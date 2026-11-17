@@ -8,15 +8,17 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.Probability.Distributions.Gaussian.Real
-public import Mathlib.MeasureTheory.Measure.Prod
 
 /-!
-# PK estimation coverage
+# Estimation coverage transfer
 
-Confidence coverage for a latent transfers through an estimand
-map to any output set containing the transformed covered values:
-estimation coverage is preserved by the PK observation map.
+Confidence coverage for a latent transfers through any estimand
+map to any output set containing the transformed covered values
+(generic image-set coverage transfer). Applied to PK, the
+estimand map is the fitted PK parameter map; no PK model is
+assumed beyond that map.
 -/
 
 @[expose] public section
@@ -32,7 +34,7 @@ latent `z` has coverage at least `1 - α` under a law `μ`
 `z ω ∈ S ω → g (z ω) ∈ T ω` for an output set `T`, then the image
 confidence statement also has coverage at least `1 - α`:
 estimation coverage transfers through the PK estimand map. -/
-lemma pk_est_coverage_transfer {Ω : Type*} [MeasurableSpace Ω]
+lemma coverage_transfer_image {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ]
     (S : Ω → Set ℝ) (T : Ω → Set ℝ) (z : Ω → ℝ) (g : ℝ → ℝ) (α : ℝ)
     (hcover : ∀ ω, z ω ∈ S ω → g (z ω) ∈ T ω)
