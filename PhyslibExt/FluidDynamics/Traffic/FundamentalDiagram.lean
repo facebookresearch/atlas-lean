@@ -31,8 +31,10 @@ any particular calibrated road.
 - `FluidDynamics.Traffic.greenshieldsFlux`: the Greenshields flux function.
 - `FluidDynamics.Traffic.greenshieldsFlux_nonneg_le`: the flux on
   `0 ≤ k ≤ kj` is between `0` and the capacity `vf * kj / 4`.
-- `FluidDynamics.Traffic.greenshieldsFlux_half`: capacity is attained at
-  half the jam density.
+- `FluidDynamics.Traffic.greenshieldsFlux_half`: midpoint value at half
+  the jam density.
+- `FluidDynamics.Traffic.greenshieldsFlux_capacity_attained`: for positive
+  free-flow speed, that value is the capacity and is attained.
 
 ## iii. Table of contents
 
@@ -64,32 +66,40 @@ noncomputable def greenshieldsFlux (vf kj k : ℝ) : ℝ :=
 theorem greenshieldsFlux_nonneg_le {vf kj k : ℝ} (hvf : 0 < vf)
     (hkj : 0 < kj) (hk0 : 0 ≤ k) (hk : k ≤ kj) :
     0 ≤ greenshieldsFlux vf kj k ∧ greenshieldsFlux vf kj k ≤ vf * kj / 4 := by
-  unfold greenshieldsFlux
-  have hkj_ne : kj ≠ 0 := ne_of_gt hkj
-  have h1 : 0 ≤ 1 - k / kj := by
-    have hdiv : k / kj ≤ 1 := (div_le_one hkj).mpr hk
+  have hkj' : kj ≠ 0 := ne_of_gt hkj
+  have h2 : k / kj ≤ 1 := (div_le_one hkj).mpr hk
+  have h3 : 0 ≤ (1 : ℝ) - k / kj := sub_nonneg.mpr h2
+  have hkey : vf * kj / 4 - vf * k * (1 - k / kj)
+      = vf * (k - kj / 2) ^ 2 / kj := by
+    field_simp
+    ring
+  have hnonneg : 0 ≤ vf * (k - kj / 2) ^ 2 / kj := by positivity
+  refine ⟨?_, ?_⟩
+  · show 0 ≤ vf * k * (1 - k / kj)
+    exact mul_nonneg (mul_nonneg hvf.le hk0) h3
+  · show vf * k * (1 - k / kj) ≤ vf * kj / 4
     linarith
-  refine ⟨mul_nonneg (mul_nonneg hvf.le hk0) h1, ?_⟩
-  have hsq : 0 ≤ (kj - 2 * k) ^ 2 := sq_nonneg _
-  have hcap : k * (kj - k) ≤ kj ^ 2 / 4 := by nlinarith [hsq]
-  have hdecomp : vf * k * (1 - k / kj) = vf / kj * (k * (kj - k)) := by
-    field_simp
-  have hvfkj : 0 ≤ vf / kj := le_of_lt (div_pos hvf hkj)
-  have hmul : vf / kj * (k * (kj - k)) ≤ vf / kj * (kj ^ 2 / 4) :=
-    mul_le_mul_of_nonneg_left hcap hvfkj
-  have heq : vf / kj * (kj ^ 2 / 4) = vf * kj / 4 := by
-    field_simp
-  calc vf * k * (1 - k / kj) = vf / kj * (k * (kj - k)) := hdecomp
-    _ ≤ vf / kj * (kj ^ 2 / 4) := hmul
-    _ = vf * kj / 4 := heq
 
-/-- The Greenshields capacity `vf * kj / 4` is attained at half the jam
-density. -/
+/-- Midpoint value: at half the jam density the flux equals
+`vf * kj / 4`. This is a value identity for any `vf`; it is capacity
+attainment only under `0 < vf`, as in
+`greenshieldsFlux_capacity_attained`. -/
 lemma greenshieldsFlux_half {vf kj : ℝ} (hkj : 0 < kj) :
     greenshieldsFlux vf kj (kj / 2) = vf * kj / 4 := by
-  have hkj_ne : kj ≠ 0 := ne_of_gt hkj
-  unfold greenshieldsFlux
+  have hkj' : kj ≠ 0 := ne_of_gt hkj
+  show vf * (kj / 2) * (1 - kj / 2 / kj) = vf * kj / 4
   field_simp
   ring
+
+/-- **Capacity attainment.** For positive free-flow speed, the value
+`vf * kj / 4` is attained at half the jam density and bounds every flux on
+the physical density range. -/
+theorem greenshieldsFlux_capacity_attained {vf kj : ℝ} (hvf : 0 < vf)
+    (hkj : 0 < kj) :
+    greenshieldsFlux vf kj (kj / 2) = vf * kj / 4
+      ∧ ∀ k : ℝ, 0 ≤ k → k ≤ kj →
+        greenshieldsFlux vf kj k ≤ vf * kj / 4 := by
+  exact ⟨greenshieldsFlux_half hkj,
+    fun k hk0 hk => (greenshieldsFlux_nonneg_le hvf hkj hk0 hk).2⟩
 
 end FluidDynamics.Traffic

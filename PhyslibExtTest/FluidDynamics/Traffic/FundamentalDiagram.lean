@@ -47,7 +47,7 @@ open FluidDynamics.Traffic
 example : greenshieldsFlux 100 200 0 = 0 ∧ greenshieldsFlux 100 200 200 = 0 := by
   constructor <;> norm_num [greenshieldsFlux]
 
-/-- Capacity at half the jam density, through the public lemma. -/
+/-- Midpoint value at half the jam density, through the public lemma. -/
 example : greenshieldsFlux 100 200 (200 / 2) = 5000 := by
   have h := greenshieldsFlux_half (vf := (100 : ℝ)) (kj := (200 : ℝ)) (by norm_num)
   norm_num at h ⊢
@@ -71,3 +71,8 @@ example : greenshieldsFlux 100 200 300 = -15000 := by
 example {vf kj k : ℝ} (hvf : 0 < vf) (hkj : 0 < kj) (hk0 : 0 ≤ k) (hk : k ≤ kj) :
     0 ≤ vf * k * (1 - k / kj) ∧ vf * k * (1 - k / kj) ≤ vf * kj / 4 :=
   greenshieldsFlux_nonneg_le hvf hkj hk0 hk
+
+/-- Capacity attainment at the same witness, through the public theorem. -/
+example : greenshieldsFlux 100 200 (200 / 2) = 100 * 200 / 4
+    ∧ ∀ k : ℝ, 0 ≤ k → k ≤ 200 → greenshieldsFlux 100 200 k ≤ 100 * 200 / 4 :=
+  greenshieldsFlux_capacity_attained (by norm_num) (by norm_num)
