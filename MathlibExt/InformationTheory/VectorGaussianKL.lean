@@ -23,7 +23,9 @@ positive definite covariances is the standard trace/log-det
 formula, computed through the canonical multivariate Gaussian
 density from `MathlibExt.Probability.Distributions.GaussianDensity`
 (imported, not copied). Equal covariances reduce it to the
-Mahalanobis form; singular limits are excluded.
+Mahalanobis form; singular limits are excluded. Private `_of_density` variants take the
+density theorem `MetaMathlibExt.multivariateGaussian_eq_withDensity` as a hypothesis and the public
+theorems discharge it.
 -/
 
 @[expose] public section
@@ -159,14 +161,15 @@ theorem log_multivariateGaussianPDFReal_div {ι : Type*} [Fintype ι] [Decidable
 
 /-- Gaussians with positive definite covariances are absolutely continuous with respect to each
 other; one direction: `N(m, S) ≪ N(q, T)`, given the shared density theorem at both laws. -/
-theorem multivariateGaussian_absolutelyContinuous {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (m q : EuclideanSpace ℝ ι) (S T : Matrix ι ι ℝ) (hS : S.PosDef) (hT : T.PosDef)
+private theorem multivariateGaussian_absolutelyContinuous_of_density {ι : Type*} [Fintype ι]
+    [DecidableEq ι] (m q : EuclideanSpace ℝ ι) (S T : Matrix ι ι ℝ) (hT : T.PosDef)
     (hdS : multivariateGaussian m S =
-      volume.withDensity fun x => ENNReal.ofReal (MetaMathlibExt.multivariateGaussianPDFReal m S x))
+      volume.withDensity fun x =>
+        ENNReal.ofReal (MetaMathlibExt.multivariateGaussianPDFReal m S x))
     (hdT : multivariateGaussian q T =
-      volume.withDensity fun x => ENNReal.ofReal (MetaMathlibExt.multivariateGaussianPDFReal q T x)) :
+      volume.withDensity fun x =>
+        ENNReal.ofReal (MetaMathlibExt.multivariateGaussianPDFReal q T x)) :
     multivariateGaussian m S ≪ multivariateGaussian q T := by
-  have _ := hS
   rw [hdS, hdT]
   refine (withDensity_absolutelyContinuous _ _).trans ?_
   refine withDensity_absolutelyContinuous' (measurable_pdf q T).ennreal_ofReal.aemeasurable ?_
@@ -174,12 +177,14 @@ theorem multivariateGaussian_absolutelyContinuous {ι : Type*} [Fintype ι] [Dec
 
 /-- The log-likelihood ratio of `N(m, S)` against `N(q, T)` is, `N(m, S)`-almost everywhere,
 `(log (det T / det S) - (x - m)ᵀ S⁻¹ (x - m) + (x - q)ᵀ T⁻¹ (x - q)) / 2`. -/
-theorem llr_multivariateGaussian_ae {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (m q : EuclideanSpace ℝ ι) (S T : Matrix ι ι ℝ) (hS : S.PosDef) (hT : T.PosDef)
+private theorem llr_multivariateGaussian_ae_of_density {ι : Type*} [Fintype ι]
+    [DecidableEq ι] (m q : EuclideanSpace ℝ ι) (S T : Matrix ι ι ℝ) (hS : S.PosDef) (hT : T.PosDef)
     (hdS : multivariateGaussian m S =
-      volume.withDensity fun x => ENNReal.ofReal (MetaMathlibExt.multivariateGaussianPDFReal m S x))
+      volume.withDensity fun x =>
+        ENNReal.ofReal (MetaMathlibExt.multivariateGaussianPDFReal m S x))
     (hdT : multivariateGaussian q T =
-      volume.withDensity fun x => ENNReal.ofReal (MetaMathlibExt.multivariateGaussianPDFReal q T x)) :
+      volume.withDensity fun x =>
+        ENNReal.ofReal (MetaMathlibExt.multivariateGaussianPDFReal q T x)) :
     llr (multivariateGaussian m S) (multivariateGaussian q T) =ᵐ[multivariateGaussian m S]
       fun x => (Real.log (T.det / S.det) - ofLp (x - m) ⬝ᵥ S⁻¹ *ᵥ ofLp (x - m) +
         ofLp (x - q) ⬝ᵥ T⁻¹ *ᵥ ofLp (x - q)) / 2 := by
@@ -200,38 +205,43 @@ theorem llr_multivariateGaussian_ae {ι : Type*} [Fintype ι] [DecidableEq ι]
     ENNReal.toReal_ofReal (pdf_pos m S hS x).le, div_eq_inv_mul]
 
 /-- The log-likelihood ratio of `N(m, S)` against `N(q, T)` is `N(m, S)`-integrable. -/
-theorem integrable_llr_multivariateGaussian {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (m q : EuclideanSpace ℝ ι) (S T : Matrix ι ι ℝ) (hS : S.PosDef) (hT : T.PosDef)
+private theorem integrable_llr_multivariateGaussian_of_density {ι : Type*} [Fintype ι]
+    [DecidableEq ι] (m q : EuclideanSpace ℝ ι) (S T : Matrix ι ι ℝ) (hS : S.PosDef) (hT : T.PosDef)
     (hdS : multivariateGaussian m S =
-      volume.withDensity fun x => ENNReal.ofReal (MetaMathlibExt.multivariateGaussianPDFReal m S x))
+      volume.withDensity fun x =>
+        ENNReal.ofReal (MetaMathlibExt.multivariateGaussianPDFReal m S x))
     (hdT : multivariateGaussian q T =
-      volume.withDensity fun x => ENNReal.ofReal (MetaMathlibExt.multivariateGaussianPDFReal q T x)) :
+      volume.withDensity fun x =>
+        ENNReal.ofReal (MetaMathlibExt.multivariateGaussianPDFReal q T x)) :
     Integrable (llr (multivariateGaussian m S) (multivariateGaussian q T))
       (multivariateGaussian m S) := by
-  refine Integrable.congr ?_ (llr_multivariateGaussian_ae m q S T hS hT hdS hdT).symm
+  refine Integrable.congr ?_ (llr_multivariateGaussian_ae_of_density m q S T hS hT hdS hdT).symm
   have h1 := integrable_quadratic_multivariateGaussian m m S S⁻¹ hS.posSemidef
   have h2 := integrable_quadratic_multivariateGaussian m q S T⁻¹ hS.posSemidef
   exact (((integrable_const _).sub h1).add h2).div_const 2
 
 /-! ### Headline -/
 
-/-- **Kullback-Leibler divergence between multivariate Gaussians.** For `n ≥ 1` and positive
+/-- Density-hypothesis form of `klDiv_multivariateGaussian`. For `n ≥ 1` and positive
 definite covariances `S`, `T` on `EuclideanSpace ℝ ι` (`n = card ι`), given the shared density
 theorem at both laws,
-`KL(N(m, S) ‖ N(q, T)) = ofReal ((log (det T / det S) - n + trace (T⁻¹ S) + (m - q)ᵀ T⁻¹ (m - q)) / 2)`.
+`KL(N(m, S) ‖ N(q, T)) =
+ofReal ((log (det T / det S) - n + trace (T⁻¹ S) + (m - q)ᵀ T⁻¹ (m - q)) / 2)`.
 -/
-theorem klDiv_multivariateGaussian {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι]
-    (m q : EuclideanSpace ℝ ι) (S T : Matrix ι ι ℝ) (hS : S.PosDef) (hT : T.PosDef)
+private theorem klDiv_multivariateGaussian_of_density {ι : Type*} [Fintype ι] [DecidableEq ι]
+    [Nonempty ι] (m q : EuclideanSpace ℝ ι) (S T : Matrix ι ι ℝ) (hS : S.PosDef) (hT : T.PosDef)
     (hdS : multivariateGaussian m S =
-      volume.withDensity fun x => ENNReal.ofReal (MetaMathlibExt.multivariateGaussianPDFReal m S x))
+      volume.withDensity fun x =>
+        ENNReal.ofReal (MetaMathlibExt.multivariateGaussianPDFReal m S x))
     (hdT : multivariateGaussian q T =
-      volume.withDensity fun x => ENNReal.ofReal (MetaMathlibExt.multivariateGaussianPDFReal q T x)) :
+      volume.withDensity fun x =>
+        ENNReal.ofReal (MetaMathlibExt.multivariateGaussianPDFReal q T x)) :
     klDiv (multivariateGaussian m S) (multivariateGaussian q T) =
       ENNReal.ofReal (multivariateGaussianKLReal m q S T) := by
-  have hac := multivariateGaussian_absolutelyContinuous m q S T hS hT hdS hdT
-  have hint := integrable_llr_multivariateGaussian m q S T hS hT hdS hdT
+  have hac := multivariateGaussian_absolutelyContinuous_of_density m q S T hT hdS hdT
+  have hint := integrable_llr_multivariateGaussian_of_density m q S T hS hT hdS hdT
   rw [klDiv_of_ac_of_integrable hac hint, probReal_univ, probReal_univ, add_sub_cancel_right,
-    integral_congr_ae (llr_multivariateGaussian_ae m q S T hS hT hdS hdT)]
+    integral_congr_ae (llr_multivariateGaussian_ae_of_density m q S T hS hT hdS hdT)]
   congr 1
   have h1 := integrable_quadratic_multivariateGaussian m m S S⁻¹ hS.posSemidef
   have h2 := integrable_quadratic_multivariateGaussian m q S T⁻¹ hS.posSemidef
@@ -305,7 +315,7 @@ private lemma posDef_two_one_one_two : (!![2, 1; 1, 2] : Matrix (Fin 2) (Fin 2) 
 /-- Validation, nondiagonal covariance (measure level, coordinate transport):
 `KL(N((1,0), 1) ‖ N(0, [[2,1],[1,2]])) = ofReal (log 3 / 2)`, given the shared density theorem at
 both laws. -/
-theorem klDiv_multivariateGaussian_nondiagonal
+private theorem klDiv_multivariateGaussian_nondiagonal_of_density
     (hdS : multivariateGaussian (toLp 2 ![1, 0]) (1 : Matrix (Fin 2) (Fin 2) ℝ) =
       volume.withDensity fun x => ENNReal.ofReal
         (MetaMathlibExt.multivariateGaussianPDFReal (toLp 2 ![1, 0]) 1 x))
@@ -315,18 +325,20 @@ theorem klDiv_multivariateGaussian_nondiagonal
     klDiv (multivariateGaussian (toLp 2 ![1, 0]) (1 : Matrix (Fin 2) (Fin 2) ℝ))
         (multivariateGaussian 0 !![2, 1; 1, 2]) =
       ENNReal.ofReal (Real.log 3 / 2) := by
-  rw [klDiv_multivariateGaussian _ _ _ _ Matrix.PosDef.one posDef_two_one_one_two hdS hdT,
+  rw [klDiv_multivariateGaussian_of_density _ _ _ _ Matrix.PosDef.one posDef_two_one_one_two
+      hdS hdT,
     multivariateGaussianKLReal_nondiagonal]
 
 /-- Violated premise (`S` positive definite): for `n ≥ 1` the zero covariance gives the point mass
-`N(m, 0) = δ_m`, which is singular to `N(q, T)`; the divergence is `⊤`, not the finite closed form. -/
-theorem klDiv_multivariateGaussian_zero_covariance_ne {ι : Type*} [Fintype ι] [DecidableEq ι]
-    [Nonempty ι] (m q : EuclideanSpace ℝ ι) (T : Matrix ι ι ℝ) (hT : T.PosDef)
+`N(m, 0) = δ_m`, which is singular to `N(q, T)`; the divergence is `⊤`, not the finite closed
+form. -/
+private theorem klDiv_multivariateGaussian_zero_covariance_ne_of_density {ι : Type*} [Fintype ι]
+    [DecidableEq ι] [Nonempty ι] (m q : EuclideanSpace ℝ ι) (T : Matrix ι ι ℝ)
     (hdT : multivariateGaussian q T =
-      volume.withDensity fun x => ENNReal.ofReal (MetaMathlibExt.multivariateGaussianPDFReal q T x)) :
+      volume.withDensity fun x =>
+        ENNReal.ofReal (MetaMathlibExt.multivariateGaussianPDFReal q T x)) :
     klDiv (multivariateGaussian m 0) (multivariateGaussian q T) ≠
       ENNReal.ofReal (multivariateGaussianKLReal m q 0 T) := by
-  have _ := hT
   have h0 : multivariateGaussian m (0 : Matrix ι ι ℝ) = Measure.dirac m := by
     simp [multivariateGaussian, CFC.sqrt_zero]
   have hnac : ¬ multivariateGaussian m 0 ≪ multivariateGaussian q T := by
@@ -339,5 +351,73 @@ theorem klDiv_multivariateGaussian_zero_covariance_ne {ι : Type*} [Fintype ι] 
     simp at this
   rw [klDiv_of_not_ac hnac]
   exact ENNReal.top_ne_ofReal
+
+/-! ### Density discharged
+
+The public statements below supply the canonical density theorem
+`MetaMathlibExt.multivariateGaussian_eq_withDensity` to the private `_of_density` variants. -/
+
+/-- **Absolute continuity, density discharged.** Gaussians with positive definite covariances
+satisfy `N(m, S) ≪ N(q, T)`. -/
+theorem multivariateGaussian_absolutelyContinuous {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (m q : EuclideanSpace ℝ ι) (S T : Matrix ι ι ℝ) (hS : S.PosDef) (hT : T.PosDef) :
+    multivariateGaussian m S ≪ multivariateGaussian q T :=
+  multivariateGaussian_absolutelyContinuous_of_density m q S T hT
+    (MetaMathlibExt.multivariateGaussian_eq_withDensity m hS)
+    (MetaMathlibExt.multivariateGaussian_eq_withDensity q hT)
+
+/-- The log-likelihood ratio of `N(m, S)` against `N(q, T)` is, `N(m, S)`-almost everywhere,
+`(log (det T / det S) - (x - m)ᵀ S⁻¹ (x - m) + (x - q)ᵀ T⁻¹ (x - q)) / 2`; density discharged. -/
+theorem llr_multivariateGaussian_ae {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (m q : EuclideanSpace ℝ ι) (S T : Matrix ι ι ℝ) (hS : S.PosDef) (hT : T.PosDef) :
+    llr (multivariateGaussian m S) (multivariateGaussian q T) =ᵐ[multivariateGaussian m S]
+      fun x => (Real.log (T.det / S.det) - ofLp (x - m) ⬝ᵥ S⁻¹ *ᵥ ofLp (x - m) +
+        ofLp (x - q) ⬝ᵥ T⁻¹ *ᵥ ofLp (x - q)) / 2 :=
+  llr_multivariateGaussian_ae_of_density m q S T hS hT
+    (MetaMathlibExt.multivariateGaussian_eq_withDensity m hS)
+    (MetaMathlibExt.multivariateGaussian_eq_withDensity q hT)
+
+/-- The log-likelihood ratio of `N(m, S)` against `N(q, T)` is `N(m, S)`-integrable; density
+discharged. -/
+theorem integrable_llr_multivariateGaussian {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (m q : EuclideanSpace ℝ ι) (S T : Matrix ι ι ℝ) (hS : S.PosDef) (hT : T.PosDef) :
+    Integrable (llr (multivariateGaussian m S) (multivariateGaussian q T))
+      (multivariateGaussian m S) :=
+  integrable_llr_multivariateGaussian_of_density m q S T hS hT
+    (MetaMathlibExt.multivariateGaussian_eq_withDensity m hS)
+    (MetaMathlibExt.multivariateGaussian_eq_withDensity q hT)
+
+/-- **Kullback-Leibler divergence between multivariate Gaussians.** For `n ≥ 1` and positive
+definite covariances `S`, `T` on `EuclideanSpace ℝ ι` (`n = card ι`),
+`KL(N(m, S) ‖ N(q, T)) =
+ofReal ((log (det T / det S) - n + trace (T⁻¹ S) + (m - q)ᵀ T⁻¹ (m - q)) / 2)`.
+-/
+theorem klDiv_multivariateGaussian {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι]
+    (m q : EuclideanSpace ℝ ι) (S T : Matrix ι ι ℝ) (hS : S.PosDef) (hT : T.PosDef) :
+    klDiv (multivariateGaussian m S) (multivariateGaussian q T) =
+      ENNReal.ofReal (multivariateGaussianKLReal m q S T) :=
+  klDiv_multivariateGaussian_of_density m q S T hS hT
+    (MetaMathlibExt.multivariateGaussian_eq_withDensity m hS)
+    (MetaMathlibExt.multivariateGaussian_eq_withDensity q hT)
+
+/-- Validation, nondiagonal covariance (measure level, coordinate transport):
+`KL(N((1,0), 1) ‖ N(0, [[2,1],[1,2]])) = ofReal (log 3 / 2)`; density discharged. -/
+theorem klDiv_multivariateGaussian_nondiagonal :
+    klDiv (multivariateGaussian (toLp 2 ![1, 0]) (1 : Matrix (Fin 2) (Fin 2) ℝ))
+        (multivariateGaussian 0 !![2, 1; 1, 2]) =
+      ENNReal.ofReal (Real.log 3 / 2) :=
+  klDiv_multivariateGaussian_nondiagonal_of_density
+    (MetaMathlibExt.multivariateGaussian_eq_withDensity _ Matrix.PosDef.one)
+    (MetaMathlibExt.multivariateGaussian_eq_withDensity _ posDef_two_one_one_two)
+
+/-- Violated premise (`S` positive definite): for `n ≥ 1` the zero covariance gives the point mass
+`N(m, 0) = δ_m`, which is singular to `N(q, T)`; the divergence is `⊤`, not the finite closed form.
+Density discharged. -/
+theorem klDiv_multivariateGaussian_zero_covariance_ne {ι : Type*} [Fintype ι] [DecidableEq ι]
+    [Nonempty ι] (m q : EuclideanSpace ℝ ι) (T : Matrix ι ι ℝ) (hT : T.PosDef) :
+    klDiv (multivariateGaussian m 0) (multivariateGaussian q T) ≠
+      ENNReal.ofReal (multivariateGaussianKLReal m q 0 T) :=
+  klDiv_multivariateGaussian_zero_covariance_ne_of_density m q T
+    (MetaMathlibExt.multivariateGaussian_eq_withDensity q hT)
 
 end MathlibExt.InformationTheory.VectorGaussianKL
