@@ -614,15 +614,13 @@ within-derivative `clippedRadiatorRate C Krad Q Tmin Tmax (T s)` on
 On the box the clipped and physical rates agree, so such a
 trajectory also solves the original field there. -/
 lemma clippedRadiator_solution_trapped {C Krad Q Tmin Tmax : ℝ}
-    (hC : 0 < C) (hK : 0 < Krad) (hmin : 0 ≤ Tmin) (hmax : Tmin ≤ Tmax)
+    (hC : 0 < C) (hmax : Tmin ≤ Tmax)
     (hlo : 0 ≤ Q - Krad * Tmin ^ 4) (hhi : Q - Krad * Tmax ^ 4 ≤ 0)
     {T : ℝ → ℝ}
     (hT : ∀ s : ℝ, 0 ≤ s →
       HasDerivWithinAt T (clippedRadiatorRate C Krad Q Tmin Tmax (T s)) (Set.Ici 0) s)
     (h0 : T 0 ∈ Set.Icc Tmin Tmax) {t : ℝ} (ht : 0 ≤ t) :
     T t ∈ Set.Icc Tmin Tmax := by
-  have _ := hK
-  have _ := hmin
   have h0le : Tmin ≤ T 0 ∧ T 0 ≤ Tmax := h0
   have hcont : ∀ x ∈ Set.Icc 0 t, ContinuousWithinAt T (Set.Ici 0) x := by
     intro x hx
@@ -765,7 +763,7 @@ theorem radiator_solution_exists_trapped {C Krad Q Tmin Tmax T0 : ℝ}
     rw [hT0]
     exact h0
   have hmem : T t ∈ Set.Icc Tmin Tmax :=
-    clippedRadiator_solution_trapped hC hK hmin hmax hlo hhi hTwithin h0T ht
+    clippedRadiator_solution_trapped hC hmax hlo hhi hTwithin h0T ht
   have hderiv : HasDerivAt T (radiatorRate C Krad Q (T t)) t := by
     have h := hT t
     rw [clippedRadiatorRate_eq_of_mem hmem] at h
