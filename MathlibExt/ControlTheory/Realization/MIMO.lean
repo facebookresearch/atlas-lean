@@ -20,7 +20,8 @@ matrix `G` over a field `𝕜` splits as `G = D + N / d` with a constant
 matrix `D` (the value at infinity), a polynomial matrix `N`, and one
 common monic denominator `d` whose degree strictly exceeds every entry
 degree of `N`; the construction takes `d` to be the product of the
-(with-monadic-normal-form) entry denominators and divides. This is the
+monic entry denominators (`RatFunc.denom` is normalized to be monic)
+and divides. This is the
 standard first step from a proper transfer matrix toward a state-space
 realization; no realization is constructed here. The common denominator
 is not claimed minimal (it need not be the lcm of the entry
