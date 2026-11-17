@@ -36,4 +36,12 @@ example (t : ℝ) : ‖fmSignal 2 10 3 Real.cos t‖ = 2 := by
 example (t : ℝ) : discriminatorOutput (fmSignal 0 10 3 Real.cos) t = 0 :=
   discriminatorOutput_fmSignal_zero_amplitude 10 3 Real.cos t
 
+/-- Negative nonzero amplitude: the discriminator still reads
+`5 + 2 cos 1`, and the constant envelope is `|-3| = 3`. -/
+example : discriminatorOutput (fmSignal (-3) 5 2 Real.cos) 1 = 5 + 2 * Real.cos 1 :=
+  fmDiscriminator_cos_message (-3) 5 2 (by norm_num) 1
+
+example : ‖fmSignal (-3) 5 2 Real.cos 1‖ = 3 := by
+  rw [norm_fmSignal]; norm_num
+
 end PhyslibExtTest.Communications.IdealFMDiscriminator

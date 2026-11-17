@@ -186,7 +186,7 @@ lemma hasDerivAt_fmSignal (A fc kf : ℝ) (m : ℝ → ℝ) (hm : Continuous m) 
   exact hasDerivAt_fmSignal_of_hasDerivAt_fmPhase A fc kf m t
     (hasDerivAt_fmPhase fc kf m hm t)
 
-/-- Constant envelope: `‖z(t)‖ = A`. -/
+/-- Constant envelope: `‖z(t)‖ = |A|`. -/
 lemma norm_fmSignal (A fc kf : ℝ) (m : ℝ → ℝ) (t : ℝ) :
     ‖fmSignal A fc kf m t‖ = |A| := by
   exact norm_fmSignal_aux A fc kf m t
@@ -280,12 +280,5 @@ lemma fmSignal_zero_sensitivity_eq (A fc : ℝ) (m m' : ℝ → ℝ) :
     unfold fmPhase
     ring
   simp [fmSignal, hph]
-
-
--- concrete negative-amplitude instances
-example : discriminatorOutput (fmSignal (-3) 5 2 Real.cos) 1 = 5 + 2 * Real.cos 1 :=
-  fmDiscriminator_cos_message (-3) 5 2 (by norm_num) 1
-example : ‖fmSignal (-3) 5 2 Real.cos 1‖ = 3 := by
-  rw [norm_fmSignal]; norm_num
 
 end PhyslibExt.Communications.IdealFMDiscriminator
