@@ -13,7 +13,6 @@ public import Physlib.Electromagnetism.Kinematics.ScalarPotential
 public import Physlib.Electromagnetism.Kinematics.VectorPotential
 public import Physlib.Electromagnetism.Kinematics.ElectricField
 public import Physlib.Electromagnetism.Kinematics.MagneticField
-public import Physlib.Electromagnetism.Dynamics.CurrentDensity
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.Normed.Group.AddTorsor
 public import Mathlib.Analysis.Calculus.FDeriv.Basic
@@ -158,12 +157,12 @@ private lemma diff_z {f : ℝ → ℝ → ℝ} (hf : ContDiff ℝ ∞ (Function.
 
 /-- `E = (0, -a f_t, 0)`. -/
 lemma electricField_separableGuidePotential (c : SpeedOfLight) (a : ℝ → ℝ) (f : ℝ → ℝ → ℝ)
-    (hf : ContDiff ℝ ∞ (Function.uncurry f)) (t : Time) (p : Space) :
+    (t : Time) (p : Space) {ft : ℝ} (hf : HasDerivAt (fun s => f s (p 2)) ft t.val) :
     (separableGuidePotential c a f).electricField c t p =
       WithLp.toLp 2 ![0, -(a (p 0) * deriv (fun s => f s (p 2)) t.val), 0] := by
+  rw [hf.deriv]
   exact electricField_of c _ t p _ _ (scalarPotential_separableGuidePotential c a f)
-    (fun s => vectorPotential_separableGuidePotential c a f s p)
-    ((diff_t hf (p 2) t.val).hasDerivAt.const_mul (a (p 0)))
+    (fun s => vectorPotential_separableGuidePotential c a f s p) (hf.const_mul (a (p 0)))
 
 private lemma space_deriv_zero (μ : Fin 3) (p : Space) :
     Space.deriv μ (fun _ : Space => (0 : ℝ)) p = 0 := by
@@ -171,13 +170,14 @@ private lemma space_deriv_zero (μ : Fin 3) (p : Space) :
 
 /-- `B = (-a f_z, 0, a' f)`. -/
 lemma magneticField_separableGuidePotential (c : SpeedOfLight) (a : ℝ → ℝ) (f : ℝ → ℝ → ℝ)
-    (ha : ContDiff ℝ ∞ a) (hf : ContDiff ℝ ∞ (Function.uncurry f)) (t : Time) (p : Space) :
+    (t : Time) (p : Space) (ha : DifferentiableAt ℝ a (p 0))
+    (hf : DifferentiableAt ℝ (f t.val) (p 2)) :
     (separableGuidePotential c a f).magneticField c t p =
       WithLp.toLp 2 ![-(a (p 0) * deriv (f t.val) (p 2)), 0, deriv a (p 0) * f t.val (p 2)] := by
   have e : (separableGuidePotential c a f).vectorPotential c t =
       fun q => WithLp.toLp 2 ![0, a (q 0) * f t.val (q 2), 0] :=
     funext (vectorPotential_separableGuidePotential c a f t)
-  have hd := space_deriv_mul a (f t.val) p ((ha.differentiable (by simp)) _) (diff_z hf _ _)
+  have hd := space_deriv_mul a (f t.val) p ha hf
   ext i; fin_cases i <;> simp [ElectromagneticPotential.magneticField, e, Space.curl, hd, space_deriv_zero,
     mul_comm]
 
@@ -213,8 +213,9 @@ lemma separableGuidePotential_fields (c : SpeedOfLight) (a : ℝ → ℝ) (f : �
     (∀ t p, (separableGuidePotential c a f).magneticField c t p =
       WithLp.toLp 2 ![-(a (p 0) * deriv (f t.val) (p 2)), 0, deriv a (p 0) * f t.val (p 2)]) ∧
     ContDiff ℝ ∞ (separableGuidePotential c a f) := by
-  exact ⟨electricField_separableGuidePotential c a f hf,
-    magneticField_separableGuidePotential c a f ha hf,
+  exact ⟨fun t p => electricField_separableGuidePotential c a f t p (diff_t hf _ _).hasDerivAt,
+    fun t p => magneticField_separableGuidePotential c a f t p (ha.differentiable (by simp) _)
+      (diff_z hf _ _),
     contDiff_separableGuidePotential c a f ha hf⟩
 
 /-! ### Validation: sinusoidal `a`, time-space `f` -/
@@ -239,8 +240,8 @@ private lemma deriv_wave_z (t z : ℝ) :
 lemma sinusoidal_electricField (c : SpeedOfLight) (t : Time) (p : Space) :
     (sinusoidalGuidePotential c).electricField c t p =
       WithLp.toLp 2 ![0, 2 * Real.sin (p 0) * Real.sin (2 * t.val - 3 * p 2), 0] := by
-  rw [sinusoidalGuidePotential, electricField_separableGuidePotential c _ _
-    contDiff_cos_wave, deriv_wave_t]
+  rw [sinusoidalGuidePotential, electricField_separableGuidePotential c _ _ t p
+    (diff_t contDiff_cos_wave _ _).hasDerivAt, deriv_wave_t]
   ring_nf
 
 /-- `B = (-3 sin x sin (2 t - 3 z), 0, cos x cos (2 t - 3 z))`. -/
@@ -248,8 +249,8 @@ lemma sinusoidal_magneticField (c : SpeedOfLight) (t : Time) (p : Space) :
     (sinusoidalGuidePotential c).magneticField c t p =
       WithLp.toLp 2 ![-(3 * Real.sin (p 0) * Real.sin (2 * t.val - 3 * p 2)), 0,
         Real.cos (p 0) * Real.cos (2 * t.val - 3 * p 2)] := by
-  rw [sinusoidalGuidePotential, magneticField_separableGuidePotential c _ _ Real.contDiff_sin
-    contDiff_cos_wave, deriv_wave_z, Real.deriv_sin]
+  rw [sinusoidalGuidePotential, magneticField_separableGuidePotential c _ _ t p
+    (Real.differentiable_sin _) (diff_z contDiff_cos_wave _ _), deriv_wave_z, Real.deriv_sin]
   ring_nf
 
 /-- Nonzero derivatives at explicit points: at `t = 0`, `(x, y, z) = (π/2, 0, -π/6)` the

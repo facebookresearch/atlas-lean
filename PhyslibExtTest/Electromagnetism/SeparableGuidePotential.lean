@@ -32,7 +32,7 @@ for zero profile and constant mode it vanishes identically. -/
 example (c : SpeedOfLight) (t : Time) (p : Space) :
     (separableGuidePotential c (fun _ => 0) (fun _ _ => 0)).electricField c t p =
       WithLp.toLp 2 ![0, 0, 0] := by
-  rw [electricField_separableGuidePotential c _ _ contDiff_const]
+  rw [electricField_separableGuidePotential c _ _ t p (hasDerivAt_const _ _)]
   simp
 
 /-- The sinusoidal fixture's fields at the documented point. -/
