@@ -32,9 +32,10 @@ open scoped NNReal
 
 namespace MathlibExt.Analysis.ODE.PWMPrimitiveBound
 
-/-- Left-endpoint-sampled PWM switching signal with period `ε` and duty `d`: on cycle
-`k = ⌊t / ε⌋`, i.e. `t ∈ [k ε, (k+1) ε)`, it is `1` on the first `d (k ε) * ε` of the cycle,
-`[k ε, k ε + d (k ε) ε)`, and `0` on the remainder. -/
+/-- Left-endpoint-sampled PWM switching signal with carrier (switching-cycle) length
+`ε` and duty `d`: on cycle `k = ⌊t / ε⌋`, i.e. (for `0 < ε`) `t ∈ [k ε, (k+1) ε)`, it is `1`
+on the first `d (k ε) * ε` of the cycle, `[k ε, k ε + d (k ε) ε)`, and `0` on the remainder.
+For varying duty `d` the resulting signal need not be periodic. -/
 noncomputable def pwmSignal (ε : ℝ) (d : ℝ → ℝ) (t : ℝ) : ℝ :=
   if t - (⌊t / ε⌋ : ℝ) * ε < d ((⌊t / ε⌋ : ℝ) * ε) * ε then 1 else 0
 
