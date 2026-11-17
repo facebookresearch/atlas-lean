@@ -22,7 +22,6 @@ shifted loss. The threshold rule that compares the two posterior
 losses is Bayes optimal in Mathlib's estimator framework, and the
 truth-only shift does not change the original-cost minimizer.
 
-Discharges ECE roadmap leaf `ECE.DET.MATCHED.L3`.
 -/
 
 @[expose] public section
