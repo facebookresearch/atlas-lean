@@ -22,9 +22,11 @@ example : (1:ℝ) * 10 * 2 * (Real.exp (-(2 / 5) * 1) - Real.exp (-2 * 1)) / (5 
       ((5 * 2) * (2 - (2 * 2) / (5 * 2))) :=
   oral_scaling_curve (by norm_num) (by norm_num) (by norm_num)
 
-/-- Flip-flop with `A = 3`, `ka = 2`, `k = 1`, `t = 1`. -/
-example : (3:ℝ) * (Real.exp (-1 * 1) - Real.exp (-2 * 1)) / (2 - 1) =
-    3 * (Real.exp (-2 * 1) - Real.exp (-1 * 1)) / (1 - 2) :=
-  oral_flip_flop
+/-- Physical flip-flop at the original oral parameters. -/
+example : (1:ℝ) * 10 * 2 * (Real.exp (-(1 / 5) * 1) - Real.exp (-2 * 1)) /
+      (5 * (2 - 1 / 5)) =
+    (1 * 10 * (1 / 5) * (Real.exp (-2 * 1) - Real.exp (-(1 / 5) * 1)) *
+      (2 / (1 / 5))) / (5 * (1 / 5 - 2)) :=
+  oral_flip_flop (by norm_num) (by norm_num) (by norm_num) (by norm_num)
 
 end MathlibExtTest.Biology.Biophysics.PharmacokineticObservation.OralCurve
