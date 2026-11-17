@@ -10,7 +10,14 @@ module
 
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Basic
-public import Mathlib
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Tactic.Continuity
+import Mathlib.Tactic.FunProp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-!
 # Ideal square-law MOS transistor
@@ -84,7 +91,7 @@ noncomputable def current (beta u Vds : ℝ) : ℝ :=
 
 /-- If two functions are continuous at `x` and agree there, any
 if-then-else between them is continuous at `x`. -/
-private theorem continuousAt_ite_of_agree {α : Type*} [PseudoMetricSpace α]
+private lemma continuousAt_ite_of_agree {α : Type*} [PseudoMetricSpace α]
     {β : Type*} [PseudoMetricSpace β]
     (f g : α → β) (P : α → Prop) [DecidablePred P]
     (x : α) (hf : ContinuousAt f x) (hg : ContinuousAt g x)
@@ -106,7 +113,7 @@ private theorem continuousAt_ite_of_agree {α : Type*} [PseudoMetricSpace α]
   · exact e2
 
 /-- Nonnegativity of current, as a helper before its pinned use. -/
-private theorem current_nonneg_aux (beta u Vds : ℝ) (hbeta : 0 < beta)
+private lemma current_nonneg_aux (beta u Vds : ℝ) (hbeta : 0 < beta)
     (hV : 0 ≤ Vds) :
     0 ≤ current beta u Vds := by
   unfold current
