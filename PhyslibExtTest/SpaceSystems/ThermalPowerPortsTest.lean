@@ -57,9 +57,10 @@ example :
    ThermalPowerPorts.radiatorRate_nonpos_at_max (C := 2) (Krad := 1) (Q := 16)
      (Tmax := 2) (by norm_num) (by norm_num),
    by
-     have h := ThermalPowerPorts.clippedRadiatorRate_lipschitz (C := 2)
+     have h := (ThermalPowerPorts.clippedRadiatorRate_lipschitzWith (C := 2)
        (Krad := 1) (Q := 16) (Tmin := 1) (Tmax := 2) (by norm_num)
-       (by norm_num) (by norm_num) (by norm_num) 0 3
+       (by norm_num) (by norm_num) (by norm_num)).dist_le_mul 0 3
+     rw [Real.dist_eq, Real.dist_eq] at h
      calc |ThermalPowerPorts.clippedRadiatorRate 2 1 16 1 2 0 -
            ThermalPowerPorts.clippedRadiatorRate 2 1 16 1 2 3|
          ≤ 1 * (4 * 2 ^ 3) / 2 * |(0 : ℝ) - 3| := h
@@ -85,10 +86,13 @@ example :
 in `[1, 2]` at `t = 1`, and solving the physical field there. -/
 example :
     ∃ T : ℝ → ℝ, T 0 = 3 / 2 ∧ T 1 ∈ Set.Icc 1 2 ∧
-      HasDerivAt T (ThermalPowerPorts.radiatorRate 2 1 16 (T 1)) 1 := by
-  obtain ⟨T, hT0, -, htrap⟩ :=
+      HasDerivAt T (ThermalPowerPorts.radiatorRate 2 1 16 (T 1)) 1 ∧
+      HasDerivAt T
+        (ThermalPowerPorts.clippedRadiatorRate 2 1 16 1 2 (T (-1))) (-1) := by
+  obtain ⟨T, hT0, hclip, htrap⟩ :=
     ThermalPowerPorts.radiator_solution_exists_trapped (C := 2) (Krad := 1)
       (Q := 16) (Tmin := 1) (Tmax := 2) (T0 := 3 / 2) (by norm_num)
       (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
       (by norm_num)
-  exact ⟨T, hT0, (htrap 1 (by norm_num)).1, (htrap 1 (by norm_num)).2⟩
+  refine ⟨T, hT0, (htrap 1 (by norm_num)).1, (htrap 1 (by norm_num)).2, ?_⟩
+  exact hclip (-1)

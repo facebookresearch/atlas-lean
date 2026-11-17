@@ -33,9 +33,10 @@ original field.
 
 ## ii. Key results
 
-- `ThermalPowerPorts.clippedRadiatorRate_lipschitz`: the clipped
-  rate is globally Lipschitz with constant
-  `Krad * (4 * Tmax^3) / C`.
+- `ThermalPowerPorts.clippedRadiatorRate_lipschitzWith`: the
+  clipped rate is globally Lipschitz with constant
+  `Krad * (4 * Tmax^3) / C`, in `LipschitzWith` form (the
+  pointwise form is `clippedRadiatorRate_lipschitz`).
 - `ThermalPowerPorts.radiator_solution_trapped`: forward solutions
   with `HasDerivWithinAt` on `Set.Ici 0` starting in the box stay
   in the box for all `t ≥ 0`.
@@ -239,6 +240,22 @@ lemma clippedRadiatorRate_lipschitz {C Krad Q Tmin Tmax : ℝ}
     ring
   rw [hLHS, hRHS]
   exact hmul
+
+/-- The clipped rate in Mathlib's bundled `LipschitzWith` form,
+with constant `Krad * (4 * Tmax^3) / C`, for direct consumption
+by ODE existence/uniqueness APIs. -/
+theorem clippedRadiatorRate_lipschitzWith {C Krad Q Tmin Tmax : ℝ}
+    (hC : 0 < C) (hK : 0 < Krad) (hmin : 0 ≤ Tmin) (hmax : Tmin ≤ Tmax) :
+    LipschitzWith ⟨Krad * (4 * Tmax ^ 3) / C, by
+      have hT0 : (0 : ℝ) ≤ Tmax := le_trans hmin hmax
+      have h3 : (0 : ℝ) ≤ Tmax ^ 3 := pow_nonneg hT0 3
+      have h4 : (0 : ℝ) ≤ 4 * Tmax ^ 3 := by linarith
+      exact div_nonneg (mul_nonneg (le_of_lt hK) h4) (le_of_lt hC)⟩
+      (clippedRadiatorRate C Krad Q Tmin Tmax) := by
+  apply LipschitzWith.of_dist_le_mul
+  intro a b
+  rw [Real.dist_eq, Real.dist_eq]
+  exact clippedRadiatorRate_lipschitz hC hK hmin hmax a b
 
 /-- Inward sign at the lower box end: `rate(Tmin) ≥ 0` whenever
 `Q - Krad * Tmin^4 ≥ 0` and `C > 0`. -/
@@ -817,17 +834,8 @@ theorem radiator_solution_exists_trapped {C Krad Q Tmin Tmax T0 : ℝ}
       (∀ t : ℝ, HasDerivAt T (clippedRadiatorRate C Krad Q Tmin Tmax (T t)) t) ∧
       (∀ t : ℝ, 0 ≤ t → T t ∈ Set.Icc Tmin Tmax ∧
         HasDerivAt T (radiatorRate C Krad Q (T t)) t) := by
-  have hKnn : 0 ≤ Krad * (4 * Tmax ^ 3) / C := by
-    have hT0 : (0 : ℝ) ≤ Tmax := le_trans hmin hmax
-    have h3 : (0 : ℝ) ≤ Tmax ^ 3 := pow_nonneg hT0 3
-    have h4 : (0 : ℝ) ≤ 4 * Tmax ^ 3 := by linarith
-    exact div_nonneg (mul_nonneg (le_of_lt hK) h4) (le_of_lt hC)
-  have hlip : LipschitzWith ⟨Krad * (4 * Tmax ^ 3) / C, hKnn⟩
-      (clippedRadiatorRate C Krad Q Tmin Tmax) := by
-    apply LipschitzWith.of_dist_le_mul
-    intro a b
-    rw [Real.dist_eq, Real.dist_eq]
-    exact clippedRadiatorRate_lipschitz hC hK hmin hmax a b
+  have hlip := clippedRadiatorRate_lipschitzWith hC hK hmin hmax
+    (Q := Q)
   obtain ⟨T, hT0, hT⟩ :=
     ode_global_exists_of_global_lipschitz _ _ hlip T0
   refine ⟨T, hT0, hT, fun t ht => ?_⟩
