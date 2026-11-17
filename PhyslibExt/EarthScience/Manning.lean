@@ -19,10 +19,12 @@ import Mathlib.Tactic.Positivity
 Manning's empirical open-channel law, for fixed section geometry, is
 `Q = (1 / n) * A * R ^ (2 / 3) * sqrt S` with roughness `n`, flow area
 `A`, hydraulic radius `R`, and slope `S`, in one consistent unit system.
-This module records the two parameter monotonicities: discharge strictly
-increases with slope and strictly decreases with roughness. It is the
-empirical law only; no derivation from a fluid PDE and no calibration is
-claimed.
+This module records the two parameter monotonicities, on their physical
+domains: discharge strictly increases when a nonnegative slope increases,
+and strictly decreases when a positive roughness increases. Outside the
+positive-parameter domain the totalized definition has no physical
+interpretation. It is the empirical law only; no derivation from a fluid
+PDE and no calibration is claimed.
 
 ## ii. Key results
 
@@ -56,7 +58,7 @@ noncomputable def manningDischarge (n A R S : ℝ) : ℝ :=
   (1 / n) * A * R ^ ((2 : ℝ) / 3) * Real.sqrt S
 
 /-- For positive roughness, area, and hydraulic radius, Manning discharge
-strictly increases with slope. -/
+strictly increases with slope, comparing nonnegative slopes. -/
 theorem manningDischarge_lt_of_slope_lt {n A R S1 S2 : ℝ}
     (hn : 0 < n) (hA : 0 < A) (hR : 0 < R)
     (hS1 : 0 ≤ S1) (hS : S1 < S2) :
@@ -70,7 +72,7 @@ theorem manningDischarge_lt_of_slope_lt {n A R S1 S2 : ℝ}
   exact mul_lt_mul_of_pos_left hsqrt hC
 
 /-- For positive area, hydraulic radius, and slope, Manning discharge
-strictly decreases when roughness increases. -/
+strictly decreases when (positive) roughness increases. -/
 theorem manningDischarge_lt_of_roughness_lt {n1 n2 A R S : ℝ}
     (hn1 : 0 < n1) (hn : n1 < n2) (hA : 0 < A) (hR : 0 < R)
     (hS : 0 < S) :

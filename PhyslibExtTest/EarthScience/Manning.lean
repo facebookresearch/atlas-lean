@@ -35,6 +35,10 @@ example : manningDischarge 1 1 1 1 < manningDischarge 1 1 1 4 :=
   manningDischarge_lt_of_slope_lt (by norm_num) (by norm_num) (by norm_num)
     (by norm_num) (by norm_num)
 
+/-- Doubling roughness halves discharge at unit geometry. -/
+example : manningDischarge 2 1 1 1 = 1 / 2 := by
+  norm_num [manningDischarge]
+
 /-- Roughness comparison through the public theorem. -/
 example : manningDischarge 2 1 1 1 < manningDischarge 1 1 1 1 :=
   manningDischarge_lt_of_roughness_lt (by norm_num) (by norm_num) (by norm_num)
