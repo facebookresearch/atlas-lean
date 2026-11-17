@@ -23,8 +23,8 @@ squaring is not additive (with `x = y = 1`, `(x t + y t)^2 = 4` against
 `timeMulInt x n = n * x n`) is linear but not time invariant (on the constant
 signal `1`, shift-then-multiply gives `t`, multiply-then-shift `t - 1`); the
 one-step advance `shiftₗ ℝ ℝ (-1)` is not causal (an impulse at time `1` is
-visible at time `0`). Provenance: control-theory roadmap leaf `SSC-U01.T03`
-(clause `SSC-U01.c04.b`), on the merged foundation `SSC-U01.T01`.
+visible at time `0`). These are the standard counterexamples accompanying the definitions in
+`Signals.Basic`.
 -/
 
 @[expose] public section
