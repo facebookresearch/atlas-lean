@@ -111,20 +111,25 @@ lemma receiverLoss_strictMonoOn {U K Ta : ℝ} (hU : 0 ≤ U) (hK : 0 < K)
   exact add_lt_add_of_le_of_lt hUle hKlt
 
 /-- A dimensionally valid large-temperature bound: at
-`Ta + (sqrt (sqrt (α * G / K)) + 1)` the loss exceeds `α * G`
+`Ta + 2 * sqrt (sqrt (α * G / K))` the loss exceeds `α * G`
 whenever `U ≥ 0`, `K > 0`, `Ta ≥ 0`, and `α * G > 0`. The
-fourth root of `α * G / K` has units of temperature, matching
-`Ta`; the radiative term alone dominates because
-`(Ta + d)^4 - Ta^4 ≥ d^4` for `d = (α * G / K)^{1/4} + 1`. -/
+fourth root `q = (α * G / K)^{1/4}` has units of temperature,
+matching `Ta`, and the increment `2 * q` is a dimensionless
+multiple of that temperature; the radiative term alone
+dominates because `(Ta + d)^4 - Ta^4 ≥ d^4` for
+`d = 2 * (α * G / K)^{1/4}`, with `d^4 = 16 * (α * G / K)`. -/
 lemma receiverLoss_gt_at_large {U K Ta α G : ℝ} (hU : 0 ≤ U) (hK : 0 < K)
     (hTa : 0 ≤ Ta) (hαG : 0 < α * G) :
     α * G < receiverLoss U K Ta
-      (Ta + (Real.sqrt (Real.sqrt (α * G / K)) + 1)) := by
+      (Ta + 2 * (Real.sqrt (Real.sqrt (α * G / K)))) := by
   set q : ℝ := Real.sqrt (Real.sqrt (α * G / K)) with hq
   have hKne : K ≠ 0 := ne_of_gt hK
   have hαGK : (0 : ℝ) ≤ α * G / K := div_nonneg (le_of_lt hαG) (le_of_lt hK)
   have hq_nn : (0 : ℝ) ≤ q := Real.sqrt_nonneg _
-  have hd_nn : (0 : ℝ) ≤ q + 1 := by linarith
+  have hq_pos : 0 < q := by
+    rw [hq]
+    exact Real.sqrt_pos.mpr (Real.sqrt_pos.mpr (div_pos hαG hK))
+  have hd_nn : (0 : ℝ) ≤ 2 * q := by linarith
   have hq4 : q ^ 4 = α * G / K := by
     have h1 : q ^ 2 = Real.sqrt (α * G / K) := by
       rw [hq]
@@ -132,31 +137,31 @@ lemma receiverLoss_gt_at_large {U K Ta α G : ℝ} (hU : 0 ≤ U) (hK : 0 < K)
     calc q ^ 4 = (q ^ 2) ^ 2 := by ring
       _ = (Real.sqrt (α * G / K)) ^ 2 := by rw [h1]
       _ = α * G / K := Real.sq_sqrt hαGK
-  have hq4lt : q ^ 4 < (q + 1) ^ 4 :=
+  have hq4lt : q ^ 4 < (2 * q) ^ 4 :=
     pow_lt_pow_left₀ (by linarith) hq_nn (by norm_num)
-  have hexpand : (Ta + (q + 1)) ^ 4 - Ta ^ 4
-      = 4 * Ta ^ 3 * (q + 1) + 6 * Ta ^ 2 * (q + 1) ^ 2
-        + 4 * Ta * (q + 1) ^ 3 + (q + 1) ^ 4 := by ring
-  have hrad : (q + 1) ^ 4 ≤ (Ta + (q + 1)) ^ 4 - Ta ^ 4 := by
+  have hexpand : (Ta + (2 * q)) ^ 4 - Ta ^ 4
+      = 4 * Ta ^ 3 * (2 * q) + 6 * Ta ^ 2 * (2 * q) ^ 2
+        + 4 * Ta * (2 * q) ^ 3 + (2 * q) ^ 4 := by ring
+  have hrad : (2 * q) ^ 4 ≤ (Ta + (2 * q)) ^ 4 - Ta ^ 4 := by
     rw [hexpand]
-    have t1 : (0 : ℝ) ≤ 4 * Ta ^ 3 * (q + 1) :=
+    have t1 : (0 : ℝ) ≤ 4 * Ta ^ 3 * (2 * q) :=
       mul_nonneg (mul_nonneg (by norm_num) (pow_nonneg hTa 3)) hd_nn
-    have t2 : (0 : ℝ) ≤ 6 * Ta ^ 2 * (q + 1) ^ 2 :=
+    have t2 : (0 : ℝ) ≤ 6 * Ta ^ 2 * (2 * q) ^ 2 :=
       mul_nonneg (mul_nonneg (by norm_num) (pow_nonneg hTa 2)) (sq_nonneg _)
-    have t3 : (0 : ℝ) ≤ 4 * Ta * (q + 1) ^ 3 :=
+    have t3 : (0 : ℝ) ≤ 4 * Ta * (2 * q) ^ 3 :=
       mul_nonneg (mul_nonneg (by norm_num) hTa) (pow_nonneg hd_nn 3)
     linarith
-  have hKgt : α * G < K * ((Ta + (q + 1)) ^ 4 - Ta ^ 4) := by
+  have hKgt : α * G < K * ((Ta + (2 * q)) ^ 4 - Ta ^ 4) := by
     have h1 : K * (α * G / K) = α * G := by
       rw [mul_comm K (α * G / K)]
       exact div_mul_cancel₀ _ hKne
-    have h2 : K * (α * G / K) < K * ((Ta + (q + 1)) ^ 4 - Ta ^ 4) :=
+    have h2 : K * (α * G / K) < K * ((Ta + (2 * q)) ^ 4 - Ta ^ 4) :=
       mul_lt_mul_of_pos_left (lt_of_lt_of_le (by rwa [hq4] at hq4lt) hrad) hK
     rwa [h1] at h2
-  have hUd : (0 : ℝ) ≤ U * (q + 1) := mul_nonneg hU hd_nn
+  have hUd : (0 : ℝ) ≤ U * (2 * q) := mul_nonneg hU hd_nn
   unfold receiverLoss
-  have hsub : Ta + (Real.sqrt (Real.sqrt (α * G / K)) + 1) - Ta
-      = q + 1 := by
+  have hsub : Ta + 2 * (Real.sqrt (Real.sqrt (α * G / K))) - Ta
+      = 2 * q := by
     rw [hq]
     ring
   rw [hsub]
@@ -171,27 +176,27 @@ lemma receiver_stagnationTemperature {Ta G α U K : ℝ} (hTa : 0 < Ta)
   have _ := hα1
   have hαG : 0 < α * G := mul_pos hα0 hG
   have hpos : 0 < α * G / K := div_pos hαG hK
-  have hle : Ta ≤ Ta + (Real.sqrt (Real.sqrt (α * G / K)) + 1) := by
+  have hle : Ta ≤ Ta + 2 * (Real.sqrt (Real.sqrt (α * G / K))) := by
     have hnn : (0 : ℝ) ≤ Real.sqrt (Real.sqrt (α * G / K)) :=
       Real.sqrt_nonneg _
     linarith
-  have hgt : α * G < receiverLoss U K Ta (Ta + (Real.sqrt (Real.sqrt (α * G / K)) + 1)) :=
+  have hgt : α * G < receiverLoss U K Ta (Ta + 2 * (Real.sqrt (Real.sqrt (α * G / K)))) :=
     receiverLoss_gt_at_large hU hK hTa.le hαG
   have hcont : ContinuousOn (fun T => receiverLoss U K Ta T)
-      (Set.Icc Ta (Ta + (Real.sqrt (Real.sqrt (α * G / K)) + 1))) := by
+      (Set.Icc Ta (Ta + 2 * (Real.sqrt (Real.sqrt (α * G / K))))) := by
     have hfc : Continuous (fun T => receiverLoss U K Ta T) := by
       unfold receiverLoss
       continuity
     exact hfc.continuousOn
   have hmem : α * G ∈ (fun T => receiverLoss U K Ta T) ''
-      Set.Ioo Ta (Ta + (Real.sqrt (Real.sqrt (α * G / K)) + 1)) := by
+      Set.Ioo Ta (Ta + 2 * (Real.sqrt (Real.sqrt (α * G / K)))) := by
     have hsub := intermediate_value_Ioo hle hcont
     apply hsub
     constructor
     · show receiverLoss U K Ta Ta < α * G
       rw [receiverLoss_ambient]
       exact hαG
-    · show α * G < receiverLoss U K Ta (Ta + (Real.sqrt (Real.sqrt (α * G / K)) + 1))
+    · show α * G < receiverLoss U K Ta (Ta + 2 * (Real.sqrt (Real.sqrt (α * G / K))))
       exact hgt
   obtain ⟨Tstag, hIoo, hval⟩ := hmem
   dsimp only at hval
