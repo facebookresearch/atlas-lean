@@ -119,5 +119,21 @@ lemma windkessel_amount_eq {R C q p0 : ℝ} (hR : 0 < R) (hC : 0 < C) :
 lemma windkessel_initial {R C q p0 : ℝ} (hR : 0 < R) (hC : 0 < C) :
     R * q + (p0 - R * q) * Real.exp (-(0:ℝ) / (R * C)) = p0 := by
   simp
+/-- The Windkessel transient solves the pressure equation in
+`HasDerivAt` form with derivative `(q - p t / R) / C`. -/
+lemma windkessel_transient_hasDerivAt {R C q p0 t : ℝ} (hR : 0 < R)
+    (hC : 0 < C) :
+    HasDerivAt (fun u => R * q + (p0 - R * q) * Real.exp (-u / (R * C)))
+      ((q - (R * q + (p0 - R * q) * Real.exp (-t / (R * C))) / R) / C) t := by
+  have hamt := MathlibExt.Biology.Biophysics.CompartmentKinetics.hasDerivAt_amount
+    (k := 1 / (R * C)) (R := q / C) (A₀ := p0) (t := t)
+  rw [windkessel_amount_eq hR hC]
+  convert hamt using 1
+  have hk : (1 : ℝ) / (R * C) ≠ 0 := by
+    have hRC : R * C ≠ 0 := mul_ne_zero (ne_of_gt hR) (ne_of_gt hC)
+    positivity
+  rw [MathlibExt.Biology.Biophysics.CompartmentKinetics.amount_eq_of_ne_zero hk]
+  have hRC : R * C ≠ 0 := mul_ne_zero (ne_of_gt hR) (ne_of_gt hC)
+  field_simp
 
 end PhyslibExt.Physiology.Windkessel
