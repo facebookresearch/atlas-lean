@@ -71,12 +71,6 @@ private theorem t_convWeights_apply_sum (w1 w2 : ℕ →₀ ℚ) (n : ℕ) :
   simp only [Finsupp.sum_apply, t_finsupp_sum_bridge,
     t_single_apply_eq]
 
-private theorem t_mixture_apply (C S : RationalLossLaw) (m : ℕ) :
-    (aggregateLaw C S).weights m
-      = ∑ k ∈ C.weights.support, C.weights k * (iterLaw S k).weights m := by
-  rw [aggregateLaw_weights, Finsupp.sum_apply]
-  simp only [t_smul_apply_eq, t_finsupp_sum_bridge]
-
 private theorem t_zero_atom_left (w : ℕ →₀ ℚ) (n : ℕ) :
     convWeights (Finsupp.single 0 1) w n = w n := by
   rw [t_convWeights_apply_sum,
@@ -84,21 +78,21 @@ private theorem t_zero_atom_left (w : ℕ →₀ ℚ) (n : ℕ) :
     Finset.sum_singleton]
   simp only [Finsupp.single_eq_same, zero_add, one_mul]
   by_cases hn : n ∈ w.support
-  · have h₀ : ∀ b ∈ w.support, b ≠ n →
+  · have h0 : ∀ b ∈ w.support, b ≠ n →
         (if n = b then w b else 0) = 0 := by
       intro b _ hbn
       exact ite_eq_right (fun h => hbn h.symm)
-    have h₁ : n ∉ w.support → (if n = n then w n else 0) = 0 :=
+    have h1 : n ∉ w.support → (if n = n then w n else 0) = 0 :=
       fun h => absurd hn h
-    rw [Finset.sum_eq_single n h₀ h₁]
+    rw [Finset.sum_eq_single n h0 h1]
     simp
-  · have h₀ : ∀ b ∈ w.support, (if n = b then w b else 0) = 0 := by
+  · have h0 : ∀ b ∈ w.support, (if n = b then w b else 0) = 0 := by
       intro b hb
       apply ite_eq_right
       intro h
       have hmem : n ∈ w.support := by rwa [h]
       exact hn hmem
-    rw [Finset.sum_eq_zero h₀, Finsupp.notMem_support_iff.mp hn]
+    rw [Finset.sum_eq_zero h0, Finsupp.notMem_support_iff.mp hn]
 
 noncomputable def wC : ℕ →₀ ℚ :=
   Finsupp.single 0 (1 / 4 : ℚ) + Finsupp.single 1 (1 / 4 : ℚ)
@@ -208,7 +202,8 @@ private theorem t_unit_mass_0 : unitLaw.weights 0 = 1 := by
 
 theorem agg_unit_weights (S : RationalLossLaw) (m : ℕ) :
     (aggregateLaw unitLaw S).weights m = unitLaw.weights m := by
-  rw [t_mixture_apply, t_unit_support, Finset.sum_singleton,
+  simp only [aggregateLaw_weights_apply, t_finsupp_sum_bridge]
+  rw [t_unit_support, Finset.sum_singleton,
     t_unit_mass_0, iterLaw_zero, one_mul]
 
 theorem agg_unit_decode (S : RationalLossLaw) :
@@ -233,7 +228,8 @@ private theorem t_ctwo_mass_2 : Ctwo.weights 2 = 1 := by
 
 theorem agg_ctwo_weights (S : RationalLossLaw) (m : ℕ) :
     (aggregateLaw Ctwo S).weights m = (iterLaw S 2).weights m := by
-  rw [t_mixture_apply, t_ctwo_support, Finset.sum_singleton,
+  simp only [aggregateLaw_weights_apply, t_finsupp_sum_bridge]
+  rw [t_ctwo_support, Finset.sum_singleton,
     t_ctwo_mass_2, one_mul]
 
 theorem agg_ctwo_decode_apply (S : RationalLossLaw) (m : ℕ) :
@@ -315,17 +311,20 @@ private theorem t_agg_enum (F : ℕ → ℚ) :
     Finset.sum_singleton]
 
 theorem agg_mass_0 : (aggregateLaw Cnt Sev).weights 0 = 1 / 2 := by
-  rw [t_mixture_apply, t_Cnt_weights, t_agg_enum, wC_0, wC_1, wC_2,
+  simp only [aggregateLaw_weights_apply, t_finsupp_sum_bridge]
+  rw [t_Cnt_weights, t_agg_enum, wC_0, wC_1, wC_2,
     iter0_mass_0, iter1_mass_0, iter2_mass_0]
   norm_num
 
 theorem agg_mass_1 : (aggregateLaw Cnt Sev).weights 1 = 3 / 8 := by
-  rw [t_mixture_apply, t_Cnt_weights, t_agg_enum, wC_0, wC_1, wC_2,
+  simp only [aggregateLaw_weights_apply, t_finsupp_sum_bridge]
+  rw [t_Cnt_weights, t_agg_enum, wC_0, wC_1, wC_2,
     iter0_mass_1, iter1_mass_1, iter2_mass_1]
   norm_num
 
 theorem agg_mass_2 : (aggregateLaw Cnt Sev).weights 2 = 1 / 8 := by
-  rw [t_mixture_apply, t_Cnt_weights, t_agg_enum, wC_0, wC_1, wC_2,
+  simp only [aggregateLaw_weights_apply, t_finsupp_sum_bridge]
+  rw [t_Cnt_weights, t_agg_enum, wC_0, wC_1, wC_2,
     iter0_mass_2, iter1_mass_2, iter2_mass_2]
   norm_num
 
@@ -356,7 +355,8 @@ private theorem t_iter2_eq_zero (m : ℕ) (hm : 2 < m) :
 
 private theorem t_agg_eq_zero_of_ge (m : ℕ) (hm : 3 ≤ m) :
     (aggregateLaw Cnt Sev).weights m = 0 := by
-  rw [t_mixture_apply, t_Cnt_weights, wC_support]
+  simp only [aggregateLaw_weights_apply, t_finsupp_sum_bridge]
+  rw [t_Cnt_weights, wC_support]
   apply Finset.sum_eq_zero
   intro k hk
   simp only [Finset.mem_insert, Finset.mem_singleton] at hk

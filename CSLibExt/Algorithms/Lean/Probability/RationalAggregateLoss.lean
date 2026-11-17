@@ -113,6 +113,14 @@ with the count masses. -/
     (aggregateLaw C S).weights
       = C.weights.sum fun k q => q • (iterLaw S k).weights := rfl
 
+/-- Pointwise evaluation of the aggregate law weights: the mass at `m`
+is the count-weighted mixture of the deterministic-count masses at `m`. -/
+@[simp] theorem aggregateLaw_weights_apply (C S : RationalLossLaw) (m : ℕ) :
+    (aggregateLaw C S).weights m
+      = C.weights.sum (fun k q => q * (iterLaw S k).weights m) := by
+  rw [aggregateLaw_weights, Finsupp.sum_apply]
+  simp only [smul_apply_eq]
+
 private theorem decode_apply (L : RationalLossLaw) (n : ℕ) :
     decode L n = ENNReal.ofReal ((L.weights n : ℚ) : ℝ) := by
   unfold decode
