@@ -42,11 +42,11 @@ example : observe 1 2 ((0 : ℝ) + 1 / 2) = some false :=
     (by norm_num) (by norm_num)
 
 /-- Noise below the high margin preserves a promised high output
-(`Voh = 3`, margin `1`, noise `1/4`, through the gate contract). -/
+(`Voh = 3`, margin `1`, noise `1/4`, through the output contract). -/
 example (b : Bool) (y : ℝ)
     (hy : (b = false ∧ y <= 0) ∨ (b = true ∧ (3 : ℝ) <= y)) :
     observe 1 2 (y + 1 / 4) = some b :=
-  observe_noisy_gate (by norm_num) (by norm_num) (by norm_num) b y (1 / 4) hy
+  observe_noisy_output (by norm_num) (by norm_num) (by norm_num) b y (1 / 4) hy
     (by norm_num)
 
 end PhyslibExtTest.Electronics.LogicObservationBands

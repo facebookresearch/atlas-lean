@@ -8,20 +8,49 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.Linarith
 
 /-!
 # Logic observation bands
 
+## i. Overview
+
 A physical observation relation for digital voltage bands: with
-thresholds `Vil < Vih`, a voltage is observed low when `v <= Vil` and
-high when `v >= Vih`; voltages strictly between the thresholds are
-invalid/unknown and are not coerced to a Boolean value. If a gate model
-promises output-low at most `Vol < Vil` and output-high at least
-`Voh > Vih`, then any additive noise smaller in absolute value than
-both noise margins (`Vil - Vol` and `Voh - Vih`) preserves the Boolean
-observation. Nothing here is a transistor, cell or netlist claim.
+thresholds `Vil < Vih`, a voltage is observed low when `v <= Vil`
+and high when `v >= Vih`; voltages strictly between the thresholds
+are invalid/unknown (`none`) and are not coerced to a Boolean value.
+If an ideal output voltage is promised low (`<= Vol`, `Vol < Vil`)
+or high (`>= Voh`, `Voh > Vih`), then additive noise smaller in
+absolute value than both noise margins (`Vil - Vol` and
+`Voh - Vih`) preserves the Boolean observation of the expected
+output bit. No gate function is modeled: the promise hypothesis
+states directly that the ideal output voltage encodes the expected
+output bit. Nothing here is a transistor, cell or netlist claim.
+
+## ii. Key results
+
+- `observe_eq_false_of_le`, `observe_eq_true_of_le`,
+  `observe_eq_none_iff`, `observe_eq_some_iff`: the threshold
+  characterization of the three-valued observation, with the
+  invalid band mapped to `none`.
+- `observe_noisy_low`, `observe_noisy_high`: one-sided noise
+  preservation below the respective margin.
+- `observe_noisy_output`: the composed output-observation
+  contract for both Boolean values.
+
+## iii. Table of contents
+
+- A. Voltage band observation
+
+## iv. References
+
+- N. H. E. Weste and D. M. Harris, *CMOS VLSI Design: A Circuits
+  and Systems Perspective*, fourth edition, Addison-Wesley, 2011:
+  logic input/output voltage levels `Vil`, `Vih`, `Vol`, `Voh` and
+  the noise margins formed from them.
+
+## A. Voltage band observation
 
 Discharges ECE roadmap leaf `ECE.HW.PHYSBOOL.L1` (voltage validity
 bands to two-valued logic).
@@ -41,13 +70,13 @@ noncomputable def observe (Vil Vih v : ℝ) : Option Bool :=
   else none
 
 /-- A voltage at or below the low threshold is observed low. -/
-theorem observe_eq_false_of_le {Vil v : ℝ} (hv : v <= Vil) (Vih : ℝ) :
+lemma observe_eq_false_of_le {Vil v : ℝ} (hv : v <= Vil) (Vih : ℝ) :
     observe Vil Vih v = some false := by
   unfold observe
   simp [hv]
 
 /-- A voltage at or above the high threshold is observed high. -/
-theorem observe_eq_true_of_le {Vil Vih v : ℝ} (hVilVih : Vil < Vih)
+lemma observe_eq_true_of_le {Vil Vih v : ℝ} (hVilVih : Vil < Vih)
     (hv : Vih <= v) :
     observe Vil Vih v = some true := by
   have h : ¬ v <= Vil := by linarith
@@ -55,7 +84,7 @@ theorem observe_eq_true_of_le {Vil Vih v : ℝ} (hVilVih : Vil < Vih)
   simp [h, hv]
 
 /-- The observation is invalid exactly on the open gap band. -/
-theorem observe_eq_none_iff {Vil Vih v : ℝ} (hVilVih : Vil < Vih) :
+lemma observe_eq_none_iff {Vil Vih v : ℝ} (hVilVih : Vil < Vih) :
     observe Vil Vih v = none ↔ Vil < v ∧ v < Vih := by
   by_cases h1 : v <= Vil
   · rw [observe_eq_false_of_le h1 Vih]
@@ -82,7 +111,7 @@ theorem observe_eq_none_iff {Vil Vih v : ℝ} (hVilVih : Vil < Vih) :
 
 /-- The observation, when defined, agrees with the two threshold
 predicates and with no other Boolean value. -/
-theorem observe_eq_some_iff {Vil Vih v : ℝ} (hVilVih : Vil < Vih) (b : Bool) :
+lemma observe_eq_some_iff {Vil Vih v : ℝ} (hVilVih : Vil < Vih) (b : Bool) :
     observe Vil Vih v = some b ↔ (b = false ∧ v <= Vil) ∨ (b = true ∧ Vih <= v) := by
   by_cases h1 : v <= Vil
   · rw [observe_eq_false_of_le h1 Vih]
@@ -120,7 +149,7 @@ theorem observe_eq_some_iff {Vil Vih v : ℝ} (hVilVih : Vil < Vih) (b : Bool) :
 /-- Low-side noise preservation: a promised low output `y <= Vol`,
 perturbed by noise of absolute value below the low margin `Vil - Vol`,
 is still observed low. -/
-theorem observe_noisy_low {Vol Vil Vih y e : ℝ} (hVol : Vol < Vil)
+lemma observe_noisy_low {Vol Vil Vih y e : ℝ} (hVol : Vol < Vil)
     (hy : y <= Vol) (he : |e| < Vil - Vol) :
     observe Vil Vih (y + e) = some false := by
   apply observe_eq_false_of_le
@@ -131,7 +160,7 @@ theorem observe_noisy_low {Vol Vil Vih y e : ℝ} (hVol : Vol < Vil)
 /-- High-side noise preservation: a promised high output `y >= Voh`,
 perturbed by noise of absolute value below the high margin
 `Voh - Vih`, is still observed high. -/
-theorem observe_noisy_high {Voh Vil Vih y e : ℝ} (hVilVih : Vil < Vih)
+lemma observe_noisy_high {Voh Vil Vih y e : ℝ} (hVilVih : Vil < Vih)
     (hVoh : Vih < Voh) (hy : Voh <= y) (he : |e| < Voh - Vih) :
     observe Vil Vih (y + e) = some true := by
   refine observe_eq_true_of_le hVilVih ?_
@@ -139,12 +168,15 @@ theorem observe_noisy_high {Voh Vil Vih y e : ℝ} (hVilVih : Vil < Vih)
   have he' : -(Voh - Vih) < e := (abs_lt.mp he).1
   linarith
 
-/-- The gate-level contract: for a Boolean input, if the gate's ideal
-output voltage is promised low (`<= Vol`) on `false` and high
-(`>= Voh`) on `true`, with `Vol < Vil < Vih < Voh`, then additive noise
-below both margins makes the physical observation of the noisy output
-equal the input. Here the two margins are `Vil - Vol` and `Voh - Vih`. -/
-theorem observe_noisy_gate {Vol Vil Vih Voh : ℝ} (hVol : Vol < Vil)
+/-- The output-observation contract: if a gate's ideal output voltage
+is promised low (`<= Vol`) when its expected output bit is `false` and
+high (`>= Voh`) when its expected output bit is `true`, with
+`Vol < Vil < Vih < Voh`, then additive noise below both margins makes
+the physical observation of the noisy output equal that expected
+output bit. No gate function is modeled: the premise `hy` says directly
+that the ideal output voltage encodes the expected output bit. Here
+the two margins are `Vil - Vol` and `Voh - Vih`. -/
+lemma observe_noisy_output {Vol Vil Vih Voh : ℝ} (hVol : Vol < Vil)
     (hVilVih : Vil < Vih) (hVoh : Vih < Voh) (b : Bool) (y e : ℝ)
     (hy : (b = false ∧ y <= Vol) ∨ (b = true ∧ Voh <= y))
     (he : |e| < min (Vil - Vol) (Voh - Vih)) :
