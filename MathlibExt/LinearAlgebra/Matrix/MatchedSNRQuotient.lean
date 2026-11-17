@@ -22,8 +22,9 @@ weight `w ≠ 0`, the matched-filter signal-to-noise quotient
 `s ⬝ᵥ R⁻¹ *ᵥ s`, with equality exactly when `w` is a nonzero
 multiple of the matched weight `R⁻¹ *ᵥ s`. This is the
 positive-definite Cauchy--Schwarz inequality specialized to the
-matched filter. The `R = diag(1, 4)` validation case and the
-zero-signal case are included, as is an indefinite counterexample.
+matched filter. The zero-signal case is included; concrete `R = diag(1, 4)`
+validation fixtures and the indefinite counterexample live in the
+test module.
 
 Discharges ECE roadmap leaf `ECE.DET.MATCHED.L1` (matched SNR
 bound).
@@ -189,101 +190,5 @@ theorem matchedSNR_zero_weight {ι : Type} [Fintype ι] (R : Matrix ι ι ℝ) (
     matchedSNR R s 0 = 0 := by
   show ((0 : ι → ℝ) ⬝ᵥ s) ^ 2 / ((0 : ι → ℝ) ⬝ᵥ R *ᵥ (0 : ι → ℝ)) = 0
   rw [zero_dotProduct, show (0:ℝ) ^ 2 = 0 from zero_pow two_ne_zero, zero_div]
-
-/-- Fixture: `R = diag(1, 4)`, non-axis-aligned signal `s = (1, 1)`: the bound
-`sᵀR⁻¹s` is `5/4`. -/
-theorem diag_one_four_inv_quadForm :
-    (![1, 1] : Fin 2 → ℝ) ⬝ᵥ (Matrix.diagonal ![1, 4] : Matrix (Fin 2) (Fin 2) ℝ)⁻¹ *ᵥ
-      ![1, 1] = 5 / 4 := by
-  have hUdet : IsUnit (Matrix.diagonal ![1, 4] : Matrix (Fin 2) (Fin 2) ℝ).det := by
-    simp only [det_diagonal, Fin.prod_univ_two, cons_val_zero, cons_val_one,
-      isUnit_iff_ne_zero]
-    norm_num
-  have hRD : (Matrix.diagonal ![1, 4] : Matrix (Fin 2) (Fin 2) ℝ)
-      * Matrix.diagonal ![1, 1 / 4] = 1 := by
-    rw [diagonal_mul_diagonal]
-    have h1 : (fun i : Fin 2 => (![1, 4] : Fin 2 → ℝ) i * (![1, 1 / 4] : Fin 2 → ℝ) i)
-        = 1 := by
-      funext i
-      fin_cases i <;> norm_num [cons_val_zero, cons_val_one, Pi.one_apply]
-    rw [h1, diagonal_one']
-  have hinv : (Matrix.diagonal ![1, 4] : Matrix (Fin 2) (Fin 2) ℝ)⁻¹
-      = Matrix.diagonal ![1, 1 / 4] := by
-    calc (Matrix.diagonal ![1, 4] : Matrix (Fin 2) (Fin 2) ℝ)⁻¹
-          = (Matrix.diagonal ![1, 4] : Matrix (Fin 2) (Fin 2) ℝ)⁻¹ * 1 :=
-            (mul_one _).symm
-        _ = (Matrix.diagonal ![1, 4] : Matrix (Fin 2) (Fin 2) ℝ)⁻¹ *
-            ((Matrix.diagonal ![1, 4] : Matrix (Fin 2) (Fin 2) ℝ)
-              * Matrix.diagonal ![1, 1 / 4]) := by rw [hRD]
-        _ = ((Matrix.diagonal ![1, 4] : Matrix (Fin 2) (Fin 2) ℝ)⁻¹ *
-            (Matrix.diagonal ![1, 4] : Matrix (Fin 2) (Fin 2) ℝ))
-            * Matrix.diagonal ![1, 1 / 4] := by rw [mul_assoc]
-        _ = 1 * Matrix.diagonal ![1, 1 / 4] := by rw [nonsing_inv_mul _ hUdet]
-        _ = Matrix.diagonal ![1, 1 / 4] := one_mul _
-  rw [hinv]
-  simp only [dotProduct, mulVec_diagonal, Fin.sum_univ_two,
-    cons_val_zero, cons_val_one]
-  norm_num
-
-/-- Fixture: the non-optimal weight `w = (1, 1)` has SNR `4/5`, strictly below `5/4`. -/
-theorem diag_one_four_matchedSNR_ones :
-    matchedSNR (Matrix.diagonal ![1, 4] : Matrix (Fin 2) (Fin 2) ℝ) ![1, 1] ![1, 1] =
-      4 / 5 := by
-  simp only [matchedSNR, dotProduct, mulVec_diagonal, Fin.sum_univ_two,
-    cons_val_zero, cons_val_one]
-  norm_num
-
-/-- Fixture: the negative multiple `w = -2 • R⁻¹ s = (-2, -1/2)` is also an SNR maximizer,
-attaining `5/4`. -/
-theorem diag_one_four_matchedSNR_neg_multiple :
-    matchedSNR (Matrix.diagonal ![1, 4] : Matrix (Fin 2) (Fin 2) ℝ) ![1, 1] ![-2, -1 / 2] =
-      5 / 4 := by
-  simp only [matchedSNR, dotProduct, mulVec_diagonal, Fin.sum_univ_two,
-    cons_val_zero, cons_val_one]
-  norm_num
-
-/-- Fixture: `diag(1, 4)` is positive definite, so the general theorems apply to the
-fixtures above. -/
-theorem diag_one_four_posDef :
-    (Matrix.diagonal ![1, 4] : Matrix (Fin 2) (Fin 2) ℝ).PosDef := by
-  apply Matrix.PosDef.diagonal
-  intro i
-  fin_cases i <;> norm_num [cons_val_zero, cons_val_one]
-
-/-- Violated premise: for the invertible but indefinite `R = diag(1, -1)`, `s = (0, 1)`
-and `w = (1, 1)`, the bound fails (`0 > -1`), so positive definiteness cannot be dropped. -/
-theorem not_matchedSNR_le_of_indefinite :
-    ¬ matchedSNR (Matrix.diagonal ![1, -1] : Matrix (Fin 2) (Fin 2) ℝ) ![0, 1] ![1, 1] ≤
-      (![0, 1] : Fin 2 → ℝ) ⬝ᵥ (Matrix.diagonal ![1, -1] : Matrix (Fin 2) (Fin 2) ℝ)⁻¹ *ᵥ
-        ![0, 1] := by
-  have hUdet : IsUnit (Matrix.diagonal ![1, -1] : Matrix (Fin 2) (Fin 2) ℝ).det := by
-    simp only [det_diagonal, Fin.prod_univ_two, cons_val_zero, cons_val_one,
-      isUnit_iff_ne_zero]
-    norm_num
-  have hRR : (Matrix.diagonal ![1, -1] : Matrix (Fin 2) (Fin 2) ℝ)
-      * Matrix.diagonal ![1, -1] = 1 := by
-    rw [diagonal_mul_diagonal]
-    have h1 : (fun i : Fin 2 => (![1, -1] : Fin 2 → ℝ) i * (![1, -1] : Fin 2 → ℝ) i)
-        = 1 := by
-      funext i
-      fin_cases i <;> norm_num [cons_val_zero, cons_val_one, Pi.one_apply]
-    rw [h1, diagonal_one']
-  have hinv : (Matrix.diagonal ![1, -1] : Matrix (Fin 2) (Fin 2) ℝ)⁻¹
-      = Matrix.diagonal ![1, -1] := by
-    calc (Matrix.diagonal ![1, -1] : Matrix (Fin 2) (Fin 2) ℝ)⁻¹
-          = (Matrix.diagonal ![1, -1] : Matrix (Fin 2) (Fin 2) ℝ)⁻¹ * 1 :=
-            (mul_one _).symm
-        _ = (Matrix.diagonal ![1, -1] : Matrix (Fin 2) (Fin 2) ℝ)⁻¹ *
-            ((Matrix.diagonal ![1, -1] : Matrix (Fin 2) (Fin 2) ℝ)
-              * Matrix.diagonal ![1, -1]) := by rw [hRR]
-        _ = ((Matrix.diagonal ![1, -1] : Matrix (Fin 2) (Fin 2) ℝ)⁻¹ *
-            (Matrix.diagonal ![1, -1] : Matrix (Fin 2) (Fin 2) ℝ))
-            * Matrix.diagonal ![1, -1] := by rw [mul_assoc]
-        _ = 1 * Matrix.diagonal ![1, -1] := by rw [nonsing_inv_mul _ hUdet]
-        _ = Matrix.diagonal ![1, -1] := one_mul _
-  rw [hinv]
-  simp only [matchedSNR, dotProduct, mulVec_diagonal, Fin.sum_univ_two,
-    cons_val_zero, cons_val_one]
-  norm_num
 
 end MathlibExt.LinearAlgebra.Matrix.MatchedSNRQuotient
