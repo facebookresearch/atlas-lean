@@ -67,13 +67,14 @@ example : (1 : ℝ) * iteratedDeriv 2
    (BeamModes.beamMode_curvature_zero 1 (by norm_num) _ 0).2⟩
 
 /-- Sine-basis tail bound: for unit coefficients, the tail modes
-`2 .. 3` of the sine Hilbert basis have squared norm at most that
-of the full sum `1 .. 3`. -/
+`2 .. 3` (coefficient indices `1 .. 2`) of the sine Hilbert basis
+have squared norm at most that of the full sum over modes
+`1 .. 3` (coefficient indices `0 .. 2`). -/
 example :
-    ‖∑ k ∈ Finset.Ico (1 + 1) (3 + 1),
+    ‖∑ k ∈ Finset.Ico 1 3,
         (1 : ℝ) • MathlibExt.Analysis.ODE.GreensOperator.sineHilbertBasis
           ⟨k + 1, Nat.succ_pos k⟩‖ ^ 2 ≤
-      ‖∑ k ∈ Finset.Icc 1 3,
+      ‖∑ k ∈ Finset.Ico 0 3,
         (1 : ℝ) • MathlibExt.Analysis.ODE.GreensOperator.sineHilbertBasis
           ⟨k + 1, Nat.succ_pos k⟩‖ ^ 2 :=
   BeamModes.sineBasis_tail_norm_sq_le (fun _ => 1) (by norm_num)

@@ -426,22 +426,27 @@ theorem orthonormal_tail_norm_sq_le {E : Type*} [NormedAddCommGroup E]
 
 /-- Tail bound for the existing sine Hilbert basis
 `MathlibExt.Analysis.ODE.GreensOperator.sineHilbertBasis` on
-`L²([0, 1])`: with modes indexed from `1`, the squared norm of the
-tail `N + 1 .. K` of a finite modal sum is at most that of the full
-sum `1 .. K`. Fixed-time modal coefficients already contain the
+`L²([0, 1])`: the basis is indexed by positive mode number, so
+with zero-based coefficient indices the full sum runs over
+`k ∈ Finset.Ico 0 K` (modes `1 .. K`, coefficient `c k` on mode
+`k + 1`) and the tail over `k ∈ Finset.Ico N K` (modes
+`N + 1 .. K`); the tail's squared norm is at most the full sum's.
+Fixed-time modal coefficients already contain the
 initial-velocity contribution divided by the modal frequency. -/
 theorem sineBasis_tail_norm_sq_le (c : ℕ → ℝ) {N K : ℕ} (hNK : N ≤ K) :
-    ‖∑ k ∈ Finset.Ico (N + 1) (K + 1),
+    ‖∑ k ∈ Finset.Ico N K,
         c k • MathlibExt.Analysis.ODE.GreensOperator.sineHilbertBasis
           ⟨k + 1, Nat.succ_pos k⟩‖ ^ 2 ≤
-      ‖∑ k ∈ Finset.Icc 1 K,
+      ‖∑ k ∈ Finset.Ico 0 K,
         c k • MathlibExt.Analysis.ODE.GreensOperator.sineHilbertBasis
-          ⟨k + 1, Nat.succ_pos k⟩‖ ^ 2 :=
-  orthonormal_tail_norm_sq_le
-    (MathlibExt.Analysis.ODE.GreensOperator.sineHilbertBasis.orthonormal.comp
+          ⟨k + 1, Nat.succ_pos k⟩‖ ^ 2 := by
+  have he :=
+    MathlibExt.Analysis.ODE.GreensOperator.sineHilbertBasis.orthonormal.comp
       (fun n : ℕ => (⟨n + 1, Nat.succ_pos n⟩ : ℕ+))
       (fun a b h => by
-        simpa using congrArg (fun p : ℕ+ => (p : ℕ)) h))
-    c hNK
+        simpa using congrArg (fun p : ℕ+ => (p : ℕ)) h)
+  rw [orthonormal_sum_norm_sq he, orthonormal_sum_norm_sq he]
+  exact Finset.sum_le_sum_of_subset_of_nonneg
+    (Finset.Ico_subset_Ico (Nat.zero_le N) le_rfl) (fun k _ _ => sq_nonneg _)
 
 end BeamModes
