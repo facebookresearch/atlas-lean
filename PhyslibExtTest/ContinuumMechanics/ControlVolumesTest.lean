@@ -41,21 +41,6 @@ None.
 
 -/
 
-private lemma aux_swap (t y : ℝ) :
-    HasDerivAt (fun τ : ℝ => ∫ x in (0 : ℝ)..y, τ * x)
-      (∫ x in (0 : ℝ)..y, x) t := by
-  have hInt : ∀ τ : ℝ, (∫ x in (0 : ℝ)..y, τ * x) = τ * (y ^ 2 / 2) := by
-    intro τ
-    rw [intervalIntegral.integral_const_mul]
-    rw [integral_id]
-    ring
-  rw [funext hInt]
-  have hd : HasDerivAt (fun τ : ℝ => τ * (y ^ 2 / 2)) (y ^ 2 / 2) t := by
-    simpa using (hasDerivAt_id t).mul_const (y ^ 2 / 2)
-  convert hd using 1
-  rw [integral_id]
-  ring
-
 /-- Leibniz identity for `u t x = t * x`, `a = 0`, `b(t) = t + 1`
 at `t = 1`: the value is `4`. -/
 example :
@@ -69,8 +54,7 @@ example :
     (by fun_prop)
     (fun t x => by simpa using (hasDerivAt_id t).mul_const x)
     (by fun_prop)
-    (fun t y => (continuous_const.mul continuous_id).continuousOn)
-    aux_swap 1
+    1
   rw [h]
   rw [integral_id]
   norm_num
@@ -90,12 +74,9 @@ example :
     (by fun_prop)
     (fun t x => by simpa using (hasDerivAt_id t).mul_const x)
     (by fun_prop)
-    (fun t y => (continuous_const.mul continuous_id).continuousOn)
-    aux_swap
     (fun t x => hasDerivAt_const x (0 : ℝ))
     (fun _ => continuousOn_const)
     (fun _ _ => by ring)
-    (fun t => by simpa using (continuous_id.intervalIntegrable (0 : ℝ) (t + 1)))
     (fun t => by simpa using (continuous_id.intervalIntegrable (0 : ℝ) (t + 1)))
     1
   rw [h]
