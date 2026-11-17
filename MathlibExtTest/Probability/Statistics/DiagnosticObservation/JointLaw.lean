@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Probability.Statistics.DiagnosticObservation.JointLaw
+import Mathlib.MeasureTheory.Measure.Dirac.Basic
 
 /-! Tests for the diagnostic joint law: the prevalence-transport example
 and the two boundary laws at prevalence `0` and `1` on a one-point space. -/
@@ -17,7 +18,6 @@ namespace MathlibExtTest.Probability.Statistics.DiagnosticObservation.JointLaw
 
 open MeasureTheory Set MathlibExt.Probability.Statistics.DiagnosticObservation
 
-instance : IsProbabilityMeasure (Measure.dirac ((): Unit)) := ⟨by simp⟩
 
 /-- Sensitivity/specificity `3/4`: prevalence `1/10` gives PPV `1/4`,
 prevalence `1/2` gives PPV `3/4`. -/

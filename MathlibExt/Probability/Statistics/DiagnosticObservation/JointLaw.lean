@@ -16,8 +16,11 @@ public import Mathlib.MeasureTheory.Measure.Real
 For a disease event `D` and a positive-test event `T` in a probability
 space, the four joint masses determined by prevalence `π`, sensitivity
 `se` and specificity `sp` determine the test-positive and test-negative
-masses and the predictive values as real ratios. Raising prevalence at
-fixed sensitivity and specificity raises the positive predictive value.
+masses and the predictive values as real ratios. In the numerical
+example below, raising prevalence from `1/10` to `1/2` at sensitivity
+and specificity `3/4` raises the positive predictive value from `1/4`
+to `3/4`; no general prevalence-monotonicity claim is made (it fails
+for degenerate tests, e.g. sensitivity `0`).
 
 This is a statement about the declared joint law only. It contains no
 screening, diagnosis, treatment or threshold recommendation and no
