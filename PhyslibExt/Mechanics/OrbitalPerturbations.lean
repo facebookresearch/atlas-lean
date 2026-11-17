@@ -46,6 +46,11 @@ excluded ball.
 - The estimate is direct norm algebra (triangle and reverse triangle
   inequalities); no mean-value theorem through the excluded ball is
   used, so no convexity hypothesis on the exterior set appears.
+- D. A. Vallado, *Fundamentals of Astrodynamics and Applications*:
+  the J2 perturbing-acceleration component formulas and sign
+  convention used in section B (geopotential term
+  `-(μ / ‖r‖) * J2 * (R / ‖r‖)^2 * P₂(z / ‖r‖)`, positive `J2` for
+  the oblate case).
 
 ## A. The inverse-square field on an exterior set
 
@@ -214,53 +219,56 @@ lemma inverseSquareField_lipschitzOnWith {E : Type*}
 
 /-- The `J2` perturbing acceleration for gravitational parameter `μ`,
 reference radius `R`, and signed oblateness coefficient `J2`, at a
-position `r` in three-dimensional Euclidean space with axial
-coordinate `z = r 2` and `u = z^2 / ‖r‖^2`:
-`a = -(3 * J2 * μ * R^2 / (2 * ‖r‖^5)) * ((1 - 5u) • r + 2 • ẑ)`,
-where `ẑ` is the axial part of `r`. This is the standard first-order
-zonal harmonic acceleration; at `r = 0` the scalar factor is Lean's
-junk value and the field is read away from the origin. -/
-noncomputable def j2Accel {E : Type*} [NormedAddCommGroup E]
-    [InnerProductSpace ℝ E] (μ R J2 : ℝ) (zaxis : E) (r : E) : E :=
+position `r` in three-dimensional Euclidean space. With axial
+coordinate `z = r 2` and `u = z^2 / ‖r‖^2`, and `ẑ = single 2 z` the
+axial projection of `r`:
+`a = -(3 * J2 * μ * R^2 / (2 * ‖r‖^5)) * ((1 - 5u) • r + 2 • ẑ)`.
+
+Convention: this is the acceleration from the geopotential term
+`-(μ / ‖r‖) * J2 * (R / ‖r‖)^2 * P₂(z / ‖r‖)` with Legendre
+polynomial `P₂`, so positive `J2` is the oblate case (Earth:
+`J2 ≈ 1.083e-3`); equivalently the negative of the gradient of the
+full potential's `J2` part with the opposite geodetic sign
+convention is not used. This matches the component formulas in
+Vallado, *Fundamentals of Astrodynamics and Applications*. At
+`r = 0` the scalar factor is Lean's junk value; the field is read
+away from the origin. -/
+noncomputable def j2Accel (μ R J2 : ℝ) (r : EuclideanSpace ℝ (Fin 3)) :
+    EuclideanSpace ℝ (Fin 3) :=
   -(3 * J2 * μ * R ^ 2 / (2 * ‖r‖ ^ 5)) •
-    ((1 - 5 * (inner ℝ r zaxis / ‖r‖ ^ 2)) • r + 2 • zaxis)
+    ((1 - 5 * ((r 2) ^ 2 / ‖r‖ ^ 2)) • r +
+      (2 : ℝ) • EuclideanSpace.single 2 (r 2))
 
 /-- The normalized J2 magnitude polynomial `5u^2 - 2u + 1` is at most
 `4` on `u ∈ [0, 1]` (it equals `4` at the pole `u = 1` and `1` at the
 equator `u = 0`). -/
 lemma j2Poly_le {u : ℝ} (hu0 : 0 ≤ u) (hu1 : u ≤ 1) : 5 * u ^ 2 - 2 * u + 1 ≤ 4 := by
-  have h : 5 * u ^ 2 - 2 * u + 1 - 4 = -((1 - u) * (5 * u + 3)) := by ring
-  have h1 : (0 : ℝ) ≤ (1 - u) * (5 * u + 3) := mul_nonneg (by linarith) (by linarith)
+  have h3 : (0 : ℝ) ≤ 3 + 5 * u := by linarith
+  have h := mul_nonneg (sub_nonneg.mpr hu1) h3
+  have hid : 5 * u ^ 2 - 2 * u + 1 = 4 - (1 - u) * (3 + 5 * u) := by ring
+  rw [hid]
   linarith
 
-/-- Squared magnitude of the J2 acceleration: for a unit axial vector
-`zaxis` with `inner ℝ r zaxis = z` (the axial coordinate), writing
-`u = z^2 / ‖r‖^2`,
+/-- Squared magnitude of the J2 acceleration: for `r ≠ 0`, writing
+`u = (r 2)^2 / ‖r‖^2`,
 `‖a‖^2 = (3 * J2 * μ * R^2 / (2 * ‖r‖^4))^2 * (5 * u^2 - 2 * u + 1)`. -/
 lemma j2Accel_norm_sq {μ R J2 : ℝ}
     {r : EuclideanSpace ℝ (Fin 3)} (hr : r ≠ 0) :
-    ‖j2Accel μ R J2 (EuclideanSpace.single 2 (r 2)) r‖ ^ 2 =
+    ‖j2Accel μ R J2 r‖ ^ 2 =
       (3 * J2 * μ * R ^ 2 / (2 * ‖r‖ ^ 4)) ^ 2 *
         (5 * ((r 2) ^ 2 / ‖r‖ ^ 2) ^ 2 - 2 * ((r 2) ^ 2 / ‖r‖ ^ 2) + 1) := by
-  have hnorm : ‖r‖ ≠ 0 := norm_ne_zero_iff.mpr hr
-  have h2smul : ∀ z : EuclideanSpace ℝ (Fin 3), (2 : ℕ) • z = (2 : ℝ) • z := fun z => by
-    have h := (Nat.cast_smul_eq_nsmul (R := ℝ)
-      (M := EuclideanSpace ℝ (Fin 3)) 2 z).symm
-    simpa using h
-  have hsmul_r : ∀ a : ℝ, ‖a • r‖ ^ 2 = a ^ 2 * ‖r‖ ^ 2 := fun a => by
-    rw [norm_smul, Real.norm_eq_abs, mul_pow, sq_abs]
-  have h2 : (‖r‖ ^ 2 : ℝ) ≠ 0 := pow_ne_zero 2 hnorm
-  have h4 : (‖r‖ ^ 4 : ℝ) ≠ 0 := pow_ne_zero 4 hnorm
-  have h5 : (‖r‖ ^ 5 : ℝ) ≠ 0 := pow_ne_zero 5 hnorm
-  have h24 : ((2 * ‖r‖ ^ 4 : ℝ)) ≠ 0 := mul_ne_zero (by norm_num) h4
-  have h25 : ((2 * ‖r‖ ^ 5 : ℝ)) ≠ 0 := mul_ne_zero (by norm_num) h5
+  have hnorm : ‖r‖ ≠ 0 := fun h => hr (norm_eq_zero.mp h)
+  have hinner : inner ℝ r (EuclideanSpace.single 2 (r 2)) = (r 2) * (r 2) := by
+    rw [EuclideanSpace.inner_single_right]
+    simp
+  have hsingle : ‖EuclideanSpace.single (2 : Fin 3) (r 2)‖ = ‖(r 2 : ℝ)‖ :=
+    PiLp.norm_single 2 (fun _ => ℝ) 2 (r 2)
+  have hn2 : (‖r‖ : ℝ) ^ 2 ≠ 0 := pow_ne_zero 2 hnorm
+  have hn4 : (2 : ℝ) * ‖r‖ ^ 4 ≠ 0 := mul_ne_zero two_ne_zero (pow_ne_zero 4 hnorm)
+  have hn5 : (2 : ℝ) * ‖r‖ ^ 5 ≠ 0 := mul_ne_zero two_ne_zero (pow_ne_zero 5 hnorm)
   unfold j2Accel
-  rw [h2smul]
-  rw [norm_smul, Real.norm_eq_abs, mul_pow, sq_abs, norm_add_sq_real, hsmul_r,
-    norm_smul, Real.norm_eq_abs, mul_pow, sq_abs,
-    PiLp.norm_single, Real.norm_eq_abs, sq_abs,
-    real_inner_smul_left, real_inner_smul_right,
-    EuclideanSpace.inner_single_right, RCLike.conj_to_real]
+  simp only [norm_smul, mul_pow, norm_add_sq_real, real_inner_smul_left,
+    real_inner_smul_right, hinner, hsingle, Real.norm_eq_abs, sq_abs]
   field_simp
   ring
 
@@ -269,58 +277,63 @@ lemma j2Accel_norm_sq {μ R J2 : ℝ}
 `‖a_J2‖ ≤ 3 * |J2| * μ * R^2 / rmin^4`. -/
 lemma j2Accel_norm_le {μ R J2 rmin : ℝ} (hμ : 0 < μ) (hrmin : 0 < rmin)
     {r : EuclideanSpace ℝ (Fin 3)} (hr : rmin ≤ ‖r‖) :
-    ‖j2Accel μ R J2 (EuclideanSpace.single 2 (r 2)) r‖ ≤
+    ‖j2Accel μ R J2 r‖ ≤
       3 * |J2| * μ * R ^ 2 / rmin ^ 4 := by
   have hnpos : 0 < ‖r‖ := lt_of_lt_of_le hrmin hr
   have hr0 : r ≠ 0 := by
     rintro rfl
-    rw [norm_zero] at hnpos
-    exact lt_irrefl 0 hnpos
-  have hsq : ‖j2Accel μ R J2 (EuclideanSpace.single 2 (r 2)) r‖ ^ 2 =
-      (3 * J2 * μ * R ^ 2 / (2 * ‖r‖ ^ 4)) ^ 2 *
-        (5 * ((r 2) ^ 2 / ‖r‖ ^ 2) ^ 2 - 2 * ((r 2) ^ 2 / ‖r‖ ^ 2) + 1) :=
-    j2Accel_norm_sq hr0
-  have hu0 : (0 : ℝ) ≤ (r 2) ^ 2 / ‖r‖ ^ 2 := div_nonneg (sq_nonneg _) (sq_nonneg _)
-  have hcoord : (r 2) ^ 2 ≤ ‖r‖ ^ 2 := by
-    rw [EuclideanSpace.real_norm_sq_eq, Fin.sum_univ_three]
-    have h0 := sq_nonneg (r 0)
-    have h1 := sq_nonneg (r 1)
+    rw [norm_zero] at hr
     linarith
-  have hu1 : (r 2) ^ 2 / ‖r‖ ^ 2 ≤ 1 := by
-    rw [div_le_one (pow_pos hnpos 2)]
-    exact hcoord
-  have hP := j2Poly_le hu0 hu1
-  have hr4 : (0 : ℝ) < ‖r‖ ^ 4 := pow_pos hnpos 4
-  have hr4ne : (‖r‖ ^ 4 : ℝ) ≠ 0 := ne_of_gt hr4
-  have hrmin4 : (0 : ℝ) < rmin ^ 4 := pow_pos hrmin 4
-  have hC0 : (0 : ℝ) ≤ 3 * |J2| * μ * R ^ 2 := by positivity
-  have hC : |3 * J2 * μ * R ^ 2| = 3 * |J2| * μ * R ^ 2 := by
-    have e3 : |(3 : ℝ)| = 3 := by norm_num
-    have eμ : |μ| = μ := abs_of_pos hμ
-    have eR : |R ^ 2| = R ^ 2 := abs_of_nonneg (sq_nonneg R)
-    simp only [abs_mul, e3, eμ, eR]
-  have hKsq : (3 * J2 * μ * R ^ 2 / (2 * ‖r‖ ^ 4)) ^ 2 * 4
-      = (3 * |J2| * μ * R ^ 2 / ‖r‖ ^ 4) ^ 2 := by
-    have hD : ((2 * ‖r‖ ^ 4 : ℝ)) ≠ 0 := mul_ne_zero (by norm_num) hr4ne
-    have hD2 : ((2 * ‖r‖ ^ 4) ^ 2 : ℝ) ≠ 0 := pow_ne_zero 2 hD
-    have hr42 : ((‖r‖ ^ 4) ^ 2 : ℝ) ≠ 0 := pow_ne_zero 2 hr4ne
-    rw [← hC, div_pow, div_pow, sq_abs]
-    field_simp
-    ring
-  have hM1 : (0 : ℝ) ≤ 3 * |J2| * μ * R ^ 2 / ‖r‖ ^ 4 :=
-    div_nonneg hC0 (pow_nonneg (norm_nonneg _) 4)
-  have hle1 : ‖j2Accel μ R J2 (EuclideanSpace.single 2 (r 2)) r‖ ^ 2
-      ≤ (3 * |J2| * μ * R ^ 2 / ‖r‖ ^ 4) ^ 2 := by
-    rw [hsq, ← hKsq]
-    exact mul_le_mul_of_nonneg_left hP (sq_nonneg _)
-  have hle2 : ‖j2Accel μ R J2 (EuclideanSpace.single 2 (r 2)) r‖
-      ≤ 3 * |J2| * μ * R ^ 2 / ‖r‖ ^ 4 := by
-    have h := abs_le_of_sq_le_sq hle1 hM1
+  have hsq : ‖r‖ ^ 2 = (r 0) ^ 2 + (r 1) ^ 2 + (r 2) ^ 2 := by
+    have h := EuclideanSpace.norm_sq_eq r
+    rw [Fin.sum_univ_three] at h
+    simp only [Real.norm_eq_abs, sq_abs] at h
+    exact h
+  have hcomp : (r 2) ^ 2 ≤ ‖r‖ ^ 2 := by
+    rw [hsq]
+    exact le_add_of_nonneg_left (add_nonneg (sq_nonneg _) (sq_nonneg _))
+  have hu0 : 0 ≤ (r 2) ^ 2 / ‖r‖ ^ 2 := div_nonneg (sq_nonneg _) (sq_nonneg _)
+  have hu1 : (r 2) ^ 2 / ‖r‖ ^ 2 ≤ 1 := (div_le_one (pow_pos hnpos 2)).mpr hcomp
+  have hP : 5 * ((r 2) ^ 2 / ‖r‖ ^ 2) ^ 2 - 2 * ((r 2) ^ 2 / ‖r‖ ^ 2) + 1 ≤ 4 :=
+    j2Poly_le hu0 hu1
+  have hsq2 : ‖j2Accel μ R J2 r‖ ^ 2 = (3 * J2 * μ * R ^ 2 / (2 * ‖r‖ ^ 4)) ^ 2 *
+      (5 * ((r 2) ^ 2 / ‖r‖ ^ 2) ^ 2 - 2 * ((r 2) ^ 2 / ‖r‖ ^ 2) + 1) :=
+    j2Accel_norm_sq hr0
+  have hK2 : (0 : ℝ) ≤ (3 * J2 * μ * R ^ 2 / (2 * ‖r‖ ^ 4)) ^ 2 := sq_nonneg _
+  have hAle : ‖j2Accel μ R J2 r‖ ^ 2 ≤ (2 * |3 * J2 * μ * R ^ 2 / (2 * ‖r‖ ^ 4)|) ^ 2 := by
+    have hmul := mul_le_mul_of_nonneg_left hP hK2
+    have habs : (2 * |3 * J2 * μ * R ^ 2 / (2 * ‖r‖ ^ 4)|) ^ 2
+        = (3 * J2 * μ * R ^ 2 / (2 * ‖r‖ ^ 4)) ^ 2 * 4 := by
+      generalize (3 * J2 * μ * R ^ 2 / (2 * ‖r‖ ^ 4)) = K
+      rw [mul_pow, sq_abs]
+      ring
+    rw [hsq2, habs]
+    exact hmul
+  have hA : ‖j2Accel μ R J2 r‖ ≤ 2 * |3 * J2 * μ * R ^ 2 / (2 * ‖r‖ ^ 4)| := by
+    have h := abs_le_of_sq_le_sq hAle (by positivity)
     rwa [abs_of_nonneg (norm_nonneg _)] at h
-  have hpow : rmin ^ 4 ≤ ‖r‖ ^ 4 := pow_le_pow_left₀ hrmin.le hr 4
-  have hdiv : 3 * |J2| * μ * R ^ 2 / ‖r‖ ^ 4 ≤ 3 * |J2| * μ * R ^ 2 / rmin ^ 4 := by
-    rw [div_le_div_iff₀ hr4 hrmin4]
-    exact mul_le_mul_of_nonneg_left hpow hC0
-  exact le_trans hle2 hdiv
+  have h3 : |(3 : ℝ)| = 3 := by norm_num
+  have hR2 : |R ^ 2| = R ^ 2 := abs_of_nonneg (sq_nonneg R)
+  have hden : |(2 : ℝ) * ‖r‖ ^ 4| = 2 * ‖r‖ ^ 4 :=
+    abs_of_pos (mul_pos two_pos (pow_pos hnpos 4))
+  have hK : 2 * |3 * J2 * μ * R ^ 2 / (2 * ‖r‖ ^ 4)| = 3 * |J2| * μ * R ^ 2 / ‖r‖ ^ 4 := by
+    have hne : (‖r‖ : ℝ) ≠ 0 := ne_of_gt hnpos
+    have hn4 : (2 : ℝ) * ‖r‖ ^ 4 ≠ 0 := mul_ne_zero two_ne_zero (pow_ne_zero 4 hne)
+    have hn4' : (‖r‖ : ℝ) ^ 4 ≠ 0 := pow_ne_zero 4 hne
+    rw [abs_div, hden]
+    simp only [abs_mul, h3, abs_of_pos hμ, hR2]
+    field_simp
+  have hX : (0 : ℝ) ≤ 3 * |J2| * μ * R ^ 2 := by positivity
+  have h4 : rmin ^ 4 ≤ ‖r‖ ^ 4 := pow_le_pow_left₀ hrmin.le hr 4
+  have hfin : 3 * |J2| * μ * R ^ 2 / ‖r‖ ^ 4 ≤ 3 * |J2| * μ * R ^ 2 / rmin ^ 4 := by
+    have h1 : (1 : ℝ) / ‖r‖ ^ 4 ≤ 1 / rmin ^ 4 :=
+      one_div_le_one_div_of_le (pow_pos hrmin 4) h4
+    have h2 := mul_le_mul_of_nonneg_left h1 hX
+    rw [← div_eq_mul_one_div, ← div_eq_mul_one_div] at h2
+    exact h2
+  calc ‖j2Accel μ R J2 r‖
+      ≤ 2 * |3 * J2 * μ * R ^ 2 / (2 * ‖r‖ ^ 4)| := hA
+    _ = 3 * |J2| * μ * R ^ 2 / ‖r‖ ^ 4 := hK
+    _ ≤ 3 * |J2| * μ * R ^ 2 / rmin ^ 4 := hfin
 
 end OrbitalPerturbations

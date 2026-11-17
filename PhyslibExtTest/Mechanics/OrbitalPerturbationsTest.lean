@@ -95,8 +95,6 @@ example :
 normalized polynomial at `u = 1` equals `4`. -/
 example :
     ‖OrbitalPerturbations.j2Accel 3 1 (1 / 2)
-        (EuclideanSpace.single 2
-          ((EuclideanSpace.single (2 : Fin 3) (2 : ℝ)) 2))
         (EuclideanSpace.single (2 : Fin 3) (2 : ℝ))‖ ≤
       3 * |(1 : ℝ) / 2| * 3 * 1 ^ 2 / 2 ^ 4 ∧
         (5 : ℝ) * 1 ^ 2 - 2 * 1 + 1 = 4 := by
