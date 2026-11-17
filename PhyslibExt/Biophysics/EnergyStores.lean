@@ -13,7 +13,7 @@ public import Mathlib.Analysis.Calculus.Deriv.Basic
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 /-!
-# Exercise efficiency bound
+# Exercise efficiency and energy budget
 
 ## i. Overview
 
@@ -22,7 +22,10 @@ nonnegative baseline and mechanical powers and efficiency
 `0 < eta ≤ 1`, metabolic power is at least the mechanical power, and
 over an ordered finite window `a ≤ b` the metabolic energy cost is at
 least the mechanical work. The window order matters: for `a > b` the
-signed interval integral reverses the inequality.
+signed interval integral reverses the inequality. The module also
+proves the energy-budget identity: stored energy
+`rhoF * F + rhoL * L` with derivative `intake - expenditure` changes
+by exactly the net intake integral.
 
 This is a statement about the declared model only, with no diet,
 patient-level or causal claim, and no calorie or FITT prescription.
@@ -41,8 +44,8 @@ patient-level or causal claim, and no calorie or FITT prescription.
 
 ## iv. References
 
-* The declared model is local to this module; no literature result is
-  claimed, so both declarations are `lemma`s.
+* The declared models are local to this module; no literature result
+  is claimed, so all three declarations are `lemma`s.
 
 -/
 

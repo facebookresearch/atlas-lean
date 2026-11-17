@@ -12,8 +12,9 @@ import PhyslibExt.Biophysics.EnergyStores
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Add
 
-/-! Tests for the exercise-efficiency bound: perfect efficiency,
-vanishing mechanical power, and constant powers over a unit window. -/
+/-! Tests for the exercise-efficiency bound (perfect efficiency,
+vanishing mechanical power, constant powers over a unit window) and
+the energy-budget identity at constant net flux. -/
 
 namespace PhyslibExtTest.Biophysics.EnergyStores
 
