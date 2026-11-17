@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Analysis.SpecificLimits.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import MathlibExt.Algebra.AffineRecurrenceConvergence
 
 /-!
 # Periodic dose steady state
@@ -30,20 +31,15 @@ post-dose amounts `x n = q^n * x0 + D * ∑ j ∈ range n, q^j` tend to
 lemma post_dose_tendsto {D q x0 : ℝ} (hq0 : 0 ≤ q) (hq1 : q < 1) :
     Tendsto (fun n : ℕ => q ^ n * x0 + D * ∑ j ∈ Finset.range n, q ^ j)
       atTop (𝓝 (D / (1 - q))) := by
-  have hPow : Tendsto (fun n : ℕ => q ^ n) atTop (𝓝 0) :=
-    tendsto_pow_atTop_nhds_zero_of_lt_one hq0 hq1
-  have hPowx0 : Tendsto (fun n : ℕ => q ^ n * x0) atTop (𝓝 (0 * x0)) :=
-    hPow.mul_const x0
-  have hHas : HasSum (fun n : ℕ => q ^ n) ((1 - q)⁻¹) :=
-    hasSum_geometric_of_lt_one hq0 hq1
-  have hSum : Tendsto (fun n : ℕ => ∑ j ∈ Finset.range n, q ^ j) atTop (𝓝 ((1 - q)⁻¹)) :=
-    hHas.tendsto_sum_nat
-  have hDsum : Tendsto (fun n : ℕ => D * ∑ j ∈ Finset.range n, q ^ j) atTop (𝓝 (D * (1 - q)⁻¹)) :=
-    hSum.const_mul D
-  have hAdd := hPowx0.add hDsum
-  have hEq : 0 * x0 + D * (1 - q)⁻¹ = D / (1 - q) := by
-    rw [zero_mul, zero_add, div_eq_mul_inv]
-  rwa [hEq] at hAdd
+  have hx : ∀ n : ℕ, (q ^ (n + 1) * x0 + D * ∑ j ∈ Finset.range (n + 1), q ^ j) =
+      q * (q ^ n * x0 + D * ∑ j ∈ Finset.range n, q ^ j) + D := by
+    intro n
+    rw [pow_succ', geom_sum_succ]
+    ring
+  have habs : |q| < 1 := abs_lt.mpr ⟨by linarith, hq1⟩
+  have h := MathlibExt.AffineRecurrence.affine_tendsto_fixedPoint
+    (x := fun n : ℕ => q ^ n * x0 + D * ∑ j ∈ Finset.range n, q ^ j) hx habs
+  exact h
 
 /-- **Steady-state trough.** The pre-dose (trough) amounts
 `q * x n` tend to `q * D / (1 - q)`. -/
