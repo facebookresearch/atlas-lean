@@ -4,7 +4,7 @@ All rights reserved.
 
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
--*/
+-/
 
 module
 
@@ -20,28 +20,18 @@ deterministic coordinates, and the empty index type.
 open MeasureTheory
 open MathlibExt.Probability.Statistics.Measurement
 
+@[expose] public section
+
 namespace MathlibExtTest.Probability.Statistics.Measurement
 
-private theorem localIndepPMF_sum_toReal {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (q : ι → ℝ) (hq0 : ∀ i, 0 ≤ q i) (hq1 : ∀ i, q i ≤ 1) :
-    (∑ x : ι → Bool, (localIndepPMF q hq0 hq1 x).toReal) = 1 := by
-  calc ∑ x : ι → Bool, (localIndepPMF q hq0 hq1 x).toReal
-      = ∑ x : ι → Bool, ∏ i, (if x i then q i else 1 - q i) :=
-        Finset.sum_congr rfl (fun x _ => localIndepPMF_toReal_apply q hq0 hq1 x)
-    _ = ∏ i, ∑ b : Bool, (if b then q i else 1 - q i) :=
-        sum_pi_prod_bool (fun i b => if b then q i else 1 - q i)
-    _ = ∏ _i : ι, 1 :=
-        Finset.prod_congr rfl (fun i _ => localIndepPMF_real_factor_sum_one q i)
-    _ = 1 := Finset.prod_const_one
-
-private theorem fin2_hq0 : ∀ i : Fin 2, (0 : ℝ) ≤ (if i = 0 then (1 / 3 : ℝ) else (2 / 5 : ℝ)) := by
+theorem fin2_hq0 : ∀ i : Fin 2, (0 : ℝ) ≤ (if i = 0 then (1 / 3 : ℝ) else (2 / 5 : ℝ)) := by
   intro i
   by_cases hi : i = 0
   · simp [hi]
   · simp [hi]
     norm_num
 
-private theorem fin2_hq1 : ∀ i : Fin 2, (if i = 0 then (1 / 3 : ℝ) else (2 / 5 : ℝ)) ≤ 1 := by
+theorem fin2_hq1 : ∀ i : Fin 2, (if i = 0 then (1 / 3 : ℝ) else (2 / 5 : ℝ)) ≤ 1 := by
   intro i
   by_cases hi : i = 0 <;> simp [hi] <;> norm_num
 

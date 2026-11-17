@@ -4,7 +4,7 @@ All rights reserved.
 
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
--*/
+-/
 
 module
 
@@ -21,39 +21,17 @@ indicators have the product-law means and pairwise product means.
 
 open MeasureTheory
 
+@[expose] public section
+
 namespace MathlibExt.Probability.Statistics.Measurement
 
 private theorem sum_pi_prod_bool {ι : Type*} [Fintype ι] [DecidableEq ι] {R : Type*} [CommSemiring R]
     (f : ι → Bool → R) :
     ∑ x : ι → Bool, ∏ i, f i (x i) = ∏ i, ∑ b, f i b := by
-  let e : (ι → Bool) ≃ ((a : ι) → a ∈ (Finset.univ : Finset ι) → Bool) :=
-    { toFun x a _ := x a
-      invFun p a := p a (Finset.mem_univ a)
-      left_inv x := rfl
-      right_inv p := by funext a _; rfl }
-  have hpi : Finset.univ.pi (fun _ : ι => (Finset.univ : Finset Bool)) = Finset.univ := by
-    ext p
-    simp [Finset.mem_pi]
-  have hterm : ∀ x : ι → Bool, (∏ i, f i (x i))
-      = ∏ z ∈ (Finset.univ : Finset ι).attach, f ↑z ((⇑e x) ↑z z.2) := by
-    intro x
-    rw [← Finset.prod_attach (Finset.univ : Finset ι) (fun i => f i (x i))]
-    refine Finset.prod_congr rfl (fun z _ => ?_)
-    rfl
-  calc ∑ x : ι → Bool, ∏ i, f i (x i)
-      = ∑ x, ∏ z ∈ (Finset.univ : Finset ι).attach, f ↑z ((⇑e x) ↑z z.2) :=
-        Finset.sum_congr rfl (fun x _ => hterm x)
-    _ = ∑ p : ((a : ι) → a ∈ (Finset.univ : Finset ι) → Bool),
-          ∏ z ∈ (Finset.univ : Finset ι).attach, f ↑z (p ↑z z.2) :=
-        Equiv.sum_comp e
-          (fun p : ((a : ι) → a ∈ (Finset.univ : Finset ι) → Bool) =>
-            ∏ z ∈ (Finset.univ : Finset ι).attach, f ↑z (p ↑z z.2))
-    _ = ∑ p ∈ Finset.univ.pi (fun _ : ι => (Finset.univ : Finset Bool)),
-          ∏ z ∈ (Finset.univ : Finset ι).attach, f ↑z (p ↑z z.2) := by
-        rw [hpi]
-    _ = ∏ a ∈ Finset.univ, ∑ b ∈ Finset.univ, f a b :=
-        (Finset.prod_sum Finset.univ (fun _ : ι => (Finset.univ : Finset Bool)) f).symm
-    _ = ∏ i, ∑ b, f i b := rfl
+  have h := Finset.sum_prod_piFinset (ι := ι) (κ := Bool) (s := Finset.univ)
+    (fun i b => f i b)
+  rw [Fintype.piFinset_univ] at h
+  exact h
 
 /-- (1) Real mass of one outcome: `toReal` of the product law is the product
 of the selected coordinate probabilities. No strict positivity: `q i = 0`
@@ -108,6 +86,20 @@ private theorem localIndepPMF_real_factor_sum_one {ι : Type*} [Fintype ι] [Dec
     (∑ b : Bool, (if b then q i else 1 - q i)) = 1 := by
   simp only [Fintype.sum_bool, ite_true, Bool.false_eq_true, ite_false]
   ring
+
+
+/-- Total real mass of the product law is `1`. -/
+theorem localIndepPMF_sum_toReal {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (q : ι → ℝ) (hq0 : ∀ i, 0 ≤ q i) (hq1 : ∀ i, q i ≤ 1) :
+    (∑ x : ι → Bool, (localIndepPMF q hq0 hq1 x).toReal) = 1 := by
+  calc ∑ x : ι → Bool, (localIndepPMF q hq0 hq1 x).toReal
+      = ∑ x : ι → Bool, ∏ i, (if x i then q i else 1 - q i) :=
+        Finset.sum_congr rfl (fun x _ => localIndepPMF_toReal_apply q hq0 hq1 x)
+    _ = ∏ i, ∑ b : Bool, (if b then q i else 1 - q i) :=
+        sum_pi_prod_bool (fun i b => if b then q i else 1 - q i)
+    _ = ∏ _i : ι, 1 :=
+        Finset.prod_congr rfl (fun i _ => localIndepPMF_real_factor_sum_one q i)
+    _ = 1 := Finset.prod_const_one
 
 /-- (2)+(3) Coordinate moments under `PMF.toMeasure`: each coordinate has
 mean `q i`, and two distinct coordinates have product-mean `q i * q j`.
