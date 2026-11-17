@@ -151,17 +151,6 @@ private theorem fibFactNat_mem_dvd (N i : ℕ) (hi : i ∈ Finset.range N) :
     Nat.fib (i + 1) ∣ fibFactNat N :=
   Finset.dvd_prod_of_mem _ hi
 
-/-- Count of `i < N` with `d ∣ (i+1)` equals `N / d`. -/
-private theorem count_dvd (d N : ℕ) :
-    ((Finset.range N).filter (fun i => d ∣ (i + 1))).card = N / d := by
-  induction N with
-  | zero => simp
-  | succ N ih =>
-    rw [Finset.card_filter, Finset.sum_range_succ, ← Finset.card_filter, ih]
-    split
-    · next h => rw [Nat.succ_div_of_dvd h]
-    · next h => rw [Nat.succ_div_of_not_dvd h, add_zero]
-
 /-- Rank of apparition: `p^(t+1) ∣ fib m ↔ d ∣ m`,
 when `d` is minimal with the divisibility. -/
 private theorem fib_pow_dvd_iff (p t d : ℕ) (hd1 : 1 ≤ d)
@@ -200,7 +189,7 @@ private theorem level_count (p t N : ℕ)
     apply Finset.filter_congr
     intro i _
     exact fib_pow_dvd_iff p t (Nat.find h) hd1 hdvd hmin (i + 1)
-  rw [heq, count_dvd]
+  rw [heq, Nat.card_multiples]
 
 /-- The level count when the level is empty: equals `0`. -/
 private theorem level_count_zero (p t N : ℕ)

@@ -30,9 +30,6 @@ namespace Section8Example4BernoulliIntegral
 open Section8Example4Integrable (f f_natCast)
 open Entry9IiGeneralizedbellgeneratingDefining (generalizedBellGenerating)
 
-private lemma neg_one_le_natCast (k : ℕ) : (-1 : ℤ) ≤ k := by
-  omega
-
 private theorem choose_helper (p j : ℕ) (h : j ≤ p) :
     ((p - j : ℕ) : ℚ) * (Nat.choose p j : ℚ)
       = (p : ℚ) * (Nat.choose (p - 1) j : ℚ) := by
@@ -873,7 +870,7 @@ private theorem LHS_eq (n : ℕ) (x : ℂ) :
 
 private theorem RHS_eq (m : ℕ) (x : ℂ) :
     (∑ k ∈ Finset.range (m + 1), (↑(Nat.choose m k) : ℂ) * ((((bernoulli (m - k) : ℚ))) : ℂ) *
-        f ⟨↑k, neg_one_le_natCast k⟩ x / (↑(k + 1) : ℂ))
+        f ⟨↑k, Int.neg_ofNat_le_natCast 1 k⟩ x / (↑(k + 1) : ℂ))
     = ∑ a ∈ Finset.range (m + 2), ((∑ k ∈ Finset.range (m + 1),
         (↑(Nat.choose m k) : ℂ) * ((((bernoulli (m - k) : ℚ))) : ℂ) *
         (Nat.stirlingSecond (k + 1) a : ℂ) / (((k : ℂ) + 1))) * x ^ a) := by
@@ -952,7 +949,7 @@ private theorem zero_LHS (x : ℂ) :
 
 private theorem zero_RHS (x : ℂ) :
     (∑ k ∈ Finset.range (0 + 1), (↑(Nat.choose 0 k) : ℂ) * (((bernoulli (0 - k) : ℚ)) : ℂ) *
-        f ⟨↑k, neg_one_le_natCast k⟩ x / (↑(k + 1) : ℂ)) = x := by
+        f ⟨↑k, Int.neg_ofNat_le_natCast 1 k⟩ x / (↑(k + 1) : ℂ)) = x := by
   rw [Finset.sum_range_one]
   simp only [Nat.choose_self, Nat.cast_one, one_mul, Nat.zero_sub,
     zero_add, div_one] at ⊢
