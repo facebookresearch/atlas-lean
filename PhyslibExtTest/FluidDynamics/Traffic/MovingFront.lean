@@ -14,7 +14,7 @@ import PhyslibExt.FluidDynamics.Traffic.MovingFront
 /-!
 # Moving-front checks
 
-Focused checks for `PhyslibExt.Transport.Traffic.MovingFront`: the
+Focused checks for `PhyslibExt.FluidDynamics.Traffic.MovingFront`: the
 witness states `kL = 0, kR = 1, s = 1, qL = 0, qR = 1` satisfy the
 balance with forced speed `1`, and `qR = 2` fails it.
 
