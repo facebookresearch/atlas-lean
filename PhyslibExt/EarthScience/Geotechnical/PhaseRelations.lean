@@ -36,8 +36,10 @@ separate models, not treated here.
 
 ## iv. References
 
-- Standard soil phase-relations definitions (void ratio and porosity), as in
-  undergraduate soil mechanics texts.
+- B. M. Das and K. Sobhan, *Principles of Geotechnical Engineering*,
+  10th edition, Cengage, 2022, Chapter 3 (Weight–Volume Relationships):
+  void ratio `e = Vv / Vs`, porosity `n = Vv / (Vs + Vv)`, and the derived
+  relation `n = e / (1 + e)`.
 -/
 
 @[expose] public section
