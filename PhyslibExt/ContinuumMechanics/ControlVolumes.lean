@@ -376,7 +376,8 @@ theorem movingJumpTransport {uL uR vL vR : ℝ → ℝ → ℝ}
 
 
 /-- Interior-interface form of `movingJumpTransport`: when the
-interface point `s t` lies in the closed interval `[a, b]`, the
+interface point stays in the closed interval `[a, b]` in a
+neighborhood of `t`, the
 two integrals are the genuine left and right pieces of `[a, b]`
 and the same transport formula holds. -/
 theorem movingJumpTransport_interior {uL uR vL vR : ℝ → ℝ → ℝ}
@@ -388,7 +389,7 @@ theorem movingJumpTransport_interior {uL uR vL vR : ℝ → ℝ → ℝ}
     (hjR : Continuous fun p : ℝ × ℝ => uR p.1 p.2)
     (hvR : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => uR τ x) (vR t x) t)
     (hcvR : Continuous fun p : ℝ × ℝ => vR p.1 p.2)
-    (t : ℝ) (hint : s t ∈ Set.Icc a b) :
+    (t : ℝ) (hint : ∀ᶠ τ in nhds t, s τ ∈ Set.Icc a b) :
     HasDerivAt
       (fun τ : ℝ => (∫ x in a..s τ, uL τ x) + (∫ x in s τ..b, uR τ x))
       ((∫ x in a..s t, vL t x) + (∫ x in s t..b, vR t x) +

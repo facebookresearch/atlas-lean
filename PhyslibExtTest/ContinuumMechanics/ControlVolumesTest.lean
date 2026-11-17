@@ -99,6 +99,8 @@ example :
     (by fun_prop) (fun t x => by simpa using (hasDerivAt_const t (x : ℝ)))
     (by fun_prop) (by fun_prop)
     (fun t x => by simpa using (hasDerivAt_const t (2 * x : ℝ)))
-    (by fun_prop) 1 (by norm_num)
+    (by fun_prop) 1 (by
+      exact Filter.eventually_of_mem (Ioo_mem_nhds (by norm_num) (by norm_num))
+        (fun τ hτ => ⟨hτ.1.le, hτ.2.le⟩))
   rw [show (-1 : ℝ) = (1 : ℝ) - 2 by norm_num]
   simpa using h
