@@ -23,8 +23,9 @@ conditioning branch the ratio is a totalized algebraic value (`0/0=0`
 in Lean), not a predictive value. In the numerical
 example below, raising prevalence from `1/10` to `1/2` at sensitivity
 and specificity `3/4` raises the positive predictive value from `1/4`
-to `3/4`; no general prevalence-monotonicity claim is made (it fails
-for degenerate tests, e.g. sensitivity `0`).
+to `3/4`. No general strict-increase claim is made: at sensitivity
+`0` the PPV is identically `0` wherever the denominator is nonzero,
+so prevalence can leave it unchanged.
 
 This is a statement about the declared joint law only. It contains no
 screening, diagnosis, treatment or threshold recommendation and no
