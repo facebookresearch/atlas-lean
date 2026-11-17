@@ -66,7 +66,14 @@ noncomputable def receiverLoss (U K Ta T : ℝ) : ℝ :=
 `η(T) = (α * G - loss(T)) / G`, stated in the multiplied form
 `G * η(T) = α * G - loss(T)` by the theorems below. -/
 noncomputable def receiverEfficiency (α G U K Ta T : ℝ) : ℝ :=
-  α - receiverLoss U K Ta T / G
+  (α * G - receiverLoss U K Ta T) / G
+
+/-- Multiplied balance form of the efficiency: for `G ≠ 0`,
+`G * η(T) = α * G - loss(T)`. -/
+lemma receiverEfficiency_mul {α G U K Ta T : ℝ} (hG : G ≠ 0) :
+    G * receiverEfficiency α G U K Ta T = α * G - receiverLoss U K Ta T := by
+  unfold receiverEfficiency
+  field_simp
 
 /-- The loss vanishes at ambient temperature. -/
 lemma receiverLoss_ambient (U K Ta : ℝ) : receiverLoss U K Ta Ta = 0 := by
@@ -76,10 +83,13 @@ lemma receiverLoss_ambient (U K Ta : ℝ) : receiverLoss U K Ta Ta = 0 := by
 /-- The loss is strictly increasing on `[Ta, ∞)` for `U ≥ 0`, `K > 0`:
 if `Ta ≤ s ≤ t` and `s < t` then `loss(s) < loss(t)`. -/
 lemma receiverLoss_strictMonoOn {U K Ta : ℝ} (hU : 0 ≤ U) (hK : 0 < K)
-    (hTa : 0 ≤ Ta) {s t : ℝ} (hs : Ta ≤ s) (hst : s ≤ t) (hlt : s < t) :
-    receiverLoss U K Ta s < receiverLoss U K Ta t := by
+    (hTa : 0 ≤ Ta) :
+    StrictMonoOn (receiverLoss U K Ta) (Set.Ici Ta) := by
+  intro s hs t ht hlt
+  have hs' : Ta ≤ s := hs
+  have hst : s ≤ t := hlt.le
   unfold receiverLoss
-  have hs0 : 0 ≤ s := le_trans hTa hs
+  have hs0 : 0 ≤ s := le_trans hTa hs'
   have hpow : s ^ 4 < t ^ 4 := pow_lt_pow_left₀ hlt hs0 (by norm_num)
   have hUle : U * (s - Ta) ≤ U * (t - Ta) :=
     mul_le_mul_of_nonneg_left (sub_le_sub_right hst Ta) hU
@@ -162,12 +172,12 @@ lemma receiver_stagnationTemperature {Ta G α U K : ℝ} (hTa : 0 < Ta)
   intro y hy
   rcases lt_trichotomy y Tstag with h | h | h
   · exfalso
-    have hlt := receiverLoss_strictMonoOn hU hK hTa.le hy.1.le h.le h
+    have hlt := receiverLoss_strictMonoOn hU hK hTa.le (Set.mem_Ici.mpr hy.1.le) (Set.mem_Ici.mpr hIoo.1.le) h
     rw [hy.2, hval] at hlt
     exact lt_irrefl _ hlt
   · exact h
   · exfalso
-    have hlt := receiverLoss_strictMonoOn hU hK hTa.le hIoo.1.le h.le h
+    have hlt := receiverLoss_strictMonoOn hU hK hTa.le (Set.mem_Ici.mpr hIoo.1.le) (Set.mem_Ici.mpr hy.1.le) h
     rw [hval, hy.2] at hlt
     exact lt_irrefl _ hlt
 
@@ -179,14 +189,14 @@ lemma receiver_objective_endpoints {Ta G α U K Tstag : ℝ} (hG : G ≠ 0)
     (hTa : Ta ≠ 0) (hT : Tstag ≠ 0) (hstag : receiverLoss U K Ta Tstag = α * G) :
     receiverEfficiency α G U K Ta Ta * (1 - Ta / Ta) = 0 ∧
       receiverEfficiency α G U K Ta Tstag * (1 - Ta / Tstag) = 0 := by
+  have _ := hG
   have _ := hT
   have hTa1 : Ta / Ta = 1 := div_self hTa
-  have hdiv : α * G / G = α := mul_div_cancel_right₀ α hG
   constructor
   · rw [hTa1, sub_self, mul_zero]
   · have heff : receiverEfficiency α G U K Ta Tstag = 0 := by
       unfold receiverEfficiency
-      rw [hstag, hdiv, sub_self]
+      rw [hstag, sub_self, zero_div]
     rw [heff, zero_mul]
 
 end RenewableEnergyPorts
