@@ -27,8 +27,8 @@ example : 𝓕 (fun j => ((amSignal 4 1 (1 / 2) (fun _ => 2) 1 j : ℝ) : ℂ)) 
 
 /-- The `N = 4` tone sidebands are not disjoint, through the public
 lemma. -/
-example : ¬ Disjoint (upperSidebandSupport 4 (carrierCos 4 1) 1)
-    (lowerSidebandSupport 4 (carrierCos 4 1) 1) :=
-  not_disjoint_sidebands_tone_four
+example : ¬ Disjoint (positiveShiftSupport 4 (carrierCos 4 1) 1)
+    (negativeShiftSupport 4 (carrierCos 4 1) 1) :=
+  not_disjoint_shifted_supports_tone_four
 
 end PhyslibExtTest.Communications.FiniteAMModulator

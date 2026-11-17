@@ -17,21 +17,25 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 ## i. Overview
 
 Amplitude modulation in the finite Fourier model on `ZMod N`: the
-AM signal formed from a carrier cosine at bin `k`, amplitude `A`
-and modulation index `μ` has a discrete Fourier transform given by
-the carrier impulses plus the message spectrum shifted to `k` and
-`-k`. When the upper and lower sideband supports are disjoint, the
-transform at each sideband is exactly the corresponding shifted
-message spectrum. Constant and tone messages are worked out, and
-the `N = 4` tone case shows the sidebands need not be disjoint.
+signal `(A + μ mⱼ) cos(2πkj/N)` (additive modulation coefficient
+`μ`; the roadmap contract's model, not the dimensionless index of
+`A(1 + μ m)`) has a discrete Fourier transform given by the
+carrier impulses plus the message spectrum shifted to `k` and
+`-k`. Each shifted copy is the full spectral replica centered at
+`±k`; for a tone message it contains both conventional sidebands
+`k ± f`. When the two shifted supports are disjoint, the
+transform on each is exactly the corresponding shifted message
+spectrum. Constant and tone messages are worked out, and the
+`N = 4` tone case shows the shifted supports need not be
+disjoint.
 
 ## ii. Key results
 
 - `dft_amSignal`: the DFT of the AM signal in terms of the
   message spectrum.
-- `dft_amSignal_eq_upper_sideband` and
-  `dft_amSignal_eq_lower_sideband`: the sideband readings under
-  disjointness.
+- `dft_amSignal_eq_positive_shift` and
+  `dft_amSignal_eq_negative_shift`: the shifted-replica readings
+  under disjointness.
 - `dft_amSignal_const_message` and `dft_amSignal_tone_message`:
   the constant and tone validations.
 
@@ -73,13 +77,17 @@ def binImpulse (N : ℕ) (k l : ZMod N) : ℂ :=
 noncomputable def messageSpectrum (N : ℕ) [NeZero N] (m : ZMod N → ℝ) : ZMod N → ℂ :=
   𝓕 (fun j => (m j : ℂ))
 
-/-- Bins carrying the upper sideband `M (l - k)`. -/
-noncomputable def upperSidebandSupport (N : ℕ) [NeZero N] (m : ZMod N → ℝ)
+/-- Bins carrying the positively shifted replica `M (l - k)`: the
+full copy of the message spectrum centered at `k`, containing
+both conventional sidebands `k ± f` for a tone at `f`. -/
+noncomputable def positiveShiftSupport (N : ℕ) [NeZero N] (m : ZMod N → ℝ)
     (k : ZMod N) : Set (ZMod N) :=
   Function.support (fun l => messageSpectrum N m (l - k))
 
-/-- Bins carrying the lower sideband `M (l + k)`. -/
-noncomputable def lowerSidebandSupport (N : ℕ) [NeZero N] (m : ZMod N → ℝ)
+/-- Bins carrying the negatively shifted replica `M (l + k)`: the
+full copy of the message spectrum centered at `-k`, containing
+both conventional sidebands `-k ± f` for a tone at `f`. -/
+noncomputable def negativeShiftSupport (N : ℕ) [NeZero N] (m : ZMod N → ℝ)
     (k : ZMod N) : Set (ZMod N) :=
   Function.support (fun l => messageSpectrum N m (l + k))
 
@@ -178,11 +186,11 @@ lemma dft_amSignal (N : ℕ) [NeZero N] (A μ : ℝ) (m : ZMod N → ℝ) (k l :
   simp only [messageSpectrum]
   ring
 
-/-- No-alias reading, upper sideband: if the shifted supports are disjoint, a bin of
-the upper sideband off the carrier bins carries exactly `μ / 2 · M (l - k)`. -/
-lemma dft_amSignal_eq_upper_sideband (N : ℕ) [NeZero N] (A μ : ℝ) (m : ZMod N → ℝ)
-    (k l : ZMod N) (hdisj : Disjoint (upperSidebandSupport N m k) (lowerSidebandSupport N m k))
-    (hl : l ∈ upperSidebandSupport N m k) (hlk : l ≠ k) (hlnk : l ≠ -k) :
+/-- No-alias reading, positive shift: if the shifted supports are disjoint, a bin of
+the positively shifted replica off the carrier bins carries exactly `μ / 2 · M (l - k)`. -/
+lemma dft_amSignal_eq_positive_shift (N : ℕ) [NeZero N] (A μ : ℝ) (m : ZMod N → ℝ)
+    (k l : ZMod N) (hdisj : Disjoint (positiveShiftSupport N m k) (negativeShiftSupport N m k))
+    (hl : l ∈ positiveShiftSupport N m k) (hlk : l ≠ k) (hlnk : l ≠ -k) :
     𝓕 (fun j => ((amSignal N A μ m k j : ℝ) : ℂ)) l =
       (μ : ℂ) / 2 * messageSpectrum N m (l - k) := by
   rw [dft_amSignal]
@@ -192,17 +200,17 @@ lemma dft_amSignal_eq_upper_sideband (N : ℕ) [NeZero N] (A μ : ℝ) (m : ZMod
   have e2 : binImpulse N (-k) l = 0 := by
     unfold binImpulse
     rw [ite_eq_right hlnk]
-  have hnot : l ∉ lowerSidebandSupport N m k := Set.disjoint_left.mp hdisj hl
+  have hnot : l ∉ negativeShiftSupport N m k := Set.disjoint_left.mp hdisj hl
   have e3 : messageSpectrum N m (l + k) = 0 := by
     by_contra hne
     exact hnot hne
   rw [e1, e2, e3]
   ring
 
-/-- No-alias reading, lower sideband: the mirror statement for `M (l + k)`. -/
-lemma dft_amSignal_eq_lower_sideband (N : ℕ) [NeZero N] (A μ : ℝ) (m : ZMod N → ℝ)
-    (k l : ZMod N) (hdisj : Disjoint (upperSidebandSupport N m k) (lowerSidebandSupport N m k))
-    (hl : l ∈ lowerSidebandSupport N m k) (hlk : l ≠ k) (hlnk : l ≠ -k) :
+/-- No-alias reading, negative shift: the mirror statement for `M (l + k)`. -/
+lemma dft_amSignal_eq_negative_shift (N : ℕ) [NeZero N] (A μ : ℝ) (m : ZMod N → ℝ)
+    (k l : ZMod N) (hdisj : Disjoint (positiveShiftSupport N m k) (negativeShiftSupport N m k))
+    (hl : l ∈ negativeShiftSupport N m k) (hlk : l ≠ k) (hlnk : l ≠ -k) :
     𝓕 (fun j => ((amSignal N A μ m k j : ℝ) : ℂ)) l =
       (μ : ℂ) / 2 * messageSpectrum N m (l + k) := by
   rw [dft_amSignal]
@@ -212,7 +220,7 @@ lemma dft_amSignal_eq_lower_sideband (N : ℕ) [NeZero N] (A μ : ℝ) (m : ZMod
   have e2 : binImpulse N (-k) l = 0 := by
     unfold binImpulse
     rw [ite_eq_right hlnk]
-  have hnot : l ∉ upperSidebandSupport N m k :=
+  have hnot : l ∉ positiveShiftSupport N m k :=
     Set.disjoint_right.mp hdisj hl
   have e3 : messageSpectrum N m (l - k) = 0 := by
     by_contra hne
@@ -297,16 +305,16 @@ lemma dft_amSignal_tone_message (N : ℕ) [NeZero N] (A μ : ℝ) (f k l : ZMod 
 
 /-- Violated premise, general: if `k + k = 0` (so `k = -k`) and the message spectrum is
 not identically zero, the two shifted supports coincide and are not disjoint. -/
-lemma not_disjoint_sidebands_of_add_self_eq_zero (N : ℕ) [NeZero N] (m : ZMod N → ℝ)
+lemma not_disjoint_shifted_supports_of_add_self_eq_zero (N : ℕ) [NeZero N] (m : ZMod N → ℝ)
     (k : ZMod N) (hk : k + k = 0) (hm : ∃ l : ZMod N, messageSpectrum N m l ≠ 0) :
-    ¬ Disjoint (upperSidebandSupport N m k) (lowerSidebandSupport N m k) := by
+    ¬ Disjoint (positiveShiftSupport N m k) (negativeShiftSupport N m k) := by
   obtain ⟨l₀, hl₀⟩ := hm
   intro hdisj
-  have hmemU : l₀ + k ∈ upperSidebandSupport N m k := by
+  have hmemU : l₀ + k ∈ positiveShiftSupport N m k := by
     show messageSpectrum N m ((l₀ + k) - k) ≠ 0
     rw [add_sub_cancel_right]
     exact hl₀
-  have hmemL : l₀ + k ∈ lowerSidebandSupport N m k := by
+  have hmemL : l₀ + k ∈ negativeShiftSupport N m k := by
     show messageSpectrum N m ((l₀ + k) + k) ≠ 0
     have heq : (l₀ + k) + k = l₀ := by rw [add_assoc, hk, add_zero]
     rw [heq]
@@ -315,18 +323,18 @@ lemma not_disjoint_sidebands_of_add_self_eq_zero (N : ℕ) [NeZero N] (m : ZMod 
 
 /-- Violated premise, concrete: `N = 4`, carrier `k = 1`, message tone `f = 1`. The
 upper and lower sidebands both occupy bins `0` and `2`. -/
-lemma not_disjoint_sidebands_tone_four :
-    ¬ Disjoint (upperSidebandSupport 4 (carrierCos 4 1) 1)
-      (lowerSidebandSupport 4 (carrierCos 4 1) 1) := by
+lemma not_disjoint_shifted_supports_tone_four :
+    ¬ Disjoint (positiveShiftSupport 4 (carrierCos 4 1) 1)
+      (negativeShiftSupport 4 (carrierCos 4 1) 1) := by
   intro hdisj
-  have h0u : (0 : ZMod 4) ∈ upperSidebandSupport 4 (carrierCos 4 1) 1 := by
+  have h0u : (0 : ZMod 4) ∈ positiveShiftSupport 4 (carrierCos 4 1) 1 := by
     show messageSpectrum 4 (carrierCos 4 1) (0 - 1) ≠ 0
     rw [messageSpectrum_carrierCos]
     have e1 : ((0 : ZMod 4) - 1) ≠ 1 := by decide
     have e2 : ((0 : ZMod 4) - 1) = -1 := by decide
     simp only [binImpulse, ite_eq_right e1, ite_eq_left e2]
     norm_num
-  have h0l : (0 : ZMod 4) ∈ lowerSidebandSupport 4 (carrierCos 4 1) 1 := by
+  have h0l : (0 : ZMod 4) ∈ negativeShiftSupport 4 (carrierCos 4 1) 1 := by
     show messageSpectrum 4 (carrierCos 4 1) (0 + 1) ≠ 0
     rw [messageSpectrum_carrierCos]
     have e1 : ((0 : ZMod 4) + 1) = 1 := by decide
