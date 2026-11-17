@@ -35,8 +35,6 @@ generator `g` of degree `r` the same statement holds with taps
 proved both as bit words (`0b100`, `0b001`, `0b101`) and as
 polynomials, and reversing the payload changes the result, as
 the unreflected convention requires.
-
-semantics).
 -/
 
 @[expose] public section
