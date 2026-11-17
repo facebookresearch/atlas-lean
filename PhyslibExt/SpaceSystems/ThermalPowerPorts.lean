@@ -9,7 +9,7 @@ module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import MathlibExt.Analysis.ODE.MaximalSolution
+import MathlibExt.Analysis.ODE.MaximalSolution
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
