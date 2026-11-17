@@ -17,13 +17,13 @@ open PhyslibExt.Instrumentation.InverseCalibrationBudget
 
 namespace PhyslibExtTest.Instrumentation.InverseCalibrationBudget
 
-/-- Known parameters at concrete values: `a = 2`, `b = 1`, `x = 3`,
-`e = 1/2`, so `y = 15/2` and the recovered input is
-`(15/2 - 1) / 2 = 13/4`, with error `1/4 = E / |a|`: the bound is
-met with equality. -/
+/-- Known parameters at concrete values: intercept `a = 1`, slope
+`b = 2`, `x = 3`, `e = 1/2`, so `y = 2 * 3 + 1 + 1/2 = 15/2` and
+the recovered input is `(15/2 - 1) / 2 = 13/4`, with error
+`1/4 = E / |b|`: the bound is met with equality. -/
 example : |Chemistry.Calibration.inversePrediction 1 2 (15 / 2 : ℝ) - 3|
     ≤ (1 / 2) / |(2 : ℝ)| :=
-  inversePrediction_error_le_known_params 2 1 3 (1 / 2) (1 / 2) (15 / 2)
+  inversePrediction_error_le_known_params 1 2 3 (1 / 2) (1 / 2) (15 / 2)
     (by norm_num) (by norm_num) (by norm_num) (by norm_num)
 
 /-- The deterministic bound behind it, evaluated. -/

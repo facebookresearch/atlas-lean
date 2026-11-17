@@ -59,67 +59,69 @@ open Chemistry.Calibration
 
 namespace PhyslibExt.Instrumentation.InverseCalibrationBudget
 
-/-- Bounded-parameter-error transfer for inverse prediction. With true slope
-`a`, true intercept `b`, perturbations `da`, `db`, observation error `e`,
-observation `y = a * x + b + e`, and bounds `|x| <= X`, `|da| <= Da < |a|`,
-`|db| <= Db`, `|e| <= E` (all bound constants nonnegative), the perturbed
-inverse prediction `inversePrediction (b + db) (a + da) y` differs from `x`
-by at most `(Da * X + Db + E) / (|a| - Da)`. -/
+/-- Bounded-parameter-error transfer for inverse prediction, in the
+canonical intercept-first order of `inversePrediction`. With true
+intercept `a`, true slope `b`, intercept perturbation `da` bounded by
+`Da`, slope perturbation `db` bounded by `Db < |b|`, observation error
+`e`, observation `y = b * x + a + e`, and bounds `|x| <= X`,
+`|e| <= E` (all bound constants nonnegative), the perturbed inverse
+prediction `inversePrediction (a + da) (b + db) y` differs from `x`
+by at most `(Db * X + Da + E) / (|b| - Db)`. -/
 lemma inversePrediction_error_le (a b x X da Da db Db e E y : ℝ)
     (hX0 : 0 ≤ X) (hDa0 : 0 ≤ Da) (hDb0 : 0 ≤ Db) (hE0 : 0 ≤ E)
-    (hDa : Da < |a|) (hx : |x| ≤ X) (hda : |da| ≤ Da) (hdb : |db| ≤ Db)
-    (he : |e| ≤ E) (hy : y = a * x + b + e) :
-    |inversePrediction (b + db) (a + da) y - x| ≤
-      (Da * X + Db + E) / (|a| - Da) := by
-  have hne : a + da ≠ 0 := by
+    (hDb : Db < |b|) (hx : |x| ≤ X) (hda : |da| ≤ Da) (hdb : |db| ≤ Db)
+    (he : |e| ≤ E) (hy : y = b * x + a + e) :
+    |inversePrediction (a + da) (b + db) y - x| ≤
+      (Db * X + Da + E) / (|b| - Db) := by
+  have hne : b + db ≠ 0 := by
     intro hcon
-    have ha : a = -da := by linarith
-    have habs : |a| = |da| := by rw [ha, abs_neg]
+    have hb : b = -db := by linarith
+    have habs : |b| = |db| := by rw [hb, abs_neg]
     linarith
-  have hsub : inversePrediction (b + db) (a + da) y - x
-      = (e - db - x * da) / (a + da) := by
+  have hsub : inversePrediction (a + da) (b + db) y - x
+      = (e - da - x * db) / (b + db) := by
     unfold inversePrediction
     rw [hy]
     field_simp
     ring
-  have htri : |e - db - x * da| ≤ |e| + |db| + |x| * |da| := by
-    have h1 : |e - db - x * da| ≤ |e - db| + |x * da| := abs_sub _ _
-    have h2 : |e - db| ≤ |e| + |db| := abs_sub _ _
+  have htri : |e - da - x * db| ≤ |e| + |da| + |x| * |db| := by
+    have h1 : |e - da - x * db| ≤ |e - da| + |x * db| := abs_sub _ _
+    have h2 : |e - da| ≤ |e| + |da| := abs_sub _ _
     rw [abs_mul] at h1
     linarith
-  have hprod : |x| * |da| ≤ X * Da := mul_le_mul hx hda (abs_nonneg da) hX0
-  have hnum : |e - db - x * da| ≤ Da * X + Db + E := by
-    calc |e - db - x * da| ≤ |e| + |db| + |x| * |da| := htri
-      _ ≤ E + Db + X * Da := add_le_add (add_le_add he hdb) hprod
-      _ = Da * X + Db + E := by ring
-  have hden : |a| - Da ≤ |a + da| := by
-    have h2 : |(a + da) - da| ≤ |a + da| + |da| := abs_sub _ _
-    have h3 : (a + da) - da = a := by ring
+  have hprod : |x| * |db| ≤ X * Db := mul_le_mul hx hdb (abs_nonneg db) hX0
+  have hnum : |e - da - x * db| ≤ Db * X + Da + E := by
+    calc |e - da - x * db| ≤ |e| + |da| + |x| * |db| := htri
+      _ ≤ E + Da + X * Db := add_le_add (add_le_add he hda) hprod
+      _ = Db * X + Da + E := by ring
+  have hden : |b| - Db ≤ |b + db| := by
+    have h2 : |(b + db) - db| ≤ |b + db| + |db| := abs_sub _ _
+    have h3 : (b + db) - db = b := by ring
     rw [h3] at h2
     linarith
-  have hDpos : 0 < |a| - Da := by linarith
-  have hapos : 0 < |a + da| := by linarith
-  have hNUM0 : 0 ≤ Da * X + Db + E := by
-    have h1 : 0 ≤ Da * X := mul_nonneg hDa0 hX0
+  have hDpos : 0 < |b| - Db := by linarith
+  have hapos : 0 < |b + db| := by linarith
+  have hNUM0 : 0 ≤ Db * X + Da + E := by
+    have h1 : 0 ≤ Db * X := mul_nonneg hDb0 hX0
     linarith
-  have hdiv1 : |e - db - x * da| / |a + da|
-      ≤ (Da * X + Db + E) / |a + da| := by
-    have hpos : (0 : ℝ) ≤ |a + da|⁻¹ := le_of_lt (inv_pos.mpr hapos)
+  have hdiv1 : |e - da - x * db| / |b + db|
+      ≤ (Db * X + Da + E) / |b + db| := by
+    have hpos : (0 : ℝ) ≤ |b + db|⁻¹ := le_of_lt (inv_pos.mpr hapos)
     have h := mul_le_mul_of_nonneg_right hnum hpos
     simpa only [div_eq_mul_inv] using h
-  have hdiv2 : (Da * X + Db + E) / |a + da|
-      ≤ (Da * X + Db + E) / (|a| - Da) :=
+  have hdiv2 : (Db * X + Da + E) / |b + db|
+      ≤ (Db * X + Da + E) / (|b| - Db) :=
     div_le_div_of_nonneg_left hNUM0 hDpos hden
   rw [hsub, abs_div]
   exact le_trans hdiv1 hdiv2
 
 /-- Known-calibration reduction: with exact parameters (`da = db = 0`), the
-bound of `inversePrediction_error_le` reduces to `E / |a|`. -/
+bound of `inversePrediction_error_le` reduces to `E / |b|`. -/
 lemma inversePrediction_error_le_known_params (a b x e E y : ℝ)
-    (ha : a ≠ 0) (hE0 : 0 ≤ E) (he : |e| ≤ E) (hy : y = a * x + b + e) :
-    |inversePrediction b a y - x| ≤ E / |a| := by
+    (hb : b ≠ 0) (hE0 : 0 ≤ E) (he : |e| ≤ E) (hy : y = b * x + a + e) :
+    |inversePrediction a b y - x| ≤ E / |b| := by
   have h := inversePrediction_error_le a b x |x| 0 0 0 0 e E y
-    (abs_nonneg x) le_rfl le_rfl hE0 (abs_pos.mpr ha) le_rfl (by simp) (by simp)
+    (abs_nonneg x) le_rfl le_rfl hE0 (abs_pos.mpr hb) le_rfl (by simp) (by simp)
     he hy
   simpa using h
 
@@ -127,7 +129,7 @@ lemma inversePrediction_error_le_known_params (a b x e E y : ℝ)
 bound `|xhat ω - x ω| <= B` holds at every outcome of a set `Good`, then the
 bad event where the bound fails has measure at most `μ Goodᶜ`, and hence at
 most any `p` with `μ Goodᶜ <= p`. No distributional assumption is made. -/
-lemma inversePrediction_error_bad_event_measure_le {Ω : Type*}
+private lemma inversePrediction_error_bad_event_measure_le {Ω : Type*}
     [MeasurableSpace Ω] (μ : MeasureTheory.Measure Ω) (xhat x : Ω → ℝ)
     (B p : ℝ) (Good : Set Ω)
     (hGood : ∀ ω ∈ Good, |xhat ω - x ω| ≤ B)
@@ -144,23 +146,23 @@ lemma inversePrediction_error_bad_event_measure_le {Ω : Type*}
 
 /-- Calibration bad-event bound, derived from the deterministic
 known-parameter bound: on the good event that the residual obeys
-`|e ω| ≤ E`, the recovered input `inversePrediction b a (y ω)` with
-`y ω = a * x ω + b + e ω` differs from `x ω` by at most `E / |a|`,
+`|e ω| ≤ E`, the recovered input `inversePrediction a b (y ω)` with
+`y ω = b * x ω + a + e ω` differs from `x ω` by at most `E / |b|`,
 so the bad event is contained in the residual bad event. -/
 lemma inversePrediction_error_event_measure_le {Ω : Type*}
     [MeasurableSpace Ω] (μ : MeasureTheory.Measure Ω)
-    (a b E p : ℝ) (ha : a ≠ 0) (hE : 0 ≤ E) (x e : Ω → ℝ)
+    (a b E p : ℝ) (hb : b ≠ 0) (hE : 0 ≤ E) (x e : Ω → ℝ)
     (hp : μ {ω | E < |e ω|} ≤ ENNReal.ofReal p) :
-    μ {ω | E / |a| <
-      |inversePrediction b a (a * x ω + b + e ω) - x ω|}
+    μ {ω | E / |b| <
+      |inversePrediction a b (b * x ω + a + e ω) - x ω|}
       ≤ ENNReal.ofReal p := by
   refine inversePrediction_error_bad_event_measure_le μ
-    (fun ω => inversePrediction b a (a * x ω + b + e ω)) x (E / |a|) p
+    (fun ω => inversePrediction a b (b * x ω + a + e ω)) x (E / |b|) p
     {ω | |e ω| ≤ E} ?_ ?_
   · intro ω hω
     rw [Set.mem_ofPred_eq] at hω
     exact inversePrediction_error_le_known_params a b (x ω) (e ω) E
-      (a * x ω + b + e ω) ha hE hω rfl
+      (b * x ω + a + e ω) hb hE hω rfl
   · have hset : {ω | |e ω| ≤ E}ᶜ = {ω | E < |e ω|} := by
       ext ω
       simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, not_le]
