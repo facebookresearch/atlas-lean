@@ -8,13 +8,18 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import PhyslibExt.EarthScience.ConductiveGeotherm
+
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Pow
 
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
 
 /-!
-# Energy source removal: steady slab with uniform heat generation
+# Energy source removal: steady slab and heated cylinder with uniform heat generation
 
 ## i. Overview
 
@@ -24,7 +29,9 @@ source term, per unit area fluxes). The temperature profile is the
 existing geotherm profile of `PhyslibExt.EarthScience.ConductiveGeotherm`
 read as a slab; this file names the slab quantities, proves the total
 outward heat removal `H * L`, and identifies the midplane maximum for
-equal surface temperatures. No transient behavior is claimed: with the
+equal surface temperatures. Section C adds the regular heated-cylinder
+profile with the same constant-conductivity, uniform-source model, its
+radial heat-balance equation, and its outward boundary power. No transient behavior is claimed: with the
 source cut off (`H = 0`) the steady profile is the constant or linear
 steady branch, not an instantaneous prediction.
 
@@ -35,11 +42,16 @@ steady branch, not an instantaneous prediction.
 - `HeatTransfer.slabTemperature_le_midplane`: for equal surface
   temperatures and `H ≥ 0`, the profile on the slab is at most the
   midplane value `Ts + H * L^2 / (8k)`.
+- `HeatTransfer.cylinder_radial_equation` and
+  `HeatTransfer.cylinder_outwardPower`: the regular heated-cylinder
+  profile satisfies the radial heat-balance equation away from the
+  center, and its outward power per unit length is `π * R^2 * qvol`.
 
 ## iii. Table of contents
 
 - A. Slab profile and outward fluxes
 - B. Derivative bridge to the geotherm profile
+- C. Regular heated cylinder
 
 ## iv. References
 
@@ -146,5 +158,102 @@ for the same profile. -/
 lemma slabGradient_hasDerivAt {Ts Tb L k H d : ℝ} (hk : 0 < k) :
     HasDerivAt (slabGradient Ts Tb L k H) (-H / k) d ∧ k * (-H / k) + H = 0 :=
   EarthScience.geotherm_second_deriv hk
+
+/-! ## C. Regular heated cylinder -/
+
+/-- Temperature profile of the steady solid cylinder with constant
+conductivity `k` and uniform volumetric heat source `qvol`: at radius
+`r` in a cylinder of radius `R` with surface temperature `Ts`,
+`T(r) = Ts + qvol * (R^2 - r^2) / (4k)`. This is the regular polynomial
+profile; at `r = 0` it is read through its polynomial extension, not by
+evaluating a radial flux divided by `r`. Intended for `k ≠ 0`. -/
+noncomputable def cylinderTemperature (Ts R k qvol r : ℝ) : ℝ :=
+  Ts + qvol * (R ^ 2 - r ^ 2) / (4 * k)
+
+/-- Radial temperature gradient of the cylinder profile,
+`T'(r) = -qvol * r / (2k)`. -/
+noncomputable def cylinderGradient (k qvol r : ℝ) : ℝ :=
+  -qvol * r / (2 * k)
+
+private lemma hasDerivAt_quad {c d x : ℝ} :
+    HasDerivAt (fun s : ℝ => c * s ^ 2 + d) (2 * c * x) x := by
+  have h := ((hasDerivAt_pow 2 x).const_mul c).add_const d
+  convert h using 1
+  ring
+
+/-- Center value: `T(0) = Ts + qvol * R^2 / (4k)`. -/
+lemma cylinderTemperature_center {Ts R k qvol : ℝ} :
+    cylinderTemperature Ts R k qvol 0 = Ts + qvol * R ^ 2 / (4 * k) := by
+  simp [cylinderTemperature]
+
+/-- Surface value: `T(R) = Ts`. -/
+lemma cylinderTemperature_surface (Ts R k qvol : ℝ) :
+    cylinderTemperature Ts R k qvol R = Ts := by
+  simp [cylinderTemperature]
+
+/-- Center-to-surface temperature rise: `qvol * R^2 / (4k)`. -/
+lemma cylinder_center_sub_surface {Ts R k qvol : ℝ} :
+    cylinderTemperature Ts R k qvol 0 - cylinderTemperature Ts R k qvol R =
+      qvol * R ^ 2 / (4 * k) := by
+  rw [cylinderTemperature_center, cylinderTemperature_surface]
+  ring
+
+/-- The gradient vanishes at the center: the regular profile has zero
+radial slope at `r = 0`. -/
+lemma cylinderGradient_zero (k qvol : ℝ) : cylinderGradient k qvol 0 = 0 := by
+  simp [cylinderGradient]
+
+/-- Derivative of the cylinder profile is the stated gradient. -/
+lemma hasDerivAt_cylinderTemperature {Ts R k qvol r : ℝ} (hk : k ≠ 0) :
+    HasDerivAt (cylinderTemperature Ts R k qvol) (cylinderGradient k qvol r) r := by
+  have h2k : (2 : ℝ) * k ≠ 0 := mul_ne_zero (by norm_num) hk
+  have h4k : (4 : ℝ) * k ≠ 0 := mul_ne_zero (by norm_num) hk
+  have hbase : HasDerivAt (fun s : ℝ => (-(qvol / (4 * k))) * s ^ 2 + (Ts + qvol * R ^ 2 / (4 * k)))
+      (2 * (-(qvol / (4 * k))) * r) r := hasDerivAt_quad
+  have hfun : (fun s : ℝ => (-(qvol / (4 * k))) * s ^ 2 + (Ts + qvol * R ^ 2 / (4 * k)))
+      = cylinderTemperature Ts R k qvol := by
+    funext s
+    simp only [cylinderTemperature]
+    field_simp
+    ring
+  have hderiv : 2 * (-(qvol / (4 * k))) * r = cylinderGradient k qvol r := by
+    simp only [cylinderGradient]
+    field_simp
+    ring
+  rw [hfun, hderiv] at hbase
+  exact hbase
+
+/-- Radial heat-balance equation away from the center: for `r > 0`,
+`(1 / r) * (d/dr) (r * T'(r)) = -qvol / k`, the cylindrical Laplacian of
+the profile. -/
+lemma cylinder_radial_equation {k qvol r : ℝ} (hk : k ≠ 0) (hr : 0 < r) :
+    (1 / r) * deriv (fun s : ℝ => s * cylinderGradient k qvol s) r =
+      -qvol / k := by
+  have hr' : r ≠ 0 := ne_of_gt hr
+  have h2k : (2 : ℝ) * k ≠ 0 := mul_ne_zero (by norm_num) hk
+  have hbase : HasDerivAt (fun s : ℝ => (-(qvol / (2 * k))) * s ^ 2 + 0)
+      (2 * (-(qvol / (2 * k))) * r) r := hasDerivAt_quad
+  have hfun : (fun s : ℝ => (-(qvol / (2 * k))) * s ^ 2 + 0)
+      = (fun s : ℝ => s * cylinderGradient k qvol s) := by
+    funext s
+    simp only [cylinderGradient]
+    field_simp
+    ring
+  have hderiv_val : 2 * (-(qvol / (2 * k))) * r = -qvol * r / k := by
+    field_simp
+  rw [hfun, hderiv_val] at hbase
+  have hderiv := hbase.deriv
+  rw [hderiv]
+  field_simp
+
+/-- Outward conductive power per unit length at the surface:
+`2πR * (-k * T'(R)) = π * R^2 * qvol`, balancing the total source in the
+cross-section. -/
+lemma cylinder_outwardPower {R k qvol : ℝ} (hk : k ≠ 0) :
+    2 * Real.pi * R * (-k * cylinderGradient k qvol R) =
+      Real.pi * R ^ 2 * qvol := by
+  have h2k : (2 : ℝ) * k ≠ 0 := mul_ne_zero (by norm_num) hk
+  simp only [cylinderGradient]
+  field_simp
 
 end HeatTransfer
