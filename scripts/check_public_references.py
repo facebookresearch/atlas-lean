@@ -102,17 +102,23 @@ def scan_commit(raw, sha):
             in_signature = False
         if field not in (b"author", b"committer", b"mergetag"):
             continue
-        if b"-----BEGIN PGP SIGNATURE-----" in line:
-            in_signature = True
-        if not in_signature:
-            findings.extend(
-                scan(
-                    line.decode("utf-8", errors="replace"),
-                    "commit " + sha + " header",
-                )
+        # Only standalone delimiters in an embedded tag are signature syntax.
+        # Marker text inside a name or tag header is ordinary public content.
+        if field == b"mergetag":
+            if line == b" -----BEGIN PGP SIGNATURE-----":
+                in_signature = True
+                continue
+            if line == b" -----END PGP SIGNATURE-----":
+                in_signature = False
+                continue
+            if in_signature:
+                continue
+        findings.extend(
+            scan(
+                line.decode("utf-8", errors="replace"),
+                "commit " + sha + " header",
             )
-        if b"-----END PGP SIGNATURE-----" in line:
-            in_signature = False
+        )
     return findings
 
 

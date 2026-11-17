@@ -70,6 +70,39 @@ class Patterns(unittest.TestCase):
         ).encode()
         self.assertEqual(gate.scan_commit(raw, "a" * 40), [])
 
+    def test_mergetag_signature_payload_is_not_scanned(self):
+        for ending in (" -----END PGP SIGNATURE-----\n", ""):
+            with self.subTest(ending=ending):
+                raw = (
+                    "mergetag object "
+                    + "a" * 40
+                    + "\n tagger "
+                    + private_ref("T")
+                    + " <author@example.com>\n \n"
+                    + " -----BEGIN PGP SIGNATURE-----\n "
+                    + private_ref()
+                    + "\n"
+                    + ending
+                    + "author "
+                    + private_ref("P")
+                    + " <author@example.com>\n\nOrdinary message\n"
+                ).encode()
+                self.assertEqual(len(gate.scan_commit(raw, "a" * 40)), 2)
+
+    def test_mergetag_signature_marker_in_text_is_not_control(self):
+        for prefix in ("mergetag ", " tagger ", " tag "):
+            with self.subTest(prefix=prefix):
+                raw = (
+                    "mergetag object "
+                    + "a" * 40
+                    + "\n"
+                    + prefix
+                    + "-----BEGIN PGP SIGNATURE----- "
+                    + private_ref()
+                    + "\n\nOrdinary message\n"
+                ).encode()
+                self.assertEqual(len(gate.scan_commit(raw, "a" * 40)), 1)
+
     def test_reports_never_echo_matches_or_unsafe_locations(self):
         secret = private_ref()
         findings = gate.scan("first\n" + secret, secret + ".md")
@@ -158,6 +191,18 @@ class Repository(unittest.TestCase):
         )
         self.commit("Ordinary change")
         self.assertEqual(len(self.check()["findings"]), 2)
+
+    def test_signature_markers_in_identities_are_not_control(self):
+        marker = "-----BEGIN PGP SIGNATURE-----"
+        for name in (
+            private_ref() + " " + marker,
+            marker + " " + private_ref(),
+        ):
+            with self.subTest(name=name):
+                self.base = self.head()
+                self.run_git("config", "user.name", name)
+                self.commit("Ordinary change")
+                self.assertEqual(len(self.check()["findings"]), 2)
 
     def test_merge_side_history_is_scanned(self):
         original = self.run_git("branch", "--show-current")
