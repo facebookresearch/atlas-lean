@@ -10,7 +10,7 @@ module
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Tactic.NormNum
 
-import PhyslibExt.BuiltEnvironment.Accessibility
+import MathlibExt.Transport.Accessibility
 
 /-!
 # Threshold accessibility checks
