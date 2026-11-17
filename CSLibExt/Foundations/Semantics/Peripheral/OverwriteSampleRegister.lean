@@ -345,6 +345,81 @@ theorem trace_correct {α : Type u} (μs : List (Label α)) (s : Slot α)
     readIds_pairwise_lt μs s h hinc,
     fun i n v hi hn => unreturned_pending_or_overwritten μs s h hinc i n v hi hn⟩
 
+/-- A trace ending in a full slot either kept the initial slot (empty trace) or went
+through a last publication of exactly the stored pair, with no publication after it. -/
+private theorem last_publish_of_slot_some {α : Type u} {n : ℕ} {v : α}
+    (μs : List (Label α)) (s₀ : Slot α) {s : Slot α}
+    (h : (registerLTS α).MTr s₀ μs s) (hs : s = some (n, v)) :
+    (μs = [] ∧ s₀ = some (n, v)) ∨
+      (∃ j, j < μs.length ∧ μs[j]? = some (.publish n v) ∧
+        ∀ k m w, j < k → k < μs.length → μs[k]? ≠ some (.publish m w)) := by
+  induction μs generalizing s₀ s with
+  | nil =>
+      cases h
+      exact Or.inl ⟨rfl, hs⟩
+  | cons mu tl ih =>
+      cases h with
+      | stepL htr hrest =>
+          rcases ih _ hrest hs with ⟨rfl, hs₂⟩ | ⟨j, hj, hpub, hnone⟩
+          · cases htr with
+            | publish pn pv =>
+                simp only [Option.some.injEq, Prod.mk.injEq] at hs₂
+                obtain ⟨rfl, rfl⟩ := hs₂
+                refine Or.inr ⟨0, by simp, List.getElem?_cons_zero, ?_⟩
+                intro k m w h0k hk1 _
+                simp only [List.length_cons, List.length_nil] at hk1
+                omega
+            | read =>
+                cases hs₂
+          · refine Or.inr ⟨j + 1, ?_, ?_, ?_⟩
+            · simp only [List.length_cons]
+              omega
+            · rw [List.getElem?_cons_succ]
+              exact hpub
+            · intro k m w hjk hklen hcon
+              obtain ⟨k', rfl⟩ : ∃ k', k = k' + 1 := ⟨k - 1, by omega⟩
+              rw [List.getElem?_cons_succ] at hcon
+              simp only [List.length_cons] at hklen
+              exact hnone k' m w (by omega) (by omega) hcon
+
+theorem exists_publish_index_of_read_mem {α : Type u} (μs : List (Label α)) (s : Slot α)
+    (h : (registerLTS α).MTr none μs s)
+    (i : ℕ) (n : ℕ) (v : α) (hi : μs[i]? = some (.read (some (n, v)))) :
+    ∃ j, j < i ∧ μs[j]? = some (.publish n v) ∧
+      ∀ k m w, j < k → k < i → μs[k]? ≠ some (.publish m w) := by
+  have hsplit :
+      (registerLTS α).MTr none (List.take (i + 1) μs ++ List.drop (i + 1) μs) s := by
+    rw [List.take_append_drop]
+    exact h
+  obtain ⟨s_mid, hpre, hsuf⟩ := mtr_split _ _ hsplit
+  have htake : List.take (i + 1) μs = List.take i μs ++ [Label.read (some (n, v))] := by
+    rw [List.take_add_one, hi, Option.toList_some]
+  rw [htake] at hpre
+  obtain ⟨s_pre, hpre', hsingle⟩ := mtr_split _ _ hpre
+  have htr := mtr_singleton hsingle
+  have hr := (registerLTS_tr_read_iff _ _ _).mp htr
+  have hsp : s_pre = some (n, v) := hr.1.symm
+  rcases last_publish_of_slot_some (List.take i μs) none hpre' hsp with
+    ⟨htake_nil, _⟩ | ⟨j, hj, hpub, hnone⟩
+  · rw [htake_nil] at hpre'
+    cases hpre'
+    cases hsp
+  · have hji : j < i := by
+      rw [List.length_take] at hj
+      omega
+    refine ⟨j, hji, ?_, ?_⟩
+    · rw [← List.getElem?_take_of_lt hji]
+      exact hpub
+    · intro k m w hjk hki hcon
+      have hkl : ¬ μs.length ≤ k := fun hle => by
+        rw [List.getElem?_eq_none hle] at hcon
+        cases hcon
+      have hklen : k < (List.take i μs).length := by
+        rw [List.length_take]
+        omega
+      rw [← List.getElem?_take_of_lt hki] at hcon
+      exact hnone k m w hjk hklen hcon
+
 /-- No fabricated values: every successful read returns an `(id, value)` pair that was
 published earlier in the trace. -/
 theorem publish_mem_of_read_mem {α : Type u} (μs : List (Label α)) (s : Slot α)
