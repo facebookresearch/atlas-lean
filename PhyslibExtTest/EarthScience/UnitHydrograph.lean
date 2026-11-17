@@ -50,8 +50,9 @@ example : (1 : ℝ) * ∑ k ∈ Finset.range (1 + 2),
 example : ∑ k ∈ Finset.range (1 + 2),
       AdditiveCombinatorics.sumConv (fun i => if i = 0 then (1 : ℝ) else 0)
         (fun j => if j < 2 then (1 : ℝ) else 0) k = 2 := by
-  have h := sumConv_sum_eq (p := fun i => if i = 0 then (1 : ℝ) else 0)
-    (u := fun j => if j < 2 then (1 : ℝ) else 0) (n := 1) (m := 2)
+  have h := AdditiveCombinatorics.sum_range_sumConv (R := ℝ)
+    (f := fun i => if i = 0 then (1 : ℝ) else 0)
+    (g := fun j => if j < 2 then (1 : ℝ) else 0) (n := 1) (m := 2)
     (by intro i hi; simp [show i ≠ 0 by omega])
     (by intro j hj; simp [show ¬ j < 2 by omega])
   rw [h]

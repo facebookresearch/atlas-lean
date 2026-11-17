@@ -85,16 +85,8 @@ theorem discreteConvolution_volume_eq {p u : ℕ → ℝ} {n m : ℕ}
   ring
 
 /-- The hydrologic outflow is the canonical `sumConv` convolution. -/
-theorem discreteConvolution_eq_sumConv (p u : ℕ → ℝ) (k : ℕ) :
+lemma discreteConvolution_eq_sumConv (p u : ℕ → ℝ) (k : ℕ) :
     discreteConvolution p u k = AdditiveCombinatorics.sumConv p u k :=
   rfl
-
-/-- Total `sumConv` response over the padded horizon, as a corollary of
-`discreteConvolution_sum_eq`. -/
-theorem sumConv_sum_eq {p u : ℕ → ℝ} {n m : ℕ}
-    (hp : ∀ i : ℕ, n ≤ i → p i = 0) (hu : ∀ j : ℕ, m ≤ j → u j = 0) :
-    ∑ k ∈ Finset.range (n + m), AdditiveCombinatorics.sumConv p u k
-      = (∑ i ∈ Finset.range n, p i) * (∑ j ∈ Finset.range m, u j) :=
-  AdditiveCombinatorics.sum_range_sumConv p u hp hu
 
 end EarthScience
