@@ -103,13 +103,12 @@ lemma windkessel_transient {R C q p0 t : ℝ} (hR : 0 < R) (hC : 0 < C) :
   field_simp
   ring
 /-- The Windkessel transient is the canonical one-compartment
-amount with elimination rate `1 / (R * C)` and input `q / C`, scaled
-by `C`: `p(t) = C * amount ...` in the amount equation's units, with
-initial condition `p(0) = p0`. -/
+amount with elimination rate `1 / (R * C)` and input `q / C`
+(pressure-level correspondence: `p = amount (1/(RC)) (q/C) p0`),
+with initial condition `p(0) = p0`. -/
 lemma windkessel_amount_eq {R C q p0 : ℝ} (hR : 0 < R) (hC : 0 < C) :
     (fun t => R * q + (p0 - R * q) * Real.exp (-t / (R * C))) =
-    MathlibExt.Biology.Biophysics.CompartmentKinetics.amount
-      (1 / (R * C)) ((q / C) * (R * C) / (R * C)) p0 := by
+    MathlibExt.Biology.Biophysics.CompartmentKinetics.amount (1 / (R * C)) (q / C) p0 := by
   funext t
   have hk : (1 : ℝ) / (R * C) ≠ 0 := by positivity
   rw [MathlibExt.Biology.Biophysics.CompartmentKinetics.amount_eq_of_ne_zero hk]
