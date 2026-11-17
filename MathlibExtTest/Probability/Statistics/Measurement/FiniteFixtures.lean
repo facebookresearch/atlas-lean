@@ -11,7 +11,14 @@ module
 public import MathlibExt.Analysis.Fourier.BooleanCube
 public import MathlibExt.Analysis.Fourier.BooleanCubeInfluence
 public import MathlibExt.Probability.Statistics.Measurement.ProductMoments
-public import Mathlib
+public import Mathlib.Probability.Distributions.Uniform
+public import Mathlib.Probability.Independence.Basic
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 open MeasureTheory ProbabilityTheory Finset
 open scoped ENNReal
@@ -41,11 +48,11 @@ finite type by `Integrable.of_finite`), then `μUnif_real_singleton`, then
 
 /-- Uniform probability law on the finite Boolean cube. -/
 noncomputable def μUnif (n : ℕ) : Measure (BoolCube n) :=
-  Measure.uniformOfFinset Finset.univ
+  MeasureTheory.Measure.uniformOfFinset Finset.univ
 
 /-- Fair-coin law on one Bool coordinate. -/
 noncomputable abbrev coinMeasure : Measure Bool :=
-  Measure.uniformOfFinset Finset.univ
+  MeasureTheory.Measure.uniformOfFinset Finset.univ
 
 /-- Realized `i`-th Rademacher coordinate via production cube value. -/
 def coord (n : ℕ) (i : Fin n) (ω : BoolCube n) : ℝ := cubeVal (ω i)
@@ -54,71 +61,32 @@ def coord (n : ℕ) (i : Fin n) (ω : BoolCube n) : ℝ := cubeVal (ω i)
 def sharedCoords (n : ℕ) (i : Fin n) (ω : BoolCube n) : ℝ × ℝ :=
   (coord n i ω, coord n i ω)
 
-/-- Two distinct realized coordinates as a pair. -/
-def indepCoords (n : ℕ) (i j : Fin n) (ω : BoolCube n) : ℝ × ℝ :=
+/-- Two realized coordinates as a pair; distinctness is a hypothesis
+at the use sites, not part of the pair. -/
+def coordPair (n : ℕ) (i j : Fin n) (ω : BoolCube n) : ℝ × ℝ :=
   (coord n i ω, coord n j ω)
 
 /-! ## Helpers for half A: finite sums of measures -/
 
-theorem measure_apply_finset_sum {ι α : Type*} [MeasurableSpace α] (s : Finset ι)
-    (μ : ι → MeasureTheory.Measure α) (t : Set α) :
-    (∑ i ∈ s, μ i) t = ∑ i ∈ s, μ i t :=
-  MeasureTheory.Measure.finsetSum_apply s μ t
-
-theorem measure_smul_apply {α : Type*} [MeasurableSpace α] (c : ℝ≥0∞)
-    (μ : MeasureTheory.Measure α) (t : Set α) : (c • μ) t = c * μ t := by
-  simp
-
-theorem dirac_apply_singleton {α : Type*} [MeasurableSpace α] [MeasurableSingletonClass α]
-    [DecidableEq α] (a b : α) :
-    MeasureTheory.Measure.dirac a ({b} : Set α) = (if a = b then 1 else 0) := by
-  by_cases h : a = b
-  · subst h
-    rw [MeasureTheory.Measure.dirac_apply_of_mem (Set.mem_singleton a), ite_eq_left rfl]
-  · rw [MeasureTheory.Measure.dirac_apply a {b},
-      Set.indicator_of_notMem (by simpa using h) _, ite_eq_right h]
-
-theorem uniformOfFinset_apply_singleton {α : Type*} [MeasurableSpace α]
-    [MeasurableSingletonClass α] [Fintype α] [DecidableEq α]
-    (s : Finset α) (a : α) (ha : a ∈ s) :
-    MeasureTheory.Measure.uniformOfFinset s {a} = (s.card : ℝ≥0∞)⁻¹ := by
-  simp only [MeasureTheory.Measure.uniformOfFinset, measure_apply_finset_sum,
-    measure_smul_apply, dirac_apply_singleton]
-  rw [← Finset.mul_sum]
-  have hsum : (∑ x ∈ s, (if x = a then (1 : ℝ≥0∞) else 0)) = 1 := by
-    rw [Finset.sum_eq_single a (fun b _ hb => ite_eq_right hb) (fun ha' => absurd ha ha')]
-    exact ite_eq_left rfl
-  rw [hsum, mul_one]
-
 /-! ## Bit-flip pairing via production flip -/
 
-/-- Bit-flip as an equivalence via production flip. -/
-def flipCoordEquiv (n : ℕ) (i : Fin n) : BoolCube n ≃ BoolCube n where
-  toFun x := flipCoord x i
-  invFun x := flipCoord x i
-  left_inv x := flipCoord_flipCoord x i
-  right_inv x := flipCoord_flipCoord x i
-
-theorem cubeVal_not (b : Bool) : cubeVal (!b) = -cubeVal b := by
-  cases b <;> simp [cubeVal]
-
 theorem coord_flip_neg (n : ℕ) (i : Fin n) (ω : BoolCube n) :
-    coord n i (flipCoordEquiv n i ω) = -coord n i ω := by
+    coord n i (flipCoord ω i) = -coord n i ω := by
   show coord n i (flipCoord ω i) = -coord n i ω
   show cubeVal (flipCoord ω i i) = -cubeVal (ω i)
   rw [flipCoord_apply_self]
-  exact cubeVal_not _
+  exact BooleanCube.cubeVal_not _
 
 theorem coord_flip_fixed (n : ℕ) (i j : Fin n) (hji : j ≠ i) (ω : BoolCube n) :
-    coord n j (flipCoordEquiv n i ω) = coord n j ω := by
+    coord n j (flipCoord ω i) = coord n j ω := by
   show coord n j (flipCoord ω i) = coord n j ω
   show cubeVal (flipCoord ω i j) = cubeVal (ω j)
   rw [flipCoord_apply_of_ne ω hji]
 
 /-- A sum over all outcomes of a function negated by the bit-flip is zero. -/
 theorem sum_eq_zero_of_flip_neg (n : ℕ) (i : Fin n) (g : BoolCube n → ℝ)
-    (hg : ∀ ω, g (flipCoordEquiv n i ω) = -g ω) : ∑ ω, g ω = 0 := by
-  have hcomp := Equiv.sum_comp (flipCoordEquiv n i) g
+    (hg : ∀ ω, g (flipCoord ω i) = -g ω) : ∑ ω, g ω = 0 := by
+  have hcomp := BooleanCube.sum_comp_flipCoord g i
   simp only [hg] at hcomp
   have h2 : (∑ ω : BoolCube n, g ω) + (∑ ω : BoolCube n, -g ω) = 0 := by
     rw [← Finset.sum_add_distrib]
@@ -137,9 +105,9 @@ instance (n : ℕ) : IsProbabilityMeasure (μUnif n) := by
     simp
   have hdirac : ∀ a : BoolCube n, MeasureTheory.Measure.dirac a Set.univ = 1 :=
     fun a => MeasureTheory.Measure.dirac_apply_of_mem (Set.mem_univ a)
-  simp only [μUnif, MeasureTheory.Measure.uniformOfFinset, measure_apply_finset_sum,
-    measure_smul_apply, hdirac, mul_one]
-  rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+  simp only [μUnif, MeasureTheory.Measure.uniformOfFinset, MeasureTheory.Measure.finsetSum_apply,
+    MeasureTheory.Measure.smul_apply, hdirac, mul_one]
+  rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, smul_eq_mul, mul_one]
   exact ENNReal.mul_inv_cancel hcard0 hcardTop
 
 /-! ## Uniform law: masses and the integral-to-sum bridge -/
@@ -164,9 +132,10 @@ theorem coinMeasure_isProbability : IsProbabilityMeasure coinMeasure := by
   have hdirac : ∀ b : Bool, MeasureTheory.Measure.dirac b Set.univ = 1 :=
     fun b => MeasureTheory.Measure.dirac_apply_of_mem (Set.mem_univ b)
   simp only [coinMeasure, MeasureTheory.Measure.uniformOfFinset,
-    measure_apply_finset_sum, measure_smul_apply, hdirac, mul_one]
-  rw [Finset.sum_const, Finset.card_univ, Fintype.card_bool, nsmul_eq_mul]
-  exact ENNReal.mul_inv_cancel (by simp) (by simp)
+    MeasureTheory.Measure.finsetSum_apply, MeasureTheory.Measure.smul_apply, hdirac, mul_one]
+  rw [Finset.sum_const, Finset.card_univ, Fintype.card_bool, nsmul_eq_mul, smul_eq_mul,
+    mul_one]
+  exact ENNReal.mul_inv_cancel (by norm_num) (by norm_num)
 
 theorem μUnif_eq_pi (n : ℕ) :
     μUnif n = Measure.pi (fun _ : Fin n => coinMeasure) := by
@@ -285,7 +254,7 @@ theorem coord_cross_moment {n : ℕ} {i j : Fin n} (hij : i ≠ j) :
   have hsum : (∑ ω : BoolCube n, coord n i ω * coord n j ω) = 0 := by
     apply sum_eq_zero_of_flip_neg n i
     intro ω
-    show coord n i (flipCoordEquiv n i ω) * coord n j (flipCoordEquiv n i ω)
+    show coord n i (flipCoord ω i) * coord n j (flipCoord ω i)
       = -(coord n i ω * coord n j ω)
     rw [coord_flip_neg, coord_flip_fixed n i j (fun h => hij h.symm)]
     ring
@@ -465,8 +434,8 @@ theorem shared_product_moment (n : ℕ) (i : Fin n) :
   exact coord_self_moment n i
 
 theorem indep_product_moment {n : ℕ} {i j : Fin n} (hij : i ≠ j) :
-    ∫ ω, (indepCoords n i j ω).1 * (indepCoords n i j ω).2 ∂μUnif n = 0 := by
-  have h : ∀ ω : BoolCube n, (indepCoords n i j ω).1 * (indepCoords n i j ω).2
+    ∫ ω, (coordPair n i j ω).1 * (coordPair n i j ω).2 ∂μUnif n = 0 := by
+  have h : ∀ ω : BoolCube n, (coordPair n i j ω).1 * (coordPair n i j ω).2
       = coord n i ω * coord n j ω := fun ω => rfl
   simp only [h]
   exact coord_cross_moment hij
