@@ -48,8 +48,19 @@ example : ![3, 4] = (!![2, 1; 0, 1] : Matrix (Fin 2) (Fin 2) ℝ)⁻¹
   have h2 : (!![0, 1; 1, 0] : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ ![1, 2]
         + !![2, 1; 0, 1] *ᵥ ![3, 4] = ![12, 5] := by
     ext i <;> fin_cases i <;> norm_num [Matrix.mulVec, dotProduct]
-  have hred := (elim_forward h1 h2).1
-  exact (elim_forward h1 h2).2
+  have hred : schur (!![1, 0; 0, 1] : Matrix (Fin 2) (Fin 2) ℝ) !![1, 1; 0, 1]
+        !![0, 1; 1, 0] !![2, 1; 0, 1] *ᵥ ![1, 2]
+      = ![8, 6] - !![1, 1; 0, 1] *ᵥ
+          ((!![2, 1; 0, 1] : Matrix (Fin 2) (Fin 2) ℝ)⁻¹ *ᵥ ![12, 5]) :=
+    (elim_forward h1 h2).1
+  have hnum : ![8, 6] - !![1, 1; 0, 1] *ᵥ
+        ((!![2, 1; 0, 1] : Matrix (Fin 2) (Fin 2) ℝ)⁻¹ *ᵥ ![12, 5])
+      = ![(-1 : ℝ) / 2, 1] := by
+    ext i <;> fin_cases i <;>
+      norm_num [Matrix.mulVec, dotProduct, Matrix.inv_def,
+        Matrix.adjugate_fin_two, Matrix.det_fin_two]
+  have hiff := elim_iff.mpr ⟨hred, (elim_forward h1 h2).2⟩
+  exact (elim_iff.mp hiff).2
 
 /-- The Schur complement of the scalar system, through the public
 definition: `1 - 2 * (1/4) * 3 = -1/2`. -/
