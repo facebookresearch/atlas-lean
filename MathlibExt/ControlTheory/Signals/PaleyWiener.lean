@@ -14,9 +14,11 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 /-!
 # Compact-spectrum representative
 
-For a band half-width `B` and a frequency profile `g`, `PW.rep B g` is the
-inverse Fourier integral of `g` restricted to the symmetric band `[-B, B]`:
-`PW.rep B g t = ∫ ν in (-B)..B, g ν * e^{2πiνt}`. It is a pointwise
+For a real number `B` and a frequency profile `g`, `PW.rep B g` is the
+inverse Fourier integral of `g` over the oriented interval from `-B` to
+`B`: `PW.rep B g t = ∫ ν in (-B)..B, g ν * e^{2πiνt}`. For `0 ≤ B` this is
+the integral over the symmetric band `[-B, B]`; negating `B` negates the
+value, as for any oriented interval integral. It is a pointwise
 representative, not an identification with an `L²` class.
 
 If `g` is square integrable on the whole line, the representative is
@@ -35,12 +37,14 @@ namespace ControlTheory
 
 namespace PW
 
-/-- The compact-spectrum inverse-integral representative: for a band `B` and a
-frequency profile `g : ℝ → ℂ`, `PW.rep B g t = ∫ ν in (-B)..B, g ν * e^{2πi ν t}`,
-the inverse Fourier integral of `g` over the symmetric band `[-B, B]` only.
-It is defined for every raw function `g`; the theorems below impose the
-`L²` and almost-everywhere support hypotheses of the leaf. It is a pointwise
-representative, not an identification with an `L²` class. -/
+/-- The compact-spectrum inverse-integral representative: for a real `B` and
+a frequency profile `g : ℝ → ℂ`,
+`PW.rep B g t = ∫ ν in (-B)..B, g ν * e^{2πi ν t}`, the inverse Fourier
+integral of `g` over the oriented interval from `-B` to `B` (the symmetric
+band `[-B, B]` when `0 ≤ B`). It is defined for every raw function `g`;
+the theorems below impose an `L²` hypothesis, and the pointwise bound
+also assumes `0 < B`. It is a pointwise representative, not an
+identification with an `L²` class. -/
 noncomputable def rep (B : ℝ) (g : ℝ → ℂ) (t : ℝ) : ℂ :=
   ∫ ν in (-B)..B, g ν * Complex.exp (2 * Real.pi * Complex.I * ν * t)
 
@@ -139,8 +143,7 @@ theorem rep_continuous {B : ℝ} {g : ℝ → ℂ} (hg : MemLp g 2 volume) :
     exact (continuous_param_integral hg B (-B)).neg
 
 /-- Pointwise bound on the compact-spectrum representative: for `0 < B`, a
-square-integrable frequency profile `g` vanishing almost everywhere off
-`[-B, B]`, and every time `t`,
+square-integrable frequency profile `g`, and every time `t`,
 `‖PW.rep B g t‖ ≤ √(2B) * ‖g‖₂`, where `‖g‖₂` is
 `(eLpNorm g 2 volume).toReal`. This is Cauchy-Schwarz on the band of
 length `2B`. No support hypothesis is needed: the band norm is bounded by

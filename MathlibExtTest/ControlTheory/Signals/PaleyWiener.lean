@@ -21,6 +21,19 @@ example : PW.rep 3 0 7 = 0 := by
 -- continuous by `PW.rep_continuous`.
 example : Continuous (PW.rep 5 0) := PW.rep_continuous MemLp.zero
 
+-- Boundary: zero width gives the zero representative for every profile.
+example {g : ℝ → ℂ} (t : ℝ) : PW.rep 0 g t = 0 := by
+  simp [PW.rep]
+
+-- Boundary: the representative is an oriented interval integral, so a
+-- negative width negates the value (`∫ ν in 1..-1, 1 = -2`).
+example : PW.rep (-1) (fun _ => (1 : ℂ)) 0 = -2 := by
+  have h : PW.rep (-1) (fun _ => (1 : ℂ)) 0
+      = ∫ _ν in (1 : ℝ)..(-1), (1 : ℂ) := by
+    simp [PW.rep]
+  rw [h, intervalIntegral.integral_const]
+  norm_num
+
 -- Happy path: the constant profile `1` on the band `[-1, 1]` at time `0`
 -- returns the band width `2`.
 example : PW.rep 1 (fun _ => (1 : ℂ)) 0 = 2 := by
