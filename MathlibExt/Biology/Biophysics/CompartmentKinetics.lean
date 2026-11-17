@@ -45,6 +45,8 @@ formula. Its explicit form is
   `C → R / CL`; `amount_monotone`, `amount_antitone`, `amount_le_steadyAmount`,
   `steadyAmount_le_amount`: the approach is monotone, from the side of `A₀ - A∞`.
 * `amount_bolus_add_halfLife`: a bolus halves every `t½ = log 2 / k`.
+* `bolus_absolute_reconstruction`, `bolus_absolute_injective`: exact absolute bolus
+  observations at `0` and at `t > 0` with known dose recover `V`, `CL / V` and `CL`.
 * Boundaries: `amount_rate_zero_input_zero` (`k = 0`, `R = 0`: constant),
   `tendsto_amount_rate_zero_atTop`, `not_tendsto_amount_rate_zero`,
   `not_isSolution_const_rate_zero` (`k = 0`, `R > 0`: linear growth, no steady state),
@@ -335,5 +337,71 @@ theorem not_isSolution_const_rate_zero (hR : R ≠ 0) (a : ℝ) :
 theorem tendsto_amount_bolus (hk : 0 < k) (A₀ : ℝ) :
     Tendsto (amount k 0 A₀) atTop (𝓝 0) := by
   simpa [steadyAmount] using tendsto_amount hk 0 A₀
+
+/-! ### Absolute identification from exact bolus observations -/
+
+set_option linter.unusedVariables false in
+/-- **Absolute bolus reconstruction.** Exact noiseless bolus observations
+`C₀ = D / V` at time `0` and `Ct = (D / V) * exp (-(CL / V) * t)` at time
+`t > 0`, with known dose `D > 0`, volume `V > 0` and clearance `CL ≥ 0`,
+recover the volume, the elimination rate and the clearance. The two
+formulas are `concentration_bolus` at times `0` and `t`. This is a
+statement about the model only; it is no finite-sample estimator
+guarantee and no fit to an individual. The `CL ≥ 0` hypotheses state the
+physical domain; the algebra itself needs less, hence the local linter
+suppression on the statements. -/
+theorem bolus_absolute_reconstruction {D V CL t C0 Ct : ℝ}
+    (hD : 0 < D) (hV : 0 < V) (hCL : 0 ≤ CL) (ht : 0 < t)
+    (hC0 : C0 = D / V) (hCt : Ct = D / V * exp (-(CL / V) * t)) :
+    0 < C0 ∧ 0 < Ct ∧ V = D / C0 ∧ CL / V = -Real.log (Ct / C0) / t ∧
+      CL = -(V / t) * Real.log (Ct / C0) := by
+  have hD' : D ≠ 0 := ne_of_gt hD
+  have hV' : V ≠ 0 := ne_of_gt hV
+  have ht' : t ≠ 0 := ne_of_gt ht
+  have hDV : 0 < D / V := div_pos hD hV
+  have hDV' : D / V ≠ 0 := ne_of_gt hDV
+  have hC0pos : 0 < C0 := by rw [hC0]; exact hDV
+  have hCtpos : 0 < Ct := by rw [hCt]; exact mul_pos hDV (exp_pos _)
+  have hVeq : V = D / C0 := by rw [hC0]; field_simp
+  have hRatio : Ct / C0 = exp (-(CL / V) * t) := by
+    rw [hCt, hC0]
+    field_simp
+  have hLog : Real.log (Ct / C0) = -(CL / V) * t := by
+    rw [hRatio, Real.log_exp]
+  have hRate : CL / V = -Real.log (Ct / C0) / t := by
+    rw [hLog]; field_simp
+  have hCLfinal : CL = -(V / t) * Real.log (Ct / C0) := by
+    rw [hLog]; field_simp
+  exact ⟨hC0pos, hCtpos, hVeq, hRate, hCLfinal⟩
+
+set_option linter.unusedVariables false in
+/-- The two exact absolute observations determine the pair `(V, CL)`: two
+physical parameter pairs with the same known dose and sampling time giving
+the same observations at `0` and at `t > 0` are equal. -/
+theorem bolus_absolute_injective {D t V₁ V₂ CL₁ CL₂ : ℝ}
+    (hD : 0 < D) (hV₁ : 0 < V₁) (hV₂ : 0 < V₂) (hCL₁ : 0 ≤ CL₁) (hCL₂ : 0 ≤ CL₂)
+    (ht : 0 < t)
+    (h0 : D / V₁ = D / V₂)
+    (h1 : D / V₁ * exp (-(CL₁ / V₁) * t) = D / V₂ * exp (-(CL₂ / V₂) * t)) :
+    V₁ = V₂ ∧ CL₁ = CL₂ := by
+  have hD' : D ≠ 0 := ne_of_gt hD
+  have hV₁' : V₁ ≠ 0 := ne_of_gt hV₁
+  have hV₂' : V₂ ≠ 0 := ne_of_gt hV₂
+  have ht' : t ≠ 0 := ne_of_gt ht
+  have hV : V₁ = V₂ := by
+    have h := (div_eq_div_iff hV₁' hV₂').mp h0
+    exact (mul_left_cancel₀ hD' h).symm
+  subst hV
+  have hDV₁ : D / V₁ ≠ 0 := ne_of_gt (div_pos hD hV₁)
+  have hExp : exp (-(CL₁ / V₁) * t) = exp (-(CL₂ / V₁) * t) :=
+    mul_left_cancel₀ hDV₁ h1
+  have hArg : -(CL₁ / V₁) * t = -(CL₂ / V₁) * t :=
+    Real.exp_strictMono.injective hExp
+  have hNeg : -(CL₁ / V₁) = -(CL₂ / V₁) := mul_right_cancel₀ ht' hArg
+  have hDiv : CL₁ / V₁ = CL₂ / V₁ := neg_inj.mp hNeg
+  have hCL : CL₁ = CL₂ := by
+    have hmul := congrArg (fun x => x * V₁) hDiv
+    rwa [div_mul_cancel₀ CL₁ hV₁', div_mul_cancel₀ CL₂ hV₁'] at hmul
+  exact ⟨rfl, hCL⟩
 
 end MathlibExt.Biology.Biophysics.CompartmentKinetics

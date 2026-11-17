@@ -2044,30 +2044,6 @@ private lemma lr_J_exp_pos : ∀ k : ℕ, 1 ≤ k → 0 < lrJ (Real.exp (k : ℝ
     simpa using h1k
   linarith [lo, hnn, hJ1]
 
-/-- `k / (k + c) → 1` along naturals. -/
-private lemma lr_nat_div_add_tendsto (c : ℝ) :
-    Filter.Tendsto (fun k : ℕ => (k : ℝ) / ((k : ℝ) + c))
-      Filter.atTop (nhds 1) := by
-  have h0 : Filter.Tendsto (fun k : ℕ => c / (k : ℝ))
-      Filter.atTop (nhds 0) :=
-    tendsto_const_div_atTop_nhds_zero_nat c
-  have h1 : Filter.Tendsto (fun k : ℕ => 1 + c / (k : ℝ))
-      Filter.atTop (nhds (1 + 0)) :=
-    tendsto_const_nhds.add h0
-  rw [add_zero] at h1
-  have h2 : Filter.Tendsto (fun k : ℕ => 1 / (1 + c / (k : ℝ)))
-      Filter.atTop (nhds (1 / 1)) :=
-    tendsto_const_nhds.div h1 one_ne_zero
-  rw [div_one] at h2
-  refine h2.congr' ?_
-  filter_upwards [Filter.eventually_ge_atTop 1] with k hk
-  have hsk : (k : ℝ) ≠ 0 := by
-    have : k ≠ 0 := by omega
-    exact_mod_cast this
-  have e : (1 : ℝ) + c / (k : ℝ) = ((k : ℝ) + c) / (k : ℝ) := by
-    rw [add_div, div_self hsk]
-  rw [e, one_div_div]
-
 /-- Sequential version: `A(e^k) / √k → α` for some `α > 0`. -/
 private lemma lr_A_seq_tendsto :
     ∃ α : ℝ, 0 < α ∧
@@ -2140,7 +2116,7 @@ private lemma lr_A_seq_tendsto :
       (fun k : ℕ => (3 / 2) * ((lrJ (Real.exp (k : ℝ)) / (k : ℝ) ^ (3 / 2 : ℝ))
         * ((k : ℝ) / ((k : ℝ) + C))))
       Filter.atTop (nhds ((3 / 2) * L)) := by
-    have hmul := hL.mul (lr_nat_div_add_tendsto C)
+    have hmul := hL.mul (tendsto_natCast_div_add_atTop C)
     have hmul2 : Filter.Tendsto
         (fun k : ℕ => (3 / 2) * ((lrJ (Real.exp (k : ℝ)) / (k : ℝ) ^ (3 / 2 : ℝ))
           * ((k : ℝ) / ((k : ℝ) + C))))
@@ -2151,7 +2127,7 @@ private lemma lr_A_seq_tendsto :
       (fun k : ℕ => (3 / 2) * ((lrJ (Real.exp (k : ℝ)) / (k : ℝ) ^ (3 / 2 : ℝ))
         * ((k : ℝ) / ((k : ℝ) - C))))
       Filter.atTop (nhds ((3 / 2) * L)) := by
-    have hmul := hL.mul (lr_nat_div_add_tendsto (-C))
+    have hmul := hL.mul (tendsto_natCast_div_add_atTop (-C))
     have hmul2 : Filter.Tendsto
         (fun k : ℕ => (3 / 2) * ((lrJ (Real.exp (k : ℝ)) / (k : ℝ) ^ (3 / 2 : ℝ))
           * ((k : ℝ) / ((k : ℝ) + (-C)))))
@@ -2237,7 +2213,7 @@ private lemma lr_A_seq_low (α : ℝ)
       Filter.atTop (nhds 1) := by
     have hbase : Filter.Tendsto (fun k : ℕ => (k : ℝ) / (((k + 1 : ℕ)) : ℝ))
         Filter.atTop (nhds 1) := by
-      have h := lr_nat_div_add_tendsto (1 : ℝ)
+      have h := tendsto_natCast_div_add_atTop (1 : ℝ)
       refine h.congr' ?_
       filter_upwards with k
       have hcast : (((k + 1 : ℕ)) : ℝ) = (k : ℝ) + 1 := by push_cast; ring
