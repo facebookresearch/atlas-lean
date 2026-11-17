@@ -15,8 +15,8 @@ public import MathlibExt.Algebra.AffineRecurrence
 /-!
 # Periodic dose recurrence
 
-Post-dose amounts under a fixed-spacing schedule obey `x (n+1) = q x n + D` with closed
-form `q^n x0 + D ∑_{j<n} q^j`; without elimination they grow linearly.
+Post-dose amounts in the fixed-spacing trajectory obey the affine recurrence with ratio
+`exp (-k * tau)`, with the corresponding closed form.
 -/
 
 @[expose] public section
@@ -25,25 +25,51 @@ open Finset
 
 namespace MathlibExt.Biology.Biophysics.CompartmentKinetics.DoseRecurrence
 
-/-- **Post-dose recurrence closed form.** With `x n` the amount
-just after the `n`-th periodic dose, `x (n+1) = q * x n + D` where
-`q = exp (-k * tau)`, the post-dose amounts are
-`x n = q^n * x 0 + D * ∑ j ∈ range n, q^j`. At `k = 0` (`q = 1`)
-this is `x n = x 0 + n * D`. -/
-lemma post_dose_closed_form {D q x0 : ℝ} (x : ℕ → ℝ)
-    (h0 : x 0 = x0) (hstep : ∀ n, x (n + 1) = q * x n + D) (n : ℕ) :
-    x n = q ^ n * x0 + D * ∑ j ∈ Finset.range n, q ^ j := by
-  have h := MathlibExt.AffineRecurrence.IsAffineRecurrence.eq_pow_mul_add_geom_sum
-    (x := x) (a := q) (b := D) hstep n
-  rwa [h0] at h
+/-- **Post-dose amounts satisfy the affine recurrence.** The
+amount just after dose `n + 1` in the fixed-spacing trajectory of
+`Dosing.lean` (dose `D`, decay rate `k`, spacing `tau`) is the
+amount just after dose `n`, decayed by `exp (-k * tau)`, plus the
+new dose `D`. -/
+lemma post_dose_amount_succ {D k tau : ℝ} (n : ℕ) :
+    (∑ i ∈ Finset.range (n + 1 + 1),
+        D * Real.exp (-k * (((n + 1 : ℕ) : ℝ) * tau - (i : ℝ) * tau))) =
+      Real.exp (-k * tau) *
+          (∑ i ∈ Finset.range (n + 1),
+            D * Real.exp (-k * ((n : ℝ) * tau - (i : ℝ) * tau))) + D := by
+  rw [Finset.sum_range_succ]
+  have hlast : D * Real.exp (-k * (((n + 1 : ℕ) : ℝ) * tau -
+      ((n + 1 : ℕ) : ℝ) * tau)) = D := by
+    simp
+  rw [hlast]
+  congr 1
+  rw [Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro i _
+  have hexp : -k * (((n + 1 : ℕ) : ℝ) * tau - (i : ℝ) * tau) =
+      -k * tau + -k * ((n : ℝ) * tau - (i : ℝ) * tau) := by
+    push_cast
+    ring
+  rw [hexp, Real.exp_add]
+  ring
 
-/-- At `q = 1` (no elimination) amounts grow linearly. -/
-lemma post_dose_no_elimination {D x0 : ℝ} (x : ℕ → ℝ)
-    (h0 : x 0 = x0) (hstep : ∀ n, x (n + 1) = 1 * x n + D) (n : ℕ) :
-    x n = x0 + n * D := by
-  have h := MathlibExt.AffineRecurrence.IsAffineRecurrence.eq_add_nsmul_of_one
-    (x := x) (b := D) hstep n
-  rw [h0] at h
-  simpa using h
+/-- **Post-dose closed form for the periodic trajectory.** The
+amount just after dose `n` is
+`exp (-k * tau)^n * D + D * ∑ j ∈ range n, exp (-k * tau)^j`,
+derived from `post_dose_amount_succ` through the affine-recurrence
+closed form. -/
+lemma post_dose_amount_closed_form {D k tau : ℝ} (n : ℕ) :
+    (∑ i ∈ Finset.range (n + 1),
+        D * Real.exp (-k * ((n : ℝ) * tau - (i : ℝ) * tau))) =
+      Real.exp (-k * tau) ^ n * D +
+        D * ∑ j ∈ Finset.range n, Real.exp (-k * tau) ^ j := by
+  have h := MathlibExt.AffineRecurrence.IsAffineRecurrence.eq_pow_mul_add_geom_sum
+    (x := fun m : ℕ => ∑ i ∈ Finset.range (m + 1),
+      D * Real.exp (-k * ((m : ℝ) * tau - (i : ℝ) * tau)))
+    (a := Real.exp (-k * tau)) (b := D)
+    (fun m => post_dose_amount_succ m) n
+  have h0 : (∑ i ∈ Finset.range (0 + 1),
+      D * Real.exp (-k * (((0 : ℕ) : ℝ) * tau - (i : ℝ) * tau))) = D := by
+    simp
+  rwa [h0] at h
 
 end MathlibExt.Biology.Biophysics.CompartmentKinetics.DoseRecurrence
