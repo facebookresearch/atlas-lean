@@ -119,7 +119,7 @@ theorem queueLen_eq_zero_of_clearance {lam mu R : ℝ} (hlam : 0 < lam)
       linarith
     exact max_eq_left hinner
 
-/-- Nonnegativity everywhere in time. -/
+/-- Nonnegativity at every nonnegative time. -/
 theorem queueLen_nonneg {lam mu R : ℝ} (hlam : 0 < lam)
     {t : ℝ} (ht0 : 0 ≤ t) :
     0 ≤ queueLen lam mu R t := by
