@@ -79,11 +79,11 @@ lemma separableGuidePotential_apply (c : SpeedOfLight) (a : ℝ → ℝ) (f : �
   rcases μ with μ | μ <;> fin_cases μ <;> rfl
 
 open SpaceTime in
-private theorem symm_apply (c : SpeedOfLight) (t : Time) (p : Space) (μ : Fin 1 ⊕ Fin 3) :
+private lemma symm_apply (c : SpeedOfLight) (t : Time) (p : Space) (μ : Fin 1 ⊕ Fin 3) :
     (toTimeAndSpace c).symm (t, p) μ = Sum.elim (fun _ => c * t.val) p μ := by
   rcases μ with _ | _ <;> rfl
 
-private theorem timeSlice_apply {M : Type} (c : SpeedOfLight) (g : SpaceTime → M) (t : Time)
+private lemma timeSlice_apply {M : Type} (c : SpeedOfLight) (g : SpaceTime → M) (t : Time)
     (p : Space) : SpaceTime.timeSlice c g t p = g ((SpaceTime.toTimeAndSpace c).symm (t, p)) := rfl
 
 /-- `φ = 0`. -/
@@ -102,7 +102,7 @@ lemma vectorPotential_separableGuidePotential (c : SpeedOfLight) (a : ℝ → �
   fin_cases i <;> simp [ElectromagneticPotential.vectorPotential, timeSlice_apply,
     separableGuidePotential_apply, symm_apply, c.pos.ne']
 
-private theorem basis_apply (μ j : Fin 3) : (Space.basis μ : Space) j = if j = μ then 1 else 0 := by
+private lemma basis_apply (μ j : Fin 3) : (Space.basis μ : Space) j = if j = μ then 1 else 0 := by
   rw [← Space.basis.repr_symm_single]
   exact PiLp.single_apply (p := 2) (i := μ) (a := (1 : ℝ)) (j := j)
 
@@ -113,18 +113,18 @@ private noncomputable def coord (i : Fin 3) : Space →L[ℝ] ℝ :=
     exact Real.abs_le_sqrt (Finset.single_le_sum (f := fun j => p j ^ 2)
       (fun j _ => sq_nonneg (p j)) (Finset.mem_univ i))
 
-@[simp] private theorem coord_apply (i : Fin 3) (p : Space) : coord i p = p i := rfl
+@[simp] private lemma coord_apply (i : Fin 3) (p : Space) : coord i p = p i := rfl
 
 /-- The time coordinate as a continuous linear map. -/
 private noncomputable def timeCoord : Time →L[ℝ] ℝ :=
   LinearMap.mkContinuous ⟨⟨Time.val, fun _ _ => rfl⟩, fun _ _ => rfl⟩ 1 fun t => by
     rw [one_mul]; rfl
 
-@[simp] private theorem timeCoord_apply (t : Time) : timeCoord t = t.val := rfl
+@[simp] private lemma timeCoord_apply (t : Time) : timeCoord t = t.val := rfl
 
-@[simp] private theorem time_one_val : (1 : Time).val = 1 := Nat.cast_one
+@[simp] private lemma time_one_val : (1 : Time).val = 1 := Nat.cast_one
 
-private theorem space_deriv_mul (a F : ℝ → ℝ) (p : Space) (ha : DifferentiableAt ℝ a (p 0))
+private lemma space_deriv_mul (a F : ℝ → ℝ) (p : Space) (ha : DifferentiableAt ℝ a (p 0))
     (hF : DifferentiableAt ℝ F (p 2)) (μ : Fin 3) :
     Space.deriv μ (fun q : Space => a (q 0) * F (q 2)) p =
       a (p 0) * (deriv F (p 2) * if 2 = μ then 1 else 0) +
@@ -134,7 +134,7 @@ private theorem space_deriv_mul (a F : ℝ → ℝ) (p : Space) (ha : Differenti
       (hF.hasDerivAt.comp_hasFDerivAt p (coord 2).hasFDerivAt)
   simp [Space.deriv, h.fderiv, basis_apply]
 
-private theorem electricField_of (c : SpeedOfLight) (A : ElectromagneticPotential) (t : Time)
+private lemma electricField_of (c : SpeedOfLight) (A : ElectromagneticPotential) (t : Time)
     (p : Space) (g : ℝ → ℝ) (g' : ℝ) (hφ : A.scalarPotential c = 0)
     (hA : ∀ s, A.vectorPotential c s p = WithLp.toLp 2 ![0, g s.val, 0])
     (hg : HasDerivAt g g' t.val) :
@@ -148,11 +148,11 @@ private theorem electricField_of (c : SpeedOfLight) (A : ElectromagneticPotentia
   rw [h.fderiv]
   ext i; fin_cases i <;> simp [Space.grad, Space.deriv]
 
-private theorem diff_t {f : ℝ → ℝ → ℝ} (hf : ContDiff ℝ ∞ (Function.uncurry f)) (z : ℝ) :
+private lemma diff_t {f : ℝ → ℝ → ℝ} (hf : ContDiff ℝ ∞ (Function.uncurry f)) (z : ℝ) :
     Differentiable ℝ (fun s => f s z) :=
   (hf.differentiable (by simp)).comp (differentiable_id.prodMk (differentiable_const z))
 
-private theorem diff_z {f : ℝ → ℝ → ℝ} (hf : ContDiff ℝ ∞ (Function.uncurry f)) (t : ℝ) :
+private lemma diff_z {f : ℝ → ℝ → ℝ} (hf : ContDiff ℝ ∞ (Function.uncurry f)) (t : ℝ) :
     Differentiable ℝ (f t) :=
   (hf.differentiable (by simp)).comp ((differentiable_const t).prodMk differentiable_id)
 
@@ -165,7 +165,7 @@ lemma electricField_separableGuidePotential (c : SpeedOfLight) (a : ℝ → ℝ)
     (fun s => vectorPotential_separableGuidePotential c a f s p)
     ((diff_t hf (p 2) t.val).hasDerivAt.const_mul (a (p 0)))
 
-private theorem space_deriv_zero (μ : Fin 3) (p : Space) :
+private lemma space_deriv_zero (μ : Fin 3) (p : Space) :
     Space.deriv μ (fun _ : Space => (0 : ℝ)) p = 0 := by
   simp [Space.deriv]
 
@@ -203,26 +203,19 @@ lemma contDiff_separableGuidePotential (c : SpeedOfLight) (a : ℝ → ℝ) (f :
     · exact contDiff_const
   simpa [Function.comp_def] using ev.symm.contDiff.comp ((contDiff_piLp 2).2 h)
 
-/-- The zero current is `C^∞` (premise `hJ` of Physlib's `IsExtrema` equivalences). -/
-lemma contDiff_zero_lorentzCurrentDensity :
-    ContDiff ℝ ∞ (0 : LorentzCurrentDensity) := by
-  exact contDiff_const
-
 /-- **Fields of the separable guide potential.** For `C^∞` `a` and `f` and any speed of light
 `c`, the potential `A_y = a(x) f(t, z)`, `A_x = A_z = φ = 0` (with `t = x⁰ / c`) has
-`E = (0, -a f_t, 0)` and `B = (-a f_z, 0, a' f)`, and both the potential and the zero current
-are `C^∞`. -/
+`E = (0, -a f_t, 0)` and `B = (-a f_z, 0, a' f)`, and the potential is `C^∞`. -/
 lemma separableGuidePotential_fields (c : SpeedOfLight) (a : ℝ → ℝ) (f : ℝ → ℝ → ℝ)
     (ha : ContDiff ℝ ∞ a) (hf : ContDiff ℝ ∞ (Function.uncurry f)) :
     (∀ t p, (separableGuidePotential c a f).electricField c t p =
       WithLp.toLp 2 ![0, -(a (p 0) * deriv (fun s => f s (p 2)) t.val), 0]) ∧
     (∀ t p, (separableGuidePotential c a f).magneticField c t p =
       WithLp.toLp 2 ![-(a (p 0) * deriv (f t.val) (p 2)), 0, deriv a (p 0) * f t.val (p 2)]) ∧
-    ContDiff ℝ ∞ (separableGuidePotential c a f) ∧
-    ContDiff ℝ ∞ (0 : LorentzCurrentDensity) := by
+    ContDiff ℝ ∞ (separableGuidePotential c a f) := by
   exact ⟨electricField_separableGuidePotential c a f hf,
     magneticField_separableGuidePotential c a f ha hf,
-    contDiff_separableGuidePotential c a f ha hf, contDiff_zero_lorentzCurrentDensity⟩
+    contDiff_separableGuidePotential c a f ha hf⟩
 
 /-! ### Validation: sinusoidal `a`, time-space `f` -/
 
@@ -230,15 +223,15 @@ lemma separableGuidePotential_fields (c : SpeedOfLight) (a : ℝ → ℝ) (f : �
 noncomputable def sinusoidalGuidePotential (c : SpeedOfLight) : ElectromagneticPotential :=
   separableGuidePotential c Real.sin (fun t z => Real.cos (2 * t - 3 * z))
 
-private theorem contDiff_cos_wave :
+private lemma contDiff_cos_wave :
     ContDiff ℝ ∞ (Function.uncurry fun t z : ℝ => Real.cos (2 * t - 3 * z)) :=
   Real.contDiff_cos.comp ((contDiff_const.mul contDiff_fst).sub (contDiff_const.mul contDiff_snd))
 
-private theorem deriv_wave_t (t z : ℝ) :
+private lemma deriv_wave_t (t z : ℝ) :
     deriv (fun s => Real.cos (2 * s - 3 * z)) t = -(2 * Real.sin (2 * t - 3 * z)) := by
   rw [(((hasDerivAt_id' t).const_mul 2).sub_const (3 * z)).cos.deriv]; ring
 
-private theorem deriv_wave_z (t z : ℝ) :
+private lemma deriv_wave_z (t z : ℝ) :
     deriv (fun w => Real.cos (2 * t - 3 * w)) z = 3 * Real.sin (2 * t - 3 * z) := by
   rw [(((hasDerivAt_id' z).const_mul 3).const_sub (2 * t)).cos.deriv]; ring
 
