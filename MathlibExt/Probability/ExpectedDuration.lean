@@ -12,8 +12,6 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 import Mathlib.Data.Fintype.Order
 import Mathlib.MeasureTheory.Function.L1Space.Integrable
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
 
 /-!
 # Expected project duration versus path means
@@ -35,9 +33,10 @@ arbitrary; no independence or integer-time model is assumed.
 
 ## iv. References
 
-- Critical-path method background: J. E. Kelley and M. R. Walker,
-  critical-path planning and scheduling, 1959 (expected-maximum form
-  as stated here).
+- Historical background only: J. E. Kelley and M. R. Walker,
+  critical-path planning and scheduling, 1959 (deterministic CPM;
+  the stochastic inequality here is the elementary integral bound
+  proved in this module).
 
 ## A. Path durations
 -/
