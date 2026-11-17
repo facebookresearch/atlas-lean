@@ -123,9 +123,10 @@ lemma gram_eq_conjTranspose_mul_waveformMatrix {ι κ : Type} [Fintype ι] [Fint
   intro t _
   rfl
 
-/-- Matched projections of `∑ a_k u_k` are `G a`, with `G_jk = ⟪u_j, u_k⟫`. -/
+/-- Matched projections of `∑ a_k u_k` are `G a`, with `G_jk = ⟪u_j, u_k⟫`.
+No normalization is needed for this identity. -/
 lemma matchedOutput_eq_gram_mulVec {ι κ : Type} [Fintype ι] [Fintype κ]
-    (u : κ → EuclideanSpace ℂ ι) (hnorm : ∀ j, ‖u j‖ = 1) (a : κ → ℂ) :
+    (u : κ → EuclideanSpace ℂ ι) (a : κ → ℂ) :
     matchedOutput u a = (Matrix.gram ℂ u).mulVec a := by
   funext j
   simp only [matchedOutput, superpose, inner_sum, inner_smul_right, Matrix.mulVec,
@@ -141,7 +142,7 @@ lemma matchedOutput_sub_eq_interference {ι κ : Type} [Fintype ι] [Fintype κ]
     [DecidableEq κ] (u : κ → EuclideanSpace ℂ ι) (hnorm : ∀ j, ‖u j‖ = 1)
     (a : κ → ℂ) (j : κ) :
     matchedOutput u a j - a j = ∑ k ∈ Finset.univ.erase j, Matrix.gram ℂ u j k * a k := by
-  have h := congrFun (matchedOutput_eq_gram_mulVec u hnorm a) j
+  have h := congrFun (matchedOutput_eq_gram_mulVec u a) j
   rw [h]
   have hmul : (Matrix.gram ℂ u).mulVec a j
       = ∑ k, Matrix.gram ℂ u j k * a k := by
@@ -175,7 +176,7 @@ lemma matchedOutput_eq_of_orthonormal {ι κ : Type} [Fintype ι] [Fintype κ]
     matchedOutput u a = a := by
   classical
   obtain ⟨hnorm, hpair⟩ := horth
-  rw [matchedOutput_eq_gram_mulVec u hnorm a,
+  rw [matchedOutput_eq_gram_mulVec u a,
     Matrix.gram_eq_one_iff_orthonormal.mpr ⟨hnorm, hpair⟩, Matrix.one_mulVec]
 
 /-- FDMA: carriers at distinct DFT frequencies are orthonormal. -/
@@ -390,7 +391,7 @@ lemma gram_skewPair_zero_one :
 /-- A nonorthogonal interferer contributes its Gram term: `y_0 = a_0 + a_1/√2`. -/
 lemma skewPair_matchedOutput_zero (a : Fin 2 → ℂ) :
     matchedOutput skewPair a 0 = a 0 + ((Real.sqrt 2)⁻¹ : ℂ) * a 1 := by
-  have h := congrFun (matchedOutput_eq_gram_mulVec skewPair norm_skewPair a) 0
+  have h := congrFun (matchedOutput_eq_gram_mulVec skewPair a) 0
   rw [h]
   have hmul : (Matrix.gram ℂ skewPair).mulVec a 0
       = ∑ k, Matrix.gram ℂ skewPair 0 k * a k := by
