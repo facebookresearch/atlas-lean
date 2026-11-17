@@ -9,7 +9,7 @@ module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
-public import MathlibExt.Probability.Diffusion.FokkerPlanckFreeEnergy
+import MathlibExt.Probability.Diffusion.FokkerPlanckFreeEnergy
 import Mathlib.Tactic.Ring
 
 /-!
