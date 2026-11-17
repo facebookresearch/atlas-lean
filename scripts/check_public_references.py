@@ -120,36 +120,9 @@ def oid(value):
 def scan_commit(raw, sha, findings=None):
     if b"\n\n" not in raw:
         raise IncompleteScan("Malformed commit object")
-    headers, message = raw.split(b"\n\n", 1)
-    findings = scan(
-        message.decode("utf-8", errors="replace"), "commit " + sha, findings
+    return scan(
+        raw.decode("utf-8", errors="replace"), "commit " + sha, findings
     )
-    field = b""
-    in_signature = False
-    for line in headers.split(b"\n"):
-        if not line.startswith(b" "):
-            field = line.split(b" ", 1)[0]
-            in_signature = False
-        if field not in (b"author", b"committer", b"mergetag"):
-            continue
-        # Only standalone delimiters in an embedded tag are signature syntax.
-        # Marker text inside a name or tag header is ordinary public content.
-        if field == b"mergetag":
-            signature_line = line.removesuffix(b"\r")
-            if signature_line == b" -----BEGIN PGP SIGNATURE-----":
-                in_signature = True
-                continue
-            if signature_line == b" -----END PGP SIGNATURE-----":
-                in_signature = False
-                continue
-            if in_signature:
-                continue
-        scan(
-            line.decode("utf-8", errors="replace"),
-            "commit " + sha + " header",
-            findings,
-        )
-    return findings
 
 
 def check_range(root, base, head, metadata=None):

@@ -58,7 +58,7 @@ class Patterns(unittest.TestCase):
         )
         self.assertTrue(gate.scan("fbcode" + "/example/source.py", "text"))
 
-    def test_signature_payload_is_not_scanned(self):
+    def test_signature_headers_are_public_content(self):
         raw = (
             "author Example <author@example.com>\n"
             "committer Example <author@example.com>\n"
@@ -68,9 +68,9 @@ class Patterns(unittest.TestCase):
             + private_ref("P")
             + "\n\nOrdinary message\n"
         ).encode()
-        self.assertEqual(gate.scan_commit(raw, "a" * 40), [])
+        self.assertEqual(len(gate.scan_commit(raw, "a" * 40)), 2)
 
-    def test_mergetag_signature_payload_is_not_scanned(self):
+    def test_mergetag_signature_markers_are_not_control(self):
         for ending in (" -----END PGP SIGNATURE-----\n", ""):
             with self.subTest(ending=ending):
                 raw = (
@@ -87,9 +87,9 @@ class Patterns(unittest.TestCase):
                     + private_ref("P")
                     + " <author@example.com>\n\nOrdinary message\n"
                 ).encode()
-                self.assertEqual(len(gate.scan_commit(raw, "a" * 40)), 2)
+                self.assertEqual(len(gate.scan_commit(raw, "a" * 40)), 3)
 
-    def test_mergetag_crlf_signature_payload_is_not_scanned(self):
+    def test_mergetag_crlf_signature_markers_are_not_control(self):
         raw = (
             "mergetag object "
             + "a" * 40
@@ -100,7 +100,7 @@ class Patterns(unittest.TestCase):
             + private_ref("T")
             + " <author@example.com>\n\nOrdinary message\n"
         ).encode()
-        self.assertEqual(len(gate.scan_commit(raw, "a" * 40)), 1)
+        self.assertEqual(len(gate.scan_commit(raw, "a" * 40)), 2)
 
     def test_mergetag_signature_marker_in_text_is_not_control(self):
         for prefix in ("mergetag ", " tagger ", " tag "):
@@ -260,6 +260,50 @@ class Repository(unittest.TestCase):
             b"\r", gate.git(self.root, "cat-file", "commit", self.head())
         )
         self.assertEqual(len(self.check()["findings"]), 2)
+
+    def test_signature_shaped_headers_cannot_hide_references(self):
+        self.write("notes.md", "Public notes\n")
+        self.commit("Side change")
+        side = self.head()
+        tree = self.run_git("rev-parse", "HEAD^{tree}")
+        identity = "Example <author@example.com> 1700000000 +0000"
+        for field in ("mergetag", "gpgsig", "gpgsig-sha256", "x-provenance"):
+            for ending in ("", "\n-----END PGP SIGNATURE-----"):
+                with self.subTest(field=field, closed=bool(ending)):
+                    value = (
+                        "-----BEGIN PGP SIGNATURE-----\n"
+                        + private_ref()
+                        + ending
+                    )
+                    if field == "mergetag":
+                        value = (
+                            f"object {side}\ntype commit\ntag release\n"
+                            f"tagger {identity}\n\nNotes\n{value}"
+                        )
+                    raw = (
+                        f"tree {tree}\nparent {self.base}\nparent {side}\n"
+                        f"author {identity}\ncommitter {identity}\n"
+                        + field
+                        + " "
+                        + value.replace("\n", "\n ")
+                        + "\n\nMerge release\n"
+                    ).encode()
+                    sha = (
+                        gate.git(
+                            self.root,
+                            "hash-object",
+                            "-t",
+                            "commit",
+                            "-w",
+                            "--stdin",
+                            input_data=raw,
+                        )
+                        .decode()
+                        .strip()
+                    )
+                    self.run_git("update-ref", "HEAD", sha)
+                    self.run_git("fsck", "--strict")
+                    self.assertEqual(len(self.check()["findings"]), 1)
 
     def test_merge_side_history_is_scanned(self):
         original = self.run_git("branch", "--show-current")
