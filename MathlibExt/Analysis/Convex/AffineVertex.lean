@@ -73,7 +73,7 @@ theorem precedence_le_iff {ι : Type*} [Fintype ι]
   constructor <;> intro h <;> linarith
 
 /-- An affine inequality holds on the whole convex hull of a finite
-nonempty vertex set exactly when it holds at every vertex. This is
+possibly empty finite vertex set exactly when it holds at every vertex. This is
 the fixed-schedule vertex certificate: precedence inequalities with
 affine durations need only be checked at hull vertices. -/
 theorem affineFun_nonneg_hull_iff {ι : Type*} [Fintype ι] [DecidableEq ι]
