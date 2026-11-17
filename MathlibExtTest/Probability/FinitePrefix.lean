@@ -26,6 +26,24 @@ namespace MathlibExtTest.Probability.FinitePrefix
 
 open MathlibExt.Probability.FinitePrefix
 
+theorem ennreal_half_mul_three_quarter : (1 / 2 : ℝ≥0∞) * (3 / 4) = 3 / 8 := by
+  apply (ENNReal.toReal_eq_toReal_iff' ?_ ?_).mp
+  · simp only [ENNReal.toReal_mul, ENNReal.toReal_div, ENNReal.toReal_one,
+      ENNReal.toReal_ofNat]
+    norm_num
+  · finiteness
+  · finiteness
+
+theorem ennreal_one_sub_quarter : (1 - 1 / 4 : ℝ≥0∞) = 3 / 4 := by
+  refine ENNReal.sub_eq_of_eq_add (by finiteness) ?_
+  apply (ENNReal.toReal_eq_toReal_iff' ?_ ?_).mp
+  · have ha : (3 / 4 : ℝ≥0∞) ≠ ∞ := by finiteness
+    have hb : (1 / 4 : ℝ≥0∞) ≠ ∞ := by finiteness
+    rw [ENNReal.toReal_add ha hb]
+    simp only [ENNReal.toReal_div, ENNReal.toReal_one, ENNReal.toReal_ofNat]
+    norm_num
+  · finiteness
+  · finiteness
 
 section BoolExamples
 
@@ -133,6 +151,7 @@ theorem prefixProd_histKernel_example :
   simp only [prefixProd]
   rw [histKernel_nil_true, histKernel_singleton_true_false, ennreal_one_sub_quarter,
     mul_one, ennreal_half_mul_three_quarter]
+
 end BoolExamples
 
 end MathlibExtTest.Probability.FinitePrefix
