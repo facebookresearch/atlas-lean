@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Probability.Distributions.BinomialTail
 public import Mathlib.Data.ZMod.Basic
+public import CSLibExt.Coding.Hamming74
 public import Mathlib.MeasureTheory.Constructions.Pi
 public import Mathlib.Probability.Distributions.Bernoulli
 
@@ -34,11 +35,6 @@ distance decoding error bound).
 open ProbabilityTheory
 
 namespace CSLibExt.Coding.BoundedDistanceBSC
-
-/-- Hamming weight of a binary error word: number of flipped
-positions. -/
-def errorWeight (n : ℕ) (e : Fin n → ZMod 2) : ℕ :=
-  (Finset.univ.filter (fun i => e i ≠ 0)).card
 
 /-- Binary symmetric channel law on error words: product
 (`Measure.pi`) of IID `Bernoulli(delta)` flips, where flip value `1`
@@ -71,20 +67,19 @@ private lemma zmod2_eq_one_of_ne_zero (x : ZMod 2) (hx : x ≠ 0) : x = 1 := by
   have h : ∀ y : ZMod 2, y ≠ 0 → y = 1 := by decide
   exact h x hx
 
-/-- The error weight is bounded by the word length. -/
-private lemma errorWeight_le_n (n : ℕ) (e : Fin n → ZMod 2) :
-    errorWeight n e ≤ n := by
-  unfold errorWeight
-  calc (Finset.univ.filter (fun i => e i ≠ 0)).card ≤ Finset.univ.card :=
-        Finset.card_filter_le _ _
-    _ = n := by rw [Finset.card_univ, Fintype.card_fin]
+/-- The Hamming norm is bounded by the word length. -/
+private lemma hammingNorm_le_n (n : ℕ) (e : Fin n → ZMod 2) :
+    hammingNorm e ≤ n := by
+  calc hammingNorm e ≤ Fintype.card (Fin n) := hammingNorm_le_card_fintype
+    _ = n := Fintype.card_fin n
 
 /-- The `bscMeasure` mass of a singleton error word. -/
 private lemma bsc_real_singleton (n : ℕ) (delta : ℝ) (hdelta0 : 0 ≤ delta)
     (hdelta1 : delta ≤ 1) (e : Fin n → ZMod 2) :
     (bscMeasure n delta hdelta0 hdelta1).real {e} =
-      delta ^ errorWeight n e * (1 - delta) ^ (n - errorWeight n e) := by
-  unfold errorWeight
+      delta ^ hammingNorm e * (1 - delta) ^ (n - hammingNorm e) := by
+  have hbridge : hammingNorm e = (Finset.univ.filter (fun i => e i ≠ 0)).card := rfl
+  rw [hbridge]
   have hfactor : ∀ i : Fin n,
       ((ProbabilityTheory.bernoulliMeasure (1 : ZMod 2) 0
         ⟨delta, Set.mem_Icc.mpr ⟨hdelta0, hdelta1⟩⟩) {e i}).toReal =
@@ -149,21 +144,21 @@ private lemma bsc_real_singleton (n : ℕ) (delta : ℝ) (hdelta0 : 0 ≤ delta)
 /-- Error words of a given weight biject with `j`-subsets of positions. -/
 private lemma card_filter_weight_eq_choose (n j : ℕ) :
     (Finset.univ.filter
-      (fun e : Fin n → ZMod 2 => errorWeight n e = j)).card =
+      (fun e : Fin n → ZMod 2 => hammingNorm e = j)).card =
       n.choose j := by
   have hi_maps : Set.MapsTo (supp n)
       (↑(Finset.univ.filter
-        (fun e : Fin n → ZMod 2 => errorWeight n e = j)))
+        (fun e : Fin n → ZMod 2 => hammingNorm e = j)))
       (↑(Finset.powersetCard j (Finset.univ : Finset (Fin n)))) := by
     intro e he
-    have hew : errorWeight n e = j :=
+    have hew : hammingNorm e = j :=
       (Finset.mem_filter.mp (Finset.mem_coe.mp he)).2
     rw [Finset.mem_coe, Finset.mem_powersetCard]
     refine ⟨Finset.filter_subset _ _, ?_⟩
     exact hew
   have hi_inj : Set.InjOn (supp n)
       (↑(Finset.univ.filter
-        (fun e : Fin n → ZMod 2 => errorWeight n e = j))) := by
+        (fun e : Fin n → ZMod 2 => hammingNorm e = j))) := by
     intro e₁ _ e₂ _ hsup
     funext i
     by_cases h1 : e₁ i ≠ 0
@@ -182,7 +177,7 @@ private lemma card_filter_weight_eq_choose (n j : ℕ) :
       rw [he₁0, he₂0]
   have hi_surj : Set.SurjOn (supp n)
       (↑(Finset.univ.filter
-        (fun e : Fin n → ZMod 2 => errorWeight n e = j)))
+        (fun e : Fin n → ZMod 2 => hammingNorm e = j)))
       (↑(Finset.powersetCard j (Finset.univ : Finset (Fin n)))) := by
     intro S hS
     have hScard : S.card = j :=
@@ -205,8 +200,8 @@ private lemma card_filter_weight_eq_choose (n j : ℕ) :
           rw [ite_eq_left hiS]
         rw [h1]
         exact by decide
-    have hweight : errorWeight n (ind n S) = j := by
-      have hrfl : errorWeight n (ind n S) = (supp n (ind n S)).card := rfl
+    have hweight : hammingNorm (ind n S) = j := by
+      have hrfl : hammingNorm (ind n S) = (supp n (ind n S)).card := rfl
       rw [hrfl, hsupp]
       exact hScard
     refine ⟨ind n S, ?_, hsupp⟩
@@ -222,12 +217,12 @@ theorem weight_gt_t_of_decode_ne (n k t : ℕ)
     (encode : (Fin k → ZMod 2) → (Fin n → ZMod 2))
     (decode : (Fin n → ZMod 2) → (Fin n → ZMod 2))
     (hcorrect : ∀ (msg : Fin k → ZMod 2) (e : Fin n → ZMod 2),
-      errorWeight n e ≤ t → decode (encode msg + e) = encode msg)
+      hammingNorm e ≤ t → decode (encode msg + e) = encode msg)
     (m : Fin k → ZMod 2) (e : Fin n → ZMod 2)
     (hbad : decode (encode m + e) ≠ encode m) :
-    t + 1 ≤ errorWeight n e := by
+    t + 1 ≤ hammingNorm e := by
   by_contra h
-  have hle : errorWeight n e ≤ t := by omega
+  have hle : hammingNorm e ≤ t := by omega
   exact hbad (hcorrect m e hle)
 
 /-- The BSC product law gives the weight upper tail as the binomial
@@ -235,34 +230,34 @@ tail polynomial. -/
 theorem bsc_real_weight_ge_eq_binomTail (n k : ℕ) (delta : ℝ)
     (hdelta0 : 0 ≤ delta) (hdelta1 : delta ≤ 1) :
     (bscMeasure n delta hdelta0 hdelta1).real
-        {e : Fin n → ZMod 2 | k ≤ errorWeight n e} =
+        {e : Fin n → ZMod 2 | k ≤ hammingNorm e} =
       binomTail n k delta := by
   have hFS : ((Finset.univ.filter
-        (fun e : Fin n → ZMod 2 => k ≤ errorWeight n e)) :
+        (fun e : Fin n → ZMod 2 => k ≤ hammingNorm e)) :
         Set (Fin n → ZMod 2)) =
-      {e : Fin n → ZMod 2 | k ≤ errorWeight n e} := by
+      {e : Fin n → ZMod 2 | k ≤ hammingNorm e} := by
     apply le_antisymm
     · intro e he
       rw [Finset.mem_coe, Finset.mem_filter] at he
-      show k ≤ errorWeight n e
+      show k ≤ hammingNorm e
       exact he.2
     · intro e he
-      have he' : k ≤ errorWeight n e := he
+      have he' : k ≤ hammingNorm e := he
       rw [Finset.mem_coe, Finset.mem_filter]
       exact ⟨Finset.mem_univ e, he'⟩
   have hdisj : Set.PairwiseDisjoint
       (↑(Finset.univ.filter
-        (fun e : Fin n → ZMod 2 => k ≤ errorWeight n e)))
+        (fun e : Fin n → ZMod 2 => k ≤ hammingNorm e)))
       (fun e => ({e} : Set (Fin n → ZMod 2))) := by
     intro e _ e' _ hne
     show Disjoint ({e} : Set (Fin n → ZMod 2)) ({e'} : Set (Fin n → ZMod 2))
     exact Set.disjoint_singleton.mpr hne
   have hbiU : (⋃ e ∈ ((Finset.univ.filter
-          (fun e : Fin n → ZMod 2 => k ≤ errorWeight n e)) :
+          (fun e : Fin n → ZMod 2 => k ≤ hammingNorm e)) :
           Set (Fin n → ZMod 2)),
         ({e} : Set (Fin n → ZMod 2))) =
       ((Finset.univ.filter
-        (fun e : Fin n → ZMod 2 => k ≤ errorWeight n e)) :
+        (fun e : Fin n → ZMod 2 => k ≤ hammingNorm e)) :
         Set (Fin n → ZMod 2)) := by
     apply le_antisymm
     · intro e he
@@ -273,53 +268,53 @@ theorem bsc_real_weight_ge_eq_binomTail (n k : ℕ) (delta : ℝ)
       simp only [Set.mem_iUnion, Set.mem_singleton_iff, exists_prop]
       exact ⟨e, he, rfl⟩
   have hsum : (bscMeasure n delta hdelta0 hdelta1)
-        {e : Fin n → ZMod 2 | k ≤ errorWeight n e} =
-      ∑ e ∈ Finset.univ.filter (fun e : Fin n → ZMod 2 => k ≤ errorWeight n e),
+        {e : Fin n → ZMod 2 | k ≤ hammingNorm e} =
+      ∑ e ∈ Finset.univ.filter (fun e : Fin n → ZMod 2 => k ≤ hammingNorm e),
         (bscMeasure n delta hdelta0 hdelta1) {e} := by
     have hbiUmeas : (bscMeasure n delta hdelta0 hdelta1)
           (⋃ e ∈ ((Finset.univ.filter
-            (fun e : Fin n → ZMod 2 => k ≤ errorWeight n e)) :
+            (fun e : Fin n → ZMod 2 => k ≤ hammingNorm e)) :
             Set (Fin n → ZMod 2)),
             ({e} : Set (Fin n → ZMod 2))) =
-        ∑ e ∈ Finset.univ.filter (fun e : Fin n → ZMod 2 => k ≤ errorWeight n e),
+        ∑ e ∈ Finset.univ.filter (fun e : Fin n → ZMod 2 => k ≤ hammingNorm e),
           (bscMeasure n delta hdelta0 hdelta1) {e} :=
       MeasureTheory.measure_biUnion_finset hdisj
         (fun e _ => measurableSet_singleton e)
     rw [← hFS, ← hbiU]
     exact hbiUmeas
   have hreal_sum : (bscMeasure n delta hdelta0 hdelta1).real
-        {e : Fin n → ZMod 2 | k ≤ errorWeight n e} =
-      ∑ e ∈ Finset.univ.filter (fun e : Fin n → ZMod 2 => k ≤ errorWeight n e),
+        {e : Fin n → ZMod 2 | k ≤ hammingNorm e} =
+      ∑ e ∈ Finset.univ.filter (fun e : Fin n → ZMod 2 => k ≤ hammingNorm e),
         (bscMeasure n delta hdelta0 hdelta1).real {e} := by
     rw [MeasureTheory.measureReal_def, hsum,
       ENNReal.toReal_sum (fun e (_ : e ∈ Finset.univ.filter
-        (fun e : Fin n → ZMod 2 => k ≤ errorWeight n e)) =>
+        (fun e : Fin n → ZMod 2 => k ≤ hammingNorm e)) =>
         (MeasureTheory.measure_lt_top (bscMeasure n delta hdelta0 hdelta1)
           {e}).ne)]
     refine Finset.sum_congr rfl (fun e _ => ?_)
     rw [MeasureTheory.measureReal_def]
   have h_mem : ∀ e ∈ Finset.univ.filter
-      (fun e : Fin n → ZMod 2 => k ≤ errorWeight n e),
-      errorWeight n e ∈ Finset.Icc k n := by
+      (fun e : Fin n → ZMod 2 => k ≤ hammingNorm e),
+      hammingNorm e ∈ Finset.Icc k n := by
     intro e he
-    have hek : k ≤ errorWeight n e := (Finset.mem_filter.mp he).2
-    have hle : errorWeight n e ≤ n := errorWeight_le_n n e
+    have hek : k ≤ hammingNorm e := (Finset.mem_filter.mp he).2
+    have hle : hammingNorm e ≤ n := hammingNorm_le_n n e
     rw [Finset.mem_Icc]
     exact ⟨hek, hle⟩
   have hsplit : (∑ e ∈ Finset.univ.filter
-        (fun e : Fin n → ZMod 2 => k ≤ errorWeight n e),
+        (fun e : Fin n → ZMod 2 => k ≤ hammingNorm e),
         (bscMeasure n delta hdelta0 hdelta1).real {e}) =
       ∑ j ∈ Finset.Icc k n,
         ∑ e ∈ (Finset.univ.filter
-          (fun e : Fin n → ZMod 2 => k ≤ errorWeight n e)).filter
-          (fun e => errorWeight n e = j),
+          (fun e : Fin n → ZMod 2 => k ≤ hammingNorm e)).filter
+          (fun e => hammingNorm e = j),
         (bscMeasure n delta hdelta0 hdelta1).real {e} :=
     (Finset.sum_fiberwise_of_maps_to h_mem _).symm
   have hfib : ∀ j ∈ Finset.Icc k n,
       (Finset.univ.filter
-        (fun e : Fin n → ZMod 2 => k ≤ errorWeight n e)).filter
-        (fun e => errorWeight n e = j) =
-        Finset.univ.filter (fun e : Fin n → ZMod 2 => errorWeight n e = j) := by
+        (fun e : Fin n → ZMod 2 => k ≤ hammingNorm e)).filter
+        (fun e => hammingNorm e = j) =
+        Finset.univ.filter (fun e : Fin n → ZMod 2 => hammingNorm e = j) := by
     intro j hj
     have hkj : k ≤ j := (Finset.mem_Icc.mp hj).1
     apply le_antisymm
@@ -327,36 +322,29 @@ theorem bsc_real_weight_ge_eq_binomTail (n k : ℕ) (delta : ℝ)
       have he2 := (Finset.mem_filter.mp he).2
       exact Finset.mem_filter.mpr ⟨Finset.mem_univ e, he2⟩
     · intro e he
-      have he2 : errorWeight n e = j := (Finset.mem_filter.mp he).2
-      have hek : k ≤ errorWeight n e := by omega
+      have he2 : hammingNorm e = j := (Finset.mem_filter.mp he).2
+      have hek : k ≤ hammingNorm e := by omega
       exact Finset.mem_filter.mpr
         ⟨Finset.mem_filter.mpr ⟨Finset.mem_univ e, hek⟩, he2⟩
   have hinner : ∀ j ∈ Finset.Icc k n,
       (∑ e ∈ (Finset.univ.filter
-        (fun e : Fin n → ZMod 2 => k ≤ errorWeight n e)).filter
-        (fun e => errorWeight n e = j),
+        (fun e : Fin n → ZMod 2 => k ≤ hammingNorm e)).filter
+        (fun e => hammingNorm e = j),
         (bscMeasure n delta hdelta0 hdelta1).real {e}) =
         ((n.choose j : ℝ) * delta ^ j * (1 - delta) ^ (n - j)) := by
     intro j hj
     have hconst : ∀ e ∈ Finset.univ.filter
-        (fun e : Fin n → ZMod 2 => errorWeight n e = j),
+        (fun e : Fin n → ZMod 2 => hammingNorm e = j),
         (bscMeasure n delta hdelta0 hdelta1).real {e} =
           delta ^ j * (1 - delta) ^ (n - j) := by
       intro e he
-      have hew : errorWeight n e = j := (Finset.mem_filter.mp he).2
+      have hew : hammingNorm e = j := (Finset.mem_filter.mp he).2
       rw [bsc_real_singleton n delta hdelta0 hdelta1 e, hew]
     rw [hfib j hj, Finset.sum_congr rfl hconst, Finset.sum_const,
       card_filter_weight_eq_choose n j, nsmul_eq_mul, mul_assoc]
   rw [hreal_sum, hsplit]
   unfold binomTail
   exact Finset.sum_congr rfl hinner
-
-/-- The binomial tail vanishes above `n`. -/
-theorem binomTail_eq_zero_of_gt (n k : ℕ) (h : n < k) (p : ℝ) :
-    binomTail n k p = 0 := by
-  unfold binomTail
-  rw [Finset.Icc_eq_empty_of_lt h]
-  simp
 
 /-- **Bounded-distance BSC block-error bound.** A decoder correcting
 every error of weight at most `t` has block-error probability under
@@ -365,19 +353,19 @@ theorem boundedDistance_bsc_error_le_binomTail (n k t : ℕ)
     (encode : (Fin k → ZMod 2) → (Fin n → ZMod 2))
     (decode : (Fin n → ZMod 2) → (Fin n → ZMod 2))
     (hcorrect : ∀ (msg : Fin k → ZMod 2) (e : Fin n → ZMod 2),
-      errorWeight n e ≤ t → decode (encode msg + e) = encode msg)
+      hammingNorm e ≤ t → decode (encode msg + e) = encode msg)
     (m : Fin k → ZMod 2) (delta : ℝ) (hdelta0 : 0 ≤ delta)
     (hdelta1 : delta ≤ 1) :
     (bscMeasure n delta hdelta0 hdelta1).real
         {e : Fin n → ZMod 2 | decode (encode m + e) ≠ encode m} ≤
       binomTail n (t + 1) delta := by
   have hsub : {e : Fin n → ZMod 2 | decode (encode m + e) ≠ encode m} ⊆
-      {e : Fin n → ZMod 2 | t + 1 ≤ errorWeight n e} := by
+      {e : Fin n → ZMod 2 | t + 1 ≤ hammingNorm e} := by
     intro e he
     exact weight_gt_t_of_decode_ne n k t encode decode hcorrect m e he
   have hle := MeasureTheory.measureReal_mono hsub
     (MeasureTheory.measure_lt_top (bscMeasure n delta hdelta0 hdelta1)
-      {e : Fin n → ZMod 2 | t + 1 ≤ errorWeight n e}).ne
+      {e : Fin n → ZMod 2 | t + 1 ≤ hammingNorm e}).ne
   rw [bsc_real_weight_ge_eq_binomTail n (t + 1) delta hdelta0 hdelta1] at hle
   exact hle
 
@@ -389,7 +377,7 @@ theorem hamming74_bsc_error_le_binomTail
     (encode : (Fin 4 → ZMod 2) → (Fin 7 → ZMod 2))
     (decode : (Fin 7 → ZMod 2) → (Fin 7 → ZMod 2))
     (hcorrect : ∀ (msg : Fin 4 → ZMod 2) (e : Fin 7 → ZMod 2),
-      errorWeight 7 e ≤ 1 → decode (encode msg + e) = encode msg)
+      hammingNorm e ≤ 1 → decode (encode msg + e) = encode msg)
     (m : Fin 4 → ZMod 2) (delta : ℝ) (hdelta0 : 0 ≤ delta)
     (hdelta1 : delta ≤ 1) :
     (bscMeasure 7 delta hdelta0 hdelta1).real
@@ -404,17 +392,35 @@ theorem boundedDistance_bsc_error_eq_zero_of_le (n k t : ℕ)
     (encode : (Fin k → ZMod 2) → (Fin n → ZMod 2))
     (decode : (Fin n → ZMod 2) → (Fin n → ZMod 2))
     (hcorrect : ∀ (msg : Fin k → ZMod 2) (e : Fin n → ZMod 2),
-      errorWeight n e ≤ t → decode (encode msg + e) = encode msg)
+      hammingNorm e ≤ t → decode (encode msg + e) = encode msg)
     (hnt : n ≤ t) (m : Fin k → ZMod 2) (delta : ℝ)
     (hdelta0 : 0 ≤ delta) (hdelta1 : delta ≤ 1) :
     (bscMeasure n delta hdelta0 hdelta1).real
         {e : Fin n → ZMod 2 | decode (encode m + e) ≠ encode m} = 0 := by
   have hsub : {e : Fin n → ZMod 2 | decode (encode m + e) ≠ encode m} ⊆ ∅ := by
     intro e he
-    exact absurd (hcorrect m e (le_trans (errorWeight_le_n n e) hnt)) he
+    exact absurd (hcorrect m e (le_trans (hammingNorm_le_n n e) hnt)) he
   have hle := MeasureTheory.measureReal_mono hsub
     (MeasureTheory.measure_lt_top (bscMeasure n delta hdelta0 hdelta1) ∅).ne
   rw [MeasureTheory.measureReal_empty] at hle
   exact le_antisymm hle MeasureTheory.measureReal_nonneg
+
+
+/-- The concrete Hamming (7,4) code of `Cslib.CodingTheory.Hamming74`
+over the BSC: since its decoder corrects every error of weight at
+most `1` (`Hamming74.decode_add`), the block-error probability is at
+most `ProbabilityTheory.binomTail 7 2 delta`. -/
+theorem hamming74_bsc_error_le (m : Fin 4 → ZMod 2) (delta : ℝ)
+    (hdelta0 : 0 ≤ delta) (hdelta1 : delta ≤ 1) :
+    (bscMeasure 7 delta hdelta0 hdelta1).real
+        {e : Fin 7 → ZMod 2 | Cslib.CodingTheory.Hamming74.decode
+          (Cslib.CodingTheory.Hamming74.encode m + e)
+          ≠ Cslib.CodingTheory.Hamming74.encode m}
+      ≤ ProbabilityTheory.binomTail 7 2 delta :=
+  hamming74_bsc_error_le_binomTail
+    Cslib.CodingTheory.Hamming74.encode Cslib.CodingTheory.Hamming74.decode
+    (fun msg e he => Cslib.CodingTheory.Hamming74.decode_add
+      (Cslib.CodingTheory.Hamming74.encode_mem_code msg) he)
+    m delta hdelta0 hdelta1
 
 end CSLibExt.Coding.BoundedDistanceBSC
