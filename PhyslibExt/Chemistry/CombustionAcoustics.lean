@@ -151,107 +151,8 @@ private lemma arrheniusRate_pos_of_le_Ta {G H B Ta T : ℝ} (hG : 0 < G)
     unfold arrheniusRate
     exact sub_pos.mpr hlt
 
-/-- A negative within-derivative on `Set.Ici 0` at `c > 0` forces
-strictly larger values immediately to the left of `c`. -/
-private lemma exists_left_gt_of_hasDerivWithinAt_neg {T : ℝ → ℝ} {f' c t : ℝ}
-    (hT : HasDerivWithinAt T f' (Set.Ici 0) c) (hf' : f' < 0) (hc : 0 < c)
-    (hct : c ≤ t) :
-    ∃ s ∈ Set.Icc (0 : ℝ) t, s < c ∧ T c < T s := by
-  rw [hasDerivWithinAt_iff_tendsto] at hT
-  have habs : |f'| = -f' := abs_of_neg hf'
-  have hK : (0 : ℝ) < |f'| / 2 := by
-    rw [habs]
-    linarith
-  have hev := hT.eventually (eventually_lt_nhds hK)
-  rw [eventually_nhdsWithin_iff] at hev
-  rw [Metric.eventually_nhds_iff] at hev
-  obtain ⟨ε, hε, hball⟩ := hev
-  have hε2 : (0 : ℝ) < ε / 2 := by linarith
-  have hc2 : (0 : ℝ) < c / 2 := by linarith
-  have hu_pos : (0 : ℝ) < min (c / 2) (ε / 2) := lt_min hc2 hε2
-  have huc : min (c / 2) (ε / 2) ≤ c / 2 := min_le_left _ _
-  have hue : min (c / 2) (ε / 2) < ε :=
-    lt_of_le_of_lt (min_le_right _ _) (by linarith)
-  set u := min (c / 2) (ε / 2) with hu
-  have hs0 : (0 : ℝ) ≤ c - u := by linarith
-  have hst : c - u ≤ t := by linarith
-  have hsc : c - u < c := by linarith
-  refine ⟨c - u, Set.mem_Icc.mpr ⟨hs0, hst⟩, hsc, ?_⟩
-  have hdist : dist (c - u) c < ε := by
-    have hdu : dist (c - u) c = u := by
-      rw [dist_eq_norm, show (c - u) - c = -u by ring, norm_neg,
-        Real.norm_eq_abs, abs_of_pos hu_pos]
-    rw [hdu]
-    exact hue
-  have hF := hball hdist (Set.mem_Ici.mpr hs0)
-  have hsub : (c - u) - c = -u := by ring
-  have hnorm : ‖(c - u) - c‖ = u := by
-    rw [hsub, norm_neg, Real.norm_eq_abs, abs_of_pos hu_pos]
-  rw [hnorm, hsub, smul_eq_mul] at hF
-  have hu_ne : u ≠ 0 := ne_of_gt hu_pos
-  have hX : ‖T (c - u) - T c - -u * f'‖ < u * (|f'| / 2) := by
-    have h := mul_lt_mul_of_pos_left hF hu_pos
-    rwa [← mul_assoc, mul_inv_cancel₀ hu_ne, one_mul] at h
-  have hfus : -u * f' = u * |f'| := by rw [habs]; ring
-  have hrhs : u * (|f'| / 2) = u * |f'| / 2 := by ring
-  rw [hfus, hrhs] at hX
-  have hle : -‖T (c - u) - T c - u * |f'|‖ ≤ T (c - u) - T c - u * |f'| := by
-    rw [Real.norm_eq_abs]
-    exact neg_abs_le _
-  have hw : (0 : ℝ) < u * |f'| := mul_pos hu_pos (by rw [habs]; linarith)
-  linarith
-
-/-- A positive within-derivative on `Set.Ici 0` at `c > 0` forces
-strictly smaller values immediately to the left of `c`. -/
-private lemma exists_left_lt_of_hasDerivWithinAt_pos {T : ℝ → ℝ} {f' c t : ℝ}
-    (hT : HasDerivWithinAt T f' (Set.Ici 0) c) (hf' : 0 < f') (hc : 0 < c)
-    (hct : c ≤ t) :
-    ∃ s ∈ Set.Icc (0 : ℝ) t, s < c ∧ T s < T c := by
-  rw [hasDerivWithinAt_iff_tendsto] at hT
-  have habs : |f'| = f' := abs_of_pos hf'
-  have hK : (0 : ℝ) < |f'| / 2 := by
-    rw [habs]
-    linarith
-  have hev := hT.eventually (eventually_lt_nhds hK)
-  rw [eventually_nhdsWithin_iff] at hev
-  rw [Metric.eventually_nhds_iff] at hev
-  obtain ⟨ε, hε, hball⟩ := hev
-  have hε2 : (0 : ℝ) < ε / 2 := by linarith
-  have hc2 : (0 : ℝ) < c / 2 := by linarith
-  have hu_pos : (0 : ℝ) < min (c / 2) (ε / 2) := lt_min hc2 hε2
-  have huc : min (c / 2) (ε / 2) ≤ c / 2 := min_le_left _ _
-  have hue : min (c / 2) (ε / 2) < ε :=
-    lt_of_le_of_lt (min_le_right _ _) (by linarith)
-  set u := min (c / 2) (ε / 2) with hu
-  have hs0 : (0 : ℝ) ≤ c - u := by linarith
-  have hst : c - u ≤ t := by linarith
-  have hsc : c - u < c := by linarith
-  refine ⟨c - u, Set.mem_Icc.mpr ⟨hs0, hst⟩, hsc, ?_⟩
-  have hdist : dist (c - u) c < ε := by
-    have hdu : dist (c - u) c = u := by
-      rw [dist_eq_norm, show (c - u) - c = -u by ring, norm_neg,
-        Real.norm_eq_abs, abs_of_pos hu_pos]
-    rw [hdu]
-    exact hue
-  have hF := hball hdist (Set.mem_Ici.mpr hs0)
-  have hsub : (c - u) - c = -u := by ring
-  have hnorm : ‖(c - u) - c‖ = u := by
-    rw [hsub, norm_neg, Real.norm_eq_abs, abs_of_pos hu_pos]
-  rw [hnorm, hsub, smul_eq_mul] at hF
-  have hu_ne : u ≠ 0 := ne_of_gt hu_pos
-  have hX : ‖T (c - u) - T c - -u * f'‖ < u * (|f'| / 2) := by
-    have h := mul_lt_mul_of_pos_left hF hu_pos
-    rwa [← mul_assoc, mul_inv_cancel₀ hu_ne, one_mul] at h
-  have hfus : -u * f' = -(u * |f'|) := by rw [habs]; ring
-  have hrhs : u * (|f'| / 2) = u * |f'| / 2 := by ring
-  rw [hfus, hrhs] at hX
-  have hle : T (c - u) - T c - -(u * |f'|) ≤
-      ‖T (c - u) - T c - -(u * |f'|)‖ := by
-    rw [Real.norm_eq_abs]
-    exact le_abs_self _
-  have hw : (0 : ℝ) < u * |f'| := mul_pos hu_pos (by rw [habs]; linarith)
-  linarith
-
+/-- A negative within-derivative on `Set.Icc 0 t` at `c > 0`
+forces strictly larger values immediately to the left of `c`. -/
 private lemma exists_left_gt_of_hasDerivWithinAt_neg_on_interval {T : ℝ → ℝ} {f' c t : ℝ}
     (hT : HasDerivWithinAt T f' (Set.Icc 0 t) c) (hf' : f' < 0) (hc : 0 < c)
     (hct : c ≤ t) :
@@ -300,8 +201,8 @@ private lemma exists_left_gt_of_hasDerivWithinAt_neg_on_interval {T : ℝ → �
   have hw : (0 : ℝ) < u * |f'| := mul_pos hu_pos (by rw [habs]; linarith)
   linarith
 
-/-- A positive within-derivative on `Set.Icc 0 t` at `c > 0` forces
-strictly smaller values immediately to the left of `c`. -/
+/-- A positive within-derivative on `Set.Icc 0 t` at `c > 0`
+forces strictly smaller values immediately to the left of `c`. -/
 private lemma exists_left_lt_of_hasDerivWithinAt_pos_on_interval {T : ℝ → ℝ} {f' c t : ℝ}
     (hT : HasDerivWithinAt T f' (Set.Icc 0 t) c) (hf' : 0 < f') (hc : 0 < c)
     (hct : c ≤ t) :
