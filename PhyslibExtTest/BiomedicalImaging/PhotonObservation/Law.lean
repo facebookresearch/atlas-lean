@@ -29,4 +29,12 @@ example {x x' : Fin 1 → ℝ} :
 example : transmittedRate (fun _ => (3 : ℝ≥0)) ![![0]] (fun _ => (5 : ℝ)) 0 = 3 := by
   simp [transmittedRate, Matrix.mulVec, dotProduct]
 
+/-- Rectangular case: two rays, three cells, `A = ![![1,0,0],![0,1,0]]`
+reads the first two cells. -/
+example {x x' : Fin 3 → ℝ} :
+    photonLaw (fun _ => (1 : ℝ≥0)) ![![1, 0, 0], ![0, 1, 0]] x =
+      photonLaw (fun _ => (1 : ℝ≥0)) ![![1, 0, 0], ![0, 1, 0]] x' ↔
+    ![![1, 0, 0], ![0, 1, 0]] *ᵥ x = ![![1, 0, 0], ![0, 1, 0]] *ᵥ x' :=
+  photon_law_agree_iff (fun _ => one_pos)
+
 end PhyslibExtTest.BiomedicalImaging.PhotonObservation.Law

@@ -19,7 +19,8 @@ public import Mathlib.Data.Matrix.Mul
 ## i. Overview
 
 For a finite ray set, positive source intensities `I0 j > 0` and a real
-attenuation matrix `A`, the independent-Poisson count-vector law with
+attenuation matrix `A` (rays and attenuation cells may have
+different index types), the independent-Poisson count-vector law with
 rates `I0 j * exp (-(A *ᵥ x) j)` (built from
 `ProbabilityTheory.piPoissonKernel`) determines the attenuation
 exactly up to the action of `A`: the laws at `x` and `x'` agree if and
@@ -55,7 +56,6 @@ namespace PhyslibExt.BiomedicalImaging.PhotonObservation
 
 /-! ## A. Rate identification. -/
 
-set_option linter.unusedDecidableInType false in
 /-- **Photon attenuation rate identification.** For a finite ray set
 `ι`, positive source intensities `I0 j > 0` and a real attenuation
 matrix `A`, the transmitted rates `I0 j * exp (-(A *ᵥ x) j)` agree at
@@ -64,8 +64,8 @@ two attenuation vectors `x`, `x'` in every ray if and only if
 with `I0 j = 0` carries no information about `(A *ᵥ x) j`. This is
 the rate-level core of the independent-Poisson photon law; the law
 itself is obtained from it with Poisson rate injectivity. -/
-lemma photon_rate_agree_iff {ι : Type*} [Fintype ι] [DecidableEq ι]
-    {I0 : ι → ℝ} (hI0 : ∀ j, 0 < I0 j) {A : Matrix ι ι ℝ} {x x' : ι → ℝ} :
+lemma photon_rate_agree_iff {ι κ : Type*} [Fintype κ]
+    {I0 : ι → ℝ} (hI0 : ∀ j, 0 < I0 j) {A : Matrix ι κ ℝ} {x x' : κ → ℝ} :
     (∀ j, I0 j * Real.exp (-(A *ᵥ x) j) = I0 j * Real.exp (-(A *ᵥ x') j)) ↔
     A *ᵥ x = A *ᵥ x' := by
   constructor
@@ -83,33 +83,32 @@ lemma photon_rate_agree_iff {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-- The transmitted Poisson rate in ray `j`: source intensity times
 the attenuation factor, as a nonnegative real. -/
-noncomputable def transmittedRate {ι : Type*} [Fintype ι] (I0 : ι → ℝ≥0) (A : Matrix ι ι ℝ)
-    (x : ι → ℝ) (j : ι) : ℝ≥0 :=
+noncomputable def transmittedRate {ι κ : Type*} [Fintype κ] (I0 : ι → ℝ≥0) (A : Matrix ι κ ℝ)
+    (x : κ → ℝ) (j : ι) : ℝ≥0 :=
   I0 j * (Real.exp (-(A *ᵥ x) j)).toNNReal
 
 /-- The independent-Poisson photon count law at attenuation `x`. -/
-noncomputable def photonLaw {ι : Type*} [Fintype ι] (I0 : ι → ℝ≥0) (A : Matrix ι ι ℝ)
-    (x : ι → ℝ) : MeasureTheory.Measure (ι → ℕ) :=
+noncomputable def photonLaw {ι κ : Type*} [Fintype ι] [Fintype κ] (I0 : ι → ℝ≥0) (A : Matrix ι κ ℝ)
+    (x : κ → ℝ) : MeasureTheory.Measure (ι → ℕ) :=
   MeasureTheory.Measure.pi fun j => ProbabilityTheory.poissonMeasure (transmittedRate I0 A x j)
 
 /-- The photon law unfolded: the product of its Poisson rates. -/
-theorem photonLaw_eq {ι : Type*} [Fintype ι] (I0 : ι → ℝ≥0) (A : Matrix ι ι ℝ)
-    (x : ι → ℝ) :
+lemma photonLaw_eq {ι κ : Type*} [Fintype ι] [Fintype κ] (I0 : ι → ℝ≥0) (A : Matrix ι κ ℝ)
+    (x : κ → ℝ) :
     photonLaw I0 A x = MeasureTheory.Measure.pi
       fun j => ProbabilityTheory.poissonMeasure (transmittedRate I0 A x j) := rfl
 
 /-- The transmitted rate as a real number. -/
-theorem transmittedRate_coe {ι : Type*} [Fintype ι] (I0 : ι → ℝ≥0) (A : Matrix ι ι ℝ)
-    (x : ι → ℝ) (j : ι) :
+lemma transmittedRate_coe {ι κ : Type*} [Fintype κ] (I0 : ι → ℝ≥0) (A : Matrix ι κ ℝ)
+    (x : κ → ℝ) (j : ι) :
     ((transmittedRate I0 A x j : ℝ≥0) : ℝ) =
       (I0 j : ℝ) * Real.exp (-(A *ᵥ x) j) := by
   simp [transmittedRate, Real.coe_toNNReal _ (Real.exp_nonneg _)]
 
-set_option linter.unusedDecidableInType false in
 /-- **Photon law identification.** The independent-Poisson count laws
 at `x` and `x'` agree if and only if `A *ᵥ x = A *ᵥ x'`. -/
-theorem photon_law_agree_iff {ι : Type*} [Fintype ι] [DecidableEq ι]
-    {I0 : ι → ℝ≥0} (hI0 : ∀ j, 0 < I0 j) {A : Matrix ι ι ℝ} {x x' : ι → ℝ} :
+lemma photon_law_agree_iff {ι κ : Type*} [Fintype ι] [Fintype κ]
+    {I0 : ι → ℝ≥0} (hI0 : ∀ j, 0 < I0 j) {A : Matrix ι κ ℝ} {x x' : κ → ℝ} :
     photonLaw I0 A x = photonLaw I0 A x' ↔ A *ᵥ x = A *ᵥ x' := by
   constructor
   · intro h
