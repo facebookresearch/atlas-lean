@@ -112,17 +112,6 @@ lemma netPortPower_adapter_eq_zero
   rw [idealTransformerPort_fst, idealTransformerPort_snd]
   exact netPortPower_eq_zero_of_idealTransformer hn rfl rfl
 
-/-- The `n = 2` validation case: a two-to-one ideal transformer with
-`V1 = 2 * V2` and `I2 = -(2 * I1)` has zero net instantaneous port
-power. -/
-lemma netPortPower_eq_zero_two_to_one
-    {V1 V2 I1 I2 : ℝ}
-    (hV : V1 = 2 * V2) (hI : I2 = -(2 * I1)) :
-    netPortPower V1 I1 V2 I2 = 0 := by
-  unfold netPortPower
-  rw [hV, hI]
-  ring
-
 /-- The entering-current sign is essential: keep `I2` the entering
 secondary current but give it the erroneous sign relation
 `I2 = n * I1` (the relation a leaving secondary current would
