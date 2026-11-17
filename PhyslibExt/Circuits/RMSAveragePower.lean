@@ -10,7 +10,7 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 public import Mathlib.Analysis.Complex.Trigonometric
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
 
@@ -260,14 +260,24 @@ lemma average_rmsWaveform_mul_rmsWaveform
   field_simp [hT]
 
 /-- In-phase validation case: a waveform averaged against itself
-gives `V.re ^ 2 + V.im ^ 2`, i.e. `Re (V * conj V)`. -/
+gives the canonical norm square `Complex.normSq V`, i.e.
+`Re (V * conj V)`. -/
 lemma average_rmsWaveform_mul_self
     (V : ℂ) {ω : ℝ} (hω : 0 < ω) (a : ℝ) :
     (∫ t in a..(a + 2 * Real.pi / ω),
       rmsWaveform V ω t * rmsWaveform V ω t) / (2 * Real.pi / ω)
-      = V.re ^ 2 + V.im ^ 2 := by
+      = Complex.normSq V := by
   have h := average_rmsWaveform_mul_rmsWaveform V V hω a
-  rw [h, re_mul_conj]
+  rw [h, re_mul_conj, Complex.normSq_apply]
+
+/-- The in-phase average in coordinates: `V.re ^ 2 + V.im ^ 2`. -/
+lemma average_rmsWaveform_mul_self_re_im
+    (V : ℂ) {ω : ℝ} (hω : 0 < ω) (a : ℝ) :
+    (∫ t in a..(a + 2 * Real.pi / ω),
+      rmsWaveform V ω t * rmsWaveform V ω t) / (2 * Real.pi / ω)
+      = V.re ^ 2 + V.im ^ 2 := by
+  have h := average_rmsWaveform_mul_self V hω a
+  rw [h, Complex.normSq_apply]
   ring
 
 /-- Quadrature validation case: a waveform averaged against the
