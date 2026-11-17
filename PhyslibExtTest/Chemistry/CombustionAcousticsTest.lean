@@ -93,10 +93,9 @@ example : ∃ Te : ℝ, Te ∈ Set.Ioo 1 (1 + 1 / 1) ∧
     have hfun : (fun s : ℝ => if s ≤ 1 then Te else 0) s = Te := if_pos hs.2
     rw [hfun, hrate]
     have hconst := hasDerivWithinAt_const s (Set.Icc (0 : ℝ) 1) Te
-    refine hconst.congr_of_eventuallyEq ?_ ?_
-    · exact Filter.EventuallyEq.of_mem self_mem_nhdsWithin
-        (fun y hy => if_pos hy.2)
-    · exact if_pos hs.2
+    have h := hconst.congr_of_eventuallyEq
+      (eventuallyEq_of_mem self_mem_nhdsWithin (fun y hy => if_pos hy.2)) (if_pos hs.2)
+    simpa using h
   have h := Chemistry.CombustionAcoustics.arrhenius_solution_trapped_on_interval
     (G := 1) (H := 1) (B := 1) (Ta := 1) (C := 1) (by norm_num) (by norm_num)
     (by norm_num) (by norm_num) (by norm_num) (t := 1) (by norm_num) hderiv
