@@ -120,5 +120,27 @@ lemma energy_budget {rhoF rhoL : ℝ} {F L qF qL intake expenditure : ℝ → �
       rw [← hbal s hs']
       exact hE s hs') hint
   exact hftc.symm
+/-! ## D. Energy-preserving composition perturbation. -/
+
+/-- **Energy-preserving composition perturbation.** Perturbing the
+stores `(F, L)` by `(rhoL * s, -rhoF * s)` preserves the stored
+energy `rhoF * F + rhoL * L` exactly, while the total mass changes by
+`(rhoL - rhoF) * s`. Hence, when `rhoF ≠ rhoL` and `s ≠ 0`, two
+admissible compositions can share one energy with different masses:
+energy alone does not identify the composition. -/
+lemma energy_composition_perturbation {rhoF rhoL F L s : ℝ} :
+    rhoF * (F + rhoL * s) + rhoL * (L - rhoF * s) = rhoF * F + rhoL * L ∧
+    ((F + rhoL * s) + (L - rhoF * s)) - (F + L) = (rhoL - rhoF) * s := by
+  constructor
+  · ring
+  · ring
+
+/-- **Nonvacuous witness.** With `rhoF = 2`, `rhoL = 1`, the
+compositions `(F, L) = (1, 2)` and `(3/2, 1)` both have stored energy
+`4` but total masses `3` and `5/2`. -/
+lemma energy_composition_witness :
+    (2 : ℝ) * 1 + 1 * 2 = 4 ∧ (2 : ℝ) * (3 / 2) + 1 * 1 = 4 ∧
+    (1 : ℝ) + 2 = 3 ∧ (3 / 2 : ℝ) + 1 = 5 / 2 ∧ (3 : ℝ) ≠ 5 / 2 := by
+  refine ⟨by norm_num, by norm_num, by norm_num, by norm_num, by norm_num⟩
 
 end PhyslibExt.Biophysics.EnergyStores
