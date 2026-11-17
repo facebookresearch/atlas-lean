@@ -49,11 +49,13 @@ excluded ball.
 
 namespace OrbitalPerturbations
 
-/-- The inverse-square field `μ • r / ‖r‖^3` (gravitational acceleration
-form) on a real inner-product space, as the scalar multiple
+/-- The inverse-square field `μ • r / ‖r‖^3` (outward radial form) on a real inner-product space, as the scalar multiple
 `(μ / ‖r‖^3) • r`. It is intended for points away from the origin; at
 `r = 0` the scalar factor is Lean's junk value for division by zero and
-the field value is `0`. -/
+the field value is `0`. For `μ > 0` this field points parallel to
+`r` (outward from the origin); the gravitational acceleration toward
+an attracting body at the origin is its negative,
+`-(μ / ‖r‖^3) • r`. -/
 noncomputable def inverseSquareField {E : Type*} [NormedAddCommGroup E]
     [InnerProductSpace ℝ E] (μ : ℝ) (r : E) : E :=
   (μ / ‖r‖ ^ 3) • r
@@ -76,9 +78,9 @@ excluded ball of radius `rmin > 0`, the field is Lipschitz with constant
 `4μ / rmin^3`. The constant is conservative, not claimed sharp, and the
 estimate is direct algebra from the reverse triangle inequality, with no
 mean-value argument through the excluded ball. -/
-theorem inverseSquareField_lipschitz_exterior {E : Type*}
+lemma inverseSquareField_lipschitz_exterior {E : Type*}
     [NormedAddCommGroup E] [InnerProductSpace ℝ E] {μ rmin : ℝ}
-    (hμ : 0 < μ) (hrmin : 0 < rmin) {r s : E} (hr : rmin ≤ ‖r‖)
+    (hμ : 0 ≤ μ) (hrmin : 0 < rmin) {r s : E} (hr : rmin ≤ ‖r‖)
     (hs : rmin ≤ ‖s‖) :
     ‖inverseSquareField μ r - inverseSquareField μ s‖ ≤
       (4 * μ / rmin ^ 3) * ‖r - s‖ := by
@@ -96,7 +98,7 @@ theorem inverseSquareField_lipschitz_exterior {E : Type*}
   have hden2 : ‖r‖ ^ 3 * ‖s‖ ^ 2 ≠ 0 := mul_ne_zero hr3 hs2
   have hr1s2 : ‖r‖ * ‖s‖ ^ 2 ≠ 0 := mul_ne_zero hr0 hs2
   have hr2s1 : ‖r‖ ^ 2 * ‖s‖ ≠ 0 := mul_ne_zero hr2 hs0
-  have hnn1 : (0 : ℝ) ≤ μ / ‖r‖ ^ 3 := div_nonneg hμ.le (pow_nonneg hnr _)
+  have hnn1 : (0 : ℝ) ≤ μ / ‖r‖ ^ 3 := div_nonneg hμ (pow_nonneg hnr _)
   have hsplit : inverseSquareField μ r - inverseSquareField μ s
       = (μ / ‖r‖ ^ 3) • (r - s) + ((μ / ‖r‖ ^ 3) - (μ / ‖s‖ ^ 3)) • s := by
     unfold inverseSquareField
@@ -111,7 +113,7 @@ theorem inverseSquareField_lipschitz_exterior {E : Type*}
   have h2s : rmin ^ 2 ≤ ‖s‖ ^ 2 := pow_le_pow_left₀ hrmin.le hs 2
   have h2r : rmin ^ 2 ≤ ‖r‖ ^ 2 := pow_le_pow_left₀ hrmin.le hr 2
   have hdiv1 : μ / ‖r‖ ^ 3 ≤ μ / rmin ^ 3 :=
-    div_le_div_of_nonneg_left hμ.le (pow_pos hrmin 3) h3r
+    div_le_div_of_nonneg_left hμ (pow_pos hrmin 3) h3r
   have hterm1 : (μ / ‖r‖ ^ 3) * ‖r - s‖ ≤ (μ / rmin ^ 3) * ‖r - s‖ :=
     mul_le_mul_of_nonneg_right hdiv1 (norm_nonneg _)
   have hba : |‖s‖ - ‖r‖| ≤ ‖r - s‖ := by
@@ -154,7 +156,7 @@ theorem inverseSquareField_lipschitz_exterior {E : Type*}
         / (‖r‖ ^ 3 * ‖s‖ ^ 2)) := by
     have e1' : |μ * (‖s‖ ^ 3 - ‖r‖ ^ 3)|
         = μ * (|‖s‖ - ‖r‖| * (‖r‖ ^ 2 + ‖r‖ * ‖s‖ + ‖s‖ ^ 2)) := by
-      rw [abs_mul, abs_of_nonneg hμ.le, habs3]
+      rw [abs_mul, abs_of_nonneg hμ, habs3]
     have e2' : |(‖r‖ ^ 3 * ‖s‖ ^ 3 : ℝ)| = ‖r‖ ^ 3 * ‖s‖ ^ 3 :=
       abs_of_nonneg (mul_nonneg (pow_nonneg hnr 3) (pow_nonneg hns 3))
     rw [hsub, abs_div, e1', e2']
@@ -169,11 +171,11 @@ theorem inverseSquareField_lipschitz_exterior {E : Type*}
           / (‖r‖ ^ 3 * ‖s‖ ^ 2))
         ≤ μ * ‖r - s‖ * ((‖r‖ ^ 2 + ‖r‖ * ‖s‖ + ‖s‖ ^ 2)
           / (‖r‖ ^ 3 * ‖s‖ ^ 2)) :=
-      mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hba hμ.le) hQnonneg
+      mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hba hμ) hQnonneg
     have step2 : μ * ‖r - s‖ * ((‖r‖ ^ 2 + ‖r‖ * ‖s‖ + ‖s‖ ^ 2)
           / (‖r‖ ^ 3 * ‖s‖ ^ 2))
         ≤ μ * ‖r - s‖ * (3 / rmin ^ 3) :=
-      mul_le_mul_of_nonneg_left hQ (mul_nonneg hμ.le (norm_nonneg _))
+      mul_le_mul_of_nonneg_left hQ (mul_nonneg hμ (norm_nonneg _))
     have hfin := le_trans step1 step2
     rwa [show (3 * μ / rmin ^ 3) * ‖r - s‖ = μ * ‖r - s‖ * (3 / rmin ^ 3)
       from by ring]
@@ -190,12 +192,12 @@ the inverse-square field is Lipschitz on the exterior set
 `{r | rmin ≤ ‖r‖}` with constant `4μ / rmin^3`. This is the form
 downstream `LipschitzOnWith` API consumes; the pointwise norm form is
 `inverseSquareField_lipschitz_exterior`. -/
-theorem inverseSquareField_lipschitzOnWith {E : Type*}
+lemma inverseSquareField_lipschitzOnWith {E : Type*}
     [NormedAddCommGroup E] [InnerProductSpace ℝ E] {μ rmin : ℝ}
-    (hμ : 0 < μ) (hrmin : 0 < rmin) :
+    (hμ : 0 ≤ μ) (hrmin : 0 < rmin) :
     LipschitzOnWith
       ⟨4 * μ / rmin ^ 3,
-        div_nonneg (mul_nonneg (by norm_num) hμ.le) (pow_nonneg hrmin.le 3)⟩
+        div_nonneg (mul_nonneg (by norm_num) hμ) (pow_nonneg hrmin.le 3)⟩
       (inverseSquareField μ) {r : E | rmin ≤ ‖r‖} := by
   refine LipschitzOnWith.of_dist_le_mul fun x hx y hy => ?_
   simp only [Set.mem_ofPred_eq] at hx hy

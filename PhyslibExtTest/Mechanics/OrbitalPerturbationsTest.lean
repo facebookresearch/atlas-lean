@@ -69,3 +69,22 @@ example :
       {r : EuclideanSpace ℝ (Fin 3) | 2 ≤ ‖r‖} :=
   OrbitalPerturbations.inverseSquareField_lipschitzOnWith
     (by norm_num) (by norm_num)
+
+/-- Direction check: at `r = (2, 0, 0)` with `μ = 5` the field is the
+outward scalar multiple `(5 / 8) • r` (parallel to `r`, not toward the
+origin). -/
+example :
+    OrbitalPerturbations.inverseSquareField 5
+        (EuclideanSpace.single (0 : Fin 3) (2 : ℝ)) =
+      (5 / 8 : ℝ) • EuclideanSpace.single (0 : Fin 3) (2 : ℝ) := by
+  have hnr : ‖EuclideanSpace.single (0 : Fin 3) (2 : ℝ)‖ = 2 := by
+    simp [PiLp.norm_single]
+  simp [OrbitalPerturbations.inverseSquareField, hnr]
+
+/-- Zero-parameter endpoint: the bundled Lipschitz form at `μ = 0`. -/
+example :
+    LipschitzOnWith ⟨4 * 0 / 2 ^ 3, by positivity⟩
+      (OrbitalPerturbations.inverseSquareField 0)
+      {r : EuclideanSpace ℝ (Fin 3) | 2 ≤ ‖r‖} :=
+  OrbitalPerturbations.inverseSquareField_lipschitzOnWith
+    (le_refl 0) (by norm_num)
