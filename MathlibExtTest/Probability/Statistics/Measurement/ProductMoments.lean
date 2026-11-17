@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.Measurement.ProductMoments
+public import MathlibExt.Probability.FiniteProbability
 
 /-!
 # Product-law mass tests
@@ -54,7 +55,7 @@ theorem localIndepPMF_fin2_moments : (∫ x, (if x 0 then (1 : ℝ) else 0)
     have h := (localIndepPMF_coordinate_moments
       (fun i : Fin 2 => if i = 0 then (1 / 3 : ℝ) else (2 / 5 : ℝ)) fin2_hq0 fin2_hq1).2 0 1 h01
     simpa [h10] using h
-  · exact localIndepPMF_sum_toReal _ fin2_hq0 fin2_hq1
+  · exact MathlibExt.Probability.FiniteProbability.sum_toReal_eq_one _
 
 /-- Deterministic coordinates `q ≡ 1` and `q ≡ 0`: means `1` and `0`. -/
 theorem localIndepPMF_deterministic_moments : (∫ x, (if x 0 then (1 : ℝ) else 0)

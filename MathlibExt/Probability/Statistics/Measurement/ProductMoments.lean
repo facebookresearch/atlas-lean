@@ -81,26 +81,6 @@ private theorem localIndepPMF_m2_factor {ι : Type*} [Fintype ι] [DecidableEq �
       simp [hi]
     · simp [hi, hj]
 
-private theorem localIndepPMF_real_factor_sum_one {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (q : ι → ℝ) (i : ι) :
-    (∑ b : Bool, (if b then q i else 1 - q i)) = 1 := by
-  simp only [Fintype.sum_bool, ite_true, Bool.false_eq_true, ite_false]
-  ring
-
-
-/-- Total real mass of the product law is `1`. -/
-theorem localIndepPMF_sum_toReal {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (q : ι → ℝ) (hq0 : ∀ i, 0 ≤ q i) (hq1 : ∀ i, q i ≤ 1) :
-    (∑ x : ι → Bool, (localIndepPMF q hq0 hq1 x).toReal) = 1 := by
-  calc ∑ x : ι → Bool, (localIndepPMF q hq0 hq1 x).toReal
-      = ∑ x : ι → Bool, ∏ i, (if x i then q i else 1 - q i) :=
-        Finset.sum_congr rfl (fun x _ => localIndepPMF_toReal_apply q hq0 hq1 x)
-    _ = ∏ i, ∑ b : Bool, (if b then q i else 1 - q i) :=
-        sum_pi_prod_bool (fun i b => if b then q i else 1 - q i)
-    _ = ∏ _i : ι, 1 :=
-        Finset.prod_congr rfl (fun i _ => localIndepPMF_real_factor_sum_one q i)
-    _ = 1 := Finset.prod_const_one
-
 /-- (2)+(3) Coordinate moments under `PMF.toMeasure`: each coordinate has
 mean `q i`, and two distinct coordinates have product-mean `q i * q j`.
 The `i ≠ j` hypothesis is required only for the product identity. -/
