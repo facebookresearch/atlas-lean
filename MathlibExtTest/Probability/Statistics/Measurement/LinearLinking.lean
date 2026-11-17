@@ -59,15 +59,10 @@ theorem integral_linked_eq {Ω : Type*} [MeasurableSpace Ω]
     (hX : MeasureTheory.Integrable X μ)
     (hmean : ∫ ω, X ω ∂μ = μX) :
     ∫ ω, (μY + (σY / σX) * (X ω - μX)) ∂μ = μY := by
-  have h1 : MeasureTheory.Integrable (fun ω => (σY / σX) * X ω) μ :=
-    hX.const_mul _
-  have h2 : MeasureTheory.Integrable (fun _ : Ω => (μY - (σY / σX) * μX)) μ :=
-    MeasureTheory.integrable_const _
   have heq : (fun ω => μY + (σY / σX) * (X ω - μX))
       = (fun ω => (σY / σX) * X ω + (μY - (σY / σX) * μX)) := by
     funext ω; ring
-  rw [heq, MeasureTheory.integral_add h1 h2, MeasureTheory.integral_const_mul,
-    hmean, MeasureTheory.integral_const, MeasureTheory.probReal_univ, one_smul]
+  rw [heq, MeasureTheory.integral_const_mul_add_const hX, hmean]
   ring
 
 /-- Variance transport: if `variance X μ = σX ^ 2`, then the linked
@@ -83,14 +78,12 @@ theorem variance_linked_eq {Ω : Type*} [MeasurableSpace Ω]
     ProbabilityTheory.variance
         (fun ω => μY + (σY / σX) * (X ω - μX)) μ = σY ^ 2 := by
   have hXne : σX ≠ 0 := ne_of_gt hσX
-  have hmeas : MeasureTheory.AEStronglyMeasurable (fun ω => (σY / σX) * X ω) μ :=
-    hX.const_mul _
   have heq : (fun ω => μY + (σY / σX) * (X ω - μX))
       = (fun ω => (σY / σX) * X ω + (μY - (σY / σX) * μX)) := by
     funext ω; ring
-  rw [heq, ProbabilityTheory.variance_add_const hmeas,
-    ProbabilityTheory.variance_const_mul, hvar]
+  rw [heq, ProbabilityTheory.variance_const_mul_add_const hX, hvar]
   field_simp
+  ring
 
 /-- Nonvacuity, positive scale, forward value: with `μX = 10`, `σX = 2`,
 `μY = 50`, `σY = 15`, the score `x = 12` (one input SD above the input
@@ -110,8 +103,8 @@ theorem example_positive_scale_reverse :
 expression collapses to the constant `μY`, because Lean division by zero
 is `σY / 0 = 0`. This pins the encoding's behaviour only; mathematically
 the linking map is undefined at `σX = 0` and no linking claim is made. -/
-theorem zero_scale_forward_collapses (μY σY x : ℝ) :
-    μY + (σY / (0 : ℝ)) * (x - 0) = μY := by
+theorem zero_scale_forward_collapses (μX μY σY x : ℝ) :
+    μY + (σY / (0 : ℝ)) * (x - μX) = μY := by
   simp
 
 /-- Zero scale, roundtrip failure: the roundtrip identity of
