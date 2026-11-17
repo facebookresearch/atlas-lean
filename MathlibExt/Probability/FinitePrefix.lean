@@ -56,25 +56,6 @@ private theorem map_cons_apply_nil {Token : Type*} (p : PMF (List Token)) (x : T
   intro u
   exact ite_eq_right (show ([] : List Token) ≠ x :: u from by simp)
 
-private theorem ennreal_half_mul_three_quarter : (1 / 2 : ℝ≥0∞) * (3 / 4) = 3 / 8 := by
-  apply (ENNReal.toReal_eq_toReal_iff' ?_ ?_).mp
-  · simp only [ENNReal.toReal_mul, ENNReal.toReal_div, ENNReal.toReal_one,
-      ENNReal.toReal_ofNat]
-    norm_num
-  · finiteness
-  · finiteness
-
-private theorem ennreal_one_sub_quarter : (1 - 1 / 4 : ℝ≥0∞) = 3 / 4 := by
-  refine ENNReal.sub_eq_of_eq_add (by finiteness) ?_
-  apply (ENNReal.toReal_eq_toReal_iff' ?_ ?_).mp
-  · have ha : (3 / 4 : ℝ≥0∞) ≠ ∞ := by finiteness
-    have hb : (1 / 4 : ℝ≥0∞) ≠ ∞ := by finiteness
-    rw [ENNReal.toReal_add ha hb]
-    simp only [ENNReal.toReal_div, ENNReal.toReal_one, ENNReal.toReal_ofNat]
-    norm_num
-  · finiteness
-  · finiteness
-
 section PrefixLaw
 
 variable {Token : Type*} [Fintype Token]
