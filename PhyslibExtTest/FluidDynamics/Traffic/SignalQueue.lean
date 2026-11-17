@@ -35,3 +35,11 @@ example : deriv (queueLen 1 3 2) 1 = 1 ∧ deriv (queueLen 1 3 2) (5 / 2) = -(3 
   ⟨queueLen_deriv_red (lam := 1) (mu := 3) (R := 2) (t := 1) (by norm_num),
     queueLen_deriv_green (lam := 1) (mu := 3) (R := 2) (t := 5 / 2)
       (by norm_num) (by norm_num) (by norm_num) (by norm_num)⟩
+
+/-- Clearance API on the witness: zero at `t = 3` and after, and the
+post-clearance derivative is `0`. -/
+example : queueLen 1 3 2 3 = 0 ∧ deriv (queueLen 1 3 2) (7 / 2) = 0 :=
+  ⟨queueLen_eq_zero_of_clearance (lam := 1) (mu := 3) (R := 2)
+      (by norm_num) (by norm_num) (by norm_num) (by norm_num),
+    queueLen_deriv_after_clearance (lam := 1) (mu := 3) (R := 2)
+      (t := 7 / 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)⟩

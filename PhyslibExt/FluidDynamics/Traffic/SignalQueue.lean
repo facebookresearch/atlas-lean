@@ -65,8 +65,9 @@ theorem queueLen_zero {lam mu R : ℝ} (hR : 0 ≤ R) :
   rw [ite_eq_left hR]
   ring
 
-/-- The queue clears strictly inside the green phase and is empty at
-the cycle end, under `lam * (R + G) < mu * G` with `0 < lam < mu`. -/
+/-- The queue is empty at the cycle end, under
+`lam * (R + G) < mu * G` with `0 < lam < mu`. (Clearance inside the
+green phase is `queueLen_eq_zero_of_clearance`.) -/
 theorem queueLen_cycle_end {lam mu R G : ℝ} (hlam : 0 < lam)
     (hmu : lam < mu) (hR : 0 ≤ R) (hG : 0 ≤ G)
     (hcap : lam * (R + G) < mu * G) :
