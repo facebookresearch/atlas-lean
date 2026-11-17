@@ -43,28 +43,15 @@ private theorem t_decode_apply (L : RationalLossLaw) (n : ℕ) :
   unfold decode
   rw [PMF.ofFinset_apply]
 
-private theorem t_unitLaw_weights :
-    unitLaw.weights = Finsupp.single 0 1 := rfl
-
-private theorem t_aggregateLaw_weights (C S : RationalLossLaw) :
-    (aggregateLaw C S).weights
-      = C.weights.sum fun k q => q • (iterLaw S k).weights := rfl
-
-private theorem t_iterLaw_zero (S : RationalLossLaw) :
-    iterLaw S 0 = unitLaw := rfl
-
-private theorem t_iterLaw_succ (S : RationalLossLaw) (n : ℕ) :
-    iterLaw S (n + 1) = convLaw (iterLaw S n) S := rfl
-
 private theorem t_iterLaw_one (S : RationalLossLaw) :
     iterLaw S 1 = convLaw unitLaw S := by
   show iterLaw S (0 + 1) = convLaw unitLaw S
-  rw [t_iterLaw_succ, t_iterLaw_zero]
+  rw [iterLaw_succ, iterLaw_zero]
 
 private theorem t_iterLaw_two (S : RationalLossLaw) :
     iterLaw S 2 = convLaw (iterLaw S 1) S := by
   show iterLaw S (1 + 1) = convLaw (iterLaw S 1) S
-  rw [t_iterLaw_succ]
+  rw [iterLaw_succ]
 
 private theorem t_convLaw_weights (L1 L2 : RationalLossLaw) :
     (convLaw L1 L2).weights = convWeights L1.weights L2.weights := rfl
@@ -87,19 +74,8 @@ private theorem t_convWeights_apply_sum (w1 w2 : ℕ →₀ ℚ) (n : ℕ) :
 private theorem t_mixture_apply (C S : RationalLossLaw) (m : ℕ) :
     (aggregateLaw C S).weights m
       = ∑ k ∈ C.weights.support, C.weights k * (iterLaw S k).weights m := by
-  rw [t_aggregateLaw_weights, Finsupp.sum_apply]
+  rw [aggregateLaw_weights, Finsupp.sum_apply]
   simp only [t_smul_apply_eq, t_finsupp_sum_bridge]
-
-private theorem t_decode_unitLaw : decode unitLaw = PMF.pure 0 := by
-  apply PMF.ext
-  intro m
-  have hsingle : unitLaw.weights m = Finsupp.single (0 : ℕ) (1 : ℚ) m := rfl
-  rw [t_decode_apply, hsingle, Finsupp.single_apply, PMF.pure_apply]
-  by_cases h : m = 0
-  · subst h
-    simp
-  · have h' : ¬ (0 : ℕ) = m := fun hh => h hh.symm
-    simp [h, h']
 
 private theorem t_zero_atom_left (w : ℕ →₀ ℚ) (n : ℕ) :
     convWeights (Finsupp.single 0 1) w n = w n := by
@@ -223,24 +199,24 @@ private theorem t_Sev_weights : Sev.weights = wS := rfl
 private theorem t_ctwo_weights : Ctwo.weights = Finsupp.single 2 1 := rfl
 
 private theorem t_unit_support : unitLaw.weights.support = {0} := by
-  rw [t_unitLaw_weights]
+  rw [unitLaw_weights]
   exact Finsupp.support_single 0 (by norm_num)
 
 private theorem t_unit_mass_0 : unitLaw.weights 0 = 1 := by
-  rw [t_unitLaw_weights]
+  rw [unitLaw_weights]
   exact Finsupp.single_eq_same
 
 theorem agg_unit_weights (S : RationalLossLaw) (m : ℕ) :
     (aggregateLaw unitLaw S).weights m = unitLaw.weights m := by
   rw [t_mixture_apply, t_unit_support, Finset.sum_singleton,
-    t_unit_mass_0, t_iterLaw_zero, one_mul]
+    t_unit_mass_0, iterLaw_zero, one_mul]
 
 theorem agg_unit_decode (S : RationalLossLaw) :
     decode (aggregateLaw unitLaw S) = PMF.pure 0 := by
   apply PMF.ext
   intro m
   rw [t_decode_apply, agg_unit_weights, ← t_decode_apply,
-    t_decode_unitLaw]
+    decode_unitLaw]
 
 theorem agg_unit_mass_zero (S : RationalLossLaw) :
     decode (aggregateLaw unitLaw S) 0 = 1 := by
@@ -266,11 +242,11 @@ theorem agg_ctwo_decode_apply (S : RationalLossLaw) (m : ℕ) :
 
 private theorem t_iter0_eq_zero (m : ℕ) (hm : m ≠ 0) :
     (iterLaw Sev 0).weights m = 0 := by
-  rw [t_iterLaw_zero, t_unitLaw_weights]
+  rw [iterLaw_zero, unitLaw_weights]
   exact Finsupp.single_eq_of_ne hm
 
 private theorem t_iter1_weights : (iterLaw Sev 1).weights = wS := by
-  rw [t_iterLaw_one, t_convLaw_weights, t_unitLaw_weights,
+  rw [t_iterLaw_one, t_convLaw_weights, unitLaw_weights,
     t_Sev_weights]
   exact Finsupp.ext (fun n => t_zero_atom_left wS n)
 
@@ -293,7 +269,7 @@ private theorem t_wS_enum (F : ℕ → ℕ → ℚ) :
     Finset.sum_singleton]
 
 theorem iter0_mass_0 : (iterLaw Sev 0).weights 0 = 1 := by
-  rw [t_iterLaw_zero, t_unitLaw_weights]
+  rw [iterLaw_zero, unitLaw_weights]
   exact Finsupp.single_eq_same
 
 theorem iter0_mass_1 : (iterLaw Sev 0).weights 1 = 0 :=

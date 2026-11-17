@@ -45,16 +45,23 @@ noncomputable def unitLaw : RationalLossLaw where
   nonneg := unit_weights_nonneg
   normalized := unit_weights_normalized
 
+/-- The weights of the unit law are the point mass at 0. -/
+@[simp] theorem unitLaw_weights :
+    unitLaw.weights = Finsupp.single 0 1 := rfl
+
 /-- The deterministic-count law: sum of `n` i.i.d. severities `S`, by
 iterated convolution starting at the unit point mass at 0. -/
 noncomputable def iterLaw (S : RationalLossLaw) : ℕ → RationalLossLaw
   | 0 => unitLaw
   | n + 1 => convLaw (iterLaw S n) S
 
-private theorem iterLaw_zero (S : RationalLossLaw) :
+/-- The deterministic-count law at count 0 is the unit law. -/
+@[simp] theorem iterLaw_zero (S : RationalLossLaw) :
     iterLaw S 0 = unitLaw := rfl
 
-private theorem iterLaw_succ (S : RationalLossLaw) (n : ℕ) :
+/-- The deterministic-count law at count `n + 1` convolves the count-`n`
+law with the severity law. -/
+@[simp] theorem iterLaw_succ (S : RationalLossLaw) (n : ℕ) :
     iterLaw S (n + 1) = convLaw (iterLaw S n) S := rfl
 
 private theorem smul_apply_eq (q : ℚ) (w : ℕ →₀ ℚ) (m : ℕ) :
@@ -100,7 +107,9 @@ noncomputable def aggregateLaw (C S : RationalLossLaw) : RationalLossLaw where
   nonneg := aggregate_weights_nonneg C S
   normalized := aggregate_weights_normalized C S
 
-private theorem aggregateLaw_weights (C S : RationalLossLaw) :
+/-- The weights of the aggregate law mix the deterministic-count laws
+with the count masses. -/
+@[simp] theorem aggregateLaw_weights (C S : RationalLossLaw) :
     (aggregateLaw C S).weights
       = C.weights.sum fun k q => q • (iterLaw S k).weights := rfl
 
@@ -113,7 +122,8 @@ private theorem cast_nonneg (L : RationalLossLaw) (a : ℕ) :
     0 ≤ ((L.weights a : ℚ) : ℝ) :=
   Rat.cast_nonneg.mpr (L.nonneg a)
 
-private theorem decode_unitLaw : decode unitLaw = PMF.pure 0 := by
+/-- Decoding the unit law is the point mass at 0. -/
+@[simp] theorem decode_unitLaw : decode unitLaw = PMF.pure 0 := by
   apply PMF.ext
   intro m
   have hsingle : unitLaw.weights m = Finsupp.single (0 : ℕ) (1 : ℚ) m := rfl
@@ -124,7 +134,10 @@ private theorem decode_unitLaw : decode unitLaw = PMF.pure 0 := by
   · have h' : ¬ (0 : ℕ) = m := fun hh => h hh.symm
     simp [h, h']
 
-private theorem decode_iterLaw (S : RationalLossLaw) (n : ℕ) :
+/-- Decoding the deterministic-count law `iterLaw S n` is the native
+`n`-fold independent sum of `decode S` draws: iterating
+`q ↦ q.bind (fun a => (decode S).map (a + ·))` `n` times from `PMF.pure 0`. -/
+theorem decode_iterLaw_eq_iterate (S : RationalLossLaw) (n : ℕ) :
     decode (iterLaw S n)
       = (fun q : PMF ℕ => q.bind (fun a => (decode S).map (a + ·)))^[n]
         (PMF.pure 0) := by
@@ -185,7 +198,7 @@ theorem decode_aggregateLaw_eq_bind (C S : RationalLossLaw) :
       = ∑ k ∈ C.weights.support, ENNReal.ofReal ((C.weights k : ℚ) : ℝ)
         * ENNReal.ofReal (((iterLaw S k).weights m : ℚ) : ℝ) := by
     rw [PMF.bind_apply]
-    simp only [← decode_iterLaw, decode_apply, bind_tsum_eq]
+    simp only [← decode_iterLaw_eq_iterate, decode_apply, bind_tsum_eq]
   exact hLHS.trans hRHS.symm
 
 end Cslib.Algorithms.Lean.Probability.RationalAggregateLoss
