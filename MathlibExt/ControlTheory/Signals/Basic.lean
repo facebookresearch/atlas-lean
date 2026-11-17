@@ -29,8 +29,10 @@ is legitimate). A linear system is a Mathlib linear map
   e.g. on `Additive (Equiv.Perm (Fin 3))` — and `ℤ`- or `ℝ`-time, the
   intended domains, are commutative.
 * `IsCausal S`: the output at `t` depends only on inputs at `s ≤ t`
-  (prefix condition, `s = t` included, so the identity system and every
-  delay are causal and every advance is not).
+  (prefix condition, `s = t` included; for example over `ℤ` with values
+  in `ℝ` the identity system and every delay are causal and no advance
+  is, as the tests show — in degenerate settings such as a subsingleton
+  value module every system is causal).
 * `IsTimeInvariant S`: `S` commutes with every shift.
 
 Both predicates are closed under composition (series interconnection) and

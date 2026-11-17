@@ -10,6 +10,7 @@ module
 
 import MathlibExt.ControlTheory.Signals.Basic
 import Mathlib.Data.Real.Basic
+import Mathlib.GroupTheory.Perm.Basic
 import Mathlib.Tactic.NormNum
 
 open ControlTheory
