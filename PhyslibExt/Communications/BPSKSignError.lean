@@ -265,279 +265,40 @@ private theorem formula_neg_swap (p a σ τ : ℝ) :
   rw [e1, e2, symm_aux, symm_aux]
   ring
 
-private theorem pdfReal_continuous_aux :
-    Continuous (gaussianPDFReal (0 : ℝ) 1) := by
-  unfold gaussianPDFReal
-  fun_prop
+private theorem gaussianPDFReal_std_neg (x : ℝ) :
+    gaussianPDFReal 0 1 (-x) = gaussianPDFReal 0 1 x := by
+  simp [gaussianPDFReal_def]
 
-private theorem cdf_sub_eq_mass (u v : ℝ) (huv : u ≤ v) :
-    cdf (gaussianReal 0 1) v - cdf (gaussianReal 0 1) u =
-      (gaussianReal (0 : ℝ) 1).real (Set.Ioc u v) := by
-  rw [cdf_eq_real, cdf_eq_real]
-  have hunion : Set.Iic v = Set.Iic u ∪ Set.Ioc u v := by
-    ext z
-    simp only [Set.mem_Iic, Set.mem_Ioc, Set.mem_union]
-    constructor
-    · intro h
-      by_cases h1 : z ≤ u
-      · exact Or.inl h1
-      · exact Or.inr ⟨lt_of_not_ge h1, h⟩
-    · rintro (h | ⟨_, h⟩)
-      · exact h.trans huv
-      · exact h
-  have hdisj : Disjoint (Set.Iic u) (Set.Ioc u v) := by
-    rw [Set.disjoint_left]
-    intro z hx hxy'
-    simp only [Set.mem_Iic, Set.mem_Ioc] at hx hxy'
-    exact lt_irrefl u (hxy'.1.trans_le hx)
-  rw [hunion, measureReal_union hdisj measurableSet_Ioc]
-  ring
+/-- The threshold error has derivative `(2p - 1) φ(a / σ) / σ` at threshold `0`. -/
+private theorem hasDerivAt_thresholdErrorFormula_zero (p a σ : ℝ) :
+    HasDerivAt (thresholdErrorFormula p a σ)
+      ((2 * p - 1) * gaussianPDFReal 0 1 (a / σ) / σ) 0 := by
+  have hl : HasDerivAt (fun τ : ℝ => (τ - a) / σ) (1 / σ) 0 :=
+    ((hasDerivAt_id' 0).sub_const a).div_const σ
+  have hr : HasDerivAt (fun τ : ℝ => (τ + a) / σ) (1 / σ) 0 :=
+    ((hasDerivAt_id' 0).add_const a).div_const σ
+  have h := (((hasDerivAt_stdNormal_cdf ((0 - a) / σ)).comp 0 hl).const_mul p).add
+    ((((hasDerivAt_stdNormal_cdf ((0 + a) / σ)).comp 0 hr).const_sub 1).const_mul (1 - p))
+  have e1 : (0 - a) / σ = -(a / σ) := by ring
+  have e2 : (0 + a) / σ = a / σ := by ring
+  rw [e1, e2, gaussianPDFReal_std_neg] at h
+  convert h using 1
+  · rfl
+  · ring
 
-private theorem ioc_mass_bounds (u v lo hi : ℝ) (huv : u < v) (hlo : 0 ≤ lo)
-    (h : ∀ x ∈ Set.Ioc u v,
-      lo ≤ gaussianPDFReal (0 : ℝ) 1 x ∧ gaussianPDFReal (0 : ℝ) 1 x ≤ hi) :
-    lo * (v - u) ≤ (gaussianReal (0 : ℝ) 1).real (Set.Ioc u v) ∧
-      (gaussianReal (0 : ℝ) 1).real (Set.Ioc u v) ≤ hi * (v - u) := by
-  have hmid_mem : (u + v) / 2 ∈ Set.Ioc u v := by
-    simp only [Set.mem_Ioc]
-    constructor <;> linarith
-  obtain ⟨hlo_mid, hhi_mid⟩ := h ((u + v) / 2) hmid_mem
-  have hhi0 : 0 ≤ hi := le_trans hlo (le_trans hlo_mid hhi_mid)
-  have hENN_lo : ENNReal.ofReal (lo * (v - u)) ≤ (gaussianReal (0 : ℝ) 1) (Set.Ioc u v) := by
-    rw [gaussianReal_apply _ (by simp : (1 : ℝ≥0) ≠ 0)]
-    have h1 : (∫⁻ _ in Set.Ioc u v, ENNReal.ofReal lo) ≤
-        ∫⁻ x in Set.Ioc u v, gaussianPDF (0 : ℝ) 1 x := by
-      refine lintegral_mono_ae ?_
-      rw [ae_restrict_iff' measurableSet_Ioc]
-      apply Filter.Eventually.of_forall
-      intro x hx
-      obtain ⟨hlo_x, -⟩ := h x hx
-      have hpdf : gaussianPDF (0 : ℝ) 1 x =
-          ENNReal.ofReal (gaussianPDFReal (0 : ℝ) 1 x) := rfl
-      rw [hpdf]
-      exact ENNReal.ofReal_le_ofReal hlo_x
-    rw [setLIntegral_const, Real.volume_Ioc, ← ENNReal.ofReal_mul hlo] at h1
-    exact h1
-  have hENN_hi : (gaussianReal (0 : ℝ) 1) (Set.Ioc u v) ≤ ENNReal.ofReal (hi * (v - u)) := by
-    rw [gaussianReal_apply _ (by simp : (1 : ℝ≥0) ≠ 0)]
-    have h2 : (∫⁻ x in Set.Ioc u v, gaussianPDF (0 : ℝ) 1 x) ≤
-        ∫⁻ _ in Set.Ioc u v, ENNReal.ofReal hi := by
-      refine lintegral_mono_ae ?_
-      rw [ae_restrict_iff' measurableSet_Ioc]
-      apply Filter.Eventually.of_forall
-      intro x hx
-      obtain ⟨-, hhi_x⟩ := h x hx
-      have hpdf : gaussianPDF (0 : ℝ) 1 x =
-          ENNReal.ofReal (gaussianPDFReal (0 : ℝ) 1 x) := rfl
-      rw [hpdf]
-      exact ENNReal.ofReal_le_ofReal hhi_x
-    rw [setLIntegral_const, Real.volume_Ioc, ← ENNReal.ofReal_mul hhi0] at h2
-    exact h2
-  have hlo_nn : 0 ≤ lo * (v - u) := mul_nonneg hlo (by linarith)
-  have hhi_nn : 0 ≤ hi * (v - u) := mul_nonneg hhi0 (by linarith)
-  have hfin : (gaussianReal (0 : ℝ) 1) (Set.Ioc u v) ≠ _ :=
-    measure_ne_top _ _
-  have hreal_eq : (gaussianReal (0 : ℝ) 1).real (Set.Ioc u v) =
-      ENNReal.toReal ((gaussianReal (0 : ℝ) 1) (Set.Ioc u v)) := rfl
-  constructor
-  · have hlow : ENNReal.toReal (ENNReal.ofReal (lo * (v - u))) ≤
-        ENNReal.toReal ((gaussianReal (0 : ℝ) 1) (Set.Ioc u v)) :=
-      ENNReal.toReal_mono hfin hENN_lo
-    rw [ENNReal.toReal_ofReal hlo_nn, ← hreal_eq] at hlow
-    exact hlow
-  · have hhigh : ENNReal.toReal ((gaussianReal (0 : ℝ) 1) (Set.Ioc u v)) ≤
-        ENNReal.toReal (ENNReal.ofReal (hi * (v - u))) :=
-      ENNReal.toReal_mono ENNReal.ofReal_ne_top hENN_hi
-    rw [ENNReal.toReal_ofReal hhi_nn, ← hreal_eq] at hhigh
-    exact hhigh
-
-private theorem exists_pos_case (p a σ : ℝ) (hp1 : 1 / 2 < p) (hp2 : p < 1)
-    (ha : 0 < a) (hσ : 0 < σ) :
+/-- For `p > 1/2` the derivative at `0` is positive, so a slightly negative threshold
+is strictly better than `0`. -/
+private theorem exists_pos_case (p a σ : ℝ) (hp1 : 1 / 2 < p) (hσ : 0 < σ) :
     ∃ τ : ℝ, thresholdErrorFormula p a σ τ < thresholdErrorFormula p a σ 0 := by
-  have hσ' : σ ≠ 0 := ne_of_gt hσ
-  have h1p : 0 < 1 - p := by linarith
-  -- center c, peak M, ratio r, tolerance ε
-  set c : ℝ := -a / σ with hc
-  set M : ℝ := gaussianPDFReal (0 : ℝ) 1 c with hM
-  have hMpos : 0 < M := gaussianPDFReal_pos 0 1 c (by simp)
-  set r : ℝ := p / (1 - p) with hr
-  have hr1 : 1 < r := by
-    rw [hr, one_lt_div h1p]
-    linarith
-  have hrpos : 0 < r := by linarith
-  set ε : ℝ := M * (r - 1) / (2 * (r + 1)) with hε
-  have hr1ne : r + 1 ≠ 0 := ne_of_gt (by linarith)
-  have hεpos : 0 < ε := by
-    rw [hε]
-    apply div_pos _ _ <;> nlinarith [hMpos, hr1, hrpos]
-  have hεM : ε < M := by
-    have hfrac : (r - 1) / (2 * (r + 1)) < 1 := by
-      rw [div_lt_one (by positivity : 0 < 2 * (r + 1))]
-      nlinarith [hr1]
-    have hεeq : ε = M * ((r - 1) / (2 * (r + 1))) := by rw [hε]; ring
-    rw [hεeq]
-    calc M * ((r - 1) / (2 * (r + 1))) < M * 1 :=
-            mul_lt_mul_of_pos_left hfrac hMpos
-      _ = M := mul_one M
-  have hMratio : (M + ε) / (M - ε) < r := by
-    have hMε : 0 < M - ε := by linarith
-    rw [div_lt_iff₀ hMε]
-    -- M + ε < r * (M - ε)
-    have hεeq : ε * (1 + r) = M * (r - 1) / 2 := by
-      rw [hε]
-      field_simp
-      ring
-    nlinarith [hεeq, hMpos, hr1, hrpos, hεpos, hεM]
-  -- continuity gives δ₀
-  have hcont : ContinuousAt (gaussianPDFReal (0 : ℝ) 1) c :=
-    pdfReal_continuous_aux.continuousAt
-  obtain ⟨δ₀, hδ₀pos, hδ₀⟩ := (Metric.continuousAt_iff.mp hcont) ε hεpos
-  -- δ := δ₀ * σ / 2
-  set δ : ℝ := δ₀ * σ / 2 with hδ
-  have hδpos : 0 < δ := by
-    rw [hδ]
+  have hD : 0 < (2 * p - 1) * gaussianPDFReal 0 1 (a / σ) / σ := by
+    have hφ := gaussianPDFReal_pos 0 1 (a / σ) one_ne_zero
+    have h2p : 0 < 2 * p - 1 := by linarith
     positivity
-  have hδσ : δ / σ = δ₀ / 2 := by
-    rw [hδ]
-    field_simp
-  have hδσpos : 0 < δ / σ := by positivity
-  have hδσlt : δ / σ < δ₀ := by
-    rw [hδσ]
-    linarith
-  -- intervals
-  set u1 : ℝ := c - δ / σ with hu1
-  set v2 : ℝ := c + δ / σ with hv2
-  have hu1lt : u1 < c := by
-    rw [hu1]
-    linarith [hδσpos]
-  have hclt : c < v2 := by
-    rw [hv2]
-    linarith [hδσpos]
-  have hlen1 : c - u1 = δ / σ := by
-    rw [hu1]
-    ring
-  have hlen2 : v2 - c = δ / σ := by
-    rw [hv2]
-    ring
-  -- pdf bounds on both intervals
-  have hbound1 : ∀ x ∈ Set.Ioc u1 c,
-      M - ε ≤ gaussianPDFReal (0 : ℝ) 1 x ∧ gaussianPDFReal (0 : ℝ) 1 x ≤ M + ε := by
-    intro x hx
-    simp only [Set.mem_Ioc] at hx
-    obtain ⟨hx1, hx2⟩ := hx
-    have hdist : dist x c < δ₀ := by
-      rw [Real.dist_eq]
-      have habs : |x - c| = c - x := by
-        rw [abs_of_nonpos (by linarith)]
-        ring
-      rw [habs]
-      have : c - x < c - u1 := by linarith
-      rw [hlen1] at this
-      linarith [hδσlt, this]
-    have hpd := hδ₀ hdist
-    rw [Real.dist_eq] at hpd
-    have habs2 : -ε < gaussianPDFReal (0 : ℝ) 1 x - M ∧
-        gaussianPDFReal (0 : ℝ) 1 x - M < ε := abs_lt.mp hpd
-    constructor <;> linarith
-  have hbound2 : ∀ x ∈ Set.Ioc c v2,
-      M - ε ≤ gaussianPDFReal (0 : ℝ) 1 x ∧ gaussianPDFReal (0 : ℝ) 1 x ≤ M + ε := by
-    intro x hx
-    simp only [Set.mem_Ioc] at hx
-    obtain ⟨hx1, hx2⟩ := hx
-    have hdist : dist x c < δ₀ := by
-      rw [Real.dist_eq]
-      have habs : |x - c| = x - c := abs_of_nonneg (by linarith)
-      rw [habs]
-      have : x - c ≤ v2 - c := by linarith
-      rw [hlen2] at this
-      linarith [hδσlt, this]
-    have hpd := hδ₀ hdist
-    rw [Real.dist_eq] at hpd
-    have habs2 : -ε < gaussianPDFReal (0 : ℝ) 1 x - M ∧
-        gaussianPDFReal (0 : ℝ) 1 x - M < ε := abs_lt.mp hpd
-    constructor <;> linarith
-  have hlo0 : 0 ≤ M - ε := le_of_lt (by linarith)
-  obtain ⟨hAlo, hAhi⟩ := ioc_mass_bounds u1 c (M - ε) (M + ε) hu1lt hlo0 hbound1
-  obtain ⟨hBlo, hBhi⟩ := ioc_mass_bounds c v2 (M - ε) (M + ε) hclt hlo0 hbound2
-  rw [hlen1] at hAlo hAhi
-  rw [hlen2] at hBlo hBhi
-  -- A B notation
-  set A : ℝ := (gaussianReal (0 : ℝ) 1).real (Set.Ioc u1 c) with hA
-  set B : ℝ := (gaussianReal (0 : ℝ) 1).real (Set.Ioc c v2) with hB
-  have hApos : 0 < A := by
-    have : 0 < (M - ε) * (δ / σ) := by
-      apply mul_pos _ hδσpos
-      linarith
-    linarith [hAlo, this]
-  have hLpos : 0 < δ / σ := hδσpos
-  have hLne : δ / σ ≠ 0 := ne_of_gt hLpos
-  have hlo_pos : 0 < M - ε := by linarith
-  have hhi_pos : 0 < M + ε := by linarith [hMpos, hεpos]
-  -- B / A < r
-  have hBA : B / A < r := by
-    have hMε_ne : M - ε ≠ 0 := ne_of_gt hlo_pos
-    have hprod_ne : (M - ε) * (δ / σ) ≠ 0 := mul_ne_zero hMε_ne hLne
-    have h1 : B / A ≤ ((M + ε) * (δ / σ)) / ((M - ε) * (δ / σ)) := by
-      have hBnn : 0 ≤ B := le_trans (by positivity : 0 ≤ (M - ε) * (δ / σ)) hBlo
-      have hAinv_nn : 0 ≤ 1 / A := by positivity
-      have hAle : (M - ε) * (δ / σ) ≤ A := hAlo
-      have hBle : B ≤ (M + ε) * (δ / σ) := hBhi
-      have hAinv_le : 1 / A ≤ 1 / ((M - ε) * (δ / σ)) := by
-        apply one_div_le_one_div_of_le _ hAle
-        positivity
-      calc B / A = B * (1 / A) := by ring
-        _ ≤ ((M + ε) * (δ / σ)) * (1 / A) :=
-          mul_le_mul_of_nonneg_right hBle hAinv_nn
-        _ ≤ ((M + ε) * (δ / σ)) * (1 / ((M - ε) * (δ / σ))) :=
-          mul_le_mul_of_nonneg_left hAinv_le (by positivity)
-        _ = ((M + ε) * (δ / σ)) / ((M - ε) * (δ / σ)) := by ring
-    have h2 : ((M + ε) * (δ / σ)) / ((M - ε) * (δ / σ)) = (M + ε) / (M - ε) := by
-      field_simp
-    rw [h2] at h1
-    linarith [h1, hMratio]
-  -- (1-p) * B < p * A
-  have hmain : (1 - p) * B < p * A := by
-    have hr_eq : r = p / (1 - p) := rfl
-    rw [hr_eq] at hBA
-    rw [div_lt_div_iff₀ hApos h1p] at hBA
-    -- hBA : B * (1 - p) < p * A
-    linarith [hBA]
-  -- connect to formula with τ = -δ
-  have hu1_eq : u1 = (-δ - a) / σ := by
-    simp only [hu1, hc]
-    field_simp
-    ring
-  have hv2_eq : v2 = (δ - a) / σ := by
-    simp only [hv2, hc]
-    field_simp
-    ring
-  have hc_eq : c = -a / σ := rfl
-  have hAu : u1 ≤ c := le_of_lt hu1lt
-  have hvc : c ≤ v2 := le_of_lt hclt
-  have hA_eq : cdf (gaussianReal 0 1) c - cdf (gaussianReal 0 1) u1 = A :=
-    cdf_sub_eq_mass u1 c hAu
-  have hB_eq : cdf (gaussianReal 0 1) v2 - cdf (gaussianReal 0 1) c = B :=
-    cdf_sub_eq_mass c v2 hvc
-  have hf0 : thresholdErrorFormula p a σ 0 = cdf (gaussianReal 0 1) c := by
-    rw [formula_zero_eq, hc_eq]
-  have hfneg : thresholdErrorFormula p a σ (-δ) =
-      p * cdf (gaussianReal 0 1) u1 + (1 - p) * cdf (gaussianReal 0 1) v2 := by
-    unfold thresholdErrorFormula
-    have e1 : ((-δ - a) / σ) = u1 := hu1_eq.symm
-    have e2 : ((-δ + a) / σ) = -v2 := by
-      simp only [hv2, hc]
-      field_simp
-      ring
-    rw [e1, e2, symm_aux]
-    ring
-  use -δ
-  rw [hfneg, hf0]
-  -- goal: p*Φ(u1) + (1-p)*Φ(v2) < Φ(c)
-  -- with Φ(u1) = Φ(c) - A, Φ(v2) = Φ(c) + B
-  have hΦu : cdf (gaussianReal 0 1) u1 = cdf (gaussianReal 0 1) c - A := by linarith [hA_eq]
-  have hΦv : cdf (gaussianReal 0 1) v2 = cdf (gaussianReal 0 1) c + B := by linarith [hB_eq]
-  rw [hΦu, hΦv]
-  nlinarith [hmain]
+  have hev := (hasDerivAt_thresholdErrorFormula_zero p a σ).tendsto_slope_zero_left.eventually
+    (lt_mem_nhds hD)
+  obtain ⟨t, ht, htneg⟩ := (hev.and self_mem_nhdsWithin).exists
+  rw [zero_add, smul_eq_mul] at ht
+  exact ⟨t, by linarith [neg_of_mul_pos_right ht (inv_nonpos.mpr (le_of_lt htneg))]⟩
 
 /-- `Φ(-x) = Q(x)`: the symmetry of the standard normal cdf in `Q` form. -/
 lemma cdf_neg_eq_gaussianQ (x : ℝ) :
@@ -801,7 +562,6 @@ lemma exists_threshold_lt_zero_threshold_of_prior_ne_half (p a σ : ℝ) (hp0 : 
       linarith
     · -- 0 < p < 1
       have hp0pos : 0 < p := lt_of_le_of_ne hp0 (Ne.symm hp0')
-      have hp1lt : p < 1 := lt_of_le_of_ne hp1 hp1'
       by_cases ha0 : a = 0
       · -- a = 0: closed form is (1-p) + (2p-1)·Φ(τ/σ); τ = ±σ beats 0
         subst ha0
@@ -847,19 +607,17 @@ lemma exists_threshold_lt_zero_threshold_of_prior_ne_half (p a σ : ℝ) (hp0 : 
             mul_lt_mul_of_pos_left hPhi h2p
           linarith
       · -- a > 0
-        have hapos : 0 < a := lt_of_le_of_ne ha (Ne.symm ha0)
         rcases lt_or_gt_of_ne hp with hlt | hgt
         · -- p < 1/2: reduce to 1-p > 1/2 via threshold negation
           have hp1_gt : 1 / 2 < 1 - p := by linarith
-          have hp1_lt : 1 - p < 1 := by linarith
-          obtain ⟨τ', hτ'⟩ := exists_pos_case (1 - p) a σ hp1_gt hp1_lt hapos hσ
+          obtain ⟨τ', hτ'⟩ := exists_pos_case (1 - p) a σ hp1_gt hσ
           use -τ'
           have h0eq : thresholdErrorFormula p a σ 0 =
               thresholdErrorFormula (1 - p) a σ 0 := by
             rw [formula_zero_eq, formula_zero_eq]
           rw [formula_neg_swap, h0eq]
           exact hτ'
-        · -- p > 1/2: continuity argument
-          exact exists_pos_case p a σ hgt hp1lt hapos hσ
+        · -- p > 1/2: derivative-sign argument
+          exact exists_pos_case p a σ hgt hσ
 
 end PhyslibExt.Communications.BPSKSignError
