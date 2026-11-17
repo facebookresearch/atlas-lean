@@ -38,8 +38,9 @@ complementary alignment certificate.
 
 ## iv. References
 
-- Standard discrete limit analysis (lower/upper bound theorems) for
-  frame/plastic mechanisms.
+- J. B. Martin, *Plasticity: Fundamentals and General Results*,
+  MIT Press, 1975, chapters on discrete limit analysis (bounding
+  theorems and complementary energy equality conditions).
 
 ## A. Work certificates
 -/
