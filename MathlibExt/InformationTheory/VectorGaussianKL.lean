@@ -22,10 +22,18 @@ The KL divergence between two multivariate Gaussians with
 positive definite covariances is the standard trace/log-det
 formula, computed through the canonical multivariate Gaussian
 density from `MathlibExt.Probability.Distributions.GaussianDensity`
-(imported, not copied). Equal covariances reduce it to the
-Mahalanobis form; singular limits are excluded. Private `_of_density` variants take the
+(imported, not copied). Equal covariances reduce it to half the
+Mahalanobis term (`klDiv_multivariateGaussian_same_covariance`). A zero covariance, which is not
+positive definite, gives a point mass and divergence `⊤`
+(`klDiv_multivariateGaussian_zero_covariance`). Private `_of_density` variants take the
 density theorem `MetaMathlibExt.multivariateGaussian_eq_withDensity` as a hypothesis and the public
 theorems discharge it.
+
+## References
+
+* C. E. Rasmussen and C. K. I. Williams, *Gaussian Processes for Machine Learning*, MIT Press
+  (2006), Appendix A.5, eq. (A.23) (KL divergence between two multivariate Gaussians, after
+  S. Kullback, *Information Theory and Statistics*, Wiley (1959), §9.1).
 -/
 
 @[expose] public section
@@ -276,6 +284,15 @@ theorem multivariateGaussianKLReal_self {ι : Type*} [Fintype ι] [DecidableEq �
   simp [multivariateGaussianKLReal, div_self hdet,
     Matrix.nonsing_inv_mul S (isUnit_iff_ne_zero.mpr hdet)]
 
+/-- Equal covariances: for positive definite `S` the closed form at `T = S` is half the
+Mahalanobis term, `(m - q)ᵀ S⁻¹ (m - q) / 2`. -/
+theorem multivariateGaussianKLReal_same_covariance {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (m q : EuclideanSpace ℝ ι) (S : Matrix ι ι ℝ) (hS : S.PosDef) :
+    multivariateGaussianKLReal m q S S = ofLp (m - q) ⬝ᵥ S⁻¹ *ᵥ ofLp (m - q) / 2 := by
+  have hdet : S.det ≠ 0 := hS.det_pos.ne'
+  simp [multivariateGaussianKLReal, div_self hdet,
+    Matrix.nonsing_inv_mul S (isUnit_iff_ne_zero.mpr hdet)]
+
 /-- Validation, equal laws: both sides of the headline are zero at `q = m`, `T = S`. -/
 theorem klDiv_multivariateGaussian_self {ι : Type*} [Fintype ι] [DecidableEq ι]
     (m : EuclideanSpace ℝ ι) (S : Matrix ι ι ℝ) (hS : S.PosDef) :
@@ -330,15 +347,13 @@ private theorem klDiv_multivariateGaussian_nondiagonal_of_density
     multivariateGaussianKLReal_nondiagonal]
 
 /-- Violated premise (`S` positive definite): for `n ≥ 1` the zero covariance gives the point mass
-`N(m, 0) = δ_m`, which is singular to `N(q, T)`; the divergence is `⊤`, not the finite closed
-form. -/
-private theorem klDiv_multivariateGaussian_zero_covariance_ne_of_density {ι : Type*} [Fintype ι]
+`N(m, 0) = δ_m`, which is singular to `N(q, T)`, so the divergence is `⊤`. -/
+private theorem klDiv_multivariateGaussian_zero_covariance_of_density {ι : Type*} [Fintype ι]
     [DecidableEq ι] [Nonempty ι] (m q : EuclideanSpace ℝ ι) (T : Matrix ι ι ℝ)
     (hdT : multivariateGaussian q T =
       volume.withDensity fun x =>
         ENNReal.ofReal (MetaMathlibExt.multivariateGaussianPDFReal q T x)) :
-    klDiv (multivariateGaussian m 0) (multivariateGaussian q T) ≠
-      ENNReal.ofReal (multivariateGaussianKLReal m q 0 T) := by
+    klDiv (multivariateGaussian m 0) (multivariateGaussian q T) = ∞ := by
   have h0 : multivariateGaussian m (0 : Matrix ι ι ℝ) = Measure.dirac m := by
     simp [multivariateGaussian, CFC.sqrt_zero]
   have hnac : ¬ multivariateGaussian m 0 ≪ multivariateGaussian q T := by
@@ -349,8 +364,7 @@ private theorem klDiv_multivariateGaussian_zero_covariance_ne_of_density {ι : T
     have := hac hvol
     rw [h0] at this
     simp at this
-  rw [klDiv_of_not_ac hnac]
-  exact ENNReal.top_ne_ofReal
+  exact klDiv_of_not_ac hnac
 
 /-! ### Density discharged
 
@@ -400,6 +414,15 @@ theorem klDiv_multivariateGaussian {ι : Type*} [Fintype ι] [DecidableEq ι] [N
     (MetaMathlibExt.multivariateGaussian_eq_withDensity m hS)
     (MetaMathlibExt.multivariateGaussian_eq_withDensity q hT)
 
+/-- **Equal covariances.** For `n ≥ 1` and positive definite `S`, the divergence between Gaussians
+with the same covariance is half the Mahalanobis term:
+`KL(N(m, S) ‖ N(q, S)) = ofReal ((m - q)ᵀ S⁻¹ (m - q) / 2)`. Density discharged. -/
+theorem klDiv_multivariateGaussian_same_covariance {ι : Type*} [Fintype ι] [DecidableEq ι]
+    [Nonempty ι] (m q : EuclideanSpace ℝ ι) (S : Matrix ι ι ℝ) (hS : S.PosDef) :
+    klDiv (multivariateGaussian m S) (multivariateGaussian q S) =
+      ENNReal.ofReal (ofLp (m - q) ⬝ᵥ S⁻¹ *ᵥ ofLp (m - q) / 2) := by
+  rw [klDiv_multivariateGaussian m q S S hS hS, multivariateGaussianKLReal_same_covariance m q S hS]
+
 /-- Validation, nondiagonal covariance (measure level, coordinate transport):
 `KL(N((1,0), 1) ‖ N(0, [[2,1],[1,2]])) = ofReal (log 3 / 2)`; density discharged. -/
 theorem klDiv_multivariateGaussian_nondiagonal :
@@ -410,14 +433,23 @@ theorem klDiv_multivariateGaussian_nondiagonal :
     (MetaMathlibExt.multivariateGaussian_eq_withDensity _ Matrix.PosDef.one)
     (MetaMathlibExt.multivariateGaussian_eq_withDensity _ posDef_two_one_one_two)
 
-/-- Violated premise (`S` positive definite): for `n ≥ 1` the zero covariance gives the point mass
-`N(m, 0) = δ_m`, which is singular to `N(q, T)`; the divergence is `⊤`, not the finite closed form.
-Density discharged. -/
+/-- **Violated premise** (`S` positive definite): for `n ≥ 1` the zero covariance gives the point
+mass `N(m, 0) = δ_m`, which is singular to `N(q, T)`, so
+`KL(N(m, 0) ‖ N(q, T)) = ⊤`. Density discharged. -/
+theorem klDiv_multivariateGaussian_zero_covariance {ι : Type*} [Fintype ι] [DecidableEq ι]
+    [Nonempty ι] (m q : EuclideanSpace ℝ ι) (T : Matrix ι ι ℝ) (hT : T.PosDef) :
+    klDiv (multivariateGaussian m 0) (multivariateGaussian q T) = ∞ :=
+  klDiv_multivariateGaussian_zero_covariance_of_density m q T
+    (MetaMathlibExt.multivariateGaussian_eq_withDensity q hT)
+
+/-- Corollary of `klDiv_multivariateGaussian_zero_covariance`: at the zero covariance the
+divergence is not the finite closed form, so the positive-definiteness premise of
+`klDiv_multivariateGaussian` cannot be dropped. -/
 theorem klDiv_multivariateGaussian_zero_covariance_ne {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Nonempty ι] (m q : EuclideanSpace ℝ ι) (T : Matrix ι ι ℝ) (hT : T.PosDef) :
     klDiv (multivariateGaussian m 0) (multivariateGaussian q T) ≠
-      ENNReal.ofReal (multivariateGaussianKLReal m q 0 T) :=
-  klDiv_multivariateGaussian_zero_covariance_ne_of_density m q T
-    (MetaMathlibExt.multivariateGaussian_eq_withDensity q hT)
+      ENNReal.ofReal (multivariateGaussianKLReal m q 0 T) := by
+  rw [klDiv_multivariateGaussian_zero_covariance m q T hT]
+  exact ENNReal.top_ne_ofReal
 
 end MathlibExt.InformationTheory.VectorGaussianKL
