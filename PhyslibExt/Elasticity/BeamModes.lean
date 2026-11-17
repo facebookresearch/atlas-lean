@@ -35,12 +35,10 @@ amplitude; no mode-completeness or first-mode claim is made.
   satisfies the beam equation at every `x, t`.
 - `BeamModes.beamModeEnergy_conserved`: the integrated energy is
   constant in time.
-- `BeamModes.orthonormal_tail_norm_sq_le`: for a finite modal sum
-  in an orthonormal family, the squared norm of the tail modes
-  `N + 1 .. K` is at most that of the full sum `1 .. K` (finite
-  Parseval plus nonnegativity of each modal contribution).
-- `BeamModes.sineBasis_tail_norm_sq_le`: that tail bound for the
-  existing sine Hilbert basis on `L²([0, 1])`.
+- `BeamModes.sineBasis_tail_norm_sq_le`: for a finite modal sum
+  in the existing sine Hilbert basis on `L²([0, 1])`, the squared
+  norm of the tail modes is at most that of the full sum (via the
+  finite Pythagoras identity in `MathlibExt`).
 
 ## iii. Table of contents
 
@@ -391,39 +389,6 @@ theorem beamModeEnergy_conserved {EI ρA L : ℝ} (hEI : 0 < EI)
 
 /-! ## B. Finite-mode truncation tail bound -/
 
-/-- Finite Parseval identity for an orthonormal family: for any
-finite index set `s` and coefficients `c`,
-`‖∑ k ∈ s, c k • e k‖^2 = ∑ k ∈ s, (c k)^2`. -/
-theorem orthonormal_sum_norm_sq {E : Type*} [NormedAddCommGroup E]
-    [InnerProductSpace ℝ E] {e : ℕ → E} (he : Orthonormal ℝ e)
-    (c : ℕ → ℝ) (s : Finset ℕ) :
-    ‖∑ k ∈ s, c k • e k‖ ^ 2 = ∑ k ∈ s, c k ^ 2 := by
-  have h := Orthonormal.inner_sum he c c s
-  rw [real_inner_self_eq_norm_sq] at h
-  refine h.trans ?_
-  refine Finset.sum_congr rfl fun k _ => ?_
-  simp only [RCLike.conj_to_real, pow_two]
-
-/-- Tail bound for a finite modal sum: the squared norm of the tail
-modes `N + 1 .. K` is at most the squared norm of the full sum
-`1 .. K`, since every modal contribution `(c k)^2` is nonnegative.
-This is the displacement-tail bound for a finite-mode beam
-truncation in an orthonormal sine basis; modal coefficients `c k`
-at a fixed time already contain the initial-velocity contribution
-`(b k) / ω k` in their sine-in-time part. -/
-theorem orthonormal_tail_norm_sq_le {E : Type*} [NormedAddCommGroup E]
-    [InnerProductSpace ℝ E] {e : ℕ → E} (he : Orthonormal ℝ e)
-    (c : ℕ → ℝ) {N K : ℕ} (hNK : N ≤ K) :
-    ‖∑ k ∈ Finset.Ico (N + 1) (K + 1), c k • e k‖ ^ 2 ≤
-      ‖∑ k ∈ Finset.Icc 1 K, c k • e k‖ ^ 2 := by
-  have _ : N ≤ K := hNK
-  rw [orthonormal_sum_norm_sq he, orthonormal_sum_norm_sq he]
-  refine Finset.sum_le_sum_of_subset_of_nonneg ?hsub (fun k _ _ => sq_nonneg _)
-  intro x hx
-  rw [Finset.mem_Ico] at hx
-  rw [Finset.mem_Icc]
-  exact ⟨Nat.le_trans (Nat.le_add_left 1 N) hx.1, Nat.le_of_lt_succ hx.2⟩
-
 /-- Tail bound for the existing sine Hilbert basis
 `MathlibExt.Analysis.ODE.GreensOperator.sineHilbertBasis` on
 `L²([0, 1])`: the basis is indexed by positive mode number, so
@@ -431,7 +396,9 @@ with zero-based coefficient indices the full sum runs over
 `k ∈ Finset.Ico 0 K` (modes `1 .. K`, coefficient `c k` on mode
 `k + 1`) and the tail over `k ∈ Finset.Ico N K` (modes
 `N + 1 .. K`); the tail's squared norm is at most the full sum's.
-Fixed-time modal coefficients already contain the
+The finite Parseval identity behind this is Mathlib's
+`Orthonormal.inner_sum`; each modal contribution is
+`(c k)^2 ≥ 0`. Fixed-time modal coefficients already contain the
 initial-velocity contribution divided by the modal frequency. -/
 theorem sineBasis_tail_norm_sq_le (c : ℕ → ℝ) {N K : ℕ} (hNK : N ≤ K) :
     ‖∑ k ∈ Finset.Ico N K,
@@ -447,7 +414,16 @@ theorem sineBasis_tail_norm_sq_le (c : ℕ → ℝ) {N K : ℕ} (hNK : N ≤ K) 
       (fun n : ℕ => (⟨n + 1, Nat.succ_pos n⟩ : ℕ+))
       (fun a b h => by
         simpa using congrArg (fun p : ℕ+ => (p : ℕ)) h)
-  rw [orthonormal_sum_norm_sq he, orthonormal_sum_norm_sq he]
+  have key : ∀ s : Finset ℕ,
+      ‖∑ k ∈ s, c k • MathlibExt.Analysis.ODE.GreensOperator.sineHilbertBasis
+        ⟨k + 1, Nat.succ_pos k⟩‖ ^ 2 = ∑ k ∈ s, c k ^ 2 := by
+    intro s
+    have h := Orthonormal.inner_sum he c c s
+    rw [real_inner_self_eq_norm_sq] at h
+    refine h.trans ?_
+    refine Finset.sum_congr rfl fun k _ => ?_
+    simp only [RCLike.conj_to_real, pow_two]
+  rw [key, key]
   exact Finset.sum_le_sum_of_subset_of_nonneg
     (Finset.Ico_subset_Ico (Nat.zero_le N) le_rfl) (fun k _ _ => sq_nonneg _)
 
