@@ -56,5 +56,16 @@ example : ((2:ℝ) * 2 + 3 * 0) - (2 * 0 + 3 * 0) =
     (fun _ _ => by norm_num)
     intervalIntegrable_const
   exact h
+/-- Densities `2, 1` and shift `s = 1/2` from `(1, 2)` reach
+`(3/2, 1)`: same energy, mass drops from `3` to `5/2`. -/
+example : (2:ℝ) * (1 + 1 * (1/2)) + 1 * (2 - 2 * (1/2)) = 2 * 1 + 1 * 2 ∧
+    ((1 + 1 * (1/2)) + (2 - 2 * (1/2))) - (1 + 2) = ((1:ℝ) - 2) * (1/2) :=
+  energy_composition_perturbation
+
+/-- The witness energies and masses. -/
+example : (2 : ℝ) * 1 + 1 * 2 = 4 ∧ (2 : ℝ) * (3 / 2) + 1 * 1 = 4 ∧
+    (3 : ℝ) ≠ 5 / 2 := by
+  have h := energy_composition_witness
+  exact ⟨h.1, h.2.1, h.2.2.2.2⟩
 
 end PhyslibExtTest.Biophysics.EnergyStores
