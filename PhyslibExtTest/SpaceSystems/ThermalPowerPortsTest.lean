@@ -56,6 +56,11 @@ example :
      (Tmin := 1) (by norm_num) (by norm_num),
    ThermalPowerPorts.radiatorRate_nonpos_at_max (C := 2) (Krad := 1) (Q := 16)
      (Tmax := 2) (by norm_num) (by norm_num),
-   ThermalPowerPorts.clippedRadiatorRate_lipschitz (C := 2) (Krad := 1) (Q := 16)
-     (Tmin := 1) (Tmax := 2) (by norm_num) (by norm_num) (by norm_num)
-     (by norm_num) 0 3⟩
+   by
+     have h := ThermalPowerPorts.clippedRadiatorRate_lipschitz (C := 2)
+       (Krad := 1) (Q := 16) (Tmin := 1) (Tmax := 2) (by norm_num)
+       (by norm_num) (by norm_num) (by norm_num) 0 3
+     calc |ThermalPowerPorts.clippedRadiatorRate 2 1 16 1 2 0 -
+           ThermalPowerPorts.clippedRadiatorRate 2 1 16 1 2 3|
+         ≤ 1 * (4 * 2 ^ 3) / 2 * |(0 : ℝ) - 3| := h
+       _ = 16 * |(0 : ℝ) - 3| := by norm_num⟩
