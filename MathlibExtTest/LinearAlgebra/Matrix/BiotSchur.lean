@@ -31,3 +31,14 @@ example : (3 : Fin 1 → ℝ) = (1 : Matrix (Fin 1) (Fin 1) ℝ) *ᵥ ((4 : Fin 
     1 1 (3 : Fin 1 → ℝ) (1 : Fin 1 → ℝ) 4 2 (by ext i; fin_cases i; norm_num [mulVec, dotProduct])
     (by ext i; fin_cases i; norm_num [mulVec, dotProduct])
   exact h.1
+
+/-- The reduced Schur equation in the same scalar case: `(1+1) • p`
+with `p = 1` equals `4 - 2`. -/
+example : ((1 : Matrix (Fin 1) (Fin 1) ℝ)ᵀ * (1 : Matrix (Fin 1) (Fin 1) ℝ)
+      * (1 : Matrix (Fin 1) (Fin 1) ℝ) + 1) *ᵥ (1 : Fin 1 → ℝ)
+    = (1 : Matrix (Fin 1) (Fin 1) ℝ)ᵀ *ᵥ
+      ((1 : Matrix (Fin 1) (Fin 1) ℝ) *ᵥ (4 : Fin 1 → ℝ)) - 2 := by
+  have h := biot_schur (1 : Matrix (Fin 1) (Fin 1) ℝ) 1 (by simp) (by simp)
+    1 1 (3 : Fin 1 → ℝ) (1 : Fin 1 → ℝ) 4 2 (by ext i; fin_cases i; norm_num [mulVec, dotProduct])
+    (by ext i; fin_cases i; norm_num [mulVec, dotProduct])
+  exact h.2

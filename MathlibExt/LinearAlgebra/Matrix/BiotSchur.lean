@@ -10,6 +10,7 @@ module
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Data.Matrix.Mul
+public import MathlibExt.LinearAlgebra.Matrix.BlockSolutionEquiv
 public import Mathlib.LinearAlgebra.Matrix.Defs
 import Mathlib.Data.Matrix.Basic
 import Mathlib.Tactic.Abel
@@ -64,26 +65,26 @@ theorem biot_schur {n m : Type*} [Fintype n] [Fintype m]
 (h2 : Qᵀ *ᵥ u - C *ᵥ p = g) :
 u = Kinv *ᵥ (f - Q *ᵥ p)
 ∧ (Qᵀ * Kinv * Q + C) *ᵥ p = Qᵀ *ᵥ (Kinv *ᵥ f) - g := by
-  have _hk := hK
-  have hKu : K *ᵥ u = f - Q *ᵥ p := by
-    rw [← h1]
-    exact (add_sub_cancel_right _ _).symm
-  have hu : u = Kinv *ᵥ (f - Q *ᵥ p) := by
-    rw [← hKu, Matrix.mulVec_mulVec, hK', Matrix.one_mulVec]
-  refine ⟨hu, ?_⟩
-  have hsplit : (Qᵀ * Kinv * Q + C) *ᵥ p
-      = Qᵀ *ᵥ (Kinv *ᵥ (Q *ᵥ p)) + C *ᵥ p := by
-    rw [Matrix.add_mulVec, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec]
-  have hKf : Kinv *ᵥ f = u + Kinv *ᵥ (Q *ᵥ p) := by
-    have hsub := Matrix.mulVec_sub Kinv f (Q *ᵥ p)
-    rw [hsub] at hu
-    rw [hu]
-    exact (sub_add_cancel _ _).symm
-  have hQu : Qᵀ *ᵥ u = g + C *ᵥ p := by
-    rw [← h2]
-    exact (sub_add_cancel _ _).symm
-  rw [hsplit, hKf, Matrix.mulVec_add, hQu]
-  rw [add_comm (g + C *ᵥ p) _, add_sub_assoc, add_comm g _,
-    add_sub_assoc, sub_self, add_zero]
+  have : Invertible K := ⟨Kinv, hK', hK⟩
+  have hKinv : K⁻¹ = Kinv := Matrix.inv_eq_right_inv hK
+  have h1' : (-C) *ᵥ p + Qᵀ *ᵥ u = g := by
+    rw [Matrix.neg_mulVec, add_comm (-(C *ᵥ p)) (Qᵀ *ᵥ u), ← sub_eq_add_neg]
+    exact h2
+  have h2' : Q *ᵥ p + K *ᵥ u = f := by
+    rw [add_comm (Q *ᵥ p) (K *ᵥ u)]
+    exact h1
+  obtain ⟨hschur, hrec⟩ :=
+    MathlibExt.LinearAlgebra.Matrix.BlockSolutionEquiv.elim_forward
+      (A := -C) (B := Qᵀ) (C := Q) (D := K)
+      (x := p) (y := u) (u := g) (v := f) h1' h2'
+  have hschur2 : ((-C) - Qᵀ * K⁻¹ * Q) *ᵥ p = g - Qᵀ *ᵥ (K⁻¹ *ᵥ f) := hschur
+  rw [hKinv] at hrec hschur2
+  refine ⟨hrec, ?_⟩
+  have hmat : (-C) - Qᵀ * Kinv * Q = -(Qᵀ * Kinv * Q + C) := by
+    rw [sub_eq_add_neg, neg_add_rev]
+  rw [hmat, Matrix.neg_mulVec] at hschur2
+  apply neg_inj.mp
+  rw [neg_sub]
+  exact hschur2
 
 end BiotSchur
