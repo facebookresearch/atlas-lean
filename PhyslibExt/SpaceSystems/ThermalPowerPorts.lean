@@ -80,109 +80,28 @@ private lemma clip_mem {Tmin Tmax T : ℝ} (hmax : Tmin ≤ Tmax) :
   · exact le_min (le_max_right T Tmin) hmax
   · exact min_le_right _ _
 
-private lemma max_sub_max_le (x y c : ℝ) : max x c - max y c ≤ |x - y| := by
-  have hxy : x ≤ y + |x - y| := by
-    have h : x - y ≤ |x - y| := le_abs_self _
-    linarith
-  have h1 : x ≤ max (y + |x - y|) c := le_trans hxy (le_max_left _ _)
-  have h2 : c ≤ max (y + |x - y|) c := le_max_right _ _
-  have h3 : max x c ≤ max (y + |x - y|) c := max_le_iff.mpr ⟨h1, h2⟩
-  have hd : (0 : ℝ) ≤ |x - y| := abs_nonneg _
-  have h4 : y + |x - y| ≤ max y c + |x - y| := by
-    have hy : y ≤ max y c := le_max_left _ _
-    linarith
-  have h5 : c ≤ max y c + |x - y| := by
-    have hc : c ≤ max y c := le_max_right _ _
-    linarith
-  have h6 : max (y + |x - y|) c ≤ max y c + |x - y| := max_le_iff.mpr ⟨h4, h5⟩
-  linarith
-
-private lemma abs_max_sub_max_le (a b c : ℝ) : |max a c - max b c| ≤ |a - b| := by
-  rw [abs_le]
-  refine ⟨?_, max_sub_max_le a b c⟩
-  have h : max b c - max a c ≤ |b - a| := max_sub_max_le b a c
-  rw [abs_sub_comm] at h
-  linarith
-
-private lemma min_sub_min_le (x y c : ℝ) : min x c - min y c ≤ |x - y| := by
-  have hxy : x ≤ y + |x - y| := by
-    have h : x - y ≤ |x - y| := le_abs_self _
-    linarith
-  have h1 : min x c ≤ y + |x - y| := le_trans (min_le_left _ _) hxy
-  have h2 : min x c ≤ c := min_le_right _ _
-  have h3 : min x c ≤ min (y + |x - y|) c := le_min_iff.mpr ⟨h1, h2⟩
-  have h6 : min (y + |x - y|) c ≤ min y c + |x - y| := by
-    rw [min_le_iff]
-    cases le_total y c with
-    | inl hyc =>
-      left
-      have hmin : min y c = y := min_eq_left hyc
-      linarith
-    | inr hcy =>
-      right
-      have hmin : min y c = c := min_eq_right hcy
-      have hd : (0 : ℝ) ≤ |x - y| := abs_nonneg _
-      linarith
-  linarith
-
-private lemma abs_min_sub_min_le (a b c : ℝ) : |min a c - min b c| ≤ |a - b| := by
-  rw [abs_le]
-  refine ⟨?_, min_sub_min_le a b c⟩
-  have h : min b c - min a c ≤ |b - a| := min_sub_min_le b a c
-  rw [abs_sub_comm] at h
-  linarith
-
 private lemma abs_clip_sub_clip_le (Tmin Tmax a b : ℝ) :
-    |min (max a Tmin) Tmax - min (max b Tmin) Tmax| ≤ |a - b| :=
-  le_trans (abs_min_sub_min_le _ _ _) (abs_max_sub_max_le _ _ _)
+    |min (max a Tmin) Tmax - min (max b Tmin) Tmax| ≤ |a - b| := by
+  refine le_trans (abs_min_sub_min_le_max _ _ _ _) ?_
+  rw [sub_self, abs_zero]
+  exact max_le (abs_max_sub_max_le_abs _ _ _) (abs_nonneg _)
 
 private lemma abs_pow4_sub_le (x y Tmin Tmax : ℝ) (hmin : 0 ≤ Tmin)
     (hx : x ∈ Set.Icc Tmin Tmax) (hy : y ∈ Set.Icc Tmin Tmax) :
     |x ^ 4 - y ^ 4| ≤ (4 * Tmax ^ 3) * |x - y| := by
-  have ⟨hxlo, hxhi⟩ := hx
-  have ⟨hylo, hyhi⟩ := hy
-  have hx0 : (0 : ℝ) ≤ x := le_trans hmin hxlo
-  have hy0 : (0 : ℝ) ≤ y := le_trans hmin hylo
-  have hT0 : (0 : ℝ) ≤ Tmax := le_trans hmin (le_trans hxlo hxhi)
-  have hx3 : x ^ 3 ≤ Tmax ^ 3 := pow_le_pow_left₀ hx0 hxhi 3
-  have hy3 : y ^ 3 ≤ Tmax ^ 3 := pow_le_pow_left₀ hy0 hyhi 3
-  have hx2 : x ^ 2 ≤ Tmax ^ 2 := pow_le_pow_left₀ hx0 hxhi 2
-  have hy2 : y ^ 2 ≤ Tmax ^ 2 := pow_le_pow_left₀ hy0 hyhi 2
-  have hT2 : (0 : ℝ) ≤ Tmax ^ 2 := pow_nonneg hT0 2
-  have hy2nn : (0 : ℝ) ≤ y ^ 2 := pow_nonneg hy0 2
-  have hx2y : x ^ 2 * y ≤ Tmax ^ 3 := by
-    have h1 : x ^ 2 * y ≤ Tmax ^ 2 * y := mul_le_mul_of_nonneg_right hx2 hy0
-    have h2 : Tmax ^ 2 * y ≤ Tmax ^ 2 * Tmax := mul_le_mul_of_nonneg_left hyhi hT2
-    have h3 : Tmax ^ 2 * Tmax = Tmax ^ 3 := by ring
-    calc x ^ 2 * y ≤ Tmax ^ 2 * y := h1
-      _ ≤ Tmax ^ 2 * Tmax := h2
-      _ = Tmax ^ 3 := h3
-  have hxy2 : x * y ^ 2 ≤ Tmax ^ 3 := by
-    have h1 : x * y ^ 2 ≤ Tmax * y ^ 2 := mul_le_mul_of_nonneg_right hxhi hy2nn
-    have h2 : Tmax * y ^ 2 ≤ Tmax * Tmax ^ 2 := mul_le_mul_of_nonneg_left hy2 hT0
-    have h3 : Tmax * Tmax ^ 2 = Tmax ^ 3 := by ring
-    calc x * y ^ 2 ≤ Tmax * y ^ 2 := h1
-      _ ≤ Tmax * Tmax ^ 2 := h2
-      _ = Tmax ^ 3 := h3
-  have nx3 : (0 : ℝ) ≤ x ^ 3 := pow_nonneg hx0 3
-  have nx2y : (0 : ℝ) ≤ x ^ 2 * y := mul_nonneg (pow_nonneg hx0 2) hy0
-  have nxy2 : (0 : ℝ) ≤ x * y ^ 2 := mul_nonneg hx0 (pow_nonneg hy0 2)
-  have ny3 : (0 : ℝ) ≤ y ^ 3 := pow_nonneg hy0 3
-  have hSnn : (0 : ℝ) ≤ x ^ 3 + x ^ 2 * y + x * y ^ 2 + y ^ 3 :=
-    add_nonneg (add_nonneg (add_nonneg nx3 nx2y) nxy2) ny3
-  have hSle : x ^ 3 + x ^ 2 * y + x * y ^ 2 + y ^ 3 ≤ 4 * Tmax ^ 3 := by
-    linarith [hx3, hx2y, hxy2, hy3]
-  have hSabs : |x ^ 3 + x ^ 2 * y + x * y ^ 2 + y ^ 3| ≤ 4 * Tmax ^ 3 := by
-    rw [abs_of_nonneg hSnn]
-    exact hSle
-  have hfactor : x ^ 4 - y ^ 4 =
-      (x - y) * (x ^ 3 + x ^ 2 * y + x * y ^ 2 + y ^ 3) := by
-    ring
+  have hx0 : (0 : ℝ) ≤ x := le_trans hmin hx.1
+  have hy0 : (0 : ℝ) ≤ y := le_trans hmin hy.1
+  have hmax3 : max |x| |y| ^ 3 ≤ Tmax ^ 3 := by
+    apply pow_le_pow_left₀ _ _ 3
+    · exact le_max_of_le_left (abs_nonneg _)
+    · rw [abs_of_nonneg hx0, abs_of_nonneg hy0]
+      exact max_le hx.2 hy.2
   calc |x ^ 4 - y ^ 4|
-      = |x - y| * |x ^ 3 + x ^ 2 * y + x * y ^ 2 + y ^ 3| := by
-        rw [hfactor, abs_mul]
-    _ ≤ |x - y| * (4 * Tmax ^ 3) := mul_le_mul_of_nonneg_left hSabs (abs_nonneg _)
-    _ = (4 * Tmax ^ 3) * |x - y| := mul_comm _ _
+      ≤ |x - y| * 4 * max |x| |y| ^ 3 := abs_pow_sub_pow_le x y 4
+    _ ≤ |x - y| * 4 * Tmax ^ 3 :=
+        mul_le_mul_of_nonneg_left hmax3
+          (mul_nonneg (abs_nonneg _) (by norm_num))
+    _ = (4 * Tmax ^ 3) * |x - y| := by ring
 
 /-- The clipped rate agrees with the physical rate on the box. -/
 lemma clippedRadiatorRate_eq_of_mem {C Krad Q Tmin Tmax T : ℝ}
