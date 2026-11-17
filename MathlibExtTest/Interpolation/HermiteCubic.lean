@@ -9,12 +9,12 @@ module
 
 import Mathlib.Tactic.NormNum
 
-import PhyslibExt.Mechanics.Structural.HermiteCubic
+import MathlibExt.Interpolation.HermiteCubic
 
 /-!
 # Hermite cubic checks
 
-Focused checks for `PhyslibExt.Mechanics.Structural.HermiteCubic`: the
+Focused checks for `MathlibExt.Interpolation.HermiteCubic`: the
 four unit basis data on `L = 2` through the public end-condition
 theorems, and zero end data giving the zero cubic.
 
