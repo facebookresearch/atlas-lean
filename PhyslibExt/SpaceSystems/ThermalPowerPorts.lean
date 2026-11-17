@@ -163,7 +163,7 @@ lemma clippedRadiatorRate_lipschitz {C Krad Q Tmin Tmax : ℝ}
 /-- The clipped rate in Mathlib's bundled `LipschitzWith` form,
 with constant `Krad * (4 * Tmax^3) / C`, for direct consumption
 by ODE existence/uniqueness APIs. -/
-theorem clippedRadiatorRate_lipschitzWith {C Krad Q Tmin Tmax : ℝ}
+lemma clippedRadiatorRate_lipschitzWith {C Krad Q Tmin Tmax : ℝ}
     (hC : 0 < C) (hK : 0 < Krad) (hmin : 0 ≤ Tmin) (hmax : Tmin ≤ Tmax) :
     LipschitzWith ⟨Krad * (4 * Tmax ^ 3) / C, by
       have hT0 : (0 : ℝ) ≤ Tmax := le_trans hmin hmax
@@ -613,7 +613,7 @@ within-derivative `clippedRadiatorRate C Krad Q Tmin Tmax (T s)` on
 `T 0 ∈ [Tmin, Tmax]`, then `T t ∈ [Tmin, Tmax]` for every `t ≥ 0`.
 On the box the clipped and physical rates agree, so such a
 trajectory also solves the original field there. -/
-theorem clippedRadiator_solution_trapped {C Krad Q Tmin Tmax : ℝ}
+lemma clippedRadiator_solution_trapped {C Krad Q Tmin Tmax : ℝ}
     (hC : 0 < C) (hK : 0 < Krad) (hmin : 0 ≤ Tmin) (hmax : Tmin ≤ Tmax)
     (hlo : 0 ≤ Q - Krad * Tmin ^ 4) (hhi : Q - Krad * Tmax ^ 4 ≤ 0)
     {T : ℝ → ℝ}
