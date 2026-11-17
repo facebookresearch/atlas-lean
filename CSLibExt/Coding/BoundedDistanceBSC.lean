@@ -34,7 +34,7 @@ distance decoding error bound).
 
 open ProbabilityTheory
 
-namespace CSLibExt.Coding.BoundedDistanceBSC
+namespace Cslib.CodingTheory.BoundedDistanceBSC
 
 /-- Binary symmetric channel law on error words: product
 (`Measure.pi`) of IID `Bernoulli(delta)` flips, where flip value `1`
@@ -369,23 +369,6 @@ theorem boundedDistance_bsc_error_le_binomTail (n k t : ℕ)
   rw [bsc_real_weight_ge_eq_binomTail n (t + 1) delta hdelta0 hdelta1] at hle
   exact hle
 
-/-- **Hamming (7,4) instantiation.** With `t = 1`, block-error
-probability is at most `binomTail 7 2 delta`, provided the decoder
-corrects every weight-at-most-`1` error (the Atlas Hamming
-`decode_add` guarantee, supplied here as hypothesis). -/
-theorem hamming74_bsc_error_le_binomTail
-    (encode : (Fin 4 → ZMod 2) → (Fin 7 → ZMod 2))
-    (decode : (Fin 7 → ZMod 2) → (Fin 7 → ZMod 2))
-    (hcorrect : ∀ (msg : Fin 4 → ZMod 2) (e : Fin 7 → ZMod 2),
-      hammingNorm e ≤ 1 → decode (encode msg + e) = encode msg)
-    (m : Fin 4 → ZMod 2) (delta : ℝ) (hdelta0 : 0 ≤ delta)
-    (hdelta1 : delta ≤ 1) :
-    (bscMeasure 7 delta hdelta0 hdelta1).real
-        {e : Fin 7 → ZMod 2 | decode (encode m + e) ≠ encode m} ≤
-      binomTail 7 2 delta := by
-  exact boundedDistance_bsc_error_le_binomTail 7 4 1 encode decode hcorrect m
-    delta hdelta0 hdelta1
-
 /-- If `t >= n`, every error is corrected and block-error
 probability is `0`. -/
 theorem boundedDistance_bsc_error_eq_zero_of_le (n k t : ℕ)
@@ -417,10 +400,10 @@ theorem hamming74_bsc_error_le (m : Fin 4 → ZMod 2) (delta : ℝ)
           (Cslib.CodingTheory.Hamming74.encode m + e)
           ≠ Cslib.CodingTheory.Hamming74.encode m}
       ≤ ProbabilityTheory.binomTail 7 2 delta :=
-  hamming74_bsc_error_le_binomTail
+  boundedDistance_bsc_error_le_binomTail 7 4 1
     Cslib.CodingTheory.Hamming74.encode Cslib.CodingTheory.Hamming74.decode
     (fun msg e he => Cslib.CodingTheory.Hamming74.decode_add
       (Cslib.CodingTheory.Hamming74.encode_mem_code msg) he)
     m delta hdelta0 hdelta1
 
-end CSLibExt.Coding.BoundedDistanceBSC
+end Cslib.CodingTheory.BoundedDistanceBSC

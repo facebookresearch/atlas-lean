@@ -13,9 +13,9 @@ import Mathlib.Tactic.NormNum
 
 @[expose] public section
 
-open CSLibExt.Coding.BoundedDistanceBSC ProbabilityTheory
+open Cslib.CodingTheory.BoundedDistanceBSC ProbabilityTheory
 
-namespace CSLibExtTest.Coding.BoundedDistanceBSC
+namespace Cslib.CodingTheory.BoundedDistanceBSCTests
 
 /-- The canonical binomial tail at concrete values:
 `binomTail 7 2 (1/2) = (2^7 - 1 - 7) / 2^7 = 15/16`. -/
@@ -63,4 +63,4 @@ example (m : Fin 4 → ZMod 2) :
       ≤ ProbabilityTheory.binomTail 7 2 (1 / 10 : ℝ) :=
   hamming74_bsc_error_le m (1 / 10 : ℝ) (by norm_num) (by norm_num)
 
-end CSLibExtTest.Coding.BoundedDistanceBSC
+end Cslib.CodingTheory.BoundedDistanceBSCTests
