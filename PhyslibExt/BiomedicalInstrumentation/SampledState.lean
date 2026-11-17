@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Normed.Algebra.Exponential
-public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.Topology.Instances.Matrix
 
 /-!
@@ -68,29 +67,22 @@ the stacked finite map. This contrasts with the jet stack
 itself rule out dynamical recovery. -/
 lemma sampled_injective_iff {n m k : ℕ} (A : Matrix (Fin n) (Fin n) ℝ)
     (H : Matrix (Fin k) (Fin n) ℝ) (t : Fin m → ℝ) :
-    Function.Injective
-      (fun x => fun j => H *ᵥ ((NormedSpace.exp (t j • A) : Matrix (Fin n) (Fin n) ℝ) *ᵥ x)) ↔
-    ∀ x : Fin n → ℝ, (∀ j, H *ᵥ ((NormedSpace.exp (t j • A) : Matrix (Fin n) (Fin n) ℝ) *ᵥ x) = 0) →
+    Function.Injective (sampledMap A H t) ↔
+    ∀ x : Fin n → ℝ, (∀ j, H *ᵥ
+      ((NormedSpace.exp (t j • A) : Matrix (Fin n) (Fin n) ℝ) *ᵥ x) = 0) →
       x = 0 := by
+  rw [injective_iff_map_eq_zero]
   constructor
-  · intro hinj x hx
-    have hf0 : (fun x : Fin n → ℝ => fun j => H *ᵥ
-        ((NormedSpace.exp (t j • A) : Matrix (Fin n) (Fin n) ℝ) *ᵥ x)) 0 = 0 := by
+  · intro h x hx
+    have : sampledMap A H t x = 0 := by
       funext j
-      simp only [Matrix.mulVec_zero, Pi.zero_apply]
-    have hfx : (fun x : Fin n → ℝ => fun j => H *ᵥ
-        ((NormedSpace.exp (t j • A) : Matrix (Fin n) (Fin n) ℝ) *ᵥ x)) x = 0 := by
-      funext j
+      rw [sampledMap_apply]
       exact hx j
-    exact hinj (hfx.trans hf0.symm)
-  · intro hker x y hxy
-    have hsub : x - y = 0 := by
-      apply hker
-      intro j
-      have hj : H *ᵥ ((NormedSpace.exp (t j • A) : Matrix (Fin n) (Fin n) ℝ) *ᵥ x)
-          = H *ᵥ ((NormedSpace.exp (t j • A) : Matrix (Fin n) (Fin n) ℝ) *ᵥ y) :=
-        congrFun hxy j
-      simp only [Matrix.mulVec_sub, hj, sub_self]
-    exact sub_eq_zero.mp hsub
+    exact h x this
+  · intro h x hx
+    apply h
+    intro j
+    have := congrFun hx j
+    rwa [sampledMap_apply] at this
 
 end PhyslibExt.BiomedicalInstrumentation.SampledState

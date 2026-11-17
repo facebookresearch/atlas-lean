@@ -21,9 +21,8 @@ open scoped Matrix
 /-- `H = 1`, `A = 0`, one sample: observable (exp 0 = 1). -/
 example (t : Fin 1 → ℝ) :
     Function.Injective
-      (fun x => fun j => (1 : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ
-        ((NormedSpace.exp (t j • (0 : Matrix (Fin 2) (Fin 2) ℝ)) :
-          Matrix (Fin 2) (Fin 2) ℝ) *ᵥ x)) := by
+      (sampledMap (n := 2) (m := 1) (k := 2) (0 : Matrix (Fin 2) (Fin 2) ℝ)
+        (1 : Matrix (Fin 2) (Fin 2) ℝ) t) := by
   rw [sampled_injective_iff]
   intro x hx
   have h0 := hx 0
@@ -32,9 +31,8 @@ example (t : Fin 1 → ℝ) :
 /-- `H = 0`: not observable. -/
 example (A : Matrix (Fin 2) (Fin 2) ℝ) (t : Fin 1 → ℝ) :
     ¬ Function.Injective
-      (fun x => fun j => (0 : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ
-        ((NormedSpace.exp (t j • A) : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ x)) :=
-  (sampled_injective_iff A 0 t).not.mpr
+      (sampledMap (k := 2) A (0 : Matrix (Fin 2) (Fin 2) ℝ) t) :=
+  (sampled_injective_iff (n := 2) (m := 1) (k := 2) A (0 : Matrix (Fin 2) (Fin 2) ℝ) t).not.mpr
     (fun h => by
       have h0 := h (fun _ => 1) (fun j => by simp)
       exact one_ne_zero (congrFun h0 0))
