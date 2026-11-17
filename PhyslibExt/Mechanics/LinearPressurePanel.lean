@@ -25,9 +25,9 @@ hydrostatic gates and Rankine walls; no pressure law is derived here.
 
 ## ii. Key results
 
-- `PhyslibExt.Mechanics.HarmonicMechanics.linearPressureForce_eq`:
+- `PhyslibExt.Mechanics.LinearPressurePanel.linearPressureForce_eq`:
   resultant force.
-- `PhyslibExt.Mechanics.HarmonicMechanics.linearPressureMoment_eq`:
+- `PhyslibExt.Mechanics.LinearPressurePanel.linearPressureMoment_eq`:
   first moment about the datum.
 
 ## iii. Table of contents
