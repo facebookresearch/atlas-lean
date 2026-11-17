@@ -45,3 +45,28 @@ example : CombustionAcoustics.arrheniusRate 1 1 1 1 1 = Real.exp (-1) ∧
     0 < CombustionAcoustics.arrheniusRate 1 1 1 1 1 :=
   ⟨by simpa using CombustionAcoustics.arrheniusRate_ambient 1 1 1 1,
    CombustionAcoustics.arrheniusRate_pos_ambient (by norm_num)⟩
+
+/-- Trapping API on the constant equilibrium solution: for the
+equilibrium `Te` of the unit parameters, the constant trajectory
+`T = Te` has zero within-derivative, the rate vanishes there, and
+the trapping theorem keeps it in `[min Te 1, max Te 2]`. -/
+example : ∃ Te : ℝ, Te ∈ Set.Ioo 1 (1 + 1 / 1) ∧
+    CombustionAcoustics.arrheniusRate 1 1 1 1 Te = 0 ∧
+      ∀ t : ℝ, 0 ≤ t → (fun _ : ℝ => Te) t ∈
+        Set.Icc (min ((fun _ : ℝ => Te) 0) 1)
+          (max ((fun _ : ℝ => Te) 0) (1 + 1 / 1)) := by
+  obtain ⟨Te, hTe, hrate⟩ :=
+    CombustionAcoustics.arrhenius_equilibrium_exists (G := 1) (H := 1)
+      (B := 1) (Ta := 1) (by norm_num) (by norm_num) (by norm_num)
+      (by norm_num)
+  refine ⟨Te, hTe, hrate, fun t ht => ?_⟩
+  have hderiv : ∀ s : ℝ, 0 ≤ s →
+      HasDerivWithinAt (fun _ : ℝ => Te)
+        (CombustionAcoustics.arrheniusRate 1 1 1 1 Te / 1) (Set.Ici 0) s := by
+    intro s _
+    rw [hrate]
+    simpa using hasDerivWithinAt_const s (Set.Ici 0) Te
+  have h := CombustionAcoustics.arrhenius_solution_trapped (G := 1)
+    (H := 1) (B := 1) (Ta := 1) (C := 1) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) hderiv ht
+  simpa using h
