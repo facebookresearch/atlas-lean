@@ -102,19 +102,6 @@ private theorem inner_eq_sum_star_mul {ι : Type} [Fintype ι]
   intro t _
   exact mul_comm _ _
 
-/-- The norm of the real scalar `(√2)⁻¹` in `ℂ`. -/
-private theorem norm_sqrt2_inv_ofReal :
-    ‖((Real.sqrt 2)⁻¹ : ℂ)‖ = (Real.sqrt 2)⁻¹ := by
-  have hnonneg : (0 : ℝ) ≤ (Real.sqrt 2)⁻¹ := inv_nonneg.mpr (Real.sqrt_nonneg 2)
-  simp [abs_of_nonneg hnonneg]
-
-/-- The spread-code scalar satisfies `s² + s² = 1` for `s = (√2)⁻¹`. -/
-private theorem sq_sqrt2_inv_add_self :
-    ((Real.sqrt 2)⁻¹)^2 + ((Real.sqrt 2)⁻¹)^2 = (1:ℝ) := by
-  have h2 : (Real.sqrt 2)^2 = 2 := Real.sq_sqrt (by norm_num)
-  have hinv : ((Real.sqrt 2)⁻¹)^2 = 1/2 := by rw [inv_pow, h2]; norm_num
-  rw [hinv]; norm_num
-
 /-- The Gram matrix of the columns is `Uᴴ U` for the waveform matrix `U`. -/
 lemma gram_eq_conjTranspose_mul_waveformMatrix {ι κ : Type} [Fintype ι] [Fintype κ]
     (u : κ → EuclideanSpace ℂ ι) :
