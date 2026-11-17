@@ -36,10 +36,12 @@ set_option linter.unusedVariables false in
 /-- **PPV coverage transfer.** Let `θ ω = (π, se, sp)` be the true
 diagnostic parameters, `S ω` a joint confidence set for them with
 measurable coverage event, and `T ω` a PPV output set with measurable
-coverage event. On the admissible domain the PPV denominator is positive:
-`π * se + (1 - π) * (1 - sp) ≠ 0` whenever `θ ω ∈ S ω`. If `T ω`
-contains the PPV image value
-`π * se / (π * se + (1 - π) * (1 - sp))` whenever `θ ω ∈ S ω`, then
+coverage event. On the admissible domain, whenever `θ ω ∈ S ω` the parameters
+lie in the diagnostic domain `π, se, sp ∈ [0, 1]` and the PPV
+denominator is strictly positive:
+`0 < π * se + (1 - π) * (1 - sp)`. If `T ω` contains the PPV
+image value `π * se / (π * se + (1 - π) * (1 - sp))` whenever
+`θ ω ∈ S ω`, then
 the PPV coverage event has at least the measure of the joint coverage
 event: coverage transfers conservatively through the PPV map, for any
 (not necessarily rectangular) joint set. Only the PPV denominator
@@ -50,8 +52,11 @@ theorem ppv_coverage_transfer {Ω : Type*} [MeasurableSpace Ω]
     (hS : MeasurableSet {ω | θ ω ∈ S ω})
     (hT : MeasurableSet {ω | (θ ω).1 * (θ ω).2.1 /
       ((θ ω).1 * (θ ω).2.1 + (1 - (θ ω).1) * (1 - (θ ω).2.2)) ∈ T ω})
+    (hdom : ∀ ω, θ ω ∈ S ω →
+      0 ≤ (θ ω).1 ∧ (θ ω).1 ≤ 1 ∧ 0 ≤ (θ ω).2.1 ∧ (θ ω).2.1 ≤ 1 ∧
+      0 ≤ (θ ω).2.2 ∧ (θ ω).2.2 ≤ 1)
     (hden : ∀ ω, θ ω ∈ S ω →
-      (θ ω).1 * (θ ω).2.1 + (1 - (θ ω).1) * (1 - (θ ω).2.2) ≠ 0)
+      0 < (θ ω).1 * (θ ω).2.1 + (1 - (θ ω).1) * (1 - (θ ω).2.2))
     (hcov : ∀ ω, θ ω ∈ S ω →
       (θ ω).1 * (θ ω).2.1 /
         ((θ ω).1 * (θ ω).2.1 + (1 - (θ ω).1) * (1 - (θ ω).2.2)) ∈ T ω) :

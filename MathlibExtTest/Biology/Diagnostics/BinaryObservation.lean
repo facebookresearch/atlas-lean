@@ -25,7 +25,7 @@ example : (Measure.dirac ((): Unit)).real Set.univ ≤
     (Measure.dirac ((): Unit)).real Set.univ := by
   have h := ppv_coverage_transfer (Measure.dirac ())
     (fun _ => Set.univ) (fun _ => ((1 : ℝ), 1, 1)) (fun _ => Set.univ)
-    (by simp) (by simp) (fun _ _ => by norm_num) (fun _ _ => by simp)
+    (by simp) (by simp) (fun _ _ => by norm_num) (fun _ _ => by norm_num) (fun _ _ => by simp)
   simp at h ⊢
 
 /-- The singleton `(1, 1, 1)` has PPV `1`. -/
