@@ -15,16 +15,37 @@ import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 /-!
 # Fourier normalization: hertz versus angular frequency
 
-Mathlib's `𝓕` on `ℝ` uses frequency in hertz, `e^{-2πitξ}`. Signals and
-systems texts also use angular frequency `ω = 2πξ` with kernel `e^{-iωt}`.
-`fourierAngular` is the angular form, and `fourierAngular_eq` identifies it
-with `𝓕` at `ω / (2π)` (no `1 / √(2π)` factor in either convention here).
-Conjugate symmetry for real signals and the time-shift/modulation phase
-rules are recorded in the hertz convention, with the shift rule also in the
-angular convention. Transforms are taken of raw functions into `ℂ`; the
-lemmas keep the `Integrable` hypotheses of the source statements.
+Two normalizations of the Fourier transform on `ℝ` are in common use, and
+they differ by where the factor `2π` sits:
 
-Roadmap leaf `SSC-U07.T01`, clauses `SSC-F02.c02.b`, `SSC-U07.c01`.
+* hertz (cycles per unit time): `F f ξ = ∫ t, e^{-2πitξ} f t`, and
+* angular frequency (radians per unit time): `F_ω f ω = ∫ t, e^{-iωt} f t`,
+
+related by `ω = 2πξ`, i.e. `F_ω f ω = F f (ω / (2π))`. Neither convention
+as used here carries a `1 / √(2π)` prefactor. Mathlib's `𝓕` is the hertz
+form: on `ℝ`,
+`𝓕 f w = ∫ v, Complex.exp (↑(-2 * π * v * w) * Complex.I) • f v`
+(`Real.fourier_real_eq_integral_exp_smul` in
+`Mathlib/Analysis/Fourier/FourierTransform.lean`).
+
+This file defines the angular form `fourierAngular` and records, for
+integrable `f : ℝ → ℂ`, the standard identities in both conventions:
+`fourierAngular f ω = 𝓕 f (ω / (2π))`; conjugate symmetry
+`𝓕 f (-ξ) = conj (𝓕 f ξ)` for real-valued `f`; the delay rules
+`𝓕 (f (· - a)) ξ = e^{-2πiaξ} 𝓕 f ξ` and
+`fourierAngular (f (· - a)) ω = e^{-iaω} fourierAngular f ω`; and the
+modulation rule `𝓕 (e^{2πiat} f t) ξ = 𝓕 f (ξ - a)`. The `Integrable f`
+hypotheses are kept on the statements (as in the classical `L¹` theory)
+even where the integral identities also hold without them by the
+junk-value convention for Bochner integrals. Transforms are taken of raw
+functions into `ℂ` against Lebesgue measure on `ℝ`.
+
+Provenance: these are the classical `L¹` Fourier identities, specialized
+to Mathlib's hertz convention `𝓕` as displayed above; this file is the
+control-theory roadmap's Fourier normalization sheet, leaf `SSC-U07.T01`
+(clauses `SSC-F02.c02.b`, `SSC-U07.c01`). The normalizations, signs, and
+retained integrability hypotheses can all be checked against the formulas
+in this docstring and the cited Mathlib characterization of `𝓕`.
 -/
 
 open MeasureTheory
