@@ -48,11 +48,12 @@ example : ((2:ℝ) * 2 + 3 * 0) - (2 * 0 + 3 * 0) =
   have h := energy_budget (rhoF := 2) (rhoL := 3) (F := fun s => s) (L := fun _ => (0:ℝ))
     (qF := fun _ => (2:ℝ)) (qL := fun _ => (0:ℝ)) (intake := fun _ => (5:ℝ))
     (expenditure := fun _ => (3:ℝ)) (t := 2) (by norm_num) (by norm_num) (by norm_num)
-    (fun s => by
+    (fun s _ => by
       have hid : HasDerivAt (fun u : ℝ => u) 1 s := hasDerivAt_id s
       have h1 := hid.const_mul (2 : ℝ)
       simpa using h1)
-    (fun _ => by norm_num)
+    (fun s _ => by simpa using (hasDerivAt_const s (0 : ℝ)))
+    (fun _ _ => by norm_num)
     intervalIntegrable_const
   exact h
 

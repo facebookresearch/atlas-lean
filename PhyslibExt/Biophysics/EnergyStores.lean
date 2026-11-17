@@ -91,30 +91,34 @@ lemma exercise_efficiency_integral {Pbase Pmech : ℝ → ℝ} {eta a b : ℝ}
 
 set_option linter.unusedVariables false in
 /-- **Energy budget identity.** With fixed energy densities `rhoF`,
-`rhoL` (positive), store trajectories `F`, `L` and component fluxes
-`qF`, `qL` satisfying the component balances in derivative form
-(`rhoF * F + rhoL * L` has derivative `qF + qL` everywhere), and the
-net balance `qF + qL = intake - expenditure`, the stored energy
-`E = rhoF * F + rhoL * L` satisfies
+`rhoL` (positive), stores `F`, `L` and component fluxes `qF`, `qL`
+satisfying the separate component balances in derivative form on
+the integration window (`rhoF * F` has derivative `qF` and
+`rhoL * L` has derivative `qL` at every `s ∈ [0, t]`), and the net
+balance `qF + qL = intake - expenditure` on the window, the stored
+energy `E = rhoF * F + rhoL * L` satisfies
 `E t - E 0 = ∫ s in 0..t, (intake s - expenditure s)`. No
 variable-density or hydration term is present in this declared model. -/
 lemma energy_budget {rhoF rhoL : ℝ} {F L qF qL intake expenditure : ℝ → ℝ}
     {t : ℝ} (hrhoF : 0 < rhoF) (hrhoL : 0 < rhoL) (ht : 0 ≤ t)
-    (hE : ∀ s : ℝ, HasDerivAt (fun u => rhoF * F u + rhoL * L u) (qF s + qL s) s)
-    (hbal : ∀ s : ℝ, qF s + qL s = intake s - expenditure s)
+    (hF : ∀ s ∈ Set.Icc 0 t, HasDerivAt (fun u => rhoF * F u) (qF s) s)
+    (hL : ∀ s ∈ Set.Icc 0 t, HasDerivAt (fun u => rhoL * L u) (qL s) s)
+    (hbal : ∀ s ∈ Set.Icc 0 t, qF s + qL s = intake s - expenditure s)
     (hint : IntervalIntegrable (fun s => intake s - expenditure s)
       MeasureTheory.volume 0 t) :
     (rhoF * F t + rhoL * L t) - (rhoF * F 0 + rhoL * L 0) =
       ∫ s in (0)..t, (intake s - expenditure s) := by
-  have hfun : (fun s => qF s + qL s) = (fun s => intake s - expenditure s) :=
-    funext hbal
-  have hint' : IntervalIntegrable (fun s => qF s + qL s) MeasureTheory.volume 0 t := by
-    rw [hfun]
-    exact hint
+  have hE : ∀ s ∈ Set.Icc (0:ℝ) t,
+      HasDerivAt (fun u => rhoF * F u + rhoL * L u) (qF s + qL s) s :=
+    fun s hs => (hF s hs).add (hL s hs)
   have hftc := intervalIntegral.integral_eq_sub_of_hasDerivAt
-    (f := fun u => rhoF * F u + rhoL * L u) (f' := fun s => qF s + qL s)
-    (fun s _ => hE s) hint'
-  rw [← hfun]
+    (f := fun u => rhoF * F u + rhoL * L u)
+    (f' := fun s => intake s - expenditure s)
+    (fun s hs => by
+      have hs' : s ∈ Set.Icc (0:ℝ) t := by
+        rwa [Set.uIcc_of_le ht] at hs
+      rw [← hbal s hs']
+      exact hE s hs') hint
   exact hftc.symm
 
 end PhyslibExt.Biophysics.EnergyStores
