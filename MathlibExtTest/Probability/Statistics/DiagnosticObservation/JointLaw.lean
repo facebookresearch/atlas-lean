@@ -33,16 +33,16 @@ example : ((Measure.dirac () : Measure Unit)).real (∅ : Set Unit) = 0 := by
 example : let μ : Measure Unit := Measure.dirac ()
     μ.real (∅ : Set Unit) = (0 : ℝ) * (3 / 4) + (1 - 0) * (1 - 1) ∧
     μ.real (∅ : Set Unit)ᶜ = (1 - 0) * 1 + 0 * (1 - 3 / 4) := by
-  have h := diagnostic_predictive_values (μ := (Measure.dirac () : Measure Unit))
+  have h := diagnostic_test_masses (μ := (Measure.dirac () : Measure Unit))
     (D := (∅ : Set Unit)) (T := (∅ : Set Unit)) (π := 0) (se := 3 / 4) (sp := 1)
     MeasurableSet.empty MeasurableSet.empty (by simp) (by simp) (by simp) (by simp)
-  exact ⟨h.1, h.2.1⟩
+  exact ⟨h.1, h.2⟩
 
 /-- Boundary prevalence `1`: everybody is diseased and, at sensitivity
 `1`, test-positive. -/
 example : let μ : Measure Unit := Measure.dirac ()
     μ.real (Set.univ : Set Unit) = (1 : ℝ) * 1 + (1 - 1) * (1 - 3 / 4) := by
-  have h := diagnostic_predictive_values (μ := (Measure.dirac () : Measure Unit))
+  have h := diagnostic_test_masses (μ := (Measure.dirac () : Measure Unit))
     (D := (Set.univ : Set Unit)) (T := (Set.univ : Set Unit)) (π := 1) (se := 1) (sp := 3 / 4)
     MeasurableSet.univ MeasurableSet.univ (by simp) (by simp) (by simp) (by simp)
   exact h.1

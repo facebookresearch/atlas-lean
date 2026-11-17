@@ -16,7 +16,11 @@ public import Mathlib.MeasureTheory.Measure.Real
 For a disease event `D` and a positive-test event `T` in a probability
 space, the four joint masses determined by prevalence `π`, sensitivity
 `se` and specificity `sp` determine the test-positive and test-negative
-masses and the predictive values as real ratios. In the numerical
+masses unconditionally (`diagnostic_test_masses`). The predictive
+values are stated separately (`diagnostic_ppv`, `diagnostic_npv`)
+under the relevant nonzero-denominator hypothesis: on a null
+conditioning branch the ratio is a totalized algebraic value (`0/0=0`
+in Lean), not a predictive value. In the numerical
 example below, raising prevalence from `1/10` to `1/2` at sensitivity
 and specificity `3/4` raises the positive predictive value from `1/4`
 to `3/4`; no general prevalence-monotonicity claim is made (it fails
@@ -42,7 +46,7 @@ that the four joint masses are `π * se`, `π * (1 - se)`,
 `(1 - π) * sp + π * (1 - se)`, and (as real ratios) the predictive
 values are `π * se / (π * se + (1 - π) * (1 - sp))` and
 `(1 - π) * sp / ((1 - π) * sp + π * (1 - se))`. -/
-theorem diagnostic_predictive_values {Ω : Type*} [MeasurableSpace Ω]
+private theorem diagnostic_predictive_values {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] {D T : Set Ω} {π se sp : ℝ}
     (hD : MeasurableSet D) (hT : MeasurableSet T)
     (hTP : μ.real (D ∩ T) = π * se) (hFN : μ.real (D ∩ Tᶜ) = π * (1 - se))
@@ -101,5 +105,51 @@ theorem diagnostic_ppv_prevalence_example :
     ((1 / 10 : ℝ) * (3 / 4) / ((1 / 10 : ℝ) * (3 / 4) + (1 - 1 / 10) * (1 - 3 / 4)) = 1 / 4) ∧
     ((1 / 2 : ℝ) * (3 / 4) / ((1 / 2 : ℝ) * (3 / 4) + (1 - 1 / 2) * (1 - 3 / 4)) = 3 / 4) := by
   constructor <;> norm_num
+
+/-- **Test masses.** The joint masses determine the test-positive and
+test-negative masses, with no denominator condition. -/
+theorem diagnostic_test_masses {Ω : Type*} [MeasurableSpace Ω]
+    (μ : Measure Ω) [IsProbabilityMeasure μ] {D T : Set Ω} {π se sp : ℝ}
+    (hD : MeasurableSet D) (hT : MeasurableSet T)
+    (hTP : μ.real (D ∩ T) = π * se) (hFN : μ.real (D ∩ Tᶜ) = π * (1 - se))
+    (hFP : μ.real (Dᶜ ∩ T) = (1 - π) * (1 - sp))
+    (hTN : μ.real (Dᶜ ∩ Tᶜ) = (1 - π) * sp) :
+    μ.real T = π * se + (1 - π) * (1 - sp) ∧
+    μ.real Tᶜ = (1 - π) * sp + π * (1 - se) := by
+  have h := diagnostic_predictive_values μ hD hT hTP hFN hFP hTN
+  exact ⟨h.1, h.2.1⟩
+
+set_option linter.unusedVariables false in
+/-- **Positive predictive value.** Under the nonzero test-positive
+denominator hypothesis, the conditional ratio
+`μ.real (D ∩ T) / μ.real T` is the predictive value
+`π * se / (π * se + (1 - π) * (1 - sp))`. -/
+theorem diagnostic_ppv {Ω : Type*} [MeasurableSpace Ω]
+    (μ : Measure Ω) [IsProbabilityMeasure μ] {D T : Set Ω} {π se sp : ℝ}
+    (hD : MeasurableSet D) (hT : MeasurableSet T)
+    (hTP : μ.real (D ∩ T) = π * se) (hFN : μ.real (D ∩ Tᶜ) = π * (1 - se))
+    (hFP : μ.real (Dᶜ ∩ T) = (1 - π) * (1 - sp))
+    (hTN : μ.real (Dᶜ ∩ Tᶜ) = (1 - π) * sp)
+    (hden : π * se + (1 - π) * (1 - sp) ≠ 0) :
+    μ.real (D ∩ T) / μ.real T = π * se / (π * se + (1 - π) * (1 - sp)) := by
+  have h := diagnostic_predictive_values μ hD hT hTP hFN hFP hTN
+  exact h.2.2.1
+
+set_option linter.unusedVariables false in
+/-- **Negative predictive value.** Under the nonzero test-negative
+denominator hypothesis, the conditional ratio
+`μ.real (Dᶜ ∩ Tᶜ) / μ.real Tᶜ` is the predictive value
+`(1 - π) * sp / ((1 - π) * sp + π * (1 - se))`. -/
+theorem diagnostic_npv {Ω : Type*} [MeasurableSpace Ω]
+    (μ : Measure Ω) [IsProbabilityMeasure μ] {D T : Set Ω} {π se sp : ℝ}
+    (hD : MeasurableSet D) (hT : MeasurableSet T)
+    (hTP : μ.real (D ∩ T) = π * se) (hFN : μ.real (D ∩ Tᶜ) = π * (1 - se))
+    (hFP : μ.real (Dᶜ ∩ T) = (1 - π) * (1 - sp))
+    (hTN : μ.real (Dᶜ ∩ Tᶜ) = (1 - π) * sp)
+    (hden : (1 - π) * sp + π * (1 - se) ≠ 0) :
+    μ.real (Dᶜ ∩ Tᶜ) / μ.real Tᶜ =
+      (1 - π) * sp / ((1 - π) * sp + π * (1 - se)) := by
+  have h := diagnostic_predictive_values μ hD hT hTP hFN hFP hTN
+  exact h.2.2.2
 
 end MathlibExt.Probability.Statistics.DiagnosticObservation
