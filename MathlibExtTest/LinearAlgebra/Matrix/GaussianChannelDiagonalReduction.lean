@@ -72,8 +72,11 @@ example :
 /-- The diagonalized covariance is positive semidefinite and its
 trace (total power) is preserved for the identity channel. -/
 example (K : Matrix (Fin 2) (Fin 2) ℝ) (hK : K.PosSemidef) :
-    (diagonalizedCovariance (1 : Matrix (Fin 2) (Fin 2) ℝ) Matrix.PosDef.one K).trace = K.trace :=
-  trace_diagonalizedCovariance (1 : Matrix (Fin 2) (Fin 2) ℝ) Matrix.PosDef.one K
+    (diagonalizedCovariance (1 : Matrix (Fin 2) (Fin 2) ℝ) Matrix.PosDef.one K).PosSemidef ∧
+      (diagonalizedCovariance (1 : Matrix (Fin 2) (Fin 2) ℝ) Matrix.PosDef.one K).trace =
+        K.trace :=
+  ⟨diagonalizedCovariance_posSemidef (1 : Matrix (Fin 2) (Fin 2) ℝ) Matrix.PosDef.one hK,
+    trace_diagonalizedCovariance (1 : Matrix (Fin 2) (Fin 2) ℝ) Matrix.PosDef.one K⟩
 
 /-- Diagonalization cannot decrease the determinant ratio. -/
 example (K : Matrix (Fin 2) (Fin 2) ℝ) (hK : K.PosSemidef) :
