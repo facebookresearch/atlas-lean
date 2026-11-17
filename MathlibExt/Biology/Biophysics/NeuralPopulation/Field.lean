@@ -26,6 +26,14 @@ has the exact partial derivatives stated below, including the
 These are local derivative statements about the declared field only:
 no global solution, stability, or trajectory claim is made from a
 Jacobian.
+
+## References
+
+* H. R. Wilson and J. D. Cowan, "Excitatory and inhibitory
+  interactions in localized populations of model neurons",
+  Biophys. J. 12 (1972), 1-24. This module states the normalized
+  specialization of the classical refractory factors
+  `(kE - rE * x)`, `(kI - rI * y)` with `kE = kI = 1`.
 -/
 
 @[expose] public section
