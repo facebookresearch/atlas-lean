@@ -15,7 +15,7 @@ import MathlibExt.Transport.Accessibility
 /-!
 # Threshold accessibility checks
 
-Focused checks for `PhyslibExt.BuiltEnvironment.Accessibility`: one
+Focused checks for `MathlibExt.Transport.Accessibility`: one
 destination with opportunity `5` and travel time `2` contributes `0` at
 threshold `1` and `5` at threshold `3`; a missing travel time always
 contributes zero.
