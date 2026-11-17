@@ -42,3 +42,21 @@ example : ((1 : Matrix (Fin 1) (Fin 1) ℝ)ᵀ * (1 : Matrix (Fin 1) (Fin 1) ℝ
     1 1 (3 : Fin 1 → ℝ) (1 : Fin 1 → ℝ) 4 2 (by ext i; fin_cases i; norm_num [mulVec, dotProduct])
     (by ext i; fin_cases i; norm_num [mulVec, dotProduct])
   exact h.2
+
+/-- Rate form on scalar data: `du = 7`, `dp = 1`, `df = 8`,
+`H = 3`, `p = 5`, `s = 21`, through `biot_rate_equation`. -/
+example : (7 : Fin 1 → ℝ)
+    = (1 : Matrix (Fin 1) (Fin 1) ℝ) *ᵥ
+        ((8 : Fin 1 → ℝ) - (1 : Matrix (Fin 1) (Fin 1) ℝ) *ᵥ (1 : Fin 1 → ℝ))
+    ∧ ((1 : Matrix (Fin 1) (Fin 1) ℝ)ᵀ * (1 : Matrix (Fin 1) (Fin 1) ℝ)
+          * (1 : Matrix (Fin 1) (Fin 1) ℝ) + 1) *ᵥ (1 : Fin 1 → ℝ)
+      = (1 : Matrix (Fin 1) (Fin 1) ℝ)ᵀ *ᵥ
+          ((1 : Matrix (Fin 1) (Fin 1) ℝ) *ᵥ (8 : Fin 1 → ℝ))
+        - (fun _ : Fin 1 => (21 : ℝ))
+        + (fun _ _ : Fin 1 => (3 : ℝ)) *ᵥ (fun _ : Fin 1 => (5 : ℝ)) := by
+  have h := biot_rate_equation (1 : Matrix (Fin 1) (Fin 1) ℝ) 1 (by simp)
+    (by simp) 1 1 (fun _ _ : Fin 1 => (3 : ℝ)) (7 : Fin 1 → ℝ)
+    (1 : Fin 1 → ℝ) 8 (fun _ : Fin 1 => (21 : ℝ)) 5
+    (by ext i; fin_cases i; norm_num [mulVec, dotProduct])
+    (by ext i; fin_cases i; norm_num [mulVec, dotProduct])
+  exact h

@@ -29,7 +29,9 @@ behind the Biot storage reduction at each time step.
 
 ## ii. Key results
 
-- `BiotSchur.biot_schur`: elimination and recovery.
+- `BiotSchur.biot_schur`: elimination and recovery (derived from
+  `BlockSolutionEquiv.elim_forward`).
+- `BiotSchur.biot_rate_equation`: the dynamic Biot rate form.
 
 ## iii. Table of contents
 
@@ -86,5 +88,29 @@ u = Kinv *ᵥ (f - Q *ᵥ p)
   apply neg_inj.mp
   rw [neg_sub]
   exact hschur2
+
+
+/-- Biot rate form: at each time step (or for the differentiated
+system), with rates `du, dp, df` satisfying `K *ᵥ du + Q *ᵥ dp = df`
+and the storage balance `Qᵀ *ᵥ du - C *ᵥ dp = s - H *ᵥ p`, the
+pressure rate solves the Biot storage equation
+`(Qᵀ K⁻¹ Q + C) *ᵥ dp = Qᵀ K⁻¹ df - s + H *ᵥ p`, and `du` is
+recovered from the first equation. This is the dynamic Biot equation
+of the roadmap in the pin's sign convention. -/
+theorem biot_rate_equation {n m : Type*} [Fintype n] [Fintype m]
+    [DecidableEq n] [DecidableEq m]
+    (K : Matrix n n ℝ) (Kinv : Matrix n n ℝ)
+    (hK : K * Kinv = 1) (hK' : Kinv * K = 1)
+    (Q : Matrix n m ℝ) (C H : Matrix m m ℝ)
+    (du : n → ℝ) (dp : m → ℝ) (df : n → ℝ) (s : m → ℝ) (p : m → ℝ)
+    (h1 : K *ᵥ du + Q *ᵥ dp = df)
+    (h2 : Qᵀ *ᵥ du - C *ᵥ dp = s - H *ᵥ p) :
+    du = Kinv *ᵥ (df - Q *ᵥ dp)
+      ∧ (Qᵀ * Kinv * Q + C) *ᵥ dp
+        = Qᵀ *ᵥ (Kinv *ᵥ df) - s + H *ᵥ p := by
+  obtain ⟨hdu, hdp⟩ := biot_schur K Kinv hK hK' Q C du dp df (s - H *ᵥ p) h1 h2
+  refine ⟨hdu, ?_⟩
+  rw [hdp]
+  abel
 
 end BiotSchur
