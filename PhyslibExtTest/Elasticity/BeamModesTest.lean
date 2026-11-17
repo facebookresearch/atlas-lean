@@ -34,7 +34,7 @@ No new definitions or results are introduced here.
 -/
 
 /-- Support values and conserved energy of the first mode at
-`L = 2`, `EI = 3`, `ρA = 1`, evaluated at `t = 0`. -/
+`L = 2`, `EI = 3`, `ρA = 1`, at arbitrary time `t`. -/
 example (t : ℝ) :
     BeamModes.beamMode 1 2 (BeamModes.beamFreq 3 1 2 1) 0 t = 0 ∧
       BeamModes.beamMode 1 2 (BeamModes.beamFreq 3 1 2 1) 2 t = 0 ∧
@@ -46,3 +46,22 @@ example (t : ℝ) :
      have h := BeamModes.beamModeEnergy_conserved (EI := 3) (ρA := 1)
        (L := 2) (by norm_num) (by norm_num) (by norm_num) 1 t
      simpa using h)⟩
+
+/-- The beam equation and curvature conditions for the first mode at
+`L = 2`, `EI = 3`, `ρA = 1`, at the interior point `x = 1`,
+`t = 0`. -/
+example : (1 : ℝ) * iteratedDeriv 2
+      (fun s : ℝ => BeamModes.beamMode 1 2 (BeamModes.beamFreq 3 1 2 1) 1 s) 0 +
+    3 * iteratedDeriv 4
+      (fun y : ℝ => BeamModes.beamMode 1 2 (BeamModes.beamFreq 3 1 2 1) y 0) 1 =
+    0 ∧
+  iteratedDeriv 2
+      (fun y : ℝ => BeamModes.beamMode 1 2 (BeamModes.beamFreq 3 1 2 1) y 0) 0 =
+    0 ∧
+  iteratedDeriv 2
+      (fun y : ℝ => BeamModes.beamMode 1 2 (BeamModes.beamFreq 3 1 2 1) y 0) 2 =
+    0 :=
+  ⟨BeamModes.beamMode_beamEquation (by norm_num) (by norm_num)
+    (by norm_num) 1 1 0,
+   (BeamModes.beamMode_curvature_zero 1 (by norm_num) _ 0).1,
+   (BeamModes.beamMode_curvature_zero 1 (by norm_num) _ 0).2⟩

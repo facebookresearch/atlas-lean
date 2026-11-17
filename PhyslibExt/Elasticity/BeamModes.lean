@@ -45,6 +45,11 @@ amplitude; no mode-completeness or first-mode claim is made.
   `MathlibExt.Analysis.ODE.DirichletSineEigenfunctions`, whose
   differential identities this physical-units mode instantiates with
   explicit `EI`, `ρA`, and `L`.
+- S. S. Rao, *Mechanical Vibrations*, 6th ed., Pearson (2017):
+  the Euler-Bernoulli beam equation `ρA * w_tt + EI * w_xxxx = 0`,
+  the simply supported modal frequencies
+  `ω_k = (kπ / L)^2 * √(EI / ρA)`, and the kinetic/bending energy
+  expressions used here.
 
 ## A. The simply supported mode and its energy
 
