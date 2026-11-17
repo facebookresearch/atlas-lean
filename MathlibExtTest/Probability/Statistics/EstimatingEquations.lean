@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.EstimatingEquations
+public import MathlibExtTest.Probability.Statistics.VectorInference
 public import Mathlib.Probability.Independence.InfinitePi
 public import Mathlib.Probability.StrongLaw
 public import Mathlib.Probability.Distributions.Gaussian.Real
@@ -23,6 +24,16 @@ import Mathlib.Analysis.PSeries
   cluster sandwich theorem gives `√n (-X̄ₙ) ⇒ N(0, 1)` with sandwich variance `t * t`.
 * Boundary (S16.1, singular): the zero operator is not a unit, so the nonsingularity
   hypothesis — and hence the sandwich conclusion — is unavailable there.
+* Positive (correctly specified recovery): under the hypotheses of the vector likelihood
+  theorem, the cluster sandwich theorem, `covarianceOperator_map_eq_integral_rankOne` and
+  `sandwich_score_eq_inverse_fisherInformation` give `√n (θhat n - θ₀) ⇒ N(0, I(θ₀)⁻¹)`.
+* Non-vacuity (sandwich projection laws and collapse): on the Gaussian location family
+  `N(θ, Id)` at `0` (`D = -Id`), `hasLaw_inner_neg_inverse_apply_sandwich` and
+  `sandwich_score_eq_inverse_fisherInformation` give `⟪-D⁻¹ Z, u⟫ ~ N(0, ⟪I(0)⁻¹ u, u⟫)`.
+* Boundary (singular `D`): at `D = 0` the projection law degenerates to `N(0, 0)`.
+* Non-vacuity (misspecified working model): data `N(θ₀, 4)`, working model `N(θ, 1)`:
+  `D = -1`, `V = 4 • 1`, and `sandwichCovariance_integral_rankOne` gives the sandwich `4 • 1`,
+  not the model-based inverse information `1`.
 * Boundary (S16.3, positive): with the explicit influence function `φ = id` on
   `N(0, 1)` and the sample mean (zero remainder), the scalar asymptotic-linearity
   theorem gives `√n X̄ₙ ⇒ N(0, 1)`.
@@ -42,6 +53,7 @@ open MeasureTheory ProbabilityTheory Filter Topology
 open scoped RealInnerProductSpace NNReal
 open MathlibExt.Probability.Statistics.EstimatingEquations
 open MathlibExt.Probability.Statistics.VectorInference
+open MathlibExt.Probability.Statistics.FisherInformation (lawOf)
 
 /-- The IID sample space: coordinates of the infinite product of `N(0, 1)`. -/
 noncomputable def sampleR : Measure (ℕ → ℝ) :=
@@ -294,6 +306,161 @@ theorem tendstoInDistribution_sqrt_mean_of_clusterEE :
     (integrable_const _) hM hmeas hsq hmean hDmeas hDint hA htheta
     tendsto_root_negClusterMean tendstoInMeasure_neg_clusterMean
     aemeasurable_id hZ
+
+/-! ### Rank-one meat, sandwich projection laws and the Fisher collapse -/
+
+/-- **Correctly specified recovery.** Under the hypotheses of
+`VectorInference.tendstoInDistribution_sqrt_smul_sub_of_likelihoodEquation`, the cluster
+sandwich theorem, the meat bridge `covarianceOperator_map_eq_integral_rankOne` and the collapse
+`sandwich_score_eq_inverse_fisherInformation` give `√n (θhat n - θ₀) ⇒ N(0, I(θ₀)⁻¹)`. -/
+theorem tendstoInDistribution_sqrt_smul_sub_of_score_sandwich
+    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    [MeasurableSpace E] [BorelSpace E] {𝓧 : Type*} [MeasurableSpace 𝓧]
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
+    {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']
+    {ν : Measure 𝓧} {p : E → 𝓧 → ℝ} {θ₀ : E} {δ : ℝ} (hδ : 0 < δ)
+    {X : ℕ → Ω → 𝓧} (hX_law : ∀ i, HasLaw (X i) (lawOf ν p θ₀) P) (hX_indep : iIndepFun X P)
+    (hs_diff : ∀ x, ∀ θ ∈ Metric.ball θ₀ δ, DifferentiableAt ℝ (fun t => score p t x) θ)
+    {M : 𝓧 → ℝ} (hM_meas : Measurable M) (hM_int : Integrable M (lawOf ν p θ₀))
+    (hM : ∀ x, ∀ θ ∈ Metric.ball θ₀ δ,
+      ‖fderiv ℝ (fun t => score p t x) θ - fderiv ℝ (fun t => score p t x) θ₀‖ ≤
+        M x * ‖θ - θ₀‖)
+    (hs_meas : Measurable (score p θ₀))
+    (hs_sq : Integrable (fun x => ‖score p θ₀ x‖ ^ 2) (lawOf ν p θ₀))
+    (hs_mean : ∫ x, score p θ₀ x ∂(lawOf ν p θ₀) = 0)
+    (hs'_meas : StronglyMeasurable fun x => fderiv ℝ (fun t => score p t x) θ₀)
+    (hs'_int : Integrable (fun x => fderiv ℝ (fun t => score p t x) θ₀) (lawOf ν p θ₀))
+    (h_info : ∫ x, fderiv ℝ (fun t => score p t x) θ₀ ∂(lawOf ν p θ₀) =
+      -fisherInformation ν p θ₀)
+    (hI : IsUnit (fisherInformation ν p θ₀))
+    {θhat : ℕ → Ω → E} (hθ_meas : ∀ n, AEMeasurable (θhat n) P)
+    (hroot : Tendsto (fun n => P {ω | ∑ i ∈ Finset.range n, score p (θhat n ω) (X i ω) ≠ 0})
+      atTop (𝓝 0))
+    (hcons : TendstoInMeasure P θhat atTop (fun _ => θ₀))
+    {Z : Ω' → E} (hZ_meas : AEMeasurable Z P')
+    (hZ : ∀ t, HasLaw (fun ω => ⟪Z ω, t⟫)
+      (gaussianReal 0 (⟪Ring.inverse (fisherInformation ν p θ₀) t, t⟫).toNNReal) P') :
+    TendstoInDistribution (fun (n : ℕ) ω => √n • (θhat n ω - θ₀)) atTop Z (fun _ => P) P' := by
+  refine tendstoInDistribution_sqrt_smul_sub_of_clusterEstimatingEquation hX_law hX_indep hδ
+    hs_diff hM_meas hM_int hM hs_meas hs_sq hs_mean hs'_meas hs'_int
+    (by rw [h_info]; exact hI.neg) hθ_meas hroot hcons hZ_meas (fun t => ?_)
+  rw [covarianceOperator_map_eq_integral_rankOne hs_meas hs_sq,
+    sandwich_score_eq_inverse_fisherInformation h_info hI]
+  exact hZ t
+
+open MathlibExtTest.Probability.Statistics.VectorInference in
+/-- **Non-vacuity of `hasLaw_inner_neg_inverse_apply_sandwich` and
+`sandwich_score_eq_inverse_fisherInformation`** on the Gaussian location family `N(θ, Id)` at `0`
+(the density `pE` of the `VectorInference` tests): the score limit `Z = id ~ N(0, Id)` meets the
+projection hypothesis, and with `D = E Dscore 0 = -Id` the two results give
+`⟪-D⁻¹ Z, u⟫ ~ N(0, ⟪I(0)⁻¹ u, u⟫)`. -/
+theorem hasLaw_inner_neg_inverse_apply_pE
+    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    [MeasurableSpace E] [BorelSpace E] (u : E) :
+    HasLaw (fun z : E => ⟪-Ring.inverse (∫ x, fderiv ℝ (fun t => score pE t x) 0
+        ∂(lawOf (stdGaussian E) pE 0)) (id z), u⟫)
+      (gaussianReal 0 (⟪Ring.inverse (fisherInformation (stdGaussian E) pE 0) u, u⟫).toNNReal)
+      (stdGaussian E) := by
+  have hD : (fun x : E => fderiv ℝ (fun t => score pE t x) 0) =
+      fun _ => -ContinuousLinearMap.id ℝ E := funext fun x => fderiv_score_pE x 0
+  have hlaw : IsProbabilityMeasure (lawOf (stdGaussian E) pE 0) := by
+    rw [lawOf_pE]; infer_instance
+  have h_info : ∫ x, fderiv ℝ (fun t => score pE t x) 0 ∂(lawOf (stdGaussian E) pE 0) =
+      -fisherInformation (stdGaussian E) pE 0 := by
+    rw [hD, fisherInformation_pE]; simp
+  have hI : IsUnit (fisherInformation (stdGaussian E) pE 0) := by
+    rw [fisherInformation_pE, ← ContinuousLinearMap.one_def]; exact isUnit_one
+  rw [← sandwich_score_eq_inverse_fisherInformation h_info hI]
+  refine hasLaw_inner_neg_inverse_apply_sandwich (by rw [score_pE_zero]; exact measurable_id)
+    (memLp_score_pE.integrable_norm_pow two_ne_zero) _ (fun s => ?_) u
+  have h := hasLaw_inner_id s
+  rw [inverse_fisherInformation_pE, ← fisherInformation_pE,
+    inner_fisherInformation_apply memLp_score_pE] at h
+  simpa only [sq] using h
+
+/-- **Boundary (singular `D`)**: with `D = 0`, `Ring.inverse 0 = 0`, so the projection law of
+`hasLaw_inner_neg_inverse_apply_sandwich` degenerates to `N(0, 0)` whatever the meat. -/
+theorem hasLaw_inner_neg_inverse_zero_apply_sandwich
+    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    [MeasurableSpace E] [BorelSpace E] {𝓧 : Type*} [MeasurableSpace 𝓧]
+    {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'}
+    {μX : Measure 𝓧} {ψ₀ : 𝓧 → E} (hψ_meas : Measurable ψ₀)
+    (hψ_sq : Integrable (fun x => ‖ψ₀ x‖ ^ 2) μX) {Y : Ω' → E}
+    (hY : ∀ t, HasLaw (fun ω => ⟪Y ω, t⟫)
+      (gaussianReal 0 (∫ x, ⟪ψ₀ x, t⟫ ^ 2 ∂μX).toNNReal) P') (t : E) :
+    HasLaw (fun ω => ⟪-Ring.inverse (0 : E →L[ℝ] E) (Y ω), t⟫) (gaussianReal 0 0) P' := by
+  have h := hasLaw_inner_neg_inverse_apply_sandwich hψ_meas hψ_sq 0 hY t
+  rwa [GEE.sandwichCovariance_zero_left, zero_apply, inner_zero_left,
+    Real.toNNReal_zero] at h
+
+/-- **Misspecified working model, bread**: data `N(θ₀, 4)`, working model `N(θ, 1)` with
+score `ψ θ x = x - θ`; then `D = E Dψ θ₀ = -1` under any probability law. -/
+theorem integral_fderiv_sub_misspecified (μ : Measure ℝ) [IsProbabilityMeasure μ] (θ₀ : ℝ) :
+    ∫ x, fderiv ℝ (fun t : ℝ => x - t) θ₀ ∂μ = -1 := by
+  have hderiv : ∀ x, fderiv ℝ (fun t : ℝ => x - t) θ₀ = -1 := fun x => by
+    have h1 : HasFDerivAt (fun t : ℝ => x - t) (-1 : ℝ →L[ℝ] ℝ) θ₀ := by
+      have h := (hasFDerivAt_const (𝕜 := ℝ) x θ₀).sub (hasFDerivAt_id (𝕜 := ℝ) θ₀)
+      have heq1 : ((fun _ => x) - id) = (fun t : ℝ => x - t) := rfl
+      have heq2 : (0 : ℝ →L[ℝ] ℝ) - ContinuousLinearMap.id ℝ ℝ = -1 := by
+        rw [show (1 : ℝ →L[ℝ] ℝ) = ContinuousLinearMap.id ℝ ℝ from rfl, zero_sub]
+      rwa [heq1, heq2] at h
+    exact h1.fderiv
+  simp_rw [hderiv]
+  simp [integral_const]
+
+/-- **Misspecified working model, meat**: `V = E (X - θ₀)² • 1 = 4 • 1` under the true law
+`N(θ₀, 4)`. -/
+theorem integral_rankOne_sub_misspecified (θ₀ : ℝ) :
+    ∫ x, InnerProductSpace.rankOne ℝ (x - θ₀) (x - θ₀) ∂(gaussianReal θ₀ 4) =
+      (4 : ℝ) • (1 : ℝ →L[ℝ] ℝ) := by
+  have hrank : ∀ a : ℝ, InnerProductSpace.rankOne ℝ a a = (a * a) • (1 : ℝ →L[ℝ] ℝ) :=
+    fun a => by
+      refine ContinuousLinearMap.ext fun v => ?_
+      simp only [InnerProductSpace.rankOne_apply, smul_apply, one_apply_eq_self, smul_eq_mul,
+        RCLike.inner_apply, RCLike.conj_to_real]
+      ring
+  simp_rw [hrank]
+  rw [integral_smul_const]
+  congr 1
+  have h := ProbabilityTheory.variance_fun_id_gaussianReal (μ := θ₀) (v := 4)
+  rw [ProbabilityTheory.variance_eq_integral (X := fun x => x) aemeasurable_id] at h
+  simp only [ProbabilityTheory.integral_id_gaussianReal] at h
+  have h4 : ((4 : NNReal) : ℝ) = 4 := by simp
+  simp_rw [← pow_two]
+  rwa [h4] at h
+
+/-- **Misspecified working model, sandwich**: the canonical sandwich of the misspecified score
+is `4 • 1` (`sandwichCovariance_integral_rankOne` writes it as `D⁻¹ V (D⁻¹)*`), not the
+model-based inverse information `-D⁻¹ = 1`: the sandwich correction is nonzero. -/
+theorem sandwichCovariance_sub_misspecified (θ₀ : ℝ) :
+    GEE.sandwichCovariance (∫ x, fderiv ℝ (fun t : ℝ => x - t) θ₀ ∂(gaussianReal θ₀ 4))
+        (∫ x, InnerProductSpace.rankOne ℝ (x - θ₀) (x - θ₀) ∂(gaussianReal θ₀ 4)) =
+      (4 : ℝ) • 1 ∧
+      (4 : ℝ) • (1 : ℝ →L[ℝ] ℝ) ≠
+        -Ring.inverse (∫ x, fderiv ℝ (fun t : ℝ => x - t) θ₀ ∂(gaussianReal θ₀ 4)) := by
+  rw [sandwichCovariance_integral_rankOne, integral_fderiv_sub_misspecified,
+    integral_rankOne_sub_misspecified]
+  have hU : IsUnit (-1 : ℝ →L[ℝ] ℝ) := (isUnit_one (M := ℝ →L[ℝ] ℝ)).neg
+  have h1 : Ring.inverse (-1 : ℝ →L[ℝ] ℝ) = -1 := by
+    refine ContinuousLinearMap.ext fun v => ?_
+    have h := inverse_apply_apply hU v
+    simp only [neg_apply, one_apply_eq_self, map_neg] at h
+    rw [neg_apply, one_apply_eq_self]
+    have h2 := congrArg Neg.neg h
+    simpa using h2
+  have hadj : ContinuousLinearMap.adjoint (-1 : ℝ →L[ℝ] ℝ) = -1 := by
+    rw [map_neg, ContinuousLinearMap.adjoint_one]
+  constructor
+  · rw [h1, hadj]
+    refine ContinuousLinearMap.ext fun v => ?_
+    simp only [ContinuousLinearMap.comp_apply, neg_apply, smul_apply, one_apply_eq_self,
+      smul_eq_mul]
+    ring
+  · rw [h1, neg_neg]
+    intro hcon
+    have h2 := congrArg (fun A : ℝ →L[ℝ] ℝ => A 1) hcon
+    simp only [smul_apply, one_apply_eq_self, smul_eq_mul, mul_one] at h2
+    norm_num at h2
 
 /-! ### Asymptotically linear estimator with `φ = id` (S16.3) -/
 
