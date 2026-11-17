@@ -17,7 +17,7 @@ public import MathlibExt.GroupTheory.BurnsidePaqb.SimplePrime
 Authors: Muse Spark 1.3
 
 Port of the fully proved headline stage from the screened archive
-`genai_web_search/tree/users/akiezun/burnside_proof.zip` (SHA-256
+`burnside_proof.zip` (SHA-256
 `d9da7df82e467d9fa587892eeef9f51e2b83df0588175653bd1d16264b09dd00`):
 `Burnside/Statement.lean`.
 
