@@ -15,6 +15,7 @@ import MathlibExt.Biology.Epidemiology.IncidenceObservation.Law
 namespace MathlibExtTest.Biology.Epidemiology.IncidenceObservation.Law
 
 open MathlibExt.Biology.Epidemiology.IncidenceObservation.Law
+open scoped NNReal
 
 /-- Background-only at `rho = 0`. -/
 example {S I : ℝ → ℝ} :
@@ -29,10 +30,10 @@ example (L : ℝ → MeasureTheory.Measure ℕ) :
     L ((0:ℝ) * 5 + (1/10) * (2 - 0)) = L ((0:ℝ) * 7 + (1/10) * (2 - 0)) := by
   norm_num
 /-- The zero-reporting estimand is not identified. -/
-example (L : ℝ → MeasureTheory.Measure ℕ) :
+example :
     ¬ MathlibExt.Probability.Statistics.IsIdentifiedBy
-      (fun beta : ℝ => L ((0 : ℝ) * beta + (1/10) * (2 - 0)))
-      (fun beta : ℝ => beta) :=
-  epi_nonidentified_at_zero_reporting L
+      (fun _lam : Fin 2 → ℝ≥0 => reportingLaw (n := 2) (fun _ => 1))
+      (fun lam : Fin 2 → ℝ≥0 => (lam 0 : ℝ)) :=
+  epi_nonidentified_at_zero_reporting
 
 end MathlibExtTest.Biology.Epidemiology.IncidenceObservation.Law

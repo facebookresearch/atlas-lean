@@ -11,6 +11,7 @@ module
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.MeasureTheory.Measure.Prod
 public import MathlibExt.Probability.Statistics.Identifiability
+public import MathlibExt.Probability.Distributions.PoissonKernel
 
 /-!
 # Epidemic reporting law
@@ -28,6 +29,7 @@ of the SIR ODE.
 @[expose] public section
 
 open MeasureTheory intervalIntegral
+open scoped NNReal
 
 namespace MathlibExt.Biology.Epidemiology.IncidenceObservation.Law
 
@@ -43,20 +45,32 @@ lemma epi_intensity_background_only {beta background N a b : ℝ}
       background * (b - a) := by
   rw [zero_mul, zero_add]
 
-/-- **Nonidentification at zero reporting.** Let the model be a
-rate `beta` with a fixed background/window intensity map, the
-reporting law `fun beta => L (background * (b - a))` (the `rho = 0`
-law, independent of `beta`), and the estimand `tau beta = beta`.
-Then the estimand is not identified by the reporting law: the two
-distinct rates `0` and `1` have the same law but different
-estimands. -/
-lemma epi_nonidentified_at_zero_reporting {ι : Type*} [MeasurableSpace ι] (L : ℝ → Measure ι) {background a b : ℝ} :
+/-- The independent Poisson reporting law on a finite interval
+index, as a kernel from the intensity vector. -/
+noncomputable def reportingLaw {n : ℕ} :
+    ProbabilityTheory.Kernel (Fin n → ℝ≥0) (Fin n → ℕ) :=
+  ProbabilityTheory.piPoissonKernel (Fin n)
+
+/-- **Law equality from equal intensities.** Two intensity vectors
+that agree give the same independent Poisson reporting law. -/
+lemma reportingLaw_eq_of_intensity_eq {n : ℕ} {lam lam' : Fin n → ℝ≥0}
+    (h : lam = lam') : reportingLaw lam = reportingLaw lam' :=
+  congrArg reportingLaw h
+
+/-- **Nonidentification at zero reporting.** With reporting
+fraction `rho = 0`, every epidemic rate vector has the same
+background-only intensity vector, hence the same Poisson reporting
+law; the estimand `tau lam = lam 0` (for `n ≥ 1`) is not identified
+by the reporting law: rates `0` and the rate differing only at
+coordinate `0` share the law but differ in the estimand. -/
+lemma epi_nonidentified_at_zero_reporting {n : ℕ} [NeZero n]
+    {background : Fin n → ℝ≥0} :
     ¬ MathlibExt.Probability.Statistics.IsIdentifiedBy
-      (fun beta : ℝ => L ((0 : ℝ) * beta + background * (b - a)))
-      (fun beta : ℝ => beta) := by
+      (fun _lam : Fin n → ℝ≥0 => reportingLaw background)
+      (fun lam : Fin n → ℝ≥0 => (lam 0 : ℝ)) := by
   apply MathlibExt.Probability.Statistics.not_isIdentifiedBy_of_eq_of_ne
-    (θ := (0 : ℝ)) (θ' := (1 : ℝ))
+    (θ := fun _ => (0 : ℝ≥0)) (θ' := fun i => if i = 0 then 1 else 0)
+  · rfl
   · simp
-  · norm_num
 
 end MathlibExt.Biology.Epidemiology.IncidenceObservation.Law
