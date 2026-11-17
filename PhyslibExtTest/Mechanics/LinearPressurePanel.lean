@@ -16,7 +16,7 @@ import PhyslibExt.Mechanics.LinearPressurePanel
 
 Focused checks for `PhyslibExt.Mechanics.LinearPressurePanel`: at
 `c = w = 1` on `[0, 2]` the force is `2`, the moment is `8 / 3`, and the
-resultant acts at depth `4 / 3`; a partially submerged interval
+resultant acts at depth `4 / 3`; a nonzero-lower-bound interval
 `[1, 4]` gives force `15 / 2`.
 
 These are elaboration and non-vacuity checks, not new results.
@@ -30,6 +30,6 @@ example : linearPressureForce 1 1 0 2 = 2 ∧ linearPressureMoment 1 1 0 2 = 8 /
   · rw [linearPressureForce_eq]; norm_num
   · rw [linearPressureMoment_eq]; norm_num
 
-/-- Partially submerged interval `[1, 4]`. -/
+/-- Nonzero-lower-bound interval `[1, 4]`. -/
 example : linearPressureForce 1 1 1 4 = 15 / 2 := by
   rw [linearPressureForce_eq]; norm_num
