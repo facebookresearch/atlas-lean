@@ -89,3 +89,9 @@ theorem PolyManyOneRed.compl
   exact ⟨f, hf, fun x => congrArg Bool.not (he x)⟩
 
 end Cslib.Complexity
+
+namespace Cslib.CookLevin.PolyManyOneRed
+
+export Cslib.Complexity.PolyManyOneRed (compl)
+
+end Cslib.CookLevin.PolyManyOneRed
