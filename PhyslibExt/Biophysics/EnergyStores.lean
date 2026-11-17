@@ -35,17 +35,20 @@ patient-level or causal claim, and no calorie or FITT prescription.
 * `exercise_efficiency_bound`: the pointwise bound on metabolic power.
 * `exercise_efficiency_integral`: the integrated bound over `a ≤ b`.
 * `energy_budget`: stored-energy change equals net intake integral.
+* `energy_composition_perturbation`, `energy_composition_witness`:
+  energy-preserving store perturbations change total mass.
 
 ## iii. Table of contents
 
 * A. Pointwise efficiency bound.
 * B. Integrated efficiency bound.
 * C. Energy budget identity.
+* D. Energy-preserving composition perturbation.
 
 ## iv. References
 
 * The declared models are local to this module; no literature result
-  is claimed, so all three declarations are `lemma`s.
+  is claimed, so all declarations are `lemma`s.
 
 -/
 
