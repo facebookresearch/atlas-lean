@@ -13,6 +13,8 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 /-!
 # Exercise efficiency bound
 
+## i. Overview
+
 For the declared power model `Pmet = Pbase + Pmech / eta` with
 nonnegative baseline and mechanical powers and efficiency
 `0 < eta ≤ 1`, metabolic power is at least the mechanical power, and
@@ -22,6 +24,22 @@ signed interval integral reverses the inequality.
 
 This is a statement about the declared model only, with no diet,
 patient-level or causal claim, and no calorie or FITT prescription.
+
+## ii. Key results
+
+* `exercise_efficiency_bound`: the pointwise bound on metabolic power.
+* `exercise_efficiency_integral`: the integrated bound over `a ≤ b`.
+
+## iii. Table of contents
+
+* A. Pointwise efficiency bound.
+* B. Integrated efficiency bound.
+
+## iv. References
+
+* The declared model is local to this module; no literature result is
+  claimed, so both declarations are `lemma`s.
+
 -/
 
 @[expose] public section
@@ -30,11 +48,13 @@ open MeasureTheory intervalIntegral
 
 namespace PhyslibExt.Biophysics.EnergyStores
 
+/-! ## A. Pointwise efficiency bound. -/
+
 /-- **Declared exercise-efficiency bound.** For the declared power model
 `Pmet = Pbase + Pmech / eta` with nonnegative baseline and mechanical
 powers and efficiency `eta ∈ (0, 1]`, metabolic power is at least the
 mechanical power. -/
-theorem exercise_efficiency_bound {Pbase Pmech eta : ℝ}
+lemma exercise_efficiency_bound {Pbase Pmech eta : ℝ}
     (hbase : 0 ≤ Pbase) (hmech : 0 ≤ Pmech) (heta0 : 0 < eta) (heta1 : eta ≤ 1) :
     Pmech ≤ Pbase + Pmech / eta := by
   have h : Pmech ≤ Pmech / eta := by
@@ -43,11 +63,13 @@ theorem exercise_efficiency_bound {Pbase Pmech eta : ℝ}
       _ = Pmech := mul_one _
   linarith
 
+/-! ## B. Integrated efficiency bound. -/
+
 /-- Integrated form: over any finite window, metabolic energy cost is at
 least the mechanical work, when both powers are integrable and the
 pointwise declared model holds. The window is `a ≤ b`; for `a > b` the
 signed interval integral reverses the inequality. -/
-theorem exercise_efficiency_integral {Pbase Pmech : ℝ → ℝ} {eta a b : ℝ}
+lemma exercise_efficiency_integral {Pbase Pmech : ℝ → ℝ} {eta a b : ℝ}
     (hab : a ≤ b) (heta0 : 0 < eta) (heta1 : eta ≤ 1)
     (hbase : ∀ t, 0 ≤ Pbase t) (hmech : ∀ t, 0 ≤ Pmech t)
     (hint_base : IntervalIntegrable Pbase MeasureTheory.volume a b)
