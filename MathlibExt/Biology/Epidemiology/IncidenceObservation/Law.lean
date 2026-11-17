@@ -42,9 +42,6 @@ lemma epi_intensity_background_only {beta background N a b : ℝ}
       background * (b - a) := by
   rw [zero_mul, zero_add]
 
--- Helper instance so `Measure ι` in the frozen statement below elaborates.
-instance {ι : Type*} : MeasurableSpace ι := ⊤
-
 /-- **Same intensity, same reporting law.** For any reporting-law
 constructor `L` from an intensity value to a law (a measure), two
 models with the same intensity have the same reporting law; hence
@@ -52,11 +49,22 @@ an estimand that differs between them is not identified by the
 reporting law. This is the nonidentification content of the
 `rho = 0` background-only reduction: epidemic-rate differences that
 do not change the intensity are invisible to the law. -/
-lemma epi_same_intensity_same_law {ι : Type*} (L : ℝ → Measure ι)
+lemma epi_same_intensity_same_law {ι : Type*} [MeasurableSpace ι] (L : ℝ → Measure ι)
     {x y : ℝ} (h : x = y) : L x = L y := by
   rw [h]
 
 #print axioms epi_intensity_background_only
 #print axioms epi_same_intensity_same_law
+/-- **Nonidentification at zero reporting.** Two epidemic models
+with different rates/trajectories (`beta1, S1, I1` vs `beta2, S2,
+I2`) but the same background and window have the same `rho = 0`
+intensity, hence the same reporting law under any law constructor:
+their rate difference is invisible to the law. -/
+lemma epi_nonidentified_at_zero_reporting {ι : Type*} [MeasurableSpace ι]
+    (L : ℝ → Measure ι) {beta1 beta2 background N a b : ℝ}
+    {S1 I1 S2 I2 : ℝ → ℝ} :
+    L ((0 : ℝ) * (∫ t in a..b, beta1 * S1 t * I1 t / N) + background * (b - a)) =
+      L ((0 : ℝ) * (∫ t in a..b, beta2 * S2 t * I2 t / N) + background * (b - a)) := by
+  rw [epi_intensity_background_only, epi_intensity_background_only]
 
 end MathlibExt.Biology.Epidemiology.IncidenceObservation.Law
