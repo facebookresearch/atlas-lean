@@ -140,17 +140,18 @@ example : s12.massComposition (fun _ => 0) = none := by
 -- total mass flow is positive: masses (-1, 1) on flows (1, 2) have mass
 -- flows (-1, 2) with total 1.
 example : s12.massComposition ![-1, 1] = none := by
-  have hneg : s12.massFlow ![-1, 1] 0 = -1 := by
-    simp only [StreamFlow.massFlow, s12]
-    norm_num [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons]
-  have hfalse :
-      ¬ ((∀ i, 0 ≤ s12.massFlow ![-1, 1] i) ∧ 0 < ∑ i, s12.massFlow ![-1, 1] i) := by
-    intro h
-    have h0 := h.1 0
-    rw [hneg] at h0
-    norm_num at h0
-  unfold StreamFlow.massComposition
-  rw [ite_eq_right hfalse]
+  apply massComposition_eq_none_of_nonpos_at _ _ 0
+  norm_num [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons]
+
+-- A zero molar mass at one species gives no mass composition.
+example : s12.massComposition ![0, 1] = none := by
+  apply massComposition_eq_none_of_nonpos_at _ _ 0
+  norm_num [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons]
+
+-- A negative molar mass on a zero-flow species still gives none.
+example : s02.massComposition ![-1, 1] = none := by
+  apply massComposition_eq_none_of_nonpos_at _ _ 0
+  norm_num [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons]
 
 -- The zero stream has no mass composition.
 example : StreamFlow.massComposition (StreamFlow.zero (Fin 2)) M23 = none := by
