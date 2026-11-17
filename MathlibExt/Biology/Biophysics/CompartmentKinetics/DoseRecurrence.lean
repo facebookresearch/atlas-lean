@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import MathlibExt.Algebra.AffineRecurrence
 
 /-!
 # Periodic dose recurrence
@@ -32,21 +33,17 @@ this is `x n = x 0 + n * D`. -/
 lemma post_dose_closed_form {D q x0 : ℝ} (x : ℕ → ℝ)
     (h0 : x 0 = x0) (hstep : ∀ n, x (n + 1) = q * x n + D) (n : ℕ) :
     x n = q ^ n * x0 + D * ∑ j ∈ Finset.range n, q ^ j := by
-  induction n with
-  | zero => simp [h0]
-  | succ n ih =>
-    rw [hstep n, ih, geom_sum_succ]
-    ring
+  have h := MathlibExt.AffineRecurrence.IsAffineRecurrence.eq_pow_mul_add_geom_sum
+    (x := x) (a := q) (b := D) hstep n
+  rwa [h0] at h
 
 /-- At `q = 1` (no elimination) amounts grow linearly. -/
 lemma post_dose_no_elimination {D x0 : ℝ} (x : ℕ → ℝ)
     (h0 : x 0 = x0) (hstep : ∀ n, x (n + 1) = 1 * x n + D) (n : ℕ) :
     x n = x0 + n * D := by
-  induction n with
-  | zero => simp [h0]
-  | succ n ih =>
-    rw [hstep n, ih]
-    push_cast
-    ring
+  have h := MathlibExt.AffineRecurrence.IsAffineRecurrence.eq_add_nsmul_of_one
+    (x := x) (b := D) hstep n
+  rw [h0] at h
+  simpa using h
 
 end MathlibExt.Biology.Biophysics.CompartmentKinetics.DoseRecurrence
