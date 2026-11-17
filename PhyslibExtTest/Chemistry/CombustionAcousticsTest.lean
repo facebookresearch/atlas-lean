@@ -11,6 +11,7 @@ import PhyslibExt.Chemistry.CombustionAcoustics
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
 /-!
 # Arrhenius equilibrium checks
@@ -313,3 +314,87 @@ example :
         (Real.pi / Real.pi) * Real.cos (Real.sqrt 2 * t)
       rw [div_self Real.pi_ne_zero])
     0 1
+
+/-- Nonzero accumulated interval balance: the decaying solution
+`A(t) = 2 * exp (-t)`, `B(t) = exp (-t)` of the modal equations
+with `γ = 2`, `pbar = ρ = 1`, `L = π`, `r = 3`, `H = 0` has
+endpoint energies differing by the nonzero integral
+`-3π (1 - exp (-2)) / 4` over `[0, 1]`. -/
+example :
+    Chemistry.CombustionAcoustics.acousticModeEnergy 2 1 1 Real.pi
+        (2 * Real.exp (-(1 : ℝ))) (Real.exp (-(1 : ℝ))) -
+      Chemistry.CombustionAcoustics.acousticModeEnergy 2 1 1 Real.pi
+        (2 * Real.exp (-(0 : ℝ))) (Real.exp (-(0 : ℝ))) =
+      -3 * Real.pi * (1 - Real.exp (-2)) / 4 := by
+  have hA : ∀ t ∈ Set.uIcc (0 : ℝ) 1,
+      HasDerivAt (fun s : ℝ => 2 * Real.exp (-s))
+        (-2 * Real.exp (-t)) t := by
+    intro t _
+    have h := ((hasDerivAt_id t).neg.exp).const_mul (2 : ℝ)
+    convert h using 1
+    · first
+      | (funext s; simp)
+      | simp
+    · first
+      | (funext s; simp)
+      | simp
+  have hB : ∀ t ∈ Set.uIcc (0 : ℝ) 1,
+      HasDerivAt (fun s : ℝ => Real.exp (-s)) (-Real.exp (-t)) t := by
+    intro t _
+    have h := (hasDerivAt_id t).neg.exp
+    simpa using h
+  have h := Chemistry.CombustionAcoustics.acousticModeEnergy_sub_eq_integral
+    (γ := 2) (pbar := 1) (ρ := 1) (L := Real.pi) (r := 3) (H := 0)
+    (by norm_num) (by norm_num) Real.pi_pos
+    (A := fun s : ℝ => 2 * Real.exp (-s)) (B := fun s : ℝ => Real.exp (-s))
+    (A' := fun t : ℝ => -2 * Real.exp (-t))
+    (B' := fun t : ℝ => -Real.exp (-t)) 0 1 hA hB
+    (fun t _ => by
+      show -2 * Real.exp (-t) =
+        -2 * 1 * (Real.pi / Real.pi) * Real.exp (-t) + (2 - 1) * 0
+      rw [div_self Real.pi_ne_zero]
+      ring)
+    (fun t _ => by
+      show (1 : ℝ) * (-Real.exp (-t)) =
+        (Real.pi / Real.pi) * (2 * Real.exp (-t)) - 3 * Real.exp (-t)
+      rw [div_self Real.pi_ne_zero]
+      ring)
+  rw [h]
+  have hF : ∀ t ∈ Set.uIcc (0 : ℝ) 1,
+      HasDerivAt (fun s : ℝ => -(Real.exp (-2 * s)) / 2)
+        (Real.exp (-2 * t)) t := by
+    intro t _
+    have h2 := ((hasDerivAt_id t).const_mul (-2 : ℝ)).exp
+    have h3 := h2.const_mul (-1 / 2 : ℝ)
+    convert h3 using 1
+    · first
+      | (funext s; simp only [id_eq]; congr 1; ring)
+      | (simp only [id_eq]; ring_nf)
+    · first
+      | (funext s; simp only [id_eq]; congr 1; ring)
+      | (simp only [id_eq]; ring_nf)
+  have hint : (∫ t in (0 : ℝ)..(1 : ℝ), Real.exp (-2 * t)) =
+      (1 - Real.exp (-2)) / 2 := by
+    have hi := intervalIntegral.integral_eq_sub_of_hasDerivAt hF
+      ((Real.continuous_exp.comp (continuous_const.mul continuous_id)).intervalIntegrable
+        0 1)
+    rw [hi]
+    norm_num
+    ring
+  have e : (∫ t in (0 : ℝ)..(1 : ℝ),
+      (Real.pi * (2 - 1) * (2 * Real.exp (-t)) * 0 / (2 * 2 * 1) -
+        3 * Real.pi * (Real.exp (-t)) ^ 2 / 2)) =
+      ∫ t in (0 : ℝ)..(1 : ℝ), (-(3 * Real.pi / 2) * Real.exp (-2 * t)) := by
+    apply intervalIntegral.integral_congr
+    intro t _
+    have hsq : (Real.exp (-t)) ^ 2 = Real.exp (-2 * t) := by
+      rw [← Real.exp_nat_mul]
+      congr 1
+      ring
+    show Real.pi * (2 - 1) * (2 * Real.exp (-t)) * 0 / (2 * 2 * 1) -
+        3 * Real.pi * (Real.exp (-t)) ^ 2 / 2 =
+      -(3 * Real.pi / 2) * Real.exp (-2 * t)
+    rw [hsq]
+    ring
+  rw [e, intervalIntegral.integral_const_mul, hint]
+  ring
