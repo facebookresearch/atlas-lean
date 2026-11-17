@@ -358,10 +358,10 @@ theorem movingJumpTransport {uL uR vL vR : ℝ → ℝ → ℝ}
         s' t * (uL t (s t) - uR t (s t))) t := by
   have hL := movingEndpoint_hasDerivAt (u := uL) (ut := vL)
     (a := fun _ : ℝ => a) (b := s) (a' := fun _ : ℝ => 0) (b' := s')
-    (fun τ => hasDerivAt_const τ a) hs hjL hvL hcvL t
+    t (hasDerivAt_const t a) (hs t) hjL hvL hcvL
   have hR := movingEndpoint_hasDerivAt (u := uR) (ut := vR)
     (a := s) (b := fun _ : ℝ => b) (a' := s') (b' := fun _ : ℝ => 0)
-    hs (fun τ => hasDerivAt_const τ b) hjR hvR hcvR t
+    t (hs t) (hasDerivAt_const t b) hjR hvR hcvR
   have hL' : HasDerivAt (fun τ : ℝ => ∫ x in a..s τ, uL τ x)
       ((∫ x in a..s t, vL t x) + s' t * uL t (s t)) t := by
     convert hL using 1
