@@ -54,12 +54,19 @@ holds the coefficient of `X^i` (unreflected). -/
 noncomputable def registerToPoly (r : ℕ) (v : Fin r → ZMod 2) : Polynomial (ZMod 2) :=
   ∑ i : Fin r, Polynomial.C (v i) * Polynomial.X ^ i.val
 
-/-- One unreflected serial step: from a register representing `s`, on input
-bit `b`, produce the register representing `(s * X + b) % g`, coefficient by
-coefficient. Zero initialization and no input/output XOR are used. -/
+/-- One unreflected serial step, as a hardware transition: the register
+shifts toward higher indices, the input bit enters at index `0`, and the
+outgoing high bit (the coefficient of `X^(r-1)`) is fed back through the
+generator taps `g.coeff i` (addition is XOR in `ZMod 2`). No polynomial
+division occurs in the transition itself; `registerToPoly_stepRegister`
+proves that this transition represents `(s * X + b) % g`. Zero
+initialization and no input/output XOR are used. -/
 noncomputable def stepRegister (g : Polynomial (ZMod 2)) (r : ℕ) (v : Fin r → ZMod 2)
     (b : Bool) : Fin r → ZMod 2 :=
-  fun i => (Polynomial.modByMonic (registerToPoly r v * Polynomial.X + bitPoly b) g).coeff i.val
+  fun i =>
+    (if i.val = 0 then (bitPoly b).coeff 0
+      else v ⟨i.val - 1, by have hi : i.val < r := i.isLt; omega⟩) +
+    (if h : 0 < r then v ⟨r - 1, by omega⟩ * g.coeff i.val else 0)
 
 /-- The zero initial register of width `r`. -/
 def initialRegister (r : ℕ) : Fin r → ZMod 2 :=
@@ -199,30 +206,140 @@ theorem registerToPoly_initialRegister (r : ℕ) :
   unfold registerToPoly initialRegister
   simp
 
+/-- Helper: coefficients of `registerToPoly`. -/
+private theorem coeff_registerToPoly_aux (r : ℕ) (v : Fin r → ZMod 2) (n : ℕ) :
+    (registerToPoly r v).coeff n = if h : n < r then v ⟨n, h⟩ else 0 := by
+  unfold registerToPoly
+  rw [Polynomial.finsetSum_coeff]
+  simp only [Polynomial.coeff_C_mul_X_pow]
+  by_cases hn : n < r
+  · rw [dite_eq_left hn]
+    have hiff : ∀ i : Fin r, (n = i.val) ↔ (i = ⟨n, hn⟩) := by
+      intro i
+      constructor
+      · intro hcon
+        exact Fin.ext hcon.symm
+      · intro hcon
+        rw [hcon]
+    simp only [hiff]
+    rw [Finset.sum_ite_eq']
+    simp
+  · rw [dite_eq_right hn]
+    have hzero : ∀ i : Fin r, (if n = i.val then v i else (0 : ZMod 2)) = 0 := by
+      intro i
+      have hi := i.isLt
+      apply ite_eq_right
+      omega
+    simp only [hzero, Finset.sum_const_zero]
+
+/-- Helper: `registerToPoly` has degree below `r`. -/
+private theorem degree_registerToPoly_aux (r : ℕ) (v : Fin r → ZMod 2) :
+    (registerToPoly r v).degree < r := by
+  unfold registerToPoly
+  refine lt_of_le_of_lt (Polynomial.degree_sum_le _ _) ?_
+  apply (Finset.sup_lt_iff (WithBot.bot_lt_coe r)).mpr
+  intro i _
+  refine lt_of_le_of_lt (Polynomial.degree_C_mul_X_pow_le _ _) ?_
+  exact WithBot.coe_lt_coe.mpr i.isLt
+
+/-- Helper: the hardware step represents the shifted-plus-bit polynomial up to a
+multiple of the generator. -/
+private theorem stepRegister_identity_aux (g : Polynomial (ZMod 2)) (r : ℕ)
+    (hg : g.Monic) (hr : g.natDegree = r) (hr1 : 1 ≤ r)
+    (v : Fin r → ZMod 2) (b : Bool) :
+    registerToPoly r (stepRegister g r v b)
+      = registerToPoly r v * Polynomial.X + bitPoly b
+        + Polynomial.C (v ⟨r - 1, by omega⟩) * g := by
+  rw [Polynomial.ext_iff]
+  intro n
+  by_cases hn0 : n = 0
+  · subst hn0
+    rw [coeff_registerToPoly_aux, dite_eq_left (by omega : 0 < r)]
+    rw [Polynomial.coeff_add, Polynomial.coeff_add, Polynomial.coeff_C_mul,
+      Polynomial.coeff_mul_X_zero]
+    unfold stepRegister
+    rw [ite_eq_left rfl, dite_eq_left (by omega : 0 < r)]
+    show (bitPoly b).coeff 0 + v ⟨r - 1, by omega⟩ * g.coeff 0
+      = (0 + (bitPoly b).coeff 0) + v ⟨r - 1, by omega⟩ * g.coeff 0
+    ring
+  · by_cases hn : n < r
+    · rw [coeff_registerToPoly_aux, dite_eq_left hn]
+      rw [Polynomial.coeff_add, Polynomial.coeff_add, Polynomial.coeff_C_mul]
+      obtain ⟨m, rfl⟩ := (⟨n - 1, by omega⟩ : ∃ m, n = m + 1)
+      rw [Polynomial.coeff_mul_X, coeff_registerToPoly_aux,
+        dite_eq_left (by omega : m < r)]
+      have hb : (bitPoly b).coeff (m + 1) = 0 := by
+        cases b <;> simp [bitPoly, Polynomial.coeff_one]
+      rw [hb]
+      unfold stepRegister
+      have hne : (⟨m + 1, hn⟩ : Fin r).val ≠ 0 := by
+        show m + 1 ≠ 0
+        omega
+      rw [ite_eq_right hne, dite_eq_left (by omega : 0 < r)]
+      show v ⟨m, by omega⟩ + v ⟨r - 1, by omega⟩ * g.coeff (m + 1)
+        = (v ⟨m, by omega⟩ + 0) + v ⟨r - 1, by omega⟩ * g.coeff (m + 1)
+      ring
+    · rw [coeff_registerToPoly_aux, dite_eq_right hn]
+      rw [Polynomial.coeff_add, Polynomial.coeff_add, Polynomial.coeff_C_mul]
+      obtain ⟨m, rfl⟩ := (⟨n - 1, by omega⟩ : ∃ m, n = m + 1)
+      rw [Polynomial.coeff_mul_X, coeff_registerToPoly_aux]
+      by_cases hm : m < r
+      · rw [dite_eq_left hm]
+        have hb : (bitPoly b).coeff (m + 1) = 0 := by
+          cases b <;> simp [bitPoly, Polynomial.coeff_one]
+        rw [hb]
+        have hmr : m + 1 = r := by omega
+        have hg1 : g.coeff (m + 1) = 1 := by
+          rw [hmr]
+          have h := hg.coeff_natDegree
+          rwa [hr] at h
+        rw [hg1]
+        have hmeq : m = r - 1 := by omega
+        have hfin : (⟨m, hm⟩ : Fin r) = ⟨r - 1, by omega⟩ := Fin.ext hmeq
+        rw [hfin]
+        show (0 : ZMod 2) = (v ⟨r - 1, by omega⟩ + 0) + v ⟨r - 1, by omega⟩ * 1
+        rw [mul_one, add_zero]
+        exact (CharTwo.add_self_eq_zero _).symm
+      · rw [dite_eq_right hm]
+        have hb : (bitPoly b).coeff (m + 1) = 0 := by
+          cases b <;> simp [bitPoly, Polynomial.coeff_one]
+        rw [hb]
+        have hg0 : g.coeff (m + 1) = 0 := by
+          apply Polynomial.coeff_eq_zero_of_natDegree_lt
+          omega
+        rw [hg0]
+        simp
+
 /-- One serial step represents one polynomial long-division step:
 the register after reading `b` represents `(s * X + b) % g`. -/
 theorem registerToPoly_stepRegister (g : Polynomial (ZMod 2)) (r : ℕ)
     (hg : g.Monic) (hr : g.natDegree = r) (v : Fin r → ZMod 2) (b : Bool) :
     registerToPoly r (stepRegister g r v b) =
       Polynomial.modByMonic (registerToPoly r v * Polynomial.X + bitPoly b) g := by
-  have hdeg : g.degree = (r : WithBot ℕ) := by
-    rw [Polynomial.degree_eq_natDegree hg.ne_zero, hr]
-  have h := Polynomial.sum_modByMonic_coeff
-    (p := registerToPoly r v * Polynomial.X + bitPoly b) (q := g) hg (n := r) (by
-    rw [hdeg])
-  have hmon : ∀ (i : Fin r),
-      Polynomial.C (((registerToPoly r v * Polynomial.X + bitPoly b) %ₘ g).coeff i.val)
-        * Polynomial.X ^ i.val
-      = Polynomial.monomial i.val
-        (((registerToPoly r v * Polynomial.X + bitPoly b) %ₘ g).coeff i.val) := by
-    intro i
-    rw [Polynomial.C_mul_X_pow_eq_monomial]
-  show (∑ i : Fin r, Polynomial.C
-      (((registerToPoly r v * Polynomial.X + bitPoly b) %ₘ g).coeff i.val)
-        * Polynomial.X ^ i.val)
-    = Polynomial.modByMonic (registerToPoly r v * Polynomial.X + bitPoly b) g
-  simp only [hmon]
-  exact h
+  rcases eq_zero_or_pos r with rfl | hr0
+  · have hg1 : g = 1 := by
+      have hc : g.coeff 0 = 1 := by
+        have h := hg.coeff_natDegree
+        rwa [hr] at h
+      rw [Polynomial.eq_C_of_natDegree_eq_zero hr, hc, Polynomial.C_1]
+    rw [hg1]
+    simp [registerToPoly, Polynomial.modByMonic_one]
+  · have hr1 : 1 ≤ r := hr0
+    have hident := stepRegister_identity_aux g r hg hr hr1 v b
+    have hdeg : (registerToPoly r (stepRegister g r v b)).degree < g.degree := by
+      have h1 := degree_registerToPoly_aux r (stepRegister g r v b)
+      have h2 : g.degree = (r : WithBot ℕ) := by
+        rw [Polynomial.degree_eq_natDegree hg.ne_zero, hr]
+      rw [h2]
+      exact h1
+    have hself := (Polynomial.modByMonic_eq_self_iff hg).mpr hdeg
+    have hdiv : g ∣ registerToPoly r (stepRegister g r v b)
+        - (registerToPoly r v * Polynomial.X + bitPoly b) := by
+      use Polynomial.C (v ⟨r - 1, by omega⟩)
+      rw [hident]
+      ring
+    rw [← hself]
+    exact Polynomial.modByMonic_eq_of_dvd_sub hg hdiv
 
 /-- Run invariant: after processing any MSB-first list `bits` from the zero
 register, the register represents `Polynomial.modByMonic (messagePoly bits) g`. -/
