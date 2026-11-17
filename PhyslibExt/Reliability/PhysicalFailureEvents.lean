@@ -62,7 +62,8 @@ empirically, and `σ` is a peak tensile stress, not a fatigue stress range.
 - N. E. Dowling, *Mechanical Behavior of Materials: Engineering Methods
   for Deformation, Fracture, and Fatigue*, 4th ed., Pearson (2013): the
   mode-I stress intensity model and the critical-crack condition
-  `K_I = K_IC` used here.
+  `K_I = K_IC` used here, and the Paris fatigue-crack-growth law
+  `da/dN = C * (ΔK)^m` reduced in section B.
 
 ## A. Mode-I stress intensity and the critical crack length
 
@@ -143,7 +144,18 @@ lemma crackFailure_iff_criticalCrackLength_le {KIC Y σ a : ℝ}
   rw [← not_lt, ← not_lt,
     modeIStressIntensity_lt_iff_lt_criticalCrackLength hKIC hY hσ ha]
 
-/- ### B. Paris-law crack growth -/
+/-! ## B. Paris-law crack growth
+
+The Paris section uses the reduced one-parameter form of the standard
+Paris law. The standard law is `da/dN = C * (ΔK)^m` with stress-intensity
+range `ΔK = Y * Δσ * √(π * a)` for a constant geometry factor `Y` and
+fatigue stress range `Δσ`. Substituting gives
+`da/dN = K * a ^ (m / 2)` with the single aggregate coefficient
+`K = C * (Y * Δσ * √π) ^ m > 0`, which is the `K` of this section; it is
+an aggregate growth coefficient, not a stress intensity (`K_I`, `K_IC`
+in section A). The reduction assumes constant `Y` and `Δσ` and the
+small-scale-yielding LEFM regime; no load spectrum, crack closure, or
+empirical calibration is modeled. -/
 
 /-- Paris-law crack-growth solution, power branch. With growth exponent
 `m ≠ 2` and coefficient `K > 0` in `da/dN = K * a ^ (m / 2)`, writing
