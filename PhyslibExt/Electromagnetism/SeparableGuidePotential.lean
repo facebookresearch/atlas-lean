@@ -158,7 +158,7 @@ private theorem diff_z {f : ℝ → ℝ → ℝ} (hf : ContDiff ℝ ∞ (Functio
 
 /-- `E = (0, -a f_t, 0)`. -/
 lemma electricField_separableGuidePotential (c : SpeedOfLight) (a : ℝ → ℝ) (f : ℝ → ℝ → ℝ)
-    (ha : ContDiff ℝ ∞ a) (hf : ContDiff ℝ ∞ (Function.uncurry f)) (t : Time) (p : Space) :
+    (hf : ContDiff ℝ ∞ (Function.uncurry f)) (t : Time) (p : Space) :
     (separableGuidePotential c a f).electricField c t p =
       WithLp.toLp 2 ![0, -(a (p 0) * deriv (fun s => f s (p 2)) t.val), 0] := by
   exact electricField_of c _ t p _ _ (scalarPotential_separableGuidePotential c a f)
@@ -220,7 +220,7 @@ lemma separableGuidePotential_fields (c : SpeedOfLight) (a : ℝ → ℝ) (f : �
       WithLp.toLp 2 ![-(a (p 0) * deriv (f t.val) (p 2)), 0, deriv a (p 0) * f t.val (p 2)]) ∧
     ContDiff ℝ ∞ (separableGuidePotential c a f) ∧
     ContDiff ℝ ∞ (0 : LorentzCurrentDensity) := by
-  exact ⟨electricField_separableGuidePotential c a f ha hf,
+  exact ⟨electricField_separableGuidePotential c a f hf,
     magneticField_separableGuidePotential c a f ha hf,
     contDiff_separableGuidePotential c a f ha hf, contDiff_zero_lorentzCurrentDensity⟩
 
@@ -246,7 +246,7 @@ private theorem deriv_wave_z (t z : ℝ) :
 lemma sinusoidal_electricField (c : SpeedOfLight) (t : Time) (p : Space) :
     (sinusoidalGuidePotential c).electricField c t p =
       WithLp.toLp 2 ![0, 2 * Real.sin (p 0) * Real.sin (2 * t.val - 3 * p 2), 0] := by
-  rw [sinusoidalGuidePotential, electricField_separableGuidePotential c _ _ Real.contDiff_sin
+  rw [sinusoidalGuidePotential, electricField_separableGuidePotential c _ _
     contDiff_cos_wave, deriv_wave_t]
   ring_nf
 
@@ -287,7 +287,7 @@ lemma sinusoidal_reversed_curl_sign_fails (c : SpeedOfLight) :
 /-- Skipping the time conversion (feeding the spacetime coordinate `x⁰` straight into `f`)
 rescales the electric field: `E_y = -c a(x) f_t(c t, z)`. -/
 lemma unconvertedPotential_electricField (c : SpeedOfLight) (a : ℝ → ℝ) (f : ℝ → ℝ → ℝ)
-    (ha : ContDiff ℝ ∞ a) (hf : ContDiff ℝ ∞ (Function.uncurry f)) (t : Time) (p : Space) :
+    (hf : ContDiff ℝ ∞ (Function.uncurry f)) (t : Time) (p : Space) :
     (⟨fun x μ => if μ = Sum.inr 1 then a (x (Sum.inr 0)) * f (x (Sum.inl 0)) (x (Sum.inr 2))
         else 0⟩ : ElectromagneticPotential).electricField c t p =
       WithLp.toLp 2 ![0, -((c : ℝ) * (a (p 0) * deriv (fun s => f s (p 2)) (c * t.val))), 0] := by
