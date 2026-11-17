@@ -32,7 +32,7 @@ forget everything except its keys, respectively its priorities. Through them,
 `CartesianTree.HeapOrdered` (`heapOrdered_priorityTree`).
 
 The implementation and proofs were authored for this module. The representation
-style follows `BinarySearchTree` from D123980084; no public treap implementation
+style follows the `BinarySearchTree` module; no public treap implementation
 was copied.
 -/
 

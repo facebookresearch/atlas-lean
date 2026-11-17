@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 /-
 Ported from fairinternal/formal-math at `c3bae57ddba11aa34b3cbc61270f587aa4c40152`.
 
-Original formalization by Metamate (introduced in commit `fc40f70f`, PR #9684);
+Original formalization by Metamate (introduced in commit `fc40f70f`);
 ported with attribution.
 -/
 

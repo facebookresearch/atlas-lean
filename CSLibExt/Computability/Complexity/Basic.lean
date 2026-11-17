@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 Ported from fairinternal/formal-math at `c3bae57ddba11aa34b3cbc61270f587aa4c40152`.
 
 Original formalization by Adam Kiezun, with contributions by Metamate
-(consolidation commit `fc40f70f`, PR #9684); ported with attribution.
+(consolidation commit `fc40f70f`); ported with attribution.
 -/
 
 module
