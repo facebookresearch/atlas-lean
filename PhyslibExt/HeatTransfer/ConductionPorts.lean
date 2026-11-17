@@ -33,12 +33,12 @@ model; it is not claimed to be thermodynamic stored energy.
 ## ii. Key results
 
 - `ConductionPorts.heatEnergy_hasDerivAt`: the full identity with
-  explicit boundary work at one time `t`, for a jointly-`C²`
-  representative with `ut` the actual time derivative (the
-  differentiation under the integral is the `HasDerivAt`
-  hypothesis `hE`; the integration by parts is proved from the
-  stated `HasDerivAt` and continuity data, all scoped to
-  `[0, L]` at `t`).
+  explicit boundary work at one time `t`, under the stated
+  pointwise one-time assumptions: `ut` is the actual time
+  derivative, the spatial derivatives are given in `HasDerivAt`
+  form on `[0, L]`, and the differentiation under the integral is
+  the `HasDerivAt` hypothesis `hE` (no joint `ContDiff` hypothesis
+  is declared or needed).
 - `ConductionPorts.heatEnergy_hasDerivAt_zeroDirichlet`: under
   `u(t, 0) = u(t, L) = 0` the boundary work vanishes.
 - `ConductionPorts.diffusion_contribution_nonpos`: the diffusion
@@ -71,9 +71,10 @@ form on `Set.uIcc 0 L` (`0 ≤ L`), satisfying
 + ∫₀ᴸ u * src dx`. The boundary terms are retained, not discarded.
 All hypotheses are scoped to the single time `t` and the interval
 `[0, L]`. The hypothesis `hE` is the differentiation under the
-integral, as a `HasDerivAt` for the energy itself, for the
-declared jointly-`C²` representative; `ut` is required to be the
-actual time derivative (`hut`). The integration by parts is proved
+integral, as a `HasDerivAt` for the energy itself; `ut` is
+required to be the actual time derivative (`hut`). No joint
+regularity hypothesis is declared: the assumptions are exactly
+the pointwise derivative and continuity data at this `t`. The integration by parts is proved
 from the stated derivative and continuity data. The first term is
 the diffusion contribution; it is a dissipation only when
 `0 ≤ D` (see `diffusion_contribution_nonpos`). -/
@@ -187,7 +188,9 @@ theorem heatEnergy_hasDerivAt_zeroDirichlet {D L : ℝ} (hL : 0 ≤ L)
 /-- The diffusion contribution is nonpositive when the diffusivity
 is nonnegative: `-D * ∫₀ᴸ ux^2 ≤ 0` for `0 ≤ D` and `0 ≤ L`. -/
 lemma diffusion_contribution_nonpos {D L : ℝ} (hD : 0 ≤ D) (hL : 0 ≤ L)
-    (ux : ℝ → ℝ → ℝ) (t : ℝ) :
+    (ux : ℝ → ℝ → ℝ) (t : ℝ)
+    (hint : IntervalIntegrable (fun x : ℝ => ux t x ^ 2)
+      MeasureTheory.volume 0 L) :
     -D * (∫ x in (0 : ℝ)..L, ux t x ^ 2) ≤ 0 := by
   have hnn : 0 ≤ ∫ x in (0 : ℝ)..L, ux t x ^ 2 :=
     intervalIntegral.integral_nonneg hL (fun x _ => sq_nonneg _)

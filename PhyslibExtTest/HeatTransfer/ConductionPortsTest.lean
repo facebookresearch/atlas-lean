@@ -104,3 +104,4 @@ example :
     -3 * (∫ x in (0 : ℝ)..(2 : ℝ), ((1 : ℝ) + 2) ^ 2) ≤ 0 :=
   ConductionPorts.diffusion_contribution_nonpos (by norm_num) (by norm_num)
     (fun t _x : ℝ => t + 2) 1
+    (continuousOn_const.intervalIntegrable 0 2)
