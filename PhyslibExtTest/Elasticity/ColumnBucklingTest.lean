@@ -45,7 +45,7 @@ example :
     3 * iteratedDeriv 4 (Elasticity.clampedClampedMode 2) 1 +
         (4 * Real.pi ^ 2 * 3 / 2 ^ 2) *
           iteratedDeriv 2 (Elasticity.clampedClampedMode 2) 1 = 0 :=
-  (Elasticity.clampedClamped_eigenpair (EI := 3) (L := 2) (by norm_num)).1 1
+  (Elasticity.clampedClamped_eigenpair (EI := 3) (L := 2) (by norm_num) (by norm_num)).1 1
 
 /-- Boundary failure: the pinned-pinned sine `sin (πx / 2)` on `L = 2`
 has slope `π / 2 ≠ 0` at `x = 0`, so it does not meet the clamped slope

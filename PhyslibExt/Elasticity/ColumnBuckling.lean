@@ -25,10 +25,13 @@ displacements is made here.
 
 ## ii. Key results
 
-- `Elasticity.clampedClamped_eigenpair`: `w = 1 - cos (2πx / L)` at
-  `P = 4π²EI / L²` satisfies the column equation and the clamped
-  conditions `w = w' = 0` at both ends, with midspan value `2`
-  (`Elasticity.clampedClampedMode_midspan`).
+- `Elasticity.clampedClamped_eigenpair`: for positive flexural
+  rigidity, `w = 1 - cos (2πx / L)` at `P = 4π²EI / L²` satisfies the
+  column equation and the clamped conditions `w = w' = 0` at both
+  ends, with midspan value `2`
+  (`Elasticity.clampedClampedMode_midspan`). The unrestricted algebraic
+  identity behind it, valid for every real `EI`, is
+  `Elasticity.clampedClamped_columnEquation`.
 
 ## iii. Table of contents
 
@@ -36,10 +39,17 @@ displacements is made here.
 
 ## iv. References
 
-- The Euler column equation and its support-dependent eigenvalues are
-  standard in mechanics of materials; the derivative computations use
-  `Real.hasDerivAt_sin`, `Real.hasDerivAt_cos`, and Mathlib's
-  `iteratedDeriv` API.
+- J. E. Shigley, C. R. Mischke, *Mechanical Engineering Design*
+  (McGraw-Hill): columns and the Euler column formula, including
+  end-condition-dependent effective lengths; the fixed-fixed (both ends
+  clamped) case has theoretical effective-length factor `K = 1/2`, so
+  the first fixed-fixed buckling load is `4π²EI / L²`, matching the
+  eigenpair verified here. Authorship across editions changes
+  (Shigley-Mischke 6th ed., c2001; later editions add Budynas and
+  Nisbett), so the title and original authors are cited without an
+  edition claim.
+- The derivative computations use `Real.hasDerivAt_sin`,
+  `Real.hasDerivAt_cos`, and Mathlib's `iteratedDeriv` API.
 
 ## A. The clamped-clamped mode
 
@@ -137,13 +147,16 @@ lemma iteratedDeriv_four_clampedClampedMode {L : ℝ} (hL : L ≠ 0) (x : ℝ) :
   rw [h]
   ring
 
-/-- The clamped-clamped eigenpair: with axial load `P = 4π²EI / L²`, the
-mode `w = 1 - cos (2πx / L)` satisfies the fourth-order Euler column
-equation `EI * w'''' + P * w'' = 0` at every `x`, together with the
-clamped displacement and slope conditions `w = w' = 0` at both supports.
-This records one explicit eigenpair, not a lowest-mode or completeness
-claim. -/
-theorem clampedClamped_eigenpair {EI L : ℝ} (hL : 0 < L) :
+/-- Unrestricted algebraic form of the clamped-clamped column identity:
+with axial load `P = 4π²EI / L²`, the mode `w = 1 - cos (2πx / L)`
+satisfies the fourth-order Euler column equation
+`EI * w'''' + P * w'' = 0` at every `x`, together with the clamped
+displacement and slope conditions `w = w' = 0` at both supports, for
+every real `EI` (the identity is linear in `EI`; the degenerate case
+`EI = 0` makes both sides of the equation zero and carries no column
+mechanics). This records one explicit eigenpair, not a lowest-mode or
+completeness claim. -/
+lemma clampedClamped_columnEquation {EI L : ℝ} (hL : 0 < L) :
     (∀ x : ℝ, EI * iteratedDeriv 4 (clampedClampedMode L) x +
         (4 * Real.pi ^ 2 * EI / L ^ 2) *
           iteratedDeriv 2 (clampedClampedMode L) x = 0) ∧
@@ -163,5 +176,21 @@ theorem clampedClamped_eigenpair {EI L : ℝ} (hL : 0 < L) :
     show (2 * Real.pi / L) * Real.sin (2 * Real.pi * L / L) = 0
     have hph : 2 * Real.pi * L / L = 2 * Real.pi := by field_simp
     rw [hph, Real.sin_two_pi, mul_zero]
+
+/-- The clamped-clamped Euler column eigenpair: for positive flexural
+rigidity `EI` and column length `L`, `w = 1 - cos (2πx / L)` at axial
+load `P = 4π²EI / L²` is a buckling eigenfunction of a fixed-fixed
+column (both ends clamped). The factor `4` against the pinned-pinned
+load `π²EI / L²` is the standard fixed-fixed Euler result (effective
+length `L / 2`); see the module references. One explicit eigenpair, not
+a lowest-mode or completeness claim. -/
+theorem clampedClamped_eigenpair {EI L : ℝ} (hEI : 0 < EI) (hL : 0 < L) :
+    (∀ x : ℝ, EI * iteratedDeriv 4 (clampedClampedMode L) x +
+        (4 * Real.pi ^ 2 * EI / L ^ 2) *
+          iteratedDeriv 2 (clampedClampedMode L) x = 0) ∧
+      clampedClampedMode L 0 = 0 ∧ clampedClampedMode L L = 0 ∧
+        deriv (clampedClampedMode L) 0 = 0 ∧
+          deriv (clampedClampedMode L) L = 0 :=
+  clampedClamped_columnEquation hL
 
 end Elasticity
