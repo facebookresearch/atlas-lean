@@ -27,8 +27,8 @@ open QuadraticDerivative
 
 /-- Identity witness through the public `deriv` form. -/
 example (t : ℝ) :
-    deriv (fun s => halfQuadForm (fun i j : Fin 2 => if i = j then (1 : ℝ) else 0)
-      (fun (i : Fin 2) => if i = 0 then s else 1)) t = t := by
+    deriv (fun s => MathlibExt.LinearAlgebra.Matrix.QuadraticFormCongruence.quadForm (fun i j : Fin 2 => if i = j then (1 : ℝ) else 0)
+      (fun (i : Fin 2) => if i = 0 then s else 1) / 2) t = t := by
   have hC : Matrix.IsSymm
       ((fun i j : Fin 2 => if i = j then (1 : ℝ) else 0) :
         Matrix (Fin 2) (Fin 2) ℝ) := by
@@ -42,5 +42,5 @@ example (t : ℝ) :
       exact hasDerivAt_id t
     · simp [h]
       exact hasDerivAt_const t (1 : ℝ)
-  rw [halfQuadForm_deriv_eq _ hC _ _ t hx]
+  rw [quadForm_half_deriv_eq _ hC _ _ t hx]
   simp [Fin.sum_univ_two]
