@@ -53,7 +53,6 @@ show that the two premises are distinct.
 
 ## A. Terminal-charge Jacobians
 
-Discharges ECE roadmap leaf `ECE.G.COMPACTDEVICE.L1`.
 -/
 
 @[expose] public section
