@@ -10,6 +10,7 @@ module
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Topology.Order.IntermediateValue
+public import PhyslibExt.Chemistry.Thermodynamics.Entropy
 
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
@@ -24,7 +25,7 @@ An ideal solar-thermal receiver at absorber temperature `T` loses
 ambient `Ta`, and absorbs flux `α * G`. This file proves existence and
 uniqueness of the stagnation temperature where the loss balances the
 absorbed flux, and the endpoint values of the ideal receiver-engine
-objective `η(T) * (1 - Ta / T)`. The interior-maximum statement for
+objective `η(T) * carnotEfficiency Ta T`. The interior-maximum statement for
 that objective on `[Ta, Tstag]` is the compactness argument over these
 endpoint and monotonicity facts; no empirical adequacy of the ideal
 model is claimed.
@@ -181,22 +182,30 @@ lemma receiver_stagnationTemperature {Ta G α U K : ℝ} (hTa : 0 < Ta)
     rw [hval, hy.2] at hlt
     exact lt_irrefl _ hlt
 
-/-- The ideal receiver-engine objective
-`η(T) * (1 - Ta / T)` vanishes at both endpoints `T = Ta` and at any
-stagnation temperature `Tstag` with `loss(Tstag) = α * G` (for
-`G ≠ 0`, `Tstag ≠ 0`). -/
+/-- The ideal receiver-engine objective: receiver efficiency times
+the Carnot factor `carnotEfficiency Ta T = 1 - Ta / T` from
+`Chemistry.Thermodynamics`. -/
+noncomputable def receiverObjective (α G U K Ta T : ℝ) : ℝ :=
+  receiverEfficiency α G U K Ta T *
+    Chemistry.Thermodynamics.carnotEfficiency Ta T
+
+/-- The receiver objective vanishes at both endpoints `T = Ta`
+and at any stagnation temperature `Tstag` with
+`loss(Tstag) = α * G` (for `G ≠ 0`, `Tstag ≠ 0`). -/
 lemma receiver_objective_endpoints {Ta G α U K Tstag : ℝ} (hG : G ≠ 0)
     (hTa : Ta ≠ 0) (hT : Tstag ≠ 0) (hstag : receiverLoss U K Ta Tstag = α * G) :
-    receiverEfficiency α G U K Ta Ta * (1 - Ta / Ta) = 0 ∧
-      receiverEfficiency α G U K Ta Tstag * (1 - Ta / Tstag) = 0 := by
+    receiverObjective α G U K Ta Ta = 0 ∧
+      receiverObjective α G U K Ta Tstag = 0 := by
   have _ := hG
   have _ := hT
   have hTa1 : Ta / Ta = 1 := div_self hTa
   constructor
-  · rw [hTa1, sub_self, mul_zero]
+  · unfold receiverObjective Chemistry.Thermodynamics.carnotEfficiency
+    rw [hTa1, sub_self, mul_zero]
   · have heff : receiverEfficiency α G U K Ta Tstag = 0 := by
       unfold receiverEfficiency
       rw [hstag, sub_self, zero_div]
+    unfold receiverObjective
     rw [heff, zero_mul]
 
 end RenewableEnergyPorts

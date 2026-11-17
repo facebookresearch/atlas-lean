@@ -47,8 +47,22 @@ both endpoints for any stagnation temperature. -/
 example (Tstag : ℝ) (hT : Tstag ≠ 0)
     (hstag : RenewableEnergyPorts.receiverLoss 0 1 300 Tstag = 1 * 1000) :
     RenewableEnergyPorts.receiverLoss 0 1 300 300 = 0 ∧
-      RenewableEnergyPorts.receiverEfficiency 1 1000 0 1 300 Tstag *
-        (1 - 300 / Tstag) = 0 :=
+      RenewableEnergyPorts.receiverObjective 1 1000 0 1 300 Tstag = 0 :=
   ⟨RenewableEnergyPorts.receiverLoss_ambient 0 1 300,
    (RenewableEnergyPorts.receiver_objective_endpoints (by norm_num)
      (by norm_num) hT hstag).2⟩
+
+/-- Concrete definition check: the stagnation balance for these
+parameters is the expanded polynomial equation
+`Tstag^4 - 300^4 = 1000`, read directly off `receiverLoss`. -/
+example (Tstag : ℝ)
+    (hstag : RenewableEnergyPorts.receiverLoss 0 1 300 Tstag = 1 * 1000) :
+    Tstag ^ 4 - 300 ^ 4 = 1000 := by
+  simpa [RenewableEnergyPorts.receiverLoss] using hstag
+
+/-- Concrete efficiency evaluation at ambient: at `T = Ta = 300`
+the loss vanishes, so `receiverEfficiency 1 1000 0 1 300 300`
+is `(1000 - 0) / 1000 = 1`, read directly off the definition. -/
+example : RenewableEnergyPorts.receiverEfficiency 1 1000 0 1 300 300 = 1 := by
+  simp [RenewableEnergyPorts.receiverEfficiency,
+    RenewableEnergyPorts.receiverLoss]
