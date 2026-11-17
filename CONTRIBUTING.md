@@ -33,7 +33,13 @@ filename. Existing historical exposures need separate cleanup. It does not
 only inspect subjects or added lines. Errors, missing objects, moved PR
 metadata, and incomplete ranges fail
 the check. It never executes code from the proposed head. PR description edits
-rerun it too.
+rerun it too. LFS pointers, including CRLF and legacy-version forms, fail because
+their external contents are not scanned.
+
+Reports contain at most 100 findings, with locations limited to 240 characters.
+`findings_truncated: true` means additional findings were omitted. After the
+limit is exceeded, reference detection stops, but object and input-completeness
+validation continues. A truncated report always fails the check.
 
 To check a local branch before pushing, with optional JSON containing `title`,
 `body`, and `branch` fields:

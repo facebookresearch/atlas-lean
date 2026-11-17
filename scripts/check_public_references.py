@@ -15,7 +15,7 @@ import urllib.request
 RULES = {
     "internal-reference": re.compile(r"\b(?:[DTP][0-9]{5,}|[SNL][0-9]{6,})\b"),
     "private-host": re.compile(
-        r"\b(?:[a-z0-9-]+\.)*(?:internalfb\.com|internalmeta\.com|"
+        r"\b(?:internalfb\.com|internalmeta\.com|"
         r"fb\.workplace\.com|fburl\.com)\b",
         re.I,
     ),
@@ -43,31 +43,59 @@ RULES = {
     ),
 }
 MAX_BLOB_BYTES = 64 * 1024 * 1024
+MAX_FINDINGS = 100
+MAX_LOCATION_CHARS = 240
+LFS_POINTER_PREFIXES = tuple(
+    "version " + version + ending
+    for version in (
+        "https://git-lfs.github.com/spec/v1",
+        "https://hawser.github.com/spec/v1",
+        "http://git-media.io/v/2",
+    )
+    for ending in ("\n", "\r\n")
+)
 
 
 class IncompleteScan(RuntimeError):
     pass
 
 
-def scan(text, location):
-    """Return locations/rules, never the potentially private matched text."""
-    result = []
-    for rule, pattern in RULES.items():
+class Findings(list):
+    """One bounded report shared by every input in the requested range."""
+
+    truncated = False
+
+
+def scan(text, location, findings=None, rules=None):
+    """Return bounded locations/rules, never the matched private text."""
+    findings = Findings() if findings is None else findings
+    if findings.truncated:
+        return findings
+    safe_location = None
+    for rule, pattern in (RULES if rules is None else rules).items():
+        previous, line = 0, 1
         for match in pattern.finditer(text):
-            result.append(
-                {
-                    "location": redact(location),
-                    "line": text.count("\n", 0, match.start()) + 1,
-                    "rule": rule,
-                }
+            if len(findings) >= MAX_FINDINGS:
+                findings.truncated = True
+                return findings
+            # Each prefix character is counted at most once per rule.
+            line += text.count("\n", previous, match.start())
+            previous = match.start()
+            if safe_location is None:
+                safe_location = redact(location)
+                if len(safe_location) > MAX_LOCATION_CHARS:
+                    safe_location = (
+                        safe_location[: MAX_LOCATION_CHARS - 3] + "..."
+                    )
+            findings.append(
+                {"location": safe_location, "line": line, "rule": rule}
             )
-    return result
+    return findings
 
 
 def redact(text):
-    for pattern in RULES.values():
-        text = pattern.sub("[redacted]", text)
-    return text
+    # Mask the whole unsafe location, including any private hostname prefix.
+    return "[redacted]" if any(p.search(text) for p in RULES.values()) else text
 
 
 def git(root, *args, input_data=None):
@@ -89,11 +117,13 @@ def oid(value):
     return value
 
 
-def scan_commit(raw, sha):
+def scan_commit(raw, sha, findings=None):
     if b"\n\n" not in raw:
         raise IncompleteScan("Malformed commit object")
     headers, message = raw.split(b"\n\n", 1)
-    findings = scan(message.decode("utf-8", errors="replace"), "commit " + sha)
+    findings = scan(
+        message.decode("utf-8", errors="replace"), "commit " + sha, findings
+    )
     field = b""
     in_signature = False
     for line in headers.splitlines():
@@ -113,11 +143,10 @@ def scan_commit(raw, sha):
                 continue
             if in_signature:
                 continue
-        findings.extend(
-            scan(
-                line.decode("utf-8", errors="replace"),
-                "commit " + sha + " header",
-            )
+        scan(
+            line.decode("utf-8", errors="replace"),
+            "commit " + sha + " header",
+            findings,
         )
     return findings
 
@@ -128,7 +157,7 @@ def check_range(root, base, head, metadata=None):
     git(root, "cat-file", "-e", head + "^{commit}")
     git(root, "merge-base", base, head)
     commits = git(root, "rev-list", base + ".." + head).splitlines()
-    findings, blobs, paths = [], {}, set()
+    findings, blobs, paths = Findings(), {}, set()
     introduced = set(
         git(
             root,
@@ -140,7 +169,7 @@ def check_range(root, base, head, metadata=None):
     )
     for commit in commits:
         sha = oid(commit.decode("ascii"))
-        findings.extend(scan_commit(git(root, "cat-file", "commit", sha), sha))
+        scan_commit(git(root, "cat-file", "commit", sha), sha, findings)
         # Every parent of a merge matters. Inspect intermediate versions too,
         # including files added and later removed before the final head.
         records = git(
@@ -173,7 +202,7 @@ def check_range(root, base, head, metadata=None):
                 )
             path = raw_path.decode("utf-8", errors="surrogateescape")
             paths.add(path)
-            findings.extend(scan(path, "filename in commit " + sha))
+            scan(path, "filename in commit " + sha, findings)
             # Base-history content is already published, even if main later
             # changed/deleted it. Do not attribute it to a base-merge PR.
             if blob not in introduced:
@@ -216,31 +245,36 @@ def check_range(root, base, head, metadata=None):
             if len(contents) != size or payload[cursor : cursor + 1] != b"\n":
                 raise IncompleteScan("Incomplete file contents")
             cursor += 1
-            if contents.startswith(
-                b"version https://git-lfs.github.com/spec/v1\n"
-            ):
+            text = contents.decode("utf-8", errors="replace")
+            if text.lstrip().startswith(LFS_POINTER_PREFIXES):
                 raise IncompleteScan(
                     "LFS content requires a separate full-content review"
                 )
             binary_count += b"\0" in contents
             # Symlinks are text, not followed. No decompression or OCR.
-            findings.extend(
-                scan(contents.decode("utf-8", errors="replace"), location)
-            )
+            scan(text, location, findings)
         if cursor != len(payload):
             raise IncompleteScan("Unexpected trailing blob data")
     for field in ("title", "body", "branch"):
         value = (metadata or {}).get(field, "")
         if not isinstance(value, str):
             raise IncompleteScan("Malformed PR metadata")
-        findings.extend(scan(value, "PR " + field))
         if field == "branch":
-            for finding in scan(value.upper(), "PR branch"):
-                if (
-                    finding["rule"] == "private-planning-reference"
-                    and finding not in findings
-                ):
-                    findings.append(finding)
+            planning = "private-planning-reference"
+            scan(
+                value,
+                "PR branch",
+                findings,
+                {k: p for k, p in RULES.items() if k != planning},
+            )
+            scan(
+                value.upper(),
+                "PR branch",
+                findings,
+                {planning: RULES[planning]},
+            )
+        else:
+            scan(value, "PR " + field, findings)
     return {
         "commits": len(commits),
         "files": len(paths),
@@ -248,6 +282,7 @@ def check_range(root, base, head, metadata=None):
         "bytes": byte_count,
         "binary_files": binary_count,
         "findings": findings,
+        "findings_truncated": findings.truncated,
     }
 
 
@@ -347,7 +382,7 @@ def main(argv=None):
                 raise IncompleteScan("Expected a metadata object")
             result = check_range(args.repo_root, args.base, args.head, metadata)
         print(json.dumps(result, ensure_ascii=True, sort_keys=True))
-        return 1 if result["findings"] else 0
+        return 1 if result["findings"] or result["findings_truncated"] else 0
     except (
         IncompleteScan,
         OSError,

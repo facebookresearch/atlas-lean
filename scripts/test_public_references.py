@@ -103,6 +103,41 @@ class Patterns(unittest.TestCase):
                 ).encode()
                 self.assertEqual(len(gate.scan_commit(raw, "a" * 40)), 1)
 
+    def test_line_number_work_is_linear(self):
+        class CountedText(str):
+            visited = 0
+
+            def count(self, substring, start=0, end=None):
+                end = len(self) if end is None else end
+                self.visited += end - start
+                return super().count(substring, start, end)
+
+        text = CountedText((private_ref() + "\n") * 50)
+        findings = gate.scan(text, "fixture")
+        self.assertEqual([f["line"] for f in findings], list(range(1, 51)))
+        self.assertLessEqual(text.visited, len(text))
+
+    def test_report_budget_and_location_bound(self):
+        with patch.object(gate, "MAX_FINDINGS", 2, create=True):
+            for count in (0, 2, 3):
+                with self.subTest(count=count):
+                    findings = gate.scan(
+                        (private_ref() + "\n") * count, "safe/" * 1000
+                    )
+                    self.assertEqual(len(findings), min(count, 2))
+                    self.assertEqual(findings.truncated, count > 2)
+                    self.assertTrue(
+                        all(len(f["location"]) <= 240 for f in findings)
+                    )
+
+    def test_domain_like_prefixes_and_whole_location_redaction(self):
+        prefix = "a." * 2000
+        self.assertEqual(gate.scan(prefix, "fixture"), [])
+        host = prefix + "internalmeta" + ".com"
+        findings = gate.scan(host, host)
+        self.assertEqual(len(findings), 1)
+        self.assertEqual(findings[0]["location"], "[redacted]")
+
     def test_reports_never_echo_matches_or_unsafe_locations(self):
         secret = private_ref()
         findings = gate.scan("first\n" + secret, secret + ".md")
@@ -340,6 +375,74 @@ class Repository(unittest.TestCase):
         self.commit("Add external content pointer")
         with self.assertRaises(gate.IncompleteScan):
             self.check()
+
+    def test_lfs_pointer_variants_are_not_full_coverage(self):
+        for version in (
+            "https://git-lfs.github.com/spec/v1",
+            "https://hawser.github.com/spec/v1",
+            "http://git-media.io/v/2",
+        ):
+            for ending in ("\n", "\r\n"):
+                for prefix in ("", "\n", "\t", "\u00a0"):
+                    with self.subTest(
+                        version=version, ending=ending, prefix=prefix
+                    ):
+                        self.base = self.head()
+                        self.write(
+                            "large.dat",
+                            prefix
+                            + ending.join(
+                                (
+                                    "version " + version,
+                                    "oid sha256:" + "0" * 64,
+                                    "size 1",
+                                    "",
+                                )
+                            ),
+                        )
+                        self.commit("Add external content pointer")
+                        with self.assertRaises(gate.IncompleteScan):
+                            self.check()
+
+    def test_finding_budget_is_shared_across_inputs(self):
+        self.run_git("config", "user.name", private_ref())
+        self.write(private_ref("P") + ".txt", private_ref())
+        self.write("second.txt", private_ref("P"))
+        self.commit("A change with " + private_ref("T"))
+        with patch.object(gate, "MAX_FINDINGS", 2, create=True):
+            result = self.check({"title": private_ref()})
+        self.assertEqual(len(result["findings"]), 2)
+        self.assertTrue(result["findings_truncated"])
+
+    def test_reporting_limit_does_not_skip_input_validation(self):
+        self.write(private_ref() + ".txt", private_ref())
+        self.write("large.dat", "version https://git-lfs.github.com/spec/v1\n")
+        self.commit("Add inputs")
+        with patch.object(gate, "MAX_FINDINGS", 1, create=True):
+            with self.assertRaises(gate.IncompleteScan):
+                self.check()
+
+    def test_truncated_empty_report_still_fails(self):
+        self.write("notes.md", private_ref())
+        self.commit("Add notes")
+        out = io.StringIO()
+        with patch.object(
+            gate, "MAX_FINDINGS", 0, create=True
+        ), contextlib.redirect_stdout(out):
+            result = gate.main(
+                [
+                    "--repo-root",
+                    str(self.root),
+                    "--base",
+                    self.base,
+                    "--head",
+                    self.head(),
+                ]
+            )
+        self.assertEqual(result, 1)
+        report = json.loads(out.getvalue())
+        self.assertEqual(report["findings"], [])
+        self.assertTrue(report["findings_truncated"])
 
     def test_exit_codes_and_no_secret_in_output(self):
         self.write("notes.md", private_ref())
