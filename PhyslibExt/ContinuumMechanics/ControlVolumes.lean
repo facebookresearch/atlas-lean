@@ -276,10 +276,11 @@ theorem movingEndpoint_hasDerivAt_flux {u ut f fx src : ℝ → ℝ → ℝ}
     (hjoint : Continuous fun p : ℝ × ℝ => u p.1 p.2)
     (hut : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => u τ x) (ut t x) t)
     (hcont_ut : Continuous fun p : ℝ × ℝ => ut p.1 p.2)
-    (hfx : ∀ x : ℝ, HasDerivAt (fun y : ℝ => f t y) (fx t x) x)
+    (hfx : ∀ x ∈ Set.uIcc (a t) (b t),
+      HasDerivAt (fun y : ℝ => f t y) (fx t x) x)
     (hcont_fx : ContinuousOn (fun x : ℝ => fx t x)
       (Set.uIcc (a t) (b t)))
-    (hPDE : ∀ x : ℝ, ut t x = src t x - fx t x)
+    (hPDE : ∀ x ∈ Set.uIcc (a t) (b t), ut t x = src t x - fx t x)
     (hint_src : IntervalIntegrable (fun x : ℝ => src t x)
       MeasureTheory.volume (a t) (b t)) :
     HasDerivAt (fun τ : ℝ => ∫ x in a τ..b τ, u τ x)
@@ -289,8 +290,7 @@ theorem movingEndpoint_hasDerivAt_flux {u ut f fx src : ℝ → ℝ → ℝ}
   have hmain := movingEndpoint_hasDerivAt t ha hb hjoint hut hcont_ut
   have hFTC : (∫ x in a t..b t, fx t x) = f t (b t) - f t (a t) := by
     have hderiv : ∀ x ∈ Set.uIcc (a t) (b t),
-        HasDerivAt (fun y : ℝ => f t y) (fx t x) x :=
-      fun x _ => hfx x
+        HasDerivAt (fun y : ℝ => f t y) (fx t x) x := hfx
     have hint : IntervalIntegrable (fun x : ℝ => fx t x) MeasureTheory.volume (a t) (b t) :=
       hcont_fx.intervalIntegrable
     exact intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint
@@ -298,8 +298,11 @@ theorem movingEndpoint_hasDerivAt_flux {u ut f fx src : ℝ → ℝ → ℝ}
       = (∫ x in a t..b t, src t x) - (∫ x in a t..b t, fx t x) := by
     have hfx_int : IntervalIntegrable (fun x : ℝ => fx t x) MeasureTheory.volume (a t) (b t) :=
       hcont_fx.intervalIntegrable
-    have h : (fun x : ℝ => ut t x) = (fun x : ℝ => src t x - fx t x) :=
-      funext (fun x => hPDE x)
+    have h : (∫ x in a t..b t, ut t x)
+        = ∫ x in a t..b t, (src t x - fx t x) := by
+      apply intervalIntegral.integral_congr
+      intro x hx
+      exact hPDE x hx
     rw [h]
     exact intervalIntegral.integral_sub hint_src hfx_int
   have hval : (∫ x in a t..b t, ut t x) + u t (b t) * b' t - u t (a t) * a' t
@@ -316,10 +319,11 @@ theorem movingEndpoint_deriv_flux {u ut f fx src : ℝ → ℝ → ℝ}
     (hjoint : Continuous fun p : ℝ × ℝ => u p.1 p.2)
     (hut : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => u τ x) (ut t x) t)
     (hcont_ut : Continuous fun p : ℝ × ℝ => ut p.1 p.2)
-    (hfx : ∀ x : ℝ, HasDerivAt (fun y : ℝ => f t y) (fx t x) x)
+    (hfx : ∀ x ∈ Set.uIcc (a t) (b t),
+      HasDerivAt (fun y : ℝ => f t y) (fx t x) x)
     (hcont_fx : ContinuousOn (fun x : ℝ => fx t x)
       (Set.uIcc (a t) (b t)))
-    (hPDE : ∀ x : ℝ, ut t x = src t x - fx t x)
+    (hPDE : ∀ x ∈ Set.uIcc (a t) (b t), ut t x = src t x - fx t x)
     (hint_src : IntervalIntegrable (fun x : ℝ => src t x)
       MeasureTheory.volume (a t) (b t)) :
     deriv (fun τ : ℝ => ∫ x in a τ..b τ, u τ x) t =
