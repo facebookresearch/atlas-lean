@@ -24,8 +24,11 @@ carrier impulses plus the message spectrum shifted to `k` and
 `-k`. Each shifted copy is the full spectral replica centered at
 `±k`; for a tone message it contains both conventional sidebands
 `k ± f`. When the two shifted supports are disjoint, the
-transform on each is exactly the corresponding shifted message
-spectrum. Constant and tone messages are worked out, and the
+transform on each support, away from the carrier bins `k` and
+`-k` themselves, is exactly the corresponding shifted message
+spectrum; at the carrier bins the carrier impulse `A N / 2` is
+also present, which is why the reading lemmas exclude them.
+Constant and tone messages are worked out, and the
 `N = 4` tone case shows the shifted supports need not be
 disjoint.
 
@@ -35,7 +38,7 @@ disjoint.
   message spectrum.
 - `dft_amSignal_eq_positive_shift` and
   `dft_amSignal_eq_negative_shift`: the shifted-replica readings
-  under disjointness.
+  under disjointness, at bins other than the carrier bins.
 - `dft_amSignal_const_message` and `dft_amSignal_tone_message`:
   the constant and tone validations.
 
