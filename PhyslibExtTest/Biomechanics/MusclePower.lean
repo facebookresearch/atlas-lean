@@ -34,4 +34,17 @@ example : let Fstar := Real.sqrt (1 * (1 + 3)) - 1
 example : (0 : ℝ) * (2 * (3 - 0) / (0 + 1)) = 0 ∧
     (3 : ℝ) * (2 * (3 - 3) / (3 + 1)) = 0 := by norm_num
 
+/-- Power at `F = 1` under `a = 1`, `F0 = 3`, `b = 2` is `2`. -/
+example : hillPower 1 2 3 1 = 2 := by
+  have h := muscle_power_formula (a := 1) (b := 2) (F0 := 3) (F := 1)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+  rw [h]
+  norm_num
+
+/-- Constant force `c = 1` with `x' = 2`: work over `[0, 3]` is
+`1 * (x 3 - x 0)`. -/
+example {x : ℝ → ℝ} (hx : ∀ t ∈ Set.uIcc 0 3, HasDerivAt x (2 * (3 - 1) / (1 + 1)) t) :
+    (∫ _t in (0:ℝ)..3, (1:ℝ) * (2 * (3 - 1) / (1 + 1))) = 1 * (x 3 - x 0) :=
+  muscle_work_constant (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) hx
+
 end PhyslibExtTest.Biomechanics.MusclePower
