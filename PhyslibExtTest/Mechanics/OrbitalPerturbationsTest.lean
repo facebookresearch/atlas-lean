@@ -89,3 +89,16 @@ example :
       {r : EuclideanSpace ℝ (Fin 3) | 2 ≤ ‖r‖} :=
   OrbitalPerturbations.inverseSquareField_lipschitzOnWith
     (le_refl 0) (by norm_num)
+
+/-- J2 envelope at the pole point `r = (0, 0, 2)` with `μ = 3`,
+`R = 1`, `J2 = 1 / 2`, `rmin = 2`: the bound is `9 / 32`, and the
+normalized polynomial at `u = 1` equals `4`. -/
+example :
+    ‖OrbitalPerturbations.j2Accel 3 1 (1 / 2)
+        (EuclideanSpace.single (2 : Fin 3) (2 : ℝ))‖ ≤
+      3 * |(1 : ℝ) / 2| * 3 * 1 ^ 2 / 2 ^ 4 ∧
+        (5 : ℝ) * 1 ^ 2 - 2 * 1 + 1 = 4 := by
+  constructor
+  · apply OrbitalPerturbations.j2Accel_norm_le (by norm_num) (by norm_num)
+    simp [PiLp.norm_single]
+  · norm_num
