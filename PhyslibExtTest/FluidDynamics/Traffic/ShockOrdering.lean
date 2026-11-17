@@ -16,7 +16,7 @@ import PhyslibExt.FluidDynamics.Traffic.ShockOrdering
 
 Focused checks for `PhyslibExt.FluidDynamics.Traffic.ShockOrdering`:
 the shock speed of the quadratic flux `q(k) = k * (1 - k)` between
-densities `0` and `1 / 2` is `3 / 4` by computation, and the public
+densities `0` and `1 / 2` is `1 / 2` by computation, and the public
 ordering theorems apply to it (concavity of the quadratic on `ℝ` is
 standard; here the checked content is the secant value and that the
 theorem's hypotheses are the ones used).
@@ -24,7 +24,7 @@ theorem's hypotheses are the ones used).
 These are elaboration and non-vacuity checks, not new results.
 -/
 
-open ShockOrdering
+open FluidDynamics.Traffic.ShockOrdering
 
 /-- The secant value on the quadratic flux, by computation. -/
 example : shockSpeed (fun k : ℝ => k * (1 - k)) 0 (1 / 2) = 1 / 2 := by

@@ -29,8 +29,8 @@ Lax entropy condition for increasing-density shocks).
 
 ## ii. Key results
 
-- `ShockOrdering.shockSpeed_between_of_concave`: the ordering.
-- `ShockOrdering.shockSpeed_strict_between_of_strictConcave`: the
+- `FluidDynamics.Traffic.ShockOrdering.shockSpeed_between_of_concave`: the ordering.
+- `FluidDynamics.Traffic.ShockOrdering.shockSpeed_strict_between_of_strictConcave`: the
   strict form.
 
 ## iii. Table of contents
@@ -47,7 +47,7 @@ Lax entropy condition for increasing-density shocks).
 
 @[expose] public section
 
-namespace ShockOrdering
+namespace FluidDynamics.Traffic.ShockOrdering
 
 
 /-- Shock speed between two densities: the secant slope of the flux. -/
@@ -85,4 +85,4 @@ theorem shockSpeed_strict_between_of_strictConcave {q : ℝ → ℝ}
     hconc.slope_lt_deriv (Set.mem_univ kL) (Set.mem_univ kR) h
     (hdiff kL).differentiableAt⟩
 
-end ShockOrdering
+end FluidDynamics.Traffic.ShockOrdering
