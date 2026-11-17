@@ -55,18 +55,16 @@ theorem PowerConstraint.integrable_norm_sq {Ω E : Type*} {mΩ : MeasurableSpace
   rw [hasFiniteIntegral_iff_ofReal (Filter.Eventually.of_forall fun _ => by positivity)]
   exact h.2.trans_lt ENNReal.ofReal_lt_top
 
-/-- The power constraint in Bochner form: `E‖X‖² ≤ P`. -/
+/-- The power constraint in Bochner form for an a.e. strongly measurable input: `E‖X‖² ≤ P`
+(here `‖X‖²` is integrable, so the Bochner integral is the second moment). -/
 theorem PowerConstraint.integral_norm_sq_le {Ω E : Type*} {mΩ : MeasurableSpace Ω}
-    {μ : Measure Ω} [NormedAddCommGroup E] {X : Ω → E} {P : ℝ} (h : PowerConstraint μ X P) :
-    ∫ ω, ‖X ω‖ ^ 2 ∂μ ≤ P := by
-  by_cases hint : Integrable (fun ω => ‖X ω‖ ^ 2) μ
-  · rw [integral_eq_lintegral_of_nonneg_ae (Filter.Eventually.of_forall fun _ => by positivity)
-      hint.aestronglyMeasurable]
-    calc (∫⁻ ω, ENNReal.ofReal (‖X ω‖ ^ 2) ∂μ).toReal ≤ (ENNReal.ofReal P).toReal :=
-          ENNReal.toReal_mono ENNReal.ofReal_ne_top h.2
-      _ = P := ENNReal.toReal_ofReal h.1
-  · rw [integral_undef hint]
-    exact h.1
+    {μ : Measure Ω} [NormedAddCommGroup E] {X : Ω → E} {P : ℝ} (h : PowerConstraint μ X P)
+    (hX : AEStronglyMeasurable X μ) : ∫ ω, ‖X ω‖ ^ 2 ∂μ ≤ P := by
+  rw [integral_eq_lintegral_of_nonneg_ae (Filter.Eventually.of_forall fun _ => by positivity)
+    (PowerConstraint.integrable_norm_sq h hX).aestronglyMeasurable]
+  calc (∫⁻ ω, ENNReal.ofReal (‖X ω‖ ^ 2) ∂μ).toReal ≤ (ENNReal.ofReal P).toReal :=
+        ENNReal.toReal_mono ENNReal.ofReal_ne_top h.2
+    _ = P := ENNReal.toReal_ofReal h.1
 
 /-- On a finite measure, a power-constrained input is integrable, so its mean exists. -/
 theorem PowerConstraint.integrable {Ω E : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
@@ -258,7 +256,7 @@ theorem trace_add_norm_sq_le_of_powerConstraint {Ω : Type*} {mΩ : MeasurableSp
     K.trace + ‖m‖ ^ 2 ≤ P := by
   rw [trace_add_norm_sq_eq_integral_norm_sq
     (PowerConstraint.memLp_two hpow hX.aestronglyMeasurable) hm hK]
-  exact PowerConstraint.integral_norm_sq_le hpow
+  exact PowerConstraint.integral_norm_sq_le hpow hX.aestronglyMeasurable
 
 /-! ### Validation statements -/
 
