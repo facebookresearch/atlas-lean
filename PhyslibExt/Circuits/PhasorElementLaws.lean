@@ -80,11 +80,6 @@ private theorem exp_pi_div_two :
   rw [hcast]
   exact Complex.exp_pi_div_two_mul_I
 
-/-- The waveform at time zero sees the real part of the phasor. -/
-private theorem rmsWaveform_at_zero (V : ℂ) (ω : ℝ) :
-    rmsWaveform V ω 0 = Real.sqrt 2 * V.re := by
-  simp [rmsWaveform]
-
 /-- The waveform at a quarter period sees the imaginary part of the phasor. -/
 private theorem rmsWaveform_at_quarter (V : ℂ) {ω : ℝ} (hω : ω ≠ 0) :
     rmsWaveform V ω (Real.pi / (2 * ω)) = Real.sqrt 2 * (-V.im) := by
@@ -304,7 +299,7 @@ lemma capacitor_phasor_iff_impedance (C : ℝ) (hC : 0 < C) {ω : ℝ} (hω : 0 
 
 /-- Inductor quadrature: under `V = i ω L I` the voltage waveform is `ω L` times the current
 waveform advanced by a quarter period `π / (2 ω)`. -/
-lemma inductor_voltage_leads_current (L : ℝ) {ω : ℝ} (hω : 0 < ω) (V I : ℂ)
+lemma inductor_voltage_leads_current (L : ℝ) (hL : 0 < L) {ω : ℝ} (hω : 0 < ω) (V I : ℂ)
     (h : V = Complex.I * (ω : ℂ) * (L : ℂ) * I) (t : ℝ) :
     rmsWaveform V ω t = ω * L * rmsWaveform I ω (t + Real.pi / (2 * ω)) := by
   have hV : V = Complex.I * ((((ω * L : ℝ)) : ℂ) * I) := by
@@ -315,7 +310,7 @@ lemma inductor_voltage_leads_current (L : ℝ) {ω : ℝ} (hω : 0 < ω) (V I : 
 
 /-- Capacitor quadrature: under `I = i ω C V` the current waveform is `ω C` times the voltage
 waveform advanced by a quarter period `π / (2 ω)`. -/
-lemma capacitor_current_leads_voltage (C : ℝ) {ω : ℝ} (hω : 0 < ω) (V I : ℂ)
+lemma capacitor_current_leads_voltage (C : ℝ) (hC : 0 < C) {ω : ℝ} (hω : 0 < ω) (V I : ℂ)
     (h : I = Complex.I * (ω : ℂ) * (C : ℂ) * V) (t : ℝ) :
     rmsWaveform I ω t = ω * C * rmsWaveform V ω (t + Real.pi / (2 * ω)) := by
   have hI : I = Complex.I * ((((ω * C : ℝ)) : ℂ) * V) := by
