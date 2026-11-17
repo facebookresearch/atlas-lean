@@ -38,10 +38,15 @@ lemma two_compartment_budget {k10 k12 k21 T : ℝ} (hT : 0 ≤ T)
       HasDerivAt A1 (u s - (k10 + k12) * A1 s + k21 * A2 s) s)
     (hA2 : ∀ s ∈ Set.Icc 0 T,
       HasDerivAt A2 (k12 * A1 s - k21 * A2 s) s)
-    (hu : IntervalIntegrable u volume 0 T)
-    (hA1i : IntervalIntegrable A1 volume 0 T) :
+    (hu : IntervalIntegrable u volume 0 T) :
     (A1 T + A2 T) - (A1 0 + A2 0) =
       ∫ s in (0:ℝ)..T, (u s - k10 * A1 s) := by
+  have hA1cont : ContinuousOn A1 (Set.uIcc 0 T) := by
+    intro x hx
+    rw [Set.uIcc_of_le hT] at hx
+    exact (hA1 x hx).continuousAt.continuousWithinAt
+  have hA1i : IntervalIntegrable A1 volume 0 T :=
+    hA1cont.intervalIntegrable
   have hsum : ∀ x ∈ Set.uIcc 0 T,
       HasDerivAt (A1 + A2) (u x - k10 * A1 x) x := by
     intro x hx
