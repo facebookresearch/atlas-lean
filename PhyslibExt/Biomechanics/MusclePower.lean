@@ -158,7 +158,7 @@ derivative `x' = v(c) = b * (F0 - c) / (c + a)` (constant force `c`
 under the Hill law), then the mechanical work over `[0, T]`, the time
 integral of the power `c * x'`, equals `c * (x T - x 0)`. -/
 lemma muscle_work_constant {a b F0 c T : ℝ} (ha : 0 < a) (hb : 0 < b)
-    (hF0 : 0 < F0) (hc : c ∈ Set.Icc 0 F0) {x : ℝ → ℝ}
+    (hF0 : 0 < F0) (hc : c ∈ Set.Icc 0 F0) (hT : 0 ≤ T) {x : ℝ → ℝ}
     (hx : ∀ t ∈ Set.uIcc 0 T, HasDerivAt x (b * (F0 - c) / (c + a)) t) :
     (∫ _t in (0:ℝ)..T, c * (b * (F0 - c) / (c + a))) = c * (x T - x 0) := by
   have hFTC : (∫ _t in (0:ℝ)..T, b * (F0 - c) / (c + a)) = x T - x 0 :=

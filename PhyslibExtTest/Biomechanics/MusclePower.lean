@@ -45,6 +45,6 @@ example : hillPower 1 2 3 1 = 2 := by
 `1 * (x 3 - x 0)`. -/
 example {x : ℝ → ℝ} (hx : ∀ t ∈ Set.uIcc 0 3, HasDerivAt x (2 * (3 - 1) / (1 + 1)) t) :
     (∫ _t in (0:ℝ)..3, (1:ℝ) * (2 * (3 - 1) / (1 + 1))) = 1 * (x 3 - x 0) :=
-  muscle_work_constant (by norm_num) (by norm_num) (by norm_num) (by norm_num) hx
+  muscle_work_constant (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) hx
 
 end PhyslibExtTest.Biomechanics.MusclePower
