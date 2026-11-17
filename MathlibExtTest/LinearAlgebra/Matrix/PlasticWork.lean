@@ -41,6 +41,17 @@ example : (1 : ℝ) = ∑ e : Fin 1, (fun _ : Fin 1 => (1 : ℝ)) e
     (by simp [dotProduct])
     (fun e => by fin_cases e; rw [hmv]; norm_num)
 
+/-- The bound is strict in the slack case: the dissipation sum
+evaluates to `2 > 1`. -/
+example : (1 : ℝ) < ∑ e : Fin 1, (fun _ : Fin 1 => (2 : ℝ)) e
+    * |((1 : Matrix (Fin 1) (Fin 1) ℝ) *ᵥ (fun _ : Fin 1 => (1 : ℝ))) e| := by
+  have hsum : ∑ e : Fin 1, (fun _ : Fin 1 => (2 : ℝ)) e
+      * |((1 : Matrix (Fin 1) (Fin 1) ℝ) *ᵥ (fun _ : Fin 1 => (1 : ℝ))) e|
+      = 2 := by
+    simp [Finset.sum, mulVec, dotProduct]
+  rw [hsum]
+  norm_num
+
 /-- The bound in a slack case: `1 ≤ 2`. -/
 example : (1 : ℝ) ≤ ((∑ e : Fin 1, (fun _ : Fin 1 => (2 : ℝ)) e
     * |((1 : Matrix (Fin 1) (Fin 1) ℝ) *ᵥ (fun _ : Fin 1 => (1 : ℝ))) e|) : ℝ) :=
