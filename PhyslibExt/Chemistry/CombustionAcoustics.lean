@@ -287,8 +287,10 @@ theorem arrhenius_equilibrium_exists {G H B Ta : ℝ} (hG : 0 < G)
   exact ⟨T, hTmem, hTeq⟩
 
 /-- Finite-horizon trapping: if `T` has within-derivative
-`arrheniusRate G H B Ta (T t) / C` on `Set.Icc 0 t` at every
-`s ∈ [0, t]`, with `C > 0`, then `T t` lies in `[lo, hi]` where
+`arrheniusRate G H B Ta (T s) / C` on `Set.Icc 0 t` at every
+`s ∈ [0, t]`, with `C > 0` and `0 < T s` on the interval (the
+rate is a thermal model only for positive temperatures), then
+`T t` lies in `[lo, hi]` where
 `lo = min (T 0) Ta` and `hi = max (T 0) (Ta + G / H)`. This
 applies to any solution on the interval `[0, t]`, including a
 maximal solution restricted to a compact subinterval of its
@@ -297,7 +299,8 @@ lemma arrhenius_solution_trapped_on_interval {G H B Ta C : ℝ} (hG : 0 < G)
     (hH : 0 < H) (hB : 0 < B) (hTa : 0 < Ta) (hC : 0 < C)
     {T : ℝ → ℝ} {t : ℝ} (ht : 0 ≤ t)
     (hT : ∀ s : ℝ, s ∈ Set.Icc 0 t →
-      HasDerivWithinAt T (arrheniusRate G H B Ta (T s) / C) (Set.Icc 0 t) s) :
+      HasDerivWithinAt T (arrheniusRate G H B Ta (T s) / C) (Set.Icc 0 t) s)
+    (hpos : ∀ s : ℝ, s ∈ Set.Icc 0 t → 0 < T s) :
     T t ∈ Set.Icc (min (T 0) Ta) (max (T 0) (Ta + G / H)) := by
   have hcont : ContinuousOn T (Set.Icc 0 t) :=
     fun x hx => (hT x hx).continuousWithinAt
@@ -340,7 +343,7 @@ lemma arrhenius_solution_trapped_on_interval {G H B Ta C : ℝ} (hG : 0 < G)
     have hmin : T c < min (T 0) Ta := lt_of_le_of_lt htt hcon
     have hTc : T c < Ta := lt_of_lt_of_le hmin (min_le_right _ _)
     have hrate : 0 < arrheniusRate G H B Ta (T c) :=
-      arrheniusRate_pos_of_le_Ta hG hH hTa (le_of_lt hTc)
+      arrheniusRate_pos_of_le_ambient hG hH (hpos c hc_mem) (le_of_lt hTc)
     have hderiv := hT c hc_mem
     have hf' : 0 < arrheniusRate G H B Ta (T c) / C := div_pos hrate hC
     obtain ⟨s, hs_mem, hsc, hlt⟩ :=
@@ -362,9 +365,11 @@ lemma arrhenius_solution_trapped {G H B Ta C : ℝ} (hG : 0 < G)
     {T : ℝ → ℝ}
     (hT : ∀ s : ℝ, 0 ≤ s →
       HasDerivWithinAt T (arrheniusRate G H B Ta (T s) / C) (Set.Ici 0) s)
+    (hpos : ∀ s : ℝ, 0 ≤ s → 0 < T s)
     {t : ℝ} (ht : 0 ≤ t) :
     T t ∈ Set.Icc (min (T 0) Ta) (max (T 0) (Ta + G / H)) := by
   exact arrhenius_solution_trapped_on_interval hG hH hB hTa hC ht
     (fun s hs => (hT s hs.1).mono Set.Icc_subset_Ici_self)
+    (fun s hs => hpos s hs.1)
 
 end Chemistry.CombustionAcoustics

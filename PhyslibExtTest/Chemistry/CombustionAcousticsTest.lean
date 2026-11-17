@@ -68,7 +68,8 @@ example : ∃ Te : ℝ, Te ∈ Set.Ioo 1 (1 + 1 / 1) ∧
     simpa using hasDerivWithinAt_const s (Set.Ici 0) Te
   have h := Chemistry.CombustionAcoustics.arrhenius_solution_trapped (G := 1)
     (H := 1) (B := 1) (Ta := 1) (C := 1) (by norm_num) (by norm_num)
-    (by norm_num) (by norm_num) (by norm_num) hderiv ht
+    (by norm_num) (by norm_num) (by norm_num) hderiv
+    (fun s _ => hTe.1) ht
   simpa using h
 
 /-- Finite-horizon regression: the equilibrium trajectory on
@@ -101,4 +102,8 @@ example : ∃ Te : ℝ, Te ∈ Set.Ioo 1 (1 + 1 / 1) ∧
   have h := Chemistry.CombustionAcoustics.arrhenius_solution_trapped_on_interval
     (G := 1) (H := 1) (B := 1) (Ta := 1) (C := 1) (by norm_num) (by norm_num)
     (by norm_num) (by norm_num) (by norm_num) (t := 1) (by norm_num) hderiv
+    (fun s hs => by
+      show 0 < (fun s : ℝ => if s ≤ 1 then Te else 0) s
+      rw [if_pos hs.2]
+      exact hTe.1)
   simpa using h
