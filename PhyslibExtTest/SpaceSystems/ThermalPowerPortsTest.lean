@@ -79,3 +79,16 @@ example :
         rw [h0]
         exact (hasDerivAt_const s (2 : ℝ)).hasDerivWithinAt)
       (by norm_num) ht
+
+/-- The global existence API at the same unit parameters: from
+`T0 = 3 / 2` there is a trajectory starting at `3 / 2`, trapped
+in `[1, 2]` at `t = 1`, and solving the physical field there. -/
+example :
+    ∃ T : ℝ → ℝ, T 0 = 3 / 2 ∧ T 1 ∈ Set.Icc 1 2 ∧
+      HasDerivAt T (ThermalPowerPorts.radiatorRate 2 1 16 (T 1)) 1 := by
+  obtain ⟨T, hT0, -, htrap⟩ :=
+    ThermalPowerPorts.radiator_solution_exists_trapped (C := 2) (Krad := 1)
+      (Q := 16) (Tmin := 1) (Tmax := 2) (T0 := 3 / 2) (by norm_num)
+      (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+      (by norm_num)
+  exact ⟨T, hT0, (htrap 1 (by norm_num)).1, (htrap 1 (by norm_num)).2⟩
