@@ -63,7 +63,7 @@ beam of length `L`, bending stiffness `EI`, under uniform load `w`:
 noncomputable def uniformLoadDeflection (w EI L x : ℝ) : ℝ :=
   w * (L ^ 3 * x - 2 * L * x ^ 3 + x ^ 4) / (24 * EI)
 
-theorem iteratedDeriv_uniformLoadDeflection (w EI L : ℝ) (n : ℕ) (x : ℝ) :
+private lemma iteratedDeriv_uniformLoadDeflection (w EI L : ℝ) (n : ℕ) (x : ℝ) :
     iteratedDeriv n (uniformLoadDeflection w EI L) x =
       w * (L ^ 3 * iteratedDeriv n (fun x : ℝ => x) x
         - (2 * L) * iteratedDeriv n (fun x : ℝ => x ^ 3) x
