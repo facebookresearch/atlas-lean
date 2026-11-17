@@ -11,15 +11,19 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 
 /-!
-# Hertzian short-dipole power, directivity and resistance
+# Hertzian dipole power, directivity and resistance
 
 ## i. Overview
 
-The far-field intensity of a Hertzian (short) dipole is
-`K sin²θ`. Integrating over the sphere, the total radiated power
-is `8πK/3`, the directivity is `3 sin²θ/2` with maximum `3/2`
-broadside and zeros on the axis, and the radiation resistance,
-under the peak-amplitude convention `R = 2P/I²`, is
+The far-field intensity of a Hertzian (infinitesimal,
+uniform-current) dipole is `K sin²θ`. Throughout, "dipole" means
+this Hertzian element; the finite short dipole with triangular
+current (effective length `l/2`) is a different element whose
+intensity coefficient and resistance are four times smaller, and
+is not modeled here. Integrating over the sphere, the total
+radiated power is `8πK/3`, the directivity is `3 sin²θ/2` with
+maximum `3/2` broadside and zeros on the axis, and the radiation
+resistance, under the peak-amplitude convention `R = 2P/I²`, is
 `16πK/(3I²)`. A zero drive gives zero power, and the on-axis
 directivity is not the maximum.
 
@@ -67,7 +71,12 @@ noncomputable def radiatedPower (U : ℝ → ℝ) : ℝ :=
 noncomputable def directivity (U : ℝ → ℝ) (θ : ℝ) : ℝ :=
   4 * π * U θ / radiatedPower U
 
-/-- Short-dipole intensity coefficient `K = η k² I_peak² l² / (32 π²)`. -/
+/-- Intensity coefficient `K = η k² I_peak² l² / (32 π²)` of a
+Hertzian (infinitesimal) dipole element: a uniform-current
+element whose effective length equals its physical length `l`.
+This is not the finite short dipole with triangular current
+distribution, whose effective length is `l / 2` and whose
+coefficient is four times smaller. -/
 noncomputable def shortDipoleIntensityCoeff (η k Ipeak l : ℝ) : ℝ :=
   η * k ^ 2 * Ipeak ^ 2 * l ^ 2 / (32 * π ^ 2)
 
