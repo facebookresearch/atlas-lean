@@ -9,6 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
+public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 public import Mathlib.Analysis.Real.Sqrt
 
 /-!
@@ -27,10 +30,13 @@ claim outside `[0, F0]`.
 
 * `muscle_power_max`: interiority of `Fstar`, its defining identity
   `Fstar^2 + 2 * a * Fstar = a * F0`, and maximality of the power.
+* `muscle_power_formula`, `muscle_work_constant`: mechanical power at a
+  force, and work at constant force as `c * (x T - x 0)`.
 
 ## iii. Table of contents
 
 * A. The power maximum.
+* B. Power and work.
 
 ## iv. References
 
@@ -43,7 +49,7 @@ claim outside `[0, F0]`.
 
 @[expose] public section
 
-open Real
+open Real intervalIntegral
 
 namespace PhyslibExt.Biomechanics.MusclePower
 
@@ -123,5 +129,28 @@ lemma muscle_power_max {a b F0 : ℝ} (ha : 0 < a) (hb : 0 < b) (hF0 : 0 < F0) :
     apply mul_nonneg (le_of_lt hb)
     exact sq_nonneg _
   linarith
+
+/-! ## B. Power and work. -/
+
+/-- **Mechanical power at a force.** For the Hill shortening law
+`v(F) = b * (F0 - F) / (F + a)`, the mechanical power at force `F` is
+`P(F) = F * v(F) = b * F * (F0 - F) / (F + a)`. -/
+lemma muscle_power_formula {a b F0 F : ℝ} :
+    F * (b * (F0 - F) / (F + a)) = b * F * (F0 - F) / (F + a) := by
+  ring
+
+/-- **Work at constant force.** If the displacement `x` has constant
+derivative `x' = v(c) = b * (F0 - c) / (c + a)` (constant force `c`
+under the Hill law), then the mechanical work over `[0, T]`, the time
+integral of the power `c * x'`, equals `c * (x T - x 0)`. -/
+lemma muscle_work_constant {a b F0 c T : ℝ} {x : ℝ → ℝ}
+    (hx : ∀ t : ℝ, HasDerivAt x (b * (F0 - c) / (c + a)) t) :
+    (∫ _t in (0:ℝ)..T, c * (b * (F0 - c) / (c + a))) = c * (x T - x 0) := by
+  have hFTC : (∫ _t in (0:ℝ)..T, b * (F0 - c) / (c + a)) = x T - x 0 :=
+    intervalIntegral.integral_eq_sub_of_hasDerivAt (fun t _ => hx t) intervalIntegrable_const
+  calc (∫ _t in (0:ℝ)..T, c * (b * (F0 - c) / (c + a)))
+      = c * (∫ _t in (0:ℝ)..T, b * (F0 - c) / (c + a)) :=
+        intervalIntegral.integral_const_mul c _
+    _ = c * (x T - x 0) := by rw [hFTC]
 
 end PhyslibExt.Biomechanics.MusclePower

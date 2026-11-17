@@ -34,4 +34,14 @@ example : let Fstar := Real.sqrt (1 * (1 + 3)) - 1
 example : (0 : ℝ) * (2 * (3 - 0) / (0 + 1)) = 0 ∧
     (3 : ℝ) * (2 * (3 - 3) / (3 + 1)) = 0 := by norm_num
 
+/-- Power at `F = 1` under `a = 1`, `F0 = 3`, `b = 2` is `2`. -/
+example : (1 : ℝ) * (2 * (3 - 1) / (1 + 1)) = 2 * 1 * (3 - 1) / (1 + 1) :=
+  muscle_power_formula
+
+/-- Constant force `c = 1` with `x' = 2`: work over `[0, 3]` is
+`1 * (x 3 - x 0)`. -/
+example {x : ℝ → ℝ} (hx : ∀ t : ℝ, HasDerivAt x (2 * (3 - 1) / (1 + 1)) t) :
+    (∫ _t in (0:ℝ)..3, (1:ℝ) * (2 * (3 - 1) / (1 + 1))) = 1 * (x 3 - x 0) :=
+  muscle_work_constant hx
+
 end PhyslibExtTest.Biomechanics.MusclePower
