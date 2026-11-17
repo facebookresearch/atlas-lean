@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Algebra.BigOperators.Ring.Finset
 
 /-!
 # Ordered dot-product error bound
@@ -80,7 +81,7 @@ theorem extend_apply_of_lt (m : ℕ) (f : Fin m → ℝ) (i : ℕ) (hi : i < m) 
     extend m f i = f ⟨i, hi⟩ := by
   simp [extend, hi]
 
-private theorem accumulator_eq_sum_range (p d : ℕ → ℝ) (n : ℕ) :
+theorem accumulator_eq_sum_range (p d : ℕ → ℝ) (n : ℕ) :
     accumulator p d n = ∑ i ∈ Finset.range n, (p i + d i) := by
   induction n with
   | zero =>
@@ -88,20 +89,6 @@ private theorem accumulator_eq_sum_range (p d : ℕ → ℝ) (n : ℕ) :
   | succ n ih =>
     rw [accumulator_succ, ih, Finset.sum_range_succ]
     exact add_assoc _ _ _
-
-private theorem sum_mul_const_right {ι : Type*} [DecidableEq ι] (s : Finset ι) (f : ι → ℝ)
-    (c : ℝ) : ∑ i ∈ s, f i * c = (∑ i ∈ s, f i) * c := by
-  induction s using Finset.induction with
-  | empty => simp
-  | insert _ _ ha ih =>
-    rw [Finset.sum_insert ha, Finset.sum_insert ha, ih, add_mul]
-
-private theorem sum_const_mul_left {ι : Type*} [DecidableEq ι] (s : Finset ι) (f : ι → ℝ)
-    (c : ℝ) : ∑ i ∈ s, c * f i = c * (∑ i ∈ s, f i) := by
-  induction s using Finset.induction with
-  | empty => simp
-  | insert _ _ ha ih =>
-    rw [Finset.sum_insert ha, Finset.sum_insert ha, ih, mul_add]
 
 /-- The m-step fold is the finite sum of its per-index increments. -/
 theorem accumulator_extend_eq_sum (m : ℕ) (p d : Fin m → ℝ) :
@@ -136,7 +123,7 @@ theorem product_sub (m : ℕ) (h dh x dx dp : Fin m → ℝ) (k : Fin m) :
 /-- Finite filter and fixed-point error composition:
 |yhat - y| <= ex * sum |h| + eh * sum |x| + m * eh * ex + m * ep + m * ea,
 with yhat the m-step zero-initialized left fold and y = sum h_k * x_k. -/
-theorem orderedDotProduct_error_bound (m : ℕ) (x h dx dh dp da : Fin m → ℝ)
+theorem orderedDotProduct_error_bound (m : ℕ) (h dh x dx dp da : Fin m → ℝ)
     (ex eh ep ea : ℝ)
     (hex : 0 ≤ ex) (heh : 0 ≤ eh) (hep : 0 ≤ ep) (hea : 0 ≤ ea)
     (hdx : ∀ k : Fin m, |dx k| ≤ ex)
@@ -193,9 +180,9 @@ theorem orderedDotProduct_error_bound (m : ℕ) (x h dx dh dp da : Fin m → ℝ
       = ex * (∑ k : Fin m, |h k|) + eh * (∑ k : Fin m, |x k|)
         + (m : ℝ) * eh * ex + (m : ℝ) * ep + (m : ℝ) * ea := by
     have sA : ∑ k : Fin m, |h k| * ex = ex * (∑ k : Fin m, |h k|) := by
-      rw [sum_mul_const_right, mul_comm (∑ k : Fin m, |h k|) ex]
+      rw [← Finset.sum_mul, mul_comm (∑ k : Fin m, |h k|) ex]
     have sB : ∑ k : Fin m, eh * |x k| = eh * (∑ k : Fin m, |x k|) :=
-      sum_const_mul_left _ _ _
+      (Finset.mul_sum _ _ _).symm
     have sC : ∑ k : Fin m, eh * ex = (m : ℝ) * eh * ex := by
       rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
         ← mul_assoc]

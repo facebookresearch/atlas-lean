@@ -20,35 +20,36 @@ open MathlibExt.Analysis.Numerical.OrderedDotProductError
 
 namespace MathlibExtTest.Analysis.Numerical.OrderedDotProductError
 
-/-- A two-term instance computed exactly: perturbed inputs and
-coefficients `3/2`, ideal inputs and coefficients `1`, so the
-perturbed output is `9/2`, the ideal output is `2`, and the error is
-`5/2`. -/
-example : outputPerturbed 2 ![1, 1] ![1 / 2, 1 / 2] ![1, 1] ![1 / 2, 1 / 2]
-      ![0, 0] ![0, 0] = 9 / 2 := by
+/-- A two-term instance with asymmetric data, computed exactly:
+`h = ![1, 2]`, `dh = ![1/2, 0]`, `x = ![3, 4]`, `dx = ![1/4, 0]`,
+no product or accumulation error. The perturbed products are
+`3/2 * 13/4 = 39/8` and `2 * 4 = 8`, so the perturbed output is
+`103/8` and the ideal output is `1 * 3 + 2 * 4 = 11`. -/
+example : outputPerturbed 2 ![1, 2] ![1 / 2, 0] ![3, 4] ![1 / 4, 0]
+      ![0, 0] ![0, 0] = 103 / 8 := by
   norm_num [outputPerturbed, accumulator, extend, productPerturbed,
     inputPerturbed, coeffPerturbed]
 
-example : outputIdeal 2 ![1, 1] ![1, 1] = 2 := by
+example : outputIdeal 2 ![1, 2] ![3, 4] = 11 := by
   norm_num [outputIdeal, Fin.sum_univ_two]
 
-/-- The fold equals the sum, in the same instance. -/
-example : accumulator (extend 2 ![3 / 2, 3 / 2]) (extend 2 ![0, 0]) 2
-    = ∑ k : Fin 2, (![3 / 2, 3 / 2] k + ![0, 0] k) :=
-  accumulator_extend_eq_sum 2 ![3 / 2, 3 / 2] ![0, 0]
+/-- The fold equals the sum, in an asymmetric instance. -/
+example : accumulator (extend 2 ![39 / 8, 8]) (extend 2 ![0, 0]) 2
+    = ∑ k : Fin 2, (![39 / 8, 8] k + ![0, 0] k) :=
+  accumulator_extend_eq_sum 2 ![39 / 8, 8] ![0, 0]
 
-/-- The error bound on the same instance. With `ex = eh = 1/2` and
+/-- The error bound on the same instance, applied in the model's
+argument order (`h dh x dx dp da`). With `ex = 1/4`, `eh = 1/2` and
 `ep = ea = 0` the bound is
-`1/2 * 2 + 1/2 * 2 + 2 * (1/2) * (1/2) = 5/2`, so the bound is met
-with equality: it is not vacuous, and the cross term contributes
-`1/2` of it. -/
-example : |outputPerturbed 2 ![1, 1] ![1 / 2, 1 / 2] ![1, 1] ![1 / 2, 1 / 2]
-      ![0, 0] ![0, 0] - outputIdeal 2 ![1, 1] ![1, 1]|
-    ≤ (1 / 2) * (∑ k : Fin 2, |![1, 1] k|)
-      + (1 / 2) * (∑ k : Fin 2, |![1, 1] k|)
-      + (2 : ℝ) * (1 / 2) * (1 / 2) + (2 : ℝ) * 0 + (2 : ℝ) * 0 :=
-  orderedDotProduct_error_bound 2 ![1, 1] ![1, 1] ![1 / 2, 1 / 2] ![1 / 2, 1 / 2]
-    ![0, 0] ![0, 0] (1 / 2) (1 / 2) 0 0
+`1/4 * 3 + 1/2 * 7 + 2 * (1/2) * (1/4) = 9/2`, and the actual error
+is `103/8 - 11 = 15/8`. -/
+example : |outputPerturbed 2 ![1, 2] ![1 / 2, 0] ![3, 4] ![1 / 4, 0]
+      ![0, 0] ![0, 0] - outputIdeal 2 ![1, 2] ![3, 4]|
+    ≤ (1 / 4) * (∑ k : Fin 2, |![1, 2] k|)
+      + (1 / 2) * (∑ k : Fin 2, |![3, 4] k|)
+      + (2 : ℝ) * (1 / 2) * (1 / 4) + (2 : ℝ) * 0 + (2 : ℝ) * 0 :=
+  orderedDotProduct_error_bound 2 ![1, 2] ![1 / 2, 0] ![3, 4] ![1 / 4, 0]
+    ![0, 0] ![0, 0] (1 / 4) (1 / 2) 0 0
     (by norm_num) (by norm_num) (by norm_num) (by norm_num)
     (by intro k; fin_cases k <;> norm_num)
     (by intro k; fin_cases k <;> norm_num)
@@ -56,11 +57,11 @@ example : |outputPerturbed 2 ![1, 1] ![1 / 2, 1 / 2] ![1, 1] ![1 / 2, 1 / 2]
     (by intro k; fin_cases k <;> norm_num)
 
 /-- The per-product expansion keeps the cross term: with
-`h = x = 1`, `dh = dx = 1/2`, `dp = 0`, the product error is
-`3/2 * 3/2 - 1 = 5/4 = 1/2 + 1/2 + 1/4`, the last term being
-`dh * dx`. -/
-example : productPerturbed 2 ![1, 1] ![1 / 2, 1 / 2] ![1, 1] ![1 / 2, 1 / 2]
-      ![0, 0] 0 - ![1, 1] 0 * ![1, 1] 0 = 5 / 4 := by
+`h = 1`, `x = 3`, `dh = 1/2`, `dx = 1/4`, `dp = 0`, the product
+error is `3/2 * 13/4 - 3 = 15/8 = 1/4 + 3/2 + 1/8`, the last term
+being `dh * dx = 1/8`. -/
+example : productPerturbed 2 ![1, 2] ![1 / 2, 0] ![3, 4] ![1 / 4, 0]
+      ![0, 0] 0 - ![1, 2] 0 * ![3, 4] 0 = 15 / 8 := by
   norm_num [productPerturbed, inputPerturbed, coeffPerturbed]
 
 end MathlibExtTest.Analysis.Numerical.OrderedDotProductError
