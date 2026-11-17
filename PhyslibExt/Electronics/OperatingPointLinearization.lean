@@ -12,8 +12,8 @@ public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Calculus.FDeriv.Basic
 import Mathlib.Analysis.Calculus.ContDiff.Comp
-public import PhyslibExt.Chemistry.Uncertainty.Propagation
-public import PhyslibExt.Statistics.UncertaintyPropagation
+import PhyslibExt.Chemistry.Uncertainty.Propagation
+import PhyslibExt.Statistics.UncertaintyPropagation
 import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.Calculus.Deriv.MeanValue

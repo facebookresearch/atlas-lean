@@ -9,6 +9,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Electronics.OperatingPointLinearization
+import Mathlib.Analysis.Calculus.ContDiff.Operations
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Tactic.FunProp
 import Mathlib.Tactic.NormNum
 
 @[expose] public section
@@ -35,7 +40,10 @@ example : |smallSignalRemainder (fun v : Fin 1 → ℝ => (v 0) ^ 2) 0
     (fun _ => 3)| ≤ 2 * ‖(fun _ => 3 : Fin 1 → ℝ)‖ ^ 2 / 2 :=
   smallSignal_remainder_le_of_segment_bound _ _ _ 2
     (by fun_prop)
-    (by fun_prop)
+    (by
+      have hcont : ContDiff ℝ 2 (fun s : ℝ => (s * 3) ^ 2) :=
+        (contDiff_id.mul contDiff_const).pow 2
+      simpa using hcont)
     (by
       intro t _
       have hg : (fun s : ℝ => (fun v : Fin 1 → ℝ => (v 0) ^ 2)
@@ -45,7 +53,11 @@ example : |smallSignalRemainder (fun v : Fin 1 → ℝ => (v 0) ^ 2) 0
       rw [hg]
       have hd : ∀ s : ℝ, HasDerivAt (fun u : ℝ => (u * 3) ^ 2) (18 * s) s := by
         intro s
-        have h := ((hasDerivAt_id' s).mul_const (3 : ℝ)).pow 2
+        have h9 : (fun u : ℝ => (u * 3) ^ 2) = fun u => 9 * u ^ 2 := by
+          funext u
+          ring
+        rw [h9]
+        have h := (hasDerivAt_pow 2 s).const_mul (9 : ℝ)
         convert h using 1
         ring
       have hd1 : deriv (fun u : ℝ => (u * 3) ^ 2) = fun s => 18 * s :=
@@ -64,7 +76,9 @@ example : |smallSignalRemainder (fun v : Fin 1 → ℝ => (v 0) ^ 2) 0
 `u ↦ (2 * u 0) • proj 0`, of sup-norm at most `2`. -/
 example : |smallSignalRemainder (fun v : Fin 1 → ℝ => (v 0) ^ 2) 0
     (fun _ => 3)| ≤ 2 * ‖(fun _ => 3 : Fin 1 → ℝ)‖ ^ 2 / 2 := by
-  have hC2 : ContDiff ℝ 2 (fun v : Fin 1 → ℝ => (v 0) ^ 2) := by fun_prop
+  have hC2 : ContDiff ℝ 2 (fun v : Fin 1 → ℝ => (v 0) ^ 2) :=
+    (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 1 => ℝ)
+      (0 : Fin 1)).contDiff.pow 2
   have hM : ∀ y ∈ Set.Icc (fun _ => (-4 : ℝ)) (fun _ => (4 : ℝ)),
       ‖fderiv ℝ (fderiv ℝ (fun v : Fin 1 → ℝ => (v 0) ^ 2)) y‖ ≤ 2 := by
     set P : (Fin 1 → ℝ) →L[ℝ] ℝ :=
