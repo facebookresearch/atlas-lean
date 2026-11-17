@@ -32,24 +32,9 @@ private theorem test_single_apply_eq (a b n : ℕ) (v : ℚ) :
   · rw [ite_eq_left h, ite_eq_left h.symm]
   · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
 
-private theorem test_convWeights_apply_sum (w1 w2 : ℕ →₀ ℚ) (n : ℕ) :
-    convWeights w1 w2 n
-      = ∑ a ∈ w1.support, ∑ b ∈ w2.support,
-        if n = a + b then w1 a * w2 b else 0 := by
-  unfold convWeights
-  simp only [Finsupp.sum_apply, test_finsupp_sum_bridge, test_single_apply_eq]
-
 private theorem test_single_sum_id (c : ℕ) (v : ℚ) :
     (Finsupp.single c v).sum (fun _ q => q) = v :=
   Finsupp.sum_single_index rfl
-
-private theorem test_decode_apply (L : RationalLossLaw) (n : ℕ) :
-    decode L n = ENNReal.ofReal ((L.weights n : ℚ) : ℝ) := by
-  unfold decode
-  rw [PMF.ofFinset_apply]
-
-private theorem test_convLaw_weights (L1 L2 : RationalLossLaw) :
-    (convLaw L1 L2).weights = convWeights L1.weights L2.weights := rfl
 
 noncomputable def w1 : ℕ →₀ ℚ :=
   Finsupp.single 0 (1 / 4 : ℚ) + Finsupp.single 1 (1 / 2 : ℚ)
@@ -168,52 +153,52 @@ private theorem enum_double_sum (F : ℕ → ℕ → ℚ) :
     Finset.sum_insert hb, Finset.sum_singleton]
 
 theorem conv_mass_0 : convWeights w1 w2 0 = 1 / 8 := by
-  rw [test_convWeights_apply_sum, enum_double_sum, w1_0, w1_1, w1_2, w2_0,
+  rw [convWeights_apply, enum_double_sum, w1_0, w1_1, w1_2, w2_0,
     w2_1]
   simp
   norm_num
 
 theorem conv_mass_1 : convWeights w1 w2 1 = 3 / 8 := by
-  rw [test_convWeights_apply_sum, enum_double_sum, w1_0, w1_1, w1_2, w2_0,
+  rw [convWeights_apply, enum_double_sum, w1_0, w1_1, w1_2, w2_0,
     w2_1]
   simp
   norm_num
 
 theorem conv_mass_2 : convWeights w1 w2 2 = 3 / 8 := by
-  rw [test_convWeights_apply_sum, enum_double_sum, w1_0, w1_1, w1_2, w2_0,
+  rw [convWeights_apply, enum_double_sum, w1_0, w1_1, w1_2, w2_0,
     w2_1]
   simp
   norm_num
 
 theorem conv_mass_3 : convWeights w1 w2 3 = 1 / 8 := by
-  rw [test_convWeights_apply_sum, enum_double_sum, w1_0, w1_1, w1_2, w2_0,
+  rw [convWeights_apply, enum_double_sum, w1_0, w1_1, w1_2, w2_0,
     w2_1]
   simp
   norm_num
 
 theorem decode_mass_0 :
     decode (convLaw L1 L2) 0 = ENNReal.ofReal (((1 / 8 : ℚ)) : ℝ) := by
-  rw [test_decode_apply, test_convLaw_weights, L1_weights, L2_weights,
+  rw [decode_apply, convLaw_weights, L1_weights, L2_weights,
     conv_mass_0]
 
 theorem decode_mass_1 :
     decode (convLaw L1 L2) 1 = ENNReal.ofReal (((3 / 8 : ℚ)) : ℝ) := by
-  rw [test_decode_apply, test_convLaw_weights, L1_weights, L2_weights,
+  rw [decode_apply, convLaw_weights, L1_weights, L2_weights,
     conv_mass_1]
 
 theorem decode_mass_2 :
     decode (convLaw L1 L2) 2 = ENNReal.ofReal (((3 / 8 : ℚ)) : ℝ) := by
-  rw [test_decode_apply, test_convLaw_weights, L1_weights, L2_weights,
+  rw [decode_apply, convLaw_weights, L1_weights, L2_weights,
     conv_mass_2]
 
 theorem decode_mass_3 :
     decode (convLaw L1 L2) 3 = ENNReal.ofReal (((1 / 8 : ℚ)) : ℝ) := by
-  rw [test_decode_apply, test_convLaw_weights, L1_weights, L2_weights,
+  rw [decode_apply, convLaw_weights, L1_weights, L2_weights,
     conv_mass_3]
 
 theorem zero_atom_left (w : ℕ →₀ ℚ) (n : ℕ) :
     convWeights (Finsupp.single 0 1) w n = w n := by
-  rw [test_convWeights_apply_sum,
+  rw [convWeights_apply,
     Finsupp.support_single 0 (show (1 : ℚ) ≠ 0 by norm_num),
     Finset.sum_singleton]
   simp only [Finsupp.single_eq_same, zero_add, one_mul]
@@ -237,7 +222,7 @@ theorem zero_atom_left (w : ℕ →₀ ℚ) (n : ℕ) :
 theorem zero_atom_convLaw (w : ℕ →₀ ℚ) (hw0 : ∀ n, 0 ≤ w n)
     (hw1 : w.sum (fun _ q => q) = 1) (n : ℕ) :
     (convLaw L0 ⟨w, hw0, hw1⟩).weights n = w n := by
-  rw [test_convLaw_weights]
+  rw [convLaw_weights]
   exact zero_atom_left w n
 
 theorem repeated_support_mass :
@@ -278,7 +263,7 @@ theorem decode_tsum_eq_one (L : RationalLossLaw) :
 theorem decode_support_sum_eq_one :
     ∑ n ∈ (convLaw L1 L2).weights.support,
       decode (convLaw L1 L2) n = 1 := by
-  simp only [test_decode_apply]
+  simp only [decode_apply]
   exact decode_sum_eq_one _
 
 example : (convWeights L1.weights L2.weights).sum (fun _ q => q)
@@ -287,7 +272,7 @@ example : (convWeights L1.weights L2.weights).sum (fun _ q => q)
 
 private theorem conv_eq_zero_of_gt (n : ℕ) (hn : 3 < n) :
     convWeights w1 w2 n = 0 := by
-  rw [test_convWeights_apply_sum, w1_support, w2_support]
+  rw [convWeights_apply, w1_support, w2_support]
   apply Finset.sum_eq_zero
   intro a ha
   apply Finset.sum_eq_zero
@@ -302,7 +287,7 @@ theorem support_bound (n : ℕ)
     (h : decode (convLaw L1 L2) n ≠ 0) : n ≤ 3 := by
   by_contra hlt
   have h3 : 3 < n := not_le.mp hlt
-  rw [test_decode_apply, test_convLaw_weights, L1_weights, L2_weights,
+  rw [decode_apply, convLaw_weights, L1_weights, L2_weights,
     conv_eq_zero_of_gt n h3] at h
   simp at h
 

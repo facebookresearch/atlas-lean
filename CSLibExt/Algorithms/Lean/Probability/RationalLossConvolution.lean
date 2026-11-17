@@ -53,7 +53,7 @@ private theorem single_apply_eq (a b n : ℕ) (v : ℚ) :
   · rw [ite_eq_left h, ite_eq_left h.symm]
   · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
 
-private theorem convWeights_apply_sum (w1 w2 : ℕ →₀ ℚ) (n : ℕ) :
+theorem convWeights_apply (w1 w2 : ℕ →₀ ℚ) (n : ℕ) :
     convWeights w1 w2 n
       = ∑ a ∈ w1.support, ∑ b ∈ w2.support,
         if n = a + b then w1 a * w2 b else 0 := by
@@ -85,7 +85,7 @@ private theorem ite_mul_nonneg (L1 L2 : RationalLossLaw) (a b n : ℕ) :
 
 theorem convWeights_nonneg (L1 L2 : RationalLossLaw) (n : ℕ) :
     0 ≤ convWeights L1.weights L2.weights n := by
-  rw [convWeights_apply_sum]
+  rw [convWeights_apply]
   apply Finset.sum_nonneg
   intro a _
   apply Finset.sum_nonneg
@@ -137,12 +137,12 @@ noncomputable def decode (L : RationalLossLaw) : PMF ℕ :=
     L.weights.support (decode_sum_eq_one L)
     (fun a ha => decode_apply_eq_zero_of_not_mem L a ha)
 
-private theorem decode_apply (L : RationalLossLaw) (n : ℕ) :
+@[simp] theorem decode_apply (L : RationalLossLaw) (n : ℕ) :
     decode L n = ENNReal.ofReal ((L.weights n : ℚ) : ℝ) := by
   unfold decode
   rw [PMF.ofFinset_apply]
 
-private theorem convLaw_weights (L1 L2 : RationalLossLaw) :
+@[simp] theorem convLaw_weights (L1 L2 : RationalLossLaw) :
     (convLaw L1 L2).weights = convWeights L1.weights L2.weights := rfl
 
 private theorem inner_tsum_eq (L2 : RationalLossLaw) (a n : ℕ) :
@@ -214,7 +214,7 @@ theorem decode_convLaw_eq_bind_map (L1 L2 : RationalLossLaw) :
       = ∑ a ∈ L1.weights.support, ∑ b ∈ L2.weights.support,
         if n = a + b then ENNReal.ofReal ((L1.weights a : ℚ) : ℝ)
           * ENNReal.ofReal ((L2.weights b : ℚ) : ℝ) else 0 := by
-    rw [decode_apply, convLaw_weights, convWeights_apply_sum,
+    rw [decode_apply, convLaw_weights, convWeights_apply,
       ofReal_double_sum]
   have hRHS : ((decode L1).bind (fun a => (decode L2).map (a + ·))) n
       = ∑ a ∈ L1.weights.support, ∑ b ∈ L2.weights.support,
