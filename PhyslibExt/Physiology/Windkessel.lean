@@ -12,6 +12,7 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+public import MathlibExt.Biology.Biophysics.CompartmentKinetics
 
 /-!
 # Windkessel cardiovascular agreement
@@ -31,7 +32,12 @@ The two-element Windkessel model `C p' = qin - p / R` with `R, C > 0` agrees wit
 
 ## iv. References
 
-* The declared model is local to this module (the classical two-element Windkessel equation); no literature result is imported. All declarations are `lemma`s.
+* The declared model is local to this module (the classical
+  two-element Windkessel equation); no literature result is
+  imported. All declarations are `lemma`s. The transient reuses
+  `MathlibExt.Biology.Biophysics.CompartmentKinetics.amount`.
+* Frank O. Die Grundform des arteriellen Pulses.
+  Z Biol. 1899;37:483-526 (the original Windkessel model).
 
 -/
 
@@ -96,5 +102,23 @@ lemma windkessel_transient {R C q p0 t : ℝ} (hR : 0 < R) (hC : 0 < C) :
   rw [hfull.deriv]
   field_simp
   ring
+/-- The Windkessel transient is the canonical one-compartment
+amount with elimination rate `1 / (R * C)` and input `q / C`, scaled
+by `C`: `p(t) = C * amount ...` in the amount equation's units, with
+initial condition `p(0) = p0`. -/
+lemma windkessel_amount_eq {R C q p0 : ℝ} (hR : 0 < R) (hC : 0 < C) :
+    (fun t => R * q + (p0 - R * q) * Real.exp (-t / (R * C))) =
+    MathlibExt.Biology.Biophysics.CompartmentKinetics.amount
+      (1 / (R * C)) ((q / C) * (R * C) / (R * C)) p0 := by
+  funext t
+  have hk : (1 : ℝ) / (R * C) ≠ 0 := by positivity
+  rw [MathlibExt.Biology.Biophysics.CompartmentKinetics.amount_eq_of_ne_zero hk]
+  have hRC : R * C ≠ 0 := mul_ne_zero (ne_of_gt hR) (ne_of_gt hC)
+  field_simp
+
+/-- The Windkessel path starts at `p0`. -/
+lemma windkessel_initial {R C q p0 : ℝ} (hR : 0 < R) (hC : 0 < C) :
+    R * q + (p0 - R * q) * Real.exp (-(0:ℝ) / (R * C)) = p0 := by
+  simp
 
 end PhyslibExt.Physiology.Windkessel
