@@ -11,11 +11,13 @@ public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import PhyslibExt.EarthScience.ConductiveGeotherm
 
+import Mathlib.Analysis.Calculus.Deriv.Pow
+
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
 
 /-!
-# Energy source removal: steady slab with uniform heat generation
+# Energy source removal: steady slab and heated cylinder with uniform heat generation
 
 ## i. Overview
 
@@ -25,7 +27,9 @@ source term, per unit area fluxes). The temperature profile is the
 existing geotherm profile of `PhyslibExt.EarthScience.ConductiveGeotherm`
 read as a slab; this file names the slab quantities, proves the total
 outward heat removal `H * L`, and identifies the midplane maximum for
-equal surface temperatures. No transient behavior is claimed: with the
+equal surface temperatures. Section C adds the regular heated-cylinder
+profile with the same constant-conductivity, uniform-source model, its
+radial heat-balance equation, and its outward boundary power. No transient behavior is claimed: with the
 source cut off (`H = 0`) the steady profile is the constant or linear
 steady branch, not an instantaneous prediction.
 
@@ -171,26 +175,9 @@ noncomputable def cylinderGradient (k qvol r : ℝ) : ℝ :=
 
 private lemma hasDerivAt_quad {c d x : ℝ} :
     HasDerivAt (fun s : ℝ => c * s ^ 2 + d) (2 * c * x) x := by
-  rw [hasDerivAt_iff_tendsto]
-  simp only [smul_eq_mul]
-  have hfun : (fun x' : ℝ => ‖x' - x‖⁻¹ * ‖c * x' ^ 2 + d - (c * x ^ 2 + d) - (x' - x) * (2 * c * x)‖)
-      = (fun x' : ℝ => ‖c‖ * ‖x' - x‖) := by
-    funext x'
-    have harg : c * x' ^ 2 + d - (c * x ^ 2 + d) - (x' - x) * (2 * c * x)
-        = c * (x' - x) ^ 2 := by ring
-    rw [harg, norm_mul, norm_pow]
-    by_cases ha : ‖x' - x‖ = 0
-    · simp [ha]
-    · have h1 : ‖x' - x‖⁻¹ * ‖x' - x‖ = 1 := inv_mul_cancel₀ ha
-      rw [pow_two]
-      calc ‖x' - x‖⁻¹ * (‖c‖ * (‖x' - x‖ * ‖x' - x‖))
-          = ‖c‖ * ((‖x' - x‖⁻¹ * ‖x' - x‖) * ‖x' - x‖) := by ring
-        _ = ‖c‖ * ‖x' - x‖ := by rw [h1, one_mul]
-  rw [hfun]
-  have hcont : Continuous (fun x' : ℝ => ‖c‖ * ‖x' - x‖) :=
-    continuous_const.mul ((continuous_id.sub continuous_const).norm)
-  have h := hcont.tendsto x
-  simpa using h
+  have h := ((hasDerivAt_pow 2 x).const_mul c).add_const d
+  convert h using 1
+  ring
 
 /-- Center value: `T(0) = Ts + qvol * R^2 / (4k)`. -/
 lemma cylinderTemperature_center {Ts R k qvol : ℝ} :
