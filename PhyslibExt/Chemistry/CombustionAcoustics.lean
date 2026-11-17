@@ -353,6 +353,25 @@ lemma arrhenius_solution_trapped_on_interval {G H B Ta C : ℝ} (hG : 0 < G)
     linarith
   exact Set.mem_Icc.mpr ⟨hlb, hub⟩
 
+
+/-- Forward trapping for a forward solution defined for all
+`t ≥ 0`: if `T` has within-derivative
+`arrheniusRate G H B Ta (T t) / C` on `Set.Ici 0` at every
+`t ≥ 0`, with `C > 0`, then `T t` lies in `[lo, hi]` where
+`lo = min (T 0) Ta` and `hi = max (T 0) (Ta + G / H)`, for every
+`t ≥ 0`. This is the finite-horizon trapping lemma applied on
+`[0, t]`; it presupposes a solution existing for all forward
+time and is not a global-existence claim. -/
+lemma arrhenius_solution_trapped {G H B Ta C : ℝ} (hG : 0 < G)
+    (hH : 0 < H) (hB : 0 < B) (hTa : 0 < Ta) (hC : 0 < C)
+    {T : ℝ → ℝ}
+    (hT : ∀ s : ℝ, 0 ≤ s →
+      HasDerivWithinAt T (arrheniusRate G H B Ta (T s) / C) (Set.Ici 0) s)
+    {t : ℝ} (ht : 0 ≤ t) :
+    T t ∈ Set.Icc (min (T 0) Ta) (max (T 0) (Ta + G / H)) := by
+  exact arrhenius_solution_trapped_on_interval hG hH hB hTa hC ht
+    (fun s hs => hT s hs.1)
+
 /-- Acoustic modal energy for one standing mode with pressure amplitude
 `A` and velocity amplitude `B` in a duct of length `L`, ratio of
 specific heats `γ`, mean pressure `pbar`, and density `ρ`:
