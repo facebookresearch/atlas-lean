@@ -79,7 +79,7 @@ theorem comp_mem_coNP {L : DecisionProblem} {f : List Bool → List Bool}
 
 end MetaMathlibExt.ComplexityTheory
 
-namespace Cslib.CookLevin
+namespace Cslib.Complexity
 
 /-- The same reduction function reduces the complements. -/
 theorem PolyManyOneRed.compl
@@ -88,4 +88,4 @@ theorem PolyManyOneRed.compl
   obtain ⟨f, hf, he⟩ := h
   exact ⟨f, hf, fun x => congrArg Bool.not (he x)⟩
 
-end Cslib.CookLevin
+end Cslib.Complexity
