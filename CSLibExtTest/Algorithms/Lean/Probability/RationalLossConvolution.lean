@@ -176,6 +176,11 @@ theorem conv_mass_3 : convWeights w1 w2 3 = 1 / 8 := by
   simp
   norm_num
 
+theorem conv_mass_2_eq_addMonoidAlgebra_coeff :
+    convWeights w1 w2 2
+      = (AddMonoidAlgebra.ofCoeff w1 * AddMonoidAlgebra.ofCoeff w2).coeff 2 := by
+  rw [convWeights_eq_addMonoidAlgebra_mul]
+
 theorem decode_mass_0 :
     decode (convLaw L1 L2) 0 = ENNReal.ofReal (((1 / 8 : ℚ)) : ℝ) := by
   rw [decode_apply, convLaw_weights, L1_weights, L2_weights,

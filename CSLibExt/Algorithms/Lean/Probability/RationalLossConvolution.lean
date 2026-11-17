@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 public import Mathlib.Probability.ProbabilityMassFunction.Monad
+public import Mathlib.Algebra.MonoidAlgebra.Defs
 
 @[expose] public section
 
@@ -103,6 +104,17 @@ theorem convWeights_normalized (L1 L2 : RationalLossLaw) :
     rw [← Finsupp.mul_sum, L2.normalized, mul_one]
   simp only [h2]
   exact L1.normalized
+
+theorem convWeights_eq_addMonoidAlgebra_mul (w1 w2 : ℕ →₀ ℚ) :
+    convWeights w1 w2
+      = (AddMonoidAlgebra.ofCoeff w1 * AddMonoidAlgebra.ofCoeff w2).coeff := by
+  ext n
+  rw [convWeights_apply, AddMonoidAlgebra.coeff_mul]
+  simp only [finsupp_sum_bridge]
+  refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
+  by_cases h : a + b = n
+  · rw [ite_eq_left h.symm, ite_eq_left h]
+  · rw [ite_eq_right (Ne.symm h), ite_eq_right h]
 
 /-- Convolution of two normalized rational loss laws, as a normalized
 rational loss law. -/
