@@ -97,7 +97,8 @@ theorem lif_no_hit {ur theta tau uinf : ℝ}
 /-- **Asymptotic approach at threshold equilibrium.** At
 `uinf = theta` with `tau > 0`, the trajectory
 `theta - (theta - ur) * exp (-t / tau)` tends to `theta` as
-`t → ∞`, without attaining it at any finite time (`lif_no_hit`). -/
+`t → ∞`; when additionally `ur < theta` it does not attain `theta`
+at any finite time (`lif_no_hit`). -/
 theorem lif_tendsto {ur theta tau : ℝ} (htau : 0 < tau) :
     Filter.Tendsto (fun t => theta - (theta - ur) * Real.exp (-t / tau))
       Filter.atTop (𝓝 theta) := by
