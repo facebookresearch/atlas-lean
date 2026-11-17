@@ -10,6 +10,7 @@ module
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Basic.Real.Basic
+public import MathlibExt.LinearAlgebra.Matrix.QuadraticFormCongruence
 import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Tactic.FieldSimp
@@ -27,8 +28,10 @@ For a constant symmetric matrix `C`, the derivative of
 
 ## ii. Key results
 
-- `QuadraticDerivative.hasDerivAt_quadForm`: the derivative.
-- `QuadraticDerivative.quadForm_deriv_eq`: `deriv` form.
+- `QuadraticDerivative.hasDerivAt_halfQuadForm`: the derivative.
+- `QuadraticDerivative.halfQuadForm_deriv_eq`: `deriv` form.
+- `QuadraticDerivative.halfQuadForm_eq_quadForm`: bridge to the
+  existing `QuadraticFormCongruence.quadForm`.
 
 ## iii. Table of contents
 
@@ -45,61 +48,90 @@ For a constant symmetric matrix `C`, the derivative of
 
 namespace QuadraticDerivative
 
-open Finset
+open Finset Matrix
 
-/-- Half the quadratic form of a matrix `C` at `x`. -/
-noncomputable def quadForm {n : ℕ} (C : Fin n → Fin n → ℝ) (x : Fin n → ℝ) : ℝ :=
-  (∑ i, ∑ j, x i * C i j * x j) / 2
+/-- Half the quadratic form of a matrix `C` at `x`, in dot-product
+form: `(x ⬝ᵥ (C *ᵥ x)) / 2`. -/
+noncomputable def halfQuadForm {ι : Type*} [Fintype ι] (C : Matrix ι ι ℝ)
+    (x : ι → ℝ) : ℝ :=
+  (x ⬝ᵥ (C *ᵥ x)) / 2
+
+/-- The half-quadratic form is the explicit double sum over entries. -/
+theorem halfQuadForm_eq_sum {ι : Type*} [Fintype ι] (C : Matrix ι ι ℝ)
+    (x : ι → ℝ) :
+    halfQuadForm C x = (∑ i, ∑ j, x i * C i j * x j) / 2 := by
+  unfold halfQuadForm dotProduct
+  congr 1
+  apply Finset.sum_congr rfl
+  intro i _
+  rw [Matrix.mulVec_apply_eq_sum, Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro j _
+  ring
 
 /-- Derivative of the half-quadratic form along componentwise
-differentiable `x t`, for symmetric `C`: the derivative is
-`∑ i j, dx i * C i j * x j` (one copy of the two symmetric halves). -/
-theorem hasDerivAt_quadForm {n : ℕ} (C : Fin n → Fin n → ℝ)
-    (hC : ∀ i j : Fin n, C i j = C j i)
-    (x : ℝ → Fin n → ℝ) (dx : Fin n → ℝ) (t : ℝ)
-    (hx : ∀ i : Fin n, HasDerivAt (fun s => x s i) (dx i) t) :
-    HasDerivAt (fun s => quadForm C (x s))
+differentiable `x t`, for a symmetric matrix `C`
+(`Matrix.IsSymm C`): the derivative is `∑ i j, dx i * C i j * x j`. -/
+theorem hasDerivAt_halfQuadForm {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (C : Matrix ι ι ℝ) (hC : C.IsSymm)
+    (x : ℝ → ι → ℝ) (dx : ι → ℝ) (t : ℝ)
+    (hx : ∀ i : ι, HasDerivAt (fun s => x s i) (dx i) t) :
+    HasDerivAt (fun s => halfQuadForm C (x s))
       (∑ i, ∑ j, dx i * C i j * x t j) t := by
-  have hterm : ∀ i j : Fin n, HasDerivAt (fun s => x s i * C i j * x s j)
+  have hterm : ∀ i j : ι, HasDerivAt (fun s => x s i * C i j * x s j)
       (dx i * C i j * x t j + x t i * C i j * dx j) t := by
     intro i j
     exact ((hx i).mul_const (C i j)).mul (hx j)
-  have hsum : HasDerivAt (fun s => ∑ i, ∑ j, x s i * C i j * x s j)
-      (∑ i, ∑ j, (dx i * C i j * x t j + x t i * C i j * dx j)) t := by
-    apply HasDerivAt.fun_sum
-    intro i _
-    apply HasDerivAt.fun_sum
-    intro j _
-    exact hterm i j
-  have hval : (∑ i, ∑ j, (dx i * C i j * x t j + x t i * C i j * dx j)) / 2
-      = ∑ i, ∑ j, dx i * C i j * x t j := by
-    have hsplit : (∑ i, ∑ j, (dx i * C i j * x t j + x t i * C i j * dx j))
-        = (∑ i, ∑ j, dx i * C i j * x t j) + (∑ i, ∑ j, x t i * C i j * dx j) := by
-      simp only [Finset.sum_add_distrib]
-    have hsym : (∑ i, ∑ j, x t i * C i j * dx j)
-        = (∑ i, ∑ j, dx i * C i j * x t j) := by
-      rw [Finset.sum_comm]
-      apply Finset.sum_congr rfl
-      intro a _
-      apply Finset.sum_congr rfl
-      intro b _
-      show x t b * C b a * dx a = dx a * C a b * x t b
-      rw [hC b a]
-      ring
-    rw [hsplit, hsym]
+  have hinner : ∀ i : ι, HasDerivAt (fun s => ∑ j, x s i * C i j * x s j)
+      (∑ j, (dx i * C i j * x t j + x t i * C i j * dx j)) t := by
+    intro i
+    exact HasDerivAt.fun_sum (fun j _ => hterm i j)
+  have houter : HasDerivAt (fun s => ∑ i, ∑ j, x s i * C i j * x s j)
+      (∑ i, ∑ j, (dx i * C i j * x t j + x t i * C i j * dx j)) t :=
+    HasDerivAt.fun_sum (fun i _ => hinner i)
+  have hdiv : HasDerivAt (fun s => (∑ i, ∑ j, x s i * C i j * x s j) / 2)
+      ((∑ i, ∑ j, (dx i * C i j * x t j + x t i * C i j * dx j)) / 2) t :=
+    houter.div_const 2
+  have hfun : (fun s => halfQuadForm C (x s))
+      = (fun s => (∑ i, ∑ j, x s i * C i j * x s j) / 2) := by
+    funext s
+    exact halfQuadForm_eq_sum C (x s)
+  have hsplit : (∑ i, ∑ j, (dx i * C i j * x t j + x t i * C i j * dx j))
+      = (∑ i, ∑ j, dx i * C i j * x t j)
+        + (∑ i, ∑ j, x t i * C i j * dx j) := by
+    simp only [Finset.sum_add_distrib]
+  have hsymm : (∑ i, ∑ j, x t i * C i j * dx j)
+      = (∑ i, ∑ j, dx i * C i j * x t j) := by
+    rw [Finset.sum_comm]
+    apply Finset.sum_congr rfl
+    intro a _
+    apply Finset.sum_congr rfl
+    intro b _
+    have h : C b a = C a b := hC.apply a b
+    rw [h]
     ring
-  have hdiv := hsum.div_const 2
-  rw [hval] at hdiv
-  simpa only [quadForm] using hdiv
-
-/-- The derivative formula at a concrete symmetric witness is the
-plain quadratic derivative (non-vacuity anchor, same statement). -/
-theorem quadForm_deriv_eq {n : ℕ} (C : Fin n → Fin n → ℝ)
-    (hC : ∀ i j : Fin n, C i j = C j i)
-    (x : ℝ → Fin n → ℝ) (dx : Fin n → ℝ) (t : ℝ)
-    (hx : ∀ i : Fin n, HasDerivAt (fun s => x s i) (dx i) t) :
-    deriv (fun s => quadForm C (x s)) t
+  have hderiv : ((∑ i, ∑ j, (dx i * C i j * x t j + x t i * C i j * dx j)) / 2)
       = ∑ i, ∑ j, dx i * C i j * x t j := by
-  exact (hasDerivAt_quadForm C hC x dx t hx).deriv
+    rw [hsplit, hsymm]
+    ring
+  rw [hfun, ← hderiv]
+  exact hdiv
+
+/-- `deriv` form of the derivative formula. -/
+theorem halfQuadForm_deriv_eq {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (C : Matrix ι ι ℝ) (hC : C.IsSymm)
+    (x : ℝ → ι → ℝ) (dx : ι → ℝ) (t : ℝ)
+    (hx : ∀ i : ι, HasDerivAt (fun s => x s i) (dx i) t) :
+    deriv (fun s => halfQuadForm C (x s)) t
+      = ∑ i, ∑ j, dx i * C i j * x t j := by
+  exact (hasDerivAt_halfQuadForm C hC x dx t hx).deriv
+
+/-- Bridge: the half-quadratic form is half of the existing
+`QuadraticFormCongruence.quadForm` (definitional). -/
+lemma halfQuadForm_eq_quadForm {ι : Type*} [Fintype ι] (C : Matrix ι ι ℝ)
+    (x : ι → ℝ) :
+    halfQuadForm C x
+      = MathlibExt.LinearAlgebra.Matrix.QuadraticFormCongruence.quadForm C x / 2 :=
+  rfl
 
 end QuadraticDerivative
