@@ -34,7 +34,7 @@ set_option linter.unusedVariables false in
 is the amount just after the `n`-th dose decayed freely over
 `t - n * tau`. The dose at `t = n * tau` itself is included (the
 `i = n` term is `D * exp 0 = D` at the event instant). -/
-lemma periodic_amount_decay {D k tau t : ℝ} (htau : 0 < tau) (n : ℕ)
+lemma periodic_amount_decay {D k tau t : ℝ} (htau : 0 < tau) (ht : 0 ≤ t) (n : ℕ)
     (hfloor : ⌊t / tau⌋₊ = n) :
     (∑ i ∈ Finset.range (⌊t / tau⌋₊ + 1),
       D * Real.exp (-k * (t - i * tau))) =
