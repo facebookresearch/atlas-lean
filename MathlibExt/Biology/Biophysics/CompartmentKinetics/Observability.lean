@@ -17,7 +17,7 @@ public import Mathlib.Basic.Real.Basic
 # Two-compartment observability
 
 For central output `H = (1/V1, 0)`, the two-jet observability determinant is `k21 /
-V1^2`; the initial jets identify the initial state exactly when `k21 ≠ 0`.
+V1^2`; the initial jets identify the initial state exactly when `k21 ≠ 0` (with `V1 ≠ 0`; at `V1 = 0` the totalized output vanishes).
 -/
 
 @[expose] public section
