@@ -16,11 +16,13 @@ public import Mathlib.Data.Rat.Cast.Order
 /-!
 # PWM primitive bound
 
-For a periodic pulse-width-modulated signal with values in
-`[0, 1]`, the primitive over any interval is bounded by the
-duty-scaled envelope: over whole cycles it is exact, and the
-constant-duty, ramp, and rational-indicator cases are computed
-explicitly. A duty outside `[0, 1]` breaks the bound.
+For a pulse-width-modulated signal with carrier period `ε`
+and values in `[0, 1]`, the primitive over any interval is
+bounded by the duty-scaled envelope: over whole cycles it is
+exact, and the constant-duty, ramp, and rational-indicator
+cases are computed explicitly. A duty outside `[0, 1]` breaks
+the bound. (For varying duty `d` the signal is not itself
+periodic; `ε` is the switching-cycle length.)
 -/
 
 @[expose] public section
