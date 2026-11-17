@@ -404,4 +404,45 @@ theorem bolus_absolute_injective {D t V₁ V₂ CL₁ CL₂ : ℝ}
     rwa [div_mul_cancel₀ CL₁ hV₁', div_mul_cancel₀ CL₂ hV₁'] at hmul
   exact ⟨rfl, hCL⟩
 
+set_option linter.unusedVariables false in
+/-- **Normalized washout identifies the elimination rate.** For a
+bolus concentration `C(t) = (D / V) * exp (-(CL / V) * t)` with
+`D > 0`, `V > 0`, `CL ≥ 0`, the normalized washout `C(t) / C(0)` at
+any `t > 0` recovers exactly the rate `CL / V`:
+`-log (C(t) / C(0)) / t = CL / V`. The dose need not be known. -/
+theorem normalized_washout_rate {D V CL t : ℝ}
+    (hD : 0 < D) (hV : 0 < V) (hCL : 0 ≤ CL) (ht : 0 < t) :
+    -Real.log (((D / V) * Real.exp (-(CL / V) * t)) / (D / V)) / t = CL / V := by
+  have hD' : D ≠ 0 := ne_of_gt hD
+  have hV' : V ≠ 0 := ne_of_gt hV
+  have hDV : D / V ≠ 0 := div_ne_zero hD' hV'
+  have ht' : t ≠ 0 := ne_of_gt ht
+  have hcancel : ((D / V) * Real.exp (-(CL / V) * t)) / (D / V)
+      = Real.exp (-(CL / V) * t) := by
+    field_simp
+  rw [hcancel, Real.log_exp]
+  field_simp
+
+set_option linter.unusedVariables false in
+/-- **Scaling obstruction for separate parameters.** Scaling `V` and
+`CL` by the same `s > 0`, `s ≠ 1`, leaves the normalized washout
+`exp (-(CL / V) * t)` unchanged at every time, while the volume
+itself changes. Hence normalized observations identify the ratio
+`CL / V` but not `V` (and so not `CL`) separately. -/
+theorem normalized_scaling_same_washout {V CL s : ℝ}
+    (hV : 0 < V) (hCL : 0 ≤ CL) (hs : 0 < s) (hs1 : s ≠ 1) :
+    (∀ t : ℝ, Real.exp (-((s * CL) / (s * V)) * t) = Real.exp (-(CL / V) * t)) ∧
+    s * V ≠ V := by
+  have hV' : V ≠ 0 := ne_of_gt hV
+  have hs' : s ≠ 0 := ne_of_gt hs
+  have hratio : (s * CL) / (s * V) = CL / V := by
+    field_simp
+  constructor
+  · intro t
+    rw [hratio]
+  · intro hcon
+    apply hs1
+    have h1 : s * V = 1 * V := by rw [one_mul]; exact hcon
+    exact mul_right_cancel₀ hV' h1
+
 end MathlibExt.Biology.Biophysics.CompartmentKinetics
