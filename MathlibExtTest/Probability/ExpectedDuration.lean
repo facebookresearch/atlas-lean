@@ -33,3 +33,22 @@ example : (∫ ω, ⨆ p : Fin 2, pathDuration (fun j : Fin 2 => fun _ : ℝ => 
     (fun j : Fin 2 => fun _ : ℝ => (j : ℝ) + 1)
     (fun p : Fin 2 => (([p] : List (Fin 2)) : Multiset (Fin 2)))
     (fun j => integrable_const _)
+
+/-- The bound is attained: both sides evaluate to `2`. -/
+example : (∫ ω, ⨆ p : Fin 2, pathDuration (fun j : Fin 2 => fun _ : ℝ => (j : ℝ) + 1)
+      (fun p : Fin 2 => (([p] : List (Fin 2)) : Multiset (Fin 2))) p ω
+      ∂(Measure.dirac (0 : ℝ))) = 2
+    ∧ (⨆ p : Fin 2, ((([p] : List (Fin 2)) : Multiset (Fin 2)).map
+      fun (j : Fin 2) => ∫ _ : ℝ, ((j : ℝ) + 1) ∂(Measure.dirac (0 : ℝ))).sum) = 2 := by
+  have hsup : (⨆ p : Fin 2, ((p : ℝ) + 1)) = 2 := by
+    apply le_antisymm
+    · apply ciSup_le
+      intro p
+      fin_cases p <;> norm_num
+    · have h := le_ciSup
+        (Set.finite_range (fun p : Fin 2 => ((p : ℝ) + 1))).bddAbove (1 : Fin 2)
+      convert h using 1
+      norm_num
+  constructor
+  · simp [pathDuration, integral_dirac, hsup]
+  · simp [integral_dirac, hsup]
