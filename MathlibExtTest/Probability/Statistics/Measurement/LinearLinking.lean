@@ -83,7 +83,6 @@ theorem variance_linked_eq {Ω : Type*} [MeasurableSpace Ω]
     funext ω; ring
   rw [heq, ProbabilityTheory.variance_const_mul_add_const hX, hvar]
   field_simp
-  ring
 
 /-- Nonvacuity, positive scale, forward value: with `μX = 10`, `σX = 2`,
 `μY = 50`, `σY = 15`, the score `x = 12` (one input SD above the input
