@@ -35,8 +35,13 @@ inequality excludes the pole.
 
 ## iv. References
 
-- Standard car-following stability criteria (frequency-domain
-  string stability).
+- R. E. Chandler, R. Herman and E. W. Montroll, *Traffic
+  dynamics: studies in car following*, Operations Research 6(2),
+  1958: the delayed car-following law whose linearization gives
+  `H(s) = lam e^{-sT} / (s + lam e^{-sT})`.
+- M. Treiber and A. Kesting, *Traffic Flow Dynamics*, Springer,
+  2013, string-stability chapter: the frequency criterion
+  `|H(iw)| < 1` for all `w > 0`.
 
 ## A. Gain reduction
 -/
