@@ -44,8 +44,9 @@ semantics).
 
 namespace CSLibExt.Coding.UnreflectedSerialCRC
 
-/-- The field structure on `ZMod 2` used by `Cslib.CodingTheory.CRC.encode`. -/
-instance : Fact (Nat.Prime 2) := ⟨by decide⟩
+/-- The field structure on `ZMod 2` used by `Cslib.CodingTheory.CRC.encode`,
+registered only while this module is elaborated. -/
+local instance : Fact (Nat.Prime 2) := ⟨by decide⟩
 
 
 /-- A payload bit as a polynomial over `ZMod 2`. -/
