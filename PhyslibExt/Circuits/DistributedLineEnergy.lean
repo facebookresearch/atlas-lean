@@ -89,8 +89,7 @@ noncomputable def dissipationDensity (R G : ℝ) (v i : ℝ → ℝ → ℝ) (x 
 noncomputable def lineEnergy (L C ℓ : ℝ) (v i : ℝ → ℝ → ℝ) (t : ℝ) : ℝ :=
   ∫ x in (0 : ℝ)..ℓ, energyDensity L C v i x t
 
--- Private helpers for the proofs below. All pinned statements, definitions and
--- docstrings are byte-identical to the pin; only each `sorry` is replaced.
+-- Private helpers for the proofs below.
 
 /-- Time slices of a `C¹` field on an open set are differentiable. -/
 private theorem differentiableAt_timeSlice (U : Set (ℝ × ℝ)) (f : ℝ → ℝ → ℝ)

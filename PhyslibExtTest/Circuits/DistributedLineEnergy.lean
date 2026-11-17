@@ -18,15 +18,23 @@ open PhyslibExt.Circuits.DistributedLineEnergy
 namespace PhyslibExtTest.Circuits.DistributedLineEnergy
 
 /-- A lossless traveling wave carries power flux at the wave
-speed `1/√(LC)` times the energy density: here `L = C = 1` at the
-origin. -/
+speed `1/√(LC)` times the energy density, evaluated at a point
+where the wave is nonzero: `L = C = 1`, `f = id`, `x = 2`,
+`t = 0`. -/
 example : powerFlux (travelingWaveVoltage 1 1 (fun x => x))
-      (travelingWaveCurrent 1 1 (fun x => x)) 0 0
+      (travelingWaveCurrent 1 1 (fun x => x)) 2 0
     = 1 / Real.sqrt (1 * 1) *
       energyDensity 1 1 (travelingWaveVoltage 1 1 (fun x => x))
-        (travelingWaveCurrent 1 1 (fun x => x)) 0 0 :=
+        (travelingWaveCurrent 1 1 (fun x => x)) 2 0 :=
   travelingWave_powerFlux_eq_speed_mul_energyDensity 1 1 (fun x => x)
-    (by norm_num) (by norm_num) 0 0
+    (by norm_num) (by norm_num) 2 0
+
+/-- For the same wave the electric and magnetic energy densities
+agree at the nonzero point `x = 2`, `t = 0`. -/
+example : (1 : ℝ) * travelingWaveVoltage 1 1 (fun x => x) 2 0 ^ 2 / 2
+    = 1 * travelingWaveCurrent 1 1 (fun x => x) 2 0 ^ 2 / 2 :=
+  travelingWave_electric_eq_magnetic 1 1 (fun x => x) (by norm_num)
+    (by norm_num) 2 0
 
 /-- The shunt discharge loses stored energy strictly: the energy
 at `t = 1` is below the energy at `t = 0`. -/
