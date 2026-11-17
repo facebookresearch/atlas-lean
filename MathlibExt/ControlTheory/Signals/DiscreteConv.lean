@@ -155,8 +155,10 @@ private theorem causalConv_triangular_sum (R : Type*) [AddCommMonoid R]
     rw [hS]
     ac_rfl
 
-/-- Causal convolution is associative over a semiring. -/
-theorem causalConv_assoc {R : Type*} [Semiring R] (f g h : ℕ → R) :
+/-- Causal convolution is associative over any (not necessarily
+unital) semiring: the proof uses only distributivity, additive
+commutativity, and associativity of the value multiplication. -/
+theorem causalConv_assoc {R : Type*} [NonUnitalSemiring R] (f g h : ℕ → R) :
     causalConv (causalConv f g) h = causalConv f (causalConv g h) := by
   ext n
   simp only [causalConv_apply]

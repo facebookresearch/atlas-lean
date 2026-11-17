@@ -49,6 +49,11 @@ example (f : ℕ → ℝ) : causalConv (Pi.single 0 1) f 2 = f 2 := by
 example (f : ℕ → ℝ) : causalConv f (Pi.single 0 1) 2 = f 2 := by
   rw [causalConv_single_zero]
 
+-- Associativity applies at the full non-unital generality.
+example {R : Type*} [NonUnitalSemiring R] (f g h : ℕ → R) :
+    causalConv (causalConv f g) h = causalConv f (causalConv g h) :=
+  causalConv_assoc f g h
+
 #print axioms causalConv_apply
 #print axioms causalConv_eq_addRingConvolution
 #print axioms zero_causalConv
