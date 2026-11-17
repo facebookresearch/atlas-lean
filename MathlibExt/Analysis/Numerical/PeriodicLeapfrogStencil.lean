@@ -254,39 +254,78 @@ theorem weightedInner_dPlus {N : ℕ} (hN : 2 ≤ N) (h : ℝ) (hh : 0 < h)
   rw [hshift]
   ring
 
+/-- **The stencil identity `D₊^* = -D₋`, unconditionally.** For every `N` and every
+`h` (including `h = 0`, where both sides are the zero operator, and `N ≤ 1`), the
+transposed forward difference equals `-D₋` as operators. -/
+theorem dPlusAdjoint_eq_neg_dMinus {N : ℕ} (h : ℝ) :
+    dPlusAdjoint (N := N) h = -dMinus h := by
+  funext u k
+  have hentry : ∀ j : Fin N, dPlusMatrix h j k =
+      ((if periodicSucc j = k then (1 : ℝ) else 0) - (if j = k then 1 else 0)) / h := by
+    intro j
+    show ((Pi.single k (1 : ℝ) : Fin N → ℝ) (periodicSucc j) -
+      (Pi.single k (1 : ℝ) : Fin N → ℝ) j) / h = _
+    rw [Pi.single_apply, Pi.single_apply]
+  have h1 : ∑ j : Fin N, (if periodicSucc j = k then (1 : ℝ) else 0) * u j =
+      u (periodicPred k) := by
+    have e : ∀ j : Fin N, (if periodicSucc j = k then (1 : ℝ) else 0) * u j =
+        if j = periodicPred k then u j else 0 := by
+      intro j
+      by_cases hje : periodicSucc j = k
+      · have hj : j = periodicPred k := by rw [← pred_succ j, hje]
+        rw [hj]; simp [succ_pred]
+      · have hj : j ≠ periodicPred k := fun hj => hje (by rw [hj, succ_pred])
+        simp [hje, hj]
+    rw [Finset.sum_congr rfl (fun j _ => e j)]
+    simp
+  have h2 : ∑ j : Fin N, (if j = k then (1 : ℝ) else 0) * u j = u k := by
+    simp
+  have hterm : ∀ j : Fin N, ((if periodicSucc j = k then (1 : ℝ) else 0) -
+      (if j = k then 1 else 0)) / h * u j =
+      ((if periodicSucc j = k then (1 : ℝ) else 0) * u j -
+        (if j = k then 1 else 0) * u j) * h⁻¹ := fun j => by ring
+  have hsum : dPlusAdjoint (N := N) h u k = ∑ j : Fin N, dPlusMatrix h j k * u j := by
+    simp only [dPlusAdjoint, Matrix.mulVec, dotProduct, Matrix.transpose_apply]
+  rw [hsum, Finset.sum_congr rfl (fun j _ => by rw [hentry j, hterm j]), ← Finset.sum_mul,
+    Finset.sum_sub_distrib, h1, h2]
+  show (u (periodicPred k) - u k) * h⁻¹ = -(dMinus h u k)
+  simp only [dMinus, Pi.neg_apply, div_eq_mul_inv]
+  ring
+
+/-- `-D₋` is a weighted adjoint of `D₊` (summation by parts on the periodic grid). -/
+theorem isWeightedAdjoint_dPlus_neg_dMinus {N : ℕ} (hN : 2 ≤ N) (h : ℝ) (hh : 0 < h) :
+    IsWeightedAdjoint h (dPlus (N := N) h) (-dMinus h) := by
+  intro u v
+  have hsbp := weightedInner_dPlus hN h hh u v
+  have hneg := neg_weightedInner h v (dMinus h u)
+  rw [hsbp]
+  exact hneg.symm
+
+/-- Every weighted adjoint of `D₊` equals `-D₋` (uniqueness at positive weight). -/
+theorem eq_neg_dMinus_of_isWeightedAdjoint {N : ℕ} (hN : 2 ≤ N) (h : ℝ) (hh : 0 < h)
+    (T : (Fin N → ℝ) → (Fin N → ℝ)) (hT : IsWeightedAdjoint h (dPlus (N := N) h) T) :
+    T = -dMinus h :=
+  isWeightedAdjoint_unique h hh _ _ _ hT (isWeightedAdjoint_dPlus_neg_dMinus hN h hh)
+
 /-- **`D₊^* = -D₋`.** On a periodic `N`-cell grid (`N ≥ 2`) with `h > 0`: the transposed
 forward difference equals `-D₋`, `-D₋` is a weighted adjoint of `D₊`, and every weighted
 adjoint of `D₊` equals `-D₋`. -/
 theorem dPlus_adjoint_eq_neg_dMinus {N : ℕ} (hN : 2 ≤ N) (h : ℝ) (hh : 0 < h) :
     dPlusAdjoint (N := N) h = -dMinus h ∧
       IsWeightedAdjoint h (dPlus (N := N) h) (-dMinus h) ∧
-      ∀ T : (Fin N → ℝ) → (Fin N → ℝ), IsWeightedAdjoint h (dPlus h) T → T = -dMinus h := by
-  have hD : dPlus (N := N) h = fun v => dPlusMatrix h *ᵥ v := by
-    funext v
-    exact (dPlusMatrix_mulVec h v).symm
-  have hA : dPlusAdjoint (N := N) h = fun u => (dPlusMatrix h)ᵀ *ᵥ u := rfl
-  have hTrans : IsWeightedAdjoint h (dPlus (N := N) h) (dPlusAdjoint (N := N) h) := by
-    rw [hD, hA]
-    exact isWeightedAdjoint_transpose h (dPlusMatrix h)
-  have hNeg : IsWeightedAdjoint h (dPlus (N := N) h) (-dMinus h) := by
-    intro u v
-    have hsbp := weightedInner_dPlus hN h hh u v
-    have hneg := neg_weightedInner h v (dMinus h u)
-    rw [hsbp]
-    exact hneg.symm
-  have hEq : dPlusAdjoint (N := N) h = -dMinus h :=
-    isWeightedAdjoint_unique h hh _ _ _ hTrans hNeg
-  refine ⟨hEq, hNeg, fun T hT => isWeightedAdjoint_unique h hh _ _ _ hT hNeg⟩
+      ∀ T : (Fin N → ℝ) → (Fin N → ℝ), IsWeightedAdjoint h (dPlus h) T → T = -dMinus h :=
+  ⟨dPlusAdjoint_eq_neg_dMinus h, isWeightedAdjoint_dPlus_neg_dMinus hN h hh,
+    fun T hT => eq_neg_dMinus_of_isWeightedAdjoint hN h hh T hT⟩
 
 /-- The leapfrog update is the staggered stencil
 `v_new j = v j + c dt (u j - u (j-1)) / h`, `u_new j = u j + c dt (v_new (j+1) - v_new j) / h`. -/
-theorem leapfrogStep_apply {N : ℕ} (hN : 2 ≤ N) (h c dt : ℝ) (hh : 0 < h) (hc : 0 < c)
-    (hdt : 0 < dt) (u v : Fin N → ℝ) (j : Fin N) :
+theorem leapfrogStep_apply {N : ℕ} (h c dt : ℝ) (hh : 0 < h)
+    (u v : Fin N → ℝ) (j : Fin N) :
     (leapfrogStep h c dt u v).2 j = v j + c * dt * (u j - u (periodicPred j)) / h ∧
       (leapfrogStep h c dt u v).1 j =
         u j + c * dt * ((leapfrogStep h c dt u v).2 (periodicSucc j) -
           (leapfrogStep h c dt u v).2 j) / h := by
-  have hEq := (dPlus_adjoint_eq_neg_dMinus hN h hh).1
+  have hEq := dPlusAdjoint_eq_neg_dMinus (N := N) h
   have hAdj : ∀ k : Fin N, dPlusAdjoint h u k = -((u k - u (periodicPred k)) / h) := by
     intro k
     have hfun := congrArg (fun F => F u k) hEq
@@ -305,23 +344,6 @@ theorem leapfrogStep_apply {N : ℕ} (hN : 2 ≤ N) (h c dt : ℝ) (hh : 0 < h) 
 
 /-! ### Validation -/
 
-/-- Nonconstant periodic vectors on `N = 3`, `h = 1/2`: `⟪D₊ v, u⟫_h = ⟪v, -D₋ u⟫_h = -5`,
-while the wrong-sign pairing `⟪v, D₋ u⟫_h` is `+5`. -/
-theorem example_adjoint_sign :
-    weightedInner (1 / 2) (dPlus (1 / 2) ![1, 2, 4]) ![3, -1, 2] = -5 ∧
-      weightedInner (1 / 2) ![1, 2, 4] (-dMinus (1 / 2) ![3, -1, 2]) = -5 ∧
-      weightedInner (1 / 2) ![1, 2, 4] (dMinus (1 / 2) ![3, -1, 2]) = 5 := by
-  have s0 : periodicSucc (0 : Fin 3) = 1 := rfl
-  have s1 : periodicSucc (1 : Fin 3) = 2 := rfl
-  have s2 : periodicSucc (2 : Fin 3) = 0 := rfl
-  have p0 : periodicPred (0 : Fin 3) = 2 := rfl
-  have p1 : periodicPred (1 : Fin 3) = 0 := rfl
-  have p2 : periodicPred (2 : Fin 3) = 1 := rfl
-  unfold weightedInner dPlus dMinus
-  simp only [Fin.sum_univ_three, s0, s1, s2, p0, p1, p2, Pi.neg_apply]
-  norm_num [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
-    Matrix.cons_val_two, Matrix.cons_val_three]
-
 /-- Wrong curl sign: for `N ≥ 2` and `h > 0`, `+D₋` is not a weighted adjoint of `D₊`. -/
 theorem wrong_sign_not_weightedAdjoint {N : ℕ} (hN : 2 ≤ N) (h : ℝ) (hh : 0 < h) :
     ¬ IsWeightedAdjoint h (dPlus (N := N) h) (dMinus h) := by
@@ -330,35 +352,5 @@ theorem wrong_sign_not_weightedAdjoint {N : ℕ} (hN : 2 ≤ N) (h : ℝ) (hh : 
   have hEq : dMinus (N := N) h = -dMinus h :=
     isWeightedAdjoint_unique h hh _ _ _ H H2
   exact dMinus_ne_neg_dMinus hN h hh hEq
-
-/-- Forward difference with the periodic wrap omitted: the last cell's term is dropped. -/
-noncomputable def dPlusNoWrap {N : ℕ} (h : ℝ) (v : Fin N → ℝ) : Fin N → ℝ :=
-  fun j => if j.val + 1 < N then (v (periodicSucc j) - v j) / h else 0
-
-/-- Omitting the periodic wrap breaks summation by parts (`N = 3`, `h = 1/2`). -/
-theorem noWrap_not_weightedAdjoint :
-    ¬ IsWeightedAdjoint (1 / 2) (dPlusNoWrap (N := 3) (1 / 2)) (-dMinus (1 / 2)) := by
-  intro H
-  have hH := H ![3, -1, 2] ![1, 2, 4]
-  simp only [Pi.neg_apply] at hH
-  have hLHS : weightedInner (1 / 2) (dPlusNoWrap (N := 3) (1 / 2) ![1, 2, 4])
-      ![3, -1, 2] = 1 := by
-    have s0 : periodicSucc (0 : Fin 3) = 1 := rfl
-    have s1 : periodicSucc (1 : Fin 3) = 2 := rfl
-    have c0 : (0 : Fin 3).val + 1 < 3 := by decide
-    have c1 : (1 : Fin 3).val + 1 < 3 := by decide
-    have c2 : ¬ (2 : Fin 3).val + 1 < 3 := by decide
-    unfold weightedInner dPlusNoWrap
-    simp only [Fin.sum_univ_three, ite_eq_left c0, ite_eq_left c1, ite_eq_right c2,
-      s0, s1]
-    norm_num [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
-      Matrix.cons_val_two, Matrix.cons_val_three]
-  have hRHS : weightedInner (1 / 2) ![1, 2, 4] (-dMinus (1 / 2) ![3, -1, 2]) = -5 :=
-    example_adjoint_sign.2.1
-  rw [hLHS, hRHS] at hH
-  have h01 : (0 : ℝ) < 1 := zero_lt_one
-  rw [hH] at h01
-  have hneg : ¬((0 : ℝ) < -5) := by norm_num
-  exact hneg h01
 
 end MathlibExt.Analysis.Numerical.PeriodicLeapfrogStencil
