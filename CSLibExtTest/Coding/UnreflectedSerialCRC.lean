@@ -35,4 +35,12 @@ example : registerToPoly 3 (finalRegister crc3Generator 3 [false, true, true])
   have h0 := congrArg (fun p : Polynomial (ZMod 2) => p.coeff 2) h
   simp at h0
 
+/-- The canonical Mealy-machine run reaches the CRC-3 fixture
+register: `MealyMachine.runState` of `serialLFSR` is `finalRegister`. -/
+example : Cslib.Automata.MealyMachine.runState (serialLFSR crc3Generator 3)
+      (initialRegister 3) ([true, false, true] ++ List.replicate 3 false)
+    = finalRegister crc3Generator 3 [true, false, true] := by
+  rw [runState_serialLFSR]
+  rfl
+
 end CSLibExtTest.Coding.UnreflectedSerialCRC

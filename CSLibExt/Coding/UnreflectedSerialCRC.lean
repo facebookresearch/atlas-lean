@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import CSLibExt.Computability.Automata.Transducers.Sequential
 public import Mathlib.Algebra.Polynomial.FieldDivision
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
@@ -72,19 +73,12 @@ noncomputable def stepRegister (g : Polynomial (ZMod 2)) (r : ℕ) (v : Fin r �
 def initialRegister (r : ℕ) : Fin r → ZMod 2 :=
   fun _ => 0
 
-/-- A Mealy-style machine specification, mirroring the canonical transducer
-API shape: a transition function and a start state. -/
-structure MealySpec (State In Out : Type) where
-  /-- Successor state and output on one input letter. -/
-  step : State → In → State × Out
-  /-- The start state. -/
-  start : State
-
 /-- The zero-init unreflected serial LFSR for generator `g` and register
-width `r`, as a Mealy-style machine: state `Fin r → ZMod 2`, input `Bool`,
-output the new register, start the zero register. -/
+width `r`, as a canonical `Cslib.Automata.MealyMachine`: state
+`Fin r → ZMod 2`, input `Bool`, output the new register, start the zero
+register. -/
 noncomputable def serialLFSR (g : Polynomial (ZMod 2)) (r : ℕ) :
-    MealySpec (Fin r → ZMod 2) Bool (Fin r → ZMod 2) where
+    Cslib.Automata.MealyMachine (Fin r → ZMod 2) Bool (Fin r → ZMod 2) where
   step v b := let v' := stepRegister g r v b; (v', v')
   start := initialRegister r
 
@@ -93,6 +87,25 @@ zero initial register. -/
 noncomputable def runRegister (g : Polynomial (ZMod 2)) (r : ℕ) (bits : List Bool) :
     Fin r → ZMod 2 :=
   bits.foldl (fun v b => stepRegister g r v b) (initialRegister r)
+
+/-- Running the canonical Mealy machine from any register reaches the
+same register as the fold: `runRegister` is `MealyMachine.runState` of
+`serialLFSR`. -/
+theorem runState_serialLFSR (g : Polynomial (ZMod 2)) (r : ℕ)
+    (v : Fin r → ZMod 2) (bits : List Bool) :
+    Cslib.Automata.MealyMachine.runState (serialLFSR g r) v bits
+      = bits.foldl (fun w b => stepRegister g r w b) v := by
+  have h : ∀ (w : Fin r → ZMod 2) (xs : List Bool),
+      (Cslib.Automata.MealyMachine.runFrom (serialLFSR g r) w xs).1
+        = xs.foldl (fun u b => stepRegister g r u b) w := by
+    intro w xs
+    induction xs generalizing w with
+    | nil => rfl
+    | cons b xs ih =>
+      simp only [Cslib.Automata.MealyMachine.runFrom, serialLFSR,
+        List.foldl_cons]
+      exact ih _
+  exact h v bits
 
 /-- The final register for a payload: the payload followed by `r` zero
 bits, run from the zero initial register. -/
