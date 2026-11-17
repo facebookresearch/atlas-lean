@@ -23,7 +23,8 @@ message `m`, the FM signal with instantaneous frequency
 discriminator recovers exactly `fc + kf m(t)`. The message is
 therefore recoverable when `kf ≠ 0`; at zero amplitude the
 discriminator outputs `0`, and at `kf = 0` every message gives the
-same signal.
+same signal. Negative nonzero amplitudes are allowed and work
+identically.
 
 ## ii. Key results
 
@@ -67,10 +68,13 @@ noncomputable def fmSignal (A fc kf : ℝ) (m : ℝ → ℝ) (t : ℝ) : ℂ :=
 
 /-- Ideal frequency discriminator applied to a complex signal `z`:
 `Im(conj(z t) · z'(t)) / (2π ‖z t‖²)`. It uses the derivative of `z`, never a phase
-unwrap. The quotient is totalized: when `z t = 0` the denominator
-vanishes and the value is `0` by the real-division convention; no
-frequency is measured there, and every recovery theorem below
-assumes a nonzero envelope. -/
+unwrap. The quotient is totalized in two ways: when `z t = 0`
+the denominator vanishes and the value is `0` by the real-division
+convention; and when `z` is not differentiable at `t`, the
+totalized derivative `deriv z t` is `0`, so the value is again
+`0`. No frequency is measured in either case, and every recovery
+result below assumes a nonzero envelope and the needed
+differentiability. -/
 noncomputable def discriminatorOutput (z : ℝ → ℂ) (t : ℝ) : ℝ :=
   (starRingEnd ℂ (z t) * deriv z t).im / (2 * Real.pi * ‖z t‖ ^ 2)
 
@@ -125,19 +129,19 @@ private theorem hasDerivAt_fmSignal_of_hasDerivAt_fmPhase (A fc kf : ℝ) (m : �
   exact h4'
 
 /-- Constant envelope from `‖exp (I * θ)‖ = 1`. -/
-private theorem norm_fmSignal_aux (A fc kf : ℝ) (m : ℝ → ℝ) (t : ℝ) (hA : 0 < A) :
-    ‖fmSignal A fc kf m t‖ = A := by
-  simp [fmSignal, Real.norm_eq_abs, abs_of_pos hA]
+private theorem norm_fmSignal_aux (A fc kf : ℝ) (m : ℝ → ℝ) (t : ℝ) :
+    ‖fmSignal A fc kf m t‖ = |A| := by
+  simp [fmSignal, Real.norm_eq_abs]
 
 /-- Discriminator identity from the signal derivative. -/
 private theorem fmDiscriminator_of_hasDerivAt_fmSignal (A fc kf : ℝ) (m : ℝ → ℝ)
-    (t : ℝ) (hA : 0 < A)
+    (t : ℝ) (hA : A ≠ 0)
     (hderiv : HasDerivAt (fmSignal A fc kf m)
       (Complex.I * ((2 * Real.pi * (fc + kf * m t) : ℝ) : ℂ)
         * fmSignal A fc kf m t) t) :
     discriminatorOutput (fmSignal A fc kf m) t = fc + kf * m t := by
-  have hnorm : ‖fmSignal A fc kf m t‖ = A :=
-    norm_fmSignal_aux A fc kf m t hA
+  have hnorm : ‖fmSignal A fc kf m t‖ = |A| :=
+    norm_fmSignal_aux A fc kf m t
   have hderiv_eq : deriv (fmSignal A fc kf m) t
       = Complex.I * ((2 * Real.pi * (fc + kf * m t) : ℝ) : ℂ)
         * fmSignal A fc kf m t :=
@@ -145,7 +149,7 @@ private theorem fmDiscriminator_of_hasDerivAt_fmSignal (A fc kf : ℝ) (m : ℝ 
   have hmul : starRingEnd ℂ (fmSignal A fc kf m t)
         * (Complex.I * ((2 * Real.pi * (fc + kf * m t) : ℝ) : ℂ)
           * fmSignal A fc kf m t)
-      = ((((A ^ 2 * (2 * Real.pi * (fc + kf * m t)) : ℝ))) : ℂ) * Complex.I := by
+      = (((((|A|) ^ 2 * (2 * Real.pi * (fc + kf * m t)) : ℝ))) : ℂ) * Complex.I := by
     have h1 : starRingEnd ℂ (fmSignal A fc kf m t) * fmSignal A fc kf m t
         = ((((‖fmSignal A fc kf m t‖ : ℝ))) : ℂ) ^ 2 :=
       RCLike.conj_mul _
@@ -163,14 +167,14 @@ private theorem fmDiscriminator_of_hasDerivAt_fmSignal (A fc kf : ℝ) (m : ℝ 
     simp
   unfold discriminatorOutput
   rw [hderiv_eq, hnorm, hmul, him]
-  have hD : (2 : ℝ) * Real.pi * A ^ 2 ≠ 0 :=
+  have hD : (2 : ℝ) * Real.pi * |A| ^ 2 ≠ 0 :=
     mul_ne_zero (mul_ne_zero (by norm_num) Real.pi_ne_zero)
-      (pow_ne_zero 2 (ne_of_gt hA))
+      (pow_ne_zero 2 (abs_ne_zero.mpr hA))
   rw [div_eq_iff hD]
   ring
 
 /-- The FM phase has derivative `2π f_c + 2π k_f m(t)` for continuous `m`. -/
-lemma hasDerivAt_fmPhase (fc kf : ℝ) (m : ℝ → ℝ) (hm : Continuous m) (t : ℝ) :
+theorem hasDerivAt_fmPhase (fc kf : ℝ) (m : ℝ → ℝ) (hm : Continuous m) (t : ℝ) :
     HasDerivAt (fmPhase fc kf m) (2 * Real.pi * fc + 2 * Real.pi * kf * m t) t := by
   exact hasDerivAt_fmPhase_of_hasDerivAt_integral fc kf m t
     (hm.integral_hasStrictDerivAt 0 t).hasDerivAt
@@ -183,15 +187,14 @@ lemma hasDerivAt_fmSignal (A fc kf : ℝ) (m : ℝ → ℝ) (hm : Continuous m) 
     (hasDerivAt_fmPhase fc kf m hm t)
 
 /-- Constant envelope: `‖z(t)‖ = A`. -/
-lemma norm_fmSignal (A fc kf : ℝ) (m : ℝ → ℝ) (hA : 0 < A)
-    (t : ℝ) :
-    ‖fmSignal A fc kf m t‖ = A := by
-  exact norm_fmSignal_aux A fc kf m t hA
+lemma norm_fmSignal (A fc kf : ℝ) (m : ℝ → ℝ) (t : ℝ) :
+    ‖fmSignal A fc kf m t‖ = |A| := by
+  exact norm_fmSignal_aux A fc kf m t
 
 /-- Ideal discriminator identity:
-`Im(conj(z) z') / (2π ‖z‖²) = f_c + k_f m(t)` for `A > 0` and continuous `m`. -/
+`Im(conj(z) z') / (2π ‖z‖²) = f_c + k_f m(t)` for `A ≠ 0` and continuous `m`. -/
 lemma fmDiscriminator_eq_instantaneousFrequency (A fc kf : ℝ) (m : ℝ → ℝ)
-    (hA : 0 < A) (hm : Continuous m) (t : ℝ) :
+    (hA : A ≠ 0) (hm : Continuous m) (t : ℝ) :
     discriminatorOutput (fmSignal A fc kf m) t = fc + kf * m t := by
   exact fmDiscriminator_of_hasDerivAt_fmSignal A fc kf m t hA
     (hasDerivAt_fmSignal A fc kf m hm t)
@@ -199,7 +202,7 @@ lemma fmDiscriminator_eq_instantaneousFrequency (A fc kf : ℝ) (m : ℝ → ℝ
 /-- Interval reading of the hypotheses: a message continuous on `[0, T]` gives the
 same discriminator identity at every interior time `t ∈ (0, T)`. -/
 lemma fmDiscriminator_eq_instantaneousFrequency_of_continuousOn (A fc kf T : ℝ)
-    (m : ℝ → ℝ) (hA : 0 < A) (hm : ContinuousOn m (Set.Icc 0 T)) (t : ℝ)
+    (m : ℝ → ℝ) (hA : A ≠ 0) (hm : ContinuousOn m (Set.Icc 0 T)) (t : ℝ)
     (ht : t ∈ Set.Ioo 0 T) :
     discriminatorOutput (fmSignal A fc kf m) t = fc + kf * m t := by
   have hle : (0 : ℝ) ≤ t := le_of_lt ht.1
@@ -219,15 +222,15 @@ lemma fmDiscriminator_eq_instantaneousFrequency_of_continuousOn (A fc kf T : ℝ
 
 /-- Ideal demodulation for `k_f ≠ 0`:
 `m(t) = (discriminatorOutput z t - f_c) / k_f`. -/
-lemma fmMessage_eq_of_discriminator (A fc kf : ℝ) (m : ℝ → ℝ) (hA : 0 < A)
+lemma fmMessage_eq_of_discriminator (A fc kf : ℝ) (m : ℝ → ℝ) (hA : A ≠ 0)
     (hkf : kf ≠ 0) (hm : Continuous m) (t : ℝ) :
     m t = (discriminatorOutput (fmSignal A fc kf m) t - fc) / kf := by
   have h := fmDiscriminator_eq_instantaneousFrequency A fc kf m hA hm t
   rw [h, eq_div_iff hkf]
   ring
 
-/-- For `A > 0` and `k_f ≠ 0`, the FM signal determines the continuous message. -/
-lemma fmSignal_message_injective (A fc kf : ℝ) (m m' : ℝ → ℝ) (hA : 0 < A)
+/-- For `A ≠ 0` and `k_f ≠ 0`, the FM signal determines the continuous message. -/
+lemma fmSignal_message_injective (A fc kf : ℝ) (m m' : ℝ → ℝ) (hA : A ≠ 0)
     (hkf : kf ≠ 0) (hm : Continuous m) (hm' : Continuous m')
     (h : fmSignal A fc kf m = fmSignal A fc kf m') :
     m = m' := by
@@ -241,20 +244,20 @@ lemma fmSignal_message_injective (A fc kf : ℝ) (m m' : ℝ → ℝ) (hA : 0 < 
   rw [e1, e2]
 
 /-- Zero message: the discriminator reads the carrier frequency `f_c`. -/
-lemma fmDiscriminator_zero_message (A fc kf : ℝ) (hA : 0 < A) (t : ℝ) :
+lemma fmDiscriminator_zero_message (A fc kf : ℝ) (hA : A ≠ 0) (t : ℝ) :
     discriminatorOutput (fmSignal A fc kf (fun _ => 0)) t = fc := by
   simpa using fmDiscriminator_eq_instantaneousFrequency A fc kf (fun _ => 0) hA
     continuous_const t
 
 /-- Constant message `c`: the discriminator reads `f_c + k_f c`. -/
-lemma fmDiscriminator_const_message (A fc kf c : ℝ) (hA : 0 < A) (t : ℝ) :
+lemma fmDiscriminator_const_message (A fc kf c : ℝ) (hA : A ≠ 0) (t : ℝ) :
     discriminatorOutput (fmSignal A fc kf (fun _ => c)) t = fc + kf * c := by
   exact fmDiscriminator_eq_instantaneousFrequency A fc kf (fun _ => c) hA
     continuous_const t
 
 /-- Nonconstant continuous message `m = cos`: the discriminator reads
 `f_c + k_f cos t`. -/
-lemma fmDiscriminator_cos_message (A fc kf : ℝ) (hA : 0 < A) (t : ℝ) :
+lemma fmDiscriminator_cos_message (A fc kf : ℝ) (hA : A ≠ 0) (t : ℝ) :
     discriminatorOutput (fmSignal A fc kf Real.cos) t = fc + kf * Real.cos t := by
   exact fmDiscriminator_eq_instantaneousFrequency A fc kf Real.cos hA
     Real.continuous_cos t
@@ -277,5 +280,12 @@ lemma fmSignal_zero_sensitivity_eq (A fc : ℝ) (m m' : ℝ → ℝ) :
     unfold fmPhase
     ring
   simp [fmSignal, hph]
+
+
+-- concrete negative-amplitude instances
+example : discriminatorOutput (fmSignal (-3) 5 2 Real.cos) 1 = 5 + 2 * Real.cos 1 :=
+  fmDiscriminator_cos_message (-3) 5 2 (by norm_num) 1
+example : ‖fmSignal (-3) 5 2 Real.cos 1‖ = 3 := by
+  rw [norm_fmSignal]; norm_num
 
 end PhyslibExt.Communications.IdealFMDiscriminator
