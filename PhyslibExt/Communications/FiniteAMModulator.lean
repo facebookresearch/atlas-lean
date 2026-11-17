@@ -61,11 +61,11 @@ namespace PhyslibExt.Communications.FiniteAMModulator
 open ZMod
 
 /-- The sampled carrier `cos(2π k j / N)` on `ZMod N`, via `ZMod.val` lifts. -/
-noncomputable def carrierCos (N : ℕ) (k j : ZMod N) : ℝ :=
+noncomputable def carrierCos (N : ℕ) [NeZero N] (k j : ZMod N) : ℝ :=
   Real.cos (2 * Real.pi * (k.val : ℝ) * (j.val : ℝ) / (N : ℝ))
 
 /-- The finite AM signal `s_j = (A + μ m_j) cos(2π k j / N)`. -/
-noncomputable def amSignal (N : ℕ) (A μ : ℝ) (m : ZMod N → ℝ) (k : ZMod N) :
+noncomputable def amSignal (N : ℕ) [NeZero N] (A μ : ℝ) (m : ZMod N → ℝ) (k : ZMod N) :
     ZMod N → ℝ :=
   fun j => (A + μ * m j) * carrierCos N k j
 
