@@ -20,7 +20,10 @@ open MathlibExt.Biology.Biophysics.CompartmentKinetics.DoseRecurrence
 example :
     (∑ i ∈ Finset.range (2 + 1),
         (3:ℝ) * Real.exp (-(0:ℝ) * ((2:ℝ) * 1 - (i:ℝ) * 1))) = 9 := by
-  have h := post_dose_amount_zero_elimination (D := (3:ℝ)) (tau := (1:ℝ)) 2
-  simpa using h
+  calc (∑ i ∈ Finset.range (2 + 1),
+        (3:ℝ) * Real.exp (-(0:ℝ) * ((2:ℝ) * 1 - (i:ℝ) * 1)))
+      = ((2:ℝ) + 1) * 3 :=
+        post_dose_amount_zero_elimination (D := (3:ℝ)) (tau := (1:ℝ)) 2
+    _ = 9 := by norm_num
 
 end MathlibExtTest.Biology.Biophysics.CompartmentKinetics.DoseRecurrence
