@@ -16,15 +16,30 @@ public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 /-!
 # Windkessel cardiovascular agreement
 
-The two-element Windkessel model with R, C > 0 agrees with the
-canonical scalar evolution: the constant-flow RC transient and the
-finite pressure-volume budget over [0, T], T >= 0. R = 0 or C = 0
-is not this IVP.
+## i. Overview
+
+The two-element Windkessel model `C p' = qin - p / R` with `R, C > 0` agrees with the canonical scalar evolution `k = 1/(RC)`, forcing `qin/C`: the constant-flow RC transient and the finite pressure-volume budget over `[0, T]`, `T >= 0`. Nonnegative pressure additionally requires nonnegative initial excess pressure/input; `R = 0` or `C = 0` is not this IVP.
+
+## ii. Key results
+
+* `windkessel_budget`: `C (p T - p 0)` equals the net inflow integral.
+* `windkessel_transient`: the closed form solves the constant-flow equation.
+
+## iii. Table of contents
+
+* A. Windkessel agreement.
+
+## iv. References
+
+* The declared model is local to this module (the classical two-element Windkessel equation); no literature result is imported. All declarations are `lemma`s.
+
 -/
 
 @[expose] public section
 
 open MeasureTheory intervalIntegral
+
+/-! ## A. Windkessel agreement. -/
 
 namespace PhyslibExt.Physiology.Windkessel
 
