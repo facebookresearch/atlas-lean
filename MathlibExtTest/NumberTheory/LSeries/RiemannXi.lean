@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.LSeries.RiemannXi
+import Mathlib.NumberTheory.Harmonic.ZetaAsymp
+import Mathlib.NumberTheory.LSeries.HurwitzZetaValues
 
 @[expose] public section
 
@@ -64,5 +66,33 @@ example :
       (∀ s : ℂ, RiemannXi.riemannXi (1 - s) = RiemannXi.riemannXi s) ∧
       ∀ s : ℂ, RiemannXi.riemannXi s = 0 → 0 < s.re ∧ s.re < 1 :=
   RiemannXi.riemannXi_entire_functional_equation_and_critical_strip
+
+/-! ### `riemannZetaNontrivialZeros` -/
+
+/-- `s = 0` is not a nontrivial zero, since `ζ(0) = -1/2`. -/
+example : (0 : ℂ) ∉ riemannZetaNontrivialZeros := fun h => by
+  have := h.1
+  rw [riemannZeta_zero] at this
+  norm_num at this
+
+/-- The pole `s = 1` is not a nontrivial zero (Mathlib's junk value `ζ(1)` is nonzero). -/
+example : (1 : ℂ) ∉ riemannZetaNontrivialZeros := fun h => riemannZeta_one_ne_zero h.1
+
+/-- The trivial zero `s = -2` is excluded. -/
+example : riemannZeta (-2) = 0 ∧ (-2 : ℂ) ∉ riemannZetaNontrivialZeros := by
+  refine ⟨?_, fun h => by have := h.2.1; norm_num at this⟩
+  simpa using riemannZeta_neg_two_mul_nat_add_one 0
+
+/-- `ξ(0) = ξ(1) = 1/2`, consistent with `riemannXi_eq_zero_iff` at the excluded points. -/
+example : RiemannXi.riemannXi 0 ≠ 0 ∧ RiemannXi.riemannXi 1 ≠ 0 := by
+  constructor <;> simp [RiemannXi.riemannXi]
+
+/-- The zeros of `ξ` are the nontrivial zeros of `ζ`. -/
+example (s : ℂ) : RiemannXi.riemannXi s = 0 ↔ riemannZeta s = 0 ∧ 0 ≤ s.re ∧ s.re ≤ 1 :=
+  RiemannXi.riemannXi_eq_zero_iff s
+
+/-- A nontrivial zero lies in the open strip. -/
+example {s : ℂ} (hs : s ∈ riemannZetaNontrivialZeros) : 0 < s.re ∧ s.re < 1 :=
+  RiemannXi.riemannXi_mem_strip ((RiemannXi.riemannXi_eq_zero_iff s).mpr hs)
 
 end RiemannXiTest
