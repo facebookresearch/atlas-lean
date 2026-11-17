@@ -26,7 +26,7 @@ open MeasureTheory intervalIntegral
 namespace MathlibExt.Biology.Biophysics.CompartmentKinetics.TwoCompartmentBudget
 
 /-- **Two-compartment mass budget.** If `(A1, A2)` solves the
-two-compartment system with nonnegative rates in derivative form on
+two-compartment system in derivative form on (no sign assumptions on the rates are needed) on
 `[0, T]` (`A1' = u - (k10 + k12) A1 + k21 A2` and
 `A2' = k12 A1 - k21 A2`), then the total amount satisfies
 `(A1 + A2)(T) - (A1 + A2)(0) =

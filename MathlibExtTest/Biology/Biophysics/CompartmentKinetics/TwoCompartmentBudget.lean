@@ -17,7 +17,7 @@ namespace MathlibExtTest.Biology.Biophysics.CompartmentKinetics.TwoCompartmentBu
 open MathlibExt.Biology.Biophysics.CompartmentKinetics.TwoCompartmentBudget
 
 /-- Zero window: both sides are zero for arbitrary differentiable
-amounts satisfying the derivative forms (which hold trivially here). -/
+amounts satisfying the derivative forms at the single point `0`. -/
 example {A1 A2 u : ℝ → ℝ}
     (hA1 : ∀ s ∈ Set.Icc 0 0, HasDerivAt A1 (u s - (1 + 1) * A1 s + 1 * A2 s) s)
     (hA2 : ∀ s ∈ Set.Icc 0 0, HasDerivAt A2 (1 * A1 s - 1 * A2 s) s)
