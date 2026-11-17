@@ -44,3 +44,9 @@ example : queueLen 1 3 2 3 = 0 ∧ deriv (queueLen 1 3 2) (7 / 2) = 0 :=
     queueLen_deriv_after_clearance (lam := 1) (mu := 3) (R := 2) (G := 2)
       (t := 7 / 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
       (by norm_num)⟩
+
+/-- Exact-capacity boundary: `lam = 1, mu = 3, R = 2, G = 1` has
+`lam * (R + G) = mu * G`, and the queue is empty at the cycle end. -/
+example : queueLen 1 3 2 (2 + 1) = 0 :=
+  queueLen_cycle_end (lam := 1) (mu := 3) (R := 2) (G := 1)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
