@@ -25,8 +25,8 @@ The erased list agrees with `List.kerase`, the erased bucket with `AList.erase`,
 of a valid table with `Finmap.erase`. Raw lists lose only their first matching entry; `AList`
 supplies the distinct-key invariant needed for complete absence after deletion.
 
-The scan algorithms and deletion API are adapted from fairinternal/formal-math PR #6201
-(head `d5cebc9629a37d99e6e586b2ec398c9e63f169df`). Canonical erasure bridges replace its
+The scan algorithms and deletion API are adapted from formal-math
+(commit `d5cebc9629a37d99e6e586b2ec398c9e63f169df`). Canonical erasure bridges replace its
 auxiliary membership and nodup inductions; the absent/present bounds refine its length-plus-one
 bound without changing the event convention.
 -/
