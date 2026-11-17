@@ -113,8 +113,8 @@ faults injected into the arithmetic libraries.
 
 ## Provenance and remaining gates
 
-Sole diagnostic author: Codex, requested gpt-6-astra/high; exact serving identity
-was not exposed. `Model.lean` reuses this author's earlier diagnostic
+Sole diagnostic author: Codex; exact serving identity was not exposed.
+`Model.lean` reuses this author's earlier diagnostic
 `ModelProbe.lean`, SHA-256
 `5a906d92d471101395bea13ab84e4fa9b18aa48ecb05e9f016038ce64b1a9332`.
 The local development repair evidence retains a `PREDECESSOR.json` receipt
