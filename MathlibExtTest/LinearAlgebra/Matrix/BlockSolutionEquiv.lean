@@ -33,19 +33,22 @@ example : ![2] = (!![4] : Matrix (Fin 1) (Fin 1) ℝ)⁻¹ *ᵥ (![11] - !![3] *
   fin_cases i
   norm_num [Matrix.mulVec, dotProduct, Matrix.inv_def, Matrix.adjugate_fin_one]
 
-/-- With a nonsymmetric invertible interior block `D = !![2, 1; 0, 1]`,
-elimination of a known solution returns the same interior unknown, for
-arbitrary `x, y` satisfying the displayed system. -/
-example : ∀ x y : Fin 2 → ℝ,
-    (!![1, 0; 0, 1] : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ x
-        + !![1, 1; 0, 1] *ᵥ y = ![3, 4] →
-      (!![0, 1; 1, 0] : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ x
-          + !![2, 1; 0, 1] *ᵥ y = ![5, 6] →
-        y = (!![2, 1; 0, 1] : Matrix (Fin 2) (Fin 2) ℝ)⁻¹
-          *ᵥ (![5, 6] - !![0, 1; 1, 0] *ᵥ x) := by
-  intro x y h1 h2
+/-- With a nonsymmetric invertible interior block `D = !![2, 1; 0, 1]`
+and the concrete solution `x = ![1, 2]`, `y = ![3, 4]`, the
+right-hand sides computed from that solution are `u = ![8, 6]` and
+`v = ![12, 5]`; elimination returns the reduced equation and the
+same interior unknown `y`. -/
+example : ![3, 4] = (!![2, 1; 0, 1] : Matrix (Fin 2) (Fin 2) ℝ)⁻¹
+        *ᵥ (![12, 5] - !![0, 1; 1, 0] *ᵥ ![1, 2]) := by
   letI : Invertible (!![2, 1; 0, 1] : Matrix (Fin 2) (Fin 2) ℝ) :=
     Matrix.invertibleOfIsUnitDet _ (by norm_num)
+  have h1 : (!![1, 0; 0, 1] : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ ![1, 2]
+        + !![1, 1; 0, 1] *ᵥ ![3, 4] = ![8, 6] := by
+    ext i <;> fin_cases i <;> norm_num [Matrix.mulVec, dotProduct]
+  have h2 : (!![0, 1; 1, 0] : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ ![1, 2]
+        + !![2, 1; 0, 1] *ᵥ ![3, 4] = ![12, 5] := by
+    ext i <;> fin_cases i <;> norm_num [Matrix.mulVec, dotProduct]
+  have hred := (elim_forward h1 h2).1
   exact (elim_forward h1 h2).2
 
 /-- The Schur complement of the scalar system, through the public
