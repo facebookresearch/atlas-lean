@@ -39,15 +39,25 @@ coefficients are model inputs; no empirical adequacy is claimed.
   temperature exists in the stated bracket.
 - `Chemistry.CombustionAcoustics.arrhenius_solution_trapped`: forward
   solutions are trapped in the stated interval.
+- `Chemistry.CombustionAcoustics.hasDerivAt_acousticModeEnergy`: the
+  standing-mode acoustic energy derivative (heat-release source
+  minus algebraic damping), with its interval balance
+  `acousticModeEnergy_sub_eq_integral`, the signed dissipation
+  corollary `acousticModeEnergy_deriv_nonpos_of_no_heat`, and the
+  conserved case `hasDerivAt_acousticModeEnergy_conserved`.
 
 ## iii. Table of contents
 
 - A. Arrhenius equilibrium and trapping
+- B. Acoustic modal energy
 
 ## iv. References
 
 - The sign bracket is the classical Semenov/Frank-Kamenetskii
   zeroth-order balance; the formal statement is self-contained.
+- The acoustic energy identity is the standard standing-mode
+  energy balance for a duct mode; the formal statement is
+  self-contained.
 
 ## A. Arrhenius equilibrium and trapping
 
@@ -372,6 +382,8 @@ lemma arrhenius_solution_trapped {G H B Ta C : ℝ} (hG : 0 < G)
   exact arrhenius_solution_trapped_on_interval hG hH hB hTa hC ht
     (fun s hs => hT s hs.1)
 
+/-! ## B. Acoustic modal energy -/
+
 /-- Acoustic modal energy for one standing mode with pressure amplitude
 `A` and velocity amplitude `B` in a duct of length `L`, ratio of
 specific heats `γ`, mean pressure `pbar`, and density `ρ`:
@@ -401,17 +413,18 @@ differentiable in time with
 the energy `E(t) = L * (A(t)^2 / (γ * pbar) + ρ * B(t)^2) / 4` has
 derivative
 `L * (γ - 1) * A(t) * H / (2 * γ * pbar) - r * L * B(t)^2 / 2`:
-the heat-release source term minus viscous dissipation. Here `H` is a
+the heat-release source term minus the algebraic damping term
+`r * L * B(t)^2 / 2` (a genuine dissipation under `0 ≤ r` and
+`0 < L`; see `acousticModeEnergy_deriv_nonpos_of_no_heat`). Here `H` is a
 constant heat-release amplitude for this identity. -/
 lemma hasDerivAt_acousticModeEnergy
-    {γ pbar ρ L r H : ℝ} (hγ : γ ≠ 0) (hpbar : pbar ≠ 0) (hρ : ρ ≠ 0)
+    {γ pbar ρ L r H : ℝ} (hγ : γ ≠ 0) (hpbar : pbar ≠ 0)
     (hL : L ≠ 0) {A B : ℝ → ℝ} {A' B' : ℝ} {t : ℝ}
     (hA : HasDerivAt A A' t) (hB : HasDerivAt B B' t)
     (hA' : A' = -γ * pbar * (Real.pi / L) * B t + (γ - 1) * H)
     (hB' : ρ * B' = (Real.pi / L) * A t - r * B t) :
     HasDerivAt (fun s : ℝ => acousticModeEnergy γ pbar ρ L (A s) (B s))
       (L * (γ - 1) * A t * H / (2 * γ * pbar) - r * L * B t ^ 2 / 2) t := by
-  have _ := hρ
   have hA2 : HasDerivAt (fun s : ℝ => A s ^ 2) ((2 * A t) * A') t :=
     (HasDerivAt.comp t (hasDerivAt_sq (A t)) hA).congr_of_eventuallyEq
       (Filter.Eventually.of_forall fun s => rfl)
@@ -438,48 +451,76 @@ lemma hasDerivAt_acousticModeEnergy
   exact hE.congr_of_eventuallyEq (Filter.Eventually.of_forall fun s => by
     simp only [acousticModeEnergy, Pi.add_apply])
 
+/-- Signed dissipation with no heat release: under `0 ≤ r` and
+`0 < L`, with `H = 0`, the modal energy derivative is
+`-(r * L * B(t)^2 / 2)`, which is nonpositive. -/
+lemma acousticModeEnergy_deriv_nonpos_of_no_heat
+    {γ pbar ρ L r : ℝ} (hγ : γ ≠ 0) (hpbar : pbar ≠ 0)
+    (hL : 0 < L) (hr : 0 ≤ r) {A B : ℝ → ℝ} {A' B' : ℝ} {t : ℝ}
+    (hA : HasDerivAt A A' t) (hB : HasDerivAt B B' t)
+    (hA' : A' = -γ * pbar * (Real.pi / L) * B t + (γ - 1) * 0)
+    (hB' : ρ * B' = (Real.pi / L) * A t - r * B t) :
+    HasDerivAt (fun s : ℝ => acousticModeEnergy γ pbar ρ L (A s) (B s))
+        (-(r * L * B t ^ 2 / 2)) t ∧ -(r * L * B t ^ 2 / 2) ≤ 0 := by
+  have h := hasDerivAt_acousticModeEnergy (r := r) (H := 0) hγ hpbar
+    (ne_of_gt hL) hA hB hA' hB'
+  have e : L * (γ - 1) * A t * 0 / (2 * γ * pbar) - r * L * B t ^ 2 / 2
+      = -(r * L * B t ^ 2 / 2) := by ring
+  rw [e] at h
+  refine ⟨h, ?_⟩
+  have hnn : (0 : ℝ) ≤ r * L * B t ^ 2 / 2 :=
+    div_nonneg (mul_nonneg (mul_nonneg hr (le_of_lt hL)) (sq_nonneg _)) (by norm_num)
+  linarith
+
 /-- Integrated energy balance over a time interval `[t0, t1]`: under
 the same modal equations at every time, the energy change equals the
-integral of the heat-release source minus dissipation. -/
+integral of the heat-release source minus the algebraic
+damping term. -/
 lemma acousticModeEnergy_sub_eq_integral
-    {γ pbar ρ L r H : ℝ} (hγ : 0 < γ) (hpbar : 0 < pbar) (hρ : 0 < ρ)
-    (hL : 0 < L) {A B A' B' : ℝ → ℝ}
-    (hA : ∀ t : ℝ, HasDerivAt A (A' t) t)
-    (hB : ∀ t : ℝ, HasDerivAt B (B' t) t)
-    (hA' : ∀ t : ℝ, A' t = -γ * pbar * (Real.pi / L) * B t + (γ - 1) * H)
-    (hB' : ∀ t : ℝ, ρ * B' t = (Real.pi / L) * A t - r * B t)
-    (t0 t1 : ℝ) :
+    {γ pbar ρ L r H : ℝ} (hγ : 0 < γ) (hpbar : 0 < pbar)
+    (hL : 0 < L) {A B A' B' : ℝ → ℝ} (t0 t1 : ℝ)
+    (hA : ∀ t ∈ Set.uIcc t0 t1, HasDerivAt A (A' t) t)
+    (hB : ∀ t ∈ Set.uIcc t0 t1, HasDerivAt B (B' t) t)
+    (hA' : ∀ t ∈ Set.uIcc t0 t1,
+      A' t = -γ * pbar * (Real.pi / L) * B t + (γ - 1) * H)
+    (hB' : ∀ t ∈ Set.uIcc t0 t1,
+      ρ * B' t = (Real.pi / L) * A t - r * B t) :
     acousticModeEnergy γ pbar ρ L (A t1) (B t1) -
         acousticModeEnergy γ pbar ρ L (A t0) (B t0) =
       ∫ t in t0..t1,
         (L * (γ - 1) * A t * H / (2 * γ * pbar) - r * L * B t ^ 2 / 2) := by
   have hγ' : γ ≠ 0 := ne_of_gt hγ
   have hpbar' : pbar ≠ 0 := ne_of_gt hpbar
-  have hρ' : ρ ≠ 0 := ne_of_gt hρ
   have hL' : L ≠ 0 := ne_of_gt hL
   have hderiv : ∀ x ∈ Set.uIcc t0 t1,
       HasDerivAt (fun s : ℝ => acousticModeEnergy γ pbar ρ L (A s) (B s))
         (L * (γ - 1) * A x * H / (2 * γ * pbar) - r * L * B x ^ 2 / 2) x :=
-    fun x _ => hasDerivAt_acousticModeEnergy hγ' hpbar' hρ' hL' (hA x) (hB x) (hA' x) (hB' x)
-  have hAcont : Continuous A := continuous_iff_continuousAt.mpr fun t => (hA t).continuousAt
-  have hBcont : Continuous B := continuous_iff_continuousAt.mpr fun t => (hB t).continuousAt
-  have hcont : Continuous (fun t : ℝ =>
-      L * (γ - 1) * A t * H / (2 * γ * pbar) - r * L * B t ^ 2 / 2) := by
-    have e1 : Continuous (fun t : ℝ => L * (γ - 1) * A t * H / (2 * γ * pbar)) :=
+    fun x hx => hasDerivAt_acousticModeEnergy hγ' hpbar' hL'
+      (hA x hx) (hB x hx) (hA' x hx) (hB' x hx)
+  have hAcont : ContinuousOn A (Set.uIcc t0 t1) :=
+    fun x hx => (hA x hx).continuousAt.continuousWithinAt
+  have hBcont : ContinuousOn B (Set.uIcc t0 t1) :=
+    fun x hx => (hB x hx).continuousAt.continuousWithinAt
+  have hcont : ContinuousOn (fun t : ℝ =>
+      L * (γ - 1) * A t * H / (2 * γ * pbar) - r * L * B t ^ 2 / 2)
+      (Set.uIcc t0 t1) := by
+    have e1 : ContinuousOn (fun t : ℝ => L * (γ - 1) * A t * H / (2 * γ * pbar))
+        (Set.uIcc t0 t1) :=
       ((hAcont.const_mul (L * (γ - 1))).mul_const H).div_const (2 * γ * pbar)
-    have e2 : Continuous (fun t : ℝ => r * L * B t ^ 2 / 2) :=
+    have e2 : ContinuousOn (fun t : ℝ => r * L * B t ^ 2 / 2)
+        (Set.uIcc t0 t1) :=
       ((hBcont.pow 2).const_mul (r * L)).div_const 2
     exact e1.sub e2
   have hint : IntervalIntegrable (fun t : ℝ =>
       L * (γ - 1) * A t * H / (2 * γ * pbar) - r * L * B t ^ 2 / 2)
-      MeasureTheory.volume t0 t1 := hcont.intervalIntegrable t0 t1
+      MeasureTheory.volume t0 t1 := hcont.intervalIntegrable
   exact (intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint).symm
 
 /-- With no heat release and no dissipation, the modal energy is
 conserved: its derivative is zero at every time satisfying the modal
 equations. -/
 lemma hasDerivAt_acousticModeEnergy_conserved
-    {γ pbar ρ L : ℝ} (hγ : γ ≠ 0) (hpbar : pbar ≠ 0) (hρ : ρ ≠ 0)
+    {γ pbar ρ L : ℝ} (hγ : γ ≠ 0) (hpbar : pbar ≠ 0)
     (hL : L ≠ 0) {A B : ℝ → ℝ} {A' B' : ℝ} {t : ℝ}
     (hA : HasDerivAt A A' t) (hB : HasDerivAt B B' t)
     (hA' : A' = -γ * pbar * (Real.pi / L) * B t)
@@ -489,7 +530,7 @@ lemma hasDerivAt_acousticModeEnergy_conserved
     rw [hA']; ring
   have hB0 : ρ * B' = (Real.pi / L) * A t - 0 * B t := by
     rw [hB']; ring
-  have h := hasDerivAt_acousticModeEnergy (r := 0) (H := 0) hγ hpbar hρ hL hA hB hA0 hB0
+  have h := hasDerivAt_acousticModeEnergy (r := 0) (H := 0) hγ hpbar hL hA hB hA0 hB0
   have e : L * (γ - 1) * A t * 0 / (2 * γ * pbar) - 0 * L * B t ^ 2 / 2 = 0 := by
     ring
   rw [e] at h

@@ -78,7 +78,7 @@ example :
       0 (0 : ℝ) := by
   have h := Chemistry.CombustionAcoustics.hasDerivAt_acousticModeEnergy
     (γ := 2) (pbar := 1) (ρ := 1) (L := Real.pi) (r := 0)
-    (H := 2) (by norm_num) (by norm_num) (by norm_num) Real.pi_ne_zero
+    (H := 2) (by norm_num) (by norm_num) Real.pi_ne_zero
     (A := fun _ : ℝ => 0) (B := fun _ : ℝ => 1) (A' := 0) (B' := 0) (t := 0)
     (hasDerivAt_const 0 0) (hasDerivAt_const 0 1)
     (by field_simp; ring) (by field_simp; ring)
@@ -92,9 +92,9 @@ example :
         ((fun _ : ℝ => 0) 0) ((fun _ : ℝ => 1) 0) = 0 := by
   have h := Chemistry.CombustionAcoustics.acousticModeEnergy_sub_eq_integral
     (γ := 2) (pbar := 1) (ρ := 1) (L := Real.pi) (r := 0)
-    (H := 2) (by norm_num) (by norm_num) (by norm_num) Real.pi_pos
+    (H := 2) (by norm_num) (by norm_num) Real.pi_pos
     (A := fun _ : ℝ => 0) (B := fun _ : ℝ => 1) (A' := fun _ : ℝ => 0)
-    (B' := fun _ : ℝ => 0)
-    (fun t => hasDerivAt_const t 0) (fun t => hasDerivAt_const t 1)
-    (fun t => by field_simp; ring) (fun t => by field_simp; ring) 0 1
+    (B' := fun _ : ℝ => 0) 0 1
+    (fun t _ => hasDerivAt_const t 0) (fun t _ => hasDerivAt_const t 1)
+    (fun t _ => by field_simp; ring) (fun t _ => by field_simp; ring)
   simpa using h
