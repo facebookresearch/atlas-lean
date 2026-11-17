@@ -132,13 +132,26 @@ lemma muscle_power_max {a b F0 : ℝ} (ha : 0 < a) (hb : 0 < b) (hF0 : 0 < F0) :
 
 /-! ## B. Power and work. -/
 
+section
+
+/-- Hill shortening velocity at force `F`: `v(F) = b (F0 - F)/(F + a)`. -/
+noncomputable def hillVelocity (a b F0 F : ℝ) : ℝ := b * (F0 - F) / (F + a)
+
+/-- Mechanical power at force `F`: `P(F) = F * v(F)`. -/
+noncomputable def hillPower (a b F0 F : ℝ) : ℝ := F * hillVelocity a b F0 F
+
+/-- Hill velocity formula. -/
+lemma hillVelocity_eq {a b F0 F : ℝ} :
+    hillVelocity a b F0 F = b * (F0 - F) / (F + a) := rfl
+
 set_option linter.unusedVariables false in
-/-- **Mechanical power at a force.** For the Hill shortening law
-`v(F) = b * (F0 - F) / (F + a)`, the mechanical power at force `F ∈ [0, F0]` (with
-`a, b, F0 > 0`) is `P(F) = F * v(F) = b * F * (F0 - F) / (F + a)`. -/
+/-- **Mechanical power under the Hill law.** On the declared domain
+(`a, b, F0 > 0`, `F ∈ [0, F0]`), the mechanical power is
+`P(F) = b * F * (F0 - F) / (F + a)`. -/
 lemma muscle_power_formula {a b F0 F : ℝ} (ha : 0 < a) (hb : 0 < b)
     (hF0 : 0 < F0) (hF : F ∈ Set.Icc 0 F0) :
-    F * (b * (F0 - F) / (F + a)) = b * F * (F0 - F) / (F + a) := by
+    hillPower a b F0 F = b * F * (F0 - F) / (F + a) := by
+  rw [hillPower, hillVelocity_eq]
   ring
 
 set_option linter.unusedVariables false in
