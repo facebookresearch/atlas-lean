@@ -14,17 +14,33 @@ public import Mathlib.Algebra.Module.LinearMap.Basic
 /-!
 # Signals, shifts, causality, and time invariance
 
-Raw pointwise signals `T → E`; a linear system is a Mathlib linear map
-`(T → E) →ₗ[𝕜] (T → F)` (no duplicate linearity predicate). `shiftₗ 𝕜 E a`
-delays by `a`, `shiftₗ 𝕜 E a x t = x (t - a)`, with group law
-`shiftₗ a ∘ shiftₗ b = shiftₗ (a + b)` over an additive commutative group
-(for `ℤ` or `ℝ` time). `IsCausal` is the prefix condition: the output at
-`t` depends only on inputs at `s ≤ t`. `IsTimeInvariant` is commutation
-with every shift. Both predicates are closed under composition (series) and
-pointwise sum (parallel). No `Lp`-class predicates and no `ℕ`-time
-translations are treated here.
+Foundations for signals-and-systems algebra on raw pointwise signals
+`T → E` (functions, not a.e. equivalence classes, so pointwise evaluation
+is legitimate). A linear system is a Mathlib linear map
+`(T → E) →ₗ[𝕜] (T → F)`; no duplicate linearity predicate is introduced.
 
-Roadmap leaf `SSC-U01.T01`, clauses `SSC-U01.c01`, `SSC-U01.c02`.
+* `shiftₗ 𝕜 E a x t = x (t - a)` is delay by `a` (for positive `a`), built
+  as `LinearMap.funLeft` along `t ↦ t - a`. Shifting by `0` is the
+  identity over any additive group (`shiftₗ_zero`, `[AddGroup T]`). The
+  composition law `shiftₗ a ∘ shiftₗ b = shiftₗ (a + b)` (`shiftₗ_comp`)
+  is stated over an additive commutative group: over a general
+  `AddGroup` it is false (counterexample on `Additive (Equiv.Perm
+  (Fin 3))`, where the two orders of composing shifts differ), and `ℤ`- or
+  `ℝ`-time, the intended domains, are commutative.
+* `IsCausal S`: the output at `t` depends only on inputs at `s ≤ t`
+  (prefix condition, `s = t` included, so the identity system and every
+  delay are causal and every advance is not).
+* `IsTimeInvariant S`: `S` commutes with every shift.
+
+Both predicates are closed under composition (series interconnection) and
+pointwise sum (parallel interconnection). No `Lp`-class predicates and no
+`ℕ`-time zero-extension translations are treated here.
+
+Provenance: the classical definitions of delay, causality, and time
+invariance for systems on signals, as displayed above and in the
+declaration docstring formulas below; this file is the control-theory
+roadmap's signals foundation leaf `SSC-U01.T01` (clauses `SSC-U01.c01`,
+`SSC-U01.c02`).
 -/
 
 @[expose] public section
@@ -57,8 +73,7 @@ theorem shiftₗ_apply {𝕜 T E : Type*} [Semiring 𝕜] [AddCommMonoid E] [Mod
   rfl
 
 theorem shiftₗ_zero {𝕜 T E : Type*} [Semiring 𝕜] [AddCommMonoid E] [Module 𝕜 E]
-    [AddCommGroup T] :
-    (shiftₗ 𝕜 E (0 : T) : (T → E) →ₗ[𝕜] (T → E)) = LinearMap.id := by
+    [AddGroup T] : (shiftₗ 𝕜 E (0 : T) : (T → E) →ₗ[𝕜] (T → E)) = LinearMap.id := by
   ext x t
   simp
 

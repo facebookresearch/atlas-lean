@@ -64,6 +64,13 @@ example : ((shiftₗ ℝ ℝ (1 : ℤ)).comp (shiftₗ ℝ ℝ (2 : ℤ))) = shi
 example (x : ℤ → ℝ) (t : ℤ) : shiftₗ ℝ ℝ (0 : ℤ) x t = x t := by
   simp
 
+-- `shiftₗ_zero` needs no commutativity: it holds with time domain the
+-- noncommutative additive group of permutations of `Fin 3` (where the
+-- composition law `shiftₗ_comp` fails). Regression case for the
+-- `AddGroup` generality of `shiftₗ_zero`.
+example : shiftₗ ℝ ℝ (0 : Additive (Equiv.Perm (Fin 3))) = LinearMap.id :=
+  shiftₗ_zero
+
 #print axioms shiftₗ_apply
 #print axioms shiftₗ_zero
 #print axioms shiftₗ_comp
