@@ -16,7 +16,9 @@ import Mathlib.Tactic.FieldSimp
 ## i. Overview
 
 Sound intensity level in decibels is `10 * log10 (I / Iref)` against a
-reference intensity. Level differences are independent of the reference,
+reference intensity. Levels are physically meaningful only for positive
+intensities in the same unit; outside that domain the totalized
+`Real.logb` values have no physical interpretation. Level differences are independent of the reference,
 and `N` equal incoherent sources (total intensity the sum of the equal
 intensities, as a stated premise) raise the level by `10 * log10 N`.
 
@@ -44,7 +46,9 @@ namespace Acoustics
 /-! ## A. Levels and level differences -/
 
 /-- Sound intensity level of intensity `I` against reference intensity
-`Iref`, in decibels: `10 * log10 (I / Iref)`. -/
+`Iref`, in decibels: `10 * log10 (I / Iref)`. Physically meaningful only
+for positive `Iref` and `I` in the same unit; the totalized `Real.logb`
+value outside that domain (for example at `I = 0`) is not a level. -/
 noncomputable def intensityLevel (Iref I : ℝ) : ℝ :=
   10 * Real.logb 10 (I / Iref)
 
