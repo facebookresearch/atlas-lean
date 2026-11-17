@@ -30,7 +30,7 @@ example (t : ℝ) : discriminatorOutput (fmSignal 2 10 3 (fun _ => 2)) t = 16 :=
 
 /-- The signal has constant modulus `2`. -/
 example (t : ℝ) : ‖fmSignal 2 10 3 Real.cos t‖ = 2 :=
-  norm_fmSignal 2 10 3 Real.cos (by norm_num) Real.continuous_cos t
+  norm_fmSignal 2 10 3 Real.cos (by norm_num) t
 
 /-- At zero amplitude the discriminator outputs `0`. -/
 example (t : ℝ) : discriminatorOutput (fmSignal 0 10 3 Real.cos) t = 0 :=

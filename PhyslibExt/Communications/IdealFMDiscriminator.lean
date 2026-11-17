@@ -180,7 +180,7 @@ lemma hasDerivAt_fmSignal (A fc kf : ℝ) (m : ℝ → ℝ) (hm : Continuous m) 
     (hasDerivAt_fmPhase fc kf m hm t)
 
 /-- Constant envelope: `‖z(t)‖ = A`. -/
-lemma norm_fmSignal (A fc kf : ℝ) (m : ℝ → ℝ) (hA : 0 < A) (hm : Continuous m)
+lemma norm_fmSignal (A fc kf : ℝ) (m : ℝ → ℝ) (hA : 0 < A)
     (t : ℝ) :
     ‖fmSignal A fc kf m t‖ = A := by
   exact norm_fmSignal_aux A fc kf m t hA
