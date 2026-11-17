@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Data.Matrix.Mul
 public import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic.Ring
 
@@ -35,10 +34,12 @@ current, core loss or dynamics is modeled.
 - `netPortPower_eq_zero_polarity_reversed_secondary`: negating both
   secondary variables preserves the balance.
 - `netPortPower_flipped_secondary_current` and
-  `netPortPower_flipped_secondary_current_ne_zero`: flipping only
-  the secondary-current sign gives net power `2 * (n * V2 * I1)`,
-  nonzero whenever `n * V2 * I1 ≠ 0`: conservation depends on the
-  entering-current sign.
+  `netPortPower_flipped_secondary_current_ne_zero`: keeping `I2`
+  an entering current but with the erroneous sign relation
+  `I2 = n * I1` (the relation a leaving current would satisfy),
+  the entering-power sum is `2 * (n * V2 * I1)`, nonzero whenever
+  `n * V2 * I1 ≠ 0`: conservation depends on the entering-current
+  sign.
 
 ## iii. Table of contents
 
@@ -122,10 +123,15 @@ lemma netPortPower_eq_zero_two_to_one
   rw [hV, hI]
   ring
 
-/-- Flipping only the secondary-current sign breaks the cancellation:
-with `V1 = n * V2` but `I2 = n * I1` (the leaving-sign convention in
-place of the entering one), the net instantaneous port power is
-`2 * (n * V2 * I1)`, not zero in general. -/
+/-- The entering-current sign is essential: keep `I2` the entering
+secondary current but give it the erroneous sign relation
+`I2 = n * I1` (the relation a leaving secondary current would
+satisfy), with `V1 = n * V2`. The entering-power sum
+`netPortPower (n * V2) I1 V2 (n * I1)` is then `2 * (n * V2 * I1)`,
+not zero in general: power conservation fails for the wrong
+entering sign. This lemma does not reinterpret `I2` as a leaving
+current; with a leaving current the entering-power formula itself
+would be `V1 * I1 - V2 * I2`, a different function. -/
 lemma netPortPower_flipped_secondary_current
     (n V2 I1 : ℝ) :
     netPortPower (n * V2) I1 V2 (n * I1) = 2 * (n * V2 * I1) := by
@@ -144,8 +150,9 @@ lemma netPortPower_eq_zero_polarity_reversed_secondary
   ring
 
 /-- In particular, with a nonzero turns ratio and nonzero `V2` and
-`I1`, the flipped secondary-current sign gives nonzero net power, so
-power conservation genuinely depends on the entering-current sign. -/
+`I1`, the erroneous entering sign gives nonzero net entering power,
+so power conservation genuinely depends on the entering-current
+sign. -/
 lemma netPortPower_flipped_secondary_current_ne_zero
     {n V2 I1 : ℝ} (hn : n ≠ 0) (hV2 : V2 ≠ 0) (hI1 : I1 ≠ 0) :
     netPortPower (n * V2) I1 V2 (n * I1) ≠ 0 := by

@@ -38,9 +38,10 @@ example : netPortPower 6 4 (-3) 8 = 0 := by
     (V2 := 3) (I1 := 4) (I2 := -8) (by norm_num) (by norm_num) (by norm_num)
   simpa using h
 
-/-- Flipping only the secondary-current sign breaks conservation:
-net power `2 * (2 * 3 * 4) = 48`, through the public lemma and by
-direct computation. -/
+/-- The erroneous entering sign breaks conservation: with `I2`
+still entering but satisfying `I2 = 2 * I1` in place of
+`I2 = -(2 * I1)`, the net entering power is `2 * (2 * 3 * 4) = 48`,
+through the public lemma and by direct computation. -/
 example : netPortPower (2 * 3) 4 3 (2 * 4) = 48 := by
   rw [netPortPower_flipped_secondary_current]
   norm_num
