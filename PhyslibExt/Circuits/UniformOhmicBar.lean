@@ -33,8 +33,7 @@ a rectangle cross-section example computes the current exactly.
   conductance times voltage.
 - `voltage_eq_resistance_mul_terminalCurrent`: the same relation
   in resistance form.
-- `terminalCurrent_rectangle_example`: the concrete rectangle
-  case.
+- The concrete rectangle case is exercised in the test module.
 
 ## iii. Table of contents
 
