@@ -47,7 +47,6 @@ a rectangle cross-section example computes the current exactly.
 
 ## A. The uniform ohmic bar
 
-Discharges ECE roadmap leaf `ECE.NET.FIELDPORT.L2` (ohmic bar).
 -/
 
 @[expose] public section
