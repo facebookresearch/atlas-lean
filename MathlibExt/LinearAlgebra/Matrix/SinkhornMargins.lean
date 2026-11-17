@@ -56,8 +56,8 @@ noncomputable def scaledTable {m n : ℕ} (a : Fin m → ℝ) (K : Matrix (Fin m
   fun i j => a i * K i j * b j
 
 /-- Row margins: if every `a`-scaled kernel row sums to the target
-`r i` (that is, `∑ j, K i j * b j = r i / a i` in the supplied form
-`a i * ∑ j, K i j * b j = r i`), the scaled table has row sums `r`. -/
+`r i` in the supplied form `a i * ∑ j, K i j * b j = r i` (no division
+by `a i` is used or claimed), the scaled table has row sums `r`. -/
 theorem scaledTable_row_sum {m n : ℕ} (a : Fin m → ℝ)
     (K : Matrix (Fin m) (Fin n) ℝ) (b : Fin n → ℝ) (r : Fin m → ℝ)
     (hrow : ∀ i : Fin m, a i * (∑ j, K i j * b j) = r i) (i : Fin m) :
