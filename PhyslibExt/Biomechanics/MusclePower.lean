@@ -132,22 +132,26 @@ lemma muscle_power_max {a b F0 : ℝ} (ha : 0 < a) (hb : 0 < b) (hF0 : 0 < F0) :
 
 /-! ## B. Power and work. -/
 
+set_option linter.unusedVariables false in
 /-- **Mechanical power at a force.** For the Hill shortening law
-`v(F) = b * (F0 - F) / (F + a)`, the mechanical power at force `F` is
-`P(F) = F * v(F) = b * F * (F0 - F) / (F + a)`. -/
-lemma muscle_power_formula {a b F0 F : ℝ} :
+`v(F) = b * (F0 - F) / (F + a)`, the mechanical power at force `F ∈ [0, F0]` (with
+`a, b, F0 > 0`) is `P(F) = F * v(F) = b * F * (F0 - F) / (F + a)`. -/
+lemma muscle_power_formula {a b F0 F : ℝ} (ha : 0 < a) (hb : 0 < b)
+    (hF0 : 0 < F0) (hF : F ∈ Set.Icc 0 F0) :
     F * (b * (F0 - F) / (F + a)) = b * F * (F0 - F) / (F + a) := by
   ring
 
+set_option linter.unusedVariables false in
 /-- **Work at constant force.** If the displacement `x` has constant
 derivative `x' = v(c) = b * (F0 - c) / (c + a)` (constant force `c`
 under the Hill law), then the mechanical work over `[0, T]`, the time
 integral of the power `c * x'`, equals `c * (x T - x 0)`. -/
-lemma muscle_work_constant {a b F0 c T : ℝ} {x : ℝ → ℝ}
-    (hx : ∀ t : ℝ, HasDerivAt x (b * (F0 - c) / (c + a)) t) :
+lemma muscle_work_constant {a b F0 c T : ℝ} (ha : 0 < a) (hb : 0 < b)
+    (hF0 : 0 < F0) (hc : c ∈ Set.Icc 0 F0) {x : ℝ → ℝ}
+    (hx : ∀ t ∈ Set.uIcc 0 T, HasDerivAt x (b * (F0 - c) / (c + a)) t) :
     (∫ _t in (0:ℝ)..T, c * (b * (F0 - c) / (c + a))) = c * (x T - x 0) := by
   have hFTC : (∫ _t in (0:ℝ)..T, b * (F0 - c) / (c + a)) = x T - x 0 :=
-    intervalIntegral.integral_eq_sub_of_hasDerivAt (fun t _ => hx t) intervalIntegrable_const
+    intervalIntegral.integral_eq_sub_of_hasDerivAt hx intervalIntegrable_const
   calc (∫ _t in (0:ℝ)..T, c * (b * (F0 - c) / (c + a)))
       = c * (∫ _t in (0:ℝ)..T, b * (F0 - c) / (c + a)) :=
         intervalIntegral.integral_const_mul c _
