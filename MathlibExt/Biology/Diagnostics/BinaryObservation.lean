@@ -59,7 +59,7 @@ theorem ppv_coverage_transfer {Ω : Type*} [MeasurableSpace Ω]
     (S : Ω → Set (ℝ × ℝ × ℝ)) (T : Ω → Set ℝ) (θ : Ω → ℝ × ℝ × ℝ)
     (hS : MeasurableSet {ω | θ ω ∈ S ω})
     (hT : MeasurableSet {ω | ppv (θ ω) ∈ T ω})
-    (hcover : ∀ ω, θ ω ∈ S ω → ppv (θ ω) ∈ T ω)
+    (hcover : ∀ ω, Set.image ppv (S ω) ⊆ T ω)
     (hdom : ∀ ω, θ ω ∈ S ω →
       0 ≤ (θ ω).1 ∧ (θ ω).1 ≤ 1 ∧ 0 ≤ (θ ω).2.1 ∧ (θ ω).2.1 ≤ 1 ∧
       0 ≤ (θ ω).2.2 ∧ (θ ω).2.2 ≤ 1)
@@ -68,7 +68,7 @@ theorem ppv_coverage_transfer {Ω : Type*} [MeasurableSpace Ω]
     μ.real {ω | θ ω ∈ S ω} ≤ μ.real {ω | ppv (θ ω) ∈ T ω} := by
   apply measureReal_mono _ (measure_ne_top _ _)
   intro ω hω
-  exact hcover ω hω
+  exact hcover ω ⟨θ ω, hω, rfl⟩
 
 /-- The singleton parameter `(π, se, sp) = (1, 1, 1)` has PPV `1`
 although its negative-test mass `(1 - π) * sp + π * (1 - se)` is zero:
