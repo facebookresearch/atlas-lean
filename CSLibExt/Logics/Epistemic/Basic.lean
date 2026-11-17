@@ -55,6 +55,7 @@ inductive Formula (Atom : Type v) (Agent : Type w) where
   | bot : Formula Atom Agent
   | imp (φ ψ : Formula Atom Agent) : Formula Atom Agent
   | know (i : Agent) (φ : Formula Atom Agent) : Formula Atom Agent
+  | common (G : Set Agent) (φ : Formula Atom Agent) : Formula Atom Agent
 
 namespace Formula
 
@@ -67,13 +68,22 @@ def or {Atom : Type*} {Agent : Type*} (φ ψ : Formula Atom Agent) : Formula Ato
 
 end Formula
 
-/-- Satisfaction of an epistemic formula at a world. -/
+/-- One accessibility step by a member of the group `G`. -/
+def groupRel {World Atom Agent : Type*} (M : Model World Atom Agent)
+    (G : Set Agent) (w v : World) : Prop :=
+  ∃ i ∈ G, M.rel i w v
+
+/-- Satisfaction of an epistemic formula at a world. Common knowledge
+`C_G φ` holds when `φ` holds at every world reachable by a finite chain of
+group steps, zero steps included. -/
 def Sat {World Atom Agent : Type*} (M : Model World Atom Agent) :
     Formula Atom Agent → World → Prop
   | .atom a, w => M.valuation w a
   | .bot, _ => False
   | .imp φ ψ, w => Sat M φ w → Sat M ψ w
   | .know i φ, w => ∀ v, M.rel i w v → Sat M φ v
+  | .common G φ, w =>
+      ∀ v, Relation.ReflTransGen (groupRel M G) w v → Sat M φ v
 
 /-- A formula is valid in a model when it holds at every world. -/
 def Valid {World Atom Agent : Type*} (M : Model World Atom Agent) (φ : Formula Atom Agent) : Prop :=
