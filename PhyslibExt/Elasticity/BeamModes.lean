@@ -440,7 +440,9 @@ theorem sineBasis_tail_norm_sq_le (c : ℕ → ℝ) {N K : ℕ} (hNK : N ≤ K) 
       ‖∑ k ∈ Finset.Ico 0 K,
         c k • MathlibExt.Analysis.ODE.GreensOperator.sineHilbertBasis
           ⟨k + 1, Nat.succ_pos k⟩‖ ^ 2 := by
-  have he :=
+  have he : Orthonormal ℝ (fun k : ℕ =>
+      MathlibExt.Analysis.ODE.GreensOperator.sineHilbertBasis
+        ⟨k + 1, Nat.succ_pos k⟩) :=
     MathlibExt.Analysis.ODE.GreensOperator.sineHilbertBasis.orthonormal.comp
       (fun n : ℕ => (⟨n + 1, Nat.succ_pos n⟩ : ℕ+))
       (fun a b h => by
