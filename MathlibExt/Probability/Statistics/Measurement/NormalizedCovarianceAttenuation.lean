@@ -45,8 +45,9 @@ open scoped ProbabilityTheory
 
 Let `X = Tx + Ex` and `Y = Ty + Ey` on a probability space, with all of
 `Tx`, `Ty`, `Ex`, `Ey` square integrable. Assume the true-score variances
-`Var[Tx]`, `Var[Ty]` and the observed variances `Var[X]`, `Var[Y]` are
-positive, the own true/error covariances `cov[Tx, Ex]`, `cov[Ty, Ey]`
+`Var[Tx]`, `Var[Ty]` are positive (the observed variances are then
+positive, since each is a true variance plus a nonnegative error
+variance), the own true/error covariances `cov[Tx, Ex]`, `cov[Ty, Ey]`
 vanish, the error covariance `cov[Ex, Ey]` vanishes, and the cross
 true/error covariances `cov[Tx, Ey]`, `cov[Ex, Ty]` vanish. Then the
 normalized covariance of the observed scores is the normalized covariance
@@ -60,7 +61,6 @@ theorem normalizedCovariance_attenuation {Ω : Type*} [MeasurableSpace Ω]
     (hTx : MemLp Tx 2 μ) (hTy : MemLp Ty 2 μ)
     (hEx : MemLp Ex 2 μ) (hEy : MemLp Ey 2 μ)
     (hVarTx : 0 < Var[Tx; μ]) (hVarTy : 0 < Var[Ty; μ])
-    (hVarX : 0 < Var[X; μ]) (hVarY : 0 < Var[Y; μ])
     (hTxEx : cov[Tx, Ex; μ] = 0) (hTyEy : cov[Ty, Ey; μ] = 0)
     (hExEy : cov[Ex, Ey; μ] = 0)
     (hTxEy : cov[Tx, Ey; μ] = 0) (hExTy : cov[Ex, Ty; μ] = 0) :
@@ -80,8 +80,10 @@ theorem normalizedCovariance_attenuation {Ω : Type*} [MeasurableSpace Ω]
   have hVarY' : Var[Y; μ] = Var[Ty; μ] + Var[Ey; μ] := by
     rw [hY, variance_fun_add hTy hEy, hTyEy]
     ring
-  have hposX : 0 < Var[Tx; μ] + Var[Ex; μ] := by rw [← hVarX']; exact hVarX
-  have hposY : 0 < Var[Ty; μ] + Var[Ey; μ] := by rw [← hVarY']; exact hVarY
+  have hposX : 0 < Var[Tx; μ] + Var[Ex; μ] :=
+    add_pos_of_pos_of_nonneg hVarTx (variance_nonneg Ex μ)
+  have hposY : 0 < Var[Ty; μ] + Var[Ey; μ] :=
+    add_pos_of_pos_of_nonneg hVarTy (variance_nonneg Ey μ)
   rw [hCovXY, hVarX', hVarY']
   unfold attenuationFactor
   rw [Real.sqrt_mul (div_nonneg hVarTx.le hposX.le),

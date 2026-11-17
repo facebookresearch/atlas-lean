@@ -93,7 +93,6 @@ theorem normalizedCovariance_attenuation_applied {Ω : Type*}
     cov[X, Y; μ] / (Real.sqrt Var[X; μ] * Real.sqrt Var[Y; μ]) = -1 / 2 := by
   have h := normalizedCovariance_attenuation hX hY hTx hTy hEx hEy
     (by rw [hVarTx]; norm_num) (by rw [hVarTy]; norm_num)
-    (by rw [hVarX]; norm_num) (by rw [hVarY]; norm_num)
     hTxEx hTyEy hExEy hTxEy hExTy
   rw [hCovT, hVarTx, hVarTy, hVarEx, hVarEy] at h
   rw [h, Real.sqrt_one, mul_one, div_one]
