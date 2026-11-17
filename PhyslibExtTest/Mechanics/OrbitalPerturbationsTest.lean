@@ -79,7 +79,8 @@ example :
       (5 / 8 : ℝ) • EuclideanSpace.single (0 : Fin 3) (2 : ℝ) := by
   have hnr : ‖EuclideanSpace.single (0 : Fin 3) (2 : ℝ)‖ = 2 := by
     simp [PiLp.norm_single]
-  simp [OrbitalPerturbations.inverseSquareField, hnr]
+  have h58 : (5 : ℝ) / 2 ^ 3 = 5 / 8 := by norm_num
+  simp [OrbitalPerturbations.inverseSquareField, hnr, h58]
 
 /-- Zero-parameter endpoint: the bundled Lipschitz form at `μ = 0`. -/
 example :
