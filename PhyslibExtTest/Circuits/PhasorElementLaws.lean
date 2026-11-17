@@ -27,4 +27,30 @@ example {ω : ℝ} (hω : 0 < ω) :
   phasor_element_laws 2 3 5 (by norm_num) (by norm_num) (by norm_num) hω 0 0
     (rmsWaveform 0 ω) (rmsWaveform 0 ω) (fun _ => rfl) (fun _ => rfl)
 
+/-- Nonzero inductor case: `V = 6i`, `I = 1`, `L = 2`, `omega = 3`
+satisfies the phasor law, its waveform vanishes at `t = 0`, and at
+a quarter period it reads `sqrt 2 * (-6)`. -/
+example : (Complex.I * (3 : ℂ) * (2 : ℂ) * 1) = 6 * Complex.I := by ring
+
+/-- The inductor law at nonzero values, through the public iff. -/
+example :
+    ((∀ t, rmsWaveform (6 * Complex.I) 3 t = 2 * deriv (rmsWaveform 1 3) t) ↔
+      (6 * Complex.I : ℂ) = Complex.I * (3 : ℂ) * (2 : ℂ) * 1) :=
+  inductor_law_iff_phasor 2 (by norm_num) (by norm_num) (6 * Complex.I) 1
+    (rmsWaveform (6 * Complex.I) 3) (rmsWaveform 1 3) (fun _ => rfl) (fun _ => rfl)
+
+/-- Quarter-period lead at nonzero values: the voltage waveform
+is `omega L` times the current waveform advanced by a quarter
+period. -/
+example (t : ℝ) :
+    rmsWaveform (6 * Complex.I) 3 t =
+      3 * 2 * rmsWaveform 1 3 (t + Real.pi / (2 * 3)) :=
+  inductor_voltage_leads_current 2 (by norm_num) (by norm_num) (6 * Complex.I) 1 (by push_cast; ring) t
+
+/-- A nonzero admittance case: `R = 2`, `V = 2`, `I = 1`
+satisfies the admittance form `I = V / R`. -/
+example : ((2 : ℂ) = (2 : ℂ) * 1) ↔ (1 : ℂ) = (2 : ℂ) / (2 : ℂ) :=
+  resistor_phasor_iff_admittance 2 (by norm_num) 2 1
+
+
 end PhyslibExtTest.Circuits.PhasorElementLaws
