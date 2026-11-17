@@ -72,10 +72,6 @@ noncomputable def amSignal (N : ℕ) [NeZero N] (A μ : ℝ) (m : ZMod N → ℝ
     ZMod N → ℝ :=
   fun j => (A + μ * m j) * carrierCos N k j
 
-/-- The unit impulse at circular bin `k`. -/
-def binImpulse (N : ℕ) (k l : ZMod N) : ℂ :=
-  if l = k then 1 else 0
-
 /-- The canonical (Mathlib, negative-exponent, unnormalized) DFT of a real message. -/
 noncomputable def messageSpectrum (N : ℕ) [NeZero N] (m : ZMod N → ℝ) : ZMod N → ℂ :=
   𝓕 (fun j => (m j : ℂ))
@@ -134,7 +130,7 @@ lemma dft_stdAddChar_mul (N : ℕ) [NeZero N] (Φ : ZMod N → ℂ) (k l : ZMod 
 
 /-- A pure complex tone at bin `k` has DFT `N` times the impulse at `k`. -/
 lemma dft_stdAddChar (N : ℕ) [NeZero N] (k l : ZMod N) :
-    𝓕 (fun j => stdAddChar (k * j)) l = (N : ℂ) * binImpulse N k l := by
+    𝓕 (fun j => stdAddChar (k * j)) l = (N : ℂ) * (Pi.single k (1 : ℂ) : ZMod N → ℂ) l := by
   simp only [dft_apply, smul_eq_mul]
   have hsum : ∀ j : ZMod N,
       stdAddChar (-(j * l)) * stdAddChar (k * j) = stdAddChar ((k - l) * j) := by
@@ -147,23 +143,20 @@ lemma dft_stdAddChar (N : ℕ) [NeZero N] (k l : ZMod N) :
   · have hlk : l = k := (sub_eq_zero.mp h).symm
     simp only [h, zero_mul, AddChar.map_zero_eq_one, Finset.sum_const, Finset.card_univ,
       ZMod.card, nsmul_eq_mul, mul_one]
-    unfold binImpulse
-    rw [ite_eq_left hlk]
+    rw [hlk, Pi.single_eq_same]
     ring
   · have hlk : l ≠ k := fun heq => h (by rw [heq, sub_self])
     have hzero : ∑ j : ZMod N, stdAddChar ((k - l) * j) = 0 :=
       AddChar.sum_eq_zero_of_ne_one ((isPrimitive_stdAddChar N) h)
     rw [hzero]
-    unfold binImpulse
-    rw [ite_eq_right hlk]
-    ring
+    simp [Pi.single_apply, hlk]
 
 /-- **Finite AM spectrum.** The canonical DFT of `s_j = (A + μ m_j) cos(2π k j / N)` is
 `A N / 2` times the impulses at `k` and `-k` plus `μ / 2` times the two shifted
 transforms of `m`. No support hypothesis: coinciding bins add. -/
 lemma dft_amSignal (N : ℕ) [NeZero N] (A μ : ℝ) (m : ZMod N → ℝ) (k l : ZMod N) :
     𝓕 (fun j => ((amSignal N A μ m k j : ℝ) : ℂ)) l =
-      (A : ℂ) * (N : ℂ) / 2 * (binImpulse N k l + binImpulse N (-k) l) +
+      (A : ℂ) * (N : ℂ) / 2 * ((Pi.single k (1 : ℂ) : ZMod N → ℂ) l + (Pi.single (-k) (1 : ℂ) : ZMod N → ℂ) l) +
         (μ : ℂ) / 2 * (messageSpectrum N m (l - k) + messageSpectrum N m (l + k)) := by
   have hdecomp : (fun j => ((amSignal N A μ m k j : ℝ) : ℂ))
       = ((A : ℂ) / 2) • (fun j => stdAddChar (k * j))
@@ -197,12 +190,10 @@ lemma dft_amSignal_eq_positive_shift (N : ℕ) [NeZero N] (A μ : ℝ) (m : ZMod
     𝓕 (fun j => ((amSignal N A μ m k j : ℝ) : ℂ)) l =
       (μ : ℂ) / 2 * messageSpectrum N m (l - k) := by
   rw [dft_amSignal]
-  have e1 : binImpulse N k l = 0 := by
-    unfold binImpulse
-    rw [ite_eq_right hlk]
-  have e2 : binImpulse N (-k) l = 0 := by
-    unfold binImpulse
-    rw [ite_eq_right hlnk]
+  have e1 : (Pi.single k (1 : ℂ) : ZMod N → ℂ) l = 0 := by
+    simp [Pi.single_apply, hlk]
+  have e2 : (Pi.single (-k) (1 : ℂ) : ZMod N → ℂ) l = 0 := by
+    simp [Pi.single_apply, hlnk]
   have hnot : l ∉ negativeShiftSupport N m k := Set.disjoint_left.mp hdisj hl
   have e3 : messageSpectrum N m (l + k) = 0 := by
     by_contra hne
@@ -217,12 +208,10 @@ lemma dft_amSignal_eq_negative_shift (N : ℕ) [NeZero N] (A μ : ℝ) (m : ZMod
     𝓕 (fun j => ((amSignal N A μ m k j : ℝ) : ℂ)) l =
       (μ : ℂ) / 2 * messageSpectrum N m (l + k) := by
   rw [dft_amSignal]
-  have e1 : binImpulse N k l = 0 := by
-    unfold binImpulse
-    rw [ite_eq_right hlk]
-  have e2 : binImpulse N (-k) l = 0 := by
-    unfold binImpulse
-    rw [ite_eq_right hlnk]
+  have e1 : (Pi.single k (1 : ℂ) : ZMod N → ℂ) l = 0 := by
+    simp [Pi.single_apply, hlk]
+  have e2 : (Pi.single (-k) (1 : ℂ) : ZMod N → ℂ) l = 0 := by
+    simp [Pi.single_apply, hlnk]
   have hnot : l ∉ positiveShiftSupport N m k :=
     Set.disjoint_right.mp hdisj hl
   have e3 : messageSpectrum N m (l - k) = 0 := by
@@ -233,7 +222,7 @@ lemma dft_amSignal_eq_negative_shift (N : ℕ) [NeZero N] (A μ : ℝ) (m : ZMod
 
 private theorem messageSpectrum_carrierCos_aux (N : ℕ) [NeZero N] (f l : ZMod N) :
     messageSpectrum N (carrierCos N f) l =
-      (N : ℂ) / 2 * (binImpulse N f l + binImpulse N (-f) l) := by
+      (N : ℂ) / 2 * ((Pi.single f (1 : ℂ) : ZMod N → ℂ) l + (Pi.single (-f) (1 : ℂ) : ZMod N → ℂ) l) := by
   have hdecomp : (fun j => ((carrierCos N f j : ℝ) : ℂ))
       = ((1 / 2 : ℂ)) • (fun j => stdAddChar (f * j))
         + ((1 / 2 : ℂ)) • (fun j => stdAddChar (-(f * j))) := by
@@ -254,7 +243,7 @@ private theorem messageSpectrum_carrierCos_aux (N : ℕ) [NeZero N] (f l : ZMod 
 `(A + μ c) N / 2`. -/
 lemma dft_amSignal_const_message (N : ℕ) [NeZero N] (A μ c : ℝ) (k l : ZMod N) :
     𝓕 (fun j => ((amSignal N A μ (fun _ => c) k j : ℝ) : ℂ)) l =
-      ((A + μ * c : ℝ) : ℂ) * (N : ℂ) / 2 * (binImpulse N k l + binImpulse N (-k) l) := by
+      ((A + μ * c : ℝ) : ℂ) * (N : ℂ) / 2 * ((Pi.single k (1 : ℂ) : ZMod N → ℂ) l + (Pi.single (-k) (1 : ℂ) : ZMod N → ℂ) l) := by
   have hdecomp : (fun j => ((amSignal N A μ (fun _ => c) k j : ℝ) : ℂ))
       = (((A + μ * c : ℝ) : ℂ)) • (fun j => ((carrierCos N k j : ℝ) : ℂ)) := by
     ext j
@@ -271,38 +260,40 @@ lemma dft_amSignal_const_message (N : ℕ) [NeZero N] (A μ c : ℝ) (k l : ZMod
 /-- A baseband cosine tone at bin `f` has spectrum `N / 2` at `f` and `-f`. -/
 lemma messageSpectrum_carrierCos (N : ℕ) [NeZero N] (f l : ZMod N) :
     messageSpectrum N (carrierCos N f) l =
-      (N : ℂ) / 2 * (binImpulse N f l + binImpulse N (-f) l) := by
+      (N : ℂ) / 2 * ((Pi.single f (1 : ℂ) : ZMod N → ℂ) l + (Pi.single (-f) (1 : ℂ) : ZMod N → ℂ) l) := by
   exact messageSpectrum_carrierCos_aux N f l
 
 /-- Validation, baseband tone at `f`: carrier impulses plus four sideband impulses at
 `±k ± f`, each of weight `μ N / 4`. -/
 lemma dft_amSignal_tone_message (N : ℕ) [NeZero N] (A μ : ℝ) (f k l : ZMod N) :
     𝓕 (fun j => ((amSignal N A μ (carrierCos N f) k j : ℝ) : ℂ)) l =
-      (A : ℂ) * (N : ℂ) / 2 * (binImpulse N k l + binImpulse N (-k) l) +
+      (A : ℂ) * (N : ℂ) / 2 * ((Pi.single k (1 : ℂ) : ZMod N → ℂ) l + (Pi.single (-k) (1 : ℂ) : ZMod N → ℂ) l) +
         (μ : ℂ) * (N : ℂ) / 4 *
-          (binImpulse N (k + f) l + binImpulse N (k - f) l +
-            binImpulse N (-k + f) l + binImpulse N (-k - f) l) := by
+          ((Pi.single (k + f) (1 : ℂ) : ZMod N → ℂ) l + (Pi.single (k - f) (1 : ℂ) : ZMod N → ℂ) l +
+            (Pi.single (-k + f) (1 : ℂ) : ZMod N → ℂ) l + (Pi.single (-k - f) (1 : ℂ) : ZMod N → ℂ) l) := by
   rw [dft_amSignal, messageSpectrum_carrierCos, messageSpectrum_carrierCos]
-  have h1 : binImpulse N f (l - k) = binImpulse N (k + f) l := by
-    unfold binImpulse
-    have hiff : (l - k = f) ↔ (l = k + f) := by
-      constructor <;> intro h <;> linear_combination h
-    simp only [hiff]
-  have h2 : binImpulse N (-f) (l - k) = binImpulse N (k - f) l := by
-    unfold binImpulse
-    have hiff : (l - k = -f) ↔ (l = k - f) := by
-      constructor <;> intro h <;> linear_combination h
-    simp only [hiff]
-  have h3 : binImpulse N f (l + k) = binImpulse N (-k + f) l := by
-    unfold binImpulse
-    have hiff : (l + k = f) ↔ (l = -k + f) := by
-      constructor <;> intro h <;> linear_combination h
-    simp only [hiff]
-  have h4 : binImpulse N (-f) (l + k) = binImpulse N (-k - f) l := by
-    unfold binImpulse
-    have hiff : (l + k = -f) ↔ (l = -k - f) := by
-      constructor <;> intro h <;> linear_combination h
-    simp only [hiff]
+  have h1 : (Pi.single f (1 : ℂ) : ZMod N → ℂ) (l - k) = (Pi.single (k + f) (1 : ℂ) : ZMod N → ℂ) l := by
+    by_cases h : l - k = f
+    · have hl : l = k + f := by linear_combination h
+      simp [Pi.single_apply, h, hl]
+    · have hl : l ≠ k + f := fun he => h (by linear_combination he)
+      simp [Pi.single_apply, h, hl]
+  have h2 : (Pi.single (-f) (1 : ℂ) : ZMod N → ℂ) (l - k) = (Pi.single (k - f) (1 : ℂ) : ZMod N → ℂ) l := by
+    by_cases h : l - k = -f
+    · have hl : l = k - f := by linear_combination h
+      simp [Pi.single_apply, h, hl]
+    · have hl : l ≠ k - f := fun he => h (by linear_combination he)
+      simp [Pi.single_apply, h, hl]
+  have h3 : (Pi.single f (1 : ℂ) : ZMod N → ℂ) (l + k) = (Pi.single (-k + f) (1 : ℂ) : ZMod N → ℂ) l := by
+    by_cases h : l + k = f
+    · rw [h, show l = -k + f from by linear_combination h, Pi.single_eq_same, Pi.single_eq_same]
+    · have hl : l ≠ -k + f := fun he => h (by linear_combination he)
+      simp [Pi.single_apply, h, hl]
+  have h4 : (Pi.single (-f) (1 : ℂ) : ZMod N → ℂ) (l + k) = (Pi.single (-k - f) (1 : ℂ) : ZMod N → ℂ) l := by
+    by_cases h : l + k = -f
+    · rw [h, show l = -k - f from by linear_combination h, Pi.single_eq_same, Pi.single_eq_same]
+    · have hl : l ≠ -k - f := fun he => h (by linear_combination he)
+      simp [Pi.single_apply, h, hl]
   rw [h1, h2, h3, h4]
   ring
 
@@ -335,14 +326,14 @@ lemma not_disjoint_shifted_supports_tone_four :
     rw [messageSpectrum_carrierCos]
     have e1 : ((0 : ZMod 4) - 1) ≠ 1 := by decide
     have e2 : ((0 : ZMod 4) - 1) = -1 := by decide
-    simp only [binImpulse, ite_eq_right e1, ite_eq_left e2]
+    rw [Pi.single_apply, Pi.single_apply, if_neg e1, if_pos e2]
     norm_num
   have h0l : (0 : ZMod 4) ∈ negativeShiftSupport 4 (carrierCos 4 1) 1 := by
     show messageSpectrum 4 (carrierCos 4 1) (0 + 1) ≠ 0
     rw [messageSpectrum_carrierCos]
     have e1 : ((0 : ZMod 4) + 1) = 1 := by decide
     have e2 : ((0 : ZMod 4) + 1) ≠ -1 := by decide
-    simp only [binImpulse, ite_eq_left e1, ite_eq_right e2]
+    rw [Pi.single_apply, Pi.single_apply, if_pos e1, if_neg e2]
     norm_num
   exact (Set.disjoint_left.mp hdisj h0u) h0l
 
@@ -352,14 +343,17 @@ over the samples `A + μ, 0, μ - A, 0`). -/
 lemma dft_amSignal_tone_four_zero (A μ : ℝ) :
     𝓕 (fun j => ((amSignal 4 A μ (carrierCos 4 1) 1 j : ℝ) : ℂ)) 0 = 2 * (μ : ℂ) := by
   rw [dft_amSignal_tone_message]
-  have c1 : ¬ ((0 : ZMod 4) = 1) := by decide
-  have c2 : ¬ ((0 : ZMod 4) = -1) := by decide
-  have c3 : ¬ ((0 : ZMod 4) = 1 + 1) := by decide
-  have c4 : ((0 : ZMod 4) = 1 - 1) := by decide
-  have c5 : ((0 : ZMod 4) = -1 + 1) := by decide
-  have c6 : ¬ ((0 : ZMod 4) = -1 - 1) := by decide
-  simp only [binImpulse, ite_eq_right c1, ite_eq_right c2, ite_eq_right c3, ite_eq_left c4,
-    ite_eq_left c5, ite_eq_right c6]
+  have z1 : (Pi.single (1 : ZMod 4) (1 : ℂ) : ZMod 4 → ℂ) 0 = 0 := @Pi.single_eq_of_ne (ZMod 4) (fun _ => ℂ) _ _ 1 0 (by decide) (1 : ℂ)
+  have z2 : (Pi.single (-1 : ZMod 4) (1 : ℂ) : ZMod 4 → ℂ) 0 = 0 := @Pi.single_eq_of_ne (ZMod 4) (fun _ => ℂ) _ _ (-1) 0 (by decide) (1 : ℂ)
+  have z3 : (Pi.single (1 + 1 : ZMod 4) (1 : ℂ) : ZMod 4 → ℂ) 0 = 0 := @Pi.single_eq_of_ne (ZMod 4) (fun _ => ℂ) _ _ (1 + 1) 0 (by decide) (1 : ℂ)
+  have z4 : (Pi.single (1 - 1 : ZMod 4) (1 : ℂ) : ZMod 4 → ℂ) 0 = 1 := by
+    rw [show (1 - 1 : ZMod 4) = 0 by decide]
+    exact @Pi.single_eq_same (ZMod 4) (fun _ => ℂ) _ _ 0 (1 : ℂ)
+  have z5 : (Pi.single (-1 + 1 : ZMod 4) (1 : ℂ) : ZMod 4 → ℂ) 0 = 1 := by
+    rw [show (-1 + 1 : ZMod 4) = 0 by decide]
+    exact @Pi.single_eq_same (ZMod 4) (fun _ => ℂ) _ _ 0 (1 : ℂ)
+  have z6 : (Pi.single (-1 - 1 : ZMod 4) (1 : ℂ) : ZMod 4 → ℂ) 0 = 0 := @Pi.single_eq_of_ne (ZMod 4) (fun _ => ℂ) _ _ (-1 - 1) 0 (by decide) (1 : ℂ)
+  rw [z1, z2, z3, z4, z5, z6]
   push_cast
   ring
 
