@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.MeasureTheory.Measure.Real
+public import Mathlib.Probability.ConditionalProbability
 
 /-!
 # Diagnostic joint law and predictive values
@@ -35,6 +36,7 @@ empirical sensitivity or specificity claim.
 @[expose] public section
 
 open MeasureTheory Set
+open scoped ProbabilityTheory
 
 namespace MathlibExt.Probability.Statistics.DiagnosticObservation
 
@@ -44,8 +46,10 @@ with disease event `D` and positive-test event `T`, if the prevalence is
 that the four joint masses are `π * se`, `π * (1 - se)`,
 `(1 - π) * (1 - sp)` and `(1 - π) * sp`, then the test-positive mass is
 `π * se + (1 - π) * (1 - sp)`, the test-negative mass is
-`(1 - π) * sp + π * (1 - se)`, and (as real ratios) the predictive
-values are `π * se / (π * se + (1 - π) * (1 - sp))` and
+`(1 - π) * sp + π * (1 - se)`, and, as totalized real ratios (the
+predictive values only under the nonzero-denominator hypotheses of
+`diagnostic_ppv`/`diagnostic_npv` below), the ratios are
+`π * se / (π * se + (1 - π) * (1 - sp))` and
 `(1 - π) * sp / ((1 - π) * sp + π * (1 - se))`. -/
 private theorem diagnostic_predictive_values {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] {D T : Set Ω} {π se sp : ℝ}
@@ -152,5 +156,42 @@ theorem diagnostic_npv {Ω : Type*} [MeasurableSpace Ω]
       (1 - π) * sp / ((1 - π) * sp + π * (1 - se)) := by
   have h := diagnostic_predictive_values μ hD hT hTP hFN hFP hTN
   exact h.2.2.2
+
+/-- **Positive predictive value, conditional-measure form.** Under the
+nonzero test-positive denominator hypothesis, the conditional measure
+`μ[|T]` evaluated at `D` is the predictive value. -/
+theorem diagnostic_ppv_cond {Ω : Type*} [MeasurableSpace Ω]
+    (μ : Measure Ω) [IsProbabilityMeasure μ] {D T : Set Ω} {π se sp : ℝ}
+    (hD : MeasurableSet D) (hT : MeasurableSet T)
+    (hTP : μ.real (D ∩ T) = π * se) (hFN : μ.real (D ∩ Tᶜ) = π * (1 - se))
+    (hFP : μ.real (Dᶜ ∩ T) = (1 - π) * (1 - sp))
+    (hTN : μ.real (Dᶜ ∩ Tᶜ) = (1 - π) * sp)
+    (hden : π * se + (1 - π) * (1 - sp) ≠ 0) :
+    (μ[|T]).real D = π * se / (π * se + (1 - π) * (1 - sp)) := by
+  have hppv := diagnostic_ppv μ hD hT hTP hFN hFP hTN hden
+  have hrealT : μ.real T ≠ 0 := by
+    have hm := diagnostic_test_masses μ hD hT hTP hFN hFP hTN
+    rw [hm.1]; exact hden
+  have h1 : (μ[|T]).real D = μ.real (D ∩ T) / μ.real T := by
+    simp only [Measure.real, ProbabilityTheory.cond_apply hT μ D, inter_comm T D,
+      ENNReal.toReal_mul, ENNReal.toReal_inv, div_eq_inv_mul]
+  rw [h1]; exact hppv
+
+/-- **Negative predictive value, conditional-measure form.** Under the
+nonzero test-negative denominator hypothesis, the conditional measure
+`μ[|Tᶜ]` evaluated at `Dᶜ` is the predictive value. -/
+theorem diagnostic_npv_cond {Ω : Type*} [MeasurableSpace Ω]
+    (μ : Measure Ω) [IsProbabilityMeasure μ] {D T : Set Ω} {π se sp : ℝ}
+    (hD : MeasurableSet D) (hT : MeasurableSet T)
+    (hTP : μ.real (D ∩ T) = π * se) (hFN : μ.real (D ∩ Tᶜ) = π * (1 - se))
+    (hFP : μ.real (Dᶜ ∩ T) = (1 - π) * (1 - sp))
+    (hTN : μ.real (Dᶜ ∩ Tᶜ) = (1 - π) * sp)
+    (hden : (1 - π) * sp + π * (1 - se) ≠ 0) :
+    (μ[|Tᶜ]).real Dᶜ = (1 - π) * sp / ((1 - π) * sp + π * (1 - se)) := by
+  have hnpv := diagnostic_npv μ hD hT hTP hFN hFP hTN hden
+  have h1 : (μ[|Tᶜ]).real Dᶜ = μ.real (Dᶜ ∩ Tᶜ) / μ.real Tᶜ := by
+    simp only [Measure.real, ProbabilityTheory.cond_apply hT.compl μ Dᶜ, inter_comm Tᶜ Dᶜ,
+      ENNReal.toReal_mul, ENNReal.toReal_inv, div_eq_inv_mul]
+  rw [h1]; exact hnpv
 
 end MathlibExt.Probability.Statistics.DiagnosticObservation

@@ -17,6 +17,7 @@ and the two boundary laws at prevalence `0` and `1` on a one-point space. -/
 namespace MathlibExtTest.Probability.Statistics.DiagnosticObservation.JointLaw
 
 open MeasureTheory Set MathlibExt.Probability.Statistics.DiagnosticObservation
+open scoped ProbabilityTheory
 
 
 /-- Sensitivity/specificity `3/4`: prevalence `1/10` gives PPV `1/4`,
@@ -46,5 +47,11 @@ example : let μ : Measure Unit := Measure.dirac ()
     (D := (Set.univ : Set Unit)) (T := (Set.univ : Set Unit)) (π := 1) (se := 1) (sp := 3 / 4)
     MeasurableSet.univ MeasurableSet.univ (by simp) (by simp) (by simp) (by simp)
   exact h.1
+
+/-- Conditional-measure form at prevalence `1`: `(μ[|T]).real D = 1`. -/
+example : ((Measure.dirac ((): Unit))[|(Set.univ : Set Unit)]).real (Set.univ : Set Unit) =
+    (1 : ℝ) * 1 / ((1 : ℝ) * 1 + (1 - 1) * (1 - 3 / 4)) :=
+  diagnostic_ppv_cond (Measure.dirac ())
+    MeasurableSet.univ MeasurableSet.univ (by simp) (by simp) (by simp) (by simp) (by norm_num)
 
 end MathlibExtTest.Probability.Statistics.DiagnosticObservation.JointLaw
