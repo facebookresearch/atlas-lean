@@ -23,17 +23,16 @@ example {S I : ℝ → ℝ} :
       (1/10) * (2 - 0) :=
   epi_intensity_background_only
 
-/-- Same intensity, same law: two model intensities that agree
-(here both `background * width = 0.1 * 2`) give the same law under
-any law constructor `L`. -/
-example (L : ℝ → MeasureTheory.Measure ℕ) :
-    L ((0:ℝ) * 5 + (1/10) * (2 - 0)) = L ((0:ℝ) * 7 + (1/10) * (2 - 0)) := by
-  norm_num
+/-- The reporting law determines its intensity vector. -/
+example {lam lam' : Fin 2 → ℝ≥0}
+    (h : reportingLaw lam = reportingLaw lam') : lam = lam' :=
+  reportingLaw_injective h
+
 /-- The zero-reporting estimand is not identified. -/
 example :
     ¬ MathlibExt.Probability.Statistics.IsIdentifiedBy
       (fun incidence : Fin 2 → ℝ≥0 =>
-        reportingLaw (intensityAt 0 (fun _ => 1) incidence))
+        reportingLaw (intensityAt 0 zero_le_one (fun _ => 1) incidence))
       (fun incidence : Fin 2 → ℝ≥0 => (incidence 0 : ℝ)) :=
   epi_nonidentified_at_zero_reporting (fun _ => 1)
 

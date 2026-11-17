@@ -45,17 +45,18 @@ lemma epi_intensity_background_only {beta background N a b : ℝ}
       background * (b - a) := by
   rw [zero_mul, zero_add]
 
-/-- The interval-intensity vector at reporting fraction `rho`:
-background plus `rho` times the integrated epidemic incidence per
-interval. -/
-noncomputable def intensityAt {n : ℕ} (rho : ℝ≥0) (background : Fin n → ℝ≥0)
-    (incidence : Fin n → ℝ≥0) : Fin n → ℝ≥0 :=
+/-- The interval-intensity vector at reporting fraction `rho`,
+with `rho ≤ 1`: background plus `rho` times the integrated epidemic
+incidence per interval. -/
+noncomputable def intensityAt {n : ℕ} (rho : ℝ≥0) (hrho : rho ≤ 1)
+    (background : Fin n → ℝ≥0) (incidence : Fin n → ℝ≥0) :
+    Fin n → ℝ≥0 :=
   fun j => background j + rho * incidence j
 
 /-- At zero reporting the intensity map is the constant background
 vector, for every epidemic incidence vector. -/
 lemma intensityAt_zero {n : ℕ} (background incidence : Fin n → ℝ≥0) :
-    intensityAt 0 background incidence = background := by
+    intensityAt 0 zero_le_one background incidence = background := by
   funext j
   simp [intensityAt]
 
@@ -65,11 +66,12 @@ noncomputable def reportingLaw {n : ℕ} :
     ProbabilityTheory.Kernel (Fin n → ℝ≥0) (Fin n → ℕ) :=
   ProbabilityTheory.piPoissonKernel (Fin n)
 
-/-- **Law equality from equal intensities.** Two intensity vectors
-that agree give the same independent Poisson reporting law. -/
-lemma reportingLaw_eq_of_intensity_eq {n : ℕ} {lam lam' : Fin n → ℝ≥0}
-    (h : lam = lam') : reportingLaw lam = reportingLaw lam' :=
-  congrArg reportingLaw h
+/-- **The reporting law determines its intensities.** The
+independent Poisson reporting law is injective: equal reporting
+laws come only from equal intensity vectors. -/
+lemma reportingLaw_injective {n : ℕ} :
+    Function.Injective (reportingLaw (n := n)) :=
+  ProbabilityTheory.piPoissonKernel_injective
 
 /-- **Nonidentification at zero reporting.** Compose the
 reporting law with the intensity map at `rho = 0`. The resulting
@@ -83,7 +85,7 @@ lemma epi_nonidentified_at_zero_reporting {n : ℕ} [NeZero n]
     (background : Fin n → ℝ≥0) :
     ¬ MathlibExt.Probability.Statistics.IsIdentifiedBy
       (fun incidence : Fin n → ℝ≥0 =>
-        reportingLaw (intensityAt 0 background incidence))
+        reportingLaw (intensityAt 0 zero_le_one background incidence))
       (fun incidence : Fin n → ℝ≥0 => (incidence 0 : ℝ)) := by
   apply MathlibExt.Probability.Statistics.not_isIdentifiedBy_of_eq_of_ne
     (θ := fun _ => (0 : ℝ≥0)) (θ' := fun i => if i = 0 then 1 else 0)
