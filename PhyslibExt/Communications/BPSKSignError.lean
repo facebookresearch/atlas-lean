@@ -12,6 +12,7 @@ public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.Probability.CDF
 public import Mathlib.Probability.HasLaw
 public import Mathlib.Probability.Independence.Basic
+public import MathlibExt.Probability.Distributions.GaussianCdf
 
 /-!
 # BPSK sign-detector error probability
@@ -97,81 +98,15 @@ private theorem detector_eq_one_iff (τ y : ℝ) :
 
 private theorem symm_aux (x : ℝ) :
     cdf (gaussianReal 0 1) (-x) = 1 - cdf (gaussianReal 0 1) x := by
-  have hmap : (gaussianReal (0 : ℝ) 1).map (fun y => -y) = gaussianReal 0 1 := by
-    rw [gaussianReal_map_neg]
-    simp
-  have hnull : NullSingletonClass (gaussianReal (0 : ℝ) 1) :=
-    nullSingletonClass_gaussianReal (by simp)
-  rw [cdf_eq_real, cdf_eq_real]
-  have hpre : (fun y : ℝ => -y) ⁻¹' (Set.Iic (-x)) = Set.Ici x := by
-    ext y
-    simp only [Set.mem_preimage, Set.mem_Iic, Set.mem_Ici]
-    rw [neg_le_neg_iff]
-  have h1 : ((gaussianReal (0 : ℝ) 1).map (fun y => -y)).real (Set.Iic (-x)) =
-      (gaussianReal (0 : ℝ) 1).real (Set.Ici x) := by
-    rw [map_measureReal_apply (by fun_prop) measurableSet_Iic, hpre]
-  have hIci_eq : (gaussianReal (0 : ℝ) 1).real (Set.Iic (-x)) =
-      (gaussianReal (0 : ℝ) 1).real (Set.Ici x) := by
-    calc (gaussianReal (0 : ℝ) 1).real (Set.Iic (-x))
-        = ((gaussianReal (0 : ℝ) 1).map (fun y => -y)).real (Set.Iic (-x)) := by
-          rw [hmap]
-      _ = (gaussianReal (0 : ℝ) 1).real (Set.Ici x) := h1
-  rw [hIci_eq]
-  have hIci_union : Set.Ici x = Set.Ioi x ∪ {x} := by
-    ext y
-    simp only [Set.mem_Ici, Set.mem_Ioi, Set.mem_union, Set.mem_singleton_iff]
-    constructor
-    · intro h
-      rcases lt_or_eq_of_le h with hlt | heq
-      · exact Or.inl hlt
-      · exact Or.inr heq.symm
-    · rintro (hlt | rfl)
-      · exact le_of_lt hlt
-      · exact le_rfl
-  have hdisj : Disjoint (Set.Ioi x) ({x} : Set ℝ) := by
-    rw [Set.disjoint_left]
-    intro y hy hx
-    simp only [Set.mem_Ioi, Set.mem_singleton_iff] at hy hx
-    rw [hx] at hy
-    exact lt_irrefl x hy
-  have hsing : (gaussianReal (0 : ℝ) 1).real {x} = 0 := by
-    have h0 : (gaussianReal (0 : ℝ) 1) {x} = 0 := @measure_singleton _ _ _ hnull x
-    simp [Measure.real, h0]
-  have hIci_real : (gaussianReal (0 : ℝ) 1).real (Set.Ici x) =
-      (gaussianReal (0 : ℝ) 1).real (Set.Ioi x) := by
-    rw [hIci_union, measureReal_union hdisj (MeasurableSet.singleton x), hsing, add_zero]
-  rw [hIci_real]
-  have hcompl : Set.Ioi x = (Set.Iic x)ᶜ := Set.compl_Iic.symm
-  rw [hcompl, measureReal_compl measurableSet_Iic, probReal_univ]
+  exact ProbabilityTheory.cdf_gaussianReal_neg x
 
 private theorem std_aux (σ x : ℝ) (hσ : 0 < σ) :
     cdf (gaussianReal 0 (σ ^ 2).toNNReal) x = cdf (gaussianReal 0 1) (x / σ) := by
-  have hσ' : σ ≠ 0 := ne_of_gt hσ
-  have hmap : (gaussianReal 0 (σ ^ 2).toNNReal).map (fun y => y / σ) =
-      gaussianReal 0 1 := by
-    rw [gaussianReal_map_div_const]
-    congr 1
-    · simp
-    · have h_eq : (σ ^ 2).toNNReal = NNReal.mk (σ ^ 2) (sq_nonneg σ) := by
-        ext
-        simp [Real.coe_toNNReal', NNReal.coe_mk, max_eq_left (sq_nonneg σ)]
-      rw [h_eq]
-      apply div_self
-      intro h
-      have hcoe : ((NNReal.mk (σ ^ 2) (sq_nonneg σ) : ℝ≥0) : ℝ) = 0 := by
-        rw [h]; simp
-      rw [NNReal.coe_mk] at hcoe
-      exact pow_ne_zero 2 hσ' hcoe
-  rw [cdf_eq_real, cdf_eq_real]
-  have hpre : (fun y : ℝ => y / σ) ⁻¹' (Set.Iic (x / σ)) = Set.Iic x := by
-    ext y
-    simp only [Set.mem_preimage, Set.mem_Iic]
-    constructor <;> intro h
-    · have hle : y / σ * σ ≤ x / σ * σ :=
-        mul_le_mul_of_nonneg_right h (le_of_lt hσ)
-      rwa [div_mul_cancel₀ _ hσ', div_mul_cancel₀ _ hσ'] at hle
-    · exact div_le_div_of_nonneg_right h (le_of_lt hσ)
-  rw [← hmap, map_measureReal_apply (by fun_prop) measurableSet_Iic, hpre]
+  have hv : (σ ^ 2).toNNReal ≠ 0 := by
+    rw [ne_eq, Real.toNNReal_eq_zero, not_le]
+    exact pow_pos hσ 2
+  rw [ProbabilityTheory.cdf_gaussianReal_eq_std 0 x hv, sub_zero,
+    Real.coe_toNNReal _ (sq_nonneg σ), Real.sqrt_sq (le_of_lt hσ)]
 
 private theorem var_ne_zero_aux (σ : ℝ) (hσ : 0 < σ) :
     (σ ^ 2).toNNReal ≠ 0 := by
@@ -305,44 +240,10 @@ private theorem event_neg_eq (Ω : Type*) (a τ : ℝ) (S : Ω → ℤ) (Nz : Ω
     simp at hcon
 
 private theorem cdf_std_zero : cdf (gaussianReal 0 1) 0 = 1 / 2 := by
-  have h := symm_aux 0
-  simp only [neg_zero] at h
-  linarith
+  exact ProbabilityTheory.cdf_gaussianReal_zero
 
 private theorem strictMono_cdf_std_aux : StrictMono (cdf (gaussianReal 0 1)) := by
-  intro x y hxy
-  rw [cdf_eq_real, cdf_eq_real]
-  have hunion : Set.Iic y = Set.Iic x ∪ Set.Ioc x y := by
-    ext z
-    simp only [Set.mem_Iic, Set.mem_Ioc, Set.mem_union]
-    constructor
-    · intro h
-      by_cases h1 : z ≤ x
-      · exact Or.inl h1
-      · exact Or.inr ⟨lt_of_not_ge h1, h⟩
-    · rintro (h | ⟨_, h⟩)
-      · exact h.trans (le_of_lt hxy)
-      · exact h
-  have hdisj : Disjoint (Set.Iic x) (Set.Ioc x y) := by
-    rw [Set.disjoint_left]
-    intro z hx hxy'
-    simp only [Set.mem_Iic, Set.mem_Ioc] at hx hxy'
-    exact lt_irrefl x (hxy'.1.trans_le hx)
-  have hpos : 0 < (gaussianReal (0 : ℝ) 1).real (Set.Ioc x y) := by
-    have hENN : 0 < (gaussianReal (0 : ℝ) 1) (Set.Ioc x y) := by
-      rw [gaussianReal_apply _ (by simp : (1 : ℝ≥0) ≠ 0)]
-      rw [setLIntegral_pos_iff (measurable_gaussianPDF _ _)]
-      have hsupp : Function.support (gaussianPDF (0 : ℝ) 1) = Set.univ :=
-        support_gaussianPDF (by simp)
-      rw [hsupp, Set.univ_inter]
-      rw [Real.volume_Ioc]
-      rw [ENNReal.ofReal_pos]
-      linarith
-    have hfin := measure_ne_top (gaussianReal (0 : ℝ) 1) (Set.Ioc x y)
-    have hne : (gaussianReal (0 : ℝ) 1) (Set.Ioc x y) ≠ 0 := ne_of_gt hENN
-    exact ENNReal.toReal_pos hne hfin
-  rw [hunion, measureReal_union hdisj measurableSet_Ioc]
-  linarith
+  exact ProbabilityTheory.strictMono_cdf_gaussianReal 0 one_ne_zero
 
 private theorem formula_zero_eq (p a σ : ℝ) :
     thresholdErrorFormula p a σ 0 = cdf (gaussianReal 0 1) (-a / σ) := by
