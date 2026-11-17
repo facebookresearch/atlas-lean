@@ -32,8 +32,9 @@ example (L : ℝ → MeasureTheory.Measure ℕ) :
 /-- The zero-reporting estimand is not identified. -/
 example :
     ¬ MathlibExt.Probability.Statistics.IsIdentifiedBy
-      (fun _lam : Fin 2 → ℝ≥0 => reportingLaw (n := 2) (fun _ => 1))
-      (fun lam : Fin 2 → ℝ≥0 => (lam 0 : ℝ)) :=
-  epi_nonidentified_at_zero_reporting
+      (fun incidence : Fin 2 → ℝ≥0 =>
+        reportingLaw (intensityAt 0 (fun _ => 1) incidence))
+      (fun incidence : Fin 2 → ℝ≥0 => (incidence 0 : ℝ)) :=
+  epi_nonidentified_at_zero_reporting (fun _ => 1)
 
 end MathlibExtTest.Biology.Epidemiology.IncidenceObservation.Law

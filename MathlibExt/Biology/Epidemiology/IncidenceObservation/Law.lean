@@ -45,6 +45,20 @@ lemma epi_intensity_background_only {beta background N a b : ℝ}
       background * (b - a) := by
   rw [zero_mul, zero_add]
 
+/-- The interval-intensity vector at reporting fraction `rho`:
+background plus `rho` times the integrated epidemic incidence per
+interval. -/
+noncomputable def intensityAt {n : ℕ} (rho : ℝ≥0) (background : Fin n → ℝ≥0)
+    (incidence : Fin n → ℝ≥0) : Fin n → ℝ≥0 :=
+  fun j => background j + rho * incidence j
+
+/-- At zero reporting the intensity map is the constant background
+vector, for every epidemic incidence vector. -/
+lemma intensityAt_zero {n : ℕ} (background incidence : Fin n → ℝ≥0) :
+    intensityAt 0 background incidence = background := by
+  funext j
+  simp [intensityAt]
+
 /-- The independent Poisson reporting law on a finite interval
 index, as a kernel from the intensity vector. -/
 noncomputable def reportingLaw {n : ℕ} :
@@ -57,20 +71,23 @@ lemma reportingLaw_eq_of_intensity_eq {n : ℕ} {lam lam' : Fin n → ℝ≥0}
     (h : lam = lam') : reportingLaw lam = reportingLaw lam' :=
   congrArg reportingLaw h
 
-/-- **Nonidentification at zero reporting.** With reporting
-fraction `rho = 0`, every epidemic rate vector has the same
-background-only intensity vector, hence the same Poisson reporting
-law; the estimand `tau lam = lam 0` (for `n ≥ 1`) is not identified
-by the reporting law: rates `0` and the rate differing only at
-coordinate `0` share the law but differ in the estimand. -/
+/-- **Nonidentification at zero reporting.** Compose the
+reporting law with the intensity map at `rho = 0`. The resulting
+law family is constant in the epidemic incidence vector (every
+incidence has the same background-only intensity, by
+`intensityAt_zero`), while the estimand `incidence 0` varies: the
+zero vector and the vector differing only at coordinate `0` have
+the same reporting law but estimands `0` and `1`. Hence the
+estimand is not identified by the zero-reporting law. -/
 lemma epi_nonidentified_at_zero_reporting {n : ℕ} [NeZero n]
-    {background : Fin n → ℝ≥0} :
+    (background : Fin n → ℝ≥0) :
     ¬ MathlibExt.Probability.Statistics.IsIdentifiedBy
-      (fun _lam : Fin n → ℝ≥0 => reportingLaw background)
-      (fun lam : Fin n → ℝ≥0 => (lam 0 : ℝ)) := by
+      (fun incidence : Fin n → ℝ≥0 =>
+        reportingLaw (intensityAt 0 background incidence))
+      (fun incidence : Fin n → ℝ≥0 => (incidence 0 : ℝ)) := by
   apply MathlibExt.Probability.Statistics.not_isIdentifiedBy_of_eq_of_ne
     (θ := fun _ => (0 : ℝ≥0)) (θ' := fun i => if i = 0 then 1 else 0)
-  · rfl
+  · rw [intensityAt_zero, intensityAt_zero]
   · simp
 
 end MathlibExt.Biology.Epidemiology.IncidenceObservation.Law
