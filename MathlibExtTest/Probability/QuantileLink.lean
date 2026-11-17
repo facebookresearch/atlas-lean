@@ -9,13 +9,16 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.QuantileLink
+public import MathlibExt.Probability.Distributions.GaussianCdf
 
 /-!
 # Equipercentile linking tests
 
 A Gaussian location-scale link in an instantiable form (the affine
-relation only on `(0, 1)`, where Atlas quantiles live), and the Dirac
-step-cdf counterexample showing both regularity hypotheses are needed.
+relation only on `(0, 1)`, where Atlas quantiles live), the spec applied
+to two concrete Gaussian measures, and the Dirac step cdf, which has
+neither regularity property (this example alone does not show that each
+hypothesis is independently necessary).
 -/
 
 open MeasureTheory Set
@@ -46,11 +49,38 @@ theorem gaussian_affine_link (F qF qG : ℝ → ℝ)
   intro x
   rw [hlink (F x) (hF x), hqF x]
 
-/-- Step-cdf counterexample: a *single* atom at `0` (corrected from
-the v1 note, which described a two-point law).  Its cdf is the step
+/-- The production spec applied to two concrete Gaussian measures:
+the standard normal and the normal with mean `1` and variance `4`.
+Transport and both inverse identities hold for the actual
+`cdfQuantile`/`cdf` API. -/
+theorem gaussian_equipercentileLink :
+    Measure.map
+        (fun x => cdfQuantile (ProbabilityTheory.gaussianReal 1 4)
+          (cdf (ProbabilityTheory.gaussianReal 0 1) x))
+        (ProbabilityTheory.gaussianReal 0 1)
+        = ProbabilityTheory.gaussianReal 1 4 ∧
+    (∀ x : ℝ,
+      (cdfQuantile (ProbabilityTheory.gaussianReal 0 1) ∘
+          fun y => cdf (ProbabilityTheory.gaussianReal 1 4) y)
+        ((fun x => cdfQuantile (ProbabilityTheory.gaussianReal 1 4)
+          (cdf (ProbabilityTheory.gaussianReal 0 1) x)) x) = x) ∧
+    (∀ y : ℝ,
+      (fun x => cdfQuantile (ProbabilityTheory.gaussianReal 1 4)
+          (cdf (ProbabilityTheory.gaussianReal 0 1) x))
+        ((cdfQuantile (ProbabilityTheory.gaussianReal 0 1) ∘
+          fun z => cdf (ProbabilityTheory.gaussianReal 1 4) z) y) = y) :=
+  equipercentileLink_spec _ _
+    (ProbabilityTheory.continuous_cdf_gaussianReal 0 (by norm_num))
+    (ProbabilityTheory.strictMono_cdf_gaussianReal 0 (by norm_num))
+    (ProbabilityTheory.continuous_cdf_gaussianReal 1 (by norm_num))
+    (ProbabilityTheory.strictMono_cdf_gaussianReal 1 (by norm_num))
+
+
+/-- The Dirac step cdf: a single atom at `0`. Its cdf is the step
 `x ↦ 0` for `x < 0`, `1` for `x ≥ 0`, hence neither continuous nor
-strictly monotone: both regularity hypotheses of
-`equipercentileLink_spec` are load-bearing. -/
+strictly monotone. This shows the two regularity hypotheses exclude
+atomic laws; it does not by itself show each hypothesis is
+independently necessary. -/
 theorem stepCdf_dirac_zero :
     cdf (Measure.dirac (0 : ℝ)) =
       (fun x : ℝ => if x < 0 then (0 : ℝ) else 1) ∧
