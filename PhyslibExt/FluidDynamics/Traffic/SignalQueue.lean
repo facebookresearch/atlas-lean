@@ -21,10 +21,13 @@ import Mathlib.Topology.ContinuousOn
 
 ## i. Overview
 
-The deterministic fluid queue at a traffic signal over one cycle:
-queue grows at arrival rate during red, drains at `mu - lam` during
-green, clears at `R + lam * R / (mu - lam)`, and is empty at the
-cycle end under the capacity condition.
+The deterministic fluid queue at a traffic signal over one cycle
+(the one-cycle, non-periodic fluid model): queue grows at arrival
+rate during red, drains at `mu - lam` during green, clears at
+`R + lam * R / (mu - lam)`, and is empty at the cycle end under the
+capacity condition. Times beyond the cycle end belong to the next
+cycle of a periodic signal, which this one-cycle model does not
+describe; here the queue simply remains at its cleared value.
 
 ## ii. Key results
 
