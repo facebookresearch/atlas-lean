@@ -15,17 +15,18 @@ import Mathlib.Topology.ContinuousMap.Bounded.Basic
 /-!
 # Prefix-causal operators
 
-Given bounded projections `P t` on a normed space satisfying the
-filtration law `P s ∘L P t = P (s ⊓ t)`, an operator `G` is
-*prefix causal* when the prefix of its output up to any `t` depends
-only on the same prefix of the input:
-`P t ∘L G = P t ∘L G ∘L P t` (`IsPrefixCausal`). The prefix-causal
-operators form a unital subalgebra of the bounded operators
-(`prefixCausalSubalgebra`); its carrier is closed in the operator
-norm (`isClosed_prefixCausalCarrier`), and the Neumann series of a
-prefix-causal strict contraction is again prefix causal
-(`IsPrefixCausal.tsum_pow`), so inverses of the form `(1 - G)⁻¹`
-given by Neumann series stay prefix causal.
+Given bounded projections `P t` on a normed space, an operator `G`
+is *prefix causal* when the prefix of its output up to any `t`
+depends only on the same prefix of the input:
+`P t ∘L G = P t ∘L G ∘L P t` (`IsPrefixCausal`). When every `P t`
+is idempotent, the prefix-causal operators form a unital
+subalgebra of the bounded operators (`prefixCausalSubalgebra`);
+only pointwise idempotence is needed, and a filtration law
+`P s ∘L P t = P (s ⊓ t)` is one way to obtain it. The carrier is
+closed in the operator norm (`isClosed_prefixCausalCarrier`), and
+the Neumann series of a prefix-causal strict contraction is again
+prefix causal (`IsPrefixCausal.tsum_pow`), so inverses of the form
+`(1 - G)⁻¹` given by Neumann series stay prefix causal.
 -/
 
 open ContinuousLinearMap
@@ -49,12 +50,12 @@ def IsPrefixCausal {𝕜 : Type*} [NontriviallyNormedField 𝕜] {X : Type*}
 `X →L[𝕜] X`: each constraint `P t ∘L G ∘L (1 - P t) = 0` is linear,
 and for a product the inner projection is absorbed by either factor
 (`P t ∘L G ∘L P t ∘L H = P t ∘L G ∘L H` by causality of `G`, then the
-right projection by causality of `H`). The filtration law
-`P s ∘L P t = P (s ⊓ t)` gives idempotence at `s = t`. -/
+right projection by causality of `H`). Only pointwise idempotence of the `P t` is used; a filtration
+law `P s ∘L P t = P (s ⊓ t)` is one way to obtain it. -/
 def prefixCausalSubalgebra {𝕜 : Type*} [NontriviallyNormedField 𝕜]
     {X : Type*} [NormedAddCommGroup X] [NormedSpace 𝕜 X] {ι : Type*}
-    [SemilatticeInf ι] (P : ι → X →L[𝕜] X)
-    (hP : ∀ s t, (P s).comp (P t) = P (s ⊓ t)) :
+    (P : ι → X →L[𝕜] X)
+    (hP : ∀ t, (P t).comp (P t) = P t) :
     Subalgebra 𝕜 (X →L[𝕜] X) where
   carrier := {G | IsPrefixCausal P G}
   mul_mem' {G H} hG hH := by
@@ -76,9 +77,7 @@ def prefixCausalSubalgebra {𝕜 : Type*} [NontriviallyNormedField 𝕜]
       _ = (P t) (G (H ((P t) x))) := e3.symm
   one_mem' := by
     intro t
-    have h : (P t).comp (P t) = P t := by
-      have h' := hP t t
-      rwa [inf_idem] at h'
+    have h : (P t).comp (P t) = P t := hP t
     ext x
     simp only [comp_apply]
     have h' := DFunLike.congr_fun h x
@@ -96,9 +95,7 @@ def prefixCausalSubalgebra {𝕜 : Type*} [NontriviallyNormedField 𝕜]
     simp
   algebraMap_mem' r := by
     intro t
-    have h : (P t).comp (P t) = P t := by
-      have h' := hP t t
-      rwa [inf_idem] at h'
+    have h : (P t).comp (P t) = P t := hP t
     ext x
     simp only [comp_apply, ContinuousLinearMap.algebraMap_apply, map_smul]
     congr 1
@@ -110,8 +107,8 @@ an intersection of closed conditions `P t ∘L G = P t ∘L G ∘L P t`,
 both sides continuous in `G` in the operator norm. -/
 theorem isClosed_prefixCausalCarrier {𝕜 : Type*}
     [NontriviallyNormedField 𝕜] {X : Type*} [NormedAddCommGroup X]
-    [NormedSpace 𝕜 X] {ι : Type*} [SemilatticeInf ι]
-    (P : ι → X →L[𝕜] X) (hP : ∀ s t, (P s).comp (P t) = P (s ⊓ t)) :
+    [NormedSpace 𝕜 X] {ι : Type*}
+    (P : ι → X →L[𝕜] X) (hP : ∀ t, (P t).comp (P t) = P t) :
     IsClosed (prefixCausalSubalgebra P hP : Set (X →L[𝕜] X)) := by
   have hcarrier : (prefixCausalSubalgebra P hP : Set (X →L[𝕜] X))
       = ⋂ t, {G : X →L[𝕜] X | (P t).comp G = ((P t).comp G).comp (P t)} := by
@@ -129,8 +126,8 @@ is prefix causal on a Banach space, then the Neumann series
 partial sums are prefix causal and the carrier is closed. -/
 theorem IsPrefixCausal.tsum_pow {𝕜 : Type*} [NontriviallyNormedField 𝕜]
     {X : Type*} [NormedAddCommGroup X] [NormedSpace 𝕜 X]
-    [CompleteSpace X] {ι : Type*} [SemilatticeInf ι]
-    (P : ι → X →L[𝕜] X) (hP : ∀ s t, (P s).comp (P t) = P (s ⊓ t))
+    [CompleteSpace X] {ι : Type*}
+    (P : ι → X →L[𝕜] X) (hP : ∀ t, (P t).comp (P t) = P t)
     {G : X →L[𝕜] X} (hG : IsPrefixCausal P G) (hG1 : ‖G‖ < 1) :
     IsPrefixCausal P (∑' n : ℕ, G ^ n) := by
   have hsum : Summable (fun n : ℕ => G ^ n) := summable_geometric_of_norm_lt_one hG1

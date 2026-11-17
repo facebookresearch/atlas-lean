@@ -30,6 +30,14 @@ theorem truncFilt_law {n : ℕ} :
   simp only [comp_apply, truncFilt_apply, le_inf_iff]
   by_cases hs : i ≤ s <;> by_cases ht : i ≤ t <;> simp [hs, ht]
 
+/-- Pointwise idempotence of the truncation projections, derived
+from the filtration law at `s = t`. -/
+theorem truncFilt_idem {n : ℕ} :
+    ∀ t : Fin n, (truncFilt t).comp (truncFilt t) = truncFilt t := by
+  intro t
+  have h := truncFilt_law t t
+  rwa [inf_idem] at h
+
 /-- The operator of a square array (row `i` is output coordinate `i`). -/
 noncomputable def arrayOp {n : ℕ} (M : Fin n → Fin n → ℝ) :
     (Fin n → ℝ) →L[ℝ] (Fin n → ℝ) :=
@@ -56,7 +64,7 @@ lemma advOp_apply (x : Fin 3 → ℝ) : advOp x = ![x 1, 0, 0] := by
 -- The delay is prefix causal for both remaining filtration levels
 -- (membership in the subalgebra is the predicate, by definition).
 theorem delay_mem :
-    delayOp ∈ prefixCausalSubalgebra truncFilt truncFilt_law := by
+    delayOp ∈ prefixCausalSubalgebra truncFilt truncFilt_idem := by
   show IsPrefixCausal truncFilt delayOp
   intro t
   refine ContinuousLinearMap.ext fun x => funext fun i => ?_
@@ -65,16 +73,16 @@ theorem delay_mem :
 -- The advance is not prefix causal: at `t = 0` on `![0, 1, 0]` the two
 -- sides of the prefix law give `1` and `0`.
 theorem adv_not_mem :
-    advOp ∉ prefixCausalSubalgebra truncFilt truncFilt_law := by
+    advOp ∉ prefixCausalSubalgebra truncFilt truncFilt_idem := by
   intro h
   have h0 := congrFun (DFunLike.congr_fun (h 0) ![0, 1, 0]) 0
   simp [comp_apply, truncFilt_apply, advOp_apply] at h0
 
 -- Subalgebra operations on members, through the algebra API.
-example : delayOp + delayOp ∈ prefixCausalSubalgebra truncFilt truncFilt_law :=
+example : delayOp + delayOp ∈ prefixCausalSubalgebra truncFilt truncFilt_idem :=
   Subalgebra.add_mem _ delay_mem delay_mem
 
-example : delayOp * delayOp ∈ prefixCausalSubalgebra truncFilt truncFilt_law :=
+example : delayOp * delayOp ∈ prefixCausalSubalgebra truncFilt truncFilt_idem :=
   Subalgebra.mul_mem _ delay_mem delay_mem
 
 -- Neumann series of the half delay: causal by the theorem, and equal
@@ -101,7 +109,7 @@ theorem halfDelay_norm_lt : ‖halfDelay‖ < 1 := by
 
 theorem neumann_causal :
     IsPrefixCausal truncFilt (∑' k : ℕ, halfDelay ^ k) :=
-  IsPrefixCausal.tsum_pow truncFilt truncFilt_law
+  IsPrefixCausal.tsum_pow truncFilt truncFilt_idem
     (Subalgebra.smul_mem _ delay_mem _) halfDelay_norm_lt
 
 lemma halfDelay_pow_three : halfDelay ^ 3 = 0 := by
