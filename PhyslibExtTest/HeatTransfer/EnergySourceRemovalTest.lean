@@ -74,8 +74,9 @@ example : HeatTransfer.cylinderTemperature 300 2 2 8 0 = 304 ∧
   refine ⟨by norm_num [HeatTransfer.cylinderTemperature],
     by norm_num [HeatTransfer.cylinderTemperature],
     HeatTransfer.cylinderGradient_zero 2 8, ?_⟩
-  have h := HeatTransfer.cylinder_radial_equation (k := 2) (qvol := 8)
-    (r := 1) (by norm_num) (by norm_num)
+  have h := HeatTransfer.cylinder_radial_equation (R := 2) (k := 2)
+    (qvol := 8) (r := 1) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
   rw [show (1 : ℝ) / 1 = 1 from by norm_num, one_mul]
   norm_num at h
   exact h

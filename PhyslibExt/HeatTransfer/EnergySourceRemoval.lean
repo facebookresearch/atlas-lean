@@ -43,10 +43,12 @@ steady branch, not an instantaneous prediction.
   temperatures and `H ≥ 0`, the profile on the slab is at most the
   midplane value `Ts + H * L^2 / (8k)`.
 - `HeatTransfer.cylinder_radial_equation` and
-  `HeatTransfer.cylinder_outwardPower_of_pos`: the regular
-  heated-cylinder profile satisfies the radial heat-balance equation
-  away from the center, and for `0 < R` and `0 < k` its outward power
-  per unit length is `π * R^2 * qvol`.
+  `HeatTransfer.cylinder_outwardPower_of_pos`: on the physical
+  domain `0 < r ≤ R` with `0 < R` and `0 < k`, the regular
+  heated-cylinder profile satisfies the radial heat-balance
+  equation away from the center, and its outward power per unit
+  length is `π * R^2 * qvol`. The unrestricted algebraic form of
+  the radial identity is `cylinder_radial_equation_algebraic`.
 
 ## iii. Table of contents
 
@@ -235,10 +237,14 @@ lemma hasDerivAt_cylinderTemperature {Ts R k qvol r : ℝ} (hk : k ≠ 0) :
   rw [hfun, hderiv] at hbase
   exact hbase
 
-/-- Radial heat-balance equation away from the center: for `r > 0`,
-`(1 / r) * (d/dr) (r * T'(r)) = -qvol / k`, the cylindrical Laplacian of
-the profile. -/
-lemma cylinder_radial_equation {k qvol r : ℝ} (hk : k ≠ 0) (hr : 0 < r) :
+/-- Algebraic radial identity for the polynomial extension of the
+cylinder profile: for any `r > 0` and `k ≠ 0`,
+`(1 / r) * (d/dr) (r * T'(r)) = -qvol / k`, the cylindrical
+Laplacian of the extended profile. This is not restricted to the
+physical cylinder; the physical statement is
+`cylinder_radial_equation`. -/
+lemma cylinder_radial_equation_algebraic {k qvol r : ℝ} (hk : k ≠ 0)
+    (hr : 0 < r) :
     (1 / r) * deriv (fun s : ℝ => s * cylinderGradient k qvol s) r =
       -qvol / k := by
   have hr' : r ≠ 0 := ne_of_gt hr
@@ -257,6 +263,16 @@ lemma cylinder_radial_equation {k qvol r : ℝ} (hk : k ≠ 0) (hr : 0 < r) :
   have hderiv := hbase.deriv
   rw [hderiv]
   field_simp
+
+/-- Radial heat-balance equation on the physical cylinder: for
+radius `0 < R`, conductivity `0 < k`, and an interior radius
+`0 < r` with `r ≤ R`,
+`(1 / r) * (d/dr) (r * T'(r)) = -qvol / k`. -/
+theorem cylinder_radial_equation {R k qvol r : ℝ} (hR : 0 < R)
+    (hk : 0 < k) (hr : 0 < r) (hrR : r ≤ R) :
+    (1 / r) * deriv (fun s : ℝ => s * cylinderGradient k qvol s) r =
+      -qvol / k :=
+  cylinder_radial_equation_algebraic (ne_of_gt hk) hr
 
 /-- Algebraic form of the surface-power identity:
 `2πR * (-k * T'(R)) = π * R^2 * qvol` for any `k ≠ 0`, with no
