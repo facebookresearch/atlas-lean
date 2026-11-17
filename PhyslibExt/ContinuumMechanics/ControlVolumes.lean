@@ -329,4 +329,46 @@ theorem movingEndpoint_deriv_flux {u ut f fx src : ℝ → ℝ → ℝ}
   exact (movingEndpoint_hasDerivAt_flux t ha hb hjoint hut hcont_ut hfx hcont_fx hPDE
     hint_src).deriv
 
+
+/-- Moving interior jump transport: for a `C¹` interface curve
+`s` inside the fixed interval `[a, b]`, with left and right
+fields `uL`, `uR` (time partials `vL`, `vR`), the split integral
+`(∫ x in a..s t, uL t x) + (∫ x in s t..b, uR t x)` has
+derivative the two classical integrals plus the interface
+contribution `s' t * (uL t (s t) - uR t (s t))`. This is the
+two instantiations of `movingEndpoint_hasDerivAt` (moving right
+endpoint on the left piece, moving left endpoint on the right
+piece) added together. -/
+theorem movingJumpTransport {uL uR vL vR : ℝ → ℝ → ℝ}
+    {s s' : ℝ → ℝ} {a b : ℝ}
+    (hs : ∀ t : ℝ, HasDerivAt s (s' t) t)
+    (hjL : Continuous fun p : ℝ × ℝ => uL p.1 p.2)
+    (hvL : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => uL τ x) (vL t x) t)
+    (hcvL : Continuous fun p : ℝ × ℝ => vL p.1 p.2)
+    (hjR : Continuous fun p : ℝ × ℝ => uR p.1 p.2)
+    (hvR : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => uR τ x) (vR t x) t)
+    (hcvR : Continuous fun p : ℝ × ℝ => vR p.1 p.2)
+    (t : ℝ) :
+    HasDerivAt
+      (fun τ : ℝ => (∫ x in a..s τ, uL τ x) + (∫ x in s τ..b, uR τ x))
+      ((∫ x in a..s t, vL t x) + (∫ x in s t..b, vR t x) +
+        s' t * (uL t (s t) - uR t (s t))) t := by
+  have hL := movingEndpoint_hasDerivAt (u := uL) (ut := vL)
+    (a := fun _ : ℝ => a) (b := s) (a' := fun _ : ℝ => 0) (b' := s')
+    (fun τ => hasDerivAt_const τ a) hs hjL hvL hcvL t
+  have hR := movingEndpoint_hasDerivAt (u := uR) (ut := vR)
+    (a := s) (b := fun _ : ℝ => b) (a' := s') (b' := fun _ : ℝ => 0)
+    hs (fun τ => hasDerivAt_const τ b) hjR hvR hcvR t
+  have hL' : HasDerivAt (fun τ : ℝ => ∫ x in a..s τ, uL τ x)
+      ((∫ x in a..s t, vL t x) + s' t * uL t (s t)) t := by
+    convert hL using 1
+    ring
+  have hR' : HasDerivAt (fun τ : ℝ => ∫ x in s τ..b, uR τ x)
+      ((∫ x in s t..b, vR t x) - s' t * uR t (s t)) t := by
+    convert hR using 1
+    ring
+  have h := hL'.add hR'
+  convert h using 1
+  ring
+
 end ControlVolumes
