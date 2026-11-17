@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.Algebra.Order.Round
+public import Mathlib.Order.Interval.Set.ProjIcc
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
@@ -34,9 +35,11 @@ Encoding notes:
   is exactly the `floor(x / Delta + 1 / 2)` above; see
   `code_eq_floor_add_half`.
 * `clamp(kmin, kmax, r)` is `max kmin (min kmax r)` on the integers.
-* The distance to the full-scale interval is represented by the explicit
-  nearest point `clampReal`; `clampReal_mem_Icc` and
-  `abs_sub_clampReal_le` identify `|x - clampReal x|` as that distance.
+* The distance to the full-scale interval is represented by the Mathlib
+  interval projection `Set.projIcc`: its coercion to `Real` is the
+  nearest point of the interval, and `abs_sub_projIcc_le` identifies
+  `|x - (Set.projIcc ... x : Real)|` as that distance. The endpoint
+  ordering needed by `Set.projIcc` is the named lemma `fullScale_le`.
 * Signed `w`-bit codes are `-(2 ^ (w - 1)) .. 2 ^ (w - 1) - 1`, only
   under `1 <= w`.
 
@@ -98,10 +101,11 @@ def signedMinCode (w : ℕ) : ℤ := -(2 : ℤ) ^ (w - 1)
 `1 <= w`; the theorems below carry that hypothesis. -/
 def signedMaxCode (w : ℕ) : ℤ := (2 : ℤ) ^ (w - 1) - 1
 
-/-- The nearest point of the full-scale interval
-`[Δ * kmin, Δ * kmax]` to `x`, written explicitly. -/
-noncomputable def clampReal (Δ : ℝ) (kmin kmax : ℤ) (x : ℝ) : ℝ :=
-  max (Δ * (kmin : ℝ)) (min (Δ * (kmax : ℝ)) x)
+/-- The endpoints of the full-scale interval are ordered, as required
+by the Mathlib interval projection `Set.projIcc`. -/
+theorem fullScale_le {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : ℤ} (hk : kmin ≤ kmax) :
+    Δ * (kmin : ℝ) ≤ Δ * (kmax : ℝ) := by
+  exact mul_le_mul_of_nonneg_left (Int.cast_le.mpr hk) hΔ.le
 
 /-- The code in floor form: `round y = ⌊y + 1 / 2⌋`. -/
 theorem code_eq_floor_add_half (Δ : ℝ) (kmin kmax : ℤ) (x : ℝ) :
@@ -208,55 +212,46 @@ theorem abs_quantize_sub_le_of_mem_Icc {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : �
         mul_le_mul_of_nonneg_left habs2 hΔ.le
     _ = Δ / 2 := by ring
 
-/-- The explicit clamp lies in the full-scale interval. -/
-theorem clampReal_mem_Icc {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : ℤ}
-    (hk : kmin ≤ kmax) (x : ℝ) :
-    clampReal Δ kmin kmax x ∈ Set.Icc (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ)) := by
-  have hle : Δ * (kmin : ℝ) ≤ Δ * (kmax : ℝ) :=
-    mul_le_mul_of_nonneg_left (Int.cast_le.mpr hk) hΔ.le
-  unfold clampReal
-  rw [Set.mem_Icc]
-  exact ⟨le_max_left _ _, max_le hle (min_le_left _ _)⟩
-
-/-- The explicit clamp is a nearest point of the full-scale interval:
-`|x - clampReal ...|` is the distance from `x` to that interval. -/
-theorem abs_sub_clampReal_le {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : ℤ}
-    (hk : kmin ≤ kmax) (x : ℝ) {z : ℝ}
-    (hz : z ∈ Set.Icc (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ))) :
-    |x - clampReal Δ kmin kmax x| ≤ |x - z| := by
-  have hle : Δ * (kmin : ℝ) ≤ Δ * (kmax : ℝ) :=
-    mul_le_mul_of_nonneg_left (Int.cast_le.mpr hk) hΔ.le
+/-- The Mathlib interval projection `Set.projIcc` is a nearest point:
+for real endpoints `a <= b`, `|x - (Set.projIcc a b hab x : ℝ)|` is at
+most the distance from `x` to any point of `[a, b]`, so it is the
+distance from `x` to that interval. -/
+theorem abs_sub_projIcc_le {a b : ℝ} (hab : a ≤ b) (x : ℝ) {z : ℝ}
+    (hz : z ∈ Set.Icc a b) :
+    |x - (Set.projIcc a b hab x : ℝ)| ≤ |x - z| := by
   rw [Set.mem_Icc] at hz
   obtain ⟨hz1, hz2⟩ := hz
-  unfold clampReal
-  by_cases hx1 : x ≤ Δ * (kmin : ℝ)
-  · have hmin : min (Δ * (kmax : ℝ)) x = x := min_eq_right (le_trans hx1 hle)
-    have hmax : max (Δ * (kmin : ℝ)) x = Δ * (kmin : ℝ) := max_eq_left hx1
+  rw [Set.coe_projIcc]
+  by_cases hx1 : x ≤ a
+  · have hmin : min b x = x := min_eq_right (le_trans hx1 hab)
+    have hmax : max a x = a := max_eq_left hx1
     rw [hmin, hmax]
     have hxz : x ≤ z := le_trans hx1 hz1
     rw [abs_of_nonpos (sub_nonpos.mpr hx1), abs_of_nonpos (sub_nonpos.mpr hxz)]
     linarith
-  · have hx1' : Δ * (kmin : ℝ) < x := lt_of_not_ge hx1
-    by_cases hx2 : Δ * (kmax : ℝ) ≤ x
-    · have hmin : min (Δ * (kmax : ℝ)) x = Δ * (kmax : ℝ) := min_eq_left hx2
-      have hmax : max (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ)) = Δ * (kmax : ℝ) :=
-        max_eq_right hle
+  · have hx1' : a < x := lt_of_not_ge hx1
+    by_cases hx2 : b ≤ x
+    · have hmin : min b x = b := min_eq_left hx2
+      have hmax : max a b = b := max_eq_right hab
       rw [hmin, hmax]
       have hzx : z ≤ x := le_trans hz2 hx2
       rw [abs_of_nonneg (sub_nonneg.mpr hx2), abs_of_nonneg (sub_nonneg.mpr hzx)]
       linarith
-    · have hx2' : x < Δ * (kmax : ℝ) := lt_of_not_ge hx2
-      have hmin : min (Δ * (kmax : ℝ)) x = x := min_eq_right (le_of_lt hx2')
-      have hmax : max (Δ * (kmin : ℝ)) x = x := max_eq_right (le_of_lt hx1')
+    · have hx2' : x < b := lt_of_not_ge hx2
+      have hmin : min b x = x := min_eq_right (le_of_lt hx2')
+      have hmax : max a x = x := max_eq_right (le_of_lt hx1')
       rw [hmin, hmax, sub_self, abs_zero]
       exact abs_nonneg _
 
-/-- Quantizing an input agrees with quantizing its clamped value. -/
-theorem quantize_eq_quantize_clampReal {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : ℤ}
+/-- Quantizing an input agrees with quantizing its projection onto
+the full-scale interval. -/
+theorem quantize_eq_quantize_projIcc {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : ℤ}
     (hk : kmin ≤ kmax) (x : ℝ) :
-    quantize Δ kmin kmax x = quantize Δ kmin kmax (clampReal Δ kmin kmax x) := by
-  have hle : Δ * (kmin : ℝ) ≤ Δ * (kmax : ℝ) :=
-    mul_le_mul_of_nonneg_left (Int.cast_le.mpr hk) hΔ.le
+    quantize Δ kmin kmax x
+      = quantize Δ kmin kmax
+          (Set.projIcc (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ))
+            (fullScale_le hΔ hk) x : ℝ) := by
+  have hle : Δ * (kmin : ℝ) ≤ Δ * (kmax : ℝ) := fullScale_le hΔ hk
   have hcode_a : code Δ kmin kmax (Δ * (kmin : ℝ)) = kmin := by
     unfold code
     rw [mul_div_cancel_real Δ hΔ _, round_intCast, min_eq_right hk,
@@ -269,11 +264,12 @@ theorem quantize_eq_quantize_clampReal {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : �
   rw [Set.mem_Icc] at hmem
   obtain ⟨hlo_code, hhi_code⟩ := hmem
   have hcode_eq :
-      code Δ kmin kmax x = code Δ kmin kmax (clampReal Δ kmin kmax x) := by
+      code Δ kmin kmax x = code Δ kmin kmax (Set.projIcc (Δ * (kmin : ℝ))
+        (Δ * (kmax : ℝ)) (fullScale_le hΔ hk) x : ℝ) := by
     by_cases hx1 : x ≤ Δ * (kmin : ℝ)
-    · have hclamp : clampReal Δ kmin kmax x = Δ * (kmin : ℝ) := by
-        unfold clampReal
-        rw [min_eq_right (le_trans hx1 hle), max_eq_left hx1]
+    · have hclamp : (Set.projIcc (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ))
+          (fullScale_le hΔ hk) x : ℝ) = Δ * (kmin : ℝ) := by
+        rw [Set.coe_projIcc, min_eq_right (le_trans hx1 hle), max_eq_left hx1]
       rw [hclamp, hcode_a]
       have hle1 : code Δ kmin kmax x ≤ code Δ kmin kmax (Δ * (kmin : ℝ)) :=
         code_mono hΔ kmin kmax hx1
@@ -281,17 +277,17 @@ theorem quantize_eq_quantize_clampReal {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : �
       exact le_antisymm hle1 hlo_code
     · have hx1' : Δ * (kmin : ℝ) < x := lt_of_not_ge hx1
       by_cases hx2 : Δ * (kmax : ℝ) ≤ x
-      · have hclamp : clampReal Δ kmin kmax x = Δ * (kmax : ℝ) := by
-          unfold clampReal
-          rw [min_eq_left hx2, max_eq_right hle]
+      · have hclamp : (Set.projIcc (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ))
+            (fullScale_le hΔ hk) x : ℝ) = Δ * (kmax : ℝ) := by
+          rw [Set.coe_projIcc, min_eq_left hx2, max_eq_right hle]
         rw [hclamp, hcode_b]
         have hle2 : code Δ kmin kmax (Δ * (kmax : ℝ)) ≤ code Δ kmin kmax x :=
           code_mono hΔ kmin kmax hx2
         rw [hcode_b] at hle2
         exact le_antisymm hhi_code hle2
-      · have hclamp : clampReal Δ kmin kmax x = x := by
-          unfold clampReal
-          rw [min_eq_right (le_of_lt (lt_of_not_ge hx2)),
+      · have hclamp : (Set.projIcc (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ))
+            (fullScale_le hΔ hk) x : ℝ) = x := by
+          rw [Set.coe_projIcc, min_eq_right (le_of_lt (lt_of_not_ge hx2)),
             max_eq_right (le_of_lt hx1')]
         rw [hclamp]
   unfold quantize
@@ -302,13 +298,20 @@ full-scale interval plus `Δ / 2`. -/
 theorem abs_quantize_sub_le {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : ℤ}
     (hk : kmin ≤ kmax) (x : ℝ) :
     |quantize Δ kmin kmax x - x|
-      ≤ |x - clampReal Δ kmin kmax x| + Δ / 2 := by
-  have heq := quantize_eq_quantize_clampReal hΔ hk x
-  have hmem := clampReal_mem_Icc hΔ hk x
+      ≤ |x - (Set.projIcc (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ))
+            (fullScale_le hΔ hk) x : ℝ)| + Δ / 2 := by
+  have heq := quantize_eq_quantize_projIcc hΔ hk x
+  have hmem : (Set.projIcc (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ))
+      (fullScale_le hΔ hk) x : ℝ)
+      ∈ Set.Icc (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ)) :=
+    (Set.projIcc (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ)) (fullScale_le hΔ hk) x).2
   have hbound := abs_quantize_sub_le_of_mem_Icc hΔ hmem
-  have htri := abs_sub_le_mid (quantize Δ kmin kmax (clampReal Δ kmin kmax x))
-    (clampReal Δ kmin kmax x) x
-  rw [abs_sub_comm (clampReal Δ kmin kmax x) x] at htri
+  have htri := abs_sub_le_mid (quantize Δ kmin kmax (Set.projIcc (Δ * (kmin : ℝ))
+      (Δ * (kmax : ℝ)) (fullScale_le hΔ hk) x : ℝ))
+    (Set.projIcc (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ))
+      (fullScale_le hΔ hk) x : ℝ) x
+  rw [abs_sub_comm (Set.projIcc (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ))
+    (fullScale_le hΔ hk) x : ℝ) x] at htri
   rw [heq]
   linarith
 
@@ -321,7 +324,8 @@ theorem quantize_correct {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : ℤ}
       ∧ (∀ x ∈ Set.Icc (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ)),
           |quantize Δ kmin kmax x - x| ≤ Δ / 2)
       ∧ (∀ x : ℝ, |quantize Δ kmin kmax x - x|
-          ≤ |x - clampReal Δ kmin kmax x| + Δ / 2) := by
+          ≤ |x - (Set.projIcc (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ))
+                (fullScale_le hΔ hk) x : ℝ)| + Δ / 2) := by
   exact ⟨quantize_mono hΔ _ _, fun x hx => abs_quantize_sub_le_of_mem_Icc hΔ hx,
     fun x => abs_quantize_sub_le hΔ hk x⟩
 

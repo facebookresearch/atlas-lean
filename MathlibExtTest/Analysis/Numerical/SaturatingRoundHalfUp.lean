@@ -89,9 +89,21 @@ example : |quantize 2 (signedMinCode 3) (signedMaxCode 3) (1 : ℝ) - 1| ≤ 1 :
 example : quantize 1 0 7 (1 / 3 : ℝ) ≤ quantize 1 0 7 (5 / 3 : ℝ) :=
   quantize_mono one_pos 0 7 (by norm_num)
 
-/-- The global distance-plus-`Delta / 2` bound on a clipped input is the
-sharp statement away from the full-scale interval: distance `3` plus `1/2`. -/
-example : |quantize 1 0 7 10 - 10| ≤ |10 - clampReal 1 0 7 10| + 1 / 2 :=
-  abs_quantize_sub_le one_pos (by norm_num) 10
+/-- The global bound on a clipped input: the distance to the full-scale
+interval (`3`, through `Set.projIcc`) plus `Delta / 2`. The bound is not
+attained here; the exact saturated error is the distance itself, as the
+next example records. -/
+example : |quantize 1 0 7 10 - 10|
+    ≤ |10 - (Set.projIcc (0 : ℝ) 7 (by norm_num) 10 : ℝ)| + 1 / 2 := by
+  have h := abs_quantize_sub_le (Δ := (1 : ℝ)) (kmin := 0) (kmax := 7)
+    one_pos (by norm_num) 10
+  norm_num [fullScale_le, Set.coe_projIcc] at h ⊢
+  exact h
+
+/-- Outside the full-scale interval on the saturated high side, the
+error equals the interval distance exactly: both sides are `3`. -/
+example : |quantize 1 0 7 10 - 10|
+    = |10 - (Set.projIcc (0 : ℝ) 7 (by norm_num) 10 : ℝ)| := by
+  norm_num [quantize, code, round_eq, Set.coe_projIcc]
 
 end MathlibExtTest.Analysis.Numerical.SaturatingRoundHalfUp
