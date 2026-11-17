@@ -23,19 +23,24 @@ These are elaboration and non-vacuity checks, not new results.
 
 open CellTransmission
 
-/-- Unit-parameter witness: flux `1 / 2`, within both bounds. -/
-example : faceFlux 1 1 1 1 (1 / 2) (1 / 2) = 1 / 2
-    ∧ faceFlux 1 1 1 1 (1 / 2) (1 / 2) ≤ demand 1 1 (1 / 2)
-    ∧ faceFlux 1 1 1 1 (1 / 2) (1 / 2) ≤ supply 1 1 1 (1 / 2) := by
-  refine ⟨by norm_num [faceFlux, demand, supply], faceFlux_le_demand,
-    faceFlux_le_supply⟩
+/-- Unit witness: capacity `1 / 2`, flux `1 / 2`, within both bounds. -/
+example : faceFlux 1 1 1 (1 / 2) (1 / 2) = 1 / 2
+    ∧ faceFlux 1 1 1 (1 / 2) (1 / 2) ≤ demand 1 1 1 (1 / 2)
+    ∧ faceFlux 1 1 1 (1 / 2) (1 / 2) ≤ supply 1 1 1 (1 / 2) := by
+  refine ⟨by norm_num [faceFlux, demand, supply, capacity],
+    faceFlux_le_demand, faceFlux_le_supply⟩
 
 /-- Nonnegativity through the public theorem. -/
-example : 0 ≤ faceFlux 2 3 5 10 4 9 :=
+example : 0 ≤ faceFlux 2 3 10 4 9 :=
   faceFlux_nonneg_of_le (by norm_num) (by norm_num) (by norm_num)
     ⟨by norm_num, by norm_num⟩ ⟨by norm_num, by norm_num⟩
 
-/-- Jammed receiving cell and zero capacity, by computation. -/
-example : faceFlux 1 1 1 1 (1 / 2) 1 = 0 ∧ faceFlux 1 1 0 1 (1 / 2) (1 / 2) = 0 :=
-  ⟨by norm_num [faceFlux, demand, supply],
-    by norm_num [faceFlux, demand, supply]⟩
+/-- Capacity is attained at the critical density `1 / 2` for unit
+parameters, through the public theorem. -/
+example : demand 1 1 1 (1 / 2) = capacity 1 1 1
+    ∧ supply 1 1 1 (1 / 2) = capacity 1 1 1 :=
+  capacity_attained (by norm_num) (by norm_num)
+
+/-- Jammed receiving cell gives flux `0`, by computation. -/
+example : faceFlux 1 1 1 (1 / 2) 1 = 0 := by
+  norm_num [faceFlux, demand, supply, capacity]

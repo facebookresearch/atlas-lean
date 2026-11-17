@@ -8,19 +8,23 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Basic.Real.Basic
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-!
 # Cell-transmission demand, supply, and face flux
 
 ## i. Overview
 
-For the triangular fundamental diagram, a cell's demand is
-`min (v * k, Qmax)` and its receiving supply is
-`min (w * (kj - k), Qmax)`. The flux through a face is the smaller of
-upstream demand and downstream supply. On admissible densities the
-face flux is nonnegative and bounded by both sides.
+For the triangular fundamental diagram with capacity
+`v * w * kj / (v + w)`, a cell's demand is `min (v * k, capacity)` and
+its receiving supply is `min (w * (kj - k), capacity)`. The flux
+through a face is the smaller of upstream demand and downstream
+supply. On admissible densities the face flux is nonnegative and
+bounded by both sides, and the capacity is attained at the critical
+density.
 
 ## ii. Key results
 
@@ -47,60 +51,90 @@ face flux is nonnegative and bounded by both sides.
 
 namespace CellTransmission
 
-/-- Triangular-fundamental-diagram demand of a cell with density `k`,
-free-flow speed `v`, capacity `Qmax`: `min (v * k) Qmax`. -/
-noncomputable def demand (v Qmax k : ℝ) : ℝ := min (v * k) Qmax
+/-- Capacity of the triangular fundamental diagram with free-flow
+speed `v`, wave speed `w`, jam density `kj`: the peak flow
+`v * w * kj / (v + w)`, attained at the critical density. -/
+noncomputable def capacity (v w kj : ℝ) : ℝ := v * w * kj / (v + w)
 
-/-- Receiving supply of a cell with density `k`, wave speed `w`, jam
-density `kj`, capacity `Qmax`: `min (w * (kj - k)) Qmax`. -/
-noncomputable def supply (w Qmax kj k : ℝ) : ℝ := min (w * (kj - k)) Qmax
+/-- Demand of a cell with density `k` under the triangular diagram:
+free-flow flow capped at capacity. -/
+noncomputable def demand (v w kj k : ℝ) : ℝ := min (v * k) (capacity v w kj)
+
+/-- Receiving supply of a cell with density `k` under the triangular
+diagram: congested-branch flow capped at capacity. -/
+noncomputable def supply (v w kj k : ℝ) : ℝ :=
+  min (w * (kj - k)) (capacity v w kj)
 
 /-- Face flux between an upstream and downstream cell: the smaller of
 upstream demand and downstream supply. -/
-noncomputable def faceFlux (v w Qmax kj kup kdown : ℝ) : ℝ :=
-  min (demand v Qmax kup) (supply w Qmax kj kdown)
+noncomputable def faceFlux (v w kj kup kdown : ℝ) : ℝ :=
+  min (demand v w kj kup) (supply v w kj kdown)
+
+theorem capacity_nonneg {v w kj : ℝ} (hv : 0 < v) (hw : 0 < w)
+    (hkj : 0 ≤ kj) : 0 ≤ capacity v w kj := by
+  unfold capacity
+  exact div_nonneg (mul_nonneg (mul_nonneg hv.le hw.le) hkj) (add_pos hv hw).le
 
 /-- On admissible densities (`0 ≤ k ≤ kj` in both cells) with positive
-speeds and nonnegative capacity, the face flux is nonnegative and
-bounded by both the local demand and the receiving supply. -/
-theorem faceFlux_nonneg_of_le {v w Qmax kj kup kdown : ℝ}
-    (hv : 0 < v) (hw : 0 < w) (hQ : 0 ≤ Qmax)
+speeds, the face flux is nonnegative. -/
+theorem faceFlux_nonneg_of_le {v w kj kup kdown : ℝ}
+    (hv : 0 < v) (hw : 0 < w) (hkj : 0 ≤ kj)
     (hup : 0 ≤ kup ∧ kup ≤ kj) (hdown : 0 ≤ kdown ∧ kdown ≤ kj) :
-    0 ≤ faceFlux v w Qmax kj kup kdown := by
+    0 ≤ faceFlux v w kj kup kdown := by
   unfold faceFlux demand supply
-  exact le_min (le_min (mul_nonneg hv.le hup.1) hQ)
-    (le_min (mul_nonneg hw.le (sub_nonneg.mpr hdown.2)) hQ)
+  refine le_min (le_min ?_ ?_) (le_min ?_ ?_)
+  · exact mul_nonneg hv.le hup.1
+  · exact capacity_nonneg hv hw hkj
+  · exact mul_nonneg hw.le (sub_nonneg.mpr hdown.2)
+  · exact capacity_nonneg hv hw hkj
 
 /-- The face flux never exceeds the upstream demand. -/
-theorem faceFlux_le_demand {v w Qmax kj kup kdown : ℝ} :
-    faceFlux v w Qmax kj kup kdown ≤ demand v Qmax kup := by
+theorem faceFlux_le_demand {v w kj kup kdown : ℝ} :
+    faceFlux v w kj kup kdown ≤ demand v w kj kup := by
   unfold faceFlux
   exact min_le_left _ _
 
 /-- The face flux never exceeds the downstream receiving supply. -/
-theorem faceFlux_le_supply {v w Qmax kj kup kdown : ℝ} :
-    faceFlux v w Qmax kj kup kdown ≤ supply w Qmax kj kdown := by
+theorem faceFlux_le_supply {v w kj kup kdown : ℝ} :
+    faceFlux v w kj kup kdown ≤ supply v w kj kdown := by
   unfold faceFlux
   exact min_le_right _ _
 
-/-- Demand itself is nonnegative and capacity-bounded on admissible
+/-- Demand is nonnegative and capacity-bounded on admissible
 densities. -/
-theorem demand_nonneg_le {v Qmax k : ℝ} (hv : 0 < v) (hQ : 0 ≤ Qmax)
-    (hk : 0 ≤ k) : 0 ≤ demand v Qmax k ∧ demand v Qmax k ≤ Qmax := by
-  constructor
-  · unfold demand
-    exact le_min (mul_nonneg hv.le hk) hQ
-  · unfold demand
-    exact min_le_right _ _
+theorem demand_nonneg_le {v w kj k : ℝ} (hv : 0 < v) (hw : 0 < w)
+    (hkj : 0 ≤ kj) (hk : 0 ≤ k) :
+    0 ≤ demand v w kj k ∧ demand v w kj k ≤ capacity v w kj := by
+  unfold demand
+  exact ⟨le_min (mul_nonneg hv.le hk) (capacity_nonneg hv hw hkj),
+    min_le_right _ _⟩
 
-/-- Supply itself is nonnegative and capacity-bounded on admissible
+/-- Supply is nonnegative and capacity-bounded on admissible
 densities. -/
-theorem supply_nonneg_le {w Qmax kj k : ℝ} (hw : 0 < w) (hQ : 0 ≤ Qmax)
-    (hk : k ≤ kj) : 0 ≤ supply w Qmax kj k ∧ supply w Qmax kj k ≤ Qmax := by
+theorem supply_nonneg_le {v w kj k : ℝ} (hv : 0 < v) (hw : 0 < w)
+    (hkj : 0 ≤ kj) (hk : k ≤ kj) :
+    0 ≤ supply v w kj k ∧ supply v w kj k ≤ capacity v w kj := by
+  unfold supply
+  exact ⟨le_min (mul_nonneg hw.le (sub_nonneg.mpr hk)) (capacity_nonneg hv hw hkj),
+    min_le_right _ _⟩
+
+/-- The capacity is attained at the critical density
+`kc = w * kj / (v + w)` from both branches. -/
+theorem capacity_attained {v w kj : ℝ} (hv : 0 < v) (hw : 0 < w) :
+    demand v w kj (w * kj / (v + w)) = capacity v w kj
+      ∧ supply v w kj (w * kj / (v + w)) = capacity v w kj := by
+  have hsum : v + w ≠ 0 := ne_of_gt (add_pos hv hw)
+  have hd : v * (w * kj / (v + w)) = capacity v w kj := by
+    unfold capacity
+    field_simp
+  have hs : w * (kj - w * kj / (v + w)) = capacity v w kj := by
+    unfold capacity
+    field_simp
+    ring
   constructor
+  · unfold demand
+    rw [hd, min_self]
   · unfold supply
-    exact le_min (mul_nonneg hw.le (sub_nonneg.mpr hk)) hQ
-  · unfold supply
-    exact min_le_right _ _
+    rw [hs, min_self]
 
 end CellTransmission
