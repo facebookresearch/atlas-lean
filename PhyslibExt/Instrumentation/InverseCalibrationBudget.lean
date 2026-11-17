@@ -142,4 +142,29 @@ lemma inversePrediction_error_bad_event_measure_le {Ω : Type*}
     linarith
   exact le_trans (MeasureTheory.measure_mono hsub) hp
 
+/-- Calibration bad-event bound, derived from the deterministic
+known-parameter bound: on the good event that the residual obeys
+`|e ω| ≤ E`, the recovered input `inversePrediction b a (y ω)` with
+`y ω = a * x ω + b + e ω` differs from `x ω` by at most `E / |a|`,
+so the bad event is contained in the residual bad event. -/
+lemma inversePrediction_error_event_measure_le {Ω : Type*}
+    [MeasurableSpace Ω] (μ : MeasureTheory.Measure Ω)
+    (a b E p : ℝ) (ha : a ≠ 0) (hE : 0 ≤ E) (x e : Ω → ℝ)
+    (hp : μ {ω | E < |e ω|} ≤ ENNReal.ofReal p) :
+    μ {ω | E / |a| <
+      |inversePrediction b a (a * x ω + b + e ω) - x ω|}
+      ≤ ENNReal.ofReal p := by
+  refine inversePrediction_error_bad_event_measure_le μ
+    (fun ω => inversePrediction b a (a * x ω + b + e ω)) x (E / |a|) p
+    {ω | |e ω| ≤ E} ?_ ?_
+  · intro ω hω
+    rw [Set.mem_ofPred_eq] at hω
+    exact inversePrediction_error_le_known_params a b (x ω) (e ω) E
+      (a * x ω + b + e ω) ha hE hω rfl
+  · have hset : {ω | |e ω| ≤ E}ᶜ = {ω | E < |e ω|} := by
+      ext ω
+      simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, not_le]
+    rw [hset]
+    exact hp
+
 end PhyslibExt.Instrumentation.InverseCalibrationBudget
