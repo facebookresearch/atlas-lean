@@ -22,7 +22,7 @@ resultant acts at depth `4 / 3`; a partially submerged interval
 These are elaboration and non-vacuity checks, not new results.
 -/
 
-open PhyslibExt.Mechanics.HarmonicMechanics
+open PhyslibExt.Mechanics.LinearPressurePanel
 
 /-- Force and moment on `[0, 2]`, through the public theorems. -/
 example : linearPressureForce 1 1 0 2 = 2 ∧ linearPressureMoment 1 1 0 2 = 8 / 3 := by

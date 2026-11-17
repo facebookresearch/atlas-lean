@@ -42,7 +42,7 @@ hydrostatic gates and Rankine walls; no pressure law is derived here.
 
 @[expose] public section
 
-namespace PhyslibExt.Mechanics.HarmonicMechanics
+namespace PhyslibExt.Mechanics.LinearPressurePanel
 
 /-! ## A. Resultant force and moment -/
 
@@ -79,4 +79,4 @@ theorem linearPressureMoment_eq (c w a b : ℝ) :
   norm_num
   ring
 
-end PhyslibExt.Mechanics.HarmonicMechanics
+end PhyslibExt.Mechanics.LinearPressurePanel
