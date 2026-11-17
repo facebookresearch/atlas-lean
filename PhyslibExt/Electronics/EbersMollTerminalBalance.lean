@@ -21,10 +21,12 @@ saturation currents, current gains and the two junction
 voltages. The three terminal currents balance, each junction
 current is smooth with the stated derivative, the collector
 transconductance at zero collector-base voltage is the stated
-forward expression, the forward and reverse saturation currents
-satisfy the reciprocity relation, and in transport form the
+forward expression, the and in transport form the
 collector current is the forward transport current minus the
-reverse transport current. At zero bias every terminal current
+reverse transport current. When the forward and reverse
+saturation currents satisfy the reciprocity relation
+`alphaF * IsF = alphaR * IsR`, both derive from one transport
+saturation current. At zero bias every terminal current
 vanishes; in forward-active operation (positive forward
 saturation and gain, zero reverse drive) the collector and
 emitter currents are positive.
@@ -56,9 +58,6 @@ Principles*, fourth edition, McGraw-Hill, 2012: the Ebers-Moll model, terminal c
   transport form.
 
 ## A. Ebers-Moll terminal currents
-
-Discharges ECE roadmap leaf `ECE.DEV.BJT.L1` (BJT Ebers-Moll
-balance).
 -/
 
 @[expose] public section
@@ -353,8 +352,8 @@ reciprocity from device physics, it states what reciprocity means for the
 currents. The `_of_transportSaturation` lemmas below use the parameterization
 directly. -/
 lemma reciprocal_parameterization (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ)
-    (_hVT : 0 < VT) (hαF : alphaF ≠ 0) (hαR : alphaR ≠ 0)
-    (hrec : alphaF * IsF = alphaR * IsR) :
+    (_hVT : 0 < VT) (hαF : alphaF ≠ 0) (hαR : alphaR ≠ 0) :
+    alphaF * IsF = alphaR * IsR ↔
     ∃ IS : ℝ, IS = alphaF * IsF ∧ IsF = IS / alphaF ∧ IsR = IS / alphaR ∧
       collectorCurrent IsF IsR alphaF VT Vbe Vbc =
         IS * (Real.exp (Vbe / VT) - Real.exp (Vbc / VT)) -
@@ -362,18 +361,23 @@ lemma reciprocal_parameterization (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ)
       emitterCurrent IsF IsR alphaR VT Vbe Vbc =
         IS * (Real.exp (Vbe / VT) - Real.exp (Vbc / VT)) +
           IS * ((1 - alphaF) / alphaF) * (Real.exp (Vbe / VT) - 1) := by
-  have hIsR : IsR = alphaF * IsF / alphaR := by
-    rw [eq_div_iff hαR]
-    linear_combination -hrec
-  refine ⟨alphaF * IsF, rfl, by field_simp, hIsR, ?_, ?_⟩
-  · simp only [collectorCurrent, forwardBranchCurrent, reverseBranchCurrent]
-    rw [hIsR]
-    field_simp
-    ring
-  · simp only [emitterCurrent, forwardBranchCurrent, reverseBranchCurrent]
-    rw [hIsR]
-    field_simp
-    ring
+  constructor
+  · intro hrec
+    have hIsR : IsR = alphaF * IsF / alphaR := by
+      rw [eq_div_iff hαR]
+      linear_combination -hrec
+    refine ⟨alphaF * IsF, rfl, by field_simp, hIsR, ?_, ?_⟩
+    · simp only [collectorCurrent, forwardBranchCurrent, reverseBranchCurrent]
+      rw [hIsR]
+      field_simp
+      ring
+    · simp only [emitterCurrent, forwardBranchCurrent, reverseBranchCurrent]
+      rw [hIsR]
+      field_simp
+      ring
+  · rintro ⟨IS, -, hF, hR, -, -⟩
+    rw [hF, hR, mul_comm alphaF (IS / alphaF), div_mul_cancel₀ _ hαF,
+      mul_comm alphaR (IS / alphaR), div_mul_cancel₀ _ hαR]
 
 
 /-- With both saturation currents derived from one transport current `IS`
