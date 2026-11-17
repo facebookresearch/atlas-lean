@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.Topology.Algebra.Order.Field
+public import MathlibExt.Biology.Biophysics.CompartmentKinetics
 
 /-!
 # Absorption limits
@@ -32,11 +33,14 @@ lemma exp_neg_mul_tendsto_zero {c : ℝ} (hc : 0 < c) :
     (tendsto_id.const_mul_atTop hc)
   exact h.congr (fun t => by simp [Function.comp])
 
-lemma gut_amount_tendsto {D ka : ℝ} (hD : 0 ≤ D) (hka : 0 < ka) :
+lemma gut_amount_tendsto {D ka : ℝ} (hka : 0 < ka) :
     Tendsto (fun t => D * Real.exp (-ka * t)) atTop (𝓝 0) := by
-  have h0 := exp_neg_mul_tendsto_zero hka
-  have h := Filter.Tendsto.const_mul D h0
-  simpa using h
+  have h := MathlibExt.Biology.Biophysics.CompartmentKinetics.tendsto_amount_bolus hka D
+  have heq : (fun t => D * Real.exp (-ka * t)) =
+      MathlibExt.Biology.Biophysics.CompartmentKinetics.amount ka 0 D := by
+    funext t
+    rw [MathlibExt.Biology.Biophysics.CompartmentKinetics.amount_bolus]
+  rwa [heq]
 
 set_option linter.unusedVariables false in
 /-- **Central amount vanishes at infinity.** The central amount at

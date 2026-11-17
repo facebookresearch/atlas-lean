@@ -19,10 +19,16 @@ open Filter Topology
 
 /-- Gut amount with `D = 10`, `ka = 2`. -/
 example : Filter.Tendsto (fun t => 10 * Real.exp (-2 * t)) Filter.atTop (𝓝 0) :=
-  gut_amount_tendsto (by norm_num) (by norm_num)
+  gut_amount_tendsto (by norm_num)
 
 /-- Zero dose: identically zero, still tends to zero. -/
 example : Filter.Tendsto (fun t => (0:ℝ) * Real.exp (-2 * t)) Filter.atTop (𝓝 0) :=
-  gut_amount_tendsto (le_refl 0) (by norm_num)
+  gut_amount_tendsto (by norm_num)
+/-- Central amount at distinct positive rates `k = 1`, `ka = 2`. -/
+example : Filter.Tendsto
+    (fun t => (1:ℝ) * 10 * 2 * (Real.exp (-1 * t) - Real.exp (-2 * t)) / (2 - 1))
+    Filter.atTop (𝓝 0) :=
+  central_amount_tendsto (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num)
 
 end MathlibExtTest.Biology.Biophysics.Absorption.Limit
