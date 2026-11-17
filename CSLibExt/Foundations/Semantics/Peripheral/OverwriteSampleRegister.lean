@@ -23,8 +23,6 @@ read returns the value of a specific earlier publish, read IDs
 are strictly increasing, and an unread publish is either still
 in the slot or was overwritten before any later read. With
 decreasing publish IDs the monotonicity fails.
-
-Discharges ECE roadmap leaf `ECE.HW.MMIO.L1` (register semantics).
 -/
 
 @[expose] public section
@@ -273,7 +271,7 @@ theorem readIds_pairwise_lt {α : Type u} (μs : List (Label α)) (s : Slot α)
 /-- Every publication whose ID is never returned by a read is still pending in the final
 slot, or was overwritten by a later publication with no read in between. -/
 theorem unreturned_pending_or_overwritten {α : Type u} (μs : List (Label α)) (s : Slot α)
-    (h : (registerLTS α).MTr none μs s) (hinc : (publishIds μs).Pairwise (· < ·))
+    (h : (registerLTS α).MTr none μs s)
     (i n : ℕ) (v : α) (hi : μs[i]? = some (.publish n v)) (hn : n ∉ readIds μs) :
     s = some (n, v) ∨
       ∃ j, i < j ∧ (∃ m w, μs[j]? = some (.publish m w)) ∧
@@ -343,7 +341,7 @@ theorem trace_correct {α : Type u} (μs : List (Label α)) (s : Slot α)
             ∀ k r, i < k → k < j → μs[k]? ≠ some (.read r) := by
   exact ⟨exists_injective_readIds_to_publishIds μs s h hinc,
     readIds_pairwise_lt μs s h hinc,
-    fun i n v hi hn => unreturned_pending_or_overwritten μs s h hinc i n v hi hn⟩
+    fun i n v hi hn => unreturned_pending_or_overwritten μs s h i n v hi hn⟩
 
 /-- A trace ending in a full slot either kept the initial slot (empty trace) or went
 through a last publication of exactly the stored pair, with no publication after it. -/
