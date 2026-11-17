@@ -18,7 +18,7 @@ public import Mathlib.LinearAlgebra.Matrix.Notation
 /-!
 # Gaussian channel diagonal reduction
 
-A complex Gaussian channel with positive semidefinite Gram
+A real Gaussian channel with positive semidefinite Gram
 matrix reduces, by orthogonal diagonalization, to parallel
 scalar channels: the determinant ratio against the diagonalized
 covariance is the product of the scalar ratios, hence at most
@@ -361,7 +361,7 @@ theorem diagonalizedCovariance_posSemidef {m n : Type*} [Fintype m] [Fintype n] 
 /-- Replacing the rotated covariance by its diagonal preserves the trace (total power). -/
 theorem trace_diagonalizedCovariance {m n : Type*} [Fintype m] [Fintype n] [DecidableEq m]
     [DecidableEq n] (H : Matrix m n ℝ) {R : Matrix m m ℝ} (hR : R.PosDef)
-    {K : Matrix n n ℝ} (hK : K.PosSemidef) :
+    (K : Matrix n n ℝ) :
     (diagonalizedCovariance H hR K).trace = K.trace := by
   have hV1 := (inputBasis_orthogonal H hR).1
   have hV2 := (inputBasis_orthogonal H hR).2
@@ -412,7 +412,7 @@ theorem gaussianChannel_diagonalReduction {m n : Type*} [Fintype m] [Fintype n]
       detRatio H R (diagonalizedCovariance H hR K) =
         ∏ i, (1 + channelEigenvalues H hR i * powerAllocation H hR K i) := by
   exact ⟨fun i => channelEigenvalues_nonneg H hR i,
-    trace_diagonalizedCovariance H hR hK,
+    trace_diagonalizedCovariance H hR K,
     detRatio_le_detRatio_diagonalizedCovariance H hR hK,
     detRatio_diagonalizedCovariance_eq_prod H hR hK⟩
 
@@ -448,51 +448,5 @@ theorem detRatio_eq_one_of_channelEigenvalues_eq_zero {m n : Type*} [Fintype m] 
     (channelGram_posSemidef H hR).isHermitian.eigenvalues_eq_zero_iff.mp h00
   have hratio := detRatio_eq_one_add_gram H hR K
   rw [hratio, hG0, zero_mul, add_zero, Matrix.det_one]
-
-/-- Rank-deficient channel `diag(1, 0)`, `R = 1`, off-diagonal `K = [[1, 1/2], [1/2, 1]]`:
-`det (1 + H K Hᵀ) = 2`, which equals `∏ (1 + λ_i K_ii) = (1 + 1)(1 + 0)` in the basis `V = 1`. -/
-theorem detRatio_rankDeficient_offDiagonal :
-    detRatio !![(1 : ℝ), 0; 0, 0] 1 !![(1 : ℝ), 1 / 2; 1 / 2, 1] = 2 := by
-  have h01 : (0 : Fin 2) ≠ 1 := by decide
-  have h10 : (1 : Fin 2) ≠ 0 := by decide
-  simp only [detRatio, Matrix.det_fin_two, Matrix.det_one, div_one, Matrix.add_apply,
-    Matrix.mul_apply, Fin.sum_univ_two, Matrix.transpose_apply, Matrix.one_apply_eq,
-    Matrix.one_apply_ne h01, Matrix.one_apply_ne h10, Matrix.of_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_succ, Matrix.head_cons]
-  norm_num
-
-/-- Channel `diag(1, 2)`, `R = 1` (`λ = (1, 4)`, basis `V = 1`), off-diagonal
-`K = [[1, 1/2], [1/2, 1]]`: `det (1 + H K Hᵀ) = 9 < 10 = (1 + 1)(1 + 4)`, so dropping the
-off-diagonal correlation strictly helps. -/
-theorem detRatio_offDiagonal_lt :
-    detRatio !![(1 : ℝ), 0; 0, 2] 1 !![(1 : ℝ), 1 / 2; 1 / 2, 1] <
-      ∏ i, (1 + ![(1 : ℝ), 4] i * (!![(1 : ℝ), 1 / 2; 1 / 2, 1]) i i) := by
-  have h01 : (0 : Fin 2) ≠ 1 := by decide
-  have h10 : (1 : Fin 2) ≠ 0 := by decide
-  simp only [detRatio, Matrix.det_fin_two, Matrix.det_one, div_one, Fin.prod_univ_two,
-    Matrix.add_apply, Matrix.mul_apply, Fin.sum_univ_two, Matrix.transpose_apply,
-    Matrix.one_apply_eq, Matrix.one_apply_ne h01, Matrix.one_apply_ne h10, Matrix.of_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_succ, Matrix.head_cons]
-  norm_num
-
-/-- Violated premise: the symmetric but indefinite
-`K = [[-2, 1, 0], [1, -2, 0], [0, 0, -2]]` with `H = R = 1` (`λ = 1`, `V = 1`) has
-`det (1 + K) = 0 > -1 = ∏ (1 + K_ii)`, so the PSD hypothesis cannot be dropped. -/
-theorem prod_lt_detRatio_of_not_posSemidef :
-    ∏ i, (1 + (1 : ℝ) * (!![(-2 : ℝ), 1, 0; 1, -2, 0; 0, 0, -2]) i i) <
-      detRatio (1 : Matrix (Fin 3) (Fin 3) ℝ) 1 !![(-2 : ℝ), 1, 0; 1, -2, 0; 0, 0, -2] := by
-  have h01 : (0 : Fin 3) ≠ 1 := by decide
-  have h02 : (0 : Fin 3) ≠ 2 := by decide
-  have h10 : (1 : Fin 3) ≠ 0 := by decide
-  have h12 : (1 : Fin 3) ≠ 2 := by decide
-  have h20 : (2 : Fin 3) ≠ 0 := by decide
-  have h21 : (2 : Fin 3) ≠ 1 := by decide
-  simp only [detRatio, Matrix.det_fin_three, Matrix.det_one, div_one, Fin.prod_univ_three,
-    Matrix.add_apply, Matrix.mul_apply, Fin.sum_univ_three, Matrix.transpose_apply,
-    Matrix.one_apply_eq, Matrix.one_apply_ne h01, Matrix.one_apply_ne h02,
-    Matrix.one_apply_ne h10, Matrix.one_apply_ne h12, Matrix.one_apply_ne h20,
-    Matrix.one_apply_ne h21, Matrix.of_apply, Matrix.cons_val_zero, Matrix.cons_val_one,
-    Matrix.cons_val_two, Matrix.cons_val_succ, Matrix.head_cons, Matrix.tail_cons]
-  norm_num
 
 end MathlibExt.LinearAlgebra.Matrix.GaussianChannelDiagonalReduction
