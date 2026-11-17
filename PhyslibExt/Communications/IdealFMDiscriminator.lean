@@ -67,7 +67,10 @@ noncomputable def fmSignal (A fc kf : ℝ) (m : ℝ → ℝ) (t : ℝ) : ℂ :=
 
 /-- Ideal frequency discriminator applied to a complex signal `z`:
 `Im(conj(z t) · z'(t)) / (2π ‖z t‖²)`. It uses the derivative of `z`, never a phase
-unwrap. -/
+unwrap. The quotient is totalized: when `z t = 0` the denominator
+vanishes and the value is `0` by the real-division convention; no
+frequency is measured there, and every recovery theorem below
+assumes a nonzero envelope. -/
 noncomputable def discriminatorOutput (z : ℝ → ℂ) (t : ℝ) : ℝ :=
   (starRingEnd ℂ (z t) * deriv z t).im / (2 * Real.pi * ‖z t‖ ^ 2)
 
@@ -256,8 +259,9 @@ lemma fmDiscriminator_cos_message (A fc kf : ℝ) (hA : 0 < A) (t : ℝ) :
   exact fmDiscriminator_eq_instantaneousFrequency A fc kf Real.cos hA
     Real.continuous_cos t
 
-/-- `A = 0`: the signal is identically zero and the division-based discriminator
-outputs `0` regardless of the message, so it does not reconstruct `f_c + k_f m(t)`. -/
+/-- `A = 0`: the signal is identically zero, so discrimination is
+undefined; the totalized discriminator expression evaluates to `0`
+only by the `0 / 0 = 0` convention, and no frequency is recovered. -/
 lemma discriminatorOutput_fmSignal_zero_amplitude (fc kf : ℝ) (m : ℝ → ℝ) (t : ℝ) :
     discriminatorOutput (fmSignal 0 fc kf m) t = 0 := by
   have hz : fmSignal 0 fc kf m t = 0 := by simp [fmSignal]
