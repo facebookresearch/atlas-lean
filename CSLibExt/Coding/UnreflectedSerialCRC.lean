@@ -36,7 +36,6 @@ proved both as bit words (`0b100`, `0b001`, `0b101`) and as
 polynomials, and reversing the payload changes the result, as
 the unreflected convention requires.
 
-Discharges ECE roadmap leaf `ECE.HW.CRC.L1` (serial CRC register
 semantics).
 -/
 
