@@ -33,7 +33,7 @@ example : ∀ x ∈ convexHull ℝ
           + affineFun ((fun _ : Fin 2 => (1 : ℝ)) e.1)
             ((fun _ _ : Fin 2 => (1 : ℝ)) e.1) x
           ≤ (fun j : Fin 2 => if j = 1 then (5 : ℝ) else 0) e.2 := by
-  rw [schedule_precedence_hull_iff _ (by simp)
+  rw [schedule_precedence_hull_iff _
     (fun j : Fin 2 => if j = 1 then (5 : ℝ) else 0) (fun _ => (1 : ℝ))
     (fun _ _ : Fin 2 => (1 : ℝ)) _]
   intro v hv e he
@@ -45,6 +45,22 @@ example : ∀ x ∈ convexHull ℝ
 example : ¬ ∀ v ∈ ({![0, 0]} : Finset (Fin 2 → ℝ)),
     ∀ j ∈ ({0} : Finset (Fin 2)),
       0 ≤ affineFun (-1 : ℝ) (fun _ : Fin 2 => (0 : ℝ)) v := by
+  intro h
+  have hv := h ![0, 0] (by simp) 0 (by simp)
+  norm_num [affineFun] at hv
+
+/-- Empty scenario set: both sides of the certificates are vacuous. -/
+example : (∀ x ∈ convexHull ℝ ((∅ : Finset (Fin 2 → ℝ)) : Set (Fin 2 → ℝ)),
+      0 ≤ affineFun 1 (fun _ => (1 : ℝ)) x)
+    ↔ ∀ v ∈ (∅ : Finset (Fin 2 → ℝ)), 0 ≤ affineFun 1 (fun _ => (1 : ℝ)) v :=
+  affineFun_nonneg_hull_iff _ _ _
+
+/-- The negative-duration rejection goes through the duration
+certificate's vertex side. -/
+example : ¬ ∀ x ∈ convexHull ℝ (({![0, 0]} : Finset (Fin 2 → ℝ)) : Set (Fin 2 → ℝ)),
+    ∀ j ∈ ({0} : Finset (Fin 2)),
+      0 ≤ affineFun (-1 : ℝ) (fun _ : Fin 2 => (0 : ℝ)) x := by
+  rw [durations_nonneg_hull_iff]
   intro h
   have hv := h ![0, 0] (by simp) 0 (by simp)
   norm_num [affineFun] at hv
