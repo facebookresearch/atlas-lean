@@ -49,4 +49,15 @@ example : baseCurrent 2 3 1 1 1 0 0 = 0 :=
 example : emitterCurrent 2 3 1 1 0 0 = 0 :=
   (terminalCurrents_zero_bias 2 3 1 1 1).2.2
 
+/-- Reverse-active exact case: `VT = 1`, `Vbe = log 2`,
+`Vbc = log 3` gives branch currents `F = 2`, `R = 2`, hence
+`Ic = -1`, `Ib = 7/3`, `Ie = 4/3`. The reverse branch and
+`alphaR` are genuinely exercised (unlike `Vbc = 0`). -/
+example : collectorCurrent 2 1 (1 / 2) 1 (Real.log 2) (Real.log 3) = -1
+    ∧ baseCurrent 2 1 (1 / 2) (1 / 3) 1 (Real.log 2) (Real.log 3) = 7 / 3
+    ∧ emitterCurrent 2 1 (1 / 3) 1 (Real.log 2) (Real.log 3) = 4 / 3 := by
+  refine ⟨?_, ?_, ?_⟩ <;>
+    simp [collectorCurrent, baseCurrent, emitterCurrent, forwardBranchCurrent,
+      reverseBranchCurrent, Real.exp_log] <;> norm_num
+
 end PhyslibExtTest.Electronics.EbersMollTerminalBalance

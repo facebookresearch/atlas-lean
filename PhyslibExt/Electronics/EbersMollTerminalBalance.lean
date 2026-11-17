@@ -38,9 +38,12 @@ emitter currents are positive.
   voltage.
 - `collectorTransconductance_of_vbc_zero`: the forward-active
   transconductance.
-- `reciprocal_saturation_relation` and
-  `collectorCurrent_transport_form`: the Ebers-Moll reciprocity
-  and transport forms.
+- `collectorCurrent_of_transportSaturation` and
+  `emitterCurrent_of_transportSaturation`: with both saturation
+  currents derived from one transport current `IS` (the physical
+  reciprocal parameterization), the terminal currents take
+  transport form. `reciprocal_parameterization` states the
+  equivalence with the relation `alphaF * IsF = alphaR * IsR`.
 
 ## iii. Table of contents
 
@@ -341,12 +344,15 @@ lemma collector_add_base_add_emitterOut_ne_zero_of_forwardActive
 
 /-! ### Reciprocal parameterization -/
 
-/-- **Reciprocity.** When the branch saturation currents satisfy reciprocity
+/-- **Reciprocal parameterization.** When the branch saturation currents satisfy
 `alphaF * IsF = alphaR * IsR`, both derive from the single transport saturation
 current `IS = alphaF * IsF`: `IsF = IS / alphaF` and `IsR = IS / alphaR`. The
 collector and emitter-out currents then depend on `IsF`, `IsR` only through `IS`,
-in transport form. -/
-lemma reciprocal_saturation_relation (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ)
+in transport form. This is a parameterization equivalence: it does not derive
+reciprocity from device physics, it states what reciprocity means for the
+currents. The `_of_transportSaturation` lemmas below use the parameterization
+directly. -/
+lemma reciprocal_parameterization (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ)
     (_hVT : 0 < VT) (hαF : alphaF ≠ 0) (hαR : alphaR ≠ 0)
     (hrec : alphaF * IsF = alphaR * IsR) :
     ∃ IS : ℝ, IS = alphaF * IsF ∧ IsF = IS / alphaF ∧ IsR = IS / alphaR ∧
@@ -368,6 +374,30 @@ lemma reciprocal_saturation_relation (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ)
     rw [hIsR]
     field_simp
     ring
+
+
+/-- With both saturation currents derived from one transport current `IS`
+(`IsF = IS / alphaF`, `IsR = IS / alphaR`, the physical reciprocal
+parameterization), the collector current takes transport form in `IS` alone. -/
+lemma collectorCurrent_of_transportSaturation (IS alphaF alphaR VT Vbe Vbc : ℝ)
+    (hαF : alphaF ≠ 0) (hαR : alphaR ≠ 0) :
+    collectorCurrent (IS / alphaF) (IS / alphaR) alphaF VT Vbe Vbc =
+      IS * (Real.exp (Vbe / VT) - Real.exp (Vbc / VT)) -
+        IS * ((1 - alphaR) / alphaR) * (Real.exp (Vbc / VT) - 1) := by
+  simp only [collectorCurrent, forwardBranchCurrent, reverseBranchCurrent]
+  field_simp
+  ring
+
+/-- With both saturation currents derived from one transport current `IS`, the
+emitter-out current takes transport form in `IS` alone. -/
+lemma emitterCurrent_of_transportSaturation (IS alphaF alphaR VT Vbe Vbc : ℝ)
+    (hαF : alphaF ≠ 0) (hαR : alphaR ≠ 0) :
+    emitterCurrent (IS / alphaF) (IS / alphaR) alphaR VT Vbe Vbc =
+      IS * (Real.exp (Vbe / VT) - Real.exp (Vbc / VT)) +
+        IS * ((1 - alphaF) / alphaF) * (Real.exp (Vbe / VT) - 1) := by
+  simp only [emitterCurrent, forwardBranchCurrent, reverseBranchCurrent]
+  field_simp
+  ring
 
 /-- Under reciprocity `alphaF * IsF = alphaR * IsR`, the collector current in transport form
 `Ic = IS (e^{Vbe/VT} - e^{Vbc/VT}) - IS (1 - alphaR) / alphaR (e^{Vbc/VT} - 1)`,
