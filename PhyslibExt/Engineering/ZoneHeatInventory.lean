@@ -16,6 +16,8 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
+import PhyslibExt.EarthScience.Compartments
+
 /-!
 # Zone-network heat inventory balance
 
@@ -62,34 +64,22 @@ theorem heat_inventory_deriv {ι : Type*} [Fintype ι]
     (t : ℝ) :
     HasDerivAt (fun s => ∑ i, C i * T i s)
       (∑ i, (b i t + P i t)) t := by
-  have hcancel : (∑ i, ∑ j, G i j * (T j t - T i t)) = 0 := by
-    have hflip : (∑ i, ∑ j, G i j * (T j t - T i t))
-        = ∑ i, ∑ j, G i j * (T i t - T j t) := by
-      rw [Finset.sum_comm]
-      refine Finset.sum_congr rfl (fun j _ => Finset.sum_congr rfl (fun i _ => ?_))
-      rw [hG i j]
-    have hneg : (∑ i, ∑ j, G i j * (T i t - T j t))
-        = -(∑ i, ∑ j, G i j * (T j t - T i t)) := by
-      rw [← Finset.sum_neg_distrib]
-      refine Finset.sum_congr rfl (fun i _ => ?_)
-      rw [← Finset.sum_neg_distrib]
-      refine Finset.sum_congr rfl (fun j _ => ?_)
-      ring
-    linarith
-  have heq : (∑ i, C i * Tv i t) = ∑ i, (b i t + P i t) := by
-    have hzone' : ∀ i, C i * Tv i t
-        = (∑ j, G i j * (T j t - T i t)) + (b i t + P i t) := by
-      intro i
-      rw [hzone i t, add_assoc]
-    calc (∑ i, C i * Tv i t)
-        = ∑ i, ((∑ j, G i j * (T j t - T i t)) + (b i t + P i t)) :=
-          Finset.sum_congr rfl (fun i _ => hzone' i)
-      _ = (∑ i, ∑ j, G i j * (T j t - T i t)) + ∑ i, (b i t + P i t) :=
-          Finset.sum_add_distrib
-      _ = ∑ i, (b i t + P i t) := by rw [hcancel, zero_add]
-  have hmain : HasDerivAt (fun s => ∑ i, C i * T i s) (∑ i, C i * Tv i t) t :=
-    HasDerivAt.fun_sum (fun i _ => (hT i t).const_mul (C i))
-  rw [heq] at hmain
-  exact hmain
+  have hexch : ∀ i, (∑ j, G i j * (T j t - T i t))
+      = ∑ j ∈ Finset.univ, (G j i * T j t - G i j * T i t) := by
+    intro i
+    apply Finset.sum_congr rfl
+    intro j _
+    rw [hG i j]
+    ring
+  have h := EarthScience.hasDerivAt_total_stock Finset.univ
+    (fun i s => C i * T i s) (fun i j s => G i j * T i s)
+    (fun i s => b i s + P i s) t (fun i _ => by
+      show HasDerivAt (fun s => C i * T i s)
+        ((∑ j ∈ Finset.univ, (G j i * T j t - G i j * T i t)) + (b i t + P i t)) t
+      have hder : C i * Tv i t
+          = (∑ j ∈ Finset.univ, (G j i * T j t - G i j * T i t)) + (b i t + P i t) := by
+        rw [hzone i t, hexch i, add_assoc]
+      exact hder ▸ HasDerivAt.const_mul (C i) (hT i t))
+  exact h
 
 end ZoneHeatInventory
