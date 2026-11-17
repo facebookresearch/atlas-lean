@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Analysis.Convex.StdSimplexWeights
+public import MathlibExt.Analysis.SpecialFunctions.Softplus
 public import Mathlib.Analysis.MeanInequalities
 public import Mathlib.Analysis.SpecialFunctions.Sigmoid
 public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
@@ -29,7 +30,8 @@ is the softplus `log (1 + exp z)`, whose derivative is the logistic function `Re
 * `convexOn_log_sum_mul_exp`: for nonnegative weights `h` with a positive entry,
   `z ↦ log ∑ i, h i * exp (z i)` is convex (Hölder's inequality in the form of the weighted
   AM-GM inequality `p ^ a * q ^ b ≤ a * p + b * q`, summed over normalized terms). In particular
-  `convexOn_logSumExp` and `convexOn_softplus`.
+  `convexOn_logSumExp` (and `convexOn_softplus`, from
+  `MathlibExt/Analysis/SpecialFunctions/Softplus.lean`).
 * `sum_softmax`, `softmaxDist`, `log_softmax`: the softmax is a categorical distribution (a point
   of Mathlib's `Convexity.StdSimplex`), and `log (softmax z i) = z i - logSumExp z`.
 * `hasFDerivAt_logSumExp`, `hasGradientAt_logSumExp`, `hasDerivAt_logSumExp_line`: the gradient
@@ -38,7 +40,7 @@ is the softplus `log (1 + exp z)`, whose derivative is the logistic function `Re
   `MathlibExt/Analysis/Calculus/DotProductGradient.lean`).
 * `logSumExp_add_const`, `softmax_add_const`: on a nonempty index type, adding a constant to all
   scores shifts log-sum-exp by that constant, and it always leaves the softmax unchanged.
-* `hasDerivAt_softplus`: the derivative of the softplus is the logistic function;
+* `hasDerivAt_softplus` (from `Softplus.lean`): the derivative of the softplus is the logistic function;
   `softmax_pair`: the softmax of two scores is the logistic function of their difference;
   `softplus_neg`, `neg_log_sigmoid`: `softplus (-z) = softplus z - z` and
   `-log (sigmoid z) = softplus (-z)`; `unitInterval.coe_sigmoid`: Mathlib's
@@ -112,10 +114,6 @@ noncomputable def logSumExp (z : ι → ℝ) : ℝ :=
 /-- The softmax `exp (z i) / ∑ j, exp (z j)`. -/
 noncomputable def softmax (z : ι → ℝ) (i : ι) : ℝ :=
   exp (z i) / ∑ j, exp (z j)
-
-/-- The softplus `log (1 + exp z)`. -/
-noncomputable def softplus (z : ℝ) : ℝ :=
-  log (1 + exp z)
 
 theorem convexOn_logSumExp [Nonempty ι] : ConvexOn ℝ Set.univ (logSumExp (ι := ι)) := by
   have h := convexOn_log_sum_mul_exp (h := fun _ : ι => (1 : ℝ)) (fun _ => zero_le_one)
@@ -193,25 +191,6 @@ theorem softmax_add_const (z : ι → ℝ) (c : ℝ) (i : ι) :
 
 theorem softplus_eq_logSumExp (z : ℝ) : softplus z = logSumExp ![0, z] := by
   simp [softplus, logSumExp, Fin.sum_univ_two]
-
-theorem convexOn_softplus : ConvexOn ℝ Set.univ softplus := by
-  have h := convexOn_logSumExp (ι := Fin 2)
-  have hlin : ConvexOn ℝ Set.univ (fun z : ℝ => logSumExp ((fun z : ℝ => ![0, z]) z)) := by
-    refine ⟨convex_univ, fun x _ y _ a b ha hb hab => ?_⟩
-    have := h.2 (Set.mem_univ ![0, x]) (Set.mem_univ ![0, y]) ha hb hab
-    convert this using 2
-    ext i
-    fin_cases i <;> simp
-  rwa [show softplus = fun z => logSumExp ![0, z] from funext softplus_eq_logSumExp]
-
-/-- The derivative of the softplus is the logistic function. -/
-theorem hasDerivAt_softplus (z : ℝ) : HasDerivAt softplus (sigmoid z) z := by
-  have h := ((hasDerivAt_exp z).const_add 1).log (by positivity)
-  convert h using 1
-  · rfl
-  · rw [sigmoid_def, exp_neg]
-    field_simp
-    ring
 
 /-- The softmax of two scores is the logistic function of their difference. -/
 theorem softmax_pair (z₀ z₁ : ℝ) : softmax ![z₀, z₁] 1 = sigmoid (z₁ - z₀) := by
