@@ -260,8 +260,10 @@ lemma network_storage_deriv_eq_supplied_minus_losses (nN nB : ℕ)
   linarith
 
 /-- **Finite-horizon energy inequality (FTC / nonnegative loss).**
-If the storage-balance identity holds on `[a, b]` with nonnegative
-resistive loss and integrable supplied power, then
+If the circuit laws (KVL, KCL, and the resistor, capacitor and
+inductor branch laws) hold at every `s ∈ [a, b]`, so that the
+storage-balance identity is derived from the network model there
+rather than assumed, with integrable supplied power, then
 `E(b) - E(a) <= ∫ s in a..b, (phi ⬝ᵥ j - sum_source v_e * i_e)`. -/
 lemma network_energy_sub_le_integral_supplied (nN nB : ℕ)
     (B : Matrix (Fin nN) (Fin nB) ℝ)
@@ -272,13 +274,18 @@ lemma network_energy_sub_le_integral_supplied (nN nB : ℕ)
     (hC : ∀ e ∈ Cset, 0 < Cval e)
     (phi j : ℝ → Fin nN → ℝ) (v iB : ℝ → Fin nB → ℝ)
     (a b : ℝ) (hab : a ≤ b)
-    (hderiv : ∀ s ∈ Set.Icc a b,
-      HasDerivAt (fun τ => storedEnergy nB Cset Lset Cval Lval (v τ) (iB τ))
-        (dotProduct (phi s) (j s) -
-          sourceAbsorbedPower nB Sset (v s) (iB s) -
-          resistiveLoss nB Rset Rval (iB s)) s)
-    (hloss_nonneg : ∀ s ∈ Set.Icc a b,
-      0 ≤ resistiveLoss nB Rset Rval (iB s))
+    (hKVL : ∀ s ∈ Set.Icc a b,
+      v s = Matrix.mulVec (Matrix.transpose B) (phi s))
+    (hKCL : ∀ s ∈ Set.Icc a b, Matrix.mulVec B (iB s) = j s)
+    (hRlaw : ∀ s ∈ Set.Icc a b, ∀ e ∈ Rset, v s e = Rval e * iB s e)
+    (hClaw : ∀ s ∈ Set.Icc a b, ∀ e ∈ Cset,
+      iB s e = Cval e * deriv (fun τ => v τ e) s)
+    (hLlaw : ∀ s ∈ Set.Icc a b, ∀ e ∈ Lset,
+      v s e = Lval e * deriv (fun τ => iB τ e) s)
+    (hCdiff : ∀ s ∈ Set.Icc a b, ∀ e ∈ Cset,
+      DifferentiableAt ℝ (fun τ => v τ e) s)
+    (hLdiff : ∀ s ∈ Set.Icc a b, ∀ e ∈ Lset,
+      DifferentiableAt ℝ (fun τ => iB τ e) s)
     (hsupplied_cont : ContinuousOn
       (fun s => dotProduct (phi s) (j s) -
         sourceAbsorbedPower nB Sset (v s) (iB s)) (Set.Icc a b))
@@ -291,6 +298,33 @@ lemma network_energy_sub_le_integral_supplied (nN nB : ℕ)
         storedEnergy nB Cset Lset Cval Lval (v a) (iB a) ≤
       ∫ s in a..b, (dotProduct (phi s) (j s) -
         sourceAbsorbedPower nB Sset (v s) (iB s)) := by
+  have hderiv : ∀ s ∈ Set.Icc a b,
+      HasDerivAt (fun τ => storedEnergy nB Cset Lset Cval Lval (v τ) (iB τ))
+        (dotProduct (phi s) (j s) -
+          sourceAbsorbedPower nB Sset (v s) (iB s) -
+          resistiveLoss nB Rset Rval (iB s)) s := by
+    intro s hs
+    have hE := hasDerivAt_storedEnergy nB Cset Lset Cval Lval v iB s
+      (hClaw s hs) (hLlaw s hs) (hCdiff s hs) (hLdiff s hs)
+    have hval : (∑ e ∈ Cset, v s e * iB s e) + ∑ e ∈ Lset, v s e * iB s e =
+        dotProduct (phi s) (j s) -
+          sourceAbsorbedPower nB Sset (v s) (iB s) -
+          resistiveLoss nB Rset Rval (iB s) := by
+      have hbal := network_storage_deriv_eq_supplied_minus_losses nN nB B
+        Rset Lset Cset Sset hpart Rval Lval Cval hR hL hC phi j v iB s
+        (hKVL s hs) (hKCL s hs) (hRlaw s hs) (hClaw s hs) (hLlaw s hs)
+        (hCdiff s hs) (hLdiff s hs)
+      exact hE.deriv.symm.trans hbal
+    rw [hval] at hE
+    exact hE
+  have hloss_nonneg : ∀ s ∈ Set.Icc a b,
+      0 ≤ resistiveLoss nB Rset Rval (iB s) := by
+    intro s hs
+    unfold resistiveLoss
+    apply Finset.sum_nonneg
+    intro e he
+    apply mul_nonneg (hR e he)
+    exact sq_nonneg _
   have hderiv' : ∀ x ∈ Set.uIcc a b,
       HasDerivAt (fun τ => storedEnergy nB Cset Lset Cval Lval (v τ) (iB τ))
         (dotProduct (phi x) (j x) -
