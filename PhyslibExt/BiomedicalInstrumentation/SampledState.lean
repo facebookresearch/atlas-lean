@@ -41,6 +41,23 @@ open scoped Matrix
 
 namespace PhyslibExt.BiomedicalInstrumentation.SampledState
 
+/-- The bundled sampled-state operator: the stacked output map as
+a linear map via `Matrix.mulVecLin`. -/
+noncomputable def sampledMap {n m k : ℕ} (A : Matrix (Fin n) (Fin n) ℝ)
+    (H : Matrix (Fin k) (Fin n) ℝ) (t : Fin m → ℝ) :
+    (Fin n → ℝ) →ₗ[ℝ] (Fin m → Fin k → ℝ) :=
+  LinearMap.pi (fun j => (Matrix.mulVecLin H).comp
+    (Matrix.mulVecLin
+      (NormedSpace.exp (t j • A) : Matrix (Fin n) (Fin n) ℝ)))
+
+/-- The bundled operator applied. -/
+lemma sampledMap_apply {n m k : ℕ} (A : Matrix (Fin n) (Fin n) ℝ)
+    (H : Matrix (Fin k) (Fin n) ℝ) (t : Fin m → ℝ) (x : Fin n → ℝ) :
+    sampledMap A H t x = fun j => H *ᵥ
+      ((NormedSpace.exp (t j • A) : Matrix (Fin n) (Fin n) ℝ) *ᵥ x) := by
+  funext j
+  simp [sampledMap, Matrix.mulVecLin_apply]
+
 /-- **Sampled-state observability criterion.** For known dynamics
 `A`, output matrix `H`, and fixed sampling times `t j`, the stacked
 sampled map `x ↦ (H *ᵥ (exp (t j • A) *ᵥ x))_j` is injective exactly
