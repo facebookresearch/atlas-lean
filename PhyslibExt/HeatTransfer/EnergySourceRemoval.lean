@@ -132,7 +132,7 @@ lemma slabTemperature_le_midplane {Ts L k H d : ℝ} (hk : 0 < k)
 
 
 
-/- ### B. Derivative bridge to the geotherm profile -/
+/-! ## B. Derivative bridge to the geotherm profile -/
 
 /-- The slab gradient is the actual derivative of the slab temperature:
 this is `EarthScience.geotherm_hasDerivAt` for the same profile. -/
