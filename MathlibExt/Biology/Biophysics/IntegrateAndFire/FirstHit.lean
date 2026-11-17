@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Exp
+public import Mathlib.Topology.Order.Basic
 
 /-!
 # Leaky integrate-and-fire first threshold hit
@@ -29,6 +30,7 @@ reduction and no spiking-network claim.
 @[expose] public section
 
 open Real
+open Topology Filter
 
 namespace MathlibExt.Biology.Biophysics.IntegrateAndFire.FirstHit
 
@@ -91,5 +93,22 @@ theorem lif_no_hit {ur theta tau uinf : ℝ}
   have hpos : 0 < (uinf - ur) * Real.exp (-t / tau) :=
     mul_pos (sub_pos.mpr hur) (Real.exp_pos _)
   linarith
+
+/-- **Asymptotic approach at threshold equilibrium.** At
+`uinf = theta` with `tau > 0`, the trajectory
+`theta - (theta - ur) * exp (-t / tau)` tends to `theta` as
+`t → ∞`, without attaining it at any finite time (`lif_no_hit`). -/
+theorem lif_tendsto {ur theta tau : ℝ} (htau : 0 < tau) :
+    Filter.Tendsto (fun t => theta - (theta - ur) * Real.exp (-t / tau))
+      Filter.atTop (𝓝 theta) := by
+  have hexp : Filter.Tendsto (fun t : ℝ => Real.exp (-t / tau)) Filter.atTop (𝓝 0) := by
+    apply Real.tendsto_exp_atBot.comp
+    have h1 : Filter.Tendsto (fun t : ℝ => t / tau) Filter.atTop Filter.atTop :=
+      Filter.Tendsto.atTop_div_const htau Filter.tendsto_id
+    have h2 : Filter.Tendsto (fun t : ℝ => -(t / tau)) Filter.atTop Filter.atBot :=
+      Filter.tendsto_neg_atTop_atBot.comp h1
+    exact h2.congr (fun t => by ring)
+  have h2 := hexp.const_mul (theta - ur)
+  simpa using (Filter.Tendsto.const_sub theta h2)
 
 end MathlibExt.Biology.Biophysics.IntegrateAndFire.FirstHit
