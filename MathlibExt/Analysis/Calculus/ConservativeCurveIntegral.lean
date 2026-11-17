@@ -25,7 +25,6 @@ curve-integral convention. Path reversal negates the value. The
 rotational field on a triangular loop is the standard
 nonconservative counterexample.
 
-Discharges ECE roadmap leaf `ECE.NET.FIELDPORT.L1`.
 -/
 
 @[expose] public section
