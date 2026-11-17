@@ -23,7 +23,7 @@ import Mathlib.Tactic.Ring
 
 ## i. Overview
 
-For `f : E → ℝ` twice differentiable at `x + t • v`, the second
+For `f : E → ℝ` that is `C²` at `x + t • v`, the second
 derivative of the line restriction `s ↦ f (x + s • v)` at `t` is the
 second Fréchet derivative applied twice to `v`, bounded by
 `‖D²f‖ * ‖v‖²`.
