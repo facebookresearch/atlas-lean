@@ -12,10 +12,9 @@ public import Mathlib.MeasureTheory.Constructions.UnitInterval
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.Data.Matrix.Mul
 public import MathlibExt.Probability.Process.ContinuousTimeMarkovChain.RateMatrix
+import MathlibExt.MeasureTheory.Measure.MomentDeterminacy
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.Data.Nat.Choose.Cast
-import Mathlib.MeasureTheory.Measure.HasOuterApproxClosed
-import Mathlib.Topology.ContinuousMap.Weierstrass
 import MathlibExt.Biology.PopulationGenetics.Coalescent.Kingman
 
 /-!
@@ -323,47 +322,7 @@ theorem eq_of_mergerRate_eq (Λ' : Measure I) [IsFiniteMeasure Λ']
     intro j
     have := h (j + 2) (by omega)
     simpa [mergerRate_of_le _ (show 2 ≤ j + 2 by omega) le_rfl] using this
-  have hint : ∀ (μ : Measure I) [IsFiniteMeasure μ] (j : ℕ),
-      Integrable (fun x : I => (x : ℝ) ^ j) μ := fun μ _ j => by
-    simpa using integrable_pow_mul_one_sub_pow μ j 0
-  -- equal integrals of polynomials
-  have hpoly : ∀ p : Polynomial ℝ, ∫ x, p.eval (x : ℝ) ∂Λ = ∫ x, p.eval (x : ℝ) ∂Λ' := by
-    intro p
-    simp_rw [Polynomial.eval_eq_sum_range]
-    rw [integral_finsetSum _ fun i _ => (hint Λ i).const_mul _,
-      integral_finsetSum _ fun i _ => (hint Λ' i).const_mul _]
-    exact sum_congr rfl fun i _ => by rw [integral_const_mul, integral_const_mul, hmom]
-  -- Weierstrass approximation
-  refine ext_of_forall_integral_eq_of_IsFiniteMeasure fun f => ?_
-  refine eq_of_forall_dist_le fun ε hε => ?_
-  set M := Λ.real Set.univ + Λ'.real Set.univ + 1 with hM
-  have hM0 : 0 < M := by positivity
-  obtain ⟨p, hp⟩ := exists_polynomial_near_continuousMap 0 1 f.toContinuousMap (ε / M)
-    (div_pos hε hM0)
-  set P : BoundedContinuousFunction I ℝ :=
-    BoundedContinuousFunction.mkOfCompact (p.toContinuousMapOn _)
-  have hPf : ∀ x : I, ‖f x - P x‖ ≤ ε / M := fun x => by
-    rw [norm_sub_rev]
-    exact (ContinuousMap.norm_coe_le_norm _ x).trans hp.le
-  have hP : ∀ (μ : Measure I), ∫ x, P x ∂μ = ∫ x, p.eval (x : ℝ) ∂μ := fun μ => rfl
-  have hbound : ∀ (μ : Measure I) [IsFiniteMeasure μ],
-      ‖∫ x, f x ∂μ - ∫ x, P x ∂μ‖ ≤ ε / M * μ.real Set.univ := fun μ _ => by
-    rw [← integral_sub (f.integrable μ) (P.integrable μ)]
-    exact norm_integral_le_of_norm_le_const (ae_of_all _ hPf)
-  have h1 := hbound Λ
-  have h2 := hbound Λ'
-  rw [hP, hpoly] at h1
-  rw [hP] at h2
-  rw [Real.dist_eq]
-  calc |∫ x, f x ∂Λ - ∫ x, f x ∂Λ'|
-      ≤ ‖∫ x, f x ∂Λ - ∫ x, p.eval (x : ℝ) ∂Λ'‖ + ‖∫ x, f x ∂Λ' - ∫ x, p.eval (x : ℝ) ∂Λ'‖ := by
-        rw [Real.norm_eq_abs, Real.norm_eq_abs]
-        have := abs_sub_le (∫ x, f x ∂Λ) (∫ x, p.eval (x : ℝ) ∂Λ') (∫ x, f x ∂Λ')
-        rwa [abs_sub_comm (∫ x, p.eval (x : ℝ) ∂Λ')] at this
-    _ ≤ ε / M * Λ.real Set.univ + ε / M * Λ'.real Set.univ := add_le_add h1 h2
-    _ ≤ ε := by
-        rw [← mul_add, div_mul_eq_mul_div, div_le_iff₀ hM0]
-        nlinarith [measureReal_nonneg (μ := Λ) (s := Set.univ)]
+  exact MeasureTheory.measure_eq_of_forall_integral_pow_eq Λ Λ' hmom
 
 /-! ### Kingman's coalescent: `Λ = δ₀` -/
 
