@@ -191,36 +191,9 @@ lemma orthonormal_fdmaCarrier {κ : Type} (N : ℕ) [NeZero N] (f : κ → ZMod 
     · simp only [hd, zero_mul]
       simp [ZMod.card]
     · rw [if_neg hd]
-      have hreindex : (∑ t, ZMod.stdAddChar (d * t))
-          = ∑ t, ZMod.stdAddChar (d * (t + 1)) := by
-        have h := Equiv.sum_comp (Equiv.addRight (1 : ZMod N))
-          (fun t => ZMod.stdAddChar (d * t))
-        simpa [Equiv.addRight] using h.symm
-      have hshift : ∀ t : ZMod N, ZMod.stdAddChar (d * (t + 1))
-          = ZMod.stdAddChar (d * t) * ZMod.stdAddChar d := by
-        intro t
-        have hdt : d * (t + 1) = d * t + d := by ring
-        rw [hdt]
-        exact AddChar.map_add_eq_mul _ _ _
-      have hSeq : (∑ t, ZMod.stdAddChar (d * t))
-          = (∑ t, ZMod.stdAddChar (d * t)) * ZMod.stdAddChar d :=
-        calc (∑ t, ZMod.stdAddChar (d * t))
-            = ∑ t, ZMod.stdAddChar (d * (t + 1)) := hreindex
-          _ = ∑ t, (ZMod.stdAddChar (d * t) * ZMod.stdAddChar d) := by
-              apply Finset.sum_congr rfl
-              intro t _
-              exact hshift t
-          _ = (∑ t, ZMod.stdAddChar (d * t)) * ZMod.stdAddChar d := by
-              rw [Finset.sum_mul]
-      have h0 : (∑ t, ZMod.stdAddChar (d * t)) * (ZMod.stdAddChar d - 1) = 0 := by
-        rw [mul_sub, mul_one, ← hSeq, sub_self]
-      rcases mul_eq_zero.mp h0 with hS0 | h1
-      · exact hS0
-      · exfalso
-        have h1' : ZMod.stdAddChar d = 1 := sub_eq_zero.mp h1
-        have h0' : ZMod.stdAddChar (0 : ZMod N) = 1 := (ZMod.stdAddChar (N := N)).map_zero_eq_one
-        have hdeq : ZMod.stdAddChar d = ZMod.stdAddChar (0 : ZMod N) := by rw [h1', h0']
-        exact hd (ZMod.injective_stdAddChar hdeq)
+      have h := AddChar.sum_mulShift d (ZMod.isPrimitive_stdAddChar N)
+      rw [if_neg hd] at h
+      simpa only [mul_comm, Nat.cast_zero] using h
   have innerForm : ∀ a b : ZMod N, ⟪fdmaCarrier N a, fdmaCarrier N b⟫_ℂ
       = (if a = b then (1 : ℂ) else 0) := by
     intro a b
