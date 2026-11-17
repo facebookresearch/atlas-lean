@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.LinearAlgebra.Matrix.BlockSolutionEquiv
+public import MathlibExt.LinearAlgebra.Matrix.SchurStrictPositivity
 public import Mathlib.LinearAlgebra.Matrix.Hermitian
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.LinearAlgebra.Matrix.PosDef
@@ -31,11 +32,6 @@ open Matrix
 
 namespace MathlibExt.LinearAlgebra.Matrix.SchurSourceEnergy
 
-private theorem posDef_interior_of_fromBlocks {m p : Type*} (A : Matrix m m ℝ)
-    (B : Matrix m p ℝ) (D : Matrix p p ℝ)
-    (hG : (fromBlocks A B Bᵀ D).PosDef) : D.PosDef := by
-  have h := hG.submatrix (e := Sum.inr) Sum.inr_injective
-  rwa [show (fromBlocks A B Bᵀ D).submatrix Sum.inr Sum.inr = D from rfl] at h
 
 private theorem mulVec_one_one (c x : ℝ) : !![c] *ᵥ ![x] = ![c * x] := by
   ext i
@@ -54,7 +50,8 @@ theorem dotProduct_fromBlocks_mulVec_eq_schur_add_source {m p : Type*} [Fintype 
     [Invertible D] (hD : D.IsSymm) (φP : m → ℝ) (φI jI : p → ℝ)
     (hφI : φI = D⁻¹ *ᵥ (jI - Bᵀ *ᵥ φP)) :
     (φP ⊕ᵥ φI) ⬝ᵥ (fromBlocks A B Bᵀ D *ᵥ (φP ⊕ᵥ φI)) =
-      φP ⬝ᵥ ((A - B * D⁻¹ * Bᵀ) *ᵥ φP) + jI ⬝ᵥ (D⁻¹ *ᵥ jI) := by
+      φP ⬝ᵥ ((SchurStrictPositivity.schurComplement A B D) *ᵥ φP) + jI ⬝ᵥ (D⁻¹ *ᵥ jI) := by
+  unfold SchurStrictPositivity.schurComplement
   subst hφI
   have hDinvT : D⁻¹ᵀ = D⁻¹ := by rw [Matrix.transpose_nonsing_inv, hD.eq]
   have hDD : ∀ v : p → ℝ, D *ᵥ (D⁻¹ *ᵥ v) = v := fun v => by
@@ -83,7 +80,8 @@ theorem dotProduct_fromBlocks_mulVec_eq_schur_add_source_of_interior {m p : Type
     (D : Matrix p p ℝ) [Invertible D] (hG : (fromBlocks A B Bᵀ D).IsSymm) (φP : m → ℝ)
     (φI jI : p → ℝ) (hI : Bᵀ *ᵥ φP + D *ᵥ φI = jI) :
     (φP ⊕ᵥ φI) ⬝ᵥ (fromBlocks A B Bᵀ D *ᵥ (φP ⊕ᵥ φI)) =
-      φP ⬝ᵥ ((A - B * D⁻¹ * Bᵀ) *ᵥ φP) + jI ⬝ᵥ (D⁻¹ *ᵥ jI) := by
+      φP ⬝ᵥ ((SchurStrictPositivity.schurComplement A B D) *ᵥ φP) + jI ⬝ᵥ (D⁻¹ *ᵥ jI) := by
+  unfold SchurStrictPositivity.schurComplement
   have hD : D.IsSymm := by
     show Dᵀ = D
     ext i j
@@ -102,7 +100,8 @@ theorem dotProduct_fromBlocks_mulVec_eq_schur_of_interior_zero {m p : Type*} [Fi
     [Invertible D] (hG : (fromBlocks A B Bᵀ D).IsSymm) (φP : m → ℝ) (φI : p → ℝ)
     (hI : Bᵀ *ᵥ φP + D *ᵥ φI = 0) :
     (φP ⊕ᵥ φI) ⬝ᵥ (fromBlocks A B Bᵀ D *ᵥ (φP ⊕ᵥ φI)) =
-      φP ⬝ᵥ ((A - B * D⁻¹ * Bᵀ) *ᵥ φP) := by
+      φP ⬝ᵥ ((SchurStrictPositivity.schurComplement A B D) *ᵥ φP) := by
+  unfold SchurStrictPositivity.schurComplement
   have h := dotProduct_fromBlocks_mulVec_eq_schur_add_source_of_interior A B D hG φP φI 0 hI
   rw [Matrix.mulVec_zero, zero_dotProduct, add_zero] at h
   exact h
@@ -113,8 +112,8 @@ both terms of the split are nonnegative: the port term `φPᵀ K φP` and the so
 theorem schur_dotProduct_nonneg_and_source_nonneg_of_posDef {m p : Type*} [Fintype m]
     [Fintype p] [DecidableEq m] [DecidableEq p] (A : Matrix m m ℝ) (B : Matrix m p ℝ)
     (D : Matrix p p ℝ) (hG : (fromBlocks A B Bᵀ D).PosDef) (φP : m → ℝ) (jI : p → ℝ) :
-    0 ≤ φP ⬝ᵥ ((A - B * D⁻¹ * Bᵀ) *ᵥ φP) ∧ 0 ≤ jI ⬝ᵥ (D⁻¹ *ᵥ jI) := by
-  have hDpd : D.PosDef := posDef_interior_of_fromBlocks A B D hG
+    0 ≤ φP ⬝ᵥ ((SchurStrictPositivity.schurComplement A B D) *ᵥ φP) ∧ 0 ≤ jI ⬝ᵥ (D⁻¹ *ᵥ jI) := by
+  have hDpd : D.PosDef := SchurStrictPositivity.interior_posDef hG
   have hInv : Invertible D := hDpd.isUnit.invertible
   have hGsymm : (fromBlocks A B Bᵀ D).IsSymm := by
     have hH : (fromBlocks A B Bᵀ D)ᴴ = (fromBlocks A B Bᵀ D) := hG.isHermitian
@@ -142,8 +141,9 @@ theorem dotProduct_fromBlocks_mulVec_ne_schur_of_source_ne_zero {m p : Type*} [F
     (D : Matrix p p ℝ) (hG : (fromBlocks A B Bᵀ D).PosDef) (φP : m → ℝ) (φI : p → ℝ)
     (hj : Bᵀ *ᵥ φP + D *ᵥ φI ≠ 0) :
     (φP ⊕ᵥ φI) ⬝ᵥ (fromBlocks A B Bᵀ D *ᵥ (φP ⊕ᵥ φI)) ≠
-      φP ⬝ᵥ ((A - B * D⁻¹ * Bᵀ) *ᵥ φP) := by
-  have hDpd : D.PosDef := posDef_interior_of_fromBlocks A B D hG
+      φP ⬝ᵥ ((SchurStrictPositivity.schurComplement A B D) *ᵥ φP) := by
+  unfold SchurStrictPositivity.schurComplement
+  have hDpd : D.PosDef := SchurStrictPositivity.interior_posDef hG
   have hInv : Invertible D := hDpd.isUnit.invertible
   have hGsymm : (fromBlocks A B Bᵀ D).IsSymm := by
     have hH : (fromBlocks A B Bᵀ D)ᴴ = (fromBlocks A B Bᵀ D) := hG.isHermitian
