@@ -11,6 +11,8 @@ public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import PhyslibExt.EarthScience.ConductiveGeotherm
 
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Pow
 
 import Mathlib.Tactic.FieldSimp
