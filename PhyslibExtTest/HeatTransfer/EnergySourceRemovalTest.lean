@@ -10,12 +10,13 @@ module
 import PhyslibExt.HeatTransfer.EnergySourceRemoval
 
 /-!
-# Slab heat-removal checks
+# Slab and cylinder heat-removal checks
 
 Concrete consumers of `PhyslibExt.HeatTransfer.EnergySourceRemoval`:
 the numeric slab `Ts = Tb = 300`, `L = 2`, `k = 2`, `H = 8` with
-midplane `302` and total outward removal `16`, and the source-free
-branch `H = 0`.
+midplane `302` and total outward removal `16`, the source-free
+branch `H = 0`, and the numeric heated cylinder with outward power
+`32π`.
 
 ## i. Overview
 
@@ -29,6 +30,7 @@ No new definitions or results are introduced here.
 
 - A. Numeric slab with source
 - B. Source-free branch
+- C. Numeric heated cylinder
 
 ## iv. References
 
@@ -76,3 +78,13 @@ example : HeatTransfer.cylinderTemperature 300 2 2 8 0 = 304 ∧
   rw [show (1 : ℝ) / 1 = 1 from by norm_num, one_mul]
   norm_num at h
   exact h
+
+/-- Outward power per unit length of the numeric cylinder:
+`2πR * (-k * T'(R)) = 32π` at `R = 2`, `k = 2`, `qvol = 8`. -/
+example : 2 * Real.pi * 2 * (-2 * HeatTransfer.cylinderGradient 2 8 2) =
+    32 * Real.pi := by
+  have h := HeatTransfer.cylinder_outwardPower (R := 2) (k := 2)
+    (qvol := 8) (by norm_num)
+  calc 2 * Real.pi * 2 * (-2 * HeatTransfer.cylinderGradient 2 8 2)
+      = Real.pi * 2 ^ 2 * 8 := h
+    _ = 32 * Real.pi := by ring
