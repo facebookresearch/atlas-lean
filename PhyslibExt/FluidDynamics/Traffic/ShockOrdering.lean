@@ -49,40 +49,41 @@ Lax entropy condition for increasing-density shocks).
 
 namespace FluidDynamics.Traffic.ShockOrdering
 
-
 /-- Shock speed between two densities: the secant slope of the flux. -/
 noncomputable def shockSpeed (q : ℝ → ℝ) (kL kR : ℝ) : ℝ :=
   (q kR - q kL) / (kR - kL)
 
-/-- For a concave flux differentiable on all of `ℝ`, with
-`kL < kR`, the shock speed lies between the characteristic speeds at
-the endpoints: `q'(kR) ≤ s ≤ q'(kL)`. -/
-theorem shockSpeed_between_of_concave {q : ℝ → ℝ}
-    (hconc : ConcaveOn ℝ Set.univ q)
-    (hdiff : ∀ x : ℝ, HasDerivAt q (deriv q x) x)
-    {kL kR : ℝ} (h : kL < kR) :
+/-- For a flux concave on the closed interval `[kL, kR]` and
+differentiable at the endpoints, the shock speed lies between the
+characteristic speeds: `q'(kR) ≤ s ≤ q'(kL)`. -/
+theorem shockSpeed_between_of_concave {q : ℝ → ℝ} {kL kR : ℝ}
+    (hconc : ConcaveOn ℝ (Set.Icc kL kR) q)
+    (hL : HasDerivAt q (deriv q kL) kL)
+    (hR : HasDerivAt q (deriv q kR) kR)
+    (h : kL < kR) :
     deriv q kR ≤ shockSpeed q kL kR ∧ shockSpeed q kL kR ≤ deriv q kL := by
-  have e : shockSpeed q kL kR = slope q kL kR := by
-    simp only [shockSpeed, slope_def_field]
-  rw [e]
-  exact ⟨hconc.deriv_le_slope (Set.mem_univ kL) (Set.mem_univ kR) h
-    (hdiff kR).differentiableAt,
-    hconc.slope_le_deriv (Set.mem_univ kL) (Set.mem_univ kR) h
-    (hdiff kL).differentiableAt⟩
+  have hx : kL ∈ Set.Icc kL kR := ⟨le_refl _, le_of_lt h⟩
+  have hy : kR ∈ Set.Icc kL kR := ⟨le_of_lt h, le_refl _⟩
+  have hR' := hconc.le_slope_of_hasDerivAt hx hy h hR
+  have hL' := hconc.slope_le_of_hasDerivAt hx hy h hL
+  rw [slope_def_field] at hR' hL'
+  unfold shockSpeed
+  exact ⟨hR', hL'⟩
 
 /-- Strict form under strict concavity on the interval: both
-inequalities are strict. -/
-theorem shockSpeed_strict_between_of_strictConcave {q : ℝ → ℝ}
-    (hconc : StrictConcaveOn ℝ Set.univ q)
-    (hdiff : ∀ x : ℝ, HasDerivAt q (deriv q x) x)
-    {kL kR : ℝ} (h : kL < kR) :
+inequalities are strict (Lax entropy condition). -/
+theorem shockSpeed_strict_between_of_strictConcave {q : ℝ → ℝ} {kL kR : ℝ}
+    (hconc : StrictConcaveOn ℝ (Set.Icc kL kR) q)
+    (hL : HasDerivAt q (deriv q kL) kL)
+    (hR : HasDerivAt q (deriv q kR) kR)
+    (h : kL < kR) :
     deriv q kR < shockSpeed q kL kR ∧ shockSpeed q kL kR < deriv q kL := by
-  have e : shockSpeed q kL kR = slope q kL kR := by
-    simp only [shockSpeed, slope_def_field]
-  rw [e]
-  exact ⟨hconc.deriv_lt_slope (Set.mem_univ kL) (Set.mem_univ kR) h
-    (hdiff kR).differentiableAt,
-    hconc.slope_lt_deriv (Set.mem_univ kL) (Set.mem_univ kR) h
-    (hdiff kL).differentiableAt⟩
+  have hx : kL ∈ Set.Icc kL kR := ⟨le_refl _, le_of_lt h⟩
+  have hy : kR ∈ Set.Icc kL kR := ⟨le_of_lt h, le_refl _⟩
+  have hR' := hconc.lt_slope_of_hasDerivAt hx hy h hR
+  have hL' := hconc.slope_lt_of_hasDerivAt hx hy h hL
+  rw [slope_def_field] at hR' hL'
+  unfold shockSpeed
+  exact ⟨hR', hL'⟩
 
 end FluidDynamics.Traffic.ShockOrdering
