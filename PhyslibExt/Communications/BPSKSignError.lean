@@ -683,7 +683,7 @@ lemma thresholdErrorFormula_half_zero (a σ : ℝ) (hσ : 0 < σ) :
 /-- **BPSK sign-detector error.** Equiprobable labels `±1`, amplitude `a ≥ 0`, noise
 `N(0, σ^2)` independent of the label, `σ > 0`: the sign detector errs with probability
 `Φ(-a / σ)`, where `Φ = cdf (gaussianReal 0 1)`. -/
-lemma prob_signError_eq_cdf_neg_div (Ω : Type*) [MeasurableSpace Ω] (P : Measure Ω)
+theorem prob_signError_eq_cdf_neg_div (Ω : Type*) [MeasurableSpace Ω] (P : Measure Ω)
     [IsProbabilityMeasure P] (S : Ω → ℤ) (Nz : Ω → ℝ) (a σ : ℝ) (ha : 0 ≤ a)
     (hσ : 0 < σ) (hSmeas : Measurable S) (hSval : ∀ ω, S ω = 1 ∨ S ω = -1)
     (hprior : P.real {ω | S ω = 1} = 1 / 2)
@@ -720,7 +720,7 @@ lemma div_eq_sqrt_two_bitEnergy_div (a σ N0 : ℝ) (ha : 0 ≤ a) (hσ : 0 < σ
 
 /-- **BPSK error in `Eb/N0` form.** Under the declared conventions `Eb = a^2` and
 `σ^2 = N0 / 2` with `N0 > 0`, the sign-detector error is `Q(√(2 Eb / N0))`. -/
-lemma prob_signError_eq_gaussianQ_sqrt_two_bitEnergy_div (Ω : Type*)
+theorem prob_signError_eq_gaussianQ_sqrt_two_bitEnergy_div (Ω : Type*)
     [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure P] (S : Ω → ℤ)
     (Nz : Ω → ℝ) (a σ N0 : ℝ) (ha : 0 ≤ a) (hσ : 0 < σ) (hN0 : 0 < N0)
     (hvar : σ ^ 2 = N0 / 2) (hSmeas : Measurable S) (hSval : ∀ ω, S ω = 1 ∨ S ω = -1)

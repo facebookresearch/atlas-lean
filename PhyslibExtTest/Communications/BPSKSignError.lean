@@ -33,4 +33,28 @@ example : (2 : ℝ) / 1 = Real.sqrt (2 * bitEnergy 2 / 2) := by
     (by norm_num) (by norm_num)
   simpa using h
 
+/-- Detector behavior: at the tie `y = τ` the detector returns
+`+1`; strictly below threshold it returns `-1`. -/
+example : thresholdDetector 0 0 = 1 := by simp [thresholdDetector]
+
+example : thresholdDetector 0 (-1) = -1 := by simp [thresholdDetector]
+
+example : signDetector 0 = 1 := by simp [signDetector, thresholdDetector]
+
+/-- Error-event membership on a two-point sample space: with
+label `+1` and a received sample below threshold, the point is in
+the error event; with label `-1` it is not. -/
+example : (0 : Fin 2) ∈ signErrorEvent (Fin 2) 1 ![1, -1] ![-3, 0] := by
+  simp [signErrorEvent, receivedSample, signDetector, thresholdDetector]
+
+example : (1 : Fin 2) ∉ signErrorEvent (Fin 2) 1 ![1, -1] ![-3, 0] := by
+  simp [signErrorEvent, receivedSample, signDetector, thresholdDetector]
+
+/-- Unequal priors: for prior `1/4`, amplitude `1` and `σ = 1`,
+some nonzero threshold strictly beats the zero threshold. -/
+example : ∃ τ : ℝ, thresholdErrorFormula (1 / 4) 1 1 τ
+    < thresholdErrorFormula (1 / 4) 1 1 0 :=
+  exists_threshold_lt_zero_threshold_of_prior_ne_half (1 / 4) 1 1
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+
 end PhyslibExtTest.Communications.BPSKSignError
