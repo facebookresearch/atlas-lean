@@ -17,25 +17,26 @@ public import PhyslibExt.Chemistry.Calibration
 ## i. Overview
 
 Error transfer for inverse prediction in a linear calibration
-`y = a * x + b + e`, using the existing intercept-first
-`Chemistry.Calibration.inversePrediction`. With perturbed
-intercept and slope (`|da| ≤ Da`, `|db| ≤ Db`, `Da < |a|`), input
-bounded by `|x| ≤ X` and residual bounded by `|e| ≤ E`, the
-recovered input satisfies
-`|xhat - x| ≤ (Da * X + Db + E) / (|a| - Da)`. The known-parameter
-case is `E / |a|`. A measure form bounds the probability of the
-bad event `{ω | B < |xhat ω - x ω|}` by the mass of the complement
-of any good set on which the deterministic bound holds. No
-distributional assumption on the residual is made.
+`y = b * x + a + e`, using the existing intercept-first
+`Chemistry.Calibration.inversePrediction` (intercept `a`, slope
+`b`). With intercept perturbation `|da| ≤ Da` and slope
+perturbation `|db| ≤ Db < |b|`, input bounded by `|x| ≤ X` and
+residual bounded by `|e| ≤ E`, the recovered input satisfies
+`|xhat - x| ≤ (Db * X + Da + E) / (|b| - Db)`. The known-parameter
+case is `E / |b|`. A measure form bounds the probability of the
+bad event `{ω | E / |b| < |xhat ω - x ω|}` by the probability of
+the residual bad event `{ω | E < |e ω|}`, with no distributional
+assumption on the residual.
 
 ## ii. Key results
 
 - `inversePrediction_error_le`: the perturbed-parameter error
   bound.
 - `inversePrediction_error_le_known_params`: the exact-parameter
-  specialization `E / |a|`.
-- `inversePrediction_error_bad_event_measure_le`: the bad-event
-  measure bound.
+  specialization `E / |b|`.
+- `inversePrediction_error_event_measure_le`: the bad-event
+  measure bound, composed from the deterministic bound on the
+  good event.
 
 ## iii. Table of contents
 
