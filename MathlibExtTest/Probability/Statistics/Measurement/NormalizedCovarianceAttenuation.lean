@@ -72,4 +72,35 @@ theorem nonorthogonal_errors_break_premise {Ω : Type*} [MeasurableSpace Ω]
   rintro ⟨_, _, h, _, _⟩
   exact hExEy h
 
+/-- The production theorem applied to the signed moment instance:
+supplying the decomposition, integrability, positivity, and five
+zero-covariance hypotheses of `normalizedCovariance_attenuation`, the
+observed normalized covariance for the `-1` true covariance instance is
+`-1 / 2`. -/
+theorem normalizedCovariance_attenuation_applied {Ω : Type*}
+    [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
+    {Tx Ty Ex Ey X Y : Ω → ℝ}
+    (hX : X = fun ω => Tx ω + Ex ω) (hY : Y = fun ω => Ty ω + Ey ω)
+    (hTx : MemLp Tx 2 μ) (hTy : MemLp Ty 2 μ)
+    (hEx : MemLp Ex 2 μ) (hEy : MemLp Ey 2 μ)
+    (hVarTx : Var[Tx; μ] = 1) (hVarTy : Var[Ty; μ] = 1)
+    (hVarX : Var[X; μ] = 2) (hVarY : Var[Y; μ] = 2)
+    (hVarEx : Var[Ex; μ] = 1) (hVarEy : Var[Ey; μ] = 1)
+    (hCovT : cov[Tx, Ty; μ] = -1)
+    (hTxEx : cov[Tx, Ex; μ] = 0) (hTyEy : cov[Ty, Ey; μ] = 0)
+    (hExEy : cov[Ex, Ey; μ] = 0)
+    (hTxEy : cov[Tx, Ey; μ] = 0) (hExTy : cov[Ex, Ty; μ] = 0) :
+    cov[X, Y; μ] / (Real.sqrt Var[X; μ] * Real.sqrt Var[Y; μ]) = -1 / 2 := by
+  have h := normalizedCovariance_attenuation hX hY hTx hTy hEx hEy
+    (by rw [hVarTx]; norm_num) (by rw [hVarTy]; norm_num)
+    (by rw [hVarX]; norm_num) (by rw [hVarY]; norm_num)
+    hTxEx hTyEy hExEy hTxEy hExTy
+  rw [hCovT, hVarTx, hVarTy, hVarEx, hVarEy] at h
+  rw [h, Real.sqrt_one, mul_one, div_one]
+  unfold MathlibExt.Probability.Statistics.LinearModel.ErrorsInVariables.attenuationFactor
+  rw [show ((1 : ℝ) / (1 + 1)) * (1 / (1 + 1)) = 1 / 4 by norm_num,
+    show (1 / 4 : ℝ) = (1 / 2) ^ 2 by norm_num,
+    Real.sqrt_sq (show (0 : ℝ) ≤ 1 / 2 by norm_num)]
+  norm_num
+
 end MathlibExtTest.Probability.Statistics.Measurement

@@ -17,7 +17,11 @@ public import Mathlib.Probability.Moments.Variance
 
 With uncorrelated true/error, own error, and cross terms, the observed
 normalized covariance is the true-score normalized covariance times the
-square root of the product of the two reliabilities.
+square root of the product of the two reliabilities. This is the
+correction-for-attenuation identity of classical test theory (see, for
+example, Lord and Novick, Statistical Theories of Mental Test Scores
+(1968), the chapter on attenuation): the observed correlation is the
+true-score correlation attenuated by `sqrt (rhoX * rhoY)`.
 -/
 
 @[expose] public section
