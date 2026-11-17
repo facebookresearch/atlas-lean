@@ -18,10 +18,19 @@ public import Mathlib.Probability.Moments.Variance
 With uncorrelated true/error, own error, and cross terms, the observed
 normalized covariance is the true-score normalized covariance times the
 square root of the product of the two reliabilities. This is the
-correction-for-attenuation identity of classical test theory (see, for
-example, Lord and Novick, Statistical Theories of Mental Test Scores
-(1968), the chapter on attenuation): the observed correlation is the
-true-score correlation attenuated by `sqrt (rhoX * rhoY)`.
+correction-for-attenuation identity of classical test theory: Spearman,
+"The proof and measurement of association between two things", American
+Journal of Psychology 15 (1904), 72-101, where the correction
+`r_true = r_obs / sqrt (rhoX * rhoY)` is introduced; rearranged, the
+observed correlation is the true-score correlation attenuated by
+`sqrt (rhoX * rhoY)`. Assumption map for this theorem: the observed
+scores split as `X = Tx + Ex`, `Y = Ty + Ey`; `cov[Tx, Ex] = 0` and
+`cov[Ty, Ey] = 0` give `Var[X] = Var[Tx] + Var[Ex]` and
+`Var[Y] = Var[Ty] + Var[Ey]`, so `rhoX = attenuationFactor Var[Tx]
+Var[Ex]` is the usual reliability `Var[Tx] / Var[X]`; `cov[Ex, Ey] = 0`,
+`cov[Tx, Ey] = 0`, and `cov[Ex, Ty] = 0` give
+`cov[X, Y] = cov[Tx, Ty]`; positivity of the four variances keeps every
+square root and division nonzero.
 -/
 
 @[expose] public section
