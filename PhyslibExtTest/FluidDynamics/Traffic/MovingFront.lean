@@ -9,7 +9,7 @@ module
 
 import Mathlib.Tactic.NormNum
 
-import PhyslibExt.Transport.Traffic.MovingFront
+import PhyslibExt.FluidDynamics.Traffic.MovingFront
 
 /-!
 # Moving-front checks
@@ -21,20 +21,21 @@ balance with forced speed `1`, and `qR = 2` fails it.
 These are elaboration and non-vacuity checks, not new results.
 -/
 
-open MovingFront
+open FluidDynamics.Traffic.MovingFront
 
 /-- The witness balance and forced speed, through the public theorems. -/
 example : (1 : ℝ) = ((1 : ℝ) - 0) / ((1 : ℝ) - 0) :=
   front_speed_eq_of_ne (by norm_num) (by norm_num)
 
-/-- Both directions of the conservation form on the witness. -/
+/-- Both directions of the conservation form on the witness
+(front at `8` inside `[0, 10]` at `t = 5`). -/
 example : HasDerivAt (fun t => inventory 0 1 0 10 (1 * t + 3)) (0 - 1) 5
     ↔ (1 : ℝ) * (1 - 0) = 1 - 0 :=
-  inventory_deriv_eq_iff 0 1 0 10 1 3 0 1 5
+  inventory_deriv_eq_iff_of_mem (by norm_num)
 
 /-- A failed balance: slope is `-1`, not `0 - 2`. -/
 example : ¬ HasDerivAt (fun t => inventory 0 1 0 10 (1 * t + 3)) (0 - 2) 5 := by
-  rw [inventory_deriv_eq_iff]
+  rw [inventory_deriv_eq_iff_of_mem (show (0:ℝ) < 1 * 5 + 3 ∧ 1 * 5 + 3 < 10 by norm_num)]
   norm_num
 
 /-- The interior form: front at `3` inside `[0, 10]` at time `0`. -/

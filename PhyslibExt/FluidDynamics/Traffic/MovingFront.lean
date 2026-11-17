@@ -29,9 +29,12 @@ the front-inside hypothesis.
 
 ## ii. Key results
 
-- `MovingFront.inventory_hasDerivAt`: inventory slope.
-- `MovingFront.inventory_deriv_eq_iff`: conservation form.
-- `MovingFront.front_speed_eq_of_ne`: forced front speed.
+- `FluidDynamics.Traffic.MovingFront.inventory_hasDerivAt`:
+  inventory slope.
+- `FluidDynamics.Traffic.MovingFront.inventory_deriv_eq_iff_of_mem`:
+  conservation form with the front inside the interval.
+- `FluidDynamics.Traffic.MovingFront.front_speed_eq_of_ne`: forced
+  front speed.
 
 ## iii. Table of contents
 
@@ -47,7 +50,7 @@ the front-inside hypothesis.
 
 @[expose] public section
 
-namespace MovingFront
+namespace FluidDynamics.Traffic.MovingFront
 
 /-- Vehicle inventory of a two-state region `a ≤ x ≤ b` split by a front
 at `xi`: left density `kL` on `[a, xi]`, right density `kR` on `[xi, b]`. -/
@@ -74,7 +77,7 @@ theorem inventory_hasDerivAt (kL kR a b s xi0 t : ℝ) :
 /-- Conservation form: the inventory derivative equals the net inflow
 `qL - qR` exactly when `s * (kR - kL) = qR - qL` (the Rankine-Hugoniot
 balance for these constant states). -/
-theorem inventory_deriv_eq_iff (kL kR a b s xi0 qL qR t : ℝ) :
+private lemma inventory_deriv_eq_iff (kL kR a b s xi0 qL qR t : ℝ) :
     HasDerivAt (fun t => inventory kL kR a b (s * t + xi0)) (qL - qR) t
       ↔ s * (kR - kL) = qR - qL := by
   constructor
@@ -105,4 +108,4 @@ theorem inventory_deriv_eq_iff_of_mem {kL kR a b s xi0 qL qR t : ℝ}
   have _ : a < b := lt_trans hin.1 hin.2
   exact inventory_deriv_eq_iff kL kR a b s xi0 qL qR t
 
-end MovingFront
+end FluidDynamics.Traffic.MovingFront
