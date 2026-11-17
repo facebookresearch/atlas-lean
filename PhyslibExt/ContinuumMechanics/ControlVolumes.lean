@@ -72,11 +72,10 @@ private lemma hasDerivAt_fixed_integral {u ut : ℝ → ℝ → ℝ}
     hjoint hcont_ut hut
 
 private lemma hasDerivAt_endpoint_integral {u ut : ℝ → ℝ → ℝ} {c c' : ℝ → ℝ}
-    (hc : ∀ t : ℝ, HasDerivAt c (c' t) t)
+    (t : ℝ) (hc : HasDerivAt c (c' t) t)
     (hjoint : Continuous fun p : ℝ × ℝ => u p.1 p.2)
     (hut : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => u τ x) (ut t x) t)
-    (hcont_ut : Continuous fun p : ℝ × ℝ => ut p.1 p.2)
-    (t : ℝ) :
+    (hcont_ut : Continuous fun p : ℝ × ℝ => ut p.1 p.2) :
     HasDerivAt (fun τ : ℝ => ∫ x in (0 : ℝ)..c τ, u τ x)
       ((∫ x in (0 : ℝ)..c t, ut t x) + u t (c t) * c' t) t := by
   have hswap : ∀ t y : ℝ,
@@ -129,8 +128,8 @@ private lemma hasDerivAt_endpoint_integral {u ut : ℝ → ℝ → ℝ} {c c' : 
     have e1 : ∀ᶠ τ in nhds t, τ ∈ Metric.ball t δ :=
       Filter.eventually_of_mem (Metric.ball_mem_nhds t hδ0) (fun _ h => h)
     have e2 : ∀ᶠ τ in nhds t, c τ ∈ Metric.ball (c t) δ :=
-      (hc t).continuousAt.eventually_mem (Metric.ball_mem_nhds _ hδ0)
-    have hco := HasDerivAt.isLittleO (hc t)
+      hc.continuousAt.eventually_mem (Metric.ball_mem_nhds _ hδ0)
+    have hco := HasDerivAt.isLittleO hc
     have eK : ∀ᶠ τ in nhds t, ‖c τ - c t - (τ - t) • c' t‖ ≤ 1 * ‖τ - t‖ :=
       hco.def zero_lt_one
     filter_upwards [e1, e2, eK] with τ hτ hcτ hKτ
@@ -178,7 +177,7 @@ private lemma hasDerivAt_endpoint_integral {u ut : ℝ → ℝ → ℝ} {c c' : 
     HasDerivAt.isLittleO (hswap t (c t))
   have hCo : (fun τ : ℝ => c τ - c t - (τ - t) • c' t)
       =o[nhds t] fun τ : ℝ => τ - t :=
-    HasDerivAt.isLittleO (hc t)
+    HasDerivAt.isLittleO hc
   have hsum := (hE1o.add hE2o).add (hCo.const_mul_left (u t (c t)))
   refine HasDerivAt.of_isLittleO
     ((Asymptotics.isLittleO_congr ?hf Filter.EventuallyEq.rfl).mp hsum)
@@ -202,12 +201,10 @@ at `t`. Differentiation under the fixed-limit integral is derived
 from the joint-continuity data, not assumed. No ordering
 `a t < b t` is needed for the oriented-integral statement. -/
 theorem movingEndpoint_hasDerivAt {u ut : ℝ → ℝ → ℝ} {a b a' b' : ℝ → ℝ}
-    (ha : ∀ t : ℝ, HasDerivAt a (a' t) t)
-    (hb : ∀ t : ℝ, HasDerivAt b (b' t) t)
+    (t : ℝ) (ha : HasDerivAt a (a' t) t) (hb : HasDerivAt b (b' t) t)
     (hjoint : Continuous fun p : ℝ × ℝ => u p.1 p.2)
     (hut : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => u τ x) (ut t x) t)
-    (hcont_ut : Continuous fun p : ℝ × ℝ => ut p.1 p.2)
-    (t : ℝ) :
+    (hcont_ut : Continuous fun p : ℝ × ℝ => ut p.1 p.2) :
     HasDerivAt (fun τ : ℝ => ∫ x in a τ..b τ, u τ x)
       ((∫ x in a t..b t, ut t x) + u t (b t) * b' t -
         u t (a t) * a' t) t := by
@@ -217,10 +214,10 @@ theorem movingEndpoint_hasDerivAt {u ut : ℝ → ℝ → ℝ} {a b a' b' : ℝ 
     fun τ => slice_continuous hcont_ut τ
   have hGb : HasDerivAt (fun τ : ℝ => ∫ x in (0 : ℝ)..b τ, u τ x)
       ((∫ x in (0 : ℝ)..b t, ut t x) + u t (b t) * b' t) t :=
-    hasDerivAt_endpoint_integral hb hjoint hut hcont_ut t
+    hasDerivAt_endpoint_integral t hb hjoint hut hcont_ut
   have hGa : HasDerivAt (fun τ : ℝ => ∫ x in (0 : ℝ)..a τ, u τ x)
       ((∫ x in (0 : ℝ)..a t, ut t x) + u t (a t) * a' t) t :=
-    hasDerivAt_endpoint_integral ha hjoint hut hcont_ut t
+    hasDerivAt_endpoint_integral t ha hjoint hut hcont_ut
   have hsplit : ∀ τ : ℝ, (∫ x in a τ..b τ, u τ x)
       = (∫ x in (0 : ℝ)..b τ, u τ x) - (∫ x in (0 : ℝ)..a τ, u τ x) := by
     intro τ
@@ -260,16 +257,14 @@ theorem movingEndpoint_hasDerivAt {u ut : ℝ → ℝ → ℝ} {a b a' b' : ℝ 
 /-- Moving-endpoint transport, `deriv` form (corollary of
 `movingEndpoint_hasDerivAt`). -/
 theorem movingEndpoint_deriv {u ut : ℝ → ℝ → ℝ} {a b a' b' : ℝ → ℝ}
-    (ha : ∀ t : ℝ, HasDerivAt a (a' t) t)
-    (hb : ∀ t : ℝ, HasDerivAt b (b' t) t)
+    (t : ℝ) (ha : HasDerivAt a (a' t) t) (hb : HasDerivAt b (b' t) t)
     (hjoint : Continuous fun p : ℝ × ℝ => u p.1 p.2)
     (hut : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => u τ x) (ut t x) t)
-    (hcont_ut : Continuous fun p : ℝ × ℝ => ut p.1 p.2)
-    (t : ℝ) :
+    (hcont_ut : Continuous fun p : ℝ × ℝ => ut p.1 p.2) :
     deriv (fun τ : ℝ => ∫ x in a τ..b τ, u τ x) t =
       (∫ x in a t..b t, ut t x) + u t (b t) * b' t -
         u t (a t) * a' t := by
-  exact (movingEndpoint_hasDerivAt ha hb hjoint hut hcont_ut t).deriv
+  exact (movingEndpoint_hasDerivAt t ha hb hjoint hut hcont_ut).deriv
 
 /-- Relative-flux form, `HasDerivAt` version: if
 `ut = src - fx` where `fx t` is the spatial derivative of a flux
@@ -277,38 +272,36 @@ theorem movingEndpoint_deriv {u ut : ℝ → ℝ → ℝ} {a b a' b' : ℝ → �
 `f - u * endpointSpeed`. -/
 theorem movingEndpoint_hasDerivAt_flux {u ut f fx src : ℝ → ℝ → ℝ}
     {a b a' b' : ℝ → ℝ}
-    (ha : ∀ t : ℝ, HasDerivAt a (a' t) t)
-    (hb : ∀ t : ℝ, HasDerivAt b (b' t) t)
+    (t : ℝ) (ha : HasDerivAt a (a' t) t) (hb : HasDerivAt b (b' t) t)
     (hjoint : Continuous fun p : ℝ × ℝ => u p.1 p.2)
     (hut : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => u τ x) (ut t x) t)
     (hcont_ut : Continuous fun p : ℝ × ℝ => ut p.1 p.2)
-    (hfx : ∀ t x : ℝ, HasDerivAt (fun y : ℝ => f t y) (fx t x) x)
-    (hcont_fx : ∀ t : ℝ, ContinuousOn (fun x : ℝ => fx t x)
+    (hfx : ∀ x : ℝ, HasDerivAt (fun y : ℝ => f t y) (fx t x) x)
+    (hcont_fx : ContinuousOn (fun x : ℝ => fx t x)
       (Set.uIcc (a t) (b t)))
-    (hPDE : ∀ t x : ℝ, ut t x = src t x - fx t x)
-    (hint_src : ∀ t : ℝ, IntervalIntegrable (fun x : ℝ => src t x)
-      MeasureTheory.volume (a t) (b t))
-    (t : ℝ) :
+    (hPDE : ∀ x : ℝ, ut t x = src t x - fx t x)
+    (hint_src : IntervalIntegrable (fun x : ℝ => src t x)
+      MeasureTheory.volume (a t) (b t)) :
     HasDerivAt (fun τ : ℝ => ∫ x in a τ..b τ, u τ x)
       ((∫ x in a t..b t, src t x) -
         (f t (b t) - u t (b t) * b' t) +
           (f t (a t) - u t (a t) * a' t)) t := by
-  have hmain := movingEndpoint_hasDerivAt ha hb hjoint hut hcont_ut t
+  have hmain := movingEndpoint_hasDerivAt t ha hb hjoint hut hcont_ut
   have hFTC : (∫ x in a t..b t, fx t x) = f t (b t) - f t (a t) := by
     have hderiv : ∀ x ∈ Set.uIcc (a t) (b t),
         HasDerivAt (fun y : ℝ => f t y) (fx t x) x :=
-      fun x _ => hfx t x
+      fun x _ => hfx x
     have hint : IntervalIntegrable (fun x : ℝ => fx t x) MeasureTheory.volume (a t) (b t) :=
-      (hcont_fx t).intervalIntegrable
+      hcont_fx.intervalIntegrable
     exact intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint
   have hsplit : (∫ x in a t..b t, ut t x)
       = (∫ x in a t..b t, src t x) - (∫ x in a t..b t, fx t x) := by
     have hfx_int : IntervalIntegrable (fun x : ℝ => fx t x) MeasureTheory.volume (a t) (b t) :=
-      (hcont_fx t).intervalIntegrable
+      hcont_fx.intervalIntegrable
     have h : (fun x : ℝ => ut t x) = (fun x : ℝ => src t x - fx t x) :=
-      funext (fun x => hPDE t x)
+      funext (fun x => hPDE x)
     rw [h]
-    exact intervalIntegral.integral_sub (hint_src t) hfx_int
+    exact intervalIntegral.integral_sub hint_src hfx_int
   have hval : (∫ x in a t..b t, ut t x) + u t (b t) * b' t - u t (a t) * a' t
       = (∫ x in a t..b t, src t x) -
         (f t (b t) - u t (b t) * b' t) +
@@ -319,23 +312,21 @@ theorem movingEndpoint_hasDerivAt_flux {u ut f fx src : ℝ → ℝ → ℝ}
 /-- Relative-flux form, `deriv` version (corollary). -/
 theorem movingEndpoint_deriv_flux {u ut f fx src : ℝ → ℝ → ℝ}
     {a b a' b' : ℝ → ℝ}
-    (ha : ∀ t : ℝ, HasDerivAt a (a' t) t)
-    (hb : ∀ t : ℝ, HasDerivAt b (b' t) t)
+    (t : ℝ) (ha : HasDerivAt a (a' t) t) (hb : HasDerivAt b (b' t) t)
     (hjoint : Continuous fun p : ℝ × ℝ => u p.1 p.2)
     (hut : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => u τ x) (ut t x) t)
     (hcont_ut : Continuous fun p : ℝ × ℝ => ut p.1 p.2)
-    (hfx : ∀ t x : ℝ, HasDerivAt (fun y : ℝ => f t y) (fx t x) x)
-    (hcont_fx : ∀ t : ℝ, ContinuousOn (fun x : ℝ => fx t x)
+    (hfx : ∀ x : ℝ, HasDerivAt (fun y : ℝ => f t y) (fx t x) x)
+    (hcont_fx : ContinuousOn (fun x : ℝ => fx t x)
       (Set.uIcc (a t) (b t)))
-    (hPDE : ∀ t x : ℝ, ut t x = src t x - fx t x)
-    (hint_src : ∀ t : ℝ, IntervalIntegrable (fun x : ℝ => src t x)
-      MeasureTheory.volume (a t) (b t))
-    (t : ℝ) :
+    (hPDE : ∀ x : ℝ, ut t x = src t x - fx t x)
+    (hint_src : IntervalIntegrable (fun x : ℝ => src t x)
+      MeasureTheory.volume (a t) (b t)) :
     deriv (fun τ : ℝ => ∫ x in a τ..b τ, u τ x) t =
       (∫ x in a t..b t, src t x) -
         (f t (b t) - u t (b t) * b' t) +
           (f t (a t) - u t (a t) * a' t) := by
-  exact (movingEndpoint_hasDerivAt_flux ha hb hjoint hut hcont_ut hfx hcont_fx hPDE hint_src
-    t).deriv
+  exact (movingEndpoint_hasDerivAt_flux t ha hb hjoint hut hcont_ut hfx hcont_fx hPDE
+    hint_src).deriv
 
 end ControlVolumes

@@ -49,12 +49,12 @@ example :
     (u := fun t x : ℝ => t * x) (ut := fun _ x : ℝ => x)
     (a := fun _ : ℝ => 0) (b := fun τ : ℝ => τ + 1)
     (a' := fun _ : ℝ => 0) (b' := fun _ : ℝ => 1)
-    (fun t => hasDerivAt_const t (0 : ℝ))
-    (fun t => by simpa using (hasDerivAt_id t).add_const (1 : ℝ))
+    1
+    (hasDerivAt_const 1 (0 : ℝ))
+    (by simpa using (hasDerivAt_id 1).add_const (1 : ℝ))
     (by fun_prop)
     (fun t x => by simpa using (hasDerivAt_id t).mul_const x)
     (by fun_prop)
-    1
   rw [h]
   rw [integral_id]
   norm_num
@@ -69,16 +69,16 @@ example :
     (src := fun _ x : ℝ => x)
     (a := fun _ : ℝ => 0) (b := fun τ : ℝ => τ + 1)
     (a' := fun _ : ℝ => 0) (b' := fun _ : ℝ => 1)
-    (fun t => hasDerivAt_const t (0 : ℝ))
-    (fun t => by simpa using (hasDerivAt_id t).add_const (1 : ℝ))
+    1
+    (hasDerivAt_const 1 (0 : ℝ))
+    (by simpa using (hasDerivAt_id 1).add_const (1 : ℝ))
     (by fun_prop)
     (fun t x => by simpa using (hasDerivAt_id t).mul_const x)
     (by fun_prop)
-    (fun t x => hasDerivAt_const x (0 : ℝ))
-    (fun _ => continuousOn_const)
-    (fun _ _ => by ring)
-    (fun t => by simpa using (continuous_id.intervalIntegrable (0 : ℝ) (t + 1)))
-    1
+    (fun x => hasDerivAt_const x (0 : ℝ))
+    continuousOn_const
+    (fun _ => by ring)
+    (by simpa using (continuous_id.intervalIntegrable (0 : ℝ) (2 : ℝ)))
   rw [h]
   rw [integral_id]
   norm_num
