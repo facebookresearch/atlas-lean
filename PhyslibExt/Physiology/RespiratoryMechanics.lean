@@ -14,13 +14,28 @@ public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 /-!
 # Respiratory mechanics agreement
 
-The passive single-compartment equation `R V' + E V = Paw - P0`
-with `R, E > 0` and compliance `C = 1/E` agrees with the scalar
-evolution of decay `E/R`: the constant-drive closed form and free
-expiration.
+## i. Overview
+
+The passive linear single-compartment equation `R V' + E V = Paw - P0` with `R, E > 0` and compliance `C = 1/E` agrees with the scalar evolution of decay `E/R` and forcing `(Paw - P0)/R`: the constant-drive closed form and free expiration. A jump in `Paw` is handled intervalwise; no derivative through a step is claimed.
+
+## ii. Key results
+
+* `respiratory_response`: the closed form solves `R V' + E V = dP`.
+* `respiratory_expiration`: zero drive gives the pure decay solving `R V' + E V = 0`.
+
+## iii. Table of contents
+
+* A. Respiratory agreement.
+
+## iv. References
+
+* The declared model is local to this module; mechanical Kelvin-Voigt naming is not asserted. All declarations are `lemma`s.
+
 -/
 
 @[expose] public section
+
+/-! ## A. Respiratory agreement. -/
 
 namespace PhyslibExt.Physiology.RespiratoryMechanics
 
@@ -54,11 +69,12 @@ lemma respiratory_response {R E dP V0 t : ℝ} (hR : 0 < R) (hE : 0 < E) :
   field_simp
   ring
 
-/-- **Free expiration.** Zero drive: the response is the pure decay
-`V0 * exp (-t / (R * C))` with `C = 1 / E`. -/
-lemma respiratory_expiration {R E V0 t : ℝ} :
-    (1 / E) * (0 : ℝ) + (V0 - (1 / E) * 0) * Real.exp (-t / (R * (1 / E))) =
-      V0 * Real.exp (-t / (R * (1 / E))) := by
-  simp
+/-- **Free expiration.** Zero drive: the response `V(t) = V0 * exp (-t / (R * C))`, `C = 1 / E`, solves the zero-drive equation `R V' + E V = 0` at every `t`. -/
+lemma respiratory_expiration {R E V0 t : ℝ} (hR : 0 < R) (hE : 0 < E) :
+    R * deriv (fun u => V0 * Real.exp (-u / (R * (1 / E)))) t +
+      E * (V0 * Real.exp (-t / (R * (1 / E)))) = 0 := by
+  have h := respiratory_response (R := R) (E := E) (dP := 0) (V0 := V0)
+    (t := t) hR hE
+  simpa using h
 
 end PhyslibExt.Physiology.RespiratoryMechanics
