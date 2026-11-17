@@ -337,8 +337,8 @@ theorem abs_pwmPrimitive_cycle_le (T ε : ℝ) (Ld : ℝ≥0) (d : ℝ → ℝ) 
 
 /-- Partial final cycle: from the start `⌊t / ε⌋ ε` of the cycle containing `t ∈ [0, T]` up to
 `t`, the discrepancy integral is at most `ε` in absolute value. -/
-theorem abs_pwmPrimitive_partialCycle_le (T ε : ℝ) (Ld : ℝ≥0) (d : ℝ → ℝ) (hε : 0 < ε)
-    (hd : ∀ t ∈ Icc 0 T, d t ∈ Icc 0 1) (hLip : LipschitzOnWith Ld d (Icc 0 T))
+theorem abs_pwmPrimitive_partialCycle_le (T ε : ℝ) (d : ℝ → ℝ) (hε : 0 < ε)
+    (hd : ∀ t ∈ Icc 0 T, d t ∈ Icc 0 1)
     (t : ℝ) (ht : t ∈ Icc 0 T) :
     |∫ u in ((⌊t / ε⌋ : ℝ) * ε)..t, (pwmSignal ε d u - d u)| ≤ ε := by
   exact abs_pwmPrimitive_partialCycle_le_aux T ε d hε hd t ht
