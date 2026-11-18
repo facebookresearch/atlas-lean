@@ -12,7 +12,6 @@ public import Mathlib.Data.Matrix.Mul
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import MathlibExt.LinearAlgebra.Matrix.BlockSolutionEquiv
-public import MathlibExt.LinearAlgebra.Matrix.SchurStrictPositivity
 
 /-!
 # Index-one elimination for a linear descriptor system
