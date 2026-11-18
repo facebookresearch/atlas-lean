@@ -469,6 +469,51 @@ def first_words(text: str, limit: int = 60) -> str:
     return sentence if len(sentence) <= limit else sentence[:limit].rsplit(" ", 1)[0] + "..."
 
 
+_MODULE_HEADER = re.compile(r"^\s*module\s*$")
+_SCOPE = re.compile(
+    r"^\s*(?:@\[[^\]]*\]\s*)*(?P<mods>(?:(?:public|private|noncomputable|meta)\s+)*)(?P<kind>section|namespace|mutual|end)\b")
+
+
+def module_private_lines(lines: list[str]) -> frozenset[int]:
+    """The (0-based) lines where a declaration is private by module visibility: in a file that opens with
+    `module`, outside every `public section` (a nested `section`, `namespace` or `mutual` keeps the visibility
+    around it). A declaration written `public` or `private` says so itself.
+
+    It fails open: in a file that is no module, or whose scopes do not balance (an `end` with nothing to close),
+    no line is private, so a misread keeps a declaration rather than losing it.
+    """
+    code = code_lines(lines)
+    first = next((line for line in code if line.strip()), "")
+    if not _MODULE_HEADER.match(first):
+        return frozenset()
+    scopes: list[bool] = []  # whether each open scope is public
+    private: set[int] = set()
+    for number, line in enumerate(code):
+        scope = _SCOPE.match(line)
+        if scope:
+            if scope.group("kind") == "end":
+                if not scopes:
+                    return frozenset()
+                scopes.pop()
+            else:
+                inherited = scopes[-1] if scopes else False
+                scopes.append(inherited or (scope.group("kind") == "section" and "public" in scope.group("mods").split()))
+            continue
+        if not (scopes and scopes[-1]):
+            private.add(number)
+    return frozenset(private)
+
+
+def visible(match: re.Match, number: int, module_private: frozenset[int]) -> bool:
+    """Whether a declaration line declares something public: neither written `private` nor private by module
+    visibility (see module_private_lines). A wanted command is always kept: Batteries makes each one a private
+    placeholder anyway, so its visibility says nothing about the statement it asks for."""
+    mods = match.group("mods").split()
+    if "private" in mods:
+        return False
+    return "public" in mods or match.group("kw") in WANTED or number not in module_private
+
+
 def section_labels(lines: list[str]) -> list[tuple[str, str, str]]:
     """The doc heading, named section and namespace in force at each line.
 
@@ -573,8 +618,9 @@ def load_library(library: str, index, taxonomy: dict, titles: dict | None = None
             # A folder upstream just added waits for a subject; its modules get no pages until then, but the coverage
             # counts their declarations like any other.
             summary["unsubjected"].append(relative.as_posix())
+            module_private = module_private_lines(lines)
             for number, match in declaration_lines(lines, indexed_lines[relative]):
-                if "private" in match.group("mods"):
+                if not visible(match, number, module_private):
                     continue
                 summary["public"] += 1
                 if match.group("kw") == "instance":
@@ -583,8 +629,11 @@ def load_library(library: str, index, taxonomy: dict, titles: dict | None = None
                     summary["documented"] += 1
             continue
         labels = section_labels(lines)
+        module_private = module_private_lines(lines)
         for number, match in declaration_lines(lines, indexed_lines[relative]):
-            if "private" in match.group("mods"):
+            # A private declaration, written so or private by module visibility, gets no page and no count; a
+            # page an editor already gave one keeps it, since its declaration still exists.
+            if not visible(match, number, module_private):
                 continue
             summary["public"] += 1
             if match.group("kw") == "instance":

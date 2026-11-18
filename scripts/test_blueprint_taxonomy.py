@@ -49,6 +49,44 @@ class BlueprintTaxonomyTests(unittest.TestCase):
         # The coverage still counts the waiting declaration.
         self.assertEqual((summary["public"], summary["documented"], summary["instances"]), (1, 1, 0))
 
+    def test_module_private_declarations_get_no_page_and_no_count(self):
+        # In a `module` file a declaration outside `public section` is private: no page, no count. A declaration
+        # written `public`, one in a `public section`, and a wanted command (a private placeholder anyway) stay.
+        with tempfile.TemporaryDirectory() as root:
+            module = Path(root, "MathlibExt", "Algebra", "Fact.lean")
+            module.parent.mkdir(parents=True)
+            module.write_text("/- Copyright. -/\nmodule\n\npublic import Mathlib.Logic.Basic\n\n"
+                              "/-- A helper. -/\ntheorem helper : True := trivial\n\n"
+                              "/-- Hidden. -/\nprivate theorem hidden : True := trivial\n\n"
+                              "/-- Exported. -/\npublic theorem exported : True := trivial\n\n"
+                              "/-- Asked for. -/\ntheorem_wanted asked : True\n\n"
+                              "public section\n\n/-- A result. -/\ntheorem result : True := trivial\n\nend\n")
+            taxonomy = {"subjects": {"Algebra": {}}, "placements": {}}
+            with patch.object(wiki, "ROOT", Path(root)):
+                targets, summary = wiki.load_library("MathlibExt", SimpleNamespace(declarations={}), taxonomy)
+        self.assertEqual([target.names[0] for target in targets], ["exported", "asked", "result"])
+        self.assertEqual((summary["public"], summary["documented"]), (3, 3))
+
+    def test_module_private_lines(self):
+        def private(text):
+            lines = text.split("\n")
+            return [line.strip() for number, line in enumerate(lines)
+                    if number in wiki.module_private_lines(lines) and line.strip().startswith(("theorem", "def"))]
+
+        # Not a module: nothing is private by visibility.
+        self.assertEqual(private("theorem a : True := trivial"), [])
+        # Scopes nest; a `public section` makes everything in it public, through namespaces, sections and mutual.
+        text = ("/-! Doc. -/\nmodule\ntheorem a : True := trivial\n@[expose] public section\nnamespace N\n"
+                "theorem b : True := trivial\nsection\ntheorem c : True := trivial\nend\nmutual\n"
+                "  def d : Nat := 0\nend\ntheorem e : True := trivial\nend N\nend\ntheorem f : True := trivial\n"
+                "public noncomputable section\ndef g : Nat := 0\nend\nnoncomputable section\ndef h : Nat := 0\nend")
+        self.assertEqual(private(text), ["theorem a : True := trivial", "theorem f : True := trivial", "def h : Nat := 0"])
+        # Scope commands in comments and strings are text.
+        text = 'module\n/- public section -/\ntheorem a : True := trivial\ndef s : String := "\npublic section"\ndef t : Nat := 0'
+        self.assertEqual(private(text), ["theorem a : True := trivial", 'def s : String := "', "def t : Nat := 0"])
+        # An `end` with nothing to close: fail open, nothing is private.
+        self.assertEqual(private("module\ntheorem a : True := trivial\nend\ntheorem b : True := trivial"), [])
+
     def test_field_and_subfield_slugs_are_unique(self):
         # A repeated slug would be silently ignored: the generator places topics on its first occurrence.
         taxonomy = wiki.load_taxonomy()
