@@ -249,22 +249,26 @@ theorem timeConstant_pos {cm : ℝ} (hm : 0 < rm) (hcm : 0 < cm) :
   mul_pos hm hcm
 
 /-- **Sealed end.** At a point of the cable with unique spatial
-derivative, the axial current vanishes exactly when the voltage
-spatial derivative vanishes: a sealed end is the zero-derivative
-boundary condition. -/
+derivative where the voltage is differentiable, the axial current
+vanishes exactly when the voltage spatial derivative vanishes:
+a sealed end is the zero-derivative boundary condition. Here
+`cm` in `timeConstant` is membrane capacitance per unit length,
+so `rm * cm` has units of time. -/
 theorem sealed_end_iff {s : Set ℝ} {V I : ℝ → ℝ} (h : IsSteadyState rm ri s V I)
     (hri : ri ≠ 0) {x : ℝ} (hx : x ∈ s)
-    (hu : UniqueDiffWithinAt ℝ s x) :
-    I x = 0 ↔ HasDerivWithinAt V 0 s x := by
+    (hu : UniqueDiffWithinAt ℝ s x) (hDiff : DifferentiableAt ℝ V x) :
+    I x = 0 ↔ deriv V x = 0 := by
   have hv := h.hasDerivWithinAt_voltage x hx
+  have hderiv : (-(ri * I x)) = deriv V x :=
+    UniqueDiffWithinAt.eq_deriv s hu hv hDiff.hasDerivAt.hasDerivWithinAt
   constructor
   · intro hI
-    rw [hI, mul_zero, neg_zero] at hv
-    exact hv
+    rw [hI, mul_zero, neg_zero] at hderiv
+    exact hderiv.symm
   · intro hV
-    have heq : (-(ri * I x)) = 0 := UniqueDiffWithinAt.eq_deriv s hu hv hV
-    have : ri * I x = 0 := by linarith
-    exact (mul_eq_zero.mp this).resolve_left hri
+    rw [hV] at hderiv
+    have h2 : ri * I x = 0 := by linarith [hderiv.symm]
+    exact (mul_eq_zero.mp h2).resolve_left hri
 
 /-- `r∞ = ri λ`. -/
 theorem charResistance_eq (hm : 0 < rm) (hi : 0 < ri) :
