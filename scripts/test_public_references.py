@@ -1957,6 +1957,733 @@ class Repository(unittest.TestCase):
                 findings = gate.scan_commit(raw, z, None, ("A", "C"))
                 self.assertEqual(sorted(f["line"] for f in findings), expected)
 
+    def test_existing_names_stay_quiet_on_content_and_mode_edits(self):
+        name = "D" + "12345.md"
+        self.write(name, "Base text\n")
+        os.symlink("target.txt", self.root / "link")
+        self.commit("Base with a matching name")
+        self.base = self.head()
+        self.write(name, "Edited text\n")
+        self.commit("Edit the existing file")
+        os.chmod(self.root / name, 0o755)
+        self.commit("Change its mode")
+        self.assertEqual(self.check()["findings"], [])
+        # Changed contents are still scanned, with a masked location.
+        self.write(name, "Ticket " + "P" + "1234567\n")
+        self.commit("Add a private reference")
+        findings = self.check()["findings"]
+        self.assertEqual(len(findings), 1)
+        self.assertEqual(findings[0]["location"], "[redacted]")
+        # A retyped entry keeps its name; a strict symlink target is checked.
+        (self.root / name).unlink()
+        os.symlink("/".join(["", "home", "runner!"]), self.root / name)
+        self.commit("Turn it into a symlink")
+        findings = self.check()["findings"]
+        self.assertEqual(
+            sorted(f["rule"] for f in findings),
+            ["internal-reference", "personal-workspace"],
+        )
+        self.assertTrue(all(f["location"] == "[redacted]" for f in findings))
+
+    def test_new_destinations_still_get_name_checks(self):
+        name = "D" + "12345.md"
+        self.write(name, "Base text\n")
+        self.commit("Base with a matching name")
+        self.base = self.head()
+        self.run_git("mv", name, "D" + "77777.md")
+        self.commit("Rename")
+        self.write("D" + "99999.md", "Base text\n")
+        self.commit("Copy the same text to another matching name")
+        findings = self.check()["findings"]
+        self.assertEqual(len(findings), 2)
+        self.assertTrue(
+            all(f["location"].startswith("filename in ") for f in findings)
+        )
+
+    def test_merge_resolution_keeps_an_existing_name(self):
+        name = "D" + "12345.md"
+        self.write(name, "Base text\n")
+        self.commit("Base with a matching name")
+        self.base = self.head()
+        self.run_git("checkout", "-q", "-b", "side")
+        self.write(name, "Side text\n")
+        self.commit("Side edit")
+        self.run_git("checkout", "-q", "-")
+        self.write(name, "Main text\n")
+        self.commit("Main edit")
+        subprocess.run(
+            ["git", "-C", str(self.root), "merge", "-q", "side"],
+            capture_output=True,
+        )
+        self.write(name, "Resolved text\n")
+        self.commit("Resolve")
+        self.assertEqual(
+            len(self.run_git("log", "-1", "--format=%P").split()), 2
+        )
+        self.assertEqual(self.check()["findings"], [])
+
+    def test_merge_restoring_an_entry_the_base_removed_is_checked(self):
+        for kind in ("name", "link", "content"):
+            with self.subTest(kind=kind):
+                self.setUp()
+                name = ("D" + "12345.md") if kind == "name" else "legacy"
+                if kind == "link":
+                    os.symlink(
+                        "/".join(["", "home", "runner!"]), self.root / name
+                    )
+                else:
+                    text = (
+                        "T" + "54321\n" if kind == "content" else "Old text\n"
+                    )
+                    self.write(name, text)
+                self.commit("Old base")
+                self.run_git("checkout", "-q", "-b", "side")
+                self.write("other.md", "New text\n")
+                self.commit("Side change")
+                self.run_git("checkout", "-q", "-")
+                self.run_git("rm", "-q", name)
+                self.commit("Base removes the entry")
+                self.base = self.head()
+                subprocess.run(
+                    [
+                        "git",
+                        "-C",
+                        str(self.root),
+                        "merge",
+                        "--no-ff",
+                        "--no-commit",
+                        "side",
+                    ],
+                    capture_output=True,
+                )
+                self.assertFalse(os.path.lexists(self.root / name))
+                self.run_git(
+                    "restore",
+                    "--source=side",
+                    "--staged",
+                    "--worktree",
+                    "--",
+                    name,
+                )
+                self.commit("Restore it in the merge")
+                findings = self.check()["findings"]
+                self.assertEqual(len(findings), 1, findings)
+                prefix = "filename in " if kind == "name" else name + " @ "
+                self.assertTrue(findings[0]["location"].startswith(prefix))
+
+    def test_side_edits_do_not_vouch_for_restored_entries(self):
+        # A side commit that only changes the mode or public contents of an
+        # entry, or flips it back, never checked that entry's name or old
+        # bytes; restoring it after the base removed it is still checked.
+        name = "D" + "12345.md"
+        for edit in ("chmod", "content", "flip-back"):
+            for removed in (True, False):
+                with self.subTest(edit=edit, removed=removed):
+                    self.setUp()
+                    self.write(name, "T" + "54321\n")
+                    self.commit("Old base")
+                    self.run_git("checkout", "-q", "-b", "side")
+                    if edit == "content":
+                        self.write(name, "Public text\n")
+                    else:
+                        os.chmod(self.root / name, 0o755)
+                    self.commit("Side edit")
+                    if edit == "flip-back":
+                        os.chmod(self.root / name, 0o644)
+                        self.commit("Side flip back")
+                    self.run_git("checkout", "-q", "-")
+                    if removed:
+                        self.run_git("rm", "-q", name)
+                    else:
+                        self.write("other.md", "Base text\n")
+                    self.commit("Base change")
+                    self.base = self.head()
+                    subprocess.run(
+                        [
+                            "git",
+                            "-C",
+                            str(self.root),
+                            "merge",
+                            "--no-ff",
+                            "--no-commit",
+                            "side",
+                        ],
+                        capture_output=True,
+                    )
+                    self.run_git(
+                        "restore",
+                        "--source=side",
+                        "--staged",
+                        "--worktree",
+                        "--",
+                        name,
+                    )
+                    self.commit("Resolve to the side entry")
+                    findings = self.check()["findings"]
+                    if not removed:
+                        self.assertEqual(findings, [])
+                        continue
+                    names = [
+                        f
+                        for f in findings
+                        if f["location"].startswith("filename in ")
+                    ]
+                    self.assertEqual(len(names), 1, findings)
+                    old_bytes = edit != "content"
+                    contents = [f for f in findings if f not in names]
+                    self.assertEqual(len(contents), int(old_bytes), findings)
+                    for finding in contents:
+                        self.assertEqual(finding["location"], "[redacted]")
+
+    def test_restored_old_bytes_are_scanned_on_every_branch(self):
+        old = "T" + "54321\n"
+
+        def scenario(resolve, keep_in_base=None, one_parent=False):
+            self.setUp()
+            self.write("legacy.md", old)
+            self.commit("Old base")
+            self.run_git("checkout", "-q", "-b", "side")
+            self.write("legacy.md", "Public text\n")
+            self.commit("Side edits it clean")
+            self.run_git("checkout", "-q", "-")
+            self.run_git("rm", "-q", "legacy.md")
+            if keep_in_base:
+                self.write(keep_in_base, old)
+            self.commit("Base removes the file")
+            self.base = self.head()
+            if one_parent:
+                self.write("legacy.md", old)
+                self.commit("Bring the old bytes back directly")
+                return self.check()["findings"]
+            subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    str(self.root),
+                    "merge",
+                    "--no-ff",
+                    "--no-commit",
+                    "side",
+                ],
+                capture_output=True,
+            )
+            resolve()
+            self.commit("Resolve the merge")
+            self.assertEqual(
+                len(self.run_git("log", "-1", "--format=%P").split()), 2
+            )
+            return self.check()["findings"]
+
+        def old_bytes():
+            self.write("legacy.md", old)
+            self.run_git("add", "legacy.md")
+
+        def old_bytes_executable():
+            old_bytes()
+            os.chmod(self.root / "legacy.md", 0o755)
+            self.run_git("add", "legacy.md")
+
+        for label, kwargs, expected in (
+            ("merge resolves to old bytes", {"resolve": old_bytes}, 1),
+            ("old bytes and mode", {"resolve": old_bytes_executable}, 1),
+            ("one-parent restore", {"resolve": None, "one_parent": True}, 1),
+            (
+                "bytes still in base, same path",
+                {"resolve": old_bytes, "keep_in_base": "legacy-copy.md"},
+                0,
+            ),
+            (
+                "bytes still in base, one parent",
+                {
+                    "resolve": None,
+                    "keep_in_base": "kept.md",
+                    "one_parent": True,
+                },
+                0,
+            ),
+        ):
+            with self.subTest(label=label):
+                findings = scenario(**kwargs)
+                self.assertEqual(len(findings), expected, findings)
+                for finding in findings:
+                    self.assertEqual(finding["rule"], "internal-reference")
+                    self.assertTrue(
+                        finding["location"].startswith("legacy.md @ ")
+                    )
+
+    def test_an_older_base_ancestor_does_not_vouch_for_removed_entries(self):
+        # A merge with an ancestor of the current base restores an entry the
+        # base removed; that ancestor's tree is not current.
+        self.write("legacy.md", "T" + "54321\n")
+        self.commit("Old base")
+        old = self.head()
+        self.run_git("rm", "-q", "legacy.md")
+        self.commit("Base removes the file")
+        self.base = self.head()
+        head = self.run_git(
+            "commit-tree",
+            old + "^{tree}",
+            "-p",
+            self.base,
+            "-p",
+            old,
+            "-m",
+            "Merge the old ancestor and keep its file",
+        )
+        self.run_git("update-ref", "HEAD", head)
+        findings = self.check()["findings"]
+        self.assertEqual(len(findings), 1, findings)
+        self.assertTrue(findings[0]["location"].startswith("legacy.md @ "))
+        # Control: a base-side commit that is not contained in the other
+        # parent still vouches for its own current entries.
+        self.setUp()
+        self.write("legacy.md", "Public text\n")
+        self.commit("Base file")
+        self.base = self.head()
+        self.run_git("checkout", "-q", "-b", "topic", self.base + "~1")
+        self.write("topic.md", "Topic\n")
+        self.commit("Topic work")
+        self.run_git("merge", "-q", "--no-edit", self.base)
+        self.assertEqual(self.check()["findings"], [])
+
+    def test_merge_written_paths_need_current_bytes(self):
+        # Topic forks first; old base P has private bytes; current base C
+        # removes them; a merge with P writes those bytes at a new path.
+        self.write("other.md", "Fork text\n")
+        self.commit("Fork")
+        fork = self.head()
+        self.write("source.md", "T" + "54321\n")
+        self.commit("Old base")
+        old = self.head()
+        for keep, expected in ((False, 1), (True, 0)):
+            with self.subTest(current_keeps_bytes=keep):
+                self.run_git("checkout", "-q", "-B", "main", old)
+                self.run_git("rm", "-q", "source.md")
+                if keep:
+                    self.write("kept.md", "T" + "54321\n")
+                self.commit("Current base")
+                self.base = self.head()
+                self.run_git("checkout", "-q", "-B", "topic", fork)
+                self.write("topic.md", "Topic\n")
+                self.commit("Topic work")
+                subprocess.run(
+                    [
+                        "git",
+                        "-C",
+                        str(self.root),
+                        "merge",
+                        "--no-ff",
+                        "--no-commit",
+                        old,
+                    ],
+                    capture_output=True,
+                )
+                self.run_git("mv", "source.md", "new.md")
+                self.commit("Merge the old base, moving its file")
+                findings = self.check()["findings"]
+                contents = [
+                    f for f in findings if f["location"].startswith("new.md @ ")
+                ]
+                self.assertEqual(len(contents), expected, findings)
+
+    def test_a_base_side_parent_vouches_only_for_its_exact_entries(self):
+        # A topic keeps foo unchanged; a base-side parent holds the same
+        # bytes only under another path, which the current base removed.
+        data = "T" + "54321"
+        for kept, alias, current, expected in (
+            ("file", "file", False, 1),
+            ("file", "link", False, 1),
+            ("link", "link", False, 1),
+            ("file", "file", True, 0),
+            ("link", "link", True, 0),
+        ):
+            with self.subTest(kept=kept, alias=alias, current=current):
+                self.setUp()
+                if kept == "link":
+                    os.symlink(data, self.root / "foo")
+                else:
+                    (self.root / "foo").write_bytes(data.encode())
+                self.commit("A")
+                a = self.head()
+                self.run_git("checkout", "-q", "-b", "topic")
+                self.write("topic.md", "Topic\n")
+                self.commit("Q changes only topic.md")
+                q = self.head()
+                self.run_git("checkout", "-q", "-B", "main", a)
+                self.run_git("rm", "-q", "foo")
+                if alias == "link":
+                    os.symlink(data, self.root / "source")
+                else:
+                    (self.root / "source").write_bytes(data.encode())
+                self.commit("P moves the bytes to source")
+                p = self.head()
+                if not current:
+                    self.run_git("rm", "-q", "source")
+                    self.commit("C removes source")
+                self.base = self.head()
+                tree = self.run_git("rev-parse", q + "^{tree}")
+                head = self.run_git(
+                    "commit-tree", tree, "-p", q, "-p", p, "-m", "M keeps foo"
+                )
+                self.run_git("update-ref", "HEAD", head)
+                findings = [
+                    f
+                    for f in self.check()["findings"]
+                    if f["location"].startswith("foo @ ")
+                ]
+                self.assertEqual(len(findings), expected, findings)
+
+    def test_eligible_parent_names_and_entries_are_separate(self):
+        # Topic forks; old base P adds a matching name with public text;
+        # current base C removes it; the merge with P keeps that path.
+        name = "D" + "12345.md"
+        for label, text, mode, expected in (
+            ("exact entry", "Public text\n", 0o644, []),
+            ("public edit", "Edited public text\n", 0o644, []),
+            ("private edit", "T" + "54321\n", 0o644, ["[redacted]"]),
+            ("mode change", "Public text\n", 0o755, []),
+        ):
+            with self.subTest(label=label):
+                self.setUp()
+                fork = self.head()
+                self.write(name, "Public text\n")
+                self.commit("P adds the file")
+                old = self.head()
+                self.run_git("rm", "-q", name)
+                self.commit("C removes it")
+                self.base = self.head()
+                self.run_git("checkout", "-q", "-b", "topic", fork)
+                self.write("topic.md", "Topic\n")
+                self.commit("Topic work")
+                self.run_git("merge", "-q", "--no-edit", old)
+                if label != "exact entry":
+                    self.write(name, text)
+                    os.chmod(self.root / name, mode)
+                    self.run_git("add", name)
+                    self.run_git("commit", "-q", "--amend", "--no-edit")
+                self.assertEqual(
+                    len(self.run_git("log", "-1", "--format=%P").split()), 2
+                )
+                findings = self.check()["findings"]
+                self.assertEqual([f["location"] for f in findings], expected)
+
+    def test_historical_gitlinks_gain_no_acceptance(self):
+        # A gitlink only an old base-side parent holds is refused when a
+        # merge keeps it; the same gitlink in the current base is accepted.
+        target = self.base
+
+        blob = (
+            subprocess.run(
+                ["git", "-C", str(self.root), "hash-object", "-w", "--stdin"],
+                input=b"Topic\n",
+                capture_output=True,
+                check=True,
+            )
+            .stdout.decode()
+            .strip()
+        )
+
+        def commit(files, *parents):
+            rows = "".join(
+                (
+                    f"100644 blob {blob}\t{name}\n"
+                    if name.endswith(".md")
+                    else f"160000 commit {target}\t{name}\n"
+                )
+                for name in sorted(files)
+            )
+            tree = (
+                subprocess.run(
+                    ["git", "-C", str(self.root), "mktree"],
+                    input=rows.encode(),
+                    capture_output=True,
+                    check=True,
+                )
+                .stdout.decode()
+                .strip()
+            )
+            args = ["commit-tree", tree, "-m", "Commit"]
+            for parent in parents:
+                args += ["-p", parent]
+            return self.run_git(*args)
+
+        fork = commit({"keep"}, target)
+        old = commit({"keep", "legacy"}, fork)
+        for current, refused in ((False, True), (True, False)):
+            with self.subTest(current=current):
+                self.base = commit(
+                    {"keep", "legacy"} if current else {"keep"}, old
+                )
+                topic = commit({"keep", "topic.md"}, fork)
+                head = commit({"keep", "legacy", "topic.md"}, topic, old)
+                self.run_git("update-ref", "HEAD", head)
+                if refused:
+                    with self.assertRaises(gate.IncompleteScan):
+                        self.check()
+                else:
+                    self.assertEqual(self.check()["findings"], [])
+
+    def test_one_parent_executable_bit_on_base_history_bytes(self):
+        # A topic makes an old base-history file executable after the
+        # current base removed or cleaned it: no new content finding, and
+        # the skip vouches for nothing later. Real changes stay checked.
+        secret = "T" + "54321\n"
+
+        def start(state):
+            self.setUp()
+            self.write("legacy.md", secret)
+            self.commit("Old base")
+            old = self.head()
+            if state == "removed":
+                self.run_git("rm", "-q", "legacy.md")
+            elif state == "cleaned":
+                self.write("legacy.md", "Current clean text\n")
+            else:
+                self.write("other.md", "Base text\n")
+            self.commit("Current base")
+            self.base = self.head()
+            self.run_git("checkout", "-q", "-b", "topic", old)
+            return old
+
+        def chmod(mode=0o755, text=None):
+            if text is not None:
+                self.write("legacy.md", text)
+            os.chmod(self.root / "legacy.md", mode)
+            self.commit("Topic edit")
+
+        for state in ("removed", "cleaned", "retained"):
+            with self.subTest(case="executable only", state=state):
+                start(state)
+                chmod()
+                result = self.check()
+                self.assertEqual(result["findings"], [])
+                self.assertEqual(result["blobs"], 0)
+        with self.subTest(case="one byte plus chmod"):
+            start("removed")
+            chmod(text="T" + "54322\n")
+            self.assertEqual(len(self.check()["findings"]), 1)
+        with self.subTest(case="restore over cleaned bytes"):
+            start("cleaned")
+            self.run_git("checkout", "-q", "-B", "topic", self.base)
+            self.write("legacy.md", secret)
+            self.commit("Restore the old bytes")
+            self.assertEqual(len(self.check()["findings"]), 1)
+        with self.subTest(case="add back a removed path"):
+            start("removed")
+            self.run_git("checkout", "-q", "-B", "topic", self.base)
+            self.write("legacy.md", secret)
+            self.commit("Add it back")
+            self.assertEqual(len(self.check()["findings"]), 1)
+        for state, expected in (("removed", 1), ("retained", 0)):
+            with self.subTest(case="copy stale bytes", state=state):
+                start(state)
+                self.write("copy.md", secret)
+                self.commit("Copy the old bytes")
+                self.assertEqual(len(self.check()["findings"]), expected)
+        with self.subTest(case="old prose as a symlink target"):
+            start("removed")
+            self.write("prose.md", "/".join(["", "home", "runner!"]))
+            self.commit("Prose")
+            self.base = self.head()
+            os.symlink("/".join(["", "home", "runner!"]), self.root / "link")
+            self.commit("Link")
+            self.assertEqual(len(self.check()["findings"]), 1)
+        # Integrating the current base after the executable-only edit.
+        with self.subTest(case="cleaned base merged in"):
+            start("cleaned")
+            chmod()
+            self.run_git("merge", "-q", "--no-edit", self.base)
+            self.assertEqual(
+                (self.root / "legacy.md").read_text(), "Current clean text\n"
+            )
+            self.assertEqual(self.check()["findings"], [])
+        for resolution, expected in (("delete", []), ("retain", 1)):
+            with self.subTest(case="removed base merged in", res=resolution):
+                start("removed")
+                chmod()
+                subprocess.run(
+                    [
+                        "git",
+                        "-C",
+                        str(self.root),
+                        "merge",
+                        "--no-edit",
+                        self.base,
+                    ],
+                    capture_output=True,
+                )
+                if resolution == "delete":
+                    self.run_git("rm", "-q", "legacy.md")
+                else:
+                    self.run_git("add", "legacy.md")
+                self.run_git("commit", "-q", "--no-edit")
+                self.assertEqual(
+                    len(self.run_git("log", "-1", "--format=%P").split()), 2
+                )
+                findings = self.check()["findings"]
+                if resolution == "delete":
+                    self.assertEqual(findings, expected)
+                else:
+                    self.assertEqual(len(findings), expected, findings)
+                    self.assertTrue(
+                        findings[0]["location"].startswith("legacy.md @ ")
+                    )
+
+    def test_current_symlink_bytes_may_be_reused_as_file_contents(self):
+        target = "T" + "54321"
+        os.symlink(target, self.root / "current-link")
+        self.commit("Base keeps a symlink")
+        self.base = self.head()
+        # The same bytes as an ordinary file are already present in the
+        # current base, so no new content finding is due.
+        (self.root / "copy.md").write_bytes(target.encode())
+        self.commit("Reuse the bytes as a file")
+        self.assertEqual(self.check()["findings"], [])
+        # The reverse is still strict: current file bytes as a new symlink.
+        home = "/".join(["", "home", "runner!"])
+        (self.root / "prose.md").write_bytes(home.encode())
+        self.commit("Base keeps the bytes as a file")
+        self.base = self.head()
+        os.symlink(home, self.root / "new-link")
+        self.commit("Reuse the bytes as a symlink target")
+        findings = self.check()["findings"]
+        self.assertEqual(len(findings), 1)
+        self.assertTrue(findings[0]["location"].startswith("new-link @ "))
+
+    def test_merge_changes_to_unsupported_modes_fail_closed(self):
+        # A merge keeps a gitlink from a side parent where the current base
+        # has a regular file; a known target and name must not skip refusal.
+        target = self.base
+
+        def tree(files):
+            rows = []
+            for name, (mode, value) in sorted(files.items()):
+                if mode == "160000":
+                    rows.append(f"160000 commit {value}\t{name}\n")
+                else:
+                    blob = (
+                        subprocess.run(
+                            [
+                                "git",
+                                "-C",
+                                str(self.root),
+                                "hash-object",
+                                "-w",
+                                "--stdin",
+                            ],
+                            input=value.encode(),
+                            capture_output=True,
+                            check=True,
+                        )
+                        .stdout.decode()
+                        .strip()
+                    )
+                    rows.append(f"{mode} blob {blob}\t{name}\n")
+            return (
+                subprocess.run(
+                    ["git", "-C", str(self.root), "mktree"],
+                    input="".join(rows).encode(),
+                    capture_output=True,
+                    check=True,
+                )
+                .stdout.decode()
+                .strip()
+            )
+
+        def commit(files, *parents):
+            args = ["commit-tree", tree(files), "-m", "Commit"]
+            for parent in parents:
+                args += ["-p", parent]
+            return self.run_git(*args)
+
+        for alias, name in ((True, "legacy"), (False, "legacy"), (True, "new")):
+            with self.subTest(alias=alias, name=name):
+                old = commit({name: ("160000", target)}, target)
+                base_files = {}
+                if name == "legacy":
+                    base_files[name] = ("100644", "Clean text\n")
+                if alias:
+                    base_files["alias"] = ("160000", target)
+                self.base = commit(base_files, old)
+                side_files = {
+                    name: ("160000", target),
+                    "other.md": ("100644", "Side text\n"),
+                }
+                side = commit(side_files, old)
+                head = commit({**base_files, **side_files}, self.base, side)
+                self.run_git("update-ref", "HEAD", head)
+                with self.assertRaises(gate.IncompleteScan):
+                    self.check()
+        # Control: a gitlink the current base already holds, kept unchanged
+        # by the merge, is not a change and is accepted.
+        old = commit({}, target)
+        self.base = commit({"legacy": ("160000", target)}, old)
+        side = commit({"other.md": ("100644", "Side text\n")}, old)
+        head = commit(
+            {
+                "legacy": ("160000", target),
+                "other.md": ("100644", "Side text\n"),
+            },
+            self.base,
+            side,
+        )
+        self.run_git("update-ref", "HEAD", head)
+        self.assertEqual(self.check()["findings"], [])
+
+    def test_supported_tag_message_uses_message_rules(self):
+        z = "0" * 40
+        plain = (
+            "author A <a@example.invalid> 1 +0000\n"
+            "committer C <c@example.invalid> 1 +0000\n"
+        )
+        doi = "https://doi.org/10.1017/S0308210500015080"
+        url = "https://www.math.cmu.edu/users/mubayi/papers/no-singleton.pdf"
+
+        def tag(message, after=""):
+            return (
+                "mergetag object " + z + "\n type commit\n tag v1\n"
+                " tagger T <t@example.invalid> 1 +0000\n \n "
+                + message
+                + "\n"
+                + after
+            )
+
+        def lines(headers, body="Msg\n"):
+            raw = ("tree " + z + "\n" + plain + headers + "\n" + body).encode()
+            return sorted(
+                f["line"] for f in gate.scan_commit(raw, z, None, ("A", "C"))
+            )
+
+        self.assertEqual(lines(tag(doi + " " + url)), [])
+        self.assertEqual(lines(tag("first\n " + doi)), [])
+        self.assertEqual(lines("", doi + " " + url + "\n"), [])
+        strict = {
+            "tag name": "mergetag object "
+            + z
+            + "\n type commit\n tag "
+            + doi
+            + "\n \n m\n",
+            "unknown header": "x-meta " + doi + "\n",
+            "unsupported tag": "mergetag not-a-tag\n \n " + doi + "\n",
+            "signature": tag(
+                "m",
+                " -----BEGIN PGP SIGNATURE-----\n Comment: "
+                + doi
+                + "\n -----END PGP SIGNATURE-----\n",
+            ),
+            "after signature": tag(
+                "m",
+                " -----BEGIN PGP SIGNATURE-----\n x\n"
+                " -----END PGP SIGNATURE-----\n " + doi + "\n",
+            ),
+            "later bad field": "mergetag object " + z + "\n type commit\n"
+            " tag v1\n x-bad y\n \n " + doi + "\n",
+            "neighbor token": tag(doi + " " + "P" + "1234567"),
+        }
+        for label, headers in strict.items():
+            with self.subTest(label=label):
+                self.assertEqual(len(lines(headers)), 1)
+
     def test_literal_filename_is_redacted_in_blob_locations(self):
         name = "/".join(["docs", "home", "runner!"])
         self.write(name, "Ticket " + "D" + "12345\n")

@@ -4,6 +4,7 @@
 import argparse
 import functools
 import heapq
+import itertools
 import json
 import os
 from pathlib import Path
@@ -101,6 +102,8 @@ LITERAL_RULES["personal-workspace"] = re.compile(
     LITERAL_PROFILE.pattern + "|" + RULES["personal-workspace"].pattern
 )
 
+FILE_MODES = (b"100644", b"100755")
+TEXT_MODES = FILE_MODES + (b"120000",)
 MAX_BLOB_BYTES = 64 * 1024 * 1024
 MAX_FINDINGS = 100
 MAX_LOCATION_CHARS = 240
@@ -156,17 +159,30 @@ def valid_issn(pii):
     return issn[7] == ("X" if check == 10 else str(check))
 
 
-def citation_slots(text, start):
-    """Exempt spans at or after start, in increasing order (constant memory)."""
+def prose_regions(text, start):
+    """Sorted, non-overlapping (start, end) prose regions of text."""
+    if isinstance(start, int):
+        return [(start, len(text))]
+    return list(start)
 
-    def slots(pattern, publisher):
-        for match in pattern.finditer(text, start):
+
+def citation_slots(text, start):
+    """Exempt spans inside the prose regions, in increasing order.
+
+    A whole recognized citation must lie in one region (constant memory).
+    """
+
+    def slots(pattern, publisher, begin, end):
+        for match in pattern.finditer(text, begin, end):
             if not publisher or valid_issn(match.group(1)):
                 yield match.span(1)
 
-    return heapq.merge(
-        *(slots(p, True) for p in PUBLISHER_PII_SLOTS),
-        *(slots(p, False) for p in REVIEWED_CITATION_SLOTS),
+    return itertools.chain.from_iterable(
+        heapq.merge(
+            *(slots(p, True, begin, end) for p in PUBLISHER_PII_SLOTS),
+            *(slots(p, False, begin, end) for p in REVIEWED_CITATION_SLOTS),
+        )
+        for begin, end in prose_regions(text, start)
     )
 
 
@@ -251,16 +267,22 @@ def _public_authority(authority):
 
 
 def url_path_matches(pattern, text, start):
-    """Filesystem-path matches outside public URL paths (lazy, ordered)."""
+    """Filesystem-path matches outside public URL paths (lazy, ordered).
+
+    A whole URL must lie in one prose region for its path to count.
+    """
+    regions = prose_regions(text, start)
+    first = regions[0][0] if regions else len(text)
     paths = path = None
     for match in pattern.finditer(text):
-        if match.start() < start:
+        if match.start() < first:
             yield match
             continue
         if paths is None:
             paths = (
                 m.span(2)
-                for m in URL_PATH.finditer(text, start)
+                for begin, end in regions
+                for m in URL_PATH.finditer(text, begin, end)
                 if public_authority(m.group(1))
                 and not DRIVE_SEGMENT.search(m.group(2))
             )
@@ -374,11 +396,24 @@ def scan_commit(raw, sha, findings=None, identity=None):
     if b"\n\n" not in raw:
         raise IncompleteScan("Malformed commit object")
     text = raw.decode("utf-8", errors="replace")
-    # The whole raw object is scanned with raw line numbers. Citation slots
-    # are recognized only in the message after the header/body separator.
+    # The whole raw object is scanned with raw line numbers. Citations and
+    # public URL paths are recognized only in prose: the message after the
+    # header/body separator and, with identities parsed, the message of each
+    # supported embedded tag. Each recognized span lies in one region.
     findings = Findings() if findings is None else findings
     first = len(findings)
-    scan(text, "commit " + sha, findings, citation_start=text.index("\n\n") + 2)
+    body = text.index("\n\n") + 2
+    regions = [(body, len(text))]
+    if identity is not None:
+        header = text[: body - 2].split("\n")
+        starts = [0]
+        for row in header:
+            starts.append(starts[-1] + len(row) + 1)
+        regions = [
+            (starts[top - 1], starts[bottom] - 1)
+            for top, bottom in tag_messages(header)
+        ] + regions
+    scan(text, "commit " + sha, findings, citation_start=regions)
     if identity is None:
         return findings
     # Header values are literal, not prose: identity names (read like Git
@@ -448,6 +483,34 @@ def supported_tags(header):
     return supported
 
 
+def tag_messages(header):
+    """(first, last) 1-based line numbers of each supported tag's message:
+    after its blank separator, up to its first signature armor line."""
+    supported, messages = supported_tags(header), []
+    state, top = None, None
+
+    def close(last):
+        if top is not None and last >= top:
+            messages.append((top, last))
+
+    for line, row in enumerate(header, 1):
+        if state and row.startswith(" "):
+            if state == "header" and row == " ":
+                state, top = "message", line + 1
+            elif state == "message" and row[1:].startswith("-----BEGIN "):
+                close(line - 1)
+                state = "opaque"
+            continue
+        if state == "message":
+            close(line - 1)
+        key = row.partition(" ")[0]
+        state = "header" if key == "mergetag" and line in supported else None
+        top = None
+    if state == "message":
+        close(len(header))
+    return messages
+
+
 def header_values(header):
     """(line, kind, value) for each raw header line. Every header byte is
     covered except the message of a supported embedded merge tag, which stays
@@ -506,6 +569,34 @@ def tree_entries(root, rev):
             mode, _, obj = info.split()
             entries.add((mode, obj, path))
     return entries
+
+
+def unvetted_parents(root, base, commits, exclusions):
+    """Boundary parents whose tree names were never checked or trusted.
+
+    Outgoing parents were scanned, public tips are trusted current trees, and
+    ancestors of base are the declared boundary. Only with public tips can a
+    parent be none of these: history a public tip reached but no longer has.
+    """
+    if not exclusions:
+        return set()
+    tips = {tip[1:].encode() for tip in exclusions}
+    outgoing = {row[0] for row in commits}
+    found = set()
+    for parent in {p for row in commits for p in row[1:]}:
+        if parent in outgoing or parent in tips:
+            continue
+        ancestor = subprocess.run(
+            ["git", "-C", str(root), "merge-base", "--is-ancestor"]
+            + [parent.decode(), base],
+            capture_output=True,
+            timeout=180,
+        ).returncode
+        if ancestor not in (0, 1):
+            raise IncompleteScan("Git could not compare public history")
+        if ancestor == 1:
+            found.add(parent)
+    return found
 
 
 def public_history_entries(root, base, commits, exclusions, public):
@@ -602,20 +693,28 @@ def check_range(root, base, head, metadata=None, public=()):
     inherited = public_history_entries(
         root, base, commits, exclusions, public_entries
     )
+    unvetted = unvetted_parents(root, base, commits, exclusions)
+    outgoing = {row[0] for row in commits}
 
-    def check_entry(sha, mode, blob, raw_path, status, new_entry):
+    def check_entry(
+        sha, mode, blob, raw_path, status, new_entry, new_name, restored=False
+    ):
         if mode not in (b"100644", b"100755", b"120000"):
             raise IncompleteScan("Changed submodule or unsupported tree entry")
         path = raw_path.decode("utf-8", errors="surrogateescape")
         paths.add(path)
-        if new_entry and raw_path not in public_paths:
+        # A name is new where no checked or trusted parent has that path;
+        # changing an existing path's contents or mode does not rename it.
+        if new_name and raw_path not in public_paths:
             scan(path, "filename in commit " + sha, findings, LITERAL_RULES)
+            checked_names.add(raw_path)
         # Symlink targets are always strict, so a new symlink entry is
         # scanned even when its bytes were accepted earlier as file text.
         strict_link = mode == b"120000" and new_entry
         # Git omits base-history content inherited by a merge. A new
-        # destination still receives the filename check above.
-        if blob not in introduced and not strict_link:
+        # destination still receives the filename check above, and content a
+        # merge restores after the current snapshots dropped it is scanned.
+        if blob not in introduced and not strict_link and not restored:
             return
         if status not in (b"A", b"C", b"M", b"T"):
             raise IncompleteScan("Unsupported change status")
@@ -625,6 +724,168 @@ def check_range(root, base, head, metadata=None, public=()):
             # Strict wins for a shared blob and reports the symlink.
             symlinks.setdefault(blob, location)
         blobs.setdefault(blob, location)
+
+    def diff_records(sha, merge):
+        """ACMT records against every parent, and for a merge the paths
+        that differ from every parent (its combined diff)."""
+        combined = None
+        if merge:
+            filenames = git(
+                root,
+                "diff-tree",
+                "--root",
+                "-r",
+                "-c",
+                "--name-only",
+                "-z",
+                "--no-commit-id",
+                "--no-renames",
+                "--no-ext-diff",
+                sha,
+                "--",
+            ).split(b"\0")
+            if filenames[-1] != b"":
+                raise IncompleteScan("Incomplete combined filename diff")
+            combined = set(filenames[:-1])
+        # Every parent of a merge matters. Inspect intermediate versions too,
+        # including files added and later removed before the final head.
+        raw = git(
+            root,
+            "diff-tree",
+            "--root",
+            "-r",
+            "-m",
+            "-z",
+            "--raw",
+            "--no-commit-id",
+            "--no-renames",
+            "--no-abbrev",
+            "--no-ext-diff",
+            "--diff-filter=ACMT",
+            sha,
+            "--",
+        ).split(b"\0")
+        if raw[-1] != b"" or (len(raw) - 1) % 2:
+            raise IncompleteScan("Incomplete raw tree diff")
+        records = []
+        for index in range(0, len(raw) - 1, 2):
+            header, raw_path = raw[index : index + 2]
+            fields = header.split()
+            if len(fields) != 5 or not fields[0].startswith(b":"):
+                raise IncompleteScan("Malformed raw tree diff")
+            old_mode, mode, old_blob, blob, status = fields
+            records.append(
+                (mode, blob, raw_path, status, old_mode[1:], old_blob)
+            )
+        return records, combined
+
+    diffs = {}
+    for commit in commits:
+        sha = oid(commit[0].decode("ascii"))
+        diffs[commit[0]] = diff_records(sha, len(commit) > 2)
+    # What was actually checked so far, in parent-before-child order: names
+    # scanned as filenames, blobs scanned as content (the blobs and symlinks
+    # maps, strict symlink scans in the latter). A visited entry whose name
+    # or bytes were skipped does not count.
+    checked_names = set()
+    base_entries = tree_entries(root, base) if commits else set()
+    current_entries = base_entries | public_entries
+    current_files = {
+        obj for mode, obj, _ in current_entries if mode in TEXT_MODES
+    }
+    current_links = {
+        obj for mode, obj, _ in current_entries if mode == b"120000"
+    }
+    snapshots = {}
+
+    def snapshot(rev):
+        if rev not in snapshots:
+            snapshots[rev] = tree_entries(root, rev.decode())
+        return snapshots[rev]
+
+    ancestry = {}
+
+    def is_ancestor(older, newer):
+        """Whether older is already contained in newer: merging it adds no
+        history, so its tree cannot vouch for an entry newer dropped."""
+        if (older, newer) not in ancestry:
+            code = subprocess.run(
+                ["git", "-C", str(root), "merge-base", "--is-ancestor"]
+                + [older.decode(), newer.decode()],
+                capture_output=True,
+                timeout=180,
+            ).returncode
+            if code not in (0, 1):
+                raise IncompleteScan("Git could not compare merge parents")
+            ancestry[(older, newer)] = code == 0
+        return ancestry[(older, newer)]
+
+    def check_merge(sha, commit, records, combined):
+        """Check each component of a merge entry against its own authority.
+
+        A name is exempt if the current base, a public tip, or an eligible
+        base-side parent has that exact path, or it was scanned already.
+        Bytes and symlink targets are exempt only when the current base or a
+        public tip holds them, an eligible parent holds the exact (mode,
+        object, path) entry the merge kept, or they were scanned already. A
+        same-path entry kept from an eligible parent can be a stale import;
+        the commit graph cannot tell, and such an entry still qualifies."""
+        # An eligible base-side parent is a direct parent reachable from the
+        # supplied base and not contained in any other direct parent.
+        base_side = [
+            parent
+            for parent in commit[1:]
+            if parent not in outgoing
+            and is_ancestor(parent, base.encode())
+            and not any(
+                other != parent and is_ancestor(parent, other)
+                for other in commit[1:]
+            )
+        ]
+        present = current_entries
+        for parent in base_side:
+            present = present | snapshot(parent)
+        names = {path for _, _, path in present}
+        # Byte authority: the current base and public tips vouch for bytes at
+        # any path (a current symlink target may also be reused as file
+        # contents); a base-side parent vouches only for its exact entry.
+        seen = set()
+        for mode, blob, raw_path, status, _, _ in records:
+            if mode not in TEXT_MODES and (
+                raw_path in combined
+                or (mode, blob, raw_path) not in current_entries
+            ):
+                # Refuse an unsupported entry unless the current base or a
+                # public tip holds that exact entry and the merge kept it.
+                raise IncompleteScan("Changed submodule or unsupported entry")
+            if raw_path in seen:
+                continue
+            seen.add(raw_path)
+            if mode not in TEXT_MODES:
+                continue  # Kept unchanged from a current snapshot.
+            new_name = raw_path not in names and raw_path not in checked_names
+            key = blob.decode("ascii")
+            # Old file bytes the current snapshots do not vouch for and no
+            # completed scan covered are scanned, kept or resolved alike.
+            exact = (mode, blob, raw_path) in present
+            bytes_ = mode in FILE_MODES and blob not in current_files
+            bytes_ = bytes_ and not exact and key not in blobs
+            if raw_path in combined:
+                # A path the merge itself wrote is not inherited from any
+                # parent, so only the current base and public tips (or a
+                # completed scan) vouch for its bytes.
+                bytes_ = mode in FILE_MODES and blob not in current_files
+                bytes_ = bytes_ and key not in blobs
+                check_entry(
+                    sha, mode, blob, raw_path, status, True, new_name, bytes_
+                )
+                continue
+            link = mode == b"120000" and blob not in current_links
+            link = link and not exact and key not in symlinks
+            if new_name or link or bytes_:
+                check_entry(
+                    sha, mode, blob, raw_path, status, link, new_name, bytes_
+                )
 
     # Git's own parser supplies the author and committer names.
     fields = (
@@ -647,7 +908,18 @@ def check_range(root, base, head, metadata=None, public=()):
             value.decode("utf-8", errors="replace")
             for value in fields[i + 1 : i + 3]
         )
-    for commit in commits:
+    # Parents before children, so completed checks are known to merges.
+    position = {
+        row: index
+        for index, row in enumerate(
+            git(
+                root, "rev-list", "--topo-order", "--reverse", *revisions
+            ).split()
+        )
+    }
+    if set(position) != {row[0] for row in commits}:
+        raise IncompleteScan("Inconsistent commit order")
+    for commit in sorted(commits, key=lambda row: position[row[0]]):
         sha = oid(commit[0].decode("ascii"))
         if sha not in identities:
             raise IncompleteScan("Unparsed commit identity")
@@ -657,62 +929,41 @@ def check_range(root, base, head, metadata=None, public=()):
             findings,
             identities[sha],
         )
-        # A merge can inherit an entry unchanged from a parent. Its origin
-        # was either scanned in another outgoing commit or belongs to base.
-        new_filenames = None
-        if len(commit) > 2:
-            filenames = git(
-                root,
-                "diff-tree",
-                "--root",
-                "-r",
-                "-c",
-                "--name-only",
-                "-z",
-                "--no-commit-id",
-                "--no-renames",
-                "--no-ext-diff",
-                sha,
-                "--",
-            ).split(b"\0")
-            if filenames[-1] != b"":
-                raise IncompleteScan("Incomplete combined filename diff")
-            new_filenames = set(filenames[:-1])
-        # Every parent of a merge matters. Inspect intermediate versions too,
-        # including files added and later removed before the final head.
-        records = git(
-            root,
-            "diff-tree",
-            "--root",
-            "-r",
-            "-m",
-            "-z",
-            "--raw",
-            "--no-commit-id",
-            "--no-renames",
-            "--no-abbrev",
-            "--no-ext-diff",
-            "--diff-filter=ACMT",
-            sha,
-            "--",
-        ).split(b"\0")
-        if records[-1] != b"" or (len(records) - 1) % 2:
-            raise IncompleteScan("Incomplete raw tree diff")
-        for index in range(0, len(records) - 1, 2):
-            header, raw_path = records[index : index + 2]
-            fields = header.split()
-            if len(fields) != 5 or not fields[0].startswith(b":"):
-                raise IncompleteScan("Malformed raw tree diff")
-            _, mode, _, blob, status = fields
-            # A merge entry is new only if it differs from every parent.
-            new_entry = new_filenames is None or raw_path in new_filenames
-            if new_entry and new_filenames is not None:
-                new_filenames.discard(raw_path)
-            check_entry(sha, mode, blob, raw_path, status, new_entry)
         # Entries inherited unchanged from excluded public history that the
         # public tips no longer contain are new relative to those snapshots.
         for mode, blob, raw_path in sorted(inherited.get(commit[0], ())):
-            check_entry(sha, mode, blob, raw_path, b"A", True)
+            check_entry(sha, mode, blob, raw_path, b"A", True, True)
+        records, combined = diffs[commit[0]]
+        if len(commit) <= 2:
+            for mode, blob, raw_path, status, old_mode, old_blob in records:
+                # One parent: an added path is a new name; a modified or
+                # retyped path keeps it unless that parent is unchecked.
+                new_name = status == b"A" or (
+                    len(commit) == 2 and commit[1] in unvetted
+                )
+                # Old bytes the current base and public tips no longer hold
+                # are scanned again when a commit brings them back. Making a
+                # base-history file executable, bytes and path unchanged,
+                # brings nothing back; the skip is not a completed scan.
+                executable_only = (
+                    len(commit) == 2
+                    and (old_mode, mode) == (b"100644", b"100755")
+                    and old_blob == blob
+                    and status == b"M"
+                    and blob not in introduced
+                    and is_ancestor(commit[1], base.encode())
+                )
+                bytes_ = (
+                    mode in FILE_MODES
+                    and not executable_only
+                    and blob not in current_files
+                    and blob.decode("ascii") not in blobs
+                )
+                check_entry(
+                    sha, mode, blob, raw_path, status, True, new_name, bytes_
+                )
+        else:
+            check_merge(sha, commit, records, combined)
 
     byte_count, binary_count = 0, 0
     if blobs:

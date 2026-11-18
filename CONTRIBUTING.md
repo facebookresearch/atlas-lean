@@ -44,12 +44,14 @@ upper-case parts; three-part package names and lower-case release branches are
 not classified by that shape alone.
 Preserve authorship and copyright notices when correcting provenance.
 
-File contents, commit messages (not headers), and PR titles and descriptions
-recognize two public forms; filenames, branches, and symlink targets stay
-strict. A publisher identifier is exempt only in the exact identifier slot of
-a recognized citation: a DOI under a listed publisher prefix (optionally
-prefixed by `doi:` or `https://doi.org/`) with a valid ISSN check digit, a
-recognized ScienceDirect article URL, or an exact citation in the checker.
+File contents, commit messages (not headers), the message of a supported
+embedded merge tag, and PR titles and descriptions recognize two public forms;
+filenames, branches, header values, and symlink targets stay strict. A whole
+recognized form must lie inside one such message. A publisher identifier is
+exempt only in the exact identifier slot of a recognized citation: a DOI under
+a listed publisher prefix (optionally prefixed by `doi:` or
+`https://doi.org/`) with a valid ISSN check digit, a recognized ScienceDirect
+article URL, or an exact citation in the checker.
 
 A filesystem-path match wholly inside an HTTP(S) URL path is exempt only for
 a public-looking DNS authority with no user information, valid labels and
@@ -64,12 +66,31 @@ The **Public references / public-references** check applies to every PR author,
 including forks. It reads every outgoing Git commit's complete message and all
 headers, including signature-shaped text, plus every new Git file blob. File
 versions replaced or deleted before the tip are included. Signature markers
-never disable scanning; they are data, not authenticated signatures. Blob
-contents Git excludes as base-history objects are not re-scanned; new
-destination filenames are still checked. A merge does not re-report a filename
-inherited unchanged from a parent: its origin is checked in the outgoing
-ancestor commits, or excluded with the base history. Deliberately restored
-historical files can be introduced and checked again. Existing historical
+never disable scanning; they are data, not authenticated signatures. File
+contents the current base or a public tip still holds, as a file or as a
+symlink target, are not re-scanned as file contents; a new or changed symlink
+target is scanned strictly, even when its bytes are held as file text. A
+single-parent commit that only makes a base-history file executable, with the
+same path and bytes, does not have them re-scanned; that skip never counts as a
+scan for later commits. New destination filenames are still checked. Editing the
+contents or mode of an existing path does not re-report its name. In a merge, a
+base-side parent is a direct parent reachable from the base and not contained
+in another parent. A name is not re-reported when the current base, a public
+tip, or a base-side parent has that exact path, even if the merge changes its
+contents or mode.
+File contents are scanned unless the current base or a public tip holds the
+same bytes (at any path), the merge keeps a base-side parent's exact entry
+(same path, mode, and object), or they were already scanned. A retained
+symlink target is scanned strictly unless the current base or a public tip
+holds it as a symlink target, the merge keeps such an exact entry, or it was
+already scanned as a target; a new or changed target is always strict. A
+base-side parent's bytes at another path never count. So contents and symlink
+targets a merge brings back after the base removed or cleaned them are checked
+again, and so is a restored name absent from every base-side parent. The commit
+graph cannot tell a deliberate same-path import from an earlier ordinary merge
+of a base-side parent, so that parent's exact path and exact entry still pass.
+Submodule entries pass only when kept unchanged from the current base or a
+public tip. Existing historical
 exposures need separate cleanup. It does not
 only inspect subjects or added lines. Errors, missing objects, moved PR
 metadata, and incomplete ranges fail
