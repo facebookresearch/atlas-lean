@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Author: @vonbo and an AI assistant
+Author: @vonbo, Meta Muse
 -/
 module
 

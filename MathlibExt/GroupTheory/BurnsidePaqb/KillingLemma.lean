@@ -17,7 +17,7 @@ public import MathlibExt.GroupTheory.BurnsidePaqb.CyclotomicField
 /-!
 Norm/killing stage of the complete Burnside proof.
 
-Authors: Muse Spark 1.3, @toskua, and an AI assistant
+Authors: Muse Spark 1.3, @toskua, Meta Muse
 Source archive: burnside_proof.zip
 SHA-256: d9da7df82e467d9fa587892eeef9f51e2b83df0588175653bd1d16264b09dd00
 
