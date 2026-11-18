@@ -46,10 +46,10 @@ theorem test_law_root_branch_right_leaf {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1
 event at the left-child address, with the root mass. -/
 theorem test_law_shiftLeft_preimage_root_branch {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
     law p (shiftLeft ⁻¹' branchAt []) = ENNReal.ofReal p := by
-  rw [shiftLeft_preimage_branchAt]
-  have hbranch : law p (branchAt (false :: [])) = ENNReal.ofReal p := by
-    rw [branchAt_eq_cylinder, law_cylinder hp0 hp1, cylinder_mass_singleton]
-    simp
-  exact hbranch
+  have hinv := law_shift_preimage hp0 hp1 [false] (measurableSet_branchAt [])
+  unfold shiftLeft
+  unfold shiftLeft at hinv
+  rw [hinv, branchAt_eq_cylinder, law_cylinder hp0 hp1, cylinder_mass_singleton]
+  simp
 
 

@@ -10,6 +10,8 @@ module
 
 public import Mathlib.Probability.ProductMeasure
 public import Mathlib.Probability.Distributions.Bernoulli
+public import Mathlib.Probability.Independence.InfinitePi
+public import MathlibExt.Probability.Configuration.ProductMeasure
 
 /-!
 # Independent branch choices at finite binary addresses
@@ -44,7 +46,7 @@ value (not a probability measure); every probability statement below assumes
 noncomputable def bernoulliBool (p : ℝ) : Measure Bool :=
   ENNReal.ofReal p • Measure.dirac true + ENNReal.ofReal (1 - p) • Measure.dirac false
 
-/-- (proposed symbol `law`): the independent branch-choice law on
+/-- the independent branch-choice law on
 `Ω = List Bool -> Bool`, the constant-family instance of
 `MeasureTheory.Measure.infinitePi` with coordinate law `bernoulliBool p`
 at every address. Unconditional as a measure; it is a probability
@@ -102,6 +104,30 @@ theorem law_map_eval {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (a : List Bool) :
   unfold law
   exact @Measure.infinitePi_map_eval (List Bool) (fun _ => Bool) _ (fun _ => bernoulliBool p) hInst a
 
+/-- On the probability range, this law is the existing Bernoulli product
+measure `StatMech.bernoulliProductMeasure` at the corresponding
+nonnegative parameter. The real-parameter form is retained because the
+grammar weight interface below it is real-valued. -/
+theorem law_eq_bernoulliProductMeasure {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
+    law p = StatMech.bernoulliProductMeasure (E := List Bool)
+      (ENNReal.toNNReal (ENNReal.ofReal p))
+      (by
+        have hle : ENNReal.ofReal p ≤ 1 := by simpa using ENNReal.ofReal_le_ofReal hp1
+        exact (ENNReal.toNNReal_le_toNNReal ENNReal.ofReal_ne_top ENNReal.one_ne_top).mpr hle) := by
+  have hcoord : bernoulliBool p = StatMech.bernoulliMeasure
+      (ENNReal.toNNReal (ENNReal.ofReal p))
+      (by
+        have hle : ENNReal.ofReal p ≤ 1 := by simpa using ENNReal.ofReal_le_ofReal hp1
+        exact (ENNReal.toNNReal_le_toNNReal ENNReal.ofReal_ne_top ENNReal.one_ne_top).mpr hle) := by
+    rw [bernoulliBool_eq_bernoulliMeasure hp0 hp1]
+    unfold StatMech.bernoulliMeasure
+    congr 1
+    apply Subtype.ext
+    show p = (ENNReal.ofReal p).toReal
+    rw [ENNReal.toReal_ofReal hp0]
+  unfold law StatMech.bernoulliProductMeasure
+  rw [hcoord]
+
 /-! ## finite-address cylinders and their masses -/
 
 /-- the finite-address cylinder fixing the choices on the finset
@@ -111,7 +137,7 @@ plain finite-coordinate event, not a tree type. -/
 def cylinder (s : Finset (List Bool)) (t : List Bool → Bool) : Set Ω :=
   {ω : Ω | ∀ a ∈ s, ω a = t a}
 
-/-- (proposed symbol `cylinder_mass`): the product mass of
+/-- the product mass of
 `cylinder s t` under `law p`: one factor `p` per address assigned
 `true` (branch) and one factor `1 - p` per address assigned `false`
 (leaf). -/
@@ -200,6 +226,27 @@ def branchAt (a : List Bool) : Set Ω :=
 /-- the event that the node at address `a` is a leaf. -/
 def leafAt (a : List Bool) : Set Ω :=
   {ω : Ω | ω a = false}
+
+theorem measurableSet_cylinder (s : Finset (List Bool)) (t : List Bool → Bool) :
+    MeasurableSet (cylinder s t) := by
+  have h : cylinder s t = ⋂ a ∈ s, {ω : Ω | ω a = t a} := by
+    ext ω
+    simp [cylinder]
+  rw [h]
+  exact MeasurableSet.biInter (Finset.countable_toSet s) (fun a _ =>
+    measurableSet_eq_fun (measurable_pi_apply a) measurable_const)
+
+theorem measurableSet_branchAt (a : List Bool) : MeasurableSet (branchAt a) := by
+  rw [show branchAt a = cylinder {a} (fun _ => true) from by
+    ext ω
+    simp [branchAt, cylinder]]
+  exact measurableSet_cylinder {a} (fun _ => true)
+
+theorem measurableSet_leafAt (a : List Bool) : MeasurableSet (leafAt a) := by
+  rw [show leafAt a = cylinder {a} (fun _ => false) from by
+    ext ω
+    simp [leafAt, cylinder]]
+  exact measurableSet_cylinder {a} (fun _ => false)
 
 theorem branchAt_eq_cylinder (a : List Bool) :
     branchAt a = cylinder {a} (fun _ => true) := by
@@ -373,71 +420,22 @@ are still independent `bernoulliBool p` coordinates), by
 `Measure.eq_infinitePi`. -/
 theorem map_shift_law {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (u : List Bool) :
     (law p).map (shift u) = law p := by
-  have hInst : ∀ i : List Bool, IsProbabilityMeasure ((fun _ : List Bool => bernoulliBool p) i) :=
+  haveI : ∀ i : List Bool, IsProbabilityMeasure ((fun _ : List Bool => bernoulliBool p) i) :=
     fun _ => bernoulliBool_isProbabilityMeasure hp0 hp1
+  haveI : ∀ i : List Bool,
+      IsProbabilityMeasure ((fun _ : List Bool => bernoulliBool p) (u ++ i)) :=
+    fun _ => bernoulliBool_isProbabilityMeasure hp0 hp1
+  haveI : ∀ i : List Bool, IsProbabilityMeasure (bernoulliBool p) :=
+    fun _ => bernoulliBool_isProbabilityMeasure hp0 hp1
+  have h := @MeasureTheory.Measure.map_infinitePi_infinitePi_of_inj (List Bool) (List Bool)
+    (fun _ => Bool) (fun _ => inferInstance) (fun _ : List Bool => bernoulliBool p)
+    (fun _ => bernoulliBool_isProbabilityMeasure hp0 hp1) (fun a : List Bool => u ++ a)
+    (List.append_right_injective u)
   unfold law
-  apply @Measure.eq_infinitePi (List Bool) (fun _ => Bool) _ (fun _ => bernoulliBool p) hInst _
-  intro s t ht
-  have hmeas : MeasurableSet ((s : Set (List Bool)).pi t) :=
-    MeasurableSet.pi (Finset.countable_toSet s) (fun i _ => ht i)
-  rw [@Measure.map_apply Ω Ω _ _ _ (shift u) (measurable_shift u) _ hmeas]
-  have hf_inj : Function.Injective (fun a : List Bool => u ++ a) :=
-    List.append_right_injective u
-  let e : List Bool ↪ List Bool := ⟨fun a => u ++ a, hf_inj⟩
-  have heq : ∀ a : List Bool, e a = u ++ a := fun _ => rfl
-  let t' : List Bool → Set Bool := fun b => {y | ∃ a ∈ s, u ++ a = b ∧ y ∈ t a}
-  have ht'_eq : ∀ a₀ ∈ s, t' (u ++ a₀) = t a₀ := by
-    intro a₀ ha₀
-    ext y
-    simp only [t', Set.mem_ofPred_eq]
-    constructor
-    · rintro ⟨a, ha, heq2, hy⟩
-      have : a = a₀ := hf_inj heq2
-      subst this
-      exact hy
-    · intro hy
-      exact ⟨a₀, ha₀, rfl, hy⟩
-  have ht'_eq_e : ∀ a₀ ∈ s, t' (e a₀) = t a₀ := by
-    intro a₀ ha₀
-    rw [heq]
-    exact ht'_eq a₀ ha₀
-  have ht'_meas : ∀ b ∈ s.map e, MeasurableSet (t' b) := by
-    intro b hb
-    rw [Finset.mem_map] at hb
-    obtain ⟨a, ha, hab⟩ := hb
-    rw [← hab]
-    exact ht'_eq_e a ha ▸ ht a
-  have hpre_eq : shift u ⁻¹' ((s : Set (List Bool)).pi t)
-      = ((s.map e : Finset (List Bool)) : Set (List Bool)).pi t' := by
-    ext ω
-    simp only [Set.mem_preimage, Set.mem_pi, Finset.mem_coe, shift]
-    constructor
-    · intro h b hb
-      rw [Finset.mem_map] at hb
-      obtain ⟨a, ha, hab⟩ := hb
-      rw [← hab, heq]
-      have ha_coe : a ∈ (s : Set (List Bool)) := Finset.mem_coe.mpr ha
-      have h_a := h a ha_coe
-      rw [ht'_eq a ha]
-      exact h_a
-    · intro h a ha
-      have ha_fin : a ∈ s := Finset.mem_coe.mp ha
-      have hb : e a ∈ s.map e := Finset.mem_map.mpr ⟨a, ha_fin, rfl⟩
-      have hb_coe : (e a : List Bool) ∈ ((s.map e : Finset (List Bool)) : Set (List Bool)) :=
-        Finset.mem_coe.mpr hb
-      have h_b := h (e a) hb_coe
-      rw [heq, ht'_eq a ha_fin] at h_b
-      exact h_b
-  rw [hpre_eq]
-  have hpi : Measure.infinitePi (fun _ : List Bool => bernoulliBool p)
-      (((s.map e : Finset (List Bool)) : Set (List Bool)).pi t')
-      = ∏ b ∈ s.map e, bernoulliBool p (t' b) := by
-    exact @Measure.infinitePi_pi (List Bool) (fun _ => Bool) _ (fun _ => bernoulliBool p) hInst (s.map e) t' ht'_meas
-  rw [hpi]
-  rw [Finset.prod_map s e (fun b => bernoulliBool p (t' b))]
-  apply Finset.prod_congr rfl
-  intro a ha
-  rw [ht'_eq_e a ha]
+  show Measure.map (fun ω i => ω (u ++ i))
+      (Measure.infinitePi fun _ : List Bool => bernoulliBool p) =
+    Measure.infinitePi fun _ : List Bool => bernoulliBool p
+  exact h
 
 theorem law_shift_preimage {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (u : List Bool)
     {E : Set Ω} (hE : MeasurableSet E) :
