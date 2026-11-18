@@ -21,4 +21,4 @@ Two players alternately choose moves `x 0, x 1, x 2, …` from a set `A`, each s
 
 - [Non-determined games](../non-determined-games/README.md): with the axiom of choice, the Gale–Stewart theorem cannot be extended to all payoff sets.
 - [Borel and analytic determinacy](../borel-and-analytic-determinacy/README.md): Martin's extensions of the theorem to Borel and, under a measurable cardinal, analytic payoff sets.
-- Banach–Mazur game: a topological game on the reals, whose determinacy is tied to the property of Baire.
+- [Banach–Mazur game](../../../Topology/descriptive-set-theory/banach-mazur-game/README.md): a topological game on the reals, whose determinacy is tied to the property of Baire.

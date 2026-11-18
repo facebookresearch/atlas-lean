@@ -11,4 +11,4 @@ With the axiom of choice, some game on `{0, 1}` is not determined (Gale and Stew
 
 - [Gale–Stewart games](../gale-stewart-games/README.md): the games, strategies and determinacy notion used here.
 - [Regularity of sets of reals from determinacy](../regularity-of-sets-of-reals-from-determinacy/README.md): how consequences of determinacy are stated once AD itself is refuted.
-- Bernstein sets: the same diagonalisation of length continuum, against perfect sets instead of strategies.
+- [Bernstein sets](../../../Topology/descriptive-set-theory/bernstein-set-exists.md): the same diagonalisation of length continuum, against perfect sets instead of strategies.
