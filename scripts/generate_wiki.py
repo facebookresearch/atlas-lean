@@ -238,45 +238,71 @@ def not_a_link(text: str) -> str:
     return LINK_SYNTAX.sub(lambda m: m.group() if LINK_TARGET.fullmatch(m.group(2)) else f"[{m.group(1)}]&#40;{m.group(2)})", text)
 
 
+# Where something other than code may start: a block comment, a line comment, a string, a character, a raw string.
+_LEXEME = re.compile(r'/-|--|"|\'|(?<![\w\'!?])r#*"')
+_STRING_TAIL = re.compile(r'(?:[^"\\]|\\.)*"', re.S)
+_CHAR = re.compile(r"'(?:\\(?:x[0-9a-fA-F]{2}|u\{[0-9a-fA-F]+\}|.)|[^\\\n'])'")
+_BLOCK = re.compile(r"/-|-/")
+
+
+def _blank(text: str) -> str:
+    return re.sub(r"[^\n]", " ", text)
+
+
+def code_only(text: str) -> str:
+    """The Lean source with every comment and literal blanked out, keeping its lines and columns.
+
+    It reads the source as Lean's lexer does: block comments nest, so a docstring that shows a documented
+    example stays one comment; a line comment runs to the end of its line; string literals, raw strings and
+    character literals may span lines and hide comment markers and declaration-looking text; and a prime
+    that ends a name (`h'`) starts no character literal.
+    """
+    out: list[str] = []
+    i, n = 0, len(text)
+    while i < n:
+        match = _LEXEME.search(text, i)
+        if match is None:
+            out.append(text[i:])
+            break
+        start, lexeme = match.start(), match.group()
+        out.append(text[i:start])
+        if lexeme == "/-":
+            depth, end = 1, n
+            for mark in _BLOCK.finditer(text, start + 2):
+                depth += 1 if mark.group() == "/-" else -1
+                if depth == 0:
+                    end = mark.end()
+                    break
+        elif lexeme == "--":
+            end = text.find("\n", start)
+            end = n if end < 0 else end
+        elif lexeme == '"':
+            tail = _STRING_TAIL.match(text, start + 1)
+            end = tail.end() if tail else n
+        elif lexeme == "'":
+            char = None if start and (text[start - 1].isalnum() or text[start - 1] in "_'!?") else _CHAR.match(text, start)
+            if char is None:
+                out.append("'")
+                i = start + 1
+                continue
+            end = char.end()
+        else:  # a raw string, r"..." or r#"..."# with as many closing hashes as opening ones
+            close = '"' + "#" * (len(lexeme) - 2)
+            end = text.find(close, match.end())
+            end = n if end < 0 else end + len(close)
+        out.append(_blank(text[start:end]))
+        i = end
+    return "".join(out)
+
+
 def without_comments(text: str) -> str:
-    return re.sub(r"--[^\n]*", "", re.sub(r"/-.*?-/", " ", text, flags=re.S))
+    """The Lean source without its comments and literals (blanked, so that no two tokens join)."""
+    return code_only(text)
 
 
 def code_lines(lines: list[str]) -> list[str]:
-    """The lines with every comment blanked out, keeping their number and the code's columns.
-
-    Block comments nest as in Lean, so a docstring that shows a documented example stays one comment; a line
-    comment runs to the end of its line; neither starts inside a string literal.
-    """
-    out: list[str] = []
-    depth = 0
-    for line in lines:
-        chars = list(line)
-        i, in_string = 0, False
-        while i < len(chars):
-            pair = line[i:i + 2]
-            if depth:
-                if pair == "/-":
-                    depth += 1; chars[i] = chars[i + 1] = " "; i += 2
-                elif pair == "-/":
-                    depth -= 1; chars[i] = chars[i + 1] = " "; i += 2
-                else:
-                    chars[i] = " "; i += 1
-            elif in_string:
-                if line[i] == "\\":
-                    i += 2
-                else:
-                    in_string = line[i] != '"'; i += 1
-            elif pair == "/-":
-                depth = 1; chars[i] = chars[i + 1] = " "; i += 2
-            elif pair == "--":
-                chars[i:] = [" "] * (len(chars) - i); break
-            elif line[i:i + 3] in ("'\"'",):
-                i += 3
-            else:
-                in_string = line[i] == '"'; i += 1
-        out.append("".join(chars))
-    return out
+    """The lines with every comment and literal blanked out (see code_only), keeping their number and columns."""
+    return code_only("\n".join(lines)).split("\n")
 
 
 def attribute_opening(lines: list[str], end: int) -> int | None:

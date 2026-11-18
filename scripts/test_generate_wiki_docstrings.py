@@ -58,6 +58,25 @@ class DocstringBefore(unittest.TestCase):
         self.assertEqual(found, [(3, "s"), (5, "t")])
         self.assertEqual(len(wiki.code_lines(lines)), len(lines))
 
+    def test_literals_spanning_lines_hide_comment_markers_and_declarations(self) -> None:
+        # Lean strings may span lines; a comment marker or a declaration-looking line inside one is text.
+        lines = ('/-- A multi-line string containing comment markers as literal characters. -/\n'
+                 'def text : String := "first line\n/- literal characters\nlast line"\n\n'
+                 '/-- The real value after the string. -/\ndef real : Nat := 1').splitlines()
+        self.assertEqual([(n, m.group("name")) for n, m in wiki.declaration_lines(lines)], [(1, "text"), (6, "real")])
+        lines = 'def s : String := "a\ndef fake : Nat := 0\nb"\ndef t : Nat := 1'.splitlines()
+        self.assertEqual([(n, m.group("name")) for n, m in wiki.declaration_lines(lines)], [(0, "s"), (3, "t")])
+
+    def test_characters_raw_strings_and_primes_are_read_as_lean_reads_them(self) -> None:
+        lines = ("def q : Char := '\"'\ndef h2 : Nat := f' 0 -- \"\ndef r : String := r#\"/- no comment\"#\n"
+                 'def e : String := "a\\"/-"\ntheorem x\' : True := trivial').splitlines()
+        self.assertEqual([m.group("name") for _, m in wiki.declaration_lines(lines)], ["q", "h2", "r", "e", "x'"])
+
+    def test_sorry_in_a_nested_comment_or_a_string_is_no_proof_hole(self) -> None:
+        text = '/- /- -/ sorry -/\ntheorem a : True := by exact "sorry" |> fun _ => trivial\n'
+        self.assertNotRegex(wiki.without_comments(text), r"\bsorry\b")
+        self.assertEqual(wiki.without_comments(text).count("\n"), text.count("\n"))
+
     def test_indented_prose_outside_a_mutual_block_is_no_declaration(self) -> None:
         source = ("/-- A result.\n  theorem: decidable iff r.e. and co-r.e.\n  lemma with that bound; -/\n"
                   "theorem t : True := trivial\n\nnamespace N\n  def indented : Nat := 1\nend N")

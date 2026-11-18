@@ -82,7 +82,10 @@ python scripts/check_blueprint_site.py site-src site
 ```
 
 These shell snippets use Bash. `lean-facts` updates the local articles and
-annotations for rendering; do not commit those derived changes. Missing
+annotations for rendering; do not commit those derived changes. Because the
+rendered blueprint then differs from the commit, `autoform render` leaves out
+each page's link to its Markdown source; restoring those links is tracked in
+[#4993](https://github.com/facebookresearch/atlas-lean/issues/4993). Missing
 compiled modules or import collisions fail the workflow rather than silently
 publishing a partial graph. The ordinary repository CI remains the authority
 for the libraries' build and trust-policy checks.
