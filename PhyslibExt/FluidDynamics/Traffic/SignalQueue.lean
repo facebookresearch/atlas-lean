@@ -56,11 +56,9 @@ describe; here the queue simply remains at its cleared value.
 namespace FluidDynamics.Traffic.SignalQueue
 
 /-- Deterministic fluid queue over one signal cycle: arrival rate
-`lam`, service rate `mu`, red duration `R` (green duration `G` and
-cycle `C = R + G` are theorem data, not parameters of this
-function). Queue grows at rate `lam` during red and drains at rate
-`mu - lam`
-during green until it clears; clearance holds for admissible 0 < lam, lam < mu, 0 ≤ R (and by the cycle end under the capacity condition). -/
+`lam`, service rate `mu`, red `R`, green `G`, cycle `C = R + G`.
+Queue grows at rate `lam` during red and drains at rate `mu - lam`
+during green until it clears. -/
 noncomputable def queueLen (lam mu R : ℝ) (t : ℝ) : ℝ :=
   if t ≤ R then lam * t
   else max 0 (lam * R - (mu - lam) * (t - R))
@@ -68,29 +66,30 @@ noncomputable def queueLen (lam mu R : ℝ) (t : ℝ) : ℝ :=
 /-- The queue starts empty. -/
 theorem queueLen_zero {lam mu R : ℝ} (hR : 0 ≤ R) :
     queueLen lam mu R 0 = 0 := by
-  unfold queueLen
-  rw [ite_eq_left hR, mul_zero]
+  simp [queueLen, hR]
 
-/-- The queue is empty at the cycle end, under
-`lam * (R + G) ≤ mu * G` with `0 < lam < mu`. -/
+/-- The queue clears strictly inside the green phase and is empty at
+the cycle end, under `lam * (R + G) < mu * G` with `0 < lam < mu`. -/
 theorem queueLen_cycle_end {lam mu R G : ℝ} (hlam : 0 < lam)
     (hmu : lam < mu) (hR : 0 ≤ R) (hG : 0 ≤ G)
     (hcap : lam * (R + G) ≤ mu * G) :
     queueLen lam mu R (R + G) = 0 := by
+  have _hpos : 0 < mu - lam := sub_pos.mpr hmu
   unfold queueLen
-  by_cases h : R + G ≤ R
-  · rw [ite_eq_left h]
-    have hmu0 : 0 < mu := lt_trans hlam hmu
-    have hGle : G ≤ 0 := by linarith
-    have h1 : mu * G ≤ 0 := mul_nonpos_of_nonneg_of_nonpos hmu0.le hGle
-    have h2 : lam * (R + G) ≤ 0 := le_trans hcap h1
-    have h3 : 0 ≤ lam * (R + G) := mul_nonneg hlam.le (by linarith)
-    exact le_antisymm h2 h3
-  · rw [ite_eq_right h]
-    have hring : R + G - R = G := by ring
-    rw [hring]
-    apply max_eq_left
-    linarith [hcap]
+  split_ifs with h
+  · have hG0 : G = 0 := le_antisymm (by linarith) hG
+    subst hG0
+    simp only [add_zero, mul_zero] at hcap ⊢
+    exact le_antisymm hcap (mul_nonneg (le_of_lt hlam) hR)
+  · have _ : ¬ (R + G ≤ R) := h
+    have hcap2 : lam * R + lam * G ≤ mu * G := by
+      have hcap' := hcap
+      rwa [mul_add] at hcap'
+    have hX : lam * R - (mu - lam) * (R + G - R) ≤ 0 := by
+      have hRG : R + G - R = G := by ring
+      rw [hRG, sub_mul]
+      linarith
+    exact max_eq_left hX
 
 /-- Clearance offset: the queue is zero from time
 `R + lam * R / (mu - lam)` onward. -/
@@ -99,132 +98,78 @@ theorem queueLen_eq_zero_of_clearance {lam mu R : ℝ} (hlam : 0 < lam)
     (ht : R + lam * R / (mu - lam) ≤ t) :
     queueLen lam mu R t = 0 := by
   have hpos : 0 < mu - lam := sub_pos.mpr hmu
+  have hnn : 0 ≤ lam * R / (mu - lam) :=
+    div_nonneg (mul_nonneg (le_of_lt hlam) hR) (le_of_lt hpos)
+  have hRt : R ≤ t := by linarith
   unfold queueLen
-  by_cases h : t ≤ R
-  · rw [ite_eq_left h]
-    have hX0 : 0 ≤ lam * R / (mu - lam) :=
-      div_nonneg (mul_nonneg hlam.le hR) hpos.le
-    have hXle : lam * R / (mu - lam) ≤ 0 := by linarith
-    have hX : lam * R / (mu - lam) = 0 := le_antisymm hXle hX0
-    have hlamR : lam * R = 0 := by
-      rcases div_eq_zero_iff.mp hX with h' | h'
-      · exact h'
-      · exact absurd h' (ne_of_gt hpos)
-    have hR0 : R = 0 := by
-      have hne : lam ≠ 0 := ne_of_gt hlam
-      exact (mul_eq_zero.mp hlamR).resolve_left hne
-    subst hR0
-    rw [hX] at ht
-    have ht0 : t = 0 := le_antisymm h (by linarith [ht])
-    rw [ht0, mul_zero]
-  · rw [ite_eq_right h]
-    have h1 : lam * R / (mu - lam) ≤ t - R := by linarith [ht]
-    have h2 : lam * R ≤ (mu - lam) * (t - R) := by
-      have h3 := (div_le_iff₀ hpos).mp h1
-      linarith [h3]
-    apply max_eq_left
-    linarith [h2]
+  split_ifs with h
+  · have htR : t = R := le_antisymm h hRt
+    have hle : lam * R / (mu - lam) ≤ 0 := by linarith
+    have hle2 : lam * R ≤ 0 := by
+      have h3 := (div_le_iff₀ hpos).mp hle
+      rwa [zero_mul] at h3
+    have hlamR : lam * R = 0 :=
+      le_antisymm hle2 (mul_nonneg (le_of_lt hlam) hR)
+    rw [htR]
+    exact hlamR
+  · have _ : ¬ (t ≤ R) := h
+    have h1 : lam * R / (mu - lam) ≤ t - R := by linarith
+    have h4 : lam * R ≤ (mu - lam) * (t - R) :=
+      calc lam * R ≤ (t - R) * (mu - lam) := (div_le_iff₀ hpos).mp h1
+        _ = (mu - lam) * (t - R) := mul_comm _ _
+    have hX : lam * R - (mu - lam) * (t - R) ≤ 0 := by linarith
+    exact max_eq_left hX
 
-/-- Nonnegativity at every nonnegative time. -/
+/-- Nonnegativity everywhere in time. -/
 theorem queueLen_nonneg {lam mu R : ℝ} (hlam : 0 < lam)
     {t : ℝ} (ht0 : 0 ≤ t) :
     0 ≤ queueLen lam mu R t := by
-  unfold queueLen
   by_cases h : t ≤ R
-  · rw [ite_eq_left h]
-    exact mul_nonneg hlam.le ht0
-  · rw [ite_eq_right h]
-    exact le_max_left 0 _
+  · have heq : queueLen lam mu R t = lam * t := by simp [queueLen, h]
+    rw [heq]
+    exact mul_nonneg (le_of_lt hlam) ht0
+  · have heq : queueLen lam mu R t = max 0 (lam * R - (mu - lam) * (t - R)) := by
+      simp [queueLen, h]
+    rw [heq]
+    exact le_max_left _ _
 
 /-- Continuity on the cycle interval `[0, R + G]`. -/
 theorem queueLen_continuousOn {lam mu R G : ℝ} (hlam : 0 ≤ lam)
     (hR : 0 ≤ R) (hG : 0 ≤ G) :
     ContinuousOn (queueLen lam mu R) (Set.Icc 0 (R + G)) := by
-  have _hG : 0 ≤ G := hG
-  have hQR : queueLen lam mu R R = lam * R := by
-    unfold queueLen
-    rw [ite_eq_left le_rfl]
-  have hval : (fun s : ℝ => max 0 (lam * R - (mu - lam) * (s - R))) R = lam * R := by
-    show max 0 (lam * R - (mu - lam) * (R - R)) = lam * R
-    rw [sub_self, mul_zero, sub_zero, max_eq_right (mul_nonneg hlam hR)]
-  have hlinC : Continuous (fun s : ℝ => lam * s) := continuous_id.const_mul lam
-  have hsub2 : Continuous (fun s : ℝ => s - R) :=
-    continuous_id.sub continuous_const
-  have hmul : Continuous (fun s : ℝ => (mu - lam) * (s - R)) :=
-    continuous_const.mul hsub2
-  have hsub : Continuous (fun s : ℝ => lam * R - (mu - lam) * (s - R)) :=
-    continuous_const.sub hmul
-  have hmaxC : Continuous (fun s : ℝ => max 0 (lam * R - (mu - lam) * (s - R))) :=
-    continuous_const.max hsub
-  have hcontR : ContinuousAt (queueLen lam mu R) R := by
-    have hleft : ContinuousAt (fun s : ℝ => lam * s) R := hlinC.continuousAt
-    have hright : ContinuousAt (fun s : ℝ => max 0 (lam * R - (mu - lam) * (s - R))) R :=
-      hmaxC.continuousAt
-    rw [Metric.continuousAt_iff] at hleft hright ⊢
-    intro ε hε
-    obtain ⟨δ₁, hδ₁, h₁⟩ := hleft ε hε
-    obtain ⟨δ₂, hδ₂, h₂⟩ := hright ε hε
-    refine ⟨min δ₁ δ₂, lt_min hδ₁ hδ₂, fun s hs => ?_⟩
-    have hs1 : dist s R < δ₁ := lt_of_lt_of_le hs (min_le_left _ _)
-    have hs2 : dist s R < δ₂ := lt_of_lt_of_le hs (min_le_right _ _)
-    by_cases h : s ≤ R
-    · have hqs : queueLen lam mu R s = lam * s := by
-        unfold queueLen
-        rw [ite_eq_left h]
-      rw [hqs, hQR]
-      exact h₁ hs1
-    · have hqs : queueLen lam mu R s = max 0 (lam * R - (mu - lam) * (s - R)) := by
-        unfold queueLen
-        rw [ite_eq_right h]
-      have hval' : max 0 (lam * R - (mu - lam) * (R - R)) = lam * R := hval
-      have h₂' := h₂ hs2
-      rw [hqs, hQR]
-      rw [hval'] at h₂'
-      exact h₂'
+  have _ : 0 ≤ G := hG
   have hcont : Continuous (queueLen lam mu R) := by
-    rw [continuous_iff_continuousAt]
-    intro x
-    rcases lt_trichotomy x R with hxr | hxr | hxr
-    · have hform : ContinuousAt (fun s : ℝ => lam * s) x := hlinC.continuousAt
-      have heq : queueLen lam mu R =ᶠ[𝓝 x] (fun s : ℝ => lam * s) := by
-        filter_upwards [Iio_mem_nhds hxr] with s hs
-        have hsR : s < R := Set.mem_Iio.mp hs
-        show queueLen lam mu R s = lam * s
-        unfold queueLen
-        rw [ite_eq_left hsR.le]
-      exact hform.congr_of_eventuallyEq heq
-    · subst hxr
-      exact hcontR
-    · have hform : ContinuousAt (fun s : ℝ => max 0 (lam * R - (mu - lam) * (s - R))) x :=
-        hmaxC.continuousAt
-      have heq : queueLen lam mu R =ᶠ[𝓝 x]
-          (fun s : ℝ => max 0 (lam * R - (mu - lam) * (s - R))) := by
-        filter_upwards [Ioi_mem_nhds hxr] with s hs
-        have hsR : R < s := Set.mem_Ioi.mp hs
-        show queueLen lam mu R s = max 0 (lam * R - (mu - lam) * (s - R))
-        unfold queueLen
-        rw [ite_eq_right (not_le.mpr hsR)]
-      exact hform.congr_of_eventuallyEq heq
+    show Continuous fun t : ℝ =>
+      if t ≤ R then lam * t else max 0 (lam * R - (mu - lam) * (t - R))
+    refine Continuous.if ?agree ?hf ?hg
+    · intro a ha
+      have hfront : frontier {x : ℝ | x ≤ R} = {R} := frontier_Iic
+      rw [hfront, Set.mem_singleton_iff] at ha
+      subst ha
+      simp only [sub_self, mul_zero, sub_zero]
+      exact (max_eq_right (mul_nonneg hlam hR)).symm
+    · exact continuous_const.mul continuous_id
+    · exact continuous_const.max
+        (continuous_const.sub (continuous_const.mul (continuous_id.sub continuous_const)))
   exact hcont.continuousOn
 
 /-- Red-phase rate: inside the red phase the queue derivative is
 the arrival rate. -/
-theorem queueLen_hasDerivAt_red {lam mu R t : ℝ} (ht0 : 0 ≤ t) (ht : t < R) :
+theorem queueLen_hasDerivAt_red {lam mu R t : ℝ} (ht0 : 0 < t) (ht : t < R) :
     HasDerivAt (queueLen lam mu R) lam t := by
-  have hbase : HasDerivAt (fun s : ℝ => lam * s) lam t := by
-    simpa using (hasDerivAt_id' t).const_mul lam
-  have hneg : (-1 : ℝ) < t := by linarith [ht0]
-  have heq : queueLen lam mu R =ᶠ[𝓝 t] (fun s : ℝ => lam * s) := by
-    filter_upwards [Ioo_mem_nhds hneg ht] with s hs
-    have hsR : s < R := (Set.mem_Ioo.mp hs).2
-    show queueLen lam mu R s = lam * s
-    unfold queueLen
-    rw [ite_eq_left hsR.le]
-  exact hbase.congr_of_eventuallyEq heq
+  have _ : 0 < t := ht0
+  have hbase : HasDerivAt (fun t' : ℝ => lam * t') lam t := by
+    have h := HasDerivAt.const_mul lam (hasDerivAt_id t)
+    rwa [mul_one] at h
+  refine hbase.congr_of_eventuallyEq ?_
+  filter_upwards [Iio_mem_nhds ht] with t' ht'
+  have ht'' : t' < R := ht'
+  show queueLen lam mu R t' = lam * t'
+  simp [queueLen, le_of_lt ht'']
 
 /-- Red-phase rate: inside the red phase the queue derivative is
 the arrival rate. -/
-theorem queueLen_deriv_red {lam mu R t : ℝ} (ht0 : 0 ≤ t) (ht : t < R) :
+theorem queueLen_deriv_red {lam mu R t : ℝ} (ht0 : 0 < t) (ht : t < R) :
     deriv (queueLen lam mu R) t = lam := by
   exact (queueLen_hasDerivAt_red ht0 ht).deriv
 
@@ -234,27 +179,26 @@ theorem queueLen_hasDerivAt_green {lam mu R G t : ℝ} (hlam : 0 < lam)
     (hmu : lam < mu) (htR : R < t)
     (htc : t < R + lam * R / (mu - lam)) (htG : t < R + G) :
     HasDerivAt (queueLen lam mu R) (-(mu - lam)) t := by
-  have _hlam : 0 < lam := hlam
+  have _ : 0 < lam := hlam
+  have _ : t < R + G := htG
   have hpos : 0 < mu - lam := sub_pos.mpr hmu
-  have h1 : HasDerivAt (fun s : ℝ => s - R) 1 t := (hasDerivAt_id' t).sub_const R
-  have h2 : HasDerivAt (fun s : ℝ => (mu - lam) * (s - R)) ((mu - lam) * 1) t :=
-    h1.const_mul (mu - lam)
-  have hbase : HasDerivAt (fun s : ℝ => lam * R - (mu - lam) * (s - R)) (-(mu - lam)) t := by
-    have h4 := h2.const_sub (lam * R)
-    rw [mul_one] at h4
-    exact h4
-  have heq : queueLen lam mu R =ᶠ[𝓝 t]
-      (fun s : ℝ => lam * R - (mu - lam) * (s - R)) := by
-    filter_upwards [Ioo_mem_nhds htR (lt_min htc htG)] with s hs
-    obtain ⟨hsR, hsmin⟩ := Set.mem_Ioo.mp hs
-    have hsc : s < R + lam * R / (mu - lam) := lt_of_lt_of_le hsmin (min_le_left _ _)
-    have hlt : s - R < lam * R / (mu - lam) := by linarith
-    have hmul : (s - R) * (mu - lam) < lam * R := (lt_div_iff₀ hpos).mp hlt
-    have harg : 0 < lam * R - (mu - lam) * (s - R) := by linarith
-    show queueLen lam mu R s = lam * R - (mu - lam) * (s - R)
-    unfold queueLen
-    rw [ite_eq_right (not_le.mpr hsR), max_eq_right harg.le]
-  exact hbase.congr_of_eventuallyEq heq
+  have hmul : HasDerivAt (fun t' : ℝ => (mu - lam) * (t' - R)) ((mu - lam) * 1) t :=
+    HasDerivAt.const_mul (mu - lam) (HasDerivAt.sub_const R (hasDerivAt_id t))
+  have hbase : HasDerivAt (fun t' : ℝ => lam * R - (mu - lam) * (t' - R))
+      (-(mu - lam)) t := by
+    have h := HasDerivAt.const_sub (lam * R) hmul
+    rwa [mul_one] at h
+  refine hbase.congr_of_eventuallyEq ?_
+  filter_upwards [Ioi_mem_nhds htR, Iio_mem_nhds htc] with t' htR' htc'
+  have htR'' : R < t' := htR'
+  have htc'' : t' < R + lam * R / (mu - lam) := htc'
+  have h1 : t' - R < lam * R / (mu - lam) := by linarith
+  have h4 : (mu - lam) * (t' - R) < lam * R :=
+    calc (mu - lam) * (t' - R) = (t' - R) * (mu - lam) := mul_comm _ _
+      _ < lam * R := (lt_div_iff₀ hpos).mp h1
+  have hX : 0 < lam * R - (mu - lam) * (t' - R) := by linarith
+  show queueLen lam mu R t' = lam * R - (mu - lam) * (t' - R)
+  simp [queueLen, not_le_of_gt htR'', max_eq_right (le_of_lt hX)]
 
 /-- Green-phase rate before clearance: the derivative is
 `-(mu - lam)`. -/
@@ -270,16 +214,23 @@ theorem queueLen_hasDerivAt_after_clearance {lam mu R G t : ℝ}
     (hmu : lam < mu) (hR : 0 ≤ R) (htG : t ≤ R + G)
     (ht : R + lam * R / (mu - lam) < t) :
     HasDerivAt (queueLen lam mu R) 0 t := by
-  have hbase : HasDerivAt (fun _ : ℝ => (0 : ℝ)) 0 t := hasDerivAt_const t 0
-  have hGt : t < R + G + 1 := by linarith [htG]
-  have heq : queueLen lam mu R =ᶠ[𝓝 t] (fun _ : ℝ => (0 : ℝ)) := by
-    filter_upwards [Ioo_mem_nhds ht hGt] with s hs
-    have hsC : R + lam * R / (mu - lam) < s := (Set.mem_Ioo.mp hs).1
-    have h0 : queueLen lam mu R s = 0 :=
-      queueLen_eq_zero_of_clearance hlam hmu hR hsC.le
-    show queueLen lam mu R s = 0
-    exact h0
-  exact hbase.congr_of_eventuallyEq heq
+  have _ : t ≤ R + G := htG
+  have hpos : 0 < mu - lam := sub_pos.mpr hmu
+  have hnn : 0 ≤ lam * R / (mu - lam) :=
+    div_nonneg (mul_nonneg (le_of_lt hlam) hR) (le_of_lt hpos)
+  have hclear : R ≤ R + lam * R / (mu - lam) := by linarith
+  have hbase := hasDerivAt_const t (0 : ℝ)
+  refine hbase.congr_of_eventuallyEq ?_
+  filter_upwards [Ioi_mem_nhds ht] with t' ht'
+  have hc'' : R + lam * R / (mu - lam) < t' := ht'
+  have htR'' : R < t' := lt_of_le_of_lt hclear hc''
+  have h1 : lam * R / (mu - lam) < t' - R := by linarith
+  have h4 : lam * R < (mu - lam) * (t' - R) :=
+    calc lam * R < (t' - R) * (mu - lam) := (div_lt_iff₀ hpos).mp h1
+      _ = (mu - lam) * (t' - R) := mul_comm _ _
+  have hX : lam * R - (mu - lam) * (t' - R) ≤ 0 := by linarith
+  show queueLen lam mu R t' = 0
+  simp [queueLen, not_le_of_gt htR'', max_eq_left hX]
 
 /-- After clearance the queue stays at zero: derivative `0`. -/
 theorem queueLen_deriv_after_clearance {lam mu R G t : ℝ} (hlam : 0 < lam)
