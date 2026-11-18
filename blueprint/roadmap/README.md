@@ -12,3 +12,7 @@
 - [Algebra](Algebra/README.md)
 - [Group Theory](GroupTheory/README.md)
 - [Ring Theory](RingTheory/README.md)
+- [Field Theory](FieldTheory/README.md)
+- [Linear Algebra](LinearAlgebra/README.md)
+- [Representation Theory](RepresentationTheory/README.md)
+- [Number Theory](NumberTheory/README.md)
