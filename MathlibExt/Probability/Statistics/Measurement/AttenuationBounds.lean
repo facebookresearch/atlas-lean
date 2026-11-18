@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import MathlibExt.Biology.StatisticalGenetics.LDScoreVariance
+import MathlibExt.Probability.Statistics.CovarianceBounds
 public import MathlibExt.Probability.Statistics.Measurement.NormalizedCovarianceAttenuation
 public import Mathlib.Probability.Moments.Covariance
 public import Mathlib.Probability.Moments.Variance
@@ -70,7 +70,7 @@ private theorem abs_cov_div_sqrt_mul_sqrt_le_one {Ω : Type*} [MeasurableSpace �
     memLp_div_sqrt_variance_self hZ
   have hV : MemLp (fun ω => W ω / Real.sqrt Var[W; μ]) 2 μ :=
     memLp_div_sqrt_variance_self hW
-  have h2 := MathlibExt.Biology.StatisticalGenetics.LDScoreVariance.two_mul_abs_covariance_le
+  have h2 := MathlibExt.Probability.Statistics.two_mul_abs_covariance_le
     hU hV
   rw [covariance_div_sqrt_variance, variance_div_sqrt_variance_self hVarZ,
     variance_div_sqrt_variance_self hVarW] at h2
