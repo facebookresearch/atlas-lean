@@ -22,17 +22,17 @@ def rampSeq : ℕ → ℝ := fun n => n
 
 -- Two-tap kernel on the ramp: `n + 2(n - 1)` for `n ≥ 1`, `0` at `0`.
 example : causalConv twoTap rampSeq 0 = 0 := by
-  norm_num [causalConv_apply, twoTap, rampSeq, Finset.sum_range_succ]
+  norm_num [AdditiveCombinatorics.sumConv_apply, twoTap, rampSeq, Finset.sum_range_succ]
 example : causalConv twoTap rampSeq 1 = 1 := by
-  norm_num [causalConv_apply, twoTap, rampSeq, Finset.sum_range_succ]
+  norm_num [AdditiveCombinatorics.sumConv_apply, twoTap, rampSeq, Finset.sum_range_succ]
 example : causalConv twoTap rampSeq 2 = 4 := by
-  norm_num [causalConv_apply, twoTap, rampSeq, Finset.sum_range_succ]
+  norm_num [AdditiveCombinatorics.sumConv_apply, twoTap, rampSeq, Finset.sum_range_succ]
 example : causalConv twoTap rampSeq 4 = 10 := by
-  norm_num [causalConv_apply, twoTap, rampSeq, Finset.sum_range_succ]
+  norm_num [AdditiveCombinatorics.sumConv_apply, twoTap, rampSeq, Finset.sum_range_succ]
 
 -- Boundary at `n = 0`, for arbitrary sequences.
 example (f g : ℕ → ℝ) : causalConv f g 0 = f 0 * g 0 := by
-  simp [causalConv_apply]
+  simp [AdditiveCombinatorics.sumConv_apply]
 
 -- Zero kernel on both sides.
 example (g : ℕ → ℝ) : causalConv 0 g 3 = 0 := by simp
@@ -41,24 +41,24 @@ example (f : ℕ → ℝ) : causalConv f 0 3 = 0 := by simp
 -- The delay kernel `Pi.single 2 1` shifts by two: output at `5` reads
 -- the input at `3`.
 example (g : ℕ → ℝ) : causalConv (Pi.single 2 1) g 5 = g 3 := by
-  norm_num [causalConv_apply, Finset.sum_range_succ, Pi.single_apply]
+  norm_num [AdditiveCombinatorics.sumConv_apply, Finset.sum_range_succ, Pi.single_apply]
 
 -- Unit sample on both sides at explicit points.
-example (f : ℕ → ℝ) : causalConv (Pi.single 0 1) f 2 = f 2 := by
-  rw [single_zero_causalConv]
-example (f : ℕ → ℝ) : causalConv f (Pi.single 0 1) 2 = f 2 := by
-  rw [causalConv_single_zero]
+example (f : ℕ → ℝ) : causalConv (Pi.single 0 1) f 2 = f 2 :=
+  congrFun (AdditiveCombinatorics.single_zero_sumConv f) 2
+example (f : ℕ → ℝ) : causalConv f (Pi.single 0 1) 2 = f 2 :=
+  congrFun (AdditiveCombinatorics.sumConv_single_zero f) 2
 
 -- Associativity applies at the full non-unital generality.
 example {R : Type*} [NonUnitalSemiring R] (f g h : ℕ → R) :
     causalConv (causalConv f g) h = causalConv f (causalConv g h) :=
-  causalConv_assoc f g h
+  AdditiveCombinatorics.sumConv_assoc f g h
 
-#print axioms causalConv_apply
-#print axioms causalConv_eq_addRingConvolution
-#print axioms zero_causalConv
-#print axioms causalConv_zero
-#print axioms single_zero_causalConv
-#print axioms causalConv_single_zero
-#print axioms causalConv_comm
-#print axioms causalConv_assoc
+#print axioms AdditiveCombinatorics.sumConv_apply
+#print axioms AdditiveCombinatorics.sumConv_eq_addRingConvolution
+#print axioms AdditiveCombinatorics.zero_sumConv
+#print axioms AdditiveCombinatorics.sumConv_zero
+#print axioms AdditiveCombinatorics.single_zero_sumConv
+#print axioms AdditiveCombinatorics.sumConv_single_zero
+#print axioms AdditiveCombinatorics.sumConv_comm
+#print axioms AdditiveCombinatorics.sumConv_assoc

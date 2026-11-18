@@ -18,6 +18,7 @@ module
 public import MathlibExt.Algebra.Group.Indicator
 public import MathlibExt.Combinatorics.Additive.RepresentationCount
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import Mathlib.Topology.Algebra.InfiniteSum.DiscreteConvolution
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.BigOperators.NatAntidiagonal
 
@@ -102,6 +103,17 @@ theorem orderedRepresentationCount_eq_powerSeries_coeff (A : Set ℕ) (n : ℕ) 
     mul_ite, mul_one, mul_zero]
   push_cast [← ite_and, card_filter, and_comm]
   congr!
+
+/-- Agreement with Mathlib's generic discrete convolution
+(`DiscreteConvolution.addRingConvolution`, the additive-index
+ring convolution, specialized to `ℕ`): on `ℕ` the generic
+`tsum`-based convolution is the finite sum convolution. -/
+theorem sumConv_eq_addRingConvolution {R : Type*}
+    [NonUnitalNonAssocSemiring R] [TopologicalSpace R] (f g : ℕ → R) :
+    sumConv f g = DiscreteConvolution.addRingConvolution f g := by
+  ext n
+  simp only [DiscreteConvolution.addRingConvolution_eq_sum_antidiagonal]
+  rfl
 
 /-- The explicit finite range formula for the sum convolution. -/
 @[simp]
