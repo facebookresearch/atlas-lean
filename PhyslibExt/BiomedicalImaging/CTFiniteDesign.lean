@@ -25,7 +25,7 @@ forward linearity only; no inverse or uniqueness claim is made.
 ## ii. Key results
 
 * `ct_design_apply`: measurement of a superposition is the design sum.
-* `ct_design_entry`: the same statement at a chosen ray.
+* `ct_design_radon_apply`: the application law for the Radon design entries.
 
 ## iii. Table of contents
 
@@ -53,18 +53,6 @@ lemma ct_design_apply {ι α : Type*} [MeasurableSpace α] {s : Finset ι}
     integral_finsetSum _ (fun i hi => (hint i hi).const_mul _)
   rw [hsum]
   exact sum_congr rfl (fun i _ => integral_const_mul _ _)
-
-/-- **Design matrix entry agreement.** The `j`-th ray entry of
-the finite design applied to `x` is the sum over basis elements
-of `x i` times the ray transform of `phi i`. -/
-lemma ct_design_entry {ι α ρ : Type*} [MeasurableSpace α] {s : Finset ι}
-    (mu : ρ → Measure α) (ray : ρ) (phi : ι → α → ℝ) (x : ι → ℝ)
-    (hint : ∀ i ∈ s, Integrable (phi i) (mu ray)) :
-    (∫ a, (∑ i ∈ s, x i * phi i a) ∂(mu ray)) =
-      ∑ i ∈ s, x i * (∫ a, phi i a ∂(mu ray)) := by
-  exact ct_design_apply _ _ _ hint
-
-
 
 /-- The finite CT design entry for basis element `phi i` at
 Radon parameters `xi, p` (an arbitrary hyperplane level; the

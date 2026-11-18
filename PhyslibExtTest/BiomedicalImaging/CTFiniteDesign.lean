@@ -27,7 +27,7 @@ example (mu : Fin 2 → MeasureTheory.Measure (Fin 2 → ℝ)) (phi : Fin 2 → 
     (x : Fin 2 → ℝ) (hint : ∀ i ∈ Finset.univ, MeasureTheory.Integrable (phi i) (mu 0)) :
     (∫ a, (∑ i ∈ Finset.univ, x i * phi i a) ∂(mu 0)) =
       ∑ i ∈ Finset.univ, x i * (∫ a, phi i a ∂(mu 0)) :=
-  ct_design_entry mu 0 phi x hint
+  ct_design_apply (mu 0) phi x hint
 
 /-- The design entry of a zero basis element vanishes at any ray. -/
 example (xi : EuclideanSpace ℝ (Fin 2)) :
