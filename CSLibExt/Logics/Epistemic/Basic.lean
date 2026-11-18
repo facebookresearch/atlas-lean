@@ -48,14 +48,15 @@ structure Model (World : Type u) (Atom : Type v) (Agent : Type w) where
   /-- There is at least one world. -/
   nonempty_world : Nonempty World
 
-/-- Formulas of epistemic logic: atoms, falsity, implication, and
-`Kᵢ φ`. -/
+/-- Formulas of epistemic logic: atoms, falsity, implication, knowledge
+`Kᵢ φ`, common knowledge `C_G φ`, and public announcements `[!φ] ψ`. -/
 inductive Formula (Atom : Type v) (Agent : Type w) where
   | atom (a : Atom) : Formula Atom Agent
   | bot : Formula Atom Agent
   | imp (φ ψ : Formula Atom Agent) : Formula Atom Agent
   | know (i : Agent) (φ : Formula Atom Agent) : Formula Atom Agent
   | common (G : Set Agent) (φ : Formula Atom Agent) : Formula Atom Agent
+  | announce (φ ψ : Formula Atom Agent) : Formula Atom Agent
 
 namespace Formula
 
@@ -73,9 +74,27 @@ def groupRel {World Atom Agent : Type*} (M : Model World Atom Agent)
     (G : Set Agent) (w v : World) : Prop :=
   ∃ i ∈ G, M.rel i w v
 
+/-- Satisfaction relativized to a world predicate `P`: satisfaction in
+the submodel of `P`-worlds. Knowledge steps and common-knowledge paths
+stay inside the predicate, and an announcement strengthens it. This is
+meaningful at worlds satisfying `P`; callers guard the start world. -/
+def SatAt {World Atom Agent : Type*} (M : Model World Atom Agent)
+    (P : World → Prop) : Formula Atom Agent → World → Prop
+  | .atom a, w => M.valuation w a
+  | .bot, _ => False
+  | .imp φ ψ, w => SatAt M P φ w → SatAt M P ψ w
+  | .know i φ, w => ∀ v, P v → M.rel i w v → SatAt M P φ v
+  | .common G φ, w =>
+      ∀ v, Relation.ReflTransGen
+        (fun a b => ∃ i ∈ G, P b ∧ M.rel i a b) w v → SatAt M P φ v
+  | .announce φ ψ, w =>
+      ∀ _h : SatAt M P φ w,
+        SatAt M (fun v => P v ∧ SatAt M P φ v) ψ w
+
 /-- Satisfaction of an epistemic formula at a world. Common knowledge
 `C_G φ` holds when `φ` holds at every world reachable by a finite chain of
-group steps, zero steps included. -/
+group steps, zero steps included. `announce φ ψ` holds at `w` when, if
+`φ` holds at `w`, then `ψ` holds at `w` in the submodel of `φ`-worlds. -/
 def Sat {World Atom Agent : Type*} (M : Model World Atom Agent) :
     Formula Atom Agent → World → Prop
   | .atom a, w => M.valuation w a
@@ -84,6 +103,8 @@ def Sat {World Atom Agent : Type*} (M : Model World Atom Agent) :
   | .know i φ, w => ∀ v, M.rel i w v → Sat M φ v
   | .common G φ, w =>
       ∀ v, Relation.ReflTransGen (groupRel M G) w v → Sat M φ v
+  | .announce φ ψ, w =>
+      ∀ _h : Sat M φ w, SatAt M (fun v => Sat M φ v) ψ w
 
 /-- A formula is valid in a model when it holds at every world. -/
 def Valid {World Atom Agent : Type*} (M : Model World Atom Agent) (φ : Formula Atom Agent) : Prop :=
