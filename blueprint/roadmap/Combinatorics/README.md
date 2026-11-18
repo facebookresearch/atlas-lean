@@ -31,3 +31,12 @@ parking functions and set partitions.
 
 - [Binomial coefficients and identities](binomial-coefficients/README.md)
 - [Catalan numbers and lattice paths](catalan-numbers-lattice-paths/README.md)
+- [Stirling, Bell and Eulerian numbers](stirling-bell-eulerian/README.md)
+- [Riordan arrays and sequence transforms](riordan-arrays-transforms/README.md)
+- [Integer partitions](integer-partitions/README.md)
+- [Integer compositions](integer-compositions/README.md)
+- [Permutations](permutations/README.md)
+- [Set partitions](set-partitions/README.md)
+- [Parking functions](parking-functions/README.md)
+- [Tilings, dimers and board placements](tilings-board-placements/README.md)
+- [Symmetric functions, tableaux and q-analogues](symmetric-functions-q-analogues/README.md)

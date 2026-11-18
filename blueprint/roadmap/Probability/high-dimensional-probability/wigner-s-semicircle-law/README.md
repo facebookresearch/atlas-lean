@@ -38,7 +38,7 @@ concentration then upgrades convergence in expectation to almost sure convergenc
 
 - [Operator norm of random matrices](../operator-norm-of-random-matrices/README.md)
 - [Catalan numbers](../../../Combinatorics/catalan-numbers-lattice-paths/catalan-numbers/catalan-numbers/README.md)
-- Noncrossing pair partitions and the Catalan count
+- [Noncrossing pair partitions and the Catalan count](../../../Combinatorics/set-partitions/noncrossing-partitions/noncrossing-pair-partitions-and-the-catalan-count/README.md)
 - [Weyl's eigenvalue inequalities](../../../Analysis/operator-theory/eigenvalue-inequalities/weyl-s-eigenvalue-inequalities/README.md)
 - [Talagrand's concentration inequality](../../concentration-inequalities/talagrand-s-concentration-inequality/README.md)
 - [Moment problem for compactly supported measures](../../../Analysis/harmonic-analysis/integral-transforms/moment-problem-for-compactly-supported-measures/README.md)
