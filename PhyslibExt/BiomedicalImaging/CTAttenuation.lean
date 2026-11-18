@@ -32,11 +32,19 @@ transmission by the mean attenuation is not exact.
 
 * A. Log attenuation inversion.
 * B. Mixture counterexample.
+
+## iv. References
+
+* The Beer-Lambert law for monochromatic X-ray attenuation and
+  its CT line-integral form, as in Kak and Slaney, *Principles of
+  Computerized Tomographic Imaging* (1988), Chapter 1.
 -/
 
 @[expose] public section
 
 namespace PhyslibExt.BiomedicalImaging.CTAttenuation
+
+/-! ## A. Log attenuation inversion. -/
 
 /-- **Monochromatic attenuation inversion.** For incident
 intensity `I0 > 0` and line integral `L`, the transmitted
@@ -56,6 +64,8 @@ lemma attenuation_log_ratio {I0 L : ℝ} (hI0 : 0 < I0) :
   have hexp : Real.exp (-L) ≠ 0 := (Real.exp_pos _).ne'
   have h : I0 / (I0 * Real.exp (-L)) = (Real.exp (-L))⁻¹ := by field_simp
   rw [h, Real.log_inv, Real.log_exp, neg_neg]
+
+/-! ## B. Mixture counterexample. -/
 
 /-- **Two-energy mixture counterexample.** Replacing the log of
 an equal two-energy mixture transmission by the mean attenuation
