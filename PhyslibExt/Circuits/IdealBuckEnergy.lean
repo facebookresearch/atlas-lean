@@ -28,17 +28,23 @@ import Mathlib.Tactic.Ring
 
 ## i. Overview
 
-An ideal two-state buck converter in continuous conduction, before
-any averaging: positive inductance `L`, capacitance `C` and load
+An ideal two-state synchronous buck converter, before any
+averaging: positive inductance `L`, capacitance `C` and load
 resistance `R`, constant input voltage `Vin`, a switching
-function `s` that takes only the values `0` and `1` and is
-constant with a binary value on each open interval between
-finitely many switching instants, and inductor-current and
-capacitor-voltage states `i` and `v` that are continuous on the
-whole closed horizon, differentiable between switches, and satisfy
-the inductor voltage law `L * i' = s * Vin - v` and the capacitor
-current law `C * v' = i - v / R` at every non-switching time. The
-stored energy is the canonical network stored energy
+function `s` that is constant with a binary value (`0` or `1`) on
+each open interval between finitely many switching instants, and
+inductor-current and capacitor-voltage states `i` and `v` that are
+continuous on the whole closed horizon, differentiable between
+switches, and satisfy the inductor voltage law
+`L * i' = s * Vin - v` and the capacitor current law
+`C * v' = i - v / R` at every non-switching time. The switch node
+is always driven to `Vin` or to `0`, so the inductor current may
+take either sign: this is the bidirectional switched-voltage model
+of a synchronous buck, and no sign condition on `i` is assumed,
+because no proof step uses one. The diode buck in continuous
+conduction is the special case in which `i` stays positive on the
+horizon; the results apply to it unchanged. The stored energy is
+the canonical network stored energy
 `NetworkStorageBalance.storedEnergy` on the four-branch embedding
 in source, inductor, capacitor, resistor order, specialized to the
 single capacitor branch `2` and the single inductor branch `1`;
@@ -47,17 +53,17 @@ derivative between switches is the switched input power delivered
 minus the resistive loss, `s * Vin * i - v^2 / R`. Continuity of
 the state at the switching instants carries the balance across
 switches with no jump term, so the integrated balance sums the
-interval contributions, and a state that returns to its initial
-value after one period has zero net stored-energy change over the
-cycle. The source branch carries the switched input voltage at
-current `-i` (passive sign), so the source delivers `s * Vin * i`
-exactly when its absorbed power is subtracted. Continuous
-conduction is represented by the binary switching together with
-the two state laws and the continuity of the state on the whole
-horizon; no separate positivity hypothesis on the inductor current
-is assumed, because no proof step uses one. No averaged
-duty-cycle model, discontinuous conduction mode, dead time or
-switching loss is claimed.
+interval contributions. Over a closed horizon `[0, T]` whose
+endpoint states agree the net stored-energy change is zero; one
+period `T > 0` of a periodic steady state is the intended
+instance, but periodicity enters only through the endpoint
+equality, and the degenerate horizon `T = 0` is admitted. The
+source branch carries the switched input voltage at current `-i`
+(passive sign), so the source delivers `s * Vin * i` exactly when
+its absorbed power is subtracted. No averaged duty-cycle model,
+discontinuous conduction mode (an idle interval with the inductor
+current held at zero would need the non-binary switch value
+`v / Vin`), dead time or switching loss is claimed.
 
 The pointwise balance is proved directly from the two state laws:
 the derivative of each quadratic energy term is computed from the
@@ -65,8 +71,9 @@ differentiability hypotheses, and the two laws are combined by
 linear combination. The integrated balance applies the fundamental
 theorem of calculus on each closed subinterval between consecutive
 breakpoints, sums the adjacent interval integrals, and telescopes
-the resulting sum of energy differences. The periodic statement is
-the integrated balance evaluated at endpoints with equal state.
+the resulting sum of energy differences. The endpoint-return
+statement is the integrated balance evaluated at endpoints with
+equal state.
 
 ## ii. Key results
 
@@ -82,7 +89,8 @@ the integrated balance evaluated at endpoints with equal state.
 - `buckStoredEnergy_sub_eq_integral_supplied_sub_loss`: the
   integrated balance over finitely many switching intervals.
 - `buckStoredEnergy_periodic_net_change_eq_zero`: zero net
-  stored-energy change over a period for a periodic state.
+  stored-energy change over a horizon `[0, T]` whose endpoint
+  states agree, such as one period of a periodic state.
 
 ## iii. Table of contents
 
@@ -358,12 +366,16 @@ theorem buckStoredEnergy_sub_eq_integral_supplied_sub_loss (L C R Vin : ℝ)
   rw [← htel, ← hcongr]
   exact hsum
 
-/-- Periodic cycle: under the same finite-switch hypotheses on one
-period, a state that returns to its initial current and voltage
-has zero net stored-energy change over the cycle, and the
-integrated switched input power minus resistive loss over the
-cycle is therefore zero as well. This is the integrated balance
-with equal endpoint states. -/
+/-- Endpoint-return corollary: under the same finite-switch
+hypotheses on a closed horizon `[0, T]`, a state that returns to
+its initial current and voltage at `T` has zero net stored-energy
+change over the horizon, and the integrated switched input power
+minus resistive loss over the horizon is therefore zero as well.
+This is the integrated balance with equal endpoint states. One
+period `T > 0` of a periodic steady state is the intended
+instance; periodicity of `s`, `i` or `v` is not assumed beyond
+the endpoint equality, and the degenerate horizon `T = 0`, with no
+switching interval, is admitted. -/
 theorem buckStoredEnergy_periodic_net_change_eq_zero (L C R Vin : ℝ)
     (hL : 0 < L) (hC : 0 < C) (hR : 0 < R) (s i v : ℝ → ℝ) (T : ℝ)
     (hT : 0 ≤ T) (n : ℕ) (τ : ℕ → ℝ) (hτ0 : τ 0 = 0) (hτn : τ n = T)
