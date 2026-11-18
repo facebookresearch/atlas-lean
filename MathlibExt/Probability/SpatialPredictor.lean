@@ -16,6 +16,8 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
+public import MathlibExt.Probability.Finance.PortfolioVariance
+
 open ProbabilityTheory
 
 /-!
@@ -51,11 +53,12 @@ variance `Var X - 2 (w . c) + w . (K w)`.
 
 namespace SpatialPredictor
 
-/-- Covariance matrix of the observations: `K i j = Cov(Y i, Y j)`. -/
-noncomputable def covMatrix {Ω : Type*} [MeasurableSpace Ω]
+/-- Covariance matrix of the observations, reusing the existing
+covariance-matrix API (`K i j = Cov(Y i, Y j)`). -/
+noncomputable abbrev covMatrix {Ω : Type*} [MeasurableSpace Ω]
     (μ : MeasureTheory.Measure Ω) {n : ℕ} (Y : Fin n → Ω → ℝ) :
     Matrix (Fin n) (Fin n) ℝ :=
-  Matrix.of fun i j => ProbabilityTheory.covariance (Y i) (Y j) μ
+  MathlibExt.Probability.Finance.PortfolioVariance.covMatrix μ Y
 
 /-- Covariance vector between target and observations:
 `c i = Cov(X, Y i)`. -/
@@ -76,7 +79,7 @@ theorem covMatrix_posSemidef {Ω : Type*} [MeasurableSpace Ω]
   · rw [Matrix.isHermitian_iff_isSymm]
     apply Matrix.IsSymm.ext
     intro i j
-    simp only [covMatrix, Matrix.of_apply]
+    simp only [covMatrix, MathlibExt.Probability.Finance.PortfolioVariance.covMatrix, Matrix.of_apply]
     exact ProbabilityTheory.covariance_comm _ _
   · intro x
     have hstar : star x = x := by simp
@@ -92,7 +95,7 @@ theorem covMatrix_posSemidef {Ω : Type*} [MeasurableSpace Ω]
       rw [h1]
       simp only [ProbabilityTheory.covariance_const_mul_left,
         ProbabilityTheory.covariance_const_mul_right, dotProduct,
-        Matrix.mulVec_apply_eq_sum, covMatrix, Matrix.of_apply, Finset.mul_sum]
+        Matrix.mulVec_apply_eq_sum, covMatrix, MathlibExt.Probability.Finance.PortfolioVariance.covMatrix, Matrix.of_apply, Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro i _
       apply Finset.sum_congr rfl
@@ -158,7 +161,7 @@ theorem predictor_unbiased_and_error_variance {Ω : Type*}
       rw [h1]
       simp only [ProbabilityTheory.covariance_const_mul_left,
         ProbabilityTheory.covariance_const_mul_right, dotProduct,
-        Matrix.mulVec_apply_eq_sum, covMatrix, Matrix.of_apply, Finset.mul_sum]
+        Matrix.mulVec_apply_eq_sum, covMatrix, MathlibExt.Probability.Finance.PortfolioVariance.covMatrix, Matrix.of_apply, Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro i _
       apply Finset.sum_congr rfl
