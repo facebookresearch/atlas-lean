@@ -46,16 +46,15 @@ namespace PhyslibExt.BiomedicalInstrumentation.Aliasing
 /-- **Calibrated samples of aliased signals agree.** Two signals
 with the same samples at multiples of `tau` have the same samples
 after the same affine sensor map `x ↦ a * x + b`. -/
-theorem calibrated_samples_eq {f g : ℝ → ℝ} {a b tau : ℝ}
+lemma calibrated_samples_eq {f g : ℝ → ℝ} {a b tau : ℝ}
     (hsamp : ∀ n : ℕ, f (n * tau) = g (n * tau)) (n : ℕ) :
     a * f (n * tau) + b = a * g (n * tau) + b := by
   rw [hsamp n]
 
-/-- **Aliasing is not identified by calibrated samples.** If two
-signals agree at every sample time but differ somewhere, their
-calibrated samples (with any common additive noise sequence) agree
-everywhere while the signals are distinct. -/
-theorem calibrated_sample_equality {f g : ℝ → ℝ} {a b tau : ℝ}
+/-- **Noisy calibrated samples of aliased signals agree.** If two
+signals agree at every sample time, their calibrated samples with
+any common additive noise sequence agree at every sample. -/
+lemma calibrated_sample_equality {f g : ℝ → ℝ} {a b tau : ℝ}
     (e : ℕ → ℝ)
     (hsamp : ∀ n : ℕ, f (n * tau) = g (n * tau)) :
     ∀ n : ℕ, (a * f (n * tau) + b) + e n = (a * g (n * tau) + b) + e n := by
@@ -73,7 +72,7 @@ and `t ↦ sin (π * t)` have identical sampled calibrated
 observations (for every affine calibration and common noise), yet
 they are distinct signals. Hence the sampled observation map is
 not injective. -/
-theorem sin_alias_not_identified (a b : ℝ) (e : ℕ → ℝ) :
+lemma sin_alias_not_identified (a b : ℝ) (e : ℕ → ℝ) :
     ¬ Function.Injective
       (fun f : ℝ → ℝ => sampledObservation f a b 1 e) := by
   intro hInj

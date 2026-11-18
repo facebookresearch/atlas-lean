@@ -21,9 +21,13 @@ example {f g : ℝ → ℝ} (h : ∀ n : ℕ, f (n * (1:ℝ)) = g (n * (1:ℝ)))
     2 * f (n * 1) + 3 = 2 * g (n * 1) + 3 :=
   calibrated_samples_eq h n
 
-/-- Distinct signals with equal samples are not identified. -/
+/-- Aliased distinct signals: same noisy calibrated observations,
+distinct signals. -/
 example {f g : ℝ → ℝ} (h : ∀ n : ℕ, f (n * (1:ℝ)) = g (n * (1:ℝ)))
-    (hd : ∃ t : ℝ, f t ≠ g t) : f ≠ g := by
+    (hd : ∃ t : ℝ, f t ≠ g t) :
+    (∀ n : ℕ, (2 * f (n * 1) + 3) + (0:ℝ) = (2 * g (n * 1) + 3) + 0) ∧
+      f ≠ g := by
+  refine ⟨calibrated_sample_equality (fun _ => (0:ℝ)) h, ?_⟩
   obtain ⟨t, ht⟩ := hd
   intro hfg
   apply ht
