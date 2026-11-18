@@ -126,8 +126,7 @@ def chargeContinuity (flux : Fin 6 → ℝ) (chargeRate : ℝ) : Prop :=
 /-- The flux of an ohmic density is the conductivity times the flux of
 the normal field component. -/
 theorem faceFlux_ohmicDensity (σ : ℝ) (D : Fin 6 → Set (ℝ × ℝ))
-    (eDensity : Fin 6 → (ℝ × ℝ) → ℝ) (f : Fin 6)
-    (hInt : IntegrableOn (eDensity f) (D f) volume) :
+    (eDensity : Fin 6 → (ℝ × ℝ) → ℝ) (f : Fin 6) :
     faceFlux D (ohmicDensity σ eDensity) f = σ * faceFlux D eDensity f := by
   unfold faceFlux ohmicDensity
     PhyslibExt.Circuits.UniformOhmicBar.ohmCurrentDensity

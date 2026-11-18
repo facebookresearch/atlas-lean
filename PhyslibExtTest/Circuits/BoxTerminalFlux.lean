@@ -69,9 +69,7 @@ example : faceFlux (fun _ => Set.Icc ((0 : ℝ), (0 : ℝ)) (2, 3)) (fun _ _ => 
 `3` give flux `2 * 18 = 36`. -/
 example : faceFlux (fun _ => Set.Icc ((0 : ℝ), (0 : ℝ)) (2, 3))
     (ohmicDensity 2 (fun _ _ => 3)) 0 = 36 := by
-  have hfin : volume (Set.Icc ((0 : ℝ), (0 : ℝ)) (2, 3)) ≠ ⊤ := by
-    rw [volume_rect]; exact ENNReal.ofNat_ne_top
-  rw [faceFlux_ohmicDensity 2 _ _ 0 (integrableOn_const hfin),
+  rw [faceFlux_ohmicDensity 2 _ _ 0,
     faceFlux_of_const _ _ 0 3 measurableSet_Icc (fun _ _ => rfl), Measure.real, volume_rect]
   norm_num
 
