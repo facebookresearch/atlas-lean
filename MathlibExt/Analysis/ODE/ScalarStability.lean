@@ -180,10 +180,15 @@ theorem scalar_sign_decay_of_hasDerivAt
   exact h
 
 /-- The explicit scalar Hurwitz trajectory `exp (-c * t) * x0`
-is bounded by its exponential envelope for `t ≥ 0`. -/
+never exceeds its initial magnitude for `t ≥ 0`. -/
 theorem hurwitz_scalar_bound {c x0 t : ℝ} (hc : 0 < c) (ht : 0 ≤ t) :
-    |Real.exp (-c * t) * x0| ≤ Real.exp (-c * t) * |x0| := by
+    |Real.exp (-c * t) * x0| ≤ |x0| := by
   rw [abs_mul, abs_of_pos (Real.exp_pos _)]
+  have hexp : Real.exp (-c * t) ≤ 1 :=
+    Real.exp_le_one_iff.mpr (by nlinarith [mul_nonneg hc.le ht])
+  calc Real.exp (-c * t) * |x0| ≤ 1 * |x0| :=
+        mul_le_mul_of_nonneg_right hexp (abs_nonneg x0)
+    _ = |x0| := one_mul _
 
 /-- Every explicit scalar Hurwitz trajectory tends to the
 equilibrium `0` as `t → ∞`. -/

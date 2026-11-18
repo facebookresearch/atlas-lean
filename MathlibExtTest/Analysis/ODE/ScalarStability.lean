@@ -42,8 +42,8 @@ example :
       simpa using h)
     (by norm_num)
 
-/-- The unit-rate trajectory at time zero keeps the initial value. -/
-example : |Real.exp (-(1:ℝ) * 0) * (3:ℝ)| ≤ Real.exp (-(1:ℝ) * 0) * |(3:ℝ)| :=
+/-- The unit-rate trajectory never exceeds its initial magnitude. -/
+example : |Real.exp (-(1:ℝ) * 0) * (3:ℝ)| ≤ |(3:ℝ)| :=
   hurwitz_scalar_bound (by norm_num) le_rfl
 
 /-- The unit-rate trajectory from `3` tends to the equilibrium. -/
