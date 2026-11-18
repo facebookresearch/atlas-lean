@@ -114,3 +114,39 @@ example : (MathlibExt.Probability.Finance.PortfolioVariance.covMatrix twoPoint
         MeasureTheory.integral_smul_measure,
         MeasureTheory.integral_dirac, MeasureTheory.integral_dirac]
       norm_num) (by simp)).2
+
+/-- Independent numeric check: for the two-point family above, the
+prediction error `X - Y 0` takes values `1` and `-1` with equal
+probability, so its variance is `1`. Proved by evaluating the
+integrals over `twoPoint` directly, without the predictor theorem. -/
+example : ProbabilityTheory.variance
+    (fun ω : Bool => (if ω then (1 : ℝ) else 0)
+      - (if ω then (0 : ℝ) else 1)) twoPoint = 1 := by
+  have hmean : ∫ ω : Bool, ((if ω then (1 : ℝ) else 0)
+        - (if ω then (0 : ℝ) else 1)) ∂twoPoint = 0 := by
+    show ∫ ω : Bool, ((if ω then (1 : ℝ) else 0)
+        - (if ω then (0 : ℝ) else 1))
+        ∂((2 : ℝ≥0∞)⁻¹ • MeasureTheory.Measure.dirac true
+          + (2 : ℝ≥0∞)⁻¹ • MeasureTheory.Measure.dirac false) = 0
+    haveI : MeasureTheory.IsFiniteMeasure
+        ((2 : ℝ≥0∞)⁻¹ • MeasureTheory.Measure.dirac true) := ⟨by simp⟩
+    haveI : MeasureTheory.IsFiniteMeasure
+        ((2 : ℝ≥0∞)⁻¹ • MeasureTheory.Measure.dirac false) := ⟨by simp⟩
+    rw [MeasureTheory.integral_add_measure
+        MeasureTheory.Integrable.of_finite
+        MeasureTheory.Integrable.of_finite,
+      MeasureTheory.integral_smul_measure,
+      MeasureTheory.integral_smul_measure,
+      MeasureTheory.integral_dirac, MeasureTheory.integral_dirac]
+    norm_num
+  rw [ProbabilityTheory.variance, ProbabilityTheory.evariance, hmean]
+  show (∫⁻ ω : Bool, ‖(if ω then (1 : ℝ) else 0)
+        - (if ω then (0 : ℝ) else 1) - 0‖ₑ ^ 2
+      ∂((2 : ℝ≥0∞)⁻¹ • MeasureTheory.Measure.dirac true
+        + (2 : ℝ≥0∞)⁻¹ • MeasureTheory.Measure.dirac false)).toReal = 1
+  rw [MeasureTheory.lintegral_add_measure,
+    MeasureTheory.lintegral_smul_measure,
+    MeasureTheory.lintegral_smul_measure,
+    MeasureTheory.lintegral_dirac, MeasureTheory.lintegral_dirac]
+  simp
+  rw [ENNReal.inv_two_add_inv_two, ENNReal.toReal_one]
