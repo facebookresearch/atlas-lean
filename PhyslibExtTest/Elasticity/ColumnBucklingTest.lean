@@ -135,17 +135,17 @@ example : (∫ x in (0 : ℝ)..1, (1 - 2 * x) ^ 2) =
 /-- At `EI = L = 1`, the pinned sine mode has zero quadratic energy at
 the critical load. -/
 example : (1 : ℝ) * (∫ x in (0 : ℝ)..1,
-      (-(Real.pi / 1) ^ 2 * Real.sin (Real.pi * x / 1)) ^ 2) -
+      (iteratedDeriv 2 (Elasticity.pinnedMode 1) x) ^ 2) -
       (Real.pi ^ 2 * 1 / 1 ^ 2) * (∫ x in (0 : ℝ)..1,
-        ((Real.pi / 1) * Real.cos (Real.pi * x / 1)) ^ 2) = 0 :=
+        (deriv (Elasticity.pinnedMode 1) x) ^ 2) = 0 :=
   Elasticity.pinnedMode_energy_eq_zero one_pos one_pos
 
 /-- At `EI = L = 1` and load `π^2 + 1`, the pinned sine mode has
 strictly negative quadratic energy. -/
 example : (1 : ℝ) * (∫ x in (0 : ℝ)..1,
-      (-(Real.pi / 1) ^ 2 * Real.sin (Real.pi * x / 1)) ^ 2) -
+      (iteratedDeriv 2 (Elasticity.pinnedMode 1) x) ^ 2) -
       (Real.pi ^ 2 + 1) * (∫ x in (0 : ℝ)..1,
-        ((Real.pi / 1) * Real.cos (Real.pi * x / 1)) ^ 2) < 0 :=
+        (deriv (Elasticity.pinnedMode 1) x) ^ 2) < 0 :=
   Elasticity.pinnedMode_energy_neg one_pos one_pos (by
     have hπ : (0 : ℝ) < Real.pi ^ 2 := pow_pos Real.pi_pos 2
     simp only [mul_one, one_pow, div_one]

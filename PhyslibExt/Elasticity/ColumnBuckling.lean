@@ -536,17 +536,6 @@ private theorem aux_cos_sq {L : ℝ} (hL : 0 < L) :
     rw [hdiv, hcos0, zero_div]
   rw [hc1, hc2, add_zero]
 
-/-- Dirichlet Wirtinger inequality on `[0, π]`: for a differentiable
-`f` with derivative function `f'` and `f 0 = f π = 0`,
-`∫ f^2 ≤ ∫ (f')^2`. -/
-theorem wirtinger_pi {f f' : ℝ → ℝ}
-    (hf : ∀ x ∈ Set.Icc 0 Real.pi, HasDerivAt f (f' x) x)
-    (hf' : ContinuousOn f' (Set.Icc 0 Real.pi))
-    (h0 : f 0 = 0) (hpi : f Real.pi = 0) :
-    (∫ x in (0 : ℝ)..Real.pi, (f x) ^ 2) ≤
-      ∫ x in (0 : ℝ)..Real.pi, (f' x) ^ 2 :=
-  MetaMathlibExt.wirtinger_inequality f f'
-    (fun x hx => (hf x hx).hasDerivWithinAt) hf' h0 hpi
 /-- Scaled Dirichlet Wirtinger inequality on `[0, L]`: for `L > 0`
 and `w 0 = w L = 0`,
 `∫ w^2 ≤ (L / π)^2 * ∫ (w')^2`. -/
@@ -588,7 +577,9 @@ theorem wirtinger_scaled {L : ℝ} (hL : 0 < L) {w w' : ℝ → ℝ}
   have hgπ : w ((L / Real.pi) * Real.pi) = 0 := by rw [hLπ]; exact hL0
   have key : (∫ t in (0 : ℝ)..Real.pi, (w ((L / Real.pi) * t)) ^ 2)
       ≤ ∫ t in (0 : ℝ)..Real.pi, (w' ((L / Real.pi) * t) * (L / Real.pi)) ^ 2 :=
-    wirtinger_pi hg hg'cont hg0 hgπ
+    MetaMathlibExt.wirtinger_inequality (fun s => w ((L / Real.pi) * s))
+      (fun t => w' ((L / Real.pi) * t) * (L / Real.pi))
+      (fun t ht => (hg t ht).hasDerivWithinAt) hg'cont hg0 hgπ
   have hinv : (L / Real.pi)⁻¹ = Real.pi / L := inv_div L Real.pi
   have hsub1 : (∫ t in (0 : ℝ)..Real.pi, (w ((L / Real.pi) * t)) ^ 2)
       = (Real.pi / L) * ∫ y in (0 : ℝ)..L, (w y) ^ 2 := by
@@ -905,8 +896,61 @@ theorem quadratic_energy_pos_of_lt {EI L P : ℝ} (hEI : 0 < EI)
     mul_pos hmP hApos
   exact lt_of_lt_of_le hpos hlow
 
+
+private lemma hasDerivAt_pinnedPhase {L : ℝ} (x : ℝ) :
+    HasDerivAt (fun x : ℝ => Real.pi * x / L) (Real.pi / L) x := by
+  have h := (hasDerivAt_id x).const_mul (Real.pi / L)
+  rw [mul_one] at h
+  have heq : (fun x : ℝ => Real.pi * x / L)
+      = fun x : ℝ => (Real.pi / L) * x := by
+    funext y
+    ring
+  rwa [heq]
+
 /-- The first pinned mode `x ↦ sin (π * x / L)`. -/
 noncomputable def pinnedMode (L x : ℝ) : ℝ := Real.sin (Real.pi * x / L)
+
+/-- The pinned mode vanishes at the left support. -/
+lemma pinnedMode_zero (L : ℝ) : pinnedMode L 0 = 0 := by
+  simp [pinnedMode]
+
+/-- The pinned mode vanishes at the right support. -/
+lemma pinnedMode_length (L : ℝ) : pinnedMode L L = 0 := by
+  by_cases hL : L = 0
+  · simp [pinnedMode, hL]
+  · have hph : Real.pi * L / L = Real.pi := by field_simp
+    simp [pinnedMode, hph]
+
+/-- First derivative of the pinned mode at a point. -/
+lemma hasDerivAt_pinnedMode (L x : ℝ) :
+    HasDerivAt (pinnedMode L)
+      ((Real.pi / L) * Real.cos (Real.pi * x / L)) x := by
+  have h := (hasDerivAt_pinnedPhase (L := L) x).sin
+  change HasDerivAt (fun x => Real.sin (Real.pi * x / L))
+    ((Real.pi / L) * Real.cos (Real.pi * x / L)) x
+  rw [mul_comm]
+  exact h
+
+/-- First derivative of the pinned mode. -/
+lemma deriv_pinnedMode (L : ℝ) :
+    deriv (pinnedMode L) =
+      fun x => (Real.pi / L) * Real.cos (Real.pi * x / L) :=
+  funext fun x => (hasDerivAt_pinnedMode L x).deriv
+
+/-- Second derivative of the pinned mode. -/
+lemma iteratedDeriv_two_pinnedMode (L x : ℝ) :
+    iteratedDeriv 2 (pinnedMode L) x =
+      -(Real.pi / L) ^ 2 * Real.sin (Real.pi * x / L) := by
+  have hstep : iteratedDeriv 2 (pinnedMode L) x =
+      deriv (deriv (pinnedMode L)) x := by
+    have h := congrFun (iteratedDeriv_succ (n := 1) (f := pinnedMode L)) x
+    rwa [iteratedDeriv_one] at h
+  rw [hstep, deriv_pinnedMode]
+  have h := ((hasDerivAt_pinnedPhase (L := L) x).cos).const_mul (Real.pi / L)
+  have hder : (Real.pi / L) * (-Real.sin (Real.pi * x / L) * (Real.pi / L))
+      = -(Real.pi / L) ^ 2 * Real.sin (Real.pi * x / L) := by ring
+  rw [hder] at h
+  exact h.deriv
 
 /-- Integral of the squared pinned mode over `[0, L]` is `L / 2`. -/
 theorem integral_pinnedMode_sq {L : ℝ} (hL : 0 < L) :
@@ -914,12 +958,12 @@ theorem integral_pinnedMode_sq {L : ℝ} (hL : 0 < L) :
   simp only [pinnedMode]
   exact aux_sin_sq hL
 
-/-- Integral of the squared pinned-mode slope
-`(π / L) * cos (π * x / L)` over `[0, L]` is `(π / L)^2 * (L / 2)`. -/
+/-- Integral of the squared derivative of the pinned mode over
+`[0, L]` is `(π / L)^2 * (L / 2)`. -/
 theorem integral_pinnedMode_slope_sq {L : ℝ} (hL : 0 < L) :
-    (∫ x in (0 : ℝ)..L,
-      ((Real.pi / L) * Real.cos (Real.pi * x / L)) ^ 2) =
+    (∫ x in (0 : ℝ)..L, (deriv (pinnedMode L) x) ^ 2) =
       (Real.pi / L) ^ 2 * (L / 2) := by
+  simp only [deriv_pinnedMode]
   have e : (fun x => ((Real.pi / L) * Real.cos (Real.pi * x / L)) ^ 2)
       = (fun x => (Real.pi / L) ^ 2 * (Real.cos (Real.pi * x / L)) ^ 2) :=
     funext fun x => by ring
@@ -929,13 +973,12 @@ theorem integral_pinnedMode_slope_sq {L : ℝ} (hL : 0 < L) :
     intervalIntegral.integral_const_mul _ _
   rw [hcm, aux_cos_sq hL]
 
-/-- Integral of the squared pinned-mode curvature
-`-(π / L)^2 * sin (π * x / L)` over `[0, L]` is
-`(π / L)^4 * (L / 2)`. -/
+/-- Integral of the squared second derivative of the pinned mode
+over `[0, L]` is `(π / L)^4 * (L / 2)`. -/
 theorem integral_pinnedMode_curvature_sq {L : ℝ} (hL : 0 < L) :
-    (∫ x in (0 : ℝ)..L,
-      (-(Real.pi / L) ^ 2 * Real.sin (Real.pi * x / L)) ^ 2) =
+    (∫ x in (0 : ℝ)..L, (iteratedDeriv 2 (pinnedMode L) x) ^ 2) =
       (Real.pi / L) ^ 4 * (L / 2) := by
+  simp only [iteratedDeriv_two_pinnedMode]
   have e : (fun x => (-(Real.pi / L) ^ 2 * Real.sin (Real.pi * x / L)) ^ 2)
       = (fun x => (Real.pi / L) ^ 4 * (Real.sin (Real.pi * x / L)) ^ 2) :=
     funext fun x => by ring
@@ -949,10 +992,9 @@ theorem integral_pinnedMode_curvature_sq {L : ℝ} (hL : 0 < L) :
 of the pinned sine mode is exactly zero. -/
 theorem pinnedMode_energy_eq_zero {EI L : ℝ} (hEI : 0 < EI)
     (hL : 0 < L) :
-    EI * (∫ x in (0 : ℝ)..L,
-      (-(Real.pi / L) ^ 2 * Real.sin (Real.pi * x / L)) ^ 2) -
+    EI * (∫ x in (0 : ℝ)..L, (iteratedDeriv 2 (pinnedMode L) x) ^ 2) -
       (Real.pi ^ 2 * EI / L ^ 2) * (∫ x in (0 : ℝ)..L,
-        ((Real.pi / L) * Real.cos (Real.pi * x / L)) ^ 2) = 0 := by
+        (deriv (pinnedMode L) x) ^ 2) = 0 := by
   have _pos := hEI
   rw [integral_pinnedMode_curvature_sq hL, integral_pinnedMode_slope_sq hL]
   have hLne : L ≠ 0 := ne_of_gt hL
@@ -963,10 +1005,8 @@ theorem pinnedMode_energy_eq_zero {EI L : ℝ} (hEI : 0 < EI)
 sine mode is strictly negative. -/
 theorem pinnedMode_energy_neg {EI L P : ℝ} (hEI : 0 < EI)
     (hL : 0 < L) (hP : Real.pi ^ 2 * EI / L ^ 2 < P) :
-    EI * (∫ x in (0 : ℝ)..L,
-      (-(Real.pi / L) ^ 2 * Real.sin (Real.pi * x / L)) ^ 2) -
-      P * (∫ x in (0 : ℝ)..L,
-        ((Real.pi / L) * Real.cos (Real.pi * x / L)) ^ 2) < 0 := by
+    EI * (∫ x in (0 : ℝ)..L, (iteratedDeriv 2 (pinnedMode L) x) ^ 2) -
+      P * (∫ x in (0 : ℝ)..L, (deriv (pinnedMode L) x) ^ 2) < 0 := by
   have _pos := hEI
   rw [integral_pinnedMode_curvature_sq hL, integral_pinnedMode_slope_sq hL]
   have hLne : L ≠ 0 := ne_of_gt hL
