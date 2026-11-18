@@ -50,9 +50,11 @@ Both readings are stated for each form.
 
 A resistive load `R` has the real coefficient
 `Gamma_R = (R - Z0) / (R + Z0)`, and for such a load the reflection
-holds instant by instant: `vminus t = Gamma_R * vplus t`. A reactive
-load has a frequency-dependent coefficient and no such
-frequency-independent time-domain reading. The guard `ZL + Z0 != 0`
+holds instant by instant: `vminus t = Gamma_R * vplus t`. This file
+does not model a load as a function of frequency; for the inductive
+load `i * omega * L` it records only that the coefficient can change
+with `omega` (one example at two frequencies), so that load has no
+such frequency-independent time-domain reading. The guard `ZL + Z0 != 0`
 cannot be dropped: at `ZL = -Z0` the total division in Lean gives
 `Gamma = 0`, so the bound holds while `Re ZL < 0`. A zero load (short
 circuit) lies inside the domain; an infinite (open) load is not a
@@ -439,9 +441,10 @@ lemma reflection_criterion_fails_at_excluded_load (Z0 : ℝ) (hZ0 : 0 < Z0) :
   · simp only [Complex.neg_re, Complex.ofReal_re]
     linarith
 
-/-- A reactive load has a frequency-dependent coefficient: an inductive
+/-- An inductive load can have a frequency-dependent coefficient: the
 reactance `i * omega * L` with `L = 1`, `Z0 = 1` gives different
-coefficients at `omega = 1` and `omega = 2`. -/
+coefficients at `omega = 1` and `omega = 2`. This is one example, not a
+general statement about reactive loads. -/
 lemma reflectionCoefficient_inductive_depends_on_frequency :
     reflectionCoefficient (Complex.I * ((1 : ℝ) * 1 : ℝ)) 1 ≠
       reflectionCoefficient (Complex.I * ((2 : ℝ) * 1 : ℝ)) 1 := by
