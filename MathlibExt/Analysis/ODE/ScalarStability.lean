@@ -200,10 +200,4 @@ theorem hurwitz_scalar_tendsto {c x0 : ℝ} (hc : 0 < c) :
   simp only [neg_mul]
   exact hmul
 
-/-- At `x0 = 0` the explicit scalar trajectory is identically
-the equilibrium. -/
-theorem hurwitz_scalar_equilibrium {c t : ℝ} :
-    Real.exp (-c * t) * (0 : ℝ) = 0 :=
-  mul_zero _
-
 end MathlibExt.Analysis.ODE.ScalarStability

@@ -46,8 +46,8 @@ example :
 example : |Real.exp (-(1:ℝ) * 0) * (3:ℝ)| ≤ Real.exp (-(1:ℝ) * 0) * |(3:ℝ)| :=
   hurwitz_scalar_bound (by norm_num) le_rfl
 
-/-- The zero initial state stays at the equilibrium. -/
-example : Real.exp (-(2:ℝ) * (5:ℝ)) * (0:ℝ) = 0 :=
-  hurwitz_scalar_equilibrium
+/-- The unit-rate trajectory from `3` tends to the equilibrium. -/
+example : Filter.Tendsto (fun t : ℝ => Real.exp (-(1:ℝ) * t) * (3:ℝ)) Filter.atTop (nhds 0) :=
+  hurwitz_scalar_tendsto (by norm_num)
 
 end MathlibExtTest.Analysis.ODE.ScalarStability
