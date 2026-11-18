@@ -38,9 +38,7 @@ example :
     ![1 / 2, 14 / 3]
       = massEx⁻¹ *ᵥ (!![1, 2, -1; 4, -2, 5] *ᵥ ![1, 2, 3]
         - !![1, 1; 0, 2] *ᵥ ![1, -1] - ![1, 3]) :=
-  (mass_mulVec_eq_iff_forces massEx massEx_unit
-    !![1, 2, -1; 4, -2, 5] ![1, 2, 3] !![1, 1; 0, 2] ![1, -1] ![1, 3]
-    ![1 / 2, 14 / 3]).mp (by
+  (Matrix.mulVec_eq_iff_inv_mulVec (A := massEx) massEx_unit).mp (by
       ext i
       fin_cases i <;>
         simp [massEx, Matrix.mulVec, dotProduct, Fin.sum_univ_two,
@@ -63,8 +61,7 @@ example :
 example :
     ![0, -3] = massEx⁻¹ *ᵥ (!![1, 2, -1; 4, -2, 5] *ᵥ 0
       - !![1, 1; 0, 2] *ᵥ 0 - ![0, 9]) :=
-  (mass_mulVec_eq_iff_forces massEx massEx_unit
-    !![1, 2, -1; 4, -2, 5] 0 !![1, 1; 0, 2] 0 ![0, 9] ![0, -3]).mp (by
+  (Matrix.mulVec_eq_iff_inv_mulVec (A := massEx) massEx_unit).mp (by
       ext i
       fin_cases i <;>
         simp [massEx, Matrix.mulVec, dotProduct, Fin.sum_univ_two,
@@ -88,6 +85,4 @@ example :
   have h0 := congrFun h1 0
   norm_num at h0
 
-#print axioms mass_mulVec_eq_iff
-#print axioms mass_mulVec_eq_iff_forces
 #print axioms eq_firstOrderRhs_iff
