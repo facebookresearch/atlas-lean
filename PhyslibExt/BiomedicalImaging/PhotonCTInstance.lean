@@ -102,14 +102,4 @@ lemma ct_photon_not_identified (I0 : Fin 1 → ℝ≥0) :
     intro i
     fin_cases i <;> simp
 
-/-- **General rate agreement.** Any two coefficient vectors
-with the same finite design measurement have the same
-transmitted rate at every ray. -/
-lemma ct_rates_of_measurement_eq {m n : ℕ} (A : Matrix (Fin m) (Fin n) ℝ)
-    (x y : Fin n → ℝ) (I0 : Fin m → ℝ≥0) (h : A *ᵥ x = A *ᵥ y) (j : Fin m) :
-    PhyslibExt.BiomedicalImaging.PhotonObservation.transmittedRate I0 A x j =
-      PhyslibExt.BiomedicalImaging.PhotonObservation.transmittedRate I0 A y j := by
-  unfold PhyslibExt.BiomedicalImaging.PhotonObservation.transmittedRate
-  rw [h]
-
 end PhyslibExt.BiomedicalImaging.PhotonCTInstance
