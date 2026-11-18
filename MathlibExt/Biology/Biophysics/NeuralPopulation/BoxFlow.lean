@@ -9,44 +9,31 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Order.Bounds.Basic
+public import Mathlib.Order.Interval.Set.ProjIcc
 
 /-!
-# Box clipping projection
+# Box projection for rate dynamics
 
-Coordinatewise clipping onto an interval lands in the interval, is the identity inside it, and is idempotent: clipped trajectories started in the box see the original field.
+The coordinatewise box projection is Mathlib's canonical interval projection `Set.projIcc`: its value lies in the interval by construction, and it is the identity on points already in the interval.
 -/
 
 @[expose] public section
 
 namespace MathlibExt.Biology.Biophysics.NeuralPopulation.BoxFlow
 
-/-- The coordinatewise clipping projection onto the box
-`[0, U]`: `clip U x = max 0 (min U x)`. -/
-def clipBox (U : ℝ) (x : ℝ) : ℝ :=
-  max 0 (min U x)
+/-- The box projection onto `[0, U]`, as the canonical interval
+projection. Membership in the box is part of the subtype. -/
+noncomputable def boxProj (U : ℝ) (hU : 0 ≤ U) (x : ℝ) : Set.Icc (0:ℝ) U :=
+  Set.projIcc 0 U hU x
 
-/-- **Clipping lands in the box.** For `0 ≤ U`, every clipped
-value lies in `[0, U]`. -/
-theorem clipBox_mem {U x : ℝ} (hU : 0 ≤ U) :
-    0 ≤ clipBox U x ∧ clipBox U x ≤ U := by
-  unfold clipBox
-  exact ⟨le_max_left 0 (min U x), max_le hU (min_le_left U x)⟩
+/-- The projected value as a real number is `max 0 (min U x)`. -/
+lemma boxProj_coe (U : ℝ) (hU : 0 ≤ U) (x : ℝ) :
+    ((boxProj U hU x : Set.Icc (0:ℝ) U) : ℝ) = max 0 (min U x) :=
+  Set.coe_projIcc 0 U hU x
 
-/-- **Clipping is the identity inside the box.** For a value
-already in `[0, U]`, clipping does not change it; hence clipped
-trajectories started in the box use the original field values. -/
-theorem clipBox_eq_of_mem {U x : ℝ} (h0 : 0 ≤ x) (hU : x ≤ U) :
-    clipBox U x = x := by
-  unfold clipBox
-  rw [min_eq_right hU, max_eq_right h0]
-
-/-- **Clipping is idempotent.** Clipping a clipped value changes
-nothing. -/
-theorem clipBox_idempotent {U x : ℝ} (hU : 0 ≤ U) :
-    clipBox U (clipBox U x) = clipBox U x := by
-  have h := clipBox_mem hU (x := x)
-  exact clipBox_eq_of_mem h.1 h.2
-
+/-- The projection is the identity on points already in the box. -/
+lemma boxProj_of_mem (U : ℝ) (hU : 0 ≤ U) {x : ℝ}
+    (hx : x ∈ Set.Icc (0:ℝ) U) : boxProj U hU x = ⟨x, hx⟩ :=
+  Set.projIcc_of_mem hU hx
 
 end MathlibExt.Biology.Biophysics.NeuralPopulation.BoxFlow
