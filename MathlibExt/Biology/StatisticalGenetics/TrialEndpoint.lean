@@ -24,7 +24,7 @@ namespace MathlibExt.Biology.StatisticalGenetics.TrialEndpoint
 /-- The prespecified truncated endpoint of event time `T i` at
 horizon `h`: `min (T i) h`. -/
 def truncatedEndpoint {ι : Type*} (T : ι → ℝ) (h : ℝ) (i : ι) : ℝ :=
-  MathlibExt.Probability.Statistics.Survival.obsTime T (fun _ => h) i
+  MathlibExt.Probability.Statistics.CountingProcess.ContinuousTime.obsTime T (fun _ => h) i
 
 /-- **Truncated endpoint at or inside the horizon.** If
 `T i ≤ h`, the truncated endpoint is the event time itself. -/

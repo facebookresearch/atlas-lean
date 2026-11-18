@@ -17,11 +17,11 @@ The observed time of a latent event time and a censoring time is their minimum. 
 
 @[expose] public section
 
-namespace MathlibExt.Probability.Statistics.Survival
+namespace MathlibExt.Probability.Statistics.CountingProcess.ContinuousTime
 
 /-- The observed time `min (T i) (C i)` of latent event time `T`
 and censoring time `C` for subject `i`. -/
 def obsTime {ι : Type*} (T C : ι → ℝ) (i : ι) : ℝ :=
   min (T i) (C i)
 
-end MathlibExt.Probability.Statistics.Survival
+end MathlibExt.Probability.Statistics.CountingProcess.ContinuousTime
