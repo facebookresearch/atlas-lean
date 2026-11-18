@@ -534,10 +534,14 @@ def own_list(lines: list[str]) -> dict[int, int]:
 
 
 def heading_title(row: str) -> str:
-    """A heading's title as the site shows it, emphasis and code marks read away (see heading_text): "**Sources**" and
-    "`Sources`" are "Sources". A title with no mark is taken as written, as is one the site would not publish."""
-    title = row.strip(" \t#")
-    return title if re.fullmatch(r"(?:[^\W_]|[\s,.:;'()-])*", title) else heading_text(row.strip()) or title
+    """A heading's title as the site shows it, its spaces collapsed: "Related  topics" is "Related topics". A title of
+    words and plain punctuation is read as written; any other, one with a "#" included, is rendered (see heading_text),
+    so that "**Sources**", "`Sources`" and "Sources ##" are "Sources" while "Sources #2" keeps its "#". One the site
+    would not publish is read as written."""
+    title = row.strip().lstrip("#")
+    if re.fullmatch(r"(?:[^\W_]|[\s,.:;'()-])*", title):
+        return " ".join(title.split())
+    return heading_text(row.strip()) or " ".join(title.split())
 
 
 def add_to_listing(readme: Path, line: str, before: list[str] = (), after: list[str] = (), section: list[str] = ()) -> str:
@@ -904,8 +908,8 @@ def with_part_lists(readme: Path, text: str) -> tuple[str, list[str], list[str]]
     a page that is not simple (see simple_page), for a part whose heading, page or items there are not simple with no
     code allowed, or whose copy runs over another block, and when the refreshed copy does not render as meant (see
     verify_edit), the copy stays as it is, and the part is returned, by its folder, for an editor. A line of a copy the
-    refresh replaces or removes that is none of the part's entries, as when a note was added there, is returned too,
-    with its folder."""
+    refresh replaces or removes that is none of the part's entries, as when a note was added there, or one more copy
+    of a line than the part's entries make, is returned too, with its folder."""
     body = text.rstrip("\n")
     tail = text[len(body):]
     simple = simple_page(body, code=True)
@@ -949,8 +953,8 @@ def with_part_lists(readme: Path, text: str) -> tuple[str, list[str], list[str]]
         old, new = ("\n".join(block for other in page for block in other) + tail for page in (sections, refreshed))
         if verify_edit(old, new, [(line, href, (ordinal, section[0])) for line, href in copy], replaced):
             sections, changed = refreshed, True
-            dropped += [f"{(readme.parent / folder).relative_to(wiki.ROADMAP).as_posix()}: {section[i]}" for i in copied
-                        if section[i] not in lines]
+            excess = Counter(section[i] for i in copied) - Counter(lines)
+            dropped += [f"{(readme.parent / folder).relative_to(wiki.ROADMAP).as_posix()}: {row}" for row in excess.elements()]
         else:
             unrefreshed.append((readme.parent / folder).relative_to(wiki.ROADMAP).as_posix())
     return ("\n".join(block for other in sections for block in other) + tail if changed else text), unrefreshed, dropped

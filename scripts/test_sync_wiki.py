@@ -1047,12 +1047,21 @@ class Declarations(Vault):
                               ("within related topics", "## Related topics\n\n### Here\n\n- [Notes](notes.md)\n"),
                               ("bold", "## **Sources**\n\n- [Notes](notes.md)\n"), ("code", "## `Sources`\n\n- [Notes](notes.md)\n"),
                               ("emphasis", "## _Related topics_\n\n### Here\n\n- [Notes](notes.md)\n"),
-                              ("starred emphasis", "## *Sources*\n\n- [Notes](notes.md)\n")):
+                              ("starred emphasis", "## *Sources*\n\n- [Notes](notes.md)\n"),
+                              ("two spaces", "## Related  topics\n\n- [Notes](notes.md)\n"),
+                              ("closing sequence", "## Sources ##\n\n- [Notes](notes.md)\n")):
             with self.subTest(name):
                 report = self.add_sylow(f"# Groups\n\nProse.\n\n{closing}")
                 self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
                                  f"# Groups\n\nProse.\n\n- [Sylow](sylow.md)\n\n{closing}")
                 self.assertEqual((report["appended"], report["unlisted"]), ([], []))
+
+    def test_a_literal_hash_makes_another_title(self) -> None:
+        # The site keeps a "#" inside a title: "Sources #2" closes nothing, so the list under it is the own list.
+        report = self.add_sylow("# Groups\n\nProse.\n\n## Sources #2\n\n- [Notes](notes.md)\n")
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
+                         "# Groups\n\nProse.\n\n## Sources #2\n\n- [Notes](notes.md)\n- [Sylow](sylow.md)\n")
+        self.assertEqual((report["appended"], report["unlisted"]), ([], []))
 
     def test_a_new_section_keeps_its_modules_code(self) -> None:
         # page_title drops a title's backticks, which would leave "<textarea>" as raw HTML: the heading keeps them. A
@@ -1227,6 +1236,13 @@ class Declarations(Vault):
                          "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md)\n- [B](part-01/b.md)\n")
         self.assertEqual(report["replaced"], ["Algebra/groups/part-01: - [A](part-01/a.md) (start here)",
                                               "Algebra/groups/part-01: - [C](part-01/c.md)"])
+        # One copy of a line too many is removed, and reported once for each copy.
+        text = "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md)\n- [A](part-01/a.md)\n- [B](part-01/b.md)\n"
+        self.page("Algebra/groups/README.md", text)
+        report = sync.apply_declarations([], SimpleNamespace(declarations={}))
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
+                         "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md)\n- [B](part-01/b.md)\n")
+        self.assertEqual(report["replaced"], ["Algebra/groups/part-01: - [A](part-01/a.md)"])
 
     def test_verify_edit_reads_the_page_as_the_site_renders_it(self) -> None:
         page = "# T\n\n- [A](a.md)\n\n## Related topics\n\n- [R](../r/README.md)\n"
