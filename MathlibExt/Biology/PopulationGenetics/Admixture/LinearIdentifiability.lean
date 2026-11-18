@@ -9,8 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.PopulationGenetics.QpGraph
-public import MathlibExt.Biology.PopulationGenetics.FStatisticsBasis
-public import MathlibExt.Biology.StatisticalGenetics.StratifiedLDScore
+public import Mathlib.LinearAlgebra.Matrix.Rank
 import Mathlib.Data.Sym.Card
 
 /-!
@@ -70,9 +69,14 @@ end MathlibExt.Biology.PopulationGenetics.FStatistics.DriftModel
 
 namespace MathlibExt.Biology.PopulationGenetics.QpGraph
 
-open MathlibExt.Biology.StatisticalGenetics.StratifiedLDScore
-
 variable {ι E P : Type*} [Fintype E]
+
+/-- A real matrix has injective `mulVec` iff it has full column rank. -/
+private theorem injective_mulVec_iff_rank_eq_card {m n : Type*} [Fintype n]
+    (A : Matrix m n ℝ) : Function.Injective A.mulVec ↔ A.rank = Fintype.card n := by
+  rw [Matrix.mulVec_injective_iff, Matrix.rank_eq_finrank_span_cols,
+    linearIndependent_iff_card_eq_finrank_span, Set.finrank]
+  exact eq_comm
 
 /-- Identifiability, direction `⇐`: if the design matrix has full column rank (injective
 `mulVec`), two drift models with the same weights and the same basis statistics have the same

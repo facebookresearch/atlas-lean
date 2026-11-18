@@ -68,8 +68,12 @@ theorem tree_injective :
   fin_cases e <;> simp <;> linarith
 
 theorem tree_rank : (designMatrix wTree pairA pairB pairA pairB).rank = 5 := by
-  exact ((MathlibExt.Biology.StatisticalGenetics.StratifiedLDScore.injective_mulVec_iff_rank_eq_card
-    _).mp tree_injective).trans (Fintype.card_fin 5)
+  have h : Function.Injective (designMatrix wTree pairA pairB pairA pairB).mulVec ↔
+      (designMatrix wTree pairA pairB pairA pairB).rank = Fintype.card (Fin 5) := by
+    rw [Matrix.mulVec_injective_iff, Matrix.rank_eq_finrank_span_cols,
+      linearIndependent_iff_card_eq_finrank_span, Set.finrank]
+    exact eq_comm
+  exact (h.mp tree_injective).trans (Fintype.card_fin 5)
 
 /-- Endpoint: one population (`1 choose 2 = 0`) and one edge: never identifiable. -/
 example : ¬ Function.Injective
