@@ -59,3 +59,22 @@ example : thermalInterfaceTemp 1 10 20
     (A := 1) (hin := 10) (hout := 20) (Tin := 20) (Tout := 13)
     (fun _ => 1 / 5) (fun _ => 1)
     (by norm_num [thermalTotalResistance, Finset.sum_range_one])
+
+/-- The same end matching through the physical
+positive-domain form, without a separate nonzero-resistance
+proof. -/
+example : thermalInterfaceTemp 1 10 20
+        ((20 - 13)
+          / thermalTotalResistance (n := 1) 1 10 20
+            (fun _ => 1 / 5) (fun _ => 1))
+        (fun _ => 1 / 5) (fun _ => 1) 1
+      - ((20 - 13)
+          / thermalTotalResistance (n := 1) 1 10 20
+            (fun _ => 1 / 5) (fun _ => 1))
+        * (1 / ((20 : ℝ) * 1))
+    = 13 :=
+  thermalInterfaceTemp_last_sub_film_of_pos (n := 1)
+    (A := 1) (hin := 10) (hout := 20) (Tin := 20) (Tout := 13)
+    (by norm_num) (by norm_num) (by norm_num)
+    (fun _ => 1 / 5) (fun _ => 1)
+    (by intro i _; norm_num) (by intro i _; norm_num)

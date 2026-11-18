@@ -10,6 +10,8 @@ module
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Wall interface temperatures from cumulative resistance
@@ -27,7 +29,12 @@ interface. Adjacent modeled interfaces differ by the layer
 drop, and the reconstruction with the recovered heat rate
 matches the outside air temperature after the final film
 drop. This is the steady, one-dimensional, constant-property
-model only.
+model only. The definitions below are the displayed algebraic
+formulas for arbitrary real inputs; the physical
+series-resistance interpretation is the positive domain
+`A, hin, hout > 0`, layer conductivities `k i > 0`, and
+nonnegative layer thicknesses `L i ≥ 0`, where the total
+resistance is positive.
 
 ## ii. Key results
 
@@ -36,6 +43,9 @@ model only.
 - `Engineering.ThermalInterfaces.thermalInterfaceTemp_last_sub_film`:
   end matching at the
   outside air temperature.
+- `Engineering.ThermalInterfaces.thermalTotalResistance_pos` and
+  `Engineering.ThermalInterfaces.thermalInterfaceTemp_last_sub_film_of_pos`:
+  the physical positive-domain form.
 
 ## iii. Table of contents
 
@@ -54,9 +64,12 @@ model only.
 namespace Engineering.ThermalInterfaces
 
 
-/-- Total series resistance of `n` planar layers and two films
-at common area `A` (the same formula as the series-resistance
-package). -/
+/-- Total series-resistance formula for `n` planar layers and
+two films at common area `A` (the same formula as the
+series-resistance package). As a definition this is the
+totalized algebraic formula; its physical resistance
+interpretation is the positive domain in
+`thermalTotalResistance_pos`. -/
 noncomputable def thermalTotalResistance {n : ℕ} (A hin hout : ℝ)
     (L k : ℕ → ℝ) : ℝ :=
   1 / (hin * A) + (∑ i ∈ Finset.range n, L i / (k i * A))
@@ -114,5 +127,47 @@ theorem thermalInterfaceTemp_last_sub_film {n : ℕ}
     exact div_mul_cancel₀ _ hR
   rw [sub_sub, hQ]
   exact sub_sub_cancel _ _
+
+/-- On the physical positive domain (positive common area and
+film coefficients, positive layer conductivities, and
+nonnegative layer thicknesses), the total series resistance is
+positive. -/
+lemma thermalTotalResistance_pos {n : ℕ}
+    {A hin hout : ℝ} (hA : 0 < A) (hhin : 0 < hin)
+    (hhout : 0 < hout) (L k : ℕ → ℝ)
+    (hL : ∀ i : ℕ, i < n → 0 ≤ L i)
+    (hk : ∀ i : ℕ, i < n → 0 < k i) :
+    0 < thermalTotalResistance (n := n) A hin hout L k := by
+  unfold thermalTotalResistance
+  have hfilm1 : 0 < 1 / (hin * A) :=
+    one_div_pos.mpr (mul_pos hhin hA)
+  have hsum : 0 ≤ ∑ i ∈ Finset.range n, L i / (k i * A) := by
+    apply Finset.sum_nonneg
+    intro i hi
+    have hi' : i < n := Finset.mem_range.mp hi
+    exact div_nonneg (hL i hi') (le_of_lt (mul_pos (hk i hi') hA))
+  have hfilm2 : 0 < 1 / (hout * A) :=
+    one_div_pos.mpr (mul_pos hhout hA)
+  linarith
+
+/-- Physical positive-domain end matching: with positive area
+and film coefficients, positive layer conductivities, and
+nonnegative layer thicknesses, the recovered heat rate is
+formed with a positive total resistance and the last interface
+minus the outside film drop is the outside air temperature. -/
+lemma thermalInterfaceTemp_last_sub_film_of_pos {n : ℕ}
+    {A hin hout Tin Tout : ℝ} (hA : 0 < A) (hhin : 0 < hin)
+    (hhout : 0 < hout) (L k : ℕ → ℝ)
+    (hL : ∀ i : ℕ, i < n → 0 ≤ L i)
+    (hk : ∀ i : ℕ, i < n → 0 < k i) :
+    thermalInterfaceTemp A hin Tin
+        ((Tin - Tout)
+          / thermalTotalResistance (n := n) A hin hout L k) L k n
+      - ((Tin - Tout)
+          / thermalTotalResistance (n := n) A hin hout L k)
+        * (1 / (hout * A))
+    = Tout :=
+  thermalInterfaceTemp_last_sub_film L k
+    (ne_of_gt (thermalTotalResistance_pos hA hhin hhout L k hL hk))
 
 end Engineering.ThermalInterfaces
