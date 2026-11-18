@@ -186,4 +186,28 @@ example :
   rw [one_div, log_inv]
   ring
 
+/-! ### Regularity of the scale-function ratio -/
+
+/-- The regularity hypotheses hold for every genic-selection diffusion. -/
+example (α : ℝ) : ContDiffOn ℝ 2
+    (fixationProb (fun x => α * x * (1 - x)) (fun x => x * (1 - x))) (Ioo 0 1) :=
+  (isRegularDiffusion_wrightFisher α).contDiffOn_fixationProb
+
+/-- Existence: the ratio solves the Dirichlet problem in the stated class. -/
+example {b a : ℝ → ℝ} (h : IsRegularDiffusion b a) :
+    ContinuousOn (fixationProb b a) (Icc 0 1) ∧ ContDiffOn ℝ 2 (fixationProb b a) (Ioo 0 1) ∧
+      (∀ x ∈ Ioo (0 : ℝ) 1, diffusionGenerator b a (fixationProb b a) x = 0) ∧
+      fixationProb b a 0 = 0 ∧ fixationProb b a 1 = 1 :=
+  h.fixationProb_solves
+
+/-- Uniqueness in the class, evaluated at the midpoint. -/
+example {b a u : ℝ → ℝ} (h : IsRegularDiffusion b a) (hcont : ContinuousOn u (Icc 0 1))
+    (hu : ContDiffOn ℝ 2 u (Ioo 0 1)) (hgen : ∀ x ∈ Ioo (0 : ℝ) 1, diffusionGenerator b a u x = 0)
+    (h0 : u 0 = 0) (h1 : u 1 = 1) : u (1 / 2) = fixationProb b a (1 / 2) :=
+  eq_fixationProb_of_contDiffOn h hcont hu hgen h0 h1 _ ⟨by norm_num, by norm_num⟩
+
+#print axioms IsRegularDiffusion.contDiffOn_fixationProb
+#print axioms IsRegularDiffusion.fixationProb_solves
+#print axioms eq_fixationProb_of_contDiffOn
+
 end MathlibExtTest.Biology.PopulationGenetics.Diffusion.GeneralDiffusion

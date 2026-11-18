@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Analysis.Fourier.AddCircle
 public import Mathlib.MeasureTheory.Function.L2Space
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 
@@ -27,6 +28,10 @@ on the band of length `2B` gives the pointwise bound
 `‖PW.rep B g t‖ ≤ √(2B) * ‖g‖₂`. The support hypothesis one might expect is
 not needed: the band norm is bounded by the whole-line norm, so the bound in
 particular covers profiles vanishing almost everywhere off `[-B, B]`.
+
+`PW.bandExt B g` is the zero extension of `g` from the band. For
+`0 < B` and `0 < T` with `2 * B * T ≤ 1`, its one-period Fourier
+coefficients at period `1 / T` are the samples `T * PW.rep B g (-n * T)`.
 -/
 
 open MeasureTheory intervalIntegral
@@ -47,6 +52,13 @@ also assumes `0 < B`. It is a pointwise representative, not an
 identification with an `L²` class. -/
 noncomputable def rep (B : ℝ) (g : ℝ → ℂ) (t : ℝ) : ℂ :=
   ∫ ν in (-B)..B, g ν * Complex.exp (2 * Real.pi * Complex.I * ν * t)
+
+/-- The zero extension of a band profile: `PW.bandExt B g` agrees with `g`
+on `[-B, B]` and is zero elsewhere. For `0 < B` and `0 < T` with
+`B ≤ 1 / (2 * T)`, its one-period Fourier coefficients at period `1 / T`
+are the samples of the representative `PW.rep`. -/
+noncomputable def bandExt (B : ℝ) (g : ℝ → ℂ) : ℝ → ℂ :=
+  (Set.Icc (-B) B).indicator g
 
 private theorem norm_exp_factor (ν t : ℝ) :
     ‖Complex.exp (2 * Real.pi * Complex.I * ν * t)‖ = 1 := by
@@ -255,6 +267,87 @@ theorem norm_rep_le {B : ℝ} {g : ℝ → ℂ} (hB : 0 < B) (hg : MemLp g 2 vol
           rw [hB2]
           exact mul_comm _ _
   exact hstep1.trans hfinal
+
+private theorem ae_compl_Ioc_eq_zero {B a b : ℝ} {F : ℝ → ℂ}
+    (hF : ∀ x, x ∉ Set.Icc (-B) B → F x = 0)
+    (haB : a ≤ -B) (hBb : B ≤ b) :
+    ∀ᵐ x ∂(volume : Measure ℝ), x ∉ Set.Ioc a b → F x = 0 := by
+  have hsing : ∀ᵐ x ∂(volume : Measure ℝ), x ≠ -B := by
+    rw [ae_iff]
+    have hset : {x : ℝ | ¬x ≠ -B} = {-B} := by
+      ext x
+      simp
+    rw [hset]
+    exact Real.volume_singleton
+  filter_upwards [hsing] with x hx hmem
+  apply hF
+  intro hcon
+  rw [Set.mem_Icc] at hcon
+  obtain ⟨hxlo, hxhi⟩ := hcon
+  simp only [Set.mem_Ioc, not_and] at hmem
+  by_cases h : a < x
+  · exact hmem h (le_trans hxhi hBb)
+  · have hle' : x ≤ a := not_lt.mp h
+    exact hx (le_antisymm (le_trans hle' haB) hxlo)
+
+private theorem integral_window_eq_integral_band {B : ℝ} {E : ℝ → ℂ} {g : ℝ → ℂ}
+    {a b : ℝ} (hab : a ≤ b) (hBB : -B ≤ B) (haB : a ≤ -B) (hBb : B ≤ b) :
+    ∫ x in a..b, E x • bandExt B g x = ∫ x in (-B)..B, E x • bandExt B g x := by
+  have hF : ∀ x, x ∉ Set.Icc (-B) B → E x • bandExt B g x = 0 := by
+    intro x hx
+    unfold bandExt
+    rw [Set.indicator_of_notMem hx]
+    exact smul_zero _
+  rw [integral_of_le hab, integral_of_le hBB,
+    setIntegral_eq_integral_of_ae_compl_eq_zero (ae_compl_Ioc_eq_zero hF haB hBb),
+    setIntegral_eq_integral_of_ae_compl_eq_zero (ae_compl_Ioc_eq_zero hF le_rfl le_rfl)]
+
+/-- Sample-coefficient identity: for `0 < B`, `0 < T` with `2 * B * T ≤ 1`,
+and a profile `g` integrable on the band `[-B, B]`, the `n`-th Fourier
+coefficient of the zero extension of `g` over one period `1 / T` (window
+`[-1 / (2 * T), 1 / (2 * T)]`) is `T` times the representative at the
+sample `-n * T`:
+`fourierCoeffOn (bandExt B g) n = T * PW.rep B g (-n * T)`.
+The index sign is the one forced by the `+2πi` inverse convention of
+`PW.rep` and the `fourier (-n)` convention of `fourierCoeffOn`. -/
+theorem fourierCoeff_eq_sample {B T : ℝ} (hB : 0 < B) (hT : 0 < T)
+    (hle : 2 * B * T ≤ 1) {g : ℝ → ℂ}
+    (hg : IntervalIntegrable g volume (-B) B) (n : ℤ) :
+    fourierCoeffOn (show (-(1 / (2 * T)) : ℝ) < 1 / (2 * T) by
+      rw [neg_lt_self_iff]
+      positivity) (bandExt B g) n
+      = (T : ℂ) * rep B g (-(n : ℝ) * T) := by
+  have _ := hg
+  have hT' : T ≠ 0 := ne_of_gt hT
+  have h2T : (2:ℝ) * T ≠ 0 := mul_ne_zero (by norm_num) hT'
+  have hba : 1 / (2 * T) - -(1 / (2 * T)) = 1 / T := by
+    field_simp
+    ring
+  have h2Tpos : (0:ℝ) < 2 * T := by positivity
+  have hBle : B ≤ 1 / (2 * T) := by
+    rw [le_div_iff₀ h2Tpos]
+    have hmul : B * (2 * T) = 2 * B * T := by ring
+    rw [hmul]
+    exact hle
+  have hab' : -(1 / (2 * T)) ≤ 1 / (2 * T) :=
+    neg_le_self_iff.mpr (le_of_lt (by positivity : (0:ℝ) < 1 / (2 * T)))
+  have hBB : -B ≤ B := neg_le_self_iff.mpr (le_of_lt hB)
+  have haB : -(1 / (2 * T)) ≤ -B := neg_le_neg_iff.mpr hBle
+  rw [fourierCoeffOn_eq_integral, hba, one_div_one_div, Complex.real_smul]
+  unfold rep
+  congr 1
+  rw [integral_window_eq_integral_band hab' hBB haB hBle]
+  apply integral_congr
+  rw [Set.uIcc_of_le hBB]
+  intro x hx
+  dsimp only
+  unfold bandExt
+  rw [Set.indicator_of_mem hx g, smul_eq_mul, fourier_coe_apply,
+    mul_comm (Complex.exp _) (g x)]
+  congr 1
+  push_cast
+  have hTc : (T:ℂ) ≠ 0 := by exact_mod_cast hT'
+  field_simp
 
 end PW
 
