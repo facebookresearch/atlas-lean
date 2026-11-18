@@ -91,9 +91,10 @@ example (c : ℝ) :
   rw [hi]
   exact (twoTerminal_equalOppositeFlux (c / 2)).2.2.1
 
-/-- Accumulating charge on the six-face field data: an extra constant density `k` on face `2`
-gives the face fluxes `(-c/2, c/2, k/2, 0, 0, 0)`, continuity holds at rate `-k/2`, and every
-compatible injection equals `k/2` at the box node. -/
+/-- Changing charge on the six-face field data: an extra constant outward density `k` on face `2`
+gives the face fluxes `(-c/2, c/2, k/2, 0, 0, 0)`, continuity holds at enclosed-charge rate
+`-(k/2)`, and every compatible injection equals `k/2` at the box node. For positive `k` the
+enclosed charge decreases while the net outward flux and the box injection are positive. -/
 example (c k : ℝ) (j : Fin 3 → ℝ)
     (hKCL : electricalIncidence twoTerminalTail twoTerminalHead *ᵥ
       (fun e => portSign twoTerminalTail 0 e *
