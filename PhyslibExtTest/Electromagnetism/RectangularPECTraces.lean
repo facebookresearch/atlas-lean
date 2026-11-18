@@ -20,7 +20,9 @@ audit of every production result.
 ## i. Overview
 
 These are elaboration and non-vacuity checks at concrete values, not new
-results. The guide widths are `a = 2` and `b = 3` throughout.
+results. The guide widths are `a = 2` and `b = 3`, except in the checks
+that no field satisfies either predicate at the negative widths
+`a = b = -1`.
 
 ## ii. Key results
 
@@ -32,7 +34,8 @@ No new definitions or results are introduced here.
 - B. Face predicates and per-face equivalences
 - C. Headline equivalence and corners for the zero fields
 - D. Constant tangential field failure at the origin
-- E. Axiom audit
+- E. Negative widths
+- F. Axiom audit
 
 ## iv. References
 
@@ -49,7 +52,7 @@ namespace PhyslibExtTest.Electromagnetism.RectangularPECTraces
 
 /-- The zero fields satisfy the PEC traces for `a = 2`, `b = 3`. -/
 example : rectangularGuidePECTraces 2 3 0 0 :=
-  rectangularGuidePECTraces_zero 2 3
+  rectangularGuidePECTraces_zero 2 3 (by norm_num) (by norm_num)
 
 /-! ## B. Face predicates and per-face equivalences -/
 
@@ -74,11 +77,18 @@ example : (0 : (Fin 3 → ℝ) → Fin 3 → ℝ) ![0, 3, 0] 0 = 0 ∧
 
 /-! ## C. Headline equivalence and corners for the zero fields -/
 
+/-- The unconditional equivalence applies to arbitrary fields, with no
+smoothness or width hypothesis to discharge. -/
+example (E B : (Fin 3 → ℝ) → Fin 3 → ℝ) :
+    rectangularGuidePECTraces 2 3 E B ↔ rectangularGuidePECComponentConditions 2 3 E B :=
+  traces_iff_componentConditions 2 3 E B
+
 /-- The explicit component conditions hold for the zero fields, by the
 headline equivalence. -/
 example : rectangularGuidePECComponentConditions 2 3 (fun _ => 0) (fun _ => 0) :=
   (rectangularGuidePECTraces_iff_componentConditions 2 3 (by norm_num) (by norm_num)
-    _ _ contDiff_const contDiff_const).mp (rectangularGuidePECTraces_zero 2 3)
+    _ _ contDiff_const contDiff_const).mp
+    (rectangularGuidePECTraces_zero 2 3 (by norm_num) (by norm_num))
 
 /-- At the corner line `x = 0`, `y = 0`, `z = 0`, the zero electric field
 vanishes and its first two magnetic components vanish. -/
@@ -86,7 +96,7 @@ example : (0 : (Fin 3 → ℝ) → Fin 3 → ℝ) ![0, 0, 0] = 0 ∧
     (0 : (Fin 3 → ℝ) → Fin 3 → ℝ) ![0, 0, 0] 0 = 0 ∧
     (0 : (Fin 3 → ℝ) → Fin 3 → ℝ) ![0, 0, 0] 1 = 0 :=
   cornerComponents_of_rectangularGuidePECTraces 2 3 (by norm_num) (by norm_num)
-    0 0 (rectangularGuidePECTraces_zero 2 3) 0
+    0 0 (rectangularGuidePECTraces_zero 2 3 (by norm_num) (by norm_num)) 0
 
 /-- The electric field of the zero fields vanishes at all four corner
 points in the plane `z = 0`. -/
@@ -95,7 +105,7 @@ example : (0 : (Fin 3 → ℝ) → Fin 3 → ℝ) ![0, 0, 0] = 0 ∧
     (0 : (Fin 3 → ℝ) → Fin 3 → ℝ) ![0, 3, 0] = 0 ∧
     (0 : (Fin 3 → ℝ) → Fin 3 → ℝ) ![2, 3, 0] = 0 :=
   (allCornerComponents_of_rectangularGuidePECTraces 2 3 (by norm_num) (by norm_num)
-    0 0 (rectangularGuidePECTraces_zero 2 3) 0).1
+    0 0 (rectangularGuidePECTraces_zero 2 3 (by norm_num) (by norm_num)) 0).1
 
 /-! ## D. Constant tangential field failure at the origin -/
 
@@ -116,14 +126,36 @@ example : ¬ rectangularGuidePECTraces 2 3 0 (fun _ => ![0, 1, 0]) :=
   not_rectangularGuidePECTraces_of_normalMagneticNeZero 2 3 _ _ 0 0 le_rfl
     (by norm_num) (by simp)
 
+/-! ## E. Negative widths -/
+
+/-- No pair of fields satisfies the PEC traces at the negative widths
+`a = b = -1`, where the intervals across the guide are empty. -/
+example (E B : (Fin 3 → ℝ) → Fin 3 → ℝ) : ¬ rectangularGuidePECTraces (-1) (-1) E B := by
+  rintro ⟨⟨ha, -⟩, -⟩
+  norm_num at ha
+
+/-- No pair of fields satisfies the explicit component conditions at the
+negative widths `a = b = -1`. -/
+example (E B : (Fin 3 → ℝ) → Fin 3 → ℝ) :
+    ¬ rectangularGuidePECComponentConditions (-1) (-1) E B := by
+  rintro ⟨⟨ha, -⟩, -⟩
+  norm_num at ha
+
+/-- In particular the zero fields, which satisfy the traces at positive
+widths, fail them at `a = b = -1`. -/
+example : ¬ rectangularGuidePECTraces (-1) (-1) 0 0 := by
+  rintro ⟨⟨ha, -⟩, -⟩
+  norm_num at ha
+
 end PhyslibExtTest.Electromagnetism.RectangularPECTraces
 
-/-! ## E. Axiom audit -/
+/-! ## F. Axiom audit -/
 
 #print axioms xZeroWall_traces_iff_components
 #print axioms xTopWall_traces_iff_components
 #print axioms yZeroWall_traces_iff_components
 #print axioms yTopWall_traces_iff_components
+#print axioms traces_iff_componentConditions
 #print axioms rectangularGuidePECTraces_iff_componentConditions
 #print axioms cornerComponents_of_rectangularGuidePECTraces
 #print axioms allCornerComponents_of_rectangularGuidePECTraces

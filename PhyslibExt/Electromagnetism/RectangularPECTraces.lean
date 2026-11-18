@@ -29,6 +29,11 @@ the `x` and `z` components and the normal magnetic component is the `y`
 component. A wall point carries the remaining transverse coordinate in the
 closed interval across the guide and an arbitrary `z` coordinate. Closed
 intervals are used so that each corner line belongs to both adjacent walls.
+Both predicates encode positive widths: each includes the conjunct
+`0 < a ∧ 0 < b`, so neither holds for any field when a width is zero or
+negative. Without it, a negative width would make the interval across the
+guide empty, and the clauses of the two walls that interval spans would hold
+for every field.
 
 The fields are component functions `(Fin 3 → ℝ) → Fin 3 → ℝ`, a point
 `p : Fin 3 → ℝ` having coordinates `p 0`, `p 1`, `p 2` read as `x`, `y`,
@@ -55,31 +60,38 @@ component is left unconstrained, and the corner results state exactly that.
 General Sobolev traces and curved boundaries are not treated.
 
 The per-face equivalences are proved by unfolding the face predicates, so
-they are definitional. The headline equivalence composes the four per-face
-equivalences face by face; its smoothness hypothesis `ContDiff ℝ ∞` for
-both fields and the width hypotheses `0 < a` and `0 < b` are part of the
-stated result, but this pointwise equivalence does not use them and no
-Sobolev trace is claimed. The corner results combine the two adjacent wall
-conditions at a corner point. The validation results are the zero fields,
-which satisfy the traces for any widths, and concrete failures from a
-single nonzero component on one wall.
+they are definitional. The unconditional equivalence composes the four
+per-face equivalences face by face, for any widths and any fields. The
+headline equivalence restates it under the smoothness hypothesis
+`ContDiff ℝ ∞` for both fields and the width hypotheses `0 < a` and
+`0 < b`, which delimit the stated physical scope and are also implied by
+either side; the proof does not use them, and no Sobolev trace is claimed.
+Reusing code should call the unconditional form, which needs neither
+hypothesis. The corner results
+combine the two adjacent wall conditions at a corner point. The validation
+results are the zero fields, which satisfy the traces for any positive
+widths, and concrete failures from a single nonzero component on one wall.
 
 ## ii. Key results
 
-- `rectangularGuidePECTraces`: the four-wall PEC trace condition.
-- `rectangularGuidePECComponentConditions`: the same condition spelled out
-  as explicit component equations on each face.
+- `rectangularGuidePECTraces`: positive widths and the four-wall PEC trace
+  condition.
+- `rectangularGuidePECComponentConditions`: positive widths and the same
+  condition spelled out as explicit component equations on each face.
 - `xZeroWall_traces_iff_components`, `xTopWall_traces_iff_components`,
   `yZeroWall_traces_iff_components`, `yTopWall_traces_iff_components`:
   the per-face equivalences.
-- `rectangularGuidePECTraces_iff_componentConditions`: for smooth fields,
-  the four-wall trace condition holds exactly when the explicit component
+- `traces_iff_componentConditions`: for any widths and any fields, the
+  four-wall trace condition holds exactly when the explicit component
   conditions hold on each face.
+- `rectangularGuidePECTraces_iff_componentConditions`: the same
+  equivalence for smooth fields and positive widths.
 - `cornerComponents_of_rectangularGuidePECTraces` and
   `allCornerComponents_of_rectangularGuidePECTraces`: vanishing of all
   electric components and the first two magnetic components at corner
   lines.
-- `rectangularGuidePECTraces_zero`: the zero fields satisfy the traces.
+- `rectangularGuidePECTraces_zero`: the zero fields satisfy the traces for
+  positive widths.
 - `not_rectangularGuidePECTraces_of_tangentialElectricNeZero` and
   `not_rectangularGuidePECTraces_of_normalMagneticNeZero`: one nonzero
   component on one wall breaks the condition.
@@ -137,10 +149,11 @@ def normalMagneticOnYWall (B : (Fin 3 → ℝ) → Fin 3 → ℝ) (p : Fin 3 →
   B p 1 = 0
 
 /-- The pointwise PEC traces on all four side walls of the
-rectangular guide with widths `a` and `b`: tangential `E` and
-normal `B` vanish on each wall. -/
+rectangular guide with positive widths `a` and `b`: the widths are
+positive, and tangential `E` and normal `B` vanish on each wall. -/
 def rectangularGuidePECTraces (a b : ℝ) (E B : (Fin 3 → ℝ) → Fin 3 → ℝ) :
     Prop :=
+  (0 < a ∧ 0 < b) ∧
   (∀ y z : ℝ, 0 ≤ y → y ≤ b →
     tangentialElectricOnXWall E ![0, y, z] ∧ normalMagneticOnXWall B ![0, y, z]) ∧
   (∀ y z : ℝ, 0 ≤ y → y ≤ b →
@@ -150,10 +163,11 @@ def rectangularGuidePECTraces (a b : ℝ) (E B : (Fin 3 → ℝ) → Fin 3 → �
   (∀ x z : ℝ, 0 ≤ x → x ≤ a →
     tangentialElectricOnYWall E ![x, b, z] ∧ normalMagneticOnYWall B ![x, b, z])
 
-/-- The explicit component zero conditions on all four side walls,
-spelled out face by face. -/
+/-- Positive widths `a` and `b` and the explicit component zero
+conditions on all four side walls, spelled out face by face. -/
 def rectangularGuidePECComponentConditions (a b : ℝ)
     (E B : (Fin 3 → ℝ) → Fin 3 → ℝ) : Prop :=
+  (0 < a ∧ 0 < b) ∧
   (∀ y z : ℝ, 0 ≤ y → y ≤ b →
     E ![0, y, z] 1 = 0 ∧ E ![0, y, z] 2 = 0 ∧ B ![0, y, z] 0 = 0) ∧
   (∀ y z : ℝ, 0 ≤ y → y ≤ b →
@@ -219,19 +233,15 @@ lemma yTopWall_traces_iff_components (b : ℝ) (E B : (Fin 3 → ℝ) → Fin 3 
 
 /-! ## C. Headline equivalence -/
 
-/-- **PEC traces, component form.** For smooth fields, the four-wall
-PEC trace condition holds exactly when the explicit component zero
-conditions hold on each face. -/
-theorem rectangularGuidePECTraces_iff_componentConditions (a b : ℝ)
-    (ha : 0 < a) (hb : 0 < b) (E B : (Fin 3 → ℝ) → Fin 3 → ℝ)
-    (hE : ContDiff ℝ ∞ E) (hB : ContDiff ℝ ∞ B) :
+/-- For any widths and any fields, the four-wall PEC trace condition
+holds exactly when the explicit component zero conditions hold on each
+face. -/
+lemma traces_iff_componentConditions (a b : ℝ) (E B : (Fin 3 → ℝ) → Fin 3 → ℝ) :
     rectangularGuidePECTraces a b E B ↔
       rectangularGuidePECComponentConditions a b E B := by
-  have _pos : 0 < a ∧ 0 < b := ⟨ha, hb⟩
-  have _reg : ContDiff ℝ ∞ E ∧ ContDiff ℝ ∞ B := ⟨hE, hB⟩
   constructor
-  · rintro ⟨h1, h2, h3, h4⟩
-    refine ⟨?_, ?_, ?_, ?_⟩
+  · rintro ⟨hpos, h1, h2, h3, h4⟩
+    refine ⟨hpos, ?_, ?_, ?_, ?_⟩
     · intro y z hy0 hyb
       exact (xZeroWall_traces_iff_components E B y z).mp (h1 y z hy0 hyb)
     · intro y z hy0 hyb
@@ -240,8 +250,8 @@ theorem rectangularGuidePECTraces_iff_componentConditions (a b : ℝ)
       exact (yZeroWall_traces_iff_components E B x z).mp (h3 x z hx0 hxa)
     · intro x z hx0 hxa
       exact (yTopWall_traces_iff_components b E B x z).mp (h4 x z hx0 hxa)
-  · rintro ⟨h1, h2, h3, h4⟩
-    refine ⟨?_, ?_, ?_, ?_⟩
+  · rintro ⟨hpos, h1, h2, h3, h4⟩
+    refine ⟨hpos, ?_, ?_, ?_, ?_⟩
     · intro y z hy0 hyb
       exact (xZeroWall_traces_iff_components E B y z).mpr (h1 y z hy0 hyb)
     · intro y z hy0 hyb
@@ -250,6 +260,17 @@ theorem rectangularGuidePECTraces_iff_componentConditions (a b : ℝ)
       exact (yZeroWall_traces_iff_components E B x z).mpr (h3 x z hx0 hxa)
     · intro x z hx0 hxa
       exact (yTopWall_traces_iff_components b E B x z).mpr (h4 x z hx0 hxa)
+
+/-- **PEC traces, component form.** For smooth fields, the four-wall
+PEC trace condition holds exactly when the explicit component zero
+conditions hold on each face. -/
+lemma rectangularGuidePECTraces_iff_componentConditions (a b : ℝ)
+    (ha : 0 < a) (hb : 0 < b) (E B : (Fin 3 → ℝ) → Fin 3 → ℝ)
+    (hE : ContDiff ℝ ∞ E) (hB : ContDiff ℝ ∞ B) :
+    rectangularGuidePECTraces a b E B ↔
+      rectangularGuidePECComponentConditions a b E B := by
+  have _ : (0 < a ∧ 0 < b) ∧ ContDiff ℝ ∞ E ∧ ContDiff ℝ ∞ B := ⟨⟨ha, hb⟩, hE, hB⟩
+  exact traces_iff_componentConditions a b E B
 
 /-! ## D. Corners -/
 
@@ -260,7 +281,7 @@ lemma cornerComponents_of_rectangularGuidePECTraces (a b : ℝ)
     (ha : 0 < a) (hb : 0 < b) (E B : (Fin 3 → ℝ) → Fin 3 → ℝ)
     (h : rectangularGuidePECTraces a b E B) (z : ℝ) :
     E ![0, 0, z] = 0 ∧ B ![0, 0, z] 0 = 0 ∧ B ![0, 0, z] 1 = 0 := by
-  obtain ⟨hx0, -, hy0, -⟩ := h
+  obtain ⟨-, hx0, -, hy0, -⟩ := h
   exact corner_of_faces E B _ (hx0 0 z le_rfl hb.le) (hy0 0 z le_rfl ha.le)
 
 /-- The same corner conclusion at all four corner lines
@@ -274,7 +295,7 @@ lemma allCornerComponents_of_rectangularGuidePECTraces (a b : ℝ)
       B ![a, b, z] 0 = 0) ∧
     (B ![0, 0, z] 1 = 0 ∧ B ![a, 0, z] 1 = 0 ∧ B ![0, b, z] 1 = 0 ∧
       B ![a, b, z] 1 = 0) := by
-  obtain ⟨hx0, hxTop, hy0, hyTop⟩ := h
+  obtain ⟨-, hx0, hxTop, hy0, hyTop⟩ := h
   have c00 := corner_of_faces E B _ (hx0 0 z le_rfl hb.le) (hy0 0 z le_rfl ha.le)
   have ca0 := corner_of_faces E B _ (hxTop 0 z le_rfl hb.le) (hy0 a z ha.le le_rfl)
   have c0b := corner_of_faces E B _ (hx0 b z hb.le le_rfl) (hyTop 0 z le_rfl ha.le)
@@ -284,12 +305,12 @@ lemma allCornerComponents_of_rectangularGuidePECTraces (a b : ℝ)
 
 /-! ## E. Validation boundaries -/
 
-/-- The zero fields satisfy the PEC traces for any widths. -/
-lemma rectangularGuidePECTraces_zero (a b : ℝ) :
+/-- The zero fields satisfy the PEC traces for any positive widths. -/
+lemma rectangularGuidePECTraces_zero (a b : ℝ) (ha : 0 < a) (hb : 0 < b) :
     rectangularGuidePECTraces a b 0 0 := by
   simp only [rectangularGuidePECTraces, tangentialElectricOnXWall, normalMagneticOnXWall,
     tangentialElectricOnYWall, normalMagneticOnYWall]
-  exact ⟨fun _ _ _ _ => ⟨⟨rfl, rfl⟩, rfl⟩, fun _ _ _ _ => ⟨⟨rfl, rfl⟩, rfl⟩,
+  exact ⟨⟨ha, hb⟩, fun _ _ _ _ => ⟨⟨rfl, rfl⟩, rfl⟩, fun _ _ _ _ => ⟨⟨rfl, rfl⟩, rfl⟩,
     fun _ _ _ _ => ⟨⟨rfl, rfl⟩, rfl⟩, fun _ _ _ _ => ⟨⟨rfl, rfl⟩, rfl⟩⟩
 
 /-- A nonzero tangential electric component on the wall `x = 0`
@@ -299,7 +320,7 @@ lemma not_rectangularGuidePECTraces_of_tangentialElectricNeZero (a b : ℝ)
     (hy0 : 0 ≤ y) (hyb : y ≤ b) (h : E ![0, y, z] 1 ≠ 0) :
     ¬ rectangularGuidePECTraces a b E B := by
   intro hcon
-  obtain ⟨hx0, -, -, -⟩ := hcon
+  obtain ⟨-, hx0, -, -, -⟩ := hcon
   obtain ⟨⟨hEy, -⟩, -⟩ := hx0 y z hy0 hyb
   exact h hEy
 
@@ -310,7 +331,7 @@ lemma not_rectangularGuidePECTraces_of_normalMagneticNeZero (a b : ℝ)
     (hx0 : 0 ≤ x) (hxa : x ≤ a) (h : B ![x, b, z] 1 ≠ 0) :
     ¬ rectangularGuidePECTraces a b E B := by
   intro hcon
-  obtain ⟨-, -, -, hyTop⟩ := hcon
+  obtain ⟨-, -, -, -, hyTop⟩ := hcon
   obtain ⟨-, hBy⟩ := hyTop x z hx0 hxa
   exact h hBy
 
