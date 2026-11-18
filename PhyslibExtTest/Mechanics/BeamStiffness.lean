@@ -20,7 +20,7 @@ and rigid translation produces no end forces.
 These are elaboration and non-vacuity checks, not new results.
 -/
 
-open Matrix
+open Matrix Mechanics.EulerBernoulli
 
 /-- Unit tip deflection: tip force entry is `12` at `EI = L = 1`. -/
 example : (beamStiffness 1 1 *ᵥ ![0, 0, 1, 0]) 2 = 12 := by

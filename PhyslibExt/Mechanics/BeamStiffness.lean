@@ -23,14 +23,17 @@ matrix with rows `(12, 6L, -12, 6L)`, `(6L, 4L^2, -6L, 2L^2)`,
 `(-12, -6L, 12, -6L)`, `(6L, 2L^2, -6L, 4L^2)`. The matrix is
 symmetric; rigid translation and rigid rotation are in its
 kernel; and its quadratic form `d ⬝ᵥ (K *ᵥ d)` (twice the strain
-energy) has the closed form recorded in `beamStiffness_quad_form`.
+energy) has the closed form recorded in
+`Mechanics.EulerBernoulli.beamStiffness_quad_form`.
 
 ## ii. Key results
 
-- `beamStiffness_transpose`: symmetry.
-- `beamStiffness_mulVec_translation`,
-  `beamStiffness_mulVec_rotation`: rigid-body kernel vectors.
-- `beamStiffness_quad_form`: the energy quadratic form.
+- `Mechanics.EulerBernoulli.beamStiffness_transpose`: symmetry.
+- `Mechanics.EulerBernoulli.beamStiffness_mulVec_translation`
+  and `Mechanics.EulerBernoulli.beamStiffness_mulVec_rotation`:
+  rigid-body kernel vectors.
+- `Mechanics.EulerBernoulli.beamStiffness_quad_form`: the
+  energy quadratic form.
 
 ## iii. Table of contents
 
@@ -52,6 +55,8 @@ energy) has the closed form recorded in `beamStiffness_quad_form`.
 open Matrix
 
 /-! ## A. The stiffness matrix and its energy -/
+namespace Mechanics.EulerBernoulli
+
 
 /-- Beam-element stiffness matrix for a prismatic Euler-Bernoulli
 element with flexural rigidity `EI` and length `L`, in the nodal
@@ -101,3 +106,5 @@ theorem beamStiffness_quad_form (EI L : ℝ) (d : Fin 4 → ℝ) :
   unfold beamStiffness
   simp [Matrix.mulVec, dotProduct, Fin.sum_univ_four]
   ring
+
+end Mechanics.EulerBernoulli
