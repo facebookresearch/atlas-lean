@@ -38,6 +38,6 @@ and free semicircular families on the full Fock space.
 ## Related topics
 
 - [Wigner's semicircle law](../wigner-s-semicircle-law/README.md)
-- Noncrossing pair partitions and the Catalan count
-- Noncrossing partitions and the refinement order
+- [Noncrossing pair partitions and the Catalan count](../../../Combinatorics/set-partitions/noncrossing-partitions/noncrossing-pair-partitions-and-the-catalan-count/README.md)
+- [Noncrossing partitions and the refinement order](../../../Combinatorics/set-partitions/noncrossing-partitions/noncrossing-partitions-and-the-refinement-order/README.md)
 - [Ben Arous–Guionnet large deviations](../../large-deviations/ben-arous-guionnet-large-deviations/README.md)

@@ -5,5 +5,5 @@
 
 ## Related topics
 
-- Noncrossing pair partitions and the Catalan count
+- [Noncrossing pair partitions and the Catalan count](../../../set-partitions/noncrossing-partitions/noncrossing-pair-partitions-and-the-catalan-count/README.md)
 - [Wigner's semicircle law](../../../../Probability/high-dimensional-probability/wigner-s-semicircle-law/README.md)
