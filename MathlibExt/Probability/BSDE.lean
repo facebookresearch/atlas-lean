@@ -25,8 +25,9 @@ solution of a backward stochastic differential equation*, Systems Control Lett. 
 Unlike an SDE, the terminal value is prescribed, and the martingale part `Z` is an unknown.
 
 This file fixes the one-dimensional solution notion `IsBSDESolution`, in the space
-`M²(0, T)` of progressive processes with `E ∫_0^T |·|² dt < ∞`, with the repository's `L²` Itô
-integral `ProbabilityTheory.itoIntegral`, and the augmented Brownian filtration
+`M²(0, T)` of progressive processes with `E ∫_0^T |·|² dt < ∞` and an almost surely integrable
+drift `s ↦ g(s, Y_s, Z_s)`, with the repository's `L²` Itô integral
+`ProbabilityTheory.itoIntegral`, and the augmented Brownian filtration
 `IsAugmentedBrownianFiltration`. It proves that a generator vanishing at `z = 0` has the constant
 solutions `(Y, Z) = (c, 0)`: this is the constant-preserving property `E^g[c] = c` of Peng's
 g-expectation (ICM 2010, §1.6). The existence, uniqueness and comparison theorems are recorded in
@@ -54,14 +55,19 @@ def IsAugmentedBrownianFiltration (P : Measure Ω) (F : Filtration ℝ≥0 mΩ)
 /-- **Solution of a one-dimensional BSDE on `[0, T]`** (S. Peng, Proc. ICM 2010, Vol. I, §1.2,
 equation (1.7) and Theorem 1.1, with `m = d = 1`). The pair `(Y, Z)` solves the BSDE with
 generator `g` and terminal value `ξ` if `Y` and `Z` are `F`-progressive with
-`E ∫_0^T Y_t² dt < ∞` and `E ∫_0^T Z_t² dt < ∞` (the space `M²(0, T)`), and for every `t ≤ T`,
-almost surely, `Y_t = ξ + ∫_t^T g(s, Y_s, Z_s) ds - (∫_0^T Z dB - ∫_0^t Z dB)`, where `∫ Z dB`
-is the repository's `L²` Itô integral `ProbabilityTheory.itoIntegral`. -/
+`E ∫_0^T Y_t² dt < ∞` and `E ∫_0^T Z_t² dt < ∞` (the space `M²(0, T)`), almost surely the drift
+`s ↦ g(s, Y_s, Z_s)` is integrable on `[0, T]`, and for every `t ≤ T`, almost surely,
+`Y_t = ξ + ∫_t^T g(s, Y_s, Z_s) ds - (∫_0^T Z dB - ∫_0^t Z dB)`, where `∫ Z dB` is the
+repository's `L²` Itô integral `ProbabilityTheory.itoIntegral`. The integrability condition makes
+the drift integral a genuine Lebesgue integral on every `[t, T]`: without it, a divergent integral
+would be read as `0` (`intervalIntegral.integral_undef`). -/
 def IsBSDESolution (P : Measure Ω) (F : Filtration ℝ≥0 mΩ) (B : ℝ≥0 → Ω → ℝ) (T : ℝ≥0)
     (g : ℝ≥0 → Ω → ℝ → ℝ → ℝ) (ξ : Ω → ℝ) (Y Z : ℝ≥0 → Ω → ℝ) : Prop :=
   IsProgressive F Y ∧ IsProgressive F Z ∧
     ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) T, ‖Y u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞ ∧
     ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) T, ‖Z u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞ ∧
+    (∀ᵐ ω ∂P, IntervalIntegrable
+      (fun u : ℝ ↦ g u.toNNReal ω (Y u.toNNReal ω) (Z u.toNNReal ω)) volume 0 T) ∧
     ∀ t ≤ T, ∀ᵐ ω ∂P, Y t ω = ξ ω +
       (∫ u in (t : ℝ)..T, g u.toNNReal ω (Y u.toNNReal ω) (Z u.toNNReal ω)) -
         (itoIntegral P F B Z T ω - itoIntegral P F B Z t ω)
@@ -88,9 +94,10 @@ theorem isBSDESolution_const {P : Measure Ω} [IsProbabilityMeasure P] {F : Filt
     (hInd : ∀ s t, s ≤ t → Indep (MeasurableSpace.comap (fun ω ↦ B t ω - B s ω) inferInstance)
       (F s) P) (T : ℝ≥0) {g : ℝ≥0 → Ω → ℝ → ℝ → ℝ} (c : ℝ) (hg : ∀ t ω, g t ω c 0 = 0) :
     IsBSDESolution P F B T g (fun _ ↦ c) (fun _ _ ↦ c) (fun _ _ ↦ 0) := by
-  refine ⟨isProgressive_const F c, isProgressive_const F 0, ?_, by simp, ?_⟩
+  refine ⟨isProgressive_const F c, isProgressive_const F 0, ?_, by simp, ?_, ?_⟩
   · simp only [lintegral_const, measure_univ, mul_one]
     exact ENNReal.mul_ne_top (by simp) (by simp [Real.volume_Ioc])
+  · exact Filter.Eventually.of_forall fun ω ↦ by simp [hg]
   · intro t _
     have h0 : (fun (_ : ℝ≥0) (_ : Ω) ↦ (0 : ℝ)) = 0 := rfl
     filter_upwards [itoIntegral_zero_ae hB hBF hInd T, itoIntegral_zero_ae hB hBF hInd t]

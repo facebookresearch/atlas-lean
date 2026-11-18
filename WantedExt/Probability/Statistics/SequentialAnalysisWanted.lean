@@ -55,12 +55,14 @@ theorem_wanted sprt_wald_wolfowitz {P₀ P₁ : Measure X} [IsProbabilityMeasure
     (hT₀ : ∫⁻ ω, ((show ℕ∞ from T ω) : ℝ≥0∞) ∂Measure.infinitePi (fun _ : ℕ => P₀) < ∞)
     (hT₁ : ∫⁻ ω, ((show ℕ∞ from T ω) : ℝ≥0∞) ∂Measure.infinitePi (fun _ : ℕ => P₁) < ∞)
     (hα : Measure.infinitePi (fun _ : ℕ => P₀) D ≤
-      Measure.infinitePi (fun _ : ℕ => P₀) (sprtAcceptOne P₀ P₁ a b))
+      Measure.infinitePi (fun _ : ℕ => P₀) (sprtAcceptOne P₀ P₁ h₁₀ h₀₁ a b))
     (hβ : Measure.infinitePi (fun _ : ℕ => P₁) Dᶜ ≤
-      Measure.infinitePi (fun _ : ℕ => P₁) (sprtAcceptZero P₀ P₁ a b)) :
-    ∫⁻ ω, ((show ℕ∞ from sprtTime P₀ P₁ a b ω) : ℝ≥0∞) ∂Measure.infinitePi (fun _ : ℕ => P₀) ≤
+      Measure.infinitePi (fun _ : ℕ => P₁) (sprtAcceptZero P₀ P₁ h₁₀ h₀₁ a b)) :
+    ∫⁻ ω, ((show ℕ∞ from sprtTime P₀ P₁ h₁₀ h₀₁ a b ω) : ℝ≥0∞)
+        ∂Measure.infinitePi (fun _ : ℕ => P₀) ≤
         ∫⁻ ω, ((show ℕ∞ from T ω) : ℝ≥0∞) ∂Measure.infinitePi (fun _ : ℕ => P₀) ∧
-      ∫⁻ ω, ((show ℕ∞ from sprtTime P₀ P₁ a b ω) : ℝ≥0∞) ∂Measure.infinitePi (fun _ : ℕ => P₁) ≤
+      ∫⁻ ω, ((show ℕ∞ from sprtTime P₀ P₁ h₁₀ h₀₁ a b ω) : ℝ≥0∞)
+        ∂Measure.infinitePi (fun _ : ℕ => P₁) ≤
         ∫⁻ ω, ((show ℕ∞ from T ω) : ℝ≥0∞) ∂Measure.infinitePi (fun _ : ℕ => P₁)
 
 /-- **Shiryaev's theorem: Bayesian optimality of the Shiryaev rule.** Let `P₀ ≠ P₁` be mutually
@@ -75,10 +77,11 @@ theorem_wanted shiryaevTime_optimal {P₀ P₁ : Measure X} [IsProbabilityMeasur
     [IsProbabilityMeasure P₁] (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) (hne : P₀ ≠ P₁)
     (hkl : InformationTheory.klDiv P₁ P₀ ≠ ∞) {ρ : ℝ} (hρ₀ : 0 < ρ) (hρ₁ : ρ < 1) {A : ℝ}
     (hA₀ : 0 < A) (hA₁ : A < 1) {α : ℝ≥0∞}
-    (hα : falseAlarmProb P₀ P₁ ρ (shiryaevTime P₀ P₁ ρ A) = α)
+    (hα : falseAlarmProb P₀ P₁ ρ (shiryaevTime P₀ P₁ h₁₀ h₀₁ ρ A) = α)
     {τ : (ℕ → X) → WithTop ℕ} (hτ : IsStoppingTime (observationFiltration X) τ)
     (hτα : falseAlarmProb P₀ P₁ ρ τ ≤ α) :
-    averageDetectionDelay P₀ P₁ ρ (shiryaevTime P₀ P₁ ρ A) ≤ averageDetectionDelay P₀ P₁ ρ τ
+    averageDetectionDelay P₀ P₁ ρ (shiryaevTime P₀ P₁ h₁₀ h₀₁ ρ A) ≤
+      averageDetectionDelay P₀ P₁ ρ τ
 
 /-- **Moustakides' theorem: optimality of CUSUM under Lorden's criterion.** Let `P₀ ≠ P₁` be
 mutually absolutely continuous, let `c > 0`, and let `γ` be the mean time to false alarm
@@ -91,10 +94,10 @@ statistic `W_n` used here (Veeravalli–Banerjee, remark after equation (48)). -
 theorem_wanted cusumTime_lordenDelay_le {P₀ P₁ : Measure X} [IsProbabilityMeasure P₀]
     [IsProbabilityMeasure P₁] (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) (hne : P₀ ≠ P₁) {c : ℝ}
     (hc : 0 < c) {γ : ℝ≥0∞}
-    (hγ : ∫⁻ ω, ((show ℕ∞ from cusumTime P₀ P₁ c ω) : ℝ≥0∞)
+    (hγ : ∫⁻ ω, ((show ℕ∞ from cusumTime P₀ P₁ h₁₀ h₀₁ c ω) : ℝ≥0∞)
       ∂Measure.infinitePi (fun _ : ℕ => P₀) = γ)
     {T : (ℕ → X) → WithTop ℕ} (hT : IsStoppingTime (observationFiltration X) T)
     (hTγ : γ ≤ ∫⁻ ω, ((show ℕ∞ from T ω) : ℝ≥0∞) ∂Measure.infinitePi (fun _ : ℕ => P₀)) :
-    lordenDelay P₀ P₁ (cusumTime P₀ P₁ c) ≤ lordenDelay P₀ P₁ T
+    lordenDelay P₀ P₁ (cusumTime P₀ P₁ h₁₀ h₀₁ c) ≤ lordenDelay P₀ P₁ T
 
 end MeasureTheory

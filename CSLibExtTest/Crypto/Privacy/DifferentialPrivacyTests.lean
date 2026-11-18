@@ -16,7 +16,7 @@ public import CSLibExt.Crypto.Privacy.Laplace
 
 * A counting query on `n` rows has sensitivity `1` for `hammingAdj`, so the Laplace mechanism with
   scale `1 / ε` is `ε`-differentially private; post-processing it by squaring keeps the guarantee.
-* The Laplace law is a probability measure.
+* The Laplace law, and every output of the Laplace mechanism, is a probability measure.
 * The exponential mechanism with the score "is this my value" on `Fin 3` is `ε`-differentially
   private for any pair of databases; composing it with the Laplace count adds the epsilons.
 * Basic composition of three Laplace counts, the vector Laplace mechanism, approximate
@@ -51,13 +51,21 @@ theorem countTrue_sensitivity {n : ℕ} {S S' : Fin n → Bool} (h : hammingAdj 
 
 /-- The Laplace count is `ε`-differentially private. -/
 example {n : ℕ} {ε : ℝ} (hε : 0 < ε) :
-    DifferentiallyPrivate hammingAdj (laplaceMechanism (countTrue (n := n)) (1 / ε)) ε 0 :=
+    DifferentiallyPrivate hammingAdj
+      (laplaceMechanism (countTrue (n := n)) (1 / ε) (by positivity)) ε 0 :=
   laplaceMechanism_differentiallyPrivate one_pos hε fun _ _ h ↦ countTrue_sensitivity h
+
+/-- Non-vacuity: the Laplace mechanism releases a sample, since each output law has total mass
+one; a mechanism whose outputs were zero measures would satisfy every privacy bound. -/
+example {n : ℕ} {ε : ℝ} (hε : 0 < ε) (S : Fin n → Bool) :
+    laplaceMechanism (countTrue (n := n)) (1 / ε) (by positivity) S Set.univ = 1 :=
+  measure_univ
 
 /-- Post-processing the Laplace count by squaring keeps `ε`-differential privacy. -/
 example {n : ℕ} {ε : ℝ} (hε : 0 < ε) :
     DifferentiallyPrivate hammingAdj
-      (fun S ↦ (laplaceMechanism (countTrue (n := n)) (1 / ε) S).map fun z ↦ z ^ 2) ε 0 :=
+      (fun S ↦ (laplaceMechanism (countTrue (n := n)) (1 / ε) (by positivity) S).map
+        fun z ↦ z ^ 2) ε 0 :=
   (laplaceMechanism_differentiallyPrivate one_pos hε fun _ _ h ↦ countTrue_sensitivity h).map
     (by fun_prop)
 
@@ -94,7 +102,7 @@ example (x : Fin 3) (t : ℝ) :
 `(ε₁ + ε₂)`-differentially private. -/
 example {ε₁ ε₂ : ℝ} (h₁ : 0 < ε₁) (h₂ : 0 ≤ ε₂) :
     DifferentiallyPrivate (fun _ _ : Fin 3 ↦ True)
-      (fun x ↦ (laplaceMechanism (fun x : Fin 3 ↦ (x : ℝ)) (2 / ε₁) x).prod
+      (fun x ↦ (laplaceMechanism (fun x : Fin 3 ↦ (x : ℝ)) (2 / ε₁) (by positivity) x).prod
         (expMechanism ε₂ 1 matchScore x)) (ε₁ + ε₂) 0 := by
   refine DifferentiallyPrivate.prod
     (laplaceMechanism_differentiallyPrivate two_pos h₁ fun x y _ ↦ ?_)
@@ -104,12 +112,12 @@ example {ε₁ ε₂ : ℝ} (h₁ : 0 < ε₁) (h₂ : 0 ≤ ε₂) :
 /-- Three independent releases of the Laplace count compose to `3ε` (basic composition). -/
 example {n : ℕ} {ε : ℝ} (hε : 0 < ε) :
     DifferentiallyPrivate hammingAdj
-      (fun S ↦ Measure.pi fun _ : Fin 3 ↦ laplaceMechanism (countTrue (n := n)) (1 / ε) S)
+      (fun S ↦ Measure.pi fun _ : Fin 3 ↦
+        laplaceMechanism (countTrue (n := n)) (1 / ε) (by positivity) S)
       (3 * ε) 0 := by
-  have : ∀ S, IsProbabilityMeasure (laplaceMechanism (countTrue (n := n)) (1 / ε) S) :=
-    fun _ ↦ isProbabilityMeasure_laplaceMeasure (by positivity) _
   have h := differentiallyPrivate_pi (Ω := fun _ : Fin 3 ↦ ℝ)
-    (M := fun _ ↦ laplaceMechanism (countTrue (n := n)) (1 / ε)) (ε := fun _ ↦ ε)
+    (M := fun _ ↦ laplaceMechanism (countTrue (n := n)) (1 / ε) (by positivity))
+    (ε := fun _ ↦ ε)
     (δ := fun _ ↦ 0) fun _ ↦
       laplaceMechanism_differentiallyPrivate one_pos hε fun _ _ h ↦ countTrue_sensitivity h
   simpa [Finset.sum_const, Finset.card_univ, Fintype.card_fin] using h

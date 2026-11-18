@@ -457,21 +457,23 @@ private lemma mem_support_of_mem_span {m : ℕ} (L : ℝ) {z : ℕ → Euclidean
 
 /-- **Lower complexity bound for smooth convex minimisation.** Let `L > 0`, `1 ≤ k` and
 `2 k + 1 ≤ n`. For every `x₀ ∈ ℝⁿ` there is a convex `C^∞` function `f` on `ℝⁿ` with `L`-Lipschitz
-gradient and a minimiser `x⋆` of `f` such that every sequence with `x 0 = x₀` and
+gradient and a minimiser `x⋆ ≠ x₀` of `f` such that every sequence with `x 0 = x₀` and
 `x j - x₀ ∈ span {∇f (x i) : i < j}` for all `j` satisfies
 `f (x k) - f x⋆ ≥ 3 L ‖x₀ - x⋆‖ ^ 2 / (32 (k + 1) ^ 2)` and
-`‖x k - x⋆‖ ^ 2 ≥ ‖x₀ - x⋆‖ ^ 2 / 32`.
+`‖x k - x⋆‖ ^ 2 ≥ ‖x₀ - x⋆‖ ^ 2 / 32`. Since `‖x₀ - x⋆‖ > 0`, both bounds are positive: they are
+not met trivially by taking `x⋆ = x₀` (for instance `f ≡ 0`).
 
 This is Theorem 2.1.6 of Yu. Nesterov, *Introductory Lectures on Convex Programming, Volume I:
 Basic course* (lecture notes, July 2, 1998), whose hypothesis `1 ≤ k ≤ (n - 1) / 2` is
 `2 k + 1 ≤ n`. The function is the shift by `x₀` of `worstFunction n (2 k + 1) L`, and `x⋆` is
-the shift of its minimiser `x̄ᵢ = 1 - i / (2 k + 2)` (`i ≤ 2 k + 1`), `x̄ᵢ = 0` otherwise; for
-`n > 2 k + 1` the minimiser is not unique and the bound is claimed for this one. -/
+the shift of its minimiser `x̄ᵢ = 1 - i / (2 k + 2)` (`i ≤ 2 k + 1`), `x̄ᵢ = 0` otherwise, which
+is nonzero; for `n > 2 k + 1` the minimiser is not unique and the bound is claimed for this
+one. -/
 theorem exists_lower_bound_smooth_convex {k : ℕ} (hk : 1 ≤ k) (hkn : 2 * k + 1 ≤ n)
     {L : ℝ} (hL : 0 < L) (x₀ : EuclideanSpace ℝ (Fin n)) :
     ∃ f : EuclideanSpace ℝ (Fin n) → ℝ, ContDiff ℝ ∞ f ∧ ConvexOn ℝ Set.univ f ∧
       LipschitzWith ⟨L, hL.le⟩ (gradient f) ∧
-      ∃ xstar : EuclideanSpace ℝ (Fin n), (∀ z, f xstar ≤ f z) ∧
+      ∃ xstar : EuclideanSpace ℝ (Fin n), xstar ≠ x₀ ∧ (∀ z, f xstar ≤ f z) ∧
         ∀ x : ℕ → EuclideanSpace ℝ (Fin n), x 0 = x₀ →
           (∀ j, x j - x₀ ∈ Submodule.span ℝ ((fun i => gradient f (x i)) '' Set.Iio j)) →
           3 * L * ‖x₀ - xstar‖ ^ 2 / (32 * ((k : ℝ) + 1) ^ 2) ≤ f (x k) - f xstar ∧
@@ -487,7 +489,7 @@ theorem exists_lower_bound_smooth_convex {k : ℕ} (hk : 1 ≤ k) (hkn : 2 * k +
     simp only [ContinuousLinearMap.comp_id] at h2
     exact (hasGradientAt_iff_hasFDerivAt.mpr h2).gradient
   obtain ⟨hcd, hcv, hlip⟩ := worstFunction_mem_class (n := n) m hL.le
-  refine ⟨f, ?_, ?_, ?_, x₀ + worstMinimizer n m, ?_, ?_⟩
+  refine ⟨f, ?_, ?_, ?_, x₀ + worstMinimizer n m, ?_, ?_, ?_⟩
   · exact hcd.comp (contDiff_id.sub contDiff_const)
   · refine ⟨convex_univ, fun x _ y _ a b ha hb hab => ?_⟩
     have h := hcv.2 (Set.mem_univ (x - x₀)) (Set.mem_univ (y - x₀)) ha hb hab
@@ -502,6 +504,17 @@ theorem exists_lower_bound_smooth_convex {k : ℕ} (hk : 1 ≤ k) (hkn : 2 * k +
     refine LipschitzWith.of_dist_le_mul fun x y => ?_
     have := hlip.dist_le_mul (x - x₀) (y - x₀)
     rwa [dist_sub_right, gradient_worstFunction] at this
+  · -- the first coordinate of the minimiser is `1 - 1 / (m + 1) > 0`
+    intro h
+    have h1 := inner_coordVec_worstMinimizer (n := n) (m := m) hkn 1
+    have c1 : 1 ≤ 1 ∧ 1 ≤ m := by omega
+    rw [add_eq_left.mp h, inner_zero_right] at h1
+    simp only [c1, and_self, ↓reduceIte, Nat.cast_one] at h1
+    have : (1 : ℝ) / ((m : ℝ) + 1) < 1 := by
+      rw [div_lt_one (by positivity)]
+      simp only [lt_add_iff_pos_left, Nat.cast_pos]
+      omega
+    linarith
   · intro z
     simp only [f, g, add_sub_cancel_left]
     rw [worstFunction_worstMinimizer (by omega) hkn]

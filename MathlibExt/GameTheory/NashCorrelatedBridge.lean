@@ -54,7 +54,8 @@ theorem isCorrelatedEq_productDist_of_isMixedNash {u : ι → (∀ i, S i) → �
     exact τ.total
   refine MathlibExt.GameTheory.CorrelatedEquilibrium.isCorrelatedEq_productDist
     (fun i a => (σ i).nonneg a) (fun i => hsum i (σ i)) fun i a => ?_
-  have hdev := h i (Convexity.StdSimplex.single a)
+  have hdev : expectedPayoff u (Function.update σ i (Convexity.StdSimplex.single a)) i ≤
+      expectedPayoff u σ i := h i (Convexity.StdSimplex.single a)
   have hlhs : expectedPayoff u (Function.update σ i (Convexity.StdSimplex.single a)) i =
       -pureCost (fun i s => -u i s) (fun i => (σ i).weights) i a := by
     simp only [expectedPayoff, pureCost, ← sum_neg_distrib]

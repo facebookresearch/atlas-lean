@@ -73,13 +73,24 @@ example : fairCoin ≠ biasedCoin := by
 
 /-- Wald's two inequalities for the fair coin against the biased coin. -/
 example (a b : ℝ) :
-    Measure.infinitePi (fun _ : ℕ => biasedCoin) (sprtAcceptZero fairCoin biasedCoin a b) ≤
-        ENNReal.ofReal (Real.exp a) *
-          Measure.infinitePi (fun _ : ℕ => fairCoin) (sprtAcceptZero fairCoin biasedCoin a b) ∧
-      ENNReal.ofReal (Real.exp b) *
-          Measure.infinitePi (fun _ : ℕ => fairCoin) (sprtAcceptOne fairCoin biasedCoin a b) ≤
-        Measure.infinitePi (fun _ : ℕ => biasedCoin) (sprtAcceptOne fairCoin biasedCoin a b) :=
+    Measure.infinitePi (fun _ : ℕ => biasedCoin)
+        (sprtAcceptZero fairCoin biasedCoin biasedCoin_ac fairCoin_ac a b) ≤
+        ENNReal.ofReal (Real.exp a) * Measure.infinitePi (fun _ : ℕ => fairCoin)
+          (sprtAcceptZero fairCoin biasedCoin biasedCoin_ac fairCoin_ac a b) ∧
+      ENNReal.ofReal (Real.exp b) * Measure.infinitePi (fun _ : ℕ => fairCoin)
+          (sprtAcceptOne fairCoin biasedCoin biasedCoin_ac fairCoin_ac a b) ≤
+        Measure.infinitePi (fun _ : ℕ => biasedCoin)
+          (sprtAcceptOne fairCoin biasedCoin biasedCoin_ac fairCoin_ac a b) :=
   ⟨sprt_acceptZero_le biasedCoin_ac fairCoin_ac a b,
     sprt_acceptOne_ge biasedCoin_ac fairCoin_ac a b⟩
+
+/-- The likelihood-ratio statistics admit only mutually absolutely continuous laws. The fair
+coin is not absolutely continuous with respect to the coin that always shows `true`: under the
+second law `false` is impossible, its log-likelihood ratio against the fair coin is `-∞`, and the
+real-valued `llr` would read it as `0`. -/
+example : ¬ fairCoin ≪ Measure.dirac true := by
+  intro h
+  have h0 := h (s := {false}) (by simp)
+  simp [fairCoin, PMF.toMeasure_apply_singleton _ _ (measurableSet_singleton _)] at h0
 
 end MathlibExtTest.Probability.Statistics.WaldInequalities

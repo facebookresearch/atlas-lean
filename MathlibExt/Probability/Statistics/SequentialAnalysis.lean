@@ -18,20 +18,31 @@ public import Mathlib.MeasureTheory.Measure.LogLikelihoodRatio
 
 Basic objects of discrete-time sequential analysis for i.i.d. observations `X₁, X₂, …` with
 values in a measurable space `X`, modelled on the coordinate space `ℕ → X` (coordinate `i` is the
-observation `X_{i+1}`):
+observation `X_{i+1}`), whose two laws `P₀` and `P₁` are mutually absolutely continuous
+probability measures:
 
 * `MeasureTheory.observationFiltration X`: the filtration `σ(X₁, …, Xₙ)`;
-* `MeasureTheory.llrSum P₀ P₁`: the partial sums `Λₙ` of the log-likelihood ratio
+* `MeasureTheory.llrSum P₀ P₁ h₁₀ h₀₁`: the partial sums `Λₙ` of the log-likelihood ratio
   `log (dP₁/dP₀)` of the observations, written with Mathlib's `MeasureTheory.llr P₁ P₀`;
-* `MeasureTheory.sprtTime P₀ P₁ a b`: Wald's sequential probability ratio test
+* `MeasureTheory.sprtTime P₀ P₁ h₁₀ h₀₁ a b`: Wald's sequential probability ratio test
   `N = inf {n ≥ 1 : Λₙ ≤ a or Λₙ ≥ b}` (Lai 2001, equation (2.1), with `a = log B`,
   `b = log A`);
 * `MeasureTheory.changePointLaw P₀ P₁ ν`: the law of the observations when the first
   post-change observation is `X_ν`;
-* `MeasureTheory.pageCusum P₀ P₁` and `MeasureTheory.cusumTime`: Page's CUSUM statistic
+* `MeasureTheory.pageCusum P₀ P₁ h₁₀ h₀₁` and `MeasureTheory.cusumTime`: Page's CUSUM statistic
   `W_{n+1} = (W_n + log L(X_{n+1}))⁺`, `W₀ = 0`, and its alarm time;
 * `MeasureTheory.shiryaevPosterior` and `MeasureTheory.shiryaevTime`: Shiryaev's posterior
   probability of a change under a geometric prior, and the Shiryaev alarm time.
+
+The likelihood-ratio statistics (`llrSum`, `sprtTime`, `pageCusum`, `shiryaevPosterior` and the
+objects built on them) take probability laws `P₀` and `P₁` (instances `IsProbabilityMeasure P₀`
+and `IsProbabilityMeasure P₁`) and proofs `h₁₀ : P₁ ≪ P₀` and `h₀₁ : P₀ ≪ P₁`, the standing
+assumptions of Wald's inequalities and of the optimality theorems. For such laws the likelihood
+ratio `dP₁/dP₀` is positive and finite almost surely, so `llr P₁ P₀ = log (dP₁/dP₀)` is the
+log-likelihood ratio of almost every observation. Without absolute continuity an observation
+that is impossible under one law has log-likelihood ratio `±∞`, and for an infinite measure such
+as `P₁ = ∞ • P₀` the ratio is `∞` almost everywhere; the real-valued `llr` reads both as `0`
+(neutral evidence), so the statistics would no longer be the ones of the sources.
 
 The main proved statement is the closed form of the CUSUM recursion,
 `MeasureTheory.pageCusum_eq_sup`. Wald's inequalities for the SPRT are proved in
@@ -65,25 +76,34 @@ noncomputable def observationFiltration (X : Type*) [MeasurableSpace X] :
   mono' _ _ hij := Filtration.mono _ (Finset.range_mono hij)
   le' n := Filtration.le _ (Finset.range n)
 
-/-- **Cumulative log-likelihood ratio.** `Λₙ = ∑_{i=1}^{n} log (dP₁/dP₀)(Xᵢ)`, the logarithm of
-the likelihood ratio `Rₙ` of the first `n` observations (`Λ₀ = 0`); each term is Mathlib's
-log-likelihood ratio `llr P₁ P₀ = log (dP₁/dP₀)`, with the Radon–Nikodym derivative read in `ℝ`. -/
-noncomputable def llrSum (P₀ P₁ : Measure X) (n : ℕ) (ω : ℕ → X) : ℝ :=
+/-- **Cumulative log-likelihood ratio.** For probability laws `P₀` and `P₁`, mutually absolutely
+continuous, `Λₙ = ∑_{i=1}^{n} log (dP₁/dP₀)(Xᵢ)`, the logarithm of the likelihood ratio `Rₙ` of
+the first `n` observations (`Λ₀ = 0`); each term is Mathlib's log-likelihood ratio
+`llr P₁ P₀ = log (dP₁/dP₀)`, with the Radon–Nikodym derivative read in `ℝ`, which is positive and
+finite almost surely for such laws. -/
+noncomputable def llrSum (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀] [IsProbabilityMeasure P₁]
+    (_h₁₀ : P₁ ≪ P₀) (_h₀₁ : P₀ ≪ P₁) (n : ℕ) (ω : ℕ → X) : ℝ :=
   ∑ i ∈ Finset.range n, llr P₁ P₀ (ω i)
 
-/-- **Wald's sequential probability ratio test.** With log-boundaries `a < 0 < b`, the SPRT stops
-at `N = inf {n ≥ 1 : Λₙ ≤ a or Λₙ ≥ b}` (`⊤` if this never happens) and accepts `P₁` when
+/-- **Wald's sequential probability ratio test.** For probability laws `P₀` and `P₁`, mutually
+absolutely continuous, and log-boundaries `a < 0 < b`, the SPRT stops at
+`N = inf {n ≥ 1 : Λₙ ≤ a or Λₙ ≥ b}` (`⊤` if this never happens) and accepts `P₁` when
 `Λ_N ≥ b`, `P₀` when `Λ_N ≤ a` (Lai 2001, equation (2.1), with `A = exp b` and `B = exp a`). -/
-noncomputable def sprtTime (P₀ P₁ : Measure X) (a b : ℝ) : (ℕ → X) → WithTop ℕ :=
-  hittingAfter (llrSum P₀ P₁) (Set.Iic a ∪ Set.Ici b) 1
+noncomputable def sprtTime (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀] [IsProbabilityMeasure P₁]
+    (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) (a b : ℝ) : (ℕ → X) → WithTop ℕ :=
+  hittingAfter (llrSum P₀ P₁ h₁₀ h₀₁) (Set.Iic a ∪ Set.Ici b) 1
 
-/-- **Event that the SPRT stops and accepts `P₁`.** `{N < ∞ and Λ_N ≥ b}`. -/
-def sprtAcceptOne (P₀ P₁ : Measure X) (a b : ℝ) : Set (ℕ → X) :=
-  {ω | ∃ n : ℕ, sprtTime P₀ P₁ a b ω = n ∧ b ≤ llrSum P₀ P₁ n ω}
+/-- **Event that the SPRT stops and accepts `P₁`.** `{N < ∞ and Λ_N ≥ b}`, for probability laws
+`P₀` and `P₁`, mutually absolutely continuous. -/
+def sprtAcceptOne (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀] [IsProbabilityMeasure P₁]
+    (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) (a b : ℝ) : Set (ℕ → X) :=
+  {ω | ∃ n : ℕ, sprtTime P₀ P₁ h₁₀ h₀₁ a b ω = n ∧ b ≤ llrSum P₀ P₁ h₁₀ h₀₁ n ω}
 
-/-- **Event that the SPRT stops and accepts `P₀`.** `{N < ∞ and Λ_N ≤ a}`. -/
-def sprtAcceptZero (P₀ P₁ : Measure X) (a b : ℝ) : Set (ℕ → X) :=
-  {ω | ∃ n : ℕ, sprtTime P₀ P₁ a b ω = n ∧ llrSum P₀ P₁ n ω ≤ a}
+/-- **Event that the SPRT stops and accepts `P₀`.** `{N < ∞ and Λ_N ≤ a}`, for probability laws
+`P₀` and `P₁`, mutually absolutely continuous. -/
+def sprtAcceptZero (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀] [IsProbabilityMeasure P₁]
+    (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) (a b : ℝ) : Set (ℕ → X) :=
+  {ω | ∃ n : ℕ, sprtTime P₀ P₁ h₁₀ h₀₁ a b ω = n ∧ llrSum P₀ P₁ h₁₀ h₀₁ n ω ≤ a}
 
 /-- **Law of the observations with a change point.** For `ν ≥ 1`, the observations are
 independent, `X₁, …, X_{ν-1}` have law `P₀` and `X_ν, X_{ν+1}, …` have law `P₁` (so `X_ν` is the
@@ -92,22 +112,27 @@ first post-change observation, the convention of Lai 2001, §3, and of Veeravall
 noncomputable def changePointLaw (P₀ P₁ : Measure X) (ν : ℕ) : Measure (ℕ → X) :=
   Measure.infinitePi fun i : ℕ => if i + 1 < ν then P₀ else P₁
 
-/-- **Page's CUSUM statistic.** `W₀ = 0` and `W_{n+1} = max (W_n + log L(X_{n+1})) 0`, where
-`log L = log (dP₁/dP₀)` (Veeravalli–Banerjee, equation (45)). -/
-noncomputable def pageCusum (P₀ P₁ : Measure X) : ℕ → (ℕ → X) → ℝ
+/-- **Page's CUSUM statistic.** For probability laws `P₀` and `P₁`, mutually absolutely
+continuous, `W₀ = 0` and `W_{n+1} = max (W_n + log L(X_{n+1})) 0`, where `log L = log (dP₁/dP₀)`
+(Veeravalli–Banerjee, equation (45)). -/
+noncomputable def pageCusum (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀] [IsProbabilityMeasure P₁]
+    (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) : ℕ → (ℕ → X) → ℝ
   | 0 => fun _ => 0
-  | n + 1 => fun ω => max (pageCusum P₀ P₁ n ω + llr P₁ P₀ (ω n)) 0
+  | n + 1 => fun ω => max (pageCusum P₀ P₁ h₁₀ h₀₁ n ω + llr P₁ P₀ (ω n)) 0
 
-/-- **CUSUM alarm time.** For a threshold `c`, `N_c = inf {n ≥ 1 : W_n ≥ c}`
-(Veeravalli–Banerjee, equation (43)); `⊤` if no alarm is raised. -/
-noncomputable def cusumTime (P₀ P₁ : Measure X) (c : ℝ) : (ℕ → X) → WithTop ℕ :=
-  hittingAfter (pageCusum P₀ P₁) (Set.Ici c) 1
+/-- **CUSUM alarm time.** For probability laws `P₀` and `P₁`, mutually absolutely continuous,
+and a threshold `c`, `N_c = inf {n ≥ 1 : W_n ≥ c}` (Veeravalli–Banerjee, equation (43)); `⊤` if
+no alarm is raised. -/
+noncomputable def cusumTime (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀] [IsProbabilityMeasure P₁]
+    (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) (c : ℝ) : (ℕ → X) → WithTop ℕ :=
+  hittingAfter (pageCusum P₀ P₁ h₁₀ h₀₁) (Set.Ici c) 1
 
 /-- **Closed form of the CUSUM statistic** (Veeravalli–Banerjee, equations (44)–(45)):
 `W_n = max_{0 ≤ j ≤ n} ∑_{i=j}^{n-1} log L(ω i)`, the largest log-likelihood ratio of a final
 segment of the first `n` observations (the empty segment contributes `0`). -/
-theorem pageCusum_eq_sup (P₀ P₁ : Measure X) (n : ℕ) (ω : ℕ → X) :
-    pageCusum P₀ P₁ n ω =
+theorem pageCusum_eq_sup (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀]
+    [IsProbabilityMeasure P₁] (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) (n : ℕ) (ω : ℕ → X) :
+    pageCusum P₀ P₁ h₁₀ h₀₁ n ω =
       (Finset.range (n + 1)).sup' Finset.nonempty_range_add_one
         fun j => ∑ i ∈ Finset.Ico j n, llr P₁ P₀ (ω i) := by
   induction n with
@@ -131,21 +156,27 @@ theorem pageCusum_eq_sup (P₀ P₁ : Measure X) (n : ℕ) (ω : ℕ → X) :
         subst this
         simp
 
-/-- **Shiryaev's posterior probability of a change.** Under a geometric prior
-`P(Γ = n) = ρ (1 - ρ)^{n-1}` on the change point, `p₀ = 0` and
-`p_{n+1} = p̃ₙ L(X_{n+1}) / (p̃ₙ L(X_{n+1}) + 1 - p̃ₙ)` with `p̃ₙ = pₙ + (1 - pₙ) ρ` and
-`L = dP₁/dP₀` (Veeravalli–Banerjee, equations (12)–(14)). -/
-noncomputable def shiryaevPosterior (P₀ P₁ : Measure X) (ρ : ℝ) : ℕ → (ℕ → X) → ℝ
+/-- **Shiryaev's posterior probability of a change.** For probability laws `P₀` and `P₁`,
+mutually absolutely continuous, under a geometric prior `P(Γ = n) = ρ (1 - ρ)^{n-1}` on the change
+point, `p₀ = 0` and `p_{n+1} = p̃ₙ L(X_{n+1}) / (p̃ₙ L(X_{n+1}) + 1 - p̃ₙ)` with
+`p̃ₙ = pₙ + (1 - pₙ) ρ` and `L = dP₁/dP₀`, positive and finite almost surely (Veeravalli–Banerjee,
+equations (12)–(14)). -/
+noncomputable def shiryaevPosterior (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀]
+    [IsProbabilityMeasure P₁] (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) (ρ : ℝ) : ℕ → (ℕ → X) → ℝ
   | 0 => fun _ => 0
   | n + 1 => fun ω =>
-      let p := shiryaevPosterior P₀ P₁ ρ n ω + (1 - shiryaevPosterior P₀ P₁ ρ n ω) * ρ
+      let p := shiryaevPosterior P₀ P₁ h₁₀ h₀₁ ρ n ω +
+        (1 - shiryaevPosterior P₀ P₁ h₁₀ h₀₁ ρ n ω) * ρ
       let L := (P₁.rnDeriv P₀ (ω n)).toReal
       p * L / (p * L + (1 - p))
 
-/-- **Shiryaev's alarm time.** For a threshold `A`, `τ_S = inf {n ≥ 1 : pₙ ≥ A}`
-(Veeravalli–Banerjee, equation (15)). -/
-noncomputable def shiryaevTime (P₀ P₁ : Measure X) (ρ A : ℝ) : (ℕ → X) → WithTop ℕ :=
-  hittingAfter (shiryaevPosterior P₀ P₁ ρ) (Set.Ici A) 1
+/-- **Shiryaev's alarm time.** For probability laws `P₀` and `P₁`, mutually absolutely
+continuous, and a threshold `A`, `τ_S = inf {n ≥ 1 : pₙ ≥ A}` (Veeravalli–Banerjee,
+equation (15)). -/
+noncomputable def shiryaevTime (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀]
+    [IsProbabilityMeasure P₁] (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) (ρ A : ℝ) :
+    (ℕ → X) → WithTop ℕ :=
+  hittingAfter (shiryaevPosterior P₀ P₁ h₁₀ h₀₁ ρ) (Set.Ici A) 1
 
 /-- **Probability of false alarm under a geometric prior.**
 `PFA(τ) = ∑_{n ≥ 1} πₙ Pₙ(τ < n)` with `πₙ = ρ (1 - ρ)^{n-1}` and `Pₙ = changePointLaw P₀ P₁ n`

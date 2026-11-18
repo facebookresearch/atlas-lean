@@ -111,17 +111,18 @@ theorem infinitePi_apply_eq_setLIntegral_prod_rnDeriv (P₀ P₁ : Measure X) [I
       (Measure.measurable_rnDeriv _ _).comp (measurable_pi_apply i)
 
 
-/-- **The cumulative log-likelihood ratio is adapted.** `Λₙ` is measurable with respect to
-`σ(X₁, …, Xₙ)`, so the SPRT decides after `n` observations from those observations only (Lai 2001,
-§2, equation (2.1)). -/
-theorem adapted_llrSum (P₀ P₁ : Measure X) :
-    Adapted (observationFiltration X) (llrSum P₀ P₁) := by
+/-- **The cumulative log-likelihood ratio is adapted.** For probability laws, mutually
+absolutely continuous, `Λₙ` is measurable with respect to `σ(X₁, …, Xₙ)`, so the SPRT decides
+after `n` observations from those observations only (Lai 2001, §2, equation (2.1)). -/
+theorem adapted_llrSum (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀] [IsProbabilityMeasure P₁]
+    (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) :
+    Adapted (observationFiltration X) (llrSum P₀ P₁ h₁₀ h₀₁) := by
   intro n
-  change Measurable[MeasurableSpace.pi.comap (range n).restrict] (llrSum P₀ P₁ n)
+  change Measurable[MeasurableSpace.pi.comap (range n).restrict] (llrSum P₀ P₁ h₁₀ h₀₁ n)
   have hg : Measurable fun x : (range n) → X => ∑ i : range n, llr P₁ P₀ (x i) :=
     Finset.measurable_sum _ fun i _ =>
       (measurable_llr P₁ P₀).comp (measurable_pi_apply i)
-  have : llrSum P₀ P₁ n =
+  have : llrSum P₀ P₁ h₁₀ h₀₁ n =
       (fun x : (range n) → X => ∑ i : range n, llr P₁ P₀ (x i)) ∘
         (range n).restrict := by
     funext ω
@@ -130,11 +131,13 @@ theorem adapted_llrSum (P₀ P₁ : Measure X) :
   rw [this]
   exact hg.comp (comap_measurable _)
 
-/-- **The SPRT stopping time is a stopping time** of the observations, possibly infinite (Lai 2001,
-§2, equation (2.1)). -/
-theorem isStoppingTime_sprtTime (P₀ P₁ : Measure X) (a b : ℝ) :
-    IsStoppingTime (observationFiltration X) (sprtTime P₀ P₁ a b) :=
-  (adapted_llrSum P₀ P₁).isStoppingTime_hittingAfter (measurableSet_Iic.union measurableSet_Ici)
+/-- **The SPRT stopping time is a stopping time** of the observations, possibly infinite, for
+probability laws, mutually absolutely continuous (Lai 2001, §2, equation (2.1)). -/
+theorem isStoppingTime_sprtTime (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀]
+    [IsProbabilityMeasure P₁] (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) (a b : ℝ) :
+    IsStoppingTime (observationFiltration X) (sprtTime P₀ P₁ h₁₀ h₀₁ a b) :=
+  (adapted_llrSum P₀ P₁ h₁₀ h₀₁).isStoppingTime_hittingAfter
+    (measurableSet_Iic.union measurableSet_Ici)
 
 private theorem ae_rnDeriv_coord (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀]
     [IsProbabilityMeasure P₁] (h₀₁ : P₀ ≪ P₁) :
@@ -148,9 +151,11 @@ private theorem ae_rnDeriv_coord (P₀ P₁ : Measure X) [IsProbabilityMeasure P
     (measurable_pi_apply i).aemeasurable
     (by rw [Measure.infinitePi_map_eval (fun _ : ℕ => P₀) i]; exact h1)
 
-private theorem prod_rnDeriv_eq_ofReal_exp (P₀ P₁ : Measure X) (n : ℕ) {ω : ℕ → X}
+private theorem prod_rnDeriv_eq_ofReal_exp (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀]
+    [IsProbabilityMeasure P₁] (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) (n : ℕ) {ω : ℕ → X}
     (hω : ∀ i, 0 < P₁.rnDeriv P₀ (ω i) ∧ P₁.rnDeriv P₀ (ω i) < ∞) :
-    ∏ i ∈ range n, P₁.rnDeriv P₀ (ω i) = ENNReal.ofReal (Real.exp (llrSum P₀ P₁ n ω)) := by
+    ∏ i ∈ range n, P₁.rnDeriv P₀ (ω i) =
+      ENNReal.ofReal (Real.exp (llrSum P₀ P₁ h₁₀ h₀₁ n ω)) := by
   rw [llrSum, Real.exp_sum, ENNReal.ofReal_prod_of_nonneg (fun i _ => (Real.exp_pos _).le)]
   refine prod_congr rfl fun i _ => ?_
   have hpos : 0 < (P₁.rnDeriv P₀ (ω i)).toReal :=
@@ -166,16 +171,16 @@ boundary `A` is `e^a` here); `1 - α` equals `P₀(accept P₀)` when the SPRT s
 surely. The source takes `a < 0 < b`; the inequality holds for all `a` and `b`. -/
 theorem sprt_acceptZero_le {P₀ P₁ : Measure X} [IsProbabilityMeasure P₀]
     [IsProbabilityMeasure P₁] (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) (a b : ℝ) :
-    Measure.infinitePi (fun _ : ℕ => P₁) (sprtAcceptZero P₀ P₁ a b) ≤
+    Measure.infinitePi (fun _ : ℕ => P₁) (sprtAcceptZero P₀ P₁ h₁₀ h₀₁ a b) ≤
       ENNReal.ofReal (Real.exp a) *
-        Measure.infinitePi (fun _ : ℕ => P₀) (sprtAcceptZero P₀ P₁ a b) := by
+        Measure.infinitePi (fun _ : ℕ => P₀) (sprtAcceptZero P₀ P₁ h₁₀ h₀₁ a b) := by
   set E : ℕ → Set (ℕ → X) := fun n =>
-    {ω | sprtTime P₀ P₁ a b ω = n} ∩ (llrSum P₀ P₁ n) ⁻¹' Set.Iic a with hEdef
-  have hU : sprtAcceptZero P₀ P₁ a b = ⋃ n, E n := by
+    {ω | sprtTime P₀ P₁ h₁₀ h₀₁ a b ω = n} ∩ (llrSum P₀ P₁ h₁₀ h₀₁ n) ⁻¹' Set.Iic a with hEdef
+  have hU : sprtAcceptZero P₀ P₁ h₁₀ h₀₁ a b = ⋃ n, E n := by
     ext ω; simp [sprtAcceptZero, hEdef]
   have hEn : ∀ n, MeasurableSet[observationFiltration X n] (E n) := fun n =>
-    ((isStoppingTime_sprtTime P₀ P₁ a b).measurableSet_eq n).inter
-      (adapted_llrSum P₀ P₁ n measurableSet_Iic)
+    ((isStoppingTime_sprtTime P₀ P₁ h₁₀ h₀₁ a b).measurableSet_eq n).inter
+      (adapted_llrSum P₀ P₁ h₁₀ h₀₁ n measurableSet_Iic)
   have hEm : ∀ n, MeasurableSet (E n) := fun n => (observationFiltration X).le n _ (hEn n)
   have hdisj : Pairwise (Function.onFun Disjoint E) := by
     intro n m hnm
@@ -189,7 +194,7 @@ theorem sprt_acceptZero_le {P₀ P₁ : Measure X} [IsProbabilityMeasure P₀]
     rw [infinitePi_apply_eq_setLIntegral_prod_rnDeriv P₀ P₁ h₁₀ n (hEn n), ← setLIntegral_const]
     refine lintegral_mono_ae ((ae_restrict_iff' (hEm n)).mpr ?_)
     filter_upwards [hcoord] with ω hω hmem
-    rw [prod_rnDeriv_eq_ofReal_exp P₀ P₁ n hω]
+    rw [prod_rnDeriv_eq_ofReal_exp P₀ P₁ h₁₀ h₀₁ n hω]
     exact ENNReal.ofReal_le_ofReal (Real.exp_le_exp.mpr hmem.2)
   rw [hU, measure_iUnion hdisj hEm, measure_iUnion hdisj hEm, ← ENNReal.tsum_mul_left]
   exact ENNReal.tsum_le_tsum hn
@@ -204,15 +209,15 @@ log-likelihood ratio has no overshoot. The source takes `a < 0 < b`; the inequal
 theorem sprt_acceptOne_ge {P₀ P₁ : Measure X} [IsProbabilityMeasure P₀]
     [IsProbabilityMeasure P₁] (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) (a b : ℝ) :
     ENNReal.ofReal (Real.exp b) *
-        Measure.infinitePi (fun _ : ℕ => P₀) (sprtAcceptOne P₀ P₁ a b) ≤
-      Measure.infinitePi (fun _ : ℕ => P₁) (sprtAcceptOne P₀ P₁ a b) := by
+        Measure.infinitePi (fun _ : ℕ => P₀) (sprtAcceptOne P₀ P₁ h₁₀ h₀₁ a b) ≤
+      Measure.infinitePi (fun _ : ℕ => P₁) (sprtAcceptOne P₀ P₁ h₁₀ h₀₁ a b) := by
   set E : ℕ → Set (ℕ → X) := fun n =>
-    {ω | sprtTime P₀ P₁ a b ω = n} ∩ (llrSum P₀ P₁ n) ⁻¹' Set.Ici b with hEdef
-  have hU : sprtAcceptOne P₀ P₁ a b = ⋃ n, E n := by
+    {ω | sprtTime P₀ P₁ h₁₀ h₀₁ a b ω = n} ∩ (llrSum P₀ P₁ h₁₀ h₀₁ n) ⁻¹' Set.Ici b with hEdef
+  have hU : sprtAcceptOne P₀ P₁ h₁₀ h₀₁ a b = ⋃ n, E n := by
     ext ω; simp [sprtAcceptOne, hEdef]
   have hEn : ∀ n, MeasurableSet[observationFiltration X n] (E n) := fun n =>
-    ((isStoppingTime_sprtTime P₀ P₁ a b).measurableSet_eq n).inter
-      (adapted_llrSum P₀ P₁ n measurableSet_Ici)
+    ((isStoppingTime_sprtTime P₀ P₁ h₁₀ h₀₁ a b).measurableSet_eq n).inter
+      (adapted_llrSum P₀ P₁ h₁₀ h₀₁ n measurableSet_Ici)
   have hEm : ∀ n, MeasurableSet (E n) := fun n => (observationFiltration X).le n _ (hEn n)
   have hdisj : Pairwise (Function.onFun Disjoint E) := by
     intro n m hnm
@@ -226,7 +231,7 @@ theorem sprt_acceptOne_ge {P₀ P₁ : Measure X} [IsProbabilityMeasure P₀]
     rw [infinitePi_apply_eq_setLIntegral_prod_rnDeriv P₀ P₁ h₁₀ n (hEn n), ← setLIntegral_const]
     refine lintegral_mono_ae ((ae_restrict_iff' (hEm n)).mpr ?_)
     filter_upwards [hcoord] with ω hω hmem
-    rw [prod_rnDeriv_eq_ofReal_exp P₀ P₁ n hω]
+    rw [prod_rnDeriv_eq_ofReal_exp P₀ P₁ h₁₀ h₀₁ n hω]
     exact ENNReal.ofReal_le_ofReal (Real.exp_le_exp.mpr hmem.2)
   rw [hU, measure_iUnion hdisj hEm, measure_iUnion hdisj hEm, ← ENNReal.tsum_mul_left]
   exact ENNReal.tsum_le_tsum hn

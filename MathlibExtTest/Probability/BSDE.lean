@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.BSDE
+import Mathlib.Analysis.SpecialFunctions.NonIntegrable
 
 @[expose] public section
 
@@ -52,5 +53,20 @@ example {P : Measure Ω} [IsProbabilityMeasure P] {F : Filtration ℝ≥0 mΩ} {
       (F s) P) (T : ℝ≥0) (c : ℝ) :
     IsBSDESolution P F B T (fun _ _ _ z ↦ |z|) (fun _ ↦ c) (fun _ _ ↦ c) (fun _ _ ↦ 0) :=
   isBSDESolution_const hB hBF hInd T c (fun _ _ ↦ abs_zero)
+
+/-- The drift must be integrable: with the generator `g(t, ω, y, z) = 1/t`, whose integral over
+`[0, 1]` diverges, no pair solves the BSDE on `[0, 1]`, in particular not `Y_t = -log t`,
+`Z = 0`, which satisfies the equation at every positive time. -/
+example {P : Measure Ω} [IsProbabilityMeasure P] {F : Filtration ℝ≥0 mΩ} {B : ℝ≥0 → Ω → ℝ}
+    (ξ : Ω → ℝ) (Y Z : ℝ≥0 → Ω → ℝ) :
+    ¬ IsBSDESolution P F B 1 (fun t _ _ _ ↦ (t : ℝ)⁻¹) ξ Y Z := by
+  rintro ⟨-, -, -, -, hint, -⟩
+  obtain ⟨ω, hω⟩ := hint.exists
+  rw [NNReal.coe_one] at hω
+  have hinv : IntervalIntegrable (fun u : ℝ ↦ u⁻¹) volume 0 1 := by
+    refine hω.congr fun u hu ↦ ?_
+    rw [Set.uIoc_of_le zero_le_one] at hu
+    simp [Real.coe_toNNReal u hu.1.le]
+  simp [intervalIntegrable_inv_iff] at hinv
 
 end MathlibExtTest.Probability.BSDE

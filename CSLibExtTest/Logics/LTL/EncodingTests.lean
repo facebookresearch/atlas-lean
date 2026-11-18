@@ -13,7 +13,8 @@ public import CSLibExt.Logics.LTL.Encoding
 /-!
 # Tests for the token encoding of LTL formulas
 
-Concrete token lists, round trips, and rejection of ill-formed lists.
+Concrete token lists, round trips, and rejection of ill-formed lists, including connective tokens
+with nonzero data.
 -/
 
 @[expose] public section
@@ -42,5 +43,19 @@ example : decodeList [Nat.pair 3 0, Nat.pair 0 0] = none := by
 /-- Trailing tokens are rejected. -/
 example : decodeList [Nat.pair 1 0, Nat.pair 1 0] = none := by
   simp [decodeList, parseFuel, Nat.unpair_pair]
+
+/-- A connective token carries `0`: `Nat.pair 1 0` decodes to truth, while `Nat.pair 1 1`, the
+token of no formula, decodes to nothing, also inside a formula. -/
+example : decodeList [Nat.pair 1 0] = some .top := decodeList_tokens .top
+
+example : decodeList [Nat.pair 1 1] = none := by
+  simp [decodeList, parseFuel, Nat.unpair_pair]
+
+example : decodeList [Nat.pair 2 0, Nat.pair 4 3, Nat.pair 0 0] = none := by
+  simp [decodeList, parseFuel, Nat.unpair_pair]
+
+/-- Decoding returns only a formula whose token list is exactly its input. -/
+example (l : List ℕ) (φ : Formula ℕ) (h : decodeList l = some φ) : tokens φ = l :=
+  decodeList_eq_some_iff.mp h
 
 end Cslib.LTL.EncodingTests

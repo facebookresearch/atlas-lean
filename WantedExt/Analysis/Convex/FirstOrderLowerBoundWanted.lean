@@ -35,10 +35,12 @@ namespace WantedExt.Analysis.Convex.FirstOrderLowerBoundWanted
 
 /-- **Lower complexity bound for smooth strongly convex minimisation.** Let `μ > 0` and `Q > 1`.
 For every `x₀ ∈ ℓ²` there is a `μ`-strongly convex `C^∞` function `f` on `ℓ²` with
-`μ Q`-Lipschitz gradient and a minimiser `x⋆` such that every sequence with `x 0 = x₀` and
+`μ Q`-Lipschitz gradient and a minimiser `x⋆ ≠ x₀` such that every sequence with `x 0 = x₀` and
 `x j - x₀ ∈ span {∇f (x i) : i < j}` for all `j` satisfies, for every `k`,
 `‖x k - x⋆‖ ^ 2 ≥ ((√Q - 1) / (√Q + 1)) ^ (2 k) ‖x₀ - x⋆‖ ^ 2` and
-`f (x k) - f x⋆ ≥ μ / 2 ((√Q - 1) / (√Q + 1)) ^ (2 k) ‖x₀ - x⋆‖ ^ 2`.
+`f (x k) - f x⋆ ≥ μ / 2 ((√Q - 1) / (√Q + 1)) ^ (2 k) ‖x₀ - x⋆‖ ^ 2`. Since `‖x₀ - x⋆‖ > 0`, both
+bounds are positive: they are not met trivially by taking `x⋆ = x₀` (for instance
+`f z = μ ‖z - x₀‖ ^ 2 / 2`).
 
 This is Theorem 2.1.12 of Yu. Nesterov, *Introductory Lectures on Convex Programming, Volume I:
 Basic course* (lecture notes, July 2, 1998), stated there on `R^∞`, the space `ℓ²` of
@@ -47,7 +49,7 @@ theorem_wanted exists_lower_bound_strongly_convex {μ Q : ℝ} (hμ : 0 < μ) (h
     (x₀ : lp (fun _ : ℕ => ℝ) 2) :
     ∃ f : lp (fun _ : ℕ => ℝ) 2 → ℝ, ContDiff ℝ ∞ f ∧ StrongConvexOn Set.univ μ f ∧
       LipschitzWith ⟨μ * Q, by positivity⟩ (gradient f) ∧
-      ∃ xstar : lp (fun _ : ℕ => ℝ) 2, (∀ z, f xstar ≤ f z) ∧
+      ∃ xstar : lp (fun _ : ℕ => ℝ) 2, xstar ≠ x₀ ∧ (∀ z, f xstar ≤ f z) ∧
         ∀ x : ℕ → lp (fun _ : ℕ => ℝ) 2, x 0 = x₀ →
           (∀ j, x j - x₀ ∈ Submodule.span ℝ ((fun i => gradient f (x i)) '' Set.Iio j)) →
           ∀ k : ℕ,

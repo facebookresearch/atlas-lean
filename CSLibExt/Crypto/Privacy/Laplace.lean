@@ -16,9 +16,10 @@ public import MathlibExt.Probability.Distributions.Laplace
 
 The Laplace mechanism releases `f x` plus Laplace noise of scale `Δ / ε`, where `Δ` bounds the
 sensitivity of `f` (Dwork and Roth, *The Algorithmic Foundations of Differential Privacy*, 2014,
-Definitions 3.1 and 3.3). The Laplace distribution itself is
-`MathlibExt.Probability.Distributions.Laplace`; the privacy proof rests on
-`ProbabilityTheory.laplaceMeasure_le_smul`.
+Definitions 3.1 and 3.3). The scale must be positive, so every output law is a probability
+measure (`isProbabilityMeasure_laplaceMechanism`): the mechanism always releases a sample. The
+Laplace distribution itself is `MathlibExt.Probability.Distributions.Laplace`; the privacy proof
+rests on `ProbabilityTheory.laplaceMeasure_le_smul`.
 
 * `laplaceMechanism_differentiallyPrivate` (Dwork and Roth, 2014, Theorem 3.6, for real-valued
   queries): if `|f x - f y| ≤ Δ` on neighbours, the Laplace mechanism with scale `Δ / ε` is
@@ -36,24 +37,29 @@ open scoped ENNReal
 
 namespace Cslib.Crypto.Privacy
 
-/-- **Laplace mechanism.** Release `f x + Y` with `Y` Laplace noise of scale `b`, i.e. the law
-`laplaceMeasure (f x) b` (Dwork and Roth, 2014, Definition 3.3, for real-valued `f`, with
-`b = Δf / ε`). -/
-noncomputable def laplaceMechanism {X : Type*} (f : X → ℝ) (b : ℝ) : X → Measure ℝ :=
+/-- **Laplace mechanism.** For a scale `b > 0`, release `f x + Y` with `Y` Laplace noise of
+scale `b`, i.e. the law `laplaceMeasure (f x) b` (Dwork and Roth, 2014, Definition 3.3, for
+real-valued `f`, with `b = Δf / ε`). The scale must be positive: every output law is then a
+probability measure (`isProbabilityMeasure_laplaceMechanism`), whereas for `b ≤ 0` the truncated
+density would vanish and the mechanism would release nothing. -/
+noncomputable def laplaceMechanism {X : Type*} (f : X → ℝ) (b : ℝ) (_hb : 0 < b) :
+    X → Measure ℝ :=
   fun x ↦ laplaceMeasure (f x) b
 
-instance {X : Type*} (f : X → ℝ) (b : ℝ) (x : X) : SFinite (laplaceMechanism f b x) := by
-  unfold laplaceMechanism
-  infer_instance
+/-- **The Laplace mechanism releases a sample.** Every output law of the Laplace mechanism, whose
+scale is positive, is a probability measure (Dwork and Roth, 2014, Definitions 3.2 and 3.3). -/
+instance isProbabilityMeasure_laplaceMechanism {X : Type*} (f : X → ℝ) {b : ℝ} (hb : 0 < b)
+    (x : X) : IsProbabilityMeasure (laplaceMechanism f b hb x) :=
+  isProbabilityMeasure_laplaceMeasure hb (f x)
 
 /-- **The Laplace mechanism is differentially private.** Let `f : X → ℝ` satisfy
 `|f x - f y| ≤ Δ` whenever `Adj x y` (`Δ` bounds the sensitivity of `f`), with `Δ > 0` and
-`ε > 0`. Then the Laplace mechanism with scale `Δ / ε` is `ε`-differentially private (Dwork and
-Roth, *The Algorithmic Foundations of Differential Privacy*, 2014, Theorem 3.6, for real-valued
-queries). -/
+`ε > 0`. Then the Laplace mechanism with scale `Δ / ε > 0` is `ε`-differentially private (Dwork
+and Roth, *The Algorithmic Foundations of Differential Privacy*, 2014, Theorem 3.6, for
+real-valued queries). -/
 theorem laplaceMechanism_differentiallyPrivate {X : Type*} {Adj : X → X → Prop} {f : X → ℝ}
     {Δ ε : ℝ} (hΔ : 0 < Δ) (hε : 0 < ε) (hf : ∀ ⦃x y⦄, Adj x y → |f x - f y| ≤ Δ) :
-    DifferentiallyPrivate Adj (laplaceMechanism f (Δ / ε)) ε 0 := by
+    DifferentiallyPrivate Adj (laplaceMechanism f (Δ / ε) (div_pos hΔ hε)) ε 0 := by
   have hb : 0 < Δ / ε := div_pos hΔ hε
   rw [differentiallyPrivate_zero_iff_le_smul]
   intro x y hxy

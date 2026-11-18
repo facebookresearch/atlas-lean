@@ -9,18 +9,20 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Analysis.Convex.KKM
+import MathlibExt.Analysis.Convex.BrouwerFixedPoint
 
 /-!
 # Brouwer's fixed-point theorem for the standard simplex
 
 Every continuous self-map of the standard simplex `Δⁿ = Convexity.StdSimplex ℝ (Fin (n + 1))`
-has a fixed point. Pinned Mathlib has no Brouwer fixed-point theorem; this module derives the
-simplex case from the Knaster–Kuratowski–Mazurkiewicz lemma
-(`MathlibExt.Analysis.Convex.KKM.kkm_lemma`), which the repository proves from Sperner's lemma
-on iterated barycentric subdivisions. The derivation is the one of the KKM paper, whose title
-announces it: for a continuous `f`, the sets `Fᵢ = {x | f(x)ᵢ ≤ xᵢ}` are closed and satisfy the
-KKM covering condition, so they have a common point, and at a common point `f(x) = x` because
-both weight vectors sum to `1`.
+has a fixed point. Pinned Mathlib has no Brouwer fixed-point theorem; the simplex case is derived
+from the Knaster–Kuratowski–Mazurkiewicz lemma (`MathlibExt.Analysis.Convex.KKM.kkm_lemma`),
+which the repository proves from Sperner's lemma on iterated barycentric subdivisions. The
+derivation is the one of the KKM paper, whose title announces it: for a continuous `f`, the sets
+`Fᵢ = {x | f(x)ᵢ ≤ xᵢ}` are closed and satisfy the KKM covering condition
+(`exists_pos_weights_le`), so they have a common point, and at a common point `f(x) = x` because
+both weight vectors sum to `1`. That derivation is carried out in
+`MathlibExt.Analysis.Convex.BrouwerFixedPoint`, from which `exists_fixedPoint` is restated.
 
 So the chain Sperner ⟹ KKM ⟹ Brouwer, the combinatorial route to Brouwer that underlies the
 complexity class PPAD (Papadimitriou 1994; Daskalakis, Goldberg and Papadimitriou 2009,
@@ -31,10 +33,12 @@ general compact convex sets are covered by `MathlibExt.Analysis.Convex.BrouwerFi
 
 ## Relation to `MathlibExt.Analysis.Convex.BrouwerFixedPoint`
 
-That module proves the simplex case by the same KKM argument (`exists_fixedPoint_stdSimplex`,
-the statement of `exists_fixedPoint` here) and extends it to every nonempty compact convex set in
-a finite-dimensional real normed space (its `exists_fixedPoint`). It does not state the forms
-for other finite vertex sets and products (`exists_fixedPoint_of_finite`, `exists_fixedPoint_pi`).
+`exists_fixedPoint` here has the same statement as that module's `exists_fixedPoint_stdSimplex`
+and is proved from it; it is kept as this library's entry point (see #4334). That module also
+extends the theorem to every nonempty compact convex set in a finite-dimensional real normed space
+(its `exists_fixedPoint`), but does not state the forms for other finite vertex sets and products
+(`exists_fixedPoint_of_finite`, `exists_fixedPoint_pi`), which are derived here from
+`exists_fixedPoint`.
 
 ## References
 
@@ -82,32 +86,19 @@ theorem exists_pos_weights_le (f : StdSimplex ℝ (Fin (n + 1)) → StdSimplex �
   linarith
 
 /-- **Brouwer's fixed-point theorem for the standard simplex.** Every continuous map `f` of the
-standard simplex `Δⁿ = Convexity.StdSimplex ℝ (Fin (n + 1))` to itself has a fixed point.
+standard simplex `Δⁿ = Convexity.StdSimplex ℝ (Fin (n + 1))` to itself has a fixed point. The
+closed sets `Fᵢ = {x | f(x)ᵢ ≤ xᵢ}` satisfy the KKM condition (`exists_pos_weights_le`), so by the
+Knaster–Kuratowski–Mazurkiewicz lemma they share a point `x`; there `f(x)ᵢ ≤ xᵢ` for every `i`
+and both sides sum to `1`, so `f(x) = x` (B. Knaster, C. Kuratowski and S. Mazurkiewicz, "Ein
+Beweis des Fixpunktsatzes für n-dimensionale Simplexe", Fundamenta Mathematicae 14 (1929),
+132–137). The statement is Brouwer's theorem restricted to the simplex; it is the form used by
+Nash-type existence proofs once strategy spaces are simplices.
 
-Proof: the closed sets `Fᵢ = {x | f(x)ᵢ ≤ xᵢ}` satisfy the KKM condition
-(`exists_pos_weights_le`), so by the Knaster–Kuratowski–Mazurkiewicz lemma they share a point
-`x`; there `f(x)ᵢ ≤ xᵢ` for every `i` and both sides sum to `1`, so `f(x) = x`. This is the
-argument of B. Knaster, C. Kuratowski and S. Mazurkiewicz, "Ein Beweis des Fixpunktsatzes für
-n-dimensionale Simplexe", Fundamenta Mathematicae 14 (1929), 132–137. The statement is
-Brouwer's theorem restricted to the simplex; it is the form used by Nash-type existence proofs
-once strategy spaces are simplices. -/
+Same statement as `MathlibExt.Analysis.Convex.BrouwerFixedPoint.exists_fixedPoint_stdSimplex`;
+kept as this library's entry point; see #4334. -/
 theorem exists_fixedPoint (f : StdSimplex ℝ (Fin (n + 1)) → StdSimplex ℝ (Fin (n + 1)))
-    (hf : Continuous f) : ∃ x, f x = x := by
-  classical
-  obtain ⟨x, hx⟩ := MathlibExt.Analysis.Convex.KKM.kkm_lemma
-    (fun i => {x | (f x).weights i ≤ x.weights i})
-    (fun i => isClosed_le ((StdSimplex.continuous_weights_apply ℝ i).comp hf)
-      (StdSimplex.continuous_weights_apply ℝ i))
-    (fun x => by
-      obtain ⟨i, hi, hle⟩ := exists_pos_weights_le f x
-      exact ⟨i, hi, hle⟩)
-  refine ⟨x, ?_⟩
-  have hle : ∀ i ∈ (Finset.univ : Finset (Fin (n + 1))), (f x).weights i ≤ x.weights i :=
-    fun i _ => hx i
-  have heq := (Finset.sum_eq_sum_iff_of_le hle).mp
-    (by rw [(f x).total_of_fintype, x.total_of_fintype])
-  ext i
-  exact heq i (Finset.mem_univ i)
+    (hf : Continuous f) : ∃ x, f x = x :=
+  MathlibExt.Analysis.Convex.BrouwerFixedPoint.exists_fixedPoint_stdSimplex f hf
 
 /-- **Brouwer's theorem for the simplex, fixed-point form.** A continuous self-map of the
 standard simplex has a point `x` with `Function.IsFixedPt f x`; a restatement of
