@@ -22,6 +22,11 @@ open PhyslibExt.BiomedicalImaging.PhotonCTInstance
 /-- Equal photon laws at unit incident intensity. -/
 example : PhyslibExt.BiomedicalImaging.PhotonObservation.photonLaw (fun _ => (1:ℝ≥0)) ctRow ![1, 0] =
     PhyslibExt.BiomedicalImaging.PhotonObservation.photonLaw (fun _ => (1:ℝ≥0)) ctRow ![0, 1] :=
-  ct_photon_law_pair (fun _ => one_pos)
+  ct_photon_law_pair _
+
+/-- Equal photon laws also at zero incident intensity. -/
+example : PhyslibExt.BiomedicalImaging.PhotonObservation.photonLaw (fun _ => (0:ℝ≥0)) ctRow ![1, 0] =
+    PhyslibExt.BiomedicalImaging.PhotonObservation.photonLaw (fun _ => (0:ℝ≥0)) ctRow ![0, 1] :=
+  ct_photon_law_pair _
 
 end PhyslibExtTest.BiomedicalImaging.PhotonCTInstance

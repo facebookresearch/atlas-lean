@@ -75,11 +75,12 @@ lemma ct_equal_rates (I0 : Fin 1 → ℝ≥0) :
 
 /-- **Equal photon laws.** With positive source intensities,
 the pair has the same independent-Poisson photon law. -/
-lemma ct_photon_law_pair {I0 : Fin 1 → ℝ≥0} (hI0 : ∀ j, 0 < I0 j) :
+lemma ct_photon_law_pair (I0 : Fin 1 → ℝ≥0) :
     PhyslibExt.BiomedicalImaging.PhotonObservation.photonLaw I0 ctRow ![1, 0] =
-      PhyslibExt.BiomedicalImaging.PhotonObservation.photonLaw I0 ctRow ![0, 1] :=
-  (PhyslibExt.BiomedicalImaging.PhotonObservation.photon_law_agree_iff hI0).mpr
-    ct_nullspace_pair.1
+      PhyslibExt.BiomedicalImaging.PhotonObservation.photonLaw I0 ctRow ![0, 1] := by
+  unfold PhyslibExt.BiomedicalImaging.PhotonObservation.photonLaw
+    PhyslibExt.BiomedicalImaging.PhotonObservation.transmittedRate
+  rw [ct_nullspace_pair.1]
 
 /-- **Non-identification on the nonnegative orthant.** The
 photon law for the design `[1, 1]` is not injective on
