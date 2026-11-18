@@ -22,7 +22,13 @@ Files, filenames, branch names, PR titles/descriptions, and complete commit
 messages must not contain private task/diff/paste identifiers, private service
 links, machine names, or personal workspace paths. Keep private provenance in
 private records; use public citations and repository-relative paths here.
-Branch identifier checks ignore letter case and treat underscores as separators.
+The numeric-reference and campaign-code checks ignore letter case in branch
+names and treat underscores as separators. Slashes remain path boundaries;
+compound campaign/lesson references have a separate slash-aware pattern, also
+checked case-insensitively when quoted in PR text or files.
+Dotted roadmap-label checks use the original case and require at least four
+upper-case parts; three-part package names and lower-case release branches are
+not classified by that shape alone.
 Preserve authorship and copyright notices when correcting provenance.
 
 The **Public references / public-references** check applies to every PR author,
@@ -57,8 +63,11 @@ The detector uses identifier/URL/path patterns, not a list of confidential model
 names. It is a backstop, not a confidentiality guarantee: unfamiliar private
 references, encoded data, images, and compressed archive contents need author
 review. Binary files receive a raw-byte text scan, not decompression or OCR.
-Legitimate public identifiers can collide with the patterns; ask maintainers to
-review such a case rather than disguising the text or disabling the check.
+Legitimate public identifiers can collide with the patterns. In particular,
+hyphenated or underscored F-number topics can have the same shape as private
+work-item codes. A finding is not proof that the identifier is confidential;
+ask maintainers to review such a case rather than disguising the text or
+disabling the check. A review accept alone does not change a failing check.
 Removing a reference from the tip does not erase already-published history.
 CI runs after a branch and PR have been published; run the local check before
 pushing to avoid exposing a reference in the first place.

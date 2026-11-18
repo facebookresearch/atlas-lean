@@ -17,6 +17,10 @@ def private_ref(prefix="D"):
     return prefix + "123456789"
 
 
+def roadmap_ref(*segments):
+    return ".".join(("EXAMPLE", *segments))
+
+
 class Patterns(unittest.TestCase):
     def test_reference_families(self):
         for prefix in "DTPSNL":
@@ -48,6 +52,58 @@ class Patterns(unittest.TestCase):
         for text in samples:
             with self.subTest(text=text):
                 self.assertTrue(gate.scan(text, "text"))
+
+    def test_dotted_roadmap_labels(self):
+        for segments in (
+            ("AREA", "TOPIC", "LEAF"),
+            ("HW", "DEVICE", "L1"),
+            ("G", "TOPIC", "L1"),
+        ):
+            label = roadmap_ref(*segments)
+            with self.subTest(segments=segments):
+                findings = gate.scan("First line\n" + label, "text")
+                self.assertEqual(len(findings), 1)
+                self.assertEqual(
+                    findings[0]["rule"], "private-roadmap-reference"
+                )
+                self.assertEqual(findings[0]["line"], 2)
+                self.assertNotIn(label, json.dumps(findings))
+        for text in (
+            "Nat.Prime.two",
+            "Real.pi",
+            "e.g.",
+            "U.S.A.",
+            "v1.2.3",
+            "ISO.8601",
+            "README.md",
+            "A.B.C",
+            "COM.EXAMPLE.API",
+        ):
+            self.assertEqual(gate.scan(text, "text"), [])
+
+    def test_lesson_references_in_text(self):
+        for separator in ("/", "_", "-"):
+            for leaf in ("s98l97", "s98.l97"):
+                reference = "f" + "99" + separator + leaf
+                for value in (reference, reference.upper()):
+                    findings = gate.scan(
+                        "Based on `" + value + "-example`.", "PR body"
+                    )
+                    self.assertEqual(len(findings), 1)
+                    self.assertEqual(
+                        findings[0]["rule"], "private-planning-reference"
+                    )
+        self.assertTrue(gate.scan("S" + "98.L97", "text"))
+        for value in (
+            "F16 jets",
+            "S13 lemma",
+            "Section 13.L",
+            "s1.l2",
+            "sl01",
+            "f16-sweep",
+            "COM.EXAMPLE.API",
+        ):
+            self.assertEqual(gate.scan(value, "text"), [])
 
     def test_short_reference_boundary_and_runner_path(self):
         for prefix in "DTP":
@@ -413,6 +469,45 @@ class Repository(unittest.TestCase):
             "d" + "1234-fix",
             "s" + "12345-fix",
             "modeld" + "12345x",
+        ):
+            self.assertEqual(self.check({"branch": branch})["findings"], [])
+
+    def test_roadmap_label_in_intermediate_blob(self):
+        label = roadmap_ref("AREA", "TOPIC", "LEAF")
+        self.write("notes.md", "Discharges roadmap leaf `" + label + "`.\n")
+        self.commit("Add notes")
+        self.write("notes.md", "Public final description.\n")
+        self.commit("Clarify description")
+        result = self.check()
+        self.assertEqual(
+            (result["commits"], result["files"], result["blobs"]), (2, 1, 2)
+        )
+        self.assertEqual(len(result["findings"]), 1)
+        self.assertEqual(
+            result["findings"][0]["rule"], "private-roadmap-reference"
+        )
+        self.assertNotIn(label, json.dumps(result))
+
+    def test_branch_planning_separators_and_raw_dotted_case(self):
+        for separator in ("-", "_"):
+            branch = "feature/" + separator.join(
+                ("f" + "10", "example", "leaf")
+            )
+            self.assertEqual(len(self.check({"branch": branch})["findings"]), 1)
+        lesson_branch = "feature/f" + "99" + "/s98l97-example"
+        self.assertEqual(
+            len(self.check({"branch": lesson_branch})["findings"]), 1
+        )
+        label = roadmap_ref("HW", "DEVICE", "L1")
+        self.assertEqual(len(self.check({"branch": label})["findings"]), 1)
+        for branch in (
+            label.lower(),
+            "release.v1.x",
+            "feature.release.v1.x",
+            "feature/f2/fix-typo",
+            "popgen/f2/form-relations",
+            "deps/f12/x/y",
+            "release/f1/v2-fix",
         ):
             self.assertEqual(self.check({"branch": branch})["findings"], [])
 
