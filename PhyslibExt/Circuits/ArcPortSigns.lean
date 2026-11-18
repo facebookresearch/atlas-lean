@@ -14,7 +14,6 @@ public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Logic.Function.Basic
 import Mathlib.Tactic.Ring
-import Mathlib.Tactic.NormNum
 
 /-!
 # Oriented branch ports and network power balance
@@ -53,7 +52,6 @@ and a branch whose tail and head coincide has a zero column.
 - B. Branch voltage from potentials
 - C. Power balance
 - D. Branch reversal
-- E. Concrete witnesses
 
 ## iv. References
 
@@ -211,7 +209,7 @@ lemma branchPower_reversedBranch_eq
 current balance give the power balance, and simultaneous reversal of one
 branch, its voltage and its current preserves both the nodal injection and
 the potential-defined voltage up to the stated sign change. -/
-theorem orientedBranchPorts_powerBalance_andReversal {V : Type*} [Fintype V]
+lemma orientedBranchPorts_powerBalance_andReversal {V : Type*} [Fintype V]
     [DecidableEq V] {E : Type*} [Fintype E] [DecidableEq E] (tail head : E → V)
     (phi j : V → ℝ) (v i : E → ℝ) (hKCL : electricalIncidence tail head *ᵥ i = j)
     (hKVL : v = (electricalIncidence tail head).transpose *ᵥ phi) (e₀ : E) :
@@ -226,36 +224,5 @@ theorem orientedBranchPorts_powerBalance_andReversal {V : Type*} [Fintype V]
   · rw [mulVec_reversedBranch_eq]
     exact hKCL
   · rw [transpose_mulVec_reversedBranch_eq, ← hKVL]
-
-/-! ## E. Concrete witnesses -/
-
-/-- Two-node witness: one branch from node `0` to node `1`, potentials
-`3` and `1`, branch current `5`. Branch power and node power are both `10`. -/
-lemma twoNode_branchPower_example :
-    (∑ e : Fin 1, (![2] : Fin 1 → ℝ) e * (![5] : Fin 1 → ℝ) e) =
-      ∑ n : Fin 2, (![3, 1] : Fin 2 → ℝ) n * (![5, -5] : Fin 2 → ℝ) n := by
-  simp only [Fin.sum_univ_one, Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
-  norm_num
-
-/-- Three-node cycle witness: three branches forming a directed cycle,
-unit current on each, potentials `3`, `1`, `0`. The nodal injection is zero
-and total branch power is zero. -/
-lemma threeNodeCycle_power_example :
-    (∑ e : Fin 3, (![2, 1, -3] : Fin 3 → ℝ) e * (![1, 1, 1] : Fin 3 → ℝ) e) =
-      ∑ n : Fin 3, (![3, 1, 0] : Fin 3 → ℝ) n * (![0, 0, 0] : Fin 3 → ℝ) n := by
-  simp only [Fin.sum_univ_three, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
-    Matrix.head_cons, Matrix.tail_cons]
-  norm_num
-
-/-- Negative witness: flipping one branch current while holding the
-incidence, the potentials and the externally specified injection fixed
-breaks the power identity, because current balance is then violated. -/
-lemma flippedCurrent_breaks_powerBalance_example :
-    (![2] : Fin 1 → ℝ) ⬝ᵥ (![-5] : Fin 1 → ℝ) ≠
-      (![3, 1] : Fin 2 → ℝ) ⬝ᵥ (![5, -5] : Fin 2 → ℝ) := by
-  simp only [dotProduct, Fin.sum_univ_one, Fin.sum_univ_two, Matrix.cons_val_zero,
-    Matrix.cons_val_one]
-  have h : (2 : ℝ) * -5 < 3 * 5 + 1 * -5 := by norm_num
-  exact h.ne
 
 end PhyslibExt.Circuits.ArcPortSigns
