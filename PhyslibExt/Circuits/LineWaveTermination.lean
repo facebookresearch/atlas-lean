@@ -126,7 +126,7 @@ noncomputable def currentPhasor (Aplus Aminus : ℂ) (Z0 β x : ℝ) : ℂ :=
 noncomputable def reflectionCoefficient (ZL : ℂ) (Z0 : ℝ) : ℂ :=
   (ZL - (Z0 : ℂ)) / (ZL + (Z0 : ℂ))
 
-/-! ### B. Parameter identities -/
+/-! ## B. Parameter identities -/
 
 /-- The wave speed is positive. -/
 lemma waveSpeed_pos (L C : ℝ) (hL : 0 < L) (hC : 0 < C) :
@@ -199,7 +199,7 @@ lemma phaseConstant_eq_div_waveSpeed (L C ω : ℝ) (hL : 0 < L)
     ne_of_gt (Real.sqrt_pos.mpr (mul_pos hL hC))
   field_simp
 
-/-! ### C. Load-plane values and phasor telegrapher equations -/
+/-! ## C. Load-plane values and phasor telegrapher equations -/
 
 /-- The voltage phasor at the load plane is the sum of the two wave
 amplitudes. -/
@@ -371,7 +371,7 @@ theorem currentPhasor_deriv (Aplus Aminus : ℂ) (L C ω Z0 β x : ℝ)
   linear_combination (-(Complex.I * (Aplus * Complex.exp (↑x * (-(β : ℂ) * Complex.I))
     + Aminus * Complex.exp (↑x * ((β : ℂ) * Complex.I))))) * hβc
 
-/-! ### D. Load termination and reflection -/
+/-! ## D. Load termination and reflection -/
 
 /-- Load elimination in multiplicative form: the load relations imply
 `(ZL + Z0) * Aminus = (ZL - Z0) * Aplus`, with no division by a wave
@@ -495,7 +495,7 @@ lemma zeroExcitation_ratio_example :
   have h3 : (0 : ℝ) = 2 / 4 := Complex.ofReal_injective h
   norm_num at h3
 
-/-! ### E. Combined relations -/
+/-! ## E. Combined relations -/
 
 /-- Headline correctness: the speed and impedance relations hold, the
 phasor telegrapher equations for both voltage and current hold at
