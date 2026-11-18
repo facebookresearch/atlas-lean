@@ -12,7 +12,8 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Matrix.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Algebra.BigOperators.Fin
-public import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.FinCases
 
 /-!
 # Two-compartment model generator

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Biology.Biophysics.CompartmentKinetics.TwoCompartment.Model
+import Mathlib.Tactic.NormNum
 
 /-! Tests: component equations at concrete rates. -/
 
