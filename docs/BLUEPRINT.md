@@ -107,8 +107,8 @@ It edits within a folder page only where every line of the page is simple: a
 blank line, a heading, a single-line `- [title](page)` item with plain text
 after it, or a line of plain text that opens no other block, with no item next to
 text. On any other page, a new page's item goes at the end, after a blank line,
-and is reported for an editor to place; a page that ends in an open block, such
-as a fence, is left as it is and the new page reported as an error. A part list
+and is reported for an editor to place; a page with raw HTML or a code fence is
+left as it is and the new page reported as an error. A part list
 on a page that is not simple is left as it is and reported too.
 
 `scripts/wiki-sync.json` is the

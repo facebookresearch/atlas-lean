@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import io
 import json
 import tempfile
 import unittest
@@ -773,10 +774,13 @@ class Declarations(Vault):
                 ("loose item", "- [A](a.md): first\n\n  second with [B](b.md)\n", copy),
                 ("note after a blank line", "- [A](a.md)\n\n  Note about A.\n", copy),
                 ("note after several blank lines", "- [A](a.md)\n\n\n  Note about A.\n", copy),
+                ("dot segment", "- [A](./a.md)\n", copy),
                 ("link title", '- [A](a.md "A")\n', copy),
                 ("escaped destination", "- [A](a\\(1\\).md)\n", copy),
                 ("destination in angle brackets", "- [A](<a b.md>)\n", copy),
-                ("copy with code", "- [A](a.md)\n", "- [`A`](part-01/a.md)\n")):
+                ("copy with code", "- [A](a.md)\n", "- [`A`](part-01/a.md)\n"),
+                ("copy over a paragraph", "- [A](a.md)\n", "- [A](part-01/a.md)\n\nA note on A.\n\n- [C](part-01/c.md)\n"),
+                ("copy over another item", "- [A](a.md)\n", "- [A](part-01/a.md)\n- [Intro](intro.md)\n- [C](part-01/c.md)\n")):
             with self.subTest(name):
                 text = f"# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n{listed}"
                 self.page("Algebra/groups/README.md", text)
@@ -811,43 +815,6 @@ class Declarations(Vault):
         sync.LINKS.mkdir(parents=True)
         sync.apply_declarations([], SimpleNamespace(declarations={}))
         self.assertEqual((groups / "README.md").read_text(), text)
-
-    def test_a_folder_pages_own_list_reads_nothing_inside_a_comment(self) -> None:
-        # A heading and an item in a comment make no section of the list; the comment makes the page no simple one, so
-        # the new page goes at its end and is reported for an editor.
-        self.page("Algebra/groups/README.md", "# Groups\n\n- [Old](old.md)\n<!--\n## Planned\n- [Wish](wish.md)\n-->\n"
-                  "- [Late](late.md)\n\n## Related topics\n\n- [Rings](../rings/README.md): rings.\n")
-        sync.LINKS.mkdir(parents=True)
-        sylow = declaration("Ext.sylow", "sylow", "Sylow", "Sylow.", module=("Ext", "Sylow"))
-        sylow.path = wiki.ROADMAP / "Algebra" / "groups" / "sylow.md"
-        report = sync.apply_declarations([sylow], SimpleNamespace(declarations={"Ext.sylow": None}))
-        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
-                         "# Groups\n\n- [Old](old.md)\n<!--\n## Planned\n- [Wish](wish.md)\n-->\n- [Late](late.md)\n\n"
-                         "## Related topics\n\n- [Rings](../rings/README.md): rings.\n\n- [Sylow](sylow.md)\n")
-        self.assertEqual(report["appended"], ["Algebra/groups/sylow.md"])
-
-    def test_a_page_with_a_comment_or_a_code_fence_takes_a_new_page_at_its_end(self) -> None:
-        # H's page is listed only in a comment or a fenced code block, which makes the page no simple one: B goes at its
-        # end rather than by a neighbour read past the comment, and is reported for an editor.
-        groups = wiki.ROADMAP / "Algebra" / "groups"
-        for short in "ahc":
-            self.page(f"Algebra/groups/{short}.md", f"# {short.upper()}\n")
-        targets = []
-        for number, (short, section) in enumerate([("a", "Basics"), ("h", "Results"), ("b", "Results"), ("c", "Results")]):
-            target = declaration(f"Ext.{short}", short, short.upper(), f"{short}.")
-            target.idx, target.sections = number, (section, "", "")
-            targets.append(target)
-        for opening, closing in (("<!--", "-->"), ("```", "```"), ("~~~", "~~~")):
-            with self.subTest(opening=opening):
-                results = f"## Results\n\n{opening}\n- [H](h.md)\n{closing}\n\n"
-                self.page("Algebra/groups/README.md", f"# Groups\n\n## Basics\n\n- [A](a.md)\n\n{results}- [C](c.md)\n")
-                (groups / "b.md").unlink(missing_ok=True)
-                self.annotate([self.about(f"Algebra/groups/{short}.md", object=[{"location": {"declaration": f"Ext.{short}"}}])
-                               for short in "ahc"])
-                report = sync.apply_declarations(targets, SimpleNamespace(declarations={f"Ext.{short}": None for short in "ahbc"}))
-                self.assertEqual((groups / "README.md").read_text(),
-                                 f"# Groups\n\n## Basics\n\n- [A](a.md)\n\n{results}- [C](c.md)\n\n- [B](b.md)\n")
-                self.assertEqual(report["appended"], ["Algebra/groups/b.md"])
 
     def test_a_page_that_is_not_simple_takes_a_new_page_at_its_end(self) -> None:
         # A code span hiding a bracket, a backtick left open, a note after one blank line or several, a loose item, or
@@ -943,34 +910,62 @@ class Declarations(Vault):
         sync.apply_declarations([], SimpleNamespace(declarations={}))
         self.assertEqual((groups / "README.md").read_text(), text)
 
-    def test_a_page_with_raw_html_takes_a_new_page_after_it(self) -> None:
-        # An item in a <pre> example is no neighbour: the page is no simple one, and the new page goes at its end, after
-        # the closing tag and a blank line, where it is a list item.
-        text = ("# Groups\n\nAn example:\n\n<pre>\n- [Sample](old.md)\n\n</pre>\n\n- [Old](old.md)\n\n"
-                "## Related topics\n\n- [Rings](../rings/README.md): rings.\n")
+    def add_sylow(self, text: str) -> dict:
+        """The report of a run that adds Ext.sylow to a groups folder whose page is *text*, its page as it was gone."""
         self.page("Algebra/groups/README.md", text)
-        sync.LINKS.mkdir(parents=True)
+        self.annotate([])
+        (wiki.ROADMAP / "Algebra" / "groups" / "sylow.md").unlink(missing_ok=True)
         sylow = declaration("Ext.sylow", "sylow", "Sylow", "Sylow.", module=("Ext", "Sylow"))
         sylow.path = wiki.ROADMAP / "Algebra" / "groups" / "sylow.md"
-        report = sync.apply_declarations([sylow], SimpleNamespace(declarations={"Ext.sylow": None}))
-        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(), f"{text}\n- [Sylow](sylow.md)\n")
-        self.assertEqual((report["appended"], report["unlisted"]), (["Algebra/groups/sylow.md"], []))
+        return sync.apply_declarations([sylow], SimpleNamespace(declarations={"Ext.sylow": None}))
 
-    def test_a_page_that_ends_in_an_open_block_is_left_as_it_is(self) -> None:
-        # An item appended after a fence, a comment or raw HTML left open would be part of it, not a link: the page is
-        # left as it is, and the new page is reported as listed nowhere.
-        for name, tail in (("backtick fence", "```\n- [Sample](old.md)\n"), ("tilde fence", "~~~ text\nsample\n"),
-                           ("comment", "<!-- To do:\n"), ("pre", "<pre>\n- [Sample](old.md)\n\nmore\n")):
+    def test_a_page_with_raw_html_or_a_code_fence_is_left_as_it_is(self) -> None:
+        # An item appended after raw HTML or a fence the sync does not read could be part of it, not a link: whether
+        # closed or not, the page is left as it is, and the new page is reported as listed nowhere.
+        related = "## Related topics\n\n- [Rings](../rings/README.md): rings.\n"
+        for name, block in (("comment in the list", "- [Old](old.md)\n<!--\n## Planned\n- [Wish](wish.md)\n-->\n- [Late](late.md)\n"),
+                            ("backtick fence", "```\n- [H](h.md)\n```\n"), ("tilde fence", "~~~ text\n- [H](h.md)\n~~~\n"),
+                            ("pre", "<pre>\n- [Sample](old.md)\n\n</pre>\n"), ("pre closed by </pre", "<pre>\nx\n</pre\n"),
+                            ("pre closed by another tag", "<pre>\nx\n</pre-extra>\n"), ("xml", "<?xml version=\"1.0\"\n"),
+                            ("doctype", "<!DOCTYPE html\n"), ("cdata", "<![CDATA[\nx\n"),
+                            ("div", "<div>\n- [Sample](old.md)\n</div>\n"), ("tag alone", '<span class="x">\n'),
+                            ("nested details", "<details>\n<details>\n</details>\n"),
+                            ("fence left open", "```\n- [Sample](old.md)\n"),
+                            ("comment left open", "<!-- To do:\n"), ("pre left open", "<pre>\n- [Sample](old.md)\n\nmore\n")):
             with self.subTest(name):
-                text = f"# Groups\n\n- [Old](old.md)\n\n{tail}"
-                self.page("Algebra/groups/README.md", text)
-                self.annotate([])
-                (wiki.ROADMAP / "Algebra" / "groups" / "sylow.md").unlink(missing_ok=True)
-                sylow = declaration("Ext.sylow", "sylow", "Sylow", "Sylow.", module=("Ext", "Sylow"))
-                sylow.path = wiki.ROADMAP / "Algebra" / "groups" / "sylow.md"
-                report = sync.apply_declarations([sylow], SimpleNamespace(declarations={"Ext.sylow": None}))
+                text = f"# Groups\n\n- [Old](old.md)\n\n{related}\n{block}"
+                report = self.add_sylow(text)
                 self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(), text)
                 self.assertEqual((report["appended"], report["unlisted"]), ([], ["Algebra/groups/sylow.md"]))
+
+    def test_a_page_with_another_block_takes_a_new_page_at_its_end(self) -> None:
+        # Any CommonMark block other than a heading, a simple item, a blank line or a paragraph of plain text, and any
+        # item that links a path back into the folder, makes the page not simple: the new page goes at its end.
+        for name, block in (("setext heading", "Groups\n======\n"), ("setext heading with dashes", "Groups\n------\n"),
+                            ("thematic break", "___\n"), ("starred thematic break", "* * *\n"),
+                            ("link reference definition", "[book]: https://example.org\n"),
+                            ("table", "Name | Size\n:--- | ---:\nA | 1\n"), ("block quote", "> A quote.\n"),
+                            ("ordered list", "1. [Late](late.md)\n"), ("indented code", "    code\n"),
+                            ("attribute list", "{: .note }\n"), ("second level-1 heading", "# Second topic\n\n- [Late](late.md)\n"),
+                            ("dot segment", "- [Rings](./../rings/README.md): rings.\n"),
+                            ("dot-dot segment", "- [Rings](sub/../../rings/README.md): rings.\n"),
+                            ("dot segment in the list", "- [Late](./late.md)\n")):
+            with self.subTest(name):
+                text = f"# First topic\n\n- [Old](old.md)\n\n## Related topics\n\n{block}"
+                report = self.add_sylow(text)
+                self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(), f"{text}\n- [Sylow](sylow.md)\n")
+                self.assertEqual((report["appended"], report["unlisted"]), (["Algebra/groups/sylow.md"], []))
+
+    def test_a_page_listed_nowhere_fails_the_run(self) -> None:
+        report = {kind: [] for kind in ("added", "folders", "gone", "changed", "unindexed", "parts", "appended")}
+        report["unlisted"] = ["Algebra/groups/sylow.md"]
+        lean = SimpleNamespace(index_project=lambda *args, **kwargs: SimpleNamespace(declarations={}))
+        with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean), "autoform_cli.lean": lean}), \
+                patch.object(wiki, "generate", lambda *args: {}), patch.object(sync, "apply_declarations", lambda *args: report), \
+                patch.object(sync, "refresh_catalog", lambda generated: None), \
+                patch("sys.stdout", new_callable=io.StringIO), patch("sys.stderr", new_callable=io.StringIO) as errors:
+            self.assertEqual(sync.run_declarations(), 1)
+        self.assertIn("error: Algebra/groups/sylow.md is listed on no folder page", errors.getvalue())
 
     def test_a_new_section_follows_all_that_the_last_one_holds(self) -> None:
         # The prose after the last item stays in the section it closes.
