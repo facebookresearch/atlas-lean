@@ -35,11 +35,12 @@ example {μs : ℕ → ProbabilityMeasure ℝ} {μ : ProbabilityMeasure ℝ} {g 
     Tendsto (fun n => (μs n).map g) atTop (𝓝 (μ.map g)) :=
   tendsto_map_of_tendsto_of_ae_continuousAt hconv hg hdisc
 
+/-! The Polish corollary, also at `Ω = Ω' = ℝ`. -/
 example {μs : ℕ → ProbabilityMeasure ℝ} {μ : ProbabilityMeasure ℝ} {g : ℝ → ℝ}
     (hg : Measurable g) (hdisc : (μ : Measure ℝ) {x | ¬ContinuousAt g x} = 0)
     (hconv : Tendsto μs atTop (𝓝 μ)) :
     Tendsto (fun n => (μs n).map g) atTop (𝓝 (μ.map g)) :=
-  MeasureTheory.ProbabilityMeasure.tendsto_map_of_tendsto_of_ae_continuous hg hdisc hconv
+  tendsto_map_of_tendsto_of_ae_continuousAt_polish hconv hg hdisc
 
 /-! Acceptance test: the sup-norm functional on `C([0,1], ℝ)` (Borel σ-algebra). -/
 section SupNorm
