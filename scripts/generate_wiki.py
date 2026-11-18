@@ -1170,10 +1170,11 @@ def render_coverage(rows: list[tuple[str, str, str]]) -> str:
         "",
         "# ATLAS coverage",
         "",
-        "Each documented public declaration of the ATLAS v2 libraries gets one roadmap",
-        "article, which `scripts/sync_wiki.py declarations` writes from its docstring. The",
-        "counts below are of documented declarations, so they include any whose article that",
-        "sync has yet to write. The standalone `Atlas/` developments are not decomposed yet,",
+        "Each documented public declaration of the ATLAS v2 libraries, instances aside, gets one",
+        "roadmap article, which `scripts/sync_wiki.py declarations` writes from its docstring; a",
+        "declaration the Lean index does not select waits for an editor. The counts below are of",
+        "documented non-instance declarations, so they include any whose article that sync has",
+        "yet to write. The standalone `Atlas/` developments are not decomposed yet,",
         "and the archived v1 release is not part of the wiki. Progress percentages and target",
         "counts cover only the decomposed rows below; they are not repository-wide coverage.",
         "",
@@ -1334,9 +1335,9 @@ def generate(titles: dict | None = None, dependency_file: Path | None = None, re
             (
                 f"v2 / {library}",
                 "DECOMPOSED",
-                f"[{summary['documented']} documented public declarations](../roadmap/README.md) "
+                f"[{summary['documented']} documented public non-instance declarations](../roadmap/README.md) "
                 f"across {len(summary['subjects'])} subjects; {summary['instances']} instances and "
-                f"{summary['public'] - summary['instances'] - summary['documented']} undocumented public "
+                f"{summary['public'] - summary['instances'] - summary['documented']} undocumented public non-instance "
                 "declarations are not articles.",
             )
         )

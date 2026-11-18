@@ -87,6 +87,19 @@ class MissingRows(unittest.TestCase):
 
 
 class Mutual(unittest.TestCase):
+    def test_a_hidden_theorem_gives_a_statement_what_it_states_not_how_it_is_proved(self) -> None:
+        # T's statement uses the undocumented theorem h, whose type uses A and whose proof uses B: T's statement
+        # depends on A only, and a proof of T that uses h depends on B as well.
+        rows = [row("A", "def", [], []), row("B", "def", [], []), row("h", "theorem", ["A"], ["B"]),
+                row("T", "theorem", ["h"], ["h"]), row("D", "def", ["h"], [])]
+        found = run_extract(rows, ["A", "B", "T", "D"])
+        self.assertEqual((found["T"]["statement"], found["T"]["proof"]), (["A"], ["B"]))
+        self.assertEqual((found["D"]["statement"], found["D"]["proof"]), (["A"], []))
+
+    def test_a_hidden_definition_body_stays_part_of_a_statement(self) -> None:
+        rows = [row("A", "def", [], []), row("d", "def", [], ["A"]), row("T", "theorem", ["d"], [])]
+        self.assertEqual(run_extract(rows, ["A", "T"])["T"]["statement"], ["A"])
+
     def test_mutual_definitions_drop_their_edges_to_each_other(self) -> None:
         found = run_extract(
             [row("E", "def", [], []), row("Win", "def", [], ["Lose", "E"]), row("Lose", "def", [], ["Win"])],

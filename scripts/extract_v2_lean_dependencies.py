@@ -78,8 +78,13 @@ def article_manifest() -> set[str]:
     return set(load_graph(BLUEPRINT).lean_names())
 
 
-def frontiers(rows: dict[str, dict], articles: set[str]) -> dict[str, frozenset[str]]:
+def frontiers(rows: dict[str, dict], articles: set[str], statement: bool = False) -> dict[str, frozenset[str]]:
     """For every non-article constant, the articles reachable through non-articles.
+
+    With *statement*, only what a constant states counts: its type, and its value only when that value is
+    part of what it states (a definition's body, an inductive type's constructors). A hidden theorem's proof
+    then reaches nothing, so an article whose statement uses that theorem depends on what the theorem says,
+    not on how it is proved.
 
     Mutually recursive non-articles reach the same articles, so the non-article graph is first cut into
     strongly connected components (Tarjan's algorithm): a component is finished only after every
@@ -89,7 +94,11 @@ def frontiers(rows: dict[str, dict], articles: set[str]) -> dict[str, frozenset[
 
     def uses(name: str) -> list[str]:
         row = rows.get(name)
-        return (row["type"] + row["value"]) if row else []
+        if not row:
+            return []
+        if statement and row.get("kind") not in STATEMENT_VALUE:
+            return row["type"]
+        return row["type"] + row["value"]
 
     memo: dict[str, frozenset[str]] = {}
     index: dict[str, int] = {}
@@ -196,12 +205,13 @@ def main() -> int:
             print(f"warning: roadmap Lean target is absent from the compiled dependency dump: {name}", file=sys.stderr)
         print(f"warning: {len(missing)} roadmap targets have no compiled dependency row", file=sys.stderr)
     articles = manifest & rows.keys()
-    reach = frontiers(rows, articles)
+    # Statements reach through what hidden constants state; proofs through everything they use.
+    reach_statement, reach = frontiers(rows, articles, statement=True), frontiers(rows, articles)
 
-    def collapse(name: str, uses: list[str]) -> set[str]:
+    def collapse(name: str, uses: list[str], through: dict[str, frozenset[str]]) -> set[str]:
         found: set[str] = set()
         for use in uses:
-            found |= {use} if use in articles else reach.get(use, frozenset())
+            found |= {use} if use in articles else through.get(use, frozenset())
         found.discard(name)
         return found
 
@@ -209,10 +219,10 @@ def main() -> int:
     for name in sorted(articles):
         row = rows[name]
         if row["kind"] in STATEMENT_VALUE:
-            statement, proof = collapse(name, row["type"] + row["value"]), set()
+            statement, proof = collapse(name, row["type"] + row["value"], reach_statement), set()
         else:
-            statement = collapse(name, row["type"])
-            proof = collapse(name, row["value"]) - statement
+            statement = collapse(name, row["type"], reach_statement)
+            proof = collapse(name, row["value"], reach) - statement
         result[name] = {
             "module": row["module"],
             "statement": sorted(statement),
