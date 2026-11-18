@@ -17,19 +17,29 @@ open PhyslibExt.Circuits.IndexOneElimination
 namespace PhyslibExtTest.Circuits.IndexOneElimination
 
 /-- Scalar reconstruction with nonzero forcing: state `2` and
-forcing `5` with unit blocks reconstruct to `-7`. -/
-example :
+forcing `5` with unit blocks reconstruct to `-7`, so the forcing is
+retained by the reconstruction. -/
+private lemma scalar_reconstruction_with_nonzeroForcing :
     @algebraicReconstruction (Fin 1) (Fin 1) _ _ _ (1 : Matrix (Fin 1) (Fin 1) ℝ)
         invertibleOne (1 : Matrix (Fin 1) (Fin 1) ℝ) (fun _ => 2) (fun _ => 5) =
-      (fun _ => -7) :=
-  scalar_reconstruction_with_nonzeroForcing.1
+      (fun _ => -7) := by
+  have h1 : (1 : Matrix (Fin 1) (Fin 1) ℝ)⁻¹ = 1 :=
+    Matrix.inv_eq_left_inv (by simp)
+  simp only [algebraicReconstruction, h1, Matrix.one_mulVec]
+  funext i
+  simp only [Pi.neg_apply, Pi.add_apply]
+  norm_num
 
 /-- The value `0` is not consistent with state `2` and forcing `5`
-for unit blocks. -/
+for unit blocks, checked directly from the algebraic equation. -/
 example :
     ¬ consistentPair (1 : Matrix (Fin 1) (Fin 1) ℝ)
-        (1 : Matrix (Fin 1) (Fin 1) ℝ) (fun _ => 5) (fun _ => 2) (fun _ => 0) :=
-  scalar_reconstruction_with_nonzeroForcing.2
+        (1 : Matrix (Fin 1) (Fin 1) ℝ) (fun _ => 5) (fun _ => 2) (fun _ => 0) := by
+  intro hcon
+  simp only [consistentPair, Matrix.one_mulVec] at hcon
+  have h0 := congrFun hcon 0
+  simp only [Pi.add_apply, Pi.zero_apply] at h0
+  norm_num at h0
 
 /-- The reconstructed value `-7` is consistent with state `2` and
 forcing `5` for unit blocks. -/
@@ -39,7 +49,7 @@ example :
   apply (@consistentPair_iff_eq_algebraicReconstruction (Fin 1) (Fin 1) _ _ _
     (1 : Matrix (Fin 1) (Fin 1) ℝ) (1 : Matrix (Fin 1) (Fin 1) ℝ) invertibleOne
     (fun _ => 5) (fun _ => 2) (fun _ => -7)).mpr
-  exact scalar_reconstruction_with_nonzeroForcing.1.symm
+  exact scalar_reconstruction_with_nonzeroForcing.symm
 
 /-- A value different from the reconstruction, here `0`, is excluded
 by the consistency criterion for state `2` and forcing `5`. -/
@@ -50,14 +60,20 @@ example :
     (1 : Matrix (Fin 1) (Fin 1) ℝ) (1 : Matrix (Fin 1) (Fin 1) ℝ) invertibleOne
     (fun _ => 5) (fun _ => 2) (fun _ => 0)
   intro hcon
-  have hrec := scalar_reconstruction_with_nonzeroForcing.1
+  have hrec := scalar_reconstruction_with_nonzeroForcing
   rw [← hcon] at hrec
   have h0 := congrFun hrec 0
   norm_num at h0
 
-/-- The zero scalar block admits no invertible instance. -/
-example : ¬ Nonempty (Invertible (0 : Matrix (Fin 1) (Fin 1) ℝ)) :=
-  not_nonempty_invertible_zero_scalar
+/-- The zero scalar block admits no invertible instance, so a
+singular algebraic block is outside the reduction. -/
+example : ¬ Nonempty (Invertible (0 : Matrix (Fin 1) (Fin 1) ℝ)) := by
+  intro hne
+  obtain ⟨h⟩ := hne
+  have h2 := h.mul_invOf_self
+  rw [Matrix.zero_mul] at h2
+  have h3 := congrFun (congrFun h2 0) 0
+  simp at h3
 
 /-- Descriptor satisfaction can be stated for a singular algebraic
 block: the predicate itself needs no invertibility instance. -/
