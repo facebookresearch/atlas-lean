@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block footer %}
+<footer class="md-footer">
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+        Developed with
+        <a href="https://github.com/facebookresearch/autoform-bot">AutoformBot</a>.
+        {% if config.repo_url %}
+        <a href="{{ config.repo_url }}">Formalization source</a>.
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</footer>
+{% endblock %}

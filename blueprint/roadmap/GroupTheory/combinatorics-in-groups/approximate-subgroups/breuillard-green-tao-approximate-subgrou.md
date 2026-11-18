@@ -1,0 +1,14 @@
+# Breuillard–Green–Tao structure theorem for approximate subgroups
+
+For every real number
+$K$ there is a natural number $C \ge 1$ with the following property. Let $G$ be a group and let
+$A \subseteq G$ be a $K$-approximate subgroup, that is, $1 \in A$, $A^{-1} = A$, and $A^2$ is
+covered by at most $K$ left translates of $A$. Then there are a subgroup $H$ of $G$, a normal
+subgroup $N$ of $H$, a finite set $F \subseteq G$ and a finite set $S \subseteq H/N$ such that
+$H/N$ is nilpotent of class at most $C$ (the $C$-th term of its upper central series is all of
+$H/N$), $S$ has at most $C$ elements and generates $H/N$, $N$ is contained in the $C$-fold
+product set $(AA^{-1})^C$, $F$ has at most $C$ elements, and $A \subseteq FH$.
+
+## Sources
+
+- S. Machado, *Topics in Geometric Group Theory* lecture notes, <https://sites.google.com/view/simonmachado/teaching>, Theorem 4.4; original B. Breuillard, B. Green, T. Tao, *The structure of approximate groups*, Publ. Math. IHÉS 116 (2012).
