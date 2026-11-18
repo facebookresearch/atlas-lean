@@ -17,6 +17,7 @@ public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 public import Mathlib.Tactic.Ring
 public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Topology.Algebra.Order.Field
+public import MathlibExt.Biology.Biophysics.CompartmentKinetics.DecayExpansion
 
 /-!
 # Oral absorption model
@@ -61,11 +62,11 @@ theorem depot_hasDerivAt (D ka t : ℝ) :
   rw [hval] at hmul
   exact hmul
 
-/-- **Distinct-rate central equation.** The central amount
-starts at zero and solves `Ac' = F * ka * Ag - k * Ac`. -/
-theorem central_deriv_distinct {F D ka k t : ℝ} (h : ka ≠ k) :
-    deriv (centralAmount F D ka k) t =
-      F * ka * depotAmount D ka t - k * centralAmount F D ka k t := by
+/-- **Distinct-rate central derivative.** The central amount
+has derivative `F * ka * Ag - k * Ac`. -/
+theorem central_hasDerivAt_distinct {F D ka k t : ℝ} (h : ka ≠ k) :
+    HasDerivAt (centralAmount F D ka k)
+      (F * ka * depotAmount D ka t - k * centralAmount F D ka k t) t := by
   have hlin_k : HasDerivAt (fun t => -k * t) (-k * 1) t :=
     HasDerivAt.const_mul (-k) (hasDerivAt_id t)
   have hlin_ka : HasDerivAt (fun t => -ka * t) (-ka * 1) t :=
@@ -88,20 +89,29 @@ theorem central_deriv_distinct {F D ka k t : ℝ} (h : ka ≠ k) :
   have hmain : HasDerivAt (centralAmount F D ka k)
       (((F * D * ka) * (Real.exp (-k * t) * (-k * 1) - Real.exp (-ka * t) * (-ka * 1))) / (ka - k)) t :=
     hdiv
-  rw [hmain.deriv]
   have hne : ka - k ≠ 0 := sub_ne_zero.mpr h
-  simp only [depotAmount, centralAmount]
-  field_simp
-  ring
+  have hval : (((F * D * ka) * (Real.exp (-k * t) * (-k * 1) - Real.exp (-ka * t) * (-ka * 1))) / (ka - k)) =
+      F * ka * depotAmount D ka t - k * centralAmount F D ka k t := by
+    simp only [depotAmount, centralAmount]
+    field_simp
+    ring
+  rwa [hval] at hmain
+
+/-- **Distinct-rate central equation.** The central amount
+solves `Ac' = F * ka * Ag - k * Ac`. -/
+theorem central_deriv_distinct {F D ka k t : ℝ} (h : ka ≠ k) :
+    deriv (centralAmount F D ka k) t =
+      F * ka * depotAmount D ka t - k * centralAmount F D ka k t :=
+  (central_hasDerivAt_distinct h).deriv
 
 /-- **Distinct-rate initial value.** -/
 theorem central_zero (F D ka k : ℝ) : centralAmount F D ka k 0 = 0 := by
   simp [centralAmount]
 
-/-- **Equal-rate central equation.** -/
-theorem central_deriv_equal {F D ka t : ℝ} :
-    deriv (centralAmountEqual F D ka) t =
-      F * ka * depotAmount D ka t - ka * centralAmountEqual F D ka t := by
+/-- **Equal-rate central derivative.** -/
+theorem central_hasDerivAt_equal {F D ka t : ℝ} :
+    HasDerivAt (centralAmountEqual F D ka)
+      (F * ka * depotAmount D ka t - ka * centralAmountEqual F D ka t) t := by
   have hlin : HasDerivAt (fun t => -ka * t) (-ka * 1) t :=
     HasDerivAt.const_mul (-ka) (hasDerivAt_id t)
   have hexp : HasDerivAt (fun t => Real.exp (-ka * t))
@@ -116,34 +126,36 @@ theorem central_deriv_equal {F D ka t : ℝ} :
   have hmain : HasDerivAt (centralAmountEqual F D ka)
       ((F * D * ka) * 1 * Real.exp (-ka * t) + (F * D * ka) * t * (Real.exp (-ka * t) * (-ka * 1))) t :=
     hprod
-  rw [hmain.deriv]
-  simp only [depotAmount, centralAmountEqual]
-  ring
+  have hval : ((F * D * ka) * 1 * Real.exp (-ka * t) + (F * D * ka) * t * (Real.exp (-ka * t) * (-ka * 1))) =
+      F * ka * depotAmount D ka t - ka * centralAmountEqual F D ka t := by
+    simp only [depotAmount, centralAmountEqual]
+    ring
+  rwa [hval] at hmain
+
+/-- **Equal-rate central equation.** -/
+theorem central_deriv_equal {F D ka t : ℝ} :
+    deriv (centralAmountEqual F D ka) t =
+      F * ka * depotAmount D ka t - ka * centralAmountEqual F D ka t :=
+  central_hasDerivAt_equal.deriv
 
 /-- **Distinct-rate nonnegativity.** For admissible parameters
 and `t ≥ 0`, the central amount is nonnegative. -/
 theorem central_nonneg {F D ka k t : ℝ} (hF : 0 ≤ F) (hD : 0 ≤ D)
     (hka : 0 < ka) (hk : 0 ≤ k) (ht : 0 ≤ t) (h : ka ≠ k) :
     0 ≤ centralAmount F D ka k t := by
-  have hC : 0 ≤ F * D * ka := by positivity
-  rcases lt_or_gt_of_ne h with hlt | hgt
-  · have hdenom : ka - k ≤ 0 := sub_nonpos.mpr (le_of_lt hlt)
-    have hkt : ka * t ≤ k * t := mul_le_mul_of_nonneg_right (le_of_lt hlt) ht
-    have hle : -k * t ≤ -ka * t := by linarith
-    have hexp : Real.exp (-k * t) ≤ Real.exp (-ka * t) := Real.exp_le_exp.mpr hle
-    have hdiff : Real.exp (-k * t) - Real.exp (-ka * t) ≤ 0 := sub_nonpos.mpr hexp
-    have hnum : F * D * ka * (Real.exp (-k * t) - Real.exp (-ka * t)) ≤ 0 :=
-      mul_nonpos_of_nonneg_of_nonpos hC hdiff
-    show 0 ≤ F * D * ka * (Real.exp (-k * t) - Real.exp (-ka * t)) / (ka - k)
-    exact div_nonneg_of_nonpos hnum hdenom
-  · have hdenom : 0 ≤ ka - k := sub_nonneg.mpr (le_of_lt hgt)
-    have hkt : k * t ≤ ka * t := mul_le_mul_of_nonneg_right (le_of_lt hgt) ht
-    have hle : -ka * t ≤ -k * t := by linarith
-    have hexp : Real.exp (-ka * t) ≤ Real.exp (-k * t) := Real.exp_le_exp.mpr hle
-    have hdiff : 0 ≤ Real.exp (-k * t) - Real.exp (-ka * t) := sub_nonneg.mpr hexp
-    have hnum : 0 ≤ F * D * ka * (Real.exp (-k * t) - Real.exp (-ka * t)) :=
-      mul_nonneg hC hdiff
-    show 0 ≤ F * D * ka * (Real.exp (-k * t) - Real.exp (-ka * t)) / (ka - k)
-    exact div_nonneg hnum hdenom
+  have hC : 0 ≤ F * D * ka := mul_nonneg (mul_nonneg hF hD) hka.le
+  show 0 ≤ F * D * ka * (Real.exp (-k * t) - Real.exp (-ka * t)) / (ka - k)
+  exact MathlibExt.Biology.Biophysics.CompartmentKinetics.DecayExpansion.decay_expansion_nonneg
+    hC hka.le hk ht h
+
+/-- **Equal-rate nonnegativity.** For admissible parameters and
+`t ≥ 0`, the equal-rate central amount is nonnegative. -/
+theorem centralEqual_nonneg {F D ka t : ℝ} (hF : 0 ≤ F) (hD : 0 ≤ D)
+    (hka : 0 ≤ ka) (ht : 0 ≤ t) :
+    0 ≤ centralAmountEqual F D ka t := by
+  have hC : 0 ≤ F * D * ka := mul_nonneg (mul_nonneg hF hD) hka
+  show 0 ≤ F * D * ka * t * Real.exp (-ka * t)
+  exact MathlibExt.Biology.Biophysics.CompartmentKinetics.DecayExpansion.decay_equal_rate_nonneg
+    hC hka ht
 
 end MathlibExt.Biology.Biophysics.CompartmentKinetics.Absorption.Model

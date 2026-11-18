@@ -20,4 +20,13 @@ open MathlibExt.Biology.Biophysics.CompartmentKinetics.Absorption.Model
 example : 0 ≤ centralAmount 1 2 3 1 1 :=
   central_nonneg (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
 
+/-- Equal-rate central amount is nonnegative at unit time. -/
+example : 0 ≤ centralAmountEqual 1 2 3 1 :=
+  centralEqual_nonneg (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+
+/-- The distinct-rate derivative witness at concrete rates. -/
+example : HasDerivAt (centralAmount 1 2 3 1)
+    (1 * 3 * depotAmount 2 3 1 - 1 * centralAmount 1 2 3 1 1) 1 :=
+  central_hasDerivAt_distinct (by norm_num)
+
 end MathlibExtTest.Biology.Biophysics.CompartmentKinetics.Absorption.Model
