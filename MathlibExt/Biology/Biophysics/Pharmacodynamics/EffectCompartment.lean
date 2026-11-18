@@ -19,6 +19,14 @@ The effect concentration is the canonical relaxation
 (variation-of-constants) solution with production `ke0 * Cp`:
 it solves the lag equation `Ce' = ke0 * (Cp - Ce)`, starts at
 `Ce0`, and stays nonnegative for nonnegative input.
+
+## References
+
+* The effect-compartment model with first-order equilibration
+  `Ce' = ke0 * (Cp - Ce)` is the model of Sheiner, Stanski,
+  Vozeh, Miller, and Ham, *Simultaneous modeling of
+  pharmacokinetics and pharmacodynamics: application to
+  d-tubocurarine*, Clin. Pharmacol. Ther. 25 (1979) 358-371.
 -/
 
 @[expose] public section
