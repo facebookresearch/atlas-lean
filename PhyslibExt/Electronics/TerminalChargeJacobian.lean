@@ -65,7 +65,7 @@ open MetaMathlibExt
 open scoped Filter Topology
 
 /-- Derivative of an affine line `t ↦ v + t • w` at `0` is `w`. -/
-private theorem hasDerivAt_affine_line (n : ℕ) (v w : Fin n → ℝ) :
+private lemma hasDerivAt_affine_line (n : ℕ) (v w : Fin n → ℝ) :
     HasDerivAt (fun t : ℝ => v + t • w) w 0 := by
   have h1 : HasDerivAt (fun x : ℝ => x) 1 0 := hasDerivAt_id' 0
   have hs : HasDerivAt (fun t : ℝ => t • w) w 0 := by
@@ -73,7 +73,7 @@ private theorem hasDerivAt_affine_line (n : ℕ) (v w : Fin n → ℝ) :
   exact HasDerivAt.const_add v hs
 
 /-- Chain rule for `g` along an affine line through `v` in direction `w`. -/
-private theorem hasDerivAt_comp_affine (n : ℕ) (g : (Fin n → ℝ) → ℝ) (v w : Fin n → ℝ)
+private lemma hasDerivAt_comp_affine (n : ℕ) (g : (Fin n → ℝ) → ℝ) (v w : Fin n → ℝ)
     (hg : DifferentiableAt ℝ g v) :
     HasDerivAt (g ∘ (fun t : ℝ => v + t • w)) ((fderiv ℝ g v) w) 0 := by
   have hγ := hasDerivAt_affine_line n v w
@@ -84,13 +84,13 @@ private theorem hasDerivAt_comp_affine (n : ℕ) (g : (Fin n → ℝ) → ℝ) (
   exact hgc0.comp_hasDerivAt 0 hγ
 
 /-- The derivative of `g` along an affine line is the Fréchet derivative applied. -/
-private theorem deriv_comp_affine_eq_fderiv (n : ℕ) (g : (Fin n → ℝ) → ℝ) (v w : Fin n → ℝ)
+private lemma deriv_comp_affine_eq_fderiv (n : ℕ) (g : (Fin n → ℝ) → ℝ) (v w : Fin n → ℝ)
     (hg : DifferentiableAt ℝ g v) :
     deriv (fun t : ℝ => g (v + t • w)) 0 = fderiv ℝ g v w :=
   (hasDerivAt_comp_affine n g v w hg).deriv
 
 /-- The standard basis sums to the all-ones vector. -/
-private theorem sum_pi_single_eq_one (n : ℕ) :
+private lemma sum_pi_single_eq_one (n : ℕ) :
     (∑ j : Fin n, Pi.single j (1 : ℝ)) = fun _ => (1 : ℝ) := by
   funext k
   simp only [Finset.sum_apply]
@@ -99,7 +99,7 @@ private theorem sum_pi_single_eq_one (n : ℕ) :
   exact (Fintype.sum_eq_single k h0).trans (Pi.single_eq_same k 1)
 
 /-- An affine line through a point of an open set stays in the set near `0`. -/
-private theorem eventually_affine_mem (n : ℕ) (U : Set (Fin n → ℝ)) (v w : Fin n → ℝ)
+private lemma eventually_affine_mem (n : ℕ) (U : Set (Fin n → ℝ)) (v w : Fin n → ℝ)
     (hU : IsOpen U) (hv : v ∈ U) : ∀ᶠ t in 𝓝 (0 : ℝ), v + t • w ∈ U := by
   have hγ := hasDerivAt_affine_line n v w
   have hcont : ContinuousAt (fun t : ℝ => v + t • w) 0 := hγ.differentiableAt.continuousAt
@@ -110,7 +110,7 @@ private theorem eventually_affine_mem (n : ℕ) (U : Set (Fin n → ℝ)) (v w :
   exact Filter.Tendsto.eventually hcont hp
 
 /-- A coordinate projection has Fréchet derivative `ContinuousLinearMap.proj`. -/
-private theorem hasFDerivAt_proj_apply (n : ℕ) (a : Fin n) (x : Fin n → ℝ) :
+private lemma hasFDerivAt_proj_apply (n : ℕ) (a : Fin n) (x : Fin n → ℝ) :
     HasFDerivAt (fun v : Fin n → ℝ => v a)
       (ContinuousLinearMap.proj a : (Fin n → ℝ) →L[ℝ] ℝ) x := by
   have h : HasFDerivAt
@@ -122,7 +122,7 @@ private theorem hasFDerivAt_proj_apply (n : ℕ) (a : Fin n) (x : Fin n → ℝ)
   rfl
 
 /-- A pairwise-capacitor component is Fréchet differentiable everywhere. -/
-private theorem hasFDerivAt_pairwise_component (n : ℕ) (Cap : Matrix (Fin n) (Fin n) ℝ)
+private lemma hasFDerivAt_pairwise_component (n : ℕ) (Cap : Matrix (Fin n) (Fin n) ℝ)
     (i : Fin n) (x : Fin n → ℝ) :
     DifferentiableAt ℝ (fun v : Fin n → ℝ => ∑ k, Cap i k * (v i - v k)) x := by
   have hsub (k) :=
