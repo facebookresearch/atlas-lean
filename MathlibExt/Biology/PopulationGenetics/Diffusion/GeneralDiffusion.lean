@@ -83,8 +83,10 @@ sojourn density `G(p, x) u(x) / u(p)`. In the neutral case the conditional mean 
 * `IsRegularDiffusion.fixationProb_solves`, `eq_fixationProb_of_contDiffOn`: the ratio is itself
   in `C[0, 1] ∩ C²(0, 1)`, and is the unique solution in that class.
 * `diffusionGenerator_integral_greenFunction`, `integral_greenFunction_zero_left`,
-  `integral_greenFunction_one_left`, `eq_of_diffusionGenerator_eq`: `G` inverts `-L` with
-  Dirichlet conditions, and that problem has at most one regular solution.
+  `integral_greenFunction_one_left`, `eq_of_diffusionGenerator_eq`,
+  `eq_integral_greenFunction_of_diffusionGenerator_eq_neg`: `G` inverts `-L` with
+  Dirichlet conditions, and a regular solution is the Green integral when that integral
+  also lies in the regularity class.
 * `fixationProb_wrightFisher`, `greenFunction_neutral`, `fixationProb_dominance`.
   `greenFunction_eq_selectionGreen` (in `AlleleAge`) identifies `greenFunction` at genic
   selection with `selectionGreen`, so there is one Green-kernel representation, not two.
@@ -787,6 +789,34 @@ theorem integral_greenFunction_one_left (b a g : ℝ → ℝ) :
     (ae_of_all _ fun x hx => ?_)).trans (by simp)
   rw [uIoc_of_le zero_le_one] at hx
   simp [greenFunction, max_eq_left hx.2]
+
+/-- Bundled Dirichlet uniqueness for the Green integral: a function `u` in
+Atlas's regularity class (`C[0,1]`, differentiable with differentiable
+derivative on `(0,1)`) satisfying `L u = -g` on `(0,1)` and `u 0 = u 1 = 0`
+equals the Green integral on `[0,1]`, provided the Green integral also lies in
+that class (`hv`, `hv'`, `hv''`). -/
+theorem eq_integral_greenFunction_of_diffusionGenerator_eq_neg {b a g : ℝ → ℝ}
+    (h : IsRegularDiffusion b a) (hg : ContinuousOn g (Ioo 0 1))
+    (hL : ∀ q ∈ Ioo (0 : ℝ) 1, IntervalIntegrable
+      (fun x => scaleFunction b a x * g x / (a x * scaleDensity b a x)) MeasureTheory.volume 0 q)
+    (hR : ∀ q ∈ Ioo (0 : ℝ) 1, IntervalIntegrable
+      (fun x => (scaleFunction b a 1 - scaleFunction b a x) * g x / (a x * scaleDensity b a x))
+      MeasureTheory.volume q 1) {u : ℝ → ℝ}
+    (hu : ContinuousOn u (Icc 0 1))
+    (hu' : DifferentiableOn ℝ u (Ioo 0 1))
+    (hu'' : DifferentiableOn ℝ (deriv u) (Ioo 0 1))
+    (hv : ContinuousOn (fun q => ∫ x in (0 : ℝ)..1, greenFunction b a q x * g x) (Icc 0 1))
+    (hv' : DifferentiableOn ℝ (fun q => ∫ x in (0 : ℝ)..1, greenFunction b a q x * g x)
+      (Ioo 0 1))
+    (hv'' : DifferentiableOn ℝ
+      (deriv (fun q => ∫ x in (0 : ℝ)..1, greenFunction b a q x * g x)) (Ioo 0 1))
+    (hgen : ∀ x ∈ Ioo (0 : ℝ) 1, diffusionGenerator b a u x = -g x)
+    (h0 : u 0 = 0) (h1 : u 1 = 0) :
+    ∀ x ∈ Icc (0 : ℝ) 1, u x = ∫ y in (0 : ℝ)..1, greenFunction b a x y * g y :=
+  eq_of_diffusionGenerator_eq h hu hv hu' hv' hu'' hv''
+    (fun x hx => by rw [hgen x hx, diffusionGenerator_integral_greenFunction h hg hL hR hx])
+    (by rw [h0, integral_greenFunction_zero_left])
+    (by rw [h1, integral_greenFunction_one_left])
 
 /-! ### Genic selection and dominance -/
 

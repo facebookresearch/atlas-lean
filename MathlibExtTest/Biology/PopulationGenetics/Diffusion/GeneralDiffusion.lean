@@ -152,6 +152,28 @@ example (b a g : ℝ → ℝ) : ∫ x in (0 : ℝ)..1, greenFunction b a 0 x * g
 example (b a g : ℝ → ℝ) : ∫ x in (0 : ℝ)..1, greenFunction b a 1 x * g x = 0 :=
   integral_greenFunction_one_left b a g
 
+/-- A regular Dirichlet solution is the Green integral, assuming the Green
+integral is in the same regularity class. -/
+example {b a g u : ℝ → ℝ} (h : IsRegularDiffusion b a) (hg : ContinuousOn g (Ioo 0 1))
+    (hL : ∀ q ∈ Ioo (0 : ℝ) 1, IntervalIntegrable
+      (fun x => scaleFunction b a x * g x / (a x * scaleDensity b a x)) MeasureTheory.volume 0 q)
+    (hR : ∀ q ∈ Ioo (0 : ℝ) 1, IntervalIntegrable
+      (fun x => (scaleFunction b a 1 - scaleFunction b a x) * g x / (a x * scaleDensity b a x))
+      MeasureTheory.volume q 1)
+    (hu : ContinuousOn u (Icc 0 1))
+    (hu' : DifferentiableOn ℝ u (Ioo 0 1))
+    (hu'' : DifferentiableOn ℝ (deriv u) (Ioo 0 1))
+    (hv : ContinuousOn (fun q => ∫ x in (0 : ℝ)..1, greenFunction b a q x * g x) (Icc 0 1))
+    (hv' : DifferentiableOn ℝ (fun q => ∫ x in (0 : ℝ)..1, greenFunction b a q x * g x)
+      (Ioo 0 1))
+    (hv'' : DifferentiableOn ℝ
+      (deriv (fun q => ∫ x in (0 : ℝ)..1, greenFunction b a q x * g x)) (Ioo 0 1))
+    (hgen : ∀ x ∈ Ioo (0 : ℝ) 1, diffusionGenerator b a u x = -g x)
+    (h0 : u 0 = 0) (h1 : u 1 = 0) :
+    ∀ x ∈ Icc (0 : ℝ) 1, u x = ∫ y in (0 : ℝ)..1, greenFunction b a x y * g y :=
+  eq_integral_greenFunction_of_diffusionGenerator_eq_neg h hg hL hR hu hu' hu'' hv hv' hv''
+    hgen h0 h1
+
 /-! ### Conditional times -/
 
 /-- From `p = 1/2`, the conditional fixation time is `2 log 2`, the same as the unconditional
