@@ -127,4 +127,38 @@ lemma photon_law_agree_iff {ι κ : Type*} [Fintype ι] [Fintype κ]
     unfold photonLaw transmittedRate
     rw [h]
 
+/-- **Identification on an admissible set.** With positive source
+intensities, the photon law is injective on an admissible set `D`
+exactly when the attenuation action `A.mulVec` is injective on
+`D`. -/
+lemma photon_identify_iff {ι κ : Type*} [Fintype ι] [Fintype κ]
+    {I0 : ι → ℝ≥0} (hI0 : ∀ j, 0 < I0 j) (A : Matrix ι κ ℝ)
+    (D : Set (κ → ℝ)) :
+    Set.InjOn (fun x => photonLaw I0 A x) D ↔ Set.InjOn (A *ᵥ ·) D := by
+  constructor
+  · intro h x hx y hy hxy
+    exact h hx hy ((photon_law_agree_iff hI0).mpr hxy)
+  · intro h x hx y hy hxy
+    exact h hx hy ((photon_law_agree_iff hI0).mp hxy)
+
+/-- **Rank deficiency defeats photon-law identification.** If
+`A *ᵥ v = 0` for `v ≠ 0` and both `x` and `x + v` are admissible,
+the photon law is not injective on `D`. -/
+lemma photon_not_identify_of_kernel {ι κ : Type*} [Fintype ι] [Fintype κ]
+    {I0 : ι → ℝ≥0} (hI0 : ∀ j, 0 < I0 j) (A : Matrix ι κ ℝ)
+    (D : Set (κ → ℝ)) {v x : κ → ℝ} (hv : v ≠ 0) (hk : A *ᵥ v = 0)
+    (hx : x ∈ D) (hxv : x + v ∈ D) :
+    ¬ Set.InjOn (fun x => photonLaw I0 A x) D := by
+  rw [photon_identify_iff hI0 A D]
+  intro hInj
+  have hne : x ≠ x + v := by
+    intro h
+    apply hv
+    have h2 : x + 0 = x + v := by rw [add_zero]; exact h
+    exact (add_left_cancel h2).symm
+  have hmap : A *ᵥ (x + v) = A *ᵥ x := by
+    rw [Matrix.mulVec_add, hk, add_zero]
+  exact hne (hInj hx hxv hmap.symm)
+
+
 end PhyslibExt.BiomedicalImaging.PhotonObservation
