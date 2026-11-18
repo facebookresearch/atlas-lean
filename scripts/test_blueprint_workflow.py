@@ -37,7 +37,7 @@ class BlueprintWorkflowTests(unittest.TestCase):
         for path in (
             "blueprint/**", "scripts/generate_wiki.py", "scripts/sync_wiki.py",
             "scripts/extract_v2_lean_dependencies.py", "scripts/dump_v2_dependencies.lean",
-            "scripts/check_blueprint_site.py", "scripts/taxonomy.json", "scripts/wiki-sync.json",
+            "scripts/check_blueprint_site.py", "scripts/check_graph_rules.py", "scripts/taxonomy.json", "scripts/wiki-sync.json",
             "scripts/requirements-blueprint.txt", "mkdocs.yml", "theme/**", "hooks/**",
             "docs/BLUEPRINT.md", "docs/GRAPH.md", ".github/workflows/blueprint-pages.yml", ".github/autoform-ref",
             "lean-toolchain", "lake-manifest.json", "lakefile.toml",

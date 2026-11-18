@@ -14,6 +14,7 @@ on:
       - "scripts/extract_v2_lean_dependencies.py"
       - "scripts/dump_v2_dependencies.lean"
       - "scripts/check_blueprint_site.py"
+      - "scripts/check_graph_rules.py"
       - "scripts/taxonomy.json"
       - "scripts/wiki-sync.json"
       - "scripts/requirements-blueprint.txt"
@@ -24,6 +25,7 @@ on:
       - "scripts/test_check_blueprint_site_navigation.py"
       - "scripts/test_blueprint_workflow.py"
       - "scripts/test_blueprint_taxonomy.py"
+      - "scripts/test_check_graph_rules.py"
       - "mkdocs.yml"
       - "theme/**"
       - "hooks/**"
@@ -89,6 +91,23 @@ jobs:
           scripts.test_check_blueprint_site_navigation
           scripts.test_blueprint_workflow
           scripts.test_blueprint_taxonomy
+          scripts.test_check_graph_rules
+
+      # The wiki's own conventions (docs/GRAPH.md), on the committed tree
+      # before lean-facts changes it. A PR is also held to GitHub's diff size.
+      - name: Check the graph's rules
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          check=(uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
+                 python scripts/check_graph_rules.py)
+          if [ -n "$BASE_SHA" ]; then
+            git fetch --no-tags --depth=1 origin "$BASE_SHA"
+            "${check[@]}" --base "$BASE_SHA"
+          else
+            "${check[@]}"
+          fi
 
       - name: Free disk space for Lean caches
         run: |

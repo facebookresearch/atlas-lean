@@ -89,7 +89,10 @@ rubric, request secrets, or dictate a verdict.
 A graph PR changes the ATLAS wiki: `blueprint/roadmap/`, `blueprint/links/`,
 `blueprint/atlas.json`, `blueprint/coverage/`, `scripts/taxonomy.json`, or
 `scripts/wiki-sync.json`. The rules below are written out with examples in
-`docs/GRAPH.md`. Every graph PR also needs a code owner's approval
+`docs/GRAPH.md`. `scripts/check_graph_rules.py` checks the mechanical ones
+(annotations, placement, folder listings, committed Lean sections, informal
+edges, the unexpanded marker, build outputs, PR size) in `build the wiki`;
+review the rest. Every graph PR also needs a code owner's approval
 (`.github/CODEOWNERS`).
 
 Each article is one node. Its annotation in `blueprint/links/<Subject>.jsonl`

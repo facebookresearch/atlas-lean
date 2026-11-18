@@ -44,7 +44,9 @@ python -m unittest \
   scripts.test_extract_v2_lean_dependencies \
   scripts.test_check_blueprint_site_navigation \
   scripts.test_blueprint_workflow \
-  scripts.test_blueprint_taxonomy
+  scripts.test_blueprint_taxonomy \
+  scripts.test_check_graph_rules
+python scripts/check_graph_rules.py
 ```
 
 Render from a dedicated checkout that excludes `v1/` and `Atlas/`, as the

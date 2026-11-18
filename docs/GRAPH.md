@@ -13,7 +13,8 @@ graph is tracked as GitHub issues:
 
 `docs/BLUEPRINT.md` covers building and syncing the wiki. This page covers
 what a graph PR may change. `REVIEWING.md` holds the same rules in the form
-reviewers and Codex apply.
+reviewers and Codex apply, and `scripts/check_graph_rules.py` checks the
+mechanical ones in CI.
 
 ## How the graph is stored
 
@@ -87,9 +88,10 @@ one reviewable: one node per PR, and at most a few dozen children.
 ## Checks to run before opening a PR
 
 ```sh
+python scripts/check_graph_rules.py --base origin/main
 autoform check blueprint
 ```
 
-`build the wiki` runs on every PR that touches the wiki: the full build,
-`lean-facts`, `autoform check --lean-root .` and the site checks that
+`build the wiki` runs both on every PR that touches the wiki, with the full
+build, `lean-facts`, `autoform check --lean-root .` and the site checks that
 `docs/BLUEPRINT.md` lists.
