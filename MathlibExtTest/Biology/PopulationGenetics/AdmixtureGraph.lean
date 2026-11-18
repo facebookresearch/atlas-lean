@@ -142,4 +142,94 @@ example (e : T.Edge) : T.weight 0 e = 0 := by
     rw [AdmixtureGraph.weight, T.visit_eq]
     simp [T, parT]
 
+/-- On a tree, the root-relative second moment is the shared lineage length. -/
+example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} (M : DriftModel μ T.Edge (Fin 3))
+    (hM : M.weight = T.weight) (X Y : Fin 3) :
+    M.rootSecondMoment X Y = ∑ e ∈ M.lineage X ∩ M.lineage Y, M.len e :=
+  T.rootSecondMoment_eq_sum_inter_of_isTree T_isTree hM X Y
+
+#print axioms AdmixtureGraph.rootSecondMoment_eq_sum_inter_of_isTree
+
+/-! ### Admixture f3 with complementary proportions -/
+
+namespace AdmixtureF3Check
+
+
+def exParents : Fin 5 → Finset (Fin 5)
+  | 0 => ∅
+  | 1 => {0}
+  | 2 => {0}
+  | 3 => {1, 2}
+  | 4 => {3}
+
+noncomputable def exProp (α : ℝ) : Fin 5 → Fin 5 → ℝ
+  | 1, 0 => 1
+  | 2, 0 => 1
+  | 3, 1 => α
+  | 3, 2 => 1 - α
+  | 4, 3 => 1
+  | _, _ => 0
+
+theorem exParents_lt : ∀ X Y : Fin 5, Y ∈ exParents X → Y < X := by decide
+
+noncomputable def exGraph (α : ℝ) (h0 : 0 ≤ α) (h1 : α ≤ 1) : AdmixtureGraph (Fin 5) where
+  root := 0
+  parents := exParents
+  prop := exProp α
+  parents_root := rfl
+  card_parents := by decide
+  prop_nonneg := by
+    intro X Y
+    fin_cases X <;> fin_cases Y <;> simp [exProp] <;> linarith
+  prop_eq_zero := by
+    intro X Y hY
+    fin_cases X <;> fin_cases Y <;> simp_all [exParents, exProp]
+  sum_prop := by
+    intro X hX
+    fin_cases X <;> simp_all [exParents, exProp]
+  wf := Subrelation.wf (fun {Y X} h => exParents_lt X Y h) (InvImage.wf (fun x : Fin 5 => x.val)
+    Nat.lt_wfRel.wf)
+
+variable (α : ℝ) (h0 : 0 ≤ α) (h1 : α ≤ 1)
+
+theorem ex_parents_X : (exGraph α h0 h1).parents 3 = {1, 2} := rfl
+theorem ex_parents_Y : (exGraph α h0 h1).parents 4 = {3} := rfl
+theorem ex_AB : (1 : Fin 5) ≠ 2 := by decide
+
+/-- The complementary-proportion lemma evaluated: `prop X B = 1 - α`. -/
+example : (exGraph α h0 h1).prop 3 2 = 1 - (exGraph α h0 h1).prop 3 1 :=
+  (exGraph α h0 h1).prop_eq_one_sub_of_parents_eq_pair (ex_parents_X α h0 h1) ex_AB
+
+/-- A drift model with the graph's weights exists (zero increments; any square-integrable,
+pairwise-uncorrelated increments would do), so the hypotheses `hM`, `hX`, `hAB`, `hY` of every
+Part 2 theorem are simultaneously satisfiable, including at the endpoints `α = 0`, `α = 1`. -/
+noncomputable def exModel : DriftModel (Measure.dirac ()) (exGraph α h0 h1).Edge (Fin 5) :=
+  (exGraph α h0 h1).driftModel (fun _ => 1 / 2) (fun _ _ => 0) (memLp_const _)
+    (fun _ => memLp_const _) (fun _ _ _ => by simp)
+
+example : f3 (Measure.dirac ()) (exModel α h0 h1).freq 4 1 2 =
+    α ^ 2 * (exModel α h0 h1).len ⟨(3, 1), by simp [exGraph, exParents]⟩ +
+      (1 - α) ^ 2 * (exModel α h0 h1).len ⟨(3, 2), by simp [exGraph, exParents]⟩ -
+      α * (1 - α) * f2 (Measure.dirac ()) (exModel α h0 h1).freq 1 2 +
+      (exModel α h0 h1).len ⟨(4, 3), by simp [exGraph, exParents]⟩ :=
+  (exGraph α h0 h1).f3_admixture_of_parents_eq_singleton rfl (ex_parents_Y α h0 h1)
+    (ex_parents_X α h0 h1) ex_AB
+
+/-- Endpoint instances: the `α = 1` and `α = 0` graphs satisfy the endpoint hypotheses. -/
+example : f3 (Measure.dirac ()) (exModel 1 zero_le_one le_rfl).freq 3 1 2 =
+    (exModel 1 zero_le_one le_rfl).len ⟨(3, 1), by simp [exGraph, exParents]⟩ :=
+  (exGraph 1 zero_le_one le_rfl).f3_admixture_of_prop_eq_one rfl rfl ex_AB rfl
+
+example : f3 (Measure.dirac ()) (exModel 0 le_rfl zero_le_one).freq 3 1 2 =
+    (exModel 0 le_rfl zero_le_one).len ⟨(3, 2), by simp [exGraph, exParents]⟩ :=
+  (exGraph 0 le_rfl zero_le_one).f3_admixture_of_prop_eq_zero rfl rfl ex_AB rfl
+
+
+end AdmixtureF3Check
+
+#print axioms AdmixtureGraph.prop_eq_one_sub_of_parents_eq_pair
+#print axioms AdmixtureGraph.f3_admixture_one_sub
+#print axioms AdmixtureGraph.f3_admixture_of_prop_eq_one
+#print axioms AdmixtureGraph.f3_of_parents_eq_singleton
+
 end MathlibExtTest.Biology.PopulationGenetics.AdmixtureGraph
