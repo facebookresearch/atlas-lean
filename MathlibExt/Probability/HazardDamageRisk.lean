@@ -28,8 +28,9 @@ hazard state, averaged over the hazard law.
 - `HazardDamageRisk.risk`: expected loss under hazard then damage.
 - `HazardDamageRisk.risk_eq_joint`: risk as expectation under the
   joint law.
-- `HazardDamageRisk.risk_const`, `HazardDamageRisk.risk_mono`:
-  constant-loss value and monotonicity.
+- `HazardDamageRisk.risk_const`, `HazardDamageRisk.risk_mono`,
+  `HazardDamageRisk.risk_add`: constant-loss value, monotonicity,
+  and additivity of the risk.
 
 ## iii. Table of contents
 
@@ -65,7 +66,7 @@ theorem risk_eq_joint {Ω Γ : Type*} [MeasurableSpace Ω]
     (L : Ω × Γ → ℝ≥0∞) (hL : Measurable L) :
     risk μ κ L = ∫⁻ z, L z ∂(μ ⊗ₘ κ) := by
   unfold risk
-  exact (MeasureTheory.Measure.lintegral_compProd hL).symm
+  exact (Measure.lintegral_compProd hL).symm
 
 /-- Constant loss: if the loss is constantly `c`, the risk is `c`
 (the joint law of a probability hazard and a Markov damage kernel
@@ -76,18 +77,32 @@ theorem risk_const {Ω Γ : Type*} [MeasurableSpace Ω]
     (κ : ProbabilityTheory.Kernel Ω Γ)
     [ProbabilityTheory.IsMarkovKernel κ] (c : ℝ≥0∞) :
     risk μ κ (fun _ => c) = c := by
-  simp [risk]
+  unfold risk
+  simp [lintegral_const]
 
-/-- Monotonicity: a pointwise smaller loss has smaller risk. -/
+/-- Monotonicity: a pointwise smaller loss has smaller risk, for
+arbitrary measures and kernels. -/
 theorem risk_mono {Ω Γ : Type*} [MeasurableSpace Ω]
     [MeasurableSpace Γ] (μ : MeasureTheory.Measure Ω)
-    [MeasureTheory.IsProbabilityMeasure μ]
     (κ : ProbabilityTheory.Kernel Ω Γ)
-    [ProbabilityTheory.IsMarkovKernel κ]
     (L L' : Ω × Γ → ℝ≥0∞) (h : ∀ z, L z ≤ L' z) :
     risk μ κ L ≤ risk μ κ L' := by
   unfold risk
-  exact MeasureTheory.lintegral_mono fun ω =>
-    MeasureTheory.lintegral_mono fun γ => h (ω, γ)
+  exact lintegral_mono fun ω => lintegral_mono fun γ => h (ω, γ)
+
+/-- Additivity: the risk of a sum of two measurable losses is the
+sum of the risks. -/
+theorem risk_add {Ω Γ : Type*} [MeasurableSpace Ω]
+    [MeasurableSpace Γ] (μ : MeasureTheory.Measure Ω)
+    (κ : ProbabilityTheory.Kernel Ω Γ)
+    [ProbabilityTheory.IsMarkovKernel κ]
+    (L L' : Ω × Γ → ℝ≥0∞) (hL : Measurable L) (hL' : Measurable L') :
+    risk μ κ (fun z => L z + L' z) = risk μ κ L + risk μ κ L' := by
+  unfold risk
+  have h_inner : ∀ ω, ∫⁻ γ, (L (ω, γ) + L' (ω, γ)) ∂(κ ω)
+      = ∫⁻ γ, L (ω, γ) ∂(κ ω) + ∫⁻ γ, L' (ω, γ) ∂(κ ω) := fun ω =>
+    lintegral_add_left (hL.comp (measurable_prodMk_left (x := ω))) _
+  simp_rw [h_inner]
+  exact lintegral_add_right _ (hL'.lintegral_kernel_prod_right')
 
 end HazardDamageRisk
