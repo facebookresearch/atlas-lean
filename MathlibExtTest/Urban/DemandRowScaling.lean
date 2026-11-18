@@ -35,3 +35,18 @@ example : normalizedDemand 8 (fun i => if i = 0 then (1:ℝ) else 3)
     ({0, 1} : Finset ℕ) 0 = 2 := by
   unfold normalizedDemand
   norm_num [Finset.sum_pair]
+
+/-- A zero-weight destination stays at zero, under scaling and
+in value. -/
+example : normalizedDemand 8 (fun j => 2 * (fun i => if i = 0 then (0:ℝ) else 3) j)
+    ({0, 1} : Finset ℕ) 0
+    = normalizedDemand 8 (fun i => if i = 0 then (0:ℝ) else 3) ({0, 1} : Finset ℕ) 0 :=
+  normalizedDemand_row_scaling 8 (fun i => if i = 0 then (0:ℝ) else 3)
+    ({0, 1} : Finset ℕ) 0 (by norm_num)
+    (by norm_num [Finset.sum_pair])
+
+/-- The zero-weight entry has value `0`. -/
+example : normalizedDemand 8 (fun i => if i = 0 then (0:ℝ) else 3)
+    ({0, 1} : Finset ℕ) 0 = 0 := by
+  unfold normalizedDemand
+  norm_num [Finset.sum_pair]
