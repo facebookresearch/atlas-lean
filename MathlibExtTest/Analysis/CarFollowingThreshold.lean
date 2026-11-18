@@ -32,3 +32,11 @@ example : ¬ ∀ omega : ℝ, 0 < omega
   rw [gain_threshold_all_frequencies (lambda := 51 / 100) (T := 1)
     (by norm_num) (by norm_num)]
   norm_num
+
+
+/-- The composed transfer-function gain statement at the boundary. -/
+example : ∀ w : ℝ, 0 < w
+    → ‖((1 / 2 : ℝ) : ℂ) * Complex.exp (-(Complex.I * w * 1))‖
+      < ‖CarFollowingGain.denom (1 / 2) 1 w‖ :=
+  (CarFollowingGain.gain_lt_one_all_frequencies (lam := 1 / 2) (T := 1)
+    (by norm_num) (by norm_num)).2 (by norm_num)

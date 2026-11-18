@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import MathlibExt.Analysis.CarFollowingGain
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 import Mathlib.Tactic.Positivity
 
@@ -106,3 +107,23 @@ theorem gain_threshold_all_frequencies {lambda T : ℝ}
               mul_le_mul_of_nonneg_left hle2 (le_of_lt homega)
             _ = omega := mul_one omega
       exact lt_of_lt_of_le hmul hle3
+
+
+/-- All-frequency gain threshold for the car-following transfer
+function: the gain `‖λ * exp (-(I * w * T))‖ < ‖denom λ T w‖`
+holds at every positive frequency `w` if and only if
+`lambda * T ≤ 1 / 2`. This composes `CarFollowingGain.gain_lt_one_iff`
+with `gain_threshold_all_frequencies`. -/
+theorem CarFollowingGain.gain_lt_one_all_frequencies {lam T : ℝ}
+    (hlam : 0 < lam) (hT : 0 ≤ T) :
+    (∀ w : ℝ, 0 < w → ‖(lam : ℂ) * Complex.exp (-(Complex.I * w * T))‖
+        < ‖CarFollowingGain.denom lam T w‖)
+      ↔ lam * T ≤ 1 / 2 := by
+  constructor
+  · intro h
+    rw [← gain_threshold_all_frequencies hlam hT]
+    intro w hw
+    exact (CarFollowingGain.gain_lt_one_iff hlam hw).1 (h w hw)
+  · intro h w hw
+    exact (CarFollowingGain.gain_lt_one_iff hlam hw).2
+      ((gain_threshold_all_frequencies hlam hT).2 h w hw)
