@@ -9,6 +9,6 @@ Infinite two-player games of perfect information on A^ℕ: the Gale–Stewart th
 
 ## Related topics
 
-- Descriptive set theory: the topology of Polish spaces, Baire space and Cantor space on which these games are played.
-- Banach–Mazur game: the game on intervals of the reals in which player II has a winning strategy exactly when the set is meagre; through it, if every set in a class closed under Borel preimages is determined, every set in the class has the property of Baire.
+- [Descriptive set theory](../../Topology/descriptive-set-theory/README.md): the topology of Polish spaces, Baire space and Cantor space on which these games are played.
+- [Banach–Mazur game](../../Topology/descriptive-set-theory/banach-mazur-game/README.md): the game on intervals of the reals in which player II has a winning strategy exactly when the set is meagre; through it, if every set in a class closed under Borel preimages is determined, every set in the class has the property of Baire.
 - [Measurable cardinal](../large-cardinals/measurable-cardinal.md): the large cardinal hypothesis of Martin's analytic determinacy theorem.
