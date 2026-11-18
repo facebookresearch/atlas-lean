@@ -38,8 +38,8 @@ The pure imaginary quaternions are the kernel of the real-part map
   quaternion is a linear isometry of `pureIm`.
 - `QuaternionRotation.rotMatrix_mulVec`: `rotMatrix q` represents that
   conjugation in the explicit coordinates.
-- `QuaternionRotation.exists_unitary_hom_specialOrthogonalGroup`: the
-  packaged monoid homomorphism from `unitary ℍ` into
+- `QuaternionRotation.unitaryHomSpecialOrthogonalGroup`: the packaged
+  monoid homomorphism from `unitary ℍ` into
   `Matrix.specialOrthogonalGroup (Fin 3) ℝ`.
 
 ## iii. Table of contents
@@ -160,31 +160,47 @@ theorem rotMatrix_mul {p q : ℍ} (hp : ‖p‖ = 1) (hq : ‖q‖ = 1) :
     simp [rotMatrix, imCoords, imBasis, Matrix.mul_apply, Fin.sum_univ_three] <;>
     ring
 
+/-- The rotation matrix of the identity quaternion is the identity matrix. -/
+private theorem rotMatrix_one : rotMatrix 1 = 1 := by
+  ext a b
+  fin_cases a <;> fin_cases b <;>
+    simp [rotMatrix, imCoords, imBasis]
+
+/-- The packaged rotation action: unit quaternions act by conjugation on
+pure imaginary quaternions, packaged as a monoid homomorphism into the
+existing `Matrix.specialOrthogonalGroup (Fin 3) ℝ` carrier. -/
+noncomputable def unitaryHomSpecialOrthogonalGroup :
+    unitary ℍ →* Matrix.specialOrthogonalGroup (Fin 3) ℝ where
+  toFun := fun u => ⟨rotMatrix (u : ℍ),
+    rotMatrix_mem_specialOrthogonalGroup (CStarRing.norm_coe_unitary u)⟩
+  map_one' := by
+    apply Subtype.ext
+    simp only
+    have h1 : ((1 : unitary ℍ) : ℍ) = 1 := rfl
+    rw [h1]
+    exact rotMatrix_one
+  map_mul' := fun u v => by
+    apply Subtype.ext
+    simp only
+    have hmul : ((u * v : unitary ℍ) : ℍ) = (u : ℍ) * (v : ℍ) := rfl
+    rw [hmul]
+    exact rotMatrix_mul (CStarRing.norm_coe_unitary u)
+      (CStarRing.norm_coe_unitary v)
+
+/-- The underlying matrix of the packaged rotation action is `rotMatrix`. -/
+@[simp] theorem coe_unitaryHomSpecialOrthogonalGroup (u : unitary ℍ) :
+    (unitaryHomSpecialOrthogonalGroup u : Matrix (Fin 3) (Fin 3) ℝ) =
+      rotMatrix (u : ℍ) :=
+  rfl
+
 /-- Packaged: a monoid homomorphism from unit quaternions into the existing
-`Matrix.specialOrthogonalGroup (Fin 3) ℝ` whose underlying matrix is `rotMatrix`. -/
+`Matrix.specialOrthogonalGroup (Fin 3) ℝ` whose underlying matrix is
+`rotMatrix`, witnessed by `unitaryHomSpecialOrthogonalGroup`. -/
 theorem exists_unitary_hom_specialOrthogonalGroup :
     ∃ R : unitary ℍ →* Matrix.specialOrthogonalGroup (Fin 3) ℝ,
-      ∀ u : unitary ℍ, (R u : Matrix (Fin 3) (Fin 3) ℝ) = rotMatrix (u : ℍ) := by
-  have hOne : rotMatrix 1 = 1 := by
-    ext a b
-    fin_cases a <;> fin_cases b <;>
-      simp [rotMatrix, imCoords, imBasis]
-  let R : unitary ℍ →* Matrix.specialOrthogonalGroup (Fin 3) ℝ :=
-    { toFun := fun u => ⟨rotMatrix (u : ℍ),
-        rotMatrix_mem_specialOrthogonalGroup (CStarRing.norm_coe_unitary u)⟩
-      map_one' := by
-        apply Subtype.ext
-        simp only
-        have h1 : ((1 : unitary ℍ) : ℍ) = 1 := rfl
-        rw [h1]
-        exact hOne
-      map_mul' := fun u v => by
-        apply Subtype.ext
-        simp only
-        have hmul : ((u * v : unitary ℍ) : ℍ) = (u : ℍ) * (v : ℍ) := rfl
-        rw [hmul]
-        exact rotMatrix_mul (CStarRing.norm_coe_unitary u) (CStarRing.norm_coe_unitary v) }
-  exact ⟨R, fun u => rfl⟩
+      ∀ u : unitary ℍ, (R u : Matrix (Fin 3) (Fin 3) ℝ) = rotMatrix (u : ℍ) :=
+  ⟨unitaryHomSpecialOrthogonalGroup,
+    fun u => coe_unitaryHomSpecialOrthogonalGroup u⟩
 
 /-- Fixture: the quarter turn `(1 + i) / √2` about the `i` axis is a unit
 quaternion whose rotation matrix is the nonidentity matrix sending `j ↦ k`,

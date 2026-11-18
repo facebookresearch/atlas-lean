@@ -10,12 +10,19 @@ module
 
 import MathlibExt.Analysis.QuaternionRotation
 
--- The packaged homomorphism into the existing special orthogonal group carrier.
-example :
-    ∃ R : unitary (Quaternion ℝ) →* Matrix.specialOrthogonalGroup (Fin 3) ℝ,
-      ∀ u : unitary (Quaternion ℝ),
-        (R u : Matrix (Fin 3) (Fin 3) ℝ) = QuaternionRotation.rotMatrix (u : Quaternion ℝ) :=
-  QuaternionRotation.exists_unitary_hom_specialOrthogonalGroup
+-- The packaged homomorphism is directly nameable, and its underlying matrix
+-- is `rotMatrix`.
+example (u : unitary (Quaternion ℝ)) :
+    (QuaternionRotation.unitaryHomSpecialOrthogonalGroup u :
+      Matrix (Fin 3) (Fin 3) ℝ) = QuaternionRotation.rotMatrix (u : Quaternion ℝ) :=
+  QuaternionRotation.coe_unitaryHomSpecialOrthogonalGroup u
+
+-- It can be used as a monoid homomorphism without choosing a witness.
+example (u v : unitary (Quaternion ℝ)) :
+    QuaternionRotation.unitaryHomSpecialOrthogonalGroup (u * v) =
+      QuaternionRotation.unitaryHomSpecialOrthogonalGroup u *
+        QuaternionRotation.unitaryHomSpecialOrthogonalGroup v :=
+  map_mul _ u v
 
 -- The quarter-turn fixture has determinant one through the determinant theorem.
 example :
