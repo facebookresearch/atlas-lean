@@ -142,4 +142,12 @@ example (e : T.Edge) : T.weight 0 e = 0 := by
     rw [AdmixtureGraph.weight, T.visit_eq]
     simp [T, parT]
 
+/-- On a tree, the root-relative second moment is the shared lineage length. -/
+example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} (M : DriftModel μ T.Edge (Fin 3))
+    (hM : M.weight = T.weight) (X Y : Fin 3) :
+    M.rootSecondMoment X Y = ∑ e ∈ M.lineage X ∩ M.lineage Y, M.len e :=
+  T.rootSecondMoment_eq_sum_inter_of_isTree T_isTree hM X Y
+
+#print axioms AdmixtureGraph.rootSecondMoment_eq_sum_inter_of_isTree
+
 end MathlibExtTest.Biology.PopulationGenetics.AdmixtureGraph
