@@ -61,13 +61,13 @@ noncomputable def selectedShift (W : (ι → ℝ) → ℝ) (Z X : Ω → ι → 
 
 /-- **Lande's multivariate response** `Δz̄ = G P⁻¹ S` (Lande 1979). Let `(A, Z)` be jointly
 Gaussian with `Cov(A_i, Z_j) = G_ij` and `Cov(Z_i, Z_j) = P_ij`, `P` positive definite, and select
-with measurable weights `W(Z)` with `𝔼[W(Z)] ≠ 0` and `W(Z) Z_j`, `W(Z) A_i` integrable. Then the
+with measurable fitness weights `W(Z) ≥ 0` with `0 < 𝔼[W(Z)]` and `W(Z) Z_j`, `W(Z) A_i` integrable. Then the
 selected shift of the breeding values is `G P⁻¹` applied to the selection differential. -/
 theorem selectedShift_breeding_eq {A Z : Ω → ι → ℝ} {G Pm : Matrix ι ι ℝ} {W : (ι → ℝ) → ℝ}
     (hAZ : HasGaussianLaw (fun ω => (A ω, Z ω)) P)
     (hG : ∀ i j, cov[fun ω => A ω i, fun ω => Z ω j; P] = G i j)
     (hPZ : ∀ i j, cov[fun ω => Z ω i, fun ω => Z ω j; P] = Pm i j) (hPd : Pm.PosDef)
-    (hWm : Measurable W) (hw : ∫ ω, W (Z ω) ∂P ≠ 0)
+    (hWm : Measurable W) (hW0 : ∀ z, 0 ≤ W z) (hw : 0 < ∫ ω, W (Z ω) ∂P)
     (hWZ : ∀ j, Integrable (fun ω => W (Z ω) * Z ω j) P)
     (hWA : ∀ i, Integrable (fun ω => W (Z ω) * A ω i) P) :
     selectedShift W Z A P = (G * Pm⁻¹) *ᵥ selectedShift W Z Z P := by
@@ -104,7 +104,7 @@ theorem selectedShift_breeding_eq {A Z : Ω → ι → ℝ} {G Pm : Matrix ι ι
   have hind := hRZ.indepFun_of_covariance_eval hcov
   have hR2 : ∀ i, MemLp (R i) 2 P := fun i => (hRZ.fst.eval (X := R) i).memLp_two
   have hWi : Integrable (fun ω => W (Z ω)) P := by
-    by_contra h; exact hw (integral_undef h)
+    by_contra h; exact hw.ne' (integral_undef h)
   have hWmeas : AEStronglyMeasurable (fun ω => W (Z ω)) P :=
     (hWm.comp_aemeasurable hAZ.snd.aemeasurable).aestronglyMeasurable
   ext i
@@ -132,16 +132,17 @@ theorem selectedShift_breeding_eq {A Z : Ω → ι → ℝ} {G Pm : Matrix ι ι
     simp only [integral_const_mul]
     ring
   simp only [selectedShift, mulVec, dotProduct, mul_sub, sum_sub_distrib, mul_div_assoc', ← sum_div]
+  have hwne : (∫ ω, W (Z ω) ∂P) ≠ 0 := hw.ne'
   rw [h1, h2, hWR]
   field_simp
   ring
 
 
 /-- **Univariate case `R = h² S`** with `h² = Cov(A, Z) / Var(Z)`: for jointly Gaussian `(A, Z)`,
-`Var(Z) > 0`, measurable weights `W(Z)` with `𝔼[W(Z)] ≠ 0` and `W(Z) Z`, `W(Z) A` integrable. -/
+`Var(Z) > 0`, measurable fitness weights `W(Z) ≥ 0` with `0 < 𝔼[W(Z)]` and `W(Z) Z`, `W(Z) A` integrable. -/
 theorem breeding_response_univariate {A Z : Ω → ℝ} {Va Vp : ℝ} {W : ℝ → ℝ}
     (hAZ : HasGaussianLaw (fun ω => (A ω, Z ω)) P) (hG : cov[A, Z; P] = Va) (hPZ : Var[Z; P] = Vp)
-    (hVp : 0 < Vp) (hWm : Measurable W) (hw : ∫ ω, W (Z ω) ∂P ≠ 0)
+    (hVp : 0 < Vp) (hWm : Measurable W) (hW0 : ∀ z, 0 ≤ W z) (hw : 0 < ∫ ω, W (Z ω) ∂P)
     (hWZ : Integrable (fun ω => W (Z ω) * Z ω) P) (hWA : Integrable (fun ω => W (Z ω) * A ω) P) :
     (∫ ω, W (Z ω) * A ω ∂P) / (∫ ω, W (Z ω) ∂P) - ∫ ω, A ω ∂P =
       Va / Vp * ((∫ ω, W (Z ω) * Z ω ∂P) / (∫ ω, W (Z ω) ∂P) - ∫ ω, Z ω ∂P) := by
@@ -163,7 +164,7 @@ theorem breeding_response_univariate {A Z : Ω → ℝ} {Va Vp : ℝ} {W : ℝ �
     ring
   have hind := hRZ.indepFun_of_covariance_eq_zero hcov
   have hWi : Integrable (fun ω => W (Z ω)) P := by
-    by_contra h; exact hw (integral_undef h)
+    by_contra h; exact hw.ne' (integral_undef h)
   have hWR : ∫ ω, W (Z ω) * R ω ∂P = (∫ ω, W (Z ω) ∂P) * ∫ ω, R ω ∂P :=
     (hind.symm.comp hWm measurable_id).integral_fun_mul_eq_mul_integral
       (hWm.comp_aemeasurable hAZ.snd.aemeasurable).aestronglyMeasurable
@@ -179,6 +180,7 @@ theorem breeding_response_univariate {A Z : Ω → ℝ} {Va Vp : ℝ} {W : ℝ �
     rw [integral_sub (hA2.integrable one_le_two) ((hZ2.integrable one_le_two).const_mul h),
       integral_const_mul]
     ring
+  have hwne : (∫ ω, W (Z ω) ∂P) ≠ 0 := hw.ne'
   rw [h1, h2, hWR]
   field_simp
   ring
@@ -194,7 +196,7 @@ theorem selectedShift_breeding_eq_gradient {A Z : Ω → ι → ℝ} {G Pm : Mat
     (hG : ∀ i j, cov[fun ω => A ω i, fun ω => Z ω j; P] = G i j)
     (hlaw : HasLaw (fun ω => WithLp.toLp 2 (Z ω)) (multivariateGaussian μ Pm) P)
     (hPd : Pm.PosDef) (hWm : Measurable W) (hWb : ∃ C, ∀ z, |W z| ≤ C)
-    (hw : meanFitnessMV W Pm μ ≠ 0) :
+    (hW0 : ∀ z, 0 ≤ W z) (hw : 0 < meanFitnessMV W Pm μ) :
     selectedShift (fun z => W (WithLp.toLp 2 z)) Z A P =
       G *ᵥ ⇑(gradient (fun m => Real.log (meanFitnessMV W Pm m)) μ) := by
   obtain ⟨C, hC⟩ := hWb
@@ -230,7 +232,7 @@ theorem selectedShift_breeding_eq_gradient {A Z : Ω → ι → ℝ} {G Pm : Mat
   have hWA : ∀ i, Integrable (fun ω => W (WithLp.toLp 2 (Z ω)) * A ω i) P := fun i =>
     ((hA2 i).integrable one_le_two).bdd_mul (hWm.comp_aemeasurable hZm).aestronglyMeasurable
       (ae_of_all _ hbd)
-  have hcore := selectedShift_breeding_eq hAZ hG hPZ hPd hWm' (by rw [hwP]; exact hw) hWZ hWA
+  have hcore := selectedShift_breeding_eq hAZ hG hPZ hPd hWm' (fun z => hW0 _) (by rw [hwP]; exact hw) hWZ hWA
   -- the selection differential is Atlas's `selectionDifferentialMV`
   have hmoment : Integrable (fun x => W x • (x - μ)) (multivariateGaussian μ Pm) :=
     (hint.sub (integrable_const μ)).bdd_smul C hWm.aestronglyMeasurable
@@ -257,7 +259,7 @@ theorem selectedShift_breeding_eq_gradient {A Z : Ω → ι → ℝ} {G Pm : Mat
     simp only [selectedShift, selectionDifferentialMV, PiLp.smul_apply, smul_eq_mul, hj, hwP, hWZj,
       hmean]
     field_simp
-  rw [hcore, hS, selectionDifferentialMV_eq hWm ⟨C, hC⟩ hPd hw, Matrix.ofLp_toEuclideanCLM,
+  rw [hcore, hS, selectionDifferentialMV_eq hWm ⟨C, hC⟩ hPd hw.ne', Matrix.ofLp_toEuclideanCLM,
     Matrix.mulVec_mulVec, Matrix.mul_assoc, nonsing_inv_mul _ hPd.det_pos.ne'.isUnit,
     Matrix.mul_one]
 

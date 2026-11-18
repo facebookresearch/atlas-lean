@@ -107,7 +107,7 @@ example {A Z : Ω → ℝ} {Va Vp : ℝ} {W : ℝ → ℝ}
     let S := (∫ ω, W (Z ω) * Z ω ∂P) / (∫ ω, W (Z ω) ∂P) - ∫ ω, Z ω ∂P
     let R := (∫ ω, W (Z ω) * A ω ∂P) / (∫ ω, W (Z ω) ∂P) - ∫ ω, A ω ∂P
     R = (Va / Vp) * S :=
-  breeding_response_univariate hAZ hG hPZ hVp hWm hw.ne' hWZ hWA
+  breeding_response_univariate hAZ hG hPZ hVp hWm _hW0 hw hWZ hWA
 
 -- record-form hypotheses (`W ≥ 0`, `0 < 𝔼 W(Z)`) are a special case of the pinned ones
 example {A Z : Ω → ι → ℝ} {G Pm : Matrix ι ι ℝ} {W : (ι → ℝ) → ℝ}
@@ -118,7 +118,7 @@ example {A Z : Ω → ι → ℝ} {G Pm : Matrix ι ι ℝ} {W : (ι → ℝ) �
     (hWZ : ∀ j, Integrable (fun ω => W (Z ω) * Z ω j) P)
     (hWA : ∀ i, Integrable (fun ω => W (Z ω) * A ω i) P) :
     selectedShift W Z A P = (G * Pm⁻¹) *ᵥ selectedShift W Z Z P :=
-  selectedShift_breeding_eq hAZ hG hPZ hPd hWm hw.ne' hWZ hWA
+  selectedShift_breeding_eq hAZ hG hPZ hPd hWm _hW0 hw hWZ hWA
 
 -- non-vacuity: `A = Z ~ N(0, 1)` (heritability one) satisfies every hypothesis with `W = 1`
 example : HasGaussianLaw (fun x : ℝ => (x, x)) (gaussianReal 0 1) :=
