@@ -95,7 +95,9 @@ private theorem measurable_pwmSignal (ε : ℝ) (d : ℝ → ℝ) : Measurable (
   exact Measurable.ite (measurableSet_lt (measurable_id.sub (hk.mul_const ε)) (hg.mul_const ε))
     measurable_const measurable_const
 
-private theorem intervalIntegrable_pwmSignal (ε : ℝ) (d : ℝ → ℝ) (a b : ℝ) :
+/-- The PWM signal is interval integrable on every interval: it is measurable and takes values
+in `[0, 1]`. -/
+theorem intervalIntegrable_pwmSignal (ε : ℝ) (d : ℝ → ℝ) (a b : ℝ) :
     IntervalIntegrable (pwmSignal ε d) volume a b := by
   refine IntervalIntegrable.mono_fun' (g := fun _ => (1 : ℝ)) intervalIntegrable_const
     (measurable_pwmSignal ε d).aestronglyMeasurable (ae_of_all _ fun t => ?_)
