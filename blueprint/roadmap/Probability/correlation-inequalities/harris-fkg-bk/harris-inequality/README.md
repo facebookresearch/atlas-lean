@@ -16,4 +16,4 @@
 
 ## Related topics
 
-- Janson's inequalities: upper bounds on the probability that no increasing event $\{S_i \subseteq R\}$ occurs, complementing the Harris lower bound $\prod_i (1 - \Pr[A_i])$; their proof rests on the Harris inequality.
+- [Janson's inequalities](../../../../Combinatorics/probabilistic-combinatorics/janson-s-inequalities/README.md): upper bounds on the probability that no increasing event $\{S_i \subseteq R\}$ occurs, complementing the Harris lower bound $\prod_i (1 - \Pr[A_i])$; their proof rests on the Harris inequality.
