@@ -211,133 +211,13 @@ lemma plantOfNetwork_trajectory_eq (nN nB : ℕ) (B : Matrix (Fin nN) (Fin nB) �
 
 /-! ### C. Storage balance and finite-horizon passivity -/
 
-/-- Resistive loss rate is nonnegative for nonnegative resistances. -/
-private lemma plantLossRate_nonneg {nN nB : ℕ} (P : NetworkPlant nN nB)
-    (hR : ∀ e ∈ P.resistorSet, 0 ≤ P.resistance e) (t : ℝ) :
-    0 ≤ plantLossRate P t := by
-  unfold plantLossRate resistiveLoss
-  apply Finset.sum_nonneg
-  intro e he
-  exact mul_nonneg (hR e he) (sq_nonneg _)
-
-/-- Storage balance at the `HasDerivAt` level: on a network trajectory the
-storage has derivative supply minus loss. -/
-private lemma hasDerivAt_plantStorage {nN nB : ℕ} (P : NetworkPlant nN nB)
-    (hP : IsNetworkTrajectory P)
-    (_hR : ∀ e ∈ P.resistorSet, 0 ≤ P.resistance e)
-    (_hL : ∀ e ∈ P.inductorSet, 0 < P.inductance e)
-    (_hC : ∀ e ∈ P.capacitorSet, 0 < P.capacitance e) (t : ℝ) :
-    HasDerivAt (fun s => plantStorage P s)
-      (plantSupplyRate P t - plantLossRate P t) t := by
-  unfold IsNetworkTrajectory at hP
-  obtain ⟨hpart, hV, hbal, hRlaw, hClaw, hLlaw, hCdiff, hLdiff⟩ := hP
-  unfold IsBranchPartition at hpart
-  obtain ⟨hRL, hRC, hRS, hLC, hLS, hCS, hcover⟩ := hpart
-  have hC : ∀ e ∈ P.capacitorSet,
-      HasDerivAt (fun s => P.capacitance e * (P.branchVoltage s e) ^ 2 / 2)
-        (P.branchVoltage t e * P.branchCurrent t e) t := by
-    intro e he
-    have hu : HasDerivAt (fun s => P.branchVoltage s e)
-        (deriv (fun s => P.branchVoltage s e) t) t :=
-      (hCdiff t e he).hasDerivAt
-    have hpow : HasDerivAt (fun s => (P.branchVoltage s e) ^ 2)
-        (2 * P.branchVoltage t e * deriv (fun s => P.branchVoltage s e) t) t := by
-      have h := hu.pow 2
-      norm_num at h
-      exact h
-    have h0 := HasDerivAt.div_const
-      (HasDerivAt.const_mul (P.capacitance e) hpow) 2
-    have hcap := hClaw t e he
-    have hval : P.capacitance e * (2 * P.branchVoltage t e *
-        deriv (fun s => P.branchVoltage s e) t) / 2 =
-        P.branchVoltage t e * P.branchCurrent t e := by
-      rw [hcap]
-      ring
-    rw [hval] at h0
-    exact h0
-  have hL : ∀ e ∈ P.inductorSet,
-      HasDerivAt (fun s => P.inductance e * (P.branchCurrent s e) ^ 2 / 2)
-        (P.branchVoltage t e * P.branchCurrent t e) t := by
-    intro e he
-    have hu : HasDerivAt (fun s => P.branchCurrent s e)
-        (deriv (fun s => P.branchCurrent s e) t) t :=
-      (hLdiff t e he).hasDerivAt
-    have hpow : HasDerivAt (fun s => (P.branchCurrent s e) ^ 2)
-        (2 * P.branchCurrent t e * deriv (fun s => P.branchCurrent s e) t) t := by
-      have h := hu.pow 2
-      norm_num at h
-      exact h
-    have h0 := HasDerivAt.div_const
-      (HasDerivAt.const_mul (P.inductance e) hpow) 2
-    have hLaw := hLlaw t e he
-    have hval : P.inductance e * (2 * P.branchCurrent t e *
-        deriv (fun s => P.branchCurrent s e) t) / 2 =
-        P.branchVoltage t e * P.branchCurrent t e := by
-      rw [hLaw]
-      ring
-    rw [hval] at h0
-    exact h0
-  have hsumC := HasDerivAt.sum hC
-  have hsumL := HasDerivAt.sum hL
-  have hadd := hsumC.add hsumL
-  have hfun : ((∑ e ∈ P.capacitorSet,
-      (fun s => P.capacitance e * (P.branchVoltage s e) ^ 2 / 2)) +
-      (∑ e ∈ P.inductorSet,
-        (fun s => P.inductance e * (P.branchCurrent s e) ^ 2 / 2))) =
-      (fun s => plantStorage P s) := by
-    funext s
-    simp [plantStorage, storedEnergy, Pi.add_apply, Finset.sum_apply]
-  have hRpow : plantLossRate P t =
-      ∑ e ∈ P.resistorSet, P.branchVoltage t e * P.branchCurrent t e := by
-    unfold plantLossRate resistiveLoss
-    apply Finset.sum_congr rfl
-    intro e he
-    show P.resistance e * (P.branchCurrent t e) ^ 2 =
-      P.branchVoltage t e * P.branchCurrent t e
-    have hRv := hRlaw t e he
-    rw [hRv]
-    ring
-  have htel : (P.potential t) ⬝ᵥ (P.injection t) =
-      ∑ e, P.branchVoltage t e * P.branchCurrent t e := by
-    have hVt := hV t
-    have hjt := hbal t
-    rw [← hjt, Matrix.dotProduct_mulVec, ← Matrix.mulVec_transpose, ← hVt]
-    rfl
-  have hsplit : (∑ e, P.branchVoltage t e * P.branchCurrent t e) =
-      (∑ e ∈ P.resistorSet, P.branchVoltage t e * P.branchCurrent t e) +
-      (∑ e ∈ P.inductorSet, P.branchVoltage t e * P.branchCurrent t e) +
-      (∑ e ∈ P.capacitorSet, P.branchVoltage t e * P.branchCurrent t e) +
-      (∑ e ∈ P.sourceSet, P.branchVoltage t e * P.branchCurrent t e) := by
-    have h1 : Disjoint (P.resistorSet ∪ P.inductorSet ∪ P.capacitorSet)
-        P.sourceSet :=
-      Finset.disjoint_union_left.mpr
-        ⟨Finset.disjoint_union_left.mpr ⟨hRS, hLS⟩, hCS⟩
-    have h2 : Disjoint (P.resistorSet ∪ P.inductorSet) P.capacitorSet :=
-      Finset.disjoint_union_left.mpr ⟨hRC, hLC⟩
-    conv_lhs => rw [← hcover, Finset.sum_union h1, Finset.sum_union h2,
-      Finset.sum_union hRL]
-  have hval : (∑ e ∈ P.capacitorSet, P.branchVoltage t e * P.branchCurrent t e) +
-      (∑ e ∈ P.inductorSet, P.branchVoltage t e * P.branchCurrent t e) =
-      plantSupplyRate P t - plantLossRate P t := by
-    unfold plantSupplyRate sourceAbsorbedPower
-    rw [htel, hsplit, hRpow]
-    ring
-  rw [← hfun, ← hval]
-  exact hadd
-
 /-- Storage is nonnegative for nonnegative capacitance and inductance. -/
 lemma plantStorage_nonneg {nN nB : ℕ} (P : NetworkPlant nN nB)
     (hC : ∀ e ∈ P.capacitorSet, 0 ≤ P.capacitance e)
     (hL : ∀ e ∈ P.inductorSet, 0 ≤ P.inductance e) (t : ℝ) :
-    0 ≤ plantStorage P t := by
-  unfold plantStorage storedEnergy
-  apply add_nonneg
-  · apply Finset.sum_nonneg
-    intro e he
-    exact div_nonneg (mul_nonneg (hC e he) (sq_nonneg _)) (by norm_num)
-  · apply Finset.sum_nonneg
-    intro e he
-    exact div_nonneg (mul_nonneg (hL e he) (sq_nonneg _)) (by norm_num)
+    0 ≤ plantStorage P t :=
+  storedEnergy_nonneg nB P.capacitorSet P.inductorSet P.capacitance
+    P.inductance (P.branchVoltage t) (P.branchCurrent t) hC hL
 
 /-- Storage balance: on a network trajectory with nonnegative resistances
 and positive reactive values, the derivative of storage is the supply rate
@@ -348,7 +228,13 @@ lemma plantStorage_deriv_eq_supply_sub_loss {nN nB : ℕ} (P : NetworkPlant nN n
     (hL : ∀ e ∈ P.inductorSet, 0 < P.inductance e)
     (hC : ∀ e ∈ P.capacitorSet, 0 < P.capacitance e) (t : ℝ) :
     deriv (fun s => plantStorage P s) t = plantSupplyRate P t - plantLossRate P t := by
-  exact (hasDerivAt_plantStorage P hP hR hL hC t).deriv
+  unfold IsNetworkTrajectory at hP
+  obtain ⟨hpart, hV, hbal, hRlaw, hClaw, hLlaw, hCdiff, hLdiff⟩ := hP
+  exact network_storage_deriv_eq_supplied_minus_losses nN nB P.incidence
+    P.resistorSet P.inductorSet P.capacitorSet P.sourceSet hpart
+    P.resistance P.inductance P.capacitance hR hL hC
+    P.potential P.injection P.branchVoltage P.branchCurrent t
+    (hV t) (hbal t) (hRlaw t) (hClaw t) (hLlaw t) (hCdiff t) (hLdiff t)
 
 /-- Finite-horizon passivity: on a network trajectory over an interval,
 with continuous supply rate and integrable balance rate, the increase of
@@ -362,26 +248,15 @@ lemma plant_finiteHorizonPassive {nN nB : ℕ} (P : NetworkPlant nN nB)
     (hderiv_int : IntervalIntegrable (fun s => plantSupplyRate P s - plantLossRate P s)
       MeasureTheory.volume a b) :
     FiniteHorizonPassiveOn P a b := by
-  have hHas : ∀ x ∈ Set.uIcc a b, HasDerivAt (fun s => plantStorage P s)
-      (plantSupplyRate P x - plantLossRate P x) x :=
-    fun x _ => hasDerivAt_plantStorage P hP hR hL hC x
-  have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt
-    (f := fun s => plantStorage P s)
-    (f' := fun s => plantSupplyRate P s - plantLossRate P s) hHas hderiv_int
-  have hSupInt : IntervalIntegrable (fun s => plantSupplyRate P s)
-      MeasureTheory.volume a b :=
-    hsupply_cont.intervalIntegrable_of_Icc hab
-  have hle : ∀ x ∈ Set.Icc a b,
-      plantSupplyRate P x - plantLossRate P x ≤ plantSupplyRate P x :=
-    fun x _ => sub_le_self _ (plantLossRate_nonneg P hR x)
-  have hMono := intervalIntegral.integral_mono_on
-    (f := fun s => plantSupplyRate P s - plantLossRate P s)
-    (g := fun s => plantSupplyRate P s) hab hderiv_int hSupInt hle
-  have hEq : plantStorage P b - plantStorage P a =
-      ∫ y in a..b, (plantSupplyRate P y - plantLossRate P y) := hFTC.symm
-  change plantStorage P b - plantStorage P a ≤ ∫ s in a..b, plantSupplyRate P s
-  rw [hEq]
-  exact hMono
+  unfold IsNetworkTrajectory at hP
+  obtain ⟨hpart, hV, hbal, hRlaw, hClaw, hLlaw, hCdiff, hLdiff⟩ := hP
+  exact network_energy_sub_le_integral_supplied nN nB P.incidence
+    P.resistorSet P.inductorSet P.capacitorSet P.sourceSet hpart
+    P.resistance P.inductance P.capacitance hR hL hC
+    P.potential P.injection P.branchVoltage P.branchCurrent a b hab
+    (fun s _ => hV s) (fun s _ => hbal s) (fun s _ => hRlaw s)
+    (fun s _ => hClaw s) (fun s _ => hLlaw s) (fun s _ => hCdiff s)
+    (fun s _ => hLdiff s) hsupply_cont hderiv_int
 
 /-- Headline passivity correctness: a network trajectory has nonnegative
 storage at every time, its storage derivative is supply minus loss, and it
@@ -424,9 +299,26 @@ lemma plantStorage_constant_of_zero_supply_loss {nN nB : ℕ} (P : NetworkPlant 
     (hderiv_int : IntervalIntegrable (fun s => plantSupplyRate P s - plantLossRate P s)
       MeasureTheory.volume a b) :
     plantStorage P b = plantStorage P a := by
+  unfold IsNetworkTrajectory at hP
+  obtain ⟨hpart, hV, hbal, hRlaw, hClaw, hLlaw, hCdiff, hLdiff⟩ := hP
   have hHas : ∀ x ∈ Set.uIcc a b, HasDerivAt (fun s => plantStorage P s)
-      (plantSupplyRate P x - plantLossRate P x) x :=
-    fun x _ => hasDerivAt_plantStorage P hP hR hL hC x
+      (plantSupplyRate P x - plantLossRate P x) x := by
+    intro x _
+    have h1 := hasDerivAt_storedEnergy nB P.capacitorSet P.inductorSet
+      P.capacitance P.inductance P.branchVoltage P.branchCurrent x
+      (hClaw x) (hLlaw x) (hCdiff x) (hLdiff x)
+    have h2 := network_storage_deriv_eq_supplied_minus_losses nN nB P.incidence
+      P.resistorSet P.inductorSet P.capacitorSet P.sourceSet hpart
+      P.resistance P.inductance P.capacitance hR hL hC
+      P.potential P.injection P.branchVoltage P.branchCurrent x
+      (hV x) (hbal x) (hRlaw x) (hClaw x) (hLlaw x) (hCdiff x) (hLdiff x)
+    have hval : ((∑ e ∈ P.capacitorSet, P.branchVoltage x e * P.branchCurrent x e) +
+        ∑ e ∈ P.inductorSet, P.branchVoltage x e * P.branchCurrent x e)
+        = plantSupplyRate P x - plantLossRate P x := by
+      rw [← h1.deriv]
+      exact h2
+    rw [hval] at h1
+    exact h1
   have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt
     (f := fun s => plantStorage P s)
     (f' := fun s => plantSupplyRate P s - plantLossRate P s) hHas hderiv_int
