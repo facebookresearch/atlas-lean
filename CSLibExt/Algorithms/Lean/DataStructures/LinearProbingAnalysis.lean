@@ -95,9 +95,12 @@ def occupancy (l : List (Fin N)) : Finset (Fin N) :=
 item is entered by linear probing into a cyclic table of `N` cells that already holds `n` items,
 when the `n + 1` hash addresses are independent and uniform on the `N` cells: the average of
 `probes` over all `N ^ (n + 1)` hash sequences. This is `M(N, n + 1)` in Knuth's 1963 note on
-open addressing; it is also the expected cost of an unsuccessful search in that table. It is an
-expectation for `N ≥ 1`; for `N = 0` there is no table and no hash sequence, and the value is
-`0` (`0 / 0`), which is not an expected number of probes. -/
+open addressing; it is also the expected cost of an unsuccessful search in that table. It is that
+expected cost when the table has a free cell, `n < N`. For `n ≥ N ≥ 1` the search for a free cell
+is capped and the value is the capped algebraic extension (for example `insertionCost 1 1 = 2`),
+not the cost of inserting into a full table; for `N = 0` there is no table and no hash sequence,
+and the value is `0` (`0 / 0`). The formula is kept for all `N` and `n` for the exact counts and
+limits, whose statements carry their own capacity hypotheses. -/
 def insertionCost (N n : ℕ) : ℚ :=
   (∑ a : Fin n → Fin N, ∑ h : Fin N, (probes (occupancy (List.ofFn a)) h : ℚ)) /
     (N : ℚ) ^ (n + 1)
@@ -105,9 +108,10 @@ def insertionCost (N n : ℕ) : ℚ :=
 /-- **Expected cost of a successful linear-probing search.** For a table of `N` cells built
 from `n` uniformly random hash addresses, the average over the `n` stored items of the expected
 number of probes needed to find an item, which equals the number needed to insert it:
-`T(N, n) = (1 / n) ∑_{i < n} insertionCost N i` (Section 7 of Knuth's 1963 note). It is an
-average for `n ≥ 1` stored items in a table of `N ≥ 1` cells; for `n = 0` there is no item to
-find, and the value is `0` (`0 / 0`), which is not an average number of probes. -/
+`T(N, n) = (1 / n) ∑_{i < n} insertionCost N i` (Section 7 of Knuth's 1963 note). It is that
+average for `1 ≤ n ≤ N` stored items; for `n > N` it averages capped extensions of
+`insertionCost` (see there), and for `n = 0` there is no item to find and the value is `0`
+(`0 / 0`), not an average number of probes. -/
 def successfulSearchCost (N n : ℕ) : ℚ :=
   (∑ i ∈ Finset.range n, insertionCost N i) / n
 

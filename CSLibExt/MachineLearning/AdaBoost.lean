@@ -442,10 +442,14 @@ theorem expLoss_score_succ_le (hm : 0 < m) (T : ℕ) (h0 : 0 < eps y wl T)
 
 /-! ## Margins of the training examples -/
 
-/-- **The training margin error**: the fraction of training points whose normalized margin
-`yᵢ F_T(xᵢ) / ∑_{t < T} α_t` is at most `θ`, written without division as
-`yᵢ F_T(xᵢ) ≤ θ ∑_{t < T} α_t`. For `m = 0` there is no training point and the value is `0`
-(`0 / 0`), which is not a fraction; the results below assume `0 < m`. -/
+/-- **The training margin statistic**: the fraction of the `m` training points with
+`yᵢ F_T(xᵢ) ≤ θ ∑_{t < T} α_t`, the cross-multiplied margin event. When `∑_{t < T} α_t > 0` it is
+the training margin error, the fraction of training points whose normalized margin
+`yᵢ F_T(xᵢ) / ∑_{t < T} α_t` is at most `θ`. For a zero or negative coefficient sum the two
+events differ (one point, zero rounds and `θ = -1` give `1` here, and `0` for the quotient form
+with `0 / 0 = 0`), and `marginErr_le` bounds the cross-multiplied statistic. For `m = 0` there is
+no training point and the value is `0` (`0 / 0`), which is not a fraction; the results below
+assume `0 < m`. -/
 noncomputable def marginErr (y : Fin m → Bool) (wl : (Fin m → ℝ) → Fin m → Bool) (θ : ℝ)
     (T : ℕ) : ℝ :=
   (∑ i, if sign (y i) * score y wl T i ≤ θ * ∑ t ∈ Finset.range T, alpha (eps y wl t)

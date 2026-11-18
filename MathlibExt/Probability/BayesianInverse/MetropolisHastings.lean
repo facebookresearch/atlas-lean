@@ -33,7 +33,8 @@ Cotter, Roberts, Stuart and White, Statist. Sci. 28 (2013), arXiv:1202.0709).
 
 * `map_swap_compProd_eq_of_isReversible`: a kernel reversible for a finite measure `μ₀` makes the
   joint law `μ₀ ⊗ Q` symmetric.
-* `mhKernel Q Φ`, a Markov kernel (`isMarkovKernel_mhKernel`).
+* `mhKernel Q Φ hΦ`, for a Markov proposal and a measurable potential, a Markov kernel
+  (`isMarkovKernel_mhKernel`).
 * `isReversible_mhKernel` (**Dashti-Stuart Theorem 5.8**) and `invariant_mhKernel`.
 * `isReversible_pcn_mhKernel`: the pCN method is reversible for the posterior of a centred
   Gaussian prior on a separable Banach space.
@@ -113,10 +114,14 @@ theorem mhAcceptPotential_le_one (Φ : U → ℝ) (u v : U) : mhAcceptPotential 
 `v ~ Q(u, ·)` and accept it with probability `a(u, v) = min{1, exp(Φ(u) - Φ(v))}`; otherwise stay
 at `u`. As a kernel, `P(u, dv) = a(u, v) Q(u, dv) + r(u) δ_u(dv)` with rejection probability
 `r(u) = ∫ (1 - a(u, w)) Q(u, dw)` (Dashti and Stuart, arXiv:1302.6989v4, equation (5.5) and
-Algorithm 5.6). The proposal must be a Markov kernel, so that acceptance and rejection add up to
-one (`isMarkovKernel_mhKernel`): for the zero proposal every event would have probability `0`,
-and for a proposal of mass `2` the "rejection probability" could exceed one. -/
-noncomputable def mhKernel (Q : Kernel U U) [IsMarkovKernel Q] (Φ : U → ℝ) : Kernel U U :=
+Algorithm 5.6). The proposal must be a Markov kernel and the potential measurable, so that
+acceptance and rejection add up to one (`isMarkovKernel_mhKernel`): for the zero proposal every
+event would have probability `0`, for a proposal of mass `2` the "rejection probability" could
+exceed one, and for a non-measurable `Φ` the acceptance density is not measurable, so
+`Kernel.withDensity` would return the zero kernel and the transition law could lose all its
+mass. -/
+noncomputable def mhKernel (Q : Kernel U U) [IsMarkovKernel Q] (Φ : U → ℝ)
+    (_hΦ : Measurable Φ) : Kernel U U :=
   Q.withDensity (mhAcceptPotential Φ) +
     (Kernel.deterministic id measurable_id).withDensity
       fun u _ ↦ ∫⁻ w, (1 - mhAcceptPotential Φ u w) ∂Q u
@@ -130,7 +135,7 @@ the accepted moves into `B` plus the
 rejection probability if `u ∈ B`. -/
 theorem mhKernel_apply (Q : Kernel U U) [IsMarkovKernel Q] {Φ : U → ℝ} (hΦ : Measurable Φ)
     (u : U) {B : Set U} (hB : MeasurableSet B) :
-    mhKernel Q Φ u B = ∫⁻ v in B, mhAcceptPotential Φ u v ∂Q u +
+    mhKernel Q Φ hΦ u B = ∫⁻ v in B, mhAcceptPotential Φ u v ∂Q u +
       B.indicator (fun u ↦ ∫⁻ w, (1 - mhAcceptPotential Φ u w) ∂Q u) u := by
   rw [mhKernel, add_apply, Measure.add_apply,
     Kernel.withDensity_apply _ (measurable_mhAcceptPotential hΦ),
@@ -146,7 +151,7 @@ theorem mhKernel_apply (Q : Kernel U U) [IsMarkovKernel Q] {Φ : U → ℝ} (hΦ
 /-- **The Metropolis–Hastings kernel is a Markov kernel**: accepted and rejected mass add to
 one because `a ≤ 1`. -/
 theorem isMarkovKernel_mhKernel (Q : Kernel U U) [IsMarkovKernel Q] {Φ : U → ℝ}
-    (hΦ : Measurable Φ) : IsMarkovKernel (mhKernel Q Φ) := by
+    (hΦ : Measurable Φ) : IsMarkovKernel (mhKernel Q Φ hΦ) := by
   refine ⟨fun u ↦ ⟨?_⟩⟩
   rw [mhKernel_apply Q hΦ u MeasurableSet.univ, Measure.restrict_univ,
     Set.indicator_of_mem (Set.mem_univ u), ← lintegral_add_left]
@@ -161,7 +166,7 @@ with density `exp(-Φ)/Z` against `μ₀` (Dashti and Stuart, arXiv:1302.6989v4,
 proof is theirs: `exp(-Φ(u)) a(u, v) = min{exp(-Φ(u)), exp(-Φ(v))}` is symmetric. -/
 theorem isReversible_mhKernel (μ₀ : Measure U) [IsProbabilityMeasure μ₀] (Q : Kernel U U)
     [IsMarkovKernel Q] (hQ : Q.IsReversible μ₀) {Φ : U → ℝ} (hΦ : Measurable Φ) :
-    (mhKernel Q Φ).IsReversible (posterior μ₀ Φ) := by
+    (mhKernel Q Φ hΦ).IsReversible (posterior μ₀ Φ) := by
   set Z := normalizer μ₀ Φ
   set g : U → ℝ≥0∞ := fun u ↦ ENNReal.ofReal (Real.exp (-Φ u) / Z)
   have hg : Measurable g := by fun_prop
@@ -180,7 +185,7 @@ theorem isReversible_mhKernel (μ₀ : Measure U) [IsProbabilityMeasure μ₀] (
     rw [div_mul_eq_mul_div, mul_min_of_nonneg _ _ (Real.exp_pos _).le, mul_one,
       ← Real.exp_add, show -Φ u + (Φ u - Φ v) = -Φ v by ring]
   have hflow : ∀ {A B : Set U}, MeasurableSet A → MeasurableSet B →
-      ∫⁻ x in A, mhKernel Q Φ x B ∂posterior μ₀ Φ =
+      ∫⁻ x in A, mhKernel Q Φ hΦ x B ∂posterior μ₀ Φ =
         ∫⁻ x in A, ∫⁻ v in B, m x v ∂Q x ∂μ₀ + ∫⁻ x in B ∩ A, g x * r x ∂μ₀ := by
     intro A B hA hB
     rw [posterior, setLIntegral_withDensity_eq_setLIntegral_mul μ₀ hg
@@ -201,7 +206,7 @@ theorem isReversible_mhKernel (μ₀ : Measure U) [IsProbabilityMeasure μ₀] (
 (Dashti and Stuart, arXiv:1302.6989v4, Theorem 5.8 with Lemma 5.2). -/
 theorem invariant_mhKernel (μ₀ : Measure U) [IsProbabilityMeasure μ₀] (Q : Kernel U U)
     [IsMarkovKernel Q] (hQ : Q.IsReversible μ₀) {Φ : U → ℝ} (hΦ : Measurable Φ) :
-    (mhKernel Q Φ).Invariant (posterior μ₀ Φ) :=
+    (mhKernel Q Φ hΦ).Invariant (posterior μ₀ Φ) :=
   haveI := isMarkovKernel_mhKernel Q hΦ
   (isReversible_mhKernel μ₀ Q hQ hΦ).invariant
 
@@ -214,7 +219,7 @@ theorem isReversible_pcn_mhKernel {E : Type*} [NormedAddCommGroup E] [NormedSpac
     [MeasurableSpace E] [BorelSpace E] [CompleteSpace E] [SecondCountableTopology E]
     (μ₀ : Measure E) [IsGaussian μ₀] (hμ₀ : μ₀[id] = 0) {β : ℝ} (hβ₁ : -1 ≤ β) (hβ₂ : β ≤ 1)
     {Φ : E → ℝ} (hΦ : Measurable Φ) :
-    (mhKernel (pcnKernel μ₀ β) Φ).IsReversible (posterior μ₀ Φ) :=
+    (mhKernel (pcnKernel μ₀ β) Φ hΦ).IsReversible (posterior μ₀ Φ) :=
   isReversible_mhKernel μ₀ _ (isReversible_pcnKernel μ₀ hμ₀ hβ₁ hβ₂) hΦ
 
 end MathlibExt.Probability.BayesianInverse

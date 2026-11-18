@@ -61,17 +61,23 @@ open scoped NNReal
 namespace ProbabilityTheory
 
 /-- **Marginal density of a Gaussian location mixture.** For a prior `g` on the mean and a
-variance `v > 0`, `f(x) = ∫ φ_v(x - μ) g(dμ)`, the density of `x` when `μ ~ g` and
-`x | μ ~ N(μ, v)` (for a prior that is not a probability measure, the unnormalised density, of
-mass `g univ`). For `v = 0`, which is excluded, `gaussianPDFReal μ 0` vanishes identically (while
+variance `v > 0`, the Bochner integral `f(x) = ∫ φ_v(x - μ) g(dμ)`. For a finite prior it is the
+density of `x` when `μ ~ g` and `x | μ ~ N(μ, v)` (for a finite prior that is not a probability
+measure, the unnormalised density, of mass `g univ`); for any prior it is that density at every
+`x` where `μ ↦ φ_v(x - μ)` is `g`-integrable. Where the integrand is not integrable the Bochner
+integral is `0`, which is not a density value: for `g = ∞ • δ₃` the value is `0` at every `x`.
+For `v = 0`, which is excluded, `gaussianPDFReal μ 0` vanishes identically (while
 `gaussianReal μ 0 = δ_μ`), so the value would be `0`. -/
 noncomputable def gaussianMixtureDensity (g : Measure ℝ) (v : ℝ≥0) [NeZero v] (x : ℝ) : ℝ :=
   ∫ μ, gaussianPDFReal μ v x ∂g
 
 /-- **Posterior mean in the Gaussian location model.** Bayes' rule for `μ ~ g` and
 `x | μ ~ N(μ, v)` with `v > 0`: `E[μ | x] = ∫ μ φ_v(x - μ) g(dμ) / f(x)`, with `f` the marginal
-density. For `v = 0`, which is excluded, the Gaussian density vanishes identically and the value
-would be `0` instead of `x`. -/
+density. It is the posterior mean at `x` when both integrands are `g`-integrable and the
+normaliser `f(x)` is positive and finite, which holds for every finite nonzero prior. Otherwise
+the Bochner integrals are totalised and the value is `0` (for `g = ∞ • δ₃` at every `x`), not a
+posterior mean. For `v = 0`, which is excluded, the Gaussian density vanishes identically and the
+value would be `0` instead of `x`. -/
 noncomputable def gaussianPosteriorMean (g : Measure ℝ) (v : ℝ≥0) [NeZero v] (x : ℝ) : ℝ :=
   (∫ μ, μ * gaussianPDFReal μ v x ∂g) / gaussianMixtureDensity g v x
 
@@ -219,8 +225,11 @@ theorem gaussianPosteriorMean_eq_add_mul_deriv_log (g : Measure ℝ) [IsFiniteMe
 /-! ### The second-order formula: posterior variance -/
 
 /-- **Posterior second moment in the Gaussian location model.** Bayes' rule for `μ ~ g` and
-`x | μ ~ N(μ, v)` with `v > 0`: `E[μ² | x] = ∫ μ² φ_v(x - μ) g(dμ) / f(x)`. For `v = 0`, which is
-excluded, the value would be `0` instead of `x²`. -/
+`x | μ ~ N(μ, v)` with `v > 0`: `E[μ² | x] = ∫ μ² φ_v(x - μ) g(dμ) / f(x)`. As for
+`gaussianPosteriorMean`, it is the posterior second moment when both integrands are
+`g`-integrable and `f(x)` is positive and finite (every finite nonzero prior); otherwise the value
+is the totalised `0` (for `g = ∞ • δ₃` at every `x`). For `v = 0`, which is excluded, the value
+would be `0` instead of `x²`. -/
 noncomputable def gaussianPosteriorSecondMoment (g : Measure ℝ) (v : ℝ≥0) [NeZero v] (x : ℝ) :
     ℝ :=
   (∫ μ, μ ^ 2 * gaussianPDFReal μ v x ∂g) / gaussianMixtureDensity g v x

@@ -55,9 +55,12 @@ variable {ι : Type*} [Fintype ι]
 /-- **Weighted quantile with an atom at `+∞`.** For a level `β`, scores `v : ι → ℝ` and weights
 `p : ι → ℝ`, the least score `vⱼ` whose cumulative weight `∑_{i : vᵢ ≤ vⱼ} pᵢ` is at least `β`,
 and `⊤` if there is none. When the `pᵢ` are nonnegative, the remaining mass `p_∞ = 1 - ∑ᵢ pᵢ`
-sits at `+∞` and `β ≤ 1`, this is the level-`β` quantile `inf {t : F(t) ≥ β}` of
-`F = ∑ᵢ pᵢ δ_{vᵢ} + p_∞ δ_{+∞}`, the quantity `Quantile(β; ∑ᵢ pᵢ δ_{vᵢ} + p_{n+1} δ_∞)` of
-Tibshirani, Barber, Candès and Ramdas (NeurIPS 2019, arXiv:1904.06019, Corollary 1). -/
+is nonnegative and sits at `+∞`, and `0 < β ≤ 1`, this is the level-`β` quantile
+`inf {t : F(t) ≥ β}` of `F = ∑ᵢ pᵢ δ_{vᵢ} + p_∞ δ_{+∞}`, the quantity
+`Quantile(β; ∑ᵢ pᵢ δ_{vᵢ} + p_{n+1} δ_∞)` of Tibshirani, Barber, Candès and Ramdas (NeurIPS 2019,
+arXiv:1904.06019, Corollary 1); the quantile theorems below assume `0 < β`. Outside that range it
+is only the finite selection formula: for `β ≤ 0` with nonnegative weights every score qualifies
+and the value is the least score, although every real threshold `t` has `F(t) ≥ β`. -/
 noncomputable def weightedQuantile (β : ℝ) (v : ι → ℝ) (p : ι → ℝ) : WithTop ℝ :=
   (univ.filter fun j => β ≤ ∑ i ∈ univ.filter (fun i => v i ≤ v j), p i).inf
     fun j => ((v j : ℝ) : WithTop ℝ)

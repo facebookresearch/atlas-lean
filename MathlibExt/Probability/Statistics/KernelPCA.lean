@@ -59,7 +59,8 @@ variable {X F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℝ F] {M : ℕ
 
 /-- **Covariance operator in feature space** (Schölkopf, Smola and Müller, *Nonlinear component
 analysis as a kernel eigenvalue problem*, Neural Comput. 10 (1998), equation (2.5)). For feature
-vectors `Φ(x₁), …, Φ(x_M)` it is `C̄ V = (1/M) ∑ⱼ ⟪Φ(xⱼ), V⟫ Φ(xⱼ)`. -/
+vectors `Φ(x₁), …, Φ(x_M)` it is `C̄ V = (1/M) ∑ⱼ ⟪Φ(xⱼ), V⟫ Φ(xⱼ)`. For an empty sample
+(`M = 0`) it is the zero map (`0⁻¹ = 0`), not the covariance of any data. -/
 noncomputable def covOp (Φ : X → F) (x : Fin M → X) (V : F) : F :=
   (M : ℝ)⁻¹ • ∑ j, ⟪Φ (x j), V⟫_ℝ • Φ (x j)
 

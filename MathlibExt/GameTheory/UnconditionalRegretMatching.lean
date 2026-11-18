@@ -58,7 +58,8 @@ def regretVector (c : A → B → ℝ) (a : A) (b : B) : EuclideanSpace ℝ A :=
 
 /-- **Unconditional regret matching** (Hart and Mas-Colell 2000, Theorem B; Hart 2005, §10.1):
 given the average regret vector `x`, play `k` with probability `x_k⁺ / ∑ₗ x_l⁺`, and uniformly
-when no regret is positive. -/
+when no regret is positive. For a nonempty action set this is a mixed strategy; for an empty
+action set it is the empty function, of total mass `0`, not a mixed strategy. -/
 noncomputable def urm (x : EuclideanSpace ℝ A) (k : A) : ℝ :=
   if 0 < ∑ l, max (x l) 0 then max (x k) 0 / ∑ l, max (x l) 0 else (Fintype.card A : ℝ)⁻¹
 

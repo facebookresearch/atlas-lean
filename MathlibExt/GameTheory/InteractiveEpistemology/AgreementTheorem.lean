@@ -58,8 +58,11 @@ variable {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
 
 /-- **Posterior probability.** The posterior probability of the event `A` at state `ω` for an
 agent with information partition `r`: `μ(A ∩ P(ω)) / μ(P(ω))` where `P(ω)` is the agent's cell
-containing `ω` (Aumann 1976, p. 1237: "`qᵢ(ω) = p(A ∩ Pᵢ(ω)) / p(Pᵢ(ω))`"). If the cell is
-null, Lean's convention `x / 0 = 0` makes the posterior `0`. -/
+containing `ω` (Aumann 1976, p. 1237: "`qᵢ(ω) = p(A ∩ Pᵢ(ω)) / p(Pᵢ(ω))`"). It is a
+conditional probability for cells of positive finite measure. If the cell is null, Lean's
+convention `x / 0 = 0` makes the posterior `0`; if the cell has infinite measure, `μ.real` reads
+it as `0` and the posterior is again `0`, even for the certain event. The agreement theorems are
+stated for finite measures. -/
 noncomputable def posterior (r : Setoid Ω) (A : Set Ω) (ω : Ω) : ℝ :=
   μ.real (A ∩ cell r ω) / μ.real (cell r ω)
 

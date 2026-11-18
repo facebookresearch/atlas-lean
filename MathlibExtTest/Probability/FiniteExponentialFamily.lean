@@ -58,4 +58,15 @@ Hint: Adding the command `deriving instance Nonempty for Empty` may allow Lean t
 #guard_msgs in
 noncomputable example : ℝ := meanParameter (fun e : Empty => (e.elim : ℝ)) 0
 
+/-! The density needs a nonempty finite set: on an empty set it would have total mass `0`. -/
+
+/--
+error: failed to synthesize instance of type class
+  Nonempty Empty
+
+Hint: Adding the command `deriving instance Nonempty for Empty` may allow Lean to derive the missing instance.
+-/
+#guard_msgs in
+noncomputable example : Empty → ℝ := density (fun e : Empty => (e.elim : ℝ)) 0
+
 end MathlibExtTest.FiniteExponentialFamily

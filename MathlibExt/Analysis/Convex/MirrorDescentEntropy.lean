@@ -87,8 +87,9 @@ def posSimplex (n : ℕ) : Set (L1 n) := {x | (∀ i, 0 < x i) ∧ ∑ i, x i = 
 theorem posSimplex_subset_simplex : posSimplex n ⊆ simplex n :=
   fun _ hx => ⟨fun i => (hx.1 i).le, hx.2⟩
 
-/-- **The uniform point of the simplex** `(1/n, …, 1/n)`, the minimizer of the entropy on the
-simplex. -/
+/-- **The uniform point of the simplex** `(1/n, …, 1/n)`, for `n ≥ 1` the minimizer of the
+entropy on the simplex. For `n = 0` the simplex is empty and this (empty) vector is not a point of
+it. -/
 noncomputable def uniform (n : ℕ) : L1 n := WithLp.toLp 1 (fun _ => (n : ℝ)⁻¹)
 
 theorem uniform_apply (i : Fin n) : uniform n i = (n : ℝ)⁻¹ := rfl

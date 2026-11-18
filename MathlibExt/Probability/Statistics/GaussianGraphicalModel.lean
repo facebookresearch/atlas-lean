@@ -365,7 +365,8 @@ section Dempster
 
 variable {ι : Type*} [Fintype ι]
 
-/-- The sample second-moment matrix `m⁻¹ ∑ₛ xₛ xₛᵀ` of `m` observations in `ℝ^ι`. -/
+/-- The sample second-moment matrix `m⁻¹ ∑ₛ xₛ xₛᵀ` of `m` observations in `ℝ^ι`. For an empty
+sample (`m = 0`) it is the zero matrix (`0⁻¹ = 0`), not the second moment of any data. -/
 noncomputable def sampleCov {m : ℕ} (x : Fin m → ι → ℝ) : Matrix ι ι ℝ :=
   (m : ℝ)⁻¹ • ∑ s, vecMulVec (x s) (x s)
 

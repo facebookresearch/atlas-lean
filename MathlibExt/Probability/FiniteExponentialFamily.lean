@@ -55,9 +55,11 @@ exponential families, and variational inference* (2008), with the counting measu
 set `X`. -/
 noncomputable def logPartition (φ : X → E) (θ : E) : ℝ := log (partitionSum φ θ)
 
-/-- **Density of a finite exponential family.** `p_θ(x) = exp ⟪φ x, θ⟫ / Z(θ)
-= exp (⟪φ x, θ⟫ - A(θ))` (Wainwright and Jordan (2008), Section 3.2). -/
-noncomputable def density (φ : X → E) (θ : E) (x : X) : ℝ :=
+/-- **Density of a finite exponential family.** On a nonempty finite set,
+`p_θ(x) = exp ⟪φ x, θ⟫ / Z(θ) = exp (⟪φ x, θ⟫ - A(θ))` (Wainwright and Jordan (2008),
+Section 3.2), a probability distribution (`density_pos_and_sum_eq_one`). On an empty set, which is
+excluded, it would be the empty function, of total mass `0`. -/
+noncomputable def density [Nonempty X] (φ : X → E) (θ : E) (x : X) : ℝ :=
   exp (inner ℝ (φ x) θ) / partitionSum φ θ
 
 /-- **Mean parameter of a finite exponential family.** On a nonempty finite set,

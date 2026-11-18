@@ -41,23 +41,30 @@ open scoped NNReal Nat
 
 namespace ProbabilityTheory
 
-/-- **Marginal mass of a Poisson mixture.** For a prior `g` on the rate,
-`f(x) = ∫ e^{-θ} θ^x / x! g(dθ)`. When `g` is a probability measure it is the probability of the
-count `x` when `θ ~ g` and `x | θ ~ Poisson(θ)`. For a general (finite or improper) prior it is
-the unnormalised marginal mass (for example `10 / e > 1` for `g = 10 δ₁`), which is all that the
-posterior mean and Robbins' formula use. -/
+/-- **Marginal mass of a Poisson mixture.** For a prior `g` on the rate, the Bochner integral
+`f(x) = ∫ e^{-θ} θ^x / x! g(dθ)`. When `θ ↦ e^{-θ} θ^x / x!` is `g`-integrable (for instance for
+every finite prior) it is the marginal mass of the count `x`: the probability of `x` when
+`θ ~ g` and `x | θ ~ Poisson(θ)` if `g` is a probability measure, and the unnormalised marginal
+mass otherwise (for example `10 / e > 1` for `g = 10 δ₁`). When the integrand is not integrable
+the Bochner integral is `0`, which is not the marginal mass: for `g = ∞ • δ₁` the value is `0`,
+although `∫⁻ θ, Poisson(θ){x} ∂g = ∞`. -/
 noncomputable def poissonMixtureMass (g : Measure ℝ≥0) (x : ℕ) : ℝ :=
   ∫ θ, (poissonMeasure θ).real {x} ∂g
 
 /-- **Posterior mean in the Poisson model.** Bayes' rule for `θ ~ g` and `x | θ ~ Poisson(θ)`:
-`E[θ | x] = ∫ θ e^{-θ} θ^x / x! g(dθ) / f(x)`, with `f` the marginal mass. -/
+`E[θ | x] = ∫ θ e^{-θ} θ^x / x! g(dθ) / f(x)`, with `f` the marginal mass. It is the posterior
+mean when both integrands are `g`-integrable and the normaliser is positive and finite,
+`0 < f(x) < ∞`, which covers every finite prior with `f(x) > 0`. Otherwise the Bochner integrals
+are totalised and the value is `0` (for example for `g = ∞ • δ₁`), not a posterior mean. -/
 noncomputable def poissonPosteriorMean (g : Measure ℝ≥0) (x : ℕ) : ℝ :=
   (∫ θ, (θ : ℝ) * (poissonMeasure θ).real {x} ∂g) / poissonMixtureMass g x
 
 /-- **Robbins' formula.** For every prior `g` on the Poisson rate and every count `x`, the posterior
 mean is `E[θ | x] = (x + 1) f(x + 1) / f(x)`, where `f` is the marginal mass (Efron, 2021
-manuscript, equation (1.7); Robbins 1956). The identity holds for any measure `g`, with no
-moment assumption: it rests on `θ e^{-θ} θ^x / x! = (x + 1) e^{-θ} θ^{x+1} / (x + 1)!`. -/
+manuscript, equation (1.7); Robbins 1956). As an identity between the totalised quantities
+above it holds for any measure `g`, with no moment assumption: it rests on
+`θ e^{-θ} θ^x / x! = (x + 1) e^{-θ} θ^{x+1} / (x + 1)!`. It is Robbins' formula for the posterior
+mean wherever `poissonPosteriorMean` is one (integrable integrands, positive finite marginal). -/
 theorem poissonPosteriorMean_eq (g : Measure ℝ≥0) (x : ℕ) :
     poissonPosteriorMean g x =
       (x + 1) * poissonMixtureMass g (x + 1) / poissonMixtureMass g x := by

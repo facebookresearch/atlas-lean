@@ -63,7 +63,9 @@ noncomputable def couplingLaw (N : ℕ) : Measure (Fin N → Fin N → ℝ) :=
   Measure.pi fun _ => Measure.pi fun _ => gaussianReal 0 1
 
 /-- **Free energy of the SK model** (Talagrand, *The Parisi formula*, Ann. of Math. 163 (2006),
-left-hand side of (1.14) before the limit). `F_N = (1 / N) E log ∑_σ exp(H_N(σ) + h ∑_i σ_i)`. -/
+left-hand side of (1.14) before the limit). `F_N = (1 / N) E log ∑_σ exp(H_N(σ) + h ∑_i σ_i)`,
+the free energy per spin for `N ≥ 1` spins. For `N = 0` the value is `0` (`1 / 0 = 0`), a
+convention, not a free energy per spin; only the limit `N → ∞` is used. -/
 noncomputable def freeEnergy (β h : ℝ) (N : ℕ) : ℝ :=
   (1 / N) * ∫ g, Real.log (∑ σ : Fin N → Bool,
     Real.exp (hamiltonian β N g σ + h * ∑ i, spin (σ i))) ∂couplingLaw N

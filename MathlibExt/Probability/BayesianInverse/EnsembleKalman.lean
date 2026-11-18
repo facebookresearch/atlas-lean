@@ -55,19 +55,22 @@ open scoped InnerProductSpace
 variable {X F : Type*} [AddCommGroup X] [Module ℝ X] [NormedAddCommGroup F]
   [InnerProductSpace ℝ F] {J : ℕ}
 
-/-- **Ensemble mean.** `(1/J) Σⱼ v⁽ʲ⁾` for an ensemble `v : Fin J → X`. -/
+/-- **Ensemble mean.** `(1/J) Σⱼ v⁽ʲ⁾` for an ensemble `v : Fin J → X` of `J ≥ 1` members. For
+an empty ensemble (`J = 0`) the value is `0` (`0⁻¹ = 0`), which is not a mean of any members. -/
 noncomputable def ensembleMean {V : Type*} [AddCommGroup V] [Module ℝ V] (v : Fin J → V) : V :=
   (J : ℝ)⁻¹ • ∑ j, v j
 
 /-- **EKI cross-covariance applied to a vector.**
 `C^{up}(u) d = (1/J) Σₖ ⟨G(u⁽ᵏ⁾) - Ḡ, d⟩ (u⁽ᵏ⁾ - ū)` (Schillings and Stuart, arXiv:1602.02020,
-equation (5); Iglesias, Law and Stuart, arXiv:1209.2736, equations (20) and (22)). -/
+equation (5); Iglesias, Law and Stuart, arXiv:1209.2736, equations (20) and (22)). For an empty
+ensemble (`J = 0`) it is `0`, not an empirical covariance. -/
 noncomputable def crossCov (G : X → F) (u : Fin J → X) (d : F) : X :=
   (J : ℝ)⁻¹ • ∑ k, ⟪G (u k) - ensembleMean (G ∘ u), d⟫_ℝ • (u k - ensembleMean u)
 
 /-- **EKI output covariance.** The linear map
 `C^{pp}(u) d = (1/J) Σₖ ⟨G(u⁽ᵏ⁾) - Ḡ, d⟩ (G(u⁽ᵏ⁾) - Ḡ)` (Schillings and Stuart,
-arXiv:1602.02020, equation (5); Iglesias, Law and Stuart, arXiv:1209.2736, equation (21)). -/
+arXiv:1602.02020, equation (5); Iglesias, Law and Stuart, arXiv:1209.2736, equation (21)). For an
+empty ensemble (`J = 0`) it is the zero map, not an empirical covariance. -/
 noncomputable def outputCov (G : X → F) (u : Fin J → X) : F →ₗ[ℝ] F where
   toFun d := (J : ℝ)⁻¹ • ∑ k, ⟪G (u k) - ensembleMean (G ∘ u), d⟫_ℝ •
     (G (u k) - ensembleMean (G ∘ u))
