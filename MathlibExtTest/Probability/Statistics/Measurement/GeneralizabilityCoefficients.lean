@@ -99,7 +99,7 @@ private theorem test_variance_ratio_values
         < Var[P 0; μ] / (Var[P 0; μ] + Var[delta_p grandMean X P I 0; μ]) := by
   have h := dependability_generalizability_eq_variance_ratio grandMean X P I e 4 2 6 0
     hX hI_mem he_mem hI_cov he_cov hIe_cov hP_var
-  rw [Fintype.card_fin] at h
+  simp only [Fintype.card_fin] at h
   rw [← h.1, ← h.2]
   exact ⟨test_dependability_value, test_generalizability_value, test_strict_value⟩
 
