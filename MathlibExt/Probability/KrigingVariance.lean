@@ -27,16 +27,19 @@ certificate; no stochastic existence claim is made.
 
 ## Main results
 
-- `kriging_variance_difference`: the difference identity.
-- `krigingErrorVariance_le`: optimality under positive
-  semidefinite `K`.
-- `kriging_weights_unique`: uniqueness under positive definite
-  `K`.
+- `MathlibExt.Probability.KrigingVariance.kriging_variance_difference`:
+  the difference identity.
+- `MathlibExt.Probability.KrigingVariance.krigingErrorVariance_le`:
+  optimality under positive semidefinite `K`.
+- `MathlibExt.Probability.KrigingVariance.kriging_weights_unique`:
+  uniqueness under positive definite `K`.
 -/
 
 @[expose] public section
 
 open Matrix
+
+namespace MathlibExt.Probability.KrigingVariance
 
 /-- Ordinary-kriging prediction-error variance expression for
 weights `u`, target variance `σ`, observation covariance matrix
@@ -118,3 +121,5 @@ theorem kriging_weights_unique {n : Type*} [Fintype n]
     rw [h0] at hpos
     exact lt_irrefl 0 hpos
   exact sub_eq_zero.mp hsub
+
+end MathlibExt.Probability.KrigingVariance

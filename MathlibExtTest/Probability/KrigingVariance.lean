@@ -26,6 +26,7 @@ These are elaboration and non-vacuity checks, not new results.
 -/
 
 open Matrix
+open MathlibExt.Probability.KrigingVariance
 
 /-- The two-by-two identity matrix is positive definite. -/
 private lemma posDef_one_fin_two :
