@@ -18,8 +18,24 @@ namespace MathlibExtTest.Biology.Biophysics.CompartmentKinetics.TwoCompartment.M
 
 open MathlibExt.Biology.Biophysics.CompartmentKinetics.TwoCompartment.Model
 
-/-- Central component at rates `1, 2, 3`. -/
-example : (pk2Generator 1 2 3 *ᵥ ![4, 5]) 0 = -(1 + 2) * 4 + 3 * 5 :=
-  pk2_central_component 1 2 3 4 5
+/-- Central component at rates `1, 2, 3`, evaluated directly. -/
+example : (pk2Generator 1 2 3 *ᵥ ![4, 5]) 0 = 3 := by
+  simp [pk2Generator, Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+  norm_num
+
+/-- Peripheral component at rates `1, 2, 3`, evaluated directly. -/
+example : (pk2Generator 1 2 3 *ᵥ ![4, 5]) 1 = -7 := by
+  simp [pk2Generator, Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+  norm_num
+
+/-- Zero-exchange central output, evaluated directly. -/
+example : (pk2Generator 2 0 3 *ᵥ ![4, 0]) 0 = -8 := by
+  simp [pk2Generator, Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+  norm_num
+
+/-- Augmented columns sum to zero at concrete rates. -/
+example : ∑ i, pk2AugmentedGenerator 1 2 3 i 0 = 0 ∧
+    ∑ i, pk2AugmentedGenerator 1 2 3 i 1 = 0 :=
+  ⟨pk2_augmented_budget 1 2 3 0, pk2_augmented_budget 1 2 3 1⟩
 
 end MathlibExtTest.Biology.Biophysics.CompartmentKinetics.TwoCompartment.Model

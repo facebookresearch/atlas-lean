@@ -47,12 +47,17 @@ theorem pk2_peripheral_component (k10 k12 k21 A1 A2 : ℝ) :
   simp [pk2Generator, Matrix.mulVec, dotProduct, Fin.sum_univ_two]
   ring
 
-/-- **Augmented column budget.** Adjoining the eliminated sink
-gives a conservation law: the three row rates out of the
-central state sum with the sink entry to zero net creation. -/
-theorem pk2_augmented_budget (k10 k12 k21 : ℝ) :
-    (-(k10 + k12)) + k12 + k10 = 0 ∧ k21 + (-k21) = 0 := by
-  constructor <;> ring
+/-- The augmented three-state generator with the eliminated
+sink as a third row. -/
+def pk2AugmentedGenerator (k10 k12 k21 : ℝ) : Matrix (Fin 3) (Fin 2) ℝ :=
+  ![![-(k10 + k12), k21], ![k12, -k21], ![k10, 0]]
+
+/-- **Augmented column budget.** Every column of the augmented
+generator sums to zero: adjoining the sink makes the amount
+dynamics conservative. -/
+theorem pk2_augmented_budget (k10 k12 k21 : ℝ) (j : Fin 2) :
+    ∑ i, pk2AugmentedGenerator k10 k12 k21 i j = 0 := by
+  fin_cases j <;> simp [pk2AugmentedGenerator, Fin.sum_univ_three] <;> ring
 
 /-- **Zero-exchange reduction.** With `k12 = 0` and no
 peripheral amount, the central equation is pure elimination. -/
