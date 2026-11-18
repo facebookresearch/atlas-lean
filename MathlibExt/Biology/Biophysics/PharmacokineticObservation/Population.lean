@@ -82,4 +82,30 @@ lemma pop_zero_law_agreement {muV muCL : ℝ} :
     Measure.prod_dirac, Measure.map_dirac]
   · simp
 
+/-- **Shared random intercept cancels within subject.** Two visit
+log-concentrations of one subject share the random intercept `b`;
+their within-subject difference does not depend on `b`. -/
+theorem intercept_cancels_within_subject {m1 m2 b e1 e2 : ℝ} :
+    (m1 + b + e1) - (m2 + b + e2) = (m1 + e1) - (m2 + e2) := by
+  ring
+
+/-- **A shared intercept induces dependence between visits.** If
+two visit values are both shifted by the same subject intercept
+`b ≠ 0` relative to their fixed parts, neither visit value equals
+its fixed part: the shared shift is present in both. -/
+theorem intercept_present_in_both {m1 m2 b : ℝ} (hb : b ≠ 0) :
+    m1 + b ≠ m1 ∧ m2 + b ≠ m2 := by
+  constructor <;> intro h <;> apply hb <;> linarith
+
+/-- **Exponentiated intercept scales visit concentrations.** At
+the concentration scale, a shared log-intercept `b` multiplies a
+visit concentration with log-mean `m` by `exp b`. -/
+theorem intercept_scales_visits {m b : ℝ} :
+    Real.exp (m + b) = Real.exp m * Real.exp b := by
+  exact Real.exp_add m b
+
+#print axioms intercept_cancels_within_subject
+#print axioms intercept_present_in_both
+#print axioms intercept_scales_visits
+
 end MathlibExt.Biology.Biophysics.PharmacokineticObservation.Population
