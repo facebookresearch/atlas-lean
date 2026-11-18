@@ -51,9 +51,7 @@ example {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasur
     (fun _ => c) =ᵐ[μ] fun _ => ∫ ω', Y ω' ∂μ := by
   have h := ae_eq_condExp_of_integral_sq_sub_le (m := ⊥) bot_le hY (memLp_const c)
     stronglyMeasurable_const (by simpa [condExp_bot] using hle)
-  filter_upwards [h, condExp_bot (μ := μ) (f := Y)] with ω hω hce
-  rw [hce] at hω
-  exact hω
+  simpa [condExp_bot] using h
 
 #print axioms integral_sq_sub_condExp_eq_iff
 #print axioms ae_eq_condExp_of_integral_sq_sub_le
