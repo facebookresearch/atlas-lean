@@ -84,8 +84,15 @@ class BlueprintTaxonomyTests(unittest.TestCase):
         # Scope commands in comments and strings are text.
         text = 'module\n/- public section -/\ntheorem a : True := trivial\ndef s : String := "\npublic section"\ndef t : Nat := 0'
         self.assertEqual(private(text), ["theorem a : True := trivial", 'def s : String := "', "def t : Nat := 0"])
-        # An `end` with nothing to close: fail open, nothing is private.
+        # A dotted name opens and closes one scope per component, as in Lean.
+        text = ("module\npublic section\nnamespace Outer.Inner\ndef first : Nat := 1\nend Inner\ndef second : Nat := 2\n"
+                "end Outer\ndef third : Nat := 3\nend\ndef fourth : Nat := 4\nnamespace A.B\npublic section C.D\n"
+                "def fifth : Nat := 5\nend C.D\ndef sixth : Nat := 6\nend A.B")
+        self.assertEqual(private(text), ["def fourth : Nat := 4", "def sixth : Nat := 6"])
+        # An `end` with nothing to close, or a quoted scope name: fail open, nothing is private.
         self.assertEqual(private("module\ntheorem a : True := trivial\nend\ntheorem b : True := trivial"), [])
+        self.assertEqual(private("module\ntheorem a : True := trivial\nnamespace A.B\nend A.B.C\ntheorem b : True := trivial"), [])
+        self.assertEqual(private("module\nnamespace «A.B»\ntheorem a : True := trivial\nend «A.B»"), [])
 
     def test_field_and_subfield_slugs_are_unique(self):
         # A repeated slug would be silently ignored: the generator places topics on its first occurrence.

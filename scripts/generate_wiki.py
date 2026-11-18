@@ -471,7 +471,8 @@ def first_words(text: str, limit: int = 60) -> str:
 
 _MODULE_HEADER = re.compile(r"^\s*module\s*$")
 _SCOPE = re.compile(
-    r"^\s*(?:@\[[^\]]*\]\s*)*(?P<mods>(?:(?:public|private|noncomputable|meta)\s+)*)(?P<kind>section|namespace|mutual|end)\b")
+    r"^\s*(?:@\[[^\]]*\]\s*)*(?P<mods>(?:(?:public|private|noncomputable|meta)\s+)*)(?P<kind>section|namespace|mutual|end)\b"
+    r"[ \t]*(?P<name>[^\s]*)")
 
 
 def module_private_lines(lines: list[str]) -> frozenset[int]:
@@ -479,8 +480,12 @@ def module_private_lines(lines: list[str]) -> frozenset[int]:
     `module`, outside every `public section` (a nested `section`, `namespace` or `mutual` keeps the visibility
     around it). A declaration written `public` or `private` says so itself.
 
-    It fails open: in a file that is no module, or whose scopes do not balance (an `end` with nothing to close),
-    no line is private, so a misread keeps a declaration rather than losing it.
+    As in Lean, a dotted name opens or closes one scope per component: `namespace A.B` opens two, which
+    `end B` and `end A`, or `end A.B`, close.
+
+    It fails open: in a file that is no module, whose scopes do not balance (an `end` with nothing to close), or
+    that names a scope with a quoted name, no line is private, so a misread keeps a declaration rather than
+    losing it.
     """
     code = code_lines(lines)
     first = next((line for line in code if line.strip()), "")
@@ -491,13 +496,18 @@ def module_private_lines(lines: list[str]) -> frozenset[int]:
     for number, line in enumerate(code):
         scope = _SCOPE.match(line)
         if scope:
+            name = scope.group("name")
+            if "«" in name or "»" in name:
+                return frozenset()
+            count = len(name.split(".")) if name and scope.group("kind") != "mutual" else 1
             if scope.group("kind") == "end":
-                if not scopes:
+                if len(scopes) < count:
                     return frozenset()
-                scopes.pop()
+                del scopes[len(scopes) - count:]
             else:
                 inherited = scopes[-1] if scopes else False
-                scopes.append(inherited or (scope.group("kind") == "section" and "public" in scope.group("mods").split()))
+                public = inherited or (scope.group("kind") == "section" and "public" in scope.group("mods").split())
+                scopes.extend([public] * count)
             continue
         if not (scopes and scopes[-1]):
             private.add(number)
