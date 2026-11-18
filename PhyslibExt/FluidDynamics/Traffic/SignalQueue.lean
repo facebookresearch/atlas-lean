@@ -60,7 +60,7 @@ namespace FluidDynamics.Traffic.SignalQueue
 cycle `C = R + G` are theorem data, not parameters of this
 function). Queue grows at rate `lam` during red and drains at rate
 `mu - lam`
-during green until it clears. -/
+during green (for admissible , ) until it clears. -/
 noncomputable def queueLen (lam mu R : ℝ) (t : ℝ) : ℝ :=
   if t ≤ R then lam * t
   else max 0 (lam * R - (mu - lam) * (t - R))
