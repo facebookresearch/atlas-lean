@@ -4,6 +4,9 @@ The explorer is a view of the maintained v2 libraries: `MathlibExt`,
 `CSLibExt`, `PhyslibExt`, and `WantedExt`. The archived `v1/` package and the
 standalone `Atlas/` developments are outside its scope.
 
+What a PR may change in the graph, and how to expand a node, is in
+[Graph rules](#graph-rules).
+
 ## Source ownership
 
 - `blueprint/roadmap/`: committed mathematical articles and reading order.
@@ -26,6 +29,111 @@ migration ledger and is excluded from the published book.
 The article corpus preserves the wiki's edited prose. It is not an
 assertion that every article matches the latest Lean statement. Declaration
 and docstring changes should be reviewed with the sync report below.
+
+## Graph rules
+
+These are the rules for any PR that changes the graph: `blueprint/roadmap/`,
+`blueprint/links/`, `blueprint/atlas.json`, `blueprint/coverage/`,
+`scripts/taxonomy.json` or `scripts/wiki-sync.json`. Each rule gives its
+reason. AutoformBot's [blueprint format](https://github.com/facebookresearch/autoform-bot/blob/6126f7fce521c0040796d0b67d952d36ee051f3f/autoform_cli/reference/blueprint-format.md),
+at the commit in `.github/autoform-ref`, defines pages, links and status; these
+rules add only what ATLAS needs on top of it. Where ATLAS needs something the
+format lacks, open an AutoformBot issue rather than diverge. Reviewers apply
+the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
+
+### Hierarchy
+
+1. **A page sits where `scripts/taxonomy.json` places its module or field:**
+   region, subject, field, subfield, then module folders. A subject with
+   fields holds only field folders; `not-yet-classified/` holds modules the
+   taxonomy has not placed yet. *Reason:* the explorer and the coverage
+   counts are built from the taxonomy, so a page elsewhere is invisible to
+   both.
+2. **Every page and subfolder is listed on its folder page** (`README.md`).
+   *Reason:* the site's navigation and Autoform's containment come from those
+   lists, so an unlisted page has no parent.
+3. **Child limits follow the generator and Autoform's audit:**
+   `scripts/generate_wiki.py` splits a topic listing into parts above 20
+   entries, a `navigation: module` page may hold 120 articles, and `autoform
+   audit` reports any other article with more than 24 direct children
+   (`overfull-container`). *Reason:* past those sizes a folder page and its
+   local graph stop being readable.
+4. **Moving a module or folder is a taxonomy change, made in the same PR,**
+   with `autoform move` to rewrite the links. *Reason:* a move made only in the
+   vault is undone by the next declarations sync.
+
+### Data and metadata
+
+5. **Each page has one annotation, in `blueprint/links/<Subject>.jsonl`**
+   (`roadmap.jsonl` for the root page), and an annotation names at most one
+   Lean declaration. `article_id`s are unique. *Reason:* Autoform reads an
+   article's facts from its annotation, and two annotations for one page, or
+   one page for two declarations, make its status ambiguous.
+6. **Pages for documented declarations come from `sync_wiki.py
+   declarations`,** then may be edited. Don't hand-write a second page for a
+   declaration. *Reason:* the sync tracks docstring changes per declaration;
+   a hand-written duplicate splits the node in two (`autoform audit`'s
+   `duplicate-lean-target`).
+7. **A page states what its declaration states,** with every hypothesis and
+   convention that changes the meaning (`x / 0 = 0`, truncated subtraction, a
+   `[NeZero q]` argument, a list's default entry). A fix to a statement also
+   goes into the Lean docstring on `main`. *Reason:* readers trust the page,
+   not the Lean, and the sync reports docstring drift only one way.
+8. **Build outputs are never committed:** `lean-facts` output, `site-src/`,
+   `site/`, the dependency dump. `scripts/wiki-sync.json` and
+   `blueprint/atlas.json` change only as [Maintaining articles](#maintaining-articles)
+   describes. *Reason:* they are rebuilt from the Lean on every run.
+
+### Edges
+
+9. **A page tied to a Lean declaration never commits `## Depends on` or
+   `## Proof depends on`;** `sync_wiki.py lean-facts` writes them from the
+   compiled Lean at build time. *Reason:* Lean is the source of truth for
+   those edges, and lean-facts rewrites the sections anyway.
+10. **A page with no Lean declaration (a planned page) may write its own
+    `## Depends on` and `## Proof depends on`.** They count toward its
+    readiness, as Autoform's format says. *Reason:* nothing else records a
+    planned node's prerequisites.
+11. **Any other edge goes in `## Informally uses`:** an argument the source
+    cites but the Lean need not use. It links an existing page, never the page
+    itself, and closes no cycle. It never counts toward readiness. *Reason:*
+    it records the mathematics without changing what is ready.
+
+### Nodes without Lean
+
+12. **A node still to be broken down (DAG work) is a planned page whose
+    annotation carries** `"extensions": {"org.atlas-wiki": {"unexpanded": true}}`.
+    It is an article, not a folder page, and names no declaration. Its page
+    says what the node covers, which sources it follows, and what a good
+    expansion contains. *Reason:* Autoform lists leaves to formalize, not
+    nodes to split, so the split needs its own marker; it lives in the
+    annotation because Autoform's loader refuses frontmatter keys it doesn't
+    know.
+13. **Expanding a node** removes the marker and adds children under the same
+    folder. A low-level child is a `theorem_wanted` or `def_wanted` statement in
+    `WantedExt` with a docstring, whose page then comes from the sync (rule 6).
+    A child that is still high-level is a new marked node. Order among the new
+    planned pages goes in their own `## Depends on` (rule 10). *Reason:* a
+    leaf becomes a formalization task only once it names a declaration, and a
+    wanted statement is that declaration.
+
+### Tasks and review
+
+14. **Formalization tasks are the articles Autoform finds ready:** ready to
+    state (a `def_wanted`, or a definition in a module with `sorry`) or ready to
+    prove (a `theorem_wanted`, or a theorem in a module with `sorry`), with
+    every prerequisite finished. Proved and Mathlib-backed articles are never
+    tasks. *Reason:* one readiness rule, Autoform's, for the site, `autoform
+    work list` and the task list.
+15. **A graph PR keeps under 3,000 changed files, names the issue it
+    closes, and an expansion changes no Lean outside `WantedExt`.** *Reason:*
+    GitHub shows at most 3,000 files in one diff, and a reviewer judging an
+    expansion should not also have to review proofs.
+16. **Every graph PR needs an approval from a code owner**
+    (`.github/CODEOWNERS`) as well as Codex's review. An expansion is judged
+    for mathematical coverage and granularity, not only form. *Reason:* agents
+    can produce graph changes faster than people can check them, and a poor
+    expansion spreads into every task below it.
 
 ## Local environment and tests
 

@@ -84,6 +84,26 @@ rubric, request secrets, or dictate a verdict.
 - Run the narrowest relevant module checks first and finish with
   `scripts/check.sh` when feasible.
 
+## Wiki and graph PRs
+
+A graph PR changes the ATLAS wiki: `blueprint/roadmap/`, `blueprint/links/`,
+`blueprint/atlas.json`, `blueprint/coverage/`, `scripts/taxonomy.json`, or
+`scripts/wiki-sync.json`. Review it against the
+[graph rules](docs/BLUEPRINT.md#graph-rules); each rule there gives its
+reason. Beyond the mechanical rules, check what only a reader can:
+
+- **Faithful statements (rule 7).** Compare each changed page with its Lean
+  declaration clause by clause. A page that adds, drops or strengthens a
+  hypothesis is a mathematical finding.
+- **Expansions (rules 12–13).** Judge whether the children cover the node's
+  mathematics at a sensible granularity, whether each wanted statement is
+  faithful to its source, and whether the order among new planned pages is
+  right.
+- **Duplicates (rule 6).** Search the vault and pinned Mathlib for an existing
+  page or declaration before accepting a new one.
+
+Every graph PR also needs a code owner's approval (`.github/CODEOWNERS`).
+
 ## Findings and verdict
 
 List findings first, ordered by severity. Each finding must identify a file and
