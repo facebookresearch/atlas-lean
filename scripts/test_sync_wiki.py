@@ -957,7 +957,7 @@ class Declarations(Vault):
                 self.assertEqual((report["appended"], report["unlisted"]), (["Algebra/groups/sylow.md"], []))
 
     def test_a_page_listed_nowhere_fails_the_run(self) -> None:
-        report = {kind: [] for kind in ("added", "folders", "gone", "changed", "unindexed", "parts", "appended")}
+        report = {kind: [] for kind in ("added", "folders", "gone", "changed", "unindexed", "parts", "replaced", "appended")}
         report["unlisted"] = ["Algebra/groups/sylow.md"]
         lean = SimpleNamespace(index_project=lambda *args, **kwargs: SimpleNamespace(declarations={}))
         with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean), "autoform_cli.lean": lean}), \
@@ -1027,13 +1027,16 @@ class Declarations(Vault):
                 self.assertEqual(report["parts"], ["Algebra/groups/part-01"])
 
     def test_an_encoded_link_makes_a_page_not_simple(self) -> None:
-        # "%2e%2e/" and "&period;&period;&sol;" read as "../", so either could lead anywhere: the new page goes at the end.
-        for name, page in (("percent", "%2e%2e/rings/README.md"), ("entity", "&period;&period;&sol;rings/README.md")):
-            with self.subTest(name):
-                text = f"# Groups\n\n- [Old](old.md)\n\n## Related topics\n\n- [Rings]({page}): rings.\n"
-                report = self.add_sylow(text)
-                self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(), f"{text}\n- [Sylow](sylow.md)\n")
-                self.assertEqual(report["appended"], ["Algebra/groups/sylow.md"])
+        # "%2e%2e/" reads as "../", so it could lead anywhere: the new page goes at the end. "&period;&period;&sol;" is
+        # that too, but the site already shows a page with a character reference as typed, so the page is left alone.
+        text = "# Groups\n\n- [Old](old.md)\n\n## Related topics\n\n- [Rings](%2e%2e/rings/README.md): rings.\n"
+        report = self.add_sylow(text)
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(), f"{text}\n- [Sylow](sylow.md)\n")
+        self.assertEqual((report["appended"], report["unlisted"]), (["Algebra/groups/sylow.md"], []))
+        text = text.replace("%2e%2e/", "&period;&period;&sol;")
+        report = self.add_sylow(text)
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(), text)
+        self.assertEqual((report["appended"], report["unlisted"]), ([], ["Algebra/groups/sylow.md"]))
 
     def test_a_closing_section_holds_none_of_the_own_list(self) -> None:
         # A page whose only list of its folder's pages is under "Sources", or a section within "Related topics", has no
@@ -1047,9 +1050,13 @@ class Declarations(Vault):
                 self.assertEqual((report["appended"], report["unlisted"]), ([], []))
 
     def test_a_new_section_keeps_its_modules_code(self) -> None:
-        # page_title drops a title's backticks, which would leave "<textarea>" as raw HTML: the heading keeps them.
+        # page_title drops a title's backticks, which would leave "<textarea>" as raw HTML: the heading keeps them. A
+        # "<" or "&" outside code is written as it is, as generate_wiki writes it; a title Autoform's check would have
+        # the site show as typed, taking the page's links with it, gives way to the module's name.
         text = "# Bakery\n\n## The algorithm\n\n- [State](state.md)\n\n## Mutual exclusion\n\n- [Invariant](invariant.md)\n"
-        for title, heading in (("The `<textarea>` example", "The `<textarea>` example"), ("Bounds for n <m & k", "Bounds for n &lt;m &amp; k")):
+        for title, heading in (("The `<textarea>` example", "The `<textarea>` example"),
+                               ("Bounds for 1 < |x| < 3", "Bounds for 1 < |x| < 3"), ("Sheaves & sites", "Sheaves & sites"),
+                               ("Ratio &lt; one", "Two Process"), ("Orders<sup>2</sup>", "Two Process")):
             with self.subTest(title):
                 self.page("Algebra/bakery/README.md", text)
                 self.annotate([])
@@ -1100,6 +1107,101 @@ class Declarations(Vault):
         self.assertEqual((groups / "README.md").read_bytes(), (text + "\n- [Sylow](sylow.md)\n").encode())
         self.assertEqual(report["appended"], ["Algebra/groups/sylow.md"])
 
+    def test_a_page_the_site_shows_as_typed_is_left_as_it_is(self) -> None:
+        # autoform render publishes a page that Autoform's check flags as typed, in one block with no link or heading:
+        # a new page listed there would be listed nowhere, so the page is left as it is and the new page reported.
+        for name, text in (("raw HTML in a heading", "# Groups\n\n- [Old](old.md)\n\n## Orders<sup>2</sup>\n\n- [Late](late.md)\n"),
+                           ("character reference", "# Groups\n\nGroups &mdash; and their actions.\n\n- [Old](old.md)\n"),
+                           ("attribute list", "# Groups\n\nGroups and their actions.\n{: .lead}\n\n- [Old](old.md)\n"),
+                           ("unsafe scheme", "# Groups\n\n- [Old](old.md)\n\n## Related topics\n\n- [Book](urn:isbn:0)\n"),
+                           ("open comment", "# Groups\n\n- [Old](old.md)\n\n<!-- todo\n")):
+            with self.subTest(name):
+                report = self.add_sylow(text)
+                self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(), text)
+                self.assertEqual((report["appended"], report["unlisted"]), ([], ["Algebra/groups/sylow.md"]))
+        # A part's entry with a character reference would take its folder page off the site the same way.
+        text = "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [B](part-01/b.md)\n"
+        self.page("Algebra/groups/README.md", text)
+        self.page("Algebra/groups/part-01/README.md", "# Part 1 of 1\n\n- [A &amp; B](a.md)\n- [B](b.md)\n")
+        report = sync.apply_declarations([], SimpleNamespace(declarations={}))
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(), text)
+        self.assertEqual(report["parts"], ["Algebra/groups/part-01"])
+
+    def test_a_style_that_hides_the_new_link_is_caught(self) -> None:
+        # The tree a browser builds still holds a link a style hides; Autoform's check rejects the style, so the page is
+        # left as it is and the new page reported as listed nowhere.
+        for rule in ("display:none", "opacity: 0"):
+            with self.subTest(rule):
+                text = f'# Groups\n\n- [Old](old.md)\n\n## Notes <style>a[href="sylow.md"] {{ {rule} }}</style>\n'
+                self.assertTrue(sync.simple_page(text, code=True))
+                report = self.add_sylow(text)
+                self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(), text)
+                self.assertEqual((report["appended"], report["unlisted"]), ([], ["Algebra/groups/sylow.md"]))
+
+    def test_a_new_section_follows_the_sections_within_the_last_one(self) -> None:
+        # The last section's own sections are part of it: the new section goes after them, so that none of them falls
+        # under it.
+        text = ("# Bakery\n\n## The algorithm\n\n- [State](state.md)\n\n## Mutual exclusion\n\n- [Invariant](invariant.md)\n\n"
+                "### Further reading\n\nThe original paper.\n\n## Related topics\n\n- [Locks](../locks/README.md)\n")
+        self.page("Algebra/bakery/README.md", text)
+        self.annotate([])
+        turn = declaration("Ext.turn", "turn", "Turn", "Turn.", module=("Ext", "TwoProcess"))
+        turn.path, turn.module_title = wiki.ROADMAP / "Algebra" / "bakery" / "turn.md", "Two-process bakery"
+        report = sync.apply_declarations([turn], SimpleNamespace(declarations={"Ext.turn": None}))
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "bakery" / "README.md").read_text(), text.replace(
+            "## Related topics", "## Two-process bakery\n\n- [Turn](turn.md)\n\n## Related topics"))
+        self.assertEqual((report["appended"], report["unlisted"]), ([], []))
+
+    def test_a_new_sections_heading_takes_no_other_headings_id(self) -> None:
+        # A new "Examples" ahead of the page's own would take its id, "examples", and move the links to it: the
+        # section takes its module's name instead.
+        text = ("# Bakery\n\n## The algorithm\n\n- [State](state.md)\n\n## Mutual exclusion\n\n- [Invariant](invariant.md)\n\n"
+                "## Examples\n\nSee the exercises.\n")
+        self.page("Algebra/bakery/README.md", text)
+        self.annotate([])
+        turn = declaration("Ext.turn", "turn", "Turn", "Turn.", module=("Ext", "TwoProcess"))
+        turn.path, turn.module_title = wiki.ROADMAP / "Algebra" / "bakery" / "turn.md", "Examples"
+        report = sync.apply_declarations([turn], SimpleNamespace(declarations={"Ext.turn": None}))
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "bakery" / "README.md").read_text(), text.replace(
+            "## Examples", "## Two Process\n\n- [Turn](turn.md)\n\n## Examples"))
+        self.assertEqual((report["appended"], report["unlisted"]), ([], []))
+
+    def test_a_line_break_only_autoform_reads_makes_a_page_not_simple(self) -> None:
+        # Autoform splits lines wherever str.splitlines does, at a form feed or U+2028 too: such a page takes the new
+        # page at its end.
+        for name, character in (("form feed", "\f"), ("line separator", "\u2028"), ("next line", "\x85")):
+            with self.subTest(name):
+                text = f"# Groups\n\nProse.{character}More prose.\n\n- [Old](old.md)\n"
+                self.assertFalse(sync.simple_page(text, code=True))
+                report = self.add_sylow(text)
+                self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(), f"{text}\n- [Sylow](sylow.md)\n")
+                self.assertEqual((report["appended"], report["unlisted"]), (["Algebra/groups/sylow.md"], []))
+
+    def test_nothing_is_written_when_the_edit_check_cannot_be_built(self) -> None:
+        # A site configuration the check cannot read stops the run before any page is written, so none is orphaned.
+        site = self.tmp / "mkdocs.yml"
+        site.write_text("markdown_extensions:\n  - toc:\n      title: !ENV TITLE\n")
+        sync.renderer.cache_clear()
+        self.addCleanup(sync.renderer.cache_clear)
+        self.page("Algebra/groups/README.md", "# Groups\n\n- [Old](old.md)\n")
+        self.annotate([])
+        sylow = declaration("Ext.sylow", "sylow", "Sylow", "Sylow.", module=("Ext", "Sylow"))
+        sylow.path = wiki.ROADMAP / "Algebra" / "groups" / "sylow.md"
+        with patch.object(sync, "SITE", site), self.assertRaises(Exception):
+            sync.apply_declarations([sylow], SimpleNamespace(declarations={"Ext.sylow": None}))
+        self.assertFalse(sylow.path.exists())
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(), "# Groups\n\n- [Old](old.md)\n")
+
+    def test_a_part_refresh_reports_a_line_it_replaces(self) -> None:
+        # A note added on the folder page's copy only is not the part's entry: the refresh replaces it and says so.
+        text = "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md) (start here)\n"
+        self.page("Algebra/groups/README.md", text)
+        self.page("Algebra/groups/part-01/README.md", "# Part 1 of 1\n\n- [A](a.md)\n- [B](b.md)\n")
+        report = sync.apply_declarations([], SimpleNamespace(declarations={}))
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
+                         "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md)\n- [B](part-01/b.md)\n")
+        self.assertEqual(report["replaced"], ["Algebra/groups/part-01: - [A](part-01/a.md) (start here)"])
+
     def test_verify_edit_reads_the_page_as_the_site_renders_it(self) -> None:
         page = "# T\n\n- [A](a.md)\n\n## Related topics\n\n- [R](../r/README.md)\n"
         good = "# T\n\n- [A](a.md)\n- [B](b.md)\n\n## Related topics\n\n- [R](../r/README.md)\n"
@@ -1110,6 +1212,15 @@ class Declarations(Vault):
                                           [("- [B](b.md)", "b.md", (0, "# T"))]))
         self.assertFalse(sync.verify_edit(page, good.replace("- [R](../r/README.md)\n", ""), [("- [B](b.md)", "b.md", (0, "# T"))]))
         self.assertFalse(sync.verify_edit(page, page + "\n```\n- [B](b.md)\n```\n", [("- [B](b.md)", "b.md", None)]))
+        # A heading added ahead of another's own sections takes them in; one whose id another heading had moves it.
+        nested = "# T\n\n## A\n\n- [A](a.md)\n\n### Notes\n\nText.\n"
+        self.assertFalse(sync.verify_edit(nested, nested.replace("### Notes", "## New\n\n- [B](b.md)\n\n### Notes"),
+                                          [("- [B](b.md)", "b.md", (2, "## New"))], added=(2, "## New")))
+        self.assertTrue(sync.verify_edit(nested, nested + "\n## New\n\n- [B](b.md)\n",
+                                         [("- [B](b.md)", "b.md", (3, "## New"))], added=(3, "## New")))
+        examples = "# T\n\n## A\n\n- [A](a.md)\n\n## Examples\n\nText.\n"
+        self.assertFalse(sync.verify_edit(examples, examples.replace("## Examples", "## Examples\n\n- [B](b.md)\n\n## Examples"),
+                                          [("- [B](b.md)", "b.md", (2, "## Examples"))], added=(2, "## Examples")))
 
     def test_a_new_section_follows_all_that_the_last_one_holds(self) -> None:
         # The prose after the last item stays in the section it closes.

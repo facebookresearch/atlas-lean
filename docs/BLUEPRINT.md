@@ -110,10 +110,13 @@ text. On any other page, a new page's item goes at the end, after a blank line,
 and is reported for an editor to place; a page with raw HTML or a code fence is
 left as it is and the new page reported as an error. A part list
 on a page that is not simple is left as it is and reported too. Every edit is
-rendered with the site's Markdown extensions, read from `mkdocs.yml`, and read
-as a browser builds the page, before it is written; one that would lose a link,
-move a heading, or not show the new link where it belongs is left out and
-reported the same way.
+checked before it is written: Autoform's check of what the site may publish
+must pass on the page, as `autoform render` would otherwise show it as typed,
+with no link, and the text it publishes is rendered with the site's Markdown
+extensions, read from `mkdocs.yml`, and read as a browser builds the page. An
+edit that would lose a link, move a heading or its id, or not show the new link
+where it belongs is left out and reported the same way, as is a line of a part
+list that the refresh replaces with the part's own entry when the two differ.
 
 `scripts/wiki-sync.json` is the
 reviewed docstring-digest baseline. Removed declarations' articles are kept

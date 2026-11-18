@@ -31,10 +31,12 @@ reported for an editor to place; if the page has raw HTML or a code fence, it is
 left out and reported as an error. A folder the wiki has keeps its layout and each
 topic its folder (see kept_layout), and a folder page split into parts lists what
 its parts list when both pages are simple; any other part list is reported. Each
-edit is rendered as the site renders it, and read as a browser builds it, before
-it is written (see verify_edit): one that would lose a link, move a heading, or
-show its new link elsewhere or not at all is left out and reported too, and a page
-keeps its line ends and bytes.
+edit is checked before it is written (see verify_edit): Autoform's check of what
+the site may publish must pass on the page, as render would otherwise show it as
+typed, with no link, and the text it publishes is rendered with the site's
+Markdown extensions and read as a browser builds it. An edit that would lose a
+link, move a heading or its id, or show its new link elsewhere or not at all is
+left out and reported too, and a page keeps its line ends and bytes.
 
 import runs once, on a tree whose Lean still holds the wiki's English. TITLES.jsonl
 holds checked titles, one {"file", "name", "opening", "title"} per line: a
@@ -531,15 +533,16 @@ def own_list(lines: list[str]) -> dict[int, int]:
     return own
 
 
-def add_to_listing(readme: Path, line: str, before: list[str] = (), after: list[str] = (), section: str = "") -> str:
+def add_to_listing(readme: Path, line: str, before: list[str] = (), after: list[str] = (), section: list[str] = ()) -> str:
     """Add a link line to a folder page. On a simple page (see simple_page): after the item linking the last of *before*
     that its own list (see own_list) holds, else ahead of the item linking the first of *after* that it holds, else at
-    the end of the own list, where, if that list runs over sections, it starts a section of its own, *section*, after
-    all that the last one holds. A page with no own list takes it ahead of its first section, such as "Related topics",
-    or at its end. Any other page is never edited within: the line goes at its end, after a blank line, and "appended"
-    is returned, so that an editor places it. If the page could hold raw HTML or a code fence (see uncertain), or the
-    edit does not render as meant (see verify_edit), the page is left as it is and "unlisted" is returned. "" otherwise.
-    The page keeps its line ends and every byte it had."""
+    the end of the own list, where, if that list runs over sections, it starts a section of its own after all that the
+    last one holds, its sections within it included, under the first of the titles in *section* whose heading the edit
+    check passes on (see verify_edit), as one whose id another heading has does not. A page with no own list takes it
+    ahead of its first section, such as "Related topics", or at its end. Any other page is never edited within: the
+    line goes at its end, after a blank line, and "appended" is returned, so that an editor places it. If the page
+    could hold raw HTML or a code fence (see uncertain), or the edit fails the check, the page is left as it is and
+    "unlisted" is returned. "" otherwise. The page keeps its line ends and every byte it had."""
     text, newline = read_page(readme)
     body = text.rstrip("\n")
     href = re.search(r"\]\(([^()\s]+)\)$", line).group(1)
@@ -559,40 +562,40 @@ def add_to_listing(readme: Path, line: str, before: list[str] = (), after: list[
     at = next((items[link] + 1 for link in reversed(before) if link in items), None)
     if at is None:
         at = next((items[link] for link in after if link in items), None)
-    new, sectioned = [line], False
+    new, marker = [line], ""
     if at is None:
-        sectioned = bool(section) and len(set(own.values())) > 1
-        at = last + 1 if own and not sectioned else end
-        if sectioned:
-            new = [f"{re.match(' *(#+)', lines[own[last]]).group(1)} {section}", "", line]
+        if section and len(set(own.values())) > 1:
+            marker = re.match(" *(#+)", lines[own[last]]).group(1)
+            end = next((i for i in range(last + 1, len(lines))
+                        if HEADING.match(lines[i]) and len(re.match(" *(#+)", lines[i]).group(1)) <= len(marker)), len(lines))
+            new = [marker, "", line]
+        at = last + 1 if own and not marker else end
         if at == end:
             # After all that the last section holds, apart from it unless the line joins the list it ends with.
             while at and not lines[at - 1].strip():
                 at -= 1
-            joins = own and not sectioned and LIST_ITEM.match(lines[at - 1])
+            joins = own and not marker and LIST_ITEM.match(lines[at - 1])
             new = [""] * bool(at and not joins) + new + [""] * bool(at < len(lines) and lines[at].strip())
-    lines[at:at] = new
-    edited = "\n".join(lines) + text[len(body):]
-    headings = [number for number, row in enumerate(lines) if re.match(r"#{1,6}(?: |$)", row)]
-    index = at + new.index(line)
-    above = [number for number in headings if number < index]
-    under = (len(above) - 1, lines[above[-1]] if above else "")
-    added = (len(above) - 1, lines[above[-1]]) if sectioned else None
-    if not verify_edit(text, edited, [(line, href, under)], added=added):
-        return "unlisted"
-    write_page(readme, edited, newline)
-    return ""
+    for title in section if marker else [""]:
+        rows = [f"{marker} {title}" if marker and row == marker else row for row in new]
+        edited_lines = lines[:at] + rows + lines[at:]
+        index = at + rows.index(line)
+        above = [number for number in range(index) if re.match(r"#{1,6}(?: |$)", edited_lines[number])]
+        under = (len(above) - 1, edited_lines[above[-1]] if above else "")
+        edited = "\n".join(edited_lines) + text[len(body):]
+        if verify_edit(text, edited, [(line, href, under)], added=under if marker else None):
+            write_page(readme, edited, newline)
+            return ""
+    return "unlisted"
 
 
-def section_title(target) -> str:
-    """The heading of the section a new page opens: its module's title, its code kept, else its module's name, with
-    each "&" and "<" outside code written as an entity, so that none of it reads as HTML."""
-    title = target.module_title if wiki.page_title(target.module_title) else wiki.topic_title(target.module[-1])
-    pieces, at = [], 0
-    for code in re.finditer(r"(`+).+?(?<!`)\1(?!`)", title):
-        pieces += [title[at:code.start()].replace("&", "&amp;").replace("<", "&lt;"), code.group()]
-        at = code.end()
-    return "".join(pieces) + title[at:].replace("&", "&amp;").replace("<", "&lt;")
+def section_titles(target) -> list[str]:
+    """The titles the section a new page opens may take, in order: its module's title as generate_wiki gives it, but
+    with its code marks kept, when Autoform's check of what the site may publish passes on its heading (see published),
+    else its module's name; and its module's name, for a title whose heading id another heading has."""
+    name = wiki.topic_title(target.module[-1])
+    title = target.module_title if wiki.page_title(target.module_title) else name
+    return list(dict.fromkeys([title if published(f"## {title}\n") is not None else name, name]))
 
 
 def read_page(path: Path) -> tuple[str, str]:
@@ -640,12 +643,24 @@ HIDDEN = {"code", "datalist", "iframe", "noembed", "noframes", "noscript", "obje
 
 
 @functools.lru_cache(maxsize=1024)
+def published(text: str) -> str | None:
+    """The text autoform render publishes for a folder page with *text*, without the header it puts on top: the page as
+    Autoform's check of what the site may publish gives it, its comments dropped and its lines as Autoform reads them;
+    None when that check finds anything in it, as render then publishes the page as typed, with no link or heading."""
+    from autoform_cli.markdown import PAGE_HEADER
+    from autoform_cli.ui.publishable import publishable_article
+
+    visible, errors, _ = publishable_article(text)
+    return None if errors else visible.removeprefix(PAGE_HEADER)
+
+
+@functools.lru_cache(maxsize=1024)
 def rendered(text: str) -> tuple[tuple, tuple, tuple]:
-    """What a folder page shows as the site renders it (see renderer), its HTML built into the tree a browser builds,
-    with scripting on: the hrefs of its links, the texts of its headings, and the first link, text and heading ordinal
-    (-1 for none) of each of its list items. Nothing within code, raw text or an element that is not shown counts: see
-    HIDDEN, and an element with a hidden attribute or a style that hides it, a dialog that is not open, and what a
-    details element that is not open holds but for its summary."""
+    """What Markdown text shows as the site renders it (see renderer), its HTML built into the tree a browser builds,
+    with scripting on: the hrefs of its links, the level, text and id of each of its headings, and the first link, text
+    and heading ordinal (-1 for none) of each of its list items. Nothing within code, raw text or an element that is not
+    shown counts: see HIDDEN, and an element with a hidden attribute or a style that hides it, a dialog that is not
+    open, and what a details element that is not open holds but for its summary."""
     import html5lib
 
     md = renderer()
@@ -666,7 +681,7 @@ def rendered(text: str) -> tuple[tuple, tuple, tuple]:
                 if item is not None and item[0] is None:
                     item[0] = child.get("href")
             if re.fullmatch(r"h[1-6]", tag):
-                headings.append(" ".join("".join(child.itertext()).split()))
+                headings.append((int(tag[1]), " ".join("".join(child.itertext()).split()), child.get("id")))
             if tag == "li":
                 entry = [None, " ".join("".join(child.itertext()).split()), len(headings) - 1]
                 walk(child, entry)
@@ -679,33 +694,51 @@ def rendered(text: str) -> tuple[tuple, tuple, tuple]:
 
 
 def heading_text(line: str) -> str | None:
-    headings = rendered(line)[1]
-    return headings[0] if len(headings) == 1 else None
+    shown = published(line)
+    headings = rendered(shown)[1] if shown is not None else ()
+    return headings[0][1] if len(headings) == 1 else None
+
+
+def parents(headings: list[tuple]) -> list[int]:
+    """The ordinal of each heading's parent, the nearest heading above it of a higher level, or -1 for none."""
+    return [next((above for above in range(number - 1, -1, -1) if headings[above][0] < level), -1)
+            for number, (level, _, _) in enumerate(headings)]
 
 
 def verify_edit(before: str, after: str, items: list[tuple[str, str, tuple[int, str] | None]],
                 replaced: list[str] = (), added: tuple[int, str] | None = None) -> bool:
-    """Whether *after*, a folder page edited from *before*, renders as meant (see rendered): every link *before* shows
-    is still shown, but for the hrefs in *replaced*; its headings keep their order, *added*, the ordinal and line of a
-    heading the edit adds, aside; and each of *items*, an item's line and href, is shown with that href and as its line
-    shows alone, in a list item under the heading its ordinal and line name, or anywhere if None."""
-    old_links, old_headings, _ = rendered(before)
-    links, headings, shown = rendered(after)
+    """Whether *after*, a folder page edited from *before*, is published as meant. Autoform's check of what the site may
+    publish passes on both (see published), and what each publishes, rendered as the site renders it (see rendered),
+    shows: every link *before* shows, but for the hrefs in *replaced*; the headings of *before*, in order, each with its
+    level, text and id, under the same parent, *added*, the ordinal and line of a heading the edit adds, aside; and each
+    of *items*, an item's line and href, with that href and as its line shows alone, in a list item under the heading
+    its ordinal and line name, or anywhere if None."""
+    pages = [published(text) for text in (before, after)]
+    if None in pages:
+        return False
+    (old_links, old_headings, _), (links, headings, shown) = map(rendered, pages)
     if Counter(old_links) - Counter(replaced) - Counter(links):
         return False
-    kept = list(headings)
-    if added is not None and (added[0] >= len(kept) or kept.pop(added[0]) != heading_text(added[1])):
+    at = added[0] if added is not None else len(headings)
+    if added is not None and (at >= len(headings) or headings[at][1] != heading_text(added[1])):
         return False
-    if kept != list(old_headings):
+    kept = [number for number in range(len(headings)) if number != at]
+    if [headings[number] for number in kept] != list(old_headings):
+        return False
+    # A kept heading keeps its parent: none falls under the heading the edit adds.
+    old = {number: ordinal for ordinal, number in enumerate(kept)}
+    new_parents = parents(headings)
+    if [old.get(new_parents[number], -1 if new_parents[number] < 0 else None) for number in kept] != parents(old_headings):
         return False
     for line, href, under in items:
-        alone = rendered(line)[2]
+        alone = published(line)
+        alone = rendered(alone)[2] if alone is not None else ()
         if len(alone) != 1 or alone[0][0] != href:
             return False
         if under is None:
             if Counter(links)[href] <= Counter(old_links)[href]:
                 return False
-        elif (under[0] >= 0 and (under[0] >= len(headings) or headings[under[0]] != heading_text(under[1]))
+        elif (under[0] >= 0 and (under[0] >= len(headings) or headings[under[0]][1] != heading_text(under[1]))
               or (href, alone[0][1], under[0]) not in shown):
             return False
     return True
@@ -802,8 +835,9 @@ def simple_page(text: str, code: bool = False) -> bool:
     heading, with a space after its marker, and of level 1 only on the page's first line; a simple item (see
     simple_item, which *code* is passed to); or a line of plain text (see TEXT) with no backtick run left open and no
     "<" that could open HTML outside code spans. No item is next to a line of text, so that no text continues an item
-    and no item breaks into text. Such a page's lines are its blocks."""
-    if "\r" in text:
+    and no item breaks into text, and no character but "\n" breaks a line, as for Autoform (see published). Such a
+    page's lines are its blocks."""
+    if re.search("[\r\v\f\x1c-\x1e\x85\u2028\u2029]", text):
         return False
     kinds = []
     for row in text.strip("\n").split("\n"):
@@ -855,13 +889,14 @@ def part_entries(text: str) -> list[tuple[str, str, str]] | None:
     return entries
 
 
-def with_part_lists(readme: Path, text: str) -> tuple[str, list[str]]:
+def with_part_lists(readme: Path, text: str) -> tuple[str, list[str], list[str]]:
     """A folder page whose list is split into parts, with each part's entries as the part's own page lists them, their
     pages taken from the folder page, under the heading that links the part. They replace the items there that link
     the part's pages, "part-N/" and a child of it (see destination), and only those, which must follow one another. On
     a page that is not simple (see simple_page), for a part whose heading, page or items there are not simple with no
     code allowed, or whose copy runs over another block, and when the refreshed copy does not render as meant (see
-    verify_edit), the copy stays as it is, and the part is returned, by its folder, for an editor."""
+    verify_edit), the copy stays as it is, and the part is returned, by its folder, for an editor. A line of a copy the
+    refresh replaces that is not the part's entry, as when a note was added there, is returned too, with its folder."""
     body = text.rstrip("\n")
     tail = text[len(body):]
     simple = simple_page(body, code=True)
@@ -870,7 +905,7 @@ def with_part_lists(readme: Path, text: str) -> tuple[str, list[str]]:
         if not sections or HEADING.match(block):
             sections.append([])
         sections[-1].append(block)
-    changed, unrefreshed = False, []
+    changed, unrefreshed, dropped = False, [], []
     for number, section in enumerate(sections):
         part = PART_HEADING.match(section[0])
         if not (part and (readme.parent / part.group(2)).is_file()):
@@ -905,9 +940,11 @@ def with_part_lists(readme: Path, text: str) -> tuple[str, list[str]]:
         old, new = ("\n".join(block for other in page for block in other) + tail for page in (sections, refreshed))
         if verify_edit(old, new, [(line, href, (ordinal, section[0])) for line, href in copy], replaced):
             sections, changed = refreshed, True
+            dropped += [f"{(readme.parent / folder).relative_to(wiki.ROADMAP).as_posix()}: {section[i]}" for i in copied
+                        if section[i] not in lines]
         else:
             unrefreshed.append((readme.parent / folder).relative_to(wiki.ROADMAP).as_posix())
-    return ("\n".join(block for other in sections for block in other) + tail if changed else text), unrefreshed
+    return ("\n".join(block for other in sections for block in other) + tail if changed else text), unrefreshed, dropped
 
 
 def declared(key: str, index) -> bool:
@@ -985,12 +1022,16 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     pages by path, whose folder pages a new page's folder takes when it has none; ``unindexed`` the documented
     declarations the Lean index lacks (`path:line name`), which get no page and are reported for an editor."""
     generated = generated or {}
+    # What checks an edit (see verify_edit) is built before anything is written, so that a module it needs that is
+    # missing, or a site configuration it cannot read, stops the run with nothing written.
+    renderer()
+    published("")
     files = read_annotations()
     keyed = [(annotation_key(a, index), a) for rows in files.values() for a in rows]
     pages = {key: subject_path(a) for key, a in keyed if key}
     current = {declaration_key(target): target for target in targets if declaration_key(target)}
     report: dict[str, list[str]] = {"added": [], "folders": [], "gone": [], "changed": [], "unindexed": [], "parts": [],
-                                  "appended": [], "unlisted": []}
+                                  "replaced": [], "appended": [], "unlisted": []}
     # A declaration the index lacks, and a page an earlier sync wrote for one, wait for an editor: no page is ever
     # keyed by a name rebuilt from the source.
     report["unindexed"] = sorted(
@@ -1050,7 +1091,7 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
                 earlier = []
             if kind := add_to_listing(readme, f"- [{wiki.link_text(target.title)}]({target.path.name})",
                                       [entry[0] for entry in earlier], [entry[0] for entry in later],
-                                      section_title(target)):
+                                      section_titles(target)):
                 report[kind].append(target.path.relative_to(wiki.ROADMAP).as_posix())
         annotation: dict = {"subject": [{"type": "generic", "uri": "../" + target.path.relative_to(wiki.VAULT).as_posix()}]}
         if target.lean:
@@ -1093,8 +1134,9 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     # A folder page split into parts lists each part's entries under the heading that links it, as the part lists them.
     for readme in sorted(wiki.ROADMAP.rglob("README.md")):
         text, newline = read_page(readme)
-        copied, unrefreshed = with_part_lists(readme, text)
+        copied, unrefreshed, dropped = with_part_lists(readme, text)
         report["parts"] += unrefreshed
+        report["replaced"] += dropped
         if text != copied:
             write_page(readme, copied, newline)
     # A declaration upstream never documented keeps its page; only one the Lean no longer declares is gone.
@@ -1137,16 +1179,17 @@ def run_declarations() -> int:
                         ("gone", "Pages whose declaration is gone"), ("changed", "Pages whose declaration's docstring changed"),
                         ("unindexed", "Declarations the Lean index lacks, and their pages, for an editor"),
                         ("parts", "Part lists not refreshed, as an entry needs an editor"),
+                        ("replaced", "Lines of a part list replaced by the part's own entry, which differs, to check"),
                         ("appended", "New pages and folders listed at the end of a page that is not simple, to place"),
-                        ("unlisted", "New pages and folders listed nowhere, as their page may hold raw HTML or code, or "
-                         "their item would not render where placed")):
+                        ("unlisted", "New pages and folders listed nowhere, as their page may hold raw HTML or code, the "
+                         "site would show it as typed, or their item would not show where placed")):
         print(f"{title}: {len(report[kind])}")
         for row in report[kind]:
             print(f"  {row}")
     for row in report["unlisted"]:
         print(f"error: {row} is listed on no folder page: that page has raw HTML or a code fence, which could take in "
-              "its item, or the item would not render where it was placed, so the sync left the page as it is; list it "
-              "by hand", file=sys.stderr)
+              "its item, the site would show the page as typed, with no link, or the item would not show where it was "
+              "placed, so the sync left the page as it is; list it by hand", file=sys.stderr)
     return 1 if report["unlisted"] else 0
 
 
