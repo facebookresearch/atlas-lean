@@ -44,7 +44,9 @@ a plant trajectory with the same storage and the same supply rate,
 its storage derivative is supply minus resistive loss, and over a
 finite interval the increase of storage is at most the integral of
 the supply rate. That finite-horizon inequality is the passivity
-statement. No trajectory existence is asserted, no asymptotic
+statement; it needs the network laws only on the interval itself
+(`IsNetworkTrajectoryOn`), and the global `IsNetworkTrajectory`
+forms are corollaries. No trajectory existence is asserted, no asymptotic
 stability is claimed, and no wider control framework is introduced.
 
 ## ii. Key results
@@ -58,10 +60,15 @@ stability is claimed, and no wider control framework is introduced.
 - `plantStorage_deriv_eq_supply_sub_loss`: on a network
   trajectory, the derivative of plant storage is the supply rate
   minus the resistive loss rate.
-- `plant_finiteHorizonPassive` and `networkPlant_passivity`: the
-  finite-horizon passivity bound, packaged with storage
-  nonnegativity and the storage balance.
-- `plantStorage_constant_of_zero_supply_loss`,
+- `plant_finiteHorizonPassive_of_trajectoryOn`: the finite-horizon
+  passivity bound when the network laws hold only on `[a, b]`
+  (`IsNetworkTrajectoryOn`); `plant_finiteHorizonPassive` and
+  `networkPlant_passivity` are its global-trajectory corollaries,
+  the latter packaged with storage nonnegativity and the storage
+  balance.
+- `plantStorage_constant_of_zero_supply_loss` (with its
+  interval-scoped form
+  `plantStorage_constant_of_zero_supply_loss_of_trajectoryOn`),
   `finiteHorizonPassive_zeroLength` and
   `partition_no_branch_counted_twice`: validation cases covering
   constant undamped storage, a zero-length interval, and exact
@@ -151,6 +158,32 @@ def IsNetworkTrajectory {nN nB : ℕ} (P : NetworkPlant nN nB) : Prop :=
     (∀ t : ℝ, ∀ e ∈ P.inductorSet,
       DifferentiableAt ℝ (fun s => P.branchCurrent s e) t)
 
+/-- The plant trajectory obeys the network laws at every time in `S`: exact
+branch partition, potential voltage, node current balance for the
+independent injection, and the resistor, capacitor and inductor laws with
+differentiability of the storage coordinates at each time of `S`. -/
+def IsNetworkTrajectoryOn {nN nB : ℕ} (P : NetworkPlant nN nB) (S : Set ℝ) : Prop :=
+  IsBranchPartition nB P.resistorSet P.inductorSet P.capacitorSet P.sourceSet ∧
+    (∀ t ∈ S, P.branchVoltage t = P.incidence.transpose *ᵥ P.potential t) ∧
+    (∀ t ∈ S, P.incidence *ᵥ P.branchCurrent t = P.injection t) ∧
+    (∀ t ∈ S, ∀ e ∈ P.resistorSet, P.branchVoltage t e =
+      P.resistance e * P.branchCurrent t e) ∧
+    (∀ t ∈ S, ∀ e ∈ P.capacitorSet, P.branchCurrent t e =
+      P.capacitance e * deriv (fun s => P.branchVoltage s e) t) ∧
+    (∀ t ∈ S, ∀ e ∈ P.inductorSet, P.branchVoltage t e =
+      P.inductance e * deriv (fun s => P.branchCurrent s e) t) ∧
+    (∀ t ∈ S, ∀ e ∈ P.capacitorSet,
+      DifferentiableAt ℝ (fun s => P.branchVoltage s e) t) ∧
+    (∀ t ∈ S, ∀ e ∈ P.inductorSet,
+      DifferentiableAt ℝ (fun s => P.branchCurrent s e) t)
+
+/-- A network trajectory obeys the network laws on every set of times. -/
+lemma IsNetworkTrajectory.isNetworkTrajectoryOn {nN nB : ℕ} {P : NetworkPlant nN nB}
+    (hP : IsNetworkTrajectory P) (S : Set ℝ) : IsNetworkTrajectoryOn P S := by
+  obtain ⟨hpart, hV, hbal, hRlaw, hClaw, hLlaw, hCdiff, hLdiff⟩ := hP
+  exact ⟨hpart, fun t _ => hV t, fun t _ => hbal t, fun t _ => hRlaw t,
+    fun t _ => hClaw t, fun t _ => hLlaw t, fun t _ => hCdiff t, fun t _ => hLdiff t⟩
+
 /-- Finite-horizon passivity of a plant on an interval: the increase of
 storage is at most the integral of the supply rate. -/
 def FiniteHorizonPassiveOn {nN nB : ℕ} (P : NetworkPlant nN nB) (a b : ℝ) : Prop :=
@@ -236,6 +269,26 @@ lemma plantStorage_deriv_eq_supply_sub_loss {nN nB : ℕ} (P : NetworkPlant nN n
     P.potential P.injection P.branchVoltage P.branchCurrent t
     (hV t) (hbal t) (hRlaw t) (hClaw t) (hLlaw t) (hCdiff t) (hLdiff t)
 
+/-- Finite-horizon passivity under interval-scoped trajectory hypotheses:
+if the network laws hold on `[a, b]`, with continuous supply rate and
+integrable balance rate there, the increase of storage is at most the
+integral of the supply rate. -/
+lemma plant_finiteHorizonPassive_of_trajectoryOn {nN nB : ℕ} (P : NetworkPlant nN nB)
+    (hR : ∀ e ∈ P.resistorSet, 0 ≤ P.resistance e)
+    (hL : ∀ e ∈ P.inductorSet, 0 < P.inductance e)
+    (hC : ∀ e ∈ P.capacitorSet, 0 < P.capacitance e) (a b : ℝ) (hab : a ≤ b)
+    (hP : IsNetworkTrajectoryOn P (Set.Icc a b))
+    (hsupply_cont : ContinuousOn (fun s => plantSupplyRate P s) (Set.Icc a b))
+    (hderiv_int : IntervalIntegrable (fun s => plantSupplyRate P s - plantLossRate P s)
+      MeasureTheory.volume a b) :
+    FiniteHorizonPassiveOn P a b := by
+  obtain ⟨hpart, hV, hbal, hRlaw, hClaw, hLlaw, hCdiff, hLdiff⟩ := hP
+  exact network_energy_sub_le_integral_supplied nN nB P.incidence
+    P.resistorSet P.inductorSet P.capacitorSet P.sourceSet hpart
+    P.resistance P.inductance P.capacitance hR hL hC
+    P.potential P.injection P.branchVoltage P.branchCurrent a b hab
+    hV hbal hRlaw hClaw hLlaw hCdiff hLdiff hsupply_cont hderiv_int
+
 /-- Finite-horizon passivity: on a network trajectory over an interval,
 with continuous supply rate and integrable balance rate, the increase of
 storage is at most the integral of the supply rate. -/
@@ -247,16 +300,9 @@ lemma plant_finiteHorizonPassive {nN nB : ℕ} (P : NetworkPlant nN nB)
     (hsupply_cont : ContinuousOn (fun s => plantSupplyRate P s) (Set.Icc a b))
     (hderiv_int : IntervalIntegrable (fun s => plantSupplyRate P s - plantLossRate P s)
       MeasureTheory.volume a b) :
-    FiniteHorizonPassiveOn P a b := by
-  unfold IsNetworkTrajectory at hP
-  obtain ⟨hpart, hV, hbal, hRlaw, hClaw, hLlaw, hCdiff, hLdiff⟩ := hP
-  exact network_energy_sub_le_integral_supplied nN nB P.incidence
-    P.resistorSet P.inductorSet P.capacitorSet P.sourceSet hpart
-    P.resistance P.inductance P.capacitance hR hL hC
-    P.potential P.injection P.branchVoltage P.branchCurrent a b hab
-    (fun s _ => hV s) (fun s _ => hbal s) (fun s _ => hRlaw s)
-    (fun s _ => hClaw s) (fun s _ => hLlaw s) (fun s _ => hCdiff s)
-    (fun s _ => hLdiff s) hsupply_cont hderiv_int
+    FiniteHorizonPassiveOn P a b :=
+  plant_finiteHorizonPassive_of_trajectoryOn P hR hL hC a b hab
+    (hP.isNetworkTrajectoryOn _) hsupply_cont hderiv_int
 
 /-- Headline passivity correctness: a network trajectory has nonnegative
 storage at every time, its storage derivative is supply minus loss, and it
@@ -286,32 +332,34 @@ lemma networkPlant_passivity {nN nB : ℕ} (P : NetworkPlant nN nB)
 
 /-! ### D. Validation cases -/
 
-/-- Undamped case: if supply and loss rates vanish on an interval and the
-trajectory hypotheses hold there, storage is constant on that interval, not
-decaying. -/
-lemma plantStorage_constant_of_zero_supply_loss {nN nB : ℕ} (P : NetworkPlant nN nB)
-    (hP : IsNetworkTrajectory P)
+/-- Undamped case under interval-scoped trajectory hypotheses: if the
+network laws hold on `[a, b]` and the supply and loss rates vanish there,
+storage is constant on that interval, not decaying. -/
+lemma plantStorage_constant_of_zero_supply_loss_of_trajectoryOn {nN nB : ℕ}
+    (P : NetworkPlant nN nB)
     (hR : ∀ e ∈ P.resistorSet, 0 ≤ P.resistance e)
     (hL : ∀ e ∈ P.inductorSet, 0 < P.inductance e)
     (hC : ∀ e ∈ P.capacitorSet, 0 < P.capacitance e) (a b : ℝ) (hab : a ≤ b)
+    (hP : IsNetworkTrajectoryOn P (Set.Icc a b))
     (hsupply : ∀ s ∈ Set.Icc a b, plantSupplyRate P s = 0)
     (hloss : ∀ s ∈ Set.Icc a b, plantLossRate P s = 0)
     (hderiv_int : IntervalIntegrable (fun s => plantSupplyRate P s - plantLossRate P s)
       MeasureTheory.volume a b) :
     plantStorage P b = plantStorage P a := by
-  unfold IsNetworkTrajectory at hP
   obtain ⟨hpart, hV, hbal, hRlaw, hClaw, hLlaw, hCdiff, hLdiff⟩ := hP
   have hHas : ∀ x ∈ Set.uIcc a b, HasDerivAt (fun s => plantStorage P s)
       (plantSupplyRate P x - plantLossRate P x) x := by
-    intro x _
+    intro x hx
+    rw [Set.uIcc_of_le hab] at hx
     have h1 := hasDerivAt_storedEnergy nB P.capacitorSet P.inductorSet
       P.capacitance P.inductance P.branchVoltage P.branchCurrent x
-      (hClaw x) (hLlaw x) (hCdiff x) (hLdiff x)
+      (hClaw x hx) (hLlaw x hx) (hCdiff x hx) (hLdiff x hx)
     have h2 := network_storage_deriv_eq_supplied_minus_losses nN nB P.incidence
       P.resistorSet P.inductorSet P.capacitorSet P.sourceSet hpart
       P.resistance P.inductance P.capacitance hR hL hC
       P.potential P.injection P.branchVoltage P.branchCurrent x
-      (hV x) (hbal x) (hRlaw x) (hClaw x) (hLlaw x) (hCdiff x) (hLdiff x)
+      (hV x hx) (hbal x hx) (hRlaw x hx) (hClaw x hx) (hLlaw x hx)
+      (hCdiff x hx) (hLdiff x hx)
     have hval : ((∑ e ∈ P.capacitorSet, P.branchVoltage x e * P.branchCurrent x e) +
         ∑ e ∈ P.inductorSet, P.branchVoltage x e * P.branchCurrent x e)
         = plantSupplyRate P x - plantLossRate P x := by
@@ -339,6 +387,22 @@ lemma plantStorage_constant_of_zero_supply_loss {nN nB : ℕ} (P : NetworkPlant 
   have hzero : (∫ y in a..b, (0 : ℝ)) = 0 := intervalIntegral.integral_zero
   have hsub : plantStorage P b - plantStorage P a = 0 := by rw [hEq, hzero]
   exact sub_eq_zero.mp hsub
+
+/-- Undamped case: if supply and loss rates vanish on an interval and the
+trajectory hypotheses hold there, storage is constant on that interval, not
+decaying. -/
+lemma plantStorage_constant_of_zero_supply_loss {nN nB : ℕ} (P : NetworkPlant nN nB)
+    (hP : IsNetworkTrajectory P)
+    (hR : ∀ e ∈ P.resistorSet, 0 ≤ P.resistance e)
+    (hL : ∀ e ∈ P.inductorSet, 0 < P.inductance e)
+    (hC : ∀ e ∈ P.capacitorSet, 0 < P.capacitance e) (a b : ℝ) (hab : a ≤ b)
+    (hsupply : ∀ s ∈ Set.Icc a b, plantSupplyRate P s = 0)
+    (hloss : ∀ s ∈ Set.Icc a b, plantLossRate P s = 0)
+    (hderiv_int : IntervalIntegrable (fun s => plantSupplyRate P s - plantLossRate P s)
+      MeasureTheory.volume a b) :
+    plantStorage P b = plantStorage P a :=
+  plantStorage_constant_of_zero_supply_loss_of_trajectoryOn P hR hL hC a b hab
+    (hP.isNetworkTrajectoryOn _) hsupply hloss hderiv_int
 
 /-- Zero-length interval: passivity on a degenerate interval is the
 statement that zero storage increase is at most zero supplied energy. -/
