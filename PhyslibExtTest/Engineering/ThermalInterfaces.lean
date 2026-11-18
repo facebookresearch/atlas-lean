@@ -28,24 +28,24 @@ These are elaboration and non-vacuity checks, not new results.
 open Engineering.ThermalInterfaces
 
 /-- The interface after the inside film is `18`. -/
-example : thermalInterfaceTemp (n := 1) 1 10 20 20
+example : thermalInterfaceTemp 1 10 20 20
       (fun _ => 1 / 5) (fun _ => 1) 0 = 18 := by
   norm_num [thermalInterfaceTemp]
 
 /-- The interface after the single layer is `14`, a layer
 drop of `4`. -/
-example : thermalInterfaceTemp (n := 1) 1 10 20 20
+example : thermalInterfaceTemp 1 10 20 20
         (fun _ => 1 / 5) (fun _ => 1) 0
-      - thermalInterfaceTemp (n := 1) 1 10 20 20
+      - thermalInterfaceTemp 1 10 20 20
         (fun _ => 1 / 5) (fun _ => 1) 1 = 4 := by
-  have h := thermalInterfaceTemp_succ_sub (n := 1) (m := 0)
-    1 10 20 20 (fun _ => 1 / 5) (fun _ => 1) (by norm_num)
+  have h := thermalInterfaceTemp_succ_sub (m := 0)
+    1 10 20 20 (fun _ => 1 / 5) (fun _ => 1)
   norm_num at h ⊢
   exact h
 
 /-- End matching: the last interface minus the outside film
 drop is the outside temperature `13`. -/
-example : thermalInterfaceTemp (n := 1) 1 10 20
+example : thermalInterfaceTemp 1 10 20
         ((20 - 13)
           / thermalTotalResistance (n := 1) 1 10 20
             (fun _ => 1 / 5) (fun _ => 1))

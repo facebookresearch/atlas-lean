@@ -65,18 +65,19 @@ noncomputable def thermalTotalResistance {n : ℕ} (A hin hout : ℝ)
 /-- Interface temperature after the inside film and the first
 `m` layers, reconstructed from the inside air temperature
 `Tin` and the common steady heat rate `Q` by cumulative
-resistance drops. The modeled interfaces are `m ≤ n`. -/
-noncomputable def thermalInterfaceTemp {n : ℕ} (A hin Tin Q : ℝ)
+resistance drops. The total layer count is not part of
+this cumulative definition; end matching chooses `m = n`. -/
+noncomputable def thermalInterfaceTemp (A hin Tin Q : ℝ)
     (L k : ℕ → ℝ) (m : ℕ) : ℝ :=
   Tin - Q * (1 / (hin * A)
     + ∑ i ∈ Finset.range m, L i / (k i * A))
 
-/-- Adjacent interface temperatures within the modeled layers
+/-- Adjacent cumulative interface temperatures
 differ by the layer drop `Q * (L m / (k m * A))`. -/
-theorem thermalInterfaceTemp_succ_sub {n m : ℕ}
-    (A hin Tin Q : ℝ) (L k : ℕ → ℝ) (_hm : m < n) :
-    thermalInterfaceTemp (n := n) A hin Tin Q L k m
-        - thermalInterfaceTemp (n := n) A hin Tin Q L k (m + 1)
+theorem thermalInterfaceTemp_succ_sub {m : ℕ}
+    (A hin Tin Q : ℝ) (L k : ℕ → ℝ) :
+    thermalInterfaceTemp A hin Tin Q L k m
+        - thermalInterfaceTemp A hin Tin Q L k (m + 1)
       = Q * (L m / (k m * A)) := by
   unfold thermalInterfaceTemp
   rw [Finset.sum_range_succ]
@@ -95,7 +96,7 @@ outside air temperature `Tout`. -/
 theorem thermalInterfaceTemp_last_sub_film {n : ℕ}
     {A hin hout Tin Tout : ℝ} (L k : ℕ → ℝ)
     (hR : thermalTotalResistance (n := n) A hin hout L k ≠ 0) :
-    thermalInterfaceTemp (n := n) A hin Tin
+    thermalInterfaceTemp A hin Tin
         ((Tin - Tout)
           / thermalTotalResistance (n := n) A hin hout L k) L k n
       - ((Tin - Tout)
