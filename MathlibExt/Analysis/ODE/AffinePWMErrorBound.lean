@@ -35,7 +35,9 @@ input contributes `q(t) • b`, where `q(t) = ∫₀ᵗ (s - d)` is the discrepa
 * `norm_sub_le_of_primitive_le_zeroOperator`: at `A = 0` the exponential factor is `1`.
 * `switched_averaged_error_le`: for an `Ld`-Lipschitz duty with values in `[0, 1]`,
   `‖x t - y t‖ ≤ exp(‖A‖ T) (‖x₀ - y₀‖ + ‖b‖ ε (1 + Ld T / 2))` on `[0, T]`.
-* `switched_averaged_error_le_of_constDuty`: a constant duty gives the factor `ε`.
+* `switched_averaged_error_le_of_constDuty_sharp`: a constant duty `c₀ ∈ [0, 1]` gives the
+  factor `c₀ (1 - c₀) ε`, at most `ε / 4` and zero at duties `0` and `1`.
+* `switched_averaged_error_le_of_constDuty`: the coarser constant-duty factor `ε`.
 
 The initial mismatch `‖x₀ - y₀‖` is kept in every bound. Only the affine case with a fixed
 input direction is treated; there is no state-dependent input map, hybrid or Zeno dynamics,
@@ -293,6 +295,35 @@ theorem switched_averaged_error_le
     (fun t ht => abs_pwmPrimitive_le T ε Ld d hT hε hd hLip t ht) t ht
   simpa only [mul_assoc] using h
 
+/-- Sharp constant-duty bound: for a constant duty `c₀ ∈ [0, 1]` the discrepancy primitive
+stays in `[0, c₀ (1 - c₀) ε]` (`pwmPrimitive_const_mem_Icc`), so the error is at most
+`exp(‖A‖ T) (‖x₀ - y₀‖ + ‖b‖ c₀ (1 - c₀) ε)` on `[0, T]`. -/
+theorem switched_averaged_error_le_of_constDuty_sharp
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
+    (A : E →L[ℝ] E) (b : E) (c : ℝ → E) (hc : Continuous c)
+    (T ε c₀ : ℝ) (hT : 0 ≤ T) (hε : 0 < ε) (hc₀ : c₀ ∈ Set.Icc 0 1)
+    (x y : ℝ → E) (x₀ y₀ : E)
+    (hx : ∀ t ∈ Set.Icc 0 T, x t = x₀ +
+      ∫ u in (0 : ℝ)..t, (A (x u) + (pwmSignal ε (fun _ => c₀) u) • b + c u))
+    (hy : ∀ t ∈ Set.Icc 0 T, y t = y₀ +
+      ∫ u in (0 : ℝ)..t, (A (y u) + c₀ • b + c u))
+    (t : ℝ) (ht : t ∈ Set.Icc 0 T) :
+    ‖x t - y t‖ ≤ Real.exp (‖A‖ * T) * (‖x₀ - y₀‖ + ‖b‖ * (c₀ * (1 - c₀) * ε)) := by
+  have : CompleteSpace E := FiniteDimensional.complete ℝ E
+  have hxi := intervalIntegrable_of_eq_add_integral A c hc hT
+    (fun u => pwmSignal ε (fun _ => c₀) u • b)
+    ⟨(intervalIntegrable_pwmSignal ε _ 0 T).1.smul_const _,
+      (intervalIntegrable_pwmSignal ε _ 0 T).2.smul_const _⟩ x x₀ hx
+  have hyi := intervalIntegrable_of_eq_add_integral A c hc hT (fun _ => c₀ • b)
+    intervalIntegrable_const y y₀ hy
+  have hQ : 0 ≤ c₀ * (1 - c₀) * ε :=
+    mul_nonneg (mul_nonneg hc₀.1 (sub_nonneg.mpr hc₀.2)) hε.le
+  exact norm_sub_le_exp_mul_of_primitive_le A b c hc T _ hT hQ
+    (pwmSignal ε (fun _ => c₀)) (fun _ => c₀) x y x₀ y₀ hx hy hxi hyi
+    (fun t ht => by
+      have h := pwmPrimitive_const_mem_Icc ε c₀ t hε hc₀ ht.1
+      exact (abs_of_nonneg h.1).trans_le h.2) t ht
+
 /-- Constant duty specialization: a constant duty `c₀ ∈ [0, 1]` is
 the `Ld = 0` case, giving the factor `ε (1 + 0 * T / 2) = ε` in the
 headline bound. -/
@@ -307,7 +338,10 @@ theorem switched_averaged_error_le_of_constDuty
       ∫ u in (0 : ℝ)..t, (A (y u) + c₀ • b + c u))
     (t : ℝ) (ht : t ∈ Set.Icc 0 T) :
     ‖x t - y t‖ ≤ Real.exp (‖A‖ * T) * (‖x₀ - y₀‖ + ‖b‖ * ε) := by
-  simpa using switched_averaged_error_le A b c hc T ε 0 (fun _ => c₀) hT hε (fun _ _ => hc₀)
-    (LipschitzWith.const c₀).lipschitzOnWith x y x₀ y₀ hx hy t ht
+  refine (switched_averaged_error_le_of_constDuty_sharp A b c hc T ε c₀ hT hε hc₀ x y x₀ y₀
+    hx hy t ht).trans ?_
+  have hc1 : c₀ * (1 - c₀) ≤ 1 := by nlinarith [hc₀.1, hc₀.2]
+  gcongr
+  exact mul_le_of_le_one_left hε.le hc1
 
 end MathlibExt.Analysis.ODE.AffinePWMErrorBound

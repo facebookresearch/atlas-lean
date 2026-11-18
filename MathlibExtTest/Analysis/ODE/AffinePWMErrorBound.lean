@@ -51,4 +51,16 @@ example (t : ℝ) (ht : t ∈ Set.Icc (0 : ℝ) 2) :
   refine h.trans_eq ?_
   norm_num [Real.norm_eq_abs]
 
+/-- Sharp constant-duty case on the same trajectories: the ripple factor is
+`c₀ (1 - c₀) ε = 1/4`, so the error stays within `|5 - 2| + 1/4 = 13/4`. -/
+example (t : ℝ) (ht : t ∈ Set.Icc (0 : ℝ) 2) :
+    ‖(5 + ∫ u in (0 : ℝ)..t, pwmSignal 1 (fun _ => 1 / 2) u) - (2 + t / 2)‖ ≤ 13 / 4 := by
+  have h := switched_averaged_error_le_of_constDuty_sharp (0 : ℝ →L[ℝ] ℝ) 1 (fun _ => 0)
+    continuous_const 2 1 (1 / 2) (by norm_num) one_pos ⟨by norm_num, by norm_num⟩
+    (fun t => 5 + ∫ u in (0 : ℝ)..t, pwmSignal 1 (fun _ => 1 / 2) u)
+    (fun t => 2 + t / 2) 5 2 (fun _ _ => by simp)
+    (fun _ _ => by simp; ring) t ht
+  refine h.trans_eq ?_
+  norm_num [Real.norm_eq_abs]
+
 end MathlibExtTest.Analysis.ODE.AffinePWMErrorBound
