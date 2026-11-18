@@ -676,7 +676,7 @@ class UnindexedIdentity(Vault):
 
     def test_written_names_and_continued_heads_keep_targets_apart(self) -> None:
         keys = [sync.declaration_key(target) for target in self.targets()]
-        self.assertEqual(keys, ["MathlibExt.Algebra.Wanted:arithmeticProgressions_pnat",
+        self.assertEqual(keys, ["MathlibExt.Algebra.Wanted:IsJSet.arithmeticProgressions_pnat",
                                 "MathlibExt.Algebra.Wanted:IsEssentialCRSet.arithmeticProgressions_pnat",
                                 "MathlibExt.Algebra.Wanted:continued",
                                 "MathlibExt.Algebra.Wanted:IsJSet.arithmeticProgressions_pnat_def"])
@@ -689,16 +689,80 @@ class UnindexedIdentity(Vault):
         rows = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]
         own = [row["extensions"]["org.atlas-wiki"] for row in rows if "org.atlas-wiki" in row.get("extensions", {})]
         self.assertEqual(sorted((entry["name"], entry["line"]) for entry in own),
-                         sorted([("arithmeticProgressions_pnat", 3), ("IsEssentialCRSet.arithmeticProgressions_pnat", 6),
+                         sorted([("IsJSet.arithmeticProgressions_pnat", 3), ("IsEssentialCRSet.arithmeticProgressions_pnat", 6),
                                  ("continued", 8), ("IsJSet.arithmeticProgressions_pnat_def", 11)]))
         again = sync.apply_declarations(self.targets(), SimpleNamespace(declarations={}))
         self.assertEqual((again["added"], again["gone"]), ([], []))
         sync.apply_lean_facts(SimpleNamespace(declarations={}), {})
         facts = {row["extensions"]["org.atlas-wiki"]["name"]: (row.get("kind"), row.get("status"))
                  for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"] if "org.atlas-wiki" in row.get("extensions", {})}
-        self.assertEqual(facts, {"arithmeticProgressions_pnat": ("theorem", "stated"),
+        self.assertEqual(facts, {"IsJSet.arithmeticProgressions_pnat": ("theorem", "stated"),
                                  "IsEssentialCRSet.arithmeticProgressions_pnat": ("theorem", "stated"),
                                  "continued": ("theorem", "stated"), "IsJSet.arithmeticProgressions_pnat_def": ("def", None)})
+
+    def test_namespace_local_names_and_edges_resolve_alike_everywhere(self) -> None:
+        # `same` in namespaces A and B are two declarations: two keys, two pages, and lean-facts finds each, and
+        # the edges between fallback declarations, by the same identity generate_wiki gives them.
+        source = self.tmp / "MathlibExt" / "Algebra" / "Wanted.lean"
+        source.write_text("namespace A\n/-- The first. -/\ntheorem_wanted\n  same : True\nend A\n\n"
+                          "namespace B\n/-- The second. -/\ndef_wanted\n  same : Nat\nend B\n\n"
+                          "/-- A domain. -/\ndef_wanted\n  Base.carrier : Type\n\n"
+                          "/-- Reflexivity. -/\ntheorem_wanted\n  Claim.reflexive : Base.carrier = Base.carrier\n")
+        targets = self.targets()
+        self.assertEqual([sync.declaration_key(target) for target in targets],
+                         [f"MathlibExt.Algebra.Wanted:{name}" for name in ("A.same", "B.same", "Base.carrier", "Claim.reflexive")])
+        self.page("Algebra/README.md", "# Algebra\n")
+        self.annotate([self.about("Algebra/README.md")])
+        self.assertEqual(len(sync.apply_declarations(targets, SimpleNamespace(declarations={}))["added"]), 4)
+        module = "MathlibExt.Algebra.Wanted"
+        dependencies = {f"_private.{module}.0.Claim.reflexive": {"module": module, "statement": [f"_private.{module}.0.Base.carrier"], "proof": []},
+                        f"_private.{module}.0.Base.carrier": {"module": module, "statement": [], "proof": []}}
+        counts, unlinked = sync.apply_lean_facts(SimpleNamespace(declarations={}), dependencies)
+        self.assertEqual((counts, unlinked), ({"articles": 4, "unresolved": 0, "edges": 1}, []))
+        rows = {row["extensions"]["org.atlas-wiki"]["name"]: row for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]
+                if "org.atlas-wiki" in row.get("extensions", {})}
+        self.assertEqual({name: (row.get("kind"), row.get("status")) for name, row in rows.items()},
+                         {"A.same": ("theorem", "stated"), "B.same": ("def", None), "Base.carrier": ("def", None),
+                          "Claim.reflexive": ("theorem", "stated")})
+        claim = sync.subject_path(rows["Claim.reflexive"])
+        self.assertIn("## Depends on\n\n- [", claim.read_text())
+        self.assertIn("- [Carrier](carrier.md)", claim.read_text())
+        # generate_wiki's edges agree.
+        wiki.link_v2(targets, dependencies)
+        claim_target = next(target for target in targets if target.names[0] == "Claim.reflexive")
+        self.assertEqual([other.names[0] for other in claim_target.depends], ["Base.carrier"])
+
+    def test_an_annotation_with_a_short_name_keeps_its_page(self) -> None:
+        # An earlier sync wrote only the last component; its key is read back as the full name, so the sync finds
+        # the page instead of writing a second one.
+        source = self.tmp / "MathlibExt" / "Algebra" / "Wanted.lean"
+        source.write_text("namespace Deep.Space\n/-- A wish. -/\ntheorem_wanted wish : True\nend Deep.Space\n")
+        self.page("Algebra/README.md", "# Algebra\n\n- [Wish](wish.md)\n")
+        self.page("Algebra/wish.md", "# Wish\n\nA wish.\n")
+        self.annotate([self.about("Algebra/README.md"),
+                       self.about("Algebra/wish.md", extensions={"org.atlas-wiki": {"module": "MathlibExt.Algebra.Wanted", "name": "wish"}})])
+        report = sync.apply_declarations(self.targets(), SimpleNamespace(declarations={}))
+        self.assertEqual((report["added"], report["gone"]), ([], []))
+        self.assertEqual(sync.annotation_key(sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][1]),
+                         "MathlibExt.Algebra.Wanted:Deep.Space.wish")
+
+    def test_one_helper_builds_every_identity(self) -> None:
+        # Keys are built only by generate_wiki.declaration_identity and read only by split_identity; a last name
+        # component is taken only for titles and slugs, for annotations written before full names were kept,
+        # and for a test-only deprecated() fallback.
+        sources = {name: (Path(wiki.__file__).parent / f"{name}.py").read_text() for name in ("generate_wiki", "sync_wiki")}
+        self.assertEqual([line.strip() for text in sources.values() for line in text.splitlines() if "}:{" in line],
+                         ["return f\"{module if isinstance(module, str) else '.'.join(module)}:{name}\""])
+        self.assertEqual([line.strip() for text in sources.values() for line in text.splitlines() if 'rsplit(":"' in line],
+                         ['module, name = key.rsplit(":", 1)'])
+        short = [line.strip() for text in sources.values() for line in text.splitlines() if 'split(".")[-1]' in line]
+        self.assertEqual(short, [
+            'titles = [value if position == 0 else humanize(value.split(".")[-1]) if value else "" for value in values]',
+            'short = written.split(".")[-1]',
+            'written = [head for head in heads if head[1].group("name").split(".")[-1] == name]',
+            'short = target.names[0].split(".")[-1]',
+            'if (match := wiki.V2_DECLARATION.match(row)) and match.group("name").split(".")[-1] == short]',
+        ])
 
     def test_source_lookups_use_the_written_name_then_the_line(self) -> None:
         module = "MathlibExt.Algebra.Wanted"

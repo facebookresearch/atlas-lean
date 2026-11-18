@@ -475,43 +475,99 @@ _SCOPE = re.compile(
     r"[ \t]*(?P<name>[^\s]*)")
 
 
+def scope_states(lines: list[str]) -> list[tuple[tuple[str, ...], bool]] | None:
+    """For each line, the namespace in force (its components) and whether the innermost scope is public, that
+    is, a `public section` or inside one (a nested `section`, `namespace` or `mutual` keeps the visibility around
+    it). As in Lean, a dotted name opens or closes one scope per component: `namespace A.B` opens two, which
+    `end B` and `end A`, or `end A.B`, close; only namespaces add to names.
+
+    None when the scopes do not balance (an `end` with nothing to close) or a scope has a quoted name: callers
+    then fall back to what needs no scopes."""
+    scopes: list[tuple[str | None, bool]] = []  # each open scope: its namespace component (None if none), public
+    states: list[tuple[tuple[str, ...], bool]] = []
+    for line in code_lines(lines):
+        scope = _SCOPE.match(line)
+        if scope:
+            kind, name = scope.group("kind"), scope.group("name")
+            if "«" in name or "»" in name:
+                return None
+            components = name.split(".") if name and kind != "mutual" else [""]
+            if kind == "end":
+                if len(scopes) < len(components):
+                    return None
+                del scopes[len(scopes) - len(components):]
+            else:
+                inherited = scopes[-1][1] if scopes else False
+                public = inherited or (kind == "section" and "public" in scope.group("mods").split())
+                scopes.extend((component if kind == "namespace" else None, public) for component in components)
+        states.append((tuple(component for component, _ in scopes if component is not None), bool(scopes and scopes[-1][1])))
+    return states
+
+
 def module_private_lines(lines: list[str]) -> frozenset[int]:
     """The (0-based) lines where a declaration is private by module visibility: in a file that opens with
-    `module`, outside every `public section` (a nested `section`, `namespace` or `mutual` keeps the visibility
-    around it). A declaration written `public` or `private` says so itself.
+    `module`, outside every `public section` (see scope_states). A declaration written `public` or `private`
+    says so itself.
 
-    As in Lean, a dotted name opens or closes one scope per component: `namespace A.B` opens two, which
-    `end B` and `end A`, or `end A.B`, close.
-
-    It fails open: in a file that is no module, whose scopes do not balance (an `end` with nothing to close), or
-    that names a scope with a quoted name, no line is private, so a misread keeps a declaration rather than
-    losing it.
+    It fails open: in a file that is no module, or whose scopes scope_states cannot follow, no line is private,
+    so a misread keeps a declaration rather than losing it.
     """
     code = code_lines(lines)
     first = next((line for line in code if line.strip()), "")
     if not _MODULE_HEADER.match(first):
         return frozenset()
-    scopes: list[bool] = []  # whether each open scope is public
-    private: set[int] = set()
-    for number, line in enumerate(code):
-        scope = _SCOPE.match(line)
-        if scope:
-            name = scope.group("name")
-            if "«" in name or "»" in name:
-                return frozenset()
-            count = len(name.split(".")) if name and scope.group("kind") != "mutual" else 1
-            if scope.group("kind") == "end":
-                if len(scopes) < count:
-                    return frozenset()
-                del scopes[len(scopes) - count:]
-            else:
-                inherited = scopes[-1] if scopes else False
-                public = inherited or (scope.group("kind") == "section" and "public" in scope.group("mods").split())
-                scopes.extend([public] * count)
-            continue
-        if not (scopes and scopes[-1]):
-            private.add(number)
-    return frozenset(private)
+    states = scope_states(lines)
+    if states is None:
+        return frozenset()
+    return frozenset(number for number, (_, public) in enumerate(states) if not public)
+
+
+def qualified_name(written: str, namespace: tuple[str, ...]) -> str:
+    """A declaration's full name from its name as written and the namespace in force: `_root_.` opts out."""
+    if written.startswith("_root_."):
+        return written[len("_root_."):]
+    return ".".join((*namespace, written))
+
+
+def declaration_identity(lean: str | None, module, name: str) -> str:
+    """The one identity every consumer uses for a declaration: its full name in the Lean index when the index
+    has it, else `<module>:<name>` with *name* its full name as the source writes it (see qualified_name). A
+    line is never part of it, so an edit above a declaration leaves its identity alone; the line kept in
+    fallback metadata only breaks ties."""
+    if lean:
+        return lean
+    return f"{module if isinstance(module, str) else '.'.join(module)}:{name}"
+
+
+def split_identity(key: str) -> tuple[str, str] | None:
+    """(module, name) of a fallback identity, None for an indexed one."""
+    if ":" not in key:
+        return None
+    module, name = key.rsplit(":", 1)
+    return module, name
+
+
+def fallback_metadata(target) -> dict:
+    """What an annotation keeps of a declaration the index lacks: its module, its full name, and its line."""
+    metadata = {"module": ".".join(target.module), "name": target.names[0]}
+    if getattr(target, "line", 0):
+        metadata["line"] = target.line
+    return metadata
+
+
+def match_fallback(compiled: str, names) -> str | None:
+    """Which of a module's fallback names a compiled constant is: the same name, else the one the compiled name
+    ends with as a dotted suffix (a private placeholder is `_private.<module>.0.<name>`); None when none is, or
+    when two equally long ones are."""
+    names = list(names)
+    if compiled in names:
+        return compiled
+    suffixes = [name for name in names if compiled.endswith("." + name)]
+    if not suffixes:
+        return None
+    longest = max(len(name) for name in suffixes)
+    best = [name for name in suffixes if len(name) == longest]
+    return best[0] if len(best) == 1 else None
 
 
 def visible(match: re.Match, number: int, module_private: frozenset[int]) -> bool:
@@ -661,6 +717,7 @@ def load_library(library: str, index, taxonomy: dict, titles: dict | None = None
             continue
         labels = section_labels(lines)
         module_private = module_private_lines(lines)
+        states = scope_states(lines)
         for number, match in declaration_lines(lines, indexed_lines[relative]):
             # A private declaration, written so or private by module visibility, gets no page and no count; a
             # page an editor already gave one keeps it, since its declaration still exists.
@@ -722,9 +779,9 @@ def load_library(library: str, index, taxonomy: dict, titles: dict | None = None
                     lean=lean,
                     statement=statement,
                     proof=proof,
-                    # A declaration the index lacks is known by its name as written, which tells apart two of a
-                    # module's declarations that share a last component.
-                    names=[lean or written],
+                    # A declaration the index lacks is known by its full name as the source writes it, which tells
+                    # apart two of a module's declarations that share a last component.
+                    names=[lean or qualified_name(written, states[number][0] if states else ())],
                     citations=citations,
                     module=module,
                     module_title=module_title,
@@ -976,8 +1033,7 @@ def subject_tree(subject: str, targets: list[Target], taxonomy: dict) -> Contain
 def link_v2(targets: list[Target], dependencies: dict) -> None:
     """Add Lean dependency edges between v2 articles from sources/v2/lean-dependencies.json."""
     by_name = {target.lean: target for target in targets if target.lean}
-    # Wanted entries have no `lean:` link; match them in their module by their name as written, which the compiled
-    # name ends with (the longest such name wins).
+    # Wanted entries have no `lean:` link; match them in their module by their full name (see match_fallback).
     by_module: dict[str, list[Target]] = defaultdict(list)
     for target in targets:
         if not target.lean:
@@ -986,9 +1042,9 @@ def link_v2(targets: list[Target], dependencies: dict) -> None:
     def find(name: str) -> Target | None:
         if name in by_name:
             return by_name[name]
-        module = dependencies.get(name, {}).get("module", "")
-        written = [target for target in by_module.get(module, []) if name == target.names[0] or name.endswith("." + target.names[0])]
-        return max(written, key=lambda target: len(target.names[0])) if written else None
+        candidates = {target.names[0]: target for target in by_module.get(dependencies.get(name, {}).get("module", ""), [])}
+        match = match_fallback(name, candidates)
+        return candidates[match] if match else None
 
     for name, entry in dependencies.items():
         target = find(name)

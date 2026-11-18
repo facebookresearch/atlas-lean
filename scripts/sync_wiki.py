@@ -189,7 +189,7 @@ def seed(titles: dict, dependency_file: Path) -> tuple[dict[Path, str], dict[Pat
         if ours:
             extensions[NAMESPACE] = ours
         if target and not target.lean:
-            extensions[OWN] = {"module": ".".join(target.module), "name": target.names[0]}
+            extensions[OWN] = wiki.fallback_metadata(target)
         if extensions:
             annotation["extensions"] = extensions
         annotations[links_file(path)].append(annotation)
@@ -233,21 +233,28 @@ def lean_facts_for(name: str | None, own: dict | None, index, sorry) -> tuple[st
 
 
 def source_declaration(module: str, name: str, line: int = 0):
-    """(line number, match) of the declaration in *module*'s source that *name* names, or None. *name* is the
-    declaration's name as written; of several so written, the one at the 1-based *line* when it is one of them,
-    else the first. A name with no dot that no declaration is written as is matched by its last component, as
-    earlier annotations wrote it. The source is read with comments and literals blanked out, at any indentation,
-    with names continued on the next line (see generate_wiki.declaration_heads)."""
+    """(line number, match, full name) of the declaration in *module*'s source that *name* names, or None. *name* is the
+    declaration's full name as the source writes it (see generate_wiki.qualified_name), else its name as written;
+    of several, the one at the 1-based *line* when it is one of them, else the first. A name with no dot that
+    matches neither is matched by its last component, as earlier annotations wrote it. The source is read with
+    comments and literals blanked out, at any indentation, with names continued on the next line (see
+    generate_wiki.declaration_heads)."""
     source = wiki.ROOT / Path(*module.split(".")).with_suffix(".lean")
     if not source.is_file():
         return None
-    heads = list(wiki.declaration_heads(source.read_text().splitlines()))
-    written = [(number, match) for number, match in heads if match.group("name") == name]
+    lines = source.read_text().splitlines()
+    states = wiki.scope_states(lines)
+    heads = [(number, match, wiki.qualified_name(match.group("name"), states[number][0] if states else ()))
+             for number, match in wiki.declaration_heads(lines)]
+    written = [head for head in heads if head[2] == name]
+    if not written:
+        written = [head for head in heads if head[1].group("name") == name]
     if not written and "." not in name:
-        written = [(number, match) for number, match in heads if match.group("name").split(".")[-1] == name]
+        # An annotation written before full names were kept names only the last component.
+        written = [head for head in heads if head[1].group("name").split(".")[-1] == name]
     if not written:
         return None
-    return next(((number, match) for number, match in written if number + 1 == line), written[0])
+    return next((head for head in written if head[0] + 1 == line), written[0])
 
 
 def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[str]]:
@@ -294,15 +301,19 @@ def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[st
     by_name = {lean_name(a): path for path, a in articles.items() if lean_name(a)}
     # declarations marks a page it wrote with {"from": "docstring"} under OWN; only a page whose declaration the
     # index can't see also keeps its module and name there.
-    by_short = {
-        (a["extensions"][OWN]["module"], a["extensions"][OWN]["name"]): path
-        for path, a in articles.items()
-        if {"module", "name"} <= a.get("extensions", {}).get(OWN, {}).keys()
-    }
+    fallback: dict[str, dict[str, Path]] = defaultdict(dict)
+    for path, a in articles.items():
+        own = a.get("extensions", {}).get(OWN, {})
+        if {"module", "name"} <= own.keys():
+            fallback[own["module"]][own["name"]] = path
 
     def find(name: str) -> Path | None:
-        module = dependencies.get(name, {}).get("module", "")
-        return by_name.get(name) or by_short.get((module, name.split(".")[-1]))
+        # As generate_wiki.link_v2 finds a declaration's article: by full name, else among its module's fallback names.
+        if name in by_name:
+            return by_name[name]
+        candidates = fallback.get(dependencies.get(name, {}).get("module", ""), {})
+        match = wiki.match_fallback(name, candidates)
+        return candidates[match] if match else None
 
     depends: dict[Path, tuple[list[Path], list[Path]]] = {path: ([], []) for path in articles}
     for name, entry in dependencies.items():
@@ -387,8 +398,8 @@ def run_lean_facts(dependency_file: Path) -> int:
 
 
 def declaration_key(target) -> str:
-    """How the sync finds a declaration's page: its Lean name, or its module and name when the index can't see it."""
-    return target.lean or f"{'.'.join(target.module)}:{target.names[0]}"
+    """How the sync finds a declaration's page: its identity (see generate_wiki.declaration_identity)."""
+    return wiki.declaration_identity(target.lean, target.module, target.names[0])
 
 
 def annotation_key(annotation: dict) -> str | None:
@@ -396,7 +407,11 @@ def annotation_key(annotation: dict) -> str | None:
     if name:
         return name
     own = annotation.get("extensions", {}).get(OWN)
-    return f"{own['module']}:{own['name']}" if own and "module" in own and "name" in own else None
+    if not (own and "module" in own and "name" in own):
+        return None
+    # The declaration's full name, read from its source, whatever form of its name an earlier sync wrote.
+    found = source_declaration(own["module"], own["name"], own.get("line", 0))
+    return wiki.declaration_identity(None, own["module"], found[2] if found else own["name"])
 
 
 def digest(text: str) -> str:
@@ -413,8 +428,9 @@ def docstring_digest(target) -> str:
 
 def documented(key: str, index) -> bool | None:
     """Whether the declaration behind a page key still has a docstring; None when it is gone or out of sight."""
-    if ":" in key:
-        module, name = key.rsplit(":", 1)
+    fallback = wiki.split_identity(key)
+    if fallback:
+        module, name = fallback
         found = source_declaration(module, name)
         if found is None:
             return None
@@ -509,10 +525,10 @@ def without_empty_headings(text: str) -> str:
 
 def declared(key: str, index) -> bool:
     """Whether the Lean still declares a page's declaration, documented or not."""
-    if ":" not in key:
+    fallback = wiki.split_identity(key)
+    if fallback is None:
         return key in index.declarations
-    module, name = key.rsplit(":", 1)
-    return source_declaration(module, name) is not None
+    return source_declaration(*fallback) is not None
 
 
 def deprecated(target) -> bool:
@@ -528,6 +544,8 @@ def deprecated(target) -> bool:
     if line:
         number = line - 1
     else:
+        # Not an identity lookup: a target with no line is a bare test or legacy case, found by its last component
+        # only when no other declaration of its module shares it.
         short = target.names[0].split(".")[-1]
         found = [number for number, row in enumerate(wiki.code_lines(lines))
                  if (match := wiki.V2_DECLARATION.match(row)) and match.group("name").split(".")[-1] == short]
@@ -613,11 +631,7 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
         if "origin" in fields:
             extensions[NAMESPACE] = {"origin": fields["origin"]}
         if not target.lean:
-            # The name as written tells apart two declarations of the module that share a last component; the line
-            # breaks a tie between two written alike.
-            extensions[OWN].update({"module": ".".join(target.module), "name": target.names[0]})
-            if getattr(target, "line", 0):
-                extensions[OWN]["line"] = target.line
+            extensions[OWN].update(wiki.fallback_metadata(target))
         annotation["extensions"] = extensions
         files.setdefault(links_file(target.path), []).append(annotation)
         pages[key] = target.path
