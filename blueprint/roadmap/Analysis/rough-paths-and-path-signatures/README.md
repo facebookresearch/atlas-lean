@@ -8,10 +8,10 @@ Signatures of paths and controlled differential equations: iterated integrals of
 
 ## Related topics
 
-- Brownian motion and stochastic calculus: Brownian
+- [Brownian motion and stochastic calculus](../../Probability/stochastic-calculus/README.md): Brownian
   paths have finite $p$-variation only for $p > 2$; lifted with their Lévy area they are the basic
   rough paths, and Stratonovich equations are rough differential equations.
-- Quadratic variation of Brownian motion:
+- [Quadratic variation of Brownian motion](../../Probability/stochastic-calculus/quadratic-variation-of-brownian-motion/README.md):
   why Brownian paths have unbounded variation, so that their iterated integrals are not
   Riemann–Stieltjes integrals.
 - [Ordinary differential equations](../ordinary-differential-equations/README.md): controlled

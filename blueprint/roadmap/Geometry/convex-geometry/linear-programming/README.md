@@ -14,6 +14,6 @@
 - Bondareva–Shapley theorem: nonemptiness of the core by LP duality.
 - Scheduling unrelated parallel machines: an approximation algorithm by rounding an LP relaxation.
 - Weighted vertex cover by the pricing method: a primal–dual approximation algorithm.
-- Lagrange duality
+- [Lagrange duality](../../../Analysis/convex-analysis-and-variations/lagrange-duality/README.md)
 - [Robust linear programming](../robust-linear-programming/README.md): linear programs whose data lie in uncertainty sets; under ellipsoidal uncertainty the robust counterpart is a conic quadratic program.
-- Ellipsoid method: the first polynomial-time algorithm for linear programming (Khachiyan, 1979).
+- [Ellipsoid method](../../../Analysis/convex-analysis-and-variations/ellipsoid-method/README.md): the first polynomial-time algorithm for linear programming (Khachiyan, 1979).

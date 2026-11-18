@@ -7,4 +7,4 @@
 
 ## Related topics
 
-- Tikhonov regularization
+- [Tikhonov regularization](../../../convex-analysis-and-variations/tikhonov-regularization/README.md)
