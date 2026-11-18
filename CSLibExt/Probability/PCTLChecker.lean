@@ -230,12 +230,12 @@ def lookupTab {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin m))
     (k : ℕ) (i : Fin m) : ℚ :=
   (hitTab P A B k).getD i.val 0
 
-/-- The tabulated list has one entry per state. -/
 /-- A tabulated step always produces one entry per state. -/
 theorem tabStep_length {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin m))
     (v : List ℚ) : (tabStep P A B v).length = m := by
   simp [tabStep]
 
+/-- The tabulated list has one entry per state. -/
 theorem hitTab_length {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin m))
     (k : ℕ) : (hitTab P A B k).length = m := by
   induction k with
