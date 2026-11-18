@@ -90,7 +90,7 @@ structure SystemState (σ : Type v) (α : Type u) where
   slot : Slot α
 
 /-- A producer interrupt handler: a transition relation over the whole closed-system state, so
-that a handler which writes driver-local state or the slot is expressible; `Rely` excludes it. -/
+that a handler which writes driver-local state or the slot is expressible; `Rely` restricts slot writes to publications. -/
 abbrev InterruptHandler (σ : Type v) (α : Type u) :=
   Cslib.LTS (SystemState σ α) (InterruptAction α)
 
