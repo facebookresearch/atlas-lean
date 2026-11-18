@@ -142,7 +142,7 @@ example : liftedInjection 2 twoBusExample.admittance (voltageLift 2 ![1, 1 / 2])
   rw [CurrentLimitedOPF.admittance, ← nodeComplexPower_eq_liftedInjection]
   exact power1
 
-/-! ### Rank-one witness, rank-two point, soundness and phase -/
+/-! ### Rank-one witness, rank-two point, rank bound, soundness and phase -/
 
 /-- The rank-one witness is AC feasible, with relaxation-feasible lift and cost `1/4`. -/
 example : acFeasible 2 1 twoBusExample ![1, 1 / 2] ∧
@@ -170,6 +170,15 @@ example (L : ℝ)
       L ≤ sdpCost 2 1 twoBusExample W) : L ≤ 1 / 4 := by
   rw [← twoBus_rankOne_witness.2.2.1]
   exact (currentLimitedACLift_sound 2 1 twoBusExample).2 L hL _ twoBus_rankOne_witness.1
+
+/-- Rank at most one: the witness lift is nonzero with rank at most one, while the zero
+vector lifts to the zero matrix. -/
+example : (voltageLift 2 ![1, 1 / 2]).rank ≤ 1 ∧ voltageLift 2 ![1, 1 / 2] ≠ 0 ∧
+    voltageLift 2 0 = 0 := by
+  refine ⟨voltageLift_rank_le_one 2 _, fun h => ?_, voltageLift_zero 2⟩
+  have h00 := congrFun (congrFun h 0) 0
+  rw [lift_eq] at h00
+  simp at h00
 
 /-- Global phase: multiplying the witness by `i` leaves its lift unchanged. -/
 example : voltageLift 2 (fun k => Complex.I * (![1, 1 / 2] : Fin 2 → ℂ) k) =
