@@ -967,6 +967,150 @@ class Declarations(Vault):
             self.assertEqual(sync.run_declarations(), 1)
         self.assertIn("error: Algebra/groups/sylow.md is listed on no folder page", errors.getvalue())
 
+    def test_an_edit_that_does_not_render_as_meant_is_left_out(self) -> None:
+        # The whitelist admits a heading holding raw HTML, but a browser builds the rest of the page inside the
+        # textarea it opens: the new page's item would show no link, so the page is left as it is and the new page
+        # reported as listed nowhere. Raw HTML inline, in a quote or in a list item is caught the same way, while a
+        # fence that renders it as code takes the item.
+        for name, text, simple in (
+                ("heading", "# T\n\n- [Old](old.md)\n\n## Example <textarea>\n\n- [Late](late.md)\n", True),
+                ("inline", "# T\n\nExample: <textarea>\n\n- [Old](old.md)\n", False),
+                ("quoted", "# T\n\n- [Old](old.md)\n\n> <textarea>\n", False),
+                ("in a list item", "# T\n\n- [Old](old.md)\n  <textarea>\n", False),
+                # A select drops the list that follows; a table keeps the heading open, which takes in that list.
+                ("select in a heading", "# T\n\n- [Old](old.md)\n\n## Example <select>\n\n- [Late](late.md)\n", True),
+                ("table in a heading", "# T\n\n- [Old](old.md)\n\n## Example <table>\n\n- [Late](late.md)\n", True)):
+            with self.subTest(name):
+                self.assertEqual(sync.simple_page(text, code=True), simple)
+                report = self.add_sylow(text)
+                self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(), text)
+                self.assertEqual((report["appended"], report["unlisted"]), ([], ["Algebra/groups/sylow.md"]))
+        text = "# T\n\n- [Old](old.md)\n\n    ```\n    <textarea>\n    ```\n"
+        report = self.add_sylow(text)
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(), f"{text}\n- [Sylow](sylow.md)\n")
+        self.assertEqual((report["appended"], report["unlisted"]), (["Algebra/groups/sylow.md"], []))
+
+    def test_a_part_copy_that_does_not_render_as_meant_is_left_to_an_editor(self) -> None:
+        # The whitelist admits a part's entry whose math runs past the link, or whose attribute list sets another
+        # href; its copy would show no link, or a link to the wrong page, so the copy stays as it is.
+        groups = wiki.ROADMAP / "Algebra" / "groups"
+        for name, entry in (("math across the link", "- [$A](a.md)$\n"), ("attribute list", '- [A](a.md){: href="x.md"}\n')):
+            with self.subTest(name):
+                part = f"# Part 1 of 1\n\n{entry}- [B](b.md)\n"
+                self.assertTrue(sync.simple_page(part))
+                text = "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [B](part-01/b.md)\n"
+                self.page("Algebra/groups/README.md", text)
+                self.page("Algebra/groups/part-01/README.md", part)
+                sync.LINKS.mkdir(parents=True, exist_ok=True)
+                report = sync.apply_declarations([], SimpleNamespace(declarations={}))
+                self.assertEqual((groups / "README.md").read_text(), text)
+                self.assertEqual(report["parts"], ["Algebra/groups/part-01"])
+
+    def test_a_part_list_keeps_every_entry_it_cannot_read(self) -> None:
+        # A part's entry with a fragment, a query, a dot in its name, a deeper path, another extension or a scheme is
+        # no entry the copy can take, and a copy's item with a fragment or a deeper path is none it can replace: the
+        # copy stays as it is, and no item is dropped from the folder page.
+        groups = wiki.ROADMAP / "Algebra" / "groups"
+        copy = "- [A](part-01/a.md)\n- [B](part-01/b.md)\n"
+        for name, part, listed in (("fragment", "- [A](a.md#statement)\n", copy), ("query", "- [A](a.md?x=1)\n", copy),
+                                   ("dot in the name", "- [A](a.b.md)\n", copy), ("deeper path", "- [A](deep/a.md)\n", copy),
+                                   ("other extension", "- [A](a.markdown)\n", copy), ("scheme", "- [A](urn:x)\n", copy),
+                                   ("copy with a fragment", "- [A](a.md)\n", "- [A](part-01/a.md#appendix)\n- [B](part-01/b.md)\n"),
+                                   ("copy with a deeper path", "- [A](a.md)\n", copy + "- [Note](part-01/deep/note.md)\n")):
+            with self.subTest(name):
+                text = f"# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n{listed}"
+                self.page("Algebra/groups/README.md", text)
+                self.page("Algebra/groups/part-01/README.md", f"# Part 1 of 1\n\n{part}- [B](b.md)\n- [C](c.md)\n")
+                sync.LINKS.mkdir(parents=True, exist_ok=True)
+                report = sync.apply_declarations([], SimpleNamespace(declarations={}))
+                self.assertEqual((groups / "README.md").read_text(), text)
+                self.assertEqual(report["parts"], ["Algebra/groups/part-01"])
+
+    def test_an_encoded_link_makes_a_page_not_simple(self) -> None:
+        # "%2e%2e/" and "&period;&period;&sol;" read as "../", so either could lead anywhere: the new page goes at the end.
+        for name, page in (("percent", "%2e%2e/rings/README.md"), ("entity", "&period;&period;&sol;rings/README.md")):
+            with self.subTest(name):
+                text = f"# Groups\n\n- [Old](old.md)\n\n## Related topics\n\n- [Rings]({page}): rings.\n"
+                report = self.add_sylow(text)
+                self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(), f"{text}\n- [Sylow](sylow.md)\n")
+                self.assertEqual(report["appended"], ["Algebra/groups/sylow.md"])
+
+    def test_a_closing_section_holds_none_of_the_own_list(self) -> None:
+        # A page whose only list of its folder's pages is under "Sources", or a section within "Related topics", has no
+        # own list: the new page goes ahead of the first section, not into either.
+        for name, closing in (("sources", "## Sources\n\n- [Notes](notes.md)\n"),
+                              ("within related topics", "## Related topics\n\n### Here\n\n- [Notes](notes.md)\n")):
+            with self.subTest(name):
+                report = self.add_sylow(f"# Groups\n\nProse.\n\n{closing}")
+                self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
+                                 f"# Groups\n\nProse.\n\n- [Sylow](sylow.md)\n\n{closing}")
+                self.assertEqual((report["appended"], report["unlisted"]), ([], []))
+
+    def test_a_new_section_keeps_its_modules_code(self) -> None:
+        # page_title drops a title's backticks, which would leave "<textarea>" as raw HTML: the heading keeps them.
+        text = "# Bakery\n\n## The algorithm\n\n- [State](state.md)\n\n## Mutual exclusion\n\n- [Invariant](invariant.md)\n"
+        for title, heading in (("The `<textarea>` example", "The `<textarea>` example"), ("Bounds for n <m & k", "Bounds for n &lt;m &amp; k")):
+            with self.subTest(title):
+                self.page("Algebra/bakery/README.md", text)
+                self.annotate([])
+                (wiki.ROADMAP / "Algebra" / "bakery" / "turn.md").unlink(missing_ok=True)
+                turn = declaration("Ext.turn", "turn", "Turn", "Turn.", module=("Ext", "TwoProcess"))
+                turn.path, turn.module_title = wiki.ROADMAP / "Algebra" / "bakery" / "turn.md", title
+                report = sync.apply_declarations([turn], SimpleNamespace(declarations={"Ext.turn": None}))
+                self.assertEqual((wiki.ROADMAP / "Algebra" / "bakery" / "README.md").read_text(),
+                                 f"{text}\n## {heading}\n\n- [Turn](turn.md)\n")
+                self.assertEqual((report["appended"], report["unlisted"]), ([], []))
+
+    def test_an_edit_keeps_the_pages_line_ends_and_bytes(self) -> None:
+        # A page written with "\r\n" keeps them, the new item's included, and nothing at its end is dropped.
+        groups = wiki.ROADMAP / "Algebra" / "groups"
+        for name, text, edited in (
+                ("insert", "# Groups\n\n- [Old](old.md)\n\n## Related topics\n\n- [Rings](../rings/README.md)\n",
+                 "# Groups\n\n- [Old](old.md)\n- [Sylow](sylow.md)\n\n## Related topics\n\n- [Rings](../rings/README.md)\n"),
+                ("append", "# Groups\n\n- [Old](old.md)\n  note\n", "# Groups\n\n- [Old](old.md)\n  note\n\n- [Sylow](sylow.md)\n"),
+                ("no line end at the end", "# Groups\n\n- [Old](old.md)", "# Groups\n\n- [Old](old.md)\n- [Sylow](sylow.md)"),
+                ("blank lines at the end", "# Groups\n\n- [Old](old.md)\n\n\n", "# Groups\n\n- [Old](old.md)\n- [Sylow](sylow.md)\n\n\n")):
+            for newline in ("\n", "\r\n"):
+                with self.subTest(name, newline=newline):
+                    (groups / "README.md").parent.mkdir(parents=True, exist_ok=True)
+                    (groups / "README.md").write_bytes(text.replace("\n", newline).encode())
+                    self.annotate([])
+                    (groups / "sylow.md").unlink(missing_ok=True)
+                    sylow = declaration("Ext.sylow", "sylow", "Sylow", "Sylow.", module=("Ext", "Sylow"))
+                    sylow.path = groups / "sylow.md"
+                    sync.apply_declarations([sylow], SimpleNamespace(declarations={"Ext.sylow": None}))
+                    self.assertEqual((groups / "README.md").read_bytes(), edited.replace("\n", newline).encode())
+        # A part's copy refreshed on a page written with "\r\n" keeps them too.
+        text = "# Groups\r\n\r\n## [Part 1 of 1](part-01/README.md)\r\n\r\n- [A](part-01/a.md)\r\n"
+        (groups / "README.md").write_bytes(text.encode())
+        self.page("Algebra/groups/part-01/README.md", "# Part 1 of 1\n\n- [A](a.md)\n- [B](b.md)\n")
+        self.annotate([])
+        sync.apply_declarations([], SimpleNamespace(declarations={}))
+        self.assertEqual((groups / "README.md").read_bytes(), (text + "- [B](part-01/b.md)\r\n").encode())
+
+    def test_a_page_with_mixed_line_ends_takes_a_new_page_at_its_end(self) -> None:
+        text = "# Groups\r\n\r\n- [Old](old.md)\n"
+        groups = wiki.ROADMAP / "Algebra" / "groups"
+        groups.mkdir(parents=True)
+        (groups / "README.md").write_bytes(text.encode())
+        sync.LINKS.mkdir(parents=True)
+        sylow = declaration("Ext.sylow", "sylow", "Sylow", "Sylow.", module=("Ext", "Sylow"))
+        sylow.path = groups / "sylow.md"
+        report = sync.apply_declarations([sylow], SimpleNamespace(declarations={"Ext.sylow": None}))
+        self.assertEqual((groups / "README.md").read_bytes(), (text + "\n- [Sylow](sylow.md)\n").encode())
+        self.assertEqual(report["appended"], ["Algebra/groups/sylow.md"])
+
+    def test_verify_edit_reads_the_page_as_the_site_renders_it(self) -> None:
+        page = "# T\n\n- [A](a.md)\n\n## Related topics\n\n- [R](../r/README.md)\n"
+        good = "# T\n\n- [A](a.md)\n- [B](b.md)\n\n## Related topics\n\n- [R](../r/README.md)\n"
+        self.assertTrue(sync.verify_edit(page, good, [("- [B](b.md)", "b.md", (0, "# T"))]))
+        # Under the wrong heading, merged into a paragraph, losing a link, or hidden in code: each fails.
+        self.assertFalse(sync.verify_edit(page, good, [("- [B](b.md)", "b.md", (1, "## Related topics"))]))
+        self.assertFalse(sync.verify_edit(page, page.replace("- [A](a.md)\n", "- [A](a.md)\nB [B](b.md)\n"),
+                                          [("- [B](b.md)", "b.md", (0, "# T"))]))
+        self.assertFalse(sync.verify_edit(page, good.replace("- [R](../r/README.md)\n", ""), [("- [B](b.md)", "b.md", (0, "# T"))]))
+        self.assertFalse(sync.verify_edit(page, page + "\n```\n- [B](b.md)\n```\n", [("- [B](b.md)", "b.md", None)]))
+
     def test_a_new_section_follows_all_that_the_last_one_holds(self) -> None:
         # The prose after the last item stays in the section it closes.
         tail = "- [Invariant](invariant.md)\n\nThe invariant is Lamport's.\nIt is short.\n\n"

@@ -30,7 +30,11 @@ section holds. On any other page, it goes at the end, after a blank line, and is
 reported for an editor to place; if the page has raw HTML or a code fence, it is
 left out and reported as an error. A folder the wiki has keeps its layout and each
 topic its folder (see kept_layout), and a folder page split into parts lists what
-its parts list when both pages are simple; any other part list is reported.
+its parts list when both pages are simple; any other part list is reported. Each
+edit is rendered as the site renders it, and read as a browser builds it, before
+it is written (see verify_edit): one that would lose a link, move a heading, or
+show its new link elsewhere or not at all is left out and reported too, and a page
+keeps its line ends and bytes.
 
 import runs once, on a tree whose Lean still holds the wiki's English. TITLES.jsonl
 holds checked titles, one {"file", "name", "opening", "title"} per line: a
@@ -43,7 +47,9 @@ Run it with a Python that has Autoform installed (see blueprint-pages.yml).
 
 from __future__ import annotations
 
+import functools
 import hashlib
+import importlib
 import json
 import re
 import sys
@@ -62,6 +68,8 @@ NAMESPACE = "org.autoform"
 OWN = "org.atlas-wiki"
 DEFAULTS = {"object": {"type": "lean", "uri": "../.."}}
 STATE = wiki.ROOT / "scripts" / "wiki-sync.json"
+# The site's build configuration, whose Markdown extensions a folder page is rendered with to check an edit.
+SITE = wiki.ROOT / "mkdocs.yml"
 LEAN_SECTIONS = ("Depends on", "Proof depends on")
 FRONTMATTER = re.compile(r"\A---\n(.*?)\n---\n\n?", re.S)
 SECTION = re.compile(r"(?m)^## (.+)$")
@@ -87,11 +95,12 @@ TEXT = re.compile(r"(?![-+*_>|<`~#=:{\s]|\d{1,9}[.)]|\[(?:[^]\\]|\\.)*\]:)")
 # them.
 LIST_ITEM = re.compile(r" {0,3}(?:[-+*]|\d{1,9}[.)])(?:[ \t]|$)")
 HEADING = re.compile(r" {0,3}#{2,6}(?:[ \t]|$)")
-# A page of the folder, as an item links it: "NAME.md" or "NAME/README.md", with no dot, slash, fragment or query in
-# NAME; and a destination that is no path in the wiki's tree: one with a scheme, of any case, or that starts with "/"
-# or "#".
-CHILD = re.compile(r"[^./#?\s]+(?:/README)?\.md")
-ABSOLUTE = re.compile(r"[A-Za-z][A-Za-z0-9+.-]*:|[#/]")
+# A page of the folder, as an item links it: "NAME.md" or "NAME/README.md", with no dot, slash, fragment, query,
+# encoding or math in NAME (see destination).
+CHILD = re.compile(r"[^./#?%&$\s]+(?:/README)?\.md")
+# The titles of the sections that close a folder page: what they list is not the page's own list.
+CLOSING = {"related topics", "sources", "references", "bibliography", "see also", "further reading", "depends on",
+           "proof depends on", "mathematical overview"}
 PART = re.compile(r"part-\d+")
 
 
@@ -464,12 +473,30 @@ def listed_links(readme: Path) -> list[str]:
     return [page for block in blocks(readme.read_text()) if (page := own_page(block))]
 
 
+def destination(page: str) -> str:
+    """What a link's destination on a folder page is: "elsewhere" when it has a scheme, of any case, starts with "/" or
+    "#", or leaves the folder by a leading chain of "../" with no "." or ".." segment after it; "child" when it is a
+    page of the folder (see CHILD); "part" when it is a page of one of its parts, "part-N/" and a child of it; and
+    "unclear" for any other, an encoded one or one with a fragment or a query included, which might lead back into the
+    folder."""
+    if re.match(r"[A-Za-z][A-Za-z0-9+.-]*:|[#/]", page):
+        return "elsewhere"
+    if re.search(r"[%&$\\]", page):
+        return "unclear"
+    if CHILD.fullmatch(page):
+        return "child"
+    if re.fullmatch(rf"part-\d+/{CHILD.pattern}", page):
+        return "part"
+    rest = re.sub(r"^(?:\.\./)+", "", page)
+    return "elsewhere" if rest != page and not {".", ".."} & set(re.split(r"[/#?]", rest)) else "unclear"
+
+
 def own_page(block: str) -> str | None:
-    """The page of its folder that an item of a folder page links first, outside code spans (see without_code): a
-    destination that CHILD matches. None for any other block."""
+    """The page of its folder that an item of a folder page links first, outside code spans (see without_code), a
+    "child" destination (see destination); None for any other block."""
     item = OWN_ITEM.match(without_code(block) or block)
     page = item and block[item.start(2):item.end(2)]
-    return page if page and CHILD.fullmatch(page) else None
+    return page if page and destination(page) == "child" else None
 
 
 def listed_items(lines: list[str]) -> dict[str, int]:
@@ -491,12 +518,15 @@ def listing(text: str) -> list[tuple[str, str]]:
 
 def own_list(lines: list[str]) -> dict[int, int]:
     """A folder page's own list, by block: each item that links a page of its folder (see own_page), and the block of
-    the heading above it, or -1, so that two sections with one title stay two."""
-    heading, own = -1, {}
+    the heading above it, or -1, so that two sections with one title stay two. A closing section (see CLOSING) and the
+    sections within it hold none of it."""
+    heading, own, closing = -1, {}, 0
     for number, row in enumerate(lines):
         if HEADING.match(row):
-            heading = number
-        elif own_page(row):
+            heading, level = number, len(row.strip()) - len(row.strip().lstrip("#"))
+            if not closing or level <= closing:
+                closing = level if row.strip(" \t#").casefold() in CLOSING else 0
+        elif own_page(row) and not closing:
             own[number] = heading
     return own
 
@@ -507,15 +537,21 @@ def add_to_listing(readme: Path, line: str, before: list[str] = (), after: list[
     the end of the own list, where, if that list runs over sections, it starts a section of its own, *section*, after
     all that the last one holds. A page with no own list takes it ahead of its first section, such as "Related topics",
     or at its end. Any other page is never edited within: the line goes at its end, after a blank line, and "appended"
-    is returned, so that an editor places it; or, if the page could hold raw HTML or a code fence (see uncertain), the
-    page is left as it is and "unlisted" is returned. "" otherwise."""
-    text = readme.read_text().rstrip("\n")
-    if not simple_page(text, code=True):
-        if uncertain(text):
+    is returned, so that an editor places it. If the page could hold raw HTML or a code fence (see uncertain), or the
+    edit does not render as meant (see verify_edit), the page is left as it is and "unlisted" is returned. "" otherwise.
+    The page keeps its line ends and every byte it had."""
+    text, newline = read_page(readme)
+    body = text.rstrip("\n")
+    href = re.search(r"\]\(([^()\s]+)\)$", line).group(1)
+    if not simple_page(body, code=True):
+        if uncertain(body):
             return "unlisted"
-        readme.write_text(f"{text}\n\n{line}\n")
+        edited = text + "\n" * max(0, 2 - (len(text) - len(body))) + line + "\n"
+        if not verify_edit(text, edited, [(line, href, None)]):
+            return "unlisted"
+        write_page(readme, edited, newline)
         return "appended"
-    lines = text.split("\n")
+    lines = body.split("\n")
     own = own_list(lines)
     last = max(own, default=-1)
     end = next((i for i in range(last + 1, len(lines)) if HEADING.match(lines[i])), len(lines))
@@ -523,7 +559,7 @@ def add_to_listing(readme: Path, line: str, before: list[str] = (), after: list[
     at = next((items[link] + 1 for link in reversed(before) if link in items), None)
     if at is None:
         at = next((items[link] for link in after if link in items), None)
-    new = [line]
+    new, sectioned = [line], False
     if at is None:
         sectioned = bool(section) and len(set(own.values())) > 1
         at = last + 1 if own and not sectioned else end
@@ -536,8 +572,143 @@ def add_to_listing(readme: Path, line: str, before: list[str] = (), after: list[
             joins = own and not sectioned and LIST_ITEM.match(lines[at - 1])
             new = [""] * bool(at and not joins) + new + [""] * bool(at < len(lines) and lines[at].strip())
     lines[at:at] = new
-    readme.write_text("\n".join(lines) + "\n")
+    edited = "\n".join(lines) + text[len(body):]
+    headings = [number for number, row in enumerate(lines) if re.match(r"#{1,6}(?: |$)", row)]
+    index = at + new.index(line)
+    above = [number for number in headings if number < index]
+    under = (len(above) - 1, lines[above[-1]] if above else "")
+    added = (len(above) - 1, lines[above[-1]]) if sectioned else None
+    if not verify_edit(text, edited, [(line, href, under)], added=added):
+        return "unlisted"
+    write_page(readme, edited, newline)
     return ""
+
+
+def section_title(target) -> str:
+    """The heading of the section a new page opens: its module's title, its code kept, else its module's name, with
+    each "&" and "<" outside code written as an entity, so that none of it reads as HTML."""
+    title = target.module_title if wiki.page_title(target.module_title) else wiki.topic_title(target.module[-1])
+    pieces, at = [], 0
+    for code in re.finditer(r"(`+).+?(?<!`)\1(?!`)", title):
+        pieces += [title[at:code.start()].replace("&", "&amp;").replace("<", "&lt;"), code.group()]
+        at = code.end()
+    return "".join(pieces) + title[at:].replace("&", "&amp;").replace("<", "&lt;")
+
+
+def read_page(path: Path) -> tuple[str, str]:
+    """A folder page's text, with "\n" line ends, and the line end it was written with: "\r\n" when every line end
+    is one, else "\n". A page whose line ends are mixed keeps its "\r"s, which no simple page holds."""
+    raw = path.read_bytes().decode("utf-8")
+    if "\r\n" in raw and raw.count("\r") == raw.count("\r\n") == raw.count("\n"):
+        return raw.replace("\r\n", "\n"), "\r\n"
+    return raw, "\n"
+
+
+def write_page(path: Path, text: str, newline: str) -> None:
+    """Write a folder page's text (see read_page) with its line ends."""
+    path.write_bytes(text.replace("\n", newline).encode("utf-8"))
+
+
+@functools.cache
+def renderer():
+    """The site's Markdown, as MkDocs builds it from SITE: MkDocs' own extensions, toc, tables and fenced_code, then
+    those SITE lists, with their settings."""
+    import markdown
+    import yaml
+
+    class Loader(yaml.SafeLoader):
+        pass
+
+    def named(loader, name: str, node):
+        module, _, attribute = name.rpartition(".")
+        return getattr(importlib.import_module(module), attribute)
+
+    Loader.add_multi_constructor("tag:yaml.org,2002:python/name:", named)
+    names, settings = ["toc", "tables", "fenced_code"], {}
+    for entry in yaml.load(SITE.read_text(), Loader=Loader).get("markdown_extensions", []):
+        name, options = next(iter(entry.items())) if isinstance(entry, dict) else (entry, None)
+        names += [name] * (name not in names)
+        if options:
+            settings[name] = options
+    return markdown.Markdown(extensions=names, extension_configs=settings)
+
+
+# Elements whose content a reader is not shown as markup, or not shown at all: code, raw text, and inert or fallback
+# content.
+HIDDEN = {"code", "datalist", "iframe", "noembed", "noframes", "noscript", "object", "plaintext", "pre", "script",
+          "select", "style", "template", "textarea", "title", "xmp"}
+
+
+@functools.lru_cache(maxsize=1024)
+def rendered(text: str) -> tuple[tuple, tuple, tuple]:
+    """What a folder page shows as the site renders it (see renderer), its HTML built into the tree a browser builds,
+    with scripting on: the hrefs of its links, the texts of its headings, and the first link, text and heading ordinal
+    (-1 for none) of each of its list items. Nothing within code, raw text or an element that is not shown counts: see
+    HIDDEN, and an element with a hidden attribute or a style that hides it, a dialog that is not open, and what a
+    details element that is not open holds but for its summary."""
+    import html5lib
+
+    md = renderer()
+    md.reset()
+    tree = html5lib.HTMLParser(namespaceHTMLElements=False).parse(md.convert(text), scripting=True)
+    links, headings, items = [], [], []
+
+    def walk(node, item: list | None) -> None:
+        for child in node:
+            tag = child.tag if isinstance(child.tag, str) else ""
+            if (tag in HIDDEN or "hidden" in child.attrib
+                    or re.search(r"display\s*:\s*none|visibility\s*:\s*hidden", child.get("style", ""), re.I)
+                    or tag == "dialog" and "open" not in child.attrib
+                    or node.tag == "details" and "open" not in node.attrib and tag != "summary"):
+                continue
+            if tag == "a" and child.get("href") is not None:
+                links.append(child.get("href"))
+                if item is not None and item[0] is None:
+                    item[0] = child.get("href")
+            if re.fullmatch(r"h[1-6]", tag):
+                headings.append(" ".join("".join(child.itertext()).split()))
+            if tag == "li":
+                entry = [None, " ".join("".join(child.itertext()).split()), len(headings) - 1]
+                walk(child, entry)
+                items.append(tuple(entry))
+            else:
+                walk(child, item)
+
+    walk(tree, None)
+    return tuple(links), tuple(headings), tuple(items)
+
+
+def heading_text(line: str) -> str | None:
+    headings = rendered(line)[1]
+    return headings[0] if len(headings) == 1 else None
+
+
+def verify_edit(before: str, after: str, items: list[tuple[str, str, tuple[int, str] | None]],
+                replaced: list[str] = (), added: tuple[int, str] | None = None) -> bool:
+    """Whether *after*, a folder page edited from *before*, renders as meant (see rendered): every link *before* shows
+    is still shown, but for the hrefs in *replaced*; its headings keep their order, *added*, the ordinal and line of a
+    heading the edit adds, aside; and each of *items*, an item's line and href, is shown with that href and as its line
+    shows alone, in a list item under the heading its ordinal and line name, or anywhere if None."""
+    old_links, old_headings, _ = rendered(before)
+    links, headings, shown = rendered(after)
+    if Counter(old_links) - Counter(replaced) - Counter(links):
+        return False
+    kept = list(headings)
+    if added is not None and (added[0] >= len(kept) or kept.pop(added[0]) != heading_text(added[1])):
+        return False
+    if kept != list(old_headings):
+        return False
+    for line, href, under in items:
+        alone = rendered(line)[2]
+        if len(alone) != 1 or alone[0][0] != href:
+            return False
+        if under is None:
+            if Counter(links)[href] <= Counter(old_links)[href]:
+                return False
+        elif (under[0] >= 0 and (under[0] >= len(headings) or headings[under[0]] != heading_text(under[1]))
+              or (href, alone[0][1], under[0]) not in shown):
+            return False
+    return True
 
 
 def page_heading(text: str) -> str | None:
@@ -618,16 +789,12 @@ def without_code(row: str, strict: bool = False) -> str | None:
 
 def simple_item(block: str, code: bool = False) -> re.Match | None:
     """The match of a simple item (see SIMPLE_ITEM), whose second group is its page; with *code*, also of one whose
-    texts hold inline code spans that hide nothing of the link (see without_code), read with them made plain. A
-    relative page with a "." or ".." segment, but for a leading chain of "../", is not simple: it could lead back into
-    the folder."""
+    texts hold inline code spans that hide nothing of the link (see without_code), read with them made plain. An
+    "unclear" page (see destination) is not simple: it could lead back into the folder."""
     plain = without_code(block, strict=True) if code else block
     item = plain and SIMPLE_ITEM.fullmatch(plain)
     page = item and block[item.start(2):item.end(2)]
-    if not item or page != item.group(2):
-        return None
-    path = re.sub(r"^(?:\.\./)+", "", re.split(r"[#?]", page)[0])
-    return None if not ABSOLUTE.match(page) and {".", ".."} & set(path.split("/")) else item
+    return item if item and page == item.group(2) and destination(page) != "unclear" else None
 
 
 def simple_page(text: str, code: bool = False) -> bool:
@@ -636,6 +803,8 @@ def simple_page(text: str, code: bool = False) -> bool:
     simple_item, which *code* is passed to); or a line of plain text (see TEXT) with no backtick run left open and no
     "<" that could open HTML outside code spans. No item is next to a line of text, so that no text continues an item
     and no item breaks into text. Such a page's lines are its blocks."""
+    if "\r" in text:
+        return False
     kinds = []
     for row in text.strip("\n").split("\n"):
         plain = without_code(row)
@@ -664,12 +833,12 @@ def uncertain(text: str) -> bool:
 def part_entries(text: str) -> list[tuple[str, str, str]] | None:
     """A folder page's entries, as its parent copies them: the title, page and text after it of each list item that
     links a page of its folder, and of an item for each of its parts in place of the items under the part's heading.
-    None when such a heading, or the page, is not simple (see simple_page, with no code allowed)."""
+    None when such a heading, the page (see simple_page, with no code allowed), or a list item outside the parts that
+    is not a simple item linking a page of the folder is not simple."""
     if not simple_page(text):
         return None
-    lines = text.split("\n")
     entries, in_part = [], False
-    for block in lines:
+    for block in text.split("\n"):
         part = PART_HEADING.match(block)
         if part:
             if not re.fullmatch(f"{PLAIN}+", part.group(1)):
@@ -678,7 +847,10 @@ def part_entries(text: str) -> list[tuple[str, str, str]] | None:
             in_part = True
         elif HEADING.match(block):
             in_part = False
-        elif not in_part and (item := simple_item(block)) and CHILD.fullmatch(item.group(2)):
+        elif not in_part and LIST_ITEM.match(block):
+            item = simple_item(block)
+            if not item or destination(item.group(2)) != "child":
+                return None
             entries.append(item.groups())
     return entries
 
@@ -686,12 +858,15 @@ def part_entries(text: str) -> list[tuple[str, str, str]] | None:
 def with_part_lists(readme: Path, text: str) -> tuple[str, list[str]]:
     """A folder page whose list is split into parts, with each part's entries as the part's own page lists them, their
     pages taken from the folder page, under the heading that links the part. They replace the items there that link
-    the part's pages, and only those, which must follow one another. On a page that is not simple (see simple_page),
-    and for a part whose heading, page or items there are not simple with no code allowed, or whose copy runs over
-    another block, the copy stays as it is, and the part is returned, by its folder, for an editor."""
-    simple = simple_page(text, code=True)
+    the part's pages, "part-N/" and a child of it (see destination), and only those, which must follow one another. On
+    a page that is not simple (see simple_page), for a part whose heading, page or items there are not simple with no
+    code allowed, or whose copy runs over another block, and when the refreshed copy does not render as meant (see
+    verify_edit), the copy stays as it is, and the part is returned, by its folder, for an editor."""
+    body = text.rstrip("\n")
+    tail = text[len(body):]
+    simple = simple_page(body, code=True)
     sections: list[list[str]] = []
-    for block in blocks(text.rstrip("\n")):
+    for block in blocks(body):
         if not sections or HEADING.match(block):
             sections.append([])
         sections[-1].append(block)
@@ -703,27 +878,36 @@ def with_part_lists(readme: Path, text: str) -> tuple[str, list[str]]:
         folder = Path(part.group(2)).parent.as_posix()
         entries = part_entries((readme.parent / part.group(2)).read_text())
         items = [i for i, block in enumerate(section) if LIST_ITEM.match(block)]
-        copied = [i for i in items if (item := simple_item(section[i])) and item.group(2).startswith(f"{folder}/")
-                  and item.group(2) != part.group(2)]
+        copied = [i for i in items if (item := simple_item(section[i])) and item.group(2) != part.group(2)
+                  and item.group(2).startswith(f"{folder}/") and destination(item.group(2)) == "part"]
         apart = bool(copied) and copied[-1] - copied[0] >= len(copied)
         if (not simple or entries is None or not re.fullmatch(f"{PLAIN}+", part.group(1))
                 or not all(simple_item(section[i]) for i in items) or apart):
             unrefreshed.append((readme.parent / folder).relative_to(wiki.ROADMAP).as_posix())
             continue
-        copy = [f"- [{title}]({folder}/{page}){rest}" for title, page, rest in entries]
+        copy = [(f"- [{title}]({folder}/{page}){rest}", f"{folder}/{page}") for title, page, rest in entries]
         kept = [block for i, block in enumerate(section) if i not in copied]
+        lines = [line for line, _ in copy]
         if copied:
             at = copied[0]
         elif copy:
             # No copy yet: one below the heading, a blank line on either side.
             at = 2 if len(kept) > 1 and not kept[1].strip() else 1
             follows = bool(kept[at].strip()) if at < len(kept) else number + 1 < len(sections)
-            copy = [""] * (at == 1) + copy + [""] * follows
+            lines = [""] * (at == 1) + lines + [""] * follows
         else:
             continue
-        if kept[:at] + copy + kept[at:] != section:
-            sections[number], changed = kept[:at] + copy + kept[at:], True
-    return ("\n".join(block for section in sections for block in section) + "\n" if changed else text), unrefreshed
+        if kept[:at] + lines + kept[at:] == section:
+            continue
+        refreshed = [*sections[:number], kept[:at] + lines + kept[at:], *sections[number + 1:]]
+        ordinal = sum(bool(re.match(r"#{1,6}(?: |$)", block)) for other in sections[:number] for block in other)
+        replaced = [href for i in copied for href in rendered(section[i])[0]]
+        old, new = ("\n".join(block for other in page for block in other) + tail for page in (sections, refreshed))
+        if verify_edit(old, new, [(line, href, (ordinal, section[0])) for line, href in copy], replaced):
+            sections, changed = refreshed, True
+        else:
+            unrefreshed.append((readme.parent / folder).relative_to(wiki.ROADMAP).as_posix())
+    return ("\n".join(block for other in sections for block in other) + tail if changed else text), unrefreshed
 
 
 def declared(key: str, index) -> bool:
@@ -866,7 +1050,7 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
                 earlier = []
             if kind := add_to_listing(readme, f"- [{wiki.link_text(target.title)}]({target.path.name})",
                                       [entry[0] for entry in earlier], [entry[0] for entry in later],
-                                      wiki.page_title(target.module_title) or wiki.topic_title(target.module[-1])):
+                                      section_title(target)):
                 report[kind].append(target.path.relative_to(wiki.ROADMAP).as_posix())
         annotation: dict = {"subject": [{"type": "generic", "uri": "../" + target.path.relative_to(wiki.VAULT).as_posix()}]}
         if target.lean:
@@ -908,11 +1092,11 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
                 report[kind].append(readme.parent.relative_to(wiki.ROADMAP).as_posix())
     # A folder page split into parts lists each part's entries under the heading that links it, as the part lists them.
     for readme in sorted(wiki.ROADMAP.rglob("README.md")):
-        text = readme.read_text()
+        text, newline = read_page(readme)
         copied, unrefreshed = with_part_lists(readme, text)
         report["parts"] += unrefreshed
         if text != copied:
-            readme.write_text(copied)
+            write_page(readme, copied, newline)
     # A declaration upstream never documented keeps its page; only one the Lean no longer declares is gone.
     report["gone"] = sorted(
         f"{key} ({path.relative_to(wiki.ROADMAP)})" for key, path in pages.items() if key not in current and not declared(key, index)
@@ -954,13 +1138,15 @@ def run_declarations() -> int:
                         ("unindexed", "Declarations the Lean index lacks, and their pages, for an editor"),
                         ("parts", "Part lists not refreshed, as an entry needs an editor"),
                         ("appended", "New pages and folders listed at the end of a page that is not simple, to place"),
-                        ("unlisted", "New pages and folders listed nowhere, as their page may hold raw HTML or code")):
+                        ("unlisted", "New pages and folders listed nowhere, as their page may hold raw HTML or code, or "
+                         "their item would not render where placed")):
         print(f"{title}: {len(report[kind])}")
         for row in report[kind]:
             print(f"  {row}")
     for row in report["unlisted"]:
         print(f"error: {row} is listed on no folder page: that page has raw HTML or a code fence, which could take in "
-              "its item, so the sync left the page as it is; list it by hand", file=sys.stderr)
+              "its item, or the item would not render where it was placed, so the sync left the page as it is; list it "
+              "by hand", file=sys.stderr)
     return 1 if report["unlisted"] else 0
 
 
