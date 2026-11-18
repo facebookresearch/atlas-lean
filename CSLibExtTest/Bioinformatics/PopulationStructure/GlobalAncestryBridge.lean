@@ -42,7 +42,17 @@ example {mJ : MeasurableSpace J} {μ : Measure J} {n r k : ℕ}
     (f4Matrix μ (ancestryFreq θ) Sum.inl R).rank ≤ k :=
   rank_f4Matrix_ancestryFreq_le θ hp R
 
-/-- The concrete parameters of `probe.py`: three individuals, three loci,
+/-- Boundary ancestry proportions are allowed by the raw bridge: only the
+row-sum hypothesis is used, not strict positivity. -/
+example {J : Type*} [MeasurableSpace J] {μ : Measure J} (F : Fin 2 → J → ℝ)
+    (hp : ∀ X, MemLp (ancestryFreqOf ![![1, 0], ![0, 1]] F X) 2 μ) (i : Fin 2)
+    (X Y Z : Fin 2 ⊕ Fin 2) :
+    f4 μ (ancestryFreqOf ![![1, 0], ![0, 1]] F) (Sum.inl i) X Y Z =
+      ∑ k, ![![1, 0], ![0, 1]] i k *
+        f4 μ (ancestryFreqOf ![![1, 0], ![0, 1]] F) (Sum.inr k) X Y Z :=
+  f4_ancestryFreqOf_individual _ _ (fun i => by fin_cases i <;> norm_num [Fin.sum_univ_two]) hp i X Y Z
+
+/-- The concrete parameters used below: three individuals, three loci,
 two ancestral populations. -/
 noncomputable def θex : Params (Fin 3) (Fin 3) (Fin 2) where
   Q := ![![1 / 2, 1 / 2], ![1 / 4, 3 / 4], ![3 / 4, 1 / 4]]
@@ -60,13 +70,40 @@ noncomputable def θex : Params (Fin 3) (Fin 3) (Fin 2) where
     intro k j
     fin_cases k <;> fin_cases j <;> norm_num
 
-/-- Acceptance: the individual-level f4 matrix of the example (individuals
-on both sides, loci with the counting measure) has rank at most `K - 1 = 1`.
-`probe.py` computes the matrix `[[2/25, -2/25], [-2/25, 2/25]]`, of rank
-exactly `1`, so the bound is attained. -/
+/-- The individual-level f4 matrix of the concrete example, evaluated
+entry by entry over loci with the counting measure. -/
+theorem f4Matrix_example :
+    f4Matrix (Measure.count : Measure (Fin 3)) (ancestryFreq θex) Sum.inl Sum.inl =
+      ![![2 / 25, -2 / 25], ![-2 / 25, 2 / 25]] := by
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [f4Matrix, f4, ancestryFreq, ancestryFreqOf, θex, Fin.sum_univ_three,
+      MeasureTheory.integral_count] <;> norm_num
+
+/-- Acceptance: the concrete example attains the rank bound `K - 1 = 1`. -/
+theorem rank_example_eq_one :
+    (f4Matrix (Measure.count : Measure (Fin 3)) (ancestryFreq θex) Sum.inl Sum.inl).rank = 1 := by
+  have hle : (f4Matrix (Measure.count : Measure (Fin 3)) (ancestryFreq θex)
+      Sum.inl Sum.inl).rank ≤ 1 :=
+    rank_f4Matrix_ancestryFreq_le_of_finite θex Sum.inl
+  have hpos : 0 < (f4Matrix (Measure.count : Measure (Fin 3)) (ancestryFreq θex) Sum.inl Sum.inl).rank := by
+    classical
+    have hne : (f4Matrix (Measure.count : Measure (Fin 3)) (ancestryFreq θex) Sum.inl Sum.inl).mulVec (Pi.single 0 1) ≠ 0 := by
+      intro h
+      have h0 := congrFun h 0
+      rw [f4Matrix_example] at h0
+      norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two] at h0
+    have hne' : (⟨(f4Matrix (Measure.count : Measure (Fin 3)) (ancestryFreq θex) Sum.inl Sum.inl).mulVec (Pi.single 0 1), LinearMap.mem_range_self _ _⟩ :
+        LinearMap.range (f4Matrix (Measure.count : Measure (Fin 3)) (ancestryFreq θex) Sum.inl Sum.inl).mulVecLin) ≠ 0 := by
+      intro h
+      exact hne (by simpa using Subtype.ext_iff.mp h)
+    unfold Matrix.rank
+    exact Module.finrank_pos_iff_exists_ne_zero.mpr ⟨_, hne'⟩
+  exact Nat.le_antisymm hle hpos
+
 theorem rank_example_le_one :
     (f4Matrix (Measure.count : Measure (Fin 3)) (ancestryFreq θex) Sum.inl Sum.inl).rank ≤ 1 :=
-  rank_f4Matrix_ancestryFreq_le_of_finite θex Sum.inl
+  rank_example_eq_one.le
 
 /-- Endpoint `K = 1`: with one ancestral population the individual-level f4
 matrix has rank `0` (all individuals have the same frequency `F`). -/
