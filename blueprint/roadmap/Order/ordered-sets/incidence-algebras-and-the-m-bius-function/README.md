@@ -40,6 +40,6 @@ Möbius inversion and the product theorem in algebra form.
 - Möbius algebras and flag vectors:
   the Möbius algebra of a lattice, whose basis $\delta_t$ is built from $\mu$ and which Stanley uses
   to prove Weisner's and the crosscut theorem.
-- Multiplicative functions and mean values:
+- [Multiplicative functions and mean values](../../../NumberTheory/arithmetic-functions/multiplicative-functions/README.md):
   the classical Möbius function of number theory is $\mu(1, n)$ in the lattice of divisors of $n$, a
   product of chains (Stanley, Example 3.8.4).
