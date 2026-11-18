@@ -29,10 +29,12 @@ open MeasureTheory
 
 /-! ## New result: 2PL test information from the existing operator
 
-Exactly one new public symbol is proposed:
-`Measurement.vector_fisherInformation_twoPL`.  The four private helpers
-discharge, for this finite model, the analytic hypotheses of the upstream
-operator lemmas; they are not part of the public interface. -/
+The public interface is `Measurement.vector_fisherInformation_twoPL`
+together with its four named clauses:
+`twoPL_fisherInformation_quadraticForm`, `twoPL_fisherInformation_eq_scalar`,
+`twoPL_information_nonneg`, and `twoPL_information_pos_iff`.  The private
+helpers discharge, for this finite model, the analytic hypotheses of the
+upstream operator lemmas; they are not part of the public interface. -/
 
 namespace MathlibExt.Probability.Statistics.Measurement
 
@@ -324,6 +326,8 @@ theorem vector_fisherInformation_twoPL {ι : Type*} [Fintype ι] [DecidableEq ι
       linarith
 
 
+/-- The 2PL information quadratic form at `1`, as a named clause of
+`vector_fisherInformation_twoPL`. -/
 theorem twoPL_fisherInformation_quadraticForm {ι : Type*} [Fintype ι] [DecidableEq ι]
     (a b : ι → ℝ) (θ : ℝ) :
     ⟪MathlibExt.Probability.Statistics.VectorInference.fisherInformation
@@ -333,6 +337,8 @@ theorem twoPL_fisherInformation_quadraticForm {ι : Type*} [Fintype ι] [Decidab
             * (1 - Real.sigmoid (a j * (θ - b j)))) :=
   (vector_fisherInformation_twoPL a b θ).1
 
+/-- The 2PL information quadratic form agrees with the scalar Fisher
+information at the same parameter. -/
 theorem twoPL_fisherInformation_eq_scalar {ι : Type*} [Fintype ι] [DecidableEq ι]
     (a b : ι → ℝ) (θ : ℝ) :
     ⟪MathlibExt.Probability.Statistics.VectorInference.fisherInformation
@@ -341,6 +347,7 @@ theorem twoPL_fisherInformation_eq_scalar {ι : Type*} [Fintype ι] [DecidableEq
           Measure.count (fun t Y => (twoPLPMF a b t Y).toReal) θ :=
   (vector_fisherInformation_twoPL a b θ).2.1
 
+/-- The 2PL test information is nonnegative. -/
 theorem twoPL_information_nonneg {ι : Type*} [Fintype ι] [DecidableEq ι]
     (a b : ι → ℝ) (θ : ℝ) :
     0 ≤ ∑ j, (a j) ^ 2
@@ -348,10 +355,13 @@ theorem twoPL_information_nonneg {ι : Type*} [Fintype ι] [DecidableEq ι]
             * (1 - Real.sigmoid (a j * (θ - b j)))) :=
   (vector_fisherInformation_twoPL a b θ).2.2.1
 
+/-- The 2PL test information is strictly positive exactly when some
+discrimination is nonzero. -/
 theorem twoPL_information_pos_iff {ι : Type*} [Fintype ι] [DecidableEq ι]
     (a b : ι → ℝ) (θ : ℝ) :
-    (∃ j, a j ≠ 0) ↔ 0 < ∑ j, (a j) ^ 2
+    (0 < ∑ j, (a j) ^ 2
           * (Real.sigmoid (a j * (θ - b j))
-            * (1 - Real.sigmoid (a j * (θ - b j)))) :=
-  (vector_fisherInformation_twoPL a b θ).2.2.2
+            * (1 - Real.sigmoid (a j * (θ - b j)))))
+      ↔ ∃ j, a j ≠ 0 :=
+  (vector_fisherInformation_twoPL a b θ).2.2.2.symm
 end MathlibExt.Probability.Statistics.Measurement

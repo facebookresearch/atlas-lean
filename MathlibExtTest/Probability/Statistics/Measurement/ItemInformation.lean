@@ -189,7 +189,7 @@ example :
   refine ⟨?_, ?_⟩
   · have h := (twoPL_information_pos_iff
       (fun j : Fin 2 => if j = 0 then (0 : ℝ) else 2)
-      (fun _ : Fin 2 => (0 : ℝ)) 0).mp ⟨1, hwit⟩
+      (fun _ : Fin 2 => (0 : ℝ)) 0).mpr ⟨1, hwit⟩
     exact h
   · simp
 end MathlibExtTest.Probability.Statistics.Measurement.ItemInformation
