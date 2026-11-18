@@ -72,3 +72,55 @@ example : HasDerivAt (fun s : ℝ => (1 / 2 : ℝ) * ∑ i : Fin 1,
     (by intro i t; simpa using hasDerivAt_const t (5 : ℝ))
     (by intro i t; simp) 0)
   simpa using h.1
+
+/-- Two zones with reciprocal conductance `3 / 2` and exact
+solution `T s = (1 + exp (-3s), 1 - exp (-3s))`: the dissipation
+derivative at time `0` is `-6`, exercising the reciprocal edge
+term and its `1 / 2` factor. -/
+example : HasDerivAt (fun s : ℝ => (1 / 2 : ℝ) * ∑ i : Fin 2,
+      (1 : ℝ) * ((![1 + Real.exp (-3 * s), 1 - Real.exp (-3 * s)]
+        : Fin 2 → ℝ) i - 0) ^ 2) (-6) 0 := by
+  have hexp : ∀ t : ℝ, HasDerivAt (fun s => Real.exp (-3 * s))
+      (Real.exp (-3 * t) * -3) t := by
+    intro t
+    have h := ((hasDerivAt_id t).const_mul (-3 : ℝ)).exp
+    simpa using h
+  have h := (quadratic_dissipation_nonpos (fun _ : Fin 2 => (1 : ℝ))
+    (fun i j : Fin 2 => if i = j then 0 else 3 / 2)
+    (fun _ : Fin 2 => (0 : ℝ)) 0
+    (fun i s => (![1 + Real.exp (-3 * s), 1 - Real.exp (-3 * s)]
+      : Fin 2 → ℝ) i)
+    (fun i s => (![Real.exp (-3 * s) * -3, Real.exp (-3 * s) * 3]
+      : Fin 2 → ℝ) i)
+    (by intro i j; fin_cases i <;> fin_cases j <;> simp)
+    (by intro i j; fin_cases i <;> fin_cases j <;> simp <;> norm_num)
+    (by intro i; simp)
+    (by
+      intro i t
+      fin_cases i
+      · have h1 := (hasDerivAt_const t (1 : ℝ)).add (hexp t)
+        simp only [zero_add] at h1
+        exact h1
+      · have h1 := (hasDerivAt_const t (1 : ℝ)).sub (hexp t)
+        convert h1 using 1
+        · funext s
+          simp
+        · simp)
+    (by
+      intro i t
+      fin_cases i <;>
+        simp [Finset.sum_fin_eq_sum_range, Finset.sum_range_succ] <;>
+        ring) 0)
+  have hval : -((1 / 2 : ℝ) * ∑ i : Fin 2, ∑ j : Fin 2,
+        (if i = j then (0 : ℝ) else 3 / 2)
+          * ((![1 + Real.exp (-3 * (0 : ℝ)), 1 - Real.exp (-3 * (0 : ℝ))]
+              : Fin 2 → ℝ) j
+            - (![1 + Real.exp (-3 * (0 : ℝ)), 1 - Real.exp (-3 * (0 : ℝ))]
+              : Fin 2 → ℝ) i) ^ 2
+        + ∑ i : Fin 2, (0 : ℝ)
+          * ((![1 + Real.exp (-3 * (0 : ℝ)), 1 - Real.exp (-3 * (0 : ℝ))]
+              : Fin 2 → ℝ) i - 0) ^ 2) = -6 := by
+    simp [Finset.sum_fin_eq_sum_range, Finset.sum_range_succ]
+    norm_num
+  rw [hval] at h
+  exact h.1
