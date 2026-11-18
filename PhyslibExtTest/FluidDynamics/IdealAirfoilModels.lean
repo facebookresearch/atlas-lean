@@ -9,6 +9,8 @@ module
 
 public import PhyslibExt.FluidDynamics.IdealAirfoilModels
 
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+
 /-!
 # Tests for ideal airfoil models
 
@@ -164,10 +166,9 @@ example {U Γ α : ℝ} :
             (Γ : ℂ) / (2 * Real.pi * Complex.I * z)‖ ≤ K / ‖z‖ ^ 2 :=
   JoukowskiBranch.exists_physicalVelocity_farField one_pos U Γ α
 
-/-- Seam discharge: at any contour radius `R > 2a`, the composite
-signed-lift conclusions hold for the physical velocity with no force
-hypothesis left open: the far-field package supplies the expansion
-hypothesis and the bridge lemma supplies the Blasius force value. -/
+/-- At any contour radius `R > 2a`, the composite signed-lift
+conclusions hold for the physical velocity: signed lift at the Kutta
+circulation, coefficient `2π sin α`, and the small-angle bound. -/
 example {a ρ U α R : ℝ} (ha : 0 < a) (hρ : 0 < ρ) (hU : 0 < U)
     (hR : 2 * a < R) :
     KuttaJoukowski.signedLift (BlasiusForce.blasiusForce ρ
@@ -186,14 +187,13 @@ example {a ρ U α R : ℝ} (ha : 0 < a) (hρ : 0 < ρ) (hU : 0 < U)
             (-4 * Real.pi * a * U * Real.sin α) α) R) α)
           ρ U (4 * a) -
         2 * Real.pi * α| ≤ Real.pi * |α| ^ 3 / 3 :=
-  KuttaJoukowski.signedLift_liftCoefficient_kutta ha hρ hU
-    (JoukowskiBranch.exists_physicalVelocity_farField ha U
-      (-4 * Real.pi * a * U * Real.sin α) α)
-    (KuttaJoukowski.blasiusForce_physicalVelocity ha hρ hU hR)
+  KuttaJoukowski.signedLift_liftCoefficient_kutta ha hρ hU hR
 
-/-- The `π / 6` fixture at contour radius `3`, with its force
-hypothesis discharged by the bridge lemma: signed lift `2π` and lift
-coefficient `π`, both positive. -/
+/-- Nonzero-incidence fixture at `a = ρ = U = 1`, `α = π / 6`, and
+contour radius `3`, proved from the generic lift lemmas and the bridge
+lemma: since `sin (π / 6) = 1 / 2`, the Kutta circulation is `-2π`,
+the signed lift is `2π`, and the lift coefficient at chord `4` is
+`π`, both positive. -/
 example :
     KuttaJoukowski.signedLift (BlasiusForce.blasiusForce 1
         (JoukowskiBranch.physicalVelocity 1 1
@@ -212,9 +212,39 @@ example :
         (BlasiusForce.blasiusForce 1
           (JoukowskiBranch.physicalVelocity 1 1
             (-4 * Real.pi * 1 * 1 * Real.sin (Real.pi / 6))
-            (Real.pi / 6)) 3) (Real.pi / 6)) 1 1 (4 * 1) :=
-  KuttaJoukowski.fixture_pi_div_six
-    (KuttaJoukowski.blasiusForce_physicalVelocity one_pos one_pos one_pos
-      (by norm_num))
+            (Real.pi / 6)) 3) (Real.pi / 6)) 1 1 (4 * 1) := by
+  have hF : BlasiusForce.blasiusForce 1
+      (JoukowskiBranch.physicalVelocity 1 1
+        (-4 * Real.pi * 1 * 1 * Real.sin (Real.pi / 6)) (Real.pi / 6)) 3 =
+      Complex.I * (1 : ℝ) * (1 : ℝ) *
+        ((-4 * Real.pi * 1 * 1 * Real.sin (Real.pi / 6) : ℝ) : ℂ) *
+        Complex.exp (-((Real.pi / 6 : ℝ) : ℂ) * Complex.I) :=
+    KuttaJoukowski.blasiusForce_physicalVelocity one_pos one_pos one_pos
+      (by norm_num)
+  have hL := KuttaJoukowski.signedLift_of_blasiusForce_eq hF
+  have hval : -(1 : ℝ) * 1 *
+      (-4 * Real.pi * 1 * 1 * Real.sin (Real.pi / 6)) =
+      2 * Real.pi := by
+    rw [Real.sin_pi_div_six]
+    ring
+  rw [hval] at hL
+  have hL2 : -(1 : ℝ) * 1 * (-4 * Real.pi * 1 * 1 * (1 / 2)) =
+      2 * Real.pi := by ring
+  have hC : KuttaJoukowski.liftCoefficient (-(1 : ℝ) * 1 *
+      (-4 * Real.pi * 1 * 1 * Real.sin (Real.pi / 6))) 1 1 (4 * 1) =
+      2 * Real.pi * Real.sin (Real.pi / 6) :=
+    KuttaJoukowski.liftCoefficient_kutta (by norm_num) (by norm_num)
+      (by norm_num)
+  rw [Real.sin_pi_div_six] at hC
+  rw [hL2] at hC
+  have hC2 : (2 : ℝ) * Real.pi * (1 / 2) = Real.pi := by ring
+  rw [hC2] at hC
+  refine ⟨hL, ?_, ?_, ?_⟩
+  · rw [hL]
+    positivity
+  · rw [hL]
+    exact hC
+  · rw [hL, hC]
+    exact Real.pi_pos
 
 end FluidDynamics.IdealAirfoilModels

@@ -12,7 +12,6 @@ public import Mathlib.Analysis.Complex.CauchyIntegral
 public import Mathlib.Analysis.Complex.SqrtDeriv
 public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 public import Mathlib.MeasureTheory.Integral.CircleIntegral
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
@@ -1124,35 +1123,16 @@ lemma abs_two_pi_sin_sub_two_pi_le {α : ℝ} :
     _ = Real.pi * |α| ^ 3 / 3 := by ring
 
 /-- Kutta-selected signed lift, lift coefficient, and small-angle
-bound for the physical velocity.
+bound for the physical velocity, at any contour radius `R > 2 * a`.
 
-The first hypothesis is the far-field package for the
-Kutta-selected physical velocity: holomorphy on `2 * a < ‖z‖`
-together with a `K / ‖z‖^2` remainder bound beyond some `R1`.
-The second hypothesis is the resulting Blasius contour-force
-value at radius `R`. With chord `c = 4 * a`, the signed lift is
-`-ρ * U * Γ` at the Kutta circulation, the lift coefficient is
+The Blasius force value at radius `R` comes from the far-field
+package through `blasiusForce_physicalVelocity`. With chord
+`c = 4 * a`, the signed lift is `-ρ * U * Γ` at the Kutta
+circulation `Γ = -4 * π * a * U * sin α`, the lift coefficient is
 `2 * π * sin α`, and it differs from `2 * π * α` by at most
 `π * |α|^3 / 3`. -/
 lemma signedLift_liftCoefficient_kutta {a ρ U α R : ℝ}
-    (ha : 0 < a) (hρ : 0 < ρ) (hU : 0 < U)
-    (_hfar : DifferentiableOn ℂ
-        (JoukowskiBranch.physicalVelocity a U
-          (-4 * Real.pi * a * U * Real.sin α) α)
-        {z : ℂ | 2 * a < ‖z‖} ∧
-      ∃ R1 K : ℝ, 2 * a < R1 ∧ 0 ≤ K ∧ ∀ z : ℂ, R1 ≤ ‖z‖ →
-        ‖JoukowskiBranch.physicalVelocity a U
-            (-4 * Real.pi * a * U * Real.sin α) α z -
-          (U : ℂ) * Complex.exp (-α * Complex.I) -
-          ((-4 * Real.pi * a * U * Real.sin α : ℝ) : ℂ) /
-            (2 * Real.pi * Complex.I * z)‖ ≤
-          K / ‖z‖ ^ 2)
-    (hF : BlasiusForce.blasiusForce ρ
-        (JoukowskiBranch.physicalVelocity a U
-          (-4 * Real.pi * a * U * Real.sin α) α) R =
-      Complex.I * ρ * U *
-        ((-4 * Real.pi * a * U * Real.sin α : ℝ) : ℂ) *
-        Complex.exp (-α * Complex.I)) :
+    (ha : 0 < a) (hρ : 0 < ρ) (hU : 0 < U) (hR : 2 * a < R) :
     signedLift (BlasiusForce.blasiusForce ρ
         (JoukowskiBranch.physicalVelocity a U
           (-4 * Real.pi * a * U * Real.sin α) α) R) α =
@@ -1167,6 +1147,13 @@ lemma signedLift_liftCoefficient_kutta {a ρ U α R : ℝ}
           (-4 * Real.pi * a * U * Real.sin α) α) R) α)
           ρ U (4 * a) -
         2 * Real.pi * α| ≤ Real.pi * |α| ^ 3 / 3 := by
+  have hF : BlasiusForce.blasiusForce ρ
+      (JoukowskiBranch.physicalVelocity a U
+        (-4 * Real.pi * a * U * Real.sin α) α) R =
+    Complex.I * ρ * U *
+      ((-4 * Real.pi * a * U * Real.sin α : ℝ) : ℂ) *
+      Complex.exp (-α * Complex.I) :=
+    blasiusForce_physicalVelocity ha hρ hU hR
   have hL := signedLift_of_blasiusForce_eq hF
   have hC : liftCoefficient (-ρ * U * (-4 * Real.pi * a * U * Real.sin α))
       ρ U (4 * a) = 2 * Real.pi * Real.sin α :=
@@ -1176,60 +1163,6 @@ lemma signedLift_liftCoefficient_kutta {a ρ U α R : ℝ}
     exact hC
   · rw [hL, hC]
     exact abs_two_pi_sin_sub_two_pi_le
-
-/-- Nonzero-incidence fixture at `a = ρ = U = 1` and
-`α = π / 6`. Since `sin (π / 6) = 1 / 2`, the Kutta circulation
-in the displayed physical velocity is `-2 * π`; the signed lift
-is `2 * π`, positive in the direction `(-sin α, cos α)`, and the
-lift coefficient at chord `4` is `π`. -/
-lemma fixture_pi_div_six {R : ℝ}
-    (hF : BlasiusForce.blasiusForce 1
-        (JoukowskiBranch.physicalVelocity 1 1
-          (-4 * Real.pi * 1 * 1 * Real.sin (Real.pi / 6))
-          (Real.pi / 6)) R =
-      Complex.I * (1 : ℝ) * (1 : ℝ) *
-        ((-4 * Real.pi * 1 * 1 * Real.sin (Real.pi / 6) : ℝ) : ℂ) *
-        Complex.exp (-((Real.pi / 6 : ℝ) : ℂ) * Complex.I)) :
-    signedLift (BlasiusForce.blasiusForce 1
-        (JoukowskiBranch.physicalVelocity 1 1
-          (-4 * Real.pi * 1 * 1 * Real.sin (Real.pi / 6))
-          (Real.pi / 6)) R) (Real.pi / 6) = 2 * Real.pi ∧
-      0 < signedLift (BlasiusForce.blasiusForce 1
-        (JoukowskiBranch.physicalVelocity 1 1
-          (-4 * Real.pi * 1 * 1 * Real.sin (Real.pi / 6))
-          (Real.pi / 6)) R) (Real.pi / 6) ∧
-      liftCoefficient (signedLift (BlasiusForce.blasiusForce 1
-        (JoukowskiBranch.physicalVelocity 1 1
-          (-4 * Real.pi * 1 * 1 * Real.sin (Real.pi / 6))
-          (Real.pi / 6)) R) (Real.pi / 6)) 1 1 (4 * 1) = Real.pi ∧
-      0 < liftCoefficient (signedLift (BlasiusForce.blasiusForce 1
-        (JoukowskiBranch.physicalVelocity 1 1
-          (-4 * Real.pi * 1 * 1 * Real.sin (Real.pi / 6))
-          (Real.pi / 6)) R) (Real.pi / 6)) 1 1 (4 * 1) := by
-  have hL := signedLift_of_blasiusForce_eq hF
-  have hval : -(1 : ℝ) * 1 *
-      (-4 * Real.pi * 1 * 1 * Real.sin (Real.pi / 6)) =
-      2 * Real.pi := by
-    rw [Real.sin_pi_div_six]
-    ring
-  rw [hval] at hL
-  have hL2 : -(1 : ℝ) * 1 * (-4 * Real.pi * 1 * 1 * (1 / 2)) =
-      2 * Real.pi := by ring
-  have hC : liftCoefficient (-(1 : ℝ) * 1 *
-      (-4 * Real.pi * 1 * 1 * Real.sin (Real.pi / 6))) 1 1 (4 * 1) =
-      2 * Real.pi * Real.sin (Real.pi / 6) :=
-    liftCoefficient_kutta (by norm_num) (by norm_num) (by norm_num)
-  rw [Real.sin_pi_div_six] at hC
-  rw [hL2] at hC
-  have hC2 : (2 : ℝ) * Real.pi * (1 / 2) = Real.pi := by ring
-  rw [hC2] at hC
-  refine ⟨hL, ?_, ?_, ?_⟩
-  · rw [hL]
-    positivity
-  · rw [hL]
-    exact hC
-  · rw [hL, hC]
-    exact Real.pi_pos
 
 end KuttaJoukowski
 
