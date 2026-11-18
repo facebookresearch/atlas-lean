@@ -312,4 +312,3 @@ theorem vector_fisherInformation_twoPL {ι : Type*} [Fintype ι] [DecidableEq ι
       linarith
 
 end MathlibExt.Probability.Statistics.Measurement
-
