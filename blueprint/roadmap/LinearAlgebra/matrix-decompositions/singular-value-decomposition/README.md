@@ -17,7 +17,7 @@ Every real or complex matrix factors as $A = U\Sigma V^*$ with $U, V$ unitary an
 
 ## Related topics
 
-- Eckart–Young theorem in operator norm
+- [Eckart–Young theorem in operator norm](../../../Analysis/operator-theory/eigenvalue-inequalities/eckart-young-best-rank-approx-operator-n.md)
 - Principal component analysis
 - [Polar decomposition](../polar-decomposition/README.md)
 - [Condition numbers of sign matrices](../condition-numbers-of-sign-matrices/README.md)

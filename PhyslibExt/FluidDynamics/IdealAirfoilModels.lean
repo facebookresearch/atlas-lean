@@ -12,6 +12,8 @@ public import Mathlib.Analysis.Complex.CauchyIntegral
 public import Mathlib.Analysis.Complex.SqrtDeriv
 public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 public import Mathlib.MeasureTheory.Integral.CircleIntegral
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Ring
 
 /-!
@@ -40,6 +42,11 @@ far-field expansion are hypotheses, not derived from flow equations.
   the far-field branch inverts the Joukowski map on `2a < ‖z‖`.
 - `FluidDynamics.IdealAirfoilModels.JoukowskiBranch.kutta_cancellation`:
   the Kutta condition gives `Γ = -4πaU sin α`.
+- `FluidDynamics.IdealAirfoilModels.JoukowskiBranch.exists_physicalVelocity_farField`:
+  the physical velocity `circleVelocity ζ(z) / (1 - a^2 / ζ(z)^2)` is
+  holomorphic on `2a < ‖z‖` and differs from
+  `U exp(-αI) + Γ / (2πI z)` by at most `K / ‖z‖^2` for `4a ≤ ‖z‖`,
+  with `K = 12|U| a^2 + a|Γ|`.
 - `FluidDynamics.IdealAirfoilModels.BlasiusForce.blasiusForce_eq`:
   the Blasius force from a far-field expansion.
 
@@ -189,11 +196,11 @@ theorem joukowski_farFieldZeta {a : ℝ} (ha : 0 < a) {z : ℂ}
     linear_combination hquad
   linear_combination e
 
-/-- The far-field branch lands outside the circle of radius `a`:
-`a < ‖ζ(z)‖` whenever `2 * a < ‖z‖`. -/
-theorem abs_farFieldZeta_gt {a : ℝ} (ha : 0 < a) {z : ℂ}
+/-- Route step: on the exterior region the branch satisfies
+`‖z‖ / 2 < ‖ζ(z)‖`. -/
+lemma norm_farFieldZeta_gt_half {a : ℝ} (ha : 0 < a) {z : ℂ}
     (hz : 2 * a < ‖z‖) :
-    a < ‖farFieldZeta a z‖ := by
+    ‖z‖ / 2 < ‖farFieldZeta a z‖ := by
   have hzz : (0 : ℝ) < ‖z‖ := by linarith [hz, ha]
   have hmem : (1 - 4 * a ^ 2 / z ^ 2 : ℂ) ∈ Complex.slitPlane :=
     radicand_mem_slitPlane ha hz
@@ -257,8 +264,15 @@ theorem abs_farFieldZeta_gt {a : ℝ} (ha : 0 < a) {z : ℂ}
   have hlt : (‖z‖ / 2) * 1
       < (‖z‖ / 2) * ‖(1 + Complex.sqrt (1 - 4 * a ^ 2 / z ^ 2 : ℂ))‖ :=
     mul_lt_mul_of_pos_left h1s h2a
-  have hza : a < ‖z‖ / 2 := by linarith [hz]
-  linarith [hlt, hza]
+  rwa [mul_one] at hlt
+
+/-- The far-field branch lands outside the circle of radius `a`:
+`a < ‖ζ(z)‖` whenever `2 * a < ‖z‖`. -/
+theorem abs_farFieldZeta_gt {a : ℝ} (ha : 0 < a) {z : ℂ}
+    (hz : 2 * a < ‖z‖) :
+    a < ‖farFieldZeta a z‖ := by
+  have h := norm_farFieldZeta_gt_half ha hz
+  linarith [h, hz]
 
 /-- The far-field branch is holomorphic on the exterior region. -/
 theorem differentiableAt_farFieldZeta {a : ℝ} (ha : 0 < a) {z : ℂ}
@@ -323,6 +337,407 @@ theorem kutta_cancellation {a U Γ α : ℝ} (ha : 0 < a) :
   rw [hcast]
   linear_combination (4 * (U : ℂ) * ((Real.sin α) : ℂ) * (Real.pi : ℂ) * (a : ℂ)) *
     Complex.I_mul_I
+
+
+private theorem norm_ratio (a : ℝ) (ζ : ℂ) :
+    ‖(a : ℂ) ^ 2 / ζ ^ 2‖ = a ^ 2 / ‖ζ‖ ^ 2 := by
+  rw [norm_div, norm_pow, norm_pow, Complex.norm_real, Real.norm_eq_abs, sq_abs]
+
+private theorem denominator_ne_zero {a : ℝ} (ha : 0 < a) {z : ℂ}
+    (hz : 2 * a < ‖z‖) :
+    (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2) ≠ 0 := by
+  intro hcon
+  have hζpos : (0 : ℝ) < ‖farFieldZeta a z‖ := by
+    have h := abs_farFieldZeta_gt ha hz
+    linarith [h, ha]
+  have hw1 : (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2 = 1 := by
+    linear_combination -hcon
+  have hsq : a ^ 2 < ‖farFieldZeta a z‖ ^ 2 :=
+    pow_lt_pow_left₀ (abs_farFieldZeta_gt ha hz) (le_of_lt ha)
+      (show 2 ≠ 0 by norm_num)
+  have hζ2pos : (0 : ℝ) < ‖farFieldZeta a z‖ ^ 2 := pow_pos hζpos 2
+  have hlt : ‖(a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2‖ < 1 := by
+    rw [norm_ratio, div_lt_one hζ2pos]
+    exact hsq
+  rw [hw1, norm_one] at hlt
+  linarith [hlt]
+
+
+/-! ### Physical complex velocity and its far-field remainder -/
+
+/-- Circle-plane complex velocity (the Kutta numerator):
+`U * (exp (-α * I) - a^2 * exp (α * I) / ζ^2) + Γ / (2 * π * I * ζ)`. -/
+noncomputable def circleVelocity (a U Γ α : ℝ) (ζ : ℂ) : ℂ :=
+  (U : ℂ) * (Complex.exp (-α * Complex.I) -
+      a ^ 2 * Complex.exp (α * Complex.I) / ζ ^ 2) +
+    (Γ : ℂ) / (2 * Real.pi * Complex.I * ζ)
+
+/-- Physical complex velocity on the far-field branch:
+`W(z) = circleVelocity (ζ(z)) / (1 - a^2 / ζ(z)^2)` with `ζ = farFieldZeta a z`
+(division totalized; the denominator vanishes only at `ζ = ±a`). -/
+noncomputable def physicalVelocity (a U Γ α : ℝ) (z : ℂ) : ℂ :=
+  circleVelocity a U Γ α (farFieldZeta a z) /
+    (1 - a ^ 2 / (farFieldZeta a z) ^ 2)
+
+/-- Kutta value at the trailing edge: with the Kutta circulation
+`Γ = -4πaU sin α` from `kutta_cancellation`, the circle velocity
+vanishes at `ζ = a`. -/
+lemma circleVelocity_kutta_trailingEdge {a U α : ℝ} (ha : 0 < a) :
+    circleVelocity a U (-4 * Real.pi * a * U * Real.sin α) α (a : ℂ) = 0 := by
+  have ha0 : (a : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr (ne_of_gt ha)
+  have ha20 : (a : ℂ) ^ 2 ≠ 0 := pow_ne_zero 2 ha0
+  have hsin := Complex.two_sin ((α : ℝ) : ℂ)
+  have hD : (Complex.exp ((-(α : ℂ)) * Complex.I) - Complex.exp ((α : ℂ) * Complex.I))
+      = -(2 * Complex.sin (α : ℂ) * Complex.I) := by
+    have h1 := congrArg (· * Complex.I) hsin.symm
+    simp only [mul_assoc, Complex.I_mul_I] at h1
+    linear_combination -h1
+  have h2 : ((2 : ℂ)) ≠ 0 := by norm_num
+  have hpi : ((Real.pi : ℝ) : ℂ) ≠ 0 :=
+    Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
+  have hM : (2 * Real.pi * Complex.I * (a : ℂ) : ℂ) ≠ 0 :=
+    mul_ne_zero (mul_ne_zero (mul_ne_zero h2 hpi) Complex.I_ne_zero) ha0
+  have hcast : ((-4 * Real.pi * a * U * Real.sin α : ℝ) : ℂ)
+      = -4 * (Real.pi : ℂ) * (a : ℂ) * (U : ℂ) * ((Real.sin α) : ℂ) := by
+    push_cast
+    ring
+  have hΓ : ((-4 * Real.pi * a * U * Real.sin α : ℝ) : ℂ)
+        / (2 * Real.pi * Complex.I * (a : ℂ))
+      = -((U : ℂ) * (-(2 * ((Real.sin α : ℝ) : ℂ) * Complex.I))) := by
+    rw [div_eq_iff hM, hcast]
+    linear_combination
+      (-(4 * (U : ℂ) * ((Real.sin α : ℝ) : ℂ) * (Real.pi : ℂ) * (a : ℂ))) *
+        Complex.I_mul_I
+  unfold circleVelocity
+  rw [mul_div_cancel_left₀ _ ha20, hD, ← Complex.ofReal_sin, hΓ]
+  exact add_neg_cancel _
+
+/-- Route step: for `4 * a ≤ ‖z‖` the conformal denominator is bounded
+away from zero, `3 / 4 ≤ ‖1 - a^2 / ζ(z)^2‖`. -/
+lemma norm_denominator_ge {a : ℝ} (ha : 0 < a) {z : ℂ}
+    (hz : 4 * a ≤ ‖z‖) :
+    (3 / 4 : ℝ) ≤ ‖1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2‖ := by
+  have hz2a : 2 * a < ‖z‖ := by linarith [hz, ha]
+  have hζ := norm_farFieldZeta_gt_half ha hz2a
+  have h2a : 2 * a < ‖farFieldZeta a z‖ := by linarith [hζ, hz]
+  have hsq : (2 * a) ^ 2 < ‖farFieldZeta a z‖ ^ 2 :=
+    pow_lt_pow_left₀ h2a (by linarith [ha]) (show 2 ≠ 0 by norm_num)
+  rw [show (2 * a : ℝ) ^ 2 = 4 * a ^ 2 by ring] at hsq
+  have hζpos : (0 : ℝ) < ‖farFieldZeta a z‖ := by linarith [h2a, ha]
+  have hζ2pos : (0 : ℝ) < ‖farFieldZeta a z‖ ^ 2 := pow_pos hζpos 2
+  have hw : ‖(a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2‖ < 1 / 4 := by
+    rw [norm_ratio, div_lt_iff₀ hζ2pos]
+    linarith [hsq]
+  have h1 := norm_sub_norm_le (1 : ℂ) ((a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2)
+  rw [norm_one] at h1
+  linarith [h1, hw]
+
+/-- Holomorphy: the physical complex velocity is complex-differentiable on
+the whole far-field exterior `2 * a < ‖z‖`. -/
+lemma differentiableOn_physicalVelocity {a : ℝ} (ha : 0 < a) (U Γ α : ℝ) :
+    DifferentiableOn ℂ (physicalVelocity a U Γ α) {z : ℂ | 2 * a < ‖z‖} := by
+  intro z hz
+  have hz2a : 2 * a < ‖z‖ := hz
+  have hζpos : (0 : ℝ) < ‖farFieldZeta a z‖ := by
+    have h := abs_farFieldZeta_gt ha hz2a
+    linarith [h, ha]
+  have hζ0 : farFieldZeta a z ≠ 0 := norm_pos_iff.mp hζpos
+  have hζ2 : (farFieldZeta a z) ^ 2 ≠ 0 := pow_ne_zero 2 hζ0
+  have hD0 : (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2) ≠ 0 :=
+    denominator_ne_zero ha hz2a
+  have hζdiff : DifferentiableAt ℂ (farFieldZeta a) z :=
+    differentiableAt_farFieldZeta ha hz2a
+  have hζ2diff : DifferentiableAt ℂ (fun z : ℂ => (farFieldZeta a z) ^ 2) z :=
+    hζdiff.fun_pow 2
+  have h2πI0 : (2 * Real.pi * Complex.I : ℂ) ≠ 0 :=
+    mul_ne_zero (mul_ne_zero (by norm_num) (by exact_mod_cast Real.pi_ne_zero))
+      Complex.I_ne_zero
+  have hpow2 : DifferentiableAt ℂ (fun ζ : ℂ => ζ ^ 2) (farFieldZeta a z) :=
+    differentiableAt_pow 2
+  have hsub : DifferentiableAt ℂ
+      (fun ζ : ℂ => Complex.exp (-α * Complex.I) -
+        (a : ℂ) ^ 2 * Complex.exp (α * Complex.I) / ζ ^ 2) (farFieldZeta a z) :=
+    ((differentiableAt_const ((a : ℂ) ^ 2 * Complex.exp (α * Complex.I))).fun_div
+      hpow2 hζ2).const_sub _
+  have hfirst : DifferentiableAt ℂ
+      (fun ζ : ℂ => (U : ℂ) * (Complex.exp (-α * Complex.I) -
+        (a : ℂ) ^ 2 * Complex.exp (α * Complex.I) / ζ ^ 2)) (farFieldZeta a z) :=
+    hsub.const_mul _
+  have hlin : DifferentiableAt ℂ
+      (fun ζ : ℂ => 2 * Real.pi * Complex.I * ζ) (farFieldZeta a z) :=
+    differentiableAt_id.const_mul _
+  have hsecond : DifferentiableAt ℂ
+      (fun ζ : ℂ => (Γ : ℂ) / (2 * Real.pi * Complex.I * ζ)) (farFieldZeta a z) :=
+    (differentiableAt_const (Γ : ℂ)).fun_div hlin (mul_ne_zero h2πI0 hζ0)
+  have hN : DifferentiableAt ℂ (circleVelocity a U Γ α) (farFieldZeta a z) :=
+    hfirst.fun_add hsecond
+  have hNcomp : DifferentiableAt ℂ
+      (fun z : ℂ => circleVelocity a U Γ α (farFieldZeta a z)) z :=
+    hN.comp z hζdiff
+  have hD : DifferentiableAt ℂ
+      (fun z : ℂ => 1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2) z :=
+    ((differentiableAt_const ((a : ℂ) ^ 2)).fun_div hζ2diff hζ2).const_sub 1
+  have hfinal : DifferentiableAt ℂ (physicalVelocity a U Γ α) z :=
+    hNcomp.fun_div hD hD0
+  exact hfinal.differentiableWithinAt
+
+/-- Explicit far-field remainder: with `R1 = 4 * a` and
+`K = 12 * |U| * a^2 + a * |Γ|`,
+`‖W(z) - U * exp (-α * I) - Γ / (2 * π * I * z)‖ ≤ K / ‖z‖^2`
+for every `z` with `4 * a ≤ ‖z‖`. -/
+lemma physicalVelocity_farField_bound {a : ℝ} (ha : 0 < a) (U Γ α : ℝ)
+    {z : ℂ} (hz : 4 * a ≤ ‖z‖) :
+    ‖physicalVelocity a U Γ α z - (U : ℂ) * Complex.exp (-α * Complex.I) -
+        (Γ : ℂ) / (2 * Real.pi * Complex.I * z)‖ ≤
+      (12 * |U| * a ^ 2 + a * |Γ|) / ‖z‖ ^ 2 := by
+  have hz2a : 2 * a < ‖z‖ := by linarith [hz, ha]
+  have hzz : (0 : ℝ) < ‖z‖ := by linarith [hz2a, ha]
+  have hz0 : z ≠ 0 := norm_pos_iff.mp hzz
+  have hzz2pos : (0 : ℝ) < ‖z‖ ^ 2 := pow_pos hzz 2
+  have hζ := norm_farFieldZeta_gt_half ha hz2a
+  have hζpos : (0 : ℝ) < ‖farFieldZeta a z‖ := by linarith [hζ, hzz]
+  have hζ0 : farFieldZeta a z ≠ 0 := norm_pos_iff.mp hζpos
+  have hζ2 : (farFieldZeta a z) ^ 2 ≠ 0 := pow_ne_zero 2 hζ0
+  have hζ2pos : (0 : ℝ) < ‖farFieldZeta a z‖ ^ 2 := pow_pos hζpos 2
+  have hDge : (3 / 4 : ℝ) ≤ ‖1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2‖ :=
+    norm_denominator_ge ha hz
+  have hD0 : (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2) ≠ 0 := by
+    intro hcon
+    rw [hcon, norm_zero] at hDge
+    norm_num at hDge
+  have hDpos : (0 : ℝ) < ‖1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2‖ := by
+    linarith [hDge]
+  have har0 : a ≠ 0 := ne_of_gt ha
+  have hP0 : (2 * Real.pi * Complex.I : ℂ) ≠ 0 :=
+    mul_ne_zero (mul_ne_zero (by norm_num) (by exact_mod_cast Real.pi_ne_zero))
+      Complex.I_ne_zero
+  have hPζ0 : ((2 * Real.pi * Complex.I : ℂ) * farFieldZeta a z) ≠ 0 :=
+    mul_ne_zero hP0 hζ0
+  have hζD0 : (farFieldZeta a z) * (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2) ≠ 0 :=
+    mul_ne_zero hζ0 hD0
+  have hDen0 : (farFieldZeta a z) ^ 2 * (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2) * z ≠ 0 :=
+    mul_ne_zero (mul_ne_zero hζ2 hD0) hz0
+  have hζ2D0 : (farFieldZeta a z) ^ 2 * (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2) ≠ 0 :=
+    mul_ne_zero hζ2 hD0
+  have hJ2 : z * farFieldZeta a z = (farFieldZeta a z) ^ 2 + (a : ℂ) ^ 2 := by
+    have hJ := joukowski_farFieldZeta ha hz2a
+    unfold joukowski at hJ
+    have hmul := congrArg (fun w : ℂ => w * farFieldZeta a z) hJ
+    rw [add_mul, div_mul_cancel₀ _ hζ0] at hmul
+    linear_combination -hmul
+  have hD2 : (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2) * (farFieldZeta a z) ^ 2
+      = (farFieldZeta a z) ^ 2 - (a : ℂ) ^ 2 := by
+    rw [sub_mul, one_mul, div_mul_cancel₀ _ hζ2]
+  have hζ2a2 : (farFieldZeta a z) ^ 2 - (a : ℂ) ^ 2 ≠ 0 := by
+    have h := mul_ne_zero hD0 hζ2
+    rw [hD2] at h
+    exact h
+  have hBz : ((Γ : ℂ) / (2 * Real.pi * Complex.I)) / z
+      = (Γ : ℂ) / (2 * Real.pi * Complex.I * z) := by
+    rw [div_div]
+  have hE1 : ‖Complex.exp (-α * Complex.I)‖ = 1 := by
+    rw [Complex.norm_exp]
+    have hre : (-α * Complex.I : ℂ).re = 0 := by simp
+    rw [hre, Real.exp_zero]
+  have hE2 : ‖Complex.exp (α * Complex.I)‖ = 1 := by
+    rw [Complex.norm_exp]
+    have hre : (α * Complex.I : ℂ).re = 0 := by simp
+    rw [hre, Real.exp_zero]
+  have h2pi : ‖(2 * Real.pi * Complex.I : ℂ)‖ = 2 * Real.pi := by
+    rw [norm_mul, norm_mul, Complex.norm_I, Complex.norm_real, Real.norm_eq_abs,
+      abs_of_pos Real.pi_pos, show ‖(2 : ℂ)‖ = 2 by simp, mul_one]
+  have hBnorm : ‖(Γ : ℂ) / (2 * Real.pi * Complex.I)‖ = |Γ| / (2 * Real.pi) := by
+    rw [norm_div, Complex.norm_real, Real.norm_eq_abs, h2pi]
+  have hBalg : ((Γ : ℂ) / (2 * Real.pi * Complex.I))
+        / ((farFieldZeta a z) * (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2))
+      - ((Γ : ℂ) / (2 * Real.pi * Complex.I)) / z
+      = 2 * (a : ℂ) ^ 2 * ((Γ : ℂ) / (2 * Real.pi * Complex.I))
+        / ((farFieldZeta a z) ^ 2 * (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2) * z) := by
+    have e1 : ((Γ : ℂ) / (2 * Real.pi * Complex.I))
+          / ((farFieldZeta a z) * (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2))
+          * ((farFieldZeta a z) ^ 2 * (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2) * z)
+        = ((Γ : ℂ) / (2 * Real.pi * Complex.I)) * (farFieldZeta a z) * z := by
+      field_simp
+    have e2 : (((Γ : ℂ) / (2 * Real.pi * Complex.I)) / z)
+          * ((farFieldZeta a z) ^ 2 * (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2) * z)
+        = ((Γ : ℂ) / (2 * Real.pi * Complex.I))
+          * ((farFieldZeta a z) ^ 2 * (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2)) := by
+      field_simp
+    have hkey : (farFieldZeta a z) * z
+          - (farFieldZeta a z) ^ 2 * (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2)
+        = 2 * (a : ℂ) ^ 2 := by
+      linear_combination hJ2 - hD2
+    have hexpand : ((Γ : ℂ) / (2 * Real.pi * Complex.I)) * (farFieldZeta a z) * z
+          - ((Γ : ℂ) / (2 * Real.pi * Complex.I))
+            * ((farFieldZeta a z) ^ 2 * (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2))
+        = ((Γ : ℂ) / (2 * Real.pi * Complex.I))
+          * ((farFieldZeta a z) * z
+            - (farFieldZeta a z) ^ 2 * (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2)) := by
+      ring
+    rw [eq_div_iff hDen0, sub_mul, e1, e2, hexpand, hkey]
+    ring
+  have hdec : circleVelocity a U Γ α (farFieldZeta a z)
+        / (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2)
+        - (U : ℂ) * Complex.exp (-α * Complex.I)
+      = ((Γ : ℂ) / (2 * Real.pi * Complex.I))
+          / ((farFieldZeta a z) * (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2))
+        + (((U : ℂ) * Complex.exp (-α * Complex.I) * (a : ℂ) ^ 2
+          - (U : ℂ) * (a : ℂ) ^ 2 * Complex.exp (α * Complex.I))
+          / ((farFieldZeta a z) ^ 2 * (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2))) := by
+    unfold circleVelocity
+    field_simp
+    ring
+  have hW : physicalVelocity a U Γ α z - (U : ℂ) * Complex.exp (-α * Complex.I)
+        - (Γ : ℂ) / (2 * Real.pi * Complex.I * z)
+      = 2 * (a : ℂ) ^ 2 * ((Γ : ℂ) / (2 * Real.pi * Complex.I))
+          / ((farFieldZeta a z) ^ 2 * (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2) * z)
+        + (((U : ℂ) * Complex.exp (-α * Complex.I) * (a : ℂ) ^ 2
+          - (U : ℂ) * (a : ℂ) ^ 2 * Complex.exp (α * Complex.I))
+          / ((farFieldZeta a z) ^ 2 * (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2))) := by
+    unfold physicalVelocity
+    rw [hdec, ← hBz]
+    linear_combination hBalg
+  rw [hW]
+  have hζ2gt : ‖z‖ ^ 2 / 4 < ‖farFieldZeta a z‖ ^ 2 := by
+    have h2 : (‖z‖ / 2) ^ 2 < ‖farFieldZeta a z‖ ^ 2 :=
+      pow_lt_pow_left₀ hζ (div_nonneg (norm_nonneg _) (by norm_num))
+        (show 2 ≠ 0 by norm_num)
+    rw [show (‖z‖ / 2 : ℝ) ^ 2 = ‖z‖ ^ 2 / 4 by ring] at h2
+    exact h2
+  have hT2norm : ‖(((U : ℂ) * Complex.exp (-α * Complex.I) * (a : ℂ) ^ 2
+        - (U : ℂ) * (a : ℂ) ^ 2 * Complex.exp (α * Complex.I))
+        / ((farFieldZeta a z) ^ 2 * (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2)))‖
+      = ‖(U : ℂ) * Complex.exp (-α * Complex.I) * (a : ℂ) ^ 2
+        - (U : ℂ) * (a : ℂ) ^ 2 * Complex.exp (α * Complex.I)‖
+        / (‖farFieldZeta a z‖ ^ 2 * ‖1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2‖) := by
+    rw [norm_div, norm_mul, norm_pow]
+  have hA2 : ‖(U : ℂ) * Complex.exp (-α * Complex.I) * (a : ℂ) ^ 2‖
+      = |U| * a ^ 2 := by
+    rw [norm_mul, norm_mul, Complex.norm_real, Real.norm_eq_abs, hE1,
+      norm_pow, Complex.norm_real, Real.norm_eq_abs, abs_of_pos ha, mul_one]
+  have hCnorm : ‖(U : ℂ) * (a : ℂ) ^ 2 * Complex.exp (α * Complex.I)‖
+      = |U| * a ^ 2 := by
+    rw [norm_mul, norm_mul, Complex.norm_real, Real.norm_eq_abs, hE2,
+      norm_pow, Complex.norm_real, Real.norm_eq_abs, abs_of_pos ha, mul_one]
+  have hnum2 : ‖(U : ℂ) * Complex.exp (-α * Complex.I) * (a : ℂ) ^ 2
+      - (U : ℂ) * (a : ℂ) ^ 2 * Complex.exp (α * Complex.I)‖
+      ≤ 2 * |U| * a ^ 2 := by
+    calc ‖(U : ℂ) * Complex.exp (-α * Complex.I) * (a : ℂ) ^ 2
+          - (U : ℂ) * (a : ℂ) ^ 2 * Complex.exp (α * Complex.I)‖
+          ≤ ‖(U : ℂ) * Complex.exp (-α * Complex.I) * (a : ℂ) ^ 2‖
+            + ‖(U : ℂ) * (a : ℂ) ^ 2 * Complex.exp (α * Complex.I)‖ :=
+            norm_sub_le _ _
+      _ = |U| * a ^ 2 + |U| * a ^ 2 := by rw [hA2, hCnorm]
+      _ = 2 * |U| * a ^ 2 := by ring
+  have hden2 : (‖z‖ ^ 2 / 4) * (3 / 4)
+      ≤ ‖farFieldZeta a z‖ ^ 2 * ‖1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2‖ :=
+    mul_le_mul (le_of_lt hζ2gt) hDge (by norm_num) (by positivity)
+  have hden2pos : (0 : ℝ)
+      < ‖farFieldZeta a z‖ ^ 2 * ‖1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2‖ :=
+    mul_pos hζ2pos hDpos
+  have hdd2pos : (0 : ℝ) < (‖z‖ ^ 2 / 4) * (3 / 4) :=
+    mul_pos (div_pos hzz2pos (by norm_num)) (by norm_num)
+  have hY2nonneg : (0 : ℝ) ≤ 2 * |U| * a ^ 2 := by positivity
+  have hT2 : ‖(((U : ℂ) * Complex.exp (-α * Complex.I) * (a : ℂ) ^ 2
+        - (U : ℂ) * (a : ℂ) ^ 2 * Complex.exp (α * Complex.I))
+        / ((farFieldZeta a z) ^ 2 * (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2)))‖
+      ≤ 12 * |U| * a ^ 2 / ‖z‖ ^ 2 := by
+    rw [hT2norm]
+    have hmid : ‖(U : ℂ) * Complex.exp (-α * Complex.I) * (a : ℂ) ^ 2
+          - (U : ℂ) * (a : ℂ) ^ 2 * Complex.exp (α * Complex.I)‖
+          / (‖farFieldZeta a z‖ ^ 2 * ‖1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2‖)
+        ≤ (2 * |U| * a ^ 2) / ((‖z‖ ^ 2 / 4) * (3 / 4)) := by
+      gcongr
+    have hX2 : (0 : ℝ) ≤ |U| * a ^ 2 / ‖z‖ ^ 2 :=
+      div_nonneg (mul_nonneg (abs_nonneg _) (by positivity)) (le_of_lt hzz2pos)
+    have heq1 : (2 * |U| * a ^ 2) / ((‖z‖ ^ 2 / 4) * (3 / 4))
+        = (32 / 3) * (|U| * a ^ 2 / ‖z‖ ^ 2) := by
+      have hzz20 : ‖z‖ ^ 2 ≠ 0 := ne_of_gt hzz2pos
+      have h4 : (4 : ℝ) ≠ 0 := by norm_num
+      have h3 : (3 : ℝ) ≠ 0 := by norm_num
+      have h34 : ((3 : ℝ) / 4) ≠ 0 := by norm_num
+      have hS4 : (‖z‖ ^ 2 / 4 : ℝ) ≠ 0 := div_ne_zero hzz20 h4
+      have hprod : ((‖z‖ ^ 2 / 4) * (3 / 4) : ℝ) ≠ 0 := mul_ne_zero hS4 h34
+      field_simp
+      ring
+    have heq2 : 12 * |U| * a ^ 2 / ‖z‖ ^ 2 = 12 * (|U| * a ^ 2 / ‖z‖ ^ 2) := by
+      ring
+    rw [heq2]
+    refine le_trans hmid ?_
+    rw [heq1]
+    exact mul_le_mul_of_nonneg_right (by norm_num) hX2
+  have hT1norm : ‖2 * (a : ℂ) ^ 2 * ((Γ : ℂ) / (2 * Real.pi * Complex.I))
+        / ((farFieldZeta a z) ^ 2 * (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2) * z)‖
+      = 2 * a ^ 2 * (|Γ| / (2 * Real.pi))
+        / (‖farFieldZeta a z‖ ^ 2 * ‖1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2‖ * ‖z‖) := by
+    have hnum : ‖2 * (a : ℂ) ^ 2 * ((Γ : ℂ) / (2 * Real.pi * Complex.I))‖
+        = 2 * a ^ 2 * (|Γ| / (2 * Real.pi)) := by
+      rw [norm_mul, norm_mul, norm_pow, Complex.norm_real, Real.norm_eq_abs,
+        abs_of_pos ha, hBnorm, show ‖(2 : ℂ)‖ = 2 by simp]
+    rw [norm_div, hnum, norm_mul, norm_mul, norm_pow]
+  have hden1 : ((‖z‖ ^ 2 / 4) * (3 / 4)) * (4 * a)
+      ≤ (‖farFieldZeta a z‖ ^ 2 * ‖1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2‖) * ‖z‖ :=
+    mul_le_mul hden2 hz (by positivity) (by positivity)
+  have hden1pos : (0 : ℝ)
+      < (‖farFieldZeta a z‖ ^ 2 * ‖1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2‖) * ‖z‖ :=
+    mul_pos hden2pos hzz
+  have hdd1pos : (0 : ℝ) < ((‖z‖ ^ 2 / 4) * (3 / 4)) * (4 * a) :=
+    mul_pos hdd2pos (by linarith [ha])
+  have h2pipos : (0 : ℝ) < 2 * Real.pi := mul_pos (by norm_num) Real.pi_pos
+  have hY1nonneg : (0 : ℝ) ≤ 2 * a ^ 2 * (|Γ| / (2 * Real.pi)) :=
+    mul_nonneg (by positivity) (div_nonneg (abs_nonneg _) (le_of_lt h2pipos))
+  have hT1 : ‖2 * (a : ℂ) ^ 2 * ((Γ : ℂ) / (2 * Real.pi * Complex.I))
+        / ((farFieldZeta a z) ^ 2 * (1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2) * z)‖
+      ≤ a * |Γ| / ‖z‖ ^ 2 := by
+    rw [hT1norm]
+    have hmid : 2 * a ^ 2 * (|Γ| / (2 * Real.pi))
+          / ((‖farFieldZeta a z‖ ^ 2 * ‖1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2‖) * ‖z‖)
+        ≤ 2 * a ^ 2 * (|Γ| / (2 * Real.pi)) / (((‖z‖ ^ 2 / 4) * (3 / 4)) * (4 * a)) := by
+      gcongr
+    have hX1 : (0 : ℝ) ≤ a * |Γ| / ‖z‖ ^ 2 :=
+      div_nonneg (mul_nonneg (le_of_lt ha) (abs_nonneg _)) (le_of_lt hzz2pos)
+    have hfrac : (4 : ℝ) / (3 * Real.pi) ≤ 1 := by
+      have h3p : (0 : ℝ) < 3 * Real.pi := mul_pos (by norm_num) Real.pi_pos
+      rw [div_le_iff₀ h3p]
+      linarith [Real.two_le_pi]
+    have heq1 : 2 * a ^ 2 * (|Γ| / (2 * Real.pi)) / (((‖z‖ ^ 2 / 4) * (3 / 4)) * (4 * a))
+        = (4 / (3 * Real.pi)) * (a * |Γ| / ‖z‖ ^ 2) := by
+      have hzz20 : ‖z‖ ^ 2 ≠ 0 := ne_of_gt hzz2pos
+      have hpi0 : Real.pi ≠ 0 := Real.pi_ne_zero
+      have h2 : (2 : ℝ) ≠ 0 := by norm_num
+      have h3 : (3 : ℝ) ≠ 0 := by norm_num
+      have h4 : (4 : ℝ) ≠ 0 := by norm_num
+      have h34 : ((3 : ℝ) / 4) ≠ 0 := by norm_num
+      have h2pi0 : ((2 : ℝ) * Real.pi) ≠ 0 := mul_ne_zero h2 hpi0
+      have h3pi0 : ((3 : ℝ) * Real.pi) ≠ 0 := mul_ne_zero h3 hpi0
+      have hS4 : (‖z‖ ^ 2 / 4 : ℝ) ≠ 0 := div_ne_zero hzz20 h4
+      have hprod : ((‖z‖ ^ 2 / 4) * (3 / 4) : ℝ) ≠ 0 := mul_ne_zero hS4 h34
+      have h4a0 : ((4 : ℝ) * a) ≠ 0 := mul_ne_zero h4 har0
+      have hprod2 : (((‖z‖ ^ 2 / 4) * (3 / 4)) * (4 * a) : ℝ) ≠ 0 :=
+        mul_ne_zero hprod h4a0
+      field_simp
+    refine le_trans hmid ?_
+    rw [heq1]
+    have hle := mul_le_mul_of_nonneg_right hfrac hX1
+    rw [one_mul] at hle
+    exact hle
+  have hsum : a * |Γ| / ‖z‖ ^ 2 + 12 * |U| * a ^ 2 / ‖z‖ ^ 2
+      = (12 * |U| * a ^ 2 + a * |Γ|) / ‖z‖ ^ 2 := by
+    ring
+  exact le_trans (norm_add_le _ _) (le_trans (add_le_add hT1 hT2) hsum.le)
+
+/-- Existential packaging of the leaf: holomorphy on `2 * a < ‖z‖` and
+constants `R1 > 2 * a`, `K ≥ 0` with the `K / ‖z‖^2` remainder bound for
+`R1 ≤ ‖z‖`. -/
+lemma exists_physicalVelocity_farField {a : ℝ} (ha : 0 < a) (U Γ α : ℝ) :
+    DifferentiableOn ℂ (physicalVelocity a U Γ α) {z : ℂ | 2 * a < ‖z‖} ∧
+      ∃ R1 K : ℝ, 2 * a < R1 ∧ 0 ≤ K ∧ ∀ z : ℂ, R1 ≤ ‖z‖ →
+        ‖physicalVelocity a U Γ α z - (U : ℂ) * Complex.exp (-α * Complex.I) -
+            (Γ : ℂ) / (2 * Real.pi * Complex.I * z)‖ ≤ K / ‖z‖ ^ 2 := by
+  refine ⟨differentiableOn_physicalVelocity ha U Γ α, 4 * a,
+    12 * |U| * a ^ 2 + a * |Γ|, by linarith [ha], by positivity, ?_⟩
+  intro z hz
+  exact physicalVelocity_farField_bound ha U Γ α hz
 
 end JoukowskiBranch
 
