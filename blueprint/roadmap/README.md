@@ -28,3 +28,8 @@
 - [Analysis](Analysis/README.md)
 - [Measure Theory](MeasureTheory/README.md)
 - [Probability](Probability/README.md)
+- [Dynamical Systems](Dynamics/README.md)
+
+## Discrete Mathematics & Computer Science
+
+- [Combinatorics](Combinatorics/README.md)

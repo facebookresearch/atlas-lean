@@ -15,7 +15,7 @@ Couplings of probability measures, transport costs, existence of optimal couplin
   with the normalisation $\sup_A |\mu(A) - \nu(A)|$, total variation is the optimal transport cost for the cost
   $1_{x \ne y}$ (Villani's equation (6.11) carries a factor 2 for his total variation norm),
   and it bounds $W_1$ on bounded spaces.
-- Stochastic domination and Strassen's theorem:
+- [Stochastic domination and Strassen's theorem](../../Probability/correlation-inequalities/stochastic-domination-and-strassen-s-theorem/README.md):
   Strassen's theorem is a coupling existence theorem, a transport problem with a cost valued in
   $\{0, 1\}$ (Villani, Chapter 1).
 - [Matrix scaling to doubly stochastic form](../../LinearAlgebra/special-matrices/matrix-scaling-to-doubly-stochastic-form/README.md):
