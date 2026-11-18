@@ -36,8 +36,13 @@ entries are equal in magnitude and opposite in sign.
 
 ## iv. References
 
-- Standard finite-element beam theory (Hermite cubic element,
-  consistent load vector for uniform load).
+- K.-J. Bathe, *Finite Element Procedures*, 2nd edition,
+  Prentice-Hall, 2014, Section 5.2 (Hermite beam element in
+  deflection-rotation coordinates and its consistent load
+  vector for uniform load).
+- R. D. Cook, D. S. Malkus, M. E. Plesha and R. J. Witt,
+  *Concepts and Applications of Finite Element Analysis*,
+  4th edition, Wiley, 2002, Section 2.5.
 -/
 
 @[expose] public section
