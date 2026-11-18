@@ -31,7 +31,7 @@ No new definitions or results are introduced here.
 
 - A. Zero fields
 - B. Face predicates and per-face equivalences
-- C. Headline equivalence and corners for the zero fields
+- C. Headline equivalence and corners
 - D. Constant tangential field failure at the origin
 - E. Negative widths
 - F. Axiom audit
@@ -74,7 +74,7 @@ example : (0 : (Fin 3 → ℝ) → Fin 3 → ℝ) ![0, 3, 0] 0 = 0 ∧
     (0 : (Fin 3 → ℝ) → Fin 3 → ℝ) ![0, 3, 0] 1 = 0 :=
   (yTopWall_traces_iff_components 3 0 0 0 0).mp ⟨⟨rfl, rfl⟩, rfl⟩
 
-/-! ## C. Headline equivalence and corners for the zero fields -/
+/-! ## C. Headline equivalence and corners -/
 
 /-- The headline equivalence applies to arbitrary fields, with no
 smoothness or width hypothesis to discharge. -/
@@ -93,7 +93,7 @@ vanishes and its first two magnetic components vanish. -/
 example : (0 : (Fin 3 → ℝ) → Fin 3 → ℝ) ![0, 0, 0] = 0 ∧
     (0 : (Fin 3 → ℝ) → Fin 3 → ℝ) ![0, 0, 0] 0 = 0 ∧
     (0 : (Fin 3 → ℝ) → Fin 3 → ℝ) ![0, 0, 0] 1 = 0 :=
-  cornerComponents_of_rectangularGuidePECTraces 2 3 (by norm_num) (by norm_num)
+  cornerComponents_of_rectangularGuidePECTraces 2 3
     0 0 (rectangularGuidePECTraces_zero 2 3 (by norm_num) (by norm_num)) 0
 
 /-- The electric field of the zero fields vanishes at all four corner
@@ -102,21 +102,48 @@ example : (0 : (Fin 3 → ℝ) → Fin 3 → ℝ) ![0, 0, 0] = 0 ∧
     (0 : (Fin 3 → ℝ) → Fin 3 → ℝ) ![2, 0, 0] = 0 ∧
     (0 : (Fin 3 → ℝ) → Fin 3 → ℝ) ![0, 3, 0] = 0 ∧
     (0 : (Fin 3 → ℝ) → Fin 3 → ℝ) ![2, 3, 0] = 0 :=
-  (allCornerComponents_of_rectangularGuidePECTraces 2 3 (by norm_num) (by norm_num)
+  (allCornerComponents_of_rectangularGuidePECTraces 2 3
     0 0 (rectangularGuidePECTraces_zero 2 3 (by norm_num) (by norm_num)) 0).1
+
+/-- The third magnetic component is left free at the corners: the constant
+field `B = (0, 0, 1)` with `E = 0` satisfies the traces of the guide
+`a = 2`, `b = 3`, the corner results give its first two components zero at
+all four corner points in a plane `z = const`, and its third component is
+`1` at each of them. -/
+example (z : ℝ) :
+    let B : (Fin 3 → ℝ) → Fin 3 → ℝ := fun _ => ![0, 0, 1]
+    rectangularGuidePECTraces 2 3 0 B ∧
+    (B ![0, 0, z] 0 = 0 ∧ B ![2, 0, z] 0 = 0 ∧ B ![0, 3, z] 0 = 0 ∧
+      B ![2, 3, z] 0 = 0) ∧
+    (B ![0, 0, z] 1 = 0 ∧ B ![2, 0, z] 1 = 0 ∧ B ![0, 3, z] 1 = 0 ∧
+      B ![2, 3, z] 1 = 0) ∧
+    (B ![0, 0, z] 2 = 1 ∧ B ![2, 0, z] 2 = 1 ∧ B ![0, 3, z] 2 = 1 ∧
+      B ![2, 3, z] 2 = 1) := by
+  intro B
+  have h : rectangularGuidePECTraces 2 3 0 B := by
+    refine ⟨⟨by norm_num, by norm_num⟩, ?_, ?_, ?_, ?_⟩ <;> intro _ _ _ _ <;>
+      simp [B, tangentialElectricOnXWall, normalMagneticOnXWall,
+        tangentialElectricOnYWall, normalMagneticOnYWall]
+  have hc := allCornerComponents_of_rectangularGuidePECTraces 2 3 0 B h z
+  exact ⟨h, hc.2.1, hc.2.2, by simp [B]⟩
 
 /-! ## D. Constant tangential field failure at the origin -/
 
 /-- The constant field `E = (0, 1, 0)` with `B = 0` does not satisfy the
 traces of the guide `a = 2`, `b = 3`. -/
 example : ¬ rectangularGuidePECTraces 2 3 (fun _ => ![0, 1, 0]) 0 :=
-  constantTangentialField_not_rectangularGuidePECTraces 2 3 (by norm_num)
+  constantTangentialField_not_rectangularGuidePECTraces 2 3
 
 /-- The same failure seen at the origin on the wall `x = 0`: the
 tangential component `E ![0, 0, 0] 1 = 1` is nonzero. -/
 example : ¬ rectangularGuidePECTraces 2 3 (fun _ => ![0, 1, 0]) 0 :=
   not_rectangularGuidePECTraces_of_tangentialElectricNeZero 2 3 _ _ 0 0 le_rfl
     (by norm_num) (by simp)
+
+/-- The constant-field failure needs no width hypothesis: at the
+degenerate height `b = 0` it holds as well. -/
+example : ¬ rectangularGuidePECTraces 2 0 (fun _ => ![0, 1, 0]) 0 :=
+  constantTangentialField_not_rectangularGuidePECTraces 2 0
 
 /-- A nonzero normal magnetic component on the wall `y = 3` at the
 origin also breaks the traces. -/

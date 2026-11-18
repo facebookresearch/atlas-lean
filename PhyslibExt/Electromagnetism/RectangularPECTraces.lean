@@ -66,7 +66,8 @@ they are definitional. The headline equivalence composes the four per-face
 equivalences face by face, for any widths and any fields; it needs no
 smoothness or width hypothesis, since the predicates are pointwise and each
 side already carries the width conjunct. No Sobolev trace is claimed. The
-corner results combine the two adjacent wall conditions at a corner point.
+corner results combine the two adjacent wall conditions at a corner point,
+taking the positive widths from the trace predicate itself.
 The validation results are the zero fields, which satisfy the traces for any
 positive widths, and concrete failures from a single nonzero component on
 one wall.
@@ -93,7 +94,7 @@ one wall.
   `not_rectangularGuidePECTraces_of_normalMagneticNeZero`: one nonzero
   component on one wall breaks the condition.
 - `constantTangentialField_not_rectangularGuidePECTraces`: the constant
-  field `E = (0, 1, 0)` with `B = 0` fails for a guide of positive height.
+  field `E = (0, 1, 0)` with `B = 0` fails for any widths.
 
 ## iii. Table of contents
 
@@ -171,7 +172,7 @@ def rectangularGuidePECComponentConditions (a b : ℝ)
     E ![x, b, z] 0 = 0 ∧ E ![x, b, z] 2 = 0 ∧ B ![x, b, z] 1 = 0)
 
 /-- A vector over `Fin 3` with all components zero is the zero vector. -/
-private theorem vec_eq_zero_of_components (v : Fin 3 → ℝ)
+private lemma vec_eq_zero_of_components (v : Fin 3 → ℝ)
     (h0 : v 0 = 0) (h1 : v 1 = 0) (h2 : v 2 = 0) : v = 0 := by
   apply funext
   intro i
@@ -182,7 +183,7 @@ private theorem vec_eq_zero_of_components (v : Fin 3 → ℝ)
 
 /-- At a point carrying both an `x`-wall face and a `y`-wall face, the
 electric field vanishes and the first two magnetic components vanish. -/
-private theorem corner_of_faces (E B : (Fin 3 → ℝ) → Fin 3 → ℝ) (p : Fin 3 → ℝ)
+private lemma corner_of_faces (E B : (Fin 3 → ℝ) → Fin 3 → ℝ) (p : Fin 3 → ℝ)
     (hX : tangentialElectricOnXWall E p ∧ normalMagneticOnXWall B p)
     (hY : tangentialElectricOnYWall E p ∧ normalMagneticOnYWall B p) :
     E p = 0 ∧ B p 0 = 0 ∧ B p 1 = 0 := by
@@ -260,16 +261,16 @@ lemma traces_iff_componentConditions (a b : ℝ) (E B : (Fin 3 → ℝ) → Fin 
 traces has all electric components zero and its first two magnetic
 components zero. -/
 lemma cornerComponents_of_rectangularGuidePECTraces (a b : ℝ)
-    (ha : 0 < a) (hb : 0 < b) (E B : (Fin 3 → ℝ) → Fin 3 → ℝ)
+    (E B : (Fin 3 → ℝ) → Fin 3 → ℝ)
     (h : rectangularGuidePECTraces a b E B) (z : ℝ) :
     E ![0, 0, z] = 0 ∧ B ![0, 0, z] 0 = 0 ∧ B ![0, 0, z] 1 = 0 := by
-  obtain ⟨-, hx0, -, hy0, -⟩ := h
+  obtain ⟨⟨ha, hb⟩, hx0, -, hy0, -⟩ := h
   exact corner_of_faces E B _ (hx0 0 z le_rfl hb.le) (hy0 0 z le_rfl ha.le)
 
 /-- The same corner conclusion at all four corner lines
 `(0, 0)`, `(a, 0)`, `(0, b)` and `(a, b)`. -/
 lemma allCornerComponents_of_rectangularGuidePECTraces (a b : ℝ)
-    (ha : 0 < a) (hb : 0 < b) (E B : (Fin 3 → ℝ) → Fin 3 → ℝ)
+    (E B : (Fin 3 → ℝ) → Fin 3 → ℝ)
     (h : rectangularGuidePECTraces a b E B) (z : ℝ) :
     (E ![0, 0, z] = 0 ∧ E ![a, 0, z] = 0 ∧ E ![0, b, z] = 0 ∧
       E ![a, b, z] = 0) ∧
@@ -277,7 +278,7 @@ lemma allCornerComponents_of_rectangularGuidePECTraces (a b : ℝ)
       B ![a, b, z] 0 = 0) ∧
     (B ![0, 0, z] 1 = 0 ∧ B ![a, 0, z] 1 = 0 ∧ B ![0, b, z] 1 = 0 ∧
       B ![a, b, z] 1 = 0) := by
-  obtain ⟨-, hx0, hxTop, hy0, hyTop⟩ := h
+  obtain ⟨⟨ha, hb⟩, hx0, hxTop, hy0, hyTop⟩ := h
   have c00 := corner_of_faces E B _ (hx0 0 z le_rfl hb.le) (hy0 0 z le_rfl ha.le)
   have ca0 := corner_of_faces E B _ (hxTop 0 z le_rfl hb.le) (hy0 a z ha.le le_rfl)
   have c0b := corner_of_faces E B _ (hx0 b z hb.le le_rfl) (hyTop 0 z le_rfl ha.le)
@@ -319,12 +320,12 @@ lemma not_rectangularGuidePECTraces_of_normalMagneticNeZero (a b : ℝ)
 
 /-- Concrete failure: the constant field with electric component
 `E = (0, 1, 0)` and zero magnetic field does not satisfy the traces
-of a guide of positive height `b`. -/
-lemma constantTangentialField_not_rectangularGuidePECTraces (a b : ℝ)
-    (hb : 0 < b) :
+for any widths `a` and `b`. -/
+lemma constantTangentialField_not_rectangularGuidePECTraces (a b : ℝ) :
     ¬ rectangularGuidePECTraces a b (fun _ => ![0, 1, 0]) 0 := by
+  intro h
   refine not_rectangularGuidePECTraces_of_tangentialElectricNeZero a b _ _ 0 0 le_rfl
-    hb.le ?_
+    h.1.2.le ?_ h
   simp
 
 end PhyslibExt.Electromagnetism.RectangularPECTraces
