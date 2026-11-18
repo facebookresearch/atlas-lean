@@ -99,4 +99,28 @@ example : ¬ flip.IsPrimitive := by
   · rw [pow_succ, pow_mul, sq, flip_mul_flip, one_pow, Matrix.one_mul] at h
     simp [flip] at h
 
+/-- Existence without primitivity: the periodic flip chain still has a stationary
+distribution. -/
+example : ∃ π : Fin 2 → ℝ, (∀ y, 0 ≤ π y) ∧ ∑ y, π y = 1 ∧
+    π ᵥ* !![0, 1; 1, 0] = π :=
+  exists_stationary (by
+    rw [mem_rowStochastic_iff_sum]
+    refine ⟨fun i j => ?_, fun i => ?_⟩ <;> fin_cases i <;> (try fin_cases j) <;> simp)
+
+/-- The smallest primitive case: on `Unit`, the packaged Perron-Frobenius statement holds for
+the identity matrix. -/
+example : ∃ π : Unit → ℝ, ((∀ y, 0 ≤ π y) ∧ ∑ y, π y = 1 ∧ π ᵥ* (1 : Matrix Unit Unit ℝ) = π) ∧
+    (∀ y, 0 < π y) ∧ (∃ C α : ℝ, 0 ≤ α ∧ α < 1 ∧ ∀ (n : ℕ) (x : Unit),
+      tvDist (fun y => ((1 : Matrix Unit Unit ℝ) ^ n) x y) π ≤ C * α ^ n) ∧
+    (∀ π' : Unit → ℝ, (∑ y, π' y = 1 ∧ π' ᵥ* (1 : Matrix Unit Unit ℝ) = π') → π' = π) :=
+  perron_frobenius_primitive (by
+      rw [mem_rowStochastic_iff_sum]; exact ⟨fun i j => by simp, fun i => by simp⟩)
+    ⟨fun i j => by simp, 1, one_pos, fun i j => by simp⟩
+
+/-- Empty state space boundary: no vector on `Fin 0` sums to `1`, so `[Nonempty S]` is needed. -/
+example (π : Fin 0 → ℝ) : ∑ y, π y ≠ 1 := by simp
+
+#print axioms exists_stationary
+#print axioms perron_frobenius_primitive
+
 end MathlibExtTest.Probability.FiniteMarkovChainConvergence
