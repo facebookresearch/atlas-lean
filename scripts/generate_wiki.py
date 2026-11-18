@@ -240,9 +240,14 @@ def not_a_link(text: str) -> str:
 
 # Where something other than code may start: a block comment, a line comment, a string, a character, a raw string.
 _LEXEME = re.compile(r'/-|--|"|\'|(?<![\w\'!?])r#*"')
+# The same, with the braces that open and close a term embedded in an interpolated string.
+_LEXEME_IN_TERM = re.compile(r'/-|--|"|\'|(?<![\w\'!?])r#*"|[{}]')
 _STRING_TAIL = re.compile(r'(?:[^"\\]|\\.)*"', re.S)
 _CHAR = re.compile(r"'(?:\\(?:x[0-9a-fA-F]{2}|u\{[0-9a-fA-F]+\}|.)|[^\\\n'])'")
 _BLOCK = re.compile(r"/-|-/")
+# What makes the string that follows an interpolated one: `s!`, `m!`, `f!` (any `name!`), or a command that
+# takes an interpolated string, such as `throwError`.
+_INTERPOLATING = re.compile(r"(?:!|(?<![\w'])(?:throwError|dbg_trace|trace\[[^\]\n]*\])\s*|(?<![\w'])throwErrorAt\s+\S+\s+)$")
 
 
 def _blank(text: str) -> str:
@@ -254,44 +259,86 @@ def code_only(text: str) -> str:
 
     It reads the source as Lean's lexer does: block comments nest, so a docstring that shows a documented
     example stays one comment; a line comment runs to the end of its line; string literals, raw strings and
-    character literals may span lines and hide comment markers and declaration-looking text; and a prime
-    that ends a name (`h'`) starts no character literal.
+    character literals may span lines and hide comment markers and declaration-looking text; a prime that
+    ends a name (`h'`) starts no character literal; and the terms embedded in an interpolated string
+    (`s!"…{term}…"`) are code, which stays, with their own strings and braces.
     """
     out: list[str] = []
-    i, n = 0, len(text)
-    while i < n:
-        match = _LEXEME.search(text, i)
-        if match is None:
-            out.append(text[i:])
-            break
-        start, lexeme = match.start(), match.group()
-        out.append(text[i:start])
-        if lexeme == "/-":
-            depth, end = 1, n
-            for mark in _BLOCK.finditer(text, start + 2):
-                depth += 1 if mark.group() == "/-" else -1
-                if depth == 0:
-                    end = mark.end()
-                    break
-        elif lexeme == "--":
-            end = text.find("\n", start)
-            end = n if end < 0 else end
-        elif lexeme == '"':
-            tail = _STRING_TAIL.match(text, start + 1)
-            end = tail.end() if tail else n
-        elif lexeme == "'":
-            char = None if start and (text[start - 1].isalnum() or text[start - 1] in "_'!?") else _CHAR.match(text, start)
-            if char is None:
-                out.append("'")
+    n = len(text)
+
+    def code(i: int, in_term: bool) -> int:
+        # Code from i: to the end, or, in a term embedded in a string, past the brace that closes it.
+        depth = 0
+        lexemes = _LEXEME_IN_TERM if in_term else _LEXEME
+        while i < n:
+            match = lexemes.search(text, i)
+            if match is None:
+                out.append(text[i:])
+                return n
+            start, lexeme = match.start(), match.group()
+            out.append(text[i:start])
+            if lexeme in "{}":
+                out.append(lexeme)
+                if lexeme == "}":
+                    if depth == 0:
+                        return start + 1
+                    depth -= 1
+                else:
+                    depth += 1
                 i = start + 1
                 continue
-            end = char.end()
-        else:  # a raw string, r"..." or r#"..."# with as many closing hashes as opening ones
-            close = '"' + "#" * (len(lexeme) - 2)
-            end = text.find(close, match.end())
-            end = n if end < 0 else end + len(close)
-        out.append(_blank(text[start:end]))
-        i = end
+            if lexeme == "/-":
+                count, end = 1, n
+                for mark in _BLOCK.finditer(text, start + 2):
+                    count += 1 if mark.group() == "/-" else -1
+                    if count == 0:
+                        end = mark.end()
+                        break
+            elif lexeme == "--":
+                end = text.find("\n", start)
+                end = n if end < 0 else end
+            elif lexeme == '"':
+                line_start = text.rfind("\n", 0, start) + 1
+                if _INTERPOLATING.search(text, line_start, start):
+                    i = interpolated(start)
+                    continue
+                tail = _STRING_TAIL.match(text, start + 1)
+                end = tail.end() if tail else n
+            elif lexeme == "'":
+                char = None if start and (text[start - 1].isalnum() or text[start - 1] in "_'!?") else _CHAR.match(text, start)
+                if char is None:
+                    out.append("'")
+                    i = start + 1
+                    continue
+                end = char.end()
+            else:  # a raw string, r"..." or r#"..."# with as many closing hashes as opening ones
+                close = '"' + "#" * (len(lexeme) - 2)
+                end = text.find(close, match.end())
+                end = n if end < 0 else end + len(close)
+            out.append(_blank(text[start:end]))
+            i = end
+        return n
+
+    def interpolated(start: int) -> int:
+        # An interpolated string from its opening quote: its text is blanked, its embedded terms are code.
+        i = segment = start + 1
+        out.append(" ")
+        while i < n:
+            c = text[i]
+            if c == "\\":
+                i += 2
+            elif c == '"':
+                out.append(_blank(text[segment:i + 1]))
+                return i + 1
+            elif c == "{":
+                out.append(_blank(text[segment:i]) + "{")
+                i = segment = code(i + 1, True)
+            else:
+                i += 1
+        out.append(_blank(text[segment:n]))
+        return n
+
+    code(0, False)
     return "".join(out)
 
 

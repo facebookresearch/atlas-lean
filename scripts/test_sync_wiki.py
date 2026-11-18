@@ -230,6 +230,24 @@ class LeanFacts(Vault):
         self.assertEqual(page_a.read_text(), "# A\n\nStatement.\n\n## Depends on\n\nThis node has no prerequisites.\n")
         self.assertIsNone(status()["d.md"])
 
+    def test_a_sorry_in_an_interpolated_term_is_no_formalized_definition(self) -> None:
+        source = self.tmp / "Ext" / "Groups.lean"
+        source.parent.mkdir(parents=True)
+        source.write_text('def unfinished : String := s!"{(sorry : Nat)}"\ndef done : String := "sorry"\n')
+        sorry_source = self.tmp / "Ext" / "Done.lean"
+        sorry_source.write_text('def done : String := "sorry"\n')
+        self.page("Algebra/unfinished.md", "# Unfinished\n\nA string.\n")
+        self.page("Algebra/done.md", "# Done\n\nA string.\n")
+        self.annotate([self.about("Algebra/unfinished.md", object=[{"location": {"declaration": "Ext.unfinished"}}]),
+                       self.about("Algebra/done.md", object=[{"location": {"declaration": "Ext.done"}}])])
+        index = SimpleNamespace(declarations={
+            "Ext.unfinished": SimpleNamespace(keyword="def", path=Path("Ext/Groups.lean")),
+            "Ext.done": SimpleNamespace(keyword="def", path=Path("Ext/Done.lean"))})
+        sync.apply_lean_facts(index, {})
+        rows = {sync.subject_path(r).name: r for r in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
+        self.assertEqual((rows["unfinished.md"].get("kind"), rows["unfinished.md"].get("status")), ("def", None))
+        self.assertEqual((rows["done.md"].get("kind"), rows["done.md"].get("status")), ("def", "formalized"))
+
     def test_a_page_that_loses_its_declaration_loses_its_facts(self) -> None:
         source = self.tmp / "Ext" / "Groups.lean"
         source.parent.mkdir(parents=True)

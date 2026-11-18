@@ -72,6 +72,15 @@ class DocstringBefore(unittest.TestCase):
                  'def e : String := "a\\"/-"\ntheorem x\' : True := trivial').splitlines()
         self.assertEqual([m.group("name") for _, m in wiki.declaration_lines(lines)], ["q", "h2", "r", "e", "x'"])
 
+    def test_terms_embedded_in_interpolated_strings_are_code(self) -> None:
+        # The term in `s!"{...}"` is code: its own string may hold a comment marker, and a `sorry` in it counts.
+        lines = ('def rendered : String := s!"{("/-" : String)}"\n\n/-- The real value. -/\ndef real : Nat := 1').splitlines()
+        self.assertEqual([m.group("name") for _, m in wiki.declaration_lines(lines)], ["rendered", "real"])
+        self.assertRegex(wiki.without_comments('def unfinished : String := s!"{(sorry : Nat)}"\n'), r"\bsorry\b")
+        lines = ('def a : String := s!"x {f "{" ++ g {y := 1}} \\{ z"\ndef e : M Unit := throwError "bad {("/-" : String)}"\n'
+                 'def p : String := panic! "{"\ndef b : Nat := 1').splitlines()
+        self.assertEqual([m.group("name") for _, m in wiki.declaration_lines(lines)], ["a", "e", "p", "b"])
+
     def test_sorry_in_a_nested_comment_or_a_string_is_no_proof_hole(self) -> None:
         text = '/- /- -/ sorry -/\ntheorem a : True := by exact "sorry" |> fun _ => trivial\n'
         self.assertNotRegex(wiki.without_comments(text), r"\bsorry\b")
