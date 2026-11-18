@@ -21,7 +21,7 @@ eligible-set maximum.
 
 open MeasureTheory
 
-/-! ## PIN-TEST: pinned instances (proofs deferred to the test module)
+/-! ## pinned instances (proofs deferred to the test module)
 
 These examples only pin that the result above instantiates at the
 required cases.  On port they move to the test file; every proof is
@@ -32,7 +32,7 @@ namespace MathlibExtTest.Probability.Statistics.Measurement.ItemInformation
 open scoped RealInnerProductSpace
 open MathlibExt.Probability.Statistics.Measurement
 
-/-- PIN-TEST (Rasch information): one item, slope `1`, difficulty `2`, at
+/-- Rasch information): one item, slope `1`, difficulty `2`, at
 `θ = 2 = b`, so `p = sigmoid 0 = 1 / 2` and the information is `1 / 4`,
 in both the operator and the scalar form, and it is positive. -/
 example :
@@ -53,7 +53,7 @@ example :
   · rw [← h2, h1, Fin.sum_univ_one]
     norm_num [Real.sigmoid_zero]
 
-/-- PIN-TEST (nonidentical finite test): two items with slopes `1` and
+/-- nonidentical finite test): two items with slopes `1` and
 `2` (hence nonidentical), difficulties `0`, at `θ = 0`, so each
 `p j = 1 / 2` and the information is `(1 + 4) / 4 = 5 / 4`; it is
 strictly positive, as the nonempty, all-slopes-positive package
@@ -87,7 +87,7 @@ example :
     simp only [e1]
     norm_num [Real.sigmoid_zero]
 
-/-- PIN-TEST (empty and zero-slope boundaries): the empty test has
+/-- empty and zero-slope boundaries): the empty test has
 information `0`, and a one-item test with discrimination `0` has
 information `0` at every `θ`.  These pin that no nonemptiness or slope
 hypothesis is hidden in the formula, and that strict positivity really
@@ -113,7 +113,7 @@ example :
     rw [h.1, Fin.sum_univ_one]
     simp
 
-/-- PIN-TEST (item ordering reverses): two slope-`1` items with
+/-- item ordering reverses): two slope-`1` items with
 difficulties `0` and `2`; item `0` carries more information at `θ = 0`
 and item `1` carries more at `θ = 2`, for the per-item information
 `a^2 * p * (1 - p)`. -/
@@ -142,7 +142,7 @@ example :
       sq_pos_of_ne_zero (sub_ne_zero.mpr (ne_of_gt hgt))
     nlinarith [hsq]
 
-/-- PIN-TEST (eligible-set maximum): for any finite nonempty set `S` of
+/-- eligible-set maximum): for any finite nonempty set `S` of
 eligible abilities, the test information attains its maximum over `S`.
 This is the existing finite-set maximum principle
 (`Finset.exists_max_image`, Mathlib `Data/Finset/Max.lean`) applied to
