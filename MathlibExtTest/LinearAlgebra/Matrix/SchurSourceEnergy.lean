@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.LinearAlgebra.Matrix.SchurSourceEnergy
+public import Mathlib.LinearAlgebra.Matrix.Notation
 
 @[expose] public section
 

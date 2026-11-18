@@ -8,13 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.LinearAlgebra.Matrix.BlockSolutionEquiv
 public import MathlibExt.LinearAlgebra.Matrix.SchurStrictPositivity
 public import Mathlib.LinearAlgebra.Matrix.Hermitian
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.LinearAlgebra.Matrix.SchurComplement
-public import Mathlib.LinearAlgebra.Matrix.Notation
 
 /-!
 # Schur source energy
@@ -31,15 +29,6 @@ term is refuted by an explicit fixture.
 open Matrix
 
 namespace MathlibExt.LinearAlgebra.Matrix.SchurSourceEnergy
-
-
-private theorem mulVec_one_one (c x : ℝ) : !![c] *ᵥ ![x] = ![c * x] := by
-  ext i
-  fin_cases i
-  simp [Matrix.mulVec]
-
-private theorem dotProduct_one_one (x y : ℝ) : ![x] ⬝ᵥ ![y] = x * y := by
-  simp [dotProduct]
 
 /-- **Schur energy identity with a source offset (reconstruction form).** For a symmetric
 invertible interior block `D` and interior potentials given by the reconstruction
