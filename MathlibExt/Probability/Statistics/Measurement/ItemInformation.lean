@@ -323,4 +323,35 @@ theorem vector_fisherInformation_twoPL {ι : Type*} [Fintype ι] [DecidableEq ι
         simp
       linarith
 
+
+theorem twoPL_fisherInformation_quadraticForm {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (a b : ι → ℝ) (θ : ℝ) :
+    ⟪MathlibExt.Probability.Statistics.VectorInference.fisherInformation
+        Measure.count (fun t Y => (twoPLPMF a b t Y).toReal) θ 1, (1 : ℝ)⟫
+      = ∑ j, (a j) ^ 2
+          * (Real.sigmoid (a j * (θ - b j))
+            * (1 - Real.sigmoid (a j * (θ - b j)))) :=
+  (vector_fisherInformation_twoPL a b θ).1
+
+theorem twoPL_fisherInformation_eq_scalar {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (a b : ι → ℝ) (θ : ℝ) :
+    ⟪MathlibExt.Probability.Statistics.VectorInference.fisherInformation
+        Measure.count (fun t Y => (twoPLPMF a b t Y).toReal) θ 1, (1 : ℝ)⟫
+      = MathlibExt.Probability.Statistics.FisherInformation.fisherInformation
+          Measure.count (fun t Y => (twoPLPMF a b t Y).toReal) θ :=
+  (vector_fisherInformation_twoPL a b θ).2.1
+
+theorem twoPL_information_nonneg {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (a b : ι → ℝ) (θ : ℝ) :
+    0 ≤ ∑ j, (a j) ^ 2
+          * (Real.sigmoid (a j * (θ - b j))
+            * (1 - Real.sigmoid (a j * (θ - b j)))) :=
+  (vector_fisherInformation_twoPL a b θ).2.2.1
+
+theorem twoPL_information_pos_iff {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (a b : ι → ℝ) (θ : ℝ) :
+    (∃ j, a j ≠ 0) ↔ 0 < ∑ j, (a j) ^ 2
+          * (Real.sigmoid (a j * (θ - b j))
+            * (1 - Real.sigmoid (a j * (θ - b j)))) :=
+  (vector_fisherInformation_twoPL a b θ).2.2.2
 end MathlibExt.Probability.Statistics.Measurement

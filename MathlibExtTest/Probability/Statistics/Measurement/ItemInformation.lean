@@ -154,4 +154,42 @@ example (a b : Fin 2 → ℝ) (S : Finset ℝ) (hS : S.Nonempty) :
           Measure.count (fun t Y => (twoPLPMF a b t Y).toReal) θ 1, (1 : ℝ)⟫ := by
   exact Finset.exists_max_image S _ hS
 
+
+/-- Direct nonnegativity: slopes `(1, 2)` on `Fin 2` at `θ = 1`,
+by applying `twoPL_information_nonneg`. -/
+example :
+    0 ≤ ∑ j, (((fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2) j) ^ 2
+      * (Real.sigmoid (((fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2) j)
+          * (1 - (fun _ : Fin 2 => (0 : ℝ)) j))
+        * (1 - Real.sigmoid (((fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2) j)
+          * (1 - (fun _ : Fin 2 => (0 : ℝ)) j))))) := by
+  have h := twoPL_information_nonneg
+    (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2) (fun _ : Fin 2 => (0 : ℝ)) 1
+  exact h
+
+/-- Direct positivity iff: slopes `(0, 2)` on `Fin 2` give strict
+positivity via `twoPL_information_pos_iff`, while all-zero slopes give
+information `0`. -/
+example :
+    (0 < ∑ j, (((fun j : Fin 2 => if j = 0 then (0 : ℝ) else 2) j) ^ 2
+      * (Real.sigmoid (((fun j : Fin 2 => if j = 0 then (0 : ℝ) else 2) j)
+          * (0 - (fun _ : Fin 2 => (0 : ℝ)) j))
+        * (1 - Real.sigmoid (((fun j : Fin 2 => if j = 0 then (0 : ℝ) else 2) j)
+          * (0 - (fun _ : Fin 2 => (0 : ℝ)) j))))))
+    ∧ ((∑ j, (((fun _ : Fin 2 => (0 : ℝ)) j) ^ 2
+      * (Real.sigmoid (((fun _ : Fin 2 => (0 : ℝ)) j)
+          * (0 - (fun _ : Fin 2 => (0 : ℝ)) j))
+        * (1 - Real.sigmoid (((fun _ : Fin 2 => (0 : ℝ)) j)
+          * (0 - (fun _ : Fin 2 => (0 : ℝ)) j)))))) = 0) := by
+  have e1 : (if (1 : Fin 2) = 0 then (0 : ℝ) else 2) = 2 :=
+    ite_eq_right (by decide)
+  have hwit : ((fun j : Fin 2 => if j = 0 then (0 : ℝ) else 2) 1) ≠ 0 := by
+    simp only [e1]
+    norm_num
+  refine ⟨?_, ?_⟩
+  · have h := (twoPL_information_pos_iff
+      (fun j : Fin 2 => if j = 0 then (0 : ℝ) else 2)
+      (fun _ : Fin 2 => (0 : ℝ)) 0).mp ⟨1, hwit⟩
+    exact h
+  · simp
 end MathlibExtTest.Probability.Statistics.Measurement.ItemInformation
