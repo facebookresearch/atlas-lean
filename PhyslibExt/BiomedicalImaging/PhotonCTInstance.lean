@@ -73,7 +73,7 @@ lemma ct_equal_rates (I0 : Fin 1 → ℝ≥0) :
   unfold PhyslibExt.BiomedicalImaging.PhotonObservation.transmittedRate
   rw [ct_nullspace_pair.1]
 
-/-- **Equal photon laws.** With positive source intensities,
+/-- **Equal photon laws.** For arbitrary nonnegative source intensities,
 the pair has the same independent-Poisson photon law. -/
 lemma ct_photon_law_pair (I0 : Fin 1 → ℝ≥0) :
     PhyslibExt.BiomedicalImaging.PhotonObservation.photonLaw I0 ctRow ![1, 0] =
