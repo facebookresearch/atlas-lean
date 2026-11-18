@@ -248,12 +248,6 @@ theorem timeConstant_pos {cm : ℝ} (hm : 0 < rm) (hcm : 0 < cm) :
     0 < timeConstant rm cm :=
   mul_pos hm hcm
 
-/-- `lambda^2 * ri = rm` for the cable length constant. -/
-theorem lengthConstant_sq_mul (hm : 0 < rm) (hi : 0 < ri) :
-    lengthConstant rm ri ^ 2 * ri = rm := by
-  rw [mul_comm]
-  exact mul_lengthConstant_sq hm hi
-
 /-- **Sealed end.** At a point of the cable with unique spatial
 derivative, the axial current vanishes exactly when the voltage
 spatial derivative vanishes: a sealed end is the zero-derivative
