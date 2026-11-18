@@ -399,8 +399,8 @@ neighbour of `V_i`: the sum over all sequences `w` satisfying `P` of
 random walks `V₁, …, V_t` from a uniform start vertex, indexed here from `0`). The hypotheses
 make the weights a probability distribution (`walkProb_true`): for a graph that is not
 `d`-regular the rows of `A / d` need not sum to `1` (the complete graph on two vertices with
-`d = 2` would give the certain event probability `1/2`), and for `d = 0` or an empty vertex set
-every event would have probability `0`. -/
+`d = 2` would give the certain event probability `1/2` after one step), and for `d = 0` with a
+positive walk length `t`, or for an empty vertex set, every event would have probability `0`. -/
 noncomputable def walkProb (G : SimpleGraph V) [DecidableRel G.Adj] (d : ℕ)
     (_hreg : G.IsRegularOfDegree d) (_hd : 0 < d) [Nonempty V] (t : ℕ)
     (P : (Fin (t + 1) → V) → Prop) [DecidablePred P] : ℝ :=
