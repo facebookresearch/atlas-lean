@@ -390,7 +390,7 @@ cos (μ * (x - L / 2))` with `ux` its `x`-derivative solves `u_t = D * u_xx` at
 every point, satisfies the outward Robin conditions at both ends with
 `h = k * μ * tan (μ * L / 2)`, has `h ≥ 0` when `0 ≤ μ`, `0 ≤ L` and
 `μ * L / 2 < π / 2`, and has `θ(t, 0) ≠ 0` there. -/
-theorem robinCosineMode {D k μ L Ta : ℝ} (hk : 0 < k) (hμ : 0 ≤ μ) (hL0 : 0 ≤ L)
+lemma robinCosineMode {D k μ L Ta : ℝ} (hk : 0 < k) (hμ : 0 ≤ μ) (hL0 : 0 ≤ L)
     (hμL : μ * L / 2 < Real.pi / 2) :
     let u : ℝ → ℝ → ℝ := fun t x => Ta + Real.exp (-D * μ ^ 2 * t) * Real.cos (μ * (x - L / 2))
     let ux : ℝ → ℝ → ℝ := fun t x => -μ * Real.exp (-D * μ ^ 2 * t) * Real.sin (μ * (x - L / 2))
@@ -504,7 +504,7 @@ theorem robinCosineMode {D k μ L Ta : ℝ} (hk : 0 < k) (hμ : 0 ≤ μ) (hL0 :
 at both ends and `θ(t, 0) ≠ 0`. This fixture records only the first
 spatial derivative and the zero-flux boundary conditions; the
 heat-equation content for cosine modes is in `robinCosineMode`. -/
-theorem neumannCosineMode {D k L Ta : ℝ} (hL0 : 0 < L) :
+lemma neumannCosineMode {D k L Ta : ℝ} (hL0 : 0 < L) :
     let μ : ℝ := Real.pi / L
     let u : ℝ → ℝ → ℝ := fun t x => Ta + Real.exp (-D * μ ^ 2 * t) * Real.cos (μ * x)
     let ux : ℝ → ℝ → ℝ := fun t x => -μ * Real.exp (-D * μ ^ 2 * t) * Real.sin (μ * x)
@@ -551,7 +551,7 @@ theorem neumannCosineMode {D k L Ta : ℝ} (hL0 : 0 < L) :
 /-- Invalid: the wrong left sign (`-k * ux(0) = h0 * θ(0)`, i.e. normal `+1` at `0`)
 admits boundary input: with `k = h0 = D = 1`, `θ(0) = 1`, `ux(0) = -1`,
 `θ(L) = ux(L) = 0`, the boundary work `D * (θ(L) ux(L) - θ(0) ux(0))` is `1 > 0`. -/
-theorem wrongLeftSign_boundaryInput :
+lemma wrongLeftSign_boundaryInput :
     ∃ k h0 D θ0 ux0 θL uxL : ℝ, 0 < k ∧ 0 < h0 ∧ 0 < D ∧
       -k * ux0 = h0 * θ0 ∧ -k * uxL = 0 * θL ∧
       0 < D * (θL * uxL - θ0 * ux0) := by
@@ -561,7 +561,7 @@ theorem wrongLeftSign_boundaryInput :
 /-- Invalid: a negative transfer coefficient with the correct signs is not
 dissipative: `k = D = 1`, `h0 = -1`, `θ(0) = 1`, `ux(0) = -1`, `θ(L) = ux(L) = 0`
 gives positive boundary work. -/
-theorem negativeH_boundaryInput :
+lemma negativeH_boundaryInput :
     ∃ k h0 D θ0 ux0 θL uxL : ℝ, 0 < k ∧ h0 < 0 ∧ 0 < D ∧
       k * ux0 = h0 * θ0 ∧ -k * uxL = 0 * θL ∧
       0 < D * (θL * uxL - θ0 * ux0) := by
