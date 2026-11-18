@@ -38,9 +38,15 @@ For an actual wave at the load plane, the load relations
 with nonzero incident amplitude `Aplus` make the amplitude ratio
 `Aminus / Aplus` equal to `Gamma`
 (`PhyslibExt.Circuits.LineWaveTermination.load_reflectionCoefficient_eq`),
-so `|Aminus| <= |Aplus|` exactly when `Re ZL >= 0`. The time-averaged
-load power ties the two forms together:
+so `|Aminus| <= |Aplus|` exactly when `Re ZL >= 0`. The real part of
+the complex power ties the two forms together:
 `Re (V * conj I) = (|Aplus| ^ 2 - |Aminus| ^ 2) / Z0 = Re ZL * |I| ^ 2`.
+This real part is the time-averaged load power only when `V` and `I`
+are RMS phasors
+(`PhyslibExt.Circuits.RMSAveragePower.average_rmsWaveform_mul_rmsWaveform`);
+for peak phasors the period average carries an extra factor `1 / 2`
+(`PhyslibExt.Circuits.RMSAveragePower.average_peakWaveform_mul_peakWaveform`).
+Both readings are stated for each form.
 
 A resistive load `R` has the real coefficient
 `Gamma_R = (R - Z0) / (R + Z0)`, and for such a load the reflection
@@ -62,8 +68,12 @@ value of `ZL`.
 - `norm_reflected_le_norm_incident_iff`: the wave-amplitude form of the
   criterion.
 - `load_power_eq_incident_sub_reflected` and
-  `load_power_eq_re_mul_norm_sq`: the two expressions for the load
-  power.
+  `load_power_eq_re_mul_norm_sq`: the two expressions for the real
+  part `Re (V * conj I)` of the complex power at the load plane.
+- `average_rmsWaveform_load_power_eq_incident_sub_reflected`,
+  `average_rmsWaveform_load_power_eq_re_mul_norm_sq` and their
+  `average_peakWaveform_*` counterparts: the time-averaged load power
+  for RMS phasors, and half of it for peak phasors.
 - `passiveLoadReflection`: the ratio and wave-amplitude criteria
   together.
 - `instantaneous_resistive_reflection`: time-domain reflection at a
@@ -90,6 +100,7 @@ value of `ZL`.
 namespace PhyslibExt.Circuits.PassiveLoadReflection
 
 open PhyslibExt.Circuits.LineWaveTermination
+open PhyslibExt.Circuits.RMSAveragePower
 
 /-- Power-balance identity:
 `1 - |Gamma| ^ 2 = 4 * Z0 * Re ZL / |ZL + Z0| ^ 2`. -/
@@ -188,8 +199,12 @@ lemma one_lt_norm_reflectionCoefficient_iff (ZL : ℂ) (Z0 : ℝ) (hZ0 : 0 < Z0)
 
 /-! ### B. Wave reflection and load power -/
 
-/-- Load power from the wave amplitudes:
-`Re (V * conj I) = (|Aplus| ^ 2 - |Aminus| ^ 2) / Z0`. -/
+/-- Real part of the complex power at the load plane from the wave
+amplitudes: `Re (V * conj I) = (|Aplus| ^ 2 - |Aminus| ^ 2) / Z0`. This
+is the time-averaged load power only for RMS phasors
+(`average_rmsWaveform_load_power_eq_incident_sub_reflected`); for peak
+phasors the average is half of it
+(`average_peakWaveform_load_power_eq_incident_sub_reflected`). -/
 theorem load_power_eq_incident_sub_reflected (V I Aplus Aminus : ℂ) (Z0 : ℝ)
     (hZ0 : 0 < Z0) (hV : V = Aplus + Aminus)
     (hI : I = (Aplus - Aminus) / (Z0 : ℂ)) :
@@ -221,13 +236,68 @@ theorem load_power_eq_incident_sub_reflected (V I Aplus Aminus : ℂ) (Z0 : ℝ)
   simp only [Complex.add_re, Complex.sub_re]
   linear_combination hca - hcb + hcross
 
-/-- Load power from the load law: `Re (V * conj I) = Re ZL * |I| ^ 2`. -/
+/-- Real part of the complex power at the load plane from the load law:
+`Re (V * conj I) = Re ZL * |I| ^ 2`. This is the time-averaged load
+power only for RMS phasors
+(`average_rmsWaveform_load_power_eq_re_mul_norm_sq`); for peak phasors
+the average is half of it
+(`average_peakWaveform_load_power_eq_re_mul_norm_sq`). -/
 theorem load_power_eq_re_mul_norm_sq (V I ZL : ℂ) (hload : V = ZL * I) :
     (V * (starRingEnd ℂ) I).re = ZL.re * ‖I‖ ^ 2 := by
   have hIc : I * (starRingEnd ℂ) I = ((‖I‖ ^ 2 : ℝ) : ℂ) := by
     rw [Complex.mul_conj, Complex.normSq_eq_norm_sq]
   rw [hload, mul_assoc, hIc]
   simp only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, mul_zero, sub_zero]
+
+/-- Time-averaged load power for RMS phasors: under the load-plane
+relations, the average of the product of the RMS voltage and current
+waveforms over any complete period is
+`(|Aplus| ^ 2 - |Aminus| ^ 2) / Z0`. -/
+theorem average_rmsWaveform_load_power_eq_incident_sub_reflected
+    (V I Aplus Aminus : ℂ) (Z0 ω : ℝ) (hω : 0 < ω) (a : ℝ)
+    (hZ0 : 0 < Z0) (hV : V = Aplus + Aminus)
+    (hI : I = (Aplus - Aminus) / (Z0 : ℂ)) :
+    (∫ t in a..(a + 2 * Real.pi / ω),
+      rmsWaveform V ω t * rmsWaveform I ω t) / (2 * Real.pi / ω)
+      = (‖Aplus‖ ^ 2 - ‖Aminus‖ ^ 2) / Z0 := by
+  rw [average_rmsWaveform_mul_rmsWaveform V I hω a]
+  exact load_power_eq_incident_sub_reflected V I Aplus Aminus Z0 hZ0 hV hI
+
+/-- Time-averaged load power for peak phasors: under the load-plane
+relations, the average of the product of the peak voltage and current
+waveforms over any complete period is
+`(1 / 2) * ((|Aplus| ^ 2 - |Aminus| ^ 2) / Z0)`. -/
+theorem average_peakWaveform_load_power_eq_incident_sub_reflected
+    (V I Aplus Aminus : ℂ) (Z0 ω : ℝ) (hω : 0 < ω) (a : ℝ)
+    (hZ0 : 0 < Z0) (hV : V = Aplus + Aminus)
+    (hI : I = (Aplus - Aminus) / (Z0 : ℂ)) :
+    (∫ t in a..(a + 2 * Real.pi / ω),
+      peakWaveform V ω t * peakWaveform I ω t) / (2 * Real.pi / ω)
+      = (1 / 2) * ((‖Aplus‖ ^ 2 - ‖Aminus‖ ^ 2) / Z0) := by
+  rw [average_peakWaveform_mul_peakWaveform V I hω a,
+    load_power_eq_incident_sub_reflected V I Aplus Aminus Z0 hZ0 hV hI]
+
+/-- Time-averaged load power for RMS phasors from the load law: the
+average of the product of the RMS voltage and current waveforms over
+any complete period is `Re ZL * |I| ^ 2`. -/
+theorem average_rmsWaveform_load_power_eq_re_mul_norm_sq
+    (V I ZL : ℂ) (ω : ℝ) (hω : 0 < ω) (a : ℝ) (hload : V = ZL * I) :
+    (∫ t in a..(a + 2 * Real.pi / ω),
+      rmsWaveform V ω t * rmsWaveform I ω t) / (2 * Real.pi / ω)
+      = ZL.re * ‖I‖ ^ 2 := by
+  rw [average_rmsWaveform_mul_rmsWaveform V I hω a]
+  exact load_power_eq_re_mul_norm_sq V I ZL hload
+
+/-- Time-averaged load power for peak phasors from the load law: the
+average of the product of the peak voltage and current waveforms over
+any complete period is `(1 / 2) * (Re ZL * |I| ^ 2)`. -/
+theorem average_peakWaveform_load_power_eq_re_mul_norm_sq
+    (V I ZL : ℂ) (ω : ℝ) (hω : 0 < ω) (a : ℝ) (hload : V = ZL * I) :
+    (∫ t in a..(a + 2 * Real.pi / ω),
+      peakWaveform V ω t * peakWaveform I ω t) / (2 * Real.pi / ω)
+      = (1 / 2) * (ZL.re * ‖I‖ ^ 2) := by
+  rw [average_peakWaveform_mul_peakWaveform V I hω a,
+    load_power_eq_re_mul_norm_sq V I ZL hload]
 
 /-- Wave form of the criterion: under the load-plane relations and a
 nonzero incident amplitude, the reflected amplitude is at most the

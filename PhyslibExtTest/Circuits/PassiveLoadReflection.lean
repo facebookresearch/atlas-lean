@@ -15,6 +15,7 @@ import Mathlib.Tactic.NormNum
 
 open PhyslibExt.Circuits.LineWaveTermination
 open PhyslibExt.Circuits.PassiveLoadReflection
+open PhyslibExt.Circuits.RMSAveragePower
 
 namespace PhyslibExtTest.Circuits.PassiveLoadReflection
 
@@ -112,6 +113,24 @@ example : ((3 : ℂ) * (starRingEnd ℂ) 1).re = (‖(2 : ℂ)‖ ^ 2 - ‖(1 : 
 
 example : ((3 : ℂ) * (starRingEnd ℂ) 1).re = (3 : ℂ).re * ‖(1 : ℂ)‖ ^ 2 :=
   load_power_eq_re_mul_norm_sq 3 1 3 (by norm_num)
+
+/-- A unit forward wave with no reflection on a unit line has
+`Re (V * conj I) = 1`. Read as RMS phasors, the average load power is
+`1`. -/
+example :
+    (∫ t in (0 : ℝ)..(0 + 2 * Real.pi / 1),
+      rmsWaveform 1 1 t * rmsWaveform 1 1 t) / (2 * Real.pi / 1) = 1 := by
+  rw [average_rmsWaveform_load_power_eq_incident_sub_reflected 1 1 1 0 1 1
+    (by norm_num) 0 (by norm_num) (by norm_num) (by norm_num)]
+  norm_num
+
+/-- Read as peak phasors, the same wave averages to `1 / 2`. -/
+example :
+    (∫ t in (0 : ℝ)..(0 + 2 * Real.pi / 1),
+      peakWaveform 1 1 t * peakWaveform 1 1 t) / (2 * Real.pi / 1) = 1 / 2 := by
+  rw [average_peakWaveform_load_power_eq_incident_sub_reflected 1 1 1 0 1 1
+    (by norm_num) 0 (by norm_num) (by norm_num) (by norm_num)]
+  norm_num
 
 /-- Instantaneous reflection at resistor `3` on a unit line with
 `vplus t = 2 * t` and `vminus t = t`. -/
