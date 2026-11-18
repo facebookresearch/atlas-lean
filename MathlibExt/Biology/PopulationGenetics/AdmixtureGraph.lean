@@ -193,6 +193,9 @@ theorem prop_le_one (X Y : V) : G.prop X Y ≤ 1 := by
   · rw [G.prop_eq_zero X Y hY]
     exact zero_le_one
 
+/-- Acyclicity, transitive form: if `Y` is an ancestor of `X`, meaning `Y` is reached from
+`X` by repeatedly passing from a node to one of its parents, then a lineage starting from
+`Y` never passes through the descendant `X`, so `visit Y X = 0`. -/
 theorem visit_eq_zero_of_transGen {V : Type*} [DecidableEq V]
     (G : AdmixtureGraph V) {X Y : V}
     (h : Relation.TransGen (fun a b => a ∈ G.parents b) Y X) : G.visit Y X = 0 := by
