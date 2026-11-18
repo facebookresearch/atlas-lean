@@ -201,3 +201,34 @@ example : circularConvolution2 (zeroExtend2 2 2 2 2 padArr) (zeroExtend2 1 2 2 2
     show (1 : ZMod 2) - 1 = 0 by decide, show (0 : ZMod 2).val = 0 by decide,
     show (1 : ZMod 2).val = 1 by decide]
   norm_num [extendNat2, padArr, padRow]
+
+/-! ### Bounded zero extension
+
+With the cyclic length covering the support, zero extension keeps every source
+entry; with a shorter cyclic length it keeps only the leading entries. -/
+
+/-- Padding `(1, 2)` to length four keeps the entry `2` at index one. -/
+example : zeroExtend 2 4 padSigA (((1 : Fin 2).val : ℕ) : ZMod 4) = 2 :=
+  (zeroExtend_natCast 2 4 (by norm_num) padSigA 1).trans (by norm_num [padSigA])
+
+/-- Padding to the exact boundary length is injective on length-two signals. -/
+example : Function.Injective (zeroExtend 2 4) :=
+  zeroExtend_injective 2 4 (by norm_num)
+
+/-- A cyclic length shorter than the support drops trailing entries: on `ZMod 1`
+the signals `(0, 1)` and `(0, 0)` have the same image. -/
+example : zeroExtend 2 1 (fun i => if i.val = 1 then (1 : ℂ) else 0) =
+    zeroExtend 2 1 (fun _ => (0 : ℂ)) := by
+  funext i
+  rw [Subsingleton.elim i 0]
+  simp [zeroExtend, extendNat]
+
+/-- Nonsquare `3 x 2` padding of the `2 x 2` array keeps the entry `4` at `(1, 1)`. -/
+example : zeroExtend2 2 2 3 2 padArr
+    ((((1 : Fin 2).val : ℕ) : ZMod 3), (((1 : Fin 2).val : ℕ) : ZMod 2)) = 4 :=
+  (zeroExtend2_natCast 2 2 3 2 (by norm_num) (by norm_num) padArr 1 1).trans
+    (by norm_num [padArr])
+
+/-- Nonsquare `3 x 2` padding is injective on `2 x 1` arrays. -/
+example : Function.Injective (zeroExtend2 2 1 3 2) :=
+  zeroExtend2_injective 2 1 3 2 (by norm_num) (by norm_num)

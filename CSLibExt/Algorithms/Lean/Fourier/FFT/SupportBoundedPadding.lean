@@ -28,6 +28,12 @@ two-dimensional cyclic convolution equal to their full two-dimensional
 linear convolution. No dyadic length is assumed for the inputs; the
 dyadic padding route is a special case. One slot too short aliases the
 last linear coefficient onto an earlier cropped coefficient.
+
+The zero-extension maps are total in their lengths. They are faithful
+extensions exactly when the cyclic length covers the support
+(`zeroExtend_injective`, `zeroExtend2_injective`); a shorter cyclic
+length keeps only the leading entries. Every result that uses the
+extension property carries length bounds that imply this coverage.
 -/
 
 @[expose] public section
@@ -42,7 +48,11 @@ open MathlibExt.Analysis.Fourier.RectangularDFTAdapter
 def extendNat (M : ℕ) (x : Fin M → ℂ) : ℕ → ℂ :=
   fun i => if h : i < M then x ⟨i, h⟩ else 0
 
-/-- Zero extension of a finite signal to a cyclic index type. -/
+/-- Zero extension of a finite signal to a cyclic index type: the cyclic
+index `i` reads source entry `i.val` when it lies below `M` and zero
+otherwise. When `M ≤ N` this is a faithful extension
+(`zeroExtend_natCast`, `zeroExtend_injective`); when `N < M` it keeps
+only the first `N` source entries. -/
 def zeroExtend (M N : ℕ) (x : Fin M → ℂ) : ZMod N → ℂ :=
   fun i => extendNat M x i.val
 
@@ -63,6 +73,21 @@ theorem extendNat_eq_zero_of_le (M : ℕ) (x : Fin M → ℂ) (i : ℕ) (hi : M 
 theorem zeroExtend_apply_of_lt (M N : ℕ) (x : Fin M → ℂ) (i : ZMod N)
     (hi : i.val < M) : zeroExtend M N x i = x ⟨i.val, hi⟩ := by
   simp [zeroExtend, extendNat, hi]
+
+/-- When the cyclic length covers the support, zero extension preserves
+every source entry. -/
+theorem zeroExtend_natCast (M N : ℕ) (hMN : M ≤ N) (x : Fin M → ℂ) (i : Fin M) :
+    zeroExtend M N x (i.val : ZMod N) = x i := by
+  have hiN : i.val < N := lt_of_lt_of_le i.isLt hMN
+  simp [zeroExtend, extendNat, ZMod.val_natCast_of_lt hiN]
+
+/-- When the cyclic length covers the support, zero extension loses no
+information. -/
+theorem zeroExtend_injective (M N : ℕ) (hMN : M ≤ N) :
+    Function.Injective (zeroExtend M N) := by
+  intro x x' h
+  funext i
+  rw [← zeroExtend_natCast M N hMN x i, ← zeroExtend_natCast M N hMN x' i, h]
 
 private theorem sum_zmod_eq_sum_range (N : ℕ) [NeZero N] (F : ZMod N → ℂ) :
     ∑ j : ZMod N, F j = ∑ n ∈ Finset.range N, F (n : ZMod N) := by
@@ -308,9 +333,30 @@ theorem one_short_padding_aliases (M K : ℕ) [NeZero (M + K - 2)] (hM : 2 ≤ M
 def extendNat2 (M K : ℕ) (x : Fin M × Fin K → ℂ) : ℕ × ℕ → ℂ :=
   fun p => if h1 : p.1 < M then if h2 : p.2 < K then x (⟨p.1, h1⟩, ⟨p.2, h2⟩) else 0 else 0
 
-/-- Zero extension of a rectangularly supported array to cyclic pairs. -/
+/-- Zero extension of a rectangularly supported array to cyclic pairs,
+coordinatewise as in `zeroExtend`. When `M ≤ N1` and `K ≤ N2` this is a
+faithful extension (`zeroExtend2_natCast`, `zeroExtend2_injective`);
+otherwise it keeps only the leading `N1 x N2` block. -/
 def zeroExtend2 (M K N1 N2 : ℕ) (x : Fin M × Fin K → ℂ) : ZMod N1 × ZMod N2 → ℂ :=
   fun p => extendNat2 M K x (p.1.val, p.2.val)
+
+/-- When both cyclic lengths cover the rectangular support, zero
+extension preserves every source entry. -/
+theorem zeroExtend2_natCast (M K N1 N2 : ℕ) (hM : M ≤ N1) (hK : K ≤ N2)
+    (x : Fin M × Fin K → ℂ) (i : Fin M) (j : Fin K) :
+    zeroExtend2 M K N1 N2 x ((i.val : ZMod N1), (j.val : ZMod N2)) = x (i, j) := by
+  have hi : i.val < N1 := lt_of_lt_of_le i.isLt hM
+  have hj : j.val < N2 := lt_of_lt_of_le j.isLt hK
+  simp [zeroExtend2, extendNat2, ZMod.val_natCast_of_lt hi, ZMod.val_natCast_of_lt hj]
+
+/-- When both cyclic lengths cover the rectangular support, zero
+extension loses no information. -/
+theorem zeroExtend2_injective (M K N1 N2 : ℕ) (hM : M ≤ N1) (hK : K ≤ N2) :
+    Function.Injective (zeroExtend2 M K N1 N2) := by
+  intro x x' h
+  funext p
+  rw [← zeroExtend2_natCast M K N1 N2 hM hK x p.1 p.2,
+    ← zeroExtend2_natCast M K N1 N2 hM hK x' p.1 p.2, h]
 
 /-- Full two-dimensional linear convolution of rectangular supports. -/
 def linearConvolution2 (M K P Q : ℕ) (x : Fin M × Fin K → ℂ)
