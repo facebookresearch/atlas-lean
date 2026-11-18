@@ -67,10 +67,10 @@ amplitudes vanish.
   relation at the load plane.
 - `load_sum_ne_zero`: nonzero excitation forces a nonzero
   denominator `ZL + Z0`.
-- `load_reflection_ratio_of_ne_zero`: the divided reflection formula
-  under nonzero excitation alone; `load_reflection_ratio` and
-  `load_reflectionCoefficient_eq` state it with the denominator guard
-  spelled out.
+- `load_reflection_ratio_of_ne_zero` and
+  `load_reflectionCoefficient_eq`: the divided reflection formula under
+  nonzero excitation alone; `load_reflection_ratio` states it with the
+  denominator guard spelled out.
 - `lineWaveTerminationRelations`: the combined speed, impedance,
   telegrapher and load relations.
 
@@ -428,15 +428,15 @@ theorem load_reflection_ratio_of_ne_zero (V I Aplus Aminus ZL : ℂ) (Z0 : ℝ)
   load_reflection_ratio V I Aplus Aminus ZL Z0 hZ0 hV hI hload hA
     (load_sum_ne_zero V I Aplus Aminus ZL Z0 hZ0 hV hI hload hA)
 
-/-- The guarded amplitude ratio is the reflection coefficient. The
-denominator guard is implied by the others (`load_sum_ne_zero`). -/
+/-- Under nonzero excitation the amplitude ratio is the reflection
+coefficient; the denominator guard is derived by `load_sum_ne_zero`. -/
 lemma load_reflectionCoefficient_eq (V I Aplus Aminus ZL : ℂ) (Z0 : ℝ)
     (hZ0 : 0 < Z0) (hV : V = Aplus + Aminus)
     (hI : I = (Aplus - Aminus) / (Z0 : ℂ)) (hload : V = ZL * I)
-    (hA : Aplus ≠ 0) (hsum : ZL + (Z0 : ℂ) ≠ 0) :
+    (hA : Aplus ≠ 0) :
     Aminus / Aplus = reflectionCoefficient ZL Z0 := by
   unfold reflectionCoefficient
-  exact load_reflection_ratio V I Aplus Aminus ZL Z0 hZ0 hV hI hload hA hsum
+  exact load_reflection_ratio_of_ne_zero V I Aplus Aminus ZL Z0 hZ0 hV hI hload hA
 
 /-- Matched load: a load equal to the characteristic impedance
 reflects nothing. -/
