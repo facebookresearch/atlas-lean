@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import PhyslibExt.ClassicalMechanics.Acoustics.Transmission
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Positivity
 
 /-!
@@ -33,6 +35,12 @@ mean does not apply.
   between the patch losses.
 - `Acoustics.effective_loss_lt_db_average`: the effective loss is
   strictly below the decibel average for distinct coefficients.
+- `Acoustics.effectivePowerTransmission_two_patch_eq`: the
+  uniform-intensity two-patch effective coefficient is the
+  arithmetic mean, through `effectivePowerTransmission`.
+- `Acoustics.effectivePowerTransmission_loss_between` and
+  `Acoustics.effectivePowerTransmission_loss_lt_db_average`: the
+  bounds stated for that effective coefficient.
 
 ## iii. Table of contents
 
@@ -101,5 +109,55 @@ theorem effective_loss_lt_db_average {τ1 τ2 : ℝ} (h1 : 0 < τ1)
     norm_num
   rw [hpow] at hlog
   linarith
+
+/-- Two-patch uniform-intensity specialization of the effective
+power transmission coefficient: for two patches of equal area
+`A > 0` under uniform incident intensity `I0 > 0`, the effective
+coefficient `Acoustics.effectivePowerTransmission` is the
+arithmetic mean `(τ1 + τ2) / 2`. -/
+theorem effectivePowerTransmission_two_patch_eq {τ1 τ2 A I0 : ℝ}
+    (hI0 : 0 < I0) (hA : 0 < A) :
+    effectivePowerTransmission (fun _ : Fin 2 => I0)
+        (fun _ : Fin 2 => A) (fun i : Fin 2 => if i = 0 then τ1 else τ2)
+        Finset.univ
+      = (τ1 + τ2) / 2 := by
+  rw [effectivePowerTransmission_eq_of_uniform _ _ _ _ hI0
+    (fun i _ => rfl)]
+  have hA' : A ≠ 0 := ne_of_gt hA
+  have e1 : (fun i : Fin 2 => if i = 0 then τ1 else τ2) 1 = τ2 :=
+    if_neg (by decide)
+  simp only [Fin.sum_univ_two, e1]
+  field_simp
+  split_ifs <;> ring
+
+/-- The effective loss of the two-patch effective coefficient
+lies between the two patch losses. -/
+theorem effectivePowerTransmission_loss_between {τ1 τ2 A I0 : ℝ}
+    (hI0 : 0 < I0) (hA : 0 < A) (h1 : 0 < τ1) (h2 : 0 < τ2) :
+    -10 * Real.logb 10 (max τ1 τ2)
+        ≤ -10 * Real.logb 10
+          (effectivePowerTransmission (fun _ : Fin 2 => I0)
+            (fun _ : Fin 2 => A) (fun i : Fin 2 => if i = 0 then τ1 else τ2)
+            Finset.univ)
+      ∧ -10 * Real.logb 10
+          (effectivePowerTransmission (fun _ : Fin 2 => I0)
+            (fun _ : Fin 2 => A) (fun i : Fin 2 => if i = 0 then τ1 else τ2)
+            Finset.univ)
+        ≤ -10 * Real.logb 10 (min τ1 τ2) := by
+  rw [effectivePowerTransmission_two_patch_eq hI0 hA]
+  exact effective_loss_between h1 h2
+
+/-- The effective loss of the two-patch effective coefficient is
+strictly below the decibel average for distinct coefficients. -/
+theorem effectivePowerTransmission_loss_lt_db_average
+    {τ1 τ2 A I0 : ℝ} (hI0 : 0 < I0) (hA : 0 < A) (h1 : 0 < τ1)
+    (h2 : 0 < τ2) (hne : τ1 ≠ τ2) :
+    -10 * Real.logb 10
+        (effectivePowerTransmission (fun _ : Fin 2 => I0)
+          (fun _ : Fin 2 => A) (fun i : Fin 2 => if i = 0 then τ1 else τ2)
+          Finset.univ)
+      < (-10 * Real.logb 10 τ1 + -10 * Real.logb 10 τ2) / 2 := by
+  rw [effectivePowerTransmission_two_patch_eq hI0 hA]
+  exact effective_loss_lt_db_average h1 h2 hne
 
 end Acoustics
