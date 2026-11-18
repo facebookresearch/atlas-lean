@@ -123,8 +123,7 @@ class Seed(Vault):
         self.assertEqual(rows, [
             {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/README.md"}],
              "extensions": {"org.autoform": {"navigation": "module"}}},
-            {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/conjecture.md"}],
-             "extensions": {"org.atlas-wiki": {"module": "Ext.Groups", "name": "conjecture"}}},
+            {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/conjecture.md"}]},
             {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/lagrange.md"}],
              "object": [{"location": {"declaration": "Ext.lagrange"}}],
              "id": "af_000000000000000000000001",
@@ -181,10 +180,11 @@ class LeanFacts(Vault):
             "Ext.order": SimpleNamespace(keyword="def", path=Path("Ext/Groups.lean")),
             "Ext.hard": SimpleNamespace(keyword="theorem", path=Path("Ext/Open.lean")),
             "Ext.partial": SimpleNamespace(keyword="def", path=Path("Ext/Open.lean")),
+            "Ext.conjecture": SimpleNamespace(keyword="theorem_wanted", path=Path("Ext/Groups.lean")),
         }
         dependencies = {
-            "Ext.lagrange": {"module": "Ext.Groups", "statement": ["Ext.order", "Ext.lagrange"], "proof": ["conjecture", "Ext.order"]},
-            "conjecture": {"module": "Ext.Groups", "statement": [], "proof": []},
+            "Ext.lagrange": {"module": "Ext.Groups", "statement": ["Ext.order", "Ext.lagrange"], "proof": ["Ext.conjecture", "Ext.order"]},
+            "Ext.conjecture": {"module": "Ext.Groups", "statement": [], "proof": []},
         }
         counts, unlinked = sync.apply_lean_facts(SimpleNamespace(declarations=declarations), dependencies)
         self.assertEqual(counts, {"articles": 5, "unresolved": 0, "edges": 2})
@@ -248,25 +248,27 @@ class LeanFacts(Vault):
         self.assertEqual((rows["unfinished.md"].get("kind"), rows["unfinished.md"].get("status")), ("def", None))
         self.assertEqual((rows["done.md"].get("kind"), rows["done.md"].get("status")), ("def", "formalized"))
 
-    def test_a_page_found_by_module_and_name_reads_code_not_comments(self) -> None:
-        # The page of a declaration the index lacks is found in its module's code: a docstring or a string that
-        # shows a declaration of the same name is not it, and a theorem_wanted is stated, a def_wanted unstated.
+    def test_a_legacy_page_resolves_through_the_index_when_unambiguous(self) -> None:
+        # A page an earlier sync wrote with a module and a name only gets the facts of the one declaration of that
+        # module the index gives that name; with two such declarations, it gets none rather than a guess.
         source = self.tmp / "Ext" / "Groups.lean"
         source.parent.mkdir(parents=True)
-        source.write_text('/-- An example: `def conjecture : Nat := 0`.\ndef conjecture : Nat := 0\n-/\n'
-                          'def text : String := "\ndef_wanted wish : Nat\n"\n'
-                          "theorem_wanted conjecture : True\ndef_wanted wish : Nat\n")
-        for name in ("conjecture", "wish"):
+        source.write_text("theorem_wanted conjecture : True\ndef_wanted wish : Nat\n")
+        for name in ("conjecture", "wish", "same"):
             self.page(f"Algebra/{name}.md", f"# {name}\n\nOpen.\n")
         self.annotate([self.about(f"Algebra/{name}.md", extensions={"org.atlas-wiki": {"module": "Ext.Groups", "name": name}})
-                       for name in ("conjecture", "wish")])
-        sync.apply_lean_facts(SimpleNamespace(declarations={}), {})
+                       for name in ("conjecture", "wish", "same")])
+        path = Path("Ext/Groups.lean")
+        index = SimpleNamespace(declarations={
+            "Ext.conjecture": SimpleNamespace(keyword="theorem_wanted", path=path),
+            "Ext.wish": SimpleNamespace(keyword="def_wanted", path=path),
+            "Ext.A.same": SimpleNamespace(keyword="theorem_wanted", path=path),
+            "Ext.B.same": SimpleNamespace(keyword="def_wanted", path=path)})
+        counts, _ = sync.apply_lean_facts(index, {})
+        self.assertEqual((counts["articles"], counts["unresolved"]), (2, 1))
         rows = {sync.subject_path(r).name: r for r in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
         self.assertEqual({n: (r.get("kind"), r.get("status")) for n, r in rows.items()},
-                         {"conjecture.md": ("theorem", "stated"), "wish.md": ("def", None)})
-        source.write_text('/-- `theorem_wanted gone : True` -/\ndef s : String := "theorem_wanted gone : True"\n')
-        self.assertFalse(sync.declared("Ext.Groups:gone", SimpleNamespace(declarations={})))
-        self.assertFalse(sync.declared("Ext.Groups:conjecture", SimpleNamespace(declarations={})))
+                         {"conjecture.md": ("theorem", "stated"), "wish.md": ("def", None), "same.md": (None, None)})
 
     def test_a_page_that_loses_its_declaration_loses_its_facts(self) -> None:
         source = self.tmp / "Ext" / "Groups.lean"
@@ -296,9 +298,10 @@ class LeanFacts(Vault):
             self.about("Algebra/conjecture.md",
                        extensions={"org.atlas-wiki": {"from": "docstring", "module": "Ext.Groups", "name": "conjecture"}}),
         ])
-        declarations = {"Ext.lagrange": SimpleNamespace(keyword="theorem", path=Path("Ext/Groups.lean"))}
-        dependencies = {"Ext.lagrange": {"module": "Ext.Groups", "statement": ["conjecture"], "proof": []},
-                        "conjecture": {"module": "Ext.Groups", "statement": [], "proof": []}}
+        declarations = {"Ext.lagrange": SimpleNamespace(keyword="theorem", path=Path("Ext/Groups.lean")),
+                        "Ext.conjecture": SimpleNamespace(keyword="theorem_wanted", path=Path("Ext/Groups.lean"))}
+        dependencies = {"Ext.lagrange": {"module": "Ext.Groups", "statement": ["Ext.conjecture"], "proof": []},
+                        "Ext.conjecture": {"module": "Ext.Groups", "statement": [], "proof": []}}
         counts, unlinked = sync.apply_lean_facts(SimpleNamespace(declarations=declarations), dependencies)
         self.assertEqual((counts, unlinked), ({"articles": 2, "unresolved": 0, "edges": 1}, []))
         self.assertEqual((wiki.ROADMAP / "Algebra" / "lagrange.md").read_text(),
@@ -316,8 +319,8 @@ class LeanFacts(Vault):
         self.assertEqual((wiki.ROADMAP / "Algebra" / "gone.md").read_text(), "# Gone\n\nRemoved upstream.\n")
 
     def test_pages_the_declarations_sync_wrote_get_their_facts(self) -> None:
-        # declarations marks its pages with {"from": "docstring"}, and with a module and name only when the index
-        # can't see the declaration; lean-facts must read both shapes.
+        # declarations marks its pages with {"from": "docstring"}; an earlier sync also wrote a module and a name for
+        # a page without a Lean link, which lean-facts reads through the index.
         source = self.tmp / "Ext" / "Groups.lean"
         source.parent.mkdir(parents=True)
         source.write_text("theorem order_pos : True := trivial\ntheorem_wanted conjecture : True\n")
@@ -329,10 +332,11 @@ class LeanFacts(Vault):
             self.about("Algebra/conjecture.md",
                        extensions={"org.atlas-wiki": {"from": "docstring", "module": "Ext.Groups", "name": "conjecture"}}),
         ])
-        declarations = {"Ext.order_pos": SimpleNamespace(keyword="theorem", path=Path("Ext/Groups.lean"))}
+        declarations = {"Ext.order_pos": SimpleNamespace(keyword="theorem", path=Path("Ext/Groups.lean")),
+                        "Ext.conjecture": SimpleNamespace(keyword="theorem_wanted", path=Path("Ext/Groups.lean"))}
         dependencies = {
-            "Ext.order_pos": {"module": "Ext.Groups", "statement": [], "proof": ["conjecture"]},
-            "conjecture": {"module": "Ext.Groups", "statement": [], "proof": []},
+            "Ext.order_pos": {"module": "Ext.Groups", "statement": [], "proof": ["Ext.conjecture"]},
+            "Ext.conjecture": {"module": "Ext.Groups", "statement": [], "proof": []},
         }
         counts, unlinked = sync.apply_lean_facts(SimpleNamespace(declarations=declarations), dependencies)
         self.assertEqual(counts, {"articles": 2, "unresolved": 0, "edges": 1})
@@ -403,25 +407,21 @@ class Declarations(Vault):
         ])
         index = SimpleNamespace(declarations={"Ext.old": None, "Ext.new": None, "Ext.kept": None})
         report = sync.apply_declarations(targets, index)
-        self.assertEqual(report["added"], [
-            "Ext.Groups:wanted -> Algebra/groups/wanted.md",
-            "Ext.new -> Algebra/groups/new.md",
-            "Other.lone -> Algebra/lone.md",
-        ])
+        self.assertEqual(report["added"], ["Ext.new -> Algebra/groups/new.md", "Other.lone -> Algebra/lone.md"])
+        self.assertEqual(report["unindexed"], ["wanted (no Lean name)"])
         self.assertEqual(report["gone"], ["Ext.gone (Algebra/groups/gone.md)"])
         self.assertEqual(report["changed"], [])
         self.assertEqual(old.read_text(), "# Old, as the wiki wrote it\n\nEdited text.\n")
         self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "new.md").read_text(), "# New result\n\nA new statement.\n")
         # In source order: the targets' order here.
         self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
-                         "# Groups\n\nProse.\n\n- [Old](old.md)\n- [New result](new.md)\n- [Wanted](wanted.md)\n")
+                         "# Groups\n\nProse.\n\n- [Old](old.md)\n- [New result](new.md)\n")
         self.assertEqual((wiki.ROADMAP / "Algebra" / "README.md").read_text(),
                          "# Algebra\n\n- [Groups](groups/README.md)\n- [Lone](lone.md)\n")
         rows = {sync.subject_path(row).name: row for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
         self.assertEqual(rows["new.md"]["object"], [{"location": {"declaration": "Ext.new"}}])
         self.assertEqual(rows["new.md"]["extensions"], {"org.atlas-wiki": {"from": "docstring"}})
-        self.assertEqual(rows["wanted.md"]["extensions"],
-                         {"org.atlas-wiki": {"from": "docstring", "module": "Ext.Groups", "name": "wanted"}})
+        self.assertNotIn("wanted.md", rows)
 
     def test_a_new_page_never_takes_the_name_of_its_folder_page(self) -> None:
         self.page("Algebra/groups/README.md", "# Groups\n")
@@ -653,135 +653,99 @@ class DocstringReport(Vault):
         self.assertEqual(sync.apply_declarations([], self.index)["changed"], [])
 
 
-class UnindexedIdentity(Vault):
-    """Declarations the index lacks are known by module and name as written, with the line to break ties."""
+class UnindexedDeclarations(Vault):
+    """A declaration the Lean index lacks (a name declared in two modules, which the index leaves unselected) gets
+    no page: no identity is ever rebuilt from the source. It is reported for an editor; a page an earlier sync wrote
+    for one is kept, and read through the index only when the index makes it unambiguous."""
 
-    SOURCE = ("namespace IsJSet\n/-- The J-set version. -/\ntheorem_wanted arithmeticProgressions_pnat : True\nend IsJSet\n"
-              "/-- The written-qualified version. -/\ntheorem_wanted IsEssentialCRSet.arithmeticProgressions_pnat : True\n"
-              "/-- A head whose name is on the next line. -/\npublic theorem_wanted\n    continued : True\n"
-              "/-- A definition sharing the last component. -/\ndef_wanted IsJSet.arithmeticProgressions_pnat_def : Nat\n")
-
-    def setUp(self) -> None:
-        super().setUp()
+    def library(self, text: str):
         source = self.tmp / "MathlibExt" / "Algebra" / "Wanted.lean"
         source.parent.mkdir(parents=True, exist_ok=True)
-        source.write_text(self.SOURCE)
-
-    def targets(self):
+        source.write_text(text)
         taxonomy = {"subjects": {"Algebra": {}}, "placements": {}}
-        targets, _ = wiki.load_library("MathlibExt", SimpleNamespace(declarations={}), taxonomy)
-        for target in targets:  # where generate_wiki would lay them out
-            target.path = wiki.ROADMAP / "Algebra" / f"{target.slug}.md"
-        return targets
+        return wiki.load_library("MathlibExt", SimpleNamespace(declarations={}), taxonomy)
 
-    def test_written_names_and_continued_heads_keep_targets_apart(self) -> None:
-        keys = [sync.declaration_key(target) for target in self.targets()]
-        self.assertEqual(keys, ["MathlibExt.Algebra.Wanted:IsJSet.arithmeticProgressions_pnat",
-                                "MathlibExt.Algebra.Wanted:IsEssentialCRSet.arithmeticProgressions_pnat",
-                                "MathlibExt.Algebra.Wanted:continued",
-                                "MathlibExt.Algebra.Wanted:IsJSet.arithmeticProgressions_pnat_def"])
-
-    def test_the_sync_writes_one_page_each_and_finds_them_again(self) -> None:
+    def test_unindexed_declarations_get_no_page_and_are_reported(self) -> None:
+        cases = [
+            # A root declaration and a namespaced one written alike.
+            ("/-- Root. -/\ntheorem_wanted same : True\nnamespace B\n/-- B's. -/\ndef_wanted same : Nat\nend B\n", [2, 5]),
+            # A quoted scope before two namespace-local declarations written alike.
+            ("namespace «Auxiliary.Scope»\nend «Auxiliary.Scope»\nnamespace A\n/-- A's. -/\ntheorem_wanted\n  same : True\n"
+             "end A\nnamespace B\n/-- B's. -/\ndef_wanted\n  same : Nat\nend B\n", [5, 10]),
+        ]
         self.page("Algebra/README.md", "# Algebra\n")
         self.annotate([self.about("Algebra/README.md")])
-        report = sync.apply_declarations(self.targets(), SimpleNamespace(declarations={}))
-        self.assertEqual(len(report["added"]), 4)
-        rows = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]
-        own = [row["extensions"]["org.atlas-wiki"] for row in rows if "org.atlas-wiki" in row.get("extensions", {})]
-        self.assertEqual(sorted((entry["name"], entry["line"]) for entry in own),
-                         sorted([("IsJSet.arithmeticProgressions_pnat", 3), ("IsEssentialCRSet.arithmeticProgressions_pnat", 6),
-                                 ("continued", 8), ("IsJSet.arithmeticProgressions_pnat_def", 11)]))
-        again = sync.apply_declarations(self.targets(), SimpleNamespace(declarations={}))
-        self.assertEqual((again["added"], again["gone"]), ([], []))
-        sync.apply_lean_facts(SimpleNamespace(declarations={}), {})
-        facts = {row["extensions"]["org.atlas-wiki"]["name"]: (row.get("kind"), row.get("status"))
-                 for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"] if "org.atlas-wiki" in row.get("extensions", {})}
-        self.assertEqual(facts, {"IsJSet.arithmeticProgressions_pnat": ("theorem", "stated"),
-                                 "IsEssentialCRSet.arithmeticProgressions_pnat": ("theorem", "stated"),
-                                 "continued": ("theorem", "stated"), "IsJSet.arithmeticProgressions_pnat_def": ("def", None)})
+        for text, lines in cases:
+            with self.subTest(lines=lines):
+                targets, summary = self.library(text)
+                expected = [f"MathlibExt/Algebra/Wanted.lean:{line} same" for line in lines]
+                self.assertEqual((targets, summary["unindexed"]), ([], expected))
+                report = sync.apply_declarations(targets, SimpleNamespace(declarations={}), unindexed=summary["unindexed"])
+                self.assertEqual((report["added"], report["unindexed"]), ([], sorted(expected)))
 
-    def test_namespace_local_names_and_edges_resolve_alike_everywhere(self) -> None:
-        # `same` in namespaces A and B are two declarations: two keys, two pages, and lean-facts finds each, and
-        # the edges between fallback declarations, by the same identity generate_wiki gives them.
-        source = self.tmp / "MathlibExt" / "Algebra" / "Wanted.lean"
-        source.write_text("namespace A\n/-- The first. -/\ntheorem_wanted\n  same : True\nend A\n\n"
-                          "namespace B\n/-- The second. -/\ndef_wanted\n  same : Nat\nend B\n\n"
-                          "/-- A domain. -/\ndef_wanted\n  Base.carrier : Type\n\n"
-                          "/-- Reflexivity. -/\ntheorem_wanted\n  Claim.reflexive : Base.carrier = Base.carrier\n")
-        targets = self.targets()
-        self.assertEqual([sync.declaration_key(target) for target in targets],
-                         [f"MathlibExt.Algebra.Wanted:{name}" for name in ("A.same", "B.same", "Base.carrier", "Claim.reflexive")])
-        self.page("Algebra/README.md", "# Algebra\n")
-        self.annotate([self.about("Algebra/README.md")])
-        self.assertEqual(len(sync.apply_declarations(targets, SimpleNamespace(declarations={}))["added"]), 4)
-        module = "MathlibExt.Algebra.Wanted"
-        dependencies = {f"_private.{module}.0.Claim.reflexive": {"module": module, "statement": [f"_private.{module}.0.Base.carrier"], "proof": []},
-                        f"_private.{module}.0.Base.carrier": {"module": module, "statement": [], "proof": []}}
-        counts, unlinked = sync.apply_lean_facts(SimpleNamespace(declarations={}), dependencies)
-        self.assertEqual((counts, unlinked), ({"articles": 4, "unresolved": 0, "edges": 1}, []))
-        rows = {row["extensions"]["org.atlas-wiki"]["name"]: row for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]
-                if "org.atlas-wiki" in row.get("extensions", {})}
-        self.assertEqual({name: (row.get("kind"), row.get("status")) for name, row in rows.items()},
-                         {"A.same": ("theorem", "stated"), "B.same": ("def", None), "Base.carrier": ("def", None),
-                          "Claim.reflexive": ("theorem", "stated")})
-        claim = sync.subject_path(rows["Claim.reflexive"])
-        self.assertIn("## Depends on\n\n- [", claim.read_text())
-        self.assertIn("- [Carrier](carrier.md)", claim.read_text())
-        # generate_wiki's edges agree.
-        wiki.link_v2(targets, dependencies)
-        claim_target = next(target for target in targets if target.names[0] == "Claim.reflexive")
-        self.assertEqual([other.names[0] for other in claim_target.depends], ["Base.carrier"])
+    def test_a_legacy_page_is_kept_and_reported_when_the_index_cannot_name_it(self) -> None:
+        # Deleting the root `same` must not rebind its page to `B.same`: the index names neither, so the page waits.
+        self.library("namespace B\n/-- B's. -/\ndef_wanted same : Nat\nend B\n")
+        self.page("Algebra/README.md", "# Algebra\n\n- [Same](same.md)\n")
+        self.page("Algebra/same.md", "# Same\n\nRoot.\n")
+        row = self.about("Algebra/same.md", extensions={"org.atlas-wiki": {"module": "MathlibExt.Algebra.Wanted", "name": "same"}})
+        self.annotate([self.about("Algebra/README.md"), row])
+        index = SimpleNamespace(declarations={})
+        self.assertIsNone(sync.annotation_key(row, index))
+        report = sync.apply_declarations([], index)
+        self.assertEqual((report["added"], report["gone"]), ([], []))
+        self.assertEqual(report["unindexed"], ["Algebra/same.md (MathlibExt.Algebra.Wanted:same)"])
+        self.assertTrue((wiki.ROADMAP / "Algebra" / "same.md").is_file())
 
-    def test_an_annotation_with_a_short_name_keeps_its_page(self) -> None:
-        # An earlier sync wrote only the last component; its key is read back as the full name, so the sync finds
-        # the page instead of writing a second one.
-        source = self.tmp / "MathlibExt" / "Algebra" / "Wanted.lean"
-        source.write_text("namespace Deep.Space\n/-- A wish. -/\ntheorem_wanted wish : True\nend Deep.Space\n")
+    def test_a_legacy_page_named_by_the_index_keeps_its_page(self) -> None:
+        self.library("namespace Deep.Space\n/-- A wish. -/\ntheorem_wanted wish : True\nend Deep.Space\n")
         self.page("Algebra/README.md", "# Algebra\n\n- [Wish](wish.md)\n")
         self.page("Algebra/wish.md", "# Wish\n\nA wish.\n")
-        self.annotate([self.about("Algebra/README.md"),
-                       self.about("Algebra/wish.md", extensions={"org.atlas-wiki": {"module": "MathlibExt.Algebra.Wanted", "name": "wish"}})])
-        report = sync.apply_declarations(self.targets(), SimpleNamespace(declarations={}))
-        self.assertEqual((report["added"], report["gone"]), ([], []))
-        self.assertEqual(sync.annotation_key(sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][1]),
-                         "MathlibExt.Algebra.Wanted:Deep.Space.wish")
+        row = self.about("Algebra/wish.md", extensions={"org.atlas-wiki": {"module": "MathlibExt.Algebra.Wanted", "name": "wish"}})
+        self.annotate([self.about("Algebra/README.md"), row])
+        index = SimpleNamespace(declarations={"Deep.Space.wish": SimpleNamespace(
+            path=Path("MathlibExt/Algebra/Wanted.lean"), line=3, keyword="theorem_wanted", name="Deep.Space.wish")})
+        targets, _ = wiki.load_library("MathlibExt", index, {"subjects": {"Algebra": {}}, "placements": {}})
+        for target in targets:
+            target.path = wiki.ROADMAP / "Algebra" / f"{target.slug}.md"
+        self.assertEqual(sync.annotation_key(row, index), "Deep.Space.wish")
+        report = sync.apply_declarations(targets, index)
+        self.assertEqual((report["added"], report["gone"], report["unindexed"]), ([], [], []))
 
-    def test_a_source_backed_article_without_a_compiled_row_claims_no_prerequisites(self) -> None:
+    def test_a_legacy_page_without_a_compiled_row_claims_no_prerequisites(self) -> None:
         source = self.tmp / "MathlibExt" / "Algebra" / "Wanted.lean"
+        source.parent.mkdir(parents=True, exist_ok=True)
         source.write_text("/-- A wish. -/\ntheorem_wanted wish : True\n")
         page = self.page("Algebra/wish.md", "# Wish\n\nA wish.\n\n## Depends on\n\nThis node has no prerequisites.\n")
         self.annotate([self.about("Algebra/wish.md", extensions={"org.atlas-wiki": {"module": "MathlibExt.Algebra.Wanted", "name": "wish"}})])
-        counts, _ = sync.apply_lean_facts(SimpleNamespace(declarations={}), {})
+        index = SimpleNamespace(declarations={"MathlibExt.wish": SimpleNamespace(
+            path=Path("MathlibExt/Algebra/Wanted.lean"), line=2, keyword="theorem_wanted")})
+        counts, _ = sync.apply_lean_facts(index, {})
         self.assertEqual(counts["articles"], 1)
         self.assertEqual(page.read_text(), "# Wish\n\nA wish.\n")
 
-    def test_one_helper_builds_every_identity(self) -> None:
-        # Keys are built only by generate_wiki.declaration_identity and read only by split_identity; a last name
-        # component is taken only for titles and slugs, for annotations written before full names were kept,
-        # and for a test-only deprecated() fallback.
+    def test_no_identity_is_rebuilt_from_the_source(self) -> None:
+        # Keys are Lean names from the index: nothing builds `module:name` keys, and a last name component is taken
+        # only for titles and slugs, for reading an earlier sync's annotation through the index, and for
+        # deprecated()'s no-line test path.
         sources = {name: (Path(wiki.__file__).parent / f"{name}.py").read_text() for name in ("generate_wiki", "sync_wiki")}
-        self.assertEqual([line.strip() for text in sources.values() for line in text.splitlines() if "}:{" in line],
-                         ["return f\"{module if isinstance(module, str) else '.'.join(module)}:{name}\""])
-        self.assertEqual([line.strip() for text in sources.values() for line in text.splitlines() if 'rsplit(":"' in line],
-                         ['module, name = key.rsplit(":", 1)'])
-        short = [line.strip() for text in sources.values() for line in text.splitlines() if 'split(".")[-1]' in line]
-        self.assertEqual(short, [
+        lines = [line.strip() for text in sources.values() for line in text.splitlines()]
+        self.assertEqual([line for line in lines if 'rsplit(":"' in line], [])
+        # Only the report formats `module:name` or `path:line`, for a reader.
+        self.assertEqual([line for line in lines if "}:{" in line], [
+            'summary["unindexed"].append(f"{relative.as_posix()}:{number + 1} {written}")',
+            '+ [f"{subject_path(a).relative_to(wiki.ROADMAP)} ({a[\'extensions\'][OWN][\'module\']}:{a[\'extensions\'][OWN][\'name\']})"',
+        ])
+        for helper in ("declaration_identity", "split_identity", "fallback_metadata", "match_fallback", "qualified_name",
+                       "source_declaration"):
+            self.assertFalse(hasattr(wiki, helper) or hasattr(sync, helper), helper)
+        self.assertEqual([line for line in lines if 'split(".")[-1]' in line], [
             'titles = [value if position == 0 else humanize(value.split(".")[-1]) if value else "" for value in values]',
             'short = written.split(".")[-1]',
-            'written = [head for head in heads if head[1].group("name").split(".")[-1] == name]',
+            'and name.split(".")[-1] == own["name"].split(".")[-1]]',
             'short = target.names[0].split(".")[-1]',
             'if (match := wiki.V2_DECLARATION.match(row)) and match.group("name").split(".")[-1] == short]',
         ])
-
-    def test_source_lookups_use_the_written_name_then_the_line(self) -> None:
-        module = "MathlibExt.Algebra.Wanted"
-        self.assertEqual(sync.source_declaration(module, "IsEssentialCRSet.arithmeticProgressions_pnat")[0], 5)
-        self.assertEqual(sync.source_declaration(module, "continued")[1].group("kw"), "theorem_wanted")
-        self.assertIsNone(sync.source_declaration(module, "IsJSet.missing"))
-        # An earlier annotation's bare last component still finds its declaration.
-        self.assertEqual(sync.source_declaration(module, "arithmeticProgressions_pnat_def")[0], 10)
-        self.assertTrue(sync.declared(f"{module}:IsEssentialCRSet.arithmeticProgressions_pnat", SimpleNamespace(declarations={})))
-        self.assertTrue(sync.documented(f"{module}:continued", SimpleNamespace(declarations={})))
 
 
 class Titles(unittest.TestCase):

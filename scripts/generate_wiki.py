@@ -472,7 +472,25 @@ def first_words(text: str, limit: int = 60) -> str:
 _MODULE_HEADER = re.compile(r"^\s*module\s*$")
 _SCOPE = re.compile(
     r"^\s*(?:@\[[^\]]*\]\s*)*(?P<mods>(?:(?:public|private|noncomputable|meta)\s+)*)(?P<kind>section|namespace|mutual|end)\b"
-    r"[ \t]*(?P<name>[^\s]*)")
+    r"[ \t]*(?P<name>(?:«[^»\n]*»|[^\s«])*)")
+
+
+def name_components(name: str) -> list[str] | None:
+    """The components of a dotted Lean name, a quoted one («…») kept whole with its quotes; None if a quote is
+    left open."""
+    components, current, quoted = [], "", False
+    for char in name:
+        if char == "«":
+            quoted = True
+        elif char == "»":
+            quoted = False
+        if char == "." and not quoted:
+            components.append(current)
+            current = ""
+        else:
+            current += char
+    components.append(current)
+    return None if quoted else components
 
 
 def scope_states(lines: list[str]) -> list[tuple[tuple[str, ...], bool]] | None:
@@ -481,17 +499,17 @@ def scope_states(lines: list[str]) -> list[tuple[tuple[str, ...], bool]] | None:
     it). As in Lean, a dotted name opens or closes one scope per component: `namespace A.B` opens two, which
     `end B` and `end A`, or `end A.B`, close; only namespaces add to names.
 
-    None when the scopes do not balance (an `end` with nothing to close) or a scope has a quoted name: callers
-    then fall back to what needs no scopes."""
+    A quoted component («Auxiliary.Scope») counts as one. None when the scopes do not balance (an `end` with
+    nothing to close) or a quote is left open; module_private_lines then fails open."""
     scopes: list[tuple[str | None, bool]] = []  # each open scope: its namespace component (None if none), public
     states: list[tuple[tuple[str, ...], bool]] = []
     for line in code_lines(lines):
         scope = _SCOPE.match(line)
         if scope:
             kind, name = scope.group("kind"), scope.group("name")
-            if "«" in name or "»" in name:
+            components = name_components(name) if name and kind != "mutual" else [""]
+            if components is None or line[scope.end():].startswith("«"):  # a quote left open
                 return None
-            components = name.split(".") if name and kind != "mutual" else [""]
             if kind == "end":
                 if len(scopes) < len(components):
                     return None
@@ -520,54 +538,6 @@ def module_private_lines(lines: list[str]) -> frozenset[int]:
     if states is None:
         return frozenset()
     return frozenset(number for number, (_, public) in enumerate(states) if not public)
-
-
-def qualified_name(written: str, namespace: tuple[str, ...]) -> str:
-    """A declaration's full name from its name as written and the namespace in force: `_root_.` opts out."""
-    if written.startswith("_root_."):
-        return written[len("_root_."):]
-    return ".".join((*namespace, written))
-
-
-def declaration_identity(lean: str | None, module, name: str) -> str:
-    """The one identity every consumer uses for a declaration: its full name in the Lean index when the index
-    has it, else `<module>:<name>` with *name* its full name as the source writes it (see qualified_name). A
-    line is never part of it, so an edit above a declaration leaves its identity alone; the line kept in
-    fallback metadata only breaks ties."""
-    if lean:
-        return lean
-    return f"{module if isinstance(module, str) else '.'.join(module)}:{name}"
-
-
-def split_identity(key: str) -> tuple[str, str] | None:
-    """(module, name) of a fallback identity, None for an indexed one."""
-    if ":" not in key:
-        return None
-    module, name = key.rsplit(":", 1)
-    return module, name
-
-
-def fallback_metadata(target) -> dict:
-    """What an annotation keeps of a declaration the index lacks: its module, its full name, and its line."""
-    metadata = {"module": ".".join(target.module), "name": target.names[0]}
-    if getattr(target, "line", 0):
-        metadata["line"] = target.line
-    return metadata
-
-
-def match_fallback(compiled: str, names) -> str | None:
-    """Which of a module's fallback names a compiled constant is: the same name, else the one the compiled name
-    ends with as a dotted suffix (a private placeholder is `_private.<module>.0.<name>`); None when none is, or
-    when two equally long ones are."""
-    names = list(names)
-    if compiled in names:
-        return compiled
-    suffixes = [name for name in names if compiled.endswith("." + name)]
-    if not suffixes:
-        return None
-    longest = max(len(name) for name in suffixes)
-    best = [name for name in suffixes if len(name) == longest]
-    return best[0] if len(best) == 1 else None
 
 
 def visible(match: re.Match, number: int, module_private: frozenset[int]) -> bool:
@@ -689,7 +659,7 @@ def load_library(library: str, index, taxonomy: dict, titles: dict | None = None
     for path, line in located:
         indexed_lines[path].add(line)
     targets: list[Target] = []
-    summary = {"public": 0, "documented": 0, "instances": 0, "subjects": set(), "unsubjected": []}
+    summary = {"public": 0, "documented": 0, "instances": 0, "subjects": set(), "unsubjected": [], "unindexed": []}
     named_by_docstring: set[int] = set()
     used_titles: dict[Path, set[str]] = defaultdict(set)
     for path in sorted((ROOT / library).rglob("*.lean")):
@@ -717,7 +687,6 @@ def load_library(library: str, index, taxonomy: dict, titles: dict | None = None
             continue
         labels = section_labels(lines)
         module_private = module_private_lines(lines)
-        states = scope_states(lines)
         for number, match in declaration_lines(lines, indexed_lines[relative]):
             # A private declaration, written so or private by module visibility, gets no page and no count; a
             # page an editor already gave one keeps it, since its declaration still exists.
@@ -735,10 +704,11 @@ def load_library(library: str, index, taxonomy: dict, titles: dict | None = None
             short = written.split(".")[-1]
             found = located.get((relative, number + 1))
             if found is None:
-                # A declaration the index lacks: a theorem_wanted is still stated, as below.
-                declaration, lean = WANTED.get(keyword, keyword), None
-                statement, proof = keyword == "theorem_wanted", False
-            elif found.keyword in WANTED:
+                # The Lean index lacks it (a name declared in two modules, which the index leaves unselected): no
+                # page under a name reconstructed from the source; the declarations sync reports it for an editor.
+                summary["unindexed"].append(f"{relative.as_posix()}:{number + 1} {written}")
+                continue
+            if found.keyword in WANTED:
                 # Stated without a proof. A wanted definition stays unstated,
                 # because Autoform counts a stated definition as defined.
                 declaration, lean = WANTED[found.keyword], found.name
@@ -779,9 +749,7 @@ def load_library(library: str, index, taxonomy: dict, titles: dict | None = None
                     lean=lean,
                     statement=statement,
                     proof=proof,
-                    # A declaration the index lacks is known by its full name as the source writes it, which tells
-                    # apart two of a module's declarations that share a last component.
-                    names=[lean or qualified_name(written, states[number][0] if states else ())],
+                    names=[lean],
                     citations=citations,
                     module=module,
                     module_title=module_title,
@@ -1033,18 +1001,9 @@ def subject_tree(subject: str, targets: list[Target], taxonomy: dict) -> Contain
 def link_v2(targets: list[Target], dependencies: dict) -> None:
     """Add Lean dependency edges between v2 articles from sources/v2/lean-dependencies.json."""
     by_name = {target.lean: target for target in targets if target.lean}
-    # Wanted entries have no `lean:` link; match them in their module by their full name (see match_fallback).
-    by_module: dict[str, list[Target]] = defaultdict(list)
-    for target in targets:
-        if not target.lean:
-            by_module[".".join(target.module)].append(target)
 
     def find(name: str) -> Target | None:
-        if name in by_name:
-            return by_name[name]
-        candidates = {target.names[0]: target for target in by_module.get(dependencies.get(name, {}).get("module", ""), [])}
-        match = match_fallback(name, candidates)
-        return candidates[match] if match else None
+        return by_name.get(name)
 
     for name, entry in dependencies.items():
         target = find(name)
@@ -1308,10 +1267,12 @@ def pages_by_lean() -> dict[str, Path]:
     return {key: next(iter(paths)) for key, paths in found.items() if len(paths) == 1}
 
 
-def generate(titles: dict | None = None, dependency_file: Path | None = None, rendered: list | None = None, index=None) -> dict[Path, str]:
+def generate(titles: dict | None = None, dependency_file: Path | None = None, rendered: list | None = None, index=None,
+             unindexed: list | None = None) -> dict[Path, str]:
     """Every page, by path, with blueprint/pages.json; ``titles`` as load_library takes them, and the Lean
     dependency edges from ``dependency_file`` (default sources/v2/lean-dependencies.json) when it exists.
-    Every article's Target is added to ``rendered`` when given; ``index`` is the project's, when already built."""
+    Every article's Target is added to ``rendered`` when given, and each documented declaration the Lean index
+    lacks, as `path:line name`, to ``unindexed``; ``index`` is the project's, when already built."""
     # The archived v1 release and the standalone code under Atlas/ are not part of
     # the wiki, and both declare many v2 names again. Autoform selects neither
     # declaration of a name declared twice, so indexing them would leave those
@@ -1340,6 +1301,8 @@ def generate(titles: dict | None = None, dependency_file: Path | None = None, re
         print(f"note: {len(unsubjected)} modules are in folders with no subject in {TAXONOMY.relative_to(ROOT)} or "
               f"generate_wiki.LIBRARIES, so they get no pages yet: {', '.join(unsubjected[:5])}"
               f"{', ...' if len(unsubjected) > 5 else ''}", file=sys.stderr)
+    if unindexed is not None:
+        unindexed.extend(sorted(entry for _, summary in v2_loaded.values() for entry in summary["unindexed"]))
     # Dependencies come first: they order the topics.
     dependency_file = dependency_file or SOURCES / "v2" / "lean-dependencies.json"
     dependency_data = None

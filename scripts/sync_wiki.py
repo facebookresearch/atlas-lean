@@ -188,8 +188,6 @@ def seed(titles: dict, dependency_file: Path) -> tuple[dict[Path, str], dict[Pat
         ours = {key: fields[key] for key in ("origin", "navigation", "area") if key in fields}
         if ours:
             extensions[NAMESPACE] = ours
-        if target and not target.lean:
-            extensions[OWN] = wiki.fallback_metadata(target)
         if extensions:
             annotation["extensions"] = extensions
         annotations[links_file(path)].append(annotation)
@@ -222,39 +220,23 @@ def lean_facts_for(name: str | None, own: dict | None, index, sorry) -> tuple[st
         if keyword in wiki.DEFINITION_DECLARATIONS:
             return keyword, None if has_sorry else "formalized"
         return keyword, "stated" if has_sorry else "formalized"
-    if own and "module" in own and "name" in own:
-        found = source_declaration(own["module"], own["name"], own.get("line", 0))
-        if found:
-            match = found[1]
-            # Read as generate_wiki reads a declaration the index lacks: a theorem_wanted is stated.
-            keyword = match.group("kw")
-            return wiki.WANTED.get(keyword, keyword), "stated" if keyword == "theorem_wanted" else None
+    resolved = legacy_lean_name(own, index)
+    if resolved:
+        return lean_facts_for(resolved, None, index, sorry)
     return None, None
 
 
-def source_declaration(module: str, name: str, line: int = 0):
-    """(line number, match, full name) of the declaration in *module*'s source that *name* names, or None. *name* is the
-    declaration's full name as the source writes it (see generate_wiki.qualified_name), else its name as written;
-    of several, the one at the 1-based *line* when it is one of them, else the first. A name with no dot that
-    matches neither is matched by its last component, as earlier annotations wrote it. The source is read with
-    comments and literals blanked out, at any indentation, with names continued on the next line (see
-    generate_wiki.declaration_heads)."""
-    source = wiki.ROOT / Path(*module.split(".")).with_suffix(".lean")
-    if not source.is_file():
+def legacy_lean_name(own: dict | None, index) -> str | None:
+    """The Lean name of a page an earlier sync wrote with only a module and a name (no Lean link), read through
+    the Lean index: the one declaration of that module whose last name component is that name; None when the
+    index has none, or more than one, so no page is ever bound to a declaration by a guess."""
+    if not (own and "module" in own and "name" in own):
         return None
-    lines = source.read_text().splitlines()
-    states = wiki.scope_states(lines)
-    heads = [(number, match, wiki.qualified_name(match.group("name"), states[number][0] if states else ()))
-             for number, match in wiki.declaration_heads(lines)]
-    written = [head for head in heads if head[2] == name]
-    if not written:
-        written = [head for head in heads if head[1].group("name") == name]
-    if not written and "." not in name:
-        # An annotation written before full names were kept names only the last component.
-        written = [head for head in heads if head[1].group("name").split(".")[-1] == name]
-    if not written:
-        return None
-    return next((head for head in written if head[0] + 1 == line), written[0])
+    source = Path(*own["module"].split(".")).with_suffix(".lean")
+    names = [name for name, declaration in index.declarations.items()
+             if getattr(declaration, "path", None) is not None and Path(declaration.path) == source
+             and name.split(".")[-1] == own["name"].split(".")[-1]]
+    return names[0] if len(names) == 1 else None
 
 
 def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[str]]:
@@ -299,21 +281,14 @@ def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[st
             articles[path] = annotation
             counts["articles"] += 1
     by_name = {lean_name(a): path for path, a in articles.items() if lean_name(a)}
+    for path, a in articles.items():
+        resolved = None if lean_name(a) else legacy_lean_name(a.get("extensions", {}).get(OWN), index)
+        if resolved:
+            by_name.setdefault(resolved, path)
     # declarations marks a page it wrote with {"from": "docstring"} under OWN; only a page whose declaration the
     # index can't see also keeps its module and name there.
-    fallback: dict[str, dict[str, Path]] = defaultdict(dict)
-    for path, a in articles.items():
-        own = a.get("extensions", {}).get(OWN, {})
-        if {"module", "name"} <= own.keys():
-            fallback[own["module"]][own["name"]] = path
-
     def find(name: str) -> Path | None:
-        # As generate_wiki.link_v2 finds a declaration's article: by full name, else among its module's fallback names.
-        if name in by_name:
-            return by_name[name]
-        candidates = fallback.get(dependencies.get(name, {}).get("module", ""), {})
-        match = wiki.match_fallback(name, candidates)
-        return candidates[match] if match else None
+        return by_name.get(name)
 
     depends: dict[Path, tuple[list[Path], list[Path]]] = {path: ([], []) for path in articles}
     covered: set[Path] = set()
@@ -340,7 +315,7 @@ def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[st
 
     for path, (statement, proof) in depends.items():
         if path not in covered and not lean_name(articles[path]):
-            # A source-backed article with no compiled row: its dependencies are unknown, so no section claims none.
+            # A page with no Lean link and no compiled row: its dependencies are unknown, so no section claims none.
             body = path.read_text()
             if has_lean_sections(body):
                 path.write_text(without_sections(body, LEAN_SECTIONS))
@@ -405,21 +380,19 @@ def run_lean_facts(dependency_file: Path) -> int:
     return 0
 
 
-def declaration_key(target) -> str:
-    """How the sync finds a declaration's page: its identity (see generate_wiki.declaration_identity)."""
-    return wiki.declaration_identity(target.lean, target.module, target.names[0])
+def declaration_key(target) -> str | None:
+    """How the sync finds a declaration's page: its Lean name. A declaration the Lean index lacks has none, and
+    gets no page (generate_wiki leaves it out and the sync reports it)."""
+    return target.lean
 
 
-def annotation_key(annotation: dict) -> str | None:
+def annotation_key(annotation: dict, index=None) -> str | None:
+    """A page's Lean name: its Lean link, or, for a page an earlier sync wrote with a module and a name only, the
+    name the Lean index gives it (see legacy_lean_name); None when there is none."""
     name = lean_name(annotation)
-    if name:
+    if name or index is None:
         return name
-    own = annotation.get("extensions", {}).get(OWN)
-    if not (own and "module" in own and "name" in own):
-        return None
-    # The declaration's full name, read from its source, whatever form of its name an earlier sync wrote.
-    found = source_declaration(own["module"], own["name"], own.get("line", 0))
-    return wiki.declaration_identity(None, own["module"], found[2] if found else own["name"])
+    return legacy_lean_name(annotation.get("extensions", {}).get(OWN), index)
 
 
 def digest(text: str) -> str:
@@ -435,26 +408,16 @@ def docstring_digest(target) -> str:
 
 
 def documented(key: str, index) -> bool | None:
-    """Whether the declaration behind a page key still has a docstring; None when it is gone or out of sight."""
-    fallback = wiki.split_identity(key)
-    if fallback:
-        module, name = fallback
-        found = source_declaration(module, name)
-        if found is None:
-            return None
-        lines = (wiki.ROOT / Path(*module.split(".")).with_suffix(".lean")).read_text().splitlines()
-        numbers = [found[0]]
-    else:
-        declaration = index.declarations.get(key)
-        path, line = getattr(declaration, "path", None), getattr(declaration, "line", 0)
-        source = wiki.ROOT / path if path is not None else None
-        if source is None or not line or not source.is_file():
-            return None
-        lines = source.read_text().splitlines()
-        numbers = [line - 1]
-    if not numbers or numbers[0] >= len(lines):
+    """Whether the declaration behind a page key still has a docstring; None when the index does not have it."""
+    declaration = index.declarations.get(key)
+    path, line = getattr(declaration, "path", None), getattr(declaration, "line", 0)
+    source = wiki.ROOT / path if path is not None else None
+    if source is None or not line or not source.is_file():
         return None
-    return wiki.docstring_before(lines, numbers[0]) is not None
+    lines = source.read_text().splitlines()
+    if line - 1 >= len(lines):
+        return None
+    return wiki.docstring_before(lines, line - 1) is not None
 
 
 def page_text(target) -> tuple[str, dict[str, str]]:
@@ -533,10 +496,7 @@ def without_empty_headings(text: str) -> str:
 
 def declared(key: str, index) -> bool:
     """Whether the Lean still declares a page's declaration, documented or not."""
-    fallback = wiki.split_identity(key)
-    if fallback is None:
-        return key in index.declarations
-    return source_declaration(*fallback) is not None
+    return key in index.declarations
 
 
 def deprecated(target) -> bool:
@@ -575,14 +535,23 @@ def deprecated(target) -> bool:
     return re.search(r"@\[[^\]]*\bdeprecated\b", "\n".join(lines[top:number + 1])) is not None
 
 
-def apply_declarations(targets: list, index, generated: dict[Path, str] | None = None) -> dict[str, list[str]]:
+def apply_declarations(targets: list, index, generated: dict[Path, str] | None = None,
+                       unindexed: list[str] | None = None) -> dict[str, list[str]]:
     """Pages for new declarations, and the report; see the module docstring. ``generated`` holds generate_wiki's
-    pages by path, whose folder pages a new page's folder takes when it has none."""
+    pages by path, whose folder pages a new page's folder takes when it has none; ``unindexed`` the documented
+    declarations the Lean index lacks (`path:line name`), which get no page and are reported for an editor."""
     generated = generated or {}
     files = read_annotations()
-    pages = {annotation_key(a): subject_path(a) for rows in files.values() for a in rows if annotation_key(a)}
-    current = {declaration_key(target): target for target in targets}
-    report: dict[str, list[str]] = {"added": [], "folders": [], "gone": [], "changed": []}
+    keyed = [(annotation_key(a, index), a) for rows in files.values() for a in rows]
+    pages = {key: subject_path(a) for key, a in keyed if key}
+    current = {declaration_key(target): target for target in targets if declaration_key(target)}
+    report: dict[str, list[str]] = {"added": [], "folders": [], "gone": [], "changed": [], "unindexed": []}
+    # A declaration the index lacks, and a page an earlier sync wrote for one, wait for an editor: no page is ever
+    # keyed by a name rebuilt from the source.
+    report["unindexed"] = sorted(
+        [*(unindexed or []), *(f"{target.names[0]} (no Lean name)" for target in targets if not declaration_key(target))]
+        + [f"{subject_path(a).relative_to(wiki.ROADMAP)} ({a['extensions'][OWN]['module']}:{a['extensions'][OWN]['name']})"
+           for key, a in keyed if key is None and {"module", "name"} <= a.get("extensions", {}).get(OWN, {}).keys()])
     folders: dict[tuple[str, ...], Counter] = defaultdict(Counter)
     for key, target in current.items():
         if key in pages:
@@ -638,8 +607,6 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
         extensions: dict = {OWN: {"from": "docstring"}}
         if "origin" in fields:
             extensions[NAMESPACE] = {"origin": fields["origin"]}
-        if not target.lean:
-            extensions[OWN].update(wiki.fallback_metadata(target))
         annotation["extensions"] = extensions
         files.setdefault(links_file(target.path), []).append(annotation)
         pages[key] = target.path
@@ -701,11 +668,13 @@ def run_declarations() -> int:
 
     index = index_project(wiki.ROOT, exclude_roots=("v1", "Atlas"))
     targets: list = []
-    generated = wiki.generate(None, None, targets, index)
-    report = apply_declarations(targets, index, generated)
+    unindexed: list[str] = []
+    generated = wiki.generate(None, None, targets, index, unindexed)
+    report = apply_declarations(targets, index, generated, unindexed)
     refresh_catalog(generated)
     for kind, title in (("added", "New pages, taken from docstrings"), ("folders", "New folders, as the taxonomy places their modules"),
-                        ("gone", "Pages whose declaration is gone"), ("changed", "Pages whose declaration's docstring changed")):
+                        ("gone", "Pages whose declaration is gone"), ("changed", "Pages whose declaration's docstring changed"),
+                        ("unindexed", "Declarations the Lean index lacks, and their pages, for an editor")):
         print(f"{title}: {len(report[kind])}")
         for row in report[kind]:
             print(f"  {row}")

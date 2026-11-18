@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Keep newer library roots visible in the curated blueprint taxonomy."""
 
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -62,8 +63,16 @@ class BlueprintTaxonomyTests(unittest.TestCase):
                               "/-- Asked for. -/\ntheorem_wanted asked : True\n\n"
                               "public section\n\n/-- A result. -/\ntheorem result : True := trivial\n\nend\n")
             taxonomy = {"subjects": {"Algebra": {}}, "placements": {}}
+            path = Path("MathlibExt/Algebra/Fact.lean")
+            text = module.read_text().splitlines()
+            declarations = {}
+            for number, line in enumerate(text):
+                head = re.match(r"(?:private |public )?(theorem_wanted|theorem) (\w+)", line)
+                if head:
+                    declarations[head.group(2)] = SimpleNamespace(path=path, line=number + 1, keyword=head.group(1), name=head.group(2))
+            index = SimpleNamespace(declarations=declarations)
             with patch.object(wiki, "ROOT", Path(root)):
-                targets, summary = wiki.load_library("MathlibExt", SimpleNamespace(declarations={}), taxonomy)
+                targets, summary = wiki.load_library("MathlibExt", index, taxonomy)
         self.assertEqual([target.names[0] for target in targets], ["exported", "asked", "result"])
         self.assertEqual((summary["public"], summary["documented"]), (3, 3))
 
@@ -92,7 +101,9 @@ class BlueprintTaxonomyTests(unittest.TestCase):
         # An `end` with nothing to close, or a quoted scope name: fail open, nothing is private.
         self.assertEqual(private("module\ntheorem a : True := trivial\nend\ntheorem b : True := trivial"), [])
         self.assertEqual(private("module\ntheorem a : True := trivial\nnamespace A.B\nend A.B.C\ntheorem b : True := trivial"), [])
-        self.assertEqual(private("module\nnamespace «A.B»\ntheorem a : True := trivial\nend «A.B»"), [])
+        # A quoted name is one component; a quote left open fails open.
+        self.assertEqual(private("module\nnamespace «A.B»\ntheorem a : True := trivial\nend «A.B»"), ["theorem a : True := trivial"])
+        self.assertEqual(private("module\nnamespace «A.B\ntheorem a : True := trivial\nend"), [])
 
     def test_field_and_subfield_slugs_are_unique(self):
         # A repeated slug would be silently ignored: the generator places topics on its first occurrence.

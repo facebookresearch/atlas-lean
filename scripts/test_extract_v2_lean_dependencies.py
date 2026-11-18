@@ -87,18 +87,6 @@ class MissingRows(unittest.TestCase):
 
 
 class Mutual(unittest.TestCase):
-    def test_source_backed_articles_join_by_module_and_name(self) -> None:
-        # An article for a declaration the index lacks has no Lean link; its private placeholder still gets a row,
-        # and a name that two constants answer to gets none.
-        private = "_private.MathlibExt.T.0."
-        rows = [row(private + "Base.carrier", "def", [], []), row(private + "Claim.reflexive", "theorem", [private + "Base.carrier"], []),
-                row(private + "A.same", "def", [], []), row(private + "B.same", "def", [], [])]
-        with patch.object(extract, "source_backed_articles",
-                          lambda: {("MathlibExt.T", "Base.carrier"), ("MathlibExt.T", "Claim.reflexive"), ("MathlibExt.T", "same")}):
-            found = run_extract(rows, [])
-        self.assertEqual(sorted(found), [private + "Base.carrier", private + "Claim.reflexive"])
-        self.assertEqual(found[private + "Claim.reflexive"]["statement"], [private + "Base.carrier"])
-
     def test_mutual_definitions_drop_their_edges_to_each_other(self) -> None:
         found = run_extract(
             [row("E", "def", [], []), row("Win", "def", [], ["Lose", "E"]), row("Lose", "def", [], ["Win"])],

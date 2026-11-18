@@ -78,36 +78,6 @@ def article_manifest() -> set[str]:
     return set(load_graph(BLUEPRINT).lean_names())
 
 
-def source_backed_articles() -> set[tuple[str, str]]:
-    """(module, name) of each article written for a declaration the Lean index lacks: it has no Lean link, only
-    its module and full name under the `org.atlas-wiki` extension (see sync_wiki's declarations)."""
-    found: set[tuple[str, str]] = set()
-    for path in sorted((BLUEPRINT / "links").glob("*.jsonl")):
-        for line in path.read_text(encoding="utf-8").splitlines():
-            if not line.strip():
-                continue
-            row = json.loads(line)
-            own = row.get("extensions", {}).get("org.atlas-wiki", {})
-            if "object" not in row and {"module", "name"} <= own.keys():
-                found.add((own["module"], own["name"]))
-    return found
-
-
-def compiled_source_backed(source_backed: set[tuple[str, str]], rows: dict[str, dict]) -> set[str]:
-    """The compiled constant each source-backed article names: in its module, the one constant whose name is the
-    article's name or ends with it as a dotted suffix (a private placeholder is `_private.<module>.0.<name>`).
-    An article no constant, or more than one, answers to keeps no row, so lean-facts claims nothing for it."""
-    by_module: dict[str, list[str]] = {}
-    for name, row in rows.items():
-        by_module.setdefault(row["module"], []).append(name)
-    found: set[str] = set()
-    for module, name in source_backed:
-        matches = [compiled for compiled in by_module.get(module, []) if compiled == name or compiled.endswith("." + name)]
-        if len(matches) == 1:
-            found.add(matches[0])
-    return found
-
-
 def frontiers(rows: dict[str, dict], articles: set[str]) -> dict[str, frozenset[str]]:
     """For every non-article constant, the articles reachable through non-articles.
 
@@ -225,8 +195,7 @@ def main() -> int:
         for name in missing[:20]:
             print(f"warning: roadmap Lean target is absent from the compiled dependency dump: {name}", file=sys.stderr)
         print(f"warning: {len(missing)} roadmap targets have no compiled dependency row", file=sys.stderr)
-    # Articles for declarations the index lacks have no Lean link, so they join by their module and name.
-    articles = (manifest & rows.keys()) | compiled_source_backed(source_backed_articles(), rows)
+    articles = manifest & rows.keys()
     reach = frontiers(rows, articles)
 
     def collapse(name: str, uses: list[str]) -> set[str]:
