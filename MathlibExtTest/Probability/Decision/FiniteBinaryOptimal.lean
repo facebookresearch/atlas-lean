@@ -102,4 +102,147 @@ theorem weightedScore_oneSidedSupport_false :
   have h1 : (0 : ℝ) < 1 - π := by linarith
   simp only [mul_zero]
   positivity
+
+
+theorem test_api_weightedScore_optimal :
+    (∃ f : Fin 2 → Bool, f 0 = false ∧ f 1 = true)
+    ∧ ((1 - (1/3 : ℝ)) * 1 * (∑ x, (fun x : Fin 2 => if x = 0 then (3/4 : ℝ) else 1/4) x
+          * (fun x : Fin 2 => if x = 0 then (0 : ℝ) else 1) x)
+        + (1/3) * 4 * (∑ x, (fun x : Fin 2 => if x = 0 then (1/4 : ℝ) else 3/4) x
+          * (1 - (fun x : Fin 2 => if x = 0 then (0 : ℝ) else 1) x))
+        ≤ (1 - (1/3 : ℝ)) * 1 * (∑ x, (fun x : Fin 2 => if x = 0 then (3/4 : ℝ) else 1/4) x
+          * (fun _ : Fin 2 => (1/2 : ℝ)) x)
+        + (1/3) * 4 * (∑ x, (fun x : Fin 2 => if x = 0 then (1/4 : ℝ) else 3/4) x
+          * (1 - (fun _ : Fin 2 => (1/2 : ℝ)) x)))
+    ∧ ((¬ (1/3 : ℝ) * 4 * (3/4) = (1 - 1/3) * 1 * (1/4))
+        ∧ (((1/3 : ℝ) * 4 * (fun x : Fin 2 => if x = 0 then (1/4 : ℝ) else 3/4) 1
+          = (1 - 1/3) * 1 * (fun x : Fin 2 => if x = 0 then (3/4 : ℝ) else 1/4) 1)
+          → ∀ a b : ℝ, MathlibExt.Probability.Decision.weightedScoreContribution
+            (fun x : Fin 2 => if x = 0 then (3/4 : ℝ) else 1/4)
+            (fun x : Fin 2 => if x = 0 then (1/4 : ℝ) else 3/4)
+            (1/3) 1 4 a 1
+            = MathlibExt.Probability.Decision.weightedScoreContribution
+            (fun x : Fin 2 => if x = 0 then (3/4 : ℝ) else 1/4)
+            (fun x : Fin 2 => if x = 0 then (1/4 : ℝ) else 3/4)
+            (1/3) 1 4 b 1))
+    ∧ ((1 - (1/3 : ℝ)) * 1 * 0 < (1/3) * 4 * (1/2)) := by
+  have hP0 : ∀ x : Fin 2, 0 ≤ (fun x : Fin 2 => if x = 0 then (3/4 : ℝ) else 1/4) x := by
+    rw [Fin.forall_fin_two]
+    constructor
+    · show (0 : ℝ) ≤ 3/4; norm_num
+    · show (0 : ℝ) ≤ 1/4; norm_num
+  have hP0sum : ∑ x : Fin 2, (fun x : Fin 2 => if x = 0 then (3/4 : ℝ) else 1/4) x = 1 := by
+    rw [Fin.sum_univ_two]
+    show (3/4 : ℝ) + 1/4 = 1; norm_num
+  have hP1 : ∀ x : Fin 2, 0 ≤ (fun x : Fin 2 => if x = 0 then (1/4 : ℝ) else 3/4) x := by
+    rw [Fin.forall_fin_two]
+    constructor
+    · show (0 : ℝ) ≤ 1/4; norm_num
+    · show (0 : ℝ) ≤ 3/4; norm_num
+  have hP1sum : ∑ x : Fin 2, (fun x : Fin 2 => if x = 0 then (1/4 : ℝ) else 3/4) x = 1 := by
+    rw [Fin.sum_univ_two]
+    show (1/4 : ℝ) + 3/4 = 1; norm_num
+  have hπ0 : 0 < (1/3 : ℝ) := by norm_num
+  have hπ1 : (1/3 : ℝ) < 1 := by norm_num
+  have hcFP : 0 < (1 : ℝ) := by norm_num
+  have hcFN : 0 < (4 : ℝ) := by norm_num
+  have hH := MathlibExt.Probability.Decision.weightedScore_binary_optimal
+    (fun x : Fin 2 => if x = 0 then (3/4 : ℝ) else 1/4)
+    (fun x : Fin 2 => if x = 0 then (1/4 : ℝ) else 3/4)
+    (1/3) 1 4 hP0 hP0sum hP1 hP1sum hπ0 hπ1 hcFP hcFN
+  obtain ⟨f, -, htrue, hfalse, -⟩ := hH.1
+  have hf0 : f 0 = false := by
+    apply hfalse 0
+    show (1/3 : ℝ) * 4 * (1/4) < (1 - 1/3) * 1 * (3/4); norm_num
+  have hf1 : f 1 = true := by
+    apply htrue 1
+    show (1 - (1/3 : ℝ)) * 1 * (1/4) < (1/3) * 4 * (3/4); norm_num
+  have hδmem : ∀ x : Fin 2, (fun _ : Fin 2 => (1/2 : ℝ)) x ∈ Set.Icc (0 : ℝ) 1 := by
+    intro x
+    show (1/2 : ℝ) ∈ Set.Icc (0 : ℝ) 1
+    rw [Set.mem_Icc]
+    norm_num
+  have hδ'mem : ∀ x : Fin 2, (fun x : Fin 2 => if x = 0 then (0 : ℝ) else 1) x ∈ Set.Icc (0 : ℝ) 1 := by
+    rw [Fin.forall_fin_two]
+    constructor
+    · show (0 : ℝ) ∈ Set.Icc (0 : ℝ) 1; rw [Set.mem_Icc]; norm_num
+    · show (1 : ℝ) ∈ Set.Icc (0 : ℝ) 1; rw [Set.mem_Icc]; norm_num
+  have h1' : ∀ x : Fin 2, (1 - (1/3 : ℝ)) * 1 * (fun x : Fin 2 => if x = 0 then (3/4 : ℝ) else 1/4) x
+      < (1/3) * 4 * (fun x : Fin 2 => if x = 0 then (1/4 : ℝ) else 3/4) x
+      → (fun x : Fin 2 => if x = 0 then (0 : ℝ) else 1) x = 1 := by
+    intro x hlt
+    by_cases hx : x = 0
+    · subst hx
+      change (1 - (1/3 : ℝ)) * 1 * (3/4) < (1/3) * 4 * (1/4) at hlt
+      norm_num at hlt
+    · simp [hx]
+  have h0' : ∀ x : Fin 2, (1/3 : ℝ) * 4 * (fun x : Fin 2 => if x = 0 then (1/4 : ℝ) else 3/4) x
+      < (1 - (1/3 : ℝ)) * 1 * (fun x : Fin 2 => if x = 0 then (3/4 : ℝ) else 1/4) x
+      → (fun x : Fin 2 => if x = 0 then (0 : ℝ) else 1) x = 0 := by
+    intro x hlt
+    by_cases hx : x = 0
+    · subst hx
+      rfl
+    · have hx1 : x = 1 := Fin.eq_one_of_ne_zero x hx
+      subst hx1
+      change (1/3 : ℝ) * 4 * (3/4) < (1 - (1/3 : ℝ)) * 1 * (1/4) at hlt
+      norm_num at hlt
+  have hRisk := hH.2.1 (fun _ : Fin 2 => (1/2 : ℝ))
+    (fun x : Fin 2 => if x = 0 then (0 : ℝ) else 1) hδmem hδ'mem h1' h0'
+  have hNoTie : ¬ (1/3 : ℝ) * 4 * (3/4) = (1 - 1/3) * 1 * (1/4) := by norm_num
+  have hTieImp := hH.2.2.1 1
+  have hP0'' : ∀ x : Fin 2, 0 ≤ (fun x : Fin 2 => if x = 0 then (0 : ℝ) else 1) x := by
+    rw [Fin.forall_fin_two]
+    constructor
+    · show (0 : ℝ) ≤ 0; norm_num
+    · show (0 : ℝ) ≤ 1; norm_num
+  have hP0''sum : ∑ x : Fin 2, (fun x : Fin 2 => if x = 0 then (0 : ℝ) else 1) x = 1 := by
+    rw [Fin.sum_univ_two]
+    show (0 : ℝ) + 1 = 1; norm_num
+  have hP1'' : ∀ x : Fin 2, 0 ≤ (fun x : Fin 2 => if x = 0 then (1/2 : ℝ) else 1/2) x := by
+    rw [Fin.forall_fin_two]
+    constructor
+    · show (0 : ℝ) ≤ 1/2; norm_num
+    · show (0 : ℝ) ≤ 1/2; norm_num
+  have hP1''sum : ∑ x : Fin 2, (fun x : Fin 2 => if x = 0 then (1/2 : ℝ) else 1/2) x = 1 := by
+    rw [Fin.sum_univ_two]
+    show (1/2 : ℝ) + 1/2 = 1; norm_num
+  have hH'' := MathlibExt.Probability.Decision.weightedScore_binary_optimal
+    (fun x : Fin 2 => if x = 0 then (0 : ℝ) else 1)
+    (fun x : Fin 2 => if x = 0 then (1/2 : ℝ) else 1/2)
+    (1/3) 1 4 hP0'' hP0''sum hP1'' hP1''sum hπ0 hπ1 hcFP hcFN
+  have hOneSided := hH''.2.2.2.1 0 rfl (by show (0 : ℝ) < 1/2; norm_num)
+  exact ⟨⟨f, hf0, hf1⟩, hRisk, ⟨hNoTie, hTieImp⟩, hOneSided⟩
+
+theorem test_api_weightedScoreContribution_tie_iff :
+    ((1/3 : ℝ) * 4 * (1/4) = (1 - 1/3) * 1 * (1/2))
+    ∧ (MathlibExt.Probability.Decision.weightedScoreContribution
+          (fun _ : Fin 2 => (1/2 : ℝ))
+          (fun x : Fin 2 => if x = 0 then (1/4 : ℝ) else 3/4)
+          (1/3) 1 4 (1/4) 0
+        = MathlibExt.Probability.Decision.weightedScoreContribution
+          (fun _ : Fin 2 => (1/2 : ℝ))
+          (fun x : Fin 2 => if x = 0 then (1/4 : ℝ) else 3/4)
+          (1/3) 1 4 (3/4) 0) := by
+  have htie : (1/3 : ℝ) * 4 * (1/4) = (1 - 1/3) * 1 * (1/2) := by norm_num
+  have hconst : ∀ a b : ℝ, MathlibExt.Probability.Decision.weightedScoreContribution
+      (fun _ : Fin 2 => (1/2 : ℝ))
+      (fun x : Fin 2 => if x = 0 then (1/4 : ℝ) else 3/4)
+      (1/3) 1 4 a 0
+      = MathlibExt.Probability.Decision.weightedScoreContribution
+      (fun _ : Fin 2 => (1/2 : ℝ))
+      (fun x : Fin 2 => if x = 0 then (1/4 : ℝ) else 3/4)
+      (1/3) 1 4 b 0 := by
+    intro a b
+    unfold MathlibExt.Probability.Decision.weightedScoreContribution
+    show a * ((1 - (1/3 : ℝ)) * 1 * (1/2 : ℝ)) + (1 - a) * ((1/3) * 4 * (1/4 : ℝ))
+      = b * ((1 - (1/3 : ℝ)) * 1 * (1/2 : ℝ)) + (1 - b) * ((1/3) * 4 * (1/4 : ℝ))
+    rw [htie]
+    ring
+  have hIff := MathlibExt.Probability.Decision.weightedScoreContribution_constant_iff
+    (fun _ : Fin 2 => (1/2 : ℝ))
+    (fun x : Fin 2 => if x = 0 then (1/4 : ℝ) else 3/4)
+    (1/3) 1 4 0
+  exact ⟨hIff.mp hconst, hIff.mpr htie (1/4) (3/4)⟩
+
 end MathlibExtTest.Probability.Decision

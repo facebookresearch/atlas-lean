@@ -235,4 +235,13 @@ theorem weightedScoreContribution_constant_iff {𝒳 : Type*} (P0 P1 : 𝒳 → 
   · intro h a b
     simp only [weightedScoreContribution, h]
     ring
+
+theorem weightedScore_oneSidedSupport' {𝒳 : Type*} (P0 P1 : 𝒳 → ℝ) (π cFP cFN : ℝ)
+    (hπ0 : 0 < π) (hπ1 : π < 1) (hcFP : 0 < cFP) (hcFN : 0 < cFN) (x : 𝒳)
+    (h0 : P1 x = 0) (h1 : 0 < P0 x) :
+    π * cFN * P1 x < (1 - π) * cFP * P0 x := by
+  rw [h0, mul_zero]
+  have h1π : 0 < 1 - π := by linarith
+  have hpos : 0 < (1 - π) * cFP * P0 x := by positivity
+  exact hpos
 end MathlibExt.Probability.Decision
