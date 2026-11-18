@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+public import MathlibExt.Interpolation.HermiteCubic
 public import Mathlib.Analysis.SpecialFunctions.Integrability.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import Mathlib.Tactic.FieldSimp
@@ -44,6 +45,8 @@ entries are equal in magnitude and opposite in sign.
 /-! ## A. Consistent loads -/
 
 open intervalIntegral
+
+namespace HermiteCubic
 
 /-- Consistent load vector for a uniform span load. For span
 `L ≠ 0` and constant load `w`, integrating the four Hermite shape
@@ -169,3 +172,48 @@ theorem hermite_consistent_loads {w L : ℝ} (hL : L ≠ 0) :
     simp
     field_simp
     ring
+
+/-- The consistent-load integrals stated against the canonical
+Hermite basis `HermiteCubic.hermite`: the four integrands are
+`w` times the unit-data specializations of `hermite`. -/
+theorem hermite_consistent_loads_hermite {w L : ℝ} (hL : L ≠ 0) :
+    (∫ x in (0 : ℝ)..L, w * HermiteCubic.hermite L 1 0 0 0 x
+      = w * L / 2)
+    ∧ (∫ x in (0 : ℝ)..L, w * HermiteCubic.hermite L 0 1 0 0 x
+      = w * L ^ 2 / 12)
+    ∧ (∫ x in (0 : ℝ)..L, w * HermiteCubic.hermite L 0 0 1 0 x
+      = w * L / 2)
+    ∧ (∫ x in (0 : ℝ)..L, w * HermiteCubic.hermite L 0 0 0 1 x
+      = -w * L ^ 2 / 12) := by
+  have e1 : ∀ x : ℝ, w * HermiteCubic.hermite L 1 0 0 0 x
+      = w * (1 - 3 * (x / L) ^ 2 + 2 * (x / L) ^ 3) := by
+    intro x
+    unfold HermiteCubic.hermite
+    ring
+  have e2 : ∀ x : ℝ, w * HermiteCubic.hermite L 0 1 0 0 x
+      = w * (L * ((x / L) - 2 * (x / L) ^ 2 + (x / L) ^ 3)) := by
+    intro x
+    unfold HermiteCubic.hermite
+    ring
+  have e3 : ∀ x : ℝ, w * HermiteCubic.hermite L 0 0 1 0 x
+      = w * (3 * (x / L) ^ 2 - 2 * (x / L) ^ 3) := by
+    intro x
+    unfold HermiteCubic.hermite
+    ring
+  have e4 : ∀ x : ℝ, w * HermiteCubic.hermite L 0 0 0 1 x
+      = w * (L * (-(x / L) ^ 2 + (x / L) ^ 3)) := by
+    intro x
+    unfold HermiteCubic.hermite
+    ring
+  have h := hermite_consistent_loads hL (w := w)
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · rw [intervalIntegral.integral_congr (fun x _ => e1 x)]
+    exact h.1
+  · rw [intervalIntegral.integral_congr (fun x _ => e2 x)]
+    exact h.2.1
+  · rw [intervalIntegral.integral_congr (fun x _ => e3 x)]
+    exact h.2.2.1
+  · rw [intervalIntegral.integral_congr (fun x _ => e4 x)]
+    exact h.2.2.2
+
+end HermiteCubic

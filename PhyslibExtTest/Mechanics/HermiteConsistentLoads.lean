@@ -26,7 +26,7 @@ open intervalIntegral
 /-- Entry values at `w = 2`, `L = 3`. -/
 example : (∫ x in (0 : ℝ)..3, (2 : ℝ) * (1 - 3 * (x / 3) ^ 2 + 2 * (x / 3) ^ 3)) = 3
     ∧ (∫ x in (0 : ℝ)..3, (2 : ℝ) * (3 * ((x / 3) - 2 * (x / 3) ^ 2 + (x / 3) ^ 3))) = 3 / 2 := by
-  have h := hermite_consistent_loads (w := 2) (L := 3) (by norm_num)
+  have h := HermiteCubic.hermite_consistent_loads (w := 2) (L := 3) (by norm_num)
   refine ⟨?_, ?_⟩
   · rw [h.1]
     norm_num
@@ -35,6 +35,6 @@ example : (∫ x in (0 : ℝ)..3, (2 : ℝ) * (1 - 3 * (x / 3) ^ 2 + 2 * (x / 3)
 
 /-- Zero load gives a zero first entry. -/
 example : (∫ x in (0 : ℝ)..3, (0 : ℝ) * (1 - 3 * (x / 3) ^ 2 + 2 * (x / 3) ^ 3)) = 0 := by
-  have h := hermite_consistent_loads (w := 0) (L := 3) (by norm_num)
+  have h := HermiteCubic.hermite_consistent_loads (w := 0) (L := 3) (by norm_num)
   rw [h.1]
   norm_num
