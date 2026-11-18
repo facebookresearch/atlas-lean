@@ -9,6 +9,8 @@ module
 
 import MathlibExt.Probability.Reliability.SystemSurvival
 import Mathlib.Tactic.NormNum
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Tactic.IntervalCases
 
 /-!
 # System-survival checks

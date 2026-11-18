@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import MathlibExt.Probability.ContinuousDistributions
-public import MathlibExt.Probability.Reliability.LimitState
+public import Mathlib.MeasureTheory.Measure.Real
+public import Mathlib.Probability.Independence.Basic
 
 /-!
 # Series and parallel system survival
@@ -93,6 +93,57 @@ theorem parallel_survival_le_sum {Ω : Type*} [MeasurableSpace Ω]
       = ⋃ i ∈ Finset.range n, {ω | x < T i ω} := by
     ext ω
     simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Finset.mem_range, exists_prop]
+  rw [hset]
+  exact MeasureTheory.measureReal_biUnion_finset_le _ _
+
+/-- Parallel survival under mutual independence over a finite
+component set: one minus the product of component failure
+probabilities. This is the finite-set form of
+`parallel_survival_eq`. -/
+theorem parallel_survival_eq_finset {Ω ι : Type*} [MeasurableSpace Ω]
+    {P : MeasureTheory.Measure Ω} [MeasureTheory.IsProbabilityMeasure P]
+    {T : ι → Ω → ℝ} (hT : ProbabilityTheory.iIndepFun T P)
+    (hmeas : ∀ i, Measurable (T i)) (s : Finset ι) (x : ℝ) :
+    P.real {ω | ∃ i ∈ s, x < T i ω}
+      = 1 - ∏ i ∈ s, (1 - P.real {ω | x < T i ω}) := by
+  have hcompl : {ω | ∃ i ∈ s, x < T i ω} = {ω | ∀ i ∈ s, T i ω ≤ x}ᶜ := by
+    ext ω
+    simp only [Set.mem_ofPred_eq, Set.mem_compl_iff, not_forall, not_le,
+      exists_prop]
+  have hset : {ω | ∀ i ∈ s, T i ω ≤ x}
+      = ⋂ i ∈ s, T i ⁻¹' Set.Iic x := by
+    ext ω
+    simp only [Set.mem_ofPred_eq, Set.mem_iInter, Set.mem_preimage,
+      Set.mem_Iic]
+  have hmeas_fail : MeasurableSet {ω | ∀ i ∈ s, T i ω ≤ x} := by
+    rw [hset]
+    exact Finset.measurableSet_biInter _ (fun i _ => (hmeas i) measurableSet_Iic)
+  rw [hcompl, MeasureTheory.probReal_compl_eq_one_sub hmeas_fail]
+  congr 1
+  rw [hset, measureReal_def, hT.measure_inter_preimage_eq_mul s
+    (sets := fun _ => Set.Iic x) (fun _ _ => measurableSet_Iic),
+    ENNReal.toReal_prod]
+  refine Finset.prod_congr rfl fun i _ => ?_
+  have hi : T i ⁻¹' Set.Iic x = {ω | x < T i ω}ᶜ := by
+    ext ω
+    simp only [Set.mem_preimage, Set.mem_Iic, Set.mem_compl_iff,
+      Set.mem_ofPred_eq, not_lt]
+  have hmeas_i : MeasurableSet {ω | x < T i ω} := (hmeas i) measurableSet_Ioi
+  rw [hi, ← measureReal_def,
+    MeasureTheory.probReal_compl_eq_one_sub hmeas_i]
+
+/-- Union bound over a finite component set, with no independence
+hypothesis. This is the finite-set form of
+`parallel_survival_le_sum`. -/
+theorem parallel_survival_le_sum_finset {Ω ι : Type*} [MeasurableSpace Ω]
+    {P : MeasureTheory.Measure Ω} {T : ι → Ω → ℝ} (s : Finset ι)
+    (x : ℝ) :
+    P.real {ω | ∃ i ∈ s, x < T i ω}
+      ≤ ∑ i ∈ s, P.real {ω | x < T i ω} := by
+  have hset : {ω | ∃ i ∈ s, x < T i ω}
+      = ⋃ i ∈ s, {ω | x < T i ω} := by
+    ext ω
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, exists_prop]
   rw [hset]
   exact MeasureTheory.measureReal_biUnion_finset_le _ _
 
