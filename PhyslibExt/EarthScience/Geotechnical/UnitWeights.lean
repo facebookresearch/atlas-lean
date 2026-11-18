@@ -7,8 +7,9 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Real.Basic
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Ring
 
 /-!
 # Soil unit weights
@@ -34,7 +35,8 @@ weight minus the water unit weight and is positive exactly when
 
 ## iv. References
 
-- Standard soil-mechanics phase relations for unit weights.
+- R. F. Craig, *Craig's Soil Mechanics*, 8th edition, Spon
+  Press, 2012 (unit weights from the soil phase relations).
 -/
 
 @[expose] public section
