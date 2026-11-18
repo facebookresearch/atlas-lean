@@ -29,9 +29,9 @@ on the band of length `2B` gives the pointwise bound
 not needed: the band norm is bounded by the whole-line norm, so the bound in
 particular covers profiles vanishing almost everywhere off `[-B, B]`.
 
-`PW.bandExt B g` is the zero extension of `g` from the band. When
-`2 * B * T ≤ 1`, its one-period Fourier coefficients at period `1 / T` are
-the samples `T * PW.rep B g (-n * T)`.
+`PW.bandExt B g` is the zero extension of `g` from the band. For
+`0 < B` and `0 < T` with `2 * B * T ≤ 1`, its one-period Fourier
+coefficients at period `1 / T` are the samples `T * PW.rep B g (-n * T)`.
 -/
 
 open MeasureTheory intervalIntegral
@@ -54,9 +54,9 @@ noncomputable def rep (B : ℝ) (g : ℝ → ℂ) (t : ℝ) : ℂ :=
   ∫ ν in (-B)..B, g ν * Complex.exp (2 * Real.pi * Complex.I * ν * t)
 
 /-- The zero extension of a band profile: `PW.bandExt B g` agrees with `g`
-on `[-B, B]` and is zero elsewhere. Its one-period Fourier coefficients
-(at period `1 / T` with `B ≤ 1 / (2 * T)`) are the samples of the
-representative `PW.rep`. -/
+on `[-B, B]` and is zero elsewhere. For `0 < B` and `0 < T` with
+`B ≤ 1 / (2 * T)`, its one-period Fourier coefficients at period `1 / T`
+are the samples of the representative `PW.rep`. -/
 noncomputable def bandExt (B : ℝ) (g : ℝ → ℂ) : ℝ → ℂ :=
   (Set.Icc (-B) B).indicator g
 
