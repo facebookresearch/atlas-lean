@@ -753,6 +753,32 @@ class Declarations(Vault):
                          "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md) — see [B](part-01/b.md), "
                          "[Rings](../rings/README.md) and [a book](https://example.org)\n")
 
+    def test_a_part_list_reads_nothing_inside_a_comment(self) -> None:
+        # Neither an item nor a part heading in a comment counts, and the comment stays as written.
+        groups = wiki.ROADMAP / "Algebra" / "groups"
+        text = ("# Groups\n\n## [Part 1 of 2](part-01/README.md)\n\n<!-- Retired navigation entry:\n- [Retired](part-01/retired.md)\n"
+                "-->\n\n- [A](part-01/a.md)\n\n## [Part 2 of 2](part-02/README.md)\n\n- [B](part-02/b.md)\n\n<!--\n"
+                "## [Part 3 of 3](part-03/README.md)\n\n- [D](part-03/d.md)\n-->\n")
+        self.page("Algebra/groups/README.md", text)
+        self.page("Algebra/groups/part-01/README.md", "# Part 1 of 2\n\n- [A](a.md)\n")
+        self.page("Algebra/groups/part-02/README.md", "# Part 2 of 2\n\n- [B](b.md)\n")
+        self.page("Algebra/groups/part-03/README.md", "# Part 3 of 3\n\n- [E](e.md)\n")
+        sync.LINKS.mkdir(parents=True)
+        sync.apply_declarations([], SimpleNamespace(declarations={}))
+        self.assertEqual((groups / "README.md").read_text(), text)
+
+    def test_a_folder_pages_own_list_reads_nothing_inside_a_comment(self) -> None:
+        # A heading and an item in a comment make no section of the list, so a page with no listed neighbour ends it.
+        self.page("Algebra/groups/README.md", "# Groups\n\n- [Old](old.md)\n<!--\n## Planned\n- [Wish](wish.md)\n-->\n"
+                  "- [Late](late.md)\n\n## Related topics\n\n- [Rings](../rings/README.md): rings.\n")
+        sync.LINKS.mkdir(parents=True)
+        sylow = declaration("Ext.sylow", "sylow", "Sylow", "Sylow.", module=("Ext", "Sylow"))
+        sylow.path = wiki.ROADMAP / "Algebra" / "groups" / "sylow.md"
+        sync.apply_declarations([sylow], SimpleNamespace(declarations={"Ext.sylow": None}))
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
+                         "# Groups\n\n- [Old](old.md)\n<!--\n## Planned\n- [Wish](wish.md)\n-->\n- [Late](late.md)\n"
+                         "- [Sylow](sylow.md)\n\n## Related topics\n\n- [Rings](../rings/README.md): rings.\n")
+
     def test_a_docstring_edit_is_reported_from_the_second_run(self) -> None:
         self.page("Algebra/groups/README.md", "# Groups\n\n- [Old](old.md)\n")
         self.page("Algebra/groups/old.md", "# Old\n\nWiki text.\n")

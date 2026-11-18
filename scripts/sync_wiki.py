@@ -456,7 +456,7 @@ def listing(text: str) -> list[tuple[str, str]]:
 
 
 def own_list(lines: list[str]) -> dict[int, str]:
-    """A folder page's own list: the line of each item that links a page of its folder, and the heading above it."""
+    """A folder page's own list, by block: each item that links a page of its folder, and the heading above it."""
     heading, own = "", {}
     for number, row in enumerate(lines):
         if re.match(r"#{2,6} ", row):
@@ -470,9 +470,10 @@ def add_to_listing(readme: Path, line: str, before: list[str] = (), after: list[
     """Add a link line after the item linking the last of *before* that the page lists, else ahead of the item
     linking the first of *after* that it lists, else at the end of the page's own list, the items that link its
     folder's pages: there, when that list runs over sections, under a heading *section* of its own. A page with no
-    such item takes it ahead of its first section, such as "Related topics", or at its end."""
-    lines = readme.read_text().rstrip("\n").split("\n")
-    items = {match.group(1): i for i, row in enumerate(lines) if (match := LIST_LINK.match(row))}
+    such item takes it ahead of its first section, such as "Related topics", or at its end. An item in a comment
+    counts for none of this (see blocks)."""
+    lines = blocks(readme.read_text().rstrip("\n"))
+    items = {match.group(1): i for i, row in enumerate(lines) if (match := LIST_LINK.match(row.split("\n")[0]))}
     at = next((items[link] + 1 for link in reversed(before) if link in items), None)
     if at is None:
         at = next((items[link] for link in after if link in items), None)
@@ -529,13 +530,17 @@ def without_empty_headings(text: str) -> str:
 
 
 def blocks(text: str) -> list[str]:
-    """A page's lines, each list item joined with the indented lines that continue it."""
+    """A page's lines, each list item joined with the indented lines that continue it, and each HTML comment over
+    several lines kept whole, so that nothing in a comment reads as an item or a heading."""
     found: list[str] = []
+    commented = False
     for row in text.split("\n"):
-        if found and found[-1].startswith("- ") and row[:1].isspace() and row.strip():
+        if found and (commented or found[-1].startswith("- ") and row[:1].isspace() and row.strip()):
             found[-1] += "\n" + row
         else:
             found.append(row)
+        for mark in re.findall(r"<!--|-->", row):
+            commented = mark == "<!--" if not commented else mark != "-->"
     return found
 
 
@@ -721,7 +726,7 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
             # with its section. A page joins a section of the folder page's own list only beside its module's pages:
             # where that list runs over sections, generate_wiki's order across modules says nothing of them.
             order = listing(generated.get(readme, ""))
-            sectioned = len(set(own_list(readme.read_text().split("\n")).values())) > 1
+            sectioned = len(set(own_list(blocks(readme.read_text())).values())) > 1
             if sectioned or target.path.name not in [entry[0] for entry in order]:
                 order = [(target.path.name if other is target else pages[declaration_key(other)].name, other.sections)
                          for other in in_source_order[target.module]
