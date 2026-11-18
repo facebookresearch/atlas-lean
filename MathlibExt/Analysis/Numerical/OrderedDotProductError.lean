@@ -26,9 +26,6 @@ with the coefficient/input cross term `m * eh * ex` retained: each
 perturbed product is `(h k + dh k) * (x k + dx k)`, expanded exactly,
 not linearized. The fold is summed in index order; no reordering or
 floating-point rounding model is introduced.
-
-Discharges ECE roadmap leaf `ECE.SIG.DSPERROR.L1` (DSP accumulated
-error analysis).
 -/
 
 @[expose] public section

@@ -140,4 +140,20 @@ example :
   have := hss.sealedEnd_voltage_end (by norm_num) (by norm_num) one_pos
   simpa [cableVoltage, lengthConstant_four_one] using this hI
 
+/-- Unit cable parameters give time constant `1`. -/
+example : MathlibExt.Biology.Biophysics.MembraneCable.timeConstant 1 1 = 1 := by
+  unfold MathlibExt.Biology.Biophysics.MembraneCable.timeConstant
+  norm_num
+
+/-- Sealed end for the transfer-form cable on `[0, 1]`: the
+sealed axial current at the end is the zero voltage derivative. -/
+example (V0 : ℝ) :
+    MathlibExt.Biology.Biophysics.MembraneCable.cableCurrent 4 1 V0 1 1 = 0 ↔
+      derivWithin (MathlibExt.Biology.Biophysics.MembraneCable.cableVoltage 4 1 V0 1) (Set.Icc 0 1) 1 = 0 :=
+  MathlibExt.Biology.Biophysics.MembraneCable.sealed_end_iff (rm := (4:ℝ)) (ri := (1:ℝ))
+    (MathlibExt.Biology.Biophysics.MembraneCable.isSteadyState_cable
+      (by norm_num) (by norm_num) (Set.Icc 0 1) V0 1)
+    (by norm_num) (Set.mem_Icc.mpr ⟨zero_le_one, le_refl 1⟩)
+    (uniqueDiffOn_Icc (show (0:ℝ) < 1 by norm_num) 1 (Set.mem_Icc.mpr ⟨zero_le_one, le_refl 1⟩))
+
 end MathlibExtTest.Biology.Biophysics.MembraneCable

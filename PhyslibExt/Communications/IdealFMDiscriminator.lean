@@ -47,9 +47,6 @@ identically.
 Systems*, fifth edition, Oxford University Press, 2019: frequency modulation and discrimination.
 
 ## A. The FM signal and discriminator
-
-Discharges ECE roadmap leaf `ECE.COM.MODULATION.FM` (FM
-discriminator).
 -/
 
 @[expose] public section

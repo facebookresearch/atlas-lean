@@ -11,12 +11,13 @@ import PhyslibExt.HeatTransfer.EnergySourceRemoval
 import Mathlib.Tactic.NormNum
 
 /-!
-# Slab heat-removal checks
+# Slab and cylinder heat-removal checks
 
 Concrete consumers of `PhyslibExt.HeatTransfer.EnergySourceRemoval`:
 the numeric slab `Ts = Tb = 300`, `L = 2`, `k = 2`, `H = 8` with
-midplane `302` and total outward removal `16`, and the source-free
-branch `H = 0`.
+midplane `302` and total outward removal `16`, the source-free
+branch `H = 0`, and the numeric heated cylinder with outward power
+`32π`.
 
 ## i. Overview
 
@@ -30,6 +31,7 @@ No new definitions or results are introduced here.
 
 - A. Numeric slab with source
 - B. Source-free branch
+- C. Numeric heated cylinder
 
 ## iv. References
 
@@ -60,3 +62,41 @@ example : HeatTransfer.slabTemperature 300 300 2 2 8 1 = 302 := by
 the constant surface temperature (a steady branch, not a transient). -/
 example (d : ℝ) : HeatTransfer.slabTemperature 300 300 2 2 0 d = 300 := by
   simp [HeatTransfer.slabTemperature]
+
+/-- Numeric heated cylinder `Ts = 300`, `R = 2`, `k = 2`, `qvol = 8`:
+center `304`, surface `300`, rise `4`, zero center gradient, and the
+radial equation value `-4` at `r = 1`. -/
+example : HeatTransfer.cylinderTemperature 300 2 2 8 0 = 304 ∧
+    HeatTransfer.cylinderTemperature 300 2 2 8 2 = 300 ∧
+      HeatTransfer.cylinderGradient 2 8 0 = 0 ∧
+        (1 / (1 : ℝ)) * deriv (fun s : ℝ =>
+          s * HeatTransfer.cylinderGradient 2 8 s) 1 = -4 := by
+  refine ⟨by norm_num [HeatTransfer.cylinderTemperature],
+    by norm_num [HeatTransfer.cylinderTemperature],
+    HeatTransfer.cylinderGradient_zero 2 8, ?_⟩
+  have h := HeatTransfer.cylinder_radial_equation (R := 2) (k := 2)
+    (qvol := 8) (r := 1) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
+  rw [show (1 : ℝ) / 1 = 1 from by norm_num, one_mul]
+  norm_num at h
+  exact h
+
+/-- Outward power per unit length of the numeric cylinder:
+`2πR * (-k * T'(R)) = 32π` at `R = 2`, `k = 2`, `qvol = 8`. -/
+example : 2 * Real.pi * 2 * (-2 * HeatTransfer.cylinderGradient 2 8 2) =
+    32 * Real.pi := by
+  have h := HeatTransfer.cylinder_outwardPower (R := 2) (k := 2)
+    (qvol := 8) (by norm_num)
+  calc 2 * Real.pi * 2 * (-2 * HeatTransfer.cylinderGradient 2 8 2)
+      = Real.pi * 2 ^ 2 * 8 := h
+    _ = 32 * Real.pi := by ring
+
+/-- The domain-correct surface balance at positive radius and
+conductivity gives the same numeric value `32π`. -/
+example : 2 * Real.pi * 2 * (-2 * HeatTransfer.cylinderGradient 2 8 2) =
+    32 * Real.pi := by
+  have h := HeatTransfer.cylinder_outwardPower_of_pos (R := 2) (k := 2)
+    (qvol := 8) (by norm_num) (by norm_num)
+  calc 2 * Real.pi * 2 * (-2 * HeatTransfer.cylinderGradient 2 8 2)
+      = Real.pi * 2 ^ 2 * 8 := h
+    _ = 32 * Real.pi := by ring
