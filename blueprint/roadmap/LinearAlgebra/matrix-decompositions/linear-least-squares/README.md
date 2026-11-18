@@ -1,0 +1,14 @@
+# Linear least squares
+
+Minimizing $\|y - X\theta\|_2$. A solution always exists and the solutions are exactly those of the normal equations $X^{\mathsf{T}}X\theta = X^{\mathsf{T}}y$, the residual being orthogonal to the range of $X$ (Trefethen and Bau, Lecture 11): see least squares and the normal equations and existence of least-squares estimates, where this is linear regression. With full column rank the solution is unique and numerical linear algebra computes it from a QR factorization, $\theta = R^{-1}Q^{\mathsf{T}}y$ (Trefethen and Bau, Lecture 11), never forming $X^{\mathsf{T}}X$. Ridge regression is the Tikhonov regularization of this problem, and the statistical theory of the estimator (Gauss–Markov, Frisch–Waugh–Lovell, generalized least squares) is in linear models.
+
+- [Least squares via QR factorization](rss-le-iff-of-qr.md)
+- [Existence and uniqueness of the least-squares solution](exists-unique-rss-le.md)
+
+## Related topics
+
+- [QR factorization](../qr-factorization/README.md)
+- Least squares, ridge and lasso regression
+- Tikhonov regularization
+- Linear models and multivariate analysis
+- [GMRES](../gmres/README.md)
