@@ -44,8 +44,8 @@ edges, the allele frequency of `X` is `root + ∑ e, weight X e * incr e`.
 * `AdmixtureGraph.driftModel`: the drift model induced by a graph and edge increments;
   `AdmixtureGraph.hasBinaryLoadings_of_isTree`: a tree-shaped graph induces binary loadings,
   so `AdmixtureGraph.f3_nonneg_of_isTree`: on a tree `f3 ≥ 0` (the three-population test).
-* `AdmixtureGraph.rootCov_eq_sum_inter_of_isTree`: on a tree, the root-relative covariance is
-  the drift length of the shared root lineage.
+* `AdmixtureGraph.rootSecondMoment_eq_sum_inter_of_isTree`: on a tree, the root-relative
+  second moment is the drift length of the shared root lineage.
 * `AdmixtureGraph.f3_admixture`: for an admixture node `X` with parents `A`, `B`,
   `f3 X A B = α² ℓ_{XA} + β² ℓ_{XB} - α β f2 A B` (`α + β = 1`, `ℓ` the drift lengths of the
   admixture edges); with no drift on the admixture edges this is the seed's
@@ -564,10 +564,10 @@ theorem f3_admixture_of_len_eq_zero {M : DriftModel μ G.Edge V} (hM : M.weight 
 
 /-- Tree check on a tree-shaped admixture graph: `Σ X Y` is the drift length of the edges shared
 by the root-to-`X` and root-to-`Y` lineages. -/
-theorem rootCov_eq_sum_inter_of_isTree (hG : G.IsTree) {M : DriftModel μ G.Edge V}
+theorem rootSecondMoment_eq_sum_inter_of_isTree (hG : G.IsTree) {M : DriftModel μ G.Edge V}
     (hM : M.weight = G.weight) (X Y : V) :
-    M.rootCov X Y = ∑ e ∈ M.lineage X ∩ M.lineage Y, M.len e :=
-  M.rootCov_eq_sum_inter (G.hasBinaryLoadings_of_isTree hG hM) X Y
+    M.rootSecondMoment X Y = ∑ e ∈ M.lineage X ∩ M.lineage Y, M.len e :=
+  M.rootSecondMoment_eq_sum_inter (G.hasBinaryLoadings_of_isTree hG hM) X Y
 
 end AdmixtureGraph
 
