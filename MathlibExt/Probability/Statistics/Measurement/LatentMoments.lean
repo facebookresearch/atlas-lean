@@ -20,7 +20,7 @@ public import Mathlib.Probability.ProbabilityMassFunction.Monad
 
 For a finite latent state with law `pi` and conditionally independent
 coordinates with success curves `q z i` in `[0, 1]`, the observed law is
-the bind of `pi` with the existing product law. Its first and pair
+the bind of `pi` with the existing product law. Its first moments and its off-diagonal (distinct-coordinate) pair
 moments are the `pi`-mixtures of the component moments, and for distinct
 coordinates the observed covariance is the finite covariance of the
 success curves under `pi`.
@@ -73,8 +73,8 @@ private theorem bind_integral_eq {Z α : Type*} [Fintype Z] [Fintype α]
 and `q z i ∈ [0, 1]` item curves (endpoints `0` and `1` allowed). Under
 the observed law `pi.bind (fun z => localIndepPMF (q z) ..)`, the first
 moment of coordinate `i` is the `pi`-mixture of the component means
-`q z i`, the pair moment of coordinates `i, j` is the mixture of the
-component products `q z i * q z j`, and for distinct coordinates
+`q z i`, the off-diagonal pair moment of distinct coordinates `i, j` is
+the mixture of the component products `q z i * q z j`, and for distinct coordinates
 `i ≠ j` the observed covariance is the finite covariance of the curves
 `z ↦ q z i`, `z ↦ q z j` under the weights `(pi z).toReal`. -/
 theorem latentMixture_coordinate_moments {Z ι : Type*} [Fintype Z] [Fintype ι]
