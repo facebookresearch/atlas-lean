@@ -12,12 +12,13 @@ public import Mathlib.Analysis.Complex.CauchyIntegral
 public import Mathlib.Analysis.Complex.SqrtDeriv
 public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 public import Mathlib.MeasureTheory.Integral.CircleIntegral
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Ring
 
 /-!
-# Ideal airfoil models: Joukowski branch and Blasius force
+# Ideal airfoil models: Joukowski branch, Blasius force, and signed lift
 
 ## i. Overview
 
@@ -49,11 +50,16 @@ far-field expansion are hypotheses, not derived from flow equations.
   with `K = 12|U| a^2 + a|Γ|`.
 - `FluidDynamics.IdealAirfoilModels.BlasiusForce.blasiusForce_eq`:
   the Blasius force from a far-field expansion.
+- `FluidDynamics.IdealAirfoilModels.KuttaJoukowski.signedLift_liftCoefficient_kutta`:
+  at the Kutta circulation, signed lift `-ρUΓ`, lift coefficient
+  `2π sin α` at chord `4a`, and the small-angle bound
+  `π |α|^3 / 3`.
 
 ## iii. Table of contents
 
 - A. The Joukowski far-field branch
 - B. Blasius force from a far-field expansion
+- C. Signed lift and lift coefficient
 
 ## iv. References
 
@@ -976,5 +982,188 @@ theorem blasiusForce_eq {ρ U Γ α R0 R1 K : ℝ} (hρ : 0 < ρ)
   field_simp
 
 end BlasiusForce
+
+/-! ## C. Signed lift and lift coefficient -/
+
+namespace KuttaJoukowski
+
+/-- Signed lift per unit span extracted from a complex force
+`C = Fx - I * Fy` at incidence `α`.
+
+The free-stream direction is `(cos α, sin α)`, and positive lift is
+the component in the counterclockwise normal direction
+`(-sin α, cos α)`. In coordinates this component is
+`-(sin α * C.re + cos α * C.im)`, equivalently
+`-(exp (α * I) * C).im`. At `α = 0` it is `Fy`. -/
+noncomputable def signedLift (C : ℂ) (α : ℝ) : ℝ :=
+  -(Complex.exp (α * Complex.I) * C).im
+
+/-- Lift coefficient for a two-dimensional force per unit span:
+`L / (ρ * U^2 * c / 2)`, where `L` is signed lift and `c` is chord.
+As usual in Lean, division by zero is totalized; the coefficient
+formulas below assume the factors being cancelled are nonzero. -/
+noncomputable def liftCoefficient (L ρ U c : ℝ) : ℝ :=
+  L / (ρ * U ^ 2 * c / 2)
+
+/-- Bridge from the far-field package to the force value used below:
+for the physical velocity at any circulation `Γ` and any contour
+radius `R > 2 * a`, the Blasius force is `I * ρ * U * Γ * exp (-α * I)`.
+This combines `JoukowskiBranch.exists_physicalVelocity_farField` with
+`BlasiusForce.blasiusForce_eq`, taking the decomposition remainder to
+be the difference from the two-term far-field expansion. -/
+lemma blasiusForce_physicalVelocity {a ρ U Γ α R : ℝ} (ha : 0 < a)
+    (hρ : 0 < ρ) (hU : 0 < U) (hR : 2 * a < R) :
+    BlasiusForce.blasiusForce ρ (JoukowskiBranch.physicalVelocity a U Γ α) R =
+      Complex.I * ρ * U * Γ * Complex.exp (-α * Complex.I) := by
+  obtain ⟨hW, R1, K, hR1, hK, hbound⟩ :=
+    JoukowskiBranch.exists_physicalVelocity_farField ha U Γ α
+  refine BlasiusForce.blasiusForce_eq (R0 := 2 * a) (R1 := R1) (K := K)
+    (W := JoukowskiBranch.physicalVelocity a U Γ α)
+    (e := fun z : ℂ => JoukowskiBranch.physicalVelocity a U Γ α z -
+      (U : ℂ) * Complex.exp (-α * Complex.I) -
+      (Γ : ℂ) / (2 * Real.pi * Complex.I * z))
+    hρ hU (by linarith) hR1 hW ?_ ?_ ?_ hR
+  · intro z hz
+    show JoukowskiBranch.physicalVelocity a U Γ α z =
+      (U : ℂ) * Complex.exp (-α * Complex.I) +
+        ((Γ : ℂ) / (2 * Real.pi * Complex.I)) / z +
+        (JoukowskiBranch.physicalVelocity a U Γ α z -
+          (U : ℂ) * Complex.exp (-α * Complex.I) -
+          (Γ : ℂ) / (2 * Real.pi * Complex.I * z))
+    rw [div_div]
+    abel
+  · intro z hz
+    have hz0 : (z : ℂ) ≠ 0 := by
+      intro h
+      rw [h] at hz
+      simp only [norm_zero] at hz
+      linarith
+    have hzext : z ∈ {z : ℂ | 2 * a < ‖z‖} := lt_of_lt_of_le hR1 hz
+    have hWz : DifferentiableAt ℂ (JoukowskiBranch.physicalVelocity a U Γ α) z :=
+      hW.differentiableAt ((isOpen_lt continuous_const continuous_norm).mem_nhds hzext)
+    have hc : (2 * Real.pi * Complex.I : ℂ) ≠ 0 :=
+      mul_ne_zero (mul_ne_zero (by norm_num)
+        (Complex.ofReal_ne_zero.mpr Real.pi_ne_zero)) Complex.I_ne_zero
+    have hterm : DifferentiableAt ℂ
+        (fun z : ℂ => (Γ : ℂ) / (2 * Real.pi * Complex.I * z)) z :=
+      (differentiableAt_const _).div
+        ((differentiableAt_const _).mul differentiableAt_id) (mul_ne_zero hc hz0)
+    exact (hWz.sub_const _).sub hterm
+  · intro z hz
+    exact hbound z hz
+
+/-- Signed lift from the Blasius force value. If the contour force
+for `physicalVelocity a U Γ α` is `I * ρ * U * Γ * exp (-α * I)`,
+then rotating that complex force by `exp (α * I)` gives
+`I * ρ * U * Γ`; hence the component perpendicular to the free
+stream, with the sign convention in `signedLift`, is `-ρ * U * Γ`.
+No positivity or nonvanishing hypothesis is needed for this
+algebraic step. -/
+lemma signedLift_of_blasiusForce_eq {a ρ U Γ α R : ℝ}
+    (hF : BlasiusForce.blasiusForce ρ
+        (JoukowskiBranch.physicalVelocity a U Γ α) R =
+      Complex.I * ρ * U * Γ * Complex.exp (-α * Complex.I)) :
+    signedLift (BlasiusForce.blasiusForce ρ
+        (JoukowskiBranch.physicalVelocity a U Γ α) R) α =
+      -ρ * U * Γ := by
+  have hexp : Complex.exp ((α : ℂ) * Complex.I) *
+      Complex.exp ((-(α : ℂ)) * Complex.I) = 1 := by
+    rw [← Complex.exp_add]
+    have h0 : (α : ℂ) * Complex.I + (-(α : ℂ)) * Complex.I = 0 := by ring
+    rw [h0, Complex.exp_zero]
+  unfold signedLift
+  rw [hF]
+  have hmul : Complex.exp ((α : ℂ) * Complex.I) *
+      (Complex.I * (ρ : ℂ) * (U : ℂ) * (Γ : ℂ) *
+        Complex.exp ((-(α : ℂ)) * Complex.I)) =
+      Complex.I * ((ρ * U * Γ : ℝ) : ℂ) := by
+    have hring : Complex.exp ((α : ℂ) * Complex.I) *
+        (Complex.I * (ρ : ℂ) * (U : ℂ) * (Γ : ℂ) *
+          Complex.exp ((-(α : ℂ)) * Complex.I)) =
+        (Complex.I * (ρ : ℂ) * (U : ℂ) * (Γ : ℂ)) *
+        (Complex.exp ((α : ℂ) * Complex.I) *
+          Complex.exp ((-(α : ℂ)) * Complex.I)) := by ring
+    rw [hring, hexp, mul_one]
+    push_cast
+    ring
+  rw [hmul, Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re]
+  ring
+
+/-- Lift coefficient for the Kutta circulation
+`Γ = -4 * π * a * U * sin α`, signed lift `-ρ * U * Γ`, and chord
+`c = 4 * a`: the coefficient is `2 * π * sin α`. The nonzero
+hypotheses are the factors cancelled in
+`(-ρ * U * Γ) / (ρ * U^2 * (4 * a) / 2)`. -/
+lemma liftCoefficient_kutta {a ρ U α : ℝ}
+    (ha : a ≠ 0) (hρ : ρ ≠ 0) (hU : U ≠ 0) :
+    liftCoefficient (-ρ * U * (-4 * Real.pi * a * U * Real.sin α))
+        ρ U (4 * a) =
+      2 * Real.pi * Real.sin α := by
+  unfold liftCoefficient
+  have hden : ρ * U ^ 2 * (4 * a) / 2 ≠ 0 := by
+    have hU2 : U ^ 2 ≠ 0 := pow_ne_zero 2 hU
+    have h4a : (4 : ℝ) * a ≠ 0 := mul_ne_zero (by norm_num) ha
+    exact div_ne_zero (mul_ne_zero (mul_ne_zero hρ hU2) h4a) (by norm_num)
+  field_simp
+
+/-- Small-angle approximation for `2 * π * sin α`, for every real
+`α`: `|2 * π * sin α - 2 * π * α| ≤ π * |α|^3 / 3`. -/
+lemma abs_two_pi_sin_sub_two_pi_le {α : ℝ} :
+    |2 * Real.pi * Real.sin α - 2 * Real.pi * α| ≤
+      Real.pi * |α| ^ 3 / 3 := by
+  have h := Real.abs_sub_sin_le α
+  have h2pi : (0 : ℝ) ≤ 2 * Real.pi := by positivity
+  calc |2 * Real.pi * Real.sin α - 2 * Real.pi * α|
+      = (2 * Real.pi) * |α - Real.sin α| := by
+        have hfactor : 2 * Real.pi * Real.sin α - 2 * Real.pi * α =
+            -((2 * Real.pi) * (α - Real.sin α)) := by ring
+        rw [hfactor, abs_neg, abs_mul, abs_of_nonneg h2pi]
+    _ ≤ (2 * Real.pi) * (|α| ^ 3 / 6) :=
+        mul_le_mul_of_nonneg_left h h2pi
+    _ = Real.pi * |α| ^ 3 / 3 := by ring
+
+/-- Kutta-selected signed lift, lift coefficient, and small-angle
+bound for the physical velocity, at any contour radius `R > 2 * a`.
+
+The Blasius force value at radius `R` comes from the far-field
+package through `blasiusForce_physicalVelocity`. With chord
+`c = 4 * a`, the signed lift is `-ρ * U * Γ` at the Kutta
+circulation `Γ = -4 * π * a * U * sin α`, the lift coefficient is
+`2 * π * sin α`, and it differs from `2 * π * α` by at most
+`π * |α|^3 / 3`. -/
+lemma signedLift_liftCoefficient_kutta {a ρ U α R : ℝ}
+    (ha : 0 < a) (hρ : 0 < ρ) (hU : 0 < U) (hR : 2 * a < R) :
+    signedLift (BlasiusForce.blasiusForce ρ
+        (JoukowskiBranch.physicalVelocity a U
+          (-4 * Real.pi * a * U * Real.sin α) α) R) α =
+        -ρ * U * (-4 * Real.pi * a * U * Real.sin α) ∧
+      liftCoefficient (signedLift (BlasiusForce.blasiusForce ρ
+        (JoukowskiBranch.physicalVelocity a U
+          (-4 * Real.pi * a * U * Real.sin α) α) R) α)
+          ρ U (4 * a) =
+        2 * Real.pi * Real.sin α ∧
+      |liftCoefficient (signedLift (BlasiusForce.blasiusForce ρ
+        (JoukowskiBranch.physicalVelocity a U
+          (-4 * Real.pi * a * U * Real.sin α) α) R) α)
+          ρ U (4 * a) -
+        2 * Real.pi * α| ≤ Real.pi * |α| ^ 3 / 3 := by
+  have hF : BlasiusForce.blasiusForce ρ
+      (JoukowskiBranch.physicalVelocity a U
+        (-4 * Real.pi * a * U * Real.sin α) α) R =
+    Complex.I * ρ * U *
+      ((-4 * Real.pi * a * U * Real.sin α : ℝ) : ℂ) *
+      Complex.exp (-α * Complex.I) :=
+    blasiusForce_physicalVelocity ha hρ hU hR
+  have hL := signedLift_of_blasiusForce_eq hF
+  have hC : liftCoefficient (-ρ * U * (-4 * Real.pi * a * U * Real.sin α))
+      ρ U (4 * a) = 2 * Real.pi * Real.sin α :=
+    liftCoefficient_kutta (ne_of_gt ha) (ne_of_gt hρ) (ne_of_gt hU)
+  refine ⟨hL, ?_, ?_⟩
+  · rw [hL]
+    exact hC
+  · rw [hL, hC]
+    exact abs_two_pi_sin_sub_two_pi_le
+
+end KuttaJoukowski
 
 end FluidDynamics.IdealAirfoilModels
