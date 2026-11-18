@@ -121,9 +121,8 @@ theorem exists_linearIsometry_conj {q : ℍ} (hq : ‖q‖ = 1) :
 
 /-- `rotMatrix q` represents conjugation by `q` on pure imaginary quaternions
 in the explicit coordinates. -/
-theorem rotMatrix_mulVec {q : ℍ} (hq : ‖q‖ = 1) {v : ℍ} (hv : v ∈ pureIm) :
+theorem rotMatrix_mulVec {q : ℍ} {v : ℍ} (hv : v ∈ pureIm) :
     (rotMatrix q).mulVec (imCoords v) = imCoords (q * v * star q) := by
-  have _ : ‖q‖ = 1 := hq
   have hv0 : v.re = 0 := by simpa [pureIm] using hv
   ext a
   fin_cases a <;>
@@ -151,10 +150,8 @@ theorem rotMatrix_mem_specialOrthogonalGroup {q : ℍ} (hq : ‖q‖ = 1) :
   exact ⟨horth, hdet⟩
 
 /-- Multiplicativity: `R (p * q) = R p * R q`. -/
-theorem rotMatrix_mul {p q : ℍ} (hp : ‖p‖ = 1) (hq : ‖q‖ = 1) :
+theorem rotMatrix_mul {p q : ℍ} :
     rotMatrix (p * q) = rotMatrix p * rotMatrix q := by
-  have _ : ‖p‖ = 1 := hp
-  have _ : ‖q‖ = 1 := hq
   ext a b
   fin_cases a <;> fin_cases b <;>
     simp [rotMatrix, imCoords, imBasis, Matrix.mul_apply, Fin.sum_univ_three] <;>
@@ -184,8 +181,7 @@ noncomputable def unitaryHomSpecialOrthogonalGroup :
     simp only
     have hmul : ((u * v : unitary ℍ) : ℍ) = (u : ℍ) * (v : ℍ) := rfl
     rw [hmul]
-    exact rotMatrix_mul (CStarRing.norm_coe_unitary u)
-      (CStarRing.norm_coe_unitary v)
+    exact rotMatrix_mul
 
 /-- The underlying matrix of the packaged rotation action is `rotMatrix`. -/
 @[simp] theorem coe_unitaryHomSpecialOrthogonalGroup (u : unitary ℍ) :
