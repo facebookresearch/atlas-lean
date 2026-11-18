@@ -20,21 +20,28 @@ import Mathlib.Probability.Distributions.Gaussian.Fernique
 # Lande's multivariate response to selection
 
 Breeding values `A` and phenotypes `Z` are random vectors in `ι → ℝ`, jointly Gaussian,
-with `Cov(A, Z) = G` and `Var(Z) = P` positive definite. Selection weights individuals by
-`W(Z)`; selected means are `𝔼[W(Z) X] / 𝔼[W(Z)]`, measured from the pre-selection mean
-`𝔼[X]`. With faithful additive transmission, the offspring mean shift is the selected
-parents' breeding-value shift, and Lande's equation says it is `G P⁻¹ S`, where `S` is
-the selection differential.
+with cross-covariance `Cov(A, Z) = G` and `Var(Z) = P` positive definite. Selection
+weights individuals by `W(Z)`; selected means are `𝔼[W(Z) X] / 𝔼[W(Z)]`, measured from
+the pre-selection mean `𝔼[X]`. With faithful additive transmission, the offspring mean
+shift is the selected parents' breeding-value shift. The Gaussian regression identity
+gives it as `G P⁻¹ S`, where `S` is the selection differential. In the quantitative-genetic
+decomposition `Z = A + E` with `Cov(A, E) = 0`, this cross-covariance `G` is also the
+additive genetic covariance `Var(A)`; corollaries below record that Lande form explicitly.
 
 The key Gaussian fact is that the residual `A - G P⁻¹ Z` is uncorrelated with, hence
 independent of, `Z`.
 
 ## Main results
 
-* `LandeResponse.selectedShift_breeding_eq`: `Δz̄ = G P⁻¹ S`.
-* `LandeResponse.breeding_response_univariate`: the univariate `R = h² S`.
+* `LandeResponse.selectedShift_breeding_eq`: the cross-covariance form `Δz̄ = G P⁻¹ S`.
+* `LandeResponse.selectedShift_breeding_eq_geneticCov`: Lande's form when moreover
+  `Var(A) = G`.
+* `LandeResponse.breeding_response_univariate`: the univariate coefficient
+  `Cov(A, Z) / Var(Z)`, and `breeding_response_univariate_of_var` for `R = h² S` when
+  `Var(A) = V_A`.
 * `LandeResponse.selectedShift_breeding_eq_gradient`: `Δz̄ = G ∇_μ log w̄(μ)` for bounded
-  measurable fitness when `Z ~ N(μ, P)`.
+  measurable fitness when `Z ~ N(μ, P)`, with the genetic-covariance form in
+  `selectedShift_breeding_eq_gradient_geneticCov`.
 
 ## References
 
@@ -59,10 +66,13 @@ is the response `Δz̄`. If `𝔼[W(Z)] = 0` it is a junk value (excluded by the
 noncomputable def selectedShift (W : (ι → ℝ) → ℝ) (Z X : Ω → ι → ℝ) (P : Measure Ω) : ι → ℝ :=
   fun i => (∫ ω, W (Z ω) * X ω i ∂P) / (∫ ω, W (Z ω) ∂P) - ∫ ω, X ω i ∂P
 
-/-- **Lande's multivariate response** `Δz̄ = G P⁻¹ S` (Lande 1979). Let `(A, Z)` be jointly
-Gaussian with `Cov(A_i, Z_j) = G_ij` and `Cov(Z_i, Z_j) = P_ij`, `P` positive definite, and select
-with measurable fitness weights `W(Z) ≥ 0` with `0 < 𝔼[W(Z)]` and `W(Z) Z_j`, `W(Z) A_i` integrable. Then the
-selected shift of the breeding values is `G P⁻¹` applied to the selection differential. -/
+/-- **Gaussian cross-covariance response** `Δz̄ = G P⁻¹ S`. Let `(A, Z)` be jointly
+Gaussian with cross-covariance `Cov(A_i, Z_j) = G_ij` and `Cov(Z_i, Z_j) = P_ij`, `P`
+positive definite, and select with measurable fitness weights `W(Z) ≥ 0` with
+`0 < 𝔼[W(Z)]` and `W(Z) Z_j`, `W(Z) A_i` integrable. Then the selected shift of the
+breeding values is `G P⁻¹` applied to the selection differential. This is the regression
+identity behind Lande's equation; `selectedShift_breeding_eq_geneticCov` records the
+form in which `G` is also the additive genetic covariance `Var(A)`. -/
 theorem selectedShift_breeding_eq {A Z : Ω → ι → ℝ} {G Pm : Matrix ι ι ℝ} {W : (ι → ℝ) → ℝ}
     (hAZ : HasGaussianLaw (fun ω => (A ω, Z ω)) P)
     (hG : ∀ i j, cov[fun ω => A ω i, fun ω => Z ω j; P] = G i j)
@@ -137,9 +147,26 @@ theorem selectedShift_breeding_eq {A Z : Ω → ι → ℝ} {G Pm : Matrix ι ι
   field_simp
   ring
 
+/-- **Lande's multivariate response, genetic-covariance form** `Δz̄ = G P⁻¹ S`. This is
+`selectedShift_breeding_eq` under the additional identification of `G` as the additive
+genetic covariance `Var(A)`, as in the decomposition `Z = A + E` with `Cov(A, E) = 0`. -/
+theorem selectedShift_breeding_eq_geneticCov {A Z : Ω → ι → ℝ} {G Pm : Matrix ι ι ℝ}
+    {W : (ι → ℝ) → ℝ}
+    (hAZ : HasGaussianLaw (fun ω => (A ω, Z ω)) P)
+    (hG : ∀ i j, cov[fun ω => A ω i, fun ω => Z ω j; P] = G i j)
+    (_hGA : ∀ i j, cov[fun ω => A ω i, fun ω => A ω j; P] = G i j)
+    (hPZ : ∀ i j, cov[fun ω => Z ω i, fun ω => Z ω j; P] = Pm i j) (hPd : Pm.PosDef)
+    (hWm : Measurable W) (hW0 : ∀ z, 0 ≤ W z) (hw : 0 < ∫ ω, W (Z ω) ∂P)
+    (hWZ : ∀ j, Integrable (fun ω => W (Z ω) * Z ω j) P)
+    (hWA : ∀ i, Integrable (fun ω => W (Z ω) * A ω i) P) :
+    selectedShift W Z A P = (G * Pm⁻¹) *ᵥ selectedShift W Z Z P :=
+  selectedShift_breeding_eq hAZ hG hPZ hPd hWm hW0 hw hWZ hWA
 
-/-- **Univariate case `R = h² S`** with `h² = Cov(A, Z) / Var(Z)`: for jointly Gaussian `(A, Z)`,
-`Var(Z) > 0`, measurable fitness weights `W(Z) ≥ 0` with `0 < 𝔼[W(Z)]` and `W(Z) Z`, `W(Z) A` integrable. -/
+
+/-- **Univariate cross-covariance case** with coefficient `Cov(A, Z) / Var(Z)`: for jointly
+Gaussian `(A, Z)`, `Var(Z) > 0`, measurable fitness weights `W(Z) ≥ 0` with
+`0 < 𝔼[W(Z)]` and `W(Z) Z`, `W(Z) A` integrable. When moreover `Var(A) = Va`, this is the
+breeder's equation `R = h² S` with `h² = Va / Vp` (`breeding_response_univariate_of_var`). -/
 theorem breeding_response_univariate {A Z : Ω → ℝ} {Va Vp : ℝ} {W : ℝ → ℝ}
     (hAZ : HasGaussianLaw (fun ω => (A ω, Z ω)) P) (hG : cov[A, Z; P] = Va) (hPZ : Var[Z; P] = Vp)
     (hVp : 0 < Vp) (hWm : Measurable W) (hW0 : ∀ z, 0 ≤ W z) (hw : 0 < ∫ ω, W (Z ω) ∂P)
@@ -185,11 +212,24 @@ theorem breeding_response_univariate {A Z : Ω → ℝ} {Va Vp : ℝ} {W : ℝ �
   field_simp
   ring
 
+/-- **Breeder's equation** `R = h² S` with `h² = V_A / V_P`. This is the univariate
+cross-covariance identity under the additional identification `Var(A) = Va`, so `Va` is
+the additive genetic variance rather than only the cross-covariance `Cov(A, Z)`. -/
+theorem breeding_response_univariate_of_var {A Z : Ω → ℝ} {Va Vp : ℝ} {W : ℝ → ℝ}
+    (hAZ : HasGaussianLaw (fun ω => (A ω, Z ω)) P) (hG : cov[A, Z; P] = Va)
+    (_hVa : Var[A; P] = Va) (hPZ : Var[Z; P] = Vp)
+    (hVp : 0 < Vp) (hWm : Measurable W) (hW0 : ∀ z, 0 ≤ W z) (hw : 0 < ∫ ω, W (Z ω) ∂P)
+    (hWZ : Integrable (fun ω => W (Z ω) * Z ω) P) (hWA : Integrable (fun ω => W (Z ω) * A ω) P) :
+    (∫ ω, W (Z ω) * A ω ∂P) / (∫ ω, W (Z ω) ∂P) - ∫ ω, A ω ∂P =
+      Va / Vp * ((∫ ω, W (Z ω) * Z ω ∂P) / (∫ ω, W (Z ω) ∂P) - ∫ ω, Z ω ∂P) :=
+  breeding_response_univariate hAZ hG hPZ hVp hWm hW0 hw hWZ hWA
+
 
 open MathlibExt.Biology.StatisticalGenetics.SelectionGradient in
-/-- **Gradient form** `Δz̄ = G ∇_μ log w̄(μ)` for bounded measurable fitness: if moreover the law of
-`Z` is `N(μ, P)`, then with Atlas's mean fitness `meanFitnessMV W P` (as a function of the trait
-mean), the response is `G` applied to the gradient of its logarithm at `μ`. -/
+/-- **Cross-covariance gradient form** `Δz̄ = G ∇_μ log w̄(μ)` for bounded measurable
+fitness: if moreover the law of `Z` is `N(μ, P)`, then with Atlas's mean fitness
+`meanFitnessMV W P` (as a function of the trait mean), the response is the cross-covariance
+`G` applied to the gradient of its logarithm at `μ`. -/
 theorem selectedShift_breeding_eq_gradient {A Z : Ω → ι → ℝ} {G Pm : Matrix ι ι ℝ}
     {W : EuclideanSpace ℝ ι → ℝ} {μ : EuclideanSpace ℝ ι}
     (hAZ : HasGaussianLaw (fun ω => (A ω, Z ω)) P)
@@ -262,5 +302,21 @@ theorem selectedShift_breeding_eq_gradient {A Z : Ω → ι → ℝ} {G Pm : Mat
   rw [hcore, hS, selectionDifferentialMV_eq hWm ⟨C, hC⟩ hPd hw.ne', Matrix.ofLp_toEuclideanCLM,
     Matrix.mulVec_mulVec, Matrix.mul_assoc, nonsing_inv_mul _ hPd.det_pos.ne'.isUnit,
     Matrix.mul_one]
+
+open MathlibExt.Biology.StatisticalGenetics.SelectionGradient in
+/-- **Lande gradient form, genetic-covariance version** `Δz̄ = G ∇_μ log w̄(μ)`. This is
+`selectedShift_breeding_eq_gradient` under the additional identification of `G` as the
+additive genetic covariance `Var(A)`. -/
+theorem selectedShift_breeding_eq_gradient_geneticCov {A Z : Ω → ι → ℝ} {G Pm : Matrix ι ι ℝ}
+    {W : EuclideanSpace ℝ ι → ℝ} {μ : EuclideanSpace ℝ ι}
+    (hAZ : HasGaussianLaw (fun ω => (A ω, Z ω)) P)
+    (hG : ∀ i j, cov[fun ω => A ω i, fun ω => Z ω j; P] = G i j)
+    (_hGA : ∀ i j, cov[fun ω => A ω i, fun ω => A ω j; P] = G i j)
+    (hlaw : HasLaw (fun ω => WithLp.toLp 2 (Z ω)) (multivariateGaussian μ Pm) P)
+    (hPd : Pm.PosDef) (hWm : Measurable W) (hWb : ∃ C, ∀ z, |W z| ≤ C)
+    (hW0 : ∀ z, 0 ≤ W z) (hw : 0 < meanFitnessMV W Pm μ) :
+    selectedShift (fun z => W (WithLp.toLp 2 z)) Z A P =
+      G *ᵥ ⇑(gradient (fun m => Real.log (meanFitnessMV W Pm m)) μ) :=
+  selectedShift_breeding_eq_gradient hAZ hG hlaw hPd hWm hWb hW0 hw
 
 end MathlibExt.Biology.PopulationGenetics.Classical.LandeResponse

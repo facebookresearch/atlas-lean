@@ -99,26 +99,30 @@ example [IsProbabilityMeasure P] {A E : Ω → ℝ} (hA : MemLp A 2 P) (hE : Mem
   change cov[A, A + E; P] = _
   rw [covariance_add_right hA hA hE, h0, add_zero, covariance_self hA.aemeasurable]
 
--- acceptance 3: the univariate statement is `R = h² S` with `h² = V_A / V_P`
+-- acceptance 3: with `Var(A) = V_A`, the univariate statement is the breeder's
+-- equation `R = h² S` with `h² = V_A / V_P`
 example {A Z : Ω → ℝ} {Va Vp : ℝ} {W : ℝ → ℝ}
-    (hAZ : HasGaussianLaw (fun ω => (A ω, Z ω)) P) (hG : cov[A, Z; P] = Va) (hPZ : Var[Z; P] = Vp)
+    (hAZ : HasGaussianLaw (fun ω => (A ω, Z ω)) P) (hG : cov[A, Z; P] = Va)
+    (_hVa : Var[A; P] = Va) (hPZ : Var[Z; P] = Vp)
     (hVp : 0 < Vp) (hWm : Measurable W) (_hW0 : ∀ z, 0 ≤ W z) (hw : 0 < ∫ ω, W (Z ω) ∂P)
     (hWZ : Integrable (fun ω => W (Z ω) * Z ω) P) (hWA : Integrable (fun ω => W (Z ω) * A ω) P) :
     let S := (∫ ω, W (Z ω) * Z ω ∂P) / (∫ ω, W (Z ω) ∂P) - ∫ ω, Z ω ∂P
     let R := (∫ ω, W (Z ω) * A ω ∂P) / (∫ ω, W (Z ω) ∂P) - ∫ ω, A ω ∂P
     R = (Va / Vp) * S :=
-  breeding_response_univariate hAZ hG hPZ hVp hWm _hW0 hw hWZ hWA
+  breeding_response_univariate_of_var hAZ hG _hVa hPZ hVp hWm _hW0 hw hWZ hWA
 
--- record-form hypotheses (`W ≥ 0`, `0 < 𝔼 W(Z)`) are a special case of the pinned ones
+-- record-form hypotheses (`Var(A) = G`, `Cov(A, Z) = G`, `W ≥ 0`, `0 < 𝔼 W(Z)`) are the
+-- genetic-covariance form of Lande's response
 example {A Z : Ω → ι → ℝ} {G Pm : Matrix ι ι ℝ} {W : (ι → ℝ) → ℝ}
     (hAZ : HasGaussianLaw (fun ω => (A ω, Z ω)) P)
     (hG : ∀ i j, cov[fun ω => A ω i, fun ω => Z ω j; P] = G i j)
+    (_hGA : ∀ i j, cov[fun ω => A ω i, fun ω => A ω j; P] = G i j)
     (hPZ : ∀ i j, cov[fun ω => Z ω i, fun ω => Z ω j; P] = Pm i j) (hPd : Pm.PosDef)
     (hWm : Measurable W) (_hW0 : ∀ z, 0 ≤ W z) (hw : 0 < ∫ ω, W (Z ω) ∂P)
     (hWZ : ∀ j, Integrable (fun ω => W (Z ω) * Z ω j) P)
     (hWA : ∀ i, Integrable (fun ω => W (Z ω) * A ω i) P) :
     selectedShift W Z A P = (G * Pm⁻¹) *ᵥ selectedShift W Z Z P :=
-  selectedShift_breeding_eq hAZ hG hPZ hPd hWm _hW0 hw hWZ hWA
+  selectedShift_breeding_eq_geneticCov hAZ hG _hGA hPZ hPd hWm _hW0 hw hWZ hWA
 
 -- non-vacuity: `A = Z ~ N(0, 1)` (heritability one) satisfies every hypothesis with `W = 1`
 example : HasGaussianLaw (fun x : ℝ => (x, x)) (gaussianReal 0 1) :=
@@ -128,7 +132,10 @@ example : cov[fun x : ℝ => x, fun x => x; gaussianReal 0 1] = 1 := by
 example : ∫ x, (fun _ : ℝ => (1 : ℝ)) x ∂(gaussianReal 0 1) ≠ 0 := by simp
 
 #print axioms selectedShift_breeding_eq
+#print axioms selectedShift_breeding_eq_geneticCov
 #print axioms breeding_response_univariate
+#print axioms breeding_response_univariate_of_var
 #print axioms selectedShift_breeding_eq_gradient
+#print axioms selectedShift_breeding_eq_gradient_geneticCov
 
 end MathlibExtTest.Biology.PopulationGenetics.Classical.LandeResponse
