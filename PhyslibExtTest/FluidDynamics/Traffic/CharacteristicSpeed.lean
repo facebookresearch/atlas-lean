@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.FluidDynamics.Traffic.CharacteristicSpeed
+import Mathlib.Tactic.NormNum
 
 /-!
 # Characteristic-speed checks
