@@ -145,14 +145,18 @@ example : MathlibExt.Biology.Biophysics.MembraneCable.timeConstant 1 1 = 1 := by
   unfold MathlibExt.Biology.Biophysics.MembraneCable.timeConstant
   norm_num
 
-/-- Sealed end for the zero cable: zero current is zero derivative. -/
-example : (fun _ : ℝ => (0:ℝ)) 1 = 0 ↔ deriv (fun _ : ℝ => (0:ℝ)) 1 = 0 :=
+/-- Sealed end for the transfer-form cable on `[0, 1]`: the
+sealed axial current at the end is the zero voltage derivative. -/
+example (V0 : ℝ) :
+    MathlibExt.Biology.Biophysics.MembraneCable.cableCurrent 4 1 V0 1 1 = 0 ↔
+      deriv (MathlibExt.Biology.Biophysics.MembraneCable.cableVoltage 4 1 V0 1) 1 = 0 :=
   MathlibExt.Biology.Biophysics.MembraneCable.sealed_end_iff (rm := (4:ℝ)) (ri := (1:ℝ))
-    (s := Set.Icc 0 1) (V := fun _ : ℝ => (0:ℝ)) (I := fun _ : ℝ => (0:ℝ))
-    ⟨fun x _ => by simpa using hasDerivWithinAt_const x (Set.Icc 0 1) (0:ℝ),
-      fun x _ => by simpa using hasDerivWithinAt_const x (Set.Icc 0 1) (0:ℝ)⟩
+    (MathlibExt.Biology.Biophysics.MembraneCable.isSteadyState_cable
+      (by norm_num) (by norm_num) (Set.Icc 0 1) V0 1)
     (by norm_num) (Set.mem_Icc.mpr ⟨zero_le_one, le_refl 1⟩)
     (uniqueDiffOn_Icc (show (0:ℝ) < 1 by norm_num) 1 (Set.mem_Icc.mpr ⟨zero_le_one, le_refl 1⟩))
-    (differentiableAt_const 0)
+    (by
+      unfold MathlibExt.Biology.Biophysics.MembraneCable.cableVoltage
+      fun_prop)
 
 end MathlibExtTest.Biology.Biophysics.MembraneCable

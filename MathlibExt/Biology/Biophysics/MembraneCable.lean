@@ -240,7 +240,9 @@ theorem mul_lengthConstant_sq (hm : 0 < rm) (hi : 0 < ri) : ri * lengthConstant 
 
 
 /-- Time constant `tau = rm * cm` of a passive cable with membrane
-resistance `rm` and membrane capacitance `cm`. -/
+resistance `rm` (resistance times length) and membrane
+capacitance `cm` per unit length, so the product has units of
+time. -/
 noncomputable def timeConstant (rm cm : ℝ) : ℝ := rm * cm
 
 /-- The cable time constant is positive for positive parameters. -/
@@ -251,9 +253,7 @@ theorem timeConstant_pos {cm : ℝ} (hm : 0 < rm) (hcm : 0 < cm) :
 /-- **Sealed end.** At a point of the cable with unique spatial
 derivative where the voltage is differentiable, the axial current
 vanishes exactly when the voltage spatial derivative vanishes:
-a sealed end is the zero-derivative boundary condition. Here
-`cm` in `timeConstant` is membrane capacitance per unit length,
-so `rm * cm` has units of time. -/
+a sealed end is the zero-derivative boundary condition. -/
 theorem sealed_end_iff {s : Set ℝ} {V I : ℝ → ℝ} (h : IsSteadyState rm ri s V I)
     (hri : ri ≠ 0) {x : ℝ} (hx : x ∈ s)
     (hu : UniqueDiffWithinAt ℝ s x) (hDiff : DifferentiableAt ℝ V x) :
