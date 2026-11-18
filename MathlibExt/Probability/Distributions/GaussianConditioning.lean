@@ -49,7 +49,9 @@ Main results:
   given `y = H x + v` with `v ~ N(0, R)` and `H S Hᵀ + R` invertible,
   `x | y ~ N(m + S Hᵀ (H S Hᵀ + R)⁻¹ (y - H m), S - S Hᵀ (H S Hᵀ + R)⁻¹ H S)`. The proof
   concatenates `(x, v)`, maps it to `(x, y)` by `[[1, 0], [H, 1]]`, and applies the
-  Schur-complement formula.
+  Schur-complement formula. `condDistrib_linear_add_of_indepFun_precision`: **the precision form**
+  for a proper prior `x ~ N(m, Λ⁻¹)` and isotropic noise `v ~ N(0, σ² I)`: the posterior is
+  `N(Π⁻¹ (Λ m + σ⁻² Xᵀ y), Π⁻¹)` with `Π = Λ + σ⁻² Xᵀ X`, for any design `X`.
 -/
 
 @[expose] public section
@@ -569,6 +571,98 @@ theorem condDistrib_linear_add_of_indepFun {x : Ω → EuclideanSpace ℝ n}
     rw [hMe, hblk2]
   rw [hX, hY, hblk1, hblk2] at h
   simpa using h
+
+private theorem isUnit_det_of_posDef' {k : Type*} [Fintype k] [DecidableEq k] {A : Matrix k k ℝ}
+    (hA : A.PosDef) : IsUnit A.det :=
+  (Matrix.isUnit_iff_isUnit_det _).mp hA.isUnit
+
+omit [Fintype n] [DecidableEq n] [DecidableEq p] in
+/-- The posterior precision `Λ + σ⁻² Xᵀ X` of a proper prior is positive definite. -/
+private theorem posDef_add_smul_transpose_mul [Finite n] {Λ : Matrix n n ℝ} (hΛ : Λ.PosDef) {σ2 : ℝ}
+    (hσ : 0 < σ2) (X : Matrix p n ℝ) : (Λ + σ2⁻¹ • (Xᵀ * X)).PosDef := by
+  have h : (Xᵀ * X).PosSemidef := by
+    simpa [conjTranspose_eq_transpose_of_trivial] using posSemidef_conjTranspose_mul_self X
+  exact hΛ.add_posSemidef (h.smul (inv_nonneg.mpr hσ.le))
+
+/-- The push-through identity behind the precision form:
+`Λ⁻¹ Xᵀ (X Λ⁻¹ Xᵀ + σ² I)⁻¹ = σ⁻² (Λ + σ⁻² Xᵀ X)⁻¹ Xᵀ`. -/
+private theorem gain_eq_precision {Λ : Matrix n n ℝ} (hΛ : Λ.PosDef) {σ2 : ℝ} (hσ : 0 < σ2)
+    (X : Matrix p n ℝ) (hD : IsUnit (X * Λ⁻¹ * Xᵀ + σ2 • (1 : Matrix p p ℝ)).det) :
+    Λ⁻¹ * Xᵀ * (X * Λ⁻¹ * Xᵀ + σ2 • (1 : Matrix p p ℝ))⁻¹ =
+      σ2⁻¹ • ((Λ + σ2⁻¹ • (Xᵀ * X))⁻¹ * Xᵀ) := by
+  set Pr := Λ + σ2⁻¹ • (Xᵀ * X) with hPr
+  set D := X * Λ⁻¹ * Xᵀ + σ2 • (1 : Matrix p p ℝ) with hDdef
+  have hΛu := isUnit_det_of_posDef' hΛ
+  have hPru := isUnit_det_of_posDef' (posDef_add_smul_transpose_mul hΛ hσ X)
+  have h1 : Pr * (Λ⁻¹ * Xᵀ) = σ2⁻¹ • (Xᵀ * D) := by
+    rw [hPr, hDdef, Matrix.add_mul, ← Matrix.mul_assoc, Matrix.mul_nonsing_inv _ hΛu,
+      Matrix.one_mul, Matrix.mul_add, Matrix.mul_smul, Matrix.mul_one, smul_add, smul_smul,
+      inv_mul_cancel₀ hσ.ne', one_smul, Matrix.smul_mul]
+    simp only [Matrix.mul_assoc]
+    abel
+  calc Λ⁻¹ * Xᵀ * D⁻¹ = Pr⁻¹ * (Pr * (Λ⁻¹ * Xᵀ)) * D⁻¹ := by
+        rw [← Matrix.mul_assoc Pr⁻¹, Matrix.nonsing_inv_mul _ hPru, Matrix.one_mul]
+    _ = σ2⁻¹ • (Pr⁻¹ * Xᵀ) := by
+        rw [h1, Matrix.mul_smul, Matrix.smul_mul, Matrix.mul_assoc, Matrix.mul_assoc,
+          Matrix.mul_nonsing_inv _ hD, Matrix.mul_one]
+
+/-- **Bayes' theorem for a linear-Gaussian observation, precision form**: let the prior be
+`x ~ N(m, Λ⁻¹)` with positive definite precision `Λ`, and observe `y = X x + v` with noise
+`v ~ N(0, σ² I)`, `σ² > 0`, independent of `x`, for any real design `X` (of any rank). Then for
+almost every `y`, the conditional law of `x` given `y` is Gaussian with precision
+`Π = Λ + σ⁻² Xᵀ X` (positive definite), covariance `Π⁻¹` and mean `Π⁻¹ (Λ m + σ⁻² Xᵀ y)`. This is
+the gain form `condDistrib_linear_add_of_indepFun` rewritten by the push-through identity. -/
+theorem condDistrib_linear_add_of_indepFun_precision {x : Ω → EuclideanSpace ℝ n}
+    {v : Ω → EuclideanSpace ℝ p} (hx : Measurable x) (hv : Measurable v) (hind : IndepFun x v P)
+    {m : EuclideanSpace ℝ n} {Λ : Matrix n n ℝ} (hΛ : Λ.PosDef) {σ2 : ℝ} (hσ : 0 < σ2)
+    (hxl : P.map x = multivariateGaussian m Λ⁻¹)
+    (hvl : P.map v = multivariateGaussian 0 (σ2 • (1 : Matrix p p ℝ))) (X : Matrix p n ℝ) :
+    ∀ᵐ y ∂P.map (fun ω => toEuclideanLin X (x ω) + v ω),
+      condDistrib x (fun ω => toEuclideanLin X (x ω) + v ω) P y =
+        multivariateGaussian
+          (toEuclideanLin (Λ + σ2⁻¹ • (Xᵀ * X))⁻¹
+            (toEuclideanLin Λ m + σ2⁻¹ • toEuclideanLin Xᵀ y))
+          (Λ + σ2⁻¹ • (Xᵀ * X))⁻¹ := by
+  set Pr := Λ + σ2⁻¹ • (Xᵀ * X) with hPr
+  have hR : (σ2 • (1 : Matrix p p ℝ)).PosDef := PosDef.one.smul hσ
+  have hXS : (X * Λ⁻¹ * Xᵀ).PosSemidef := by
+    simpa [conjTranspose_eq_transpose_of_trivial] using
+      hΛ.inv.posSemidef.mul_mul_conjTranspose_same X
+  have hDpos : (X * Λ⁻¹ * Xᵀ + σ2 • (1 : Matrix p p ℝ)).PosDef := PosDef.posSemidef_add hXS hR
+  have hD := isUnit_det_of_posDef' hDpos
+  have hΛu := isUnit_det_of_posDef' hΛ
+  have hPru := isUnit_det_of_posDef' (posDef_add_smul_transpose_mul hΛ hσ X)
+  have hgain := gain_eq_precision hΛ hσ X hD
+  have hcov :
+      Λ⁻¹ - Λ⁻¹ * Xᵀ * (X * Λ⁻¹ * Xᵀ + σ2 • (1 : Matrix p p ℝ))⁻¹ * (X * Λ⁻¹) = Pr⁻¹ := by
+    rw [hgain]
+    calc Λ⁻¹ - σ2⁻¹ • (Pr⁻¹ * Xᵀ) * (X * Λ⁻¹)
+        = Pr⁻¹ * ((Pr - σ2⁻¹ • (Xᵀ * X)) * Λ⁻¹) := by
+          rw [Matrix.sub_mul, Matrix.mul_sub, ← Matrix.mul_assoc Pr⁻¹ Pr,
+            Matrix.nonsing_inv_mul _ hPru, Matrix.one_mul, Matrix.smul_mul, Matrix.smul_mul,
+            Matrix.mul_smul]
+          simp only [Matrix.mul_assoc]
+      _ = Pr⁻¹ := by
+          rw [hPr, add_sub_cancel_right, Matrix.mul_nonsing_inv _ hΛu, Matrix.mul_one]
+  have h := condDistrib_linear_add_of_indepFun hx hv hind hΛ.inv.posSemidef hR.posSemidef hxl hvl
+    X hD
+  filter_upwards [h] with y hy
+  rw [hy, hcov]
+  congr 1
+  apply WithLp.ofLp_injective
+  simp only [WithLp.ofLp_add, WithLp.ofLp_sub, WithLp.ofLp_smul, Matrix.ofLp_toLpLin, hgain,
+    Matrix.toLin'_apply, ← hPr]
+  have hPrm : Pr *ᵥ WithLp.ofLp m =
+      Λ *ᵥ WithLp.ofLp m + σ2⁻¹ • (Xᵀ *ᵥ (X *ᵥ WithLp.ofLp m)) := by
+    rw [hPr, add_mulVec, smul_mulVec, mulVec_mulVec]
+  have hm : WithLp.ofLp m = Pr⁻¹ *ᵥ (Λ *ᵥ WithLp.ofLp m) +
+      σ2⁻¹ • (Pr⁻¹ *ᵥ (Xᵀ *ᵥ (X *ᵥ WithLp.ofLp m))) := by
+    rw [← mulVec_smul, ← mulVec_add, ← hPrm, mulVec_mulVec, Matrix.nonsing_inv_mul _ hPru,
+      one_mulVec]
+  rw [smul_mulVec, ← mulVec_mulVec, mulVec_sub, mulVec_add, mulVec_smul]
+  nth_rewrite 1 [hm]
+  rw [mulVec_sub, smul_sub]
+  abel
 
 end Model
 

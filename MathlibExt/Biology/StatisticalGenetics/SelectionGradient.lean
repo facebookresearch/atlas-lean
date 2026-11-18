@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 
 import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 import Mathlib.Analysis.Calculus.ParametricIntegral
+import MathlibExt.Probability.Statistics.SteinLemma
 
 /-!
 # Lande's selection gradient for a normally distributed trait
@@ -68,17 +69,6 @@ private lemma integrable_pdf_mul_iff {μ : ℝ} {v : ℝ≥0} (hv : v ≠ 0)
     integrable_withDensity_iff_integrable_smul' (measurable_gaussianPDF μ v)
       (ae_of_all _ fun _ => gaussianPDF_lt_top)]
   simp only [toReal_gaussianPDF, smul_eq_mul]
-
-private lemma hasDerivAt_pdf {μ : ℝ} {v : ℝ≥0} (hv : v ≠ 0) (x : ℝ) :
-    HasDerivAt (gaussianPDFReal μ v)
-      (-(x - μ) / v * gaussianPDFReal μ v x) x := by
-  have hvR : (v : ℝ) ≠ 0 := NNReal.coe_ne_zero.mpr hv
-  convert ((((hasDerivAt_id x).sub_const μ).pow 2).neg.div_const
-    (2 * (v : ℝ))).exp.const_mul (Real.sqrt (2 * Real.pi * v))⁻¹ using 1
-  · rfl
-  · dsimp
-    unfold gaussianPDFReal
-    field_simp
 
 private lemma hasDerivAt_pdf_mean {v : ℝ≥0} (hv : v ≠ 0) (m x : ℝ) :
     HasDerivAt (fun a => gaussianPDFReal a v x)
@@ -163,38 +153,12 @@ private lemma integrable_abs_sub_pdf {v : ℝ≥0} (hv : v ≠ 0) (μ a : ℝ) :
 /-- **Stein's lemma** for the normal law `N(μ, v)`, `v > 0`: if `g` is differentiable with
 derivative `g'` and `g`, `(z - μ) g z` and `g'` are integrable, then
 `𝔼[(z - μ) g z] = v 𝔼[g' z]` (Stein 1981, Lemma 1). -/
-theorem integral_sub_mul_gaussianReal {μ : ℝ} {v : ℝ≥0} (hv : v ≠ 0) {g g' : ℝ → ℝ}
-    (hg : ∀ x, HasDerivAt g (g' x) x) (hgi : Integrable g (gaussianReal μ v))
-    (hxg : Integrable (fun x => (x - μ) * g x) (gaussianReal μ v))
+theorem integral_sub_mul_gaussianReal {μ : ℝ} {v : ℝ≥0} (_hv : v ≠ 0) {g g' : ℝ → ℝ}
+    (hg : ∀ x, HasDerivAt g (g' x) x) (_hgi : Integrable g (gaussianReal μ v))
+    (_hxg : Integrable (fun x => (x - μ) * g x) (gaussianReal μ v))
     (hg' : Integrable g' (gaussianReal μ v)) :
     ∫ x, (x - μ) * g x ∂gaussianReal μ v = v * ∫ x, g' x ∂gaussianReal μ v := by
-  have hvR : (v : ℝ) ≠ 0 := NNReal.coe_ne_zero.mpr hv
-  have hi := (integrable_pdf_mul_iff hv).mpr hxg
-  have hi' := (integrable_pdf_mul_iff hv).mpr hg'
-  have hig := (integrable_pdf_mul_iff hv).mpr hgi
-  have hip : Integrable (g * fun x => -(x - μ) / v * gaussianPDFReal μ v x) := by
-    convert hi.const_mul (-(v : ℝ)⁻¹) using 1
-    ext x
-    dsimp
-    ring
-  have h := integral_mul_deriv_eq_deriv_mul_of_integrable
-    (u := g) (u' := g') (v := gaussianPDFReal μ v)
-    (v' := fun x => -(x - μ) / v * gaussianPDFReal μ v x)
-    (fun x _ => hg x) (fun x _ => hasDerivAt_pdf hv x) hip
-    (by simpa only [Pi.mul_def, mul_comm] using hi')
-    (by simpa only [Pi.mul_def, mul_comm] using hig)
-  have he : (fun x => g x * (-(x - μ) / v * gaussianPDFReal μ v x)) =
-      fun x => -(v : ℝ)⁻¹ * (gaussianPDFReal μ v x * ((x - μ) * g x)) := by
-    ext x
-    ring
-  rw [he, integral_const_mul] at h
-  simp only [mul_comm (g' _) (gaussianPDFReal μ v _)] at h
-  rw [integral_gaussianReal_eq_integral_smul hv,
-    integral_gaussianReal_eq_integral_smul hv]
-  simp only [smul_eq_mul]
-  rw [neg_mul, neg_inj] at h
-  have h2 := congrArg (fun a : ℝ => (v : ℝ) * a) h
-  simpa only [← mul_assoc, mul_inv_cancel₀ hvR, one_mul] using h2
+  exact (ProbabilityTheory.integrable_and_integral_sub_mul_gaussianReal μ v hg hg').2
 
 /-- The mean fitness `w̄(μ) = 𝔼[W z]` of a population whose trait is distributed as
 `N(μ, v)`. -/

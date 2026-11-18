@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import CSLibExt.Algorithms.Quantum.Shor.ContinuedFractions
 public import CSLibExt.Algorithms.Quantum.Shor.OrderToFactor
 
 /-!
@@ -18,6 +19,10 @@ algorithm. So far it contains the proved classical post-processing step:
 from a multiplicative order `r` of `a` modulo `N` with `r` even and
 `a ^ (r / 2) ≢ ±1 (mod N)`, `gcd (a ^ (r / 2) - 1) N` is a nontrivial factor
 of `N` (`gcd_factor_of_order`, with the existential form
-`exists_factor_of_order`). The quantum order-finding subroutine and the full
-factoring theorem are not formalized in this module.
+`exists_factor_of_order`), and the classical continued-fraction step of order
+finding: a fraction `d / r` with `0 < r < n` within `1 / (2 q)` of the observed
+`c / q`, where `n ^ 2 ≤ q`, is unique (`eq_of_abs_sub_le_of_lt`) and is a
+convergent of the continued fraction of `c / q`
+(`exists_convergent_eq_of_abs_sub_le`). The quantum order-finding subroutine
+itself and the full factoring theorem are not formalized in this module.
 -/

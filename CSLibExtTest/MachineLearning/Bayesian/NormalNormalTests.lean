@@ -68,4 +68,10 @@ example : (gaussianLikelihood 1 ∘ₘ gaussianReal 0 1) ⊗ₘ normalPosteriorK
     (gaussianReal 0 1 ⊗ₘ gaussianLikelihood 1).map Prod.swap :=
   compProd_normalPosteriorKernel 0
 
+/-- The Bayes-ratio posterior mean of Tweedie's formula agrees with the conjugate posterior mean:
+prior `N(0, 1)`, unit noise, observation `2`, posterior mean `1`. -/
+example : ProbabilityTheory.gaussianPosteriorMean (gaussianReal 0 1) 1 2 = 1 := by
+  rw [gaussianPosteriorMean_gaussianReal_eq_normalPostMean 1 one_ne_zero, normalPostMean]
+  norm_num
+
 end CSLibExtTest.MachineLearning.Bayesian.NormalNormal

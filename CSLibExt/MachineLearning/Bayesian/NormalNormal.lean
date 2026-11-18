@@ -10,6 +10,7 @@ module
 
 public import CSLibExt.MachineLearning.Bayesian.Density
 public import Mathlib.Probability.Distributions.Gaussian.Real
+public import MathlibExt.Probability.Statistics.Tweedie
 
 /-!
 # Normal–Normal conjugacy with known variance
@@ -228,5 +229,14 @@ theorem gaussianLikelihood_comp_posterior (m₀ : ℝ) {v₀ v : ℝ≥0} [NeZer
   filter_upwards [posterior_gaussianLikelihood_gaussianReal m₀ (v₀ := v₀) (v := v)] with x hx
   rw [hx, gaussianLikelihood_comp_gaussianReal _
     (normalPostVar_ne_zero (NeZero.ne v₀) (NeZero.ne v)) (NeZero.ne v)]
+
+/-- **The Bayes-ratio posterior mean of the normal–normal model is the conjugate posterior mean.**
+For the prior `N(0, A)` and noise variance `v > 0`, the posterior mean of the Gaussian location
+model computed as a ratio of integrals against the prior (`gaussianPosteriorMean`, the quantity in
+Tweedie's formula) equals the conjugate posterior mean `normalPostMean 0 A v x = A x / (A + v)`. -/
+theorem gaussianPosteriorMean_gaussianReal_eq_normalPostMean (A : ℝ≥0) {v : ℝ≥0} (hv : v ≠ 0)
+    (x : ℝ) : gaussianPosteriorMean (gaussianReal 0 A) v x = normalPostMean 0 A v x := by
+  rw [gaussianPosteriorMean_gaussianReal A hv x, normalPostMean]
+  ring
 
 end Cslib.MachineLearning.Bayesian
