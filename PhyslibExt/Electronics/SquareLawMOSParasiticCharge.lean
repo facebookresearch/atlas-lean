@@ -28,22 +28,26 @@ import Mathlib.Tactic.Ring
 
 A three-terminal nMOS with terminals gate `0`, drain `1` and source `2`
 and terminal voltages `w : Fin 3 → ℝ` stores charge on three fixed
-pairwise parasitic capacitors `Cgs`, `Cgd`, `Cds`:
+pairwise parasitic capacitors `Cgs`, `Cgd`, `Cds`. The charges are the
+generic pairwise-capacitor charges of the terminal-charge Jacobian
+module for the symmetric capacitance matrix
+`!![0, Cgd, Cgs; Cgd, 0, Cds; Cgs, Cds, 0]`, which reduce to
 `qg = Cgs (Vg - Vs) + Cgd (Vg - Vd)`, `qd = Cgd (Vd - Vg) + Cds (Vd - Vs)`
 and `qs = Cgs (Vs - Vg) + Cds (Vs - Vd)`. Its static conduction currents
 are `Ig = 0`, the ideal square-law drain current `Id = I(u, Vds)` with
 overdrive `u = Vg - Vs - Vth` and `Vds = Vd - Vs`, and `Is = -Id`.
 
-From these formulas alone, the charge map conserves charge
-(`qg + qd + qs = 0`), is invariant under common-mode voltage shifts in
-the form the terminal-charge Jacobian theorem takes, and the static
+Specializing the pairwise-capacitor results, the charge map conserves
+charge (`qg + qd + qs = 0`), is invariant under common-mode voltage
+shifts in the form the terminal-charge Jacobian theorem takes, and the static
 currents sum to zero. The dynamic terminal Kirchhoff current law then
 applies: along a differentiable bias path, in particular one that stays
 in an open forward regime (cutoff, triode or saturation, each with
 `Vds > 0`), the dynamic terminal currents `I_cond,i + d q_i / dt` sum to
 zero at every time. The capacitances model fixed parasitic or overlap
-storage only, not an intrinsic channel-charge partition; no
-capacitance-matrix symmetry or short-channel model is claimed.
+storage only, not an intrinsic channel-charge partition; the pairwise
+matrix is symmetric by construction, and no symmetry of an intrinsic
+capacitance matrix or short-channel model is claimed.
 
 The absorbed displacement power equals the rate of change of the stored
 energy `(Cgs (Vg - Vs)² + Cgd (Vg - Vd)² + Cds (Vd - Vs)²) / 2`, which
@@ -58,8 +62,11 @@ case is stated.
 
 ## ii. Key results
 
+- `parasiticCapacitance`, `parasiticCharge`, `parasiticCharge_eq`: the
+  capacitance matrix, the pairwise-capacitor charges it determines, and
+  their explicit formulas.
 - `parasiticCharge_sum_eq_zero`, `parasiticCharge_gauge`: the
-  conservation and gauge premises derived from the charge formulas.
+  conservation and gauge premises, from the pairwise-capacitor results.
 - `parasiticCharge_jacobian_sums_eq_zero`: zero row and column sums of
   the charge Jacobian through the terminal-charge Jacobian theorem.
 - `conductionCurrent_sum_eq_zero`: static current conservation.
@@ -100,16 +107,19 @@ case is stated.
 namespace PhyslibExt.Electronics.SquareLawMOSParasiticCharge
 
 open PhyslibExt.Electronics.DynamicTerminalKCL
+open PhyslibExt.Electronics.TerminalChargeJacobian
 
 /-! ## A. The device model -/
 
-/-- Terminal charges of three fixed pairwise parasitic capacitors on terminals gate `0`,
-drain `1`, source `2`: `qg = Cgs (Vg - Vs) + Cgd (Vg - Vd)`,
-`qd = Cgd (Vd - Vg) + Cds (Vd - Vs)`, `qs = Cgs (Vs - Vg) + Cds (Vs - Vd)`. -/
+/-- Symmetric pairwise capacitance matrix on terminals gate `0`, drain `1`, source `2`:
+`Cgd` joins gate and drain, `Cgs` gate and source, `Cds` drain and source. -/
+def parasiticCapacitance (Cgs Cgd Cds : ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
+  !![0, Cgd, Cgs; Cgd, 0, Cds; Cgs, Cds, 0]
+
+/-- Terminal charges of the three fixed parasitic capacitors: the pairwise-capacitor charges
+of `parasiticCapacitance`. -/
 def parasiticCharge (Cgs Cgd Cds : ℝ) (w : Fin 3 → ℝ) : Fin 3 → ℝ :=
-  ![Cgs * (w 0 - w 2) + Cgd * (w 0 - w 1),
-    Cgd * (w 1 - w 0) + Cds * (w 1 - w 2),
-    Cgs * (w 2 - w 0) + Cds * (w 2 - w 1)]
+  pairwiseCapacitorCharge 3 (parasiticCapacitance Cgs Cgd Cds) w
 
 /-- Static conduction currents: `Ig = 0`, `Id` the square-law drain current at
 overdrive `Vg - Vs - Vth` and drain voltage `Vd - Vs`, and `Is = -Id`. -/
@@ -145,21 +155,35 @@ def flippedGateCharge (Cgs Cgd Cds : ℝ) (w : Fin 3 → ℝ) : Fin 3 → ℝ :=
     Cgd * (w 1 - w 0) + Cds * (w 1 - w 2),
     Cgs * (w 2 - w 0) + Cds * (w 2 - w 1)]
 
+/-- The capacitance matrix is symmetric. -/
+lemma parasiticCapacitance_symm (Cgs Cgd Cds : ℝ) (i k : Fin 3) :
+    parasiticCapacitance Cgs Cgd Cds i k = parasiticCapacitance Cgs Cgd Cds k i := by
+  fin_cases i <;> fin_cases k <;> simp [parasiticCapacitance]
+
+/-- The explicit charge formulas: `qg = Cgs (Vg - Vs) + Cgd (Vg - Vd)`,
+`qd = Cgd (Vd - Vg) + Cds (Vd - Vs)`, `qs = Cgs (Vs - Vg) + Cds (Vs - Vd)`. -/
+lemma parasiticCharge_eq (Cgs Cgd Cds : ℝ) (w : Fin 3 → ℝ) :
+    parasiticCharge Cgs Cgd Cds w =
+      ![Cgs * (w 0 - w 2) + Cgd * (w 0 - w 1),
+        Cgd * (w 1 - w 0) + Cds * (w 1 - w 2),
+        Cgs * (w 2 - w 0) + Cds * (w 2 - w 1)] := by
+  ext i
+  fin_cases i <;>
+    simp [parasiticCharge, parasiticCapacitance, pairwiseCapacitorCharge, Fin.sum_univ_three]
+  ring
+
 /-! ## B. Conservation and gauge premises -/
 
 /-- **Charge conservation.** The three terminal charges sum to zero at every voltage. -/
 theorem parasiticCharge_sum_eq_zero (Cgs Cgd Cds : ℝ) (w : Fin 3 → ℝ) :
-    ∑ i, parasiticCharge Cgs Cgd Cds w i = 0 := by
-  simp only [parasiticCharge, Fin.sum_univ_three, Matrix.cons_val_zero, Matrix.cons_val_one,
-    Matrix.cons_val_two, Matrix.head_cons, Matrix.tail_cons]
-  ring
+    ∑ i, parasiticCharge Cgs Cgd Cds w i = 0 :=
+  pairwiseCapacitorCharge_sum_eq_zero 3 _ (parasiticCapacitance_symm Cgs Cgd Cds) w
 
 /-- A common voltage shift leaves every terminal charge unchanged. -/
 lemma parasiticCharge_common_mode (Cgs Cgd Cds : ℝ) (w : Fin 3 → ℝ) (c : ℝ) :
     parasiticCharge Cgs Cgd Cds (w + c • (fun _ => (1 : ℝ))) =
-      parasiticCharge Cgs Cgd Cds w := by
-  ext i
-  fin_cases i <;> simp [parasiticCharge, Pi.add_apply, Pi.smul_apply]
+      parasiticCharge Cgs Cgd Cds w :=
+  pairwiseCapacitorCharge_common_mode 3 _ w c
 
 /-- **Gauge premise.** Common-mode invariance in the exact form the terminal-charge
 Jacobian theorem takes, on any voltage set. -/
@@ -174,12 +198,14 @@ theorem parasiticCharge_gauge (Cgs Cgd Cds : ℝ) (U : Set (Fin 3 → ℝ)) :
 lemma parasiticCharge_differentiableOn (Cgs Cgd Cds : ℝ) (U : Set (Fin 3 → ℝ)) :
     ∀ i, DifferentiableOn ℝ (fun w => parasiticCharge Cgs Cgd Cds w i) U := by
   intro i
-  fin_cases i <;> simp only [parasiticCharge, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk,
+  simp only [parasiticCharge_eq]
+  fin_cases i <;> simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk,
     Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons,
     Matrix.tail_cons] <;> fun_prop
 
 /-- **Charge Jacobian sums.** Through the terminal-charge Jacobian theorem, the charge
-Jacobian has zero column sums and zero row sums on any open voltage set. -/
+Jacobian has zero column sums and zero row sums on any open voltage set. At every voltage
+this is `pairwiseCapacitorCharge_jacobian_sums_eq_zero` for `parasiticCapacitance`. -/
 theorem parasiticCharge_jacobian_sums_eq_zero (Cgs Cgd Cds : ℝ) (U : Set (Fin 3 → ℝ))
     (hU : IsOpen U) :
     ∀ w ∈ U,
@@ -310,15 +336,15 @@ lemma displacementCurrent_parasiticCharge (Cgs Cgd Cds : ℝ) (v : ℝ → (Fin 
   have q0 : (fun s => parasiticCharge Cgs Cgd Cds (v s) 0)
       = fun s => Cgs * (v s 0 - v s 2) + Cgd * (v s 0 - v s 1) := by
     funext s
-    simp [parasiticCharge]
+    simp [parasiticCharge_eq]
   have q1 : (fun s => parasiticCharge Cgs Cgd Cds (v s) 1)
       = fun s => Cgd * (v s 1 - v s 0) + Cds * (v s 1 - v s 2) := by
     funext s
-    simp [parasiticCharge]
+    simp [parasiticCharge_eq]
   have q2 : (fun s => parasiticCharge Cgs Cgd Cds (v s) 2)
       = fun s => Cgs * (v s 2 - v s 0) + Cds * (v s 2 - v s 1) := by
     funext s
-    simp [parasiticCharge]
+    simp [parasiticCharge_eq]
   refine ⟨?_, ?_, ?_⟩
   · simp only [displacementCurrent, q0]
     exact ((((hd 0).sub (hd 2)).const_mul Cgs).add (((hd 0).sub (hd 1)).const_mul Cgd)).deriv
@@ -399,7 +425,7 @@ theorem squareLawMOSParasiticCharge_dynamicKCL (Cgs Cgd Cds beta Vth : ℝ)
 /-- Charge-energy identity: `∑ i, w i * q i (w)` is twice the stored energy. -/
 lemma sum_mul_parasiticCharge_eq_two_mul_energy (Cgs Cgd Cds : ℝ) (w : Fin 3 → ℝ) :
     ∑ i, w i * parasiticCharge Cgs Cgd Cds w i = 2 * parasiticEnergy Cgs Cgd Cds w := by
-  simp only [Fin.sum_univ_three, parasiticCharge, parasiticEnergy, Matrix.cons_val_zero,
+  simp only [Fin.sum_univ_three, parasiticCharge_eq, parasiticEnergy, Matrix.cons_val_zero,
     Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons, Matrix.tail_cons]
   ring
 
@@ -457,7 +483,7 @@ lemma saturation_path_example :
           ((fun s : ℝ => ![2 + Real.sin s / 2, 5, 0]) s) 0)
         = fun s => Real.sin s - 1 := by
       funext s
-      simp only [parasiticCharge, Matrix.cons_val_zero, Matrix.cons_val_one,
+      simp only [parasiticCharge_eq, Matrix.cons_val_zero, Matrix.cons_val_one,
         Matrix.cons_val_two, Matrix.head_cons, Matrix.tail_cons]
       ring
     simp only [displacementCurrent, hq]
