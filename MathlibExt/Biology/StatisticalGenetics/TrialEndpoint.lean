@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Basic.Real.Basic
+public import MathlibExt.Probability.Statistics.Survival.CountingProcess
 
 /-!
 # Prespecified truncated trial endpoint
@@ -23,7 +24,7 @@ namespace MathlibExt.Biology.StatisticalGenetics.TrialEndpoint
 /-- The prespecified truncated endpoint of event time `T i` at
 horizon `h`: `min (T i) h`. -/
 def truncatedEndpoint {ι : Type*} (T : ι → ℝ) (h : ℝ) (i : ι) : ℝ :=
-  min (T i) h
+  MathlibExt.Probability.Statistics.CountingProcess.ContinuousTime.obsTime T (fun _ => h) i
 
 /-- **Truncated endpoint at or inside the horizon.** If
 `T i ≤ h`, the truncated endpoint is the event time itself. -/
