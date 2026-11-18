@@ -35,4 +35,13 @@ example (xi : EuclideanSpace ℝ (Fin 2)) :
   unfold ctDesignEntry MetaMathlibExt.euclideanRadonTransform
   simp
 
+/-- The Radon application law at a unit coordinate direction. -/
+example : MetaMathlibExt.euclideanRadonTransform
+      (fun a => ∑ i ∈ (Finset.univ : Finset (Fin 2)), (1:ℝ) * (fun _ => (0:ℝ)) a)
+      (EuclideanSpace.single (0 : Fin 2) (1:ℝ)) 3 =
+    ∑ i ∈ (Finset.univ : Finset (Fin 2)), (1:ℝ) * ctDesignEntry (fun _ : Fin 2 => fun _ => (0:ℝ))
+      (EuclideanSpace.single (0 : Fin 2) (1:ℝ)) 3 i :=
+  ct_design_radon_apply _ _ _ (by simp) _
+    (fun i _ => by simpa using MeasureTheory.integrableOn_zero)
+
 end PhyslibExtTest.BiomedicalImaging.CTFiniteDesign

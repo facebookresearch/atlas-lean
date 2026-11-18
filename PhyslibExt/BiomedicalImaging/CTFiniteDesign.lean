@@ -79,7 +79,7 @@ coefficient-weighted design entries, whenever every basis
 restriction to the ray hyperplane is integrable. -/
 lemma ct_design_radon_apply {ι : Type*} {s : Finset ι}
     (phi : ι → EuclideanSpace ℝ (Fin 2) → ℝ) (x : ι → ℝ)
-    (xi : EuclideanSpace ℝ (Fin 2)) (p : ℝ)
+    (xi : EuclideanSpace ℝ (Fin 2)) (hxi : ‖xi‖ = 1) (p : ℝ)
     (hint : ∀ i ∈ s, MeasureTheory.IntegrableOn (phi i)
       {y : EuclideanSpace ℝ (Fin 2) | @inner ℝ _ _ y xi = p}
       (MeasureTheory.Measure.euclideanHausdorffMeasure 1)) :
