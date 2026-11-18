@@ -424,3 +424,17 @@ example : deriv (Chemistry.CombustionAcoustics.critRatio 1 (4 * 1)) 2 = 0 :=
 example : deriv (fun s : ℝ =>
     deriv (Chemistry.CombustionAcoustics.critRatio 1 (4 * 1)) s) (2 * 1) = 0 :=
   Chemistry.CombustionAcoustics.critRatio_degenerate_fold_second one_pos
+
+/-- Ordinary folds are nondegenerate: both second derivatives are
+nonzero for `Ta = 1`, `B = 5`. -/
+example : deriv (fun s : ℝ =>
+    deriv (Chemistry.CombustionAcoustics.critRatio 1 5) s)
+    ((5 - Real.sqrt (5 ^ 2 - 4 * 5 * 1)) / 2) ≠ 0 :=
+  (Chemistry.CombustionAcoustics.critRatio_two_folds_nondegenerate one_pos
+    (by norm_num)).1
+
+example : deriv (fun s : ℝ =>
+    deriv (Chemistry.CombustionAcoustics.critRatio 1 5) s)
+    ((5 + Real.sqrt (5 ^ 2 - 4 * 5 * 1)) / 2) ≠ 0 :=
+  (Chemistry.CombustionAcoustics.critRatio_two_folds_nondegenerate one_pos
+    (by norm_num)).2

@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.Topology.Order.IntermediateValue
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import Mathlib.Analysis.Calculus.Deriv.Inv
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.Calculus.Deriv.Pow
@@ -65,6 +66,13 @@ coefficients are model inputs; no empirical adequacy is claimed.
 
 - The sign bracket is the classical Semenov/Frank-Kamenetskii
   zeroth-order balance; the formal statement is self-contained.
+- The critical-ratio fold picture of Section C is the classical
+  Semenov thermal-explosion criticality (N. N. Semenov, 1928; see
+  D. A. Frank-Kamenetskii, *Diffusion and Heat Transfer in Chemical
+  Kinetics*, 2nd ed., Plenum, 1969, Chapter 1): with ambient
+  temperature `Ta` and activation ratio `B = E / R`, equilibrium is
+  `G / H = q(T)` for `q(T) = (T - Ta) * exp (B / T)`, and the two
+  stationary points of `q` merge at `B = 4 * Ta`, `T = 2 * Ta`.
 - Acoustic energy: A. D. Pierce, *Acoustics: An Introduction
   to Its Physical Principles and Applications* (McGraw-Hill,
   1981), Chapter 1 (acoustic energy density and energy flux
@@ -596,75 +604,19 @@ noncomputable def critRatio (Ta B T : ℝ) : ℝ :=
 
 private lemma critRatio_hasDerivAt_const_div {B T : ℝ} (hT : 0 < T) :
     HasDerivAt (fun T : ℝ => B / T) (-B / T ^ 2) T := by
-  have hT' : T ≠ 0 := ne_of_gt hT
-  have hTn : ‖T‖ = T := by rw [Real.norm_eq_abs, abs_of_pos hT]
-  have hT2 : (0 : ℝ) < T ^ 2 := by positivity
-  have hT2' : T ^ 2 ≠ 0 := ne_of_gt hT2
-  rw [hasDerivAt_iff_tendsto]
-  have hEvt : Filter.EventuallyEq (nhds T)
-      (fun T' : ℝ => ‖T' - T‖⁻¹ * ‖B / T' - B / T - (T' - T) • (-B / T ^ 2)‖)
-      (fun T' : ℝ => ‖B‖ * ‖T' - T‖ / (T ^ 2 * ‖T'‖)) := by
-    have h0 : Filter.Eventually (fun T' : ℝ => T' ≠ 0) (nhds T) :=
-      continuousAt_id.eventually_ne hT'
-    refine h0.mono (fun T' hT'0 => ?_)
-    by_cases hTT : T' = T
-    · subst hTT
-      simp
-    · have hTT' : T' - T ≠ 0 := sub_ne_zero.mpr hTT
-      have hnT : ‖T' - T‖ ≠ 0 := norm_ne_zero_iff.mpr hTT'
-      have hn0 : ‖T'‖ ≠ 0 := norm_ne_zero_iff.mpr hT'0
-      have hm : T ^ 2 * ‖T'‖ ≠ 0 := mul_ne_zero hT2' hn0
-      have hTT2 : T ^ 2 * T' ≠ 0 := mul_ne_zero hT2' hT'0
-      have hT2n : ‖T ^ 2‖ = T ^ 2 := by rw [norm_pow, hTn]
-      have e : B / T' - B / T - (T' - T) * (-B / T ^ 2)
-          = B * (T' - T) ^ 2 / (T ^ 2 * T') := by
-        field_simp
-        ring
-      show ‖T' - T‖⁻¹ * ‖B / T' - B / T - (T' - T) • (-B / T ^ 2)‖
-        = ‖B‖ * ‖T' - T‖ / (T ^ 2 * ‖T'‖)
-      rw [smul_eq_mul, e, norm_div, norm_mul, norm_pow, norm_mul, hT2n]
-      field_simp
-  have hlim : Filter.Tendsto (fun T' : ℝ => ‖B‖ * ‖T' - T‖ / (T ^ 2 * ‖T'‖))
-      (nhds T) (nhds 0) := by
-    have hf : ContinuousAt (fun T' : ℝ => ‖B‖ * ‖T' - T‖) T :=
-      (continuousAt_id.sub continuousAt_const).norm.const_mul ‖B‖
-    have hg : ContinuousAt (fun T' : ℝ => T ^ 2 * ‖T'‖) T :=
-      continuousAt_id.norm.const_mul (T ^ 2)
-    have hgT : T ^ 2 * ‖T‖ ≠ 0 :=
-      mul_ne_zero hT2' (by rw [hTn]; exact hT')
-    have hdiv := hf.div hg hgT
-    have hval : (fun T' : ℝ => ‖B‖ * ‖T' - T‖) T
-        / (fun T' : ℝ => T ^ 2 * ‖T'‖) T = 0 := by
-      simp
-    have ht := hdiv.tendsto
-    rw [Pi.div_apply, hval] at ht
-    exact ht
-  exact Filter.Tendsto.congr' hEvt.symm hlim
+  have h := HasDerivAt.div (hasDerivAt_const T B) (hasDerivAt_id' T) (ne_of_gt hT)
+  have e : (0 * T - B * 1) / T ^ 2 = -B / T ^ 2 := by ring
+  rwa [e] at h
 
 private lemma critRatio_hasDerivAt_sq {T : ℝ} :
-    HasDerivAt (fun s : ℝ => s ^ 2) (2 * T) T := by
-  have hmul : HasDerivAt (fun s : ℝ => s * s) (2 * T) T := by
-    have h := (hasDerivAt_id' T).mul (hasDerivAt_id' T)
-    have hval : (1 : ℝ) * T + T * 1 = 2 * T := by ring
-    rw [hval] at h
-    exact h
-  have heq : (fun s : ℝ => s ^ 2) =ᶠ[nhds T] (fun s : ℝ => s * s) := by
-    apply Filter.Eventually.of_forall
-    intro s
-    ring
-  exact hmul.congr_of_eventuallyEq heq
+    HasDerivAt (fun s : ℝ => s ^ 2) (2 * T) T :=
+  hasDerivAt_sq T
 
 private lemma critRatio_hasDerivAt_inv {T : ℝ} (hT : 0 < T) :
     HasDerivAt (fun s : ℝ => s⁻¹) (-1 / T ^ 2) T := by
-  have h1 : HasDerivAt (fun s : ℝ => (1 : ℝ) / s) (-(1 : ℝ) / T ^ 2) T :=
-    critRatio_hasDerivAt_const_div hT
-  have heq : (fun s : ℝ => s⁻¹) =ᶠ[nhds T] (fun s : ℝ => (1 : ℝ) / s) := by
-    apply Filter.Eventually.of_forall
-    intro s
-    exact (one_div s).symm
-  have hval : (-(1 : ℝ) / T ^ 2) = (-1 / T ^ 2) := by ring
-  rw [hval] at h1
-  exact h1.congr_of_eventuallyEq heq
+  have h := hasDerivAt_inv (ne_of_gt hT)
+  have e : (-(T ^ 2)⁻¹) = -1 / T ^ 2 := by rw [← one_div, ← neg_div]
+  rwa [e] at h
 
 private lemma critRatio_hasDerivAt_inv_sq {T : ℝ} (hT : 0 < T) :
     HasDerivAt (fun s : ℝ => (s ^ 2)⁻¹)
