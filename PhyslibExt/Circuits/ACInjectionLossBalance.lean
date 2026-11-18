@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Circuits.BalancedThreePhase
-public import PhyslibExt.Circuits.PhasorElementLaws
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
@@ -31,16 +30,15 @@ currents plus the shunt current at that node.
 
 With the absorbed complex power at a node defined as the node
 voltage times the conjugate of its injected current, in the
-convention of `PhyslibExt.Circuits.BalancedThreePhase.complexPower`
-and the phasor element laws of
-`PhyslibExt.Circuits.PhasorElementLaws`, the total absorbed real
-power over all nodes equals the sum over branches of the real
-part of the branch admittance times the squared magnitude of
-the branch drop, plus the sum over nodes of the real part of
-the shunt admittance times the squared magnitude of the node
-voltage. The same calculation gives the complex and reactive
-forms. Nonnegativity of the total real power is a separate
-consequence that needs nonnegative real parts of all
+convention of
+`PhyslibExt.Circuits.BalancedThreePhase.complexPower`, the total
+absorbed real power over all nodes equals the sum over branches
+of the real part of the branch admittance times the squared
+magnitude of the branch drop, plus the sum over nodes of the
+real part of the shunt admittance times the squared magnitude of
+the node voltage. The same calculation gives the complex and
+reactive forms. Nonnegativity of the total real power is a
+separate consequence that needs nonnegative real parts of all
 admittances. No specified-power load-flow problem is solved:
 voltages and currents obey a linear admittance relation, and
 different voltage solutions or infeasible demanded powers are
