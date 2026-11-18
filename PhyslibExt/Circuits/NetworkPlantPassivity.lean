@@ -29,7 +29,9 @@ into resistor, inductor, capacitor and source classes, as carried
 by `PhyslibExt.Circuits.NetworkStorageBalance`. This module reads
 that network off as a plant. A `NetworkPlant` holds only the static
 data: the incidence matrix, the branch partition and the element
-values. A `NetworkTrajectory` is a separate signal tuple of node
+values, together with the proof that the four branch classes are an
+exact partition of the branches, so malformed branch data is not a
+plant and cannot be certified passive. A `NetworkTrajectory` is a separate signal tuple of node
 potentials, independent node injections, branch voltages and branch
 currents, and `IsNetworkTrajectoryOn P x S` is the relation saying
 that the trajectory `x` obeys the network laws of the plant `P` at
@@ -87,7 +89,7 @@ and no wider control framework is introduced.
   `finiteHorizonPassive_zeroLength` and
   `partition_no_branch_counted_twice`: validation cases covering
   constant undamped storage, a zero-length interval, and exact
-  branch accounting with no source branch counted twice.
+  branch accounting with no source branch of a plant counted twice.
 
 ## iii. Table of contents
 
@@ -123,8 +125,9 @@ open PhyslibExt.Circuits.NetworkStorageBalance
 /-! ### A. The plant read-off interface -/
 
 /-- Static plant data for one lumped network: incidence, branch partition
-and element values. It carries no signals; trajectories are separate.
-New definition owned by this leaf. -/
+and element values, with the invariant that the resistor, inductor,
+capacitor and source classes partition the branches exactly. It carries no
+signals; trajectories are separate. New definition owned by this leaf. -/
 structure NetworkPlant (nN nB : ℕ) where
   incidence : Matrix (Fin nN) (Fin nB) ℝ
   resistorSet : Finset (Fin nB)
@@ -134,6 +137,7 @@ structure NetworkPlant (nN nB : ℕ) where
   resistance : Fin nB → ℝ
   inductance : Fin nB → ℝ
   capacitance : Fin nB → ℝ
+  isBranchPartition : IsBranchPartition nB resistorSet inductorSet capacitorSet sourceSet
 
 /-- A candidate signal tuple for a network with `nN` nodes and `nB`
 branches: node potentials, independent node injections, branch voltages
@@ -165,13 +169,12 @@ def plantLossRate {nN nB : ℕ} (P : NetworkPlant nN nB)
   resistiveLoss nB P.resistorSet P.resistance (x.branchCurrent t)
 
 /-- The trajectory obeys the network laws of the plant at every time:
-exact branch partition, potential voltage, node current balance for the
-independent injection, and the resistor, capacitor and inductor laws with
-differentiability of the storage coordinates at every time. -/
+potential voltage, node current balance for the independent injection, and
+the resistor, capacitor and inductor laws with differentiability of the
+storage coordinates at every time. -/
 def IsNetworkTrajectory {nN nB : ℕ} (P : NetworkPlant nN nB)
     (x : NetworkTrajectory nN nB) : Prop :=
-  IsBranchPartition nB P.resistorSet P.inductorSet P.capacitorSet P.sourceSet ∧
-    (∀ t : ℝ, x.branchVoltage t = P.incidence.transpose *ᵥ x.potential t) ∧
+  (∀ t : ℝ, x.branchVoltage t = P.incidence.transpose *ᵥ x.potential t) ∧
     (∀ t : ℝ, P.incidence *ᵥ x.branchCurrent t = x.injection t) ∧
     (∀ t : ℝ, ∀ e ∈ P.resistorSet, x.branchVoltage t e =
       P.resistance e * x.branchCurrent t e) ∧
@@ -185,15 +188,14 @@ def IsNetworkTrajectory {nN nB : ℕ} (P : NetworkPlant nN nB)
       DifferentiableAt ℝ (fun s => x.branchCurrent s e) t)
 
 /-- The trajectory obeys the network laws of the plant at every time in
-`S`: exact branch partition, potential voltage, node current balance for
-the independent injection, and the resistor, capacitor and inductor laws.
+`S`: potential voltage, node current balance for the independent
+injection, and the resistor, capacitor and inductor laws.
 The capacitor and inductor laws use derivatives within `S` and
 differentiability within `S`, so the relation depends only on the signal
 values at times of `S`; at an endpoint of an interval they are one-sided. -/
 def IsNetworkTrajectoryOn {nN nB : ℕ} (P : NetworkPlant nN nB)
     (x : NetworkTrajectory nN nB) (S : Set ℝ) : Prop :=
-  IsBranchPartition nB P.resistorSet P.inductorSet P.capacitorSet P.sourceSet ∧
-    (∀ t ∈ S, x.branchVoltage t = P.incidence.transpose *ᵥ x.potential t) ∧
+  (∀ t ∈ S, x.branchVoltage t = P.incidence.transpose *ᵥ x.potential t) ∧
     (∀ t ∈ S, P.incidence *ᵥ x.branchCurrent t = x.injection t) ∧
     (∀ t ∈ S, ∀ e ∈ P.resistorSet, x.branchVoltage t e =
       P.resistance e * x.branchCurrent t e) ∧
@@ -211,8 +213,8 @@ which derivatives are unique, such as `[a, b]` with `a < b`. -/
 lemma IsNetworkTrajectory.isNetworkTrajectoryOn {nN nB : ℕ} {P : NetworkPlant nN nB}
     {x : NetworkTrajectory nN nB} (hP : IsNetworkTrajectory P x) {S : Set ℝ}
     (hS : UniqueDiffOn ℝ S) : IsNetworkTrajectoryOn P x S := by
-  obtain ⟨hpart, hV, hbal, hRlaw, hClaw, hLlaw, hCdiff, hLdiff⟩ := hP
-  refine ⟨hpart, fun t _ => hV t, fun t _ => hbal t, fun t _ => hRlaw t, ?_, ?_,
+  obtain ⟨hV, hbal, hRlaw, hClaw, hLlaw, hCdiff, hLdiff⟩ := hP
+  refine ⟨fun t _ => hV t, fun t _ => hbal t, fun t _ => hRlaw t, ?_, ?_,
     fun t _ e he => (hCdiff t e he).differentiableWithinAt,
     fun t _ e he => (hLdiff t e he).differentiableWithinAt⟩
   · intro t ht e he
@@ -231,12 +233,12 @@ lemma IsNetworkTrajectoryOn.congr {nN nB : ℕ} {P : NetworkPlant nN nB}
     (hv : Set.EqOn y.branchVoltage x.branchVoltage S)
     (hi : Set.EqOn y.branchCurrent x.branchCurrent S) :
     IsNetworkTrajectoryOn P y S := by
-  obtain ⟨hpart, hV, hbal, hRlaw, hClaw, hLlaw, hCdiff, hLdiff⟩ := hP
+  obtain ⟨hV, hbal, hRlaw, hClaw, hLlaw, hCdiff, hLdiff⟩ := hP
   have hve : ∀ e, Set.EqOn (fun s => y.branchVoltage s e) (fun s => x.branchVoltage s e) S :=
     fun e _ ht => congrFun (hv ht) e
   have hie : ∀ e, Set.EqOn (fun s => y.branchCurrent s e) (fun s => x.branchCurrent s e) S :=
     fun e _ ht => congrFun (hi ht) e
-  refine ⟨hpart, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro t ht
     rw [hv ht, hphi ht]
     exact hV t ht
@@ -275,9 +277,11 @@ def IsFiniteHorizonPassive {nN nB : ℕ} (P : NetworkPlant nN nB) : Prop :=
       MeasureTheory.volume a b →
     FiniteHorizonPassiveOn P x a b
 
-/-- The identity representation of raw network data as a plant. -/
+/-- The identity representation of raw network data, with its branch
+partition, as a plant. -/
 def plantOfNetwork (nN nB : ℕ) (B : Matrix (Fin nN) (Fin nB) ℝ)
-    (Rset Lset Cset Sset : Finset (Fin nB)) (Rval Lval Cval : Fin nB → ℝ) :
+    (Rset Lset Cset Sset : Finset (Fin nB))
+    (hpart : IsBranchPartition nB Rset Lset Cset Sset) (Rval Lval Cval : Fin nB → ℝ) :
     NetworkPlant nN nB where
   incidence := B
   resistorSet := Rset
@@ -287,6 +291,7 @@ def plantOfNetwork (nN nB : ℕ) (B : Matrix (Fin nN) (Fin nB) ℝ)
   resistance := Rval
   inductance := Lval
   capacitance := Cval
+  isBranchPartition := hpart
 
 /-- The identity representation of raw network signals as a trajectory. -/
 def trajectoryOfSignals {nN nB : ℕ} (phi j : ℝ → Fin nN → ℝ) (v iB : ℝ → Fin nB → ℝ) :
@@ -302,9 +307,10 @@ def trajectoryOfSignals {nN nB : ℕ} (phi j : ℝ → Fin nN → ℝ) (v iB : �
 along the trajectory built from network signals, has exactly the network
 stored energy at every time. -/
 lemma plantOfNetwork_storage_eq (nN nB : ℕ) (B : Matrix (Fin nN) (Fin nB) ℝ)
-    (Rset Lset Cset Sset : Finset (Fin nB)) (Rval Lval Cval : Fin nB → ℝ)
+    (Rset Lset Cset Sset : Finset (Fin nB))
+    (hpart : IsBranchPartition nB Rset Lset Cset Sset) (Rval Lval Cval : Fin nB → ℝ)
     (phi j : ℝ → Fin nN → ℝ) (v iB : ℝ → Fin nB → ℝ) (t : ℝ) :
-    plantStorage (plantOfNetwork nN nB B Rset Lset Cset Sset Rval Lval Cval)
+    plantStorage (plantOfNetwork nN nB B Rset Lset Cset Sset hpart Rval Lval Cval)
         (trajectoryOfSignals phi j v iB) t =
       storedEnergy nB Cset Lset Cval Lval (v t) (iB t) := by
   rfl
@@ -313,12 +319,13 @@ lemma plantOfNetwork_storage_eq (nN nB : ℕ) (B : Matrix (Fin nN) (Fin nB) ℝ)
 rates are exactly the network supplied-minus-source power and resistive
 loss. -/
 lemma plantOfNetwork_supplyAndLoss_eq (nN nB : ℕ) (B : Matrix (Fin nN) (Fin nB) ℝ)
-    (Rset Lset Cset Sset : Finset (Fin nB)) (Rval Lval Cval : Fin nB → ℝ)
+    (Rset Lset Cset Sset : Finset (Fin nB))
+    (hpart : IsBranchPartition nB Rset Lset Cset Sset) (Rval Lval Cval : Fin nB → ℝ)
     (phi j : ℝ → Fin nN → ℝ) (v iB : ℝ → Fin nB → ℝ) (t : ℝ) :
-    plantSupplyRate (plantOfNetwork nN nB B Rset Lset Cset Sset Rval Lval Cval)
+    plantSupplyRate (plantOfNetwork nN nB B Rset Lset Cset Sset hpart Rval Lval Cval)
         (trajectoryOfSignals phi j v iB) t =
         (phi t) ⬝ᵥ (j t) - sourceAbsorbedPower nB Sset (v t) (iB t) ∧
-      plantLossRate (plantOfNetwork nN nB B Rset Lset Cset Sset Rval Lval Cval)
+      plantLossRate (plantOfNetwork nN nB B Rset Lset Cset Sset hpart Rval Lval Cval)
         (trajectoryOfSignals phi j v iB) t =
         resistiveLoss nB Rset Rval (iB t) := by
   exact ⟨rfl, rfl⟩
@@ -362,9 +369,9 @@ lemma plantStorage_deriv_eq_supply_sub_loss {nN nB : ℕ} (P : NetworkPlant nN n
     (hC : ∀ e ∈ P.capacitorSet, 0 < P.capacitance e) (t : ℝ) :
     deriv (fun s => plantStorage P x s) t =
       plantSupplyRate P x t - plantLossRate P x t := by
-  obtain ⟨hpart, hV, hbal, hRlaw, hClaw, hLlaw, hCdiff, hLdiff⟩ := hP
+  obtain ⟨hV, hbal, hRlaw, hClaw, hLlaw, hCdiff, hLdiff⟩ := hP
   exact network_storage_deriv_eq_supplied_minus_losses nN nB P.incidence
-    P.resistorSet P.inductorSet P.capacitorSet P.sourceSet hpart
+    P.resistorSet P.inductorSet P.capacitorSet P.sourceSet P.isBranchPartition
     P.resistance P.inductance P.capacitance hR hL hC
     x.potential x.injection x.branchVoltage x.branchCurrent t
     (hV t) (hbal t) (hRlaw t) (hClaw t) (hLlaw t) (hCdiff t) (hLdiff t)
@@ -375,7 +382,7 @@ lemma IsNetworkTrajectoryOn.continuousOn_plantStorage {nN nB : ℕ}
     {P : NetworkPlant nN nB} {x : NetworkTrajectory nN nB} {S : Set ℝ}
     (hP : IsNetworkTrajectoryOn P x S) :
     ContinuousOn (fun s => plantStorage P x s) S := by
-  obtain ⟨-, -, -, -, -, -, hCdiff, hLdiff⟩ := hP
+  obtain ⟨-, -, -, -, -, hCdiff, hLdiff⟩ := hP
   unfold plantStorage storedEnergy
   refine ContinuousOn.add ?_ ?_
   · refine continuousOn_finsetSum _ fun e he => ?_
@@ -398,7 +405,7 @@ lemma IsNetworkTrajectoryOn.hasDerivAt_plantStorage {nN nB : ℕ}
     (hC : ∀ e ∈ P.capacitorSet, 0 < P.capacitance e) {t : ℝ} (ht : t ∈ Set.Ioo a b) :
     HasDerivAt (fun s => plantStorage P x s)
       (plantSupplyRate P x t - plantLossRate P x t) t := by
-  obtain ⟨hpart, hV, hbal, hRlaw, hClaw, hLlaw, hCdiff, hLdiff⟩ := hP
+  obtain ⟨hV, hbal, hRlaw, hClaw, hLlaw, hCdiff, hLdiff⟩ := hP
   have hnhds : Set.Icc a b ∈ nhds t := Icc_mem_nhds ht.1 ht.2
   have htI : t ∈ Set.Icc a b := Set.Ioo_subset_Icc_self ht
   have hCdiff' : ∀ e ∈ P.capacitorSet,
@@ -419,7 +426,7 @@ lemma IsNetworkTrajectoryOn.hasDerivAt_plantStorage {nN nB : ℕ}
     P.capacitance P.inductance x.branchVoltage x.branchCurrent t
     hClaw' hLlaw' hCdiff' hLdiff'
   have hbalance := network_storage_deriv_eq_supplied_minus_losses nN nB P.incidence
-    P.resistorSet P.inductorSet P.capacitorSet P.sourceSet hpart
+    P.resistorSet P.inductorSet P.capacitorSet P.sourceSet P.isBranchPartition
     P.resistance P.inductance P.capacitance hR hL hC
     x.potential x.injection x.branchVoltage x.branchCurrent t
     (hV t htI) (hbal t htI) (hRlaw t htI) hClaw' hLlaw' hCdiff' hLdiff'
@@ -556,15 +563,13 @@ lemma plantStorage_constant_of_zero_supply_loss {nN nB : ℕ} (P : NetworkPlant 
       (hP.isNetworkTrajectoryOn (uniqueDiffOn_Icc hlt)) hsupply hloss hderiv_int
   · rfl
 
-/-- Exact accounting: under the branch partition no branch lies in two
+/-- Exact accounting: the branch partition of a plant puts no branch in two
 classes, so no source branch is also counted as a resistor, inductor or
 capacitor branch. -/
 lemma partition_no_branch_counted_twice {nN nB : ℕ} (P : NetworkPlant nN nB)
-    (hpart : IsBranchPartition nB P.resistorSet P.inductorSet P.capacitorSet P.sourceSet)
     (e : Fin nB) (he : e ∈ P.sourceSet) :
     e ∉ P.resistorSet ∧ e ∉ P.inductorSet ∧ e ∉ P.capacitorSet := by
-  unfold IsBranchPartition at hpart
-  obtain ⟨-, -, hRS, -, hLS, hCS, -⟩ := hpart
+  obtain ⟨-, -, hRS, -, hLS, hCS, -⟩ := P.isBranchPartition
   refine ⟨?_, ?_, ?_⟩
   · intro h
     exact absurd he (Finset.disjoint_left.mp hRS h)

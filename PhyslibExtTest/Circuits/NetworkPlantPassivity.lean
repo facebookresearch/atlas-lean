@@ -19,6 +19,12 @@ open PhyslibExt.Circuits.NetworkStorageBalance
 
 namespace PhyslibExtTest.Circuits.NetworkPlantPassivity
 
+private lemma capPlant_partition :
+    IsBranchPartition 1 (∅ : Finset (Fin 1)) ∅ {0} ∅ := by
+  unfold IsBranchPartition
+  refine ⟨by decide, by decide, by decide, by decide, by decide, by decide,
+    by decide⟩
+
 /-- One-node, one-branch capacitor plant: the branch is a capacitor with
 `C = 2`, and there are no resistor, inductor or source branches. -/
 private def capPlant : NetworkPlant 1 1 where
@@ -30,6 +36,7 @@ private def capPlant : NetworkPlant 1 1 where
   resistance := ![0]
   inductance := ![0]
   capacitance := ![2]
+  isBranchPartition := capPlant_partition
 
 private lemma capPlant_R : ∀ e ∈ capPlant.resistorSet, 0 ≤ capPlant.resistance e := by
   intro e he; simp [capPlant] at he
@@ -54,14 +61,8 @@ private def capTraj : NetworkTrajectory 1 1 where
   branchVoltage := fun _ => ![4]
   branchCurrent := fun _ => ![0]
 
-private lemma capPlant_partition :
-    IsBranchPartition 1 (∅ : Finset (Fin 1)) ∅ {0} ∅ := by
-  unfold IsBranchPartition
-  refine ⟨by decide, by decide, by decide, by decide, by decide, by decide,
-    by decide⟩
-
 private lemma capTraj_trajectory : IsNetworkTrajectory capPlant capTraj := by
-  refine ⟨capPlant_partition, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro t
     ext i
     fin_cases i
@@ -147,7 +148,7 @@ private noncomputable def capTrajUntilTwo : NetworkTrajectory 1 1 where
 /-- The trajectory is not a network trajectory at every time. -/
 example : ¬ IsNetworkTrajectory capPlant capTrajUntilTwo := by
   intro h
-  have h3 := congrFun (h.2.1 3) 0
+  have h3 := congrFun (h.1 3) 0
   norm_num [capPlant, capTrajUntilTwo, Matrix.mulVec, dotProduct, Fin.sum_univ_one,
     Matrix.transpose] at h3
 
@@ -225,7 +226,7 @@ time, and an ambient-derivative condition at the endpoint `0 ∈ [0, 1]` would
 reject it. -/
 example : ¬ IsNetworkTrajectory capPlant kinkTraj := by
   intro h
-  exact kinkTraj_not_differentiableAt (h.2.2.2.2.2.2.1 0 0 (by simp [capPlant]))
+  exact kinkTraj_not_differentiableAt (h.2.2.2.2.2.1 0 0 (by simp [capPlant]))
 
 /-- The interval relation only reads `[0, 1]`, where the kinked trajectory
 agrees with the constant one, so it obeys the network laws there. -/
@@ -264,6 +265,22 @@ example : FiniteHorizonPassiveOn capPlant capTraj 0 1 ∧
     · rw [hb]
       exact intervalIntegrable_const
   exact ⟨hpass capTraj rfl capTraj_trajectoryOn, hpass kinkTraj rfl kinkTraj_trajectoryOn⟩
+
+/-- Malformed branch data is not a plant: one branch in no class misses the
+covering half of the partition, so no plant with these classes exists and
+none can be certified passive. -/
+example : ¬ ∃ P : NetworkPlant 0 1, P.resistorSet = ∅ ∧ P.inductorSet = ∅ ∧
+    P.capacitorSet = ∅ ∧ P.sourceSet = ∅ := by
+  rintro ⟨P, hR, hL, hC, hS⟩
+  have hu := P.isBranchPartition.2.2.2.2.2.2
+  rw [hR, hL, hC, hS] at hu
+  exact absurd hu (by decide)
+
+/-- Malformed branch data is not a plant: one branch in two classes misses
+the disjointness half of the partition. -/
+example : ¬ ∃ P : NetworkPlant 0 1, 0 ∈ P.resistorSet ∧ 0 ∈ P.capacitorSet := by
+  rintro ⟨P, hR, hC⟩
+  exact Finset.disjoint_left.mp P.isBranchPartition.2.1 hR hC
 
 /-- Zero-length interval at time `2`: zero storage increase is at
 most zero supplied energy, through the public zero-length lemma. -/
