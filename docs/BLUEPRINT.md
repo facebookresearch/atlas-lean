@@ -135,6 +135,27 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
     can produce graph changes faster than people can check them, and a poor
     expansion spreads into every task below it.
 
+### Checks
+
+`build the wiki` checks these rules on every PR that touches the wiki:
+
+- `python scripts/check_graph_rules.py --base <base>` fails the PR on a broken
+  mechanical rule: annotations and article ids (rule 5), placement and folder
+  listings (rules 1 and 2), committed Lean-owned sections and informal edges
+  (rules 9 and 11, read with Autoform's own parser), the DAG-work marker
+  (rule 12), build outputs (rule 8) and PR size (rule 15).
+- `autoform check` validates the whole graph after `lean-facts`.
+- `autoform audit --json` runs report only, and its counts go in the job
+  summary: two pages for one declaration (rule 6), overfull folders (rule 3),
+  provenance and coverage gaps.
+
+Run the first two before opening a PR (with Autoform installed as below):
+
+```sh
+python scripts/check_graph_rules.py --base origin/main
+autoform check blueprint
+```
+
 ## Local environment and tests
 
 Use Python 3.11–3.14 and the Lean toolchain in `lean-toolchain`.
@@ -151,7 +172,9 @@ python -m unittest \
   scripts.test_extract_v2_lean_dependencies \
   scripts.test_check_blueprint_site_navigation \
   scripts.test_blueprint_workflow \
-  scripts.test_blueprint_taxonomy
+  scripts.test_blueprint_taxonomy \
+  scripts.test_check_graph_rules
+python scripts/check_graph_rules.py
 ```
 
 Render from a dedicated checkout that excludes `v1/` and `Atlas/`, as the

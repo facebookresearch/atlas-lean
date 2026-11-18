@@ -37,7 +37,7 @@ class BlueprintWorkflowTests(unittest.TestCase):
         for path in (
             "blueprint/**", "scripts/generate_wiki.py", "scripts/sync_wiki.py",
             "scripts/extract_v2_lean_dependencies.py", "scripts/dump_v2_dependencies.lean",
-            "scripts/check_blueprint_site.py", "scripts/taxonomy.json", "scripts/wiki-sync.json",
+            "scripts/check_blueprint_site.py", "scripts/check_graph_rules.py", "scripts/taxonomy.json", "scripts/wiki-sync.json",
             "scripts/requirements-blueprint.txt", "mkdocs.yml", "theme/**", "hooks/**",
             "docs/BLUEPRINT.md", ".github/workflows/blueprint-pages.yml", ".github/autoform-ref",
             "lean-toolchain", "lake-manifest.json", "lakefile.toml",
@@ -157,6 +157,20 @@ class BlueprintWorkflowTests(unittest.TestCase):
                        "github.event_name != 'merge_group'"):
             self.assertIn(clause, condition)
         self.assertNotIn("BLUEPRINT_PAGES", condition)
+
+    def test_the_audit_reports_without_blocking_and_fails_only_if_it_cannot_run(self):
+        audit = self.step("Audit the graph (report only)")
+        self.assertNotIn("if", audit)
+        self.assertNotIn("continue-on-error", audit)
+        # Actions runs a step with `bash -e`, so findings must not end it; a crash still does, through the
+        # JSON read below.
+        self.assertIn("|| status=$?", audit["run"])
+        self.assertIn("json.load", audit["run"])
+        self.assertIn("autoform audit blueprint --lean-root . --json", audit["run"])
+        self.assertIn("GITHUB_STEP_SUMMARY", audit["run"])
+        positions = {s.get("name"): i for i, s in enumerate(self.steps)}
+        self.assertLess(positions["Validate the theorem DAG and its declarations"], positions[audit["name"]])
+        self.assertLess(positions[audit["name"]], positions["Render the blueprint"])
 
 
 if __name__ == "__main__":

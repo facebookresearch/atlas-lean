@@ -14,6 +14,7 @@ on:
       - "scripts/extract_v2_lean_dependencies.py"
       - "scripts/dump_v2_dependencies.lean"
       - "scripts/check_blueprint_site.py"
+      - "scripts/check_graph_rules.py"
       - "scripts/taxonomy.json"
       - "scripts/wiki-sync.json"
       - "scripts/requirements-blueprint.txt"
@@ -24,6 +25,7 @@ on:
       - "scripts/test_check_blueprint_site_navigation.py"
       - "scripts/test_blueprint_workflow.py"
       - "scripts/test_blueprint_taxonomy.py"
+      - "scripts/test_check_graph_rules.py"
       - "mkdocs.yml"
       - "theme/**"
       - "hooks/**"
@@ -88,6 +90,23 @@ jobs:
           scripts.test_check_blueprint_site_navigation
           scripts.test_blueprint_workflow
           scripts.test_blueprint_taxonomy
+          scripts.test_check_graph_rules
+
+      # The wiki's own conventions (Graph rules, docs/BLUEPRINT.md), on the committed tree
+      # before lean-facts changes it. A PR is also held to GitHub's diff size.
+      - name: Check the graph's rules
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          check=(uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
+                 python scripts/check_graph_rules.py)
+          if [ -n "$BASE_SHA" ]; then
+            git fetch --no-tags --depth=1 origin "$BASE_SHA"
+            "${check[@]}" --base "$BASE_SHA"
+          else
+            "${check[@]}"
+          fi
 
       - name: Free disk space for Lean caches
         run: |
@@ -181,6 +200,29 @@ jobs:
         run: >-
           uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
           autoform check blueprint --lean-root .
+
+      # Report-only, so that its findings can be measured before any of them
+      # blocks a PR: two pages for one declaration, overfull folders,
+      # provenance and coverage gaps. The counts go in the job summary.
+      - name: Audit the graph (report only)
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          # Nonzero means findings; Actions runs steps with -e, so record it.
+          status=0
+          uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}" \
+            autoform audit blueprint --lean-root . --json > build/audit.json || status=$?
+          echo "autoform audit exited $status (nonzero means findings)"
+          python3 - build/audit.json >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import collections, json, sys
+          audit = json.load(open(sys.argv[1]))
+          counts = collections.Counter(finding.get("code", "?") for finding in audit.get("findings", []))
+          print("## autoform audit (report only)\n")
+          print("| Finding | Count |\n| --- | ---: |")
+          for code, count in counts.most_common():
+              print(f"| `{code}` | {count} |")
+          print(f"\n{len(audit.get('warnings', []))} warning(s).")
+          PY
 
       - name: Render the blueprint
         run: >-
