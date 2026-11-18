@@ -68,6 +68,15 @@ private theorem bind_integral_eq {Z α : Type*} [Fintype Z] [Fintype α]
   ring
 
 
+"/-- **Latent-mixture coordinate moments.** Let `Z` (latent states) and `ι`
+(items) be finite, `pi : PMF Z` a latent law with no support restriction,
+and `q z i ∈ [0, 1]` item curves (endpoints `0` and `1` allowed). Under
+the observed law `pi.bind (fun z => localIndepPMF (q z) ..)`, the first
+moment of coordinate `i` is the `pi`-mixture of the component means
+`q z i`, the pair moment of coordinates `i, j` is the mixture of the
+component products `q z i * q z j`, and for distinct coordinates
+`i ≠ j` the observed covariance is the finite covariance of the curves
+`z ↦ q z i`, `z ↦ q z j` under the weights `(pi z).toReal`. -/
 theorem latentMixture_coordinate_moments {Z ι : Type*} [Fintype Z] [Fintype ι]
     [DecidableEq ι] (pi : PMF Z) (q : Z → ι → ℝ)
     (hq0 : ∀ z i, 0 ≤ q z i) (hq1 : ∀ z i, q z i ≤ 1) :
