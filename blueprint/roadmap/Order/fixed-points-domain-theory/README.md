@@ -11,5 +11,5 @@ Least and greatest fixed points of monotone and Scott-continuous maps, Kleene it
 
 ## Related topics
 
-- Models of the untyped lambda calculus: λ-terms interpreted in the graph model.
-- PCF and computational adequacy: Scott's model of a typed language with recursion.
+- [Models of the untyped lambda calculus](../../ComputerScience/programming-language-semantics/models-of-the-untyped-lambda-calculus/README.md): λ-terms interpreted in the graph model.
+- [PCF and computational adequacy](../../ComputerScience/programming-language-semantics/pcf-and-computational-adequacy/README.md): Scott's model of a typed language with recursion.

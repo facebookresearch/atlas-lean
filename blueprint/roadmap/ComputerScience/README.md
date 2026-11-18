@@ -42,3 +42,8 @@ normal forms, and transaction concurrency control.
 - [Cryptography](cryptography/README.md)
 - [Databases](databases/README.md)
 - [Quantum algorithms](quantum-algorithms/README.md)
+- [Process calculi and behavioural equivalence](process-calculi/README.md)
+- [Concurrent systems and protocols](concurrent-systems-and-protocols/README.md)
+- [Programming language semantics](programming-language-semantics/README.md)
+- [Type systems and lambda calculi](type-systems-and-lambda-calculi/README.md)
+- [Program logics and verification](program-logics-and-verification/README.md)
