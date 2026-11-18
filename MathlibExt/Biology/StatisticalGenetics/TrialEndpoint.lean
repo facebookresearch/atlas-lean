@@ -9,46 +9,45 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import MathlibExt.Probability.Causality.CausalIdentification
 
 /-!
 # Prespecified truncated trial endpoint
 
-Potential endpoints truncated at a prespecified horizon give a difference-in-means estimand; truncation changes values beyond the horizon and is the identity inside it.
+Potential endpoints truncated at a prespecified horizon inherit the finite-population randomization results for difference-in-means; truncation changes event times beyond the horizon.
 -/
 
 @[expose] public section
 
-open Finset
-
 namespace MathlibExt.Biology.StatisticalGenetics.TrialEndpoint
 
-/-- **Truncated endpoint difference-in-means.** For a finite
-subject set with treated set `A` and control set `B`, the
-difference-in-means of the prespecified truncated endpoints
-`min (T i, h)` is the difference of the two truncated group means. -/
-theorem truncated_dim {ι : Type*} (T : ι → ℝ) (h : ℝ)
-    (A B : Finset ι) :
-    (∑ i ∈ A, min (T i) h) / (A.card : ℝ) -
-      (∑ i ∈ B, min (T i) h) / (B.card : ℝ) =
-    (∑ i ∈ A, min (T i) h) / (A.card : ℝ) -
-      (∑ i ∈ B, min (T i) h) / (B.card : ℝ) := by
-  rfl
+/-- The prespecified truncated endpoint of event time `T i` at
+horizon `h`: `min (T i) h`. -/
+def truncatedEndpoint {ι : Type*} (T : ι → ℝ) (h : ℝ) (i : ι) : ℝ :=
+  min (T i) h
 
-/-- **Censoring changes the estimand.** For an event time beyond
-the horizon (`h < T`), the truncated endpoint `min (T, h)` differs
-from the uncensored event time: truncation is not the identity. -/
-theorem truncation_changes_value {T h : ℝ} (hT : h < T) :
+/-- **Truncated endpoints inherit difference-in-means
+unbiasedness.** Under complete randomization with at least one
+treated and one control unit, the difference-in-means of the
+prespecified truncated potential endpoints is unbiased for their
+finite-population average treatment effect. This is
+`randExp_diffInMeans` applied to the truncated outcomes. -/
+lemma truncated_endpoint_unbiased {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (T0 T1 : ι → ℝ) (h : ℝ) {n1 : ℕ} (h1 : 1 ≤ n1)
+    (h0 : n1 + 1 ≤ Fintype.card ι) :
+    MathlibExt.Probability.Causality.randExp n1
+        (MathlibExt.Probability.Causality.diffInMeans
+          (truncatedEndpoint T0 h) (truncatedEndpoint T1 h)) =
+      MathlibExt.Probability.Causality.ate
+        (truncatedEndpoint T0 h) (truncatedEndpoint T1 h) :=
+  MathlibExt.Probability.Causality.randExp_diffInMeans _ _ h1 h0
+
+/-- **Truncation changes event times beyond the horizon.** For
+an event time beyond the horizon (`h < T`), the truncated
+endpoint differs from the uncensored event time. -/
+lemma truncation_changes_value {T h : ℝ} (hT : h < T) :
     min T h ≠ T := by
-  rw [min_eq_right hT.le]
+  rw [min_eq_right (le_of_lt hT)]
   exact ne_of_lt hT
-
-/-- **Truncation is the identity inside the horizon.** For an
-event time at or before the horizon (`T ≤ h`), the truncated
-endpoint equals the event time. -/
-theorem truncation_identity_inside {T h : ℝ} (hT : T ≤ h) :
-    min T h = T := by
-  exact min_eq_left hT
-
 
 end MathlibExt.Biology.StatisticalGenetics.TrialEndpoint

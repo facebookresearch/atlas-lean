@@ -17,9 +17,11 @@ namespace MathlibExtTest.Biology.StatisticalGenetics.TrialEndpoint
 open MathlibExt.Biology.StatisticalGenetics.TrialEndpoint
 
 /-- Event at `7` is truncated at horizon `5`. -/
-example : min (7:ℝ) 5 ≠ 7 := truncation_changes_value (T := (7:ℝ)) (h := (5:ℝ)) (by exact_mod_cast (by decide : (5:ℕ) < 7))
+example : min (7:ℝ) 5 ≠ 7 :=
+  truncation_changes_value (by exact_mod_cast (by decide : (5:ℕ) < 7))
 
-/-- Event at `3` is unchanged at horizon `5`. -/
-example : min (3:ℝ) 5 = 3 := truncation_identity_inside (T := (3:ℝ)) (h := (5:ℝ)) (by exact_mod_cast (by decide : (3:ℕ) ≤ 5))
+/-- Event at `3` is unchanged at horizon `5` (generic `min_eq_left`). -/
+example : min (3:ℝ) 5 = 3 :=
+  min_eq_left (by exact_mod_cast (by decide : (3:ℕ) ≤ 5))
 
 end MathlibExtTest.Biology.StatisticalGenetics.TrialEndpoint
