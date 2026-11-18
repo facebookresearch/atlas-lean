@@ -41,6 +41,8 @@ including secants crossing a corner or the plateau.
 
 /-! ## A. Secant bounds -/
 
+namespace FluidDynamics.Traffic
+
 /-- Capped-triangular front speed bounds. For the flux
 `q(k) = min (v * k) (min (w * (kj - k)) Qmax)` with `v, w, kj > 0`
 and `Qmax ≥ 0`, every secant slope between distinct densities in
@@ -155,3 +157,5 @@ theorem capped_triangular_secant_bounds {v w kj Qmax kL kR : ℝ}
         · rw [hL']
           exact le_trans
             (le_trans (sub_le_sub_right hR3 _) (le_of_eq (sub_self Qmax))) hnnv
+
+end FluidDynamics.Traffic

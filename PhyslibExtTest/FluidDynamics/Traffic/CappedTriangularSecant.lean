@@ -31,6 +31,6 @@ example : -3 ≤ (min (2 * (7 : ℝ)) (min (3 * (10 - 7)) 5)
         - min (2 * 6) (min (3 * (10 - 6)) 5)) / (7 - 6)
     ∧ (min (2 * (7 : ℝ)) (min (3 * (10 - 7)) 5)
         - min (2 * 6) (min (3 * (10 - 6)) 5)) / (7 - 6) ≤ 2 :=
-  capped_triangular_secant_bounds (by norm_num) (by norm_num)
+  FluidDynamics.Traffic.capped_triangular_secant_bounds (by norm_num) (by norm_num)
     (by norm_num) (by norm_num) (by norm_num [Set.mem_Icc])
     (by norm_num [Set.mem_Icc]) (by norm_num)
