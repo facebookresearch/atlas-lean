@@ -21,12 +21,12 @@ Root, two-address, and shifted-cylinder instances.
 open scoped ENNReal
 open Cslib.Language.BinaryTreeAddressLaw
 
-/-- PIN-TEST: at `p = 1/2` the root branches with mass `1/2`. -/
+/-- at `p = 1/2` the root branches with mass `1/2`. -/
 theorem test_law_half_root_branch :
     law (1 / 2) (branchAt []) = ENNReal.ofReal (1 / 2) := by
   exact law_root_branch (by norm_num) (by norm_num)
 
-/-- PIN-TEST: root and left child both branch at `p = 1/2`. -/
+/-- root and left child both branch at `p = 1/2`. -/
 theorem test_law_half_two_branch :
     law (1 / 2) (cylinder {[], [false]} (fun _ => true)) =
       ENNReal.ofReal (1 / 2) * ENNReal.ofReal (1 / 2) := by
@@ -34,7 +34,7 @@ theorem test_law_half_two_branch :
   rw [law_cylinder (by norm_num) (by norm_num)]
   simp [cylinder_mass, Finset.prod_pair hne]
 
-/-- PIN-TEST: root branches and right child is a leaf at general `p`. -/
+/-- root branches and right child is a leaf at general `p`. -/
 theorem test_law_root_branch_right_leaf {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
     law p (cylinder {[], [true]} (fun a => a.isEmpty)) =
       ENNReal.ofReal p * ENNReal.ofReal (1 - p) := by
@@ -42,7 +42,7 @@ theorem test_law_root_branch_right_leaf {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1
   rw [law_cylinder hp0 hp1]
   simp [cylinder_mass, Finset.prod_pair hne]
 
-/-- PIN-TEST: the branch event below the left shift is the branch
+/-- the branch event below the left shift is the branch
 event at the left-child address, with the root mass. -/
 theorem test_law_shiftLeft_preimage_root_branch {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
     law p (shiftLeft ⁻¹' branchAt []) = ENNReal.ofReal p := by
