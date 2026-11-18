@@ -60,9 +60,6 @@ used.
   power sign conventions.
 
 ## A. The branch-partition storage carrier
-
-Discharges ECE roadmap leaf `ECE.NET.ENERGY.L1` (network energy
-storage balance).
 -/
 
 @[expose] public section

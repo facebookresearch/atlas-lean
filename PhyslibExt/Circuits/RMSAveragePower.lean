@@ -51,9 +51,6 @@ network or load model is introduced.
   and the RMS phasor convention.
 
 ## A. RMS and peak waveform averages
-
-Discharges ECE roadmap leaf `ECE.NET.PHASOR.L1` (phasor average
-power).
 -/
 
 @[expose] public section
