@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import CSLibExt.MachineLearning.LatentVariable.BernoulliMixture
 public import CSLibExt.MachineLearning.LatentVariable.ExpectationMaximization
 public import MathlibExt.Probability.Statistics.Measurement.ItemResponse
 
@@ -82,30 +81,6 @@ theorem itemJoint_pos {Z ι : Type*} [Fintype Z] [Fintype ι] [DecidableEq ι]
   split
   · exact (ENNReal.ofReal_pos.mpr (F.prob_pos z i)).ne'
   · exact (ENNReal.ofReal_pos.mpr (sub_pos.mpr (F.prob_lt_one z i))).ne'
-
-/-- The posterior-average weight update `z ↦ (1 / N) ∑ n, p_θ(z | xₙ)` of a joint model `p`. -/
-noncomputable def weightUpdate {Θ X Z : Type*} [Fintype Z] {N : ℕ} (p : Θ → X → Z → ℝ)
-    (xs : Fin N → X) (θ : Θ) (z : Z) : ℝ :=
-  (∑ n, posterior p θ (xs n) z) / N
-
-/-- For a strictly positive joint and at least one data point, the posterior-average update is
-a valid latent weight. -/
-theorem weightUpdate_valid {Θ X Z : Type*} [Fintype Z] [Nonempty Z] {N : ℕ}
-    {p : Θ → X → Z → ℝ} (hp : ∀ θ x z, 0 < p θ x z) (xs : Fin N → X) (hN : 0 < N) (θ : Θ) :
-    WeightValid (weightUpdate p xs θ) := by
-  have hm : ∀ x, 0 < marginal p θ x := fun x =>
-    Finset.sum_pos (fun z _ => hp θ x z) Finset.univ_nonempty
-  have hNr : (0 : ℝ) < N := Nat.cast_pos.mpr hN
-  have hsum : ∀ x, ∑ z, posterior p θ x z = 1 := fun x => by
-    simp only [posterior]
-    rw [← Finset.sum_div]
-    exact div_self (hm x).ne'
-  refine ⟨fun z => div_pos (Finset.sum_pos (fun n _ => div_pos (hp θ _ z) (hm _))
-    ⟨⟨0, hN⟩, Finset.mem_univ _⟩) hNr, ?_⟩
-  simp only [weightUpdate]
-  rw [← Finset.sum_div, Finset.sum_comm]
-  simp only [hsum, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, mul_one]
-  exact div_self hNr.ne'
 
 /-- The fixed item likelihood `P_z(x)` (the weight-free part of `itemJoint`). -/
 noncomputable def itemLik {Z ι : Type*} [Fintype Z] [Fintype ι] [DecidableEq ι]

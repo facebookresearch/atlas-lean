@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.MachineLearning.LatentVariable.ItemResponseWeightStep
+import CSLibExt.MachineLearning.LatentVariable.BernoulliMixture
 
 /-!
 # Tests for the latent-weight EM step
