@@ -28,12 +28,16 @@ circuit (`Cslib.Circuits.Circuit`) with one real contamination delay per gate, i
 * `StableBefore s τ`: after the clock edge at time `0`, the signal `s : ℝ → U` takes a single
   value at every time before `τ`, that is on `[0, τ)`. Changes before the edge are unconstrained,
   so a signal may carry the previous cycle's transitions.
-* `Line.Causal`, `Program.Causal`: the gate-delay model at the edge. A gate's contamination delay
-  is nonnegative, and if every wire it reads is stable on `[0, τ)`, its output is stable on
-  `[0, cdelay + τ)`. This says the circuit has settled by the edge (the previous cycle met
-  setup) and that no gate responds to an input change sooner than its contamination delay.
+* `Line.Causal`, `Program.Causal`: the gate-delay model after the edge. A gate's contamination
+  delay is nonnegative, and if every wire it reads is stable on `[0, τ)`, its output is stable on
+  `[0, cdelay + τ)`: no gate responds to a change sooner than its contamination delay. The model
+  constrains only times from the edge on. A circuit still settling from the previous cycle can
+  violate it, but it does not say that any signal was settled before the edge.
+* `SettledBefore s δ`: before the edge, `s` already holds its value at the edge on `[-δ, 0]`.
+  This is the pre-edge (setup) side of a capture, which a setup analysis would supply.
 * `HoldMet s hold u`: a register clocked at time `0` sees its data input `s` unchanged from the
   edge until `hold + u`, the hold time plus the clock uncertainty.
+* `CaptureMet s setup hold u`: `s` holds its value at the edge on all of `[-setup, hold + u)`.
 
 ## Main results
 
@@ -44,10 +48,14 @@ circuit (`Cslib.Circuits.Circuit`) with one real contamination delay per gate, i
   after the edge before its minimum clock-to-Q delay `tqMin`, then
   `hold + u ≤ tqMin + earliest_path` certifies hold at the receiving register, where
   `earliest_path` is the output's earliest change with every input changing at time `0`.
+* `Circuit.captureMet_of_le_outputEarliests`: adding the explicit premise that the receiving
+  register's data input settled `setup` seconds before the edge, the same certificate gives a
+  single value on `[-setup, hold + u)`.
 
 The min-delay model is separate from any max-delay (setup) analysis: nothing here uses arrival
-times or depth. Settling before the edge, which a setup analysis would supply, is a premise of
-the causal model. Delays are premises of the model; setup timing, clock-domain crossing and
+times or depth. The hold certificate constrains only the window after the edge and needs no
+pre-edge premise; settling before the edge is the explicit premise `SettledBefore` of the
+capture certificate. Delays are premises of the model; setup timing, clock-domain crossing and
 glitch freedom are out of scope.
 -/
 
@@ -65,11 +73,12 @@ edge. Times before the edge are unconstrained. -/
 def StableBefore {U : Type*} (s : ℝ → U) (τ : WithTop ℝ) : Prop :=
   ∀ t₁ t₂ : ℝ, 0 ≤ t₁ → 0 ≤ t₂ → (t₁ : WithTop ℝ) < τ → (t₂ : WithTop ℝ) < τ → s t₁ = s t₂
 
-/-- **Causal gate-delay model for one gate.** The gate reading `line` has
-nonnegative contamination delay `cdelay` and output signal `out`, settled at the
-clock edge at time `0`: whenever every wire it reads is stable on `[0, τ)`, its
-output is stable on `[0, cdelay + τ)`. A gate with no inputs is therefore
-constant after the edge. -/
+/-- **Causal gate-delay model for one gate, after the clock edge.** The gate
+reading `line` has nonnegative contamination delay `cdelay` and output signal
+`out`: whenever every wire it reads is stable on `[0, τ)`, its output is stable
+on `[0, cdelay + τ)`. A gate with no inputs is therefore constant after the
+edge. Only times from the edge at `0` on are constrained: this does not say the
+output had settled before the edge (see `SettledBefore`). -/
 def Line.Causal {σ : Signature.{v}} {inputCount gateCount : Nat} {U : Type*}
     (line : Line σ inputCount gateCount) (wireSignal : Wire inputCount gateCount → ℝ → U)
     (cdelay : ℝ) (out : ℝ → U) : Prop :=
@@ -93,6 +102,19 @@ def Program.Causal {σ : Signature.{v}} {inputCount : Nat} {U : Type*} :
 plus the clock uncertainty `u`, that is on `[0, hold + u)`. -/
 def HoldMet {U : Type*} (s : ℝ → U) (hold u : ℝ) : Prop :=
   StableBefore s ((hold + u : ℝ) : WithTop ℝ)
+
+/-- **Settled before the edge.** The signal `s` already holds its value at the
+clock edge at time `0` throughout the `δ` seconds before it, that is on
+`[-δ, 0]`. -/
+def SettledBefore {U : Type*} (s : ℝ → U) (δ : ℝ) : Prop :=
+  ∀ t : ℝ, -δ ≤ t → t ≤ 0 → s t = s 0
+
+/-- **Capture check at the receiving register.** The register is clocked at time
+`0`; its data input `s` holds its value at the edge from `setup` seconds before
+the edge until the hold time `hold` plus the clock uncertainty `u`, that is on
+`[-setup, hold + u)`. -/
+def CaptureMet {U : Type*} (s : ℝ → U) (setup hold u : ℝ) : Prop :=
+  ∀ t : ℝ, -setup ≤ t → (t : WithTop ℝ) < ((hold + u : ℝ) : WithTop ℝ) → s t = s 0
 
 /-! ### Earliest change: min-plus propagation of contamination delays -/
 
@@ -377,5 +399,29 @@ theorem Circuit.holdMet_of_le_outputEarliests {σ : Signature.{v}}
   simp only [add_zero] at hshift
   rw [hshift] at hs
   exact StableBefore.mono hcert hs
+
+/-- **Capture certificate.** Under the premises of
+`Circuit.holdMet_of_le_outputEarliests`, if the receiving register's data input
+also settled `setup` seconds before the edge, it holds its value at the edge on
+`[-setup, hold + u)`. -/
+theorem Circuit.captureMet_of_le_outputEarliests {σ : Signature.{v}}
+    {inputCount outputCount : Nat} {U : Type*} (c : Circuit σ inputCount outputCount)
+    (cdelay : Fin c.size → ℝ)
+    (inputSignal : Fin inputCount → ℝ → U) (gateSignal : Fin c.size → ℝ → U)
+    (tqMin setup hold u : ℝ)
+    (hcausal : c.program.Causal cdelay inputSignal gateSignal)
+    (hlaunch : ∀ i, StableBefore (inputSignal i) (tqMin : WithTop ℝ))
+    (o : Fin outputCount)
+    (hsettled : SettledBefore (Wire.elim inputSignal gateSignal (c.outputs o)) setup)
+    (hcert : ((hold + u : ℝ) : WithTop ℝ) ≤
+      (tqMin : WithTop ℝ) + c.outputEarliests cdelay (fun _ => 0) o) :
+    CaptureMet (Wire.elim inputSignal gateSignal (c.outputs o)) setup hold u := by
+  have hhold := c.holdMet_of_le_outputEarliests cdelay inputSignal gateSignal tqMin hold u
+    hcausal hlaunch o hcert
+  intro t hlo hhi
+  rcases le_or_gt t 0 with ht | ht
+  · exact hsettled t hlo ht
+  · exact hhold t 0 ht.le le_rfl hhi
+      (lt_trans (WithTop.coe_lt_coe.mpr ht) hhi)
 
 end Cslib.Circuits

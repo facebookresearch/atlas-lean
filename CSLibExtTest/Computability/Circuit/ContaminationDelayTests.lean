@@ -15,9 +15,9 @@ public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Ring
 
-/-! Tests for contamination-delay propagation and the hold certificate on a circuit with a slow
-path and a short bypass that passes setup but fails hold, plus a constant output, repeated
-launches, an unsettled circuit and a negative delay. -/
+/-! Tests for contamination-delay propagation and the hold and capture certificates on a circuit
+with a slow path and a short bypass that passes setup but fails hold, plus a constant output,
+repeated launches, a late launch, a signal that changes at the edge and a negative delay. -/
 
 namespace Cslib.Circuits
 
@@ -258,6 +258,61 @@ example : HoldMet (s2 x₂) 1 (1/2) :=
     (prog_causal x₂ x₂_settled) launch_stable₂ 0
     (by rw [outputEarliests_zero, ← WithTop.coe_add])
 
+/-! ### Capture: the pre-edge premise is separate -/
+
+/-- **Capture with a single launch.** `g2` has been `false` since long before the edge, so the
+capture certificate gives one value on `[-1, 3/2)`. -/
+example : CaptureMet (s2 x₁) 1 1 (1/2) :=
+  circ.captureMet_of_le_outputEarliests cdelay (fun _ => x₁) (gSig x₁) 1 1 1 (1/2)
+    (prog_causal x₁ x₁_settled) launch_stable₁ 0
+    (fun t _ ht => (s2_of_lt (by linarith)).trans (s2_of_lt (by norm_num)).symm)
+    (by rw [outputEarliests_zero, ← WithTop.coe_add])
+
+/-- `g2` over repeated launches has settled `2` seconds before the edge. -/
+private theorem s2_x₂_settled : SettledBefore (s2 x₂) 2 := by
+  have hx : ∀ r : ℝ, -11 ≤ r → r < 1 → x₂ r = true := fun r h₁ h₂ => by
+    rw [x₂, decide_eq_true h₁, decide_eq_false (not_le.mpr h₂)]
+    rfl
+  intro t h₁ h₂
+  rw [s2_eq, s2_eq, hx (t - 17/2) (by linarith) (by linarith), hx (t - 1/2) (by linarith)
+    (by linarith), hx (0 - 17/2) (by norm_num) (by norm_num),
+    hx (0 - 1/2) (by norm_num) (by norm_num)]
+
+/-- **Capture over repeated launches.** With a two-second setup window the capture certificate
+applies. -/
+example : CaptureMet (s2 x₂) 2 1 (1/2) :=
+  circ.captureMet_of_le_outputEarliests cdelay (fun _ => x₂) (gSig x₂) 1 2 1 (1/2)
+    (prog_causal x₂ x₂_settled) launch_stable₂ 0 s2_x₂_settled
+    (by rw [outputEarliests_zero, ← WithTop.coe_add])
+
+/-- **The setup side can fail while hold passes.** `g2` changes at `-5/2`, inside a
+three-second setup window, so capture fails although hold holds. -/
+example : ¬ CaptureMet (s2 x₂) 3 1 (1/2) := by
+  intro h
+  have := h (-3) le_rfl (by rw [WithTop.coe_lt_coe]; norm_num)
+  rw [s2_eq, s2_eq] at this
+  norm_num [x₂] at this
+
+/-- A signal that changes exactly at the edge. -/
+private noncomputable def edgeSig (t : ℝ) : Bool := decide (0 ≤ t)
+
+/-- **The causal model says nothing before the edge.** A gate whose output changes exactly at
+the edge obeys the model for any nonnegative delay, whatever it reads. -/
+example (W : Wire 1 0 → ℝ → Bool) (d : ℝ) (hd : 0 ≤ d) :
+    (bufLine (.input 0) : Line σ2 1 0).Causal W d edgeSig :=
+  ⟨hd, fun _ _ t₁ t₂ h₀₁ h₀₂ _ _ => by simp [edgeSig, h₀₁, h₀₂]⟩
+
+/-- Such a signal meets hold, but it was not settled before the edge, so capture fails. -/
+example : HoldMet edgeSig 1 0 := fun t₁ t₂ h₀₁ h₀₂ _ _ => by simp [edgeSig, h₀₁, h₀₂]
+
+example (δ : ℝ) (hδ : 0 < δ) : ¬ SettledBefore edgeSig δ := fun h => by
+  have := h (-δ) le_rfl (by linarith)
+  simp [edgeSig, not_le.mpr (neg_lt_zero.mpr hδ)] at this
+
+example : ¬ CaptureMet edgeSig 1 1 0 := fun h => by
+  have := h (-1) le_rfl (by rw [WithTop.coe_lt_coe]; norm_num)
+  norm_num [edgeSig] at this
+
 /-! ### Violated premises -/
 
 /-- A launch at `-8`, too late for the slow path to settle before the edge, changes `g2` at
@@ -277,8 +332,8 @@ private theorem not_holdMet₃ : ¬ HoldMet (s2 x₃) 1 (1/2) := by
   rw [s2_eq, s2_eq] at this
   norm_num [x₃] at this
 
-/-- **Unsettled circuit.** The causal model is the settled-at-the-edge premise: these signals
-violate it, since otherwise the certificate would give the hold check that fails. -/
+/-- **Late launch.** A circuit still settling at the edge can violate the causal model: these
+signals violate it, since otherwise the certificate would give the hold check that fails. -/
 example : ¬ prog.Causal cdelay (fun _ => x₃) (gSig x₃) := fun hcausal =>
   not_holdMet₃ (circ.holdMet_of_le_outputEarliests cdelay (fun _ => x₃) (gSig x₃) 1 1 (1/2)
     hcausal launch_stable₃ 0 (by rw [outputEarliests_zero, ← WithTop.coe_add]))
