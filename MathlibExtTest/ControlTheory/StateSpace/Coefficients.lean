@@ -36,15 +36,10 @@ example (A : Matrix (Fin 1) (Fin 1) ℝ) (B : Matrix (Fin 1) (Fin 1) ℝ)
       = A *ᵥ x + B *ᵥ u := by
   rw [StateSpaceCoeffs.ofMatrix_A_apply, StateSpaceCoeffs.ofMatrix_B_apply]
 
--- The SISO adapter has the same field and output as the SISO system.
-example {n : Type*} [Fintype n]
-    (S : MathlibExt.Biology.Dynamics.IntegralFeedback.LinearSystem n)
-    (x : n → ℝ) (u : ℝ) :
-    (StateSpaceCoeffs.ofSISO S).A x + (StateSpaceCoeffs.ofSISO S).B u
-        = MathlibExt.Biology.Dynamics.IntegralFeedback.LinearSystem.field S x u ∧
-      (StateSpaceCoeffs.ofSISO S).C x + (StateSpaceCoeffs.ofSISO S).D u
-        = MathlibExt.Biology.Dynamics.IntegralFeedback.LinearSystem.output S x u :=
-  ⟨StateSpaceCoeffs.ofSISO_field S x u, StateSpaceCoeffs.ofSISO_output S x u⟩
+-- The coefficient record itself does not require a complete scalar
+-- field: it can be formed over `ℚ` from already-given continuous maps.
+example : StateSpaceCoeffs ℚ ℚ ℚ ℚ :=
+  ⟨0, 0, 0, 0⟩
 
 -- Empty state, input, and output index types are allowed for the matrix
 -- adapter.
@@ -60,5 +55,3 @@ example :
 #print axioms StateSpaceCoeffs.ofMatrix_C_apply
 #print axioms StateSpaceCoeffs.ofMatrix_D_apply
 #print axioms StateSpaceCoeffs.toMatrix_ofMatrix
-#print axioms StateSpaceCoeffs.ofSISO_field
-#print axioms StateSpaceCoeffs.ofSISO_output

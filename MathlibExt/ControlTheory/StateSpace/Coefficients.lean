@@ -11,7 +11,6 @@ module
 public import Mathlib.Analysis.CStarAlgebra.Matrix
 public import Mathlib.LinearAlgebra.Matrix.ToLin
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
-public import MathlibExt.Biology.Dynamics.IntegralFeedback
 
 /-!
 # State-space coefficients
@@ -23,9 +22,7 @@ normed spaces. It carries no trajectory semantics.
 On finite coordinate spaces, `StateSpaceCoeffs.ofMatrix` builds the
 coefficients from matrices by matrix-vector multiplication, and
 `StateSpaceCoeffs.toMatrix` extracts the representing matrices in the
-canonical bases. `StateSpaceCoeffs.ofSISO` adapts the real
-single-input single-output `LinearSystem`, with dynamics and output
-agreement theorems.
+canonical bases.
 -/
 
 open Matrix
@@ -38,7 +35,7 @@ namespace ControlTheory
 maps `A : X →L[𝕜] X`, `B : U →L[𝕜] X`, `C : X →L[𝕜] Y`, and
 `D : U →L[𝕜] Y` over normed spaces. This is only the coefficient view;
 it carries no trajectory semantics. -/
-structure StateSpaceCoeffs (𝕜 X U Y : Type*) [NontriviallyNormedField 𝕜] [CompleteSpace 𝕜]
+structure StateSpaceCoeffs (𝕜 X U Y : Type*) [NontriviallyNormedField 𝕜]
     [NormedAddCommGroup X] [NormedSpace 𝕜 X]
     [NormedAddCommGroup U] [NormedSpace 𝕜 U]
     [NormedAddCommGroup Y] [NormedSpace 𝕜 Y] where
@@ -68,7 +65,7 @@ noncomputable def ofMatrix {𝕜 : Type*} [NontriviallyNormedField 𝕜] [Comple
 
 /-- The matrices representing coefficients on finite coordinate spaces in
 the canonical bases. -/
-def toMatrix {𝕜 : Type*} [NontriviallyNormedField 𝕜] [CompleteSpace 𝕜]
+def toMatrix {𝕜 : Type*} [NontriviallyNormedField 𝕜]
     {n m p : Type*} [Fintype n] [Fintype m] [Fintype p]
     [DecidableEq n] [DecidableEq m] [DecidableEq p]
     (S : StateSpaceCoeffs 𝕜 (n → 𝕜) (m → 𝕜) (p → 𝕜)) :
@@ -104,7 +101,7 @@ theorem ofMatrix_D_apply {𝕜 : Type*} [NontriviallyNormedField 𝕜] [Complete
     (ofMatrix A B C D).D u = D *ᵥ u := by
   simp [ofMatrix]
 
-private theorem toMatrix'_mulVecLin {𝕜 : Type*} [NontriviallyNormedField 𝕜] [CompleteSpace 𝕜]
+private theorem toMatrix'_mulVecLin {𝕜 : Type*} [NontriviallyNormedField 𝕜]
     {a b : Type*} [Fintype a] [Fintype b] [DecidableEq b]
     (M : Matrix a b 𝕜) : LinearMap.toMatrix' (Matrix.mulVecLin M) = M := by
   have h : Matrix.mulVecLin M = Matrix.toLin' M := by
@@ -124,37 +121,6 @@ theorem toMatrix_ofMatrix {𝕜 : Type*} [NontriviallyNormedField 𝕜] [Complet
   simp only [toMatrix, ofMatrix]
   simp only [LinearMap.coe_toContinuousLinearMap]
   rw [toMatrix'_mulVecLin, toMatrix'_mulVecLin, toMatrix'_mulVecLin, toMatrix'_mulVecLin]
-
-/-- The coefficient record of the real single-input single-output
-`LinearSystem`: state matrix by matrix-vector multiplication, input map
-`u ↦ u • b`, output map `x ↦ c ⬝ᵥ x`, and feedthrough `u ↦ d * u`. -/
-noncomputable def ofSISO {n : Type*} [Fintype n]
-    (S : MathlibExt.Biology.Dynamics.IntegralFeedback.LinearSystem n) :
-    StateSpaceCoeffs ℝ (n → ℝ) ℝ ℝ where
-  A := (Matrix.mulVecLin S.A).toContinuousLinearMap
-  B := (LinearMap.smulRight (LinearMap.id : ℝ →ₗ[ℝ] ℝ) S.b).toContinuousLinearMap
-  C := ∑ i, (S.c i) • (ContinuousLinearMap.proj i : (n → ℝ) →L[ℝ] ℝ)
-  D := S.d • ContinuousLinearMap.id ℝ ℝ
-
-/-- The dynamics of `ofSISO S` are the SISO vector field:
-`A x + B u = S.field x u`. -/
-theorem ofSISO_field {n : Type*} [Fintype n]
-    (S : MathlibExt.Biology.Dynamics.IntegralFeedback.LinearSystem n)
-    (x : n → ℝ) (u : ℝ) :
-    (ofSISO S).A x + (ofSISO S).B u
-      = MathlibExt.Biology.Dynamics.IntegralFeedback.LinearSystem.field S x u := by
-  simp [ofSISO, MathlibExt.Biology.Dynamics.IntegralFeedback.LinearSystem.field,
-    LinearMap.smulRight_apply]
-
-/-- The output of `ofSISO S` is the SISO output:
-`C x + D u = S.output x u`. -/
-theorem ofSISO_output {n : Type*} [Fintype n]
-    (S : MathlibExt.Biology.Dynamics.IntegralFeedback.LinearSystem n)
-    (x : n → ℝ) (u : ℝ) :
-    (ofSISO S).C x + (ofSISO S).D u
-      = MathlibExt.Biology.Dynamics.IntegralFeedback.LinearSystem.output S x u := by
-  simp [ofSISO, MathlibExt.Biology.Dynamics.IntegralFeedback.LinearSystem.output,
-    dotProduct, smul_eq_mul]
 
 end StateSpaceCoeffs
 
