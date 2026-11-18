@@ -604,6 +604,111 @@ class Declarations(Vault):
         self.assertEqual((wiki.ROADMAP / "Algebra" / "README.md").read_text(),
                          "# Algebra\n\n- [Fields](fields/README.md)\n- [Rings](rings/README.md)\n")
 
+    def test_a_page_with_no_listed_neighbour_ends_its_folders_own_list(self) -> None:
+        # Not under "Related topics" or "Sources", which follow that list. Where the list runs over sections, a page
+        # joins one only beside its module's pages, whatever generate_wiki's order across modules, and else starts one
+        # of its own, under its module's title.
+        related = "## Related topics\n\n- [Rings](../rings/README.md): rings.\n\n## Sources\n\n- [Book](https://example.org)\n"
+        self.page("Algebra/groups/README.md", f"# Groups\n\nProse.\n\n- [Old](old.md) (wanted)\n\n{related}")
+        self.page("Algebra/bakery/README.md", "# Bakery\n\n## The algorithm\n\n- [State](state.md)\n\n## Mutual exclusion\n\n"
+                  f"- [Invariant](invariant.md)\n\n{related}")
+        self.page("Algebra/fields/README.md", f"# Fields\n\nProse.\n\n{related}")
+        sync.LINKS.mkdir(parents=True)
+        targets = []
+        for short, folder, module in (("sylow", "groups", "Sylow"), ("turn", "bakery", "TwoProcess"), ("galois", "fields", "Galois")):
+            target = declaration(f"Ext.{short}", short, short.title(), f"{short}.", module=("Ext", module))
+            target.path = wiki.ROADMAP / "Algebra" / folder / f"{short}.md"
+            targets.append(target)
+        targets[1].module_title = "Two-process bakery"
+        generated = {targets[1].path.parent / "README.md": "# Bakery\n\n- [State](state.md)\n- [Invariant](invariant.md)\n- [Turn](turn.md)\n"}
+        sync.apply_declarations(targets, SimpleNamespace(declarations={f"Ext.{t.slug}": None for t in targets}), generated)
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
+                         f"# Groups\n\nProse.\n\n- [Old](old.md) (wanted)\n- [Sylow](sylow.md)\n\n{related}")
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "bakery" / "README.md").read_text(),
+                         "# Bakery\n\n## The algorithm\n\n- [State](state.md)\n\n## Mutual exclusion\n\n- [Invariant](invariant.md)\n\n"
+                         f"## Two-process bakery\n\n- [Turn](turn.md)\n\n{related}")
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "fields" / "README.md").read_text(),
+                         f"# Fields\n\nProse.\n\n- [Galois](galois.md)\n\n{related}")
+
+    def test_a_flat_folder_stays_flat_and_each_topic_keeps_its_folder(self) -> None:
+        # generate_wiki splits a folder of more than MAX_CHILDREN entries into parts, numbered afresh as it grows. A
+        # folder the wiki has keeps its layout, so no page moves: no part folder goes beside its entries, and a topic
+        # that generate_wiki puts in a part keeps the folder it has.
+        groups = wiki.ROADMAP / "Algebra" / "groups"
+        self.page("Algebra/groups/README.md", "# Groups\n\n- [Sylow theorems](sylow/README.md)\n- [Old](old.md)\n")
+        self.page("Algebra/groups/old.md", "# Old\n")
+        self.page("Algebra/groups/sylow/README.md", "# Sylow theorems\n\n- [Sylow](sylow.md)\n")
+        self.page("Algebra/groups/sylow/sylow.md", "# Sylow\n")
+        self.annotate([self.about("Algebra/groups/old.md", object=[{"location": {"declaration": "Ext.old"}}]),
+                       self.about("Algebra/groups/sylow/sylow.md", object=[{"location": {"declaration": "Ext.sylow"}}])])
+        burnside = declaration("Ext.burnside", "burnside", "Burnside", "Burnside.", module=("Ext", "Burnside"))
+        burnside.path = groups / "part-02" / "burnside.md"
+        counting = declaration("Ext.counting", "counting", "Counting", "Counting.", module=("Ext", "SylowCounting"))
+        counting.path = groups / "part-02" / "sylow" / "counting.md"
+        generated = {
+            groups / "README.md": "# Groups\n\n## [Part 1 of 2](part-01/README.md)\n\n- [Old](part-01/old.md)\n\n"
+            "## [Part 2 of 2](part-02/README.md)\n\n- [Sylow theorems](part-02/sylow/README.md)\n- [Burnside](part-02/burnside.md)\n",
+            groups / "part-01" / "README.md": "# Part 1 of 2\n\n- [Old](old.md)\n",
+            groups / "part-02" / "README.md": "# Part 2 of 2\n\n- [Sylow theorems](sylow/README.md)\n- [Burnside](burnside.md)\n",
+            groups / "part-02" / "sylow" / "README.md": "# Sylow theorems\n\n- [Sylow](sylow.md)\n- [Counting](counting.md)\n",
+        }
+        index = SimpleNamespace(declarations={"Ext.old": None, "Ext.sylow": None, "Ext.burnside": None, "Ext.counting": None})
+        report = sync.apply_declarations([burnside, counting], index, generated)
+        self.assertEqual(report["added"], ["Ext.burnside -> Algebra/groups/burnside.md", "Ext.counting -> Algebra/groups/sylow/counting.md"])
+        self.assertEqual(report["folders"], [])
+        self.assertFalse((groups / "part-02").exists())
+        self.assertEqual((groups / "README.md").read_text(),
+                         "# Groups\n\n- [Sylow theorems](sylow/README.md)\n- [Old](old.md)\n- [Burnside](burnside.md)\n")
+        self.assertEqual((groups / "sylow" / "README.md").read_text(), "# Sylow theorems\n\n- [Sylow](sylow.md)\n- [Counting](counting.md)\n")
+
+    def test_a_folder_split_into_parts_keeps_its_parts(self) -> None:
+        # A topic keeps its folder in whichever part holds it; a new page or folder joins the last part, and the folder
+        # page's copy of each part's list follows the part.
+        groups = wiki.ROADMAP / "Algebra" / "groups"
+        self.page("Algebra/groups/README.md", "# Groups\n\n## [Part 1 of 2](part-01/README.md)\n\n- [Sylow theorems](part-01/sylow/README.md)\n"
+                  "- [Old](part-01/old.md)\n\n## [Part 2 of 2](part-02/README.md)\n\n- [Late](part-02/late.md)\n\n"
+                  "## Related topics\n\n- [Rings](../rings/README.md): rings.\n")
+        self.page("Algebra/groups/part-01/README.md", "# Part 1 of 2\n\n- [Sylow theorems](sylow/README.md)\n- [Old](old.md)\n")
+        self.page("Algebra/groups/part-02/README.md", "# Part 2 of 2\n\n- [Late](late.md)\n")
+        self.page("Algebra/groups/part-01/sylow/README.md", "# Sylow theorems\n\n- [Sylow](sylow.md)\n")
+        for page in ("part-01/old.md", "part-01/sylow/sylow.md", "part-02/late.md"):
+            self.page(f"Algebra/groups/{page}", f"# {Path(page).stem.title()}\n")
+        self.annotate([self.about(f"Algebra/groups/{page}", object=[{"location": {"declaration": f"Ext.{Path(page).stem}"}}])
+                       for page in ("part-01/old.md", "part-01/sylow/sylow.md", "part-02/late.md")])
+        burnside = declaration("Ext.burnside", "burnside", "Burnside", "Burnside.", module=("Ext", "Burnside"))
+        burnside.path = groups / "part-03" / "burnside.md"
+        counting = declaration("Ext.counting", "counting", "Counting", "Counting.", module=("Ext", "SylowCounting"))
+        counting.path = groups / "part-03" / "sylow" / "counting.md"
+        index = SimpleNamespace(declarations={f"Ext.{name}": None for name in ("old", "sylow", "late", "burnside", "counting")})
+        report = sync.apply_declarations([burnside, counting], index)
+        self.assertEqual(report["added"], ["Ext.burnside -> Algebra/groups/part-02/burnside.md",
+                                           "Ext.counting -> Algebra/groups/part-01/sylow/counting.md"])
+        self.assertFalse((groups / "part-03").exists())
+        self.assertEqual((groups / "part-02" / "README.md").read_text(), "# Part 2 of 2\n\n- [Late](late.md)\n- [Burnside](burnside.md)\n")
+        self.assertEqual((groups / "README.md").read_text(),
+                         "# Groups\n\n## [Part 1 of 2](part-01/README.md)\n\n- [Sylow theorems](part-01/sylow/README.md)\n"
+                         "- [Old](part-01/old.md)\n\n## [Part 2 of 2](part-02/README.md)\n\n- [Late](part-02/late.md)\n"
+                         "- [Burnside](part-02/burnside.md)\n\n## Related topics\n\n- [Rings](../rings/README.md): rings.\n")
+
+    def test_a_folder_page_split_into_parts_lists_what_its_parts_list(self) -> None:
+        groups = wiki.ROADMAP / "Algebra" / "groups"
+        self.page("Algebra/groups/README.md", "# Groups\n\n## [Part 1 of 2](part-01/README.md)\n\n- [Old](part-01/old.md)\n\n"
+                  "## [Part 2 of 2](part-02/README.md)\n\n- [A](part-02/a.md)\n- [C](part-02/c.md)\n")
+        self.page("Algebra/groups/part-01/README.md", "# Part 1 of 2\n\n- [Old](old.md)\n")
+        self.page("Algebra/groups/part-02/README.md", "# Part 2 of 2\n\n- [A](a.md)\n- [C](c.md)\n")
+        for page in ("part-01/old.md", "part-02/a.md", "part-02/c.md"):
+            self.page(f"Algebra/groups/{page}", f"# {Path(page).stem.upper()}\n")
+        self.annotate([self.about(f"Algebra/groups/{page}", object=[{"location": {"declaration": f"Ext.{Path(page).stem}"}}])
+                       for page in ("part-01/old.md", "part-02/a.md", "part-02/c.md")])
+        targets = [declaration(f"Ext.{short}", short, short.upper(), f"{short}.") for short in "abc"]
+        for number, target in enumerate(targets):
+            target.idx = number
+        sync.apply_declarations(targets, SimpleNamespace(declarations={f"Ext.{short}": None for short in ("old", "a", "b", "c")}))
+        self.assertEqual((groups / "part-02" / "README.md").read_text(), "# Part 2 of 2\n\n- [A](a.md)\n- [B](b.md)\n- [C](c.md)\n")
+        self.assertEqual((groups / "README.md").read_text(),
+                         "# Groups\n\n## [Part 1 of 2](part-01/README.md)\n\n- [Old](part-01/old.md)\n\n"
+                         "## [Part 2 of 2](part-02/README.md)\n\n- [A](part-02/a.md)\n- [B](part-02/b.md)\n- [C](part-02/c.md)\n")
+
     def test_a_docstring_edit_is_reported_from_the_second_run(self) -> None:
         self.page("Algebra/groups/README.md", "# Groups\n\n- [Old](old.md)\n")
         self.page("Algebra/groups/old.md", "# Old\n\nWiki text.\n")

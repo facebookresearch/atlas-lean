@@ -22,6 +22,11 @@ its page. It lists pages whose declaration is gone and docstrings that changed
 since the last run (scripts/wiki-sync.json keeps their digests), and changes no
 article that exists. Its first run records the digests only. The source-derived
 area catalog and coverage summary are refreshed with the same source snapshot.
+A page with no listed neighbour ends the folder page's own list, ahead of
+"Related topics" or "Sources"; it joins a section of that list only beside its
+module's pages, and else starts one under its module's title. A folder the wiki
+has keeps its layout and each topic its folder (see kept_layout), and a folder
+page split into parts lists what its parts list.
 
 import runs once, on a tree whose Lean still holds the wiki's English. TITLES.jsonl
 holds checked titles, one {"file", "name", "opening", "title"} per line: a
@@ -61,6 +66,10 @@ BOLD_LEAD = re.compile(r"\*\*(?P<lead>[^*\n]+)\*\*(?P<stop>[.:]?)")
 # A folder page's list item, and a heading that links a part, as generate_wiki writes them.
 LIST_LINK = re.compile(r"^- \[.*\]\(([^()\s]+)\)$")
 HEADING_LINK = re.compile(r"^#{2,6} \[.*\]\(([^()\s]+)\)$")
+# An item that links a page of the folder, its title, link and any text after it; a part's heading, its title and link.
+OWN_ITEM = re.compile(r"^- \[(.*)\]\((?!\.\./)([^():\s]+)\)(.*)$")
+PART_HEADING = re.compile(r"^#{2,6} \[(.*)\]\((part-\d+/README\.md)\)$")
+PART = re.compile(r"part-\d+")
 
 
 def split_frontmatter(text: str) -> tuple[dict[str, str], str]:
@@ -443,20 +452,42 @@ def listing(text: str) -> list[tuple[str, str]]:
     return items
 
 
-def add_to_listing(readme: Path, line: str, before: list[str] = (), after: list[str] = ()) -> None:
+def own_list(lines: list[str]) -> dict[int, str]:
+    """A folder page's own list: the line of each item that links a page of its folder, and the heading above it."""
+    heading, own = "", {}
+    for number, row in enumerate(lines):
+        if re.match(r"#{2,6} ", row):
+            heading = row
+        elif OWN_ITEM.match(row):
+            own[number] = heading
+    return own
+
+
+def add_to_listing(readme: Path, line: str, before: list[str] = (), after: list[str] = (), section: str = "") -> None:
     """Add a link line after the item linking the last of *before* that the page lists, else ahead of the item
-    linking the first of *after* that it lists, else after the page's last list item, or at its end."""
+    linking the first of *after* that it lists, else at the end of the page's own list, the items that link its
+    folder's pages: there, when that list runs over sections, under a heading *section* of its own. A page with no
+    such item takes it ahead of its first section, such as "Related topics", or at its end."""
     lines = readme.read_text().rstrip("\n").split("\n")
     items = {match.group(1): i for i, row in enumerate(lines) if (match := LIST_LINK.match(row))}
     at = next((items[link] + 1 for link in reversed(before) if link in items), None)
     if at is None:
         at = next((items[link] for link in after if link in items), None)
     if at is None:
-        last = max((i for i, row in enumerate(lines) if row.startswith("- [")), default=None)
-        if last is None and lines[-1].strip():
-            # A page's first item, apart from the text above it, which it would otherwise continue.
-            lines.append("")
-        at = len(lines) if last is None else last + 1
+        own = own_list(lines)
+        if own:
+            at = max(own) + 1
+            if section and len(set(own.values())) > 1:
+                lines[at:at] = ["", f"{own[at - 1].split(' ')[0]} {section}", ""]
+                at += 3
+        else:
+            # A page's first item, apart from the text above it and from the section below it.
+            at = next((i for i, row in enumerate(lines) if re.match(r"#{2,6} ", row)), len(lines))
+            if at < len(lines):
+                lines.insert(at, "")
+            if lines[at - 1].strip():
+                lines.insert(at, "")
+                at += 1
     lines.insert(at, line)
     readme.write_text("\n".join(lines) + "\n")
 
@@ -492,6 +523,41 @@ def without_empty_headings(text: str) -> str:
                 continue
         kept.append(row)
     return re.sub(r"\n{3,}", "\n\n", "\n".join(kept)).strip("\n") + "\n"
+
+
+def part_entries(text: str) -> list[tuple[str, str, str]]:
+    """A folder page's entries, each a title, a link and any text after it: the items that link its folder's pages,
+    and the heading of each of its parts in place of the items under it."""
+    entries, in_part = [], False
+    for row in text.split("\n"):
+        part = PART_HEADING.match(row)
+        if part:
+            entries.append((*part.groups(), ""))
+            in_part = True
+        elif re.match(r"#{1,6} ", row):
+            in_part = False
+        elif not in_part and (item := OWN_ITEM.match(row)):
+            entries.append(item.groups())
+    return entries
+
+
+def with_part_lists(readme: Path, text: str) -> str:
+    """A folder page whose list is split into parts, with each part's entries, as the part's own page lists them,
+    under the heading that links the part; any other page as it is."""
+    if not any(PART_HEADING.match(row) for row in text.split("\n")):
+        return text
+    rows, copied = [], False
+    for row in text.rstrip("\n").split("\n"):
+        part = PART_HEADING.match(row)
+        if part and (readme.parent / part.group(2)).is_file():
+            folder = Path(part.group(2)).parent.as_posix()
+            entries = part_entries((readme.parent / part.group(2)).read_text())
+            rows += [row, "", *(f"- [{title}]({folder}/{link}){rest}" for title, link, rest in entries), ""]
+            copied = True
+        elif not copied or re.match(r"#{1,6} ", row):
+            rows.append(row)
+            copied = False
+    return "\n".join(rows).rstrip("\n") + "\n"
 
 
 def declared(key: str, index) -> bool:
@@ -535,6 +601,37 @@ def deprecated(target) -> bool:
     return re.search(r"@\[[^\]]*\bdeprecated\b", "\n".join(lines[top:number + 1])) is not None
 
 
+def parts(folder: Path) -> list[Path]:
+    """A folder, and its parts and theirs, in order: a folder that is not split into parts alone."""
+    return [folder, *(part for page in sorted(folder.glob("part-*/README.md")) if PART.fullmatch(page.parent.name)
+                      for part in parts(page.parent))]
+
+
+def kept_layout(folder: Path, created: dict[Path, str]) -> tuple[Path, list[tuple[Path, Path]]]:
+    """The folder a page goes in that belongs in *folder*, the wiki's or generate_wiki's, and the folders on the way
+    that it still needs, each with the folder of generate_wiki's layout whose folder page it takes. generate_wiki
+    splits a folder of more than MAX_CHILDREN entries into parts, numbered afresh as the folder grows; a folder the
+    wiki has keeps its layout instead, so that no page moves. A part of generate_wiki's that such a folder lacks is
+    passed over: what generate_wiki puts in it goes in the folder itself if the folder is flat, else in its last part.
+    A topic keeps its folder, in whichever part holds it."""
+    def known(path: Path) -> bool:
+        return (path / "README.md").is_file() or path / "README.md" in created
+
+    at, laid_out, missing = wiki.ROADMAP, wiki.ROADMAP, []
+    for name in folder.relative_to(wiki.ROADMAP).parts:
+        laid_out = laid_out / name
+        if not (at / "README.md").is_file():
+            # Below a folder the run makes, generate_wiki's layout.
+            at = at / name
+        elif PART.fullmatch(name) and not known(at / name):
+            continue
+        else:
+            whole = next(path for path in (at, *at.parents) if not PART.fullmatch(path.name))
+            at = next((path / name for path in (at, *parts(whole)) if known(path / name)), parts(at)[-1] / name)
+        missing = [] if known(at) else [*missing, (at / "README.md", laid_out / "README.md")]
+    return (parts(at)[-1] if (at / "README.md").is_file() else at), missing
+
+
 def apply_declarations(targets: list, index, generated: dict[Path, str] | None = None,
                        unindexed: list[str] | None = None) -> dict[str, list[str]]:
     """Pages for new declarations, and the report; see the module docstring. ``generated`` holds generate_wiki's
@@ -563,17 +660,15 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     for key, target in sorted(current.items()):
         if key in pages or deprecated(target):
             continue
-        # Beside the module's pages, else on the generated path. A folder with no page of its own takes the folder
-        # pages generate_wiki lays out on the way to it; without them, the deepest folder on the way that has one.
-        folder = folders[target.module].most_common(1)[0][0] if folders[target.module] else target.path.parent
-        up, missing = folder, []
-        while not (up / "README.md").is_file() and up / "README.md" not in created and up != wiki.ROADMAP:
-            missing.append(up / "README.md")
-            up = up.parent
-        if missing and all(page in generated for page in missing):
-            created.update((page, generated[page]) for page in missing)
-        else:
-            folder = up
+        # Beside the module's pages, else on the generated path as the wiki's folders keep it (see kept_layout). A
+        # folder with no page of its own takes the folder pages generate_wiki lays out on the way to it; without them,
+        # the deepest folder on the way that has one.
+        folder, missing = kept_layout(folders[target.module].most_common(1)[0][0] if folders[target.module]
+                                      else target.path.parent, created)
+        if missing and all(laid_out in generated for _, laid_out in missing):
+            created.update((page, generated[laid_out]) for page, laid_out in missing)
+        elif missing:
+            folder = missing[0][0].parent.parent
         name, number = target.slug, 1
         while name in wiki.RESERVED_SLUGS or (folder / f"{name}.md").exists():
             number += 1
@@ -586,9 +681,11 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
         readme = folder / "README.md"
         if readme.is_file():
             # Where generate_wiki lists the page here, else in source order among its module's pages here, each
-            # with its section.
+            # with its section. A page joins a section of the folder page's own list only beside its module's pages:
+            # where that list runs over sections, generate_wiki's order across modules says nothing of them.
             order = listing(generated.get(readme, ""))
-            if target.path.name not in [entry[0] for entry in order]:
+            sectioned = len(set(own_list(readme.read_text().split("\n")).values())) > 1
+            if sectioned or target.path.name not in [entry[0] for entry in order]:
                 order = [(target.path.name if other is target else pages[declaration_key(other)].name, other.sections)
                          for other in in_source_order[target.module]
                          if other is target or (there := pages.get(declaration_key(other))) and there.parent == folder]
@@ -600,7 +697,8 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
             if earlier and later and earlier[-1][1] != order[position][1] == later[0][1]:
                 earlier = []
             add_to_listing(readme, f"- [{wiki.link_text(target.title)}]({target.path.name})",
-                           [entry[0] for entry in earlier], [entry[0] for entry in later])
+                           [entry[0] for entry in earlier], [entry[0] for entry in later],
+                           wiki.page_title(target.module_title) or wiki.topic_title(target.module[-1]))
         annotation: dict = {"subject": [{"type": "generic", "uri": "../" + target.path.relative_to(wiki.VAULT).as_posix()}]}
         if target.lean:
             annotation["object"] = [{"location": {"declaration": target.lean}}]
@@ -636,6 +734,11 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
             link = f"{readme.parent.name}/README.md"
             position = order.index(link) if link in order else len(order)
             add_to_listing(parent, f"- [{wiki.link_text(title(readme))}]({link})", order[:position], order[position + 1:])
+    # A folder page split into parts lists each part's entries under the heading that links it, as the part lists them.
+    for readme in sorted(wiki.ROADMAP.rglob("README.md")):
+        text = readme.read_text()
+        if text != (copied := with_part_lists(readme, text)):
+            readme.write_text(copied)
     # A declaration upstream never documented keeps its page; only one the Lean no longer declares is gone.
     report["gone"] = sorted(
         f"{key} ({path.relative_to(wiki.ROADMAP)})" for key, path in pages.items() if key not in current and not declared(key, index)
