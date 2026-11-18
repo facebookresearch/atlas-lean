@@ -32,7 +32,7 @@ namespace MathlibExt.Probability.Statistics.Measurement
 
 open MeasureTheory ProbabilityTheory
 
-/-! ## Helpers (proof-only, not PIN-COPY) -/
+/-! ## Helpers -/
 
 private theorem bind_integral_eq {Z α : Type*} [Fintype Z] [Fintype α]
     [MeasurableSpace α] [MeasurableSingletonClass α]
