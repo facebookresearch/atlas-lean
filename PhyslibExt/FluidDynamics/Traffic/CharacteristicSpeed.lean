@@ -20,8 +20,10 @@ import Mathlib.Analysis.Calculus.Deriv.Pow
 
 For the Greenshields flux `q(k) = vf * k * (1 - k / kj)`, the
 characteristic (kinematic wave) speed `q'(k) = vf * (1 - 2 * k / kj)`
-differs from the vehicle speed `q(k) / k = vf * (1 - k / kj)`:
-they agree only at zero density, and the characteristic speed is
+differs from the vehicle speed, the Greenshields constitutive
+speed `v(k) = vf * (1 - k / kj)`, which satisfies `q(k) = k * v(k)`
+for every `k` and equals the quotient `q(k) / k` for `k ≠ 0`:
+they agree at zero density, and the characteristic speed is
 negative for `k > kj / 2` while vehicles still move forward.
 
 ## ii. Key results
