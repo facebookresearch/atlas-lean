@@ -11,7 +11,6 @@ module
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Calculus.Deriv.MeanValue
 public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
-public import MathlibExt.Analysis.ODE.Duhamel
 public import PhyslibExt.Instrumentation.DACLevelError
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
