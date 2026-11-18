@@ -25,28 +25,27 @@ disjoint cylinders.
 
 namespace Cslib.Language
 
-/-! ## NEW: exact branch/leaf addresses of a finite tree
+/-! ## exact branch/leaf addresses of a finite tree
 
 The three address sets are defined by recursion on the existing
 trees, carrying the absolute root prefix `u`. No new tree type: the
-values are plain `Finset (List Bool)`, the address type of
-F12-L-ADDRESS-LAW. -/
+values are plain `Finset (List Bool)`, the address type of the binary address law. -/
 
-/-- NEW: branch (internal-node) addresses of `t` rooted at prefix `u`:
+/-- branch (internal-node) addresses of `t` rooted at prefix `u`:
 the root of every internal node; leaves contribute none. -/
 def CGTree.branchAddresses : CGTree → List Bool → Finset (List Bool)
   | .leaf, _ => ∅
   | .node l r, u =>
       insert u (l.branchAddresses (u ++ [false]) ∪ r.branchAddresses (u ++ [true]))
 
-/-- NEW: leaf addresses of `t` rooted at prefix `u`: the root of every
+/-- leaf addresses of `t` rooted at prefix `u`: the root of every
 tree leaf; internal nodes contribute none directly. -/
 def CGTree.leafAddresses : CGTree → List Bool → Finset (List Bool)
   | .leaf, u => {u}
   | .node l r, u =>
       l.leafAddresses (u ++ [false]) ∪ r.leafAddresses (u ++ [true])
 
-/-- NEW: active addresses of `t` rooted at prefix `u`: every node of
+/-- active addresses of `t` rooted at prefix `u`: every node of
 the tree. Descendants of leaves (non-empty continuations of a leaf
 address) are never active; see `not_mem_activeAddresses_of_leaf`. -/
 def CGTree.activeAddresses : CGTree → List Bool → Finset (List Bool)
@@ -54,55 +53,55 @@ def CGTree.activeAddresses : CGTree → List Bool → Finset (List Bool)
   | .node l r, u =>
       insert u (l.activeAddresses (u ++ [false]) ∪ r.activeAddresses (u ++ [true]))
 
-/-- NEW: the Bool assignment the tree imposes at prefix `u`: `true`
+/-- the Bool assignment the tree imposes at prefix `u`: `true`
 (branch) exactly on its branch addresses, `false` elsewhere. On the
 active set `false` is exactly the leaf addresses
 (`branchAssignment_eq_false_of_mem_active`). -/
 def CGTree.branchAssignment (t : CGTree) (u : List Bool) : List Bool → Bool :=
   fun a => decide (a ∈ t.branchAddresses u)
 
-/-- NEW: branch addresses of a derivation tree rooted at prefix `u`,
+/-- branch addresses of a derivation tree rooted at prefix `u`,
 by the same recursion, ignoring nonterminal/terminal labels. -/
 def PDerivTree.branchAddresses {NT T : Type*} : PDerivTree NT T → List Bool → Finset (List Bool)
   | .leaf _ _, _ => ∅
   | .node _ _ _ l r, u =>
       insert u (l.branchAddresses (u ++ [false]) ∪ r.branchAddresses (u ++ [true]))
 
-/-- NEW: leaf addresses of a derivation tree rooted at prefix `u`. -/
+/-- leaf addresses of a derivation tree rooted at prefix `u`. -/
 def PDerivTree.leafAddresses {NT T : Type*} : PDerivTree NT T → List Bool → Finset (List Bool)
   | .leaf _ _, u => {u}
   | .node _ _ _ l r, u =>
       l.leafAddresses (u ++ [false]) ∪ r.leafAddresses (u ++ [true])
 
-/-- NEW: active addresses of a derivation tree rooted at prefix `u`. -/
+/-- active addresses of a derivation tree rooted at prefix `u`. -/
 def PDerivTree.activeAddresses {NT T : Type*} : PDerivTree NT T → List Bool → Finset (List Bool)
   | .leaf _ _, u => {u}
   | .node _ _ _ l r, u =>
       insert u (l.activeAddresses (u ++ [false]) ∪ r.activeAddresses (u ++ [true]))
 
-/-- NEW: the Bool assignment a derivation tree imposes at prefix `u`. -/
+/-- the Bool assignment a derivation tree imposes at prefix `u`. -/
 def PDerivTree.branchAssignment {NT T : Type*} (t : PDerivTree NT T) (u : List Bool) :
     List Bool → Bool :=
   fun a => decide (a ∈ t.branchAddresses u)
 
-/-- NEW: the shape of a derivation tree as an existing `CGTree`
+/-- the shape of a derivation tree as an existing `CGTree`
 (projection, not a new tree type). Address sets of `t` are those of
 `t.shape`; see `PDerivTree.activeAddresses_shape`. -/
 def PDerivTree.shape {NT T : Type*} : PDerivTree NT T → CGTree
   | .leaf _ _ => .leaf
   | .node _ _ _ l r => .node l.shape r.shape
 
-/-! ## NEW: the cylinder of a finite tree -/
+/-! ## the cylinder of a finite tree -/
 
-/-- NEW: the cylinder of a finite one-nonterminal tree: the
-finite-address cylinder (F12-L-ADDRESS-LAW) on exactly its active
+/-- the cylinder of a finite one-nonterminal tree: the
+finite-address cylinder of the binary address law on exactly its active
 addresses, with its branch assignment. It constrains only active
 nodes; every address outside the active set, in particular every
 descendant of a leaf, is unrestricted. -/
 def treeCylinder (t : CGTree) : Set BinaryTreeAddressLaw.Ω :=
   BinaryTreeAddressLaw.cylinder (t.activeAddresses []) (t.branchAssignment [])
 
-/-- NEW: the cylinder of a finite derivation tree, by the same rule
+/-- the cylinder of a finite derivation tree, by the same rule
 on its own exact addresses. Same-shape derivation trees (different
 labels or terminals) have the same cylinder; disjointness below is
 therefore stated for distinct shapes, not distinct labelled trees. -/
@@ -455,7 +454,7 @@ theorem not_mem_active_of_leaf_helper (t : CGTree) :
             exact hd
           exact ihr c b hc hb hd'
 
-/-- NEW: the active addresses are exactly the branch and leaf
+/-- the active addresses are exactly the branch and leaf
 addresses, and the two kinds are disjoint. -/
 theorem CGTree.activeAddresses_eq_union (t : CGTree) (u : List Bool) :
     t.activeAddresses u = t.branchAddresses u ∪ t.leafAddresses u ∧
@@ -497,7 +496,7 @@ theorem CGTree.branchAssignment_eq_true_iff (t : CGTree) (u a : List Bool) :
   show decide (a ∈ t.branchAddresses u) = true ↔ a ∈ t.branchAddresses u
   by_cases h : a ∈ t.branchAddresses u <;> simp [h]
 
-/-- NEW: on an active address, assignment `false` is exactly being a
+/-- on an active address, assignment `false` is exactly being a
 leaf address of the tree. -/
 theorem CGTree.branchAssignment_eq_false_of_mem_active (t : CGTree) (u a : List Bool) :
     a ∈ t.activeAddresses u →
@@ -548,7 +547,7 @@ theorem CGTree.mem_activeAddresses_node_iff (l r : CGTree) (u a : List Bool) :
     · exact Or.inr (Or.inl ((mem_activeAddresses_iff l (u ++ [false]) a).mpr ⟨b, hb, hab⟩))
     · exact Or.inr (Or.inr ((mem_activeAddresses_iff r (u ++ [true]) a).mpr ⟨b, hb, hab⟩))
 
-/-- NEW: no descendant of a leaf is active. A non-empty continuation
+/-- no descendant of a leaf is active. A non-empty continuation
 `b` of a leaf address `a` is never constrained by the tree. -/
 theorem CGTree.not_mem_activeAddresses_of_leaf (t : CGTree) {a : List Bool}
     (ha : a ∈ t.leafAddresses []) {b : List Bool} (hb : b ≠ []) :
@@ -616,7 +615,7 @@ theorem mem_treeCylinder {t : CGTree} {ω : BinaryTreeAddressLaw.Ω} :
   rw [treeCylinder_def]
   exact BinaryTreeAddressLaw.mem_cylinder
 
-/-- NEW: membership depends only on the values at active addresses:
+/-- membership depends only on the values at active addresses:
 changing `ω` anywhere else, in particular below any leaf, keeps it
 in (and out of) the cylinder. -/
 theorem treeCylinder_mem_of_agree_on_active {t : CGTree}
@@ -632,7 +631,7 @@ theorem treeCylinder_mem_of_agree_on_active {t : CGTree}
     rw [h a ha]
     exact h2 a ha
 
-/-- NEW: the tree's own assignment, read as a point of `Ω`, lies in
+/-- the tree's own assignment, read as a point of `Ω`, lies in
 its cylinder, so every tree cylinder is nonempty (consistent) even
 when a boundary probability gives it measure zero. -/
 theorem CGTree.branchAssignment_mem_treeCylinder (t : CGTree) :
@@ -641,9 +640,8 @@ theorem CGTree.branchAssignment_mem_treeCylinder (t : CGTree) :
   intro a _
   rfl
 
-/-- NEW: a node cylinder is the root-branch event together with the
-two subtree cylinders pulled back along the exact prefix shifts of
-F12-L-ADDRESS-LAW. This is the decomposition the measure proof
+/-- a node cylinder is the root-branch event together with the
+two subtree cylinders pulled back along the exact prefix shifts of the binary address law. This is the decomposition the measure proof
 recurses on. -/
 theorem treeCylinder_node (l r : CGTree) :
     treeCylinder (CGTree.node l r) =
@@ -731,7 +729,7 @@ theorem treeCylinder_node (l r : CGTree) :
       rw [haddr] at eR'
       rw [eR', ← htrans, ← hagree]
 
-/-- NEW: a leaf cylinder is exactly the root-leaf event; the values
+/-- a leaf cylinder is exactly the root-leaf event; the values
 below the root are unrestricted. -/
 theorem treeCylinder_leaf :
     treeCylinder CGTree.leaf = BinaryTreeAddressLaw.leafAt [] := by
@@ -755,9 +753,9 @@ theorem treeCylinder_leaf :
     rw [hf]
     exact h
 
-/-! ## NEW: cylinder measure is the existing p/q weight -/
+/-! ## cylinder measure is the existing p/q weight -/
 
-/-- NEW: the finite product over the active addresses is the
+/-- the finite product over the active addresses is the
 existing weight with leaf weight `1 - p`. Proof route on port:
 induction on `t`, splitting `cylinder_mass` over the disjoint
 branch/leaf (equivalently left/right) address sets. -/
@@ -766,7 +764,7 @@ theorem treeCylinder_mass {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (t : CGTree)
       ENNReal.ofReal (t.weight p (1 - p)) :=
   cylinder_mass_active hp0 hp1 t []
 
-/-- NEW: the measure of a tree cylinder under the address law is its
+/-- the measure of a tree cylinder under the address law is its
 existing p/q weight (leaf weight `1 - p`). Directly
 `BinaryTreeAddressLaw.law_cylinder` composed with
 `treeCylinder_mass`. No range hypothesis on a second weight is
@@ -776,9 +774,9 @@ theorem treeCylinder_weight {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (t : CGTre
       ENNReal.ofReal (t.weight p (1 - p)) := by
   rw [treeCylinder_def, BinaryTreeAddressLaw.law_cylinder hp0 hp1, treeCylinder_mass hp0 hp1]
 
-/-! ## NEW: distinct finite trees have disjoint cylinders -/
+/-! ## distinct finite trees have disjoint cylinders -/
 
-/-- NEW: two distinct finite trees disagree, as branch/leaf, at some
+/-- two distinct finite trees disagree, as branch/leaf, at some
 address active for both. Proof route on port: induction on the first
 tree, case split on the second; the first node where one side is a
 leaf and the other a branch gives the address, and prefixes keep it
@@ -887,7 +885,7 @@ theorem CGTree.exists_disagreement_of_ne {t₁ t₂ : CGTree} (h : t₁ ≠ t₂
               rw [ag1, ag2, tr1, tr2]
               exact hdiff
 
-/-- NEW: distinct finite trees have disjoint cylinders, via
+/-- distinct finite trees have disjoint cylinders, via
 `BinaryTreeAddressLaw.cylinder_disjoint_of_ne` at the disagreement
 address of `exists_disagreement_of_ne`. -/
 theorem treeCylinder_disjoint_of_ne {t₁ t₂ : CGTree} (h : t₁ ≠ t₂) :
@@ -915,9 +913,9 @@ theorem treeCylinder_weight_disjoint {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
       Disjoint (treeCylinder t₁) (treeCylinder t₂) :=
   ⟨treeCylinder_weight hp0 hp1 t₁, treeCylinder_weight hp0 hp1 t₂,
     treeCylinder_disjoint_of_ne h⟩
-/-! ## NEW: derivation trees (`PDerivTree`) via their exact addresses -/
+/-! ## derivation trees (`PDerivTree`) via their exact addresses -/
 
-/-- NEW: the address sets of a derivation tree are those of its
+/-- the address sets of a derivation tree are those of its
 `CGTree` shape, at every prefix. Proof route: induction on `t`. -/
 theorem PDerivTree.addresses_shape {NT T : Type*} (t : PDerivTree NT T) (u : List Bool) :
     t.branchAddresses u = t.shape.branchAddresses u ∧
@@ -941,7 +939,7 @@ theorem PDerivTree.addresses_shape {NT T : Type*} (t : PDerivTree NT T) (u : Lis
         have e2 := (ihr (u ++ [true])).2.2
         simp only [PDerivTree.activeAddresses, PDerivTree.shape, CGTree.activeAddresses, e1, e2]
 
-/-- NEW: a derivation tree's cylinder is the cylinder of its shape. -/
+/-- a derivation tree's cylinder is the cylinder of its shape. -/
 theorem PDerivTree.treeCylinder_eq {NT T : Type*} (t : PDerivTree NT T) :
     t.treeCylinder = Cslib.Language.treeCylinder t.shape := by
   have hb := (PDerivTree.addresses_shape t []).1
@@ -952,7 +950,7 @@ theorem PDerivTree.treeCylinder_eq {NT T : Type*} (t : PDerivTree NT T) :
   unfold PDerivTree.treeCylinder Cslib.Language.treeCylinder
   rw [ha, hassign]
 
-/-- NEW: the shape maps of the copied bijection agree with the
+/-- the shape maps of the copied bijection agree with the
 existing `toCGTree` on `ambG` trees. -/
 theorem PDerivTree.shape_eq_toCGTree (t : PDerivTree ambG.NT Unit) :
     t.shape = toCGTree t := by
@@ -970,7 +968,7 @@ theorem PDerivTree.weightOf_eq_shape_weight {NT T : Type*} (w : ContextFreeRule 
   | node A B C l r ihl ihr =>
       simp only [PDerivTree.weightOf, PDerivTree.shape, CGTree.weight, hw_node, ihl, ihr]
 
-/-- NEW: under rule weights that depend only on rule shape (binary
+/-- under rule weights that depend only on rule shape (binary
 weight `p`, terminal weight `1 - p`), a derivation tree's cylinder
 measure is its existing derivation weight `PDerivTree.weightOf`.
 Proof route: `treeCylinder_eq`, induction on `t` for
@@ -984,7 +982,7 @@ theorem PDerivTree.treeCylinder_weight {NT T : Type*} {p : ℝ} (hp0 : 0 ≤ p) 
   rw [PDerivTree.treeCylinder_eq, Cslib.Language.treeCylinder_weight hp0 hp1,
     PDerivTree.weightOf_eq_shape_weight w p hw_node hw_leaf t]
 
-/-- NEW: derivation trees of distinct shape have disjoint cylinders.
+/-- derivation trees of distinct shape have disjoint cylinders.
 Distinct labelled trees of the *same* shape have equal cylinders, so
 shape-distinctness is the exact hypothesis; terminal yield plays no
 role (two trees below share a yield and are still disjoint). -/
