@@ -25,7 +25,7 @@ ESCAPED = re.compile(r"\\\$")
 LITERAL_DOLLAR = "\ufffc"
 DOLLAR_REFERENCES = frozenset({"#36", "#x24", "#X24", "dollar"})
 VOID = frozenset({"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"})
-# Text on either side of these elements does not run together on the page.
+# Text on either side of these elements, or of a verbatim element, does not run together on the page.
 BLOCK = frozenset({
     "address", "article", "aside", "blockquote", "br", "dd", "details", "div", "dl", "dt", "figcaption", "figure",
     "footer", "h1", "h2", "h3", "h4", "h5", "h6", "header", "hr", "li", "main", "nav", "ol", "p", "pre", "section",
@@ -50,7 +50,7 @@ class PageParser(HTMLParser):
         values = dict(attrs)
         classes = (values.get("class") or "").split()
         inside = bool(self._open and self._open[-1][1])
-        if tag in BLOCK and not inside:
+        if not inside and (tag in BLOCK or tag in VERBATIM):
             self.flow.append(BOUNDARY)
         if tag not in VOID:
             if "arithmatex" in classes and not inside:
@@ -73,7 +73,7 @@ class PageParser(HTMLParser):
             if self._open[depth][0] == tag:
                 del self._open[depth:]
                 break
-        if tag in BLOCK and not (self._open and self._open[-1][1]):
+        if (tag in BLOCK or tag in VERBATIM) and not (self._open and self._open[-1][1]):
             self.flow.append(BOUNDARY)
 
     def handle_data(self, data: str) -> None:
