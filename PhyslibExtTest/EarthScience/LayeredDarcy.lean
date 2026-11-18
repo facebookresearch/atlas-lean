@@ -39,3 +39,11 @@ example : (4 : ℝ) = (3 - 1) / ((2 : ℝ) / 4) := by
     (by intro i _; norm_num) (by intro i _; norm_num)
     (by intro i hi; interval_cases i <;> norm_num)
   simpa [Finset.sum_range_one] using h
+
+/-- Boundary documentation of the totalization: the empty
+system evaluates to `0` by Lean's division convention; this is
+not a physical conductivity claim (the physical results all
+require at least one positive layer). -/
+example : layeredEffectiveConductivity (n := 0) (fun _ => (1 : ℝ))
+    (fun _ => 1) = 0 := by
+  norm_num [layeredEffectiveConductivity]
