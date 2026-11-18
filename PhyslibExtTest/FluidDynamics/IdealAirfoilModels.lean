@@ -99,4 +99,66 @@ example : DifferentiableOn ℂ (JoukowskiBranch.physicalVelocity 1 2 0 0)
     {z : ℂ | 2 * (1 : ℝ) < ‖z‖} :=
   JoukowskiBranch.differentiableOn_physicalVelocity one_pos 2 0 0
 
+/-- Nonzero-circulation fixture: `a = 1`, `U = 1`, `Γ = 1`, `α = 0` has a
+nonzero `1 / z` tail coefficient and a finite bound with `R1 = 4`, `K = 13`. -/
+example :
+    (1 : ℂ) / (2 * Real.pi * Complex.I) ≠ 0 ∧
+      ∀ z : ℂ, 4 ≤ ‖z‖ →
+        ‖JoukowskiBranch.physicalVelocity 1 1 1 0 z - 1 - 1 / (2 * Real.pi * Complex.I * z)‖ ≤
+          13 / ‖z‖ ^ 2 := by
+  constructor
+  · exact div_ne_zero one_ne_zero
+      (mul_ne_zero (mul_ne_zero (by norm_num) (by exact_mod_cast Real.pi_ne_zero))
+        Complex.I_ne_zero)
+  · intro z hz
+    have h1 : (0 : ℝ) < 1 := by norm_num
+    have h2 : 4 * 1 ≤ ‖z‖ := by rwa [mul_one]
+    have h := JoukowskiBranch.physicalVelocity_farField_bound h1 1 1 0 h2
+    have hU : ((1 : ℝ) : ℂ) * Complex.exp (-(0 : ℝ) * Complex.I) = 1 := by
+      rw [Complex.ofReal_one, Complex.ofReal_zero, neg_zero, zero_mul,
+        Complex.exp_zero, one_mul]
+    have hK : (12 * |(1 : ℝ)| * (1 : ℝ) ^ 2 + 1 * |(1 : ℝ)|) = 13 := by norm_num
+    rw [hU, hK, Complex.ofReal_one] at h
+    exact h
+
+/-- Invalid-point fixture: the leading edge `z = -2a` maps to `ζ = -a`, where
+the conformal denominator vanishes, and it lies outside the bound region. -/
+example {a : ℝ} (ha : 0 < a) :
+    JoukowskiBranch.farFieldZeta a (-(2 * a : ℂ)) = -(a : ℂ) ∧
+      1 - (a : ℂ) ^ 2 / (JoukowskiBranch.farFieldZeta a (-(2 * a : ℂ))) ^ 2 = 0 ∧
+      ¬ (4 * a ≤ ‖(-(2 * a : ℂ))‖) := by
+  have ha0 : (a : ℂ) ≠ 0 := by exact_mod_cast ne_of_gt ha
+  have hz2 : (-(2 * a : ℂ)) ^ 2 = 4 * (a : ℂ) ^ 2 := by ring
+  have h4a : (4 : ℂ) * (a : ℂ) ^ 2 ≠ 0 :=
+    mul_ne_zero (by norm_num) (pow_ne_zero 2 ha0)
+  have hrad : (1 - 4 * (a : ℂ) ^ 2 / (-(2 * a : ℂ)) ^ 2 : ℂ) = 0 := by
+    rw [hz2, div_self h4a, sub_self]
+  have hζ : JoukowskiBranch.farFieldZeta a (-(2 * a : ℂ)) = -(a : ℂ) := by
+    unfold JoukowskiBranch.farFieldZeta
+    rw [hrad, Complex.sqrt_zero, add_zero, mul_one]
+    ring
+  have hD : (1 - (a : ℂ) ^ 2 / (JoukowskiBranch.farFieldZeta a (-(2 * a : ℂ))) ^ 2 : ℂ) = 0 := by
+    rw [hζ]
+    have hsq : (-(a : ℂ)) ^ 2 = (a : ℂ) ^ 2 := by ring
+    rw [hsq, div_self (pow_ne_zero 2 ha0), sub_self]
+  have hnorm : ‖(-(2 * a : ℂ))‖ = 2 * a := by
+    rw [norm_neg, norm_mul, show ‖(2 : ℂ)‖ = 2 by simp, Complex.norm_real,
+      Real.norm_eq_abs, abs_of_pos ha]
+  have hneg : ¬ (4 * a ≤ ‖(-(2 * a : ℂ))‖) := by
+    intro hcon
+    rw [hnorm] at hcon
+    linarith [hcon, ha]
+  exact ⟨hζ, hD, hneg⟩
+
+/-- The existential far-field package at `a = 1`: holomorphy on the
+exterior plus some radius and constant with the `K / ‖z‖^2` bound. -/
+example {U Γ α : ℝ} :
+    DifferentiableOn ℂ (JoukowskiBranch.physicalVelocity 1 U Γ α)
+        {z : ℂ | 2 * (1 : ℝ) < ‖z‖} ∧
+      ∃ R1 K : ℝ, 2 * (1 : ℝ) < R1 ∧ 0 ≤ K ∧ ∀ z : ℂ, R1 ≤ ‖z‖ →
+        ‖JoukowskiBranch.physicalVelocity 1 U Γ α z -
+            (U : ℂ) * Complex.exp (-α * Complex.I) -
+            (Γ : ℂ) / (2 * Real.pi * Complex.I * z)‖ ≤ K / ‖z‖ ^ 2 :=
+  JoukowskiBranch.exists_physicalVelocity_farField one_pos U Γ α
+
 end FluidDynamics.IdealAirfoilModels

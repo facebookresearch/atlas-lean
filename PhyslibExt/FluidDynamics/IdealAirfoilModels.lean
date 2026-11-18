@@ -196,11 +196,11 @@ theorem joukowski_farFieldZeta {a : ℝ} (ha : 0 < a) {z : ℂ}
     linear_combination hquad
   linear_combination e
 
-/-- The far-field branch lands outside the circle of radius `a`:
-`a < ‖ζ(z)‖` whenever `2 * a < ‖z‖`. -/
-theorem abs_farFieldZeta_gt {a : ℝ} (ha : 0 < a) {z : ℂ}
+/-- Route step: on the exterior region the branch satisfies
+`‖z‖ / 2 < ‖ζ(z)‖`. -/
+lemma norm_farFieldZeta_gt_half {a : ℝ} (ha : 0 < a) {z : ℂ}
     (hz : 2 * a < ‖z‖) :
-    a < ‖farFieldZeta a z‖ := by
+    ‖z‖ / 2 < ‖farFieldZeta a z‖ := by
   have hzz : (0 : ℝ) < ‖z‖ := by linarith [hz, ha]
   have hmem : (1 - 4 * a ^ 2 / z ^ 2 : ℂ) ∈ Complex.slitPlane :=
     radicand_mem_slitPlane ha hz
@@ -264,8 +264,15 @@ theorem abs_farFieldZeta_gt {a : ℝ} (ha : 0 < a) {z : ℂ}
   have hlt : (‖z‖ / 2) * 1
       < (‖z‖ / 2) * ‖(1 + Complex.sqrt (1 - 4 * a ^ 2 / z ^ 2 : ℂ))‖ :=
     mul_lt_mul_of_pos_left h1s h2a
-  have hza : a < ‖z‖ / 2 := by linarith [hz]
-  linarith [hlt, hza]
+  rwa [mul_one] at hlt
+
+/-- The far-field branch lands outside the circle of radius `a`:
+`a < ‖ζ(z)‖` whenever `2 * a < ‖z‖`. -/
+theorem abs_farFieldZeta_gt {a : ℝ} (ha : 0 < a) {z : ℂ}
+    (hz : 2 * a < ‖z‖) :
+    a < ‖farFieldZeta a z‖ := by
+  have h := norm_farFieldZeta_gt_half ha hz
+  linarith [h, hz]
 
 /-- The far-field branch is holomorphic on the exterior region. -/
 theorem differentiableAt_farFieldZeta {a : ℝ} (ha : 0 < a) {z : ℂ}
@@ -356,7 +363,7 @@ private theorem denominator_ne_zero {a : ℝ} (ha : 0 < a) {z : ℂ}
   linarith [hlt]
 
 
-/-! ## Physical complex velocity and its far-field remainder -/
+/-! ### Physical complex velocity and its far-field remainder -/
 
 /-- Circle-plane complex velocity (the Kutta numerator):
 `U * (exp (-α * I) - a^2 * exp (α * I) / ζ^2) + Γ / (2 * π * I * ζ)`. -/
@@ -372,88 +379,42 @@ noncomputable def physicalVelocity (a U Γ α : ℝ) (z : ℂ) : ℂ :=
   circleVelocity a U Γ α (farFieldZeta a z) /
     (1 - a ^ 2 / (farFieldZeta a z) ^ 2)
 
-/-- Convention check: at the trailing edge `ζ = a` the circle velocity is
-exactly the left-hand side of the merged `kutta_cancellation`. -/
-theorem circleVelocity_trailingEdge (a U Γ α : ℝ) :
-    circleVelocity a U Γ α (a : ℂ) =
-      (U : ℂ) * (Complex.exp (-α * Complex.I) -
-          a ^ 2 * Complex.exp (α * Complex.I) / (a : ℂ) ^ 2) +
-        (Γ : ℂ) / (2 * Real.pi * Complex.I * a) := by
-  rfl
-
-/-- Route step: on the exterior region the branch satisfies
-`‖z‖ / 2 < ‖ζ(z)‖`. -/
-theorem norm_farFieldZeta_gt_half {a : ℝ} (ha : 0 < a) {z : ℂ}
-    (hz : 2 * a < ‖z‖) :
-    ‖z‖ / 2 < ‖farFieldZeta a z‖ := by
-  have hzz : (0 : ℝ) < ‖z‖ := by linarith [hz, ha]
-  have hmem : (1 - 4 * a ^ 2 / z ^ 2 : ℂ) ∈ Complex.slitPlane :=
-    radicand_mem_slitPlane ha hz
-  have hre : 0 < (Complex.sqrt (1 - 4 * a ^ 2 / z ^ 2 : ℂ)).re := by
-    have hre_eq : (Complex.sqrt (1 - 4 * a ^ 2 / z ^ 2 : ℂ)).re
-        = √((‖(1 - 4 * a ^ 2 / z ^ 2 : ℂ)‖ + (1 - 4 * a ^ 2 / z ^ 2 : ℂ).re) / 2) := by
-      have hform := Complex.sqrt_eq_real_add_ite (a := (1 - 4 * a ^ 2 / z ^ 2 : ℂ))
-      rw [hform]
-      by_cases him : (0 : ℝ) ≤ (1 - 4 * a ^ 2 / z ^ 2 : ℂ).im
-      · simp only [him, ite_true]
-        simp [Complex.add_re, Complex.mul_re, Complex.ofReal_re,
-          Complex.ofReal_im, Complex.I_re, Complex.I_im, Complex.one_re]
-      · simp only [him, ite_false]
-        simp [Complex.add_re, Complex.mul_re, Complex.ofReal_re,
-          Complex.ofReal_im, Complex.I_re, Complex.I_im, Complex.one_re,
-          Complex.neg_re]
-    rw [hre_eq, Real.sqrt_pos]
-    rcases hmem with hpos | hne
-    · have hnn := norm_nonneg (1 - 4 * a ^ 2 / z ^ 2 : ℂ)
-      linarith [hnn, hpos]
-    · have hsq : ‖(1 - 4 * a ^ 2 / z ^ 2 : ℂ)‖ ^ 2
-          = (1 - 4 * a ^ 2 / z ^ 2 : ℂ).re * (1 - 4 * a ^ 2 / z ^ 2 : ℂ).re
-            + (1 - 4 * a ^ 2 / z ^ 2 : ℂ).im * (1 - 4 * a ^ 2 / z ^ 2 : ℂ).im := by
-        rw [Complex.norm_def, Real.sq_sqrt (Complex.normSq_nonneg _),
-          Complex.normSq_apply]
-      have him2 : (0 : ℝ)
-          < (1 - 4 * a ^ 2 / z ^ 2 : ℂ).im * (1 - 4 * a ^ 2 / z ^ 2 : ℂ).im :=
-        mul_self_pos.mpr hne
-      have hle : (1 - 4 * a ^ 2 / z ^ 2 : ℂ).re ≤ ‖(1 - 4 * a ^ 2 / z ^ 2 : ℂ)‖ :=
-        Complex.re_le_norm _
-      have hprod : (0 : ℝ)
-          < (‖(1 - 4 * a ^ 2 / z ^ 2 : ℂ)‖ + (1 - 4 * a ^ 2 / z ^ 2 : ℂ).re)
-            * (‖(1 - 4 * a ^ 2 / z ^ 2 : ℂ)‖ - (1 - 4 * a ^ 2 / z ^ 2 : ℂ).re) := by
-        have heq : (‖(1 - 4 * a ^ 2 / z ^ 2 : ℂ)‖ + (1 - 4 * a ^ 2 / z ^ 2 : ℂ).re)
-              * (‖(1 - 4 * a ^ 2 / z ^ 2 : ℂ)‖ - (1 - 4 * a ^ 2 / z ^ 2 : ℂ).re)
-            = (1 - 4 * a ^ 2 / z ^ 2 : ℂ).im * (1 - 4 * a ^ 2 / z ^ 2 : ℂ).im := by
-          linear_combination hsq
-        rw [heq]
-        exact him2
-      have hnn : (0 : ℝ)
-          ≤ ‖(1 - 4 * a ^ 2 / z ^ 2 : ℂ)‖ - (1 - 4 * a ^ 2 / z ^ 2 : ℂ).re := by
-        linarith [hle]
-      have hpos2 : (0 : ℝ)
-          < ‖(1 - 4 * a ^ 2 / z ^ 2 : ℂ)‖ + (1 - 4 * a ^ 2 / z ^ 2 : ℂ).re :=
-        pos_of_mul_pos_left hprod hnn
-      linarith [hpos2]
-  have h1s : (1 : ℝ) < ‖(1 + Complex.sqrt (1 - 4 * a ^ 2 / z ^ 2 : ℂ))‖ := by
-    have hle : (1 + Complex.sqrt (1 - 4 * a ^ 2 / z ^ 2 : ℂ)).re
-        ≤ ‖(1 + Complex.sqrt (1 - 4 * a ^ 2 / z ^ 2 : ℂ))‖ :=
-      Complex.re_le_norm _
-    have hre1 : (1 + Complex.sqrt (1 - 4 * a ^ 2 / z ^ 2 : ℂ)).re
-        = 1 + (Complex.sqrt (1 - 4 * a ^ 2 / z ^ 2 : ℂ)).re := by
-      rw [Complex.add_re, Complex.one_re]
-    linarith [hle, hre, hre1]
-  have hnorm : ‖farFieldZeta (a : ℂ) z‖
-      = (‖z‖ / 2) * ‖(1 + Complex.sqrt (1 - 4 * a ^ 2 / z ^ 2 : ℂ))‖ := by
-    unfold farFieldZeta
-    rw [norm_mul, norm_div, Complex.norm_ofNat]
-  rw [hnorm]
-  have h2a : (0 : ℝ) < ‖z‖ / 2 := by linarith [hzz]
-  have hlt : (‖z‖ / 2) * 1
-      < (‖z‖ / 2) * ‖(1 + Complex.sqrt (1 - 4 * a ^ 2 / z ^ 2 : ℂ))‖ :=
-    mul_lt_mul_of_pos_left h1s h2a
-  rwa [mul_one] at hlt
+/-- Kutta value at the trailing edge: with the Kutta circulation
+`Γ = -4πaU sin α` from `kutta_cancellation`, the circle velocity
+vanishes at `ζ = a`. -/
+lemma circleVelocity_kutta_trailingEdge {a U α : ℝ} (ha : 0 < a) :
+    circleVelocity a U (-4 * Real.pi * a * U * Real.sin α) α (a : ℂ) = 0 := by
+  have ha0 : (a : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr (ne_of_gt ha)
+  have ha20 : (a : ℂ) ^ 2 ≠ 0 := pow_ne_zero 2 ha0
+  have hsin := Complex.two_sin ((α : ℝ) : ℂ)
+  have hD : (Complex.exp ((-(α : ℂ)) * Complex.I) - Complex.exp ((α : ℂ) * Complex.I))
+      = -(2 * Complex.sin (α : ℂ) * Complex.I) := by
+    have h1 := congrArg (· * Complex.I) hsin.symm
+    simp only [mul_assoc, Complex.I_mul_I] at h1
+    linear_combination -h1
+  have h2 : ((2 : ℂ)) ≠ 0 := by norm_num
+  have hpi : ((Real.pi : ℝ) : ℂ) ≠ 0 :=
+    Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
+  have hM : (2 * Real.pi * Complex.I * (a : ℂ) : ℂ) ≠ 0 :=
+    mul_ne_zero (mul_ne_zero (mul_ne_zero h2 hpi) Complex.I_ne_zero) ha0
+  have hcast : ((-4 * Real.pi * a * U * Real.sin α : ℝ) : ℂ)
+      = -4 * (Real.pi : ℂ) * (a : ℂ) * (U : ℂ) * ((Real.sin α) : ℂ) := by
+    push_cast
+    ring
+  have hΓ : ((-4 * Real.pi * a * U * Real.sin α : ℝ) : ℂ)
+        / (2 * Real.pi * Complex.I * (a : ℂ))
+      = -((U : ℂ) * (-(2 * ((Real.sin α : ℝ) : ℂ) * Complex.I))) := by
+    rw [div_eq_iff hM, hcast]
+    linear_combination
+      (-(4 * (U : ℂ) * ((Real.sin α : ℝ) : ℂ) * (Real.pi : ℂ) * (a : ℂ))) *
+        Complex.I_mul_I
+  unfold circleVelocity
+  rw [mul_div_cancel_left₀ _ ha20, hD, ← Complex.ofReal_sin, hΓ]
+  exact add_neg_cancel _
 
 /-- Route step: for `4 * a ≤ ‖z‖` the conformal denominator is bounded
 away from zero, `3 / 4 ≤ ‖1 - a^2 / ζ(z)^2‖`. -/
-theorem norm_denominator_ge {a : ℝ} (ha : 0 < a) {z : ℂ}
+lemma norm_denominator_ge {a : ℝ} (ha : 0 < a) {z : ℂ}
     (hz : 4 * a ≤ ‖z‖) :
     (3 / 4 : ℝ) ≤ ‖1 - (a : ℂ) ^ 2 / (farFieldZeta a z) ^ 2‖ := by
   have hz2a : 2 * a < ‖z‖ := by linarith [hz, ha]
@@ -473,7 +434,7 @@ theorem norm_denominator_ge {a : ℝ} (ha : 0 < a) {z : ℂ}
 
 /-- Holomorphy: the physical complex velocity is complex-differentiable on
 the whole far-field exterior `2 * a < ‖z‖`. -/
-theorem differentiableOn_physicalVelocity {a : ℝ} (ha : 0 < a) (U Γ α : ℝ) :
+lemma differentiableOn_physicalVelocity {a : ℝ} (ha : 0 < a) (U Γ α : ℝ) :
     DifferentiableOn ℂ (physicalVelocity a U Γ α) {z : ℂ | 2 * a < ‖z‖} := by
   intro z hz
   have hz2a : 2 * a < ‖z‖ := hz
@@ -524,7 +485,7 @@ theorem differentiableOn_physicalVelocity {a : ℝ} (ha : 0 < a) (U Γ α : ℝ)
 `K = 12 * |U| * a^2 + a * |Γ|`,
 `‖W(z) - U * exp (-α * I) - Γ / (2 * π * I * z)‖ ≤ K / ‖z‖^2`
 for every `z` with `4 * a ≤ ‖z‖`. -/
-theorem physicalVelocity_farField_bound {a : ℝ} (ha : 0 < a) (U Γ α : ℝ)
+lemma physicalVelocity_farField_bound {a : ℝ} (ha : 0 < a) (U Γ α : ℝ)
     {z : ℂ} (hz : 4 * a ≤ ‖z‖) :
     ‖physicalVelocity a U Γ α z - (U : ℂ) * Complex.exp (-α * Complex.I) -
         (Γ : ℂ) / (2 * Real.pi * Complex.I * z)‖ ≤
@@ -768,7 +729,7 @@ theorem physicalVelocity_farField_bound {a : ℝ} (ha : 0 < a) (U Γ α : ℝ)
 /-- Existential packaging of the leaf: holomorphy on `2 * a < ‖z‖` and
 constants `R1 > 2 * a`, `K ≥ 0` with the `K / ‖z‖^2` remainder bound for
 `R1 ≤ ‖z‖`. -/
-theorem exists_physicalVelocity_farField {a : ℝ} (ha : 0 < a) (U Γ α : ℝ) :
+lemma exists_physicalVelocity_farField {a : ℝ} (ha : 0 < a) (U Γ α : ℝ) :
     DifferentiableOn ℂ (physicalVelocity a U Γ α) {z : ℂ | 2 * a < ‖z‖} ∧
       ∃ R1 K : ℝ, 2 * a < R1 ∧ 0 ≤ K ∧ ∀ z : ℂ, R1 ≤ ‖z‖ →
         ‖physicalVelocity a U Γ α z - (U : ℂ) * Complex.exp (-α * Complex.I) -
@@ -777,59 +738,6 @@ theorem exists_physicalVelocity_farField {a : ℝ} (ha : 0 < a) (U Γ α : ℝ) 
     12 * |U| * a ^ 2 + a * |Γ|, by linarith [ha], by positivity, ?_⟩
   intro z hz
   exact physicalVelocity_farField_bound ha U Γ α hz
-
-/-! ## Fixtures -/
-
-/-- Nonzero-circulation fixture: `a = 1`, `U = 1`, `Γ = 1`, `α = 0` has a
-nonzero `1 / z` tail coefficient and a finite bound with `R1 = 4`, `K = 13`. -/
-theorem fixture_nonzero_tail :
-    (1 : ℂ) / (2 * Real.pi * Complex.I) ≠ 0 ∧
-      ∀ z : ℂ, 4 ≤ ‖z‖ →
-        ‖physicalVelocity 1 1 1 0 z - 1 - 1 / (2 * Real.pi * Complex.I * z)‖ ≤
-          13 / ‖z‖ ^ 2 := by
-  constructor
-  · exact div_ne_zero one_ne_zero
-      (mul_ne_zero (mul_ne_zero (by norm_num) (by exact_mod_cast Real.pi_ne_zero))
-        Complex.I_ne_zero)
-  · intro z hz
-    have h1 : (0 : ℝ) < 1 := by norm_num
-    have h2 : 4 * 1 ≤ ‖z‖ := by rwa [mul_one]
-    have h := physicalVelocity_farField_bound h1 1 1 0 h2
-    have hU : ((1 : ℝ) : ℂ) * Complex.exp (-(0 : ℝ) * Complex.I) = 1 := by
-      rw [Complex.ofReal_one, Complex.ofReal_zero, neg_zero, zero_mul,
-        Complex.exp_zero, one_mul]
-    have hK : (12 * |(1 : ℝ)| * (1 : ℝ) ^ 2 + 1 * |(1 : ℝ)|) = 13 := by norm_num
-    rw [hU, hK, Complex.ofReal_one] at h
-    exact h
-
-/-- Invalid-point fixture: the leading edge `z = -2a` maps to `ζ = -a`, where
-the conformal denominator vanishes, and it lies outside the bound region. -/
-theorem fixture_leadingEdge {a : ℝ} (ha : 0 < a) :
-    farFieldZeta a (-(2 * a : ℂ)) = -(a : ℂ) ∧
-      1 - (a : ℂ) ^ 2 / (farFieldZeta a (-(2 * a : ℂ))) ^ 2 = 0 ∧
-      ¬ (4 * a ≤ ‖(-(2 * a : ℂ))‖) := by
-  have ha0 : (a : ℂ) ≠ 0 := by exact_mod_cast ne_of_gt ha
-  have hz2 : (-(2 * a : ℂ)) ^ 2 = 4 * (a : ℂ) ^ 2 := by ring
-  have h4a : (4 : ℂ) * (a : ℂ) ^ 2 ≠ 0 :=
-    mul_ne_zero (by norm_num) (pow_ne_zero 2 ha0)
-  have hrad : (1 - 4 * (a : ℂ) ^ 2 / (-(2 * a : ℂ)) ^ 2 : ℂ) = 0 := by
-    rw [hz2, div_self h4a, sub_self]
-  have hζ : farFieldZeta a (-(2 * a : ℂ)) = -(a : ℂ) := by
-    unfold farFieldZeta
-    rw [hrad, Complex.sqrt_zero, add_zero, mul_one]
-    ring
-  have hD : (1 - (a : ℂ) ^ 2 / (farFieldZeta a (-(2 * a : ℂ))) ^ 2 : ℂ) = 0 := by
-    rw [hζ]
-    have hsq : (-(a : ℂ)) ^ 2 = (a : ℂ) ^ 2 := by ring
-    rw [hsq, div_self (pow_ne_zero 2 ha0), sub_self]
-  have hnorm : ‖(-(2 * a : ℂ))‖ = 2 * a := by
-    rw [norm_neg, norm_mul, show ‖(2 : ℂ)‖ = 2 by simp, Complex.norm_real,
-      Real.norm_eq_abs, abs_of_pos ha]
-  have hneg : ¬ (4 * a ≤ ‖(-(2 * a : ℂ))‖) := by
-    intro hcon
-    rw [hnorm] at hcon
-    linarith [hcon, ha]
-  exact ⟨hζ, hD, hneg⟩
 
 end JoukowskiBranch
 
