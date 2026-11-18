@@ -12,7 +12,6 @@ public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.Analysis.Complex.Trigonometric
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Analysis.Calculus.Deriv.Basic
-public import PhyslibExt.Circuits.RMSAveragePower
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
