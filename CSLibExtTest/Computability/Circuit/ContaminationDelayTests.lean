@@ -16,7 +16,8 @@ public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Ring
 
 /-! Tests for contamination-delay propagation and the hold certificate on a circuit with a slow
-path and a short bypass that passes setup but fails hold, plus a constant output. -/
+path and a short bypass that passes setup but fails hold, plus a constant output, repeated
+launches, an unsettled circuit and a negative delay. -/
 
 namespace Cslib.Circuits
 
@@ -93,24 +94,30 @@ example (w : Wire 1 4) :
 
 /-! ### Signals obeying the causal model -/
 
-/-- The launching register's output: `false` before `tqMin = 1`, `true` from `1` on. -/
-private noncomputable def inSig : Fin 1 → ℝ → Bool := fun _ t => decide (1 ≤ t)
-
-/-- Gate signals with transport delays `4, 4, 1/2, 1`, each at least the contamination delay:
-the slow path through `g0` and `g1` takes `8`, the bypass `1/2`. -/
-private noncomputable def s0 (t : ℝ) : Bool := inSig 0 (t - 4)
-private noncomputable def s1 (t : ℝ) : Bool := s0 (t - 4)
-private noncomputable def s2 (t : ℝ) : Bool := s1 (t - 1/2) ^^ inSig 0 (t - 1/2)
+/-- Gate signals driven by the launching register's output `x`, with transport delays
+`4, 4, 1/2, 1`, each at least the contamination delay: the slow path through `g0` and `g1`
+takes `8`, the bypass `1/2`. -/
+private noncomputable def s0 (x : ℝ → Bool) (t : ℝ) : Bool := x (t - 4)
+private noncomputable def s1 (x : ℝ → Bool) (t : ℝ) : Bool := s0 x (t - 4)
+private noncomputable def s2 (x : ℝ → Bool) (t : ℝ) : Bool := s1 x (t - 1/2) ^^ x (t - 1/2)
 private def s3 (_ : ℝ) : Bool := true
 
-private noncomputable def gSig : Fin 4 → ℝ → Bool := ![s0, s1, s2, s3]
+private noncomputable def gSig (x : ℝ → Bool) : Fin 4 → ℝ → Bool := ![s0 x, s1 x, s2 x, s3]
 
-/-- A gate whose output is a function of its inputs `δ` seconds earlier obeys the causal model
-for any contamination delay at most `δ`. -/
+private theorem s2_eq (x : ℝ → Bool) (t : ℝ) : s2 x t = (x (t - 17/2) ^^ x (t - 1/2)) := by
+  simp only [s2, s1, s0]
+  congr 2
+  ring
+
+/-- A gate whose output is a function of its inputs `δ` seconds earlier, and whose inputs did
+not change during the `δ` seconds before the edge, obeys the causal model for any nonnegative
+contamination delay at most `δ`. -/
 private theorem causal_of_transport {σ : Signature} {m g : ℕ} {U : Type*} (line : Line σ m g)
-    (W : Wire m g → ℝ → U) (d δ : ℝ) (hd : d ≤ δ) (out : ℝ → U)
+    (W : Wire m g → ℝ → U) (d δ : ℝ) (hd₀ : 0 ≤ d) (hd : d ≤ δ) (out : ℝ → U)
     (F : (Fin (σ.Arity line.op) → U) → U)
-    (hout : ∀ t, out t = F fun k => W (line.wires k) (t - δ)) : line.Causal W d out := by
+    (hout : ∀ t, out t = F fun k => W (line.wires k) (t - δ))
+    (hsettled : ∀ k t, -δ ≤ t → t ≤ 0 → W (line.wires k) t = W (line.wires k) 0) :
+    line.Causal W d out := by
   have shift : ∀ {t : ℝ} {τ : WithTop ℝ}, (t : WithTop ℝ) < (d : WithTop ℝ) + τ →
       ((t - δ : ℝ) : WithTop ℝ) < τ := by
     intro t τ h
@@ -120,57 +127,82 @@ private theorem causal_of_transport {σ : Signature} {m g : ℕ} {U : Type*} (li
       rw [← WithTop.coe_add, WithTop.coe_lt_coe] at h
       rw [WithTop.coe_lt_coe]
       linarith
-  intro τ h t₁ t₂ h₁ h₂
+  refine ⟨hd₀, fun τ h t₁ t₂ h₀₁ h₀₂ h₁ h₂ => ?_⟩
+  have key : ∀ t : ℝ, 0 ≤ t → (t : WithTop ℝ) < (d : WithTop ℝ) + τ →
+      ∀ k, W (line.wires k) (t - δ) = W (line.wires k) 0 := by
+    intro t h₀ ht k
+    by_cases hle : t - δ ≤ 0
+    · exact hsettled k _ (by linarith) hle
+    · have hpos : 0 < t - δ := lt_of_not_ge hle
+      exact h k _ _ hpos.le le_rfl (shift ht)
+        (lt_trans (WithTop.coe_lt_coe.mpr hpos) (shift ht))
   rw [hout, hout]
   congr 1
   funext k
-  exact h k _ _ (shift h₁) (shift h₂)
+  rw [key t₁ h₀₁ h₁ k, key t₂ h₀₂ h₂ k]
 
-private theorem prog_causal : prog.Causal cdelay inSig gSig :=
-  ⟨⟨⟨⟨trivial, causal_of_transport _ _ _ 4 (show (3 : ℝ) ≤ 4 by norm_num) _
-      (fun f : Fin 2 → Bool => f 0) fun _ => rfl⟩,
-    causal_of_transport _ _ _ 4 (show (3 : ℝ) ≤ 4 by norm_num) _
-      (fun f : Fin 2 → Bool => f 0) fun _ => rfl⟩,
-    causal_of_transport _ _ _ (1/2) (show (1/2 : ℝ) ≤ 1/2 from le_rfl) _
-      (fun f : Fin 2 → Bool => f 0 ^^ f 1) fun _ => rfl⟩,
-    causal_of_transport _ _ _ 1 (show (1 : ℝ) ≤ 1 from le_rfl) _
-      (fun _ : Fin 0 → Bool => true) fun _ => rfl⟩
+/-- The program obeys the causal model whenever the launching register's output did not change
+during the slow path's `17/2` seconds before the edge (the previous cycle settled). -/
+private theorem prog_causal (x : ℝ → Bool) (hx : ∀ t, -17/2 ≤ t → t ≤ 0 → x t = x 0) :
+    prog.Causal cdelay (fun _ => x) (gSig x) :=
+  ⟨⟨⟨⟨trivial, causal_of_transport _ _ _ 4 (show (0 : ℝ) ≤ 3 by norm_num)
+      (show (3 : ℝ) ≤ 4 by norm_num) _
+      (fun f : Fin 2 → Bool => f 0) (fun _ => rfl) fun k t h₁ h₂ => by
+        fin_cases k <;> exact hx t (by linarith) h₂⟩,
+    causal_of_transport _ _ _ 4 (show (0 : ℝ) ≤ 3 by norm_num)
+      (show (3 : ℝ) ≤ 4 by norm_num) _
+      (fun f : Fin 2 → Bool => f 0) (fun _ => rfl) fun k t h₁ h₂ => by
+        fin_cases k <;>
+          exact (hx (t - 4) (by linarith) (by linarith)).trans
+            (hx (0 - 4) (by norm_num) (by norm_num)).symm⟩,
+    causal_of_transport _ _ _ (1/2) (show (0 : ℝ) ≤ 1/2 by norm_num)
+      (show (1/2 : ℝ) ≤ 1/2 from le_rfl) _
+      (fun f : Fin 2 → Bool => f 0 ^^ f 1) (fun _ => rfl) fun k t h₁ h₂ => by
+        fin_cases k
+        · exact (hx (t - 4 - 4) (by linarith) (by linarith)).trans
+            (hx (0 - 4 - 4) (by norm_num) (by norm_num)).symm
+        · exact hx t (by linarith) h₂⟩,
+    causal_of_transport _ _ _ 1 (show (0 : ℝ) ≤ 1 by norm_num) (show (1 : ℝ) ≤ 1 from le_rfl) _
+      (fun _ : Fin 0 → Bool => true) (fun _ => rfl) fun k => k.elim0⟩
 
-private theorem launch_stable : ∀ i, StableBefore (inSig i) ((1 : ℝ) : WithTop ℝ) := by
-  intro i t₁ t₂ h₁ h₂
+/-! ### Single launch: setup passes, hold fails -/
+
+/-- The launching register's output: `false` before `tqMin = 1`, `true` from `1` on. -/
+private noncomputable def x₁ (t : ℝ) : Bool := decide (1 ≤ t)
+
+private theorem x₁_settled (t : ℝ) (_ : -17/2 ≤ t) (ht : t ≤ 0) : x₁ t = x₁ 0 := by
+  simp [x₁, show ¬ 1 ≤ t by linarith]
+
+private theorem launch_stable₁ : ∀ _ : Fin 1, StableBefore x₁ ((1 : ℝ) : WithTop ℝ) := by
+  intro _ t₁ t₂ _ _ h₁ h₂
   rw [WithTop.coe_lt_coe] at h₁ h₂
-  simp [inSig, not_le.mpr h₁, not_le.mpr h₂]
+  simp [x₁, not_le.mpr h₁, not_le.mpr h₂]
 
-private theorem s2_eq (t : ℝ) : s2 t = (decide (1 ≤ t - 17/2) ^^ decide (1 ≤ t - 1/2)) := by
-  simp only [s2, s1, s0, inSig]
-  congr 3
-  ring
-
-private theorem s2_of_lt {t : ℝ} (ht : t < 3/2) : s2 t = false := by
-  rw [s2_eq, decide_eq_false (by linarith), decide_eq_false (by linarith)]
+private theorem s2_of_lt {t : ℝ} (ht : t < 3/2) : s2 x₁ t = false := by
+  rw [s2_eq, x₁, x₁, decide_eq_false (by linarith), decide_eq_false (by linarith)]
   rfl
-
-/-! ### Setup passes, hold fails -/
 
 /-- **Setup passes.** With the next edge at `T = 12`, setup time `1` and uncertainty `1/2`, the
 slow path settles in time: `g2` holds its final value from `12 - 1 - 1/2` on. -/
-example : ∀ t : ℝ, 12 - 1 - 1/2 ≤ t → s2 t = false := by
+example : ∀ t : ℝ, 12 - 1 - 1/2 ≤ t → s2 x₁ t = false := by
   intro t ht
-  rw [s2_eq, decide_eq_true (by linarith), decide_eq_true (by linarith)]
+  rw [s2_eq, x₁, x₁, decide_eq_true (by linarith), decide_eq_true (by linarith)]
   rfl
 
 /-- **Hold at the boundary.** With `hold + u = 1 + 1/2 = tqMin + earliest_path`, the
 certificate gives hold. -/
-example : HoldMet s2 1 (1/2) :=
-  circ.holdMet_of_le_outputEarliests cdelay inSig gSig 1 1 (1/2) prog_causal launch_stable 0
+example : HoldMet (s2 x₁) 1 (1/2) :=
+  circ.holdMet_of_le_outputEarliests cdelay (fun _ => x₁) (gSig x₁) 1 1 (1/2)
+    (prog_causal x₁ x₁_settled) launch_stable₁ 0
     (by rw [outputEarliests_zero, ← WithTop.coe_add])
 
 /-- The boundary is attained: the bypass changes `g2` at `3/2`, so any longer hold window
 fails. -/
-example : ¬ HoldMet s2 1 (3/4) := by
+example : ¬ HoldMet (s2 x₁) 1 (3/4) := by
   intro h
-  have := h 0 (3/2) (by rw [WithTop.coe_lt_coe]; norm_num) (by rw [WithTop.coe_lt_coe]; norm_num)
-  rw [s2_of_lt (by norm_num), s2_eq] at this
+  have := h 0 (3/2) le_rfl (by norm_num) (by rw [WithTop.coe_lt_coe]; norm_num)
+    (by rw [WithTop.coe_lt_coe]; norm_num)
+  rw [s2_of_lt (by norm_num), s2_eq, x₁, x₁] at this
   norm_num at this
 
 /-- **Hold fails.** With `hold = 2` and `u = 1/2` the certificate fails, and the hold check
@@ -180,15 +212,82 @@ example : ¬ ((2 + 1/2 : ℝ) : WithTop ℝ) ≤
   rw [outputEarliests_zero, ← WithTop.coe_add, WithTop.coe_le_coe]
   norm_num
 
-example : ¬ HoldMet s2 2 (1/2) := by
+example : ¬ HoldMet (s2 x₁) 2 (1/2) := by
   intro h
-  have := h 0 2 (by rw [WithTop.coe_lt_coe]; norm_num) (by rw [WithTop.coe_lt_coe]; norm_num)
-  rw [s2_of_lt (by norm_num), s2_eq] at this
+  have := h 0 2 le_rfl (by norm_num) (by rw [WithTop.coe_lt_coe]; norm_num)
+    (by rw [WithTop.coe_lt_coe]; norm_num)
+  rw [s2_of_lt (by norm_num), s2_eq, x₁, x₁] at this
   norm_num at this
 
 /-- **No-transition output.** The constant meets any hold requirement. -/
 example : HoldMet s3 100 (1/2) :=
-  circ.holdMet_of_le_outputEarliests cdelay inSig gSig 1 100 (1/2) prog_causal launch_stable 1
+  circ.holdMet_of_le_outputEarliests cdelay (fun _ => x₁) (gSig x₁) 1 100 (1/2)
+    (prog_causal x₁ x₁_settled) launch_stable₁ 1
     (by rw [outputEarliests_one, WithTop.add_top]; exact le_top)
+
+/-! ### Repeated launches: hold constrains only the window after the edge -/
+
+/-- Hold says nothing before the edge: a signal that changed at `-1` and is constant on
+`[0, 1)` meets a one-second hold check. -/
+example : HoldMet (fun t : ℝ => decide (-1 ≤ t)) 1 0 := by
+  intro t₁ t₂ h₀₁ h₀₂ _ _
+  simp [show (-1 : ℝ) ≤ t₁ by linarith, show (-1 : ℝ) ≤ t₂ by linarith]
+
+/-- The launching register's output over two cycles: launched at `-11` by the previous edge
+at `-12`, and at `1` by the edge at `0`. -/
+private noncomputable def x₂ (t : ℝ) : Bool := decide (-11 ≤ t) ^^ decide (1 ≤ t)
+
+private theorem x₂_settled (t : ℝ) (ht₀ : -17/2 ≤ t) (ht : t ≤ 0) : x₂ t = x₂ 0 := by
+  simp [x₂, show (-11 : ℝ) ≤ t by linarith, show ¬ 1 ≤ t by linarith]
+
+private theorem launch_stable₂ : ∀ _ : Fin 1, StableBefore x₂ ((1 : ℝ) : WithTop ℝ) := by
+  intro _ t₁ t₂ h₀₁ h₀₂ h₁ h₂
+  rw [WithTop.coe_lt_coe] at h₁ h₂
+  simp [x₂, show (-11 : ℝ) ≤ t₁ by linarith, show (-11 : ℝ) ≤ t₂ by linarith,
+    not_le.mpr h₁, not_le.mpr h₂]
+
+/-- `g2` carries the previous cycle's transition: it changes at `-5/2`, before the edge. -/
+example : s2 x₂ (-3) ≠ s2 x₂ 0 := by
+  rw [s2_eq, s2_eq]
+  norm_num [x₂]
+
+/-- **Hold over repeated launches.** The same certificate gives hold although `g2` changed
+during the previous cycle. -/
+example : HoldMet (s2 x₂) 1 (1/2) :=
+  circ.holdMet_of_le_outputEarliests cdelay (fun _ => x₂) (gSig x₂) 1 1 (1/2)
+    (prog_causal x₂ x₂_settled) launch_stable₂ 0
+    (by rw [outputEarliests_zero, ← WithTop.coe_add])
+
+/-! ### Violated premises -/
+
+/-- A launch at `-8`, too late for the slow path to settle before the edge, changes `g2` at
+`1/2`. The launch premise still holds after the edge. -/
+private noncomputable def x₃ (t : ℝ) : Bool := decide (-8 ≤ t) ^^ decide (1 ≤ t)
+
+private theorem launch_stable₃ : ∀ _ : Fin 1, StableBefore x₃ ((1 : ℝ) : WithTop ℝ) := by
+  intro _ t₁ t₂ h₀₁ h₀₂ h₁ h₂
+  rw [WithTop.coe_lt_coe] at h₁ h₂
+  simp [x₃, show (-8 : ℝ) ≤ t₁ by linarith, show (-8 : ℝ) ≤ t₂ by linarith,
+    not_le.mpr h₁, not_le.mpr h₂]
+
+private theorem not_holdMet₃ : ¬ HoldMet (s2 x₃) 1 (1/2) := by
+  intro h
+  have := h 0 1 le_rfl (by norm_num) (by rw [WithTop.coe_lt_coe]; norm_num)
+    (by rw [WithTop.coe_lt_coe]; norm_num)
+  rw [s2_eq, s2_eq] at this
+  norm_num [x₃] at this
+
+/-- **Unsettled circuit.** The causal model is the settled-at-the-edge premise: these signals
+violate it, since otherwise the certificate would give the hold check that fails. -/
+example : ¬ prog.Causal cdelay (fun _ => x₃) (gSig x₃) := fun hcausal =>
+  not_holdMet₃ (circ.holdMet_of_le_outputEarliests cdelay (fun _ => x₃) (gSig x₃) 1 1 (1/2)
+    hcausal launch_stable₃ 0 (by rw [outputEarliests_zero, ← WithTop.coe_add]))
+
+/-- **Negative delays are not causal.** A gate with contamination delay `-1` never obeys the
+model, whatever its signals. -/
+example (W : Wire 1 3 → ℝ → Bool) (out : ℝ → Bool) :
+    ¬ (conLine true : Line σ2 1 3).Causal W (-1) out := fun h => by
+  have := h.1
+  norm_num at this
 
 end Cslib.Circuits

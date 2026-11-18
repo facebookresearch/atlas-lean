@@ -25,11 +25,15 @@ circuit (`Cslib.Circuits.Circuit`) with one real contamination delay per gate, i
   among the wires it reads, the minimum folded from `⊤`. A constant (zero-input) gate gets `⊤`,
   not a transition at its own delay. `Program.earliests`, `Program.wireEarliests` and
   `Circuit.outputEarliests` propagate the recursion through a program and to the outputs.
-* `StableBefore s τ`: the signal `s : ℝ → U` takes a single value at every time before `τ`.
-* `Line.Causal`, `Program.Causal`: the gate-delay model. If every wire a gate reads is stable
-  before `τ`, its output is stable before its contamination delay plus `τ`.
-* `HoldMet s hold u`: a register clocked at time `0` sees its data input `s` unchanged until
-  `hold + u`, the hold time plus the clock uncertainty.
+* `StableBefore s τ`: after the clock edge at time `0`, the signal `s : ℝ → U` takes a single
+  value at every time before `τ`, that is on `[0, τ)`. Changes before the edge are unconstrained,
+  so a signal may carry the previous cycle's transitions.
+* `Line.Causal`, `Program.Causal`: the gate-delay model at the edge. A gate's contamination delay
+  is nonnegative, and if every wire it reads is stable on `[0, τ)`, its output is stable on
+  `[0, cdelay + τ)`. This says the circuit has settled by the edge (the previous cycle met
+  setup) and that no gate responds to an input change sooner than its contamination delay.
+* `HoldMet s hold u`: a register clocked at time `0` sees its data input `s` unchanged from the
+  edge until `hold + u`, the hold time plus the clock uncertainty.
 
 ## Main results
 
@@ -37,12 +41,13 @@ circuit (`Cslib.Circuits.Circuit`) with one real contamination delay per gate, i
   before its stated earliest change, every wire is stable before its computed earliest change.
 * `Program.le_wireEarliests`: with nonnegative delays, no wire changes before the inputs do.
 * `Circuit.holdMet_of_le_outputEarliests`: if the launching register's outputs cannot change
-  before its minimum clock-to-Q delay `tqMin`, then `hold + u ≤ tqMin + earliest_path`
-  certifies hold at the receiving register, where `earliest_path` is the output's earliest
-  change with every input changing at time `0`.
+  after the edge before its minimum clock-to-Q delay `tqMin`, then
+  `hold + u ≤ tqMin + earliest_path` certifies hold at the receiving register, where
+  `earliest_path` is the output's earliest change with every input changing at time `0`.
 
 The min-delay model is separate from any max-delay (setup) analysis: nothing here uses arrival
-times or depth. Delays are premises of the model; setup timing, clock-domain crossing and
+times or depth. Settling before the edge, which a setup analysis would supply, is a premise of
+the causal model. Delays are premises of the model; setup timing, clock-domain crossing and
 glitch freedom are out of scope.
 -/
 
@@ -54,19 +59,21 @@ universe v
 
 /-! ### Signals and the causal gate-delay model -/
 
-/-- A signal holds a single value at every time strictly before `τ`; with
-`τ = ⊤` it never changes. -/
+/-- From the clock edge at time `0`, a signal holds a single value at every time
+strictly before `τ`, that is on `[0, τ)`; with `τ = ⊤` it never changes after the
+edge. Times before the edge are unconstrained. -/
 def StableBefore {U : Type*} (s : ℝ → U) (τ : WithTop ℝ) : Prop :=
-  ∀ t₁ t₂ : ℝ, (t₁ : WithTop ℝ) < τ → (t₂ : WithTop ℝ) < τ → s t₁ = s t₂
+  ∀ t₁ t₂ : ℝ, 0 ≤ t₁ → 0 ≤ t₂ → (t₁ : WithTop ℝ) < τ → (t₂ : WithTop ℝ) < τ → s t₁ = s t₂
 
 /-- **Causal gate-delay model for one gate.** The gate reading `line` has
-contamination delay `cdelay` and output signal `out`: whenever every wire it
-reads is stable before `τ`, its output is stable before `cdelay + τ`. A gate
-with no inputs is therefore constant. -/
+nonnegative contamination delay `cdelay` and output signal `out`, settled at the
+clock edge at time `0`: whenever every wire it reads is stable on `[0, τ)`, its
+output is stable on `[0, cdelay + τ)`. A gate with no inputs is therefore
+constant after the edge. -/
 def Line.Causal {σ : Signature.{v}} {inputCount gateCount : Nat} {U : Type*}
     (line : Line σ inputCount gateCount) (wireSignal : Wire inputCount gateCount → ℝ → U)
     (cdelay : ℝ) (out : ℝ → U) : Prop :=
-  ∀ τ : WithTop ℝ, (∀ k, StableBefore (wireSignal (line.wires k)) τ) →
+  0 ≤ cdelay ∧ ∀ τ : WithTop ℝ, (∀ k, StableBefore (wireSignal (line.wires k)) τ) →
     StableBefore out ((cdelay : WithTop ℝ) + τ)
 
 /-- **Causal gate-delay model for a program.** Every gate obeys `Line.Causal`
@@ -82,8 +89,8 @@ def Program.Causal {σ : Signature.{v}} {inputCount : Nat} {U : Type*} :
           (cdelay (Fin.last _)) (gateSignal (Fin.last _))
 
 /-- **Hold check at the receiving register.** The register is clocked at time
-`0`; its data input `s` must not change before the hold time `hold` plus the
-clock uncertainty `u`. -/
+`0`; its data input `s` must not change from the edge until the hold time `hold`
+plus the clock uncertainty `u`, that is on `[0, hold + u)`. -/
 def HoldMet {U : Type*} (s : ℝ → U) (hold u : ℝ) : Prop :=
   StableBefore s ((hold + u : ℝ) : WithTop ℝ)
 
@@ -154,8 +161,8 @@ private theorem foldl_min_add (a : ℝ) (n : Nat) (g : Fin n → WithTop ℝ) (x
 
 /-- Stability before `τ` implies stability before any earlier time. -/
 private theorem StableBefore.mono {U : Type*} {s : ℝ → U} {τ τ' : WithTop ℝ} (hle : τ' ≤ τ)
-    (h : StableBefore s τ) : StableBefore s τ' := fun t₁ t₂ h₁ h₂ =>
-  h t₁ t₂ (lt_of_lt_of_le h₁ hle) (lt_of_lt_of_le h₂ hle)
+    (h : StableBefore s τ) : StableBefore s τ' := fun t₁ t₂ h₀₁ h₀₂ h₁ h₂ =>
+  h t₁ t₂ h₀₁ h₀₂ (lt_of_lt_of_le h₁ hle) (lt_of_lt_of_le h₂ hle)
 
 /-! ### Line earliest: no-transition constants and min over fan-in -/
 
@@ -323,7 +330,7 @@ theorem Program.stableBefore_wireEarliests {σ : Signature.{v}} {inputCount gate
         change StableBefore (gateSignal (Fin.last _))
           ((p.gate line).earliests cdelay inputEarliest (Fin.last _))
         rw [Program.earliests_gate_last]
-        apply hl
+        apply hl.2
         intro k
         refine StableBefore.mono ?_ (ih _ _ hp (line.wires k))
         have h := line.earliest_le_add_wireEarliest
@@ -349,8 +356,8 @@ theorem Circuit.stableBefore_outputEarliests {σ : Signature.{v}} {inputCount ou
     hcausal hinput (c.outputs o)
 
 /-- **Hold certificate.** A register clocked at time `0` launches the circuit
-inputs, which cannot change before its minimum clock-to-Q delay `tqMin`. Under
-the causal gate-delay model, if `hold + u ≤ tqMin + earliest_path`, where
+inputs, which after the edge cannot change before its minimum clock-to-Q delay
+`tqMin`. Under the causal gate-delay model, if `hold + u ≤ tqMin + earliest_path`, where
 `earliest_path` is the output's earliest change with inputs changing at time
 `0`, the receiving register's hold check passes. -/
 theorem Circuit.holdMet_of_le_outputEarliests {σ : Signature.{v}}
