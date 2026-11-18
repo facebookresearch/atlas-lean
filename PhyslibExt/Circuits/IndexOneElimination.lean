@@ -12,7 +12,6 @@ public import Mathlib.Data.Matrix.Mul
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import MathlibExt.LinearAlgebra.Matrix.BlockSolutionEquiv
-public import MathlibExt.LinearAlgebra.Matrix.SchurStrictPositivity
 
 /-!
 # Index-one elimination for a linear descriptor system
@@ -279,40 +278,5 @@ lemma not_consistentPair_of_ne_algebraicReconstruction
     ¬ consistentPair C D g₀ x₀ y₀ := by
   intro hc
   exact h ((consistentPair_iff_eq_algebraicReconstruction C D g₀ x₀ y₀).mp hc)
-
-/-- Nonzero forcing is retained by the reconstruction: in the scalar
-case with unit blocks, state `2` and forcing `5`, the reconstructed
-algebraic value is `-7`, and `0` is not consistent with that state
-and forcing. -/
-lemma scalar_reconstruction_with_nonzeroForcing :
-    @algebraicReconstruction (Fin 1) (Fin 1) _ _ _ (1 : Matrix (Fin 1) (Fin 1) ℝ)
-        invertibleOne (1 : Matrix (Fin 1) (Fin 1) ℝ) (fun _ => 2) (fun _ => 5) =
-      (fun _ => -7) ∧
-    ¬ consistentPair (1 : Matrix (Fin 1) (Fin 1) ℝ)
-        (1 : Matrix (Fin 1) (Fin 1) ℝ) (fun _ => 5) (fun _ => 2) (fun _ => 0) := by
-  constructor
-  · have h1 : (1 : Matrix (Fin 1) (Fin 1) ℝ)⁻¹ = 1 :=
-      Matrix.inv_eq_left_inv (by simp)
-    simp only [algebraicReconstruction, h1, Matrix.one_mulVec]
-    funext i
-    simp only [Pi.neg_apply, Pi.add_apply]
-    norm_num
-  · intro hcon
-    simp only [consistentPair, Matrix.one_mulVec] at hcon
-    have h0 := congrFun hcon 0
-    simp only [Pi.add_apply, Pi.zero_apply] at h0
-    norm_num at h0
-
-/-- The zero scalar block is not invertible, so a singular algebraic
-block is outside the reduction: no invertible instance exists for
-it. -/
-lemma not_nonempty_invertible_zero_scalar :
-    ¬ Nonempty (Invertible (0 : Matrix (Fin 1) (Fin 1) ℝ)) := by
-  intro hne
-  obtain ⟨h⟩ := hne
-  have h2 := h.mul_invOf_self
-  rw [Matrix.zero_mul] at h2
-  have h3 := congrFun (congrFun h2 0) 0
-  simp at h3
 
 end PhyslibExt.Circuits.IndexOneElimination
