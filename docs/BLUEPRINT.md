@@ -110,10 +110,12 @@ the report; no old Lean-source link is fabricated.
 
 Every page under `blueprint/roadmap/` needs a row in `blueprint/links/`;
 `lean-facts` fails on a page without one. A folder page takes the navigation of
-its sibling folders. A display formula `$$…$$` must be a paragraph of its own,
-with a blank line before and after it, and not inside a list item: elsewhere it
-renders as `$`, inline math, `$`. The site check fails on such an unpaired
-delimiter.
+its sibling folders. A display formula `$$…$$` must be a Markdown block of its
+own, with a blank line before and after it; inside a list item, indent it by
+four spaces like the item's other paragraphs. Otherwise it renders as `$`,
+inline math, `$`. The site check fails on such an unpaired delimiter, and on a
+`$` attached to TeX-shaped text. Markdown drops the backslash of `\$`, so write
+a literal dollar of that shape as `&#36;`, or inside inline code.
 
 Changing AutoformBot requires a reviewed `.github/autoform-ref` update and
 passing tests. The workflow has no automatic pin push, upstream-sync bot,

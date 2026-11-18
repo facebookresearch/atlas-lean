@@ -131,7 +131,10 @@ class NavigationPayloadTests(unittest.TestCase):
         # A `$$` display that touches its paragraph renders as `$`, inline math, `$`.
         cases = ('<p>So $<span class="arithmatex">\\(x^2\\)</span>$ follows.</p>',
                  "<ul><li>An unclosed $\\mathbb{R} span.</li></ul>", "<p>An unmatched $$ display.</p>",
-                 "<p>A closing x^{2}$ without its opening.</p>", "<p>If $2^{\\kappa}\\lt \\lambda, then.</p>")
+                 "<p>A closing x^{2}$ without its opening.</p>", "<p>If $2^{\\kappa}\\lt \\lambda, then.</p>",
+                 # Inline markup or a comment between the `$` and the TeX does not hide it.
+                 "<p>Let $<em>x_i</em> be a number.</p>", "<p>Then <em>x_i</em>$ follows.</p>",
+                 '<p>See $<a href="#">x^2</a> here.</p>', "<p>Odd $<!-- note -->x_i here.</p>")
         for body in cases:
             with self.subTest(body=body):
                 self.site_with_page(body)
@@ -141,11 +144,15 @@ class NavigationPayloadTests(unittest.TestCase):
                 self.assertIn("roadmap/topic/index.html", stderr)
 
     def test_dollars_in_math_code_scripts_and_prose_pass(self) -> None:
-        # Math, code and scripts keep their `$`; so does prose that uses it as a currency sign, escaped or not.
+        # Math, code and scripts keep their `$`; so does prose that uses it as a currency sign. A literal dollar of
+        # delimiter shape is written `&#36;`, and a backslash left in the HTML escapes its dollar.
         self.site_with_page('<p>Math <span class="arithmatex">\\($x$\\)</span>, code <code>a $$ b</code>.</p>'
                             "<pre><span>echo $HOME</pre><p>After the block.</p>"
                             '<script>var s = "$$";</script><div class="arithmatex">\\[ $ \\]</div><br><img alt="x">'
-                            '<p>It costs $5, or <a href="#">$3 a month</a>; <span class="arithmatex">\\(x\\)</span> is $2.</p>')
+                            '<p>It costs $5, or <a href="#">$3 a month</a>; <span class="arithmatex">\\(x\\)</span> is $2.</p>'
+                            "<p>Write &#36;&#36; literally, and &#36;x_i too; &amp; is just an ampersand.</p>"
+                            "<p>It costs \\$5, and \\$x_i is escaped.</p><p>A <em>price</em> of $5 and <strong>$6</strong>.</p>"
+                            "<p>Total $</p><p>x_i starts the next paragraph.</p>")
         result, _stdout, stderr = self.check()
         self.assertEqual(result, 0, stderr)
 
