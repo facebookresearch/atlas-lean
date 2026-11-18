@@ -23,13 +23,13 @@ These are elaboration and non-vacuity checks, not new results.
 /-- Boundary case is admitted. -/
 example : ∀ omega : ℝ, 0 < omega
     → omega > 2 * (1 / 2 : ℝ) * Real.sin (omega * 1) :=
-  (gain_threshold_all_frequencies (lambda := 1 / 2) (T := 1)
+  (CarFollowingGain.gain_threshold_all_frequencies (lambda := 1 / 2) (T := 1)
     (by norm_num) (by norm_num)).2 (by norm_num)
 
 /-- Just past the boundary is excluded. -/
 example : ¬ ∀ omega : ℝ, 0 < omega
     → omega > 2 * (51 / 100 : ℝ) * Real.sin (omega * 1) := by
-  rw [gain_threshold_all_frequencies (lambda := 51 / 100) (T := 1)
+  rw [CarFollowingGain.gain_threshold_all_frequencies (lambda := 51 / 100) (T := 1)
     (by norm_num) (by norm_num)]
   norm_num
 

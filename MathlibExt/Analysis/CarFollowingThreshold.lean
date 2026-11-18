@@ -27,7 +27,7 @@ sufficiently small frequency.
 
 ## Main results
 
-- `gain_threshold_all_frequencies`: the all-frequency threshold
+- `CarFollowingGain.gain_threshold_all_frequencies`: the
   characterization.
 -/
 
@@ -41,7 +41,7 @@ frequency-response analysis of the model this is the condition
 that the transfer denominator never vanishes and the gain stays
 strictly below one at every positive frequency; the boundary
 `lambda * T = 1 / 2` is included. -/
-theorem gain_threshold_all_frequencies {lambda T : ℝ}
+theorem CarFollowingGain.gain_threshold_all_frequencies {lambda T : ℝ}
     (hlambda : 0 < lambda) (hT : 0 ≤ T) :
     (∀ omega : ℝ, 0 < omega → omega > 2 * lambda * Real.sin (omega * T))
       ↔ lambda * T ≤ 1 / 2 := by
@@ -115,7 +115,7 @@ theorem gain_threshold_all_frequencies {lambda T : ℝ}
 function: the gain `‖λ * exp (-(I * w * T))‖ < ‖denom λ T w‖`
 holds at every positive frequency `w` if and only if
 `lambda * T ≤ 1 / 2`. This composes `CarFollowingGain.gain_lt_one_iff`
-with `gain_threshold_all_frequencies`. -/
+with `CarFollowingGain.gain_threshold_all_frequencies`. -/
 theorem CarFollowingGain.gain_lt_one_all_frequencies {lam T : ℝ}
     (hlam : 0 < lam) (hT : 0 ≤ T) :
     (∀ w : ℝ, 0 < w → ‖(lam : ℂ) * Complex.exp (-(Complex.I * w * T))‖
@@ -123,9 +123,9 @@ theorem CarFollowingGain.gain_lt_one_all_frequencies {lam T : ℝ}
       ↔ lam * T ≤ 1 / 2 := by
   constructor
   · intro h
-    rw [← gain_threshold_all_frequencies hlam hT]
+    rw [← CarFollowingGain.gain_threshold_all_frequencies hlam hT]
     intro w hw
     exact (CarFollowingGain.gain_lt_one_iff hlam hw).1 (h w hw)
   · intro h w hw
     exact (CarFollowingGain.gain_lt_one_iff hlam hw).2
-      ((gain_threshold_all_frequencies hlam hT).2 h w hw)
+      ((CarFollowingGain.gain_threshold_all_frequencies hlam hT).2 h w hw)
