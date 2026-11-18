@@ -42,7 +42,9 @@ the load plane the phasors are `V = Aplus + Aminus` and
 `I = (Aplus - Aminus) / Z0`; together with `V = ZL * I` they give
 the multiplicative relation
 `(ZL + Z0) * Aminus = (ZL - Z0) * Aplus`, and the divided
-reflection formula only under `Aplus != 0` and `ZL + Z0 != 0`.
+reflection formula under `Aplus != 0`. The denominator guard
+`ZL + Z0 != 0` is not an independent assumption: it follows from
+the load relations and `Aplus != 0`.
 
 The parameter identities are proved from positivity and the
 real square-root laws for `L * C` and `L / C`. The phasor
@@ -53,7 +55,8 @@ capacitance identity, which is where positivity of `L` and `C`
 is used. The load identities are proved by clearing the
 characteristic-impedance denominator and comparing coefficients;
 the matched, short-circuit and open-circuit cases are the
-corresponding specializations, and the zero-excitation example
+corresponding specializations (the short-circuit case needs no
+excitation guard), and the zero-excitation example
 records that the divided formula is not available when both
 amplitudes vanish.
 
@@ -63,8 +66,12 @@ amplitudes vanish.
   telegrapher equations for voltage and current.
 - `load_multiplicative_relation`: the division-free reflection
   relation at the load plane.
-- `load_reflection_ratio` and `load_reflectionCoefficient_eq`:
-  the guarded divided reflection formula.
+- `load_sum_ne_zero`: nonzero excitation forces a nonzero
+  denominator `ZL + Z0`.
+- `load_reflection_ratio_of_ne_zero`: the divided reflection formula
+  under nonzero excitation alone; `load_reflection_ratio` and
+  `load_reflectionCoefficient_eq` state it with the denominator guard
+  spelled out.
 - `lineWaveTerminationRelations`: the combined speed, impedance,
   telegrapher and load relations.
 
@@ -378,8 +385,29 @@ theorem load_multiplicative_relation (V I Aplus Aminus ZL : ℂ) (Z0 : ℝ)
     rw [hload, mul_assoc, div_mul_cancel₀ _ hZ0ne]
   linear_combination h2
 
+/-- Nonzero excitation forces a nonzero denominator: if `ZL + Z0 = 0`,
+the multiplicative relation gives `0 = (-2 * Z0) * Aplus`, so
+`Aplus = 0`. -/
+lemma load_sum_ne_zero (V I Aplus Aminus ZL : ℂ) (Z0 : ℝ)
+    (hZ0 : 0 < Z0) (hV : V = Aplus + Aminus)
+    (hI : I = (Aplus - Aminus) / (Z0 : ℂ)) (hload : V = ZL * I)
+    (hA : Aplus ≠ 0) :
+    ZL + (Z0 : ℂ) ≠ 0 := by
+  intro hsum
+  have hZ0ne : (Z0 : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr (ne_of_gt hZ0)
+  have hmul := load_multiplicative_relation V I Aplus Aminus ZL Z0 hZ0 hV hI hload
+  have hZL : ZL = -(Z0 : ℂ) := by linear_combination hsum
+  rw [hsum, zero_mul, hZL] at hmul
+  have h2 : (-(Z0 : ℂ) - (Z0 : ℂ)) ≠ 0 := by
+    have h22 : -(Z0 : ℂ) - (Z0 : ℂ) = -(2 * (Z0 : ℂ)) := by ring
+    rw [h22, neg_ne_zero]
+    exact mul_ne_zero two_ne_zero hZ0ne
+  exact hA ((mul_eq_zero.mp hmul.symm).resolve_left h2)
+
 /-- Guarded reflection ratio: under nonzero excitation and a nonzero
-denominator, the amplitude ratio is `(ZL - Z0) / (ZL + Z0)`. -/
+denominator, the amplitude ratio is `(ZL - Z0) / (ZL + Z0)`. The
+denominator guard is implied by the others (`load_sum_ne_zero`);
+`load_reflection_ratio_of_ne_zero` states the result without it. -/
 theorem load_reflection_ratio (V I Aplus Aminus ZL : ℂ) (Z0 : ℝ)
     (hZ0 : 0 < Z0) (hV : V = Aplus + Aminus)
     (hI : I = (Aplus - Aminus) / (Z0 : ℂ)) (hload : V = ZL * I)
@@ -389,7 +417,18 @@ theorem load_reflection_ratio (V I Aplus Aminus ZL : ℂ) (Z0 : ℝ)
   rw [div_eq_div_iff hA hsum]
   linear_combination hmul
 
-/-- The guarded amplitude ratio is the reflection coefficient. -/
+/-- Reflection ratio under nonzero excitation alone: the denominator
+guard is derived by `load_sum_ne_zero`. -/
+theorem load_reflection_ratio_of_ne_zero (V I Aplus Aminus ZL : ℂ) (Z0 : ℝ)
+    (hZ0 : 0 < Z0) (hV : V = Aplus + Aminus)
+    (hI : I = (Aplus - Aminus) / (Z0 : ℂ)) (hload : V = ZL * I)
+    (hA : Aplus ≠ 0) :
+    Aminus / Aplus = (ZL - (Z0 : ℂ)) / (ZL + (Z0 : ℂ)) :=
+  load_reflection_ratio V I Aplus Aminus ZL Z0 hZ0 hV hI hload hA
+    (load_sum_ne_zero V I Aplus Aminus ZL Z0 hZ0 hV hI hload hA)
+
+/-- The guarded amplitude ratio is the reflection coefficient. The
+denominator guard is implied by the others (`load_sum_ne_zero`). -/
 lemma load_reflectionCoefficient_eq (V I Aplus Aminus ZL : ℂ) (Z0 : ℝ)
     (hZ0 : 0 < Z0) (hV : V = Aplus + Aminus)
     (hI : I = (Aplus - Aminus) / (Z0 : ℂ)) (hload : V = ZL * I)
@@ -413,15 +452,22 @@ lemma matched_load_reflection_eq_zero (V I Aplus Aminus : ℂ) (Z0 : ℝ)
     exact mul_ne_zero two_ne_zero hZ0ne
   exact (mul_eq_zero.mp hmul).resolve_left h2
 
+/-- Short circuit: zero load voltage forces the backward amplitude to
+be the negated forward amplitude, with no excitation guard. -/
+lemma shortCircuit_reflection (Aplus Aminus : ℂ) (hV : Aplus + Aminus = 0) :
+    Aminus = -Aplus := by
+  linear_combination hV
+
 /-- Short-circuit load: a zero load impedance reflects with a sign
-flip, under nonzero excitation. -/
+flip. Only the voltage relation is used; the excitation guard is not
+needed (`shortCircuit_reflection` states the result without it). -/
 lemma shortCircuit_load_reflection (V I Aplus Aminus : ℂ) (Z0 : ℝ)
     (hZ0 : 0 < Z0) (hV : V = Aplus + Aminus)
     (hI : I = (Aplus - Aminus) / (Z0 : ℂ)) (hload : V = (0 : ℂ) * I)
     (hA : Aplus ≠ 0) :
     Aminus = -Aplus := by
   rw [hV, zero_mul] at hload
-  linear_combination hload
+  exact shortCircuit_reflection Aplus Aminus hload
 
 /-- Open-circuit limit: zero load current forces the backward
 amplitude to equal the forward amplitude. This is the separate
@@ -456,7 +502,8 @@ lemma zeroExcitation_ratio_example :
 phasor telegrapher equations for both voltage and current hold at
 every position, the load relations imply the
 multiplicative reflection relation, and the divided formula follows
-only under its two guards. -/
+under nonzero excitation; the stated denominator guard is implied by
+the other hypotheses (`load_sum_ne_zero`). -/
 theorem lineWaveTerminationRelations (Aplus Aminus ZL : ℂ) (L C ω Z0 β : ℝ)
     (hL : 0 < L) (hC : 0 < C) (hω : 0 < ω) (hZ0 : 0 < Z0)
     (hβ : β = propagationConstant L C ω) (hZ : Z0 = characteristicImpedance L C) :

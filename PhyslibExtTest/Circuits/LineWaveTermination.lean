@@ -30,6 +30,12 @@ example : (1 : ℂ) / 2 = ((3 : ℂ) - 1) / ((3 : ℂ) + 1) :=
   load_reflection_ratio 3 1 2 1 3 1 (by norm_num) (by norm_num)
     (by norm_num) (by norm_num) (by norm_num) (by norm_num)
 
+/-- The same ratio from nonzero excitation alone, with the
+denominator guard derived. -/
+example : (1 : ℂ) / 2 = ((3 : ℂ) - 1) / ((3 : ℂ) + 1) :=
+  load_reflection_ratio_of_ne_zero 3 1 2 1 3 1 (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num)
+
 /-- The same ratio is the reflection coefficient at load `3` and
 unit characteristic impedance. -/
 example : (1 : ℂ) / 2 = reflectionCoefficient 3 1 :=
@@ -60,6 +66,11 @@ flip. -/
 example : (-2 : ℂ) = -2 :=
   shortCircuit_load_reflection 0 4 2 (-2) 1 (by norm_num) (by norm_num)
     (by norm_num) (by norm_num) (by norm_num)
+
+/-- Short circuit at zero excitation: both amplitudes zero still
+satisfy the sign flip. -/
+example : (0 : ℂ) = -0 :=
+  shortCircuit_reflection 0 0 (by norm_num)
 
 /-- Zero excitation does not give the divided formula at unit
 characteristic impedance and load `3`. -/
