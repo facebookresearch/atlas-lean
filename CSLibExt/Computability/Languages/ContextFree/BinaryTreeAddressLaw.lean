@@ -417,7 +417,7 @@ theorem shift_preimage_cylinder (u : List Bool) (s : Finset (List Bool))
 
 /-- every prefix shift preserves `law p` (the shifted coordinates
 are still independent `bernoulliBool p` coordinates), by
-`Measure.eq_infinitePi`. -/
+`Measure.map_infinitePi_infinitePi_of_inj`. -/
 theorem map_shift_law {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (u : List Bool) :
     (law p).map (shift u) = law p := by
   haveI : ∀ i : List Bool, IsProbabilityMeasure ((fun _ : List Bool => bernoulliBool p) i) :=
