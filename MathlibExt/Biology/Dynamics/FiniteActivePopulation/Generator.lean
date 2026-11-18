@@ -42,7 +42,7 @@ noncomputable def birthDeathGenerator (N : ℕ) (alpha : ℝ) (f : ℕ → ℝ) 
 `f i ≥ 0`, and states `i ≤ N`, every off-diagonal entry of the
 birth-death generator is nonnegative. -/
 theorem birthDeath_offDiag_nonneg (N : ℕ) (alpha : ℝ) (f : ℕ → ℝ)
-    (halpha : 0 ≤ alpha) (hf : ∀ i, 0 ≤ f i)
+    (halpha : 0 ≤ alpha) (hf : ∀ i : Fin (N + 1), 0 ≤ f (i : ℕ))
     {i j : Fin (N + 1)} (hij : i ≠ j) :
     0 ≤ birthDeathGenerator N alpha f i j := by
   unfold birthDeathGenerator
@@ -148,7 +148,7 @@ theorem birthDeath_decomp (N : ℕ) (alpha : ℝ) (f : ℕ → ℝ) (i j : Fin (
 `ProbabilityTheory.IsRateMatrix`: off-diagonal entries are
 nonnegative and every row sums to zero. -/
 theorem birthDeath_isRateMatrix (N : ℕ) (alpha : ℝ) (f : ℕ → ℝ)
-    (halpha : 0 ≤ alpha) (hf : ∀ i, 0 ≤ f i) :
+    (halpha : 0 ≤ alpha) (hf : ∀ i : Fin (N + 1), 0 ≤ f (i : ℕ)) :
     ProbabilityTheory.IsRateMatrix (birthDeathGenerator N alpha f) := by
   constructor
   · intro i j hij

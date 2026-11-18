@@ -27,7 +27,7 @@ example (alpha : ℝ) (f : ℕ → ℝ) :
   simp [birthDeathGenerator]
 
 /-- The generator is a rate matrix for nonnegative rates. -/
-example (f : ℕ → ℝ) (hf : ∀ i, 0 ≤ f i) :
+example (f : ℕ → ℝ) (hf : ∀ i : Fin (2 + 1), 0 ≤ f (i : ℕ)) :
     ProbabilityTheory.IsRateMatrix (birthDeathGenerator 2 1 f) :=
   birthDeath_isRateMatrix 2 1 f zero_le_one hf
 
