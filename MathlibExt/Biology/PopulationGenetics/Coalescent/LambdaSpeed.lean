@@ -14,8 +14,6 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Integral.IntegrableOn
 public import Mathlib.Analysis.Convex.Function
 public import Mathlib.Analysis.SpecialFunctions.Exp
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Probability.Distributions.Beta
 import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 
 /-!

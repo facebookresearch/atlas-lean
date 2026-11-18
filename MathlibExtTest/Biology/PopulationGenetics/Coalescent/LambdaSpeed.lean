@@ -33,6 +33,10 @@ example (Λ : Measure I) [IsFiniteMeasure Λ] :
     GreyCondition Λ ↔ Λ ≠ 0 ∧ ∀ a, 0 < a → IntegrableOn (fun q => (psi Λ q)⁻¹) (Ioi a) :=
   greyCondition_iff Λ
 
+-- Nonzero-support branch of the kernel: a unit atom at `1`, not the special value at `0`.
+example (q : ℝ) : psi (Measure.dirac (1 : I)) q = exp (-q) - 1 + q := by
+  simp [psi, psiKernel]
+
 example : psi (Measure.dirac (0 : I)) 2 = 2 := psi_dirac_zero_two
 
 example : psiTail (Measure.dirac (0 : I)) 2 = 1 := by
