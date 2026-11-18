@@ -11,9 +11,11 @@ standalone `Atlas/` developments are outside its scope.
   Lean declarations, stable article IDs, and navigation metadata.
 - `scripts/taxonomy.json` and `blueprint/atlas.json`: subject organization.
 - Lean sources: declaration kinds and statement/proof status.
-- Compiled Lean: dependencies of declarations' types and values. Definitions'
-  bodies and inductive constructors contribute statement dependencies;
-  theorem values contribute proof dependencies.
+- Compiled Lean: dependencies of declarations' types and values. The values of
+  `def`, `abbrev`, `instance` and `inductive` declarations (bodies and
+  constructors) contribute statement dependencies. Theorem proofs and `opaque`
+  bodies (`partial def` included) contribute proof dependencies only: Lean cannot
+  unfold them, so no statement that uses the constant can depend on them.
 - AutoformBot: renderer and shared interactive graph viewer, installed at the
   reviewed full commit in `.github/autoform-ref`.
 

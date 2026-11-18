@@ -31,7 +31,9 @@ BLUEPRINT = ROOT / "blueprint"
 LIBRARIES = frozenset({"MathlibExt", "CSLibExt", "PhyslibExt", "WantedExt"})
 # The key of `missing_articles` for absent targets whose names start with no library name.
 UNPREFIXED = "unprefixed"
-# A definition is its body and an inductive type its constructors, so their values are part of the statement.
+# A definition is its body and an inductive type its constructors, so their values are part of the statement
+# (`abbrev` and `instance` compile to `def`). Lean cannot unfold a theorem's proof or an `opaque` body, so no
+# statement can depend on them: those values give proof dependencies only.
 STATEMENT_VALUE = frozenset({"def", "inductive"})
 
 

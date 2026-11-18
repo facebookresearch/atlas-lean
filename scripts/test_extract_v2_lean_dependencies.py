@@ -96,6 +96,16 @@ class Mutual(unittest.TestCase):
         self.assertEqual((found["T"]["statement"], found["T"]["proof"]), (["A"], ["B"]))
         self.assertEqual((found["D"]["statement"], found["D"]["proof"]), (["A"], []))
 
+    def test_an_opaque_body_gives_proof_dependencies_only(self) -> None:
+        # Lean cannot unfold an opaque constant, so its body is like a proof: a published opaque O states only its
+        # type, and an opaque helper o reaches B only through a proof that uses it.
+        rows = [row("A", "def", [], []), row("B", "def", [], []), row("O", "opaque", ["A"], ["B"]),
+                row("o", "opaque", ["A"], ["B"]), row("D", "def", ["o"], []), row("T", "theorem", ["o"], ["o"])]
+        found = run_extract(rows, ["A", "B", "O", "D", "T"])
+        self.assertEqual((found["O"]["statement"], found["O"]["proof"]), (["A"], ["B"]))
+        self.assertEqual((found["D"]["statement"], found["D"]["proof"]), (["A"], []))
+        self.assertEqual((found["T"]["statement"], found["T"]["proof"]), (["A"], ["B"]))
+
     def test_a_hidden_definition_body_stays_part_of_a_statement(self) -> None:
         rows = [row("A", "def", [], []), row("d", "def", [], ["A"]), row("T", "theorem", ["d"], [])]
         self.assertEqual(run_extract(rows, ["A", "T"])["T"]["statement"], ["A"])
