@@ -52,4 +52,83 @@ example :
     runRegister 3 crc3Taps (encodedBody 3 crc3Taps [true, false, true]) = 0#3 :=
   runRegister_encodedBody_eq_zero 3 crc3Taps [true, false, true]
 
+/-- The parser state space is finite. -/
+example : Finite (ParserState 3 3) := inferInstance
+
+/-- Wrong length, short: a five-bit body at `l + r = 6` ends failed. -/
+example :
+    ((frameParser 3 3 crc3Taps).runState (frameParser 3 3 crc3Taps).start
+      (FrameToken.start :: [true, false, true, true, false].map FrameToken.bit ++
+        [FrameToken.endTok])).phase = ParserPhase.failed := by
+  decide
+
+/-- Wrong length, long: a nine-bit body, past the saturation point of the
+count, ends failed. -/
+example :
+    ((frameParser 3 3 crc3Taps).runState (frameParser 3 3 crc3Taps).start
+      (FrameToken.start ::
+        [true, false, true, true, false, false, false, false, false].map
+          FrameToken.bit ++ [FrameToken.endTok])).phase = ParserPhase.failed := by
+  decide
+
+/-- A five-bit body at `l + r = 6` is rejected for every output. -/
+example (out : List Bool) :
+    ¬ (frameParser 3 3 crc3Taps).Translates
+      (FrameToken.start :: [true, false, true, true, false].map FrameToken.bit ++
+        [FrameToken.endTok]) out :=
+  wrongLengthBody_rejected 3 3 crc3Taps [true, false, true, true, false] (by decide) out
+
+/-- Nonzero remainder: payload `101` with check bits `000` has remainder
+`0b100`, ends failed, and still emits its first three bits. -/
+example :
+    runRegister 3 crc3Taps [true, false, true, false, false, false] = 0b100#3 ∧
+      ((frameParser 3 3 crc3Taps).runState (frameParser 3 3 crc3Taps).start
+        (FrameToken.start :: [true, false, true, false, false, false].map
+          FrameToken.bit ++ [FrameToken.endTok])).phase = ParserPhase.failed ∧
+      (frameParser 3 3 crc3Taps).runOut (frameParser 3 3 crc3Taps).start
+        (FrameToken.start :: [true, false, true, false, false, false].map
+          FrameToken.bit ++ [FrameToken.endTok]) = [true, false, true] := by
+  decide
+
+/-- Payload `101` with check bits `000` is rejected for every output. -/
+example (out : List Bool) :
+    ¬ (frameParser 3 3 crc3Taps).Translates
+      (FrameToken.start :: [true, false, true, false, false, false].map
+        FrameToken.bit ++ [FrameToken.endTok]) out :=
+  nonzeroRemainderBody_rejected 3 3 crc3Taps [true, false, true, false, false, false]
+    rfl (by decide) out
+
+/-- A `start` after two body bits restarts: the clean frame for `101` is
+accepted, and the output is the two emitted bits followed by `101`. -/
+example :
+    ((frameParser 3 3 crc3Taps).runState (frameParser 3 3 crc3Taps).start
+      (FrameToken.start :: [false, true].map FrameToken.bit ++
+        encodeFrame 3 crc3Taps [true, false, true])).phase = ParserPhase.done ∧
+      (frameParser 3 3 crc3Taps).runOut (frameParser 3 3 crc3Taps).start
+        (FrameToken.start :: [false, true].map FrameToken.bit ++
+          encodeFrame 3 crc3Taps [true, false, true]) =
+        [false, true, true, false, true] := by
+  decide
+
+/-- A partial body longer than `l` emits only its first `l` bits before
+the restart. -/
+example :
+    (frameParser 3 3 crc3Taps).Translates
+      (FrameToken.start :: [false, true, true, true].map FrameToken.bit ++
+        encodeFrame 3 crc3Taps [true, false, true])
+      [false, true, true, true, false, true] :=
+  startInBody_aborts_and_restarts 3 3 crc3Taps [false, true, true, true]
+    [true, false, true] rfl
+
+/-- A bit before any `start` fails the parser, and the next `start`
+restarts it: the following clean frame is accepted and returns `101`. -/
+example :
+    ((frameParser 3 3 crc3Taps).runState (frameParser 3 3 crc3Taps).start
+      (FrameToken.bit true :: encodeFrame 3 crc3Taps [true, false, true])).phase =
+        ParserPhase.done ∧
+      (frameParser 3 3 crc3Taps).runOut (frameParser 3 3 crc3Taps).start
+        (FrameToken.bit true :: encodeFrame 3 crc3Taps [true, false, true]) =
+        [true, false, true] := by
+  decide
+
 end CSLibExtTest.Coding.FixedLengthCRCFrames
