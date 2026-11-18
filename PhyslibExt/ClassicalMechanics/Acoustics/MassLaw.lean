@@ -14,8 +14,11 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Base
 
 ## i. Overview
 
-For the dimensionless ratio `x = ω * m / (2 * ρ * c) > 0` and the
-declared normal-incidence panel model `τ = 1 / (1 + x ^ 2)`, the
+For the dimensionless ratio `x = ω * m / (2 * ρ * c) > 0`
+(`ω` angular frequency, `m` the panel surface mass density in
+kg/m^2, `ρ` air density, `c` the speed of sound in air) and the
+declared normal-incidence limp-panel model `τ = 1 / (1 + x ^ 2)`,
+the
 transmission loss `10 * log10 (1 / τ) = 10 * log10 (1 + x ^ 2)`
 splits into the mass-law asymptote `20 * log10 x` plus the
 positive correction `10 * log10 (1 + x ^ (-2))`. The loss strictly
@@ -33,8 +36,9 @@ asymptote.
 
 ## iv. References
 
-- Standard building-acoustics mass law for a limp panel
-  (normal-incidence model).
+- L. L. Beranek and I. L. Vér (eds.), *Noise and Vibration
+  Control Engineering*, Wiley, 1992 (mass law for a limp panel at
+  normal incidence).
 -/
 
 @[expose] public section
@@ -82,5 +86,23 @@ theorem mass_law_comparison {x : ℝ} (hx : 0 < x) :
       mul_pos (by norm_num) hcorr
     linarith
   · rw [hdouble]; ring
+
+/-- The mass-law split: transmission loss equals the asymptote
+plus the positive correction term. -/
+lemma mass_law_split {x : ℝ} (hx : 0 < x) :
+    10 * Real.logb 10 (1 + x ^ 2)
+      = 20 * Real.logb 10 x + 10 * Real.logb 10 (1 + x ^ (-2 : ℤ)) :=
+  (mass_law_comparison hx).1
+
+/-- The transmission loss strictly exceeds the mass-law asymptote. -/
+lemma mass_law_gt_asymptote {x : ℝ} (hx : 0 < x) :
+    20 * Real.logb 10 x < 10 * Real.logb 10 (1 + x ^ 2) :=
+  (mass_law_comparison hx).2.1
+
+/-- Doubling `x` adds `20 * log10 2` to the asymptote. -/
+lemma mass_law_asymptote_double {x : ℝ} (hx : 0 < x) :
+    20 * Real.logb 10 (2 * x)
+      = 20 * Real.logb 10 x + 20 * Real.logb 10 2 :=
+  (mass_law_comparison hx).2.2
 
 end Acoustics
