@@ -117,8 +117,8 @@ example :
   have c2 : (∑ Y : Fin 2 → Bool, (twoPLPMF
       (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2)
       (fun _ : Fin 2 => (0 : ℝ)) 1 Y).toReal = 1) :=
-    twoPLPMF_toReal_sum (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2)
-      (fun _ : Fin 2 => (0 : ℝ)) 1
+    MathlibExt.Probability.FiniteProbability.sum_toReal_eq_one (twoPLPMF (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2)
+      (fun _ : Fin 2 => (0 : ℝ)) 1)
   have c3 : (∀ Y : Fin 2 → Bool, 0 < (twoPLPMF
       (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2)
       (fun _ : Fin 2 => (0 : ℝ)) 1 Y).toReal) := by

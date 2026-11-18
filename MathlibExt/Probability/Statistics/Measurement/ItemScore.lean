@@ -37,11 +37,6 @@ theorem twoPLPMF_toReal {ι : Type*} [Fintype ι] [DecidableEq ι]
         else 1 - Real.sigmoid (a i * (t - b i))) := by
   exact localIndepPMF_toReal_apply _ _ _ _
 
-theorem twoPLPMF_toReal_sum {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (a b : ι → ℝ) (θ : ℝ) :
-    (∑ Y : ι → Bool, (twoPLPMF a b θ Y).toReal) = 1 := by
-  exact MathlibExt.Probability.FiniteProbability.sum_toReal_eq_one _
-
 theorem localIndepPMF_coord_sum {ι : Type*} [Fintype ι] [DecidableEq ι]
     (q : ι → ℝ) (hq0 : ∀ i, 0 ≤ q i) (hq1 : ∀ i, q i ≤ 1) (j : ι) :
     (∑ Y : ι → Bool, (localIndepPMF q hq0 hq1 Y).toReal * (if Y j then (1 : ℝ) else 0))
@@ -204,7 +199,7 @@ theorem integral_vector_score_twoPL {ι : Type*} [Fintype ι] [DecidableEq ι]
     apply Finset.sum_congr rfl
     intro Y _
     ring
-  simp only [twoPLPMF_coord_sum a b θ j, hconst, twoPLPMF_toReal_sum a b θ,
+  simp only [twoPLPMF_coord_sum a b θ j, hconst, MathlibExt.Probability.FiniteProbability.sum_toReal_eq_one (twoPLPMF a b θ),
     mul_one, sub_self, mul_zero]
 
 end MathlibExt.Probability.Statistics.Measurement
