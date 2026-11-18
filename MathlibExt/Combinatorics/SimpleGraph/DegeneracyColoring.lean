@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Author: @vonbo, an AI assistant
+Author: @vonbo and an AI assistant
 -/
 module
 
