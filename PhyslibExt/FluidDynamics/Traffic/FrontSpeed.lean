@@ -7,28 +7,29 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Basic.Real.Basic
-import Mathlib.Tactic.FieldSimp
+public import PhyslibExt.FluidDynamics.Traffic.FundamentalDiagram
+public import PhyslibExt.FluidDynamics.Traffic.ShockOrdering
 
 /-!
-# Greenshields front speed
+# Greenshields shock speed
 
 ## i. Overview
 
-With free-flow speed `vf`, jam density `kj`, and the Greenshields
-flux `q(k) = k * vf * (1 - k / kj)`, the moving-front speed between
-two distinct densities is the Rankine-Hugoniot quotient
-`(q(kR) - q(kL)) / (kR - kL) = vf * (1 - (kL + kR) / kj)`. For
-complementary densities `kL + kR = kj` the front is stationary.
+With the Greenshields flux `greenshieldsFlux vf kj` (free-flow
+speed `vf`, jam density `kj`), the shock speed between two
+distinct densities is the Rankine-Hugoniot secant
+`ShockOrdering.shockSpeed (greenshieldsFlux vf kj) kL kR`, and it
+specializes to `vf * (1 - (kL + kR) / kj)`. For complementary
+densities `kL + kR = kj` the front is stationary.
 
 ## ii. Key results
 
-- `greenshields_front_speed`: the front-speed specialization for
-  distinct states.
+- `FluidDynamics.Traffic.greenshields_shock_speed`: the shock
+  speed specialization for distinct states.
 
 ## iii. Table of contents
 
-- A. Front speed
+- A. Shock speed
 
 ## iv. References
 
@@ -38,27 +39,24 @@ complementary densities `kL + kR = kj` the front is stationary.
 
 @[expose] public section
 
-/-! ## A. Front speed -/
+namespace FluidDynamics.Traffic
 
-/-- Greenshields front speed between two distinct states. With
-free-flow speed `vf`, jam density `kj ≠ 0`, and the Greenshields
-flux `q(k) = k * vf * (1 - k / kj)`, the moving-front (shock) speed
-between distinct densities `kL ≠ kR` is
-`s = (q(kR) - q(kL)) / (kR - kL) = vf * (1 - (kL + kR) / kj)`.
-For complementary densities (`kL + kR = kj`) the front is
-stationary. -/
-theorem greenshields_front_speed {vf kj kL kR : ℝ} (hkj : kj ≠ 0)
+/-! ## A. Shock speed -/
+
+/-- Greenshields shock speed between two distinct states. With
+the Greenshields flux `greenshieldsFlux vf kj`, the shock speed
+`ShockOrdering.shockSpeed (greenshieldsFlux vf kj) kL kR` between
+distinct densities `kL ≠ kR` (with `kj ≠ 0`) is
+`vf * (1 - (kL + kR) / kj)`. For complementary densities
+(`kL + kR = kj`) the front is stationary. -/
+theorem greenshields_shock_speed {vf kj kL kR : ℝ} (hkj : kj ≠ 0)
     (hdist : kL ≠ kR) :
-    (kR * (vf * (1 - kR / kj)) - kL * (vf * (1 - kL / kj)))
-        / (kR - kL)
+    ShockOrdering.shockSpeed (greenshieldsFlux vf kj) kL kR
       = vf * (1 - (kL + kR) / kj) := by
+  unfold ShockOrdering.shockSpeed greenshieldsFlux
   have hne : kR - kL ≠ 0 := sub_ne_zero.mpr (Ne.symm hdist)
-  rw [div_eq_iff hne]
   field_simp
-  simp only [mul_sub, mul_add, mul_comm, mul_left_comm] at *
-  have h_inner : vf * (kL * kR) + vf * (kR * kR) - (vf * (kL * kL) + vf * (kL * kR))
-      = vf * (kR * kR) - vf * (kL * kL) := by
-    rw [add_comm (vf * (kL * kL)) (vf * (kL * kR))]
-    exact add_sub_add_left_eq_sub _ _ _
-  rw [h_inner]
-  simp only [sub_eq_add_neg, neg_add, neg_neg, add_assoc, add_comm, add_left_comm]
+  ring
+
+
+end FluidDynamics.Traffic
