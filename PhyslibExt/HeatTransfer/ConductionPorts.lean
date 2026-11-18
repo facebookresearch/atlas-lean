@@ -70,6 +70,7 @@ model; it is not claimed to be thermodynamic stored energy.
 
 - A. The quadratic energy identity
 - B. Outward Robin/Neumann dissipation
+- C. Fixtures
 
 ## iv. References
 
@@ -77,8 +78,6 @@ model; it is not claimed to be thermodynamic stored energy.
   for the linear heat equation; the statement is self-contained.
 
 ## A. The quadratic energy identity
-
-## B. Outward Robin/Neumann dissipation
 
 -/
 
@@ -221,6 +220,8 @@ lemma diffusion_contribution_nonpos {D L : ℝ} (hD : 0 ≤ D) (hL : 0 ≤ L)
     intervalIntegral.integral_nonneg hL (fun x _ => sq_nonneg _)
   exact mul_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr hD) hnn
 
+
+/-! ## B. Outward Robin/Neumann dissipation -/
 
 /-- Robin energy identity at one time `t`. From the upstream boundary-work identity
 for `θ = u - Ta` with no source (`hE`), the outward Robin conditions at `0` and `L`
@@ -382,7 +383,7 @@ theorem robin_uniqueness {D L k h0 hL Ta T : ℝ} (hD : 0 ≤ D) (hL0 : 0 < L)
     rw [hempty] at ht
     simp at ht
 
-/-! ## Fixtures -/
+/-! ## C. Fixtures -/
 
 /-- Robin cosine mode (nonzero fixture). `u t x = Ta + exp (-D * μ^2 * t) *
 cos (μ * (x - L / 2))` with `ux` its `x`-derivative solves `u_t = D * u_xx` at
@@ -498,9 +499,11 @@ theorem robinCosineMode {D k μ L Ta : ℝ} (hk : 0 < k) (hμ : 0 ≤ μ) (hL0 :
     rw [heq]
     exact mul_ne_zero (Real.exp_ne_zero _) hC1
 
-/-- Neumann cosine mode (nonzero fixture, `h0 = hL = 0`). With `μ = π / L`,
-`u t x = Ta + exp (-D * μ^2 * t) * cos (μ * x)` has zero flux at both ends and
-`θ(t, 0) ≠ 0`. -/
+/-- Neumann cosine mode (nonzero boundary fixture, `h0 = hL = 0`). With
+`μ = π / L`, `u t x = Ta + exp (-D * μ^2 * t) * cos (μ * x)` has zero flux
+at both ends and `θ(t, 0) ≠ 0`. This fixture records only the first
+spatial derivative and the zero-flux boundary conditions; the
+heat-equation content for cosine modes is in `robinCosineMode`. -/
 theorem neumannCosineMode {D k L Ta : ℝ} (hL0 : 0 < L) :
     let μ : ℝ := Real.pi / L
     let u : ℝ → ℝ → ℝ := fun t x => Ta + Real.exp (-D * μ ^ 2 * t) * Real.cos (μ * x)
