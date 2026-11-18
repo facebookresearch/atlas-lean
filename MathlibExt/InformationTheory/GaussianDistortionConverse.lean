@@ -35,6 +35,18 @@ information of every such law, in bits, is at least
 rate-distortion function at `D`. The case `D = 0` is excluded from
 this density test; a strictly smaller expected distortion than `D`
 gives a strictly larger test mean.
+
+Units: the test bound is in nats, and mutual information is reported in
+bits, as the Kullback-Leibler divergence in nats divided by `log 2`; so
+the nats bound `log (sigma2 / D) / 2` becomes the bits bound
+`log (sigma2 / D) / (2 * log 2)`, that is `(1 / 2) log_2 (sigma2 / D)`.
+
+Source: Cover and Thomas, Elements of Information Theory, 2nd ed. (2006),
+Theorem 10.3.2 (rate-distortion function of a Gaussian source under
+squared-error distortion, `R(D) = (1 / 2) log_2 (sigma2 / D)` for
+`0 < D < sigma2`); this module proves the converse inequality
+`R(D) ≥ (1 / 2) log_2 (sigma2 / D)` by the normalized density test above
+rather than the entropy argument of that section.
 -/
 
 @[expose] public section
@@ -119,17 +131,18 @@ private theorem integrable_sq_id_gaussian (v : ℝ≥0) :
 
 private theorem integrable_sq_error_of_mem_distortionFeasible (σ2 : ℝ≥0) (D : ℝ≥0)
     (μ : ProbabilityMeasure (ℝ × ℝ)) (hμ : μ ∈ distortionFeasible σ2 (D : ℝ)) :
-    Integrable (fun z : ℝ × ℝ => (z.1 - z.2) ^ 2) (μ : Measure (ℝ × ℝ)) := by
-  obtain ⟨hDnn, hfst, hlin⟩ := hμ
-  refine ⟨(by fun_prop : Measurable (fun z : ℝ × ℝ => (z.1 - z.2) ^ 2)).aestronglyMeasurable, ?_⟩
-  exact (hasFiniteIntegral_iff_ofReal
-    (ae_of_all _ (fun z : ℝ × ℝ => sq_nonneg (z.1 - z.2)))).mpr
-    (lt_of_le_of_lt hlin ENNReal.ofReal_lt_top)
+    Integrable (fun z : ℝ × ℝ => (z.1 - z.2) ^ 2) (μ : Measure (ℝ × ℝ)) :=
+  ((mem_distortionFeasible_iff (NNReal.coe_nonneg D) μ).mp hμ).2.1
+
+private theorem map_fst_of_mem_distortionFeasible (σ2 : ℝ≥0) (D : ℝ≥0)
+    (μ : ProbabilityMeasure (ℝ × ℝ)) (hμ : μ ∈ distortionFeasible σ2 (D : ℝ)) :
+    (μ : Measure (ℝ × ℝ)).map Prod.fst = gaussianReal 0 σ2 :=
+  ((mem_distortionFeasible_iff (NNReal.coe_nonneg D) μ).mp hμ).1
 
 private theorem integrable_sq_fst_of_mem_distortionFeasible (σ2 : ℝ≥0) (D : ℝ≥0)
     (μ : ProbabilityMeasure (ℝ × ℝ)) (hμ : μ ∈ distortionFeasible σ2 (D : ℝ)) :
     Integrable (fun z : ℝ × ℝ => z.1 ^ 2) (μ : Measure (ℝ × ℝ)) := by
-  obtain ⟨hDnn, hfst, hlin⟩ := hμ
+  have hfst := map_fst_of_mem_distortionFeasible σ2 D μ hμ
   have key : Integrable (fun x : ℝ => x ^ 2)
       ((μ : Measure (ℝ × ℝ)).map Prod.fst) := hfst.symm ▸ integrable_sq_id_gaussian σ2
   have hcomp := key.comp_measurable measurable_fst
@@ -138,7 +151,7 @@ private theorem integrable_sq_fst_of_mem_distortionFeasible (σ2 : ℝ≥0) (D :
 private theorem integral_sq_fst_of_mem_distortionFeasible (σ2 : ℝ≥0) (D : ℝ≥0)
     (μ : ProbabilityMeasure (ℝ × ℝ)) (hμ : μ ∈ distortionFeasible σ2 (D : ℝ)) :
     ∫ z : ℝ × ℝ, z.1 ^ 2 ∂(μ : Measure (ℝ × ℝ)) = (σ2 : ℝ) := by
-  obtain ⟨hDnn, hfst, hlin⟩ := hμ
+  have hfst := map_fst_of_mem_distortionFeasible σ2 D μ hμ
   have hmap : ∫ z : ℝ × ℝ, z.1 ^ 2 ∂(μ : Measure (ℝ × ℝ))
       = ∫ x : ℝ, x ^ 2 ∂(gaussianReal 0 σ2) := by
     rw [← hfst]
@@ -152,19 +165,8 @@ private theorem integral_sq_fst_of_mem_distortionFeasible (σ2 : ℝ≥0) (D : �
 
 private theorem integral_sq_error_le_of_mem_distortionFeasible (σ2 : ℝ≥0) (D : ℝ≥0)
     (μ : ProbabilityMeasure (ℝ × ℝ)) (hμ : μ ∈ distortionFeasible σ2 (D : ℝ)) :
-    ∫ z : ℝ × ℝ, (z.1 - z.2) ^ 2 ∂(μ : Measure (ℝ × ℝ)) ≤ (D : ℝ) := by
-  obtain ⟨hDnn, hfst, hlin⟩ := hμ
-  have hint := integrable_sq_error_of_mem_distortionFeasible σ2 D μ
-    ⟨hDnn, hfst, hlin⟩
-  have hEq : ENNReal.ofReal
-        (∫ z : ℝ × ℝ, (z.1 - z.2) ^ 2 ∂(μ : Measure (ℝ × ℝ)))
-      = ∫⁻ z, ENNReal.ofReal ((z.1 - z.2) ^ 2) ∂(μ : Measure (ℝ × ℝ)) :=
-    ofReal_integral_eq_lintegral_ofReal hint
-      (ae_of_all _ (fun z => sq_nonneg (z.1 - z.2)))
-  have hle : ENNReal.ofReal
-        (∫ z : ℝ × ℝ, (z.1 - z.2) ^ 2 ∂(μ : Measure (ℝ × ℝ)))
-      ≤ ENNReal.ofReal (D : ℝ) := hEq ▸ hlin
-  exact (ENNReal.ofReal_le_ofReal_iff (NNReal.coe_nonneg D)).mp hle
+    ∫ z : ℝ × ℝ, (z.1 - z.2) ^ 2 ∂(μ : Measure (ℝ × ℝ)) ≤ (D : ℝ) :=
+  ((mem_distortionFeasible_iff (NNReal.coe_nonneg D) μ).mp hμ).2.2
 
 /-- Integrability of the Gaussian test under a distortion-feasible law,
 derived from the source second moment and the square-error bound. -/
@@ -243,7 +245,7 @@ private theorem lintegral_exp_gaussianTest_productMarginal_eq_one (σ2 : ℝ≥0
     (μ : ProbabilityMeasure (ℝ × ℝ)) (hμ : μ ∈ distortionFeasible σ2 (D : ℝ)) :
     ∫⁻ z, ENNReal.ofReal (Real.exp (gaussianTest D σ2 z))
         ∂(productMarginal μ) = 1 := by
-  obtain ⟨hDnn, hfst, hlin⟩ := hμ
+  have hfst := map_fst_of_mem_distortionFeasible σ2 D μ hμ
   have hD0 : D ≠ 0 := nnreal_ne_zero_of_coe_pos hD
   have hσ0 : σ2 ≠ 0 := nnreal_ne_zero_of_coe_pos hσ2
   have hF : Measurable
@@ -446,173 +448,12 @@ theorem ofReal_integral_gaussianTest_le_klDiv_productMarginal (σ2 : ℝ≥0) (D
     (hμ : μ ∈ distortionFeasible σ2 (D : ℝ)) :
     ENNReal.ofReal (∫ z : ℝ × ℝ, gaussianTest D σ2 z ∂(μ : Measure (ℝ × ℝ))) ≤
       InformationTheory.klDiv (μ : Measure (ℝ × ℝ)) (productMarginal μ) := by
-  by_cases hac : (μ : Measure (ℝ × ℝ)) ≪ productMarginal μ
-  · by_cases hllr : Integrable
-        (MeasureTheory.llr (μ : Measure (ℝ × ℝ)) (productMarginal μ))
-        (μ : Measure (ℝ × ℝ))
-    · have := isProbabilityMeasure_productMarginal μ
-      have hf_int_μ := integrable_gaussianTest_of_mem_distortionFeasible σ2 D μ hμ
-      have hu_int_ν :=
-        integrable_exp_gaussianTest_productMarginal_of_mem_distortionFeasible
-          σ2 D hD μ hμ
-      have hu_eq := integral_exp_gaussianTest_productMarginal_eq_one
-        σ2 D hD hσ2 μ hμ
-      have hf_r : Integrable
-          (fun x : ℝ × ℝ =>
-            ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-              * gaussianTest D σ2 x) (productMarginal μ) :=
-        (MeasureTheory.integrable_toReal_rnDeriv_mul_iff hac).mpr hf_int_μ
-      have hlog_r : Integrable
-          (fun x : ℝ × ℝ =>
-            ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-              * Real.log
-                (((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal))
-          (productMarginal μ) :=
-        (MeasureTheory.integrable_rnDeriv_mul_log_iff hac).mpr hllr
-      have hr_int_aux : Integrable
-          (fun x : ℝ × ℝ =>
-            ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal * (1 : ℝ))
-          (productMarginal μ) :=
-        (MeasureTheory.integrable_toReal_rnDeriv_mul_iff hac).mpr
-          (integrable_const (1 : ℝ))
-      have hr_int : Integrable
-          (fun x : ℝ × ℝ =>
-            ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal)
-          (productMarginal μ) := by
-        simpa using hr_int_aux
-      have h_int_f : ∫ x : ℝ × ℝ,
-            ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-              * gaussianTest D σ2 x ∂(productMarginal μ)
-          = ∫ x : ℝ × ℝ, gaussianTest D σ2 x ∂(μ : Measure (ℝ × ℝ)) :=
-        MeasureTheory.integral_toReal_rnDeriv_mul hac
-      have h_int_log : ∫ x : ℝ × ℝ,
-            ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-              * Real.log
-                (((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal)
-            ∂(productMarginal μ)
-          = ∫ x : ℝ × ℝ,
-              MeasureTheory.llr (μ : Measure (ℝ × ℝ)) (productMarginal μ) x
-              ∂(μ : Measure (ℝ × ℝ)) :=
-        MeasureTheory.integral_rnDeriv_mul_log hac
-      have h_int_r : ∫ x : ℝ × ℝ,
-            ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-            ∂(productMarginal μ) = 1 := by
-        have h := MeasureTheory.integral_toReal_rnDeriv_mul
-          (μ := (μ : Measure (ℝ × ℝ))) (ν := productMarginal μ)
-          (f := fun _ : ℝ × ℝ => (1 : ℝ)) hac
-        simp only [mul_one] at h
-        rw [h]
-        simp
-      have hpoint : ∀ x : ℝ × ℝ,
-          ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-              * gaussianTest D σ2 x
-            ≤ ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-                * Real.log
-                  (((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal)
-              - ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-              + Real.exp (gaussianTest D σ2 x) := by
-        intro x
-        by_cases hr0 :
-            ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal = 0
-        · rw [hr0]
-          have hnn : (0 : ℝ) ≤ Real.exp (gaussianTest D σ2 x) :=
-            Real.exp_nonneg _
-          simpa using hnn
-        · have hrpos : (0 : ℝ)
-              < ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal :=
-            lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm hr0)
-          have hlogle : Real.log
-                (Real.exp (gaussianTest D σ2 x)
-                  / ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal)
-              ≤ Real.exp (gaussianTest D σ2 x)
-                  / ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-                - 1 :=
-            Real.log_le_sub_one_of_pos
-              (div_pos (Real.exp_pos _) hrpos)
-          have hmul := mul_le_mul_of_nonneg_left hlogle hrpos.le
-          have heq1 :
-              ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-                  * Real.log
-                    (Real.exp (gaussianTest D σ2 x)
-                      / ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal)
-                = ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-                    * gaussianTest D σ2 x
-                  - ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-                    * Real.log
-                      (((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal) := by
-            rw [Real.log_div (Real.exp_pos _).ne' hrpos.ne', Real.log_exp]
-            ring
-          have heq2 :
-              ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-                  * (Real.exp (gaussianTest D σ2 x)
-                      / ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-                    - 1)
-                = Real.exp (gaussianTest D σ2 x)
-                  - ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal := by
-            rw [mul_sub, mul_div_cancel₀ _ hrpos.ne', mul_one]
-          rw [heq1, heq2] at hmul
-          linarith
-      have hsub_int : Integrable
-          (fun x : ℝ × ℝ =>
-            ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-                * Real.log
-                  (((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal)
-              - ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal)
-          (productMarginal μ) :=
-        hlog_r.sub hr_int
-      have hIntRHS : Integrable
-          (fun x : ℝ × ℝ =>
-            ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-                * Real.log
-                  (((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal)
-              - ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-              + Real.exp (gaussianTest D σ2 x)) (productMarginal μ) :=
-        (hlog_r.sub hr_int).add hu_int_ν
-      have hmono : ∫ x : ℝ × ℝ,
-            ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-              * gaussianTest D σ2 x ∂(productMarginal μ)
-          ≤ ∫ x : ℝ × ℝ,
-            (((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-                * Real.log
-                  (((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal)
-              - ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-              + Real.exp (gaussianTest D σ2 x)) ∂(productMarginal μ) :=
-        integral_mono_ae hf_r hIntRHS (ae_of_all _ hpoint)
-      have hRHS : ∫ x : ℝ × ℝ,
-            (((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-                * Real.log
-                  (((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal)
-              - ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-              + Real.exp (gaussianTest D σ2 x)) ∂(productMarginal μ)
-          = ∫ x : ℝ × ℝ,
-              ((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal
-                * Real.log
-                  (((μ : Measure (ℝ × ℝ)).rnDeriv (productMarginal μ) x).toReal)
-              ∂(productMarginal μ) := by
-        have e1 := integral_add hsub_int hu_int_ν
-        have e2 := integral_sub hlog_r hr_int
-        rw [e1, e2, hu_eq, h_int_r]
-        ring
-      have hle_real : ∫ z : ℝ × ℝ, gaussianTest D σ2 z
-            ∂(μ : Measure (ℝ × ℝ))
-          ≤ ∫ x : ℝ × ℝ,
-              MeasureTheory.llr (μ : Measure (ℝ × ℝ)) (productMarginal μ) x
-              ∂(μ : Measure (ℝ × ℝ)) := by
-        rw [← h_int_f, ← h_int_log]
-        exact hRHS ▸ hmono
-      rw [InformationTheory.klDiv_of_ac_of_integrable hac hllr]
-      have hνreal : (productMarginal μ).real Set.univ = 1 := by
-        have := isProbabilityMeasure_productMarginal μ
-        simp [MeasureTheory.Measure.real]
-      have hμreal : (μ : Measure (ℝ × ℝ)).real Set.univ = 1 := by
-        simp [MeasureTheory.Measure.real]
-      rw [hνreal, hμreal]
-      simp only [add_sub_cancel_right]
-      exact ENNReal.ofReal_le_ofReal hle_real
-    · rw [InformationTheory.klDiv_of_not_integrable hllr]
-      exact le_top
-  · rw [InformationTheory.klDiv_of_not_ac hac]
-    exact le_top
+  haveI := isProbabilityMeasure_productMarginal μ
+  exact NormalizedKLTestBound.ofReal_integral_le_klDiv (μ : Measure (ℝ × ℝ))
+    (productMarginal μ) (measurable_gaussianTest D σ2)
+    (integrable_gaussianTest_of_mem_distortionFeasible σ2 D μ hμ)
+    (integrable_exp_gaussianTest_productMarginal_of_mem_distortionFeasible σ2 D hD μ hμ)
+    (integral_exp_gaussianTest_productMarginal_eq_one σ2 D hD hσ2 μ hμ)
 
 /-- Every distortion-feasible law has mutual information, in bits, at
 least `log (sigma2 / D) / (2 * log 2)`. -/
