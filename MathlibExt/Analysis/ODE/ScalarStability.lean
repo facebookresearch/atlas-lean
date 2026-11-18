@@ -179,4 +179,31 @@ theorem scalar_sign_decay_of_hasDerivAt
   rw [e1, e0] at h
   exact h
 
+/-- The explicit scalar Hurwitz trajectory `exp (-c * t) * x0`
+is bounded by its exponential envelope for `t ≥ 0`. -/
+theorem hurwitz_scalar_bound {c x0 t : ℝ} (hc : 0 < c) (ht : 0 ≤ t) :
+    |Real.exp (-c * t) * x0| ≤ Real.exp (-c * t) * |x0| := by
+  rw [abs_mul, abs_of_pos (Real.exp_pos _)]
+
+/-- Every explicit scalar Hurwitz trajectory tends to the
+equilibrium `0` as `t → ∞`. -/
+theorem hurwitz_scalar_tendsto {c x0 : ℝ} (hc : 0 < c) :
+    Filter.Tendsto (fun t : ℝ => Real.exp (-c * t) * x0) Filter.atTop
+      (nhds 0) := by
+  have hct : Filter.Tendsto (fun t : ℝ => c * t) Filter.atTop Filter.atTop :=
+    (Filter.tendsto_const_mul_atTop_of_pos hc).mpr Filter.tendsto_id
+  have hexp : Filter.Tendsto (fun t : ℝ => Real.exp (-(c * t))) Filter.atTop (nhds 0) :=
+    Real.tendsto_exp_neg_atTop_nhds_zero.comp hct
+  have hmul : Filter.Tendsto (fun t : ℝ => Real.exp (-(c * t)) * x0) Filter.atTop (nhds (0 * x0)) :=
+    hexp.mul tendsto_const_nhds
+  rw [zero_mul] at hmul
+  simp only [neg_mul]
+  exact hmul
+
+/-- At `x0 = 0` the explicit scalar trajectory is identically
+the equilibrium. -/
+theorem hurwitz_scalar_equilibrium {c t : ℝ} :
+    Real.exp (-c * t) * (0 : ℝ) = 0 :=
+  mul_zero _
+
 end MathlibExt.Analysis.ODE.ScalarStability

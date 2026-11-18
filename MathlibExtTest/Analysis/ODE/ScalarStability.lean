@@ -42,4 +42,12 @@ example :
       simpa using h)
     (by norm_num)
 
+/-- The unit-rate trajectory at time zero keeps the initial value. -/
+example : |Real.exp (-(1:ℝ) * 0) * (3:ℝ)| ≤ Real.exp (-(1:ℝ) * 0) * |(3:ℝ)| :=
+  hurwitz_scalar_bound (by norm_num) le_rfl
+
+/-- The zero initial state stays at the equilibrium. -/
+example : Real.exp (-(2:ℝ) * (5:ℝ)) * (0:ℝ) = 0 :=
+  hurwitz_scalar_equilibrium
+
 end MathlibExtTest.Analysis.ODE.ScalarStability
