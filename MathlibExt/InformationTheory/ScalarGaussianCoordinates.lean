@@ -30,8 +30,8 @@ Main results:
   multivariate Gaussian with mean `(m)` and covariance `[s]`.
 * `condDistrib_scalarCoord_add`, `map_prod_scalarCoord_add`: the conditional and joint laws of the
   embedded channel are given by the canonical noise kernel.
-* `scalarPowerBound_iff_powerConstraint`: the scalar power bound `∫⁻ ofReal (X²) ≤ ofReal P`,
-  with `0 ≤ P`, is the vector `PowerConstraint` of the embedded input.
+* `scalarPowerBound_iff_powerConstraint`: the scalar power bound
+  `0 ≤ P ∧ ∫⁻ ofReal (X²) ≤ ofReal P` is the vector `PowerConstraint` of the embedded input.
 * `klDiv_map_scalarCoord`, `klDiv_map_scalarCoordPair`,
   `measureMutualInformation_map_scalarCoordPair`: the embedding preserves Kullback-Leibler
   divergence and mutual information as extended reals, so a top value stays top.
@@ -62,11 +62,17 @@ noncomputable abbrev scalarCoord : ℝ → EuclideanSpace ℝ (Fin 1) := lineIso
 /-- The coordinate projection back to the real line: the inverse isometry `lineIsometry.symm`. -/
 noncomputable abbrev scalarCoordInv : EuclideanSpace ℝ (Fin 1) → ℝ := lineIsometry.symm
 
-/-- The scalar power bound: the lower integral of `ofReal (x^2)` under the law of `X` is at most
-`ofReal P`. -/
+/-- The scalar power bound: the budget `P` is nonnegative and the lower integral of
+`ofReal (x^2)` under the law of `X` is at most `ofReal P`. The nonnegativity conjunct matters
+because `ENNReal.ofReal` sends every negative budget to `0`. -/
 def scalarPowerBound {Ω : Type*} {mΩ : MeasurableSpace Ω} (μ : Measure Ω)
     (X : Ω → ℝ) (P : ℝ) : Prop :=
-  ∫⁻ ω, ENNReal.ofReal ((X ω) ^ 2) ∂μ ≤ ENNReal.ofReal P
+  0 ≤ P ∧ ∫⁻ ω, ENNReal.ofReal ((X ω) ^ 2) ∂μ ≤ ENNReal.ofReal P
+
+/-- The scalar power bound carries a nonnegative budget. -/
+theorem scalarPowerBound.nonneg {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
+    {X : Ω → ℝ} {P : ℝ} (h : scalarPowerBound μ X P) : 0 ≤ P :=
+  h.1
 
 /-- The coordinate projection inverts the embedding. -/
 theorem scalarCoordInv_scalarCoord (x : ℝ) : scalarCoordInv (scalarCoord x) = x :=
@@ -226,13 +232,11 @@ theorem map_prod_scalarCoord_add {Ω : Type*} {mΩ : MeasurableSpace Ω}
   rw [← ProbabilityTheory.compProd_map_condDistrib hX' hY']
   exact Measure.compProd_congr hcond
 
-/-- **Power identification.** The scalar power bound together with `0 ≤ P` is exactly the vector
-total-power condition for the embedded input, including its nonzero-mean contribution through
-the norm. -/
+/-- **Power identification.** The scalar power bound is exactly the vector total-power condition
+for the embedded input, including its nonzero-mean contribution through the norm. -/
 theorem scalarPowerBound_iff_powerConstraint {Ω : Type*} {mΩ : MeasurableSpace Ω}
     (μ : Measure Ω) (X : Ω → ℝ) (P : ℝ) :
-    PowerConstraint μ (fun ω => scalarCoord (X ω)) P ↔
-      0 ≤ P ∧ scalarPowerBound μ X P := by
+    PowerConstraint μ (fun ω => scalarCoord (X ω)) P ↔ scalarPowerBound μ X P := by
   have h : ∀ ω : Ω, ENNReal.ofReal (‖scalarCoord (X ω)‖ ^ 2)
       = ENNReal.ofReal ((X ω) ^ 2) := fun ω => by
     rw [norm_scalarCoord, sq_abs]
@@ -241,11 +245,11 @@ theorem scalarPowerBound_iff_powerConstraint {Ω : Type*} {mΩ : MeasurableSpace
 
 /-- Finite second moment of the embedded input from the scalar power bound. -/
 theorem memLp_scalarCoord_of_scalarPowerBound {Ω : Type*} {mΩ : MeasurableSpace Ω}
-    {μ : Measure Ω} {X : Ω → ℝ} {P : ℝ} (hP : 0 ≤ P) (h : scalarPowerBound μ X P)
+    {μ : Measure Ω} {X : Ω → ℝ} {P : ℝ} (h : scalarPowerBound μ X P)
     (hX : AEStronglyMeasurable X μ) :
     MemLp (fun ω => scalarCoord (X ω)) 2 μ := by
   have hPC : PowerConstraint μ (fun ω => scalarCoord (X ω)) P :=
-    (scalarPowerBound_iff_powerConstraint μ X P).mpr ⟨hP, h⟩
+    (scalarPowerBound_iff_powerConstraint μ X P).mpr h
   have hX' : AEStronglyMeasurable (fun ω => scalarCoord (X ω)) μ :=
     lineIsometry.continuous.comp_aestronglyMeasurable hX
   exact PowerConstraint.memLp_two hPC hX'
@@ -253,10 +257,10 @@ theorem memLp_scalarCoord_of_scalarPowerBound {Ω : Type*} {mΩ : MeasurableSpac
 /-- Finite second moment of the scalar input from the scalar power bound, with no finite-power
 conclusion drawn from an infinite lower integral. -/
 theorem memLp_of_scalarPowerBound {Ω : Type*} {mΩ : MeasurableSpace Ω}
-    {μ : Measure Ω} {X : Ω → ℝ} {P : ℝ} (hP : 0 ≤ P) (h : scalarPowerBound μ X P)
+    {μ : Measure Ω} {X : Ω → ℝ} {P : ℝ} (h : scalarPowerBound μ X P)
     (hX : AEStronglyMeasurable X μ) : MemLp X 2 μ := by
   have hmem : MemLp (scalarCoord ∘ X) 2 μ :=
-    memLp_scalarCoord_of_scalarPowerBound hP h hX
+    memLp_scalarCoord_of_scalarPowerBound h hX
   have h0 : scalarCoord 0 = 0 := map_zero lineIsometry
   exact MeasureTheory.MemLp.of_comp_antilipschitzWith hmem
     lineIsometry.isometry.uniformContinuous lineIsometry.antilipschitzWith h0
@@ -416,7 +420,7 @@ kernel, and the power identification all hold together. This is the headline ide
 divergence and mutual-information transport are the separate corollaries above. -/
 theorem scalarGaussianChannel_identification {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {μ : Measure Ω} [IsProbabilityMeasure μ] {X Z : Ω → ℝ} (hX : Measurable X)
-    (hZ : Measurable Z) (hind : IndepFun X Z μ) (N P : ℝ) (hN : 0 < N) (hP : 0 ≤ P)
+    (hZ : Measurable Z) (hind : IndepFun X Z μ) (N P : ℝ) (hN : 0 < N)
     (hZlaw : μ.map Z = gaussianReal 0 ⟨N, hN.le⟩) :
     (gaussianReal 0 ⟨N, hN.le⟩).map scalarCoord =
         multivariateGaussian 0 (!![N] : Matrix (Fin 1) (Fin 1) ℝ) ∧
@@ -439,8 +443,7 @@ theorem scalarGaussianChannel_identification {Ω : Type*} {mΩ : MeasurableSpace
     rwa [h0] at h
   · exact condDistrib_scalarCoord_add hX hZ hind N hN hZlaw
   · exact map_prod_scalarCoord_add hX hZ hind N hN hZlaw
-  · rw [scalarPowerBound_iff_powerConstraint μ X P]
-    exact ⟨And.right, fun h => ⟨hP, h⟩⟩
+  · exact scalarPowerBound_iff_powerConstraint μ X P
 
 /-- Validation, point mass and nonzero mean: a point mass at `2` meets the scalar power bound at `P
 = 4` and fails it at `P = 3`; its embedded second moment is `4`. -/
@@ -449,13 +452,13 @@ theorem scalarPowerBound_dirac_two :
       ¬ scalarPowerBound (Measure.dirac 2) id 3 := by
   constructor
   · unfold scalarPowerBound
+    refine ⟨by norm_num, ?_⟩
     rw [lintegral_dirac]
     change ENNReal.ofReal ((2 : ℝ) ^ 2) ≤ ENNReal.ofReal 4
     exact ENNReal.ofReal_le_ofReal (by norm_num)
-  · unfold scalarPowerBound
-    rw [lintegral_dirac]
-    change ENNReal.ofReal ((2 : ℝ) ^ 2) ≤ ENNReal.ofReal 3 → False
-    intro h
+  · rintro ⟨-, h⟩
+    rw [lintegral_dirac] at h
+    change ENNReal.ofReal ((2 : ℝ) ^ 2) ≤ ENNReal.ofReal 3 at h
     have h4 : (2 : ℝ) ^ 2 = 4 := by norm_num
     rw [h4] at h
     have hle := (ENNReal.ofReal_le_ofReal_iff (by norm_num : (0 : ℝ) ≤ 3)).mp h
@@ -466,8 +469,8 @@ scalar bound at `P = 0`. -/
 theorem not_scalarPowerBound_zero_const {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {μ : Measure Ω} [IsProbabilityMeasure μ] {c : ℝ} (hc : c ≠ 0) :
     ¬ scalarPowerBound μ (fun _ => c) 0 := by
-  change ¬ (∫⁻ ω, ENNReal.ofReal (c ^ 2) ∂μ ≤ ENNReal.ofReal 0)
-  intro h
+  rintro ⟨-, h⟩
+  change ∫⁻ ω, ENNReal.ofReal (c ^ 2) ∂μ ≤ ENNReal.ofReal 0 at h
   rw [lintegral_const, IsProbabilityMeasure.measure_univ, mul_one] at h
   have h' : c ^ 2 ≤ 0 := (ENNReal.ofReal_le_ofReal_iff le_rfl).mp h
   have h0 : c ^ 2 = 0 := le_antisymm h' (sq_nonneg c)
@@ -498,6 +501,13 @@ theorem scalarPowerBound_gaussianReal (m s : ℝ) (hs : 0 ≤ s) :
         = (∫ x, ((id x) ^ 2 : ℝ) ∂(gaussianReal m ⟨s, hs⟩)) - m ^ 2 := hdecomp
     linarith
   unfold scalarPowerBound
+  refine ⟨by positivity, ?_⟩
   rw [← hconv, hEq]
+
+/-- Validation, negative budget: no input, not even the zero input, meets the scalar power bound
+at a negative budget, although `ENNReal.ofReal` sends that budget to `0`. -/
+theorem not_scalarPowerBound_of_neg {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {μ : Measure Ω} {X : Ω → ℝ} {P : ℝ} (hP : P < 0) : ¬ scalarPowerBound μ X P :=
+  fun h => absurd h.nonneg (not_le.mpr hP)
 
 end MathlibExt.InformationTheory.ScalarGaussianCoordinates

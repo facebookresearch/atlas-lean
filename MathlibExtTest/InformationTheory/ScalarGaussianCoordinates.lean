@@ -84,19 +84,28 @@ example :
     PowerConstraint (gaussianReal 1 ⟨2, by norm_num⟩) (fun x => scalarCoord (id x)) 3 := by
   have h := scalarPowerBound_gaussianReal 1 2 (by norm_num)
   norm_num at h
-  exact (scalarPowerBound_iff_powerConstraint _ _ _).2 ⟨by norm_num, h⟩
+  exact (scalarPowerBound_iff_powerConstraint _ _ _).2 h
 
 /-- The input `N(1, 2)` has a finite second moment, from its scalar power bound at `P = 3`. -/
 example : MemLp id 2 (gaussianReal 1 ⟨2, by norm_num⟩) := by
   have h := scalarPowerBound_gaussianReal 1 2 (by norm_num)
   norm_num at h
-  exact memLp_of_scalarPowerBound (by norm_num) h aestronglyMeasurable_id
+  exact memLp_of_scalarPowerBound h aestronglyMeasurable_id
 
 /-- The constant input `2` fails the vector power model at `P = 0`. -/
 example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ] :
     ¬ PowerConstraint μ (fun _ => scalarCoord 2) 0 := by
   rw [scalarPowerBound_iff_powerConstraint μ (fun _ => 2) 0]
-  exact fun h => not_scalarPowerBound_zero_const (μ := μ) (by norm_num) h.2
+  exact not_scalarPowerBound_zero_const (μ := μ) (by norm_num)
+
+/-- Negative-budget boundary: the zero input fails the scalar power bound at `P = -1`, where
+`ENNReal.ofReal` alone would compare `0 ≤ 0`, and so fails the vector power model there too. -/
+example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} :
+    ¬ scalarPowerBound μ (fun _ => (0 : ℝ)) (-1) ∧
+      ¬ PowerConstraint μ (fun _ => scalarCoord 0) (-1) := by
+  refine ⟨not_scalarPowerBound_of_neg (by norm_num), ?_⟩
+  rw [scalarPowerBound_iff_powerConstraint μ (fun _ => 0) (-1)]
+  exact not_scalarPowerBound_of_neg (by norm_num)
 
 /-- The scalar divergence `KL(N(0, 1) ‖ N(0, 2))` is the vector closed form at dimension one,
 `(log 2 - 1 + 1 / 2) / 2`. -/
