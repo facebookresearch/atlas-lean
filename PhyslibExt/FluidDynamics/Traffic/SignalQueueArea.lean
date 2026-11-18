@@ -9,6 +9,7 @@ module
 
 public import PhyslibExt.FluidDynamics.Traffic.SignalQueue
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 
 /-!
 # One-cycle queue area
@@ -32,9 +33,8 @@ condition that the queue clears within the cycle.
 
 ## iv. References
 
-- F. Viti and B. De Schutter, *A Multimodal Kalman Filter Based
-  Approach for Activity Analysis*, 2010 (deterministic fluid queue
-  at a signalized intersection).
+- Standard deterministic queueing at fixed-time signals (fluid
+  model), e.g. D. Gazis (ed.), *Traffic Science*, 1974.
 -/
 
 @[expose] public section
@@ -42,22 +42,6 @@ condition that the queue clears within the cycle.
 namespace FluidDynamics.Traffic.SignalQueue
 
 /-! ## A. The one-cycle area formula -/
-
-/-- Integral of the identity over `[0, L]`, by reflection `x ↦ L - x`. -/
-theorem integral_id_from_zero {L : ℝ} : ∫ x in (0)..L, x = L ^ 2 / 2 := by
-  have hint : IntervalIntegrable (fun x : ℝ => x) MeasureTheory.volume 0 L :=
-    Continuous.intervalIntegrable continuous_id 0 L
-  have hconst : IntervalIntegrable (fun _ : ℝ => L) MeasureTheory.volume 0 L :=
-    intervalIntegrable_const
-  have hrefl : (∫ x in (0)..L, (L - x)) = ∫ x in (0)..L, x := by
-    have h : (∫ x in (0)..L, (L - x)) = ∫ x in L - L..L - 0, x :=
-      intervalIntegral.integral_comp_sub_left (fun x : ℝ => x) L
-    rwa [sub_self, sub_zero] at h
-  have hsub := intervalIntegral.integral_sub (a := 0) (b := L) hconst hint
-  simp only [intervalIntegral.integral_const, sub_zero, smul_eq_mul] at hsub
-  have hI : (∫ x in (0)..L, x) = L * L / 2 := by linarith [hrefl, hsub]
-  rw [hI]
-  ring
 
 /-- Area under the queue-length curve over one cycle. -/
 theorem queueLen_integral_cycle {lam mu R G : ℝ} (hlam : 0 < lam)
@@ -107,7 +91,7 @@ theorem queueLen_integral_cycle {lam mu R G : ℝ} (hlam : 0 < lam)
       rw [Set.uIoo_of_le hR, Set.mem_Ioo] at hx
       have hxR : x ≤ R := le_of_lt hx.2
       simp [queueLen, hxR]
-    rw [hcongr, intervalIntegral.integral_const_mul, integral_id_from_zero]
+    rw [hcongr, intervalIntegral.integral_const_mul, integral_id]
     ring
   have hP3 : (∫ t in c..(R + G), queueLen lam mu R t) = 0 := by
     apply intervalIntegral.integral_zero_ae
@@ -145,7 +129,7 @@ theorem queueLen_integral_cycle {lam mu R G : ℝ} (hlam : 0 < lam)
     have hshift : (∫ t in R..c, (t - R)) = ∫ t in (0)..(c - R), t := by
       have h := intervalIntegral.integral_comp_sub_right (fun x : ℝ => x) R (a := R) (b := c)
       simpa only [sub_self] using h
-    rw [hsub, hshift, integral_id_from_zero]
+    rw [hsub, hshift, integral_id]
     ring
   have hcR : c - R = lam * R / (mu - lam) := by
     rw [hc]
