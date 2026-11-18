@@ -27,19 +27,18 @@ These are elaboration and non-vacuity checks, not new results.
 
 open HazardDamageRisk
 
-/-- Unit-loss application: the joint risk is `1`. -/
-example : ∫⁻ z, (fun _ : Unit × Bool => (1 : ℝ≥0∞)) z
-      ∂((MeasureTheory.Measure.dirac ()) ⊗ₘ
-        (ProbabilityTheory.Kernel.const Unit (MeasureTheory.Measure.dirac false)))
-    = 1 := by
-  rw [risk_eq_iterated (MeasureTheory.Measure.dirac ())
+/-- Unit loss: the risk is `1`, through `risk_eq_joint`. -/
+example : risk (MeasureTheory.Measure.dirac ())
+      (ProbabilityTheory.Kernel.const Unit (MeasureTheory.Measure.dirac false))
+      (fun _ : Unit × Bool => (1 : ℝ≥0∞)) = 1 := by
+  rw [risk_eq_joint (MeasureTheory.Measure.dirac ())
     (ProbabilityTheory.Kernel.const Unit (MeasureTheory.Measure.dirac false))
     (fun _ : Unit × Bool => (1 : ℝ≥0∞)) (by fun_prop)]
   simp
 
 /-- Constant loss `3` has risk `3` through `risk_const`. -/
-example : (∫⁻ _z : Unit × Bool, (3 : ℝ≥0∞)
-      ∂((MeasureTheory.Measure.dirac ()) ⊗ₘ
-        (ProbabilityTheory.Kernel.const Unit (MeasureTheory.Measure.dirac false)))) = 3 :=
+example : risk (MeasureTheory.Measure.dirac ())
+      (ProbabilityTheory.Kernel.const Unit (MeasureTheory.Measure.dirac false))
+      (fun _ : Unit × Bool => (3 : ℝ≥0∞)) = 3 :=
   risk_const (MeasureTheory.Measure.dirac ())
     (ProbabilityTheory.Kernel.const Unit (MeasureTheory.Measure.dirac false)) 3

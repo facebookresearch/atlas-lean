@@ -25,9 +25,11 @@ hazard state, averaged over the hazard law.
 
 ## ii. Key results
 
-- `HazardDamageRisk.risk_eq_iterated`: the joint/iterated identity.
+- `HazardDamageRisk.risk`: expected loss under hazard then damage.
+- `HazardDamageRisk.risk_eq_joint`: risk as expectation under the
+  joint law.
 - `HazardDamageRisk.risk_const`, `HazardDamageRisk.risk_mono`:
-  constant-loss value and monotonicity of the risk.
+  constant-loss value and monotonicity.
 
 ## iii. Table of contents
 
@@ -45,20 +47,25 @@ hazard state, averaged over the hazard law.
 
 namespace HazardDamageRisk
 
-/-- Joint-hazard conditional-damage risk: for a probability hazard
-law `μ`, a Markov damage kernel `κ`, and a measurable nonnegative
-loss `L`, the risk computed against the joint law `μ ⊗ₘ κ`
-equals the iterated integral: first the conditional expected loss
-given the hazard state, then the hazard average. -/
-theorem risk_eq_iterated {Ω Γ : Type*} [MeasurableSpace Ω]
+/-- Joint-hazard conditional-damage risk: the expected loss of the
+damage state drawn from the kernel `κ` at hazard state drawn from
+`μ`. -/
+noncomputable def risk {Ω Γ : Type*} [MeasurableSpace Ω]
+    [MeasurableSpace Γ] (μ : MeasureTheory.Measure Ω)
+    (κ : ProbabilityTheory.Kernel Ω Γ) (L : Ω × Γ → ℝ≥0∞) : ℝ≥0∞ :=
+  ∫⁻ ω, ∫⁻ γ, L (ω, γ) ∂(κ ω) ∂μ
+
+/-- The risk equals the expected loss under the joint law
+`μ ⊗ₘ κ`. -/
+theorem risk_eq_joint {Ω Γ : Type*} [MeasurableSpace Ω]
     [MeasurableSpace Γ] (μ : MeasureTheory.Measure Ω)
     [MeasureTheory.IsProbabilityMeasure μ]
     (κ : ProbabilityTheory.Kernel Ω Γ)
     [ProbabilityTheory.IsMarkovKernel κ]
     (L : Ω × Γ → ℝ≥0∞) (hL : Measurable L) :
-    ∫⁻ z, L z ∂(μ ⊗ₘ κ)
-      = ∫⁻ ω, ∫⁻ γ, L (ω, γ) ∂(κ ω) ∂μ := by
-  exact MeasureTheory.Measure.lintegral_compProd hL
+    risk μ κ L = ∫⁻ z, L z ∂(μ ⊗ₘ κ) := by
+  unfold risk
+  exact (MeasureTheory.Measure.lintegral_compProd hL).symm
 
 /-- Constant loss: if the loss is constantly `c`, the risk is `c`
 (the joint law of a probability hazard and a Markov damage kernel
@@ -68,8 +75,8 @@ theorem risk_const {Ω Γ : Type*} [MeasurableSpace Ω]
     [MeasureTheory.IsProbabilityMeasure μ]
     (κ : ProbabilityTheory.Kernel Ω Γ)
     [ProbabilityTheory.IsMarkovKernel κ] (c : ℝ≥0∞) :
-    (∫⁻ _z, c ∂(μ ⊗ₘ κ)) = c := by
-  simp
+    risk μ κ (fun _ => c) = c := by
+  simp [risk]
 
 /-- Monotonicity: a pointwise smaller loss has smaller risk. -/
 theorem risk_mono {Ω Γ : Type*} [MeasurableSpace Ω]
@@ -77,11 +84,10 @@ theorem risk_mono {Ω Γ : Type*} [MeasurableSpace Ω]
     [MeasureTheory.IsProbabilityMeasure μ]
     (κ : ProbabilityTheory.Kernel Ω Γ)
     [ProbabilityTheory.IsMarkovKernel κ]
-    (L L' : Ω × Γ → ℝ≥0∞) (hL : Measurable L) (hL' : Measurable L')
-    (h : ∀ z, L z ≤ L' z) :
-    (∫⁻ ω, ∫⁻ γ, L (ω, γ) ∂(κ ω) ∂μ)
-      ≤ ∫⁻ ω, ∫⁻ γ, L' (ω, γ) ∂(κ ω) ∂μ := by
-  rw [← risk_eq_iterated μ κ L hL, ← risk_eq_iterated μ κ L' hL']
-  exact lintegral_mono h
+    (L L' : Ω × Γ → ℝ≥0∞) (h : ∀ z, L z ≤ L' z) :
+    risk μ κ L ≤ risk μ κ L' := by
+  unfold risk
+  exact MeasureTheory.lintegral_mono fun ω =>
+    MeasureTheory.lintegral_mono fun γ => h (ω, γ)
 
 end HazardDamageRisk
