@@ -24,9 +24,8 @@ y''`, shear `V = M'`), the bending moment is `(w / 2) * (L * x -
 x ^ 2)` and the shear is `(w / 2) * (L - 2 * x)`. End moments
 vanish, end shears are opposite, `V' = -w` as a function
 identity, and the maximum moment on `[0, L]` is `w * L ^ 2 / 8`
-at the midpoint. The deflection used here is identified with the
-canonical `uniformLoadDeflection` by
-`uniformBeamDeflection_eq_uniformLoadDeflection`.
+at the midpoint. Moment and shear are built directly on the
+canonical deflection `uniformLoadDeflection`.
 
 ## ii. Key results
 
@@ -56,21 +55,16 @@ namespace Mechanics.EulerBernoulli
 
 /-! ## A. Moment and shear formulas -/
 
-/-- Deflection profile for a simply supported beam under uniform
-load `w`, span `L`, and flexural rigidity `EI`, in the sagging
-sign convention used below. -/
-noncomputable def uniformBeamDeflection (w EI L x : ℝ) : ℝ :=
-  w * x * (L ^ 3 - 2 * L * x ^ 2 + x ^ 3) / (24 * EI)
-
-/-- Bending moment from the deflection profile, `M = -EI * y''`. -/
+/-- Bending moment from the canonical uniform-load deflection,
+`M = -EI * y''` (sagging sign convention). -/
 noncomputable def uniformBeamMoment (w EI L x : ℝ) : ℝ :=
-  -EI * deriv (deriv (uniformBeamDeflection w EI L)) x
+  -EI * deriv (deriv (uniformLoadDeflection w EI L)) x
 
 /-- Shear as the derivative of bending moment, `V = M'`. -/
 noncomputable def uniformBeamShear (w EI L x : ℝ) : ℝ :=
   deriv (uniformBeamMoment w EI L) x
 
-theorem hasDerivAt_quartic_aux {L x : ℝ} :
+private theorem hasDerivAt_quartic_aux {L x : ℝ} :
     HasDerivAt (fun x : ℝ => L ^ 3 * x - 2 * L * x ^ 3 + x ^ 4)
       (L ^ 3 - 6 * L * x ^ 2 + 4 * x ^ 3) x := by
   have hid : HasDerivAt (fun x : ℝ => x) 1 x := hasDerivAt_id' x
@@ -86,24 +80,24 @@ theorem hasDerivAt_quartic_aux {L x : ℝ} :
   convert h using 2
   ring
 
-theorem deriv_uniformBeamDeflection_aux {w EI L : ℝ} :
-    deriv (uniformBeamDeflection w EI L)
+private theorem deriv_uniformLoadDeflection_aux {w EI L : ℝ} :
+    deriv (uniformLoadDeflection w EI L)
       = fun x => w / (24 * EI) * (L ^ 3 - 6 * L * x ^ 2 + 4 * x ^ 3) := by
   funext x
   have hpoly : HasDerivAt (fun x : ℝ => L ^ 3 * x - 2 * L * x ^ 3 + x ^ 4)
       (L ^ 3 - 6 * L * x ^ 2 + 4 * x ^ 3) x :=
     hasDerivAt_quartic_aux
   have hscaled := HasDerivAt.const_mul (w / (24 * EI)) hpoly
-  have hev : uniformBeamDeflection w EI L
+  have hev : uniformLoadDeflection w EI L
       =ᶠ[nhds x] (fun y => w / (24 * EI) * (L ^ 3 * y - 2 * L * y ^ 3 + y ^ 4)) := by
     apply Filter.Eventually.of_forall
     intro y
-    unfold uniformBeamDeflection
+    unfold uniformLoadDeflection
     ring
   have h := HasDerivAt.congr_of_eventuallyEq hscaled hev
   exact h.deriv
 
-theorem hasDerivAt_cubic_aux {L x : ℝ} :
+private theorem hasDerivAt_cubic_aux {L x : ℝ} :
     HasDerivAt (fun x : ℝ => L ^ 3 - 6 * L * x ^ 2 + 4 * x ^ 3)
       (-12 * L * x + 12 * x ^ 2) x := by
   have hC : HasDerivAt (fun _ : ℝ => L ^ 3) 0 x := hasDerivAt_const x _
@@ -119,10 +113,10 @@ theorem hasDerivAt_cubic_aux {L x : ℝ} :
   convert h using 1
   ring
 
-theorem deriv2_uniformBeamDeflection_aux {w EI L : ℝ} :
-    deriv (deriv (uniformBeamDeflection w EI L))
+private theorem deriv2_uniformLoadDeflection_aux {w EI L : ℝ} :
+    deriv (deriv (uniformLoadDeflection w EI L))
       = fun x => w / (24 * EI) * (-12 * L * x + 12 * x ^ 2) := by
-  rw [deriv_uniformBeamDeflection_aux]
+  rw [deriv_uniformLoadDeflection_aux]
   funext x
   have hpoly : HasDerivAt (fun x : ℝ => L ^ 3 - 6 * L * x ^ 2 + 4 * x ^ 3)
       (-12 * L * x + 12 * x ^ 2) x :=
@@ -133,14 +127,14 @@ theorem deriv2_uniformBeamDeflection_aux {w EI L : ℝ} :
 /-- The explicit moment diagram for the uniform-load quartic. -/
 theorem uniformBeamMoment_eq {w EI L x : ℝ} (hEI : EI ≠ 0) :
     uniformBeamMoment w EI L x = (w / 2) * (L * x - x ^ 2) := by
-  have h2 := congrFun (@deriv2_uniformBeamDeflection_aux w EI L) x
+  have h2 := congrFun (@deriv2_uniformLoadDeflection_aux w EI L) x
   unfold uniformBeamMoment
   rw [h2]
   show -EI * (w / (24 * EI) * (-12 * L * x + 12 * x ^ 2)) = _
   field_simp
   ring
 
-theorem uniformBeamMoment_fun_aux {w EI L : ℝ} (hEI : EI ≠ 0) :
+private theorem uniformBeamMoment_fun_aux {w EI L : ℝ} (hEI : EI ≠ 0) :
     uniformBeamMoment w EI L = fun x => (w / 2) * (L * x - x ^ 2) := by
   funext x
   exact uniformBeamMoment_eq hEI
@@ -217,12 +211,5 @@ theorem uniformBeamMoment_midpoint_max {w EI L : ℝ} (hEI : EI ≠ 0)
         = w * L ^ 2 / 8 - (w / 2) * (x - L / 2) ^ 2 := by ring
     linarith
 
-/-- Bridge to the canonical deflection: the package-local quartic
-is the uniform-load deflection
-`Mechanics.EulerBernoulli.uniformLoadDeflection`. -/
-theorem uniformBeamDeflection_eq_uniformLoadDeflection (w EI L x : ℝ) :
-    uniformBeamDeflection w EI L x = uniformLoadDeflection w EI L x := by
-  unfold uniformBeamDeflection uniformLoadDeflection
-  ring
 
 end Mechanics.EulerBernoulli
