@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.ControlTheory.IntersampleEnclosure
+import Mathlib.Analysis.Normed.Group.Real
 
 open ControlTheory
 

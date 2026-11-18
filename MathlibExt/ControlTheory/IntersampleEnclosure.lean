@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Normed.Group.Basic
-public import Mathlib.Analysis.Normed.Module.Basic
 public import Mathlib.Basic.Real.Basic
 
 /-!
@@ -35,7 +34,7 @@ throughout the interval. The motion bound is an explicit
 premise about the actual trajectory, not a consequence of
 sample agreement. -/
 theorem intersample_displacement_le
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {E : Type*} [NormedAddCommGroup E]
     {γ : ℝ → E} {xhat : E} {ts h vbar ε : ℝ} (hv : 0 ≤ vbar)
     (hmotion : ∀ t ∈ Set.Icc ts (ts + h), ‖γ t - γ ts‖ ≤ vbar * (t - ts))
     (hstart : ‖γ ts - xhat‖ ≤ ε) :
