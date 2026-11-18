@@ -68,7 +68,7 @@ case is stated.
 - `parasiticCharge_sum_eq_zero`, `parasiticCharge_gauge`: the
   conservation and gauge premises, from the pairwise-capacitor results.
 - `parasiticCharge_jacobian_sums_eq_zero`: zero row and column sums of
-  the charge Jacobian through the terminal-charge Jacobian theorem.
+  the charge Jacobian at every voltage, from the pairwise-capacitor results.
 - `conductionCurrent_sum_eq_zero`: static current conservation.
 - `sum_dynamicTerminalCurrent_eq_zero`: the dynamic Kirchhoff current
   law along every differentiable path, for all real capacitances.
@@ -203,18 +203,12 @@ lemma parasiticCharge_differentiableOn (Cgs Cgd Cds : ℝ) (U : Set (Fin 3 → �
     Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons,
     Matrix.tail_cons] <;> fun_prop
 
-/-- **Charge Jacobian sums.** Through the terminal-charge Jacobian theorem, the charge
-Jacobian has zero column sums and zero row sums on any open voltage set. At every voltage
-this is `pairwiseCapacitorCharge_jacobian_sums_eq_zero` for `parasiticCapacitance`. -/
-theorem parasiticCharge_jacobian_sums_eq_zero (Cgs Cgd Cds : ℝ) (U : Set (Fin 3 → ℝ))
-    (hU : IsOpen U) :
-    ∀ w ∈ U,
-      (∀ j, ∑ i, MetaMathlibExt.jacobianMatrix (parasiticCharge Cgs Cgd Cds) w i j = 0) ∧
-        (∀ i, ∑ j, MetaMathlibExt.jacobianMatrix (parasiticCharge Cgs Cgd Cds) w i j = 0) :=
-  PhyslibExt.Electronics.TerminalChargeJacobian.terminal_charge_jacobian_sums_eq_zero
-    3 U hU (parasiticCharge Cgs Cgd Cds) (parasiticCharge_differentiableOn Cgs Cgd Cds U)
-    (fun w _ => parasiticCharge_sum_eq_zero Cgs Cgd Cds w)
-    (parasiticCharge_gauge Cgs Cgd Cds U)
+/-- **Charge Jacobian sums.** The charge Jacobian has zero column sums and zero row sums at
+every voltage: `pairwiseCapacitorCharge_jacobian_sums_eq_zero` for `parasiticCapacitance`. -/
+theorem parasiticCharge_jacobian_sums_eq_zero (Cgs Cgd Cds : ℝ) (w : Fin 3 → ℝ) :
+    (∀ j, ∑ i, MetaMathlibExt.jacobianMatrix (parasiticCharge Cgs Cgd Cds) w i j = 0) ∧
+      (∀ i, ∑ j, MetaMathlibExt.jacobianMatrix (parasiticCharge Cgs Cgd Cds) w i j = 0) :=
+  pairwiseCapacitorCharge_jacobian_sums_eq_zero 3 _ (parasiticCapacitance_symm Cgs Cgd Cds) w
 
 /-! ## C. Static conduction currents and forward regimes -/
 

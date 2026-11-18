@@ -92,6 +92,18 @@ example : displacementCurrent 3 (parasiticCharge 2 3 5) (fun s : ℝ => ![s, 0, 
   simp
   norm_num
 
+/-- The charge Jacobian sum rules hold at a bias point with no open-set premise: the drain
+column sums to zero at `(2, 5, 0)`. -/
+example : ∑ i, MetaMathlibExt.jacobianMatrix (parasiticCharge 2 3 5) ![2, 5, 0] i 1 = 0 :=
+  (parasiticCharge_jacobian_sums_eq_zero 2 3 5 _).1 1
+
+/-- The sum rules on any voltage set follow from the pointwise statement. -/
+example (Cgs Cgd Cds : ℝ) (U : Set (Fin 3 → ℝ)) :
+    ∀ w ∈ U,
+      (∀ j, ∑ i, MetaMathlibExt.jacobianMatrix (parasiticCharge Cgs Cgd Cds) w i j = 0) ∧
+        (∀ i, ∑ j, MetaMathlibExt.jacobianMatrix (parasiticCharge Cgs Cgd Cds) w i j = 0) :=
+  fun w _ => parasiticCharge_jacobian_sums_eq_zero Cgs Cgd Cds w
+
 /-! ### Flipped charge sign -/
 
 /-- Flipping the gate charge sign gives total charge `-2` at `(1, 0, 0)` for
