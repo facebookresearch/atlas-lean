@@ -24,7 +24,7 @@ namespace MathlibExtTest.Probability.Statistics.Measurement
 
 open MathlibExt.Probability.Statistics.Measurement
 
-/-- PIN-TEST: two persons, one item, and unit residual variance.
+/-- two persons, one item, and unit residual variance.
 
 The person and item variance components are `0` and the residual
 variance component is `1`, so both error variances are `1`.  Centering
@@ -108,7 +108,7 @@ theorem pin_test_two_persons_one_item_unit_error
   rw [hcenter, hdelta]
   norm_num
 
-/-- PIN-TEST: unequal item variances and the variance of a mean.
+/-- unequal item variances and the variance of a mean.
 
 Two uncorrelated square-integrable variables with variances `1` and
 `9` have a two-term mean of variance `(1 + 9) / 4 = 5 / 2`.  This is
@@ -129,7 +129,7 @@ theorem pin_test_unequal_item_variances_mean
   rw [hfun, variance_const_mul, variance_fun_add (hY_mem 0) (hY_mem 1), hY0, hY1, hY_cov]
   norm_num
 
-/-- PIN-TEST: shared item effects correlate different persons.
+/-- shared item effects correlate different persons.
 
 With two persons, one item, item variance component `2`, and
 residual variance component `1`, the absolute errors of persons `0`
