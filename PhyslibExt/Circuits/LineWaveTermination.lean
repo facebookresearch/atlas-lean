@@ -36,7 +36,7 @@ and
 `PhyslibExt.Circuits.RMSAveragePower.average_peakWaveform_mul_peakWaveform`),
 the voltage and current phasors are superpositions of a forward
 wave of amplitude `Aplus` and a backward wave of amplitude
-`Aminus`, with propagation constant `omega * sqrt (L * C)`. At
+`Aminus`, with phase constant `omega * sqrt (L * C)`. At
 the load plane the phasors are `V = Aplus + Aminus` and
 `I = (Aplus - Aminus) / Z0`; together with `V = ZL * I` they give
 the multiplicative relation
@@ -104,8 +104,10 @@ under the hypotheses stated separately. -/
 noncomputable def characteristicImpedance (L C : ℝ) : ℝ :=
   Real.sqrt (L / C)
 
-/-- Propagation constant `omega * sqrt(L * C)`. -/
-noncomputable def propagationConstant (L C ω : ℝ) : ℝ :=
+/-- Phase constant `beta = omega * sqrt(L * C)`, the real wavenumber of
+the phasors `exp (-i * beta * x)` and `exp (i * beta * x)`. On a
+lossless line the complex propagation constant is `i * beta`. -/
+noncomputable def phaseConstant (L C ω : ℝ) : ℝ :=
   ω * Real.sqrt (L * C)
 
 /-- Voltage phasor at position `x`: a forward wave plus a backward
@@ -188,11 +190,11 @@ lemma characteristicImpedance_div_waveSpeed (L C : ℝ) (hL : 0 < L)
   rw [hring, eq_div_iff hsne, ← pow_two]
   exact hs2
 
-/-- The propagation constant is frequency divided by wave speed. -/
-lemma propagationConstant_eq_div_waveSpeed (L C ω : ℝ) (hL : 0 < L)
+/-- The phase constant is frequency divided by wave speed. -/
+lemma phaseConstant_eq_div_waveSpeed (L C ω : ℝ) (hL : 0 < L)
     (hC : 0 < C) :
-    propagationConstant L C ω = ω / waveSpeed L C := by
-  unfold propagationConstant waveSpeed
+    phaseConstant L C ω = ω / waveSpeed L C := by
+  unfold phaseConstant waveSpeed
   have hsne : Real.sqrt (L * C) ≠ 0 :=
     ne_of_gt (Real.sqrt_pos.mpr (mul_pos hL hC))
   field_simp
@@ -217,7 +219,7 @@ lemma currentPhasor_at_zero (Aplus Aminus : ℂ) (Z0 β : ℝ) :
 of the voltage phasor is `-i * omega * L` times the current phasor. -/
 theorem voltagePhasor_deriv (Aplus Aminus : ℂ) (L C ω Z0 β x : ℝ)
     (hL : 0 < L) (hC : 0 < C)
-    (hβ : β = propagationConstant L C ω) (hZ : Z0 = characteristicImpedance L C) :
+    (hβ : β = phaseConstant L C ω) (hZ : Z0 = characteristicImpedance L C) :
     deriv (fun y : ℝ => voltagePhasor Aplus Aminus β y) x
       = -(Complex.I * (ω : ℂ) * (L : ℂ)) * currentPhasor Aplus Aminus Z0 β x := by
   have hmul : Real.sqrt (L * C) * Real.sqrt (L / C) = L := by
@@ -228,7 +230,7 @@ theorem voltagePhasor_deriv (Aplus Aminus : ℂ) (L C ω Z0 β x : ℝ)
     rw [hLC, Real.sqrt_sq (le_of_lt hL)]
   have hβZ0 : β * Z0 = ω * L := by
     rw [hβ, hZ]
-    unfold propagationConstant characteristicImpedance
+    unfold phaseConstant characteristicImpedance
     rw [mul_assoc, hmul]
   have hβZ0c : (β : ℂ) * (Z0 : ℂ) = (ω : ℂ) * (L : ℂ) := by exact_mod_cast hβZ0
   have hZ0pos : 0 < Z0 := by
@@ -289,7 +291,7 @@ theorem voltagePhasor_deriv (Aplus Aminus : ℂ) (L C ω Z0 β x : ℝ)
 of the current phasor is `-i * omega * C` times the voltage phasor. -/
 theorem currentPhasor_deriv (Aplus Aminus : ℂ) (L C ω Z0 β x : ℝ)
     (hL : 0 < L) (hC : 0 < C)
-    (hβ : β = propagationConstant L C ω) (hZ : Z0 = characteristicImpedance L C) :
+    (hβ : β = phaseConstant L C ω) (hZ : Z0 = characteristicImpedance L C) :
     deriv (fun y : ℝ => currentPhasor Aplus Aminus Z0 β y) x
       = -(Complex.I * (ω : ℂ) * (C : ℂ)) * voltagePhasor Aplus Aminus β x := by
   have hZdiv : characteristicImpedance L C = Real.sqrt (L * C) / C := by
@@ -304,7 +306,7 @@ theorem currentPhasor_deriv (Aplus Aminus : ℂ) (L C ω Z0 β x : ℝ)
     rw [mul_comm, div_mul_cancel₀ _ hCne]
   have hβeq : β = ω * C * Z0 := by
     rw [hβ, hZ, hZdiv]
-    unfold propagationConstant
+    unfold phaseConstant
     rw [mul_assoc, hCs]
   have hβc : (β : ℂ) = (ω : ℂ) * (C : ℂ) * (Z0 : ℂ) := by exact_mod_cast hβeq
   have hZ0pos : 0 < Z0 := by
@@ -458,12 +460,10 @@ lemma shortCircuit_reflection (Aplus Aminus : ℂ) (hV : Aplus + Aminus = 0) :
   linear_combination hV
 
 /-- Short-circuit load: a zero load impedance reflects with a sign
-flip. Only the voltage relation is used; the excitation guard is not
-needed (`shortCircuit_reflection` states the result without it). -/
-lemma shortCircuit_load_reflection (V I Aplus Aminus : ℂ) (Z0 : ℝ)
-    (hZ0 : 0 < Z0) (hV : V = Aplus + Aminus)
-    (hI : I = (Aplus - Aminus) / (Z0 : ℂ)) (hload : V = (0 : ℂ) * I)
-    (hA : Aplus ≠ 0) :
+flip. Only the voltage relation is used, so neither an excitation
+guard nor the current relation is needed. -/
+lemma shortCircuit_load_reflection (V I Aplus Aminus : ℂ)
+    (hV : V = Aplus + Aminus) (hload : V = (0 : ℂ) * I) :
     Aminus = -Aplus := by
   rw [hV, zero_mul] at hload
   exact shortCircuit_reflection Aplus Aminus hload
@@ -500,12 +500,12 @@ lemma zeroExcitation_ratio_example :
 /-- Headline correctness: the speed and impedance relations hold, the
 phasor telegrapher equations for both voltage and current hold at
 every position, the load relations imply the
-multiplicative reflection relation, and the divided formula follows
-under nonzero excitation; the stated denominator guard is implied by
-the other hypotheses (`load_sum_ne_zero`). -/
+multiplicative reflection relation, and nonzero excitation alone gives
+both the denominator guard `ZL + Z0 != 0` (`load_sum_ne_zero`) and the
+divided formula. -/
 theorem lineWaveTerminationRelations (Aplus Aminus ZL : ℂ) (L C ω Z0 β : ℝ)
     (hL : 0 < L) (hC : 0 < C) (hω : 0 < ω) (hZ0 : 0 < Z0)
-    (hβ : β = propagationConstant L C ω) (hZ : Z0 = characteristicImpedance L C) :
+    (hβ : β = phaseConstant L C ω) (hZ : Z0 = characteristicImpedance L C) :
     waveSpeed L C * Real.sqrt (L * C) = 1 ∧
       characteristicImpedance L C ^ 2 = L / C ∧
       (∀ x : ℝ, deriv (fun y : ℝ => voltagePhasor Aplus Aminus β y) x
@@ -518,7 +518,7 @@ theorem lineWaveTerminationRelations (Aplus Aminus ZL : ℂ) (L C ω Z0 β : ℝ
         → I = (Aplus - Aminus) / (Z0 : ℂ) → V = ZL * I
         → (ZL + (Z0 : ℂ)) * Aminus = (ZL - (Z0 : ℂ)) * Aplus
           ∧ (Aplus ≠ 0 → ZL + (Z0 : ℂ) ≠ 0
-            → Aminus / Aplus = (ZL - (Z0 : ℂ)) / (ZL + (Z0 : ℂ)))) := by
+            ∧ Aminus / Aplus = (ZL - (Z0 : ℂ)) / (ZL + (Z0 : ℂ)))) := by
   refine ⟨waveSpeed_mul_sqrt L C hL hC, characteristicImpedance_sq L C hL hC, ?_, ?_, ?_⟩
   · intro x
     exact voltagePhasor_deriv Aplus Aminus L C ω Z0 β x hL hC hβ hZ
@@ -526,7 +526,8 @@ theorem lineWaveTerminationRelations (Aplus Aminus ZL : ℂ) (L C ω Z0 β : ℝ
     exact currentPhasor_deriv Aplus Aminus L C ω Z0 β x hL hC hβ hZ
   · intro V I hV hI hload
     refine ⟨load_multiplicative_relation V I Aplus Aminus ZL Z0 hZ0 hV hI hload, ?_⟩
-    intro hA hsum
-    exact load_reflection_ratio V I Aplus Aminus ZL Z0 hZ0 hV hI hload hA hsum
+    intro hA
+    exact ⟨load_sum_ne_zero V I Aplus Aminus ZL Z0 hZ0 hV hI hload hA,
+      load_reflection_ratio_of_ne_zero V I Aplus Aminus ZL Z0 hZ0 hV hI hload hA⟩
 
 end PhyslibExt.Circuits.LineWaveTermination

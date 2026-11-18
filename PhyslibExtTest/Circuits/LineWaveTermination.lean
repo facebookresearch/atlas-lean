@@ -74,14 +74,14 @@ lemma characteristicImpedance_two_eight : characteristicImpedance 2 8 = 1 / 2 :=
   unfold characteristicImpedance
   rw [show (2 : ℝ) / 8 = (1 / 2) ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
 
-/-- The propagation constant `omega * sqrt (L * C)` at `L = 2`,
+/-- The phase constant `omega * sqrt (L * C)` at `L = 2`,
 `C = 8`, `omega = 3` is `12`. -/
-lemma propagationConstant_two_eight_three : propagationConstant 2 8 3 = 12 := by
-  unfold propagationConstant
+lemma phaseConstant_two_eight_three : phaseConstant 2 8 3 = 12 := by
+  unfold phaseConstant
   rw [sqrt_two_mul_eight]
   norm_num
 
-/-! Phasors away from the load plane, with propagation constant `12`
+/-! Phasors away from the load plane, with phase constant `12`
 at `x = pi / 24`, so `beta * x = pi / 2`. The forward factor
 `exp (-i * beta * x)` is `-i` and the backward factor is `i`; a
 convention with the propagation directions swapped would give the
@@ -132,7 +132,7 @@ these fail. -/
 `-(i * 3 * 2) * (-6 * i) = -36`. -/
 example : deriv (fun y : ℝ => voltagePhasor 2 1 12 y) (Real.pi / 24) = -36 := by
   rw [voltagePhasor_deriv 2 1 2 8 3 (1 / 2) 12 (Real.pi / 24) (by norm_num) (by norm_num)
-    propagationConstant_two_eight_three.symm characteristicImpedance_two_eight.symm,
+    phaseConstant_two_eight_three.symm characteristicImpedance_two_eight.symm,
     currentPhasor_at_quarter_turn]
   push_cast
   linear_combination 36 * Complex.I_sq
@@ -141,7 +141,7 @@ example : deriv (fun y : ℝ => voltagePhasor 2 1 12 y) (Real.pi / 24) = -36 := 
 `-(i * 3 * 8) * (-i) = -24`. -/
 example : deriv (fun y : ℝ => currentPhasor 2 1 (1 / 2) 12 y) (Real.pi / 24) = -24 := by
   rw [currentPhasor_deriv 2 1 2 8 3 (1 / 2) 12 (Real.pi / 24) (by norm_num) (by norm_num)
-    propagationConstant_two_eight_three.symm characteristicImpedance_two_eight.symm,
+    phaseConstant_two_eight_three.symm characteristicImpedance_two_eight.symm,
     voltagePhasor_at_quarter_turn]
   push_cast
   linear_combination 24 * Complex.I_sq
@@ -157,8 +157,23 @@ example : (0 : ℂ) = 0 :=
 load voltage `0` and load current `4`, reflects with a sign
 flip. -/
 example : (-2 : ℂ) = -2 :=
-  shortCircuit_load_reflection 0 4 2 (-2) 1 (by norm_num) (by norm_num)
-    (by norm_num) (by norm_num) (by norm_num)
+  shortCircuit_load_reflection 0 4 2 (-2) (by norm_num) (by norm_num)
+
+/-- Short-circuit load at zero excitation: both amplitudes zero, load
+voltage and current zero, still satisfy the sign flip at the load
+level. -/
+example : (0 : ℂ) = -0 :=
+  shortCircuit_load_reflection 0 0 0 0 (by norm_num) (by norm_num)
+
+/-- The combined relation derives the denominator guard from nonzero
+excitation: at unit characteristic impedance (`L = C = 1`) with
+forward amplitude `2`, backward amplitude `1` and load `3`, it returns
+`3 + 1 ≠ 0` without being given it. -/
+example : ((3 : ℂ) + ((1 : ℝ) : ℂ)) ≠ 0 :=
+  (((((lineWaveTerminationRelations 2 1 3 1 1 1 1 (phaseConstant 1 1 1)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) rfl
+    (by simp [characteristicImpedance])).2.2.2.2) 3 1 (by norm_num)
+    (by norm_num) (by norm_num)).2) (by norm_num)).1
 
 /-- Short circuit at zero excitation: both amplitudes zero still
 satisfy the sign flip. -/
