@@ -906,8 +906,9 @@ def with_part_lists(readme: Path, text: str) -> tuple[str, list[str], list[str]]
     pages taken from the folder page, under the heading that links the part. They replace the items there that link
     the part's pages, "part-N/" and a child of it (see destination), and only those, which must follow one another. On
     a page that is not simple (see simple_page), for a part whose heading, page or items there are not simple with no
-    code allowed, or whose copy runs over another block, and when the refreshed copy does not render as meant (see
-    verify_edit), the copy stays as it is, and the part is returned, by its folder, for an editor. A line of a copy the
+    code allowed, whose copy runs over another block, whose heading has a section within it, or whose section has
+    "part-N/" anywhere but in the copy, and when the refreshed copy does not render as meant (see verify_edit), the copy
+    stays as it is, and the part is returned, by its folder, for an editor. A line of a copy the
     refresh replaces or removes that is none of the part's entries, as when a note was added there, or one more copy
     of a line than the part's entries make, is returned too, with its folder."""
     body = text.rstrip("\n")
@@ -929,8 +930,12 @@ def with_part_lists(readme: Path, text: str) -> tuple[str, list[str], list[str]]
         copied = [i for i in items if (item := simple_item(section[i])) and item.group(2) != part.group(2)
                   and item.group(2).startswith(f"{folder}/") and destination(item.group(2)) == "part"]
         apart = bool(copied) and copied[-1] - copied[0] >= len(copied)
+        # A section within the part's, or a link into a part outside the copy, would be left as it is, stale or not.
+        inner = sections[number + 1][0] if number + 1 < len(sections) else ""
+        nested = bool(inner) and len(re.match(" *(#+)", inner).group(1)) > len(re.match(" *(#+)", section[0]).group(1))
+        stray = any(re.search(r"part-\d+/", block) for i, block in enumerate(section[1:], 1) if i not in copied)
         if (not simple or entries is None or not re.fullmatch(f"{PLAIN}+", part.group(1))
-                or not all(simple_item(section[i]) for i in items) or apart):
+                or not all(simple_item(section[i]) for i in items) or apart or nested or stray):
             unrefreshed.append((readme.parent / folder).relative_to(wiki.ROADMAP).as_posix())
             continue
         copy = [(f"- [{title}]({folder}/{page}){rest}", f"{folder}/{page}") for title, page, rest in entries]

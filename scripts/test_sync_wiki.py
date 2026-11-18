@@ -1225,6 +1225,23 @@ class Declarations(Vault):
                 self.assertFalse(sylow.path.exists())
                 self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(), "# Groups\n\n- [Old](old.md)\n")
 
+    def test_a_part_heading_with_a_section_within_it_is_left_to_an_editor(self) -> None:
+        # The copy is read only up to the next heading: part links under a section within the part's, or anywhere in
+        # its section but the copy, would be left as they are, stale or not. The copy stays as it is, and the part is
+        # reported, even when nothing under the inner heading links a part.
+        groups = wiki.ROADMAP / "Algebra" / "groups"
+        for name, under in (("part links under a section within", "\n### Note\n\n- [Old](part-01/old.md)\n"),
+                            ("no part link under a section within", "\n### Note\n\nSee the overview.\n"),
+                            ("part link in text", "\nSee [Old](part-01/old.md) for more.\n")):
+            with self.subTest(name):
+                text = f"# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md)\n{under}"
+                self.page("Algebra/groups/README.md", text)
+                self.page("Algebra/groups/part-01/README.md", "# Part 1 of 1\n\n- [A](a.md)\n- [B](b.md)\n")
+                sync.LINKS.mkdir(parents=True, exist_ok=True)
+                report = sync.apply_declarations([], SimpleNamespace(declarations={}))
+                self.assertEqual((groups / "README.md").read_text(), text)
+                self.assertEqual(report["parts"], ["Algebra/groups/part-01"])
+
     def test_a_part_refresh_reports_a_line_it_replaces_or_removes(self) -> None:
         # A note added on the folder page's copy only is not the part's entry, nor is a line for a page the part no
         # longer lists: the refresh replaces the one, removes the other, and says so.
