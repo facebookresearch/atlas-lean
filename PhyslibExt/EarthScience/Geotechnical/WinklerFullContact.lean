@@ -33,8 +33,11 @@ pressure at one edge.
 
 ## iv. References
 
-- Standard rigid-footing Winkler contact theory (affine pressure
-  distribution under combined settlement and rotation).
+- J. E. Bowles, *Foundation Analysis and Design*, 5th edition,
+  McGraw-Hill, 1996 (Winkler subgrade reaction; the affine contact
+  pressure under combined settlement and rotation is nonnegative
+  throughout exactly when its edge values are, which is the
+  criterion proved here).
 -/
 
 @[expose] public section
@@ -48,7 +51,7 @@ noncomputable def footingPressure (ks a b x : ℝ) : ℝ := ks * (a + b * x)
 
 /-- Full-contact admission: pressure is nonnegative everywhere on
 the footing exactly when `a ≥ |b| * B / 2`. -/
-theorem footingPressure_nonneg_iff {ks a b B : ℝ} (hks : 0 < ks)
+lemma footingPressure_nonneg_iff {ks a b B : ℝ} (hks : 0 < ks)
     (hB : 0 < B) :
     (∀ x ∈ Set.Icc (-B / 2) (B / 2), 0 ≤ footingPressure ks a b x)
       ↔ |b| * B / 2 ≤ a := by
