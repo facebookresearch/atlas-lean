@@ -29,8 +29,13 @@ products against `u` and `v` recover the coefficients `a` and `b`.
 The coefficients are constant on the interval; no time-varying
 envelope is treated as a constant. This is the two-dimensional real
 signal-space representation of a bandpass signal in terms of its
-in-phase and quadrature components. The companion phasor convention
-is recorded in `PhyslibExt.Circuits.RMSAveragePower`: its
+in-phase and quadrature components. With angular frequency
+`omega = 2 * pi * k / T`, the in-phase, quadrature and combined
+waveforms are the root-mean-square phasor waveforms
+`rmsWaveform` of `PhyslibExt.Circuits.RMSAveragePower` with phasors
+`sqrt(1/T)`, `i * sqrt(1/T)` and `(a + b * i) * sqrt(1/T)`; public
+bridge lemmas state these identities, so results about `rmsWaveform`
+rewrite to this API. In that file,
 `average_rmsWaveform_mul_rmsWaveform` gives a period average of
 `Re (V * conj I)` for root-mean-square waveforms, while
 `average_peakWaveform_mul_peakWaveform` gives half that value for
@@ -52,6 +57,10 @@ sine terms vanish because `k` is an integer.
   waveform against `u` and `v` recovers `a` and `b`.
 - `iqBasis_orthonormal_energy_and_projection`: the combined
   orthonormality, energy and projection statement.
+- `inPhaseWaveform_eq_rmsWaveform`,
+  `quadratureWaveform_eq_rmsWaveform` and
+  `iqWaveform_eq_rmsWaveform`: the three waveforms as
+  root-mean-square phasor waveforms.
 
 ## iii. Table of contents
 
@@ -85,6 +94,55 @@ noncomputable def quadratureWaveform (T : ℝ) (k : ℕ) (t : ℝ) : ℝ :=
 /-- The constant-coefficient waveform `a * u + b * v`. -/
 noncomputable def iqWaveform (a b T : ℝ) (k : ℕ) (t : ℝ) : ℝ :=
   a * inPhaseWaveform T k t + b * quadratureWaveform T k t
+
+private lemma sqrt_two_div_eq (T : ℝ) :
+    Real.sqrt (2 / T) = Real.sqrt 2 * Real.sqrt (1 / T) := by
+  rw [← Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 2), mul_one_div]
+
+/-- The in-phase waveform is the root-mean-square phasor waveform of
+the real phasor `sqrt(1/T)` at angular frequency `2 * pi * k / T`. -/
+theorem inPhaseWaveform_eq_rmsWaveform (T : ℝ) (k : ℕ) (t : ℝ) :
+    inPhaseWaveform T k t
+      = PhyslibExt.Circuits.RMSAveragePower.rmsWaveform
+          (Real.sqrt (1 / T) : ℂ) (2 * Real.pi * (k : ℝ) / T) t := by
+  have harg : 2 * Real.pi * (k : ℝ) / T * t = 2 * Real.pi * (k : ℝ) * t / T := by ring
+  unfold inPhaseWaveform PhyslibExt.Circuits.RMSAveragePower.rmsWaveform
+  rw [Complex.mul_re, Complex.exp_ofReal_mul_I_re, Complex.exp_ofReal_mul_I_im,
+    Complex.ofReal_re, Complex.ofReal_im, harg, sqrt_two_div_eq]
+  ring
+
+/-- The quadrature waveform is the root-mean-square phasor waveform of
+the phasor `i * sqrt(1/T)` at angular frequency `2 * pi * k / T`. -/
+theorem quadratureWaveform_eq_rmsWaveform (T : ℝ) (k : ℕ) (t : ℝ) :
+    quadratureWaveform T k t
+      = PhyslibExt.Circuits.RMSAveragePower.rmsWaveform
+          (Complex.I * (Real.sqrt (1 / T) : ℂ)) (2 * Real.pi * (k : ℝ) / T) t := by
+  have harg : 2 * Real.pi * (k : ℝ) / T * t = 2 * Real.pi * (k : ℝ) * t / T := by ring
+  have hre : (Complex.I * (Real.sqrt (1 / T) : ℂ)).re = 0 := by simp
+  have him : (Complex.I * (Real.sqrt (1 / T) : ℂ)).im = Real.sqrt (1 / T) := by simp
+  unfold quadratureWaveform PhyslibExt.Circuits.RMSAveragePower.rmsWaveform
+  rw [Complex.mul_re, hre, him, Complex.exp_ofReal_mul_I_re, Complex.exp_ofReal_mul_I_im,
+    harg, sqrt_two_div_eq]
+  ring
+
+/-- The combined waveform `a * u + b * v` is the root-mean-square
+phasor waveform of the phasor `(a + b * i) * sqrt(1/T)` at angular
+frequency `2 * pi * k / T`. -/
+theorem iqWaveform_eq_rmsWaveform (a b T : ℝ) (k : ℕ) (t : ℝ) :
+    iqWaveform a b T k t
+      = PhyslibExt.Circuits.RMSAveragePower.rmsWaveform
+          (((a : ℂ) + (b : ℂ) * Complex.I) * (Real.sqrt (1 / T) : ℂ))
+          (2 * Real.pi * (k : ℝ) / T) t := by
+  have harg : 2 * Real.pi * (k : ℝ) / T * t = 2 * Real.pi * (k : ℝ) * t / T := by ring
+  have hre : (((a : ℂ) + (b : ℂ) * Complex.I) * (Real.sqrt (1 / T) : ℂ)).re
+      = a * Real.sqrt (1 / T) := by simp [Complex.mul_re]
+  have him : (((a : ℂ) + (b : ℂ) * Complex.I) * (Real.sqrt (1 / T) : ℂ)).im
+      = b * Real.sqrt (1 / T) := by simp [Complex.mul_im]
+  unfold iqWaveform inPhaseWaveform quadratureWaveform
+    PhyslibExt.Circuits.RMSAveragePower.rmsWaveform
+  rw [Complex.mul_re, hre, him, Complex.exp_ofReal_mul_I_re, Complex.exp_ofReal_mul_I_im,
+    harg, sqrt_two_div_eq]
+  ring
 
 /-! ## B. Orthonormality on the observation interval -/
 
