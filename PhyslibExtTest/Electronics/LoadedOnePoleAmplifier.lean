@@ -81,10 +81,17 @@ example : (5 : ℂ) = loadedTransfer 10 2 1 (1 / 2) (1 / 2) 0 * 12 :=
     (by norm_num) (by norm_num) (by norm_num) (by norm_num [openLoopGain])
     (by norm_num)
 
+/-- Signal-level DC gain of the fixture: with `vi = 12`, the model
+equations at `s = 0` hold for `vamp = 10` and `vo = 5`, and the output
+is the real DC gain times the input. -/
+example : (5 : ℂ) = ((loadedDcGain 10 1 (1 / 2) (1 / 2) : ℝ) : ℂ) * 12 :=
+  output_eq_loadedDcGain_mul_input 10 2 1 (1 / 2) (1 / 2) 12 5 10
+    (by norm_num) (by norm_num) (by norm_num [openLoopGain]) (by norm_num)
+
 /-- With no source or output resistance both dividers equal one, and
 the loaded transfer reduces to the unloaded form. -/
 example : sourceDivider 0 3 = 1 ∧ loadDivider 0 7 = 1 :=
-  dividers_eq_one_of_no_source_load_resistance 3 7 (by norm_num) (by norm_num)
+  dividers_eq_one_of_no_source_output_resistance 3 7 (by norm_num) (by norm_num)
 
 example (s : ℂ) : loadedTransfer 10 2 1 1 1 s
     = (10 : ℂ) / (1 + s / ((2 : ℝ) : ℂ) + (((1 * 10 : ℝ)) : ℂ)) :=

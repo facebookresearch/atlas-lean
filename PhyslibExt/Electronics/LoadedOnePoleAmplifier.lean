@@ -41,11 +41,16 @@ the transfer for every parameter choice (with `a = 0`, for
 instance, the transfer is identically zero). Under the positive
 sign hypotheses stated below, that denominator zero lies in the
 open left half-plane, and the denominator is nonzero at every
-point of the closed right half-plane. At `s = 0` the transfer is
-the real loaded DC gain, which factors as the source divider
-times the canonical closed-loop gain of the load-referred
-open-loop gain `b * A0`. Parasitic poles, nonlinear rails and
-frequency-dependent loading are not modeled.
+point of the closed right half-plane. At `s = 0` the transfer
+expression equals the real expression
+`a * b * A0 / (1 + beta * b * A0)` for every parameter choice,
+since both use the same division; this real number is the loaded
+DC gain only when `1 + beta * b * A0 ≠ 0`, and the signal-level
+DC statement carries that hypothesis together with `wp ≠ 0`. The
+DC gain factors as the source divider times the canonical
+closed-loop gain of the load-referred open-loop gain `b * A0`.
+Parasitic poles, nonlinear rails and frequency-dependent loading
+are not modeled.
 
 ## ii. Key results
 
@@ -53,6 +58,9 @@ frequency-dependent loading are not modeled.
   output signals satisfying the two model equations, away from both
   denominator zeros and with `wp ≠ 0`, satisfy
   `vo = G(s) * vi` for the loaded transfer `G`.
+- `output_eq_loadedDcGain_mul_input`: at `s = 0`, with `wp ≠ 0`
+  and `1 + beta * b * A0 ≠ 0`, any signals satisfying the two model
+  equations satisfy `vo = loadedDcGain A0 beta a b * vi`.
 - `loadedDcGain_eq_sourceDivider_mul_closedLoopGain`: the loaded
   DC gain is the source divider times the canonical closed-loop
   gain `closedLoopGain (b * A0) beta`.
@@ -182,16 +190,46 @@ theorem output_eq_loadedTransfer_mul_input (A0 wp beta a b : ℝ) (s vi vo vamp 
 
 /-! ## C. Direct-current gain -/
 
-/-- The loaded DC gain `a * b * A0 / (1 + beta * b * A0)` as a real number. -/
+/-- The loaded DC gain `a * b * A0 / (1 + beta * b * A0)` as a real number.
+It is the physical DC gain only when `1 + beta * b * A0 ≠ 0`; at the
+singular parameter choices the division is the totalized one and the
+value carries no physical meaning. -/
 noncomputable def loadedDcGain (A0 beta a b : ℝ) : ℝ :=
   a * b * A0 / (1 + beta * b * A0)
 
-/-- At `s = 0` the loaded transfer is the cast of the real loaded DC gain. -/
+/-- At `s = 0` the loaded transfer expression is the cast of the real
+loaded DC gain expression. This is an identity between the two
+expressions for every parameter choice, because both use the same
+division; it makes no physical claim at the singular parameters
+where `1 + beta * b * A0 = 0`. The guarded signal-level statement is
+`output_eq_loadedDcGain_mul_input`. -/
 lemma loadedTransfer_zero (A0 wp beta a b : ℝ) :
     loadedTransfer A0 wp beta a b 0 = ((loadedDcGain A0 beta a b : ℝ) : ℂ) := by
   unfold loadedTransfer loadedDcGain
   simp only [zero_div, add_zero, Complex.ofReal_div, Complex.ofReal_add,
     Complex.ofReal_mul, Complex.ofReal_one]
+
+/-- **Loaded DC gain of the signal model.** At `s = 0`, with `wp ≠ 0`
+and `1 + beta * b * A0 ≠ 0`, any unloaded and loaded output signals
+obeying the two model equations satisfy
+`vo = loadedDcGain A0 beta a b * vi`. The open-loop denominator is
+`1` at `s = 0`, the loaded denominator reduces to
+`1 + beta * b * A0`, and the transfer theorem then applies. -/
+theorem output_eq_loadedDcGain_mul_input (A0 wp beta a b : ℝ) (vi vo vamp : ℂ)
+    (hwp : (wp : ℂ) ≠ 0)
+    (hdc : 1 + beta * b * A0 ≠ 0)
+    (hvamp : vamp = openLoopGain A0 wp 0 * ((a : ℂ) * vi - (beta : ℂ) * vo))
+    (hvo : vo = (b : ℂ) * vamp) :
+    vo = ((loadedDcGain A0 beta a b : ℝ) : ℂ) * vi := by
+  have hopen : 1 + (0 : ℂ) / (wp : ℂ) ≠ 0 := by
+    rw [zero_div, add_zero]
+    exact one_ne_zero
+  have hden : 1 + (0 : ℂ) / (wp : ℂ) + ((beta * b * A0 : ℝ) : ℂ) ≠ 0 := by
+    rw [zero_div, add_zero]
+    exact_mod_cast hdc
+  rw [← loadedTransfer_zero A0 wp beta a b]
+  exact output_eq_loadedTransfer_mul_input A0 wp beta a b 0 vi vo vamp hwp hopen hden
+    hvamp hvo
 
 /-- **DC gain through the canonical finite-gain law.** The loaded DC gain
 is the source divider times the canonical closed-loop gain of the
@@ -310,7 +348,7 @@ theorem denominator_ne_zero_of_re_nonneg (A0 wp beta b : ℝ) (hA0 : 0 < A0)
 /-! ## E. Lossless dividers and a concrete example -/
 
 /-- With no source or output resistance, both dividers equal one. -/
-lemma dividers_eq_one_of_no_source_load_resistance (Rin RL : ℝ)
+lemma dividers_eq_one_of_no_source_output_resistance (Rin RL : ℝ)
     (hRin : 0 < Rin) (hRL : 0 < RL) :
     sourceDivider 0 Rin = 1 ∧ loadDivider 0 RL = 1 := by
   unfold sourceDivider loadDivider
