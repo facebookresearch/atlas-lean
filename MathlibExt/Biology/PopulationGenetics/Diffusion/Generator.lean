@@ -28,9 +28,6 @@ This combines the selection generator `generator` and the mutation generator
 * `selectionMutationGenerator_eq`: the drifts add, after removing the shared neutral term.
 * `selectionMutationGenerator_id`: on the identity, the generator is the drift.
 * `selectionMutationGenerator_neutral_sq`: in the neutral case, `L (y ↦ y²) = x (1 - x)`.
-* `selectionMutationGenerator_kimuraFixation`, `eq_kimuraFixation_of_selectionMutationGenerator_eq_zero`:
-  with mutation switched off, Kimura's fixation probability is the unique
-  `C[0, 1] ∩ C²(0, 1)` solution of the fixation boundary-value problem.
 
 ## References
 
@@ -92,25 +89,5 @@ theorem selectionMutationGenerator_neutral_sq (x : ℝ) :
   rw [selectionMutationGenerator_zero_zero, generator_pow]
   norm_num
   ring
-
-/-! ### Kimura's fixation probability for the mutation-free generator -/
-
-/-- Kimura's fixation probability solves `L_{α,0} u = 0` everywhere, for the combined
-selection–mutation generator with mutation switched off. -/
-theorem selectionMutationGenerator_kimuraFixation (α x : ℝ) :
-    selectionMutationGenerator α 0 0 (kimuraFixation α) x = 0 := by
-  rw [selectionMutationGenerator_zero_zero, generator_kimuraFixation]
-
-/-- **Uniqueness** for the fixation boundary-value problem of `L_{α,0}`: a function continuous
-on `[0, 1]`, `C²` on `(0, 1)`, solving `L_{α,0} u = 0` on `(0, 1)` with `u 0 = 0` and `u 1 = 1`
-equals Kimura's fixation probability on `[0, 1]`. -/
-theorem eq_kimuraFixation_of_selectionMutationGenerator_eq_zero {α : ℝ} {u : ℝ → ℝ}
-    (hcont : ContinuousOn u (Icc 0 1)) (hu : ContDiffOn ℝ 2 u (Ioo 0 1))
-    (hgen : ∀ x ∈ Ioo (0 : ℝ) 1, selectionMutationGenerator α 0 0 u x = 0)
-    (h0 : u 0 = 0) (h1 : u 1 = 1) :
-    ∀ x ∈ Icc (0 : ℝ) 1, u x = kimuraFixation α x := by
-  refine eq_kimuraFixation_of_contDiffOn hcont hu (fun x hx => ?_) h0 h1
-  rw [← selectionMutationGenerator_zero_zero]
-  exact hgen x hx
 
 end MathlibExt.Biology.PopulationGenetics.Diffusion
