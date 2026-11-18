@@ -145,11 +145,10 @@ lemma photon_identify_iff {ι κ : Type*} [Fintype ι] [Fintype κ]
 `A *ᵥ v = 0` for `v ≠ 0` and both `x` and `x + v` are admissible,
 the photon law is not injective on `D`. -/
 lemma photon_not_identify_of_kernel {ι κ : Type*} [Fintype ι] [Fintype κ]
-    {I0 : ι → ℝ≥0} (hI0 : ∀ j, 0 < I0 j) (A : Matrix ι κ ℝ)
+    {I0 : ι → ℝ≥0} (A : Matrix ι κ ℝ)
     (D : Set (κ → ℝ)) {v x : κ → ℝ} (hv : v ≠ 0) (hk : A *ᵥ v = 0)
     (hx : x ∈ D) (hxv : x + v ∈ D) :
     ¬ Set.InjOn (fun x => photonLaw I0 A x) D := by
-  rw [photon_identify_iff hI0 A D]
   intro hInj
   have hne : x ≠ x + v := by
     intro h
@@ -158,7 +157,10 @@ lemma photon_not_identify_of_kernel {ι κ : Type*} [Fintype ι] [Fintype κ]
     exact (add_left_cancel h2).symm
   have hmap : A *ᵥ (x + v) = A *ᵥ x := by
     rw [Matrix.mulVec_add, hk, add_zero]
-  exact hne (hInj hx hxv hmap.symm)
+  have hlaw : photonLaw I0 A (x + v) = photonLaw I0 A x := by
+    unfold photonLaw transmittedRate
+    rw [hmap]
+  exact hne (hInj hx hxv hlaw.symm)
 
 
 end PhyslibExt.BiomedicalImaging.PhotonObservation
