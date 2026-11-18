@@ -731,10 +731,10 @@ class Declarations(Vault):
 
     def test_a_part_list_gives_way_to_the_part_and_nothing_else(self) -> None:
         # With no declaration to add: under a part's heading only the items that link the part's pages are the part's
-        # copy; another item, an editor's paragraph and a comment there stay.
+        # copy; another item and an editor's paragraph there stay.
         groups = wiki.ROADMAP / "Algebra" / "groups"
-        part_one = ("## [Part 1 of 2](part-01/README.md)\n\n<!-- Keep this part in the book's order. -->\n\n"
-                    "- [Introduction](introduction.md)\n- [A](part-01/a.md)\n\nThe first part follows the book.\n\n")
+        part_one = ("## [Part 1 of 2](part-01/README.md)\n\n- [Introduction](introduction.md)\n- [A](part-01/a.md)\n\n"
+                    "The first part follows the book.\n\n")
         self.page("Algebra/groups/README.md", f"# Groups\n\n{part_one}## [Part 2 of 2](part-02/README.md)\n\n- [B](part-02/b.md)\n")
         self.page("Algebra/groups/part-01/README.md", "# Part 1 of 2\n\n- [A](a.md)\n")
         self.page("Algebra/groups/part-02/README.md", "# Part 2 of 2\n\n- [B](b.md)\n- [C](c.md)\n")
@@ -772,6 +772,7 @@ class Declarations(Vault):
                 ("another bullet", "* [A](a.md)\n", copy),
                 ("loose item", "- [A](a.md): first\n\n  second with [B](b.md)\n", copy),
                 ("note after a blank line", "- [A](a.md)\n\n  Note about A.\n", copy),
+                ("note after several blank lines", "- [A](a.md)\n\n\n  Note about A.\n", copy),
                 ("link title", '- [A](a.md "A")\n', copy),
                 ("escaped destination", "- [A](a\\(1\\).md)\n", copy),
                 ("destination in angle brackets", "- [A](<a b.md>)\n", copy),
@@ -812,8 +813,8 @@ class Declarations(Vault):
         self.assertEqual((groups / "README.md").read_text(), text)
 
     def test_a_folder_pages_own_list_reads_nothing_inside_a_comment(self) -> None:
-        # A heading and an item in a comment make no section of the list, so a page with no listed neighbour ends it;
-        # the comment makes the list no simple one, so the page is reported for an editor.
+        # A heading and an item in a comment make no section of the list; the comment makes the page no simple one, so
+        # the new page goes at its end and is reported for an editor.
         self.page("Algebra/groups/README.md", "# Groups\n\n- [Old](old.md)\n<!--\n## Planned\n- [Wish](wish.md)\n-->\n"
                   "- [Late](late.md)\n\n## Related topics\n\n- [Rings](../rings/README.md): rings.\n")
         sync.LINKS.mkdir(parents=True)
@@ -821,13 +822,13 @@ class Declarations(Vault):
         sylow.path = wiki.ROADMAP / "Algebra" / "groups" / "sylow.md"
         report = sync.apply_declarations([sylow], SimpleNamespace(declarations={"Ext.sylow": None}))
         self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
-                         "# Groups\n\n- [Old](old.md)\n<!--\n## Planned\n- [Wish](wish.md)\n-->\n- [Late](late.md)\n"
-                         "- [Sylow](sylow.md)\n\n## Related topics\n\n- [Rings](../rings/README.md): rings.\n")
+                         "# Groups\n\n- [Old](old.md)\n<!--\n## Planned\n- [Wish](wish.md)\n-->\n- [Late](late.md)\n\n"
+                         "## Related topics\n\n- [Rings](../rings/README.md): rings.\n\n- [Sylow](sylow.md)\n")
         self.assertEqual(report["appended"], ["Algebra/groups/sylow.md"])
 
-    def test_a_list_with_a_comment_or_a_code_fence_takes_a_new_page_at_its_end(self) -> None:
-        # H's page is listed only in a comment or a fenced code block inside the own list, which is then no simple list:
-        # B goes at its end rather than by a neighbour read past the comment, and is reported for an editor.
+    def test_a_page_with_a_comment_or_a_code_fence_takes_a_new_page_at_its_end(self) -> None:
+        # H's page is listed only in a comment or a fenced code block, which makes the page no simple one: B goes at its
+        # end rather than by a neighbour read past the comment, and is reported for an editor.
         groups = wiki.ROADMAP / "Algebra" / "groups"
         for short in "ahc":
             self.page(f"Algebra/groups/{short}.md", f"# {short.upper()}\n")
@@ -845,17 +846,20 @@ class Declarations(Vault):
                                for short in "ahc"])
                 report = sync.apply_declarations(targets, SimpleNamespace(declarations={f"Ext.{short}": None for short in "ahbc"}))
                 self.assertEqual((groups / "README.md").read_text(),
-                                 f"# Groups\n\n## Basics\n\n- [A](a.md)\n\n{results}- [C](c.md)\n- [B](b.md)\n")
+                                 f"# Groups\n\n## Basics\n\n- [A](a.md)\n\n{results}- [C](c.md)\n\n- [B](b.md)\n")
                 self.assertEqual(report["appended"], ["Algebra/groups/b.md"])
 
-    def test_a_list_that_is_not_simple_takes_a_new_page_at_its_end(self) -> None:
-        # A code span hiding a bracket, a backtick left open, a note after a blank line, or a loose item: the new page
-        # ends the own list, after all that its last section holds and ahead of "Related topics", and is reported.
+    def test_a_page_that_is_not_simple_takes_a_new_page_at_its_end(self) -> None:
+        # A code span hiding a bracket, a backtick left open, a note after one blank line or several, a loose item, or
+        # another kind of list item: the page is never edited within; the new page goes at its end, after "Related
+        # topics", where it is a list item of its own, and is reported for an editor to place.
         related = "## Related topics\n\n- [Rings](../rings/README.md): rings.\n"
-        for name, listed, apart in (("code span hiding a bracket", "- [`a]b`](old.md)\n- [Late](late.md)\n", ""),
-                                    ("backtick left open", "- [The ` sign](old.md)\n", ""),
-                                    ("note after a blank line", "- [Old](old.md)\n\n  Note about Old.\n", "\n"),
-                                    ("loose item", "- [Old](old.md): first\n\n  second with [Late](late.md)\n", "\n")):
+        for name, listed in (("code span hiding a bracket", "- [`a]b`](old.md)\n- [Late](late.md)\n"),
+                             ("backtick left open", "- [The ` sign](old.md)\n"),
+                             ("note after a blank line", "- [Old](old.md)\n\n  Note about Old.\n"),
+                             ("note after several blank lines", "- [Old](old.md)\n\n\n\n  Note belonging to Old.\n"),
+                             ("loose item", "- [Old](old.md): first\n\n  second with [Late](late.md)\n"),
+                             ("another bullet", "## Basics\n\n- [Old](old.md)\n\n## Results\n\n+ [Late](late.md)\n")):
             with self.subTest(name):
                 self.page("Algebra/groups/README.md", f"# Groups\n\n{listed}\n{related}")
                 self.annotate([])
@@ -864,7 +868,7 @@ class Declarations(Vault):
                 sylow.path = wiki.ROADMAP / "Algebra" / "groups" / "sylow.md"
                 report = sync.apply_declarations([sylow], SimpleNamespace(declarations={"Ext.sylow": None}))
                 self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
-                                 f"# Groups\n\n{listed}{apart}- [Sylow](sylow.md)\n\n{related}")
+                                 f"# Groups\n\n{listed}\n{related}\n- [Sylow](sylow.md)\n")
                 self.assertEqual(report["appended"], ["Algebra/groups/sylow.md"])
 
     def test_an_own_list_with_code_in_its_titles_takes_a_new_page_by_its_neighbours(self) -> None:
@@ -916,7 +920,8 @@ class Declarations(Vault):
         self.assertEqual(report["appended"], [])
 
     def test_a_marker_indented_four_spaces_opens_no_block(self) -> None:
-        # Four spaces in, "<!--", a fence or its closer is indented code, which hides none of the lines after it.
+        # Four spaces in, "<!--", a fence or its closer is indented code, which hides none of the lines after it: the
+        # page is no simple one, and the new page, at its end, is listed.
         for marker in ("<!--", "```", "~~~"):
             with self.subTest(marker=marker):
                 text = (f"# Groups\n\nAn example:\n\n    {marker}\n\n- [Old](old.md)\n\n"
@@ -928,8 +933,8 @@ class Declarations(Vault):
                 sylow.path = wiki.ROADMAP / "Algebra" / "groups" / "sylow.md"
                 report = sync.apply_declarations([sylow], SimpleNamespace(declarations={"Ext.sylow": None}))
                 self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
-                                 text.replace("- [Old](old.md)\n", "- [Old](old.md)\n- [Sylow](sylow.md)\n"))
-                self.assertEqual(report["appended"], [])
+                                 f"{text}\n- [Sylow](sylow.md)\n")
+                self.assertEqual(report["appended"], ["Algebra/groups/sylow.md"])
         # Nor does a closer four spaces in close a fence that a line opened.
         groups = wiki.ROADMAP / "Algebra" / "groups"
         text = "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md)\n\n```\n    ```\n- [Z](part-01/z.md)\n```\n"
@@ -938,9 +943,38 @@ class Declarations(Vault):
         sync.apply_declarations([], SimpleNamespace(declarations={}))
         self.assertEqual((groups / "README.md").read_text(), text)
 
+    def test_a_page_with_raw_html_takes_a_new_page_after_it(self) -> None:
+        # An item in a <pre> example is no neighbour: the page is no simple one, and the new page goes at its end, after
+        # the closing tag and a blank line, where it is a list item.
+        text = ("# Groups\n\nAn example:\n\n<pre>\n- [Sample](old.md)\n\n</pre>\n\n- [Old](old.md)\n\n"
+                "## Related topics\n\n- [Rings](../rings/README.md): rings.\n")
+        self.page("Algebra/groups/README.md", text)
+        sync.LINKS.mkdir(parents=True)
+        sylow = declaration("Ext.sylow", "sylow", "Sylow", "Sylow.", module=("Ext", "Sylow"))
+        sylow.path = wiki.ROADMAP / "Algebra" / "groups" / "sylow.md"
+        report = sync.apply_declarations([sylow], SimpleNamespace(declarations={"Ext.sylow": None}))
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(), f"{text}\n- [Sylow](sylow.md)\n")
+        self.assertEqual((report["appended"], report["unlisted"]), (["Algebra/groups/sylow.md"], []))
+
+    def test_a_page_that_ends_in_an_open_block_is_left_as_it_is(self) -> None:
+        # An item appended after a fence, a comment or raw HTML left open would be part of it, not a link: the page is
+        # left as it is, and the new page is reported as listed nowhere.
+        for name, tail in (("backtick fence", "```\n- [Sample](old.md)\n"), ("tilde fence", "~~~ text\nsample\n"),
+                           ("comment", "<!-- To do:\n"), ("pre", "<pre>\n- [Sample](old.md)\n\nmore\n")):
+            with self.subTest(name):
+                text = f"# Groups\n\n- [Old](old.md)\n\n{tail}"
+                self.page("Algebra/groups/README.md", text)
+                self.annotate([])
+                (wiki.ROADMAP / "Algebra" / "groups" / "sylow.md").unlink(missing_ok=True)
+                sylow = declaration("Ext.sylow", "sylow", "Sylow", "Sylow.", module=("Ext", "Sylow"))
+                sylow.path = wiki.ROADMAP / "Algebra" / "groups" / "sylow.md"
+                report = sync.apply_declarations([sylow], SimpleNamespace(declarations={"Ext.sylow": None}))
+                self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(), text)
+                self.assertEqual((report["appended"], report["unlisted"]), ([], ["Algebra/groups/sylow.md"]))
+
     def test_a_new_section_follows_all_that_the_last_one_holds(self) -> None:
-        # The prose and the comment after the last item stay in the section they close.
-        tail = "- [Invariant](invariant.md)\n\nThe invariant is Lamport's.\n<!-- Keep it short. -->\n\n"
+        # The prose after the last item stays in the section it closes.
+        tail = "- [Invariant](invariant.md)\n\nThe invariant is Lamport's.\nIt is short.\n\n"
         self.page("Algebra/bakery/README.md", f"# Bakery\n\n## The algorithm\n\n- [State](state.md)\n\n## Mutual exclusion\n\n{tail}"
                   "## Related topics\n\n- [Rings](../rings/README.md): rings.\n")
         sync.LINKS.mkdir(parents=True)
@@ -952,16 +986,38 @@ class Declarations(Vault):
                          "## Two-process bakery\n\n- [Turn](turn.md)\n\n## Related topics\n\n- [Rings](../rings/README.md): rings.\n")
         self.assertEqual(report["appended"], [])
 
+    def test_two_sections_with_one_title_stay_two(self) -> None:
+        # A page with no listed neighbour starts a section of its own rather than join the second "Results".
+        text = "# Bakery\n\n## Results\n\n- [State](state.md)\n\n## Results\n\n- [Invariant](invariant.md)\n"
+        self.page("Algebra/bakery/README.md", text)
+        sync.LINKS.mkdir(parents=True)
+        turn = declaration("Ext.turn", "turn", "Turn", "Turn.", module=("Ext", "TwoProcess"))
+        turn.path, turn.module_title = wiki.ROADMAP / "Algebra" / "bakery" / "turn.md", "Two-process bakery"
+        report = sync.apply_declarations([turn], SimpleNamespace(declarations={"Ext.turn": None}))
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "bakery" / "README.md").read_text(),
+                         f"{text}\n## Two-process bakery\n\n- [Turn](turn.md)\n")
+        self.assertEqual(report["appended"], [])
+
+    def test_a_heading_with_a_tab_after_its_marker_is_not_simple(self) -> None:
+        text = "# Bakery\n\n## Basics\n\n- [State](state.md)\n\n##\tResults\n\n- [Invariant](invariant.md)\n"
+        self.page("Algebra/bakery/README.md", text)
+        sync.LINKS.mkdir(parents=True)
+        turn = declaration("Ext.turn", "turn", "Turn", "Turn.", module=("Ext", "TwoProcess"))
+        turn.path, turn.module_title = wiki.ROADMAP / "Algebra" / "bakery" / "turn.md", "Two-process bakery"
+        report = sync.apply_declarations([turn], SimpleNamespace(declarations={"Ext.turn": None}))
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "bakery" / "README.md").read_text(), f"{text}\n- [Turn](turn.md)\n")
+        self.assertEqual(report["appended"], ["Algebra/bakery/turn.md"])
+
     def test_a_comment_opened_in_a_code_span_hides_nothing(self) -> None:
         self.page("Algebra/groups/README.md", "# Groups\n\nUse `<!--` to open a comment.\n\n- [Old](old.md)\n\n"
-                  "## Related topics\n\n- [Rings](../rings/README.md): rings.\n\n## Sources\n\n- A book.\n")
+                  "## Related topics\n\n- [Rings](../rings/README.md): rings.\n\n## Sources\n\nA book.\n")
         sync.LINKS.mkdir(parents=True)
         sylow = declaration("Ext.sylow", "sylow", "Sylow", "Sylow.", module=("Ext", "Sylow"))
         sylow.path = wiki.ROADMAP / "Algebra" / "groups" / "sylow.md"
         report = sync.apply_declarations([sylow], SimpleNamespace(declarations={"Ext.sylow": None}))
         self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
                          "# Groups\n\nUse `<!--` to open a comment.\n\n- [Old](old.md)\n- [Sylow](sylow.md)\n\n"
-                         "## Related topics\n\n- [Rings](../rings/README.md): rings.\n\n## Sources\n\n- A book.\n")
+                         "## Related topics\n\n- [Rings](../rings/README.md): rings.\n\n## Sources\n\nA book.\n")
         self.assertEqual(report["appended"], [])
 
     def test_a_docstring_edit_is_reported_from_the_second_run(self) -> None:

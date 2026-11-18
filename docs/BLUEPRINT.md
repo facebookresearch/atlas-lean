@@ -103,10 +103,14 @@ only the editorial/source changes. It creates pages for new documented
 non-deprecated declarations, preserves existing article prose, and reports
 removed declarations and changed docstrings. It also refreshes the source-derived
 area catalog and coverage metadata without replacing article prose.
-It edits a folder page's list only where the list is simple: single-line
-`- [title](page)` items with plain text after them (inline code too, in a
-folder page's own list), headings, and blank lines between them. A new page joining any other list goes at its end and is
-reported, as is a part list it leaves as it is, for an editor.
+It edits within a folder page only where every line of the page is simple: a
+blank line, a heading, a single-line `- [title](page)` item with plain text
+after it, or a line of plain text that opens no other block, with no item next to
+text. On any other page, a new page's item goes at the end, after a blank line,
+and is reported for an editor to place; a page that ends in an open block, such
+as a fence, is left as it is and the new page reported as an error. A part list
+on a page that is not simple is left as it is and reported too.
+
 `scripts/wiki-sync.json` is the
 reviewed docstring-digest baseline. Removed declarations' articles are kept
 as unlinked mathematical articles during rendering until an editor resolves
