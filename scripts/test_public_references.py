@@ -1895,6 +1895,68 @@ class Repository(unittest.TestCase):
             all(f["location"].startswith("filename in ") for f in findings)
         )
 
+    def test_tagger_identity_needs_a_supported_tag_header(self):
+        home = "/".join(["", "home", ""])
+        z = "0" * 40
+        plain = (
+            "author A <a@example.invalid> 1 +0000\n"
+            "committer C <c@example.invalid> 1 +0000\n"
+        )
+        exact = " tagger T <" + home + "runner> 1 +0000\n"
+        start = "mergetag object " + z + "\n"
+        shapes = {
+            # name: (embedded tag lines, expected finding lines)
+            "supported": (start + " type commit\n tag v1\n" + exact, []),
+            "bad object": (
+                "mergetag object x\n type commit\n tag v1\n" + exact,
+                [7],
+            ),
+            "bad field before": (
+                start + " x-bad y\n type commit\n tag v1\n" + exact,
+                [8],
+            ),
+            "bad field after": (
+                start + " type commit\n tag v1\n" + exact + " x-bad y\n",
+                [7],
+            ),
+            "out of order": (start + " tag v1\n type commit\n" + exact, [7]),
+            "duplicate type": (
+                start + " type commit\n type commit\n tag v1\n" + exact,
+                [8],
+            ),
+            "duplicate tag": (
+                start + " type commit\n tag v1\n tag v2\n" + exact,
+                [8],
+            ),
+            "duplicate tagger": (
+                start + " type commit\n tag v1\n" + exact + exact,
+                [7, 8],
+            ),
+            "missing tag": (start + " type commit\n" + exact, [6]),
+        }
+        for name, (lines, expected) in shapes.items():
+            for closed in (True, False):
+                body = lines + (" \n m\n" if closed else "x-after z\n")
+                want = expected if closed or not name == "supported" else [7]
+                raw = ("tree " + z + "\n" + plain + body + "\nMsg\n").encode()
+                with self.subTest(shape=name, closed=closed):
+                    findings = gate.scan_commit(raw, z, None, ("A", "C"))
+                    self.assertEqual(sorted(f["line"] for f in findings), want)
+        # Each mergetag starts a fresh decision: an unsupported block does
+        # not taint the next supported one, nor the reverse.
+        bad = "mergetag not-a-tag\n" + exact + " \n m\n"
+        good = start + " type commit\n tag v1\n" + exact + " \n m\n"
+        for blocks, expected in (
+            (bad + good, [5]),
+            (good + bad, [11]),
+            (bad + bad, [5, 9]),
+            (good + good, []),
+        ):
+            raw = ("tree " + z + "\n" + plain + blocks + "\nMsg\n").encode()
+            with self.subTest(blocks=blocks):
+                findings = gate.scan_commit(raw, z, None, ("A", "C"))
+                self.assertEqual(sorted(f["line"] for f in findings), expected)
+
     def test_literal_filename_is_redacted_in_blob_locations(self):
         name = "/".join(["docs", "home", "runner!"])
         self.write(name, "Ticket " + "D" + "12345\n")
@@ -2026,6 +2088,39 @@ class Repository(unittest.TestCase):
                 ("A", "C"),
                 "Msg\n",
                 [5],
+            ),
+            # Only a supported embedded tag has a tagger identity; in any
+            # other shape the tagger line is whole literal data.
+            (
+                plain
+                + "mergetag not-a-tag\n tagger T <"
+                + home
+                + "runner> 1 +0000 >\n \n m\n",
+                ("A", "C"),
+                "Msg\n",
+                [5],
+            ),
+            (
+                plain
+                + "mergetag object "
+                + "0" * 40
+                + "\n type commit\n tag v1\n tagger T <"
+                + home
+                + "runner> 1 +0000\n x-extra y\n \n m\n",
+                ("A", "C"),
+                "Msg\n",
+                [7],
+            ),
+            (
+                plain
+                + "mergetag object "
+                + "0" * 40
+                + "\n type commit\n tag v1\n tagger T <"
+                + home
+                + "runner> 1 +0000\n \n m\n",
+                ("A", "C"),
+                "Msg\n",
+                [],
             ),
             # Only a supported embedded tag header grants prose to its message.
             (

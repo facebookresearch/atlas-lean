@@ -423,36 +423,54 @@ TAG_FIELDS = (
 )
 
 
+def supported_tags(header):
+    """Line numbers of mergetag headers whose embedded tag header is the
+    supported shape: "object <id>", then "type", "tag" and an optional
+    "tagger" continuation, in that order, closed by a blank continuation."""
+    supported, start, fields = set(), None, -1
+    for line, row in enumerate(header, 1):
+        if start is not None and row.startswith(" "):
+            field = row[1:]
+            if field == "":
+                if fields >= 2:
+                    supported.add(start)
+                start = None
+            elif 0 <= fields < 3 and TAG_FIELDS[fields].fullmatch(field):
+                fields += 1
+            else:
+                fields = -1
+            continue
+        start = None
+        key, _, value = row.partition(" ")
+        if key == "mergetag":
+            start = line
+            fields = 0 if TAG_OBJECT.fullmatch(value) else -1
+    return supported
+
+
 def header_values(header):
     """(line, kind, value) for each raw header line. Every header byte is
     covered except the message of a supported embedded merge tag, which stays
     prose like the commit message. An identity line gives its Git name and,
     separately, the text inside and after its brackets; other lines give the
-    whole line, key included. A supported tag header is "object", "type",
-    "tag" and an optional "tagger", in that order; any other shape keeps its
-    whole payload literal. A tag signature is opaque data, from its first
-    armor line to the end of that tag."""
-    values = []
-    tag = tag_header = prose = signature = False
-    fields = 0
+    whole line, key included. Only a supported tag (see supported_tags) has
+    a tagger identity or a prose message; any other shape keeps its whole
+    payload literal. A tag signature is opaque data, from its first armor
+    line to the end of that tag."""
+    values, supported = [], supported_tags(header)
+    tag = tag_header = ok = signature = False
     for line, row in enumerate(header, 1):
         if row.startswith(" ") and tag:
             field = row[1:]
             if tag_header and field == "":
                 tag_header = False
-                prose = fields >= 2
+            elif tag_header and ok and field.startswith("tagger "):
+                values += identity_values(line, "tagger", field[7:])
             elif tag_header:
-                if 0 <= fields < 3 and TAG_FIELDS[fields].fullmatch(field):
-                    fields += 1
-                else:
-                    fields = -1
-                if field.startswith("tagger "):
-                    values += identity_values(line, "tagger", field[7:])
-                else:
-                    values.append((line, "tag-header", field))
+                values.append((line, "tag-header", field))
             else:
                 signature = signature or field.startswith("-----BEGIN ")
-                if signature or not prose:
+                if signature or not ok:
                     values.append((line, "tag-body", field))
             continue
         if row.startswith(" "):
@@ -460,8 +478,7 @@ def header_values(header):
             continue
         key, _, value = row.partition(" ")
         tag = tag_header = key == "mergetag"
-        prose = signature = False
-        fields = 0 if tag and TAG_OBJECT.fullmatch(value) else -1
+        ok, signature = tag and line in supported, False
         if key in ("author", "committer"):
             values += identity_values(line, key, value)
         else:
