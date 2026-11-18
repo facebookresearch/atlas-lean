@@ -48,14 +48,24 @@ namespace EarthScience
 
 /-! ## A. Unique minimum of the specific energy -/
 
-/-- Rectangular-channel specific energy `E(h) = h + q^2 / (2 * g * h^2)` for
-discharge per unit width `q > 0` and gravity `g > 0` has a unique minimum
-on `h > 0`, attained at the critical depth `hc = (q^2 / g) ^ (1/3)`. -/
+/-- Specific energy per unit weight for a rectangular channel at
+depth `h`, with discharge per unit width `q` and gravity `g`:
+depth plus velocity head, `h + q^2 / (2 * g * h^2)`. Physically
+meaningful for `0 < g` and `0 < h`; outside that range the formula
+uses Lean's totalized division. -/
+noncomputable def rectangularSpecificEnergy (q g h : ℝ) : ℝ :=
+  h + q ^ 2 / (2 * g * h ^ 2)
+
+/-- Rectangular-channel specific energy
+(`rectangularSpecificEnergy`) for discharge per unit width
+`q > 0` and gravity `g > 0` has a unique minimum on `h > 0`,
+attained at the critical depth `hc = (q^2 / g) ^ (1/3)`. -/
 theorem specific_energy_unique_minimum {q g : ℝ} (hq : 0 < q) (hg : 0 < g) :
     ∃ hc : ℝ, hc = (q ^ 2 / g) ^ (1 / 3 : ℝ) ∧ 0 < hc ∧ hc ^ 3 = q ^ 2 / g ∧
       ∀ h : ℝ, 0 < h →
-        h + q ^ 2 / (2 * g * h ^ 2) ≥ hc + q ^ 2 / (2 * g * hc ^ 2) ∧
-        (h + q ^ 2 / (2 * g * h ^ 2) = hc + q ^ 2 / (2 * g * hc ^ 2) ↔ h = hc) := by
+        rectangularSpecificEnergy q g h ≥ rectangularSpecificEnergy q g hc ∧
+        (rectangularSpecificEnergy q g h = rectangularSpecificEnergy q g hc
+          ↔ h = hc) := by
   have hq2 : 0 < q ^ 2 / g := by positivity
   set hc : ℝ := (q ^ 2 / g) ^ (1 / 3 : ℝ) with hhc_def
   have hhc_pos : 0 < hc := by
@@ -66,6 +76,7 @@ theorem specific_energy_unique_minimum {q g : ℝ} (hq : 0 < q) (hg : 0 < g) :
     norm_num
   refine ⟨hc, rfl, hhc_pos, hhc_cube, ?_⟩
   intro h hh
+  unfold rectangularSpecificEnergy
   have hg' : g ≠ 0 := ne_of_gt hg
   have hh' : h ≠ 0 := ne_of_gt hh
   have hhc' : hc ≠ 0 := ne_of_gt hhc_pos
