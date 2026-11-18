@@ -200,4 +200,47 @@ example (q : ℝ) : hetSub ![1/3, 2/3] ![q, q] = hetTotal ![1/3, 2/3] ![q, q] :=
 
 end Wahlund
 
+/-! ### Root-relative second moment -/
+
+section RootCov
+
+variable {Ω P : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
+
+/-- With no edges every root-relative second moment vanishes. -/
+example (M : DriftModel μ Empty P) (X Y : P) : M.rootSecondMoment X Y = 0 := by
+  simp [M.rootSecondMoment_eq_sum]
+
+/-- A zero-length edge contributes nothing. -/
+example (M : DriftModel μ Unit P) (h : M.len () = 0) (X Y : P) : M.rootSecondMoment X Y = 0 := by
+  simp [M.rootSecondMoment_eq_sum, h]
+
+/-- The diagonal is the root-relative second moment. -/
+example {E : Type*} [Fintype E] (M : DriftModel μ E P) (X : P) :
+    M.rootSecondMoment X X = ∑ e, M.weight X e ^ 2 * M.len e := by
+  rw [M.rootSecondMoment_eq_sum]
+  exact Finset.sum_congr rfl fun e _ => by ring
+
+/-- Two leaves sharing edge `0`, with private edges `1` and `2`. -/
+def treeWeight : Fin 2 → Fin 3 → ℝ := ![![1, 1, 0], ![1, 0, 1]]
+
+example (M : DriftModel μ (Fin 3) (Fin 2)) (hw : M.weight = treeWeight) :
+    M.rootSecondMoment 0 1 = M.len 0 ∧ M.rootSecondMoment 0 0 = M.len 0 + M.len 1 ∧
+      M.rootSecondMoment 1 1 = M.len 0 + M.len 2 := by
+  simp [M.rootSecondMoment_eq_sum, hw, treeWeight, Fin.sum_univ_three]
+
+example (M : DriftModel μ (Fin 3) (Fin 2)) (hw : M.weight = treeWeight) :
+    M.lineage 0 ∩ M.lineage 1 = {0} := by
+  ext e
+  fin_cases e <;> simp [DriftModel.lineage, hw, treeWeight]
+
+example (M : DriftModel μ (Fin 3) (Fin 2)) : (Matrix.of M.rootSecondMoment).PosSemidef :=
+  M.posSemidef_rootSecondMoment
+
+#print axioms DriftModel.rootSecondMoment_eq_sum
+#print axioms DriftModel.rootSecondMoment_eq_mul_diagonal_mul_transpose
+#print axioms DriftModel.posSemidef_rootSecondMoment
+#print axioms DriftModel.rootSecondMoment_eq_sum_inter
+
+end RootCov
+
 end MathlibExtTest.Biology.PopulationGenetics.FStatistics

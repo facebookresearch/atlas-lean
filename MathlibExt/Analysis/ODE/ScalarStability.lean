@@ -179,4 +179,19 @@ theorem scalar_sign_decay_of_hasDerivAt
   rw [e1, e0] at h
   exact h
 
+/-- Every explicit scalar Hurwitz trajectory tends to the
+equilibrium `0` as `t → ∞`. -/
+theorem hurwitz_scalar_tendsto {c x0 : ℝ} (hc : 0 < c) :
+    Filter.Tendsto (fun t : ℝ => Real.exp (-c * t) * x0) Filter.atTop
+      (nhds 0) := by
+  have hct : Filter.Tendsto (fun t : ℝ => c * t) Filter.atTop Filter.atTop :=
+    (Filter.tendsto_const_mul_atTop_of_pos hc).mpr Filter.tendsto_id
+  have hexp : Filter.Tendsto (fun t : ℝ => Real.exp (-(c * t))) Filter.atTop (nhds 0) :=
+    Real.tendsto_exp_neg_atTop_nhds_zero.comp hct
+  have hmul : Filter.Tendsto (fun t : ℝ => Real.exp (-(c * t)) * x0) Filter.atTop (nhds (0 * x0)) :=
+    hexp.mul tendsto_const_nhds
+  rw [zero_mul] at hmul
+  simp only [neg_mul]
+  exact hmul
+
 end MathlibExt.Analysis.ODE.ScalarStability
