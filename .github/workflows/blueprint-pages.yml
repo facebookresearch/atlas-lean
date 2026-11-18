@@ -15,6 +15,7 @@ on:
       - "scripts/dump_v2_dependencies.lean"
       - "scripts/check_blueprint_site.py"
       - "scripts/check_graph_rules.py"
+      - "scripts/frontier_issues.py"
       - "scripts/taxonomy.json"
       - "scripts/wiki-sync.json"
       - "scripts/requirements-blueprint.txt"
@@ -26,6 +27,7 @@ on:
       - "scripts/test_blueprint_workflow.py"
       - "scripts/test_blueprint_taxonomy.py"
       - "scripts/test_check_graph_rules.py"
+      - "scripts/test_frontier_issues.py"
       - "mkdocs.yml"
       - "theme/**"
       - "hooks/**"
@@ -92,6 +94,7 @@ jobs:
           scripts.test_blueprint_workflow
           scripts.test_blueprint_taxonomy
           scripts.test_check_graph_rules
+          scripts.test_frontier_issues
 
       # The wiki's own conventions (docs/GRAPH.md), on the committed tree
       # before lean-facts changes it. A PR is also held to GitHub's diff size.
@@ -202,6 +205,24 @@ jobs:
           uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
           autoform check blueprint --lean-root .
 
+      # The tasks that can start now, by Autoform's readiness rule, and the
+      # nodes marked unexpanded (docs/GRAPH.md). Computed on every run, so a
+      # PR that breaks it fails here; only main keeps it for the issue sync.
+      - name: Compute the task frontier
+        run: >-
+          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
+          python scripts/frontier_issues.py frontier blueprint
+          --output build/frontier.json
+
+      - name: Keep the task frontier
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: blueprint-frontier
+          path: build/frontier.json
+          if-no-files-found: error
+          retention-days: 1
+
       - name: Render the blueprint
         run: >-
           uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
@@ -270,3 +291,46 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+
+  # Keeps one issue open for each task on the graph's frontier, and closes
+  # the issues of tasks that left it (scripts/frontier_issues.py). Only main
+  # runs it, after a successful build, one run at a time. It writes nothing
+  # until a maintainer sets the Actions variable FRONTIER_ISSUES to true, and
+  # it runs only the standard-library sync script: no package or Lean code.
+  frontier-issues:
+    name: sync task issues
+    needs: wiki
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    concurrency:
+      group: frontier-issues
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Check out the sync script
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: scripts/frontier_issues.py
+          sparse-checkout-cone-mode: false
+
+      - name: Download the task frontier
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: blueprint-frontier
+          path: build
+
+      - name: Sync the task issues
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          FRONTIER_ISSUES: ${{ vars.FRONTIER_ISSUES }}
+        run: |
+          set -euo pipefail
+          args=(sync build/frontier.json --repo "$GITHUB_REPOSITORY" --summary "$GITHUB_STEP_SUMMARY")
+          if [ "${FRONTIER_ISSUES:-}" = "true" ]; then
+            args+=(--apply)
+          fi
+          python3 scripts/frontier_issues.py "${args[@]}"

@@ -1,0 +1,287 @@
+"""Frontier issues follow the built graph: one per task that can start now, kept in step and closed when done."""
+
+from __future__ import annotations
+
+import importlib.util
+import json
+import tempfile
+import unittest
+from pathlib import Path
+from unittest.mock import patch
+
+from scripts import frontier_issues as fi
+
+REPO = "facebookresearch/atlas-lean"
+HAS_AUTOFORM = importlib.util.find_spec("autoform_cli") is not None
+
+
+def task(key="node:A/b", kind="formalize", phase="proof", **extra) -> dict:
+    base = {
+        "key": key, "kind": kind, "phase": phase, "node_id": key.split(":", 1)[1], "article_id": None,
+        "title": "Result B", "page": "blueprint/roadmap/A/b.md", "subject": "A", "statement": "B holds.",
+        "declarations": ["X.b"], "dependencies": [], "unlocks": 0,
+    }
+    base.update(extra)
+    return base
+
+
+def frontier(*tasks, finished=()) -> dict:
+    return {"schema": fi.SCHEMA, "commit": "0" * 40, "source_revision": "r", "tasks": list(tasks), "finished": list(finished)}
+
+
+def issue(number, item=None, state="open", state_reason=None, title=None, body=None, labels=None, marks=None) -> dict:
+    if marks is not None:
+        body = "".join(f"<!-- atlas-{name}: {value} -->\n" for name, value in marks) + "old\n"
+    return {
+        "number": number, "state": state, "state_reason": state_reason,
+        "title": title if title is not None else fi.issue_title(item),
+        "body": body if body is not None else fi.issue_body(item, REPO),
+        "labels": [{"name": name} for name in (labels if labels is not None else fi.issue_labels(item))],
+    }
+
+
+class Rendering(unittest.TestCase):
+    def test_titles_say_what_to_do(self) -> None:
+        self.assertEqual(fi.issue_title(task()), "Prove: Result B")
+        self.assertEqual(fi.issue_title(task(phase="statement")), "State in Lean: Result B")
+        self.assertEqual(fi.issue_title(task(kind="dag-work", phase=None)), "Expand: Result B")
+        self.assertLessEqual(len(fi.issue_title(task(title="x" * 500))), fi.TITLE_LIMIT)
+
+    def test_the_body_carries_its_marks_links_and_criteria(self) -> None:
+        dependencies = [{"title": f"D{n}", "page": f"blueprint/roadmap/A/d{n}.md"} for n in range(25)]
+        body = fi.issue_body(task(dependencies=dependencies, unlocks=3), REPO)
+        self.assertIn("<!-- atlas-task: node:A/b -->", body)
+        self.assertIn("<!-- atlas-node: A/b -->", body)
+        self.assertIn("> B holds.", body)
+        self.assertIn(f"https://github.com/{REPO}/blob/main/blueprint/roadmap/A/b.md", body)
+        self.assertIn("`X.b`", body)
+        self.assertIn("and 5 more", body)
+        self.assertIn("3 unfinished node(s)", body)
+        self.assertIn("`theorem_wanted` is gone", body)
+        self.assertIn("`unexpanded` marker is gone", fi.issue_body(task(kind="dag-work", phase=None), REPO))
+
+    def test_labels_name_the_kind_the_graph_and_the_area(self) -> None:
+        self.assertEqual(fi.issue_labels(task()), ["task:formalize", "math graph", "area:A"])
+        self.assertEqual(fi.issue_labels(task(kind="dag-work", subject=None)), ["task:dag-work", "math graph"])
+
+
+class Planning(unittest.TestCase):
+    def plan(self, data, issues, labels=("task:formalize", "task:dag-work", "math graph", "area:A")):
+        return fi.plan_sync(data, issues, set(labels), REPO)
+
+    def test_a_new_task_gets_an_issue_and_missing_labels_are_created(self) -> None:
+        plan = self.plan(frontier(task()), [], labels=())
+        self.assertEqual([t["key"] for t in plan.create], ["node:A/b"])
+        self.assertEqual(plan.labels, ["area:A", "math graph", "task:dag-work", "task:formalize"])
+
+    def test_an_issue_in_step_is_left_alone(self) -> None:
+        item = task()
+        plan = self.plan(frontier(item), [issue(1, item, labels=fi.issue_labels(item) + ["help wanted"])])
+        self.assertEqual((plan.unchanged, plan.writes()), (1, 0))
+
+    def test_a_changed_task_updates_its_issue(self) -> None:
+        old, new = task(statement="Old."), task(statement="New.")
+        plan = self.plan(frontier(new), [issue(1, old)])
+        self.assertEqual([(i["number"], t["statement"]) for i, t in plan.update], [(1, "New.")])
+
+    def test_an_issue_is_found_by_its_node_when_the_article_gains_an_id(self) -> None:
+        old = task()
+        new = task(key="article:af_" + "1" * 24, article_id="af_" + "1" * 24, node_id="A/b")
+        plan = self.plan(frontier(new), [issue(1, old)])
+        self.assertEqual(len(plan.update), 1)
+        self.assertEqual(plan.create, [])
+
+    def test_a_task_off_the_frontier_closes_its_issue(self) -> None:
+        done, moved = task("node:A/done"), task("node:A/moved")
+        plan = self.plan(frontier(finished=["node:A/done"]), [issue(1, done), issue(2, moved)])
+        self.assertEqual([(i["number"], reason) for i, reason in plan.close], [(1, "completed"), (2, "not_planned")])
+
+    def test_issues_without_marks_and_closed_issues_are_not_closed(self) -> None:
+        plan = self.plan(frontier(), [issue(1, body="written by a person", title="t", labels=["task:formalize"]),
+                                      issue(2, task(), state="closed", state_reason="completed")])
+        self.assertEqual(plan.close, [])
+
+    def test_a_task_back_on_the_frontier_reopens_its_issue_unless_declined(self) -> None:
+        back, declined = task("node:A/back"), task("node:A/no")
+        plan = self.plan(frontier(back, declined), [
+            issue(1, back, state="closed", state_reason="completed"),
+            issue(2, declined, state="closed", state_reason="not_planned"),
+        ])
+        self.assertEqual([i["number"] for i, _ in plan.reopen], [1])
+        self.assertEqual((plan.declined, plan.create), (1, []))
+
+    def test_a_task_blocked_for_a_while_gets_its_issue_back(self) -> None:
+        item = task()
+        open_issue = issue(1, item)
+        plan = self.plan(frontier(), [open_issue])
+        self.assertEqual([(i["number"], reason) for i, reason in plan.close], [(1, "not_planned")])
+        github = FakeGitHub()
+        fi.apply_plan(plan, github, REPO, max_writes=10)
+        closed = dict(open_issue, state="closed", state_reason="not_planned",
+                      body=github.calls[-1][5])
+        self.assertIn(fi.OFF_FRONTIER, closed["body"])
+        plan = self.plan(frontier(item), [closed])
+        self.assertEqual(([i["number"] for i, _ in plan.reopen], plan.declined), ([1], 0))
+
+    def test_managed_labels_follow_the_task_and_other_labels_stay(self) -> None:
+        old = task(kind="dag-work", phase=None, subject="B")
+        new = task(subject="A")
+        stale = issue(1, old, labels=fi.issue_labels(old) + ["help wanted"])
+        plan = self.plan(frontier(new), [stale])
+        self.assertEqual(len(plan.update), 1)
+        self.assertEqual(fi.merged_labels(stale, new), ["area:A", "help wanted", "math graph", "task:formalize"])
+
+    def test_a_page_taking_over_an_old_path_does_not_take_another_articles_issue(self) -> None:
+        moved = task(key="article:af_" + "1" * 24, article_id="af_" + "1" * 24, node_id="A/moved", page="blueprint/roadmap/A/moved.md")
+        newcomer = task(key="node:A/b", node_id="A/b", title="Another result")
+        held = issue(1, dict(moved, node_id="A/b"))
+        plan = self.plan(frontier(moved, newcomer), [held])
+        self.assertEqual([(i["number"], t["key"]) for i, t in plan.update], [(1, moved["key"])])
+        self.assertEqual([t["key"] for t in plan.create], ["node:A/b"])
+
+    def test_a_duplicate_issue_is_closed(self) -> None:
+        item = task()
+        plan = self.plan(frontier(item), [issue(1, item), issue(2, item)])
+        self.assertEqual(plan.unchanged, 1)
+        self.assertEqual([(i["number"], reason) for i, reason in plan.close], [(1, "not_planned")])
+
+    def test_a_frontier_of_another_schema_is_refused(self) -> None:
+        with self.assertRaises(ValueError):
+            self.plan({"schema": "other", "tasks": []}, [])
+
+
+class FakeGitHub:
+    def __init__(self, limit_after: int | None = None) -> None:
+        self.calls: list[tuple] = []
+        self.limit_after = limit_after
+
+    def _record(self, *call) -> dict:
+        if self.limit_after is not None and len(self.calls) >= self.limit_after:
+            raise fi.RateLimited("limit")
+        self.calls.append(call)
+        return {}
+
+    def create_label(self, name, color):
+        return self._record("label", name, color)
+
+    def create_issue(self, title, body, labels):
+        return self._record("create", title, tuple(labels))
+
+    def update_issue(self, number, **fields):
+        return self._record("update", number, fields.get("state"), fields.get("state_reason"),
+                            tuple(fields.get("labels", ())), fields.get("body"))
+
+
+class Applying(unittest.TestCase):
+    def plan(self) -> fi.Plan:
+        changed, gone = task("node:A/changed", statement="New."), task("node:A/gone")
+        stale = issue(1, task("node:A/changed", statement="Old."), labels=["task:formalize", "triage"])
+        return fi.plan_sync(
+            frontier(changed, task("node:A/new1"), task("node:A/new2")),
+            [stale, issue(2, gone)], {"task:formalize", "math graph"}, REPO,
+        )
+
+    def test_closes_then_updates_then_creates_keeping_other_labels(self) -> None:
+        github = FakeGitHub()
+        self.assertEqual(fi.apply_plan(self.plan(), github, REPO, max_writes=100), 6)
+        self.assertEqual([call[0] for call in github.calls], ["label", "label", "update", "update", "create", "create"])
+        self.assertEqual([call[1] for call in github.calls[:2]], ["area:A", "task:dag-work"])
+        self.assertEqual(github.calls[2][:4], ("update", 2, "closed", "not_planned"))
+        self.assertEqual(github.calls[3][:3], ("update", 1, "open"))
+        self.assertIn("triage", github.calls[3][4])
+        self.assertEqual([call[1] for call in github.calls[4:]], ["Prove: Result B", "Prove: Result B"])
+
+    def test_writes_stop_at_the_cap_and_at_a_rate_limit(self) -> None:
+        github = FakeGitHub()
+        self.assertEqual(fi.apply_plan(self.plan(), github, REPO, max_writes=3), 3)
+        limited = FakeGitHub(limit_after=2)
+        messages: list[str] = []
+        self.assertEqual(fi.apply_plan(self.plan(), limited, REPO, max_writes=100, log=messages.append), 2)
+        self.assertIn("the next run continues", messages[0])
+
+    def test_the_summary_counts_every_action(self) -> None:
+        summary = fi.summarize(self.plan(), frontier(task()), None, 400)
+        self.assertIn("dry run: nothing was written", summary)
+        self.assertIn("| open issues | 2 |", summary)
+        self.assertIn("| close issues | 1 |", summary)
+
+
+class Command(unittest.TestCase):
+    def test_sync_needs_a_token(self) -> None:
+        with tempfile.TemporaryDirectory() as directory, patch.dict("os.environ", {}, clear=True):
+            path = Path(directory) / "frontier.json"
+            path.write_text(json.dumps(frontier()))
+            self.assertEqual(fi.main(["sync", str(path), "--repo", REPO]), 2)
+
+
+@unittest.skipUnless(HAS_AUTOFORM, "needs Autoform, as the wiki build installs it")
+class Frontier(unittest.TestCase):
+    """A built vault, as lean-facts leaves it: a proved definition, a stated theorem resting on it, a stated
+    theorem whose proof rests on that one, a wanted definition, and a node marked unexpanded."""
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.TemporaryDirectory()
+        root = Path(self.tmp.name)
+        self.blueprint = root / "blueprint"
+        pages = {
+            "README.md": "# ATLAS roadmap\n\n- [Topoi](T/README.md)\n",
+            "T/README.md": "# Topoi\n\n- [Topos](topos.md)\n- [Slice](slice.md)\n- [Deep](deep.md)\n- [Jacobian](jacobian.md)\n- [Hodge](hodge.md)\n",
+            "T/topos.md": "# Topos\n\nA topos.\n\n## Depends on\n\nThis node has no prerequisites.\n",
+            "T/slice.md": "# Slice\n\nSlices are toposes.\n\n## Depends on\n\n- [Topos](topos.md)\n",
+            "T/deep.md": "# Deep\n\nDeeper.\n\n## Depends on\n\nThis node has no prerequisites.\n\n## Proof depends on\n\n- [Slice](slice.md)\n",
+            "T/jacobian.md": "# Jacobian\n\nThe Jacobian.\n\n## Depends on\n\nThis node has no prerequisites.\n",
+            "T/hodge.md": "# Hodge\n\nTo expand.\n",
+        }
+        for name, text in pages.items():
+            path = self.blueprint / "roadmap" / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(text)
+
+        def row(page, declaration=None, **extra):
+            entry = {"subject": [{"type": "generic", "uri": f"../roadmap/{page}"}]}
+            if declaration:
+                entry["object"] = [{"location": {"declaration": declaration}}]
+            entry.update(extra)
+            return entry
+
+        rows = {
+            "roadmap": [row("README.md")],
+            "T": [
+                row("T/README.md"),
+                row("T/topos.md", "X.Topos", kind="def", status="formalized", id="af_" + "1" * 24),
+                row("T/slice.md", "X.slice", kind="theorem", status="stated"),
+                row("T/deep.md", "X.deep", kind="theorem", status="stated"),
+                row("T/jacobian.md", "X.Jacobian", kind="def"),
+                row("T/hodge.md", extensions={fi.OWN: {fi.UNEXPANDED: True}}),
+            ],
+        }
+        (self.blueprint / "links").mkdir()
+        (self.blueprint / "links" / "_defaults.json").write_text(json.dumps({"object": {"type": "lean", "uri": "../.."}}) + "\n")
+        for name, entries in rows.items():
+            (self.blueprint / "links" / f"{name}.jsonl").write_text("".join(json.dumps(e) + "\n" for e in entries))
+
+    def tearDown(self) -> None:
+        self.tmp.cleanup()
+
+    def test_the_frontier_holds_exactly_the_tasks_that_can_start(self) -> None:
+        result = fi.build_frontier(self.blueprint, "abc")
+        tasks = {t["node_id"]: t for t in result["tasks"]}
+        self.assertEqual(set(tasks), {"T/slice", "T/jacobian", "T/hodge"})
+        self.assertEqual((tasks["T/slice"]["kind"], tasks["T/slice"]["phase"]), ("formalize", "proof"))
+        self.assertEqual(tasks["T/slice"]["unlocks"], 1)
+        self.assertEqual(tasks["T/slice"]["dependencies"], [{"title": "Topos", "page": "blueprint/roadmap/T/topos.md"}])
+        self.assertEqual(tasks["T/slice"]["statement"], "Slices are toposes.")
+        self.assertEqual(tasks["T/slice"]["subject"], "T")
+        self.assertEqual((tasks["T/jacobian"]["kind"], tasks["T/jacobian"]["phase"]), ("formalize", "statement"))
+        self.assertEqual((tasks["T/hodge"]["kind"], tasks["T/hodge"]["phase"]), ("dag-work", None))
+        self.assertIn("article:af_" + "1" * 24, result["finished"])
+        self.assertEqual(result["tasks"][0]["node_id"], "T/slice")  # what it unblocks comes first
+
+    def test_the_command_writes_the_frontier(self) -> None:
+        output = Path(self.tmp.name) / "build" / "frontier.json"
+        self.assertEqual(fi.main(["frontier", str(self.blueprint), "--output", str(output), "--commit", "abc"]), 0)
+        self.assertEqual(json.loads(output.read_text())["schema"], fi.SCHEMA)
+
+
+if __name__ == "__main__":
+    unittest.main()

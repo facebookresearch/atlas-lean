@@ -45,7 +45,8 @@ python -m unittest \
   scripts.test_check_blueprint_site_navigation \
   scripts.test_blueprint_workflow \
   scripts.test_blueprint_taxonomy \
-  scripts.test_check_graph_rules
+  scripts.test_check_graph_rules \
+  scripts.test_frontier_issues
 python scripts/check_graph_rules.py
 ```
 
@@ -110,7 +111,33 @@ the report; no old Lean-source link is fabricated.
 
 Changing AutoformBot requires a reviewed `.github/autoform-ref` update and
 passing tests. The workflow has no automatic pin push, upstream-sync bot,
-model-driven audit, schedule, or required personal token.
+model-driven audit, schedule, or required personal token; the issue sync
+uses the job's own `GITHUB_TOKEN`.
+
+## Task issues
+
+After `lean-facts`, the workflow writes the graph's frontier with
+`python scripts/frontier_issues.py frontier blueprint --output build/frontier.json`:
+the articles that are ready to state or to prove by Autoform's readiness rule
+(`autoform work list`), and the nodes marked unexpanded (`docs/GRAPH.md`). On
+`main`, the `sync task issues` job then keeps one issue open per task, labelled
+`task:formalize` or `task:dag-work` with `math graph` and the subject's
+`area:` label. It opens issues for new tasks, updates issues whose task
+changed, and closes the issues of tasks that left the frontier: completed when
+the node is finished, not planned otherwise. An issue closed as not planned
+is never reopened. A hidden `<!-- atlas-task: … -->` line ties each issue to
+its node. Writes are paced and capped at 250 per run, so the first fill opens
+over several `main` builds.
+
+The job is the only one with `issues: write`, runs only the standard-library
+sync script, and writes nothing until a maintainer sets the Actions variable
+`FRONTIER_ISSUES` to `true`. Until then each run reports its plan in the job
+summary. To preview it locally:
+
+```sh
+GITHUB_TOKEN=... python scripts/frontier_issues.py sync build/frontier.json \
+  --repo facebookresearch/atlas-lean
+```
 
 ## GitHub Actions and publication
 
