@@ -68,7 +68,7 @@ private theorem bind_integral_eq {Z α : Type*} [Fintype Z] [Fintype α]
   ring
 
 
-"/-- **Latent-mixture coordinate moments.** Let `Z` (latent states) and `ι`
+/-- **Latent-mixture coordinate moments.** Let `Z` (latent states) and `ι`
 (items) be finite, `pi : PMF Z` a latent law with no support restriction,
 and `q z i ∈ [0, 1]` item curves (endpoints `0` and `1` allowed). Under
 the observed law `pi.bind (fun z => localIndepPMF (q z) ..)`, the first
