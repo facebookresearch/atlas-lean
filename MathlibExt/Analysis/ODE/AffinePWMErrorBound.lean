@@ -18,10 +18,10 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 # Switched-to-averaged error bound for affine PWM systems
 
 Let `A` be a bounded linear operator on a finite-dimensional real normed space `E`, let `b ∈ E`
-be a constant input direction and let `c` be a continuous common forcing. The switched
+be a constant input direction and let `c` be a common forcing. The switched
 trajectory `x` solves `x' = A x + s(t) • b + c(t)`, where `s = pwmSignal ε d` is the
-pulse-width signal with period `ε` and duty `d`, and the averaged trajectory `y` solves
-`y' = A y + d(t) • b + c(t)`; both are given in integral-equation form on `[0, T]`.
+pulse-width signal with switching-cycle length `ε` and duty `d`, and the averaged trajectory
+`y` solves `y' = A y + d(t) • b + c(t)`; both are given in integral-equation form on `[0, T]`.
 
 In the difference of the two equations the forcing `c` cancels and, since `b` is constant, the
 input contributes `q(t) • b`, where `q(t) = ∫₀ᵗ (s - d)` is the discrepancy primitive. A bound
@@ -33,7 +33,8 @@ input contributes `q(t) • b`, where `q(t) = ∫₀ᵗ (s - d)` is the discrepa
 * `norm_sub_le_exp_mul_of_primitive_le`: if `|q| ≤ Q` on `[0, T]` and both integrands are
   interval integrable, then `‖x t - y t‖ ≤ exp(‖A‖ T) (‖x₀ - y₀‖ + ‖b‖ Q)` there.
 * `norm_sub_le_of_primitive_le_zeroOperator`: at `A = 0` the exponential factor is `1`.
-* `switched_averaged_error_le`: for an `Ld`-Lipschitz duty with values in `[0, 1]`,
+* `switched_averaged_error_le`: for a continuous forcing `c` and an `Ld`-Lipschitz duty with
+  values in `[0, 1]`,
   `‖x t - y t‖ ≤ exp(‖A‖ T) (‖x₀ - y₀‖ + ‖b‖ ε (1 + Ld T / 2))` on `[0, T]`.
 * `switched_averaged_error_le_of_constDuty_sharp`: a constant duty `c₀ ∈ [0, 1]` gives the
   factor `c₀ (1 - c₀) ε`, at most `ε / 4` and zero at duties `0` and `1`.
@@ -165,13 +166,13 @@ private theorem intervalIntegrable_of_eq_add_integral {E : Type*} [NormedAddComm
 /-- Bounded-primitive error estimate, split from the affine
 specialization: if the switched and averaged trajectories satisfy
 their integral equations on `[0, T]` with integrable integrands and a
-common continuous forcing `c`, and the discrepancy primitive is bounded
+common forcing `c`, and the discrepancy primitive is bounded
 by `Q` on `[0, T]`, then
 the trajectory error is at most
 `exp(‖A‖ T) (‖x₀ - y₀‖ + ‖b‖ Q)` on `[0, T]`. -/
 theorem norm_sub_le_exp_mul_of_primitive_le
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
-    (A : E →L[ℝ] E) (b : E) (c : ℝ → E) (_hc : Continuous c)
+    (A : E →L[ℝ] E) (b : E) (c : ℝ → E)
     (T Q : ℝ) (hT : 0 ≤ T) (hQ : 0 ≤ Q)
     (s d : ℝ → ℝ) (x y : ℝ → E) (x₀ y₀ : E)
     (hx : ∀ t ∈ Set.Icc 0 T, x t = x₀ +
@@ -247,7 +248,7 @@ exponential factor is `1`, so the error is the initial mismatch plus
 `‖b‖ Q`; the initial mismatch is not dropped. -/
 theorem norm_sub_le_of_primitive_le_zeroOperator
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
-    (b : E) (c : ℝ → E) (hc : Continuous c)
+    (b : E) (c : ℝ → E)
     (T Q : ℝ) (hT : 0 ≤ T) (hQ : 0 ≤ Q)
     (s d : ℝ → ℝ) (x y : ℝ → E) (x₀ y₀ : E)
     (hx : ∀ t ∈ Set.Icc 0 T, x t = x₀ +
@@ -259,12 +260,12 @@ theorem norm_sub_le_of_primitive_le_zeroOperator
     (hq : ∀ t ∈ Set.Icc 0 T, |∫ u in (0 : ℝ)..t, (s u - d u)| ≤ Q)
     (t : ℝ) (ht : t ∈ Set.Icc 0 T) :
     ‖x t - y t‖ ≤ ‖x₀ - y₀‖ + ‖b‖ * Q := by
-  simpa using norm_sub_le_exp_mul_of_primitive_le 0 b c hc T Q hT hQ s d x y x₀ y₀
+  simpa using norm_sub_le_exp_mul_of_primitive_le 0 b c T Q hT hQ s d x y x₀ y₀
     hx hy hxi hyi hq t ht
 
 /-- Switched-to-averaged error bound: for `x' = A x + s(t) • b + c(t)`
 and `y' = A y + d(t) • b + c(t)` in integral-equation form on
-`[0, T]`, with `s` the pulse-width signal of period `ε` and duty `d`,
+`[0, T]`, with `s` the pulse-width signal with switching-cycle length `ε` and duty `d`,
 `‖x t - y t‖ ≤ exp(‖A‖ T) (‖x₀ - y₀‖ + ‖b‖ ε (1 + Ld T / 2))`
 for every `t ∈ [0, T]`. -/
 theorem switched_averaged_error_le
@@ -290,7 +291,7 @@ theorem switched_averaged_error_le
     (hsmul (intervalIntegrable_pwmSignal ε d 0 T)) x x₀ hx
   have hyi := intervalIntegrable_of_eq_add_integral A c hc hT (fun u => d u • b)
     (hsmul hdi) y y₀ hy
-  have h := norm_sub_le_exp_mul_of_primitive_le A b c hc T (ε * (1 + (Ld : ℝ) * T / 2)) hT
+  have h := norm_sub_le_exp_mul_of_primitive_le A b c T (ε * (1 + (Ld : ℝ) * T / 2)) hT
     (by positivity) (pwmSignal ε d) d x y x₀ y₀ hx hy hxi hyi
     (fun t ht => abs_pwmPrimitive_le T ε Ld d hT hε hd hLip t ht) t ht
   simpa only [mul_assoc] using h
@@ -318,7 +319,7 @@ theorem switched_averaged_error_le_of_constDuty_sharp
     intervalIntegrable_const y y₀ hy
   have hQ : 0 ≤ c₀ * (1 - c₀) * ε :=
     mul_nonneg (mul_nonneg hc₀.1 (sub_nonneg.mpr hc₀.2)) hε.le
-  exact norm_sub_le_exp_mul_of_primitive_le A b c hc T _ hT hQ
+  exact norm_sub_le_exp_mul_of_primitive_le A b c T _ hT hQ
     (pwmSignal ε (fun _ => c₀)) (fun _ => c₀) x y x₀ y₀ hx hy hxi hyi
     (fun t ht => by
       have h := pwmPrimitive_const_mem_Icc ε c₀ t hε hc₀ ht.1
