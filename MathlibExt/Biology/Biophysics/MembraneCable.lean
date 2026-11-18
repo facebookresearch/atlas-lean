@@ -251,23 +251,21 @@ theorem timeConstant_pos {cm : ℝ} (hm : 0 < rm) (hcm : 0 < cm) :
   mul_pos hm hcm
 
 /-- **Sealed end.** At a point of the cable with unique spatial
-derivative where the voltage is differentiable, the axial current
-vanishes exactly when the voltage spatial derivative vanishes:
+derivative within the cable set, the axial current vanishes
+exactly when the within-set voltage spatial derivative vanishes:
 a sealed end is the zero-derivative boundary condition. -/
 theorem sealed_end_iff {s : Set ℝ} {V I : ℝ → ℝ} (h : IsSteadyState rm ri s V I)
     (hri : ri ≠ 0) {x : ℝ} (hx : x ∈ s)
-    (hu : UniqueDiffWithinAt ℝ s x) (hDiff : DifferentiableAt ℝ V x) :
-    I x = 0 ↔ deriv V x = 0 := by
+    (hu : UniqueDiffWithinAt ℝ s x) :
+    I x = 0 ↔ derivWithin V s x = 0 := by
   have hv := h.hasDerivWithinAt_voltage x hx
-  have hderiv : (-(ri * I x)) = deriv V x :=
-    UniqueDiffWithinAt.eq_deriv s hu hv hDiff.hasDerivAt.hasDerivWithinAt
+  have hderiv : derivWithin V s x = -(ri * I x) := hv.derivWithin hu
+  rw [hderiv]
   constructor
   · intro hI
-    rw [hI, mul_zero, neg_zero] at hderiv
-    exact hderiv.symm
-  · intro hV
-    rw [hV] at hderiv
-    have h2 : ri * I x = 0 := by linarith [hderiv.symm]
+    rw [hI, mul_zero, neg_zero]
+  · intro h0
+    have h2 : ri * I x = 0 := by linarith [h0]
     exact (mul_eq_zero.mp h2).resolve_left hri
 
 /-- `r∞ = ri λ`. -/
