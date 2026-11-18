@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Circuits.BalancedThreePhase
+public import PhyslibExt.Circuits.PerUnitBases
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
@@ -28,16 +29,25 @@ is the branch admittance times that drop, and the current
 injected at a node is the signed sum of the incident branch
 currents plus the shunt current at that node.
 
-With the absorbed complex power at a node defined as the node
-voltage times the conjugate of its injected current, in the
-convention of
-`PhyslibExt.Circuits.BalancedThreePhase.complexPower`, the total
-absorbed real power over all nodes equals the sum over branches
-of the real part of the branch admittance times the squared
-magnitude of the branch drop, plus the sum over nodes of the
-real part of the shunt admittance times the squared magnitude of
-the node voltage. The same calculation gives the complex and
-reactive forms. Nonnegativity of the total real power is a
+Sign convention. The incidence coefficients that form a branch
+drop also assemble the nodal current, so the injected current at
+a node is the current leaving the node into its incident branches
+and its shunt. The node voltage times the conjugate of that
+current is therefore the complex power supplied by the node to the
+branch and shunt network, which is the power the network absorbs
+through that node in the convention of
+`PhyslibExt.Circuits.BalancedThreePhase.complexPower`. For a
+single unit-conductance branch from node `0` to node `1` with
+voltages `1` and `0`, the supplied power at node `0` is `+1`: the
+node supplies the power that the branch dissipates.
+
+The total supplied real power over all nodes equals the sum over
+branches of the real part of the branch admittance times the
+squared magnitude of the branch drop, plus the sum over nodes of
+the real part of the shunt admittance times the squared magnitude
+of the node voltage, that is, the total real power absorbed by the
+network. The same calculation gives the complex and reactive
+forms. Nonnegativity of the total supplied real power is a
 separate consequence that needs nonnegative real parts of all
 admittances. No specified-power load-flow problem is solved:
 voltages and currents obey a linear admittance relation, and
@@ -49,21 +59,24 @@ interchanging the finite sums over nodes and branches, and
 collecting each branch drop against its conjugate to obtain a
 `Complex.normSq` term; the shunt terms collect in the same way.
 The real and reactive identities are the real and imaginary
-parts of that complex identity, and the remaining results are
-direct consequences of those forms or of the per-unit
-definition.
+parts of that complex identity, and the sign and validation
+results are direct consequences of those forms. The per-unit
+power on a direct real base is the existing
+`PhyslibExt.Circuits.PerUnitBases.powerPerUnit` at phase bases
+`1` and `Sbase / 3`, whose three-phase power base is `Sbase`; it
+agrees with `powerPerUnit` on every three-phase power base.
 
 ## ii. Key results
 
-- `total_complexPower_eq_branch_add_shunt`: the total absorbed
+- `total_complexPower_eq_branch_add_shunt`: the total supplied
   complex power splits into branch and shunt parts.
 - `total_realPower_eq_branch_add_shunt_losses`: the headline
-  balance of total absorbed real power against branch and shunt
+  balance of total supplied real power against branch and shunt
   conductive losses.
 
 ## iii. Table of contents
 
-- A. Network data and absorbed power
+- A. Network data and supplied power
 - B. Total power balance
 - C. Nodal injection equations
 - D. Sign, reactive, and per-unit consequences
@@ -74,13 +87,14 @@ definition.
   McGraw-Hill, 1994: nodal power injections, complex power
   balance, and per-unit quantities.
 
-## A. Network data and absorbed power
+## A. Network data and supplied power
 -/
 
 @[expose] public section
 
 open ComplexConjugate
 open PhyslibExt.Circuits.BalancedThreePhase
+open PhyslibExt.Circuits.PerUnitBases
 
 namespace PhyslibExt.Circuits.ACInjectionLossBalance
 
@@ -99,18 +113,22 @@ def nodeInjection (nN nE : ℕ) (B : Matrix (Fin nN) (Fin nE) ℝ)
     (V : Fin nN → ℂ) (y : Fin nE → ℂ) (ys : Fin nN → ℂ) (v : Fin nN) : ℂ :=
   (∑ e : Fin nE, (B v e : ℂ) * (y e * branchDrop nN nE B V e)) + ys v * V v
 
-/-- Absorbed complex power at a node, voltage times conjugated injection,
-in the canonical root-mean-square convention. New definition owned by this
-module. -/
+/-- Complex power supplied by a node to the branch and shunt network:
+voltage times conjugated injection, in the canonical root-mean-square
+convention. The injection is the current leaving the node into the
+network, so this is the power the network absorbs through that node.
+New definition owned by this module. -/
 def nodeComplexPower (nN nE : ℕ) (B : Matrix (Fin nN) (Fin nE) ℝ)
     (V : Fin nN → ℂ) (y : Fin nE → ℂ) (ys : Fin nN → ℂ) (v : Fin nN) : ℂ :=
   complexPower (V v) (nodeInjection nN nE B V y ys v)
 
-/-- Complex power in per-unit on a positive real base power: dividing by a
+/-- Complex power in per-unit on a direct real base power `Sbase`: the
+existing `powerPerUnit` with phase voltage base `1` and phase current base
+`Sbase / 3`, whose three-phase power base is `Sbase`. Dividing by a
 positive real base scales the real and reactive parts by the same positive
 factor and does not rotate them. -/
 noncomputable def perUnitComplexPower (S : ℂ) (Sbase : ℝ) : ℂ :=
-  S / (Sbase : ℂ)
+  powerPerUnit 1 (Sbase / 3) S
 
 private theorem re_sum {ι : Type*} (s : Finset ι) (f : ι → ℂ) :
     (∑ i ∈ s, f i).re = ∑ i ∈ s, (f i).re := by
@@ -153,7 +171,7 @@ private theorem conj_mul_normSq (u : ℂ) :
 
 /-! ## B. Total power balance -/
 
-/-- Total absorbed complex power splits into a branch part and a shunt
+/-- Total supplied complex power splits into a branch part and a shunt
 part: each branch contributes conjugated admittance times squared drop
 magnitude, and each node contributes conjugated shunt admittance times
 squared voltage magnitude. -/
@@ -186,7 +204,7 @@ theorem total_complexPower_eq_branch_add_shunt (nN nE : ℕ)
     rw [hdrop, mul_assoc, hconj]
   · refine Finset.sum_congr rfl (fun v _ => mul_conj_factor _ _)
 
-/-- Headline balance: total absorbed real power equals total branch
+/-- Headline balance: total supplied real power equals total branch
 conductive loss plus total shunt conductive loss, with squared magnitudes
 in the form of squared complex norms. No sign hypothesis on any admittance
 is needed for this identity. -/
@@ -202,7 +220,7 @@ theorem total_realPower_eq_branch_add_shunt_losses (nN nE : ℕ)
   simp only [conj_mul_ofReal_re] at h2
   exact h2
 
-/-- Total absorbed reactive power equals minus the branch susceptive part
+/-- Total supplied reactive power equals minus the branch susceptive part
 minus the shunt susceptive part: conjugation flips the sign of every
 imaginary admittance part. -/
 lemma total_reactivePower_eq_neg_susceptive (nN nE : ℕ)
@@ -221,7 +239,7 @@ lemma total_reactivePower_eq_neg_susceptive (nN nE : ℕ)
 
 /-! ## C. Nodal injection equations -/
 
-/-- Real injection equation at one node: the real absorbed power is the
+/-- Real injection equation at one node: the real supplied power is the
 real part of voltage times conjugated branch injection, plus the shunt
 conductance times squared voltage magnitude. -/
 lemma node_realPower_eq_branch_add_shunt (nN nE : ℕ)
@@ -237,7 +255,7 @@ lemma node_realPower_eq_branch_add_shunt (nN nE : ℕ)
   rw [map_mul, mul_conj_factor]
   exact conj_mul_ofReal_re _ _
 
-/-- Reactive injection equation at one node: the imaginary absorbed power
+/-- Reactive injection equation at one node: the imaginary supplied power
 is the imaginary part of voltage times conjugated branch injection, minus
 the shunt susceptance times squared voltage magnitude. -/
 lemma node_reactivePower_eq_branch_sub_shunt (nN nE : ℕ)
@@ -256,7 +274,7 @@ lemma node_reactivePower_eq_branch_sub_shunt (nN nE : ℕ)
 /-! ## D. Sign, reactive, and per-unit consequences -/
 
 /-- With nonnegative conductance in every branch and shunt, the total
-absorbed real power is nonnegative. This sign conclusion is separate from
+supplied real power is nonnegative. This sign conclusion is separate from
 the balance identity above. -/
 lemma total_realPower_nonneg (nN nE : ℕ) (B : Matrix (Fin nN) (Fin nE) ℝ)
     (V : Fin nN → ℂ) (y : Fin nE → ℂ) (ys : Fin nN → ℂ)
@@ -272,7 +290,7 @@ lemma total_realPower_nonneg (nN nE : ℕ) (B : Matrix (Fin nN) (Fin nE) ℝ)
     exact mul_nonneg (hys v) (Complex.normSq_nonneg _)
 
 /-- Purely reactive validation case: if every branch and shunt admittance
-has zero real part, the total absorbed real power is zero, for resistive
+has zero real part, the total supplied real power is zero, for resistive
 losses at the endpoints and the branches agree on zero. -/
 lemma total_realPower_eq_zero_of_purely_reactive (nN nE : ℕ)
     (B : Matrix (Fin nN) (Fin nE) ℝ) (V : Fin nN → ℂ) (y : Fin nE → ℂ)
@@ -296,8 +314,23 @@ value by the base, read as a complex number, returns the original complex
 power. Positivity gives the nonzero side condition the division needs. -/
 lemma perUnitComplexPower_mul_base_eq (S : ℂ) (Sbase : ℝ) (hbase : 0 < Sbase) :
     perUnitComplexPower S Sbase * (Sbase : ℂ) = S := by
-  unfold perUnitComplexPower
   have hbase' : (Sbase : ℂ) ≠ 0 := by exact_mod_cast ne_of_gt hbase
+  have hb : threePhasePowerBase 1 (Sbase / 3) = Sbase := by
+    unfold threePhasePowerBase
+    ring
+  unfold perUnitComplexPower powerPerUnit
+  rw [hb]
   exact div_mul_cancel₀ S hbase'
+
+/-- The direct-base per-unit power is the existing `powerPerUnit` on every
+three-phase power base, so both views give the same per-unit value. -/
+lemma perUnitComplexPower_threePhasePowerBase (S : ℂ) (Vb Ib : ℝ) :
+    perUnitComplexPower S (threePhasePowerBase Vb Ib) = powerPerUnit Vb Ib S := by
+  have hb : threePhasePowerBase 1 (threePhasePowerBase Vb Ib / 3) =
+      threePhasePowerBase Vb Ib := by
+    unfold threePhasePowerBase
+    ring
+  unfold perUnitComplexPower powerPerUnit
+  rw [hb]
 
 end PhyslibExt.Circuits.ACInjectionLossBalance

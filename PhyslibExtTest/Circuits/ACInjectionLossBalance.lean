@@ -17,7 +17,7 @@ open PhyslibExt.Circuits.ACInjectionLossBalance
 
 namespace PhyslibExtTest.Circuits.ACInjectionLossBalance
 
-/-- One node, one branch, resistive admittances: the total absorbed
+/-- One node, one branch, resistive admittances: the total supplied
 real power is `27`, from branch loss `18` and shunt loss `9`. -/
 example :
     (∑ v : Fin 1, (nodeComplexPower 1 1 (Matrix.of fun _ _ => (1 : ℝ)) (fun _ => (3 : ℂ))
@@ -45,5 +45,12 @@ example :
 /-- Per-unit recovery at a positive real base. -/
 example : perUnitComplexPower (27 : ℂ) (9 : ℝ) * ((9 : ℝ) : ℂ) = 27 :=
   perUnitComplexPower_mul_base_eq 27 9 (by norm_num)
+
+/-- The direct-base per-unit power agrees with the existing per-unit power
+on a three-phase power base. -/
+example (S : ℂ) :
+    perUnitComplexPower S (PhyslibExt.Circuits.PerUnitBases.threePhasePowerBase 2 4) =
+      PhyslibExt.Circuits.PerUnitBases.powerPerUnit 2 4 S :=
+  perUnitComplexPower_threePhasePowerBase S 2 4
 
 end PhyslibExtTest.Circuits.ACInjectionLossBalance
