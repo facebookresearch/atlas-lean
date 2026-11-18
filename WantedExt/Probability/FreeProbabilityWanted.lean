@@ -53,7 +53,7 @@ cumulant of `a + b` is the sum of those of `a` and `b`:
 (Corollary 5.3.23). The source states it for bounded operators; its proof (multilinearity of the
 cumulants and the vanishing of mixed cumulants, Theorem 5.3.15) is algebraic. -/
 theorem_wanted freeCumulant_add_of_areFree (φ : A →ₗ[ℂ] ℂ) (hφ : φ 1 = 1) (a b : A)
-    (hfree : AreFree φ ![a, b]) {n : ℕ} (hn : 1 ≤ n) :
+    (hfree : AreFree φ hφ ![a, b]) {n : ℕ} (hn : 1 ≤ n) :
     freeCumulant (fun k => φ ((a + b) ^ k)) n =
       freeCumulant (fun k => φ (a ^ k)) n + freeCumulant (fun k => φ (b ^ k)) n
 
@@ -66,7 +66,7 @@ for every `p`, `φ (X_Nᵖ)` tends to the number of noncrossing pair partitions 
 which is the `p`-th moment of the semicircle law. -/
 theorem_wanted free_central_limit [StarRing A] [StarModule ℂ A] (φ : A →ₗ[ℂ] ℂ) (hφ : φ 1 = 1)
     (htrace : ∀ x y, φ (x * y) = φ (y * x)) (hpos : ∀ x, 0 ≤ φ (star x * x))
-    (a : ℕ → A) (hfree : AreFree φ a) (hsa : ∀ i, IsSelfAdjoint (a i))
+    (a : ℕ → A) (hfree : AreFree φ hφ a) (hsa : ∀ i, IsSelfAdjoint (a i))
     (hmean : ∀ i, φ (a i) = 0) (hvar : ∀ i, φ (a i ^ 2) = 1)
     (hbdd : ∀ k : ℕ, ∃ C : ℝ, ∀ i, ‖φ (a i ^ k)‖ ≤ C) (p : ℕ) :
     Tendsto (fun N : ℕ => φ (((((Real.sqrt N)⁻¹ : ℝ) : ℂ) • ∑ i ∈ Finset.range N, a i) ^ p))

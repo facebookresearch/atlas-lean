@@ -33,6 +33,13 @@ constant in the log-Sobolev inequality `L(f) ≤ C E(f, f)`. Both infima are tak
 the set is empty (for instance on a one-point space, or when `π` charges a single point) the
 value is `sInf ∅ = 0`.
 
+These formulas are those of a probability vector `π`, so `spectralGap` and `logSobolevConstant`
+take proofs that `π ≥ 0` and `∑ π = 1`. For other weights the constants change: for the
+two-state chain that moves to a uniform state, the weights `(1/2, 1/2)` give the gap `1` but
+`(1, 1)` would give `1/2`, and with weights summing to more than `1` the entropy functional is
+negative on constants. The variance and the entropy functional themselves, `weightedVariance`
+and `entropyFunctional`, are algebraic expressions in `π` and are defined for all weights.
+
 The Poincaré inequality is the hypothesis of Sinclair's mixing bounds
 (`MathlibExt.Probability.CanonicalPaths`, `MathlibExt.Probability.PoincareMixing`), written there
 as `∑ (ψ x - ψ y)² π(x) π(y) ≤ B ∑ (ψ x - ψ y)² π(x) P(x, y)`, i.e. `Var ≤ B E`. We prove that this
@@ -41,7 +48,8 @@ spectral gap.
 
 ## Main definitions
 
-* `weightedVariance π f`, `spectralGap π P`, `entropyFunctional π f`, `logSobolevConstant π P`.
+* `weightedVariance π f`, `spectralGap π hπ hπ1 P`, `entropyFunctional π f`,
+  `logSobolevConstant π hπ hπ1 P`, where `hπ : ∀ x, 0 ≤ π x` and `hπ1 : ∑ x, π x = 1`.
 
 ## Main results
 
@@ -77,29 +85,38 @@ variable {S : Type*} [Fintype S] [DecidableEq S]
 /-- **Variance of a function under a weight vector.**
 `Var_π(f) = ½ ∑_{x,y} (f x - f y)² π(x) π(y)` (P. Diaconis and L. Saloff-Coste,
 *Ann. Appl. Probab.* 6 (1996), equation (1.4)); for a probability vector `π` this is
-`∑ π (f - E_π f)²`. -/
+`∑ π (f - E_π f)²`, the variance of `f`. The expression is defined for all weights; the spectral
+gap uses it for probability vectors only. -/
 noncomputable def weightedVariance (π : S → ℝ) (f : S → ℝ) : ℝ :=
   1 / 2 * ∑ x, ∑ y, (f x - f y) ^ 2 * (π x * π y)
 
-/-- **Spectral gap of a finite Markov kernel, in Dirichlet-form terms.**
-`λ(P, π) = inf {E(f, f) / Var_π(f) : Var_π(f) ≠ 0}`, where `E(f, f) = ½ ∑ π(x) P(x, y)
-(f x - f y)²` is the Dirichlet form of `P - 1` (P. Diaconis and L. Saloff-Coste, *Ann. Appl.
-Probab.* 6 (1996), equation (1.4)). The infimum of the empty set is `0` (one-point spaces). -/
-noncomputable def spectralGap (π : S → ℝ) (P : Matrix S S ℝ) : ℝ :=
+/-- **Spectral gap of a finite Markov kernel, in Dirichlet-form terms.** For a probability vector
+`π` (`π ≥ 0`, `∑ π = 1`), `λ(P, π) = inf {E(f, f) / Var_π(f) : Var_π(f) ≠ 0}`, where
+`E(f, f) = ½ ∑ π(x) P(x, y) (f x - f y)²` is the Dirichlet form of `P - 1` (P. Diaconis and
+L. Saloff-Coste, *Ann. Appl. Probab.* 6 (1996), equation (1.4)). The infimum of the empty set is
+`0` (one-point spaces). Other weights are excluded: scaling `π` by `c` scales the ratio by
+`1 / c`. -/
+noncomputable def spectralGap (π : S → ℝ) (_hπ : ∀ x, 0 ≤ π x) (_hπ1 : ∑ x, π x = 1)
+    (P : Matrix S S ℝ) : ℝ :=
   sInf ((fun f => form π (P - 1) f f / weightedVariance π f) '' {f | weightedVariance π f ≠ 0})
 
 /-- **Entropy-like functional of the log-Sobolev inequality.**
 `L_π(f) = ∑_x f(x)² log(f(x)² / ‖f‖₂²) π(x)` with `‖f‖₂² = ∑ π f²` (P. Diaconis and
 L. Saloff-Coste, *Ann. Appl. Probab.* 6 (1996), equation (1.6); `Real.log 0 = 0`, so points
-where `f` vanishes contribute `0`). -/
+where `f` vanishes contribute `0`). For a probability vector `π` it is nonnegative
+(`entropyFunctional_nonneg`); the expression is defined for all weights, and the log-Sobolev
+constant uses it for probability vectors only. -/
 noncomputable def entropyFunctional (π : S → ℝ) (f : S → ℝ) : ℝ :=
   ∑ x, f x ^ 2 * Real.log (f x ^ 2 / ∑ y, π y * f y ^ 2) * π x
 
-/-- **Log-Sobolev constant of a finite Markov kernel.**
-`α(P, π) = inf {E(f, f) / L_π(f) : L_π(f) ≠ 0}`, with `E` the Dirichlet form of `P - 1`
-(P. Diaconis and L. Saloff-Coste, *Ann. Appl. Probab.* 6 (1996), equations (1.7) and (3.1));
-`1/α` is the best constant `C` in `L_π(f) ≤ C E(f, f)`. The infimum of the empty set is `0`. -/
-noncomputable def logSobolevConstant (π : S → ℝ) (P : Matrix S S ℝ) : ℝ :=
+/-- **Log-Sobolev constant of a finite Markov kernel.** For a probability vector `π` (`π ≥ 0`,
+`∑ π = 1`), `α(P, π) = inf {E(f, f) / L_π(f) : L_π(f) ≠ 0}`, with `E` the Dirichlet form of
+`P - 1` (P. Diaconis and L. Saloff-Coste, *Ann. Appl. Probab.* 6 (1996), equations (1.7) and
+(3.1)); `1/α` is the best constant `C` in `L_π(f) ≤ C E(f, f)`. The infimum of the empty set is
+`0`. Other weights are excluded: for weights summing to more than `1`, `L_π` is negative on
+constants. -/
+noncomputable def logSobolevConstant (π : S → ℝ) (_hπ : ∀ x, 0 ≤ π x) (_hπ1 : ∑ x, π x = 1)
+    (P : Matrix S S ℝ) : ℝ :=
   sInf ((fun f => form π (P - 1) f f / entropyFunctional π f) '' {f | entropyFunctional π f ≠ 0})
 
 omit [DecidableEq S] in
@@ -120,35 +137,38 @@ theorem form_sub_one_self_nonneg {π : S → ℝ} (hπ : ∀ x, 0 ≤ π x) {P :
   linarith [show π x * P x y * (f x - f y) * (f x - f y) =
     π x * P x y * ((f x - f y) * (f x - f y)) by ring]
 
-/-- **The spectral gap is nonnegative** for `π ≥ 0` and a stochastic `P`. -/
-theorem spectralGap_nonneg {π : S → ℝ} (hπ : ∀ x, 0 ≤ π x) {P : Matrix S S ℝ}
-    (hP : ∀ x y, 0 ≤ P x y) (hrow : ∀ x, ∑ y, P x y = 1) : 0 ≤ spectralGap π P := by
+/-- **The spectral gap is nonnegative** for a probability vector `π` and a stochastic `P`. -/
+theorem spectralGap_nonneg {π : S → ℝ} (hπ : ∀ x, 0 ≤ π x) (hπ1 : ∑ x, π x = 1)
+    {P : Matrix S S ℝ} (hP : ∀ x y, 0 ≤ P x y) (hrow : ∀ x, ∑ y, P x y = 1) :
+    0 ≤ spectralGap π hπ hπ1 P := by
   refine Real.sInf_nonneg ?_
   rintro _ ⟨f, -, rfl⟩
   exact div_nonneg (form_sub_one_self_nonneg hπ hP hrow f) (weightedVariance_nonneg hπ f)
 
-/-- **Poincaré inequality with the spectral gap.** If `π ≥ 0`, `P ≥ 0` and the rows of `P` sum
-to `1`, then `λ(P, π) Var_π(f) ≤ E(f, f)` for every `f` (P. Diaconis and L. Saloff-Coste,
-*Ann. Appl. Probab.* 6 (1996), equation (1.4): `λ` is the best such constant). -/
-theorem spectralGap_mul_weightedVariance_le {π : S → ℝ} (hπ : ∀ x, 0 ≤ π x) {P : Matrix S S ℝ}
-    (hP : ∀ x y, 0 ≤ P x y) (hrow : ∀ x, ∑ y, P x y = 1) (f : S → ℝ) :
-    spectralGap π P * weightedVariance π f ≤ form π (P - 1) f f := by
+/-- **Poincaré inequality with the spectral gap.** If `π` is a probability vector, `P ≥ 0` and
+the rows of `P` sum to `1`, then `λ(P, π) Var_π(f) ≤ E(f, f)` for every `f` (P. Diaconis and
+L. Saloff-Coste, *Ann. Appl. Probab.* 6 (1996), equation (1.4): `λ` is the best such
+constant). -/
+theorem spectralGap_mul_weightedVariance_le {π : S → ℝ} (hπ : ∀ x, 0 ≤ π x)
+    (hπ1 : ∑ x, π x = 1) {P : Matrix S S ℝ} (hP : ∀ x y, 0 ≤ P x y)
+    (hrow : ∀ x, ∑ y, P x y = 1) (f : S → ℝ) :
+    spectralGap π hπ hπ1 P * weightedVariance π f ≤ form π (P - 1) f f := by
   by_cases hv : weightedVariance π f = 0
   · rw [hv, mul_zero]; exact form_sub_one_self_nonneg hπ hP hrow f
   · have hvpos : 0 < weightedVariance π f :=
       lt_of_le_of_ne (weightedVariance_nonneg hπ f) (Ne.symm hv)
-    have hle : spectralGap π P ≤ form π (P - 1) f f / weightedVariance π f := by
+    have hle : spectralGap π hπ hπ1 P ≤ form π (P - 1) f f / weightedVariance π f := by
       refine csInf_le ⟨0, ?_⟩ ⟨f, hv, rfl⟩
       rintro _ ⟨g, -, rfl⟩
       exact div_nonneg (form_sub_one_self_nonneg hπ hP hrow g) (weightedVariance_nonneg hπ g)
     rwa [le_div_iff₀ hvpos] at hle
 
-/-- **Poincaré constants bound the spectral gap from below.** If some function has nonzero
-variance and `c Var_π(f) ≤ E(f, f)` for every `f`, then `c ≤ λ(P, π)` (P. Diaconis and
-L. Saloff-Coste, *Ann. Appl. Probab.* 6 (1996), equation (1.4)). -/
-theorem le_spectralGap {π : S → ℝ} (hπ : ∀ x, 0 ≤ π x) {P : Matrix S S ℝ}
+/-- **Poincaré constants bound the spectral gap from below.** For a probability vector `π`, if
+some function has nonzero variance and `c Var_π(f) ≤ E(f, f)` for every `f`, then `c ≤ λ(P, π)`
+(P. Diaconis and L. Saloff-Coste, *Ann. Appl. Probab.* 6 (1996), equation (1.4)). -/
+theorem le_spectralGap {π : S → ℝ} (hπ : ∀ x, 0 ≤ π x) (hπ1 : ∑ x, π x = 1) {P : Matrix S S ℝ}
     (hne : ∃ f, weightedVariance π f ≠ 0) {c : ℝ}
-    (h : ∀ f, c * weightedVariance π f ≤ form π (P - 1) f f) : c ≤ spectralGap π P := by
+    (h : ∀ f, c * weightedVariance π f ≤ form π (P - 1) f f) : c ≤ spectralGap π hπ hπ1 P := by
   obtain ⟨f₀, hf₀⟩ := hne
   refine le_csInf ⟨_, f₀, hf₀, rfl⟩ ?_
   rintro _ ⟨f, hf, rfl⟩
@@ -171,28 +191,29 @@ private theorem sum_sq_mul_eq_two_mul_form {π : S → ℝ} {P : Matrix S S ℝ}
     Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y _ => by ring
   rw [this]; ring
 
-/-- **Sinclair's Poincaré hypothesis is a lower bound on the spectral gap.** Let `π ≥ 0`, `P ≥ 0`
-with unit row sums, `B > 0`, and suppose some function has nonzero variance. Then the Poincaré
+/-- **Sinclair's Poincaré hypothesis is a lower bound on the spectral gap.** Let `π` be a
+probability vector, `P ≥ 0` with unit row sums, `B > 0`, and suppose some function has nonzero
+variance. Then the Poincaré
 inequality `∑ (ψ x - ψ y)² π(x) π(y) ≤ B ∑ (ψ x - ψ y)² π(x) P(x, y)` for every `ψ` (the
 hypothesis of `MathlibExt.Probability.CanonicalPaths.one_le_mul_one_sub_of_poincare` and of
 `MathlibExt.Probability.PoincareMixing.isMixedAt_of_poincare`, after A. Sinclair, *Combin.
 Probab. Comput.* 1 (1992)) holds if and only if `1/B ≤ λ(P, π)` (P. Diaconis and
 L. Saloff-Coste, *Ann. Appl. Probab.* 6 (1996), equation (1.4)). -/
-theorem inv_le_spectralGap_iff_poincare {π : S → ℝ} (hπ : ∀ x, 0 ≤ π x) {P : Matrix S S ℝ}
-    (hP : ∀ x y, 0 ≤ P x y) (hrow : ∀ x, ∑ y, P x y = 1) (hne : ∃ f, weightedVariance π f ≠ 0)
-    {B : ℝ} (hB : 0 < B) :
-    B⁻¹ ≤ spectralGap π P ↔ ∀ ψ : S → ℝ, ∑ x, ∑ y, (ψ x - ψ y) ^ 2 * (π x * π y) ≤
+theorem inv_le_spectralGap_iff_poincare {π : S → ℝ} (hπ : ∀ x, 0 ≤ π x) (hπ1 : ∑ x, π x = 1)
+    {P : Matrix S S ℝ} (hP : ∀ x y, 0 ≤ P x y) (hrow : ∀ x, ∑ y, P x y = 1)
+    (hne : ∃ f, weightedVariance π f ≠ 0) {B : ℝ} (hB : 0 < B) :
+    B⁻¹ ≤ spectralGap π hπ hπ1 P ↔ ∀ ψ : S → ℝ, ∑ x, ∑ y, (ψ x - ψ y) ^ 2 * (π x * π y) ≤
       B * ∑ x, ∑ y, (ψ x - ψ y) ^ 2 * (π x * P x y) := by
   simp only [sum_sq_mul_eq_two_mul_weightedVariance, sum_sq_mul_eq_two_mul_form hrow]
   constructor
   · intro h ψ
-    have h1 := spectralGap_mul_weightedVariance_le hπ hP hrow ψ
-    have h2 : B⁻¹ * weightedVariance π ψ ≤ spectralGap π P * weightedVariance π ψ :=
+    have h1 := spectralGap_mul_weightedVariance_le hπ hπ1 hP hrow ψ
+    have h2 : B⁻¹ * weightedVariance π ψ ≤ spectralGap π hπ hπ1 P * weightedVariance π ψ :=
       mul_le_mul_of_nonneg_right h (weightedVariance_nonneg hπ ψ)
     have h3 : weightedVariance π ψ = B * (B⁻¹ * weightedVariance π ψ) := by field_simp
     nlinarith
   · intro h
-    refine le_spectralGap hπ hne fun f => ?_
+    refine le_spectralGap hπ hπ1 hne fun f => ?_
     have := h f
     have h3 : B⁻¹ * weightedVariance π f = B⁻¹ * (2 * weightedVariance π f) / 2 := by ring
     rw [h3, div_le_iff₀ (by norm_num : (0 : ℝ) < 2), inv_mul_le_iff₀ hB]
@@ -208,7 +229,7 @@ gap through `inv_le_spectralGap_iff_poincare`, for `B = 1/γ`. -/
 theorem isMixedAt_of_le_spectralGap {π : S → ℝ} (hπ : ∀ x, 0 < π x) (hπ1 : ∑ x, π x = 1)
     {K : Matrix S S ℝ} (hK : K ∈ rowStochastic ℝ S) (hrev : IsDetailedBalance π K)
     {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ ≤ 1)
-    (hγ : γ ≤ spectralGap π ((1 / 2 : ℝ) • (1 + K))) {t : ℕ}
+    (hγ : γ ≤ spectralGap π (fun x => (hπ x).le) hπ1 ((1 / 2 : ℝ) • (1 + K))) {t : ℕ}
     (ht : ∀ x, (1 - γ) ^ t * (1 / π x - 1) ≤ 1 / 4) :
     IsMixedAt ((1 / 2 : ℝ) • (1 + K)) π t := by
   obtain ⟨hPs, -⟩ := PoincareMixing.lazy_mem_rowStochastic_and_detailedBalance hK hrev
@@ -217,7 +238,7 @@ theorem isMixedAt_of_le_spectralGap {π : S → ℝ} (hπ : ∀ x, 0 < π x) (h�
   have hrow : ∀ x, ∑ y, ((1 / 2 : ℝ) • (1 + K)) x y = 1 := sum_row_of_mem_rowStochastic hPs
   by_cases hne : ∃ f, weightedVariance π f ≠ 0
   · have hB : 1 ≤ γ⁻¹ := one_le_inv₀ hγ0 |>.mpr hγ1
-    have hpoin := (inv_le_spectralGap_iff_poincare (fun x => (hπ x).le) hP hrow hne
+    have hpoin := (inv_le_spectralGap_iff_poincare (fun x => (hπ x).le) hπ1 hP hrow hne
       (inv_pos.mpr hγ0)).mp (by rwa [inv_inv])
     refine PoincareMixing.isMixedAt_of_poincare hπ hπ1 hK hrev hB hpoin fun x => ?_
     simpa [one_div, inv_inv] using ht x
@@ -267,12 +288,12 @@ theorem entropyFunctional_nonneg {π : S → ℝ} (hπ : ∀ x, 0 ≤ π x) (hπ
 theorem logSobolevConstant_mul_entropyFunctional_le {π : S → ℝ} (hπ : ∀ x, 0 ≤ π x)
     (hπ1 : ∑ x, π x = 1)
     {P : Matrix S S ℝ} (hP : ∀ x y, 0 ≤ P x y) (hrow : ∀ x, ∑ y, P x y = 1) (f : S → ℝ) :
-    logSobolevConstant π P * entropyFunctional π f ≤ form π (P - 1) f f := by
+    logSobolevConstant π hπ hπ1 P * entropyFunctional π f ≤ form π (P - 1) f f := by
   by_cases hv : entropyFunctional π f = 0
   · rw [hv, mul_zero]; exact form_sub_one_self_nonneg hπ hP hrow f
   · have hpos : 0 < entropyFunctional π f :=
       lt_of_le_of_ne (entropyFunctional_nonneg hπ hπ1 f) (Ne.symm hv)
-    have hle : logSobolevConstant π P ≤ form π (P - 1) f f / entropyFunctional π f := by
+    have hle : logSobolevConstant π hπ hπ1 P ≤ form π (P - 1) f f / entropyFunctional π f := by
       refine csInf_le ⟨0, ?_⟩ ⟨f, hv, rfl⟩
       rintro _ ⟨g, -, rfl⟩
       exact div_nonneg (form_sub_one_self_nonneg hπ hP hrow g) (entropyFunctional_nonneg hπ hπ1 g)
@@ -282,7 +303,7 @@ theorem logSobolevConstant_mul_entropyFunctional_le {π : S → ℝ} (hπ : ∀ 
 `P`. -/
 theorem logSobolevConstant_nonneg {π : S → ℝ} (hπ : ∀ x, 0 ≤ π x) (hπ1 : ∑ x, π x = 1)
     {P : Matrix S S ℝ} (hP : ∀ x y, 0 ≤ P x y) (hrow : ∀ x, ∑ y, P x y = 1) :
-    0 ≤ logSobolevConstant π P := by
+    0 ≤ logSobolevConstant π hπ hπ1 P := by
   refine Real.sInf_nonneg ?_
   rintro _ ⟨f, -, rfl⟩
   exact div_nonneg (form_sub_one_self_nonneg hπ hP hrow f) (entropyFunctional_nonneg hπ hπ1 f)

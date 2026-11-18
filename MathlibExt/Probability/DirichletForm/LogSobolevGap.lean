@@ -241,10 +241,11 @@ both constants are `0`. -/
 theorem two_mul_logSobolevConstant_le_spectralGap {π : S → ℝ} (hπ : ∀ x, 0 < π x)
     (hπ1 : ∑ x, π x = 1) {P : Matrix S S ℝ} (hP : ∀ x y, 0 ≤ P x y)
     (hrow : ∀ x, ∑ y, P x y = 1) :
-    2 * logSobolevConstant π P ≤ spectralGap π P := by
+    2 * logSobolevConstant π (fun x => (hπ x).le) hπ1 P ≤
+      spectralGap π (fun x => (hπ x).le) hπ1 P := by
   have hπ0 : ∀ x, 0 ≤ π x := fun x => (hπ x).le
   have hα0 := logSobolevConstant_nonneg hπ0 hπ1 hP hrow
-  set α := logSobolevConstant π P with hα
+  set α := logSobolevConstant π hπ0 hπ1 P with hα
   by_cases hne : ∃ f, weightedVariance π f ≠ 0
   swap
   · -- All points coincide: the entropyFunctional functional vanishes identically, so `α = 0`.
@@ -268,8 +269,8 @@ theorem two_mul_logSobolevConstant_le_spectralGap {π : S → ℝ} (hπ : ∀ x,
       ext f; simp [hent f]
     have : α = 0 := by rw [hα, logSobolevConstant, hset, Set.image_empty, Real.sInf_empty]
     rw [this, mul_zero]
-    exact spectralGap_nonneg hπ0 hP hrow
-  refine le_spectralGap hπ0 hne fun g => ?_
+    exact spectralGap_nonneg hπ0 hπ1 hP hrow
+  refine le_spectralGap hπ0 hπ1 hne fun g => ?_
   set V := weightedVariance π g
   set E := form π (P - 1) g g
   set M := ∑ x, |g x| with hMdef

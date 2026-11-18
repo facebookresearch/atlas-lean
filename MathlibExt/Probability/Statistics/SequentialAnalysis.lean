@@ -37,7 +37,10 @@ probability measures:
 The likelihood-ratio statistics (`llrSum`, `sprtTime`, `pageCusum`, `shiryaevPosterior` and the
 objects built on them) take probability laws `P₀` and `P₁` (instances `IsProbabilityMeasure P₀`
 and `IsProbabilityMeasure P₁`) and proofs `h₁₀ : P₁ ≪ P₀` and `h₀₁ : P₀ ≪ P₁`, the standing
-assumptions of Wald's inequalities and of the optimality theorems. For such laws the likelihood
+assumptions of Wald's inequalities and of the optimality theorems. The change-point law and the
+criteria built on it (`changePointLaw`, `falseAlarmProb`, `averageDetectionDelay`,
+`lordenDelay`) take the two instances: for laws that are not probability measures the product
+law is the zero measure. For such laws the likelihood
 ratio `dP₁/dP₀` is positive and finite almost surely, so `llr P₁ P₀ = log (dP₁/dP₀)` is the
 log-likelihood ratio of almost every observation. Without absolute continuity an observation
 that is impossible under one law has log-likelihood ratio `±∞`, and for an infinite measure such
@@ -105,11 +108,14 @@ def sprtAcceptZero (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀] [IsProbab
     (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) (a b : ℝ) : Set (ℕ → X) :=
   {ω | ∃ n : ℕ, sprtTime P₀ P₁ h₁₀ h₀₁ a b ω = n ∧ llrSum P₀ P₁ h₁₀ h₀₁ n ω ≤ a}
 
-/-- **Law of the observations with a change point.** For `ν ≥ 1`, the observations are
-independent, `X₁, …, X_{ν-1}` have law `P₀` and `X_ν, X_{ν+1}, …` have law `P₁` (so `X_ν` is the
-first post-change observation, the convention of Lai 2001, §3, and of Veeravalli–Banerjee,
-§III-A). For `ν = 0` every observation has law `P₁`. -/
-noncomputable def changePointLaw (P₀ P₁ : Measure X) (ν : ℕ) : Measure (ℕ → X) :=
+/-- **Law of the observations with a change point.** For probability laws `P₀` and `P₁` and
+`ν ≥ 1`, the observations are independent, `X₁, …, X_{ν-1}` have law `P₀` and `X_ν, X_{ν+1}, …`
+have law `P₁` (so `X_ν` is the first post-change observation, the convention of Lai 2001, §3, and
+of Veeravalli–Banerjee, §III-A). For `ν = 0` every observation has law `P₁`. The laws must be
+probability measures: `Measure.infinitePi` is the zero measure otherwise, which would give every
+procedure zero false-alarm probability and zero delay. -/
+noncomputable def changePointLaw (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀]
+    [IsProbabilityMeasure P₁] (ν : ℕ) : Measure (ℕ → X) :=
   Measure.infinitePi fun i : ℕ => if i + 1 < ν then P₀ else P₁
 
 /-- **Page's CUSUM statistic.** For probability laws `P₀` and `P₁`, mutually absolutely
@@ -178,26 +184,28 @@ noncomputable def shiryaevTime (P₀ P₁ : Measure X) [IsProbabilityMeasure P�
     (ℕ → X) → WithTop ℕ :=
   hittingAfter (shiryaevPosterior P₀ P₁ h₁₀ h₀₁ ρ) (Set.Ici A) 1
 
-/-- **Probability of false alarm under a geometric prior.**
+/-- **Probability of false alarm under a geometric prior.** For probability laws `P₀` and `P₁`,
 `PFA(τ) = ∑_{n ≥ 1} πₙ Pₙ(τ < n)` with `πₙ = ρ (1 - ρ)^{n-1}` and `Pₙ = changePointLaw P₀ P₁ n`
 (Veeravalli–Banerjee, equations (8) and (11)). -/
-noncomputable def falseAlarmProb (P₀ P₁ : Measure X) (ρ : ℝ) (τ : (ℕ → X) → WithTop ℕ) : ℝ≥0∞ :=
+noncomputable def falseAlarmProb (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀]
+    [IsProbabilityMeasure P₁] (ρ : ℝ) (τ : (ℕ → X) → WithTop ℕ) : ℝ≥0∞ :=
   ∑' n : ℕ, ENNReal.ofReal (ρ * (1 - ρ) ^ n) *
     changePointLaw P₀ P₁ (n + 1) {ω | τ ω < (n + 1 : ℕ)}
 
-/-- **Average detection delay under a geometric prior.**
+/-- **Average detection delay under a geometric prior.** For probability laws `P₀` and `P₁`,
 `ADD(τ) = ∑_{n ≥ 1} πₙ Eₙ[(τ - n)⁺]` with `πₙ = ρ (1 - ρ)^{n-1}` (Veeravalli–Banerjee,
 equations (7) and (11)); the delay is computed in `ℕ∞` (truncated subtraction, `⊤ - n = ⊤`). -/
-noncomputable def averageDetectionDelay (P₀ P₁ : Measure X) (ρ : ℝ)
-    (τ : (ℕ → X) → WithTop ℕ) : ℝ≥0∞ :=
+noncomputable def averageDetectionDelay (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀]
+    [IsProbabilityMeasure P₁] (ρ : ℝ) (τ : (ℕ → X) → WithTop ℕ) : ℝ≥0∞ :=
   ∑' n : ℕ, ENNReal.ofReal (ρ * (1 - ρ) ^ n) *
     ∫⁻ ω, (((show ℕ∞ from τ ω) - (n + 1 : ℕ) : ℕ∞) : ℝ≥0∞) ∂changePointLaw P₀ P₁ (n + 1)
 
-/-- **Lorden's worst-case detection delay.** For a stopping time `T`,
-`sup_{ν ≥ 1} ess sup E_ν[(T - ν + 1)⁺ | X₁, …, X_{ν-1}]` (Lorden's convention, as in Lai 2001,
-§3), written without conditional expectations: for a nonnegative variable `Y` and a
+/-- **Lorden's worst-case detection delay.** For probability laws `P₀` and `P₁` and a stopping
+time `T`, `sup_{ν ≥ 1} ess sup E_ν[(T - ν + 1)⁺ | X₁, …, X_{ν-1}]` (Lorden's convention, as in
+Lai 2001, §3), written without conditional expectations: for a nonnegative variable `Y` and a
 `σ`-algebra `𝓕`, `ess sup E[Y | 𝓕] = sup {E[Y; F] / P(F) : F ∈ 𝓕, P(F) > 0}`. -/
-noncomputable def lordenDelay (P₀ P₁ : Measure X) (T : (ℕ → X) → WithTop ℕ) : ℝ≥0∞ :=
+noncomputable def lordenDelay (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀]
+    [IsProbabilityMeasure P₁] (T : (ℕ → X) → WithTop ℕ) : ℝ≥0∞ :=
   ⨆ (ν : ℕ) (_ : 1 ≤ ν) (F : Set (ℕ → X)) (_ : MeasurableSet[observationFiltration X (ν - 1)] F)
     (_ : 0 < changePointLaw P₀ P₁ ν F),
     (∫⁻ ω in F, (((show ℕ∞ from T ω) + 1 - ν : ℕ∞) : ℝ≥0∞) ∂changePointLaw P₀ P₁ ν) /

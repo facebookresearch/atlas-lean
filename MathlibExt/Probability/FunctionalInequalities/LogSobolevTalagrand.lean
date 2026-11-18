@@ -32,6 +32,12 @@ Proposition 5.1 and inequality (2.3). The entropy `∫ f log f dm` of a density 
 the Kullback–Leibler divergence `KL(f m ‖ m)`, which is Gigli and Ledoux's `Ent_m(f m)` (their
 Section 2); Mathlib's `InformationTheory.klDiv` takes values in `[0, ∞]`.
 
+Both predicates are stated for a probability measure `m`, as in the source: `SatisfiesLogSobolev`
+takes an instance `IsProbabilityMeasure m` and `SatisfiesTalagrand` a `ProbabilityMeasure`. For
+the zero measure the log-Sobolev inequality would hold vacuously, since no density has
+`∫ f dm = 1`; and `KL(f m ‖ m) = ∫ f log f dm` uses that `f m` and `m` have the same mass, since
+Mathlib's Kullback–Leibler divergence of general finite measures carries a mass correction.
+
 The theorem of F. Otto and C. Villani (log-Sobolev with constant `α` implies Talagrand with
 constant `2/α`) is stated as a wanted result in `WantedExt/Probability/OttoVillaniWanted.lean`.
 Here we only set up the two predicates and check that they are satisfiable (Dirac masses).
@@ -67,15 +73,16 @@ the norm of the gradient of a `C¹` function). -/
 noncomputable def localLipschitzConstant (f : X → ℝ) (x : X) : ℝ≥0∞ :=
   limsup (fun y => ENNReal.ofReal (|f y - f x| / dist y x)) (𝓝[≠] x)
 
-/-- **Logarithmic Sobolev inequality.** A measure `m` on a metric space satisfies the
+/-- **Logarithmic Sobolev inequality.** A probability measure `m` on a metric space satisfies the
 logarithmic Sobolev inequality with constant `α` if for every nonnegative Lipschitz function `f`
 with `∫ f dm = 1`,
 `2α ∫ f log f dm ≤ ∫_{f > 0} |∇f|² / f dm`,
 where `|∇f|` is the local Lipschitz constant and `∫ f log f dm` is the relative entropy
-`KL(f m ‖ m)` (N. Gigli and M. Ledoux, *From log Sobolev to Talagrand: a quick proof*, Discrete
-Contin. Dyn. Syst. Ser. A (2013), Proposition 5.1, formulation (i); for the standard Gaussian
-measure on `ℝⁿ` this holds with `α = 1`, Gross' inequality). -/
-def SatisfiesLogSobolev (m : Measure X) (α : ℝ) : Prop :=
+`KL(f m ‖ m)` of the probability measure `f m` (N. Gigli and M. Ledoux, *From log Sobolev to
+Talagrand: a quick proof*, Discrete Contin. Dyn. Syst. Ser. A (2013), Proposition 5.1,
+formulation (i); for the standard Gaussian measure on `ℝⁿ` this holds with `α = 1`, Gross'
+inequality). For the zero measure, which is excluded, it would hold vacuously. -/
+def SatisfiesLogSobolev (m : Measure X) [IsProbabilityMeasure m] (α : ℝ) : Prop :=
   ∀ f : X → ℝ, (∃ K, LipschitzWith K f) → (∀ x, 0 ≤ f x) → ∫ x, f x ∂m = 1 →
     ENNReal.ofReal (2 * α) * klDiv (m.withDensity fun x => ENNReal.ofReal (f x)) m ≤
       ∫⁻ x in {x | 0 < f x}, localLipschitzConstant f x ^ 2 / ENNReal.ofReal (f x) ∂m

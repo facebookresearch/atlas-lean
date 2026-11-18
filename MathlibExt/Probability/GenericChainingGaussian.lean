@@ -25,6 +25,11 @@ the canonical distance is a metric: the upper half of the majorizing measure the
 A Gaussian process is encoded by its law on `T → ℝ`, which must be a Gaussian measure
 (`ProbabilityTheory.IsGaussian`).
 
+The canonical distance `canonicalDist` is the `L²(P)` norm of the increment, `eLpNorm` with
+exponent `2`, so it is a genuine extended pseudo-distance: it is `∞` when an increment is not
+square integrable. For square-integrable increments, which every Gaussian process has, it is
+`(E(X_s - X_t)²)^{1/2}` computed with the Bochner integral (`canonicalDist_eq_ofReal_sqrt`).
+
 ## References
 
 * M. Talagrand, *Upper and Lower Bounds for Stochastic Processes: Decomposition Theorems*,
@@ -41,10 +46,23 @@ open scoped ENNReal NNReal
 
 /-- **Canonical distance of a process.** For random variables `(X_t)_{t ∈ T}`,
 `d(s, t) = (E(X_s - X_t)²)^{1/2}` (Talagrand, *Upper and Lower Bounds for Stochastic Processes*,
-2nd ed., 2021, (2.113)), as an extended-valued distance function; it is a pseudo-distance. -/
+2nd ed., 2021, (2.113)), the `L²(P)` norm of the increment `X_s - X_t`, as an extended-valued
+distance function: it is `∞` when the increment is not square integrable, and for measurable
+`X_t` it is a pseudo-distance (the triangle inequality of the `L²` norm). For square-integrable
+increments it is the real formula (`canonicalDist_eq_ofReal_sqrt`). -/
 noncomputable def canonicalDist {Ω T : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     (X : T → Ω → ℝ) (s t : T) : ℝ≥0∞ :=
-  ENNReal.ofReal (Real.sqrt (∫ ω, (X s ω - X t ω) ^ 2 ∂P))
+  eLpNorm (fun ω => X s ω - X t ω) 2 P
+
+/-- **The canonical distance of square-integrable increments.** If `X_s - X_t ∈ L²(P)`, then
+`canonicalDist P X s t = (E(X_s - X_t)²)^{1/2}`, with the expectation a Bochner integral. -/
+theorem canonicalDist_eq_ofReal_sqrt {Ω T : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {X : T → Ω → ℝ} {s t : T} (h : MemLp (fun ω => X s ω - X t ω) 2 P) :
+    canonicalDist P X s t = ENNReal.ofReal (Real.sqrt (∫ ω, (X s ω - X t ω) ^ 2 ∂P)) := by
+  rw [canonicalDist, h.eLpNorm_eq_integral_rpow_norm two_ne_zero ENNReal.ofNat_ne_top,
+    Real.sqrt_eq_rpow]
+  congr 1
+  simp only [ENNReal.toReal_ofNat, Real.norm_eq_abs, Real.rpow_two, sq_abs, one_div]
 
 /-- **Two-sided Gaussian tail.** For `g ~ N(0, v)` and `u > 0`,
 `P(|g| ≥ u) ≤ 2 exp(-u² / (2v))`, from the sub-Gaussian moment generating function. -/
@@ -125,14 +143,30 @@ theorem integral_iSup_le_gammaTwo_of_isGaussian {Ω T : Type*} [MeasurableSpace 
   have h := measureReal_abs_sub_ge_le_of_isGaussian P X hX hG hint hcen s t hu
   rwa [hdist, Real.sq_sqrt (integral_nonneg fun ω => sq_nonneg _)]
 
-/-- **The metric is the canonical distance.** If `d(s, t) = (E(X_s - X_t)²)^{1/2}` for all
-`s, t`, then `edist = canonicalDist P X`, so `γ₂` computed for the metric and for the canonical
-distance agree. -/
+/-- **The metric is the canonical distance.** If every increment `X_s - X_t` is square integrable
+and `d(s, t) = (E(X_s - X_t)²)^{1/2}` for all `s, t`, then `edist = canonicalDist P X`, so `γ₂`
+computed for the metric and for the canonical distance agree. -/
 theorem edist_eq_canonicalDist {Ω T : Type*} [MeasurableSpace Ω] [MetricSpace T] (P : Measure Ω)
-    (X : T → Ω → ℝ) (hdist : ∀ s t, dist s t = Real.sqrt (∫ ω, (X s ω - X t ω) ^ 2 ∂P)) :
+    (X : T → Ω → ℝ) (hX2 : ∀ s t, MemLp (fun ω => X s ω - X t ω) 2 P)
+    (hdist : ∀ s t, dist s t = Real.sqrt (∫ ω, (X s ω - X t ω) ^ 2 ∂P)) :
     (edist : T → T → ℝ≥0∞) = canonicalDist P X := by
   funext s t
-  rw [edist_dist, hdist, canonicalDist]
+  rw [edist_dist, hdist, canonicalDist_eq_ofReal_sqrt (hX2 s t)]
+
+/-- **Increments of a Gaussian process are square integrable.** If the law of `(X_t)_{t ∈ T}` on
+`T → ℝ` is Gaussian, every increment `X_s - X_t` is in `L²(P)`, as the image of the law under a
+continuous linear functional. -/
+theorem memLp_sub_of_isGaussian {Ω T : Type*} [MeasurableSpace Ω] [Finite T] (P : Measure Ω)
+    [IsProbabilityMeasure P] (X : T → Ω → ℝ) (hX : ∀ t, Measurable (X t))
+    (hG : IsGaussian (P.map fun ω t => X t ω)) (s t : T) :
+    MemLp (fun ω => X s ω - X t ω) 2 P := by
+  have := Fintype.ofFinite T
+  set Y : Ω → T → ℝ := fun ω t => X t ω
+  have hY : Measurable Y := Measurable.of_eval hX
+  set L : StrongDual ℝ (T → ℝ) := ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : T => ℝ) s -
+    ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : T => ℝ) t
+  have h := IsGaussian.memLp_dual (P.map Y) L 2 (by simp)
+  exact (memLp_map_measure_iff L.continuous.aestronglyMeasurable hY.aemeasurable).mp h
 
 /-- **Generic chaining bound for Gaussian processes, canonical form** (Talagrand, *Upper and Lower
 Bounds for Stochastic Processes*, 2nd ed., 2021, the right-hand inequality of Theorem 2.10.1).
@@ -146,7 +180,7 @@ theorem integral_iSup_le_gammaTwo_canonicalDist {Ω T : Type*} [MeasurableSpace 
     (hcen : ∀ t, ∫ ω, X t ω ∂P = 0)
     (hdist : ∀ s t, dist s t = Real.sqrt (∫ ω, (X s ω - X t ω) ^ 2 ∂P)) :
     ENNReal.ofReal (∫ ω, ⨆ t, X t ω ∂P) ≤ 10 * gammaFunctional 2 (canonicalDist P X) := by
-  rw [← edist_eq_canonicalDist P X hdist]
+  rw [← edist_eq_canonicalDist P X (memLp_sub_of_isGaussian P X hX hG) hdist]
   exact integral_iSup_le_gammaTwo_of_isGaussian P X hX hG hcen hdist
 
 end MathlibExt.Probability.GenericChaining

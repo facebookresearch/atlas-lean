@@ -37,11 +37,18 @@ theorem isMixing_dirac_of_fixed {α : Type*} [MeasurableSpace α] {T : α → α
     rw [hconst]
     exact tendsto_const_nhds
 
-/-- Mixing is defined for probability measures only. The zero measure, for which the condition
-`μ (A ∩ T⁻ⁿ B) → μ A · μ B` would hold for every map, is not one. -/
-example {α : Type*} [MeasurableSpace α] : ¬ IsProbabilityMeasure (0 : Measure α) := by
-  intro h
-  exact IsProbabilityMeasure.ne_zero (0 : Measure α) rfl
+/-! Mixing is defined for probability measures only: `IsMixing T 0` does not elaborate, because
+the zero measure, for which the condition `μ (A ∩ T⁻ⁿ B) → μ A · μ B` would hold for every map,
+is not a probability measure. -/
+
+/--
+error: failed to synthesize instance of type class
+  IsProbabilityMeasure 0
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+example {α : Type} [MeasurableSpace α] (T : α → α) : Prop := IsMixing T (0 : Measure α)
 
 -- Mixing gives ergodicity, here for the Dirac mass at a fixed point.
 example {α : Type*} [MeasurableSpace α] {T : α → α} (hT : Measurable T) {a : α}

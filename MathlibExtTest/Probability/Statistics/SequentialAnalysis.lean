@@ -53,10 +53,38 @@ example : ∀ᵐ x ∂P₀, ENNReal.ofReal (Real.exp (llr P₁ P₀ x)) = P₁.r
 
 /-- The point mass and its multiple by `∞` are mutually absolutely continuous, but the likelihood
 ratio of the second against the first is `∞`, which `llr` would read as `0`. The second is not a
-probability measure, so the statistics do not admit this pair. -/
+probability measure, so the log-likelihood ratio sums do not elaborate for this pair. -/
 example : ¬ IsProbabilityMeasure ((Measure.dirac ()).withDensity fun _ : Unit ↦ (⊤ : ℝ≥0∞)) := by
   intro h
   have h1 := h.measure_univ
   simp at h1
+
+/--
+error: failed to synthesize instance of type class
+  IsProbabilityMeasure ((Measure.dirac ()).withDensity fun x ↦ ∞)
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+noncomputable example
+    (h₁₀ : ((Measure.dirac ()).withDensity fun _ : Unit ↦ (⊤ : ℝ≥0∞)) ≪ Measure.dirac ())
+    (h₀₁ : Measure.dirac () ≪ (Measure.dirac ()).withDensity fun _ : Unit ↦ (⊤ : ℝ≥0∞)) :
+    ℕ → (ℕ → Unit) → ℝ :=
+  llrSum (Measure.dirac ()) ((Measure.dirac ()).withDensity fun _ : Unit ↦ (⊤ : ℝ≥0∞)) h₁₀ h₀₁
+
+/-- The change-point law, and the false-alarm and delay criteria built on it, take probability
+laws: with zero laws the product law would be the zero measure, so the change-point law does not
+elaborate for them. For `ν = 0` every observation has law `P₁`. -/
+example : changePointLaw P₀ P₁ 0 = Measure.infinitePi fun _ : ℕ => P₁ := by
+  simp [changePointLaw]
+
+/--
+error: failed to synthesize instance of type class
+  IsProbabilityMeasure 0
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+noncomputable example : Measure (ℕ → Bool) := changePointLaw (0 : Measure Bool) 0 1
 
 end MathlibExtTest.Probability.Statistics.SequentialAnalysis

@@ -154,4 +154,24 @@ example : ENNReal.ofReal (∫ ω, ⨆ t : Pts, (t : ℝ) * ω ∂gaussianReal 0 
   rw [integral_const_mul, integral_sq_gaussianReal, mul_one, Real.sqrt_sq_eq_abs,
     Subtype.dist_eq, Real.dist_eq]
 
+/-! The increment condition is stated for probability measures: `P.real` reads an infinite
+measure as `0`, so under `∞ • P` every process would satisfy it. For a measure that is not a
+probability measure it does not elaborate. -/
+
+/--
+error: failed to synthesize instance of type class
+  IsProbabilityMeasure 0
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+example : Prop := SatisfiesIncrementCondition (0 : Measure ℝ) fun (t : ℝ) (ω : ℝ) => t * ω
+
+/-- The canonical distance is the `L²` norm of the increment, so it is infinite for an increment
+that is not square integrable: here the constant increment `1` under Lebesgue measure on `ℝ`.
+The real formula `(∫ (X_s - X_t)²)^{1/2}` would read the divergent integral as `0`. -/
+example : canonicalDist (volume : Measure ℝ) (fun (t : Bool) (_ : ℝ) => if t then 1 else 0)
+    true false = ∞ := by
+  simp [canonicalDist, eLpNorm_const _ two_ne_zero (NeZero.ne volume)]
+
 end MathlibExtTest.Probability.GenericChaining

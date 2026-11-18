@@ -27,17 +27,21 @@ some `A_{k(i)}`, is centred (`φ aᵢ = 0`), and consecutive indices differ, `k(
 is a genuinely noncommutative notion. Elements are free when the unital subalgebras they generate
 are free.
 
+Freeness is defined for a noncommutative probability space, so `IsFreelyIndependent` and
+`AreFree` take a proof of `φ 1 = 1`. Without it the definition would be vacuous for `φ = 0`,
+for which every family of subalgebras would be free.
+
 ## Main definitions
 
-* `MathlibExt.Probability.FreeProbability.IsFreelyIndependent φ B`: the family of subalgebras `B`
-  is freely independent with respect to `φ`.
-* `MathlibExt.Probability.FreeProbability.AreFree φ a`: the family of elements `a` is free.
+* `MathlibExt.Probability.FreeProbability.IsFreelyIndependent φ hφ B`: the family of
+  subalgebras `B` is freely independent with respect to `φ`, where `hφ : φ 1 = 1`.
+* `MathlibExt.Probability.FreeProbability.AreFree φ hφ a`: the family of elements `a` is free.
 
 ## Main results
 
 * `IsFreelyIndependent.of_subsingleton`: a family with at most one member is free.
 * `isFreelyIndependent_of_eq_bot`: a family in which every member but one is the algebra of
-  scalars is free (scalars are free from everything), when `φ 1 = 1`.
+  scalars is free (scalars are free from everything).
 * `IsFreelyIndependent.map_mul`: elements of two different free subalgebras satisfy
   `φ (a b) = φ a φ b`.
 
@@ -58,26 +62,29 @@ variable {A : Type*} [Ring A] [Algebra ℂ A]
 
 /-- **Free independence** (Anderson, Guionnet and Zeitouni, *An Introduction to Random Matrices*
 (manuscript numbering),
-Definition 5.3.1). A family `B : ι → Subalgebra ℂ A` of unital subalgebras is freely independent
-with respect to the linear functional `φ` if, for every `n ≥ 1`, indices `k : Fin n → ι` with
-consecutive indices distinct (`k i ≠ k (i + 1)`) and elements `aᵢ ∈ B (k i)` with `φ aᵢ = 0`, one
-has `φ (a₀ a₁ ⋯ a_{n-1}) = 0`. The words are indexed by `Fin (n + 1)` so that they are nonempty. -/
-def IsFreelyIndependent (φ : A →ₗ[ℂ] ℂ) {ι : Type*} (B : ι → Subalgebra ℂ A) : Prop :=
+Definition 5.3.1). Let `φ` be a linear functional with `φ 1 = 1`, so that `(A, φ)` is a
+noncommutative probability space (Definition 5.2.1). A family `B : ι → Subalgebra ℂ A` of unital
+subalgebras is freely independent with respect to `φ` if, for every `n ≥ 1`, indices
+`k : Fin n → ι` with consecutive indices distinct (`k i ≠ k (i + 1)`) and elements `aᵢ ∈ B (k i)`
+with `φ aᵢ = 0`, one has `φ (a₀ a₁ ⋯ a_{n-1}) = 0`. The words are indexed by `Fin (n + 1)` so
+that they are nonempty. For `φ = 0`, which is excluded, every family would be free. -/
+def IsFreelyIndependent (φ : A →ₗ[ℂ] ℂ) (_hφ : φ 1 = 1) {ι : Type*} (B : ι → Subalgebra ℂ A) :
+    Prop :=
   ∀ (n : ℕ) (k : Fin (n + 1) → ι) (a : Fin (n + 1) → A),
     (∀ i : Fin n, k i.castSucc ≠ k i.succ) → (∀ i, a i ∈ B (k i)) → (∀ i, φ (a i) = 0) →
       φ (List.ofFn a).prod = 0
 
-/-- **Free random variables.** A family of elements `a : ι → A` is free with respect to `φ` if the
-unital subalgebras `ℂ⟨a i⟩` that they generate are freely independent (Anderson, Guionnet and
-Zeitouni, *An Introduction to Random Matrices* (manuscript numbering), Definition 5.3.1, last
-paragraph). -/
-def AreFree (φ : A →ₗ[ℂ] ℂ) {ι : Type*} (a : ι → A) : Prop :=
-  IsFreelyIndependent φ fun i => Algebra.adjoin ℂ {a i}
+/-- **Free random variables.** In a noncommutative probability space (`φ 1 = 1`), a family of
+elements `a : ι → A` is free with respect to `φ` if the unital subalgebras `ℂ⟨a i⟩` that they
+generate are freely independent (Anderson, Guionnet and Zeitouni, *An Introduction to Random
+Matrices* (manuscript numbering), Definition 5.3.1, last paragraph). -/
+def AreFree (φ : A →ₗ[ℂ] ℂ) (hφ : φ 1 = 1) {ι : Type*} (a : ι → A) : Prop :=
+  IsFreelyIndependent φ hφ fun i => Algebra.adjoin ℂ {a i}
 
 /-- **A family with at most one member is free.** A word of length at least two would need two
 distinct consecutive indices. -/
-theorem IsFreelyIndependent.of_subsingleton (φ : A →ₗ[ℂ] ℂ) {ι : Type*} [Subsingleton ι]
-    (B : ι → Subalgebra ℂ A) : IsFreelyIndependent φ B := by
+theorem IsFreelyIndependent.of_subsingleton (φ : A →ₗ[ℂ] ℂ) (hφ : φ 1 = 1) {ι : Type*}
+    [Subsingleton ι] (B : ι → Subalgebra ℂ A) : IsFreelyIndependent φ hφ B := by
   intro n k a hk _ hφ
   rcases n with _ | n
   · simpa using hφ 0
@@ -91,11 +98,11 @@ theorem eq_zero_of_mem_bot {φ : A →ₗ[ℂ] ℂ} (hφ : φ 1 = 1) {x : A} (hx
   rw [h0, map_zero]
 
 /-- **Scalars are free from everything.** If every member of the family other than `B i₀` is the
-algebra of scalars `⊥`, the family is freely independent (for `φ 1 = 1`): in a word of length at
-least two one of the first two letters is a centred scalar, hence zero. -/
+algebra of scalars `⊥`, the family is freely independent: in a word of length at least two one of
+the first two letters is a centred scalar, hence zero since `φ 1 = 1`. -/
 theorem isFreelyIndependent_of_eq_bot {φ : A →ₗ[ℂ] ℂ} (hφ : φ 1 = 1) {ι : Type*}
     (B : ι → Subalgebra ℂ A) (i₀ : ι) (hB : ∀ i, i ≠ i₀ → B i = ⊥) :
-    IsFreelyIndependent φ B := by
+    IsFreelyIndependent φ hφ B := by
   intro n k a hk ha hφa
   rcases n with _ | n
   · simpa using hφa 0
@@ -109,11 +116,11 @@ theorem isFreelyIndependent_of_eq_bot {φ : A →ₗ[ℂ] ℂ} (hφ : φ 1 = 1) 
     rw [List.prod_eq_zero (List.mem_ofFn.2 ⟨t, ht⟩), map_zero]
 
 /-- **Free variables are uncorrelated**: if `a ∈ B i` and `b ∈ B j` with `i ≠ j` in a freely
-independent family and `φ 1 = 1`, then `φ (a b) = φ a · φ b`. Apply the definition to the centred
+independent family, then `φ (a b) = φ a · φ b`. Apply the definition to the centred
 elements `a - φ a` and `b - φ b` (Anderson, Guionnet and Zeitouni, *An Introduction to Random
 Matrices*, Definition 5.3.1; the computation of mixed moments in Remark 5.3.2(ii)). -/
 theorem IsFreelyIndependent.map_mul {φ : A →ₗ[ℂ] ℂ} (hφ : φ 1 = 1) {ι : Type*}
-    {B : ι → Subalgebra ℂ A} (h : IsFreelyIndependent φ B) {i j : ι} (hij : i ≠ j) {a b : A}
+    {B : ι → Subalgebra ℂ A} (h : IsFreelyIndependent φ hφ B) {i j : ι} (hij : i ≠ j) {a b : A}
     (ha : a ∈ B i) (hb : b ∈ B j) : φ (a * b) = φ a * φ b := by
   set a' := a - φ a • (1 : A)
   set b' := b - φ b • (1 : A)

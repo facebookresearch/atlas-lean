@@ -39,7 +39,8 @@ As in the source, the index set is **finite**: Talagrand defines `E sup_{t ∈ T
 * `diamWith d A`: the diameter of `A` for an extended-valued distance function `d`.
 * `gammaFunctional α d`: Talagrand's functional `γ_α(T, d)` (Definition 2.7.3), valued in
   `ℝ≥0∞` so that it is meaningful for every admissible sequence.
-* `SatisfiesIncrementCondition P X`: the sub-Gaussian increment condition (2.4).
+* `SatisfiesIncrementCondition P X`: the sub-Gaussian increment condition (2.4), for a
+  probability measure `P`.
 * `entropyNumber d n`: Talagrand's entropy numbers `e_n(T)` (2.36).
 
 ## Main results
@@ -231,10 +232,14 @@ theorem gammaFunctional_lt_top [Finite T] (α : ℝ) (d : T → T → ℝ≥0∞
 variable {Ω : Type*} [MeasurableSpace Ω]
 
 /-- **Sub-Gaussian increment condition** (Talagrand, *Upper and Lower Bounds for Stochastic
-Processes*, 2nd ed., 2021, (2.4)). For a process `(X_t)_{t ∈ T}` on a metric space `(T, d)`:
+Processes*, 2nd ed., 2021, (2.4)). For a process `(X_t)_{t ∈ T}` on a probability space
+`(Ω, P)`, indexed by a metric space `(T, d)`:
 `P(|X_s - X_t| ≥ u) ≤ 2 exp(-u² / (2 d(s, t)²))` for all `s, t ∈ T` and `u > 0`. It holds for a
-centred Gaussian process with `d(s, t)² = E(X_s - X_t)²`. -/
-def SatisfiesIncrementCondition [PseudoMetricSpace T] (P : Measure Ω) (X : T → Ω → ℝ) : Prop :=
+centred Gaussian process with `d(s, t)² = E(X_s - X_t)²`. `P` must be a probability measure:
+`P.real` reads an infinite measure as `0`, so under `∞ • P` every process would satisfy the
+condition. -/
+def SatisfiesIncrementCondition [PseudoMetricSpace T] (P : Measure Ω) [IsProbabilityMeasure P]
+    (X : T → Ω → ℝ) : Prop :=
   ∀ s t : T, ∀ u : ℝ, 0 < u →
     P.real {ω | u ≤ |X s ω - X t ω|} ≤ 2 * exp (-u ^ 2 / (2 * dist s t ^ 2))
 

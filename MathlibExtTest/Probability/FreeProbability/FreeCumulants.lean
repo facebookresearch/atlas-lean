@@ -26,18 +26,19 @@ namespace MathlibExtTest.Probability.FreeProbability.FreeCumulants
 variable {A : Type*} [Ring A] [Algebra ℂ A]
 
 /-- Any element is free from `0`, whose generated algebra is the scalars. -/
-example (φ : A →ₗ[ℂ] ℂ) (hφ : φ 1 = 1) (a : A) : AreFree φ ![a, 0] := by
+example (φ : A →ₗ[ℂ] ℂ) (hφ : φ 1 = 1) (a : A) : AreFree φ hφ ![a, 0] := by
   refine isFreelyIndependent_of_eq_bot hφ _ 0 fun i hi => ?_
   have hi1 : i = 1 := by fin_cases i <;> simp_all
   subst hi1
   simp
 
 /-- A single element is free (a family with one member). -/
-example (φ : A →ₗ[ℂ] ℂ) (a : A) : AreFree φ ![a] :=
-  IsFreelyIndependent.of_subsingleton φ _
+example (φ : A →ₗ[ℂ] ℂ) (hφ : φ 1 = 1) (a : A) : AreFree φ hφ ![a] :=
+  IsFreelyIndependent.of_subsingleton φ hφ _
 
 /-- Freeness forces `φ (x y) = 0` for centred `x ∈ B 0`, `y ∈ B 1`: the length-two word. -/
-example (φ : A →ₗ[ℂ] ℂ) (B : Fin 2 → Subalgebra ℂ A) (hB : IsFreelyIndependent φ B)
+example (φ : A →ₗ[ℂ] ℂ) (hφ : φ 1 = 1) (B : Fin 2 → Subalgebra ℂ A)
+    (hB : IsFreelyIndependent φ hφ B)
     (x y : A) (hx : x ∈ B 0) (hy : y ∈ B 1) (hx0 : φ x = 0) (hy0 : φ y = 0) :
     φ (x * y) = 0 := by
   have := hB 1 ![0, 1] ![x, y] (by intro i; fin_cases i; decide)
@@ -45,9 +46,22 @@ example (φ : A →ₗ[ℂ] ℂ) (B : Fin 2 → Subalgebra ℂ A) (hB : IsFreely
   simpa using this
 
 /-- Free elements are uncorrelated: `φ (x y) = φ x φ y` for `x, y` free. -/
-example (φ : A →ₗ[ℂ] ℂ) (hφ : φ 1 = 1) (x y : A) (h : AreFree φ ![x, y]) :
+example (φ : A →ₗ[ℂ] ℂ) (hφ : φ 1 = 1) (x y : A) (h : AreFree φ hφ ![x, y]) :
     φ (x * y) = φ x * φ y :=
   h.map_mul hφ (i := 0) (j := 1) (by decide) (by simp) (by simp)
+
+/-! Freeness is defined for a noncommutative probability space: for `φ = 0`, for which every
+family would be free, the proof of `φ 1 = 1` that `AreFree` takes cannot be given. -/
+
+/--
+error: unsolved goals
+A : Type u_1
+inst✝¹ : Ring A
+inst✝ : Algebra ℂ A
+⊢ False
+-/
+#guard_msgs in
+example : Prop := AreFree (0 : ℂ →ₗ[ℂ] ℂ) (by simp) ![(1 : ℂ)]
 
 /-- The second free cumulant of the semicircle moments is its variance `1 - 0²`. -/
 example (m : ℕ → ℂ) (h1 : m 1 = 0) (h2 : m 2 = 1) : freeCumulant m 2 = 1 := by

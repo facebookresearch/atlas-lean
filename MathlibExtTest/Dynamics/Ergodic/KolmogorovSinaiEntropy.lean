@@ -51,11 +51,39 @@ example {α : Type*} [MeasurableSpace α] (μ : Measure α) [IsProbabilityMeasur
     ksEntropy μ id = 0 :=
   ksEntropy_id μ
 
-/-- The entropies are defined for probability measures only: the zero measure, which would give
-every map entropy `0`, is not one. -/
-example {α : Type*} [MeasurableSpace α] : ¬ IsProbabilityMeasure (0 : Measure α) := by
-  intro h
-  exact IsProbabilityMeasure.ne_zero (0 : Measure α) rfl
+/-! The entropies are defined for probability measures only: for the zero measure, which would
+give every map entropy `0`, none of them elaborates. -/
+
+/--
+error: failed to synthesize instance of type class
+  IsProbabilityMeasure 0
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+noncomputable example {α : Type} [MeasurableSpace α] (ξ : Fin 2 → Set α) : ℝ :=
+  partitionEntropy (0 : Measure α) ξ
+
+/--
+error: failed to synthesize instance of type class
+  IsProbabilityMeasure 0
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+noncomputable example {α : Type} [MeasurableSpace α] (T : α → α) (ξ : Fin 2 → Set α) :
+    ENNReal :=
+  entropyRel (0 : Measure α) T ξ
+
+/--
+error: failed to synthesize instance of type class
+  IsProbabilityMeasure 0
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+noncomputable example {α : Type} [MeasurableSpace α] (T : α → α) : ENNReal :=
+  ksEntropy (0 : Measure α) T
 
 -- Under the identity the refinement of the trivial partition keeps entropy `0`.
 example {α : Type*} [MeasurableSpace α] (μ : Measure α) [IsProbabilityMeasure μ] :

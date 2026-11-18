@@ -21,6 +21,18 @@ namespace MathlibExtTest.Probability.FunctionalInequalities.LogSobolevTalagrand
 constant `1`. -/
 example : SatisfiesLogSobolev (Measure.dirac (0 : ℝ)) 1 := satisfiesLogSobolev_dirac 0 1
 
+/-! The log-Sobolev inequality is stated for probability measures: for the zero measure, which
+would satisfy it vacuously (no density integrates to `1`), it does not elaborate. -/
+
+/--
+error: failed to synthesize instance of type class
+  IsProbabilityMeasure 0
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+example : Prop := SatisfiesLogSobolev (0 : Measure ℝ) 1
+
 /-- Non-vacuity: the Dirac mass at `0` on `ℝ` satisfies Talagrand's inequality with constant `2`,
 the constant that the Otto–Villani theorem produces from the log-Sobolev constant `1`. -/
 example : SatisfiesTalagrand (⟨Measure.dirac (0 : ℝ), inferInstance⟩ : ProbabilityMeasure ℝ)
