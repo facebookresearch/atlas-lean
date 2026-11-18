@@ -37,4 +37,4 @@ controls the integrals of Lipschitz functions.
 - [Displacement convexity](../displacement-convexity/README.md): convexity of energies along the
   geodesics of $W_2$.
 - Mean field games: the existence theory for the mean field game system measures the dependence of the costs on the distribution of players in the Kantorovich–Rubinstein distance $W_1$.
-- Bootstrap and the Mallows metric: Bickel and Freedman's Mallows metric $d_p$ is $W_p$; its behaviour under convolution and scaling gives the asymptotic validity of the bootstrap of the mean.
+- [Bootstrap and the Mallows metric](../../../Probability/statistical-estimation/bootstrap-and-the-mallows-metric/README.md): Bickel and Freedman's Mallows metric $d_p$ is $W_p$; its behaviour under convolution and scaling gives the asymptotic validity of the bootstrap of the mean.

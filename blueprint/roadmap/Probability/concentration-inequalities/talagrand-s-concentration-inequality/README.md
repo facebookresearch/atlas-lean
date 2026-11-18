@@ -34,4 +34,4 @@ finite set $\Omega$ the inequality follows by Talagrand's induction on $N$.
 ## Related topics
 
 - [McDiarmid's inequality](../mcdiarmid-s-inequality/README.md)
-- Operator norm of random matrices
+- [Operator norm of random matrices](../../high-dimensional-probability/operator-norm-of-random-matrices/README.md)

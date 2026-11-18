@@ -17,4 +17,4 @@
 
 ## Related topics
 
-- Sequential tests and quickest change detection: Wald's identity gives the average sample number of the sequential probability ratio test.
+- [Sequential tests and quickest change detection](../../hypothesis-testing/sequential-tests-and-quickest-change-detection/README.md): Wald's identity gives the average sample number of the sequential probability ratio test.

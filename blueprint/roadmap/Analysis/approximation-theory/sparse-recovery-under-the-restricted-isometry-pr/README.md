@@ -32,7 +32,7 @@ high probability.
 
 ## Related topics
 
-- Exact recovery by basis pursuit: basis pursuit recovers every vector supported on $S$ iff the restricted nullspace property holds over $S$; the restricted isometry property with $\delta_{2s} < \sqrt2 - 1$ is a sufficient condition for it, uniform over all supports of size at most $s$.
+- [Exact recovery by basis pursuit](../../../Probability/linear-models-multivariate/exact-recovery-by-basis-pursuit/README.md): basis pursuit recovers every vector supported on $S$ iff the restricted nullspace property holds over $S$; the restricted isometry property with $\delta_{2s} < \sqrt2 - 1$ is a sufficient condition for it, uniform over all supports of size at most $s$.
 - [Low-rank matrix recovery](../low-rank-matrix-recovery/README.md): the matrix analogue, with rank for sparsity and the nuclear norm for the $\ell_1$ norm; its restricted isometry property bounds unsquared norms.
 - [Sparse recovery by orthogonal matching pursuit](../sparse-recovery-by-orthogonal-matching-pursuit/README.md): sparse recovery by a greedy algorithm under a coherence condition rather than by convex minimization.
-- Lasso error bounds under restricted eigenvalues: the statistical counterpart with noise, where a restricted eigenvalue condition on the cone plays the role of the restricted isometry property.
+- [Lasso error bounds under restricted eigenvalues](../../../Probability/linear-models-multivariate/lasso-error-bounds-under-restricted-eigenvalues/README.md): the statistical counterpart with noise, where a restricted eigenvalue condition on the cone plays the role of the restricted isometry property.

@@ -30,5 +30,5 @@ the semicircle law for these ensembles.
 
 - [Large deviation principle](../large-deviation-principle/README.md)
 - [Sanov's theorem](../sanov-s-theorem/README.md)
-- Wigner's semicircle law
-- Free probability
+- [Wigner's semicircle law](../../high-dimensional-probability/wigner-s-semicircle-law/README.md)
+- [Free probability](../../high-dimensional-probability/free-probability/README.md)

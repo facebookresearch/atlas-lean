@@ -6,4 +6,4 @@ The Poisson law $\mathrm{Po}(\lambda)$ on the natural numbers has mass $e^{-\lam
 
 ## Related topics
 
-- Indian buffet process: independent Poisson counts of feature histories, whose total number of features is Poisson by this closure.
+- [Indian buffet process](../../../bayesian-statistics/indian-buffet-process/README.md): independent Poisson counts of feature histories, whose total number of features is Poisson by this closure.

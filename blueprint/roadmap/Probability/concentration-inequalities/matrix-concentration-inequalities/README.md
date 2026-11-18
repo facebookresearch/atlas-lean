@@ -23,5 +23,5 @@ Tail and expectation bounds for the extreme eigenvalues of random Hermitian matr
 - [Peierls and Klein inequalities](../../../Analysis/operator-theory/eigenvalue-inequalities/peierls-and-klein-inequalities/README.md)
 - [Randomized range finder](../../../LinearAlgebra/matrix-decompositions/randomized-range-finder/README.md)
 - [Kadison–Singer problem](../../../Analysis/operator-algebras/kadison-singer-problem/README.md)
-- Wigner's semicircle law
+- [Wigner's semicircle law](../../high-dimensional-probability/wigner-s-semicircle-law/README.md)
 - Generalization bounds and concentration

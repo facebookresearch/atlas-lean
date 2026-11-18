@@ -30,4 +30,4 @@
 
 - Gaussian process regression: the Gaussian-process posterior and marginal likelihood as instances of conditioning and linear-Gaussian marginals.
 - Kalman filter: sequential conditioning in a linear-Gaussian state-space model.
-- Bayesian inverse problems: the linear-Gaussian case of Bayesian inversion, where the posterior is given by this formula.
+- [Bayesian inverse problems](../../../bayesian-statistics/bayesian-inverse-problems/README.md): the linear-Gaussian case of Bayesian inversion, where the posterior is given by this formula.
