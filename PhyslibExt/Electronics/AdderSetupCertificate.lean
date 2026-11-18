@@ -8,8 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import CSLibExt.Computability.Circuit.AnnotatedArrival
 public import CSLibExt.Computability.Circuit.Arithmetic.CarryLookahead
+public import CSLibExt.Computability.Circuit.UniformArrival
 
 /-!
 # Setup-timing certificates for the ripple-carry and carry-lookahead adders
@@ -40,7 +40,9 @@ constant gates (`setupMet_uniform_iff_of_noConstantGates`, its signature-wide
 form `setupMet_uniform_iff`, and the two adder `_uniform_iff` forms): a
 violated certificate is a real setup violation of the model, whether or not
 the adder computes the right sum. A constant gate settles at its delay alone
-while counting one level of depth, so exactness needs the premise.
+while counting one level of depth, so exactness needs the premise. The
+underlying exact arrival times are generic circuit facts, proved in
+`CSLibExt.Computability.Circuit.UniformArrival` and re-exported here.
 
 Delays are premises of the model, not extracted silicon timing; unit depth is
 not physical latency; hold timing, clock-domain crossing and glitches are out
@@ -52,13 +54,14 @@ of scope.
 - `rippleCarryAdder_setupMet`, `carryLookaheadAdder_setupMet`,
   `carryLookaheadAdder_claLevels_setupMet`: the certificates for the two
   adders at their width hypotheses.
-- `outputArrivals_uniform_of_noConstantGates`,
-  `setupMet_uniform_iff_of_noConstantGates`: exactness under uniform delays
+- `setupMet_uniform_iff_of_noConstantGates`: exactness under uniform delays
   for a circuit whose gates all read at least one wire.
-- `outputArrivals_uniform`, `setupMet_uniform_iff`,
-  `rippleCarryAdder_setupMet_uniform_iff`,
+- `setupMet_uniform_iff`, `rippleCarryAdder_setupMet_uniform_iff`,
   `carryLookaheadAdder_setupMet_uniform_iff`: the same for a signature
   without constants, and for the two adders.
+- `NoConstantGates`, `noConstantGates_of_arity_pos`,
+  `outputArrivals_uniform_of_noConstantGates`, `outputArrivals_uniform`:
+  re-exported from `Cslib.Circuits.Program` and `Cslib.Circuits.Circuit`.
 
 ## iii. Table of contents
 
@@ -162,125 +165,12 @@ lemma carryLookaheadAdder_claLevels_setupMet (n : ℕ) (hn : 2 ≤ n)
 
 /-! ## D. Exactness under uniform delays -/
 
-/-- Every gate of the program reads at least one wire: no gate of `p` is a
-constant. Only the operations the program uses matter; the signature may
-also offer constants. -/
-def NoConstantGates {σ : Signature.{v}} {m : ℕ} : {g : ℕ} → Program σ m g → Prop
-  | _, .empty => True
-  | _, .gate p line => NoConstantGates p ∧ 0 < σ.Arity line.op
+/-! The generic circuit facts behind exactness live in
+`CSLibExt.Computability.Circuit.UniformArrival`; their names are re-exported
+here. -/
 
-/-- A signature without constants admits no constant gate. -/
-lemma noConstantGates_of_arity_pos {σ : Signature.{v}} {m : ℕ} (hσ : ∀ op, 0 < σ.Arity op) :
-    ∀ {g : ℕ} (p : Program σ m g), NoConstantGates p
-  | _, .empty => trivial
-  | _, .gate p line => ⟨noConstantGates_of_arity_pos hσ p, hσ line.op⟩
-
-/-- The fold-max from `0` of the values `a0 + D * f k` over a nonempty index
-type is `a0 + D` times the fold-max of `f`. -/
-private lemma foldl_max_add_mul : ∀ {n : ℕ} (f : Fin n → ℕ) (a0 D : ℝ),
-    0 ≤ a0 → 0 ≤ D → 0 < n →
-    Fin.foldl n (fun t k => max t (a0 + D * (f k : ℝ))) 0
-      = a0 + D * ((Fin.foldl n (fun d k => max d (f k)) 0 : ℕ) : ℝ) := by
-  intro n
-  induction n with
-  | zero => intro f a0 D ha0 hD hn; omega
-  | succ n ih =>
-    intro f a0 D ha0 hD hn
-    simp only [Fin.foldl_succ_last]
-    by_cases hn0 : n = 0
-    · subst hn0
-      simp only [Fin.foldl_zero]
-      have hV : (0 : ℝ) ≤ a0 + D * ((f (Fin.last 0) : ℕ) : ℝ) :=
-        add_nonneg ha0 (mul_nonneg hD (Nat.cast_nonneg _))
-      rw [max_eq_right hV, max_eq_right (Nat.zero_le _)]
-    · have hih : Fin.foldl n (fun t k => max t (a0 + D * ((f k.castSucc : ℕ) : ℝ))) 0
-          = a0 + D * ((Fin.foldl n (fun d k => max d (f k.castSucc)) 0 : ℕ) : ℝ) :=
-        ih _ _ _ ha0 hD (Nat.pos_of_ne_zero hn0)
-      rw [hih, Nat.cast_max]
-      have hmono : Monotone (fun x : ℝ => a0 + D * x) := fun x y h =>
-        add_le_add_right (mul_le_mul_of_nonneg_left h hD) a0
-      exact (Monotone.map_max hmono).symm
-
-/-- The fold-max from `0` over a nonempty index type is attained. -/
-private lemma foldl_max_attained : ∀ {n : ℕ} (f : Fin n → ℕ), 0 < n →
-    ∃ k, Fin.foldl n (fun d i => max d (f i)) 0 = f k := by
-  intro n
-  induction n with
-  | zero => intro f hn; omega
-  | succ n ih =>
-    intro f hn
-    simp only [Fin.foldl_succ_last]
-    by_cases h : Fin.foldl n (fun d i => max d (f i.castSucc)) 0 ≤ f (Fin.last n)
-    · exact ⟨Fin.last n, max_eq_right h⟩
-    · simp only [not_le] at h
-      by_cases hn0 : n = 0
-      · subst hn0
-        simp only [Fin.foldl_zero] at h
-        omega
-      · obtain ⟨i, hi⟩ := ih (fun j => f j.castSucc) (Nat.pos_of_ne_zero hn0)
-        have hi' : Fin.foldl n (fun d i => max d (f i.castSucc)) 0 = f i.castSucc := hi
-        exact ⟨i.castSucc, by rw [max_eq_left (le_of_lt h), hi']⟩
-
-/-- Uniform wire arrivals follow from uniform gate arrivals. -/
-private lemma wireArrivals_uniform {σ : Signature.{v}} {m g : ℕ} (p : Program σ m g)
-    (a0 D : ℝ)
-    (hall : ∀ j, p.arrivals (fun _ => D) (fun _ => a0) j
-      = a0 + D * ((p.depths j : ℕ) : ℝ))
-    (w : Wire m g) :
-    p.wireArrivals (fun _ => D) (fun _ => a0) w
-      = a0 + D * ((p.wireDepths w : ℕ) : ℝ) := by
-  cases w with
-  | input i => simp [Program.wireArrivals, Program.wireDepths, Wire.elim]
-  | gate i =>
-    simp only [Program.wireArrivals, Program.wireDepths, Wire.elim]
-    exact hall i
-
-/-- Under uniform delays every gate arrives at `a0 + D` times its depth. -/
-private lemma arrivals_uniform_gate : ∀ {σ : Signature.{v}} {m g : ℕ} (p : Program σ m g)
-    (_hp : NoConstantGates p) (a0 D : ℝ) (_ha0 : 0 ≤ a0) (_hD : 0 ≤ D) (j : Fin g),
-    p.arrivals (fun _ => D) (fun _ => a0) j = a0 + D * ((p.depths j : ℕ) : ℝ) := by
-  intro σ m g p
-  induction p with
-  | empty =>
-    intro _ a0 D _ _ j
-    exact Fin.elim0 j
-  | gate p line ih =>
-    intro hp a0 D ha0 hD j
-    obtain ⟨hp, hop⟩ := hp
-    refine Fin.lastCases ?_ ?_ j
-    · simp only [Program.arrivals_gate_last, Program.depths_gate_last, Line.arrival,
-        Line.depth]
-      have hwire : ∀ k, p.wireArrivals (fun _ => D) (fun _ => a0) (line.wires k)
-          = a0 + D * ((p.wireDepths (line.wires k) : ℕ) : ℝ) :=
-        fun k => wireArrivals_uniform p a0 D (fun j => ih hp a0 D ha0 hD j) (line.wires k)
-      simp only [hwire]
-      have hfold : Fin.foldl (σ.Arity line.op)
-            (fun t k => max t (a0 + D * ((p.wireDepths (line.wires k) : ℕ) : ℝ))) 0
-          = a0 + D * ((Fin.foldl (σ.Arity line.op)
-            (fun d k => max d (p.wireDepths (line.wires k))) 0 : ℕ) : ℝ) :=
-        foldl_max_add_mul _ _ _ ha0 hD hop
-      rw [hfold, Nat.succ_eq_add_one, Nat.cast_add, Nat.cast_one, mul_add, mul_one]
-      ac_rfl
-    · intro i
-      simp only [Program.arrivals_gate_castSucc, Program.depths_gate_castSucc]
-      exact ih hp a0 D ha0 hD i
-
-/-- The circuit depth is attained by some designated output. -/
-private lemma depth_attained {σ : Signature.{v}} {m n : ℕ} (c : Circuit σ m n)
-    (hn : 0 < n) : ∃ o, c.outputDepths o = c.depth := by
-  obtain ⟨k, hk⟩ := foldl_max_attained (fun o => c.outputDepths o) hn
-  exact ⟨k, hk.symm⟩
-
-/-- For a circuit without constant gates, uniform delay `D ≥ 0` and every
-input arriving at `a0 ≥ 0`, every designated output arrives exactly at
-`a0 + D` times its depth. -/
-lemma outputArrivals_uniform_of_noConstantGates {σ : Signature.{v}}
-    {inputCount outputCount : ℕ} (c : Circuit σ inputCount outputCount)
-    (hc : NoConstantGates c.program) (a0 D : ℝ) (ha0 : 0 ≤ a0) (hD : 0 ≤ D)
-    (o : Fin outputCount) :
-    c.outputArrivals (fun _ => D) (fun _ => a0) o = a0 + D * (c.outputDepths o : ℝ) :=
-  wireArrivals_uniform c.program a0 D (arrivals_uniform_gate c.program hc a0 D ha0 hD)
-    (c.outputs o)
+export Program (NoConstantGates noConstantGates_of_arity_pos)
+export Circuit (outputArrivals_uniform_of_noConstantGates outputArrivals_uniform)
 
 /-- **The certificate is exact under uniform delays.** For a circuit with at
 least one output and no constant gate, uniform delay `D ≥ 0` and inputs
@@ -293,7 +183,7 @@ lemma setupMet_uniform_iff_of_noConstantGates {σ : Signature.{v}}
       tq + D * (c.depth : ℝ) + ts + u ≤ T := by
   constructor
   · intro h
-    obtain ⟨o, ho⟩ := depth_attained c hout
+    obtain ⟨o, ho⟩ := c.exists_outputDepths_eq_depth hout
     have harr := outputArrivals_uniform_of_noConstantGates c hc tq D htq hD o
     rw [ho] at harr
     have ho' := h o
@@ -307,16 +197,6 @@ lemma setupMet_uniform_iff_of_noConstantGates {σ : Signature.{v}}
       add_le_add_left (add_le_add_left (add_le_add (le_refl tq) hmul) ts) u
     rw [outputArrivals_uniform_of_noConstantGates c hc tq D htq hD o]
     exact le_trans h1 hcert
-
-/-- With every operation of the signature taking at least one argument,
-uniform delay `D ≥ 0` and every input arriving at `a0 ≥ 0`, every designated
-output arrives exactly at `a0 + D` times its depth. For a signature that
-also offers constants, use `outputArrivals_uniform_of_noConstantGates`. -/
-lemma outputArrivals_uniform {σ : Signature.{v}} {inputCount outputCount : ℕ}
-    (hσ : ∀ op, 0 < σ.Arity op) (c : Circuit σ inputCount outputCount)
-    (a0 D : ℝ) (ha0 : 0 ≤ a0) (hD : 0 ≤ D) (o : Fin outputCount) :
-    c.outputArrivals (fun _ => D) (fun _ => a0) o = a0 + D * (c.outputDepths o : ℝ) :=
-  outputArrivals_uniform_of_noConstantGates c (noConstantGates_of_arity_pos hσ _) a0 D ha0 hD o
 
 /-- **The certificate is exact under uniform delays**, for a signature whose
 operations all take an argument. For a circuit with at least one output,

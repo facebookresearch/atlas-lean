@@ -103,18 +103,6 @@ example : (rippleCarryAdder 2).eval arithInterpretation (rcaInput 3#2 1#2 false)
 example : (rippleCarryAdder 2).eval arithInterpretation (rcaInput 3#2 1#2 false) 2 = true := by
   rw [show (2 : Fin (2 + 1)) = ⟨2, by omega⟩ from rfl, rippleCarryAdder_carry, adc_three_one]
 
-/-- With uniform delay `1/2` and inputs at `1/4`, the outputs of the 2-bit
-ripple-carry adder arrive at `1/4 + 1/2 * [2, 4, 5] = [5/4, 9/4, 11/4]`. -/
-example : (rippleCarryAdder 2).outputArrivals (fun _ => 1 / 2) (fun _ => 1 / 4) 2 = 11 / 4 := by
-  have hdepth : (rippleCarryAdder 2).outputDepths 2 = 5 := by decide +kernel
-  rw [outputArrivals_uniform (fun _ => two_pos) _ _ _ (by norm_num) (by norm_num), hdepth]
-  norm_num
-
-example : (rippleCarryAdder 2).outputArrivals (fun _ => 1 / 2) (fun _ => 1 / 4) 0 = 5 / 4 := by
-  have hdepth : (rippleCarryAdder 2).outputDepths 0 = 2 := by decide +kernel
-  rw [outputArrivals_uniform (fun _ => two_pos) _ _ _ (by norm_num) (by norm_num), hdepth]
-  norm_num
-
 /-- At the certificate boundary `T = 1/4 + 1/2 * 5 + 3/20 = 29/10` setup holds. -/
 example : SetupMet (rippleCarryAdder 2) (fun _ => 1 / 2) (fun _ => 1 / 4)
     (1 / 10) (1 / 20) (29 / 10) :=
@@ -153,10 +141,6 @@ def andChain : Circuit (fullSignature 2 Bool) 2 1 where
   program := (Program.empty.gate ⟨andOp, fun k => if k.val = 0 then .input 0 else .input 1⟩).gate
     ⟨andOp, fun k => if k.val = 0 then .gate 0 else .input 0⟩
   outputs _ := .gate 1
-
-/-- The basis offers constants, so the signature-wide premise fails. -/
-example : ¬ ∀ op, 0 < (fullSignature 2 Bool).Arity op := fun h =>
-  absurd (h (.con true)) (by decide)
 
 lemma andChain_noConstantGates : NoConstantGates andChain.program :=
   ⟨⟨trivial, by decide⟩, by decide⟩
