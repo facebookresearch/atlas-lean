@@ -13,8 +13,8 @@ import CSLibExt.Algorithms.Lean.DataStructures.HashTable.EraseCost
 /-!
 # Stored consumers of hash-table erasure and scan-event bounds
 
-The identity-hash, one/two-bucket and collision fixtures adapt PR #6201's HashTableTests
-and HashTableRuntime (head `d5cebc9629a37d99e6e586b2ec398c9e63f169df`). Only erasure/scan
+The identity-hash, one/two-bucket and collision fixtures adapt formal-math's HashTableTests
+and HashTableRuntime (commit `d5cebc9629a37d99e6e586b2ec398c9e63f169df`). Only erasure/scan
 consumers are retained, as named private declarations. Additional consumers exercise canonical
 list/bucket bridges, exact absent and sharp present bounds, dependent values, raw duplicate keys,
 and the validity guard on the finite-map refinement. Counts include the absent terminal event.

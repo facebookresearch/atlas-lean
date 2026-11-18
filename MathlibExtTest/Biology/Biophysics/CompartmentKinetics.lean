@@ -145,4 +145,15 @@ example : concentration 2 10 0 100 3 ≠ concentration 3 10 0 100 3 := by
     (show (0 : ℝ) < 3 by norm_num) rfl (by rw [← e2, ← e3]; exact hcon)
   norm_num at h
 
+/-- Normalized washout at `D = 100`, `V = 10`, `CL = 2`, `t = 3`
+recovers the rate `2 / 10`. -/
+example : -Real.log (((100 / 10) * Real.exp (-(2 / 10) * 3)) / (100 / 10)) / 3 = 2 / 10 :=
+  normalized_washout_rate (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+
+/-- Doubling both `V` and `CL` leaves the washout unchanged but
+changes the volume. -/
+example : (∀ t : ℝ, Real.exp (-((2 * 2) / (2 * 10)) * t) =
+    Real.exp (-(2 / 10) * t)) ∧ (2 : ℝ) * 10 ≠ 10 :=
+  normalized_scaling_same_washout (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+
 end MathlibExtTest.Biology.Biophysics.CompartmentKinetics

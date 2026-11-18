@@ -43,6 +43,9 @@ common set of loci, as in the paper.
 * `finrank_fSpace`: `dim V_F = n choose 2` (statement 1).
 * `integral_sum_smul_f2Form`: a linear combination of forms integrates to the same linear
   combination of `f2` statistics.
+* `sum_smul_f2Form_eq_zero_iff`: a combination of `f2` forms vanishes if and only if the same
+  combination of `f2` statistics vanishes for every probability measure and square-integrable
+  model; the converse direction takes Dirac measures.
 
 ## References
 
@@ -104,6 +107,37 @@ theorem integral_sum_smul_f2Form {Ω ι : Type*} {m : MeasurableSpace Ω} {μ : 
   simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, f2Form]
   rw [integral_finsetSum _ fun i _ => (integrable_sub_sq hp (A i) (B i)).const_mul (c i)]
   simp only [integral_const_mul, f2]
+
+/-- At a Dirac measure on a one-point outcome space, the `f2` statistic is the `f2` form of the
+point's frequency vector. -/
+theorem f2_dirac (x : P → ℝ) (A B : P) :
+    f2 (Measure.dirac PUnit.unit) (fun X (_ : PUnit) => x X) A B = f2Form A B x := by
+  simp [f2, f2Form]
+
+/-- A linear relation among `f2` statistics that holds for every probability measure and every
+square-integrable frequency model holds among the per-locus forms, by taking Dirac measures. -/
+theorem sum_smul_f2Form_eq_zero_of_forall {ι : Type*} (s : Finset ι) (c : ι → ℝ)
+    (A B : ι → P)
+    (h : ∀ (Ω : Type) [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
+      (p : P → Ω → ℝ), (∀ X, MemLp (p X) 2 μ) → ∑ i ∈ s, c i * f2 μ p (A i) (B i) = 0) :
+    ∑ i ∈ s, c i • f2Form (A i) (B i) = 0 := by
+  funext x
+  have hx := h PUnit (Measure.dirac PUnit.unit) (fun X _ => x X) fun _ => memLp_const _
+  simp only [f2_dirac] at hx
+  simpa [Finset.sum_apply, Pi.smul_apply, smul_eq_mul] using hx
+
+/-- Relations transfer both ways: a combination of `f2` forms vanishes if and only if the same
+combination of `f2` statistics vanishes for every probability measure and every square-integrable
+frequency model. -/
+theorem sum_smul_f2Form_eq_zero_iff {ι : Type*} (s : Finset ι) (c : ι → ℝ) (A B : ι → P) :
+    ∑ i ∈ s, c i • f2Form (A i) (B i) = 0 ↔
+      ∀ (Ω : Type) [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
+        (p : P → Ω → ℝ), (∀ X, MemLp (p X) 2 μ) → ∑ i ∈ s, c i * f2 μ p (A i) (B i) = 0 := by
+  constructor
+  · intro h0 Ω _ μ _ p hp
+    rw [← integral_sum_smul_f2Form hp s c A B, h0]
+    simp
+  · exact sum_smul_f2Form_eq_zero_of_forall s c A B
 
 /-- `f2Form` is symmetric. -/
 theorem f2Form_comm (A B : P) : f2Form A B = f2Form B A := by

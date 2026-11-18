@@ -13,6 +13,12 @@ public import Mathlib.MeasureTheory.Measure.Restrict
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 public import Mathlib.MeasureTheory.MeasurableSpace.Pi
 public import Mathlib.MeasureTheory.PiSystem
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+import Mathlib.MeasureTheory.Integral.BoundedContinuousFunction
+import Mathlib.MeasureTheory.Integral.IntegrableOn
+import Mathlib.MeasureTheory.Measure.HasOuterApproxClosed
+import Mathlib.Topology.Algebra.MvPolynomial
+import Mathlib.Topology.ContinuousMap.StoneWeierstrass
 
 /-!
 # Uniqueness of measures on `ℝᵈ`
@@ -20,7 +26,9 @@ public import Mathlib.MeasureTheory.PiSystem
 Two finite measures on `Fin d → ℝ` are equal as soon as they agree on a
 generating π-system. This file proves the two forms of that principle that
 the book needs for measures on `ℝᵈ`: agreement on all left-closed quadrants
-`Iic a`, and agreement on all half-open rectangles `(a, b]`.
+`Iic a`, and agreement on all half-open rectangles `(a, b]`. It also records
+a moment criterion: finite measures supported in a fixed compact set are
+determined by all mixed moments.
 
 ## Source
 
@@ -68,8 +76,15 @@ dimension `1`, which is not finite.
 * `MeasureTheory.Measure.eq_of_forall_rectangleValue_eq`: if two
   measures on `Fin d → ℝ` both assign every rectangle `(a, b]` the mass
   `ENNReal.ofReal (rectangleValue F a b)`, then they are equal.
+* `MeasureTheory.Measure.eq_of_forall_integral_monomial_eq`: two finite
+  measures with no mass outside a compact `E ⊆ Fin d → ℝ` and with equal
+  mixed moments of every order are equal.
 * `MeasureTheory.rectangleValue`: the inclusion-exclusion sum of `F`
   over the vertices of a rectangle.
+
+The moment criterion is a local derivation from Stone-Weierstrass
+approximation and Mathlib's bounded-continuous extensionality for finite
+measures; it is not part of the v1 rectangle port described above.
 -/
 
 @[expose] public section
@@ -270,5 +285,197 @@ theorem Measure.eq_of_forall_rectangleValue_eq {d : ℕ}
       h₁ _ _ (fun _ => by linarith)]
     exact ENNReal.ofReal_ne_top
   · rw [h₁ a b hab, h₂ a b hab]
+
+/-- **Moment determinacy on a compact subset of `ℝ^d`.** Let `E ⊆ ℝ^d` be compact and let `μ`, `ν`
+be finite Borel measures on `ℝ^d` that put no mass outside `E`. If all their mixed moments agree,
+`∫ ∏ i, x i ^ β i ∂μ = ∫ ∏ i, x i ^ β i ∂ν` for every multi-index `β : Fin d → ℕ`, then
+`μ = ν`. (The `β = 0` moment is the total mass.) -/
+theorem Measure.eq_of_forall_integral_monomial_eq {d : ℕ} {E : Set (Fin d → ℝ)}
+    (hE : IsCompact E) (μ ν : Measure (Fin d → ℝ)) [IsFiniteMeasure μ] [IsFiniteMeasure ν]
+    (hμ : μ Eᶜ = 0) (hν : ν Eᶜ = 0)
+    (h : ∀ β : Fin d → ℕ, ∫ x, ∏ i, x i ^ β i ∂μ = ∫ x, ∏ i, x i ^ β i ∂ν) :
+    μ = ν := by
+  have hEμ : ∀ᵐ x ∂μ, x ∈ E := mem_ae_iff.mpr hμ
+  have hEν : ∀ᵐ x ∂ν, x ∈ E := mem_ae_iff.mpr hν
+  have hmon_cont : ∀ β : Fin d → ℕ, Continuous (fun x : Fin d → ℝ => ∏ i, x i ^ β i) :=
+    fun β => by continuity
+  have hmon_intμ : ∀ β : Fin d → ℕ, Integrable (fun x : Fin d → ℝ => ∏ i, x i ^ β i) μ := by
+    intro β
+    have hc := hmon_cont β
+    have hmeas : AEStronglyMeasurable (fun x : Fin d → ℝ => ∏ i, x i ^ β i) μ :=
+      hc.aestronglyMeasurable
+    obtain ⟨C, hC⟩ := IsCompact.exists_bound_of_continuousOn hE hc.continuousOn
+    refine Integrable.of_bound hmeas C ?_
+    filter_upwards [hEμ] with x hx
+    exact hC x hx
+  have hmon_intν : ∀ β : Fin d → ℕ, Integrable (fun x : Fin d → ℝ => ∏ i, x i ^ β i) ν := by
+    intro β
+    have hc := hmon_cont β
+    have hmeas : AEStronglyMeasurable (fun x : Fin d → ℝ => ∏ i, x i ^ β i) ν :=
+      hc.aestronglyMeasurable
+    obtain ⟨C, hC⟩ := IsCompact.exists_bound_of_continuousOn hE hc.continuousOn
+    refine Integrable.of_bound hmeas C ?_
+    filter_upwards [hEν] with x hx
+    exact hC x hx
+  have hpoly : ∀ p : MvPolynomial (Fin d) ℝ,
+      ∫ x, MvPolynomial.eval x p ∂μ = ∫ x, MvPolynomial.eval x p ∂ν := by
+    intro p
+    have hfun : (fun x : Fin d → ℝ => MvPolynomial.eval x p)
+        = (fun x => ∑ m ∈ p.support, p.coeff m * ∏ i, x i ^ m i) := by
+      funext x
+      exact MvPolynomial.eval_eq' x p
+    rw [hfun]
+    have hint1 : ∀ m ∈ p.support,
+        Integrable (fun x : Fin d → ℝ => p.coeff m * ∏ i, x i ^ m i) μ := by
+      intro m hm
+      exact Integrable.const_mul (hmon_intμ ⇑m) (p.coeff m)
+    have hint2 : ∀ m ∈ p.support,
+        Integrable (fun x : Fin d → ℝ => p.coeff m * ∏ i, x i ^ m i) ν := by
+      intro m hm
+      exact Integrable.const_mul (hmon_intν ⇑m) (p.coeff m)
+    rw [integral_finsetSum p.support hint1, integral_finsetSum p.support hint2]
+    apply Finset.sum_congr rfl
+    intro m hm
+    rw [integral_const_mul, integral_const_mul]
+    congr 1
+    exact h ⇑m
+  have hcont_intμ : ∀ g : ContinuousMap (Fin d → ℝ) ℝ, Integrable ⇑g μ := by
+    intro g
+    have hc : Continuous ⇑g := g.continuous
+    have hmeas : AEStronglyMeasurable ⇑g μ := hc.aestronglyMeasurable
+    obtain ⟨C, hC⟩ := IsCompact.exists_bound_of_continuousOn hE hc.continuousOn
+    refine Integrable.of_bound hmeas C ?_
+    filter_upwards [hEμ] with x hx
+    exact hC x hx
+  have hcont_intν : ∀ g : ContinuousMap (Fin d → ℝ) ℝ, Integrable ⇑g ν := by
+    intro g
+    have hc : Continuous ⇑g := g.continuous
+    have hmeas : AEStronglyMeasurable ⇑g ν := hc.aestronglyMeasurable
+    obtain ⟨C, hC⟩ := IsCompact.exists_bound_of_continuousOn hE hc.continuousOn
+    refine Integrable.of_bound hmeas C ?_
+    filter_upwards [hEν] with x hx
+    exact hC x hx
+  let A : Subalgebra ℝ (ContinuousMap (Fin d → ℝ) ℝ) :=
+    { carrier := {f | ∃ p : MvPolynomial (Fin d) ℝ, ∀ x, f x = MvPolynomial.eval x p}
+      zero_mem' := ⟨0, by intro x; simp⟩
+      one_mem' := ⟨1, by intro x; simp⟩
+      add_mem' := by
+        intro f g hf hg
+        obtain ⟨p, hp⟩ := hf
+        obtain ⟨q, hq⟩ := hg
+        exact ⟨p + q, by intro x; simp [hp x, hq x, MvPolynomial.eval_add]⟩
+      mul_mem' := by
+        intro f g hf hg
+        obtain ⟨p, hp⟩ := hf
+        obtain ⟨q, hq⟩ := hg
+        exact ⟨p * q, by intro x; simp [hp x, hq x, MvPolynomial.eval_mul]⟩
+      algebraMap_mem' := by
+        intro r
+        exact ⟨MvPolynomial.C r, by intro x; simp⟩ }
+  have hsep : A.SeparatesPoints := by
+    intro x y hxy
+    obtain ⟨i, hi⟩ := Function.ne_iff.mp hxy
+    let p : MvPolynomial (Fin d) ℝ := MvPolynomial.X i
+    let g : ContinuousMap (Fin d → ℝ) ℝ :=
+      ⟨fun x => MvPolynomial.eval x p, MvPolynomial.continuous_eval p⟩
+    have hgA : g ∈ A := ⟨p, fun x => rfl⟩
+    have himg : (fun f : ContinuousMap (Fin d → ℝ) ℝ => (f : (Fin d → ℝ) → ℝ)) g ∈
+        (fun f : ContinuousMap (Fin d → ℝ) ℝ => (f : (Fin d → ℝ) → ℝ)) ''
+          (A : Set (ContinuousMap (Fin d → ℝ) ℝ)) := by
+      exact ⟨g, hgA, rfl⟩
+    refine ⟨_, himg, ?_⟩
+    change g x ≠ g y
+    have hx : g x = x i := MvPolynomial.eval_X i
+    have hy : g y = y i := MvPolynomial.eval_X i
+    rw [hx, hy]
+    exact hi
+  apply ext_of_forall_integral_eq_of_IsFiniteMeasure
+  intro f
+  have hfμ : Integrable ⇑f μ := BoundedContinuousFunction.integrable μ f
+  have hfν : Integrable ⇑f ν := BoundedContinuousFunction.integrable ν f
+  have hKnonneg : 0 ≤ μ.real Set.univ + ν.real Set.univ := by
+    have h1 : 0 ≤ μ.real Set.univ := ENNReal.toReal_nonneg
+    have h2 : 0 ≤ ν.real Set.univ := ENNReal.toReal_nonneg
+    linarith
+  apply eq_of_forall_dist_le
+  intro ε hε
+  set K := μ.real Set.univ + ν.real Set.univ with hKdef
+  have hKnonneg' : 0 ≤ K := hKnonneg
+  have hK1pos : 0 < K + 1 := by linarith
+  set δ := ε / (K + 1) with hδdef
+  have hδpos : 0 < δ := div_pos hε hK1pos
+  let fc : ContinuousMap (Fin d → ℝ) ℝ := f.toContinuousMap
+  obtain ⟨g, hgA, happrox⟩ :=
+    ContinuousMap.exists_mem_subalgebra_near_continuous_of_isCompact_of_separatesPoints
+      hsep fc hE hδpos
+  obtain ⟨p, hp⟩ := hgA
+  have hg_eq : (∫ x, g x ∂μ) = (∫ x, g x ∂ν) := by
+    have h1 : (∫ x, g x ∂μ) = (∫ x, MvPolynomial.eval x p ∂μ) := by
+      simp only [hp]
+    have h2 : (∫ x, g x ∂ν) = (∫ x, MvPolynomial.eval x p ∂ν) := by
+      simp only [hp]
+    rw [h1, h2]
+    exact hpoly p
+  have hgμ : Integrable ⇑g μ := hcont_intμ g
+  have hgν : Integrable ⇑g ν := hcont_intν g
+  have hboundμ : ‖(∫ x, f x ∂μ) - (∫ x, g x ∂μ)‖ ≤ δ * μ.real Set.univ := by
+    have heq : (∫ x, (f x - g x) ∂μ) = (∫ x, f x ∂μ) - (∫ x, g x ∂μ) :=
+      integral_sub hfμ hgμ
+    have hle : ‖∫ x, (f x - g x) ∂μ‖ ≤ δ * μ.real Set.univ := by
+      apply norm_integral_le_of_norm_le_const
+      filter_upwards [hEμ] with x hx
+      have happ := happrox x hx
+      have hfc : fc x = f x := rfl
+      rw [hfc] at happ
+      rw [norm_sub_rev]
+      exact le_of_lt happ
+    rw [heq] at hle
+    exact hle
+  have hboundν : ‖(∫ x, f x ∂ν) - (∫ x, g x ∂ν)‖ ≤ δ * ν.real Set.univ := by
+    have heq : (∫ x, (f x - g x) ∂ν) = (∫ x, f x ∂ν) - (∫ x, g x ∂ν) :=
+      integral_sub hfν hgν
+    have hle : ‖∫ x, (f x - g x) ∂ν‖ ≤ δ * ν.real Set.univ := by
+      apply norm_integral_le_of_norm_le_const
+      filter_upwards [hEν] with x hx
+      have happ := happrox x hx
+      have hfc : fc x = f x := rfl
+      rw [hfc] at happ
+      rw [norm_sub_rev]
+      exact le_of_lt happ
+    rw [heq] at hle
+    exact hle
+  have htri : ‖(∫ x, f x ∂μ) - (∫ x, f x ∂ν)‖ ≤ δ * K := by
+    have hring : (∫ x, f x ∂μ) - (∫ x, f x ∂ν)
+        = ((∫ x, f x ∂μ) - (∫ x, g x ∂μ)) + ((∫ x, g x ∂μ) - (∫ x, g x ∂ν))
+          + ((∫ x, g x ∂ν) - (∫ x, f x ∂ν)) := by ring
+    have hmid : (∫ x, g x ∂μ) - (∫ x, g x ∂ν) = 0 := by rw [hg_eq, sub_self]
+    have hnorm : ‖(∫ x, f x ∂μ) - (∫ x, f x ∂ν)‖
+        ≤ ‖(∫ x, f x ∂μ) - (∫ x, g x ∂μ)‖ + ‖(∫ x, g x ∂μ) - (∫ x, g x ∂ν)‖
+          + ‖(∫ x, g x ∂ν) - (∫ x, f x ∂ν)‖ := by
+      rw [hring]
+      calc ‖_ + _ + _‖ ≤ ‖_ + _‖ + ‖_‖ := norm_add_le _ _
+        _ ≤ (‖_‖ + ‖_‖) + ‖_‖ := by
+          gcongr
+          exact norm_add_le _ _
+    rw [hmid] at hnorm
+    simp only [norm_zero, add_zero] at hnorm
+    have hrev : ‖(∫ x, g x ∂ν) - (∫ x, f x ∂ν)‖ = ‖(∫ x, f x ∂ν) - (∫ x, g x ∂ν)‖ :=
+      norm_sub_rev _ _
+    rw [hrev] at hnorm
+    calc ‖(∫ x, f x ∂μ) - (∫ x, f x ∂ν)‖
+        ≤ ‖(∫ x, f x ∂μ) - (∫ x, g x ∂μ)‖ + ‖(∫ x, f x ∂ν) - (∫ x, g x ∂ν)‖ := hnorm
+      _ ≤ δ * μ.real Set.univ + δ * ν.real Set.univ := add_le_add hboundμ hboundν
+      _ = δ * K := by rw [hKdef]; ring
+  have hδK : δ * K ≤ ε := by
+    have h1 : K / (K + 1) ≤ 1 := by
+      rw [div_le_one hK1pos]
+      linarith
+    calc δ * K = ε * (K / (K + 1)) := by rw [hδdef]; ring
+      _ ≤ ε * 1 := mul_le_mul_of_nonneg_left h1 (le_of_lt hε)
+      _ = ε := mul_one ε
+  rw [dist_eq_norm]
+  calc ‖(∫ x, f x ∂μ) - (∫ x, f x ∂ν)‖ ≤ δ * K := htri
+    _ ≤ ε := hδK
+
 
 end MeasureTheory
