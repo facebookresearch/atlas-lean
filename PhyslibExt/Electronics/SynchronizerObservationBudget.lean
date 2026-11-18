@@ -22,11 +22,13 @@ import Mathlib.Tactic.NormNum
 ## i. Overview
 
 A family of clock-domain-crossing observations is indexed by a
-finite type. Each observation has a resolution time and a
-settling budget supplied per index; the budget is the observation
-time minus its sampling, propagation and setup margins, and for a
-multi-stage chain the stage times are declared as data rather
-than inferred from a stage count. The supplied settling guarantee
+finite type. Each observation has a resolution time and a settling
+budget, both supplied per index as data. The module does not model
+how a budget arises from clock periods or timing margins, and the
+index ranges over observations rather than synchronizer stages, so
+it is an abstract union-bound adapter: a synchronizer analysis
+supplies the budgets, the settling guarantee and the tail bounds,
+and the results here combine them. The supplied settling guarantee
 states that, once an observation has resolved within its budget,
 its ideal voltage encodes its expected bit in the usual low or
 high output band and its additive noise is below both noise
@@ -44,9 +46,9 @@ extended nonnegative reals, the finite union bound, with no
 independence assumption, bounds the probability of any invalid
 observation by `min (1, sum_i c * exp (-budget_i / tau))`; equal
 budgets give `min (1, N * c * exp (-b / tau))`, where `N` is the
-number of observations. The tail bound is a hypothesis
-throughout, not a consequence of a device model, and no finite
-deterministic resolution deadline is inferred from it.
+number of observations. The tail bound is a hypothesis throughout,
+not a consequence of a device model, and no finite deterministic
+resolution deadline is inferred from it.
 
 ## ii. Key results
 
@@ -172,7 +174,7 @@ lemma not_invalidObservation_of_le {Ω : Type*} [MeasurableSpace Ω]
 /-- **Invalid implies unresolved.** Under the settling model, an
 invalid observation can occur only after its settling budget has
 expired: its resolution time strictly exceeds its budget. -/
-theorem resolutionExceeds_of_invalidObservation {Ω : Type*} [MeasurableSpace Ω]
+lemma resolutionExceeds_of_invalidObservation {Ω : Type*} [MeasurableSpace Ω]
     {ι : Type*} (Vil Vih Vol Voh : ℝ) (hVol : Vol < Vil) (hVilVih : Vil < Vih)
     (hVoh : Vih < Voh) (resolutionTime : ι → Ω → ℝ) (budget : ι → ℝ)
     (idealVoltage : ι → Ω → ℝ) (noise : ι → Ω → ℝ)
@@ -230,7 +232,7 @@ lemma measure_invalidEvent_le_of_tail {Ω : Type*} [MeasurableSpace Ω]
 events and a per-index exponential tail bound, the probability of any
 invalid observation is at most the sum of the tail bounds. No
 independence is assumed. -/
-theorem measure_biUnion_invalidEvent_le_sum {Ω : Type*} [MeasurableSpace Ω]
+lemma measure_biUnion_invalidEvent_le_sum {Ω : Type*} [MeasurableSpace Ω]
     {ι : Type*} [Fintype ι] (μ : Measure Ω) [IsProbabilityMeasure μ]
     (Vil Vih Vol Voh : ℝ) (hVol : Vol < Vil) (hVilVih : Vil < Vih)
     (hVoh : Vih < Voh) (resolutionTime : ι → Ω → ℝ) (budget : ι → ℝ)
@@ -282,7 +284,7 @@ lemma measure_biUnion_invalidEvent_le_min_one_sum {Ω : Type*} [MeasurableSpace 
 `b`, the capped union bound is `min (1, N * c * exp (-b / tau))`, with
 `N` the number of observations and the product taken in the extended
 nonnegative reals. -/
-theorem measure_biUnion_invalidEvent_le_min_one_card_mul {Ω : Type*}
+lemma measure_biUnion_invalidEvent_le_min_one_card_mul {Ω : Type*}
     [MeasurableSpace Ω] {ι : Type*} [Fintype ι] (μ : Measure Ω)
     [IsProbabilityMeasure μ]
     (Vil Vih Vol Voh : ℝ) (hVol : Vol < Vil) (hVilVih : Vil < Vih)
@@ -315,7 +317,7 @@ theorem measure_biUnion_invalidEvent_le_min_one_card_mul {Ω : Type*}
 for any invalid observation, under the settling model and the
 exponential resolution tail. This carries the pointwise
 invalid-implies-unresolved inclusion and needs no independence. -/
-theorem anyInvalid_measure_le_min_one_sum {Ω : Type*} [MeasurableSpace Ω]
+lemma anyInvalid_measure_le_min_one_sum {Ω : Type*} [MeasurableSpace Ω]
     {ι : Type*} [Fintype ι] (μ : Measure Ω) [IsProbabilityMeasure μ]
     (Vil Vih Vol Voh : ℝ) (hVol : Vol < Vil) (hVilVih : Vil < Vih)
     (hVoh : Vih < Voh) (resolutionTime : ι → Ω → ℝ) (budget : ι → ℝ)
