@@ -223,13 +223,26 @@ def lean_facts_for(name: str | None, own: dict | None, index, sorry) -> tuple[st
             return keyword, None if has_sorry else "formalized"
         return keyword, "stated" if has_sorry else "formalized"
     if own and "module" in own and "name" in own:
-        source = wiki.ROOT / Path(*own["module"].split(".")).with_suffix(".lean")
-        if source.is_file():
-            for line in source.read_text().splitlines():
-                match = wiki.V2_DECLARATION.match(line)
-                if match and match.group("name").split(".")[-1] == own["name"]:
-                    return wiki.WANTED.get(match.group("kw"), match.group("kw")), None
+        match = source_declaration(own["module"], own["name"])
+        if match:
+            # Read as generate_wiki reads a declaration the index lacks: a theorem_wanted is stated.
+            keyword = match.group("kw")
+            return wiki.WANTED.get(keyword, keyword), "stated" if keyword == "theorem_wanted" else None
     return None, None
+
+
+def source_declaration(module: str, name: str):
+    """The match of the first declaration in *module*'s source whose last name component is *name*, at any
+    indentation, read with comments and literals blanked out (so text in a docstring or a string never counts),
+    or None."""
+    source = wiki.ROOT / Path(*module.split(".")).with_suffix(".lean")
+    if not source.is_file():
+        return None
+    for line in wiki.code_lines(source.read_text().splitlines()):
+        match = wiki.V2_DECLARATION.match(line)
+        if match and match.group("name").split(".")[-1] == name:
+            return match
+    return None
 
 
 def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[str]]:
@@ -464,11 +477,7 @@ def declared(key: str, index) -> bool:
     if ":" not in key:
         return key in index.declarations
     module, name = key.rsplit(":", 1)
-    source = wiki.ROOT / Path(*module.split(".")).with_suffix(".lean")
-    return source.is_file() and any(
-        (match := wiki.V2_DECLARATION.match(line)) and match.group("name").split(".")[-1] == name
-        for line in source.read_text().splitlines()
-    )
+    return source_declaration(module, name) is not None
 
 
 def deprecated(target) -> bool:
@@ -485,7 +494,7 @@ def deprecated(target) -> bool:
         number = line - 1
     else:
         short = target.names[0].split(".")[-1]
-        found = [number for number, row in enumerate(lines)
+        found = [number for number, row in enumerate(wiki.code_lines(lines))
                  if (match := wiki.V2_DECLARATION.match(row)) and match.group("name").split(".")[-1] == short]
         if len(found) != 1:
             return False

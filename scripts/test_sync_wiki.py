@@ -197,7 +197,7 @@ class LeanFacts(Vault):
             "order.md": ("def", "formalized"),
             "hard.md": ("theorem", "stated"),
             "partial.md": ("def", None),
-            "conjecture.md": ("theorem", None),
+            "conjecture.md": ("theorem", "stated"),
         })
         self.assertEqual(
             lagrange.read_text(),
@@ -247,6 +247,26 @@ class LeanFacts(Vault):
         rows = {sync.subject_path(r).name: r for r in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
         self.assertEqual((rows["unfinished.md"].get("kind"), rows["unfinished.md"].get("status")), ("def", None))
         self.assertEqual((rows["done.md"].get("kind"), rows["done.md"].get("status")), ("def", "formalized"))
+
+    def test_a_page_found_by_module_and_name_reads_code_not_comments(self) -> None:
+        # The page of a declaration the index lacks is found in its module's code: a docstring or a string that
+        # shows a declaration of the same name is not it, and a theorem_wanted is stated, a def_wanted unstated.
+        source = self.tmp / "Ext" / "Groups.lean"
+        source.parent.mkdir(parents=True)
+        source.write_text('/-- An example: `def conjecture : Nat := 0`.\ndef conjecture : Nat := 0\n-/\n'
+                          'def text : String := "\ndef_wanted wish : Nat\n"\n'
+                          "theorem_wanted conjecture : True\ndef_wanted wish : Nat\n")
+        for name in ("conjecture", "wish"):
+            self.page(f"Algebra/{name}.md", f"# {name}\n\nOpen.\n")
+        self.annotate([self.about(f"Algebra/{name}.md", extensions={"org.atlas-wiki": {"module": "Ext.Groups", "name": name}})
+                       for name in ("conjecture", "wish")])
+        sync.apply_lean_facts(SimpleNamespace(declarations={}), {})
+        rows = {sync.subject_path(r).name: r for r in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
+        self.assertEqual({n: (r.get("kind"), r.get("status")) for n, r in rows.items()},
+                         {"conjecture.md": ("theorem", "stated"), "wish.md": ("def", None)})
+        source.write_text('/-- `theorem_wanted gone : True` -/\ndef s : String := "theorem_wanted gone : True"\n')
+        self.assertFalse(sync.declared("Ext.Groups:gone", SimpleNamespace(declarations={})))
+        self.assertFalse(sync.declared("Ext.Groups:conjecture", SimpleNamespace(declarations={})))
 
     def test_a_page_that_loses_its_declaration_loses_its_facts(self) -> None:
         source = self.tmp / "Ext" / "Groups.lean"
@@ -458,6 +478,16 @@ class Declarations(Vault):
                 targets, _ = wiki.load_library("MathlibExt", index, {"subjects": {"Algebra": {}}, "placements": {}})
                 self.assertEqual({t.lean: (t.line, sync.deprecated(t)) for t in targets},
                                  {"A.same": (lines["A.same"], True), "B.same": (lines["B.same"], False)})
+
+    def test_deprecated_without_a_line_reads_code_not_comments(self) -> None:
+        # A target with no line is found by its last name component in the module's code only.
+        source = self.tmp / "Ext" / "Groups.lean"
+        source.parent.mkdir(parents=True, exist_ok=True)
+        source.write_text('/-- Formerly `def lagrange`:\n@[deprecated (since := "2026-01-01")]\ndef lagrange : Nat := 0\n-/\n'
+                          "def lagrange : Nat := 1\n")
+        self.assertFalse(sync.deprecated(SimpleNamespace(module=("Ext", "Groups"), names=["Ext.lagrange"])))
+        source.write_text('/-- Old. -/\n@[deprecated (since := "2026-01-01")]\ndef lagrange : Nat := 1\n')
+        self.assertTrue(sync.deprecated(SimpleNamespace(module=("Ext", "Groups"), names=["Ext.lagrange"])))
 
     def test_a_page_rebound_to_its_moved_declaration_keeps_its_place(self) -> None:
         # Upstream moved a declaration to another module and namespace. Until an editor points the page's annotation at

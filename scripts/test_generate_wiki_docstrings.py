@@ -81,6 +81,27 @@ class DocstringBefore(unittest.TestCase):
                  'def p : String := panic! "{"\ndef b : Nat := 1').splitlines()
         self.assertEqual([m.group("name") for _, m in wiki.declaration_lines(lines)], ["a", "e", "p", "b"])
 
+    def test_interpolation_follows_the_tokens_before_a_string(self) -> None:
+        # Lean interpolates a string after s!, m!, f!, throwError, throwErrorAt <term>, dbg_trace and trace[...],
+        # whatever whitespace or comments come between; every other string, panic!'s included, is ordinary.
+        interpolated = ['s! "{(sorry : Nat)}"', 's!\n  "{(sorry : Nat)}"', 's! /- note -/ "{(sorry : Nat)}"',
+                        's! -- note\n "{(sorry : Nat)}"', 'm!"{(sorry : Nat)}"', 'f!"{(sorry : Nat)}"',
+                        'throwError "x {(sorry : Nat)}"', 'throwErrorAt stx "x {(sorry : Nat)}"',
+                        'throwErrorAt (f x) "x {(sorry : Nat)}"', 'dbg_trace "{(sorry : Nat)}"; 1',
+                        'trace[Meta.debug] "{(sorry : Nat)}"', 's!"{s!"{(sorry : Nat)}"}"']
+        ordinary = ['"{(sorry : Nat)}"', 'panic!"{(sorry : Nat)}"', 'panic! "{(sorry : Nat)}"', 'xs!"{(sorry : Nat)}"',
+                    '-- s!\n "{(sorry : Nat)}"', '"s!" ++ "{(sorry : Nat)}"']
+        for value in interpolated:
+            with self.subTest(value=value):
+                self.assertRegex(wiki.without_comments(f"def a := {value}\n"), r"\bsorry\b")
+        for value in ordinary:
+            with self.subTest(value=value):
+                self.assertNotRegex(wiki.without_comments(f"def a := {value}\n"), r"\bsorry\b")
+        for value in ('panic!"{"', 'panic! "{"', 's! "{("/-" : String)}"', 's!\n  "{("/-" : String)}"'):
+            with self.subTest(value=value):
+                lines = f"def o : String := {value}\n/-- The real value. -/\ndef real : Nat := 1".splitlines()
+                self.assertEqual([m.group("name") for _, m in wiki.declaration_lines(lines)], ["o", "real"])
+
     def test_sorry_in_a_nested_comment_or_a_string_is_no_proof_hole(self) -> None:
         text = '/- /- -/ sorry -/\ntheorem a : True := by exact "sorry" |> fun _ => trivial\n'
         self.assertNotRegex(wiki.without_comments(text), r"\bsorry\b")

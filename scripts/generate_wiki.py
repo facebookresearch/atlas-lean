@@ -245,9 +245,11 @@ _LEXEME_IN_TERM = re.compile(r'/-|--|"|\'|(?<![\w\'!?])r#*"|[{}]')
 _STRING_TAIL = re.compile(r'(?:[^"\\]|\\.)*"', re.S)
 _CHAR = re.compile(r"'(?:\\(?:x[0-9a-fA-F]{2}|u\{[0-9a-fA-F]+\}|.)|[^\\\n'])'")
 _BLOCK = re.compile(r"/-|-/")
-# What makes the string that follows an interpolated one: `s!`, `m!`, `f!` (any `name!`), or a command that
-# takes an interpolated string, such as `throwError`.
-_INTERPOLATING = re.compile(r"(?:!|(?<![\w'])(?:throwError|dbg_trace|trace\[[^\]\n]*\])\s*|(?<![\w'])throwErrorAt\s+\S+\s+)$")
+# The tokens after which a string is interpolated, as Lean's grammar has them: `s!`, `m!` and `f!`, and
+# `throwError`, `throwErrorAt <term>`, `dbg_trace` and `trace[...]`; whitespace and comments may separate them
+# from the string. Other `name!` macros, such as `panic!`, take an ordinary string.
+_INTERPOLATING = re.compile(
+    r"(?<![\w'.!?])(?:[smf]!|throwError|dbg_trace|trace\[[^\]\n]*\]|throwErrorAt\s+(?:[^\s()\"]+|\([^()]*\)))\s*$")
 
 
 def _blank(text: str) -> str:
@@ -265,6 +267,16 @@ def code_only(text: str) -> str:
     """
     out: list[str] = []
     n = len(text)
+
+    def read_so_far(size: int = 400) -> str:
+        # The end of what is read so far, its comments already blank, so the tokens before a string show.
+        pieces, length = [], 0
+        for piece in reversed(out):
+            pieces.append(piece)
+            length += len(piece)
+            if length >= size:
+                break
+        return "".join(reversed(pieces))[-size:]
 
     def code(i: int, in_term: bool) -> int:
         # Code from i: to the end, or, in a term embedded in a string, past the brace that closes it.
@@ -298,8 +310,7 @@ def code_only(text: str) -> str:
                 end = text.find("\n", start)
                 end = n if end < 0 else end
             elif lexeme == '"':
-                line_start = text.rfind("\n", 0, start) + 1
-                if _INTERPOLATING.search(text, line_start, start):
+                if _INTERPOLATING.search(read_so_far()):
                     i = interpolated(start)
                     continue
                 tail = _STRING_TAIL.match(text, start + 1)
@@ -511,8 +522,8 @@ def module_groups(items: list[Target]) -> list[str] | None:
 def declaration_lines(lines: list[str], indexed: frozenset[int] | set[int] = frozenset()):
     """(line number, match) for each declaration line: unindented, indented inside a `mutual` block, or indented
     on a line where the Lean index found a declaration (`indexed` holds 1-based line numbers), as under
-    `open ... in` or in an indented section. Lines are read with their comments blanked out, so text in a
-    comment or docstring never counts, nor opens or closes a `mutual` block."""
+    `open ... in` or in an indented section. Lines are read with their comments and literals blanked out, so
+    text in a comment, docstring or string never counts, nor opens or closes a `mutual` block."""
     in_mutual = False
     for number, line in enumerate(code_lines(lines)):
         stripped = line.strip()
@@ -585,7 +596,9 @@ def load_library(library: str, index, taxonomy: dict, titles: dict | None = None
             keyword, short = match.group("kw"), match.group("name").split(".")[-1]
             found = located.get((relative, number + 1))
             if found is None:
-                declaration, lean, statement, proof = WANTED.get(keyword, keyword), None, False, False
+                # A declaration the index lacks: a theorem_wanted is still stated, as below.
+                declaration, lean = WANTED.get(keyword, keyword), None
+                statement, proof = keyword == "theorem_wanted", False
             elif found.keyword in WANTED:
                 # Stated without a proof. A wanted definition stays unstated,
                 # because Autoform counts a stated definition as defined.
