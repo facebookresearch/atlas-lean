@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.InformationTheory.VectorGaussianKL
 public import MathlibExt.Probability.Distributions.GaussianConditioning
+public import MathlibExt.Probability.Distributions.GaussianMLE
 public import MathlibExt.Probability.Statistics.InformationInequalityIdentification
 public import Mathlib.Probability.Kernel.Composition.IntegralCompProd
 public import Mathlib.Probability.Kernel.Composition.WithDensity
@@ -72,14 +73,6 @@ theorem integrable_quad {α ι : Type*} [MeasurableSpace α] [Fintype ι] {ρ : 
   rw [this]
   refine integrable_finsetSum _ fun i _ => integrable_finsetSum _ fun j _ => ?_
   exact ((hc i).integrable_mul (hc j)).const_mul _
-
-/-- The multivariate Gaussian density is positive for a positive definite covariance. -/
-theorem multivariateGaussianPDFReal_pos {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (m : EuclideanSpace ℝ ι) {S : Matrix ι ι ℝ} (hS : S.PosDef) (x : EuclideanSpace ℝ ι) :
-    0 < MetaMathlibExt.multivariateGaussianPDFReal m S x := by
-  unfold MetaMathlibExt.multivariateGaussianPDFReal
-  exact mul_pos (mul_pos (inv_pos.2 (pow_pos (Real.sqrt_pos.2 (by positivity)) _))
-    (inv_pos.2 (Real.sqrt_pos.2 hS.det_pos))) (Real.exp_pos _)
 
 /-- Measurability of the multivariate Gaussian density in the point. -/
 theorem measurable_multivariateGaussianPDFReal_right {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -234,7 +227,7 @@ theorem compProd_noiseKernel_absolutelyContinuous {ι κ : Type*} [Fintype ι] [
     prod_multivariateGaussian_eq_withDensity q T hT μ]
   exact densityModel_absolutelyContinuous (ν := μ.prod volume) (p := fun f => f)
     (θ₀ := fun p => MetaMathlibExt.multivariateGaussianPDFReal (toEuclideanLin H p.1) R p.2) hg
-    (ae_of_all _ fun p => multivariateGaussianPDFReal_pos q hT p.2)
+    (ae_of_all _ fun p => MetaMathlibExt.multivariateGaussianPDFReal_pos q hT p.2)
 
 /-- The log-likelihood ratio on the product is the fixed-covariance
 Gaussian ratio: the log-determinant term minus the noise quadratic form
@@ -265,12 +258,12 @@ theorem llr_compProd_noiseKernel_ae {ι κ : Type*} [Fintype ι] [DecidableEq ι
   rw [compProd_noiseKernel_eq_withDensity H R hR μ,
     prod_multivariateGaussian_eq_withDensity q T hT μ]
   have h := llr_densityModel_ae_eq_of_ae (ν := μ.prod volume) (p := fun f => f) hf hg
-    (ae_of_all _ fun p => multivariateGaussianPDFReal_pos _ hR p.2)
-    (ae_of_all _ fun p => multivariateGaussianPDFReal_pos q hT p.2)
+    (ae_of_all _ fun p => MetaMathlibExt.multivariateGaussianPDFReal_pos _ hR p.2)
+    (ae_of_all _ fun p => MetaMathlibExt.multivariateGaussianPDFReal_pos q hT p.2)
   simp only [densityModel, logDensity] at h
   filter_upwards [(withDensity_absolutelyContinuous _ _).ae_le h] with p hp
-  rw [hp, ← Real.log_div (multivariateGaussianPDFReal_pos _ hR p.2).ne'
-      (multivariateGaussianPDFReal_pos q hT p.2).ne',
+  rw [hp, ← Real.log_div (MetaMathlibExt.multivariateGaussianPDFReal_pos _ hR p.2).ne'
+      (MetaMathlibExt.multivariateGaussianPDFReal_pos q hT p.2).ne',
     VectorGaussianKL.log_multivariateGaussianPDFReal_div _ _ _ _ hR hT]
 
 /-- The log-likelihood ratio on the product is integrable under the
