@@ -56,8 +56,10 @@ describe; here the queue simply remains at its cleared value.
 namespace FluidDynamics.Traffic.SignalQueue
 
 /-- Deterministic fluid queue over one signal cycle: arrival rate
-`lam`, service rate `mu`, red `R`, green `G`, cycle `C = R + G`.
-Queue grows at rate `lam` during red and drains at rate `mu - lam`
+`lam`, service rate `mu`, red duration `R` (green duration `G` and
+cycle `C = R + G` are theorem data, not parameters of this
+function). Queue grows at rate `lam` during red and drains at rate
+`mu - lam`
 during green until it clears. -/
 noncomputable def queueLen (lam mu R : ℝ) (t : ℝ) : ℝ :=
   if t ≤ R then lam * t
@@ -69,8 +71,8 @@ theorem queueLen_zero {lam mu R : ℝ} (hR : 0 ≤ R) :
   unfold queueLen
   rw [ite_eq_left hR, mul_zero]
 
-/-- The queue clears strictly inside the green phase and is empty at
-the cycle end, under `lam * (R + G) < mu * G` with `0 < lam < mu`. -/
+/-- The queue is empty at the cycle end, under
+`lam * (R + G) ≤ mu * G` with `0 < lam < mu`. -/
 theorem queueLen_cycle_end {lam mu R G : ℝ} (hlam : 0 < lam)
     (hmu : lam < mu) (hR : 0 ≤ R) (hG : 0 ≤ G)
     (hcap : lam * (R + G) ≤ mu * G) :
@@ -123,7 +125,7 @@ theorem queueLen_eq_zero_of_clearance {lam mu R : ℝ} (hlam : 0 < lam)
     apply max_eq_left
     linarith [h2]
 
-/-- Nonnegativity everywhere in time. -/
+/-- Nonnegativity at every nonnegative time. -/
 theorem queueLen_nonneg {lam mu R : ℝ} (hlam : 0 < lam)
     {t : ℝ} (ht0 : 0 ≤ t) :
     0 ≤ queueLen lam mu R t := by
