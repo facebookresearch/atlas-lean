@@ -79,60 +79,17 @@ theorem law_terminationByDepth_eq_law_real_zero {p : ℝ} (hp0 : 0 ≤ p) (hp1 :
   rw [law_terminationByDepth, cgTotal_eq_iterate_pgf_binaryOffspring hp0 hp1 h,
     GaltonWatson.law_binaryOffspring_real_zero hp0 hp1 h]
 
-/-- The depth-`h` event has finite (indeed, at most one) probability. -/
-private theorem law_terminationByDepth_ne_top {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (h : ℕ) :
-    BinaryTreeAddressLaw.law p hp0 hp1 (terminationByDepth h) ≠ ∞ := by
-  have hprob := BinaryTreeAddressLaw.law_isProbabilityMeasure hp0 hp1
-  have hle : BinaryTreeAddressLaw.law p hp0 hp1 (terminationByDepth h) ≤
-      BinaryTreeAddressLaw.law p hp0 hp1 Set.univ :=
-    measure_mono (Set.subset_univ _)
-  rw [@measure_univ _ _ _ hprob] at hle
-  exact ne_top_of_le_ne_top ENNReal.one_ne_top hle
-
-/-- The generation-`h` empty probability is the real value of the depth-`h` mass. -/
-private theorem law_real_zero_eq_toReal {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (h : ℕ) :
-    (GaltonWatson.law (GaltonWatson.binaryOffspring p) h).real {0} =
-      (BinaryTreeAddressLaw.law p hp0 hp1 (terminationByDepth h)).toReal := by
-  rw [law_terminationByDepth_eq_law_real_zero hp0 hp1 h, ENNReal.toReal_ofReal
-    measureReal_nonneg]
-
-/-- The generation empty probabilities increase with `h`. -/
-private theorem monotone_law_real_zero {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
-    Monotone (fun h => (GaltonWatson.law (GaltonWatson.binaryOffspring p) h).real {0}) := by
-  intro i j hij
-  simp only [law_real_zero_eq_toReal hp0 hp1]
-  exact ENNReal.toReal_mono (law_terminationByDepth_ne_top hp0 hp1 j)
-    (measure_mono (monotone_terminationByDepth hij))
-
-/-- The generation empty probabilities converge to their supremum. -/
-private theorem tendsto_law_real_zero {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
-    Tendsto (fun h => (GaltonWatson.law (GaltonWatson.binaryOffspring p) h).real {0}) atTop
-      (𝓝 (⨆ h, (GaltonWatson.law (GaltonWatson.binaryOffspring p) h).real {0})) := by
-  apply tendsto_atTop_ciSup (monotone_law_real_zero hp0 hp1)
-  refine ⟨1, ?_⟩
-  rintro _ ⟨h, rfl⟩
-  have hprob := BinaryTreeAddressLaw.law_isProbabilityMeasure hp0 hp1
-  have hle : BinaryTreeAddressLaw.law p hp0 hp1 (terminationByDepth h) ≤ 1 := by
-    have hle' : BinaryTreeAddressLaw.law p hp0 hp1 (terminationByDepth h) ≤
-        BinaryTreeAddressLaw.law p hp0 hp1 Set.univ :=
-      measure_mono (Set.subset_univ _)
-    rwa [@measure_univ _ _ _ hprob] at hle'
-  calc (GaltonWatson.law (GaltonWatson.binaryOffspring p) h).real {0}
-      = (BinaryTreeAddressLaw.law p hp0 hp1 (terminationByDepth h)).toReal :=
-        law_real_zero_eq_toReal hp0 hp1 h
-    _ ≤ (1 : ℝ≥0∞).toReal := ENNReal.toReal_mono ENNReal.one_ne_top hle
-    _ = 1 := ENNReal.toReal_one
-
 /-- The probability of eventual termination is the extinction probability of the
 Galton-Watson process with binary offspring law. -/
 theorem law_eventualTermination {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
     BinaryTreeAddressLaw.law p hp0 hp1 eventualTermination =
       ENNReal.ofReal (GaltonWatson.extinctionProb (GaltonWatson.binaryOffspring p)) := by
+  haveI := GaltonWatson.binaryOffspring_isProbabilityMeasure hp0 hp1
   have h2 : Tendsto
       (fun h => ENNReal.ofReal ((GaltonWatson.law (GaltonWatson.binaryOffspring p) h).real {0}))
       atTop
-      (𝓝 (ENNReal.ofReal (⨆ h, (GaltonWatson.law (GaltonWatson.binaryOffspring p) h).real {0}))) :=
-    (ENNReal.continuous_ofReal.tendsto _).comp (tendsto_law_real_zero hp0 hp1)
+      (𝓝 (ENNReal.ofReal (GaltonWatson.extinctionProb (GaltonWatson.binaryOffspring p)))) :=
+    (ENNReal.continuous_ofReal.tendsto _).comp (GaltonWatson.tendsto_law_real_zero (GaltonWatson.binaryOffspring p))
   have hfun : (fun h => ENNReal.ofReal ((GaltonWatson.law (GaltonWatson.binaryOffspring p) h).real {0}))
       = (fun h => BinaryTreeAddressLaw.law p hp0 hp1 (terminationByDepth h)) :=
     funext fun h => (law_terminationByDepth_eq_law_real_zero hp0 hp1 h).symm
@@ -161,10 +118,11 @@ theorem tendsto_chiGemanS_law_eventualTermination {p : ℝ} (hp0 : 0 ≤ p) (hp1
   have hfun : (fun h => chiGemanS p (1 - p) (h + 1))
       = (fun h => (GaltonWatson.law (GaltonWatson.binaryOffspring p) h).real {0}) :=
     funext hlink
+  haveI := GaltonWatson.binaryOffspring_isProbabilityMeasure hp0 hp1
   have htail : Tendsto (fun h => chiGemanS p (1 - p) (h + 1)) atTop
       (𝓝 (⨆ h, (GaltonWatson.law (GaltonWatson.binaryOffspring p) h).real {0})) := by
     rw [hfun]
-    exact tendsto_law_real_zero hp0 hp1
+    simpa [GaltonWatson.extinctionProb] using GaltonWatson.tendsto_law_real_zero (GaltonWatson.binaryOffspring p)
   have hfull := (tendsto_add_atTop_iff_nat (f := chiGemanS p (1 - p)) 1).mp htail
   have hL := GaltonWatson.isLeast_extinctionProb_binaryOffspring' hp0 hp1
   have hR : (BinaryTreeAddressLaw.law p hp0 hp1 eventualTermination).toReal =
