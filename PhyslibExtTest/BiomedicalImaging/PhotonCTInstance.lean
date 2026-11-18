@@ -13,14 +13,15 @@ import PhyslibExt.BiomedicalImaging.PhotonCTInstance
 /-! Tests: the nullspace pair gives equal rates. -/
 
 open Matrix
+open scoped NNReal
 
 namespace PhyslibExtTest.BiomedicalImaging.PhotonCTInstance
 
 open PhyslibExt.BiomedicalImaging.PhotonCTInstance
 
-/-- Equal transmitted intensities at unit incident intensity. -/
-example : (1:ℝ) * Real.exp (-(ctRow *ᵥ ![1, 0]) 0) =
-    (1:ℝ) * Real.exp (-(ctRow *ᵥ ![0, 1]) 0) :=
-  ct_equal_rates 1
+/-- Equal photon laws at unit incident intensity. -/
+example : PhyslibExt.BiomedicalImaging.PhotonObservation.photonLaw (fun _ => (1:ℝ≥0)) ctRow ![1, 0] =
+    PhyslibExt.BiomedicalImaging.PhotonObservation.photonLaw (fun _ => (1:ℝ≥0)) ctRow ![0, 1] :=
+  ct_photon_law_pair (fun _ => one_pos)
 
 end PhyslibExtTest.BiomedicalImaging.PhotonCTInstance

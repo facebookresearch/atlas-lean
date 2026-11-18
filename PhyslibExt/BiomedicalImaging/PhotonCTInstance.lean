@@ -11,6 +11,7 @@ module
 public import Mathlib.Data.Matrix.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Analysis.SpecialFunctions.Exp
+public import PhyslibExt.BiomedicalImaging.PhotonObservation.Law
 
 /-!
 # Photon observation on a finite CT design
@@ -37,6 +38,7 @@ admissible nonnegative nullspace pair.
 @[expose] public section
 
 open Matrix
+open scoped NNReal
 
 namespace PhyslibExt.BiomedicalImaging.PhotonCTInstance
 
@@ -63,20 +65,50 @@ lemma ct_nullspace_pair :
   · intro i
     fin_cases i <;> simp
 
-/-- **Equal transmitted rates.** Equal forward line integrals
-give equal monochromatic transmitted intensities from incident
-intensity `I0`. -/
-lemma ct_equal_rates (I0 : ℝ) :
-    I0 * Real.exp (-(ctRow *ᵥ ![1, 0]) 0) =
-      I0 * Real.exp (-(ctRow *ᵥ ![0, 1]) 0) := by
+/-- **Equal transmitted rates.** The pair has the same
+transmitted Poisson rate at nonnegative incident intensities. -/
+lemma ct_equal_rates (I0 : Fin 1 → ℝ≥0) :
+    PhyslibExt.BiomedicalImaging.PhotonObservation.transmittedRate I0 ctRow ![1, 0] (0 : Fin 1) =
+      PhyslibExt.BiomedicalImaging.PhotonObservation.transmittedRate I0 ctRow ![0, 1] (0 : Fin 1) := by
+  unfold PhyslibExt.BiomedicalImaging.PhotonObservation.transmittedRate
   rw [ct_nullspace_pair.1]
+
+/-- **Equal photon laws.** With positive source intensities,
+the pair has the same independent-Poisson photon law. -/
+lemma ct_photon_law_pair {I0 : Fin 1 → ℝ≥0} (hI0 : ∀ j, 0 < I0 j) :
+    PhyslibExt.BiomedicalImaging.PhotonObservation.photonLaw I0 ctRow ![1, 0] =
+      PhyslibExt.BiomedicalImaging.PhotonObservation.photonLaw I0 ctRow ![0, 1] :=
+  (PhyslibExt.BiomedicalImaging.PhotonObservation.photon_law_agree_iff hI0).mpr
+    ct_nullspace_pair.1
+
+/-- **Non-identification on the nonnegative orthant.** The
+photon law for the design `[1, 1]` is not injective on
+nonnegative coefficient vectors. -/
+lemma ct_photon_not_identified (I0 : Fin 1 → ℝ≥0) :
+    ¬ Set.InjOn (fun x => PhyslibExt.BiomedicalImaging.PhotonObservation.photonLaw I0 ctRow x)
+      {x : Fin 2 → ℝ | ∀ i, 0 ≤ x i} := by
+  apply PhyslibExt.BiomedicalImaging.PhotonObservation.photon_not_identify_of_kernel
+    ctRow _ (x := ![1, 0]) (v := ![-1, 1])
+  · intro h
+    have h0 := congrFun h 0
+    simp at h0
+  · ext i
+    fin_cases i
+    simp [ctRow, Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+  · intro i
+    fin_cases i <;> simp
+  · show ∀ i, 0 ≤ (![1, 0] + ![-1, 1] : Fin 2 → ℝ) i
+    intro i
+    fin_cases i <;> simp
 
 /-- **General rate agreement.** Any two coefficient vectors
 with the same finite design measurement have the same
-transmitted intensity at every ray. -/
+transmitted rate at every ray. -/
 lemma ct_rates_of_measurement_eq {m n : ℕ} (A : Matrix (Fin m) (Fin n) ℝ)
-    (x y : Fin n → ℝ) (I0 : Fin m → ℝ) (h : A *ᵥ x = A *ᵥ y) (j : Fin m) :
-    I0 j * Real.exp (-(A *ᵥ x) j) = I0 j * Real.exp (-(A *ᵥ y) j) := by
+    (x y : Fin n → ℝ) (I0 : Fin m → ℝ≥0) (h : A *ᵥ x = A *ᵥ y) (j : Fin m) :
+    PhyslibExt.BiomedicalImaging.PhotonObservation.transmittedRate I0 A x j =
+      PhyslibExt.BiomedicalImaging.PhotonObservation.transmittedRate I0 A y j := by
+  unfold PhyslibExt.BiomedicalImaging.PhotonObservation.transmittedRate
   rw [h]
 
 end PhyslibExt.BiomedicalImaging.PhotonCTInstance
