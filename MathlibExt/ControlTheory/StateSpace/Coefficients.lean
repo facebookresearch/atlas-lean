@@ -67,7 +67,7 @@ noncomputable def ofMatrix {𝕜 : Type*} [NontriviallyNormedField 𝕜] [Comple
 the canonical bases. -/
 def toMatrix {𝕜 : Type*} [NontriviallyNormedField 𝕜]
     {n m p : Type*} [Fintype n] [Fintype m] [Fintype p]
-    [DecidableEq n] [DecidableEq m] [DecidableEq p]
+    [DecidableEq n] [DecidableEq m]
     (S : StateSpaceCoeffs 𝕜 (n → 𝕜) (m → 𝕜) (p → 𝕜)) :
     Matrix n n 𝕜 × Matrix n m 𝕜 × Matrix p n 𝕜 × Matrix p m 𝕜 :=
   (LinearMap.toMatrix' S.A.toLinearMap, LinearMap.toMatrix' S.B.toLinearMap,
@@ -114,7 +114,7 @@ private theorem toMatrix'_mulVecLin {𝕜 : Type*} [NontriviallyNormedField 𝕜
 original matrices. -/
 theorem toMatrix_ofMatrix {𝕜 : Type*} [NontriviallyNormedField 𝕜] [CompleteSpace 𝕜]
     {n m p : Type*} [Fintype n] [Fintype m] [Fintype p]
-    [DecidableEq n] [DecidableEq m] [DecidableEq p]
+    [DecidableEq n] [DecidableEq m]
     (A : Matrix n n 𝕜) (B : Matrix n m 𝕜) (C : Matrix p n 𝕜)
     (D : Matrix p m 𝕜) :
     toMatrix (ofMatrix A B C D) = (A, B, C, D) := by

@@ -41,6 +41,13 @@ example (A : Matrix (Fin 1) (Fin 1) ℝ) (B : Matrix (Fin 1) (Fin 1) ℝ)
 example : StateSpaceCoeffs ℚ ℚ ℚ ℚ :=
   ⟨0, 0, 0, 0⟩
 
+-- Matrix extraction does not require decidable equality on the output
+-- index type.
+example {p : Type*} [Fintype p]
+    (S : StateSpaceCoeffs ℝ (Fin 2 → ℝ) (Fin 1 → ℝ) (p → ℝ)) : True := by
+  have h := StateSpaceCoeffs.toMatrix S
+  trivial
+
 -- Empty state, input, and output index types are allowed for the matrix
 -- adapter.
 example :
