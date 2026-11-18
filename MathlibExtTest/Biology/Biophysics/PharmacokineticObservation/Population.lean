@@ -30,4 +30,10 @@ example : (Measure.pi (fun j : Fin 1 => gaussianReal (0 : ℝ) 0)).map
     Measure.pi (fun j : Fin 1 => (gaussianReal ((0 : Fin 1 → ℝ) j) 0).map Real.exp) :=
   visit_law_fixed_latent 0 0
 
+/-- Zero-variance rate at `muV = 0`, `muCL = 1` is `exp 1`. -/
+example : Real.exp (1 - 0 : ℝ) = Real.exp 1 ∧
+    Real.exp (1 : ℝ) / Real.exp (0 : ℝ) = Real.exp (1 - 0) := by
+  have h := pop_zero_rate (muV := (0:ℝ)) (muCL := (1:ℝ))
+  exact ⟨by norm_num, h.2⟩
+
 end MathlibExtTest.Biology.Biophysics.PharmacokineticObservation.Population

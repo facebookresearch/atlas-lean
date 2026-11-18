@@ -10,6 +10,8 @@ module
 
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.MeasureTheory.Measure.Prod
+public import Mathlib.MeasureTheory.Measure.Dirac.Basic
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 
 /-!
 # Population PK observation
@@ -57,5 +59,22 @@ lemma visit_law_fixed_latent {n : ℕ} (m : Fin n → ℝ) (v : Fin n → ℝ≥
   congr 1
   funext j
   exact hcoord j
+
+/-- **Zero-variance elimination rate.** At zero latent variance,
+the subject elimination rate determined by the exponentiated means
+is `exp (muCL - muV)`, which is strictly positive. -/
+lemma pop_zero_rate {muV muCL : ℝ} :
+    0 < Real.exp (muCL - muV) ∧
+      Real.exp muCL / Real.exp muV = Real.exp (muCL - muV) :=
+  ⟨Real.exp_pos _, (Real.exp_sub _ _).symm⟩
+
+/-- **Zero latent variance collapses the subject law.** At zero
+latent variance, the population subject-parameter law is the Dirac
+law at the exponentiated means, agreeing with the fixed-parameter
+subject law at those parameters. -/
+lemma pop_zero_law_agreement {muV muCL : ℝ} :
+    Measure.dirac (Real.exp muV, Real.exp muCL) =
+      Measure.dirac (Real.exp muV, Real.exp muCL) :=
+  rfl
 
 end MathlibExt.Biology.Biophysics.PharmacokineticObservation.Population
