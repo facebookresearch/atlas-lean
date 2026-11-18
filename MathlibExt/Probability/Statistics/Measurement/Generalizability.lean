@@ -19,6 +19,21 @@ with the stated covariance structure, the absolute error of a person
 mean has variance `(sigmaI2 + sigmae2) / m` and the relative error
 (against the same sampled items) has variance `sigmae2 / m`, where
 `m` is the number of items.
+
+These are the absolute and relative error variances of
+generalizability theory for a crossed person-by-item design with a
+single observation per cell: in the notation of Brennan (2001),
+*Generalizability Theory* (Springer), the relative error variance for
+mean scores over `m = n_i` items is `sigma^2(delta) = sigma^2_e / n_i`
+and the absolute error variance is
+`sigma^2(Delta) = sigma^2_i / n_i + sigma^2_e / n_i`; see also
+Cronbach, Gleser, Nanda, and Rajaratnam (1972), *The Dependability of
+Behavioral Measurements* (Wiley). Here `Delta_p` (resp. `delta_p`) is
+the realized absolute (resp. relative) error of person `p`'s mean: the
+person mean minus the universe-score mean (resp. minus the mean
+including the realized item main effects over the same sampled items),
+so `Var[Delta_p]` and `Var[delta_p]` are the two error variances
+above.
 -/
 
 @[expose] public section
