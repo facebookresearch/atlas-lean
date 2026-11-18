@@ -44,4 +44,12 @@ example :
       MeasureTheory.Measure.dirac (Real.exp 0, Real.exp 1) :=
   pop_zero_law_agreement
 
+/-- Shared intercept cancels in a within-subject difference. -/
+example : ((3:ℝ) + 2 + 1) - (1 + 2 + 4) = (3 + 1) - (1 + 4) :=
+  intercept_cancels_within_subject
+
+/-- Shared intercept appears as the common factor `exp b`. -/
+example : Real.exp (3 + 2 + 1 : ℝ) = Real.exp 2 * Real.exp (3 + 1) :=
+  intercept_exp_factor
+
 end MathlibExtTest.Biology.Biophysics.PharmacokineticObservation.Population

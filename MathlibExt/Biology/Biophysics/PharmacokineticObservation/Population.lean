@@ -82,4 +82,29 @@ lemma pop_zero_law_agreement {muV muCL : ℝ} :
     Measure.prod_dirac, Measure.map_dirac]
   · simp
 
+/-- **Shared random intercept cancels within subject.** Two visit
+log-concentrations of one subject share the random intercept `b`;
+their within-subject difference does not depend on `b`. -/
+theorem intercept_cancels_within_subject {m1 m2 b e1 e2 : ℝ} :
+    (m1 + b + e1) - (m2 + b + e2) = (m1 + e1) - (m2 + e2) := by
+  ring
+
+/-- **A common nonzero offset shifts both visits.** A fixed
+nonzero subject offset `b` changes each visit's log-value: neither
+visit value equals its unshifted fixed part. This is a statement
+about a common deterministic offset, not about statistical
+dependence. -/
+lemma common_offset_present_in_both {m1 m2 b : ℝ} (hb : b ≠ 0) :
+    m1 + b ≠ m1 ∧ m2 + b ≠ m2 := by
+  constructor <;> intro h <;> apply hb <;> linarith
+
+/-- **Exponentiated shared intercept is a common factor.** At the
+concentration scale, a shared log-intercept `b` multiplies each
+visit concentration by `exp b`, for either visit's fixed part and
+error. -/
+lemma intercept_exp_factor {m e b : ℝ} :
+    Real.exp (m + b + e) = Real.exp b * Real.exp (m + e) := by
+  rw [show m + b + e = b + (m + e) by ring, Real.exp_add]
+
+
 end MathlibExt.Biology.Biophysics.PharmacokineticObservation.Population
