@@ -21,6 +21,9 @@ Checked consumers:
   forced circulation `-4πaU sin α = 0`;
 - the Blasius force of a pure far-field field (`e = 0`) at radius `3`
   is the Kutta-Joukowski expression.
+- the signed-lift composite at any contour radius `R > 2a`, with the
+  force hypothesis discharged by the bridge lemma, and its
+  `π / 6` fixture at radius `3`.
 -/
 
 @[expose] public section
@@ -160,5 +163,58 @@ example {U Γ α : ℝ} :
             (U : ℂ) * Complex.exp (-α * Complex.I) -
             (Γ : ℂ) / (2 * Real.pi * Complex.I * z)‖ ≤ K / ‖z‖ ^ 2 :=
   JoukowskiBranch.exists_physicalVelocity_farField one_pos U Γ α
+
+/-- Seam discharge: at any contour radius `R > 2a`, the composite
+signed-lift conclusions hold for the physical velocity with no force
+hypothesis left open: the far-field package supplies the expansion
+hypothesis and the bridge lemma supplies the Blasius force value. -/
+example {a ρ U α R : ℝ} (ha : 0 < a) (hρ : 0 < ρ) (hU : 0 < U)
+    (hR : 2 * a < R) :
+    KuttaJoukowski.signedLift (BlasiusForce.blasiusForce ρ
+        (JoukowskiBranch.physicalVelocity a U
+          (-4 * Real.pi * a * U * Real.sin α) α) R) α =
+        -ρ * U * (-4 * Real.pi * a * U * Real.sin α) ∧
+      KuttaJoukowski.liftCoefficient (KuttaJoukowski.signedLift
+        (BlasiusForce.blasiusForce ρ
+          (JoukowskiBranch.physicalVelocity a U
+            (-4 * Real.pi * a * U * Real.sin α) α) R) α)
+          ρ U (4 * a) =
+        2 * Real.pi * Real.sin α ∧
+      |KuttaJoukowski.liftCoefficient (KuttaJoukowski.signedLift
+        (BlasiusForce.blasiusForce ρ
+          (JoukowskiBranch.physicalVelocity a U
+            (-4 * Real.pi * a * U * Real.sin α) α) R) α)
+          ρ U (4 * a) -
+        2 * Real.pi * α| ≤ Real.pi * |α| ^ 3 / 3 :=
+  KuttaJoukowski.signedLift_liftCoefficient_kutta ha hρ hU
+    (JoukowskiBranch.exists_physicalVelocity_farField ha U
+      (-4 * Real.pi * a * U * Real.sin α) α)
+    (KuttaJoukowski.blasiusForce_physicalVelocity ha hρ hU hR)
+
+/-- The `π / 6` fixture at contour radius `3`, with its force
+hypothesis discharged by the bridge lemma: signed lift `2π` and lift
+coefficient `π`, both positive. -/
+example :
+    KuttaJoukowski.signedLift (BlasiusForce.blasiusForce 1
+        (JoukowskiBranch.physicalVelocity 1 1
+          (-4 * Real.pi * 1 * 1 * Real.sin (Real.pi / 6))
+          (Real.pi / 6)) 3) (Real.pi / 6) = 2 * Real.pi ∧
+      0 < KuttaJoukowski.signedLift (BlasiusForce.blasiusForce 1
+        (JoukowskiBranch.physicalVelocity 1 1
+          (-4 * Real.pi * 1 * 1 * Real.sin (Real.pi / 6))
+          (Real.pi / 6)) 3) (Real.pi / 6) ∧
+      KuttaJoukowski.liftCoefficient (KuttaJoukowski.signedLift
+        (BlasiusForce.blasiusForce 1
+          (JoukowskiBranch.physicalVelocity 1 1
+            (-4 * Real.pi * 1 * 1 * Real.sin (Real.pi / 6))
+            (Real.pi / 6)) 3) (Real.pi / 6)) 1 1 (4 * 1) = Real.pi ∧
+      0 < KuttaJoukowski.liftCoefficient (KuttaJoukowski.signedLift
+        (BlasiusForce.blasiusForce 1
+          (JoukowskiBranch.physicalVelocity 1 1
+            (-4 * Real.pi * 1 * 1 * Real.sin (Real.pi / 6))
+            (Real.pi / 6)) 3) (Real.pi / 6)) 1 1 (4 * 1) :=
+  KuttaJoukowski.fixture_pi_div_six
+    (KuttaJoukowski.blasiusForce_physicalVelocity one_pos one_pos one_pos
+      (by norm_num))
 
 end FluidDynamics.IdealAirfoilModels
