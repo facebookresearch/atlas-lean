@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Intervals
+public import MathlibExt.Analysis.ODE.ContinuumBalances
 public import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic.Ring
 
@@ -50,31 +51,42 @@ count changes by exactly `dt * (F 0 - F n)`: every internal face is
 counted once as an outflow and once as an inflow, so only the two
 external faces survive the telescoping sum. -/
 theorem total_vehicle_change {n : ℕ} (k F : ℕ → ℝ) (dt dx : ℝ)
-    (hdx : dx ≠ 0) :
+    (hdx : 0 < dx) :
     ∑ i ∈ Finset.range n,
         dx * ((k i + dt / dx * (F i - F (i + 1))) - k i)
       = dt * (F 0 - F n) := by
-  have h1 : ∀ i : ℕ,
-      (k i + dt / dx * (F i - F (i + 1))) - k i
-        = dt / dx * (F i - F (i + 1)) := by
+  have hdx' : dx ≠ 0 := ne_of_gt hdx
+  have hterm : ∀ i : ℕ, dx * ((k i + dt / dx * (F i - F (i + 1))) - k i)
+      = dt * (F i - F (i + 1)) := by
     intro i
-    ring
-  have h3 : dx * (dt / dx) = dt := by
-    rw [div_eq_mul_inv]
-    calc dx * (dt * dx⁻¹)
-        = dt * (dx * dx⁻¹) := by ring
-      _ = dt * 1 := by rw [mul_inv_cancel₀ hdx]
-      _ = dt := by ring
-  have h : ∀ i : ℕ,
-      dx * ((k i + dt / dx * (F i - F (i + 1))) - k i)
-        = dt * (F i - F (i + 1)) := by
-    intro i
-    calc dx * ((k i + dt / dx * (F i - F (i + 1))) - k i)
-        = dx * (dt / dx * (F i - F (i + 1))) := by rw [h1]
-      _ = (dx * (dt / dx)) * (F i - F (i + 1)) := by rw [← mul_assoc]
-      _ = dt * (F i - F (i + 1)) := by rw [h3]
+    have key : dx * (dt / dx * (F i - F (i + 1))) = dt * (F i - F (i + 1)) := by
+      rw [div_eq_mul_inv]
+      have hring : dx * (dt * dx⁻¹ * (F i - F (i + 1)))
+          = (dx * dx⁻¹) * (dt * (F i - F (i + 1))) := by ring
+      rw [hring, mul_inv_cancel₀ hdx', one_mul]
+    have hring2 : dx * (k i + dt / dx * (F i - F (i + 1)) - k i)
+        = dx * (dt / dx * (F i - F (i + 1))) := by ring
+    rw [hring2, key]
   induction n with
   | zero => simp
   | succ n ih =>
-    rw [Finset.sum_range_succ, ih, h]
+    rw [Finset.sum_range_succ, ih, hterm]
     ring
+
+/-- The accounting identity in terms of the finite-volume
+`totalDiscreteChange` API: the summed vehicle change is
+`dx * dt` times the total discrete balance of the face fluxes
+(the discrete balance is the per-unit-width boundary rate). -/
+theorem total_vehicle_change_eq_discrete {n : ℕ} (k F : ℕ → ℝ)
+    (dt dx : ℝ) (hdx : 0 < dx) :
+    ∑ i ∈ Finset.range n,
+        dx * ((k i + dt / dx * (F i - F (i + 1))) - k i)
+      = dx * dt * MathlibExt.Analysis.ODE.ContinuumBalances.totalDiscreteChange ⟨dx, hdx⟩
+          (fun j : Fin (n + 1) => F j.val) := by
+  rw [total_vehicle_change k F dt dx hdx, MathlibExt.Analysis.ODE.ContinuumBalances.totalDiscreteChange_eq]
+  have hdx' : dx ≠ 0 := ne_of_gt hdx
+  field_simp
+  have e1 : (Fin.last n).val = n := rfl
+  have e2 : ((0 : Fin (n + 1))).val = 0 := rfl
+  rw [e1, e2]
+  ring
