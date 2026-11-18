@@ -28,9 +28,14 @@ open Mechanics.EulerBernoulli
 /-- Midpoint moment value at the concrete witness. -/
 example : uniformBeamMoment 3 1 4 2 = 6 := by
   have h := (uniformBeamMoment_midpoint_max (w := 3) (EI := 1) (L := 4)
-    (by norm_num) (by norm_num)).1
+    (by norm_num) (by norm_num) (by norm_num)).1
   norm_num at h ⊢
   exact h
+
+/-- The midpoint belongs to the span at the concrete witness. -/
+example : (4 : ℝ) / 2 ∈ Set.Icc 0 4 :=
+  (uniformBeamMoment_midpoint_max (w := 3) (EI := 1) (L := 4)
+    (by norm_num) (by norm_num) (by norm_num)).2.1
 
 /-- End moments and end shears at the concrete witness. -/
 example : uniformBeamMoment 3 1 4 0 = 0

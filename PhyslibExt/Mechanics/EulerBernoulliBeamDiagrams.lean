@@ -247,13 +247,15 @@ theorem uniformBeamShear_deriv {w EI L : ℝ} (hEI : EI ≠ 0) :
 /-- The maximum bending moment on `[0, L]` is `w * L ^ 2 / 8`,
 attained at the midpoint. -/
 theorem uniformBeamMoment_midpoint_max {w EI L : ℝ} (hEI : EI ≠ 0)
-    (hw : 0 ≤ w) :
+    (hw : 0 ≤ w) (hL : 0 ≤ L) :
     uniformBeamMoment w EI L (L / 2) = w * L ^ 2 / 8
+      ∧ L / 2 ∈ Set.Icc 0 L
       ∧ ∀ x ∈ Set.Icc 0 L,
         uniformBeamMoment w EI L x ≤ w * L ^ 2 / 8 := by
-  constructor
+  refine ⟨?_, ?_, ?_⟩
   · rw [uniformBeamMoment_eq hEI]
     ring
+  · exact Set.mem_Icc.mpr ⟨by linarith, by linarith⟩
   · intro x _
     rw [uniformBeamMoment_eq hEI]
     have hsq : 0 ≤ (x - L / 2) ^ 2 := sq_nonneg _
