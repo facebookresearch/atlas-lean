@@ -18,7 +18,9 @@ import PhyslibExt.EarthScience.LayeredDarcy
 Focused checks for `PhyslibExt.EarthScience.LayeredDarcy`: two
 unit-thickness layers with conductivities `1` and `3` have
 effective conductivity `3 / 2` (the harmonic, not arithmetic,
-mean), and a one-layer drop law recovers the flux.
+mean), a one-layer drop law recovers the flux, and two
+boundary examples document where the totalized quotient has
+no physical reading.
 
 These are elaboration and non-vacuity checks, not new results.
 -/
@@ -47,3 +49,12 @@ require at least one positive layer). -/
 example : layeredEffectiveConductivity (n := 0) (fun _ => (1 : ℝ))
     (fun _ => 1) = 0 := by
   norm_num [layeredEffectiveConductivity]
+
+/-- Boundary documentation of the totalization at a
+zero-conductivity layer: the raw quotient evaluates to `2`
+because Lean totalizes `1 / 0` to `0`. This is not a physical
+effective conductivity (an impermeable series layer is
+outside the positive-conductivity domain of the formula). -/
+example : layeredEffectiveConductivity (n := 2) (fun _ => (1 : ℝ))
+    (fun i => if i = 0 then (0 : ℝ) else 1) = 2 := by
+  norm_num [layeredEffectiveConductivity, Finset.sum_range_succ]
