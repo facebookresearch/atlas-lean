@@ -53,15 +53,23 @@ example : airGapPower (1 : ℂ) 1 (3 / 8) = 8 := by
 
 example : convertedPower (1 : ℂ) 1 (3 / 8) = 5 := by
   have h : ‖(1 : ℂ)‖ = (1 : ℝ) := norm_one
-  unfold convertedPower airGapPower
+  unfold convertedPower rotorCopperLoss airGapPower
   rw [h]
   norm_num
 
 example : rotorCopperLoss (1 : ℂ) 1 (3 / 8) = 3 := by
   have h : ‖(1 : ℂ)‖ = (1 : ℝ) := norm_one
-  unfold rotorCopperLoss airGapPower
+  unfold rotorCopperLoss
   rw [h]
   norm_num
+
+/-- Air-gap power at the same values, through the canonical per-phase
+complex power for the voltage across the slip-divided resistance. -/
+example :
+    airGapPower (1 : ℂ) 1 (3 / 8) =
+      3 * (PhyslibExt.Circuits.BalancedThreePhase.complexPower
+        (((1 / (3 / 8) : ℝ) : ℂ) * (1 : ℂ)) (1 : ℂ)).re :=
+  airGapPower_eq_three_mul_re_complexPower (1 : ℂ) 1 (3 / 8)
 
 /-- Converted power at rotor speed, on a motoring-interval example. -/
 example :

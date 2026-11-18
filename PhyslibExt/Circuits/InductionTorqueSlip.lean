@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Complex.Trigonometric
+public import PhyslibExt.Circuits.BalancedThreePhase
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.FunProp
 import Mathlib.Tactic.Positivity
@@ -29,10 +30,14 @@ developed torque, which simplifies, after clearing the slip division,
 to the rational function
 `3 ‖Vth‖² R2 s / (ws ((Rth s + R2)² + (Xeq s)²))` of slip. That rational
 curve is defined at zero slip, where it takes the value zero, and it is
-continuous there. The converted mechanical power is the fraction
-`1 - s` of the air-gap power, equivalently the torque times the rotor
-speed `(1 - s) ws`, and the rotor copper loss is the complementary
-fraction `s` of the air-gap power.
+continuous there. The rotor copper loss is defined independently, as
+the three-phase resistive loss `3 ‖I2‖² R2` in the rotor resistance,
+and the converted mechanical power is the air-gap power remaining
+after that loss. For nonzero slip these definitions give the familiar
+fractions: the converted power is the fraction `1 - s` of the air-gap
+power, equivalently the torque times the rotor speed `(1 - s) ws`, and
+the rotor copper loss is the complementary fraction `s` of the
+air-gap power.
 
 ## ii. Key results
 
@@ -40,6 +45,9 @@ fraction `s` of the air-gap power.
   motoring interval equals the cleared rational torque curve.
 - `torqueCurve_continuousAt_zero`: the rational curve extends
   continuously to zero at zero slip.
+- `airGapPower_eq_three_mul_re_complexPower`: the air-gap power is
+  three times the real part of the canonical per-phase complex power
+  for the voltage across the slip-divided rotor resistance.
 - `convertedPower_eq_torque_mul_rotorSpeed`: the converted power is
   the torque times the rotor speed, and is the `1 - s` fraction of the
   air-gap power.
@@ -70,6 +78,8 @@ fraction `s` of the air-gap power.
 @[expose] public section
 
 namespace PhyslibExt.Circuits.InductionTorqueSlip
+
+open ComplexConjugate
 
 /-! ### A. Rotor current and air-gap power -/
 
@@ -106,6 +116,27 @@ lemma airGapPower_eq (Vth : ℂ) (Rth R2 Xeq s : ℝ) (hs : s ≠ 0) :
       3 * ‖Vth‖ ^ 2 * (R2 / s) / ((Rth + R2 / s) ^ 2 + Xeq ^ 2) := by
   unfold airGapPower
   rw [rotorCurrent_normSq Vth Rth R2 Xeq s hs]
+  ring
+
+/-- Air-gap power through the canonical per-phase complex power: for the
+voltage `((R2 / s : ℝ) : ℂ) * I2` across the slip-divided rotor resistance,
+the canonical complex power
+`PhyslibExt.Circuits.BalancedThreePhase.complexPower` (RMS phasors, passive
+sign convention) has real part `(R2 / s) * ‖I2‖²`, and the three-phase
+air-gap power is three times that real part. -/
+lemma airGapPower_eq_three_mul_re_complexPower (I2 : ℂ) (R2 s : ℝ) :
+    airGapPower I2 R2 s =
+      3 * (PhyslibExt.Circuits.BalancedThreePhase.complexPower
+        (((R2 / s : ℝ) : ℂ) * I2) I2).re := by
+  have h : PhyslibExt.Circuits.BalancedThreePhase.complexPower
+        (((R2 / s : ℝ) : ℂ) * I2) I2 = ((R2 / s * ‖I2‖ ^ 2 : ℝ) : ℂ) := by
+    unfold PhyslibExt.Circuits.BalancedThreePhase.complexPower
+    rw [show ((↑(R2 / s) * I2) * conj I2) = ↑(R2 / s) * (I2 * conj I2) by ring,
+      Complex.mul_conj']
+    push_cast
+    ring
+  unfold airGapPower
+  rw [h, Complex.ofReal_re]
   ring
 
 /-! ### B. Torque curve and zero-slip limit -/
@@ -188,25 +219,37 @@ lemma torque_at_standstill (Vth : ℂ) (Rth R2 Xeq ws : ℝ)
 
 /-! ### C. Converted power, copper loss, and power balance -/
 
-/-- Converted mechanical power at slip `s`: the fraction `1 - s` of the
-air-gap power. -/
-noncomputable def convertedPower (I2 : ℂ) (R2 s : ℝ) : ℝ :=
-  (1 - s) * airGapPower I2 R2 s
-
-/-- Rotor copper loss at slip `s`: the fraction `s` of the air-gap power. -/
+/-- Rotor copper loss: the three-phase resistive loss `3 ‖I2‖² R2` in
+the rotor resistance `R2`, at rotor current `I2`. It is defined from the
+current and the resistance alone; the slip argument is kept so that the
+loss, the air-gap power, and the converted power share one calling
+convention. -/
 noncomputable def rotorCopperLoss (I2 : ℂ) (R2 s : ℝ) : ℝ :=
-  s * airGapPower I2 R2 s
+  3 * ‖I2‖ ^ 2 * R2
+
+/-- Converted mechanical power: the air-gap power remaining after the
+rotor copper loss. It is defined as that difference; its expression as
+the fraction `1 - s` of the air-gap power is a theorem for nonzero
+slip, proved in `convertedPower_eq_torque_mul_rotorSpeed`. -/
+noncomputable def convertedPower (I2 : ℂ) (R2 s : ℝ) : ℝ :=
+  airGapPower I2 R2 s - rotorCopperLoss I2 R2 s
 
 /-- Power split: air-gap power is converted power plus rotor copper loss,
-for any slip at which the air-gap power is formed. -/
+for any slip at which the air-gap power is formed. Expanding all three
+quantities gives the air-gap term `3 ‖I2‖² (R2 / s)` on the left and
+that same term, minus and plus the copper term `3 ‖I2‖² R2`, on the
+right. -/
 lemma airGapPower_eq_converted_add_copper (I2 : ℂ) (R2 s : ℝ) :
     airGapPower I2 R2 s = convertedPower I2 R2 s + rotorCopperLoss I2 R2 s := by
-  unfold convertedPower rotorCopperLoss
+  unfold convertedPower rotorCopperLoss airGapPower
   ring
 
 /-- Converted power is torque times rotor speed `(1 - s) * ws`, for
-positive slip. The first component is field simplification after unfolding
-the definitions; the other two are the defining fractions. -/
+positive slip. The fractional forms are proved from the air-gap power
+formula: with `s ≠ 0` (from `0 < s`), the copper term
+`3 ‖I2‖² R2` is `s` times the air-gap term `3 ‖I2‖² (R2 / s)`, and the
+remaining difference is `1 - s` times that air-gap term. The torque
+form then follows from `developedTorque`, using `ws ≠ 0`. -/
 theorem convertedPower_eq_torque_mul_rotorSpeed (Vth : ℂ) (Rth R2 Xeq ws s : ℝ)
     (hR2 : 0 < R2) (hws : 0 < ws) (hRth : 0 ≤ Rth)
     (hs0 : 0 < s) (hs1 : s ≤ 1) :
@@ -216,9 +259,26 @@ theorem convertedPower_eq_torque_mul_rotorSpeed (Vth : ℂ) (Rth R2 Xeq ws s : �
         (1 - s) * airGapPower (rotorCurrent Vth Rth R2 Xeq s) R2 s ∧
       rotorCopperLoss (rotorCurrent Vth Rth R2 Xeq s) R2 s =
         s * airGapPower (rotorCurrent Vth Rth R2 Xeq s) R2 s := by
+  have hs' : s ≠ 0 := ne_of_gt hs0
   have hws' : ws ≠ 0 := ne_of_gt hws
-  refine ⟨?_, rfl, rfl⟩
-  unfold convertedPower developedTorque
+  have hsr : s * (R2 / s) = R2 := mul_div_cancel₀ R2 hs'
+  have hcop : rotorCopperLoss (rotorCurrent Vth Rth R2 Xeq s) R2 s =
+      s * airGapPower (rotorCurrent Vth Rth R2 Xeq s) R2 s := by
+    unfold rotorCopperLoss airGapPower
+    rw [show s * (3 * ‖rotorCurrent Vth Rth R2 Xeq s‖ ^ 2 * (R2 / s)) =
+        (3 * ‖rotorCurrent Vth Rth R2 Xeq s‖ ^ 2) * (s * (R2 / s)) by ring, hsr]
+  have hconv : convertedPower (rotorCurrent Vth Rth R2 Xeq s) R2 s =
+      (1 - s) * airGapPower (rotorCurrent Vth Rth R2 Xeq s) R2 s := by
+    have hfrac : (1 - s) * (R2 / s) = R2 / s - R2 := by
+      rw [sub_mul, one_mul, mul_div_cancel₀ R2 hs']
+    unfold convertedPower rotorCopperLoss airGapPower
+    rw [show (1 - s) * (3 * ‖rotorCurrent Vth Rth R2 Xeq s‖ ^ 2 * (R2 / s)) =
+        (3 * ‖rotorCurrent Vth Rth R2 Xeq s‖ ^ 2) * ((1 - s) * (R2 / s)) by ring,
+      hfrac]
+    ring
+  refine ⟨?_, hconv, hcop⟩
+  rw [hconv]
+  unfold developedTorque
   field_simp
 
 /-- Headline result: on the motoring interval the torque equals the cleared
