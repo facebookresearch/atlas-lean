@@ -15,17 +15,20 @@ public import Mathlib.MeasureTheory.Integral.Lebesgue.Countable
 
 The expected consequence of a damage kernel averages an
 extended-real loss first over damage states (through the
-kernel) and then over the hazard law; the value may be
-infinite and no finiteness is assumed. For finitely many
-damage states the inner average is the finite sum of kernel
-masses times losses, and the expected consequence is monotone
-under pointwise larger losses.
+kernel) and then over the hazard law. The kernel is Markov
+and the hazard law is a probability measure, so the double
+average is normalized; the value may still be infinite for
+an unbounded loss. For finitely many damage states the
+inner average is the finite sum of kernel masses times
+losses, and the expected consequence is monotone under
+pointwise larger losses.
 
 ## Main results
 
-- `expectedConsequence_fintype`: the finite damage-state
-  decomposition.
-- `expectedConsequence_mono`: monotonicity in the loss.
+- `Reliability.expectedConsequence_fintype`: the finite
+  damage-state decomposition.
+- `Reliability.expectedConsequence_mono`: monotonicity in
+  the loss.
 -/
 
 @[expose] public section
@@ -33,13 +36,19 @@ under pointwise larger losses.
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
+namespace Reliability
+
 /-- Expected consequence of a damage kernel: first average the
 loss over damage states for each hazard outcome, then average
-over the hazard law. The value is extended-real and may be
+over the hazard law. The kernel is Markov and the hazard law
+is a probability measure, so constant loss `1` has expected
+consequence `1`. The value is extended-real and may be
 infinite. -/
 noncomputable def expectedConsequence {α β : Type*}
     [MeasurableSpace α] [MeasurableSpace β]
     (κ : ProbabilityTheory.Kernel α β) (μ : Measure α)
+    [ProbabilityTheory.IsMarkovKernel κ]
+    [MeasureTheory.IsProbabilityMeasure μ]
     (L : β → ℝ≥0∞) : ℝ≥0∞ :=
   ∫⁻ a, ∫⁻ b, L b ∂(κ a) ∂μ
 
@@ -50,6 +59,8 @@ theorem expectedConsequence_fintype {α β : Type*}
     [MeasurableSpace α] [MeasurableSpace β] [Fintype β]
     [MeasurableSingletonClass β]
     (κ : ProbabilityTheory.Kernel α β) (μ : Measure α)
+    [ProbabilityTheory.IsMarkovKernel κ]
+    [MeasureTheory.IsProbabilityMeasure μ]
     (L : β → ℝ≥0∞) :
     expectedConsequence κ μ L
       = ∫⁻ a, ∑ b, (κ a {b}) * L b ∂μ := by
@@ -57,14 +68,24 @@ theorem expectedConsequence_fintype {α β : Type*}
   apply lintegral_congr
   intro a
   rw [lintegral_fintype]
-  exact Finset.sum_congr rfl (fun b _ => mul_comm _ _)
+  apply Finset.sum_congr rfl
+  intro b _
+  exact mul_comm _ _
 
 /-- Expected consequence is monotone under pointwise larger
 nonnegative losses. -/
 theorem expectedConsequence_mono {α β : Type*}
     [MeasurableSpace α] [MeasurableSpace β]
     (κ : ProbabilityTheory.Kernel α β) (μ : Measure α)
+    [ProbabilityTheory.IsMarkovKernel κ]
+    [MeasureTheory.IsProbabilityMeasure μ]
     {L L' : β → ℝ≥0∞} (hL : ∀ b, L b ≤ L' b) :
     expectedConsequence κ μ L ≤ expectedConsequence κ μ L' := by
   unfold expectedConsequence
-  exact lintegral_mono (fun a => lintegral_mono (fun b => hL b))
+  apply lintegral_mono
+  intro a
+  apply lintegral_mono
+  intro b
+  exact hL b
+
+end Reliability
