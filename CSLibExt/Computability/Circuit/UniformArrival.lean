@@ -14,10 +14,10 @@ public import CSLibExt.Computability.Circuit.AnnotatedArrival
 # Exact arrival times under uniform gate delays
 
 `Circuit.outputArrivals_le_add_mul_outputDepths` bounds the arrival time of every designated
-output of a circuit by `a0 + D` times its depth when every delay lies in `[0, D]` and every input
+output of a circuit by `a0 + D * depth` when every delay lies in `[0, D]` and every input
 arrives by `a0 ≥ 0`. This file shows that the bound is attained under uniform delays: if every
 gate has delay `D ≥ 0`, every input arrives at `a0 ≥ 0`, and no gate of the circuit is a
-constant, then every designated output arrives exactly at `a0 + D` times its depth
+constant, then every designated output arrives exactly at `a0 + D * depth`
 (`Circuit.outputArrivals_uniform_of_noConstantGates`). The premise is needed: a constant gate
 arrives at its delay alone while `Line.depth` gives it depth `1`, so a circuit that uses one can
 arrive before the bound when `0 < a0`.
@@ -50,7 +50,7 @@ theorem Program.noConstantGates_of_arity_pos {σ : Signature.{v}} {m : ℕ}
   | _, .gate p line => ⟨Program.noConstantGates_of_arity_pos hσ p, hσ line.op⟩
 
 /-- The fold-max from `0` of the values `a0 + D * f k` over a nonempty index
-type is `a0 + D` times the fold-max of `f`. -/
+type is `a0` plus `D` times the fold-max of `f`. -/
 private theorem foldl_max_add_mul : ∀ {n : ℕ} (f : Fin n → ℕ) (a0 D : ℝ),
     0 ≤ a0 → 0 ≤ D → 0 < n →
     Fin.foldl n (fun t k => max t (a0 + D * (f k : ℝ))) 0
@@ -110,8 +110,8 @@ private theorem wireArrivals_uniform_of_arrivals {σ : Signature.{v}} {m g : ℕ
     exact hall i
 
 /-- For a program without constant gates, uniform delay `D ≥ 0` and every
-input arriving at `a0 ≥ 0`, every gate arrives exactly at `a0 + D` times its
-depth. -/
+input arriving at `a0 ≥ 0`, every gate arrives exactly at `a0` plus `D` times
+its depth. -/
 theorem Program.arrivals_uniform : ∀ {σ : Signature.{v}} {m g : ℕ} (p : Program σ m g)
     (_hp : p.NoConstantGates) (a0 D : ℝ) (_ha0 : 0 ≤ a0) (_hD : 0 ≤ D) (j : Fin g),
     p.arrivals (fun _ => D) (fun _ => a0) j = a0 + D * ((p.depths j : ℕ) : ℝ) := by
@@ -150,7 +150,7 @@ theorem Circuit.exists_outputDepths_eq_depth {σ : Signature.{v}} {m n : ℕ}
 
 /-- For a circuit without constant gates, uniform delay `D ≥ 0` and every
 input arriving at `a0 ≥ 0`, every designated output arrives exactly at
-`a0 + D` times its depth. -/
+`a0` plus `D` times its depth. -/
 theorem Circuit.outputArrivals_uniform_of_noConstantGates {σ : Signature.{v}}
     {inputCount outputCount : ℕ} (c : Circuit σ inputCount outputCount)
     (hc : c.program.NoConstantGates) (a0 D : ℝ) (ha0 : 0 ≤ a0) (hD : 0 ≤ D)
@@ -161,7 +161,7 @@ theorem Circuit.outputArrivals_uniform_of_noConstantGates {σ : Signature.{v}}
 
 /-- With every operation of the signature taking at least one argument,
 uniform delay `D ≥ 0` and every input arriving at `a0 ≥ 0`, every designated
-output arrives exactly at `a0 + D` times its depth. For a signature that
+output arrives exactly at `a0` plus `D` times its depth. For a signature that
 also offers constants, use `Circuit.outputArrivals_uniform_of_noConstantGates`. -/
 theorem Circuit.outputArrivals_uniform {σ : Signature.{v}} {inputCount outputCount : ℕ}
     (hσ : ∀ op, 0 < σ.Arity op) (c : Circuit σ inputCount outputCount)

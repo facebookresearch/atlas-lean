@@ -35,12 +35,15 @@ depths of the existing adders, `2 n + 1` for the `n`-bit ripple-carry adder
 this gives `rippleCarryAdder_setupMet`, `carryLookaheadAdder_setupMet` and
 `carryLookaheadAdder_claLevels_setupMet`.
 
-Under uniform gate delays the certificate is exact for every circuit without
-constant gates (`setupMet_uniform_iff_of_noConstantGates`, its signature-wide
-form `setupMet_uniform_iff`, and the two adder `_uniform_iff` forms): a
-violated certificate is a real setup violation of the model, whether or not
-the adder computes the right sum. A constant gate settles at its delay alone
-while counting one level of depth, so exactness needs the premise. The
+Under uniform gate delays, with every input arriving exactly at `tq`, the
+certificate is exact for every circuit without constant gates
+(`setupMet_uniform_iff_of_noConstantGates`, its signature-wide form
+`setupMet_uniform_iff`, and the two adder `_uniform_iff` forms): a violated
+certificate is a real setup violation of the model, whether or not the adder
+computes the right sum. Both premises are needed. A constant gate settles at
+its delay alone while counting one level of depth. Inputs that only settle by
+`tq`, some strictly earlier, can meet setup below the certificate: if every
+input arrives at `0`, setup holds as soon as `D * depth + ts + u ≤ T`. The
 underlying exact arrival times are generic circuit facts, proved in
 `CSLibExt.Computability.Circuit.UniformArrival` and re-exported here.
 
@@ -55,7 +58,8 @@ of scope.
   `carryLookaheadAdder_claLevels_setupMet`: the certificates for the two
   adders at their width hypotheses.
 - `setupMet_uniform_iff_of_noConstantGates`: exactness under uniform delays
-  for a circuit whose gates all read at least one wire.
+  and every input arriving exactly at `tq`, for a circuit whose gates all read
+  at least one wire.
 - `setupMet_uniform_iff`, `rippleCarryAdder_setupMet_uniform_iff`,
   `carryLookaheadAdder_setupMet_uniform_iff`: the same for a signature
   without constants, and for the two adders.
@@ -173,8 +177,9 @@ export Program (NoConstantGates noConstantGates_of_arity_pos)
 export Circuit (outputArrivals_uniform_of_noConstantGates outputArrivals_uniform)
 
 /-- **The certificate is exact under uniform delays.** For a circuit with at
-least one output and no constant gate, uniform delay `D ≥ 0` and inputs
-settling at `tq ≥ 0`, setup holds iff `tq + D * depth + ts + u ≤ T`. -/
+least one output and no constant gate, uniform delay `D ≥ 0` and every input
+arriving exactly at `tq ≥ 0`, setup holds iff `tq + D * depth + ts + u ≤ T`.
+Inputs that only settle by `tq` can meet setup below the certificate. -/
 lemma setupMet_uniform_iff_of_noConstantGates {σ : Signature.{v}}
     {inputCount outputCount : ℕ} (c : Circuit σ inputCount outputCount)
     (hc : NoConstantGates c.program) (hout : 0 < outputCount) (tq D ts u T : ℝ)
@@ -200,7 +205,7 @@ lemma setupMet_uniform_iff_of_noConstantGates {σ : Signature.{v}}
 
 /-- **The certificate is exact under uniform delays**, for a signature whose
 operations all take an argument. For a circuit with at least one output,
-uniform delay `D ≥ 0` and inputs settling at `tq ≥ 0`, setup holds iff
+uniform delay `D ≥ 0` and every input arriving exactly at `tq ≥ 0`, setup holds iff
 `tq + D * depth + ts + u ≤ T`. For a signature that also offers constants,
 use `setupMet_uniform_iff_of_noConstantGates`. -/
 lemma setupMet_uniform_iff {σ : Signature.{v}} {inputCount outputCount : ℕ}
@@ -211,8 +216,9 @@ lemma setupMet_uniform_iff {σ : Signature.{v}} {inputCount outputCount : ℕ}
   setupMet_uniform_iff_of_noConstantGates c (noConstantGates_of_arity_pos hσ _) hout
     tq D ts u T htq hD
 
-/-- Under uniform delays the ripple-carry setup certificate is exact, so
-`T < tq + D * (2 n + 1) + ts + u` is a setup violation. -/
+/-- Under uniform delays, with every input arriving exactly at `tq`, the
+ripple-carry setup certificate is exact, so `T < tq + D * (2 n + 1) + ts + u`
+is a setup violation. -/
 lemma rippleCarryAdder_setupMet_uniform_iff (n : ℕ) (hn : 1 ≤ n)
     (tq D ts u T : ℝ) (htq : 0 ≤ tq) (hD : 0 ≤ D) :
     SetupMet (rippleCarryAdder n) (fun _ => D) (fun _ => tq) ts u T ↔
@@ -220,8 +226,9 @@ lemma rippleCarryAdder_setupMet_uniform_iff (n : ℕ) (hn : 1 ≤ n)
   have hσ : ∀ op, 0 < arithSignature.Arity op := fun _ => two_pos
   rw [setupMet_uniform_iff hσ _ (Nat.succ_pos n) _ _ _ _ _ htq hD, rippleCarryAdder_depth hn]
 
-/-- Under uniform delays the carry-lookahead setup certificate is exact, so
-`T < tq + D * (2 K + 3) + ts + u` is a setup violation. -/
+/-- Under uniform delays, with every input arriving exactly at `tq`, the
+carry-lookahead setup certificate is exact, so `T < tq + D * (2 K + 3) + ts + u`
+is a setup violation. -/
 lemma carryLookaheadAdder_setupMet_uniform_iff (n K : ℕ) (hK : 1 ≤ K) (hn : 2 ≤ n)
     (tq D ts u T : ℝ) (htq : 0 ≤ tq) (hD : 0 ≤ D) :
     SetupMet (CarryLookahead.carryLookaheadAdder n K) (fun _ => D) (fun _ => tq) ts u T ↔

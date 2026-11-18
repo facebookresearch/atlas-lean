@@ -20,7 +20,9 @@ input arrivals `1/2, 1/4` (so `tq = 1/2`) certify setup on the 1- and 2-bit
 ripple-carry adders and the 2-bit carry-lookahead adders. Under uniform delays
 the 2-bit ripple-carry adder computes `3 + 1 + 0` correctly yet violates setup
 once the period drops below the certificate, and the same holds for the 2-bit,
-1-level carry-lookahead adder. Over the full binary Boolean basis, which also
+1-level carry-lookahead adder. Inputs that settle before `tq` meet setup
+below the certificate, so exactness needs every input to arrive exactly at
+`tq`. Over the full binary Boolean basis, which also
 offers constants, a constant-free circuit is exact under uniform delays, while
 a single constant gate meets setup at a period the certificate rejects.
 -/
@@ -128,6 +130,17 @@ example : ¬ SetupMet (CarryLookahead.carryLookaheadAdder 2 1) (fun _ => 1 / 2)
   rw [carryLookaheadAdder_setupMet_uniform_iff 2 1 le_rfl le_rfl _ _ _ _ _ (by norm_num)
     (by norm_num)]
   norm_num
+
+/-- Inputs that only settle by `tq = 1/4`, here all at `0`, meet setup at
+`T = 53/20` although the certificate `1/4 + 1/2 * 5 + 3/20 = 29/10` exceeds it:
+exactness needs every input to arrive exactly at `tq`. -/
+example : (∀ i : Fin (2 * 2 + 1), (fun _ => (0 : ℝ)) i ≤ 1 / 4) ∧
+    SetupMet (rippleCarryAdder 2) (fun _ => 1 / 2) (fun _ => 0) (1 / 10) (1 / 20) (53 / 20) ∧
+    ¬ (1 / 4 + 1 / 2 * ((2 * 2 + 1 : ℕ) : ℝ) + 1 / 10 + 1 / 20 ≤ 53 / 20) :=
+  ⟨fun _ => by norm_num,
+    (rippleCarryAdder_setupMet_uniform_iff 2 (by norm_num) _ _ _ _ _ (by norm_num)
+      (by norm_num)).mpr (by norm_num),
+    by norm_num⟩
 
 /-! ## Uniform delays over a basis that also offers constants -/
 

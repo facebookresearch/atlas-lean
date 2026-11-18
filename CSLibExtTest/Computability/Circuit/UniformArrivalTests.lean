@@ -13,7 +13,7 @@ public import CSLibExt.Computability.Circuit.Arithmetic.RippleCarry
 import Mathlib.Tactic.NormNum
 
 /-! Tests for exact arrival times under uniform gate delays. With uniform delay `1/2` and inputs
-at `1/4`, the outputs of the 2-bit ripple-carry adder arrive at `1/4 + 1/2` times their depths
+at `1/4`, the outputs of the 2-bit ripple-carry adder arrive at `1/4` plus `1/2` times their depths
 `2` and `5`. Over the full binary Boolean basis, which also offers constants, the signature-wide
 premise fails, yet a two-gate AND chain has no constant gate and its output arrives exactly at
 `1/4 + 1/2 * 2`, attaining the circuit depth. A single constant gate arrives at its delay `1/2`,
