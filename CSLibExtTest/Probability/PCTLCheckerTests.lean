@@ -103,4 +103,17 @@ def negRow : Fin 2 → Fin 2 → ℚ :=
 example : stochastic negRow = false := by
   decide +kernel
 
+/-- The tabulated checker, executed in the kernel on the branch chain
+(values as `Fin 3` states). -/
+example :
+    checkBoundedUntilTab branchDTMC.P {0, 2} {1} 3 0 .eq (1 / 2) = true := by
+  decide +kernel
+
+/-- The tabulated lookup agrees with the reference recursion at every
+state of the branch chain. -/
+example (i : Fin 3) :
+    lookupTab branchDTMC.P {0, 2} {1} 3 i =
+      hitProbC branchDTMC.P {0, 2} {1} 3 i :=
+  lookupTab_eq _ _ _ _ _
+
 end Cslib.Probability.CheckerTests
