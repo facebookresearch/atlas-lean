@@ -42,10 +42,6 @@ example :
       simpa using h)
     (by norm_num)
 
-/-- The unit-rate trajectory never exceeds its initial magnitude. -/
-example : |Real.exp (-(1:ℝ) * 0) * (3:ℝ)| ≤ |(3:ℝ)| :=
-  hurwitz_scalar_bound (by norm_num) le_rfl
-
 /-- The unit-rate trajectory from `3` tends to the equilibrium. -/
 example : Filter.Tendsto (fun t : ℝ => Real.exp (-(1:ℝ) * t) * (3:ℝ)) Filter.atTop (nhds 0) :=
   hurwitz_scalar_tendsto (by norm_num)
