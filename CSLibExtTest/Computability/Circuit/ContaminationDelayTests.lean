@@ -270,30 +270,48 @@ example : HoldMet (s2 x₂) 1 (1/2) :=
 /-! ### Capture: the pre-edge premise is separate -/
 
 /-- **Capture with a single launch.** `g2` has been `false` since long before the edge, so the
-capture certificate gives one value on `[-1, 3/2)`. -/
+capture certificate gives one value on `[-3/2, 3/2)`. -/
 example : CaptureMet (s2 x₁) 1 1 (1/2) :=
   circ.captureMet_of_le_outputEarliests cdelay (fun _ => x₁) (gSig x₁) 1 1 1 (1/2)
     (prog_causal x₁ x₁_settled) launch_stable₁ 0
     (fun t _ ht => (s2_of_lt (by linarith)).trans (s2_of_lt (by norm_num)).symm)
     (cert_zero _ _ _ (by norm_num))
 
-/-- `g2` over repeated launches has settled `2` seconds before the edge. -/
-private theorem s2_x₂_settled : SettledBefore (s2 x₂) 2 := by
+/-- `g2` over repeated launches has settled `5/2` seconds before the edge. -/
+private theorem s2_x₂_settled (δ : ℝ≥0) (hδ : (δ : ℝ) ≤ 5/2) : SettledBefore (s2 x₂) δ := by
   have hx : ∀ r : ℝ, -11 ≤ r → r < 1 → x₂ r = true := fun r h₁ h₂ => by
     rw [x₂, decide_eq_true h₁, decide_eq_false (not_le.mpr h₂)]
     rfl
   intro t h₁ h₂
-  norm_num at h₁
+  have h₁ : -5/2 ≤ t := by linarith
   rw [s2_eq, s2_eq, hx (t - 17/2) (by linarith) (by linarith), hx (t - 1/2) (by linarith)
     (by linarith), hx (0 - 17/2) (by norm_num) (by norm_num),
     hx (0 - 1/2) (by norm_num) (by norm_num)]
 
-/-- **Capture over repeated launches.** With a two-second setup window the capture certificate
-applies. -/
+/-- **Capture over repeated launches.** With setup `2` and uncertainty `1/2` the window opens at
+`-5/2`, exactly where `g2` last changed, and the capture certificate applies. -/
 example : CaptureMet (s2 x₂) 2 1 (1/2) :=
   circ.captureMet_of_le_outputEarliests cdelay (fun _ => x₂) (gSig x₂) 1 2 1 (1/2)
-    (prog_causal x₂ x₂_settled) launch_stable₂ 0 s2_x₂_settled
+    (prog_causal x₂ x₂_settled) launch_stable₂ 0 (s2_x₂_settled _ (by norm_num))
     (cert_zero _ _ _ (by norm_num))
+
+/-- **Uncertainty widens the setup side.** With setup `9/4` and uncertainty `1/2` the window opens
+at `-11/4`, so the change of `g2` at `-5/2` falls inside it, although it is outside `[-9/4, 0]`. -/
+example : ¬ CaptureMet (s2 x₂) (9/4) 1 (1/2) := by
+  intro h
+  have := h (-21/8) (by norm_num) (by rw [WithTop.coe_lt_coe]; norm_num)
+  rw [s2_eq, s2_eq] at this
+  norm_num [x₂] at this
+
+/-- A signal that changes at `-5/4` and is stable afterward: with setup `1` and uncertainty `1/2`
+the change lies in the setup aperture `[-3/2, 0]`, so capture fails, although the signal is
+constant on `[-1, 1/2)`. -/
+example : ¬ CaptureMet (fun t : ℝ => decide (-5/4 ≤ t)) 1 0 (1/2) := fun h => by
+  have := h (-3/2) (by norm_num) (by rw [WithTop.coe_lt_coe]; norm_num)
+  norm_num at this
+
+example : ∀ t : ℝ, -1 ≤ t → t < 1/2 → decide (-5/4 ≤ t) = decide (-5/4 ≤ (0 : ℝ)) :=
+  fun t h _ => decide_eq_decide.mpr ⟨fun _ => by norm_num, fun _ => by linarith⟩
 
 /-- **The setup side can fail while hold passes.** `g2` changes at `-5/2`, inside a
 three-second setup window, so capture fails although hold holds. -/

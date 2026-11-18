@@ -38,7 +38,8 @@ circuit (`Cslib.Circuits.Circuit`) with one real contamination delay per gate, i
   This is the pre-edge (setup) side of a capture, which a setup analysis would supply.
 * `HoldMet s hold u`: a register clocked at time `0` sees its data input `s` unchanged from the
   edge until `hold + u`, the hold time plus the clock uncertainty.
-* `CaptureMet s setup hold u`: `s` holds its value at the edge on all of `[-setup, hold + u)`.
+* `CaptureMet s setup hold u`: `s` holds its value at the edge on all of
+  `[-(setup + u), hold + u)`. The clock uncertainty widens both sides of the capture window.
 
 The durations `δ`, `setup`, `hold`, `u` and the minimum clock-to-Q delay `tqMin` are elapsed
 times, so they are nonnegative reals (`ℝ≥0`); a negative duration cannot be stated.
@@ -53,8 +54,8 @@ times, so they are nonnegative reals (`ℝ≥0`); a negative duration cannot be 
   `hold + u ≤ tqMin + earliest_path` certifies hold at the receiving register, where
   `earliest_path` is the output's earliest change with every input changing at time `0`.
 * `Circuit.captureMet_of_le_outputEarliests`: adding the explicit premise that the receiving
-  register's data input settled `setup` seconds before the edge, the same certificate gives a
-  single value on `[-setup, hold + u)`.
+  register's data input settled `setup + u` seconds before the edge, the same certificate gives
+  a single value on `[-(setup + u), hold + u)`.
 
 The min-delay model is separate from any max-delay (setup) analysis: nothing here uses arrival
 times or depth. The hold certificate constrains only the window after the edge and needs no
@@ -116,11 +117,12 @@ def SettledBefore {U : Type*} (s : ℝ → U) (δ : ℝ≥0) : Prop :=
   ∀ t : ℝ, -(δ : ℝ) ≤ t → t ≤ 0 → s t = s 0
 
 /-- **Capture check at the receiving register.** The register is clocked at time
-`0`; its data input `s` holds its value at the edge from `setup` seconds before
-the edge until the hold time `hold` plus the clock uncertainty `u`, that is on
-`[-setup, hold + u)`. -/
+`0`; its data input `s` holds its value at the edge from the setup time `setup`
+plus the clock uncertainty `u` before the edge until the hold time `hold` plus
+`u` after it, that is on `[-(setup + u), hold + u)`. -/
 def CaptureMet {U : Type*} (s : ℝ → U) (setup hold u : ℝ≥0) : Prop :=
-  ∀ t : ℝ, -(setup : ℝ) ≤ t → (t : WithTop ℝ) < (((hold : ℝ) + u : ℝ) : WithTop ℝ) → s t = s 0
+  ∀ t : ℝ, -((setup : ℝ) + u) ≤ t → (t : WithTop ℝ) < (((hold : ℝ) + u : ℝ) : WithTop ℝ) →
+    s t = s 0
 
 /-! ### Earliest change: min-plus propagation of contamination delays -/
 
@@ -408,8 +410,8 @@ theorem Circuit.holdMet_of_le_outputEarliests {σ : Signature.{v}}
 
 /-- **Capture certificate.** Under the premises of
 `Circuit.holdMet_of_le_outputEarliests`, if the receiving register's data input
-also settled `setup` seconds before the edge, it holds its value at the edge on
-`[-setup, hold + u)`. -/
+also settled `setup + u` seconds before the edge, it holds its value at the edge
+on `[-(setup + u), hold + u)`. -/
 theorem Circuit.captureMet_of_le_outputEarliests {σ : Signature.{v}}
     {inputCount outputCount : Nat} {U : Type*} (c : Circuit σ inputCount outputCount)
     (cdelay : Fin c.size → ℝ)
@@ -418,7 +420,7 @@ theorem Circuit.captureMet_of_le_outputEarliests {σ : Signature.{v}}
     (hcausal : c.program.Causal cdelay inputSignal gateSignal)
     (hlaunch : ∀ i, StableBefore (inputSignal i) ((tqMin : ℝ) : WithTop ℝ))
     (o : Fin outputCount)
-    (hsettled : SettledBefore (Wire.elim inputSignal gateSignal (c.outputs o)) setup)
+    (hsettled : SettledBefore (Wire.elim inputSignal gateSignal (c.outputs o)) (setup + u))
     (hcert : (((hold : ℝ) + u : ℝ) : WithTop ℝ) ≤
       ((tqMin : ℝ) : WithTop ℝ) + c.outputEarliests cdelay (fun _ => 0) o) :
     CaptureMet (Wire.elim inputSignal gateSignal (c.outputs o)) setup hold u := by
@@ -426,7 +428,7 @@ theorem Circuit.captureMet_of_le_outputEarliests {σ : Signature.{v}}
     hcausal hlaunch o hcert
   intro t hlo hhi
   rcases le_or_gt t 0 with ht | ht
-  · exact hsettled t hlo ht
+  · exact hsettled t (by rw [NNReal.coe_add]; exact hlo) ht
   · exact hhold t 0 ht.le le_rfl hhi
       (lt_trans (WithTop.coe_lt_coe.mpr ht) hhi)
 
