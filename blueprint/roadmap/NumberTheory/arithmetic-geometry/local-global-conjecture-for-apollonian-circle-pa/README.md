@@ -22,7 +22,7 @@
 
 ## Related topics
 
-- Apollonian group: the flips
+- [Apollonian group](../../../Geometry/euclidean-geometry/circles-and-conics/apollonian-group/README.md): the flips
   $S_i$ as reflections of the Descartes form, and integrality of Apollonian packings.
-- Apollonian circle packings:
+- [Apollonian circle packings](../../../Geometry/euclidean-geometry/circles-and-conics/apollonian-circle-packings/README.md):
   the circle-level definitions and the Kontorovich–Oh count of circles of bounded curvature.
