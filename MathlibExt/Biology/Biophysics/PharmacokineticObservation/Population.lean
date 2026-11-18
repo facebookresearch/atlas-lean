@@ -68,13 +68,18 @@ lemma pop_zero_rate {muV muCL : ℝ} :
       Real.exp muCL / Real.exp muV = Real.exp (muCL - muV) :=
   ⟨Real.exp_pos _, (Real.exp_sub _ _).symm⟩
 
-/-- **Zero latent variance collapses the subject law.** At zero
-latent variance, the population subject-parameter law is the Dirac
-law at the exponentiated means, agreeing with the fixed-parameter
-subject law at those parameters. -/
+/-- **Zero latent variance collapses the subject law.** The
+population subject-parameter law at zero latent variance, the
+exponential pushforward of the product of the two zero-variance
+Gaussian latent laws, is the Dirac law at the exponentiated
+means: it agrees with the fixed-parameter subject law at
+`V = exp (muV)` and `CL = exp (muCL)`. -/
 lemma pop_zero_law_agreement {muV muCL : ℝ} :
-    Measure.dirac (Real.exp muV, Real.exp muCL) =
-      Measure.dirac (Real.exp muV, Real.exp muCL) :=
-  rfl
+    ((gaussianReal muV 0).prod (gaussianReal muCL 0)).map
+        (fun p : ℝ × ℝ => (Real.exp p.1, Real.exp p.2)) =
+      Measure.dirac (Real.exp muV, Real.exp muCL) := by
+  rw [gaussianReal_zero_var, gaussianReal_zero_var,
+    Measure.prod_dirac, Measure.map_dirac]
+  · simp
 
 end MathlibExt.Biology.Biophysics.PharmacokineticObservation.Population

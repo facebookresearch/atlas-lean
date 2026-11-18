@@ -36,4 +36,12 @@ example : Real.exp (1 - 0 : ℝ) = Real.exp 1 ∧
   have h := pop_zero_rate (muV := (0:ℝ)) (muCL := (1:ℝ))
   exact ⟨by norm_num, h.2⟩
 
+/-- Zero-variance collapse at the means `(0, 1)`. -/
+example :
+    ((ProbabilityTheory.gaussianReal (0:ℝ) 0).prod
+      (ProbabilityTheory.gaussianReal (1:ℝ) 0)).map
+        (fun p : ℝ × ℝ => (Real.exp p.1, Real.exp p.2)) =
+      MeasureTheory.Measure.dirac (Real.exp 0, Real.exp 1) :=
+  pop_zero_law_agreement
+
 end MathlibExtTest.Biology.Biophysics.PharmacokineticObservation.Population
