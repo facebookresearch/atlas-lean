@@ -22,4 +22,11 @@ example (phi : Fin 2 → ℝ → ℝ) (x : Fin 2 → ℝ) :
       ∑ i ∈ Finset.univ, x i * (∫ a, phi i a ∂(0 : MeasureTheory.Measure ℝ)) :=
   ct_design_apply _ _ _ (fun i _ => MeasureTheory.integrable_zero_measure)
 
+/-- Rays indexed separately from the two-dimensional domain. -/
+example (mu : Fin 2 → MeasureTheory.Measure (Fin 2 → ℝ)) (phi : Fin 2 → (Fin 2 → ℝ) → ℝ)
+    (x : Fin 2 → ℝ) (hint : ∀ i ∈ Finset.univ, MeasureTheory.Integrable (phi i) (mu 0)) :
+    (∫ a, (∑ i ∈ Finset.univ, x i * phi i a) ∂(mu 0)) =
+      ∑ i ∈ Finset.univ, x i * (∫ a, phi i a ∂(mu 0)) :=
+  ct_design_entry mu 0 phi x hint
+
 end PhyslibExtTest.BiomedicalImaging.CTFiniteDesign

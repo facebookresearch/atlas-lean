@@ -56,8 +56,8 @@ lemma ct_design_apply {ι α : Type*} [MeasurableSpace α] {s : Finset ι}
 /-- **Design matrix entry agreement.** The `j`-th ray entry of
 the finite design applied to `x` is the sum over basis elements
 of `x i` times the ray transform of `phi i`. -/
-lemma ct_design_entry {ι α : Type*} [MeasurableSpace α] {s : Finset ι}
-    (mu : α → Measure α) (ray : α) (phi : ι → α → ℝ) (x : ι → ℝ)
+lemma ct_design_entry {ι α ρ : Type*} [MeasurableSpace α] {s : Finset ι}
+    (mu : ρ → Measure α) (ray : ρ) (phi : ι → α → ℝ) (x : ι → ℝ)
     (hint : ∀ i ∈ s, Integrable (phi i) (mu ray)) :
     (∫ a, (∑ i ∈ s, x i * phi i a) ∂(mu ray)) =
       ∑ i ∈ s, x i * (∫ a, phi i a ∂(mu ray)) := by
