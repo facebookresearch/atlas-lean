@@ -13,46 +13,57 @@ import MathlibExt.Analysis.ODE.FiniteIntervalSublevel
 open MathlibExt.Analysis.ODE
 
 -- Decreasing example on `[2, 3]`: `V = id`, `γ t = -t`,
--- orbital derivative `-1`. At `t = 3` the conclusion is
--- `-3 ≤ -2`.
+-- orbital derivative `-1`. Antitonicity gives
+-- `(V ∘ γ) 3 ≤ (V ∘ γ) 2`, that is `-3 ≤ -2`.
 example : (-3 : ℝ) ≤ -2 :=
-  finite_interval_mapsTo_sublevel (V := (id : ℝ → ℝ)) (γ := fun t : ℝ => -t)
+  finite_interval_antitoneOn_v_comp (V := (id : ℝ → ℝ)) (γ := fun t : ℝ => -t)
     (f := fun _ _ => (-1 : ℝ)) (a := 2) (b := 3) (by norm_num)
-    continuous_neg.continuousOn
     (continuous_id.comp continuous_neg).continuousOn
     (fun t _ => hasDerivAt_neg t) (fun _ _ => differentiableAt_id)
     (by
       intro t _
       rw [fderiv_id]
       norm_num)
-    3 ⟨by norm_num, le_rfl⟩
+    ⟨le_rfl, by norm_num⟩ ⟨by norm_num, le_rfl⟩ (by norm_num)
 
--- Endpoint `t = a` on the same data: equality, hence `≤`.
-example : (-2 : ℝ) ≤ -2 :=
+-- The sublevel statement: with `c = -2`, the initial bound
+-- `V (γ 2) = -2 ≤ -2` persists; `γ 3 = -3` and
+-- `γ (5 / 2) = -5 / 2` stay in `{x | V x ≤ -2}`.
+example : (fun t : ℝ => -t) 3 ∈ {x : ℝ | id x ≤ -2} :=
   finite_interval_mapsTo_sublevel (V := (id : ℝ → ℝ)) (γ := fun t : ℝ => -t)
     (f := fun _ _ => (-1 : ℝ)) (a := 2) (b := 3) (by norm_num)
-    continuous_neg.continuousOn
     (continuous_id.comp continuous_neg).continuousOn
     (fun t _ => hasDerivAt_neg t) (fun _ _ => differentiableAt_id)
     (by
       intro t _
       rw [fderiv_id]
       norm_num)
-    2 ⟨le_rfl, by norm_num⟩
+    (c := -2) le_rfl
+    ⟨by norm_num, le_rfl⟩
 
--- Singleton interval `a = b = 5`: the interior hypotheses are
--- vacuous and the conclusion is `-5 ≤ -5`.
+example : (fun t : ℝ => -t) (5 / 2) ∈ {x : ℝ | id x ≤ -2} :=
+  finite_interval_mapsTo_sublevel (V := (id : ℝ → ℝ)) (γ := fun t : ℝ => -t)
+    (f := fun _ _ => (-1 : ℝ)) (a := 2) (b := 3) (by norm_num)
+    (continuous_id.comp continuous_neg).continuousOn
+    (fun t _ => hasDerivAt_neg t) (fun _ _ => differentiableAt_id)
+    (by
+      intro t _
+      rw [fderiv_id]
+      norm_num)
+    (c := -2) le_rfl
+    ⟨by norm_num, by norm_num⟩
+
+-- Singleton interval `a = b = 5`: antitonicity is `-5 ≤ -5`.
 example : (-5 : ℝ) ≤ -5 :=
-  finite_interval_mapsTo_sublevel (V := (id : ℝ → ℝ)) (γ := fun t : ℝ => -t)
+  finite_interval_antitoneOn_v_comp (V := (id : ℝ → ℝ)) (γ := fun t : ℝ => -t)
     (f := fun _ _ => (-1 : ℝ)) (a := 5) (b := 5) le_rfl
-    continuous_neg.continuousOn
     (continuous_id.comp continuous_neg).continuousOn
     (fun t _ => hasDerivAt_neg t) (fun _ _ => differentiableAt_id)
     (by
       intro t _
       rw [fderiv_id]
       norm_num)
-    5 ⟨le_rfl, le_rfl⟩
+    ⟨le_rfl, le_rfl⟩ ⟨le_rfl, le_rfl⟩ le_rfl
 
 -- The sign hypothesis cannot be dropped: for `γ t = t`,
 -- `V = id`, `f = 1` on `[0, 1]`, the orbital derivative is
@@ -66,4 +77,5 @@ example :
   simp only [ContinuousLinearMap.id_apply] at h1
   norm_num at h1
 
+#print axioms finite_interval_antitoneOn_v_comp
 #print axioms finite_interval_mapsTo_sublevel
