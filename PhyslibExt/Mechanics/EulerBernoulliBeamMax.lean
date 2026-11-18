@@ -12,6 +12,8 @@ public import PhyslibExt.Mechanics.EulerBernoulliBeam
 /-!
 # Maximum deflection of the uniformly loaded beam
 
+## i. Overview
+
 The simply supported Euler--Bernoulli beam under uniform load `w`
 (`Mechanics.EulerBernoulli.uniformLoadDeflection`, downward
 positive) attains its maximum deflection on `[0, L]` at the
@@ -19,17 +21,28 @@ midpoint, with value `5 * w * L ^ 4 / (384 * EI)`, for `w ≥ 0`,
 `EI > 0`, `L > 0`. At `w = 0` every point is a maximizer; the
 midpoint value formula and the midpoint bound remain valid.
 
-## Main results
+## ii. Key results
 
 - `Mechanics.EulerBernoulli.uniformLoadDeflection_midpoint`:
   the midpoint value.
 - `Mechanics.EulerBernoulli.uniformLoadDeflection_le_midpoint`:
   the midpoint bound on `[0, L]`.
+
+## iii. Table of contents
+
+- A. Midpoint value and maximum
+
+## iv. References
+
+- S. Timoshenko, *Strength of Materials, Part I*, 3rd edition, 1955
+  (maximum deflection of a uniformly loaded simply supported beam).
 -/
 
 @[expose] public section
 
 namespace Mechanics.EulerBernoulli
+
+/-! ## A. Midpoint value and maximum -/
 
 /-- Midpoint value of the uniform-load deflection:
 `5 * w * L ^ 4 / (384 * EI)`. -/
