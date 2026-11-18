@@ -148,14 +148,6 @@ example : Measure.dirac () (⋃ i : Fin 2, invalidEvent 1 2 twoIdeal i) ≤ 2 :=
     (by norm_num) (fun _ => le_refl 0) two_tail
   simpa [twoBudget, Fin.sum_univ_two, one_add_one_eq_two] using h
 
-/-- The capped union bound over `Fin 2` evaluates to `min 1 2 = 1`. -/
-example : Measure.dirac () (⋃ i : Fin 2, invalidEvent 1 2 twoIdeal i) ≤ 1 := by
-  have h := measure_biUnion_invalidEvent_le_min_one_sum (Measure.dirac ()) 1 2 0 3
-    (by norm_num) (by norm_num) (by norm_num) twoTime twoBudget twoIdeal twoNoise
-    twoIdeal twoBit two_settlingGuarantee two_measurableSet 1 1 (by norm_num)
-    (by norm_num) (fun _ => le_refl 0) two_tail
-  simpa [twoBudget] using h
-
 /-- The equal-budget form over `Fin 2`: the cardinality coercion gives
 `min 1 (2 * 1)`. -/
 example :
@@ -174,8 +166,7 @@ example :
         min 1 (∑ i : Fin 2, ENNReal.ofReal (1 * Real.exp (-twoBudget i / 1))) ∧
       Measure.dirac () (⋃ i : Fin 2, invalidEvent 1 2 twoIdeal i) = 1 := by
   refine ⟨anyInvalid_measure_le_min_one_sum (Measure.dirac ()) 1 2 0 3
-    (by norm_num) (by norm_num) (by norm_num) twoTime twoBudget
-    (fun i _ => by fin_cases i <;> norm_num [twoTime]) twoIdeal twoNoise twoIdeal
+    (by norm_num) (by norm_num) (by norm_num) twoTime twoBudget twoIdeal twoNoise twoIdeal
     twoBit two_settlingGuarantee two_measurableSet 1 1 (by norm_num) (by norm_num)
     (fun _ => le_refl 0) two_tail, ?_⟩
   exact Measure.dirac_apply_of_mem (Set.mem_iUnion.mpr ⟨0, two_invalid_zero⟩)

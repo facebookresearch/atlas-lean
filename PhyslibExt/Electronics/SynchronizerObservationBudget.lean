@@ -63,11 +63,10 @@ resolution deadline is inferred from it.
   tail bound transfers from the budget-expiry event to the
   invalid event by monotonicity of measure.
 - `measure_biUnion_invalidEvent_le_sum`,
-  `measure_biUnion_invalidEvent_le_min_one_sum`,
-  `measure_biUnion_invalidEvent_le_min_one_card_mul` and
-  `anyInvalid_measure_le_min_one_sum`: the finite union bound,
-  its cap at the total probability `1`, the equal-budget form,
-  and the headline capped bound.
+  `anyInvalid_measure_le_min_one_sum` and
+  `measure_biUnion_invalidEvent_le_min_one_card_mul`: the finite
+  union bound, the headline bound capped at the total probability
+  `1`, and the equal-budget form.
 
 ## iii. Table of contents
 
@@ -257,8 +256,12 @@ lemma measure_biUnion_invalidEvent_le_sum {Ω : Type*} [MeasurableSpace Ω]
           resolutionTime budget idealVoltage noise observedVoltage expectedBit hmodel c tau
           i (htail i)
 
-/-- The union bound capped at one, the total probability of the space. -/
-lemma measure_biUnion_invalidEvent_le_min_one_sum {Ω : Type*} [MeasurableSpace Ω]
+/-- **Synchronizer observation budget.** The capped finite union bound
+for any invalid observation, under the settling model and the
+exponential resolution tail: the union bound capped at one, the total
+probability of the space. This carries the pointwise
+invalid-implies-unresolved inclusion and needs no independence. -/
+lemma anyInvalid_measure_le_min_one_sum {Ω : Type*} [MeasurableSpace Ω]
     {ι : Type*} [Fintype ι] (μ : Measure Ω) [IsProbabilityMeasure μ]
     (Vil Vih Vol Voh : ℝ) (hVol : Vol < Vil) (hVilVih : Vil < Vih)
     (hVoh : Vih < Voh) (resolutionTime : ι → Ω → ℝ) (budget : ι → ℝ)
@@ -308,33 +311,10 @@ lemma measure_biUnion_invalidEvent_le_min_one_card_mul {Ω : Type*}
       intro i _
       rw [hbudget i]
     · rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-  have hmain := measure_biUnion_invalidEvent_le_min_one_sum μ Vil Vih Vol Voh hVol
+  have hmain := anyInvalid_measure_le_min_one_sum μ Vil Vih Vol Voh hVol
     hVilVih hVoh resolutionTime budget idealVoltage noise observedVoltage expectedBit hmodel
     hmeas c tau hc htau (fun i => by rw [hbudget i]; exact hb) htail
   rwa [hsum] at hmain
-
-/-- **Synchronizer observation budget.** The capped finite union bound
-for any invalid observation, under the settling model and the
-exponential resolution tail. This carries the pointwise
-invalid-implies-unresolved inclusion and needs no independence. -/
-lemma anyInvalid_measure_le_min_one_sum {Ω : Type*} [MeasurableSpace Ω]
-    {ι : Type*} [Fintype ι] (μ : Measure Ω) [IsProbabilityMeasure μ]
-    (Vil Vih Vol Voh : ℝ) (hVol : Vol < Vil) (hVilVih : Vil < Vih)
-    (hVoh : Vih < Voh) (resolutionTime : ι → Ω → ℝ) (budget : ι → ℝ)
-    (hres : ∀ (i : ι) (ω : Ω), 0 ≤ resolutionTime i ω)
-    (idealVoltage : ι → Ω → ℝ) (noise : ι → Ω → ℝ)
-    (observedVoltage : ι → Ω → ℝ) (expectedBit : ι → Ω → Bool)
-    (hmodel : settlingGuarantee Vil Vih Vol Voh resolutionTime budget
-      idealVoltage noise observedVoltage expectedBit)
-    (hmeas : ∀ i : ι, MeasurableSet (invalidEvent Vil Vih observedVoltage i))
-    (c tau : ℝ) (hc : 0 ≤ c) (htau : 0 < tau) (hb : ∀ i : ι, 0 ≤ budget i)
-    (htail : ∀ i : ι, μ (resolutionExceedsEvent resolutionTime budget i) ≤
-      ENNReal.ofReal (c * Real.exp (-budget i / tau))) :
-    μ (⋃ i : ι, invalidEvent Vil Vih observedVoltage i) ≤
-      min 1 (∑ i : ι, ENNReal.ofReal (c * Real.exp (-budget i / tau))) := by
-  exact measure_biUnion_invalidEvent_le_min_one_sum μ Vil Vih Vol Voh hVol hVilVih hVoh
-    resolutionTime budget idealVoltage noise observedVoltage expectedBit hmodel hmeas c tau
-    hc htau hb htail
 
 /-! ## E. Validation cases -/
 
