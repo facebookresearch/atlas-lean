@@ -48,14 +48,14 @@ theorem pk2_peripheral_component (k10 k12 k21 A1 A2 : ℝ) :
   ring
 
 /-- The augmented three-state generator with the eliminated
-sink as a third row. -/
-def pk2AugmentedGenerator (k10 k12 k21 : ℝ) : Matrix (Fin 3) (Fin 2) ℝ :=
-  ![![-(k10 + k12), k21], ![k12, -k21], ![k10, 0]]
+sink as a third state, acting on `[A₁, A₂, sink]`. -/
+def pk2AugmentedGenerator (k10 k12 k21 : ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
+  ![![-(k10 + k12), k21, 0], ![k12, -k21, 0], ![k10, 0, 0]]
 
 /-- **Augmented column budget.** Every column of the augmented
 generator sums to zero: adjoining the sink makes the amount
 dynamics conservative. -/
-theorem pk2_augmented_budget (k10 k12 k21 : ℝ) (j : Fin 2) :
+theorem pk2_augmented_budget (k10 k12 k21 : ℝ) (j : Fin 3) :
     ∑ i, pk2AugmentedGenerator k10 k12 k21 i j = 0 := by
   fin_cases j <;> simp [pk2AugmentedGenerator, Fin.sum_univ_three] <;> ring
 

@@ -35,7 +35,9 @@ example : (pk2Generator 2 0 3 *ᵥ ![4, 0]) 0 = -8 := by
 
 /-- Augmented columns sum to zero at concrete rates. -/
 example : ∑ i, pk2AugmentedGenerator 1 2 3 i 0 = 0 ∧
-    ∑ i, pk2AugmentedGenerator 1 2 3 i 1 = 0 :=
-  ⟨pk2_augmented_budget 1 2 3 0, pk2_augmented_budget 1 2 3 1⟩
+    ∑ i, pk2AugmentedGenerator 1 2 3 i 1 = 0 ∧
+    ∑ i, pk2AugmentedGenerator 1 2 3 i 2 = 0 :=
+  ⟨pk2_augmented_budget 1 2 3 0, pk2_augmented_budget 1 2 3 1,
+    pk2_augmented_budget 1 2 3 2⟩
 
 end MathlibExtTest.Biology.Biophysics.CompartmentKinetics.TwoCompartment.Model
