@@ -98,4 +98,13 @@ lemma common_offset_present_in_both {m1 m2 b : ℝ} (hb : b ≠ 0) :
     m1 + b ≠ m1 ∧ m2 + b ≠ m2 := by
   constructor <;> intro h <;> apply hb <;> linarith
 
+/-- **Exponentiated shared intercept is a common factor.** At the
+concentration scale, a shared log-intercept `b` multiplies each
+visit concentration by `exp b`, for either visit's fixed part and
+error. -/
+lemma intercept_exp_factor {m e b : ℝ} :
+    Real.exp (m + b + e) = Real.exp b * Real.exp (m + e) := by
+  rw [show m + b + e = b + (m + e) by ring, Real.exp_add]
+
+
 end MathlibExt.Biology.Biophysics.PharmacokineticObservation.Population
