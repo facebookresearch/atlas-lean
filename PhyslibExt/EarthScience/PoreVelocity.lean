@@ -60,27 +60,27 @@ noncomputable def courantNumber (q n dt dx : ℝ) : ℝ :=
   |q / n| * dt / dx
 
 /-- A porosity of one quarter multiplies the Darcy speed by four. -/
-theorem poreVelocity_quarter (q : ℝ) :
+lemma poreVelocity_quarter (q : ℝ) :
     poreVelocity q (1 / 4) = 4 * q := by
   unfold poreVelocity
   rw [div_eq_mul_inv, one_div, inv_inv, mul_comm]
 
 /-- The pore velocity recovers the Darcy discharge when multiplied
 back by a nonzero porosity. -/
-theorem poreVelocity_mul {q n : ℝ} (hn : n ≠ 0) :
+lemma poreVelocity_mul {q n : ℝ} (hn : n ≠ 0) :
     poreVelocity q n * n = q := by
   unfold poreVelocity
   exact div_mul_cancel₀ q hn
 
 /-- The Courant number is nonnegative for a nonnegative time step
 and positive cell width. -/
-theorem courantNumber_nonneg {q n dt dx : ℝ} (hdt : 0 ≤ dt)
+lemma courantNumber_nonneg {q n dt dx : ℝ} (hdt : 0 ≤ dt)
     (hdx : 0 < dx) : 0 ≤ courantNumber q n dt dx := by
   unfold courantNumber
   positivity
 
 /-- A zero time step has Courant number zero. -/
-theorem courantNumber_zero_dt (q n dx : ℝ) :
+lemma courantNumber_zero_dt (q n dx : ℝ) :
     courantNumber q n 0 dx = 0 := by
   unfold courantNumber
   simp
