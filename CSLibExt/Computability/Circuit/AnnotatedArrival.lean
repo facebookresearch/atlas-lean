@@ -22,12 +22,16 @@ gate, one with no arguments, therefore arrives at its delay, just as `Line.depth
 `1`. `Program.arrivals`, `Program.wireArrivals` and `Circuit.outputArrivals` give the arrival
 time of every gate, every wire and every designated output.
 
-The main result, `Circuit.outputArrivals_le_add_mul_outputDepths`, bounds arrival times by depth:
-if every delay lies in `[0, D]` and every input arrives by `a0 ≥ 0`, then every designated output
-arrives by `a0 + D * d`, where `d` is its depth `Circuit.outputDepths`. Hence every output
-arrives by `a0 + D * Circuit.depth` (`Circuit.outputArrivals_le_add_mul_depth`). Both premises
-are needed: with negative delays, or with inputs arriving before the origin, an output can arrive
-later than the bound.
+The main result, `Circuit.outputArrivals_le_add_mul_outputDepths_of_nonneg_bound`, bounds
+arrival times by depth: if every delay is at most a bound `D ≥ 0` and every input arrives by
+`a0 ≥ 0`, then every designated output arrives by `a0 + D * d`, where `d` is its depth
+`Circuit.outputDepths`. Hence every output arrives by `a0 + D * Circuit.depth`
+(`Circuit.outputArrivals_le_add_mul_depth_of_nonneg_bound`). Individual delays may be negative.
+Both premises are needed: with a negative bound `D`, or with inputs arriving before the origin,
+an output can arrive later than the bound. The forms without the `_of_nonneg_bound` suffix
+(`Circuit.outputArrivals_le_add_mul_outputDepths`, `Circuit.outputArrivals_le_add_mul_depth`)
+assume instead that every delay lies in `[0, D]`; that gives `0 ≤ D` whenever the circuit has a
+gate, and a circuit without gates meets the bound for every `D`.
 
 Delays are premises of the model, not measured hardware values; hold times, clock-domain
 crossings and glitches are outside it.
@@ -140,13 +144,14 @@ theorem Program.wireArrivals_input {σ : Signature.{v}} {inputCount gateCount : 
     p.wireArrivals delay inputArrival (.input i) = inputArrival i := by
   rfl
 
-/-- Under delays in `[0, D]` and input arrivals at most `a0 ≥ 0`, every wire
-arrives no later than `a0 + D` times its depth. -/
-theorem Program.wireArrivals_le_add_mul_wireDepths {σ : Signature.{v}}
+/-- Under delays at most a bound `D ≥ 0` and input arrivals at most `a0 ≥ 0`,
+every wire arrives no later than `a0 + D` times its depth. The delays themselves
+may be negative. -/
+theorem Program.wireArrivals_le_add_mul_wireDepths_of_nonneg_bound {σ : Signature.{v}}
     {inputCount gateCount : Nat} (p : Program σ inputCount gateCount)
     (delay : Fin gateCount → ℝ) (inputArrival : Fin inputCount → ℝ) (a0 D : ℝ)
     (ha0 : 0 ≤ a0) (hinput : ∀ i, inputArrival i ≤ a0)
-    (hdelay_nonneg : ∀ j, 0 ≤ delay j) (hdelay_le : ∀ j, delay j ≤ D)
+    (hD : 0 ≤ D) (hdelay_le : ∀ j, delay j ≤ D)
     (w : Wire inputCount gateCount) :
     p.wireArrivals delay inputArrival w ≤ a0 + D * (p.wireDepths w : ℝ) := by
   induction p with
@@ -164,15 +169,13 @@ theorem Program.wireArrivals_le_add_mul_wireDepths {σ : Signature.{v}}
         rw [Program.arrivals_gate_last, Program.depths_gate_last]
         set M : Nat := Fin.foldl (σ.Arity line.op)
           (fun d k => max d (p.wireDepths (line.wires k))) 0 with hM
-        have hD : 0 ≤ D := le_trans (hdelay_nonneg (Fin.last _)) (hdelay_le (Fin.last _))
         have hfan : ∀ k : Fin (σ.Arity line.op),
             p.wireArrivals (fun j => delay j.castSucc) inputArrival (line.wires k)
               ≤ a0 + D * (M : ℝ) := by
           intro k
           have hmem : (p.wireDepths (line.wires k) : ℝ) ≤ (M : ℝ) :=
             Nat.cast_le.mpr (le_foldl_max_of_mem (fun k => p.wireDepths (line.wires k)) 0 k)
-          exact le_trans (ih _ (fun j => hdelay_nonneg j.castSucc)
-            (fun j => hdelay_le j.castSucc) (line.wires k))
+          exact le_trans (ih _ (fun j => hdelay_le j.castSucc) (line.wires k))
             (add_le_add_right (mul_le_mul_of_nonneg_left hmem hD) a0)
         have ht : (0 : ℝ) ≤ a0 + D * (M : ℝ) :=
           add_nonneg ha0 (mul_nonneg hD (Nat.cast_nonneg M))
@@ -187,7 +190,51 @@ theorem Program.wireArrivals_le_add_mul_wireDepths {σ : Signature.{v}}
       · change (p.gate line).arrivals delay inputArrival i.castSucc ≤
           a0 + D * ((p.gate line).depths i.castSucc : ℝ)
         rw [Program.arrivals_gate_castSucc, Program.depths_gate_castSucc]
-        exact ih _ (fun k => hdelay_nonneg k.castSucc) (fun k => hdelay_le k.castSucc) (.gate i)
+        exact ih _ (fun k => hdelay_le k.castSucc) (.gate i)
+
+/-- Under delays in `[0, D]` and input arrivals at most `a0 ≥ 0`, every wire
+arrives no later than `a0 + D` times its depth. -/
+theorem Program.wireArrivals_le_add_mul_wireDepths {σ : Signature.{v}}
+    {inputCount gateCount : Nat} (p : Program σ inputCount gateCount)
+    (delay : Fin gateCount → ℝ) (inputArrival : Fin inputCount → ℝ) (a0 D : ℝ)
+    (ha0 : 0 ≤ a0) (hinput : ∀ i, inputArrival i ≤ a0)
+    (hdelay_nonneg : ∀ j, 0 ≤ delay j) (hdelay_le : ∀ j, delay j ≤ D)
+    (w : Wire inputCount gateCount) :
+    p.wireArrivals delay inputArrival w ≤ a0 + D * (p.wireDepths w : ℝ) := by
+  by_cases hD : 0 ≤ D
+  · exact p.wireArrivals_le_add_mul_wireDepths_of_nonneg_bound delay inputArrival a0 D ha0
+      hinput hD hdelay_le w
+  · -- A negative bound `D` admits no gate, so `w` is an input of depth `0`.
+    cases w with
+    | input i => simpa [Program.wireArrivals_input] using hinput i
+    | gate j => exact absurd (le_trans (hdelay_nonneg j) (hdelay_le j)) hD
+
+/-- Under delays at most a bound `D ≥ 0` and input arrivals at most `a0 ≥ 0`,
+every designated output arrives no later than `a0 + D` times its depth. -/
+theorem Circuit.outputArrivals_le_add_mul_outputDepths_of_nonneg_bound {σ : Signature.{v}}
+    {inputCount outputCount : Nat} (c : Circuit σ inputCount outputCount)
+    (delay : Fin c.size → ℝ) (inputArrival : Fin inputCount → ℝ) (a0 D : ℝ)
+    (ha0 : 0 ≤ a0) (hinput : ∀ i, inputArrival i ≤ a0)
+    (hD : 0 ≤ D) (hdelay_le : ∀ j, delay j ≤ D)
+    (o : Fin outputCount) :
+    c.outputArrivals delay inputArrival o ≤ a0 + D * (c.outputDepths o : ℝ) :=
+  Program.wireArrivals_le_add_mul_wireDepths_of_nonneg_bound c.program delay inputArrival
+    a0 D ha0 hinput hD hdelay_le (c.outputs o)
+
+/-- Under the same premises every designated output arrives no later than
+`a0 + D` times the circuit depth. -/
+theorem Circuit.outputArrivals_le_add_mul_depth_of_nonneg_bound {σ : Signature.{v}}
+    {inputCount outputCount : Nat} (c : Circuit σ inputCount outputCount)
+    (delay : Fin c.size → ℝ) (inputArrival : Fin inputCount → ℝ) (a0 D : ℝ)
+    (ha0 : 0 ≤ a0) (hinput : ∀ i, inputArrival i ≤ a0)
+    (hD : 0 ≤ D) (hdelay_le : ∀ j, delay j ≤ D)
+    (o : Fin outputCount) :
+    c.outputArrivals delay inputArrival o ≤ a0 + D * (c.depth : ℝ) :=
+  le_trans
+    (c.outputArrivals_le_add_mul_outputDepths_of_nonneg_bound delay inputArrival a0 D ha0
+      hinput hD hdelay_le o)
+    (add_le_add_right
+      (mul_le_mul_of_nonneg_left (Nat.cast_le.mpr (c.outputDepths_le_depth o)) hD) a0)
 
 /-- Under delays in `[0, D]` and input arrivals at most `a0 ≥ 0`, every
 designated output arrives no later than `a0 + D` times its depth. -/

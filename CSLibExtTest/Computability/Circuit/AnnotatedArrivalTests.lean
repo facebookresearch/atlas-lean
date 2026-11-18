@@ -16,8 +16,9 @@ public import Mathlib.Tactic.NormNum
 /-! Tests for `Circuit.outputArrivals` and its depth bound, on a four-gate circuit over CSLib's
 `fullSignature 2 Bool` (binary gates and constants): a constant gate, a gate that fans out to two
 gates and an output, unequal delays, and an input wired straight to an output. Its arrival times
-are computed, the bounds are instantiated and checked against them, and two boundary probes show
-that the premises `0 ≤ delay` and `0 ≤ a0` cannot be dropped. -/
+are computed, the bounds are instantiated and checked against them, a chain with negative delays
+meets the bound for `D = 0`, and two boundary probes show that the premises `0 ≤ D` and `0 ≤ a0`
+cannot be dropped. -/
 
 namespace Cslib.Circuits
 
@@ -115,7 +116,8 @@ example (o : Fin 4) : circ.outputArrivals delays inputs o ≤ 1/2 + 3/2 * 4 := b
     (by norm_num) (fun _ => le_rfl) delays_nonneg delays_le o
   rwa [circ_depth, Nat.cast_ofNat] at h
 
-/-! Boundary probes: dropping either premise breaks the bound. -/
+/-! Negative delays under a nonnegative bound, then boundary probes: dropping either premise
+breaks the bound. -/
 
 /-- A chain of two AND gates over one input. -/
 private def chainProg : Program σ2 1 2 :=
@@ -127,8 +129,29 @@ private def chain : Circuit σ2 1 1 := ⟨chainProg, fun _ => .gate (Fin.last 1)
 
 private theorem chain_outputDepths : chain.outputDepths 0 = 2 := by decide
 
-/-- Delays `-1` (so `D = -1`) and input time `a0 = 0`: the output arrives at `-1`, later than
-`0 + (-1) * 2`. -/
+/-- With every delay `-1` and inputs at `0`, the output arrives at `-1`. -/
+private theorem chain_outputArrivals_neg :
+    chain.outputArrivals (fun _ => -1) (fun _ => 0) 0 = -1 := by
+  change chainProg.wireArrivals (fun _ => -1) (fun _ => 0) (.gate (Fin.last 1)) = _
+  simp only [chainProg, Program.wireArrivals, Wire.elim, Program.arrivals_gate_last,
+    andLine_arrival]
+  norm_num
+
+/-- Negative delays are allowed when the bound is nonnegative: delays `-1`, `D = 0` and
+`a0 = 0` give `-1 ≤ 0 + 0 * 2`, from the theorem. -/
+example : chain.outputArrivals (fun _ => -1) (fun _ => 0) 0 ≤
+    0 + 0 * (chain.outputDepths 0 : ℝ) :=
+  Circuit.outputArrivals_le_add_mul_outputDepths_of_nonneg_bound chain (fun _ => -1)
+    (fun _ => 0) 0 0 le_rfl (fun _ => le_rfl) le_rfl (fun _ => by norm_num) 0
+
+/-- The same instance against the circuit-depth bound, checked on the computed value. -/
+example : chain.outputArrivals (fun _ => -1) (fun _ => 0) 0 ≤ 0 + 0 * (chain.depth : ℝ) ∧
+    chain.outputArrivals (fun _ => -1) (fun _ => 0) 0 = -1 :=
+  ⟨Circuit.outputArrivals_le_add_mul_depth_of_nonneg_bound chain (fun _ => -1) (fun _ => 0)
+    0 0 le_rfl (fun _ => le_rfl) le_rfl (fun _ => by norm_num) 0, chain_outputArrivals_neg⟩
+
+/-- Delays `-1` with the negative bound `D = -1` and input time `a0 = 0`: the output arrives
+at `-1`, later than `0 + (-1) * 2`, so `0 ≤ D` cannot be dropped. -/
 example : ¬ chain.outputArrivals (fun _ => -1) (fun _ => 0) 0 ≤
     0 + (-1) * (chain.outputDepths 0 : ℝ) := by
   rw [chain_outputDepths]
@@ -149,5 +172,8 @@ example : ¬ chain.outputArrivals (fun _ => 0) (fun _ => -1) 0 ≤
 #print axioms Circuit.outputArrivals_le_add_mul_outputDepths
 #print axioms Circuit.outputArrivals_le_add_mul_depth
 #print axioms Program.wireArrivals_le_add_mul_wireDepths
+#print axioms Circuit.outputArrivals_le_add_mul_outputDepths_of_nonneg_bound
+#print axioms Circuit.outputArrivals_le_add_mul_depth_of_nonneg_bound
+#print axioms Program.wireArrivals_le_add_mul_wireDepths_of_nonneg_bound
 
 end Cslib.Circuits
