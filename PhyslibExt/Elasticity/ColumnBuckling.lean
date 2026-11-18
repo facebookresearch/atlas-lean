@@ -17,6 +17,7 @@ import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
+import MathlibExt.Analysis.Calculus.Wirtinger
 
 /-!
 # Column buckling: explicit eigenpairs and the pinned-pinned threshold
@@ -535,197 +536,6 @@ private theorem aux_cos_sq {L : ℝ} (hL : 0 < L) :
     rw [hdiv, hcos0, zero_div]
   rw [hc1, hc2, add_zero]
 
-private theorem hasDerivAt_tan_aux {x : ℝ} (h : Real.cos x ≠ 0) :
-    HasDerivAt Real.tan (1 / Real.cos x ^ 2) x := by
-  have hdiv := (Real.hasDerivAt_sin x).div (Real.hasDerivAt_cos x) h
-  have efun : Real.sin / Real.cos = Real.tan :=
-    funext fun y => (Real.tan_eq_sin_div_cos y).symm
-  have e1 : Real.cos x * Real.cos x - Real.sin x * (-Real.sin x) = 1 := by
-    have hsc := Real.sin_sq_add_cos_sq x
-    linear_combination hsc
-  have ederiv : (Real.cos x * Real.cos x - Real.sin x * (-Real.sin x)) / Real.cos x ^ 2
-      = 1 / Real.cos x ^ 2 := by
-    rw [e1]
-  rwa [efun, ederiv] at hdiv
-
-private theorem wirtinger_pi_aux {f f' : ℝ → ℝ}
-    (hf : ∀ x ∈ Set.Icc 0 Real.pi, HasDerivAt f (f' x) x)
-    (hf' : ContinuousOn f' (Set.Icc 0 Real.pi))
-    (h0 : f 0 = 0) (hpi : f Real.pi = 0)
-    {c : ℝ} (hc0 : 0 < c) (hc1 : c < 1) :
-    c ^ 2 * (∫ x in (0 : ℝ)..Real.pi, (f x) ^ 2) ≤
-      ∫ x in (0 : ℝ)..Real.pi, (f' x) ^ 2 := by
-  have hπ : 0 < Real.pi := Real.pi_pos
-  have hIcc : Set.uIcc (0 : ℝ) Real.pi = Set.Icc 0 Real.pi := Set.uIcc_of_le hπ.le
-  have hf_cont : ContinuousOn f (Set.Icc 0 Real.pi) := HasDerivAt.continuousOn hf
-  have hmem : ∀ x ∈ Set.Icc (0 : ℝ) Real.pi,
-      c * (x - Real.pi / 2) ∈ Set.Ioo (-(Real.pi / 2)) (Real.pi / 2) := by
-    intro x hx
-    have hx0 : (0 : ℝ) ≤ x := hx.1
-    have hxπ : x ≤ Real.pi := hx.2
-    have hπ2 : (0 : ℝ) < Real.pi / 2 := by linarith
-    have h1 : c * (Real.pi / 2) < 1 * (Real.pi / 2) :=
-      mul_lt_mul_of_pos_right hc1 hπ2
-    rw [one_mul] at h1
-    have hlo : -(Real.pi / 2) ≤ x - Real.pi / 2 := by linarith
-    have hhi : x - Real.pi / 2 ≤ Real.pi / 2 := by linarith
-    have hclo : c * (-(Real.pi / 2)) ≤ c * (x - Real.pi / 2) :=
-      mul_le_mul_of_nonneg_left hlo hc0.le
-    have hchi : c * (x - Real.pi / 2) ≤ c * (Real.pi / 2) :=
-      mul_le_mul_of_nonneg_left hhi hc0.le
-    constructor
-    · have he : c * (-(Real.pi / 2)) = -(c * (Real.pi / 2)) := by ring
-      have hlt : -(Real.pi / 2) < c * (-(Real.pi / 2)) := by
-        rw [he]
-        linarith [h1]
-      linarith [hclo, hlt]
-    · linarith [hchi, h1]
-  have hcos : ∀ x ∈ Set.Icc (0 : ℝ) Real.pi, Real.cos (c * (x - Real.pi / 2)) ≠ 0 :=
-    fun x hx => ne_of_gt (Real.cos_pos_of_mem_Ioo (hmem x hx))
-  have hφ : ∀ x ∈ Set.Icc (0 : ℝ) Real.pi,
-      HasDerivAt (fun y : ℝ => c * (y - Real.pi / 2)) c x := by
-    intro x _
-    simpa using HasDerivAt.const_mul c ((hasDerivAt_id x).sub_const (Real.pi / 2))
-  have htan : ∀ x ∈ Set.Icc (0 : ℝ) Real.pi,
-      HasDerivAt (fun y => Real.tan (c * (y - Real.pi / 2)))
-        ((1 / Real.cos (c * (x - Real.pi / 2)) ^ 2) * c) x := by
-    intro x hx
-    have ho := hasDerivAt_tan_aux (hcos x hx)
-    exact HasDerivAt.comp x ho (hφ x hx)
-  have hRic : ∀ x ∈ Set.Icc (0 : ℝ) Real.pi,
-      (-c) * ((1 / Real.cos (c * (x - Real.pi / 2)) ^ 2) * c)
-        = -c ^ 2 - (-c * Real.tan (c * (x - Real.pi / 2))) ^ 2 := by
-    intro x hx
-    have hcosx := hcos x hx
-    have htsq : Real.tan (c * (x - Real.pi / 2)) ^ 2
-        = Real.sin (c * (x - Real.pi / 2)) ^ 2 / Real.cos (c * (x - Real.pi / 2)) ^ 2 := by
-      rw [Real.tan_eq_sin_div_cos, div_pow]
-    have hid : (1 : ℝ) + Real.tan (c * (x - Real.pi / 2)) ^ 2
-        = 1 / Real.cos (c * (x - Real.pi / 2)) ^ 2 := by
-      rw [htsq]
-      have hcos2 : Real.cos (c * (x - Real.pi / 2)) ^ 2 ≠ 0 := pow_ne_zero 2 hcosx
-      have hsc := Real.sin_sq_add_cos_sq (c * (x - Real.pi / 2))
-      rw [eq_div_iff hcos2, add_mul, one_mul, div_mul_cancel₀ _ hcos2]
-      linarith [hsc]
-    have e1 : (-c) * ((1 / Real.cos (c * (x - Real.pi / 2)) ^ 2) * c)
-        = -(c ^ 2) * (1 / Real.cos (c * (x - Real.pi / 2)) ^ 2) := by ring
-    rw [e1, ← hid]
-    ring
-  have hh : ∀ x ∈ Set.Icc (0 : ℝ) Real.pi,
-      HasDerivAt (fun y => -c * Real.tan (c * (y - Real.pi / 2)))
-        (-c ^ 2 - (-c * Real.tan (c * (x - Real.pi / 2))) ^ 2) x := by
-    intro x hx
-    have h1 := HasDerivAt.const_mul (-c) (htan x hx)
-    have e := hRic x hx
-    rwa [e] at h1
-  have hf2 : ∀ x ∈ Set.Icc (0 : ℝ) Real.pi,
-      HasDerivAt (fun y => (f y) ^ 2) (2 * f x * f' x) x := by
-    intro x hx
-    have hmul := (hf x hx).mul (hf x hx)
-    have e1 : (fun y => (f y) ^ 2) = (fun x => f x * f x) := funext fun y => pow_two (f y)
-    have ed : f' x * f x + f x * f' x = 2 * f x * f' x := by ring
-    rw [e1]
-    rwa [ed] at hmul
-  have hF : ∀ x ∈ Set.uIcc (0 : ℝ) Real.pi,
-      HasDerivAt (fun y => (-c * Real.tan (c * (y - Real.pi / 2))) * (f y) ^ 2)
-        ((-c ^ 2 - (-c * Real.tan (c * (x - Real.pi / 2))) ^ 2) * (f x) ^ 2
-          + (-c * Real.tan (c * (x - Real.pi / 2))) * (2 * f x * f' x)) x := by
-    intro x hx
-    rw [hIcc] at hx
-    exact (hh x hx).mul (hf2 x hx)
-  have hh_cont : ContinuousOn (fun y => -c * Real.tan (c * (y - Real.pi / 2)))
-      (Set.Icc 0 Real.pi) := HasDerivAt.continuousOn hh
-  have hh2cont : ContinuousOn (fun y => (-c * Real.tan (c * (y - Real.pi / 2))) ^ 2)
-      (Set.Icc 0 Real.pi) := by
-    have h := hh_cont.mul hh_cont
-    have e : (fun y => -c * Real.tan (c * (y - Real.pi / 2)))
-        * (fun y => -c * Real.tan (c * (y - Real.pi / 2)))
-        = (fun y => (-c * Real.tan (c * (y - Real.pi / 2))) ^ 2) :=
-      funext fun y => (pow_two _).symm
-    rwa [e] at h
-  have hf2cont : ContinuousOn (fun y => (f y) ^ 2) (Set.Icc 0 Real.pi) := by
-    have h := hf_cont.mul hf_cont
-    have e : f * f = (fun y => (f y) ^ 2) := funext fun y => (pow_two _).symm
-    rwa [e] at h
-  have hf'2cont : ContinuousOn (fun y => (f' y) ^ 2) (Set.Icc 0 Real.pi) := by
-    have h := hf'.mul hf'
-    have e : f' * f' = (fun y => (f' y) ^ 2) := funext fun y => (pow_two _).symm
-    rwa [e] at h
-  have hF'cont : ContinuousOn
-      (fun y => (-c ^ 2 - (-c * Real.tan (c * (y - Real.pi / 2))) ^ 2) * (f y) ^ 2
-        + (-c * Real.tan (c * (y - Real.pi / 2))) * (2 * f y * f' y))
-      (Set.Icc 0 Real.pi) := by
-    have hA : ContinuousOn
-        (fun y => -c ^ 2 - (-c * Real.tan (c * (y - Real.pi / 2))) ^ 2)
-        (Set.Icc 0 Real.pi) :=
-      continuousOn_const.sub hh2cont
-    have h2ff' : ContinuousOn (fun y => 2 * f y * f' y) (Set.Icc 0 Real.pi) :=
-      (continuousOn_const.mul hf_cont).mul hf'
-    have hB : ContinuousOn
-        (fun y => (-c * Real.tan (c * (y - Real.pi / 2))) * (2 * f y * f' y))
-        (Set.Icc 0 Real.pi) :=
-      hh_cont.mul h2ff'
-    exact (hA.mul hf2cont).add hB
-  have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt hF
-    (ContinuousOn.intervalIntegrable (by rw [hIcc]; exact hF'cont))
-  have hbound : (-c * Real.tan (c * (Real.pi - Real.pi / 2))) * (f Real.pi) ^ 2
-      - (-c * Real.tan (c * (0 - Real.pi / 2))) * (f 0) ^ 2 = 0 := by
-    rw [hpi, h0]
-    simp
-  rw [hbound] at hFTC
-  have hexp : ∀ y : ℝ, (f' y) ^ 2
-      - ((-c ^ 2 - (-c * Real.tan (c * (y - Real.pi / 2))) ^ 2) * (f y) ^ 2
-        + (-c * Real.tan (c * (y - Real.pi / 2))) * (2 * f y * f' y))
-      + (-c ^ 2 * (f y) ^ 2)
-      = (f' y - (-c * Real.tan (c * (y - Real.pi / 2))) * f y) ^ 2 := by
-    intro y
-    ring
-  have hnonneg : (0 : ℝ) ≤ ∫ y in (0 : ℝ)..Real.pi,
-      ((f' y) ^ 2
-        - ((-c ^ 2 - (-c * Real.tan (c * (y - Real.pi / 2))) ^ 2) * (f y) ^ 2
-          + (-c * Real.tan (c * (y - Real.pi / 2))) * (2 * f y * f' y))
-        + (-c ^ 2 * (f y) ^ 2)) :=
-    intervalIntegral.integral_nonneg hπ.le (fun u _ => by rw [hexp]; exact sq_nonneg _)
-  have hintB : IntervalIntegrable (fun y => (f' y) ^ 2)
-      MeasureTheory.volume 0 Real.pi :=
-    ContinuousOn.intervalIntegrable (by rw [hIcc]; exact hf'2cont)
-  have hintF : IntervalIntegrable
-      (fun y => (-c ^ 2 - (-c * Real.tan (c * (y - Real.pi / 2))) ^ 2) * (f y) ^ 2
-        + (-c * Real.tan (c * (y - Real.pi / 2))) * (2 * f y * f' y))
-      MeasureTheory.volume 0 Real.pi :=
-    ContinuousOn.intervalIntegrable (by rw [hIcc]; exact hF'cont)
-  have hintC : IntervalIntegrable (fun y => -c ^ 2 * (f y) ^ 2)
-      MeasureTheory.volume 0 Real.pi :=
-    ContinuousOn.intervalIntegrable (by rw [hIcc]; exact continuousOn_const.mul hf2cont)
-  have hintD : IntervalIntegrable (fun y => (f' y) ^ 2
-      - ((-c ^ 2 - (-c * Real.tan (c * (y - Real.pi / 2))) ^ 2) * (f y) ^ 2
-        + (-c * Real.tan (c * (y - Real.pi / 2))) * (2 * f y * f' y)))
-      MeasureTheory.volume 0 Real.pi :=
-    ContinuousOn.intervalIntegrable (by rw [hIcc]; exact hf'2cont.sub hF'cont)
-  have hsplit1 : (∫ y in (0 : ℝ)..Real.pi, (f' y) ^ 2
-      - ((-c ^ 2 - (-c * Real.tan (c * (y - Real.pi / 2))) ^ 2) * (f y) ^ 2
-        + (-c * Real.tan (c * (y - Real.pi / 2))) * (2 * f y * f' y)))
-      = (∫ y in (0 : ℝ)..Real.pi, (f' y) ^ 2)
-        - ∫ y in (0 : ℝ)..Real.pi,
-          ((-c ^ 2 - (-c * Real.tan (c * (y - Real.pi / 2))) ^ 2) * (f y) ^ 2
-            + (-c * Real.tan (c * (y - Real.pi / 2))) * (2 * f y * f' y)) :=
-    intervalIntegral.integral_sub hintB hintF
-  have hsplit2 : (∫ y in (0 : ℝ)..Real.pi,
-        ((f' y) ^ 2
-          - ((-c ^ 2 - (-c * Real.tan (c * (y - Real.pi / 2))) ^ 2) * (f y) ^ 2
-            + (-c * Real.tan (c * (y - Real.pi / 2))) * (2 * f y * f' y))
-          + (-c ^ 2 * (f y) ^ 2)))
-      = (∫ y in (0 : ℝ)..Real.pi, (f' y) ^ 2
-          - ((-c ^ 2 - (-c * Real.tan (c * (y - Real.pi / 2))) ^ 2) * (f y) ^ 2
-            + (-c * Real.tan (c * (y - Real.pi / 2))) * (2 * f y * f' y)))
-        + ∫ y in (0 : ℝ)..Real.pi, (-c ^ 2 * (f y) ^ 2) :=
-    intervalIntegral.integral_add hintD hintC
-  have hcm : (∫ y in (0 : ℝ)..Real.pi, -c ^ 2 * (f y) ^ 2)
-      = -c ^ 2 * ∫ y in (0 : ℝ)..Real.pi, (f y) ^ 2 :=
-    intervalIntegral.integral_const_mul _ _
-  rw [hsplit2, hsplit1, hcm, hFTC] at hnonneg
-  linarith [hnonneg]
-
 /-- Dirichlet Wirtinger inequality on `[0, π]`: for a differentiable
 `f` with derivative function `f'` and `f 0 = f π = 0`,
 `∫ f^2 ≤ ∫ (f')^2`. -/
@@ -734,37 +544,9 @@ theorem wirtinger_pi {f f' : ℝ → ℝ}
     (hf' : ContinuousOn f' (Set.Icc 0 Real.pi))
     (h0 : f 0 = 0) (hpi : f Real.pi = 0) :
     (∫ x in (0 : ℝ)..Real.pi, (f x) ^ 2) ≤
-      ∫ x in (0 : ℝ)..Real.pi, (f' x) ^ 2 := by
-  have hπ : 0 < Real.pi := Real.pi_pos
-  have hB : (0 : ℝ) ≤ ∫ x in (0 : ℝ)..Real.pi, (f' x) ^ 2 :=
-    intervalIntegral.integral_nonneg hπ.le (fun u _ => sq_nonneg _)
-  by_contra hcon
-  have hlt : (∫ x in (0 : ℝ)..Real.pi, (f' x) ^ 2)
-      < ∫ x in (0 : ℝ)..Real.pi, (f x) ^ 2 := not_le.mp hcon
-  have hApos : (0 : ℝ) < ∫ x in (0 : ℝ)..Real.pi, (f x) ^ 2 :=
-    lt_of_le_of_lt hB hlt
-  have hAne : (∫ x in (0 : ℝ)..Real.pi, (f x) ^ 2) ≠ 0 := ne_of_gt hApos
-  set A : ℝ := ∫ x in (0 : ℝ)..Real.pi, (f x) ^ 2 with hA
-  set B : ℝ := ∫ x in (0 : ℝ)..Real.pi, (f' x) ^ 2 with hBdef
-  have h2A : (0 : ℝ) < 2 * A := by linarith [hApos]
-  have hAB : (0 : ℝ) < A + B := by linarith [hApos, hB]
-  have hc0 : (0 : ℝ) < (A + B) / (2 * A) := div_pos hAB h2A
-  have hc1 : (A + B) / (2 * A) < 1 := by
-    rw [div_lt_one h2A]
-    linarith [hlt]
-  have key := wirtinger_pi_aux hf hf' h0 hpi hc0 hc1
-  rw [← hA, ← hBdef] at key
-  have hAne' : A ≠ 0 := by rw [hA]; exact hAne
-  have hsq : ((A + B) / (2 * A)) ^ 2 * A - B = (A - B) ^ 2 / (4 * A) := by
-    field_simp
-    ring
-  have hpos : (0 : ℝ) < (A - B) ^ 2 / (4 * A) := by
-    apply div_pos _ (by linarith [hApos])
-    apply sq_pos_of_ne_zero
-    rw [sub_ne_zero]
-    exact ne_of_gt hlt
-  linarith [key, hsq, hpos]
-
+      ∫ x in (0 : ℝ)..Real.pi, (f' x) ^ 2 :=
+  MetaMathlibExt.wirtinger_inequality f f'
+    (fun x hx => (hf x hx).hasDerivWithinAt) hf' h0 hpi
 /-- Scaled Dirichlet Wirtinger inequality on `[0, L]`: for `L > 0`
 and `w 0 = w L = 0`,
 `∫ w^2 ≤ (L / π)^2 * ∫ (w')^2`. -/
