@@ -23,7 +23,15 @@ example {f g : ℝ → ℝ} (h : ∀ n : ℕ, f (n * (1:ℝ)) = g (n * (1:ℝ)))
 
 /-- Distinct signals with equal samples are not identified. -/
 example {f g : ℝ → ℝ} (h : ∀ n : ℕ, f (n * (1:ℝ)) = g (n * (1:ℝ)))
-    (hd : ∃ t : ℝ, f t ≠ g t) : f ≠ g :=
-  (alias_not_identified (a := 2) (b := 3) (tau := 1) (fun _ => (0:ℝ)) h hd).2
+    (hd : ∃ t : ℝ, f t ≠ g t) : f ≠ g := by
+  obtain ⟨t, ht⟩ := hd
+  intro hfg
+  apply ht
+  rw [hfg]
+
+/-- The concrete sine alias defeats sampled-observation injectivity. -/
+example : ¬ Function.Injective
+    (fun f : ℝ → ℝ => sampledObservation f 2 3 1 (fun _ => (0:ℝ))) :=
+  sin_alias_not_identified 2 3 (fun _ => (0:ℝ))
 
 end PhyslibExtTest.BiomedicalInstrumentation.Aliasing
