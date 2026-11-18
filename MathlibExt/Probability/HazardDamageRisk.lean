@@ -26,6 +26,8 @@ hazard state, averaged over the hazard law.
 ## ii. Key results
 
 - `HazardDamageRisk.risk_eq_iterated`: the joint/iterated identity.
+- `HazardDamageRisk.risk_const`, `HazardDamageRisk.risk_mono`:
+  constant-loss value and monotonicity of the risk.
 
 ## iii. Table of contents
 
@@ -57,5 +59,29 @@ theorem risk_eq_iterated {Ω Γ : Type*} [MeasurableSpace Ω]
     ∫⁻ z, L z ∂(μ ⊗ₘ κ)
       = ∫⁻ ω, ∫⁻ γ, L (ω, γ) ∂(κ ω) ∂μ := by
   exact MeasureTheory.Measure.lintegral_compProd hL
+
+/-- Constant loss: if the loss is constantly `c`, the risk is `c`
+(the joint law of a probability hazard and a Markov damage kernel
+is a probability law). -/
+theorem risk_const {Ω Γ : Type*} [MeasurableSpace Ω]
+    [MeasurableSpace Γ] (μ : MeasureTheory.Measure Ω)
+    [MeasureTheory.IsProbabilityMeasure μ]
+    (κ : ProbabilityTheory.Kernel Ω Γ)
+    [ProbabilityTheory.IsMarkovKernel κ] (c : ℝ≥0∞) :
+    (∫⁻ _z, c ∂(μ ⊗ₘ κ)) = c := by
+  simp
+
+/-- Monotonicity: a pointwise smaller loss has smaller risk. -/
+theorem risk_mono {Ω Γ : Type*} [MeasurableSpace Ω]
+    [MeasurableSpace Γ] (μ : MeasureTheory.Measure Ω)
+    [MeasureTheory.IsProbabilityMeasure μ]
+    (κ : ProbabilityTheory.Kernel Ω Γ)
+    [ProbabilityTheory.IsMarkovKernel κ]
+    (L L' : Ω × Γ → ℝ≥0∞) (hL : Measurable L) (hL' : Measurable L')
+    (h : ∀ z, L z ≤ L' z) :
+    (∫⁻ ω, ∫⁻ γ, L (ω, γ) ∂(κ ω) ∂μ)
+      ≤ ∫⁻ ω, ∫⁻ γ, L' (ω, γ) ∂(κ ω) ∂μ := by
+  rw [← risk_eq_iterated μ κ L hL, ← risk_eq_iterated μ κ L' hL']
+  exact lintegral_mono h
 
 end HazardDamageRisk
