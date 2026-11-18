@@ -29,7 +29,10 @@ and restarts a fresh one, and on `endTok` the parser accepts exactly
 when the body length is `l + r` and the serial CRC register run over
 the whole body is the zero register. While reading, the parser emits
 the first `l` body bits, so an accepted frame returns its payload,
-leading zeros included, at its declared length `l`.
+leading zeros included, at its declared length `l`. Bits are emitted
+before the frame is validated: a rejected frame has no accepted
+`Translates` result, but `runOut` still contains the body bits it
+emitted before rejection.
 
 The parser state is a phase, the CRC register, and a count of body bits
 read that saturates at `l + r + 1`, so the state space is finite and a
@@ -41,6 +44,7 @@ bit step updates a bounded counter instead of an accumulated body.
 namespace CSLibExt.Coding.FixedLengthCRCFrames
 
 open CSLibExt.Coding.UnreflectedSerialCRC
+open Cslib.Automata
 
 /-- A framing token: frame start, one body bit, or frame end. -/
 inductive FrameToken where
@@ -138,93 +142,6 @@ def encodeFrame (r : ℕ) (taps : BitVec r) (bits : List Bool) :
 
 /-! ### Helper lemmas -/
 
-private theorem mealy_runState_nil (State In Out : Type*)
-    (M : Cslib.Automata.MealyMachine State In Out) (q : State) :
-    M.runState q [] = q := rfl
-
-private theorem mealy_runState_cons (State In Out : Type*)
-    (M : Cslib.Automata.MealyMachine State In Out) (q : State) (a : In)
-    (xs : List In) :
-    M.runState q (a :: xs) = M.runState ((M.step q a).1) xs := by
-  simp [Cslib.Automata.MealyMachine.runState, Cslib.Automata.MealyMachine.runFrom]
-
-private theorem mealy_runFrom_append (State In Out : Type*)
-    (M : Cslib.Automata.MealyMachine State In Out) (q : State) (xs ys : List In) :
-    M.runFrom q (xs ++ ys) =
-      let (q1, w1) := M.runFrom q xs
-      let (q2, w2) := M.runFrom q1 ys
-      (q2, w1 ++ w2) := by
-  induction xs generalizing q with
-  | nil => simp [Cslib.Automata.MealyMachine.runFrom]
-  | cons a xs ih =>
-      simp only [List.cons_append, Cslib.Automata.MealyMachine.runFrom]
-      rw [ih]
-
-private theorem mealy_runState_append (State In Out : Type*)
-    (M : Cslib.Automata.MealyMachine State In Out) (q : State) (xs ys : List In) :
-    M.runState q (xs ++ ys) = M.runState (M.runState q xs) ys := by
-  simp only [Cslib.Automata.MealyMachine.runState]
-  rw [mealy_runFrom_append]
-
-private theorem trans_runState_nil (State In Out : Type*)
-    (S : Cslib.Automata.SequentialTransducer State In Out) (q : State) :
-    S.runState q [] = q := rfl
-
-private theorem trans_runOut_nil (State In Out : Type*)
-    (S : Cslib.Automata.SequentialTransducer State In Out) (q : State) :
-    S.runOut q [] = [] := rfl
-
-private theorem trans_runState_cons (State In Out : Type*)
-    (S : Cslib.Automata.SequentialTransducer State In Out) (q : State) (a : In)
-    (xs : List In) :
-    S.runState q (a :: xs) = S.runState ((S.step q a).1) xs := by
-  simp [Cslib.Automata.SequentialTransducer.runState,
-    Cslib.Automata.SequentialTransducer.runFrom]
-
-private theorem trans_runOut_cons (State In Out : Type*)
-    (S : Cslib.Automata.SequentialTransducer State In Out) (q : State) (a : In)
-    (xs : List In) :
-    S.runOut q (a :: xs) = (S.step q a).2 ++ S.runOut ((S.step q a).1) xs := by
-  simp [Cslib.Automata.SequentialTransducer.runOut,
-    Cslib.Automata.SequentialTransducer.runFrom]
-
-private theorem trans_runFrom_append (State In Out : Type*)
-    (S : Cslib.Automata.SequentialTransducer State In Out) (q : State)
-    (xs ys : List In) :
-    S.runFrom q (xs ++ ys) =
-      let (q1, w1) := S.runFrom q xs
-      let (q2, w2) := S.runFrom q1 ys
-      (q2, w1 ++ w2) := by
-  induction xs generalizing q with
-  | nil => simp [Cslib.Automata.SequentialTransducer.runFrom]
-  | cons a xs ih =>
-      simp only [List.cons_append, Cslib.Automata.SequentialTransducer.runFrom]
-      rw [ih]
-      cases h1 : S.step q a with
-      | mk q' w =>
-          simp only [h1]
-          cases h2 : S.runFrom q' xs with
-          | mk q1 w1 =>
-              simp only [h2]
-              cases h3 : S.runFrom q1 ys with
-              | mk q2 w2 => simp only [h3, List.append_assoc]
-
-private theorem trans_runState_append (State In Out : Type*)
-    (S : Cslib.Automata.SequentialTransducer State In Out) (q : State)
-    (xs ys : List In) :
-    S.runState q (xs ++ ys) = S.runState (S.runState q xs) ys := by
-  simp only [Cslib.Automata.SequentialTransducer.runState]
-  rw [trans_runFrom_append]
-
-private theorem trans_runOut_append (State In Out : Type*)
-    (S : Cslib.Automata.SequentialTransducer State In Out) (q : State)
-    (xs ys : List In) :
-    S.runOut q (xs ++ ys) = S.runOut q xs ++ S.runOut (S.runState q xs) ys := by
-  simp only [Cslib.Automata.SequentialTransducer.runOut,
-    Cslib.Automata.SequentialTransducer.runState]
-  rw [trans_runFrom_append]
-
-
 private theorem satCount_val (l r n : ℕ) : (satCount l r n).val = min n (l + r + 1) :=
   rfl
 
@@ -275,18 +192,9 @@ private theorem frame_step_end_inBody (l r : ℕ) (taps : BitVec r)
             ParserPhase.done else ParserPhase.failed,
          register := reg, count := c }, []) := rfl
 
-private theorem take_append_self (α : Type*) (xs ys : List α) :
-    (xs ++ ys).take xs.length = xs := by
-  induction xs generalizing ys with
-  | nil => simp
-  | cons x xs ih => simp [ih]
-
-private theorem toBitsBE_length (w n : ℕ) : (Nat.toBitsBE w n).length = w := by
-  simp [Nat.toBitsBE, List.length_ofFn]
-
 private theorem checkBits_length (r : ℕ) (taps : BitVec r) (bits : List Bool) :
     (checkBits r taps bits).length = r := by
-  simp [checkBits, toBitsBE_length]
+  simp [checkBits, Nat.length_toBitsBE]
 
 private theorem encodedBody_length (r : ℕ) (taps : BitVec r) (bits : List Bool) :
     (encodedBody r taps bits).length = bits.length + r := by
@@ -295,8 +203,8 @@ private theorem encodedBody_length (r : ℕ) (taps : BitVec r) (bits : List Bool
 private theorem encodedBody_take (l r : ℕ) (taps : BitVec r) (bits : List Bool)
     (hlen : bits.length = l) :
     (encodedBody r taps bits).take l = bits := by
-  rw [← hlen]
-  exact take_append_self Bool bits (checkBits r taps bits)
+  unfold encodedBody
+  exact List.take_left' hlen
 
 private theorem runRegister_eq_runState_zero (r : ℕ) (taps : BitVec r)
     (bits : List Bool) :
@@ -317,16 +225,17 @@ private theorem run_bits_inBody_state (l r : ℕ) (taps : BitVec r)
         count := satCount l r (c.val + body.length) } := by
   induction body generalizing reg c with
   | nil =>
-      simp [trans_runState_nil, mealy_runState_nil, satCount_self]
+      change ({ phase := ParserPhase.inBody, register := reg, count := c } : ParserState l r) =
+        { phase := ParserPhase.inBody, register := reg, count := satCount l r (c.val + 0) }
+      rw [Nat.add_zero, satCount_self]
   | cons b bs ih =>
       simp only [List.map_cons]
-      rw [trans_runState_cons]
+      rw [SequentialTransducer.runState_cons]
       simp only [frame_step_bit_inBody]
       rw [ih]
       have hMealy : (serialLFSR r taps).runState reg (b :: bs) =
           (serialLFSR r taps).runState (stepRegister r taps reg b) bs := by
-        have h := mealy_runState_cons (BitVec r) Bool (BitVec r)
-          (serialLFSR r taps) reg b bs
+        have h := MealyMachine.runState_cons (serialLFSR r taps) reg b bs
         simp only [serial_step_fst] at h
         exact h
       have hLen : c.val + 1 + bs.length = c.val + (b :: bs).length := by
@@ -341,10 +250,10 @@ private theorem run_bits_inBody_out (l r : ℕ) (taps : BitVec r)
         (body.map FrameToken.bit) =
       body.take (l - c.val) := by
   induction body generalizing reg c with
-  | nil => simp [trans_runOut_nil]
+  | nil => simp [SequentialTransducer.runOut_nil]
   | cons b bs ih =>
       simp only [List.map_cons]
-      rw [trans_runOut_cons]
+      rw [SequentialTransducer.runOut_cons]
       simp only [frame_step_bit_inBody]
       rw [ih, satCount_val]
       by_cases h : c.val < l
@@ -369,9 +278,9 @@ private theorem fresh_rest_runState (l r : ℕ) (taps : BitVec r)
             ParserPhase.done else ParserPhase.failed,
         register := runRegister r taps body,
         count := satCount l r body.length } := by
-  rw [trans_runState_append, run_bits_inBody_state, satCount_add, Nat.zero_add,
-    ← runRegister_eq_runState_zero, trans_runState_cons]
-  simp [frame_step_end_inBody, trans_runState_nil, satCount_val_eq_iff]
+  rw [SequentialTransducer.runState_append, run_bits_inBody_state, satCount_add, Nat.zero_add,
+    ← runRegister_eq_runState_zero, SequentialTransducer.runState_cons]
+  simp [frame_step_end_inBody, SequentialTransducer.runState_nil, satCount_val_eq_iff]
 
 private theorem fresh_rest_runOut (l r : ℕ) (taps : BitVec r)
     (body : List Bool) :
@@ -380,8 +289,8 @@ private theorem fresh_rest_runOut (l r : ℕ) (taps : BitVec r)
           ParserState l r)
         (body.map FrameToken.bit ++ [FrameToken.endTok]) =
       body.take l := by
-  rw [trans_runOut_append, run_bits_inBody_out, run_bits_inBody_state, trans_runOut_cons]
-  simp [frame_step_end_inBody, trans_runOut_nil, satCount_zero_val]
+  rw [SequentialTransducer.runOut_append, run_bits_inBody_out, run_bits_inBody_state, SequentialTransducer.runOut_cons]
+  simp [frame_step_end_inBody, SequentialTransducer.runOut_nil, satCount_zero_val]
 
 private theorem single_frame_runState (l r : ℕ) (taps : BitVec r)
     (body : List Bool) :
@@ -392,7 +301,7 @@ private theorem single_frame_runState (l r : ℕ) (taps : BitVec r)
             ParserPhase.done else ParserPhase.failed,
         register := runRegister r taps body,
         count := satCount l r body.length } := by
-  rw [List.cons_append, trans_runState_cons, frame_step_start]
+  rw [List.cons_append, SequentialTransducer.runState_cons, frame_step_start]
   exact fresh_rest_runState l r taps body
 
 private theorem single_frame_runOut (l r : ℕ) (taps : BitVec r)
@@ -400,7 +309,7 @@ private theorem single_frame_runOut (l r : ℕ) (taps : BitVec r)
     (frameParser l r taps).runOut (frameParser l r taps).start
       (FrameToken.start :: body.map FrameToken.bit ++ [FrameToken.endTok]) =
       body.take l := by
-  rw [List.cons_append, trans_runOut_cons, frame_step_start]
+  rw [List.cons_append, SequentialTransducer.runOut_cons, frame_step_start]
   simp only [List.nil_append]
   exact fresh_rest_runOut l r taps body
 
@@ -444,7 +353,7 @@ private theorem runState_from_done_start (l r : ℕ) (taps : BitVec r)
       (frameParser l r taps).runState
         ({ phase := ParserPhase.inBody, register := 0#r, count := satCount l r 0 } :
           ParserState l r) ts := by
-  rw [trans_runState_cons]
+  rw [SequentialTransducer.runState_cons]
   simp [frame_step_start]
 
 private theorem runOut_from_any_start (l r : ℕ) (taps : BitVec r)
@@ -453,7 +362,7 @@ private theorem runOut_from_any_start (l r : ℕ) (taps : BitVec r)
       (frameParser l r taps).runOut
         ({ phase := ParserPhase.inBody, register := 0#r, count := satCount l r 0 } :
           ParserState l r) ts := by
-  rw [trans_runOut_cons]
+  rw [SequentialTransducer.runOut_cons]
   simp [frame_step_start]
 
 private theorem two_frame_translates_aux (l r : ℕ) (taps : BitVec r)
@@ -469,7 +378,7 @@ private theorem two_frame_translates_aux (l r : ℕ) (taps : BitVec r)
   simp only [Cslib.Automata.SequentialTransducer.Translates, frameParser_initOut,
     frameParser_finalOut_apply, List.nil_append, List.append_nil]
   constructor
-  · rw [trans_runState_append]
+  · rw [SequentialTransducer.runState_append]
     have hS1 := single_frame_runState l r taps b₁
     rw [if_pos ⟨h₁len, h₁reg⟩] at hS1
     rw [hS1]
@@ -478,7 +387,7 @@ private theorem two_frame_translates_aux (l r : ℕ) (taps : BitVec r)
     rw [fresh_rest_runState]
     simp only [frameParser_accept_iff]
     rw [if_pos ⟨h₂len, h₂reg⟩]
-  · rw [trans_runOut_append]
+  · rw [SequentialTransducer.runOut_append]
     have hO1 := single_frame_runOut l r taps b₁
     rw [hO1]
     have hS1 := single_frame_runState l r taps b₁
@@ -536,13 +445,15 @@ private theorem runState_serial_decomp (r : ℕ) (taps : BitVec r)
       (serialLFSR r taps).runState (0#r : BitVec r) bits ^^^
         mulXModPow r taps bits.length x := by
   induction bits generalizing x with
-  | nil => simp [mealy_runState_nil, mulXModPow_zero]
+  | nil =>
+      change x = (0#r : BitVec r) ^^^ x
+      simp
   | cons b bs ih =>
       have hstep : ∀ y : BitVec r,
           (serialLFSR r taps).runState y (b :: bs) =
             (serialLFSR r taps).runState (stepRegister r taps y b) bs := by
         intro y
-        have h := mealy_runState_cons (BitVec r) Bool (BitVec r) (serialLFSR r taps) y b bs
+        have h := MealyMachine.runState_cons (serialLFSR r taps) y b bs
         simpa only [serial_step_fst] using h
       rw [hstep x, hstep (0#r : BitVec r), ih, ih (stepRegister r taps (0#r : BitVec r) b)]
       rw [stepRegister_zero]
@@ -557,10 +468,10 @@ private theorem runState_serial_zeros (r : ℕ) (taps : BitVec r) (n : ℕ)
     (serialLFSR r taps).runState x (List.replicate n false) =
       mulXModPow r taps n x := by
   induction n generalizing x with
-  | zero => simp [mealy_runState_nil, mulXModPow_zero]
+  | zero => rfl
   | succ n ih =>
       rw [List.replicate_succ]
-      have h := mealy_runState_cons (BitVec r) Bool (BitVec r) (serialLFSR r taps) x false
+      have h := MealyMachine.runState_cons (serialLFSR r taps) x false
         (List.replicate n false)
       rw [show (serialLFSR r taps).runState x (false :: List.replicate n false) =
           (serialLFSR r taps).runState (stepRegister r taps x false)
@@ -570,26 +481,11 @@ private theorem runState_serial_zeros (r : ℕ) (taps : BitVec r) (n : ℕ)
         simp [stepRegister, inputBit]
       rw [hstep, mulXModPow_succ]
 
-private def bitsVal : List Bool → ℕ
-  | [] => 0
-  | b :: bs => (if b then 1 else 0) * 2 ^ bs.length + bitsVal bs
-
-private theorem bitsVal_append_singleton (bits : List Bool) (b : Bool) :
-    bitsVal (bits ++ [b]) = 2 * bitsVal bits + (if b then 1 else 0) := by
-  induction bits with
-  | nil => cases b <;> simp [bitsVal]
-  | cons a as ih =>
-      cases a <;> cases b <;> simp [bitsVal, ih, List.length_append, pow_succ] <;> ring
-
-private theorem bitsVal_bound (bits : List Bool) :
-    bitsVal bits < 2 ^ bits.length := by
-  induction bits with
-  | nil => simp [bitsVal]
-  | cons a as ih =>
-      have hpow : (2 : ℕ) ^ (as.length + 1) = 2 * 2 ^ as.length := by
-        rw [pow_succ]
-        ring
-      cases a <;> simp [bitsVal] <;> omega
+private theorem ofBitsBE_cons (a : Bool) (as : List Bool) :
+    Nat.ofBitsBE (a :: as) = (if a then 2 ^ as.length else 0) + Nat.ofBitsBE as := by
+  simp only [Nat.ofBitsBE, BitVec.ofBoolListBE, BitVec.toNat_cons]
+  rw [← Nat.shiftLeft_add_eq_or_of_lt (BitVec.isLt _)]
+  cases a <;> simp [Nat.shiftLeft_eq]
 
 private theorem stepRegister_ofNat (r : ℕ) (taps : BitVec r) (a k : ℕ)
     (ha : a < 2 ^ k) (hk : k < r) (b : Bool) :
@@ -636,105 +532,39 @@ private theorem stepRegister_ofNat (r : ℕ) (taps : BitVec r) (a k : ℕ)
       simp only [inputBit, ite_true, h1]
       exact Nat.xor_one_of_even ⟨a, by ring⟩
 
-private theorem toBitsBE_succ_append (r n : ℕ) :
-    Nat.toBitsBE (r + 1) n = Nat.toBitsBE r (n >>> 1) ++ [n.testBit 0] := by
-  apply List.ext_getElem
-  · simp [Nat.toBitsBE]
-  · intro i hi1 hi2
-    have e1 : (Nat.toBitsBE (r + 1) n)[i]'hi1 = n.testBit (r + 1 - 1 - i) := by
-      simp only [Nat.toBitsBE, List.getElem_ofFn]
-    rw [e1]
-    by_cases hlt : i < r
-    · rw [List.getElem_append_left (by simp [Nat.toBitsBE, hlt])]
-      have e2 : (Nat.toBitsBE r (n >>> 1))[i]'(by simp [Nat.toBitsBE, hlt]) =
-          (n >>> 1).testBit (r - 1 - i) := by
-        simp only [Nat.toBitsBE, List.getElem_ofFn]
-      rw [e2, Nat.testBit_shiftRight]
-      congr 1
-      omega
-    · have hi_eq : i = r := by
-        have h := hi1
-        simp [Nat.toBitsBE] at h
-        omega
-      subst hi_eq
-      have eR : (Nat.toBitsBE i (n >>> 1) ++ [n.testBit 0])[i]'hi2 = n.testBit 0 := by
-        rw [List.getElem_append_right (by simp [Nat.toBitsBE])]
-        simp [Nat.toBitsBE]
-      rw [eR]
-      congr 1
-      omega
-
-private theorem bitsVal_toBitsBE (r n : ℕ) :
-    bitsVal (Nat.toBitsBE r n) = n % 2 ^ r := by
-  induction r generalizing n with
-  | zero => simp [Nat.toBitsBE, bitsVal, Nat.mod_one]
-  | succ r ih =>
-      rw [toBitsBE_succ_append, bitsVal_append_singleton, ih]
-      have hm : (2 : ℕ) ^ (r + 1) = 2 * 2 ^ r := by
+private theorem runState_ofNat (r : ℕ) (taps : BitVec r) (bits : List Bool)
+    (a k : ℕ) (ha : a < 2 ^ k) (hk : k + bits.length ≤ r) :
+    (serialLFSR r taps).runState (BitVec.ofNat r a) bits =
+      BitVec.ofNat r (a * 2 ^ bits.length + Nat.ofBitsBE bits) := by
+  induction bits generalizing a k with
+  | nil =>
+      change BitVec.ofNat r a = BitVec.ofNat r (a * 2 ^ 0 + Nat.ofBitsBE [])
+      simp [Nat.ofBitsBE, BitVec.ofBoolListBE]
+  | cons b bs ih =>
+      simp only [List.length_cons] at hk
+      have hb : 2 * a + (if b then 1 else 0) < 2 ^ (k + 1) := by
         rw [pow_succ]
-        ring
-      have hbit : (if n.testBit 0 then 1 else 0) = n % 2 := by
-        have hlt : n % 2 < 2 := Nat.mod_lt _ (by norm_num)
-        by_cases h : n % 2 = 1 <;> simp [Nat.testBit_zero, h] <;> omega
-      have hdecomp : n =
-          (2 * 2 ^ r) * ((n >>> 1) / 2 ^ r) +
-            (2 * ((n >>> 1) % 2 ^ r) + n % 2) := by
-        have h1 : n = 2 * (n >>> 1) + n % 2 := by
-          have h := Nat.div_add_mod n 2
-          simp [Nat.shiftRight_eq_div_pow] at h ⊢
-          omega
-        have h2 : (n >>> 1) = 2 ^ r * ((n >>> 1) / 2 ^ r) + (n >>> 1) % 2 ^ r :=
-          (Nat.div_add_mod _ _).symm
-        calc n = 2 * (n >>> 1) + n % 2 := h1
-          _ = 2 * (2 ^ r * ((n >>> 1) / 2 ^ r) + (n >>> 1) % 2 ^ r) + n % 2 := by
-              conv_lhs => rw [h2]
-          _ = (2 * 2 ^ r) * ((n >>> 1) / 2 ^ r) +
-              (2 * ((n >>> 1) % 2 ^ r) + n % 2) := by ring
-      have hlt : 2 * ((n >>> 1) % 2 ^ r) + n % 2 < 2 * 2 ^ r := by
-        have hmod : (n >>> 1) % 2 ^ r < 2 ^ r :=
-          Nat.mod_lt _ (by positivity)
-        have h2lt : n % 2 < 2 := Nat.mod_lt _ (by norm_num)
-        omega
-      rw [hbit, hm]
-      conv_rhs => rw [hdecomp]
-      rw [Nat.add_comm ((2 * 2 ^ r) * ((n >>> 1) / 2 ^ r)) _, Nat.add_mul_mod_self_left,
-        Nat.mod_eq_of_lt hlt]
-
-private theorem runState_zero_ofNat (r : ℕ) (taps : BitVec r) (bits : List Bool)
-    (hbits : bits.length ≤ r) :
-    (serialLFSR r taps).runState (0#r : BitVec r) bits =
-      BitVec.ofNat r (bitsVal bits) := by
-  induction bits using List.reverseRecOn with
-  | nil => simp [bitsVal, mealy_runState_nil]
-  | append_singleton bits b ih =>
-      have hlen : (bits ++ [b]).length ≤ r := hbits
-      have hbits_le : bits.length ≤ r := by
-        simp only [List.length_append, List.length_singleton] at hlen
-        omega
-      have hbits_lt : bits.length < r := by
-        simp only [List.length_append, List.length_singleton] at hlen
-        omega
-      rw [mealy_runState_append, ih hbits_le, bitsVal_append_singleton]
-      have hsingle : ∀ y : BitVec r,
-          (serialLFSR r taps).runState y [b] = stepRegister r taps y b := by
-        intro y
-        have h := mealy_runState_cons (BitVec r) Bool (BitVec r) (serialLFSR r taps) y b []
-        simpa only [serial_step_fst, mealy_runState_nil] using h
-      rw [hsingle, stepRegister_ofNat r taps (bitsVal bits) bits.length
-        (bitsVal_bound bits) hbits_lt b]
+        cases b <;> simp <;> omega
+      rw [MealyMachine.runState_cons, serial_step_fst,
+        stepRegister_ofNat r taps a k ha (by omega) b,
+        ih (2 * a + (if b then 1 else 0)) (k + 1) hb (by omega), ofBitsBE_cons]
+      congr 1
+      cases b <;> simp [List.length_cons, pow_succ] <;> ring
 
 private theorem runState_zero_toBitsBE (r : ℕ) (taps : BitVec r) (v : BitVec r) :
     (serialLFSR r taps).runState (0#r : BitVec r) (Nat.toBitsBE r v.toNat) = v := by
-  rw [runState_zero_ofNat r taps _ (by rw [toBitsBE_length]), bitsVal_toBitsBE,
+  rw [runState_ofNat r taps _ 0 0 (by norm_num) (by simp), Nat.ofBitsBE_toBitsBE,
     Nat.mod_eq_of_lt v.isLt]
   apply BitVec.eq_of_toNat_eq
-  simp [BitVec.toNat_ofNat, Nat.mod_eq_of_lt v.isLt]
+  simp [Nat.mod_eq_of_lt v.isLt]
 
 private theorem finalRegister_eq_pow (r : ℕ) (taps : BitVec r) (bits : List Bool) :
     finalRegister r taps bits =
       mulXModPow r taps r (runRegister r taps bits) := by
   unfold finalRegister runRegister
-  rw [mealy_runState_append]
+  rw [← MealyMachine.seq_runState_eq _ (bits ++ List.replicate r false),
+    SequentialTransducer.runState_append]
+  simp only [MealyMachine.seq_runState_eq]
   exact runState_serial_zeros r taps r _
 
 
@@ -744,8 +574,8 @@ private theorem runOut_inBody_bits_end (l r : ℕ) (taps : BitVec r)
         { phase := ParserPhase.inBody, register := reg, count := c }
         (suffix.map FrameToken.bit ++ [FrameToken.endTok]) =
       suffix.take (l - c.val) := by
-  rw [trans_runOut_append, run_bits_inBody_out, run_bits_inBody_state, trans_runOut_cons]
-  simp [frame_step_end_inBody, trans_runOut_nil]
+  rw [SequentialTransducer.runOut_append, run_bits_inBody_out, run_bits_inBody_state, SequentialTransducer.runOut_cons]
+  simp [frame_step_end_inBody, SequentialTransducer.runOut_nil]
 
 private theorem prefix_frame_translates (l r : ℕ) (taps : BitVec r)
     (pfx : List FrameToken) (body : List Bool)
@@ -757,11 +587,11 @@ private theorem prefix_frame_translates (l r : ℕ) (taps : BitVec r)
   simp only [Cslib.Automata.SequentialTransducer.Translates, frameParser_initOut,
     frameParser_finalOut_apply, List.nil_append, List.append_nil]
   constructor
-  · rw [trans_runState_append, List.cons_append, runState_from_done_start,
+  · rw [SequentialTransducer.runState_append, List.cons_append, runState_from_done_start,
       fresh_rest_runState]
     simp only [frameParser_accept_iff]
     rw [if_pos ⟨hLen, hReg⟩]
-  · rw [trans_runOut_append, List.cons_append, runOut_from_any_start,
+  · rw [SequentialTransducer.runOut_append, List.cons_append, runOut_from_any_start,
       fresh_rest_runOut]
 
 private theorem start_prefix_runOut (l r : ℕ) (taps : BitVec r)
@@ -769,7 +599,7 @@ private theorem start_prefix_runOut (l r : ℕ) (taps : BitVec r)
     (frameParser l r taps).runOut (frameParser l r taps).start
         (FrameToken.start :: prefixBits.map FrameToken.bit) =
       prefixBits.take l := by
-  rw [trans_runOut_cons, frame_step_start]
+  rw [SequentialTransducer.runOut_cons, frame_step_start]
   simp only [List.nil_append]
   rw [run_bits_inBody_out, satCount_zero_val, Nat.sub_zero]
 
@@ -813,11 +643,11 @@ private theorem accepted_cases (l r : ℕ) (taps : BitVec r) (q : ParserState l 
             suffix.take (l - q.count.val)) := by
   induction ts generalizing q with
   | nil =>
-      exact Or.inl ⟨rfl, by simpa [trans_runState_nil] using h⟩
+      exact Or.inl ⟨rfl, by simpa [SequentialTransducer.runState_nil] using h⟩
   | cons a ts ih =>
       have h' : ((frameParser l r taps).runState
           ((frameParser l r taps).step q a).1 ts).phase = ParserPhase.done := by
-        rw [trans_runState_cons] at h
+        rw [SequentialTransducer.runState_cons] at h
         exact h
       obtain (hA | hB | hC) := ih _ h'
       · obtain ⟨rfl, hphase⟩ := hA
@@ -825,8 +655,8 @@ private theorem accepted_cases (l r : ℕ) (taps : BitVec r) (q : ParserState l 
         obtain ⟨hqph, rfl, hlen, hreg⟩ := hdone
         refine Or.inr (Or.inr ⟨hqph, [], rfl, ?_, ?_, ?_⟩)
         · simpa using hlen
-        · simpa [mealy_runState_nil] using hreg
-        · rw [trans_runOut_cons, trans_runOut_nil]
+        · exact hreg
+        · rw [SequentialTransducer.runOut_cons, SequentialTransducer.runOut_nil]
           obtain ⟨qph, qreg, qcnt⟩ := q
           change qph = ParserPhase.inBody at hqph
           subst hqph
@@ -837,11 +667,11 @@ private theorem accepted_cases (l r : ℕ) (taps : BitVec r) (q : ParserState l 
         · have e1 : (frameParser l r taps).runOut q (a :: ts) =
               ((frameParser l r taps).step q a).2 ++
                 (frameParser l r taps).runOut ((frameParser l r taps).step q a).1 ts :=
-            trans_runOut_cons _ _ _ _ _ _ _
+            SequentialTransducer.runOut_cons _ _ _ _
           have e2 : (frameParser l r taps).runOut q (a :: pfx') =
               ((frameParser l r taps).step q a).2 ++
                 (frameParser l r taps).runOut ((frameParser l r taps).step q a).1 pfx' :=
-            trans_runOut_cons _ _ _ _ _ _ _
+            SequentialTransducer.runOut_cons _ _ _ _
           rw [e1, hout, e2, List.append_assoc]
       · obtain ⟨hq'ph, suffix, hts, hlen, hreg, hout⟩ := hC
         rcases step_phase_inBody l r taps q a hq'ph with (rfl | ⟨hqph, b, rfl⟩)
@@ -862,8 +692,8 @@ private theorem accepted_cases (l r : ℕ) (taps : BitVec r) (q : ParserState l 
           refine Or.inr (Or.inl ⟨[], suffix, hlen', hreg', ?_, ?_⟩)
           · rw [hts, List.cons_append]
             simp
-          · rw [trans_runOut_cons, frame_step_start]
-            simp [hout', trans_runOut_nil]
+          · rw [SequentialTransducer.runOut_cons, frame_step_start]
+            simp [hout', SequentialTransducer.runOut_nil]
         · obtain ⟨qph, qreg, qcnt⟩ := q
           have hqph' : qph = ParserPhase.inBody := hqph
           subst hqph'
@@ -877,8 +707,7 @@ private theorem accepted_cases (l r : ℕ) (taps : BitVec r) (q : ParserState l 
           have hreg' : (serialLFSR r taps).runState qreg (b :: suffix) = 0#r := by
             have h1 : (serialLFSR r taps).runState qreg (b :: suffix) =
                 (serialLFSR r taps).runState (stepRegister r taps qreg b) suffix := by
-              have hc := mealy_runState_cons (BitVec r) Bool (BitVec r)
-                (serialLFSR r taps) qreg b suffix
+              have hc := MealyMachine.runState_cons (serialLFSR r taps) qreg b suffix
               simpa [serial_step_fst] using hc
             rw [h1]
             exact hreg
@@ -898,7 +727,9 @@ theorem runRegister_encodedBody_eq_zero (r : ℕ) (taps : BitVec r)
   have hmain : runRegister r taps (encodedBody r taps bits) =
       (serialLFSR r taps).runState (runRegister r taps bits) (checkBits r taps bits) := by
     unfold encodedBody runRegister
-    rw [mealy_runState_append]
+    rw [← MealyMachine.seq_runState_eq _ (bits ++ checkBits r taps bits),
+      SequentialTransducer.runState_append]
+    simp only [MealyMachine.seq_runState_eq]
   rw [hmain, runState_serial_decomp, checkBits_length]
   have hcheck : (serialLFSR r taps).runState (0#r : BitVec r) (checkBits r taps bits) =
       finalRegister r taps bits := by
@@ -1003,7 +834,10 @@ theorem startInBody_aborts_and_restarts (l r : ℕ) (taps : BitVec r)
       by rw [encodedBody_length, hlen], runRegister_encodedBody_eq_zero r taps bits,
       rfl, by rw [start_prefix_runOut, encodedBody_take l r taps bits hlen]⟩
 
-/-- A body of the wrong length is rejected: no output is produced. -/
+/-- A body of the wrong length is rejected: the frame has no accepted
+`Translates` result for any output. Rejection happens only at `endTok`,
+so `runOut` still contains the body bits emitted before validation, up
+to the first `l`. -/
 theorem wrongLengthBody_rejected (l r : ℕ) (taps : BitVec r)
     (body : List Bool) (hlen : body.length ≠ l + r) (out : List Bool) :
     ¬ (frameParser l r taps).Translates
@@ -1014,8 +848,10 @@ theorem wrongLengthBody_rejected (l r : ℕ) (taps : BitVec r)
   obtain ⟨⟨hLen, _⟩, _⟩ := hTrans
   exact hlen hLen
 
-/-- A body with nonzero CRC remainder is rejected: no output is
-produced. -/
+/-- A body with nonzero CRC remainder is rejected: the frame has no
+accepted `Translates` result for any output. Rejection happens only at
+`endTok`, so `runOut` still contains the first `l` body bits emitted
+before validation. -/
 theorem nonzeroRemainderBody_rejected (l r : ℕ) (taps : BitVec r)
     (body : List Bool) (hlen : body.length = l + r)
     (hrem : runRegister r taps body ≠ 0#r) (out : List Bool) :
