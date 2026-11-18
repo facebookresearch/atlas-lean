@@ -31,15 +31,13 @@ open scoped ENNReal
 
 /-- The binary offspring law on `ℕ`: `1 - p` at `0` and `p` at `2`.
 Written as a `Measure ℕ` because that is what `GaltonWatson.law` takes.
-For `p ∉ [0, 1]` the `ENNReal.ofReal` masses make it a sub-probability
-junk value; every theorem below assumes `0 ≤ p ≤ 1`. -/
+For `p ∉ [0, 1]` the `ENNReal.ofReal` masses make it a junk value outside the probability range; every theorem below assumes `0 ≤ p ≤ 1`. -/
 noncomputable def binaryOffspring (p : ℝ) : Measure ℕ :=
   ENNReal.ofReal (1 - p) • Measure.dirac 0 + ENNReal.ofReal p • Measure.dirac 2
 
-/-- Proposed leaf symbol (statement bundle anchor): the binary law is an
-instance of the Galton–Watson theory above. This definition packages the
-law together with its range hypothesis, so consumers state theorems about
-`binary_offspring_instance p hp` instead of re-discharging `0 ≤ p ≤ 1`. -/
+/-- The binary law packaged with its range hypothesis, so consumers state
+theorems about the packaged law instead of re-discharging the range
+hypothesis on every use. -/
 noncomputable def binary_offspring_instance (p : ℝ) (_hp : 0 ≤ p ∧ p ≤ 1) :
     Measure ℕ :=
   binaryOffspring p
