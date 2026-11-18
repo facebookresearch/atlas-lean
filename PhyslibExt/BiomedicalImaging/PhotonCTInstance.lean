@@ -28,7 +28,7 @@ admissible nonnegative nullspace pair.
 
 * `ct_nullspace_pair`: the admissible pair `(1, 0)`, `(0, 1)`.
 * `ct_equal_rates`: equal transmitted intensities for the pair.
-* `ct_rates_of_measurement_eq`: the general agreement law.
+* `PhotonObservation.transmittedRate_eq_of_mulVec_eq`: the general agreement law (in the photon-law API).
 
 ## iii. Table of contents
 
