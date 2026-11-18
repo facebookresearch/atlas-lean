@@ -55,16 +55,19 @@ example : HasDerivAt
     (p := fun τ _ => -Real.exp (-τ))
     (dp := fun τ _ => Real.exp (-τ))
     (by simp [Matrix.IsSymm]) (by simp [Matrix.IsSymm])
-    (by simp [Matrix.IsSymm])
-    (fun _ t => hexp t)
-    (fun _ t => by simpa only [Pi.neg_def, neg_neg] using (hexp t).neg)
-    (fun _ t => by simpa only [Pi.neg_def, neg_neg] using (hexp t).neg)
-    (fun t => by
+    (by simp [Matrix.IsSymm]) 0
+    (fun _ => hexp 0)
+    (fun _ => by simpa only [Pi.neg_def, neg_neg] using (hexp 0).neg)
+    (fun _ => by simpa only [Pi.neg_def, neg_neg] using (hexp 0).neg)
+    (by
       funext i
-      fin_cases i <;> simp [Matrix.mulVec, dotProduct] <;> ring)
-    (fun t => by
+      fin_cases i
+      simp [Matrix.mulVec, dotProduct, Real.exp_zero]
+      ring)
+    (by
       funext i
-      fin_cases i <;> simp [Matrix.mulVec, dotProduct] <;> ring)
-    0
+      fin_cases i
+      simp [Matrix.mulVec, dotProduct, Real.exp_zero]
+      ring)
   convert h using 1
   norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_one, Real.exp_zero]

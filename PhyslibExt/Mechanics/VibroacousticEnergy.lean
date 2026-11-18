@@ -10,6 +10,7 @@ module
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Mul
+import MathlibExt.Analysis.Calculus.QuadraticDerivative
 import Mathlib.Tactic.Linarith
 
 /-!
@@ -28,12 +29,16 @@ quadratic balance; reading the quadratic form as stored
 energy and the two remaining terms as dissipation uses the
 usual positivity (positive semidefinite storage matrices
 `M`, `K`, `A` and damping matrices `C`, `H`), which the
-identity itself does not assume.
+identity itself does not assume. The identity is pointwise in
+time; the all-times form is the corollary for trajectories
+satisfying the derivative and balance hypotheses at every time.
 
 ## ii. Key results
 
 - `Mechanics.Vibroacoustic.vibroacoustic_port_energy`: the
-  port-energy identity.
+  pointwise port-energy identity.
+- `Mechanics.Vibroacoustic.vibroacoustic_port_energy_all_times`:
+  the all-times form.
 
 ## iii. Table of contents
 
@@ -58,65 +63,100 @@ namespace Mechanics.Vibroacoustic
 /-! ## A. Port-energy identity -/
 
 private lemma quad_hasDerivAt {n : Type*} [Fintype n]
-    {S : Matrix n n ℝ}
-    {u du : ℝ → n → ℝ}
-    (hu : ∀ i t, HasDerivAt (fun τ => u τ i) (du t i) t)
-    (t : ℝ) :
-    HasDerivAt (fun τ => (u τ) ⬝ᵥ (S *ᵥ u τ))
-      ((du t) ⬝ᵥ (S *ᵥ u t) + (u t) ⬝ᵥ (S *ᵥ du t)) t := by
-  have hrow : ∀ i : n, HasDerivAt (fun τ => (S *ᵥ u τ) i) ((S *ᵥ du t) i) t := by
-    intro i
-    have hterm : ∀ j : n, HasDerivAt (fun τ => S i j * u τ j) (S i j * du t j) t :=
-      fun j => HasDerivAt.const_mul _ (hu j t)
-    have hsum := HasDerivAt.fun_sum (u := Finset.univ) (fun j _ => hterm j)
-    have hfun : (fun τ => (S *ᵥ u τ) i)
-        = (fun τ => ∑ j ∈ Finset.univ, S i j * u τ j) := rfl
-    have hval : (∑ j ∈ Finset.univ, S i j * du t j) = (S *ᵥ du t) i := rfl
-    rw [hfun, ← hval]
-    exact hsum
-  have hcoord : ∀ i : n, HasDerivAt (fun τ => u τ i * (S *ᵥ u τ) i)
-      (du t i * (S *ᵥ u t) i + u t i * (S *ᵥ du t) i) t :=
-    fun i => (hu i t).mul (hrow i)
-  have hsum := HasDerivAt.fun_sum (u := Finset.univ) (fun i _ => hcoord i)
-  have hfun : (fun τ => (u τ) ⬝ᵥ (S *ᵥ u τ))
-      = (fun τ => ∑ i ∈ Finset.univ, u τ i * (S *ᵥ u τ) i) := rfl
-  have hval : (∑ i ∈ Finset.univ, (du t i * (S *ᵥ u t) i + u t i * (S *ᵥ du t) i))
-      = (du t) ⬝ᵥ (S *ᵥ u t) + (u t) ⬝ᵥ (S *ᵥ du t) :=
-    Finset.sum_add_distrib.trans rfl
-  rw [hfun, ← hval]
-  exact hsum
-
-private lemma symm_dot_swap {n : Type*} [Fintype n]
     {S : Matrix n n ℝ} (hS : S.IsSymm)
-    (a b : n → ℝ) : a ⬝ᵥ (S *ᵥ b) = b ⬝ᵥ (S *ᵥ a) := by
-  have hSeq : Sᵀ = S := hS
-  calc a ⬝ᵥ (S *ᵥ b) = (a ᵥ* S) ⬝ᵥ b := Matrix.dotProduct_mulVec a S b
-    _ = (Sᵀ *ᵥ a) ⬝ᵥ b := by rw [← Matrix.mulVec_transpose S a]
-    _ = (S *ᵥ a) ⬝ᵥ b := by rw [hSeq]
-    _ = b ⬝ᵥ (S *ᵥ a) := dotProduct_comm _ _
+    {u du : ℝ → n → ℝ} (t : ℝ)
+    (hu : ∀ i, HasDerivAt (fun τ => u τ i) (du t i) t) :
+    HasDerivAt (fun τ => (u τ) ⬝ᵥ (S *ᵥ u τ))
+      (2 * ((u t) ⬝ᵥ (S *ᵥ du t))) t := by
+  have h := QuadraticDerivative.hasDerivAt_quadForm_half S hS u (du t) t hu
+  have h2 := h.const_mul (2 : ℝ)
+  have hfun : (fun τ => (u τ) ⬝ᵥ (S *ᵥ u τ))
+      = fun τ => 2 *
+        (MathlibExt.LinearAlgebra.Matrix.QuadraticFormCongruence.quadForm
+          S (u τ) / 2) := by
+    funext τ
+    simp [MathlibExt.LinearAlgebra.Matrix.QuadraticFormCongruence.quadForm]
+    ring
+  have hval : (2 : ℝ) * (∑ i, ∑ j, du t i * S i j * u t j)
+      = 2 * ((u t) ⬝ᵥ (S *ᵥ du t)) := by
+    have hsum : (∑ i, ∑ j, du t i * S i j * u t j)
+        = (du t) ⬝ᵥ (S *ᵥ u t) := by
+      rw [Matrix.dot_mulVec_eq_sum_sum]
+      exact Finset.sum_comm
+    rw [hsum, hS.dotProduct_mulVec_comm]
+  simpa only [hfun, hval] using h2
 
-private lemma couple_dot_swap {n m : Type*} [Fintype n] [Fintype m]
-    {G : Matrix n m ℝ} (v : n → ℝ) (p : m → ℝ) :
-    v ⬝ᵥ (G *ᵥ p) = p ⬝ᵥ (Gᵀ *ᵥ v) := by
-  calc v ⬝ᵥ (G *ᵥ p) = (v ᵥ* G) ⬝ᵥ p := Matrix.dotProduct_mulVec v G p
-    _ = (Gᵀ *ᵥ v) ⬝ᵥ p := by rw [← Matrix.mulVec_transpose G v]
-    _ = p ⬝ᵥ (Gᵀ *ᵥ v) := dotProduct_comm _ _
-
-/-- Reciprocal-port vibroacoustic quadratic-balance identity.
-Along differentiable structural displacement `x` with velocity
-`v` and acoustic pressure `p` with derivative function `dp`,
-satisfying at every time `M*dv + C*v + K*x - G*p = 0` and
-`A*dp + H*p + Gᵀ*v = 0`, with constant symmetric matrices
-`M`, `K`, and `A`, the quadratic form
-`1/2 * (vᵀMv + xᵀKx + pᵀAp)` has derivative
-`-(vᵀCv + pᵀHp)`: the reciprocal coupling power cancels. The
-stored-energy/dissipation reading additionally requires the
-usual positivity of the storage and damping matrices, which
-this algebraic identity does not assume. -/
+/-- Reciprocal-port vibroacoustic quadratic-balance identity at a
+fixed time `t`. For structural displacement `x` differentiable at
+`t`, with velocity value `v t` and derivative value `dv t`, and
+acoustic pressure `p` with derivative value `dp t`, satisfying at
+`t`
+`M*dv + C*v + K*x - G*p = 0` and `A*dp + H*p + Gᵀ*v = 0`, with
+constant symmetric matrices `M`, `K`, and `A`, the quadratic form
+`1/2 * (vᵀMv + xᵀKx + pᵀAp)` has derivative `-(vᵀCv + pᵀHp)` at
+`t`: the reciprocal coupling power cancels. The
+stored-energy/dissipation reading additionally requires the usual
+positivity of the storage and damping matrices, which this
+algebraic identity does not assume. -/
 theorem vibroacoustic_port_energy {n m : Type*} [Fintype n]
     [Fintype m] {M K C : Matrix n n ℝ} {A H : Matrix m m ℝ}
     {G : Matrix n m ℝ} (hM : M.IsSymm) (hK : K.IsSymm)
     (hA : A.IsSymm)
+    {x v dv : ℝ → n → ℝ} {p dp : ℝ → m → ℝ}
+    (t : ℝ)
+    (hx : ∀ i, HasDerivAt (fun τ => x τ i) (v t i) t)
+    (hv : ∀ i, HasDerivAt (fun τ => v τ i) (dv t i) t)
+    (hp : ∀ i, HasDerivAt (fun τ => p τ i) (dp t i) t)
+    (hstruct : M *ᵥ dv t + C *ᵥ v t + K *ᵥ x t
+      - G *ᵥ p t = 0)
+    (hacous : A *ᵥ dp t + H *ᵥ p t + Gᵀ *ᵥ v t = 0) :
+    HasDerivAt
+      (fun τ => (1 / 2)
+        * ((v τ) ⬝ᵥ (M *ᵥ v τ) + (x τ) ⬝ᵥ (K *ᵥ x τ)
+          + (p τ) ⬝ᵥ (A *ᵥ p τ)))
+      (-(((v t) ⬝ᵥ (C *ᵥ v t)) + ((p t) ⬝ᵥ (H *ᵥ p t)))) t := by
+  have hM' : HasDerivAt (fun τ => (v τ) ⬝ᵥ (M *ᵥ v τ))
+      (2 * ((v t) ⬝ᵥ (M *ᵥ dv t))) t := quad_hasDerivAt hM t hv
+  have hK' : HasDerivAt (fun τ => (x τ) ⬝ᵥ (K *ᵥ x τ))
+      (2 * ((x t) ⬝ᵥ (K *ᵥ v t))) t := quad_hasDerivAt hK t hx
+  have hA' : HasDerivAt (fun τ => (p τ) ⬝ᵥ (A *ᵥ p τ))
+      (2 * ((p t) ⬝ᵥ (A *ᵥ dp t))) t := quad_hasDerivAt hA t hp
+  have hfull := HasDerivAt.const_mul (1 / 2) ((hM'.add hK').add hA')
+  have hKt : Kᵀ = K := hK
+  have hKsym : (x t) ⬝ᵥ (K *ᵥ v t) = (v t) ⬝ᵥ (K *ᵥ x t) := by
+    rw [dotProduct_mulVec, ← mulVec_transpose, hKt, dotProduct_comm]
+  have hcoup : (v t) ⬝ᵥ (G *ᵥ p t) = (p t) ⬝ᵥ (Gᵀ *ᵥ v t) := by
+    rw [dotProduct_mulVec, ← mulVec_transpose, dotProduct_comm]
+  have hvd : (v t) ⬝ᵥ (M *ᵥ dv t + C *ᵥ v t + K *ᵥ x t - G *ᵥ p t) = 0 := by
+    rw [hstruct]
+    exact dotProduct_zero _
+  have h1 : ((v t) ⬝ᵥ (M *ᵥ dv t)) + ((v t) ⬝ᵥ (C *ᵥ v t))
+      + ((v t) ⬝ᵥ (K *ᵥ x t)) - ((v t) ⬝ᵥ (G *ᵥ p t)) = 0 := by
+    have h := hvd
+    rwa [dotProduct_sub, dotProduct_add, dotProduct_add] at h
+  have hpd : (p t) ⬝ᵥ (A *ᵥ dp t + H *ᵥ p t + Gᵀ *ᵥ v t) = 0 := by
+    rw [hacous]
+    exact dotProduct_zero _
+  have h2 : ((p t) ⬝ᵥ (A *ᵥ dp t)) + ((p t) ⬝ᵥ (H *ᵥ p t))
+      + ((p t) ⬝ᵥ (Gᵀ *ᵥ v t)) = 0 := by
+    have h := hpd
+    rwa [dotProduct_add, dotProduct_add] at h
+  have hDeq : (1 / 2) * ((2 * ((v t) ⬝ᵥ (M *ᵥ dv t))
+      + 2 * ((x t) ⬝ᵥ (K *ᵥ v t))) + 2 * ((p t) ⬝ᵥ (A *ᵥ dp t)))
+      = -(((v t) ⬝ᵥ (C *ᵥ v t)) + ((p t) ⬝ᵥ (H *ᵥ p t))) := by
+    rw [hKsym]
+    linarith [h1, h2, hcoup]
+  rw [hDeq] at hfull
+  exact hfull
+
+/-- All-times form of the reciprocal-port vibroacoustic
+quadratic-balance identity: if the derivative and balance
+hypotheses hold at every time, then the pointwise identity holds
+at each time `t`. -/
+theorem vibroacoustic_port_energy_all_times {n m : Type*}
+    [Fintype n] [Fintype m] {M K C : Matrix n n ℝ}
+    {A H : Matrix m m ℝ} {G : Matrix n m ℝ} (hM : M.IsSymm)
+    (hK : K.IsSymm) (hA : A.IsSymm)
     {x v dv : ℝ → n → ℝ} {p dp : ℝ → m → ℝ}
     (hx : ∀ i t, HasDerivAt (fun τ => x τ i) (v t i) t)
     (hv : ∀ i t, HasDerivAt (fun τ => v τ i) (dv t i) t)
@@ -130,41 +170,6 @@ theorem vibroacoustic_port_energy {n m : Type*} [Fintype n]
         * ((v τ) ⬝ᵥ (M *ᵥ v τ) + (x τ) ⬝ᵥ (K *ᵥ x τ)
           + (p τ) ⬝ᵥ (A *ᵥ p τ)))
       (-(((v t) ⬝ᵥ (C *ᵥ v t)) + ((p t) ⬝ᵥ (H *ᵥ p t)))) t := by
-  have hEv := quad_hasDerivAt (S := M) (u := v) (du := dv) hv t
-  have hEx := quad_hasDerivAt (S := K) (u := x) (du := v) hx t
-  have hEp := quad_hasDerivAt (S := A) (u := p) (du := dp) hp t
-  have hval : (1 / 2 : ℝ) * ((((dv t) ⬝ᵥ (M *ᵥ v t) + (v t) ⬝ᵥ (M *ᵥ dv t))
-      + ((v t) ⬝ᵥ (K *ᵥ x t) + (x t) ⬝ᵥ (K *ᵥ v t)))
-      + ((dp t) ⬝ᵥ (A *ᵥ p t) + (p t) ⬝ᵥ (A *ᵥ dp t)))
-      = -(((v t) ⬝ᵥ (C *ᵥ v t)) + ((p t) ⬝ᵥ (H *ᵥ p t))) := by
-    have e1 : ((v t) ⬝ᵥ (M *ᵥ dv t)) + ((v t) ⬝ᵥ (C *ᵥ v t))
-        + ((v t) ⬝ᵥ (K *ᵥ x t)) - ((v t) ⬝ᵥ (G *ᵥ p t)) = 0 := by
-      have h := congrArg (dotProduct (v t)) (hstruct t)
-      rw [dotProduct_sub, dotProduct_add, dotProduct_add, dotProduct_zero] at h
-      exact h
-    have e2 : ((p t) ⬝ᵥ (A *ᵥ dp t)) + ((p t) ⬝ᵥ (H *ᵥ p t))
-        + ((p t) ⬝ᵥ (Gᵀ *ᵥ v t)) = 0 := by
-      have h := congrArg (dotProduct (p t)) (hacous t)
-      rw [dotProduct_add, dotProduct_add, dotProduct_zero] at h
-      exact h
-    have s1 : (dv t) ⬝ᵥ (M *ᵥ v t) = (v t) ⬝ᵥ (M *ᵥ dv t) :=
-      symm_dot_swap hM _ _
-    have s2 : (v t) ⬝ᵥ (K *ᵥ x t) = (x t) ⬝ᵥ (K *ᵥ v t) :=
-      symm_dot_swap hK _ _
-    have s3 : (dp t) ⬝ᵥ (A *ᵥ p t) = (p t) ⬝ᵥ (A *ᵥ dp t) :=
-      symm_dot_swap hA _ _
-    have hc : (v t) ⬝ᵥ (G *ᵥ p t) = (p t) ⬝ᵥ (Gᵀ *ᵥ v t) :=
-      couple_dot_swap _ _
-    linarith
-  have hE : HasDerivAt
-      (fun τ => (1 / 2)
-        * ((v τ) ⬝ᵥ (M *ᵥ v τ) + (x τ) ⬝ᵥ (K *ᵥ x τ)
-          + (p τ) ⬝ᵥ (A *ᵥ p τ)))
-      ((1 / 2) * ((((dv t) ⬝ᵥ (M *ᵥ v t) + (v t) ⬝ᵥ (M *ᵥ dv t))
-        + ((v t) ⬝ᵥ (K *ᵥ x t) + (x t) ⬝ᵥ (K *ᵥ v t)))
-        + ((dp t) ⬝ᵥ (A *ᵥ p t) + (p t) ⬝ᵥ (A *ᵥ dp t)))) t :=
-    HasDerivAt.const_mul _ ((hEv.add hEx).add hEp)
-  rw [hval] at hE
-  exact hE
-
+  exact vibroacoustic_port_energy hM hK hA t (fun i => hx i t)
+    (fun i => hv i t) (fun i => hp i t) (hstruct t) (hacous t)
 end Mechanics.Vibroacoustic
