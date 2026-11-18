@@ -53,8 +53,7 @@ namespace Cslib.Bioinformatics.StatisticalGenetics.PoissonClassEM
 variable {ι : Type*} [Fintype ι] {N : ℕ}
 
 /-- Strictly positive class weights summing to one. -/
-def PosWeights (ι : Type*) [Fintype ι] : Type _ :=
-  {w : ι → ℝ // (∀ c, 0 < w c) ∧ ∑ c, w c = 1}
+abbrev PosWeights := Cslib.MachineLearning.LatentVariable.ExpectationMaximization.PosWeights
 
 /-- A gene's data: observed LoF count `o` and positive expected count `E`. -/
 structure GeneData where

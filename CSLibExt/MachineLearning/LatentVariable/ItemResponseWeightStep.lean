@@ -58,12 +58,12 @@ theorem localIndepPMF_twoPL {Z ι : Type*} [Fintype ι] [DecidableEq ι] (a b : 
   rfl
 
 /-- Latent weights: strictly positive and summing to one. -/
-structure WeightValid {Z : Type*} [Fintype Z] (w : Z → ℝ) : Prop where
-  pos : ∀ z, 0 < w z
-  sum_eq_one : ∑ z, w z = 1
+abbrev WeightValid {Z : Type*} [Fintype Z] (w : Z → ℝ) : Prop :=
+  (∀ z, 0 < w z) ∧ ∑ z, w z = 1
 
 /-- The valid latent weights, the parameter space of the weights-only step. -/
-abbrev ValidWeights (Z : Type*) [Fintype Z] := {w : Z → ℝ // WeightValid w}
+abbrev ValidWeights (Z : Type*) [Fintype Z] :=
+  Cslib.MachineLearning.LatentVariable.ExpectationMaximization.PosWeights Z
 
 /-- The joint `p(w, x, z) = w z * P_z(x)` with the fixed locally independent item law `P_z`. -/
 noncomputable def itemJoint {Z ι : Type*} [Fintype Z] [Fintype ι] [DecidableEq ι]
@@ -75,7 +75,7 @@ noncomputable def itemJoint {Z ι : Type*} [Fintype Z] [Fintype ι] [DecidableEq
 theorem itemJoint_pos {Z ι : Type*} [Fintype Z] [Fintype ι] [DecidableEq ι]
     (F : FixedItems Z ι) (w : ValidWeights Z) (x : ι → Bool) (z : Z) :
     0 < itemJoint F w x z := by
-  refine mul_pos (w.2.pos z) (ENNReal.toReal_pos ?_ (PMF.apply_ne_top _ _))
+  refine mul_pos (w.2.1 z) (ENNReal.toReal_pos ?_ (PMF.apply_ne_top _ _))
   unfold localIndepPMF
   rw [PMF.ofFintype_apply, Finset.prod_ne_zero_iff]
   intro i _
@@ -107,12 +107,30 @@ theorem weightUpdate_valid {Θ X Z : Type*} [Fintype Z] [Nonempty Z] {N : ℕ}
   simp only [hsum, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, mul_one]
   exact div_self hNr.ne'
 
+/-- The fixed item likelihood `P_z(x)` (the weight-free part of `itemJoint`). -/
+noncomputable def itemLik {Z ι : Type*} [Fintype Z] [Fintype ι] [DecidableEq ι]
+    (F : FixedItems Z ι) (x : ι → Bool) (z : Z) : ℝ :=
+  (localIndepPMF (F.prob z) (fun i => (F.prob_pos z i).le)
+    (fun i => (F.prob_lt_one z i).le) x).toReal
+
+/-- The fixed item likelihood is strictly positive. -/
+theorem itemLik_pos {Z ι : Type*} [Fintype Z] [Fintype ι] [DecidableEq ι]
+    (F : FixedItems Z ι) (x : ι → Bool) (z : Z) : 0 < itemLik F x z := by
+  unfold itemLik
+  refine ENNReal.toReal_pos ?_ (PMF.apply_ne_top _ _)
+  unfold localIndepPMF
+  rw [PMF.ofFintype_apply, Finset.prod_ne_zero_iff]
+  intro i _
+  split
+  · exact (ENNReal.ofReal_pos.mpr (F.prob_pos z i)).ne'
+  · exact (ENNReal.ofReal_pos.mpr (sub_pos.mpr (F.prob_lt_one z i))).ne'
+
 /-- **The weights-only EM step** with fixed item parameters: the posterior-average weights, on
 data with at least one point. -/
 noncomputable def weightOnlyStep {Z ι : Type*} [Fintype Z] [Nonempty Z] [Fintype ι]
     [DecidableEq ι] {N : ℕ} (F : FixedItems Z ι) (xs : Fin N → ι → Bool) (hN : 0 < N)
     (w : ValidWeights Z) : ValidWeights Z :=
-  ⟨weightUpdate (itemJoint F) xs w, weightUpdate_valid (itemJoint_pos F) xs hN w⟩
+  weightStep (hlik := fun x z => itemLik_pos F x z) xs hN w
 
 /-- **The weights-only step maximizes `Q(· | w)`** over all valid latent weights, with the item
 parameters fixed. -/
@@ -120,73 +138,8 @@ theorem emQ_le_weightOnlyStep {Z ι : Type*} [Fintype Z] [Nonempty Z] [Fintype �
     [DecidableEq ι] {N : ℕ} (F : FixedItems Z ι) (xs : Fin N → ι → Bool) (hN : 0 < N)
     (w' w : ValidWeights Z) :
     emQ (itemJoint F) xs w' w ≤ emQ (itemJoint F) xs (weightOnlyStep F xs hN w) w := by
-  have hPz : ∀ (z : Z) (x : ι → Bool), 0 < (localIndepPMF (F.prob z)
-      (fun i => (F.prob_pos z i).le) (fun i => (F.prob_lt_one z i).le) x).toReal := by
-    intro z x
-    refine ENNReal.toReal_pos ?_ (PMF.apply_ne_top _ _)
-    unfold localIndepPMF
-    rw [PMF.ofFintype_apply, Finset.prod_ne_zero_iff]
-    intro i _
-    split
-    · exact (ENNReal.ofReal_pos.mpr (F.prob_pos z i)).ne'
-    · exact (ENNReal.ofReal_pos.mpr (sub_pos.mpr (F.prob_lt_one z i))).ne'
-  have hsplit : ∀ (t : ValidWeights Z) (x : ι → Bool) (z : Z),
-      log (itemJoint F t x z) = log (t.1 z) + log ((localIndepPMF (F.prob z)
-        (fun i => (F.prob_pos z i).le) (fun i => (F.prob_lt_one z i).le) x).toReal) := by
-    intro t x z
-    unfold itemJoint
-    exact Real.log_mul (ne_of_gt (t.2.pos z)) (ne_of_gt (hPz z x))
-  have hmJ : ∀ x : ι → Bool, 0 < marginal (itemJoint F) w x := fun x =>
-    Finset.sum_pos (fun z _ => itemJoint_pos F w x z) Finset.univ_nonempty
-  have hq1 : ∀ x : ι → Bool, ∑ z, posterior (itemJoint F) w x z = 1 := fun x =>
-    (isDist_posterior (itemJoint_pos F) w x).2
-  have hCeq : (∑ z, ∑ n, posterior (itemJoint F) w (xs n) z) = N := by
-    rw [Finset.sum_comm]
-    simp only [hq1]
-    rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, mul_one]
-  have hwnew : ∀ z, (weightOnlyStep F xs hN w).1 z
-      = (∑ n, posterior (itemJoint F) w (xs n) z) / N := fun z => rfl
-  have hemQ : ∀ t : ValidWeights Z, emQ (itemJoint F) xs t w
-      = (∑ z, (∑ n, posterior (itemJoint F) w (xs n) z) * log (t.1 z))
-        + (∑ n, ∑ z, posterior (itemJoint F) w (xs n) z
-          * log ((localIndepPMF (F.prob z) (fun i => (F.prob_pos z i).le)
-            (fun i => (F.prob_lt_one z i).le) (xs n)).toReal)) := by
-    intro t
-    have hswap : (∑ n, ∑ z, posterior (itemJoint F) w (xs n) z * log (t.1 z))
-        = (∑ z, (∑ n, posterior (itemJoint F) w (xs n) z) * log (t.1 z)) := by
-      rw [Finset.sum_comm]
-      refine Finset.sum_congr rfl (fun z _ => ?_)
-      rw [← Finset.sum_mul]
-    show (∑ n, ∑ z, posterior (itemJoint F) w (xs n) z
-      * log (itemJoint F t (xs n) z)) = _
-    simp only [hsplit, mul_add, Finset.sum_add_distrib]
-    rw [hswap]
-  have hmain : (∑ z, (∑ n, posterior (itemJoint F) w (xs n) z) * log (w'.1 z))
-      ≤ (∑ z, (∑ n, posterior (itemJoint F) w (xs n) z)
-        * log ((weightOnlyStep F xs hN w).1 z)) := by
-    have hc : ∀ z, 0 ≤ ∑ n, posterior (itemJoint F) w (xs n) z :=
-      fun z => Finset.sum_nonneg
-        (fun n _ => le_of_lt (div_pos (itemJoint_pos F w (xs n) z) (hmJ (xs n))))
-    have hC : 0 < ∑ z, ∑ n, posterior (itemJoint F) w (xs n) z := by
-      rw [hCeq]
-      exact Nat.cast_pos.mpr hN
-    have h := Cslib.MachineLearning.LatentVariable.BernoulliMixture.sum_mul_log_le_sum_mul_log_div
-      (c := fun z => ∑ n, posterior (itemJoint F) w (xs n) z) (w := w'.1)
-      hc hC w'.2.pos w'.2.sum_eq_one
-    have h2 : (∑ z, (∑ n, posterior (itemJoint F) w (xs n) z) * log (w'.1 z))
-        ≤ (∑ z, (∑ n, posterior (itemJoint F) w (xs n) z)
-          * log ((∑ n, posterior (itemJoint F) w (xs n) z)
-            / (∑ z', ∑ n, posterior (itemJoint F) w (xs n) z'))) := h
-    rw [hCeq] at h2
-    have hcongr : (∑ z, (∑ n, posterior (itemJoint F) w (xs n) z)
-          * log ((∑ n, posterior (itemJoint F) w (xs n) z) / N))
-        = (∑ z, (∑ n, posterior (itemJoint F) w (xs n) z)
-          * log ((weightOnlyStep F xs hN w).1 z)) :=
-      Finset.sum_congr rfl (fun z _ => by rw [← hwnew])
-    rw [hcongr] at h2
-    exact h2
-  rw [hemQ w', hemQ (weightOnlyStep F xs hN w)]
-  exact add_le_add_left hmain _
+  exact emQ_le_weightStep (hlik := fun x z => itemLik_pos F x z) xs hN w' w
+
 /-- **The weights-only step does not decrease the log-likelihood.** -/
 theorem logLik_le_weightOnlyStep {Z ι : Type*} [Fintype Z] [Nonempty Z] [Fintype ι]
     [DecidableEq ι] {N : ℕ} (F : FixedItems Z ι) (xs : Fin N → ι → Bool) (hN : 0 < N)

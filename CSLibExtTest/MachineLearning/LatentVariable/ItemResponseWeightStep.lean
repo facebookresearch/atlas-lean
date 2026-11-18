@@ -229,7 +229,7 @@ private theorem test_empty_data_excluded :
   · exact h0fun
   · rw [h0fun]
     intro hcon
-    exact lt_irrefl 0 (hcon.pos 0)
+    exact lt_irrefl 0 (hcon.1 0)
 
 /-- A boundary fixture: latent state `0` never answers correctly (probability `0`). -/
 private noncomputable def bq : Fin 2 → ℝ := ![0, 1 / 2]
@@ -288,7 +288,7 @@ private theorem test_boundary_excluded :
     norm_num
   · rw [hwu]
     intro hcon
-    have hpos := hcon.pos 0
+    have hpos := hcon.1 0
     simp at hpos
 
 /-- The same fixture as Bernoulli-mixture parameters, for the item-parameter M-step. -/
@@ -385,10 +385,10 @@ private theorem test_rasch_fixture :
         = Real.sigmoid (thlog z) := by
     intro z i
     show Real.sigmoid ((fun _ : Fin 1 => (1 : ℝ)) i
-      * (thlog z - (fun _ => (0 : ℝ)) i))
+      * (thlog z - (fun _ : Fin 1 => (0 : ℝ)) i))
       = Real.sigmoid (thlog z)
     have harg : (fun _ : Fin 1 => (1 : ℝ)) i
-        * (thlog z - (fun _ => (0 : ℝ)) i)
+        * (thlog z - (fun _ : Fin 1 => (0 : ℝ)) i)
         = thlog z := by simp
     rw [harg]
   funext z i
