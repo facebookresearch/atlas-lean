@@ -14,7 +14,7 @@ public import Mathlib.Probability.CDF
 public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.Analysis.InnerProductSpace.EuclideanDist
 public import MathlibExt.Analysis.Calculus.HessianCertificate
-import Mathlib.Tactic.Linarith
+import MathlibExt.Probability.Reliability.FailureBracket
 
 /-!
 # Gaussian affine failure bracket
@@ -128,50 +128,30 @@ theorem stdGaussian_affine_failure_bracket {n : ℕ}
               (Metric.closedBall
                 (0 : EuclideanSpace ℝ (Fin n)) R)ᶜ := by
   constructor
-  · have hsub : {z : EuclideanSpace ℝ (Fin n) | g z ≤ 0}
-        ⊆ {z | a + L z ≤ delta} ∪ (Metric.closedBall
-            (0 : EuclideanSpace ℝ (Fin n)) R)ᶜ := by
-      intro z hz
-      simp only [mem_ofPred_eq] at hz
-      by_cases hzB : z ∈ Metric.closedBall (0 : EuclideanSpace ℝ (Fin n)) R
-      · left
-        obtain ⟨hlo, -⟩ := abs_le.mp (hrem z hzB)
-        simp only [mem_ofPred_eq]
-        linarith
-      · right
-        exact hzB
-    calc stdGaussian (EuclideanSpace ℝ (Fin n)) {z | g z ≤ 0}
-        ≤ stdGaussian (EuclideanSpace ℝ (Fin n))
-            ({z | a + L z ≤ delta} ∪ (Metric.closedBall
-              (0 : EuclideanSpace ℝ (Fin n)) R)ᶜ) := measure_mono hsub
-      _ ≤ stdGaussian (EuclideanSpace ℝ (Fin n)) {z | a + L z ≤ delta}
+  · calc stdGaussian (EuclideanSpace ℝ (Fin n)) {z | g z ≤ 0}
+        ≤ stdGaussian (EuclideanSpace ℝ (Fin n)) {z | a + L z ≤ delta}
             + stdGaussian (EuclideanSpace ℝ (Fin n)) (Metric.closedBall
-              (0 : EuclideanSpace ℝ (Fin n)) R)ᶜ := measure_union_le _ _
+              (0 : EuclideanSpace ℝ (Fin n)) R)ᶜ :=
+          measure_failure_bracket_upper
+            (stdGaussian (EuclideanSpace ℝ (Fin n))) g
+            (fun z => a + L z)
+            (Metric.closedBall (0 : EuclideanSpace ℝ (Fin n)) R)
+            delta hrem
       _ = ENNReal.ofReal (cdf (gaussianReal 0 1) ((delta - a) / ‖L‖))
             + stdGaussian (EuclideanSpace ℝ (Fin n)) (Metric.closedBall
               (0 : EuclideanSpace ℝ (Fin n)) R)ᶜ := by
           rw [stdGaussian_affine_le_measure hL a delta]
-  · have hsub : {z : EuclideanSpace ℝ (Fin n) | a + L z ≤ -delta}
-        ⊆ {z | g z ≤ 0} ∪ (Metric.closedBall
-            (0 : EuclideanSpace ℝ (Fin n)) R)ᶜ := by
-      intro z hz
-      simp only [mem_ofPred_eq] at hz
-      by_cases hzB : z ∈ Metric.closedBall (0 : EuclideanSpace ℝ (Fin n)) R
-      · left
-        obtain ⟨-, hhi⟩ := abs_le.mp (hrem z hzB)
-        simp only [mem_ofPred_eq]
-        linarith
-      · right
-        exact hzB
-    calc ENNReal.ofReal (cdf (gaussianReal 0 1) ((-delta - a) / ‖L‖))
+  · calc ENNReal.ofReal (cdf (gaussianReal 0 1) ((-delta - a) / ‖L‖))
         = stdGaussian (EuclideanSpace ℝ (Fin n)) {z | a + L z ≤ -delta} := by
           rw [stdGaussian_affine_le_measure hL a (-delta)]
-      _ ≤ stdGaussian (EuclideanSpace ℝ (Fin n))
-            ({z | g z ≤ 0} ∪ (Metric.closedBall
-              (0 : EuclideanSpace ℝ (Fin n)) R)ᶜ) := measure_mono hsub
       _ ≤ stdGaussian (EuclideanSpace ℝ (Fin n)) {z | g z ≤ 0}
             + stdGaussian (EuclideanSpace ℝ (Fin n)) (Metric.closedBall
-              (0 : EuclideanSpace ℝ (Fin n)) R)ᶜ := measure_union_le _ _
+              (0 : EuclideanSpace ℝ (Fin n)) R)ᶜ :=
+          measure_failure_bracket_lower
+            (stdGaussian (EuclideanSpace ℝ (Fin n))) g
+            (fun z => a + L z)
+            (Metric.closedBall (0 : EuclideanSpace ℝ (Fin n)) R)
+            delta hrem
 
 /-- Hessian-certificate form of the Gaussian affine failure
 bracket: if `g` is `C²` on the closed radius-`R` ball with
