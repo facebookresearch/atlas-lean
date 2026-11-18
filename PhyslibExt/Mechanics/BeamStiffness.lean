@@ -18,7 +18,7 @@ import Mathlib.Tactic.Ring
 
 The classical prismatic Euler-Bernoulli beam element stiffness
 matrix in nodal coordinates `(v1, θ1, v2, θ2)`, with flexural
-rigidity `EI` and length `L`: `K = (EI / L^3)` times the integer
+rigidity `EI` and length `L`: `K = (EI / L^3)` times the coefficient
 matrix with rows `(12, 6L, -12, 6L)`, `(6L, 4L^2, -6L, 2L^2)`,
 `(-12, -6L, 12, -6L)`, `(6L, 2L^2, -6L, 4L^2)`. The matrix is
 symmetric; rigid translation and rigid rotation are in its
@@ -38,8 +38,13 @@ energy) has the closed form recorded in `beamStiffness_quad_form`.
 
 ## iv. References
 
-- Standard finite-element beam theory (Euler-Bernoulli element
-  stiffness matrix).
+- K.-J. Bathe, *Finite Element Procedures*, 2nd edition,
+  Prentice-Hall, 2014, Section 5.2 (beam element stiffness
+  matrix in the nodal coordinates (v1, θ1, v2, θ2) with
+  conjugate end forces).
+- R. D. Cook, D. S. Malkus, M. E. Plesha and R. J. Witt,
+  *Concepts and Applications of Finite Element Analysis*,
+  4th edition, Wiley, 2002, Section 2.5 (beam element).
 -/
 
 @[expose] public section
@@ -52,7 +57,7 @@ open Matrix
 element with flexural rigidity `EI` and length `L`, in the nodal
 coordinates `(v1, θ1, v2, θ2)` (deflections and rotations at the
 two ends), with the conjugate end-force sign convention:
-`K = (EI / L^3)` times the classical integer matrix. The
+`K = (EI / L^3)` times the classical coefficient matrix. The
 definition is the totalized formula; no positivity is asserted by
 the definition itself. -/
 noncomputable def beamStiffness (EI L : ℝ) : Matrix (Fin 4) (Fin 4) ℝ :=
