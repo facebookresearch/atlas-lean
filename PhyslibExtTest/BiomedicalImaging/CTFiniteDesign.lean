@@ -29,4 +29,10 @@ example (mu : Fin 2 → MeasureTheory.Measure (Fin 2 → ℝ)) (phi : Fin 2 → 
       ∑ i ∈ Finset.univ, x i * (∫ a, phi i a ∂(mu 0)) :=
   ct_design_entry mu 0 phi x hint
 
+/-- The design entry of a zero basis element vanishes at any ray. -/
+example (xi : EuclideanSpace ℝ (Fin 2)) :
+    ctDesignEntry (fun _ : Fin 2 => fun _ => (0:ℝ)) xi 3 0 = 0 := by
+  unfold ctDesignEntry MetaMathlibExt.euclideanRadonTransform
+  simp
+
 end PhyslibExtTest.BiomedicalImaging.CTFiniteDesign

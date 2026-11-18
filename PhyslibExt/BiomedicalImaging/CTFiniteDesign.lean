@@ -10,6 +10,7 @@ module
 
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import MathlibExt.Analysis.IntegralGeometry.RadonTransform
 
 /-!
 # Finite CT design agreement
@@ -64,5 +65,28 @@ lemma ct_design_entry {ι α ρ : Type*} [MeasurableSpace α] {s : Finset ι}
   exact ct_design_apply _ _ _ hint
 
 
+
+/-- The finite CT design entry for basis element `phi i` on the
+ray with unit normal direction `xi` at signed distance `p`: the
+Euclidean Radon transform of the basis element on that ray. -/
+noncomputable def ctDesignEntry {ι : Type*} (phi : ι → EuclideanSpace ℝ (Fin 2) → ℝ)
+    (xi : EuclideanSpace ℝ (Fin 2)) (p : ℝ) (i : ι) : ℝ :=
+  MetaMathlibExt.euclideanRadonTransform (phi i) xi p
+
+/-- **Finite design application law.** The Radon measurement of
+a coefficient superposition equals the finite design sum of
+coefficient-weighted design entries, whenever every basis
+restriction to the ray hyperplane is integrable. -/
+lemma ct_design_radon_apply {ι : Type*} {s : Finset ι}
+    (phi : ι → EuclideanSpace ℝ (Fin 2) → ℝ) (x : ι → ℝ)
+    (xi : EuclideanSpace ℝ (Fin 2)) (p : ℝ)
+    (hint : ∀ i ∈ s, MeasureTheory.IntegrableOn (phi i)
+      {y : EuclideanSpace ℝ (Fin 2) | @inner ℝ _ _ y xi = p}
+      (MeasureTheory.Measure.euclideanHausdorffMeasure 1)) :
+    MetaMathlibExt.euclideanRadonTransform
+        (fun a => ∑ i ∈ s, x i * phi i a) xi p =
+      ∑ i ∈ s, x i * ctDesignEntry phi xi p i := by
+  unfold MetaMathlibExt.euclideanRadonTransform ctDesignEntry
+  exact ct_design_apply _ _ _ hint
 
 end PhyslibExt.BiomedicalImaging.CTFiniteDesign
