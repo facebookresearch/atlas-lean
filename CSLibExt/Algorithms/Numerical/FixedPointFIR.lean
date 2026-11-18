@@ -29,10 +29,11 @@ an explicit overflow flag.
 
 When no overflow occurs and the real inputs and coefficients are within
 half a step of their codes, the decoded output obeys the ordered
-dot-product error bound with every local error instantiated at half a
-step. The bound keeps the coefficient and input cross term and the exact
-zero initialization, and an overflowing trace is excluded rather than
-silently wrapped.
+dot-product error bound with the coefficient, input and product errors
+instantiated at half a step and the accumulation error at zero, because
+an in-range accumulation is exact. The bound keeps the coefficient and
+input cross term and the exact zero initialization, and an overflowing
+trace is excluded rather than silently wrapped.
 -/
 
 @[expose] public section
@@ -383,7 +384,9 @@ theorem decode_fir_eq_outputPerturbed_of_no_overflow {m : ℕ} (s w : ℕ) (hw :
   rw [hAm, hA0, sub_zero]
 
 /-- Headline bound: the decoded fixed-point output satisfies the
-ordered dot-product bound with every local error at half a step. -/
+ordered dot-product bound with the coefficient, input and product errors
+at half a step and no accumulation error, since a clean trace adds
+exactly. -/
 theorem fixed_point_fir_error_bound (s w m : ℕ) (hw : 1 ≤ w)
     (h x : Fin m → ℝ) (hc xc : Fin m → ℤ)
     (hdx : ∀ k : Fin m, |decode s (xc k) - x k| ≤ (1 : ℝ) / (2 * (2 : ℝ) ^ s))
@@ -396,7 +399,6 @@ theorem fixed_point_fir_error_bound (s w m : ℕ) (hw : 1 ≤ w)
       ≤ ((1 : ℝ) / (2 * (2 : ℝ) ^ s)) * (∑ k : Fin m, |h k|)
         + ((1 : ℝ) / (2 * (2 : ℝ) ^ s)) * (∑ k : Fin m, |x k|)
         + (m : ℝ) * ((1 : ℝ) / (2 * (2 : ℝ) ^ s)) * ((1 : ℝ) / (2 * (2 : ℝ) ^ s))
-        + (m : ℝ) * ((1 : ℝ) / (2 * (2 : ℝ) ^ s))
         + (m : ℝ) * ((1 : ℝ) / (2 * (2 : ℝ) ^ s)) := by
   set δ : ℝ := (1 : ℝ) / (2 * (2 : ℝ) ^ s) with hδdef
   set dh0 : Fin m → ℝ := (fun k => decode s (hc k) - h k) with hdh0
@@ -414,11 +416,10 @@ theorem fixed_point_fir_error_bound (s w m : ℕ) (hw : 1 ≤ w)
     exact div_nonneg zero_le_one (mul_nonneg (by norm_num) (le_of_lt hpow))
   have hdx' : ∀ k : Fin m, |dx0 k| ≤ δ := fun k => hdx k
   have hdh' : ∀ k : Fin m, |dh0 k| ≤ δ := fun k => hdh k
-  have hda' : ∀ k : Fin m, |da0 k| ≤ δ := by
+  have hda' : ∀ k : Fin m, |da0 k| ≤ 0 := by
     intro k
     have h0 : da0 k = 0 := rfl
     rw [h0, abs_zero]
-    exact hδ
   have hdp' : ∀ k : Fin m, |dp0 k| ≤ δ := by
     intro k
     have hround := roundHalfUpShift_error_le s (hc k * xc k)
@@ -448,7 +449,9 @@ theorem fixed_point_fir_error_bound (s w m : ℕ) (hw : 1 ≤ w)
     rw [hcc]
     exact h2
   rw [heq]
-  exact OrderedDotProductError.orderedDotProduct_error_bound m h dh0 x dx0 dp0 da0
-    δ δ δ δ hδ hδ hδ hδ hdx' hdh' hdp' hda'
+  have hb := OrderedDotProductError.orderedDotProduct_error_bound m h dh0 x dx0 dp0 da0
+    δ δ δ 0 hδ hδ hδ le_rfl hdx' hdh' hdp' hda'
+  rw [mul_zero, add_zero] at hb
+  exact hb
 
 end CSLibExt.Algorithms.Numerical.FixedPointFIR
