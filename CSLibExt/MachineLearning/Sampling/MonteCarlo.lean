@@ -207,7 +207,6 @@ theorem tendsto_isEstimate_rnDeriv {ν ρ : Measure α} [SigmaFinite ν] [SigmaF
   rwa [Measure.withDensity_rnDeriv_eq ν ρ hνρ] at h
 
 /-- With the weight `1` (target = proposal), importance sampling is plain Monte Carlo. -/
-omit {μ : Measure Ω} in
 theorem isEstimate_one (f : α → ℝ) (X : ℕ → Ω → α) (n : ℕ) (ω : Ω) :
     isEstimate 1 f X n ω = mcEstimate f X n ω := by
   simp [isEstimate]
