@@ -21,6 +21,8 @@ repeated launches, a late launch, a signal that changes at the edge and a negati
 
 namespace Cslib.Circuits
 
+open scoped NNReal
+
 /-! ### The circuit -/
 
 /-- Binary gates and constants over `Bool`. -/
@@ -78,6 +80,13 @@ private theorem outputEarliests_one : circ.outputEarliests cdelay (fun _ => 0) 1
   change prog.earliests cdelay (fun _ => 0) (Fin.last 3) = ⊤
   rw [prog, Program.earliests_gate_last]
   exact Line.earliest_of_arity_eq_zero _ _ _ rfl
+
+/-- The hold certificate's premise for output `0`, a nonnegative real inequality. -/
+private theorem cert_zero (tqMin hold u : ℝ≥0) (h : (hold : ℝ) + u ≤ tqMin + 1/2) :
+    (((hold : ℝ) + u : ℝ) : WithTop ℝ) ≤
+      ((tqMin : ℝ) : WithTop ℝ) + circ.outputEarliests cdelay (fun _ => 0) 0 := by
+  rw [outputEarliests_zero, ← WithTop.coe_add, WithTop.coe_le_coe]
+  exact h
 
 /-- Launching at `tqMin = 1` shifts the earliest change of `g2` to `3/2`. -/
 example : circ.outputEarliests cdelay (fun _ => ((1 : ℝ) : WithTop ℝ)) 0
@@ -194,7 +203,7 @@ certificate gives hold. -/
 example : HoldMet (s2 x₁) 1 (1/2) :=
   circ.holdMet_of_le_outputEarliests cdelay (fun _ => x₁) (gSig x₁) 1 1 (1/2)
     (prog_causal x₁ x₁_settled) launch_stable₁ 0
-    (by rw [outputEarliests_zero, ← WithTop.coe_add])
+    (cert_zero _ _ _ (by norm_num))
 
 /-- The boundary is attained: the bypass changes `g2` at `3/2`, so any longer hold window
 fails. -/
@@ -256,7 +265,7 @@ during the previous cycle. -/
 example : HoldMet (s2 x₂) 1 (1/2) :=
   circ.holdMet_of_le_outputEarliests cdelay (fun _ => x₂) (gSig x₂) 1 1 (1/2)
     (prog_causal x₂ x₂_settled) launch_stable₂ 0
-    (by rw [outputEarliests_zero, ← WithTop.coe_add])
+    (cert_zero _ _ _ (by norm_num))
 
 /-! ### Capture: the pre-edge premise is separate -/
 
@@ -266,7 +275,7 @@ example : CaptureMet (s2 x₁) 1 1 (1/2) :=
   circ.captureMet_of_le_outputEarliests cdelay (fun _ => x₁) (gSig x₁) 1 1 1 (1/2)
     (prog_causal x₁ x₁_settled) launch_stable₁ 0
     (fun t _ ht => (s2_of_lt (by linarith)).trans (s2_of_lt (by norm_num)).symm)
-    (by rw [outputEarliests_zero, ← WithTop.coe_add])
+    (cert_zero _ _ _ (by norm_num))
 
 /-- `g2` over repeated launches has settled `2` seconds before the edge. -/
 private theorem s2_x₂_settled : SettledBefore (s2 x₂) 2 := by
@@ -274,6 +283,7 @@ private theorem s2_x₂_settled : SettledBefore (s2 x₂) 2 := by
     rw [x₂, decide_eq_true h₁, decide_eq_false (not_le.mpr h₂)]
     rfl
   intro t h₁ h₂
+  norm_num at h₁
   rw [s2_eq, s2_eq, hx (t - 17/2) (by linarith) (by linarith), hx (t - 1/2) (by linarith)
     (by linarith), hx (0 - 17/2) (by norm_num) (by norm_num),
     hx (0 - 1/2) (by norm_num) (by norm_num)]
@@ -283,13 +293,13 @@ applies. -/
 example : CaptureMet (s2 x₂) 2 1 (1/2) :=
   circ.captureMet_of_le_outputEarliests cdelay (fun _ => x₂) (gSig x₂) 1 2 1 (1/2)
     (prog_causal x₂ x₂_settled) launch_stable₂ 0 s2_x₂_settled
-    (by rw [outputEarliests_zero, ← WithTop.coe_add])
+    (cert_zero _ _ _ (by norm_num))
 
 /-- **The setup side can fail while hold passes.** `g2` changes at `-5/2`, inside a
 three-second setup window, so capture fails although hold holds. -/
 example : ¬ CaptureMet (s2 x₂) 3 1 (1/2) := by
   intro h
-  have := h (-3) le_rfl (by rw [WithTop.coe_lt_coe]; norm_num)
+  have := h (-3) (by norm_num) (by rw [WithTop.coe_lt_coe]; norm_num)
   rw [s2_eq, s2_eq] at this
   norm_num [x₂] at this
 
@@ -305,12 +315,13 @@ example (W : Wire 1 0 → ℝ → Bool) (d : ℝ) (hd : 0 ≤ d) :
 /-- Such a signal meets hold, but it was not settled before the edge, so capture fails. -/
 example : HoldMet edgeSig 1 0 := fun t₁ t₂ h₀₁ h₀₂ _ _ => by simp [edgeSig, h₀₁, h₀₂]
 
-example (δ : ℝ) (hδ : 0 < δ) : ¬ SettledBefore edgeSig δ := fun h => by
+example (δ : ℝ≥0) (hδ : 0 < δ) : ¬ SettledBefore edgeSig δ := fun h => by
+  have hδ' : (0 : ℝ) < δ := hδ
   have := h (-δ) le_rfl (by linarith)
-  simp [edgeSig, not_le.mpr (neg_lt_zero.mpr hδ)] at this
+  simp [edgeSig, not_le.mpr (neg_lt_zero.mpr hδ')] at this
 
 example : ¬ CaptureMet edgeSig 1 1 0 := fun h => by
-  have := h (-1) le_rfl (by rw [WithTop.coe_lt_coe]; norm_num)
+  have := h (-1) (by norm_num) (by rw [WithTop.coe_lt_coe]; norm_num)
   norm_num [edgeSig] at this
 
 /-! ### Violated premises -/
@@ -336,7 +347,7 @@ private theorem not_holdMet₃ : ¬ HoldMet (s2 x₃) 1 (1/2) := by
 signals violate it, since otherwise the certificate would give the hold check that fails. -/
 example : ¬ prog.Causal cdelay (fun _ => x₃) (gSig x₃) := fun hcausal =>
   not_holdMet₃ (circ.holdMet_of_le_outputEarliests cdelay (fun _ => x₃) (gSig x₃) 1 1 (1/2)
-    hcausal launch_stable₃ 0 (by rw [outputEarliests_zero, ← WithTop.coe_add]))
+    hcausal launch_stable₃ 0 (cert_zero _ _ _ (by norm_num)))
 
 /-- **Negative delays are not causal.** A gate with contamination delay `-1` never obeys the
 model, whatever its signals. -/

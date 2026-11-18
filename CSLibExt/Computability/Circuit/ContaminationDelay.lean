@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Cslib.Computability.Circuit.Basic
+public import Mathlib.Basic.NNReal.Defs
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.WithBot
 
@@ -39,6 +40,9 @@ circuit (`Cslib.Circuits.Circuit`) with one real contamination delay per gate, i
   edge until `hold + u`, the hold time plus the clock uncertainty.
 * `CaptureMet s setup hold u`: `s` holds its value at the edge on all of `[-setup, hold + u)`.
 
+The durations `δ`, `setup`, `hold`, `u` and the minimum clock-to-Q delay `tqMin` are elapsed
+times, so they are nonnegative reals (`ℝ≥0`); a negative duration cannot be stated.
+
 ## Main results
 
 * `Program.stableBefore_wireEarliests`: under the causal model, if every input is stable
@@ -62,6 +66,8 @@ glitch freedom are out of scope.
 @[expose] public section
 
 namespace Cslib.Circuits
+
+open scoped NNReal
 
 universe v
 
@@ -100,21 +106,21 @@ def Program.Causal {σ : Signature.{v}} {inputCount : Nat} {U : Type*} :
 /-- **Hold check at the receiving register.** The register is clocked at time
 `0`; its data input `s` must not change from the edge until the hold time `hold`
 plus the clock uncertainty `u`, that is on `[0, hold + u)`. -/
-def HoldMet {U : Type*} (s : ℝ → U) (hold u : ℝ) : Prop :=
-  StableBefore s ((hold + u : ℝ) : WithTop ℝ)
+def HoldMet {U : Type*} (s : ℝ → U) (hold u : ℝ≥0) : Prop :=
+  StableBefore s (((hold : ℝ) + u : ℝ) : WithTop ℝ)
 
 /-- **Settled before the edge.** The signal `s` already holds its value at the
 clock edge at time `0` throughout the `δ` seconds before it, that is on
 `[-δ, 0]`. -/
-def SettledBefore {U : Type*} (s : ℝ → U) (δ : ℝ) : Prop :=
-  ∀ t : ℝ, -δ ≤ t → t ≤ 0 → s t = s 0
+def SettledBefore {U : Type*} (s : ℝ → U) (δ : ℝ≥0) : Prop :=
+  ∀ t : ℝ, -(δ : ℝ) ≤ t → t ≤ 0 → s t = s 0
 
 /-- **Capture check at the receiving register.** The register is clocked at time
 `0`; its data input `s` holds its value at the edge from `setup` seconds before
 the edge until the hold time `hold` plus the clock uncertainty `u`, that is on
 `[-setup, hold + u)`. -/
-def CaptureMet {U : Type*} (s : ℝ → U) (setup hold u : ℝ) : Prop :=
-  ∀ t : ℝ, -setup ≤ t → (t : WithTop ℝ) < ((hold + u : ℝ) : WithTop ℝ) → s t = s 0
+def CaptureMet {U : Type*} (s : ℝ → U) (setup hold u : ℝ≥0) : Prop :=
+  ∀ t : ℝ, -(setup : ℝ) ≤ t → (t : WithTop ℝ) < (((hold : ℝ) + u : ℝ) : WithTop ℝ) → s t = s 0
 
 /-! ### Earliest change: min-plus propagation of contamination delays -/
 
@@ -386,16 +392,16 @@ theorem Circuit.holdMet_of_le_outputEarliests {σ : Signature.{v}}
     {inputCount outputCount : Nat} {U : Type*} (c : Circuit σ inputCount outputCount)
     (cdelay : Fin c.size → ℝ)
     (inputSignal : Fin inputCount → ℝ → U) (gateSignal : Fin c.size → ℝ → U)
-    (tqMin hold u : ℝ)
+    (tqMin hold u : ℝ≥0)
     (hcausal : c.program.Causal cdelay inputSignal gateSignal)
-    (hlaunch : ∀ i, StableBefore (inputSignal i) (tqMin : WithTop ℝ))
+    (hlaunch : ∀ i, StableBefore (inputSignal i) ((tqMin : ℝ) : WithTop ℝ))
     (o : Fin outputCount)
-    (hcert : ((hold + u : ℝ) : WithTop ℝ) ≤
-      (tqMin : WithTop ℝ) + c.outputEarliests cdelay (fun _ => 0) o) :
+    (hcert : (((hold : ℝ) + u : ℝ) : WithTop ℝ) ≤
+      ((tqMin : ℝ) : WithTop ℝ) + c.outputEarliests cdelay (fun _ => 0) o) :
     HoldMet (Wire.elim inputSignal gateSignal (c.outputs o)) hold u := by
-  have hs := c.stableBefore_outputEarliests cdelay (fun _ => (tqMin : WithTop ℝ))
+  have hs := c.stableBefore_outputEarliests cdelay (fun _ => ((tqMin : ℝ) : WithTop ℝ))
     inputSignal gateSignal hcausal hlaunch o
-  have hshift := c.outputEarliests_add cdelay (fun _ => 0) tqMin o
+  have hshift := c.outputEarliests_add cdelay (fun _ => 0) (tqMin : ℝ) o
   simp only [add_zero] at hshift
   rw [hshift] at hs
   exact StableBefore.mono hcert hs
@@ -408,13 +414,13 @@ theorem Circuit.captureMet_of_le_outputEarliests {σ : Signature.{v}}
     {inputCount outputCount : Nat} {U : Type*} (c : Circuit σ inputCount outputCount)
     (cdelay : Fin c.size → ℝ)
     (inputSignal : Fin inputCount → ℝ → U) (gateSignal : Fin c.size → ℝ → U)
-    (tqMin setup hold u : ℝ)
+    (tqMin setup hold u : ℝ≥0)
     (hcausal : c.program.Causal cdelay inputSignal gateSignal)
-    (hlaunch : ∀ i, StableBefore (inputSignal i) (tqMin : WithTop ℝ))
+    (hlaunch : ∀ i, StableBefore (inputSignal i) ((tqMin : ℝ) : WithTop ℝ))
     (o : Fin outputCount)
     (hsettled : SettledBefore (Wire.elim inputSignal gateSignal (c.outputs o)) setup)
-    (hcert : ((hold + u : ℝ) : WithTop ℝ) ≤
-      (tqMin : WithTop ℝ) + c.outputEarliests cdelay (fun _ => 0) o) :
+    (hcert : (((hold : ℝ) + u : ℝ) : WithTop ℝ) ≤
+      ((tqMin : ℝ) : WithTop ℝ) + c.outputEarliests cdelay (fun _ => 0) o) :
     CaptureMet (Wire.elim inputSignal gateSignal (c.outputs o)) setup hold u := by
   have hhold := c.holdMet_of_le_outputEarliests cdelay inputSignal gateSignal tqMin hold u
     hcausal hlaunch o hcert
