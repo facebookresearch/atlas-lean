@@ -6,6 +6,7 @@ import io
 import json
 import os
 from pathlib import Path
+import string
 import subprocess
 import sys
 import tempfile
@@ -340,6 +341,52 @@ class Patterns(unittest.TestCase):
             self.assertEqual(
                 gate.scan(root + "runner/x", "f", rules=gate.LITERAL_RULES), []
             )
+
+    def test_quoted_and_literal_names_keep_every_punctuation_mark(self):
+        # Only separators, line breaks and the matching quote end a quoted
+        # or literal name; Windows-invalid characters are data there.
+        roots = ("/home/", "/".join(["", "data", "users", ""]))
+        for mark in string.punctuation:
+            if mark in "/\\":
+                continue
+            for core in ("runner", "runneradmin"):
+                for name in (core + mark, core + mark + "x"):
+                    for root in roots:
+                        for quote in ('"', "'", "`"):
+                            if quote == mark:
+                                continue
+                            text = quote + root + name + quote
+                            with self.subTest(text=text):
+                                self.assertEqual(len(gate.scan(text, "t")), 1)
+                        value = "docs" + root + name
+                        with self.subTest(value=value):
+                            findings = gate.scan(
+                                value, "f", rules=gate.LITERAL_RULES
+                            )
+                            self.assertEqual(len(findings), 1)
+                    # The same names before a further path component.
+                    nested = "/home/" + name + "/leaf.txt"
+                    for quote in ('"', "'", "`"):
+                        if quote != mark:
+                            text = quote + nested + quote
+                            with self.subTest(text=text):
+                                self.assertEqual(len(gate.scan(text, "t")), 1)
+                    with self.subTest(value="docs" + nested):
+                        findings = gate.scan(
+                            "docs" + nested, "f", rules=gate.LITERAL_RULES
+                        )
+                        self.assertEqual(len(findings), 1)
+                # The exact account before a further component stays clean.
+                for quote in ('"', "'", "`"):
+                    text = quote + "/home/" + core + "/x" + mark + quote
+                    if quote != mark:
+                        with self.subTest(text=text):
+                            self.assertEqual(gate.scan(text, "t"), [])
+                value = "docs/home/" + core + "/x" + mark
+                with self.subTest(value=value):
+                    self.assertEqual(
+                        gate.scan(value, "f", rules=gate.LITERAL_RULES), []
+                    )
 
     def test_quoted_terminal_and_separator_forms_agree(self):
         # A quote right after the root is a documented text boundary, so
@@ -1833,6 +1880,21 @@ class Repository(unittest.TestCase):
             all(f["rule"] == "personal-workspace" for f in findings["findings"])
         )
 
+    def test_literal_filenames_keep_windows_invalid_characters(self):
+        home = "/".join(["docs", "home", ""])
+        for mark in ("?", ":", "|", "<", ">", "*", '"'):
+            self.write(home + "runner" + mark + "private", "Clean text\n")
+            self.write(home + "runner" + mark + "x/leaf.txt", "Clean text\n")
+        self.write(home + "runner", "Clean text\n")
+        # The exact account before a further component stays clean.
+        self.write("docs/data/users/runner/leaf.txt", "Clean text\n")
+        self.commit("Add literal-name fixtures")
+        findings = self.check()["findings"]
+        self.assertEqual(len(findings), 14, findings)
+        self.assertTrue(
+            all(f["location"].startswith("filename in ") for f in findings)
+        )
+
     def test_literal_filename_is_redacted_in_blob_locations(self):
         name = "/".join(["docs", "home", "runner!"])
         self.write(name, "Ticket " + "D" + "12345\n")
@@ -1933,6 +1995,16 @@ class Repository(unittest.TestCase):
                 ("Example", "C"),
                 "Msg\n",
                 [],
+            ),
+            # The email slot ends at its ">"; other punctuation is data.
+            (
+                "author Example <"
+                + home
+                + "runner?x> 1 +0000\ncommitter C"
+                + mail,
+                ("Example", "C"),
+                "Msg\n",
+                [2],
             ),
             # An embedded tag message is prose; its signature is opaque data,
             # like a top-level signature.

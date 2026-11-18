@@ -15,15 +15,20 @@ import urllib.request
 
 
 PROFILE_ROOT = r"[/\\]+(?:data[/\\]+users|home|(?i:Users))[/\\]+"
-# A quoted terminal profile: the opening quote sits right before the root (or
-# its drive letter) and the name runs to the matching closing quote, so
-# punctuation and spaces inside it belong to the name. A quote right after
-# the root is a text boundary; an empty or blank name, "." and ".." are not
-# profiles; only the exact CI accounts are exempt.
+# Line boundaries, as str.splitlines() sees them.
+LINE_BREAKS = r"\n\r\x0b\x0c\x1c-\x1e\x85\u2028\u2029"
+# A quoted profile: the opening quote sits right before the root (or its
+# drive letter) and the matching quote closes the path later on the same
+# line. The profile name ends at that quote or at the next separator, so
+# punctuation, spaces and other quote characters inside it belong to the
+# name. A quote right after the root is a text boundary; an empty or blank
+# terminal name, "." and ".." are not profiles; only the exact CI accounts
+# are exempt.
 QUOTED_PROFILES = tuple(
     rf"(?:(?<={q}[A-Za-z]:)|(?<={q})){PROFILE_ROOT}"
-    rf"(?!\s*['`\"])(?!(?:\.{{1,2}}|\s*){q})(?!runner(?:admin)?{q})"
-    rf"[^/\\\x00-\x1f\x85\u2028\u2029\"<>|:*?{q}]+(?={q})"
+    rf"(?!\s*['`\"])(?!(?:\.{{1,2}}|\s*){q})"
+    rf"(?!runner(?:admin)?(?:{q}|[/\\]))"
+    rf"[^/\\{LINE_BREAKS}{q}]+(?={q}|[/\\][^{LINE_BREAKS}{q}]*{q})"
     for q in ('"', "'", "`")
 )
 
@@ -81,14 +86,15 @@ RULES = {
     ),
 }
 # Filenames, symlink targets, branch names and commit identity names are
-# literal values, not prose: a terminal profile name there runs to the end of
-# the value, with the same root, dot and exact-account exceptions as a quoted
-# path.
-LITERAL_END = r"(?=[\x00-\x1f\x85\u2028\u2029\"<>|:*?]|\Z)"
+# literal values, not prose: a profile name there runs to the next separator,
+# a line break or the end of the value, with the same root, dot and
+# exact-account exceptions as a quoted path.
+LITERAL_END = rf"(?=[{LINE_BREAKS}]|\Z)"
 LITERAL_PROFILE = re.compile(
     rf"(?<![/\\]){PROFILE_ROOT}(?!\s*['`\"])"
-    rf"(?!(?:\.{{1,2}}|\s*){LITERAL_END})(?!runner(?:admin)?{LITERAL_END})"
-    rf"[^/\\\x00-\x1f\x85\u2028\u2029\"<>|:*?]+{LITERAL_END}"
+    rf"(?!(?:\.{{1,2}}|\s*){LITERAL_END})"
+    rf"(?!runner(?:admin)?(?:[/\\]|{LITERAL_END}))"
+    rf"[^/\\{LINE_BREAKS}]+"
 )
 LITERAL_RULES = dict(RULES)
 LITERAL_RULES["personal-workspace"] = re.compile(
@@ -464,11 +470,11 @@ def header_values(header):
 
 
 def identity_values(line, kind, value):
-    bracketed = value.partition("<")[2]
+    email, _, rest = value.partition("<")[2].partition(">")
     return [
         (line, kind, identity_name(value)),
-        (line, kind + "-email", bracketed),
-        (line, kind + "-rest", bracketed.partition(">")[2]),
+        (line, kind + "-email", email),
+        (line, kind + "-rest", rest),
     ]
 
 
