@@ -536,83 +536,6 @@ private theorem aux_cos_sq {L : ℝ} (hL : 0 < L) :
     rw [hdiv, hcos0, zero_div]
   rw [hc1, hc2, add_zero]
 
-/-- Scaled Dirichlet Wirtinger inequality on `[0, L]`: for `L > 0`
-and `w 0 = w L = 0`,
-`∫ w^2 ≤ (L / π)^2 * ∫ (w')^2`. -/
-theorem wirtinger_scaled {L : ℝ} (hL : 0 < L) {w w' : ℝ → ℝ}
-    (hw : ∀ x ∈ Set.Icc 0 L, HasDerivAt w (w' x) x)
-    (hw' : ContinuousOn w' (Set.Icc 0 L))
-    (h0 : w 0 = 0) (hL0 : w L = 0) :
-    (∫ x in (0 : ℝ)..L, (w x) ^ 2) ≤
-      (L / Real.pi) ^ 2 * ∫ x in (0 : ℝ)..L, (w' x) ^ 2 := by
-  have hπ : 0 < Real.pi := Real.pi_pos
-  have hπne : Real.pi ≠ 0 := ne_of_gt hπ
-  have hLne : L ≠ 0 := ne_of_gt hL
-  have hc : (0 : ℝ) < L / Real.pi := div_pos hL hπ
-  have hcne : (L / Real.pi) ≠ 0 := ne_of_gt hc
-  have hLπ : (L / Real.pi) * Real.pi = L := by field_simp
-  have hmem : ∀ t ∈ Set.Icc (0 : ℝ) Real.pi, (L / Real.pi) * t ∈ Set.Icc 0 L := by
-    intro t ht
-    constructor
-    · exact mul_nonneg hc.le ht.1
-    · have hle : (L / Real.pi) * t ≤ (L / Real.pi) * Real.pi :=
-        mul_le_mul_of_nonneg_left ht.2 hc.le
-      rw [hLπ] at hle
-      exact hle
-  have hφ : ∀ t : ℝ, HasDerivAt (fun s : ℝ => (L / Real.pi) * s) (L / Real.pi) t :=
-    fun t => by simpa using (hasDerivAt_id t).const_mul (L / Real.pi)
-  have hg : ∀ t ∈ Set.Icc (0 : ℝ) Real.pi,
-      HasDerivAt (fun s => w ((L / Real.pi) * s))
-        (w' ((L / Real.pi) * t) * (L / Real.pi)) t := by
-    intro t ht
-    exact HasDerivAt.comp t (hw _ (hmem t ht)) (hφ t)
-  have hg'cont : ContinuousOn (fun t => w' ((L / Real.pi) * t) * (L / Real.pi))
-      (Set.Icc 0 Real.pi) := by
-    have hlin : ContinuousOn (fun t : ℝ => (L / Real.pi) * t) (Set.Icc 0 Real.pi) :=
-      continuousOn_id.const_mul (L / Real.pi)
-    have hcomp : ContinuousOn (fun t => w' ((L / Real.pi) * t)) (Set.Icc 0 Real.pi) :=
-      hw'.comp' hlin (fun t ht => hmem t ht)
-    exact hcomp.mul_const (L / Real.pi)
-  have hg0 : w ((L / Real.pi) * 0) = 0 := by rw [mul_zero]; exact h0
-  have hgπ : w ((L / Real.pi) * Real.pi) = 0 := by rw [hLπ]; exact hL0
-  have key : (∫ t in (0 : ℝ)..Real.pi, (w ((L / Real.pi) * t)) ^ 2)
-      ≤ ∫ t in (0 : ℝ)..Real.pi, (w' ((L / Real.pi) * t) * (L / Real.pi)) ^ 2 :=
-    MetaMathlibExt.wirtinger_inequality (fun s => w ((L / Real.pi) * s))
-      (fun t => w' ((L / Real.pi) * t) * (L / Real.pi))
-      (fun t ht => (hg t ht).hasDerivWithinAt) hg'cont hg0 hgπ
-  have hinv : (L / Real.pi)⁻¹ = Real.pi / L := inv_div L Real.pi
-  have hsub1 : (∫ t in (0 : ℝ)..Real.pi, (w ((L / Real.pi) * t)) ^ 2)
-      = (Real.pi / L) * ∫ y in (0 : ℝ)..L, (w y) ^ 2 := by
-    have h := intervalIntegral.integral_comp_mul_left (a := 0) (b := Real.pi)
-      (fun y : ℝ => (w y) ^ 2) hcne
-    simpa [hLπ, hinv, smul_eq_mul] using h
-  have hsub2 : (∫ t in (0 : ℝ)..Real.pi, (w' ((L / Real.pi) * t) * (L / Real.pi)) ^ 2)
-      = (L / Real.pi) * ∫ y in (0 : ℝ)..L, (w' y) ^ 2 := by
-    have e : (fun t => (w' ((L / Real.pi) * t) * (L / Real.pi)) ^ 2)
-        = (fun t => (L / Real.pi) ^ 2 * (w' ((L / Real.pi) * t)) ^ 2) :=
-      funext fun t => by ring
-    rw [e]
-    have hcm : (∫ t in (0 : ℝ)..Real.pi, (L / Real.pi) ^ 2 * (w' ((L / Real.pi) * t)) ^ 2)
-        = (L / Real.pi) ^ 2 * ∫ t in (0 : ℝ)..Real.pi, (w' ((L / Real.pi) * t)) ^ 2 :=
-      intervalIntegral.integral_const_mul _ _
-    rw [hcm]
-    have h := intervalIntegral.integral_comp_mul_left (a := 0) (b := Real.pi)
-      (fun y : ℝ => (w' y) ^ 2) hcne
-    have hsub : (∫ t in (0 : ℝ)..Real.pi, (w' ((L / Real.pi) * t)) ^ 2)
-        = (Real.pi / L) * ∫ y in (0 : ℝ)..L, (w' y) ^ 2 := by
-      simpa [hLπ, hinv, smul_eq_mul] using h
-    rw [hsub]
-    field_simp
-  rw [hsub1, hsub2] at key
-  have hmul := mul_le_mul_of_nonneg_left key hc.le
-  have e1 : (L / Real.pi) * ((Real.pi / L) * ∫ y in (0 : ℝ)..L, (w y) ^ 2)
-      = ∫ y in (0 : ℝ)..L, (w y) ^ 2 := by
-    field_simp
-  have e2 : (L / Real.pi) * ((L / Real.pi) * ∫ y in (0 : ℝ)..L, (w' y) ^ 2)
-      = (L / Real.pi) ^ 2 * ∫ y in (0 : ℝ)..L, (w' y) ^ 2 := by ring
-  rw [e1, e2] at hmul
-  exact hmul
-
 /-- Integration by parts for a `C^2` deflection vanishing at both
 ends: `∫ (w')^2 = -∫ w * w''` on `[0, L]`. -/
 theorem integral_deriv_sq_eq_neg {L : ℝ} (hL : 0 < L) {w w' w'' : ℝ → ℝ}
@@ -687,7 +610,7 @@ theorem integral_deriv_sq_le {L : ℝ} (hL : 0 < L)
     exact integral_deriv_sq_eq_neg hL hw hw' hw'' h0 hL0
   have hW : Bw ≤ (L / Real.pi) ^ 2 * A := by
     rw [hBw, hA]
-    exact wirtinger_scaled hL hw hw'_cont h0 hL0
+    simpa using MetaMathlibExt.wirtinger_inequality_Icc hL w w' hw hw'_cont h0 hL0
   have hCS : Dw ^ 2 ≤ Bw * Cw := by
     have hquad : ∀ t : ℝ, (0 : ℝ) ≤ Bw + 2 * Dw * t + Cw * t ^ 2 := by
       intro t
