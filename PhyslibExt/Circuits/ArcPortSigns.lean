@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.Graph.ArcNetwork
+public import PhyslibExt.Circuits.TellegenPowerBalance
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
@@ -32,26 +33,27 @@ balance at the nodes and the potential definition of branch voltage
 together imply that total branch power equals total node power
 (Tellegen's theorem). Reversing one branch, together with its
 voltage and its current, leaves the node equations and the power
-balance unchanged. Distinct branch identifiers that join the same
-pair of nodes keep distinct columns as functions of the identifier,
-and a branch whose tail and head coincide has a zero column.
+balance unchanged. The power balance itself is the shared matrix
+form `PhyslibExt.Circuits.TellegenPowerBalance.branchPower_eq_nodePower`
+applied to the electrical incidence. Distinct branch identifiers that
+join the same pair of nodes keep distinct columns as functions of the
+identifier, and a branch whose tail and head coincide has a zero
+column.
 
 ## ii. Key results
 
-- `branchPower_eq_nodePower`: Tellegen's identity in sum form,
-  `∑ e, v e * i e = ∑ n, phi n * j n` from KVL and KCL.
-- `branchPower_eq_nodePower_dotProduct`: the same identity in
-  dot-product form, `v ⬝ᵥ i = phi ⬝ᵥ j`.
+- `branchVoltage_eq_tail_sub_head`: a potential-defined branch
+  voltage is the tail potential minus the head potential.
 - `orientedBranchPorts_powerBalance_andReversal`: the headline
-  statement, combining the power balance with simultaneous reversal
-  of one branch, its voltage and its current.
+  statement, combining the power balance, in sum form, with
+  simultaneous reversal of one branch, its voltage and its current.
 
 ## iii. Table of contents
 
 - A. Electrical incidence and its entries
 - B. Branch voltage from potentials
-- C. Power balance
-- D. Branch reversal
+- C. Branch reversal
+- D. Power balance and reversal
 
 ## iv. References
 
@@ -121,30 +123,7 @@ lemma branchVoltage_eq_tail_sub_head {V : Type*} [Fintype V] [DecidableEq V]
   rw [Finset.sum_ite_eq _ _ _, Finset.sum_ite_eq _ _ _]
   simp
 
-/-! ## C. Power balance -/
-
-/-- Branch power balance in sum form: under node current balance with an
-independently supplied injection and the potential definition of branch
-voltage, total branch power equals total node power. This is Tellegen's
-theorem for the oriented branch model. -/
-theorem branchPower_eq_nodePower {V : Type*} [Fintype V] [DecidableEq V] {E : Type*}
-    [Fintype E] [DecidableEq E] (tail head : E → V) (phi j : V → ℝ) (v i : E → ℝ)
-    (hKCL : electricalIncidence tail head *ᵥ i = j)
-    (hKVL : v = (electricalIncidence tail head).transpose *ᵥ phi) :
-    (∑ e : E, v e * i e) = ∑ n : V, phi n * j n := by
-  change v ⬝ᵥ i = phi ⬝ᵥ j
-  rw [hKVL, dotProduct_comm, dotProduct_mulVec, vecMul_transpose, hKCL, dotProduct_comm]
-
-/-- Branch power balance in dot-product form, the same identity as
-`branchPower_eq_nodePower`. -/
-theorem branchPower_eq_nodePower_dotProduct {V : Type*} [Fintype V] [DecidableEq V]
-    {E : Type*} [Fintype E] [DecidableEq E] (tail head : E → V) (phi j : V → ℝ)
-    (v i : E → ℝ) (hKCL : electricalIncidence tail head *ᵥ i = j)
-    (hKVL : v = (electricalIncidence tail head).transpose *ᵥ phi) :
-    v ⬝ᵥ i = phi ⬝ᵥ j := by
-  rw [hKVL, dotProduct_comm, dotProduct_mulVec, vecMul_transpose, hKCL, dotProduct_comm]
-
-/-! ## D. Branch reversal -/
+/-! ## C. Branch reversal -/
 
 /-- Reversing one branch together with its current preserves node current
 balance: the reversed incidence applied to the reversed current is the
@@ -205,6 +184,8 @@ lemma branchPower_reversedBranch_eq
     simp only [Function.update_self, neg_mul_neg]
   · simp only [Function.update_of_ne he]
 
+/-! ## D. Power balance and reversal -/
+
 /-- Headline correctness: the potential definition of voltage and node
 current balance give the power balance, and simultaneous reversal of one
 branch, its voltage and its current preserves both the nodal injection and
@@ -220,7 +201,8 @@ lemma orientedBranchPorts_powerBalance_andReversal {V : Type*} [Fintype V]
           (Function.update head e₀ (tail e₀))).transpose *ᵥ phi =
         Function.update v e₀ (-v e₀) := by
   refine ⟨?_, ?_, ?_⟩
-  · exact branchPower_eq_nodePower tail head phi j v i hKCL hKVL
+  · exact PhyslibExt.Circuits.TellegenPowerBalance.branchPower_eq_nodePower
+      (electricalIncidence tail head) phi j v i hKVL hKCL
   · rw [mulVec_reversedBranch_eq]
     exact hKCL
   · rw [transpose_mulVec_reversedBranch_eq, ← hKVL]
