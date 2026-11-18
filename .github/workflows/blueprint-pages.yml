@@ -33,6 +33,7 @@ on:
       - "hooks/**"
       - "docs/BLUEPRINT.md"
       - ".github/workflows/blueprint-pages.yml"
+      - ".github/workflows/claim.yml"
       - ".github/autoform-ref"
       - "lean-toolchain"
       - "lake-manifest.json"

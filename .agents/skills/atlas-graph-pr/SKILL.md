@@ -18,7 +18,7 @@ change anything. This skill only gives the order of work.
 
 - A graph PR works one issue. For DAG work, that is a `task:dag-work` issue
   naming one node marked `"org.atlas-wiki": {"unexpanded": true}` in its
-  annotation. Take the issue before you start, as
+  annotation. Comment `/claim` on it before you start, as
   [atlas-solve-issue](../atlas-solve-issue/SKILL.md) describes.
 - Branch from the latest `main` and keep the PR to that issue.
 

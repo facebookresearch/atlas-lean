@@ -39,7 +39,7 @@ class BlueprintWorkflowTests(unittest.TestCase):
             "scripts/extract_v2_lean_dependencies.py", "scripts/dump_v2_dependencies.lean",
             "scripts/check_blueprint_site.py", "scripts/check_graph_rules.py", "scripts/frontier_issues.py", "scripts/taxonomy.json", "scripts/wiki-sync.json",
             "scripts/requirements-blueprint.txt", "mkdocs.yml", "theme/**", "hooks/**",
-            "docs/BLUEPRINT.md", ".github/workflows/blueprint-pages.yml", ".github/autoform-ref",
+            "docs/BLUEPRINT.md", ".github/workflows/blueprint-pages.yml", ".github/workflows/claim.yml", ".github/autoform-ref",
             "lean-toolchain", "lake-manifest.json", "lakefile.toml",
         ):
             self.assertIn(path, paths)

@@ -296,9 +296,17 @@ a person closed as not planned is never reopened. A hidden
 Writes are paced and capped at 250 per run, so the first fill opens over
 several `main` builds.
 
-The job is the only one with `issues: write`, runs only the standard-library
-sync script, and writes nothing until a maintainer sets the Actions variable
-`FRONTIER_ISSUES` to `true`. Until then each run reports its plan in the job
+A `/claim` comment on a task issue assigns the commenter when nobody holds
+the task, and `/unclaim` releases it; a maintainer may `/unclaim @someone`. A
+claim lapses after seven days without an open pull request that references
+the issue, as an AutoformBot claim does: the sync unassigns it and says so on
+the issue.
+`.github/workflows/claim.yml` answers these with the same script
+(`frontier_issues.py claim`), run from the default branch.
+
+The sync job is the only job of this workflow with `issues: write`, runs
+only the standard-library sync script, and writes nothing until a maintainer
+sets the Actions variable `FRONTIER_ISSUES` to `true`. Until then each run reports its plan in the job
 summary. To preview it locally:
 
 ```sh
