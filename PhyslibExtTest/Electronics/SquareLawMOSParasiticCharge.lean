@@ -68,7 +68,19 @@ example : ∑ i, dynamicTerminalCurrent 3 (parasiticCharge 1 1 1) (conductionCur
     intro i
     fin_cases i <;> simp
   exact (squareLawMOSParasiticCharge_dynamicKCL 1 1 1 2 1 zero_le_one zero_le_one zero_le_one
-    two_pos .saturation _ hv saturation_path_example.1).2.2.2 3
+    two_pos .saturation _ hv saturation_path_example.1).2.2.2.1 3
+
+/-- The bundled statement's sign conclusions on the saturation bias path, at time `3`:
+nonnegative stored energy and nonnegative drain current. -/
+example : 0 ≤ parasiticEnergy 1 1 1 ((fun s : ℝ => ![2 + Real.sin s / 2, 5, 0]) 3) ∧
+    0 ≤ conductionCurrent 2 1 ((fun s : ℝ => ![2 + Real.sin s / 2, 5, 0]) 3) 1 := by
+  have hv : Differentiable ℝ (fun s : ℝ => ![2 + Real.sin s / 2, 5, 0]) := by
+    rw [differentiable_pi]
+    intro i
+    fin_cases i <;> simp
+  obtain ⟨-, -, -, -, hE, hI⟩ := squareLawMOSParasiticCharge_dynamicKCL 1 1 1 2 1 zero_le_one
+    zero_le_one zero_le_one two_pos .saturation _ hv saturation_path_example.1
+  exact ⟨hE 3, hI 3⟩
 
 /-- A ramp on the gate with the drain held: the gate displacement current is `Cgs + Cgd`. -/
 example : displacementCurrent 3 (parasiticCharge 2 3 5) (fun s : ℝ => ![s, 0, 0]) 1 0 = 5 := by
@@ -114,7 +126,7 @@ example : ∑ i, dynamicTerminalCurrent 3 (parasiticCharge (-1) 0 1) (conduction
     rw [differentiable_pi]
     intro i
     fin_cases i <;> simp
-  exact negativeCapacitance_kcl_not_passive.1 _ hv 1
+  exact negativeCapacitance_negative_energy_and_kcl.1 _ hv 1
 
 /-- Nonnegative capacitances give nonnegative energy at the same voltage. -/
 example : 0 ≤ parasiticEnergy 1 0 1 ![1, 0, 0] :=

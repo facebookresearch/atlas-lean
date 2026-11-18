@@ -66,11 +66,12 @@ case is stated.
 - `sum_dynamicTerminalCurrent_eq_zero`: the dynamic Kirchhoff current
   law along every differentiable path, for all real capacitances.
 - `squareLawMOSParasiticCharge_dynamicKCL`: the bundled statement on an
-  open forward regime.
+  open forward regime, with nonnegative stored energy and nonnegative
+  drain current along the path.
 - `sum_mul_displacementCurrent_eq_deriv_energy`: displacement power is
   the rate of change of stored energy.
 - `saturation_path_example`, `flippedGateCharge_dynamic_sum_ne_zero`,
-  `negativeCapacitance_kcl_not_passive`: validation cases.
+  `negativeCapacitance_negative_energy_and_kcl`: validation cases.
 
 ## iii. Table of contents
 
@@ -79,7 +80,7 @@ case is stated.
 - C. Static conduction currents and forward regimes
 - D. Displacement currents along a bias path
 - E. Dynamic terminal Kirchhoff law
-- F. Stored energy and passivity
+- F. Stored energy
 - G. Validation
 
 ## iv. References
@@ -349,13 +350,25 @@ theorem sum_dynamicTerminalCurrent_eq_zero (Cgs Cgd Cds beta Vth : ℝ)
     (fun w _ => parasiticCharge_sum_eq_zero Cgs Cgd Cds w) _
     (fun w _ => conductionCurrent_sum_eq_zero beta Vth w) v hv (fun _ => Set.mem_univ _) t
 
+/-- Nonnegative capacitances store nonnegative energy. -/
+lemma parasiticEnergy_nonneg (Cgs Cgd Cds : ℝ) (hCgs : 0 ≤ Cgs) (hCgd : 0 ≤ Cgd)
+    (hCds : 0 ≤ Cds) (w : Fin 3 → ℝ) :
+    0 ≤ parasiticEnergy Cgs Cgd Cds w := by
+  unfold parasiticEnergy
+  refine div_nonneg ?_ (by norm_num)
+  exact add_nonneg (add_nonneg (mul_nonneg hCgs (sq_nonneg _)) (mul_nonneg hCgd (sq_nonneg _)))
+    (mul_nonneg hCds (sq_nonneg _))
+
 /-- **Square-law nMOS with fixed parasitic capacitors.** Under nonnegative capacitances,
 `beta > 0`, and a differentiable bias path staying in one open forward regime: the charge
 formulas conserve charge and satisfy the gauge premise on the regime, the static currents
-are conserved, and the dynamic terminal currents sum to zero at every time. The dynamic law
-itself needs none of the sign hypotheses (`sum_dynamicTerminalCurrent_eq_zero`). -/
+are conserved, the dynamic terminal currents sum to zero at every time, the stored
+parasitic energy is nonnegative at every time, and the drain conduction current is
+nonnegative at every time. The dynamic law itself needs none of the sign hypotheses
+(`sum_dynamicTerminalCurrent_eq_zero`); the capacitance signs give the energy bound and
+`beta > 0` with the forward regime gives the current bound. -/
 theorem squareLawMOSParasiticCharge_dynamicKCL (Cgs Cgd Cds beta Vth : ℝ)
-    (_hCgs : 0 ≤ Cgs) (_hCgd : 0 ≤ Cgd) (_hCds : 0 ≤ Cds) (_hbeta : 0 < beta)
+    (hCgs : 0 ≤ Cgs) (hCgd : 0 ≤ Cgd) (hCds : 0 ≤ Cds) (hbeta : 0 < beta)
     (r : ForwardRegion) (v : ℝ → (Fin 3 → ℝ)) (hv : Differentiable ℝ v)
     (hvr : ∀ t, v t ∈ forwardRegion Vth r) :
     (∀ w ∈ forwardRegion Vth r, ∑ i, parasiticCharge Cgs Cgd Cds w i = 0) ∧
@@ -365,16 +378,23 @@ theorem squareLawMOSParasiticCharge_dynamicKCL (Cgs Cgd Cds beta Vth : ℝ)
             parasiticCharge Cgs Cgd Cds w) ∧
       (∀ w ∈ forwardRegion Vth r, ∑ i, conductionCurrent beta Vth w i = 0) ∧
       (∀ t, ∑ i, dynamicTerminalCurrent 3 (parasiticCharge Cgs Cgd Cds)
-        (conductionCurrent beta Vth) v t i = 0) :=
+        (conductionCurrent beta Vth) v t i = 0) ∧
+      (∀ t, 0 ≤ parasiticEnergy Cgs Cgd Cds (v t)) ∧
+      (∀ t, 0 ≤ conductionCurrent beta Vth (v t) 1) :=
   ⟨fun w _ => parasiticCharge_sum_eq_zero _ _ _ w, parasiticCharge_gauge _ _ _ _,
     fun w _ => conductionCurrent_sum_eq_zero _ _ w,
     PhyslibExt.Electronics.DynamicTerminalKCL.sum_dynamicTerminalCurrent_eq_zero 3
       (forwardRegion Vth r) (isOpen_forwardRegion Vth r) _
       (parasiticCharge_differentiableOn Cgs Cgd Cds _)
       (fun w _ => parasiticCharge_sum_eq_zero Cgs Cgd Cds w) _
-      (fun w _ => conductionCurrent_sum_eq_zero beta Vth w) v hv hvr⟩
+      (fun w _ => conductionCurrent_sum_eq_zero beta Vth w) v hv hvr,
+    fun t => parasiticEnergy_nonneg Cgs Cgd Cds hCgs hCgd hCds (v t),
+    fun t => by
+      rw [(conductionCurrent_apply beta Vth (v t)).2.1]
+      exact PhyslibExt.Electronics.IdealSquareLawMOS.current_nonneg _ _ _ hbeta
+        (forwardRegion_vds_pos Vth r (v t) (hvr t)).le⟩
 
-/-! ## F. Stored energy and passivity -/
+/-! ## F. Stored energy -/
 
 /-- Charge-energy identity: `∑ i, w i * q i (w)` is twice the stored energy. -/
 lemma sum_mul_parasiticCharge_eq_two_mul_energy (Cgs Cgd Cds : ℝ) (w : Fin 3 → ℝ) :
@@ -382,15 +402,6 @@ lemma sum_mul_parasiticCharge_eq_two_mul_energy (Cgs Cgd Cds : ℝ) (w : Fin 3 �
   simp only [Fin.sum_univ_three, parasiticCharge, parasiticEnergy, Matrix.cons_val_zero,
     Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons, Matrix.tail_cons]
   ring
-
-/-- Nonnegative capacitances store nonnegative energy. -/
-lemma parasiticEnergy_nonneg (Cgs Cgd Cds : ℝ) (hCgs : 0 ≤ Cgs) (hCgd : 0 ≤ Cgd)
-    (hCds : 0 ≤ Cds) (w : Fin 3 → ℝ) :
-    0 ≤ parasiticEnergy Cgs Cgd Cds w := by
-  unfold parasiticEnergy
-  refine div_nonneg ?_ (by norm_num)
-  exact add_nonneg (add_nonneg (mul_nonneg hCgs (sq_nonneg _)) (mul_nonneg hCgd (sq_nonneg _)))
-    (mul_nonneg hCds (sq_nonneg _))
 
 /-- **Energy balance.** Absorbed displacement power equals the rate of change of stored
 energy along a differentiable path. -/
@@ -431,7 +442,7 @@ theorem sum_mul_displacementCurrent_eq_deriv_energy (Cgs Cgd Cds : ℝ)
 /-- Positive case: with unit capacitances, `beta = 2`, `Vth = 1`, the gate bias path
 `(2 + sin s / 2, 5, 0)` stays in saturation, the gate displacement current at time `0` is
 `1`, and the dynamic currents sum to zero. -/
-theorem saturation_path_example :
+lemma saturation_path_example :
     (∀ t, (fun s : ℝ => ![2 + Real.sin s / 2, 5, 0]) t ∈ forwardRegion 1 .saturation) ∧
       displacementCurrent 3 (parasiticCharge 1 1 1) (fun s : ℝ => ![2 + Real.sin s / 2, 5, 0])
         0 0 = 1 ∧
@@ -474,7 +485,7 @@ lemma exists_sum_flippedGateCharge_ne_zero (Cgs Cgd Cds : ℝ) (hCgs : 0 < Cgs)
 
 /-- **Violated premise, dynamic.** With the flipped gate charge, the gate ramp `(s, 0, 0)`
 has nonzero summed dynamic current at time `0`. -/
-theorem flippedGateCharge_dynamic_sum_ne_zero (Cgs Cgd Cds beta Vth : ℝ) (hCgs : 0 < Cgs)
+lemma flippedGateCharge_dynamic_sum_ne_zero (Cgs Cgd Cds beta Vth : ℝ) (hCgs : 0 < Cgs)
     (hCgd : 0 ≤ Cgd) :
     ∑ i, dynamicTerminalCurrent 3 (flippedGateCharge Cgs Cgd Cds) (conductionCurrent beta Vth)
       (fun s : ℝ => ![s, 0, 0]) 0 i ≠ 0 := by
@@ -515,9 +526,9 @@ theorem flippedGateCharge_dynamic_sum_ne_zero (Cgs Cgd Cds beta Vth : ℝ) (hCgs
   linarith
 
 /-- **Negative capacitance.** With `Cgs = -1`, `Cgd = 0`, `Cds = 1` the dynamic law still
-holds along every differentiable path, but the stored energy is negative at `(1, 0, 0)`, so
-the device is not passive. -/
-theorem negativeCapacitance_kcl_not_passive :
+holds along every differentiable path, while the stored energy `parasiticEnergy` is
+negative at `(1, 0, 0)`. -/
+lemma negativeCapacitance_negative_energy_and_kcl :
     (∀ v : ℝ → (Fin 3 → ℝ), Differentiable ℝ v → ∀ t,
       ∑ i, dynamicTerminalCurrent 3 (parasiticCharge (-1) 0 1) (conductionCurrent 1 0)
         v t i = 0) ∧
