@@ -33,8 +33,13 @@ canonical deflection `uniformLoadDeflection`.
   formula.
 - `Mechanics.EulerBernoulli.uniformBeamShear_eq`: the shear
   formula.
+- `Mechanics.EulerBernoulli.uniformBeamMoment_eq_iteratedDeriv`:
+  the moment in the canonical `iteratedDeriv 2` form.
+- `Mechanics.EulerBernoulli.uniformBeamShear_deriv`: the
+  equilibrium law `V' = -w` as a standalone theorem.
 - `Mechanics.EulerBernoulli.uniformBeam_endpoints`: end moments,
-  end shears, and `V' = -w`.
+  end shears, and `V' = -w` (convenience conjunction; the
+  individual endpoint facts are also named separately).
 - `Mechanics.EulerBernoulli.uniformBeamMoment_midpoint_max`:
   maximum moment `w * L ^ 2 / 8` at the midpoint.
 
@@ -59,6 +64,21 @@ namespace Mechanics.EulerBernoulli
 `M = -EI * y''` (sagging sign convention). -/
 noncomputable def uniformBeamMoment (w EI L x : ℝ) : ℝ :=
   -EI * deriv (deriv (uniformLoadDeflection w EI L)) x
+
+/-- The bending moment in the canonical iterated-derivative
+form used by the `EulerBernoulliBeam` API:
+`M = -EI * iteratedDeriv 2 y`. This is the same function as
+`uniformBeamMoment`, whose definition uses nested `deriv`;
+the bridge lets clients move between the two encodings. -/
+theorem uniformBeamMoment_eq_iteratedDeriv (w EI L x : ℝ) :
+    uniformBeamMoment w EI L x
+      = -EI * iteratedDeriv 2 (uniformLoadDeflection w EI L) x := by
+  have h2 : iteratedDeriv 2 (uniformLoadDeflection w EI L)
+      = deriv (deriv (uniformLoadDeflection w EI L)) := by
+    rw [show (2 : ℕ) = 1 + 1 from rfl, iteratedDeriv_succ,
+      iteratedDeriv_one]
+  unfold uniformBeamMoment
+  rw [h2]
 
 /-- Shear as the derivative of bending moment, `V = M'`. -/
 noncomputable def uniformBeamShear (w EI L x : ℝ) : ℝ :=
@@ -192,6 +212,32 @@ theorem uniformBeam_endpoints {w EI L : ℝ} (hEI : EI ≠ 0) :
     calc deriv (fun x => (w / 2) * (L - 2 * x)) x
         = (w / 2) * (-2) := h.deriv
       _ = -w := by ring
+
+/-- Zero bending moment at the left support. -/
+theorem uniformBeamMoment_zero {w EI L : ℝ} (hEI : EI ≠ 0) :
+    uniformBeamMoment w EI L 0 = 0 :=
+  (uniformBeam_endpoints hEI).1
+
+/-- Zero bending moment at the right support. -/
+theorem uniformBeamMoment_at_right {w EI L : ℝ} (hEI : EI ≠ 0) :
+    uniformBeamMoment w EI L L = 0 :=
+  (uniformBeam_endpoints hEI).2.1
+
+/-- Left end shear `w * L / 2`. -/
+theorem uniformBeamShear_zero {w EI L : ℝ} (hEI : EI ≠ 0) :
+    uniformBeamShear w EI L 0 = w * L / 2 :=
+  (uniformBeam_endpoints hEI).2.2.1
+
+/-- Right end shear `-(w * L / 2)`. -/
+theorem uniformBeamShear_at_right {w EI L : ℝ} (hEI : EI ≠ 0) :
+    uniformBeamShear w EI L L = -(w * L / 2) :=
+  (uniformBeam_endpoints hEI).2.2.2.1
+
+/-- Equilibrium law: the shear derivative is the negative
+uniform load, `V' = -w`, as a standalone function identity. -/
+theorem uniformBeamShear_deriv {w EI L : ℝ} (hEI : EI ≠ 0) :
+    deriv (uniformBeamShear w EI L) = fun _ => -w :=
+  (uniformBeam_endpoints hEI).2.2.2.2
 
 /-- The maximum bending moment on `[0, L]` is `w * L ^ 2 / 8`,
 attained at the midpoint. -/
