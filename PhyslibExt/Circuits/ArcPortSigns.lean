@@ -196,7 +196,7 @@ lemma transpose_mulVec_reversedBranch_eq {V : Type*} [Fintype V] [DecidableEq V]
 
 /-- Reversing one branch together with its voltage and current preserves
 total branch power. -/
-lemma branchPower_reversedBranch_eq {V : Type*} [Fintype V] [DecidableEq V]
+lemma branchPower_reversedBranch_eq
     {E : Type*} [Fintype E] [DecidableEq E] (v i : E → ℝ) (e₀ : E) :
     Function.update v e₀ (-v e₀) ⬝ᵥ Function.update i e₀ (-i e₀) = v ⬝ᵥ i := by
   simp only [dotProduct]

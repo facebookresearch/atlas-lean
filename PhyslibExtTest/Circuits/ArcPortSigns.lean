@@ -110,7 +110,7 @@ power, while flipping the current alone breaks the two-node balance. -/
 example : Function.update (![2] : Fin 1 → ℝ) 0 (-(![2] : Fin 1 → ℝ) 0) ⬝ᵥ
     Function.update (![5] : Fin 1 → ℝ) 0 (-(![5] : Fin 1 → ℝ) 0) =
     (![2] : Fin 1 → ℝ) ⬝ᵥ (![5] : Fin 1 → ℝ) :=
-  branchPower_reversedBranch_eq (V := Fin 2) ![2] ![5] 0
+  branchPower_reversedBranch_eq ![2] ![5] 0
 
 example : (![2] : Fin 1 → ℝ) ⬝ᵥ (![-5] : Fin 1 → ℝ) ≠
     (![3, 1] : Fin 2 → ℝ) ⬝ᵥ (![5, -5] : Fin 2 → ℝ) :=
