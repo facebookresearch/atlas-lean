@@ -35,7 +35,7 @@ example : (blockCountingGenerator (Measure.dirac (0 : I)) 5 *ᵥ fun j => ((j : 
   rw [blockCountingGenerator_mulVec_natCast, blockDrift_dirac_zero]
   norm_num [Nat.choose]
 
--- acceptance 2: the generator of COAL-034 applied to `f(b) = b` is `-γ_b`, for every finite Λ
+-- acceptance 2: the block-counting generator applied to `f(b) = b` is `-γ_b`, for every finite Λ
 example (n : ℕ) (b : Fin (n + 1)) :
     (blockCountingGenerator Λ n *ᵥ fun j => ((j : ℕ) : ℝ)) b = -blockDrift Λ b :=
   blockCountingGenerator_mulVec_natCast Λ n b
