@@ -41,6 +41,17 @@ single unit-conductance branch from node `0` to node `1` with
 voltages `1` and `0`, the supplied power at node `0` is `+1`: the
 node supplies the power that the branch dissipates.
 
+Phase convention. Every node carries one voltage phasor, so the
+network is single-phase, or one phase of a balanced three-phase
+network (its per-phase equivalent). The supplied power and every
+balance below are therefore per-phase quantities. Driving the same
+network with the balanced phase set of every node voltage rotates
+each injection by the same phase factor, so the three phases supply
+`3` times the per-phase power at every node, and the three-phase
+balance is `3` times the per-phase balance
+(`sum_nodeComplexPower_balancedPhases`,
+`total_threePhase_realPower_eq_three_mul_losses`).
+
 The total supplied real power over all nodes equals the sum over
 branches of the real part of the branch admittance times the
 squared magnitude of the branch drop, plus the sum over nodes of
@@ -63,8 +74,12 @@ parts of that complex identity, and the sign and validation
 results are direct consequences of those forms. The per-unit
 power on a direct real base is the existing
 `PhyslibExt.Circuits.PerUnitBases.powerPerUnit` at phase bases
-`1` and `Sbase / 3`, whose three-phase power base is `Sbase`; it
-agrees with `powerPerUnit` on every three-phase power base.
+`1` and `Sbase / 3`, that is, the power divided by `Sbase`. The base
+must be the base of the same quantity: the per-phase base `Vb * Ib`
+for per-phase power, or the three-phase base
+`PhyslibExt.Circuits.PerUnitBases.threePhasePowerBase` for
+three-phase power. Both give the same per-unit value
+(`perUnitComplexPower_three_mul_threePhasePowerBase`).
 
 ## ii. Key results
 
@@ -73,6 +88,8 @@ agrees with `powerPerUnit` on every three-phase power base.
 - `total_realPower_eq_branch_add_shunt_losses`: the headline
   balance of total supplied real power against branch and shunt
   conductive losses.
+- `total_threePhase_realPower_eq_three_mul_losses`: the balanced
+  three-phase form, `3` times the per-phase balance.
 
 ## iii. Table of contents
 
@@ -80,6 +97,7 @@ agrees with `powerPerUnit` on every three-phase power base.
 - B. Total power balance
 - C. Nodal injection equations
 - D. Sign, reactive, and per-unit consequences
+- E. Balanced three-phase operation
 
 ## iv. References
 
@@ -117,6 +135,8 @@ def nodeInjection (nN nE : ℕ) (B : Matrix (Fin nN) (Fin nE) ℝ)
 voltage times conjugated injection, in the canonical root-mean-square
 convention. The injection is the current leaving the node into the
 network, so this is the power the network absorbs through that node.
+It is a per-phase quantity: in balanced three-phase operation the three
+phases supply `3` times this value (`sum_nodeComplexPower_balancedPhases`).
 New definition owned by this module. -/
 def nodeComplexPower (nN nE : ℕ) (B : Matrix (Fin nN) (Fin nE) ℝ)
     (V : Fin nN → ℂ) (y : Fin nE → ℂ) (ys : Fin nN → ℂ) (v : Fin nN) : ℂ :=
@@ -124,9 +144,11 @@ def nodeComplexPower (nN nE : ℕ) (B : Matrix (Fin nN) (Fin nE) ℝ)
 
 /-- Complex power in per-unit on a direct real base power `Sbase`: the
 existing `powerPerUnit` with phase voltage base `1` and phase current base
-`Sbase / 3`, whose three-phase power base is `Sbase`. Dividing by a
-positive real base scales the real and reactive parts by the same positive
-factor and does not rotate them. -/
+`Sbase / 3`, that is, `S / Sbase`. `Sbase` is the base of the same
+quantity as `S`: a per-phase base for per-phase power such as
+`nodeComplexPower`, a three-phase base for three-phase power. Dividing by
+a positive real base scales the real and reactive parts by the same
+positive factor and does not rotate them. -/
 noncomputable def perUnitComplexPower (S : ℂ) (Sbase : ℝ) : ℂ :=
   powerPerUnit 1 (Sbase / 3) S
 
@@ -332,5 +354,74 @@ lemma perUnitComplexPower_threePhasePowerBase (S : ℂ) (Vb Ib : ℝ) :
     ring
   unfold perUnitComplexPower powerPerUnit
   rw [hb]
+
+/-- Three-phase power on the three-phase base and per-phase power on the
+per-phase base `Vb * Ib` have the same per-unit value. -/
+lemma perUnitComplexPower_three_mul_threePhasePowerBase (S : ℂ) (Vb Ib : ℝ) :
+    perUnitComplexPower (3 * S) (threePhasePowerBase Vb Ib) =
+      perUnitComplexPower S (Vb * Ib) := by
+  unfold perUnitComplexPower powerPerUnit threePhasePowerBase
+  push_cast
+  ring
+
+/-! ## E. Balanced three-phase operation -/
+
+private theorem branchDrop_const_mul (nN nE : ℕ) (B : Matrix (Fin nN) (Fin nE) ℝ)
+    (V : Fin nN → ℂ) (c : ℂ) (e : Fin nE) :
+    branchDrop nN nE B (fun w => c * V w) e = c * branchDrop nN nE B V e := by
+  unfold branchDrop
+  rw [Finset.mul_sum]
+  exact Finset.sum_congr rfl (fun v _ => by ring)
+
+private theorem nodeInjection_const_mul (nN nE : ℕ) (B : Matrix (Fin nN) (Fin nE) ℝ)
+    (V : Fin nN → ℂ) (y : Fin nE → ℂ) (ys : Fin nN → ℂ) (c : ℂ) (v : Fin nN) :
+    nodeInjection nN nE B (fun w => c * V w) y ys v =
+      c * nodeInjection nN nE B V y ys v := by
+  unfold nodeInjection
+  simp only [branchDrop_const_mul, mul_add, Finset.mul_sum]
+  congr 1
+  · exact Finset.sum_congr rfl (fun e _ => by ring)
+  · ring
+
+private theorem balancedPhases_eq_mul (X : ℂ) (p : ZMod 3) :
+    balancedPhases X p = balancedPhases 1 p * X := by
+  fin_cases p <;> simp [balancedPhases]
+
+/-- Balanced three-phase operation at one node: driving the network with
+the balanced phase set of every node voltage, the three phases together
+supply `3` times the per-phase power `nodeComplexPower`. -/
+theorem sum_nodeComplexPower_balancedPhases (nN nE : ℕ)
+    (B : Matrix (Fin nN) (Fin nE) ℝ) (V : Fin nN → ℂ) (y : Fin nE → ℂ)
+    (ys : Fin nN → ℂ) (v : Fin nN) :
+    (∑ p : ZMod 3, nodeComplexPower nN nE B (fun w => balancedPhases (V w) p) y ys v) =
+      3 * nodeComplexPower nN nE B V y ys v := by
+  have h : ∀ p : ZMod 3,
+      nodeComplexPower nN nE B (fun w => balancedPhases (V w) p) y ys v =
+        complexPower (balancedPhases (V v) p)
+          (balancedPhases (nodeInjection nN nE B V y ys v) p) := by
+    intro p
+    have hV : (fun w => balancedPhases (V w) p) = fun w => balancedPhases 1 p * V w :=
+      funext fun w => balancedPhases_eq_mul (V w) p
+    unfold nodeComplexPower
+    rw [hV, nodeInjection_const_mul, balancedPhases_eq_mul (V v),
+      balancedPhases_eq_mul (nodeInjection nN nE B V y ys v)]
+  rw [Finset.sum_congr rfl (fun p _ => h p), sum_complexPower_balancedPhases]
+  rfl
+
+/-- Balanced three-phase real power balance: the real power the three
+phases supply over all nodes is `3` times the per-phase branch and shunt
+conductive losses. -/
+theorem total_threePhase_realPower_eq_three_mul_losses (nN nE : ℕ)
+    (B : Matrix (Fin nN) (Fin nE) ℝ) (V : Fin nN → ℂ) (y : Fin nE → ℂ)
+    (ys : Fin nN → ℂ) :
+    (∑ v : Fin nN,
+        (∑ p : ZMod 3,
+          nodeComplexPower nN nE B (fun w => balancedPhases (V w) p) y ys v).re) =
+      3 * ((∑ e : Fin nE, (y e).re * Complex.normSq (branchDrop nN nE B V e)) +
+        ∑ v : Fin nN, (ys v).re * Complex.normSq (V v)) := by
+  simp only [sum_nodeComplexPower_balancedPhases]
+  rw [← total_realPower_eq_branch_add_shunt_losses, Finset.mul_sum]
+  refine Finset.sum_congr rfl (fun v _ => ?_)
+  simp [Complex.mul_re]
 
 end PhyslibExt.Circuits.ACInjectionLossBalance
