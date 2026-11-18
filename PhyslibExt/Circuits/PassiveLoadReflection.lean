@@ -304,19 +304,23 @@ theorem average_peakWaveform_load_power_eq_re_mul_norm_sq
 
 /-- Wave form of the criterion: under the load-plane relations and a
 nonzero incident amplitude, the reflected amplitude is at most the
-incident amplitude if and only if `Re ZL >= 0`. -/
+incident amplitude if and only if `Re ZL >= 0`. These hypotheses already
+force `ZL + Z0 != 0` (`LineWaveTermination.load_sum_ne_zero`). -/
 theorem norm_reflected_le_norm_incident_iff (V I Aplus Aminus ZL : ℂ) (Z0 : ℝ)
     (hZ0 : 0 < Z0) (hV : V = Aplus + Aminus)
     (hI : I = (Aplus - Aminus) / (Z0 : ℂ)) (hload : V = ZL * I)
-    (hA : Aplus ≠ 0) (hsum : ZL + (Z0 : ℂ) ≠ 0) :
+    (hA : Aplus ≠ 0) :
     ‖Aminus‖ ≤ ‖Aplus‖ ↔ 0 ≤ ZL.re := by
+  have hsum := load_sum_ne_zero V I Aplus Aminus ZL Z0 hZ0 hV hI hload hA
   have hApos : 0 < ‖Aplus‖ := norm_pos_iff.mpr hA
   rw [← div_le_one hApos, ← norm_div,
-    load_reflectionCoefficient_eq V I Aplus Aminus ZL Z0 hZ0 hV hI hload hA hsum,
+    load_reflectionCoefficient_eq V I Aplus Aminus ZL Z0 hZ0 hV hI hload hA,
     norm_reflectionCoefficient_le_one_iff ZL Z0 hZ0 hsum]
 
 /-- The ratio criterion together with its wave-amplitude form under the
-load-plane relations and a nonzero incident amplitude. -/
+load-plane relations and a nonzero incident amplitude. The guard
+`ZL + Z0 != 0` is needed only by the ratio form
+(`reflection_criterion_fails_at_excluded_load`); the wave form derives it. -/
 theorem passiveLoadReflection (ZL : ℂ) (Z0 : ℝ) (hZ0 : 0 < Z0)
     (hsum : ZL + (Z0 : ℂ) ≠ 0) :
     (‖(ZL - (Z0 : ℂ)) / (ZL + (Z0 : ℂ))‖ ≤ 1 ↔ 0 ≤ ZL.re) ∧
@@ -327,7 +331,6 @@ theorem passiveLoadReflection (ZL : ℂ) (Z0 : ℝ) (hZ0 : 0 < Z0)
   · exact norm_reflection_le_one_iff ZL Z0 hZ0 hsum
   · intro V I Aplus Aminus hV hI hload hA
     exact norm_reflected_le_norm_incident_iff V I Aplus Aminus ZL Z0 hZ0 hV hI hload hA
-      hsum
 
 /-! ### C. Resistive loads -/
 

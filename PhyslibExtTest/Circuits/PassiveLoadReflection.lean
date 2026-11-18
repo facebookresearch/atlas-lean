@@ -92,13 +92,13 @@ example : 1 - ‖reflectionCoefficient (1 + Complex.I) 1‖ ^ 2 = 4 / 5 := by
 load `3`, load voltage `3` and current `1` on a unit line. -/
 example : ‖(1 : ℂ)‖ ≤ ‖(2 : ℂ)‖ :=
   (norm_reflected_le_norm_incident_iff 3 1 2 1 3 1 (by norm_num) (by norm_num)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num)).mpr (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num)).mpr (by norm_num)
 
 /-- Wave form, active: incident amplitude `1`, reflected amplitude `-3`,
 load `-1/2`, load voltage `-2` and current `4` on a unit line. -/
 example : ¬ ‖(-3 : ℂ)‖ ≤ ‖(1 : ℂ)‖ := by
   rw [norm_reflected_le_norm_incident_iff (-2) 4 1 (-3) (-1 / 2) 1 (by norm_num)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)]
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num)]
   norm_num
 
 /-- The bundled criterion at load `3` on a unit line. -/
