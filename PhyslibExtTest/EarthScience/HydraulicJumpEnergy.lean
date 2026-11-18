@@ -38,3 +38,24 @@ example : rectangularSpecificEnergy (Real.sqrt 3) 1 1
   rw [specific_energy_jump_loss (by norm_num) (by norm_num)
     (by norm_num) hM]
   norm_num
+
+/-- Reverse orientation: the loss changes sign. -/
+example : rectangularSpecificEnergy (Real.sqrt 3) 1 2
+    - rectangularSpecificEnergy (Real.sqrt 3) 1 1 = -1 / 8 := by
+  have hM : rectangularSpecificForce (Real.sqrt 3) 1 2
+      = rectangularSpecificForce (Real.sqrt 3) 1 1 := by
+    simp [rectangularSpecificForce]
+    norm_num
+  rw [specific_energy_jump_loss (by norm_num) (by norm_num)
+    (by norm_num) hM]
+  norm_num
+
+/-- Positivity of the loss at the conjugate fixture. -/
+example : 0 < rectangularSpecificEnergy (Real.sqrt 3) 1 1
+    - rectangularSpecificEnergy (Real.sqrt 3) 1 2 := by
+  have hM : rectangularSpecificForce (Real.sqrt 3) 1 1
+      = rectangularSpecificForce (Real.sqrt 3) 1 2 := by
+    simp [rectangularSpecificForce]
+    norm_num
+  exact specific_energy_jump_loss_pos (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) hM

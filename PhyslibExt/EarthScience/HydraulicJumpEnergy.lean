@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.EarthScience.HydraulicJump
+public import PhyslibExt.EarthScience.OpenChannelSpecificEnergy
 import Mathlib.Tactic
 
 /-!
@@ -24,8 +25,8 @@ is `(h2 - h1) ^ 3 / (4 * h1 * h2)`, positive when `h2 > h1`.
 
 ## ii. Key results
 
-- `EarthScience.rectangularSpecificEnergy`: specific energy per
-  unit weight.
+- `EarthScience.rectangularSpecificEnergy` (in
+  `OpenChannelSpecificEnergy`): specific energy per unit weight.
 - `EarthScience.specific_energy_jump_loss`: the energy-loss
   identity between conjugate depths.
 - `EarthScience.specific_energy_jump_loss_pos`: positivity of the
@@ -46,11 +47,6 @@ is `(h2 - h1) ^ 3 / (4 * h1 * h2)`, positive when `h2 > h1`.
 namespace EarthScience
 
 /-! ## A. Specific energy and jump loss -/
-
-/-- Specific energy per unit weight for a rectangular channel:
-depth plus velocity head. -/
-noncomputable def rectangularSpecificEnergy (q g h : ℝ) : ℝ :=
-  h + q ^ 2 / (2 * g * h ^ 2)
 
 /-- Energy loss between conjugate depths of a hydraulic jump. -/
 theorem specific_energy_jump_loss {q g h1 h2 : ℝ} (hg : 0 < g)
