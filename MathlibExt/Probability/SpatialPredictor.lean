@@ -53,12 +53,11 @@ variance `Var X - 2 (w . c) + w . (K w)`.
 
 namespace SpatialPredictor
 
-/-- Covariance matrix of the observations, reusing the existing
-covariance-matrix API (`K i j = Cov(Y i, Y j)`). -/
-noncomputable abbrev covMatrix {Ω : Type*} [MeasurableSpace Ω]
+/-- Covariance matrix of the observations: `K i j = Cov(Y i, Y j)`. -/
+noncomputable def covMatrix {Ω : Type*} [MeasurableSpace Ω]
     (μ : MeasureTheory.Measure Ω) {n : ℕ} (Y : Fin n → Ω → ℝ) :
     Matrix (Fin n) (Fin n) ℝ :=
-  MathlibExt.Probability.Finance.PortfolioVariance.covMatrix μ Y
+  Matrix.of fun i j => ProbabilityTheory.covariance (Y i) (Y j) μ
 
 /-- Covariance vector between target and observations:
 `c i = Cov(X, Y i)`. -/
@@ -74,35 +73,7 @@ theorem covMatrix_posSemidef {Ω : Type*} [MeasurableSpace Ω]
     (μ : MeasureTheory.Measure Ω) [MeasureTheory.IsProbabilityMeasure μ]
     {n : ℕ} (Y : Fin n → Ω → ℝ) (hY : ∀ i, MeasureTheory.MemLp (Y i) 2 μ) :
     (covMatrix μ Y).PosSemidef := by
-  rw [Matrix.posSemidef_iff_dotProduct_mulVec]
-  constructor
-  · rw [Matrix.isHermitian_iff_isSymm]
-    apply Matrix.IsSymm.ext
-    intro i j
-    simp only [covMatrix, MathlibExt.Probability.Finance.PortfolioVariance.covMatrix, Matrix.of_apply]
-    exact ProbabilityTheory.covariance_comm _ _
-  · intro x
-    have hstar : star x = x := by simp
-    rw [hstar]
-    have hmem : ∀ i, MeasureTheory.MemLp (fun ω => x i * Y i ω) 2 μ :=
-      fun i => (hY i).const_mul (x i)
-    have hvar : ProbabilityTheory.variance (fun ω => ∑ i, x i * Y i ω) μ
-        = dotProduct x (Matrix.mulVec (covMatrix μ Y) x) := by
-      have h1 : ProbabilityTheory.variance (fun ω => ∑ i, x i * Y i ω) μ
-          = ∑ i, ∑ j, ProbabilityTheory.covariance (fun ω => x i * Y i ω)
-            (fun ω => x j * Y j ω) μ :=
-        ProbabilityTheory.variance_fun_sum hmem
-      rw [h1]
-      simp only [ProbabilityTheory.covariance_const_mul_left,
-        ProbabilityTheory.covariance_const_mul_right, dotProduct,
-        Matrix.mulVec_apply_eq_sum, covMatrix, MathlibExt.Probability.Finance.PortfolioVariance.covMatrix, Matrix.of_apply, Finset.mul_sum]
-      apply Finset.sum_congr rfl
-      intro i _
-      apply Finset.sum_congr rfl
-      intro j _
-      ring
-    rw [← hvar]
-    exact ProbabilityTheory.variance_nonneg _ _
+  simpa [covMatrix] using ProbabilityTheory.posSemidef_covariance_matrix hY
 
 /-- Common-mean unbiased linear predictor: observations `Y i` and
 target `X` are square-integrable with a common mean, and weights
@@ -122,51 +93,35 @@ theorem predictor_unbiased_and_error_variance {Ω : Type*}
         = ProbabilityTheory.variance X μ
           - 2 * dotProduct w (covVector μ X Y)
           + dotProduct w (Matrix.mulVec (covMatrix μ Y) w) := by
-  have hmem : ∀ i, MeasureTheory.MemLp (fun ω => w i * Y i ω) 2 μ :=
-    fun i => (hY i).const_mul (w i)
-  have hS : MeasureTheory.MemLp (fun ω => ∑ i, w i * Y i ω) 2 μ :=
-    MeasureTheory.memLp_finsetSum Finset.univ (fun i _ => hmem i)
-  constructor
-  · have hint : ∀ i ∈ (Finset.univ : Finset (Fin n)),
-        MeasureTheory.Integrable (fun ω => w i * Y i ω) μ :=
-      fun i _ => (hmem i).integrable one_le_two
-    have h1 : μ[fun ω => ∑ i, w i * Y i ω]
-        = ∑ i, w i * μ[Y i] := by
-      have e := MeasureTheory.integral_finsetSum (μ := μ)
-        (Finset.univ : Finset (Fin n))
-        (f := fun i ω => w i * Y i ω) hint
-      simp only [MeasureTheory.integral_const_mul] at e ⊢
-      exact e
-    rw [h1]
-    simp only [hm]
-    rw [← Finset.sum_mul, hw, one_mul]
+  have hSmem : MeasureTheory.MemLp (fun ω => ∑ i, w i * Y i ω) 2 μ := by
+    have h := MeasureTheory.memLp_finsetSum (p := 2) (μ := μ) Finset.univ
+      (f := fun i ω => w i * Y i ω) (fun i _ => (hY i).const_mul (w i))
+    simpa using h
+  have hSint : ∀ i, MeasureTheory.Integrable (fun ω => w i * Y i ω) μ :=
+    fun i => ((hY i).integrable (by simp)).const_mul (w i)
+  refine ⟨?_, ?_⟩
+  · have h1 : ∫ ω, ∑ i, w i * Y i ω ∂μ = ∑ i, w i * μ[Y i] := by
+      have h := MeasureTheory.integral_finsetSum (μ := μ) Finset.univ
+        (f := fun i ω => w i * Y i ω) (fun i _ => hSint i)
+      simp only [MeasureTheory.integral_const_mul] at h
+      simpa using h
+    rw [show μ[fun ω => ∑ i, w i * Y i ω] = ∫ ω, ∑ i, w i * Y i ω ∂μ from rfl, h1]
+    simp_rw [hm, ← Finset.sum_mul, hw, one_mul]
   · have hvar : ProbabilityTheory.variance (fun ω => X ω - ∑ i, w i * Y i ω) μ
         = ProbabilityTheory.variance X μ
           - 2 * ProbabilityTheory.covariance X (fun ω => ∑ i, w i * Y i ω) μ
           + ProbabilityTheory.variance (fun ω => ∑ i, w i * Y i ω) μ :=
-        ProbabilityTheory.variance_fun_sub hX hS
+      ProbabilityTheory.variance_fun_sub hX hSmem
     have hcov : ProbabilityTheory.covariance X (fun ω => ∑ i, w i * Y i ω) μ
         = dotProduct w (covVector μ X Y) := by
-      have e : ProbabilityTheory.covariance X (fun ω => ∑ i, w i * Y i ω) μ
-          = ∑ i, ProbabilityTheory.covariance X (fun ω => w i * Y i ω) μ :=
-        ProbabilityTheory.covariance_fun_sum_right hmem hX
-      rw [e]
-      simp only [ProbabilityTheory.covariance_const_mul_right, dotProduct, covVector]
+      have h := ProbabilityTheory.covariance_fun_sum_right
+        (X := fun i ω => w i * Y i ω) (Y := X) (μ := μ)
+        (fun i => (hY i).const_mul (w i)) hX
+      simp_rw [ProbabilityTheory.covariance_const_mul_right] at h
+      simpa [dotProduct, covVector] using h
     have hvarS : ProbabilityTheory.variance (fun ω => ∑ i, w i * Y i ω) μ
-        = dotProduct w (Matrix.mulVec (covMatrix μ Y) w) := by
-      have h1 : ProbabilityTheory.variance (fun ω => ∑ i, w i * Y i ω) μ
-          = ∑ i, ∑ j, ProbabilityTheory.covariance (fun ω => w i * Y i ω)
-            (fun ω => w j * Y j ω) μ :=
-        ProbabilityTheory.variance_fun_sum hmem
-      rw [h1]
-      simp only [ProbabilityTheory.covariance_const_mul_left,
-        ProbabilityTheory.covariance_const_mul_right, dotProduct,
-        Matrix.mulVec_apply_eq_sum, covMatrix, MathlibExt.Probability.Finance.PortfolioVariance.covMatrix, Matrix.of_apply, Finset.mul_sum]
-      apply Finset.sum_congr rfl
-      intro i _
-      apply Finset.sum_congr rfl
-      intro j _
-      ring
+        = dotProduct w (Matrix.mulVec (covMatrix μ Y) w) :=
+      MathlibExt.Probability.Finance.PortfolioVariance.portfolio_variance_eq_dotProduct_mulVec hY
     rw [hvar, hcov, hvarS]
 
 end SpatialPredictor
