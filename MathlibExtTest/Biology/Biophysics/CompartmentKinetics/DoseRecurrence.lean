@@ -24,6 +24,23 @@ example :
         (3:ℝ) * Real.exp (-(0:ℝ) * ((2:ℝ) * 1 - (i:ℝ) * 1)) :=
   postDoseAmount_at_event (by norm_num) 2
 
+/-- Successor recurrence at dose `2`, symbolic elimination. -/
+example (D k tau : ℝ) :
+    MathlibExt.Biology.Biophysics.CompartmentKinetics.Dosing.postDoseAmount
+        D k tau (2 + 1) =
+      Real.exp (-k * tau) *
+          MathlibExt.Biology.Biophysics.CompartmentKinetics.Dosing.postDoseAmount
+            D k tau 2 + D :=
+  post_dose_amount_succ 2
+
+/-- Closed form at dose `2`, symbolic elimination. -/
+example (D k tau : ℝ) :
+    MathlibExt.Biology.Biophysics.CompartmentKinetics.Dosing.postDoseAmount
+        D k tau 2 =
+      Real.exp (-k * tau) ^ 2 * D +
+        D * ∑ j ∈ Finset.range 2, Real.exp (-k * tau) ^ j :=
+  post_dose_amount_closed_form 2
+
 /-- No elimination at `D = 3`, after dose `2`: three doses give `9`. -/
 example :
     MathlibExt.Biology.Biophysics.CompartmentKinetics.Dosing.postDoseAmount
