@@ -35,9 +35,13 @@ The **Public references / public-references** check applies to every PR author,
 including forks. It reads every outgoing Git commit's complete message and all
 headers, including signature-shaped text, plus every new Git file blob. File
 versions replaced or deleted before the tip are included. Signature markers
-never disable scanning; they are data, not authenticated signatures. Content
-already reachable from the base's history is not re-scanned; copying it still
-checks the destination filename. Existing historical exposures need separate cleanup. It does not
+never disable scanning; they are data, not authenticated signatures. Blob
+contents Git excludes as base-history objects are not re-scanned; new
+destination filenames are still checked. A merge does not re-report a filename
+inherited unchanged from a parent: its origin is checked in the outgoing
+ancestor commits, or excluded with the base history. Deliberately restored
+historical files can be introduced and checked again. Existing historical
+exposures need separate cleanup. It does not
 only inspect subjects or added lines. Errors, missing objects, moved PR
 metadata, and incomplete ranges fail
 the check. It never executes code from the proposed head. PR description edits

@@ -412,6 +412,147 @@ class Repository(unittest.TestCase):
         self.assertEqual(result["findings"], [])
         self.assertEqual(result["blobs"], 1)
 
+    def test_merge_from_base_does_not_reintroduce_base_filenames(self):
+        original = self.run_git("branch", "--show-current")
+        self.run_git("checkout", "-q", "-b", "topic")
+        self.write("topic.md", "Topic text")
+        self.commit("Add topic")
+        self.run_git("checkout", "-q", original)
+        self.write(private_ref() + ".md", "Base text")
+        self.commit("Add base file")
+        self.base = self.head()
+        self.run_git("checkout", "-q", "topic")
+        self.run_git("merge", "-q", "--no-ff", original, "-m", "Merge base")
+        result = self.check()
+        self.assertEqual(result["findings"], [])
+        self.assertEqual(result["blobs"], 1)
+
+    def test_base_advance_does_not_reintroduce_old_filenames(self):
+        original = self.run_git("branch", "--show-current")
+        self.run_git("checkout", "-q", "-b", "topic")
+        self.write("topic.md", "Topic text")
+        self.commit("Add topic")
+        self.run_git("checkout", "-q", original)
+        name = private_ref() + ".md"
+        self.write(name, "Base text")
+        self.commit("Add base file")
+        self.run_git("checkout", "-q", "topic")
+        self.run_git("merge", "-q", "--no-ff", original, "-m", "Merge base")
+        self.run_git("checkout", "-q", original)
+        (self.root / name).unlink()
+        self.commit("Remove old base file")
+        self.base = self.head()
+        self.run_git("checkout", "-q", "topic")
+        result = self.check()
+        self.assertEqual(result["findings"], [])
+        self.assertEqual(result["blobs"], 1)
+
+    def test_merge_created_filename_using_a_base_blob_is_checked(self):
+        self.write("legacy.md", "Base text")
+        self.commit("Add base file")
+        self.base = self.head()
+        original = self.run_git("branch", "--show-current")
+        self.run_git("checkout", "-q", "-b", "side")
+        self.write("side.md", "Side text")
+        self.commit("Add side file")
+        self.run_git("checkout", "-q", original)
+        self.write("topic.md", "Topic text")
+        self.commit("Add topic")
+        self.run_git("merge", "-q", "--no-ff", "--no-commit", "side")
+        self.write(private_ref() + ".md", "Base text")
+        self.commit("Merge side")
+        result = self.check()
+        self.assertEqual(len(result["findings"]), 1)
+        self.assertEqual(result["blobs"], 2)
+        self.assertIn(self.head(), result["findings"][0]["location"])
+
+    def test_merge_inherits_filename_from_scanned_side_history(self):
+        original = self.run_git("branch", "--show-current")
+        self.run_git("checkout", "-q", "-b", "side")
+        self.write(private_ref() + ".md", "Side text")
+        self.commit("Add side file")
+        side = self.head()
+        self.run_git("checkout", "-q", original)
+        self.write("topic.md", "Topic text")
+        self.commit("Add topic")
+        self.run_git("merge", "-q", "--no-ff", "side", "-m", "Merge side")
+        result = self.check()
+        self.assertEqual(len(result["findings"]), 1)
+        self.assertIn(side, result["findings"][0]["location"])
+
+    def test_restoring_a_deleted_base_filename_is_checked(self):
+        name = private_ref() + ".md"
+        self.write(name, "Base text")
+        self.commit("Add base file")
+        (self.root / name).unlink()
+        self.commit("Remove base file")
+        self.base = self.head()
+        self.write(name, "Base text")
+        self.commit("Restore file")
+        result = self.check()
+        self.assertEqual(len(result["findings"]), 1)
+        self.assertEqual(result["blobs"], 1)
+
+    def test_octopus_merge_checks_only_new_filename_origins(self):
+        original = self.run_git("branch", "--show-current")
+        self.run_git("checkout", "-q", "-b", "topic")
+        self.write("topic.md", "Topic text")
+        self.commit("Add topic")
+        self.run_git("checkout", "-q", original)
+        self.run_git("checkout", "-q", "-b", "side")
+        self.write("side.md", "Side text")
+        self.commit("Add side")
+        self.run_git("checkout", "-q", original)
+        self.write(private_ref() + ".md", "Base text")
+        self.commit("Add base file")
+        self.base = self.head()
+        self.run_git("checkout", "-q", "topic")
+        self.run_git("merge", "-q", "--no-ff", "--no-commit", original, "side")
+        self.write(private_ref("P") + ".md", "Base text")
+        self.commit("Merge base and side")
+        self.assertEqual(
+            len(self.run_git("show", "-s", "--format=%P").split()), 3
+        )
+        result = self.check()
+        self.assertEqual(len(result["findings"]), 1)
+        self.assertIn(self.head(), result["findings"][0]["location"])
+        self.assertEqual(result["blobs"], 2)
+
+    def test_merge_deletion_does_not_scan_the_deleted_filename(self):
+        name = private_ref() + ".md"
+        self.write(name, "Base text")
+        self.commit("Add base file")
+        self.base = self.head()
+        original = self.run_git("branch", "--show-current")
+        self.run_git("checkout", "-q", "-b", "side")
+        self.write("side.md", "Side text")
+        self.commit("Add side")
+        self.run_git("checkout", "-q", original)
+        self.write("topic.md", "Topic text")
+        self.commit("Add topic")
+        self.run_git("merge", "-q", "--no-ff", "--no-commit", "side")
+        (self.root / name).unlink()
+        self.commit("Merge and remove old file")
+        self.assertEqual(self.check()["findings"], [])
+
+    def test_incomplete_combined_filename_diff_fails_closed(self):
+        original = self.run_git("branch", "--show-current")
+        self.run_git("checkout", "-q", "-b", "side")
+        self.write("notes.md", "Public text")
+        self.commit("Add notes")
+        self.run_git("checkout", "-q", original)
+        self.run_git("merge", "-q", "--no-ff", "side", "-m", "Merge notes")
+        read_git = gate.git
+
+        def truncated(root, *args, **kwargs):
+            if "--name-only" in args:
+                return b"unterminated"
+            return read_git(root, *args, **kwargs)
+
+        with patch.object(gate, "git", side_effect=truncated):
+            with self.assertRaises(gate.IncompleteScan):
+                self.check()
+
     def test_copying_a_base_blob_still_checks_the_new_filename(self):
         self.write("legacy.md", private_ref())
         self.commit("Add base file")

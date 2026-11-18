@@ -136,7 +136,12 @@ def check_range(root, base, head, metadata=None):
     git(root, "cat-file", "-e", base + "^{commit}")
     git(root, "cat-file", "-e", head + "^{commit}")
     git(root, "merge-base", base, head)
-    commits = git(root, "rev-list", base + ".." + head).splitlines()
+    commits = [
+        row.split()
+        for row in git(
+            root, "rev-list", "--parents", base + ".." + head
+        ).splitlines()
+    ]
     findings, blobs, paths = Findings(), {}, set()
     introduced = set(
         git(
@@ -148,8 +153,29 @@ def check_range(root, base, head, metadata=None):
         ).splitlines()
     )
     for commit in commits:
-        sha = oid(commit.decode("ascii"))
+        sha = oid(commit[0].decode("ascii"))
         scan_commit(git(root, "cat-file", "commit", sha), sha, findings)
+        # A merge can inherit an entry unchanged from a parent. Its origin
+        # was either scanned in another outgoing commit or belongs to base.
+        new_filenames = None
+        if len(commit) > 2:
+            filenames = git(
+                root,
+                "diff-tree",
+                "--root",
+                "-r",
+                "-c",
+                "--name-only",
+                "-z",
+                "--no-commit-id",
+                "--no-renames",
+                "--no-ext-diff",
+                sha,
+                "--",
+            ).split(b"\0")
+            if filenames[-1] != b"":
+                raise IncompleteScan("Incomplete combined filename diff")
+            new_filenames = set(filenames[:-1])
         # Every parent of a merge matters. Inspect intermediate versions too,
         # including files added and later removed before the final head.
         records = git(
@@ -182,9 +208,12 @@ def check_range(root, base, head, metadata=None):
                 )
             path = raw_path.decode("utf-8", errors="surrogateescape")
             paths.add(path)
-            scan(path, "filename in commit " + sha, findings)
-            # Base-history content is already published, even if main later
-            # changed/deleted it. Do not attribute it to a base-merge PR.
+            if new_filenames is None or raw_path in new_filenames:
+                scan(path, "filename in commit " + sha, findings)
+                if new_filenames is not None:
+                    new_filenames.remove(raw_path)
+            # Git omits base-history content inherited by a merge. A new
+            # destination still receives the filename check above.
             if blob not in introduced:
                 continue
             if status not in (b"A", b"C", b"M", b"T"):
