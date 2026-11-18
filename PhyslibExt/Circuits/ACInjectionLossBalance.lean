@@ -108,11 +108,11 @@ def nodeComplexPower (nN nE : ℕ) (B : Matrix (Fin nN) (Fin nE) ℝ)
     (V : Fin nN → ℂ) (y : Fin nE → ℂ) (ys : Fin nN → ℂ) (v : Fin nN) : ℂ :=
   complexPower (V v) (nodeInjection nN nE B V y ys v)
 
-/-- Complex power in per-unit on a complex base power. Division by the base
-is only meaningful under the nonzero-base side condition stated separately
-below. New definition owned by this module. -/
-noncomputable def perUnitComplexPower (S Sbase : ℂ) : ℂ :=
-  S / Sbase
+/-- Complex power in per-unit on a positive real base power: dividing by a
+positive real base scales the real and reactive parts by the same positive
+factor and does not rotate them. -/
+noncomputable def perUnitComplexPower (S : ℂ) (Sbase : ℝ) : ℂ :=
+  S / (Sbase : ℂ)
 
 private theorem re_sum {ι : Type*} (s : Finset ι) (f : ι → ℂ) :
     (∑ i ∈ s, f i).re = ∑ i ∈ s, (f i).re := by
@@ -293,13 +293,13 @@ lemma total_realPower_eq_zero_of_purely_reactive (nN nE : ℕ)
     rw [hys v, zero_mul]
   rw [hb, hs, add_zero]
 
-/-- Per-unit conversion is rejected at zero base power in the only way a
-total division can express it: the recovery identity `per-unit times base
-equals original` is stated only under an explicit nonzero-base hypothesis,
-and no statement here asserts it without that hypothesis. -/
-lemma perUnitComplexPower_mul_base_eq (S Sbase : ℂ) (hbase : Sbase ≠ 0) :
-    perUnitComplexPower S Sbase * Sbase = S := by
+/-- Recovery from per-unit on a positive real base: multiplying the per-unit
+value by the base, read as a complex number, returns the original complex
+power. Positivity gives the nonzero side condition the division needs. -/
+lemma perUnitComplexPower_mul_base_eq (S : ℂ) (Sbase : ℝ) (hbase : 0 < Sbase) :
+    perUnitComplexPower S Sbase * (Sbase : ℂ) = S := by
   unfold perUnitComplexPower
-  exact div_mul_cancel₀ S hbase
+  have hbase' : (Sbase : ℂ) ≠ 0 := by exact_mod_cast ne_of_gt hbase
+  exact div_mul_cancel₀ S hbase'
 
 end PhyslibExt.Circuits.ACInjectionLossBalance

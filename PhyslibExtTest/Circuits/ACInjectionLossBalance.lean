@@ -42,8 +42,8 @@ example :
     (fun _ => (3 : ℂ)) (fun _ => Complex.I) (fun _ => Complex.I)
     (fun _ => by simp) (fun _ => by simp)
 
-/-- Per-unit recovery at a nonzero base. -/
-example : perUnitComplexPower (27 : ℂ) (9 : ℂ) * (9 : ℂ) = 27 :=
+/-- Per-unit recovery at a positive real base. -/
+example : perUnitComplexPower (27 : ℂ) (9 : ℝ) * ((9 : ℝ) : ℂ) = 27 :=
   perUnitComplexPower_mul_base_eq 27 9 (by norm_num)
 
 end PhyslibExtTest.Circuits.ACInjectionLossBalance
