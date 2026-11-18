@@ -33,7 +33,8 @@ variance `Var X - 2 (w . c) + w . (K w)`.
 
 ## ii. Key results
 
-- `SpatialPredictor.covMatrix_posSemidef`: valid covariance.
+- Valid covariance: `ProbabilityTheory.posSemidef_covariance_matrix`
+  (existing API, reused here).
 - `SpatialPredictor.predictor_unbiased_and_error_variance`:
   unbiasedness and error variance.
 
@@ -53,27 +54,12 @@ variance `Var X - 2 (w . c) + w . (K w)`.
 
 namespace SpatialPredictor
 
-/-- Covariance matrix of the observations: `K i j = Cov(Y i, Y j)`. -/
-noncomputable def covMatrix {Ω : Type*} [MeasurableSpace Ω]
-    (μ : MeasureTheory.Measure Ω) {n : ℕ} (Y : Fin n → Ω → ℝ) :
-    Matrix (Fin n) (Fin n) ℝ :=
-  Matrix.of fun i j => ProbabilityTheory.covariance (Y i) (Y j) μ
-
 /-- Covariance vector between target and observations:
 `c i = Cov(X, Y i)`. -/
 noncomputable def covVector {Ω : Type*} [MeasurableSpace Ω]
     (μ : MeasureTheory.Measure Ω) {n : ℕ} (X : Ω → ℝ)
     (Y : Fin n → Ω → ℝ) : Fin n → ℝ :=
   fun i => ProbabilityTheory.covariance X (Y i) μ
-
-/-- The covariance matrix of square-integrable observations is
-positive semidefinite (it is a valid covariance), and the target
-covariance vector is as named. -/
-theorem covMatrix_posSemidef {Ω : Type*} [MeasurableSpace Ω]
-    (μ : MeasureTheory.Measure Ω) [MeasureTheory.IsProbabilityMeasure μ]
-    {n : ℕ} (Y : Fin n → Ω → ℝ) (hY : ∀ i, MeasureTheory.MemLp (Y i) 2 μ) :
-    (covMatrix μ Y).PosSemidef := by
-  simpa [covMatrix] using ProbabilityTheory.posSemidef_covariance_matrix hY
 
 /-- Common-mean unbiased linear predictor: observations `Y i` and
 target `X` are square-integrable with a common mean, and weights
@@ -92,7 +78,7 @@ theorem predictor_unbiased_and_error_variance {Ω : Type*}
       ∧ ProbabilityTheory.variance (fun ω => X ω - ∑ i, w i * Y i ω) μ
         = ProbabilityTheory.variance X μ
           - 2 * dotProduct w (covVector μ X Y)
-          + dotProduct w (Matrix.mulVec (covMatrix μ Y) w) := by
+          + dotProduct w (Matrix.mulVec (MathlibExt.Probability.Finance.PortfolioVariance.covMatrix μ Y) w) := by
   have hSmem : MeasureTheory.MemLp (fun ω => ∑ i, w i * Y i ω) 2 μ := by
     have h := MeasureTheory.memLp_finsetSum (p := 2) (μ := μ) Finset.univ
       (f := fun i ω => w i * Y i ω) (fun i _ => (hY i).const_mul (w i))
@@ -120,7 +106,7 @@ theorem predictor_unbiased_and_error_variance {Ω : Type*}
       simp_rw [ProbabilityTheory.covariance_const_mul_right] at h
       simpa [dotProduct, covVector] using h
     have hvarS : ProbabilityTheory.variance (fun ω => ∑ i, w i * Y i ω) μ
-        = dotProduct w (Matrix.mulVec (covMatrix μ Y) w) :=
+        = dotProduct w (Matrix.mulVec (MathlibExt.Probability.Finance.PortfolioVariance.covMatrix μ Y) w) :=
       MathlibExt.Probability.Finance.PortfolioVariance.portfolio_variance_eq_dotProduct_mulVec hY
     rw [hvar, hcov, hvarS]
 
