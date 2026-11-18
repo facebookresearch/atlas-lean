@@ -690,6 +690,26 @@ class Declarations(Vault):
                          "- [Old](part-01/old.md)\n\n## [Part 2 of 2](part-02/README.md)\n\n- [Late](part-02/late.md)\n"
                          "- [Burnside](part-02/burnside.md)\n\n## Related topics\n\n- [Rings](../rings/README.md): rings.\n")
 
+    def test_a_new_page_joins_the_last_part_whatever_part_generate_wiki_names(self) -> None:
+        # generate_wiki's part numbers are its own partition of the folder, so a part of the wiki's that has the number
+        # takes nothing for it; a topic still keeps its folder, in whichever part holds it.
+        groups = wiki.ROADMAP / "Algebra" / "groups"
+        self.page("Algebra/groups/README.md", "# Groups\n\n## [Part 1 of 2](part-01/README.md)\n\n- [Sylow theorems](part-01/sylow/README.md)\n"
+                  "- [Old](part-01/old.md)\n\n## [Part 2 of 2](part-02/README.md)\n\n- [Late](part-02/late.md)\n")
+        self.page("Algebra/groups/part-01/README.md", "# Part 1 of 2\n\n- [Sylow theorems](sylow/README.md)\n- [Old](old.md)\n")
+        self.page("Algebra/groups/part-02/README.md", "# Part 2 of 2\n\n- [Late](late.md)\n")
+        self.page("Algebra/groups/part-01/sylow/README.md", "# Sylow theorems\n\n- [Sylow](sylow.md)\n")
+        sync.LINKS.mkdir(parents=True)
+        lagrange = declaration("Ext.lagrange", "lagrange", "Lagrange", "Lagrange.", module=("Ext", "Lagrange"))
+        lagrange.path = groups / "part-01" / "lagrange.md"
+        counting = declaration("Ext.counting", "counting", "Counting", "Counting.", module=("Ext", "SylowCounting"))
+        counting.path = groups / "part-02" / "sylow" / "counting.md"
+        report = sync.apply_declarations([lagrange, counting], SimpleNamespace(declarations={"Ext.lagrange": None, "Ext.counting": None}))
+        self.assertEqual(report["added"], ["Ext.counting -> Algebra/groups/part-01/sylow/counting.md",
+                                           "Ext.lagrange -> Algebra/groups/part-02/lagrange.md"])
+        self.assertEqual((groups / "part-01" / "README.md").read_text(), "# Part 1 of 2\n\n- [Sylow theorems](sylow/README.md)\n- [Old](old.md)\n")
+        self.assertEqual((groups / "part-02" / "README.md").read_text(), "# Part 2 of 2\n\n- [Late](late.md)\n- [Lagrange](lagrange.md)\n")
+
     def test_a_folder_page_split_into_parts_lists_what_its_parts_list(self) -> None:
         groups = wiki.ROADMAP / "Algebra" / "groups"
         self.page("Algebra/groups/README.md", "# Groups\n\n## [Part 1 of 2](part-01/README.md)\n\n- [Old](part-01/old.md)\n\n"
@@ -708,6 +728,30 @@ class Declarations(Vault):
         self.assertEqual((groups / "README.md").read_text(),
                          "# Groups\n\n## [Part 1 of 2](part-01/README.md)\n\n- [Old](part-01/old.md)\n\n"
                          "## [Part 2 of 2](part-02/README.md)\n\n- [A](part-02/a.md)\n- [B](part-02/b.md)\n- [C](part-02/c.md)\n")
+
+    def test_a_part_list_gives_way_to_the_part_and_nothing_else(self) -> None:
+        # With no declaration to add: under a part's heading only the items that link the part's pages are the part's
+        # copy; another item, an editor's paragraph and a comment there stay.
+        groups = wiki.ROADMAP / "Algebra" / "groups"
+        part_one = ("## [Part 1 of 2](part-01/README.md)\n\n<!-- Keep this part in the book's order. -->\n\n"
+                    "- [Introduction](introduction.md)\n- [A](part-01/a.md)\n\nThe first part follows the book.\n\n")
+        self.page("Algebra/groups/README.md", f"# Groups\n\n{part_one}## [Part 2 of 2](part-02/README.md)\n\n- [B](part-02/b.md)\n")
+        self.page("Algebra/groups/part-01/README.md", "# Part 1 of 2\n\n- [A](a.md)\n")
+        self.page("Algebra/groups/part-02/README.md", "# Part 2 of 2\n\n- [B](b.md)\n- [C](c.md)\n")
+        sync.LINKS.mkdir(parents=True)
+        sync.apply_declarations([], SimpleNamespace(declarations={}))
+        self.assertEqual((groups / "README.md").read_text(),
+                         f"# Groups\n\n{part_one}## [Part 2 of 2](part-02/README.md)\n\n- [B](part-02/b.md)\n- [C](part-02/c.md)\n")
+
+    def test_a_part_list_rebases_every_link_of_an_item(self) -> None:
+        self.page("Algebra/groups/README.md", "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md)\n")
+        self.page("Algebra/groups/part-01/README.md",
+                  "# Part 1 of 1\n\n- [A](a.md) — see [B](b.md), [Rings](../../rings/README.md) and [a book](https://example.org)\n")
+        sync.LINKS.mkdir(parents=True)
+        sync.apply_declarations([], SimpleNamespace(declarations={}))
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
+                         "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md) — see [B](part-01/b.md), "
+                         "[Rings](../rings/README.md) and [a book](https://example.org)\n")
 
     def test_a_docstring_edit_is_reported_from_the_second_run(self) -> None:
         self.page("Algebra/groups/README.md", "# Groups\n\n- [Old](old.md)\n")

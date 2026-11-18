@@ -41,6 +41,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import posixpath
 import re
 import sys
 import unicodedata
@@ -66,9 +67,11 @@ BOLD_LEAD = re.compile(r"\*\*(?P<lead>[^*\n]+)\*\*(?P<stop>[.:]?)")
 # A folder page's list item, and a heading that links a part, as generate_wiki writes them.
 LIST_LINK = re.compile(r"^- \[.*\]\(([^()\s]+)\)$")
 HEADING_LINK = re.compile(r"^#{2,6} \[.*\]\(([^()\s]+)\)$")
-# An item that links a page of the folder, its title, link and any text after it; a part's heading, its title and link.
-OWN_ITEM = re.compile(r"^- \[(.*)\]\((?!\.\./)([^():\s]+)\)(.*)$")
+# An item that links a page of the folder first, its title, that link and any text after it; a part's heading, its
+# title and link; and a link's destination, which in a part's copy is taken from the part's folder to its parent.
+OWN_ITEM = re.compile(r"^- \[((?:\\.|[^\\\]])*)\]\((?!\.\./)([^():\s]+)\)(.*)$", re.S)
 PART_HEADING = re.compile(r"^#{2,6} \[(.*)\]\((part-\d+/README\.md)\)$")
+DESTINATION = re.compile(r"(?<!\\)\]\(([^()\s]+)\)")
 PART = re.compile(r"part-\d+")
 
 
@@ -525,39 +528,72 @@ def without_empty_headings(text: str) -> str:
     return re.sub(r"\n{3,}", "\n\n", "\n".join(kept)).strip("\n") + "\n"
 
 
-def part_entries(text: str) -> list[tuple[str, str, str]]:
-    """A folder page's entries, each a title, a link and any text after it: the items that link its folder's pages,
-    and the heading of each of its parts in place of the items under it."""
-    entries, in_part = [], False
+def blocks(text: str) -> list[str]:
+    """A page's lines, each list item joined with the indented lines that continue it."""
+    found: list[str] = []
     for row in text.split("\n"):
-        part = PART_HEADING.match(row)
+        if found and found[-1].startswith("- ") and row[:1].isspace() and row.strip():
+            found[-1] += "\n" + row
+        else:
+            found.append(row)
+    return found
+
+
+def part_entries(text: str) -> list[str]:
+    """A folder page's entries, as its parent copies them: each item that links a page of its folder, with the lines
+    that continue it, and an item for each of its parts in place of the items under the part's heading."""
+    entries, in_part = [], False
+    for block in blocks(text):
+        part = PART_HEADING.match(block)
         if part:
-            entries.append((*part.groups(), ""))
+            entries.append(f"- [{part.group(1)}]({part.group(2)})")
             in_part = True
-        elif re.match(r"#{1,6} ", row):
+        elif re.match(r"#{1,6} ", block):
             in_part = False
-        elif not in_part and (item := OWN_ITEM.match(row)):
-            entries.append(item.groups())
+        elif not in_part and OWN_ITEM.match(block):
+            entries.append(block)
     return entries
 
 
+def from_part(folder: str, destination: str) -> str:
+    """A link's destination on the page of the part *folder*, as the page of the folder holding the part reads it."""
+    if re.match(r"[a-z][a-z0-9+.-]*:|[#/]", destination):
+        return destination
+    return posixpath.normpath(f"{folder}/{destination}")
+
+
 def with_part_lists(readme: Path, text: str) -> str:
-    """A folder page whose list is split into parts, with each part's entries, as the part's own page lists them,
-    under the heading that links the part; any other page as it is."""
-    if not any(PART_HEADING.match(row) for row in text.split("\n")):
-        return text
-    rows, copied = [], False
-    for row in text.rstrip("\n").split("\n"):
-        part = PART_HEADING.match(row)
-        if part and (readme.parent / part.group(2)).is_file():
-            folder = Path(part.group(2)).parent.as_posix()
-            entries = part_entries((readme.parent / part.group(2)).read_text())
-            rows += [row, "", *(f"- [{title}]({folder}/{link}){rest}" for title, link, rest in entries), ""]
-            copied = True
-        elif not copied or re.match(r"#{1,6} ", row):
-            rows.append(row)
-            copied = False
-    return "\n".join(rows).rstrip("\n") + "\n"
+    """A folder page whose list is split into parts, with each part's entries as the part's own page lists them, their
+    links read from the page, under the heading that links the part. They replace the items there that link the
+    part's pages, and only those; any other page as it is."""
+    sections: list[list[str]] = []
+    for block in blocks(text.rstrip("\n")):
+        if not sections or re.match(r"#{1,6} ", block):
+            sections.append([])
+        sections[-1].append(block)
+    changed = False
+    for number, section in enumerate(sections):
+        part = PART_HEADING.match(section[0])
+        if not (part and (readme.parent / part.group(2)).is_file()):
+            continue
+        folder = Path(part.group(2)).parent.as_posix()
+        copy = [DESTINATION.sub(lambda link: f"]({from_part(folder, link.group(1))})", entry)
+                for entry in part_entries((readme.parent / part.group(2)).read_text())]
+        copied = [i for i, block in enumerate(section) if (item := OWN_ITEM.match(block))
+                  and item.group(2).startswith(f"{folder}/") and item.group(2) != part.group(2)]
+        kept = [block for i, block in enumerate(section) if i not in copied]
+        if copied:
+            at = copied[0]
+        elif copy:
+            # No copy yet: one below the heading, a blank line on either side.
+            at = 2 if len(kept) > 1 and not kept[1].strip() else 1
+            follows = bool(kept[at].strip()) if at < len(kept) else number + 1 < len(sections)
+            copy = [""] * (at == 1) + copy + [""] * follows
+        else:
+            continue
+        if kept[:at] + copy + kept[at:] != section:
+            sections[number], changed = kept[:at] + copy + kept[at:], True
+    return "\n".join(block for section in sections for block in section) + "\n" if changed else text
 
 
 def declared(key: str, index) -> bool:
@@ -607,29 +643,26 @@ def parts(folder: Path) -> list[Path]:
                       for part in parts(page.parent))]
 
 
-def kept_layout(folder: Path, created: dict[Path, str]) -> tuple[Path, list[tuple[Path, Path]]]:
-    """The folder a page goes in that belongs in *folder*, the wiki's or generate_wiki's, and the folders on the way
-    that it still needs, each with the folder of generate_wiki's layout whose folder page it takes. generate_wiki
-    splits a folder of more than MAX_CHILDREN entries into parts, numbered afresh as the folder grows; a folder the
-    wiki has keeps its layout instead, so that no page moves. A part of generate_wiki's that such a folder lacks is
-    passed over: what generate_wiki puts in it goes in the folder itself if the folder is flat, else in its last part.
-    A topic keeps its folder, in whichever part holds it."""
-    def known(path: Path) -> bool:
-        return (path / "README.md").is_file() or path / "README.md" in created
-
-    at, laid_out, missing = wiki.ROADMAP, wiki.ROADMAP, []
+def kept_layout(folder: Path, created: dict[Path, str]) -> tuple[Path, dict[Path, Path]]:
+    """The folder a page goes in that generate_wiki puts in *folder*, and generate_wiki's folder page for each folder
+    on the way, by that folder's page. generate_wiki splits a folder of more than MAX_CHILDREN entries into parts,
+    numbered afresh as the folder grows; a folder the wiki has keeps its layout instead, so that no page moves.
+    generate_wiki's parts are passed over there, whatever their numbers: what it puts in them goes in the folder itself
+    if the folder is flat, else in its last part, and a topic keeps its folder, in whichever part holds it."""
+    at, laid_out, pages = wiki.ROADMAP, wiki.ROADMAP, {}
     for name in folder.relative_to(wiki.ROADMAP).parts:
         laid_out = laid_out / name
         if not (at / "README.md").is_file():
             # Below a folder the run makes, generate_wiki's layout.
             at = at / name
-        elif PART.fullmatch(name) and not known(at / name):
+        elif PART.fullmatch(name):
             continue
         else:
-            whole = next(path for path in (at, *at.parents) if not PART.fullmatch(path.name))
-            at = next((path / name for path in (at, *parts(whole)) if known(path / name)), parts(at)[-1] / name)
-        missing = [] if known(at) else [*missing, (at / "README.md", laid_out / "README.md")]
-    return (parts(at)[-1] if (at / "README.md").is_file() else at), missing
+            kept = parts(at)
+            at = next((path / name for path in kept if (path / name / "README.md").is_file()
+                       or path / name / "README.md" in created), kept[-1] / name)
+        pages[at / "README.md"] = laid_out / "README.md"
+    return (parts(at)[-1] if (at / "README.md").is_file() else at), pages
 
 
 def apply_declarations(targets: list, index, generated: dict[Path, str] | None = None,
@@ -663,12 +696,16 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
         # Beside the module's pages, else on the generated path as the wiki's folders keep it (see kept_layout). A
         # folder with no page of its own takes the folder pages generate_wiki lays out on the way to it; without them,
         # the deepest folder on the way that has one.
-        folder, missing = kept_layout(folders[target.module].most_common(1)[0][0] if folders[target.module]
-                                      else target.path.parent, created)
-        if missing and all(laid_out in generated for _, laid_out in missing):
-            created.update((page, generated[laid_out]) for page, laid_out in missing)
-        elif missing:
-            folder = missing[0][0].parent.parent
+        folder, laid_out = ((folders[target.module].most_common(1)[0][0], {}) if folders[target.module]
+                            else kept_layout(target.path.parent, created))
+        up, missing = folder, []
+        while not (up / "README.md").is_file() and up / "README.md" not in created and up != wiki.ROADMAP:
+            missing.append(up / "README.md")
+            up = up.parent
+        if missing and all(laid_out.get(page, page) in generated for page in missing):
+            created.update((page, generated[laid_out.get(page, page)]) for page in missing)
+        else:
+            folder = up
         name, number = target.slug, 1
         while name in wiki.RESERVED_SLUGS or (folder / f"{name}.md").exists():
             number += 1
