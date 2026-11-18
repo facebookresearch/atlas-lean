@@ -50,4 +50,9 @@ example (t : ℝ) (ht : 0 ≤ t) : pwmPrimitive 1 (fun _ => 1 / 2) t ∈ Set.Icc
   norm_num at h ⊢
   exact h
 
+/-- The PWM signal is interval integrable, for any carrier length and duty. -/
+example (ε : ℝ) (d : ℝ → ℝ) (a b : ℝ) :
+    IntervalIntegrable (pwmSignal ε d) MeasureTheory.volume a b :=
+  intervalIntegrable_pwmSignal ε d a b
+
 end MathlibExtTest.Analysis.ODE.PWMPrimitiveBound
