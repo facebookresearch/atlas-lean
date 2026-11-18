@@ -137,7 +137,7 @@ theorem weightedScore_binary_optimal
       (∀ x, (1 - π) * cFP * P0 x < π * cFN * P1 x → f x = true)
       ∧ (∀ x, π * cFN * P1 x < (1 - π) * cFP * P0 x → f x = false)
       ∧ IsBayesEstimator
-          -- copied expression (copied expression loss/kernel/prior):
+          -- the binary 0/1 loss with false-positive cost `cFP` and false-negative cost `cFN`, the finite two-law experiment kernel, and the two-point prior:
           (fun θ y => if θ = y then 0
             else if θ = false then ENNReal.ofReal cFP else ENNReal.ofReal cFN)
           (Kernel.boolKernel

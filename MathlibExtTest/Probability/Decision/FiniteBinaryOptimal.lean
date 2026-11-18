@@ -23,7 +23,7 @@ densities, one-sided support, and joint-zero support.
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
-namespace MathlibExt.Probability.Decision
+namespace MathlibExtTest.Probability.Decision
 
 theorem weightedScore_det_constFalse_risk :
     (1 - (1/3 : ℝ)) * 1 * ((3/4 : ℝ) * 0 + (1/4) * 0)
@@ -102,4 +102,4 @@ theorem weightedScore_oneSidedSupport_false :
   have h1 : (0 : ℝ) < 1 - π := by linarith
   simp only [mul_zero]
   positivity
-end MathlibExt.Probability.Decision
+end MathlibExtTest.Probability.Decision
