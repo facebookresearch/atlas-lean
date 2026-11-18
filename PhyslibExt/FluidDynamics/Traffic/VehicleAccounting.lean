@@ -26,7 +26,10 @@ inflow, so the sum telescopes to the two external faces.
 
 ## ii. Key results
 
-- `total_vehicle_change`: the telescoping accounting identity.
+- `FluidDynamics.Traffic.VehicleAccounting.total_vehicle_change`:
+  the telescoping accounting identity.
+- `FluidDynamics.Traffic.VehicleAccounting.total_vehicle_change_eq_discrete`:
+  the identity against the discrete-balance API.
 
 ## iii. Table of contents
 
@@ -41,6 +44,8 @@ inflow, so the sum telescopes to the two external faces.
 @[expose] public section
 
 /-! ## A. Vehicle accounting -/
+
+namespace FluidDynamics.Traffic.VehicleAccounting
 
 /-- Vehicle accounting over a finite cell chain. Cells `0, ..., n-1`
 have densities `k i` and face fluxes `F i` between cell `i - 1` and
@@ -90,3 +95,5 @@ theorem total_vehicle_change_eq_discrete {n : ℕ} (k F : ℕ → ℝ)
   have e2 : ((0 : Fin (n + 1))).val = 0 := rfl
   rw [e1, e2]
   ring
+
+end FluidDynamics.Traffic.VehicleAccounting
