@@ -46,4 +46,4 @@ example : vaporInterfacePressure (n := 3) (fun i => if i = 0 then (2 : ℝ)
         else if i = 1 then 3 else 5) 1000 400 1
     = vaporSeriesFlux (n := 3) (fun i => if i = 0 then (2 : ℝ)
         else if i = 1 then 3 else 5) 1000 400 * 2 :=
-  vaporInterfacePressure_succ_sub _ _ _
+  vaporInterfacePressure_succ_sub _ _ _ (by norm_num)
