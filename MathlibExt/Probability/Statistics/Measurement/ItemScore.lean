@@ -29,22 +29,12 @@ open MeasureTheory
 
 namespace MathlibExt.Probability.Statistics.Measurement
 
-theorem localIndepPMF_toReal {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (q : ι → ℝ) (hq0 : ∀ i, 0 ≤ q i) (hq1 : ∀ i, q i ≤ 1) (x : ι → Bool) :
-    (localIndepPMF q hq0 hq1 x).toReal = ∏ i, (if x i then q i else 1 - q i) := by
-  rw [localIndepPMF_apply, ENNReal.toReal_prod]
-  apply Finset.prod_congr rfl
-  intro i _
-  by_cases h : x i = true
-  · simp only [ite_eq_left h, ENNReal.toReal_ofReal (hq0 i)]
-  · simp only [ite_eq_right h, ENNReal.toReal_ofReal (sub_nonneg.mpr (hq1 i))]
-
 theorem twoPLPMF_toReal {ι : Type*} [Fintype ι] [DecidableEq ι]
     (a b : ι → ℝ) (t : ℝ) (Y : ι → Bool) :
     (twoPLPMF a b t Y).toReal
       = ∏ i, (if Y i then Real.sigmoid (a i * (t - b i))
         else 1 - Real.sigmoid (a i * (t - b i))) := by
-  exact localIndepPMF_toReal _ _ _ _
+  exact localIndepPMF_toReal_apply _ _ _ _
 
 theorem localIndepPMF_toReal_sum {ι : Type*} [Fintype ι] [DecidableEq ι]
     (q : ι → ℝ) (hq0 : ∀ i, 0 ≤ q i) (hq1 : ∀ i, q i ≤ 1) :
@@ -69,27 +59,9 @@ theorem localIndepPMF_coord_sum {ι : Type*} [Fintype ι] [DecidableEq ι]
     (q : ι → ℝ) (hq0 : ∀ i, 0 ≤ q i) (hq1 : ∀ i, q i ≤ 1) (j : ι) :
     (∑ Y : ι → Bool, (localIndepPMF q hq0 hq1 Y).toReal * (if Y j then (1 : ℝ) else 0))
       = q j := by
-  simp only [localIndepPMF_toReal q hq0 hq1]
-  have key : ∀ Y : ι → Bool,
-      (∏ i, (if Y i then q i else 1 - q i)) * (if Y j then (1 : ℝ) else 0)
-      = ∏ i, ((if Y i then q i else 1 - q i)
-        * (if i = j then (if Y i then (1 : ℝ) else 0) else 1)) := by
-    intro Y
-    rw [Finset.prod_mul_distrib]
-    congr 1
-    rw [Finset.prod_ite_eq']
-    simp
-  simp only [key]
-  rw [← Fintype.prod_sum (fun i (b : Bool) => (if b then q i else 1 - q i)
-    * (if i = j then (if b then (1 : ℝ) else 0) else 1))]
-  rw [Finset.prod_eq_single j]
-  · simp only [Fintype.sum_bool, ite_true, Bool.false_eq_true, ite_false, mul_one,
-      mul_zero, add_zero]
-  · intro b _ hb
-    simp only [ite_eq_right hb, Fintype.sum_bool, ite_true, Bool.false_eq_true,
-      ite_false, mul_one]
-    ring
-  · simp
+  have h := (localIndepPMF_coordinate_moments q hq0 hq1).1 j
+  rw [PMF.integral_eq_sum] at h
+  simpa [smul_eq_mul] using h
 
 theorem twoPLPMF_coord_sum {ι : Type*} [Fintype ι] [DecidableEq ι]
     (a b : ι → ℝ) (θ : ℝ) (j : ι) :
