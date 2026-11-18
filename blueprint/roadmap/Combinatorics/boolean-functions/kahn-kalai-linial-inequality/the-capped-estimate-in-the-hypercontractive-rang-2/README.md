@@ -1,0 +1,18 @@
+# The capped estimate in the hypercontractive range with a gap condition
+
+- [Hypercontractive exponent is at most the target exponent](hcq-exponent-le.md)
+- [Closed form of the exponent gap](hcq-gap-closed-form.md)
+- [Upper bound on the exponent gap](hcq-gap-le.md)
+- [Capped estimate in the hypercontractive range with matching $q'$](hcq-capped-full.md)
+- [Under the gap condition the hypercontractive bound is dominated](hcq-dom-of-threshold.md)
+- [Target-exponent capped estimate from a domination bound](hcq-star-of-dominates.md)
+- [Target-exponent capped estimate under the gap condition](hcq-star-capped-threshold.md)
+- [Capped estimate at $p = 1/2$ for all $u \in (0, 1)$](hcq-small-delta-p-half.md)
+- [Low-range residual case of the capped estimate](hcq-low-range-residue.md)
+- [Low-range case implies the small-influence case](hcq-small-delta-of-low-range.md)
+- [Low-range case implies the full capped estimate on $(1/2, q)$](hcq-martingale-hc-of-low-range.md)
+- [Gap condition holds at $u = 1$](hcq-dominated-nonempty.md)
+- [Power bound $s \le \delta^g$ from a logarithmic exponent bound](hcq-threshold-of-gap-small.md)
+- [Gap condition holds at some $u < 1$ in the hypercontractive range](hcq-residue-proper.md)
+- [Low-range case condition fails for some $u$](hcq-antecedent-not-tautology.md)
+- [Right side of the capped estimate is nonnegative](hcq-low-range-nonvacuous.md)

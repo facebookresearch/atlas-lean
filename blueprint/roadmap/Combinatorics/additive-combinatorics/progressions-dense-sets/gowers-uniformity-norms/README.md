@@ -52,6 +52,6 @@ The definition follows Green and Tao's recursion $\|f\|_{U^{d+1}}^{2^{d+1}} = \m
 - [Freiman and Balog–Szemerédi–Gowers theorems](../../sumsets-inverse-theorems/freiman-and-balog-szemer-di-gowers-theorems/README.md): the inverse theorems of additive combinatorics used to prove inverse theorems for $U^3$ and $U^k$.
 - [Szemerédi's theorem](../szemeredi.md): the qualitative statement whose quantitative form motivated the norms.
 - [Number of arithmetic progressions in dense sets](../number-of-arithmetic-progressions-in-dense-sets/README.md): counts of progressions, which the generalized von Neumann theorem compares with those of random sets.
-- Graph limits: homomorphism densities and the counting lemma, the graph analogues of cube densities and of the generalized von Neumann theorem; $\|1_A\|_{U^2}^4$ is the four-cycle density of the sum graph $1_A(x + y)$.
-- Sidorenko's conjecture: its four-cycle case for the sum graph of $A$ is the bound $\|1_A\|_{U^2} \ge \delta$.
-- Triangle density and flag algebras: Razborov's flag algebras prove density inequalities by combining averaging identities with Cauchy–Schwarz, as the Gowers–Cauchy–Schwarz inequality does for cube densities.
+- [Graph limits](../../../../GraphTheory/random-graphs/graph-limits/README.md): homomorphism densities and the counting lemma, the graph analogues of cube densities and of the generalized von Neumann theorem; $\|1_A\|_{U^2}^4$ is the four-cycle density of the sum graph $1_A(x + y)$.
+- [Sidorenko's conjecture](../../../../GraphTheory/extremal-graph-theory/sidorenko-s-conjecture/README.md): its four-cycle case for the sum graph of $A$ is the bound $\|1_A\|_{U^2} \ge \delta$.
+- [Triangle density and flag algebras](../../../../GraphTheory/extremal-graph-theory/triangle-density-and-flag-algebras/README.md): Razborov's flag algebras prove density inequalities by combining averaging identities with Cauchy–Schwarz, as the Gowers–Cauchy–Schwarz inequality does for cube densities.

@@ -33,3 +33,5 @@
 ## Discrete Mathematics & Computer Science
 
 - [Combinatorics](Combinatorics/README.md)
+- [Graph Theory](GraphTheory/README.md)
+- [Theory of Computation](TheoryOfComputation/README.md)
