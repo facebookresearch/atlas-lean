@@ -17,11 +17,18 @@ public import Mathlib.Data.Fintype.Pi
 /-!
 # Kolmogorov–Sinai entropy
 
-Sinai's definition of the entropy of a measure-preserving transformation. A finite partition
-`ξ = {C₁, …, C_r}` of the phase space has Shannon entropy `H(ξ) = -∑ μ(Cᵢ) log μ(Cᵢ)`; the
-entropy of `T` relative to `ξ` is the growth rate
+Sinai's definition of the entropy of a measure-preserving transformation of a probability space
+`(α, μ)`. A finite partition `ξ = {C₁, …, C_r}` of the phase space has Shannon entropy
+`H(ξ) = -∑ μ(Cᵢ) log μ(Cᵢ)`; the entropy of `T` relative to `ξ` is the growth rate
 `h(T, ξ) = lim (1/n) H(ξ ∨ T⁻¹ξ ∨ ⋯ ∨ T^{-(n-1)}ξ)`, and the Kolmogorov–Sinai entropy is
 `h(T) = sup_ξ h(T, ξ)` over all finite measurable partitions.
+
+The entropies take an instance `IsProbabilityMeasure μ`, as in the sources: `H(ξ)` is the
+Shannon entropy of the probability vector `(μ(Cᵢ))ᵢ`. For an arbitrary measure the formula is no
+entropy: the zero measure would give every map entropy `0`, and an atom of infinite measure
+would contribute `negMulLog (∞.toReal) = 0`. Measurable partitions (`IsMeasurablePartition`) and
+isomorphism modulo null sets (`IsIsomorphicMod0`) make sense for every measure and take no such
+instance.
 
 Partitions are indexed families `ξ : ι → Set α` over a finite type, and the refinement
 `ξ ∨ T⁻¹ξ ∨ ⋯ ∨ T^{-(n-1)}ξ` is indexed by words `w : Fin n → ι`, so no atoms are merged and
@@ -70,13 +77,13 @@ structure IsMeasurablePartition (μ : Measure α) {ι : Type*} (ξ : ι → Set 
   /-- The atoms cover almost all of `α`. -/
   measure_compl_iUnion : μ (⋃ i, ξ i)ᶜ = 0
 
-/-- **Entropy of a finite partition.** The Shannon entropy
+/-- **Entropy of a finite partition.** For a probability measure `μ`, the Shannon entropy
 `H_μ(ξ) = -∑ᵢ μ(Cᵢ) log μ(Cᵢ)` of a partition `ξ = (Cᵢ)` indexed by a finite type, with the
 convention `0 log 0 = 0` (`Real.negMulLog`) (Sinai, Scholarpedia *Kolmogorov–Sinai entropy*;
 O. Sarig, *Lecture Notes on Ergodic Theory*, Definition 4.1). The logarithm is natural, as in
 Sinai's article; Sarig uses `log₂`, which divides every entropy by `log 2`. -/
-noncomputable def partitionEntropy (μ : Measure α) {ι : Type*} [Fintype ι]
-    (ξ : ι → Set α) : ℝ :=
+noncomputable def partitionEntropy (μ : Measure α) [IsProbabilityMeasure μ] {ι : Type*}
+    [Fintype ι] (ξ : ι → Set α) : ℝ :=
   ∑ i, Real.negMulLog (μ (ξ i)).toReal
 
 /-- **Dynamical refinement of a partition.** The partition
@@ -86,27 +93,27 @@ begins with `w`. -/
 def iterateJoin (T : α → α) {ι : Type*} (ξ : ι → Set α) (n : ℕ) : (Fin n → ι) → Set α :=
   fun w => ⋂ k : Fin n, T^[(k : ℕ)] ⁻¹' ξ (w k)
 
-/-- **Entropy of a transformation relative to a partition.**
+/-- **Entropy of a transformation relative to a partition.** For a probability measure `μ`,
 `h_μ(T, ξ) = limsup_{n → ∞} (1/n) H_μ(ξ ∨ T⁻¹ξ ∨ ⋯ ∨ T^{-(n-1)}ξ)`, in `ℝ≥0∞`. For a
-measure-preserving `T` of a probability space the sequence converges by subadditivity, so this
-is the limit of Sinai, Scholarpedia *Kolmogorov–Sinai entropy*, and of O. Sarig, *Lecture Notes
-on Ergodic Theory*, Definition 4.3. -/
-noncomputable def entropyRel (μ : Measure α) (T : α → α) {ι : Type*} [Fintype ι]
-    (ξ : ι → Set α) : ℝ≥0∞ :=
+measure-preserving `T` the sequence converges by subadditivity, so this is the limit of Sinai,
+Scholarpedia *Kolmogorov–Sinai entropy*, and of O. Sarig, *Lecture Notes on Ergodic Theory*,
+Definition 4.3. -/
+noncomputable def entropyRel (μ : Measure α) [IsProbabilityMeasure μ] (T : α → α) {ι : Type*}
+    [Fintype ι] (ξ : ι → Set α) : ℝ≥0∞ :=
   limsup (fun n : ℕ => ENNReal.ofReal (partitionEntropy μ (iterateJoin T ξ n) / n)) atTop
 
-/-- **Kolmogorov–Sinai entropy.** The entropy of a dynamical system `(α, μ, T)` is
-`h_μ(T) = sup_ξ h_μ(T, ξ)`, the supremum over all finite measurable partitions `ξ`
-(Ya. G. Sinai, *Kolmogorov–Sinai entropy*, Scholarpedia 4(3):2034, Definition 1; introduced in
-Sinai, Dokl. Akad. Nauk SSSR 124 (1959)). Partitions are indexed by `Fin r`, `r ∈ ℕ`; the value
-lies in `ℝ≥0∞`. -/
-noncomputable def ksEntropy (μ : Measure α) (T : α → α) : ℝ≥0∞ :=
+/-- **Kolmogorov–Sinai entropy.** The entropy of a dynamical system `(α, μ, T)` on a
+probability space is `h_μ(T) = sup_ξ h_μ(T, ξ)`, the supremum over all finite measurable
+partitions `ξ` (Ya. G. Sinai, *Kolmogorov–Sinai entropy*, Scholarpedia 4(3):2034, Definition 1;
+introduced in Sinai, Dokl. Akad. Nauk SSSR 124 (1959)). Partitions are indexed by `Fin r`,
+`r ∈ ℕ`; the value lies in `ℝ≥0∞`. -/
+noncomputable def ksEntropy (μ : Measure α) [IsProbabilityMeasure μ] (T : α → α) : ℝ≥0∞ :=
   ⨆ (r : ℕ) (ξ : Fin r → Set α) (_ : IsMeasurablePartition μ ξ), entropyRel μ T ξ
 
 /-- **Relative entropy is bounded by the Kolmogorov–Sinai entropy.** For every finite
 measurable partition `ξ` indexed by `Fin r`, `h_μ(T, ξ) ≤ h_μ(T)`. -/
-theorem entropyRel_le_ksEntropy {μ : Measure α} (T : α → α) {r : ℕ} {ξ : Fin r → Set α}
-    (hξ : IsMeasurablePartition μ ξ) : entropyRel μ T ξ ≤ ksEntropy μ T :=
+theorem entropyRel_le_ksEntropy {μ : Measure α} [IsProbabilityMeasure μ] (T : α → α) {r : ℕ}
+    {ξ : Fin r → Set α} (hξ : IsMeasurablePartition μ ξ) : entropyRel μ T ξ ≤ ksEntropy μ T :=
   le_iSup_of_le r <| le_iSup_of_le ξ <| le_iSup_of_le hξ le_rfl
 
 /-- **Entropy of a partition is nonnegative** for a probability measure, since every atom has
@@ -152,10 +159,12 @@ theorem IsMeasurablePartition.preimage {μ : Measure α} {ν : Measure β} {π :
       hπ.measure_preimage (MeasurableSet.iUnion hη.measurableSet).compl.nullMeasurableSet]
     exact hη.measure_compl_iUnion
 
-/-- **Relative entropy of a pulled-back partition.** If `π : (α, μ, T) → (β, ν, S)` is
-measure-preserving with `π ∘ T = S ∘ π`, then `h_μ(T, π⁻¹η) = h_ν(S, η)` for every finite
-measurable partition `η` of `β`: the two refinements have atoms of equal measure. -/
-theorem entropyRel_preimage {μ : Measure α} {ν : Measure β} {T : α → α} {S : β → β}
+/-- **Relative entropy of a pulled-back partition.** If `π : (α, μ, T) → (β, ν, S)` is a
+measure-preserving map of probability spaces with `π ∘ T = S ∘ π`, then
+`h_μ(T, π⁻¹η) = h_ν(S, η)` for every finite measurable partition `η` of `β`: the two refinements
+have atoms of equal measure. -/
+theorem entropyRel_preimage {μ : Measure α} {ν : Measure β} [IsProbabilityMeasure μ]
+    [IsProbabilityMeasure ν] {T : α → α} {S : β → β}
     {π : α → β} (hπ : MeasurePreserving π μ ν) (hS : Measurable S)
     (hconj : Function.Semiconj π T S) {ι : Type*} [Fintype ι] {η : ι → Set β}
     (hη : ∀ i, MeasurableSet (η i)) :
@@ -167,10 +176,11 @@ theorem entropyRel_preimage {μ : Measure α} {ν : Measure β} {T : α → α} 
   simp only [entropyRel, partitionEntropy, h]
 
 /-- **Entropy does not increase under factors.** If `π` is a measure-preserving map from
-`(α, μ, T)` onto `(β, ν, S)` with `π ∘ T = S ∘ π`, then `h_ν(S) ≤ h_μ(T)`: every finite
-partition of the factor pulls back to a partition of the system with the same relative entropy
-(cf. O. Sarig, *Lecture Notes on Ergodic Theory*, §4.3). -/
-theorem ksEntropy_le_of_factor {μ : Measure α} {ν : Measure β} {T : α → α} {S : β → β}
+`(α, μ, T)` onto `(β, ν, S)`, both on probability spaces, with `π ∘ T = S ∘ π`, then
+`h_ν(S) ≤ h_μ(T)`: every finite partition of the factor pulls back to a partition of the system
+with the same relative entropy (cf. O. Sarig, *Lecture Notes on Ergodic Theory*, §4.3). -/
+theorem ksEntropy_le_of_factor {μ : Measure α} {ν : Measure β} [IsProbabilityMeasure μ]
+    [IsProbabilityMeasure ν] {T : α → α} {S : β → β}
     {π : α → β} (hπ : MeasurePreserving π μ ν) (hS : Measurable S)
     (hconj : Function.Semiconj π T S) : ksEntropy ν S ≤ ksEntropy μ T := by
   refine iSup_le fun r => iSup_le fun η => iSup_le fun hη => ?_
@@ -178,13 +188,14 @@ theorem ksEntropy_le_of_factor {μ : Measure α} {ν : Measure β} {T : α → �
   exact entropyRel_le_ksEntropy T (hη.preimage hπ)
 
 /-- **Entropy is invariant under conjugacy by a measure-preserving measurable equivalence.** If
-a measure-preserving measurable equivalence `e : α ≃ᵐ β` conjugates `T` to `S` everywhere
-(`e ∘ T = S ∘ e`), then `h_μ(T) = h_ν(S)`. This everywhere version needs no measure preservation
-of `T` or `S`; measure-theoretic isomorphism modulo null sets, the notion in Sinai's remark that
-entropy is a metric invariant, is `ksEntropy_eq_of_isIsomorphicMod0`. -/
-theorem ksEntropy_eq_of_isomorphic {μ : Measure α} {ν : Measure β} {T : α → α} {S : β → β}
-    (e : α ≃ᵐ β) (he : MeasurePreserving e μ ν) (hT : Measurable T) (hS : Measurable S)
-    (hconj : Function.Semiconj e T S) : ksEntropy μ T = ksEntropy ν S := by
+a measure-preserving measurable equivalence `e : α ≃ᵐ β` of probability spaces conjugates `T` to
+`S` everywhere (`e ∘ T = S ∘ e`), then `h_μ(T) = h_ν(S)`. This everywhere version needs no
+measure preservation of `T` or `S`; measure-theoretic isomorphism modulo null sets, the notion
+in Sinai's remark that entropy is a metric invariant, is `ksEntropy_eq_of_isIsomorphicMod0`. -/
+theorem ksEntropy_eq_of_isomorphic {μ : Measure α} {ν : Measure β} [IsProbabilityMeasure μ]
+    [IsProbabilityMeasure ν] {T : α → α} {S : β → β} (e : α ≃ᵐ β) (he : MeasurePreserving e μ ν)
+    (hT : Measurable T) (hS : Measurable S) (hconj : Function.Semiconj e T S) :
+    ksEntropy μ T = ksEntropy ν S := by
   refine le_antisymm ?_ (ksEntropy_le_of_factor he hS hconj)
   have hconj' : Function.Semiconj e.symm S T := fun y => by
     apply e.injective
@@ -248,13 +259,13 @@ theorem iterateJoin_preimage_ae_eq {μ : Measure α} {T : α → α} {S : β →
   simp only [iterateJoin, Set.mem_iInter, Set.mem_preimage, hx]
 
 /-- **Relative entropy of a pulled-back partition under an a.e. factor map.** If
-`π : (α, μ) → (β, ν)` is measure-preserving, `T` is quasi-measure-preserving, `S` is measurable
-and `π ∘ T = S ∘ π` almost everywhere, then `h_μ(T, π⁻¹η) = h_ν(S, η)` for every finite
-measurable partition `η` of `β`. -/
-theorem entropyRel_preimage_of_ae {μ : Measure α} {ν : Measure β} {T : α → α} {S : β → β}
-    {π : α → β} (hπ : MeasurePreserving π μ ν) (hT : QuasiMeasurePreserving T μ μ)
-    (hS : Measurable S) (hconj : π ∘ T =ᵐ[μ] S ∘ π) {ι : Type*} [Fintype ι] {η : ι → Set β}
-    (hη : ∀ i, MeasurableSet (η i)) :
+`π : (α, μ) → (β, ν)` is a measure-preserving map of probability spaces, `T` is
+quasi-measure-preserving, `S` is measurable and `π ∘ T = S ∘ π` almost everywhere, then
+`h_μ(T, π⁻¹η) = h_ν(S, η)` for every finite measurable partition `η` of `β`. -/
+theorem entropyRel_preimage_of_ae {μ : Measure α} {ν : Measure β} [IsProbabilityMeasure μ]
+    [IsProbabilityMeasure ν] {T : α → α} {S : β → β} {π : α → β} (hπ : MeasurePreserving π μ ν)
+    (hT : QuasiMeasurePreserving T μ μ) (hS : Measurable S) (hconj : π ∘ T =ᵐ[μ] S ∘ π)
+    {ι : Type*} [Fintype ι] {η : ι → Set β} (hη : ∀ i, MeasurableSet (η i)) :
     entropyRel μ T (fun i => π ⁻¹' η i) = entropyRel ν S η := by
   have h : ∀ (n : ℕ) (w : Fin n → ι),
       μ (iterateJoin T (fun i => π ⁻¹' η i) n w) = ν (iterateJoin S η n w) := fun n w => by
@@ -263,34 +274,37 @@ theorem entropyRel_preimage_of_ae {μ : Measure α} {ν : Measure β} {T : α �
   simp only [entropyRel, partitionEntropy, h]
 
 /-- **Entropy does not increase under factors (almost-everywhere form).** If
-`π : (α, μ) → (β, ν)` is measure-preserving, `T` is quasi-measure-preserving, `S` is
-measurable and `π ∘ T = S ∘ π` almost everywhere, then `h_ν(S) ≤ h_μ(T)`. -/
-theorem ksEntropy_le_of_factor_ae {μ : Measure α} {ν : Measure β} {T : α → α} {S : β → β}
-    {π : α → β} (hπ : MeasurePreserving π μ ν) (hT : QuasiMeasurePreserving T μ μ)
-    (hS : Measurable S) (hconj : π ∘ T =ᵐ[μ] S ∘ π) : ksEntropy ν S ≤ ksEntropy μ T := by
+`π : (α, μ) → (β, ν)` is a measure-preserving map of probability spaces, `T` is
+quasi-measure-preserving, `S` is measurable and `π ∘ T = S ∘ π` almost everywhere, then
+`h_ν(S) ≤ h_μ(T)`. -/
+theorem ksEntropy_le_of_factor_ae {μ : Measure α} {ν : Measure β} [IsProbabilityMeasure μ]
+    [IsProbabilityMeasure ν] {T : α → α} {S : β → β} {π : α → β} (hπ : MeasurePreserving π μ ν)
+    (hT : QuasiMeasurePreserving T μ μ) (hS : Measurable S) (hconj : π ∘ T =ᵐ[μ] S ∘ π) :
+    ksEntropy ν S ≤ ksEntropy μ T := by
   refine iSup_le fun r => iSup_le fun η => iSup_le fun hη => ?_
   rw [← entropyRel_preimage_of_ae hπ hT hS hconj hη.measurableSet]
   exact entropyRel_le_ksEntropy T (hη.preimage hπ)
 
 /-- **Entropy is an invariant of isomorphism modulo null sets.** If two measure-preserving
-systems `(α, μ, T)` and `(β, ν, S)` are isomorphic modulo null sets (`IsIsomorphicMod0`), then
-`h_μ(T) = h_ν(S)`: "It is clear from the definition that this entropy is a metric invariant of
-dynamical system" (Ya. G. Sinai, *Kolmogorov–Sinai entropy*, Scholarpedia 4(3):2034, after
-Definition 1), with isomorphism as in O. Sarig, *Lecture Notes on Ergodic Theory*,
-Definition 1.3. -/
-theorem ksEntropy_eq_of_isIsomorphicMod0 {μ : Measure α} {ν : Measure β} {T : α → α}
-    {S : β → β} (hT : MeasurePreserving T μ μ) (hS : MeasurePreserving S ν ν)
+systems `(α, μ, T)` and `(β, ν, S)` on probability spaces are isomorphic modulo null sets
+(`IsIsomorphicMod0`), then `h_μ(T) = h_ν(S)`: "It is clear from the definition that this
+entropy is a metric invariant of dynamical system" (Ya. G. Sinai, *Kolmogorov–Sinai entropy*,
+Scholarpedia 4(3):2034, after Definition 1), with isomorphism as in O. Sarig, *Lecture Notes on
+Ergodic Theory*, Definition 1.3. -/
+theorem ksEntropy_eq_of_isIsomorphicMod0 {μ : Measure α} {ν : Measure β}
+    [IsProbabilityMeasure μ] [IsProbabilityMeasure ν] {T : α → α} {S : β → β}
+    (hT : MeasurePreserving T μ μ) (hS : MeasurePreserving S ν ν)
     (h : IsIsomorphicMod0 μ T ν S) : ksEntropy μ T = ksEntropy ν S := by
   obtain ⟨π, ρ, hπ, hρ, -, -, hπT, hρS⟩ := h
   exact le_antisymm (ksEntropy_le_of_factor_ae hρ hS.quasiMeasurePreserving hT.measurable hρS)
     (ksEntropy_le_of_factor_ae hπ hT.quasiMeasurePreserving hS.measurable hπT)
 
-/-- **Refinements under the identity.** For the identity map and `n ≥ 1`, the dynamical
-refinement `ξ ∨ ξ ∨ ⋯ ∨ ξ` of a measurable partition has the same entropy as `ξ`: the atom of
-a constant word `(i, …, i)` is `ξ i`, and the atom of a non-constant word is contained in the
-intersection of two distinct atoms, a null set. -/
-theorem partitionEntropy_iterateJoin_id {μ : Measure α} {r : ℕ} {ξ : Fin r → Set α}
-    (hξ : IsMeasurablePartition μ ξ) {n : ℕ} (hn : n ≠ 0) :
+/-- **Refinements under the identity.** For the identity map of a probability space and
+`n ≥ 1`, the dynamical refinement `ξ ∨ ξ ∨ ⋯ ∨ ξ` of a measurable partition has the same
+entropy as `ξ`: the atom of a constant word `(i, …, i)` is `ξ i`, and the atom of a non-constant
+word is contained in the intersection of two distinct atoms, a null set. -/
+theorem partitionEntropy_iterateJoin_id {μ : Measure α} [IsProbabilityMeasure μ] {r : ℕ}
+    {ξ : Fin r → Set α} (hξ : IsMeasurablePartition μ ξ) {n : ℕ} (hn : n ≠ 0) :
     partitionEntropy μ (iterateJoin id ξ n) = partitionEntropy μ ξ := by
   classical
   have hconst : Function.Injective (fun (i : Fin r) (_ : Fin n) => i) := fun i j h => by
@@ -319,10 +333,10 @@ theorem partitionEntropy_iterateJoin_id {μ : Measure α} {r : ℕ} {ξ : Fin r 
     exact Set.iInter_const _
   rw [this]
 
-/-- **The identity has zero entropy.** For every measure `μ`, `h_μ(id) = 0`: the dynamical
-refinements of a finite partition under the identity have bounded entropy, so their entropy
-per step tends to `0`. -/
-theorem ksEntropy_id (μ : Measure α) : ksEntropy μ id = 0 := by
+/-- **The identity has zero entropy.** For every probability measure `μ`, `h_μ(id) = 0`: the
+dynamical refinements of a finite partition under the identity have bounded entropy, so their
+entropy per step tends to `0`. -/
+theorem ksEntropy_id (μ : Measure α) [IsProbabilityMeasure μ] : ksEntropy μ id = 0 := by
   refine le_antisymm (iSup_le fun r => iSup_le fun ξ => iSup_le fun hξ => ?_) bot_le
   refine le_of_eq ?_
   unfold entropyRel

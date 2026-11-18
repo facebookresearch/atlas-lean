@@ -14,10 +14,16 @@ import Mathlib.Topology.Instances.ENNReal.Lemmas
 /-!
 # Strong mixing
 
-A probability-preserving map `T` is *(strongly) mixing* when every event `B`, pulled back by
-`T^[n]`, becomes asymptotically independent of every event `A`:
+A measure-preserving map `T` of a probability space `(α, μ)` is *(strongly) mixing* when every
+event `B`, pulled back by `T^[n]`, becomes asymptotically independent of every event `A`:
 `μ (A ∩ T^[n] ⁻¹' B) → μ A * μ B`. Mixing sits between ergodicity and the Kolmogorov and
 Bernoulli properties in the hierarchy of statistical properties of a dynamical system.
+
+Mixing is a property of measure-preserving maps of probability spaces, so `IsMixing` and the
+results below take an instance `IsProbabilityMeasure μ`. The product `μ A * μ B` expresses
+independence only for a probability measure: for the zero measure the condition would hold for
+every map, and for a finite measure of total mass other than `0` or `1` it would fail already
+for `A = B = univ`.
 
 ## Main results
 
@@ -42,11 +48,12 @@ open scoped ENNReal
 
 variable {α : Type*} [MeasurableSpace α] {T : α → α} {μ : Measure α}
 
-/-- **Strong mixing.** A measure-preserving map `T` of `(α, μ)` is *mixing* (strongly mixing) if
-for all measurable sets `A` and `B`, `μ (A ∩ T⁻ⁿ B) → μ A · μ B` as `n → ∞`: the event
-`T⁻ⁿ B` is asymptotically independent of `A`. This is O. Sarig, *Lecture Notes on Ergodic
-Theory*, Definition 1.5, stated there for probability-preserving transformations. -/
-structure IsMixing (T : α → α) (μ : Measure α) : Prop where
+/-- **Strong mixing.** A measure-preserving map `T` of a probability space `(α, μ)` is *mixing*
+(strongly mixing) if for all measurable sets `A` and `B`, `μ (A ∩ T⁻ⁿ B) → μ A · μ B` as
+`n → ∞`: the event `T⁻ⁿ B` is asymptotically independent of `A`. This is O. Sarig, *Lecture
+Notes on Ergodic Theory*, Definition 1.5, for probability-preserving transformations; `μ` must
+be a probability measure, since for the zero measure the condition would hold for every map. -/
+structure IsMixing (T : α → α) (μ : Measure α) [IsProbabilityMeasure μ] : Prop where
   /-- A mixing map preserves the measure. -/
   measurePreserving : MeasurePreserving T μ μ
   /-- Asymptotic independence of `A` and `T⁻ⁿ B`. -/
@@ -86,9 +93,11 @@ theorem IsMixing.ergodic [IsProbabilityMeasure μ] (h : IsMixing T μ) : Ergodic
       rw [prob_compl_eq_zero_iff hs]; exact h1
     exact (measure_eq_zero_iff_ae_notMem.1 hc).mono fun x hx => by simpa using hx
 
-/-- **Powers of a mixing map are mixing.** If `T` is mixing then so is `T^[k]` for every `k ≥ 1`:
-the sequence `μ (A ∩ T^{-kn} B)` is a subsequence of `μ (A ∩ T^{-n} B)`. -/
-theorem IsMixing.iterate (h : IsMixing T μ) {k : ℕ} (hk : 0 < k) : IsMixing T^[k] μ where
+/-- **Powers of a mixing map are mixing.** If `T` is a mixing transformation of a probability
+space, then so is `T^[k]` for every `k ≥ 1`: the sequence `μ (A ∩ T^{-kn} B)` is a subsequence of
+`μ (A ∩ T^{-n} B)`. -/
+theorem IsMixing.iterate [IsProbabilityMeasure μ] (h : IsMixing T μ) {k : ℕ} (hk : 0 < k) :
+    IsMixing T^[k] μ where
   measurePreserving := h.measurePreserving.iterate k
   tendsto_measure_inter_preimage A B hA hB := by
     have hsub : Tendsto (fun n : ℕ => k * n) atTop atTop :=

@@ -14,6 +14,7 @@ public import MathlibExt.Dynamics.Ergodic.BernoulliShift
 public import Mathlib.Probability.ProductMeasure
 public import Mathlib.Probability.UniformOn
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
+public import Mathlib.Analysis.Fourier.AddCircle
 public import Mathlib.NumberTheory.Real.Irrational
 
 /-!
@@ -102,9 +103,11 @@ theorem_wanted not_isomorphic_bernoulli_uniform_three_two :
 
 /-- **The irrational rotation has entropy zero.** For irrational `α`, the rotation
 `x ↦ x + α` of the circle `ℝ / ℤ` has Kolmogorov–Sinai entropy `0` with respect to the Haar
-probability measure (O. Sarig, *Lecture Notes on Ergodic Theory*, Proposition 4.7). -/
+probability measure `AddCircle.haarAddCircle`, which on `ℝ / ℤ` is the Lebesgue measure `volume`
+(O. Sarig, *Lecture Notes on Ergodic Theory*, Proposition 4.7). -/
 theorem_wanted ksEntropy_addCircle_rotation_eq_zero {α : ℝ} (hα : Irrational α) :
-    ksEntropy (volume : Measure (AddCircle (1 : ℝ))) (fun x => x + (α : AddCircle (1 : ℝ))) = 0
+    ksEntropy (AddCircle.haarAddCircle : Measure (AddCircle (1 : ℝ)))
+      (fun x => x + (α : AddCircle (1 : ℝ))) = 0
 
 /-- **Ornstein's isomorphism theorem.** Two invertible Bernoulli schemes with the same
 Kolmogorov–Sinai entropy are measure-theoretically isomorphic modulo null sets: if the two-sided

@@ -9,8 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Dynamics.Ergodic.KolmogorovSinaiEntropy
+public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 
-import Mathlib.MeasureTheory.Measure.Dirac.Basic
 import Mathlib.Tactic
 
 @[expose] public section
@@ -33,21 +33,29 @@ example {α : Type*} [MeasurableSpace α] (μ : Measure α) [IsProbabilityMeasur
   simp [partitionEntropy]
 
 -- Relative entropy of the trivial partition is bounded by the Kolmogorov–Sinai entropy.
-example {α : Type*} [MeasurableSpace α] (μ : Measure α) (T : α → α) :
+example {α : Type*} [MeasurableSpace α] (μ : Measure α) [IsProbabilityMeasure μ] (T : α → α) :
     entropyRel μ T (fun _ : Fin 1 => (Set.univ : Set α)) ≤ ksEntropy μ T :=
   entropyRel_le_ksEntropy T (isMeasurablePartition_univ μ)
 
 -- Conjugating by a measure-preserving equivalence does not change the entropy.
 example {α β : Type*} [MeasurableSpace α] [MeasurableSpace β] {μ : Measure α}
-    (T : α → α) (hT : Measurable T) (e : α ≃ᵐ β) :
-    ksEntropy μ T = ksEntropy (μ.map e) (e ∘ T ∘ e.symm) := by
-  refine ksEntropy_eq_of_isomorphic e (e.measurable.measurePreserving μ) hT
+    [IsProbabilityMeasure μ] {ν : Measure β} [IsProbabilityMeasure ν] (T : α → α)
+    (hT : Measurable T) (e : α ≃ᵐ β) (he : MeasurePreserving e μ ν) :
+    ksEntropy μ T = ksEntropy ν (e ∘ T ∘ e.symm) := by
+  refine ksEntropy_eq_of_isomorphic e he hT
     (e.measurable.comp (hT.comp e.symm.measurable)) fun x => ?_
   simp
 
 -- The identity, hence any map isomorphic to it, has zero entropy.
-example {α : Type*} [MeasurableSpace α] (μ : Measure α) : ksEntropy μ id = 0 :=
+example {α : Type*} [MeasurableSpace α] (μ : Measure α) [IsProbabilityMeasure μ] :
+    ksEntropy μ id = 0 :=
   ksEntropy_id μ
+
+/-- The entropies are defined for probability measures only: the zero measure, which would give
+every map entropy `0`, is not one. -/
+example {α : Type*} [MeasurableSpace α] : ¬ IsProbabilityMeasure (0 : Measure α) := by
+  intro h
+  exact IsProbabilityMeasure.ne_zero (0 : Measure α) rfl
 
 -- Under the identity the refinement of the trivial partition keeps entropy `0`.
 example {α : Type*} [MeasurableSpace α] (μ : Measure α) [IsProbabilityMeasure μ] :

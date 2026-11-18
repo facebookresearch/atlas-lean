@@ -10,8 +10,8 @@ module
 
 public import MathlibExt.Dynamics.Ergodic.Mixing
 public import MathlibExt.Dynamics.Ergodic.PoincareRecurrence
+public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 
-import Mathlib.MeasureTheory.Measure.Dirac.Basic
 import Mathlib.Tactic
 
 @[expose] public section
@@ -36,6 +36,12 @@ theorem isMixing_dirac_of_fixed {α : Type*} [MeasurableSpace α] {T : α → α
         simp [Set.indicator, hA', hB', hfix n]
     rw [hconst]
     exact tendsto_const_nhds
+
+/-- Mixing is defined for probability measures only. The zero measure, for which the condition
+`μ (A ∩ T⁻ⁿ B) → μ A · μ B` would hold for every map, is not one. -/
+example {α : Type*} [MeasurableSpace α] : ¬ IsProbabilityMeasure (0 : Measure α) := by
+  intro h
+  exact IsProbabilityMeasure.ne_zero (0 : Measure α) rfl
 
 -- Mixing gives ergodicity, here for the Dirac mass at a fixed point.
 example {α : Type*} [MeasurableSpace α] {T : α → α} (hT : Measurable T) {a : α}
