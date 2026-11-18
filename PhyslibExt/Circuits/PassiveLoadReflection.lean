@@ -385,11 +385,14 @@ theorem instantaneous_resistive_reflection (R Z0 : ℝ) (hZ0 : 0 < Z0)
 
 /-! ## D. Special loads and the excluded load -/
 
-/-- A matched load reflects nothing. -/
-lemma reflectionCoefficient_matched (Z0 : ℝ) :
+/-- A matched load `ZL = Z0` on a line with `Z0 > 0` lies in the domain,
+`Z0 + Z0 != 0`, and reflects nothing. -/
+lemma reflectionCoefficient_matched (Z0 : ℝ) (hZ0 : 0 < Z0) :
     reflectionCoefficient (Z0 : ℂ) Z0 = 0 := by
+  have hsum : (Z0 : ℂ) + (Z0 : ℂ) ≠ 0 := by
+    exact_mod_cast ne_of_gt (add_pos hZ0 hZ0)
   unfold reflectionCoefficient
-  rw [sub_self, zero_div]
+  rw [div_eq_iff hsum, sub_self, zero_mul]
 
 /-- A short circuit (zero load) lies in the domain and reflects with a sign
 flip. -/

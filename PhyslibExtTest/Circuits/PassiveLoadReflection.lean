@@ -72,7 +72,7 @@ example : ¬ (‖reflectionCoefficient (-((1 : ℝ) : ℂ)) 1‖ ≤ 1 →
 
 /-- Matched and short-circuit loads on a unit line. -/
 example : reflectionCoefficient ((1 : ℝ) : ℂ) 1 = 0 :=
-  reflectionCoefficient_matched 1
+  reflectionCoefficient_matched 1 (by norm_num)
 
 example : reflectionCoefficient 0 1 = -1 :=
   reflectionCoefficient_short 1 (by norm_num)
