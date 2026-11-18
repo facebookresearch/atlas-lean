@@ -687,8 +687,9 @@ theorem wordCode_refines {m : ℕ} (w s : ℕ) (hw : 1 ≤ w) (hc xc : Fin m →
 /-- **Headline.** The word filter refines the integer filter (decoded
 output and overflow flag), and when its flag is clear and the real
 inputs and coefficients are within half a step of their decoded words,
-its decoded output obeys the ordered dot-product bound with every local
-error at half a step and zero initialization. -/
+its decoded output obeys the ordered dot-product bound with zero
+initialization, the coefficient, input and product errors at half a
+step, and no accumulation error, since a clean trace adds exactly. -/
 theorem wordFir_correct (s w m : ℕ) (hw : 1 ≤ w)
     (h x : Fin m → ℝ) (hc xc : Fin m → BitVec w)
     (hdx : ∀ k : Fin m, |decodeWord s (xc k) - x k| ≤ (1 : ℝ) / (2 * (2 : ℝ) ^ s))
@@ -706,7 +707,6 @@ theorem wordFir_correct (s w m : ℕ) (hw : 1 ≤ w)
       ≤ ((1 : ℝ) / (2 * (2 : ℝ) ^ s)) * (∑ k : Fin m, |h k|)
         + ((1 : ℝ) / (2 * (2 : ℝ) ^ s)) * (∑ k : Fin m, |x k|)
         + (m : ℝ) * ((1 : ℝ) / (2 * (2 : ℝ) ^ s)) * ((1 : ℝ) / (2 * (2 : ℝ) ^ s))
-        + (m : ℝ) * ((1 : ℝ) / (2 * (2 : ℝ) ^ s))
         + (m : ℝ) * ((1 : ℝ) / (2 * (2 : ℝ) ^ s)) := by
   have href := wordCode_refines w s hw hc xc
   refine ⟨href, ?_⟩
