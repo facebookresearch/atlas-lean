@@ -26,13 +26,16 @@ two's complement words `BitVec w`, decoded by `BitVec.toInt`.
 Taps, inputs and the accumulator are width-`w` words. Each product and
 partial sum is formed exactly at the intermediate width `2 * w + s + 1`,
 where no value can wrap, then narrowed back to width `w` by saturation.
-Rounding adds `2 ^ s / 2` and shifts right arithmetically by `s`. The
+Rounding adds `2 ^ s / 2` one bit wider than the intermediate width, so
+the addition cannot wrap, and shifts right arithmetically by `s`. The
 range test compares against the sign-extended `BitVec.intMin w` and
 `BitVec.intMax w`. Scale, rounding, flag order and zero initialization
 match the integer fold.
 
 ## Main results
 
+* `toInt_wordRoundHalfUpShift`: word rounding decodes to the integer
+  round half up for every intermediate word.
 * `wordStep_refines`: one word step decodes to the integer step, with an
   equal overflow flag, for every accumulator, flag and operand pair.
 * `outOfRange_add_eq_saddOverflow`: when the rounded product fits, the
@@ -72,11 +75,14 @@ width. -/
 def wordProduct (w s : ℕ) (hk xk : BitVec w) : BitVec (wideWidth w s) :=
   widen w s hk * widen w s xk
 
-/-- Round half up on an intermediate word: add `2 ^ s / 2`, then shift
-right arithmetically by `s`. -/
+/-- Round half up on an intermediate word: add `2 ^ s / 2` one bit wider,
+so the addition cannot wrap, shift right arithmetically by `s`, and narrow
+back. The rounded value always fits the intermediate width. -/
 def wordRoundHalfUpShift (w s : ℕ) (n : BitVec (wideWidth w s)) :
     BitVec (wideWidth w s) :=
-  (n + BitVec.ofNat (wideWidth w s) (2 ^ s / 2)).sshiftRight s
+  ((n.signExtend (wideWidth w s + 1)
+      + BitVec.ofNat (wideWidth w s + 1) (2 ^ s / 2)).sshiftRight s).setWidth
+    (wideWidth w s)
 
 /-- The least signed width-`w` word at the intermediate width. -/
 def wideMin (w s : ℕ) : BitVec (wideWidth w s) :=
@@ -204,20 +210,38 @@ private theorem toInt_setWidth_of_mem (w s : ℕ) (hw : 1 ≤ w)
     exact (Int.bmod_bmod_of_dvd hdvd).symm
   rw [hbb, hbmod]
 
-/-- The rounding offset word decodes to `2 ^ s / 2`. -/
-private theorem toInt_offset (w s : ℕ) (hw : 1 ≤ w) :
-    (BitVec.ofNat (wideWidth w s) (2 ^ s / 2)).toInt
+/-- Narrowing by one bit is exact when the value fits the narrower signed
+range. -/
+private theorem toInt_setWidth_succ {W : ℕ} (hW : 1 ≤ W) (v : BitVec (W + 1))
+    (hlo : -(2 : ℤ) ^ (W - 1) ≤ v.toInt) (hhi : v.toInt < (2 : ℤ) ^ (W - 1)) :
+    (v.setWidth W).toInt = v.toInt := by
+  have hdvd : (2 : ℕ) ^ W ∣ (2 : ℕ) ^ (W + 1) := Nat.pow_dvd_pow _ (by omega)
+  have hset : (v.setWidth W).toInt = ((v.toNat : ℕ) : ℤ).bmod ((2 : ℕ) ^ W) :=
+    BitVec.toInt_setWidth v
+  have hto : v.toInt = ((v.toNat : ℕ) : ℤ).bmod ((2 : ℕ) ^ (W + 1)) :=
+    BitVec.toInt_eq_toNat_bmod v
+  have hbb : ((v.toNat : ℕ) : ℤ).bmod ((2 : ℕ) ^ W)
+      = (v.toInt).bmod ((2 : ℕ) ^ W) := by
+    rw [hto]
+    exact (Int.bmod_bmod_of_dvd hdvd).symm
+  rw [hset, hbb]
+  exact bmod_eq_of_signed_range hW hlo hhi
+
+/-- The rounding offset word, one bit wider than the intermediate width,
+decodes to `2 ^ s / 2`. -/
+private theorem toInt_offset (w s : ℕ) :
+    (BitVec.ofNat (wideWidth w s + 1) (2 ^ s / 2)).toInt
       = ((2 ^ s / 2 : ℕ) : ℤ) := by
   rw [BitVec.toInt_ofNat']
-  apply bmod_eq_of_signed_range (wideWidth_ge_one w s)
+  apply bmod_eq_of_signed_range (by omega : 1 ≤ wideWidth w s + 1)
   · have hx : (0 : ℤ) ≤ ((2 ^ s / 2 : ℕ) : ℤ) := Nat.cast_nonneg _
-    have hpos : (0 : ℤ) < (2 : ℤ) ^ (wideWidth w s - 1) := by positivity
+    have hpos : (0 : ℤ) < (2 : ℤ) ^ (wideWidth w s + 1 - 1) := by positivity
     omega
   · have hle : ((2 ^ s / 2 : ℕ) : ℤ) ≤ ((2 ^ s : ℕ) : ℤ) := by
       exact_mod_cast Nat.div_le_self _ _
-    have hlt : (2 : ℤ) ^ s < (2 : ℤ) ^ (wideWidth w s - 1) := by
+    have hlt : (2 : ℤ) ^ s < (2 : ℤ) ^ (wideWidth w s + 1 - 1) := by
       apply pow_lt_pow_right₀ (by norm_num)
-      rw [wideWidth_sub_one]
+      unfold wideWidth
       omega
     have hcast : (((2 ^ s : ℕ)) : ℤ) = (2 : ℤ) ^ s := by norm_cast
     omega
@@ -332,61 +356,65 @@ theorem toInt_wordProduct (w s : ℕ) (hw : 1 ≤ w) (hk xk : BitVec w) :
       omega
     exact lt_of_le_of_lt hhi hmono
 
+/-- Rounding decodes to the integer round half up of the decoded input, for
+every intermediate word. -/
+theorem toInt_wordRoundHalfUpShift (w s : ℕ) (n : BitVec (wideWidth w s)) :
+    (wordRoundHalfUpShift w s n).toInt = roundHalfUpShift s n.toInt := by
+  have hK : wideWidth w s - 1 = 2 * w + s := wideWidth_sub_one w s
+  have hK1 : wideWidth w s + 1 - 1 = 2 * w + s + 1 := by unfold wideWidth; omega
+  have hlo := BitVec.le_toInt n
+  have hhi := BitVec.toInt_lt (x := n)
+  rw [hK] at hlo hhi
+  have hext : (n.signExtend (wideWidth w s + 1)).toInt = n.toInt :=
+    BitVec.toInt_signExtend_of_le (by omega)
+  have hoff := toInt_offset w s
+  have hh0 : (0 : ℤ) ≤ ((2 ^ s / 2 : ℕ) : ℤ) := Nat.cast_nonneg _
+  have hhK : ((2 ^ s / 2 : ℕ) : ℤ) ≤ (2 : ℤ) ^ (2 * w + s) := by
+    have h1 : ((2 ^ s / 2 : ℕ) : ℤ) ≤ ((2 ^ s : ℕ) : ℤ) := by
+      exact_mod_cast Nat.div_le_self _ _
+    have h2 : (((2 ^ s : ℕ)) : ℤ) = (2 : ℤ) ^ s := by norm_cast
+    have h3 : (2 : ℤ) ^ s ≤ (2 : ℤ) ^ (2 * w + s) :=
+      pow_le_pow_right₀ (by norm_num) (by omega)
+    omega
+  have hpow : (2 : ℤ) ^ (2 * w + s + 1) = 2 * (2 : ℤ) ^ (2 * w + s) := by
+    rw [pow_succ]
+    ring
+  have hadd : (n.signExtend (wideWidth w s + 1)
+      + BitVec.ofNat (wideWidth w s + 1) (2 ^ s / 2)).toInt
+      = n.toInt + ((2 ^ s / 2 : ℕ) : ℤ) := by
+    rw [BitVec.toInt_add, hext, hoff]
+    apply bmod_eq_of_signed_range (by omega : 1 ≤ wideWidth w s + 1)
+    · rw [hK1, hpow]
+      omega
+    · rw [hK1, hpow]
+      omega
+  have hshift : ((n.signExtend (wideWidth w s + 1)
+      + BitVec.ofNat (wideWidth w s + 1) (2 ^ s / 2)).sshiftRight s).toInt
+      = roundHalfUpShift s n.toInt := by
+    rw [BitVec.toInt_sshiftRight, hadd, Int.shiftRight_eq_div_pow]
+    have hx : (((2 ^ s / 2 : ℕ)) : ℤ) = (2 : ℤ) ^ s / 2 := by
+      rw [Int.natCast_ediv]
+      norm_cast
+    have hD : (((2 ^ s : ℕ)) : ℤ) = (2 : ℤ) ^ s := by norm_cast
+    rw [hx, hD]
+    rfl
+  have hM : (0 : ℤ) < (2 : ℤ) ^ (2 * w + s) := by positivity
+  have hrhi : roundHalfUpShift s n.toInt ≤ (2 : ℤ) ^ (2 * w + s) - 1 :=
+    roundHalfUpShift_le_of_le s n.toInt ((2 : ℤ) ^ (2 * w + s) - 1) (by omega)
+      (by omega)
+  have hrlo : -(2 : ℤ) ^ (2 * w + s) ≤ roundHalfUpShift s n.toInt :=
+    le_roundHalfUpShift_of_le s n.toInt ((2 : ℤ) ^ (2 * w + s)) (le_of_lt hM) hlo
+  unfold wordRoundHalfUpShift
+  rw [toInt_setWidth_succ (wideWidth_ge_one w s) _
+    (by rw [hK, hshift]; exact hrlo) (by rw [hK, hshift]; omega), hshift]
+
 /-- Rounding the intermediate product decodes to the integer rounding of
 the integer product. -/
 theorem toInt_wordRoundHalfUpShift_wordProduct (w s : ℕ) (hw : 1 ≤ w)
     (hk xk : BitVec w) :
     (wordRoundHalfUpShift w s (wordProduct w s hk xk)).toInt
       = roundHalfUpShift s (hk.toInt * xk.toInt) := by
-  unfold wordRoundHalfUpShift
-  have hprod := toInt_wordProduct w s hw hk xk
-  have hoff := toInt_offset w s hw
-  have hadd : (wordProduct w s hk xk
-      + BitVec.ofNat (wideWidth w s) (2 ^ s / 2)).toInt
-      = hk.toInt * xk.toInt + ((2 ^ s / 2 : ℕ) : ℤ) := by
-    rw [BitVec.toInt_add, hprod, hoff]
-    apply bmod_eq_of_signed_range (wideWidth_ge_one w s)
-    · have hlo := BitVec.le_toInt_mul_toInt (x := hk) (y := xk)
-      have hmono : (2 : ℤ) ^ (w * 2 - 2) ≤ (2 : ℤ) ^ (wideWidth w s - 1) := by
-        apply pow_le_pow_right₀ (by norm_num)
-        rw [wideWidth_sub_one]
-        omega
-      have hx : (0 : ℤ) ≤ ((2 ^ s / 2 : ℕ) : ℤ) := Nat.cast_nonneg _
-      have hneg : -(2 : ℤ) ^ (wideWidth w s - 1) ≤ -(2 : ℤ) ^ (w * 2 - 2) :=
-        neg_le_neg hmono
-      have h1 : -(2 : ℤ) ^ (wideWidth w s - 1) ≤ hk.toInt * xk.toInt :=
-        le_trans hneg hlo
-      omega
-    · have hhi := BitVec.toInt_mul_toInt_le (x := hk) (y := xk)
-      have hle : ((2 ^ s / 2 : ℕ) : ℤ) ≤ (2 : ℤ) ^ s := by
-        have h1 : ((2 ^ s / 2 : ℕ) : ℤ) ≤ ((2 ^ s : ℕ) : ℤ) := by
-          exact_mod_cast Nat.div_le_self _ _
-        have h2 : (((2 ^ s : ℕ)) : ℤ) = (2 : ℤ) ^ s := by norm_cast
-        omega
-      have hA : (2 : ℤ) ^ (w * 2 - 2) ≤ (2 : ℤ) ^ (2 * w + s - 2) := by
-        apply pow_le_pow_right₀ (by norm_num)
-        omega
-      have hB : (2 : ℤ) ^ s ≤ (2 : ℤ) ^ (2 * w + s - 2) := by
-        apply pow_le_pow_right₀ (by norm_num)
-        omega
-      have hY : (2 : ℤ) ^ (2 * w + s) = 4 * (2 : ℤ) ^ (2 * w + s - 2) := by
-        conv_lhs => rw [show 2 * w + s = (2 * w + s - 2) + 2 from by omega,
-          pow_add]
-        ring
-      have hZ : (1 : ℤ) ≤ (2 : ℤ) ^ (2 * w + s - 2) :=
-        calc (1 : ℤ) = (2 : ℤ) ^ 0 := by norm_num
-          _ ≤ (2 : ℤ) ^ (2 * w + s - 2) := by
-            apply pow_le_pow_right₀ (by norm_num)
-            omega
-      rw [wideWidth_sub_one]
-      omega
-  rw [BitVec.toInt_sshiftRight, hadd, Int.shiftRight_eq_div_pow]
-  have hx : (((2 ^ s / 2 : ℕ)) : ℤ) = (2 : ℤ) ^ s / 2 := by
-    rw [Int.natCast_ediv]
-    norm_cast
-  have hD : (((2 ^ s : ℕ)) : ℤ) = (2 : ℤ) ^ s := by norm_cast
-  rw [hx, hD]
-  rfl
+  rw [toInt_wordRoundHalfUpShift, toInt_wordProduct w s hw]
 
 /-- The word range test is the integer range test against the signed
 width-`w` code range. -/
