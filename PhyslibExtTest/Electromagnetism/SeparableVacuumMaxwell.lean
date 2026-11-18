@@ -13,6 +13,8 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
 @[expose] public section
 
+open scoped ContDiff
+open PhyslibExt.Electromagnetism.SeparableGuidePotential
 open PhyslibExt.Electromagnetism.SeparableVacuumMaxwell
 
 namespace PhyslibExtTest.Electromagnetism.SeparableVacuumMaxwell
@@ -29,7 +31,22 @@ example : modeEquation 1 1 (fun t z => Real.cos (1 * t - 0 * z)) :=
 example : sourceFreeVacuumMaxwell 1
     (separableElectricField (fun x => Real.sin (1 * x)) (fun t z => Real.cos (1 * t - 0 * z)))
     (separableMagneticField (fun x => Real.sin (1 * x)) (fun t z => Real.cos (1 * t - 0 * z))) :=
-  propagatingMode_sourceFreeVacuumMaxwell 1 0 1 1 (by norm_num) (by norm_num)
+  propagatingMode_sourceFreeVacuumMaxwell 1 0 1 1 (by norm_num)
+
+/-- The canonical Physlib fields of the same guide potential satisfy the source-free equations. -/
+example : sourceFreeVacuumMaxwellFields 1
+    ((separableGuidePotential 1 (fun x => Real.sin (1 * x))
+      (fun t z => Real.cos (1 * t - 0 * z))).electricField 1)
+    ((separableGuidePotential 1 (fun x => Real.sin (1 * x))
+      (fun t z => Real.cos (1 * t - 0 * z))).magneticField 1) := by
+  obtain ⟨hprof, hmode⟩ := (propagatingMode_satisfies_scalarEquations 1 0 1 1).mpr (by norm_num)
+  have hf : ContDiff ℝ ∞ (fun p : ℝ × ℝ => Real.cos (1 * p.1 - 0 * p.2)) := by fun_prop
+  exact separableGuidePotential_sourceFreeVacuumMaxwellFields 1 _ _ 1 (by fun_prop) hf hprof hmode
+
+/-- Magnetic Gauss's law needs no regularity: a non-differentiable mode still works. -/
+example : ∀ t x y z, spaceDivergence (separableMagneticField (fun x => x ^ 3) (fun _ z => |z|))
+    t x y z = 0 :=
+  separable_divergence_magnetic _ _
 
 /-- Quarter-period electric component: at `t = x = π / 2` the field is `(0, 1, 0)`. -/
 example : separableElectricField (fun x => Real.sin (1 * x)) (fun t z => Real.cos t)
