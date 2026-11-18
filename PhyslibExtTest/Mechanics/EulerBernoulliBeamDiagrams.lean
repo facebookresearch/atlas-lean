@@ -28,7 +28,7 @@ open Mechanics.EulerBernoulli
 /-- Midpoint moment value at the concrete witness. -/
 example : uniformBeamMoment 3 1 4 2 = 6 := by
   have h := (uniformBeamMoment_midpoint_max (w := 3) (EI := 1) (L := 4)
-    (by norm_num) (by norm_num) (by norm_num)).1
+    (by norm_num) (by norm_num)).1
   norm_num at h ⊢
   exact h
 
