@@ -51,9 +51,6 @@ output bit. Nothing here is a transistor, cell or netlist claim.
   the noise margins formed from them.
 
 ## A. Voltage band observation
-
-Discharges ECE roadmap leaf `ECE.HW.PHYSBOOL.L1` (voltage validity
-bands to two-valued logic).
 -/
 
 @[expose] public section
