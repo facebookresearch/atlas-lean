@@ -52,7 +52,7 @@ private theorem leapfrogIterate_fin_one (h c dt : ℝ) (u0 v0 : Fin 1 → ℝ) (
 private theorem oneCell_mismatch :
     initialPairMismatch (N := 1) (fun _ _ => 0) (fun _ _ => 0) 1 (1 / 2)
       (fun _ => 1) 0 = 1 := by
-  simp [initialPairMismatch, pairNorm, pairNormSq, PeriodicYeeEnergy.weightedNormSq,
+  simp [initialPairMismatch, pairNorm, pairNormSq, weightedNormSq,
     weightedInner, sampledU, sampledV]
 
 /-- At the same data the pair error is `1` at every step: the mismatch never decays,
@@ -64,7 +64,7 @@ example (n : ℕ) :
         (fun _ => 1) 0 0 = 1 := by
   refine ⟨?_, (leapfrogPairError_zero _ _ _ _ _ _ _).trans oneCell_mismatch⟩
   simp [leapfrogPairError, leapfrogIterate_fin_one, pairNorm, pairNormSq,
-    PeriodicYeeEnergy.weightedNormSq, weightedInner, sampledU, sampledV]
+    weightedNormSq, weightedInner, sampledU, sampledV]
 
 /-- The global bound at the one-cell data with `c = 1`, `rho = 3 / 5`, `L = 1`,
 `Mt = Mx = 0`: every step with `n * dt ≤ T` has pair error at most
@@ -90,10 +90,10 @@ private theorem alternating_weightedNorm_dPlus (h : ℝ) (hh : 0 < h) :
       (2 / h) * weightedNorm h (![1, -1] : Fin 2 → ℝ) := by
   have s0 : periodicSucc (0 : Fin 2) = 1 := rfl
   have s1 : periodicSucc (1 : Fin 2) = 0 := rfl
-  have hsq : PeriodicYeeResidual.weightedNormSq h (dPlus h (![1, -1] : Fin 2 → ℝ)) =
-      (2 / h) ^ 2 * PeriodicYeeResidual.weightedNormSq h (![1, -1] : Fin 2 → ℝ) := by
+  have hsq : weightedNormSq h (dPlus h (![1, -1] : Fin 2 → ℝ)) =
+      (2 / h) ^ 2 * weightedNormSq h (![1, -1] : Fin 2 → ℝ) := by
     have hne : h ≠ 0 := hh.ne'
-    simp only [PeriodicYeeResidual.weightedNormSq, weightedInner, dPlus, Fin.sum_univ_two,
+    simp only [weightedNormSq, weightedInner, dPlus, Fin.sum_univ_two,
       s0, s1]
     simp
     field_simp
@@ -116,7 +116,7 @@ example (h k : ℝ) (hh : 0 < h) (hk : k < 2 / h) :
     ¬ ∀ w : Fin 2 → ℝ, weightedNorm h (dPlus h w) ≤ k * weightedNorm h w := by
   intro hall
   have hpos : 0 < weightedNorm h (![1, -1] : Fin 2 → ℝ) := by
-    unfold weightedNorm PeriodicYeeResidual.weightedNormSq weightedInner
+    unfold weightedNorm weightedNormSq weightedInner
     apply Real.sqrt_pos.mpr
     simp only [Fin.sum_univ_two]
     norm_num

@@ -141,7 +141,7 @@ private theorem pairNorm_eq {N : ℕ} (h : ℝ) (hh : 0 ≤ h) (u v : Fin N → 
   rw [pairNorm, ← Real.sqrt_sq (norm_nonneg (pairVec u v)), ← Real.sqrt_mul hh,
     EuclideanSpace.real_norm_sq_eq]
   congr 1
-  simp only [pairNormSq, PeriodicYeeEnergy.weightedNormSq, weightedInner, pairVec,
+  simp only [pairNormSq, weightedNormSq, weightedInner, pairVec,
     Fintype.sum_sum_type, Sum.elim_inl, Sum.elim_inr, sq]
   ring
 
@@ -162,13 +162,11 @@ private theorem pairNorm_smul {N : ℕ} (h : ℝ) (hh : 0 ≤ h) (k : ℝ) (u v 
 
 private theorem weightedNorm_eq_pairNorm {N : ℕ} (h : ℝ) (w : Fin N → ℝ) :
     weightedNorm h w = pairNorm h w 0 := by
-  simp [PeriodicYeeResidual.weightedNorm, pairNorm, pairNormSq,
-    PeriodicYeeEnergy.weightedNormSq, PeriodicYeeResidual.weightedNormSq, weightedInner]
+  simp [weightedNorm, pairNorm, pairNormSq, weightedNormSq, weightedInner]
 
 private theorem weightedNorm_eq_pairNorm_snd {N : ℕ} (h : ℝ) (w : Fin N → ℝ) :
     weightedNorm h w = pairNorm h 0 w := by
-  simp [PeriodicYeeResidual.weightedNorm, pairNorm, pairNormSq,
-    PeriodicYeeEnergy.weightedNormSq, PeriodicYeeResidual.weightedNormSq, weightedInner]
+  simp [weightedNorm, pairNorm, pairNormSq, weightedNormSq, weightedInner]
 
 /-- The leapfrog step is additive in the pair. -/
 theorem leapfrogStep_add {N : ℕ} (h c dt : ℝ) (u v u' v' : Fin N → ℝ) :
@@ -259,7 +257,7 @@ theorem weightedNorm_dPlus_le {N : ℕ} (h : ℝ) (hh : 0 < h) (w : Fin N → �
       _ = (2 / h) ^ 2 * ∑ j, w j * w j := by
           rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum, hre]
           field_simp; ring
-  unfold PeriodicYeeResidual.weightedNorm PeriodicYeeResidual.weightedNormSq weightedInner
+  unfold weightedNorm weightedNormSq weightedInner
   rw [show (2 / h) * Real.sqrt (h * ∑ j, w j * w j) =
       Real.sqrt ((2 / h) ^ 2 * (h * ∑ j, w j * w j)) by
     rw [Real.sqrt_mul (sq_nonneg _), Real.sqrt_sq (by positivity)]]
@@ -435,7 +433,7 @@ theorem leapfrogPairError_le_of_exact_init {N : ℕ} (hN : 0 < N)
     (sampledU u dt h 0) (sampledV v dt h 0) n hn
   have h0 : initialPairMismatch u v h dt (sampledU u dt h 0 : Fin N → ℝ)
       (sampledV v dt h 0) = 0 := by
-    simp [initialPairMismatch, pairNorm, pairNormSq, PeriodicYeeEnergy.weightedNormSq,
+    simp [initialPairMismatch, pairNorm, pairNormSq, weightedNormSq,
       weightedInner]
   rw [h0, globalErrorBound, zero_add] at hb
   exact hb
