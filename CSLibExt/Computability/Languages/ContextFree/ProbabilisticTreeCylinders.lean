@@ -388,7 +388,7 @@ theorem weight_nonneg {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (t : CGTree) :
       exact mul_nonneg (mul_nonneg hp0 ihl) ihr
 
 /-- No non-empty continuation of a leaf address is active. -/
-theorem not_mem_active_of_leaf_helper (t : CGTree) :
+private theorem not_mem_active_of_leaf_helper (t : CGTree) :
     ∀ (a b : List Bool), a ∈ t.leafAddresses [] → b ≠ [] → a ++ b ∉ t.activeAddresses [] := by
   induction t with
   | leaf =>
