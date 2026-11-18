@@ -29,7 +29,7 @@ Deriving the mechanics equation itself is out of scope.
 
 @[expose] public section
 
-namespace Control
+namespace ControlTheory
 
 /-- The first-order right-hand side of the mass equation at
 velocity `v` under net force `F`: the pair `(v, M⁻¹ *ᵥ F)` of
@@ -47,4 +47,4 @@ theorem eq_firstOrderRhs_iff {n : Type*} [Fintype n] [DecidableEq n]
   unfold firstOrderRhs
   simp only [Prod.mk.injEq, Matrix.mulVec_eq_iff_inv_mulVec hM]
 
-end Control
+end ControlTheory

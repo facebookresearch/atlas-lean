@@ -8,11 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import MathlibExt.Control.MassEquationAlgebra
+import MathlibExt.ControlTheory.MassEquationAlgebra
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Tactic.NormNum
 
-open Control
+open ControlTheory
 open scoped Matrix
 
 /-- The diagonal mass matrix `diag(2, 3)` used in the examples. -/
