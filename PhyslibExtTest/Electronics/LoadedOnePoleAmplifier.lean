@@ -74,7 +74,7 @@ example : closedLoopPole 2 1 (1 / 2) 10 < 0 :=
     (by norm_num)
 
 /-- Headline transfer at DC: with `vi = 12`, the model equations hold
-for `e = 10` and `vo = 5`, and the output is the transfer times the
+for `vamp = 10` and `vo = 5`, and the output is the transfer times the
 input. -/
 example : (5 : ℂ) = loadedTransfer 10 2 1 (1 / 2) (1 / 2) 0 * 12 :=
   output_eq_loadedTransfer_mul_input 10 2 1 (1 / 2) (1 / 2) 0 12 5 10

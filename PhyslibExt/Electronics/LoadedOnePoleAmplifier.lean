@@ -24,9 +24,11 @@ import Mathlib.Tactic.Ring
 A unilateral one-pole amplifier with open-loop response
 `A(s) = A0 / (1 + s / wp)` is driven through a source divider
 `a = Rin / (Rs + Rin)` and drives a load through a load divider
-`b = RL / (Ro + RL)`. The internal error signal obeys
-`e = A(s) * (a * vi - beta * vo)` and the loaded output is
-`vo = b * e`, with feedback sensing the loaded output. Clearing the
+`b = RL / (Ro + RL)`. The feedback error is
+`a * vi - beta * vo`. The amplifier's unloaded output `vamp`,
+before the load divider, obeys
+`vamp = A(s) * (a * vi - beta * vo)`, and the loaded output is
+`vo = b * vamp`, with feedback sensing the loaded output. Clearing the
 two denominators that occur in these equations gives the loaded
 closed-loop transfer
 `G(s) = a * b * A0 / (1 + s / wp + beta * b * A0)`, valid away from
@@ -47,8 +49,8 @@ frequency-dependent loading are not modeled.
 
 ## ii. Key results
 
-- `output_eq_loadedTransfer_mul_input`: any error and output
-  signals satisfying the two model equations, away from both
+- `output_eq_loadedTransfer_mul_input`: any unloaded and loaded
+  output signals satisfying the two model equations, away from both
   denominator zeros and with `wp ≠ 0`, satisfy
   `vo = G(s) * vi` for the loaded transfer `G`.
 - `loadedDcGain_eq_sourceDivider_mul_closedLoopGain`: the loaded
@@ -130,45 +132,46 @@ noncomputable def openLoopGain (A0 wp : ℝ) (s : ℂ) : ℂ :=
 noncomputable def loadedTransfer (A0 wp beta a b : ℝ) (s : ℂ) : ℂ :=
   ((a * b * A0 : ℝ) : ℂ) / (1 + s / (wp : ℂ) + ((beta * b * A0 : ℝ) : ℂ))
 
-/-- **Loaded closed-loop transfer.** Any error and output signals obeying
-`e = A(s) * (a * vi - beta * vo)` and `vo = b * e`, away from both
-denominator zeros (the open-loop denominator zero, where
+/-- **Loaded closed-loop transfer.** Any unloaded and loaded output
+signals obeying `vamp = A(s) * (a * vi - beta * vo)` and
+`vo = b * vamp`, where `a * vi - beta * vo` is the feedback error,
+away from both denominator zeros (the open-loop denominator zero, where
 `1 + s / wp = 0`, and the loaded denominator zero, where
 `1 + s / wp + beta * b * A0 = 0`) and with `wp ≠ 0`, satisfy
 `vo = G(s) * vi` for the loaded transfer `G`. The proof clears the
 open-loop denominator using `1 + s / wp ≠ 0`, rearranges the two
 model equations, and divides by the loaded denominator. -/
-theorem output_eq_loadedTransfer_mul_input (A0 wp beta a b : ℝ) (s vi vo e : ℂ)
+theorem output_eq_loadedTransfer_mul_input (A0 wp beta a b : ℝ) (s vi vo vamp : ℂ)
     (hwp : (wp : ℂ) ≠ 0)
     (hopen : 1 + s / (wp : ℂ) ≠ 0)
     (hden : 1 + s / (wp : ℂ) + ((beta * b * A0 : ℝ) : ℂ) ≠ 0)
-    (he : e = openLoopGain A0 wp s * ((a : ℂ) * vi - (beta : ℂ) * vo))
-    (hvo : vo = (b : ℂ) * e) :
+    (hvamp : vamp = openLoopGain A0 wp s * ((a : ℂ) * vi - (beta : ℂ) * vo))
+    (hvo : vo = (b : ℂ) * vamp) :
     vo = loadedTransfer A0 wp beta a b s * vi := by
-  unfold openLoopGain at he
+  unfold openLoopGain at hvamp
   unfold loadedTransfer
   have hcast1 : (((beta * b * A0 : ℝ)) : ℂ) = (beta : ℂ) * (b : ℂ) * (A0 : ℂ) := by
     rw [Complex.ofReal_mul, Complex.ofReal_mul]
   have hcast2 : (((a * b * A0 : ℝ)) : ℂ) = (a : ℂ) * (b : ℂ) * (A0 : ℂ) := by
     rw [Complex.ofReal_mul, Complex.ofReal_mul]
-  have he' : e * (1 + s / (wp : ℂ))
+  have hvamp' : vamp * (1 + s / (wp : ℂ))
       = (A0 : ℂ) * ((a : ℂ) * vi - (beta : ℂ) * vo) := by
-    rw [he, div_mul_eq_mul_div, div_mul_cancel₀ _ hopen]
-  have e1 : (b : ℂ) * (e * (1 + s / (wp : ℂ)))
+    rw [hvamp, div_mul_eq_mul_div, div_mul_cancel₀ _ hopen]
+  have step1 : (b : ℂ) * (vamp * (1 + s / (wp : ℂ)))
       = (b : ℂ) * ((A0 : ℂ) * ((a : ℂ) * vi - (beta : ℂ) * vo)) := by
-    rw [he']
-  have e2 : ((b : ℂ) * e) * (1 + s / (wp : ℂ))
+    rw [hvamp']
+  have step2 : ((b : ℂ) * vamp) * (1 + s / (wp : ℂ))
       = (b : ℂ) * ((A0 : ℂ) * ((a : ℂ) * vi - (beta : ℂ) * vo)) := by
-    calc ((b : ℂ) * e) * (1 + s / (wp : ℂ))
-        = (b : ℂ) * (e * (1 + s / (wp : ℂ))) := by ring
-      _ = (b : ℂ) * ((A0 : ℂ) * ((a : ℂ) * vi - (beta : ℂ) * vo)) := e1
+    calc ((b : ℂ) * vamp) * (1 + s / (wp : ℂ))
+        = (b : ℂ) * (vamp * (1 + s / (wp : ℂ))) := by ring
+      _ = (b : ℂ) * ((A0 : ℂ) * ((a : ℂ) * vi - (beta : ℂ) * vo)) := step1
   have key : vo * (1 + s / (wp : ℂ) + ((beta * b * A0 : ℝ) : ℂ))
       = ((a * b * A0 : ℝ) : ℂ) * vi := by
     rw [hcast1, hcast2, hvo]
-    have e3 : ((b : ℂ) * e) * (1 + s / (wp : ℂ) + (beta : ℂ) * (b : ℂ) * (A0 : ℂ))
-        = ((b : ℂ) * e) * (1 + s / (wp : ℂ))
-          + ((b : ℂ) * e) * ((beta : ℂ) * (b : ℂ) * (A0 : ℂ)) := by ring
-    rw [e3, e2, hvo]
+    have step3 : ((b : ℂ) * vamp) * (1 + s / (wp : ℂ) + (beta : ℂ) * (b : ℂ) * (A0 : ℂ))
+        = ((b : ℂ) * vamp) * (1 + s / (wp : ℂ))
+          + ((b : ℂ) * vamp) * ((beta : ℂ) * (b : ℂ) * (A0 : ℂ)) := by ring
+    rw [step3, step2, hvo]
     ring
   have hgoal : vo = ((a * b * A0 : ℝ) : ℂ) * vi
       / (1 + s / (wp : ℂ) + ((beta * b * A0 : ℝ) : ℂ)) := by
