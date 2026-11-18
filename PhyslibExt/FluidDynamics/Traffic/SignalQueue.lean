@@ -68,8 +68,8 @@ theorem queueLen_zero {lam mu R : ℝ} (hR : 0 ≤ R) :
     queueLen lam mu R 0 = 0 := by
   simp [queueLen, hR]
 
-/-- The queue clears strictly inside the green phase and is empty at
-the cycle end, under `lam * (R + G) < mu * G` with `0 < lam < mu`. -/
+/-- The queue is empty at the cycle end, under
+`lam * (R + G) ≤ mu * G` with `0 < lam < mu`. -/
 theorem queueLen_cycle_end {lam mu R G : ℝ} (hlam : 0 < lam)
     (hmu : lam < mu) (hR : 0 ≤ R) (hG : 0 ≤ G)
     (hcap : lam * (R + G) ≤ mu * G) :
@@ -120,7 +120,7 @@ theorem queueLen_eq_zero_of_clearance {lam mu R : ℝ} (hlam : 0 < lam)
     have hX : lam * R - (mu - lam) * (t - R) ≤ 0 := by linarith
     exact max_eq_left hX
 
-/-- Nonnegativity everywhere in time. -/
+/-- Nonnegativity at every nonnegative time. -/
 theorem queueLen_nonneg {lam mu R : ℝ} (hlam : 0 < lam)
     {t : ℝ} (ht0 : 0 ≤ t) :
     0 ≤ queueLen lam mu R t := by
