@@ -174,4 +174,46 @@ theorem budget_deriv_equal {F D ka t : ℝ} :
   rw [← Pi.add_def, htot.deriv]
   ring
 
+/-- Derivative of the equal-rate total amount. -/
+theorem hasDerivAt_totalAmountEqual {F D ka s : ℝ} :
+    HasDerivAt (fun t => depotAmount D ka t + centralAmountEqual F D ka t)
+      (-(1 - F) * ka * depotAmount D ka s - ka * centralAmountEqual F D ka s) s := by
+  have htot := (hasDerivAt_depotAmount D ka s).add (hasDerivAt_centralAmountEqual F D ka s)
+  convert htot using 1
+  ring
+
+/-- **Equal-rate integrated budget.** The finite-interval
+change in total amount equals the integral of the two loss
+terms at `ka = k`. -/
+theorem budget_integral_equal {F D ka t : ℝ} :
+    (∫ s in (0:ℝ)..t, (-(1 - F) * ka * depotAmount D ka s -
+      ka * centralAmountEqual F D ka s)) =
+      (depotAmount D ka t + centralAmountEqual F D ka t) -
+        (depotAmount D ka 0 + centralAmountEqual F D ka 0) := by
+  have hderiv : deriv (fun t => depotAmount D ka t + centralAmountEqual F D ka t) =
+      (fun s => -(1 - F) * ka * depotAmount D ka s - ka * centralAmountEqual F D ka s) := by
+    funext s
+    exact hasDerivAt_totalAmountEqual.deriv
+  have hdiff : ∀ x ∈ Set.uIcc (0:ℝ) t, DifferentiableAt ℝ
+      (fun t => depotAmount D ka t + centralAmountEqual F D ka t) x := by
+    intro x _
+    exact hasDerivAt_totalAmountEqual.differentiableAt
+  have hcont : ContinuousOn
+      (fun s => -(1 - F) * ka * depotAmount D ka s - ka * centralAmountEqual F D ka s)
+      (Set.uIcc (0:ℝ) t) := by
+    have e2 : Continuous (fun s : ℝ => Real.exp (-ka * s)) :=
+      Real.continuous_exp.comp (continuous_const.mul continuous_id)
+    have hAg : Continuous (fun s : ℝ => depotAmount D ka s) := by
+      simp only [depotAmount_eq_exp]
+      exact continuous_const.mul e2
+    have hAc : Continuous (fun s : ℝ => centralAmountEqual F D ka s) := by
+      unfold centralAmountEqual
+      exact (((continuous_const.mul continuous_const).mul continuous_const).mul
+        continuous_id).mul e2
+    have htot : Continuous
+        (fun s => -(1 - F) * ka * depotAmount D ka s - ka * centralAmountEqual F D ka s) :=
+      ((continuous_const.mul continuous_const).mul hAg).sub (continuous_const.mul hAc)
+    exact htot.continuousOn
+  exact integral_deriv_eq_sub' _ hderiv hdiff hcont
+
 end MathlibExt.Biology.Biophysics.CompartmentKinetics.Absorption.Budget

@@ -26,4 +26,11 @@ example : deriv (fun t => depotAmount 2 3 t + centralAmountEqual 1 2 3 t) 1 =
     -(1 - 1) * 3 * depotAmount 2 3 1 - 3 * centralAmountEqual 1 2 3 1 :=
   budget_deriv_equal
 
+/-- Equal-rate integrated budget at concrete rates. -/
+example : (∫ s in (0:ℝ)..(1:ℝ), (-(1 - 1) * 3 * depotAmount 2 3 s -
+      3 * centralAmountEqual 1 2 3 s)) =
+      (depotAmount 2 3 1 + centralAmountEqual 1 2 3 1) -
+        (depotAmount 2 3 0 + centralAmountEqual 1 2 3 0) :=
+  budget_integral_equal
+
 end MathlibExtTest.Biology.Biophysics.CompartmentKinetics.Absorption.Budget
