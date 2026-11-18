@@ -28,12 +28,13 @@ cases are handled separately.
 The water-filling solution for parallel Gaussian channels is
 Cover and Thomas, *Elements of Information Theory*, 2nd ed.,
 Wiley (2006), Chapter 9 (Gaussian channels; the parallel-channel
-capacity and its water-filling allocation). Their channels are
-complex; for a real Gaussian mode the capacity per mode is
-`(1/2) log (1 + λ p)` nats, which is the `1 / (2 * log 2)` factor
-in `sumRateBits` below (bits). With that normalization the
-allocation `max (ν - 1/λᵢ, 0)` and the KKT characterization here
-are exactly the finite-dimensional content of that theorem.
+capacity and its water-filling allocation). Their subchannels are
+real scalar Gaussian channels, for which the capacity per mode is
+`(1/2) log (1 + λ p)` nats: the `1/2` in `sumRateBits` is that
+real-channel factor, and the remaining `1 / log 2` converts nats
+to bits. With that reading the allocation `max (ν - 1/λᵢ, 0)`
+and the KKT characterization here are exactly the
+finite-dimensional content of the cited theorem.
 
 -/
 
