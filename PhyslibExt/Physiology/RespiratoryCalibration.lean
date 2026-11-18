@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
 # Respiratory calibration design
@@ -48,7 +47,7 @@ For the two-column design with columns `vp` and `v`, if
 `vp j = c * v j` for every sample `j`, then the parameter pairs
 `(R, E)` and `(R + s, E - c * s)` produce identical data at every
 sample. -/
-theorem resp_proportional_same_data {ι : Type*} (vp v : ι → ℝ)
+lemma resp_proportional_same_data {ι : Type*} (vp v : ι → ℝ)
     (c R E s : ℝ) (hprop : ∀ j, vp j = c * v j) (j : ι) :
     vp j * (R + s) + v j * (E - c * s) = vp j * R + v j * E := by
   rw [hprop j, mul_add, mul_sub]
@@ -61,7 +60,7 @@ containing both pairs.** Under the same proportionality, if both
 parameter pairs lie in the admissible domain and `s ≠ 0`, the
 calibration map `(R, E) ↦ fun j => vp j * R + v j * E` is not
 injective on that domain. -/
-theorem resp_proportional_not_injective {ι : Type*} (vp v : ι → ℝ)
+lemma resp_proportional_not_injective {ι : Type*} (vp v : ι → ℝ)
     (c R E s : ℝ) (hprop : ∀ j, vp j = c * v j) (hs : s ≠ 0)
     (D : Set (ℝ × ℝ)) (h1 : (R, E) ∈ D) (h2 : (R + s, E - c * s) ∈ D) :
     ¬ Set.InjOn (fun p : ℝ × ℝ => fun j => vp j * p.1 + v j * p.2) D := by

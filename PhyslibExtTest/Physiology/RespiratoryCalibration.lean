@@ -21,4 +21,12 @@ example : (fun _ : Unit => (2:ℝ)) () * (0 + 1) + (fun _ : Unit => (1:ℝ)) () 
     (fun _ : Unit => (2:ℝ)) () * 0 + (fun _ : Unit => (1:ℝ)) () * 0 :=
   resp_proportional_same_data (fun _ => (2:ℝ)) (fun _ => (1:ℝ)) 2 0 0 1 (fun _ => by norm_num) ()
 
+/-- The calibration map is not injective on the two-point domain. -/
+example :
+    ¬ Set.InjOn (fun p : ℝ × ℝ => fun _ : Unit =>
+      (fun _ : Unit => (2:ℝ)) () * p.1 + (fun _ : Unit => (1:ℝ)) () * p.2)
+      ({((0, 0) : ℝ × ℝ), ((1, -2) : ℝ × ℝ)} : Set (ℝ × ℝ)) :=
+  resp_proportional_not_injective (fun _ => (2:ℝ)) (fun _ => (1:ℝ)) 2 0 0 1
+    (fun _ => by norm_num) one_ne_zero _ (by simp) (by simp)
+
 end PhyslibExtTest.Physiology.RespiratoryCalibration
