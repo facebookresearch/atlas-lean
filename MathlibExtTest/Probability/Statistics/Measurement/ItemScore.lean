@@ -42,7 +42,6 @@ example :
         ∂(FisherInformation.lawOf Measure.count
           (fun t Y => (twoPLPMF (fun _ : Fin 1 => (1 : ℝ))
             (fun _ : Fin 1 => (2 : ℝ)) t Y).toReal) 2) = 0) := by
-  have ha1 : ∀ j : Fin 1, 0 < (fun _ : Fin 1 => (1 : ℝ)) j := fun _ => zero_lt_one
   have e1 : (twoPLPMF (fun _ : Fin 1 => (1 : ℝ)) (fun _ : Fin 1 => (2 : ℝ)) 2
       (fun _ => true)).toReal = 1 / 2 := by
     simp only [twoPLPMF_toReal, Fin.prod_univ_one, ite_true]
@@ -102,14 +101,6 @@ example :
           (fun t Y => (twoPLPMF (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2)
             (fun _ : Fin 2 => (0 : ℝ)) t Y).toReal) 1) = 0) := by
   have h1ne : (1 : Fin 2) ≠ 0 := by decide
-  have ha2 : ∀ j : Fin 2,
-      0 < (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2) j := by
-    intro j
-    by_cases hj : j = 0
-    · simp only [ite_eq_left hj]
-      exact zero_lt_one
-    · simp only [ite_eq_right hj]
-      norm_num
   have c1 : (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2) 0
       ≠ (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2) 1 := by
     simp only [ite_true, ite_eq_right h1ne]
@@ -166,5 +157,33 @@ example :
     integral_vector_score_twoPL (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2)
       (fun _ : Fin 2 => (0 : ℝ)) 1
   exact ⟨c1, c2, c3, c4, c5⟩
+
+/-- Boundary: the empty item type is supported; both identities hold
+with `Fin 0` items. -/
+example :
+    (FisherInformation.lawOf Measure.count
+        (fun t Y => (twoPLPMF (fun _ : Fin 0 => (1 : ℝ)) (fun _ : Fin 0 => (0 : ℝ)) t Y).toReal) 1
+      = (twoPLPMF (fun _ : Fin 0 => (1 : ℝ)) (fun _ : Fin 0 => (0 : ℝ)) 1).toMeasure)
+    ∧ (∀ Y : Fin 0 → Bool,
+        VectorInference.score (fun t Y => (twoPLPMF (fun _ : Fin 0 => (1 : ℝ))
+          (fun _ : Fin 0 => (0 : ℝ)) t Y).toReal) 1 Y
+          = ∑ j, (fun _ : Fin 0 => (1 : ℝ)) j * ((if Y j then (1 : ℝ) else 0)
+              - Real.sigmoid ((fun _ : Fin 0 => (1 : ℝ)) j
+                * (1 - (fun _ : Fin 0 => (0 : ℝ)) j)))) :=
+  vector_score_twoPL _ _ _
+
+/-- Boundary: zero and negative discriminations are supported. -/
+example :
+    (∫ Y, VectorInference.score (fun t Y => (twoPLPMF (fun _ : Fin 1 => (0 : ℝ))
+        (fun _ : Fin 1 => (0 : ℝ)) t Y).toReal) 1 Y
+      ∂(FisherInformation.lawOf Measure.count
+        (fun t Y => (twoPLPMF (fun _ : Fin 1 => (0 : ℝ))
+          (fun _ : Fin 1 => (0 : ℝ)) t Y).toReal) 1) = 0)
+    ∧ (∫ Y, VectorInference.score (fun t Y => (twoPLPMF (fun _ : Fin 1 => (-1 : ℝ))
+        (fun _ : Fin 1 => (0 : ℝ)) t Y).toReal) 1 Y
+      ∂(FisherInformation.lawOf Measure.count
+        (fun t Y => (twoPLPMF (fun _ : Fin 1 => (-1 : ℝ))
+          (fun _ : Fin 1 => (0 : ℝ)) t Y).toReal) 1) = 0) :=
+  ⟨integral_vector_score_twoPL _ _ _, integral_vector_score_twoPL _ _ _⟩
 
 end MathlibExtTest.Probability.Statistics.Measurement.ItemScore

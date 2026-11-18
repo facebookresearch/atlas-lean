@@ -17,7 +17,7 @@ public import MathlibExt.Probability.Statistics.VectorInference
 /-!
 # Canonical finite 2PL law and score
 
-For a finite nonempty item type with discriminations `a j > 0` and
+For a finite item type with arbitrary real discriminations `a` and
 difficulties `b`, the canonical density law of counting measure with
 the existing two-parameter logistic PMF as density is the PMF's own
 measure, and the score at `E = Real` is, at every response pattern,
@@ -97,7 +97,7 @@ open MathlibExt.Probability.Statistics
 
 /-- **Canonical 2PL law and score** .
 
-For a finite nonempty item type `ι`, discriminations `a j > 0` and
+For a finite item type `ι`, arbitrary real discriminations `a` and
 difficulties `b`, with `p_j (θ) = Real.sigmoid (a j * (θ - b j))`
 (the 2PL model in the logistic metric `D = 1`):
 
@@ -164,7 +164,7 @@ theorem vector_score_twoPL {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-- **The 2PL score has actual mean zero** .
 
-Under the same hypotheses, the Bochner integral of the
+For the same finite item type and arbitrary real discriminations, the Bochner integral of the
 `VectorInference.score` of the `toReal`-of-`twoPLPMF` density, taken
 against its canonical `FisherInformation.lawOf` on counting measure
 (which `vector_score_twoPL` identifies with the actual PMF measure
