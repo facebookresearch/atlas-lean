@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import io
 import json
 import tempfile
 import unittest
+from contextlib import redirect_stderr
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -379,6 +381,27 @@ class UncompiledArticles(unittest.TestCase):
                 self.assertEqual(sync.run_lean_facts(dependency_file), 1)
                 apply.assert_not_called()
 
+
+
+class StrayPages(Vault):
+    def test_a_page_without_an_annotation_row_stops_lean_facts(self) -> None:
+        # An imported folder page with no row would build as a stray page; lean-facts names it and stops.
+        self.page("Algebra/README.md", "# Algebra\n")
+        self.page("Algebra/groups/README.md", "# Groups\n")
+        self.page("Algebra/groups/lagrange.md", "# Lagrange\n")
+        self.annotate([self.about("Algebra/README.md"),
+                       self.about("Algebra/groups/lagrange.md", object=[{"location": {"declaration": "Ext.lagrange"}}])])
+        self.assertEqual(sync.pages_without_rows(), [(wiki.ROADMAP / "Algebra/groups/README.md").resolve()])
+        dependency_file = self.tmp / "lean-dependencies.json"
+        dependency_file.write_text(json.dumps({"missing_articles": {}, "articles": {}}))
+        stderr = io.StringIO()
+        with patch.object(sync, "apply_lean_facts") as apply, redirect_stderr(stderr):
+            self.assertEqual(sync.run_lean_facts(dependency_file), 1)
+            apply.assert_not_called()
+        self.assertIn("no annotation row names Algebra/groups/README.md", stderr.getvalue())
+        self.annotate([self.about("Algebra/README.md"), self.about("Algebra/groups/README.md"),
+                       self.about("Algebra/groups/lagrange.md", object=[{"location": {"declaration": "Ext.lagrange"}}])])
+        self.assertEqual(sync.pages_without_rows(), [])
 
 INDEX = SimpleNamespace(declarations={"Ext.old": None})
 
