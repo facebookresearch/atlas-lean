@@ -466,9 +466,8 @@ theorem indexOneEuler_error {n m : Type*} [Fintype n] [Fintype m] [DecidableEq n
 
 /-! ### D. Validation -/
 
-/-- The unit `1 × 1` real matrix is invertible (instance for the scalar fixture). -/
-noncomputable instance invertibleOneMatrixFinOne : Invertible (1 : Matrix (Fin 1) (Fin 1) ℝ) :=
-  invertibleOne
+-- The scalar fixture below uses `D = 1`; its invertibility is a local instance only.
+attribute [local instance] invertibleOne
 
 /-- Scalar fixture: `x' = y`, `0 = x + y` (so `y = -x` and the reduced equation is `x' = -x`),
 with zero forcing. The iterates `X k = (11/10) (1 - h)^k` start with initial mismatch `1/10`

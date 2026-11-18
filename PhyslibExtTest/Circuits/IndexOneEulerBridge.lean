@@ -18,6 +18,8 @@ open PhyslibExt.Circuits.IndexOneEulerBridge
 
 namespace PhyslibExtTest.Circuits.IndexOneEulerBridge
 
+attribute [local instance] invertibleOne
+
 /-- The fixture `x' = y`, `0 = x + y` has reduced Lipschitz constant `1`. -/
 lemma fixture_reducedLipschitzConstant :
     (reducedLipschitzConstant (0 : Matrix (Fin 1) (Fin 1) ℝ) (1 : Matrix (Fin 1) (Fin 1) ℝ)
