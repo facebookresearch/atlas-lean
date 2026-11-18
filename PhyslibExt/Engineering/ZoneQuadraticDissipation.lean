@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Engineering.ZoneHeatInventory
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Pow
@@ -22,7 +23,9 @@ reciprocal conductances `G i j = G j i`, boundary conductances
 `g0 i` to a constant outside reference `Tout`, and zone equations
 `C i * T' i = Σ j, G i j * (T j - T i) + g0 i * (Tout - T i) + P i`,
 the quadratic functional `V = (1/2) * Σ i, C i * (T i - Tout) ^ 2`
-(units J*K; a Lyapunov functional, not stored energy) satisfies
+(a quadratic functional of the temperature deviations; no sign
+assumption on the capacities is made, so no Lyapunov positivity
+is claimed) satisfies
 
 `V' = -( (1/2) * Σ ij, G i j * (T j - T i) ^ 2
         + Σ i, g0 i * (T i - Tout) ^ 2 ) + Σ i, (T i - Tout) * P i`:
@@ -37,6 +40,8 @@ conductances, `V` is nonincreasing along solutions.
   identity.
 - `ZoneHeatInventory.quadratic_dissipation_nonpos`: nonpositive
   derivative without input power.
+- `ZoneHeatInventory.quadratic_dissipation_antitone`: without
+  input power, `V` is nonincreasing along solutions.
 
 ## iii. Table of contents
 
@@ -215,5 +220,28 @@ theorem quadratic_dissipation_nonpos {ι : Type*} [Fintype ι]
     have h := add_nonneg hnn1 hnn2
     linarith
   exact ⟨hderiv, hle⟩
+
+
+/-- Without input power and with nonnegative conductances, the
+quadratic functional is nonincreasing along solutions: its
+derivative is everywhere the nonpositive dissipation. -/
+theorem quadratic_dissipation_antitone {ι : Type*} [Fintype ι]
+    (C : ι → ℝ) (G : ι → ι → ℝ) (g0 : ι → ℝ) (Tout : ℝ)
+    (T Tv : ι → ℝ → ℝ)
+    (hG : ∀ i j, G i j = G j i)
+    (hGnn : ∀ i j, 0 ≤ G i j) (hg0 : ∀ i, 0 ≤ g0 i)
+    (hT : ∀ i t, HasDerivAt (T i) (Tv i t) t)
+    (hzone : ∀ i t, C i * Tv i t
+      = (∑ j, G i j * (T j t - T i t)) + g0 i * (Tout - T i t)) :
+    Antitone (fun s => (1 / 2) * ∑ i, C i * (T i s - Tout) ^ 2) := by
+  apply antitone_of_deriv_nonpos
+  · intro x
+    exact (quadratic_dissipation_nonpos C G g0 Tout T Tv hG hGnn hg0
+      hT hzone x).1.differentiableAt
+  · intro x
+    rw [(quadratic_dissipation_nonpos C G g0 Tout T Tv hG hGnn hg0
+      hT hzone x).1.deriv]
+    exact (quadratic_dissipation_nonpos C G g0 Tout T Tv hG hGnn hg0
+      hT hzone x).2
 
 end ZoneHeatInventory

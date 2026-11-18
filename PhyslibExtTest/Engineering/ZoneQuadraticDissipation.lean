@@ -16,7 +16,7 @@ import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
 Focused checks for `PhyslibExt.Engineering.ZoneQuadraticDissipation`:
 a two-zone fixture with conductance `3 / 2`, temperatures
-`(2 - 3s, 3s)`, where the dissipation derivative at `s = 0` is
+`(1 + exp (-3s), 1 - exp (-3s))`, where the dissipation derivative at `s = 0` is
 `-6`; and one isolated zone (no inter-zone conductance) whose
 derivative is the boundary term only.
 
