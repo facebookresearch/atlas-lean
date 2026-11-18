@@ -52,6 +52,21 @@ example (c : Fin 3 → Bool) : ∃ P : StdSimplex ℝ (Fin 3), ∀ x,
       weightedVote (fun j => P.weights j) (flipOne c) x = c x :=
   exists_weightedVote_eq (by norm_num) (flipOne c) c (by norm_num) (weak_flipOne c)
 
+/-- The vote compares with half of the total weight: with weights `(2/5, 1/10)`, the hypothesis
+voting `true` carries `80%` of the weight and wins, and rescaling the weights changes nothing. -/
+example : weightedVote ![2 / 5, 1 / 10] ![fun _ : Fin 1 => true, fun _ => false] 0 = true := by
+  simp [weightedVote, Fin.sum_univ_two]
+  norm_num
+
+example : weightedVote ![4 / 5, 1 / 5] ![fun _ : Fin 1 => true, fun _ => false] 0 = true := by
+  simp [weightedVote, Fin.sum_univ_two]
+  norm_num
+
+/-- A tie is not a majority: with equal weights `(1, 1)` and one vote each way the vote is
+`false`. -/
+example : weightedVote ![1, 1] ![fun _ : Fin 1 => true, fun _ => false] 0 = false := by
+  simp [weightedVote, Fin.sum_univ_two]
+
 -- the mistake matrix of this instance is `1` exactly on the diagonal
 example (c : Fin 3 → Bool) (x j : Fin 3) :
     mistakeMatrix (flipOne c) c x j = if x = j then 1 else 0 := by

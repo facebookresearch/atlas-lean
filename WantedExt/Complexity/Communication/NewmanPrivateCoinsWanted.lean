@@ -29,10 +29,12 @@ early draft).
 namespace MathlibExt.Computability.CommunicationComplexity
 
 /-- **Error probability of a private-coin protocol.** For a deterministic protocol `p` in which
-Alice holds `(x, a)` and Bob holds `(y, b)`, the fraction of pairs `(a, b) ∈ RA × RB` of private
-random strings on which `p` outputs a value other than `f x y`. -/
-noncomputable def privateErrorProb {X Y RA RB : Type*} [Fintype RA] [Fintype RB]
-    (p : Protocol (X × RA) (Y × RB)) (f : X → Y → Bool) (x : X) (y : Y) : ℚ :=
+Alice holds `(x, a)` and Bob holds `(y, b)`, with nonempty finite sets `RA` and `RB` of private
+random strings, the fraction of pairs `(a, b) ∈ RA × RB` on which `p` outputs a value other than
+`f x y`: the probability of an error when `a` and `b` are independent and uniform. For an empty
+set, which is excluded, every event would get probability `0`. -/
+noncomputable def privateErrorProb {X Y RA RB : Type*} [Fintype RA] [Fintype RB] [Nonempty RA]
+    [Nonempty RB] (p : Protocol (X × RA) (Y × RB)) (f : X → Y → Bool) (x : X) (y : Y) : ℚ :=
   ((Finset.univ.filter fun r : RA × RB => p.eval (x, r.1) (y, r.2) ≠ f x y).card : ℚ) /
     (Fintype.card RA * Fintype.card RB)
 

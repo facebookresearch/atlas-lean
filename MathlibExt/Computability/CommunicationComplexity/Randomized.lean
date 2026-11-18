@@ -17,7 +17,8 @@ A public-coin protocol is a family of deterministic protocols indexed by a share
 `r` drawn uniformly from a finite set `R` (A. Rao and A. Yehudayoff, *Communication Complexity*,
 early draft, Chapter 3, "Variants of Randomized Protocols"). Its cost is the largest depth of a
 member, and its error on an input pair is the fraction of random strings on which the output is
-wrong.
+wrong. The error is defined for a nonempty set of random strings, on which the uniform
+distribution exists: for an empty set the fraction would be `0 / 0 = 0` for every event.
 
 The main result is the random-hash protocol for equality (Rao and Yehudayoff, Figure 3.1):
 Alice and Bob share a uniformly random function `h : {0,1}^n → {0,1}^k`, Alice sends `h x`
@@ -47,11 +48,12 @@ runs, over all random strings. -/
 def cost (P : PublicCoinProtocol X Y R) : ℕ :=
   Finset.univ.sup fun r => (P.run r).depth
 
-/-- **Error probability of a public-coin protocol.** For `f : X → Y → Bool` and an input pair
-`(x, y)`, the fraction of random strings `r : R` on which `run r` outputs a value other than
-`f x y`. -/
-noncomputable def errorProb (P : PublicCoinProtocol X Y R) (f : X → Y → Bool) (x : X) (y : Y) :
-    ℚ :=
+/-- **Error probability of a public-coin protocol.** For a nonempty finite set `R` of random
+strings, `f : X → Y → Bool` and an input pair `(x, y)`, the fraction of random strings `r : R`
+on which `run r` outputs a value other than `f x y`: the probability of an error when `r` is
+uniform on `R`. For an empty `R`, which is excluded, every event would get probability `0`. -/
+noncomputable def errorProb [Nonempty R] (P : PublicCoinProtocol X Y R) (f : X → Y → Bool) (x : X)
+    (y : Y) : ℚ :=
   ((Finset.univ.filter fun r => (P.run r).eval x y ≠ f x y).card : ℚ) / Fintype.card R
 
 /-- **Each run costs at most the cost.** Every deterministic protocol run by a public-coin

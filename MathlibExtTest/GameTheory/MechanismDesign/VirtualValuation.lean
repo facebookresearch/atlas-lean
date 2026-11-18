@@ -17,16 +17,27 @@ open Set MathlibExt.GameTheory.MechanismDesign.SingleParameter
 
 /-! Myerson's example (1981, §5): one bidder with value uniform on `[0, 100]`. -/
 
+theorem uniform_one : ∫ _ in (0 : ℝ)..100, (1 / 100 : ℝ) = 1 := by
+  simp only [intervalIntegral.integral_const, smul_eq_mul]
+  norm_num
+
 /-- The virtual valuation of the uniform distribution on `[0, 100]` is `2 t - 100`. -/
 theorem virtualValue_uniform (t : ℝ) :
-    virtualValue (fun _ => (1 / 100 : ℝ)) 0 t = 2 * t - 100 := by
+    virtualValue (fun _ => (1 / 100 : ℝ)) 0 100 uniform_one t = 2 * t - 100 := by
   simp only [virtualValue, intervalIntegral.integral_const, smul_eq_mul, sub_zero]
   field_simp
   ring
 
-theorem uniform_one : ∫ _ in (0 : ℝ)..100, (1 / 100 : ℝ) = 1 := by
-  simp only [intervalIntegral.integral_const, smul_eq_mul]
-  norm_num
+/-! The virtual valuation needs a normalised density: for the constant weight `2` on `[0, 1]`,
+which would give the value `-1/2` at `0` instead of the uniform distribution's `-1`, the proof
+of `∫_0^1 f = 1` cannot be given. -/
+
+/--
+error: unsolved goals
+⊢ False
+-/
+#guard_msgs in
+noncomputable example : ℝ := virtualValue (fun _ => (2 : ℝ)) 0 1 (by norm_num) 0
 
 /-- The posted price `50` earns `25`. -/
 example : ∫ t in (0 : ℝ)..100, postedPricePayment 50 t * (1 / 100) = 25 := by
@@ -51,7 +62,8 @@ example {Q P : ℝ → ℝ} (h : IsIncentiveCompatibleOn Q P 0 100)
 /-- The revenue identity on a concrete incentive-compatible mechanism: the posted price `50`. -/
 example : ∫ t in (0 : ℝ)..100, postedPricePayment 50 t * (1 / 100) =
     (∫ t in (0 : ℝ)..100,
-      virtualValue (fun _ => (1 / 100 : ℝ)) 0 t * postedPriceAlloc 50 t * (1 / 100)) -
+      virtualValue (fun _ => (1 / 100 : ℝ)) 0 100 uniform_one t * postedPriceAlloc 50 t *
+        (1 / 100)) -
       truthfulUtility (postedPriceAlloc 50) (postedPricePayment 50) 0 :=
   integral_payment_mul_density (by norm_num) continuousOn_const (fun _ _ => by norm_num)
     uniform_one (isIncentiveCompatibleOn_postedPrice 50 0 100)

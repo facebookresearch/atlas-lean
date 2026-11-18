@@ -46,7 +46,10 @@ spectral theorem. The main results:
 * `mul_sub_le_sq_mul_of_isSpectralExpander`: the elementary lower bound
   `d (N - d) ≤ (d λ)² (N - 1)`, so `λ ≥ √((N - d) / (d (N - 1)))`, about `1 / √d` for large `N`;
 * `isSpectralExpander_top`: the complete graph on `N ≥ 2` vertices is a spectral expander with
-  `d = N - 1` and `λ = 1 / (N - 1)`, for which the lower bound is an equality.
+  `d = N - 1` and `λ = 1 / (N - 1)`, for which the lower bound is an equality;
+* `walkProb G d hreg hd t P`: the probability that a random walk from a uniform start vertex
+  satisfies `P`, for a `d`-regular graph with `d ≥ 1` on a nonempty vertex set, and
+  `walkProb_true`: it has total mass one.
 -/
 
 @[expose] public section
@@ -387,13 +390,19 @@ private lemma sum_prod_walk (M : Matrix V V ℝ) (c : ℝ) (hcol : ∀ v, ∑ u,
     ring
 
 omit [DecidableEq V] in
-/-- **Probability of an event for a random walk on a regular graph.** For a graph `G` (meant to be
-`d`-regular), a length `t` and a property `P` of vertex sequences `(V₀, …, V_t)`, `walkProb G d t P`
-is the probability that the random walk `V₀, V₁, …, V_t` satisfies `P`, where `V₀` is uniform and
-each `V_{i+1}` is a uniformly random neighbour of `V_i`: the sum over all sequences `w` satisfying
-`P` of `(1 / N) ∏_{i < t} A(w_i, w_{i+1}) / d` (S. Vadhan, *Pseudorandomness* (2012),
-Section 4.2, random walks `V₁, …, V_t` from a uniform start vertex, indexed here from `0`). -/
-noncomputable def walkProb (G : SimpleGraph V) [DecidableRel G.Adj] (d t : ℕ)
+/-- **Probability of an event for a random walk on a regular graph.** For a `d`-regular graph `G`
+with `d ≥ 1` on a nonempty vertex set, a length `t` and a property `P` of vertex sequences
+`(V₀, …, V_t)`, `walkProb G d hreg hd t P` is the probability that the random walk
+`V₀, V₁, …, V_t` satisfies `P`, where `V₀` is uniform and each `V_{i+1}` is a uniformly random
+neighbour of `V_i`: the sum over all sequences `w` satisfying `P` of
+`(1 / N) ∏_{i < t} A(w_i, w_{i+1}) / d` (S. Vadhan, *Pseudorandomness* (2012), Section 4.2,
+random walks `V₁, …, V_t` from a uniform start vertex, indexed here from `0`). The hypotheses
+make the weights a probability distribution (`walkProb_true`): for a graph that is not
+`d`-regular the rows of `A / d` need not sum to `1` (the complete graph on two vertices with
+`d = 2` would give the certain event probability `1/2`), and for `d = 0` or an empty vertex set
+every event would have probability `0`. -/
+noncomputable def walkProb (G : SimpleGraph V) [DecidableRel G.Adj] (d : ℕ)
+    (_hreg : G.IsRegularOfDegree d) (_hd : 0 < d) [Nonempty V] (t : ℕ)
     (P : (Fin (t + 1) → V) → Prop) [DecidablePred P] : ℝ :=
   ∑ w, if P w then (1 / Fintype.card V : ℝ) * ∏ i : Fin t,
     G.adjMatrix ℝ (w i.castSucc) (w i.succ) / d else 0
@@ -404,7 +413,7 @@ nonempty vertex set, the walk distribution of `walkProb` is a probability distri
 certain event has probability `1`. -/
 theorem walkProb_true {G : SimpleGraph V} [DecidableRel G.Adj] {d : ℕ}
     (hreg : G.IsRegularOfDegree d) (hd : 0 < d) [Nonempty V] (t : ℕ) :
-    walkProb G d t (fun _ => True) = 1 := by
+    walkProb G d hreg hd t (fun _ => True) = 1 := by
   have hcol : ∀ v, ∑ u, G.adjMatrix ℝ u v / d = 1 := by
     intro v
     have := G.adjMatrix_mulVec_const_apply_of_regular (α := ℝ) (a := 1) hreg (v := v)

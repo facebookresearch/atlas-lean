@@ -20,7 +20,9 @@ namespace MathlibExtTest.Combinatorics.SimpleGraph.ExpanderWalk
 /-- The hitting property on `K₄` (`λ = 1 / 3`) for `B = {0}` (`μ = 1 / 4`): a walk with `t` steps
 stays at vertex `0` throughout with probability at most `(1/4 + (1/3)(3/4)) ^ (t + 1) = 2⁻⁽ᵗ⁺¹⁾`. -/
 example (t : ℕ) :
-    walkProb (⊤ : SimpleGraph (Fin 4)) 3 t (fun w => ∀ i, w i ∈ ({0} : Finset (Fin 4))) ≤
+    walkProb (⊤ : SimpleGraph (Fin 4)) 3
+        MathlibExtTest.Combinatorics.SimpleGraph.SpectralExpander.k4.1 (by norm_num) t
+        (fun w => ∀ i, w i ∈ ({0} : Finset (Fin 4))) ≤
       (1 / 2) ^ (t + 1) := by
   have h := walkProb_forall_mem_le
     MathlibExtTest.Combinatorics.SimpleGraph.SpectralExpander.k4 (by norm_num) {0} t

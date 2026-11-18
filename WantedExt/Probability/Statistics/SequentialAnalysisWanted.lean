@@ -77,11 +77,11 @@ theorem_wanted shiryaevTime_optimal {P₀ P₁ : Measure X} [IsProbabilityMeasur
     [IsProbabilityMeasure P₁] (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) (hne : P₀ ≠ P₁)
     (hkl : InformationTheory.klDiv P₁ P₀ ≠ ∞) {ρ : ℝ} (hρ₀ : 0 < ρ) (hρ₁ : ρ < 1) {A : ℝ}
     (hA₀ : 0 < A) (hA₁ : A < 1) {α : ℝ≥0∞}
-    (hα : falseAlarmProb P₀ P₁ ρ (shiryaevTime P₀ P₁ h₁₀ h₀₁ ρ A) = α)
+    (hα : falseAlarmProb P₀ P₁ ρ hρ₀ hρ₁.le (shiryaevTime P₀ P₁ h₁₀ h₀₁ ρ hρ₀ hρ₁.le A) = α)
     {τ : (ℕ → X) → WithTop ℕ} (hτ : IsStoppingTime (observationFiltration X) τ)
-    (hτα : falseAlarmProb P₀ P₁ ρ τ ≤ α) :
-    averageDetectionDelay P₀ P₁ ρ (shiryaevTime P₀ P₁ h₁₀ h₀₁ ρ A) ≤
-      averageDetectionDelay P₀ P₁ ρ τ
+    (hτα : falseAlarmProb P₀ P₁ ρ hρ₀ hρ₁.le τ ≤ α) :
+    averageDetectionDelay P₀ P₁ ρ hρ₀ hρ₁.le (shiryaevTime P₀ P₁ h₁₀ h₀₁ ρ hρ₀ hρ₁.le A) ≤
+      averageDetectionDelay P₀ P₁ ρ hρ₀ hρ₁.le τ
 
 /-- **Moustakides' theorem: optimality of CUSUM under Lorden's criterion.** Let `P₀ ≠ P₁` be
 mutually absolutely continuous, let `c > 0`, and let `γ` be the mean time to false alarm

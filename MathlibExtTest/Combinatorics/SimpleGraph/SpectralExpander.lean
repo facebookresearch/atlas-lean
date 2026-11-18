@@ -42,7 +42,19 @@ example : (3 : ℝ) * (Fintype.card (Fin 4) - 3) ≤ (3 * (1 / 3)) ^ 2 * (Fintyp
   by exact_mod_cast mul_sub_le_sq_mul_of_isSpectralExpander k4 (by simp)
 
 /-- Random-walk probabilities on `K₄` have total mass one. -/
-example (t : ℕ) : walkProb (⊤ : SimpleGraph (Fin 4)) 3 t (fun _ => True) = 1 :=
+example (t : ℕ) : walkProb (⊤ : SimpleGraph (Fin 4)) 3 k4.1 (by norm_num) t (fun _ => True) = 1 :=
   walkProb_true k4.1 (by norm_num) t
+
+/-! The walk probabilities need a `d`-regular graph with `d ≥ 1`: for the edgeless graph with
+`d = 0`, under which every event would have probability `0`, the proof of `0 < d` cannot be
+given. -/
+
+/--
+error: unsolved goals
+⊢ False
+-/
+#guard_msgs in
+noncomputable example : ℝ :=
+  walkProb (⊥ : SimpleGraph (Fin 2)) 0 (fun v => by simp) (by norm_num) 1 fun _ => True
 
 end MathlibExtTest.Combinatorics.SimpleGraph.SpectralExpander

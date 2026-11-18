@@ -94,9 +94,11 @@ theorem exists_forall_mistake_le (hn : 0 < n) (H : Fin k → Fin n → Bool) (c 
   linarith
 
 /-- **The weighted majority vote**: the `P`-weighted majority vote of the hypotheses `H` at the
-point `x`: `true` when the hypotheses voting `true` carry more than half of the weight. -/
+point `x`: `true` when the hypotheses voting `true` carry more than half of the total weight
+`∑ⱼ P j`. Rescaling the weights by a positive factor does not change the vote; for a
+distribution `P` the threshold is `1 / 2`. -/
 noncomputable def weightedVote (P : Fin k → ℝ) (H : Fin k → Fin n → Bool) (x : Fin n) : Bool :=
-  decide (1 / 2 < ∑ j, P j * (if H j x then 1 else 0))
+  decide ((∑ j, P j) / 2 < ∑ j, P j * (if H j x then 1 else 0))
 
 /-- **Under γ-weak learnability with `γ > 0`, the target is a weighted majority vote** (Freund
 and Schapire, *Game theory, on-line prediction and boosting*, COLT 1996, Section 4.1): with the
@@ -121,6 +123,7 @@ theorem exists_weightedVote_eq (hn : 0 < n) (H : Fin k → Fin n → Bool) (c : 
     linarith [hP x]
   refine ⟨hgood, ?_⟩
   unfold weightedVote
+  rw [P.total_of_fintype]
   cases hc : c x
   · -- the hypotheses voting `true` are exactly the mistaken ones
     have e : ∑ j, P.weights j * (if H j x then 1 else 0) =

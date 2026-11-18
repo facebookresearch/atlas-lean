@@ -37,9 +37,15 @@ corresponding action in the original mechanism.
   and pure strategies (Myerson 1979, Theorem 2; Myerson 1981, Lemma 1).
 * `isPureNash_of_isDominantStrategyProfile`, `isBayesNash_of_isDominantStrategyProfile`: a
   profile of dominant strategies is a pure Nash equilibrium of the complete-information game at
-  every type profile, and a Bayesian Nash equilibrium for every nonnegative prior in a
-  private-values model; likewise
-  `isBayesIncentiveCompatible_of_isDominantStrategyIncentiveCompatible` for direct mechanisms.
+  every type profile, and a Bayesian Nash equilibrium for every prior in a private-values model;
+  likewise `isBayesIncentiveCompatible_of_isDominantStrategyIncentiveCompatible` for direct
+  mechanisms.
+
+The Bayesian predicates `IsBayesNash` and `IsBayesIncentiveCompatible` take a prior `p` on type
+profiles with proofs `hp : ∀ θ, 0 ≤ p θ` and `hp1 : ∑ θ, p θ = 1`. Without them the zero prior
+would make every strategy profile an equilibrium and every mechanism incentive compatible, and a
+negative prior would reverse preferences. The interim utility `interimUtility` is an
+unnormalised weighted sum and is defined for every weight function.
 
 ## References
 
@@ -123,22 +129,26 @@ def interimUtility (p : (∀ j, Θ j) → ℝ) (u : ι → (∀ j, Θ j) → O �
     (h : (∀ j, Θ j) → O) : ℝ :=
   ∑ θ ∈ univ.filter (fun θ : ∀ j, Θ j => θ i = θi), p θ * u i θ (h θ)
 
-/-- **Bayesian Nash equilibrium.** The pure strategy profile `s` is a Bayesian Nash
-equilibrium of the mechanism `g` for the prior `p` and the utilities `u`: no agent of any type
-gains in interim expectation by a unilateral deviation to another action, the others following
-`s` (Myerson 1979, (14), restricted to pure response plans). -/
-def IsBayesNash (p : (∀ j, Θ j) → ℝ) (u : ι → (∀ j, Θ j) → O → ℝ) (g : (∀ i, X i) → O)
-    (s : ∀ i, Θ i → X i) : Prop :=
+/-- **Bayesian Nash equilibrium.** For a prior `p` on type profiles (`p ≥ 0`, `∑ p = 1`), the
+pure strategy profile `s` is a Bayesian Nash equilibrium of the mechanism `g` for the prior `p`
+and the utilities `u`: no agent of any type gains in interim expectation by a unilateral
+deviation to another action, the others following `s` (Myerson 1979, (14), restricted to pure
+response plans). The prior must be a probability distribution: under the zero prior every
+profile would be an equilibrium. -/
+def IsBayesNash (p : (∀ j, Θ j) → ℝ) (_hp : ∀ θ, 0 ≤ p θ) (_hp1 : ∑ θ, p θ = 1)
+    (u : ι → (∀ j, Θ j) → O → ℝ) (g : (∀ i, X i) → O) (s : ∀ i, Θ i → X i) : Prop :=
   ∀ i (θi : Θ i) (a : X i),
     interimUtility p u i θi (fun θ => g (Function.update (fun j => s j (θ j)) i a)) ≤
       interimUtility p u i θi (fun θ => g (fun j => s j (θ j)))
 
-/-- **Bayesian incentive compatibility.** The direct mechanism `f` is Bayesian incentive
-compatible: truthful reporting is a Bayesian Nash equilibrium, that is, no agent of any type
-`θi` gains in interim expectation by reporting `θi'` while the others report truthfully
-(Myerson 1979, (6); Myerson 1981, (3.5); Myerson and Satterthwaite 1983, §2). -/
-def IsBayesIncentiveCompatible (p : (∀ j, Θ j) → ℝ) (u : ι → (∀ j, Θ j) → O → ℝ)
-    (f : (∀ i, Θ i) → O) : Prop :=
+/-- **Bayesian incentive compatibility.** For a prior `p` on type profiles (`p ≥ 0`,
+`∑ p = 1`), the direct mechanism `f` is Bayesian incentive compatible: truthful reporting is a
+Bayesian Nash equilibrium, that is, no agent of any type `θi` gains in interim expectation by
+reporting `θi'` while the others report truthfully (Myerson 1979, (6); Myerson 1981, (3.5);
+Myerson and Satterthwaite 1983, §2). The prior must be a probability distribution: under the
+zero prior every mechanism would be incentive compatible. -/
+def IsBayesIncentiveCompatible (p : (∀ j, Θ j) → ℝ) (_hp : ∀ θ, 0 ≤ p θ) (_hp1 : ∑ θ, p θ = 1)
+    (u : ι → (∀ j, Θ j) → O → ℝ) (f : (∀ i, Θ i) → O) : Prop :=
   ∀ i (θi θi' : Θ i),
     interimUtility p u i θi (fun θ => f (Function.update θ i θi')) ≤
       interimUtility p u i θi f
@@ -150,9 +160,10 @@ outcome at every type profile is the equilibrium outcome of `g`, so every type o
 gets the same interim utility (Myerson 1979, Theorem 2; Myerson 1981, Lemma 1). Myerson's
 Theorem 2 also allows randomized response plans (mixed strategies); this statement covers pure
 strategies only, with an arbitrary outcome set `O`, which may itself be a set of lotteries. -/
-theorem revelationPrinciple_bayesNash {p : (∀ j, Θ j) → ℝ} {u : ι → (∀ j, Θ j) → O → ℝ}
-    {g : (∀ i, X i) → O} {s : ∀ i, Θ i → X i} (hs : IsBayesNash p u g s) :
-    IsBayesIncentiveCompatible p u (fun θ => g (fun j => s j (θ j))) := by
+theorem revelationPrinciple_bayesNash {p : (∀ j, Θ j) → ℝ} {hp : ∀ θ, 0 ≤ p θ}
+    {hp1 : ∑ θ, p θ = 1} {u : ι → (∀ j, Θ j) → O → ℝ} {g : (∀ i, X i) → O}
+    {s : ∀ i, Θ i → X i} (hs : IsBayesNash p hp hp1 u g s) :
+    IsBayesIncentiveCompatible p hp hp1 u (fun θ => g (fun j => s j (θ j))) := by
   intro i θi θi'
   have h := hs i θi (s i θi')
   have hcongr : ∀ θ ∈ univ.filter (fun θ : ∀ j, Θ j => θ i = θi),
@@ -166,10 +177,11 @@ theorem revelationPrinciple_bayesNash {p : (∀ j, Θ j) → ℝ} {u : ι → (�
 
 /-- **Dominant strategies are Bayesian Nash.** In a private-values model (agent `i`'s utility
 `w i (θ i) o` depends only on its own type), a profile of dominant strategies is a Bayesian
-Nash equilibrium for every nonnegative prior `p`. -/
+Nash equilibrium for every prior `p`. -/
 theorem isBayesNash_of_isDominantStrategyProfile {w : ∀ i, Θ i → O → ℝ} {g : (∀ i, X i) → O}
     {s : ∀ i, Θ i → X i} (hs : IsDominantStrategyProfile w g s) {p : (∀ j, Θ j) → ℝ}
-    (hp : ∀ θ, 0 ≤ p θ) : IsBayesNash p (fun i θ => w i (θ i)) g s := by
+    (hp : ∀ θ, 0 ≤ p θ) (hp1 : ∑ θ, p θ = 1) :
+    IsBayesNash p hp hp1 (fun i θ => w i (θ i)) g s := by
   intro i θi a
   unfold interimUtility
   refine Finset.sum_le_sum fun θ _ => ?_
@@ -179,11 +191,11 @@ theorem isBayesNash_of_isDominantStrategyProfile {w : ∀ i, Θ i → O → ℝ}
 
 /-- **Strategy-proof mechanisms are Bayesian incentive compatible.** In a private-values model,
 a dominant-strategy incentive-compatible direct mechanism is Bayesian incentive compatible for
-every nonnegative prior `p`. -/
+every prior `p`. -/
 theorem isBayesIncentiveCompatible_of_isDominantStrategyIncentiveCompatible
     {w : ∀ i, Θ i → O → ℝ} {f : (∀ i, Θ i) → O} (hf : IsDominantStrategyIncentiveCompatible w f)
-    {p : (∀ j, Θ j) → ℝ} (hp : ∀ θ, 0 ≤ p θ) :
-    IsBayesIncentiveCompatible p (fun i θ => w i (θ i)) f := by
+    {p : (∀ j, Θ j) → ℝ} (hp : ∀ θ, 0 ≤ p θ) (hp1 : ∑ θ, p θ = 1) :
+    IsBayesIncentiveCompatible p hp hp1 (fun i θ => w i (θ i)) f := by
   intro i θi θi'
   unfold interimUtility
   exact Finset.sum_le_sum fun θ _ => mul_le_mul_of_nonneg_left (hf i θ θi') (hp θ)

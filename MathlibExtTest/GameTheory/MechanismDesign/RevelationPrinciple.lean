@@ -37,15 +37,43 @@ example : IsDominantStrategyIncentiveCompatible matchUtility
 example (θ : Fin 2 → Bool) : flipMechanism (fun j => !θ j) = θ := by
   funext i; simp [flipMechanism]
 
+theorem uniform_nonneg : ∀ _θ : Fin 2 → Bool, (0 : ℝ) ≤ 1 / 4 := fun _ => by norm_num
+
+theorem uniform_sum : ∑ _θ : Fin 2 → Bool, (1 / 4 : ℝ) = 1 := by
+  have h : Fintype.card (Fin 2 → Bool) = 4 := by decide
+  simp [h]
+
 /-- For the uniform prior, the dominant-strategy profile is a Bayesian Nash equilibrium, and the
 direct mechanism is Bayesian incentive compatible. -/
-example : IsBayesNash (fun _ => (1 / 4 : ℝ)) (fun i θ => matchUtility i (θ i)) flipMechanism
-    (fun _ θi => !θi) :=
-  isBayesNash_of_isDominantStrategyProfile flip_isDominant fun _ => by norm_num
+example : IsBayesNash (fun _ => (1 / 4 : ℝ)) uniform_nonneg uniform_sum
+    (fun i θ => matchUtility i (θ i)) flipMechanism (fun _ θi => !θi) :=
+  isBayesNash_of_isDominantStrategyProfile flip_isDominant uniform_nonneg uniform_sum
 
-example : IsBayesIncentiveCompatible (fun _ => (1 / 4 : ℝ)) (fun i θ => matchUtility i (θ i))
-    (fun θ => flipMechanism (fun j => !θ j)) :=
-  revelationPrinciple_bayesNash (isBayesNash_of_isDominantStrategyProfile flip_isDominant fun _ => by norm_num)
+example : IsBayesIncentiveCompatible (fun _ => (1 / 4 : ℝ)) uniform_nonneg uniform_sum
+    (fun i θ => matchUtility i (θ i)) (fun θ => flipMechanism (fun j => !θ j)) :=
+  revelationPrinciple_bayesNash
+    (isBayesNash_of_isDominantStrategyProfile flip_isDominant uniform_nonneg uniform_sum)
+
+/-! The prior must be a probability distribution: for the zero prior, under which every profile
+would be an equilibrium, the proof of `∑ p = 1` cannot be given. -/
+
+/--
+error: unsolved goals
+⊢ False
+-/
+#guard_msgs in
+example : Prop :=
+  IsBayesNash (fun _ => (0 : ℝ)) (fun _ => le_rfl) (by simp) (fun i θ => matchUtility i (θ i))
+    flipMechanism fun _ θi => θi
+
+/--
+error: unsolved goals
+⊢ False
+-/
+#guard_msgs in
+example : Prop :=
+  IsBayesIncentiveCompatible (fun _ => (0 : ℝ)) (fun _ => le_rfl) (by simp)
+    (fun i θ => matchUtility i (θ i)) fun θ => θ
 
 /-- The dominant-strategy profile is a pure Nash equilibrium at every type profile. -/
 example (θ : Fin 2 → Bool) :

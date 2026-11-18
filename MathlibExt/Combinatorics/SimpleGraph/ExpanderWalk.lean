@@ -90,16 +90,16 @@ private lemma sqrt_dot_add_le (x y : V → ℝ) :
   simp only [add_dotProduct, dotProduct_add, dotProduct_comm y x] at *
   nlinarith
 
-/-- **Hitting property of expander walks.** Let `G` be a `d`-regular graph, `d ≥ 1`, that is a
-spectral expander with parameter `λ`, and let `B` be a vertex set of density `μ = |B| / N`. A
-random walk `V₀, V₁, …, V_t` with `t` steps from a uniformly random start vertex stays inside `B`
-at all `t + 1` times with probability at most `(μ + λ (1 - μ)) ^ (t + 1)` (S. Vadhan,
-*Pseudorandomness*, Foundations and Trends in Theoretical Computer Science 7 (2012),
-Theorem 4.17, where the walk `V₁, …, V_t` has `t - 1` steps and the bound is
-`(μ + λ (1 - μ)) ^ t`). -/
+/-- **Hitting property of expander walks.** Let `G` be a `d`-regular graph, `d ≥ 1`, on a
+nonempty vertex set, that is a spectral expander with parameter `λ`, and let `B` be a vertex set
+of density `μ = |B| / N`. A random walk `V₀, V₁, …, V_t` with `t` steps from a uniformly random
+start vertex stays inside `B` at all `t + 1` times with probability at most
+`(μ + λ (1 - μ)) ^ (t + 1)` (S. Vadhan, *Pseudorandomness*, Foundations and Trends in
+Theoretical Computer Science 7 (2012), Theorem 4.17, where the walk `V₁, …, V_t` has `t - 1`
+steps and the bound is `(μ + λ (1 - μ)) ^ t`). -/
 theorem walkProb_forall_mem_le [DecidableEq V] {G : SimpleGraph V} [DecidableRel G.Adj] {d : ℕ}
-    {lam : ℝ} (h : IsSpectralExpander G d lam) (hd : 0 < d) (B : Finset V) (t : ℕ) :
-    walkProb G d t (fun w => ∀ i, w i ∈ B) ≤
+    {lam : ℝ} (h : IsSpectralExpander G d lam) (hd : 0 < d) [Nonempty V] (B : Finset V) (t : ℕ) :
+    walkProb G d h.1 hd t (fun w => ∀ i, w i ∈ B) ≤
       ((B.card / Fintype.card V : ℝ) + lam * (1 - B.card / Fintype.card V)) ^ (t + 1) := by
   classical
   obtain ⟨hreg, hlam, hb⟩ := h
@@ -111,22 +111,13 @@ theorem walkProb_forall_mem_le [DecidableEq V] {G : SimpleGraph V} [DecidableRel
   have hAnn : ∀ u v, 0 ≤ A u v := fun u v => by
     simp only [hA, SimpleGraph.adjMatrix_apply]; split_ifs <;> norm_num
   -- The walk probability is at most `1`.
-  have hle1 : walkProb G d t (fun w => ∀ i, w i ∈ B) ≤ walkProb G d t (fun _ => True) := by
+  have hle1 : walkProb G d hreg hd t (fun w => ∀ i, w i ∈ B) ≤
+      walkProb G d hreg hd t (fun _ => True) := by
     unfold walkProb
     refine Finset.sum_le_sum fun w _ => ?_
     have : 0 ≤ (1 / N) * ∏ i : Fin t, A (w i.castSucc) (w i.succ) / d :=
       mul_nonneg (by positivity) (Finset.prod_nonneg fun i _ => div_nonneg (hAnn _ _) hdR.le)
     split_ifs <;> simp_all
-  rcases isEmpty_or_nonempty V with hV | hV
-  · have : walkProb G d t (fun w => ∀ i, w i ∈ B) = 0 := by
-      unfold walkProb
-      have : IsEmpty (Fin (t + 1) → V) := by
-        refine ⟨fun w => hV.false (w 0)⟩
-      simp
-    rw [this]
-    have hN0 : N = 0 := by simp [hN]
-    have : ρ = lam := by simp [hρ, hμ, hN0]
-    rw [this]; positivity
   have hNpos : 0 < N := by simp only [hN]; exact_mod_cast Fintype.card_pos
   have hμ0 : 0 ≤ μ := by positivity
   have hμ1 : μ ≤ 1 := by
@@ -136,7 +127,7 @@ theorem walkProb_forall_mem_le [DecidableEq V] {G : SimpleGraph V} [DecidableRel
   have hρ0 : 0 ≤ ρ := hμ0.trans hρμ
   by_cases hl1 : 1 < lam
   · have h1 : 1 ≤ ρ := by nlinarith
-    calc _ ≤ walkProb G d t (fun _ => True) := hle1
+    calc _ ≤ walkProb G d hreg hd t (fun _ => True) := hle1
       _ = 1 := walkProb_true hreg hd t
       _ ≤ ρ ^ (t + 1) := one_le_pow₀ h1
   push Not at hl1
@@ -147,7 +138,7 @@ theorem walkProb_forall_mem_le [DecidableEq V] {G : SimpleGraph V} [DecidableRel
     rw [dotProduct, Finset.sum_congr rfl fun v _ => hf01 v]
     simp [hf, indicator]
   -- Step 1 (Vadhan, Claim 4.20): the probability is `(1 / N) ∑_v stay t v`.
-  have ha : walkProb G d t (fun w => ∀ i, w i ∈ B) = (1 / N) * ∑ v, stay f M t v := by
+  have ha : walkProb G d hreg hd t (fun w => ∀ i, w i ∈ B) = (1 / N) * ∑ v, stay f M t v := by
     unfold walkProb
     have : ∀ w : Fin (t + 1) → V,
         (if ∀ i, w i ∈ B then (1 / N) * ∏ i : Fin t, A (w i.castSucc) (w i.succ) / d else 0) =

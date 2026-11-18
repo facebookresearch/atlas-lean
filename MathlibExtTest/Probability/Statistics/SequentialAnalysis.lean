@@ -16,7 +16,8 @@ public import MathlibExt.Probability.Statistics.SequentialAnalysis
 The CUSUM closed form at `n = 1` is Page's first step `max (log L(X₁)) 0`, and the CUSUM
 statistic is nonnegative. For the probability laws that the statistics admit, `llr` is the
 logarithm of a positive finite likelihood ratio almost surely; an infinite measure such as
-`∞ • P₀`, whose likelihood ratio is `∞` almost everywhere, is not admitted.
+`∞ • P₀`, whose likelihood ratio is `∞` almost everywhere, is not admitted. The change-point law
+needs both of its laws to be probability measures, and the geometric prior needs `0 < ρ ≤ 1`.
 -/
 
 @[expose] public section
@@ -78,6 +79,9 @@ elaborate for them. For `ν = 0` every observation has law `P₁`. -/
 example : changePointLaw P₀ P₁ 0 = Measure.infinitePi fun _ : ℕ => P₁ := by
   simp [changePointLaw]
 
+/-! Each law needs its own instance: with a zero pre-change law (used here, since the change
+point is `2`) or a zero post-change law, the change-point law does not elaborate. -/
+
 /--
 error: failed to synthesize instance of type class
   IsProbabilityMeasure 0
@@ -85,6 +89,41 @@ error: failed to synthesize instance of type class
 Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
 -/
 #guard_msgs in
-noncomputable example : Measure (ℕ → Bool) := changePointLaw (0 : Measure Bool) 0 1
+noncomputable example : Measure (ℕ → Bool) := changePointLaw 0 (Measure.dirac false) 2
+
+/--
+error: failed to synthesize instance of type class
+  IsProbabilityMeasure 0
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+noncomputable example : Measure (ℕ → Bool) := changePointLaw (Measure.dirac false) 0 1
+
+/-- Under a geometric prior with `0 < ρ ≤ 1`, a procedure that never stops raises no false
+alarm. -/
+example (ρ : ℝ) (hρ₀ : 0 < ρ) (hρ₁ : ρ ≤ 1) :
+    falseAlarmProb P₀ P₁ ρ hρ₀ hρ₁ (fun _ => ⊤) = 0 := by
+  simp [falseAlarmProb]
+
+/-! The geometric prior must be a probability distribution: for `ρ = 0`, under which every
+procedure would have false-alarm probability `0`, the proof of `0 < ρ` cannot be given. -/
+
+/--
+error: unsolved goals
+X : Type u_1
+inst✝² : MeasurableSpace X
+P₀ P₁ : Measure X
+inst✝¹ : IsProbabilityMeasure P₀
+inst✝ : IsProbabilityMeasure P₁
+h₁₀ : P₁ ≪ P₀
+h₀₁ : P₀ ≪ P₁
+ω : ℕ → X
+⊢ False
+-/
+#guard_msgs in
+noncomputable example : ℝ≥0∞ :=
+  falseAlarmProb (Measure.dirac false) (Measure.dirac true) 0 (by norm_num) (by norm_num)
+    fun _ => ⊤
 
 end MathlibExtTest.Probability.Statistics.SequentialAnalysis

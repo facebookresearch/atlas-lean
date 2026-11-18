@@ -28,7 +28,10 @@ constant on the cells of `r i`). The game is in the cost form of `CorrelatedEqui
 ## Main results
 
 * `IsBayesRational`: player `i` is Bayes rational at `ω` when no action `k` has a lower
-  conditional expected cost given `i`'s information than the action actually chosen.
+  conditional expected cost given `i`'s information than the action actually chosen. It takes
+  the common prior with proofs that it is nonnegative and has total mass `1`: under the zero
+  prior every action would be Bayes rational. The conditional expectation `condExpCell` is a
+  general weighted average, with the value `0` on null cells.
 * `isBayesRational_iff_sum`: on nonnull cells, the conditional-expectation form is equivalent
   to the unnormalised one (sums over the cell weighted by the prior); on null cells both hold.
 * `isCorrelatedEq_of_isBayesRational`: Aumann's Main Theorem.
@@ -63,25 +66,28 @@ containing `ω` (Aumann 1987, footnote 8). On a null cell the value is `0` by th
 noncomputable def condExpCell (p : Ω → ℝ) (r : Setoid Ω) (g : Ω → ℝ) (ω : Ω) : ℝ :=
   (∑ x ∈ cellFinset r ω, p x * g x) / ∑ x ∈ cellFinset r ω, p x
 
-/-- **Bayes rationality.** Player `i`, with information partition `r i`, is Bayes rational at
-`ω` under the action profile `s : Ω → ∀ i, S i` when, for every action `k` of `i`, the
-conditional expected cost `E(cost i (s) | 𝒫ⁱ)(ω)` is at most the conditional expected cost
-`E(cost i (s₋ᵢ, k) | 𝒫ⁱ)(ω)` of switching to `k` (Aumann 1987, §3, p. 7, in cost form: there
-`E(hⁱ(s) | 𝒫ⁱ)(ω) ≥ E(hⁱ(s₋ᵢ, σⁱ) | 𝒫ⁱ)(ω)` for payoffs `hⁱ`). -/
-def IsBayesRational (p : Ω → ℝ) (r : ι → Setoid Ω) (cost : ι → (∀ i, S i) → ℝ)
-    (s : Ω → ∀ i, S i) (i : ι) (ω : Ω) : Prop :=
+/-- **Bayes rationality.** For a common prior `p` (nonnegative, total mass `1`), player `i`,
+with information partition `r i`, is Bayes rational at `ω` under the action profile
+`s : Ω → ∀ i, S i` when, for every action `k` of `i`, the conditional expected cost
+`E(cost i (s) | 𝒫ⁱ)(ω)` is at most the conditional expected cost `E(cost i (s₋ᵢ, k) | 𝒫ⁱ)(ω)`
+of switching to `k` (Aumann 1987, §3, p. 7, in cost form: there
+`E(hⁱ(s) | 𝒫ⁱ)(ω) ≥ E(hⁱ(s₋ᵢ, σⁱ) | 𝒫ⁱ)(ω)` for payoffs `hⁱ`). The prior must be a probability
+distribution: under the zero prior every action would be Bayes rational. Null information cells
+are allowed, and every action is Bayes rational on them. -/
+def IsBayesRational (p : Ω → ℝ) (_hp : ∀ ω, 0 ≤ p ω) (_hp1 : ∑ ω, p ω = 1) (r : ι → Setoid Ω)
+    (cost : ι → (∀ i, S i) → ℝ) (s : Ω → ∀ i, S i) (i : ι) (ω : Ω) : Prop :=
   ∀ k : S i, condExpCell p (r i) (fun x => cost i (s x)) ω ≤
     condExpCell p (r i) (fun x => cost i (Function.update (s x) i k)) ω
 
 omit [Fintype ι] [∀ i, Fintype (S i)] [∀ i, DecidableEq (S i)] in
-/-- **Bayes rationality without normalisation.** For a nonnegative prior, player `i` is Bayes
+/-- **Bayes rationality without normalisation.** For a common prior `p`, player `i` is Bayes
 rational at `ω` if and only if, for every action `k`,
 `∑_{x ∈ Pⁱ(ω)} p(x) (cost i (s x) − cost i (s₋ᵢ x, k)) ≤ 0`. On a nonnull cell this is the
 conditional inequality multiplied by `p(Pⁱ(ω)) > 0`; on a null cell both sides hold
 trivially. -/
-theorem isBayesRational_iff_sum {p : Ω → ℝ} (hp : ∀ ω, 0 ≤ p ω) (r : ι → Setoid Ω)
-    (cost : ι → (∀ i, S i) → ℝ) (s : Ω → ∀ i, S i) (i : ι) (ω : Ω) :
-    IsBayesRational p r cost s i ω ↔ ∀ k : S i,
+theorem isBayesRational_iff_sum {p : Ω → ℝ} (hp : ∀ ω, 0 ≤ p ω) (hp1 : ∑ ω, p ω = 1)
+    (r : ι → Setoid Ω) (cost : ι → (∀ i, S i) → ℝ) (s : Ω → ∀ i, S i) (i : ι) (ω : Ω) :
+    IsBayesRational p hp hp1 r cost s i ω ↔ ∀ k : S i,
       ∑ x ∈ cellFinset (r i) ω, p x * (cost i (s x) - cost i (Function.update (s x) i k)) ≤
         0 := by
   have hsplit : ∀ k : S i, ∑ x ∈ cellFinset (r i) ω,
@@ -117,7 +123,7 @@ cells. -/
 theorem isCorrelatedEq_of_isBayesRational {p : Ω → ℝ} (hp : ∀ ω, 0 ≤ p ω)
     (hp1 : ∑ ω, p ω = 1) (r : ι → Setoid Ω) (cost : ι → (∀ i, S i) → ℝ)
     (s : Ω → ∀ i, S i) (hknow : ∀ i, r i ≤ Setoid.ker fun ω => s ω i)
-    (hrat : ∀ i ω, IsBayesRational p r cost s i ω) :
+    (hrat : ∀ i ω, IsBayesRational p hp hp1 r cost s i ω) :
     IsCorrelatedEq cost (fun t => ∑ ω ∈ univ.filter (fun ω => s ω = t), p ω) 0 := by
   classical
   have hpush : ∀ g : (∀ i, S i) → ℝ,
@@ -135,7 +141,7 @@ theorem isCorrelatedEq_of_isBayesRational {p : Ω → ℝ} (hp : ∀ ω, 0 ≤ p
     have hconst : ∀ x ∈ cellFinset (r i) y, s x i = s y i := fun x hx =>
       Setoid.ker_def.mp (Setoid.le_def.mp (hknow i) (mem_cellFinset.mp hx))
     by_cases hy : s y i = j
-    · have hcell := (isBayesRational_iff_sum hp r cost s i y).mp (hrat i y) k
+    · have hcell := (isBayesRational_iff_sum hp hp1 r cost s i y).mp (hrat i y) k
       refine le_of_eq_of_le (sum_congr rfl fun x hx => ?_) hcell
       simp [switchGain, hconst x hx, hy]
     · refine le_of_eq (sum_eq_zero fun x hx => ?_)
@@ -150,9 +156,9 @@ every player is Bayes rational at every state: Bayes rationality is then a resta
 correlated-equilibrium inequalities. -/
 theorem isBayesRational_of_isCorrelatedEq {cost : ι → (∀ i, S i) → ℝ} {ψ : (∀ i, S i) → ℝ}
     (h : IsCorrelatedEq cost ψ 0) (i : ι) (t : ∀ i, S i) :
-    IsBayesRational ψ (fun i => Setoid.ker fun t : (∀ i, S i) => t i) cost id i t := by
+    IsBayesRational ψ h.1.1 h.1.2 (fun i => Setoid.ker fun t : (∀ i, S i) => t i) cost id i t := by
   classical
-  rw [isBayesRational_iff_sum h.1.1]
+  rw [isBayesRational_iff_sum h.1.1 h.1.2]
   intro k
   have hcell : cellFinset (Setoid.ker fun t : (∀ i, S i) => t i) t =
       univ.filter fun s : (∀ i, S i) => s i = t i := by
@@ -170,19 +176,19 @@ player is Bayes rational at every state and `ψ` is the distribution of `s`. -/
 theorem isCorrelatedEq_iff_exists_isBayesRational (cost : ι → (∀ i, S i) → ℝ)
     (ψ : (∀ i, S i) → ℝ) :
     IsCorrelatedEq cost ψ 0 ↔
-      ∃ (Θ : Type (max v w)) (_ : Fintype Θ) (p : Θ → ℝ) (r : ι → Setoid Θ) (s : Θ → ∀ i, S i),
-        (∀ ω, 0 ≤ p ω) ∧ ∑ ω, p ω = 1 ∧ (∀ i, r i ≤ Setoid.ker fun ω => s ω i) ∧
-        (∀ i ω, IsBayesRational p r cost s i ω) ∧
+      ∃ (Θ : Type (max v w)) (_ : Fintype Θ) (p : Θ → ℝ) (hp : ∀ ω, 0 ≤ p ω)
+        (hp1 : ∑ ω, p ω = 1) (r : ι → Setoid Θ) (s : Θ → ∀ i, S i),
+        (∀ i, r i ≤ Setoid.ker fun ω => s ω i) ∧ (∀ i ω, IsBayesRational p hp hp1 r cost s i ω) ∧
         ψ = fun t => ∑ ω ∈ univ.filter (fun ω => s ω = t), p ω := by
   classical
   constructor
   · intro h
-    refine ⟨∀ i, S i, inferInstance, ψ, fun i => Setoid.ker fun t => t i, id, h.1.1, h.1.2,
+    refine ⟨∀ i, S i, inferInstance, ψ, h.1.1, h.1.2, fun i => Setoid.ker fun t => t i, id,
       fun _ => le_rfl, isBayesRational_of_isCorrelatedEq h, ?_⟩
     funext t
     rw [sum_filter]
     simp
-  · rintro ⟨Θ, _, p, r, s, hp, hp1, hknow, hrat, rfl⟩
+  · rintro ⟨Θ, _, p, hp, hp1, r, s, hknow, hrat, rfl⟩
     convert isCorrelatedEq_of_isBayesRational hp hp1 r cost s hknow hrat
 
 end MathlibExt.GameTheory.InteractiveEpistemology

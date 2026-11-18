@@ -23,7 +23,9 @@ import Mathlib.Tactic.Linarith
 
 A bidder's value `t` is distributed on `[a, b]` with a continuous positive density `f` and
 distribution function `F t = ∫_a^t f`. Myerson's *virtual valuation* is
-`φ(t) = t - (1 - F t) / f t` (Myerson 1981, (5.1), without revision effects). For every
+`φ(t) = t - (1 - F t) / f t` (Myerson 1981, (5.1), without revision effects); it takes the
+support `[a, b]` and a proof of `∫_a^b f = 1`, since `1 - F t` is the probability of a value
+above `t` only for a normalised density. For every
 mechanism that is incentive compatible on `[a, b]`, in the interim form of
 `SingleParameter`, the expected payment equals the expected virtual surplus minus the utility
 of the lowest type:
@@ -57,15 +59,17 @@ open Set MeasureTheory Filter Topology
 
 variable {Q P f : ℝ → ℝ} {a b t : ℝ}
 
-/-- **Virtual valuation.** For the density `f` of values on `[a, b]`, the virtual valuation
-`φ(t) = t - (1 - F t) / f t` with `F t = ∫_a^t f` (Myerson 1981, (5.1) with zero revision
-effects). -/
-noncomputable def virtualValue (f : ℝ → ℝ) (a t : ℝ) : ℝ :=
+/-- **Virtual valuation.** For the density `f` of values on `[a, b]`, normalised by
+`∫_a^b f = 1`, the virtual valuation `φ(t) = t - (1 - F t) / f t` with `F t = ∫_a^t f`
+(Myerson 1981, (5.1) with zero revision effects). The normalisation makes `1 - F t` the
+probability of a value above `t`: without it the formula is not that of a distribution, and the
+constant weights `1` and `2` on `[0, 1]` would give the values `-1` and `-1/2` at `0`. -/
+noncomputable def virtualValue (f : ℝ → ℝ) (a b : ℝ) (_hf1 : ∫ t in a..b, f t = 1) (t : ℝ) : ℝ :=
   t - (1 - ∫ s in a..t, f s) / f t
 
 /-- **Virtual surplus density.** Where `f t ≠ 0`, `φ(t) f(t) = t f(t) - (1 - F t)`. -/
-theorem virtualValue_mul_density (hft : f t ≠ 0) :
-    virtualValue f a t * f t = t * f t - (1 - ∫ s in a..t, f s) := by
+theorem virtualValue_mul_density (hf1 : ∫ t in a..b, f t = 1) (hft : f t ≠ 0) :
+    virtualValue f a b hf1 t * f t = t * f t - (1 - ∫ s in a..t, f s) := by
   unfold virtualValue
   field_simp
 
@@ -85,7 +89,7 @@ theorem integral_payment_mul_density (hab : a < b) (hfc : ContinuousOn f (Icc a 
     (hfpos : ∀ t ∈ Icc a b, 0 < f t) (hf1 : ∫ t in a..b, f t = 1)
     (h : IsIncentiveCompatibleOn Q P a b) :
     ∫ t in a..b, P t * f t =
-      (∫ t in a..b, virtualValue f a t * Q t * f t) - truthfulUtility Q P a := by
+      (∫ t in a..b, virtualValue f a b hf1 t * Q t * f t) - truthfulUtility Q P a := by
   have hle := hab.le
   have hQm := h.allocation_monotoneOn
   -- a monotone extension of `Q` to the whole line
@@ -159,13 +163,13 @@ theorem integral_payment_mul_density (hab : a < b) (hfc : ContinuousOn f (Icc a 
       (hif.const_mul _), intervalIntegral.integral_sub hitQf hiGf,
       intervalIntegral.integral_const_mul]
   -- the right side
-  have hR : ∫ t in a..b, virtualValue f a t * Q t * f t =
+  have hR : ∫ t in a..b, virtualValue f a b hf1 t * Q t * f t =
       (∫ t in a..b, Qt t * (t * f t)) + ∫ t in a..b, Qt t * (F t - 1) := by
-    have hcongr : EqOn (fun t => virtualValue f a t * Q t * f t)
+    have hcongr : EqOn (fun t => virtualValue f a b hf1 t * Q t * f t)
         (fun t => Qt t * (t * f t) + Qt t * (F t - 1)) (uIcc a b) := by
       intro t ht
       rw [uIcc_of_le hle] at ht
-      have hv := virtualValue_mul_density (a := a) (hfpos t ht).ne'
+      have hv := virtualValue_mul_density hf1 (hfpos t ht).ne'
       simp only [hF]
       rw [← hQeq ht, mul_right_comm, hv]
       ring
@@ -182,7 +186,7 @@ theorem integral_payment_mul_density_le (hab : a < b) (hfc : ContinuousOn f (Icc
     (hfpos : ∀ t ∈ Icc a b, 0 < f t) (hf1 : ∫ t in a..b, f t = 1)
     (h : IsIncentiveCompatibleOn Q P a b) (hQ : ∀ t ∈ Icc a b, Q t ∈ Icc (0 : ℝ) 1)
     (hU : 0 ≤ truthfulUtility Q P a) :
-    ∫ t in a..b, P t * f t ≤ ∫ t in a..b, max (virtualValue f a t * f t) 0 := by
+    ∫ t in a..b, P t * f t ≤ ∫ t in a..b, max (virtualValue f a b hf1 t * f t) 0 := by
   have hle := hab.le
   rw [integral_payment_mul_density hab hfc hfpos hf1 h]
   -- `φ f` agrees on `[a, b]` with a continuous function
@@ -192,28 +196,30 @@ theorem integral_payment_mul_density_le (hab : a < b) (hfc : ContinuousOn f (Icc
     rwa [uIcc_of_le hle] at this
   have hc : ContinuousOn (fun t => t * f t - (1 - ∫ s in a..t, f s)) (Icc a b) :=
     (continuousOn_id.mul hfc).sub (continuousOn_const.sub hFc)
-  have heq : EqOn (fun t => t * f t - (1 - ∫ s in a..t, f s)) (fun t => virtualValue f a t * f t)
-      (Icc a b) := fun t ht => (virtualValue_mul_density (hfpos t ht).ne').symm
-  have hmax : IntervalIntegrable (fun t => max (virtualValue f a t * f t) 0) volume a b :=
+  have heq : EqOn (fun t => t * f t - (1 - ∫ s in a..t, f s))
+      (fun t => virtualValue f a b hf1 t * f t)
+      (Icc a b) := fun t ht => (virtualValue_mul_density hf1 (hfpos t ht).ne').symm
+  have hmax : IntervalIntegrable (fun t => max (virtualValue f a b hf1 t * f t) 0) volume a b :=
     intervalIntegrable_of_eqOn hle
       ((hc.sup (continuousOn_const (c := (0 : ℝ)))).intervalIntegrable_of_Icc hle)
       (fun t ht => congrArg (fun x => max x (0 : ℝ)) (heq ht))
   have hQi : IntervalIntegrable Q volume a b :=
     MonotoneOn.intervalIntegrable (by rw [uIcc_of_le hle]; exact h.allocation_monotoneOn)
-  have hφQf : IntervalIntegrable (fun t => virtualValue f a t * Q t * f t) volume a b := by
+  have hφQf : IntervalIntegrable (fun t => virtualValue f a b hf1 t * Q t * f t) volume a b := by
     have := hQi.mul_continuousOn (g := fun t => t * f t - (1 - ∫ s in a..t, f s))
       (by rw [uIcc_of_le hle]; exact hc)
     refine intervalIntegrable_of_eqOn hle this fun t ht => ?_
-    have e : t * f t - (1 - ∫ s in a..t, f s) = virtualValue f a t * f t := heq ht
-    change Q t * (t * f t - (1 - ∫ s in a..t, f s)) = virtualValue f a t * Q t * f t
+    have e : t * f t - (1 - ∫ s in a..t, f s) = virtualValue f a b hf1 t * f t := heq ht
+    change Q t * (t * f t - (1 - ∫ s in a..t, f s)) = virtualValue f a b hf1 t * Q t * f t
     rw [e]; ring
-  have hmono : ∫ t in a..b, virtualValue f a t * Q t * f t ≤
-      ∫ t in a..b, max (virtualValue f a t * f t) 0 := by
+  have hmono : ∫ t in a..b, virtualValue f a b hf1 t * Q t * f t ≤
+      ∫ t in a..b, max (virtualValue f a b hf1 t * f t) 0 := by
     refine intervalIntegral.integral_mono_on hle hφQf hmax fun t ht => ?_
     obtain ⟨hq0, hq1⟩ := hQ t ht
-    have e : virtualValue f a t * Q t * f t = (virtualValue f a t * f t) * Q t := by ring
+    have e : virtualValue f a b hf1 t * Q t * f t = (virtualValue f a b hf1 t * f t) * Q t := by
+      ring
     rw [e]
-    rcases le_total 0 (virtualValue f a t * f t) with hx | hx
+    rcases le_total 0 (virtualValue f a b hf1 t * f t) with hx | hx
     · exact (mul_le_of_le_one_right hx hq1).trans (le_max_left _ _)
     · exact (mul_nonpos_of_nonpos_of_nonneg hx hq0).trans (le_max_right _ _)
   linarith
@@ -294,8 +300,8 @@ the types with nonnegative virtual valuation, at the lowest winning bid `r`). -/
 theorem integral_payment_mul_density_le_postedPrice (hab : a < b)
     (hfc : ContinuousOn f (Icc a b)) (hfpos : ∀ t ∈ Icc a b, 0 < f t)
     (hf1 : ∫ t in a..b, f t = 1) {r : ℝ} (hr : r ∈ Icc a b)
-    (hneg : ∀ t ∈ Icc a b, t < r → virtualValue f a t ≤ 0)
-    (hpos : ∀ t ∈ Icc a b, r < t → 0 ≤ virtualValue f a t)
+    (hneg : ∀ t ∈ Icc a b, t < r → virtualValue f a b hf1 t ≤ 0)
+    (hpos : ∀ t ∈ Icc a b, r < t → 0 ≤ virtualValue f a b hf1 t)
     (h : IsIncentiveCompatibleOn Q P a b) (hQ : ∀ t ∈ Icc a b, Q t ∈ Icc (0 : ℝ) 1)
     (hU : 0 ≤ truthfulUtility Q P a) :
     ∫ t in a..b, P t * f t ≤ ∫ t in a..b, postedPricePayment r t * f t := by
@@ -310,9 +316,9 @@ theorem integral_payment_mul_density_le_postedPrice (hab : a < b)
   have hc : ContinuousOn (fun t => t * f t - (1 - F t)) (Icc a b) :=
     (continuousOn_id.mul hfc).sub (continuousOn_const.sub hFc)
   have heq : EqOn (fun t => max (t * f t - (1 - F t)) 0)
-      (fun t => max (virtualValue f a t * f t) 0) (Icc a b) := fun t ht => by
-    simp only [hF, virtualValue_mul_density (a := a) (hfpos t ht).ne']
-  have hmax : IntervalIntegrable (fun t => max (virtualValue f a t * f t) 0) volume a b :=
+      (fun t => max (virtualValue f a b hf1 t * f t) 0) (Icc a b) := fun t ht => by
+    simp only [hF, virtualValue_mul_density hf1 (hfpos t ht).ne']
+  have hmax : IntervalIntegrable (fun t => max (virtualValue f a b hf1 t * f t) 0) volume a b :=
     intervalIntegrable_of_eqOn hle
       ((hc.sup (continuousOn_const (c := (0 : ℝ)))).intervalIntegrable_of_Icc hle) heq
   have hsub : ∀ c d, c ∈ Icc a b → d ∈ Icc a b → uIcc c d ⊆ uIcc a b := fun c d hc hd =>
@@ -321,7 +327,7 @@ theorem integral_payment_mul_density_le_postedPrice (hab : a < b)
   have hbI : b ∈ Icc a b := ⟨hle, le_rfl⟩
   rw [← intervalIntegral.integral_add_adjacent_intervals
     (hmax.mono_set (hsub a r haI hr)) (hmax.mono_set (hsub r b hr hbI))]
-  have h1 : ∫ t in a..r, max (virtualValue f a t * f t) 0 = 0 := by
+  have h1 : ∫ t in a..r, max (virtualValue f a b hf1 t * f t) 0 = 0 := by
     rw [intervalIntegral.integral_congr_ae (g := fun _ => (0 : ℝ))]
     · simp
     · filter_upwards [Measure.ae_ne volume r] with t htr ht
@@ -330,13 +336,13 @@ theorem integral_payment_mul_density_le_postedPrice (hab : a < b)
       have := mul_nonpos_of_nonpos_of_nonneg (hneg t htI (lt_of_le_of_ne ht.2 htr))
         (hfpos t htI).le
       simp [this]
-  have h2 : ∫ t in r..b, max (virtualValue f a t * f t) 0 =
+  have h2 : ∫ t in r..b, max (virtualValue f a b hf1 t * f t) 0 =
       ∫ t in r..b, ((F t - 1) + t * f t) := by
     refine intervalIntegral.integral_congr_ae (Eventually.of_forall fun t ht => ?_)
     rw [uIoc_of_le hr.2] at ht
     have htI : t ∈ Icc a b := ⟨hr.1.trans ht.1.le, ht.2⟩
     have hnn := mul_nonneg (hpos t htI ht.1) (hfpos t htI).le
-    rw [max_eq_left hnn, virtualValue_mul_density (hfpos t htI).ne']
+    rw [max_eq_left hnn, virtualValue_mul_density hf1 (hfpos t htI).ne']
     simp only [hF]
     ring
   have h3 : ∫ t in r..b, ((F t - 1) + t * f t) = b * (F b - 1) - r * (F r - 1) := by

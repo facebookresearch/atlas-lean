@@ -37,15 +37,21 @@ probability measures:
 The likelihood-ratio statistics (`llrSum`, `sprtTime`, `pageCusum`, `shiryaevPosterior` and the
 objects built on them) take probability laws `P₀` and `P₁` (instances `IsProbabilityMeasure P₀`
 and `IsProbabilityMeasure P₁`) and proofs `h₁₀ : P₁ ≪ P₀` and `h₀₁ : P₀ ≪ P₁`, the standing
-assumptions of Wald's inequalities and of the optimality theorems. The change-point law and the
-criteria built on it (`changePointLaw`, `falseAlarmProb`, `averageDetectionDelay`,
-`lordenDelay`) take the two instances: for laws that are not probability measures the product
-law is the zero measure. For such laws the likelihood
+assumptions of Wald's inequalities and of the optimality theorems. For such laws the likelihood
 ratio `dP₁/dP₀` is positive and finite almost surely, so `llr P₁ P₀ = log (dP₁/dP₀)` is the
 log-likelihood ratio of almost every observation. Without absolute continuity an observation
 that is impossible under one law has log-likelihood ratio `±∞`, and for an infinite measure such
 as `P₁ = ∞ • P₀` the ratio is `∞` almost everywhere; the real-valued `llr` reads both as `0`
 (neutral evidence), so the statistics would no longer be the ones of the sources.
+
+The change-point law and the criteria built on it (`changePointLaw`, `falseAlarmProb`,
+`averageDetectionDelay`, `lordenDelay`) take the two instances: for laws that are not probability
+measures the product law is the zero measure. The Bayesian objects (`shiryaevPosterior`,
+`shiryaevTime`, `falseAlarmProb`, `averageDetectionDelay`) also take proofs of `0 < ρ` and
+`ρ ≤ 1`, so that the geometric prior `P(Γ = n) = ρ (1 - ρ)^{n-1}`, `n ≥ 1`, is a probability
+distribution of the change point (for `ρ = 1`, the point mass at `Γ = 1`). For `ρ = 0` the prior
+would have mass zero, giving every procedure zero false-alarm probability and zero delay, and for
+`ρ > 1` its weights would not be probabilities.
 
 The main proved statement is the closed form of the CUSUM recursion,
 `MeasureTheory.pageCusum_eq_sup`. Wald's inequalities for the SPRT are proved in
@@ -164,39 +170,46 @@ theorem pageCusum_eq_sup (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀]
 
 /-- **Shiryaev's posterior probability of a change.** For probability laws `P₀` and `P₁`,
 mutually absolutely continuous, under a geometric prior `P(Γ = n) = ρ (1 - ρ)^{n-1}` on the change
-point, `p₀ = 0` and `p_{n+1} = p̃ₙ L(X_{n+1}) / (p̃ₙ L(X_{n+1}) + 1 - p̃ₙ)` with
+point with `0 < ρ ≤ 1`, `p₀ = 0` and `p_{n+1} = p̃ₙ L(X_{n+1}) / (p̃ₙ L(X_{n+1}) + 1 - p̃ₙ)` with
 `p̃ₙ = pₙ + (1 - pₙ) ρ` and `L = dP₁/dP₀`, positive and finite almost surely (Veeravalli–Banerjee,
 equations (12)–(14)). -/
 noncomputable def shiryaevPosterior (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀]
-    [IsProbabilityMeasure P₁] (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) (ρ : ℝ) : ℕ → (ℕ → X) → ℝ
+    [IsProbabilityMeasure P₁] (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) (ρ : ℝ) (hρ₀ : 0 < ρ)
+    (hρ₁ : ρ ≤ 1) : ℕ → (ℕ → X) → ℝ
   | 0 => fun _ => 0
   | n + 1 => fun ω =>
-      let p := shiryaevPosterior P₀ P₁ h₁₀ h₀₁ ρ n ω +
-        (1 - shiryaevPosterior P₀ P₁ h₁₀ h₀₁ ρ n ω) * ρ
+      let p := shiryaevPosterior P₀ P₁ h₁₀ h₀₁ ρ hρ₀ hρ₁ n ω +
+        (1 - shiryaevPosterior P₀ P₁ h₁₀ h₀₁ ρ hρ₀ hρ₁ n ω) * ρ
       let L := (P₁.rnDeriv P₀ (ω n)).toReal
       p * L / (p * L + (1 - p))
 
 /-- **Shiryaev's alarm time.** For probability laws `P₀` and `P₁`, mutually absolutely
-continuous, and a threshold `A`, `τ_S = inf {n ≥ 1 : pₙ ≥ A}` (Veeravalli–Banerjee,
-equation (15)). -/
+continuous, a geometric prior with parameter `0 < ρ ≤ 1` and a threshold `A`,
+`τ_S = inf {n ≥ 1 : pₙ ≥ A}` (Veeravalli–Banerjee, equation (15)). -/
 noncomputable def shiryaevTime (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀]
-    [IsProbabilityMeasure P₁] (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) (ρ A : ℝ) :
-    (ℕ → X) → WithTop ℕ :=
-  hittingAfter (shiryaevPosterior P₀ P₁ h₁₀ h₀₁ ρ) (Set.Ici A) 1
+    [IsProbabilityMeasure P₁] (h₁₀ : P₁ ≪ P₀) (h₀₁ : P₀ ≪ P₁) (ρ : ℝ) (hρ₀ : 0 < ρ)
+    (hρ₁ : ρ ≤ 1) (A : ℝ) : (ℕ → X) → WithTop ℕ :=
+  hittingAfter (shiryaevPosterior P₀ P₁ h₁₀ h₀₁ ρ hρ₀ hρ₁) (Set.Ici A) 1
 
-/-- **Probability of false alarm under a geometric prior.** For probability laws `P₀` and `P₁`,
-`PFA(τ) = ∑_{n ≥ 1} πₙ Pₙ(τ < n)` with `πₙ = ρ (1 - ρ)^{n-1}` and `Pₙ = changePointLaw P₀ P₁ n`
-(Veeravalli–Banerjee, equations (8) and (11)). -/
+/-- **Probability of false alarm under a geometric prior.** For probability laws `P₀` and `P₁`
+and `0 < ρ ≤ 1`, `PFA(τ) = ∑_{n ≥ 1} πₙ Pₙ(τ < n)` with `πₙ = ρ (1 - ρ)^{n-1}` and
+`Pₙ = changePointLaw P₀ P₁ n` (Veeravalli–Banerjee, equations (8) and (11)). The bounds on `ρ`
+make `π` a probability distribution: for `ρ = 0` every procedure would have false-alarm
+probability `0`, and for `ρ > 1` the weights would not be probabilities. -/
 noncomputable def falseAlarmProb (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀]
-    [IsProbabilityMeasure P₁] (ρ : ℝ) (τ : (ℕ → X) → WithTop ℕ) : ℝ≥0∞ :=
+    [IsProbabilityMeasure P₁] (ρ : ℝ) (_hρ₀ : 0 < ρ) (_hρ₁ : ρ ≤ 1)
+    (τ : (ℕ → X) → WithTop ℕ) : ℝ≥0∞ :=
   ∑' n : ℕ, ENNReal.ofReal (ρ * (1 - ρ) ^ n) *
     changePointLaw P₀ P₁ (n + 1) {ω | τ ω < (n + 1 : ℕ)}
 
-/-- **Average detection delay under a geometric prior.** For probability laws `P₀` and `P₁`,
-`ADD(τ) = ∑_{n ≥ 1} πₙ Eₙ[(τ - n)⁺]` with `πₙ = ρ (1 - ρ)^{n-1}` (Veeravalli–Banerjee,
-equations (7) and (11)); the delay is computed in `ℕ∞` (truncated subtraction, `⊤ - n = ⊤`). -/
+/-- **Average detection delay under a geometric prior.** For probability laws `P₀` and `P₁`
+and `0 < ρ ≤ 1`, `ADD(τ) = ∑_{n ≥ 1} πₙ Eₙ[(τ - n)⁺]` with `πₙ = ρ (1 - ρ)^{n-1}`
+(Veeravalli–Banerjee, equations (7) and (11)); the delay is computed in `ℕ∞` (truncated
+subtraction, `⊤ - n = ⊤`). For `ρ = 0`, which is excluded, every procedure, even one that never
+stops, would have delay `0`. -/
 noncomputable def averageDetectionDelay (P₀ P₁ : Measure X) [IsProbabilityMeasure P₀]
-    [IsProbabilityMeasure P₁] (ρ : ℝ) (τ : (ℕ → X) → WithTop ℕ) : ℝ≥0∞ :=
+    [IsProbabilityMeasure P₁] (ρ : ℝ) (_hρ₀ : 0 < ρ) (_hρ₁ : ρ ≤ 1)
+    (τ : (ℕ → X) → WithTop ℕ) : ℝ≥0∞ :=
   ∑' n : ℕ, ENNReal.ofReal (ρ * (1 - ρ) ^ n) *
     ∫⁻ ω, (((show ℕ∞ from τ ω) - (n + 1 : ℕ) : ℕ∞) : ℝ≥0∞) ∂changePointLaw P₀ P₁ (n + 1)
 

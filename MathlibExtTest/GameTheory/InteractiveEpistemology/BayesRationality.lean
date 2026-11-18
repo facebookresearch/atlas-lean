@@ -27,9 +27,14 @@ def coordCost (_ : Fin 2) (t : Fin 2 → Fin 2) : ℝ := if t 0 = t 1 then 0 els
 /-- Both players play the coin's value. -/
 def coinPlay (ω : Fin 2) : Fin 2 → Fin 2 := fun _ => ω
 
+theorem coin_nonneg : ∀ _ω : Fin 2, (0 : ℝ) ≤ 1 / 2 := fun _ => by norm_num
+
+theorem coin_sum : ∑ _ω : Fin 2, (1 / 2 : ℝ) = 1 := by norm_num
+
 theorem coinPlay_bayesRational (i : Fin 2) (ω : Fin 2) :
-    IsBayesRational (fun _ => (1 / 2 : ℝ)) (fun _ => ⊥) coordCost coinPlay i ω := by
-  rw [isBayesRational_iff_sum (fun _ => by norm_num)]
+    IsBayesRational (fun _ => (1 / 2 : ℝ)) coin_nonneg coin_sum (fun _ => ⊥) coordCost coinPlay i
+      ω := by
+  rw [isBayesRational_iff_sum coin_nonneg coin_sum]
   intro k
   refine Finset.sum_nonpos fun x _ => ?_
   have h0 : coordCost i (coinPlay x) = 0 := by simp [coordCost, coinPlay]
@@ -41,7 +46,7 @@ theorem coinPlay_bayesRational (i : Fin 2) (ω : Fin 2) :
 /-- Aumann's Main Theorem applied to the public coin. -/
 example : IsCorrelatedEq coordCost
     (fun t => ∑ _ω ∈ Finset.univ.filter (fun ω => coinPlay ω = t), (1 / 2 : ℝ)) 0 :=
-  isCorrelatedEq_of_isBayesRational (fun _ => by norm_num) (by simp) (fun _ => ⊥)
+  isCorrelatedEq_of_isBayesRational coin_nonneg coin_sum (fun _ => ⊥)
     coordCost coinPlay (fun _ => bot_le) coinPlay_bayesRational
 
 /-- The resulting distribution puts mass `½` on `(0, 0)` and `0` on `(0, 1)`, so it is not a
@@ -60,6 +65,18 @@ example : (∑ _ω ∈ Finset.univ.filter (fun ω => coinPlay ω = ![0, 0]), (1 
 Bayes-rational play in an information system (the profiles themselves, each player told only
 its own recommendation). -/
 example (i : Fin 2) (t : Fin 2 → Fin 2) :
-    IsBayesRational chickenCE (fun i => Setoid.ker fun t : Fin 2 → Fin 2 => t i) chickenCost id
-      i t :=
+    IsBayesRational chickenCE chickenCE_isCorrelatedEq.1.1 chickenCE_isCorrelatedEq.1.2
+      (fun i => Setoid.ker fun t : Fin 2 → Fin 2 => t i) chickenCost id i t :=
   isBayesRational_of_isCorrelatedEq chickenCE_isCorrelatedEq i t
+
+/-! The common prior must be a probability distribution: for the zero prior, under which every
+action would be Bayes rational, the proof of `∑ p = 1` cannot be given. -/
+
+/--
+error: unsolved goals
+⊢ False
+-/
+#guard_msgs in
+example : Prop :=
+  IsBayesRational (fun _ : Fin 2 => (0 : ℝ)) (fun _ => le_rfl) (by simp) (fun _ => ⊥) coordCost
+    coinPlay 0 0

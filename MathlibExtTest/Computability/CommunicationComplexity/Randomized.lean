@@ -45,6 +45,20 @@ example : ∀ x y : Fin 1 → Bool, ((eqHashProtocol 1 1).errorProb (eqFn 1) x y
 
 example : Nonempty ((Fin 1 → Bool) → Fin 1 → Bool) := ⟨fun _ _ => false⟩
 
+/-! The error probability needs a nonempty set of random strings: for an empty set, on which
+every event would have probability `0`, it does not elaborate. -/
+
+/--
+error: failed to synthesize instance of type class
+  Nonempty Empty
+
+Hint: Adding the command `deriving instance Nonempty for Empty` may allow Lean to derive the missing instance.
+-/
+#guard_msgs in
+noncomputable example : ℚ :=
+  (⟨fun _ => .output false⟩ : PublicCoinProtocol (Fin 1 → Bool) (Fin 1 → Bool) Empty).errorProb
+    (fun _ _ => true) (fun _ => false) (fun _ => false)
+
 /-- Guard for the error range of `newman_private_coins`: without the bound `ε ≤ 1 / 2` the
 statement is false, since for large `ε` the cost-0 constant protocol meets the hypothesis while
 `log₂(n / ε²)` is negative. (Counterexample found by the reviewer of this change set.) -/
