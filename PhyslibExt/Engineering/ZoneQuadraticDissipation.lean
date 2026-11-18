@@ -49,8 +49,11 @@ conductances, `V` is nonincreasing along solutions.
 
 ## iv. References
 
-- Standard lumped-capacitance building thermal network models
-  (RC-network formulation).
+- J. A. Clarke, *Energy Simulation in Building Design*,
+  2nd edition, Butterworth-Heinemann, 2001, Chapter 3
+  (lumped-capacitance zonal thermal networks and their
+  RC-network equations). The dissipation identity is the
+  quadratic energy balance of those network equations.
 -/
 
 @[expose] public section
