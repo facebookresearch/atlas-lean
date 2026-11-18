@@ -119,7 +119,7 @@ theorem pow_card_eq_zero_of_acyclic {V : Type*} [DecidableEq V]
     (fun v => idxOf_lt_card g horder hlength v)
     (fun i j hij => supported_idxOf_lt g horder B hB i j hij)
 
-/-- **F12-L-DAG.** A DAG-supported linear SEM coefficient matrix over a
+/-- A DAG-supported linear SEM coefficient matrix over a
 finite carrier has finite inverse `(1 - B)⁻¹ = ∑ k < card V, B ^ k`.
 `B i j ≠ 0` must be supported on the edge `j → i` (column vertex causes
 row vertex); the reverse convention is the transposed test failure below.
