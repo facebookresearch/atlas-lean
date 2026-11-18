@@ -19,7 +19,7 @@ A memory-mapped sample register as a labeled transition system
 over `Cslib.LTS`: publishes overwrite the slot, reads return the
 current contents. Publication IDs carried on the publish event
 are ghost state. Under strictly increasing publish IDs, every
-read returns the value of a specific earlier publish, read IDs
+successful read returns the value of a specific earlier publish, read IDs
 are strictly increasing, and an unread publish is either still
 in the slot or was overwritten before any later read. With
 decreasing publish IDs the monotonicity fails.
@@ -418,8 +418,10 @@ theorem exists_publish_index_of_read_mem {α : Type u} (μs : List (Label α)) (
       rw [← List.getElem?_take_of_lt hki] at hcon
       exact hnone k m w hjk hklen hcon
 
-/-- No fabricated values: every successful read returns an `(id, value)` pair that was
-published earlier in the trace. -/
+/-- No fabricated values: every successful read returns an `(id, value)` pair that
+occurs as a publication somewhere in the trace. For the ordered form, with the
+publication at an earlier index than the read, see
+`exists_publish_index_of_read_mem`. -/
 theorem publish_mem_of_read_mem {α : Type u} (μs : List (Label α)) (s : Slot α)
     (h : (registerLTS α).MTr none μs s) (n : ℕ) (v : α)
     (hr : Label.read (some (n, v)) ∈ μs) :
