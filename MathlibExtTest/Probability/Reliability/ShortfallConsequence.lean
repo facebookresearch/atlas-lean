@@ -16,8 +16,9 @@ import Mathlib.Tactic.NormNum
 Focused checks for
 `MathlibExt.Probability.Reliability.ShortfallConsequence`:
 constant resistance `2` against constant load `1` has zero
-shortfall and no failure, and the expected shortfall is the
-integral over the failure event at those constant inputs.
+shortfall and no failure; the reversed constants give a
+nonzero failure path whose unrestricted, failure-event, and
+frequentist extended values are all `1`.
 
 These are elaboration and non-vacuity checks, not new results.
 -/
@@ -48,3 +49,45 @@ example (μ : ProbabilityMeasure PUnit) :
   (Reliability.shortfallConsequence_bind_eq μ
     (Reliability.shortfallConsequence_measurable measurable_const
       measurable_const)).2.2
+
+/-- Positive shortfall when load exceeds resistance by `1`. -/
+example : Reliability.shortfallConsequence (fun _ : PUnit => (1 : ℝ))
+    (fun _ => 2) PUnit.unit = 1 := by
+  norm_num [Reliability.shortfallConsequence]
+
+/-- Nonzero failure path: the unrestricted and failure-event
+extended expected shortfalls are both `1`. -/
+example (μ : ProbabilityMeasure PUnit) :
+    (∫⁻ ω, ENNReal.ofReal ((fun _ : PUnit => (2 : ℝ)) ω
+        - (fun _ => 1) ω) ∂(μ : Measure PUnit) = 1)
+    ∧ ∫⁻ ω in Reliability.failureEvent (fun _ : PUnit => (1 : ℝ))
+          (fun _ => 2),
+        ENNReal.ofReal ((fun _ : PUnit => (2 : ℝ)) ω
+          - (fun _ => 1) ω) ∂(μ : Measure PUnit) = 1 := by
+  have h := Reliability.shortfallConsequence_bind_eq
+    (R := fun _ : PUnit => (1 : ℝ)) (S := fun _ => (2 : ℝ)) μ
+    (Reliability.shortfallConsequence_measurable
+      (R := fun _ : PUnit => (1 : ℝ)) (S := fun _ => (2 : ℝ))
+      measurable_const measurable_const)
+  have hun : ∫⁻ ω, ENNReal.ofReal ((fun _ : PUnit => (2 : ℝ)) ω
+        - (fun _ => 1) ω) ∂(μ : Measure PUnit) = 1 := by
+    simp
+    norm_num
+  exact ⟨hun, h.2.2.symm.trans hun⟩
+
+/-- Nonzero failure path through the deterministic-bind and
+frequentist-risk conjuncts: the extended frequentist risk is
+`1`. -/
+example (μ : ProbabilityMeasure PUnit) :
+    MathlibExt.Probability.Statistics.EstimationRisk.frequentistRiskENN
+        (Reliability.shortfallConsequence (fun _ : PUnit => (1 : ℝ))
+          (fun _ => 2))
+        (fun _ : Unit => μ) (fun _ a => a) () = 1 := by
+  have h := Reliability.shortfallConsequence_bind_eq
+    (R := fun _ : PUnit => (1 : ℝ)) (S := fun _ => (2 : ℝ)) μ
+    (Reliability.shortfallConsequence_measurable
+      (R := fun _ : PUnit => (1 : ℝ)) (S := fun _ => (2 : ℝ))
+      measurable_const measurable_const)
+  rw [← h.1, h.2.1]
+  simp
+  norm_num
