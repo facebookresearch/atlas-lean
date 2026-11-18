@@ -11,7 +11,6 @@ module
 public import MathlibExt.Analysis.ODE.GronwallIntegral
 public import MathlibExt.Analysis.ODE.PWMPrimitiveBound
 public import Mathlib.Analysis.Normed.Module.FiniteDimension
-import Mathlib.MeasureTheory.Function.Floor
 import Mathlib.MeasureTheory.Integral.DominatedConvergence
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
@@ -161,21 +160,6 @@ private theorem intervalIntegrable_of_eq_add_integral {E : Type*} [NormedAddComm
     exact hne (le_antisymm htsT (le_csSup hSbdd hT_mem))
   rw [← hts_eq]; exact hts_mem.2
 
-/-- The pulse-width signal is interval integrable on every interval: it is measurable and takes
-only the values `0` and `1`. -/
-private theorem pwmSignal_intervalIntegrable (ε : ℝ) (d : ℝ → ℝ) (a b : ℝ) :
-    IntervalIntegrable (pwmSignal ε d) volume a b := by
-  have hfl : Measurable fun u : ℝ => ⌊u / ε⌋ := (measurable_id.div_const ε).floor
-  have h1 : Measurable fun u : ℝ => u - ((⌊u / ε⌋ : ℤ) : ℝ) * ε :=
-    measurable_id.sub ((Measurable.of_discrete (f := fun k : ℤ => (k : ℝ) * ε)).comp hfl)
-  have h2 : Measurable fun u : ℝ => d (((⌊u / ε⌋ : ℤ) : ℝ) * ε) * ε :=
-    (Measurable.of_discrete (f := fun k : ℤ => d ((k : ℝ) * ε) * ε)).comp hfl
-  have hs : Measurable (pwmSignal ε d) :=
-    Measurable.ite (measurableSet_lt h1 h2) measurable_const measurable_const
-  refine (intervalIntegrable_const (c := (1 : ℝ))).mono_fun hs.aestronglyMeasurable
-    (ae_of_all _ fun u => ?_)
-  simp only [pwmSignal]; split_ifs <;> simp
-
 /-- Bounded-primitive error estimate, split from the affine
 specialization: if the switched and averaged trajectories satisfy
 their integral equations on `[0, T]` with integrable integrands and a
@@ -301,7 +285,7 @@ theorem switched_averaged_error_le
   have hdi : IntervalIntegrable d volume 0 T :=
     (hLip.continuousOn.mono (by rw [uIcc_of_le hT])).intervalIntegrable
   have hxi := intervalIntegrable_of_eq_add_integral A c hc hT (fun u => pwmSignal ε d u • b)
-    (hsmul (pwmSignal_intervalIntegrable ε d 0 T)) x x₀ hx
+    (hsmul (intervalIntegrable_pwmSignal ε d 0 T)) x x₀ hx
   have hyi := intervalIntegrable_of_eq_add_integral A c hc hT (fun u => d u • b)
     (hsmul hdi) y y₀ hy
   have h := norm_sub_le_exp_mul_of_primitive_le A b c hc T (ε * (1 + (Ld : ℝ) * T / 2)) hT
