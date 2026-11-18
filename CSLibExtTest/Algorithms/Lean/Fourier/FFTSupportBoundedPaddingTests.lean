@@ -232,3 +232,46 @@ example : zeroExtend2 2 2 3 2 padArr
 /-- Nonsquare `3 x 2` padding is injective on `2 x 1` arrays. -/
 example : Function.Injective (zeroExtend2 2 1 3 2) :=
   zeroExtend2_injective 2 1 3 2 (by norm_num) (by norm_num)
+
+/-- For a nonzero cyclic length the coverage bound is also necessary: zero extension
+of length-two signals to `ZMod 1` is not injective. -/
+example : ¬ Function.Injective (zeroExtend 2 1) := by
+  rw [zeroExtend_injective_iff]
+  norm_num
+
+/-- Nonzero `2 x 2` padding is not injective on `2 x 3` arrays: the second axis is
+one slot short. -/
+example : ¬ Function.Injective (zeroExtend2 2 3 2 2) := by
+  rw [zeroExtend2_injective_iff 2 3 2 2 (by norm_num) (by norm_num)]
+  norm_num
+
+/-- An empty support is injective under any padding, which is why the
+two-dimensional characterization assumes nonempty supports. -/
+example : Function.Injective (zeroExtend2 2 0 1 1) :=
+  fun _ _ _ => funext fun p => p.2.elim0
+
+/-! ### Cyclic length zero
+
+`ZMod 0` is `ℤ` and `ZMod.val` is the absolute value there, so zero extension to
+length zero reads every source entry back at its natural index. -/
+
+/-- At length zero the origin reads the first source entry. -/
+example (x : Fin 1 → ℂ) : zeroExtend 1 0 x (0 : ZMod 0) = x 0 := by
+  simp [zeroExtend, extendNat]
+
+/-- Zero extension of length-two signals to `ZMod 0` is injective although `2 ≤ 0`
+fails. -/
+example : Function.Injective (zeroExtend 2 0) := by
+  intro x x' h
+  funext i
+  have hi := congrFun h ((i.val : ℕ) : ZMod 0)
+  simpa [zeroExtend, extendNat, ZMod.val_natCast, Fin.is_le i] using hi
+
+/-- A zero length on the first axis reads that axis back in full: `2 x 2` arrays
+extended to `ZMod 0 x ZMod 2` are distinguished. -/
+example : Function.Injective (zeroExtend2 2 2 0 2) := by
+  intro x x' h
+  funext p
+  have hp := congrFun h (((p.1.val : ℕ) : ZMod 0), ((p.2.val : ℕ) : ZMod 2))
+  simpa [zeroExtend2, extendNat2, ZMod.val_natCast, Nat.mod_eq_of_lt p.2.isLt, Fin.is_le p.1,
+    Fin.is_le p.2] using hp
