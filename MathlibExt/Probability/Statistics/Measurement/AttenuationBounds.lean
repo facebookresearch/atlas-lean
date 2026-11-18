@@ -87,9 +87,9 @@ private theorem attenuationFactor_mem_Icc {s t : ℝ} (hs : 0 < s) (ht : 0 ≤ t
     rw [div_le_one hpos]
     linarith
 
-/-! ## The leaf result -/
+/-! ## The bound -/
 
-/-- **Absolute attenuation bounds** (leaf F12-L-ATTEN-BOUND).
+/-- **Absolute attenuation bounds** .
 
 Under exactly the hypotheses of `normalizedCovariance_attenuation`
 (decomposition `X = Tx + Ex`, `Y = Ty + Ey`, square integrability,
