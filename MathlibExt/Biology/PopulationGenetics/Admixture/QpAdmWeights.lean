@@ -10,7 +10,7 @@ module
 
 public import MathlibExt.Biology.PopulationGenetics.ADMIXTOOLS
 public import MathlibExt.Biology.PopulationGenetics.QpGraph
-import MathlibExt.Biology.StatisticalGenetics.StratifiedLDScore
+import Mathlib.LinearAlgebra.Matrix.Rank
 
 /-!
 # Identifiability and least-squares form of qpAdm weights
@@ -35,9 +35,6 @@ unweighted qpGraph score.
 * `ADMIXTOOLS.qpAdm_weights_eq_inv_gram_mulVec`,
   `ADMIXTOOLS.qpAdm_weights_maximize_scoreS1_one`: least-squares form.
 
-The full-column-rank characterization reuses
-`StratifiedLDScore.injective_mulVec_iff_rank_eq_card`.
-
 ## References
 
 * W. Haak et al., "Massive migration from the steppe was a source for
@@ -54,6 +51,13 @@ open MeasureTheory Matrix MathlibExt.Biology.PopulationGenetics
 namespace MathlibExt.Biology.PopulationGenetics.ADMIXTOOLS
 
 variable {Ω P : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} {p : P → Ω → ℝ}
+
+/-- A real matrix has injective `mulVec` iff it has full column rank. -/
+private theorem injective_mulVec_iff_rank_eq_card {m n : Type*} [Fintype n]
+    (A : Matrix m n ℝ) : Function.Injective A.mulVec ↔ A.rank = Fintype.card n := by
+  rw [Matrix.mulVec_injective_iff, Matrix.rank_eq_finrank_span_cols,
+    linearIndependent_iff_card_eq_finrank_span, Set.finrank]
+  exact eq_comm
 
 variable (μ p) in
 /-- The qpAdm source matrix: row `j`, column `l` is
@@ -95,8 +99,7 @@ theorem qpAdm_unique_iff_rank_eq {k r : ℕ} {T : P} (S : Fin (k + 1) → P)
   have hcard : (qpAdmSourceMatrix μ p S R).rank = k ↔
       Function.Injective (qpAdmSourceMatrix μ p S R).mulVec := by
     simpa only [Fintype.card_fin] using
-      (MathlibExt.Biology.StatisticalGenetics.StratifiedLDScore.injective_mulVec_iff_rank_eq_card
-        (qpAdmSourceMatrix μ p S R)).symm
+      (injective_mulVec_iff_rank_eq_card (qpAdmSourceMatrix μ p S R)).symm
   rw [hcard]
   constructor
   · intro huniq x y hxy
@@ -122,7 +125,7 @@ theorem exists_line_of_rank_ne {k r : ℕ} {T : P} (S : Fin (k + 1) → P)
   have hnotinj : ¬ Function.Injective (qpAdmSourceMatrix μ p S R).mulVec := by
     intro h
     apply hrank
-    have h' := (MathlibExt.Biology.StatisticalGenetics.StratifiedLDScore.injective_mulVec_iff_rank_eq_card _).mp h
+    have h' := (injective_mulVec_iff_rank_eq_card _).mp h
     simpa only [Fintype.card_fin] using h'
   simp only [Function.Injective, not_forall] at hnotinj
   obtain ⟨x, y, hxy, hne⟩ := hnotinj
@@ -142,7 +145,7 @@ theorem qpAdm_weights_eq_inv_gram_mulVec {k r : ℕ} {T : P} (S : Fin (k + 1) �
   have hinj : Function.Injective A.mulVec := by
     have hrank' : A.rank = Fintype.card (Fin k) := by
       rw [Fintype.card_fin]; exact hrank
-    exact (MathlibExt.Biology.StatisticalGenetics.StratifiedLDScore.injective_mulVec_iff_rank_eq_card A).mpr hrank'
+    exact (injective_mulVec_iff_rank_eq_card A).mpr hrank'
   have hgram : IsUnit (Aᵀ * A).det := by
     have h := QpGraph.isUnit_det_gram (Q := (1 : Matrix (Fin r) (Fin r) ℝ)) Matrix.PosDef.one hinj
     simpa using h
