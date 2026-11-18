@@ -1,0 +1,17 @@
+# Lyndon and primitive words
+
+- [Primitive word](is-primitive-word.md)
+- [Content of a word](witt-word-content.md)
+- [Lyndon word](is-lyndon-word.md)
+- [Content is additive under concatenation](witt-word-content-append.md)
+- [Content of a one-letter word](witt-word-content-singleton.md)
+- [Content of a word after prepending a letter](witt-word-content-cons.md)
+- [The content of a word sums to its length](sum-witt-word-content.md)
+- [Words with prescribed content](words-of-content.md)
+- [Lyndon words of given content](lyndon-words-of-content.md)
+- [Words of given content are counted by the multinomial coefficient](card-words-of-content-eq-multinomial.md)
+- [Primitivity via distinct rotations](is-primitive-word-iff-nodup-cyclic-permu.md)
+- [Nontrivial rotations move a primitive word](rotate-ne-of-is-primitive-word.md)
+- [Primitive words of given content](primitive-words-of-content.md)
+- [Lyndon words are primitive](is-primitive-word-of-is-lyndon-word.md)
+- [Witt's formula for the number of Lyndon words of given content](card-lyndon-words-of-content-eq-witt-mul.md)

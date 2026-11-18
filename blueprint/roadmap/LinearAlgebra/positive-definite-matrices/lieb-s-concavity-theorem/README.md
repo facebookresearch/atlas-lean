@@ -12,6 +12,6 @@ Strong subadditivity of von Neumann entropy, $S(\rho_{123}) + S(\rho_2) \le S(\r
 
 ## Related topics
 
-- Matrix concentration inequalities
-- Peierls and Klein inequalities
+- [Matrix concentration inequalities](../../../Probability/concentration-inequalities/matrix-concentration-inequalities/README.md)
+- [Peierls and Klein inequalities](../../../Analysis/operator-theory/eigenvalue-inequalities/peierls-and-klein-inequalities/README.md)
 - [Von Neumann's trace inequality](../von-neumann-s-trace-inequality/README.md)
