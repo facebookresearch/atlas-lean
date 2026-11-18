@@ -36,7 +36,7 @@ open Cslib.MachineLearning.LatentVariable.BernoulliMixture
 open MathlibExt.Probability.Statistics.Measurement
 
 /-- Finite-pattern normalization of the product-Bernoulli mass. -/
-private theorem bernPMF_sum_one {d : ℕ} (q : Fin d → ℝ) :
+theorem bernPMF_sum_one {d : ℕ} (q : Fin d → ℝ) :
     ∑ y : Fin d → Bool, bernPMF q y = 1 := by
   have hfac : (∑ y : Fin d → Bool, bernPMF q y)
       = ∏ j, ∑ b : Bool, (if b then q j else 1 - q j) := by
@@ -52,7 +52,7 @@ private theorem bernPMF_sum_one {d : ℕ} (q : Fin d → ℝ) :
   ring
 
 /-- The EM joint normalizes over patterns and latent states. -/
-private theorem joint_sum_one {d K : ℕ} (θ : ValidParams d K) :
+theorem joint_sum_one {d K : ℕ} (θ : ValidParams d K) :
     ∑ y : Fin d → Bool, ∑ k' : Fin K, joint θ y k' = 1 := by
   have hB : ∀ k' : Fin K, ∑ y : Fin d → Bool, bernPMF (θ.1.prob k') y = 1 :=
     fun k' => bernPMF_sum_one (θ.1.prob k')
@@ -62,7 +62,7 @@ private theorem joint_sum_one {d K : ℕ} (θ : ValidParams d K) :
   exact θ.2.weight_sum
 
 /-- Real reading of the locally independent law is the product-Bernoulli mass. -/
-private theorem localIndepPMF_toReal {d : ℕ} (q : Fin d → ℝ)
+theorem localIndepPMF_toReal {d : ℕ} (q : Fin d → ℝ)
     (hq0 : ∀ j, 0 ≤ q j) (hq1 : ∀ j, q j ≤ 1) (x : Fin d → Bool) :
     (localIndepPMF q hq0 hq1 x).toReal = bernPMF q x := by
   rw [localIndepPMF_apply, ENNReal.toReal_prod]

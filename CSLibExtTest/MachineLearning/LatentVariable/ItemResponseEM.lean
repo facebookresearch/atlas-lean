@@ -38,44 +38,6 @@ private noncomputable def testParams : ValidParams 1 2 :=
       fun _ _ => by show (0 : ℝ) < 1 / 2; norm_num,
       fun _ _ => by show (1 / 2 : ℝ) < 1; norm_num⟩⟩
 
-private theorem bernPMF_sum_one {d : ℕ} (q : Fin d → ℝ) :
-    ∑ y : Fin d → Bool, bernPMF q y = 1 := by
-  have hfac : (∑ y : Fin d → Bool, bernPMF q y)
-      = ∏ j, ∑ b : Bool, (if b then q j else 1 - q j) := by
-    have h := Finset.sum_prod_piFinset (ι := Fin d) (κ := Bool)
-      (s := Finset.univ)
-      (fun j b => if b then q j else 1 - q j)
-    rw [Fintype.piFinset_univ] at h
-    exact h
-  rw [hfac]
-  refine Finset.prod_eq_one (fun j _ => ?_)
-  rw [Fintype.sum_bool]
-  simp only [↓reduceIte, Bool.false_eq_true]
-  ring
-
-/-- The EM joint normalizes over patterns and latent states. -/
-private theorem joint_sum_one {d K : ℕ} (θ : ValidParams d K) :
-    ∑ y : Fin d → Bool, ∑ k' : Fin K, joint θ y k' = 1 := by
-  have hB : ∀ k' : Fin K, ∑ y : Fin d → Bool, bernPMF (θ.1.prob k') y = 1 :=
-    fun k' => bernPMF_sum_one (θ.1.prob k')
-  show (∑ y : Fin d → Bool, ∑ k' : Fin K, θ.1.weight k' * bernPMF (θ.1.prob k') y) = 1
-  rw [Finset.sum_comm]
-  simp_rw [← Finset.mul_sum, hB, mul_one]
-  exact θ.2.weight_sum
-
-/-- Real reading of the locally independent law is the product-Bernoulli mass. -/
-private theorem localIndepPMF_toReal {d : ℕ} (q : Fin d → ℝ)
-    (hq0 : ∀ j, 0 ≤ q j) (hq1 : ∀ j, q j ≤ 1) (x : Fin d → Bool) :
-    (localIndepPMF q hq0 hq1 x).toReal = bernPMF q x := by
-  rw [localIndepPMF_apply, ENNReal.toReal_prod]
-  unfold bernPMF
-  apply Finset.prod_congr rfl
-  intro i _
-  by_cases h : x i = true
-  · simp only [ite_eq_left h]
-    exact ENNReal.toReal_ofReal (hq0 i)
-  · simp only [ite_eq_right h]
-    exact ENNReal.toReal_ofReal (sub_nonneg.mpr (hq1 i))
 private theorem localIndepPMF_ne_top {d : ℕ} (q : Fin d → ℝ)
     (hq0 : ∀ j, 0 ≤ q j) (hq1 : ∀ j, q j ≤ 1) (x : Fin d → Bool) :
     localIndepPMF q hq0 hq1 x ≠ ⊤ := by
