@@ -33,4 +33,16 @@ example : (∫ s in (0:ℝ)..(1:ℝ), (-(1 - 1) * 3 * depotAmount 2 3 s -
         (depotAmount 2 3 0 + centralAmountEqual 1 2 3 0) :=
   budget_integral_equal
 
+/-- Distinct-rate budget derivative with a genuine absorption loss at `F = 1/2`. -/
+example : deriv (fun t => depotAmount 2 3 t + centralAmountDistinct (1/2) 2 3 1 t) 1 =
+    -(1 - 1/2) * 3 * depotAmount 2 3 1 - 1 * centralAmountDistinct (1/2) 2 3 1 1 :=
+  budget_deriv (by norm_num)
+
+/-- Canonical integrated budget at `F = 1/2`. -/
+example : (∫ s in (0:ℝ)..(1:ℝ), (-(1 - 1/2) * 3 * depotAmount 2 3 s -
+      1 * centralAmount (1/2) 2 3 1 s)) =
+      (depotAmount 2 3 1 + centralAmount (1/2) 2 3 1 1) -
+        (depotAmount 2 3 0 + centralAmount (1/2) 2 3 1 0) :=
+  budget_integral_canonical
+
 end MathlibExtTest.Biology.Biophysics.CompartmentKinetics.Absorption.Budget
