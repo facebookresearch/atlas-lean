@@ -166,3 +166,76 @@ example : StreamFlow.massComposition (StreamFlow.zero (Fin 2)) M23 = none := by
   simp [massFlow, StreamFlow.zero]
 
 end Engineering.Process.Streams.Tests
+
+namespace Engineering.Process.Streams.RescaleTests
+
+open StreamFlow
+
+/-- Two-species stream with flows `(1, 2)` for rescaling tests. -/
+def stream12 : StreamFlow (Fin 2) :=
+  ⟨![1, 2], by
+    intro i
+    fin_cases i <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one,
+      Matrix.head_cons]⟩
+
+-- Rescale flows (1, 2) by 60 (per-minute to per-hour): total 180,
+-- composition unchanged.
+example : (stream12.rescale (by norm_num : (0:ℝ) ≤ 60)).total = 180 := by
+  have h : stream12.total = 3 := by
+    show ∑ _ : Fin 2, (![1, 2] : Fin 2 → ℝ) _ = 3
+    rw [Fin.sum_univ_two]
+    norm_num [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons]
+  rw [total_rescale, h]
+  norm_num
+
+example :
+    (stream12.rescale (by norm_num : (0:ℝ) ≤ 60)).composition = stream12.composition := by
+  have h : stream12.total = 3 := by
+    show ∑ _ : Fin 2, (![1, 2] : Fin 2 → ℝ) _ = 3
+    rw [Fin.sum_univ_two]
+    norm_num [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons]
+  exact composition_rescale stream12 (by norm_num) (by rw [h]; norm_num)
+
+-- Identity and zero scales.
+example : (stream12.rescale (le_refl 0)).total = 0 := by
+  rw [total_rescale]
+  exact zero_mul _
+
+-- A concrete balance rescales: inflow (5, 0), outflow (2, 0), generation
+-- (0, 1), accumulation (3, 1).
+example :
+    IsBalance (StreamFlow.mk ![5, 0] (by
+        intro i
+        fin_cases i <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one,
+          Matrix.head_cons]))
+      (StreamFlow.mk ![2, 0] (by
+        intro i
+        fin_cases i <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one,
+          Matrix.head_cons]))
+      (StreamFlow.mk ![0, 1] (by
+        intro i
+        fin_cases i <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one,
+          Matrix.head_cons]))
+      (StreamFlow.mk ![3, 1] (by
+        intro i
+        fin_cases i <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one,
+          Matrix.head_cons])) := by
+  intro i
+  fin_cases i <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one,
+    Matrix.head_cons]
+
+-- Affine Celsius-to-Kelvin offset does not preserve ratios of an
+-- absolute-temperature law: (273 + 100) / (273 + 0) is not 100 / 1.
+example : ((273 + 100 : ℝ) / (273 + 0)) ≠ 100 / 1 := by norm_num
+
+-- A negative unit scale is outside the rescaling API: it cannot produce a
+-- stream from `rescale`, shown here by the failure of nonnegativity of the
+-- scaled flow of species 0.
+example : ¬ (0:ℝ) ≤ -1 * stream12.flow 0 := by
+  have h : stream12.flow 0 = (1:ℝ) := by
+    show (![1, 2] : Fin 2 → ℝ) 0 = 1
+    norm_num [Matrix.cons_val_zero]
+  rw [h]
+  norm_num
+
+end Engineering.Process.Streams.RescaleTests
