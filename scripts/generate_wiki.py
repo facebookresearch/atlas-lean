@@ -268,15 +268,16 @@ def code_only(text: str) -> str:
     out: list[str] = []
     n = len(text)
 
-    def read_so_far(size: int = 400) -> str:
-        # The end of what is read so far, its comments already blank, so the tokens before a string show.
-        pieces, length = [], 0
+    def read_so_far(significant: int = 1000) -> str:
+        # What is read so far, back to `significant` characters that are not blank, with each blank run (blanked
+        # comments included) shortened to one space: trivia of any length keeps the tokens before a string.
+        pieces, count = [], 0
         for piece in reversed(out):
             pieces.append(piece)
-            length += len(piece)
-            if length >= size:
+            count += len(piece) - piece.count(" ") - piece.count("\n") - piece.count("\t")
+            if count >= significant:
                 break
-        return "".join(reversed(pieces))[-size:]
+        return re.sub(r"\s+", " ", "".join(reversed(pieces)))
 
     def code(i: int, in_term: bool) -> int:
         # Code from i: to the end, or, in a term embedded in a string, past the brace that closes it.

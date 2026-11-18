@@ -88,7 +88,9 @@ class DocstringBefore(unittest.TestCase):
                         's! -- note\n "{(sorry : Nat)}"', 'm!"{(sorry : Nat)}"', 'f!"{(sorry : Nat)}"',
                         'throwError "x {(sorry : Nat)}"', 'throwErrorAt stx "x {(sorry : Nat)}"',
                         'throwErrorAt (f x) "x {(sorry : Nat)}"', 'dbg_trace "{(sorry : Nat)}"; 1',
-                        'trace[Meta.debug] "{(sorry : Nat)}"', 's!"{s!"{(sorry : Nat)}"}"']
+                        'trace[Meta.debug] "{(sorry : Nat)}"', 's!"{s!"{(sorry : Nat)}"}"',
+                        's! /- ' + "a long note " * 60 + '-/ "{(sorry : Nat)}"', 's!' + " " * 500 + '\n' * 50 + '"{(sorry : Nat)}"',
+                        'throwErrorAt /- ' + "x" * 600 + ' -/ stx -- ' + "y" * 600 + '\n "{(sorry : Nat)}"']
         ordinary = ['"{(sorry : Nat)}"', 'panic!"{(sorry : Nat)}"', 'panic! "{(sorry : Nat)}"', 'xs!"{(sorry : Nat)}"',
                     '-- s!\n "{(sorry : Nat)}"', '"s!" ++ "{(sorry : Nat)}"']
         for value in interpolated:
