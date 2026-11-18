@@ -28,6 +28,7 @@ on:
       - "theme/**"
       - "hooks/**"
       - "docs/BLUEPRINT.md"
+      - "docs/GRAPH.md"
       - ".github/workflows/blueprint-pages.yml"
       - ".github/autoform-ref"
       - "lean-toolchain"

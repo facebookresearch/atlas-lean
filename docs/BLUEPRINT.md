@@ -4,6 +4,9 @@ The explorer is a view of the maintained v2 libraries: `MathlibExt`,
 `CSLibExt`, `PhyslibExt`, and `WantedExt`. The archived `v1/` package and the
 standalone `Atlas/` developments are outside its scope.
 
+What a PR may change in the graph, and how to expand a node, is in
+[GRAPH.md](GRAPH.md).
+
 ## Source ownership
 
 - `blueprint/roadmap/`: committed mathematical articles and reading order.
@@ -112,7 +115,7 @@ model-driven audit, schedule, or required personal token.
 `Blueprint Pages` runs on every merge group, on pushes and manual runs of
 `main`, and on PRs that touch the wiki: `blueprint/`, the wiki scripts and
 their tests, `scripts/taxonomy.json`, `scripts/wiki-sync.json`, the site
-configuration (`mkdocs.yml`, `theme/`, `hooks/`), this document, the workflow,
+configuration (`mkdocs.yml`, `theme/`, `hooks/`), this document, `docs/GRAPH.md`, the workflow,
 `.github/autoform-ref`, or the toolchain pins (`lean-toolchain`,
 `lake-manifest.json`, `lakefile.toml`). A Lean-only PR skips it, because
 `lean-facts` turns a renamed or deleted declaration into an unlinked page rather
