@@ -15,7 +15,10 @@ import Mathlib.Tactic.NormNum
 
 Focused checks for `PhyslibExt.Mechanics.BeamStiffness`: a unit
 tip deflection produces end force `12 * EI / L ^ 3` at the tip,
-and rigid translation produces no end forces.
+rigid translation produces no end forces, the factored energy
+form is positive on a nonrigid tip deflection, the matrix is
+positive semidefinite at unit data, and the rotation mode is
+read back through the kernel-span characterization.
 
 These are elaboration and non-vacuity checks, not new results.
 -/
@@ -30,3 +33,21 @@ example : (beamStiffness 1 1 *ᵥ ![0, 0, 1, 0]) 2 = 12 := by
 example : (![1, 0, 1, 0] : Fin 4 → ℝ) ⬝ᵥ (beamStiffness 1 1 *ᵥ ![1, 0, 1, 0]) = 0 := by
   rw [beamStiffness_mulVec_translation]
   simp
+
+/-- Nonrigid unit tip deflection has energy value `12` from the
+factored quadratic form. -/
+example : (![0, 0, 1, 0] : Fin 4 → ℝ)
+    ⬝ᵥ (beamStiffness 1 1 *ᵥ ![0, 0, 1, 0]) = 12 := by
+  rw [beamStiffness_quad_form_factor]
+  norm_num
+
+/-- The unit-data stiffness matrix is positive semidefinite. -/
+example : (beamStiffness 1 1).PosSemidef :=
+  beamStiffness_posSemidef (by norm_num) (by norm_num)
+
+/-- The rotation mode is read back as a rigid-span element. -/
+example : ∃ a b : ℝ,
+    (![0, 1, 2, 1] : Fin 4 → ℝ)
+      = a • ![1, 0, 1, 0] + b • ![0, 1, 2, 1] :=
+  (beamStiffness_mulVec_eq_zero_iff (by norm_num) (by norm_num)
+    ![0, 1, 2, 1]).1 (beamStiffness_mulVec_rotation 5 2)
