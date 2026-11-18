@@ -32,7 +32,7 @@ example : queueLen 1 3 2 2 = 2 ∧ queueLen 1 3 2 3 = 0
 
 /-- Rates on the witness: red rate `1`, green rate `-2`. -/
 example : deriv (queueLen 1 3 2) 1 = 1 ∧ deriv (queueLen 1 3 2) (5 / 2) = -(3 - 1) :=
-  ⟨queueLen_deriv_red (lam := 1) (mu := 3) (R := 2) (t := 1) (by norm_num),
+  ⟨queueLen_deriv_red (lam := 1) (mu := 3) (R := 2) (t := 1) (by norm_num) (by norm_num),
     queueLen_deriv_green (lam := 1) (mu := 3) (R := 2) (G := 2) (t := 5 / 2)
       (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)⟩
 
@@ -50,3 +50,12 @@ example : queueLen 1 3 2 3 = 0 ∧ deriv (queueLen 1 3 2) (7 / 2) = 0 :=
 example : queueLen 1 3 2 (2 + 1) = 0 :=
   queueLen_cycle_end (lam := 1) (mu := 3) (R := 2) (G := 1)
     (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+
+/-- HasDerivAt forms on the witness: red rate , post-clearance . -/
+example : HasDerivAt (queueLen 1 3 2) 1 1
+    ∧ HasDerivAt (queueLen 1 3 2) 0 (7 / 2) :=
+  ⟨queueLen_hasDerivAt_red (lam := 1) (mu := 3) (R := 2) (t := 1)
+      (by norm_num) (by norm_num),
+    queueLen_hasDerivAt_after_clearance (lam := 1) (mu := 3) (R := 2)
+      (G := 2) (t := 7 / 2) (by norm_num) (by norm_num) (by norm_num)
+      (by norm_num) (by norm_num)⟩
