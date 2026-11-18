@@ -316,10 +316,12 @@ def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[st
         return candidates[match] if match else None
 
     depends: dict[Path, tuple[list[Path], list[Path]]] = {path: ([], []) for path in articles}
+    covered: set[Path] = set()
     for name, entry in dependencies.items():
         path = find(name)
         if path is None:
             continue
+        covered.add(path)
         seen = set(depends[path][0] + depends[path][1])
         for kind, bucket in (("statement", depends[path][0]), ("proof", depends[path][1])):
             for dependency in entry[kind]:
@@ -337,6 +339,12 @@ def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[st
         return titles[path]
 
     for path, (statement, proof) in depends.items():
+        if path not in covered and not lean_name(articles[path]):
+            # A source-backed article with no compiled row: its dependencies are unknown, so no section claims none.
+            body = path.read_text()
+            if has_lean_sections(body):
+                path.write_text(without_sections(body, LEAN_SECTIONS))
+            continue
         page = path.relative_to(wiki.VAULT)
 
         def link(other: Path) -> str:

@@ -746,6 +746,15 @@ class UnindexedIdentity(Vault):
         self.assertEqual(sync.annotation_key(sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][1]),
                          "MathlibExt.Algebra.Wanted:Deep.Space.wish")
 
+    def test_a_source_backed_article_without_a_compiled_row_claims_no_prerequisites(self) -> None:
+        source = self.tmp / "MathlibExt" / "Algebra" / "Wanted.lean"
+        source.write_text("/-- A wish. -/\ntheorem_wanted wish : True\n")
+        page = self.page("Algebra/wish.md", "# Wish\n\nA wish.\n\n## Depends on\n\nThis node has no prerequisites.\n")
+        self.annotate([self.about("Algebra/wish.md", extensions={"org.atlas-wiki": {"module": "MathlibExt.Algebra.Wanted", "name": "wish"}})])
+        counts, _ = sync.apply_lean_facts(SimpleNamespace(declarations={}), {})
+        self.assertEqual(counts["articles"], 1)
+        self.assertEqual(page.read_text(), "# Wish\n\nA wish.\n")
+
     def test_one_helper_builds_every_identity(self) -> None:
         # Keys are built only by generate_wiki.declaration_identity and read only by split_identity; a last name
         # component is taken only for titles and slugs, for annotations written before full names were kept,
