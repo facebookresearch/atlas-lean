@@ -51,5 +51,3 @@ theorem test_law_shiftLeft_preimage_root_branch {p : ℝ} (hp0 : 0 ≤ p) (hp1 :
   unfold shiftLeft at hinv
   rw [hinv, branchAt_eq_cylinder, law_cylinder hp0 hp1, cylinder_mass_singleton]
   simp
-
-
