@@ -66,9 +66,10 @@ lemma ct_design_entry {ι α ρ : Type*} [MeasurableSpace α] {s : Finset ι}
 
 
 
-/-- The finite CT design entry for basis element `phi i` on the
-ray with unit normal direction `xi` at signed distance `p`: the
-Euclidean Radon transform of the basis element on that ray. -/
+/-- The finite CT design entry for basis element `phi i` at
+Radon parameters `xi, p` (an arbitrary hyperplane level; the
+signed-distance reading additionally needs `‖xi‖ = 1`): the
+Euclidean Radon transform of the basis element. -/
 noncomputable def ctDesignEntry {ι : Type*} (phi : ι → EuclideanSpace ℝ (Fin 2) → ℝ)
     (xi : EuclideanSpace ℝ (Fin 2)) (p : ℝ) (i : ι) : ℝ :=
   MetaMathlibExt.euclideanRadonTransform (phi i) xi p
@@ -79,7 +80,7 @@ coefficient-weighted design entries, whenever every basis
 restriction to the ray hyperplane is integrable. -/
 lemma ct_design_radon_apply {ι : Type*} {s : Finset ι}
     (phi : ι → EuclideanSpace ℝ (Fin 2) → ℝ) (x : ι → ℝ)
-    (xi : EuclideanSpace ℝ (Fin 2)) (hxi : ‖xi‖ = 1) (p : ℝ)
+    (xi : EuclideanSpace ℝ (Fin 2)) (p : ℝ)
     (hint : ∀ i ∈ s, MeasureTheory.IntegrableOn (phi i)
       {y : EuclideanSpace ℝ (Fin 2) | @inner ℝ _ _ y xi = p}
       (MeasureTheory.Measure.euclideanHausdorffMeasure 1)) :

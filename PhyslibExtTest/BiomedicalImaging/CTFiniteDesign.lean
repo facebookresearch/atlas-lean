@@ -41,7 +41,7 @@ example : MetaMathlibExt.euclideanRadonTransform
       (EuclideanSpace.single (0 : Fin 2) (1:ℝ)) 3 =
     ∑ i ∈ (Finset.univ : Finset (Fin 2)), (1:ℝ) * ctDesignEntry (fun _ : Fin 2 => fun _ => (0:ℝ))
       (EuclideanSpace.single (0 : Fin 2) (1:ℝ)) 3 i :=
-  ct_design_radon_apply _ _ _ (by simp) _
+  ct_design_radon_apply _ _ _ _
     (fun i _ => by simpa using MeasureTheory.integrableOn_zero)
 
 end PhyslibExtTest.BiomedicalImaging.CTFiniteDesign
