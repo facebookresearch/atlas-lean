@@ -200,7 +200,7 @@ lemma one_lt_norm_reflectionCoefficient_iff (ZL : ℂ) (Z0 : ℝ) (hZ0 : 0 < Z0)
     have := hle.mp hle'
     linarith
 
-/-! ### B. Wave reflection and load power -/
+/-! ## B. Wave reflection and load power -/
 
 /-- Real part of the complex power at the load plane from the wave
 amplitudes: `Re (V * conj I) = (|Aplus| ^ 2 - |Aminus| ^ 2) / Z0`. This
@@ -332,7 +332,7 @@ theorem passiveLoadReflection (ZL : ℂ) (Z0 : ℝ) (hZ0 : 0 < Z0)
   · intro V I Aplus Aminus hV hI hload hA
     exact norm_reflected_le_norm_incident_iff V I Aplus Aminus ZL Z0 hZ0 hV hI hload hA
 
-/-! ### C. Resistive loads -/
+/-! ## C. Resistive loads -/
 
 /-- Real reflection coefficient `(R - Z0) / (R + Z0)` of a resistive
 load `R`. -/
@@ -383,7 +383,7 @@ theorem instantaneous_resistive_reflection (R Z0 : ℝ) (hZ0 : 0 < Z0)
   rw [div_mul_eq_mul_div, eq_div_iff hsum]
   exact hgoal
 
-/-! ### D. Special loads and the excluded load -/
+/-! ## D. Special loads and the excluded load -/
 
 /-- A matched load reflects nothing. -/
 lemma reflectionCoefficient_matched (Z0 : ℝ) :
