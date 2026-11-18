@@ -103,4 +103,11 @@ private theorem test_variance_ratio_values
   rw [← h.1, ← h.2]
   exact ⟨test_dependability_value, test_generalizability_value, test_strict_value⟩
 
+private theorem test_zero_variance_totalized :
+    dependabilityCoefficient 0 0 0 1 = 0
+      ∧ generalizabilityCoefficient 0 0 1 = 0 := by
+  simp only [dependabilityCoefficient, generalizabilityCoefficient,
+    MathlibExt.Probability.Statistics.LinearModel.ErrorsInVariables.attenuationFactor]
+  norm_num
+
 end MathlibExtTest.Probability.Statistics.Measurement

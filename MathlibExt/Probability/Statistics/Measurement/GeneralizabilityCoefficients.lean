@@ -48,13 +48,19 @@ open MathlibExt.Probability.Statistics.LinearModel.ErrorsInVariables
 
 /-- The generalizability coefficient `sigmaP2 / (sigmaP2 + sigmae2 / m)` of a crossed
 person-by-item design with `m` items: the variance ratio `attenuationFactor` with the relative
-error variance `sigmae2 / m` as the error variance. -/
+error variance `sigmae2 / m` as the error variance. At zero total
+variance the literature coefficient is undefined; following the
+upstream `attenuationFactor`, this definition uses the totalized
+value `0` there, which carries no coefficient meaning. -/
 noncomputable def generalizabilityCoefficient (sigmaP2 sigmae2 : ℝ) (m : ℕ) [NeZero m] : ℝ :=
   attenuationFactor sigmaP2 (sigmae2 / m)
 
 /-- The dependability coefficient `sigmaP2 / (sigmaP2 + (sigmaI2 + sigmae2) / m)` of a crossed
 person-by-item design with `m` items: the variance ratio `attenuationFactor` with the absolute
-error variance `(sigmaI2 + sigmae2) / m` as the error variance. -/
+error variance `(sigmaI2 + sigmae2) / m` as the error variance. At
+zero total variance the literature coefficient is undefined; as with
+`generalizabilityCoefficient`, the value is the totalized `0` and
+carries no coefficient meaning. -/
 noncomputable def dependabilityCoefficient (sigmaP2 sigmaI2 sigmae2 : ℝ) (m : ℕ) [NeZero m] : ℝ :=
   attenuationFactor sigmaP2 ((sigmaI2 + sigmae2) / m)
 
