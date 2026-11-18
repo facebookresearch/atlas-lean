@@ -208,7 +208,7 @@ private theorem fold_zip_sum {m : ℕ} (P : Fin m → Fin m → ℚ) (i : Fin m)
 
 /-- One tabulated Bellman step on a list of per-state values, in
 `List.finRange m` order. -/
-def tabStep {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin m))
+private def tabStep {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin m))
     (v : List ℚ) : List ℚ :=
   (List.finRange m).map fun i =>
     if i ∈ B then 1 else if i ∉ A then 0
