@@ -41,8 +41,7 @@ private def pattern01 : Fin 2 → Bool :=
 
 open scoped Classical in
 /-- The anti-correlated law on two items: mass `1 / 2` on each of patterns
-`10` and `01`, and mass `0` on patterns `00` and `11`. The normalization
-proof is `sorry` in this pin. -/
+`10` and `01`, and mass `0` on patterns `00` and `11`. -/
 private noncomputable def antiCorrelatedPMF : PMF (Fin 2 → Bool) :=
   PMF.ofFintype
     (fun x => if x = pattern10 ∨ x = pattern01
