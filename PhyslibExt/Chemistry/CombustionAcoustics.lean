@@ -8,11 +8,13 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.Topology.Order.IntermediateValue
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
@@ -46,11 +48,18 @@ coefficients are model inputs; no empirical adequacy is claimed.
   corollary `acousticModeEnergy_deriv_nonpos_of_no_heat`, and the
   zero-derivative case `hasDerivAt_acousticModeEnergy_conserved` and
   genuine conservation `acousticModeEnergy_eq_of_conserved`.
+- `Chemistry.CombustionAcoustics.critRatio_two_folds`: for
+  `B > 4 * Ta` the Semenov critical ratio `q(T) = (T - Ta) * exp (B / T)`
+  has two distinct stationary points above `Ta`, both nondegenerate
+  (`critRatio_two_folds_nondegenerate`); at `B = 4 * Ta` they merge
+  into one degenerate fold at `2 * Ta`, and for `B < 4 * Ta` there is
+  no stationary point above `Ta`.
 
 ## iii. Table of contents
 
 - A. Arrhenius equilibrium and trapping
 - B. Acoustic modal energy
+- C. Semenov critical ratio and folds
 
 ## iv. References
 
@@ -577,5 +586,441 @@ theorem acousticModeEnergy_eq_of_conserved
         0 * L * B t ^ 2 / 2)) = 0 := by simp
   rw [hzero] at h
   exact sub_eq_zero.mp h
+
+/-! ## C. Semenov critical ratio and folds -/
+
+/-- Semenov critical ratio `q(T) = (T - Ta) * exp(B / T)`: for
+`H, T > 0`, equilibrium of the Arrhenius rate is `G / H = q(T)`. -/
+noncomputable def critRatio (Ta B T : ℝ) : ℝ :=
+  (T - Ta) * Real.exp (B / T)
+
+private lemma critRatio_hasDerivAt_const_div {B T : ℝ} (hT : 0 < T) :
+    HasDerivAt (fun T : ℝ => B / T) (-B / T ^ 2) T := by
+  have hT' : T ≠ 0 := ne_of_gt hT
+  have hTn : ‖T‖ = T := by rw [Real.norm_eq_abs, abs_of_pos hT]
+  have hT2 : (0 : ℝ) < T ^ 2 := by positivity
+  have hT2' : T ^ 2 ≠ 0 := ne_of_gt hT2
+  rw [hasDerivAt_iff_tendsto]
+  have hEvt : Filter.EventuallyEq (nhds T)
+      (fun T' : ℝ => ‖T' - T‖⁻¹ * ‖B / T' - B / T - (T' - T) • (-B / T ^ 2)‖)
+      (fun T' : ℝ => ‖B‖ * ‖T' - T‖ / (T ^ 2 * ‖T'‖)) := by
+    have h0 : Filter.Eventually (fun T' : ℝ => T' ≠ 0) (nhds T) :=
+      continuousAt_id.eventually_ne hT'
+    refine h0.mono (fun T' hT'0 => ?_)
+    by_cases hTT : T' = T
+    · subst hTT
+      simp
+    · have hTT' : T' - T ≠ 0 := sub_ne_zero.mpr hTT
+      have hnT : ‖T' - T‖ ≠ 0 := norm_ne_zero_iff.mpr hTT'
+      have hn0 : ‖T'‖ ≠ 0 := norm_ne_zero_iff.mpr hT'0
+      have hm : T ^ 2 * ‖T'‖ ≠ 0 := mul_ne_zero hT2' hn0
+      have hTT2 : T ^ 2 * T' ≠ 0 := mul_ne_zero hT2' hT'0
+      have hT2n : ‖T ^ 2‖ = T ^ 2 := by rw [norm_pow, hTn]
+      have e : B / T' - B / T - (T' - T) * (-B / T ^ 2)
+          = B * (T' - T) ^ 2 / (T ^ 2 * T') := by
+        field_simp
+        ring
+      show ‖T' - T‖⁻¹ * ‖B / T' - B / T - (T' - T) • (-B / T ^ 2)‖
+        = ‖B‖ * ‖T' - T‖ / (T ^ 2 * ‖T'‖)
+      rw [smul_eq_mul, e, norm_div, norm_mul, norm_pow, norm_mul, hT2n]
+      field_simp
+  have hlim : Filter.Tendsto (fun T' : ℝ => ‖B‖ * ‖T' - T‖ / (T ^ 2 * ‖T'‖))
+      (nhds T) (nhds 0) := by
+    have hf : ContinuousAt (fun T' : ℝ => ‖B‖ * ‖T' - T‖) T :=
+      (continuousAt_id.sub continuousAt_const).norm.const_mul ‖B‖
+    have hg : ContinuousAt (fun T' : ℝ => T ^ 2 * ‖T'‖) T :=
+      continuousAt_id.norm.const_mul (T ^ 2)
+    have hgT : T ^ 2 * ‖T‖ ≠ 0 :=
+      mul_ne_zero hT2' (by rw [hTn]; exact hT')
+    have hdiv := hf.div hg hgT
+    have hval : (fun T' : ℝ => ‖B‖ * ‖T' - T‖) T
+        / (fun T' : ℝ => T ^ 2 * ‖T'‖) T = 0 := by
+      simp
+    have ht := hdiv.tendsto
+    rw [Pi.div_apply, hval] at ht
+    exact ht
+  exact Filter.Tendsto.congr' hEvt.symm hlim
+
+private lemma critRatio_hasDerivAt_sq {T : ℝ} :
+    HasDerivAt (fun s : ℝ => s ^ 2) (2 * T) T := by
+  have hmul : HasDerivAt (fun s : ℝ => s * s) (2 * T) T := by
+    have h := (hasDerivAt_id' T).mul (hasDerivAt_id' T)
+    have hval : (1 : ℝ) * T + T * 1 = 2 * T := by ring
+    rw [hval] at h
+    exact h
+  have heq : (fun s : ℝ => s ^ 2) =ᶠ[nhds T] (fun s : ℝ => s * s) := by
+    apply Filter.Eventually.of_forall
+    intro s
+    ring
+  exact hmul.congr_of_eventuallyEq heq
+
+private lemma critRatio_hasDerivAt_inv {T : ℝ} (hT : 0 < T) :
+    HasDerivAt (fun s : ℝ => s⁻¹) (-1 / T ^ 2) T := by
+  have h1 : HasDerivAt (fun s : ℝ => (1 : ℝ) / s) (-(1 : ℝ) / T ^ 2) T :=
+    critRatio_hasDerivAt_const_div hT
+  have heq : (fun s : ℝ => s⁻¹) =ᶠ[nhds T] (fun s : ℝ => (1 : ℝ) / s) := by
+    apply Filter.Eventually.of_forall
+    intro s
+    exact (one_div s).symm
+  have hval : (-(1 : ℝ) / T ^ 2) = (-1 / T ^ 2) := by ring
+  rw [hval] at h1
+  exact h1.congr_of_eventuallyEq heq
+
+private lemma critRatio_hasDerivAt_inv_sq {T : ℝ} (hT : 0 < T) :
+    HasDerivAt (fun s : ℝ => (s ^ 2)⁻¹)
+      ((-1 / T ^ 2) * T⁻¹ + T⁻¹ * (-1 / T ^ 2)) T := by
+  have hInv : HasDerivAt (fun s : ℝ => s⁻¹) (-1 / T ^ 2) T :=
+    critRatio_hasDerivAt_inv hT
+  have hmul : HasDerivAt (fun s : ℝ => s⁻¹ * s⁻¹)
+      ((-1 / T ^ 2) * T⁻¹ + T⁻¹ * (-1 / T ^ 2)) T :=
+    hInv.mul hInv
+  have heq : (fun s : ℝ => (s ^ 2)⁻¹) =ᶠ[nhds T]
+      (fun s : ℝ => s⁻¹ * s⁻¹) := by
+    apply Filter.Eventually.of_forall
+    intro s
+    show (s ^ 2)⁻¹ = s⁻¹ * s⁻¹
+    rw [← inv_pow]
+    ring
+  exact hmul.congr_of_eventuallyEq heq
+
+/-- Equilibrium is the critical-ratio equation: for `0 < H` and
+`0 < T`, `arrheniusRate G H B Ta T = 0 ↔ G / H = critRatio Ta B T`. -/
+lemma equilibrium_iff_critRatio {G H B Ta T : ℝ} (hH : 0 < H)
+    (hT : 0 < T) :
+    arrheniusRate G H B Ta T = 0 ↔ G / H = critRatio Ta B T := by
+  have hH' : H ≠ 0 := ne_of_gt hH
+  have _ : T ≠ 0 := ne_of_gt hT
+  have hexp : -B / T + B / T = 0 := by ring
+  have he : Real.exp (-B / T) * Real.exp (B / T) = 1 := by
+    rw [← Real.exp_add, hexp, Real.exp_zero]
+  have he' : Real.exp (B / T) * Real.exp (-B / T) = 1 := by
+    rw [mul_comm]; exact he
+  unfold arrheniusRate critRatio
+  rw [div_eq_iff hH']
+  constructor
+  · intro h
+    have h1 : G * Real.exp (-B / T) = H * (T - Ta) := by linarith [h]
+    calc G = G * (Real.exp (-B / T) * Real.exp (B / T)) := by rw [he]; ring
+      _ = (G * Real.exp (-B / T)) * Real.exp (B / T) := by ring
+      _ = (H * (T - Ta)) * Real.exp (B / T) := by rw [h1]
+      _ = (T - Ta) * Real.exp (B / T) * H := by ring
+  · intro h
+    have h2 : G * Real.exp (-B / T) = H * (T - Ta) := by
+      calc G * Real.exp (-B / T)
+          = ((T - Ta) * Real.exp (B / T) * H) * Real.exp (-B / T) := by rw [h]
+        _ = H * (T - Ta) * (Real.exp (B / T) * Real.exp (-B / T)) := by ring
+        _ = H * (T - Ta) := by rw [he']; ring
+    linarith [h2]
+
+/-- Derivative of the critical ratio for `T > 0`:
+`q'(T) = exp(B / T) * (T^2 - B * T + B * Ta) / T^2`. -/
+lemma critRatio_hasDerivAt {Ta B T : ℝ} (hT : 0 < T) :
+    HasDerivAt (critRatio Ta B)
+      (Real.exp (B / T) * (T ^ 2 - B * T + B * Ta) / T ^ 2) T := by
+  have hT' : T ≠ 0 := ne_of_gt hT
+  have hT2 : (0 : ℝ) < T ^ 2 := by positivity
+  have hT2' : T ^ 2 ≠ 0 := ne_of_gt hT2
+  have hBT : HasDerivAt (fun T : ℝ => B / T) (-B / T ^ 2) T :=
+    critRatio_hasDerivAt_const_div hT
+  have hexp : HasDerivAt (fun T : ℝ => Real.exp (B / T))
+      (Real.exp (B / T) * (-B / T ^ 2)) T := hBT.exp
+  have hu : HasDerivAt (fun T : ℝ => T - Ta) ((1 : ℝ) - 0) T :=
+    (hasDerivAt_id T).sub (hasDerivAt_const T Ta)
+  rw [sub_zero] at hu
+  have hmul : HasDerivAt (fun T : ℝ => (T - Ta) * Real.exp (B / T))
+      (1 * Real.exp (B / T) + (T - Ta) * (Real.exp (B / T) * (-B / T ^ 2))) T :=
+    hu.mul hexp
+  have hval : 1 * Real.exp (B / T) + (T - Ta) * (Real.exp (B / T) * (-B / T ^ 2))
+      = Real.exp (B / T) * (T ^ 2 - B * T + B * Ta) / T ^ 2 := by
+    field_simp
+    ring
+  rw [hval] at hmul
+  exact hmul
+
+/-- For `T > Ta > 0`, the critical ratio is stationary exactly at
+the roots of `T^2 - B * T + B * Ta = 0`. -/
+lemma critRatio_deriv_eq_zero_iff {Ta B T : ℝ} (hTa : 0 < Ta)
+    (hT : Ta < T) :
+    deriv (critRatio Ta B) T = 0 ↔ T ^ 2 - B * T + B * Ta = 0 := by
+  have hTpos : 0 < T := lt_trans hTa hT
+  have hderiv := (critRatio_hasDerivAt (Ta := Ta) (B := B) hTpos).deriv
+  rw [hderiv]
+  have hexp : Real.exp (B / T) ≠ 0 := (Real.exp_pos _).ne'
+  have hT2pos : (0 : ℝ) < T ^ 2 := by positivity
+  have hT2 : (T : ℝ) ^ 2 ≠ 0 := ne_of_gt hT2pos
+  simp only [div_eq_zero_iff, mul_eq_zero, hexp, hT2, or_false, false_or]
+
+/-- Two ordinary folds: for `0 < Ta` and `B > 4 * Ta`, the two
+temperatures `T± = (B ± √(B^2 - 4 * B * Ta)) / 2` are distinct,
+both exceed `Ta`, ordered `Ta < T- < T+`, and both are stationary
+points of the critical ratio. -/
+theorem critRatio_two_folds {Ta B : ℝ} (hTa : 0 < Ta)
+    (hB : 4 * Ta < B) :
+    deriv (critRatio Ta B) ((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) = 0 ∧
+    deriv (critRatio Ta B) ((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) = 0 ∧
+    Ta < (B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2 ∧
+    (B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2 <
+      (B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2 := by
+  have h4Ta : (0 : ℝ) < 4 * Ta := by linarith [hTa]
+  have hBpos : 0 < B := lt_trans h4Ta hB
+  have hB4 : (0 : ℝ) < B - 4 * Ta := sub_pos.mpr hB
+  have hD : (0 : ℝ) < B ^ 2 - 4 * B * Ta := by
+    have e : B ^ 2 - 4 * B * Ta = B * (B - 4 * Ta) := by ring
+    rw [e]
+    exact mul_pos hBpos hB4
+  have hs : (0 : ℝ) < Real.sqrt (B ^ 2 - 4 * B * Ta) := Real.sqrt_pos.mpr hD
+  have hsq : Real.sqrt (B ^ 2 - 4 * B * Ta) ^ 2 = B ^ 2 - 4 * B * Ta :=
+    Real.sq_sqrt hD.le
+  have hB2 : (0 : ℝ) < B - 2 * Ta := by linarith [hB, hTa]
+  have hsq_lt : Real.sqrt (B ^ 2 - 4 * B * Ta) < B - 2 * Ta := by
+    rw [Real.sqrt_lt' hB2]
+    have e : B ^ 2 - 4 * B * Ta = (B - 2 * Ta) ^ 2 - 4 * Ta ^ 2 := by ring
+    have h4T : (0 : ℝ) < 4 * Ta ^ 2 := by positivity
+    rw [e]
+    linarith [h4T]
+  have hTm : Ta < (B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2 := by
+    linarith [hsq_lt]
+  have hord : (B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2
+      < (B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2 := by linarith [hs]
+  have hTp : Ta < (B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2 :=
+    lt_trans hTm hord
+  have hQm : ((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) ^ 2
+      - B * ((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) + B * Ta = 0 := by
+    have e : ((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) ^ 2
+        - B * ((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) + B * Ta
+        = (Real.sqrt (B ^ 2 - 4 * B * Ta) ^ 2 - (B ^ 2 - 4 * B * Ta)) / 4 := by
+      ring
+    rw [e, hsq]
+    ring
+  have hQp : ((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) ^ 2
+      - B * ((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) + B * Ta = 0 := by
+    have e : ((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) ^ 2
+        - B * ((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) + B * Ta
+        = (Real.sqrt (B ^ 2 - 4 * B * Ta) ^ 2 - (B ^ 2 - 4 * B * Ta)) / 4 := by
+      ring
+    rw [e, hsq]
+    ring
+  have hdm := (critRatio_deriv_eq_zero_iff hTa hTm).mpr hQm
+  have hdp := (critRatio_deriv_eq_zero_iff hTa hTp).mpr hQp
+  exact ⟨hdm, hdp, hTm, hord⟩
+
+/-- Degenerate fold: at `B = 4 * Ta` there is exactly one stationary
+point above `Ta`, at `T = 2 * Ta`; it is not two ordinary folds. -/
+theorem critRatio_degenerate_fold {Ta : ℝ} (hTa : 0 < Ta) {T : ℝ}
+    (hT : Ta < T) :
+    deriv (critRatio Ta (4 * Ta)) T = 0 ↔ T = 2 * Ta := by
+  have hiff :=
+    critRatio_deriv_eq_zero_iff (B := 4 * Ta) hTa hT
+  rw [hiff]
+  have e : T ^ 2 - 4 * Ta * T + 4 * Ta * Ta = (T - 2 * Ta) ^ 2 := by ring
+  rw [e, sq_eq_zero_iff, sub_eq_zero]
+
+/-- No critical point: for `B < 4 * Ta`, the critical ratio has no
+stationary point above `Ta`. (Algebraically,
+`T^2 - B * T + B * Ta = (T - 2 * Ta)^2 + (T - Ta) * (4 * Ta - B)`.) -/
+theorem critRatio_no_critical_of_lt {Ta B : ℝ} (hTa : 0 < Ta)
+    (hB : B < 4 * Ta) {T : ℝ} (hT : Ta < T) :
+    deriv (critRatio Ta B) T ≠ 0 := by
+  have hiff := critRatio_deriv_eq_zero_iff (B := B) hTa hT
+  intro h
+  rw [hiff] at h
+  have e : T ^ 2 - B * T + B * Ta
+      = (T - 2 * Ta) ^ 2 + (T - Ta) * (4 * Ta - B) := by ring
+  rw [e] at h
+  have hpos1 : (0 : ℝ) ≤ (T - 2 * Ta) ^ 2 := sq_nonneg _
+  have hpos2 : (0 : ℝ) < (T - Ta) * (4 * Ta - B) :=
+    mul_pos (sub_pos.mpr hT) (sub_pos.mpr hB)
+  have hpos : (0 : ℝ) < (T - 2 * Ta) ^ 2 + (T - Ta) * (4 * Ta - B) :=
+    add_pos_of_nonneg_of_pos hpos1 hpos2
+  exact absurd h (ne_of_gt hpos)
+
+/-- At a stationary point the derivative function
+`s ↦ exp (B / s) * (s^2 - B * s + B * Ta) / s^2` (which agrees with
+`deriv (critRatio Ta B)` at every positive point) has derivative
+`exp (B / T) * (2 * T - B) / T^2`: the terms containing the
+vanishing polynomial drop out. -/
+lemma critRatio_deriv_hasDerivAt_at_root {Ta B T : ℝ} (hT : 0 < T)
+    (hP : T ^ 2 - B * T + B * Ta = 0) :
+    HasDerivAt (fun s : ℝ => Real.exp (B / s) * (s ^ 2 - B * s + B * Ta) / s ^ 2)
+      (Real.exp (B / T) * (2 * T - B) / T ^ 2) T := by
+  have hT' : T ≠ 0 := ne_of_gt hT
+  have hT2 : (0 : ℝ) < T ^ 2 := by positivity
+  have hT2' : T ^ 2 ≠ 0 := ne_of_gt hT2
+  have hBT : HasDerivAt (fun s : ℝ => B / s) (-B / T ^ 2) T :=
+    critRatio_hasDerivAt_const_div hT
+  have hE : HasDerivAt (fun s : ℝ => Real.exp (B / s))
+      (Real.exp (B / T) * (-B / T ^ 2)) T := hBT.exp
+  have hsq : HasDerivAt (fun s : ℝ => s ^ 2) (2 * T) T := critRatio_hasDerivAt_sq
+  have hBs : HasDerivAt (fun s : ℝ => B * s) B T := by
+    have h := HasDerivAt.const_mul B (hasDerivAt_id' T)
+    have hval : B * (1 : ℝ) = B := by ring
+    rw [hval] at h
+    exact h
+  have hsub : HasDerivAt (fun s : ℝ => s ^ 2 - B * s) (2 * T - B) T :=
+    hsq.sub hBs
+  have hconst : HasDerivAt (fun _ : ℝ => B * Ta) (0 : ℝ) T :=
+    hasDerivAt_const T (B * Ta)
+  have hPderiv : HasDerivAt (fun s : ℝ => s ^ 2 - B * s + B * Ta) (2 * T - B) T := by
+    have hadd := hsub.add hconst
+    have hval : (2 * T - B) + (0 : ℝ) = 2 * T - B := by ring
+    rw [hval] at hadd
+    exact hadd
+  have hN : HasDerivAt (fun s : ℝ => Real.exp (B / s) * (s ^ 2 - B * s + B * Ta))
+      ((Real.exp (B / T) * (-B / T ^ 2)) * (T ^ 2 - B * T + B * Ta)
+        + Real.exp (B / T) * (2 * T - B)) T :=
+    hE.mul hPderiv
+  have hI := critRatio_hasDerivAt_inv_sq hT
+  have hG : HasDerivAt
+      (fun s : ℝ => (Real.exp (B / s) * (s ^ 2 - B * s + B * Ta)) * (s ^ 2)⁻¹)
+      (((Real.exp (B / T) * (-B / T ^ 2)) * (T ^ 2 - B * T + B * Ta)
+        + Real.exp (B / T) * (2 * T - B)) * (T ^ 2)⁻¹
+        + (Real.exp (B / T) * (T ^ 2 - B * T + B * Ta))
+          * ((-1 / T ^ 2) * T⁻¹ + T⁻¹ * (-1 / T ^ 2))) T :=
+    hN.mul hI
+  have heq : (fun s : ℝ => Real.exp (B / s) * (s ^ 2 - B * s + B * Ta) / s ^ 2)
+      =ᶠ[nhds T]
+      (fun s : ℝ => (Real.exp (B / s) * (s ^ 2 - B * s + B * Ta)) * (s ^ 2)⁻¹) := by
+    apply Filter.Eventually.of_forall
+    intro s
+    show Real.exp (B / s) * (s ^ 2 - B * s + B * Ta) / s ^ 2
+      = (Real.exp (B / s) * (s ^ 2 - B * s + B * Ta)) * (s ^ 2)⁻¹
+    rw [div_eq_mul_inv]
+  have hGdiv := hG.congr_of_eventuallyEq heq
+  have hval : ((Real.exp (B / T) * (-B / T ^ 2)) * (T ^ 2 - B * T + B * Ta)
+        + Real.exp (B / T) * (2 * T - B)) * (T ^ 2)⁻¹
+        + (Real.exp (B / T) * (T ^ 2 - B * T + B * Ta))
+          * ((-1 / T ^ 2) * T⁻¹ + T⁻¹ * (-1 / T ^ 2))
+      = Real.exp (B / T) * (2 * T - B) / T ^ 2 := by
+    rw [hP]
+    field_simp
+    ring
+  rw [hval] at hGdiv
+  exact hGdiv
+
+/-- The two ordinary folds are nondegenerate: the second
+derivative of the critical ratio is nonzero at both fold
+temperatures (it equals `exp (B / T±) * (±√(B^2 - 4 * B * Ta)) /
+T±^2`). -/
+theorem critRatio_two_folds_nondegenerate {Ta B : ℝ} (hTa : 0 < Ta)
+    (hB : 4 * Ta < B) :
+    deriv (fun s : ℝ => deriv (critRatio Ta B) s)
+        ((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) ≠ 0 ∧
+    deriv (fun s : ℝ => deriv (critRatio Ta B) s)
+        ((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) ≠ 0 := by
+  obtain ⟨hdm, hdp, hTm, hord⟩ := critRatio_two_folds hTa hB
+  have hTp : Ta < (B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2 :=
+    lt_trans hTm hord
+  have hQm : ((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) ^ 2
+      - B * ((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) + B * Ta = 0 :=
+    (critRatio_deriv_eq_zero_iff hTa hTm).mp hdm
+  have hQp : ((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) ^ 2
+      - B * ((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) + B * Ta = 0 :=
+    (critRatio_deriv_eq_zero_iff hTa hTp).mp hdp
+  have hTmPos : 0 < (B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2 :=
+    lt_trans hTa hTm
+  have hTpPos : 0 < (B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2 :=
+    lt_trans hTa hTp
+  have h4Ta : (0 : ℝ) < 4 * Ta := by linarith [hTa]
+  have hBpos : 0 < B := lt_trans h4Ta hB
+  have hB4 : (0 : ℝ) < B - 4 * Ta := sub_pos.mpr hB
+  have hD : (0 : ℝ) < B ^ 2 - 4 * B * Ta := by
+    have e : B ^ 2 - 4 * B * Ta = B * (B - 4 * Ta) := by ring
+    rw [e]
+    exact mul_pos hBpos hB4
+  have hs : (0 : ℝ) < Real.sqrt (B ^ 2 - 4 * B * Ta) := Real.sqrt_pos.mpr hD
+  have hHm := critRatio_deriv_hasDerivAt_at_root hTmPos hQm
+  have hEvtM : (fun s : ℝ => deriv (critRatio Ta B) s)
+      =ᶠ[nhds ((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2)]
+      (fun s : ℝ => Real.exp (B / s) * (s ^ 2 - B * s + B * Ta) / s ^ 2) := by
+    have hPos : ∀ᶠ s in nhds ((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2), 0 < s :=
+      isOpen_Ioi.eventually_mem hTmPos
+    refine hPos.mono (fun s hs0 => ?_)
+    exact (critRatio_hasDerivAt (Ta := Ta) (B := B) hs0).deriv
+  have hHm' := hHm.congr_of_eventuallyEq hEvtM
+  have hDerivM : deriv (fun s : ℝ => deriv (critRatio Ta B) s)
+        ((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2)
+      = Real.exp (B / ((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2))
+        * (2 * ((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) - B)
+        / (((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) ^ 2) := hHm'.deriv
+  have eM : 2 * ((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) - B
+      = -Real.sqrt (B ^ 2 - 4 * B * Ta) := by ring
+  have h2Tm : 2 * ((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) - B ≠ 0 := by
+    rw [eM]
+    exact neg_ne_zero.mpr (ne_of_gt hs)
+  have hexpM : Real.exp (B / ((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2)) ≠ 0 :=
+    (Real.exp_pos _).ne'
+  have hT2M : (((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) ^ 2 : ℝ) ≠ 0 := by
+    have hpos : (0 : ℝ) < ((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) ^ 2 := by
+      positivity
+    exact ne_of_gt hpos
+  have hNeM : Real.exp (B / ((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2))
+        * (2 * ((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) - B)
+        / (((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) ^ 2) ≠ 0 :=
+    div_ne_zero (mul_ne_zero hexpM h2Tm) hT2M
+  have hConM : deriv (fun s : ℝ => deriv (critRatio Ta B) s)
+        ((B - Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) ≠ 0 := by
+    rw [hDerivM]
+    exact hNeM
+  have hHp := critRatio_deriv_hasDerivAt_at_root hTpPos hQp
+  have hEvtP : (fun s : ℝ => deriv (critRatio Ta B) s)
+      =ᶠ[nhds ((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2)]
+      (fun s : ℝ => Real.exp (B / s) * (s ^ 2 - B * s + B * Ta) / s ^ 2) := by
+    have hPos : ∀ᶠ s in nhds ((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2), 0 < s :=
+      isOpen_Ioi.eventually_mem hTpPos
+    refine hPos.mono (fun s hs0 => ?_)
+    exact (critRatio_hasDerivAt (Ta := Ta) (B := B) hs0).deriv
+  have hHp' := hHp.congr_of_eventuallyEq hEvtP
+  have hDerivP : deriv (fun s : ℝ => deriv (critRatio Ta B) s)
+        ((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2)
+      = Real.exp (B / ((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2))
+        * (2 * ((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) - B)
+        / (((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) ^ 2) := hHp'.deriv
+  have eP : 2 * ((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) - B
+      = Real.sqrt (B ^ 2 - 4 * B * Ta) := by ring
+  have h2Tp : 2 * ((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) - B ≠ 0 := by
+    rw [eP]
+    exact ne_of_gt hs
+  have hexpP : Real.exp (B / ((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2)) ≠ 0 :=
+    (Real.exp_pos _).ne'
+  have hT2P : (((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) ^ 2 : ℝ) ≠ 0 := by
+    have hpos : (0 : ℝ) < ((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) ^ 2 := by
+      positivity
+    exact ne_of_gt hpos
+  have hNeP : Real.exp (B / ((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2))
+        * (2 * ((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) - B)
+        / (((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) ^ 2) ≠ 0 :=
+    div_ne_zero (mul_ne_zero hexpP h2Tp) hT2P
+  have hConP : deriv (fun s : ℝ => deriv (critRatio Ta B) s)
+        ((B + Real.sqrt (B ^ 2 - 4 * B * Ta)) / 2) ≠ 0 := by
+    rw [hDerivP]
+    exact hNeP
+  exact ⟨hConM, hConP⟩
+
+/-- The degenerate fold is degenerate: at `B = 4 * Ta` the second
+derivative of the critical ratio vanishes at `T = 2 * Ta`. -/
+theorem critRatio_degenerate_fold_second {Ta : ℝ} (hTa : 0 < Ta) :
+    deriv (fun s : ℝ => deriv (critRatio Ta (4 * Ta)) s) (2 * Ta) = 0 := by
+  have hPos : 0 < 2 * Ta := by linarith [hTa]
+  have hP : (2 * Ta) ^ 2 - (4 * Ta) * (2 * Ta) + (4 * Ta) * Ta = 0 := by ring
+  have hH := critRatio_deriv_hasDerivAt_at_root (Ta := Ta) (B := 4 * Ta) hPos hP
+  have hEvt : (fun s : ℝ => deriv (critRatio Ta (4 * Ta)) s)
+      =ᶠ[nhds (2 * Ta)]
+      (fun s : ℝ => Real.exp ((4 * Ta) / s) * (s ^ 2 - (4 * Ta) * s + (4 * Ta) * Ta)
+        / s ^ 2) := by
+    have hPosEvt : ∀ᶠ s in nhds (2 * Ta), 0 < s :=
+      isOpen_Ioi.eventually_mem hPos
+    refine hPosEvt.mono (fun s hs0 => ?_)
+    exact (critRatio_hasDerivAt (Ta := Ta) (B := 4 * Ta) hs0).deriv
+  have hH' := hH.congr_of_eventuallyEq hEvt
+  have hDeriv : deriv (fun s : ℝ => deriv (critRatio Ta (4 * Ta)) s) (2 * Ta)
+      = Real.exp ((4 * Ta) / (2 * Ta)) * (2 * (2 * Ta) - 4 * Ta) / (2 * Ta) ^ 2 :=
+    hH'.deriv
+  have e : 2 * (2 * Ta) - 4 * Ta = 0 := by ring
+  have hval : Real.exp ((4 * Ta) / (2 * Ta)) * (2 * (2 * Ta) - 4 * Ta)
+      / (2 * Ta) ^ 2 = 0 := by
+    rw [e]
+    simp
+  rw [hDeriv]
+  exact hval
 
 end Chemistry.CombustionAcoustics

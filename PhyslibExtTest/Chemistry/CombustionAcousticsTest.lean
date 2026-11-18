@@ -32,6 +32,7 @@ No new definitions or results are introduced here.
 ## iii. Table of contents
 
 - A. Unit-parameter equilibrium
+- B. Semenov critical-ratio folds
 
 ## iv. References
 
@@ -398,3 +399,28 @@ example :
     ring
   rw [e, intervalIntegral.integral_const_mul, hint]
   ring
+
+/-- The lower fold for `Ta = 1`, `B = 5`: stationary at
+`(5 - √(25 - 20)) / 2`, above `Ta`. -/
+example : deriv (Chemistry.CombustionAcoustics.critRatio 1 5)
+    ((5 - Real.sqrt (5 ^ 2 - 4 * 5 * 1)) / 2) = 0 :=
+  (Chemistry.CombustionAcoustics.critRatio_two_folds one_pos (by norm_num)).1
+
+example : (1 : ℝ) < (5 - Real.sqrt (5 ^ 2 - 4 * 5 * 1)) / 2 :=
+  (Chemistry.CombustionAcoustics.critRatio_two_folds one_pos (by norm_num)).2.2.1
+
+/-- No stationary point above `Ta = 1` for `B = 3 < 4`; checked at
+`T = 2`. -/
+example : deriv (Chemistry.CombustionAcoustics.critRatio 1 3) 2 ≠ 0 :=
+  Chemistry.CombustionAcoustics.critRatio_no_critical_of_lt one_pos
+    (by norm_num) (by norm_num)
+
+/-- At `B = 4 * Ta` the unique stationary point above `Ta = 1` is
+`T = 2`, and the second derivative vanishes there. -/
+example : deriv (Chemistry.CombustionAcoustics.critRatio 1 (4 * 1)) 2 = 0 :=
+  (Chemistry.CombustionAcoustics.critRatio_degenerate_fold one_pos
+    (by norm_num)).mpr (by norm_num)
+
+example : deriv (fun s : ℝ =>
+    deriv (Chemistry.CombustionAcoustics.critRatio 1 (4 * 1)) s) (2 * 1) = 0 :=
+  Chemistry.CombustionAcoustics.critRatio_degenerate_fold_second one_pos
