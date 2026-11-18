@@ -222,7 +222,7 @@ theorem descriptor_existsUnique_of_consistentPair {n m : Type*} [Fintype n] [Fin
 /-- **Consistency is necessary.** An initial pair that is not
 consistent at time `t₀` is reached by no solution of the descriptor
 system; no invertibility of `D` is needed. -/
-theorem not_exists_solution_of_not_consistentPair {n m : Type*} [Fintype n] [Fintype m]
+lemma not_exists_solution_of_not_consistentPair {n m : Type*} [Fintype n] [Fintype m]
     (A : Matrix n n ℝ) (B : Matrix n m ℝ) (C : Matrix m n ℝ) (D : Matrix m m ℝ)
     (f : ℝ → n → ℝ) (g : ℝ → m → ℝ) (t₀ : ℝ) (x₀ : n → ℝ) (y₀ : m → ℝ)
     (hcons : ¬ consistentPair C D (g t₀) x₀ y₀) :
@@ -236,7 +236,7 @@ theorem not_exists_solution_of_not_consistentPair {n m : Type*} [Fintype n] [Fin
 /-- **The algebraic component need not be differentiable.** For the
 scalar system `x' = 0`, `0 = y + |t|`, a solution exists and its
 algebraic component is not differentiable at `0`. -/
-theorem exists_solution_algebraic_not_differentiableAt :
+lemma exists_solution_algebraic_not_differentiableAt :
     ∃ x : ℝ → Fin 1 → ℝ, ∃ y : ℝ → Fin 1 → ℝ,
       satisfiesDescriptorSystem (0 : Matrix (Fin 1) (Fin 1) ℝ) 0 0 1
         (fun _ _ => 0) (fun t _ => |t|) x y ∧
