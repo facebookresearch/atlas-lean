@@ -102,9 +102,9 @@ def consistentPair {n m : Type*} [Fintype n] [Fintype m]
 /-- A trajectory pair satisfies the descriptor system when `x` is
 differentiable and, at every time, the differential equation and the
 algebraic equation both hold. No regularity is required of `y`. -/
-def satisfiesDescriptorSystem {n m : Type*} [Fintype n] [Fintype m] [DecidableEq m]
+def satisfiesDescriptorSystem {n m : Type*} [Fintype n] [Fintype m]
     (A : Matrix n n ℝ) (B : Matrix n m ℝ) (C : Matrix m n ℝ) (D : Matrix m m ℝ)
-    [Invertible D] (f : ℝ → n → ℝ) (g : ℝ → m → ℝ)
+    (f : ℝ → n → ℝ) (g : ℝ → m → ℝ)
     (x : ℝ → n → ℝ) (y : ℝ → m → ℝ) : Prop :=
   Differentiable ℝ x ∧
     (∀ t : ℝ, deriv x t = A *ᵥ x t + B *ᵥ y t + f t) ∧
@@ -257,9 +257,9 @@ lemma algebraicVariable_eq_reconstruction_of_satisfiesReducedSystem
 /-- Every value of a descriptor trajectory is a consistent pair for
 the forcing value at that time. -/
 lemma consistentPair_of_satisfiesDescriptorSystem
-    {n m : Type*} [Fintype n] [Fintype m] [DecidableEq m]
+    {n m : Type*} [Fintype n] [Fintype m]
     (A : Matrix n n ℝ) (B : Matrix n m ℝ) (C : Matrix m n ℝ) (D : Matrix m m ℝ)
-    [Invertible D] (f : ℝ → n → ℝ) (g : ℝ → m → ℝ)
+    (f : ℝ → n → ℝ) (g : ℝ → m → ℝ)
     (x : ℝ → n → ℝ) (y : ℝ → m → ℝ)
     (h : satisfiesDescriptorSystem A B C D f g x y) (t₀ : ℝ) :
     consistentPair C D (g t₀) (x t₀) (y t₀) := by
