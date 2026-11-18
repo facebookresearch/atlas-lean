@@ -41,6 +41,11 @@ example : uniformBeamMoment 3 1 4 0 = 0
     uniformBeam_endpoints (w := 3) (EI := 1) (L := 4) (by norm_num)
   refine ⟨h1, h2, ?_, ?_⟩ <;> norm_num at h3 h4 ⊢ <;> assumption
 
+/-- End moments need no rigidity nondegeneracy hypothesis. -/
+example : uniformBeamMoment 3 0 4 0 = 0
+    ∧ uniformBeamMoment 3 0 4 4 = 0 :=
+  ⟨uniformBeamMoment_zero, uniformBeamMoment_at_right⟩
+
 /-- Equilibrium law at the concrete witness, through the
 standalone theorem. -/
 example : deriv (uniformBeamShear 3 1 4) = fun _ => -(3 : ℝ) :=

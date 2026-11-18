@@ -70,7 +70,7 @@ form used by the `EulerBernoulliBeam` API:
 `M = -EI * iteratedDeriv 2 y`. This is the same function as
 `uniformBeamMoment`, whose definition uses nested `deriv`;
 the bridge lets clients move between the two encodings. -/
-theorem uniformBeamMoment_eq_iteratedDeriv (w EI L x : ℝ) :
+lemma uniformBeamMoment_eq_iteratedDeriv (w EI L x : ℝ) :
     uniformBeamMoment w EI L x
       = -EI * iteratedDeriv 2 (uniformLoadDeflection w EI L) x := by
   have h2 : iteratedDeriv 2 (uniformLoadDeflection w EI L)
@@ -84,7 +84,7 @@ theorem uniformBeamMoment_eq_iteratedDeriv (w EI L x : ℝ) :
 noncomputable def uniformBeamShear (w EI L x : ℝ) : ℝ :=
   deriv (uniformBeamMoment w EI L) x
 
-private theorem hasDerivAt_quartic_aux {L x : ℝ} :
+private lemma hasDerivAt_quartic_aux {L x : ℝ} :
     HasDerivAt (fun x : ℝ => L ^ 3 * x - 2 * L * x ^ 3 + x ^ 4)
       (L ^ 3 - 6 * L * x ^ 2 + 4 * x ^ 3) x := by
   have hid : HasDerivAt (fun x : ℝ => x) 1 x := hasDerivAt_id' x
@@ -100,7 +100,7 @@ private theorem hasDerivAt_quartic_aux {L x : ℝ} :
   convert h using 2
   ring
 
-private theorem deriv_uniformLoadDeflection_aux {w EI L : ℝ} :
+private lemma deriv_uniformLoadDeflection_aux {w EI L : ℝ} :
     deriv (uniformLoadDeflection w EI L)
       = fun x => w / (24 * EI) * (L ^ 3 - 6 * L * x ^ 2 + 4 * x ^ 3) := by
   funext x
@@ -117,7 +117,7 @@ private theorem deriv_uniformLoadDeflection_aux {w EI L : ℝ} :
   have h := HasDerivAt.congr_of_eventuallyEq hscaled hev
   exact h.deriv
 
-private theorem hasDerivAt_cubic_aux {L x : ℝ} :
+private lemma hasDerivAt_cubic_aux {L x : ℝ} :
     HasDerivAt (fun x : ℝ => L ^ 3 - 6 * L * x ^ 2 + 4 * x ^ 3)
       (-12 * L * x + 12 * x ^ 2) x := by
   have hC : HasDerivAt (fun _ : ℝ => L ^ 3) 0 x := hasDerivAt_const x _
@@ -133,7 +133,7 @@ private theorem hasDerivAt_cubic_aux {L x : ℝ} :
   convert h using 1
   ring
 
-private theorem deriv2_uniformLoadDeflection_aux {w EI L : ℝ} :
+private lemma deriv2_uniformLoadDeflection_aux {w EI L : ℝ} :
     deriv (deriv (uniformLoadDeflection w EI L))
       = fun x => w / (24 * EI) * (-12 * L * x + 12 * x ^ 2) := by
   rw [deriv_uniformLoadDeflection_aux]
@@ -154,7 +154,7 @@ theorem uniformBeamMoment_eq {w EI L x : ℝ} (hEI : EI ≠ 0) :
   field_simp
   ring
 
-private theorem uniformBeamMoment_fun_aux {w EI L : ℝ} (hEI : EI ≠ 0) :
+private lemma uniformBeamMoment_fun_aux {w EI L : ℝ} (hEI : EI ≠ 0) :
     uniformBeamMoment w EI L = fun x => (w / 2) * (L * x - x ^ 2) := by
   funext x
   exact uniformBeamMoment_eq hEI
@@ -213,15 +213,21 @@ theorem uniformBeam_endpoints {w EI L : ℝ} (hEI : EI ≠ 0) :
         = (w / 2) * (-2) := h.deriv
       _ = -w := by ring
 
-/-- Zero bending moment at the left support. -/
-theorem uniformBeamMoment_zero {w EI L : ℝ} (hEI : EI ≠ 0) :
-    uniformBeamMoment w EI L 0 = 0 :=
-  (uniformBeam_endpoints hEI).1
+/-- Zero bending moment at the left support. This endpoint
+fact needs no nondegeneracy hypothesis on `EI`: it is the
+canonical second-derivative endpoint through the
+iterated-derivative bridge. -/
+theorem uniformBeamMoment_zero {w EI L : ℝ} :
+    uniformBeamMoment w EI L 0 = 0 := by
+  rw [uniformBeamMoment_eq_iteratedDeriv,
+    uniformLoadDeflection_secondDeriv_zero_left, mul_zero]
 
-/-- Zero bending moment at the right support. -/
-theorem uniformBeamMoment_at_right {w EI L : ℝ} (hEI : EI ≠ 0) :
-    uniformBeamMoment w EI L L = 0 :=
-  (uniformBeam_endpoints hEI).2.1
+/-- Zero bending moment at the right support. As at the left
+support, no nondegeneracy hypothesis on `EI` is needed. -/
+theorem uniformBeamMoment_at_right {w EI L : ℝ} :
+    uniformBeamMoment w EI L L = 0 := by
+  rw [uniformBeamMoment_eq_iteratedDeriv,
+    uniformLoadDeflection_secondDeriv_zero_right, mul_zero]
 
 /-- Left end shear `w * L / 2`. -/
 theorem uniformBeamShear_zero {w EI L : ℝ} (hEI : EI ≠ 0) :
