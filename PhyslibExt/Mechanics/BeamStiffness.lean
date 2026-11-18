@@ -11,6 +11,7 @@ public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
@@ -32,7 +33,10 @@ energy) has the closed form recorded in
 `Mechanics.EulerBernoulli.beamStiffness_quad_form`. The same
 quadratic form factors into two squares, which gives positive
 semidefiniteness for `EI > 0`, `L > 0` and identifies the kernel
-with the rigid-motion span.
+with the rigid-motion span. Combining this bending block with
+the two-node axial block gives the six-DOF local frame matrix in
+`(u1, v1, θ1, u2, v2, θ2)` order; axial and bending energies
+add, and its kernel is the three planar rigid modes.
 
 ## ii. Key results
 
@@ -48,10 +52,17 @@ with the rigid-motion span.
   positive semidefiniteness for positive rigidity and length.
 - `Mechanics.EulerBernoulli.beamStiffness_mulVec_eq_zero_iff`:
   the kernel is exactly the rigid-motion span.
+- `Mechanics.EulerBernoulli.frameStiffness_quad_form_factor`
+  and `Mechanics.EulerBernoulli.frameStiffness_energy_add`:
+  the six-DOF local frame energy as axial plus bending squares.
+- `Mechanics.EulerBernoulli.frameStiffness_posSemidef` and
+  `Mechanics.EulerBernoulli.frameStiffness_mulVec_eq_zero_iff`:
+  frame positivity and the three planar rigid modes.
 
 ## iii. Table of contents
 
 - A. The stiffness matrix and its energy
+- B. Six-DOF local frame block
 
 ## iv. References
 
@@ -199,4 +210,209 @@ theorem beamStiffness_mulVec_eq_zero_iff {EI L : ℝ} (hEI : 0 < EI)
       ext i
       fin_cases i <;> simp [mulVec] <;> ring
     simp only [beamStiffness, Matrix.smul_mulVec, h0, smul_zero]
+
+/-! ## B. Six-DOF local frame block -/
+
+/-- Two-node axial stiffness matrix with axial rigidity `EA` and
+length `L`, in coordinates `(u1, u2)`: `(EA / L) * [[1, -1],
+[-1, 1]]`. The definition is the totalized formula. -/
+noncomputable def axialStiffness (EA L : ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
+  (EA / L) • !![1, -1; -1, 1]
+
+/-- Six-DOF local frame-element stiffness matrix, in the fixed
+ordering `(u1, v1, θ1, u2, v2, θ2)`: axial displacement,
+transverse deflection, and rotation at end 1, then the same three
+coordinates at end 2. It combines the axial block
+`axialStiffness` on `(u1, u2)` with the bending block
+`beamStiffness` on `(v1, θ1, v2, θ2)`, with no axial-bending
+coupling. The definition is the totalized formula. -/
+noncomputable def frameStiffness (EA EI L : ℝ) :
+    Matrix (Fin 6) (Fin 6) ℝ :=
+  !![EA / L, 0, 0, -EA / L, 0, 0;
+    0, 12 * EI / L ^ 3, 6 * EI / L ^ 2, 0,
+      -12 * EI / L ^ 3, 6 * EI / L ^ 2;
+    0, 6 * EI / L ^ 2, 4 * EI / L, 0,
+      -6 * EI / L ^ 2, 2 * EI / L;
+    -EA / L, 0, 0, EA / L, 0, 0;
+    0, -12 * EI / L ^ 3, -6 * EI / L ^ 2, 0,
+      12 * EI / L ^ 3, -6 * EI / L ^ 2;
+    0, 6 * EI / L ^ 2, 2 * EI / L, 0,
+      -6 * EI / L ^ 2, 4 * EI / L]
+
+/-- The frame-element quadratic form (twice the strain energy)
+factors as the axial square plus the two bending squares:
+`(EA / L) * (u2 - u1)^2 + (EI / L^3) * (12 * ((v1 - v2)
++ (L / 2) * (θ1 + θ2))^2 + L^2 * (θ1 - θ2)^2)`. -/
+theorem frameStiffness_quad_form_factor (EA EI L : ℝ)
+    (d : Fin 6 → ℝ) :
+    d ⬝ᵥ (frameStiffness EA EI L *ᵥ d)
+      = (EA / L) * (d 3 - d 0) ^ 2
+        + (EI / L ^ 3) * (12 * ((d 1 - d 4)
+            + (L / 2) * (d 2 + d 5)) ^ 2
+          + L ^ 2 * (d 2 - d 5) ^ 2) := by
+  by_cases hL : L = 0
+  · subst hL
+    simp only [frameStiffness, dotProduct, Matrix.mulVec, Fin.sum_univ_six,
+      Matrix.of_apply, Fin.isValue, Matrix.cons_val]
+    ring
+  · have hL' : L ≠ 0 := hL
+    simp only [frameStiffness, dotProduct, Matrix.mulVec, Fin.sum_univ_six,
+      Matrix.of_apply, Fin.isValue, Matrix.cons_val]
+    field_simp
+    ring
+
+/-- Axial and bending energies add: the frame quadratic form is
+the axial quadratic form in `(u1, u2)` plus the bending quadratic
+form in `(v1, θ1, v2, θ2)`. -/
+theorem frameStiffness_energy_add (EA EI L : ℝ)
+    (d : Fin 6 → ℝ) :
+    d ⬝ᵥ (frameStiffness EA EI L *ᵥ d)
+      = (![d 0, d 3] : Fin 2 → ℝ)
+          ⬝ᵥ (axialStiffness EA L *ᵥ ![d 0, d 3])
+        + (![d 1, d 2, d 4, d 5] : Fin 4 → ℝ)
+          ⬝ᵥ (beamStiffness EI L *ᵥ ![d 1, d 2, d 4, d 5]) := by
+  by_cases hL : L = 0
+  · subst hL
+    simp only [frameStiffness, axialStiffness, beamStiffness, dotProduct,
+      Matrix.mulVec, Fin.sum_univ_two, Fin.sum_univ_four, Fin.sum_univ_six,
+      Matrix.of_apply, Fin.isValue, Matrix.cons_val, Matrix.smul_apply, smul_eq_mul]
+    ring
+  · have hL' : L ≠ 0 := hL
+    simp only [frameStiffness, axialStiffness, beamStiffness, dotProduct,
+      Matrix.mulVec, Fin.sum_univ_two, Fin.sum_univ_four, Fin.sum_univ_six,
+      Matrix.of_apply, Fin.isValue, Matrix.cons_val, Matrix.smul_apply, smul_eq_mul]
+    field_simp
+    ring
+
+/-- The frame-element stiffness matrix is symmetric. -/
+theorem frameStiffness_transpose (EA EI L : ℝ) :
+    (frameStiffness EA EI L)ᵀ = frameStiffness EA EI L := by
+  ext i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- For positive axial rigidity, flexural rigidity, and length,
+the frame-element stiffness matrix is positive semidefinite. -/
+theorem frameStiffness_posSemidef {EA EI L : ℝ} (hEA : 0 < EA)
+    (hEI : 0 < EI) (hL : 0 < L) :
+    (frameStiffness EA EI L).PosSemidef := by
+  apply Matrix.PosSemidef.of_dotProduct_mulVec_nonneg
+  · exact Matrix.isHermitian_iff_isSymm.mpr
+      (frameStiffness_transpose EA EI L)
+  · intro x
+    have h := frameStiffness_quad_form_factor EA EI L x
+    have hsx : star x = x := by simp
+    rw [hsx, h]
+    positivity
+
+/-- For positive axial rigidity, flexural rigidity, and length,
+the kernel of the frame-element stiffness matrix is exactly the
+span of the three planar rigid modes in the ordering
+`(u1, v1, θ1, u2, v2, θ2)`: axial translation
+`(1, 0, 0, 1, 0, 0)`, transverse translation
+`(0, 1, 0, 0, 1, 0)`, and rigid rotation
+`(0, 0, 1, 0, L, 1)`. -/
+theorem frameStiffness_mulVec_eq_zero_iff {EA EI L : ℝ}
+    (hEA : 0 < EA) (hEI : 0 < EI) (hL : 0 < L)
+    (d : Fin 6 → ℝ) :
+    frameStiffness EA EI L *ᵥ d = 0
+      ↔ ∃ a b c : ℝ,
+        d = a • ![1, 0, 0, 1, 0, 0]
+          + b • ![0, 1, 0, 0, 1, 0]
+          + c • ![0, 0, 1, 0, L, 1] := by
+  constructor
+  · intro hKd
+    have hL' : L ≠ 0 := hL.ne'
+    have hdot : d ⬝ᵥ (frameStiffness EA EI L *ᵥ d) = 0 := by
+      rw [hKd]
+      exact dotProduct_zero _
+    have hfact := frameStiffness_quad_form_factor EA EI L d
+    rw [hdot] at hfact
+    have hEAL : 0 < EA / L := div_pos hEA hL
+    have hEIL : 0 < EI / L ^ 3 := div_pos hEI (pow_pos hL 3)
+    have haxnn : 0 ≤ (EA / L) * (d 3 - d 0) ^ 2 :=
+      mul_nonneg (le_of_lt hEAL) (sq_nonneg _)
+    have hbenn : 0 ≤ (EI / L ^ 3) * (12 * ((d 1 - d 4)
+          + (L / 2) * (d 2 + d 5)) ^ 2 + L ^ 2 * (d 2 - d 5) ^ 2) :=
+      mul_nonneg (le_of_lt hEIL) (add_nonneg
+        (mul_nonneg (by norm_num) (sq_nonneg _))
+        (mul_nonneg (sq_nonneg _) (sq_nonneg _)))
+    obtain ⟨hax, hben⟩ := (add_eq_zero_iff_of_nonneg haxnn hbenn).mp hfact.symm
+    have h10 : d 3 - d 0 = 0 := by
+      have hsq : (d 3 - d 0) ^ 2 = 0 := by
+        rcases mul_eq_zero.mp hax with h | h
+        · exact absurd h hEAL.ne'
+        · exact h
+      exact sq_eq_zero_iff.mp hsq
+    have hSS : 12 * ((d 1 - d 4) + (L / 2) * (d 2 + d 5)) ^ 2
+        + L ^ 2 * (d 2 - d 5) ^ 2 = 0 := by
+      rcases mul_eq_zero.mp hben with h | h
+      · exact absurd h hEIL.ne'
+      · exact h
+    have hSnn : 0 ≤ 12 * ((d 1 - d 4) + (L / 2) * (d 2 + d 5)) ^ 2 :=
+      mul_nonneg (by norm_num) (sq_nonneg _)
+    have hTnn : 0 ≤ L ^ 2 * (d 2 - d 5) ^ 2 :=
+      mul_nonneg (sq_nonneg _) (sq_nonneg _)
+    obtain ⟨hS0, hT0⟩ := (add_eq_zero_iff_of_nonneg hSnn hTnn).mp hSS
+    have hS : (d 1 - d 4) + (L / 2) * (d 2 + d 5) = 0 := by
+      have hsq : ((d 1 - d 4) + (L / 2) * (d 2 + d 5)) ^ 2 = 0 := by
+        rcases mul_eq_zero.mp hS0 with h | h
+        · norm_num at h
+        · exact h
+      exact sq_eq_zero_iff.mp hsq
+    have hT : d 2 - d 5 = 0 := by
+      have hsq : (d 2 - d 5) ^ 2 = 0 := by
+        rcases mul_eq_zero.mp hT0 with h | h
+        · exact absurd h (pow_pos hL 2).ne'
+        · exact h
+      exact sq_eq_zero_iff.mp hsq
+    have h30 : d 3 = d 0 := by linarith
+    have h52 : d 5 = d 2 := by linarith
+    have h41 : d 4 = d 1 + L * d 2 := by
+      rw [h52] at hS
+      have h2 : (L / 2) * (d 2 + d 2) = L * d 2 := by ring
+      rw [h2] at hS
+      linarith
+    have h41' : d 4 = d 1 + d 2 * L := by
+      rw [mul_comm (d 2) L]
+      exact h41
+    refine ⟨d 0, d 1, d 2, ?_⟩
+    funext i
+    fin_cases i
+    · simp only [Fin.reduceFinMk]
+      simp only [Pi.add_apply, Pi.smul_apply, Fin.isValue, Matrix.cons_val,
+        smul_eq_mul]
+      ring
+    · simp only [Fin.reduceFinMk]
+      simp only [Pi.add_apply, Pi.smul_apply, Fin.isValue, Matrix.cons_val,
+        smul_eq_mul]
+      ring
+    · simp only [Fin.reduceFinMk]
+      simp only [Pi.add_apply, Pi.smul_apply, Fin.isValue, Matrix.cons_val,
+        smul_eq_mul]
+      ring
+    · simp only [Fin.reduceFinMk]
+      simp only [Pi.add_apply, Pi.smul_apply, Fin.isValue, Matrix.cons_val,
+        smul_eq_mul]
+      rw [h30]
+      ring
+    · simp only [Fin.reduceFinMk]
+      simp only [Pi.add_apply, Pi.smul_apply, Fin.isValue, Matrix.cons_val,
+        smul_eq_mul]
+      rw [h41']
+      ring
+    · simp only [Fin.reduceFinMk]
+      simp only [Pi.add_apply, Pi.smul_apply, Fin.isValue, Matrix.cons_val,
+        smul_eq_mul]
+      rw [h52]
+      ring
+  · rintro ⟨a, b, c, rfl⟩
+    have hL' : L ≠ 0 := hL.ne'
+    ext i
+    fin_cases i <;>
+      simp only [Fin.reduceFinMk] <;>
+      simp only [dotProduct, Matrix.mulVec, Fin.sum_univ_six, frameStiffness,
+        Matrix.of_apply, Fin.isValue, Matrix.cons_val, Pi.add_apply,
+        Pi.smul_apply, smul_eq_mul, Pi.zero_apply] <;>
+      field_simp <;>
+      ring
 end Mechanics.EulerBernoulli
