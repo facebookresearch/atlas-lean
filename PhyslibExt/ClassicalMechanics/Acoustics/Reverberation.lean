@@ -50,21 +50,25 @@ namespace Acoustics
 
 /-! ## A. Sabine rate, reverberation time, and the 60 dB threshold -/
 
-/-- Energy decay rate in the Sabine model. -/
+/-- Energy decay rate in the Sabine model. Physically meaningful
+for `0 < V`, `0 < c`, `0 < A_abs`; outside that domain the formula
+uses Lean's totalized division. -/
 noncomputable def sabineRate (V c A_abs : ℝ) : ℝ := c * A_abs / (4 * V)
 
-/-- Reverberation time `T60` in the Sabine model. -/
+/-- Reverberation time `T60` in the Sabine model. Physically
+meaningful for `0 < V`, `0 < c`, `0 < A_abs`; outside that domain
+the formula uses Lean's totalized division. -/
 noncomputable def sabineT60 (V c A_abs : ℝ) : ℝ :=
   24 * Real.log 10 * V / (c * A_abs)
 
 /-- The Sabine decay rate is positive. -/
-theorem sabineRate_pos {V c A_abs : ℝ} (hV : 0 < V) (hc : 0 < c)
+lemma sabineRate_pos {V c A_abs : ℝ} (hV : 0 < V) (hc : 0 < c)
     (hA : 0 < A_abs) : 0 < sabineRate V c A_abs := by
   unfold sabineRate
   positivity
 
 /-- The reverberation time `T60` is positive. -/
-theorem sabineT60_pos {V c A_abs : ℝ} (hV : 0 < V) (hc : 0 < c)
+lemma sabineT60_pos {V c A_abs : ℝ} (hV : 0 < V) (hc : 0 < c)
     (hA : 0 < A_abs) : 0 < sabineT60 V c A_abs := by
   have hlog : 0 < Real.log 10 := Real.log_pos (by norm_num)
   unfold sabineT60
@@ -103,7 +107,7 @@ theorem sabine_energy_at_T60 {E0 V c A_abs : ℝ} (hV : 0 < V)
 
 /-- The 60 dB energy ratio at `T60` is `1 / 10 ^ 6`, independent
 of the initial energy. -/
-theorem sabine_ratio_at_T60 {E0 V c A_abs : ℝ} (hE0 : E0 ≠ 0)
+lemma sabine_ratio_at_T60 {E0 V c A_abs : ℝ} (hE0 : E0 ≠ 0)
     (hV : 0 < V) (hc : 0 < c) (hA : 0 < A_abs) :
     Chemistry.Kinetics.firstOrderSol E0 (sabineRate V c A_abs) (sabineT60 V c A_abs) / E0
       = 1 / 10 ^ 6 := by
@@ -113,7 +117,7 @@ theorem sabine_ratio_at_T60 {E0 V c A_abs : ℝ} (hE0 : E0 ≠ 0)
 
 /-- `T60` is the unique nonnegative time at which the Sabine
 energy equals `E0 / 10 ^ 6`. -/
-theorem sabine_T60_unique {E0 V c A_abs t : ℝ} (hE0 : 0 < E0)
+lemma sabine_T60_unique {E0 V c A_abs t : ℝ} (hE0 : 0 < E0)
     (hV : 0 < V) (hc : 0 < c) (hA : 0 < A_abs) (ht : 0 ≤ t)
     (h : Chemistry.Kinetics.firstOrderSol E0 (sabineRate V c A_abs) t = E0 / 10 ^ 6) :
     t = sabineT60 V c A_abs := by
