@@ -28,7 +28,7 @@ The non-commutative Fourier transform $\hat P(\rho) = \sum_s P(s)\rho(s)$ of a f
   which makes transforms of class functions scalar.
 - [Characters of representations](../characters-of-representations/README.md): the characters in
   the scalar of a class function's transform.
-- Fourier transform on finite abelian groups:
+- [Fourier transform on finite abelian groups](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-transform-on-finite-abelian-groups/README.md):
   the commutative case, where every irreducible representation is a character.
 - [Convolution on finite groups](../../../GroupTheory/characters-of-finite-groups/convolution-on-finite-groups/README.md):
   the complex-valued convolution on a finite group, equal to the one used here
