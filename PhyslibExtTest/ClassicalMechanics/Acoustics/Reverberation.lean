@@ -28,6 +28,6 @@ example : 0 < sabineRate 100 343 20 ∧ 0 < sabineT60 100 343 20 :=
    sabineT60_pos (by norm_num) (by norm_num) (by norm_num)⟩
 
 /-- Energy at `T60` for `E0 = 2`. -/
-example : Chemistry.Kinetics.firstOrderSol 2 (sabineRate 100 343 20)
+example : sabineEnergy 2 (sabineRate 100 343 20)
     (sabineT60 100 343 20) = 2 / 10 ^ 6 :=
   sabine_energy_at_T60 (by norm_num) (by norm_num) (by norm_num)

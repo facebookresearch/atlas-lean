@@ -7,7 +7,10 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import PhyslibExt.Chemistry.Kinetics.RateLaws
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Positivity
 
 /-!
 # Sabine reverberation decay
@@ -17,7 +20,7 @@ public import PhyslibExt.Chemistry.Kinetics.RateLaws
 In the Sabine diffuse-field model, the acoustic energy in a room of
 volume `V` with equivalent absorption area `A_abs` and sound speed
 `c` decays exponentially with rate `k = c * A_abs / (4 * V)`
-(`Chemistry.Kinetics.firstOrderSol E0 k`). The reverberation time
+(`sabineEnergy E0 k t = E0 * exp (-k * t)`). The reverberation time
 `T60`, at which the energy has fallen by 60 dB (a factor `10 ^ 6`
 in energy), is `24 * log 10 * V / (c * A_abs)`, independent of the
 initial energy `E0`. The 60 dB threshold uses the energy (10 log)
@@ -61,6 +64,13 @@ the formula uses Lean's totalized division. -/
 noncomputable def sabineT60 (V c A_abs : ℝ) : ℝ :=
   24 * Real.log 10 * V / (c * A_abs)
 
+/-- Sabine energy decay: initial energy `E0` decaying at rate
+`k`, `E0 * exp (-k * t)`. Defined locally in the acoustics API so
+that downstream users do not acquire an unrelated kinetics
+dependency. -/
+noncomputable def sabineEnergy (E0 k t : ℝ) : ℝ :=
+  E0 * Real.exp (-k * t)
+
 /-- The Sabine decay rate is positive. -/
 lemma sabineRate_pos {V c A_abs : ℝ} (hV : 0 < V) (hc : 0 < c)
     (hA : 0 < A_abs) : 0 < sabineRate V c A_abs := by
@@ -99,9 +109,9 @@ theorem sabine_exp_at_T60 {V c A_abs : ℝ} (hV : 0 < V) (hc : 0 < c)
 /-- At `T60` the Sabine energy has fallen to `E0 / 10 ^ 6`. -/
 theorem sabine_energy_at_T60 {E0 V c A_abs : ℝ} (hV : 0 < V)
     (hc : 0 < c) (hA : 0 < A_abs) :
-    Chemistry.Kinetics.firstOrderSol E0 (sabineRate V c A_abs) (sabineT60 V c A_abs)
+    sabineEnergy E0 (sabineRate V c A_abs) (sabineT60 V c A_abs)
       = E0 / 10 ^ 6 := by
-  unfold Chemistry.Kinetics.firstOrderSol
+  unfold sabineEnergy
   rw [sabine_exp_at_T60 hV hc hA]
   ring
 
@@ -109,7 +119,7 @@ theorem sabine_energy_at_T60 {E0 V c A_abs : ℝ} (hV : 0 < V)
 of the initial energy. -/
 lemma sabine_ratio_at_T60 {E0 V c A_abs : ℝ} (hE0 : E0 ≠ 0)
     (hV : 0 < V) (hc : 0 < c) (hA : 0 < A_abs) :
-    Chemistry.Kinetics.firstOrderSol E0 (sabineRate V c A_abs) (sabineT60 V c A_abs) / E0
+    sabineEnergy E0 (sabineRate V c A_abs) (sabineT60 V c A_abs) / E0
       = 1 / 10 ^ 6 := by
   have h106 : ((10 : ℝ) ^ 6) ≠ 0 := by norm_num
   rw [sabine_energy_at_T60 hV hc hA]
@@ -119,13 +129,13 @@ lemma sabine_ratio_at_T60 {E0 V c A_abs : ℝ} (hE0 : E0 ≠ 0)
 energy equals `E0 / 10 ^ 6`. -/
 lemma sabine_T60_unique {E0 V c A_abs t : ℝ} (hE0 : 0 < E0)
     (hV : 0 < V) (hc : 0 < c) (hA : 0 < A_abs) (ht : 0 ≤ t)
-    (h : Chemistry.Kinetics.firstOrderSol E0 (sabineRate V c A_abs) t = E0 / 10 ^ 6) :
+    (h : sabineEnergy E0 (sabineRate V c A_abs) t = E0 / 10 ^ 6) :
     t = sabineT60 V c A_abs := by
   have ht' := ht
   have hE0ne : E0 ≠ 0 := ne_of_gt hE0
   have hk_pos : 0 < sabineRate V c A_abs := sabineRate_pos hV hc hA
   have hkne : -(sabineRate V c A_abs) ≠ 0 := neg_ne_zero.mpr (ne_of_gt hk_pos)
-  unfold Chemistry.Kinetics.firstOrderSol at h
+  unfold sabineEnergy at h
   have hE : Real.exp (-(sabineRate V c A_abs) * t) = 1 / 10 ^ 6 := by
     have h' : E0 * Real.exp (-(sabineRate V c A_abs) * t) = E0 * (1 / 10 ^ 6) := by
       rw [h]
