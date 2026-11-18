@@ -47,16 +47,18 @@ noncomputable def bernoulliBool (p : ℝ) : Measure Bool :=
   ENNReal.ofReal p • Measure.dirac true + ENNReal.ofReal (1 - p) • Measure.dirac false
 
 /-- the independent branch-choice law on
-`Ω = List Bool -> Bool`, the constant-family instance of
-`MeasureTheory.Measure.infinitePi` with coordinate law `bernoulliBool p`
-at every address. Unconditional as a measure; it is a probability
-measure exactly on `0 <= p <= 1` (`law_isProbabilityMeasure`). -/
-noncomputable def law (p : ℝ) : Measure Ω :=
-  Measure.infinitePi (fun _ : List Bool => bernoulliBool p)
-
-theorem law_def (p : ℝ) :
-    law p = Measure.infinitePi (fun _ : List Bool => bernoulliBool p) := by
-  rfl
+`Ω = List Bool -> Bool`, defined directly as the existing Bernoulli
+product measure `StatMech.bernoulliProductMeasure` at the nonnegative
+parameter corresponding to `p`. The real parameter and its range proofs
+are part of the definition, so no measure is exposed for invalid
+probabilities; the grammar weight interface converts its real parameter
+at this boundary. -/
+noncomputable def law (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) : Measure Ω :=
+  StatMech.bernoulliProductMeasure (E := List Bool)
+    (ENNReal.toNNReal (ENNReal.ofReal p))
+    (by
+      have hle : ENNReal.ofReal p ≤ 1 := by simpa using ENNReal.ofReal_le_ofReal hp1
+      exact (ENNReal.toNNReal_le_toNNReal ENNReal.ofReal_ne_top ENNReal.one_ne_top).mpr hle)
 
 /-- bridge to Mathlib's unit-interval Bernoulli measure. -/
 theorem bernoulliBool_eq_bernoulliMeasure {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
@@ -71,6 +73,24 @@ theorem bernoulliBool_eq_bernoulliMeasure {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤
     have h_eq : unitInterval.toNNReal (unitInterval.symm ⟨p, hp0, hp1⟩) = NNReal.mk (1 - p) h0 := rfl
     rw [h_eq, ← ENNReal.ofReal_eq_coe_nnreal h0]
   rw [← h1, ← h2, MeasureTheory.Measure.coe_nnreal_smul, MeasureTheory.Measure.coe_nnreal_smul]
+
+/-- The proof-indexed law is the constant-family `Measure.infinitePi` of
+the real-parameter coordinate law. -/
+theorem law_eq_infinitePi {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
+    law p hp0 hp1 = Measure.infinitePi (fun _ : List Bool => bernoulliBool p) := by
+  have hcoord : bernoulliBool p = StatMech.bernoulliMeasure
+      (ENNReal.toNNReal (ENNReal.ofReal p))
+      (by
+        have hle : ENNReal.ofReal p ≤ 1 := by simpa using ENNReal.ofReal_le_ofReal hp1
+        exact (ENNReal.toNNReal_le_toNNReal ENNReal.ofReal_ne_top ENNReal.one_ne_top).mpr hle) := by
+    rw [bernoulliBool_eq_bernoulliMeasure hp0 hp1]
+    unfold StatMech.bernoulliMeasure
+    congr 1
+    apply Subtype.ext
+    show p = (ENNReal.ofReal p).toReal
+    rw [ENNReal.toReal_ofReal hp0]
+  unfold law StatMech.bernoulliProductMeasure
+  rw [hcoord]
 
 theorem bernoulliBool_isProbabilityMeasure {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
     IsProbabilityMeasure (bernoulliBool p) := by
@@ -89,19 +109,19 @@ theorem bernoulliBool_apply_false (p : ℝ) :
   simp [Measure.add_apply, Measure.smul_apply, smul_eq_mul]
 
 theorem law_isProbabilityMeasure {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
-    IsProbabilityMeasure (law p) := by
+    IsProbabilityMeasure (law p hp0 hp1) := by
   haveI : ∀ _ : List Bool, IsProbabilityMeasure (bernoulliBool p) :=
     fun _ => bernoulliBool_isProbabilityMeasure hp0 hp1
-  unfold law
+  rw [law_eq_infinitePi hp0 hp1]
   infer_instance
 
-/-- each address coordinate of `law p` is `bernoulliBool p`
+/-- each address coordinate of `law p hp0 hp1` is `bernoulliBool p`
 (`Measure.infinitePi_map_eval` at the constant family). -/
 theorem law_map_eval {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (a : List Bool) :
-    (law p).map (fun ω : Ω => ω a) = bernoulliBool p := by
+    (law p hp0 hp1).map (fun ω : Ω => ω a) = bernoulliBool p := by
   have hInst : ∀ i : List Bool, IsProbabilityMeasure ((fun _ : List Bool => bernoulliBool p) i) :=
     fun _ => bernoulliBool_isProbabilityMeasure hp0 hp1
-  unfold law
+  rw [law_eq_infinitePi hp0 hp1]
   exact @Measure.infinitePi_map_eval (List Bool) (fun _ => Bool) _ (fun _ => bernoulliBool p) hInst a
 
 /-- On the probability range, this law is the existing Bernoulli product
@@ -109,24 +129,12 @@ measure `StatMech.bernoulliProductMeasure` at the corresponding
 nonnegative parameter. The real-parameter form is retained because the
 grammar weight interface below it is real-valued. -/
 theorem law_eq_bernoulliProductMeasure {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
-    law p = StatMech.bernoulliProductMeasure (E := List Bool)
+    law p hp0 hp1 = StatMech.bernoulliProductMeasure (E := List Bool)
       (ENNReal.toNNReal (ENNReal.ofReal p))
       (by
         have hle : ENNReal.ofReal p ≤ 1 := by simpa using ENNReal.ofReal_le_ofReal hp1
         exact (ENNReal.toNNReal_le_toNNReal ENNReal.ofReal_ne_top ENNReal.one_ne_top).mpr hle) := by
-  have hcoord : bernoulliBool p = StatMech.bernoulliMeasure
-      (ENNReal.toNNReal (ENNReal.ofReal p))
-      (by
-        have hle : ENNReal.ofReal p ≤ 1 := by simpa using ENNReal.ofReal_le_ofReal hp1
-        exact (ENNReal.toNNReal_le_toNNReal ENNReal.ofReal_ne_top ENNReal.one_ne_top).mpr hle) := by
-    rw [bernoulliBool_eq_bernoulliMeasure hp0 hp1]
-    unfold StatMech.bernoulliMeasure
-    congr 1
-    apply Subtype.ext
-    show p = (ENNReal.ofReal p).toReal
-    rw [ENNReal.toReal_ofReal hp0]
-  unfold law StatMech.bernoulliProductMeasure
-  rw [hcoord]
+  rfl
 
 /-! ## finite-address cylinders and their masses -/
 
@@ -138,7 +146,7 @@ def cylinder (s : Finset (List Bool)) (t : List Bool → Bool) : Set Ω :=
   {ω : Ω | ∀ a ∈ s, ω a = t a}
 
 /-- the product mass of
-`cylinder s t` under `law p`: one factor `p` per address assigned
+`cylinder s t` under `law p hp0 hp1`: one factor `p` per address assigned
 `true` (branch) and one factor `1 - p` per address assigned `false`
 (leaf). -/
 noncomputable def cylinder_mass (p : ℝ) (s : Finset (List Bool)) (t : List Bool → Bool) :
@@ -149,31 +157,31 @@ theorem mem_cylinder {s : Finset (List Bool)} {t : List Bool → Bool} {ω : Ω}
     ω ∈ cylinder s t ↔ ∀ a ∈ s, ω a = t a := by
   rfl
 
-/-- the finite-product formula for `law p`, directly
+/-- the finite-product formula for `law p hp0 hp1`, directly
 `Measure.infinitePi_pi` at the constant family. -/
 theorem law_pi {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (s : Finset (List Bool))
     (T : List Bool → Set Bool) (hT : ∀ a ∈ s, MeasurableSet (T a)) :
-    law p ((s : Set (List Bool)).pi T) = ∏ a ∈ s, bernoulliBool p (T a) := by
+    law p hp0 hp1 ((s : Set (List Bool)).pi T) = ∏ a ∈ s, bernoulliBool p (T a) := by
   have hInst : ∀ i : List Bool, IsProbabilityMeasure ((fun _ : List Bool => bernoulliBool p) i) :=
     fun _ => bernoulliBool_isProbabilityMeasure hp0 hp1
-  unfold law
+  rw [law_eq_infinitePi hp0 hp1]
   exact @Measure.infinitePi_pi (List Bool) (fun _ => Bool) _ (fun _ => bernoulliBool p) hInst s T hT
 
 /-- the same formula in Mathlib's `MeasureTheory.cylinder` form,
 directly `Measure.infinitePi_cylinder` at the constant family. -/
 theorem law_mathlib_cylinder {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
     (s : Finset (List Bool)) {S : Set (∀ _ : s, Bool)} (hS : MeasurableSet S) :
-    law p (MeasureTheory.cylinder s S) =
+    law p hp0 hp1 (MeasureTheory.cylinder s S) =
       Measure.pi (fun _ : s => bernoulliBool p) S := by
   have hInst : ∀ i : List Bool, IsProbabilityMeasure ((fun _ : List Bool => bernoulliBool p) i) :=
     fun _ => bernoulliBool_isProbabilityMeasure hp0 hp1
-  unfold law
+  rw [law_eq_infinitePi hp0 hp1]
   exact @Measure.infinitePi_cylinder (List Bool) (fun _ => Bool) _ (fun _ => bernoulliBool p) hInst s S hS
 
 /-- the headline cylinder probability. -/
 theorem law_cylinder {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
     (s : Finset (List Bool)) (t : List Bool → Bool) :
-    law p (cylinder s t) = cylinder_mass p s t := by
+    law p hp0 hp1 (cylinder s t) = cylinder_mass p s t := by
   have hcyl : cylinder s t = (s : Set (List Bool)).pi (fun a => ({t a} : Set Bool)) := by
     ext ω
     simp [cylinder, Set.pi, Set.mem_singleton_iff]
@@ -202,9 +210,9 @@ theorem cylinder_empty (t : List Bool → Bool) :
   simp [cylinder]
 
 theorem law_cylinder_empty {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (t : List Bool → Bool) :
-    law p (cylinder ∅ t) = 1 := by
-  have h : IsProbabilityMeasure (law p) := law_isProbabilityMeasure hp0 hp1
-  rw [cylinder_empty, @measure_univ Ω _ (law p) h]
+    law p hp0 hp1 (cylinder ∅ t) = 1 := by
+  have h : IsProbabilityMeasure (law p hp0 hp1) := law_isProbabilityMeasure hp0 hp1
+  rw [cylinder_empty, @measure_univ Ω _ (law p hp0 hp1) h]
 
 theorem cylinder_mass_insert {p : ℝ} {a : List Bool} {s : Finset (List Bool)}
     (ha : a ∉ s) (t : List Bool → Bool) :
@@ -260,13 +268,13 @@ theorem leafAt_eq_cylinder (a : List Bool) :
 
 /-- (nonvacuity, root choice): the root branches with mass `p`. -/
 theorem law_root_branch {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
-    law p (branchAt []) = ENNReal.ofReal p := by
+    law p hp0 hp1 (branchAt []) = ENNReal.ofReal p := by
   rw [branchAt_eq_cylinder, law_cylinder hp0 hp1, cylinder_mass_singleton]
   simp
 
 /-- (nonvacuity, root choice): the root is a leaf with mass `1 - p`. -/
 theorem law_root_leaf {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
-    law p (leafAt []) = ENNReal.ofReal (1 - p) := by
+    law p hp0 hp1 (leafAt []) = ENNReal.ofReal (1 - p) := by
   rw [leafAt_eq_cylinder, law_cylinder hp0 hp1, cylinder_mass_singleton]
   simp
 
@@ -316,7 +324,7 @@ theorem bernoulliBool_one :
 
 /-- (boundary `p = 0`): the root is almost surely a leaf. -/
 theorem law_zero_root :
-    law 0 (leafAt []) = 1 ∧ law 0 (branchAt []) = 0 := by
+    law 0 le_rfl zero_le_one (leafAt []) = 1 ∧ law 0 le_rfl zero_le_one (branchAt []) = 0 := by
   have hleaf := law_root_leaf (show (0 : ℝ) ≤ 0 from le_rfl) (show (0 : ℝ) ≤ 1 from zero_le_one)
   have hbranch := law_root_branch (show (0 : ℝ) ≤ 0 from le_rfl) (show (0 : ℝ) ≤ 1 from zero_le_one)
   constructor
@@ -327,7 +335,7 @@ theorem law_zero_root :
 
 /-- (boundary `p = 1`): the root almost surely branches. -/
 theorem law_one_root :
-    law 1 (branchAt []) = 1 ∧ law 1 (leafAt []) = 0 := by
+    law 1 zero_le_one le_rfl (branchAt []) = 1 ∧ law 1 zero_le_one le_rfl (leafAt []) = 0 := by
   have hbranch := law_root_branch (show (0 : ℝ) ≤ 1 from zero_le_one) (show (1 : ℝ) ≤ 1 from le_rfl)
   have hleaf := law_root_leaf (show (0 : ℝ) ≤ 1 from zero_le_one) (show (1 : ℝ) ≤ 1 from le_rfl)
   constructor
@@ -415,11 +423,11 @@ theorem shift_preimage_cylinder (u : List Bool) (s : Finset (List Bool))
     shift u ⁻¹' cylinder s t = {ω : Ω | ∀ a ∈ s, ω (u ++ a) = t a} := by
   rfl
 
-/-- every prefix shift preserves `law p` (the shifted coordinates
+/-- every prefix shift preserves `law p hp0 hp1` (the shifted coordinates
 are still independent `bernoulliBool p` coordinates), by
 `Measure.map_infinitePi_infinitePi_of_inj`. -/
 theorem map_shift_law {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (u : List Bool) :
-    (law p).map (shift u) = law p := by
+    (law p hp0 hp1).map (shift u) = law p hp0 hp1 := by
   haveI : ∀ i : List Bool, IsProbabilityMeasure ((fun _ : List Bool => bernoulliBool p) i) :=
     fun _ => bernoulliBool_isProbabilityMeasure hp0 hp1
   haveI : ∀ i : List Bool,
@@ -431,7 +439,7 @@ theorem map_shift_law {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (u : List Bool) 
     (fun _ => Bool) (fun _ => inferInstance) (fun _ : List Bool => bernoulliBool p)
     (fun _ => bernoulliBool_isProbabilityMeasure hp0 hp1) (fun a : List Bool => u ++ a)
     (List.append_right_injective u)
-  unfold law
+  rw [law_eq_infinitePi hp0 hp1]
   show Measure.map (fun ω i => ω (u ++ i))
       (Measure.infinitePi fun _ : List Bool => bernoulliBool p) =
     Measure.infinitePi fun _ : List Bool => bernoulliBool p
@@ -439,7 +447,7 @@ theorem map_shift_law {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (u : List Bool) 
 
 theorem law_shift_preimage {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (u : List Bool)
     {E : Set Ω} (hE : MeasurableSet E) :
-    law p (shift u ⁻¹' E) = law p E := by
+    law p hp0 hp1 (shift u ⁻¹' E) = law p hp0 hp1 E := by
   rw [← Measure.map_apply (measurable_shift u) hE, map_shift_law hp0 hp1 u]
 
 end Cslib.Language.BinaryTreeAddressLaw
