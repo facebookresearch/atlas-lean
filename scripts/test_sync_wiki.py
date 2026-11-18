@@ -743,6 +743,18 @@ class Declarations(Vault):
         self.assertEqual((groups / "README.md").read_text(),
                          f"# Groups\n\n{part_one}## [Part 2 of 2](part-02/README.md)\n\n- [B](part-02/b.md)\n- [C](part-02/c.md)\n")
 
+    def test_a_part_list_rebases_no_link_in_a_code_span(self) -> None:
+        # As CommonMark reads code spans: a run of n backticks opens one that the next run of exactly n closes, and a
+        # backtick that a backslash escapes opens none.
+        self.page("Algebra/groups/README.md", "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md)\n")
+        self.page("Algebra/groups/part-01/README.md",
+                  "# Part 1 of 1\n\n- [A](a.md): written `[A](a.md)`, or ``[`B`](b.md)``; \\`[C](c.md)\\` is a link\n")
+        sync.LINKS.mkdir(parents=True)
+        sync.apply_declarations([], SimpleNamespace(declarations={}))
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
+                         "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md): written `[A](a.md)`, "
+                         "or ``[`B`](b.md)``; \\`[C](part-01/c.md)\\` is a link\n")
+
     def test_a_part_list_rebases_every_link_of_an_item(self) -> None:
         self.page("Algebra/groups/README.md", "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md)\n")
         self.page("Algebra/groups/part-01/README.md",

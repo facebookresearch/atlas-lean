@@ -72,6 +72,9 @@ HEADING_LINK = re.compile(r"^#{2,6} \[.*\]\(([^()\s]+)\)$")
 OWN_ITEM = re.compile(r"^- \[((?:\\.|[^\\\]])*)\]\((?!\.\./)([^():\s]+)\)(.*)$", re.S)
 PART_HEADING = re.compile(r"^#{2,6} \[(.*)\]\((part-\d+/README\.md)\)$")
 DESTINATION = re.compile(r"(?<!\\)\]\(([^()\s]+)\)")
+# A backslash escape, or a run of backticks with, when a later run exactly as long closes it, the inline code span it
+# opens, as CommonMark reads them.
+CODE = re.compile(r"\\.|(?P<run>`+)(?P<span>.*?(?<!`)(?P=run)(?!`))?", re.S)
 PART = re.compile(r"part-\d+")
 
 
@@ -565,12 +568,20 @@ def part_entries(text: str) -> list[str]:
     return entries
 
 
-def from_part(folder: str, destination: str) -> str:
-    """A link's destination on the page of the part *folder*, as the page of the folder holding the part reads it: a
-    relative one rebased, and one with a scheme, of any case, or that starts with "/" or "#" as it is."""
-    if re.match(r"[A-Za-z][A-Za-z0-9+.-]*:|[#/]", destination):
-        return destination
-    return posixpath.normpath(f"{folder}/{destination}")
+def from_part(folder: str, item: str) -> str:
+    """An item of the page of the part *folder*, as the page of the folder holding the part lists it: each relative
+    link taken from the part's folder, and one with a scheme, of any case, or that starts with "/" or "#" as it is.
+    An inline code span (see CODE) stays as written, links and all."""
+    def rebased(text: str) -> str:
+        return DESTINATION.sub(lambda link: link.group() if re.match(r"[A-Za-z][A-Za-z0-9+.-]*:|[#/]", link.group(1))
+                               else f"]({posixpath.normpath(folder + '/' + link.group(1))})", text)
+
+    pieces, start = [], 0
+    for code in CODE.finditer(item):
+        if code.group("span"):
+            pieces += [rebased(item[start:code.start()]), code.group()]
+            start = code.end()
+    return "".join(pieces) + rebased(item[start:])
 
 
 def with_part_lists(readme: Path, text: str) -> str:
@@ -588,8 +599,7 @@ def with_part_lists(readme: Path, text: str) -> str:
         if not (part and (readme.parent / part.group(2)).is_file()):
             continue
         folder = Path(part.group(2)).parent.as_posix()
-        copy = [DESTINATION.sub(lambda link: f"]({from_part(folder, link.group(1))})", entry)
-                for entry in part_entries((readme.parent / part.group(2)).read_text())]
+        copy = [from_part(folder, entry) for entry in part_entries((readme.parent / part.group(2)).read_text())]
         copied = [i for i, block in enumerate(section) if (item := OWN_ITEM.match(block))
                   and item.group(2).startswith(f"{folder}/") and item.group(2) != part.group(2)]
         kept = [block for i, block in enumerate(section) if i not in copied]
