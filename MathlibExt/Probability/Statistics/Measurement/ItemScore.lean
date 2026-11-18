@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Probability.FiniteProbability
 public import MathlibExt.Probability.Statistics.Measurement.ItemResponse
 public import MathlibExt.Probability.Statistics.Measurement.ProductMoments
 public import MathlibExt.Probability.Statistics.FisherInformation
@@ -36,24 +37,10 @@ theorem twoPLPMF_toReal {ι : Type*} [Fintype ι] [DecidableEq ι]
         else 1 - Real.sigmoid (a i * (t - b i))) := by
   exact localIndepPMF_toReal_apply _ _ _ _
 
-theorem localIndepPMF_toReal_sum {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (q : ι → ℝ) (hq0 : ∀ i, 0 ≤ q i) (hq1 : ∀ i, q i ≤ 1) :
-    (∑ Y : ι → Bool, (localIndepPMF q hq0 hq1 Y).toReal) = 1 := by
-  have htsum := PMF.tsum_coe (localIndepPMF q hq0 hq1)
-  have hreal : (∑' Y : ι → Bool, localIndepPMF q hq0 hq1 Y).toReal
-      = (1 : ENNReal).toReal := by
-    rw [htsum]
-  have hne : ∀ Y : ι → Bool, localIndepPMF q hq0 hq1 Y ≠ ⊤ :=
-    fun Y => PMF.apply_ne_top _ Y
-  rw [ENNReal.tsum_toReal_eq hne, tsum_fintype] at hreal
-  have h1 : (1 : ENNReal).toReal = 1 := by simp
-  rw [h1] at hreal
-  exact hreal
-
 theorem twoPLPMF_toReal_sum {ι : Type*} [Fintype ι] [DecidableEq ι]
     (a b : ι → ℝ) (θ : ℝ) :
     (∑ Y : ι → Bool, (twoPLPMF a b θ Y).toReal) = 1 := by
-  exact localIndepPMF_toReal_sum _ _ _
+  exact MathlibExt.Probability.FiniteProbability.sum_toReal_eq_one _
 
 theorem localIndepPMF_coord_sum {ι : Type*} [Fintype ι] [DecidableEq ι]
     (q : ι → ℝ) (hq0 : ∀ i, 0 ≤ q i) (hq1 : ∀ i, q i ≤ 1) (j : ι) :
