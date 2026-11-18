@@ -192,33 +192,17 @@ lemma abs_dacLevel_code_sub_le_of_mem_Icc {Δ η : ℝ} (hΔ : 0 < Δ) {kmin kma
     {e : ℤ → ℝ} (he : ∀ k ∈ Icc kmin kmax, |e k| ≤ η) {x : ℝ}
     (hx : x ∈ Icc (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ))) :
     |dacLevel Δ e (code Δ kmin kmax x) - x| ≤ Δ / 2 + η := by
-  apply abs_dacLevel_code_sub_le_of_not_isClipped hΔ he
-  rw [mem_Icc] at hx
-  obtain ⟨hlo, hhi⟩ := hx
-  have h1 : (kmin : ℝ) ≤ x / Δ := by
-    rw [le_div_iff₀ hΔ]
-    linarith
-  have h2 : x / Δ ≤ (kmax : ℝ) := by
-    rw [div_le_iff₀ hΔ]
-    linarith
-  rw [not_isClipped_iff, round_eq]
-  constructor
-  · apply Int.le_floor.mpr
-    linarith
-  · have hfl : ((⌊x / Δ + 1 / 2⌋ : ℤ) : ℝ) ≤ x / Δ + 1 / 2 := Int.floor_le _
-    have hcast : ((⌊x / Δ + 1 / 2⌋ : ℤ) : ℝ) < ((kmax : ℤ) : ℝ) + 1 := by
-      linarith
-    have hlt : ⌊x / Δ + 1 / 2⌋ < kmax + 1 := by exact_mod_cast hcast
-    omega
+  exact abs_dacLevel_code_sub_le_of_not_isClipped hΔ he (not_isClipped_of_mem_Icc hΔ hx)
 
 /-- **Signed `w`-bit form.** For `1 ≤ w`, the signed code range
-`[-2 ^ (w - 1), 2 ^ (w - 1) - 1]` of the ADC, `Δ > 0`, `|e k| ≤ η`
-on that range and an unclipped input `x`, the composed error is at
-most `Δ / 2 + η`. -/
+`[signedMinCode w, signedMaxCode w]` of the ADC, `Δ > 0`,
+`|e k| ≤ η` on that range and an unclipped input `x`, the composed
+error is at most `Δ / 2 + η`. -/
 lemma abs_dacLevel_code_signed_sub_le_of_not_isClipped {Δ η : ℝ} (hΔ : 0 < Δ) {w : ℕ}
-    (hw : 1 ≤ w) {e : ℤ → ℝ} (he : ∀ k ∈ Icc (-2 ^ (w - 1) : ℤ) (2 ^ (w - 1) - 1), |e k| ≤ η)
-    {x : ℝ} (hx : ¬ IsClipped Δ (-2 ^ (w - 1)) (2 ^ (w - 1) - 1) x) :
-    |dacLevel Δ e (code Δ (-2 ^ (w - 1)) (2 ^ (w - 1) - 1) x) - x| ≤ Δ / 2 + η := by
+    (hw : 1 ≤ w) {e : ℤ → ℝ}
+    (he : ∀ k ∈ Icc (signedMinCode w) (signedMaxCode w), |e k| ≤ η)
+    {x : ℝ} (hx : ¬ IsClipped Δ (signedMinCode w) (signedMaxCode w) x) :
+    |dacLevel Δ e (code Δ (signedMinCode w) (signedMaxCode w) x) - x| ≤ Δ / 2 + η := by
   exact abs_dacLevel_code_sub_le_of_not_isClipped hΔ he hx
 
 /-- **DAC level contract.** For `Δ > 0` and `|e k| ≤ η` on the code
@@ -241,7 +225,7 @@ the BitVec successor of the maximal signed code decodes to a value
 that is not the next integer code, and its DAC level is strictly
 below that of the maximal code. -/
 lemma dacLevel_toInt_intMax_add_one_lt {Δ η : ℝ} {w : ℕ} (hw : 1 ≤ w) {e : ℤ → ℝ}
-    (he : ∀ k ∈ Icc (-2 ^ (w - 1) : ℤ) (2 ^ (w - 1) - 1), |e k| ≤ η) (hη : 2 * η < Δ) :
+    (he : ∀ k ∈ Icc (signedMinCode w) (signedMaxCode w), |e k| ≤ η) (hη : 2 * η < Δ) :
     (BitVec.intMax w + 1).toInt ≠ (BitVec.intMax w).toInt + 1 ∧
       dacLevel Δ e (BitVec.intMax w + 1).toInt < dacLevel Δ e (BitVec.intMax w).toInt := by
   have hne : NeZero w := ⟨by omega⟩
@@ -255,13 +239,21 @@ lemma dacLevel_toInt_intMax_add_one_lt {Δ η : ℝ} {w : ℕ} (hw : 1 ≤ w) {e
     ring
   have hmax : (BitVec.intMax w).toInt = (2 ^ (w - 1) - 1 : ℤ) := BitVec.toInt_intMax
   have hpow : (1 : ℤ) ≤ 2 ^ (w - 1) := one_le_pow₀ (by norm_num)
-  rw [hmin, hmax]
+  have hminS : (BitVec.intMax w + 1).toInt = signedMinCode w := by
+    unfold signedMinCode
+    exact hmin
+  have hmaxS : (BitVec.intMax w).toInt = signedMaxCode w := by
+    unfold signedMaxCode
+    exact hmax
+  rw [hminS, hmaxS]
   have hmono := dacLevel_strictMonoOn he hη
-  have hmem1 : (-2 ^ (w - 1) : ℤ) ∈ Icc (-2 ^ (w - 1) : ℤ) (2 ^ (w - 1) - 1) :=
-    mem_Icc.mpr ⟨le_refl _, by linarith [hpow]⟩
-  have hmem2 : (2 ^ (w - 1) - 1 : ℤ) ∈ Icc (-2 ^ (w - 1) : ℤ) (2 ^ (w - 1) - 1) :=
-    mem_Icc.mpr ⟨by linarith [hpow], le_refl _⟩
-  have hlt : (-2 ^ (w - 1) : ℤ) < 2 ^ (w - 1) - 1 := by linarith [hpow]
+  have hmem1 : signedMinCode w ∈ Icc (signedMinCode w) (signedMaxCode w) :=
+    mem_Icc.mpr ⟨le_refl _, signedMinCode_le_signedMaxCode hw⟩
+  have hmem2 : signedMaxCode w ∈ Icc (signedMinCode w) (signedMaxCode w) :=
+    mem_Icc.mpr ⟨signedMinCode_le_signedMaxCode hw, le_refl _⟩
+  have hlt : signedMinCode w < signedMaxCode w := by
+    unfold signedMinCode signedMaxCode
+    linarith [hpow]
   constructor
   · intro hcon
     linarith
