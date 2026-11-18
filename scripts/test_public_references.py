@@ -105,6 +105,142 @@ class Patterns(unittest.TestCase):
         ):
             self.assertEqual(gate.scan(value, "text"), [])
 
+    def test_windows_personal_workspace_paths(self) -> None:
+        for separator in ("\\", "\\\\", "/"):
+            for users in ("Users", "users", "USERS"):
+                value = (
+                    "C:"
+                    + separator
+                    + separator.join((users, "example", "work", "notes.txt"))
+                )
+                with self.subTest(separator=separator, users=users):
+                    findings = gate.scan("First line\n" + value, value)
+                    self.assertEqual(len(findings), 1)
+                    self.assertEqual(findings[0]["rule"], "personal-workspace")
+                    self.assertEqual(findings[0]["line"], 2)
+                    self.assertEqual(findings[0]["location"], "[redacted]")
+                    self.assertNotIn(value, json.dumps(findings))
+        for value in (
+            "C:" + "\\".join(("", "Users", "runner", "work", "repo")),
+            "/home/runner/work/repo",
+            "Users/example/work/notes.txt",
+            "C:" + "\\".join(("", "UsersShared", "example", "notes.txt")),
+        ):
+            self.assertEqual(gate.scan(value, "text"), [])
+
+    def test_spaced_and_unicode_personal_profiles(self) -> None:
+        for name in (
+            "Example Person",
+            "Example  Person",
+            "Example'Profile",
+            "Example`Profile",
+            "Example\u00a0Profile",
+            "Example\u2003Profile",
+            "\u00a0Example",
+            " Example",
+            "Zoë Example",
+            "名字",
+        ):
+            for separator in ("\\", "\\\\", "/"):
+                value = (
+                    "C:"
+                    + separator
+                    + separator.join(("Users", name, "work", "notes.txt"))
+                )
+                with self.subTest(name=name, separator=separator):
+                    findings = gate.scan(value, "text")
+                    self.assertEqual(len(findings), 1)
+                    self.assertEqual(findings[0]["rule"], "personal-workspace")
+
+    def test_personal_profile_directory_is_enough(self) -> None:
+        for ending in ("", "'notes.txt", "`notes.txt", "\u00a0notes.txt"):
+            value = "C:" + "\\".join(("", "Users", "example", ending))
+            with self.subTest(ending=ending):
+                self.assertEqual(len(gate.scan(value, "text")), 1)
+        for invalid in (
+            '"',
+            "\n",
+            "\r",
+            "\t",
+            "\x85",
+            "\u2028",
+            "\u2029",
+            "<",
+            ">",
+            "|",
+            ":",
+            "*",
+            "?",
+        ):
+            value = "C:" + "\\".join(
+                ("", "Users", "Example" + invalid + "Profile", "notes.txt")
+            )
+            with self.subTest(invalid=invalid):
+                self.assertEqual(gate.scan(value, "text"), [])
+
+    def test_separate_root_literals_are_not_profiles(self) -> None:
+        texts = (
+            "Standard roots include `/home/` and `/tmp/`.",
+            "Standard roots include '/home/' and '/tmp/'.",
+            "root = '/home/' + username + '/work'",
+            "root = '/home/ ' + username + '/work'",
+        )
+        for text in texts:
+            with self.subTest(text=text):
+                self.assertEqual(gate.scan(text, "text"), [])
+
+    def test_windows_ci_accounts_and_spaced_profiles(self) -> None:
+        for separator in ("\\", "\\\\", "/"):
+            for name in (
+                "runner",
+                "runneradmin",
+                "runner Smith",
+                "runneradmin Example",
+                "runneradmin-extra",
+            ):
+                value = (
+                    "C:"
+                    + separator
+                    + separator.join(("Users", name, "work", "notes.txt"))
+                )
+                with self.subTest(separator=separator, name=name):
+                    self.assertEqual(
+                        bool(gate.scan(value, "text")),
+                        name not in ("runner", "runneradmin"),
+                    )
+
+    def test_windows_internal_workspace_layouts(self) -> None:
+        layouts = (
+            (("fbcode", "example", "file.py"), "internal-source-path"),
+            (("fbsource", "example", "file.py"), "internal-source-path"),
+            (
+                ("", "tmp", "example", "worktrees", "file.py"),
+                "temporary-workspace",
+            ),
+            (
+                ("", "var", "tmp", "example", "lanes", "file.py"),
+                "temporary-workspace",
+            ),
+        )
+        for separator in ("\\", "\\\\", "/"):
+            for parts, rule in layouts:
+                value = separator.join(parts)
+                with self.subTest(parts=parts, separator=separator):
+                    findings = gate.scan(value, "text")
+                    self.assertEqual(len(findings), 1)
+                    self.assertEqual(findings[0]["rule"], rule)
+            for value in (
+                "notfbsource" + separator + "example",
+                separator.join(("tmp", "example", "worktrees", "file.py")),
+            ):
+                self.assertEqual(gate.scan(value, "text"), [])
+
+    def test_workspace_separator_runs(self) -> None:
+        for separator in ("\\", "/"):
+            self.assertEqual(
+                gate.scan(separator * 100000 + "plain", "text"), []
+            )
+
     def test_short_reference_boundary_and_runner_path(self):
         for prefix in "DTP":
             self.assertTrue(gate.scan(prefix + "12345", "text"))
@@ -312,6 +448,17 @@ class Repository(unittest.TestCase):
         self.assertEqual((result["commits"], result["files"]), (4, 2))
         self.assertEqual(result["blobs"], 3)
         self.assertEqual(len(result["findings"]), 2)
+
+    def test_windows_workspace_in_a_commit_and_blob(self) -> None:
+        value = "C:" + "\\".join(("", "Users", "example", "notes.txt"))
+        self.write("notes.md", value)
+        self.commit("Private workspace\n\n" + value)
+        findings = self.check()["findings"]
+        self.assertEqual(len(findings), 2)
+        self.assertTrue(
+            all(f["rule"] == "personal-workspace" for f in findings)
+        )
+        self.assertNotIn(value, json.dumps(findings))
 
     def test_commit_identity_headers_are_public_content(self):
         self.run_git(

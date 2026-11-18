@@ -22,6 +22,13 @@ Files, filenames, branch names, PR titles/descriptions, and complete commit
 messages must not contain private task/diff/paste identifiers, private service
 links, machine names, or personal workspace paths. Keep private provenance in
 private records; use public citations and repository-relative paths here.
+Host-path checks accept either slash convention, including doubled backslashes
+in string literals and Windows profile-directory casing. Conventional CI
+account names `runner` and `runneradmin` are excluded; longer profile names
+that start with either word are not. Profile names may contain apostrophes or
+Unicode spaces; finding the profile directory is enough to report the path.
+A quote immediately after a root is treated as a text boundary, and profile
+matches do not cross line breaks.
 The numeric-reference and campaign-code checks ignore letter case in branch
 names and treat underscores as separators. Slashes remain path boundaries;
 compound campaign/lesson references have a separate slash-aware pattern, also

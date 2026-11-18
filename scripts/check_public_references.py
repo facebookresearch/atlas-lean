@@ -23,14 +23,16 @@ RULES = {
         r"\b(?:devvm|devgpu|twshared)[0-9]+(?:\.[a-z0-9.-]+)?\b", re.I
     ),
     "personal-workspace": re.compile(
-        r"/(?:data/users|home|Users)/(?!runner/)[a-zA-Z0-9_.-]+/[^\s\"'`<>]+"
+        r"(?<![/\\])[/\\]+(?:data[/\\]+users|home|(?i:Users))[/\\]+"
+        r"(?!runner(?:admin)?[/\\])(?!\s*['`])"
+        r"[^/\\\x00-\x1f\x85\u2028\u2029\"<>|:*?]+[/\\]+"
     ),
     "internal-source-path": re.compile(
-        r"(?<!\w)(?:fbcode|fbsource)/[a-zA-Z0-9_./-]+"
+        r"(?<!\w)(?:fbcode|fbsource)[/\\]+[a-zA-Z0-9_./\\-]+"
     ),
     "temporary-workspace": re.compile(
-        r"/(?:tmp|var/tmp)/[^/\s\"'`<>]+/(?:lanes|worktrees|shards|state)/"
-        r"[^\s\"'`<>]+"
+        r"(?<![/\\])[/\\]+(?:tmp|var[/\\]+tmp)[/\\]+[^/\\\s\"'`<>]+"
+        r"[/\\]+(?:lanes|worktrees|shards|state)[/\\]+[^\s\"'`<>]+"
     ),
     "session-reference": re.compile(
         r"\b(?:session|agent)[ _-]?(?:id)?[\s:=/#]+"
