@@ -155,6 +155,10 @@ NONPUBLIC_SUFFIXES = (
     "test",
     "invalid",
     "example",
+    "example.com",
+    "example.net",
+    "example.org",
+    "alt",
     "onion",
     "arpa",
 )

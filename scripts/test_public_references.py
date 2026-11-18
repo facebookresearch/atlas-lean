@@ -619,6 +619,15 @@ class PublicUrlPaths(unittest.TestCase):
             "-bad-.edu",
             "1.0.0.127.in-addr.arpa",
             "xn--bcher-kva.example",
+            "host.alt",
+            "HOST.ALT",
+            "host.alt.",
+            "example.com",
+            "www.example.com",
+            "docs.example.net",
+            "assets.example.org",
+            "EXAMPLE.ORG:443",
+            "a.b.Example.Net.",
         )
         for host in hosts:
             for scheme in ("http://", "HTTPS://"):
@@ -724,6 +733,11 @@ class PublicUrlPaths(unittest.TestCase):
             "www.math.cmu.edu.",
             "www.math.cmu.edu:443",
             "xn--bcher-kva.ch",
+            # Special-use suffixes match whole labels only.
+            "notexample.com",
+            "example.com.au",
+            "alt.edu",
+            "example.community",
         ):
             url = PUBLIC_URLS[0].replace("www.math.cmu.edu", host)
             with self.subTest(host=host):
@@ -1477,6 +1491,8 @@ class Repository(unittest.TestCase):
             "https://@" + home,
             "https://:" + home,
             "http://localhost" + home,
+            "https://host.alt" + home,
+            "https://www.example.com" + home,
         ):
             with self.subTest(text=text):
                 self.base = self.head()
