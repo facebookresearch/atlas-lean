@@ -415,7 +415,7 @@ lemma skinDepth_le_goodConductorSkinDepth_div (epsilon mu omega sigma : ℝ)
 approximation lies in `[0, rho]`; for `0 <= rho < 1` the exact skin
 depth lies in `[delta0, delta0 / (1 - rho)]`; and
 `delta0 = sqrt (2 / (omega * mu * sigma))`. -/
-theorem skinDepthApproximation_error (epsilon mu omega sigma : ℝ)
+lemma skinDepthApproximation_error (epsilon mu omega sigma : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega)
     (hsigma : 0 < sigma) :
     0 ≤ relativeAttenuationError epsilon mu omega sigma ∧
