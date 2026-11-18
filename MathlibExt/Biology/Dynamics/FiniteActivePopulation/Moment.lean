@@ -33,6 +33,21 @@ namespace MathlibExt.Biology.Dynamics.FiniteActivePopulation.Moment
 noncomputable def momentWitness : Fin 3 → ℝ :=
   fun i => if i = 0 then 1 / 2 else if i = 2 then 1 / 2 else 0
 
+
+/-- The witness is nonnegative in every state. -/
+lemma momentWitness_nonneg (i : Fin 3) : 0 ≤ momentWitness i := by
+  unfold momentWitness
+  split_ifs <;> norm_num
+
+/-- The witness has total mass one: it is a probability law on
+`Fin 3`. -/
+lemma momentWitness_sum_one :
+    (∑ i : Fin 3, momentWitness i) = 1 := by
+  rw [Finset.sum_fin_eq_sum_range, Finset.sum_range_succ, Finset.sum_range_succ,
+    Finset.sum_range_succ]
+  simp only [momentWitness, Finset.sum_range_zero]
+  norm_num
+
 /-- **Moment closure is not exact.** For `N = 2`, `alpha = 0`,
 and the nonlinear activation `f x = (x / 2) ^ 2`, the exact
 initial mean birth rate under the witness law,

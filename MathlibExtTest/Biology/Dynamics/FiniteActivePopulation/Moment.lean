@@ -21,4 +21,8 @@ example : (∑ i : Fin 3, momentWitness i * ((2 - (i : ℝ)) * ((i : ℝ) / 2) ^
     (2 - (1 : ℝ)) * ((1 : ℝ) / 2) ^ 2 = 1 / 4 :=
   ⟨moment_closure_counterexample.1, moment_closure_counterexample.2.1⟩
 
+/-- The witness is a probability law: nonnegative with total mass one. -/
+example : (∑ i : Fin 3, momentWitness i) = 1 ∧ ∀ i, 0 ≤ momentWitness i :=
+  ⟨momentWitness_sum_one, momentWitness_nonneg⟩
+
 end MathlibExtTest.Biology.Dynamics.FiniteActivePopulation.Moment
