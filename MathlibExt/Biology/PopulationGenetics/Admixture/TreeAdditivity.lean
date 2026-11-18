@@ -17,9 +17,9 @@ In the drift model every f-statistic is a sum over edges of products of weight
 differences times edge lengths. Hence f-statistics are unchanged when every weight
 vector is shifted by a common vector (more generally, by a common signed shift with
 signs `±1`), when the length of an edge traversed equally by all populations changes,
-and when a tree with binary loadings is rerooted (lineages change by a fixed symmetric
-difference). So the root position and root-stem length are not identifiable, and `f2`
-is the unrooted path metric.
+and when binary lineages change by a fixed symmetric difference (as they do when a tree
+is rerooted). So on a tree the root position and root-stem length are not identifiable
+from `f2`, which is then the unrooted path metric.
 
 ## Main results
 
@@ -111,7 +111,9 @@ theorem f4_eq_of_lineage_eq_symmDiff [DecidableEq E] (M : DriftModel μ E P)
   rcases hM X e with h | h <;> rcases hM' X e with h' | h' <;> by_cases hR : e ∈ R <;>
     simp_all
 
-/-- Rerooting invariance of `f2`: `f2` is the unrooted path metric. -/
+/-- Rerooting invariance of `f2`: invariance under the symmetric-difference change of
+lineages above. When the lineages come from rerooting a tree this says `f2` does not see
+the root position; for general binary loadings no path-metric conclusion is claimed. -/
 theorem f2_eq_of_lineage_eq_symmDiff [DecidableEq E] (M : DriftModel μ E P)
     (M' : DriftModel μ' E P) (hM : M.HasBinaryLoadings) (hM' : M'.HasBinaryLoadings)
     (hlen : M'.len = M.len) (R : Finset E) (hL : ∀ X, M'.lineage X = M.lineage X ∆ R)
