@@ -16,14 +16,19 @@ namespace MathlibExtTest.Biology.Biophysics.CompartmentKinetics.DoseRecurrence
 
 open MathlibExt.Biology.Biophysics.CompartmentKinetics.DoseRecurrence
 
+/-- Event-time bridge at dose `2`, spacing `1`. -/
+example :
+    MathlibExt.Biology.Biophysics.CompartmentKinetics.Dosing.postDoseAmount
+        3 0 1 2 =
+      ∑ i ∈ Finset.range (⌊(2 : ℝ) * 1 / 1⌋₊ + 1),
+        (3:ℝ) * Real.exp (-(0:ℝ) * ((2:ℝ) * 1 - (i:ℝ) * 1)) :=
+  postDoseAmount_at_event (by norm_num) 2
+
 /-- No elimination at `D = 3`, after dose `2`: three doses give `9`. -/
 example :
-    (∑ i ∈ Finset.range (2 + 1),
-        (3:ℝ) * Real.exp (-(0:ℝ) * ((2:ℝ) * 1 - (i:ℝ) * 1))) = 9 := by
-  calc (∑ i ∈ Finset.range (2 + 1),
-        (3:ℝ) * Real.exp (-(0:ℝ) * ((2:ℝ) * 1 - (i:ℝ) * 1)))
-      = ((2:ℝ) + 1) * 3 :=
-        post_dose_amount_zero_elimination (D := (3:ℝ)) (tau := (1:ℝ)) 2
-    _ = 9 := by norm_num
+    MathlibExt.Biology.Biophysics.CompartmentKinetics.Dosing.postDoseAmount
+        3 0 1 2 = 9 := by
+  rw [post_dose_amount_zero_elimination]
+  norm_num
 
 end MathlibExtTest.Biology.Biophysics.CompartmentKinetics.DoseRecurrence
