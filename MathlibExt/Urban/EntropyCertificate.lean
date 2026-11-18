@@ -30,6 +30,25 @@ Kullback-Leibler-style sum is the optimality certificate.
 - `SinkhornMargins.entropy_optimality_certificate_scaledTable`:
   the certificate stated for the canonical scaled table
   `SinkhornMargins.scaledTable`.
+
+The entropy functional is the finite I-divergence-style
+objective `F(S) = ∑ i j, S i j * log (S i j / K i j)` with
+reference kernel `K`, minimized over the linear row/column
+margin constraints. The formal statement below is the exact
+finite algebraic certificate for that objective and those
+constraints: it assumes the scaled table and its margins and
+proves optimality directly, without asserting existence of
+scaling factors for prescribed margins.
+
+## References
+
+- R. Sinkhorn and P. Knopp, concerning nonnegative matrices
+  and doubly stochastic matrices, *Pacific J. Math.* 21,
+  1967 (matrix scaling to prescribed margins).
+- I. Csiszár, I-divergence geometry of probability
+  distributions and minimization problems, *Ann. Probab.* 3,
+  1975 (entropy/I-projection minimization under linear
+  constraints).
 -/
 
 @[expose] public section
@@ -38,7 +57,7 @@ open InformationTheory
 
 namespace SinkhornMargins
 
-theorem klFun_entrywise_identity (s k aval bval : ℝ) (hk : 0 < k) (ha : 0 < aval)
+private theorem klFun_entrywise_identity (s k aval bval : ℝ) (hk : 0 < k) (ha : 0 < aval)
     (hb : 0 < bval) (hs : 0 ≤ s) :
     (aval * k * bval) * klFun (s / (aval * k * bval))
       = s * Real.log (s / k) - (aval * k * bval) * Real.log ((aval * k * bval) / k)
