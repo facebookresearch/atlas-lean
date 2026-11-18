@@ -11,7 +11,9 @@ module
 public import MathlibExt.Analysis.InnerProductSpace.LineIsometry
 public import MathlibExt.InformationTheory.ConditionalEntropy
 public import MathlibExt.InformationTheory.LinearGaussianJointLaw
+public import MathlibExt.InformationTheory.ReferenceOutputKL
 public import MathlibExt.InformationTheory.VectorGaussianKL
+public import Mathlib.InformationTheory.KullbackLeibler.ChainRule
 public import Mathlib.InformationTheory.KullbackLeibler.DataProcessing
 public import Mathlib.Probability.Distributions.Gaussian.Real
 
@@ -33,6 +35,9 @@ Main results:
 * `klDiv_map_scalarCoord`, `klDiv_map_scalarCoordPair`,
   `measureMutualInformation_map_scalarCoordPair`: the embedding preserves Kullback-Leibler
   divergence and mutual information as extended reals, so a top value stays top.
+* `klDiv_map_scalarCoordPair_compProd_eq_add`, `klDiv_map_scalarCoordPair_prod_reference_eq_add`:
+  the Kullback-Leibler chain rule in scalar coordinates, for embedded composition-product joint
+  laws and for an embedded joint law against an embedded input marginal times a reference output.
 * `scalarGaussian_klDiv_eq_vector`: the scalar Gaussian divergence is the closed form of
   `MathlibExt.InformationTheory.VectorGaussianKL` at dimension one.
 * `scalarGaussianChannel_identification`: the noise law, conditional law, joint law and power
@@ -334,6 +339,39 @@ theorem measureMutualInformation_map_scalarCoordPair
   unfold measureMutualInformation
   rw [hcoe, hmarg1, hmarg2,
     Measure.map_prod_map _ _ measurable_scalarCoord measurable_scalarCoord, hkl]
+
+/-- **KL chain rule in scalar coordinates.** For finite input laws `μ`, `ν` on `ℝ` and Markov
+kernels `κ`, `η` from `ℝ` to `ℝ`, the divergence between the embedded joint laws `μ ⊗ₘ κ` and
+`ν ⊗ₘ η` is the divergence between the embedded input laws plus the embedded conditional term
+`KL(μ ⊗ₘ κ ‖ μ ⊗ₘ η)`, as an identity in `ℝ≥0∞`. -/
+theorem klDiv_map_scalarCoordPair_compProd_eq_add (μ ν : Measure ℝ)
+    [IsFiniteMeasure μ] [IsFiniteMeasure ν] (κ η : Kernel ℝ ℝ)
+    [IsMarkovKernel κ] [IsMarkovKernel η] :
+    klDiv ((μ ⊗ₘ κ).map (Prod.map scalarCoord scalarCoord))
+        ((ν ⊗ₘ η).map (Prod.map scalarCoord scalarCoord)) =
+      klDiv (μ.map scalarCoord) (ν.map scalarCoord) +
+        klDiv ((μ ⊗ₘ κ).map (Prod.map scalarCoord scalarCoord))
+          ((μ ⊗ₘ η).map (Prod.map scalarCoord scalarCoord)) := by
+  rw [klDiv_map_scalarCoordPair, klDiv_map_scalarCoordPair, klDiv_map_scalarCoord]
+  exact InformationTheory.klDiv_compProd_eq_add μ ν κ η
+
+/-- **KL chain rule in scalar coordinates, reference-output form.** For a joint probability law `μ`
+on `ℝ × ℝ` and a reference output probability `Q` on `ℝ`, the divergence from the embedded joint law
+to the embedded input marginal times the embedded reference splits into the divergence to the
+product of the embedded marginals plus the divergence from the embedded output marginal to the
+embedded reference, as an identity in `ℝ≥0∞`. -/
+theorem klDiv_map_scalarCoordPair_prod_reference_eq_add (μ : ProbabilityMeasure (ℝ × ℝ))
+    (Q : Measure ℝ) [IsProbabilityMeasure Q] :
+    klDiv ((μ : Measure (ℝ × ℝ)).map (Prod.map scalarCoord scalarCoord))
+        ((((μ : Measure (ℝ × ℝ)).map Prod.fst).map scalarCoord).prod (Q.map scalarCoord)) =
+      klDiv ((μ : Measure (ℝ × ℝ)).map (Prod.map scalarCoord scalarCoord))
+          ((((μ : Measure (ℝ × ℝ)).map Prod.fst).map scalarCoord).prod
+            (((μ : Measure (ℝ × ℝ)).map Prod.snd).map scalarCoord)) +
+        klDiv (((μ : Measure (ℝ × ℝ)).map Prod.snd).map scalarCoord) (Q.map scalarCoord) := by
+  rw [Measure.map_prod_map _ _ measurable_scalarCoord measurable_scalarCoord,
+    Measure.map_prod_map _ _ measurable_scalarCoord measurable_scalarCoord,
+    klDiv_map_scalarCoordPair, klDiv_map_scalarCoordPair, klDiv_map_scalarCoord]
+  exact MathlibExt.InformationTheory.ReferenceOutputKL.klDiv_prod_reference_eq_add μ Q
 
 /-- **Scalar Gaussian divergence in vector form.** For positive variances, the scalar Gaussian
 divergence is the embedded vector Gaussian divergence closed form at dimension one. -/
