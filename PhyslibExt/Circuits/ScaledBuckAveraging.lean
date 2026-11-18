@@ -11,7 +11,6 @@ module
 public import MathlibExt.Analysis.ODE.AffinePWMErrorBound
 public import Mathlib.LinearAlgebra.Matrix.ToLin
 public import Mathlib.LinearAlgebra.Matrix.Notation
-import Mathlib.MeasureTheory.Function.Floor
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.Positivity
@@ -291,21 +290,6 @@ theorem scaledState_integral_eq (L C R Vin Iref Vref T : ℝ)
   fin_cases j <;> simp [scaledState] <;> ring
 
 /-! ## E. Error bounds -/
-
-/-- The pulse-width signal is interval integrable on every interval: it is measurable and takes
-only the values `0` and `1`. -/
-private theorem intervalIntegrable_pwmSignal (ε : ℝ) (d : ℝ → ℝ) (a b : ℝ) :
-    IntervalIntegrable (pwmSignal ε d) volume a b := by
-  have hfl : Measurable fun u : ℝ => ⌊u / ε⌋ := (measurable_id.div_const ε).floor
-  have h1 : Measurable fun u : ℝ => u - ((⌊u / ε⌋ : ℤ) : ℝ) * ε :=
-    measurable_id.sub ((Measurable.of_discrete (f := fun k : ℤ => (k : ℝ) * ε)).comp hfl)
-  have h2 : Measurable fun u : ℝ => d (((⌊u / ε⌋ : ℤ) : ℝ) * ε) * ε :=
-    (Measurable.of_discrete (f := fun k : ℤ => d ((k : ℝ) * ε) * ε)).comp hfl
-  have hs : Measurable (pwmSignal ε d) :=
-    Measurable.ite (measurableSet_lt h1 h2) measurable_const measurable_const
-  refine (intervalIntegrable_const (c := (1 : ℝ))).mono_fun hs.aestronglyMeasurable
-    (ae_of_all _ fun u => ?_)
-  simp only [pwmSignal]; split_ifs <;> simp
 
 /-- Scaled-state bound: the affine PWM bound instantiated at
 `(Ã, b̃)` with zero common forcing. -/
