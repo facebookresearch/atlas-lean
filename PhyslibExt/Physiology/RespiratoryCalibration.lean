@@ -14,7 +14,29 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 /-!
 # Respiratory calibration design
 
-For the two-column design with columns given by the sampled volume derivative and volume, proportional columns make the calibration parameters non-identifiable: shifting `(R, E)` by `(s, -c * s)` leaves every sampled datum unchanged.
+## i. Overview
+
+For the two-column design with columns given by the sampled volume
+derivative and volume, proportional columns make the calibration
+parameters non-identifiable: shifting `(R, E)` by `(s, -c * s)`
+leaves every sampled datum unchanged.
+
+## ii. Key results
+
+* `resp_proportional_same_data`: proportional columns give the
+  same sampled data for the shifted parameter pair.
+* `resp_proportional_not_injective`: the calibration map is not
+  injective on any admissible domain containing both pairs.
+
+## iii. Table of contents
+
+* A. Proportional-column non-identification.
+
+## iv. References
+
+* The two-column design is the fixed sampled design of the
+  respiratory calibration model; no dynamic trajectory assumption
+  is used.
 -/
 
 @[expose] public section
