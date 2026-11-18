@@ -290,13 +290,10 @@ noncomputable def xmodemGenerator : Polynomial (ZMod 2) :=
 def xmodemTaps : BitVec 16 :=
   0x1021#16
 
-/-- ASCII text as MSB-first bits, eight bits per character. -/
-def asciiBits (s : String) : List Bool :=
-  s.toList.flatMap fun c => Nat.toBitsBE 8 c.toNat
-
-/-- The standard CRC check payload, ASCII `"123456789"`. -/
+/-- The standard CRC check payload, ASCII `"123456789"`, as MSB-first bits, eight bits per
+character. Every character of the literal is ASCII, so its low eight bits are its byte. -/
 def xmodemCheckPayload : List Bool :=
-  asciiBits "123456789"
+  "123456789".toList.flatMap fun c => Nat.toBitsBE 8 c.toNat
 
 private theorem monicModulus_xmodemTaps : xmodemTaps.monicModulus = xmodemGenerator := by
   have h : xmodemTaps.toBoolListLE = [true, false, false, false, false, true, false, false,
