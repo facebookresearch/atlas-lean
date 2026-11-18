@@ -17,7 +17,7 @@ open MathlibExt.Analysis.ODE
 -- `(V ∘ γ) 3 ≤ (V ∘ γ) 2`, that is `-3 ≤ -2`.
 example : (-3 : ℝ) ≤ -2 :=
   finite_interval_antitoneOn_v_comp (V := (id : ℝ → ℝ)) (γ := fun t : ℝ => -t)
-    (f := fun _ _ => (-1 : ℝ)) (a := 2) (b := 3) (by norm_num)
+    (f := fun _ _ => (-1 : ℝ)) (a := 2) (b := 3)
     (continuous_id.comp continuous_neg).continuousOn
     (fun t _ => hasDerivAt_neg t) (fun _ _ => differentiableAt_id)
     (by
@@ -56,7 +56,7 @@ example : (fun t : ℝ => -t) (5 / 2) ∈ {x : ℝ | id x ≤ -2} :=
 -- Singleton interval `a = b = 5`: antitonicity is `-5 ≤ -5`.
 example : (-5 : ℝ) ≤ -5 :=
   finite_interval_antitoneOn_v_comp (V := (id : ℝ → ℝ)) (γ := fun t : ℝ => -t)
-    (f := fun _ _ => (-1 : ℝ)) (a := 5) (b := 5) le_rfl
+    (f := fun _ _ => (-1 : ℝ)) (a := 5) (b := 5)
     (continuous_id.comp continuous_neg).continuousOn
     (fun t _ => hasDerivAt_neg t) (fun _ _ => differentiableAt_id)
     (by
