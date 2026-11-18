@@ -223,4 +223,72 @@ theorem response_strictMonoOn {E0 Emax K h : ℝ} (hK : 0 < K) (hh : 0 < h)
   rw [response_eq, response_eq]
   exact hs ha hb hab
 
+set_option linter.unusedVariables false in
+/-- **Inverse pharmacodynamic response.** For the response
+`E(C) = E0 + Emax * (C^h / (K^h + C^h))` with `K > 0`, `h > 0`,
+`Emax > 0`, every interior response value `E0 < E < E0 + Emax` is
+attained at the concentration
+`C = K * ((E - E0) / (E0 + Emax - E))^(1/h)`. The endpoints are
+excluded: `E = E0` is attained only at `C = 0` and `E0 + Emax` is not
+attained at any finite concentration. -/
+private theorem pd_inverse_response {E0 Emax K h E : ℝ}
+    (hK : 0 < K) (hh : 0 < h) (hEmax : 0 < Emax)
+    (hlo : E0 < E) (hhi : E < E0 + Emax) :
+    E0 + Emax * ((K * ((E - E0) / (E0 + Emax - E)) ^ (1 / h)) ^ h /
+      (K ^ h + (K * ((E - E0) / (E0 + Emax - E)) ^ (1 / h)) ^ h)) = E := by
+  have ha : 0 < E - E0 := sub_pos.mpr hlo
+  have hb : 0 < E0 + Emax - E := by linarith
+  have hrpos : 0 < (E - E0) / (E0 + Emax - E) := div_pos ha hb
+  have hpow : (((E - E0) / (E0 + Emax - E)) ^ (1 / h)) ^ h
+      = (E - E0) / (E0 + Emax - E) := by
+    rw [← Real.rpow_mul (le_of_lt hrpos), div_mul_cancel₀ _ (ne_of_gt hh),
+      Real.rpow_one]
+  have hCh : (K * ((E - E0) / (E0 + Emax - E)) ^ (1 / h)) ^ h
+      = K ^ h * ((E - E0) / (E0 + Emax - E)) := by
+    rw [Real.mul_rpow (le_of_lt hK) (Real.rpow_nonneg (le_of_lt hrpos) _), hpow]
+  have hKh : 0 < K ^ h := Real.rpow_pos_of_pos hK h
+  rw [hCh]
+  have hden : K ^ h + K ^ h * ((E - E0) / (E0 + Emax - E)) ≠ 0 :=
+    ne_of_gt (add_pos_of_pos_of_nonneg hKh (le_of_lt (mul_pos hKh hrpos)))
+  have hbne : E0 + Emax - E ≠ 0 := ne_of_gt hb
+  field_simp
+  ring
+
+set_option linter.unusedVariables false in
+/-- **Concentration-unit scaling.** Rescaling the concentration unit
+scales `C` and `K` together and does not change the response: for
+`s > 0`, `C ≥ 0`, the Hill fraction at `(s * C, s * K)` equals the one
+at `(C, K)`. Scaling only one of them changes the response in general. -/
+private theorem pd_response_scale {Emax K h C s : ℝ}
+    (hK : 0 < K) (hh : 0 < h) (hC : 0 ≤ C) (hs : 0 < s) :
+    (s * C) ^ h / ((s * K) ^ h + (s * C) ^ h) = C ^ h / (K ^ h + C ^ h) := by
+  rw [Real.mul_rpow (le_of_lt hs) hC, Real.mul_rpow (le_of_lt hs) (le_of_lt hK)]
+  have hsh : s ^ h ≠ 0 := ne_of_gt (Real.rpow_pos_of_pos hs h)
+  have hfac : s ^ h * K ^ h + s ^ h * C ^ h = s ^ h * (K ^ h + C ^ h) := by ring
+  rw [hfac, mul_div_mul_left _ _ hsh]
+
+/-- The concentration attaining an interior response value `E`:
+`K * ((E - E0) / (E0 + Emax - E))^(1/h)`. -/
+noncomputable def inverseConcentration (E0 Emax K h E : ℝ) : ℝ :=
+  K * ((E - E0) / (E0 + Emax - E)) ^ (1 / h)
+
+/-- The inverse concentration attains its response value:
+`response E0 Emax K h (inverseConcentration E0 Emax K h E) = E` for
+`E0 < E < E0 + Emax`. -/
+theorem response_inverseConcentration {E0 Emax K h E : ℝ}
+    (hK : 0 < K) (hh : 0 < h) (hEmax : 0 < Emax)
+    (hlo : E0 < E) (hhi : E < E0 + Emax) :
+    response E0 Emax K h (inverseConcentration E0 Emax K h E) = E := by
+  rw [response_eq]
+  exact pd_inverse_response hK hh hEmax hlo hhi
+
+/-- Rescaling the concentration unit scales `C` and `K` together and
+does not change the response. -/
+theorem response_scale {E0 Emax K h C s : ℝ}
+    (hK : 0 < K) (hh : 0 < h) (hC : 0 ≤ C) (hs : 0 < s) :
+    response E0 Emax (s * K) h (s * C) = response E0 Emax K h C := by
+  rw [response_eq, response_eq]
+  have h := pd_response_scale hK hh hC hs (Emax := Emax)
+  rw [h]
+
 end MathlibExt.Biology.Biophysics.Pharmacodynamics

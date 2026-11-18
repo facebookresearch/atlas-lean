@@ -53,4 +53,23 @@ example {E0 Emax K h : ℝ} (hK : 0 < K) (hh : 0 < h) (hEmax : 0 < Emax) :
     StrictMonoOn (response E0 Emax K h) (Set.Ici 0) :=
   response_strictMonoOn hK hh hEmax
 
+/-- Inverse concentration at the half-increment value is exactly `K`. -/
+example {E0 Emax K h : ℝ} (_hK : 0 < K) (_hh : 0 < h) (hEmax : 0 < Emax) :
+    inverseConcentration E0 Emax K h (E0 + Emax / 2) = K := by
+  unfold inverseConcentration
+  have h1 : (E0 + Emax / 2 - E0) = Emax / 2 := by ring
+  have h2 : (E0 + Emax - (E0 + Emax / 2)) = Emax / 2 := by ring
+  rw [h1, h2, div_self (by positivity), Real.one_rpow, mul_one]
+
+/-- And its response is the half-increment value. -/
+example {E0 Emax K h : ℝ} (hK : 0 < K) (hh : 0 < h) (hEmax : 0 < Emax) :
+    response E0 Emax K h (inverseConcentration E0 Emax K h (E0 + Emax / 2)) =
+      E0 + Emax / 2 :=
+  response_inverseConcentration hK hh hEmax (by linarith) (by linarith)
+
+/-- Unit scaling through `response`: doubling `C` and `K` together. -/
+example {E0 Emax K h C : ℝ} (hK : 0 < K) (hh : 0 < h) (hC : 0 ≤ C) :
+    response E0 Emax (2 * K) h (2 * C) = response E0 Emax K h C :=
+  response_scale hK hh hC (by norm_num)
+
 end MathlibExtTest.Biology.Biophysics.Pharmacodynamics

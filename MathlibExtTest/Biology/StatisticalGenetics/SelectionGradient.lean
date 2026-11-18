@@ -85,4 +85,50 @@ example (μ : EuclideanSpace ℝ (Fin 2)) :
   selectionDifferentialMV_eq measurable_const ⟨1, fun _ => by simp⟩ Matrix.PosDef.one
     (by rw [meanFitnessMV_one]; exact one_ne_zero)
 
+/-! ### Truncation fitness: Lande's equation applies, the Stein form does not -/
+
+/-- The truncation fitness `W = 1_{z > 0}` is measurable and bounded. -/
+example : Measurable ((Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ))) :=
+  measurable_const.indicator measurableSet_Ioi
+
+example : ∃ C, ∀ z, |(Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ)) z| ≤ C :=
+  ⟨1, fun z => by by_cases h : z ∈ Set.Ioi (0 : ℝ) <;> simp [Set.indicator, h]⟩
+
+/-- On `N(0, 1)`, truncation selection has differential `√(2/π)`. -/
+example : selectionDifferential ((Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ))) 0 1 =
+    Real.sqrt (2 / Real.pi) := by
+  simpa only [selectionDifferential, meanFitness, sub_zero] using
+    integral_mul_indicator_Ioi_div_eq_sqrt
+
+/-- Hence Lande's equation applies and gives `d/dμ log w̄(0) = √(2/π)`. -/
+example : Real.sqrt (2 / Real.pi) =
+    (1 : NNReal) * deriv
+      (fun m => Real.log (meanFitness ((Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ))) m 1)) 0 := by
+  have hS : selectionDifferential ((Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ))) 0 1 =
+      Real.sqrt (2 / Real.pi) := by
+    simpa only [selectionDifferential, meanFitness, sub_zero] using
+      integral_mul_indicator_Ioi_div_eq_sqrt
+  have hmean : meanFitness ((Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ))) 0 1 ≠ 0 := by
+    intro h
+    rw [selectionDifferential, h, div_zero] at hS
+    exact (Real.sqrt_pos.mpr (div_pos two_pos Real.pi_pos)).ne' hS.symm
+  rw [← hS]
+  exact selectionDifferential_eq_mul_deriv_log
+    (measurable_const.indicator measurableSet_Ioi)
+    ⟨1, fun z => by by_cases h : z ∈ Set.Ioi (0 : ℝ) <;> simp [Set.indicator, h]⟩
+    one_ne_zero hmean
+
+/-- The indicator has derivative `0` away from `0`, but no derivative at `0`; the Stein form's
+everywhere-differentiability hypothesis fails. -/
+example : HasDerivAt ((Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ))) 0 (1 : ℝ) :=
+  hasDerivAt_indicator_Ioi_of_ne one_ne_zero
+
+example : ¬ ∃ W' : ℝ → ℝ, ∀ z,
+    HasDerivAt ((Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ))) (W' z) z :=
+  not_forall_hasDerivAt_indicator_Ioi
+
+#print axioms integral_mul_indicator_Ioi_div_eq_sqrt
+#print axioms hasDerivAt_indicator_Ioi_of_ne
+#print axioms not_forall_hasDerivAt_indicator_Ioi
+
 end MathlibExtTest.Biology.StatisticalGenetics.SelectionGradient

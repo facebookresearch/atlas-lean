@@ -15,6 +15,9 @@ public import Mathlib.LinearAlgebra.Matrix.Stochastic
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Analysis.SpecificLimits.Basic
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Topology.Algebra.Module.FiniteDimension
 
 /-!
 # Convergence of finite Markov chains
@@ -36,6 +39,10 @@ of the row `Pⁿ(x, ·)` from `π` is `tvDist (fun y => (P ^ n) x y) π`
 * `tendsto_pow_apply`: hence `Pⁿ(x, y) → π(y)` for every `x` and `y`;
   `stationary_unique`: the stationary distribution of a primitive chain is unique;
   `stationary_pos`: it has full support.
+* `exists_stationary`: every row-stochastic matrix on a nonempty finite state space has a
+  stationary distribution, by Cesàro averages.
+* `perron_frobenius_primitive`: the packaged primitive case, with existence, uniqueness,
+  strict positivity, and geometric total-variation convergence.
 
 ## References
 
@@ -61,6 +68,77 @@ private theorem sum_vecMul_of_mem {M : Matrix S S ℝ} (hM : M ∈ rowStochastic
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [← Finset.mul_sum, sum_row_of_mem_rowStochastic hM x, mul_one]
+
+/-- **Existence of a stationary distribution.** Every row-stochastic matrix on a nonempty
+finite state space has a stationary probability vector `π` (`π ≥ 0`, `∑ π = 1`, `π ᵥ* P = π`).
+
+The proof takes Cesàro averages of the rows of `Pᵏ` started from one state. They lie in the
+compact box `[0,1]^S`; a subsequential limit is a probability vector, and the telescoping
+identity `μₙ ᵥ* P - μₙ = (n+1)⁻¹ (rₙ₊₁ - r₀)` shows that it is stationary. -/
+theorem exists_stationary [Nonempty S] {P : Matrix S S ℝ} (hP : P ∈ rowStochastic ℝ S) :
+    ∃ π : S → ℝ, (∀ y, 0 ≤ π y) ∧ ∑ y, π y = 1 ∧ π ᵥ* P = π := by
+  obtain ⟨x₀⟩ := ‹Nonempty S›
+  set e : S → ℝ := Pi.single x₀ 1 with he
+  have he0 : ∀ y, 0 ≤ e y := fun y => by
+    by_cases h : y = x₀ <;> simp [he, h]
+  have he1 : ∑ y, e y = 1 := by simp [he]
+  set r : ℕ → S → ℝ := fun k => e ᵥ* (P ^ k) with hr
+  have hr0 : ∀ k y, 0 ≤ r k y := fun k =>
+    nonneg_vecMul_of_mem_rowStochastic (pow_mem hP k) he0
+  have hr1 : ∀ k, ∑ y, r k y = 1 := fun k => by
+    change ∑ y, (e ᵥ* P ^ k) y = 1
+    rw [sum_vecMul_of_mem (pow_mem hP k), he1]
+  have hrP : ∀ k, r k ᵥ* P = r (k + 1) := fun k => by
+    simp [hr, vecMul_vecMul, pow_succ]
+  set μ : ℕ → S → ℝ := fun n => ((n : ℝ) + 1)⁻¹ • ∑ k ∈ Finset.range (n + 1), r k with hμ
+  have hμapp : ∀ n y, μ n y = ((n : ℝ) + 1)⁻¹ * ∑ k ∈ Finset.range (n + 1), r k y := fun n y => by
+    simp [hμ, Finset.sum_apply]
+  have hμ0 : ∀ n y, 0 ≤ μ n y := fun n y => by
+    rw [hμapp]; exact mul_nonneg (by positivity) (Finset.sum_nonneg fun k _ => hr0 k y)
+  have hμ1 : ∀ n, ∑ y, μ n y = 1 := fun n => by
+    simp_rw [hμapp, ← Finset.mul_sum]
+    rw [Finset.sum_comm]
+    simp [hr1]
+    field_simp
+  have hμle : ∀ n y, μ n y ≤ 1 := fun n y => by
+    rw [← hμ1 n]; exact Finset.single_le_sum (fun z _ => hμ0 n z) (Finset.mem_univ y)
+  have hK : IsCompact (Set.univ.pi fun _ : S => Set.Icc (0 : ℝ) 1) :=
+    isCompact_univ_pi fun _ => isCompact_Icc
+  obtain ⟨π, -, φ, hφ, hlim⟩ := hK.tendsto_subseq (x := μ) fun n =>
+    Set.mem_univ_pi.2 fun y => ⟨hμ0 n y, hμle n y⟩
+  have hcoord : ∀ y, Tendsto (fun n => μ (φ n) y) atTop (𝓝 (π y)) := fun y =>
+    (continuous_apply y).continuousAt.tendsto.comp hlim
+  refine ⟨π, fun y => ?_, ?_, ?_⟩
+  · exact ge_of_tendsto' (hcoord y) fun n => hμ0 (φ n) y
+  · have hsum : Tendsto (fun n => ∑ y, μ (φ n) y) atTop (𝓝 (∑ y, π y)) :=
+      tendsto_finsetSum _ fun y _ => hcoord y
+    simp_rw [hμ1] at hsum
+    exact (tendsto_nhds_unique tendsto_const_nhds hsum).symm
+  · have htel : ∀ n, μ n ᵥ* P - μ n = ((n : ℝ) + 1)⁻¹ • (r (n + 1) - r 0) := fun n => by
+      simp only [hμ, smul_vecMul, sum_vecMul, hrP]
+      rw [← smul_sub, ← Finset.sum_sub_distrib, Finset.sum_range_sub]
+    have hvm : Continuous fun v : S → ℝ => v ᵥ* P := by fun_prop
+    have h1 : Tendsto (fun n => μ (φ n) ᵥ* P - μ (φ n)) atTop (𝓝 (π ᵥ* P - π)) :=
+      ((hvm.tendsto π).comp hlim).sub hlim
+    have h2 : Tendsto (fun n => μ (φ n) ᵥ* P - μ (φ n)) atTop (𝓝 0) := by
+      simp_rw [htel]
+      rw [tendsto_pi_nhds]
+      intro y
+      have hb : ∀ n, |r (φ n + 1) y - r 0 y| ≤ 1 := fun n => by
+        have a1 : r (φ n + 1) y ≤ 1 := by
+          rw [← hr1 (φ n + 1)]
+          exact Finset.single_le_sum (fun z _ => hr0 _ z) (Finset.mem_univ y)
+        have a2 : r 0 y ≤ 1 := by
+          rw [← hr1 0]; exact Finset.single_le_sum (fun z _ => hr0 _ z) (Finset.mem_univ y)
+        rw [abs_le]; constructor <;> linarith [hr0 (φ n + 1) y, hr0 0 y]
+      have hinv : Tendsto (fun n : ℕ => ((φ n : ℝ) + 1)⁻¹) atTop (𝓝 0) :=
+        (tendsto_inv_atTop_zero.comp (tendsto_atTop_add_const_right _ 1
+          (tendsto_natCast_atTop_atTop.comp hφ.tendsto_atTop)))
+      refine squeeze_zero_norm (fun n => ?_) hinv
+      simp only [Pi.smul_apply, Pi.sub_apply, smul_eq_mul, Real.norm_eq_abs, abs_mul]
+      rw [abs_of_pos (by positivity : (0 : ℝ) < ((φ n : ℝ) + 1)⁻¹)]
+      exact mul_le_of_le_one_right (by positivity) (hb n)
+    exact sub_eq_zero.1 (tendsto_nhds_unique h1 h2)
 
 /-- Doeblin's contraction: under the minorization `δ π ≤ M`, a stochastic matrix contracts the
 `ℓ¹` norm of signed vectors of total mass zero by the factor `1 - δ`. -/
@@ -248,5 +326,21 @@ theorem stationary_pos {P : Matrix S S ℝ} (hprim : P.IsPrimitive) {π : S → 
   exact lt_of_lt_of_le (mul_pos hx₀ (hpos x₀ y))
     (Finset.single_le_sum (f := fun x => π x * (P ^ r) x y)
       (fun x _ => mul_nonneg (hπ0 x) (hpos x y).le) (Finset.mem_univ x₀))
+
+/-- **Perron-Frobenius for primitive stochastic matrices.** A primitive row-stochastic matrix
+on a nonempty finite state space has a unique stationary distribution; it is strictly positive,
+and every row of `Pⁿ` converges to it geometrically fast in total variation. Existence is
+`exists_stationary`; uniqueness, positivity, and the rate are the theorems above. -/
+theorem perron_frobenius_primitive [Nonempty S] {P : Matrix S S ℝ}
+    (hP : P ∈ rowStochastic ℝ S) (hprim : P.IsPrimitive) :
+    ∃ π : S → ℝ, ((∀ y, 0 ≤ π y) ∧ ∑ y, π y = 1 ∧ π ᵥ* P = π) ∧
+      (∀ y, 0 < π y) ∧
+      (∃ C α : ℝ, 0 ≤ α ∧ α < 1 ∧
+        ∀ (n : ℕ) (x : S), tvDist (fun y => (P ^ n) x y) π ≤ C * α ^ n) ∧
+      (∀ π' : S → ℝ, (∑ y, π' y = 1 ∧ π' ᵥ* P = π') → π' = π) := by
+  obtain ⟨π, hπ0, hπ1, hstat⟩ := exists_stationary hP
+  refine ⟨π, ⟨hπ0, hπ1, hstat⟩, stationary_pos hprim hπ0 hπ1 hstat,
+    exists_tvDist_pow_le hP hprim hπ0 hπ1 hstat, fun π' h' => ?_⟩
+  exact (stationary_unique hP hprim hπ0 hπ1 hstat h'.1 h'.2).symm
 
 end MathlibExt.Probability.FiniteMarkovChainConvergence
