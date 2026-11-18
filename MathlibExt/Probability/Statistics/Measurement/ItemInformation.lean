@@ -146,7 +146,7 @@ theorem vector_fisherInformation_twoPL {ι : Type*} [Fintype ι] [DecidableEq ι
     ∧ (0 ≤ ∑ j, (a j) ^ 2
           * (Real.sigmoid (a j * (θ - b j))
             * (1 - Real.sigmoid (a j * (θ - b j)))))
-    ∧ ((∃ j, a j ≠ 0) → 0 < ∑ j, (a j) ^ 2
+    ∧ ((∃ j, a j ≠ 0) ↔ 0 < ∑ j, (a j) ^ 2
           * (Real.sigmoid (a j * (θ - b j))
             * (1 - Real.sigmoid (a j * (θ - b j))))) := by
   refine ⟨?_, ?_, ?_, ?_⟩
@@ -299,16 +299,28 @@ theorem vector_fisherInformation_twoPL {ι : Type*} [Fintype ι] [DecidableEq ι
     apply mul_nonneg (le_of_lt (Real.sigmoid_pos _))
     have h1lt := Real.sigmoid_lt_one (a j * (θ - b j))
     linarith
-  · intro hex
-    obtain ⟨j0, hj0⟩ := hex
-    refine Finset.sum_pos' (fun j _ => ?_) ⟨j0, Finset.mem_univ j0, ?_⟩
-    · apply mul_nonneg (sq_nonneg _)
-      apply mul_nonneg (le_of_lt (Real.sigmoid_pos _))
-      have h1lt := Real.sigmoid_lt_one (a j * (θ - b j))
-      linarith
-    · apply mul_pos (sq_pos_of_ne_zero hj0)
-      apply mul_pos (Real.sigmoid_pos _)
-      have h1lt := Real.sigmoid_lt_one (a j0 * (θ - b j0))
+  · constructor
+    · intro hex
+      obtain ⟨j0, hj0⟩ := hex
+      refine Finset.sum_pos' (fun j _ => ?_) ⟨j0, Finset.mem_univ j0, ?_⟩
+      · apply mul_nonneg (sq_nonneg _)
+        apply mul_nonneg (le_of_lt (Real.sigmoid_pos _))
+        have h1lt := Real.sigmoid_lt_one (a j * (θ - b j))
+        linarith
+      · apply mul_pos (sq_pos_of_ne_zero hj0)
+        apply mul_pos (Real.sigmoid_pos _)
+        have h1lt := Real.sigmoid_lt_one (a j0 * (θ - b j0))
+        linarith
+    · intro hpos
+      by_contra hcon
+      push_neg at hcon
+      have hzero : (∑ j, (a j) ^ 2
+            * (Real.sigmoid (a j * (θ - b j))
+              * (1 - Real.sigmoid (a j * (θ - b j))))) = 0 := by
+        apply Finset.sum_eq_zero
+        intro j _
+        rw [hcon j]
+        simp
       linarith
 
 end MathlibExt.Probability.Statistics.Measurement
