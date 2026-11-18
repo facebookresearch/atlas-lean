@@ -11,6 +11,10 @@ module
 public import CSLibExt.MachineLearning.LatentVariable.ExpectationMaximization
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Analysis.Calculus.Gradient.Basic
+import Mathlib.Analysis.InnerProductSpace.Calculus
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 
 /-!
 # EM for Gaussian mixtures
@@ -37,6 +41,11 @@ Main results:
   `KMeans.sum_sq_eq`) and the variance update (`compTerm_le`).
 * `logLik_le_emStep`: **each EM step does not decrease the log-likelihood**;
   `logLik_iterate_emStep_monotone`: the log-likelihood is monotone along the EM iterates.
+* `hasGradientAt_log_marginal_joint`: **the score of a mixture whose components share one
+  variance `v`** is `∇ log p_θ(x) = (∑ k, r k • μ k - x) / v`, with `r k` the responsibilities at
+  `x`. `hasGradientAt_log_marginal_joint_of_mean_eq_smul`: with means `λ xₖ`, this is the
+  finite-support Tweedie identity `∇ log p(z) = (λ m(z) - z) / σ²`, where `m(z)` is the
+  responsibility-weighted mean of the atoms `xₖ`.
 
 Only the isotropic case (covariance `σ k² I`) is proved; full covariances are not treated.
 
@@ -390,5 +399,78 @@ theorem logLik_iterate_emStep_monotone (hx : NotAllEqual xs) (θ₀ : ValidParam
   have := nonempty_of_valid θ₀
   exact logLik_iterate_monotone (fun θ x k => joint_pos θ x k) xs (fun θ => emQ_le_emStep xs hx θ θ)
     θ₀
+
+/-! ## The score of a mixture with a common variance -/
+
+/-- **The score of an isotropic Gaussian mixture with a common variance.** If every component
+has variance `v`, the gradient of the log mixture density is
+`∇ log p_θ(x) = (∑ k, r k • μ k - x) / v`, where `r k = resp θ x k` are the responsibilities
+(posterior component weights) at `x`. -/
+theorem hasGradientAt_log_marginal_joint (θ : ValidParams d K) {v : ℝ≥0}
+    (hv : ∀ k, θ.1.var k = v) (x : EuclideanSpace ℝ (Fin d)) :
+    HasGradientAt (fun y => log (marginal joint θ y))
+      ((v : ℝ)⁻¹ • (∑ k, resp θ x k • θ.1.mean k - x)) x := by
+  obtain ⟨k₀⟩ := nonempty_of_valid θ
+  have hv0 : v ≠ 0 := hv k₀ ▸ θ.2.var_ne_zero k₀
+  have hvpos : (0 : ℝ) < v := lt_of_le_of_ne v.2 (Ne.symm (by exact_mod_cast hv0))
+  set C := exp (-(d / 2) * log (2 * π * v)) with hC
+  have hjoint : ∀ k y, joint θ y k =
+      θ.1.weight k * C * exp (-(‖y - θ.1.mean k‖ ^ 2 * (2 * (v : ℝ))⁻¹)) := by
+    intro k y
+    rw [joint, hv k, ← exp_log (isoGaussPDF_pos (θ.1.mean k) hv0 y), log_isoGaussPDF _ hv0,
+      sub_eq_add_neg, exp_add, hC]
+    simp only [div_eq_mul_inv]
+    ring
+  have hterm : ∀ k ∈ Finset.univ, HasFDerivAt (fun y => joint θ y k)
+      ((joint θ x k * (-(2 * (v : ℝ))⁻¹ * 2)) • innerSL ℝ (x - θ.1.mean k)) x := by
+    intro k _
+    have h1 := ((hasFDerivAt_id x).sub_const (θ.1.mean k)).norm_sq
+    have h2 := ((h1.mul_const (2 * (v : ℝ))⁻¹).fun_neg.exp).const_mul (θ.1.weight k * C)
+    rw [show (fun y => joint θ y k) =
+      fun y => θ.1.weight k * C * exp (-(‖y - θ.1.mean k‖ ^ 2 * (2 * (v : ℝ))⁻¹)) from
+        funext fun y => hjoint k y]
+    refine h2.congr_fderiv ?_
+    rw [hjoint k x]
+    ext y
+    simp only [smul_apply, innerSL_apply_apply, smul_eq_mul, neg_apply,
+      ContinuousLinearMap.comp_apply, ContinuousLinearMap.coe_id', id_eq]
+    ring
+  have hsum := HasFDerivAt.fun_sum hterm
+  have hpos : 0 < ∑ k, joint θ x k :=
+    Finset.sum_pos (fun k _ => joint_pos θ x k) ⟨k₀, Finset.mem_univ _⟩
+  have hlog := hsum.log hpos.ne'
+  rw [hasGradientAt_iff_hasFDerivAt]
+  refine hlog.congr_fderiv ?_
+  ext y
+  have hr : ∑ k, resp θ x k = 1 := sum_resp θ x
+  simp only [resp, posterior, marginal] at hr ⊢
+  rw [InnerProductSpace.toDual_apply_apply]
+  simp only [smul_apply, sum_apply, innerSL_apply_apply, smul_eq_mul,
+    inner_smul_left, inner_sub_left, sum_inner, RCLike.conj_to_real]
+  conv_rhs => rw [← mul_one (inner ℝ x y), ← hr]
+  simp only [Finset.mul_sum, ← Finset.sum_sub_distrib]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  field_simp
+  ring
+
+/-- **Finite-support Tweedie score identity.** Let `X` take the value `xs k` with probability
+`π k` (positive, summing to one), let `G` be a standard Gaussian vector independent of `X`, let
+`λ` be real and `σ² = v > 0`, and let `Z = λ X + σ G`, whose density (not proved here) is the
+mixture `p(z) = ∑ k, π k N(z | λ xs k, σ² I)`, here `marginal joint θ` with means `λ xs k` and
+common variance `v`. Then `∇ log p(z) = (λ m(z) - z) / σ²`, where `m(z) = ∑ k, r k(z) • xs k` is
+the mean of the atoms under the posterior weights `r k(z) = resp θ z k`.
+
+Only the finite-sum calculus is formalized. That `p` is the density of `λ X + σ G`, and that
+`m(z)` is a version of `E[X | Z = z]`, are not proved here. This is the finite-support case of
+the identity that S. Mei and Y. Wu, *Deep networks as denoising algorithms: sample-efficient
+learning of diffusion models in high-dimensional graphical models*, arXiv:2309.11420 (version 1),
+page 5, state without proof for general laws of `X`; the general case is not proved here. -/
+theorem hasGradientAt_log_marginal_joint_of_mean_eq_smul (θ : ValidParams d K) {v : ℝ≥0}
+    (hv : ∀ k, θ.1.var k = v) (lam : ℝ) (xs : Fin K → EuclideanSpace ℝ (Fin d))
+    (hmean : ∀ k, θ.1.mean k = lam • xs k) (z : EuclideanSpace ℝ (Fin d)) :
+    HasGradientAt (fun y => log (marginal joint θ y))
+      ((v : ℝ)⁻¹ • (lam • ∑ k, resp θ z k • xs k - z)) z := by
+  convert hasGradientAt_log_marginal_joint θ hv z using 3
+  simp only [hmean, Finset.smul_sum, smul_comm lam]
 
 end Cslib.MachineLearning.LatentVariable.GaussianMixture

@@ -33,14 +33,17 @@ Main results:
 * `total_update_le_sq`, `total_weights_le_sq`, `algLoss_le_sq`: **the second-order bound**
   `L ≤ L_i + η Q + log n / η` for nonnegative (not necessarily bounded) losses, where `Q`
   (`algSq`) sums the rounds' weighted second moments `∑ x_t(i) ℓ_t(i)²` (Hazan, *Introduction to
-  Online Convex Optimization*, Theorem 1.3).
+  Online Convex Optimization*, Theorem 1.5 in arXiv:1909.05207).
+* `algSq_le_length`, `regret_le`, `regret_le_two_sqrt`: for losses in `[0, 1]` over `T` rounds,
+  `Q ≤ T`, so the regret `L - L_i` is at most `η T + log n / η`, and at most `2 √(T log n)` for
+  the tuned rate `η = √(log n / T)`.
 * `weights_append`, `algLoss_append`, `algSq_append`: a run splits at any round.
 
 ## Relation to `FormalizedTextbooks`
 
 `FormalizedTextbooks/IntroductionToOnlineConvexOptimization/OnlineLearning/Hedge.lean` treats the
 same algorithm (weights multiplied by `exp (-ε ℓ i)`, indexed by rounds `t : ℕ`) and derives
-Hazan's Theorem 1.3, `hedgeRegret`, and its one-step lemma `hedgeOnestep` from `algLoss_le_sq`
+Hazan's Theorem 1.5, `hedgeRegret`, and its one-step lemma `hedgeOnestep` from `algLoss_le_sq`
 and `total_update_le_sq`.
 
 ## Cost model
@@ -231,10 +234,10 @@ theorem total_weights_le_sq {η : ℝ} (hn : 0 < n) (hη : 0 ≤ η) :
           rw [mul_assoc, ← exp_add]; ring_nf
 
 /-- **The second-order Hedge bound** (Hazan, *Introduction to Online Convex Optimization*,
-Theorem 1.3): starting from unit weights with nonnegative losses and learning rate `η > 0`, the
-algorithm's loss satisfies `L ≤ L_i + η Q + log n / η` against every expert `i`, where `Q`
-(`algSq`) sums the rounds' weighted second moments. Unlike `algLoss_le`, the losses need not be
-bounded by `1`. -/
+Theorem 1.5 in arXiv:1909.05207): starting from unit weights with nonnegative losses and
+learning rate `η > 0`, the algorithm's loss satisfies `L ≤ L_i + η Q + log n / η` against
+every expert `i`, where `Q` (`algSq`) sums the rounds' weighted second moments. Unlike
+`algLoss_le`, the losses need not be bounded by `1`. -/
 theorem algLoss_le_sq {η : ℝ} (hη : 0 < η) (ls : List (Fin n → ℝ)) (hb : Nonneg ls)
     (i : Fin n) :
     algLoss η ls (fun _ => 1) ≤ expertLoss i ls + η * algSq η ls (fun _ => 1) + log n / η := by
@@ -278,5 +281,61 @@ theorem algSq_append (η : ℝ) : ∀ (ls ls' : List (Fin n → ℝ)) (w : Fin n
   | ℓ :: ls, ls', w => by
       simp only [List.cons_append, algSq, weights, algSq_append η ls ls' (update η w ℓ)]
       ring
+
+/-! ## The `√T` regret bound -/
+
+/-- For losses in `[0, 1]` and positive weights, a round's weighted second moment is at most
+`1`. -/
+theorem roundSq_le_one {w ℓ : Fin n → ℝ} (hw : ∀ i, 0 < w i) (hn : 0 < n)
+    (hℓ : ∀ i, 0 ≤ ℓ i ∧ ℓ i ≤ 1) : roundSq w ℓ ≤ 1 := by
+  have hW : 0 < total w := sum_pos (fun i _ => hw i) ⟨⟨0, hn⟩, mem_univ _⟩
+  rw [roundSq, div_le_one hW, total]
+  refine sum_le_sum fun i _ => ?_
+  have h1 : ℓ i ^ 2 ≤ 1 := by nlinarith [hℓ i]
+  nlinarith [hw i]
+
+/-- For losses in `[0, 1]`, the summed second moments over `T` rounds are at most `T`. -/
+theorem algSq_le_length {η : ℝ} (hn : 0 < n) : ∀ (ls : List (Fin n → ℝ)) (w : Fin n → ℝ),
+    (∀ i, 0 < w i) → Bounded ls → algSq η ls w ≤ ls.length
+  | [], _, _, _ => by simp [algSq]
+  | ℓ :: ls, w, hw, hb => by
+      have hb' : Bounded ls := fun ℓ' h => hb ℓ' (List.mem_cons_of_mem _ h)
+      have ih := algSq_le_length (η := η) hn ls (update η w ℓ) (update_pos hw ℓ) hb'
+      have h1 := roundSq_le_one hw hn (hb ℓ List.mem_cons_self)
+      simp only [algSq, List.length_cons, Nat.cast_add, Nat.cast_one]
+      linarith
+
+/-- **Regret of Hedge for losses in `[0, 1]`**: over `T` rounds with learning rate `η > 0`, the
+regret against every expert `i` is at most `η T + log n / η` (Hazan's Theorem 1.5 with
+`ℓ_t(i)² ≤ 1`). -/
+theorem regret_le {η : ℝ} (hη : 0 < η) (ls : List (Fin n → ℝ)) (hb : Bounded ls) (i : Fin n) :
+    algLoss η ls (fun _ => 1) - expertLoss i ls ≤ η * ls.length + log n / η := by
+  have hn : 0 < n := Fin.pos i
+  have h1 := algLoss_le_sq hη ls (fun ℓ h j => (hb ℓ h j).1) i
+  have h2 := algSq_le_length (η := η) hn ls (fun _ => 1) (fun _ => one_pos) hb
+  nlinarith
+
+/-- **The `√T` regret bound of Hedge**, derived from Hazan's Theorem 1.5 (arXiv:1909.05207)
+with `ℓ_t(i)² ≤ 1` and the tuned rate; Cesa-Bianchi and Lugosi (*Prediction, Learning, and
+Games*, CUP 2006, Section 2.2) give the sharper `√(T log n / 2)` with `η = √(8 log n / T)`,
+not formalized here. For losses in `[0, 1]` over `T ≥ 1` rounds and `n ≥ 2` experts, Hedge
+with learning rate `η = √(log n / T)` has regret at most `2 √(T log n)` against every expert. -/
+theorem regret_le_two_sqrt (ls : List (Fin n → ℝ)) (hb : Bounded ls) (hT : 0 < ls.length)
+    (hn : 1 < n) (i : Fin n) :
+    algLoss (√(log n / ls.length)) ls (fun _ => 1) - expertLoss i ls ≤
+      2 * √(ls.length * log n) := by
+  set T : ℝ := (ls.length : ℝ) with hTdef
+  have hTpos : 0 < T := by rw [hTdef]; exact_mod_cast hT
+  have hlog : 0 < log n := log_pos (by exact_mod_cast hn)
+  have hη : 0 < √(log n / T) := sqrt_pos.2 (div_pos hlog hTpos)
+  refine (regret_le hη ls hb i).trans (le_of_eq ?_)
+  have hsq : √(log n / T) * √(log n / T) = log n / T := mul_self_sqrt (div_pos hlog hTpos).le
+  have hprod : √(T * log n) = √(log n / T) * T := by
+    rw [show T * log n = (log n / T) * T ^ 2 by field_simp, sqrt_mul (div_pos hlog hTpos).le,
+      sqrt_sq hTpos.le]
+  have hdiv : log n / √(log n / T) = √(log n / T) * T := by
+    rw [div_eq_iff hη.ne', mul_right_comm, hsq]; field_simp
+  rw [hdiv, hprod]
+  ring
 
 end Cslib.MachineLearning.Hedge

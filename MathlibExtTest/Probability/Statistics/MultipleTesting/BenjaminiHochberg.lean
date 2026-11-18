@@ -50,6 +50,35 @@ example : bhRejections (1 / 10) p3 = {0, 1} := by
 example : (bhRejections (1 / 10) p3).card = 2 := by
   rw [card_bhRejections (by norm_num), bhIndex_p3]
 
+/-- Leave-one-out, rejected case: replacing the rejected p-value `p3 0` by `0` keeps the
+index `2`. -/
+example : bhIndex (1 / 10) (Function.update p3 0 0) = 2 := by
+  have h0 : (0 : Fin 3) ∈ bhRejections (1 / 10) p3 := by
+    rw [bhRejections, bhIndex_p3]
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    norm_num [p3]
+  rw [← (mem_bhRejections_iff_bhIndex_eq_update (by norm_num) p3 0).1 h0, bhIndex_p3]
+
+/-- Leave-one-out, non-rejected case: replacing the non-rejected p-value `p3 2` by `0` changes
+the index, and `p3 2` exceeds the threshold computed from the modified p-values. -/
+example : bhIndex (1 / 10) (Function.update p3 2 0) ≠ 2 ∧
+    1 / 10 * (bhIndex (1 / 10) (Function.update p3 2 0) : ℝ) / ((3 : ℕ) : ℝ) < p3 2 := by
+  have h2 : (2 : Fin 3) ∉ bhRejections (1 / 10) p3 := by
+    rw [bhRejections, bhIndex_p3]
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    norm_num [p3]
+  refine ⟨fun h => h2 ?_, lt_of_not_ge fun h => h2 ?_⟩
+  · rw [mem_bhRejections_iff_bhIndex_eq_update (by norm_num), h, bhIndex_p3]
+  · exact (mem_bhRejections_iff_le_bhIndex_update (by norm_num) p3 2).2 h
+
+/-- No sign condition: at any level `q ≥ 0` (including `q = 0`), a p-value `≤ 0` (negative, or
+tied at `0`) is rejected, and replacing it by `0` leaves the BH index unchanged. -/
+example {m : ℕ} {q : ℝ} (hq : 0 ≤ q) (p : Fin m → ℝ) (i : Fin m) (hi : p i ≤ 0) :
+    i ∈ bhRejections q p ∧ bhIndex q p = bhIndex q (Function.update p i 0) := by
+  have h : i ∈ bhRejections q p :=
+    (mem_bhRejections_iff_le_bhIndex_update hq p i).2 (hi.trans (by positivity))
+  exact ⟨h, (mem_bhRejections_iff_bhIndex_eq_update hq p i).1 h⟩
+
 /-- The uniform law on `[0, 1]` is a probability measure. -/
 instance : IsProbabilityMeasure (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
   ⟨by simp⟩

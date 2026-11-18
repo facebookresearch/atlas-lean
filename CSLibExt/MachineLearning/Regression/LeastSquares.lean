@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.LinearAlgebra.Matrix.Rank
+import MathlibExt.LinearAlgebra.Matrix.DeterminantLemma
 
 /-!
 # Least squares, ridge and lasso regression as maximum likelihood and MAP estimation
@@ -34,6 +35,12 @@ norms.)
   invertible the solution is
   `(Xᵀ X)⁻¹ Xᵀ y`, the least-squares matrix of MathlibExt's Gauss–Markov theorem
   (`MathlibExt.Probability.Statistics.GaussMarkov.gaussMarkov_covariance_minimality`).
+* `leaveOneOut_leverage_residual`: **leave-one-out least squares**. When `Xᵀ X` is invertible and
+  row `i` has leverage `h = xᵢᵀ (Xᵀ X)⁻¹ xᵢ ≠ 1`, the Gram matrix without row `i` is invertible (by
+  the matrix determinant lemma `Matrix.det_add_vecMulVec_of_isUnit_det`), its estimate minimizes
+  the residual sum of squares of the data without row `i`, `q = xᵢᵀ G₋ᵢ⁻¹ xᵢ` satisfies
+  `q = h / (1 - h)` and `h = q / (1 + q)`, and the residuals at row `i` satisfy
+  `eᵢ = (1 - h) e₋ᵢ`.
 * `gaussLikelihood_eq`, `gaussLikelihood_le_iff`: with independent Gaussian noise of variance
   `σ²`, the likelihood is a decreasing function of the residual sum of squares, so **least
   squares is maximum likelihood** (`isMaxOn_gaussLikelihood_iff`, and
@@ -50,7 +57,8 @@ norms.)
   objective (`softThreshold_le` in one dimension).
 
 The Gaussian MLE of linear regression is the Gaussian case of a canonical generalized linear
-model; see `glmLoss_sq` in `CSLibExt/MachineLearning/Discriminative/ExponentialFamily.lean`.
+model; the Bernoulli case, logistic regression, is in
+`CSLibExt/MachineLearning/Classification/LogisticSVM.lean`.
 -/
 
 @[expose] public section
@@ -486,5 +494,119 @@ theorem lasso_softThreshold_le {X : Matrix (Fin m) ι ℝ} (hX : Xᵀ * X = 1) (
     _ = (θ i - (Xᵀ *ᵥ y) i) ^ 2 + lam * |θ i| := by ring
 
 end Lasso
+
+/-! ## Leave-one-out least squares -/
+
+section LeaveOneOut
+
+omit [Fintype ι] [DecidableEq ι] in
+private theorem sum_eq_add_sum_erase (f : Fin m → ℝ) (i : Fin m) :
+    ∑ k, f k = f i + ∑ k ∈ Finset.univ.erase i, f k :=
+  (Finset.add_sum_erase _ _ (Finset.mem_univ i)).symm
+
+omit [Fintype ι] [DecidableEq ι] in
+private theorem gram_updateRow_zero (X : Matrix (Fin m) ι ℝ) (i : Fin m) :
+    (X.updateRow i 0)ᵀ * X.updateRow i 0 = Xᵀ * X - vecMulVec (X i) (X i) := by
+  ext a b
+  rw [Matrix.sub_apply, mul_apply, mul_apply, vecMulVec_apply,
+    sum_eq_add_sum_erase (fun k => (X.updateRow i 0)ᵀ a k * X.updateRow i 0 k b) i,
+    sum_eq_add_sum_erase (fun k => Xᵀ a k * X k b) i]
+  simp only [transpose_apply, updateRow_self, Pi.zero_apply, zero_mul, zero_add,
+    add_sub_cancel_left]
+  exact Finset.sum_congr rfl fun k hk => by
+    rw [updateRow_ne (Finset.ne_of_mem_erase hk)]
+
+omit [Fintype ι] [DecidableEq ι] in
+private theorem cross_updateRow_zero (X : Matrix (Fin m) ι ℝ) (y : Fin m → ℝ) (i : Fin m) :
+    (X.updateRow i 0)ᵀ *ᵥ Function.update y i 0 = Xᵀ *ᵥ y - y i • X i := by
+  ext a
+  rw [Pi.sub_apply, Pi.smul_apply, smul_eq_mul, mulVec, mulVec, dotProduct, dotProduct,
+    sum_eq_add_sum_erase (fun k => (X.updateRow i 0)ᵀ a k * Function.update y i 0 k) i,
+    sum_eq_add_sum_erase (fun k => Xᵀ a k * y k) i]
+  simp only [transpose_apply, updateRow_self, Pi.zero_apply, zero_mul, zero_add]
+  rw [mul_comm (y i), add_sub_cancel_left]
+  exact Finset.sum_congr rfl fun k hk => by
+    rw [updateRow_ne (Finset.ne_of_mem_erase hk),
+      Function.update_of_ne (Finset.ne_of_mem_erase hk)]
+
+private theorem inv_mulVec_eq_of_mulVec_eq {A : Matrix ι ι ℝ} (hA : IsUnit A.det) {w r : ι → ℝ}
+    (h : A *ᵥ w = r) : A⁻¹ *ᵥ r = w := by
+  rw [← h, mulVec_mulVec, nonsing_inv_mul _ hA, one_mulVec]
+
+/-- **Leave-one-out least squares: leverage and deleted residual.** Let `X` be a real design
+with rows `x k = X k`, responses `y`, Gram matrix `G = Xᵀ X` invertible, and fix a row `i` with
+leverage `h = xᵢᵀ G⁻¹ xᵢ ≠ 1`. Let `G₋ᵢ = G - xᵢ xᵢᵀ` be the Gram matrix without row `i`,
+`β = G⁻¹ Xᵀ y` the least-squares estimate, and `β₋ᵢ = G₋ᵢ⁻¹ (Xᵀ y - yᵢ xᵢ)` the estimate
+without row `i`. Then:
+
+* `G₋ᵢ` is invertible;
+* `β₋ᵢ` is a least-squares estimate of the data with row `i` deleted: it minimizes the residual
+  sum of squares of the design and responses with row `i` set to zero, which is
+  `∑ k ≠ i, (y k - xₖᵀ θ)²`;
+* `q = xᵢᵀ G₋ᵢ⁻¹ xᵢ` satisfies `q = h / (1 - h)` and `h = q / (1 + q)`;
+* the residuals `eᵢ = yᵢ - xᵢᵀ β` and `e₋ᵢ = yᵢ - xᵢᵀ β₋ᵢ`, both at the original row `i`,
+  satisfy `eᵢ = (1 - h) e₋ᵢ`. -/
+theorem leaveOneOut_leverage_residual {X : Matrix (Fin m) ι ℝ} (y : Fin m → ℝ) (i : Fin m)
+    (hG : IsUnit (Xᵀ * X).det) (hh : X i ⬝ᵥ ((Xᵀ * X)⁻¹ *ᵥ X i) ≠ 1) :
+    IsUnit (Xᵀ * X - vecMulVec (X i) (X i)).det ∧
+      (∀ θ, rss (X.updateRow i 0) (Function.update y i 0)
+          ((Xᵀ * X - vecMulVec (X i) (X i))⁻¹ *ᵥ (Xᵀ *ᵥ y - y i • X i)) ≤
+        rss (X.updateRow i 0) (Function.update y i 0) θ) ∧
+      X i ⬝ᵥ ((Xᵀ * X - vecMulVec (X i) (X i))⁻¹ *ᵥ X i) =
+        X i ⬝ᵥ ((Xᵀ * X)⁻¹ *ᵥ X i) / (1 - X i ⬝ᵥ ((Xᵀ * X)⁻¹ *ᵥ X i)) ∧
+      X i ⬝ᵥ ((Xᵀ * X)⁻¹ *ᵥ X i) =
+        X i ⬝ᵥ ((Xᵀ * X - vecMulVec (X i) (X i))⁻¹ *ᵥ X i) /
+          (1 + X i ⬝ᵥ ((Xᵀ * X - vecMulVec (X i) (X i))⁻¹ *ᵥ X i)) ∧
+      y i - X i ⬝ᵥ ((Xᵀ * X)⁻¹ *ᵥ (Xᵀ *ᵥ y)) =
+        (1 - X i ⬝ᵥ ((Xᵀ * X)⁻¹ *ᵥ X i)) *
+          (y i - X i ⬝ᵥ ((Xᵀ * X - vecMulVec (X i) (X i))⁻¹ *ᵥ (Xᵀ *ᵥ y - y i • X i))) := by
+  set G := Xᵀ * X with hGdef
+  set x := X i
+  set u := G⁻¹ *ᵥ x with hu
+  set h := x ⬝ᵥ u with hhdef
+  set Gd := G - vecMulVec x x with hGd
+  set b := Xᵀ *ᵥ y
+  have h1 : 1 - h ≠ 0 := sub_ne_zero.mpr (Ne.symm hh)
+  -- the deleted Gram matrix is invertible (matrix determinant lemma)
+  have hdet : Gd.det = G.det * (1 - h) := by
+    have := Matrix.det_add_vecMulVec_of_isUnit_det G (-x) x hG
+    rw [show G + vecMulVec (-x) x = Gd by
+      rw [hGd, sub_eq_add_neg, ← neg_vecMulVec]] at this
+    rw [this, mulVec_neg, dotProduct_neg, ← sub_eq_add_neg]
+  have hGdU : IsUnit Gd.det := by
+    rw [hdet, isUnit_iff_ne_zero]
+    exact mul_ne_zero (isUnit_iff_ne_zero.mp hG) h1
+  -- `Gd v = G v - (x ⬝ v) x` and `G u = x`
+  have hGdmul : ∀ v, Gd *ᵥ v = G *ᵥ v - (x ⬝ᵥ v) • x := fun v => by
+    rw [hGd, sub_mulVec, vecMulVec_mulVec, op_smul_eq_smul]
+  have hGinv : ∀ v, G *ᵥ (G⁻¹ *ᵥ v) = v := fun v => by
+    rw [mulVec_mulVec, mul_nonsing_inv _ hG, one_mulVec]
+  have hGu : G *ᵥ u = x := hGinv x
+  -- Sherman–Morrison applied to `x` and to `b`, by direct normal-equation algebra
+  have hGdx : Gd⁻¹ *ᵥ x = (1 - h)⁻¹ • u := by
+    apply inv_mulVec_eq_of_mulVec_eq hGdU
+    rw [hGdmul, mulVec_smul, hGu, dotProduct_smul, ← hhdef, smul_eq_mul, ← sub_smul,
+      show (1 - h)⁻¹ - (1 - h)⁻¹ * h = 1 by field_simp, one_smul]
+  set s := x ⬝ᵥ (G⁻¹ *ᵥ b) with hs
+  have hGdb : Gd⁻¹ *ᵥ b = G⁻¹ *ᵥ b + (s / (1 - h)) • u := by
+    apply inv_mulVec_eq_of_mulVec_eq hGdU
+    rw [hGdmul, mulVec_add, mulVec_smul, hGinv, hGu, dotProduct_add, dotProduct_smul, ← hs,
+      ← hhdef, smul_eq_mul, add_sub_assoc, ← sub_smul,
+      show s / (1 - h) - (s + s / (1 - h) * h) = 0 by field_simp; ring, zero_smul, add_zero]
+  have hq : x ⬝ᵥ (Gd⁻¹ *ᵥ x) = h / (1 - h) := by
+    rw [hGdx, dotProduct_smul, smul_eq_mul, ← hhdef, inv_mul_eq_div]
+  refine ⟨hGdU, fun θ => ?_, hq, ?_, ?_⟩
+  · -- the deleted estimate solves the normal equations of the row-zeroed data
+    refine (rss_le_iff_normal _ _ _).mpr ?_ θ
+    rw [mulVec_mulVec, gram_updateRow_zero, cross_updateRow_zero, ← hGdef, mulVec_mulVec,
+      mul_nonsing_inv _ hGdU, one_mulVec]
+  · rw [hq, show 1 + h / (1 - h) = (1 - h)⁻¹ by field_simp; ring, div_inv_eq_mul,
+      div_mul_cancel₀ _ h1]
+  · rw [mulVec_sub, mulVec_smul, dotProduct_sub, dotProduct_smul, hGdb, hGdx, dotProduct_add,
+      dotProduct_smul, dotProduct_smul, ← hs, ← hhdef, smul_eq_mul, smul_eq_mul, smul_eq_mul]
+    field_simp
+    ring
+
+end LeaveOneOut
 
 end Cslib.MachineLearning.LeastSquares

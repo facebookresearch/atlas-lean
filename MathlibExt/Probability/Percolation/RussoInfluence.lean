@@ -183,7 +183,8 @@ theorem sum_cov_eq (p : ℝ) (A : Set (ConfigSpace E)) (hA : IsIncreasing A) :
   exact Finset.sum_congr rfl (fun e _ => cov_eq p A hA e)
 
 /-- **Russo's formula**, covariance form: for increasing `A` and `p ∉ {0, 1}`,
-`d/dp ℙ_p(A) = (p(1 - p))⁻¹ ∑_e (ℙ_p(A ∩ {ω_e = 1}) - ℙ_p(ω_e = 1) ℙ_p(A))`. -/
+`d/dp ℙ_p(A) = (p(1 - p))⁻¹ ∑_e (ℙ_p(A ∩ {ω_e = 1}) - ℙ_p(ω_e = 1) ℙ_p(A))`.
+The same identity holds for every event: `StatMech.BeffaraDC.hasDerivAt_prob_eq_sum_cov`. -/
 theorem russoFormula (p : ℝ) (A : Set (ConfigSpace E)) (hA : IsIncreasing A)
     (hp0 : p ≠ 0) (hp1 : p ≠ 1) :
     deriv (fun p => prob p A) p

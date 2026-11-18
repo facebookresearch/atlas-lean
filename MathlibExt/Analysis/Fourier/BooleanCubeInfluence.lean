@@ -51,9 +51,9 @@ Mathlib's uniform averages `𝔼 x, f x` (`Finset.expect`).
 
 ## Implementation notes
 
-The `bool` prefix follows `boolFourierCoeff`, the coefficient of a function on `BoolCube n`:
-`BooleanCube.edgeInfluence` and `BooleanCube.totalInfluence` already name the influences of
-set families in `MathlibExt.Analysis.Fourier.BooleanThresholds`.
+The `bool` prefix follows `boolFourierCoeff`, the coefficient of a function on `BoolCube n`,
+and keeps these names apart from the influences of the set-family developments (the KKL and
+OSSS modules under `CSLibExt.Complexity.BooleanFunctions`).
 
 ## References
 
@@ -343,8 +343,11 @@ theorem boolInfluence_eq_expect_ite_ne {f : BoolCube n → ℝ} (hf : ∀ x, f x
   refine Finset.expect_congr rfl fun x _ => ?_
   rcases hf x with h1 | h1 <;> rcases hf (flipCoord x i) with h2 | h2 <;> norm_num [h1, h2]
 
-/-- The Fourier coefficients of the discrete derivative `(f x - f x^{⊕i}) / 2`. -/
-private theorem boolFourierCoeff_derivative (f : BoolCube n → ℝ) (i : Fin n)
+/-- **Fourier coefficients of the coordinate Laplacian.** For `f : BoolCube n → ℝ` and a
+coordinate `i`, the function `L_i f(x) = (f x - f x^{⊕i}) / 2` has Fourier coefficient `f̂(S)` at
+every `S ∋ i` and `0` at every other `S` (R. O'Donnell, *Analysis of Boolean Functions*, 2014,
+Definition 2.25 and Proposition 2.26). -/
+theorem boolFourierCoeff_derivative (f : BoolCube n → ℝ) (i : Fin n)
     (S : Finset (Fin n)) :
     boolFourierCoeff n (fun x => (f x - f (flipCoord x i)) / 2) S =
       if i ∈ S then boolFourierCoeff n f S else 0 := by
