@@ -207,8 +207,10 @@ private theorem fold_zip_sum {m : ℕ} (P : Fin m → Fin m → ℚ) (i : Fin m)
   rw [← Fin.sum_univ_def]
 
 /-- One tabulated Bellman step on a list of per-state values, in
-`List.finRange m` order. -/
-private def tabStep {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin m))
+`List.finRange m` order. The input list must have one entry per state
+(`v.length = m`, as `hitTab` maintains); the zip with the state list
+would otherwise truncate. -/
+def tabStep {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin m))
     (v : List ℚ) : List ℚ :=
   (List.finRange m).map fun i =>
     if i ∈ B then 1 else if i ∉ A then 0
@@ -229,6 +231,11 @@ def lookupTab {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin m))
   (hitTab P A B k).getD i.val 0
 
 /-- The tabulated list has one entry per state. -/
+/-- A tabulated step always produces one entry per state. -/
+theorem tabStep_length {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin m))
+    (v : List ℚ) : (tabStep P A B v).length = m := by
+  simp [tabStep]
+
 theorem hitTab_length {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin m))
     (k : ℕ) : (hitTab P A B k).length = m := by
   induction k with
