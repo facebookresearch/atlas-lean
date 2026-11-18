@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.InformationTheory.VectorGaussianKL
 public import MathlibExt.Probability.Distributions.GaussianConditioning
+public import MathlibExt.Probability.Statistics.InformationInequalityIdentification
 public import Mathlib.Probability.Kernel.Composition.IntegralCompProd
 public import Mathlib.Probability.Kernel.Composition.WithDensity
 
@@ -51,6 +52,8 @@ open scoped ENNReal
 namespace MathlibExt.InformationTheory.VectorGaussianKernelKL
 
 open _root_.InformationTheory
+open MathlibExt.Probability.Statistics.InformationInequalityIdentification
+  (densityModel logDensity densityModel_absolutelyContinuous llr_densityModel_ae_eq_of_ae)
 
 /-! ### Auxiliary lemmas -/
 
@@ -85,34 +88,6 @@ theorem measurable_multivariateGaussianPDFReal_right {ι : Type*} [Fintype ι] [
   unfold MetaMathlibExt.multivariateGaussianPDFReal
   fun_prop
 
-/-- The log-likelihood ratio of two measures with positive finite densities with respect to a
-common sigma-finite measure is the difference of the log densities. -/
-theorem llr_withDensity_ofReal {α : Type*} [MeasurableSpace α] (ρ : Measure α) [SigmaFinite ρ]
-    {f g : α → ℝ} (hf : Measurable f) (hg : Measurable g) (hfpos : ∀ x, 0 < f x)
-    (hgpos : ∀ x, 0 < g x) :
-    llr (ρ.withDensity fun x => ENNReal.ofReal (f x))
-        (ρ.withDensity fun x => ENNReal.ofReal (g x)) =ᵐ[ρ]
-      fun x => Real.log (f x) - Real.log (g x) := by
-  have : SigmaFinite (ρ.withDensity fun x => ENNReal.ofReal (f x)) :=
-    SigmaFinite.withDensity_of_ne_top (ae_of_all _ fun _ => ENNReal.ofReal_ne_top)
-  have h1 := Measure.rnDeriv_withDensity_right (ρ.withDensity fun x => ENNReal.ofReal (f x)) ρ
-    (f := fun x => ENNReal.ofReal (g x)) (by fun_prop)
-    (ae_of_all _ fun x => by simp [hgpos x]) (ae_of_all _ fun _ => ENNReal.ofReal_ne_top)
-  have h2 := Measure.rnDeriv_withDensity ρ (f := fun x => ENNReal.ofReal (f x)) (by fun_prop)
-  filter_upwards [h1, h2] with x hx1 hx2
-  rw [llr, hx1, hx2, ENNReal.toReal_mul, ENNReal.toReal_inv,
-    ENNReal.toReal_ofReal (hgpos x).le, ENNReal.toReal_ofReal (hfpos x).le,
-    Real.log_mul (inv_ne_zero (hgpos x).ne') (hfpos x).ne', Real.log_inv]
-  ring
-
-/-- Absolute continuity between two measures with densities, the second one positive. -/
-theorem withDensity_ofReal_absolutelyContinuous {α : Type*} [MeasurableSpace α]
-    (ρ : Measure α) {f g : α → ℝ} (hg : Measurable g) (hgpos : ∀ x, 0 < g x) :
-    (ρ.withDensity fun x => ENNReal.ofReal (f x)) ≪
-      ρ.withDensity fun x => ENNReal.ofReal (g x) :=
-  (withDensity_absolutelyContinuous ρ _).trans
-    (withDensity_absolutelyContinuous' (by fun_prop) (ae_of_all _ fun x => by simp [hgpos x]))
-
 /-- The joint law of input and noise-kernel output is the image of the product law. -/
 theorem compProd_noiseKernel_eq_map {E F : Type*} [AddCommGroup E] [MeasurableSpace E]
     [MeasurableAdd₂ E] [MeasurableSpace F] (f : F → E) (hf : Measurable f) (ν : Measure E)
@@ -138,15 +113,14 @@ noncomputable def gaussianKernelKLReal {ι κ : Type*} [Fintype ι] [DecidableEq
     ∫ x, ofLp (toEuclideanLin H x - q) ⬝ᵥ T⁻¹ *ᵥ ofLp (toEuclideanLin H x - q) ∂μ) / 2
 
 /-- The output quadratic form is integrable under a finite-second-
-moment input law, for positive definite `T`. -/
+moment input law, for any matrix `T`. -/
 theorem integrable_outputQuadratic {ι κ : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype κ] [DecidableEq κ] (H : Matrix ι κ ℝ) (q : EuclideanSpace ℝ ι)
-    (T : Matrix ι ι ℝ) (hT : T.PosDef)
+    (T : Matrix ι ι ℝ)
     (μ : Measure (EuclideanSpace ℝ κ)) [IsProbabilityMeasure μ] (hμ : MemLp id 2 μ) :
     Integrable (fun x => ofLp (toEuclideanLin H x - q) ⬝ᵥ T⁻¹ *ᵥ
-      ofLp (toEuclideanLin H x - q)) μ := by
-  have _ := hT
-  exact integrable_quad (u := fun x => toEuclideanLin H x - q)
+      ofLp (toEuclideanLin H x - q)) μ :=
+  integrable_quad (u := fun x => toEuclideanLin H x - q)
     (((LinearMap.toContinuousLinearMap (toEuclideanLin H)).comp_memLp' hμ).sub
       (memLp_const q)) T⁻¹
 
@@ -248,19 +222,19 @@ of the input law with the comparison Gaussian. -/
 theorem compProd_noiseKernel_absolutelyContinuous {ι κ : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype κ] [DecidableEq κ] (H : Matrix ι κ ℝ) (q : EuclideanSpace ℝ ι)
     (R T : Matrix ι ι ℝ) (hR : R.PosDef) (hT : T.PosDef)
-    (μ : Measure (EuclideanSpace ℝ κ)) [IsProbabilityMeasure μ] (hμ : MemLp id 2 μ) :
+    (μ : Measure (EuclideanSpace ℝ κ)) [IsProbabilityMeasure μ] :
     μ ⊗ₘ MetaMathlibExt.noiseKernel (toEuclideanLin H)
         (MetaMathlibExt.continuous_toEuclideanLin H).measurable
         (multivariateGaussian 0 R) ≪
       μ.prod (multivariateGaussian q T) := by
-  have _ := hμ
   have hg : Measurable fun p : EuclideanSpace ℝ κ × EuclideanSpace ℝ ι =>
       MetaMathlibExt.multivariateGaussianPDFReal q T p.2 :=
     (measurable_multivariateGaussianPDFReal_right q T).comp measurable_snd
   rw [compProd_noiseKernel_eq_withDensity H R hR μ,
     prod_multivariateGaussian_eq_withDensity q T hT μ]
-  exact withDensity_ofReal_absolutelyContinuous _ hg
-    fun p => multivariateGaussianPDFReal_pos q hT p.2
+  exact densityModel_absolutelyContinuous (ν := μ.prod volume) (p := fun f => f)
+    (θ₀ := fun p => MetaMathlibExt.multivariateGaussianPDFReal (toEuclideanLin H p.1) R p.2) hg
+    (ae_of_all _ fun p => multivariateGaussianPDFReal_pos q hT p.2)
 
 /-- The log-likelihood ratio on the product is the fixed-covariance
 Gaussian ratio: the log-determinant term minus the noise quadratic form
@@ -269,7 +243,7 @@ under the joint law. -/
 theorem llr_compProd_noiseKernel_ae {ι κ : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype κ] [DecidableEq κ] (H : Matrix ι κ ℝ) (q : EuclideanSpace ℝ ι)
     (R T : Matrix ι ι ℝ) (hR : R.PosDef) (hT : T.PosDef)
-    (μ : Measure (EuclideanSpace ℝ κ)) [IsProbabilityMeasure μ] (hμ : MemLp id 2 μ) :
+    (μ : Measure (EuclideanSpace ℝ κ)) [IsProbabilityMeasure μ] :
     llr (μ ⊗ₘ MetaMathlibExt.noiseKernel (toEuclideanLin H)
         (MetaMathlibExt.continuous_toEuclideanLin H).measurable
         (multivariateGaussian 0 R)) (μ.prod (multivariateGaussian q T)) =ᵐ[
@@ -279,7 +253,6 @@ theorem llr_compProd_noiseKernel_ae {ι κ : Type*} [Fintype ι] [DecidableEq ι
       fun p => (Real.log (T.det / R.det) -
         ofLp (p.2 - toEuclideanLin H p.1) ⬝ᵥ R⁻¹ *ᵥ ofLp (p.2 - toEuclideanLin H p.1) +
         ofLp (p.2 - q) ⬝ᵥ T⁻¹ *ᵥ ofLp (p.2 - q)) / 2 := by
-  have _ := hμ
   have hf : Measurable fun p : EuclideanSpace ℝ κ × EuclideanSpace ℝ ι =>
       MetaMathlibExt.multivariateGaussianPDFReal (toEuclideanLin H p.1) R p.2 := by
     have hH : Measurable (toEuclideanLin H) :=
@@ -291,9 +264,10 @@ theorem llr_compProd_noiseKernel_ae {ι κ : Type*} [Fintype ι] [DecidableEq ι
     (measurable_multivariateGaussianPDFReal_right q T).comp measurable_snd
   rw [compProd_noiseKernel_eq_withDensity H R hR μ,
     prod_multivariateGaussian_eq_withDensity q T hT μ]
-  have h := llr_withDensity_ofReal (μ.prod volume) hf hg
-    (fun p => multivariateGaussianPDFReal_pos _ hR p.2)
-    (fun p => multivariateGaussianPDFReal_pos q hT p.2)
+  have h := llr_densityModel_ae_eq_of_ae (ν := μ.prod volume) (p := fun f => f) hf hg
+    (ae_of_all _ fun p => multivariateGaussianPDFReal_pos _ hR p.2)
+    (ae_of_all _ fun p => multivariateGaussianPDFReal_pos q hT p.2)
+  simp only [densityModel, logDensity] at h
   filter_upwards [(withDensity_absolutelyContinuous _ _).ae_le h] with p hp
   rw [hp, ← Real.log_div (multivariateGaussianPDFReal_pos _ hR p.2).ne'
       (multivariateGaussianPDFReal_pos q hT p.2).ne',
@@ -314,7 +288,7 @@ theorem integrable_llr_compProd_noiseKernel {ι κ : Type*} [Fintype ι] [Decida
   obtain ⟨h1, h2⟩ := memLp_compProd_noiseKernel H q R μ hμ
   exact ((((integrable_const _).sub (integrable_quad h1 R⁻¹)).add
     (integrable_quad h2 T⁻¹)).div_const 2).congr
-      (llr_compProd_noiseKernel_ae H q R T hR hT μ hμ).symm
+      (llr_compProd_noiseKernel_ae H q R T hR hT μ).symm
 
 /-! ### The divergence -/
 
@@ -339,9 +313,9 @@ theorem klDiv_compProd_noiseKernel {ι κ : Type*} [Fintype ι] [DecidableEq ι]
       (μ ⊗ₘ MetaMathlibExt.noiseKernel (toEuclideanLin H)
         (MetaMathlibExt.continuous_toEuclideanLin H).measurable (multivariateGaussian 0 R)) :=
     (((integrable_const _).sub (integrable_quad h1 R⁻¹)).add (integrable_quad h2 T⁻¹)).div_const 2
-  rw [klDiv_of_ac_of_integrable (compProd_noiseKernel_absolutelyContinuous H q R T hR hT μ hμ)
+  rw [klDiv_of_ac_of_integrable (compProd_noiseKernel_absolutelyContinuous H q R T hR hT μ)
       (integrable_llr_compProd_noiseKernel H q R T hR hT μ hμ),
-    integral_congr_ae (llr_compProd_noiseKernel_ae H q R T hR hT μ hμ), probReal_univ,
+    integral_congr_ae (llr_compProd_noiseKernel_ae H q R T hR hT μ), probReal_univ,
     probReal_univ, add_sub_cancel_right, Measure.integral_compProd hF]
   congr 1
   simp_rw [noiseKernel_apply_multivariateGaussian]
@@ -369,7 +343,7 @@ theorem klDiv_compProd_noiseKernel {ι κ : Type*} [Fintype ι] [DecidableEq ι]
     ring
   simp_rw [inner]
   unfold gaussianKernelKLReal
-  rw [integral_div, integral_add (integrable_const _) (integrable_outputQuadratic H q T hT μ hμ),
+  rw [integral_div, integral_add (integrable_const _) (integrable_outputQuadratic H q T μ hμ),
     integral_const, probReal_univ, one_smul]
 
 /-! ### Validation -/
