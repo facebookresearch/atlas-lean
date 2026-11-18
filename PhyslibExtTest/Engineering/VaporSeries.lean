@@ -22,6 +22,8 @@ nonuniform resistances `2, 3, 5` between pressures `1000` and
 These are elaboration and non-vacuity checks, not new results.
 -/
 
+open Engineering.VaporSeries
+
 /-- Nonuniform three-layer flux and interfaces. -/
 example : vaporSeriesFlux (n := 3) (fun i => if i = 0 then (2 : ℝ)
         else if i = 1 then 3 else 5) 1000 400 = 60

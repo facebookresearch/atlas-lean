@@ -25,11 +25,14 @@ their own dimensions and no heat-flux formula is asserted.
 
 ## ii. Key results
 
-- `vaporInterfacePressure_zero`: the zeroth interface is the
+- `Engineering.VaporSeries.vaporInterfacePressure_zero`: the
+  zeroth interface is the
   inner boundary pressure.
-- `vaporInterfacePressure_last`: the final interface is the
+- `Engineering.VaporSeries.vaporInterfacePressure_last`: the
+  final interface is the
   outer boundary pressure when the total resistance is nonzero.
-- `vaporInterfacePressure_succ_sub`: adjacent interfaces differ
+- `Engineering.VaporSeries.vaporInterfacePressure_succ_sub`:
+  adjacent interfaces differ
   by the common flux times the intervening resistance.
 
 ## iii. Table of contents
@@ -45,6 +48,8 @@ their own dimensions and no heat-flux formula is asserted.
 @[expose] public section
 
 /-! ## A. Series flux and interface pressures -/
+namespace Engineering.VaporSeries
+
 
 /-- Steady vapor mass flux through layers in series from boundary
 partial pressures `pin` and `pout` and layer vapor resistances
@@ -104,3 +109,5 @@ theorem vaporSeriesFlux_mul_total {n : ℕ} (R : ℕ → ℝ)
         * (∑ i ∈ Finset.range n, R i) = pin - pout := by
   unfold vaporSeriesFlux
   exact div_mul_cancel₀ _ hR
+
+end Engineering.VaporSeries
