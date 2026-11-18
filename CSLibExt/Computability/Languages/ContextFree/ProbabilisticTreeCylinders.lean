@@ -86,7 +86,7 @@ def PDerivTree.branchAssignment {NT T : Type*} (t : PDerivTree NT T) (u : List B
 
 /-- the shape of a derivation tree as an existing `CGTree`
 (projection, not a new tree type). Address sets of `t` are those of
-`t.shape`; see `PDerivTree.activeAddresses_shape`. -/
+`t.shape`; see `PDerivTree.addresses_shape`. -/
 def PDerivTree.shape {NT T : Type*} : PDerivTree NT T → CGTree
   | .leaf _ _ => .leaf
   | .node _ _ _ l r => .node l.shape r.shape
@@ -136,14 +136,6 @@ theorem CGTree.activeAddresses_node (l r : CGTree) (u : List Bool) :
       insert u (l.activeAddresses (u ++ [false]) ∪ r.activeAddresses (u ++ [true])) := by
   rfl
 
-/-- Appended prefixes cancel on the left. -/
-theorem append_cancel_left_helper (u x y : List Bool) (h : u ++ x = u ++ y) : x = y := by
-  induction u with
-  | nil => simpa using h
-  | cons hd tl ih =>
-      have h2 : tl ++ x = tl ++ y := by simpa using h
-      exact ih h2
-
 /-- A child-prefix address is never the parent prefix. -/
 theorem root_ne_child_append (u : List Bool) (d : Bool) (b : List Bool) :
     u ≠ (u ++ [d]) ++ b := by
@@ -158,7 +150,7 @@ theorem left_right_append_ne_of_ne (d₁ d₂ : Bool) (h : d₁ ≠ d₂) (u b�
     (u ++ [d₁]) ++ b₁ ≠ (u ++ [d₂]) ++ b₂ := by
   intro hcon
   rw [List.append_assoc, List.append_assoc] at hcon
-  have h2 := append_cancel_left_helper u _ _ hcon
+  have h2 := List.append_cancel_left hcon
   simp only [List.cons_append, List.nil_append] at h2
   have hcon2 : d₁ = d₂ ∧ b₁ = b₂ := by simpa using h2
   exact h hcon2.1
@@ -376,7 +368,7 @@ theorem branchAssignment_append (t : CGTree) (u b : List Bool) :
     constructor
     · intro h
       obtain ⟨c, hc, hcb⟩ := (mem_branchAddresses_iff t u (u ++ b)).mp h
-      have hbc : b = c := append_cancel_left_helper u b c hcb
+      have hbc : b = c := List.append_cancel_left hcb
       rw [hbc]
       exact hc
     · intro h
@@ -422,7 +414,7 @@ theorem not_mem_active_of_leaf_helper (t : CGTree) :
             rw [← List.append_assoc]
             exact had
           have hcb : c ++ b = d :=
-            append_cancel_left_helper ([] ++ [false]) (c ++ b) d had2
+            List.append_cancel_left had2
           have hd' : c ++ b ∈ l.activeAddresses [] := by
             rw [hcb]
             exact hd
@@ -448,7 +440,7 @@ theorem not_mem_active_of_leaf_helper (t : CGTree) :
             rw [← List.append_assoc]
             exact had
           have hcb : c ++ b = d :=
-            append_cancel_left_helper ([] ++ [true]) (c ++ b) d had2
+            List.append_cancel_left had2
           have hd' : c ++ b ∈ r.activeAddresses [] := by
             rw [hcb]
             exact hd
