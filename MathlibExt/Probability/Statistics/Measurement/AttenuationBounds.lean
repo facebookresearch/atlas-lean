@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Biology.StatisticalGenetics.LDScoreVariance
+import MathlibExt.Biology.StatisticalGenetics.LDScoreVariance
 public import MathlibExt.Probability.Statistics.Measurement.NormalizedCovarianceAttenuation
 public import Mathlib.Probability.Moments.Covariance
 public import Mathlib.Probability.Moments.Variance

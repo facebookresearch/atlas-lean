@@ -131,4 +131,32 @@ theorem abs_normalizedCovariance_le_attenuation_zero {Ω : Type*}
     exact abs_nonneg _
   · exact h0
 
+
+/-- Applied instance: the production theorem is invoked with an actual
+true/error decomposition and its zero-covariance hypotheses, at the
+moment values of the negative test. -/
+theorem abs_normalizedCovariance_le_attenuation_applied {Ω : Type*}
+    [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
+    {Tx Ty Ex Ey X Y : Ω → ℝ}
+    (hX : X = fun ω => Tx ω + Ex ω) (hY : Y = fun ω => Ty ω + Ey ω)
+    (hTx : MemLp Tx 2 μ) (hTy : MemLp Ty 2 μ)
+    (hEx : MemLp Ex 2 μ) (hEy : MemLp Ey 2 μ)
+    (hVarTx : Var[Tx; μ] = 1) (hVarTy : Var[Ty; μ] = 1)
+    (hVarEx : Var[Ex; μ] = 1) (hVarEy : Var[Ey; μ] = 1)
+    (hCov : cov[X, Y; μ] = -1) (hCovT : cov[Tx, Ty; μ] = -1)
+    (hVarX : Var[X; μ] = 2) (hVarY : Var[Y; μ] = 2)
+    (hTxEx : cov[Tx, Ex; μ] = 0) (hTyEy : cov[Ty, Ey; μ] = 0)
+    (hExEy : cov[Ex, Ey; μ] = 0)
+    (hTxEy : cov[Tx, Ey; μ] = 0) (hExTy : cov[Ex, Ty; μ] = 0) :
+    |cov[X, Y; μ] / (Real.sqrt Var[X; μ] * Real.sqrt Var[Y; μ])| ≤ 1 / 2 ∧
+      |cov[X, Y; μ] / (Real.sqrt Var[X; μ] * Real.sqrt Var[Y; μ])| ≤ 1 := by
+  have h := abs_normalizedCovariance_le_attenuation hX hY hTx hTy hEx hEy
+    (by rw [hVarTx]; norm_num) (by rw [hVarTy]; norm_num)
+    hTxEx hTyEy hExEy hTxEy hExTy
+  rw [hVarTx, hVarTy, hVarEx, hVarEy] at h
+  unfold MathlibExt.Probability.Statistics.LinearModel.ErrorsInVariables.attenuationFactor at h
+  rw [show ((1 : ℝ) / (1 + 1)) * (1 / (1 + 1)) = (1 / 2) ^ 2 by norm_num,
+    Real.sqrt_sq (show (0 : ℝ) ≤ 1 / 2 by norm_num), hCovT] at h
+  simpa using h
+
 end MathlibExtTest.Probability.Statistics.Measurement
