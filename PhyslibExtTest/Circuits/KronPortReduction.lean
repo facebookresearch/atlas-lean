@@ -16,6 +16,7 @@ import Mathlib.Tactic.NormNum
 
 open Matrix PhyslibExt.Circuits.KronPortReduction
 open MathlibExt.LinearAlgebra.Matrix.SchurStrictPositivity
+open MathlibExt.LinearAlgebra.Matrix.SchurSourceEnergy
 
 namespace PhyslibExtTest.Circuits.KronPortReduction
 
@@ -74,8 +75,8 @@ example : !![(2 : ℝ)] *ᵥ ![(5 / 3 : ℝ)]
         (by ext i; fin_cases i <;> simp [Matrix.mulVec, dotProduct] <;> norm_num)
       exact h)
 
-/-- Dissipation split on the scalar fixture, through the public
-corrected-dissipation theorem: total dissipation is the reduced
+/-- Dissipation split on the scalar fixture, through the canonical
+Schur source energy identity: total dissipation is the reduced
 port dissipation plus the retained source term. -/
 example : (![(5 / 3 : ℝ)] ⊕ᵥ ![(-1 / 3 : ℝ)]) ⬝ᵥ
       (fromBlocks !![(2 : ℝ)] !![1] (!![(1 : ℝ)])ᵀ !![2] *ᵥ
@@ -87,7 +88,7 @@ example : (![(5 / 3 : ℝ)] ⊕ᵥ ![(-1 / 3 : ℝ)]) ⬝ᵥ
       ⟨(!![(2 : ℝ)]).det⁻¹, by rw [Matrix.det_fin_one]; norm_num,
         by rw [Matrix.det_fin_one]; norm_num⟩
     exact Matrix.invertibleOfDetInvertible _
-  exact dissipation_eq_reduced_add_source !![(2 : ℝ)] !![1] !![2]
+  exact dotProduct_fromBlocks_mulVec_eq_schur_add_source_of_interior !![(2 : ℝ)] !![1] !![2]
     (by
       show (fromBlocks !![(2 : ℝ)] !![1] (!![(1 : ℝ)])ᵀ !![2])ᵀ
         = fromBlocks !![(2 : ℝ)] !![1] (!![(1 : ℝ)])ᵀ !![2]
@@ -109,7 +110,7 @@ example : (![(5 / 3 : ℝ)] ⊕ᵥ ![(-1 / 3 : ℝ)]) ⬝ᵥ
   norm_num
 
 /-- Source-free dissipation on the scalar fixture with zero interior
-injection, through the public source-free lemma. -/
+injection, through the canonical source-free identity. -/
 example : (![(5 / 3 : ℝ)] ⊕ᵥ ![(-5 / 6 : ℝ)]) ⬝ᵥ
       (fromBlocks !![(2 : ℝ)] !![1] (!![(1 : ℝ)])ᵀ !![2] *ᵥ
         (![(5 / 3 : ℝ)] ⊕ᵥ ![(-5 / 6 : ℝ)]))
@@ -119,7 +120,7 @@ example : (![(5 / 3 : ℝ)] ⊕ᵥ ![(-5 / 6 : ℝ)]) ⬝ᵥ
       ⟨(!![(2 : ℝ)]).det⁻¹, by rw [Matrix.det_fin_one]; norm_num,
         by rw [Matrix.det_fin_one]; norm_num⟩
     exact Matrix.invertibleOfDetInvertible _
-  exact dissipation_eq_reduced_of_zero_interior !![(2 : ℝ)] !![1] !![2]
+  exact dotProduct_fromBlocks_mulVec_eq_schur_of_interior_zero !![(2 : ℝ)] !![1] !![2]
     (by
       show (fromBlocks !![(2 : ℝ)] !![1] (!![(1 : ℝ)])ᵀ !![2])ᵀ
         = fromBlocks !![(2 : ℝ)] !![1] (!![(1 : ℝ)])ᵀ !![2]

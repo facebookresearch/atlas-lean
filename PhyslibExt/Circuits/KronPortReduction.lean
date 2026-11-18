@@ -50,9 +50,12 @@ supplies the retained source term `jI ⬝ᵥ (D⁻¹ *ᵥ jI)`.
   only if the reduced port equation holds together with interior
   reconstruction, derived from the canonical block elimination
   equivalence.
-- `dissipation_eq_reduced_add_source`: total dissipation equals
-  reduced port dissipation plus the retained interior source term,
-  from the canonical Schur source energy identity.
+- The dissipation split, total dissipation equals reduced port
+  dissipation plus the retained interior source term, is the
+  canonical `dotProduct_fromBlocks_mulVec_eq_schur_add_source_of_interior`
+  (and `dotProduct_fromBlocks_mulVec_eq_schur_of_interior_zero` for
+  zero interior injection) from
+  `MathlibExt.LinearAlgebra.Matrix.SchurSourceEnergy`, used directly.
 - `kron_reduction_correct`: for a positive-definite conductance
   matrix, the Schur complement is positive definite and every full
   solution is a reduced solution with reconstruction and the
@@ -61,8 +64,7 @@ supplies the retained source term `jI ⬝ᵥ (D⁻¹ *ᵥ jI)`.
 ## iii. Table of contents
 
 - A. Block elimination and reconstruction
-- B. Dissipation with the retained source
-- C. Reindexing invariance and headline correctness
+- B. Reindexing invariance and headline correctness
 
 ## iv. References
 
@@ -107,7 +109,7 @@ theorem block_solution_iff_reduced {m p : Type*} [Fintype m] [Fintype p]
 
 /-- A full solution induces the reduced port injection equation. -/
 lemma reduced_injection_of_full_solution {m p : Type*} [Fintype m]
-    [Fintype p] [DecidableEq m] [DecidableEq p] (A : Matrix m m ℝ)
+    [Fintype p] [DecidableEq p] (A : Matrix m m ℝ)
     (B : Matrix m p ℝ) (D : Matrix p p ℝ) [Invertible D] (φP : m → ℝ)
     (φI : p → ℝ) (jP : m → ℝ) (jI : p → ℝ) (hP : A *ᵥ φP + B *ᵥ φI = jP)
     (hI : Bᵀ *ᵥ φP + D *ᵥ φI = jI) :
@@ -116,40 +118,14 @@ lemma reduced_injection_of_full_solution {m p : Type*} [Fintype m]
 
 /-- Reconstruction from a reduced solution solves the full system. -/
 lemma full_solution_of_reduced {m p : Type*} [Fintype m] [Fintype p]
-    [DecidableEq m] [DecidableEq p] (A : Matrix m m ℝ) (B : Matrix m p ℝ)
+    [DecidableEq p] (A : Matrix m m ℝ) (B : Matrix m p ℝ)
     (D : Matrix p p ℝ) [Invertible D] (φP : m → ℝ) (jP : m → ℝ) (jI : p → ℝ)
     (h : schurComplement A B D *ᵥ φP = jP - B *ᵥ (D⁻¹ *ᵥ jI)) :
     A *ᵥ φP + B *ᵥ (D⁻¹ *ᵥ (jI - Bᵀ *ᵥ φP)) = jP ∧
       Bᵀ *ᵥ φP + D *ᵥ (D⁻¹ *ᵥ (jI - Bᵀ *ᵥ φP)) = jI := by
   exact (block_solution_iff_reduced A B D φP _ jP jI).mpr ⟨h, rfl⟩
 
-/-! ## B. Dissipation with the retained source
-
-The corrected dissipation split, from the canonical Schur source
-energy identity. -/
-
-/-- Corrected dissipation: total dissipation equals reduced port
-dissipation plus the retained interior source term. -/
-theorem dissipation_eq_reduced_add_source {m p : Type*} [Fintype m]
-    [Fintype p] [DecidableEq m] [DecidableEq p] (A : Matrix m m ℝ)
-    (B : Matrix m p ℝ) (D : Matrix p p ℝ) [Invertible D]
-    (hG : (fromBlocks A B Bᵀ D).IsSymm) (φP : m → ℝ) (φI : p → ℝ)
-    (jI : p → ℝ) (hI : Bᵀ *ᵥ φP + D *ᵥ φI = jI) :
-    (φP ⊕ᵥ φI) ⬝ᵥ (fromBlocks A B Bᵀ D *ᵥ (φP ⊕ᵥ φI)) =
-      φP ⬝ᵥ (schurComplement A B D *ᵥ φP) + jI ⬝ᵥ (D⁻¹ *ᵥ jI) :=
-  dotProduct_fromBlocks_mulVec_eq_schur_add_source_of_interior A B D hG φP φI jI hI
-
-/-- Source-free dissipation: zero interior injection drops the offset. -/
-lemma dissipation_eq_reduced_of_zero_interior {m p : Type*} [Fintype m]
-    [Fintype p] [DecidableEq m] [DecidableEq p] (A : Matrix m m ℝ)
-    (B : Matrix m p ℝ) (D : Matrix p p ℝ) [Invertible D]
-    (hG : (fromBlocks A B Bᵀ D).IsSymm) (φP : m → ℝ) (φI : p → ℝ)
-    (hI : Bᵀ *ᵥ φP + D *ᵥ φI = 0) :
-    (φP ⊕ᵥ φI) ⬝ᵥ (fromBlocks A B Bᵀ D *ᵥ (φP ⊕ᵥ φI)) =
-      φP ⬝ᵥ (schurComplement A B D *ᵥ φP) :=
-  dotProduct_fromBlocks_mulVec_eq_schur_of_interior_zero A B D hG φP φI hI
-
-/-! ## C. Reindexing invariance and headline correctness
+/-! ## B. Reindexing invariance and headline correctness
 
 Relabeling invariance of the dissipation, and the headline
 correctness statement for a positive-definite conductance matrix. -/
@@ -189,7 +165,7 @@ theorem kron_reduction_correct {m p : Type*} [Fintype m] [Fintype p]
   have hS : (schurComplement A B D).PosDef := schurComplement_posDef hG
   have hSymm : (fromBlocks A B Bᵀ D).IsSymm := hG.isHermitian.isSymm
   refine ⟨hS, ?_, ?_, ?_⟩
-  · exact @reduced_injection_of_full_solution m p _ _ _ _ A B D hInv
+  · exact @reduced_injection_of_full_solution m p _ _ _ A B D hInv
       φP φI jP jI hP hI
   · exact ((@block_solution_iff_reduced m p _ _ _ A B D hInv φP φI jP jI).mp
       ⟨hP, hI⟩).2
