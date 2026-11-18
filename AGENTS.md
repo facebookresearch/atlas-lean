@@ -9,8 +9,8 @@ User instructions override this file.
 - The ATLAS wiki under `blueprint/` is the graph of the library's plan.
   [docs/BLUEPRINT.md](docs/BLUEPRINT.md) gives its
   [rules](docs/BLUEPRINT.md#graph-rules) and explains how to build and sync it.
-- Work is tracked as GitHub issues labelled `task:formalize` and
-  `task:dag-work`, one per node on the graph's frontier.
+- Work is tracked as GitHub issues: `task:formalize`, one per Lean module with
+  ready results, and `task:dag-work`, one per node to expand.
 
 ## Skills
 
@@ -25,5 +25,6 @@ User instructions override this file.
 
 - Run `scripts/check.sh` from the repository root. If you changed
   `blueprint/`, also run `python scripts/check_graph_rules.py --base origin/main`.
-- Work one issue per PR, and write `Closes #<issue>` in the body.
+- Work one issue per PR, and reference it in the body (`Closes #<issue>`, or
+  `Part of #<issue>` for part of a module's list).
 - Address every Codex finding before you ask for human review.

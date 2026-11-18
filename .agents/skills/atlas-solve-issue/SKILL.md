@@ -15,7 +15,7 @@ the graph on `main`, so don't open or close them by hand.
 
 | Label | Work | How |
 | --- | --- | --- |
-| `task:formalize` | Write the Lean statement of an article, or prove a stated one | This skill, then [REVIEWING.md](../../../REVIEWING.md) |
+| `task:formalize` | One Lean module's ready results: write their statements in Lean, or prove the stated ones | This skill, then [REVIEWING.md](../../../REVIEWING.md) |
 | `task:dag-work` | Break a node marked unexpanded into children | This skill, then [atlas-graph-pr](../atlas-graph-pr/SKILL.md) |
 
 ## 1. Pick an issue
@@ -43,7 +43,11 @@ If you stop without a PR, remove yourself so someone else can take it.
 
 ## 3. Do the work
 
-For `task:formalize`:
+For `task:formalize`, the issue lists every ready result of one Lean module,
+as a checklist. Work through as much of it as fits one reviewable PR. Say
+`Part of #<issue>` in a PR that leaves items, and `Closes #<issue>` in one
+that finishes the list; the list updates itself after each merge. For each
+result:
 
 - **Proving a `theorem_wanted`:** move the result to the matching proved
   library (`MathlibExt`, `CSLibExt` or `PhyslibExt`), as
@@ -77,8 +81,9 @@ python scripts/check_graph_rules.py --base origin/main   # if blueprint/ changed
 - Push to your fork, and open the PR against `main` on
   facebookresearch/atlas-lean.
 - Fill in `.github/pull_request_template.md`. The body says
-  `Closes #<issue>`, the declarations added or moved, and the source.
-- One issue per PR, unless the issues are a few small lemmas of one module.
+  `Closes #<issue>` (or `Part of #<issue>` for part of a module's list), the
+  declarations added or moved, and the source.
+- One issue per PR.
 
 ## 5. See it through to merge
 

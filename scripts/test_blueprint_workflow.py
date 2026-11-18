@@ -37,7 +37,7 @@ class BlueprintWorkflowTests(unittest.TestCase):
         for path in (
             "blueprint/**", "scripts/generate_wiki.py", "scripts/sync_wiki.py",
             "scripts/extract_v2_lean_dependencies.py", "scripts/dump_v2_dependencies.lean",
-            "scripts/check_blueprint_site.py", "scripts/check_graph_rules.py", "scripts/taxonomy.json", "scripts/wiki-sync.json",
+            "scripts/check_blueprint_site.py", "scripts/check_graph_rules.py", "scripts/frontier_issues.py", "scripts/taxonomy.json", "scripts/wiki-sync.json",
             "scripts/requirements-blueprint.txt", "mkdocs.yml", "theme/**", "hooks/**",
             "docs/BLUEPRINT.md", ".github/workflows/blueprint-pages.yml", ".github/autoform-ref",
             "lean-toolchain", "lake-manifest.json", "lakefile.toml",
@@ -171,6 +171,35 @@ class BlueprintWorkflowTests(unittest.TestCase):
         positions = {s.get("name"): i for i, s in enumerate(self.steps)}
         self.assertLess(positions["Validate the theorem DAG and its declarations"], positions[audit["name"]])
         self.assertLess(positions[audit["name"]], positions["Render the blueprint"])
+
+    def test_task_issues_sync_only_from_main_and_only_when_enabled(self):
+        sync = self.workflow["jobs"]["frontier-issues"]
+        self.assertEqual(sync["needs"], "wiki")
+        self.assertEqual(sync["permissions"], {"contents": "read", "issues": "write"})
+        for clause in ("github.ref == 'refs/heads/main'",
+                       "github.event_name != 'pull_request'",
+                       "github.event_name != 'merge_group'"):
+            self.assertIn(clause, sync["if"])
+            self.assertIn(clause, self.step("Keep the task frontier")["if"])
+        self.assertEqual(sync["concurrency"]["cancel-in-progress"], "false")
+        checkout = sync["steps"][0]
+        self.assertEqual(checkout["with"]["persist-credentials"], "false")
+        self.assertEqual(checkout["with"]["sparse-checkout"], "scripts/frontier_issues.py")
+        run = sync["steps"][-1]
+        self.assertEqual(run["env"]["FRONTIER_ISSUES"], "${{ vars.FRONTIER_ISSUES }}")
+        self.assertIn('if [ "${FRONTIER_ISSUES:-}" = "true" ]; then', run["run"])
+        self.assertNotIn("uv ", run["run"])
+        # No other job may write issues.
+        for name, job in self.workflow["jobs"].items():
+            if name != "frontier-issues":
+                self.assertNotIn("issues", job.get("permissions", {}))
+
+    def test_the_frontier_is_computed_after_the_lean_facts_on_every_run(self):
+        positions = {s.get("name"): i for i, s in enumerate(self.steps)}
+        frontier = self.step("Compute the task frontier")
+        self.assertNotIn("if", frontier)
+        self.assertLess(positions["Add the Lean-owned facts to the articles"], positions[frontier["name"]])
+        self.assertLess(positions[frontier["name"]], positions["Keep the task frontier"])
 
 
 if __name__ == "__main__":

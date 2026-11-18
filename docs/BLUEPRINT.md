@@ -173,7 +173,8 @@ python -m unittest \
   scripts.test_check_blueprint_site_navigation \
   scripts.test_blueprint_workflow \
   scripts.test_blueprint_taxonomy \
-  scripts.test_check_graph_rules
+  scripts.test_check_graph_rules \
+  scripts.test_frontier_issues
 python scripts/check_graph_rules.py
 ```
 
@@ -266,7 +267,44 @@ a literal dollar of that shape as `&#36;`, or inside inline code.
 
 Changing AutoformBot requires a reviewed `.github/autoform-ref` update and
 passing tests. The workflow has no automatic pin push, upstream-sync bot,
-model-driven audit, schedule, or required personal token.
+model-driven audit, schedule, or required personal token; the issue sync
+uses the job's own `GITHUB_TOKEN`.
+
+## Task issues
+
+After `lean-facts`, the workflow writes the graph's frontier with
+`python scripts/frontier_issues.py frontier blueprint --output build/frontier.json`:
+the articles that are ready to state or to prove by Autoform's readiness rule
+(`autoform work list`), and the nodes marked unexpanded (rule 12). On `main`,
+the `sync task issues` job then keeps the task issues in step with it:
+
+- **One `task:formalize` issue per Lean module** that has a ready article,
+  listing every ready article of the module. A module is the unit of a Lean
+  PR, so its ready results are usually done together, and a frontier of
+  thousands of small statements stays a list of modules. The list follows the
+  graph: a result leaves it once finished, newly unblocked ones join it, and
+  the issue closes when nothing in the module is ready.
+- **One `task:dag-work` issue per node to expand,** since each expansion is
+  its own reviewed PR.
+
+Issues carry `math graph` and the subject's `area:` label. The sync opens
+issues for new tasks, updates changed ones, and closes the issues of tasks
+that left the frontier: completed when the module or node is finished, not
+planned otherwise, and reopens its own closes when the task is back. An issue
+a person closed as not planned is never reopened. A hidden
+`<!-- atlas-task: … -->` line ties each issue to its module page or node.
+Writes are paced and capped at 250 per run, so the first fill opens over
+several `main` builds.
+
+The job is the only one with `issues: write`, runs only the standard-library
+sync script, and writes nothing until a maintainer sets the Actions variable
+`FRONTIER_ISSUES` to `true`. Until then each run reports its plan in the job
+summary. To preview it locally:
+
+```sh
+GITHUB_TOKEN=... python scripts/frontier_issues.py sync build/frontier.json \
+  --repo facebookresearch/atlas-lean
+```
 
 ## GitHub Actions and publication
 
