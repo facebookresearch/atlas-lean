@@ -32,7 +32,7 @@ namespace MathlibExtTest.Probability.Statistics.Measurement.ItemInformation
 open scoped RealInnerProductSpace
 open MathlibExt.Probability.Statistics.Measurement
 
-/-- Rasch information): one item, slope `1`, difficulty `2`, at
+/-- Rasch information: one item, slope `1`, difficulty `2`, at
 `θ = 2 = b`, so `p = sigmoid 0 = 1 / 2` and the information is `1 / 4`,
 in both the operator and the scalar form, and it is positive. -/
 example :
@@ -53,7 +53,7 @@ example :
   · rw [← h2, h1, Fin.sum_univ_one]
     norm_num [Real.sigmoid_zero]
 
-/-- nonidentical finite test): two items with slopes `1` and
+/-- nonidentical finite test: two items with slopes `1` and
 `2` (hence nonidentical), difficulties `0`, at `θ = 0`, so each
 `p j = 1 / 2` and the information is `(1 + 4) / 4 = 5 / 4`; it is
 strictly positive, as the nonempty, all-slopes-positive package
@@ -87,7 +87,7 @@ example :
     simp only [e1]
     norm_num [Real.sigmoid_zero]
 
-/-- empty and zero-slope boundaries): the empty test has
+/-- empty and zero-slope boundaries: the empty test has
 information `0`, and a one-item test with discrimination `0` has
 information `0` at every `θ`.  These pin that no nonemptiness or slope
 hypothesis is hidden in the formula, and that strict positivity really
