@@ -48,8 +48,8 @@ structure Model (World : Type u) (Atom : Type v) (Agent : Type w) where
   /-- There is at least one world. -/
   nonempty_world : Nonempty World
 
-/-- Formulas of epistemic logic: atoms, falsity, implication, and
-`Kᵢ φ`. -/
+/-- Formulas of epistemic logic: atoms, falsity, implication, knowledge
+`Kᵢ φ`, and common knowledge `C_G φ`. -/
 inductive Formula (Atom : Type v) (Agent : Type w) where
   | atom (a : Atom) : Formula Atom Agent
   | bot : Formula Atom Agent
