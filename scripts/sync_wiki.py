@@ -441,7 +441,7 @@ def page_text(target) -> tuple[str, dict[str, str]]:
 
 
 def listed_links(readme: Path) -> list[str]:
-    return [match.group(1) for row in readme.read_text().split("\n") if (match := LIST_LINK.match(row))]
+    return [match.group(1) for block in blocks(readme.read_text()) if (match := LIST_LINK.match(block.split("\n")[0]))]
 
 
 def listing(text: str) -> list[tuple[str, str]]:
@@ -531,16 +531,21 @@ def without_empty_headings(text: str) -> str:
 
 def blocks(text: str) -> list[str]:
     """A page's lines, each list item joined with the indented lines that continue it, and each HTML comment over
-    several lines kept whole, so that nothing in a comment reads as an item or a heading."""
+    several lines and each fenced code block kept whole, so that nothing in them reads as an item or a heading."""
     found: list[str] = []
-    commented = False
+    commented, fence = False, ""
     for row in text.split("\n"):
-        if found and (commented or found[-1].startswith("- ") and row[:1].isspace() and row.strip()):
+        if found and (commented or fence or found[-1].startswith("- ") and row[:1].isspace() and row.strip()):
             found[-1] += "\n" + row
         else:
             found.append(row)
-        for mark in re.findall(r"<!--|-->", row):
-            commented = mark == "<!--" if not commented else mark != "-->"
+        if fence:
+            fence = "" if re.match(rf"\s*{re.escape(fence[0])}{{{len(fence)},}}\s*$", row) else fence
+        elif not commented and (opening := re.match(r"\s*(`{3,}(?=[^`]*$)|~{3,})", row)):
+            fence = opening.group(1)
+        else:
+            for mark in re.findall(r"<!--|-->", row):
+                commented = mark == "<!--" if not commented else mark != "-->"
     return found
 
 
@@ -561,8 +566,9 @@ def part_entries(text: str) -> list[str]:
 
 
 def from_part(folder: str, destination: str) -> str:
-    """A link's destination on the page of the part *folder*, as the page of the folder holding the part reads it."""
-    if re.match(r"[a-z][a-z0-9+.-]*:|[#/]", destination):
+    """A link's destination on the page of the part *folder*, as the page of the folder holding the part reads it: a
+    relative one rebased, and one with a scheme, of any case, or that starts with "/" or "#" as it is."""
+    if re.match(r"[A-Za-z][A-Za-z0-9+.-]*:|[#/]", destination):
         return destination
     return posixpath.normpath(f"{folder}/{destination}")
 

@@ -746,12 +746,14 @@ class Declarations(Vault):
     def test_a_part_list_rebases_every_link_of_an_item(self) -> None:
         self.page("Algebra/groups/README.md", "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md)\n")
         self.page("Algebra/groups/part-01/README.md",
-                  "# Part 1 of 1\n\n- [A](a.md) — see [B](b.md), [Rings](../../rings/README.md) and [a book](https://example.org)\n")
+                  "# Part 1 of 1\n\n- [A](a.md) — see [B](b.md), [Rings](../../rings/README.md) and [a book](https://example.org)\n"
+                  "- [C](c.md): [the site](HTTPS://example.org/x), [the editors](mailto:editors@example.org)\n")
         sync.LINKS.mkdir(parents=True)
         sync.apply_declarations([], SimpleNamespace(declarations={}))
         self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
                          "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md) — see [B](part-01/b.md), "
-                         "[Rings](../rings/README.md) and [a book](https://example.org)\n")
+                         "[Rings](../rings/README.md) and [a book](https://example.org)\n"
+                         "- [C](part-01/c.md): [the site](HTTPS://example.org/x), [the editors](mailto:editors@example.org)\n")
 
     def test_a_part_list_reads_nothing_inside_a_comment(self) -> None:
         # Neither an item nor a part heading in a comment counts, and the comment stays as written.
@@ -767,6 +769,18 @@ class Declarations(Vault):
         sync.apply_declarations([], SimpleNamespace(declarations={}))
         self.assertEqual((groups / "README.md").read_text(), text)
 
+    def test_a_part_list_reads_nothing_inside_a_code_fence(self) -> None:
+        # A sample in a fenced code block, of backticks or tildes, is no part heading and no item, and stays as written.
+        groups = wiki.ROADMAP / "Algebra" / "groups"
+        text = ("# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md)\n\nA part's heading links it:\n\n"
+                "````markdown\n## [Part 1 of 1](part-01/README.md)\n\n- [Old](part-01/old.md)\n````\n\n"
+                "~~~\n## [Part 1 of 1](part-01/README.md)\n~~~\n")
+        self.page("Algebra/groups/README.md", text)
+        self.page("Algebra/groups/part-01/README.md", "# Part 1 of 1\n\n- [A](a.md)\n")
+        sync.LINKS.mkdir(parents=True)
+        sync.apply_declarations([], SimpleNamespace(declarations={}))
+        self.assertEqual((groups / "README.md").read_text(), text)
+
     def test_a_folder_pages_own_list_reads_nothing_inside_a_comment(self) -> None:
         # A heading and an item in a comment make no section of the list, so a page with no listed neighbour ends it.
         self.page("Algebra/groups/README.md", "# Groups\n\n- [Old](old.md)\n<!--\n## Planned\n- [Wish](wish.md)\n-->\n"
@@ -778,6 +792,28 @@ class Declarations(Vault):
         self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
                          "# Groups\n\n- [Old](old.md)\n<!--\n## Planned\n- [Wish](wish.md)\n-->\n- [Late](late.md)\n"
                          "- [Sylow](sylow.md)\n\n## Related topics\n\n- [Rings](../rings/README.md): rings.\n")
+
+    def test_an_item_in_a_comment_or_a_code_fence_is_no_listed_neighbour(self) -> None:
+        # H's page is listed only in a comment or a fenced code block, so B, between H and C in source order, joins C's
+        # section, not A's.
+        groups = wiki.ROADMAP / "Algebra" / "groups"
+        for short in "ahc":
+            self.page(f"Algebra/groups/{short}.md", f"# {short.upper()}\n")
+        targets = []
+        for number, (short, section) in enumerate([("a", "Basics"), ("h", "Results"), ("b", "Results"), ("c", "Results")]):
+            target = declaration(f"Ext.{short}", short, short.upper(), f"{short}.")
+            target.idx, target.sections = number, (section, "", "")
+            targets.append(target)
+        for opening, closing in (("<!--", "-->"), ("```", "```"), ("~~~", "~~~")):
+            with self.subTest(opening=opening):
+                results = f"## Results\n\n{opening}\n- [H](h.md)\n{closing}\n\n"
+                self.page("Algebra/groups/README.md", f"# Groups\n\n## Basics\n\n- [A](a.md)\n\n{results}- [C](c.md)\n")
+                (groups / "b.md").unlink(missing_ok=True)
+                self.annotate([self.about(f"Algebra/groups/{short}.md", object=[{"location": {"declaration": f"Ext.{short}"}}])
+                               for short in "ahc"])
+                sync.apply_declarations(targets, SimpleNamespace(declarations={f"Ext.{short}": None for short in "ahbc"}))
+                self.assertEqual((groups / "README.md").read_text(),
+                                 f"# Groups\n\n## Basics\n\n- [A](a.md)\n\n{results}- [B](b.md)\n- [C](c.md)\n")
 
     def test_a_docstring_edit_is_reported_from_the_second_run(self) -> None:
         self.page("Algebra/groups/README.md", "# Groups\n\n- [Old](old.md)\n")
