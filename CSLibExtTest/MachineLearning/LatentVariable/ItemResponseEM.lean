@@ -20,7 +20,7 @@ evidence.
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory
-open scoped ProbabilityTheory
+open scoped ProbabilityTheory ENNReal
 open Cslib.MachineLearning.LatentVariable.BernoulliMixture
 open Cslib.MachineLearning.LatentVariable.ExpectationMaximization
 open MathlibExt.Probability.Statistics.Measurement
@@ -128,5 +128,148 @@ private theorem pin_test_positive_evidence_and_toReal :
   · exact localIndepPMF_toReal _ (fun j => (testParams.2.prob_pos k j).le)
       (fun j => (testParams.2.prob_lt_one k j).le) x
   · exact sum_resp testParams x
+
+private noncomputable def testMeasure : Measure (Fin 2) :=
+  ∑ k : Fin 2, ENNReal.ofReal (testParams.1.weight k) • Measure.dirac k
+
+private theorem testMeasure_singleton (k' : Fin 2) :
+    testMeasure {k'} = ENNReal.ofReal (testParams.1.weight k') := by
+  have h0 : ∀ b ∈ (Finset.univ : Finset (Fin 2)), b ≠ k' →
+      (ENNReal.ofReal (testParams.1.weight b) • Measure.dirac b) {k'} = 0 := by
+    intro b _ hb
+    have hbmem : b ∉ ({k'} : Set (Fin 2)) := by
+      simp only [Set.mem_singleton_iff]
+      exact hb
+    rw [Measure.smul_apply, Measure.dirac_apply,
+      Set.indicator_of_notMem hbmem, smul_eq_mul, mul_zero]
+  have h1 : k' ∉ Finset.univ →
+      (ENNReal.ofReal (testParams.1.weight k') • Measure.dirac k') {k'} = 0 :=
+    fun h => absurd (Finset.mem_univ k') h
+  show ((∑ k : Fin 2, ENNReal.ofReal (testParams.1.weight k) • Measure.dirac k) {k'}
+      = ENNReal.ofReal (testParams.1.weight k'))
+  rw [Measure.finsetSum_apply, Finset.sum_eq_single k' h0 h1,
+    Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_singleton k'),
+    smul_eq_mul, mul_one]
+
+private instance testMeasure_finite : IsFiniteMeasure testMeasure := by
+  refine ⟨?_⟩
+  show ((∑ k : Fin 2, ENNReal.ofReal (testParams.1.weight k) • Measure.dirac k) Set.univ < ∞)
+  rw [Measure.finsetSum_apply]
+  simp_rw [Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ _)]
+  simp only [smul_eq_mul, mul_one]
+  rw [← ENNReal.ofReal_sum_of_nonneg (fun k _ => (testParams.2.weight_pos k).le),
+    testParams.2.weight_sum, ENNReal.ofReal_one]
+  exact ENNReal.one_lt_top
+
+/-- Test likelihood kernel: `localIndepPMF` masses as a kernel. -/
+private noncomputable def testKernel : Kernel (Fin 2) (Fin 1 → Bool) :=
+  ⟨fun k => ∑ y : Fin 1 → Bool,
+      localIndepPMF (testParams.1.prob k) (fun j => (testParams.2.prob_pos k j).le)
+        (fun j => (testParams.2.prob_lt_one k j).le) y • Measure.dirac y,
+    measurable_of_countable _⟩
+
+private theorem testKernel_singleton (x : Fin 1 → Bool) (k' : Fin 2) :
+    testKernel k' {x}
+      = localIndepPMF (testParams.1.prob k')
+          (fun j => (testParams.2.prob_pos k' j).le)
+          (fun j => (testParams.2.prob_lt_one k' j).le) x := by
+  have h0 : ∀ b ∈ (Finset.univ : Finset (Fin 1 → Bool)), b ≠ x →
+      (localIndepPMF (testParams.1.prob k')
+        (fun j => (testParams.2.prob_pos k' j).le)
+        (fun j => (testParams.2.prob_lt_one k' j).le) b • Measure.dirac b) {x} = 0 := by
+    intro b _ hb
+    have hbmem : b ∉ ({x} : Set (Fin 1 → Bool)) := by
+      simp only [Set.mem_singleton_iff]
+      exact hb
+    rw [Measure.smul_apply, Measure.dirac_apply,
+      Set.indicator_of_notMem hbmem, smul_eq_mul, mul_zero]
+  have h1 : x ∉ Finset.univ →
+      (localIndepPMF (testParams.1.prob k')
+        (fun j => (testParams.2.prob_pos k' j).le)
+        (fun j => (testParams.2.prob_lt_one k' j).le) x • Measure.dirac x) {x} = 0 :=
+    fun h => absurd (Finset.mem_univ x) h
+  show ((∑ y : Fin 1 → Bool, localIndepPMF (testParams.1.prob k')
+      (fun j => (testParams.2.prob_pos k' j).le)
+      (fun j => (testParams.2.prob_lt_one k' j).le) y • Measure.dirac y) {x}
+      = localIndepPMF (testParams.1.prob k')
+        (fun j => (testParams.2.prob_pos k' j).le)
+        (fun j => (testParams.2.prob_lt_one k' j).le) x)
+  rw [Measure.finsetSum_apply, Finset.sum_eq_single x h0 h1,
+    Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_singleton x),
+    smul_eq_mul, mul_one]
+
+private instance testKernel_markov : IsMarkovKernel testKernel :=
+  ⟨fun k => ⟨by
+    have hLtop : ∀ y : Fin 1 → Bool, localIndepPMF (testParams.1.prob k)
+        (fun j => (testParams.2.prob_pos k j).le)
+        (fun j => (testParams.2.prob_lt_one k j).le) y ≠ ⊤ :=
+      fun y => localIndepPMF_ne_top _ _ _ y
+    have h1 : ∀ y : Fin 1 → Bool, localIndepPMF (testParams.1.prob k)
+        (fun j => (testParams.2.prob_pos k j).le)
+        (fun j => (testParams.2.prob_lt_one k j).le) y
+        = ENNReal.ofReal (bernPMF (testParams.1.prob k) y) := by
+      intro y
+      have h2 := ENNReal.ofReal_toReal (hLtop y)
+      rw [localIndepPMF_toReal _ _ _ _] at h2
+      exact h2.symm
+    show ((∑ y : Fin 1 → Bool, localIndepPMF (testParams.1.prob k)
+        (fun j => (testParams.2.prob_pos k j).le)
+        (fun j => (testParams.2.prob_lt_one k j).le) y • Measure.dirac y) Set.univ = 1)
+    rw [Measure.finsetSum_apply]
+    simp_rw [Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ _)]
+    simp only [smul_eq_mul, mul_one]
+    rw [Finset.sum_congr rfl (fun y _ => h1 y),
+      ← ENNReal.ofReal_sum_of_nonneg (fun y _ =>
+        (bernPMF_pos (testParams.2.prob_pos k) (testParams.2.prob_lt_one k) y).le),
+      bernPMF_sum_one, ENNReal.ofReal_one]⟩⟩
+
+private theorem testEvidence_ne_zero (x : Fin 1 → Bool) :
+    (testKernel ∘ₘ testMeasure) {x} ≠ 0 := by
+  haveI : Nonempty (Fin 2) := ⟨⟨0, by decide⟩⟩
+  rw [Measure.bind_apply (measurableSet_singleton x) (Kernel.aemeasurable testKernel)]
+  have hμeq : testMeasure
+      = (ENNReal.ofReal (testParams.1.weight 0) • Measure.dirac 0)
+        + (ENNReal.ofReal (testParams.1.weight 1) • Measure.dirac 1) := by
+    show (∑ k : Fin 2, ENNReal.ofReal (testParams.1.weight k) • Measure.dirac k) = _
+    rw [Fin.sum_univ_two]
+  rw [hμeq, lintegral_add_measure, lintegral_smul_measure, lintegral_smul_measure,
+    lintegral_dirac, lintegral_dirac, testKernel_singleton, testKernel_singleton]
+  have hterm : ∀ k' : Fin 2, ENNReal.ofReal (testParams.1.weight k')
+        • localIndepPMF (testParams.1.prob k')
+          (fun j => (testParams.2.prob_pos k' j).le)
+          (fun j => (testParams.2.prob_lt_one k' j).le) x
+        = ENNReal.ofReal (joint testParams x k') := by
+    intro k'
+    rw [smul_eq_mul]
+    have hL : localIndepPMF (testParams.1.prob k')
+          (fun j => (testParams.2.prob_pos k' j).le)
+          (fun j => (testParams.2.prob_lt_one k' j).le) x
+        = ENNReal.ofReal (bernPMF (testParams.1.prob k') x) := by
+      have h2 := ENNReal.ofReal_toReal (localIndepPMF_ne_top (testParams.1.prob k')
+        (fun j => (testParams.2.prob_pos k' j).le)
+        (fun j => (testParams.2.prob_lt_one k' j).le) x)
+      rw [localIndepPMF_toReal _ _ _ _] at h2
+      exact h2.symm
+    rw [hL, ← ENNReal.ofReal_mul (testParams.2.weight_pos k').le]
+    have hj : joint testParams x k'
+        = testParams.1.weight k' * bernPMF (testParams.1.prob k') x := rfl
+    rw [hj]
+  rw [hterm 0, hterm 1,
+    ← ENNReal.ofReal_add (joint_pos testParams x 0).le (joint_pos testParams x 1).le]
+  have hmarg : joint testParams x 0 + joint testParams x 1
+      = marginal joint testParams x := by
+    have h := Fin.sum_univ_two (fun k' => joint testParams x k')
+    show joint testParams x 0 + joint testParams x 1 = ∑ k', joint testParams x k'
+    rw [← h]
+  rw [hmarg]
+  exact (ENNReal.ofReal_pos.mpr (marginal_joint_pos testParams x)).ne'
+
+/-- The posterior theorem applies to the test kernel and measure:
+responsibilities are the canonical posterior singleton masses. -/
+private theorem test_posterior_match_invocation (x : Fin 1 → Bool) (k : Fin 2) :
+    resp testParams x k = ((testKernel†testMeasure) x {k}).toReal := by
+  haveI : Nonempty (Fin 2) := ⟨⟨0, by decide⟩⟩
+  exact (law_objective_posterior_match testParams x k testKernel testMeasure
+    testMeasure_singleton (testKernel_singleton x) (testEvidence_ne_zero x)).2.2
 
 end Cslib.MachineLearning.LatentVariable.ItemResponseEM
