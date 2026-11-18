@@ -849,10 +849,11 @@ class Declarations(Vault):
                 self.assertEqual(report["appended"], ["Algebra/groups/b.md"])
 
     def test_a_list_that_is_not_simple_takes_a_new_page_at_its_end(self) -> None:
-        # Code in an item, a note after a blank line, or a loose item: the new page ends the own list, after all that
-        # its last section holds and ahead of "Related topics", and is reported for an editor.
+        # A code span hiding a bracket, a backtick left open, a note after a blank line, or a loose item: the new page
+        # ends the own list, after all that its last section holds and ahead of "Related topics", and is reported.
         related = "## Related topics\n\n- [Rings](../rings/README.md): rings.\n"
-        for name, listed, apart in (("code", "- [The `old` lemma](old.md)\n", ""),
+        for name, listed, apart in (("code span hiding a bracket", "- [`a]b`](old.md)\n- [Late](late.md)\n", ""),
+                                    ("backtick left open", "- [The ` sign](old.md)\n", ""),
                                     ("note after a blank line", "- [Old](old.md)\n\n  Note about Old.\n", "\n"),
                                     ("loose item", "- [Old](old.md): first\n\n  second with [Late](late.md)\n", "\n")):
             with self.subTest(name):
@@ -865,6 +866,77 @@ class Declarations(Vault):
                 self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
                                  f"# Groups\n\n{listed}{apart}- [Sylow](sylow.md)\n\n{related}")
                 self.assertEqual(report["appended"], ["Algebra/groups/sylow.md"])
+
+    def test_an_own_list_with_code_in_its_titles_takes_a_new_page_by_its_neighbours(self) -> None:
+        # Balanced code spans that hide nothing of an item's link leave the own list simple: B joins it between A and C.
+        listed = "- [The `a` lemma](a.md)\n- [The ``c`d`` bound](c.md)\n"
+        self.page("Algebra/groups/README.md", f"# Groups\n\n{listed}\n## Related topics\n\n- [Rings](../rings/README.md): rings.\n")
+        for short in "ac":
+            self.page(f"Algebra/groups/{short}.md", f"# {short.upper()}\n")
+        self.annotate([self.about(f"Algebra/groups/{short}.md", object=[{"location": {"declaration": f"Ext.{short}"}}])
+                       for short in "ac"])
+        targets = []
+        for number, short in enumerate("abc"):
+            target = declaration(f"Ext.{short}", short, short.upper(), f"{short}.")
+            target.idx = number
+            targets.append(target)
+        report = sync.apply_declarations(targets, SimpleNamespace(declarations={f"Ext.{short}": None for short in "abc"}))
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
+                         "# Groups\n\n- [The `a` lemma](a.md)\n- [B](b.md)\n- [The ``c`d`` bound](c.md)\n\n"
+                         "## Related topics\n\n- [Rings](../rings/README.md): rings.\n")
+        self.assertEqual(report["appended"], [])
+
+    def test_an_item_with_a_note_is_a_neighbour(self) -> None:
+        # B follows Old in source order and in Old's section, so it joins Basics after Old, note and all.
+        self.page("Algebra/groups/README.md", "# Groups\n\n## Basics\n\n- [Old](old.md) (wanted)\n\n## Results\n\n- [C](c.md)\n")
+        for short in ("old", "c"):
+            self.page(f"Algebra/groups/{short}.md", f"# {short}\n")
+        self.annotate([self.about(f"Algebra/groups/{short}.md", object=[{"location": {"declaration": f"Ext.{short}"}}])
+                       for short in ("old", "c")])
+        targets = []
+        for number, (short, section) in enumerate([("old", "Basics"), ("b", "Basics"), ("c", "Results")]):
+            target = declaration(f"Ext.{short}", short, short.upper(), f"{short}.")
+            target.idx, target.sections = number, (section, "", "")
+            targets.append(target)
+        report = sync.apply_declarations(targets, SimpleNamespace(declarations={f"Ext.{short}": None for short in ("old", "b", "c")}))
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
+                         "# Groups\n\n## Basics\n\n- [Old](old.md) (wanted)\n- [B](b.md)\n\n## Results\n\n- [C](c.md)\n")
+        self.assertEqual(report["appended"], [])
+
+    def test_a_link_to_the_site_root_or_a_fragment_is_no_page_of_the_folder(self) -> None:
+        # Such an item under "Related topics" is not in the own list, so the new page ends the own list ahead of it.
+        related = "## Related topics\n\n- [Index](/index.md)\n- [Glossary](#glossary)\n"
+        self.page("Algebra/groups/README.md", f"# Groups\n\n- [Old](old.md)\n\n{related}")
+        sync.LINKS.mkdir(parents=True)
+        sylow = declaration("Ext.sylow", "sylow", "Sylow", "Sylow.", module=("Ext", "Sylow"))
+        sylow.path = wiki.ROADMAP / "Algebra" / "groups" / "sylow.md"
+        report = sync.apply_declarations([sylow], SimpleNamespace(declarations={"Ext.sylow": None}))
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
+                         f"# Groups\n\n- [Old](old.md)\n- [Sylow](sylow.md)\n\n{related}")
+        self.assertEqual(report["appended"], [])
+
+    def test_a_marker_indented_four_spaces_opens_no_block(self) -> None:
+        # Four spaces in, "<!--", a fence or its closer is indented code, which hides none of the lines after it.
+        for marker in ("<!--", "```", "~~~"):
+            with self.subTest(marker=marker):
+                text = (f"# Groups\n\nAn example:\n\n    {marker}\n\n- [Old](old.md)\n\n"
+                        "## Related topics\n\n- [Rings](../rings/README.md): rings.\n")
+                self.page("Algebra/groups/README.md", text)
+                self.annotate([])
+                (wiki.ROADMAP / "Algebra" / "groups" / "sylow.md").unlink(missing_ok=True)
+                sylow = declaration("Ext.sylow", "sylow", "Sylow", "Sylow.", module=("Ext", "Sylow"))
+                sylow.path = wiki.ROADMAP / "Algebra" / "groups" / "sylow.md"
+                report = sync.apply_declarations([sylow], SimpleNamespace(declarations={"Ext.sylow": None}))
+                self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
+                                 text.replace("- [Old](old.md)\n", "- [Old](old.md)\n- [Sylow](sylow.md)\n"))
+                self.assertEqual(report["appended"], [])
+        # Nor does a closer four spaces in close a fence that a line opened.
+        groups = wiki.ROADMAP / "Algebra" / "groups"
+        text = "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md)\n\n```\n    ```\n- [Z](part-01/z.md)\n```\n"
+        self.page("Algebra/groups/README.md", text)
+        self.page("Algebra/groups/part-01/README.md", "# Part 1 of 1\n\n- [A](a.md)\n")
+        sync.apply_declarations([], SimpleNamespace(declarations={}))
+        self.assertEqual((groups / "README.md").read_text(), text)
 
     def test_a_new_section_follows_all_that_the_last_one_holds(self) -> None:
         # The prose and the comment after the last item stay in the section they close.

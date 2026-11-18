@@ -104,8 +104,8 @@ non-deprecated declarations, preserves existing article prose, and reports
 removed declarations and changed docstrings. It also refreshes the source-derived
 area catalog and coverage metadata without replacing article prose.
 It edits a folder page's list only where the list is simple: single-line
-`- [title](page)` items with plain text after them, headings, and blank lines
-between them. A new page joining any other list goes at its end and is
+`- [title](page)` items with plain text after them (inline code too, in a
+folder page's own list), headings, and blank lines between them. A new page joining any other list goes at its end and is
 reported, as is a part list it leaves as it is, for an editor.
 `scripts/wiki-sync.json` is the
 reviewed docstring-digest baseline. Removed declarations' articles are kept

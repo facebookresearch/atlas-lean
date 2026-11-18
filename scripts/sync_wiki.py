@@ -72,14 +72,17 @@ HEADING_LINK = re.compile(r"^#{2,6} \[.*\]\(([^()\s]+)\)$")
 # An item that links a page of the folder first, its title, that link and any text after it; and a part's heading, its
 # title and link.
 OWN_ITEM = re.compile(r"^- \[((?:\\.|[^\\\]])*)\]\((?!\.\./)([^():\s]+)\)(.*)$", re.S)
-PART_HEADING = re.compile(r"^#{2,6} \[(.*)\]\((part-\d+/README\.md)\)$")
+PART_HEADING = re.compile(r"^ {0,3}#{2,6}[ \t]+\[(.*)\]\((part-\d+/README\.md)\)$")
 # A part list's item that the sync copies, and a copy of one: "- [title](page)" and any text after it, on one line,
 # with no code or bracket in either text, no "<" that could open HTML and no backslash that could escape a bracket, a
 # backtick, a "<" or itself; and a list item of any kind. A part list with a list item that is not simple is left to an
 # editor.
 PLAIN = r"(?:[^][`<\\\n]|<(?![A-Za-z/!?])|\\(?![][`<\\\n]|$))"
 SIMPLE_ITEM = re.compile(rf"- \[({PLAIN}+)\]\(([^][()\s\\<`]+)\)({PLAIN}*)")
-LIST_ITEM = re.compile(r" {0,3}(?:[-+*]|\d{1,9}[.)])(?:\s|$)")
+# A list item of any kind, its marker with the space after it, and a heading below a page's title, as CommonMark has
+# them.
+LIST_ITEM = re.compile(r" {0,3}(?:[-+*]|\d{1,9}[.)])(?:[ \t]|$)")
+HEADING = re.compile(r" {0,3}#{2,6}(?:[ \t]|$)")
 # A link's destination that is no page of its folder: one with a scheme, of any case, or that starts with "/", "#"
 # or "../".
 ELSEWHERE = re.compile(r"[A-Za-z][A-Za-z0-9+.-]*:|[#/]|\.\./")
@@ -452,7 +455,21 @@ def page_text(target) -> tuple[str, dict[str, str]]:
 
 
 def listed_links(readme: Path) -> list[str]:
-    return [match.group(1) for block in blocks(readme.read_text()) if (match := LIST_LINK.match(block.split("\n")[0]))]
+    return [page for block in blocks(readme.read_text()) if (page := own_page(block))]
+
+
+def own_page(block: str) -> str | None:
+    """The page of its folder that an item of a folder page links first, outside code spans (see without_code): a
+    destination that ELSEWHERE does not match. None for any other block."""
+    item = OWN_ITEM.match(without_code(block) or block)
+    page = item and block[item.start(2):item.end(2)]
+    return page if page and not ELSEWHERE.match(page) else None
+
+
+def listed_items(lines: list[str]) -> dict[str, int]:
+    """The page that each simple item of a folder page's own list (see own_list and simple_item) links, by the item's
+    block; the neighbours a new page is placed by."""
+    return {item.group(2): number for number in own_list(lines) if (item := simple_item(lines[number], code=True))}
 
 
 def listing(text: str) -> list[tuple[str, str]]:
@@ -467,12 +484,13 @@ def listing(text: str) -> list[tuple[str, str]]:
 
 
 def own_list(lines: list[str]) -> dict[int, str]:
-    """A folder page's own list, by block: each item that links a page of its folder, and the heading above it."""
+    """A folder page's own list, by block: each item that links a page of its folder (see own_page), and the heading
+    above it."""
     heading, own = "", {}
     for number, row in enumerate(lines):
-        if re.match(r"#{2,6} ", row):
+        if HEADING.match(row):
             heading = row
-        elif OWN_ITEM.match(row):
+        elif own_page(row):
             own[number] = heading
     return own
 
@@ -487,9 +505,9 @@ def add_to_listing(readme: Path, line: str, before: list[str] = (), after: list[
     lines = blocks(readme.read_text().rstrip("\n"))
     own = own_list(lines)
     last = max(own, default=-1)
-    end = next((i for i in range(last + 1, len(lines)) if re.match(r"#{2,6} ", lines[i])), len(lines))
-    simple = not own or simple_list(lines, min(own), last)
-    items = {match.group(1): i for i, row in enumerate(lines) if (match := LIST_LINK.match(row.split("\n")[0]))}
+    end = next((i for i in range(last + 1, len(lines)) if HEADING.match(lines[i])), len(lines))
+    simple = not own or simple_list(lines, min(own), last, code=True)
+    items = listed_items(lines)
     at = next((items[link] + 1 for link in reversed(before) if link in items), None) if simple else None
     if at is None and simple:
         at = next((items[link] for link in after if link in items), None)
@@ -548,34 +566,64 @@ def blocks(text: str) -> list[str]:
     each HTML comment that opens a line kept whole, up to the line that closes it, so that nothing in them reads as an
     item or a heading. A comment that opens within a line, as in a code span, hides no line, as in CommonMark."""
     found: list[str] = []
-    commented, fence = False, ""
+    commented, fence, indent = False, "", 0
     for row in text.split("\n"):
-        if found and (commented or fence or found[-1].startswith("- ") and row[:1].isspace() and row.strip()):
+        item = found and LIST_ITEM.match(found[-1])
+        continued = bool(item) and row[:1].isspace() and bool(row.strip())
+        if found and (commented or fence or continued):
             found[-1] += "\n" + row
         else:
             found.append(row)
         if fence:
-            fence = "" if re.match(rf"\s*{re.escape(fence[0])}{{{len(fence)},}}\s*$", row) else fence
+            fence = "" if re.match(rf" {{0,{indent + 3}}}{re.escape(fence[0])}{{{len(fence)},}}[ \t]*$", row) else fence
         elif commented:
             commented = "-->" not in row
-        elif opening := re.match(r"\s*(`{3,}(?=[^`]*$)|~{3,})", row):
-            fence = opening.group(1)
-        elif re.match(r"\s*<!--", row):
-            commented = "-->" not in row.split("<!--", 1)[1]
+        else:
+            # A marker opens a block at most 3 spaces in, counted from the content of the item it continues, if any.
+            indent = len(item.group().expandtabs(4)) if continued else 0
+            if opening := re.match(rf" {{0,{indent + 3}}}(`{{3,}}(?=[^`]*$)|~{{3,}}|<!--)", row):
+                fence = "" if opening.group(1) == "<!--" else opening.group(1)
+                commented = opening.group(1) == "<!--" and "-->" not in row.split("<!--", 1)[1]
     return found
 
 
-def simple_list(lines: list[str], first: int, last: int) -> bool:
-    """Whether the blocks from *first* to *last* make a simple list: single-line items (see SIMPLE_ITEM), headings and
-    blank lines that no indented line follows, with nothing right after the last block that continues its item."""
+def without_code(row: str, strict: bool = False) -> str | None:
+    """*row* with each inline code span made plain text of its length, as CommonMark pairs backtick runs: a run of n
+    backticks opens a span that the next run of exactly n closes. None when a run is left open or a backslash comes
+    before a backtick, and, if *strict*, when a span holds a bracket or anything else that is not plain (see PLAIN)."""
+    if "\\`" in row:
+        return None
+    runs, out, at = list(re.finditer(r"`+", row)), [], 0
+    while runs:
+        opening = runs.pop(0)
+        closing = next((run for run in runs if len(run.group()) == len(opening.group())), None)
+        if closing is None or strict and not re.fullmatch(f"(?:{PLAIN}|`)*", row[opening.end():closing.start()]):
+            return None
+        out += [row[at:opening.start()], "x" * (closing.end() - opening.start())]
+        at, runs = closing.end(), runs[runs.index(closing) + 1:]
+    return "".join(out) + row[at:]
+
+
+def simple_item(block: str, code: bool = False) -> re.Match | None:
+    """The match of a simple item (see SIMPLE_ITEM), whose second group is its page; with *code*, also of one whose
+    texts hold inline code spans that hide nothing of the link (see without_code), read with them made plain."""
+    plain = without_code(block, strict=True) if code else block
+    item = plain and SIMPLE_ITEM.fullmatch(plain)
+    return item if item and item.group(2) == block[item.start(2):item.end(2)] else None
+
+
+def simple_list(lines: list[str], first: int, last: int, code: bool = False) -> bool:
+    """Whether the blocks from *first* to *last* make a simple list: single-line items (see simple_item, which *code*
+    is passed to), headings and blank lines that no indented line follows, with nothing right after the last block
+    that continues its item."""
     for number in range(first, min(last + 2, len(lines))):
         block, following = lines[number], lines[number + 1] if number + 1 < len(lines) else ""
         if not block.strip():
             if following[:1].isspace() and following.strip():
                 return False
         elif number > last:
-            return bool(re.match(r"#{1,6} ", block) or LIST_ITEM.match(block))
-        elif not (SIMPLE_ITEM.fullmatch(block) or re.match(r"#{1,6} ", block)):
+            return bool(HEADING.match(block) or LIST_ITEM.match(block))
+        elif not (simple_item(block, code) or HEADING.match(block)):
             return False
     return True
 
@@ -596,9 +644,9 @@ def part_entries(text: str) -> list[tuple[str, str, str]] | None:
                 return None
             entries.append((*part.groups(), ""))
             in_part = True
-        elif re.match(r"#{1,6} ", block):
+        elif HEADING.match(block):
             in_part = False
-        elif not in_part and (item := SIMPLE_ITEM.fullmatch(block)) and not ELSEWHERE.match(item.group(2)):
+        elif not in_part and (item := simple_item(block)) and not ELSEWHERE.match(item.group(2)):
             entries.append(item.groups())
     return entries
 
@@ -610,7 +658,7 @@ def with_part_lists(readme: Path, text: str) -> tuple[str, list[str]]:
     keeps its copy as it is, and is returned, by its folder, for an editor."""
     sections: list[list[str]] = []
     for block in blocks(text.rstrip("\n")):
-        if not sections or re.match(r"#{1,6} ", block):
+        if not sections or HEADING.match(block):
             sections.append([])
         sections[-1].append(block)
     changed, unrefreshed = False, []
@@ -626,7 +674,7 @@ def with_part_lists(readme: Path, text: str) -> tuple[str, list[str]]:
             unrefreshed.append((readme.parent / folder).relative_to(wiki.ROADMAP).as_posix())
             continue
         copy = [f"- [{title}]({folder}/{page}){rest}" for title, page, rest in entries]
-        copied = [i for i in items if (page := SIMPLE_ITEM.fullmatch(section[i]).group(2)).startswith(f"{folder}/")
+        copied = [i for i in items if (page := simple_item(section[i]).group(2)).startswith(f"{folder}/")
                   and page != part.group(2)]
         kept = [block for i, block in enumerate(section) if i not in copied]
         if copied:
