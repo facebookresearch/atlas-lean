@@ -743,29 +743,42 @@ class Declarations(Vault):
         self.assertEqual((groups / "README.md").read_text(),
                          f"# Groups\n\n{part_one}## [Part 2 of 2](part-02/README.md)\n\n- [B](part-02/b.md)\n- [C](part-02/c.md)\n")
 
-    def test_a_part_list_rebases_no_link_in_a_code_span(self) -> None:
-        # As CommonMark reads code spans: a run of n backticks opens one that the next run of exactly n closes, and a
-        # backtick that a backslash escapes opens none.
+    def test_a_part_list_copies_simple_entries_with_their_notes(self) -> None:
+        # A simple entry is "- [title](page)" and plain text, on one line; math's "<" and backslashes are plain text.
         self.page("Algebra/groups/README.md", "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md)\n")
         self.page("Algebra/groups/part-01/README.md",
-                  "# Part 1 of 1\n\n- [A](a.md): written `[A](a.md)`, or ``[`B`](b.md)``; \\`[C](c.md)\\` is a link\n")
+                  "# Part 1 of 1\n\n- [A](a.md) (wanted)\n- [Units of $\\mathbb{Z}/n$ in $\\{1, \\dots, n\\}$ for $n < 9$](u.md): a note\n")
         sync.LINKS.mkdir(parents=True)
-        sync.apply_declarations([], SimpleNamespace(declarations={}))
+        report = sync.apply_declarations([], SimpleNamespace(declarations={}))
+        self.assertEqual(report["parts"], [])
         self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
-                         "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md): written `[A](a.md)`, "
-                         "or ``[`B`](b.md)``; \\`[C](part-01/c.md)\\` is a link\n")
+                         "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md) (wanted)\n"
+                         "- [Units of $\\mathbb{Z}/n$ in $\\{1, \\dots, n\\}$ for $n < 9$](part-01/u.md): a note\n")
 
-    def test_a_part_list_rebases_every_link_of_an_item(self) -> None:
-        self.page("Algebra/groups/README.md", "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md)\n")
-        self.page("Algebra/groups/part-01/README.md",
-                  "# Part 1 of 1\n\n- [A](a.md) — see [B](b.md), [Rings](../../rings/README.md) and [a book](https://example.org)\n"
-                  "- [C](c.md): [the site](HTTPS://example.org/x), [the editors](mailto:editors@example.org)\n")
-        sync.LINKS.mkdir(parents=True)
-        sync.apply_declarations([], SimpleNamespace(declarations={}))
-        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
-                         "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md) — see [B](part-01/b.md), "
-                         "[Rings](../rings/README.md) and [a book](https://example.org)\n"
-                         "- [C](part-01/c.md): [the site](HTTPS://example.org/x), [the editors](mailto:editors@example.org)\n")
+    def test_a_part_list_with_an_item_that_is_not_simple_is_left_to_an_editor(self) -> None:
+        # Any other item in a part's page, or in the copy of its list, leaves the copy as it is, and the part is
+        # reported: the sync never reads a page's place in a list from code, a bracket, HTML or an escape.
+        groups = wiki.ROADMAP / "Algebra" / "groups"
+        copy = "- [A](part-01/a.md)\n- [C](part-01/c.md)\n"
+        for name, part, listed in (
+                ("code span with a bracket", "- [`a[i]`](a.md)\n", copy),
+                ("code span with a closing bracket", "- [`a]b`](a.md)\n", copy),
+                ("tilde fence in an item", "- [A](a.md)\n  ~~~\n  [B](b.md)\n  ~~~\n", copy),
+                ("backtick fence closed by a longer run", "- [A](a.md)\n  ```\n  [B](b.md)\n  ````\n", copy),
+                ("link in a note", "- [A](a.md) — see [B](b.md)\n", copy),
+                ("code in a note", "- [A](a.md): written `[A](a.md)`\n", copy),
+                ("escaped bracket", "- [A\\](a.md)\n", copy),
+                ("HTML", "- [A](a.md) <br>\n", copy),
+                ("another bullet", "* [A](a.md)\n", copy),
+                ("copy with code", "- [A](a.md)\n", "- [`A`](part-01/a.md)\n")):
+            with self.subTest(name):
+                text = f"# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n{listed}"
+                self.page("Algebra/groups/README.md", text)
+                self.page("Algebra/groups/part-01/README.md", f"# Part 1 of 1\n\n{part}- [B](b.md)\n")
+                sync.LINKS.mkdir(parents=True, exist_ok=True)
+                report = sync.apply_declarations([], SimpleNamespace(declarations={}))
+                self.assertEqual((groups / "README.md").read_text(), text)
+                self.assertEqual(report["parts"], ["Algebra/groups/part-01"])
 
     def test_a_part_list_reads_nothing_inside_a_comment(self) -> None:
         # Neither an item nor a part heading in a comment counts, and the comment stays as written.

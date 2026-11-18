@@ -26,7 +26,8 @@ A page with no listed neighbour ends the folder page's own list, ahead of
 "Related topics" or "Sources"; it joins a section of that list only beside its
 module's pages, and else starts one under its module's title. A folder the wiki
 has keeps its layout and each topic its folder (see kept_layout), and a folder
-page split into parts lists what its parts list.
+page split into parts lists what its parts list, when every item involved is a
+plain link (see SIMPLE_ITEM); it reports any other part list for an editor.
 
 import runs once, on a tree whose Lean still holds the wiki's English. TITLES.jsonl
 holds checked titles, one {"file", "name", "opening", "title"} per line: a
@@ -41,7 +42,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import posixpath
 import re
 import sys
 import unicodedata
@@ -67,14 +67,20 @@ BOLD_LEAD = re.compile(r"\*\*(?P<lead>[^*\n]+)\*\*(?P<stop>[.:]?)")
 # A folder page's list item, and a heading that links a part, as generate_wiki writes them.
 LIST_LINK = re.compile(r"^- \[.*\]\(([^()\s]+)\)$")
 HEADING_LINK = re.compile(r"^#{2,6} \[.*\]\(([^()\s]+)\)$")
-# An item that links a page of the folder first, its title, that link and any text after it; a part's heading, its
-# title and link; and a link's destination, which in a part's copy is taken from the part's folder to its parent.
+# An item that links a page of the folder first, its title, that link and any text after it; and a part's heading, its
+# title and link.
 OWN_ITEM = re.compile(r"^- \[((?:\\.|[^\\\]])*)\]\((?!\.\./)([^():\s]+)\)(.*)$", re.S)
 PART_HEADING = re.compile(r"^#{2,6} \[(.*)\]\((part-\d+/README\.md)\)$")
-DESTINATION = re.compile(r"(?<!\\)\]\(([^()\s]+)\)")
-# A backslash escape, or a run of backticks with, when a later run exactly as long closes it, the inline code span it
-# opens, as CommonMark reads them.
-CODE = re.compile(r"\\.|(?P<run>`+)(?P<span>.*?(?<!`)(?P=run)(?!`))?", re.S)
+# A part list's item that the sync copies, and a copy of one: "- [title](page)" and any text after it, on one line,
+# with no code or bracket in either text, no "<" that could open HTML and no backslash that could escape a bracket, a
+# backtick, a "<" or itself; and a list item of any kind. A part list with a list item that is not simple is left to an
+# editor.
+PLAIN = r"(?:[^][`<\\\n]|<(?![A-Za-z/!?])|\\(?![][`<\\\n]|$))"
+SIMPLE_ITEM = re.compile(rf"- \[({PLAIN}+)\]\(([^][()\s\\<`]+)\)({PLAIN}*)")
+LIST_ITEM = re.compile(r" {0,3}(?:[-+*]|\d{1,9}[.)])(?:\s|$)")
+# A link's destination that is no page of its folder: one with a scheme, of any case, or that starts with "/", "#"
+# or "../".
+ELSEWHERE = re.compile(r"[A-Za-z][A-Za-z0-9+.-]*:|[#/]|\.\./")
 PART = re.compile(r"part-\d+")
 
 
@@ -552,56 +558,53 @@ def blocks(text: str) -> list[str]:
     return found
 
 
-def part_entries(text: str) -> list[str]:
-    """A folder page's entries, as its parent copies them: each item that links a page of its folder, with the lines
-    that continue it, and an item for each of its parts in place of the items under the part's heading."""
+def part_entries(text: str) -> list[tuple[str, str, str]] | None:
+    """A folder page's entries, as its parent copies them: the title, page and text after it of each list item that
+    links a page of its folder, and of an item for each of its parts in place of the items under the part's heading.
+    None when such a heading, or a list item outside the parts, is not simple (see SIMPLE_ITEM)."""
     entries, in_part = [], False
     for block in blocks(text):
         part = PART_HEADING.match(block)
         if part:
-            entries.append(f"- [{part.group(1)}]({part.group(2)})")
+            if not re.fullmatch(f"{PLAIN}+", part.group(1)):
+                return None
+            entries.append((*part.groups(), ""))
             in_part = True
         elif re.match(r"#{1,6} ", block):
             in_part = False
-        elif not in_part and OWN_ITEM.match(block):
-            entries.append(block)
+        elif not in_part and LIST_ITEM.match(block):
+            item = SIMPLE_ITEM.fullmatch(block)
+            if item is None:
+                return None
+            if not ELSEWHERE.match(item.group(2)):
+                entries.append(item.groups())
     return entries
 
 
-def from_part(folder: str, item: str) -> str:
-    """An item of the page of the part *folder*, as the page of the folder holding the part lists it: each relative
-    link taken from the part's folder, and one with a scheme, of any case, or that starts with "/" or "#" as it is.
-    An inline code span (see CODE) stays as written, links and all."""
-    def rebased(text: str) -> str:
-        return DESTINATION.sub(lambda link: link.group() if re.match(r"[A-Za-z][A-Za-z0-9+.-]*:|[#/]", link.group(1))
-                               else f"]({posixpath.normpath(folder + '/' + link.group(1))})", text)
-
-    pieces, start = [], 0
-    for code in CODE.finditer(item):
-        if code.group("span"):
-            pieces += [rebased(item[start:code.start()]), code.group()]
-            start = code.end()
-    return "".join(pieces) + rebased(item[start:])
-
-
-def with_part_lists(readme: Path, text: str) -> str:
+def with_part_lists(readme: Path, text: str) -> tuple[str, list[str]]:
     """A folder page whose list is split into parts, with each part's entries as the part's own page lists them, their
-    links read from the page, under the heading that links the part. They replace the items there that link the
-    part's pages, and only those; any other page as it is."""
+    pages taken from the folder page, under the heading that links the part. They replace the items there that link
+    the part's pages, and only those. A part whose heading, entries or list items there are not all simple (see
+    SIMPLE_ITEM) keeps its copy as it is, and is returned, by its folder, for an editor."""
     sections: list[list[str]] = []
     for block in blocks(text.rstrip("\n")):
         if not sections or re.match(r"#{1,6} ", block):
             sections.append([])
         sections[-1].append(block)
-    changed = False
+    changed, unrefreshed = False, []
     for number, section in enumerate(sections):
         part = PART_HEADING.match(section[0])
         if not (part and (readme.parent / part.group(2)).is_file()):
             continue
         folder = Path(part.group(2)).parent.as_posix()
-        copy = [from_part(folder, entry) for entry in part_entries((readme.parent / part.group(2)).read_text())]
-        copied = [i for i, block in enumerate(section) if (item := OWN_ITEM.match(block))
-                  and item.group(2).startswith(f"{folder}/") and item.group(2) != part.group(2)]
+        entries = part_entries((readme.parent / part.group(2)).read_text())
+        items = {i: SIMPLE_ITEM.fullmatch(block) for i, block in enumerate(section) if LIST_ITEM.match(block)}
+        if entries is None or None in items.values() or not re.fullmatch(f"{PLAIN}+", part.group(1)):
+            unrefreshed.append((readme.parent / folder).relative_to(wiki.ROADMAP).as_posix())
+            continue
+        copy = [f"- [{title}]({folder}/{page}){rest}" for title, page, rest in entries]
+        copied = [i for i, item in items.items()
+                  if item.group(2).startswith(f"{folder}/") and item.group(2) != part.group(2)]
         kept = [block for i, block in enumerate(section) if i not in copied]
         if copied:
             at = copied[0]
@@ -614,7 +617,7 @@ def with_part_lists(readme: Path, text: str) -> str:
             continue
         if kept[:at] + copy + kept[at:] != section:
             sections[number], changed = kept[:at] + copy + kept[at:], True
-    return "\n".join(block for section in sections for block in section) + "\n" if changed else text
+    return ("\n".join(block for section in sections for block in section) + "\n" if changed else text), unrefreshed
 
 
 def declared(key: str, index) -> bool:
@@ -696,7 +699,7 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     keyed = [(annotation_key(a, index), a) for rows in files.values() for a in rows]
     pages = {key: subject_path(a) for key, a in keyed if key}
     current = {declaration_key(target): target for target in targets if declaration_key(target)}
-    report: dict[str, list[str]] = {"added": [], "folders": [], "gone": [], "changed": [], "unindexed": []}
+    report: dict[str, list[str]] = {"added": [], "folders": [], "gone": [], "changed": [], "unindexed": [], "parts": []}
     # A declaration the index lacks, and a page an earlier sync wrote for one, wait for an editor: no page is ever
     # keyed by a name rebuilt from the source.
     report["unindexed"] = sorted(
@@ -795,7 +798,9 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     # A folder page split into parts lists each part's entries under the heading that links it, as the part lists them.
     for readme in sorted(wiki.ROADMAP.rglob("README.md")):
         text = readme.read_text()
-        if text != (copied := with_part_lists(readme, text)):
+        copied, unrefreshed = with_part_lists(readme, text)
+        report["parts"] += unrefreshed
+        if text != copied:
             readme.write_text(copied)
     # A declaration upstream never documented keeps its page; only one the Lean no longer declares is gone.
     report["gone"] = sorted(
@@ -835,7 +840,8 @@ def run_declarations() -> int:
     refresh_catalog(generated)
     for kind, title in (("added", "New pages, taken from docstrings"), ("folders", "New folders, as the taxonomy places their modules"),
                         ("gone", "Pages whose declaration is gone"), ("changed", "Pages whose declaration's docstring changed"),
-                        ("unindexed", "Declarations the Lean index lacks, and their pages, for an editor")):
+                        ("unindexed", "Declarations the Lean index lacks, and their pages, for an editor"),
+                        ("parts", "Part lists not refreshed, as an entry needs an editor")):
         print(f"{title}: {len(report[kind])}")
         for row in report[kind]:
             print(f"  {row}")
