@@ -79,4 +79,47 @@ example :
   (convertedPower_eq_torque_mul_rotorSpeed (1 : ℂ) 0 1 1 3 (1 / 2)
     (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)).1
 
+/-- Zero-slip boundary: with `Vth = 1`, `Rth = 1`, `R2 = 1`, `Xeq = 0`, the
+rotor current at zero slip is zero, not the totalized quotient `1`. -/
+example : rotorCurrent (1 : ℂ) 1 1 0 0 = 0 :=
+  rotorCurrent_zero_slip (1 : ℂ) 1 1 0
+
+/-- At zero slip the model's air-gap power, copper loss, and converted power
+vanish, and the torque equals the rational curve's zero-slip value `0`. -/
+example :
+    airGapPower (rotorCurrent (1 : ℂ) 1 1 0 0) 1 0 = 0 ∧
+      rotorCopperLoss (rotorCurrent (1 : ℂ) 1 1 0 0) 1 0 = 0 ∧
+      convertedPower (rotorCurrent (1 : ℂ) 1 1 0 0) 1 0 = 0 ∧
+      developedTorque (rotorCurrent (1 : ℂ) 1 1 0 0) 1 0 3 = 0 := by
+  obtain ⟨-, hag, hcu, hcv, htq⟩ := rotorQuantities_zero_slip (1 : ℂ) 1 1 0 3
+  refine ⟨hag, hcu, hcv, ?_⟩
+  rw [htq]
+  exact torqueCurve_zero (1 : ℂ) 1 1 0 3 (by norm_num) (by norm_num) (by norm_num)
+
+/-- At nonzero slip the cleared current is the Thevenin quotient. -/
+example :
+    rotorCurrent (1 : ℂ) 0 1 1 (1 / 2) =
+      1 / ((↑((0 : ℝ) + 1 / (1 / 2)) : ℂ) + (↑(1 : ℝ) : ℂ) * Complex.I) :=
+  rotorCurrent_eq_div (1 : ℂ) 0 1 1 (1 / 2) (by norm_num)
+
+/-- Power split at a generating slip `s = -1 / 2`, for an independently
+given unit current, `R2 = 1`, `ws = 3`: the copper loss is the `s`
+fraction of the air-gap power `-6`. -/
+example :
+    rotorCopperLoss (1 : ℂ) 1 (-1 / 2) = (-1 / 2) * airGapPower (1 : ℂ) 1 (-1 / 2) :=
+  (powerSplit_of_ne_zero (1 : ℂ) 1 (-1 / 2) 3 (by norm_num) (by norm_num)).2.2
+
+example : airGapPower (1 : ℂ) 1 (-1 / 2) = -6 := by
+  have h : ‖(1 : ℂ)‖ = (1 : ℝ) := norm_one
+  unfold airGapPower
+  rw [h]
+  norm_num
+
+/-- Converted power at the generating slip: torque times rotor speed
+`(1 - s) * ws` with `s = -1 / 2`. -/
+example :
+    convertedPower (1 : ℂ) 1 (-1 / 2) =
+      developedTorque (1 : ℂ) 1 (-1 / 2) 3 * ((1 - -1 / 2) * 3) :=
+  (powerSplit_of_ne_zero (1 : ℂ) 1 (-1 / 2) 3 (by norm_num) (by norm_num)).1
+
 end PhyslibExtTest.Circuits.InductionTorqueSlip

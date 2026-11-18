@@ -24,7 +24,10 @@ rotor resistance `R2` and synchronous mechanical speed `ws` positive,
 stator Thevenin resistance `Rth` nonnegative, arbitrary real equivalent
 reactance `Xeq`, and slip `s` in the motoring interval `(0, 1]`, the
 rotor current is the Thevenin voltage divided by the complex impedance
-whose real part is `Rth + R2 / s`. The air-gap power is three times the
+whose real part is `Rth + R2 / s`. The current is defined in the
+equivalent cleared form `Vth s / (Rth s + R2 + i Xeq s)`, which agrees
+with that quotient at every nonzero slip and vanishes at zero slip, the
+synchronous-speed state with no rotor current. The air-gap power is three times the
 squared current norm times `R2 / s`. Dividing by `ws` gives the
 developed torque, which simplifies, after clearing the slip division,
 to the rational function
@@ -37,7 +40,9 @@ after that loss. For nonzero slip these definitions give the familiar
 fractions: the converted power is the fraction `1 - s` of the air-gap
 power, equivalently the torque times the rotor speed `(1 - s) ws`, and
 the rotor copper loss is the complementary fraction `s` of the
-air-gap power.
+air-gap power. These fractional identities hold for any rotor current
+at any nonzero slip, so they also cover generating slips. At zero slip
+the model's current, powers, and torque all vanish.
 
 ## ii. Key results
 
@@ -48,9 +53,15 @@ air-gap power.
 - `airGapPower_eq_three_mul_re_complexPower`: the air-gap power is
   three times the real part of the canonical per-phase complex power
   for the voltage across the slip-divided rotor resistance.
-- `convertedPower_eq_torque_mul_rotorSpeed`: the converted power is
-  the torque times the rotor speed, and is the `1 - s` fraction of the
-  air-gap power.
+- `powerSplit_of_ne_zero`: for any rotor current at nonzero slip and
+  nonzero synchronous speed, the converted power is the torque times
+  the rotor speed and the `1 - s` fraction of the air-gap power, and
+  the copper loss is the `s` fraction.
+- `convertedPower_eq_torque_mul_rotorSpeed`: the same split for the
+  model current on the motoring interval.
+- `rotorQuantities_zero_slip`: at zero slip the model current, air-gap
+  power, copper loss, and converted power vanish, and the torque equals
+  the rational curve's zero-slip value.
 - `inductionTorqueSlip_torque_andPowerBalance`: the combined torque,
   zero-slip, and power-split statement on the motoring interval.
 
@@ -84,13 +95,39 @@ open ComplexConjugate
 /-! ### A. Rotor current and air-gap power -/
 
 /-- Rotor current in the Thevenin equivalent: the Thevenin voltage divided
-by the impedance with real part `Rth + R2 / s` and reactance `Xeq`. Only
-evaluated for nonzero slip. -/
+by the impedance with real part `Rth + R2 / s` and reactance `Xeq`. It is
+written with the slip division cleared, as `Vth s / (Rth s + R2 + i Xeq s)`,
+so that no reciprocal of the slip appears: at nonzero slip it equals the
+quotient (`rotorCurrent_eq_div`), and at zero slip it is zero
+(`rotorCurrent_zero_slip`), the physical value at synchronous speed. -/
 noncomputable def rotorCurrent (Vth : ℂ) (Rth R2 Xeq s : ℝ) : ℂ :=
-  Vth / ((↑(Rth + R2 / s) : ℂ) + (↑Xeq : ℂ) * Complex.I)
+  Vth * (s : ℂ) / ((↑(Rth * s + R2) : ℂ) + (↑(Xeq * s) : ℂ) * Complex.I)
+
+/-- At nonzero slip the rotor current is the Thevenin voltage divided by
+the impedance with real part `Rth + R2 / s` and reactance `Xeq`. The
+proof multiplies that impedance by `s`. -/
+lemma rotorCurrent_eq_div (Vth : ℂ) (Rth R2 Xeq s : ℝ) (hs : s ≠ 0) :
+    rotorCurrent Vth Rth R2 Xeq s =
+      Vth / ((↑(Rth + R2 / s) : ℂ) + (↑Xeq : ℂ) * Complex.I) := by
+  have hs' : (s : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr hs
+  have hden : (↑(Rth * s + R2) : ℂ) + (↑(Xeq * s) : ℂ) * Complex.I =
+      ((↑(Rth + R2 / s) : ℂ) + (↑Xeq : ℂ) * Complex.I) * (s : ℂ) := by
+    push_cast
+    field_simp
+  unfold rotorCurrent
+  rw [hden, mul_div_mul_right _ _ hs']
+
+/-- At zero slip the rotor current is zero. -/
+lemma rotorCurrent_zero_slip (Vth : ℂ) (Rth R2 Xeq : ℝ) :
+    rotorCurrent Vth Rth R2 Xeq 0 = 0 := by
+  simp [rotorCurrent]
 
 /-- Air-gap power: three times the squared current norm times the
-slip-divided rotor resistance. -/
+slip-divided rotor resistance. The physical statements about it assume
+nonzero slip; at zero slip the model current is zero
+(`rotorCurrent_zero_slip`), so the air-gap power of the model vanishes
+there, and a nonzero current paired with zero slip is not a state of the
+model. -/
 noncomputable def airGapPower (I2 : ℂ) (R2 s : ℝ) : ℝ :=
   3 * ‖I2‖ ^ 2 * (R2 / s)
 
@@ -104,8 +141,7 @@ norm of the quotient through `Complex.normSq`. -/
 lemma rotorCurrent_normSq (Vth : ℂ) (Rth R2 Xeq s : ℝ) (hs : s ≠ 0) :
     ‖rotorCurrent Vth Rth R2 Xeq s‖ ^ 2 =
       ‖Vth‖ ^ 2 / ((Rth + R2 / s) ^ 2 + Xeq ^ 2) := by
-  unfold rotorCurrent
-  rw [Complex.norm_div, div_pow]
+  rw [rotorCurrent_eq_div Vth Rth R2 Xeq s hs, Complex.norm_div, div_pow]
   rw [← Complex.normSq_eq_norm_sq (((↑(Rth + R2 / s) : ℂ) + (↑Xeq : ℂ) * Complex.I))]
   rw [Complex.normSq_add_mul_I]
 
@@ -244,12 +280,39 @@ lemma airGapPower_eq_converted_add_copper (I2 : ℂ) (R2 s : ℝ) :
   unfold convertedPower rotorCopperLoss airGapPower
   ring
 
-/-- Converted power is torque times rotor speed `(1 - s) * ws`, for
-positive slip. The fractional forms are proved from the air-gap power
-formula: with `s ≠ 0` (from `0 < s`), the copper term
-`3 ‖I2‖² R2` is `s` times the air-gap term `3 ‖I2‖² (R2 / s)`, and the
-remaining difference is `1 - s` times that air-gap term. The torque
-form then follows from `developedTorque`, using `ws ≠ 0`. -/
+/-- Power split for any rotor current `I2`, at any nonzero slip and nonzero
+synchronous speed, motoring or generating: the converted power is the
+torque times the rotor speed `(1 - s) * ws` and the fraction `1 - s` of
+the air-gap power, and the rotor copper loss is the fraction `s`. With
+`s ≠ 0`, the copper term `3 ‖I2‖² R2` is `s` times the air-gap term
+`3 ‖I2‖² (R2 / s)`, and the remaining difference is `1 - s` times that
+air-gap term. The torque form then follows from `developedTorque`, using
+`ws ≠ 0`. -/
+theorem powerSplit_of_ne_zero (I2 : ℂ) (R2 s ws : ℝ) (hs : s ≠ 0) (hws : ws ≠ 0) :
+    convertedPower I2 R2 s = developedTorque I2 R2 s ws * ((1 - s) * ws) ∧
+      convertedPower I2 R2 s = (1 - s) * airGapPower I2 R2 s ∧
+      rotorCopperLoss I2 R2 s = s * airGapPower I2 R2 s := by
+  have hsr : s * (R2 / s) = R2 := mul_div_cancel₀ R2 hs
+  have hcop : rotorCopperLoss I2 R2 s = s * airGapPower I2 R2 s := by
+    unfold rotorCopperLoss airGapPower
+    rw [show s * (3 * ‖I2‖ ^ 2 * (R2 / s)) = (3 * ‖I2‖ ^ 2) * (s * (R2 / s)) by ring,
+      hsr]
+  have hconv : convertedPower I2 R2 s = (1 - s) * airGapPower I2 R2 s := by
+    have hfrac : (1 - s) * (R2 / s) = R2 / s - R2 := by
+      rw [sub_mul, one_mul, hsr]
+    unfold convertedPower rotorCopperLoss airGapPower
+    rw [show (1 - s) * (3 * ‖I2‖ ^ 2 * (R2 / s)) = (3 * ‖I2‖ ^ 2) * ((1 - s) * (R2 / s)) by
+      ring, hfrac]
+    ring
+  refine ⟨?_, hconv, hcop⟩
+  rw [hconv]
+  unfold developedTorque
+  field_simp
+
+/-- Converted power is torque times rotor speed `(1 - s) * ws`, for the
+model current on the motoring interval. This is `powerSplit_of_ne_zero`
+specialized to that current; it uses only `s ≠ 0` and `ws ≠ 0`, and keeps
+the motoring hypotheses shared by the other results of this file. -/
 theorem convertedPower_eq_torque_mul_rotorSpeed (Vth : ℂ) (Rth R2 Xeq ws s : ℝ)
     (hR2 : 0 < R2) (hws : 0 < ws) (hRth : 0 ≤ Rth)
     (hs0 : 0 < s) (hs1 : s ≤ 1) :
@@ -258,28 +321,21 @@ theorem convertedPower_eq_torque_mul_rotorSpeed (Vth : ℂ) (Rth R2 Xeq ws s : �
       convertedPower (rotorCurrent Vth Rth R2 Xeq s) R2 s =
         (1 - s) * airGapPower (rotorCurrent Vth Rth R2 Xeq s) R2 s ∧
       rotorCopperLoss (rotorCurrent Vth Rth R2 Xeq s) R2 s =
-        s * airGapPower (rotorCurrent Vth Rth R2 Xeq s) R2 s := by
-  have hs' : s ≠ 0 := ne_of_gt hs0
-  have hws' : ws ≠ 0 := ne_of_gt hws
-  have hsr : s * (R2 / s) = R2 := mul_div_cancel₀ R2 hs'
-  have hcop : rotorCopperLoss (rotorCurrent Vth Rth R2 Xeq s) R2 s =
-      s * airGapPower (rotorCurrent Vth Rth R2 Xeq s) R2 s := by
-    unfold rotorCopperLoss airGapPower
-    rw [show s * (3 * ‖rotorCurrent Vth Rth R2 Xeq s‖ ^ 2 * (R2 / s)) =
-        (3 * ‖rotorCurrent Vth Rth R2 Xeq s‖ ^ 2) * (s * (R2 / s)) by ring, hsr]
-  have hconv : convertedPower (rotorCurrent Vth Rth R2 Xeq s) R2 s =
-      (1 - s) * airGapPower (rotorCurrent Vth Rth R2 Xeq s) R2 s := by
-    have hfrac : (1 - s) * (R2 / s) = R2 / s - R2 := by
-      rw [sub_mul, one_mul, mul_div_cancel₀ R2 hs']
-    unfold convertedPower rotorCopperLoss airGapPower
-    rw [show (1 - s) * (3 * ‖rotorCurrent Vth Rth R2 Xeq s‖ ^ 2 * (R2 / s)) =
-        (3 * ‖rotorCurrent Vth Rth R2 Xeq s‖ ^ 2) * ((1 - s) * (R2 / s)) by ring,
-      hfrac]
-    ring
-  refine ⟨?_, hconv, hcop⟩
-  rw [hconv]
-  unfold developedTorque
-  field_simp
+        s * airGapPower (rotorCurrent Vth Rth R2 Xeq s) R2 s :=
+  powerSplit_of_ne_zero _ R2 s ws (ne_of_gt hs0) (ne_of_gt hws)
+
+/-- Zero-slip boundary of the model: the rotor current is zero, so the
+air-gap power, rotor copper loss, and converted power vanish, and the
+developed torque equals the rational curve's zero-slip value. -/
+lemma rotorQuantities_zero_slip (Vth : ℂ) (Rth R2 Xeq ws : ℝ) :
+    rotorCurrent Vth Rth R2 Xeq 0 = 0 ∧
+      airGapPower (rotorCurrent Vth Rth R2 Xeq 0) R2 0 = 0 ∧
+      rotorCopperLoss (rotorCurrent Vth Rth R2 Xeq 0) R2 0 = 0 ∧
+      convertedPower (rotorCurrent Vth Rth R2 Xeq 0) R2 0 = 0 ∧
+      developedTorque (rotorCurrent Vth Rth R2 Xeq 0) R2 0 ws =
+        torqueCurve Vth Rth R2 Xeq ws 0 := by
+  rw [rotorCurrent_zero_slip]
+  simp [airGapPower, rotorCopperLoss, convertedPower, developedTorque, torqueCurve]
 
 /-- Headline result: on the motoring interval the torque equals the cleared
 rational curve, the curve extends continuously to zero at zero slip, and
