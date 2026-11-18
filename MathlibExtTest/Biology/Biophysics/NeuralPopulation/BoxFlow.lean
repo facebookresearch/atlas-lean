@@ -22,4 +22,9 @@ example : (((boxProj 2 zero_le_two (fun _ => (5:ℝ)) : Set.Icc (0 : Fin 2 → �
   rw [h]
   exact max_eq_right (show (0:ℝ) ≤ 2 by exact_mod_cast (by decide : (0:ℕ) ≤ 2))
 
+/-- An interior state projects to itself. -/
+example : ((boxProj 2 zero_le_two (fun _ => (1:ℝ)) : Set.Icc (0 : Fin 2 → ℝ) (fun _ => 2)) : Fin 2 → ℝ) =
+    (fun _ => (1:ℝ)) :=
+  boxProj_of_mem 2 zero_le_two (Set.mem_Icc.mpr ⟨fun _ => zero_le_one, fun _ => one_le_two⟩)
+
 end MathlibExtTest.Biology.Biophysics.NeuralPopulation.BoxFlow

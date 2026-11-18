@@ -59,4 +59,16 @@ lemma boxProj_idempotent (U : ℝ) (hU : 0 ≤ U) (x : Fin 2 → ℝ) :
   rw [h2, boxProj_apply]
   exact (Set.coe_projIcc 0 U hU (x i)).symm
 
+/-- **The box projection is the identity on the box.** For a
+state already in the box, projecting changes nothing. -/
+lemma boxProj_of_mem (U : ℝ) (hU : 0 ≤ U) {x : Fin 2 → ℝ}
+    (hx : x ∈ Set.Icc (0 : Fin 2 → ℝ) (fun _ => U)) :
+    ((boxProj U hU x : Set.Icc (0 : Fin 2 → ℝ) (fun _ => U)) : Fin 2 → ℝ) = x := by
+  funext i
+  show ((Set.projIcc 0 U hU (x i) : Set.Icc (0:ℝ) U) : ℝ) = x i
+  have hmem : x i ∈ Set.Icc (0:ℝ) U :=
+    Set.mem_Icc.mpr ⟨(Set.mem_Icc.mp hx).1 i, (Set.mem_Icc.mp hx).2 i⟩
+  exact congrArg Subtype.val (Set.projIcc_of_mem hU hmem)
+
+
 end MathlibExt.Biology.Biophysics.NeuralPopulation.BoxFlow
