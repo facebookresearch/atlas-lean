@@ -33,6 +33,35 @@ example : sourceFreeVacuumMaxwell 1
     (separableMagneticField (fun x => Real.sin (1 * x)) (fun t z => Real.cos (1 * t - 0 * z))) :=
   propagatingMode_sourceFreeVacuumMaxwell 1 0 1 1 (by norm_num)
 
+/-- A spatially propagating mode: `kc = 3`, `beta = 4`, `freq = 5` at speed `1`
+satisfy the dispersion relation `25 = 16 + 9`. -/
+example : sourceFreeVacuumMaxwell 1
+    (separableElectricField (fun x => Real.sin (3 * x)) (fun t z => Real.cos (5 * t - 4 * z)))
+    (separableMagneticField (fun x => Real.sin (3 * x)) (fun t z => Real.cos (5 * t - 4 * z))) :=
+  propagatingMode_sourceFreeVacuumMaxwell 3 4 5 1 (by norm_num)
+
+/-- A propagating mode off the dispersion relation fails the mode equation. -/
+example : ¬ modeEquation 1 3 (fun t z => Real.cos (5 * t - 3 * z)) := by
+  intro h
+  have := ((propagatingMode_satisfies_scalarEquations 3 3 5 1).mp
+    ⟨(propagatingMode_satisfies_scalarEquations 3 4 5 1).mpr (by norm_num) |>.1, h⟩)
+  norm_num at this
+
+/-- An evanescent mode: `kc = 5`, `alpha = 3`, `freq = 4` at speed `1`
+satisfy `16 = 25 - 9`. -/
+example : modeEquation 1 5 (fun t z => Real.cos (4 * t) * Real.exp (-3 * z)) :=
+  (evanescentMode_satisfies_modeEquation 5 3 4 1).mpr (by norm_num)
+
+/-- The same evanescent fields satisfy the source-free Maxwell equations. -/
+example : sourceFreeVacuumMaxwell 1
+    (separableElectricField (fun x => Real.sin (5 * x)) (fun t z => Real.cos (4 * t) * Real.exp (-3 * z)))
+    (separableMagneticField (fun x => Real.sin (5 * x)) (fun t z => Real.cos (4 * t) * Real.exp (-3 * z))) :=
+  evanescentMode_sourceFreeVacuumMaxwell 5 3 4 1 (by norm_num)
+
+/-- With attenuation `3` the evanescent mode decays to zero along the guide. -/
+example : Filter.Tendsto (fun z => Real.cos (4 * 0) * Real.exp (-3 * z)) Filter.atTop (nhds 0) :=
+  (evanescentMode_decay 3 4 (by norm_num)).2 0
+
 /-- The canonical Physlib fields of the same guide potential satisfy the source-free equations. -/
 example : sourceFreeVacuumMaxwellFields 1
     ((separableGuidePotential 1 (fun x => Real.sin (1 * x))

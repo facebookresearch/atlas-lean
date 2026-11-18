@@ -50,7 +50,10 @@ with zero current.
   form at the free-space speed of light.
 - `propagatingMode_sourceFreeVacuumMaxwell` and
   `evanescentMode_sourceFreeVacuumMaxwell`: concrete
-  propagating and evanescent modes.
+  travelling-cosine and exponential modes `exp (-alpha z)`.
+- `evanescentMode_decay`: for positive attenuation `0 < alpha`
+  the exponential mode is evanescent, decaying strictly and to
+  zero along the guide.
 
 ## iii. Table of contents
 
@@ -796,8 +799,12 @@ theorem propagatingMode_sourceFreeVacuumMaxwell (kc beta freq : ℝ) (c : SpeedO
       fun_prop
     exact hcd) hprof hmode
 
-/-- Sinusoidal profile and decaying oscillating mode satisfy the
-mode equation exactly under `freq^2 = c0^2 (kc^2 - alpha^2)`. -/
+/-- Sinusoidal profile and the exponential mode
+`cos (freq t) exp (-alpha z)` satisfy the mode equation exactly
+under `freq^2 = c0^2 (kc^2 - alpha^2)`. No sign is imposed on
+`alpha`: the mode is evanescent (decaying along the guide) exactly
+when `0 < alpha`, see `evanescentMode_decay`; `alpha = 0` gives a
+mode independent of `z` and `alpha < 0` a growing one. -/
 theorem evanescentMode_satisfies_modeEquation (kc alpha freq c0 : ℝ) :
     modeEquation c0 kc (fun t z => Real.cos (freq * t) * Real.exp (-alpha * z)) ↔
       freq ^ 2 = c0 ^ 2 * (kc ^ 2 - alpha ^ 2) := by
@@ -816,7 +823,9 @@ theorem evanescentMode_satisfies_modeEquation (kc alpha freq c0 : ℝ) :
     rw [deriv_partialTime_evanescent_mode, deriv_partialZ_evanescent_mode, hdisp]
     ring
 
-/-- Evanescent instance of the source-free Maxwell result. -/
+/-- Exponential-mode instance of the source-free Maxwell result.
+It holds for every real `alpha`; the mode is evanescent when
+`0 < alpha`, see `evanescentMode_decay`. -/
 theorem evanescentMode_sourceFreeVacuumMaxwell (kc alpha freq : ℝ) (c : SpeedOfLight)
     (hdisp : freq ^ 2 = (c : ℝ) ^ 2 * (kc ^ 2 - alpha ^ 2)) :
     sourceFreeVacuumMaxwell c
@@ -828,5 +837,23 @@ theorem evanescentMode_sourceFreeVacuumMaxwell (kc alpha freq : ℝ) (c : SpeedO
         (fun p : ℝ × ℝ => Real.cos (freq * p.1) * Real.exp (-alpha * p.2)) := by
       fun_prop
     exact hcd) (sin_profileEquation kc) hmode
+
+/-- **Evanescence for positive attenuation.** When `0 < alpha` the
+amplitude `exp (-alpha z)` of the exponential mode is strictly
+decreasing along the guide, and at every time the mode
+`cos (freq t) exp (-alpha z)` tends to zero as `z → ∞`. -/
+theorem evanescentMode_decay (alpha freq : ℝ) (halpha : 0 < alpha) :
+    StrictAnti (fun z : ℝ => Real.exp (-alpha * z)) ∧
+      ∀ t : ℝ, Filter.Tendsto (fun z => Real.cos (freq * t) * Real.exp (-alpha * z))
+        Filter.atTop (nhds 0) := by
+  refine ⟨fun z w hzw => ?_, fun t => ?_⟩
+  · exact Real.exp_lt_exp.mpr (by nlinarith)
+  · have hlin : Filter.Tendsto (fun z : ℝ => alpha * z) Filter.atTop Filter.atTop :=
+      Filter.tendsto_id.const_mul_atTop halpha
+    have hexp : Filter.Tendsto (fun z : ℝ => Real.exp (-alpha * z)) Filter.atTop (nhds 0) :=
+      (Real.tendsto_exp_neg_atTop_nhds_zero.comp hlin).congr fun z => by
+        simp [Function.comp, neg_mul]
+    have hmul := hexp.const_mul (Real.cos (freq * t))
+    rwa [mul_zero] at hmul
 
 end PhyslibExt.Electromagnetism.SeparableVacuumMaxwell
