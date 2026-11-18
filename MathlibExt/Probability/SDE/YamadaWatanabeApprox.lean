@@ -21,17 +21,20 @@ import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 
 For a modulus `h` satisfying the Osgood divergence condition
 `∫₀^ε h(u)⁻² du = ∞`, this file constructs the even `C²` approximations to
-`|x|` used in Yamada–Watanabe pathwise-uniqueness arguments. The hypotheses are
-stated in the classical form; the construction itself uses continuity of `h`,
-positivity on `(0, ∞)`, and the divergence condition.
+`|x|` used in Yamada–Watanabe pathwise-uniqueness arguments. The construction
+uses continuity of `h`, positivity on `(0, ∞)`, and the divergence condition;
+the classical strictly increasing form is recorded as a corollary.
 
-## Main result
+## Main results
 
 * `ProbabilityTheory.SDE.exists_yamadaWatanabe_approx`: there are
   `1 = a 0 > a 1 > ⋯ → 0` with `∫_{a(n+1)}^{a n} h⁻² = n + 1` and even `C²`
   functions `φ n → |·|` with `|φ n'| ≤ 1` and
   `0 ≤ φ n'' ≤ 2 / ((n + 1) h(|x|)²)`, where `φ n''` vanishes outside
   `a (n + 1) < |x| < a n`.
+* `ProbabilityTheory.SDE.exists_yamadaWatanabe_approx_of_strictMonoOn`: the
+  same conclusion under the classical strictly increasing hypothesis, with
+  positivity derived from `h 0 = 0`.
 
 ## References
 
@@ -398,13 +401,12 @@ private lemma exists_even_primitive {b c : ℝ} (hb : 0 < b) (hbc : b < c) {ρ :
     exact heq
 
 /-- **Yamada–Watanabe approximating functions.** If `h : [0, ∞) → [0, ∞)` is continuous,
-strictly increasing, `h 0 = 0`, positive on `(0, ∞)`, and `∫⁻_{(0,ε]} h⁻² = ∞` for every
-`ε > 0`, there are `1 = a 0 > a 1 > ⋯ → 0` with `∫_{a (n+1)}^{a n} h⁻² = n + 1`, and even `C²`
+positive on `(0, ∞)`, and `∫⁻_{(0,ε]} h⁻² = ∞` for every `ε > 0`, there are
+`1 = a 0 > a 1 > ⋯ → 0` with `∫_{a (n+1)}^{a n} h⁻² = n + 1`, and even `C²`
 functions `φ n → |·|` with `|φ n'| ≤ 1` and `0 ≤ φ n'' ≤ 2 / ((n + 1) h(|x|)²)`, where
 `φ n''` vanishes outside `a (n+1) < |x| < a n`. -/
 theorem exists_yamadaWatanabe_approx {h : ℝ → ℝ}
-    (hcont : ContinuousOn h (Set.Ici 0)) (_hmono : StrictMonoOn h (Set.Ici 0))
-    (_h0 : h 0 = 0) (hpos : ∀ u, 0 < u → 0 < h u)
+    (hcont : ContinuousOn h (Set.Ici 0)) (hpos : ∀ u, 0 < u → 0 < h u)
     (hosgood : ∀ ε, 0 < ε → ∫⁻ u in Set.Ioc 0 ε, ENNReal.ofReal ((h u ^ 2)⁻¹) = ⊤) :
     ∃ (a : ℕ → ℝ) (φ : ℕ → ℝ → ℝ),
       a 0 = 1 ∧ StrictAnti a ∧ (∀ n, 0 < a n) ∧ Tendsto a atTop (𝓝 0) ∧
@@ -415,7 +417,6 @@ theorem exists_yamadaWatanabe_approx {h : ℝ → ℝ}
       (∀ n x, 0 ≤ iteratedDeriv 2 (φ n) x ∧
         iteratedDeriv 2 (φ n) x ≤ 2 / ((n + 1) * h |x| ^ 2)) ∧
       (∀ n x, iteratedDeriv 2 (φ n) x ≠ 0 → a (n + 1) < |x| ∧ |x| < a n) := by
-  -- The hypotheses `_hmono` and `_h0` are not needed for this construction.
   obtain ⟨a, ha0, hanti, hapos, hlim, hint⟩ := exists_seq hcont hpos hosgood
   have key : ∀ n : ℕ, ∃ ψ : ℝ → ℝ, ContDiff ℝ 2 ψ ∧ (∀ x, ψ (-x) = ψ x) ∧
       (∀ x, |x| - a n ≤ ψ x ∧ ψ x ≤ |x|) ∧ (∀ x, |deriv ψ x| ≤ 1) ∧
@@ -436,5 +437,26 @@ theorem exists_yamadaWatanabe_approx {h : ℝ → ℝ}
     simpa using (tendsto_const_nhds : Tendsto (fun _ : ℕ => |x|) atTop (𝓝 |x|)).sub hlim
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le hlow tendsto_const_nhds
     (fun n => ((hφ n).2.2.1 x).1) fun n => ((hφ n).2.2.1 x).2
+
+/-- Classical strictly increasing form of `exists_yamadaWatanabe_approx`: positivity
+on `(0, ∞)` follows from strict monotonicity on `[0, ∞)` and `h 0 = 0`. -/
+theorem exists_yamadaWatanabe_approx_of_strictMonoOn {h : ℝ → ℝ}
+    (hcont : ContinuousOn h (Set.Ici 0)) (hmono : StrictMonoOn h (Set.Ici 0))
+    (h0 : h 0 = 0)
+    (hosgood : ∀ ε, 0 < ε → ∫⁻ u in Set.Ioc 0 ε, ENNReal.ofReal ((h u ^ 2)⁻¹) = ⊤) :
+    ∃ (a : ℕ → ℝ) (φ : ℕ → ℝ → ℝ),
+      a 0 = 1 ∧ StrictAnti a ∧ (∀ n, 0 < a n) ∧ Tendsto a atTop (𝓝 0) ∧
+      (∀ n, ∫ u in a (n + 1)..a n, (h u ^ 2)⁻¹ = n + 1) ∧
+      (∀ n, ContDiff ℝ 2 (φ n)) ∧ (∀ n x, φ n (-x) = φ n x) ∧
+      (∀ x, Tendsto (fun n => φ n x) atTop (𝓝 |x|)) ∧
+      (∀ n x, |deriv (φ n) x| ≤ 1) ∧
+      (∀ n x, 0 ≤ iteratedDeriv 2 (φ n) x ∧
+        iteratedDeriv 2 (φ n) x ≤ 2 / ((n + 1) * h |x| ^ 2)) ∧
+      (∀ n x, iteratedDeriv 2 (φ n) x ≠ 0 → a (n + 1) < |x| ∧ |x| < a n) := by
+  have hpos : ∀ u, 0 < u → 0 < h u := by
+    intro u hu
+    have hlt := hmono (Set.mem_Ici.mpr (le_refl 0)) (Set.mem_Ici.mpr hu.le) hu
+    rwa [h0] at hlt
+  exact exists_yamadaWatanabe_approx hcont hpos hosgood
 
 end ProbabilityTheory.SDE
