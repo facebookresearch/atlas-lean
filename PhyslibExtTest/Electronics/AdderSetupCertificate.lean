@@ -20,7 +20,9 @@ input arrivals `1/2, 1/4` (so `tq = 1/2`) certify setup on the 1- and 2-bit
 ripple-carry adders and the 2-bit carry-lookahead adders. Under uniform delays
 the 2-bit ripple-carry adder computes `3 + 1 + 0` correctly yet violates setup
 once the period drops below the certificate, and the same holds for the 2-bit,
-1-level carry-lookahead adder.
+1-level carry-lookahead adder. Over the full binary Boolean basis, which also
+offers constants, a constant-free circuit is exact under uniform delays, while
+a single constant gate meets setup at a period the certificate rejects.
 -/
 
 @[expose] public section
@@ -137,6 +139,63 @@ example : ¬ SetupMet (CarryLookahead.carryLookaheadAdder 2 1) (fun _ => 1 / 2)
     (fun _ => 1 / 4) (1 / 10) (1 / 20) (289 / 100) := by
   rw [carryLookaheadAdder_setupMet_uniform_iff 2 1 le_rfl le_rfl _ _ _ _ _ (by norm_num)
     (by norm_num)]
+  norm_num
+
+/-! ## Uniform delays over a basis that also offers constants -/
+
+/-- Binary AND in the full binary Boolean basis. -/
+def andOp : (fullSignature 2 Bool).Op := FullOp.fn fun x => x 0 && x 1
+
+/-- Two AND gates in a chain over the full binary Boolean basis: gate `0` reads
+inputs `0` and `1`, gate `1` reads gate `0` and input `0`; the output is gate `1`. -/
+def andChain : Circuit (fullSignature 2 Bool) 2 1 where
+  size := 2
+  program := (Program.empty.gate ⟨andOp, fun k => if k.val = 0 then .input 0 else .input 1⟩).gate
+    ⟨andOp, fun k => if k.val = 0 then .gate 0 else .input 0⟩
+  outputs _ := .gate 1
+
+/-- The basis offers constants, so the signature-wide premise fails. -/
+example : ¬ ∀ op, 0 < (fullSignature 2 Bool).Arity op := fun h =>
+  absurd (h (.con true)) (by decide)
+
+lemma andChain_noConstantGates : NoConstantGates andChain.program :=
+  ⟨⟨trivial, by decide⟩, by decide⟩
+
+lemma andChain_depth : andChain.depth = 2 := by decide +kernel
+
+/-- Uniform delay `1/2`, inputs at `1/4`: setup holds at the certificate
+`1/4 + 1/2 * 2 + 3/20 = 7/5` and fails just below it. -/
+example : SetupMet andChain (fun _ => 1 / 2) (fun _ => 1 / 4) (1 / 10) (1 / 20) (7 / 5) := by
+  rw [setupMet_uniform_iff_of_noConstantGates _ andChain_noConstantGates (by norm_num)
+    _ _ _ _ _ (by norm_num) (by norm_num), andChain_depth]
+  norm_num
+
+example : ¬ SetupMet andChain (fun _ => 1 / 2) (fun _ => 1 / 4) (1 / 10) (1 / 20) (139 / 100) := by
+  rw [setupMet_uniform_iff_of_noConstantGates _ andChain_noConstantGates (by norm_num)
+    _ _ _ _ _ (by norm_num) (by norm_num), andChain_depth]
+  norm_num
+
+/-- A constant gate `true` in the full binary Boolean basis. -/
+def trueLine : Line (fullSignature 2 Bool) 2 0 := ⟨FullOp.con true, Fin.elim0⟩
+
+/-- One constant gate `true` driving the only output. -/
+def constCircuit : Circuit (fullSignature 2 Bool) 2 1 where
+  size := 1
+  program := Program.empty.gate trueLine
+  outputs _ := .gate 0
+
+/-- The constant gate settles at its delay `1/2` alone, so setup holds at
+`T = 7/10` although the certificate `1/4 + 1/2 * 1 + 3/20 = 9/10` exceeds it:
+exactness needs the no-constant-gate premise. -/
+example : SetupMet constCircuit (fun _ => 1 / 2) (fun _ => 1 / 4) (1 / 10) (1 / 20) (7 / 10) ∧
+    ¬ (1 / 4 + 1 / 2 * (constCircuit.depth : ℝ) + 1 / 10 + 1 / 20 ≤ 7 / 10) := by
+  have hdepth : constCircuit.depth = 1 := by decide +kernel
+  refine ⟨fun o => ?_, by rw [hdepth]; norm_num⟩
+  have harr : constCircuit.outputArrivals (fun _ => 1 / 2) (fun _ => 1 / 4) o = 1 / 2 := by
+    obtain rfl : o = Fin.last 0 := Subsingleton.elim _ _
+    exact (Program.arrivals_gate_last Program.empty trueLine (fun _ => (1 / 2 : ℝ))
+      (fun _ => (1 / 4 : ℝ))).trans (Line.arrival_of_arity_eq_zero _ _ _ rfl)
+  rw [harr]
   norm_num
 
 end PhyslibExtTest.Electronics.AdderSetupCertificate
