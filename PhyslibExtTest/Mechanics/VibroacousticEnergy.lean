@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Tactic.NormNum
 
 import PhyslibExt.Mechanics.VibroacousticEnergy
@@ -15,44 +16,55 @@ import PhyslibExt.Mechanics.VibroacousticEnergy
 # Vibroacoustic port-energy checks
 
 Focused checks for `PhyslibExt.Mechanics.VibroacousticEnergy`:
-a one-coordinate system with identity mass and compliance,
-zero stiffness, displacement `x(τ) = τ`, constant pressure
-`1`, coupling `2`, damping `2`, and acoustic coefficient `-2`
-satisfies both port equations, and the energy identity applies
-at `t = 0` with both dissipation terms nonzero.
+a one-coordinate decaying exponential solution
+`x(τ) = e^{-τ}`, `v(τ) = -e^{-τ}`, `p(τ) = -e^{-τ}` of the
+coupled system with unit mass, stiffness, and coupling,
+structural damping `3`, acoustic storage `2`, and acoustic
+damping `1`. Both quadratic damping terms are positive at
+`t = 0`, and the quadratic form has the concrete nonzero
+derivative `-4` there.
 
 These are elaboration and non-vacuity checks, not new results.
 -/
 
 open Matrix
 
-/-- The identity at the concrete one-coordinate system. -/
+/-- The identity at the decaying exponential solution, with
+the concrete derivative value `-4` at `t = 0`. -/
 example : HasDerivAt
-    (fun τ => (1 / 2) * (((fun _ => (1 : ℝ)) : Fin 1 → ℝ)
+    (fun τ => (1 / 2) * (((fun _ => -Real.exp (-τ)) : Fin 1 → ℝ)
         ⬝ᵥ ((1 : Matrix (Fin 1) (Fin 1) ℝ)
-          *ᵥ ((fun _ => (1 : ℝ)) : Fin 1 → ℝ))
-      + ((fun _ => τ) : Fin 1 → ℝ)
-        ⬝ᵥ ((0 : Matrix (Fin 1) (Fin 1) ℝ)
-          *ᵥ ((fun _ => τ) : Fin 1 → ℝ))
-      + ((fun _ => (1 : ℝ)) : Fin 1 → ℝ)
+          *ᵥ ((fun _ => -Real.exp (-τ)) : Fin 1 → ℝ))
+      + ((fun _ => Real.exp (-τ)) : Fin 1 → ℝ)
         ⬝ᵥ ((1 : Matrix (Fin 1) (Fin 1) ℝ)
-          *ᵥ ((fun _ => (1 : ℝ)) : Fin 1 → ℝ))))
-    (-(((fun _ => (1 : ℝ)) : Fin 1 → ℝ)
+          *ᵥ ((fun _ => Real.exp (-τ)) : Fin 1 → ℝ))
+      + ((fun _ => -Real.exp (-τ)) : Fin 1 → ℝ)
         ⬝ᵥ (((2 : ℝ) • (1 : Matrix (Fin 1) (Fin 1) ℝ))
-          *ᵥ ((fun _ => (1 : ℝ)) : Fin 1 → ℝ))
-      + ((fun _ => (1 : ℝ)) : Fin 1 → ℝ)
-        ⬝ᵥ (((-2 : ℝ) • (1 : Matrix (Fin 1) (Fin 1) ℝ))
-          *ᵥ ((fun _ => (1 : ℝ)) : Fin 1 → ℝ)))) 0 :=
-  Mechanics.Vibroacoustic.vibroacoustic_port_energy
-    (M := 1) (K := 0) (C := (2 : ℝ) • 1) (A := 1)
-    (H := (-2 : ℝ) • 1) (G := (2 : ℝ) • 1)
-    (x := fun τ _ => τ) (v := fun _ _ => 1) (dv := fun _ _ => 0)
-    (p := fun _ _ => 1) (dp := fun _ _ => 0)
+          *ᵥ ((fun _ => -Real.exp (-τ)) : Fin 1 → ℝ))))
+    (-4) 0 := by
+  have hexp : ∀ t : ℝ,
+      HasDerivAt (fun τ : ℝ => Real.exp (-τ)) (-Real.exp (-t)) t :=
+    fun t => by
+      simpa using (hasDerivAt_neg' t).exp
+  have h := Mechanics.Vibroacoustic.vibroacoustic_port_energy
+    (n := Fin 1) (m := Fin 1) (M := 1) (K := 1) (C := (3 : ℝ) • 1) (A := (2 : ℝ) • 1)
+    (H := 1) (G := 1)
+    (x := fun τ _ => Real.exp (-τ))
+    (v := fun τ _ => -Real.exp (-τ))
+    (dv := fun τ _ => Real.exp (-τ))
+    (p := fun τ _ => -Real.exp (-τ))
+    (dp := fun τ _ => Real.exp (-τ))
     (by simp [Matrix.IsSymm]) (by simp [Matrix.IsSymm])
     (by simp [Matrix.IsSymm])
-    (fun i t => hasDerivAt_id' t)
-    (fun i t => hasDerivAt_const t 1)
-    (fun i t => hasDerivAt_const t 1)
-    (fun t => by funext i; fin_cases i <;> simp <;> norm_num)
-    (fun t => by funext i; fin_cases i <;> simp <;> rw [Matrix.neg_mulVec] <;> simp)
+    (fun _ t => hexp t)
+    (fun _ t => by simpa only [Pi.neg_def, neg_neg] using (hexp t).neg)
+    (fun _ t => by simpa only [Pi.neg_def, neg_neg] using (hexp t).neg)
+    (fun t => by
+      funext i
+      fin_cases i <;> simp [Matrix.mulVec, dotProduct] <;> ring)
+    (fun t => by
+      funext i
+      fin_cases i <;> simp [Matrix.mulVec, dotProduct] <;> ring)
     0
+  convert h using 1
+  norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_one, Real.exp_zero]

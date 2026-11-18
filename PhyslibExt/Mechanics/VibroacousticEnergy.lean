@@ -19,12 +19,16 @@ import Mathlib.Tactic.Linarith
 
 For a coupled structural-acoustic system with structural
 displacement `x`, velocity `v = x'`, acoustic pressure `p`, and
-constant symmetric storage matrices `M`, `K`, `A` satisfying
+constant symmetric matrices `M`, `K`, `A` satisfying
 `M*dv + C*v + K*x - G*p = 0` and `A*dp + H*p + G^T*v = 0`, the
-total stored energy `(1/2) * (v^T M v + x^T K x + p^T A p)` has
+quadratic form `(1/2) * (v^T M v + x^T K x + p^T A p)` has
 derivative `-(v^T C v + p^T H p)`: the reciprocal coupling
-power through `G` and `G^T` cancels and only the two
-dissipation terms remain.
+power through `G` and `G^T` cancels. This is the algebraic
+quadratic balance; reading the quadratic form as stored
+energy and the two remaining terms as dissipation uses the
+usual positivity (positive semidefinite storage matrices
+`M`, `K`, `A` and damping matrices `C`, `H`), which the
+identity itself does not assume.
 
 ## ii. Key results
 
@@ -37,8 +41,12 @@ dissipation terms remain.
 
 ## iv. References
 
-- Standard reciprocal-port (port-Hamiltonian) formulation of
-  coupled structural-acoustic systems.
+- F. Fahy and P. Gardonio, *Sound and Structural Vibration:
+  Radiation, Transmission and Response*, 2nd edition,
+  Academic Press, 2007, Chapter 4 (coupled
+  structural-acoustic power and energy balance with
+  reciprocal coupling between structural velocity and
+  acoustic pressure).
 -/
 
 @[expose] public section
@@ -49,7 +57,7 @@ namespace Mechanics.Vibroacoustic
 
 /-! ## A. Port-energy identity -/
 
-theorem quad_hasDerivAt {n : Type*} [Fintype n]
+private lemma quad_hasDerivAt {n : Type*} [Fintype n]
     {S : Matrix n n ℝ}
     {u du : ℝ → n → ℝ}
     (hu : ∀ i t, HasDerivAt (fun τ => u τ i) (du t i) t)
@@ -78,7 +86,7 @@ theorem quad_hasDerivAt {n : Type*} [Fintype n]
   rw [hfun, ← hval]
   exact hsum
 
-theorem symm_dot_swap {n : Type*} [Fintype n]
+private lemma symm_dot_swap {n : Type*} [Fintype n]
     {S : Matrix n n ℝ} (hS : S.IsSymm)
     (a b : n → ℝ) : a ⬝ᵥ (S *ᵥ b) = b ⬝ᵥ (S *ᵥ a) := by
   have hSeq : Sᵀ = S := hS
@@ -87,23 +95,24 @@ theorem symm_dot_swap {n : Type*} [Fintype n]
     _ = (S *ᵥ a) ⬝ᵥ b := by rw [hSeq]
     _ = b ⬝ᵥ (S *ᵥ a) := dotProduct_comm _ _
 
-theorem couple_dot_swap {n m : Type*} [Fintype n] [Fintype m]
+private lemma couple_dot_swap {n m : Type*} [Fintype n] [Fintype m]
     {G : Matrix n m ℝ} (v : n → ℝ) (p : m → ℝ) :
     v ⬝ᵥ (G *ᵥ p) = p ⬝ᵥ (Gᵀ *ᵥ v) := by
   calc v ⬝ᵥ (G *ᵥ p) = (v ᵥ* G) ⬝ᵥ p := Matrix.dotProduct_mulVec v G p
     _ = (Gᵀ *ᵥ v) ⬝ᵥ p := by rw [← Matrix.mulVec_transpose G v]
     _ = p ⬝ᵥ (Gᵀ *ᵥ v) := dotProduct_comm _ _
 
-/-- Reciprocal-port vibroacoustic energy identity. Along
-differentiable structural displacement `x` with velocity `v`
-and acoustic pressure `p` with derivative function `dp`,
-satisfying at every time
-`M*dv + C*v + K*x - G*p = 0` and
-`A*dp + H*p + Gᵀ*v = 0`, with constant symmetric storage
-matrices `M`, `K`, and `A`, the total stored energy
+/-- Reciprocal-port vibroacoustic quadratic-balance identity.
+Along differentiable structural displacement `x` with velocity
+`v` and acoustic pressure `p` with derivative function `dp`,
+satisfying at every time `M*dv + C*v + K*x - G*p = 0` and
+`A*dp + H*p + Gᵀ*v = 0`, with constant symmetric matrices
+`M`, `K`, and `A`, the quadratic form
 `1/2 * (vᵀMv + xᵀKx + pᵀAp)` has derivative
-`-(vᵀCv + pᵀHp)`: the reciprocal coupling power cancels and only
-the two dissipation terms remain. -/
+`-(vᵀCv + pᵀHp)`: the reciprocal coupling power cancels. The
+stored-energy/dissipation reading additionally requires the
+usual positivity of the storage and damping matrices, which
+this algebraic identity does not assume. -/
 theorem vibroacoustic_port_energy {n m : Type*} [Fintype n]
     [Fintype m] {M K C : Matrix n n ℝ} {A H : Matrix m m ℝ}
     {G : Matrix n m ℝ} (hM : M.IsSymm) (hK : K.IsSymm)
