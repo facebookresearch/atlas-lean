@@ -19,11 +19,12 @@ public import Mathlib.Data.Fintype.Card
 A memory-mapped sample register as a labeled transition system
 over `Cslib.LTS`: publishes overwrite the slot, reads return the
 current contents. Publication IDs carried on the publish event
-are ghost state. Under strictly increasing publish IDs, every
-successful read returns the value of a specific earlier publish, read IDs
-are strictly increasing, and an unread publish is either still
-in the slot or was overwritten before any later read. With
-decreasing publish IDs the monotonicity fails.
+are ghost state. Every successful read returns the pair of the
+publication immediately before it, and distinct reads come from distinct
+publications. Under strictly increasing publish IDs, read IDs are strictly
+increasing, and an unread publish is either still in the slot or was
+overwritten before any later read. With decreasing publish IDs the
+monotonicity fails.
 -/
 
 @[expose] public section
@@ -235,7 +236,9 @@ theorem readIds_sublist_publishIds {α : Type u} (μs : List (Label α)) (s : Sl
 /-- Successful read IDs inject into publication IDs: an injective map from read positions
 to publication positions preserving the ID. Holds for every finite trace from the empty
 slot, with repeated or decreasing publication IDs too; the map comes from the sublist
-witness of `readIds_sublist_publishIds`. -/
+witness of `readIds_sublist_publishIds`. Positions here index the filtered ID lists, not
+the trace; for the map on trace indices that sends each read to the earlier publication
+it returns, see `exists_injective_causal_read_to_publish`. -/
 theorem exists_injective_readIds_to_publishIds {α : Type u} (μs : List (Label α))
     (s : Slot α) (h : (registerLTS α).MTr none μs s) :
     ∃ f : Fin (readIds μs).length → Fin (publishIds μs).length,
@@ -312,7 +315,10 @@ theorem unreturned_pending_or_overwritten {α : Type u} (μs : List (Label α)) 
 /-- **Overwrite-newest sample register, trace correctness.** For every finite trace from
 the empty slot with strictly increasing publication IDs: successful read IDs inject into
 publication IDs and are strictly increasing, and each unreturned publication is either
-still pending or was overwritten. Only the monotonicity conjunct uses `hinc`. -/
+still pending or was overwritten. Only the monotonicity conjunct uses `hinc`. The first
+conjunct maps positions of the filtered ID lists; the causal form, on trace indices with
+each read sent to the earlier publication it returns, is
+`exists_injective_causal_read_to_publish`. -/
 theorem trace_correct {α : Type u} (μs : List (Label α)) (s : Slot α)
     (h : (registerLTS α).MTr none μs s) (hinc : (publishIds μs).Pairwise (· < ·)) :
     (∃ f : Fin (readIds μs).length → Fin (publishIds μs).length,
@@ -326,80 +332,100 @@ theorem trace_correct {α : Type u} (μs : List (Label α)) (s : Slot α)
     readIds_pairwise_lt μs s h hinc,
     fun i n v hi hn => unreturned_pending_or_overwritten μs s h i n v hi hn⟩
 
-/-- A trace ending in a full slot either kept the initial slot (empty trace) or went
-through a last publication of exactly the stored pair, with no publication after it. -/
-private theorem last_publish_of_slot_some {α : Type u} {n : ℕ} {v : α}
+/-- A trace ending in a full slot either kept the initial slot (empty trace) or ends with a
+publication of exactly the stored pair: reads empty the slot, so nothing else can be last. -/
+private theorem getLast_publish_of_slot_some {α : Type u} {n : ℕ} {v : α}
     (μs : List (Label α)) (s₀ : Slot α) {s : Slot α}
     (h : (registerLTS α).MTr s₀ μs s) (hs : s = some (n, v)) :
-    (μs = [] ∧ s₀ = some (n, v)) ∨
-      (∃ j, j < μs.length ∧ μs[j]? = some (.publish n v) ∧
-        ∀ k m w, j < k → k < μs.length → μs[k]? ≠ some (.publish m w)) := by
-  induction μs generalizing s₀ s with
-  | nil =>
-      cases h
-      exact Or.inl ⟨rfl, hs⟩
-  | cons mu tl ih =>
-      cases h with
-      | stepL htr hrest =>
-          rcases ih _ hrest hs with ⟨rfl, hs₂⟩ | ⟨j, hj, hpub, hnone⟩
-          · cases htr with
-            | publish pn pv =>
-                simp only [Option.some.injEq, Prod.mk.injEq] at hs₂
-                obtain ⟨rfl, rfl⟩ := hs₂
-                refine Or.inr ⟨0, by simp, List.getElem?_cons_zero, ?_⟩
-                intro k m w h0k hk1 _
-                simp only [List.length_cons, List.length_nil] at hk1
-                omega
-            | read =>
-                cases hs₂
-          · refine Or.inr ⟨j + 1, ?_, ?_, ?_⟩
-            · simp only [List.length_cons]
-              omega
-            · rw [List.getElem?_cons_succ]
-              exact hpub
-            · intro k m w hjk hklen hcon
-              obtain ⟨k', rfl⟩ : ∃ k', k = k' + 1 := ⟨k - 1, by omega⟩
-              rw [List.getElem?_cons_succ] at hcon
-              simp only [List.length_cons] at hklen
-              exact hnone k' m w (by omega) (by omega) hcon
+    (μs = [] ∧ s₀ = some (n, v)) ∨ μs.getLast? = some (.publish n v) := by
+  induction h with
+  | refl => exact Or.inl ⟨rfl, hs⟩
+  | @stepL s₁ mu s₂ tl s₃ htr _ ih =>
+      rcases ih hs with ⟨rfl, hs₂⟩ | hlast
+      · cases htr with
+        | publish pn pv =>
+            simp only [Option.some.injEq, Prod.mk.injEq] at hs₂
+            obtain ⟨rfl, rfl⟩ := hs₂
+            exact Or.inr rfl
+        | read => cases hs₂
+      · right
+        cases tl with
+        | nil => cases hlast
+        | cons hd tl' =>
+            rw [List.getLast?_cons_cons]
+            exact hlast
 
+/-- Every successful read is immediately preceded by the publication of the pair it
+returns: the slot is full before the read, and only a publication fills it. -/
+theorem publish_pred_of_read {α : Type u} (μs : List (Label α)) (s : Slot α)
+    (h : (registerLTS α).MTr none μs s)
+    (i : ℕ) (n : ℕ) (v : α) (hi : μs[i]? = some (.read (some (n, v)))) :
+    0 < i ∧ μs[i - 1]? = some (.publish n v) := by
+  have hil : i < μs.length := (List.getElem?_eq_some_iff.mp hi).1
+  have hsplit :
+      (registerLTS α).MTr none (List.take (i + 1) μs ++ List.drop (i + 1) μs) s := by
+    rw [List.take_append_drop]
+    exact h
+  obtain ⟨s_mid, hpre, _⟩ := mtr_split _ _ hsplit
+  have htake : List.take (i + 1) μs = List.take i μs ++ [Label.read (some (n, v))] := by
+    rw [List.take_add_one, hi, Option.toList_some]
+  rw [htake] at hpre
+  obtain ⟨s_pre, hpre', hsingle⟩ := mtr_split _ _ hpre
+  have hsp : s_pre = some (n, v) :=
+    ((registerLTS_tr_read_iff _ _ _).mp (mtr_singleton hsingle)).1.symm
+  rcases getLast_publish_of_slot_some (List.take i μs) none hpre' hsp with
+    ⟨_, hcon⟩ | hlast
+  · cases hcon
+  · have hlen : (List.take i μs).length = i := by
+      rw [List.length_take]
+      omega
+    have hpos : 0 < i := by
+      rcases Nat.eq_zero_or_pos i with h0 | h0
+      · subst h0
+        cases hlast
+      · exact h0
+    refine ⟨hpos, ?_⟩
+    rw [List.getLast?_eq_getElem?, hlen, List.getElem?_take_of_lt (by omega)] at hlast
+    exact hlast
+
+/-- Every successful read at index `i` returns the pair of the latest publication before
+`i`: that publication is at some `j < i`, and no publication lies strictly between. -/
 theorem exists_publish_index_of_read_mem {α : Type u} (μs : List (Label α)) (s : Slot α)
     (h : (registerLTS α).MTr none μs s)
     (i : ℕ) (n : ℕ) (v : α) (hi : μs[i]? = some (.read (some (n, v)))) :
     ∃ j, j < i ∧ μs[j]? = some (.publish n v) ∧
       ∀ k m w, j < k → k < i → μs[k]? ≠ some (.publish m w) := by
-  have hsplit :
-      (registerLTS α).MTr none (List.take (i + 1) μs ++ List.drop (i + 1) μs) s := by
-    rw [List.take_append_drop]
-    exact h
-  obtain ⟨s_mid, hpre, hsuf⟩ := mtr_split _ _ hsplit
-  have htake : List.take (i + 1) μs = List.take i μs ++ [Label.read (some (n, v))] := by
-    rw [List.take_add_one, hi, Option.toList_some]
-  rw [htake] at hpre
-  obtain ⟨s_pre, hpre', hsingle⟩ := mtr_split _ _ hpre
-  have htr := mtr_singleton hsingle
-  have hr := (registerLTS_tr_read_iff _ _ _).mp htr
-  have hsp : s_pre = some (n, v) := hr.1.symm
-  rcases last_publish_of_slot_some (List.take i μs) none hpre' hsp with
-    ⟨htake_nil, _⟩ | ⟨j, hj, hpub, hnone⟩
-  · rw [htake_nil] at hpre'
-    cases hpre'
-    cases hsp
-  · have hji : j < i := by
-      rw [List.length_take] at hj
-      omega
-    refine ⟨j, hji, ?_, ?_⟩
-    · rw [← List.getElem?_take_of_lt hji]
-      exact hpub
-    · intro k m w hjk hki hcon
-      have hkl : ¬ μs.length ≤ k := fun hle => by
-        rw [List.getElem?_eq_none hle] at hcon
-        cases hcon
-      have hklen : k < (List.take i μs).length := by
-        rw [List.length_take]
-        omega
-      rw [← List.getElem?_take_of_lt hki] at hcon
-      exact hnone k m w hjk hklen hcon
+  obtain ⟨hpos, hpub⟩ := publish_pred_of_read μs s h i n v hi
+  refine ⟨i - 1, by omega, hpub, ?_⟩
+  intro k m w hjk hki
+  omega
+
+/-- **Causal read-to-publish map.** On every finite trace from the empty slot, with any
+publication IDs (repeated or decreasing too), there is a map `g` on trace indices that sends
+each successful read at `i` to the publication it returns: `g i < i`, the event at `g i`
+publishes exactly the returned `(id, value)` pair, and no publication lies strictly between
+`g i` and `i`. The map is injective on successful reads, so distinct reads never share a
+publication. -/
+theorem exists_injective_causal_read_to_publish {α : Type u} (μs : List (Label α))
+    (s : Slot α) (h : (registerLTS α).MTr none μs s) :
+    ∃ g : ℕ → ℕ,
+      (∀ i n v, μs[i]? = some (.read (some (n, v))) →
+        g i < i ∧ μs[g i]? = some (.publish n v) ∧
+          ∀ k m w, g i < k → k < i → μs[k]? ≠ some (.publish m w)) ∧
+      ∀ (i₁ i₂ : ℕ) (p₁ p₂ : ℕ × α), μs[i₁]? = some (.read (some p₁)) →
+        μs[i₂]? = some (.read (some p₂)) → g i₁ = g i₂ → i₁ = i₂ := by
+  refine ⟨fun i => i - 1, ?_, ?_⟩
+  · intro i n v hi
+    dsimp only
+    obtain ⟨hpos, hpub⟩ := publish_pred_of_read μs s h i n v hi
+    refine ⟨by omega, hpub, ?_⟩
+    intro k m w hjk hki
+    omega
+  · rintro i₁ i₂ ⟨n₁, v₁⟩ ⟨n₂, v₂⟩ h₁ h₂ hg
+    have := (publish_pred_of_read μs s h i₁ n₁ v₁ h₁).1
+    have := (publish_pred_of_read μs s h i₂ n₂ v₂ h₂).1
+    simp only at hg
+    omega
 
 /-- No fabricated values: every successful read returns an `(id, value)` pair that
 occurs as a publication somewhere in the trace. For the ordered form, with the
