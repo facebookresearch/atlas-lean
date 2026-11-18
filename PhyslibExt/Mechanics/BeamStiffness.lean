@@ -10,7 +10,14 @@ module
 public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.Basic.Real.Basic
+public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
+public import PhyslibExt.Mechanics.HermiteConsistentLoads
+import Mathlib.Analysis.Calculus.IteratedDeriv.Lemmas
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.FunProp
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
@@ -36,7 +43,11 @@ semidefiniteness for `EI > 0`, `L > 0` and identifies the kernel
 with the rigid-motion span. Combining this bending block with
 the two-node axial block gives the six-DOF local frame matrix in
 `(u1, v1, θ1, u2, v2, θ2)` order; axial and bending energies
-add, and its kernel is the three planar rigid modes.
+add, and its kernel is the three planar rigid modes. For a
+quartic deflection field satisfying `EI * iteratedDeriv 4 y = w`,
+the conjugate end-force vector is `K` applied to the end data
+minus the uniform consistent load vector, whose entries are the
+Hermite consistent-load integrals.
 
 ## ii. Key results
 
@@ -58,11 +69,16 @@ add, and its kernel is the three planar rigid modes.
 - `Mechanics.EulerBernoulli.frameStiffness_posSemidef` and
   `Mechanics.EulerBernoulli.frameStiffness_mulVec_eq_zero_iff`:
   frame positivity and the three planar rigid modes.
+- `Mechanics.EulerBernoulli.uniformLoadVector_entries_hermite`:
+  the load-vector entries as Hermite consistent-load integrals.
+- `Mechanics.EulerBernoulli.quartic_end_force_identity`: the
+  uniform-load quartic end-force identity.
 
 ## iii. Table of contents
 
 - A. The stiffness matrix and its energy
 - B. Six-DOF local frame block
+- C. Uniform-load end forces
 
 ## iv. References
 
@@ -77,7 +93,7 @@ add, and its kernel is the three planar rigid modes.
 
 @[expose] public section
 
-open Matrix
+open Matrix intervalIntegral
 
 /-! ## A. The stiffness matrix and its energy -/
 namespace Mechanics.EulerBernoulli
@@ -415,4 +431,128 @@ theorem frameStiffness_mulVec_eq_zero_iff {EA EI L : ℝ}
         Pi.smul_apply, smul_eq_mul, Pi.zero_apply] <;>
       field_simp <;>
       ring
+/-! ## C. Uniform-load end forces -/
+
+/-- Consistent load vector for constant load `w` on the beam
+element, in the nodal order `(v1, θ1, v2, θ2)`:
+`(w * L / 2, w * L^2 / 12, w * L / 2, -w * L^2 / 12)`. -/
+noncomputable def uniformLoadVector (w L : ℝ) : Fin 4 → ℝ :=
+  ![w * L / 2, w * L ^ 2 / 12, w * L / 2, -w * L ^ 2 / 12]
+
+/-- The four entries of `uniformLoadVector` are the Hermite
+consistent-load integrals for the unit end-data Hermite shape
+functions, in the same interleaved nodal order
+`(v1, θ1, v2, θ2)`. -/
+lemma uniformLoadVector_entries_hermite {w L : ℝ} (hL : L ≠ 0) :
+    (∫ x in (0 : ℝ)..L, w * HermiteCubic.hermite L 1 0 0 0 x
+      = uniformLoadVector w L 0)
+    ∧ (∫ x in (0 : ℝ)..L, w * HermiteCubic.hermite L 0 1 0 0 x
+      = uniformLoadVector w L 1)
+    ∧ (∫ x in (0 : ℝ)..L, w * HermiteCubic.hermite L 0 0 1 0 x
+      = uniformLoadVector w L 2)
+    ∧ (∫ x in (0 : ℝ)..L, w * HermiteCubic.hermite L 0 0 0 1 x
+      = uniformLoadVector w L 3) := by
+  have h := HermiteCubic.hermite_consistent_loads_hermite hL (w := w)
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · simpa [uniformLoadVector] using h.1
+  · simpa [uniformLoadVector] using h.2.1
+  · simpa [uniformLoadVector] using h.2.2.1
+  · simpa [uniformLoadVector] using h.2.2.2
+
+/-- End data `(y(0), y'(0), y(L), y'(L))` of a deflection field
+`y` on the element `[0, L]`. -/
+noncomputable def beamEndData (L : ℝ) (y : ℝ → ℝ) : Fin 4 → ℝ :=
+  ![y 0, iteratedDeriv 1 y 0, y L, iteratedDeriv 1 y L]
+
+/-- Conjugate end-force vector of a deflection field `y`, in
+the nodal order `(v1, θ1, v2, θ2)`, for the sign conventions
+`M = -EI * y''` and `V = M' = -EI * y'''`:
+`(EI * y'''(0), -EI * y''(0), -EI * y'''(L), EI * y''(L))`,
+i.e. `(-V(0), M(0), V(L), -M(L))`. -/
+noncomputable def beamEndForces (EI L : ℝ) (y : ℝ → ℝ) :
+    Fin 4 → ℝ :=
+  ![EI * iteratedDeriv 3 y 0, -EI * iteratedDeriv 2 y 0,
+    -EI * iteratedDeriv 3 y L, EI * iteratedDeriv 2 y L]
+
+/-- Uniform-load quartic end-force identity.
+
+For a quartic deflection field
+`y(x) = a + b*x + c*x^2 + d*x^3 + e*x^4` satisfying
+`EI * y'''' = w` on the element `[0, L]` (`EI > 0`, `L > 0`),
+the conjugate end-force vector is the stiffness action on the
+end data minus the uniform consistent load vector. -/
+theorem quartic_end_force_identity {EI L w : ℝ}
+    (hEI : 0 < EI) (hL : 0 < L) {y : ℝ → ℝ}
+    {a b c d e : ℝ}
+    (hy : ∀ x : ℝ,
+      y x = a + b * x + c * x ^ 2 + d * x ^ 3 + e * x ^ 4)
+    (hload : ∀ x ∈ Set.Icc 0 L,
+      EI * iteratedDeriv 4 y x = w) :
+    beamEndForces EI L y
+      = beamStiffness EI L *ᵥ beamEndData L y
+        - uniformLoadVector w L := by
+  have hyfun : y = fun x => a + b * x ^ 1 + c * x ^ 2 + d * x ^ 3 + e * x ^ 4 := by
+    funext x
+    simp only [hy x, pow_one]
+  have d1 : ∀ x : ℝ, iteratedDeriv 1 y x
+      = b + 2 * c * x + 3 * d * x ^ 2 + 4 * e * x ^ 3 := by
+    intro x
+    rw [hyfun]
+    simp (discharger := fun_prop) only [iteratedDeriv_fun_add, iteratedDeriv_const_mul_field,
+      iteratedDeriv_pow, iteratedDeriv_const]
+    simp only [show Nat.descFactorial 1 1 = 1 from by decide,
+      show Nat.descFactorial 2 1 = 2 from by decide,
+      show Nat.descFactorial 3 1 = 3 from by decide,
+      show Nat.descFactorial 4 1 = 4 from by decide]
+    simp
+    ring
+  have d2 : ∀ x : ℝ, iteratedDeriv 2 y x
+      = 2 * c + 6 * d * x + 12 * e * x ^ 2 := by
+    intro x
+    rw [hyfun]
+    simp (discharger := fun_prop) only [iteratedDeriv_fun_add, iteratedDeriv_const_mul_field,
+      iteratedDeriv_pow, iteratedDeriv_const]
+    simp only [show Nat.descFactorial 1 2 = 0 from by decide,
+      show Nat.descFactorial 2 2 = 2 from by decide,
+      show Nat.descFactorial 3 2 = 6 from by decide,
+      show Nat.descFactorial 4 2 = 12 from by decide]
+    simp
+    ring
+  have d3 : ∀ x : ℝ, iteratedDeriv 3 y x = 6 * d + 24 * e * x := by
+    intro x
+    rw [hyfun]
+    simp (discharger := fun_prop) only [iteratedDeriv_fun_add, iteratedDeriv_const_mul_field,
+      iteratedDeriv_pow, iteratedDeriv_const]
+    simp only [show Nat.descFactorial 1 3 = 0 from by decide,
+      show Nat.descFactorial 2 3 = 0 from by decide,
+      show Nat.descFactorial 3 3 = 6 from by decide,
+      show Nat.descFactorial 4 3 = 24 from by decide]
+    simp
+    ring
+  have d4 : ∀ x : ℝ, iteratedDeriv 4 y x = 24 * e := by
+    intro x
+    rw [hyfun]
+    simp (discharger := fun_prop) only [iteratedDeriv_fun_add, iteratedDeriv_const_mul_field,
+      iteratedDeriv_pow, iteratedDeriv_const]
+    simp only [show Nat.descFactorial 1 4 = 0 from by decide,
+      show Nat.descFactorial 2 4 = 0 from by decide,
+      show Nat.descFactorial 3 4 = 0 from by decide,
+      show Nat.descFactorial 4 4 = 24 from by decide]
+    simp
+    ring
+  have hLne : L ≠ 0 := ne_of_gt hL
+  have hw : w = 24 * EI * e := by
+    have h := hload 0 ⟨le_rfl, hL.le⟩
+    rw [d4] at h
+    linarith
+  have e_y0 : y 0 = a := by rw [hy]; ring
+  have e_d10 : iteratedDeriv 1 y 0 = b := by rw [d1]; ring
+  have e_d20 : iteratedDeriv 2 y 0 = 2 * c := by rw [d2]; ring
+  have e_d30 : iteratedDeriv 3 y 0 = 6 * d := by rw [d3]; ring
+  ext i
+  fin_cases i <;>
+    simp [beamEndForces, beamEndData, beamStiffness, uniformLoadVector,
+      e_y0, hy L, d1 L, d2 L, d3 L, e_d10, e_d20, e_d30, hw] <;>
+    field_simp <;>
+    ring
 end Mechanics.EulerBernoulli
