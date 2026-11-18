@@ -9,10 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Languages.LambdaCalculus.DeBruijn.Stlc.Syntax
-public import CSLibExt.Languages.LambdaCalculus.DeBruijn.Stlc.Denotational
-public import CSLibExt.Languages.LambdaCalculus.DeBruijn.Stlc.Substitution
 public import CSLibExt.Computability.Languages.ContextFree.Probabilistic
-public import CSLibExt.Computability.Languages.ContextFree.Yields
 
 /-!
 # A frozen seven-rule compositional fragment
