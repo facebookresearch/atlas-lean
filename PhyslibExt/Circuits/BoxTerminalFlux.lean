@@ -192,19 +192,21 @@ theorem faceFlux_of_const_of_measure_ne_top (D : Fin 6 → Set (ℝ × ℝ))
   refine ⟨?_, ENNReal.ofReal_toReal hfin, faceFlux_of_const D density f k hD hk⟩
   exact (integrableOn_const hfin).congr_fun (fun p hp => (hk p hp).symm) hD
 
-/-- Uniform through-flow: with equal end-face areas and constant normal
-densities `-c` on face `0` and `c` on face `1` (uniform flow in the
-positive axis direction), the end-face outward currents are opposite.
-The face fluxes are read through `faceFlux_of_const`, so they are
-physical only for faces of finite area. -/
+/-- Uniform through-flow: with two end faces of equal finite area and
+constant normal densities `-c` on face `0` and `c` on face `1` (uniform
+flow in the positive axis direction), the end-face outward currents are
+opposite. Finite area makes both densities integrable and
+`volume.real` the face area, so both fluxes are genuine integrals. -/
 lemma uniformThroughFlow_endFlux_opposite (D : Fin 6 → Set (ℝ × ℝ))
     (density : Fin 6 → (ℝ × ℝ) → ℝ) (c : ℝ)
     (hD0 : MeasurableSet (D 0)) (hD1 : MeasurableSet (D 1))
+    (hfin0 : volume (D 0) ≠ ⊤) (hfin1 : volume (D 1) ≠ ⊤)
     (harea : volume.real (D 0) = volume.real (D 1))
     (hk0 : ∀ p ∈ D 0, density 0 p = -c) (hk1 : ∀ p ∈ D 1, density 1 p = c) :
     faceFlux D density 1 = -faceFlux D density 0 := by
-  rw [faceFlux_of_const D density 1 c hD1 hk1,
-    faceFlux_of_const D density 0 (-c) hD0 hk0, harea]
+  obtain ⟨-, -, h1⟩ := faceFlux_of_const_of_measure_ne_top D density 1 c hD1 hfin1 hk1
+  obtain ⟨-, -, h0⟩ := faceFlux_of_const_of_measure_ne_top D density 0 (-c) hD0 hfin0 hk0
+  rw [h1, h0, harea]
   ring
 
 /-- Through-flow witness: outward currents `(-3, 3, 0, 0, 0, 0)` on the

@@ -103,6 +103,15 @@ example : ∑ f : Fin 6, faceFlux squares throughDensity f = 0 := by
   have h := sum_terminalCurrent_eq_neg_chargeRate squares throughDensity _ 0 (fun _ => rfl) hcont
   rwa [neg_zero] at h
 
+/-- Uniform through-flow on the two finite end squares of area `1`, with
+densities `-3` and `3`: the end-face currents are opposite. -/
+example : faceFlux squares throughDensity 1 = -faceFlux squares throughDensity 0 :=
+  uniformThroughFlow_endFlux_opposite squares throughDensity 3 measurableSet_Icc
+    measurableSet_Icc (by rw [volume_squares]; exact ENNReal.one_ne_top)
+    (by rw [volume_squares]; exact ENNReal.one_ne_top)
+    (by rw [Measure.real, Measure.real, volume_squares, volume_squares])
+    (fun _ _ => rfl) (fun _ _ => rfl)
+
 /-! ### The unit cube in space -/
 
 /-- Each face of the unit cube has area `1`. -/
