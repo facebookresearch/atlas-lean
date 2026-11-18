@@ -14,9 +14,14 @@ public import PhyslibExt.Mechanics.LinearPressurePanel
 
 ## i. Overview
 
-For dry horizontal backfill with supplied positive active
-coefficient `K_a`, unit weight `γ`, and wall height `H`, the active
-pressure at depth `z` is `K_a * γ * z`. Specializing the linear
+For dry, cohesionless, homogeneous, horizontal and unsurcharged
+backfill against a smooth vertical wall at the active limit
+state, with supplied positive active coefficient `K_a`, unit
+weight `γ`, and wall height `H`, the Rankine active pressure at
+depth `z` is `K_a * γ * z`. (Cohesion, surcharge, wall friction
+or inclination, and non-active failure states all change the
+pressure law; the results below are conditional on the supplied
+linear law.) Specializing the linear
 pressure panel (`PhyslibExt.Mechanics.LinearPressurePanel`) to unit
 width over `[0, H]`: the resultant force per unit wall length is
 `K_a * γ * H ^ 2 / 2`, its first moment about the surface datum is

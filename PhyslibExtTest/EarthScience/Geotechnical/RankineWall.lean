@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.Mechanics.RankineWall
+import PhyslibExt.EarthScience.Geotechnical.RankineWall
 
 /-!
 # Rankine wall checks
 
-Focused checks for `PhyslibExt.Mechanics.RankineWall`: for
+Focused checks for `PhyslibExt.EarthScience.Geotechnical.RankineWall`: for
 `K_a = 1/3`, `γ = 18`, `H = 6`, the force per unit length is 108,
 the moment is 432, and the resultant height above the base is 2.
 
