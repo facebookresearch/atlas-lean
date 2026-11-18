@@ -34,9 +34,10 @@ unconstrained drift model, via the centred Gaussian vector with covariance the d
 centring. For frequencies bounded in `[0, 1]` there is the extra constraint `f2 ≤ 1`:
 the realizable matrices are then characterized through the closed convex hull of the
 unit `f2` points, and already `[[0, 4], [4, 0]]` separates the two notions. Every
-3-by-3 conditionally negative semidefinite matrix is realized by the three-population
-admixture model with nonnegative lengths. The 4-by-4 square is realizable but not a
-tree metric.
+symmetric zero-diagonal 3-by-3 conditionally negative semidefinite matrix whose
+largest off-diagonal entry is the `0 1` entry, as can be arranged by relabeling the
+populations, is realized by the three-population admixture model with nonnegative
+lengths. The 4-by-4 square is realizable but not a tree metric.
 
 ## Main results
 
@@ -45,8 +46,9 @@ tree metric.
 * `Admixture.isF2Realizable_iff`, `Admixture.isCondNegSemidef_iff_exists_sqDist`:
   Schoenberg's characterization.
 * `Admixture.isF2RealizableUnit_iff`, `Admixture.f2_le_one`: the `[0, 1]`-bounded case.
-* `Admixture.exists_driftModel_admix_three`: realization of 3-by-3 matrices by the
-  admixture model.
+* `Admixture.exists_driftModel_admix_three`: realization, after relabeling so the
+  `0 1` entry is largest, of symmetric zero-diagonal 3-by-3 matrices by the admixture
+  model.
 * `Admixture.not_isTreeMetric_squareF2`, `Admixture.not_isF2Realizable_nonCndF2`: the
   separating examples.
 
@@ -492,6 +494,11 @@ end Unit
 
 /-! ### Three populations: admixture-graph realization -/
 
+/-- The three-population admixture weights and lengths realizing a symmetric
+zero-diagonal conditionally negative semidefinite matrix in which `D 0 1` is at least
+the other two off-diagonal entries. For a general symmetric zero-diagonal matrix,
+relabel the populations so that the largest off-diagonal entry is in the `0 1`
+position before applying this theorem. -/
 theorem exists_admix_three {D : Fin 3 → Fin 3 → ℝ} (hsymm : ∀ i j, D i j = D j i)
     (hdiag : ∀ i, D i i = 0) (hcnd : IsCondNegSemidef D) (h02 : D 0 2 ≤ D 0 1)
     (h12 : D 1 2 ≤ D 0 1) :
@@ -531,6 +538,9 @@ theorem exists_admix_three {D : Fin 3 → Fin 3 → ℝ} (hsymm : ∀ i j, D i j
     fin_cases X <;> fin_cases Y <;>
       simp [admixWeight, starWeight, Fin.sum_univ_three, hdiag] <;> nlinarith
 
+/-- The drift-model form of `exists_admix_three`, under the same symmetry,
+zero-diagonal, conditional negative semidefiniteness, and `D 0 1`-dominance
+hypotheses. -/
 theorem exists_driftModel_admix_three {D : Fin 3 → Fin 3 → ℝ} (hsymm : ∀ i j, D i j = D j i)
     (hdiag : ∀ i, D i i = 0) (hcnd : IsCondNegSemidef D) (h02 : D 0 2 ≤ D 0 1)
     (h12 : D 1 2 ≤ D 0 1) :
