@@ -40,6 +40,8 @@ leaves every sampled datum unchanged.
 
 @[expose] public section
 
+/-! ## A. Proportional-column non-identification. -/
+
 namespace PhyslibExt.Physiology.RespiratoryCalibration
 
 /-- **Proportional design columns give the same calibration data.**
