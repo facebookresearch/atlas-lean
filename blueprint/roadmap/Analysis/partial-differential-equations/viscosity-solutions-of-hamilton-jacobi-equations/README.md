@@ -29,5 +29,5 @@ The pages below give the definitions, consistency with classical solutions, the 
 
 - Mean field games: the mean field game system couples a Hamilton–Jacobi–Bellman equation for the players' value with a Fokker–Planck equation for their distribution.
 - [Hyperbolic motions in the N-body problem](../../ordinary-differential-equations/hyperbolic-motions-in-the-n-body-problem/README.md): Maderna and Venturelli obtain these motions from viscosity solutions of the Hamilton–Jacobi equation of the N-body problem.
-- Fenchel–Moreau theorem: convex conjugation, which relates the Hamiltonian and the Lagrangian in the Hopf–Lax formula.
+- [Fenchel–Moreau theorem](../../convex-analysis-and-variations/fenchel-moreau-theorem/README.md): convex conjugation, which relates the Hamiltonian and the Lagrangian in the Hopf–Lax formula.
 - Linear quadratic regulator: discrete-time dynamic programming, whose continuous-time counterpart is the Hamilton–Jacobi–Bellman equation solved in the viscosity sense.

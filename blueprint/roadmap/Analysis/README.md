@@ -56,3 +56,7 @@ stabilisation for nonlinear ones.
 - [Control theory](control-theory/README.md)
 - [Rough paths and path signatures](rough-paths-and-path-signatures/README.md)
 - [Partial differential equations](partial-differential-equations/README.md)
+- [Convex analysis and calculus of variations](convex-analysis-and-variations/README.md)
+- [Fixed-point theory](fixed-point-theory/README.md)
+- [Numerical analysis](numerical-analysis/README.md)
+- [Approximation theory](approximation-theory/README.md)

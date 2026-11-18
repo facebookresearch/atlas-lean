@@ -24,4 +24,4 @@
 - [Positive-definite kernels](../positive-definite-kernels/README.md): Aronszajn's theorem, every positive-definite kernel is the kernel of a reproducing kernel Hilbert space.
 - Kernel principal component analysis: the same span argument shows that kernel principal axes are kernel expansions at the data.
 - Logistic regression and support vector machines: the support vector expansion, the representer theorem applied to the hinge loss of the soft-margin support vector machine with offset.
-- Kernel mean embeddings and maximum mean discrepancy: the reproducing property applied to expectations instead of sample values.
+- [Kernel mean embeddings and maximum mean discrepancy](../../../Probability/convergence-of-measures/kernel-mean-embeddings-and-maximum-mean-discrepa/README.md): the reproducing property applied to expectations instead of sample values.
