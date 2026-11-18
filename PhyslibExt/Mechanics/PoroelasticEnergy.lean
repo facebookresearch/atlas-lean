@@ -18,12 +18,18 @@ import Mathlib.Tactic.FieldSimp
 ## i. Overview
 
 For a finite poroelastic port network with displacement and
-pressure trajectories satisfying `K*u - Q*p = f` and
+pressure trajectories, in possibly different finite dimensions,
+satisfying `K*u - Q*p = f` and
 `C*p' + Q^T*u' + H*p = s` for constant symmetric storage
 matrices `K` and `C`, the stored quadratic energy
 `(1/2) * (u^T K u + p^T C p)` has derivative equal to the input
 power `u'^T f + p^T s` minus the dissipation `p^T H p`. The two
 coupling powers cancel because the ports carry opposite signs.
+This is the algebraic quadratic balance: reading the quadratic
+forms as stored energy and dissipation additionally requires
+the usual positivity (positive semidefinite storage and
+dissipation matrices), which the identity itself does not
+assume.
 
 ## ii. Key results
 
@@ -49,34 +55,68 @@ namespace Mechanics.Poroelastic
 
 /-! ## A. Port-energy identity -/
 
-theorem hasDerivAt_mulVec_coord {n : Type*} [Fintype n]
-    {M : Matrix n n ℝ} {x : ℝ → n → ℝ} {dx : n → ℝ} {t : ℝ}
-    (hx : ∀ j, HasDerivAt (fun τ => x τ j) (dx j) t)
-    (i : n) : HasDerivAt (fun τ => (M *ᵥ x τ) i) ((M *ᵥ dx) i) t := by
-  have h := HasDerivAt.fun_sum (u := Finset.univ)
-    (fun j _ => HasDerivAt.const_mul (M i j) (hx j))
-  simpa [Matrix.mulVec, dotProduct] using h
+private lemma hasDerivAt_dot_mulVec_self {m : Type*} [Fintype m] {A : Matrix m m ℝ}
+    (hA : A.IsSymm) {x dx : ℝ → m → ℝ}
+    (hx : ∀ i t, HasDerivAt (fun τ => x τ i) (dx t i) t) (t : ℝ) :
+    HasDerivAt (fun τ => (x τ) ⬝ᵥ (A *ᵥ x τ)) (2 * ((dx t) ⬝ᵥ (A *ᵥ x t))) t := by
+  have hrow : ∀ i, HasDerivAt (fun τ => (A *ᵥ x τ) i) ((A *ᵥ dx t) i) t := by
+    intro i
+    have hterm : ∀ j ∈ (Finset.univ : Finset m),
+        HasDerivAt (fun τ => A i j * x τ j) (A i j * dx t j) t :=
+      fun j _ => (hx j t).const_mul (A i j)
+    have hsum := HasDerivAt.sum hterm
+    have hfun : (∑ j ∈ (Finset.univ : Finset m), fun τ => A i j * x τ j)
+        = (fun τ => (A *ᵥ x τ) i) := by
+      funext τ
+      simp [Matrix.mulVec_apply, dotProduct, Finset.sum_apply]
+    have hval : (∑ j ∈ (Finset.univ : Finset m), A i j * dx t j)
+        = (A *ᵥ dx t) i := by
+      simp [Matrix.mulVec_apply, dotProduct]
+    rw [hfun, hval] at hsum
+    exact hsum
+  have hprod : ∀ i ∈ (Finset.univ : Finset m),
+      HasDerivAt (fun τ => x τ i * (A *ᵥ x τ) i)
+        (dx t i * (A *ᵥ x t) i + x t i * (A *ᵥ dx t) i) t := by
+    intro i _
+    exact (hx i t).mul (hrow i)
+  have hsum2 := HasDerivAt.sum hprod
+  have hfun2 : (∑ i ∈ (Finset.univ : Finset m), fun τ => x τ i * (A *ᵥ x τ) i)
+      = (fun τ => (x τ) ⬝ᵥ (A *ᵥ x τ)) := by
+    funext τ
+    simp [dotProduct, Finset.sum_apply]
+  have hsymm : (x t) ⬝ᵥ (A *ᵥ dx t) = (dx t) ⬝ᵥ (A *ᵥ x t) := by
+    rw [Matrix.dotProduct_mulVec, ← Matrix.mulVec_transpose, Matrix.IsSymm.eq hA,
+      dotProduct_comm]
+  have hval2 : (∑ i ∈ (Finset.univ : Finset m),
+        (dx t i * (A *ᵥ x t) i + x t i * (A *ᵥ dx t) i))
+      = 2 * ((dx t) ⬝ᵥ (A *ᵥ x t)) := by
+    rw [Finset.sum_add_distrib]
+    have e1 : (∑ i ∈ (Finset.univ : Finset m), dx t i * (A *ᵥ x t) i)
+        = (dx t) ⬝ᵥ (A *ᵥ x t) := by simp [dotProduct]
+    have e2 : (∑ i ∈ (Finset.univ : Finset m), x t i * (A *ᵥ dx t) i)
+        = (x t) ⬝ᵥ (A *ᵥ dx t) := by simp [dotProduct]
+    rw [e1, e2, hsymm]
+    ring
+  rw [hfun2, hval2] at hsum2
+  exact hsum2
 
-theorem hasDerivAt_dotProduct {n : Type*} [Fintype n]
-    {x : ℝ → n → ℝ} {dx : n → ℝ} {y : ℝ → n → ℝ} {dy : n → ℝ} {t : ℝ}
-    (hx : ∀ i, HasDerivAt (fun τ => x τ i) (dx i) t)
-    (hy : ∀ i, HasDerivAt (fun τ => y τ i) (dy i) t) :
-    HasDerivAt (fun τ => (x τ) ⬝ᵥ (y τ)) ((dx ⬝ᵥ y t) + (x t ⬝ᵥ dy)) t := by
-  have h := HasDerivAt.fun_sum (u := Finset.univ)
-    (fun i _ => (hx i).mul (hy i))
-  simpa [dotProduct, Finset.sum_add_distrib, Pi.mul_apply] using h
-
-/-- Finite poroelastic port-energy identity. Along differentiable
-trajectories `u` (displacement) and `p` (pressure) with supplied
-derivative functions satisfying, at every time,
-`K*u - Q*p = f` and `C*p' + Qᵀ*u' + H*p = s`, for constant
-symmetric storage matrices `K` and `C`, the stored quadratic
-energy `1/2 * (uᵀKu + pᵀCp)` has derivative equal to input power
-`u'ᵀf + pᵀs` minus dissipation `pᵀHp`. The opposite signs of the
-two coupling terms are essential. -/
-theorem poroelastic_port_energy {n : Type*} [Fintype n]
-    {K Q C H : Matrix n n ℝ} (hK : K.IsSymm) (hC : C.IsSymm)
-    {u p du dp f s : ℝ → n → ℝ}
+/-- Finite poroelastic port-energy identity, with distinct
+displacement and pressure index types. Along differentiable
+trajectories `u` (displacement, `m` coordinates) and `p`
+(pressure, `n` coordinates) with supplied derivative functions
+satisfying, at every time, `K*u - Q*p = f` and
+`C*p' + Qᵀ*u' + H*p = s`, for constant symmetric storage
+matrices `K` (`m × m`) and `C` (`n × n`) and rectangular
+coupling `Q` (`m × n`), the stored quadratic energy
+`1/2 * (uᵀKu + pᵀCp)` has derivative equal to input power
+`u'ᵀf + pᵀs` minus dissipation `pᵀHp`. The opposite signs of
+the two coupling terms are essential. Reading the quadratic
+forms as energy and dissipation uses the usual positivity of
+the physical model; the identity itself needs only symmetry. -/
+theorem poroelastic_port_energy {m n : Type*} [Fintype m]
+    [Fintype n] {K : Matrix m m ℝ} {Q : Matrix m n ℝ}
+    {C H : Matrix n n ℝ} (hK : K.IsSymm) (hC : C.IsSymm)
+    {u du f : ℝ → m → ℝ} {p dp s : ℝ → n → ℝ}
     (hu : ∀ i t, HasDerivAt (fun τ => u τ i) (du t i) t)
     (hp : ∀ i t, HasDerivAt (fun τ => p τ i) (dp t i) t)
     (hmech : ∀ t, K *ᵥ u t - Q *ᵥ p t = f t)
@@ -87,42 +127,25 @@ theorem poroelastic_port_energy {n : Type*} [Fintype n]
         * ((u τ) ⬝ᵥ (K *ᵥ u τ) + (p τ) ⬝ᵥ (C *ᵥ p τ)))
       ((du t) ⬝ᵥ (f t) + (p t) ⬝ᵥ (s t)
         - (p t) ⬝ᵥ (H *ᵥ p t)) t := by
-  have hKu : ∀ i, HasDerivAt (fun τ => (K *ᵥ u τ) i) ((K *ᵥ du t) i) t :=
-    fun i => hasDerivAt_mulVec_coord (fun j => hu j t) i
-  have hE1 : HasDerivAt (fun τ => (u τ) ⬝ᵥ (K *ᵥ u τ))
-      ((du t ⬝ᵥ (K *ᵥ u t)) + (u t ⬝ᵥ (K *ᵥ du t))) t :=
-    hasDerivAt_dotProduct (fun i => hu i t) hKu
-  have hCp : ∀ i, HasDerivAt (fun τ => (C *ᵥ p τ) i) ((C *ᵥ dp t) i) t :=
-    fun i => hasDerivAt_mulVec_coord (fun j => hp j t) i
-  have hE2 : HasDerivAt (fun τ => (p τ) ⬝ᵥ (C *ᵥ p τ))
-      ((dp t ⬝ᵥ (C *ᵥ p t)) + (p t ⬝ᵥ (C *ᵥ dp t))) t :=
-    hasDerivAt_dotProduct (fun i => hp i t) hCp
-  have hSum := hE1.add hE2
-  have hEnergy := HasDerivAt.const_mul (1 / 2) hSum
-  have hsymK : (u t) ⬝ᵥ (K *ᵥ du t) = (du t) ⬝ᵥ (K *ᵥ u t) :=
-    hK.dotProduct_mulVec_comm
-  have hsymC : (p t) ⬝ᵥ (C *ᵥ dp t) = (dp t) ⬝ᵥ (C *ᵥ p t) :=
-    hC.dotProduct_mulVec_comm
-  have hcancel : (du t) ⬝ᵥ (Q *ᵥ p t) = (p t) ⬝ᵥ (Qᵀ *ᵥ du t) :=
-    (Matrix.dotProduct_transpose_mulVec Q (p t) (du t)).symm
-  have hmech_dp : (du t) ⬝ᵥ (K *ᵥ u t) - (du t) ⬝ᵥ (Q *ᵥ p t)
-      = (du t) ⬝ᵥ f t := by
-    have hcongr : (du t) ⬝ᵥ (K *ᵥ u t - Q *ᵥ p t) = (du t) ⬝ᵥ f t := by
-      rw [hmech t]
-    rwa [dotProduct_sub] at hcongr
-  have hfluid_dp : (p t) ⬝ᵥ (C *ᵥ dp t) + (p t) ⬝ᵥ (Qᵀ *ᵥ du t)
-      + (p t) ⬝ᵥ (H *ᵥ p t) = (p t) ⬝ᵥ s t := by
-    have hcongr : (p t) ⬝ᵥ (C *ᵥ dp t + Qᵀ *ᵥ du t + H *ᵥ p t)
-        = (p t) ⬝ᵥ s t := by
-      rw [hfluid t]
-    rwa [dotProduct_add, dotProduct_add] at hcongr
-  have hval : (1 / 2 : ℝ) * (((du t ⬝ᵥ (K *ᵥ u t)) + (u t ⬝ᵥ (K *ᵥ du t))) +
-      ((dp t ⬝ᵥ (C *ᵥ p t)) + (p t ⬝ᵥ (C *ᵥ dp t)))) =
-      (du t ⬝ᵥ f t) + (p t ⬝ᵥ s t) - (p t ⬝ᵥ (H *ᵥ p t)) := by
-    rw [hsymK, hsymC]
-    linarith [hmech_dp, hfluid_dp, hcancel]
-  simp only [Pi.add_apply] at hEnergy
-  rw [hval] at hEnergy
-  exact hEnergy
+  have hKu := hasDerivAt_dot_mulVec_self hK hu t
+  have hCp := hasDerivAt_dot_mulVec_self hC hp t
+  have hE := (hKu.add hCp).const_mul (1 / 2 : ℝ)
+  have hcoup : (p t) ⬝ᵥ (Qᵀ *ᵥ du t) = (du t) ⬝ᵥ (Q *ᵥ p t) := by
+    rw [Matrix.dotProduct_mulVec, Matrix.vecMul_transpose, dotProduct_comm]
+  have hCsym : (p t) ⬝ᵥ (C *ᵥ dp t) = (dp t) ⬝ᵥ (C *ᵥ p t) := by
+    rw [Matrix.dotProduct_mulVec, ← Matrix.mulVec_transpose, Matrix.IsSymm.eq hC,
+      dotProduct_comm]
+  have hval : (1 / 2 : ℝ) * (2 * ((du t) ⬝ᵥ (K *ᵥ u t)) + 2 * ((dp t) ⬝ᵥ (C *ᵥ p t)))
+      = (du t) ⬝ᵥ (f t) + (p t) ⬝ᵥ (s t) - (p t) ⬝ᵥ (H *ᵥ p t) := by
+    have hf : (du t) ⬝ᵥ f t
+        = (du t) ⬝ᵥ (K *ᵥ u t) - (du t) ⬝ᵥ (Q *ᵥ p t) := by
+      rw [← hmech t, dotProduct_sub]
+    have hs : (p t) ⬝ᵥ s t
+        = (p t) ⬝ᵥ (C *ᵥ dp t) + (p t) ⬝ᵥ (Qᵀ *ᵥ du t) + (p t) ⬝ᵥ (H *ᵥ p t) := by
+      rw [← hfluid t, dotProduct_add, dotProduct_add]
+    rw [hf, hs, hCsym, hcoup]
+    ring
+  rw [hval] at hE
+  exact hE
 
 end Mechanics.Poroelastic
