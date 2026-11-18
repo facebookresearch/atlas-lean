@@ -398,6 +398,37 @@ def digest(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
 
 
+def docstring_digest(target) -> str:
+    """The digest of everything a page takes from its declaration's docstring: the statement and the sources.
+    A docstring without sources keeps the digest of its statement alone, as earlier baselines have it."""
+    if not target.citations:
+        return digest(target.description)
+    return digest(target.description + "\n\nSource: " + "\n".join(target.citations))
+
+
+def documented(key: str, index) -> bool | None:
+    """Whether the declaration behind a page key still has a docstring; None when it is gone or out of sight."""
+    if ":" in key:
+        module, name = key.rsplit(":", 1)
+        source = wiki.ROOT / Path(*module.split(".")).with_suffix(".lean")
+        if not source.is_file():
+            return None
+        lines = source.read_text().splitlines()
+        numbers = [number for number, line in enumerate(wiki.code_lines(lines))
+                   if (match := wiki.V2_DECLARATION.match(line)) and match.group("name").split(".")[-1] == name]
+    else:
+        declaration = index.declarations.get(key)
+        path, line = getattr(declaration, "path", None), getattr(declaration, "line", 0)
+        source = wiki.ROOT / path if path is not None else None
+        if source is None or not line or not source.is_file():
+            return None
+        lines = source.read_text().splitlines()
+        numbers = [line - 1]
+    if not numbers or numbers[0] >= len(lines):
+        return None
+    return wiki.docstring_before(lines, numbers[0]) is not None
+
+
 def page_text(target) -> tuple[str, dict[str, str]]:
     """A page from a declaration's docstring, as import wrote one, and its frontmatter facts."""
     target.depends, target.proof_depends = [], []
@@ -613,13 +644,16 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
         f"{key} ({path.relative_to(wiki.ROADMAP)})" for key, path in pages.items() if key not in current and not declared(key, index)
     )
     before = json.loads(STATE.read_text())["docstrings"] if STATE.is_file() else None
-    digests = {key: digest(target.description) for key, target in current.items()}
+    digests = {key: docstring_digest(target) for key, target in current.items()}
     if before is not None:
-        report["changed"] = sorted(
-            f"{key} ({pages[key].relative_to(wiki.ROADMAP)})"
-            for key, value in digests.items()
-            if key in before and before[key] != value and key in pages
-        )
+        changed = [f"{key} ({pages[key].relative_to(wiki.ROADMAP)})"
+                   for key, value in digests.items() if key in before and before[key] != value and key in pages]
+        # A page whose declaration lost its docstring keeps its text: it is reported, and keeps its baseline entry,
+        # so that it is reported again until its docstring returns or the page goes.
+        removed = [key for key in pages if key in before and key not in current and documented(key, index) is False]
+        changed += [f"{key} ({pages[key].relative_to(wiki.ROADMAP)}; docstring removed)" for key in removed]
+        digests.update({key: before[key] for key in removed})
+        report["changed"] = sorted(changed)
     STATE.write_text(json.dumps({"docstrings": dict(sorted(digests.items()))}, indent=0, ensure_ascii=False) + "\n")
     write_annotations(files)
     return report

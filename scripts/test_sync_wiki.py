@@ -615,6 +615,44 @@ class Declarations(Vault):
         self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "old.md").read_text(), "# Old\n\nWiki text.\n")
 
 
+class DocstringReport(Vault):
+    def setUp(self) -> None:
+        super().setUp()
+        self.page("Algebra/groups/README.md", "# Groups\n\n- [Old](old.md)\n")
+        self.page("Algebra/groups/old.md", "# Old\n\nWiki text.\n")
+        self.annotate([self.about("Algebra/groups/old.md", object=[{"location": {"declaration": "Ext.old"}}])])
+        self.source = self.tmp / "Ext" / "Groups.lean"
+        self.source.parent.mkdir(parents=True, exist_ok=True)
+        self.source.write_text("/-- First. -/\ntheorem old : True := trivial\n")
+        self.index = SimpleNamespace(declarations={"Ext.old": SimpleNamespace(path=Path("Ext/Groups.lean"), line=2)})
+
+    def test_a_citation_only_edit_is_reported(self) -> None:
+        target = declaration("Ext.old", "old", "Old", "First.")
+        target.citations = ["Book, p. 1."]
+        self.assertEqual(sync.apply_declarations([target], self.index)["changed"], [])
+        target.citations = ["Book, p. 2."]
+        self.assertEqual(sync.apply_declarations([target], self.index)["changed"], ["Ext.old (Algebra/groups/old.md)"])
+
+    def test_a_docstring_without_sources_keeps_its_digest(self) -> None:
+        self.assertEqual(sync.docstring_digest(declaration("Ext.old", "old", "Old", "First.")), sync.digest("First."))
+
+    def test_a_removed_docstring_is_reported_until_it_returns(self) -> None:
+        self.assertEqual(sync.apply_declarations([declaration("Ext.old", "old", "Old", "First.")], self.index)["changed"], [])
+        self.source.write_text("theorem old : True := trivial\n")
+        self.index.declarations["Ext.old"].line = 1
+        for _ in range(2):
+            self.assertEqual(sync.apply_declarations([], self.index)["changed"],
+                             ["Ext.old (Algebra/groups/old.md; docstring removed)"])
+        self.source.write_text("/-- First. -/\ntheorem old : True := trivial\n")
+        self.index.declarations["Ext.old"].line = 2
+        self.assertEqual(sync.apply_declarations([declaration("Ext.old", "old", "Old", "First.")], self.index)["changed"], [])
+
+    def test_a_documented_declaration_the_sync_leaves_out_is_not_reported(self) -> None:
+        # A page of a declaration the sync no longer pages (one private by module visibility, say) keeps quiet.
+        self.assertEqual(sync.apply_declarations([declaration("Ext.old", "old", "Old", "First.")], self.index)["changed"], [])
+        self.assertEqual(sync.apply_declarations([], self.index)["changed"], [])
+
+
 class Titles(unittest.TestCase):
     def test_openings_are_compared_without_line_breaks(self) -> None:
         with tempfile.TemporaryDirectory() as folder:
