@@ -205,4 +205,15 @@ theorem pin_test_shared_item_effects_correlate_people
     norm_num
   exact ⟨hcov, by rw [hcov]; norm_num⟩
 
+/-- The public error definitions at two items: the person mean is over
+both items, with `m = 2`. -/
+theorem test_delta_two_items {Ω : Type*} (X : Fin 1 → Fin 2 → Ω → ℝ)
+    (P : Fin 1 → Ω → ℝ) (I : Fin 2 → Ω → ℝ) (ω : Ω) :
+    Delta_p (0 : ℝ) X P 0 ω
+        = (1 / 2) * (X 0 0 ω + X 0 1 ω) - (0 + P 0 ω)
+      ∧ delta_p (0 : ℝ) X P I 0 ω
+        = (1 / 2) * (X 0 0 ω + X 0 1 ω)
+          - (0 + P 0 ω + (1 / 2) * (I 0 ω + I 1 ω)) := by
+  constructor <;> simp [Delta_p, delta_p, Fin.sum_univ_two]
+
 end MathlibExtTest.Probability.Statistics.Measurement

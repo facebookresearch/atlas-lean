@@ -35,7 +35,7 @@ namespace MathlibExt.Probability.Statistics.Measurement
 `X p i = grandMean + P p + I i + e p i` this equals the item mean plus
 the residual mean for `p`; that equality is a consequence of the
 model, not part of this definition. -/
-noncomputable def Delta_p {Ω : Type*} {Person Item : Type*} [Fintype Item]
+noncomputable def Delta_p {Ω : Type*} {Person Item : Type*} [Fintype Item] [Nonempty Item]
     (grandMean : ℝ) (X : Person → Item → Ω → ℝ) (P : Person → Ω → ℝ)
     (p : Person) : Ω → ℝ :=
   fun ω => (1 / (Fintype.card Item : ℝ)) * ∑ i, X p i ω
@@ -50,7 +50,7 @@ where `m = Fintype.card Item`.  The subtracted item mean is the mean
 over the same items that `p` saw.  Under the decomposition of `X`
 this equals the residual mean for `p`; that equality is a
 consequence of the model, not part of this definition. -/
-noncomputable def delta_p {Ω : Type*} {Person Item : Type*} [Fintype Item]
+noncomputable def delta_p {Ω : Type*} {Person Item : Type*} [Fintype Item] [Nonempty Item]
     (grandMean : ℝ) (X : Person → Item → Ω → ℝ) (P : Person → Ω → ℝ)
     (I : Item → Ω → ℝ) (p : Person) : Ω → ℝ :=
   fun ω => (1 / (Fintype.card Item : ℝ)) * ∑ i, X p i ω
