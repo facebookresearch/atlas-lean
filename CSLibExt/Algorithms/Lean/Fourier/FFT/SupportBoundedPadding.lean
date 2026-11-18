@@ -506,39 +506,16 @@ theorem padded_cyclic_eq_linear_two_dim (M K P Q N1 N2 : ℕ) [NeZero N1] [NeZer
     sub_val_eq_of_le N2 t2 n2 ht2N2 hn2N2 hle2
   rw [hval1, hval2]
 
-private theorem columnInvDFT_columnDFT (m n : ℕ) [NeZero m] [NeZero n]
-    (w : ZMod m × ZMod n → ℂ) : columnInvDFT (columnDFT w) = w := by
-  ext ⟨a, b⟩
-  simp only [columnInvDFT, columnDFT]
-  have h : (fun k : ZMod m => ZMod.dft (fun i : ZMod m => w (i, b)) k)
-      = ZMod.dft (fun i : ZMod m => w (i, b)) := rfl
-  rw [h, LinearEquiv.symm_apply_apply]
-
-private theorem rowInvDFT_rowDFT (m n : ℕ) [NeZero m] [NeZero n]
-    (v : ZMod m × ZMod n → ℂ) : rowInvDFT (rowDFT v) = v := by
-  ext ⟨a, b⟩
-  simp only [rowInvDFT, rowDFT]
-  have h : (fun l : ZMod n => ZMod.dft (fun j : ZMod n => v (a, j)) l)
-      = ZMod.dft (fun j : ZMod n => v (a, j)) := rfl
-  rw [h, LinearEquiv.symm_apply_apply]
-
-private theorem rectangularInvDFT_rowColumnDFT (m n : ℕ) [NeZero m] [NeZero n]
-    (z : ZMod m × ZMod n → ℂ) : rectangularInvDFT (rowColumnDFT z) = z := by
-  simp only [rectangularInvDFT, rowColumnDFT]
-  rw [columnInvDFT_columnDFT, rowInvDFT_rowDFT]
-
 /-- The rectangular cyclic convolution is the rectangular inverse
 transform of the pointwise product of the row-then-column transforms
-of the zero extensions. -/
+of the zero extensions. This is the rectangular convolution theorem
+`rectangularInvDFT_mul_rowColumnDFT` specialized to zero-extended
+arrays. -/
 theorem rectangular_cyclic_eq_inverse_transform_product (M K P Q N1 N2 : ℕ)
     [NeZero N1] [NeZero N2] (x : Fin M × Fin K → ℂ) (y : Fin P × Fin Q → ℂ) :
     circularConvolution2 (zeroExtend2 M K N1 N2 x) (zeroExtend2 P Q N1 N2 y) =
       rectangularInvDFT (fun p => rowColumnDFT (zeroExtend2 M K N1 N2 x) p *
-        rowColumnDFT (zeroExtend2 P Q N1 N2 y) p) := by
-  have hforward := rowColumnDFT_circularConvolution2
-    (zeroExtend2 M K N1 N2 x) (zeroExtend2 P Q N1 N2 y)
-  have h := congrArg rectangularInvDFT hforward
-  rw [rectangularInvDFT_rowColumnDFT] at h
-  exact h
+        rowColumnDFT (zeroExtend2 P Q N1 N2 y) p) :=
+  (rectangularInvDFT_mul_rowColumnDFT _ _).symm
 
 end CSLibExt.Algorithms.Lean.Fourier.FFT.SupportBoundedPadding
