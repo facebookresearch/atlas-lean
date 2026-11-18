@@ -214,6 +214,119 @@ class Command(unittest.TestCase):
             self.assertEqual(fi.main(["sync", str(path), "--repo", REPO]), 2)
 
 
+def comment_event(body="/claim", login="ada", association="CONTRIBUTOR", assignees=(), labels=("task:formalize",),
+                  state="open", pull_request=False, user_type="User") -> dict:
+    issue = {"number": 7, "state": state, "labels": [{"name": name} for name in labels],
+             "assignees": [{"login": name} for name in assignees]}
+    if pull_request:
+        issue["pull_request"] = {"url": "x"}
+    return {"action": "created", "issue": issue,
+            "comment": {"id": 99, "body": body, "author_association": association, "user": {"login": login, "type": user_type}}}
+
+
+class Claims(unittest.TestCase):
+    def test_claim_assigns_a_free_task(self) -> None:
+        self.assertEqual(fi.decide_claim(comment_event()), fi.ClaimDecision(add="ada", react=True))
+        self.assertEqual(fi.decide_claim(comment_event("/claim\n\nI'll take it.")), fi.ClaimDecision(add="ada", react=True))
+
+    def test_claim_of_a_held_task_says_who_holds_it(self) -> None:
+        decision = fi.decide_claim(comment_event(assignees=["bob"]))
+        self.assertIsNone(decision.add)
+        self.assertIn("already claimed by @bob", decision.reply)
+        self.assertIn("`/unclaim @bob`", decision.reply)
+        self.assertEqual(fi.decide_claim(comment_event(assignees=["ada"])), fi.ClaimDecision(react=True))
+
+    def test_claim_is_for_yourself_and_for_open_tasks(self) -> None:
+        self.assertIn("@bob can claim it", fi.decide_claim(comment_event("/claim @bob")).reply)
+        self.assertIn("closed", fi.decide_claim(comment_event(state="closed")).reply)
+
+    def test_unclaim_releases_your_own_task_and_maintainers_free_others(self) -> None:
+        self.assertEqual(fi.decide_claim(comment_event("/unclaim", assignees=["ada"])), fi.ClaimDecision(remove="ada", react=True))
+        self.assertIn("only a maintainer", fi.decide_claim(comment_event("/unclaim @bob", assignees=["bob"])).reply)
+        # Organization membership is not enough; the caller checks the repository role.
+        self.assertIn("only a maintainer",
+                      fi.decide_claim(comment_event("/unclaim @bob", association="MEMBER", assignees=["bob"])).reply)
+        self.assertEqual(fi.decide_claim(comment_event("/unclaim @Bob", assignees=["bob"]), maintainer=True),
+                         fi.ClaimDecision(remove="bob", react=True))
+        self.assertIn("does not hold", fi.decide_claim(comment_event("/unclaim")).reply)
+
+    def test_other_comments_and_issues_are_ignored(self) -> None:
+        for event in (comment_event("please /claim"), comment_event("/claimed"), comment_event("/claim now please"),
+                      comment_event(labels=("bug",)), comment_event(pull_request=True), comment_event(user_type="Bot")):
+            self.assertIsNone(fi.decide_claim(event), event["comment"]["body"])
+
+    def test_applying_a_claim_assigns_and_reacts_or_explains(self) -> None:
+        class Recorder:
+            repo = REPO
+
+            def __init__(self, assigned):
+                self.calls, self.assigned = [], assigned
+
+            def request(self, method, path, payload=None):
+                self.calls.append((method, path, payload))
+                if path.endswith("/assignees") and method == "POST":
+                    return {"assignees": [{"login": name} for name in self.assigned]}, {}
+                return {}, {}
+
+        event = comment_event()
+        github = Recorder(["ada"])
+        fi.apply_claim(fi.ClaimDecision(add="ada", react=True), event, github)
+        self.assertEqual([call[:2] for call in github.calls], [
+            ("POST", f"/repos/{REPO}/issues/7/assignees"), ("POST", f"/repos/{REPO}/issues/comments/99/reactions")])
+        github = Recorder([])
+        fi.apply_claim(fi.ClaimDecision(add="ada", react=True), event, github)
+        self.assertEqual(github.calls[-1][1], f"/repos/{REPO}/issues/7/comments")
+        self.assertIn("would not assign you", github.calls[-1][2]["body"])
+        github = Recorder([])
+        fi.apply_claim(fi.ClaimDecision(remove="ada", react=True), event, github)
+        self.assertEqual(github.calls[0][:2], ("DELETE", f"/repos/{REPO}/issues/7/assignees"))
+
+    def test_the_command_decides_on_the_current_issue_and_the_commenters_role(self) -> None:
+        class Current:
+            calls: list = []
+
+            def __init__(self, repo, token, api, pause):
+                self.repo = repo
+
+            def request(self, method, path, payload=None):
+                Current.calls.append((method, path))
+                if path.endswith("/issues/7"):
+                    # Since the event was captured, bob claimed the task.
+                    return comment_event(assignees=["bob"])["issue"], {}
+                if path.endswith("/collaborators/ada/permission"):
+                    return {"permission": "read", "role_name": "triage"}, {}
+                return {}, {}
+
+        with tempfile.TemporaryDirectory() as directory, patch.dict("os.environ", {"GITHUB_TOKEN": "t"}), \
+                patch.object(fi, "GitHub", Current):
+            path = Path(directory) / "event.json"
+            path.write_text(json.dumps(comment_event()))
+            self.assertEqual(fi.main(["claim", "--event", str(path), "--repo", REPO]), 0)
+            self.assertEqual(Current.calls[0], ("GET", f"/repos/{REPO}/issues/7"))
+            self.assertEqual(Current.calls[-1], ("POST", f"/repos/{REPO}/issues/7/comments"))  # already claimed by bob
+            Current.calls.clear()
+            path.write_text(json.dumps(comment_event("/unclaim @bob", association="MEMBER")))
+            fi.main(["claim", "--event", str(path), "--repo", REPO])
+            self.assertIn(("GET", f"/repos/{REPO}/collaborators/ada/permission"), Current.calls)
+            self.assertNotIn(("DELETE", f"/repos/{REPO}/issues/7/assignees"), Current.calls)
+
+    def test_the_workflow_runs_from_the_default_branch_with_only_issue_writes(self) -> None:
+        import yaml
+
+        workflow = yaml.load((Path(fi.__file__).resolve().parent.parent / ".github/workflows/claim.yml").read_text(),
+                             Loader=yaml.BaseLoader)
+        self.assertEqual(list(workflow["on"]), ["issue_comment"])
+        self.assertEqual(workflow["permissions"], {})
+        job = workflow["jobs"]["claim"]
+        self.assertEqual(job["permissions"], {"contents": "read", "issues": "write"})
+        self.assertIn("github.event.issue.pull_request == null", job["if"])
+        self.assertEqual(job["steps"][0]["with"]["persist-credentials"], "false")
+        self.assertNotIn("comment.body", job["steps"][-1]["run"])
+        for step in job["steps"]:
+            if "uses" in step:
+                self.assertRegex(step["uses"], r"@[0-9a-f]{40}\Z")
+
+
 @unittest.skipUnless(HAS_AUTOFORM, "needs Autoform, as the wiki build installs it")
 class Frontier(unittest.TestCase):
     """A built vault, as lean-facts leaves it: a proved definition, a stated theorem resting on it, a stated

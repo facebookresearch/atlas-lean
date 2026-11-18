@@ -71,7 +71,7 @@ what a good expansion contains. Folder placement follows rule 1.
 
 To expand a node:
 
-1. Take its `task:dag-work` issue (assign yourself).
+1. Comment `/claim` on its `task:dag-work` issue.
 2. Replace the node with child articles under the same folder. Write a
    low-level child as a Lean statement in `WantedExt` (`theorem_wanted` for a
    result, `def_wanted` for a definition) with a docstring. Its page then

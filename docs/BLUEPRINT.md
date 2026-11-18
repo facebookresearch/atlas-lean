@@ -129,9 +129,14 @@ is never reopened. A hidden `<!-- atlas-task: … -->` line ties each issue to
 its node. Writes are paced and capped at 250 per run, so the first fill opens
 over several `main` builds.
 
-The job is the only one with `issues: write`, runs only the standard-library
-sync script, and writes nothing until a maintainer sets the Actions variable
-`FRONTIER_ISSUES` to `true`. Until then each run reports its plan in the job
+A `/claim` comment on a task issue assigns the commenter when nobody holds
+the task, and `/unclaim` releases it; a maintainer may `/unclaim @someone`.
+`.github/workflows/claim.yml` answers these with the same script
+(`frontier_issues.py claim`), run from the default branch.
+
+The sync job is the only job of this workflow with `issues: write`, runs
+only the standard-library sync script, and writes nothing until a maintainer
+sets the Actions variable `FRONTIER_ISSUES` to `true`. Until then each run reports its plan in the job
 summary. To preview it locally:
 
 ```sh

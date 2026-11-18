@@ -30,16 +30,18 @@ gh issue list -R facebookresearch/atlas-lean --label task:formalize --search "no
   dependencies and the acceptance criteria.
 - Skip an issue with an open PR already linked.
 
-## 2. Take it
+## 2. Claim it
 
-Assign yourself before you start, and work one issue at a time unless you
-are asked to batch:
+Comment `/claim` on the issue before you start. A bot assigns you, or says
+who already holds the task. Work one issue at a time unless you are asked to
+batch:
 
 ```sh
-gh issue edit <number> -R facebookresearch/atlas-lean --add-assignee @me
+gh issue comment <number> -R facebookresearch/atlas-lean --body /claim
 ```
 
-If you stop without a PR, remove yourself so someone else can take it.
+If you stop without a PR, comment `/unclaim` so someone else can take it. A
+maintainer can free a stalled task with `/unclaim @someone`.
 
 ## 3. Do the work
 

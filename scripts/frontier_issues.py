@@ -3,6 +3,7 @@
 
     python scripts/frontier_issues.py frontier blueprint --output build/frontier.json
     python scripts/frontier_issues.py sync build/frontier.json --repo OWNER/NAME [--apply]
+    python scripts/frontier_issues.py claim --event "$GITHUB_EVENT_PATH" --repo OWNER/NAME
 
 `frontier` runs in the wiki build, after `sync_wiki.py lean-facts` has added
 the Lean's facts, and needs Autoform. It writes the tasks that can start now:
@@ -23,6 +24,10 @@ It never reopens an issue a person closed as not planned, and it keeps the
 labels people added while it owns the kind and `area:` labels. Without --apply it only reports the plan. Writes are
 paced and capped per run (--max-writes), so a large backlog opens over several
 runs within GitHub's limits on content creation.
+
+`claim` answers a `/claim` or `/unclaim` comment on a task issue: `/claim`
+assigns the commenter when nobody holds the task, and `/unclaim` releases it.
+A maintainer may `/unclaim @someone` to free a task held by someone else.
 """
 
 from __future__ import annotations
@@ -239,8 +244,8 @@ def issue_body(task: dict, repo: str) -> str:
         ]
     lines += [
         "",
-        f"How to work it: [atlas-solve-issue]({blob}{SKILL}). Assign yourself before you start, and say",
-        "`Closes #<this issue>` in the PR.",
+        f"How to work it: [atlas-solve-issue]({blob}{SKILL}). Comment `/claim` before you start (`/unclaim`",
+        "if you stop), and say `Closes #<this issue>` in the PR.",
         "",
         "<sub>Opened from the graph on `main` by `scripts/frontier_issues.py`. It is updated while the",
         "task is on the frontier and closed when the node is finished or leaves it.</sub>",
@@ -472,6 +477,100 @@ def summarize(plan: Plan, frontier: dict, applied: int | None, max_writes: int) 
 
 
 # ---------------------------------------------------------------------------
+# claim: /claim and /unclaim on task issues
+
+CLAIM = re.compile(r"\A/(claim|unclaim)(?:[ \t]+@([A-Za-z0-9](?:[A-Za-z0-9-]{0,38})))?[ \t]*\Z")
+# Repository roles that may free a task someone else holds (the collaborator permission API's role_name).
+MAINTAINER_ROLES = frozenset({"admin", "maintain", "write"})
+
+
+@dataclass(frozen=True)
+class ClaimDecision:
+    """What to do about one comment: assign or unassign someone, and what to say."""
+
+    add: str | None = None
+    remove: str | None = None
+    reply: str | None = None
+    react: bool = False
+
+
+def claim_command(event: dict) -> tuple[str, str | None] | None:
+    """The command a comment gives, as (verb, named login), or None when it is not a claim command."""
+    issue, comment = event.get("issue") or {}, event.get("comment") or {}
+    if not issue or not comment or issue.get("pull_request") or event.get("action", "created") != "created":
+        return None
+    if (comment.get("user") or {}).get("type") == "Bot":
+        return None
+    lines = (comment.get("body") or "").strip().splitlines()
+    command = CLAIM.match(lines[0].strip()) if lines else None
+    return (command.group(1), command.group(2)) if command else None
+
+
+def decide_claim(event: dict, maintainer: bool = False) -> ClaimDecision | None:
+    """The answer to a comment, or None when the comment is not a claim command on a task issue.
+
+    `event["issue"]` should be the issue as it is now, not as the event captured it, so that two claims
+    answered one after the other see each other; `maintainer` says whether the commenter may write to the
+    repository.
+    """
+    issue, comment = event.get("issue") or {}, event.get("comment") or {}
+    if not issue or not comment or issue.get("pull_request") or event.get("action", "created") != "created":
+        return None
+    if not {label.get("name") for label in issue.get("labels", [])} & set(KINDS.values()):
+        return None
+    user = comment.get("user") or {}
+    if user.get("type") == "Bot":
+        return None
+    lines = (comment.get("body") or "").strip().splitlines()
+    command = CLAIM.match(lines[0].strip()) if lines else None
+    if not command:
+        return None
+    verb, named = command.group(1), command.group(2)
+    login = user.get("login", "")
+    holders = [assignee.get("login") for assignee in issue.get("assignees", [])]
+
+    if verb == "claim":
+        if named and named.casefold() != login.casefold():
+            return ClaimDecision(reply=f"@{login} `/claim` takes the task for yourself; @{named} can claim it.")
+        if issue.get("state") != "open":
+            return ClaimDecision(reply=f"@{login} this task is closed, so it can't be claimed.")
+        if login in holders:
+            return ClaimDecision(react=True)
+        if holders:
+            others = ", ".join(f"@{holder}" for holder in holders)
+            return ClaimDecision(reply=(
+                f"@{login} this task is already claimed by {others}. Ask them first; if it has stalled, a "
+                f"maintainer can free it with `/unclaim @{holders[0]}`."
+            ))
+        return ClaimDecision(add=login, react=True)
+
+    target = named or login
+    if target.casefold() != login.casefold() and not maintainer:
+        return ClaimDecision(reply=f"@{login} only a maintainer can unclaim a task someone else holds.")
+    holder = next((holder for holder in holders if holder.casefold() == target.casefold()), None)
+    if holder is None:
+        return ClaimDecision(reply=f"@{login} @{target} does not hold this task.")
+    return ClaimDecision(remove=holder, react=True)
+
+
+def apply_claim(decision: ClaimDecision, event: dict, github: GitHub) -> None:
+    number, comment = event["issue"]["number"], event["comment"]
+    repo = github.repo
+    reply = decision.reply
+    if decision.add:
+        result = github.request("POST", f"/repos/{repo}/issues/{number}/assignees", {"assignees": [decision.add]})[0]
+        if decision.add not in [assignee.get("login") for assignee in (result or {}).get("assignees", [])]:
+            reply = (f"@{decision.add} GitHub would not assign you. It assigns people with access to the "
+                     "repository and people who have commented on the issue; ask a maintainer to assign you.")
+    if decision.remove:
+        github.request("DELETE", f"/repos/{repo}/issues/{number}/assignees", {"assignees": [decision.remove]})
+    if decision.react and reply is None:
+        github.request("POST", f"/repos/{repo}/issues/comments/{comment['id']}/reactions", {"content": "+1"})
+    if reply:
+        github.request("POST", f"/repos/{repo}/issues/{number}/comments", {"body": reply})
+
+
+# ---------------------------------------------------------------------------
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -488,6 +587,9 @@ def main(argv: list[str] | None = None) -> int:
     sync.add_argument("--max-writes", type=int, default=250)
     sync.add_argument("--pause", type=float, default=1.0, help="seconds between writes")
     sync.add_argument("--summary", type=Path, help="append a Markdown summary here (GITHUB_STEP_SUMMARY)")
+    claim = commands.add_parser("claim", help="answer a /claim or /unclaim comment on a task issue")
+    claim.add_argument("--event", type=Path, required=True, help="the issue_comment event (GITHUB_EVENT_PATH)")
+    claim.add_argument("--repo", required=True)
     args = parser.parse_args(argv)
 
     if args.command == "frontier":
@@ -504,8 +606,33 @@ def main(argv: list[str] | None = None) -> int:
     if not token:
         print("GITHUB_TOKEN is not set", file=sys.stderr)
         return 2
+    api = os.environ.get("GITHUB_API_URL", "https://api.github.com")
+    if args.command == "claim":
+        event = json.loads(args.event.read_text(encoding="utf-8"))
+        command = claim_command(event)
+        if command is None:
+            print("not a claim command")
+            return 0
+        github = GitHub(args.repo, token, api, pause=0)
+        # Decide on the issue as it is now: the event's copy predates any claim answered since. The workflow
+        # answers one comment per issue at a time, so this read and the write after it do not interleave.
+        number = event["issue"]["number"]
+        event = dict(event, issue=github.request("GET", f"/repos/{args.repo}/issues/{number}")[0])
+        maintainer = False
+        verb, named = command
+        login = event["comment"]["user"]["login"]
+        if verb == "unclaim" and named and named.casefold() != login.casefold():
+            permission = github.request("GET", f"/repos/{args.repo}/collaborators/{login}/permission")[0] or {}
+            maintainer = permission.get("role_name") in MAINTAINER_ROLES or permission.get("permission") in {"admin", "write"}
+        decision = decide_claim(event, maintainer)
+        if decision is None:
+            print("not a claim command on a task issue")
+            return 0
+        apply_claim(decision, event, github)
+        print(decision)
+        return 0
     frontier_data = json.loads(args.frontier.read_text(encoding="utf-8"))
-    github = GitHub(args.repo, token, os.environ.get("GITHUB_API_URL", "https://api.github.com"), args.pause)
+    github = GitHub(args.repo, token, api, args.pause)
     issues = {issue["number"]: issue for label in KINDS.values() for issue in github.issues(label)}
     plan = plan_sync(frontier_data, list(issues.values()), github.labels(), args.repo)
     applied = apply_plan(plan, github, args.repo, args.max_writes) if args.apply else None
