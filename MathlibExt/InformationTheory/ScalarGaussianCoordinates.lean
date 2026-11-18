@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Analysis.InnerProductSpace.LineIsometry
 public import MathlibExt.InformationTheory.ConditionalEntropy
 public import MathlibExt.InformationTheory.LinearGaussianJointLaw
 public import MathlibExt.InformationTheory.VectorGaussianKL
@@ -17,7 +18,8 @@ public import Mathlib.Probability.Distributions.Gaussian.Real
 /-!
 # Scalar Gaussian coordinates
 
-The coordinate map `x ↦ (x)` from `ℝ` to `EuclideanSpace ℝ (Fin 1)` identifies the scalar
+The coordinate map `x ↦ (x)` from `ℝ` to `EuclideanSpace ℝ (Fin 1)`, the bundled isometry
+`MathlibExt.Analysis.InnerProductSpace.LineIsometry.lineIsometry`, identifies the scalar
 additive Gaussian channel `X + Z`, with `Z ~ N(0, N)` independent of `X`, with the vector channel
 of `MathlibExt.InformationTheory.LinearGaussianJointLaw` at gain `[1]` and noise covariance `[N]`.
 
@@ -46,14 +48,14 @@ namespace MathlibExt.InformationTheory.ScalarGaussianCoordinates
 
 open MathlibExt.InformationTheory.LinearGaussianJointLaw
 open _root_.InformationTheory
+open MathlibExt.Analysis.InnerProductSpace.LineIsometry
 
-/-- The scalar coordinate embedding `x ↦ (x)` into the one-dimensional Euclidean space. -/
-noncomputable def scalarCoord (x : ℝ) : EuclideanSpace ℝ (Fin 1) :=
-  WithLp.toLp 2 (fun _ => x)
+/-- The scalar coordinate embedding `x ↦ (x)` into the one-dimensional Euclidean space: the
+coordinate action of the bundled isometry `lineIsometry`, whose API applies directly. -/
+noncomputable abbrev scalarCoord : ℝ → EuclideanSpace ℝ (Fin 1) := lineIsometry
 
-/-- The coordinate projection back to the real line. -/
-def scalarCoordInv (y : EuclideanSpace ℝ (Fin 1)) : ℝ :=
-  WithLp.ofLp y 0
+/-- The coordinate projection back to the real line: the inverse isometry `lineIsometry.symm`. -/
+noncomputable abbrev scalarCoordInv : EuclideanSpace ℝ (Fin 1) → ℝ := lineIsometry.symm
 
 /-- The scalar power bound: the lower integral of `ofReal (x^2)` under the law of `X` is at most
 `ofReal P`. -/
@@ -62,45 +64,32 @@ def scalarPowerBound {Ω : Type*} {mΩ : MeasurableSpace Ω} (μ : Measure Ω)
   ∫⁻ ω, ENNReal.ofReal ((X ω) ^ 2) ∂μ ≤ ENNReal.ofReal P
 
 /-- The coordinate projection inverts the embedding. -/
-theorem scalarCoordInv_scalarCoord (x : ℝ) : scalarCoordInv (scalarCoord x) = x := rfl
+theorem scalarCoordInv_scalarCoord (x : ℝ) : scalarCoordInv (scalarCoord x) = x :=
+  lineIsometry.symm_apply_apply x
 
 /-- The embedding inverts the coordinate projection. -/
 theorem scalarCoord_scalarCoordInv (y : EuclideanSpace ℝ (Fin 1)) :
-    scalarCoord (scalarCoordInv y) = y := by
-  have hfun : (fun _ : Fin 1 => WithLp.ofLp y 0) = WithLp.ofLp y := by
-    funext i
-    exact congrArg (fun j : Fin 1 => WithLp.ofLp y j) (Subsingleton.elim (0 : Fin 1) i)
-  calc scalarCoord (scalarCoordInv y)
-      = WithLp.toLp 2 (fun _ : Fin 1 => WithLp.ofLp y 0) := rfl
-    _ = WithLp.toLp 2 (WithLp.ofLp y) := by rw [hfun]
-    _ = y := rfl
+    scalarCoord (scalarCoordInv y) = y :=
+  lineIsometry.apply_symm_apply y
 
 /-- The embedding is measurable. -/
-theorem measurable_scalarCoord : Measurable scalarCoord := by
-  have h : Measurable (fun x : ℝ => (fun _ : Fin 1 => x)) :=
-    Measurable.of_eval fun _ => measurable_id
-  have h2 := (WithLp.measurable_toLp 2 (Fin 1 → ℝ)).comp h
-  unfold scalarCoord
-  exact h2
+theorem measurable_scalarCoord : Measurable scalarCoord :=
+  lineIsometry.continuous.measurable
 
 /-- The coordinate projection is measurable. -/
-theorem measurable_scalarCoordInv : Measurable scalarCoordInv := by
-  have h : Measurable (fun f : Fin 1 → ℝ => f 0) := measurable_pi_apply 0
-  have h2 := h.comp (WithLp.measurable_ofLp 2 (Fin 1 → ℝ))
-  unfold scalarCoordInv
-  exact h2
+theorem measurable_scalarCoordInv : Measurable scalarCoordInv :=
+  lineIsometry.symm.continuous.measurable
 
 /-- The embedding is linear: it preserves real linear combinations. -/
 theorem scalarCoord_linear (a b x y : ℝ) :
     scalarCoord (a * x + b * y) = a • scalarCoord x + b • scalarCoord y := by
-  simp only [scalarCoord, ← WithLp.toLp_add, ← WithLp.toLp_smul]
-  congr 1
+  rw [← smul_eq_mul a x, ← smul_eq_mul b y]
+  change lineIsometry (a • x + b • y) = a • lineIsometry x + b • lineIsometry y
+  rw [map_add, map_smul, map_smul]
 
 /-- The embedding preserves the norm: the Euclidean norm of `(x)` is `|x|`. -/
-theorem norm_scalarCoord (x : ℝ) : ‖scalarCoord x‖ = |x| := by
-  rw [EuclideanSpace.norm_eq]
-  simp only [scalarCoord, PiLp.toLp_apply, Fin.sum_univ_one]
-  rw [Real.norm_eq_abs, Real.sqrt_sq_eq_abs, abs_abs]
+theorem norm_scalarCoord (x : ℝ) : ‖scalarCoord x‖ = |x| :=
+  (lineIsometry.norm_map x).trans (Real.norm_eq_abs x)
 
 /-- The gain matrix `[1]` acts as the identity on embedded scalars. -/
 theorem toEuclideanLin_one_scalarCoord (x : ℝ) :
@@ -119,8 +108,7 @@ theorem scalarCoord_add (x z : ℝ) :
     scalarCoord (x + z) =
       toEuclideanLin (!![1] : Matrix (Fin 1) (Fin 1) ℝ) (scalarCoord x) + scalarCoord z := by
   rw [toEuclideanLin_one_scalarCoord]
-  simp only [scalarCoord, ← WithLp.toLp_add]
-  congr 1
+  exact map_add lineIsometry x z
 
 /-- Evaluation at the sole coordinate is measure-preserving from the one-dimensional
 multivariate Gaussian to the real Gaussian. Shared by the two Gaussian-law theorems. -/
@@ -141,12 +129,14 @@ private theorem measurePreserving_scalarCoordInv_multivariateGaussian_aux (m s :
     exact hs
   have h := ProbabilityTheory.measurePreserving_eval_multivariateGaussian
     (μ := scalarCoord m) (S := (!![s] : Matrix (Fin 1) (Fin 1) ℝ)) hS (i := (0 : Fin 1))
-  have hmean : (scalarCoord m) 0 = m := by simp only [scalarCoord, PiLp.toLp_apply]
+  have hmean : (scalarCoord m) 0 = m := lineIsometry_apply m 0
   have h00 : (!![s] : Matrix (Fin 1) (Fin 1) ℝ) 0 0 = s := rfl
   have hvar : ((!![s] : Matrix (Fin 1) (Fin 1) ℝ) 0 0).toNNReal = ⟨s, hs⟩ := by
     rw [h00]
     exact Real.toNNReal_of_nonneg hs
-  rw [hmean, hvar] at h
+  have heval : (fun y : EuclideanSpace ℝ (Fin 1) => y 0) = scalarCoordInv :=
+    funext fun y => (lineIsometry_symm_apply y).symm
+  rw [hmean, hvar, heval] at h
   exact h
 
 /-- **Gaussian law.** The embedding sends a real Gaussian of mean `m` and variance `0 ≤ s` to the
@@ -195,7 +185,7 @@ theorem condDistrib_scalarCoord_add {Ω : Type*} {mΩ : MeasurableSpace Ω}
   have hind' : IndepFun (fun ω => scalarCoord (X ω)) (fun ω => scalarCoord (Z ω)) μ := by
     rw [hcompX, hcompZ]
     exact hind.comp measurable_scalarCoord measurable_scalarCoord
-  have h0 : scalarCoord 0 = 0 := rfl
+  have h0 : scalarCoord 0 = 0 := map_zero lineIsometry
   have hZlaw' : μ.map (fun ω => scalarCoord (Z ω)) =
       multivariateGaussian 0 (!![N] : Matrix (Fin 1) (Fin 1) ℝ) := by
     rw [hcompZ, ← Measure.map_map measurable_scalarCoord hZ, hZlaw,
@@ -244,25 +234,6 @@ theorem scalarPowerBound_iff_powerConstraint {Ω : Type*} {mΩ : MeasurableSpace
   unfold PowerConstraint scalarPowerBound
   simp only [h]
 
-/-- The scalar coordinate embedding preserves distances. -/
-private theorem dist_scalarCoord (x y : ℝ) :
-    dist (scalarCoord x) (scalarCoord y) = dist x y := by
-  have hsub : scalarCoord x - scalarCoord y = scalarCoord (x - y) := by
-    simp only [scalarCoord, ← WithLp.toLp_sub]
-    congr 1
-  rw [dist_eq_norm, dist_eq_norm, hsub, norm_scalarCoord, Real.norm_eq_abs]
-
-/-- The scalar coordinate embedding is 1-Lipschitz. -/
-private theorem lipschitzWith_one_scalarCoord : LipschitzWith 1 scalarCoord := by
-  change ∀ x y : ℝ, edist (scalarCoord x) (scalarCoord y) ≤ ↑(1 : NNReal) * edist x y
-  intro x y
-  rw [edist_dist, edist_dist, dist_scalarCoord]
-  simp
-
-/-- The scalar coordinate embedding is 1-antilipschitz. -/
-private theorem antilipschitzWith_one_scalarCoord : AntilipschitzWith 1 scalarCoord :=
-  AntilipschitzWith.of_le_mul_dist fun x y => by rw [dist_scalarCoord]; simp
-
 /-- Finite second moment of the embedded input from the scalar power bound. -/
 theorem memLp_scalarCoord_of_scalarPowerBound {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {μ : Measure Ω} {X : Ω → ℝ} {P : ℝ} (hP : 0 ≤ P) (h : scalarPowerBound μ X P)
@@ -271,7 +242,7 @@ theorem memLp_scalarCoord_of_scalarPowerBound {Ω : Type*} {mΩ : MeasurableSpac
   have hPC : PowerConstraint μ (fun ω => scalarCoord (X ω)) P :=
     (scalarPowerBound_iff_powerConstraint μ X P).mpr ⟨hP, h⟩
   have hX' : AEStronglyMeasurable (fun ω => scalarCoord (X ω)) μ :=
-    lipschitzWith_one_scalarCoord.continuous.comp_aestronglyMeasurable hX
+    lineIsometry.continuous.comp_aestronglyMeasurable hX
   exact PowerConstraint.memLp_two hPC hX'
 
 /-- Finite second moment of the scalar input from the scalar power bound, with no finite-power
@@ -281,9 +252,9 @@ theorem memLp_of_scalarPowerBound {Ω : Type*} {mΩ : MeasurableSpace Ω}
     (hX : AEStronglyMeasurable X μ) : MemLp X 2 μ := by
   have hmem : MemLp (scalarCoord ∘ X) 2 μ :=
     memLp_scalarCoord_of_scalarPowerBound hP h hX
-  have h0 : scalarCoord 0 = 0 := rfl
+  have h0 : scalarCoord 0 = 0 := map_zero lineIsometry
   exact MeasureTheory.MemLp.of_comp_antilipschitzWith hmem
-    lipschitzWith_one_scalarCoord.uniformContinuous antilipschitzWith_one_scalarCoord h0
+    lineIsometry.isometry.uniformContinuous lineIsometry.antilipschitzWith h0
 
 /-- Divergence transport: embedding both laws does not change Kullback-Leibler divergence, by data
 processing in both directions along the invertible coordinate map. -/
@@ -317,7 +288,7 @@ theorem klDiv_map_scalarCoordPair (μ ν : Measure (ℝ × ℝ))
   have hc : (Prod.map scalarCoordInv scalarCoordInv) ∘ (Prod.map scalarCoord scalarCoord)
       = id := by
     funext ⟨a, b⟩
-    rfl
+    exact Prod.ext (scalarCoordInv_scalarCoord a) (scalarCoordInv_scalarCoord b)
   have hμ : (μ.map (Prod.map scalarCoord scalarCoord)).map
       (Prod.map scalarCoordInv scalarCoordInv) = μ := by
     rw [Measure.map_map hsi hsc, hc, Measure.map_id]
@@ -424,7 +395,7 @@ theorem scalarGaussianChannel_identification {Ω : Type*} {mΩ : MeasurableSpace
               (!![1] : Matrix (Fin 1) (Fin 1) ℝ)).measurable
             (multivariateGaussian 0 (!![N] : Matrix (Fin 1) (Fin 1) ℝ))) ∧
       (PowerConstraint μ (fun ω => scalarCoord (X ω)) P ↔ scalarPowerBound μ X P) := by
-  have h0 : scalarCoord 0 = 0 := rfl
+  have h0 : scalarCoord 0 = 0 := map_zero lineIsometry
   refine ⟨?_, ?_, ?_, ?_⟩
   · have h := map_scalarCoord_gaussianReal 0 N hN.le
     rwa [h0] at h

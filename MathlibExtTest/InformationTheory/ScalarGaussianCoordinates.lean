@@ -16,18 +16,31 @@ public import MathlibExt.InformationTheory.ReferenceOutputKL
 open MathlibExt.InformationTheory.ScalarGaussianCoordinates
 open MathlibExt.InformationTheory.LinearGaussianJointLaw MeasureTheory ProbabilityTheory
 open InformationTheory MathlibExt.InformationTheory.ReferenceOutputKL
+open MathlibExt.Analysis.InnerProductSpace.LineIsometry
 
 namespace MathlibExtTest.InformationTheory.ScalarGaussianCoordinates
 
 /-- The embedding at `2` has sole coordinate `2`, and the projection reads it back. -/
 example : scalarCoord 2 0 = 2 ∧ scalarCoordInv (scalarCoord 2) = 2 :=
-  ⟨rfl, scalarCoordInv_scalarCoord 2⟩
+  ⟨lineIsometry_apply 2 0, scalarCoordInv_scalarCoord 2⟩
+
+/-- The scalar coordinates are the bundled isometry `lineIsometry` and its inverse, which reads
+the sole coordinate. -/
+example (x : ℝ) (y : EuclideanSpace ℝ (Fin 1)) :
+    scalarCoord x = lineIsometry x ∧ scalarCoordInv y = y 0 :=
+  ⟨rfl, lineIsometry_symm_apply y⟩
+
+/-- The bundled isometry API applies to the scalar coordinates directly: distances are kept. -/
+example (x y : ℝ) : dist (scalarCoord x) (scalarCoord y) = dist x y :=
+  lineIsometry.dist_map x y
 
 /-- The noise law `N(0, 2)` embeds as the one-dimensional multivariate Gaussian `N(0, [2])`. -/
 example :
     (gaussianReal 0 ⟨2, by norm_num⟩).map scalarCoord =
-      multivariateGaussian 0 (!![2] : Matrix (Fin 1) (Fin 1) ℝ) :=
-  map_scalarCoord_gaussianReal 0 2 (by norm_num)
+      multivariateGaussian 0 (!![2] : Matrix (Fin 1) (Fin 1) ℝ) := by
+  have h0 : scalarCoord 0 = 0 := map_zero lineIsometry
+  have h := map_scalarCoord_gaussianReal 0 2 (by norm_num)
+  rwa [h0] at h
 
 /-- Embedding independent Gaussians `N(1, 2) ⊗ N(0, 3)` keeps their mutual information at `0`. -/
 example :
@@ -71,11 +84,9 @@ example :
     klDiv (gaussianReal 0 ⟨1, zero_lt_one.le⟩) (gaussianReal 0 ⟨2, zero_lt_two.le⟩) =
       ENNReal.ofReal ((Real.log 2 - 1 + 1 / 2) / 2) := by
   have hcoord : ∀ m : ℝ, scalarCoord m = WithLp.toLp 2 ![m] := fun m => by
-    simp only [scalarCoord]
-    congr 1
-    funext i
+    ext i
     fin_cases i
-    rfl
+    simp
   rw [scalarGaussian_klDiv_eq_vector 0 0 1 2 zero_lt_one zero_lt_two, hcoord,
     MathlibExt.InformationTheory.VectorGaussianKL.multivariateGaussianKLReal_fin_one]
   norm_num
