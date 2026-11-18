@@ -17,6 +17,8 @@ public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 public import Mathlib.Tactic.Ring
 public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Topology.Algebra.Order.Field
+public import MathlibExt.Biology.Dynamics.FeedForwardLoop
+public import MathlibExt.Biology.Biophysics.CompartmentKinetics
 public import MathlibExt.Biology.Biophysics.CompartmentKinetics.DecayExpansion
 
 /-!
@@ -157,5 +159,95 @@ theorem centralEqual_nonneg {F D ka t : ℝ} (hF : 0 ≤ F) (hD : 0 ≤ D)
   show 0 ≤ F * D * ka * t * Real.exp (-ka * t)
   exact MathlibExt.Biology.Biophysics.CompartmentKinetics.DecayExpansion.decay_equal_rate_nonneg
     hC hka ht
+
+/-- The depot amount as the canonical bolus amount. -/
+lemma depotAmount_eq_amount (D ka t : ℝ) :
+    depotAmount D ka t =
+      MathlibExt.Biology.Biophysics.CompartmentKinetics.amount ka 0 D t := by
+  rw [MathlibExt.Biology.Biophysics.CompartmentKinetics.amount_bolus]
+  rfl
+
+/-- The canonical central amount: the relaxation solution with
+elimination rate `k` and input `F * ka * Ag`, for all rates
+without a distinct-rate side condition. -/
+noncomputable def centralAmountCanonical (F D ka k t : ℝ) : ℝ :=
+  MathlibExt.Biology.Dynamics.FeedForwardLoop.relaxation k
+    (fun s => F * ka * depotAmount D ka s) 0 t
+
+/-- The canonical central amount solves the central equation. -/
+theorem hasDerivAt_centralAmountCanonical (F D ka k s : ℝ) :
+    HasDerivAt (fun t => centralAmountCanonical F D ka k t)
+      (F * ka * depotAmount D ka s - k * centralAmountCanonical F D ka k s) s := by
+  have hcont : Continuous (fun s : ℝ => depotAmount D ka s) := by
+    unfold depotAmount
+    exact continuous_const.mul
+      (Real.continuous_exp.comp (continuous_const.mul continuous_id))
+  have h := MathlibExt.Biology.Dynamics.FeedForwardLoop.hasDerivAt_relaxation
+    (α := k) (P := fun s => F * ka * depotAmount D ka s) (t := s) 0
+    (fun a b => (hcont.continuousOn).intervalIntegrable.const_mul _)
+    ((hcont.continuousAt (x := s)).const_mul _)
+  have h2 : centralAmountCanonical F D ka k =
+      MathlibExt.Biology.Dynamics.FeedForwardLoop.relaxation k
+        (fun s => F * ka * depotAmount D ka s) 0 := rfl
+  rw [h2]
+  exact h
+
+/-- The canonical central amount starts at zero. -/
+theorem centralAmountCanonical_zero (F D ka k : ℝ) :
+    centralAmountCanonical F D ka k 0 = 0 := by
+  unfold centralAmountCanonical MathlibExt.Biology.Dynamics.FeedForwardLoop.relaxation
+  simp [intervalIntegral.integral_same]
+
+/-- Solutions of the central equation from zero agree with the
+canonical amount: the exponential-factor difference has
+derivative zero. -/
+theorem centralAmountCanonical_eq_of_forall_hasDerivAt {F D ka k : ℝ} {y : ℝ → ℝ}
+    (hy : ∀ t, HasDerivAt y (F * ka * depotAmount D ka t - k * y t) t)
+    (hy0 : y 0 = 0) (t : ℝ) :
+    centralAmountCanonical F D ka k t = y t := by
+  have hdiff : ∀ s, HasDerivAt (fun u => centralAmountCanonical F D ka k u - y u)
+      (-k * (centralAmountCanonical F D ka k s - y s)) s := by
+    intro s
+    have h := (hasDerivAt_centralAmountCanonical F D ka k s).sub (hy s)
+    convert h using 1
+    ring
+  have hw : ∀ s, HasDerivAt (fun u => Real.exp (k * u) *
+      (centralAmountCanonical F D ka k u - y u)) 0 s := by
+    intro s
+    have hexp : HasDerivAt (fun u => Real.exp (k * u)) (k * Real.exp (k * s)) s := by
+      have h1 : HasDerivAt (fun u : ℝ => k * u) (k * 1) s :=
+        HasDerivAt.const_mul k (hasDerivAt_id s)
+      have h2 := HasDerivAt.exp h1
+      convert h2 using 1
+      ring
+    have h := hexp.mul (hdiff s)
+    convert h using 1
+    ring
+  have hconst : ∀ a b : ℝ, Real.exp (k * a) * (centralAmountCanonical F D ka k a - y a) =
+      Real.exp (k * b) * (centralAmountCanonical F D ka k b - y b) :=
+    is_const_of_deriv_eq_zero (fun s => (hw s).differentiableAt)
+      (fun s => (hw s).deriv)
+  have h0 := hconst t 0
+  rw [centralAmountCanonical_zero, hy0] at h0
+  simp only [sub_zero, mul_zero] at h0
+  have hsub : centralAmountCanonical F D ka k t - y t = 0 := by
+    rcases mul_eq_zero.mp h0 with he | hd
+    · exact absurd he (Real.exp_ne_zero _)
+    · exact hd
+  linarith [hsub]
+
+/-- **Distinct-rate formula.** The canonical central amount is
+the distinct-rate closed form when `ka ≠ k`. -/
+theorem centralAmountCanonical_eq_distinct {F D ka k : ℝ} (h : ka ≠ k) (t : ℝ) :
+    centralAmountCanonical F D ka k t = centralAmount F D ka k t :=
+  centralAmountCanonical_eq_of_forall_hasDerivAt (fun s => central_hasDerivAt_distinct h)
+    (central_zero F D ka k) t
+
+/-- **Equal-rate formula.** The canonical central amount is
+the equal-rate closed form when the rates agree. -/
+theorem centralAmountCanonical_eq_equal {F D ka : ℝ} (t : ℝ) :
+    centralAmountCanonical F D ka ka t = centralAmountEqual F D ka t :=
+  centralAmountCanonical_eq_of_forall_hasDerivAt (fun s => central_hasDerivAt_equal)
+    (by simp [centralAmountEqual]) t
 
 end MathlibExt.Biology.Biophysics.CompartmentKinetics.Absorption.Model
