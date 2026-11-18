@@ -59,11 +59,14 @@ example : (∫ x in (0 : ℝ)..3, (2 : ℝ) * HermiteCubic.hermite 3 1 0 0 0 x) 
 
 /-- Zero load gives zero entries throughout. -/
 example : (∫ x in (0 : ℝ)..3, (0 : ℝ) * (1 - 3 * (x / 3) ^ 2 + 2 * (x / 3) ^ 3)) = 0
+    ∧ (∫ x in (0 : ℝ)..3, (0 : ℝ) * (3 * ((x / 3) - 2 * (x / 3) ^ 2 + (x / 3) ^ 3))) = 0
     ∧ (∫ x in (0 : ℝ)..3, (0 : ℝ) * (3 * (x / 3) ^ 2 - 2 * (x / 3) ^ 3)) = 0
     ∧ (∫ x in (0 : ℝ)..3, (0 : ℝ) * (3 * (-(x / 3) ^ 2 + (x / 3) ^ 3))) = 0 := by
   have h := HermiteCubic.hermite_consistent_loads (w := 0) (L := 3) (by norm_num)
-  refine ⟨?_, ?_, ?_⟩
+  refine ⟨?_, ?_, ?_, ?_⟩
   · rw [h.1]
+    norm_num
+  · rw [h.2.1]
     norm_num
   · rw [h.2.2.1]
     norm_num
