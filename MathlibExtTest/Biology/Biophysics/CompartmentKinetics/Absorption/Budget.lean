@@ -17,8 +17,13 @@ namespace MathlibExtTest.Biology.Biophysics.CompartmentKinetics.Absorption.Budge
 open MathlibExt.Biology.Biophysics.CompartmentKinetics.Absorption.Budget
 
 /-- At `F = 1` only central elimination remains. -/
-example : deriv (fun t => depotAmount 2 3 t + centralAmount 1 2 3 1 t) 1 =
-    -1 * centralAmount 1 2 3 1 1 :=
+example : deriv (fun t => depotAmount 2 3 t + centralAmountDistinct 1 2 3 1 t) 1 =
+    -1 * centralAmountDistinct 1 2 3 1 1 :=
   budget_deriv_full (by norm_num)
+
+/-- Equal-rate budget derivative at concrete rates. -/
+example : deriv (fun t => depotAmount 2 3 t + centralAmountEqual 1 2 3 t) 1 =
+    -(1 - 1) * 3 * depotAmount 2 3 1 - 3 * centralAmountEqual 1 2 3 1 :=
+  budget_deriv_equal
 
 end MathlibExtTest.Biology.Biophysics.CompartmentKinetics.Absorption.Budget
