@@ -65,4 +65,38 @@ example (a b : ℕ) :
           .read (some (0, b))]).Pairwise (· < ·) :=
   readIds_not_pairwise_of_decreasing_publish a b
 
+/-- Read positions inject into publication positions on the
+decreasing-ID trace, where publication IDs are `[1, 0]`. -/
+example (a b : ℕ) :
+    ∃ f : Fin (readIds [Label.publish 1 a, .read (some (1, a)), .publish 0 b,
+          .read (some (0, b))]).length →
+        Fin (publishIds [Label.publish 1 a, .read (some (1, a)), .publish 0 b,
+          .read (some (0, b))]).length,
+      Function.Injective f ∧
+        ∀ k, (publishIds [Label.publish 1 a, .read (some (1, a)), .publish 0 b,
+            .read (some (0, b))])[f k] =
+          (readIds [Label.publish 1 a, .read (some (1, a)), .publish 0 b,
+            .read (some (0, b))])[k] :=
+  exists_injective_readIds_to_publishIds _ none
+    (readIds_not_pairwise_of_decreasing_publish a b).1
+
+/-- Read positions inject into publication positions when one ID
+is published twice: both reads return ID `0`, and the map sends
+them to distinct publications. -/
+example (a b : ℕ) :
+    ∃ f : Fin (readIds [Label.publish 0 a, .read (some (0, a)), .publish 0 b,
+          .read (some (0, b))]).length →
+        Fin (publishIds [Label.publish 0 a, .read (some (0, a)), .publish 0 b,
+          .read (some (0, b))]).length,
+      Function.Injective f ∧
+        ∀ k, (publishIds [Label.publish 0 a, .read (some (0, a)), .publish 0 b,
+            .read (some (0, b))])[f k] =
+          (readIds [Label.publish 0 a, .read (some (0, a)), .publish 0 b,
+            .read (some (0, b))])[k] :=
+  exists_injective_readIds_to_publishIds _ none
+    (Cslib.LTS.MTr.stepL (RegisterStep.publish _ _ _)
+      (Cslib.LTS.MTr.stepL (RegisterStep.read _)
+        (Cslib.LTS.MTr.stepL (RegisterStep.publish _ _ _)
+          (Cslib.LTS.MTr.stepL (RegisterStep.read _) Cslib.LTS.MTr.refl))))
+
 end CSLibExtTest.Foundations.Semantics.Peripheral.OverwriteSampleRegister

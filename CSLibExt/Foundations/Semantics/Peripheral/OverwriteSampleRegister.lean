@@ -10,6 +10,7 @@ module
 
 public import Cslib.Foundations.Semantics.LTS.Basic
 public import Mathlib.Data.List.Sublists
+public import Mathlib.Data.List.NodupEquivFin
 public import Mathlib.Data.Fintype.Card
 
 /-!
@@ -152,11 +153,6 @@ private theorem mtr_slot_sublist {α : Type u} (s₀ : Slot α) (μs : List (Lab
   | refl => exact List.nil_sublist _
   | stepL htr hrest ih => exact mtr_slot_sublist_step _ _ _ _ htr ih
 
-/-- Strictly increasing lists have no duplicates. -/
-private theorem nodup_of_pairwise_lt {l : List ℕ} (h : l.Pairwise (· < ·)) : l.Nodup := by
-  rw [List.nodup_iff_pairwise_ne]
-  exact h.imp (fun hab => ne_of_lt hab)
-
 /-- Split a multistep transition over an appended label list. -/
 private theorem mtr_split {α : Type u} (l₁ : List (Label α)) (s₀ : Slot α)
     {l₂ : List (Label α)} {s : Slot α} (h : (registerLTS α).MTr s₀ (l₁ ++ l₂) s) :
@@ -237,30 +233,17 @@ theorem readIds_sublist_publishIds {α : Type u} (μs : List (Label α)) (s : Sl
   exact hsub
 
 /-- Successful read IDs inject into publication IDs: an injective map from read positions
-to publication positions preserving the ID. -/
+to publication positions preserving the ID. Holds for every finite trace from the empty
+slot, with repeated or decreasing publication IDs too; the map comes from the sublist
+witness of `readIds_sublist_publishIds`. -/
 theorem exists_injective_readIds_to_publishIds {α : Type u} (μs : List (Label α))
-    (s : Slot α) (h : (registerLTS α).MTr none μs s)
-    (hinc : (publishIds μs).Pairwise (· < ·)) :
+    (s : Slot α) (h : (registerLTS α).MTr none μs s) :
     ∃ f : Fin (readIds μs).length → Fin (publishIds μs).length,
       Function.Injective f ∧ ∀ k, (publishIds μs)[f k] = (readIds μs)[k] := by
-  have hsub : (readIds μs).Sublist (publishIds μs) := readIds_sublist_publishIds μs s h
-  have hnod : (readIds μs).Nodup :=
-    nodup_of_pairwise_lt (List.Pairwise.sublist hsub hinc)
-  have hmem : ∀ k : Fin (readIds μs).length, (readIds μs)[k] ∈ publishIds μs := by
-    intro k
-    exact hsub.subset (List.getElem_mem k.isLt)
-  choose g hg hval using fun k => List.mem_iff_getElem.mp (hmem k)
-  refine ⟨fun k => ⟨g k, hg k⟩, ?_, ?_⟩
-  · intro k₁ k₂ hkk
-    have c :=
-      congrArg (fun j : Fin (publishIds μs).length => (publishIds μs)[j]) hkk
-    have cNat : (publishIds μs)[g k₁]'(hg k₁) = (publishIds μs)[g k₂]'(hg k₂) := c
-    rw [hval k₁, hval k₂] at cNat
-    have cNat2 : (readIds μs)[k₁.val]'(k₁.isLt) = (readIds μs)[k₂.val]'(k₂.isLt) := cNat
-    have hv : k₁.val = k₂.val := (hnod.getElem_inj_iff).mp cNat2
-    exact Fin.ext hv
-  · intro k
-    exact hval k
+  obtain ⟨f, hf⟩ :=
+    List.sublist_iff_exists_fin_orderEmbedding_get_eq.mp (readIds_sublist_publishIds μs s h)
+  refine ⟨f, f.injective, fun k => ?_⟩
+  simpa only [List.get_eq_getElem, Fin.getElem_fin] using (hf k).symm
 
 /-- Successful read IDs are strictly increasing. -/
 theorem readIds_pairwise_lt {α : Type u} (μs : List (Label α)) (s : Slot α)
@@ -329,7 +312,7 @@ theorem unreturned_pending_or_overwritten {α : Type u} (μs : List (Label α)) 
 /-- **Overwrite-newest sample register, trace correctness.** For every finite trace from
 the empty slot with strictly increasing publication IDs: successful read IDs inject into
 publication IDs and are strictly increasing, and each unreturned publication is either
-still pending or was overwritten. -/
+still pending or was overwritten. Only the monotonicity conjunct uses `hinc`. -/
 theorem trace_correct {α : Type u} (μs : List (Label α)) (s : Slot α)
     (h : (registerLTS α).MTr none μs s) (hinc : (publishIds μs).Pairwise (· < ·)) :
     (∃ f : Fin (readIds μs).length → Fin (publishIds μs).length,
@@ -339,7 +322,7 @@ theorem trace_correct {α : Type u} (μs : List (Label α)) (s : Slot α)
         s = some (n, v) ∨
           ∃ j, i < j ∧ (∃ m w, μs[j]? = some (.publish m w)) ∧
             ∀ k r, i < k → k < j → μs[k]? ≠ some (.read r) := by
-  exact ⟨exists_injective_readIds_to_publishIds μs s h hinc,
+  exact ⟨exists_injective_readIds_to_publishIds μs s h,
     readIds_pairwise_lt μs s h hinc,
     fun i n v hi hn => unreturned_pending_or_overwritten μs s h i n v hi hn⟩
 
