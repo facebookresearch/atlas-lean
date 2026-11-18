@@ -16,7 +16,7 @@ public import MathlibExt.Probability.InfinitelyDivisible
 # Binary offspring instance of Galton--Watson theory
 
 The offspring law with mass `1 - p` at `0` and `p` at `2` has
-generating function `1 - p + p * s^2`. Its extinction probability is
+generating function `1 - p + p * s^2` for `p` in `[0, 1]`. Its extinction probability is
 the least fixed point of that polynomial: `1` for `p <= 1/2` and
 `(1 - p) / p` for `p > 1/2`, derived from the least-fixed-point
 characterization of the existing Galton--Watson interface.
@@ -129,13 +129,7 @@ theorem pgf_binaryOffspring (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (s : ℝ) :
   rw [pow_zero, smul_eq_mul, smul_eq_mul]
   ring
 
-/-- Consumer form on the Galton–Watson domain `[0, 1]`. -/
-theorem pgf_binaryOffspring_of_mem_Icc (hp0 : 0 ≤ p) (hp1 : p ≤ 1) {s : ℝ}
-    (hs : s ∈ Icc (0 : ℝ) 1) :
-    pgf id (binaryOffspring p) s = 1 - p + p * s ^ 2 := by
-  exact pgf_binaryOffspring hp0 hp1 s
-
-/-- Mean offspring number `E ξ = 2p` (so criticality `mean ≤ 1` is
+/-- Mean offspring number `E ξ = 2p` on the probability range (in general `ENNReal.ofReal (2 * p)`) (so criticality `mean ≤ 1` is
 `p ≤ 1 / 2`). -/
 theorem mean_binaryOffspring :
     mean (binaryOffspring p) = ENNReal.ofReal (2 * p) := by
