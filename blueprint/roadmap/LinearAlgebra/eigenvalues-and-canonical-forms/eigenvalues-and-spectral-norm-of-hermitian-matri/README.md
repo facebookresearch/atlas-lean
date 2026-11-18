@@ -32,4 +32,4 @@ The eigenvalues of a Hermitian matrix are real; the largest and smallest, $\lamb
 
 - [Matrix exponential](../../determinants-and-matrix-identities/matrix-exponential/README.md)
 - Matrix concentration inequalities
-- Eigenvalue inequalities and perturbation
+- [Eigenvalue inequalities and perturbation](../../../Analysis/operator-theory/eigenvalue-inequalities/README.md)

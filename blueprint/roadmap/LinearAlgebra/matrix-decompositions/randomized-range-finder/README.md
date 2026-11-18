@@ -11,6 +11,6 @@ Randomized algorithms for low-rank matrix approximation, following N. Halko, P.-
 ## Related topics
 
 - [Singular value decomposition](../singular-value-decomposition/README.md)
-- Eigenvalue inequalities and perturbation
+- [Eigenvalue inequalities and perturbation](../../../Analysis/operator-theory/eigenvalue-inequalities/README.md)
 - Matrix concentration inequalities
 - Principal component analysis
