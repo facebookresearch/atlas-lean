@@ -141,7 +141,16 @@ example :
   simpa [cableVoltage, lengthConstant_four_one] using this hI
 
 /-- Unit cable parameters give time constant `1`. -/
-example : (0:ℝ) < MathlibExt.Biology.Biophysics.MembraneCable.timeConstant 1 1 :=
-  MathlibExt.Biology.Biophysics.MembraneCable.timeConstant_pos one_pos one_pos
+example : MathlibExt.Biology.Biophysics.MembraneCable.timeConstant 1 1 = 1 := by
+  unfold MathlibExt.Biology.Biophysics.MembraneCable.timeConstant
+  norm_num
+
+/-- Sealed end on the unit cable: zero axial current at the end
+is the zero voltage derivative condition. -/
+example (V I : ℝ → ℝ) (h : MathlibExt.Biology.Biophysics.MembraneCable.IsSteadyState 4 1 (Set.Icc 0 1) V I) :
+    I 1 = 0 ↔ HasDerivWithinAt V 0 (Set.Icc 0 1) 1 :=
+  MathlibExt.Biology.Biophysics.MembraneCable.sealed_end_iff h (by norm_num)
+    (Set.mem_Icc.mpr ⟨zero_le_one, le_refl 1⟩)
+    (uniqueDiffOn_Icc (show (0:ℝ) < 1 by norm_num) 1 (Set.mem_Icc.mpr ⟨zero_le_one, le_refl 1⟩))
 
 end MathlibExtTest.Biology.Biophysics.MembraneCable
