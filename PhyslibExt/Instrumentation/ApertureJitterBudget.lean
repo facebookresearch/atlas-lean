@@ -207,26 +207,6 @@ lemma abs_convolution_jitter_sub_le {x w : ℝ → ℝ} {L : ℝ≥0} {A J j t�
   rw [h4]
   linarith
 
-/-- **ADC contract away from clipping.** For `Δ > 0`, an input that is not clipped is
-quantized with error at most `Δ / 2`. -/
-lemma abs_quantize_sub_le_of_not_isClipped {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : ℤ} {v : ℝ}
-    (hv : ¬ IsClipped Δ kmin kmax v) :
-    |quantize Δ kmin kmax v - v| ≤ Δ / 2 := by
-  unfold IsClipped at hv
-  have hlo : kmin ≤ round (v / Δ) := le_of_not_gt (fun hh => hv (Or.inl hh))
-  have hhi : round (v / Δ) ≤ kmax := le_of_not_gt (fun hh => hv (Or.inr hh))
-  have hc : code Δ kmin kmax v = round (v / Δ) := by
-    unfold code
-    rw [min_eq_right hhi, max_eq_right hlo]
-  unfold quantize
-  rw [hc]
-  have h := abs_sub_round (v / Δ)
-  have e : Δ * (round (v / Δ) : ℝ) - v = -(Δ * (v / Δ - round (v / Δ))) := by
-    field_simp
-    ring
-  rw [e, abs_neg, abs_mul, abs_of_pos hΔ]
-  nlinarith
-
 /-- **One acquired sample through the ADC.** Jitter `|j| ≤ J`, an aperture kernel of width `A`,
 `x` `L`-Lipschitz on the full perturbed interval, and no clipping of the perturbed analog input
 `(w ⋆ x) (t₀ + j)`: the quantized acquisition differs from `x t₀` by at most
@@ -261,24 +241,6 @@ lemma abs_quantize_sampled_sub_le {x w : ℝ → ℝ} {L : ℝ≥0} {Ts A J Δ :
   refine h.trans (le_of_eq ?_)
   ring
 
-/-- An input inside the full-scale interval is not clipped. -/
-private lemma not_isClipped_of_mem_Icc_aux {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : ℤ} {v : ℝ}
-    (hv : v ∈ Icc (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ))) : ¬ IsClipped Δ kmin kmax v := by
-  have h1 : (kmin : ℝ) ≤ v / Δ := by
-    rw [le_div_iff₀ hΔ]
-    linarith [hv.1]
-  have h2 : v / Δ ≤ (kmax : ℝ) := by
-    rw [div_le_iff₀ hΔ]
-    linarith [hv.2]
-  have r1 : kmin ≤ round (v / Δ) := by
-    rw [round_eq, Int.le_floor]
-    linarith
-  have r2 : round (v / Δ) ≤ kmax := by
-    rw [round_eq, Int.floor_le_iff]
-    linarith
-  unfold IsClipped
-  rintro (h | h) <;> omega
-
 /-- **Acquisition error budget, full-scale form.** As `abs_quantize_sampled_sub_le`, with the
 no-clipping condition replaced by membership of every perturbed analog input in the ADC
 full-scale interval `[Δ kmin, Δ kmax]`. -/
@@ -293,7 +255,7 @@ lemma abs_quantize_sampled_sub_le_of_mem_Icc {x w : ℝ → ℝ} {L : ℝ≥0} {
         x ((k : ℝ) * Ts)| ≤
       (L : ℝ) * J + (L : ℝ) * (A / 2) + Δ / 2 := by
   exact abs_quantize_sampled_sub_le j hΔ hw hj hx
-    (fun k => not_isClipped_of_mem_Icc_aux hΔ (hfs k)) k
+    (fun k => not_isClipped_of_mem_Icc hΔ (hfs k)) k
 
 /-- **Point sampling through the ADC (no aperture).** Jitter `|j| ≤ J`, `x` `L`-Lipschitz on
 `[k Ts - J, k Ts + J]`, and no clipping of the jittered sample: the quantized sample differs
