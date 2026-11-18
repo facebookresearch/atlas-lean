@@ -12,7 +12,6 @@ public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.Analysis.Complex.Trigonometric
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Analysis.Calculus.Deriv.Basic
-public import PhyslibExt.Circuits.RMSAveragePower
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
@@ -37,12 +36,14 @@ and
 `PhyslibExt.Circuits.RMSAveragePower.average_peakWaveform_mul_peakWaveform`),
 the voltage and current phasors are superpositions of a forward
 wave of amplitude `Aplus` and a backward wave of amplitude
-`Aminus`, with propagation constant `omega * sqrt (L * C)`. At
+`Aminus`, with phase constant `omega * sqrt (L * C)`. At
 the load plane the phasors are `V = Aplus + Aminus` and
 `I = (Aplus - Aminus) / Z0`; together with `V = ZL * I` they give
 the multiplicative relation
 `(ZL + Z0) * Aminus = (ZL - Z0) * Aplus`, and the divided
-reflection formula only under `Aplus != 0` and `ZL + Z0 != 0`.
+reflection formula under `Aplus != 0`. The denominator guard
+`ZL + Z0 != 0` is not an independent assumption: it follows from
+the load relations and `Aplus != 0`.
 
 The parameter identities are proved from positivity and the
 real square-root laws for `L * C` and `L / C`. The phasor
@@ -53,7 +54,8 @@ capacitance identity, which is where positivity of `L` and `C`
 is used. The load identities are proved by clearing the
 characteristic-impedance denominator and comparing coefficients;
 the matched, short-circuit and open-circuit cases are the
-corresponding specializations, and the zero-excitation example
+corresponding specializations (the short-circuit case needs no
+excitation guard), and the zero-excitation example
 records that the divided formula is not available when both
 amplitudes vanish.
 
@@ -63,8 +65,12 @@ amplitudes vanish.
   telegrapher equations for voltage and current.
 - `load_multiplicative_relation`: the division-free reflection
   relation at the load plane.
-- `load_reflection_ratio` and `load_reflectionCoefficient_eq`:
-  the guarded divided reflection formula.
+- `load_sum_ne_zero`: nonzero excitation forces a nonzero
+  denominator `ZL + Z0`.
+- `load_reflection_ratio_of_ne_zero`: the divided reflection formula
+  under nonzero excitation alone; `load_reflection_ratio` and
+  `load_reflectionCoefficient_eq` state it with the denominator guard
+  spelled out.
 - `lineWaveTerminationRelations`: the combined speed, impedance,
   telegrapher and load relations.
 
@@ -98,8 +104,10 @@ under the hypotheses stated separately. -/
 noncomputable def characteristicImpedance (L C : ℝ) : ℝ :=
   Real.sqrt (L / C)
 
-/-- Propagation constant `omega * sqrt(L * C)`. -/
-noncomputable def propagationConstant (L C ω : ℝ) : ℝ :=
+/-- Phase constant `beta = omega * sqrt(L * C)`, the real wavenumber of
+the phasors `exp (-i * beta * x)` and `exp (i * beta * x)`. On a
+lossless line the complex propagation constant is `i * beta`. -/
+noncomputable def phaseConstant (L C ω : ℝ) : ℝ :=
   ω * Real.sqrt (L * C)
 
 /-- Voltage phasor at position `x`: a forward wave plus a backward
@@ -182,11 +190,11 @@ lemma characteristicImpedance_div_waveSpeed (L C : ℝ) (hL : 0 < L)
   rw [hring, eq_div_iff hsne, ← pow_two]
   exact hs2
 
-/-- The propagation constant is frequency divided by wave speed. -/
-lemma propagationConstant_eq_div_waveSpeed (L C ω : ℝ) (hL : 0 < L)
+/-- The phase constant is frequency divided by wave speed. -/
+lemma phaseConstant_eq_div_waveSpeed (L C ω : ℝ) (hL : 0 < L)
     (hC : 0 < C) :
-    propagationConstant L C ω = ω / waveSpeed L C := by
-  unfold propagationConstant waveSpeed
+    phaseConstant L C ω = ω / waveSpeed L C := by
+  unfold phaseConstant waveSpeed
   have hsne : Real.sqrt (L * C) ≠ 0 :=
     ne_of_gt (Real.sqrt_pos.mpr (mul_pos hL hC))
   field_simp
@@ -211,7 +219,7 @@ lemma currentPhasor_at_zero (Aplus Aminus : ℂ) (Z0 β : ℝ) :
 of the voltage phasor is `-i * omega * L` times the current phasor. -/
 theorem voltagePhasor_deriv (Aplus Aminus : ℂ) (L C ω Z0 β x : ℝ)
     (hL : 0 < L) (hC : 0 < C)
-    (hβ : β = propagationConstant L C ω) (hZ : Z0 = characteristicImpedance L C) :
+    (hβ : β = phaseConstant L C ω) (hZ : Z0 = characteristicImpedance L C) :
     deriv (fun y : ℝ => voltagePhasor Aplus Aminus β y) x
       = -(Complex.I * (ω : ℂ) * (L : ℂ)) * currentPhasor Aplus Aminus Z0 β x := by
   have hmul : Real.sqrt (L * C) * Real.sqrt (L / C) = L := by
@@ -222,7 +230,7 @@ theorem voltagePhasor_deriv (Aplus Aminus : ℂ) (L C ω Z0 β x : ℝ)
     rw [hLC, Real.sqrt_sq (le_of_lt hL)]
   have hβZ0 : β * Z0 = ω * L := by
     rw [hβ, hZ]
-    unfold propagationConstant characteristicImpedance
+    unfold phaseConstant characteristicImpedance
     rw [mul_assoc, hmul]
   have hβZ0c : (β : ℂ) * (Z0 : ℂ) = (ω : ℂ) * (L : ℂ) := by exact_mod_cast hβZ0
   have hZ0pos : 0 < Z0 := by
@@ -283,7 +291,7 @@ theorem voltagePhasor_deriv (Aplus Aminus : ℂ) (L C ω Z0 β x : ℝ)
 of the current phasor is `-i * omega * C` times the voltage phasor. -/
 theorem currentPhasor_deriv (Aplus Aminus : ℂ) (L C ω Z0 β x : ℝ)
     (hL : 0 < L) (hC : 0 < C)
-    (hβ : β = propagationConstant L C ω) (hZ : Z0 = characteristicImpedance L C) :
+    (hβ : β = phaseConstant L C ω) (hZ : Z0 = characteristicImpedance L C) :
     deriv (fun y : ℝ => currentPhasor Aplus Aminus Z0 β y) x
       = -(Complex.I * (ω : ℂ) * (C : ℂ)) * voltagePhasor Aplus Aminus β x := by
   have hZdiv : characteristicImpedance L C = Real.sqrt (L * C) / C := by
@@ -298,7 +306,7 @@ theorem currentPhasor_deriv (Aplus Aminus : ℂ) (L C ω Z0 β x : ℝ)
     rw [mul_comm, div_mul_cancel₀ _ hCne]
   have hβeq : β = ω * C * Z0 := by
     rw [hβ, hZ, hZdiv]
-    unfold propagationConstant
+    unfold phaseConstant
     rw [mul_assoc, hCs]
   have hβc : (β : ℂ) = (ω : ℂ) * (C : ℂ) * (Z0 : ℂ) := by exact_mod_cast hβeq
   have hZ0pos : 0 < Z0 := by
@@ -378,8 +386,29 @@ theorem load_multiplicative_relation (V I Aplus Aminus ZL : ℂ) (Z0 : ℝ)
     rw [hload, mul_assoc, div_mul_cancel₀ _ hZ0ne]
   linear_combination h2
 
+/-- Nonzero excitation forces a nonzero denominator: if `ZL + Z0 = 0`,
+the multiplicative relation gives `0 = (-2 * Z0) * Aplus`, so
+`Aplus = 0`. -/
+lemma load_sum_ne_zero (V I Aplus Aminus ZL : ℂ) (Z0 : ℝ)
+    (hZ0 : 0 < Z0) (hV : V = Aplus + Aminus)
+    (hI : I = (Aplus - Aminus) / (Z0 : ℂ)) (hload : V = ZL * I)
+    (hA : Aplus ≠ 0) :
+    ZL + (Z0 : ℂ) ≠ 0 := by
+  intro hsum
+  have hZ0ne : (Z0 : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr (ne_of_gt hZ0)
+  have hmul := load_multiplicative_relation V I Aplus Aminus ZL Z0 hZ0 hV hI hload
+  have hZL : ZL = -(Z0 : ℂ) := by linear_combination hsum
+  rw [hsum, zero_mul, hZL] at hmul
+  have h2 : (-(Z0 : ℂ) - (Z0 : ℂ)) ≠ 0 := by
+    have h22 : -(Z0 : ℂ) - (Z0 : ℂ) = -(2 * (Z0 : ℂ)) := by ring
+    rw [h22, neg_ne_zero]
+    exact mul_ne_zero two_ne_zero hZ0ne
+  exact hA ((mul_eq_zero.mp hmul.symm).resolve_left h2)
+
 /-- Guarded reflection ratio: under nonzero excitation and a nonzero
-denominator, the amplitude ratio is `(ZL - Z0) / (ZL + Z0)`. -/
+denominator, the amplitude ratio is `(ZL - Z0) / (ZL + Z0)`. The
+denominator guard is implied by the others (`load_sum_ne_zero`);
+`load_reflection_ratio_of_ne_zero` states the result without it. -/
 theorem load_reflection_ratio (V I Aplus Aminus ZL : ℂ) (Z0 : ℝ)
     (hZ0 : 0 < Z0) (hV : V = Aplus + Aminus)
     (hI : I = (Aplus - Aminus) / (Z0 : ℂ)) (hload : V = ZL * I)
@@ -389,7 +418,18 @@ theorem load_reflection_ratio (V I Aplus Aminus ZL : ℂ) (Z0 : ℝ)
   rw [div_eq_div_iff hA hsum]
   linear_combination hmul
 
-/-- The guarded amplitude ratio is the reflection coefficient. -/
+/-- Reflection ratio under nonzero excitation alone: the denominator
+guard is derived by `load_sum_ne_zero`. -/
+theorem load_reflection_ratio_of_ne_zero (V I Aplus Aminus ZL : ℂ) (Z0 : ℝ)
+    (hZ0 : 0 < Z0) (hV : V = Aplus + Aminus)
+    (hI : I = (Aplus - Aminus) / (Z0 : ℂ)) (hload : V = ZL * I)
+    (hA : Aplus ≠ 0) :
+    Aminus / Aplus = (ZL - (Z0 : ℂ)) / (ZL + (Z0 : ℂ)) :=
+  load_reflection_ratio V I Aplus Aminus ZL Z0 hZ0 hV hI hload hA
+    (load_sum_ne_zero V I Aplus Aminus ZL Z0 hZ0 hV hI hload hA)
+
+/-- The guarded amplitude ratio is the reflection coefficient. The
+denominator guard is implied by the others (`load_sum_ne_zero`). -/
 lemma load_reflectionCoefficient_eq (V I Aplus Aminus ZL : ℂ) (Z0 : ℝ)
     (hZ0 : 0 < Z0) (hV : V = Aplus + Aminus)
     (hI : I = (Aplus - Aminus) / (Z0 : ℂ)) (hload : V = ZL * I)
@@ -413,15 +453,20 @@ lemma matched_load_reflection_eq_zero (V I Aplus Aminus : ℂ) (Z0 : ℝ)
     exact mul_ne_zero two_ne_zero hZ0ne
   exact (mul_eq_zero.mp hmul).resolve_left h2
 
+/-- Short circuit: zero load voltage forces the backward amplitude to
+be the negated forward amplitude, with no excitation guard. -/
+lemma shortCircuit_reflection (Aplus Aminus : ℂ) (hV : Aplus + Aminus = 0) :
+    Aminus = -Aplus := by
+  linear_combination hV
+
 /-- Short-circuit load: a zero load impedance reflects with a sign
-flip, under nonzero excitation. -/
-lemma shortCircuit_load_reflection (V I Aplus Aminus : ℂ) (Z0 : ℝ)
-    (hZ0 : 0 < Z0) (hV : V = Aplus + Aminus)
-    (hI : I = (Aplus - Aminus) / (Z0 : ℂ)) (hload : V = (0 : ℂ) * I)
-    (hA : Aplus ≠ 0) :
+flip. Only the voltage relation is used, so neither an excitation
+guard nor the current relation is needed. -/
+lemma shortCircuit_load_reflection (V I Aplus Aminus : ℂ)
+    (hV : V = Aplus + Aminus) (hload : V = (0 : ℂ) * I) :
     Aminus = -Aplus := by
   rw [hV, zero_mul] at hload
-  linear_combination hload
+  exact shortCircuit_reflection Aplus Aminus hload
 
 /-- Open-circuit limit: zero load current forces the backward
 amplitude to equal the forward amplitude. This is the separate
@@ -455,11 +500,12 @@ lemma zeroExcitation_ratio_example :
 /-- Headline correctness: the speed and impedance relations hold, the
 phasor telegrapher equations for both voltage and current hold at
 every position, the load relations imply the
-multiplicative reflection relation, and the divided formula follows
-only under its two guards. -/
+multiplicative reflection relation, and nonzero excitation alone gives
+both the denominator guard `ZL + Z0 != 0` (`load_sum_ne_zero`) and the
+divided formula. -/
 theorem lineWaveTerminationRelations (Aplus Aminus ZL : ℂ) (L C ω Z0 β : ℝ)
     (hL : 0 < L) (hC : 0 < C) (hω : 0 < ω) (hZ0 : 0 < Z0)
-    (hβ : β = propagationConstant L C ω) (hZ : Z0 = characteristicImpedance L C) :
+    (hβ : β = phaseConstant L C ω) (hZ : Z0 = characteristicImpedance L C) :
     waveSpeed L C * Real.sqrt (L * C) = 1 ∧
       characteristicImpedance L C ^ 2 = L / C ∧
       (∀ x : ℝ, deriv (fun y : ℝ => voltagePhasor Aplus Aminus β y) x
@@ -472,7 +518,7 @@ theorem lineWaveTerminationRelations (Aplus Aminus ZL : ℂ) (L C ω Z0 β : ℝ
         → I = (Aplus - Aminus) / (Z0 : ℂ) → V = ZL * I
         → (ZL + (Z0 : ℂ)) * Aminus = (ZL - (Z0 : ℂ)) * Aplus
           ∧ (Aplus ≠ 0 → ZL + (Z0 : ℂ) ≠ 0
-            → Aminus / Aplus = (ZL - (Z0 : ℂ)) / (ZL + (Z0 : ℂ)))) := by
+            ∧ Aminus / Aplus = (ZL - (Z0 : ℂ)) / (ZL + (Z0 : ℂ)))) := by
   refine ⟨waveSpeed_mul_sqrt L C hL hC, characteristicImpedance_sq L C hL hC, ?_, ?_, ?_⟩
   · intro x
     exact voltagePhasor_deriv Aplus Aminus L C ω Z0 β x hL hC hβ hZ
@@ -480,7 +526,8 @@ theorem lineWaveTerminationRelations (Aplus Aminus ZL : ℂ) (L C ω Z0 β : ℝ
     exact currentPhasor_deriv Aplus Aminus L C ω Z0 β x hL hC hβ hZ
   · intro V I hV hI hload
     refine ⟨load_multiplicative_relation V I Aplus Aminus ZL Z0 hZ0 hV hI hload, ?_⟩
-    intro hA hsum
-    exact load_reflection_ratio V I Aplus Aminus ZL Z0 hZ0 hV hI hload hA hsum
+    intro hA
+    exact ⟨load_sum_ne_zero V I Aplus Aminus ZL Z0 hZ0 hV hI hload hA,
+      load_reflection_ratio_of_ne_zero V I Aplus Aminus ZL Z0 hZ0 hV hI hload hA⟩
 
 end PhyslibExt.Circuits.LineWaveTermination
