@@ -140,4 +140,8 @@ example :
   have := hss.sealedEnd_voltage_end (by norm_num) (by norm_num) one_pos
   simpa [cableVoltage, lengthConstant_four_one] using this hI
 
+/-- Unit cable parameters give time constant `1`. -/
+example : (0:ℝ) < MathlibExt.Biology.Biophysics.MembraneCable.timeConstant 1 1 :=
+  MathlibExt.Biology.Biophysics.MembraneCable.timeConstant_pos one_pos one_pos
+
 end MathlibExtTest.Biology.Biophysics.MembraneCable

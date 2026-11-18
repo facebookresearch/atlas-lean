@@ -238,6 +238,40 @@ theorem lengthConstant_sq (hm : 0 < rm) (hi : 0 < ri) : lengthConstant rm ri ^ 2
 theorem mul_lengthConstant_sq (hm : 0 < rm) (hi : 0 < ri) : ri * lengthConstant rm ri ^ 2 = rm := by
   rw [lengthConstant_sq hm hi]; field_simp
 
+
+/-- Time constant `tau = rm * cm` of a passive cable with membrane
+resistance `rm` and membrane capacitance `cm`. -/
+noncomputable def timeConstant (rm cm : ℝ) : ℝ := rm * cm
+
+/-- The cable time constant is positive for positive parameters. -/
+theorem timeConstant_pos {cm : ℝ} (hm : 0 < rm) (hcm : 0 < cm) :
+    0 < timeConstant rm cm :=
+  mul_pos hm hcm
+
+/-- `lambda^2 * ri = rm` for the cable length constant. -/
+theorem lengthConstant_sq_mul (hm : 0 < rm) (hi : 0 < ri) :
+    lengthConstant rm ri ^ 2 * ri = rm := by
+  rw [mul_comm]
+  exact mul_lengthConstant_sq hm hi
+
+/-- **Sealed end.** At a point of the cable with unique spatial
+derivative, the axial current vanishes exactly when the voltage
+spatial derivative vanishes: a sealed end is the zero-derivative
+boundary condition. -/
+theorem sealed_end_iff {s : Set ℝ} {V I : ℝ → ℝ} (h : IsSteadyState rm ri s V I)
+    (hri : ri ≠ 0) {x : ℝ} (hx : x ∈ s)
+    (hu : UniqueDiffWithinAt ℝ s x) :
+    I x = 0 ↔ HasDerivWithinAt V 0 s x := by
+  have hv := h.hasDerivWithinAt_voltage x hx
+  constructor
+  · intro hI
+    rw [hI, mul_zero, neg_zero] at hv
+    exact hv
+  · intro hV
+    have heq : (-(ri * I x)) = 0 := UniqueDiffWithinAt.eq_deriv s hu hv hV
+    have : ri * I x = 0 := by linarith
+    exact (mul_eq_zero.mp this).resolve_left hri
+
 /-- `r∞ = ri λ`. -/
 theorem charResistance_eq (hm : 0 < rm) (hi : 0 < ri) :
     charResistance rm ri = ri * lengthConstant rm ri := by
