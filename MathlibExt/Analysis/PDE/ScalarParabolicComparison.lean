@@ -10,6 +10,9 @@ module
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Topology.Order.Basic
 import Mathlib.Analysis.Asymptotics.Arith
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
+import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Asymptotics.Ring
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
@@ -39,74 +42,14 @@ Fermat conditions and the equation contradict the sign of the source.
 
 namespace MathlibExt.Analysis.PDE.ScalarParabolicComparison
 
-private theorem hasDerivAt_add {f g : ℝ → ℝ} {f' g' x : ℝ}
-    (hf : HasDerivAt f f' x) (hg : HasDerivAt g g' x) :
-    HasDerivAt (fun y => f y + g y) (f' + g') x := by
-  apply HasDerivAt.of_isLittleO
-  have h := hf.isLittleO.add hg.isLittleO
-  have hfun : (fun x' : ℝ => (f x' + g x') - (f x + g x) - (x' - x) • (f' + g')) =
-      (fun x' : ℝ => (f x' - f x - (x' - x) • f') + (g x' - g x - (x' - x) • g')) := by
-    funext y
-    simp only [smul_eq_mul]
-    ring
-  rw [hfun]
-  exact h
-
-private theorem hasDerivAt_sub {f g : ℝ → ℝ} {f' g' x : ℝ}
-    (hf : HasDerivAt f f' x) (hg : HasDerivAt g g' x) :
-    HasDerivAt (fun y => f y - g y) (f' - g') x := by
-  apply HasDerivAt.of_isLittleO
-  have h := hf.isLittleO.sub hg.isLittleO
-  have hfun : (fun x' : ℝ => (f x' - g x') - (f x - g x) - (x' - x) • (f' - g')) =
-      (fun x' : ℝ => (f x' - f x - (x' - x) • f') - (g x' - g x - (x' - x) • g')) := by
-    funext y
-    simp only [smul_eq_mul]
-    ring
-  rw [hfun]
-  exact h
-
-private theorem hasDerivAt_const_mul {f : ℝ → ℝ} {f' x C : ℝ}
-    (hf : HasDerivAt f f' x) :
-    HasDerivAt (fun y => C * f y) (C * f') x := by
-  apply HasDerivAt.of_isLittleO
-  have h := hf.isLittleO.const_mul_left C
-  have hfun : (fun x' : ℝ => C * f x' - C * f x - (x' - x) • (C * f')) =
-      (fun x' : ℝ => C * (f x' - f x - (x' - x) • f')) := by
-    funext y
-    simp only [smul_eq_mul]
-    ring
-  rw [hfun]
-  exact h
-
-private theorem hasDerivAt_neg {f : ℝ → ℝ} {f' x : ℝ}
-    (hf : HasDerivAt f f' x) :
-    HasDerivAt (fun y => -f y) (-f') x := by
-  apply HasDerivAt.of_isLittleO
-  have h := hf.isLittleO.const_mul_left (-1)
-  have hfun : (fun x' : ℝ => -f x' - -f x - (x' - x) • (-f')) =
-      (fun x' : ℝ => (-1) * (f x' - f x - (x' - x) • f')) := by
-    funext y
-    simp only [smul_eq_mul]
-    ring
-  rw [hfun]
-  exact h
-
 private theorem hasDerivAt_add_const {f : ℝ → ℝ} {f' x C : ℝ}
     (hf : HasDerivAt f f' x) :
-    HasDerivAt (fun y => f y + C) f' x := by
-  have h := hasDerivAt_add hf (hasDerivAt_const x C)
-  simpa using h
+    HasDerivAt (fun y => f y + C) f' x :=
+  (hasDerivAt_add_const_iff C).mpr hf
 
 private theorem hasDerivAt_affine {a b x : ℝ} :
-    HasDerivAt (fun y => a * y + b) a x := by
-  apply HasDerivAt.of_isLittleO
-  have hfun : (fun x' : ℝ => (a * x' + b) - (a * x + b) - (x' - x) • a) =
-      fun _ => 0 := by
-    funext y
-    simp only [smul_eq_mul]
-    ring
-  rw [hfun]
-  exact Asymptotics.isLittleO_zero _ _
+    HasDerivAt (fun y => a * y + b) a x :=
+  (hasDerivAt_add_const_iff b).mpr (hasDerivAt_const_mul a)
 
 private theorem isMinOn_hasDerivAt_le_zero {f : ℝ → ℝ} {f' x : ℝ}
     (hf : HasDerivAt f f' x)
@@ -186,117 +129,7 @@ private theorem isMaxOn_hasDerivAt_eq_zero {f : ℝ → ℝ} {f' x : ℝ}
       change -f x ≤ -f y
       linarith)
   have h0 : -f' = 0 :=
-    isMinOn_hasDerivAt_eq_zero (hasDerivAt_neg hf) hmin hmem
-  linarith
-
-private theorem rolle_eq_zero {f : ℝ → ℝ} {f' : ℝ → ℝ} {a b : ℝ} (hab : a < b)
-    (hcont : ContinuousOn f (Set.Icc a b))
-    (hderiv : ∀ y ∈ Set.Ioo a b, HasDerivAt f (f' y) y)
-    (heq : f a = f b) :
-    ∃ c ∈ Set.Ioo a b, f' c = 0 := by
-  have hne : (Set.Icc a b).Nonempty := ⟨a, le_refl a, hab.le⟩
-  obtain ⟨m, hms, hmin⟩ := isCompact_Icc.exists_isMinOn hne hcont
-  obtain ⟨M, hMs, hmax⟩ := isCompact_Icc.exists_isMaxOn hne hcont
-  by_cases heqMM : f m = f M
-  · have hconst : ∀ y ∈ Set.Icc a b, f y = f m := by
-      intro y hy
-      apply le_antisymm
-      · have h1 : f y ≤ f M := hmax hy
-        rw [← heqMM] at h1
-        exact h1
-      · exact hmin hy
-    have hmid : (a + b) / 2 ∈ Set.Ioo a b := by
-      change a < (a + b) / 2 ∧ (a + b) / 2 < b
-      constructor <;> linarith
-    refine ⟨(a + b) / 2, hmid, ?_⟩
-    have hmid' : a < (a + b) / 2 ∧ (a + b) / 2 < b := hmid
-    have hIoo_mem : Set.Ioo a b ∈ nhds ((a + b) / 2) :=
-      Ioo_mem_nhds hmid'.1 hmid'.2
-    have hev : ∀ᶠ y in nhds ((a + b) / 2), (fun _ => f m) y = f y :=
-      Filter.eventually_of_mem hIoo_mem (fun y hy => by
-        have hyIcc : y ∈ Set.Icc a b := Set.Ioo_subset_Icc_self hy
-        change f m = f y
-        exact (hconst y hyIcc).symm)
-    have hfc : HasDerivAt (fun _ => f m) (f' ((a + b) / 2)) ((a + b) / 2) :=
-      HasDerivAt.congr_of_eventuallyEq (hderiv _ hmid) hev
-    have hcz : HasDerivAt (fun _ => f m) 0 ((a + b) / 2) :=
-      hasDerivAt_const _ _
-    exact hfc.unique hcz
-  · have haIcc : a ∈ Set.Icc a b := ⟨le_refl a, hab.le⟩
-    have hbIcc : b ∈ Set.Icc a b := ⟨hab.le, le_refl b⟩
-    have hma : f m ≤ f a := hmin haIcc
-    have hMb : f b ≤ f M := hmax hbIcc
-    by_cases hlt1 : f m < f a
-    · have hmIoo : m ∈ Set.Ioo a b := by
-        have hms' : a ≤ m ∧ m ≤ b := hms
-        have hne_a : m ≠ a := by
-          intro hcon
-          rw [hcon] at hlt1
-          exact (lt_irrefl _ hlt1)
-        have hne_b : m ≠ b := by
-          intro hcon
-          rw [hcon] at hlt1
-          rw [heq] at hlt1
-          exact (lt_irrefl _ hlt1)
-        change a < m ∧ m < b
-        exact ⟨lt_of_le_of_ne hms'.1 (Ne.symm hne_a), lt_of_le_of_ne hms'.2 hne_b⟩
-      have hmIoo' : a < m ∧ m < b := hmIoo
-      have hmem : Set.Icc a b ∈ nhds m := by
-        have hIoo : Set.Ioo a b ∈ nhds m := Ioo_mem_nhds hmIoo'.1 hmIoo'.2
-        exact Filter.mem_of_superset hIoo Set.Ioo_subset_Icc_self
-      exact ⟨m, hmIoo, isMinOn_hasDerivAt_eq_zero (hderiv m hmIoo) hmin hmem⟩
-    · push Not at hlt1
-      have hmeq : f m = f a := le_antisymm hma hlt1
-      have h1 : f a ≤ f M := by
-        have h := hMb
-        rw [← heq] at h
-        exact h
-      have hne2 : f a ≠ f M := fun hcon => heqMM (hmeq.trans hcon)
-      have hlt2 : f a < f M := lt_of_le_of_ne h1 hne2
-      have hMIoo : M ∈ Set.Ioo a b := by
-        have hMs' : a ≤ M ∧ M ≤ b := hMs
-        have hne_a : M ≠ a := by
-          intro hcon
-          rw [hcon] at hlt2
-          exact (lt_irrefl _ hlt2)
-        have hne_b : M ≠ b := by
-          intro hcon
-          rw [hcon] at hlt2
-          rw [heq] at hlt2
-          exact (lt_irrefl _ hlt2)
-        change a < M ∧ M < b
-        exact ⟨lt_of_le_of_ne hMs'.1 (Ne.symm hne_a), lt_of_le_of_ne hMs'.2 hne_b⟩
-      have hMIoo' : a < M ∧ M < b := hMIoo
-      have hmem : Set.Icc a b ∈ nhds M := by
-        have hIoo : Set.Ioo a b ∈ nhds M := Ioo_mem_nhds hMIoo'.1 hMIoo'.2
-        exact Filter.mem_of_superset hIoo Set.Ioo_subset_Icc_self
-      exact ⟨M, hMIoo, isMaxOn_hasDerivAt_eq_zero (hderiv M hMIoo) hmax hmem⟩
-
-private theorem mvt_slope {f : ℝ → ℝ} {f' : ℝ → ℝ} {a b : ℝ} (hab : a < b)
-    (hderiv : ∀ y ∈ Set.Icc a b, HasDerivAt f (f' y) y) :
-    ∃ c ∈ Set.Ioo a b, f b - f a = f' c * (b - a) := by
-  have hg_deriv : ∀ y ∈ Set.Icc a b,
-      HasDerivAt (fun y => (b - a) * f y - (f b - f a) * y)
-        ((b - a) * f' y - (f b - f a)) y := by
-    intro y hy
-    have h1 : HasDerivAt (fun y => (b - a) * f y) ((b - a) * f' y) y :=
-      hasDerivAt_const_mul (hderiv y hy)
-    have h2 : HasDerivAt (fun y => (f b - f a) * y) (f b - f a) y := by
-      have h := hasDerivAt_const_mul (C := (f b - f a)) (hasDerivAt_id' y)
-      simpa using h
-    exact hasDerivAt_sub h1 h2
-  have hg_cont : ContinuousOn (fun y => (b - a) * f y - (f b - f a) * y)
-      (Set.Icc a b) :=
-    HasDerivAt.continuousOn (fun y hy => hg_deriv y hy)
-  have heqg : (fun y => (b - a) * f y - (f b - f a) * y) a =
-      (fun y => (b - a) * f y - (f b - f a) * y) b := by
-    change (b - a) * f a - (f b - f a) * a = (b - a) * f b - (f b - f a) * b
-    ring
-  obtain ⟨c, hcIoo, hc0⟩ := rolle_eq_zero hab hg_cont
-    (fun y hy => hg_deriv y (Set.Ioo_subset_Icc_self hy)) heqg
-  have hc0' : (b - a) * f' c - (f b - f a) = 0 := hc0
-  refine ⟨c, hcIoo, ?_⟩
-  have hcomm : (b - a) * f' c = f' c * (b - a) := mul_comm _ _
+    isMinOn_hasDerivAt_eq_zero hf.neg hmin hmem
   linarith
 
 private theorem second_deriv_nonneg_of_isMinOn {f g gd : ℝ → ℝ} {x0 a b : ℝ}
@@ -339,8 +172,13 @@ private theorem second_deriv_nonneg_of_isMinOn {f g gd : ℝ → ℝ} {x0 a b : 
   have hf_sub : ∀ y ∈ Set.Icc y1 x0, HasDerivAt f (g y) y := by
     intro y hy
     exact hf y (hsub_Icc hy)
-  obtain ⟨c, hcIoo, hslope⟩ := mvt_slope hy1_lt hf_sub
-  have hslope' : f x0 - f y1 = g c * (x0 - y1) := hslope
+  have hf_cont : ContinuousOn f (Set.Icc y1 x0) :=
+    fun y hy => (hf_sub y hy).continuousAt.continuousWithinAt
+  obtain ⟨c, hcIoo, hslope⟩ := exists_hasDerivAt_eq_slope f g hy1_lt hf_cont
+    (fun y hy => hf_sub y (Set.Ioo_subset_Icc_self hy))
+  have hslope' : f x0 - f y1 = g c * (x0 - y1) := by
+    have hne : x0 - y1 ≠ 0 := sub_ne_zero.mpr (ne_of_gt hy1_lt)
+    rw [hslope, div_mul_cancel₀ _ hne]
   have hc' : y1 < c ∧ c < x0 := hcIoo
   have hc_gt_l : l < c := by
     have h1' : l < (l + x0) / 2 := by linarith
@@ -440,7 +278,7 @@ theorem parabolic_solution_nonneg {D L T : ℝ} (hD : 0 < D)
         change c t0 x0 + (eps * t0 + eps) ≤ c t0 y + (eps * t0 + eps)
         exact h)
     have htime_deriv : HasDerivAt (fun τ => c τ x0 + (eps * τ + eps)) (ct t0 x0 + eps) t0 :=
-      hasDerivAt_add (hct t0 x0 ht0 hx0)
+      (hct t0 x0 ht0 hx0).add
         (hasDerivAt_affine (a := eps) (b := eps) (x := t0))
     by_contra hneg2
     push Not at hneg2
