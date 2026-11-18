@@ -110,8 +110,8 @@ example (h : ℝ) (hh : 0 < h) :
   ⟨weightedNorm_dPlus_le h hh _, (alternating_weightedNorm_dPlus h hh).ge⟩
 
 /-- No constant below `2 / h` bounds the forward difference on two cells, so the
-per-step forcing constant behind the `1 / 6` term cannot be improved along this
-route. -/
+operator bound `weightedNorm_dPlus_le` is sharp. This says nothing about
+sharpness of the full forcing estimate or of the `1 / 6` constant. -/
 example (h k : ℝ) (hh : 0 < h) (hk : k < 2 / h) :
     ¬ ∀ w : Fin 2 → ℝ, weightedNorm h (dPlus h w) ≤ k * weightedNorm h w := by
   intro hall
