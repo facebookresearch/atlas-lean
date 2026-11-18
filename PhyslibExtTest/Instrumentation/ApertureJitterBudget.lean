@@ -19,7 +19,7 @@ open PhyslibExt.Instrumentation.ApertureJitterBudget
 
 namespace PhyslibExtTest.Instrumentation.ApertureJitterBudget
 
-/-- The box kernel of half-width one is an aperture kernel. -/
+/-- The width-one box kernel (supported on `[-1/2, 1/2]`) is an aperture kernel. -/
 example : IsApertureKernel (1 : ℝ) (boxKernel (1 : ℝ)) :=
   boxKernel_isApertureKernel (by norm_num)
 

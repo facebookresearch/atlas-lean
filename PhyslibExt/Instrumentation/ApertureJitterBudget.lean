@@ -26,7 +26,8 @@ jitter, and the saturating quantizer from
 not copied) has an end-to-end error budget: aperture smoothing
 and jitter blur a Lipschitz signal by `L (J + A / 2)`,
 quantization adds `Delta / 2` on unclipped inputs, and a known
-calibration scale divides through. Clipping and non-normalized
+calibration scale divides through. Clipping can break the
+budget (one clipped constant is refuted), and non-normalized
 kernels are refuted as budget violations.
 
 ## ii. Key results
@@ -35,8 +36,8 @@ kernels are refuted as budget violations.
   budget.
 - `abs_quantize_div_calibration_sub_le`: the calibrated
   budget.
-- `clipped_const_violates_budget`: clipping breaks the
-  budget.
+- `clipped_const_violates_budget`: clipping can break
+  the budget (one clipped constant does).
 
 ## iii. Table of contents
 
