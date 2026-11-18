@@ -22,12 +22,14 @@ its page. It lists pages whose declaration is gone and docstrings that changed
 since the last run (scripts/wiki-sync.json keeps their digests), and changes no
 article that exists. Its first run records the digests only. The source-derived
 area catalog and coverage summary are refreshed with the same source snapshot.
-A page with no listed neighbour ends the folder page's own list, ahead of
-"Related topics" or "Sources"; it joins a section of that list only beside its
-module's pages, and else starts one under its module's title. A folder the wiki
-has keeps its layout and each topic its folder (see kept_layout), and a folder
-page split into parts lists what its parts list, when every item involved is a
-plain link (see SIMPLE_ITEM); it reports any other part list for an editor.
+A folder page's list is edited only when it is simple (see simple_list): a page
+with no listed neighbour then ends the folder page's own list, ahead of "Related
+topics" or "Sources", joins a section of that list only beside its module's
+pages, and else starts one under its module's title, after all that the last
+section holds; in any other list, it goes at the end and is reported for an
+editor to place. A folder the wiki has keeps its layout and each topic its folder
+(see kept_layout), and a folder page split into parts lists what its parts list
+when both lists are simple; any other part list is reported for an editor.
 
 import runs once, on a tree whose Lean still holds the wiki's English. TITLES.jsonl
 holds checked titles, one {"file", "name", "opening", "title"} per line: a
@@ -475,34 +477,37 @@ def own_list(lines: list[str]) -> dict[int, str]:
     return own
 
 
-def add_to_listing(readme: Path, line: str, before: list[str] = (), after: list[str] = (), section: str = "") -> None:
-    """Add a link line after the item linking the last of *before* that the page lists, else ahead of the item
-    linking the first of *after* that it lists, else at the end of the page's own list, the items that link its
-    folder's pages: there, when that list runs over sections, under a heading *section* of its own. A page with no
-    such item takes it ahead of its first section, such as "Related topics", or at its end. An item in a comment
-    counts for none of this (see blocks)."""
+def add_to_listing(readme: Path, line: str, before: list[str] = (), after: list[str] = (), section: str = "") -> bool:
+    """Add a link line to a folder page. When its own list, from the first to the last item that links a page of its
+    folder, is simple (see simple_list): after the item linking the last of *before* that the page lists, else ahead
+    of the item linking the first of *after* that it lists, else at the end of the own list, where, if that list runs
+    over sections, it starts a section of its own, *section*, after all that the last one holds. A page with no such
+    item takes it ahead of its first section, such as "Related topics", or at its end. When the own list is not simple,
+    the line goes after all that its last section holds, and False is returned, so that an editor places it."""
     lines = blocks(readme.read_text().rstrip("\n"))
+    own = own_list(lines)
+    last = max(own, default=-1)
+    end = next((i for i in range(last + 1, len(lines)) if re.match(r"#{2,6} ", lines[i])), len(lines))
+    simple = not own or simple_list(lines, min(own), last)
     items = {match.group(1): i for i, row in enumerate(lines) if (match := LIST_LINK.match(row.split("\n")[0]))}
-    at = next((items[link] + 1 for link in reversed(before) if link in items), None)
-    if at is None:
+    at = next((items[link] + 1 for link in reversed(before) if link in items), None) if simple else None
+    if at is None and simple:
         at = next((items[link] for link in after if link in items), None)
+    new = [line]
     if at is None:
-        own = own_list(lines)
-        if own:
-            at = max(own) + 1
-            if section and len(set(own.values())) > 1:
-                lines[at:at] = ["", f"{own[at - 1].split(' ')[0]} {section}", ""]
-                at += 3
-        else:
-            # A page's first item, apart from the text above it and from the section below it.
-            at = next((i for i, row in enumerate(lines) if re.match(r"#{2,6} ", row)), len(lines))
-            if at < len(lines):
-                lines.insert(at, "")
-            if lines[at - 1].strip():
-                lines.insert(at, "")
-                at += 1
-    lines.insert(at, line)
+        sectioned = simple and section and len(set(own.values())) > 1
+        at = last + 1 if simple and own and not sectioned else end
+        if sectioned:
+            new = [f"{own[last].split(' ')[0]} {section}", "", line]
+        if at == end:
+            # After all that the last section holds, apart from it unless the line joins the list it ends with.
+            while at and not lines[at - 1].strip():
+                at -= 1
+            joins = own and not sectioned and LIST_ITEM.match(lines[at - 1])
+            new = [""] * bool(at and not joins) + new + [""] * bool(at < len(lines) and lines[at].strip())
+    lines[at:at] = new
     readme.write_text("\n".join(lines) + "\n")
+    return simple
 
 
 def page_heading(text: str) -> str | None:
@@ -539,8 +544,9 @@ def without_empty_headings(text: str) -> str:
 
 
 def blocks(text: str) -> list[str]:
-    """A page's lines, each list item joined with the indented lines that continue it, and each HTML comment over
-    several lines and each fenced code block kept whole, so that nothing in them reads as an item or a heading."""
+    """A page's lines, each list item joined with the indented lines that continue it, and each fenced code block and
+    each HTML comment that opens a line kept whole, up to the line that closes it, so that nothing in them reads as an
+    item or a heading. A comment that opens within a line, as in a code span, hides no line, as in CommonMark."""
     found: list[str] = []
     commented, fence = False, ""
     for row in text.split("\n"):
@@ -550,20 +556,40 @@ def blocks(text: str) -> list[str]:
             found.append(row)
         if fence:
             fence = "" if re.match(rf"\s*{re.escape(fence[0])}{{{len(fence)},}}\s*$", row) else fence
-        elif not commented and (opening := re.match(r"\s*(`{3,}(?=[^`]*$)|~{3,})", row)):
+        elif commented:
+            commented = "-->" not in row
+        elif opening := re.match(r"\s*(`{3,}(?=[^`]*$)|~{3,})", row):
             fence = opening.group(1)
-        else:
-            for mark in re.findall(r"<!--|-->", row):
-                commented = mark == "<!--" if not commented else mark != "-->"
+        elif re.match(r"\s*<!--", row):
+            commented = "-->" not in row.split("<!--", 1)[1]
     return found
+
+
+def simple_list(lines: list[str], first: int, last: int) -> bool:
+    """Whether the blocks from *first* to *last* make a simple list: single-line items (see SIMPLE_ITEM), headings and
+    blank lines that no indented line follows, with nothing right after the last block that continues its item."""
+    for number in range(first, min(last + 2, len(lines))):
+        block, following = lines[number], lines[number + 1] if number + 1 < len(lines) else ""
+        if not block.strip():
+            if following[:1].isspace() and following.strip():
+                return False
+        elif number > last:
+            return bool(re.match(r"#{1,6} ", block) or LIST_ITEM.match(block))
+        elif not (SIMPLE_ITEM.fullmatch(block) or re.match(r"#{1,6} ", block)):
+            return False
+    return True
 
 
 def part_entries(text: str) -> list[tuple[str, str, str]] | None:
     """A folder page's entries, as its parent copies them: the title, page and text after it of each list item that
     links a page of its folder, and of an item for each of its parts in place of the items under the part's heading.
-    None when such a heading, or a list item outside the parts, is not simple (see SIMPLE_ITEM)."""
+    None when such a heading, or the page's list, is not simple (see simple_list)."""
+    lines = blocks(text)
+    listed = [number for number, block in enumerate(lines) if LIST_ITEM.match(block)]
+    if listed and not simple_list(lines, listed[0], listed[-1]):
+        return None
     entries, in_part = [], False
-    for block in blocks(text):
+    for block in lines:
         part = PART_HEADING.match(block)
         if part:
             if not re.fullmatch(f"{PLAIN}+", part.group(1)):
@@ -572,20 +598,16 @@ def part_entries(text: str) -> list[tuple[str, str, str]] | None:
             in_part = True
         elif re.match(r"#{1,6} ", block):
             in_part = False
-        elif not in_part and LIST_ITEM.match(block):
-            item = SIMPLE_ITEM.fullmatch(block)
-            if item is None:
-                return None
-            if not ELSEWHERE.match(item.group(2)):
-                entries.append(item.groups())
+        elif not in_part and (item := SIMPLE_ITEM.fullmatch(block)) and not ELSEWHERE.match(item.group(2)):
+            entries.append(item.groups())
     return entries
 
 
 def with_part_lists(readme: Path, text: str) -> tuple[str, list[str]]:
     """A folder page whose list is split into parts, with each part's entries as the part's own page lists them, their
     pages taken from the folder page, under the heading that links the part. They replace the items there that link
-    the part's pages, and only those. A part whose heading, entries or list items there are not all simple (see
-    SIMPLE_ITEM) keeps its copy as it is, and is returned, by its folder, for an editor."""
+    the part's pages, and only those. A part whose heading, page's list or list there is not simple (see simple_list)
+    keeps its copy as it is, and is returned, by its folder, for an editor."""
     sections: list[list[str]] = []
     for block in blocks(text.rstrip("\n")):
         if not sections or re.match(r"#{1,6} ", block):
@@ -598,13 +620,14 @@ def with_part_lists(readme: Path, text: str) -> tuple[str, list[str]]:
             continue
         folder = Path(part.group(2)).parent.as_posix()
         entries = part_entries((readme.parent / part.group(2)).read_text())
-        items = {i: SIMPLE_ITEM.fullmatch(block) for i, block in enumerate(section) if LIST_ITEM.match(block)}
-        if entries is None or None in items.values() or not re.fullmatch(f"{PLAIN}+", part.group(1)):
+        items = [i for i, block in enumerate(section) if LIST_ITEM.match(block)]
+        if (entries is None or not re.fullmatch(f"{PLAIN}+", part.group(1))
+                or items and not simple_list(section, items[0], items[-1])):
             unrefreshed.append((readme.parent / folder).relative_to(wiki.ROADMAP).as_posix())
             continue
         copy = [f"- [{title}]({folder}/{page}){rest}" for title, page, rest in entries]
-        copied = [i for i, item in items.items()
-                  if item.group(2).startswith(f"{folder}/") and item.group(2) != part.group(2)]
+        copied = [i for i in items if (page := SIMPLE_ITEM.fullmatch(section[i]).group(2)).startswith(f"{folder}/")
+                  and page != part.group(2)]
         kept = [block for i, block in enumerate(section) if i not in copied]
         if copied:
             at = copied[0]
@@ -699,7 +722,8 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     keyed = [(annotation_key(a, index), a) for rows in files.values() for a in rows]
     pages = {key: subject_path(a) for key, a in keyed if key}
     current = {declaration_key(target): target for target in targets if declaration_key(target)}
-    report: dict[str, list[str]] = {"added": [], "folders": [], "gone": [], "changed": [], "unindexed": [], "parts": []}
+    report: dict[str, list[str]] = {"added": [], "folders": [], "gone": [], "changed": [], "unindexed": [], "parts": [],
+                                  "appended": []}
     # A declaration the index lacks, and a page an earlier sync wrote for one, wait for an editor: no page is ever
     # keyed by a name rebuilt from the source.
     report["unindexed"] = sorted(
@@ -757,9 +781,10 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
             # Between two sections, a page joins the one it is in.
             if earlier and later and earlier[-1][1] != order[position][1] == later[0][1]:
                 earlier = []
-            add_to_listing(readme, f"- [{wiki.link_text(target.title)}]({target.path.name})",
-                           [entry[0] for entry in earlier], [entry[0] for entry in later],
-                           wiki.page_title(target.module_title) or wiki.topic_title(target.module[-1]))
+            if not add_to_listing(readme, f"- [{wiki.link_text(target.title)}]({target.path.name})",
+                                  [entry[0] for entry in earlier], [entry[0] for entry in later],
+                                  wiki.page_title(target.module_title) or wiki.topic_title(target.module[-1])):
+                report["appended"].append(target.path.relative_to(wiki.ROADMAP).as_posix())
         annotation: dict = {"subject": [{"type": "generic", "uri": "../" + target.path.relative_to(wiki.VAULT).as_posix()}]}
         if target.lean:
             annotation["object"] = [{"location": {"declaration": target.lean}}]
@@ -781,7 +806,8 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
         # A page the generated folder page doesn't list under its name, say one renamed to keep a name free, joins it.
         listed = set(listed_links(readme))
         for page in sorted(path for path in pages.values() if path.parent == readme.parent and path.name not in listed):
-            add_to_listing(readme, f"- [{wiki.link_text(title(page))}]({page.name})")
+            if not add_to_listing(readme, f"- [{wiki.link_text(title(page))}]({page.name})"):
+                report["appended"].append(page.relative_to(wiki.ROADMAP).as_posix())
         annotation = {"subject": [{"type": "generic", "uri": "../" + readme.relative_to(wiki.VAULT).as_posix()}]}
         ours = {key: fields[key] for key in ("navigation", "area") if key in fields}
         if ours:
@@ -794,7 +820,9 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
             order = [entry[0] for entry in listing(generated.get(parent, ""))]
             link = f"{readme.parent.name}/README.md"
             position = order.index(link) if link in order else len(order)
-            add_to_listing(parent, f"- [{wiki.link_text(title(readme))}]({link})", order[:position], order[position + 1:])
+            if not add_to_listing(parent, f"- [{wiki.link_text(title(readme))}]({link})", order[:position],
+                                  order[position + 1:]):
+                report["appended"].append(readme.parent.relative_to(wiki.ROADMAP).as_posix())
     # A folder page split into parts lists each part's entries under the heading that links it, as the part lists them.
     for readme in sorted(wiki.ROADMAP.rglob("README.md")):
         text = readme.read_text()
@@ -841,7 +869,8 @@ def run_declarations() -> int:
     for kind, title in (("added", "New pages, taken from docstrings"), ("folders", "New folders, as the taxonomy places their modules"),
                         ("gone", "Pages whose declaration is gone"), ("changed", "Pages whose declaration's docstring changed"),
                         ("unindexed", "Declarations the Lean index lacks, and their pages, for an editor"),
-                        ("parts", "Part lists not refreshed, as an entry needs an editor")):
+                        ("parts", "Part lists not refreshed, as an entry needs an editor"),
+                        ("appended", "New pages and folders listed at the end of a list that is not simple, to place")):
         print(f"{title}: {len(report[kind])}")
         for row in report[kind]:
             print(f"  {row}")
