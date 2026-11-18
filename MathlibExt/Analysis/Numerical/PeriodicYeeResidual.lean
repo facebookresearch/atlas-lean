@@ -731,8 +731,8 @@ private theorem travellingSine_smooth_general (c : ℝ) (hc : 0 < c) :
     exact Real.abs_cos_le_one _
 
 /-- The nonzero travelling sine wave, sampled at the staggered
-locations, satisfies the same consistency bound with unit
-third-derivative bounds and period `2 * pi`. -/
+locations, satisfies the same consistency bound with third-derivative
+bounds `c ^ 3` in time and `1` in space, and period `2 * pi`. -/
 theorem travellingSine_staggeredResiduals_bounded {N : ℕ} (hN : 0 < N)
     (h dt c : ℝ) (hh : 0 < h) (hdt : 0 < dt) (hc : 0 < c)
     (hL : 2 * Real.pi = (N : ℝ) * h) (n : ℕ) :
