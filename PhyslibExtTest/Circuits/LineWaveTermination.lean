@@ -43,7 +43,7 @@ example : (1 : ℂ) / 2 = ((3 : ℂ) - 1) / ((3 : ℂ) + 1) :=
 unit characteristic impedance. -/
 example : (1 : ℂ) / 2 = reflectionCoefficient 3 1 :=
   load_reflectionCoefficient_eq 3 1 2 1 3 1 (by norm_num) (by norm_num)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num)
 
 /-- At the load plane the voltage phasor is the sum of the two
 amplitudes and the current phasor is their difference over the
