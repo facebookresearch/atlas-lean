@@ -113,7 +113,7 @@ example :
     rw [h.1, Fin.sum_univ_one]
     simp
 
-/-- item ordering reverses): two slope-`1` items with
+/-- item ordering reverses: two slope-`1` items with
 difficulties `0` and `2`; item `0` carries more information at `θ = 0`
 and item `1` carries more at `θ = 2`, for the per-item information
 `a^2 * p * (1 - p)`. -/
@@ -142,7 +142,7 @@ example :
       sq_pos_of_ne_zero (sub_ne_zero.mpr (ne_of_gt hgt))
     nlinarith [hsq]
 
-/-- eligible-set maximum): for any finite nonempty set `S` of
+/-- eligible-set maximum: for any finite nonempty set `S` of
 eligible abilities, the test information attains its maximum over `S`.
 This is the existing finite-set maximum principle
 (`Finset.exists_max_image`, Mathlib `Data/Finset/Max.lean`) applied to
