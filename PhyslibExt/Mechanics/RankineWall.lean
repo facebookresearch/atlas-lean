@@ -12,6 +12,8 @@ public import PhyslibExt.Mechanics.LinearPressurePanel
 /-!
 # Rankine active earth pressure on a unit-length wall
 
+## i. Overview
+
 For dry horizontal backfill with supplied positive active
 coefficient `K_a`, unit weight `γ`, and wall height `H`, the active
 pressure at depth `z` is `K_a * γ * z`. Specializing the linear
@@ -21,16 +23,30 @@ width over `[0, H]`: the resultant force per unit wall length is
 `K_a * γ * H ^ 3 / 3`, and the resultant acts at depth `2 * H / 3`,
 that is, at height `H / 3` above the base.
 
-## Main results
+## ii. Key results
 
-- `PhyslibExt.Mechanics.LinearPressurePanel.rankine_force`
-- `PhyslibExt.Mechanics.LinearPressurePanel.rankine_moment`
-- `PhyslibExt.Mechanics.LinearPressurePanel.rankine_resultant_height`
+- `PhyslibExt.Mechanics.LinearPressurePanel.rankine_force`:
+  resultant force per unit wall length.
+- `PhyslibExt.Mechanics.LinearPressurePanel.rankine_moment`:
+  first moment about the surface datum.
+- `PhyslibExt.Mechanics.LinearPressurePanel.rankine_resultant_height`:
+  resultant height `H / 3` above the base.
+
+## iii. Table of contents
+
+- A. Rankine force, moment, and resultant height
+
+## iv. References
+
+- R. F. Craig, *Craig's Soil Mechanics*, 8th edition, 2012
+  (Rankine active earth pressure and its resultant).
 -/
 
 @[expose] public section
 
 namespace PhyslibExt.Mechanics.LinearPressurePanel
+
+/-! ## A. Rankine force, moment, and resultant height -/
 
 /-- Resultant Rankine force per unit wall length. -/
 theorem rankine_force (Ka γ H : ℝ) :

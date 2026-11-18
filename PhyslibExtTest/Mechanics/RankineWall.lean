@@ -26,6 +26,11 @@ example : linearPressureForce (1 / 3 * 18) 1 0 6 = 108 := by
   rw [rankine_force]
   norm_num
 
+/-- Moment about the surface datum. -/
+example : linearPressureMoment (1 / 3 * 18) 1 0 6 = 432 := by
+  rw [rankine_moment]
+  norm_num
+
 /-- Resultant height above the base: `6 - 432 / 108 = 2`. -/
 example : (6 : ℝ) - linearPressureMoment (1 / 3 * 18) 1 0 6
     / linearPressureForce (1 / 3 * 18) 1 0 6 = 2 := by
