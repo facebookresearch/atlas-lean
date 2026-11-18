@@ -46,7 +46,8 @@ communication protocol, and the communication bounds hold against arbitrary publ
 - `StreamingAlgorithm α R s`: initial state, transition and output, each depending on the seed.
 - `StreamingAlgorithm.output`: the output after reading a stream.
 - `StreamingAlgorithm.failProb`: the fraction of seeds whose output violates a correctness
-  predicate.
+  predicate, for a nonempty seed space (for an empty one every failure probability would be
+  `0`).
 - `maxFreq`, `freqMoment`: `F*_∞` and `F_k` of a stream over `Fin n`, with `mᵢ = l.count i`.
 -/
 
@@ -83,9 +84,10 @@ def output (A : StreamingAlgorithm α R s) (r : R) (l : List α) : ℝ :=
 open Classical in
 /-- **Failure probability of a streaming algorithm.** For a correctness predicate `ok l y`
 ("output `y` is acceptable on the stream `l`"), the fraction of seeds `r ∈ R` for which the output
-of `A` on `l` is not acceptable, the seed being uniform on the finite set `R`. -/
-noncomputable def failProb [Fintype R] (A : StreamingAlgorithm α R s) (ok : List α → ℝ → Prop)
-    (l : List α) : ℝ :=
+of `A` on `l` is not acceptable, the seed being uniform on the finite nonempty set `R`. For an
+empty `R`, which is excluded, the fraction would be `0 / 0 = 0` for every predicate. -/
+noncomputable def failProb [Fintype R] [Nonempty R] (A : StreamingAlgorithm α R s)
+    (ok : List α → ℝ → Prop) (l : List α) : ℝ :=
   ((univ.filter fun r => ¬ ok l (A.output r l)).card : ℝ) / Fintype.card R
 
 end StreamingAlgorithm

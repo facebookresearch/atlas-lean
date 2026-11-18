@@ -20,7 +20,8 @@ For a finite alphabet `α` and a length `n`, the *type* of a sequence `x : Fin n
 empirical distribution. It is recorded here as the multiset of the letters of `x`, an element of
 `Sym α n`, so the `n`-types are exactly the elements of `Sym α n` and the number of `a`'s in `x` is
 `Multiset.count a (seqType x)`. The empirical distribution itself is
-`empirical s a = count a s / n`.
+`empirical s a = count a s / n`, a probability vector for `n ≥ 1` (for `n = 0` it is the zero
+function).
 
 The basic counting lemmas of Csiszár ("The method of types", IEEE Trans. Inform. Theory 44 (1998),
 Section II) are proved with the natural logarithm (the paper allows any base, used consistently):
@@ -62,10 +63,11 @@ Section II, before Lemma II.2). -/
 def typeClass (s : Sym α n) : Finset (Fin n → α) :=
   univ.filter fun x => seqType x = s
 
-/-- **Empirical distribution of a type.** The probability vector `a ↦ count a s / n` of an
-`n`-type `s`; for `s = seqType x` it is the relative frequency of each letter in `x` (Csiszár,
-"The method of types", IEEE Trans. Inform. Theory 44 (1998), Section II). For `n = 0` it is the
-zero function. -/
+/-- **Empirical distribution of a type.** The function `a ↦ count a s / n` of an `n`-type `s`.
+For `n ≥ 1` it is a probability vector, and for `s = seqType x` it is the relative frequency of
+each letter in `x` (Csiszár, "The method of types", IEEE Trans. Inform. Theory 44 (1998),
+Section II). For `n = 0` it is the zero function, which is not a probability vector (every letter
+gets `0`); the results that read it as a distribution assume `n ≠ 0`. -/
 noncomputable def empirical (s : Sym α n) (a : α) : ℝ :=
   ((s : Multiset α).count a : ℝ) / n
 

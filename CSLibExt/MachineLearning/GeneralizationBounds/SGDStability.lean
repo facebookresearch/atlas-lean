@@ -344,8 +344,7 @@ theorem abs_integral_empiricalRisk_sub_risk_sgm_le [MeasurableSpace 𝒵] {ν : 
         risk (fun (S : Fin n → 𝒵) z => ∫ κ, ℓ (sgmOutput ℓ α w₀ S T κ) z
           ∂(indexMeasure n T)) ν S) ∂(Measure.pi fun _ : Fin n => ν)| ≤
       2 * (L : ℝ) ^ 2 / n * ∑ t ∈ Finset.range T, α t := by
-  have hn : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
-  refine abs_integral_empiricalRisk_sub_risk_le (A := id) hn ?_
+  refine abs_integral_empiricalRisk_sub_risk_le (A := id) ?_
     (M := M + L * (L * ∑ t ∈ Finset.range T, α t)) ?_
     (isUniformlyStable_sgm hβ hconv hdiff hsmooth hlip hα0 hα w₀ T)
   · simp only [id]

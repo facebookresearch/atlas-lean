@@ -83,9 +83,10 @@ def IsCoarseCorrelatedEq (cost : ι → (∀ i, S i) → ℝ) (μ : (∀ i, S i)
   IsDistribution μ ∧
     ∀ i (a : S i), ∑ s, μ s * cost i s ≤ ∑ s, μ s * cost i (Function.update s i a) + ε
 
-/-- The empirical distribution of `T` rounds of play: the fraction of rounds in which the
-profile `s` was played. -/
-noncomputable def empirical {T : ℕ} (play : Fin T → ∀ i, S i) (s : ∀ i, S i) : ℝ :=
+/-- The empirical distribution of `T ≥ 1` rounds of play: the fraction of rounds in which the
+profile `s` was played. After no rounds, which is excluded, every profile would get probability
+`0`. -/
+noncomputable def empirical {T : ℕ} [NeZero T] (play : Fin T → ∀ i, S i) (s : ∀ i, S i) : ℝ :=
   (#{t | play t = s} : ℝ) / T
 
 /-- The regret of player `i` against the fixed strategy `a` over the rounds `play`. -/
@@ -94,7 +95,7 @@ def regret (cost : ι → (∀ i, S i) → ℝ) {T : ℕ} (play : Fin T → ∀ 
   ∑ t, cost i (play t) - ∑ t, cost i (Function.update (play t) i a)
 
 /-- Expectations under the empirical distribution are time averages. -/
-theorem sum_empirical_mul {T : ℕ} (play : Fin T → ∀ i, S i) (g : (∀ i, S i) → ℝ) :
+theorem sum_empirical_mul {T : ℕ} [NeZero T] (play : Fin T → ∀ i, S i) (g : (∀ i, S i) → ℝ) :
     ∑ s, empirical play s * g s = (∑ t, g (play t)) / T := by
   rw [← sum_fiberwise univ play (fun t => g (play t)), sum_div]
   refine sum_congr rfl fun s _ => ?_
@@ -103,24 +104,25 @@ theorem sum_empirical_mul {T : ℕ} (play : Fin T → ∀ i, S i) (g : (∀ i, S
   ring
 
 /-- The empirical distribution of `T ≥ 1` rounds of play is a probability distribution. -/
-theorem isDistribution_empirical {T : ℕ} (hT : 0 < T) (play : Fin T → ∀ i, S i) :
+theorem isDistribution_empirical {T : ℕ} [NeZero T] (play : Fin T → ∀ i, S i) :
     IsDistribution (empirical play) := by
   refine ⟨fun s => by unfold empirical; positivity, ?_⟩
   have := sum_empirical_mul play (fun _ => 1)
   simp only [mul_one, sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul] at this
   rw [this]
+  have : (T : ℝ) ≠ 0 := by exact_mod_cast NeZero.ne T
   field_simp
 
 /-- **No-regret dynamics converge to coarse correlated equilibria** (Roughgarden, CS364A
 Lecture 17, Proposition 3.1): if after `T ≥ 1` rounds every player's regret against every
 fixed strategy is at most `T ε`, the empirical distribution of play is an `ε`-CCE. -/
-theorem isCoarseCorrelatedEq_empirical {cost : ι → (∀ i, S i) → ℝ} {T : ℕ} (hT : 0 < T)
+theorem isCoarseCorrelatedEq_empirical {cost : ι → (∀ i, S i) → ℝ} {T : ℕ} [NeZero T]
     {play : Fin T → ∀ i, S i} {ε : ℝ} (hreg : ∀ i a, regret cost play i a ≤ T * ε) :
     IsCoarseCorrelatedEq cost (empirical play) ε := by
-  refine ⟨isDistribution_empirical hT play, fun i a => ?_⟩
+  refine ⟨isDistribution_empirical play, fun i a => ?_⟩
   rw [sum_empirical_mul play (cost i),
     sum_empirical_mul play (fun s => cost i (Function.update s i a))]
-  have hT' : (0 : ℝ) < T := by exact_mod_cast hT
+  have hT' : (0 : ℝ) < T := by exact_mod_cast NeZero.pos T
   have := hreg i a
   unfold regret at this
   rw [div_add' _ _ _ hT'.ne', div_le_div_iff_of_pos_right hT']
@@ -184,7 +186,8 @@ theorem IsSmooth.average_socialCost_le [∀ i, Finite (S i)] {cost : ι → (∀
       lam * socialCost cost t + Fintype.card ι * ε := by
   classical
   have : ∀ i, Fintype (S i) := fun i => Fintype.ofFinite (S i)
-  have := hsm.expected_socialCost_le (isCoarseCorrelatedEq_empirical hT hreg) t
+  have : NeZero T := ⟨hT.ne'⟩
+  have := hsm.expected_socialCost_le (isCoarseCorrelatedEq_empirical hreg) t
   rwa [sum_empirical_mul] at this
 
 end MathlibExt.GameTheory.NoRegretDynamics

@@ -584,7 +584,7 @@ theorem gcStat_two_add (z : Fin 2 → ℝ) (h : ∑ k, z k ^ 2 ≠ 0) : gcStat z
 containing gene `0`, as soon as both `{T₀ ≥ 1}` and `{T₀ < 1}` have positive probability and
 the scores do not vanish simultaneously (almost surely). No independence, Gaussianity or other
 assumption on the scores is involved: `T₁ = 2 - T₀` makes `p₁` a decreasing function of `p₀`. -/
-theorem not_isPRDSOn_tailPValue_gcStatRV_two [IsFiniteMeasure P] {Z : Fin 2 → Ω → ℝ}
+theorem not_isPRDSOn_tailPValue_gcStatRV_two [IsFiniteMeasure P] [NeZero P] {Z : Fin 2 → Ω → ℝ}
     (hZ : ∀ k, Measurable (Z k)) (hne : ∀ᵐ ω ∂P, ∑ k, Z k ω ^ 2 ≠ 0) {H0 : Finset (Fin 2)}
     (h0 : 0 ∈ H0) (hA : P {ω | 1 ≤ gcStatRV Z 0 ω} ≠ 0) (hB : P {ω | gcStatRV Z 0 ω < 1} ≠ 0) :
     ¬ IsPRDSOn P (MultipleTesting.tailPValue (gcStatRV Z) fun _ => chiSqOneTailReal) H0 := by

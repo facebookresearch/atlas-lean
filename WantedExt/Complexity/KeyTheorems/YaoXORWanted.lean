@@ -75,8 +75,9 @@ def xorOf {n k : ℕ} (f : (Fin n → Bool) → Bool) (xs : Fin k → Fin n → 
   xorFold (fun i => f (xs i))
 
 /-- Agreement of a circuit with a function `g` on inputs encoded by `enc`: the fraction
-of inputs on which the circuit's last gate value equals `g`. -/
-noncomputable def agreement {α : Type*} [Fintype α]
+of inputs of the nonempty finite type `α` on which the circuit's last gate value equals `g`. For an
+empty type every circuit would get agreement `0`. -/
+noncomputable def agreement {α : Type*} [Fintype α] [Nonempty α]
     (C : List XORGate) (g : α → Bool) (enc : α → List Bool) : ℚ :=
   (Set.ncard {a | (xorCircuitEval C (enc a)).getLast? = some (g a)} : ℚ) /
     (Fintype.card α : ℚ)

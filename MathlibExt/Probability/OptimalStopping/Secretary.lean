@@ -53,9 +53,12 @@ Chapter 2, equation (4)). -/
 noncomputable def harmonicTail (n r : ℕ) : ℝ := ∑ j ∈ Ico r n, (1 : ℝ) / j
 
 /-- **Win probability of a threshold rule in the secretary problem.** For `n` applicants and
-threshold `r ≥ 1`, `P_r = (1 + (r - 1) T_r)/n` with `T_r = ∑_{j=r}^{n-1} 1/j`; this is
+threshold `1 ≤ r ≤ n`, `P_r = (1 + (r - 1) T_r)/n` with `T_r = ∑_{j=r}^{n-1} 1/j`; this is
 Ferguson's equation (3), `P_r = ((r - 1)/n) ∑_{k=r}^{n} 1/(k - 1)` for `r ≥ 2` and `P_1 = 1/n`
-(*Optimal Stopping and Applications*, Chapter 2, §2.1). -/
+(*Optimal Stopping and Applications*, Chapter 2, §2.1). The formula is defined for every `r`, but
+it is a probability only for `1 ≤ r ≤ n`, the range of the results below: for `r = 0` it gives
+`(1 - H_{n-1})/n` (negative for `n ≥ 4`), and for `r > n` it gives `1/n` although the rule then
+selects no one. -/
 noncomputable def winProb (n r : ℕ) : ℝ := (1 + ((r : ℝ) - 1) * harmonicTail n r) / n
 
 /-- **Optimal threshold of the secretary problem.** `r₁ = min {r ≥ 1 : T_r ≤ 1}`, that is

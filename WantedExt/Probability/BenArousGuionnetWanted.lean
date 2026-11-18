@@ -65,11 +65,13 @@ noncomputable def betaEnsembleWeight (β : ℝ) (N : ℕ) (x : Fin N → ℝ) : 
   ENNReal.ofReal ((∏ i, ∏ j ∈ Finset.univ.filter (fun j => i < j), |x i - x j| ^ β) *
     Real.exp (-(β * N / 4) * ∑ i, x i ^ 2))
 
-/-- **The Gaussian `β`-ensemble**: the probability law on `ℝ^N` with density proportional to
-`∏_{i<j} |λᵢ - λⱼ|^β exp(-(β N / 4) ∑ λᵢ²)`. For `β = 1, 2, 4` it is the joint law of the
-eigenvalues of the Gaussian orthogonal, unitary and symplectic ensembles (Guionnet, *Probability
-Surveys* 1 (2004), formula (3.1.1) and the law `Q^N_β`). -/
-noncomputable def betaEnsemble (β : ℝ) (N : ℕ) : Measure (Fin N → ℝ) :=
+/-- **The Gaussian `β`-ensemble**: for `β > 0`, the probability law on `ℝ^N` with density
+proportional to `∏_{i<j} |λᵢ - λⱼ|^β exp(-(β N / 4) ∑ λᵢ²)`. For `β = 1, 2, 4` it is the joint law
+of the eigenvalues of the Gaussian orthogonal, unitary and symplectic ensembles (Guionnet,
+*Probability Surveys* 1 (2004), formula (3.1.1) and the law `Q^N_β`). The condition `β > 0`
+makes the normalising integral finite and positive: for `β ≤ 0` and `N ≥ 1` it is infinite, and
+the normalised measure would be zero. -/
+noncomputable def betaEnsemble (β : ℝ) (_hβ : 0 < β) (N : ℕ) : Measure (Fin N → ℝ) :=
   (∫⁻ x, betaEnsembleWeight β N x)⁻¹ • volume.withDensity (betaEnsembleWeight β N)
 
 /-- **Empirical spectral measure** `L_N = N⁻¹ ∑_{i<N} δ_{λᵢ}` of a point `λ ∈ ℝ^N`, as a probability
@@ -103,7 +105,8 @@ measurable for the Giry σ-algebra, which holds on `ℝ` but is not yet an insta
 theorem_wanted benArousGuionnet_ldp {β : ℝ} (hβ : 0 < β)
     [OpensMeasurableSpace (ProbabilityMeasure ℝ)] :
     SatisfiesLDPAtSpeed (fun N => (N : ℝ) ^ 2)
-        (fun N => (betaEnsemble β N).map (spectralEmpiricalMeasure N)) (benArousGuionnetRate β) ∧
+        (fun N => (betaEnsemble β hβ N).map (spectralEmpiricalMeasure N))
+        (benArousGuionnetRate β) ∧
       IsGoodRateFunction (benArousGuionnetRate β)
 
 /-- **The semicircle law is the unique zero of the Ben Arous–Guionnet rate function** (Guionnet,

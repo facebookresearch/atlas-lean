@@ -27,4 +27,25 @@ example : (fun b : Bool => if b then (0.3 : ℝ) else 0.5) true ≤
     (fun f => by cases f <;> norm_num [abs_le]) false
   exact this
 
+/-! The risk is taken under a probability measure and the empirical risk over a nonempty
+sample: under the zero measure, or on an empty sample, every predictor would get risk `0`. -/
+
+/--
+error: failed to synthesize instance of type class
+  MeasureTheory.IsProbabilityMeasure 0
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+noncomputable example : ℝ := risk (fun (_ : Unit) (z : ℝ) => z) (0 : MeasureTheory.Measure ℝ) ()
+
+/--
+error: failed to synthesize instance of type class
+  NeZero 0
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+noncomputable example : ℝ := empiricalRisk (fun (_ : Unit) (z : ℝ) => z) (![] : Fin 0 → ℝ) ()
+
 end CSLibExt.MachineLearning.GeneralizationBounds

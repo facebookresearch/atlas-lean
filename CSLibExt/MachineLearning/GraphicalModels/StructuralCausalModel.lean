@@ -38,8 +38,9 @@ Surveys* 2009, Definition 4, eq. (27)).
   `mech k z (U k)`.
 * `SCM.doSet s W w`: the submodel of the intervention `do(X_W = w)`.
 * `SCM.counterfactual s W w u`: the counterfactual values `X_{W ← w}(u)`.
-* `SCM.cfProb s W w E Y`: the probability that the counterfactual event `Y` holds under
-  `do(X_W = w)` given that the factual event `E` was observed.
+* `SCM.cfProb s W w E hE Y`: the probability that the counterfactual event `Y` holds under
+  `do(X_W = w)` given that the factual event `E` was observed, where `hE : 0 < P(E)`: as in
+  Pearl's conditional probabilities, the evidence must have positive probability.
 
 ## Main results
 
@@ -260,9 +261,13 @@ theorem counterfactual_eq_solve {W : Finset (Fin n)} {w : Fin n → α} {u : Fin
 /-- **Counterfactual probability given evidence** (Pearl, *Statistics Surveys* 2009, §3.4,
 the computation of `P(Y_{x₁} = y₁ | Y = y₀, X = x₀)` following eq. (28)): the probability that
 the event `Y` holds for the counterfactual values `X_{W ← w}(u)`, under the law of the
-disturbances conditioned on the event that the factual values `X(u)` satisfy `E`. -/
-noncomputable def cfProb [Fintype β] (W : Finset (Fin n)) (w : Fin n → α)
-    (E Y : (Fin n → α) → Prop) [DecidablePred E] [DecidablePred Y] : ℝ :=
+disturbances conditioned on the event that the factual values `X(u)` satisfy `E`. The evidence
+must have positive probability `P(E) = ∑_{x ∈ E} P(x) > 0`, as for every conditional probability
+in the source: for impossible evidence the quotient would be `0 / 0 = 0` for every event `Y`,
+the certain one included. -/
+noncomputable def cfProb [Fintype β] [Fintype α] [DecidableEq α] (W : Finset (Fin n))
+    (w : Fin n → α) (E : (Fin n → α) → Prop) [DecidablePred E] (_hE : 0 < ∑ x with E x, s.law x)
+    (Y : (Fin n → α) → Prop) [DecidablePred Y] : ℝ :=
   (∑ u : Fin n → β, (∏ k, (s.noise k).weights (u k)) *
       ((if E (s.solve u) then 1 else 0) * if Y (s.counterfactual W w u) then 1 else 0)) /
     ∑ u : Fin n → β, (∏ k, (s.noise k).weights (u k)) * if E (s.solve u) then 1 else 0
@@ -285,23 +290,25 @@ theorem sum_law_filter [Fintype β] [Fintype α] [DecidableEq α] (Y : (Fin n �
   rw [← mul_sum, sum_ite_eq]
   simp
 
-/-- **Without evidence, counterfactuals are interventions**:
-`P(Y_{W ← w} ∈ Y) = P(Y | do(X_W = w))`, the law of the submodel. -/
-theorem cfProb_true [Fintype β] [Fintype α] [DecidableEq α] (W : Finset (Fin n))
+/-- **Without evidence, counterfactuals are interventions**: with the certain evidence
+(probability `1`), `P(Y_{W ← w} ∈ Y) = P(Y | do(X_W = w))`, the law of the submodel. -/
+theorem cfProb_true [Fintype β] [Fintype α] [DecidableEq α] [Nonempty α] (W : Finset (Fin n))
     (w : Fin n → α) (Y : (Fin n → α) → Prop) [DecidablePred Y] :
-    s.cfProb W w (fun _ => True) Y = ∑ x with Y x, (s.doSet W w).law x := by
+    s.cfProb W w (fun _ => True) (by simp [s.sum_law]) Y =
+      ∑ x with Y x, (s.doSet W w).law x := by
   rw [sum_law_filter]
   simp only [cfProb, ite_true, one_mul, mul_one]
   rw [show (∑ u : Fin n → β, ∏ k, (s.noise k).weights (u k)) = 1 from s.sum_prod_noise, div_one]
   rfl
 
-/-- **Evidence that agrees with the antecedent**: if every assignment satisfying `E` has
-`X_W = w`, then the counterfactual probability given `E` is the observational conditional
-probability `P(Y | E)` (by consistency). -/
+/-- **Evidence that agrees with the antecedent**: if the evidence `E` has positive probability
+and every assignment satisfying `E` has `X_W = w`, then the counterfactual probability given `E`
+is the observational conditional probability `P(Y | E)` (by consistency). -/
 theorem cfProb_of_consistent [Fintype β] [Fintype α] [DecidableEq α] {W : Finset (Fin n)}
-    {w : Fin n → α} {E : (Fin n → α) → Prop} [DecidablePred E] (Y : (Fin n → α) → Prop)
-    [DecidablePred Y] (hE : ∀ x, E x → ∀ i ∈ W, x i = w i) :
-    s.cfProb W w E Y = (∑ x with E x ∧ Y x, s.law x) / ∑ x with E x, s.law x := by
+    {w : Fin n → α} {E : (Fin n → α) → Prop} [DecidablePred E]
+    (hEpos : 0 < ∑ x with E x, s.law x) (Y : (Fin n → α) → Prop) [DecidablePred Y]
+    (hE : ∀ x, E x → ∀ i ∈ W, x i = w i) :
+    s.cfProb W w E hEpos Y = (∑ x with E x ∧ Y x, s.law x) / ∑ x with E x, s.law x := by
   rw [sum_law_filter, sum_law_filter, cfProb]
   congr 1
   refine sum_congr rfl fun u _ => ?_
@@ -319,15 +326,17 @@ theorem cfProb_of_consistent [Fintype β] [Fintype α] [DecidableEq α] {W : Fin
 
 /-- **The probability of necessity under monotonicity** (Pearl, *Statistics Surveys* 2009,
 eq. (53) and Theorem 3): in a model whose variables are all binary (the framework uses one
-value type), for the treatment `X_i` and the outcome `X_j`, the probability of necessity
-`PN = P(Y_{x'} = y' | X = x, Y = y)` (with `x, y` = `true` and `x', y'` = `false`) is identified
-from the observational law and the interventional law of `do(X_i = false)` when `Y` is monotonic
-in `X` (`Y_{x'}(u) = true` implies `Y_x(u) = true`): `PN = (P(y) - P(y | do(x'))) / P(x, y)`.
-`SCM.cfProb_necessity_eq` rewrites this as the right-hand side of eq. (54). -/
+value type), for the treatment `X_i` and the outcome `X_j` with `P(x, y) > 0`, the probability
+of necessity `PN = P(Y_{x'} = y' | X = x, Y = y)` (with `x, y` = `true` and `x', y'` = `false`)
+is identified from the observational law and the interventional law of `do(X_i = false)` when
+`Y` is monotonic in `X` (`Y_{x'}(u) = true` implies `Y_x(u) = true`):
+`PN = (P(y) - P(y | do(x'))) / P(x, y)`. `SCM.cfProb_necessity_eq` rewrites this as the
+right-hand side of eq. (54). -/
 theorem cfProb_necessity [Fintype β] (s : SCM Bool β n) (i j : Fin n)
     (hmono : ∀ u, s.counterfactual {i} (fun _ => false) u j = true →
-      s.counterfactual {i} (fun _ => true) u j = true) :
-    s.cfProb {i} (fun _ => false) (fun x => x i = true ∧ x j = true) (fun x => x j = false) =
+      s.counterfactual {i} (fun _ => true) u j = true)
+    (hxy : 0 < ∑ x with x i = true ∧ x j = true, s.law x) :
+    s.cfProb {i} (fun _ => false) (fun x => x i = true ∧ x j = true) hxy (fun x => x j = false) =
       ((∑ x with x j = true, s.law x) - ∑ x with x j = true, (s.doSet {i} fun _ => false).law x) /
         ∑ x with x i = true ∧ x j = true, s.law x := by
   rw [sum_law_filter, sum_law_filter, sum_law_filter, cfProb, doSet_noise, ← sum_sub_distrib]
@@ -356,15 +365,15 @@ plus a correction for confounding. -/
 theorem cfProb_necessity_eq [Fintype β] (s : SCM Bool β n) (i j : Fin n)
     (hmono : ∀ u, s.counterfactual {i} (fun _ => false) u j = true →
       s.counterfactual {i} (fun _ => true) u j = true)
-    (hxy : ∑ x with x i = true ∧ x j = true, s.law x ≠ 0) :
-    s.cfProb {i} (fun _ => false) (fun x => x i = true ∧ x j = true) (fun x => x j = false) =
+    (hxy : 0 < ∑ x with x i = true ∧ x j = true, s.law x) :
+    s.cfProb {i} (fun _ => false) (fun x => x i = true ∧ x j = true) hxy (fun x => x j = false) =
       ((∑ x with x i = true ∧ x j = true, s.law x) / (∑ x with x i = true, s.law x) -
           (∑ x with x i = false ∧ x j = true, s.law x) / (∑ x with x i = false, s.law x)) /
         ((∑ x with x i = true ∧ x j = true, s.law x) / (∑ x with x i = true, s.law x)) +
       ((∑ x with x i = false ∧ x j = true, s.law x) / (∑ x with x i = false, s.law x) -
           ∑ x with x j = true, (s.doSet {i} fun _ => false).law x) /
         ∑ x with x i = true ∧ x j = true, s.law x := by
-  rw [s.cfProb_necessity i j hmono]
+  rw [s.cfProb_necessity i j hmono hxy]
   have h0 : ∀ x, 0 ≤ s.law x := fun x => by
     rw [law_eq_joint]
     exact s.toBayesNet.toChain.joint_nonneg n x
@@ -384,7 +393,7 @@ theorem cfProb_necessity_eq [Fintype β] (s : SCM Bool β n) (i j : Fin n)
   have hp : px + px' = 1 := by
     rw [← s.sum_law, ← sum_filter_add_sum_filter_not univ (fun x : Fin n → Bool => x i = true)]
     congr 1
-  have ha0 : 0 < a := lt_of_le_of_ne (sum_nonneg fun x _ => h0 x) (Ne.symm hxy)
+  have ha0 : 0 < a := hxy
   have hapx : a ≤ px := sum_le_sum_of_subset_of_nonneg
     (fun x hx => by simp only [mem_filter] at hx ⊢; exact ⟨hx.1, hx.2.1⟩) fun x _ _ => h0 x
   have hbpx : b ≤ px' := sum_le_sum_of_subset_of_nonneg

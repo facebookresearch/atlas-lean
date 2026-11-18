@@ -63,7 +63,10 @@ def nonParentPred (pa : (k : Fin n) → Finset (Fin k)) (k : Fin n) : Finset (Fi
   univ.filter fun j => j < k ∧ j ∉ parentSet pa k
 
 /-- **Ordered Markov property of a law** (Lauritzen 2009, property (O)): every node is
-conditionally independent of its non-parent predecessors given its parents. -/
+conditionally independent of its non-parent predecessors given its parents. Like `CondIndep`, in
+terms of which it is stated, it is defined for an arbitrary weight function `P`; it is the
+property of a law when `P` is nonnegative with total mass `1`, the hypotheses of the results
+below that read it so. For the zero weight it holds for every choice of parents. -/
 def OrderedMarkov [Fintype α] (P : (Fin n → α) → ℝ) (pa : (k : Fin n) → Finset (Fin k)) : Prop :=
   ∀ k, CondIndep P ↑({k} : Finset (Fin n)) ↑(nonParentPred pa k) ↑(parentSet pa k)
 

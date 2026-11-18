@@ -31,6 +31,24 @@ example : counter.failProb (fun l y => y = l.length) [0, 2, 2] = 0 := by
     simp [counter, StreamingAlgorithm.output]
   simp [StreamingAlgorithm.failProb, h]
 
+/-- The same counter with an empty seed space. -/
+def counterEmpty : StreamingAlgorithm (Fin 3) Empty 2 where
+  init _ := 0
+  step _ c _ := c + 1
+  out _ c := (c : ℕ)
+
+/-! The failure probability needs a nonempty seed space: for an empty one, under which every
+failure probability would be `0`, it does not elaborate. -/
+
+/--
+error: failed to synthesize instance of type class
+  Nonempty Empty
+
+Hint: Adding the command `deriving instance Nonempty for Empty` may allow Lean to derive the missing instance.
+-/
+#guard_msgs in
+noncomputable example : ℝ := counterEmpty.failProb (fun _ _ => False) [0]
+
 -- Multiplicities and moments of the stream `0, 2, 2` over `Fin 3`.
 example : maxFreq ([0, 2, 2] : List (Fin 3)) = 2 := by decide
 example : freqMoment 2 ([0, 2, 2] : List (Fin 3)) = 5 := by decide

@@ -88,8 +88,12 @@ theorem tendsto_prod_range_add_div (α : ℝ) (n : ℕ) :
 `α^{(n)} = Γ(n + α) / Γ(α)` is the rising factorial. Griffiths and Ghahramani (2011, Section 2.2:
 Equation 4 times the `K! / K₀!` labelings) give it as the probability that, for `K` classes with
 weights `θ ~ Dirichlet(α/K, …, α/K)`, the class assignments of `n` objects induce the partition
-`π`. It is the paper's closed form, taken here as a definition; it is not derived from the
-Dirichlet–multinomial model. It vanishes when `K < |π|`. -/
+`π`. It is the paper's closed form, taken here as a definition for every `α` and `K`; it is not
+derived from the Dirichlet–multinomial model. It vanishes when `K < |π|`. It is that probability
+only for `α > 0` and `K ≥ 1`: for `α < 0` the formula can be negative, at `α = 0` the rising
+factorial vanishes and every partition of `n ≥ 1` objects gets `0`, and for `K = 0` (no classes)
+every partition of `n ≥ 1` objects gets `0`. The limit `tendsto_finitePartitionProb` is an identity
+of formulas that holds for every `α`. -/
 noncomputable def finitePartitionProb (α : ℝ) (K : ℕ) {n : ℕ}
     (π : Finpartition (univ : Finset (Fin n))) : ℝ :=
   (K.descFactorial #π.parts : ℝ) * (α / K) ^ #π.parts *

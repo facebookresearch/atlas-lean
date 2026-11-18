@@ -33,7 +33,9 @@ and placed the declarations in the `MathlibExt.Analysis.WignerSemicircleWanted` 
 statements are unchanged. ATLAS changes: the Wigner 1955 source note now says what that paper
 proves, Tao's statement of this almost-sure form is cited, and the proved bridge
 `semicircleLaw_eq_semicircleReal` to `ProbabilityTheory.semicircleReal` and the resulting
-`IsProbabilityMeasure` instance are added. Source: E. Wigner, 'Characteristic vectors of bordered matrices with infinite dimensions', Ann. of Math. (2) 62 (1955) 548–564 (the expected moments of the eigenvalue distribution of random-sign real symmetric matrices, with zero diagonal and off-diagonal entries ±v, converge to the semicircle moments; extended to a wider class in Ann. of Math. 67 (1958)). Pastur's universality extending to all variances with finite second moments: L. Pastur, 'On the spectrum of random matrices', Teor. Mat. Fiz. 10 (1972) 102–112. Listed as §102 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf).
+`IsProbabilityMeasure` instance are added; the empirical spectral measure is defined for `n ≥ 1`
+only (for `n = 0` it would be the zero measure), with its `IsProbabilityMeasure` instance, so the
+sequence of matrices in the theorem is indexed by `n + 1`. Source: E. Wigner, 'Characteristic vectors of bordered matrices with infinite dimensions', Ann. of Math. (2) 62 (1955) 548–564 (the expected moments of the eigenvalue distribution of random-sign real symmetric matrices, with zero diagonal and off-diagonal entries ±v, converge to the semicircle moments; extended to a wider class in Ann. of Math. 67 (1958)). Pastur's universality extending to all variances with finite second moments: L. Pastur, 'On the spectrum of random matrices', Teor. Mat. Fiz. 10 (1972) 102–112. Listed as §102 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf).
 -/
 module
 
@@ -72,11 +74,20 @@ vacuously without them).
 open scoped ENNReal NNReal Topology
 open MeasureTheory ProbabilityTheory Filter
 
-/-- Empirical spectral measure of a Hermitian matrix `W` on the real
-eigenvalues: `(1/n) · ∑_j δ_{λ_j}`. -/
-noncomputable def empiricalSpectralMeasureHerm {n : ℕ}
+/-- Empirical spectral measure of an `n × n` Hermitian matrix `W`, `n ≥ 1`, on the real
+eigenvalues: the probability measure `(1/n) · ∑_j δ_{λ_j}`. For `n = 0` it would be the zero
+measure. -/
+noncomputable def empiricalSpectralMeasureHerm {n : ℕ} [NeZero n]
     {W : Matrix (Fin n) (Fin n) ℂ} (hW : W.IsHermitian) : Measure ℝ :=
   (n : ℝ≥0∞)⁻¹ • ∑ j : Fin n, Measure.dirac (hW.eigenvalues j)
+
+set_option linter.dupNamespace false in
+/-- The empirical spectral measure of a nonempty Hermitian matrix is a probability measure. -/
+instance isProbabilityMeasure_empiricalSpectralMeasureHerm {n : ℕ} [NeZero n]
+    {W : Matrix (Fin n) (Fin n) ℂ} (hW : W.IsHermitian) :
+    IsProbabilityMeasure (empiricalSpectralMeasureHerm hW) := by
+  constructor
+  simp [empiricalSpectralMeasureHerm, ENNReal.inv_mul_cancel, NeZero.ne]
 
 /-- The **Wigner semicircle measure** on `ℝ`: probability measure with
 density `√(4 − x²) / (2π)` supported on `[−2, 2]`. -/
@@ -112,7 +123,8 @@ lemma wignerMatrix_isHermitian {Ω : Type*} (X : ℕ → ℕ → Ω → ℝ) (n 
 /- **Wigner's semicircle law** (Wigner 1955). For an iid family of
 mean-`0`, variance-`1` real random variables, the empirical spectral
 measure of the rescaled real-symmetric matrix `W_n / √n` converges
-weakly, almost surely, to the semicircle measure on `[−2, 2]`. -/
+weakly, almost surely, to the semicircle measure on `[−2, 2]`; the
+sequence is indexed by `n + 1`, the size of the matrix. -/
 /-- Source: E. Wigner, 'Characteristic vectors of bordered matrices with infinite dimensions', Ann. of Math. (2) 62 (1955) 548–564 (the expected moments of the eigenvalue distribution of random-sign real symmetric matrices, with zero diagonal and off-diagonal entries ±v, converge to the semicircle moments; extended to a wider class in Ann. of Math. 67 (1958)). Pastur's universality extending to all variances with finite second moments: L. Pastur, 'On the spectrum of random matrices', Teor. Mat. Fiz. 10 (1972) 102–112. Listed as §102 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). This almost-sure form, for i.i.d. upper-triangular entries of mean 0 and variance 1, is T. Tao, *Topics in Random Matrix Theory*, AMS GSM 132 (2012), Theorem 2.4.2, which allows the diagonal entries a different law. Via leanprover/lean-eval@38361be, problem `wigner_semicircle`. -/
 public theorem_wanted wigner_semicircle
     {Ω : Type*} [MeasurableSpace Ω]
@@ -132,8 +144,8 @@ public theorem_wanted wigner_semicircle
         Tendsto
           (fun n : ℕ =>
             ∫ x, f x ∂ (empiricalSpectralMeasureHerm
-              (wignerMatrix_isHermitian X n ω)).map
-                (fun x : ℝ => x / Real.sqrt n))
+              (wignerMatrix_isHermitian X (n + 1) ω)).map
+                (fun x : ℝ => x / Real.sqrt (n + 1 : ℕ)))
           atTop (𝓝 (∫ x, f x ∂semicircleLaw))
 
 end WignerSemicircleProblem

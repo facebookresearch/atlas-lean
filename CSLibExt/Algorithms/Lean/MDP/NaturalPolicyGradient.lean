@@ -59,7 +59,9 @@ variable {S A : Type*} [Fintype S] [DecidableEq S] [Fintype A] [Nonempty A]
 
 /-! ## Softmax policies -/
 
-/-- The log-partition function `lse θ s = log ∑ b, exp θ(s, b)` of the logits `θ`. -/
+/-- The log-partition function `lse θ s = log ∑ b, exp θ(s, b)` of the logits `θ`, a raw
+log-sum-exp helper. It is the log-partition function of the softmax policy for a nonempty action
+set, as in every result below; on an empty action set it would be `log 0 = 0`. -/
 noncomputable def lse (θ : S → A → ℝ) (s : S) : ℝ := log (∑ b, exp (θ s b))
 
 omit [Fintype S] [DecidableEq S] in

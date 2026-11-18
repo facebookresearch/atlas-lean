@@ -203,8 +203,8 @@ def condRegret (cost : ι → (∀ i, S i) → ℝ) {T : ℕ} (play : Fin T → 
 /-- **Conditional regrets are linear in the empirical distribution** (Hart and Mas-Colell 2000,
 §3, Proof of the Proposition): `D_T(j, k) = ∑_{s : sᵢ = j} z_T(s) (cost i s − cost i (k, s₋ᵢ))`,
 where `z_T` is the empirical distribution of play (2.3). -/
-theorem condRegret_div_eq (cost : ι → (∀ i, S i) → ℝ) {T : ℕ} (play : Fin T → ∀ i, S i)
-    (i : ι) (j k : S i) :
+theorem condRegret_div_eq (cost : ι → (∀ i, S i) → ℝ) {T : ℕ} [NeZero T]
+    (play : Fin T → ∀ i, S i) (i : ι) (j k : S i) :
     condRegret cost play i j k / T = ∑ s, empirical play s * switchGain cost i j k s := by
   rw [sum_empirical_mul]
   rfl
@@ -213,12 +213,12 @@ theorem condRegret_div_eq (cost : ι → (∀ i, S i) → ℝ) {T : ℕ} (play :
 Proposition of Hart and Mas-Colell 2000, §3): after `T ≥ 1` rounds, the empirical distribution
 of play is a correlated `ε`-equilibrium if and only if every conditional regret is at most
 `T ε`. -/
-theorem isCorrelatedEq_empirical_iff {cost : ι → (∀ i, S i) → ℝ} {T : ℕ} (hT : 0 < T)
+theorem isCorrelatedEq_empirical_iff {cost : ι → (∀ i, S i) → ℝ} {T : ℕ} [NeZero T]
     (play : Fin T → ∀ i, S i) (ε : ℝ) :
     IsCorrelatedEq cost (empirical play) ε ↔
       ∀ i (j k : S i), condRegret cost play i j k ≤ T * ε := by
-  have hT' : (0 : ℝ) < T := by exact_mod_cast hT
-  refine ⟨fun h i j k => ?_, fun h => ⟨isDistribution_empirical hT play, fun i j k => ?_⟩⟩
+  have hT' : (0 : ℝ) < T := by exact_mod_cast NeZero.pos T
+  refine ⟨fun h i j k => ?_, fun h => ⟨isDistribution_empirical play, fun i j k => ?_⟩⟩
   · have := h.2 i j k
     rw [← condRegret_div_eq, div_le_iff₀ hT'] at this
     linarith

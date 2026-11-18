@@ -158,7 +158,9 @@ noncomputable def zee (t : ℕ) : ℝ := normalizer y (dist y wl t) (hyp y wl t)
 noncomputable def score (T : ℕ) (i : Fin m) : ℝ :=
   ∑ t ∈ Finset.range T, alpha (eps y wl t) * sign (hyp y wl t i)
 
-/-- The training error of the final classifier (a zero score counts as an error). -/
+/-- The training error of the final classifier (a zero score counts as an error): the fraction
+of the `m` training points it misclassifies. For `m = 0` there is no training point and the
+value is `0` (`0 / 0`), which is not a fraction; the results below assume `0 < m`. -/
 noncomputable def trainErr (T : ℕ) : ℝ :=
   (∑ i, if sign (y i) * score y wl T i ≤ 0 then (1 : ℝ) else 0) / m
 
@@ -325,7 +327,8 @@ theorem trainErr_le_exp_sum_sq (hm : 0 < m) (T : ℕ)
 /-! ## AdaBoost as coordinate descent on the exponential loss -/
 
 /-- **The exponential loss** `(1 / m) ∑ᵢ exp (-yᵢ F(xᵢ))` of a score vector `F` on the training
-points, with labels read as `±1`. -/
+points, with labels read as `±1`. For `m = 0` there is no training point and the value is `0`
+(`0 / 0`), not an average; the results below assume `0 < m`. -/
 noncomputable def expLoss (y : Fin m → Bool) (F : Fin m → ℝ) : ℝ :=
   (∑ i, exp (-(sign (y i) * F i))) / m
 
@@ -441,7 +444,8 @@ theorem expLoss_score_succ_le (hm : 0 < m) (T : ℕ) (h0 : 0 < eps y wl T)
 
 /-- **The training margin error**: the fraction of training points whose normalized margin
 `yᵢ F_T(xᵢ) / ∑_{t < T} α_t` is at most `θ`, written without division as
-`yᵢ F_T(xᵢ) ≤ θ ∑_{t < T} α_t`. -/
+`yᵢ F_T(xᵢ) ≤ θ ∑_{t < T} α_t`. For `m = 0` there is no training point and the value is `0`
+(`0 / 0`), which is not a fraction; the results below assume `0 < m`. -/
 noncomputable def marginErr (y : Fin m → Bool) (wl : (Fin m → ℝ) → Fin m → Bool) (θ : ℝ)
     (T : ℕ) : ℝ :=
   (∑ i, if sign (y i) * score y wl T i ≤ θ * ∑ t ∈ Finset.range T, alpha (eps y wl t)

@@ -58,7 +58,9 @@ open scoped ENNReal
 variable {U : Type*} [MeasurableSpace U]
 
 /-- **Normalising constant of a posterior.** For a prior `μ₀` and a potential `Φ`,
-`Z = ∫ exp(-Φ(u)) μ₀(du)` (Dashti and Stuart, arXiv:1302.6989v4, equation (4.1b)). -/
+`Z = ∫ exp(-Φ(u)) μ₀(du)` (Dashti and Stuart, arXiv:1302.6989v4, equation (4.1b)). When `exp(-Φ)`
+is not `μ₀`-integrable the Bochner integral is `0`, and so is the posterior, as for Mathlib's
+`Measure.tilted`. -/
 noncomputable def normalizer (μ₀ : Measure U) (Φ : U → ℝ) : ℝ :=
   ∫ u, Real.exp (-Φ u) ∂μ₀
 

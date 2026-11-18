@@ -48,7 +48,7 @@ theorem_wanted measureReal_abs_mmdBiased_sub_mmd_gt_le {X : Type*} [MeasurableSp
     [RKHS ℝ H X ℝ] (hφ : StronglyMeasurable (featureMap H)) {K : ℝ}
     (hk : ∀ x y, 0 ≤ kernelValue H x y ∧ kernelValue H x y ≤ K)
     (μ ν : Measure X) [IsProbabilityMeasure μ] [IsProbabilityMeasure ν]
-    {m n : ℕ} (hm : 0 < m) (hn : 0 < n) {ε : ℝ} (hε : 0 < ε) :
+    {m n : ℕ} [NeZero m] [NeZero n] {ε : ℝ} (hε : 0 < ε) :
     ((Measure.pi fun _ : Fin m => μ).prod (Measure.pi fun _ : Fin n => ν)).real
         {z | 2 * (√(K / m) + √(K / n)) + ε < |mmdBiased H z.1 z.2 - mmd H μ ν|} ≤
       2 * Real.exp (-(ε ^ 2 * m * n / (2 * K * (m + n))))

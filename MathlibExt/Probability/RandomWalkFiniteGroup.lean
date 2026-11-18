@@ -66,17 +66,19 @@ open MathlibExt.Analysis.Fourier.FiniteAbelianDFTWanted (dftFun)
 open MathlibExt.Analysis.Fourier (finGroupConv)
 open MathlibExt.Probability.MarkovMixing (tvDist)
 
-/-- **The uniform distribution on a finite set.** `U(s) = 1/|G|` for every `s`; it is the
-stationary law of every random walk on a finite group (Diaconis and Shahshahani 1981, (1.2)). -/
-noncomputable def uniform (G : Type*) [Fintype G] : G → ℝ :=
+/-- **The uniform distribution on a finite nonempty set.** `U(s) = 1/|G|` for every `s`; it is
+the stationary law of every random walk on a finite group (Diaconis and Shahshahani 1981, (1.2)).
+For an empty set, which is excluded, the total mass would be `0`. -/
+noncomputable def uniform (G : Type*) [Fintype G] [Nonempty G] : G → ℝ :=
   fun _ => ((Fintype.card G : ℝ))⁻¹
 
 open Classical in
 /-- **The random-transposition measure on the symmetric group.** Two positions `L`, `R` are chosen
-independently and uniformly among `n` and the cards there are swapped (nothing happens when
+independently and uniformly among `n ≥ 1` and the cards there are swapped (nothing happens when
 `L = R`). Its law is `T(id) = 1/n`, `T(τ) = 2/n²` for each transposition `τ`, and `T = 0`
-elsewhere (Diaconis and Shahshahani 1981, (1.1)). -/
-noncomputable def randomTransposition (n : ℕ) : Equiv.Perm (Fin n) → ℝ :=
+elsewhere (Diaconis and Shahshahani 1981, (1.1)). For `n = 0`, which is excluded, the identity
+would get mass `1/0 = 0` and the law total mass `0`. -/
+noncomputable def randomTransposition (n : ℕ) [NeZero n] : Equiv.Perm (Fin n) → ℝ :=
   fun σ => if σ = 1 then 1 / n else if σ.IsSwap then 2 / (n : ℝ) ^ 2 else 0
 
 variable {G : Type*} [AddCommGroup G] [Fintype G]
@@ -191,7 +193,7 @@ open MathlibExt.RepresentationTheory.FourierTransformFiniteGroup (fourier
 /-- **The random-transposition measure is a class function.** `T(h σ h⁻¹) = T(σ)` for all
 `σ, h ∈ Sₙ`, since conjugation fixes the identity and maps transpositions to transpositions
 (Diaconis and Shahshahani 1981, proof of Corollary 1). -/
-theorem randomTransposition_conj (n : ℕ) (σ h : Equiv.Perm (Fin n)) :
+theorem randomTransposition_conj (n : ℕ) [NeZero n] (σ h : Equiv.Perm (Fin n)) :
     randomTransposition n (h * σ * h⁻¹) = randomTransposition n σ := by
   classical
   have h1 : h * σ * h⁻¹ = 1 ↔ σ = 1 := by
@@ -233,7 +235,7 @@ theorem two_mul_card_isSwap (n : ℕ) (hn : 2 ≤ n) :
 representation of `Sₙ` on a finite-dimensional complex space of dimension `d_ρ`, and `τ` any
 transposition. Then `T̂(ρ) = (1/n + ((n - 1)/n) χ_ρ(τ)/d_ρ) • 1` (Diaconis and Shahshahani 1981,
 Corollary 1, proved there from Lemma 5 as here). -/
-theorem fourier_randomTransposition {n : ℕ} {V : Type*} [AddCommGroup V] [Module ℂ V]
+theorem fourier_randomTransposition {n : ℕ} [NeZero n] {V : Type*} [AddCommGroup V] [Module ℂ V]
     [FiniteDimensional ℂ V] (ρ : Representation ℂ (Equiv.Perm (Fin n)) V) [ρ.IsIrreducible]
     (τ : Equiv.Perm (Fin n)) (hτ : τ.IsSwap) :
     fourier ρ (fun σ => (randomTransposition n σ : ℂ)) =
@@ -361,9 +363,10 @@ theorem upper_bound_lemma {G : Type} [Group G] [Fintype G] {ι : Type} [Fintype 
 
 /-- **The random-transposition measure is a probability.** For `n ≥ 1`, `∑_σ T(σ) = 1`:
 `1/n + (2/n²) C(n, 2) = 1` (Diaconis and Shahshahani 1981, (1.1)). -/
-theorem sum_randomTransposition (n : ℕ) (hn : 1 ≤ n) :
+theorem sum_randomTransposition (n : ℕ) [NeZero n] :
     ∑ σ, randomTransposition n σ = 1 := by
   classical
+  have hn : 1 ≤ n := NeZero.one_le
   have hpt : ∀ σ : Equiv.Perm (Fin n), randomTransposition n σ =
       (if σ = 1 then 1 / (n : ℝ) else 0) + (if σ.IsSwap then 2 / (n : ℝ) ^ 2 else 0) :=
     fun σ => by
@@ -394,7 +397,7 @@ theorem sum_randomTransposition (n : ℕ) (hn : 1 ≤ n) :
     ring
 
 /-- The random-transposition measure is invariant under inversion. -/
-private theorem randomTransposition_inv (n : ℕ) (σ : Equiv.Perm (Fin n)) :
+private theorem randomTransposition_inv (n : ℕ) [NeZero n] (σ : Equiv.Perm (Fin n)) :
     randomTransposition n σ⁻¹ = randomTransposition n σ := by
   have h2 : σ⁻¹.IsSwap ↔ σ.IsSwap := by
     rw [← Equiv.Perm.card_support_eq_two, ← Equiv.Perm.card_support_eq_two,
@@ -412,7 +415,7 @@ the non-trivial irreducible representations (Diaconis and Shahshahani 1981, Lemm
 (3.1), stated there for the `ℓ¹` norm `‖·‖ = 2 ‖·‖_TV`). The proof is theirs: the upper bound
 lemma combined with Corollary 1. Section 3 of the paper then estimates the sum with Frobenius's
 formula for `χ_i(τ)/d_i`. -/
-theorem four_mul_tvDist_randomTransposition_sq_le {n : ℕ} {ι : Type} [Fintype ι]
+theorem four_mul_tvDist_randomTransposition_sq_le {n : ℕ} [NeZero n] {ι : Type} [Fintype ι]
     (V : ι → FDRep ℂ (Equiv.Perm (Fin n))) [∀ i, Simple (V i)]
     (hinj : ∀ i j, Nonempty (V i ≅ V j) → i = j)
     (hsurj : ∀ W : FDRep ℂ (Equiv.Perm (Fin n)), Simple W → ∃ i, Nonempty (W ≅ V i))
@@ -432,7 +435,7 @@ theorem four_mul_tvDist_randomTransposition_sq_le {n : ℕ} {ι : Type} [Fintype
     | zero => simp [convPow]
     | succ k ih =>
       rw [convPow, MathlibExt.RepresentationTheory.FourierTransformFiniteGroup.sum_conv, ih,
-        sum_randomTransposition n hn, one_mul]
+        sum_randomTransposition n, one_mul]
   refine (upper_bound_lemma V hinj hsurj _ (hsum k)).trans (le_of_eq ?_)
   refine Finset.sum_congr rfl fun i _ => ?_
   have := BurnsidePaqb.irreducible_of_simple_fdrep (Equiv.Perm (Fin n)) (V i)

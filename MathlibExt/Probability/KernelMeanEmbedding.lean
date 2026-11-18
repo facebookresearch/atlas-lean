@@ -275,17 +275,20 @@ theorem mmd_sq_eq {μ ν : Measure X} [SFinite μ] [SFinite ν]
 /-! ### Empirical estimates -/
 
 variable (H) in
-/-- **Empirical mean embedding.** For a sample `x₁, …, x_m`, the empirical mean embedding is
-`μ_X = (1/m) ∑ᵢ φ(xᵢ)` (Gretton et al., *A kernel two-sample test*, JMLR 13 (2012),
-Section 2.2, before equation (5)). -/
-noncomputable def empiricalEmbedding {m : ℕ} (x : Fin m → X) : H :=
+/-- **Empirical mean embedding.** For a nonempty sample `x₁, …, x_m` (`m ≥ 1`), the empirical
+mean embedding is `μ_X = (1/m) ∑ᵢ φ(xᵢ)` (Gretton et al., *A kernel two-sample test*, JMLR 13
+(2012), Section 2.2, before equation (5)). For an empty sample, which is excluded, the average
+would be `0`. -/
+noncomputable def empiricalEmbedding {m : ℕ} [NeZero m] (x : Fin m → X) : H :=
   (m : ℝ)⁻¹ • ∑ i, featureMap H (x i)
 
 variable (H) in
 /-- **Biased empirical MMD** (Gretton et al., *A kernel two-sample test*, JMLR 13 (2012),
-equation (2), with `F` the unit ball of `H`). For samples `x₁, …, x_m` and `y₁, …, y_n`,
-`MMD_b = sup_{‖f‖ ≤ 1} ((1/m) ∑ᵢ f(xᵢ) - (1/n) ∑ⱼ f(yⱼ))`. -/
-noncomputable def mmdBiased {m n : ℕ} (x : Fin m → X) (y : Fin n → X) : ℝ :=
+equation (2), with `F` the unit ball of `H`). For nonempty samples `x₁, …, x_m` and
+`y₁, …, y_n`, `MMD_b = sup_{‖f‖ ≤ 1} ((1/m) ∑ᵢ f(xᵢ) - (1/n) ∑ⱼ f(yⱼ))`. For an empty sample,
+which is excluded, its empirical average would be `0`. -/
+noncomputable def mmdBiased {m n : ℕ} [NeZero m] [NeZero n] (x : Fin m → X) (y : Fin n → X) :
+    ℝ :=
   sSup ((fun f : H => (m : ℝ)⁻¹ * ∑ i, f (x i) - (n : ℝ)⁻¹ * ∑ j, f (y j)) ''
     Metric.closedBall 0 1)
 
@@ -293,7 +296,7 @@ omit [MeasurableSpace X] in
 /-- **Reproducing property of the empirical mean embedding.** `⟪f, μ_X⟫ = (1/m) ∑ᵢ f(xᵢ)`
 (Gretton et al., *A kernel two-sample test*, JMLR 13 (2012), Section 2.2, before
 equation (5)). -/
-theorem inner_empiricalEmbedding {m : ℕ} (f : H) (x : Fin m → X) :
+theorem inner_empiricalEmbedding {m : ℕ} [NeZero m] (f : H) (x : Fin m → X) :
     ⟪f, empiricalEmbedding H x⟫_ℝ = (m : ℝ)⁻¹ * ∑ i, f (x i) := by
   simp only [empiricalEmbedding, real_inner_smul_right, inner_sum, inner_featureMap]
 
@@ -301,7 +304,7 @@ omit [MeasurableSpace X] in
 /-- **The biased empirical MMD is the distance between empirical mean embeddings**
 (Gretton et al., *A kernel two-sample test*, JMLR 13 (2012), Section 2.2, before equation (5)):
 `MMD_b = ‖μ_X - μ_Y‖`. -/
-theorem mmdBiased_eq {m n : ℕ} (x : Fin m → X) (y : Fin n → X) :
+theorem mmdBiased_eq {m n : ℕ} [NeZero m] [NeZero n] (x : Fin m → X) (y : Fin n → X) :
     mmdBiased H x y = ‖empiricalEmbedding H x - empiricalEmbedding H y‖ := by
   have h : (fun f : H => (m : ℝ)⁻¹ * ∑ i, f (x i) - (n : ℝ)⁻¹ * ∑ j, f (y j)) =
       fun f : H => ⟪f, empiricalEmbedding H x - empiricalEmbedding H y⟫_ℝ := by
@@ -314,8 +317,8 @@ omit [MeasurableSpace X] in
 /-- **Inner product of empirical mean embeddings.**
 `⟪μ_X, μ_Y⟫ = (1/(mn)) ∑ᵢ ∑ⱼ k(xᵢ, yⱼ)` (Gretton et al., *A kernel two-sample test*, JMLR 13
 (2012), derivation of equation (5)). -/
-theorem inner_empiricalEmbedding_empiricalEmbedding {m n : ℕ} (x : Fin m → X)
-    (y : Fin n → X) :
+theorem inner_empiricalEmbedding_empiricalEmbedding {m n : ℕ} [NeZero m] [NeZero n]
+    (x : Fin m → X) (y : Fin n → X) :
     ⟪empiricalEmbedding H x, empiricalEmbedding H y⟫_ℝ =
       ((m : ℝ) * n)⁻¹ * ∑ i, ∑ j, kernelValue H (x i) (y j) := by
   simp only [empiricalEmbedding, real_inner_smul_left, real_inner_smul_right, sum_inner,
@@ -328,7 +331,7 @@ omit [MeasurableSpace X] in
 /-- **The biased empirical MMD as a V-statistic** (Gretton et al., *A kernel two-sample test*,
 JMLR 13 (2012), equation (5)):
 `MMD_b² = (1/m²) ∑_{i,j} k(xᵢ, xⱼ) - (2/(mn)) ∑_{i,j} k(xᵢ, yⱼ) + (1/n²) ∑_{i,j} k(yᵢ, yⱼ)`. -/
-theorem mmdBiased_sq_eq {m n : ℕ} (x : Fin m → X) (y : Fin n → X) :
+theorem mmdBiased_sq_eq {m n : ℕ} [NeZero m] [NeZero n] (x : Fin m → X) (y : Fin n → X) :
     mmdBiased H x y ^ 2 =
       ((m : ℝ) ^ 2)⁻¹ * ∑ i, ∑ j, kernelValue H (x i) (x j) -
         2 * ((m : ℝ) * n)⁻¹ * ∑ i, ∑ j, kernelValue H (x i) (y j) +

@@ -72,8 +72,11 @@ noncomputable def weights (η : ℝ) : List (Fin n → ℝ) → (Fin n → ℝ) 
 /-- The total weight. -/
 def total (w : Fin n → ℝ) : ℝ := ∑ i, w i
 
-/-- The algorithm's loss in a round: the loss of the weighted average of the experts (its expected
-loss when it follows expert `i` with probability `w i / total w`). -/
+/-- The algorithm's loss in a round: the weighted average `(∑ i, w i * ℓ i) / total w` of the
+experts' losses. For nonnegative weights of positive total, the only weights the algorithm
+produces, it is the expected loss when the algorithm follows expert `i` with probability
+`w i / total w`. For other weights it is only this ratio: when the total weight is `0` its value
+is `0` (`x / 0 = 0`), and for weights of mixed sign it need not lie between the losses. -/
 noncomputable def roundLoss (w ℓ : Fin n → ℝ) : ℝ := (∑ i, w i * ℓ i) / total w
 
 /-- The algorithm's total loss over a sequence of rounds. -/
@@ -175,7 +178,8 @@ theorem algLoss_le {η : ℝ} (ls : List (Fin n → ℝ)) (hb : Bounded ls) (i :
 /-! ## The second-order bound -/
 
 /-- The weighted second moment of a round's losses, `∑ x(i) ℓ(i)²` for the played distribution
-`x = w / total w`. -/
+`x = w / total w`, which is a distribution for nonnegative weights of positive total. When the
+total weight is `0` the value is `0` (`x / 0 = 0`). -/
 noncomputable def roundSq (w ℓ : Fin n → ℝ) : ℝ := (∑ i, w i * ℓ i ^ 2) / total w
 
 /-- The rounds' weighted second moments, summed over a sequence of rounds. -/

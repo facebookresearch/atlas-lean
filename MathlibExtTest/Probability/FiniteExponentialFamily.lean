@@ -47,4 +47,15 @@ example : ConvexOn ℝ Set.univ (logPartition φ) := convexOn_logPartition φ
 example : ∑ x : Bool, (1 / 2 : ℝ) * (inner ℝ (φ x) 0 - log (1 / 2)) ≤ logPartition φ 0 :=
   sum_mul_inner_sub_log_le φ 0 (fun _ => by norm_num) (by norm_num)
 
+/-! The mean parameter needs a nonempty finite set: on an empty set there is no distribution. -/
+
+/--
+error: failed to synthesize instance of type class
+  Nonempty Empty
+
+Hint: Adding the command `deriving instance Nonempty for Empty` may allow Lean to derive the missing instance.
+-/
+#guard_msgs in
+noncomputable example : ℝ := meanParameter (fun e : Empty => (e.elim : ℝ)) 0
+
 end MathlibExtTest.FiniteExponentialFamily

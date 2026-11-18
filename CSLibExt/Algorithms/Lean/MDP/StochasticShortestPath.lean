@@ -283,8 +283,13 @@ variable {γ : ℝ}
 /-! ## Discounted problems as stochastic shortest path problems -/
 
 /-- **A discounted MDP as a stochastic shortest path problem.** The MDP with the same rewards and
-transition probabilities `γ * M.prob s a s'`: at every stage the system terminates with
-probability `1 - γ`, and otherwise moves as in `M`. -/
+transition weights `γ * M.prob s a s'`. For a stochastic `M` and `0 ≤ γ ≤ 1` these are transition
+probabilities (`MDP.toSSP_substochastic`): at every stage the system terminates with probability
+`1 - γ`, and otherwise moves as in `M`. Like `MDP` itself, which is a data container whose
+normalisation is imposed by the predicates `MDP.Stochastic` and `MDP.Substochastic`, the
+construction is defined for every `γ`, and the Bellman identity `policyBellman_toSSP` holds for
+every `γ`; for `γ > 1` or `γ < 0` the result is not substochastic (the "termination probability"
+`1 - γ` would be negative, or the transition weights negative). -/
 def MDP.toSSP (M : MDP S A ℝ) (γ : ℝ) : MDP S A ℝ where
   reward := M.reward
   prob s a s' := γ * M.prob s a s'

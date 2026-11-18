@@ -109,15 +109,18 @@ noncomputable def inducedCountIn {k : ℕ} (H : _root_.SimpleGraph (Fin k))
 
 /-- **Induced density of `H` inside a vertex set.** The proportion `p(H, G[L])` of the
 `k`-subsets of `L` that induce a copy of `H` in `G`: `inducedCountIn H G L / C(|L|, k)`, the
-density `p(H, G[L])` of Razborov's *Flag algebras*, J. Symbolic Logic 72 (2007). -/
+density `p(H, G[L])` of Razborov's *Flag algebras*, J. Symbolic Logic 72 (2007). When `L` has
+fewer than `k` elements there is no `k`-subset and the value is `0` for every `H` (`0 / 0`), which
+is not a proportion; it is a probability only when `k ≤ |L|`. -/
 noncomputable def inducedDensityIn {k : ℕ} (H : _root_.SimpleGraph (Fin k))
     (G : _root_.SimpleGraph V) (L : Finset V) : ℚ :=
   (inducedCountIn H G L : ℚ) / (L.card.choose k : ℚ)
 
-/-- **Induced density.** The probability `p(H, G)` that a uniformly random `k`-subset of the
-vertices of `G` induces a copy of the `k`-vertex graph `H` (Razborov, *Flag algebras*,
-J. Symbolic Logic 72 (2007), 1239-1282, abstract). It is `0` when `G` has fewer than `k`
-vertices. -/
+/-- **Induced density.** For a graph `G` with at least `k` vertices, the probability `p(H, G)`
+that a uniformly random `k`-subset of the vertices of `G` induces a copy of the `k`-vertex graph
+`H` (Razborov, *Flag algebras*, J. Symbolic Logic 72 (2007), 1239-1282, abstract). When `G` has
+fewer than `k` vertices there is no `k`-subset, and the value is `0` for every `H`, which is not a
+probability. -/
 noncomputable def inducedDensity {k : ℕ} (H : _root_.SimpleGraph (Fin k))
     (G : _root_.SimpleGraph V) : ℚ :=
   inducedDensityIn H G univ

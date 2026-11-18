@@ -19,7 +19,7 @@ namespace MathlibExtTest.Topology.BrouwerFixedPoint
 /-- Non-vacuity: the hypotheses hold for a constant map of the 2-simplex, whose fixed point is
 the constant value. -/
 example : ∃ x : StdSimplex ℝ (Fin 3), (fun _ => StdSimplex.single (0 : Fin 3)) x = x :=
-  exists_fixedPoint _ continuous_const
+  exists_fixedPoint_of_finite _ continuous_const
 
 /-- The fixed point of a constant map is forced to be its value. -/
 example (x : StdSimplex ℝ (Fin 3))

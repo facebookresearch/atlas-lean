@@ -40,4 +40,16 @@ example (A : Matrix (Fin 2) (Fin 2) ℂ) (hA : A.IsHermitian) (θ : ℝ) (hθ : 
     (fun _ => hA) hθ (integrable_const _) (integrable_const _)
   simpa [traceMgf] using this
 
+/-! The expectation is taken under a probability measure: under the zero measure, for which
+every expectation would be `0`, it does not elaborate. -/
+
+/--
+error: failed to synthesize instance of type class
+  IsProbabilityMeasure 0
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+noncomputable example : Matrix (Fin 1) (Fin 1) ℝ := expect (0 : Measure Unit) fun _ => 1
+
 end MathlibExtTest.Probability.MatrixLaplaceTransform

@@ -47,13 +47,18 @@ namespace Cslib.MachineLearning.EffectiveRank
 
 /-- The **effective rank** `r_k(Σ) = (∑_{i>k} λᵢ) / λ_{k+1}` of a covariance with eigenvalues
 `ev 0 ≥ ev 1 ≥ ⋯` (so `ev j = λ_{j+1}`); Bartlett, Long, Lugosi and Tsigler, *Benign
-overfitting in linear regression*, Definition 3. -/
+overfitting in linear regression*, Definition 3. It is the effective rank for a nonnegative
+summable spectrum with `λ_{k+1} > 0`, the hypotheses of the results below. Outside that range
+the value is a totalised ratio: an infinite trace is read as `0` by `tsum`, and `λ_{k+1} = 0`
+gives `0` (`x / 0 = 0`). -/
 noncomputable def effRank (ev : ℕ → ℝ) (k : ℕ) : ℝ :=
   (∑' j, ev (j + k)) / ev k
 
 /-- The **large effective rank** `R_k(Σ) = (∑_{i>k} λᵢ)² / ∑_{i>k} λᵢ²` of a covariance with
 eigenvalues `ev 0 ≥ ev 1 ≥ ⋯`; Bartlett, Long, Lugosi and Tsigler, *Benign overfitting in
-linear regression*, Definition 3. -/
+linear regression*, Definition 3. As for `effRank`, it is the large effective rank for a
+nonnegative summable spectrum that does not vanish beyond `k`; otherwise the value is a
+totalised ratio (a non-summable tail is read as `0`, and a zero tail gives `0 / 0 = 0`). -/
 noncomputable def effRankLarge (ev : ℕ → ℝ) (k : ℕ) : ℝ :=
   (∑' j, ev (j + k)) ^ 2 / ∑' j, ev (j + k) ^ 2
 

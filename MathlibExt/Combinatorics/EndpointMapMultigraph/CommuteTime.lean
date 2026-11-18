@@ -70,15 +70,19 @@ contributing `2 w_e h(x)`. -/
 noncomputable def neighbourSum (w : E → ℝ) (h : V → ℝ) (x : V) : ℝ :=
   ∑ e, ((if end₁ e = x then w e * h (end₂ e) else 0) + if end₂ e = x then w e * h (end₁ e) else 0)
 
-/-- **First-step equations for hitting times.** `h(z) = 0` and, for `x ≠ z`,
-`h(x) = 1 + ∑_{e ∋ x} (w_e / π(x)) h(other end of e)`. On a loopless multigraph this is the
-linear system satisfied by the expected hitting times of `z` for the network random walk
-(R. Lyons and Y. Peres, *Probability on Trees and Networks*, Cambridge University Press 2016,
-corrected online version of 19 August 2026, Section 2.7; the walk crosses an edge with
-probability proportional to its conductance, Section 2.2). With a loop it is the system of a
-different walk: `weightedDegree` and `neighbourSum` count a loop at both ends, so the loop is taken
-with probability `2 w_e / π(x)` instead of the source's `w_e / π(x)`. -/
-def IsHittingTimeSolution (w : E → ℝ) (z : V) (h : V → ℝ) : Prop :=
+/-- **First-step equations for hitting times.** For positive conductances on a connected
+multigraph, `h(z) = 0` and, for `x ≠ z`, `h(x) = 1 + ∑_{e ∋ x} (w_e / π(x)) h(other end of e)`.
+On a loopless multigraph this is the linear system satisfied by the expected hitting times of
+`z` for the network random walk (R. Lyons and Y. Peres, *Probability on Trees and Networks*,
+Cambridge University Press 2016, corrected online version of 19 August 2026, Section 2.7; the walk
+crosses an edge with probability proportional to its conductance, Section 2.2). Positivity and
+connectivity make every `x ≠ z` have positive weighted degree, so that the `w_e / π(x)` are
+transition probabilities: a vertex of weighted degree `0` would get the equation `h(x) = 1`
+(`x / 0 = 0`) although `z` cannot be reached from it. With a loop it is the system of a different
+walk: `weightedDegree` and `neighbourSum` count a loop at both ends, so the loop is taken with
+probability `2 w_e / π(x)` instead of the source's `w_e / π(x)`. -/
+def IsHittingTimeSolution (w : E → ℝ) (_hw : ∀ e, 0 < w e)
+    (_hconn : (underlyingGraph end₁ end₂).Connected) (z : V) (h : V → ℝ) : Prop :=
   h z = 0 ∧ ∀ x, x ≠ z → h x = 1 + neighbourSum end₁ end₂ w h x / weightedDegree end₁ end₂ w x
 
 /-- **The Laplacian of a multigraph applied to a potential.**
@@ -151,7 +155,7 @@ private theorem weightedDegree_pos {w : E → ℝ} (hw : ∀ e, 0 < w e)
 /-- A solution of the first-step equations for `z` satisfies `L h = π - γ δ_z`. -/
 private theorem laplacian_mulVec_of_isHittingTimeSolution {w : E → ℝ} (hw : ∀ e, 0 < w e)
     (hconn : (underlyingGraph end₁ end₂).Connected) {z : V} {h : V → ℝ}
-    (hh : IsHittingTimeSolution end₁ end₂ w z h) :
+    (hh : IsHittingTimeSolution end₁ end₂ w hw hconn z h) :
     laplacian end₁ end₂ w *ᵥ h = fun x => weightedDegree end₁ end₂ w x -
       if x = z then ∑ y, weightedDegree end₁ end₂ w y else 0 := by
   classical
@@ -181,7 +185,7 @@ University Press 2016, corrected online version of 19 August 2026, Proposition 2
 Tetali, with `Z = {z}`). -/
 theorem hitting_time_identity {w : E → ℝ} (hw : ∀ e, 0 < w e) (_hloop : ∀ e, end₁ e ≠ end₂ e)
     (hconn : (underlyingGraph end₁ end₂).Connected) {a z : V} {h v : V → ℝ}
-    (hh : IsHittingTimeSolution end₁ end₂ w z h)
+    (hh : IsHittingTimeSolution end₁ end₂ w hw hconn z h)
     (hv : laplacian end₁ end₂ w *ᵥ v = Pi.single a 1 - Pi.single z 1) (hvz : v z = 0) :
     h a = ∑ x, weightedDegree end₁ end₂ w x * v x := by
   classical
@@ -205,7 +209,7 @@ times, finite by the hitting-time identity (Proposition 2.20); here existence is
 algebra, solving `L h = π - γ δ_z`. -/
 theorem exists_isHittingTimeSolution [Finite V] {w : E → ℝ} (hw : ∀ e, 0 < w e)
     (hloop : ∀ e, end₁ e ≠ end₂ e) (hconn : (underlyingGraph end₁ end₂).Connected) (z : V) :
-    ∃ h, IsHittingTimeSolution end₁ end₂ w z h := by
+    ∃ h, IsHittingTimeSolution end₁ end₂ w hw hconn z h := by
   have := Fintype.ofFinite V
   classical
   set G := underlyingGraph end₁ end₂
@@ -244,8 +248,8 @@ solution (R. Lyons and Y. Peres, *Probability on Trees and Networks*, Cambridge 
 the difference of two solutions, which is harmonic off `z` and vanishes at `z`). -/
 theorem isHittingTimeSolution_unique [Finite V] {w : E → ℝ} (hw : ∀ e, 0 < w e)
     (hloop : ∀ e, end₁ e ≠ end₂ e) (hconn : (underlyingGraph end₁ end₂).Connected) {z : V}
-    {h h' : V → ℝ} (hh : IsHittingTimeSolution end₁ end₂ w z h)
-    (hh' : IsHittingTimeSolution end₁ end₂ w z h') : h = h' := by
+    {h h' : V → ℝ} (hh : IsHittingTimeSolution end₁ end₂ w hw hconn z h)
+    (hh' : IsHittingTimeSolution end₁ end₂ w hw hconn z h') : h = h' := by
   have := Fintype.ofFinite V
   classical
   have hL : laplacian end₁ end₂ w *ᵥ (h - h') = 0 := by
@@ -267,7 +271,8 @@ then `h_z(a) + h_a(z) = γ R_eff(a, z)` with `γ = 2 ∑_e w_e = ∑_x π(x)` (R
 the first-step equations describe a different walk (see `IsHittingTimeSolution`). -/
 theorem commute_time_identity {w : E → ℝ} (hw : ∀ e, 0 < w e) (_hloop : ∀ e, end₁ e ≠ end₂ e)
     (hconn : (underlyingGraph end₁ end₂).Connected) {a z : V} {ha hz : V → ℝ}
-    (hha : IsHittingTimeSolution end₁ end₂ w a ha) (hhz : IsHittingTimeSolution end₁ end₂ w z hz) :
+    (hha : IsHittingTimeSolution end₁ end₂ w hw hconn a ha)
+    (hhz : IsHittingTimeSolution end₁ end₂ w hw hconn z hz) :
     hz a + ha z = 2 * (∑ e, w e) * effectiveResistance end₁ end₂ w a z := by
   classical
   by_cases haz : a = z
@@ -315,8 +320,8 @@ Networks*, Cambridge University Press 2016, corrected online version of 19 Augus
 Corollary 2.21 with `c ≡ 1`). -/
 theorem commute_time_identity_one (hloop : ∀ e, end₁ e ≠ end₂ e)
     (hconn : (underlyingGraph end₁ end₂).Connected) {a z : V} {ha hz : V → ℝ}
-    (hha : IsHittingTimeSolution end₁ end₂ (fun _ => 1) a ha)
-    (hhz : IsHittingTimeSolution end₁ end₂ (fun _ => 1) z hz) :
+    (hha : IsHittingTimeSolution end₁ end₂ (fun _ => 1) (fun _ => one_pos) hconn a ha)
+    (hhz : IsHittingTimeSolution end₁ end₂ (fun _ => 1) (fun _ => one_pos) hconn z hz) :
     hz a + ha z = 2 * Fintype.card E * effectiveResistance end₁ end₂ (fun _ => 1) a z := by
   rw [commute_time_identity end₁ end₂ (fun _ => one_pos) hloop hconn hha hhz]
   simp

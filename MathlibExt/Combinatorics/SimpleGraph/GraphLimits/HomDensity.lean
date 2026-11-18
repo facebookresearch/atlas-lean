@@ -65,9 +65,11 @@ def homWeight (F : SimpleGraph α) [DecidableRel F.Adj] (w : Sym2 V → ℝ) (φ
 /-- **Homomorphism density.** The density `t(F, w) = |V| ^ (-|V(F)|) ∑_{φ : V(F) → V}
 ∏_{ij ∈ E(F)} w(φ i, φ j)` of a simple graph `F` on `α` in a weighted graph `w : Sym2 V → ℝ`
 with unit node weights (Lovász–Szegedy, *Limits of dense graph sequences*, J. Combin. Theory
-Ser. B 96 (2006), §2.1: `t(F, G) = hom(F, G) / α_G ^ k`). For a simple graph `G` with weight
-`adjWeight G` this is the probability that a uniformly random map `V(F) → V(G)` is a
-homomorphism. -/
+Ser. B 96 (2006), §2.1: `t(F, G) = hom(F, G) / α_G ^ k`). For a simple graph `G` on a nonempty
+vertex set with weight `adjWeight G` this is the probability that a uniformly random map
+`V(F) → V(G)` is a homomorphism. For an empty vertex type `V` there is no map from a nonempty
+`α`, and the value is `0` for every `F` with a vertex (`0 / 0`), which is not a probability; the
+results that read it as one assume `V` nonempty. -/
 noncomputable def homDensity (F : SimpleGraph α) [DecidableRel F.Adj] (w : Sym2 V → ℝ) : ℝ :=
   (∑ φ : α → V, homWeight F w φ) / (Fintype.card V : ℝ) ^ Fintype.card α
 

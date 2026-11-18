@@ -113,8 +113,10 @@ theorem mhAcceptPotential_le_one (Φ : U → ℝ) (u v : U) : mhAcceptPotential 
 `v ~ Q(u, ·)` and accept it with probability `a(u, v) = min{1, exp(Φ(u) - Φ(v))}`; otherwise stay
 at `u`. As a kernel, `P(u, dv) = a(u, v) Q(u, dv) + r(u) δ_u(dv)` with rejection probability
 `r(u) = ∫ (1 - a(u, w)) Q(u, dw)` (Dashti and Stuart, arXiv:1302.6989v4, equation (5.5) and
-Algorithm 5.6). -/
-noncomputable def mhKernel (Q : Kernel U U) [IsSFiniteKernel Q] (Φ : U → ℝ) : Kernel U U :=
+Algorithm 5.6). The proposal must be a Markov kernel, so that acceptance and rejection add up to
+one (`isMarkovKernel_mhKernel`): for the zero proposal every event would have probability `0`,
+and for a proposal of mass `2` the "rejection probability" could exceed one. -/
+noncomputable def mhKernel (Q : Kernel U U) [IsMarkovKernel Q] (Φ : U → ℝ) : Kernel U U :=
   Q.withDensity (mhAcceptPotential Φ) +
     (Kernel.deterministic id measurable_id).withDensity
       fun u _ ↦ ∫⁻ w, (1 - mhAcceptPotential Φ u w) ∂Q u
@@ -126,7 +128,7 @@ private lemma measurable_rejection (Q : Kernel U U) [IsSFiniteKernel Q] {Φ : U 
 /-- **Evaluation of the Metropolis–Hastings kernel.** On a measurable set `B`, the kernel is
 the accepted moves into `B` plus the
 rejection probability if `u ∈ B`. -/
-theorem mhKernel_apply (Q : Kernel U U) [IsSFiniteKernel Q] {Φ : U → ℝ} (hΦ : Measurable Φ)
+theorem mhKernel_apply (Q : Kernel U U) [IsMarkovKernel Q] {Φ : U → ℝ} (hΦ : Measurable Φ)
     (u : U) {B : Set U} (hB : MeasurableSet B) :
     mhKernel Q Φ u B = ∫⁻ v in B, mhAcceptPotential Φ u v ∂Q u +
       B.indicator (fun u ↦ ∫⁻ w, (1 - mhAcceptPotential Φ u w) ∂Q u) u := by

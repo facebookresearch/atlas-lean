@@ -47,15 +47,17 @@ namespace CSLibExt.MachineLearning.GeneralizationBounds
 variable {Ω 𝒵 F : Type*} [MeasurableSpace Ω] [MeasurableSpace 𝒵]
 
 /-- The expected risk `R(f) = E[ℓ(y, f(x))] = ∫ L f z dν(z)` of a predictor `f` under the data
-distribution `ν`, where `L f z` is the loss of `f` at the example `z`.
+distribution `ν`, a probability measure, where `L f z` is the loss of `f` at the example `z`.
+Under the zero measure, which is excluded, every predictor would have risk `0`.
 Source: F. Bach, *Learning Theory from First Principles*, MIT Press (2024), Definition 2.1. -/
-noncomputable def risk (L : F → 𝒵 → ℝ) (ν : Measure 𝒵) (f : F) : ℝ :=
+noncomputable def risk (L : F → 𝒵 → ℝ) (ν : Measure 𝒵) [IsProbabilityMeasure ν] (f : F) : ℝ :=
   ∫ z, L f z ∂ν
 
-/-- The empirical risk `R̂(f) = (1/n) ∑ᵢ ℓ(yᵢ, f(xᵢ))` of a predictor `f` on a sample
-`z : Fin n → 𝒵`.
+/-- The empirical risk `R̂(f) = (1/n) ∑ᵢ ℓ(yᵢ, f(xᵢ))` of a predictor `f` on a nonempty sample
+`z : Fin n → 𝒵` (`n ≥ 1`). On an empty sample, which is excluded, the average would be `0`.
 Source: F. Bach, *Learning Theory from First Principles*, MIT Press (2024), Definition 2.2. -/
-noncomputable def empiricalRisk {n : ℕ} (L : F → 𝒵 → ℝ) (z : Fin n → 𝒵) (f : F) : ℝ :=
+noncomputable def empiricalRisk {n : ℕ} [NeZero n] (L : F → 𝒵 → ℝ) (z : Fin n → 𝒵) (f : F) :
+    ℝ :=
   (1 / n : ℝ) * ∑ i, L f (z i)
 
 /-- **Excess risk of empirical risk minimization under a uniform deviation bound.** If `f̂`
@@ -72,7 +74,8 @@ theorem risk_le_add_two_mul_of_forall_abs_sub_le {R Rhat : F → ℝ} {fhat : F}
   linarith [hmin f]
 
 /-- The empirical risk of a measurable loss along measurable sample maps is measurable. -/
-theorem measurable_empiricalRisk {n : ℕ} {Z : Fin n → Ω → 𝒵} (hZ : ∀ i, Measurable (Z i))
+theorem measurable_empiricalRisk {n : ℕ} [NeZero n] {Z : Fin n → Ω → 𝒵}
+    (hZ : ∀ i, Measurable (Z i))
     {L : F → 𝒵 → ℝ} (hL : ∀ f, Measurable (L f)) (f : F) :
     Measurable fun ω => empiricalRisk L (fun i => Z i ω) f := by
   unfold empiricalRisk
@@ -88,12 +91,14 @@ Source: F. Bach, *Learning Theory from First Principles*, MIT Press (2024), Sect
 Proof: `MathlibExt.Probability.HoeffdingBounded.measureReal_abs_avg_sub_ge_le` for each `f` and
 a union bound over the finite class. -/
 theorem measureReal_exists_abs_empiricalRisk_sub_risk_ge_le {μ : Measure Ω}
-    [IsProbabilityMeasure μ] [Fintype F] {ν : Measure 𝒵} {n : ℕ} (hn : 0 < n)
+    [IsProbabilityMeasure μ] [Fintype F] {ν : Measure 𝒵} [IsProbabilityMeasure ν] {n : ℕ}
+    [NeZero n]
     {Z : Fin n → Ω → 𝒵} (h_indep : iIndepFun Z μ) (hZ : ∀ i, Measurable (Z i))
     (hlaw : ∀ i, μ.map (Z i) = ν) {L : F → 𝒵 → ℝ} (hL : ∀ f, Measurable (L f)) {ℓ : ℝ}
     (hbound : ∀ f, ∀ᵐ z ∂ν, L f z ∈ Set.Icc 0 ℓ) {t : ℝ} (ht : 0 ≤ t) :
     μ.real {ω | ∃ f, t ≤ |empiricalRisk L (fun i => Z i ω) f - risk L ν f|} ≤
       2 * Fintype.card F * exp (-2 * n * t ^ 2 / ℓ ^ 2) := by
+  have hn : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
   have hnpos : (0 : ℝ) < n := Nat.cast_pos.mpr hn
   have hone : ∀ f : F, μ.real {ω | t ≤ |empiricalRisk L (fun i => Z i ω) f - risk L ν f|} ≤
       2 * exp (-2 * n * t ^ 2 / ℓ ^ 2) := by
@@ -130,20 +135,22 @@ Source: F. Bach, *Learning Theory from First Principles*, MIT Press (2024), Sect
 (the source states the bound with probability greater than `1 - δ` and a non-strict
 inequality; the strict event and `δ = 1` are derived here). -/
 theorem one_sub_le_measureReal_forall_abs_empiricalRisk_sub_risk_lt {μ : Measure Ω}
-    [IsProbabilityMeasure μ] [Fintype F] [Nonempty F] {ν : Measure 𝒵} {n : ℕ} (hn : 0 < n)
+    [IsProbabilityMeasure μ] [Fintype F] [Nonempty F] {ν : Measure 𝒵} [IsProbabilityMeasure ν]
+    {n : ℕ} [NeZero n]
     {Z : Fin n → Ω → 𝒵} (h_indep : iIndepFun Z μ) (hZ : ∀ i, Measurable (Z i))
     (hlaw : ∀ i, μ.map (Z i) = ν) {L : F → 𝒵 → ℝ} (hL : ∀ f, Measurable (L f)) {ℓ : ℝ}
     (hℓ : 0 < ℓ) (hbound : ∀ f, ∀ᵐ z ∂ν, L f z ∈ Set.Icc 0 ℓ) {δ : ℝ} (hδ : δ ∈ Set.Ioc 0 1) :
     1 - δ ≤ μ.real {ω | ∀ f, |empiricalRisk L (fun i => Z i ω) f - risk L ν f| <
       ℓ * √(log (2 * Fintype.card F / δ) / (2 * n))} := by
   set t := ℓ * √(log (2 * Fintype.card F / δ) / (2 * n)) with ht_def
+  have hn : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
   have hnpos : (0 : ℝ) < n := Nat.cast_pos.mpr hn
   have hcard : (1 : ℝ) ≤ Fintype.card F := by exact_mod_cast Fintype.card_pos
   have harg : 1 ≤ 2 * Fintype.card F / δ := by
     rw [le_div_iff₀ hδ.1]; nlinarith [hδ.2]
   have hlog : 0 ≤ log (2 * Fintype.card F / δ) := log_nonneg harg
   have ht : 0 ≤ t := mul_nonneg hℓ.le (sqrt_nonneg _)
-  have htail := measureReal_exists_abs_empiricalRisk_sub_risk_ge_le hn h_indep hZ hlaw hL
+  have htail := measureReal_exists_abs_empiricalRisk_sub_risk_ge_le h_indep hZ hlaw hL
     hbound ht
   have hexp : 2 * (Fintype.card F : ℝ) * exp (-2 * n * t ^ 2 / ℓ ^ 2) = δ := by
     have ht2 : t ^ 2 = ℓ ^ 2 * (log (2 * Fintype.card F / δ) / (2 * n)) := by

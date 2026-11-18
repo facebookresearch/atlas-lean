@@ -42,10 +42,13 @@ variable (H : Type*) [NormedAddCommGroup H] [InnerProductSpace ℝ H] [CompleteS
   [RKHS ℝ H X ℝ]
 
 /-- **Unbiased empirical estimate of the squared MMD** (Gretton et al., *A kernel two-sample
-test*, JMLR 13 (2012), Lemma 6, equation (3)). For samples `x₁, …, x_m` and `y₁, …, y_n`,
+test*, JMLR 13 (2012), Lemma 6, equation (3)). For samples `x₁, …, x_m` and `y₁, …, y_n` of
+sizes `m, n ≥ 2`,
 `MMD_u² = 1/(m(m-1)) ∑_{i ≠ j} k(xᵢ, xⱼ) + 1/(n(n-1)) ∑_{i ≠ j} k(yᵢ, yⱼ)
-- 2/(mn) ∑_{i,j} k(xᵢ, yⱼ)`. -/
-noncomputable def mmdUnbiasedSq {m n : ℕ} (x : Fin m → X) (y : Fin n → X) : ℝ :=
+- 2/(mn) ∑_{i,j} k(xᵢ, yⱼ)`. For a sample of size `0` or `1`, which is excluded, there is no pair
+`i ≠ j` and its U-statistic would be `0` (`0 / 0`), so the value would not be an estimate. -/
+noncomputable def mmdUnbiasedSq {m n : ℕ} (_hm : 2 ≤ m) (_hn : 2 ≤ n) (x : Fin m → X)
+    (y : Fin n → X) : ℝ :=
   ((m : ℝ) * (m - 1))⁻¹ * ∑ i, ∑ j ∈ Finset.univ.erase i, kernelValue H (x i) (x j) +
     ((n : ℝ) * (n - 1))⁻¹ * ∑ i, ∑ j ∈ Finset.univ.erase i, kernelValue H (y i) (y j) -
     2 * ((m : ℝ) * n)⁻¹ * ∑ i, ∑ j, kernelValue H (x i) (y j)
@@ -88,7 +91,7 @@ maps, and let `x₁, …, x_m` be i.i.d. from `P` and `y₁, …, y_n` i.i.d. fr
 with `m, n ≥ 2`. Then `E[MMD_u²] = MMD(P, Q)²`. -/
 theorem integral_mmdUnbiasedSq {m n : ℕ} (hm : 2 ≤ m) (hn : 2 ≤ n)
     (hμ : Integrable (featureMap H) μ) (hν : Integrable (featureMap H) ν) :
-    ∫ z, mmdUnbiasedSq H z.1 z.2 ∂((Measure.pi fun _ : Fin m => μ).prod
+    ∫ z, mmdUnbiasedSq H hm hn z.1 z.2 ∂((Measure.pi fun _ : Fin m => μ).prod
       (Measure.pi fun _ : Fin n => ν)) = mmd H μ ν ^ 2 := by
   set Pm := Measure.pi fun _ : Fin m => μ
   set Pn := Measure.pi fun _ : Fin n => ν

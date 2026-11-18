@@ -60,9 +60,11 @@ noncomputable def logPartition (φ : X → E) (θ : E) : ℝ := log (partitionSu
 noncomputable def density (φ : X → E) (θ : E) (x : X) : ℝ :=
   exp (inner ℝ (φ x) θ) / partitionSum φ θ
 
-/-- **Mean parameter of a finite exponential family.** `μ(θ) = E_θ[φ(X)] = ∑ₓ p_θ(x) φ(x)`
-(Wainwright and Jordan (2008), Section 3.4). -/
-noncomputable def meanParameter (φ : X → E) (θ : E) : E := ∑ x, density φ θ x • φ x
+/-- **Mean parameter of a finite exponential family.** On a nonempty finite set,
+`μ(θ) = E_θ[φ(X)] = ∑ₓ p_θ(x) φ(x)` (Wainwright and Jordan (2008), Section 3.4). On an empty
+set, which is excluded, there is no distribution and the sum would be `0`. -/
+noncomputable def meanParameter [Nonempty X] (φ : X → E) (θ : E) : E :=
+  ∑ x, density φ θ x • φ x
 
 /-- **The partition function is positive** on a nonempty finite set: `Z(θ) > 0`. -/
 theorem partitionSum_pos [Nonempty X] (φ : X → E) (θ : E) : 0 < partitionSum φ θ :=

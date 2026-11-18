@@ -37,7 +37,7 @@ example (cost : Fin 2 → (Fin 2 → Fin 1) → ℝ) (ψ : (Fin 2 → Fin 1) →
 /-- Playing (leave, leave), (leave, stay), (stay, leave) once each has no conditional regret
 above `0`, so its empirical distribution is a correlated equilibrium. -/
 example : IsCorrelatedEq chickenCost (empirical ![![0, 0], ![0, 1], ![1, 0]]) 0 := by
-  rw [isCorrelatedEq_empirical_iff (by norm_num)]
+  rw [isCorrelatedEq_empirical_iff]
   intro i j k
   fin_cases i <;> fin_cases j <;> fin_cases k <;>
     simp [condRegret, switchGain, chickenCost, Fin.sum_univ_three, Function.update] <;>

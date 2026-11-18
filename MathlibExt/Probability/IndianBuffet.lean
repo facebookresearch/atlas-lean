@@ -144,7 +144,11 @@ theorem tendsto_emptyColumnsFactor (α : ℝ) (N : ℕ) :
 Equation 13) give it as the probability, for `K` features with `πₖ ~ Beta(α/K, 1)` and
 `zᵢₖ ~ Bernoulli(πₖ)`, of the `lof`-equivalence class whose non-empty columns are those of `Z`
 (so the intended input has `mₖ ≥ 1` for every column). It is the paper's closed form, taken here
-as a definition; it is not derived from the beta–Bernoulli model. -/
+as a definition for every `α`, `K` and `Z`; it is not derived from the beta–Bernoulli model. It is
+that probability only for `α ≥ 0`, `K ≥ 1` and matrices without empty columns; outside that range
+the formula is not a probability (for `α < 0` it can be negative, and an empty column is read
+through `(0 - 1)! = 0! = 1`). The limit `tendsto_finiteLofProb` is an identity of formulas that
+holds for every input. -/
 noncomputable def finiteLofProb (α : ℝ) (K : ℕ) (Z : Fin N → Fin r → Bool) : ℝ :=
   α ^ r / (historyFactorial Z : ℝ) * ((K.descFactorial r : ℝ) / (K : ℝ) ^ r) *
     emptyColumnsFactor α N K *
@@ -155,7 +159,9 @@ noncomputable def finiteLofProb (α : ℝ) (K : ℕ) (Z : Fin N → Fin r → Bo
 `α^{K₊} / ∏_h K_h! · exp(-α H_N) · ∏ₖ (N - mₖ)! (mₖ - 1)! / N!`, `K₊ = r`, for a matrix
 `Z : Fin N → Fin r → Bool`: Griffiths and Ghahramani (2011, Equation 14) give it as the
 probability of the `lof`-equivalence class whose non-empty columns are those of `Z`. Taken here
-as a definition. -/
+as a definition for every `α` and `Z`; it is that probability only for `α ≥ 0` and matrices
+without empty columns (for `α < 0` it can be negative, and an empty column is read through
+`(0 - 1)! = 0! = 1`). -/
 noncomputable def lofProb (α : ℝ) (Z : Fin N → Fin r → Bool) : ℝ :=
   α ^ r / (historyFactorial Z : ℝ) * Real.exp (-α * (harmonic N : ℝ)) *
     ∏ k, ((N - featureCount Z k).factorial * (featureCount Z k - 1).factorial : ℝ) /
@@ -185,7 +191,9 @@ theorem tendsto_finiteLofProb (α : ℝ) (Z : Fin N → Fin r → Bool) :
 `N K (α/K) / (α/K + 1)`, Griffiths and Ghahramani's value (2011, Equation 11) of `E[∑ᵢₖ zᵢₖ]`
 for `K` features with `πₖ ~ Beta(α/K, 1)`: each entry is one with probability
 `E[πₖ] = (α/K) / (α/K + 1)`, the mean `r / (r + s)` of `Beta(r, s)`. It is the paper's closed
-form, taken here as a definition; the expectation is not computed from a measure here. -/
+form, taken here as a definition for every `α`; the expectation is not computed from a measure
+here. It is that expectation only for `α ≥ 0`, the range of every theorem below (for `α < 0` the
+formula can be negative or exceed the number `N K` of entries). -/
 noncomputable def expectedOnes (α : ℝ) (N K : ℕ) : ℝ := N * K * ((α / K) / (α / K + 1))
 
 /-- **The closed-form expected number of ones equals `N α / (1 + α/K)`** (Griffiths and

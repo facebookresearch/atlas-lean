@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.MachineLearning.GraphicalModels.StructuralCausalModel
+public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.NormNum
@@ -96,9 +97,21 @@ example (x : Fin 2 → Bool) :
 
 /-- Without evidence, the counterfactual probability is the interventional one. -/
 example (Y : (Fin 2 → Bool) → Prop) [DecidablePred Y] :
-    xorSCM.cfProb {0} (fun _ => true) (fun _ => True) Y =
+    xorSCM.cfProb {0} (fun _ => true) (fun _ => True) (by simp [xorSCM.sum_law]) Y =
       ∑ x with Y x, (xorSCM.doSet {0} fun _ => true).law x :=
   xorSCM.cfProb_true _ _ Y
+
+/-! The evidence must have positive probability: for impossible evidence, under which every
+counterfactual event, the certain one included, would get probability `0`, the proof of
+`0 < P(E)` cannot be given. -/
+
+/--
+error: unsolved goals
+⊢ False
+-/
+#guard_msgs in
+noncomputable example : ℝ :=
+  xorSCM.cfProb {0} (fun _ => true) (fun _ => False) (by simp) fun _ => True
 
 /-! ### The probability of necessity in a monotone model -/
 
@@ -122,13 +135,29 @@ theorem orSCM_counterfactual (b : Bool) (u : Fin 2 → Bool) :
   intro k
   fin_cases k <;> rfl
 
+/-- In every unit, the factual values are `X₀ = U₀` and `X₁ = U₀ || U₁`. -/
+theorem orSCM_solve (u : Fin 2 → Bool) : orSCM.solve u = ![u 0, u 0 || u 1] := by
+  rw [SCM.solve_eq_iff]
+  intro k
+  fin_cases k <;> rfl
+
+/-- The evidence `X₀ = X₁ = true` has positive probability: the unit `U₀ = U₁ = true` has
+weight `1/4` and produces it. -/
+theorem orSCM_evidence_pos : 0 < ∑ x with x 0 = true ∧ x 1 = true, orSCM.law x := by
+  rw [SCM.sum_law_filter]
+  refine Finset.sum_pos' (fun u _ => mul_nonneg (Finset.prod_nonneg fun k _ =>
+    (orSCM.noise k).weights_nonneg _) (by split_ifs <;> norm_num))
+    ⟨fun _ => true, mem_univ _, ?_⟩
+  rw [orSCM_solve]
+  simp [orSCM, fair]
+
 /-- The model is monotone, so Pearl's formula for the probability of necessity applies. -/
 example : orSCM.cfProb {0} (fun _ => false) (fun x => x 0 = true ∧ x 1 = true)
-      (fun x => x 1 = false) =
+      orSCM_evidence_pos (fun x => x 1 = false) =
     ((∑ x with x 1 = true, orSCM.law x) -
         ∑ x with x 1 = true, (orSCM.doSet {0} fun _ => false).law x) /
       ∑ x with x 0 = true ∧ x 1 = true, orSCM.law x := by
-  refine orSCM.cfProb_necessity 0 1 fun u _ => ?_
+  refine orSCM.cfProb_necessity 0 1 (fun u _ => ?_) orSCM_evidence_pos
   rw [orSCM_counterfactual]
   rfl
 

@@ -61,14 +61,18 @@ open scoped NNReal
 namespace ProbabilityTheory
 
 /-- **Marginal density of a Gaussian location mixture.** For a prior `g` on the mean and a
-variance `v`, `f(x) = ∫ φ_v(x - μ) g(dμ)`, the density of `x` when `μ ~ g` and
-`x | μ ~ N(μ, v)`. -/
-noncomputable def gaussianMixtureDensity (g : Measure ℝ) (v : ℝ≥0) (x : ℝ) : ℝ :=
+variance `v > 0`, `f(x) = ∫ φ_v(x - μ) g(dμ)`, the density of `x` when `μ ~ g` and
+`x | μ ~ N(μ, v)` (for a prior that is not a probability measure, the unnormalised density, of
+mass `g univ`). For `v = 0`, which is excluded, `gaussianPDFReal μ 0` vanishes identically (while
+`gaussianReal μ 0 = δ_μ`), so the value would be `0`. -/
+noncomputable def gaussianMixtureDensity (g : Measure ℝ) (v : ℝ≥0) [NeZero v] (x : ℝ) : ℝ :=
   ∫ μ, gaussianPDFReal μ v x ∂g
 
 /-- **Posterior mean in the Gaussian location model.** Bayes' rule for `μ ~ g` and
-`x | μ ~ N(μ, v)`: `E[μ | x] = ∫ μ φ_v(x - μ) g(dμ) / f(x)`, with `f` the marginal density. -/
-noncomputable def gaussianPosteriorMean (g : Measure ℝ) (v : ℝ≥0) (x : ℝ) : ℝ :=
+`x | μ ~ N(μ, v)` with `v > 0`: `E[μ | x] = ∫ μ φ_v(x - μ) g(dμ) / f(x)`, with `f` the marginal
+density. For `v = 0`, which is excluded, the Gaussian density vanishes identically and the value
+would be `0` instead of `x`. -/
+noncomputable def gaussianPosteriorMean (g : Measure ℝ) (v : ℝ≥0) [NeZero v] (x : ℝ) : ℝ :=
   (∫ μ, μ * gaussianPDFReal μ v x ∂g) / gaussianMixtureDensity g v x
 
 private lemma hasDerivAt_gaussianPDFReal_param (μ : ℝ) {v : ℝ≥0} (hv : v ≠ 0) (y : ℝ) :
@@ -156,9 +160,10 @@ prior `g` and `v > 0`, `f(x) = ∫ φ_v(x - μ) g(dμ)` has derivative
 `f'(x) = ∫ (μ - x) / v φ_v(x - μ) g(dμ)` at every `x` (differentiation under the integral sign,
 dominated by a constant since `|t| exp(-t² / 2v)` is bounded). -/
 theorem hasDerivAt_gaussianMixtureDensity (g : Measure ℝ) [IsFiniteMeasure g] {v : ℝ≥0}
-    (hv : v ≠ 0) (x : ℝ) :
+    [NeZero v] (x : ℝ) :
     HasDerivAt (gaussianMixtureDensity g v)
       (∫ μ, (μ - x) / v * gaussianPDFReal μ v x ∂g) x := by
+  have hv : v ≠ 0 := NeZero.ne v
   have hvpos : 0 < (v : ℝ) := NNReal.coe_pos.mpr (pos_iff_ne_zero.mpr hv)
   have key := hasDerivAt_integral_of_dominated_loc_of_deriv_le (μ := g) (x₀ := x)
     (F := fun y μ => gaussianPDFReal μ v y)
@@ -178,7 +183,8 @@ theorem hasDerivAt_gaussianMixtureDensity (g : Measure ℝ) [IsFiniteMeasure g] 
 /-- **The marginal density of a Gaussian location mixture is positive.** For a finite nonzero
 prior `g` and `v > 0`, `f(x) > 0` at every `x`. -/
 theorem gaussianMixtureDensity_pos (g : Measure ℝ) [IsFiniteMeasure g] [NeZero g] {v : ℝ≥0}
-    (hv : v ≠ 0) (x : ℝ) : 0 < gaussianMixtureDensity g v x := by
+    [NeZero v] (x : ℝ) : 0 < gaussianMixtureDensity g v x := by
+  have hv : v ≠ 0 := NeZero.ne v
   rw [gaussianMixtureDensity, integral_pos_iff_support_of_nonneg
     (fun μ => gaussianPDFReal_nonneg μ v x) (integrable_gaussianPDFReal_param g v x)]
   have : Function.support (fun μ => gaussianPDFReal μ v x) = Set.univ :=
@@ -191,12 +197,13 @@ assumption), and `x | μ ~ N(μ, v)` with `v > 0`; let `f` be the marginal densi
 posterior mean is `E[μ | x] = x + v (log f)'(x)` for every `x` (Efron 2011, equation (1.4) with
 `σ² = v`; Robbins 1956). Here `E[μ | x]` is the Bayes ratio `gaussianPosteriorMean`. -/
 theorem gaussianPosteriorMean_eq_add_mul_deriv_log (g : Measure ℝ) [IsFiniteMeasure g] [NeZero g]
-    {v : ℝ≥0} (hv : v ≠ 0) (x : ℝ) :
+    {v : ℝ≥0} [NeZero v] (x : ℝ) :
     gaussianPosteriorMean g v x =
       x + v * deriv (fun y => Real.log (gaussianMixtureDensity g v y)) x := by
+  have hv : v ≠ 0 := NeZero.ne v
   have hvR : (v : ℝ) ≠ 0 := by exact_mod_cast hv
-  have hf := gaussianMixtureDensity_pos g hv x
-  rw [((hasDerivAt_gaussianMixtureDensity g hv x).log hf.ne').deriv, gaussianPosteriorMean]
+  have hf := gaussianMixtureDensity_pos g (v := v) x
+  rw [((hasDerivAt_gaussianMixtureDensity g (v := v) x).log hf.ne').deriv, gaussianPosteriorMean]
   have hsplit : ∫ μ, (μ - x) / v * gaussianPDFReal μ v x ∂g =
       ((∫ μ, μ * gaussianPDFReal μ v x ∂g) - x * gaussianMixtureDensity g v x) / v := by
     rw [gaussianMixtureDensity, ← integral_const_mul,
@@ -212,8 +219,10 @@ theorem gaussianPosteriorMean_eq_add_mul_deriv_log (g : Measure ℝ) [IsFiniteMe
 /-! ### The second-order formula: posterior variance -/
 
 /-- **Posterior second moment in the Gaussian location model.** Bayes' rule for `μ ~ g` and
-`x | μ ~ N(μ, v)`: `E[μ² | x] = ∫ μ² φ_v(x - μ) g(dμ) / f(x)`. -/
-noncomputable def gaussianPosteriorSecondMoment (g : Measure ℝ) (v : ℝ≥0) (x : ℝ) : ℝ :=
+`x | μ ~ N(μ, v)` with `v > 0`: `E[μ² | x] = ∫ μ² φ_v(x - μ) g(dμ) / f(x)`. For `v = 0`, which is
+excluded, the value would be `0` instead of `x²`. -/
+noncomputable def gaussianPosteriorSecondMoment (g : Measure ℝ) (v : ℝ≥0) [NeZero v] (x : ℝ) :
+    ℝ :=
   (∫ μ, μ ^ 2 * gaussianPDFReal μ v x ∂g) / gaussianMixtureDensity g v x
 
 private lemma sq_mul_exp_le {v : ℝ} (hv : 0 < v) (t : ℝ) :
@@ -293,19 +302,20 @@ private lemma hasDerivAt_gaussianMixtureDensity_deriv (g : Measure ℝ) [IsFinit
 `Var(μ | x) = E[μ² | x] - E[μ | x]² = v (1 + v (log f)''(x))` for every `x` (Efron 2011,
 equation (2.8), second component, with `σ² = v`). -/
 theorem gaussianPosteriorSecondMoment_sub_sq_eq (g : Measure ℝ) [IsFiniteMeasure g] [NeZero g]
-    {v : ℝ≥0} (hv : v ≠ 0) (x : ℝ) :
+    {v : ℝ≥0} [NeZero v] (x : ℝ) :
     gaussianPosteriorSecondMoment g v x - gaussianPosteriorMean g v x ^ 2 =
       v * (1 + v * deriv (deriv fun y => Real.log (gaussianMixtureDensity g v y)) x) := by
+  have hv : v ≠ 0 := NeZero.ne v
   have hvpos : 0 < (v : ℝ) := NNReal.coe_pos.mpr (pos_iff_ne_zero.mpr hv)
   set f := gaussianMixtureDensity g v
   set F1 : ℝ → ℝ := fun y => ∫ μ, (μ - y) / v * gaussianPDFReal μ v y ∂g
   have hd1 : deriv (fun y => Real.log (f y)) = fun y => F1 y / f y := by
     ext y
-    exact ((hasDerivAt_gaussianMixtureDensity g hv y).log
-      (gaussianMixtureDensity_pos g hv y).ne').deriv
+    exact ((hasDerivAt_gaussianMixtureDensity g (v := v) y).log
+      (gaussianMixtureDensity_pos g (v := v) y).ne').deriv
   have hq : HasDerivAt (fun y => F1 y / f y) _ x :=
     (hasDerivAt_gaussianMixtureDensity_deriv g hv x).div
-      (hasDerivAt_gaussianMixtureDensity g hv x) (gaussianMixtureDensity_pos g hv x).ne'
+      (hasDerivAt_gaussianMixtureDensity g (v := v) x) (gaussianMixtureDensity_pos g (v := v) x).ne'
   rw [hd1, hq.deriv]
   set N0 := f x
   set N1 := ∫ μ, μ * gaussianPDFReal μ v x ∂g
@@ -332,7 +342,7 @@ theorem gaussianPosteriorSecondMoment_sub_sq_eq (g : Measure ℝ) [IsFiniteMeasu
       integral_const_mul]
     simp only [N0, N1, N2, f, gaussianMixtureDensity]
     ring
-  have hN0 : 0 < N0 := gaussianMixtureDensity_pos g hv x
+  have hN0 : 0 < N0 := gaussianMixtureDensity_pos g (v := v) x
   rw [hF1, hF2, gaussianPosteriorSecondMoment, gaussianPosteriorMean]
   change N2 / N0 - (N1 / N0) ^ 2 = _
   field_simp
@@ -341,8 +351,10 @@ theorem gaussianPosteriorSecondMoment_sub_sq_eq (g : Measure ℝ) [IsFiniteMeasu
 /-! ### The posterior mean as a conditional expectation -/
 
 /-- **Joint law of a Gaussian location model.** The law on `ℝ × ℝ` of `(μ, x)` when `μ ~ g` and
-`x | μ ~ N(μ, v)`: the measure `g ⊗ Lebesgue` with density `φ_v(x - μ)`. -/
-noncomputable def gaussianLocationJoint (g : Measure ℝ) (v : ℝ≥0) : Measure (ℝ × ℝ) :=
+`x | μ ~ N(μ, v)` with `v > 0`: the measure `g ⊗ Lebesgue` with density `φ_v(x - μ)` (for a prior
+that is not a probability measure, a measure of mass `g univ`). For `v = 0`, which is excluded,
+the density vanishes identically and the measure would be zero. -/
+noncomputable def gaussianLocationJoint (g : Measure ℝ) (v : ℝ≥0) [NeZero v] : Measure (ℝ × ℝ) :=
   (g.prod volume).withDensity fun q => ((gaussianPDFReal q.1 v q.2).toNNReal : ENNReal)
 
 private lemma measurable_jointDensity (v : ℝ≥0) :
@@ -352,9 +364,10 @@ private lemma measurable_jointDensity (v : ℝ≥0) :
 
 /-- **The joint law of a Gaussian location model has the right marginal and kernel.** For
 measurable `A, B` and `v > 0`, `P(μ ∈ A, x ∈ B) = ∫_A N(μ, v)(B) g(dμ)`. -/
-theorem gaussianLocationJoint_prod_apply (g : Measure ℝ) [SFinite g] {v : ℝ≥0} (hv : v ≠ 0)
+theorem gaussianLocationJoint_prod_apply (g : Measure ℝ) [SFinite g] {v : ℝ≥0} [NeZero v]
     {A B : Set ℝ} (hA : MeasurableSet A) (hB : MeasurableSet B) :
     gaussianLocationJoint g v (A ×ˢ B) = ∫⁻ μ in A, gaussianReal μ v B ∂g := by
+  have hv : v ≠ 0 := NeZero.ne v
   rw [gaussianLocationJoint, withDensity_apply _ (hA.prod hB), ← Measure.prod_restrict,
     lintegral_prod (fun q : ℝ × ℝ => ((gaussianPDFReal q.1 v q.2).toNNReal : ENNReal))
       (measurable_jointDensity v).coe_nnreal_ennreal.aemeasurable]
@@ -365,7 +378,7 @@ theorem gaussianLocationJoint_prod_apply (g : Measure ℝ) [SFinite g] {v : ℝ�
 instance (g : Measure ℝ) [IsProbabilityMeasure g] {v : ℝ≥0} [NeZero v] :
     IsProbabilityMeasure (gaussianLocationJoint g v) := by
   constructor
-  rw [← Set.univ_prod_univ, gaussianLocationJoint_prod_apply g (NeZero.ne v) MeasurableSet.univ
+  rw [← Set.univ_prod_univ, gaussianLocationJoint_prod_apply g MeasurableSet.univ
     MeasurableSet.univ]
   simp
 
@@ -374,14 +387,16 @@ private lemma stronglyMeasurable_jointPDF (v : ℝ≥0) :
   (measurable_uncurry_gaussianPDFReal.comp
     (measurable_fst.prodMk (measurable_const.prodMk measurable_snd))).stronglyMeasurable
 
-private lemma measurable_gaussianMixtureDensity (g : Measure ℝ) [SFinite g] (v : ℝ≥0) :
+private lemma measurable_gaussianMixtureDensity (g : Measure ℝ) [SFinite g] (v : ℝ≥0)
+    [NeZero v] :
     Measurable (gaussianMixtureDensity g v) := by
   have h : StronglyMeasurable fun q : ℝ × ℝ => gaussianPDFReal q.2 v q.1 :=
     (measurable_uncurry_gaussianPDFReal.comp
       (measurable_snd.prodMk (measurable_const.prodMk measurable_fst))).stronglyMeasurable
   exact (h.integral_prod_right' (ν := g)).measurable
 
-private lemma measurable_gaussianPosteriorMean (g : Measure ℝ) [SFinite g] (v : ℝ≥0) :
+private lemma measurable_gaussianPosteriorMean (g : Measure ℝ) [SFinite g] (v : ℝ≥0)
+    [NeZero v] :
     Measurable (gaussianPosteriorMean g v) := by
   have h : StronglyMeasurable fun q : ℝ × ℝ => q.2 * gaussianPDFReal q.2 v q.1 :=
     (measurable_snd.mul (measurable_uncurry_gaussianPDFReal.comp
@@ -401,15 +416,17 @@ private lemma integrable_fst_mul_jointPDF (g : Measure ℝ) [IsFiniteMeasure g]
     rw [integral_mul_const, integral_gaussianPDFReal_eq_one μ hv, one_mul]
 
 private lemma posteriorMean_mul_density (g : Measure ℝ) [IsFiniteMeasure g] [NeZero g]
-    {v : ℝ≥0} (hv : v ≠ 0) (x : ℝ) :
+    {v : ℝ≥0} [NeZero v] (x : ℝ) :
     gaussianPosteriorMean g v x * gaussianMixtureDensity g v x =
       ∫ μ, μ * gaussianPDFReal μ v x ∂g := by
-  rw [gaussianPosteriorMean, div_mul_cancel₀ _ (gaussianMixtureDensity_pos g hv x).ne']
+  have hv : v ≠ 0 := NeZero.ne v
+  rw [gaussianPosteriorMean, div_mul_cancel₀ _ (gaussianMixtureDensity_pos g (v := v) x).ne']
 
 private lemma integrable_jointPDF_mul_posteriorMean (g : Measure ℝ) [IsProbabilityMeasure g]
-    (hg : Integrable id g) {v : ℝ≥0} (hv : v ≠ 0) :
+    (hg : Integrable id g) {v : ℝ≥0} [NeZero v] :
     Integrable (fun q : ℝ × ℝ => gaussianPDFReal q.1 v q.2 * gaussianPosteriorMean g v q.2)
       (g.prod volume) := by
+  have hv : v ≠ 0 := NeZero.ne v
   have hm : AEStronglyMeasurable
       (fun q : ℝ × ℝ => gaussianPDFReal q.1 v q.2 * gaussianPosteriorMean g v q.2)
       (g.prod volume) :=
@@ -431,8 +448,9 @@ private lemma integrable_jointPDF_mul_posteriorMean (g : Measure ℝ) [IsProbabi
     · rw [Real.norm_of_nonneg (integral_nonneg fun _ => norm_nonneg _)]
       simp only [norm_mul, Real.norm_eq_abs, abs_of_nonneg (gaussianPDFReal_nonneg _ _ _),
         integral_mul_const]
-      rw [← gaussianMixtureDensity, mul_comm, ← abs_of_pos (gaussianMixtureDensity_pos g hv x),
-        ← abs_mul, posteriorMean_mul_density g hv x]
+      rw [← gaussianMixtureDensity, mul_comm,
+        ← abs_of_pos (gaussianMixtureDensity_pos g (v := v) x),
+        ← abs_mul, posteriorMean_mul_density g (v := v) x]
       refine (abs_integral_le_integral_abs).trans_eq ?_
       congr 1
       ext μ
@@ -444,16 +462,16 @@ private lemma integrable_jointPDF_mul_posteriorMean (g : Measure ℝ) [IsProbabi
 `gaussianPosteriorMean g v x`, which by `gaussianPosteriorMean_eq_add_mul_deriv_log` equals
 `x + v (log f)'(x)` (Efron 2011, equations (1.2)–(1.4) with `σ² = v`). -/
 theorem condExp_fst_gaussianLocationJoint (g : Measure ℝ) [IsProbabilityMeasure g]
-    (hg : Integrable id g) {v : ℝ≥0} (hv : v ≠ 0) :
+    (hg : Integrable id g) {v : ℝ≥0} [NeZero v] :
     (fun q : ℝ × ℝ => gaussianPosteriorMean g v q.2) =ᵐ[gaussianLocationJoint g v]
       (gaussianLocationJoint g v)[Prod.fst | MeasurableSpace.comap Prod.snd inferInstance] := by
-  have : NeZero v := ⟨hv⟩
+  have hv : v ≠ 0 := NeZero.ne v
   set J := gaussianLocationJoint g v with hJ
   have hρ := measurable_jointDensity v
   have hm : MeasurableSpace.comap Prod.snd inferInstance ≤ (inferInstance : MeasurableSpace (ℝ × ℝ))
     := measurable_snd.comap_le
   have hH := integrable_fst_mul_jointPDF g hg hv
-  have hK := integrable_jointPDF_mul_posteriorMean g hg hv
+  have hK := integrable_jointPDF_mul_posteriorMean g hg (v := v)
   have hsmul : ∀ (F : ℝ × ℝ → ℝ) q, (gaussianPDFReal q.1 v q.2).toNNReal • F q =
       gaussianPDFReal q.1 v q.2 * F q := fun F q => by
     rw [NNReal.smul_def, Real.coe_toNNReal _ (gaussianPDFReal_nonneg _ _ _), smul_eq_mul]
@@ -481,7 +499,7 @@ theorem condExp_fst_gaussianLocationJoint (g : Measure ℝ) [IsProbabilityMeasur
     by_cases hx : x ∈ A
     · simp only [Set.indicator, Set.mem_preimage, hx, ite_true]
       rw [integral_mul_const, ← gaussianMixtureDensity, mul_comm,
-        posteriorMean_mul_density g hv x]
+        posteriorMean_mul_density g (v := v) x]
       exact integral_congr_ae (Filter.Eventually.of_forall fun μ => mul_comm _ _)
     · simp [Set.indicator, hx]
   · exact ((measurable_gaussianPosteriorMean g v).comp
@@ -500,8 +518,9 @@ private lemma gaussianPDFReal_comm (μ : ℝ) (v : ℝ≥0) (x : ℝ) :
 `σ₀² = v`). With `v = 1` and `V = A + 1` this is the Bayes rule `(1 - 1/V) x` that the James–Stein
 estimator imitates (Efron 2011, equations (3.7)–(3.8)). The proof applies Stein's lemma to the
 prior: `∫ μ φ_v(x - μ) N(0, A)(dμ) = A ∫ (x - μ) / v φ_v(x - μ) N(0, A)(dμ)`. -/
-theorem gaussianPosteriorMean_gaussianReal (A : ℝ≥0) {v : ℝ≥0} (hv : v ≠ 0) (x : ℝ) :
+theorem gaussianPosteriorMean_gaussianReal (A : ℝ≥0) {v : ℝ≥0} [NeZero v] (x : ℝ) :
     gaussianPosteriorMean (gaussianReal 0 A) v x = A / (A + v) * x := by
+  have hv : v ≠ 0 := NeZero.ne v
   have hvpos : 0 < (v : ℝ) := NNReal.coe_pos.mpr (pos_iff_ne_zero.mpr hv)
   set g := gaussianReal 0 A
   have hd : ∀ μ, HasDerivAt (fun μ => gaussianPDFReal μ v x)
@@ -525,7 +544,7 @@ theorem gaussianPosteriorMean_gaussianReal (A : ℝ≥0) {v : ℝ≥0} (hv : v �
     ext μ
     ring
   rw [hN] at hst
-  have hf := gaussianMixtureDensity_pos g hv x
+  have hf := gaussianMixtureDensity_pos g (v := v) x
   rw [gaussianPosteriorMean, div_eq_iff hf.ne']
   have hAv : (0 : ℝ) < A + v := by positivity
   have h1 : (∫ μ, μ * gaussianPDFReal μ v x ∂g) * v =

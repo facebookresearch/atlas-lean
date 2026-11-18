@@ -98,17 +98,21 @@ variable {ι : Type*} [Fintype ι]
 noncomputable def count (A : ι → Set Ω) (ω : Ω) : ℝ :=
   ∑ i, (A i).indicator (fun _ => (1 : ℝ)) ω
 
-/-- **Expected number of events.** `μ = ∑ᵢ P(Aᵢ)`, the expectation of the count
-`X = ∑ᵢ 1_{Aᵢ}` (Y. Zhao, *The Probabilistic Method in Combinatorics*, MIT 18.218 notes, 2019,
-Section 4.2). -/
-noncomputable def expectedCount (μ : Measure Ω) (A : ι → Set Ω) : ℝ :=
+/-- **Expected number of events.** For a probability measure `P`, `μ = ∑ᵢ P(Aᵢ)`, the
+expectation of the count `X = ∑ᵢ 1_{Aᵢ}` (Y. Zhao, *The Probabilistic Method in Combinatorics*,
+MIT 18.218 notes, 2019, Section 4.2). For another measure it is not an expectation: `μ.real`
+reads an infinite measure as `0`, and for a measure of mass `c` the sum is `c` times the
+expectation. -/
+noncomputable def expectedCount (μ : Measure Ω) [IsProbabilityMeasure μ] (A : ι → Set Ω) : ℝ :=
   ∑ i, μ.real (A i)
 
-/-- **Correlation sum over dependent pairs.** `Δ = ∑ P(Aᵢ ∩ Aⱼ)` over the ordered pairs `(i, j)`
-that are adjacent in the dependency graph `G` (Y. Zhao, *The Probabilistic Method in
-Combinatorics*, MIT 18.218 notes, 2019, Section 4.2, where the sum is over unordered pairs). -/
-noncomputable def dependentPairSum (μ : Measure Ω) (A : ι → Set Ω) (G : SimpleGraph ι)
-    [DecidableRel G.Adj] : ℝ :=
+/-- **Correlation sum over dependent pairs.** For a probability measure `P`, `Δ = ∑ P(Aᵢ ∩ Aⱼ)`
+over the ordered pairs `(i, j)` that are adjacent in the dependency graph `G` (Y. Zhao, *The
+Probabilistic Method in Combinatorics*, MIT 18.218 notes, 2019, Section 4.2, where the sum is
+over unordered pairs). For another measure the terms are not probabilities (`μ.real` reads an
+infinite measure as `0`). -/
+noncomputable def dependentPairSum (μ : Measure Ω) [IsProbabilityMeasure μ] (A : ι → Set Ω)
+    (G : SimpleGraph ι) [DecidableRel G.Adj] : ℝ :=
   ∑ i, ∑ j, if G.Adj i j then μ.real (A i ∩ A j) else 0
 
 private lemma memLp_indicator_one (A : Set Ω) (hA : MeasurableSet A) [IsFiniteMeasure μ] :
@@ -120,7 +124,7 @@ private lemma memLp_count [IsFiniteMeasure μ] (A : ι → Set Ω) (hA : ∀ i, 
   unfold count
   exact memLp_finsetSum Finset.univ (fun i _ => memLp_indicator_one (μ := μ) (A i) (hA i))
 
-private lemma integral_count [IsFiniteMeasure μ] (A : ι → Set Ω)
+private lemma integral_count [IsProbabilityMeasure μ] (A : ι → Set Ω)
     (hA : ∀ i, MeasurableSet (A i)) :
     ∫ ω, count A ω ∂μ = expectedCount μ A := by
   unfold count expectedCount

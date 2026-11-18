@@ -42,4 +42,16 @@ example : IsMarkovKernel
 example (Φ : ℝ → ℝ) (u v : ℝ) (h : Φ v ≤ Φ u) : mhAcceptPotential Φ u v = 1 := by
   rw [mhAcceptPotential, min_eq_left (Real.one_le_exp (sub_nonneg.2 h)), ENNReal.ofReal_one]
 
+/-! The proposal must be a Markov kernel: for the zero proposal every event would have
+probability `0`, so it does not elaborate. -/
+
+/--
+error: failed to synthesize instance of type class
+  IsMarkovKernel 0
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+noncomputable example : Kernel ℝ ℝ := mhKernel (0 : Kernel ℝ ℝ) fun _ => 0
+
 end MathlibExtTest.Probability.BayesianInverse.MetropolisHastings

@@ -43,7 +43,7 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
     |∫ S, (empiricalRisk (fun (w : ℝ) (z : ℝ) => min 1 |w - z|) S ((fun _ => (0 : ℝ)) S) -
         risk (fun (w : ℝ) (z : ℝ) => min 1 |w - z|) ν ((fun _ => (0 : ℝ)) S))
         ∂(Measure.pi fun _ : Fin 4 => ν)| ≤ 0 := by
-  refine abs_integral_empiricalRisk_sub_risk_le (by norm_num) ?_ (M := 1) ?_ ?_
+  refine abs_integral_empiricalRisk_sub_risk_le ?_ (M := 1) ?_ ?_
   · fun_prop
   · intro S z
     rw [abs_of_nonneg (le_min zero_le_one (abs_nonneg _))]

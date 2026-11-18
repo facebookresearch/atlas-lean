@@ -36,11 +36,12 @@ open MeasureTheory Filter Topology Finset
 open MathlibExt.GameTheory.BlackwellApproachabilityWanted (historySigma)
 
 /-- The **calibration score** of binary forecasts (Foster and Vohra 1998, §2). The forecasts
-`f s ∈ {0, 1/k, …, 1}` (the index `i` standing for `i / k`) are made for the outcomes `x s` of
-`t` rounds; with `n(i)` the number of rounds forecast `i / k` and `ρ(i)` the fraction of those
-rounds with outcome `1`, `C_t = ∑ᵢ (ρ(i) − i / k)² n(i) / t`. -/
-noncomputable def calibrationScore {k t : ℕ} (f : Fin t → Fin (k + 1)) (x : Fin t → Bool) :
-    ℝ :=
+`f s ∈ {0, 1/k, …, 1}` (the index `i` standing for `i / k`, for a grid size `k ≥ 1`) are made for
+the outcomes `x s` of `t ≥ 1` rounds; with `n(i)` the number of rounds forecast `i / k` and `ρ(i)`
+the fraction of those rounds with outcome `1`, `C_t = ∑ᵢ (ρ(i) − i / k)² n(i) / t`. For `t = 0`
+every forecaster would score `0`, and for `k = 0` the grid would not be defined. -/
+noncomputable def calibrationScore {k t : ℕ} [NeZero k] [NeZero t] (f : Fin t → Fin (k + 1))
+    (x : Fin t → Bool) : ℝ :=
   ∑ i : Fin (k + 1),
     ((#{s | f s = i ∧ x s = true} : ℝ) / #{s | f s = i} - (i : ℝ) / k) ^ 2 *
       #{s | f s = i} / t
@@ -51,9 +52,10 @@ randomised forecasting rule `μ`, choosing a distribution on the forecasts `0, 1
 history, such that against every Nature, who chooses each outcome knowing the past but not the
 current randomisation, the calibration score after `t` rounds is below `ε` with probability
 greater than `1 − ε` for all large `t`. This is weaker than Foster and Vohra's `ε`-calibration,
-`lim_t Pr(C_t < ε) > 1 − ε`, which implies it; it does not require the limit to exist. -/
+`lim_t Pr(C_t < ε) > 1 − ε`, which implies it; it does not require the limit to exist. The score
+is taken after `t + 1` rounds, so that the history is never empty. -/
 theorem_wanted exists_calibrated_forecast {ε : ℝ} (hε : 0 < ε) :
-    ∃ k : ℕ, 0 < k ∧
+    ∃ k : ℕ, ∃ _ : NeZero k,
     ∃ μ : ∀ t : ℕ, (Fin t → Fin (k + 1) × Bool) → Convexity.StdSimplex ℝ (Fin (k + 1)),
       ∀ {Ω : Type} [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure P]
         (Z : ℕ → Ω → Fin (k + 1) × Bool), (∀ n z, MeasurableSet {ω | Z n ω = z}) →
@@ -64,6 +66,6 @@ theorem_wanted exists_calibrated_forecast {ε : ℝ} (hε : 0 < ε) :
             fun ω => (μ (n + 1) (fun s => Z s ω)).weights i *
               P[{ω | (Z (n + 1) ω).2 = b}.indicator (fun _ => (1 : ℝ)) | historySigma Z n] ω) →
         ∀ᶠ t in atTop, 1 - ε < P.real {ω |
-          calibrationScore (fun s : Fin t => (Z s ω).1) (fun s => (Z s ω).2) < ε}
+          calibrationScore (fun s : Fin (t + 1) => (Z s ω).1) (fun s => (Z s ω).2) < ε}
 
 end MathlibExt.GameTheory.CalibrationWanted

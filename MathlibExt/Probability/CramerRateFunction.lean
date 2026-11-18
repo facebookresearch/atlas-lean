@@ -54,12 +54,16 @@ noncomputable def extendedLogMGFVec {d : ℕ} (X : Ω → EuclideanSpace ℝ (Fi
   ENNReal.log (∫⁻ ω, ENNReal.ofReal (Real.exp ⟪t, X ω⟫_ℝ) ∂μ)
 
 /-- **Cramér rate function.** For a random vector `X` in `ℝᵈ` under `μ`, the Legendre transform
-`Λ*(x) = sup_t (⟪t, x⟫ - log E[exp ⟪t, X⟫])` of the extended log moment generating function
+`Λ*(x) = sup_t (⟪t, x⟫ - log ∫ exp ⟪t, X⟫ dμ)` of the extended log moment generating function
 `extendedLogMGFVec X μ` (whose value is `⊤` at directions with infinite exponential moment),
 stored in `[0, ∞]`. Under a probability measure the direction `t = 0` contributes `0`, so the
-conversion to `[0, ∞]` loses nothing (`coe_cramerRateFunction`). This is the rate function of
+conversion to `[0, ∞]` loses nothing (`coe_cramerRateFunction`), and this is the rate function of
 Cramér's theorem: S. R. S. Varadhan, *Large Deviations*, lecture notes, New York University,
-Spring 2010, Section 1, equation (1.3) (https://math.nyu.edu/~varadhan/LDP/1-2.pdf). -/
+Spring 2010, Section 1, equation (1.3) (https://math.nyu.edu/~varadhan/LDP/1-2.pdf). The
+definition is stated for every measure, because the Fenchel–Young inequality, convexity and lower
+semicontinuity below hold in that generality; for a measure that is not a probability measure it
+is only a truncated conjugate, not the Cramér rate (under the zero measure it is `⊤` everywhere,
+and for mass `c ≠ 1` the conjugate is shifted by `-log c` and cut at `0`). -/
 noncomputable def cramerRateFunction {d : ℕ} (X : Ω → EuclideanSpace ℝ (Fin d))
     (μ : Measure Ω) (x : EuclideanSpace ℝ (Fin d)) : ℝ≥0∞ :=
   (MathlibExt.Probability.LegendreTransform.legendreTransform (extendedLogMGFVec X μ) x).toENNReal

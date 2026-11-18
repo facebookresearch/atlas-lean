@@ -43,9 +43,12 @@ open Finset
 
 variable {Player : Type*} [DecidableEq Player] [Fintype Player]
 
-/-- **Shapley weight.** The probability `(s − 1)! (n − s)! / n!` that, in a uniformly random
-order of `n` players, a given player arrives exactly when the coalition of the players before
-it, together with itself, is a given coalition of size `s` (Serrano 2007, §4.1). -/
+/-- **Shapley weight.** The coefficient `(s − 1)! (n − s)! / n!` (with natural-number
+subtraction) of a coalition of size `s` in Shapley's formula. For `1 ≤ s ≤ n` it is the
+probability that, in a uniformly random order of `n` players, a given player arrives exactly
+when the coalition of the players before it, together with itself, is a given coalition of size
+`s` (Serrano 2007, §4.1). `shapleyFormula` evaluates it only in that range; outside it the value
+is not a probability (for instance `shapleyWeight n 0 = 1`). -/
 noncomputable def shapleyWeight (n s : ℕ) : ℝ :=
   ((s - 1).factorial * (n - s).factorial : ℝ) / n.factorial
 

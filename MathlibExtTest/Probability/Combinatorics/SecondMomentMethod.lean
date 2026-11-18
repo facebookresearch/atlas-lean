@@ -64,4 +64,16 @@ example : (∫ ω, (fun _ : Unit => (2 : ℝ)) ω ∂(Measure.dirac ())) ^ 2 ≤
   sq_integral_le_integral_sq_mul_measureReal_pos
     (Filter.Eventually.of_forall fun _ => by norm_num) (memLp_const 2)
 
+/-! The expected count is taken under a probability measure: under the zero measure, for which
+the count of a certain event would be `0`, it does not elaborate. -/
+
+/--
+error: failed to synthesize instance of type class
+  IsProbabilityMeasure 0
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+noncomputable example : ℝ := expectedCount (0 : Measure Unit) fun _ : Unit => Set.univ
+
 end MathlibExtTest.Probability.Combinatorics.SecondMomentMethod

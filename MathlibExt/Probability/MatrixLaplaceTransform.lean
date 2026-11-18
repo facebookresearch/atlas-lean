@@ -56,8 +56,11 @@ variable {Ω n 𝕜 : Type*} [MeasurableSpace Ω] [RCLike 𝕜] [Fintype n] [Dec
   [Nonempty n]
 
 /-- **Expectation of a random matrix.** The entrywise expectation `E M` of a random matrix
-`M : Ω → Matrix n n 𝕜` (Tropp, arXiv:1501.01571, §2.2.4). -/
-noncomputable def expect (μ : Measure Ω) (M : Ω → Matrix n n 𝕜) : Matrix n n 𝕜 :=
+`M : Ω → Matrix n n 𝕜` under a probability measure `μ` (Tropp, arXiv:1501.01571, §2.2.4). For
+another measure the entrywise integral is not an expectation: under the zero measure every
+random matrix, the identity included, would have expectation `0`. -/
+noncomputable def expect (μ : Measure Ω) [IsProbabilityMeasure μ] (M : Ω → Matrix n n 𝕜) :
+    Matrix n n 𝕜 :=
   Matrix.of fun i j => ∫ ω, M ω i j ∂μ
 
 /-- **Matrix Gaussian series.** For fixed matrices `A₀, …, A_{N-1}` and a vector `ω ∈ ℝᴺ` of

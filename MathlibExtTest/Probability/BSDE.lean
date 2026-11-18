@@ -69,4 +69,18 @@ example {P : Measure Ω} [IsProbabilityMeasure P] {F : Filtration ℝ≥0 mΩ} {
     simp [Real.coe_toNNReal u hu.1.le]
   simp [intervalIntegrable_inv_iff] at hinv
 
+/-! The solution notion is stated on a probability space: under the zero measure, for which
+every progressive pair would solve every equation, it does not elaborate. -/
+
+/--
+error: failed to synthesize instance of type class
+  IsProbabilityMeasure 0
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+example (F : Filtration ℝ≥0 mΩ) (B : ℝ≥0 → Ω → ℝ) : Prop :=
+  IsBSDESolution (0 : Measure Ω) F B 1 (fun _ _ _ _ => 0) (fun _ => 0) (fun _ _ => 0)
+    (fun _ _ => 0)
+
 end MathlibExtTest.Probability.BSDE

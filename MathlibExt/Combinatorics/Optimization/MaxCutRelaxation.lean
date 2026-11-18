@@ -147,7 +147,10 @@ theorem cutWeight_le_relaxationValue {m : ℕ} (hm : 0 < m) (w : ι → ι → �
 /-- **Expected weight of the random-hyperplane cut.** `∑_{i<j} w_ij arccos(v_i · v_j) / π`,
 the closed form of Goemans and Williamson's Theorem 3.1 (*J. ACM* 42(6) (1995)) for the
 expected weight of the cut `{i : v_i · r ≥ 0}` cut out by a random hyperplane. Here it is only
-the closed-form expression; the probabilistic identity is `integral_cutWeight_hyperplane`. -/
+the closed-form expression, defined for all vectors; the probabilistic identity is
+`integral_cutWeight_hyperplane`, for unit vectors. For vectors that are not unit vectors it is not
+that expectation, since `arccos (v_i · v_j)` is then not their angle (two zero vectors, which the
+hyperplane never separates, would give `1/2`); every theorem below assumes unit vectors. -/
 noncomputable def hyperplaneExpectation {m : ℕ} (w : ι → ι → ℝ)
     (v : ι → EuclideanSpace ℝ (Fin m)) : ℝ :=
   ∑ p ∈ pairs ι, w p.1 p.2 * (arccos (inner ℝ (v p.1) (v p.2)) / π)

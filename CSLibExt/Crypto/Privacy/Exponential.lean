@@ -35,7 +35,7 @@ open scoped ENNReal
 
 namespace Cslib.Crypto.Privacy
 
-variable {X R : Type*} [Fintype R] [Nonempty R]
+variable {X R : Type*} [Fintype R]
 
 /-- **Weights of the exponential mechanism.** The un-normalised weight `exp (ε u(x, r) / (2 Δ))`
 of an output `r` on database `x` (Dwork and Roth, 2014, Definition 3.4). -/
@@ -43,17 +43,23 @@ noncomputable def expMechWeight (ε Δ : ℝ) (u : X → R → ℝ) (x : X) (r :
   Real.exp (ε * u x r / (2 * Δ))
 
 /-- **Output probabilities of the exponential mechanism.** On database `x` the exponential
-mechanism outputs `r ∈ R` with probability
+mechanism outputs `r` in the finite nonempty range `R` with probability
 `exp (ε u(x, r) / (2 Δ)) / ∑ r', exp (ε u(x, r') / (2 Δ))`
-(Dwork and Roth, *The Algorithmic Foundations of Differential Privacy*, 2014, Definition 3.4). -/
-noncomputable def expMechProb (ε Δ : ℝ) (u : X → R → ℝ) (x : X) (r : R) : ℝ :=
+(Dwork and Roth, *The Algorithmic Foundations of Differential Privacy*, 2014, Definition 3.4).
+On an empty range, which is excluded, there would be no output and the probabilities would sum
+to `0`. -/
+noncomputable def expMechProb [Nonempty R] (ε Δ : ℝ) (u : X → R → ℝ) (x : X) (r : R) : ℝ :=
   expMechWeight ε Δ u x r / ∑ r', expMechWeight ε Δ u x r'
 
-/-- **Exponential mechanism.** The law on the finite range `R` that gives each `r` the mass
-`expMechProb ε Δ u x r` (McSherry and Talwar 2007; Dwork and Roth, 2014, Definition 3.4). -/
-noncomputable def expMechanism [MeasurableSpace R] (ε Δ : ℝ) (u : X → R → ℝ) (x : X) :
-    Measure R :=
+/-- **Exponential mechanism.** The law on the finite nonempty range `R` that gives each `r` the
+mass `expMechProb ε Δ u x r` (McSherry and Talwar 2007; Dwork and Roth, 2014, Definition 3.4).
+On an empty range, which is excluded, it would be the zero measure, which satisfies every
+differential-privacy bound. -/
+noncomputable def expMechanism [Nonempty R] [MeasurableSpace R] (ε Δ : ℝ) (u : X → R → ℝ)
+    (x : X) : Measure R :=
   ∑ r, ENNReal.ofReal (expMechProb ε Δ u x r) • Measure.dirac r
+
+variable [Nonempty R]
 
 omit [Fintype R] [Nonempty R] in
 theorem expMechWeight_pos (ε Δ : ℝ) (u : X → R → ℝ) (x : X) (r : R) :

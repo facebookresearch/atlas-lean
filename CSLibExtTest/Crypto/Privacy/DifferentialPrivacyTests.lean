@@ -164,4 +164,17 @@ example {Ω : Type*} [MeasurableSpace Ω] {M : (Fin 2 → ℕ) → Measure Ω} {
     (y := fun i ↦ if i = 0 then 2 else 0) (by simp [Fin.sum_univ_two]) hS
   simpa using this
 
+/-! The exponential mechanism needs a nonempty range: on `Empty` it would be the zero measure,
+which satisfies every privacy bound, so it does not elaborate. -/
+
+/--
+error: failed to synthesize instance of type class
+  Nonempty Empty
+
+Hint: Adding the command `deriving instance Nonempty for Empty` may allow Lean to derive the missing instance.
+-/
+#guard_msgs in
+noncomputable example : MeasureTheory.Measure Empty :=
+  expMechanism (X := Unit) 1 1 (fun _ r ↦ r.elim) ()
+
 end Cslib.Crypto.PrivacyTests

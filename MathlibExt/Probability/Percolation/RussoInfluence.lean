@@ -194,8 +194,11 @@ theorem russoFormula (p : ℝ) (A : Set (ConfigSpace E)) (hA : IsIncreasing A)
   have hne : p * (1 - p) ≠ 0 := mul_ne_zero hp0 (by intro h; exact hp1 (by linarith))
   field_simp
 
-/-- The influence `I_e^p(A) = ℙ_p(e is pivotal for A)` of the coordinate `e` on the event `A`
-under the `p`-biased product measure.
+/-- The influence of the coordinate `e` on the event `A` at parameter `p`: the weight
+`pivotalProb p A e` of the configurations at which `e` is pivotal. For `0 ≤ p ≤ 1` it is the
+probability `I_e^p(A) = ℙ_p(e is pivotal for A)` under the `p`-biased product measure. It is
+defined for every real `p` because Russo's formula `deriv_eq_total_influence` is a polynomial
+identity in `p`; outside `[0, 1]` it is not a probability (it can be negative or exceed `1`).
 
 See also `MathlibExt.Analysis.Fourier.BooleanCubeInfluence.boolInfluence`, the influence of a
 real function on the uniform Boolean cube (the case `p = 1/2`, in Fourier normalization). -/

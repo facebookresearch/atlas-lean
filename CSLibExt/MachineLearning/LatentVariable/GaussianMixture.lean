@@ -173,7 +173,10 @@ noncomputable def scatter (θ : ValidParams d K) (k : Fin K) : ℝ :=
 /-- The isotropic variance update `σ k'² = S k / (d N k)`. -/
 noncomputable def newVar (θ : ValidParams d K) (k : Fin K) : ℝ := scatter xs θ k / (d * mass xs θ k)
 
-/-- The M-step: `π k' = N k / N`, `μ k'` the weighted mean, `σ k'² = S k / (d N k)`. -/
+/-- The M-step: `π k' = N k / N`, `μ k'` the weighted mean, `σ k'² = S k / (d N k)`. The result
+is a `Params`, a data container; it is a valid parameter (positive weights summing to `1` and
+positive variances) when the data are not all equal (`mStep_valid`). For an empty sample
+(`N = 0`) every weight is `0` (`0 / 0`), so the weights do not form a distribution. -/
 noncomputable def mStep (θ : ValidParams d K) : Params d K where
   weight k := mass xs θ k / N
   mean := newMean xs θ

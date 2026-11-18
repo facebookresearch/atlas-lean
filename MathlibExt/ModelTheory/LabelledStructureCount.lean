@@ -68,14 +68,16 @@ theorem nonempty_structure [L.IsRelational] (M : Type*) : Nonempty (L.Structure 
   ⟨{ funMap := fun f => isEmptyElim f
      RelMap := fun _ _ => False }⟩
 
-/-- **Proportion of labelled structures satisfying a sentence.** For a first-order sentence
-`φ` and `n : ℕ`, the number of `L`-structures on `Fin n` in which `φ` is true, divided by the
-number of all `L`-structures on `Fin n`. For a relational language with finitely many
-symbols both counts are finite and the denominator is positive
-(`FirstOrder.Language.finite_structure`, `FirstOrder.Language.nonempty_structure`); this is
-the probability `μ_n(φ)` of Fagin, "Probabilities on finite models" (J. Symbolic Logic 41,
-1976), for the uniform distribution on labelled structures. -/
-noncomputable def satFraction (φ : L.Sentence) (n : ℕ) : ℝ :=
+/-- **Proportion of labelled structures satisfying a sentence.** For a relational language with
+finitely many symbols, a first-order sentence `φ` and `n : ℕ`, the number of `L`-structures on
+`Fin n` in which `φ` is true, divided by the number of all `L`-structures on `Fin n`. Both counts
+are finite and the denominator is positive (`FirstOrder.Language.finite_structure`,
+`FirstOrder.Language.nonempty_structure`); this is the probability `μ_n(φ)` of Fagin,
+"Probabilities on finite models" (J. Symbolic Logic 41, 1976), for the uniform distribution on
+labelled structures. Without these instances there may be no structure on `Fin n` (a constant
+symbol and `n = 0`) or infinitely many (infinitely many relation symbols), and every sentence,
+`⊤` included, would get proportion `0`. -/
+noncomputable def satFraction [L.IsRelational] [Finite L.Symbols] (φ : L.Sentence) (n : ℕ) : ℝ :=
   (Set.ncard {S : L.Structure (Fin n) | @Sentence.Realize L (Fin n) S φ} : ℝ) /
     Nat.card (L.Structure (Fin n))
 

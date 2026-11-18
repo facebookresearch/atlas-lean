@@ -301,6 +301,11 @@ instance : IsFiniteMeasure three := by
   unfold three
   infer_instance
 
+instance : NeZero three := ⟨by
+  intro h
+  have := congrArg (fun μ : Measure (Fin 3) => μ {0}) h
+  simp [three] at this⟩
+
 /-- `p 0 = (0, 1, 1)` and `p 1 = (1, 1, 0)` on the outcomes `0, 1, 2`. -/
 noncomputable def slabP : Fin 2 → Fin 3 → ℝ := ![![0, 1, 1], ![1, 1, 0]]
 
@@ -395,5 +400,17 @@ example : (Finset.range (3 + 1)).sup
 /-- `measurable_bhIndex` for the coordinate projections. -/
 example (q : ℝ) : Measurable fun x : Fin 3 → ℝ => bhIndex q x :=
   measurable_bhIndex (fun i (x : Fin 3 → ℝ) => x i) (fun i => measurable_pi_apply i) q
+
+/-! PRDS is stated for a nonzero measure: under the zero measure, for which every p-value
+vector would be PRDS, it does not elaborate. -/
+
+/--
+error: failed to synthesize instance of type class
+  NeZero 0
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+example : Prop := IsPRDSOn (0 : Measure (Fin 3)) slabP {0}
 
 end MathlibExtTest.Probability.Statistics.MultipleTesting.BenjaminiHochberg

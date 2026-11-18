@@ -59,7 +59,7 @@ theorem risk_zeroOneLoss_eq_toReal_error [MeasurableSpace X] [MeasurableSpace Y]
 /-- **The empirical risk of the 0-1 loss is the miscount over the sample size.** On a labelled
 sample `S` of size `n`, the empirical 0-1 risk of `h` is CSLib's `empiricalMiscount h S`, the
 number of sample points where `h` errs, divided by `n`. -/
-theorem empiricalRisk_zeroOneLoss_eq_miscount_div [DecidableEq Y] {n : ℕ}
+theorem empiricalRisk_zeroOneLoss_eq_miscount_div [DecidableEq Y] {n : ℕ} [NeZero n]
     (S : LabeledSample X Y n) (h : X → Y) :
     empiricalRisk zeroOneLoss S h = (empiricalMiscount h S : ℝ) / n := by
   classical

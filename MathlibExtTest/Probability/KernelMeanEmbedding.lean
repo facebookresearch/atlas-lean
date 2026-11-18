@@ -101,4 +101,16 @@ example : ∀ x y : EuclideanSpace ℝ (Fin 1),
   rw [integral_dirac]
   simp [← h1]
 
+/-! The empirical mean embedding needs a nonempty sample: the average of an empty sample would
+be `0`. -/
+
+/--
+error: failed to synthesize instance of type class
+  NeZero 0
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+noncomputable example : H₂ := empiricalEmbedding H₂ (![] : Fin 0 → S)
+
 end MathlibExtTest.Probability.KernelMeanEmbedding

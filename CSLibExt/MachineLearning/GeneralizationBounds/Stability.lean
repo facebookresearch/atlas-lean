@@ -122,10 +122,11 @@ regularity hypotheses; joint measurability and boundedness of the loss are added
 every expectation is defined and finite), after O. Bousquet and A. Elisseeff, *Stability and
 generalization*, JMLR 2 (2002). -/
 theorem abs_integral_empiricalRisk_sub_risk_le {ν : Measure 𝒵} [IsProbabilityMeasure ν] {n : ℕ}
-    (hn : 0 < n) {L : H → 𝒵 → ℝ} {A : (Fin n → 𝒵) → H}
+    [NeZero n] {L : H → 𝒵 → ℝ} {A : (Fin n → 𝒵) → H}
     (hmeas : Measurable fun p : (Fin n → 𝒵) × 𝒵 => L (A p.1) p.2) {M : ℝ}
     (hbdd : ∀ S z, |L (A S) z| ≤ M) {ε : ℝ} (hstab : IsUniformlyStable L A ε) :
     |∫ S, (empiricalRisk L S (A S) - risk L ν (A S)) ∂(Measure.pi fun _ : Fin n => ν)| ≤ ε := by
+  have hn : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
   set P : Measure (Fin n → 𝒵) := Measure.pi fun _ : Fin n => ν with hP
   set Q : Measure ((Fin n → 𝒵) × 𝒵) := P.prod ν with hQ
   -- measurability of the loss at a training point and at a replaced sample

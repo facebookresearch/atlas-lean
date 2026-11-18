@@ -46,7 +46,7 @@ is a constant `b > 0` such that for all `n ≥ 10` and all `k` with
 Theorem 1 with (1.1)–(1.4); the constant is universal, Section 3 and Remark 1 of Section 5 compute
 it explicitly). -/
 theorem_wanted diaconis_shahshahani_upper :
-    ∃ b : ℝ, 0 < b ∧ ∀ n k : ℕ, 10 ≤ n →
+    ∃ b : ℝ, 0 < b ∧ ∀ (n k : ℕ) [NeZero n], 10 ≤ n →
       0 < ((k : ℝ) - n * Real.log n / 2) / n →
       2 * tvDist (convPow (randomTransposition n) k) (uniform (Equiv.Perm (Fin n))) ≤
         b * Real.exp (-2 * (((k : ℝ) - n * Real.log n / 2) / n))
@@ -57,7 +57,7 @@ theorem_wanted diaconis_shahshahani_upper :
 `ℓ¹` norm `‖·‖ = 2 ‖·‖_TV` (Diaconis and Shahshahani 1981, Theorem 2, proved there with the set
 of permutations having a fixed point, an argument they credit to Charles Stein). -/
 theorem_wanted diaconis_shahshahani_lower (k : ℕ → ℕ) (ε : ℝ) (hε : 0 < ε) :
-    ∀ᶠ n : ℕ in Filter.atTop,
+    ∀ᶠ n : ℕ in Filter.atTop, ∀ [NeZero n],
       2 * (Real.exp (-1) - Real.exp (-Real.exp (-2 * (((k n : ℝ) - n * Real.log n / 2) / n))))
         - ε ≤ 2 * tvDist (convPow (randomTransposition n) (k n)) (uniform (Equiv.Perm (Fin n)))
 

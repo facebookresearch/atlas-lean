@@ -68,4 +68,27 @@ example {G : Type} [Group G] [Fintype G] {ι : Type} [Fintype ι]
   (by positivity : (0 : ℝ) ≤ 4 * tvDist P (uniform G) ^ 2).trans
     (upper_bound_lemma V hinj hsurj P hP)
 
+/-! The uniform distribution needs a nonempty type, and the random transposition at least one
+point: on an empty type every probability would be `0`. -/
+
+/--
+error: failed to synthesize instance of type class
+  Nonempty Empty
+
+Hint: Adding the command `deriving instance Nonempty for Empty` may allow Lean to derive the missing instance.
+-/
+#guard_msgs in
+noncomputable example : Empty → ℝ := uniform Empty
+
+/-! The random transposition needs at least one point. -/
+
+/--
+error: failed to synthesize instance of type class
+  NeZero 0
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+noncomputable example : Equiv.Perm (Fin 0) → ℝ := randomTransposition 0
+
 end MathlibExtTest.Probability.RandomWalkFiniteGroup

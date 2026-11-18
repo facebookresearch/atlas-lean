@@ -562,8 +562,11 @@ theorem integral_falseDiscoveryProportion_bhRejections_le_of_arbitrary_dependenc
 `x ↦ P(P ∈ D | p i = x)` has a nondecreasing version. The conditional probability is Mathlib's
 regular conditional distribution `condDistrib P (p i) μ`, which is determined only up to
 `μ.map (p i)`-null sets, hence the "version" (`=ᵐ`) quantifier. Larger p-values are less
-significant, so `D` increasing means "closed under making p-values larger". -/
-def IsPRDSOn {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsFiniteMeasure μ]
+significant, so `D` increasing means "closed under making p-values larger". It is stated for a
+nonzero finite measure, and depends on `μ` only up to a positive factor; under the zero measure,
+which is excluded, every almost-everywhere statement holds and every p-value vector would be
+PRDS. -/
+def IsPRDSOn {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsFiniteMeasure μ] [NeZero μ]
     (p : Fin m → Ω → ℝ) (H0 : Finset (Fin m)) : Prop :=
   ∀ i ∈ H0, ∀ D : Set (Fin m → ℝ), MeasurableSet D → IsUpperSet D →
     ∃ g : ℝ → ENNReal, Monotone g ∧
@@ -586,7 +589,8 @@ nondecreasing `g` with `μ (P ∈ D, p i ∈ B) = ∫⁻ x in B, g x ∂(law of 
 i.e. `g` is a nondecreasing version of `x ↦ P(P ∈ D | p i = x)` in the classical
 (Kolmogorov) sense, with no reference to a chosen kernel. -/
 theorem isPRDSOn_iff_setLIntegral {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
-    [IsFiniteMeasure μ] (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i)) (H0 : Finset (Fin m)) :
+    [IsFiniteMeasure μ] [NeZero μ]
+    (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i)) (H0 : Finset (Fin m)) :
     IsPRDSOn μ p H0 ↔ ∀ i ∈ H0, ∀ D : Set (Fin m → ℝ), MeasurableSet D → IsUpperSet D →
       ∃ g : ℝ → ENNReal, Monotone g ∧ ∀ B : Set ℝ, MeasurableSet B →
         μ ({ω | (fun j => p j ω) ∈ D} ∩ p i ⁻¹' B) = ∫⁻ x in B, g x ∂(μ.map (p i)) := by
@@ -608,7 +612,7 @@ measurable increasing set and `s ≤ t`, then
 denominators are positive) `t ↦ P(P ∈ D | p i ≤ t)` is nondecreasing. This cross-multiplied form
 is the step of the Benjamini–Yekutieli proof that uses PRDS. -/
 theorem IsPRDSOn.measure_inter_mul_le {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
-    [IsFiniteMeasure μ] {p : Fin m → Ω → ℝ} {H0 : Finset (Fin m)} (h : IsPRDSOn μ p H0)
+    [IsFiniteMeasure μ] [NeZero μ] {p : Fin m → Ω → ℝ} {H0 : Finset (Fin m)} (h : IsPRDSOn μ p H0)
     (hp : ∀ i, Measurable (p i)) {i : Fin m} (hi : i ∈ H0) {D : Set (Fin m → ℝ)}
     (hD : MeasurableSet D) (hup : IsUpperSet D) {s t : ℝ} (hst : s ≤ t) :
     μ ({ω | (fun j => p j ω) ∈ D} ∩ {ω | p i ω ≤ s}) * μ {ω | p i ω ≤ t} ≤
@@ -650,7 +654,7 @@ denominators are positive) `P(P ∈ D | p i ≤ s) ≤ P(P ∈ D | s < p i ≤ t
 `IsPRDSOn.measure_inter_mul_le` with the common part `{p i ≤ s}` cancelled; no `s ≤ t` is needed,
 since for `t < s` the slab is empty. -/
 theorem IsPRDSOn.measure_inter_mul_measure_slab_le {Ω : Type*} [MeasurableSpace Ω]
-    {μ : Measure Ω} [IsFiniteMeasure μ] {p : Fin m → Ω → ℝ} {H0 : Finset (Fin m)}
+    {μ : Measure Ω} [IsFiniteMeasure μ] [NeZero μ] {p : Fin m → Ω → ℝ} {H0 : Finset (Fin m)}
     (h : IsPRDSOn μ p H0) (hp : ∀ i, Measurable (p i)) {i : Fin m} (hi : i ∈ H0)
     {D : Set (Fin m → ℝ)} (hD : MeasurableSet D) (hup : IsUpperSet D) (s t : ℝ) :
     μ ({ω | (fun j => p j ω) ∈ D} ∩ {ω | p i ω ≤ s}) * μ {ω | s < p i ω ∧ p i ω ≤ t} ≤
@@ -688,7 +692,8 @@ measurable increasing set `D` and some `s, t`, the event `P ∈ D` is strictly m
 `μ (P ∈ D, s < p i ≤ t) * μ (p i ≤ s) < μ (P ∈ D, p i ≤ s) * μ (s < p i ≤ t)`, then `p` is not
 PRDS on `H0`. This is the contrapositive of `IsPRDSOn.measure_inter_mul_measure_slab_le`. -/
 theorem not_isPRDSOn_of_measure_inter_mul_lt {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
-    [IsFiniteMeasure μ] {p : Fin m → Ω → ℝ} (hp : ∀ i, Measurable (p i)) {H0 : Finset (Fin m)}
+    [IsFiniteMeasure μ] [NeZero μ]
+    {p : Fin m → Ω → ℝ} (hp : ∀ i, Measurable (p i)) {H0 : Finset (Fin m)}
     {i : Fin m} (hi : i ∈ H0) {D : Set (Fin m → ℝ)} (hD : MeasurableSet D) (hup : IsUpperSet D)
     {s t : ℝ}
     (hlt : μ ({ω | (fun j => p j ω) ∈ D} ∩ {ω | s < p i ω ∧ p i ω ≤ t}) * μ {ω | p i ω ≤ s} <
@@ -703,7 +708,8 @@ probability, for some true null `i ∈ H0`. Then the increasing set `D = {x | u 
 (`not_isPRDSOn_of_measure_inter_mul_lt`). Typical instance: `p k` a decreasing function of `p i`
 (counter-monotone pairs, coupled corrected statistics). -/
 theorem not_isPRDSOn_of_separated {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
-    [IsFiniteMeasure μ] {p : Fin m → Ω → ℝ} (hp : ∀ i, Measurable (p i)) {H0 : Finset (Fin m)}
+    [IsFiniteMeasure μ] [NeZero μ]
+    {p : Fin m → Ω → ℝ} (hp : ∀ i, Measurable (p i)) {H0 : Finset (Fin m)}
     {i k : Fin m} (hi : i ∈ H0) {s t u : ℝ} (hA : μ {ω | p i ω ≤ s} ≠ 0)
     (hB : μ {ω | s < p i ω ∧ p i ω ≤ t} ≠ 0) (hAu : ∀ᵐ ω ∂μ, p i ω ≤ s → u ≤ p k ω)
     (hBu : ∀ᵐ ω ∂μ, s < p i ω → p i ω ≤ t → p k ω < u) :
@@ -727,7 +733,7 @@ theorem not_isPRDSOn_of_separated {Ω : Type*} [MeasurableSpace Ω] {μ : Measur
 
 /-- Every family is PRDS on the empty set of true nulls. -/
 theorem isPRDSOn_empty {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsFiniteMeasure μ]
-    (p : Fin m → Ω → ℝ) : IsPRDSOn μ p ∅ := by
+    [NeZero μ] (p : Fin m → Ω → ℝ) : IsPRDSOn μ p ∅ := by
   intro i hi
   simp at hi
 
@@ -736,7 +742,8 @@ vector is a coordinatewise nondecreasing function `F` of `p i`, then `p` is PRDS
 conditional probability of an increasing set is the indicator of the upper set `F ⁻¹' D`. The
 comonotone family `p j = U` for all `j` (perfect positive dependence) is the main instance. -/
 theorem isPRDSOn_of_monotone_comp {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
-    [IsFiniteMeasure μ] (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i)) (H0 : Finset (Fin m))
+    [IsFiniteMeasure μ] [NeZero μ]
+    (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i)) (H0 : Finset (Fin m))
     (hF : ∀ i ∈ H0, ∃ F : ℝ → Fin m → ℝ, Monotone F ∧ ∀ ω, (fun j => p j ω) = F (p i ω)) :
     IsPRDSOn μ p H0 := by
   classical

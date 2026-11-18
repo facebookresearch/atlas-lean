@@ -14,7 +14,8 @@ public import Mathlib.Probability.Distributions.Poisson.Basic
 # Robbins' formula for Poisson empirical Bayes
 
 Let a rate `θ ≥ 0` be drawn from a prior `g` and, given `θ`, let `x` be Poisson with mean `θ`.
-Write `f(x) = ∫ e^{-θ} θ^x / x! g(dθ)` for the marginal probability of `x`. Bayes' rule gives the
+Write `f(x) = ∫ e^{-θ} θ^x / x! g(dθ)` for the marginal mass of `x` (its marginal probability
+when `g` is a probability measure). Bayes' rule gives the
 posterior mean `E[θ | x] = ∫ θ e^{-θ} θ^x / x! g(dθ) / f(x)`, and **Robbins' formula** says that
 it equals `(x + 1) f(x + 1) / f(x)`: like Tweedie's formula in the Gaussian case, it expresses a
 Bayes rule through the marginal law alone, which empirical Bayes estimates from the counts
@@ -23,7 +24,7 @@ Bayes rule through the marginal law alone, which empirical Bayes estimates from 
 
 ## Main results
 
-* `poissonMixtureMass`, `poissonPosteriorMean`: the marginal probability and the posterior mean.
+* `poissonMixtureMass`, `poissonPosteriorMean`: the marginal mass and the posterior mean.
 * `poissonPosteriorMean_eq`: Robbins' formula.
 
 ## References
@@ -40,19 +41,21 @@ open scoped NNReal Nat
 
 namespace ProbabilityTheory
 
-/-- **Marginal probability of a Poisson mixture.** For a prior `g` on the rate,
-`f(x) = ∫ e^{-θ} θ^x / x! g(dθ)`, the probability of the count `x` when `θ ~ g` and
-`x | θ ~ Poisson(θ)`. -/
+/-- **Marginal mass of a Poisson mixture.** For a prior `g` on the rate,
+`f(x) = ∫ e^{-θ} θ^x / x! g(dθ)`. When `g` is a probability measure it is the probability of the
+count `x` when `θ ~ g` and `x | θ ~ Poisson(θ)`. For a general (finite or improper) prior it is
+the unnormalised marginal mass (for example `10 / e > 1` for `g = 10 δ₁`), which is all that the
+posterior mean and Robbins' formula use. -/
 noncomputable def poissonMixtureMass (g : Measure ℝ≥0) (x : ℕ) : ℝ :=
   ∫ θ, (poissonMeasure θ).real {x} ∂g
 
 /-- **Posterior mean in the Poisson model.** Bayes' rule for `θ ~ g` and `x | θ ~ Poisson(θ)`:
-`E[θ | x] = ∫ θ e^{-θ} θ^x / x! g(dθ) / f(x)`, with `f` the marginal probability. -/
+`E[θ | x] = ∫ θ e^{-θ} θ^x / x! g(dθ) / f(x)`, with `f` the marginal mass. -/
 noncomputable def poissonPosteriorMean (g : Measure ℝ≥0) (x : ℕ) : ℝ :=
   (∫ θ, (θ : ℝ) * (poissonMeasure θ).real {x} ∂g) / poissonMixtureMass g x
 
 /-- **Robbins' formula.** For every prior `g` on the Poisson rate and every count `x`, the posterior
-mean is `E[θ | x] = (x + 1) f(x + 1) / f(x)`, where `f` is the marginal probability (Efron, 2021
+mean is `E[θ | x] = (x + 1) f(x + 1) / f(x)`, where `f` is the marginal mass (Efron, 2021
 manuscript, equation (1.7); Robbins 1956). The identity holds for any measure `g`, with no
 moment assumption: it rests on `θ e^{-θ} θ^x / x! = (x + 1) e^{-θ} θ^{x+1} / (x + 1)!`. -/
 theorem poissonPosteriorMean_eq (g : Measure ℝ≥0) (x : ℕ) :

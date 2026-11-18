@@ -58,13 +58,18 @@ open Finset Convexity MetaMathlibExt.FiniteWeight
 variable {α : Type*} {n : ℕ}
 
 /-- **The global Markov property for a graph** (Lauritzen 2009, property (G)): every
-d-separation in the graph of `b` is a conditional independence of `P`. -/
+d-separation in the graph of `b` is a conditional independence of `P`. Like `CondIndep`, it is
+defined for an arbitrary weight function `P`; it is the property of a law when `P` is
+nonnegative with total mass `1`, as in `directedMarkov_tfae`. For the zero weight it holds for
+every graph. -/
 def GlobalMarkovFor [Fintype α] (P : (Fin n → α) → ℝ) (b : BayesNet α n) : Prop :=
   ∀ X Y Z : Set (Fin n), b.DSeparated X Y Z → CondIndep P X Y Z
 
 /-- **The local Markov property for a graph** (Lauritzen 2009, property (L)): under `P`, every
 node is conditionally independent of its non-descendants that are not its parents, given its
-parents, in the graph of `b`. -/
+parents, in the graph of `b`. Like `CondIndep`, it is defined for an arbitrary weight function
+`P`; it is the property of a law when `P` is nonnegative with total mass `1`, as in
+`directedMarkov_tfae`. For the zero weight it holds for every graph. -/
 def LocalMarkovFor [Fintype α] (P : (Fin n → α) → ℝ) (b : BayesNet α n) : Prop :=
   ∀ k, CondIndep P {k} {j | ¬b.IsDescendant k j ∧ ¬b.Edge j k} {j | b.Edge j k}
 

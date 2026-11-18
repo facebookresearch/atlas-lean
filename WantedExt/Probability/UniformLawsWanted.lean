@@ -36,17 +36,21 @@ namespace MathlibExt.Probability.UniformLawsWanted
 variable {𝓧 : Type*} [MeasurableSpace 𝓧] {ι : Type*}
 
 /-- The uniform deviation `‖P_n - P‖_F = sup_{f ∈ F} |(1/n) ∑ₖ f(xₖ) - E_P[f]|` of the empirical
-means of a sample `x : Fin n → 𝓧` from their expectations under `P`, for a class
-`F = {F i | i : ι}` (Wainwright, *High-Dimensional Statistics*, 2019, §4.1.2). -/
-noncomputable def uniformDeviation (P : Measure 𝓧) (F : ι → 𝓧 → ℝ) {n : ℕ} (x : Fin n → 𝓧) :
-    ℝ :=
+means of a sample `x : Fin n → 𝓧` of size `n ≥ 1` from their expectations under a probability
+measure `P`, for a class `F = {F i | i : ι}` (Wainwright, *High-Dimensional Statistics*, 2019,
+§4.1.2). For a measure of infinite mass the expectation would be read as `0`, and for an empty
+sample the empirical mean would be `0`. -/
+noncomputable def uniformDeviation (P : Measure 𝓧) [IsProbabilityMeasure P] (F : ι → 𝓧 → ℝ)
+    {n : ℕ} (_hn : 1 ≤ n) (x : Fin n → 𝓧) : ℝ :=
   ⨆ i, |(1 / (n : ℝ)) * ∑ k, F i (x k) - ∫ y, F i y ∂P|
 
 /-- The Rademacher complexity `R_n(F) = E_{X, ε}[sup_{f ∈ F} |(1/n) ∑ₖ εₖ f(Xₖ)|]` of a class
-`F = {F i | i : ι}` for `n` independent samples from `P`, the expectation over the uniform signs
-being the average over the `2ⁿ` sign vectors (Wainwright, *High-Dimensional Statistics*, 2019,
-§4.2). -/
-noncomputable def rademacherComplexity (P : Measure 𝓧) (F : ι → 𝓧 → ℝ) (n : ℕ) : ℝ :=
+`F = {F i | i : ι}` for `n ≥ 1` independent samples from a probability measure `P`, the
+expectation over the uniform signs being the average over the `2ⁿ` sign vectors (Wainwright,
+*High-Dimensional Statistics*, 2019, §4.2). For the zero measure or an empty sample it would be
+`0` for every class. -/
+noncomputable def rademacherComplexity (P : Measure 𝓧) [IsProbabilityMeasure P] (F : ι → 𝓧 → ℝ)
+    {n : ℕ} (_hn : 1 ≤ n) : ℝ :=
   ∫ x, ((2 : ℝ) ^ n)⁻¹ * ∑ s : Fin n → Bool,
       ⨆ i, |(1 / (n : ℝ)) * ∑ k, (if s k then (1 : ℝ) else -1) * F i (x k)|
     ∂(Measure.pi fun _ : Fin n => P)
@@ -58,8 +62,8 @@ samples from a probability measure `P`, `E[‖P_n - P‖_F] ≤ 2 R_n(F)`. -/
 public theorem_wanted integral_uniformDeviation_le_two_mul_rademacherComplexity
     (P : Measure 𝓧) [IsProbabilityMeasure P] [Countable ι] (F : ι → 𝓧 → ℝ)
     (hF : ∀ i, Measurable (F i)) {b : ℝ} (hb : ∀ i y, |F i y| ≤ b) {n : ℕ} (hn : 1 ≤ n) :
-    ∫ x, uniformDeviation P F x ∂(Measure.pi fun _ : Fin n => P) ≤
-      2 * rademacherComplexity P F n
+    ∫ x, uniformDeviation P F hn x ∂(Measure.pi fun _ : Fin n => P) ≤
+      2 * rademacherComplexity P F hn
 
 /-- **Uniform law via Rademacher complexity** (Wainwright, *High-Dimensional Statistics*, 2019,
 §4.2, the uniform law via Rademacher complexity): for a countable class of measurable functions
@@ -72,7 +76,7 @@ public theorem_wanted uniformDeviation_le_two_mul_rademacherComplexity_add
     (hn : 1 ≤ n) {δ : ℝ} (hδ : 0 ≤ δ) :
     1 - Real.exp (-(n : ℝ) * δ ^ 2 / (2 * b ^ 2)) ≤
       (Measure.pi fun _ : Fin n => P).real
-        {x | uniformDeviation P F x ≤ 2 * rademacherComplexity P F n + δ}
+        {x | uniformDeviation P F hn x ≤ 2 * rademacherComplexity P F hn + δ}
 
 end
 

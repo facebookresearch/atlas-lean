@@ -53,7 +53,9 @@ def IsAugmentedBrownianFiltration (P : Measure Ω) (F : Filtration ℝ≥0 mΩ)
     MeasurableSpace.generateFrom {N | MeasurableSet N ∧ P N = 0}
 
 /-- **Solution of a one-dimensional BSDE on `[0, T]`** (S. Peng, Proc. ICM 2010, Vol. I, §1.2,
-equation (1.7) and Theorem 1.1, with `m = d = 1`). The pair `(Y, Z)` solves the BSDE with
+equation (1.7) and Theorem 1.1, with `m = d = 1`), on a probability space `(Ω, P)`: under the
+zero measure, which is excluded, every progressive pair would solve every BSDE. The pair `(Y, Z)`
+solves the BSDE with
 generator `g` and terminal value `ξ` if `Y` and `Z` are `F`-progressive with
 `E ∫_0^T Y_t² dt < ∞` and `E ∫_0^T Z_t² dt < ∞` (the space `M²(0, T)`), almost surely the drift
 `s ↦ g(s, Y_s, Z_s)` is integrable on `[0, T]`, and for every `t ≤ T`, almost surely,
@@ -61,8 +63,9 @@ generator `g` and terminal value `ξ` if `Y` and `Z` are `F`-progressive with
 repository's `L²` Itô integral `ProbabilityTheory.itoIntegral`. The integrability condition makes
 the drift integral a genuine Lebesgue integral on every `[t, T]`: without it, a divergent integral
 would be read as `0` (`intervalIntegral.integral_undef`). -/
-def IsBSDESolution (P : Measure Ω) (F : Filtration ℝ≥0 mΩ) (B : ℝ≥0 → Ω → ℝ) (T : ℝ≥0)
-    (g : ℝ≥0 → Ω → ℝ → ℝ → ℝ) (ξ : Ω → ℝ) (Y Z : ℝ≥0 → Ω → ℝ) : Prop :=
+def IsBSDESolution (P : Measure Ω) [IsProbabilityMeasure P] (F : Filtration ℝ≥0 mΩ)
+    (B : ℝ≥0 → Ω → ℝ) (T : ℝ≥0) (g : ℝ≥0 → Ω → ℝ → ℝ → ℝ) (ξ : Ω → ℝ) (Y Z : ℝ≥0 → Ω → ℝ) :
+    Prop :=
   IsProgressive F Y ∧ IsProgressive F Z ∧
     ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) T, ‖Y u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞ ∧
     ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) T, ‖Z u.toNNReal ω‖ₑ ^ 2) ∂P ≠ ∞ ∧

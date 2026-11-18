@@ -36,12 +36,14 @@ example : weightedDegree e₁ e₂ (fun _ => 1) 1 = 2 := by
   simp [weightedDegree, Fin.sum_univ_two]; norm_num
 
 /-- Expected hitting times of `2` for simple random walk on the path: `(4, 3, 0)`. -/
-theorem hit2 : IsHittingTimeSolution e₁ e₂ (fun _ => 1) 2 ![4, 3, 0] := by
+theorem hit2 :
+    IsHittingTimeSolution e₁ e₂ (fun _ => 1) (fun _ => one_pos) connected 2 ![4, 3, 0] := by
   refine ⟨rfl, fun x hx => ?_⟩
   fin_cases x <;> simp_all [weightedDegree, neighbourSum, Fin.sum_univ_two] <;> norm_num
 
 /-- Expected hitting times of `0`: `(0, 3, 4)`. -/
-theorem hit0 : IsHittingTimeSolution e₁ e₂ (fun _ => 1) 0 ![0, 3, 4] := by
+theorem hit0 :
+    IsHittingTimeSolution e₁ e₂ (fun _ => 1) (fun _ => one_pos) connected 0 ![0, 3, 4] := by
   refine ⟨rfl, fun x hx => ?_⟩
   fin_cases x <;> simp_all [weightedDegree, neighbourSum, Fin.sum_univ_two] <;> norm_num
 
@@ -76,7 +78,8 @@ example : (![4, 3, 0] : Fin 3 → ℝ) 0 =
     laplacian_mulVec_210 rfl
 
 /-- The first-step equations have a solution, and it is the one computed above. -/
-example : ∃ h, IsHittingTimeSolution e₁ e₂ (fun _ => (1 : ℝ)) 2 h ∧ h 0 = 4 := by
+example : ∃ h, IsHittingTimeSolution e₁ e₂ (fun _ => (1 : ℝ)) (fun _ => one_pos) connected 2 h ∧
+    h 0 = 4 := by
   obtain ⟨h, hh⟩ := exists_isHittingTimeSolution e₁ e₂ (w := fun _ => (1 : ℝ))
     (fun _ => one_pos) (by decide) connected 2
   refine ⟨h, hh, ?_⟩
@@ -97,16 +100,35 @@ abbrev l₂ : Fin 2 → Fin 2 := ![1, 0]
 example : weightedDegree l₁ l₂ (fun _ => (1 : ℝ)) 0 = 3 := by
   simp [weightedDegree, Fin.sum_univ_two]; norm_num
 
-example : IsHittingTimeSolution l₁ l₂ (fun _ => 1) 1 ![3, 0] := by
+theorem connectedL : (underlyingGraph l₁ l₂).Connected := by
+  have h01 := (underlyingGraph_adj_of_ne l₁ l₂ (e := 0) (by decide)).reachable
+  refine ⟨fun u v => ?_⟩
+  fin_cases u <;> fin_cases v
+  all_goals first
+    | exact SimpleGraph.Reachable.refl _ | exact h01 | exact h01.symm
+
+example : IsHittingTimeSolution l₁ l₂ (fun _ => 1) (fun _ => one_pos) connectedL 1 ![3, 0] := by
   refine ⟨rfl, fun x hx => ?_⟩
   fin_cases x
   · simp [weightedDegree, neighbourSum, Fin.sum_univ_two]; norm_num
   · exact absurd rfl hx
 
-example : ¬ IsHittingTimeSolution l₁ l₂ (fun _ => 1) 1 ![2, 0] := by
+example : ¬ IsHittingTimeSolution l₁ l₂ (fun _ => 1) (fun _ => one_pos) connectedL 1 ![2, 0] := by
   rintro ⟨-, h⟩
   have := h 0 (by decide)
   simp [weightedDegree, neighbourSum, Fin.sum_univ_two] at this
   norm_num at this
+
+/-! The first-step equations need positive conductances: with zero conductances, under which
+a vertex of weighted degree `0` would get `h(x) = 1`, the proof of positivity cannot be given. -/
+
+/--
+error: unsolved goals
+x✝ : Fin 2
+⊢ False
+-/
+#guard_msgs in
+example : Prop :=
+  IsHittingTimeSolution e₁ e₂ (fun _ => 0) (fun _ => by norm_num) connected 2 ![1, 1, 0]
 
 end EndpointMapMultigraphCommuteTimeTest
