@@ -94,4 +94,12 @@ theorem weightedScore_jointZeroSupport :
   simp
 
 
+
+theorem weightedScore_oneSidedSupport_false :
+    ∀ π cFP cFN : ℝ, 0 < π → π < 1 → 0 < cFP → 0 < cFN
+      → π * cFN * (0 : ℝ) < (1 - π) * cFP * (1/2 : ℝ) := by
+  intro π cFP cFN hπ0 hπ1 hcFP hcFN
+  have h1 : (0 : ℝ) < 1 - π := by linarith
+  simp only [mul_zero]
+  positivity
 end MathlibExt.Probability.Decision

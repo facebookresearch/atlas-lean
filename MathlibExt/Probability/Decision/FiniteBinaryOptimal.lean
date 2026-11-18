@@ -792,4 +792,18 @@ theorem weightedScore_binary_optimal
       unfold weightedScoreContribution
       rw [hx0, hx1, mul_zero, mul_zero, mul_zero, mul_zero, add_zero]
 
+
+theorem weightedScoreContribution_constant_iff {𝒳 : Type*} (P0 P1 : 𝒳 → ℝ)
+    (π cFP cFN : ℝ) (x : 𝒳) :
+    (∀ a b : ℝ, weightedScoreContribution P0 P1 π cFP cFN a x
+      = weightedScoreContribution P0 P1 π cFP cFN b x)
+      ↔ π * cFN * P1 x = (1 - π) * cFP * P0 x := by
+  constructor
+  · intro h
+    have h10 := h 1 0
+    simp only [weightedScoreContribution] at h10
+    linarith
+  · intro h a b
+    simp only [weightedScoreContribution, h]
+    ring
 end MathlibExt.Probability.Decision
