@@ -182,6 +182,47 @@ example : FiniteHorizonPassiveOn capPlant capTrajUntilTwo 0 1 := by
   · rw [hbalance]
     exact intervalIntegrable_const
 
+/-- Undamped constancy reaches intermediate times: storage at `1/2` equals
+storage at `0` for the trajectory that obeys the network laws only on
+`[0, 1]`, through the interval-scoped public lemma. -/
+example : plantStorage capPlant capTrajUntilTwo (1 / 2) =
+    plantStorage capPlant capTrajUntilTwo 0 := by
+  have hsupply : ∀ s ∈ Set.Icc (0 : ℝ) 1, plantSupplyRate capPlant capTrajUntilTwo s = 0 := by
+    intro s _
+    norm_num [capPlant, capTrajUntilTwo, plantSupplyRate, sourceAbsorbedPower,
+      dotProduct, Fin.sum_univ_one, Finset.sum_empty]
+  have hloss : ∀ s ∈ Set.Icc (0 : ℝ) 1, plantLossRate capPlant capTrajUntilTwo s = 0 := by
+    intro s _
+    norm_num [capPlant, capTrajUntilTwo, plantLossRate, resistiveLoss, Finset.sum_empty]
+  have hbalance : (fun s => plantSupplyRate capPlant capTrajUntilTwo s -
+      plantLossRate capPlant capTrajUntilTwo s) = fun _ => (0 : ℝ) := by
+    funext s
+    norm_num [capPlant, capTrajUntilTwo, plantSupplyRate, plantLossRate,
+      sourceAbsorbedPower, resistiveLoss, dotProduct, Fin.sum_univ_one, Finset.sum_empty]
+  refine plantStorage_constant_of_zero_supply_loss_of_trajectoryOn capPlant capPlant_R
+    capPlant_L capPlant_C capTrajUntilTwo 0 1 (by norm_num) capTrajUntilTwo_trajectoryOn
+    hsupply hloss ?_ (1 / 2) (by norm_num)
+  rw [hbalance]
+  exact intervalIntegrable_const
+
+/-- The global-trajectory form gives the same intermediate-time constancy
+for the constant trajectory on `[0, 1]`. -/
+example : plantStorage capPlant capTraj (1 / 2) = plantStorage capPlant capTraj 0 := by
+  have hbalance : (fun s => plantSupplyRate capPlant capTraj s -
+      plantLossRate capPlant capTraj s) = fun _ => (0 : ℝ) := by
+    funext s
+    norm_num [capPlant, capTraj, plantSupplyRate, plantLossRate, sourceAbsorbedPower,
+      resistiveLoss, dotProduct, Fin.sum_univ_one, Finset.sum_empty]
+  refine plantStorage_constant_of_zero_supply_loss capPlant capTraj capTraj_trajectory
+    capPlant_R capPlant_L capPlant_C 0 1 (by norm_num) ?_ ?_ ?_ (1 / 2) (by norm_num)
+  · intro s _
+    norm_num [capPlant, capTraj, plantSupplyRate, sourceAbsorbedPower,
+      dotProduct, Fin.sum_univ_one, Finset.sum_empty]
+  · intro s _
+    norm_num [capPlant, capTraj, plantLossRate, resistiveLoss, Finset.sum_empty]
+  · rw [hbalance]
+    exact intervalIntegrable_const
+
 /-- A trajectory of the same plant whose branch voltage and node potential
 are `4` on `[0, ∞)` and `4 - t` before time `0`. It agrees with the constant
 trajectory on `[0, 1]` but has a kink at the left endpoint `0`. -/

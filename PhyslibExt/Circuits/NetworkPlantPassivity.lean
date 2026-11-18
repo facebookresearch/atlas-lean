@@ -520,7 +520,8 @@ lemma networkPlant_passivity {nN nB : ℕ} (P : NetworkPlant nN nB)
 
 /-- Undamped case under interval-scoped trajectory hypotheses: if the
 network laws hold on `[a, b]` and the supply and loss rates vanish there,
-storage is constant on that interval, not decaying. -/
+storage is constant on that interval, not decaying: at every time of
+`[a, b]` it equals its value at `a`. -/
 lemma plantStorage_constant_of_zero_supply_loss_of_trajectoryOn {nN nB : ℕ}
     (P : NetworkPlant nN nB)
     (hR : ∀ e ∈ P.resistorSet, 0 ≤ P.resistance e)
@@ -532,22 +533,25 @@ lemma plantStorage_constant_of_zero_supply_loss_of_trajectoryOn {nN nB : ℕ}
     (hloss : ∀ s ∈ Set.Icc a b, plantLossRate P x s = 0)
     (hderiv_int : IntervalIntegrable (fun s => plantSupplyRate P x s - plantLossRate P x s)
       MeasureTheory.volume a b) :
-    plantStorage P x b = plantStorage P x a := by
-  have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le hab
-    hP.continuousOn_plantStorage (fun t ht => hP.hasDerivAt_plantStorage hR hL hC ht)
-    hderiv_int
+    ∀ t ∈ Set.Icc a b, plantStorage P x t = plantStorage P x a := by
+  intro t ht
+  have hsub : Set.Icc a t ⊆ Set.Icc a b := Set.Icc_subset_Icc_right ht.2
+  have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le ht.1
+    (hP.continuousOn_plantStorage.mono hsub)
+    (fun s hs => hP.hasDerivAt_plantStorage hR hL hC ⟨hs.1, hs.2.trans_le ht.2⟩)
+    (hderiv_int.mono_set (by rw [Set.uIcc_of_le ht.1, Set.uIcc_of_le hab]; exact hsub))
   have hEqOn : Set.EqOn (fun s => plantSupplyRate P x s - plantLossRate P x s)
-      (fun _ => (0 : ℝ)) (Set.uIcc a b) := by
+      (fun _ => (0 : ℝ)) (Set.uIcc a t) := by
     intro s hs
-    rw [Set.uIcc_of_le hab] at hs
+    rw [Set.uIcc_of_le ht.1] at hs
     change plantSupplyRate P x s - plantLossRate P x s = 0
-    rw [hsupply s hs, hloss s hs, sub_self]
+    rw [hsupply s (hsub hs), hloss s (hsub hs), sub_self]
   rw [intervalIntegral.integral_congr hEqOn, intervalIntegral.integral_zero] at hFTC
   exact (sub_eq_zero.mp hFTC.symm)
 
 /-- Undamped case: if supply and loss rates vanish on an interval and the
 trajectory hypotheses hold there, storage is constant on that interval, not
-decaying. -/
+decaying: at every time of `[a, b]` it equals its value at `a`. -/
 lemma plantStorage_constant_of_zero_supply_loss {nN nB : ℕ} (P : NetworkPlant nN nB)
     (x : NetworkTrajectory nN nB) (hP : IsNetworkTrajectory P x)
     (hR : ∀ e ∈ P.resistorSet, 0 ≤ P.resistance e)
@@ -557,11 +561,12 @@ lemma plantStorage_constant_of_zero_supply_loss {nN nB : ℕ} (P : NetworkPlant 
     (hloss : ∀ s ∈ Set.Icc a b, plantLossRate P x s = 0)
     (hderiv_int : IntervalIntegrable (fun s => plantSupplyRate P x s - plantLossRate P x s)
       MeasureTheory.volume a b) :
-    plantStorage P x b = plantStorage P x a := by
+    ∀ t ∈ Set.Icc a b, plantStorage P x t = plantStorage P x a := by
   rcases hab.lt_or_eq with hlt | rfl
   · exact plantStorage_constant_of_zero_supply_loss_of_trajectoryOn P hR hL hC x a b hab
       (hP.isNetworkTrajectoryOn (uniqueDiffOn_Icc hlt)) hsupply hloss hderiv_int
-  · rfl
+  · intro t ht
+    rw [le_antisymm ht.2 ht.1]
 
 /-- Exact accounting: the branch partition of a plant puts no branch in two
 classes, so no source branch is also counted as a resistor, inductor or
