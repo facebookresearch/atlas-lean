@@ -10,7 +10,6 @@ module
 
 public import Mathlib.Analysis.InnerProductSpace.EuclideanDist
 public import Mathlib.Analysis.InnerProductSpace.PiL2
-public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 
 /-!
 # Radon line agreement
