@@ -349,12 +349,26 @@ def uncompiled_articles(extracted: dict, index) -> list[str]:
     return sorted(name for name in missing if name in index.declarations)
 
 
+def pages_without_rows() -> list[Path]:
+    """The roadmap pages that no annotation row names. Such a page has no node and no navigation metadata, so it
+    would build as a stray page: an editor gives it a row (a folder page takes its sibling folders' navigation)."""
+    named = {subject_path(row) for rows in read_annotations().values() for row in rows}
+    return sorted(path.resolve() for path in wiki.ROADMAP.rglob("*.md") if path.resolve() not in named)
+
+
 def run_lean_facts(dependency_file: Path) -> int:
     from autoform_cli.lean import index_project
 
     if not dependency_file.is_file():
         # Without it every page would build with no dependencies, which looks like a site and isn't one.
         print(f"error: {dependency_file} is missing; the Pages build's dependency dump writes it", file=sys.stderr)
+        return 1
+    stray = pages_without_rows()
+    if stray:
+        for path in stray[:20]:
+            print(f"error: no annotation row names {path.relative_to(wiki.ROADMAP)}", file=sys.stderr)
+        print(f"error: {len(stray)} roadmap pages have no annotation row in {LINKS.relative_to(wiki.ROOT)}",
+              file=sys.stderr)
         return 1
     index = index_project(wiki.ROOT, exclude_roots=("v1", "Atlas"))
     extracted = json.loads(dependency_file.read_text())
