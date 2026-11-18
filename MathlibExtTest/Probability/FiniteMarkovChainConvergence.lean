@@ -109,9 +109,10 @@ example : ∃ π : Fin 2 → ℝ, (∀ y, 0 ≤ π y) ∧ ∑ y, π y = 1 ∧
 
 /-- The smallest primitive case: on `Unit`, the packaged Perron-Frobenius statement holds for
 the identity matrix. -/
-example : ∃! π : Unit → ℝ, ((∀ y, 0 ≤ π y) ∧ ∑ y, π y = 1 ∧ π ᵥ* (1 : Matrix Unit Unit ℝ) = π) ∧
-    (∀ y, 0 < π y) ∧ ∃ C α : ℝ, 0 ≤ α ∧ α < 1 ∧ ∀ (n : ℕ) (x : Unit),
-      tvDist (fun y => ((1 : Matrix Unit Unit ℝ) ^ n) x y) π ≤ C * α ^ n :=
+example : ∃ π : Unit → ℝ, ((∀ y, 0 ≤ π y) ∧ ∑ y, π y = 1 ∧ π ᵥ* (1 : Matrix Unit Unit ℝ) = π) ∧
+    (∀ y, 0 < π y) ∧ (∃ C α : ℝ, 0 ≤ α ∧ α < 1 ∧ ∀ (n : ℕ) (x : Unit),
+      tvDist (fun y => ((1 : Matrix Unit Unit ℝ) ^ n) x y) π ≤ C * α ^ n) ∧
+    (∀ π' : Unit → ℝ, (∑ y, π' y = 1 ∧ π' ᵥ* (1 : Matrix Unit Unit ℝ) = π') → π' = π) :=
   perron_frobenius_primitive (by
       rw [mem_rowStochastic_iff_sum]; exact ⟨fun i j => by simp, fun i => by simp⟩)
     ⟨fun i j => by simp, 1, one_pos, fun i j => by simp⟩

@@ -333,14 +333,14 @@ and every row of `Pⁿ` converges to it geometrically fast in total variation. E
 `exists_stationary`; uniqueness, positivity, and the rate are the theorems above. -/
 theorem perron_frobenius_primitive [Nonempty S] {P : Matrix S S ℝ}
     (hP : P ∈ rowStochastic ℝ S) (hprim : P.IsPrimitive) :
-    ∃! π : S → ℝ, ((∀ y, 0 ≤ π y) ∧ ∑ y, π y = 1 ∧ π ᵥ* P = π) ∧
+    ∃ π : S → ℝ, ((∀ y, 0 ≤ π y) ∧ ∑ y, π y = 1 ∧ π ᵥ* P = π) ∧
       (∀ y, 0 < π y) ∧
-      ∃ C α : ℝ, 0 ≤ α ∧ α < 1 ∧
-        ∀ (n : ℕ) (x : S), tvDist (fun y => (P ^ n) x y) π ≤ C * α ^ n := by
+      (∃ C α : ℝ, 0 ≤ α ∧ α < 1 ∧
+        ∀ (n : ℕ) (x : S), tvDist (fun y => (P ^ n) x y) π ≤ C * α ^ n) ∧
+      (∀ π' : S → ℝ, (∑ y, π' y = 1 ∧ π' ᵥ* P = π') → π' = π) := by
   obtain ⟨π, hπ0, hπ1, hstat⟩ := exists_stationary hP
-  refine ⟨π, ⟨⟨hπ0, hπ1, hstat⟩, stationary_pos hprim hπ0 hπ1 hstat,
-    exists_tvDist_pow_le hP hprim hπ0 hπ1 hstat⟩, ?_⟩
-  rintro π' ⟨⟨-, hπ1', hstat'⟩, -⟩
-  exact (stationary_unique hP hprim hπ0 hπ1 hstat hπ1' hstat').symm
+  refine ⟨π, ⟨hπ0, hπ1, hstat⟩, stationary_pos hprim hπ0 hπ1 hstat,
+    exists_tvDist_pow_le hP hprim hπ0 hπ1 hstat, fun π' h' => ?_⟩
+  exact (stationary_unique hP hprim hπ0 hπ1 hstat h'.1 h'.2).symm
 
 end MathlibExt.Probability.FiniteMarkovChainConvergence
