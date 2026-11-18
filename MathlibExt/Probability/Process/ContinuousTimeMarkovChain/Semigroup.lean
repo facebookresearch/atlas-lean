@@ -44,6 +44,9 @@ needs positive off-diagonal rates and `t > 0`.
 * `ctmcTransition_nonneg_of_nonneg`, `one_add_le_ctmcTransition_of_nonneg`: for `A` with
   nonnegative entries and `t ≥ 0`, `exp (t • A)` is entrywise nonnegative and dominates
   `1 + t • A` entrywise; both come from the nonnegative terms of the exponential series.
+* `ctmcTransition_nonneg_of_offDiag_nonneg`: for a Metzler matrix `Q` (nonnegative off-diagonal
+  entries, no row-sum condition), `exp (t • Q)` is entrywise nonnegative for `t ≥ 0`, by
+  uniformization.
 * `IsRateMatrix.ctmcTransition_nonneg`: the entries of `P t` are nonnegative for `t ≥ 0`.
 * `IsRateMatrix.ctmcTransition_pos`: with positive off-diagonal rates, every entry of `P t` is
   positive for `t > 0`.
@@ -149,6 +152,25 @@ theorem ctmcTransition_nonneg_of_nonneg {A : Matrix ι ι ℝ} (hA : ∀ i j, 0 
     (ht : 0 ≤ t) (i j : ι) : 0 ≤ ctmcTransition A t i j := by
   obtain ⟨hnn, hsum⟩ := nonneg_and_hasSum_ctmcTransition_apply hA ht i j
   exact hsum.nonneg hnn
+
+/-- **Metzler matrices generate nonnegative semigroups.** If only the off-diagonal entries of
+`Q` are nonnegative (no row-sum condition), then `exp (t • Q)` is entrywise nonnegative for
+`t ≥ 0`: uniformizing by `c = ∑ k, |Q k k|` makes `Q + c • 1` entrywise nonnegative. -/
+theorem ctmcTransition_nonneg_of_offDiag_nonneg {Q : Matrix ι ι ℝ}
+    (hQ : ∀ i j, i ≠ j → 0 ≤ Q i j) {t : ℝ} (ht : 0 ≤ t) (i j : ι) :
+    0 ≤ ctmcTransition Q t i j := by
+  set c : ℝ := ∑ k, |Q k k|
+  have hc : ∀ i j, 0 ≤ (Q + c • (1 : Matrix ι ι ℝ)) i j := by
+    intro i j
+    by_cases h : i = j
+    · subst h
+      have hle : |Q i i| ≤ c :=
+        single_le_sum (f := fun k => |Q k k|) (fun k _ => abs_nonneg _) (mem_univ i)
+      simp only [Matrix.add_apply, Matrix.smul_apply, one_apply_eq, smul_eq_mul, mul_one]
+      linarith [neg_abs_le (Q i i)]
+    · simpa [one_apply_ne h] using hQ i j h
+  rw [ctmcTransition_eq_exp_smul_uniformized Q c t]
+  exact mul_nonneg (Real.exp_pos _).le (ctmcTransition_nonneg_of_nonneg hc ht i j)
 
 /-- For a matrix `A` with nonnegative entries and `t ≥ 0`, `exp (t • A)` dominates the first two
 terms of its series entrywise: `1 i j + t * A i j ≤ exp (t • A) i j`. -/
