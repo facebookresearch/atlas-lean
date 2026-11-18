@@ -108,6 +108,13 @@ reviewed docstring-digest baseline. Removed declarations' articles are kept
 as unlinked mathematical articles during rendering until an editor resolves
 the report; no old Lean-source link is fabricated.
 
+Every page under `blueprint/roadmap/` needs a row in `blueprint/links/`;
+`lean-facts` fails on a page without one. A folder page takes the navigation of
+its sibling folders. A display formula `$$…$$` must be a paragraph of its own,
+with a blank line before and after it, and not inside a list item: elsewhere it
+renders as `$`, inline math, `$`. The site check fails on such an unpaired
+delimiter.
+
 Changing AutoformBot requires a reviewed `.github/autoform-ref` update and
 passing tests. The workflow has no automatic pin push, upstream-sync bot,
 model-driven audit, schedule, or required personal token.

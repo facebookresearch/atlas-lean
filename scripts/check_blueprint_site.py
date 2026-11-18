@@ -1,14 +1,24 @@
 #!/usr/bin/env python3
-"""Fail when the rendered blueprint loses article cards or publishes dead links."""
+"""Fail when the rendered blueprint loses article cards, publishes dead links, or shows a math delimiter that
+did not pair."""
 
 from __future__ import annotations
 
 import json
+import re
 import sys
 from functools import lru_cache
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
+
+
+# Text in these elements is shown as written, so a `$` in it is meant.
+VERBATIM = frozenset({"code", "pre", "script", "style", "textarea"})
+# A `$` shaped like a math delimiter: doubled, or attached to a word with TeX syntax in it (`$2^{n}`, `x_i$`). A
+# currency amount (`$5`) or an escaped `\$` is not.
+DELIMITER = re.compile(r"\$\$|\$[^\s$]*[\\^_{}]|[\\^_{}][^\s$]*\$")
+VOID = frozenset({"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"})
 
 
 class PageParser(HTMLParser):
@@ -17,16 +27,53 @@ class PageParser(HTMLParser):
         self.hrefs: list[str] = []
         self.ids: set[str] = set()
         self.cards: list[str] = []
+        # The page's text outside verbatim elements, with None where a math element sits.
+        self.flow: list[str | None] = []
+        # The open elements, each with whether its text is exempt (verbatim or math, or inside such an element).
+        self._open: list[tuple[str, bool]] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         values = dict(attrs)
+        classes = (values.get("class") or "").split()
+        if tag not in VOID:
+            inside = bool(self._open and self._open[-1][1])
+            if "arithmatex" in classes and not inside:
+                self.flow.append(None)
+            self._open.append((tag, inside or tag in VERBATIM or "arithmatex" in classes))
         if values.get("id"):
             self.ids.add(values["id"] or "")
         if values.get("href") is not None:
             self.hrefs.append(values["href"] or "")
-        classes = (values.get("class") or "").split()
         if "bp-thmwrapper" in classes and values.get("data-autoform-node-id"):
             self.cards.append(values["data-autoform-node-id"] or "")
+
+    def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        self.handle_starttag(tag, attrs)
+        self.handle_endtag(tag)
+
+    def handle_endtag(self, tag: str) -> None:
+        # An element left open inside this one (HTML lets `<p>` and `<li>` close implicitly) closes with it.
+        for depth in range(len(self._open) - 1, -1, -1):
+            if self._open[depth][0] == tag:
+                del self._open[depth:]
+                return
+
+    def handle_data(self, data: str) -> None:
+        if not (self._open and self._open[-1][1]):
+            self.flow.append(data)
+
+    def unpaired_delimiters(self) -> list[str]:
+        """Text around a math delimiter that did not pair. Arithmatex leaves the `$` in the text: a `$$` display
+        that touches its paragraph renders as `$`, inline math, `$`, and an unclosed span keeps its `$`."""
+        found = []
+        for at, text in enumerate(self.flow):
+            if text is None or "$" not in text:
+                continue
+            before_math = at + 1 < len(self.flow) and self.flow[at + 1] is None and text.endswith("$")
+            after_math = at > 0 and self.flow[at - 1] is None and text.startswith("$")
+            if before_math or after_math or DELIMITER.search(text):
+                found.append(" ".join(text.split())[:120])
+        return found
 
 
 def parse(path: Path) -> PageParser:
@@ -117,7 +164,11 @@ def main() -> int:
         issues.append(f"{len(pages)} HTML pages under {site} and {cards} article cards from {docs}; a built site has both")
     links = 0
     for page in pages:
-        for href in parse(page).hrefs:
+        parsed = parse(page)
+        unpaired = parsed.unpaired_delimiters()
+        if unpaired:
+            issues.append(f"{page.relative_to(site)}: a math delimiter did not pair, leaving `$` in the text: {unpaired[0]!r}")
+        for href in parsed.hrefs:
             resolved = resolve_link(page, href, site)
             if resolved is None:
                 continue

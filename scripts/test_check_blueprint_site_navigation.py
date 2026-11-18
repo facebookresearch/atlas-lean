@@ -122,5 +122,33 @@ class NavigationPayloadTests(unittest.TestCase):
         self.assertTrue(stdout.startswith("OK:"), stdout)
 
 
+    def site_with_page(self, body: str) -> None:
+        card = '<div class="bp-thmwrapper" data-autoform-node-id="lemma"></div>'
+        self.write(self.docs / "roadmap/topic/README.md", card)
+        self.write(self.site / "roadmap/topic/index.html", f"<h1>Topic</h1>{card}{body}")
+
+    def test_an_unpaired_math_delimiter_fails(self) -> None:
+        # A `$$` display that touches its paragraph renders as `$`, inline math, `$`.
+        cases = ('<p>So $<span class="arithmatex">\\(x^2\\)</span>$ follows.</p>',
+                 "<ul><li>An unclosed $\\mathbb{R} span.</li></ul>", "<p>An unmatched $$ display.</p>",
+                 "<p>A closing x^{2}$ without its opening.</p>", "<p>If $2^{\\kappa}\\lt \\lambda, then.</p>")
+        for body in cases:
+            with self.subTest(body=body):
+                self.site_with_page(body)
+                result, _stdout, stderr = self.check()
+                self.assertEqual(result, 1)
+                self.assertIn("a math delimiter did not pair", stderr)
+                self.assertIn("roadmap/topic/index.html", stderr)
+
+    def test_dollars_in_math_code_scripts_and_prose_pass(self) -> None:
+        # Math, code and scripts keep their `$`; so does prose that uses it as a currency sign, escaped or not.
+        self.site_with_page('<p>Math <span class="arithmatex">\\($x$\\)</span>, code <code>a $$ b</code>.</p>'
+                            "<pre><span>echo $HOME</pre><p>After the block.</p>"
+                            '<script>var s = "$$";</script><div class="arithmatex">\\[ $ \\]</div><br><img alt="x">'
+                            '<p>It costs $5, or <a href="#">$3 a month</a>; <span class="arithmatex">\\(x\\)</span> is $2.</p>')
+        result, _stdout, stderr = self.check()
+        self.assertEqual(result, 0, stderr)
+
+
 if __name__ == "__main__":
     unittest.main()
