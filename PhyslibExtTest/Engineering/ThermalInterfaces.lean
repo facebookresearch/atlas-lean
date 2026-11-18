@@ -25,6 +25,8 @@ reconstruction ends at `13`.
 These are elaboration and non-vacuity checks, not new results.
 -/
 
+open Engineering.ThermalInterfaces
+
 /-- The interface after the inside film is `18`. -/
 example : thermalInterfaceTemp (n := 1) 1 10 20 20
       (fun _ => 1 / 5) (fun _ => 1) 0 = 18 := by

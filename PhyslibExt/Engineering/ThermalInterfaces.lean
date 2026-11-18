@@ -31,8 +31,10 @@ model only.
 
 ## ii. Key results
 
-- `thermalInterfaceTemp_succ_sub`: adjacent interface drop.
-- `thermalInterfaceTemp_last_sub_film`: end matching at the
+- `Engineering.ThermalInterfaces.thermalInterfaceTemp_succ_sub`:
+  adjacent interface drop.
+- `Engineering.ThermalInterfaces.thermalInterfaceTemp_last_sub_film`:
+  end matching at the
   outside air temperature.
 
 ## iii. Table of contents
@@ -49,6 +51,8 @@ model only.
 @[expose] public section
 
 /-! ## A. Interface reconstruction -/
+namespace Engineering.ThermalInterfaces
+
 
 /-- Total series resistance of `n` planar layers and two films
 at common area `A` (the same formula as the series-resistance
@@ -109,3 +113,5 @@ theorem thermalInterfaceTemp_last_sub_film {n : ℕ}
     exact div_mul_cancel₀ _ hR
   rw [sub_sub, hQ]
   exact sub_sub_cancel _ _
+
+end Engineering.ThermalInterfaces
