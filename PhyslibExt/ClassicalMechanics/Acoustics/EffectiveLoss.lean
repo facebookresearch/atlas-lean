@@ -15,12 +15,17 @@ import Mathlib.Tactic.Positivity
 
 ## i. Overview
 
-For two equal-area patches with positive transmission coefficients
-`τ1`, `τ2`, the effective loss `-10 * log10 ((τ1 + τ2) / 2)` of
-the area-averaged coefficient lies between the two patch losses,
-and for distinct coefficients it is strictly below the average of
+For two equal-area patches under uniform incident intensity
+with positive transmission coefficients `τ1`, `τ2`, the effective
+coefficient is the area average `(τ1 + τ2) / 2` (the
+uniform-intensity case of the power-weighted average
+`Acoustics.effectivePowerTransmission`), and its loss
+`-10 * log10 ((τ1 + τ2) / 2)` lies between the two patch losses.
+For distinct coefficients it is strictly below the average of
 the two decibel values: averaging decibels is not the effective
-loss.
+loss. With non-uniform incident intensity the effective
+coefficient is intensity-weighted instead, and the arithmetic
+mean does not apply.
 
 ## ii. Key results
 
@@ -35,8 +40,9 @@ loss.
 
 ## iv. References
 
-- Standard building-acoustics composite transmission loss
-  (area-weighted transmission coefficients).
+- L. L. Beranek and I. L. Vér (eds.), *Noise and Vibration
+  Control Engineering*, Wiley, 1992 (composite transmission loss
+  of parallel elements under uniform incident intensity).
 -/
 
 @[expose] public section
