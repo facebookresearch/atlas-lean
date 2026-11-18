@@ -38,6 +38,22 @@ upper-case parts; three-part package names and lower-case release branches are
 not classified by that shape alone.
 Preserve authorship and copyright notices when correcting provenance.
 
+File contents, commit messages (not headers), and PR titles and descriptions
+recognize two public forms; filenames, branches, and symlink targets stay
+strict. A publisher identifier is exempt only in the exact identifier slot of
+a recognized citation: a DOI under a listed publisher prefix (optionally
+prefixed by `doi:` or `https://doi.org/`) with a valid ISSN check digit, a
+recognized ScienceDirect article URL, or an exact citation in the checker.
+
+A filesystem-path match wholly inside an HTTP(S) URL path is exempt only for
+a public-looking DNS authority with no user information, valid labels and
+port syntax, no local or special-use suffix, and no drive-letter path segment.
+Local names, IP literals, and malformed authorities stay strict. Other rules
+still apply inside the URL, and query and fragment text remains checked.
+The checker does not resolve DNS, so a public-looking name is not proof that
+its destination is public. New citation forms need a reviewed base-checker
+change. These exceptions do not waive other findings or missing inputs.
+
 The **Public references / public-references** check applies to every PR author,
 including forks. It reads every outgoing Git commit's complete message and all
 headers, including signature-shaped text, plus every new Git file blob. File
@@ -60,13 +76,55 @@ Reports contain at most 100 findings, with locations limited to 240 characters.
 limit is exceeded, reference detection stops, but object and input-completeness
 validation continues. A truncated report always fails the check.
 
-To check a local branch before pushing, with optional JSON containing `title`,
-`body`, and `branch` fields:
+To check a local branch before its first push, fetch the public base and scan
+its full outgoing range. Put the intended branch name in `pr-metadata.json`
+under `branch`; include `title` and `body` if you will also create a PR:
 
 ```sh
+git fetch origin &&
 python3 scripts/check_public_references.py \
   --base "$(git rev-parse origin/main)" --head "$(git rev-parse HEAD)" \
   --metadata pr-metadata.json
+```
+
+For an update to an existing public branch, also exclude its already-published
+tip. Replace `my-branch` with the remote branch name:
+
+```sh
+git fetch origin &&
+python3 scripts/check_public_references.py \
+  --base "$(git rev-parse origin/main)" --head "$(git rev-parse HEAD)" \
+  --public "$(git rev-parse origin/main)" \
+  --public "$(git rev-parse origin/my-branch)"
+```
+
+`--public` takes a full commit SHA and may be repeated. It excludes published
+commit histories, but only entries in each public tip's current tree qualify
+for its content and name exemptions. Editing a file under an existing public
+name does not force a rename. Removed names, symlinks, and content are checked
+again when a push restores them, directly, through a merge, or by building on
+an older public commit. New symlink targets are always checked strictly. The
+normal base-history behavior is unchanged. This supports forward cleanup,
+including updates that merge already-public main and topic tips.
+
+Only pass tips you have fetched from the public repository and verified: the
+script checks that each value identifies a commit, not that it is public.
+Leave `--public` out for a first push. New outgoing commit headers and
+messages, introduced file blobs, new destination paths, and new symlink
+targets remain checked.
+
+`--public` excludes Git history only. If you are also creating or changing PR
+metadata or a branch name, pass the exact new `title`, `body`, or `branch`
+values in a JSON file with `--metadata pr-metadata.json`; supplied fields are
+always checked. Unchanged, already-public metadata need not be supplied for
+a code-only local pre-push check. The GitHub PR check does not accept
+`--public` and still scans the PR's complete range from its base; merge-group
+checks likewise remain unchanged. A local pass does not waive a CI finding
+or authorize rewriting published history to remove it.
+
+Run the detector's tests with:
+
+```sh
 python3 -m unittest discover -s scripts -p 'test_public_references.py'
 ```
 
@@ -83,11 +141,22 @@ Removing a reference from the tip does not erase already-published history.
 CI runs after a branch and PR have been published; run the local check before
 pushing to avoid exposing a reference in the first place.
 
-Maintainers must make `public-references` a required check in the branch ruleset
-after this workflow lands. Until it is required, CI reports failures but does
-not itself prevent a manual merge. The workflow runs the trusted default-branch
-version, so changes to the gate itself need maintainer review and local tests before
-merge; a PR cannot substitute its own scanner into this check.
+The same job also handles merge-queue events, scanning the complete combined
+Git range, including intermediate commits, without executing proposed code.
+It pins scanner code to a resolved default-branch commit and checks the queue
+ref before and after scanning. PR metadata is checked separately on PR events;
+the merge-group route does not enumerate every grouped PR's metadata.
+
+Before making this check required, maintainers must establish trusted workflow
+governance. GitHub selects a merge-group workflow definition from the event
+ref, and a PR-target workflow from the PR's base branch. Pinning the scanner
+does not authenticate the workflow that invokes it. Use a required workflow
+from a separately protected source, or enforce trusted review and protection
+for all workflow definitions, relevant policy, and default-branch scanner
+code. A required job name alone cannot prevent another workflow from reporting
+the same name. Verify ordinary PR, fork, and merge-queue delivery after an
+authorized deployment before enabling required enforcement. Until then this
+is advisory CI, not a standalone merge barrier.
 
 ## Contributor License Agreement ("CLA")
 In order to accept your pull request, we need you to submit a CLA. You only need

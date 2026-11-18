@@ -1,12 +1,15 @@
 """Public-reference gate tests, using synthetic references only."""
 
 import contextlib
+import gc
 import io
 import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
+import tracemalloc
 import unittest
 from unittest.mock import patch
 
@@ -372,6 +375,365 @@ class Patterns(unittest.TestCase):
         findings = gate.scan("first\n" + secret, secret + ".md")
         self.assertEqual(findings[0]["line"], 2)
         self.assertNotIn(secret, json.dumps(findings))
+
+
+# Public citations (verbatim from public sources) and synthetic references.
+PUBLIC_DOIS = (
+    "https://doi.org/10.1017/S0308210500015080",
+    "https://doi.org/10.1137/S0895480198349014",
+    "https://doi.org/10.1112/S0024609305004261",
+    "doi:10.1142/S0129054103001820",
+)
+PUBLIC_PII_URL = (
+    "https://www.sciencedirect.com/science/article/pii/S0001870810002471"
+)
+REVIEWED = gate.REVIEWED_CITATIONS[0]
+VALID_CITATIONS = PUBLIC_DOIS + (PUBLIC_PII_URL, REVIEWED)
+
+
+def synthetic_pii(issn7="1234567", corrupt=False):
+    """A clearly synthetic publisher-PII shape with a computed ISSN check."""
+    total = sum(int(c) * w for c, w in zip(issn7, range(8, 1, -1)))
+    check = (11 - total % 11) % 11
+    digit = "X" if check == 10 else str(check)
+    if corrupt:
+        digit = "1" if digit == "0" else "0"
+    return "S" + issn7 + digit + "2600001" + "0"
+
+
+def supported_refs():
+    """The suite's supported numeric forms: 9 digits, and each floor."""
+    refs = [prefix + "123456789" for prefix in "DTPSNL"]
+    refs += [prefix + "12345" for prefix in "DTP"]
+    refs += [prefix + "123456" for prefix in "SNL"]
+    return refs
+
+
+class CitationSlots(unittest.TestCase):
+    def assert_detected(self, text, ref):
+        start = text.index(ref)
+        self.assertEqual(text.count(ref), 1)
+        self.assertIn(
+            (start, start + len(ref)), gate.reference_spans(text, 0), text
+        )
+        self.assertTrue(gate.scan(text, "text", citation_start=0))
+
+    def test_valid_citations_are_exempt_only_in_citation_scope(self):
+        for citation in VALID_CITATIONS:
+            for text in (citation, citation + ".", "(" + citation + ")"):
+                with self.subTest(text=text):
+                    self.assertEqual(
+                        gate.scan(text, "text", citation_start=0), []
+                    )
+                    self.assertTrue(gate.scan(text, "text"))
+
+    def test_inserted_supported_references_stay_detected(self):
+        doi, url = PUBLIC_DOIS[0], PUBLIC_PII_URL
+        stem = REVIEWED.rsplit(" ", 1)[0]
+        for ref in supported_refs():
+            placements = {
+                "inside DOI slot": "doi:10.1017/" + ref,
+                "inside https DOI slot": "https://doi.org/10.1017/" + ref,
+                "inside PII URL slot": url.rsplit("/", 1)[0] + "/" + ref,
+                "before citation": ref + " " + doi,
+                "after citation": doi + " " + ref,
+                "slash after DOI": doi + "/" + ref,
+                "dot after DOI": doi + "." + ref,
+                "comma after DOI": doi + "," + ref,
+                "DOI query": doi + "?ref=" + ref,
+                "DOI fragment": doi + "#" + ref,
+                "PII URL query": url + "?ref=" + ref,
+                "PII URL fragment": url + "#" + ref,
+                "PII URL subpath": url + "/" + ref,
+                "after reviewed citation": REVIEWED + " " + ref,
+                "reviewed citation, other number": stem + " " + ref,
+                "citation-shaped wrapper": "J. Stat. Mech. (2010) " + ref,
+            }
+            for name, text in placements.items():
+                with self.subTest(ref=ref, placement=name):
+                    self.assert_detected(text, ref)
+
+    def test_aliases_and_invalid_slots_stay_strict(self):
+        pii = synthetic_pii()
+        # The synthetic PII is a valid slot in the recognized forms ...
+        for text in (
+            "doi:10.1017/" + pii,
+            "https://doi.org/10.1017/" + pii,
+            "https://www.sciencedirect.com/science/article/pii/" + pii,
+        ):
+            self.assertEqual(gate.scan(text, "text", citation_start=0), [])
+        # ... so only the alias, prefix, context, or ISSN makes these strict.
+        texts = (
+            "https://dx.doi.org/10.1017/" + pii,
+            "http://doi.org/10.1017/" + pii,
+            "DOI:10.1017/" + pii,
+            "doi.org/10.1017/" + pii,
+            "https://doi.org/10.9999/" + pii,
+            "/srv/cache/10.1017/" + pii,
+            "http://www.sciencedirect.com/science/article/pii/" + pii,
+            "https://sciencedirect.com/science/article/pii/" + pii,
+            "doi:10.1017/" + synthetic_pii(issn7="0000000"),
+            "doi:10.1017/" + synthetic_pii(corrupt=True),
+        )
+        for text in texts:
+            ref = text[text.rindex("S") :]
+            with self.subTest(text=text):
+                self.assert_detected(text, ref)
+
+    def test_other_rules_still_apply_next_to_citations(self):
+        host = "https://example." + "internalfb" + ".com/x"
+        findings = gate.scan(
+            PUBLIC_DOIS[0] + " " + host, "text", citation_start=0
+        )
+        self.assertEqual([f["rule"] for f in findings], ["private-host"])
+
+    def test_citation_start_limits_exemptions(self):
+        text = PUBLIC_DOIS[0] + "\n\n" + PUBLIC_DOIS[0]
+        start = text.index("S")
+        self.assertEqual(
+            gate.reference_spans(text, text.index("\n\n") + 2),
+            [(start, start + 17)],
+        )
+
+    def test_reviewed_citation_constant_is_readable(self):
+        self.assertEqual(
+            REVIEWED,
+            "D. Cimasoni, *A generalized Kac-Ward formula*, J. Stat. Mech. (2010) P07023",
+        )
+
+    def test_long_citation_heavy_input_is_bounded(self):
+        unit = PUBLIC_DOIS[0] + ", " + PUBLIC_PII_URL + "; " + REVIEWED + "\n"
+        text = unit * 20000
+        self.assertEqual(gate.scan(text, "text", citation_start=0), [])
+        self.assertEqual(
+            len(gate.scan(text + private_ref(), "text", citation_start=0)), 1
+        )
+
+
+# Public university URLs quoted verbatim from repository references.
+PUBLIC_URLS = (
+    "https://www.math.cmu.edu/users/mubayi/papers/no-singleton.pdf",
+    "https://users.math.msu.edu/users/meierfra/Preprints/Nflfsg/nflfsg.pdf",
+)
+
+
+class PublicUrlPaths(unittest.TestCase):
+    def rules(self, text, scope=0):
+        return [
+            f["rule"] for f in gate.scan(text, "text", citation_start=scope)
+        ]
+
+    def test_public_url_paths_are_not_filesystem_paths(self):
+        for url in PUBLIC_URLS:
+            for text in (
+                url,
+                url + ".",
+                "(" + url + ")",
+                "<" + url + ">",
+                "See " + url + " and " + url,
+            ):
+                with self.subTest(text=text):
+                    self.assertEqual(self.rules(text), [])
+                    self.assertTrue(self.rules(text, scope=None))
+        self.assertEqual(self.rules("HTTPS://example.edu/home/alice/x.pdf"), [])
+        self.assertEqual(
+            self.rules("https://example.edu/tmp/alice/state/x.txt"), []
+        )
+
+    def test_filesystem_paths_stay_detected(self):
+        bare = {
+            "/".join(["", "Users", "alice", "work", "x"]): "personal-workspace",
+            "/".join(["", "home", "alice", "x"]): "personal-workspace",
+            "/".join(["", "data", "users", "alice", "x"]): "personal-workspace",
+            "\\".join(["C:", "Users", "alice", "x"]): "personal-workspace",
+            "/".join(["", "tmp", "w", "lanes", "x"]): "temporary-workspace",
+        }
+        url = "https://example.edu"
+        for path, rule in bare.items():
+            forward = path.replace("\\", "/").removeprefix("C:")
+            cases = (
+                path,
+                "file://" + forward,
+                url + "/view?file=" + forward,
+                url + "/view#" + forward,
+                url + "/C:" + forward,
+                url + "/a" + path.replace("/", "\\").removeprefix("C:"),
+                url + "/x " + path,
+            )
+            for text in cases:
+                with self.subTest(text=text):
+                    self.assertIn(rule, self.rules(text))
+                    self.assertNotIn(
+                        "alice",
+                        json.dumps(gate.scan(text, "text", citation_start=0)),
+                    )
+        two = "https://example.edu/users/alice/x " + "/".join(
+            ["", "home", "bob", "x"]
+        )
+        self.assertEqual(self.rules(two), ["personal-workspace"])
+
+    def test_other_rules_still_apply_inside_url_paths(self):
+        base = "https://www.math.cmu.edu/users/"
+        cases = {
+            base + private_ref() + "/x.pdf": "internal-reference",
+            "/".join(
+                ["https://example." + "internalfb" + ".com", "users", "a"]
+            ): "private-host",
+            "https://example.edu/"
+            + "fbcode"
+            + "/a/b.py": "internal-source-path",
+        }
+        for text, rule in cases.items():
+            with self.subTest(rule=rule):
+                self.assertEqual(self.rules(text), [rule])
+
+    def test_local_and_nonpublic_url_authorities_stay_strict(self):
+        home = "/".join(["", "home", "alice", "x"])
+        hosts = (
+            "localhost",
+            "LocalHost",
+            "localhost.",
+            "localhost:8080",
+            "a.b.localhost",
+            "user:pw@localhost",
+            "user@www.math.cmu.edu",
+            "127.0.0.1",
+            "127.0.0.1:8000",
+            "127.1",
+            "2130706433",
+            "0x7f000001",
+            "10.0.0.5",
+            "192.168.1.10",
+            "[::1]",
+            "[::1]:8080",
+            "[0:0:0:0:0:0:0:1]",
+            "example.local",
+            "Example.Local.",
+            "box.internal",
+            "printer.lan",
+            "host.home.arpa",
+            "devbox",
+            "exa_mple.edu",
+            "%6c%6fcalhost",
+            "example.edu:http",
+            "-bad-.edu",
+            "1.0.0.127.in-addr.arpa",
+            "xn--bcher-kva.example",
+        )
+        for host in hosts:
+            for scheme in ("http://", "HTTPS://"):
+                text = scheme + host + home
+                with self.subTest(text=text):
+                    self.assertIn("personal-workspace", self.rules(text))
+
+    def test_drive_bearing_and_hostless_url_paths_stay_strict(self):
+        tail = "/".join(["Users", "Example", "work", "notes.txt"])
+        home = "/".join(["", "home", "Example", "private.txt"])
+        texts = (
+            "https://example.edu/C:/" + tail,
+            "https://example.edu/C:/./" + tail,
+            "https://example.edu/C:/folder/../" + tail,
+            "https://example.edu/docs/C:/./" + tail,
+            "https://example.edu/c%3A/" + tail,
+            "https://example.edu/C|/" + tail,
+            "https://@" + home,
+            "https://:" + home,
+            "https://:443" + home,
+            "https://user@" + home,
+            "https://." + home,
+            "https://.." + home,
+        )
+        for text in texts:
+            with self.subTest(text=text):
+                self.assertIn("personal-workspace", self.rules(text))
+
+    def test_authority_length_bound_is_the_dns_maximum(self):
+        host = ".".join(["a" * 63, "b" * 63, "c" * 63, "d" * 57, "edu"])
+        self.assertEqual(len(host), 253)
+        longest = host + ".:65535"
+        self.assertEqual(len(longest), gate.MAX_AUTHORITY_CHARS)
+        self.assertTrue(gate.public_authority(longest))
+        self.assertFalse(gate.public_authority("x" + host))
+        self.assertFalse(gate.public_authority(host + ":65536"))
+        home = "/".join(["", "home", "alice", "x"])
+        self.assertEqual(self.rules("https://" + longest + home), [])
+        self.assertIn(
+            "personal-workspace", self.rules("https://x" + longest + home)
+        )
+
+    def test_long_rejected_authorities_are_not_cached(self):
+        gate._public_authority.cache_clear()
+        home = "/".join(["", "home", "alice", "x"])
+        for index in range(12):
+            authority = str(index) + "a" * (1 << 20) + ".edu"
+            self.assertFalse(gate.public_authority(authority))
+            self.assertIn(
+                "personal-workspace", self.rules("https://" + authority + home)
+            )
+        self.assertEqual(gate._public_authority.cache_info().currsize, 0)
+
+    def test_scanning_many_long_authorities_retains_no_memory(self):
+        home = "/".join(["", "home", "alice", "x"])
+        gate._public_authority.cache_clear()
+        gc.collect()
+        tracemalloc.start()
+        try:
+            before = tracemalloc.get_traced_memory()[0]
+            for index in range(12):
+                text = "https://" + str(index) + "b" * (1 << 20) + ".edu" + home
+                self.assertEqual(len(self.rules(text)), 1)
+                del text
+            gc.collect()
+            retained = tracemalloc.get_traced_memory()[0] - before
+        finally:
+            tracemalloc.stop()
+        self.assertLess(retained, 256 * 1024)
+        self.assertLessEqual(gate._public_authority.cache_info().currsize, 0)
+
+    def test_reviewed_url_boundary_counterexamples(self):
+        home = "/".join(["", "home", "Example", "private.txt"])
+        drive = "/".join(["", "Users", "Example", "work", "notes.txt"])
+        strict = (
+            "https://example.edu:65536" + home,
+            "https://example.edu:99999" + home,
+            "https://example.edu.." + home,
+            "https://example.edu...:443" + home,
+            "https://example.edu/%43:" + drive,
+            "https://example.edu/%43%3A" + drive,
+            "https://example.edu/%63%3a" + drive,
+            "https://example.edu/C%7C" + drive,
+        )
+        for text in strict:
+            with self.subTest(text=text):
+                self.assertIn("personal-workspace", self.rules(text))
+        exempt = (
+            "https://example.edu:443" + home,
+            "https://example.edu:65535" + home,
+            "https://example.edu." + home,
+            "https://example.edu.:443" + home,
+            "https://example.edu/%2E/notes" + home,
+        )
+        for text in exempt:
+            with self.subTest(text=text):
+                self.assertEqual(self.rules(text), [])
+
+    def test_public_url_authority_forms(self):
+        for host in (
+            "www.math.cmu.edu",
+            "Www.Math.Cmu.Edu",
+            "www.math.cmu.edu.",
+            "www.math.cmu.edu:443",
+            "xn--bcher-kva.ch",
+        ):
+            url = PUBLIC_URLS[0].replace("www.math.cmu.edu", host)
+            with self.subTest(host=host):
+                self.assertEqual(self.rules(url), [])
+
+    def test_url_heavy_input_is_bounded(self):
+        text = "\n".join(PUBLIC_URLS) * 20000
+        self.assertEqual(gate.scan(text, "text", citation_start=0), [])
+        tail = "\n" + "/".join(["", "home", "alice", "x"])
+        self.assertEqual(self.rules(text + tail), ["personal-workspace"])
 
 
 class Repository(unittest.TestCase):
@@ -965,6 +1327,553 @@ class Repository(unittest.TestCase):
             self.assertEqual(
                 gate.main(["--base", "not-a-hash", "--head", self.head()]), 2
             )
+
+    def test_citations_in_commit_message_only_not_headers(self):
+        self.commit("Cite " + PUBLIC_DOIS[0] + "\n\nSee " + REVIEWED)
+        self.assertEqual(self.check()["findings"], [])
+        self.base = self.head()
+        self.run_git("config", "user.name", "Example " + PUBLIC_DOIS[0])
+        self.commit("Ordinary change")
+        findings = self.check()["findings"]
+        raw = gate.git(self.root, "cat-file", "commit", self.head()).decode()
+        lines = raw.split("\n")
+        expected = [
+            i + 1
+            for i, line in enumerate(lines)
+            if line.startswith(("author ", "committer "))
+        ]
+        self.assertEqual(sorted(f["line"] for f in findings), expected)
+        self.assertTrue(
+            all(f["location"].startswith("commit ") for f in findings)
+        )
+
+    def test_citations_in_signature_shaped_headers_stay_strict(self):
+        tree = self.run_git("rev-parse", "HEAD^{tree}")
+        identity = "Example <author@example.com> 1700000000 +0000"
+        for field in ("gpgsig", "x-provenance"):
+            with self.subTest(field=field):
+                value = (
+                    "-----BEGIN PGP SIGNATURE-----\n"
+                    + PUBLIC_DOIS[0]
+                    + "\n-----END PGP SIGNATURE-----"
+                )
+                raw = (
+                    f"tree {tree}\nparent {self.base}\n"
+                    f"author {identity}\ncommitter {identity}\n"
+                    + field
+                    + " "
+                    + value.replace("\n", "\n ")
+                    + "\n\nOrdinary change\n"
+                ).encode()
+                sha = (
+                    gate.git(
+                        self.root,
+                        "hash-object",
+                        "-t",
+                        "commit",
+                        "-w",
+                        "--stdin",
+                        input_data=raw,
+                    )
+                    .decode()
+                    .strip()
+                )
+                findings = gate.check_range(self.root, self.base, sha)[
+                    "findings"
+                ]
+                self.assertEqual([f["line"] for f in findings], [6])
+
+    def test_citations_in_regular_and_executable_files_are_exempt(self):
+        self.write("refs.md", "\n".join(VALID_CITATIONS) + "\n")
+        self.write("tool.sh", "# " + PUBLIC_DOIS[1] + "\n")
+        os.chmod(self.root / "tool.sh", 0o755)
+        self.commit("Add references")
+        self.assertEqual(self.check()["findings"], [])
+
+    def test_symlink_targets_stay_strict_in_either_order(self):
+        for regular, link in (("a.md", "z-link"), ("z.md", "a-link")):
+            with self.subTest(regular=regular, link=link):
+                self.base = self.head()
+                self.write(regular, PUBLIC_DOIS[0])
+                (self.root / link).symlink_to(PUBLIC_DOIS[0])
+                self.commit("Add regular file and link with one blob")
+                result = self.check()
+                self.assertEqual(result["blobs"], 1)
+                self.assertEqual(len(result["findings"]), 1)
+                self.assertEqual(
+                    result["findings"][0]["rule"], "internal-reference"
+                )
+                self.assertTrue(
+                    result["findings"][0]["location"].startswith(link + " @ ")
+                )
+                for name in (regular, link):
+                    (self.root / name).unlink()
+                self.commit("Remove fixtures")
+
+    def test_base_citation_bytes_reused_as_symlink_target_stay_strict(self):
+        for case in ("add link", "regular to link", "executable to link"):
+            with self.subTest(case=case):
+                name = case.split()[0] + ".md"
+                self.write(name, PUBLIC_DOIS[0])
+                if case.startswith("executable"):
+                    os.chmod(self.root / name, 0o755)
+                self.commit("Add citation file")
+                self.assertEqual(self.check()["findings"], [])
+                self.base = self.head()
+                link = name + "-link" if case == "add link" else name
+                if link == name:
+                    (self.root / name).unlink()
+                (self.root / link).symlink_to(PUBLIC_DOIS[0])
+                self.commit("Point a link at the citation text")
+                result = self.check()
+                self.assertEqual(result["blobs"], 1)
+                self.assertEqual(len(result["findings"]), 1)
+                self.assertTrue(
+                    result["findings"][0]["location"].startswith(link + " @ ")
+                )
+                for path in {name, link}:
+                    if (self.root / path).is_symlink() or (
+                        self.root / path
+                    ).exists():
+                        (self.root / path).unlink()
+                self.commit("Remove fixtures")
+                self.base = self.head()
+
+    def test_inherited_base_symlink_through_merge_is_excluded(self):
+        fork = self.head()
+        (self.root / "link").symlink_to(PUBLIC_DOIS[0])
+        self.commit("Base adds a link")
+        base = self.head()
+        self.run_git("checkout", "-q", "-b", "topic", fork)
+        self.write("topic.md", "Public topic text\n")
+        self.commit("Topic change")
+        self.run_git("merge", "-q", "--no-edit", base)
+        self.assertTrue((self.root / "link").is_symlink())
+        result = gate.check_range(self.root, base, self.head())
+        self.assertEqual(result["commits"], 2)
+        self.assertEqual(result["findings"], [])
+
+    def test_citation_filenames_and_branches_stay_strict(self):
+        self.write("refs/10.1017/" + synthetic_pii() + ".md", "Public notes\n")
+        self.commit("Add notes")
+        self.assertEqual(len(self.check()["findings"]), 1)
+        self.base = self.head()
+        self.assertEqual(
+            len(self.check({"branch": "fix/" + PUBLIC_DOIS[0]})["findings"]), 1
+        )
+        self.assertEqual(
+            self.check({"title": PUBLIC_DOIS[0], "body": REVIEWED})["findings"],
+            [],
+        )
+
+    def test_cli_url_path_bypass_controls_in_every_scope(self):
+        tail = "/".join(["Users", "Example", "work", "notes.txt"])
+        home = "/".join(["", "home", "Example", "private.txt"])
+        for text in (
+            "https://example.edu/C:/./" + tail,
+            "https://example.edu/C:/folder/../" + tail,
+            "https://example.edu/%43%3A/" + tail,
+            "https://example.edu:65536" + home,
+            "https://@" + home,
+            "https://:" + home,
+            "http://localhost" + home,
+        ):
+            with self.subTest(text=text):
+                self.base = self.head()
+                self.write("notes.md", text + "\n")
+                self.commit("Cite " + text)
+                metadata = self.root / "pr.json"
+                metadata.write_text(json.dumps({"title": text, "body": text}))
+                run = subprocess.run(
+                    [
+                        sys.executable,
+                        gate.__file__,
+                        "--repo-root",
+                        str(self.root),
+                        "--base",
+                        self.base,
+                        "--head",
+                        self.head(),
+                        "--metadata",
+                        str(metadata),
+                    ],
+                    capture_output=True,
+                    text=True,
+                )
+                metadata.unlink()
+                self.assertEqual(run.returncode, 1, run.stdout)
+                report = json.loads(run.stdout)
+                self.assertEqual(len(report["findings"]), 4)
+                self.assertNotIn("Example", run.stdout + run.stderr)
+
+    def test_cli_distinguishes_public_and_local_url_paths(self):
+        home = "/".join(["", "home", "alice", "notes.pdf"])
+        cases = (
+            ("public.md", "https://www.math.cmu.edu" + home, 0),
+            ("local.md", "http://localhost:8080" + home, 1),
+            ("loopback.md", "http://[::1]" + home, 1),
+        )
+        for name, text, expected in cases:
+            with self.subTest(name=name):
+                self.base = self.head()
+                self.write(name, text + "\n")
+                self.commit("Add " + name)
+                run = subprocess.run(
+                    [
+                        sys.executable,
+                        gate.__file__,
+                        "--repo-root",
+                        str(self.root),
+                        "--base",
+                        self.base,
+                        "--head",
+                        self.head(),
+                    ],
+                    capture_output=True,
+                    text=True,
+                )
+                self.assertEqual(run.returncode, expected, run.stdout)
+                self.assertNotIn("alice", run.stdout + run.stderr)
+                self.assertNotIn("localhost", run.stdout + run.stderr)
+
+    def test_public_url_paths_only_in_recognized_scopes(self):
+        url = PUBLIC_URLS[0]
+        self.write("refs.md", url + "\n")
+        self.commit("Cite " + url)
+        self.assertEqual(self.check()["findings"], [])
+        self.assertEqual(
+            self.check({"title": url, "body": url})["findings"], []
+        )
+        self.assertEqual(
+            len(self.check({"branch": "fix/" + url})["findings"]), 1
+        )
+        self.base = self.head()
+        (self.root / "link").symlink_to(url)
+        self.commit("Add link")
+        findings = self.check()["findings"]
+        self.assertEqual([f["rule"] for f in findings], ["personal-workspace"])
+        self.assertTrue(findings[0]["location"].startswith("link @ "))
+        self.base = self.head()
+        self.run_git("config", "user.name", "Example " + url)
+        self.commit("Ordinary change")
+        self.assertEqual(len(self.check()["findings"]), 2)
+
+    def check_public(self, *public):
+        return gate.check_range(self.root, self.base, self.head(), None, public)
+
+    def test_public_tip_excludes_legacy_topic_history(self):
+        self.write("notes.md", private_ref() + "\n")
+        self.commit("Topic work\n\nProvenance " + private_ref("T"))
+        published = self.head()
+        self.write("notes.md", "Public notes\n")
+        self.commit("Remove provenance from notes")
+        self.assertTrue(self.check()["findings"])
+        result = self.check_public(published)
+        self.assertEqual((result["commits"], result["findings"]), (1, []))
+
+    def test_merging_public_main_and_topic_does_not_rescan(self):
+        fork = self.head()
+        self.write("main.md", private_ref("P") + "\n")
+        self.commit("Main legacy\n\nSee " + private_ref())
+        main = self.head()
+        self.run_git("checkout", "-q", "-b", "topic", fork)
+        self.write(private_ref("T") + ".md", "Topic legacy\n")
+        self.commit("Topic legacy")
+        topic = self.head()
+        self.run_git("merge", "-q", "--no-edit", main)
+        self.base = fork
+        self.assertTrue(self.check()["findings"])
+        result = self.check_public(main, topic)
+        self.assertEqual((result["commits"], result["findings"]), (1, []))
+        self.assertEqual(self.check_public(main)["commits"], 2)
+        self.assertTrue(self.check_public(main)["findings"])
+
+    def published_removal(self):
+        """Clean base, F adds a legacy file, public R removes it."""
+        self.write("base.md", "Public base")
+        self.commit("Clean base")
+        self.base = self.head()
+        self.write("legacy.md", private_ref())
+        self.commit("Topic adds legacy file")
+        added = self.head()
+        (self.root / "legacy.md").unlink()
+        self.commit("Topic removes legacy file")
+        return added, self.head()
+
+    def test_public_tip_side_parent_restoration_is_checked(self):
+        added, removed = self.published_removal()
+        self.run_git("checkout", "-q", "-b", "side", added)
+        self.write("unrelated.md", "One unrelated change")
+        self.commit("One unrelated local side commit")
+        self.run_git("checkout", "-q", "-")
+        self.assertEqual(self.head(), removed)
+        self.run_git("merge", "-q", "--no-ff", "--no-commit", "side")
+        self.write("legacy.md", private_ref())
+        self.commit("Merge local side and keep legacy file")
+        result = self.check_public(removed)
+        self.assertEqual(result["commits"], 2)
+        self.assertEqual(len(result["findings"]), 1)
+        self.assertEqual(len(self.check()["findings"]), 1)
+
+    def test_public_tip_direct_restoration_is_checked(self):
+        _, removed = self.published_removal()
+        self.write("legacy.md", private_ref())
+        self.commit("Restore legacy file")
+        result = self.check_public(removed)
+        self.assertEqual((result["commits"], len(result["findings"])), (1, 1))
+
+    def test_public_tip_names_are_not_re_reported_on_edit(self):
+        legacy = private_ref() + ".md"
+        self.write(legacy, "Old public text\n")
+        self.write("cite-" + private_ref("P") + ".md", PUBLIC_DOIS[0])
+        self.commit("Published files")
+        published = self.head()
+        self.write(legacy, "New public text\n")
+        self.commit("Edit content only")
+        result = self.check_public(published)
+        self.assertEqual((result["commits"], result["findings"]), (1, []))
+        # A symlink under a public name still has a strict target.
+        link = "cite-" + private_ref("P") + ".md"
+        (self.root / link).unlink()
+        (self.root / link).symlink_to(PUBLIC_DOIS[0])
+        self.commit("Turn the public citation file into a link")
+        findings = self.check_public(published)["findings"]
+        self.assertEqual(len(findings), 1)
+        self.assertTrue(findings[0]["location"].startswith("[redacted]"))
+        self.assertEqual(findings[0]["rule"], "internal-reference")
+        # New and restored legacy names still block.
+        published = self.head()
+        self.write(private_ref("T") + ".md", "New file\n")
+        self.commit("Add a new legacy name")
+        self.assertEqual(len(self.check_public(published)["findings"]), 1)
+
+    def test_restored_legacy_name_still_blocks(self):
+        name = private_ref("T") + ".md"
+        self.write(name, "Text\n")
+        self.commit("Add legacy name")
+        (self.root / name).unlink()
+        self.commit("Remove legacy name")
+        published = self.head()
+        self.write(name, "Text\n")
+        self.commit("Restore legacy name")
+        findings = self.check_public(published)["findings"]
+        self.assertEqual([f["location"][:10] for f in findings], ["filename i"])
+
+    def side_graph(self, name, make, base_copy=None, side_commit=True):
+        """Base, F adds an entry, public R removes it, local side keeps it."""
+        self.write("base.md", "Public base")
+        if base_copy is not None:
+            self.write("base-copy.md", base_copy)
+        self.commit("Clean base")
+        self.base = self.head()
+        make(name)
+        self.commit("Topic adds entry")
+        added = self.head()
+        (self.root / name).unlink()
+        self.commit("Topic removes entry")
+        removed = self.head()
+        source = added
+        if side_commit:
+            self.run_git("checkout", "-q", "-b", "side", added)
+            self.write("unrelated.md", "One unrelated change")
+            self.commit("One unrelated local side commit")
+            self.run_git("checkout", "-q", "-")
+            source = "side"
+        self.assertEqual(self.head(), removed)
+        self.run_git("merge", "-q", "--no-ff", "--no-commit", source)
+        if not (self.root / name).is_symlink():
+            make(name)
+        self.commit("Merge and keep the entry")
+        return removed
+
+    def link_maker(self, target):
+        def make(name):
+            path = self.root / name
+            if path.is_symlink() or path.exists():
+                path.unlink()
+            path.symlink_to(target)
+
+        return make
+
+    def text_maker(self, text):
+        return lambda name: self.write(name, text)
+
+    def test_side_parent_entries_are_new_relative_to_public_tips(self):
+        prose = "Ordinary public prose"
+        cases = {
+            "filename": (private_ref("T") + ".md", self.text_maker(prose)),
+            "symlink": ("legacy-link", self.link_maker(PUBLIC_DOIS[0])),
+        }
+        for kind, (name, make) in cases.items():
+            for copy in (None, prose if kind == "filename" else PUBLIC_DOIS[0]):
+                for side in (True, False):
+                    with self.subTest(
+                        kind=kind, base_copy=bool(copy), side=side
+                    ):
+                        self.setUp()
+                        removed = self.side_graph(name, make, copy, side)
+                        result = self.check_public(removed)
+                        self.assertEqual(len(result["findings"]), 1, result)
+                        # Without a side commit, F is an ancestor of R and
+                        # the restore is an ordinary new commit.
+                        self.assertTrue(self.check()["findings"])
+
+    def test_public_history_boundary_controls(self):
+        legacy = private_ref() + ".md"
+        # Base entries stay behind the declared base boundary.
+        self.write(legacy, "Base text\n")
+        self.link_maker(PUBLIC_DOIS[0])("public-link")
+        self.commit("Base with a legacy name and a public link")
+        self.base = fork = self.head()
+        self.run_git("checkout", "-q", "-b", "public-other", fork)
+        (self.root / legacy).unlink()
+        (self.root / "public-link").unlink()
+        self.write("other.md", "Other public branch\n")
+        self.commit("Public branch without the base entries")
+        other = self.head()
+        self.run_git("checkout", "-q", "-b", "work", fork)
+        self.write("work.md", "Clean work\n")
+        self.commit("Work on top of base")
+        self.assertEqual(self.check_public(other)["findings"], [])
+        # Entries a public side parent shares with the public tip (the base
+        # link and name) are public; the removed blob it replaces is not kept.
+        self.run_git("checkout", "-q", "-b", "topic", fork)
+        self.write("legacy.md", private_ref("P") + "\n")
+        self.commit("Topic adds a legacy blob")
+        added = self.head()
+        (self.root / "legacy.md").unlink()
+        self.commit("Topic removes it")
+        removed = self.head()
+        self.run_git("checkout", "-q", "-b", "side", added)
+        self.write("legacy.md", "Clean replacement\n")
+        self.commit("Side changes the removed entry")
+        self.base = fork
+        result = self.check_public(removed)
+        self.assertEqual((result["commits"], result["findings"]), (1, []))
+
+    def test_two_public_tips_restore_from_other_tip_history(self):
+        legacy = private_ref("T") + ".md"
+        make_link = self.link_maker(PUBLIC_DOIS[0])
+        self.write("base.md", "Public base\n")
+        self.commit("Clean base")
+        self.base = fork = self.head()
+        self.run_git("checkout", "-q", "-b", "cleaned", fork)
+        self.write(legacy, "Ordinary prose\n")
+        make_link("legacy-link")
+        self.commit("Add a legacy name and link")
+        old = self.head()
+        (self.root / legacy).unlink()
+        (self.root / "legacy-link").unlink()
+        self.commit("Remove them")
+        cleaned = self.head()
+        self.run_git("checkout", "-q", "-b", "main-line", fork)
+        self.write("main.md", "Main work\n")
+        self.commit("Main public work")
+        main = self.head()
+        # Negative control: merging the other public tip itself is public.
+        self.run_git("checkout", "-q", "-b", "merge-tip", main)
+        self.run_git("merge", "-q", "--no-edit", cleaned)
+        self.assertEqual(self.check_public(main, cleaned)["findings"], [])
+        # Positive: a normal merge of an older commit from that tip's history
+        # restores entries neither current public tree contains.
+        self.run_git("checkout", "-q", "-b", "merge-old", main)
+        self.run_git("merge", "-q", "--no-edit", old)
+        self.assertTrue((self.root / "legacy-link").is_symlink())
+        findings = self.check_public(main, cleaned)["findings"]
+        self.assertEqual(len(findings), 2)
+
+    def test_direct_restores_of_names_and_links_block(self):
+        cases = {
+            private_ref("T") + ".md": self.text_maker("Ordinary prose"),
+            "legacy-link": self.link_maker(PUBLIC_DOIS[0]),
+        }
+        for name, make in cases.items():
+            with self.subTest(name=name):
+                self.setUp()
+                make(name)
+                self.commit("Add entry")
+                (self.root / name).unlink()
+                self.commit("Remove entry")
+                published = self.head()
+                make(name)
+                self.commit("Restore entry")
+                findings = self.check_public(published)["findings"]
+                self.assertEqual(len(findings), 1)
+
+    def test_public_entries_and_renames_relative_to_public_tips(self):
+        legacy = private_ref() + ".md"
+        self.write(legacy, "Public text\n")
+        self.write("clean.md", "Clean text\n")
+        self.link_maker(PUBLIC_DOIS[0])("public-link")
+        self.commit("Published entries")
+        published = self.head()
+        self.write("clean.md", "Edited clean text\n")
+        self.commit("Ordinary edit")
+        self.assertEqual(self.check_public(published)["findings"], [])
+        self.run_git("mv", legacy, "renamed-clean.md")
+        self.commit("Rename the legacy name away")
+        self.assertEqual(self.check_public(published)["findings"], [])
+        self.run_git("mv", "clean.md", private_ref("P") + ".md")
+        self.commit("Rename to a new legacy name")
+        findings = self.check_public(published)["findings"]
+        self.assertEqual([f["location"][:10] for f in findings], ["filename i"])
+
+    def test_new_findings_still_block_after_public_tips(self):
+        self.write("cite.md", PUBLIC_DOIS[0])
+        self.commit("Add public citation")
+        published = self.head()
+        self.assertEqual(self.check_public(published)["findings"], [])
+        cases = (
+            ("message", lambda: None, "New\n\nSee " + private_ref("T")),
+            ("blob", lambda: self.write("n.md", private_ref()), "Add n"),
+            ("path", lambda: self.write(private_ref("P") + ".md", "x"), "p"),
+            (
+                "symlink",
+                lambda: (self.root / "link").symlink_to(PUBLIC_DOIS[0]),
+                "Point a link at the public citation bytes",
+            ),
+        )
+        for name, change, message in cases:
+            with self.subTest(case=name):
+                change()
+                self.commit(message)
+                findings = self.check_public(published)["findings"]
+                self.assertEqual(len(findings), 1)
+                published = self.head()
+
+    def test_no_public_tips_keeps_default_range(self):
+        self.write("notes.md", private_ref() + "\n")
+        self.commit("First push " + private_ref("T"))
+        self.assertEqual(self.check(), self.check_public())
+        self.assertEqual(len(self.check()["findings"]), 2)
+
+    def test_invalid_public_tips_fail_closed(self):
+        self.write("notes.md", "Public notes\n")
+        self.commit("Add notes")
+        self.run_git("tag", "-a", "-m", "Release", "v1")
+        tree = self.run_git("rev-parse", "HEAD^{tree}")
+        blob = self.run_git("rev-parse", "HEAD:notes.md")
+        tag = self.run_git("rev-parse", "v1")
+        for tip in ("HEAD", "abc", "0" * 40, tree, blob, tag):
+            with self.subTest(tip=tip), self.assertRaises(gate.IncompleteScan):
+                self.check_public(tip)
+        args = ["--repo-root", str(self.root), "--base", self.base]
+        args += ["--head", self.head()]
+        with contextlib.redirect_stdout(io.StringIO()):
+            with contextlib.redirect_stderr(io.StringIO()) as err:
+                self.assertEqual(gate.main(args + ["--public", tree]), 2)
+                clean = {"findings": [], "findings_truncated": False}
+                with (
+                    patch.dict(os.environ, {"GH_TOKEN": "unused"}),
+                    patch.object(gate, "check_pr", return_value=clean),
+                ):
+                    pr = ["--github-repository", "o/r", "--pr", "1"]
+                    self.assertEqual(gate.main(pr), 0)
+                    self.assertEqual(
+                        gate.main(pr + ["--public", self.head()]), 2
+                    )
+                self.assertEqual(gate.main(args + ["--public", self.head()]), 0)
+        self.assertNotIn(tree, err.getvalue())
 
 
 class RemoteSnapshot(unittest.TestCase):
