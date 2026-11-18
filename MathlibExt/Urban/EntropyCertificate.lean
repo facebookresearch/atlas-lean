@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.InformationTheory.KullbackLeibler.KLFun
+public import MathlibExt.LinearAlgebra.Matrix.SinkhornMargins
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Tactic.Positivity
 
@@ -24,13 +25,18 @@ Kullback-Leibler-style sum is the optimality certificate.
 
 ## Main results
 
-- `entropy_optimality_certificate`: the identity and its
-  nonnegativity.
+- `SinkhornMargins.entropy_optimality_certificate`: the identity
+  and its nonnegativity, for general finite index types.
+- `SinkhornMargins.entropy_optimality_certificate_scaledTable`:
+  the certificate stated for the canonical scaled table
+  `SinkhornMargins.scaledTable`.
 -/
 
 @[expose] public section
 
 open InformationTheory
+
+namespace SinkhornMargins
 
 theorem klFun_entrywise_identity (s k aval bval : ℝ) (hk : 0 < k) (ha : 0 < aval)
     (hb : 0 < bval) (hs : 0 ≤ s) :
@@ -141,3 +147,30 @@ theorem entropy_optimality_certificate {ι κ : Type*}
     refine Finset.sum_nonneg fun j _ => ?_
     refine mul_nonneg (le_of_lt (hT i j)) (klFun_nonneg (div_nonneg (hS i j) ?_))
     exact le_of_lt (hT i j)
+
+/-- The certificate for the canonical scaled table
+`SinkhornMargins.scaledTable`: for positive `K`, `a`, `b`, every
+nonnegative matrix `S` with the same row and column margins as
+`scaledTable a K b` satisfies the entropy identity and the
+nonnegativity of the certificate sum. -/
+theorem entropy_optimality_certificate_scaledTable {m n : ℕ}
+    (a : Fin m → ℝ) (K : Matrix (Fin m) (Fin n) ℝ) (b : Fin n → ℝ)
+    (S : Matrix (Fin m) (Fin n) ℝ)
+    (hK : ∀ i j, 0 < K i j) (ha : ∀ i, 0 < a i)
+    (hb : ∀ j, 0 < b j) (hS : ∀ i j, 0 ≤ S i j)
+    (hrow : ∀ i, ∑ j, S i j = ∑ j, scaledTable a K b i j)
+    (hcol : ∀ j, ∑ i, S i j = ∑ i, scaledTable a K b i j) :
+    (∑ i, ∑ j, S i j * Real.log (S i j / K i j))
+        - (∑ i, ∑ j, scaledTable a K b i j
+            * Real.log (scaledTable a K b i j / K i j))
+      = ∑ i, ∑ j, scaledTable a K b i j
+          * klFun (S i j / scaledTable a K b i j)
+    ∧ 0 ≤ ∑ i, ∑ j, scaledTable a K b i j
+          * klFun (S i j / scaledTable a K b i j) := by
+  have h := entropy_optimality_certificate (fun i j => K i j)
+    (fun i j => S i j) a b hK ha hb hS
+    (fun i => by simpa only [scaledTable] using hrow i)
+    (fun j => by simpa only [scaledTable] using hcol j)
+  simpa only [scaledTable] using h
+
+end SinkhornMargins

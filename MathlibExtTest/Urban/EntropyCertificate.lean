@@ -32,7 +32,7 @@ example : 0 ≤ ∑ i : Fin 2, ∑ j : Fin 2,
             else (if j = 0 then 1 else 3)) i j
           / ((fun i => if i = 0 then (1 : ℝ) else 2) i
             * (fun _ _ => (1 : ℝ)) i j * (fun _ => (1 : ℝ)) j)) :=
-  (entropy_optimality_certificate (ι := Fin 2) (κ := Fin 2)
+  (SinkhornMargins.entropy_optimality_certificate (ι := Fin 2) (κ := Fin 2)
     (K := fun _ _ => (1 : ℝ))
     (S := fun i j => if i = 0 then (if j = 0 then (2 : ℝ) else 0)
       else (if j = 0 then 1 else 3))
