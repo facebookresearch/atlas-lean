@@ -30,6 +30,10 @@ variable {Λ : Measure I} [IsFiniteMeasure Λ]
 
 /-! ### Extra checks: acceptance, endpoints, non-vacuity -/
 
+-- the closed form of the kernel, stated through the public definition
+example (x : ℝ) (b : ℕ) : x ^ 2 * driftKernel b x = b * x - 1 + (1 - x) ^ b :=
+  sq_mul_driftKernel x b
+
 -- acceptance 1: Kingman, through the generator itself (`Λ = δ₀`, from 5 blocks)
 example : (blockCountingGenerator (Measure.dirac (0 : I)) 5 *ᵥ fun j => ((j : ℕ) : ℝ)) 5 = -10 := by
   rw [blockCountingGenerator_mulVec_natCast, blockDrift_dirac_zero]

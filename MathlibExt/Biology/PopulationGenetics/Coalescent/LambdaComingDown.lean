@@ -71,11 +71,16 @@ private theorem sum_range_sub_one_mul (x : ℝ) (b : ℕ) :
     ring
   rw [e, h1, h2]
 
+/-- The drift kernel `D_b(x) = ∑_{k=2}^b (k - 1) C(b, k) x ^ (k - 2) (1 - x) ^ (b - k)`, so that
+`γ_b = ∫ D_b dΛ`. -/
+def driftKernel (b : ℕ) (x : ℝ) : ℝ :=
+  ∑ k ∈ Icc 2 b, ((k : ℝ) - 1) * (b.choose k : ℝ) * (x ^ (k - 2) * (1 - x) ^ (b - k))
+
 /-- The kernel in closed form: `x² D_b(x) = b x - 1 + (1 - x) ^ b` for every real `x` (the mean of
 `Binomial(b, x)` minus one, corrected for `k = 0`). -/
 theorem sq_mul_driftKernel (x : ℝ) (b : ℕ) :
-    x ^ 2 * ∑ k ∈ Icc 2 b, ((k : ℝ) - 1) * (b.choose k : ℝ) * (x ^ (k - 2) * (1 - x) ^ (b - k)) =
-      b * x - 1 + (1 - x) ^ b := by
+    x ^ 2 * driftKernel b x = b * x - 1 + (1 - x) ^ b := by
+  rw [driftKernel]
   rcases Nat.eq_zero_or_pos b with rfl | hb
   · simp
   have h := sum_range_sub_one_mul x b
@@ -94,11 +99,6 @@ theorem sq_mul_driftKernel (x : ℝ) (b : ℕ) :
 
 
 
-
-/-- The drift kernel `D_b(x) = ∑_{k=2}^b (k - 1) C(b, k) x ^ (k - 2) (1 - x) ^ (b - k)`, so that
-`γ_b = ∫ D_b dΛ`. -/
-def driftKernel (b : ℕ) (x : ℝ) : ℝ :=
-  ∑ k ∈ Icc 2 b, ((k : ℝ) - 1) * (b.choose k : ℝ) * (x ^ (k - 2) * (1 - x) ^ (b - k))
 
 private lemma integrable_pow_mul_one_sub_pow' (a c : ℕ) :
     Integrable (fun x : I => (x : ℝ) ^ a * (1 - (x : ℝ)) ^ c) Λ := by
@@ -153,7 +153,7 @@ private lemma driftKernel_le_succ (b : ℕ) {x : ℝ} (hx0 : 0 ≤ x) (hx1 : x �
     exact_mod_cast Nat.choose_le_choose 2 (Nat.le_succ b)
   have hsq : 0 < x ^ 2 := by positivity
   refine le_of_mul_le_mul_left ?_ hsq
-  rw [driftKernel, driftKernel, sq_mul_driftKernel, sq_mul_driftKernel, pow_succ]
+  rw [sq_mul_driftKernel, sq_mul_driftKernel, pow_succ]
   have hp : (1 - x) ^ b ≤ 1 := pow_le_one₀ (by linarith) (by linarith)
   push_cast
   nlinarith
