@@ -17,6 +17,7 @@ import Mathlib.Tactic.Positivity
 @[expose] public section
 
 open MathlibExt.Analysis.Numerical.PeriodicLeapfrogStencil
+open MathlibExt.Analysis.Numerical.PeriodicYeeEnergy
 open MathlibExt.Analysis.Numerical.PeriodicYeeResidual
 
 namespace MathlibExtTest.Analysis.Numerical.PeriodicYeeResidual

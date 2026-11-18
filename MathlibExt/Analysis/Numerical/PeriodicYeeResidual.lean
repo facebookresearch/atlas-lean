@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Analysis.Numerical.PeriodicLeapfrogStencil
+public import MathlibExt.Analysis.Numerical.PeriodicYeeEnergy
 public import Mathlib.Analysis.Calculus.Taylor
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
@@ -39,14 +40,13 @@ continuum existence or solver convergence claim is made.
 namespace MathlibExt.Analysis.Numerical.PeriodicYeeResidual
 
 open MathlibExt.Analysis.Numerical.PeriodicLeapfrogStencil
+open MathlibExt.Analysis.Numerical.PeriodicYeeEnergy
 
 /-! ### Weighted grid norm -/
 
-/-- Squared weighted grid norm: `h` times the sum of squares. -/
-def weightedNormSq {N : ℕ} (h : ℝ) (w : Fin N → ℝ) : ℝ :=
-  weightedInner h w w
-
-/-- Weighted grid norm: the square root of the squared norm. -/
+/-- Weighted grid norm: the square root of the squared weighted grid
+norm `PeriodicYeeEnergy.weightedNormSq`, which stays the one canonical
+definition; this is only its unsquared view. -/
 noncomputable def weightedNorm {N : ℕ} (h : ℝ) (w : Fin N → ℝ) : ℝ :=
   Real.sqrt (weightedNormSq h w)
 
