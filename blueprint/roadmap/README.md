@@ -10,3 +10,5 @@
 ## Algebra & Number Theory
 
 - [Algebra](Algebra/README.md)
+- [Group Theory](GroupTheory/README.md)
+- [Ring Theory](RingTheory/README.md)
