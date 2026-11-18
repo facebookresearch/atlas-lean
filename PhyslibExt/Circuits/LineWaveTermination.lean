@@ -453,7 +453,8 @@ lemma zeroExcitation_ratio_example :
 /-! ### E. Combined relations -/
 
 /-- Headline correctness: the speed and impedance relations hold, the
-two phasor telegrapher equations hold, the load relations imply the
+phasor telegrapher equations for both voltage and current hold at
+every position, the load relations imply the
 multiplicative reflection relation, and the divided formula follows
 only under its two guards. -/
 theorem lineWaveTerminationRelations (Aplus Aminus ZL : ℂ) (L C ω Z0 β : ℝ)
@@ -464,14 +465,19 @@ theorem lineWaveTerminationRelations (Aplus Aminus ZL : ℂ) (L C ω Z0 β : ℝ
       (∀ x : ℝ, deriv (fun y : ℝ => voltagePhasor Aplus Aminus β y) x
         = -(Complex.I * (ω : ℂ) * (L : ℂ))
           * currentPhasor Aplus Aminus Z0 β x) ∧
+      (∀ x : ℝ, deriv (fun y : ℝ => currentPhasor Aplus Aminus Z0 β y) x
+        = -(Complex.I * (ω : ℂ) * (C : ℂ))
+          * voltagePhasor Aplus Aminus β x) ∧
       (∀ V I : ℂ, V = Aplus + Aminus
         → I = (Aplus - Aminus) / (Z0 : ℂ) → V = ZL * I
         → (ZL + (Z0 : ℂ)) * Aminus = (ZL - (Z0 : ℂ)) * Aplus
           ∧ (Aplus ≠ 0 → ZL + (Z0 : ℂ) ≠ 0
             → Aminus / Aplus = (ZL - (Z0 : ℂ)) / (ZL + (Z0 : ℂ)))) := by
-  refine ⟨waveSpeed_mul_sqrt L C hL hC, characteristicImpedance_sq L C hL hC, ?_, ?_⟩
+  refine ⟨waveSpeed_mul_sqrt L C hL hC, characteristicImpedance_sq L C hL hC, ?_, ?_, ?_⟩
   · intro x
     exact voltagePhasor_deriv Aplus Aminus L C ω Z0 β x hL hC hβ hZ
+  · intro x
+    exact currentPhasor_deriv Aplus Aminus L C ω Z0 β x hL hC hβ hZ
   · intro V I hV hI hload
     refine ⟨load_multiplicative_relation V I Aplus Aminus ZL Z0 hZ0 hV hI hload, ?_⟩
     intro hA hsum
