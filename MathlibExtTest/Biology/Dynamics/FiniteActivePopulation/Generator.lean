@@ -26,4 +26,14 @@ example (alpha : ℝ) (f : ℕ → ℝ) :
     birthDeathGenerator 1 alpha f 1 0 = alpha := by
   simp [birthDeathGenerator]
 
+/-- The generator is a rate matrix for nonnegative rates. -/
+example (f : ℕ → ℝ) (hf : ∀ i, 0 ≤ f i) :
+    ProbabilityTheory.IsRateMatrix (birthDeathGenerator 2 1 f) :=
+  birthDeath_isRateMatrix 2 1 f zero_le_one hf
+
+/-- Endpoint diagonals: births only at `0`, deaths only at the cap. -/
+example (f : ℕ → ℝ) :
+    birthDeathGenerator 2 1 f 0 0 = -((2:ℝ) * f 0) :=
+  (birthDeath_endpoint_diag 2 1 f).1
+
 end MathlibExtTest.Biology.Dynamics.FiniteActivePopulation.Generator
