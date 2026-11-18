@@ -10,6 +10,10 @@ module
 public import PhyslibExt.EarthScience.HydraulicJump
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Data.Real.Sqrt
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-!
 # Conjugate-depth Froude ratio
@@ -35,8 +39,9 @@ and `h2 > h1` exactly when `Fr > 1`.
 
 ## iv. References
 
-- Standard open-channel hydraulics (hydraulic-jump conjugate-depth
-  relation in terms of the upstream Froude number).
+- V. T. Chow, *Open-Channel Hydraulics*, McGraw-Hill, 1959,
+  Chapter 15 (hydraulic jump; conjugate depths and the upstream
+  Froude number).
 -/
 
 @[expose] public section
