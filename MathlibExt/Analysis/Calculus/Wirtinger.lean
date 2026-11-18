@@ -221,12 +221,12 @@ public theorem wirtinger_inequality (f f' : ℝ → ℝ)
   exact wirtinger_scaled_integral_le f f' hf_deriv hf_deriv_cont h0 hpi hc_pos hc_lt_one
 
 /-- Wirtinger's inequality on a general interval `[a, b]`, in derivative-field
-form: a function `f` with derivative field `f'` on `[a, b]`, vanishing at the
+form: a function `f` with derivative field `f'` within `[a, b]`, vanishing at the
 endpoints, satisfies `∫ₐᵇ f² ≤ ((b - a) / π)² ∫ₐᵇ (f')²`.
 
 Proof: rescale `[a, b]` to `[0, π]` and apply `wirtinger_inequality`. -/
 public theorem wirtinger_inequality_Icc {a b : ℝ} (hab : a < b) (f f' : ℝ → ℝ)
-    (hf_deriv : ∀ x ∈ Set.Icc a b, HasDerivAt f (f' x) x)
+    (hf_deriv : ∀ x ∈ Set.Icc a b, HasDerivWithinAt f (f' x) (Set.Icc a b) x)
     (hf_deriv_cont : ContinuousOn f' (Set.Icc a b))
     (ha : f a = 0) (hb : f b = 0) :
     intervalIntegral (fun x => (f x) ^ 2) a b MeasureTheory.volume ≤
@@ -245,25 +245,26 @@ public theorem wirtinger_inequality_Icc {a b : ℝ} (hab : a < b) (f f' : ℝ �
     · have hle : s * t ≤ s * Real.pi := mul_le_mul_of_nonneg_left ht.2 hs0.le
       linarith [hend]
   have hF : ∀ t ∈ Set.Icc (0 : ℝ) Real.pi,
-      HasDerivAt (fun t => f (a + s * t)) (s * f' (a + s * t)) t := by
+      HasDerivWithinAt (fun t => f (a + s * t)) (f' (a + s * t) * s)
+        (Set.Icc 0 Real.pi) t := by
     intro t ht
-    have h1 : HasDerivAt (fun t : ℝ => a + s * t) s t := by
+    have h1a : HasDerivAt (fun t : ℝ => a + s * t) s t := by
       simpa using ((hasDerivAt_id t).const_mul s).const_add a
-    have h2 := (hf_deriv _ (hmem t ht)).comp t h1
-    rw [mul_comm] at h2
-    exact h2
+    have h1 : HasDerivWithinAt (fun t : ℝ => a + s * t) s (Set.Icc 0 Real.pi) t :=
+      h1a.hasDerivWithinAt
+    exact (hf_deriv _ (hmem t ht)).comp t h1 (fun u hu => hmem u hu)
   have hlin : Continuous fun t : ℝ => a + s * t := by fun_prop
   have hcomp : ContinuousOn (fun t => f' (a + s * t)) (Set.Icc 0 Real.pi) :=
     hf_deriv_cont.comp' hlin.continuousOn (fun t ht => hmem t ht)
   have hw := wirtinger_inequality (fun t => f (a + s * t))
-    (fun t => s * f' (a + s * t)) (fun t ht => (hF t ht).hasDerivWithinAt)
-    (hcomp.const_mul s) (by simp [ha]) (by simp [hend, hb])
+    (fun t => f' (a + s * t) * s) (fun t ht => hF t ht)
+    (hcomp.mul_const s) (by simp [ha]) (by simp [hend, hb])
   have h1 : ∫ t in (0 : ℝ)..Real.pi, f (a + s * t) ^ 2 =
       s⁻¹ * ∫ x in a..b, f x ^ 2 := by
     have := intervalIntegral.integral_comp_add_mul (fun x => f x ^ 2) (a := 0)
       (b := Real.pi) hs0.ne' a
     simpa [hend] using this
-  have h2 : ∫ t in (0 : ℝ)..Real.pi, (s * f' (a + s * t)) ^ 2 =
+  have h2 : ∫ t in (0 : ℝ)..Real.pi, (f' (a + s * t) * s) ^ 2 =
       s ^ 2 * (s⁻¹ * ∫ x in a..b, f' x ^ 2) := by
     have := intervalIntegral.integral_comp_add_mul (fun x => f' x ^ 2) (a := 0)
       (b := Real.pi) hs0.ne' a

@@ -610,7 +610,8 @@ theorem integral_deriv_sq_le {L : ℝ} (hL : 0 < L)
     exact integral_deriv_sq_eq_neg hL hw hw' hw'' h0 hL0
   have hW : Bw ≤ (L / Real.pi) ^ 2 * A := by
     rw [hBw, hA]
-    simpa using MetaMathlibExt.wirtinger_inequality_Icc hL w w' hw hw'_cont h0 hL0
+    simpa using MetaMathlibExt.wirtinger_inequality_Icc hL w w'
+      (fun x hx => (hw x hx).hasDerivWithinAt) hw'_cont h0 hL0
   have hCS : Dw ^ 2 ≤ Bw * Cw := by
     have hquad : ∀ t : ℝ, (0 : ℝ) ≤ Bw + 2 * Dw * t + Cw * t ^ 2 := by
       intro t

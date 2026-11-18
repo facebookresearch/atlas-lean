@@ -837,7 +837,7 @@ theorem integral_sq_le_of_eq_zero {g : ℝ → ℝ} {a b : ℝ} (hab : a < b) (h
     (ha : g a = 0) (hb : g b = 0) :
     ∫ x in a..b, g x ^ 2 ≤ ((b - a) / Real.pi) ^ 2 * ∫ x in a..b, deriv g x ^ 2 := by
   exact MetaMathlibExt.wirtinger_inequality_Icc hab g (deriv g)
-    (fun x _ => ((hg.differentiable one_ne_zero) x).hasDerivAt)
+    (fun x _ => ((hg.differentiable one_ne_zero) x).hasDerivAt.hasDerivWithinAt)
     ((hg.continuous_deriv le_rfl).continuousOn) ha hb
 
 /-- The element estimate: a `C²` function vanishing at `a` and `b` satisfies
