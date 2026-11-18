@@ -51,7 +51,7 @@ example : muxTrace 2 1 0 3 = true := muxTrace_eq_true_of_ge 2 1 0 3 (by norm_num
 
 /-- Before time zero, the output takes its steady initialization value. -/
 example : muxTrace 2 1 0 (-1) = true :=
-  muxTrace_eq_true_of_neg 2 1 0 (-1) (by norm_num) (by norm_num) (by norm_num)
+  muxTrace_eq_true_of_neg 2 1 0 (-1) (by norm_num)
 
 /-- With `d1 ≤ d2` there is no glitch, even inside the former window. -/
 example : muxTrace 1 2 0 (3 / 2) = true := muxTrace_eq_true_of_le 1 2 0 (3 / 2) (by norm_num)

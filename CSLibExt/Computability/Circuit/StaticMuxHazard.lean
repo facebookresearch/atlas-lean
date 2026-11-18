@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Basic.NNReal.Basic
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Interval.Set.Basic
 import Mathlib.Tactic.Linarith
@@ -18,10 +19,11 @@ import Mathlib.Tactic.NormNum
 
 The two-path multiplexer `(a and b) or (not a and c)` is evaluated with
 `b = c = true` while `a` rises once at time zero, under a transport-delay
-model with nonnegative delays and steady initialization before time zero.
-The positive path output rises at `d1`, the complemented path output falls
-at `d2`, and the output gate adds delay `dor`. When `d2 < d1` the output is
-false on `[d2 + dor, d1 + dor)`; otherwise it stays true. Adding the
+model with steady initialization before time zero. Delays are
+nonnegative reals (`NNReal`), so a delay cannot act as an advance: the
+positive path output rises at `d1`, the complemented path output falls
+at `d2`, and the output gate adds delay `dor`. When `d2 < d1` the output
+is false on `[d2 + dor, d1 + dor)`; otherwise it stays true. Adding the
 initialized consensus term `b and c` preserves the static Boolean function
 and keeps the output true at all times. Inertial delay and pulse
 suppression are outside the scope of this model.
@@ -45,17 +47,17 @@ def consensusFunction (a b c : Bool) : Bool :=
   muxFunction a b c || (b && c)
 
 /-- The positive-path trace: false before `d1`, true from `d1` on. -/
-noncomputable def positivePath (d1 t : ℝ) : Bool :=
-  d1 ≤ t
+noncomputable def positivePath (d1 : NNReal) (t : ℝ) : Bool :=
+  (d1 : ℝ) ≤ t
 
 /-- The complemented-path trace: true before `d2`, false from `d2` on. -/
-noncomputable def complementedPath (d2 t : ℝ) : Bool :=
-  !(d2 ≤ t)
+noncomputable def complementedPath (d2 : NNReal) (t : ℝ) : Bool :=
+  !((d2 : ℝ) ≤ t)
 
 /-- The transport-delay output trace of the unrepaired multiplexer with
 `b = c = true`: the two path traces combined by an output gate delayed
 by `dor`. -/
-noncomputable def muxTrace (d1 d2 dor t : ℝ) : Bool :=
+noncomputable def muxTrace (d1 d2 dor : NNReal) (t : ℝ) : Bool :=
   positivePath d1 (t - dor) || complementedPath d2 (t - dor)
 
 /-- The consensus-path trace: `b and c` with `b = c = true`, initialized
@@ -64,7 +66,7 @@ def consensusPath (_t : ℝ) : Bool :=
   true
 
 /-- The transport-delay output trace with the consensus path added. -/
-noncomputable def repairedTrace (d1 d2 dor t : ℝ) : Bool :=
+noncomputable def repairedTrace (d1 d2 dor : NNReal) (t : ℝ) : Bool :=
   muxTrace d1 d2 dor t || consensusPath (t - dor)
 
 /-- The static multiplexer with `b = c = true` is constantly true. -/
@@ -78,50 +80,56 @@ theorem consensusFunction_eq_muxFunction (a b c : Bool) :
     consensusFunction a b c = muxFunction a b c := by
   cases a <;> cases b <;> cases c <;> rfl
 
-/-- Before time zero, with nonnegative delays, the output is true: the
-steady initialization value. -/
-theorem muxTrace_eq_true_of_neg (d1 d2 dor t : ℝ) (hd2 : 0 ≤ d2)
-    (hdor : 0 ≤ dor) (ht : t < 0) :
+/-- Before time zero, the output is true: the steady initialization
+value. -/
+theorem muxTrace_eq_true_of_neg (d1 d2 dor : NNReal) (t : ℝ)
+    (ht : t < 0) :
     muxTrace d1 d2 dor t = true := by
-  have hneg : ¬ d2 ≤ t - dor := by
-    have h1 : t - dor < 0 := by linarith
+  have hd2 : (0 : ℝ) ≤ (d2 : ℝ) := NNReal.coe_nonneg d2
+  have hdor : (0 : ℝ) ≤ (dor : ℝ) := NNReal.coe_nonneg dor
+  have hneg : ¬ (d2 : ℝ) ≤ t - (dor : ℝ) := by
+    have h1 : t - (dor : ℝ) < 0 := by linarith
     linarith
   simp [muxTrace, positivePath, complementedPath, hneg]
 
 /-- **Glitch interval.** When `d2 < d1`, the output is false at every
 time in `[d2 + dor, d1 + dor)`. -/
-theorem muxTrace_eq_false_of_mem_glitch (d1 d2 dor t : ℝ)
-    (h : d2 < d1) (ht : t ∈ Set.Ico (d2 + dor) (d1 + dor)) :
+theorem muxTrace_eq_false_of_mem_glitch (d1 d2 dor : NNReal) (t : ℝ)
+    (h : d2 < d1)
+    (ht : t ∈ Set.Ico ((d2 : ℝ) + (dor : ℝ)) ((d1 : ℝ) + (dor : ℝ))) :
     muxTrace d1 d2 dor t = false := by
-  have _ : d2 < d1 := h
   rw [Set.mem_Ico] at ht
   obtain ⟨hlo, hhi⟩ := ht
-  have h1 : d2 ≤ t - dor := by linarith
-  have h2 : ¬ d1 ≤ t - dor := by linarith
+  have h1 : (d2 : ℝ) ≤ t - (dor : ℝ) := by linarith
+  have h2 : ¬ (d1 : ℝ) ≤ t - (dor : ℝ) := by linarith
   simp [muxTrace, positivePath, complementedPath, h1, h2]
 
 /-- Before the glitch can start, the output is true. -/
-theorem muxTrace_eq_true_of_lt (d1 d2 dor t : ℝ) (ht : t < d2 + dor) :
+theorem muxTrace_eq_true_of_lt (d1 d2 dor : NNReal) (t : ℝ)
+    (ht : t < (d2 : ℝ) + (dor : ℝ)) :
     muxTrace d1 d2 dor t = true := by
-  have hneg : ¬ d2 ≤ t - dor := by linarith
+  have hneg : ¬ (d2 : ℝ) ≤ t - (dor : ℝ) := by linarith
   simp [muxTrace, complementedPath, hneg]
 
 /-- From `d1 + dor` on, the output is true. -/
-theorem muxTrace_eq_true_of_ge (d1 d2 dor t : ℝ) (ht : d1 + dor ≤ t) :
+theorem muxTrace_eq_true_of_ge (d1 d2 dor : NNReal) (t : ℝ)
+    (ht : (d1 : ℝ) + (dor : ℝ) ≤ t) :
     muxTrace d1 d2 dor t = true := by
-  have hpos : d1 ≤ t - dor := by linarith
+  have hpos : (d1 : ℝ) ≤ t - (dor : ℝ) := by linarith
   simp [muxTrace, positivePath, hpos]
 
 /-- **A false output occurs exactly when `d2 < d1`.** -/
-theorem exists_muxTrace_eq_false_iff (d1 d2 dor : ℝ) :
+theorem exists_muxTrace_eq_false_iff (d1 d2 dor : NNReal) :
     (∃ t : ℝ, muxTrace d1 d2 dor t = false) ↔ d2 < d1 := by
   constructor
   · rintro ⟨t, ht⟩
     simp [muxTrace, positivePath, complementedPath] at ht
     obtain ⟨h1, h2⟩ := ht
-    linarith
+    have hlt : (d2 : ℝ) < (d1 : ℝ) := by linarith
+    exact_mod_cast hlt
   · intro h
-    refine ⟨d2 + dor, ?_⟩
+    have hlt : (d2 : ℝ) < (d1 : ℝ) := by exact_mod_cast h
+    refine ⟨(d2 : ℝ) + (dor : ℝ), ?_⟩
     apply muxTrace_eq_false_of_mem_glitch _ _ _ _ h
     rw [Set.mem_Ico]
     constructor
@@ -129,16 +137,18 @@ theorem exists_muxTrace_eq_false_iff (d1 d2 dor : ℝ) :
     · linarith
 
 /-- When `d1 ≤ d2` there is no glitch: the output is true at all times. -/
-theorem muxTrace_eq_true_of_le (d1 d2 dor t : ℝ) (h : d1 ≤ d2) :
+theorem muxTrace_eq_true_of_le (d1 d2 dor : NNReal) (t : ℝ)
+    (h : d1 ≤ d2) :
     muxTrace d1 d2 dor t = true := by
-  by_cases h1 : d1 ≤ t - dor
+  have hle : (d1 : ℝ) ≤ (d2 : ℝ) := by exact_mod_cast h
+  by_cases h1 : (d1 : ℝ) ≤ t - (dor : ℝ)
   · simp [muxTrace, positivePath, h1]
-  · have h2 : ¬ d2 ≤ t - dor := by linarith
+  · have h2 : ¬ (d2 : ℝ) ≤ t - (dor : ℝ) := by linarith
     simp [muxTrace, positivePath, complementedPath, h1, h2]
 
 /-- **Consensus repair.** With the consensus path added, the output is
 true at all times, for all delays. -/
-theorem repairedTrace_eq_true (d1 d2 dor t : ℝ) :
+theorem repairedTrace_eq_true (d1 d2 dor : NNReal) (t : ℝ) :
     repairedTrace d1 d2 dor t = true := by
   simp [repairedTrace, consensusPath]
 
