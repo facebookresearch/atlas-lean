@@ -29,10 +29,11 @@ an explicit overflow flag.
 
 When no overflow occurs and the real inputs and coefficients are within
 half a step of their codes, the decoded output obeys the ordered
-dot-product error bound with every local error instantiated at half a
-step. The bound keeps the coefficient and input cross term and the exact
-zero initialization, and an overflowing trace is excluded rather than
-silently wrapped.
+dot-product error bound with the coefficient, input and product errors
+instantiated at half a step and the accumulation error at zero, because
+an in-range accumulation is exact. The bound keeps the coefficient and
+input cross term and the exact zero initialization, and an overflowing
+trace is excluded rather than silently wrapped.
 -/
 
 @[expose] public section
@@ -302,88 +303,30 @@ theorem firOverflow_eq_false_of_range_bounds {m : ℕ} (s : ℕ) (kmin kmax : �
   unfold firOverflow
   exact firFold_snd_eq_false_of_bounds s kmin kmax _ _ m hbound
 
-/-- Refinement: with no overflow, the decoded fold equals the exact
-perturbed fold with perturbations read off the integer computation. -/
+/-- Refinement: with no overflow, the decoded output is exactly the
+perturbed fold whose coefficient, input and product perturbations are
+the actual decoding and rounding errors of the integer computation and
+whose accumulation errors are zero. A saturating step would need a
+nonzero accumulation error, so this equation fails on overflowing
+traces. -/
 theorem decode_fir_eq_outputPerturbed_of_no_overflow {m : ℕ} (s w : ℕ) (hw : 1 ≤ w)
-    (h x : Fin m → ℝ) (hc : Fin m → ℤ) (xc : Fin m → ℤ)
-    (hno : firOverflow s (SaturatingRoundHalfUp.signedMinCode w)
-      (SaturatingRoundHalfUp.signedMaxCode w)
-      (fun k => hc k) (fun k => xc k) = false) :
-    ∃ dh dx dp da : Fin m → ℝ,
-      decode s (firCode s (SaturatingRoundHalfUp.signedMinCode w)
-        (SaturatingRoundHalfUp.signedMaxCode w) (fun k => hc k) (fun k => xc k))
-        = OrderedDotProductError.outputPerturbed m h dh x dx dp da := by
-  have _ := hw
-  have _ := hno
-  set kmin : ℤ := SaturatingRoundHalfUp.signedMinCode w with hkmin
-  set kmax : ℤ := SaturatingRoundHalfUp.signedMaxCode w with hkmax
-  set H : ℕ → ℤ :=
-    (fun i => if hlt : i < m then (fun k => hc k) ⟨i, hlt⟩ else 0) with hHdef
-  set X : ℕ → ℤ :=
-    (fun i => if hlt : i < m then (fun k => xc k) ⟨i, hlt⟩ else 0) with hXdef
-  set A : ℕ → ℝ := (fun j => decode s (firFold s kmin kmax H X j).1) with hAdef
-  set dh0 : Fin m → ℝ := (fun _ => 0) with hdh0
-  set da0 : Fin m → ℝ :=
-    (fun k => (A ((k : ℕ) + 1) - A (k : ℕ)) - h k * x k) with hda0
-  refine ⟨dh0, dh0, dh0, da0, ?_⟩
-  have hstep : ∀ j : ℕ, j < m →
-      (OrderedDotProductError.extend m
-        (OrderedDotProductError.productPerturbed m h dh0 x dh0 dh0)) j
-        + (OrderedDotProductError.extend m da0) j
-        = A (j + 1) - A j := by
-    intro j hj
-    have e1 : (OrderedDotProductError.extend m
-          (OrderedDotProductError.productPerturbed m h dh0 x dh0 dh0)) j
-        = OrderedDotProductError.productPerturbed m h dh0 x dh0 dh0 ⟨j, hj⟩ :=
-      dite_eq_left hj
-    have e2 : (OrderedDotProductError.extend m da0) j = da0 ⟨j, hj⟩ :=
-      dite_eq_left hj
-    rw [e1, e2]
-    have pdh : dh0 ⟨j, hj⟩ = 0 := rfl
-    have pda : da0 ⟨j, hj⟩
-        = (A (j + 1) - A j) - h ⟨j, hj⟩ * x ⟨j, hj⟩ := rfl
-    have ppp : OrderedDotProductError.productPerturbed m h dh0 x dh0 dh0 ⟨j, hj⟩
-        = h ⟨j, hj⟩ * x ⟨j, hj⟩ := by
-      change (h ⟨j, hj⟩ + dh0 ⟨j, hj⟩) * (x ⟨j, hj⟩ + dh0 ⟨j, hj⟩)
-        + dh0 ⟨j, hj⟩ = _
-      rw [pdh]
-      simp
-    rw [ppp, pda]
-    linarith
-  have htele := accumulator_telescope
-    (OrderedDotProductError.extend m
-      (OrderedDotProductError.productPerturbed m h dh0 x dh0 dh0))
-    (OrderedDotProductError.extend m da0) A m hstep m le_rfl
-  change decode s (firFold s kmin kmax H X m).1
-    = OrderedDotProductError.accumulator _ _ m
-  rw [htele]
-  have hAm : A m = decode s (firFold s kmin kmax H X m).1 := rfl
-  have hA0 : A 0 = 0 := decode_firFold_zero s kmin kmax H X
-  rw [hAm, hA0, sub_zero]
-
-/-- Headline bound: the decoded fixed-point output satisfies the
-ordered dot-product bound with every local error at half a step. -/
-theorem fixed_point_fir_error_bound (s w m : ℕ) (hw : 1 ≤ w)
     (h x : Fin m → ℝ) (hc xc : Fin m → ℤ)
-    (hdx : ∀ k : Fin m, |decode s (xc k) - x k| ≤ (1 : ℝ) / (2 * (2 : ℝ) ^ s))
-    (hdh : ∀ k : Fin m, |decode s (hc k) - h k| ≤ (1 : ℝ) / (2 * (2 : ℝ) ^ s))
     (hno : firOverflow s (SaturatingRoundHalfUp.signedMinCode w)
       (SaturatingRoundHalfUp.signedMaxCode w) hc xc = false) :
-    |decode s (firCode s (SaturatingRoundHalfUp.signedMinCode w)
+    decode s (firCode s (SaturatingRoundHalfUp.signedMinCode w)
         (SaturatingRoundHalfUp.signedMaxCode w) hc xc)
-        - OrderedDotProductError.outputIdeal m h x|
-      ≤ ((1 : ℝ) / (2 * (2 : ℝ) ^ s)) * (∑ k : Fin m, |h k|)
-        + ((1 : ℝ) / (2 * (2 : ℝ) ^ s)) * (∑ k : Fin m, |x k|)
-        + (m : ℝ) * ((1 : ℝ) / (2 * (2 : ℝ) ^ s)) * ((1 : ℝ) / (2 * (2 : ℝ) ^ s))
-        + (m : ℝ) * ((1 : ℝ) / (2 * (2 : ℝ) ^ s))
-        + (m : ℝ) * ((1 : ℝ) / (2 * (2 : ℝ) ^ s)) := by
+      = OrderedDotProductError.outputPerturbed m
+          h (fun k => decode s (hc k) - h k)
+          x (fun k => decode s (xc k) - x k)
+          (fun k => decode s (roundHalfUpShift s (hc k * xc k))
+            - decode s (hc k) * decode s (xc k))
+          (fun _ => 0) := by
   have _ := hw
   set kmin : ℤ := SaturatingRoundHalfUp.signedMinCode w with hkmin
   set kmax : ℤ := SaturatingRoundHalfUp.signedMaxCode w with hkmax
   set H : ℕ → ℤ := (fun i => if hlt : i < m then hc ⟨i, hlt⟩ else 0) with hHdef
   set X : ℕ → ℤ := (fun i => if hlt : i < m then xc ⟨i, hlt⟩ else 0) with hXdef
   set A : ℕ → ℝ := (fun j => decode s (firFold s kmin kmax H X j).1) with hAdef
-  set δ : ℝ := (1 : ℝ) / (2 * (2 : ℝ) ^ s) with hδdef
   have hno' : (firFold s kmin kmax H X m).2 = false := hno
   set dh0 : Fin m → ℝ := (fun k => decode s (hc k) - h k) with hdh0
   set dx0 : Fin m → ℝ := (fun k => decode s (xc k) - x k) with hdx0
@@ -433,25 +376,50 @@ theorem fixed_point_fir_error_bound (s w m : ℕ) (hw : 1 ≤ w)
     (OrderedDotProductError.extend m
       (OrderedDotProductError.productPerturbed m h dh0 x dx0 dp0))
     (OrderedDotProductError.extend m da0) A m hstep m le_rfl
-  have heq : decode s (firCode s kmin kmax hc xc)
-      = OrderedDotProductError.outputPerturbed m h dh0 x dx0 dp0 da0 := by
-    change decode s (firFold s kmin kmax H X m).1
-      = OrderedDotProductError.accumulator _ _ m
-    rw [htele]
-    have hAm : A m = decode s (firFold s kmin kmax H X m).1 := rfl
-    have hA0 : A 0 = 0 := decode_firFold_zero s kmin kmax H X
-    rw [hAm, hA0, sub_zero]
+  change decode s (firFold s kmin kmax H X m).1
+    = OrderedDotProductError.accumulator _ _ m
+  rw [htele]
+  have hAm : A m = decode s (firFold s kmin kmax H X m).1 := rfl
+  have hA0 : A 0 = 0 := decode_firFold_zero s kmin kmax H X
+  rw [hAm, hA0, sub_zero]
+
+/-- Headline bound: the decoded fixed-point output satisfies the
+ordered dot-product bound with the coefficient, input and product errors
+at half a step and no accumulation error, since a clean trace adds
+exactly. -/
+theorem fixed_point_fir_error_bound (s w m : ℕ) (hw : 1 ≤ w)
+    (h x : Fin m → ℝ) (hc xc : Fin m → ℤ)
+    (hdx : ∀ k : Fin m, |decode s (xc k) - x k| ≤ (1 : ℝ) / (2 * (2 : ℝ) ^ s))
+    (hdh : ∀ k : Fin m, |decode s (hc k) - h k| ≤ (1 : ℝ) / (2 * (2 : ℝ) ^ s))
+    (hno : firOverflow s (SaturatingRoundHalfUp.signedMinCode w)
+      (SaturatingRoundHalfUp.signedMaxCode w) hc xc = false) :
+    |decode s (firCode s (SaturatingRoundHalfUp.signedMinCode w)
+        (SaturatingRoundHalfUp.signedMaxCode w) hc xc)
+        - OrderedDotProductError.outputIdeal m h x|
+      ≤ ((1 : ℝ) / (2 * (2 : ℝ) ^ s)) * (∑ k : Fin m, |h k|)
+        + ((1 : ℝ) / (2 * (2 : ℝ) ^ s)) * (∑ k : Fin m, |x k|)
+        + (m : ℝ) * ((1 : ℝ) / (2 * (2 : ℝ) ^ s)) * ((1 : ℝ) / (2 * (2 : ℝ) ^ s))
+        + (m : ℝ) * ((1 : ℝ) / (2 * (2 : ℝ) ^ s)) := by
+  set δ : ℝ := (1 : ℝ) / (2 * (2 : ℝ) ^ s) with hδdef
+  set dh0 : Fin m → ℝ := (fun k => decode s (hc k) - h k) with hdh0
+  set dx0 : Fin m → ℝ := (fun k => decode s (xc k) - x k) with hdx0
+  set dp0 : Fin m → ℝ := (fun k => decode s (roundHalfUpShift s (hc k * xc k))
+    - decode s (hc k) * decode s (xc k)) with hdp0
+  set da0 : Fin m → ℝ := (fun _ => 0) with hda0
+  have heq : decode s (firCode s (SaturatingRoundHalfUp.signedMinCode w)
+        (SaturatingRoundHalfUp.signedMaxCode w) hc xc)
+      = OrderedDotProductError.outputPerturbed m h dh0 x dx0 dp0 da0 :=
+    decode_fir_eq_outputPerturbed_of_no_overflow s w hw h x hc xc hno
   have hpow : (0 : ℝ) < (2 : ℝ) ^ s := pow_pos (by norm_num) s
   have hδ : (0 : ℝ) ≤ δ := by
     change (0 : ℝ) ≤ (1 : ℝ) / (2 * (2 : ℝ) ^ s)
     exact div_nonneg zero_le_one (mul_nonneg (by norm_num) (le_of_lt hpow))
   have hdx' : ∀ k : Fin m, |dx0 k| ≤ δ := fun k => hdx k
   have hdh' : ∀ k : Fin m, |dh0 k| ≤ δ := fun k => hdh k
-  have hda' : ∀ k : Fin m, |da0 k| ≤ δ := by
+  have hda' : ∀ k : Fin m, |da0 k| ≤ 0 := by
     intro k
     have h0 : da0 k = 0 := rfl
     rw [h0, abs_zero]
-    exact hδ
   have hdp' : ∀ k : Fin m, |dp0 k| ≤ δ := by
     intro k
     have hround := roundHalfUpShift_error_le s (hc k * xc k)
@@ -481,7 +449,9 @@ theorem fixed_point_fir_error_bound (s w m : ℕ) (hw : 1 ≤ w)
     rw [hcc]
     exact h2
   rw [heq]
-  exact OrderedDotProductError.orderedDotProduct_error_bound m h dh0 x dx0 dp0 da0
-    δ δ δ δ hδ hδ hδ hδ hdx' hdh' hdp' hda'
+  have hb := OrderedDotProductError.orderedDotProduct_error_bound m h dh0 x dx0 dp0 da0
+    δ δ δ 0 hδ hδ hδ le_rfl hdx' hdh' hdp' hda'
+  rw [mul_zero, add_zero] at hb
+  exact hb
 
 end CSLibExt.Algorithms.Numerical.FixedPointFIR
