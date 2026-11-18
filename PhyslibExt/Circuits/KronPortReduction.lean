@@ -15,8 +15,6 @@ public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.LinearAlgebra.Matrix.SchurComplement
 public import Mathlib.Data.Matrix.Block
-import Mathlib.Tactic.Abel
-import Mathlib.Tactic.Ring
 
 /-!
 # Kron reduction of a port network
@@ -35,10 +33,11 @@ reduced port dissipation plus a retained interior source term, and
 relabeling the nodes does not change the dissipation. No nonlinear,
 time-varying, or zero-admittance claim is made.
 
-The block elimination equivalence is proved directly in this
-module, by expanding the Schur complement and cancelling `D⁻¹`
-against `D`; it is not obtained from a canonical block elimination
-theorem. The Schur complement and its strict positivity are the
+The block elimination equivalence is the specialization of the
+canonical block elimination equivalence
+`MathlibExt.LinearAlgebra.Matrix.BlockSolutionEquiv.elim_iff` to
+`C = Bᵀ`, with the general Schur complement identified with the
+symmetric one below. The Schur complement and its strict positivity are the
 canonical ones from
 `MathlibExt.LinearAlgebra.Matrix.SchurStrictPositivity`, and the
 dissipation identity is the canonical Schur source energy identity
@@ -49,7 +48,8 @@ supplies the retained source term `jI ⬝ᵥ (D⁻¹ *ᵥ jI)`.
 
 - `block_solution_iff_reduced`: the full block system holds if and
   only if the reduced port equation holds together with interior
-  reconstruction, proved directly in this module.
+  reconstruction, derived from the canonical block elimination
+  equivalence.
 - `dissipation_eq_reduced_add_source`: total dissipation equals
   reduced port dissipation plus the retained interior source term,
   from the canonical Schur source energy identity.
@@ -78,8 +78,8 @@ supplies the retained source term `jI ⬝ᵥ (D⁻¹ *ᵥ jI)`.
 ## A. Block elimination and reconstruction
 
 The equivalence between the full block equations and the reduced
-port equation with reconstruction, proved directly by expanding
-the Schur complement.
+port equation with reconstruction, derived from the canonical
+block elimination equivalence.
 -/
 
 @[expose] public section
@@ -91,58 +91,19 @@ namespace PhyslibExt.Circuits.KronPortReduction
 open MathlibExt.LinearAlgebra.Matrix.SchurStrictPositivity
 open MathlibExt.LinearAlgebra.Matrix.SchurSourceEnergy
 
-private theorem inv_mulVec_mulVec_cancel {p : Type*} [Fintype p] [DecidableEq p]
-    (D : Matrix p p ℝ) [Invertible D] (x : p → ℝ) :
-    D⁻¹ *ᵥ (D *ᵥ x) = x := by
-  rw [Matrix.mulVec_mulVec, Matrix.inv_mul_of_invertible, Matrix.one_mulVec]
-
-private theorem mulVec_inv_mulVec_cancel {p : Type*} [Fintype p] [DecidableEq p]
-    (D : Matrix p p ℝ) [Invertible D] (x : p → ℝ) :
-    D *ᵥ (D⁻¹ *ᵥ x) = x := by
-  rw [Matrix.mulVec_mulVec, Matrix.mul_inv_of_invertible, Matrix.one_mulVec]
-
-private theorem schur_mulVec_expand {m p : Type*} [Fintype m] [Fintype p]
-    [DecidableEq m] [DecidableEq p] (A : Matrix m m ℝ) (B : Matrix m p ℝ)
-    (D : Matrix p p ℝ) [Invertible D] (φP : m → ℝ) :
-    schurComplement A B D *ᵥ φP = A *ᵥ φP - B *ᵥ (D⁻¹ *ᵥ (Bᵀ *ᵥ φP)) := by
-  unfold schurComplement
-  rw [Matrix.sub_mulVec, ← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec]
-
 /-- The full block system is equivalent to the reduced port equation
 together with interior reconstruction. -/
 theorem block_solution_iff_reduced {m p : Type*} [Fintype m] [Fintype p]
-    [DecidableEq m] [DecidableEq p] (A : Matrix m m ℝ) (B : Matrix m p ℝ)
+    [DecidableEq p] (A : Matrix m m ℝ) (B : Matrix m p ℝ)
     (D : Matrix p p ℝ) [Invertible D] (φP : m → ℝ) (φI : p → ℝ)
     (jP : m → ℝ) (jI : p → ℝ) :
     (A *ᵥ φP + B *ᵥ φI = jP ∧ Bᵀ *ᵥ φP + D *ᵥ φI = jI) ↔
       (schurComplement A B D *ᵥ φP = jP - B *ᵥ (D⁻¹ *ᵥ jI) ∧
         φI = D⁻¹ *ᵥ (jI - Bᵀ *ᵥ φP)) := by
-  constructor
-  · intro h
-    obtain ⟨hP, hI⟩ := h
-    have hDφI : D *ᵥ φI = jI - Bᵀ *ᵥ φP := by
-      rw [← hI]; abel
-    have hφI : φI = D⁻¹ *ᵥ (jI - Bᵀ *ᵥ φP) := by
-      have h1 : D⁻¹ *ᵥ (D *ᵥ φI) = D⁻¹ *ᵥ (jI - Bᵀ *ᵥ φP) := by
-        rw [hDφI]
-      rw [inv_mulVec_mulVec_cancel] at h1
-      exact h1
-    have hBφI : B *ᵥ φI = B *ᵥ (D⁻¹ *ᵥ jI) - B *ᵥ (D⁻¹ *ᵥ (Bᵀ *ᵥ φP)) := by
-      rw [hφI]; simp only [Matrix.mulVec_sub]
-    refine ⟨?_, hφI⟩
-    rw [schur_mulVec_expand, ← hP, hBφI]
-    abel
-  · intro h
-    obtain ⟨hRed, hRec⟩ := h
-    have hRed' : A *ᵥ φP - B *ᵥ (D⁻¹ *ᵥ (Bᵀ *ᵥ φP))
-        = jP - B *ᵥ (D⁻¹ *ᵥ jI) := by
-      rw [← hRed, schur_mulVec_expand]
-    have hA : A *ᵥ φP
-        = jP - B *ᵥ (D⁻¹ *ᵥ jI) + B *ᵥ (D⁻¹ *ᵥ (Bᵀ *ᵥ φP)) := by
-      rw [← hRed']; abel
-    refine ⟨?_, ?_⟩
-    · rw [hRec]; simp only [Matrix.mulVec_sub]; rw [hA]; abel
-    · rw [hRec, mulVec_inv_mulVec_cancel]; abel
+  simpa only [MathlibExt.LinearAlgebra.Matrix.BlockSolutionEquiv.schur,
+    schurComplement] using
+    MathlibExt.LinearAlgebra.Matrix.BlockSolutionEquiv.elim_iff
+      (A := A) (B := B) (C := Bᵀ) (D := D) (x := φP) (y := φI) (u := jP) (v := jI)
 
 /-- A full solution induces the reduced port injection equation. -/
 lemma reduced_injection_of_full_solution {m p : Type*} [Fintype m]
@@ -230,7 +191,7 @@ theorem kron_reduction_correct {m p : Type*} [Fintype m] [Fintype p]
   refine ⟨hS, ?_, ?_, ?_⟩
   · exact @reduced_injection_of_full_solution m p _ _ _ _ A B D hInv
       φP φI jP jI hP hI
-  · exact ((@block_solution_iff_reduced m p _ _ _ _ A B D hInv φP φI jP jI).mp
+  · exact ((@block_solution_iff_reduced m p _ _ _ A B D hInv φP φI jP jI).mp
       ⟨hP, hI⟩).2
   · exact
       @dotProduct_fromBlocks_mulVec_eq_schur_add_source_of_interior m p _ _ _ A B D hInv
