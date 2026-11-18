@@ -20,4 +20,10 @@ open MathlibExt.Biology.Dynamics.FiniteActivePopulation.Generator
 example : (1:ℝ) * (0:ℝ) = 0 ∧ ((5:ℝ) - 5) * (fun _ => (2:ℝ)) 5 = 0 :=
   birthDeath_endpoints 5 1 (fun _ => 2)
 
+/-- Two-state regression: the death entry `Q 1 0` is `alpha`, not
+shadowed by modular successor arithmetic. -/
+example (alpha : ℝ) (f : ℕ → ℝ) :
+    birthDeathGenerator 1 alpha f 1 0 = alpha := by
+  simp [birthDeathGenerator]
+
 end MathlibExtTest.Biology.Dynamics.FiniteActivePopulation.Generator

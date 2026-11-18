@@ -30,7 +30,7 @@ the negative row sum on the diagonal and zero elsewhere. -/
 noncomputable def birthDeathGenerator (N : ℕ) (alpha : ℝ) (f : ℕ → ℝ) :
     Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ :=
   fun i j =>
-    if j = i + 1 then ((N : ℝ) - i) * f i
+    if (j : ℕ) = (i : ℕ) + 1 then ((N : ℝ) - i) * f i
     else if (j : ℕ) + 1 = i then alpha * (i : ℝ)
     else if j = i then -(((N : ℝ) - i) * f i + alpha * (i : ℝ))
     else 0
@@ -43,7 +43,7 @@ theorem birthDeath_offDiag_nonneg (N : ℕ) (alpha : ℝ) (f : ℕ → ℝ)
     {i j : Fin (N + 1)} (hij : i ≠ j) :
     0 ≤ birthDeathGenerator N alpha f i j := by
   unfold birthDeathGenerator
-  by_cases h1 : j = i + 1
+  by_cases h1 : (j : ℕ) = (i : ℕ) + 1
   · simp only [h1, ite_true]
     apply mul_nonneg _ (hf _)
     exact sub_nonneg.mpr (Nat.cast_le.mpr (Fin.is_le i))
