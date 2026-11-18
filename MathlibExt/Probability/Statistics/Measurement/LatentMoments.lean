@@ -67,14 +67,6 @@ private theorem bind_integral_eq {Z α : Type*} [Fintype Z] [Fintype α]
   intro x _
   ring
 
-private theorem pmf_sum_toReal_eq_one {Z : Type*} [Fintype Z] (pi : PMF Z) :
-    ∑ z, (pi z).toReal = 1 := by
-  have h1 : (∑ z, pi z) = 1 := by
-    have h := pi.tsum_coe
-    rwa [tsum_fintype] at h
-  have h2 : (∑ z, pi z).toReal = (1 : ENNReal).toReal := by rw [h1]
-  rw [ENNReal.toReal_sum (fun a _ => pi.apply_ne_top a)] at h2
-  simpa using h2
 
 private theorem memLp_indicator {ι : Type*} [Fintype ι] [DecidableEq ι]
     (p : PMF (ι → Bool)) (i : ι) :
@@ -84,31 +76,74 @@ private theorem memLp_indicator {ι : Type*} [Fintype ι] [DecidableEq ι]
     cases h : x i <;> simp
   · exact (by measurability : Measurable (fun x : ι → Bool => (if x i then (1 : ℝ) else 0))).aestronglyMeasurable
 
-private theorem finiteCovariance_eq {α : Type*} [Fintype α] (p X Y : α → ℝ)
-    (hp : ∑ x, p x = 1) :
-    MathlibExt.Probability.FiniteProbability.covariance p X Y
-      = (∑ x, p x * (X x * Y x)) - (∑ x, p x * X x) * (∑ x, p x * Y x) := by
-  unfold MathlibExt.Probability.FiniteProbability.covariance
-    MathlibExt.Probability.FiniteProbability.expectation
-  have hterm : ∀ x, p x * ((X x - (∑ y, p y * X y)) * (Y x - (∑ y, p y * Y y)))
-      = p x * (X x * Y x) - (p x * X x) * (∑ y, p y * Y y)
-        - (p x * Y x) * (∑ y, p y * X y)
-        + p x * ((∑ y, p y * X y) * (∑ y, p y * Y y)) := by
-    intro x
-    ring
-  simp_rw [hterm]
-  simp only [Finset.sum_add_distrib, Finset.sum_sub_distrib]
-  have hB : (∑ x, (p x * X x) * (∑ y, p y * Y y))
-      = (∑ x, p x * X x) * (∑ y, p y * Y y) :=
-    (Finset.sum_mul Finset.univ (fun x => p x * X x) _).symm
-  have hC : (∑ x, (p x * Y x) * (∑ y, p y * X y))
-      = (∑ x, p x * Y x) * (∑ y, p y * X y) :=
-    (Finset.sum_mul Finset.univ (fun x => p x * Y x) _).symm
-  have hD : (∑ x, p x * ((∑ y, p y * X y) * (∑ y, p y * Y y)))
-      = (∑ x, p x) * ((∑ y, p y * X y) * (∑ y, p y * Y y)) :=
-    (Finset.sum_mul Finset.univ (fun x => p x) _).symm
-  rw [hB, hC, hD, hp]
-  ring
+
+theorem pi_norm_rational :
+    (∑ z : Fin 2, (if z = 0 then ENNReal.ofReal (1 / 3 : ℝ) else ENNReal.ofReal (2 / 3 : ℝ))) = 1 := by
+  rw [Fin.sum_univ_two]
+  have h1 : (1 : Fin 2) ≠ 0 := by decide
+  simp only [h1, ite_true, ite_false]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  norm_num
+
+theorem hq0_rational_all : ∀ z i : Fin 2, 0 ≤ (if z = 0 then (if i = 0 then (1 / 4 : ℝ) else (1 / 2 : ℝ))
+    else (if i = 0 then (3 / 4 : ℝ) else (1 / 5 : ℝ))) := by
+  intro z i
+  by_cases hz : z = 0
+  · by_cases hi : i = 0 <;> simp [hz, hi] <;> norm_num
+  · by_cases hi : i = 0 <;> simp [hz, hi] <;> norm_num
+
+theorem hq1_rational_all : ∀ z i : Fin 2, (if z = 0 then (if i = 0 then (1 / 4 : ℝ) else (1 / 2 : ℝ))
+    else (if i = 0 then (3 / 4 : ℝ) else (1 / 5 : ℝ))) ≤ 1 := by
+  intro z i
+  by_cases hz : z = 0
+  · by_cases hi : i = 0 <;> simp [hz, hi] <;> norm_num
+  · by_cases hi : i = 0 <;> simp [hz, hi] <;> norm_num
+
+theorem pi_norm_boundary :
+    (∑ z : Fin 2, (if z = 0 then ENNReal.ofReal (1 / 2 : ℝ) else ENNReal.ofReal (1 / 2 : ℝ))) = 1 := by
+  rw [Fin.sum_univ_two]
+  have h1 : (1 : Fin 2) ≠ 0 := by decide
+  simp only [h1, ite_true, ite_false]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  norm_num
+
+theorem hq0_boundary_all : ∀ z i : Fin 2, 0 ≤ (if z = 0 then (if i = 0 then (0 : ℝ) else (1 : ℝ))
+    else (if i = 0 then (1 : ℝ) else (0 : ℝ))) := by
+  intro z i
+  by_cases hz : z = 0
+  · by_cases hi : i = 0 <;> simp [hz, hi]
+  · by_cases hi : i = 0 <;> simp [hz, hi]
+
+theorem hq1_boundary_all : ∀ z i : Fin 2, (if z = 0 then (if i = 0 then (0 : ℝ) else (1 : ℝ))
+    else (if i = 0 then (1 : ℝ) else (0 : ℝ))) ≤ 1 := by
+  intro z i
+  by_cases hz : z = 0
+  · by_cases hi : i = 0 <;> simp [hz, hi]
+  · by_cases hi : i = 0 <;> simp [hz, hi]
+
+theorem pi_norm_degenerate :
+    (∑ z : Fin 2, (if z = 0 then ENNReal.ofReal (1 : ℝ) else ENNReal.ofReal (0 : ℝ))) = 1 := by
+  rw [Fin.sum_univ_two]
+  have h1 : (1 : Fin 2) ≠ 0 := by decide
+  simp only [h1, ite_true, ite_false]
+  rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  norm_num
+
+theorem hq0_degenerate_all : ∀ z i : Fin 2, 0 ≤ (if z = 0 then (if i = 0 then (2 / 7 : ℝ) else (5 / 9 : ℝ))
+    else (if i = 0 then (1 / 3 : ℝ) else (1 / 3 : ℝ))) := by
+  intro z i
+  by_cases hz : z = 0
+  · by_cases hi : i = 0 <;> simp [hz, hi] <;> norm_num
+  · by_cases hi : i = 0 <;> simp [hz, hi] <;> norm_num
+
+theorem hq1_degenerate_all : ∀ z i : Fin 2, (if z = 0 then (if i = 0 then (2 / 7 : ℝ) else (5 / 9 : ℝ))
+    else (if i = 0 then (1 / 3 : ℝ) else (1 / 3 : ℝ))) ≤ 1 := by
+  intro z i
+  by_cases hz : z = 0
+  · by_cases hi : i = 0 <;> simp [hz, hi] <;> norm_num
+  · by_cases hi : i = 0 <;> simp [hz, hi] <;> norm_num
+
+/-! ## Production result (the leaf's one new public symbol) -/
 
 /-- **Latent-mixture coordinate moments.** Let `Z` (latent states) and `ι`
 (items) be finite, `pi : PMF Z` a latent law with no support restriction,
@@ -175,7 +210,8 @@ theorem latentMixture_coordinate_moments {Z ι : Type*} [Fintype Z] [Fintype ι]
       memLp_indicator _ j
     rw [ProbabilityTheory.covariance_eq_sub hX hY]
     simp only [Pi.mul_apply]
-    rw [finiteCovariance_eq _ _ _ (pmf_sum_toReal_eq_one pi)]
+    rw [MathlibExt.Probability.FiniteProbability.covariance_eq_sub (MathlibExt.Probability.FiniteProbability.sum_toReal_eq_one pi)]
+    unfold MathlibExt.Probability.FiniteProbability.expectation
     rw [h1 i, h1 j, h2 i j hij]
     rfl
   exact ⟨h1, h2, h3⟩
