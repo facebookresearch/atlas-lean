@@ -42,7 +42,7 @@ revision): apply `MeasureTheory.Measure.ext_of_Iic` -- it suffices to
 agree on every `Set.Iic t` -- with `MeasureTheory.Measure.map_apply`
 (measurability of `fun x => cdf μ x` is `(cdf μ).mono.measurable`).
 For `t ∈ Ioo 0 1`, `{x | cdf μ x ≤ t} = Set.Iic (cdfQuantile μ t)` by
-`StrictMono.le_iff_le hmono`
+`StrictMono.le_iff_le hmono` and
 `cdf_cdfQuantile_eq_of_continuous`, so by
 `ProbabilityTheory.ofReal_cdf` the pushforward's mass on `Set.Iic t`
 is `ENNReal.ofReal t`, as is Lebesgue's.  For `t < 0` the preimage is
@@ -160,7 +160,7 @@ by `cdf_pushforward_eq_volume_restrict_Icc μ hμcont hμmono`,
 Proof route for (2): for the first roundtrip, `cdf μ x ∈ Ioo 0 1` by
 `cdf_mem_Ioo_of_strictMono μ hμmono`, so
 `cdf_cdfQuantile_eq_of_continuous ν hνcont` gives
-`cdf ν (cdfQuantile ν (cdf μ x)) = cdf μ x`,
+`cdf ν (cdfQuantile ν (cdf μ x)) = cdf μ x`, and
 `cdfQuantile_cdf_of_strictMono μ hμmono` finishes.  The second
 roundtrip is symmetric, using `cdf_mem_Ioo_of_strictMono ν hνmono`,
 `cdf_cdfQuantile_eq_of_continuous μ hμcont`, and
