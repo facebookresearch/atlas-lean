@@ -10,6 +10,7 @@ module
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Order.Monotone.Basic
+public import Mathlib.LinearAlgebra.AffineSpace.AffineMap
 public import PhyslibExt.EarthScience.SaturationPressure
 import Mathlib.Tactic.Linarith
 
@@ -56,12 +57,18 @@ does not predict condensate or assert standards compliance.
 /-! ## A. Affine no-supersaturation certificate -/
 namespace Engineering.BuildingEnvelope
 
-/-- Affine profile between endpoint values `a` and `b`:
-`(1 - θ) * a + θ * b`. The normalized layer coordinate is
+/-- Affine profile between endpoint values `a` and `b`, as
+Mathlib's affine line map. The normalized layer coordinate is
 `θ`; the profile is the affine interpolation used on one
 homogeneous layer, not a field equation. -/
-noncomputable def affineProfile (a b θ : ℝ) : ℝ :=
-  (1 - θ) * a + θ * b
+noncomputable abbrev affineProfile (a b θ : ℝ) : ℝ :=
+  AffineMap.lineMap a b θ
+
+/-- The affine profile in coordinates:
+`affineProfile a b θ = (1 - θ) * a + θ * b`. -/
+@[simp] lemma affineProfile_apply (a b θ : ℝ) :
+    affineProfile a b θ = (1 - θ) * a + θ * b :=
+  AffineMap.lineMap_apply_ring a b θ
 
 /-- Conservative one-layer no-supersaturation certificate.
 
@@ -75,7 +82,7 @@ monotonicity), then at every `θ ∈ [0, 1]` the affine temperature
 is positive and the affine vapor pressure does not exceed the
 saturation pressure there. This is only a no-supersaturation
 admission for the affine model, not a condensate prediction. -/
-theorem affine_no_supersaturation {psat : ℝ → ℝ}
+lemma affine_no_supersaturation {psat : ℝ → ℝ}
     (hmono : MonotoneOn psat (Set.Ioi 0))
     {Tl Tr pl pr θ : ℝ} (hTl : 0 < Tl) (hTr : 0 < Tr)
     (hcert : max pl pr ≤ psat (min Tl Tr))
@@ -90,7 +97,7 @@ theorem affine_no_supersaturation {psat : ℝ → ℝ}
   have h2 : θ * min Tl Tr ≤ θ * Tr :=
     mul_le_mul_of_nonneg_left hTr_min hθ0
   have hminT : min Tl Tr ≤ affineProfile Tl Tr θ := by
-    unfold affineProfile
+    rw [affineProfile_apply]
     linarith
   have hpl : pl ≤ max pl pr := le_max_left _ _
   have hpr : pr ≤ max pl pr := le_max_right _ _
@@ -99,7 +106,7 @@ theorem affine_no_supersaturation {psat : ℝ → ℝ}
   have h4 : θ * pr ≤ θ * max pl pr :=
     mul_le_mul_of_nonneg_left hpr hθ0
   have hP : affineProfile pl pr θ ≤ max pl pr := by
-    unfold affineProfile
+    rw [affineProfile_apply]
     linarith
   have hmin_pos : 0 < min Tl Tr := lt_min hTl hTr
   have hTpos : 0 < affineProfile Tl Tr θ := lt_of_lt_of_le hmin_pos hminT
@@ -114,7 +121,7 @@ temperature up to layer `n` is positive and every layer `i < n`
 passes the same conservative endpoint-maximum certificate, then
 every affine point of every layer has positive temperature and
 is nowhere supersaturated. -/
-theorem affine_no_supersaturation_layers {n : ℕ} {psat : ℝ → ℝ}
+lemma affine_no_supersaturation_layers {n : ℕ} {psat : ℝ → ℝ}
     (hmono : MonotoneOn psat (Set.Ioi 0))
     {Tface Pface : ℕ → ℝ}
     (hT : ∀ i : ℕ, i ≤ n → 0 < Tface i)
@@ -133,12 +140,12 @@ theorem affine_no_supersaturation_layers {n : ℕ} {psat : ℝ → ℝ}
 /-- Layerwise no-supersaturation certificate for the
 EarthScience Clausius-Clapeyron saturation-pressure curve
 `T ↦ es0 * exp ((L / Rv) * (1 / T0 - 1 / T))`, with positive
-parameters `es0`, `L`, and `Rv`. This is the generic layerwise
+parameters `es0`, `L`, `Rv`, and reference temperature `T0`. This is the generic layerwise
 certificate instantiated with the saturation curve's strict
 monotonicity on positive temperatures. -/
-theorem affine_no_supersaturation_layers_saturationPressure
+lemma affine_no_supersaturation_layers_saturationPressure
     {n : ℕ} {es0 L Rv T0 : ℝ} (hes0 : 0 < es0) (hL : 0 < L)
-    (hRv : 0 < Rv) {Tface Pface : ℕ → ℝ}
+    (hRv : 0 < Rv) (_hT0 : 0 < T0) {Tface Pface : ℕ → ℝ}
     (hT : ∀ i : ℕ, i ≤ n → 0 < Tface i)
     (hcert : ∀ i : ℕ, i < n
       → max (Pface i) (Pface (i + 1))

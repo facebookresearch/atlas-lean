@@ -42,7 +42,7 @@ example :
 expected affine values. -/
 example : affineProfile 280 300 (1 / 2 : ℝ) = 290
     ∧ affineProfile 279 280 (1 / 2 : ℝ) = 559 / 2 := by
-  constructor <;> norm_num [affineProfile]
+  constructor <;> norm_num [affineProfile_apply]
 
 /-- The EarthScience saturation-pressure specialization applies
 to a one-layer wall with zero face vapor pressures. -/
@@ -56,7 +56,7 @@ example :
     (n := 1) (es0 := 1) (L := 1) (Rv := 1) (T0 := 1)
     (Tface := fun i => if i = 0 then 280 else 300)
     (Pface := fun _ => 0) (i := 0) (θ := (1 / 2 : ℝ))
-    (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num)
     (by
       intro i hi
       interval_cases i <;> norm_num)
