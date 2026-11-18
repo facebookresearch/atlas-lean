@@ -140,7 +140,7 @@ noncomputable def scaledBuckErrorBound (L C R Vin Iref Vref T ε Ld Δi₀ Δv�
 
 /-- The linear form reproduces the two-state laws: the `i` row is
 `(s Vin - v) / L` and the `v` row is `(i - v / R) / C`. -/
-theorem buckMatrix_mulVec_add_smul_buckInput (L C R Vin s i v : ℝ) :
+lemma buckMatrix_mulVec_add_smul_buckInput (L C R Vin s i v : ℝ) :
     buckMatrix L C R *ᵥ ![i, v] + s • buckInput L Vin =
       ![(s * Vin - v) / L, (i - v / R) / C] := by
   ext j
@@ -148,7 +148,7 @@ theorem buckMatrix_mulVec_add_smul_buckInput (L C R Vin s i v : ℝ) :
 
 /-- The scaled matrix is the conjugate of the buck matrix by the
 declared scaling: `S Ã = A S`. -/
-theorem stateScaling_mul_scaledBuckMatrix (L C R Iref Vref : ℝ)
+lemma stateScaling_mul_scaledBuckMatrix (L C R Iref Vref : ℝ)
     (hI : Iref ≠ 0) (hV : Vref ≠ 0) :
     stateScaling Iref Vref * scaledBuckMatrix L C R Iref Vref =
       buckMatrix L C R * stateScaling Iref Vref := by
@@ -158,7 +158,7 @@ theorem stateScaling_mul_scaledBuckMatrix (L C R Iref Vref : ℝ)
     field_simp
 
 /-- The scaled input is the scaled-back buck input: `S b̃ = b`. -/
-theorem stateScaling_mulVec_scaledBuckInput (L Vin Iref Vref : ℝ) (hI : Iref ≠ 0) :
+lemma stateScaling_mulVec_scaledBuckInput (L Vin Iref Vref : ℝ) (hI : Iref ≠ 0) :
     stateScaling Iref Vref *ᵥ scaledBuckInput L Vin Iref = buckInput L Vin := by
   ext j
   fin_cases j <;>
@@ -167,13 +167,13 @@ theorem stateScaling_mulVec_scaledBuckInput (L Vin Iref Vref : ℝ) (hI : Iref �
   field_simp
 
 /-- The scaled operator acts by the scaled matrix. -/
-theorem scaledBuckOperator_apply (L C R Iref Vref : ℝ) (z : Fin 2 → ℝ) :
+lemma scaledBuckOperator_apply (L C R Iref Vref : ℝ) (z : Fin 2 → ℝ) :
     scaledBuckOperator L C R Iref Vref z = scaledBuckMatrix L C R Iref Vref *ᵥ z := by
   rfl
 
 /-- In scaled coordinates the two-state right-hand sides read
 `Ã z + s • b̃`. -/
-theorem scaledBuckOperator_scaledState_add (L C R Vin Iref Vref s i v : ℝ)
+lemma scaledBuckOperator_scaledState_add (L C R Vin Iref Vref s i v : ℝ)
     (hL : 0 < L) (hC : 0 < C) (hI : 0 < Iref) (hV : 0 < Vref) :
     scaledBuckOperator L C R Iref Vref (scaledState Iref Vref i v) +
         s • scaledBuckInput L Vin Iref =
@@ -187,7 +187,7 @@ theorem scaledBuckOperator_scaledState_add (L C R Vin Iref Vref s i v : ℝ)
 /-! ## C. Norm computations -/
 
 /-- The sup norm on `Fin 2 → ℝ` is the larger absolute coordinate. -/
-private theorem norm_fin_two_eq_max (x : Fin 2 → ℝ) : ‖x‖ = max |x 0| |x 1| := by
+private lemma norm_fin_two_eq_max (x : Fin 2 → ℝ) : ‖x‖ = max |x 0| |x 1| := by
   refine le_antisymm ((pi_norm_le_iff_of_nonneg (le_max_of_le_left (abs_nonneg _))).2
     fun j => ?_) (max_le ?_ ?_)
   · fin_cases j
@@ -197,7 +197,7 @@ private theorem norm_fin_two_eq_max (x : Fin 2 → ℝ) : ‖x‖ = max |x 0| |x
   · simpa [Real.norm_eq_abs] using norm_le_pi_norm x 1
 
 /-- The sup-norm operator norm of `Ã` is at most `κ`. -/
-theorem norm_scaledBuckOperator_le (L C R Iref Vref : ℝ)
+lemma norm_scaledBuckOperator_le (L C R Iref Vref : ℝ)
     (hL : 0 < L) (hC : 0 < C) (hR : 0 < R) (hI : 0 < Iref) (hV : 0 < Vref) :
     ‖scaledBuckOperator L C R Iref Vref‖ ≤ scaledBuckGrowthRate L C R Iref Vref := by
   have ha : 0 ≤ Vref / (L * Iref) := by positivity
@@ -229,7 +229,7 @@ theorem norm_scaledBuckOperator_le (L C R Iref Vref : ℝ)
       _ ≤ scaledBuckGrowthRate L C R Iref Vref * ‖z‖ := by nlinarith [norm_nonneg z]
 
 /-- The scaled input has sup norm `|Vin| / (L Iref)`. -/
-theorem norm_scaledBuckInput (L Vin Iref : ℝ) (hL : 0 < L) (hI : 0 < Iref) :
+lemma norm_scaledBuckInput (L Vin Iref : ℝ) (hL : 0 < L) (hI : 0 < Iref) :
     ‖scaledBuckInput L Vin Iref‖ = |Vin| / (L * Iref) := by
   rw [norm_fin_two_eq_max]
   simp only [scaledBuckInput, Matrix.cons_val_zero, Matrix.cons_val_one, abs_zero]
@@ -237,7 +237,7 @@ theorem norm_scaledBuckInput (L Vin Iref : ℝ) (hL : 0 < L) (hI : 0 < Iref) :
 
 /-- The sup norm of a scaled state difference is the larger of the
 two scaled coordinate differences. -/
-theorem norm_scaledState_sub (Iref Vref i v i' v' : ℝ) (hI : 0 < Iref) (hV : 0 < Vref) :
+lemma norm_scaledState_sub (Iref Vref i v i' v' : ℝ) (hI : 0 < Iref) (hV : 0 < Vref) :
     ‖scaledState Iref Vref i v - scaledState Iref Vref i' v'‖ =
       max (|i - i'| / Iref) (|v - v'| / Vref) := by
   rw [norm_fin_two_eq_max]
@@ -249,7 +249,7 @@ theorem norm_scaledState_sub (Iref Vref i v i' v' : ℝ) (hI : 0 < Iref) (hV : 0
 /-- Coordinate integral equations with continuous states and an
 integrable switching function give the vector integral equation of
 the scaled state `z' = Ã z + s • b̃` on `[0, T]`. -/
-theorem scaledState_integral_eq (L C R Vin Iref Vref T : ℝ)
+lemma scaledState_integral_eq (L C R Vin Iref Vref T : ℝ)
     (hL : 0 < L) (hC : 0 < C) (hR : 0 < R) (hI : 0 < Iref) (hV : 0 < Vref) (hT : 0 ≤ T)
     (s i v : ℝ → ℝ) (i₀ v₀ : ℝ)
     (hs : IntervalIntegrable s volume 0 T)
@@ -293,7 +293,7 @@ theorem scaledState_integral_eq (L C R Vin Iref Vref T : ℝ)
 
 /-- Scaled-state bound: the affine PWM bound instantiated at
 `(Ã, b̃)` with zero common forcing. -/
-theorem scaledState_switched_averaged_error_le (L C R Vin Iref Vref : ℝ)
+lemma scaledState_switched_averaged_error_le (L C R Vin Iref Vref : ℝ)
     (hL : 0 < L) (hC : 0 < C) (hR : 0 < R) (hI : 0 < Iref) (hV : 0 < Vref)
     (T ε : ℝ) (Ld : ℝ≥0) (d : ℝ → ℝ) (hT : 0 ≤ T) (hε : 0 < ε)
     (hd : ∀ t ∈ Set.Icc 0 T, d t ∈ Set.Icc 0 1)
@@ -336,7 +336,7 @@ theorem scaledState_switched_averaged_error_le (L C R Vin Iref Vref : ℝ)
 the switched and averaged inductor currents differ by at most
 `Iref * B` and the capacitor voltages by at most `Vref * B` at every
 `t ∈ [0, T]`, with `B = scaledBuckErrorBound`. -/
-theorem buck_switched_averaged_error_le (L C R Vin Iref Vref : ℝ)
+lemma buck_switched_averaged_error_le (L C R Vin Iref Vref : ℝ)
     (hL : 0 < L) (hC : 0 < C) (hR : 0 < R) (hI : 0 < Iref) (hV : 0 < Vref)
     (T ε : ℝ) (Ld : ℝ≥0) (d : ℝ → ℝ) (hT : 0 ≤ T) (hε : 0 < ε)
     (hd : ∀ t ∈ Set.Icc 0 T, d t ∈ Set.Icc 0 1)
@@ -384,7 +384,7 @@ theorem buck_switched_averaged_error_le (L C R Vin Iref Vref : ℝ)
 
 /-- Fixed duty `D ∈ [0, 1]`: the ripple term reduces to
 `|Vin| / (L Iref) * ε`. -/
-theorem buck_switched_averaged_error_le_of_constDuty (L C R Vin Iref Vref : ℝ)
+lemma buck_switched_averaged_error_le_of_constDuty (L C R Vin Iref Vref : ℝ)
     (hL : 0 < L) (hC : 0 < C) (hR : 0 < R) (hI : 0 < Iref) (hV : 0 < Vref)
     (T ε D : ℝ) (hT : 0 ≤ T) (hε : 0 < ε) (hD : D ∈ Set.Icc 0 1)
     (i v iAvg vAvg : ℝ → ℝ) (i₀ v₀ iAvg₀ vAvg₀ : ℝ)
