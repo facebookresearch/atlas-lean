@@ -15,11 +15,14 @@ import Mathlib.Tactic.Positivity
 
 ## i. Overview
 
-For a rigid footing of width `B > 0` carrying vertical load
-`N > 0` and moment `M` per unit out-of-plane length, the linear
-full-contact edge pressures are `N / B ± 6 * M / B ^ 2`. Both are
-nonnegative exactly under the kern (middle-third) bound
-`|M / N| ≤ B / 6`.
+For a rigid strip footing of width `B > 0` (per unit
+out-of-plane length) carrying vertical load `N > 0` and moment
+`M` about the footing centerline, the linear full-contact edge
+pressures are `N / B ± 6 * M / B ^ 2`. Both are nonnegative
+exactly under the kern (middle-third) bound `|M / N| ≤ B / 6`.
+The coefficient `6` is the centered-moment value: `M` is measured
+about the centerline, and a moment taken about another axis must
+be transferred to the centerline before applying the bound.
 
 ## ii. Key results
 
@@ -32,8 +35,9 @@ nonnegative exactly under the kern (middle-third) bound
 
 ## iv. References
 
-- Standard foundation-engineering kern (middle-third) rule for
-  eccentric vertical loading.
+- J. E. Bowles, *Foundation Analysis and Design*, 5th edition,
+  McGraw-Hill, 1996 (kern / middle-third rule for eccentrically
+  loaded footings).
 -/
 
 @[expose] public section
