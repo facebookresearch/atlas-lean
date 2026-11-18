@@ -20,22 +20,24 @@ M. X. Goemans and D. P. Williamson, "New 3/4-approximation algorithms for the ma
 satisfiability problem", *SIAM J. Discrete Math.* 7(4) (1994), 656–666.
 
 Clauses are the repository's CNF clauses `Cslib.Logic.PL.CNFClause` (lists of literals
-`(variable, polarity)`). Setting each variable `x_i` true independently with probability `p_i`,
-a clause is falsified exactly when all its literals are false, so for a clause whose literals
-use distinct variables its satisfaction probability is
-`1 - ∏_{i ∈ P} (1 - p_i) ∏_{i ∈ N} p_i` (§2). This file works with that closed form,
-`clauseSatProb`, and does not formalize the probability space.
+`(variable, polarity)`). As in the paper, where a clause is given by disjoint sets `P_j`, `N_j`
+of variables, every clause must use distinct variables: `(C.map Prod.fst).Nodup`, no variable
+occurring twice in either polarity. `clauseSatProb` and `expectedWeight` take this hypothesis as
+an argument, and so does every statement below that reads them as a probability or an
+expectation.
 
-A list may repeat a variable. For such a clause the closed form is not the satisfaction
-probability, and `lpClauseBound` counts the repeated literal twice where the paper's LP sums over
-sets: for `x₀ ∨ x₀` with `p₀ = 1/2` the closed form is `3/4` while the probability is `1/2`. The
-theorems below are true inequalities about the closed form for every clause; their reading as the
-paper's probabilistic statements (Lemma 3.1, Theorem 4.1, a `3/4`-approximation in expectation)
-holds for clauses whose literals use distinct variables, which is the paper's setting.
+Setting each variable `x_i` true independently with probability `p_i`, a clause is falsified
+exactly when all its literals are false; with distinct variables these events are independent,
+so the clause is satisfied with probability `1 - ∏_{i ∈ P} (1 - p_i) ∏_{i ∈ N} p_i` (§2). This
+file works with that closed form, `clauseSatProb`, and proves that it is the satisfaction
+probability (`clauseSatProb_eq_sum_assignments`, an explicit sum over the assignments of the
+clause's variables). For a clause repeating a variable the closed form is not the probability:
+for `x₀ ∨ x₀` with `p₀ = 1/2` it would be `3/4` while the probability is `1/2`; such clauses are
+excluded. With distinct variables, `lpClauseBound` is the left-hand side of the paper's LP
+constraint.
 
-In the list below, "probability" and "expected weight" mean the closed forms; they are the
-true probabilities and expectations for clauses with distinct variables.
-
+* `clauseSatProb_eq_sum_assignments` : for a clause with distinct variables, `clauseSatProb`
+  is the probability that independent rounding satisfies it (§2).
 * `clauseSatProb_half` : Johnson's assignment `p_i = 1/2` satisfies a `k`-literal clause with
   probability `1 - 2^{-k}` (§2).
 * `roundingFactor_mul_le_clauseSatProb` : their Lemma 3.1; for every feasible solution
@@ -60,20 +62,95 @@ side `∑_{i ∈ P} y_i + ∑_{i ∈ N} (1 - y_i)` of the clause constraint of (
 Williamson, *SIAM J. Discrete Math.* 7(4) (1994), §3). -/
 noncomputable def literalProb (p : ℕ → ℝ) (l : ℕ × Bool) : ℝ := if l.2 then p l.1 else 1 - p l.1
 
-/-- **Satisfaction probability of a clause.** `1 - ∏_l (1 - P[l true])`, the probability that a
-clause whose literals use distinct variables is satisfied when the variables are set
-independently (Goemans and Williamson, *SIAM J. Discrete Math.* 7(4) (1994), §2). -/
-noncomputable def clauseSatProb (p : ℕ → ℝ) (C : CNFClause) : ℝ :=
+/-- **Satisfaction probability of a clause.** For a clause `C` whose literals use distinct
+variables, `1 - ∏_l (1 - P[l true])`, the probability that `C` is satisfied when each variable
+`i` is set true independently with probability `p i` (Goemans and Williamson, *SIAM J. Discrete
+Math.* 7(4) (1994), §2; proved in `clauseSatProb_eq_sum_assignments`). The hypothesis restricts
+the closed form to such clauses: for a clause repeating a variable it is not the satisfaction
+probability. -/
+noncomputable def clauseSatProb (p : ℕ → ℝ) (C : CNFClause) (_hC : (C.map Prod.fst).Nodup) : ℝ :=
   1 - (C.map fun l => 1 - literalProb p l).prod
 
 /-- **Left-hand side of the clause constraint of the MAX SAT relaxation.**
 `∑_{i ∈ P_j} y_i + ∑_{i ∈ N_j} (1 - y_i)` (Goemans and Williamson, *SIAM J. Discrete Math.*
-7(4) (1994), §3, constraint of (IP) and (LP)). -/
+7(4) (1994), §3, constraint of (IP) and (LP)), the sum over the literals of the clause; for a
+clause with distinct variables this is the paper's sum over the sets `P_j` and `N_j`. -/
 noncomputable def lpClauseBound (y : ℕ → ℝ) (C : CNFClause) : ℝ := (C.map (literalProb y)).sum
 
 /-- **The randomized-rounding factor.** `β_k = 1 - (1 - 1/k)^k` (Goemans and Williamson,
 *SIAM J. Discrete Math.* 7(4) (1994), Lemma 3.1). -/
 noncomputable def roundingFactor (k : ℕ) : ℝ := 1 - (1 - 1 / (k : ℝ)) ^ k
+
+open Classical in
+/-- **The closed form is the satisfaction probability.** Let `C` be a clause whose literals use
+distinct variables, with variable set `V = {l.1 : l ∈ C}`, and set each variable `i ∈ V` true
+independently with probability `p i`, so that an assignment `a : V → Bool` has probability
+`∏_{i ∈ V} P[a i]`, `P[true] = p i`, `P[false] = 1 - p i`. Then `clauseSatProb p C` is the total
+probability of the assignments that satisfy `C` (Goemans and Williamson, *SIAM J. Discrete
+Math.* 7(4) (1994), §2): because the literals use distinct variables, exactly one assignment
+falsifies `C`, the one making every literal false, and its probability is
+`∏_l (1 - P[l true])`. -/
+theorem clauseSatProb_eq_sum_assignments (p : ℕ → ℝ) {C : CNFClause}
+    (hC : (C.map Prod.fst).Nodup) :
+    clauseSatProb p C hC = ∑ a : (C.map Prod.fst).toFinset → Bool,
+      (∏ i, if a i then p i else 1 - p i) *
+        if CNFClause.Satisfies
+            (fun n => if h : n ∈ (C.map Prod.fst).toFinset then a ⟨n, h⟩ else false) C
+        then 1 else 0 := by
+  set V := (C.map Prod.fst).toFinset
+  have hmemV : ∀ l ∈ C, l.1 ∈ V := fun l hl =>
+    List.mem_toFinset.mpr (List.mem_map.mpr ⟨l, hl, rfl⟩)
+  -- the literal of each variable, unique because the variables are distinct
+  have hlit : ∀ i : V, ∃ l ∈ C, l.1 = i := fun i => by
+    obtain ⟨l, hl, h⟩ := List.mem_map.mp (List.mem_toFinset.mp i.2)
+    exact ⟨l, hl, h⟩
+  choose lit hlitC hlit1 using hlit
+  have huniq : ∀ l ∈ C, ∀ l' ∈ C, l.1 = l'.1 → l = l' := fun l hl l' hl' h =>
+    List.inj_on_of_nodup_map hC hl hl' h
+  have hlit_eq : ∀ l (hl : l ∈ C), lit ⟨l.1, hmemV l hl⟩ = l := fun l hl =>
+    huniq _ (hlitC _) _ hl (hlit1 _)
+  -- the only falsifying assignment
+  set a₀ : V → Bool := fun i => !(lit i).2 with ha₀
+  have hsat : ∀ a : V → Bool,
+      CNFClause.Satisfies (fun n => if h : n ∈ V then a ⟨n, h⟩ else false) C ↔ a ≠ a₀ := by
+    intro a
+    rw [CNFClause.satisfies_def]
+    constructor
+    · rintro ⟨l, hl, hal⟩ rfl
+      rw [dite_eq_left (hmemV l hl)] at hal
+      simp [ha₀, hlit_eq l hl] at hal
+    · intro hne
+      obtain ⟨i, hi⟩ := Function.ne_iff.mp hne
+      refine ⟨lit i, hlitC i, ?_⟩
+      have hi' : (⟨(lit i).1, hmemV _ (hlitC i)⟩ : V) = i := Subtype.ext (hlit1 i)
+      rw [dite_eq_left (hmemV _ (hlitC i)), hi']
+      simpa [ha₀] using hi
+  -- the probabilities of all assignments add up to `1`
+  have htot : ∑ a : V → Bool, (∏ i, if a i then p i else 1 - p i) = 1 := by
+    rw [← Fintype.prod_sum (fun (i : V) (b : Bool) => if b then p i else 1 - p i)]
+    simp
+  -- the probability of the falsifying assignment
+  have hw₀ : (∏ i, if a₀ i then p i else 1 - p i) = (C.map fun l => 1 - literalProb p l).prod := by
+    rw [← List.prod_toFinset _ (List.Nodup.of_map _ hC)]
+    refine Finset.prod_bij (fun i _ => lit i) (fun i _ => List.mem_toFinset.mpr (hlitC i))
+      (fun i _ j _ h => Subtype.ext ((hlit1 i).symm.trans ((congrArg Prod.fst h).trans (hlit1 j))))
+      (fun l hl => ⟨⟨l.1, hmemV l (List.mem_toFinset.mp hl)⟩, Finset.mem_univ _,
+        hlit_eq l (List.mem_toFinset.mp hl)⟩) (fun i _ => ?_)
+    simp only [ha₀, literalProb, hlit1]
+    cases (lit i).2 <;> simp
+  calc clauseSatProb p C hC
+      = ∑ a : V → Bool, ((∏ i, if a i then p i else 1 - p i) -
+          if a = a₀ then ∏ i, if a i then p i else 1 - p i else 0) := by
+        rw [Finset.sum_sub_distrib, htot, Finset.sum_ite_eq' Finset.univ a₀, ite_eq_left
+          (Finset.mem_univ _), hw₀]
+        rfl
+    _ = _ := by
+        refine Finset.sum_congr rfl fun a _ => ?_
+        by_cases h : a = a₀
+        · rw [ite_eq_left h, ite_eq_right ((hsat a).not.mpr (not_not.mpr h))]
+          ring
+        · rw [ite_eq_right h, ite_eq_left ((hsat a).mpr h)]
+          ring
 
 private theorem prod_map_const (C : CNFClause) (c : ℝ) :
     (C.map fun _ => c).prod = c ^ C.length := by
@@ -81,12 +158,11 @@ private theorem prod_map_const (C : CNFClause) (c : ℝ) :
   | nil => simp
   | cons a C ih => simp [pow_succ, mul_comm]
 
-/-- **Johnson's random assignment.** With every variable true with probability `1/2`, the
-closed-form satisfaction probability of a clause with `k` literals is `1 - 2^{-k}`; for a clause
-whose literals use distinct variables this is the probability that Johnson's assignment
-satisfies it (Goemans and Williamson, *SIAM J. Discrete Math.* 7(4) (1994), §2). -/
-theorem clauseSatProb_half (C : CNFClause) :
-    clauseSatProb (fun _ => 1 / 2) C = 1 - (1 / 2 : ℝ) ^ C.length := by
+/-- **Johnson's random assignment.** With every variable true with probability `1/2`, a clause
+with `k` literals on distinct variables is satisfied with probability `1 - 2^{-k}` (Goemans and
+Williamson, *SIAM J. Discrete Math.* 7(4) (1994), §2). -/
+theorem clauseSatProb_half (C : CNFClause) (hC : (C.map Prod.fst).Nodup) :
+    clauseSatProb (fun _ => 1 / 2) C hC = 1 - (1 / 2 : ℝ) ^ C.length := by
   unfold clauseSatProb literalProb
   have : (C.map fun l : ℕ × Bool => 1 - if l.2 then (1 / 2 : ℝ) else 1 - 1 / 2) =
       C.map fun _ => (1 / 2 : ℝ) := by
@@ -109,17 +185,16 @@ private theorem prod_le_mean_pow {n : ℕ} (hn : 0 < n) (z : Fin n → ℝ) (hz 
   have hpow := pow_le_pow_left₀ (Real.rpow_nonneg hprod _) h n
   rwa [Real.rpow_inv_natCast_pow hprod (Nat.pos_iff_ne_zero.mp hn)] at hpow
 
-/-- **Goemans–Williamson Lemma 3.1.** Let `0 ≤ y_i ≤ 1` on the variables of a clause `C` with
-`k` literals, and `0 ≤ z ≤ min(1, ∑_{i ∈ P} y_i + ∑_{i ∈ N} (1 - y_i))`. Then the closed-form
-satisfaction probability of `C` under `p_i = y_i` is at least `β_k z`, `β_k = 1 - (1 - 1/k)^k`.
-For a clause whose literals use distinct variables, as in the paper, this says that randomized
-rounding satisfies `C` with probability at least `β_k z` (Goemans and Williamson, *SIAM J.
-Discrete Math.* 7(4) (1994), Lemma 3.1, proved as there by the arithmetic–geometric mean
-inequality and concavity). The inequality itself holds for every clause. -/
+/-- **Goemans–Williamson Lemma 3.1.** Let `C` be a clause with `k` literals on distinct
+variables, `0 ≤ y_i ≤ 1` on its variables, and
+`0 ≤ z ≤ min(1, ∑_{i ∈ P} y_i + ∑_{i ∈ N} (1 - y_i))`. Then randomized rounding `p_i = y_i`
+satisfies `C` with probability at least `β_k z`, `β_k = 1 - (1 - 1/k)^k` (Goemans and
+Williamson, *SIAM J. Discrete Math.* 7(4) (1994), Lemma 3.1, proved as there by the
+arithmetic–geometric mean inequality and concavity). -/
 theorem roundingFactor_mul_le_clauseSatProb {y : ℕ → ℝ} {C : CNFClause} {z : ℝ}
-    (hy : ∀ l ∈ C, 0 ≤ y l.1 ∧ y l.1 ≤ 1) (hz0 : 0 ≤ z) (hz1 : z ≤ 1)
-    (hz : z ≤ lpClauseBound y C) :
-    roundingFactor C.length * z ≤ clauseSatProb y C := by
+    (hC : (C.map Prod.fst).Nodup) (hy : ∀ l ∈ C, 0 ≤ y l.1 ∧ y l.1 ≤ 1) (hz0 : 0 ≤ z)
+    (hz1 : z ≤ 1) (hz : z ≤ lpClauseBound y C) :
+    roundingFactor C.length * z ≤ clauseSatProb y C hC := by
   rcases Nat.eq_zero_or_pos C.length with hk | hk
   · rw [List.length_eq_zero_iff] at hk
     subst hk
@@ -201,16 +276,16 @@ theorem three_halves_le_johnson_add_roundingFactor {k : ℕ} (hk : 0 < k) :
       linarith
     linarith
 
-/-- **Goemans–Williamson Theorem 4.1, per clause.** For a clause `C`, `0 ≤ y ≤ 1` on its
-variables, and `0 ≤ z ≤ min(1, ∑_{i ∈ P} y_i + ∑_{i ∈ N} (1 - y_i))`, the average of the
-closed-form satisfaction probabilities under Johnson's assignment and under randomized rounding
-is at least `(3/4) z`; for a clause with distinct variables these are the true probabilities
-(Goemans and Williamson, *SIAM J. Discrete Math.* 7(4) (1994), proof of Theorem 4.1). -/
+/-- **Goemans–Williamson Theorem 4.1, per clause.** For a clause `C` on distinct variables,
+`0 ≤ y ≤ 1` on its variables, and `0 ≤ z ≤ min(1, ∑_{i ∈ P} y_i + ∑_{i ∈ N} (1 - y_i))`, the
+average of the probabilities that Johnson's assignment and randomized rounding satisfy `C` is at
+least `(3/4) z` (Goemans and Williamson, *SIAM J. Discrete Math.* 7(4) (1994), proof of
+Theorem 4.1). -/
 theorem three_quarters_mul_le_average {y : ℕ → ℝ} {C : CNFClause} {z : ℝ}
-    (hy : ∀ l ∈ C, 0 ≤ y l.1 ∧ y l.1 ≤ 1) (hz0 : 0 ≤ z) (hz1 : z ≤ 1)
-    (hz : z ≤ lpClauseBound y C) :
-    (3 / 4 : ℝ) * z ≤ (clauseSatProb (fun _ => 1 / 2) C + clauseSatProb y C) / 2 := by
-  have hr := roundingFactor_mul_le_clauseSatProb hy hz0 hz1 hz
+    (hC : (C.map Prod.fst).Nodup) (hy : ∀ l ∈ C, 0 ≤ y l.1 ∧ y l.1 ≤ 1) (hz0 : 0 ≤ z)
+    (hz1 : z ≤ 1) (hz : z ≤ lpClauseBound y C) :
+    (3 / 4 : ℝ) * z ≤ (clauseSatProb (fun _ => 1 / 2) C hC + clauseSatProb y C hC) / 2 := by
+  have hr := roundingFactor_mul_le_clauseSatProb hC hy hz0 hz1 hz
   rw [clauseSatProb_half]
   rcases Nat.eq_zero_or_pos C.length with hk | hk
   · rw [List.length_eq_zero_iff] at hk
@@ -231,35 +306,35 @@ Math.* 7(4) (1994), §3). -/
 def LPFeasible {m : ℕ} (C : Fin m → CNFClause) (y : ℕ → ℝ) (z : Fin m → ℝ) : Prop :=
   (∀ i, 0 ≤ y i ∧ y i ≤ 1) ∧ ∀ j, 0 ≤ z j ∧ z j ≤ 1 ∧ z j ≤ lpClauseBound y (C j)
 
-/-- **Expected weight of a randomized assignment.** `∑_j w_j · clauseSatProb p (C j)`. When every
-clause uses distinct variables, this is the expected satisfied weight when variable `i` is true
-independently with probability `p i` (Goemans and Williamson, *SIAM J. Discrete Math.* 7(4)
-(1994), §2); otherwise it is only the closed form. -/
+/-- **Expected weight of a randomized assignment.** For clauses `C j` on distinct variables,
+`∑_j w_j · clauseSatProb p (C j)`, the expected satisfied weight when variable `i` is true
+independently with probability `p i`, by linearity of expectation (Goemans and Williamson,
+*SIAM J. Discrete Math.* 7(4) (1994), §2). -/
 noncomputable def expectedWeight {m : ℕ} (w : Fin m → ℝ) (C : Fin m → CNFClause)
-    (p : ℕ → ℝ) : ℝ :=
-  ∑ j, w j * clauseSatProb p (C j)
+    (hC : ∀ j, ((C j).map Prod.fst).Nodup) (p : ℕ → ℝ) : ℝ :=
+  ∑ j, w j * clauseSatProb p (C j) (hC j)
 
-/-- **Goemans–Williamson Theorem 4.1.** For nonnegative weights and a feasible solution
-`(y, z)` of (LP), let `Ŵ₁` be the expected weight under `p_i = 1/2` and `Ŵ₂` under
-`p_i = y_i`. Then `max(Ŵ₁, Ŵ₂) ≥ (Ŵ₁ + Ŵ₂) / 2 ≥ (3/4) ∑_j w_j z_j` (Goemans and Williamson,
-*SIAM J. Discrete Math.* 7(4) (1994), Theorem 4.1, stated there for an optimal `(y, z)`; the
-proof uses only feasibility). `Ŵ₁`, `Ŵ₂` are the closed forms `expectedWeight`, which are
-expected weights when every clause uses distinct variables. -/
+/-- **Goemans–Williamson Theorem 4.1.** For clauses on distinct variables, nonnegative weights
+and a feasible solution `(y, z)` of (LP), let `Ŵ₁` be the expected satisfied weight under
+`p_i = 1/2` and `Ŵ₂` under `p_i = y_i`. Then `max(Ŵ₁, Ŵ₂) ≥ (Ŵ₁ + Ŵ₂) / 2 ≥ (3/4) ∑_j w_j z_j`
+(Goemans and Williamson, *SIAM J. Discrete Math.* 7(4) (1994), Theorem 4.1, stated there for an
+optimal `(y, z)`; the proof uses only feasibility). -/
 theorem three_quarters_le_max_expectedWeight {m : ℕ} {w : Fin m → ℝ} {C : Fin m → CNFClause}
-    {y : ℕ → ℝ} {z : Fin m → ℝ} (hw : ∀ j, 0 ≤ w j) (hf : LPFeasible C y z) :
+    {y : ℕ → ℝ} {z : Fin m → ℝ} (hC : ∀ j, ((C j).map Prod.fst).Nodup) (hw : ∀ j, 0 ≤ w j)
+    (hf : LPFeasible C y z) :
     (3 / 4 : ℝ) * ∑ j, w j * z j ≤
-        (expectedWeight w C (fun _ => 1 / 2) + expectedWeight w C y) / 2 ∧
-      (expectedWeight w C (fun _ => 1 / 2) + expectedWeight w C y) / 2 ≤
-        max (expectedWeight w C (fun _ => 1 / 2)) (expectedWeight w C y) := by
+        (expectedWeight w C hC (fun _ => 1 / 2) + expectedWeight w C hC y) / 2 ∧
+      (expectedWeight w C hC (fun _ => 1 / 2) + expectedWeight w C hC y) / 2 ≤
+        max (expectedWeight w C hC (fun _ => 1 / 2)) (expectedWeight w C hC y) := by
   refine ⟨?_, by
-    rcases le_total (expectedWeight w C (fun _ => 1 / 2)) (expectedWeight w C y) with h | h
+    rcases le_total (expectedWeight w C hC (fun _ => 1 / 2)) (expectedWeight w C hC y) with h | h
     · rw [max_eq_right h]; linarith
     · rw [max_eq_left h]; linarith⟩
   unfold expectedWeight
   rw [mul_sum, ← sum_add_distrib, sum_div]
   refine sum_le_sum fun j _ => ?_
   obtain ⟨hz0, hz1, hz⟩ := hf.2 j
-  have h := three_quarters_mul_le_average (fun l _ => hf.1 l.1) hz0 hz1 hz
+  have h := three_quarters_mul_le_average (hC j) (fun l _ => hf.1 l.1) hz0 hz1 hz
   have := mul_le_mul_of_nonneg_left h (hw j)
   linarith
 
@@ -310,25 +385,24 @@ theorem lpFeasible_of_assignment {m : ℕ} (w : Fin m → ℝ) (C : Fin m → CN
     · simp only [hs, ↓reduceIte, mul_one]
     · simp only [hs, ↓reduceIte, mul_zero]
 
-/-- **The 3/4 guarantee against the MAX SAT optimum.** For nonnegative weights, if `(y, z)` is
-an optimal solution of (LP), then for every truth assignment `a`,
-`max(Ŵ₁, Ŵ₂) ≥ (3/4) · (weight satisfied by a)` for the closed forms `Ŵ₁`, `Ŵ₂`. For
-instances whose clauses use distinct variables, the paper's setting, `Ŵ₁` and `Ŵ₂` are expected
-weights, so the better of Johnson's assignment and randomized rounding is a
-`3/4`-approximation in expectation (Goemans and Williamson, *SIAM J. Discrete Math.* 7(4)
-(1994), Theorem 4.1 with `Z*_LP ≥ Z*_IP`). For clauses repeating a variable that reading fails:
-for the single clause `x₀ ∨ x₀`, `y₀ = 1/2`, `z = 1` is optimal and both closed forms are `3/4`,
-while both roundings satisfy the clause with probability `1/2`. -/
+/-- **The 3/4 guarantee against the MAX SAT optimum.** For clauses on distinct variables and
+nonnegative weights, if `(y, z)` is an optimal solution of (LP), then for every truth assignment
+`a`, `max(Ŵ₁, Ŵ₂) ≥ (3/4) · (weight satisfied by a)`, where `Ŵ₁` and `Ŵ₂` are the expected
+satisfied weights of Johnson's assignment and of randomized rounding: the better of the two is
+a `3/4`-approximation in expectation (Goemans and Williamson, *SIAM J. Discrete Math.* 7(4)
+(1994), Theorem 4.1 with `Z*_LP ≥ Z*_IP`). Clauses that repeat a variable are excluded: for the
+single clause `x₀ ∨ x₀`, the closed forms would be `3/4` while both roundings satisfy it with
+probability `1/2`. -/
 theorem three_quarters_le_max_expectedWeight_of_optimal {m : ℕ} {w : Fin m → ℝ}
-    {C : Fin m → CNFClause} {y : ℕ → ℝ} {z : Fin m → ℝ} (hw : ∀ j, 0 ≤ w j)
-    (hf : LPFeasible C y z)
+    {C : Fin m → CNFClause} {y : ℕ → ℝ} {z : Fin m → ℝ} (hC : ∀ j, ((C j).map Prod.fst).Nodup)
+    (hw : ∀ j, 0 ≤ w j) (hf : LPFeasible C y z)
     (hopt : ∀ y' z', LPFeasible C y' z' → ∑ j, w j * z' j ≤ ∑ j, w j * z j) (a : ℕ → Bool) :
     (3 / 4 : ℝ) * satisfiedWeight w C a ≤
-      max (expectedWeight w C (fun _ => 1 / 2)) (expectedWeight w C y) := by
+      max (expectedWeight w C hC (fun _ => 1 / 2)) (expectedWeight w C hC y) := by
   obtain ⟨y', z', hf', hval⟩ := lpFeasible_of_assignment w C a
   have h1 := hopt y' z' hf'
   rw [hval] at h1
-  obtain ⟨h2, h3⟩ := three_quarters_le_max_expectedWeight hw hf
+  obtain ⟨h2, h3⟩ := three_quarters_le_max_expectedWeight hC hw hf
   linarith
 
 end CSLibExt.Algorithms.Approximation.MaxSat

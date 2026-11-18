@@ -8,11 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.GameTheory.NashExistence
+public import MathlibExt.GameTheory.MixedNashExistence
 
 @[expose] public section
 
-open Convexity MathlibExt.GameTheory.NashExistence
+open Convexity MathlibExt.GameTheory.MixedNashExistence
 
 namespace MathlibExtTest.GameTheory.NashExistence
 
@@ -23,7 +23,7 @@ def pennies (i : Fin 2) (s : Fin 2 → Fin 2) : ℝ :=
 
 /-- Non-vacuity: Nash's theorem applies to matching pennies. -/
 example : ∃ σ : Fin 2 → StdSimplex ℝ (Fin 2), IsMixedNash pennies σ :=
-  exists_isMixedNash (S := fun _ => Fin 2) pennies
+  exists_isMixedNash (A := fun _ => Fin 2) pennies
 
 /-- Unfolded, the conclusion bounds every unilateral mixed deviation. -/
 example (σ : Fin 2 → StdSimplex ℝ (Fin 2)) (h : IsMixedNash pennies σ) (τ : StdSimplex ℝ (Fin 2)) :
