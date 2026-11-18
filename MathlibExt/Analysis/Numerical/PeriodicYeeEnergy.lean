@@ -43,7 +43,8 @@ difference obtained from the transposed difference matrix. The
 coercivity proof bounds that cross term by weighted Cauchy-Schwarz
 together with a bound on the weighted norm of the forward difference,
 which gives the trap between `(1 - rho)` and `(1 + rho)` times the
-squared pair norm under the Courant bound `c * dt / h <= rho < 1`.
+squared pair norm under the Courant bound `c * dt / h <= rho`; the
+lower bound is coercive when `rho < 1`.
 The bound for every iterate follows by combining exact preservation
 of the energy at each step with the trap at the initial and current
 pairs. At Courant number at least one on an even grid, the alternating
@@ -57,9 +58,9 @@ positive coercivity constant exists there.
   positive grid spacing.
 - `leapfrogStep_yeeEnergy`: one leapfrog step preserves the energy
   exactly.
-- `yeeEnergy_pairNormSq_bounds`: under a strict Courant margin, the
-  energy is trapped between `(1 - rho)` and `(1 + rho)` times the
-  squared pair norm.
+- `yeeEnergy_pairNormSq_bounds`: under the Courant bound
+  `c * dt / h ≤ rho`, the energy is trapped between `(1 - rho)` and
+  `(1 + rho)` times the squared pair norm (coercive when `rho < 1`).
 - `staggeredLeapfrog_energyStable`: one-step energy preservation
   together with the two-sided trap.
 - `leapfrogIterate_yeeEnergy`: every iterate has the same energy as
@@ -262,29 +263,6 @@ private theorem scaledForwardDifference_sub {N : ℕ} (h c dt : ℝ)
   unfold scaledForwardDifference
   rw [dPlus_sub, smul_sub]
 
-private theorem dPlusMatrix_mulVec {N : ℕ} (h : ℝ)
-    (v : Fin N → ℝ) :
-    dPlusMatrix h *ᵥ v = dPlus h v := by
-  funext i
-  simp only [Matrix.mulVec, dPlusMatrix, Matrix.of_apply, dPlus,
-    Pi.single_apply, dotProduct]
-  have hterm : ∀ x : Fin N,
-      ((if periodicSucc i = x then (1 : ℝ) else 0) -
-          (if i = x then (1 : ℝ) else 0)) / h * v x =
-        ((if periodicSucc i = x then v x else 0) -
-          (if i = x then v x else 0)) / h := by
-    intro x
-    split_ifs <;> simp_all <;> ring
-  rw [Finset.sum_congr rfl (fun x _ => hterm x)]
-  have hsum : (∑ x, ((if periodicSucc i = x then v x else 0) -
-        (if i = x then v x else 0)) / h) =
-      ((∑ x, ((if periodicSucc i = x then v x else 0) -
-        (if i = x then v x else 0))) / h) := by
-    simp only [div_eq_mul_inv]
-    rw [← Finset.sum_mul]
-  rw [hsum, Finset.sum_sub_distrib]
-  simp
-
 private theorem weightedInner_dPlus {N : ℕ} (h : ℝ)
     (u v : Fin N → ℝ) :
     weightedInner h u (dPlus h v) =
@@ -298,7 +276,8 @@ private theorem weightedInner_dPlus {N : ℕ} (h : ℝ)
           rw [dotProduct_comm]
       _ = u ⬝ᵥ (dPlusMatrix h *ᵥ v) := by
           rw [Matrix.dotProduct_mulVec]
-      _ = u ⬝ᵥ (dPlus h v) := by rw [dPlusMatrix_mulVec]
+      _ = u ⬝ᵥ (dPlus h v) := by
+          rw [PeriodicLeapfrogStencil.dPlusMatrix_mulVec]
       _ = (dPlus h v) ⬝ᵥ u := by rw [dotProduct_comm]
   unfold weightedInner
   congr 1
@@ -477,13 +456,10 @@ theorem pairNormSq_nonneg {N : ℕ} (h : ℝ) (hh : 0 < h) (u v : Fin N → ℝ)
 
 /-- **One-step energy invariance.** The leapfrog update preserves
 the quadratic energy exactly. -/
-theorem leapfrogStep_yeeEnergy {N : ℕ} (hN : 2 ≤ N) (h c dt : ℝ)
-    (hh : 0 < h) (u v : Fin N → ℝ) :
+theorem leapfrogStep_yeeEnergy {N : ℕ} (h c dt : ℝ) (u v : Fin N → ℝ) :
     yeeEnergy h c dt (leapfrogStep h c dt u v).1
         (leapfrogStep h c dt u v).2 =
       yeeEnergy h c dt u v := by
-  have _h_pos : 0 < h := hh
-  have _hN : 2 ≤ N := hN
   have h2 : (leapfrogStep h c dt u v).2 =
       v - (c * dt) • dPlusAdjoint h u := by
     simp [leapfrogStep]
@@ -542,15 +518,15 @@ theorem leapfrogStep_yeeEnergy {N : ℕ} (hN : 2 ≤ N) (h c dt : ℝ)
   rw [h1, h2, huNorm, hvNorm, hcross, ht, hBu]
   ring
 
-/-- **Coercivity under a strict Courant margin.** With
+/-- **Two-sided energy bound under a Courant bound.** With
 `c * dt / h ≤ rho`, the energy is trapped between `(1 - rho)` and
-`(1 + rho)` times the squared pair norm. -/
+`(1 + rho)` times the squared pair norm; the lower bound is coercive
+when `rho < 1`. -/
 theorem yeeEnergy_pairNormSq_bounds {N : ℕ} (h c dt rho : ℝ)
     (hh : 0 < h) (hc : 0 < c) (hdt : 0 < dt)
-    (hr : c * dt / h ≤ rho) (hrho : rho < 1) (u v : Fin N → ℝ) :
+    (hr : c * dt / h ≤ rho) (u v : Fin N → ℝ) :
     (1 - rho) * pairNormSq h u v ≤ yeeEnergy h c dt u v ∧
       yeeEnergy h c dt u v ≤ (1 + rho) * pairNormSq h u v := by
-  have _hrho : rho < 1 := hrho
   have ha : 0 ≤ c * dt := mul_nonneg hc.le hdt.le
   have hP : 0 ≤ pairNormSq h u v := pairNormSq_nonneg h hh u v
   have habs := abs_weightedInner_scaled_le h c dt hh ha u v
@@ -565,26 +541,26 @@ theorem yeeEnergy_pairNormSq_bounds {N : ℕ} (h c dt rho : ℝ)
   unfold yeeEnergy pairNormSq at *
   constructor <;> linarith
 
-/-- **Staggered-grid energy stability.** Under a strict Courant
-margin the leapfrog update preserves the quadratic energy, and
-the energy is trapped between `(1 - rho)` and `(1 + rho)` times
-the squared pair norm. -/
-theorem staggeredLeapfrog_energyStable {N : ℕ} (hN : 2 ≤ N)
+/-- **Staggered-grid energy stability.** The leapfrog update
+preserves the quadratic energy, and under the Courant bound
+`c * dt / h ≤ rho` the energy is trapped between `(1 - rho)` and
+`(1 + rho)` times the squared pair norm. -/
+theorem staggeredLeapfrog_energyStable {N : ℕ}
     (h c dt rho : ℝ) (hh : 0 < h) (hc : 0 < c) (hdt : 0 < dt)
-    (hr : c * dt / h ≤ rho) (hrho : rho < 1) (u v : Fin N → ℝ) :
+    (hr : c * dt / h ≤ rho) (u v : Fin N → ℝ) :
     yeeEnergy h c dt (leapfrogStep h c dt u v).1
           (leapfrogStep h c dt u v).2 =
         yeeEnergy h c dt u v ∧
       (1 - rho) * pairNormSq h u v ≤ yeeEnergy h c dt u v ∧
         yeeEnergy h c dt u v ≤ (1 + rho) * pairNormSq h u v := by
-  exact ⟨leapfrogStep_yeeEnergy hN h c dt hh u v,
-    yeeEnergy_pairNormSq_bounds h c dt rho hh hc hdt hr hrho u v⟩
+  exact ⟨leapfrogStep_yeeEnergy h c dt u v,
+    yeeEnergy_pairNormSq_bounds h c dt rho hh hc hdt hr u v⟩
 
 /-! ## D. All iterates -/
 
 /-- Every iterate has the same energy as the initial pair. -/
-theorem leapfrogIterate_yeeEnergy {N : ℕ} (hN : 2 ≤ N) (h c dt : ℝ)
-    (hh : 0 < h) (u0 v0 : Fin N → ℝ) (n : ℕ) :
+theorem leapfrogIterate_yeeEnergy {N : ℕ} (h c dt : ℝ)
+    (u0 v0 : Fin N → ℝ) (n : ℕ) :
     yeeEnergy h c dt (leapfrogIterate h c dt u0 v0 n).1
         (leapfrogIterate h c dt u0 v0 n).2 =
       yeeEnergy h c dt u0 v0 := by
@@ -596,11 +572,11 @@ theorem leapfrogIterate_yeeEnergy {N : ℕ} (hN : 2 ≤ N) (h c dt : ℝ)
             (leapfrogIterate h c dt u0 v0 n).1
             (leapfrogIterate h c dt u0 v0 n).2 := rfl
       rw [hstep]
-      exact (leapfrogStep_yeeEnergy hN h c dt hh _ _).trans ih
+      exact (leapfrogStep_yeeEnergy h c dt _ _).trans ih
 
 /-- **Uniform pair-norm bound.** Every iterate has pair norm at
 most `sqrt((1 + rho) / (1 - rho))` times the initial pair norm. -/
-theorem leapfrogIterate_pairNorm_le {N : ℕ} (hN : 2 ≤ N)
+theorem leapfrogIterate_pairNorm_le {N : ℕ}
     (h c dt rho : ℝ) (hh : 0 < h) (hc : 0 < c) (hdt : 0 < dt)
     (hr : c * dt / h ≤ rho) (hrho : rho < 1) (u0 v0 : Fin N → ℝ)
     (n : ℕ) :
@@ -608,12 +584,11 @@ theorem leapfrogIterate_pairNorm_le {N : ℕ} (hN : 2 ≤ N)
         (leapfrogIterate h c dt u0 v0 n).2 ≤
       Real.sqrt ((1 + rho) / (1 - rho)) * pairNorm h u0 v0 := by
   have h1rho : 0 < 1 - rho := by linarith
-  have hb0 := yeeEnergy_pairNormSq_bounds h c dt rho hh hc hdt hr
-    hrho u0 v0
+  have hb0 := yeeEnergy_pairNormSq_bounds h c dt rho hh hc hdt hr u0 v0
   have hbn := yeeEnergy_pairNormSq_bounds h c dt rho hh hc hdt hr
-    hrho (leapfrogIterate h c dt u0 v0 n).1
+    (leapfrogIterate h c dt u0 v0 n).1
       (leapfrogIterate h c dt u0 v0 n).2
-  have henergy := leapfrogIterate_yeeEnergy hN h c dt hh u0 v0 n
+  have henergy := leapfrogIterate_yeeEnergy h c dt u0 v0 n
   have hPn : pairNormSq h (leapfrogIterate h c dt u0 v0 n).1
         (leapfrogIterate h c dt u0 v0 n).2 ≤
       ((1 + rho) / (1 - rho)) * pairNormSq h u0 v0 := by
@@ -646,12 +621,9 @@ energy below `eps` times its squared pair norm. The strict margin
 is therefore necessary for this argument, and at `r = 1` the lower
 factor `1 - rho` degenerates to zero. -/
 theorem no_positive_coercivity_of_courant_ge_one {N : ℕ} (hN : 2 ≤ N)
-    (hNeven : Even N) (h c dt : ℝ) (hh : 0 < h) (hc : 0 < c)
-    (hdt : 0 < dt) (hr : 1 ≤ c * dt / h) :
+    (hNeven : Even N) (h c dt : ℝ) (hh : 0 < h) (hr : 1 ≤ c * dt / h) :
     ¬ ∃ eps : ℝ, 0 < eps ∧
       ∀ u v : Fin N → ℝ, eps * pairNormSq h u v ≤ yeeEnergy h c dt u v := by
-  have _hc : 0 < c := hc
-  have _hdt : 0 < dt := hdt
   rintro ⟨eps, heps, hforall⟩
   set w : Fin N → ℝ := fun j => (-1 : ℝ) ^ j.val with hw_def
   have hsucc_w : ∀ j : Fin N, w (periodicSucc j) = - w j := by
