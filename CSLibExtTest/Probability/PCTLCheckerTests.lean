@@ -109,6 +109,11 @@ example :
     checkBoundedUntilTab branchDTMC.P {0, 2} {1} 3 0 .eq (1 / 2) = true := by
   decide +kernel
 
+/-- The whole tabulated row at horizon `3` on the branch chain,
+checked in the kernel. -/
+example : hitTab branchDTMC.P {0, 2} {1} 3 = [1 / 2, 1, 0] := by
+  decide +kernel
+
 /-- The tabulated lookup agrees with the reference recursion at every
 state of the branch chain. -/
 example (i : Fin 3) :
