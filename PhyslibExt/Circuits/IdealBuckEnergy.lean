@@ -30,8 +30,9 @@ import Mathlib.Tactic.Ring
 
 An ideal two-state buck converter in continuous conduction, before
 any averaging: positive inductance `L`, capacitance `C` and load
-resistance `R`, constant input voltage `Vin`, a real switching
-function `s` that is constant on each open interval between
+resistance `R`, constant input voltage `Vin`, a switching
+function `s` that takes only the values `0` and `1` and is
+constant with a binary value on each open interval between
 finitely many switching instants, and inductor-current and
 capacitor-voltage states `i` and `v` that are continuous on the
 whole closed horizon, differentiable between switches, and satisfy
@@ -50,9 +51,13 @@ interval contributions, and a state that returns to its initial
 value after one period has zero net stored-energy change over the
 cycle. The source branch carries the switched input voltage at
 current `-i` (passive sign), so the source delivers `s * Vin * i`
-exactly when its absorbed power is subtracted. No averaged
-duty-cycle model, discontinuous conduction, dead time or switching
-loss is claimed.
+exactly when its absorbed power is subtracted. Continuous
+conduction is represented by the binary switching together with
+the two state laws and the continuity of the state on the whole
+horizon; no separate positivity hypothesis on the inductor current
+is assumed, because no proof step uses one. No averaged
+duty-cycle model, discontinuous conduction mode, dead time or
+switching loss is claimed.
 
 The pointwise balance is proved directly from the two state laws:
 the derivative of each quadratic energy term is computed from the
@@ -266,8 +271,9 @@ theorem buckStoredEnergy_hasDerivAt_eq_supplied_sub_loss (L C R Vin : ℝ)
 /-- Headline integrated balance: across finitely many switching
 intervals witnessed by consecutive breakpoints, with the state
 continuous on the whole horizon, the switching function constant
-on each open interval, and both state laws with differentiability
-on each open interval, the stored energy change equals the
+with a binary value (`0` or `1`) on each open interval, and both
+state laws with differentiability on each open interval, the
+stored energy change equals the
 integral of switched input power minus resistive loss. Continuity
 at the breakpoints is the no-impulsive-reset hypothesis; no
 derivative at a breakpoint is assumed. On each closed subinterval
@@ -280,7 +286,7 @@ theorem buckStoredEnergy_sub_eq_integral_supplied_sub_loss (L C R Vin : ℝ)
     (hτinc : ∀ k : ℕ, k < n → τ k < τ (k + 1))
     (hicont : ContinuousOn i (Set.Icc a b))
     (hvcont : ContinuousOn v (Set.Icc a b))
-    (hsconst : ∀ k : ℕ, k < n → ∃ c : ℝ,
+    (hsconst : ∀ k : ℕ, k < n → ∃ c : ℝ, (c = 0 ∨ c = 1) ∧
       ∀ t : ℝ, t ∈ Set.Ioo (τ k) (τ (k + 1)) → s t = c)
     (hlaw : ∀ k : ℕ, k < n → ∀ t : ℝ, t ∈ Set.Ioo (τ k) (τ (k + 1)) →
       L * deriv i t = s t * Vin - v t ∧ C * deriv v t = i t - v t / R)
@@ -364,7 +370,7 @@ theorem buckStoredEnergy_periodic_net_change_eq_zero (L C R Vin : ℝ)
     (hτinc : ∀ k : ℕ, k < n → τ k < τ (k + 1))
     (hicont : ContinuousOn i (Set.Icc 0 T))
     (hvcont : ContinuousOn v (Set.Icc 0 T))
-    (hsconst : ∀ k : ℕ, k < n → ∃ c : ℝ,
+    (hsconst : ∀ k : ℕ, k < n → ∃ c : ℝ, (c = 0 ∨ c = 1) ∧
       ∀ t : ℝ, t ∈ Set.Ioo (τ k) (τ (k + 1)) → s t = c)
     (hlaw : ∀ k : ℕ, k < n → ∀ t : ℝ, t ∈ Set.Ioo (τ k) (τ (k + 1)) →
       L * deriv i t = s t * Vin - v t ∧ C * deriv v t = i t - v t / R)
