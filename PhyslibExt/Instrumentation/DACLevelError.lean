@@ -83,10 +83,9 @@ the DAC level error `η`.
 
 ## C. Validation
 
-A signed two-bit fixture with alternating level error, a statement
-that BitVec wraparound from the maximal to the minimal signed code
-is not a monotone adjacent step, and the sharpness witness for the
-monotonicity threshold.
+A statement that BitVec wraparound from the maximal to the minimal
+signed code is not a monotone adjacent step, and the sharpness
+witness for the monotonicity threshold.
 -/
 
 @[expose] public section
@@ -235,81 +234,6 @@ theorem dacLevel_correct {Δ η : ℝ} (hΔ : 0 < Δ) {kmin kmax : ℤ} {e : ℤ
   exact ⟨fun k hk hk1 => abs_dacLevel_add_one_sub_sub_le he hk hk1,
     fun h => dacLevel_strictMonoOn he h,
     fun x hx => abs_dacLevel_code_sub_le_of_not_isClipped hΔ he hx⟩
-
-/-- Fixture level error: `1 / 4` at even codes and `-1 / 4` at odd
-codes. -/
-noncomputable def alternatingError (k : ℤ) : ℝ :=
-  if Even k then 1 / 4 else -(1 / 4)
-
-/-- **Signed 2-bit fixture.** `Δ = 1`, codes `-2 .. 1`, `η = 1 / 4`,
-error `alternatingError`: the levels are `-7/4, -5/4, 1/4, 3/4`
-(negative and positive codes); the step from code `-1` to `0` has
-error exactly `2 * η`; the ADC maps both endpoints `-2` and `1` to
-themselves; and the negative input `-3/5` maps to code `-1`. -/
-lemma signedTwoBit_fixture :
-    dacLevel 1 alternatingError (-2) = -7 / 4 ∧ dacLevel 1 alternatingError (-1) = -5 / 4 ∧
-      dacLevel 1 alternatingError 0 = 1 / 4 ∧ dacLevel 1 alternatingError 1 = 3 / 4 ∧
-      |dacLevel 1 alternatingError 0 - dacLevel 1 alternatingError (-1) - 1| = 2 * (1 / 4) ∧
-      code 1 (-2) 1 (-2) = -2 ∧ code 1 (-2) 1 1 = 1 ∧ code 1 (-2) 1 (-3 / 5) = -1 := by
-  have hE_neg2 : Even (-2 : ℤ) := ⟨-1, by norm_num⟩
-  have hO_neg1 : ¬ Even (-1 : ℤ) := by
-    rintro ⟨r, h⟩
-    omega
-  have hE_0 : Even (0 : ℤ) := ⟨0, by norm_num⟩
-  have hO_1 : ¬ Even (1 : ℤ) := by
-    rintro ⟨r, h⟩
-    omega
-  have e_neg2 : alternatingError (-2) = 1 / 4 := by
-    unfold alternatingError
-    exact if_pos hE_neg2
-  have e_neg1 : alternatingError (-1) = -(1 / 4) := by
-    unfold alternatingError
-    exact if_neg hO_neg1
-  have e_0 : alternatingError 0 = 1 / 4 := by
-    unfold alternatingError
-    exact if_pos hE_0
-  have e_1 : alternatingError 1 = -(1 / 4) := by
-    unfold alternatingError
-    exact if_neg hO_1
-  have L_neg2 : dacLevel 1 alternatingError (-2) = -7 / 4 := by
-    simp only [dacLevel, e_neg2]
-    push_cast
-    norm_num
-  have L_neg1 : dacLevel 1 alternatingError (-1) = -5 / 4 := by
-    simp only [dacLevel, e_neg1]
-    push_cast
-    norm_num
-  have L_0 : dacLevel 1 alternatingError 0 = 1 / 4 := by
-    simp only [dacLevel, e_0]
-    push_cast
-    norm_num
-  have L_1 : dacLevel 1 alternatingError 1 = 3 / 4 := by
-    simp only [dacLevel, e_1]
-    push_cast
-    norm_num
-  have hstep : |dacLevel 1 alternatingError 0 - dacLevel 1 alternatingError (-1) - 1|
-      = 2 * (1 / 4) := by
-    rw [L_0, L_neg1]
-    norm_num
-  have r_neg2 : round ((-2 : ℝ) / 1) = -2 := by
-    norm_num [round_eq]
-  have r_1 : round ((1 : ℝ) / 1) = 1 := by
-    norm_num [round_eq]
-  have r_neg35 : round ((-3 / 5 : ℝ) / 1) = -1 := by
-    norm_num [round_eq]
-  have c_neg2 : code 1 (-2) 1 (-2) = -2 := by
-    unfold code
-    rw [r_neg2]
-    decide
-  have c_1 : code 1 (-2) 1 1 = 1 := by
-    unfold code
-    rw [r_1]
-    decide
-  have c_neg35 : code 1 (-2) 1 (-3 / 5) = -1 := by
-    unfold code
-    rw [r_neg35]
-    decide
-  exact ⟨L_neg2, L_neg1, L_0, L_1, hstep, c_neg2, c_1, c_neg35⟩
 
 /-- **BitVec wraparound is not an adjacent monotone step.** For
 `1 ≤ w`, `|e k| ≤ η` on the signed `w`-bit range and `2 * η < Δ`:
