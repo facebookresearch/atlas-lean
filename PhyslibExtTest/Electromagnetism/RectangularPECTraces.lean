@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Electromagnetism.RectangularPECTraces
-import Mathlib.Analysis.Calculus.ContDiff.Basic
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -77,7 +76,7 @@ example : (0 : (Fin 3 → ℝ) → Fin 3 → ℝ) ![0, 3, 0] 0 = 0 ∧
 
 /-! ## C. Headline equivalence and corners for the zero fields -/
 
-/-- The unconditional equivalence applies to arbitrary fields, with no
+/-- The headline equivalence applies to arbitrary fields, with no
 smoothness or width hypothesis to discharge. -/
 example (E B : (Fin 3 → ℝ) → Fin 3 → ℝ) :
     rectangularGuidePECTraces 2 3 E B ↔ rectangularGuidePECComponentConditions 2 3 E B :=
@@ -86,8 +85,7 @@ example (E B : (Fin 3 → ℝ) → Fin 3 → ℝ) :
 /-- The explicit component conditions hold for the zero fields, by the
 headline equivalence. -/
 example : rectangularGuidePECComponentConditions 2 3 (fun _ => 0) (fun _ => 0) :=
-  (rectangularGuidePECTraces_iff_componentConditions 2 3 (by norm_num) (by norm_num)
-    _ _ contDiff_const contDiff_const).mp
+  (traces_iff_componentConditions 2 3 _ _).mp
     (rectangularGuidePECTraces_zero 2 3 (by norm_num) (by norm_num))
 
 /-- At the corner line `x = 0`, `y = 0`, `z = 0`, the zero electric field
@@ -156,7 +154,6 @@ end PhyslibExtTest.Electromagnetism.RectangularPECTraces
 #print axioms yZeroWall_traces_iff_components
 #print axioms yTopWall_traces_iff_components
 #print axioms traces_iff_componentConditions
-#print axioms rectangularGuidePECTraces_iff_componentConditions
 #print axioms cornerComponents_of_rectangularGuidePECTraces
 #print axioms allCornerComponents_of_rectangularGuidePECTraces
 #print axioms rectangularGuidePECTraces_zero

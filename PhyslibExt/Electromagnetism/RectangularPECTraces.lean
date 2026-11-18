@@ -7,8 +7,10 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Analysis.Calculus.ContDiff.Defs
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Fin.VecNotation
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Tactic.FinCases
 
 /-!
 # Rectangular-guide PEC boundary traces
@@ -60,17 +62,14 @@ component is left unconstrained, and the corner results state exactly that.
 General Sobolev traces and curved boundaries are not treated.
 
 The per-face equivalences are proved by unfolding the face predicates, so
-they are definitional. The unconditional equivalence composes the four
-per-face equivalences face by face, for any widths and any fields. The
-headline equivalence restates it under the smoothness hypothesis
-`ContDiff ℝ ∞` for both fields and the width hypotheses `0 < a` and
-`0 < b`, which delimit the stated physical scope and are also implied by
-either side; the proof does not use them, and no Sobolev trace is claimed.
-Reusing code should call the unconditional form, which needs neither
-hypothesis. The corner results
-combine the two adjacent wall conditions at a corner point. The validation
-results are the zero fields, which satisfy the traces for any positive
-widths, and concrete failures from a single nonzero component on one wall.
+they are definitional. The headline equivalence composes the four per-face
+equivalences face by face, for any widths and any fields; it needs no
+smoothness or width hypothesis, since the predicates are pointwise and each
+side already carries the width conjunct. No Sobolev trace is claimed. The
+corner results combine the two adjacent wall conditions at a corner point.
+The validation results are the zero fields, which satisfy the traces for any
+positive widths, and concrete failures from a single nonzero component on
+one wall.
 
 ## ii. Key results
 
@@ -84,8 +83,6 @@ widths, and concrete failures from a single nonzero component on one wall.
 - `traces_iff_componentConditions`: for any widths and any fields, the
   four-wall trace condition holds exactly when the explicit component
   conditions hold on each face.
-- `rectangularGuidePECTraces_iff_componentConditions`: the same
-  equivalence for smooth fields and positive widths.
 - `cornerComponents_of_rectangularGuidePECTraces` and
   `allCornerComponents_of_rectangularGuidePECTraces`: vanishing of all
   electric components and the first two magnetic components at corner
@@ -112,15 +109,11 @@ widths, and concrete failures from a single nonzero component on one wall.
   1991: boundary conditions at a perfect electric conductor (vanishing
   tangential electric field and vanishing normal magnetic flux density)
   and modes of the rectangular waveguide.
-- Mathlib's `ContDiff`, for the smoothness hypothesis in the headline
-  equivalence.
 
 ## A. Face predicates
 -/
 
 @[expose] public section
-
-open scoped ContDiff
 
 namespace PhyslibExt.Electromagnetism.RectangularPECTraces
 
@@ -233,9 +226,9 @@ lemma yTopWall_traces_iff_components (b : ℝ) (E B : (Fin 3 → ℝ) → Fin 3 
 
 /-! ## C. Headline equivalence -/
 
-/-- For any widths and any fields, the four-wall PEC trace condition
-holds exactly when the explicit component zero conditions hold on each
-face. -/
+/-- **PEC traces, component form.** For any widths and any fields, the
+four-wall PEC trace condition holds exactly when the explicit component zero
+conditions hold on each face. -/
 lemma traces_iff_componentConditions (a b : ℝ) (E B : (Fin 3 → ℝ) → Fin 3 → ℝ) :
     rectangularGuidePECTraces a b E B ↔
       rectangularGuidePECComponentConditions a b E B := by
@@ -260,17 +253,6 @@ lemma traces_iff_componentConditions (a b : ℝ) (E B : (Fin 3 → ℝ) → Fin 
       exact (yZeroWall_traces_iff_components E B x z).mpr (h3 x z hx0 hxa)
     · intro x z hx0 hxa
       exact (yTopWall_traces_iff_components b E B x z).mpr (h4 x z hx0 hxa)
-
-/-- **PEC traces, component form.** For smooth fields, the four-wall
-PEC trace condition holds exactly when the explicit component zero
-conditions hold on each face. -/
-lemma rectangularGuidePECTraces_iff_componentConditions (a b : ℝ)
-    (ha : 0 < a) (hb : 0 < b) (E B : (Fin 3 → ℝ) → Fin 3 → ℝ)
-    (hE : ContDiff ℝ ∞ E) (hB : ContDiff ℝ ∞ B) :
-    rectangularGuidePECTraces a b E B ↔
-      rectangularGuidePECComponentConditions a b E B := by
-  have _ : (0 < a ∧ 0 < b) ∧ ContDiff ℝ ∞ E ∧ ContDiff ℝ ∞ B := ⟨⟨ha, hb⟩, hE, hB⟩
-  exact traces_iff_componentConditions a b E B
 
 /-! ## D. Corners -/
 
