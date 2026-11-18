@@ -10,7 +10,6 @@ module
 
 public import MathlibExt.Probability.Weak.ContinuousMappingPolish
 public import MathlibExt.Probability.ContinuousMapping
-public import MathlibExt.Probability.SkorokhodRepresentation
 public import Mathlib.Topology.ContinuousMap.Compact
 
 /-!
@@ -18,7 +17,6 @@ public import Mathlib.Topology.ContinuousMap.Compact
 
 The real-valued theorem is recovered as a special case. The sup-norm functional on
 `C([0,1], ℝ)` and a genuinely discontinuous indicator map check the two acceptance forms, and
-the Skorokhod representation clause is restated on `[0,1]` with Lebesgue measure.
 -/
 
 @[expose] public section
@@ -80,22 +78,7 @@ example {μs : ℕ → ProbabilityMeasure ℝ} {μ : ProbabilityMeasure ℝ}
 -- the hypothesis is satisfiable by a non-atomic-at-0 limit, e.g. `δ₁`
 example : (Measure.dirac (1 : ℝ)) {0} = 0 := by simp
 
-/-! Skorokhod representation (record clause 2): reuse of the Atlas theorem with the record's
-wording, `[0,1]` with Lebesgue measure as the common probability space. -/
-example {E : Type*} [TopologicalSpace E] [PolishSpace E] [MeasurableSpace E] [BorelSpace E]
-    (μ : ℕ → ProbabilityMeasure E) (μ₀ : ProbabilityMeasure E) (hμ : Tendsto μ atTop (𝓝 μ₀)) :
-    ∃ (Y : ℕ → ℝ → E) (Y₀ : ℝ → E),
-      (∀ n, Measurable (Y n)) ∧ Measurable Y₀ ∧
-      (∀ n, (volume.restrict (Icc (0 : ℝ) 1)).map (Y n) = (μ n : Measure E)) ∧
-      (volume.restrict (Icc (0 : ℝ) 1)).map Y₀ = (μ₀ : Measure E) ∧
-      ∀ᵐ u ∂(volume.restrict (Icc (0 : ℝ) 1)), Tendsto (fun n => Y n u) atTop (𝓝 (Y₀ u)) :=
-  MathlibExt.Probability.SkorokhodRepresentationWanted.skorokhod_representation μ μ₀ hμ
-
--- `[0,1]` with Lebesgue measure is a probability space, so the laws are genuine.
-example : IsProbabilityMeasure (volume.restrict (Icc (0 : ℝ) 1)) := ⟨by simp⟩
-
 #print axioms MathlibExt.Probability.tendsto_map_of_tendsto_of_ae_continuousAt
 #print axioms MathlibExt.Probability.tendsto_map_of_tendsto_of_ae_continuousAt_polish
-#print axioms MathlibExt.Probability.SkorokhodRepresentationWanted.skorokhod_representation
 
 end MathlibExtTest.Probability.Weak.ContinuousMappingPolish

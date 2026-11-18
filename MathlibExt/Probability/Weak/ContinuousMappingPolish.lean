@@ -24,6 +24,11 @@ opens-measurable target. The Polish corollary is the sequential Borel-space form
 
 * F. Simenhaus, *Convergence of probability measures*, M2 lecture notes, Theorems 8 and 15.
 * R. Durrett, *Probability: Theory and Examples*, Theorem 3.2.10.
+
+An equivalent statement was previously formalized as
+`StatMech.FK.tendsto_probabilityMeasure_map_of_ae_continuousAt` in the archived
+`Atlas/StatisticalMechanics/Code/FK/PottsClusterSumContinuity.lean`, which is outside the
+build; the proof here follows the same Portmanteau argument.
 -/
 
 @[expose] public section
