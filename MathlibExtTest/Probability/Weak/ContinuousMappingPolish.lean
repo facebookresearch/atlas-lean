@@ -15,8 +15,9 @@ public import Mathlib.Topology.ContinuousMap.Compact
 /-!
 # Tests for continuous mapping on Polish spaces
 
-The real-valued theorem is recovered as a special case. The sup-norm functional on
-`C([0,1], ℝ)` and a genuinely discontinuous indicator map check the two acceptance forms, and
+The real-valued theorem is recovered as a special case, both from the general theorem
+and from its Polish-space corollary. The examples then check the sup-norm functional on
+`C([0,1], ℝ)` and a genuinely discontinuous indicator map.
 -/
 
 @[expose] public section
