@@ -520,25 +520,33 @@ def listing(text: str) -> list[tuple[str, str]]:
 
 def own_list(lines: list[str]) -> dict[int, int]:
     """A folder page's own list, by block: each item that links a page of its folder (see own_page), and the block of
-    the heading above it, or -1, so that two sections with one title stay two. A closing section (see CLOSING) and the
-    sections within it hold none of it."""
+    the heading above it, or -1, so that two sections with one title stay two. A closing section (see CLOSING), by its
+    title as the site shows it (see heading_title), and the sections within it hold none of it."""
     heading, own, closing = -1, {}, 0
     for number, row in enumerate(lines):
         if HEADING.match(row):
             heading, level = number, len(row.strip()) - len(row.strip().lstrip("#"))
             if not closing or level <= closing:
-                closing = level if row.strip(" \t#").casefold() in CLOSING else 0
+                closing = level if heading_title(row).casefold() in CLOSING else 0
         elif own_page(row) and not closing:
             own[number] = heading
     return own
 
 
+def heading_title(row: str) -> str:
+    """A heading's title as the site shows it, emphasis and code marks read away (see heading_text): "**Sources**" and
+    "`Sources`" are "Sources". A title with no mark is taken as written, as is one the site would not publish."""
+    title = row.strip(" \t#")
+    return title if re.fullmatch(r"(?:[^\W_]|[\s,.:;'()-])*", title) else heading_text(row.strip()) or title
+
+
 def add_to_listing(readme: Path, line: str, before: list[str] = (), after: list[str] = (), section: list[str] = ()) -> str:
     """Add a link line to a folder page. On a simple page (see simple_page): after the item linking the last of *before*
     that its own list (see own_list) holds, else ahead of the item linking the first of *after* that it holds, else at
-    the end of the own list, where, if that list runs over sections, it starts a section of its own after all that the
-    last one holds, its sections within it included, under the first of the titles in *section* whose heading the edit
-    check passes on (see verify_edit), as one whose id another heading has does not. A page with no own list takes it
+    the end of the own list, where, if that list runs over sections, it starts a section of its own, at the level of the
+    shallowest of them, after all that the last section of that level holds, the sections within it included, under the
+    first of the titles in *section* whose heading the edit check passes on (see verify_edit), as one whose id another
+    heading has does not. A page with no own list takes it
     ahead of its first section, such as "Related topics", or at its end. Any other page is never edited within: the
     line goes at its end, after a blank line, and "appended" is returned, so that an editor places it. If the page
     could hold raw HTML or a code fence (see uncertain), or the edit fails the check, the page is left as it is and
@@ -565,7 +573,7 @@ def add_to_listing(readme: Path, line: str, before: list[str] = (), after: list[
     new, marker = [line], ""
     if at is None:
         if section and len(set(own.values())) > 1:
-            marker = re.match(" *(#+)", lines[own[last]]).group(1)
+            marker = min((re.match(" *(#+)", lines[heading]).group(1) for heading in set(own.values()) if heading >= 0), key=len)
             end = next((i for i in range(last + 1, len(lines))
                         if HEADING.match(lines[i]) and len(re.match(" *(#+)", lines[i]).group(1)) <= len(marker)), len(lines))
             new = [marker, "", line]
@@ -896,7 +904,8 @@ def with_part_lists(readme: Path, text: str) -> tuple[str, list[str], list[str]]
     a page that is not simple (see simple_page), for a part whose heading, page or items there are not simple with no
     code allowed, or whose copy runs over another block, and when the refreshed copy does not render as meant (see
     verify_edit), the copy stays as it is, and the part is returned, by its folder, for an editor. A line of a copy the
-    refresh replaces that is not the part's entry, as when a note was added there, is returned too, with its folder."""
+    refresh replaces or removes that is none of the part's entries, as when a note was added there, is returned too,
+    with its folder."""
     body = text.rstrip("\n")
     tail = text[len(body):]
     simple = simple_page(body, code=True)
@@ -1022,10 +1031,12 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     pages by path, whose folder pages a new page's folder takes when it has none; ``unindexed`` the documented
     declarations the Lean index lacks (`path:line name`), which get no page and are reported for an editor."""
     generated = generated or {}
-    # What checks an edit (see verify_edit) is built before anything is written, so that a module it needs that is
-    # missing, or a site configuration it cannot read, stops the run with nothing written.
-    renderer()
-    published("")
+    # What checks an edit (see verify_edit) is built and run once before anything is written, its caches emptied so
+    # that it runs, so that a module it needs that is missing, or a site configuration it cannot read, stops the run
+    # with nothing written.
+    published.cache_clear()
+    rendered.cache_clear()
+    rendered(published("") or "")
     files = read_annotations()
     keyed = [(annotation_key(a, index), a) for rows in files.values() for a in rows]
     pages = {key: subject_path(a) for key, a in keyed if key}
@@ -1179,7 +1190,8 @@ def run_declarations() -> int:
                         ("gone", "Pages whose declaration is gone"), ("changed", "Pages whose declaration's docstring changed"),
                         ("unindexed", "Declarations the Lean index lacks, and their pages, for an editor"),
                         ("parts", "Part lists not refreshed, as an entry needs an editor"),
-                        ("replaced", "Lines of a part list replaced by the part's own entry, which differs, to check"),
+                        ("replaced", "Lines of a part list that the refresh replaced or removed, as they differ from the "
+                         "part's own entries, to check"),
                         ("appended", "New pages and folders listed at the end of a page that is not simple, to place"),
                         ("unlisted", "New pages and folders listed nowhere, as their page may hold raw HTML or code, the "
                          "site would show it as typed, or their item would not show where placed")):

@@ -963,9 +963,10 @@ class Declarations(Vault):
         with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean), "autoform_cli.lean": lean}), \
                 patch.object(wiki, "generate", lambda *args: {}), patch.object(sync, "apply_declarations", lambda *args: report), \
                 patch.object(sync, "refresh_catalog", lambda generated: None), \
-                patch("sys.stdout", new_callable=io.StringIO), patch("sys.stderr", new_callable=io.StringIO) as errors:
+                patch("sys.stdout", new_callable=io.StringIO) as output, patch("sys.stderr", new_callable=io.StringIO) as errors:
             self.assertEqual(sync.run_declarations(), 1)
         self.assertIn("error: Algebra/groups/sylow.md is listed on no folder page", errors.getvalue())
+        self.assertIn("Lines of a part list that the refresh replaced or removed", output.getvalue())
 
     def test_an_edit_that_does_not_render_as_meant_is_left_out(self) -> None:
         # The whitelist admits a heading holding raw HTML, but a browser builds the rest of the page inside the
@@ -1041,8 +1042,12 @@ class Declarations(Vault):
     def test_a_closing_section_holds_none_of_the_own_list(self) -> None:
         # A page whose only list of its folder's pages is under "Sources", or a section within "Related topics", has no
         # own list: the new page goes ahead of the first section, not into either.
+        # A closing heading with emphasis or code marks is read as the site shows it.
         for name, closing in (("sources", "## Sources\n\n- [Notes](notes.md)\n"),
-                              ("within related topics", "## Related topics\n\n### Here\n\n- [Notes](notes.md)\n")):
+                              ("within related topics", "## Related topics\n\n### Here\n\n- [Notes](notes.md)\n"),
+                              ("bold", "## **Sources**\n\n- [Notes](notes.md)\n"), ("code", "## `Sources`\n\n- [Notes](notes.md)\n"),
+                              ("emphasis", "## _Related topics_\n\n### Here\n\n- [Notes](notes.md)\n"),
+                              ("starred emphasis", "## *Sources*\n\n- [Notes](notes.md)\n")):
             with self.subTest(name):
                 report = self.add_sylow(f"# Groups\n\nProse.\n\n{closing}")
                 self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
@@ -1152,6 +1157,21 @@ class Declarations(Vault):
             "## Related topics", "## Two-process bakery\n\n- [Turn](turn.md)\n\n## Related topics"))
         self.assertEqual((report["appended"], report["unlisted"]), ([], []))
 
+    def test_a_new_section_takes_the_level_of_the_shallowest_one(self) -> None:
+        # The last section of the list is an "### Theorems" within "## Main results": a new "###" section there would
+        # sit under a heading that says nothing of its module, so it takes the level of "## Basics", after all that
+        # "## Main results" holds.
+        text = ("# Bakery\n\n## Basics\n\n- [State](state.md)\n\n## Main results\n\nThe main theorems.\n\n### Theorems\n\n"
+                "- [Invariant](invariant.md)\n\n## Related topics\n\n- [Locks](../locks/README.md)\n")
+        self.page("Algebra/bakery/README.md", text)
+        self.annotate([])
+        turn = declaration("Ext.turn", "turn", "Turn", "Turn.", module=("Ext", "TwoProcess"))
+        turn.path, turn.module_title = wiki.ROADMAP / "Algebra" / "bakery" / "turn.md", "Two-process bakery"
+        report = sync.apply_declarations([turn], SimpleNamespace(declarations={"Ext.turn": None}))
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "bakery" / "README.md").read_text(), text.replace(
+            "## Related topics", "## Two-process bakery\n\n- [Turn](turn.md)\n\n## Related topics"))
+        self.assertEqual((report["appended"], report["unlisted"]), ([], []))
+
     def test_a_new_sections_heading_takes_no_other_headings_id(self) -> None:
         # A new "Examples" ahead of the page's own would take its id, "examples", and move the links to it: the
         # section takes its module's name instead.
@@ -1178,29 +1198,35 @@ class Declarations(Vault):
                 self.assertEqual((report["appended"], report["unlisted"]), (["Algebra/groups/sylow.md"], []))
 
     def test_nothing_is_written_when_the_edit_check_cannot_be_built(self) -> None:
-        # A site configuration the check cannot read stops the run before any page is written, so none is orphaned.
+        # A site configuration the check cannot read, or a module it needs only to read the rendered page, stops the
+        # run before any page is written, so none is orphaned.
         site = self.tmp / "mkdocs.yml"
         site.write_text("markdown_extensions:\n  - toc:\n      title: !ENV TITLE\n")
-        sync.renderer.cache_clear()
         self.addCleanup(sync.renderer.cache_clear)
-        self.page("Algebra/groups/README.md", "# Groups\n\n- [Old](old.md)\n")
-        self.annotate([])
-        sylow = declaration("Ext.sylow", "sylow", "Sylow", "Sylow.", module=("Ext", "Sylow"))
-        sylow.path = wiki.ROADMAP / "Algebra" / "groups" / "sylow.md"
-        with patch.object(sync, "SITE", site), self.assertRaises(Exception):
-            sync.apply_declarations([sylow], SimpleNamespace(declarations={"Ext.sylow": None}))
-        self.assertFalse(sylow.path.exists())
-        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(), "# Groups\n\n- [Old](old.md)\n")
+        for name, broken in (("site configuration", patch.object(sync, "SITE", site)),
+                             ("rendered page", patch.dict("sys.modules", {"html5lib": None}))):
+            with self.subTest(name):
+                sync.renderer.cache_clear()
+                self.page("Algebra/groups/README.md", "# Groups\n\n- [Old](old.md)\n")
+                self.annotate([])
+                sylow = declaration("Ext.sylow", "sylow", "Sylow", "Sylow.", module=("Ext", "Sylow"))
+                sylow.path = wiki.ROADMAP / "Algebra" / "groups" / "sylow.md"
+                with broken, self.assertRaises(Exception):
+                    sync.apply_declarations([sylow], SimpleNamespace(declarations={"Ext.sylow": None}))
+                self.assertFalse(sylow.path.exists())
+                self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(), "# Groups\n\n- [Old](old.md)\n")
 
-    def test_a_part_refresh_reports_a_line_it_replaces(self) -> None:
-        # A note added on the folder page's copy only is not the part's entry: the refresh replaces it and says so.
-        text = "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md) (start here)\n"
+    def test_a_part_refresh_reports_a_line_it_replaces_or_removes(self) -> None:
+        # A note added on the folder page's copy only is not the part's entry, nor is a line for a page the part no
+        # longer lists: the refresh replaces the one, removes the other, and says so.
+        text = "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md) (start here)\n- [C](part-01/c.md)\n"
         self.page("Algebra/groups/README.md", text)
         self.page("Algebra/groups/part-01/README.md", "# Part 1 of 1\n\n- [A](a.md)\n- [B](b.md)\n")
         report = sync.apply_declarations([], SimpleNamespace(declarations={}))
         self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
                          "# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md)\n- [B](part-01/b.md)\n")
-        self.assertEqual(report["replaced"], ["Algebra/groups/part-01: - [A](part-01/a.md) (start here)"])
+        self.assertEqual(report["replaced"], ["Algebra/groups/part-01: - [A](part-01/a.md) (start here)",
+                                              "Algebra/groups/part-01: - [C](part-01/c.md)"])
 
     def test_verify_edit_reads_the_page_as_the_site_renders_it(self) -> None:
         page = "# T\n\n- [A](a.md)\n\n## Related topics\n\n- [R](../r/README.md)\n"

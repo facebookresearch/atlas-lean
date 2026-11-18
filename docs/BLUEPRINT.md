@@ -115,8 +115,9 @@ must pass on the page, as `autoform render` would otherwise show it as typed,
 with no link, and the text it publishes is rendered with the site's Markdown
 extensions, read from `mkdocs.yml`, and read as a browser builds the page. An
 edit that would lose a link, move a heading or its id, or not show the new link
-where it belongs is left out and reported the same way, as is a line of a part
-list that the refresh replaces with the part's own entry when the two differ.
+where it belongs is left out and reported the same way, and a line of a part
+list that the refresh replaces or removes is reported when it differs from the
+part's own entries.
 
 `scripts/wiki-sync.json` is the
 reviewed docstring-digest baseline. Removed declarations' articles are kept
