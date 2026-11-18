@@ -28,7 +28,13 @@ account names `runner` and `runneradmin` are excluded; longer profile names
 that start with either word are not. Profile names may contain apostrophes or
 Unicode spaces; finding the profile directory is enough to report the path.
 A quote immediately after a root is treated as a text boundary, and profile
-matches do not cross line breaks.
+matches do not cross line breaks. When a path is wrapped in matching double
+quotes, single quotes, or backticks, and in filenames, symlink targets, branch
+names, and commit header values (identity names included), a profile name that ends the path runs to the closing quote or
+the end of the value: only the exact CI account names, an empty name, `.`, and
+`..` are exempt there, so `runner!` or `runner.` is reported. In unquoted
+prose, sentence punctuation after a root or an exact CI account name is treated
+as prose; this is a finite heuristic, not a parser for every file name.
 The numeric-reference and campaign-code checks ignore letter case in branch
 names and treat underscores as separators. Slashes remain path boundaries;
 compound campaign/lesson references have a separate slash-aware pattern, also

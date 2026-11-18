@@ -14,6 +14,20 @@ import urllib.error
 import urllib.request
 
 
+PROFILE_ROOT = r"[/\\]+(?:data[/\\]+users|home|(?i:Users))[/\\]+"
+# A quoted terminal profile: the opening quote sits right before the root (or
+# its drive letter) and the name runs to the matching closing quote, so
+# punctuation and spaces inside it belong to the name. A quote right after
+# the root is a text boundary; an empty or blank name, "." and ".." are not
+# profiles; only the exact CI accounts are exempt.
+QUOTED_PROFILES = tuple(
+    rf"(?:(?<={q}[A-Za-z]:)|(?<={q})){PROFILE_ROOT}"
+    rf"(?!\s*['`\"])(?!(?:\.{{1,2}}|\s*){q})(?!runner(?:admin)?{q})"
+    rf"[^/\\\x00-\x1f\x85\u2028\u2029\"<>|:*?{q}]+(?={q})"
+    for q in ('"', "'", "`")
+)
+
+
 RULES = {
     "internal-reference": re.compile(r"\b(?:[DTP][0-9]{5,}|[SNL][0-9]{6,})\b"),
     "private-host": re.compile(
@@ -25,9 +39,23 @@ RULES = {
         r"\b(?:devvm|devgpu|twshared)[0-9]+(?:\.[a-z0-9.-]+)?\b", re.I
     ),
     "personal-workspace": re.compile(
-        r"(?<![/\\])[/\\]+(?:data[/\\]+users|home|(?i:Users))[/\\]+"
-        r"(?!runner(?:admin)?[/\\])(?!\s*['`])"
+        "|".join(QUOTED_PROFILES)
+        + r"|(?<![/\\])[/\\]+(?:data[/\\]+users|home|(?i:Users))[/\\]+"
+        r"(?!\s*['`])(?:"
+        # A profile name followed by a separator.
+        r"(?!runner(?:admin)?[/\\])"
         r"[^/\\\x00-\x1f\x85\u2028\u2029\"<>|:*?]+[/\\]+"
+        # A terminal profile name. It may start with punctuation only when a
+        # name character follows. The exact CI accounts stay clean only
+        # before a boundary or trailing punctuation that ends the text; a
+        # longer name is still reported.
+        r"|(?!\s|[.,;!)\]}]+(?:$|[\s/\\\x00-\x1f\x85\u2028\u2029\"'`<>|:*?]))"
+        r"(?!runner(?:admin)?(?:[.,;!)\]}'`]+"
+        r"(?:$|[\s/\\\x00-\x1f\x85\u2028\u2029\"<>|:*?])"
+        r"|[^\S\x00-\x1f\x85\u2028\u2029]*"
+        r"(?:$|[/\\\x00-\x1f\x85\u2028\u2029\"<>|:*?])))"
+        r"[^/\\\x00-\x1f\x85\u2028\u2029\"<>|:*?\s'`]+"
+        r")"
     ),
     "internal-source-path": re.compile(
         r"(?<!\w)(?:fbcode|fbsource)[/\\]+[a-zA-Z0-9_./\\-]+"
@@ -52,6 +80,21 @@ RULES = {
         r"\b[A-Z]{2,8}(?:\.[A-Z][A-Z0-9]*){3,}\b"
     ),
 }
+# Filenames, symlink targets, branch names and commit identity names are
+# literal values, not prose: a terminal profile name there runs to the end of
+# the value, with the same root, dot and exact-account exceptions as a quoted
+# path.
+LITERAL_END = r"(?=[\x00-\x1f\x85\u2028\u2029\"<>|:*?]|\Z)"
+LITERAL_PROFILE = re.compile(
+    rf"(?<![/\\]){PROFILE_ROOT}(?!\s*['`\"])"
+    rf"(?!(?:\.{{1,2}}|\s*){LITERAL_END})(?!runner(?:admin)?{LITERAL_END})"
+    rf"[^/\\\x00-\x1f\x85\u2028\u2029\"<>|:*?]+{LITERAL_END}"
+)
+LITERAL_RULES = dict(RULES)
+LITERAL_RULES["personal-workspace"] = re.compile(
+    LITERAL_PROFILE.pattern + "|" + RULES["personal-workspace"].pattern
+)
+
 MAX_BLOB_BYTES = 64 * 1024 * 1024
 MAX_FINDINGS = 100
 MAX_LOCATION_CHARS = 240
@@ -297,7 +340,9 @@ def scan(text, location, findings=None, rules=None, citation_start=None):
 
 def redact(text):
     # Mask the whole unsafe location, including any private hostname prefix.
-    return "[redacted]" if any(p.search(text) for p in RULES.values()) else text
+    # Locations quote filenames, so the literal reading applies.
+    unsafe = any(p.search(text) for p in LITERAL_RULES.values())
+    return "[redacted]" if unsafe else text
 
 
 def git(root, *args, input_data=None):
@@ -319,15 +364,112 @@ def oid(value):
     return value
 
 
-def scan_commit(raw, sha, findings=None):
+def scan_commit(raw, sha, findings=None, identity=None):
     if b"\n\n" not in raw:
         raise IncompleteScan("Malformed commit object")
     text = raw.decode("utf-8", errors="replace")
     # The whole raw object is scanned with raw line numbers. Citation slots
     # are recognized only in the message after the header/body separator.
-    return scan(
-        text, "commit " + sha, findings, citation_start=text.index("\n\n") + 2
-    )
+    findings = Findings() if findings is None else findings
+    first = len(findings)
+    scan(text, "commit " + sha, findings, citation_start=text.index("\n\n") + 2)
+    if identity is None:
+        return findings
+    # Header values are literal, not prose: identity names (read like Git
+    # reads them) and every other header value, including unknown headers
+    # and an embedded merge tag's header. Only an embedded tag message stays
+    # text. A terminal profile that only the literal reading finds is added
+    # at its raw header line, unless the text scan already reported it.
+    header = text[: text.index("\n\n")].split("\n")
+    values = header_values(header)
+    for role, name in zip(("author", "committer"), identity):
+        # Git's own parser must agree with the first identity line.
+        parsed = [value for line, kind, value in values if kind == role]
+        if not parsed or parsed[0] != name:
+            raise IncompleteScan("Unparsed commit identity")
+    reported = {
+        f["line"] for f in findings[first:] if f["rule"] == "personal-workspace"
+    }
+    for line, _, value in values:
+        if line not in reported and LITERAL_PROFILE.search(value):
+            reported.add(line)
+            scan(
+                "\n" * (line - 1) + value,
+                "commit " + sha,
+                findings,
+                {"personal-workspace": LITERAL_PROFILE},
+            )
+    return findings
+
+
+def identity_name(value):
+    """Git's identity name: text before "<", without trailing ASCII
+    whitespace. Without a "<", the whole value is kept, which is stricter."""
+    name, bracket, _ = value.partition("<")
+    return name.rstrip(" \t\n\r") if bracket else value
+
+
+TAG_OBJECT = re.compile(r"object (?:[0-9a-f]{40}|[0-9a-f]{64})")
+TAG_FIELDS = (
+    re.compile(r"type (?:commit|tree|blob|tag)"),
+    re.compile(r"tag \S.*"),
+    re.compile(r"tagger .*"),
+)
+
+
+def header_values(header):
+    """(line, kind, value) for each raw header line. Every header byte is
+    covered except the message of a supported embedded merge tag, which stays
+    prose like the commit message. An identity line gives its Git name and,
+    separately, the text inside and after its brackets; other lines give the
+    whole line, key included. A supported tag header is "object", "type",
+    "tag" and an optional "tagger", in that order; any other shape keeps its
+    whole payload literal. A tag signature is opaque data, from its first
+    armor line to the end of that tag."""
+    values = []
+    tag = tag_header = prose = signature = False
+    fields = 0
+    for line, row in enumerate(header, 1):
+        if row.startswith(" ") and tag:
+            field = row[1:]
+            if tag_header and field == "":
+                tag_header = False
+                prose = fields >= 2
+            elif tag_header:
+                if 0 <= fields < 3 and TAG_FIELDS[fields].fullmatch(field):
+                    fields += 1
+                else:
+                    fields = -1
+                if field.startswith("tagger "):
+                    values += identity_values(line, "tagger", field[7:])
+                else:
+                    values.append((line, "tag-header", field))
+            else:
+                signature = signature or field.startswith("-----BEGIN ")
+                if signature or not prose:
+                    values.append((line, "tag-body", field))
+            continue
+        if row.startswith(" "):
+            values.append((line, "continuation", row[1:]))
+            continue
+        key, _, value = row.partition(" ")
+        tag = tag_header = key == "mergetag"
+        prose = signature = False
+        fields = 0 if tag and TAG_OBJECT.fullmatch(value) else -1
+        if key in ("author", "committer"):
+            values += identity_values(line, key, value)
+        else:
+            values.append((line, key, row))
+    return values
+
+
+def identity_values(line, kind, value):
+    bracketed = value.partition("<")[2]
+    return [
+        (line, kind, identity_name(value)),
+        (line, kind + "-email", bracketed),
+        (line, kind + "-rest", bracketed.partition(">")[2]),
+    ]
 
 
 def tree_entries(root, rev):
@@ -444,7 +586,7 @@ def check_range(root, base, head, metadata=None, public=()):
         path = raw_path.decode("utf-8", errors="surrogateescape")
         paths.add(path)
         if new_entry and raw_path not in public_paths:
-            scan(path, "filename in commit " + sha, findings)
+            scan(path, "filename in commit " + sha, findings, LITERAL_RULES)
         # Symlink targets are always strict, so a new symlink entry is
         # scanned even when its bytes were accepted earlier as file text.
         strict_link = mode == b"120000" and new_entry
@@ -461,9 +603,37 @@ def check_range(root, base, head, metadata=None, public=()):
             symlinks.setdefault(blob, location)
         blobs.setdefault(blob, location)
 
+    # Git's own parser supplies the author and committer names.
+    fields = (
+        git(
+            root,
+            "log",
+            "--no-walk=unsorted",
+            "--no-mailmap",
+            "--stdin",
+            "-z",
+            "--format=%H%x00%an%x00%cn",
+            input_data=b"".join(commit[0] + b"\n" for commit in commits),
+        ).split(b"\0")
+        if commits
+        else []
+    )
+    identities = {}
+    for i in range(0, len(fields) - 2, 3):
+        identities[fields[i].decode("ascii")] = tuple(
+            value.decode("utf-8", errors="replace")
+            for value in fields[i + 1 : i + 3]
+        )
     for commit in commits:
         sha = oid(commit[0].decode("ascii"))
-        scan_commit(git(root, "cat-file", "commit", sha), sha, findings)
+        if sha not in identities:
+            raise IncompleteScan("Unparsed commit identity")
+        scan_commit(
+            git(root, "cat-file", "commit", sha),
+            sha,
+            findings,
+            identities[sha],
+        )
         # A merge can inherit an entry unchanged from a parent. Its origin
         # was either scanned in another outgoing commit or belongs to base.
         new_filenames = None
@@ -565,6 +735,7 @@ def check_range(root, base, head, metadata=None, public=()):
                 text,
                 symlinks.get(blob, location),
                 findings,
+                LITERAL_RULES if blob in symlinks else None,
                 citation_start=None if blob in symlinks else 0,
             )
         if cursor != len(payload):
@@ -579,7 +750,11 @@ def check_range(root, base, head, metadata=None, public=()):
                 value,
                 "PR branch",
                 findings,
-                {k: p for k, p in RULES.items() if k not in identifiers},
+                {
+                    k: p
+                    for k, p in LITERAL_RULES.items()
+                    if k not in identifiers
+                },
             )
             scan(
                 value.upper().replace("_", "-"),

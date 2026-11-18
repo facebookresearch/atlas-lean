@@ -178,8 +178,255 @@ class Patterns(unittest.TestCase):
             value = "C:" + "\\".join(
                 ("", "Users", "Example" + invalid + "Profile", "notes.txt")
             )
+            # An invalid character ends the name; the profile before it is
+            # still a terminal profile path, reported once on its own line.
             with self.subTest(invalid=invalid):
-                self.assertEqual(gate.scan(value, "text"), [])
+                findings = gate.scan(value, "text")
+                self.assertEqual(len(findings), 1)
+                self.assertEqual(findings[0]["line"], 1)
+                self.assertEqual(findings[0]["rule"], "personal-workspace")
+
+    def test_terminal_personal_profiles(self) -> None:
+        roots = []
+        for separator in ("\\", "\\\\", "/"):
+            roots.append("C:" + separator + "Users" + separator)
+        home, data = "/home/", "/".join(["", "data", "users", ""])
+        roots += [home, data, "/" + home + "/", home.replace("/", "\\")]
+        names = (
+            "Example",
+            "Example Person",
+            "Example'Profile",
+            "Example\u00a0Profile",
+            "Zo\u00eb Example",
+            "\u540d\u5b57",
+            "runnerExample",
+            "runner Smith",
+            "runneradmin-extra",
+        )
+        wrappers = (
+            ("", ""),
+            ('"', '"'),
+            ("'", "'"),
+            ("`", "`"),
+            ("(", ")"),
+            ("See ", "."),
+            ("See ", " for details"),
+            ("", "\n"),
+            ("", "\r\nnext"),
+            ("", "\tnext"),
+            ("", "\x85next"),
+            ("", "\u2028next"),
+        )
+        for root in roots:
+            for name in names:
+                for before, after in wrappers:
+                    text = "First line\n" + before + root + name + after
+                    with self.subTest(root=root, name=name, after=after):
+                        findings = gate.scan(text, "text")
+                        self.assertEqual(len(findings), 1)
+                        self.assertEqual(findings[0]["line"], 2)
+                        self.assertEqual(
+                            findings[0]["rule"], "personal-workspace"
+                        )
+                        self.assertNotIn(name, json.dumps(findings))
+
+    def test_terminal_ci_prefixed_names_are_reported(self) -> None:
+        home = "/home/"
+        windows = "C:" + "\\".join(["", "Users", ""])
+        names = (
+            "runner.Example",
+            "runner'Profile",
+            "runner`Profile",
+            "runneradmin.Example",
+            "runner,Example",
+            "runner;Example",
+            "runner)Example",
+            "runner .Example",
+            "runneradmin'Example",
+        )
+        for name in names:
+            for text in (
+                home + name,
+                "'" + home + name + "'",
+                '"' + windows + name + '"',
+                windows + name + "\n",
+                "See " + home + name + " here.",
+            ):
+                with self.subTest(text=text):
+                    findings = gate.scan(text, "text")
+                    self.assertEqual(len(findings), 1)
+                    self.assertEqual(findings[0]["rule"], "personal-workspace")
+
+    def test_quoted_terminal_profiles_keep_their_punctuation(self):
+        roots = (
+            "/home/",
+            "/".join(["", "data", "users", ""]),
+            "C:" + "\\".join(["", "Users", ""]),
+            "C:" + "\\\\".join(["", "Users", ""]),
+        )
+        names = (
+            ".Example",
+            "!Example",
+            ";Example",
+            ")Example",
+            "runner. Example",
+            "runner' Profile",
+            "runneradmin, Example",
+            " Example",
+            # Inside quotes these are whole names, not the exact accounts.
+            "runner!",
+            "runner'",
+            "runneradmin)",
+            "runner.",
+            "runner ",
+            "...",
+            ". ",
+            ".. ",
+        )
+        for quote in ('"', "'", "`"):
+            for root in roots:
+                for name in names:
+                    if quote in name:
+                        continue
+                    text = "Path " + quote + root + name + quote + " here."
+                    with self.subTest(text=text):
+                        findings = gate.scan(text, "text")
+                        self.assertEqual(len(findings), 1)
+                        self.assertEqual(
+                            findings[0]["rule"], "personal-workspace"
+                        )
+                # Punctuation after the closing quote stays outside the name.
+                for name in ("runner", "runneradmin"):
+                    for tail in ("", ".", "!", ",", ")"):
+                        text = quote + root + name + quote + tail
+                        with self.subTest(text=text):
+                            self.assertEqual(gate.scan(text, "text"), [])
+                # Empty or blank, "." and "..", and a quote after the root.
+                for name in ("", " ", ".", "..", "'Example", "`Example"):
+                    text = quote + root + name + quote
+                    with self.subTest(text=text):
+                        self.assertEqual(gate.scan(text, "text"), [])
+
+    def test_literal_values_use_the_whole_terminal_name(self):
+        for root in (
+            "docs/home/",
+            "/home/",
+            "/".join(["", "data", "users", ""]),
+            "C:" + "\\".join(["", "Users", ""]),
+        ):
+            for name in (
+                "runner!",
+                "runner.",
+                "runner. Example",
+                "runner' Profile",
+                "runneradmin)",
+                ". ",
+                ".Example",
+                "Example",
+            ):
+                with self.subTest(value=root + name):
+                    findings = gate.scan(
+                        root + name, "filename", rules=gate.LITERAL_RULES
+                    )
+                    self.assertEqual(len(findings), 1)
+            for name in ("runner", "runneradmin", "", " ", ".", "..", "'x"):
+                with self.subTest(value=root + name):
+                    self.assertEqual(
+                        gate.scan(
+                            root + name, "filename", rules=gate.LITERAL_RULES
+                        ),
+                        [],
+                    )
+            self.assertEqual(
+                gate.scan(root + "runner/x", "f", rules=gate.LITERAL_RULES), []
+            )
+
+    def test_quoted_terminal_and_separator_forms_agree(self):
+        # A quote right after the root is a documented text boundary, so
+        # names here start with anything except a quote.
+        starts = ("", ".", "!", ";", ")", ",", "-", "_", "(")
+        cores = ("runner", "runneradmin", "Example", "Zo\u00eb", "\u540d")
+        joins = ("", ".", "'", ",", ";", "!", ")", "-", "_", " ", ". ", "' ")
+        tails = ("Example", "Profile")
+        names = {
+            start + core + join + tail
+            for start in starts
+            for core in cores
+            for join in joins
+            for tail in tails
+        }
+        names |= {start + "runner" for start in starts if start}
+        names |= {start + "runneradmin" for start in starts if start}
+        # Exact accounts with legal suffix punctuation are other names.
+        names |= {
+            core + suffix
+            for core in ("runner", "runneradmin")
+            for suffix in ("!", "'", ")", ";", ",", "-", "_", ".", " ")
+        }
+        for quote in ('"', "'", "`"):
+            for separator in ("\\", "\\\\", "/"):
+                root = "C:" + separator + "Users" + separator
+                for name in sorted(names):
+                    if quote in name:
+                        continue
+                    for form in (
+                        quote + root + name + quote,
+                        quote + root + name + separator + quote,
+                    ):
+                        findings = gate.scan(form, "text")
+                        if len(findings) != 1:
+                            self.fail(f"expected one finding for {form!r}")
+            for name in ("runner", "runneradmin"):
+                for form in (
+                    '"' + root + name + '"',
+                    '"' + root + name + separator + '"',
+                ):
+                    with self.subTest(form=form):
+                        self.assertEqual(gate.scan(form, "text"), [])
+
+    def test_terminal_ci_accounts_and_bare_roots_stay_clean(self) -> None:
+        roots = ["C:\\Users\\", "C:\\\\Users\\\\", "C:/Users/", "/home/"]
+        endings = (
+            "",
+            '"',
+            "'",
+            "`",
+            ".",
+            ",",
+            ")",
+            ".)",
+            "!",
+            "?",
+            ":",
+            "\t",
+            "\n",
+            "  \n",
+            "/",
+            ". Next sentence",
+            ", and more",
+        )
+        for root in roots:
+            for name in ("runner", "runneradmin"):
+                for ending in endings:
+                    for before in ("", '"', "'", "`", "("):
+                        text = before + root + name + ending
+                        with self.subTest(text=text):
+                            self.assertEqual(gate.scan(text, "text"), [])
+        home, data = "/home/", "/".join(["", "data", "users", ""])
+        texts = (
+            home,
+            "C:\\Users\\",
+            "Files under " + home + " are cleaned.",
+            "See " + home + ".",
+            "Roots (e.g. " + home + ") differ.",
+            "The " + home.rstrip("/") + " and " + data.rstrip("/") + " trees.",
+            "Standard roots include `" + home + "` and `" + data + "`.",
+            "root = '" + home + "' + username",
+            '"C:\\Users\\"',
+        )
+        for text in texts:
+            with self.subTest(text=text):
+                self.assertEqual(gate.scan(text, "text"), [])
 
     def test_separate_root_literals_are_not_profiles(self) -> None:
         texts = (
@@ -742,6 +989,31 @@ class PublicUrlPaths(unittest.TestCase):
             url = PUBLIC_URLS[0].replace("www.math.cmu.edu", host)
             with self.subTest(host=host):
                 self.assertEqual(self.rules(url), [])
+
+    def test_terminal_profile_url_paths(self):
+        url = "https://www.math.cmu.edu/users/mubayi"
+        for text in (
+            url,
+            url + ".",
+            "(" + url + ")",
+            "'" + url + "'",
+            '"' + url + '"',
+            "`" + url + "`",
+            "<" + url + ">",
+            "See " + url + " for the paper",
+        ):
+            with self.subTest(text=text):
+                self.assertEqual(self.rules(text), [])
+        home = "/".join(["", "home", "Example"])
+        for text in (
+            "https://www.example.com" + "/".join(["", "users", "Example"]),
+            "https://host.alt" + "/".join(["", "users", "Example"]),
+            "https://example.edu/view?file=" + home,
+            "https://example.edu/view#" + home,
+            "http://localhost" + home,
+        ):
+            with self.subTest(text=text):
+                self.assertIn("personal-workspace", self.rules(text))
 
     def test_url_heavy_input_is_bounded(self):
         text = "\n".join(PUBLIC_URLS) * 20000
@@ -1479,6 +1751,270 @@ class Repository(unittest.TestCase):
             self.check({"title": PUBLIC_DOIS[0], "body": REVIEWED})["findings"],
             [],
         )
+
+    def test_cli_terminal_profiles_in_every_scope(self):
+        profile = "/".join(["", "home", "Example"])
+        for text in (
+            profile,
+            '"C:' + "\\".join(["", "Users", "Example"]) + '"',
+        ):
+            with self.subTest(text=text):
+                self.base = self.head()
+                self.write("notes.md", "See " + text + "\n")
+                self.commit("Add notes\n\nSee " + text)
+                metadata = self.root / "pr.json"
+                metadata.write_text(json.dumps({"title": text, "body": text}))
+                run = subprocess.run(
+                    [
+                        sys.executable,
+                        gate.__file__,
+                        "--repo-root",
+                        str(self.root),
+                        "--base",
+                        self.base,
+                        "--head",
+                        self.head(),
+                        "--metadata",
+                        str(metadata),
+                    ],
+                    capture_output=True,
+                    text=True,
+                )
+                metadata.unlink()
+                self.assertEqual(run.returncode, 1, run.stdout)
+                report = json.loads(run.stdout)
+                self.assertEqual(len(report["findings"]), 4)
+                self.assertNotIn("Example", run.stdout + run.stderr)
+
+    def test_terminal_profiles_in_strict_contexts(self):
+        self.write("/".join(["docs", "home", "Example"]), "Clean text\n")
+        (self.root / "link").symlink_to("/".join(["", "home", "Example"]))
+        self.run_git("config", "user.name", "/".join(["", "home", "Example"]))
+        self.commit("Add strict-context fixtures")
+        findings = self.check(
+            {"branch": "fix" + "/".join(["", "home", "Example"])}
+        )
+        locations = [f["location"] for f in findings["findings"]]
+        self.assertTrue(any(l.startswith("filename") for l in locations))
+        self.assertTrue(any(l.startswith("link @ ") for l in locations))
+        self.assertTrue(
+            any(
+                l.endswith("header") or l.startswith("commit ")
+                for l in locations
+            )
+        )
+        self.assertTrue(any(l == "PR branch" for l in locations))
+        self.assertTrue(
+            all(f["rule"] == "personal-workspace" for f in findings["findings"])
+        )
+
+    def test_literal_contexts_report_ci_prefixed_names(self):
+        home = "/".join(["", "home", ""])
+        self.write("docs" + home + "runner!", "Clean text\n")
+        self.write("docs" + home + "runner", "Clean text\n")
+        (self.root / "link").symlink_to(home + "runner. Example")
+        (self.root / "ci-link").symlink_to(home + "runner")
+        self.run_git("config", "user.name", home + "runner!")
+        self.commit("Add literal-context fixtures")
+        findings = self.check({"branch": "fix" + home + "runner!"})
+        locations = sorted(f["location"] for f in findings["findings"])
+        # Git uses the configured name for both author and committer.
+        self.assertEqual(len(locations), 5, locations)
+        self.assertTrue(locations[0].startswith("PR branch"))
+        self.assertTrue(locations[1].startswith("commit "))
+        self.assertEqual(locations[1], locations[2])
+        self.assertTrue(locations[3].startswith("filename in commit "))
+        self.assertTrue(locations[4].startswith("link @ "))
+        header = [
+            f for f in findings["findings"] if f["location"] == locations[1]
+        ]
+        self.assertEqual(sorted(f["line"] for f in header), [3, 4])
+        self.assertTrue(
+            all(f["rule"] == "personal-workspace" for f in findings["findings"])
+        )
+
+    def test_literal_filename_is_redacted_in_blob_locations(self):
+        name = "/".join(["docs", "home", "runner!"])
+        self.write(name, "Ticket " + "D" + "12345\n")
+        self.commit("Add literal-name fixture")
+        report = self.check()
+        rules = sorted(f["rule"] for f in report["findings"])
+        self.assertEqual(rules, ["internal-reference", "personal-workspace"])
+        self.assertNotIn("runner", json.dumps(report))
+
+    def test_header_values_are_literal(self):
+        home = "/".join(["", "home", ""])
+        mail = " <a@example.invalid> 1 +0000\n"
+
+        def commit(headers, body="Msg\n"):
+            return ("tree " + "0" * 40 + "\n" + headers + "\n" + body).encode()
+
+        def tag(tagger, message):
+            return (
+                "mergetag object " + "0" * 40 + "\n type commit\n tag v1\n"
+                " tagger " + tagger + mail + " \n " + message + "\n"
+            )
+
+        plain = "author A" + mail + "committer C" + mail
+        cases = (
+            # (headers, Git's author and committer names, body, lines)
+            (
+                "author " + home + "runner!" + mail + "committer C" + mail,
+                (home + "runner!", "C"),
+                "Msg\n",
+                [2],
+            ),
+            (
+                "author "
+                + home
+                + "runner. Example"
+                + mail
+                + "committer "
+                + home
+                + "runner!"
+                + mail,
+                (home + "runner. Example", home + "runner!"),
+                "Msg\n",
+                [2, 3],
+            ),
+            (
+                "author " + home + "Example" + mail + "committer C" + mail,
+                (home + "Example", "C"),
+                "Msg\n",
+                [2],
+            ),
+            (
+                "author "
+                + home
+                + "runner"
+                + mail
+                + "committer "
+                + home
+                + "runneradmin"
+                + mail,
+                (home + "runner", home + "runneradmin"),
+                "Msg\n",
+                [],
+            ),
+            (
+                plain + tag(home + "runner!", "Tag message"),
+                ("A", "C"),
+                "Msg\n",
+                [7],
+            ),
+            (
+                plain + tag(home + "runner", "See " + home + "runner. ok"),
+                ("A", "C"),
+                "Msg\n",
+                [],
+            ),
+            (
+                plain + "x-unknown " + home + "runner!\n",
+                ("A", "C"),
+                "Msg\n",
+                [4],
+            ),
+            (plain, ("A", "C"), "See " + home + "runner. Next.\n", []),
+            # The email slot of an identity line is literal too.
+            (
+                "author Example <"
+                + home
+                + "runner!> 1 +0000\ncommitter C"
+                + mail,
+                ("Example", "C"),
+                "Msg\n",
+                [2],
+            ),
+            (
+                "author Example <"
+                + home
+                + "runner> 1 +0000\ncommitter C"
+                + mail,
+                ("Example", "C"),
+                "Msg\n",
+                [],
+            ),
+            # An embedded tag message is prose; its signature is opaque data,
+            # like a top-level signature.
+            (
+                plain
+                + tag("T", "See " + home + "runner!")
+                + " -----BEGIN PGP SIGNATURE-----\n Comment: "
+                + home
+                + "runner!\n abcd\n -----END PGP SIGNATURE-----\n",
+                ("A", "C"),
+                "Msg\n",
+                [11],
+            ),
+            (
+                plain
+                + "gpgsig -----BEGIN PGP SIGNATURE-----\n Comment: "
+                + home
+                + "runner!\n -----END PGP SIGNATURE-----\n",
+                ("A", "C"),
+                "Msg\n",
+                [5],
+            ),
+            # Only a supported embedded tag header grants prose to its message.
+            (
+                plain + "mergetag not-a-tag\n \n " + home + "runner!\n",
+                ("A", "C"),
+                "Msg\n",
+                [6],
+            ),
+            (
+                plain
+                + "mergetag object "
+                + "0" * 40
+                + "\n tag v1\n type commit\n \n "
+                + home
+                + "runner!\n",
+                ("A", "C"),
+                "Msg\n",
+                [8],
+            ),
+            (
+                plain
+                + "mergetag object "
+                + "0" * 40
+                + "\n type commit\n tag v1\n x-extra y\n \n "
+                + home
+                + "runner!\n",
+                ("A", "C"),
+                "Msg\n",
+                [9],
+            ),
+            # Header keys and lines without a space are covered too.
+            (
+                plain + "x-profile" + home + "runner!\n",
+                ("A", "C"),
+                "Msg\n",
+                [4],
+            ),
+            (
+                plain + "x-profile" + home + "runner! opaque\n",
+                ("A", "C"),
+                "Msg\n",
+                [4],
+            ),
+        )
+        for headers, identity, body, lines in cases:
+            with self.subTest(headers=headers, body=body):
+                findings = gate.scan_commit(
+                    commit(headers, body), "0" * 40, None, identity
+                )
+                self.assertEqual(sorted(f["line"] for f in findings), lines)
+                for finding in findings:
+                    self.assertEqual(finding["rule"], "personal-workspace")
+        # Git's parsed names must agree with the raw identity lines.
+        for headers, identity in (
+            (plain, ("B", "C")),
+            ("author NoBracket 1 +0000\ncommitter C" + mail, ("", "C")),
+            ("committer C" + mail, ("A", "C")),
+        ):
+            with self.subTest(headers=headers):
+                with self.assertRaises(gate.IncompleteScan):
+                    gate.scan_commit(commit(headers), "0" * 40, None, identity)
 
     def test_cli_url_path_bypass_controls_in_every_scope(self):
         tail = "/".join(["Users", "Example", "work", "notes.txt"])
