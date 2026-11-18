@@ -85,4 +85,18 @@ example {ρ U Γ α : ℝ} (hρ : 0 < ρ) (hU : 0 < U) :
   exact BlasiusForce.blasiusForce_eq (R0 := 1) (R1 := 2) (K := 0) hρ hU
     (by norm_num) (by norm_num) hW hdecomp he hbound (by norm_num)
 
+/-- The far-field branch at `z = 3`, `a = 1` lies beyond half the
+radius: `‖z‖ / 2 < ‖ζ(z)‖`. -/
+example : ‖((3 : ℝ) : ℂ)‖ / 2 <
+    ‖JoukowskiBranch.farFieldZeta 1 ((3 : ℝ) : ℂ)‖ :=
+  JoukowskiBranch.norm_farFieldZeta_gt_half one_pos (by
+    rw [Complex.norm_real]
+    norm_num)
+
+/-- Holomorphy of the physical velocity on the far-field exterior,
+at `a = 1`, `U = 2`, `Γ = α = 0`. -/
+example : DifferentiableOn ℂ (JoukowskiBranch.physicalVelocity 1 2 0 0)
+    {z : ℂ | 2 * (1 : ℝ) < ‖z‖} :=
+  JoukowskiBranch.differentiableOn_physicalVelocity one_pos 2 0 0
+
 end FluidDynamics.IdealAirfoilModels
