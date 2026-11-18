@@ -26,28 +26,24 @@ horizon `h`: `min (T i) h`. -/
 def truncatedEndpoint {ι : Type*} (T : ι → ℝ) (h : ℝ) (i : ι) : ℝ :=
   min (T i) h
 
-/-- **Truncated endpoints inherit difference-in-means
-unbiasedness.** Under complete randomization with at least one
-treated and one control unit, the difference-in-means of the
-prespecified truncated potential endpoints is unbiased for their
-finite-population average treatment effect. This is
-`randExp_diffInMeans` applied to the truncated outcomes. -/
-lemma truncated_endpoint_unbiased {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (T0 T1 : ι → ℝ) (h : ℝ) {n1 : ℕ} (h1 : 1 ≤ n1)
-    (h0 : n1 + 1 ≤ Fintype.card ι) :
-    MathlibExt.Probability.Causality.randExp n1
-        (MathlibExt.Probability.Causality.diffInMeans
-          (truncatedEndpoint T0 h) (truncatedEndpoint T1 h)) =
-      MathlibExt.Probability.Causality.ate
-        (truncatedEndpoint T0 h) (truncatedEndpoint T1 h) :=
-  MathlibExt.Probability.Causality.randExp_diffInMeans _ _ h1 h0
+/-- **Truncated endpoint at or inside the horizon.** If
+`T i ≤ h`, the truncated endpoint is the event time itself. -/
+lemma truncatedEndpoint_eq_of_le {ι : Type*} (T : ι → ℝ) (h : ℝ)
+    (i : ι) (hi : T i ≤ h) : truncatedEndpoint T h i = T i :=
+  min_eq_left hi
+
+/-- **Truncated endpoint beyond the horizon.** If `h ≤ T i`, the
+truncated endpoint is the horizon. -/
+lemma truncatedEndpoint_eq_of_ge {ι : Type*} (T : ι → ℝ) (h : ℝ)
+    (i : ι) (hi : h ≤ T i) : truncatedEndpoint T h i = h :=
+  min_eq_right hi
 
 /-- **Truncation changes event times beyond the horizon.** For
 an event time beyond the horizon (`h < T`), the truncated
 endpoint differs from the uncensored event time. -/
-lemma truncation_changes_value {T h : ℝ} (hT : h < T) :
-    min T h ≠ T := by
-  rw [min_eq_right (le_of_lt hT)]
+lemma truncation_changes_value {ι : Type*} (T : ι → ℝ) {h : ℝ}
+    (i : ι) (hT : h < T i) : truncatedEndpoint T h i ≠ T i := by
+  rw [truncatedEndpoint_eq_of_ge T h i (le_of_lt hT)]
   exact ne_of_lt hT
 
 end MathlibExt.Biology.StatisticalGenetics.TrialEndpoint
