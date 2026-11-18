@@ -9,6 +9,6 @@ Minimizing $\|y - X\theta\|_2$. A solution always exists and the solutions are e
 
 - [QR factorization](../qr-factorization/README.md)
 - Least squares, ridge and lasso regression
-- Tikhonov regularization
-- Linear models and multivariate analysis
+- [Tikhonov regularization](../../../Analysis/convex-analysis-and-variations/tikhonov-regularization/README.md)
+- [Linear models and multivariate analysis](../../../Probability/linear-models-multivariate/README.md)
 - [GMRES](../gmres/README.md)

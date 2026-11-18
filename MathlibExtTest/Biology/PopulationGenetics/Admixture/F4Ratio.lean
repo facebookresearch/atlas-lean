@@ -12,12 +12,13 @@ public import MathlibExt.Biology.PopulationGenetics.Admixture.F4Ratio
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.NormNum
+import MathlibExt.Biology.PopulationGenetics.Admixture.ConditionalNegDef
 
 @[expose] public section
 
 open MeasureTheory
 open MathlibExt.Biology.PopulationGenetics.FStatistics
-open scoped ENNReal
+open scoped ENNReal BigOperators symmDiff
 
 namespace MathlibExtTest.Biology.PopulationGenetics.Admixture.F4Ratio
 
@@ -106,5 +107,105 @@ example :
     (α := (0 : ℝ)) (fX := (0 : ℝ)) (fY := (2 : ℝ)) (fB := (1 : ℝ))
     (by norm_num) (by norm_num)).mpr (Or.inl rfl)
   exact ⟨by simpa using h, by norm_num⟩
+
+/-! ### The sister condition -/
+
+section SisterCriterion
+
+open MathlibExt.Biology.PopulationGenetics.Admixture (exists_driftModel)
+
+variable {Ω P E : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} [Fintype E]
+
+example (M : DriftModel μ E P) (A O Y B C : P) :
+    f4 μ M.freq A O Y C - f4 μ M.freq A O B C =
+      ∑ e, (M.weight A e - M.weight O e) * (M.weight Y e - M.weight B e) * M.len e :=
+  M.f4_sub_f4_eq_sum A O Y B C
+
+example (M : DriftModel μ E P) (A O Y B C : P) :
+    f4 μ M.freq A O Y C = f4 μ M.freq A O B C ↔
+      ∑ e, (M.weight A e - M.weight O e) * (M.weight Y e - M.weight B e) * M.len e = 0 :=
+  M.f4_sister_iff_sum_eq_zero A O Y B C
+
+example (M : DriftModel μ E P) (A O Y B C : P) :
+    f4 μ M.freq A O Y C = f4 μ M.freq A O B C ↔ f4 μ M.freq A O Y B = 0 :=
+  M.f4_sister_iff_f4_eq_zero A O Y B C
+
+example (M : DriftModel μ E P) (A O Y B C : P)
+    (h : ∀ e, (M.weight A e - M.weight O e) * (M.weight Y e - M.weight B e) = 0) :
+    f4 μ M.freq A O Y C = f4 μ M.freq A O B C :=
+  M.f4_sister_of_disjoint A O Y B C h
+
+example [DecidableEq E] (M : DriftModel μ E P) (hM : M.HasBinaryLoadings) (A O Y B C : P)
+    (h : Disjoint (M.lineage A ∆ M.lineage O) (M.lineage Y ∆ M.lineage B)) :
+    f4 μ M.freq A O Y C = f4 μ M.freq A O B C :=
+  M.f4_sister_of_lineage_disjoint hM A O Y B C h
+
+/-- Weights of the satisfying example: populations `A=0, O=1, Y=2, B=3, C=4`
+on three edges; edge `0` is on the `A`–`O` path and is shared equally by `Y`
+and `B`, and `Y`, `B` differ only on edges `1, 2` (off that path). Binary. -/
+def wSisterCriterion : Fin 5 → Fin 3 → ℝ := ![![1, 0, 0], ![0, 0, 0], ![1, 1, 0], ![1, 0, 1], ![0, 0, 0]]
+
+/-- The failing variant: `B=3` loses edge `0`, i.e. `B` branches off before the
+`A`–`O` path edge that `Y` carries. -/
+def wOffSisterPath : Fin 5 → Fin 3 → ℝ := ![![1, 0, 0], ![0, 0, 0], ![1, 1, 0], ![0, 0, 1], ![0, 0, 0]]
+
+def lenSister3 : Fin 3 → ℝ := ![1, 2, 3]
+
+theorem sister_example :
+    ∃ (Ω : Type) (_ : MeasurableSpace Ω) (μ : Measure Ω) (_ : IsProbabilityMeasure μ)
+      (M : DriftModel μ (Fin 3) (Fin 5)), M.weight = wSisterCriterion ∧ M.len = lenSister3 ∧
+        f4 μ M.freq 0 1 2 4 = 1 ∧ f4 μ M.freq 0 1 3 4 = 1 ∧ f4 μ M.freq 0 1 2 3 = 0 := by
+  obtain ⟨Ω, hΩ, μ, hμ, M, hw, hl⟩ := exists_driftModel wSisterCriterion lenSister3 (by
+    intro e
+    fin_cases e <;> norm_num [lenSister3])
+  refine ⟨Ω, hΩ, μ, hμ, M, hw, hl, ?_, ?_, ?_⟩ <;>
+    · rw [M.f4_freq, hw, hl]
+      norm_num [Fin.sum_univ_three, wSisterCriterion, lenSister3]
+
+theorem offPath_example :
+    ∃ (Ω : Type) (_ : MeasurableSpace Ω) (μ : Measure Ω) (_ : IsProbabilityMeasure μ)
+      (M : DriftModel μ (Fin 3) (Fin 5)), M.weight = wOffSisterPath ∧ M.len = lenSister3 ∧
+        f4 μ M.freq 0 1 2 4 = 1 ∧ f4 μ M.freq 0 1 3 4 = 0 ∧
+          ∑ e, (M.weight 0 e - M.weight 1 e) * (M.weight 2 e - M.weight 3 e) * M.len e = 1 := by
+  obtain ⟨Ω, hΩ, μ, hμ, M, hw, hl⟩ := exists_driftModel wOffSisterPath lenSister3 (by
+    intro e
+    fin_cases e <;> norm_num [lenSister3])
+  refine ⟨Ω, hΩ, μ, hμ, M, hw, hl, ?_, ?_, ?_⟩
+  · rw [M.f4_freq, hw, hl]
+    norm_num [Fin.sum_univ_three, wOffSisterPath, lenSister3]
+  · rw [M.f4_freq, hw, hl]
+    norm_num [Fin.sum_univ_three, wOffSisterPath, lenSister3]
+  · rw [hw, hl]
+    norm_num [Fin.sum_univ_three, wOffSisterPath, lenSister3]
+
+/-- Accidental equality: the criterion sum can vanish by cancellation between
+two edges of the `A`–`O` path, so disjointness of the supports is sufficient
+but not necessary. Populations `A=0, O=1, Y=2, B=3, C=4` on two edges. -/
+def wSisterAccidental : Fin 5 → Fin 2 → ℝ := ![![1, 1], ![0, 0], ![1, 0], ![0, 1], ![0, 0]]
+
+theorem accidental_example :
+    ∃ (Ω : Type) (_ : MeasurableSpace Ω) (μ : Measure Ω) (_ : IsProbabilityMeasure μ)
+      (M : DriftModel μ (Fin 2) (Fin 5)), M.weight = wSisterAccidental ∧ M.len = ![1, 1] ∧
+        f4 μ M.freq 0 1 2 4 = f4 μ M.freq 0 1 3 4 ∧
+          ¬ (∀ e, (M.weight 0 e - M.weight 1 e) * (M.weight 2 e - M.weight 3 e) = 0) := by
+  obtain ⟨Ω, hΩ, μ, hμ, M, hw, hl⟩ := exists_driftModel wSisterAccidental ![1, 1] (by
+    intro e
+    fin_cases e <;> norm_num)
+  refine ⟨Ω, hΩ, μ, hμ, M, hw, hl, ?_, ?_⟩
+  · rw [M.f4_freq, M.f4_freq, hw, hl]
+    norm_num [Fin.sum_univ_two, wSisterAccidental]
+  · intro hcon
+    have := hcon 0
+    rw [hw] at this
+    norm_num [wSisterAccidental] at this
+
+/-- Endpoint probe: with no edges every f4 vanishes and the criterion holds
+trivially (empty sum). -/
+example {Ω P : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} (M : DriftModel μ Empty P)
+    (A O Y B C : P) : f4 μ M.freq A O Y C = f4 μ M.freq A O B C := by
+  rw [M.f4_freq, M.f4_freq]
+  simp
+
+end SisterCriterion
 
 end MathlibExtTest.Biology.PopulationGenetics.Admixture.F4Ratio

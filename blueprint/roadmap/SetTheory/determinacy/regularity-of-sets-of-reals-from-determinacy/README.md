@@ -12,4 +12,4 @@ Any family satisfying the closure hypothesis that contains a set other than `∅
 
 - [Borel and analytic determinacy](../borel-and-analytic-determinacy/README.md): the classes that satisfy the determinacy hypothesis by Martin's theorems: the Borel sets, and the analytic sets under a measurable cardinal.
 - [Non-determined games](../non-determined-games/README.md): why the hypothesis is placed on a class of sets rather than on all sets.
-- Banach–Mazur game: the game behind the property of Baire.
+- [Banach–Mazur game](../../../Topology/descriptive-set-theory/banach-mazur-game/README.md): the game behind the property of Baire.
