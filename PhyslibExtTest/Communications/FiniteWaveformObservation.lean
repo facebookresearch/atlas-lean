@@ -86,6 +86,42 @@ example {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure
   simpa using (iqProjection_correct P 2 1 _ horth hint 0 1 (by decide) rfl rfl ![3, 4] Z 2
     (by norm_num) hZ hind).2.2.1
 
+/-- Sufficiency on the first-carrier I/Q pair on `[0, 2]` at `N0 = 2`:
+the two correlator outputs are a sufficient statistic for the
+received-waveform family indexed by the I/Q coefficients. -/
+example :
+    MathlibExt.Probability.Statistics.Sufficiency.IsSufficient
+      (MeasurableSpace.comap
+        (projectionStatistic 2 ![inPhaseWaveform 2 1, quadratureWaveform 2 1])
+        MeasurableSpace.pi)
+      (receivedWaveformLaw 2 ![inPhaseWaveform 2 1, quadratureWaveform 2 1] 2) := by
+  obtain ⟨horth, hint⟩ := iqPair_isOrthonormalOn 2 1 (by norm_num) le_rfl
+  exact projectionStatistic_isSufficient 2 _ horth hint 2
+
+/-- Under the coefficients `(3, 4)` on the same I/Q pair at `N0 = 2`, the
+sufficient statistic has independent coordinates of laws `N(3, 1)` and
+`N(4, 1)`. -/
+example :
+    HasLaw (projectionStatistic 2 ![inPhaseWaveform 2 1, quadratureWaveform 2 1])
+      (Measure.pi fun j => gaussianReal (![3, 4] j) (noiseVariance 2))
+      (receivedWaveformLaw 2 ![inPhaseWaveform 2 1, quadratureWaveform 2 1] 2 ![3, 4]) := by
+  obtain ⟨horth, hint⟩ := iqPair_isOrthonormalOn 2 1 (by norm_num) le_rfl
+  exact (projectionStatistic_sufficient_correct 2 _ horth hint 2 (by norm_num)).2.2 ![3, 4]
+
+/-- Reconstruction on the I/Q pair: the received waveform with
+coefficients `(3, 4)` and noise coordinates `(1, -1)` is the synthesis
+of its two projections. -/
+example :
+    synthesize ![inPhaseWaveform 2 1, quadratureWaveform 2 1]
+        (projectionStatistic 2 ![inPhaseWaveform 2 1, quadratureWaveform 2 1]
+          (receivedWaveform ![inPhaseWaveform 2 1, quadratureWaveform 2 1] ![3, 4]
+            (fun (i : Fin 2) (z : Fin 2 → ℝ) => z i) ![1, -1]))
+      = receivedWaveform ![inPhaseWaveform 2 1, quadratureWaveform 2 1] ![3, 4]
+          (fun (i : Fin 2) (z : Fin 2 → ℝ) => z i) ![1, -1] := by
+  obtain ⟨horth, hint⟩ := iqPair_isOrthonormalOn 2 1 (by norm_num) le_rfl
+  exact (projectionStatistic_sufficient_correct 2 _ horth hint 2 (by norm_num)).1 ![3, 4]
+    ![1, -1]
+
 /-- Antipodal energy: amplitude `sqrt 4` with label `-1` on the in-phase
 axis has energy `4`. -/
 example :
