@@ -14,6 +14,8 @@ public import MathlibExt.Probability.Statistics.Measurement.ItemResponse
 public import CSLibExt.MachineLearning.Bayesian.Basic
 public import MathlibExt.Probability.Statistics.Measurement.ProductMoments
 
+import MathlibExt.Probability.FiniteProbability
+
 /-!
 # Item-response expectation maximization correspondence
 
@@ -35,45 +37,30 @@ open MeasureTheory ProbabilityTheory
 open Cslib.MachineLearning.LatentVariable.BernoulliMixture
 open MathlibExt.Probability.Statistics.Measurement
 
-/-- Finite-pattern normalization of the product-Bernoulli mass. -/
-theorem bernPMF_sum_one {d : ℕ} (q : Fin d → ℝ) :
-    ∑ y : Fin d → Bool, bernPMF q y = 1 := by
-  have hfac : (∑ y : Fin d → Bool, bernPMF q y)
-      = ∏ j, ∑ b : Bool, (if b then q j else 1 - q j) := by
-    have h := Finset.sum_prod_piFinset (ι := Fin d) (κ := Bool)
-      (s := Finset.univ)
-      (fun j b => if b then q j else 1 - q j)
-    rw [Fintype.piFinset_univ] at h
-    exact h
-  rw [hfac]
-  refine Finset.prod_eq_one (fun j _ => ?_)
-  rw [Fintype.sum_bool]
-  simp only [↓reduceIte, Bool.false_eq_true]
-  ring
+/-- Real reading of the locally independent law is the product-Bernoulli mass. -/
+theorem localIndepPMF_toReal {d : ℕ} (q : Fin d → ℝ)
+    (hq0 : ∀ j, 0 ≤ q j) (hq1 : ∀ j, q j ≤ 1) (x : Fin d → Bool) :
+    (localIndepPMF q hq0 hq1 x).toReal = bernPMF q x := by
+  rw [localIndepPMF_toReal_apply]
+  unfold bernPMF
+  apply Finset.prod_congr rfl
+  intro i _
+  by_cases h : x i = true <;> simp [h]
 
 /-- The EM joint normalizes over patterns and latent states. -/
 theorem joint_sum_one {d K : ℕ} (θ : ValidParams d K) :
     ∑ y : Fin d → Bool, ∑ k' : Fin K, joint θ y k' = 1 := by
-  have hB : ∀ k' : Fin K, ∑ y : Fin d → Bool, bernPMF (θ.1.prob k') y = 1 :=
-    fun k' => bernPMF_sum_one (θ.1.prob k')
+  have hB : ∀ k' : Fin K, ∑ y : Fin d → Bool, bernPMF (θ.1.prob k') y = 1 := by
+    intro k'
+    have h := MathlibExt.Probability.FiniteProbability.sum_toReal_eq_one
+      (localIndepPMF (θ.1.prob k') (fun j => (θ.2.prob_pos k' j).le)
+        (fun j => (θ.2.prob_lt_one k' j).le))
+    simpa only [localIndepPMF_toReal] using h
   show (∑ y : Fin d → Bool, ∑ k' : Fin K, θ.1.weight k' * bernPMF (θ.1.prob k') y) = 1
   rw [Finset.sum_comm]
   simp_rw [← Finset.mul_sum, hB, mul_one]
   exact θ.2.weight_sum
 
-/-- Real reading of the locally independent law is the product-Bernoulli mass. -/
-theorem localIndepPMF_toReal {d : ℕ} (q : Fin d → ℝ)
-    (hq0 : ∀ j, 0 ≤ q j) (hq1 : ∀ j, q j ≤ 1) (x : Fin d → Bool) :
-    (localIndepPMF q hq0 hq1 x).toReal = bernPMF q x := by
-  rw [localIndepPMF_apply, ENNReal.toReal_prod]
-  unfold bernPMF
-  apply Finset.prod_congr rfl
-  intro i _
-  by_cases h : x i = true
-  · simp only [ite_eq_left h]
-    exact ENNReal.toReal_ofReal (hq0 i)
-  · simp only [ite_eq_right h]
-    exact ENNReal.toReal_ofReal (sub_nonneg.mpr (hq1 i))
 private theorem localIndepPMF_ne_top {d : ℕ} (q : Fin d → ℝ)
     (hq0 : ∀ j, 0 ≤ q j) (hq1 : ∀ j, q j ≤ 1) (x : Fin d → Bool) :
     localIndepPMF q hq0 hq1 x ≠ ⊤ := by

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.MachineLearning.LatentVariable.ItemResponseEM
+import MathlibExt.Probability.FiniteProbability
 
 /-!
 # Tests for the item-response EM correspondence
@@ -218,10 +219,15 @@ private instance testKernel_markov : IsMarkovKernel testKernel :=
     rw [Measure.finsetSum_apply]
     simp_rw [Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ _)]
     simp only [smul_eq_mul, mul_one]
+    have hsum : ∑ y : Fin 1 → Bool, bernPMF (testParams.1.prob k) y = 1 := by
+      have h := MathlibExt.Probability.FiniteProbability.sum_toReal_eq_one
+        (localIndepPMF (testParams.1.prob k) (fun j => (testParams.2.prob_pos k j).le)
+          (fun j => (testParams.2.prob_lt_one k j).le))
+      simpa only [localIndepPMF_toReal] using h
     rw [Finset.sum_congr rfl (fun y _ => h1 y),
       ← ENNReal.ofReal_sum_of_nonneg (fun y _ =>
         (bernPMF_pos (testParams.2.prob_pos k) (testParams.2.prob_lt_one k) y).le),
-      bernPMF_sum_one, ENNReal.ofReal_one]⟩⟩
+      hsum, ENNReal.ofReal_one]⟩⟩
 
 private theorem testEvidence_ne_zero (x : Fin 1 → Bool) :
     (testKernel ∘ₘ testMeasure) {x} ≠ 0 := by
