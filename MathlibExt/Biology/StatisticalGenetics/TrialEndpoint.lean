@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Basic.Real.Basic
-public import MathlibExt.Probability.Causality.CausalIdentification
 
 /-!
 # Prespecified truncated trial endpoint

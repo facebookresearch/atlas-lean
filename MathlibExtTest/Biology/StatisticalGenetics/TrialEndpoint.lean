@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Biology.StatisticalGenetics.TrialEndpoint
+import MathlibExt.Probability.Causality.CausalIdentification
 
 /-! Tests: truncation at horizon `5`. -/
 
