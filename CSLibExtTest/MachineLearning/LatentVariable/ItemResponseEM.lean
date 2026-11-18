@@ -270,6 +270,6 @@ private theorem test_posterior_match_invocation (x : Fin 1 → Bool) (k : Fin 2)
     resp testParams x k = ((testKernel†testMeasure) x {k}).toReal := by
   haveI : Nonempty (Fin 2) := ⟨⟨0, by decide⟩⟩
   exact (law_objective_posterior_match testParams x k testKernel testMeasure
-    testMeasure_singleton (testKernel_singleton x) (testEvidence_ne_zero x)).2.2
+    testMeasure_singleton (testKernel_singleton x)).2.2
 
 end Cslib.MachineLearning.LatentVariable.ItemResponseEM
