@@ -33,8 +33,10 @@ the identity.
 
 ## iv. References
 
-- Standard acoustical level definitions (intensity level and
-  sound pressure level at a common characteristic impedance).
+- L. E. Kinsler, A. R. Frey, A. B. Coppens and J. V. Sanders,
+  *Fundamentals of Acoustics*, 4th edition, Wiley, 2000
+  (intensity level and sound pressure level at a common
+  characteristic impedance).
 -/
 
 @[expose] public section
