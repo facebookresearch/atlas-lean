@@ -68,30 +68,6 @@ private theorem bind_integral_eq {Z α : Type*} [Fintype Z] [Fintype α]
   ring
 
 
-private theorem memLp_indicator {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (p : PMF (ι → Bool)) (i : ι) :
-    MemLp (fun x : ι → Bool => (if x i then (1 : ℝ) else 0)) 2 p.toMeasure := by
-  refine memLp_of_bounded (a := 0) (b := 1) ?_ ?_ 2
-  · filter_upwards with x
-    cases h : x i <;> simp
-  · exact (by measurability : Measurable (fun x : ι → Bool => (if x i then (1 : ℝ) else 0))).aestronglyMeasurable
-
-
-/-- **Latent-mixture coordinate moments.** Let `Z` (latent states) and `ι`
-(items) be finite, `pi : PMF Z` a latent law with no support restriction,
-and `q z i ∈ [0, 1]` item curves (endpoints `0` and `1` allowed). Write
-`K z = localIndepPMF (q z) _ _` and observe `Y : ι → Bool` from the mixture
-law `pi.bind K` on the full response space. Then, with
-`Y_i x = if x i then 1 else 0`:
-
-(1) mixed first moment `E[Y_i] = E_pi[q_i]`;
-(2) mixed pair moment `E[Y_i * Y_j] = E_pi[q_i * q_j]` for `i ≠ j`;
-(3) observable covariance `Cov(Y_i, Y_j) = Cov_pi(q_i, q_j)` for `i ≠ j`,
-where the left covariance is `ProbabilityTheory.covariance` under the
-observed law and the right is the finite-sum
-`FiniteProbability.covariance` under the weights `(pi z).toReal`.
-
-No diagonal (`i = j`) covariance claim is made. -/
 theorem latentMixture_coordinate_moments {Z ι : Type*} [Fintype Z] [Fintype ι]
     [DecidableEq ι] (pi : PMF Z) (q : Z → ι → ℝ)
     (hq0 : ∀ z i, 0 ≤ q z i) (hq1 : ∀ z i, q z i ≤ 1) :
@@ -134,18 +110,15 @@ theorem latentMixture_coordinate_moments {Z ι : Type*} [Fintype Z] [Fintype ι]
           = MathlibExt.Probability.FiniteProbability.covariance
               (fun z => (pi z).toReal) (fun z => q z i) (fun z => q z j) := by
     intro i j hij
-    have hX : MemLp (fun x : ι → Bool => (if x i then (1 : ℝ) else 0)) 2
-        (pi.bind fun z => localIndepPMF (q z) (hq0 z) (hq1 z)).toMeasure :=
-      memLp_indicator _ i
-    have hY : MemLp (fun x : ι → Bool => (if x j then (1 : ℝ) else 0)) 2
-        (pi.bind fun z => localIndepPMF (q z) (hq0 z) (hq1 z)).toMeasure :=
-      memLp_indicator _ j
-    rw [ProbabilityTheory.covariance_eq_sub hX hY]
-    simp only [Pi.mul_apply]
-    rw [MathlibExt.Probability.FiniteProbability.covariance_eq_sub (MathlibExt.Probability.FiniteProbability.sum_toReal_eq_one pi)]
-    unfold MathlibExt.Probability.FiniteProbability.expectation
+    rw [MathlibExt.Probability.FiniteProbability.covariance_toMeasure_eq]
+    rw [MathlibExt.Probability.FiniteProbability.covariance_eq_sub
+      (MathlibExt.Probability.FiniteProbability.sum_toReal_eq_one _),
+      MathlibExt.Probability.FiniteProbability.covariance_eq_sub
+      (MathlibExt.Probability.FiniteProbability.sum_toReal_eq_one pi)]
+    rw [← MathlibExt.Probability.FiniteProbability.integral_toMeasure_eq_expectation,
+      ← MathlibExt.Probability.FiniteProbability.integral_toMeasure_eq_expectation,
+      ← MathlibExt.Probability.FiniteProbability.integral_toMeasure_eq_expectation]
     rw [h1 i, h1 j, h2 i j hij]
-    rfl
   exact ⟨h1, h2, h3⟩
 
 /-- Latent relabeling, as an instantiation of the existing `PMF.map` /
