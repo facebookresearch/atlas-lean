@@ -35,17 +35,16 @@ carrier of `PhyslibExt.Circuits.NetworkStorageBalance`: a
 four-branch series loop on three non-ground nodes, with ground
 deleted, branch `0` the supply source, branch `1` the armature
 resistance, branch `2` the armature inductance, and branch `3` the
-back-EMF source. The proofs compute the electrical storage and
-rotor energy rates directly from those definitions, via the
-derivative of a scaled square; they do not invoke a network-storage
-derivative theorem.
+back-EMF source. The electrical storage rate is derived by
+instantiating the network storage balance of that carrier with
+the motor partition, incidence matrix, node potentials and branch
+laws; the rotor energy rate is computed directly, via the
+derivative of a scaled square.
 
 ## ii. Key results
 
 - `hasDerivAt_motorEnergy`: the DC motor energy identity, with
   derivative `u i - R i² - b ω² - τL ω + (kt - ke) i ω`.
-- `hasDerivAt_motorEnergy_of_pos`: the same identity under
-  `L, J > 0` and `R, b ≥ 0`.
 - `hasDerivAt_motorEnergy_of_ke_eq_kt` and
   `deriv_motorEnergy_le_of_ke_eq_kt`: the reciprocal balance and its
   dissipation inequality when `ke = kt`.
@@ -194,16 +193,39 @@ theorem deriv_motorNetwork_storedEnergy {R L ke : ℝ} (hR : 0 ≤ R) (hL : 0 < 
     deriv (fun s => storedEnergy 4 ∅ {2} Cval (fun _ => L)
         (motorIncidenceᵀ *ᵥ motorPotentials (u s) R (i s) ke (ω s)) (fun _ => i s)) t =
       u t * i t - R * i t ^ 2 - ke * ω t * i t := by
-  have hfun : (fun s => storedEnergy 4 ∅ {2} Cval (fun _ => L)
-        (motorIncidenceᵀ *ᵥ motorPotentials (u s) R (i s) ke (ω s)) (fun _ => i s)) =
-      (fun s => L * i s ^ 2 / 2) := by
-    funext s
-    exact motor_storedEnergy Cval L _ _
-  rw [hfun]
-  have h := (hasDerivAt_scaled_sq L hi).deriv
-  rw [h]
-  have h1 := congrArg (fun x => x * i t) helec
-  linarith
+  have hRlaw : ∀ e ∈ ({1} : Finset (Fin 4)),
+      (motorIncidenceᵀ *ᵥ motorPotentials (u t) R (i t) ke (ω t)) e =
+        (fun _ => R) e * (fun _ => i t) e := by
+    intro e he
+    have he1 : e = 1 := by simpa using he
+    subst he1
+    rw [motorIncidence_transpose_mulVec]
+    simp
+  have hLlaw : ∀ e ∈ ({2} : Finset (Fin 4)),
+      (motorIncidenceᵀ *ᵥ motorPotentials (u t) R (i t) ke (ω t)) e =
+        (fun _ => L) e * deriv (fun s => (fun _ => i s) e) t := by
+    intro e he
+    have he2 : e = 2 := by simpa using he
+    subst he2
+    rw [motorIncidence_transpose_mulVec]
+    have h2 : (![-u t, R * i t, u t - R * i t - ke * ω t, ke * ω t] : Fin 4 → ℝ) 2 =
+        u t - R * i t - ke * ω t := rfl
+    rw [h2]
+    have hder : (fun s => (fun _ => i s) (2 : Fin 4)) = i := rfl
+    rw [hder]
+    linarith
+  have hbal := network_storage_deriv_eq_supplied_minus_losses 3 4 motorIncidence
+    {1} {2} ∅ {0, 3} motor_isBranchPartition (fun _ => R) (fun _ => L) Cval
+    (by intro e _; exact hR) (by intro e _; exact hL)
+    (by intro e he; simp at he)
+    (fun s => motorPotentials (u s) R (i s) ke (ω s)) (fun _ => 0)
+    (fun s => motorIncidenceᵀ *ᵥ motorPotentials (u s) R (i s) ke (ω s))
+    (fun s _ => i s) t rfl (motorIncidence_mulVec_const (i t)) hRlaw
+    (by intro e he; simp at he) hLlaw (by intro e he; simp at he)
+    (by intro e _; exact hi)
+  rw [hbal, motor_sourceAbsorbedPower, motor_resistiveLoss]
+  simp only [dotProduct, Finset.sum_const_zero, Pi.zero_apply, mul_zero]
+  ring
 
 /-! ## C. Mechanical kinetic-energy derivative -/
 
@@ -241,18 +263,6 @@ theorem hasDerivAt_motorEnergy {R L J b ke kt : ℝ} {u i ω τL : ℝ → ℝ} 
     linarith
   rw [hval] at hE
   exact hE
-
-/-- **DC motor energy balance (headline, roadmap hypotheses).** For `L, J > 0`, `R, b ≥ 0`, `i`
-and `ω` differentiable at `t`, the armature equation `u = R i + L i' + ke ω` and the rotor
-equation `J ω' = kt i - b ω - τL` at `t`, the stored energy `E = L i²/2 + J ω²/2` has derivative
-`u i - R i² - b ω² - τL ω + (kt - ke) i ω` at `t`. -/
-theorem hasDerivAt_motorEnergy_of_pos {R L J b ke kt : ℝ} (hL : 0 < L) (hJ : 0 < J)
-    (hR : 0 ≤ R) (hb : 0 ≤ b) {u i ω τL : ℝ → ℝ} {t : ℝ} (hi : DifferentiableAt ℝ i t)
-    (hω : DifferentiableAt ℝ ω t) (helec : u t = R * i t + L * deriv i t + ke * ω t)
-    (hmech : J * deriv ω t = kt * i t - b * ω t - τL t) :
-    HasDerivAt (fun s => motorEnergy L J (i s) (ω s))
-      (u t * i t - R * i t ^ 2 - b * ω t ^ 2 - τL t * ω t + (kt - ke) * i t * ω t) t := by
-  exact hasDerivAt_motorEnergy hi hω helec hmech
 
 /-- **Reciprocal coupling.** Under the motor equations and the coherent-unit reciprocity premise
 `ke = kt`, `E' = u i - R i² - b ω² - τL ω`. -/
