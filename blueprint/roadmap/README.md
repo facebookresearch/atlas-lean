@@ -16,3 +16,13 @@
 - [Linear Algebra](LinearAlgebra/README.md)
 - [Representation Theory](RepresentationTheory/README.md)
 - [Number Theory](NumberTheory/README.md)
+- [Algebraic Geometry](AlgebraicGeometry/README.md)
+
+## Geometry & Topology
+
+- [Geometry](Geometry/README.md)
+- [Topology](Topology/README.md)
+
+## Analysis & Probability
+
+- [Analysis](Analysis/README.md)
