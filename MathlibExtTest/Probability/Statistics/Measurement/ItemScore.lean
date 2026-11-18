@@ -47,8 +47,8 @@ example :
     simp only [twoPLPMF_toReal, Fin.prod_univ_one, ite_true]
     rw [show (1 : ℝ) * (2 - 2) = 0 by norm_num, Real.sigmoid_zero]
     norm_num
-  have h2r := (vector_score_twoPL (fun _ : Fin 1 => (1 : ℝ))
-    (fun _ : Fin 1 => (2 : ℝ)) 2).2
+  have h2r := (twoPL_score_eq_sum (fun _ : Fin 1 => (1 : ℝ))
+    (fun _ : Fin 1 => (2 : ℝ)) 2)
   have e2 : VectorInference.score
       (fun t Y => (twoPLPMF (fun _ : Fin 1 => (1 : ℝ))
         (fun _ : Fin 1 => (2 : ℝ)) t Y).toReal) 2 (fun _ => true) = 1 / 2 := by
@@ -108,8 +108,13 @@ example :
   have c2 : (∑ Y : Fin 2 → Bool, (twoPLPMF
       (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2)
       (fun _ : Fin 2 => (0 : ℝ)) 1 Y).toReal = 1) :=
-    MathlibExt.Probability.FiniteProbability.sum_toReal_eq_one (twoPLPMF (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2)
-      (fun _ : Fin 2 => (0 : ℝ)) 1)
+    by
+      have hreal : (∑' Y, twoPLPMF (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2)
+          (fun _ : Fin 2 => (0 : ℝ)) 1 Y).toReal = (1 : ENNReal).toReal := by
+        rw [PMF.tsum_coe]
+      rw [ENNReal.tsum_toReal_eq
+        (fun Y => PMF.apply_ne_top _ Y), tsum_fintype] at hreal
+      simpa using hreal
   have c3 : (∀ Y : Fin 2 → Bool, 0 < (twoPLPMF
       (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2)
       (fun _ : Fin 2 => (0 : ℝ)) 1 Y).toReal) := by
@@ -122,12 +127,12 @@ example :
       exact Real.sigmoid_pos _
     · simp only [ite_eq_right h]
       exact sub_pos.mpr (Real.sigmoid_lt_one _)
-  have h2t := (vector_score_twoPL
+  have h2t := (twoPL_score_eq_sum
     (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2)
-    (fun _ : Fin 2 => (0 : ℝ)) 1).2 (fun _ => true)
-  have h2f := (vector_score_twoPL
+    (fun _ : Fin 2 => (0 : ℝ)) 1) (fun _ => true)
+  have h2f := (twoPL_score_eq_sum
     (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2)
-    (fun _ : Fin 2 => (0 : ℝ)) 1).2 (fun _ => false)
+    (fun _ : Fin 2 => (0 : ℝ)) 1) (fun _ => false)
   have c4 : VectorInference.score
       (fun t Y => (twoPLPMF (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2)
         (fun _ : Fin 2 => (0 : ℝ)) t Y).toReal) 1 (fun _ => true)
@@ -170,7 +175,7 @@ example :
           = ∑ j, (fun _ : Fin 0 => (1 : ℝ)) j * ((if Y j then (1 : ℝ) else 0)
               - Real.sigmoid ((fun _ : Fin 0 => (1 : ℝ)) j
                 * (1 - (fun _ : Fin 0 => (0 : ℝ)) j)))) :=
-  vector_score_twoPL _ _ _
+  ⟨twoPL_lawOf_eq_toMeasure _ _ _, twoPL_score_eq_sum _ _ _⟩
 
 /-- Boundary: zero and negative discriminations are supported. -/
 example :

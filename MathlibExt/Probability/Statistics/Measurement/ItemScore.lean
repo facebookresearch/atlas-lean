@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Probability.FiniteProbability
 public import MathlibExt.Probability.Statistics.Measurement.ItemResponse
 public import MathlibExt.Probability.Statistics.Measurement.ProductMoments
 public import MathlibExt.Probability.Statistics.FisherInformation
@@ -29,6 +28,13 @@ measure, and the score at `E = Real` is, at every response pattern,
 open MeasureTheory
 
 namespace MathlibExt.Probability.Statistics.Measurement
+
+private theorem pmf_sum_toReal_eq_one {α : Type*} [Fintype α] (p : PMF α) :
+    (∑ x, (p x).toReal) = 1 := by
+  have hreal : (∑' x, p x).toReal = (1 : ENNReal).toReal := by
+    rw [PMF.tsum_coe]
+  rw [ENNReal.tsum_toReal_eq (fun x => PMF.apply_ne_top p x), tsum_fintype] at hreal
+  simpa using hreal
 
 theorem twoPLPMF_toReal {ι : Type*} [Fintype ι] [DecidableEq ι]
     (a b : ι → ℝ) (t : ℝ) (Y : ι → Bool) :
@@ -51,7 +57,7 @@ theorem twoPLPMF_coord_sum {ι : Type*} [Fintype ι] [DecidableEq ι]
       = Real.sigmoid (a j * (θ - b j)) := by
   exact localIndepPMF_coord_sum _ _ _ _
 
-theorem score_summand_hasDerivAt {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem score_summand_hasDerivAt {ι : Type*}
     (a b : ι → ℝ) (θ : ℝ) (Y : ι → Bool) (j : ι) :
     HasDerivAt
       (fun t : ℝ => Real.log (if Y j then Real.sigmoid (a j * (t - b j))
@@ -95,79 +101,73 @@ namespace MathlibExt.Probability.Statistics.Measurement
 
 open MathlibExt.Probability.Statistics
 
-/-- **Canonical 2PL law and score** .
-
-For a finite item type `ι`, arbitrary real discriminations `a` and
-difficulties `b`, with `p_j (θ) = Real.sigmoid (a j * (θ - b j))`
-(the 2PL model in the logistic metric `D = 1`):
-
-1. the canonical density law `FisherInformation.lawOf` of counting
-   measure on `ι → Bool` with the existing twoPL PMF as density via
-   `toReal` is exactly the PMF's own measure `(twoPLPMF a b θ).toMeasure`;
-2. the `VectorInference.score` (parameter space `E = ℝ`) of that
-   density at `θ` is, at every response pattern `Y`,
-   `∑ j, a j * ((if Y j then 1 else 0) - p_j (θ))`.
-
-No new score, lawOf or information definition is introduced: both
-sides are the existing Atlas definitions, and the density is the
-existing `twoPLPMF` read through `toReal`. -/
-theorem vector_score_twoPL {ι : Type*} [Fintype ι] [DecidableEq ι]
+/-- **Canonical 2PL law.** The canonical density law of counting
+measure on `ι → Bool` with the existing twoPL PMF as density via
+`toReal` is exactly the PMF's own measure. No new law definition is
+introduced. -/
+theorem twoPL_lawOf_eq_toMeasure {ι : Type*} [Fintype ι] [DecidableEq ι]
     (a b : ι → ℝ) (θ : ℝ) :
-    (FisherInformation.lawOf Measure.count
+    FisherInformation.lawOf Measure.count
         (fun t Y => (twoPLPMF a b t Y).toReal) θ
-      = (twoPLPMF a b θ).toMeasure)
-    ∧ (∀ Y : ι → Bool,
-        VectorInference.score (fun t Y => (twoPLPMF a b t Y).toReal) θ Y
-          = ∑ j, a j * ((if Y j then (1 : ℝ) else 0)
-              - Real.sigmoid (a j * (θ - b j)))) := by
-  constructor
-  · show Measure.count.withDensity
-        (fun x => ENNReal.ofReal ((twoPLPMF a b θ x).toReal))
-        = (twoPLPMF a b θ).toMeasure
-    apply Measure.ext_iff.mpr
-    intro s hs
-    rw [withDensity_apply _ hs, PMF.toMeasure_apply_fintype]
-    rw [← lintegral_indicator hs, lintegral_count, tsum_fintype]
-    apply Finset.sum_congr rfl
-    intro x _
-    by_cases hx : x ∈ s
-    · rw [Set.indicator_of_mem hx, Set.indicator_of_mem hx]
-      exact ENNReal.ofReal_toReal (PMF.apply_ne_top _ _)
-    · rw [Set.indicator_of_notMem hx, Set.indicator_of_notMem hx]
-  · intro Y
-    show gradient (fun t : ℝ => Real.log ((twoPLPMF a b t Y).toReal)) θ
-      = ∑ j, a j * ((if Y j then (1 : ℝ) else 0)
-        - Real.sigmoid (a j * (θ - b j)))
-    rw [gradient_eq_deriv']
-    have hlog : ∀ t : ℝ, Real.log ((twoPLPMF a b t Y).toReal)
-        = ∑ j, Real.log (if Y j then Real.sigmoid (a j * (t - b j))
-          else 1 - Real.sigmoid (a j * (t - b j))) := by
-      intro t
-      have hne : ∀ j : ι, (if Y j then Real.sigmoid (a j * (t - b j))
-          else 1 - Real.sigmoid (a j * (t - b j))) ≠ 0 := by
-        intro j
-        by_cases hY : Y j = true
-        · simp only [ite_eq_left hY]
-          exact ne_of_gt (Real.sigmoid_pos _)
-        · simp only [ite_eq_right hY]
-          exact ne_of_gt (sub_pos.mpr (Real.sigmoid_lt_one _))
-      rw [twoPLPMF_toReal]
-      exact Real.log_prod (fun j _ => hne j)
-    simp only [hlog]
-    have hsum : HasDerivAt
-        (fun t : ℝ => ∑ j, Real.log (if Y j then Real.sigmoid (a j * (t - b j))
-          else 1 - Real.sigmoid (a j * (t - b j))))
-        (∑ j, a j * ((if Y j then (1 : ℝ) else 0)
-          - Real.sigmoid (a j * (θ - b j)))) θ :=
-      HasDerivAt.fun_sum (fun j _ => score_summand_hasDerivAt a b θ Y j)
-    rw [hsum.deriv]
+      = (twoPLPMF a b θ).toMeasure := by
+  show Measure.count.withDensity
+      (fun x => ENNReal.ofReal ((twoPLPMF a b θ x).toReal))
+      = (twoPLPMF a b θ).toMeasure
+  apply Measure.ext_iff.mpr
+  intro s hs
+  rw [withDensity_apply _ hs, PMF.toMeasure_apply_fintype]
+  rw [← lintegral_indicator hs, lintegral_count, tsum_fintype]
+  apply Finset.sum_congr rfl
+  intro x _
+  by_cases hx : x ∈ s
+  · rw [Set.indicator_of_mem hx, Set.indicator_of_mem hx]
+    exact ENNReal.ofReal_toReal (PMF.apply_ne_top _ _)
+  · rw [Set.indicator_of_notMem hx, Set.indicator_of_notMem hx]
+
+/-- **Canonical 2PL score.** The `VectorInference.score` (parameter
+space `E = ℝ`) of the twoPL density at `θ` is, at every response
+pattern `Y`, `∑ j, a j * ((if Y j then 1 else 0) - p_j (θ))` with
+`p_j (θ) = Real.sigmoid (a j * (θ - b j))`. No new score definition is
+introduced. -/
+theorem twoPL_score_eq_sum {ι : Type*} [Fintype ι] [DecidableEq ι]
+  (a b : ι → ℝ) (θ : ℝ) (Y : ι → Bool) :
+  VectorInference.score (fun t Y => (twoPLPMF a b t Y).toReal) θ Y
+    = ∑ j, a j * ((if Y j then (1 : ℝ) else 0)
+        - Real.sigmoid (a j * (θ - b j))) := by
+
+  show gradient (fun t : ℝ => Real.log ((twoPLPMF a b t Y).toReal)) θ
+    = ∑ j, a j * ((if Y j then (1 : ℝ) else 0)
+      - Real.sigmoid (a j * (θ - b j)))
+  rw [gradient_eq_deriv']
+  have hlog : ∀ t : ℝ, Real.log ((twoPLPMF a b t Y).toReal)
+      = ∑ j, Real.log (if Y j then Real.sigmoid (a j * (t - b j))
+        else 1 - Real.sigmoid (a j * (t - b j))) := by
+    intro t
+    have hne : ∀ j : ι, (if Y j then Real.sigmoid (a j * (t - b j))
+        else 1 - Real.sigmoid (a j * (t - b j))) ≠ 0 := by
+      intro j
+      by_cases hY : Y j = true
+      · simp only [ite_eq_left hY]
+        exact ne_of_gt (Real.sigmoid_pos _)
+      · simp only [ite_eq_right hY]
+        exact ne_of_gt (sub_pos.mpr (Real.sigmoid_lt_one _))
+    rw [twoPLPMF_toReal]
+    exact Real.log_prod (fun j _ => hne j)
+  simp only [hlog]
+  have hsum : HasDerivAt
+      (fun t : ℝ => ∑ j, Real.log (if Y j then Real.sigmoid (a j * (t - b j))
+        else 1 - Real.sigmoid (a j * (t - b j))))
+      (∑ j, a j * ((if Y j then (1 : ℝ) else 0)
+        - Real.sigmoid (a j * (θ - b j)))) θ :=
+    HasDerivAt.fun_sum (fun j _ => score_summand_hasDerivAt a b θ Y j)
+  rw [hsum.deriv]
 
 /-- **The 2PL score has actual mean zero** .
 
 For the same finite item type and arbitrary real discriminations, the Bochner integral of the
 `VectorInference.score` of the `toReal`-of-`twoPLPMF` density, taken
 against its canonical `FisherInformation.lawOf` on counting measure
-(which `vector_score_twoPL` identifies with the actual PMF measure
+(which `twoPL_lawOf_eq_toMeasure` identifies with the actual PMF measure
 `(twoPLPMF a b θ).toMeasure`), is `0`.  This is the score mean-zero
 identity for this model only; no generic score theorem is restated. -/
 theorem integral_vector_score_twoPL {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -175,8 +175,8 @@ theorem integral_vector_score_twoPL {ι : Type*} [Fintype ι] [DecidableEq ι]
     ∫ Y, VectorInference.score (fun t Y => (twoPLPMF a b t Y).toReal) θ Y
         ∂(FisherInformation.lawOf Measure.count
           (fun t Y => (twoPLPMF a b t Y).toReal) θ) = 0 := by
-  have h1 := (vector_score_twoPL a b θ).1
-  have h2 := (vector_score_twoPL a b θ).2
+  have h1 := twoPL_lawOf_eq_toMeasure a b θ
+  have h2 := twoPL_score_eq_sum a b θ
   rw [h1]
   simp only [h2]
   rw [PMF.integral_eq_sum]
@@ -199,7 +199,7 @@ theorem integral_vector_score_twoPL {ι : Type*} [Fintype ι] [DecidableEq ι]
     apply Finset.sum_congr rfl
     intro Y _
     ring
-  simp only [twoPLPMF_coord_sum a b θ j, hconst, MathlibExt.Probability.FiniteProbability.sum_toReal_eq_one (twoPLPMF a b θ),
+  simp only [twoPLPMF_coord_sum a b θ j, hconst, pmf_sum_toReal_eq_one (twoPLPMF a b θ),
     mul_one, sub_self, mul_zero]
 
 end MathlibExt.Probability.Statistics.Measurement
