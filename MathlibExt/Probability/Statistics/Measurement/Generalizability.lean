@@ -57,6 +57,84 @@ noncomputable def delta_p {Ω : Type*} {Person Item : Type*} [Fintype Item] [Non
     - (grandMean + P p ω
       + (1 / (Fintype.card Item : ℝ)) * ∑ i, I i ω)
 
+/-- Variances of the absolute and relative errors for a fixed person.
+
+This is the minimal core of `variance_absolute_relative_errors` for
+a fixed `p`: only the decomposition of `X p i`, the item and residual
+square-integrability facts, the item-item, residual-residual (at `p`),
+and item-residual (at `p`) covariance hypotheses, and the positive
+item count are needed.  In particular no person finiteness or
+nonemptiness, person variance component, moments, reverse
+cross-covariances, or nonnegativity hypotheses are used. -/
+theorem variance_absolute_relative_errors_selected
+    {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
+    [IsProbabilityMeasure μ]
+    {Person Item : Type*} [Fintype Item] [Nonempty Item] [DecidableEq Item]
+    (grandMean : ℝ)
+    (X : Person → Item → Ω → ℝ) (P : Person → Ω → ℝ)
+    (I : Item → Ω → ℝ) (e : Person → Item → Ω → ℝ)
+    (sigmaI2 sigmae2 : ℝ) (p : Person)
+    (hX : ∀ i, X p i
+      = fun ω => grandMean + P p ω + I i ω + e p i ω)
+    (hI_mem : ∀ i, MemLp (I i) 2 μ)
+    (he_mem : ∀ i, MemLp (e p i) 2 μ)
+    (hI_cov : ∀ i j, cov[I i, I j; μ]
+      = if i = j then sigmaI2 else 0)
+    (he_cov : ∀ i j, cov[e p i, e p j; μ]
+      = if i = j then sigmae2 else 0)
+    (hIe_cov : ∀ i j, cov[I i, e p j; μ] = 0)
+    (hm_pos : 0 < (Fintype.card Item : ℝ)) :
+    Var[Delta_p grandMean X P p; μ]
+        = (sigmaI2 + sigmae2) / (Fintype.card Item : ℝ)
+      ∧ Var[delta_p grandMean X P I p; μ]
+        = sigmae2 / (Fintype.card Item : ℝ) := by
+  have hm_ne : (Fintype.card Item : ℝ) ≠ 0 := ne_of_gt hm_pos
+  have hXw : ∀ (i : Item) (ω : Ω), X p i ω = grandMean + P p ω + I i ω + e p i ω := by
+    intro i ω
+    have h := hX i
+    rw [h]
+  have hDelta : Delta_p grandMean X P p
+      = fun ω => (1 / (Fintype.card Item : ℝ)) * (∑ i, I i ω + ∑ i, e p i ω) := by
+    funext ω
+    unfold Delta_p
+    simp_rw [hXw _ ω]
+    rw [Finset.sum_add_distrib, Finset.sum_add_distrib, Finset.sum_add_distrib]
+    simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+    field_simp
+    ring
+  have hdelta : delta_p grandMean X P I p
+      = fun ω => (1 / (Fintype.card Item : ℝ)) * (∑ i, e p i ω) := by
+    funext ω
+    unfold delta_p
+    simp_rw [hXw _ ω]
+    rw [Finset.sum_add_distrib, Finset.sum_add_distrib, Finset.sum_add_distrib]
+    simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+    field_simp
+    ring
+  have hA : MemLp (fun ω => ∑ i, I i ω) 2 μ :=
+    memLp_finsetSum Finset.univ (fun i _ => hI_mem i)
+  have hB : MemLp (fun ω => ∑ i, e p i ω) 2 μ :=
+    memLp_finsetSum Finset.univ (fun i _ => he_mem i)
+  constructor
+  · rw [hDelta, variance_const_mul, variance_fun_add hA hB]
+    rw [variance_fun_sum (fun i => hI_mem i)]
+    rw [variance_fun_sum (fun i => he_mem i)]
+    rw [covariance_fun_sum_fun_sum (fun i => hI_mem i) (fun i => he_mem i)]
+    simp_rw [hIe_cov]
+    simp only [Finset.sum_const_zero]
+    simp_rw [hI_cov]
+    simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
+    simp_rw [he_cov]
+    simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
+    simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+    field_simp
+    ring
+  · rw [hdelta, variance_const_mul, variance_fun_sum (fun i => he_mem i)]
+    simp_rw [he_cov]
+    simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
+    simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+    field_simp
+
 /-- Variances of the absolute and relative errors in the crossed
 person-by-item moment model.
 
@@ -105,55 +183,11 @@ theorem variance_absolute_relative_errors
         = (sigmaI2 + sigmae2) / (Fintype.card Item : ℝ)
       ∧ Var[delta_p grandMean X P I p; μ]
         = sigmae2 / (Fintype.card Item : ℝ) := by
-  have hm_ne : (Fintype.card Item : ℝ) ≠ 0 := ne_of_gt hm_pos
-  have hXw : ∀ (i : Item) (ω : Ω), X p i ω = grandMean + P p ω + I i ω + e p i ω := by
-    intro i ω
-    have h := hX p i
-    rw [h]
-  have hDelta : Delta_p grandMean X P p
-      = fun ω => (1 / (Fintype.card Item : ℝ)) * (∑ i, I i ω + ∑ i, e p i ω) := by
-    funext ω
-    unfold Delta_p
-    simp_rw [hXw _ ω]
-    rw [Finset.sum_add_distrib, Finset.sum_add_distrib, Finset.sum_add_distrib]
-    simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-    field_simp
-    ring
-  have hdelta : delta_p grandMean X P I p
-      = fun ω => (1 / (Fintype.card Item : ℝ)) * (∑ i, e p i ω) := by
-    funext ω
-    unfold delta_p
-    simp_rw [hXw _ ω]
-    rw [Finset.sum_add_distrib, Finset.sum_add_distrib, Finset.sum_add_distrib]
-    simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-    field_simp
-    ring
-  have hA : MemLp (fun ω => ∑ i, I i ω) 2 μ :=
-    memLp_finsetSum Finset.univ (fun i _ => hI_mem i)
-  have hB : MemLp (fun ω => ∑ i, e p i ω) 2 μ :=
-    memLp_finsetSum Finset.univ (fun i _ => he_mem p i)
   have he_cov_p : ∀ i j : Item, cov[e p i, e p j; μ] = if i = j then sigmae2 else 0 := by
     intro i j
     rw [he_cov]
     simp
-  constructor
-  · rw [hDelta, variance_const_mul, variance_fun_add hA hB]
-    rw [variance_fun_sum (fun i => hI_mem i)]
-    rw [variance_fun_sum (fun i => he_mem p i)]
-    rw [covariance_fun_sum_fun_sum (fun i => hI_mem i) (fun i => he_mem p i)]
-    simp_rw [hIe_cov]
-    simp only [Finset.sum_const_zero]
-    simp_rw [hI_cov]
-    simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
-    simp_rw [he_cov_p]
-    simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
-    simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-    field_simp
-    ring
-  · rw [hdelta, variance_const_mul, variance_fun_sum (fun i => he_mem p i)]
-    simp_rw [he_cov_p]
-    simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
-    simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-    field_simp
-
+  exact variance_absolute_relative_errors_selected grandMean X P I e sigmaI2 sigmae2 p
+    (fun i => hX p i) hI_mem (fun i => he_mem p i) hI_cov he_cov_p
+    (fun i j => hIe_cov i p j) hm_pos
 end MathlibExt.Probability.Statistics.Measurement

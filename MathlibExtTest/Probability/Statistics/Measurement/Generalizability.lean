@@ -216,4 +216,50 @@ theorem test_delta_two_items {Ω : Type*} (X : Fin 1 → Fin 2 → Ω → ℝ)
           - (0 + P 0 ω + (1 / 2) * (I 0 ω + I 1 ω)) := by
   constructor <;> simp [Delta_p, delta_p, Fin.sum_univ_two]
 
+
+/-- two items with item component 2 and residual component 1.
+
+The absolute error variance is `(2 + 1) / 2 = 3 / 2` and the relative
+error variance is `1 / 2`. -/
+theorem pin_test_two_items_concrete_variances
+    {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
+    [IsProbabilityMeasure μ]
+    (grandMean : ℝ)
+    (X : Fin 1 → Fin 2 → Ω → ℝ) (P : Fin 1 → Ω → ℝ)
+    (I : Fin 2 → Ω → ℝ) (e : Fin 1 → Fin 2 → Ω → ℝ)
+    (p : Fin 1)
+    (hX : ∀ p i, X p i
+      = fun ω => grandMean + P p ω + I i ω + e p i ω)
+    (hP_mem : ∀ p, MemLp (P p) 2 μ)
+    (hI_mem : ∀ i, MemLp (I i) 2 μ)
+    (he_mem : ∀ p i, MemLp (e p i) 2 μ)
+    (hP_mean : ∀ p, μ[P p] = 0)
+    (hI_mean : ∀ i, μ[I i] = 0)
+    (he_mean : ∀ p i, μ[e p i] = 0)
+    (hP_cov : ∀ p q, cov[P p, P q; μ]
+      = if p = q then (0 : ℝ) else 0)
+    (hI_cov : ∀ i j, cov[I i, I j; μ]
+      = if i = j then (2 : ℝ) else 0)
+    (he_cov : ∀ p i q j, cov[e p i, e q j; μ]
+      = if (p, i) = (q, j) then (1 : ℝ) else 0)
+    (hPI_cov : ∀ p i, cov[P p, I i; μ] = 0)
+    (hIP_cov : ∀ i p, cov[I i, P p; μ] = 0)
+    (hPe_cov : ∀ p q i, cov[P p, e q i; μ] = 0)
+    (heP_cov : ∀ p i q, cov[e p i, P q; μ] = 0)
+    (hIe_cov : ∀ i p j, cov[I i, e p j; μ] = 0)
+    (heI_cov : ∀ p i j, cov[e p i, I j; μ] = 0) :
+    Var[Delta_p grandMean X P p; μ] = 3 / 2
+      ∧ Var[delta_p grandMean X P I p; μ] = 1 / 2 := by
+  have hm_pos : 0 < (Fintype.card (Fin 2) : ℝ) := by simp
+  have hmain := variance_absolute_relative_errors grandMean X P I e 0 2 1 p
+    hX hP_mem hI_mem he_mem hP_mean hI_mean he_mean hP_cov hI_cov he_cov
+    hPI_cov hIP_cov hPe_cov heP_cov hIe_cov heI_cov
+    le_rfl (by norm_num) zero_le_one hm_pos
+  simp only [Fintype.card_fin] at hmain
+  obtain ⟨hDelta, hdelta⟩ := hmain
+  constructor
+  · rw [hDelta]
+    norm_num
+  · rw [hdelta]
+    norm_num
 end MathlibExtTest.Probability.Statistics.Measurement
