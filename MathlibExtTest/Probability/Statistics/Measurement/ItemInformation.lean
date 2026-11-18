@@ -21,11 +21,10 @@ eligible-set maximum.
 
 open MeasureTheory
 
-/-! ## pinned instances (proofs deferred to the test module)
+/-! ## instances
 
-These examples only pin that the result above instantiates at the
-required cases.  On port they move to the test file; every proof is
-`sorry` in this pin. -/
+Executable examples: the Rasch and two-slope information values,
+boundary cases, ordering, and the finite eligible-set maximum. -/
 
 namespace MathlibExtTest.Probability.Statistics.Measurement.ItemInformation
 
