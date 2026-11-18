@@ -223,26 +223,31 @@ def lean_facts_for(name: str | None, own: dict | None, index, sorry) -> tuple[st
             return keyword, None if has_sorry else "formalized"
         return keyword, "stated" if has_sorry else "formalized"
     if own and "module" in own and "name" in own:
-        match = source_declaration(own["module"], own["name"])
-        if match:
+        found = source_declaration(own["module"], own["name"], own.get("line", 0))
+        if found:
+            match = found[1]
             # Read as generate_wiki reads a declaration the index lacks: a theorem_wanted is stated.
             keyword = match.group("kw")
             return wiki.WANTED.get(keyword, keyword), "stated" if keyword == "theorem_wanted" else None
     return None, None
 
 
-def source_declaration(module: str, name: str):
-    """The match of the first declaration in *module*'s source whose last name component is *name*, at any
-    indentation, read with comments and literals blanked out (so text in a docstring or a string never counts),
-    or None."""
+def source_declaration(module: str, name: str, line: int = 0):
+    """(line number, match) of the declaration in *module*'s source that *name* names, or None. *name* is the
+    declaration's name as written; of several so written, the one at the 1-based *line* when it is one of them,
+    else the first. A name with no dot that no declaration is written as is matched by its last component, as
+    earlier annotations wrote it. The source is read with comments and literals blanked out, at any indentation,
+    with names continued on the next line (see generate_wiki.declaration_heads)."""
     source = wiki.ROOT / Path(*module.split(".")).with_suffix(".lean")
     if not source.is_file():
         return None
-    for line in wiki.code_lines(source.read_text().splitlines()):
-        match = wiki.V2_DECLARATION.match(line)
-        if match and match.group("name").split(".")[-1] == name:
-            return match
-    return None
+    heads = list(wiki.declaration_heads(source.read_text().splitlines()))
+    written = [(number, match) for number, match in heads if match.group("name") == name]
+    if not written and "." not in name:
+        written = [(number, match) for number, match in heads if match.group("name").split(".")[-1] == name]
+    if not written:
+        return None
+    return next(((number, match) for number, match in written if number + 1 == line), written[0])
 
 
 def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[str]]:
@@ -410,12 +415,11 @@ def documented(key: str, index) -> bool | None:
     """Whether the declaration behind a page key still has a docstring; None when it is gone or out of sight."""
     if ":" in key:
         module, name = key.rsplit(":", 1)
-        source = wiki.ROOT / Path(*module.split(".")).with_suffix(".lean")
-        if not source.is_file():
+        found = source_declaration(module, name)
+        if found is None:
             return None
-        lines = source.read_text().splitlines()
-        numbers = [number for number, line in enumerate(wiki.code_lines(lines))
-                   if (match := wiki.V2_DECLARATION.match(line)) and match.group("name").split(".")[-1] == name]
+        lines = (wiki.ROOT / Path(*module.split(".")).with_suffix(".lean")).read_text().splitlines()
+        numbers = [found[0]]
     else:
         declaration = index.declarations.get(key)
         path, line = getattr(declaration, "path", None), getattr(declaration, "line", 0)
@@ -609,7 +613,11 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
         if "origin" in fields:
             extensions[NAMESPACE] = {"origin": fields["origin"]}
         if not target.lean:
+            # The name as written tells apart two declarations of the module that share a last component; the line
+            # breaks a tie between two written alike.
             extensions[OWN].update({"module": ".".join(target.module), "name": target.names[0]})
+            if getattr(target, "line", 0):
+                extensions[OWN]["line"] = target.line
         annotation["extensions"] = extensions
         files.setdefault(links_file(target.path), []).append(annotation)
         pages[key] = target.path

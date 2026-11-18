@@ -575,13 +575,34 @@ def module_groups(items: list[Target]) -> list[str] | None:
     return None
 
 
+def declaration_head(code: list[str], number: int):
+    """The declaration match of code line *number*, or None. A head that stops after its keyword, its name on the
+    next line (`public theorem_wanted` and then `foo : ...`), is read with that line joined to it."""
+    match = V2_DECLARATION.match(code[number])
+    if match is None or match.group("name") or code[number][match.end():].strip():
+        return match
+    following = next((line for line in code[number + 1:] if line.strip()), "")
+    return V2_DECLARATION.match(code[number].rstrip() + " " + following.strip())
+
+
+def declaration_heads(lines: list[str]):
+    """(line number, match) for every declaration head in the source, at any indentation, read with comments and
+    literals blanked out and with names continued on the next line (see declaration_head)."""
+    code = code_lines(lines)
+    for number in range(len(code)):
+        match = declaration_head(code, number)
+        if match:
+            yield number, match
+
+
 def declaration_lines(lines: list[str], indexed: frozenset[int] | set[int] = frozenset()):
     """(line number, match) for each declaration line: unindented, indented inside a `mutual` block, or indented
     on a line where the Lean index found a declaration (`indexed` holds 1-based line numbers), as under
     `open ... in` or in an indented section. Lines are read with their comments and literals blanked out, so
     text in a comment, docstring or string never counts, nor opens or closes a `mutual` block."""
     in_mutual = False
-    for number, line in enumerate(code_lines(lines)):
+    code = code_lines(lines)
+    for number, line in enumerate(code):
         stripped = line.strip()
         if stripped == "mutual":
             in_mutual = True
@@ -589,7 +610,7 @@ def declaration_lines(lines: list[str], indexed: frozenset[int] | set[int] = fro
         if in_mutual and stripped == "end":
             in_mutual = False
             continue
-        match = V2_DECLARATION.match(line)
+        match = declaration_head(code, number)
         if match and (in_mutual or not line[:1].isspace() or number + 1 in indexed):
             yield number, match
 
@@ -653,7 +674,8 @@ def load_library(library: str, index, taxonomy: dict, titles: dict | None = None
             if doc is None:
                 continue
             summary["documented"] += 1
-            keyword, short = match.group("kw"), match.group("name").split(".")[-1]
+            keyword, written = match.group("kw"), match.group("name")
+            short = written.split(".")[-1]
             found = located.get((relative, number + 1))
             if found is None:
                 # A declaration the index lacks: a theorem_wanted is still stated, as below.
@@ -700,7 +722,9 @@ def load_library(library: str, index, taxonomy: dict, titles: dict | None = None
                     lean=lean,
                     statement=statement,
                     proof=proof,
-                    names=[lean or short],
+                    # A declaration the index lacks is known by its name as written, which tells apart two of a
+                    # module's declarations that share a last component.
+                    names=[lean or written],
                     citations=citations,
                     module=module,
                     module_title=module_title,
@@ -952,12 +976,19 @@ def subject_tree(subject: str, targets: list[Target], taxonomy: dict) -> Contain
 def link_v2(targets: list[Target], dependencies: dict) -> None:
     """Add Lean dependency edges between v2 articles from sources/v2/lean-dependencies.json."""
     by_name = {target.lean: target for target in targets if target.lean}
-    # Wanted entries have no `lean:` link; match them by module and short name.
-    by_short = {(".".join(target.module), target.names[0]): target for target in targets if not target.lean}
+    # Wanted entries have no `lean:` link; match them in their module by their name as written, which the compiled
+    # name ends with (the longest such name wins).
+    by_module: dict[str, list[Target]] = defaultdict(list)
+    for target in targets:
+        if not target.lean:
+            by_module[".".join(target.module)].append(target)
 
     def find(name: str) -> Target | None:
+        if name in by_name:
+            return by_name[name]
         module = dependencies.get(name, {}).get("module", "")
-        return by_name.get(name) or by_short.get((module, name.split(".")[-1]))
+        written = [target for target in by_module.get(module, []) if name == target.names[0] or name.endswith("." + target.names[0])]
+        return max(written, key=lambda target: len(target.names[0])) if written else None
 
     for name, entry in dependencies.items():
         target = find(name)

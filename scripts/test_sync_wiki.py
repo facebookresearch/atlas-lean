@@ -653,6 +653,64 @@ class DocstringReport(Vault):
         self.assertEqual(sync.apply_declarations([], self.index)["changed"], [])
 
 
+class UnindexedIdentity(Vault):
+    """Declarations the index lacks are known by module and name as written, with the line to break ties."""
+
+    SOURCE = ("namespace IsJSet\n/-- The J-set version. -/\ntheorem_wanted arithmeticProgressions_pnat : True\nend IsJSet\n"
+              "/-- The written-qualified version. -/\ntheorem_wanted IsEssentialCRSet.arithmeticProgressions_pnat : True\n"
+              "/-- A head whose name is on the next line. -/\npublic theorem_wanted\n    continued : True\n"
+              "/-- A definition sharing the last component. -/\ndef_wanted IsJSet.arithmeticProgressions_pnat_def : Nat\n")
+
+    def setUp(self) -> None:
+        super().setUp()
+        source = self.tmp / "MathlibExt" / "Algebra" / "Wanted.lean"
+        source.parent.mkdir(parents=True, exist_ok=True)
+        source.write_text(self.SOURCE)
+
+    def targets(self):
+        taxonomy = {"subjects": {"Algebra": {}}, "placements": {}}
+        targets, _ = wiki.load_library("MathlibExt", SimpleNamespace(declarations={}), taxonomy)
+        for target in targets:  # where generate_wiki would lay them out
+            target.path = wiki.ROADMAP / "Algebra" / f"{target.slug}.md"
+        return targets
+
+    def test_written_names_and_continued_heads_keep_targets_apart(self) -> None:
+        keys = [sync.declaration_key(target) for target in self.targets()]
+        self.assertEqual(keys, ["MathlibExt.Algebra.Wanted:arithmeticProgressions_pnat",
+                                "MathlibExt.Algebra.Wanted:IsEssentialCRSet.arithmeticProgressions_pnat",
+                                "MathlibExt.Algebra.Wanted:continued",
+                                "MathlibExt.Algebra.Wanted:IsJSet.arithmeticProgressions_pnat_def"])
+
+    def test_the_sync_writes_one_page_each_and_finds_them_again(self) -> None:
+        self.page("Algebra/README.md", "# Algebra\n")
+        self.annotate([self.about("Algebra/README.md")])
+        report = sync.apply_declarations(self.targets(), SimpleNamespace(declarations={}))
+        self.assertEqual(len(report["added"]), 4)
+        rows = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]
+        own = [row["extensions"]["org.atlas-wiki"] for row in rows if "org.atlas-wiki" in row.get("extensions", {})]
+        self.assertEqual(sorted((entry["name"], entry["line"]) for entry in own),
+                         sorted([("arithmeticProgressions_pnat", 3), ("IsEssentialCRSet.arithmeticProgressions_pnat", 6),
+                                 ("continued", 8), ("IsJSet.arithmeticProgressions_pnat_def", 11)]))
+        again = sync.apply_declarations(self.targets(), SimpleNamespace(declarations={}))
+        self.assertEqual((again["added"], again["gone"]), ([], []))
+        sync.apply_lean_facts(SimpleNamespace(declarations={}), {})
+        facts = {row["extensions"]["org.atlas-wiki"]["name"]: (row.get("kind"), row.get("status"))
+                 for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"] if "org.atlas-wiki" in row.get("extensions", {})}
+        self.assertEqual(facts, {"arithmeticProgressions_pnat": ("theorem", "stated"),
+                                 "IsEssentialCRSet.arithmeticProgressions_pnat": ("theorem", "stated"),
+                                 "continued": ("theorem", "stated"), "IsJSet.arithmeticProgressions_pnat_def": ("def", None)})
+
+    def test_source_lookups_use_the_written_name_then_the_line(self) -> None:
+        module = "MathlibExt.Algebra.Wanted"
+        self.assertEqual(sync.source_declaration(module, "IsEssentialCRSet.arithmeticProgressions_pnat")[0], 5)
+        self.assertEqual(sync.source_declaration(module, "continued")[1].group("kw"), "theorem_wanted")
+        self.assertIsNone(sync.source_declaration(module, "IsJSet.missing"))
+        # An earlier annotation's bare last component still finds its declaration.
+        self.assertEqual(sync.source_declaration(module, "arithmeticProgressions_pnat_def")[0], 10)
+        self.assertTrue(sync.declared(f"{module}:IsEssentialCRSet.arithmeticProgressions_pnat", SimpleNamespace(declarations={})))
+        self.assertTrue(sync.documented(f"{module}:continued", SimpleNamespace(declarations={})))
+
+
 class Titles(unittest.TestCase):
     def test_openings_are_compared_without_line_breaks(self) -> None:
         with tempfile.TemporaryDirectory() as folder:
