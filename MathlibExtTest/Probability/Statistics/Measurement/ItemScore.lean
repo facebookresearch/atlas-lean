@@ -49,7 +49,7 @@ example :
     rw [show (1 : ℝ) * (2 - 2) = 0 by norm_num, Real.sigmoid_zero]
     norm_num
   have h2r := (vector_score_twoPL (fun _ : Fin 1 => (1 : ℝ))
-    (fun _ : Fin 1 => (2 : ℝ)) ha1 2).2
+    (fun _ : Fin 1 => (2 : ℝ)) 2).2
   have e2 : VectorInference.score
       (fun t Y => (twoPLPMF (fun _ : Fin 1 => (1 : ℝ))
         (fun _ : Fin 1 => (2 : ℝ)) t Y).toReal) 2 (fun _ => true) = 1 / 2 := by
@@ -72,7 +72,7 @@ example :
         (fun t Y => (twoPLPMF (fun _ : Fin 1 => (1 : ℝ))
           (fun _ : Fin 1 => (2 : ℝ)) t Y).toReal) 2) = 0) :=
     integral_vector_score_twoPL (fun _ : Fin 1 => (1 : ℝ))
-      (fun _ : Fin 1 => (2 : ℝ)) ha1 2
+      (fun _ : Fin 1 => (2 : ℝ)) 2
   exact ⟨e1, e2, e3, e4⟩
 
 /-- Two nonidentical slopes, normalized finite density: `ι = Fin 2`,
@@ -133,10 +133,10 @@ example :
       exact sub_pos.mpr (Real.sigmoid_lt_one _)
   have h2t := (vector_score_twoPL
     (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2)
-    (fun _ : Fin 2 => (0 : ℝ)) ha2 1).2 (fun _ => true)
+    (fun _ : Fin 2 => (0 : ℝ)) 1).2 (fun _ => true)
   have h2f := (vector_score_twoPL
     (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2)
-    (fun _ : Fin 2 => (0 : ℝ)) ha2 1).2 (fun _ => false)
+    (fun _ : Fin 2 => (0 : ℝ)) 1).2 (fun _ => false)
   have c4 : VectorInference.score
       (fun t Y => (twoPLPMF (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2)
         (fun _ : Fin 2 => (0 : ℝ)) t Y).toReal) 1 (fun _ => true)
@@ -164,7 +164,7 @@ example :
         (fun t Y => (twoPLPMF (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2)
           (fun _ : Fin 2 => (0 : ℝ)) t Y).toReal) 1) = 0) :=
     integral_vector_score_twoPL (fun j : Fin 2 => if j = 0 then (1 : ℝ) else 2)
-      (fun _ : Fin 2 => (0 : ℝ)) ha2 1
+      (fun _ : Fin 2 => (0 : ℝ)) 1
   exact ⟨c1, c2, c3, c4, c5⟩
 
 end MathlibExtTest.Probability.Statistics.Measurement.ItemScore

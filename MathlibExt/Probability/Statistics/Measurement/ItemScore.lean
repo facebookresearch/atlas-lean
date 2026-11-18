@@ -111,8 +111,8 @@ difficulties `b`, with `p_j (θ) = Real.sigmoid (a j * (θ - b j))`
 No new score, lawOf or information definition is introduced: both
 sides are the existing Atlas definitions, and the density is the
 existing `twoPLPMF` read through `toReal`. -/
-theorem vector_score_twoPL {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι]
-    (a b : ι → ℝ) (ha : ∀ j, 0 < a j) (θ : ℝ) :
+theorem vector_score_twoPL {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (a b : ι → ℝ) (θ : ℝ) :
     (FisherInformation.lawOf Measure.count
         (fun t Y => (twoPLPMF a b t Y).toReal) θ
       = (twoPLPMF a b θ).toMeasure)
@@ -171,12 +171,12 @@ against its canonical `FisherInformation.lawOf` on counting measure
 `(twoPLPMF a b θ).toMeasure`), is `0`.  This is the score mean-zero
 identity for this model only; no generic score theorem is restated. -/
 theorem integral_vector_score_twoPL {ι : Type*} [Fintype ι] [DecidableEq ι]
-    [Nonempty ι] (a b : ι → ℝ) (ha : ∀ j, 0 < a j) (θ : ℝ) :
+    (a b : ι → ℝ) (θ : ℝ) :
     ∫ Y, VectorInference.score (fun t Y => (twoPLPMF a b t Y).toReal) θ Y
         ∂(FisherInformation.lawOf Measure.count
           (fun t Y => (twoPLPMF a b t Y).toReal) θ) = 0 := by
-  have h1 := (vector_score_twoPL a b ha θ).1
-  have h2 := (vector_score_twoPL a b ha θ).2
+  have h1 := (vector_score_twoPL a b θ).1
+  have h2 := (vector_score_twoPL a b θ).2
   rw [h1]
   simp only [h2]
   rw [PMF.integral_eq_sum]
