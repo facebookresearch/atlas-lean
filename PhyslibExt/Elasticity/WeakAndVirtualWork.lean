@@ -7,21 +7,24 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import PhyslibExt.CondensedMatter.Elasticity.StressStrain
+public import PhyslibExt.ContinuumMechanics.ControlVolumes
 public import PhyslibExt.EarthScience.WeakDiffusion
 public import PhyslibExt.Elasticity.PrismaticMembers
 
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.AbsolutelyContinuousFun
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.LebesgueDifferentiationThm
+import PhyslibExt.EarthScience.ElasticEnergy
 
 /-!
-# Variable-rigidity bar: the weak Dirichlet problem on `[0, L]`
+# The weak bar problem and virtual work on a box
 
 ## i. Overview
 
-A bar of length `L > 0`, fixed at both ends, has a measurable axial rigidity `EA` with
-`0 < EAmin ≤ EA ≤ EAmax` almost everywhere on `[0, L]` and carries an axial load `q ∈ L²(0, L)`.
-Its weak problem asks for `u ∈ H¹₀(0, L)` with `∫₀ᴸ EA u' v' = ∫₀ᴸ q v` for every
-`v ∈ H¹₀(0, L)` (`IsWeakBarSolution`). `H¹₀(0, L)` is encoded by `WeakH10On L` exactly as
+**The weak bar problem.** A bar of length `L > 0`, fixed at both ends, has a measurable axial
+rigidity `EA` with `0 < EAmin ≤ EA ≤ EAmax` almost everywhere on `[0, L]` and carries an axial
+load `q ∈ L²(0, L)`. Its weak problem asks for `u ∈ H¹₀(0, L)` with `∫₀ᴸ EA u' v' = ∫₀ᴸ q v` for
+every `v ∈ H¹₀(0, L)` (`IsWeakBarSolution`). `H¹₀(0, L)` is encoded by `WeakH10On L` exactly as
 `EarthScience.WeakH10` encodes `H¹₀(0, 1)`: a representative that is the primitive, from `0`, of
 an `L²(0, L)` weak derivative with zero integral, so that it vanishes at both ends. Values outside
 `[0, L]` are irrelevant.
@@ -48,6 +51,36 @@ Model inputs: small-strain linear elastic bar with scalar axial displacement, ze
 at both ends. Non-goals: traction ends, a global Hilbert-space equivalence, multidimensional
 `H¹`, traces or Korn inequalities, and any empirical adequacy or system safety claim.
 
+**Virtual work on a box.** On a nondegenerate box `[a, b]` in `ℝ³ = Fin 3 → ℝ`, let `σ` be a
+tension-positive Cauchy stress field, symmetric on the box and `C¹` on an open neighbourhood `U`
+of it, `v` a `C¹` virtual displacement on `U`, and `body` a body force with the equilibrium
+equations `div σ + body = 0` on the box (`stressDivergence`, the divergence of each row `σ i ·`).
+Applying the existing box divergence theorem `ControlVolumes.integral_divergence_box` to the
+vector field `σᵀ v` gives the virtual work identity
+
+`∫_[a, b] σ : ε(v) = ∫_[a, b] body · v + ∑_faces ∫_face (σ n) · v`,
+
+where `ε(v) = Elasticity.smallStrain (Elasticity.displacementGradient v x)` is the canonical small
+strain and the face sum (`boxTractionWork`) has the outward normal `+eᵢ` on the face `x i = b i`
+(`upperFaceWork`) and `-eᵢ` on the face `x i = a i` (`lowerFaceWork`), with the Cauchy traction
+`Elasticity.traction (σ x) n = σ n`. The proof is the product rule
+`div (σᵀ v) = (div σ) · v + σ : ∇v` and, for symmetric `σ`, `σ : ∇v = σ : ε(v)`. A face on which
+`v` vanishes contributes nothing and is removed from the identity; no other face is. A rigid
+virtual displacement `v x = W x`, `Wᵀ = -W`, has zero small strain, so its external virtual work
+vanishes, and it stores no elastic energy.
+
+Validation: for simple shear, `σ : ε = τ γ`, while contracting `σ` with the engineering shear
+`γ = 2 ε₀₁` in both off-diagonal slots gives `2 τ γ`. The test file checks the constant uniaxial
+stress `σ = diag (3, 0, 0)` on `[1, 3] × [0, 1] × [0, 1]` with `v x = (x₀, 0, 0)`: the opposing
+faces `x₀ = 3` and `x₀ = 1` carry the tractions `(3, 0, 0)` and `(-3, 0, 0)` and do the works `9`
+and `-3`, and the internal virtual work is `3 · 2 = 6`; with the inward normal on the face
+`x₀ = 1` the face sum would be `12`.
+
+Model inputs: small-strain kinematics, tension-positive symmetric Cauchy stress, equilibrium
+`div σ + body = 0` on the box, outward normals. This is the smooth virtual work identity, not a
+weak-space existence result; no Korn or coercivity statement is claimed, and no empirical
+adequacy or system safety claim is made.
+
 ## ii. Key results
 
 - `WeakH10On`, `WeakH10On.toUnit`, `WeakH10On.ofUnit`, `WeakH10On.ofUnit_toUnit`,
@@ -58,8 +91,17 @@ at both ends. Non-goals: traction ends, a global Hilbert-space equivalence, mult
   and uniqueness through `EarthScience.weak_diffusion_exists_unique`.
 - `IsWeakBarSolution.eqOn_axialDisplacement`, `stepRigidity_admissible`,
   `not_isWeakBarSolution_zero_rigidity`, `not_ae_lowerBound_of_nonpos`,
-  `not_exists_weakH10On_eqOn_fixedFree`: validation. The numeric fixtures are in
-  `PhyslibExtTest.Elasticity.WeakAndVirtualWorkTest`.
+  `not_exists_weakH10On_eqOn_fixedFree`: validation of the weak bar problem.
+- `stressDivergence`, `upperFaceWork`, `lowerFaceWork`, `boxTractionWork`.
+- `boxTractionWork_eq_boxOutwardFlux`, `divergence_transpose_mulVec`,
+  `doubleDot_eq_doubleDot_smallStrain`: the three ingredients of the virtual work identity.
+- `virtualWork_box`: the virtual work identity.
+- `upperFaceWork_eq_zero`, `lowerFaceWork_eq_zero`, `virtualWork_box_of_lowerFace_eq_zero`:
+  removing a face where `v = 0`.
+- `virtualWork_box_rigid`, `elasticEnergy_rigid`: rigid virtual displacements.
+- `simpleShear_engineering_double_count`: the engineering shear factor.
+
+The numeric fixtures are in `PhyslibExtTest.Elasticity.WeakAndVirtualWorkTest`.
 
 ## iii. Table of contents
 
@@ -67,6 +109,10 @@ at both ends. Non-goals: traction ends, a global Hilbert-space equivalence, mult
 - B. Transport of the weak integrals and of the hypotheses
 - C. Existence and uniqueness
 - D. Validation examples
+- E. Stress divergence and face works
+- F. The virtual work identity
+- G. Clamped faces and rigid virtual displacements
+- H. Validation of the virtual work identity
 
 ## iv. References
 
@@ -74,8 +120,13 @@ at both ends. Non-goals: traction ends, a global Hilbert-space equivalence, mult
   Springer, 2011, chapter 8 (one-dimensional `H¹₀` and Dirichlet problems).
 - T. J. R. Hughes, *The Finite Element Method: Linear Static and Dynamic Finite Element
   Analysis*, Dover, 2000, chapter 1 (the weak form of the bar problem).
+- M. E. Gurtin, *An Introduction to Continuum Mechanics*, Academic Press, 1981 (the theorem of
+  virtual work).
+- P. G. Ciarlet, *Mathematical Elasticity, Volume I: Three-Dimensional Elasticity*,
+  North-Holland, 1988, chapter 2 (the principle of virtual work).
 - `EarthScience.WeakH10` and `EarthScience.weak_diffusion_exists_unique` in
-  `PhyslibExt.EarthScience.WeakDiffusion`.
+  `PhyslibExt.EarthScience.WeakDiffusion`; `ControlVolumes.integral_divergence_box` and
+  Mathlib's `MeasureTheory.integral_divergence_of_hasFDerivAt_off_countable`.
 -/
 
 @[expose] public section
@@ -648,6 +699,270 @@ lemma not_exists_weakH10On_eqOn_fixedFree {L EA q : ℝ} (hL : 0 < L) (hEA : 0 <
   rcases mul_eq_zero.mp this with h | h
   · exact hq h
   · exact hL.ne' (pow_eq_zero_iff two_ne_zero |>.mp h)
+
+section VirtualWork
+
+open scoped Matrix
+open ControlVolumes
+open MathlibExt.Probability.FokkerPlanck (divergence)
+
+/-! ## E. Stress divergence and face works -/
+
+/-- The divergence of a stress field, row by row: `(div σ)ᵢ = ∑ⱼ ∂ⱼ σᵢⱼ`. -/
+noncomputable def stressDivergence (σ : (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ)
+    (x : Fin 3 → ℝ) : Fin 3 → ℝ :=
+  fun i => divergence (fun y => σ y i) x
+
+/-- Virtual work of the traction on the upper face `x i = b i` of the box, outward normal
+`+eᵢ`. -/
+noncomputable def upperFaceWork (a b : Fin 3 → ℝ) (σ : (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ)
+    (v : (Fin 3 → ℝ) → Fin 3 → ℝ) (i : Fin 3) : ℝ :=
+  ∫ y in Set.Icc (a ∘ i.succAbove) (b ∘ i.succAbove),
+    traction (σ (i.insertNth (b i) y)) (Pi.single i 1) ⬝ᵥ v (i.insertNth (b i) y)
+
+/-- Virtual work of the traction on the lower face `x i = a i` of the box, outward normal
+`-eᵢ`. -/
+noncomputable def lowerFaceWork (a b : Fin 3 → ℝ) (σ : (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ)
+    (v : (Fin 3 → ℝ) → Fin 3 → ℝ) (i : Fin 3) : ℝ :=
+  ∫ y in Set.Icc (a ∘ i.succAbove) (b ∘ i.succAbove),
+    traction (σ (i.insertNth (a i) y)) (-Pi.single i 1) ⬝ᵥ v (i.insertNth (a i) y)
+
+/-- The virtual work of the boundary tractions, summed over the six faces. -/
+noncomputable def boxTractionWork (a b : Fin 3 → ℝ) (σ : (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ)
+    (v : (Fin 3 → ℝ) → Fin 3 → ℝ) : ℝ :=
+  ∑ i, (upperFaceWork a b σ v i + lowerFaceWork a b σ v i)
+
+/-- The traction on the face normal `eⱼ`, dotted with `w`: `(σ eⱼ) · w = (σᵀ w)ⱼ`. -/
+private lemma traction_single_dotProduct (M : Matrix (Fin 3) (Fin 3) ℝ) (w : Fin 3 → ℝ)
+    (j : Fin 3) : traction M (Pi.single j 1) ⬝ᵥ w = (Mᵀ *ᵥ w) j := by
+  simp [traction, Matrix.mulVec, dotProduct, Pi.single_apply]
+
+/-- The traction on the face normal `-eⱼ`, dotted with `w`: `(σ (-eⱼ)) · w = -(σᵀ w)ⱼ`. -/
+private lemma traction_neg_single_dotProduct (M : Matrix (Fin 3) (Fin 3) ℝ) (w : Fin 3 → ℝ)
+    (j : Fin 3) : traction M (-Pi.single j 1) ⬝ᵥ w = -(Mᵀ *ᵥ w) j := by
+  rw [← traction_single_dotProduct]
+  simp [traction, Matrix.mulVec_neg]
+
+/-- The `j`-th component of `σᵀ v` as a sum: `(σᵀ v)ⱼ = ∑ᵢ σᵢⱼ vᵢ`. -/
+private lemma fun_transpose_mulVec_apply (σ : (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ)
+    (v : (Fin 3 → ℝ) → Fin 3 → ℝ) (j : Fin 3) :
+    (fun y => ((σ y)ᵀ *ᵥ v y) j) = fun y => ∑ i, σ y i j * v y i := by
+  funext y
+  simp [Matrix.mulVec, dotProduct, Matrix.transpose_apply]
+
+/-- At a point of an open set where `v` is `C¹`, the displacement gradient is the Fréchet
+derivative: `(∇v)ᵢⱼ = (Dv(x) eⱼ)ᵢ`. -/
+private lemma displacementGradient_eq_fderiv {U : Set (Fin 3 → ℝ)} (hU : IsOpen U)
+    {v : (Fin 3 → ℝ) → Fin 3 → ℝ} (hv : ContDiffOn ℝ 1 v U) {x : Fin 3 → ℝ} (hx : x ∈ U)
+    (i j : Fin 3) : displacementGradient v x i j = fderiv ℝ v x (Pi.single j 1) i := by
+  have hvd : HasFDerivAt v (fderiv ℝ v x) x :=
+    (((hv.differentiableOn (by norm_num)) x hx).differentiableAt (hU.mem_nhds hx)).hasFDerivAt
+  have hline : HasDerivAt (fun t : ℝ => x + t • Pi.single j (1 : ℝ)) (Pi.single j 1) 0 := by
+    simpa using ((hasDerivAt_id (0 : ℝ)).smul_const (Pi.single j (1 : ℝ))).const_add x
+  have hx0 : x + (0 : ℝ) • Pi.single j (1 : ℝ) = x := by simp
+  have hvi : HasFDerivAt (fun y => v y i) (ContinuousLinearMap.proj i ∘L fderiv ℝ v x)
+      (x + (0 : ℝ) • Pi.single j (1 : ℝ)) := by
+    rw [hx0]
+    exact hasFDerivAt_pi'.1 hvd i
+  exact (hvi.comp_hasDerivAt (0 : ℝ) hline).deriv
+
+/-- The face sum is the outward flux of `σᵀ v` through the box. -/
+lemma boxTractionWork_eq_boxOutwardFlux (a b : Fin 3 → ℝ)
+    (σ : (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ) (v : (Fin 3 → ℝ) → Fin 3 → ℝ) :
+    boxTractionWork a b σ v = boxOutwardFlux a b (fun y => (σ y)ᵀ *ᵥ v y) := by
+  unfold boxTractionWork boxOutwardFlux upperFaceWork lowerFaceWork
+  refine Finset.sum_congr rfl fun i _ => ?_
+  simp only [traction_single_dotProduct, traction_neg_single_dotProduct, integral_neg]
+  ring
+
+/-- Product rule: `div (σᵀ v) = (div σ) · v + σ : ∇v` at every point of an open set where the
+components of `σ` and `v` are `C¹`. -/
+lemma divergence_transpose_mulVec {U : Set (Fin 3 → ℝ)} (hU : IsOpen U)
+    {σ : (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ} {v : (Fin 3 → ℝ) → Fin 3 → ℝ}
+    (hσ : ∀ i j, ContDiffOn ℝ 1 (fun x => σ x i j) U) (hv : ContDiffOn ℝ 1 v U)
+    {x : Fin 3 → ℝ} (hx : x ∈ U) :
+    divergence (fun y => (σ y)ᵀ *ᵥ v y) x =
+      stressDivergence σ x ⬝ᵥ v x + ∑ i, ∑ j, σ x i j * displacementGradient v x i j := by
+  have hσd : ∀ i j, HasFDerivAt (fun y => σ y i j) (fderiv ℝ (fun y => σ y i j) x) x :=
+    fun i j =>
+      ((((hσ i j).differentiableOn (by norm_num)) x hx).differentiableAt
+        (hU.mem_nhds hx)).hasFDerivAt
+  have hvd : HasFDerivAt v (fderiv ℝ v x) x :=
+    (((hv.differentiableOn (by norm_num)) x hx).differentiableAt (hU.mem_nhds hx)).hasFDerivAt
+  have hvi : ∀ i, HasFDerivAt (fun y => v y i) (ContinuousLinearMap.proj i ∘L fderiv ℝ v x) x :=
+    fun i => hasFDerivAt_pi'.1 hvd i
+  have hFj : ∀ j, fderiv ℝ (fun y => ((σ y)ᵀ *ᵥ v y) j) x (Pi.single j 1) =
+      ∑ i, (σ x i j * fderiv ℝ v x (Pi.single j 1) i +
+        v x i * fderiv ℝ (fun y => σ y i j) x (Pi.single j 1)) := by
+    intro j
+    have h := HasFDerivAt.fun_sum (u := Finset.univ) (A := fun i y => σ y i j * v y i)
+      (fun i _ => (hσd i j).fun_mul (hvi i))
+    rw [fun_transpose_mulVec_apply σ v j, h.fderiv]
+    simp
+  simp only [divergence, MathlibExt.Probability.FokkerPlanck.pderiv, stressDivergence, hFj,
+    displacementGradient_eq_fderiv hU hv hx, dotProduct, Fin.sum_univ_three]
+  ring
+
+/-- A symmetric stress does no work on the skew part of a gradient: `σ : H = σ : ε(H)`. -/
+lemma doubleDot_eq_doubleDot_smallStrain {σ : Matrix (Fin 3) (Fin 3) ℝ}
+    (hσ : IsSymmetricStress σ) (H : Matrix (Fin 3) (Fin 3) ℝ) :
+    ∑ i, ∑ j, σ i j * H i j = ∑ i, ∑ j, σ i j * smallStrain H i j := by
+  have h : ∀ i j, σ j i = σ i j := fun i j => congrFun (congrFun hσ i) j
+  simp only [smallStrain_apply, Fin.sum_univ_three]
+  rw [h 1 0, h 2 0, h 2 1]
+  ring
+
+/-! ## F. The virtual work identity -/
+
+/-- **Virtual work on a box.** For a nondegenerate box, a stress `C¹` on an open neighbourhood
+`U` of the box and symmetric on it, a `C¹` virtual displacement `v` on `U` and the equilibrium
+equations `div σ + body = 0` on the box,
+`∫ σ : ε(v) = ∫ body · v + ∑_faces ∫ (σ n) · v`. -/
+lemma virtualWork_box {a b : Fin 3 → ℝ} (hab : ∀ i, a i < b i) {U : Set (Fin 3 → ℝ)}
+    (hU : IsOpen U) (hbox : Set.Icc a b ⊆ U) {σ : (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ}
+    {v body : (Fin 3 → ℝ) → Fin 3 → ℝ} (hσ : ∀ i j, ContDiffOn ℝ 1 (fun x => σ x i j) U)
+    (hsymm : ∀ x ∈ Set.Icc a b, IsSymmetricStress (σ x)) (hv : ContDiffOn ℝ 1 v U)
+    (heq : ∀ x ∈ Set.Icc a b, stressDivergence σ x + body x = 0) :
+    ∫ x in Set.Icc a b, ∑ i, ∑ j, σ x i j * smallStrain (displacementGradient v x) i j =
+      (∫ x in Set.Icc a b, body x ⬝ᵥ v x) + boxTractionWork a b σ v := by
+  have hF : ContDiffOn ℝ 1 (fun y => (σ y)ᵀ *ᵥ v y) U := by
+    refine contDiffOn_pi.2 fun j => ?_
+    rw [fun_transpose_mulVec_apply σ v j]
+    exact ContDiffOn.sum fun i _ => (hσ i j).mul (contDiffOn_pi.1 hv i)
+  have hdiv := integral_divergence_box hab hU hbox hF
+  rw [← boxTractionWork_eq_boxOutwardFlux] at hdiv
+  have hpt : ∀ x ∈ Set.Icc a b, divergence (fun y => (σ y)ᵀ *ᵥ v y) x =
+      ∑ i, ∑ j, σ x i j * smallStrain (displacementGradient v x) i j - body x ⬝ᵥ v x := by
+    intro x hx
+    rw [divergence_transpose_mulVec hU hσ hv (hbox hx),
+      doubleDot_eq_doubleDot_smallStrain (hsymm x hx), eq_neg_of_add_eq_zero_left (heq x hx)]
+    simp only [neg_dotProduct]
+    ring
+  rw [setIntegral_congr_fun measurableSet_Icc hpt] at hdiv
+  have hcv : ContinuousOn (fderiv ℝ v) U := hv.continuousOn_fderiv_of_isOpen hU le_rfl
+  have hcσ : ∀ i j, ContinuousOn (fderiv ℝ (fun y => σ y i j)) U :=
+    fun i j => (hσ i j).continuousOn_fderiv_of_isOpen hU le_rfl
+  have hgradc : ∀ i j, ContinuousOn (fun x => fderiv ℝ v x (Pi.single j 1) i) U :=
+    fun i j => (continuous_apply i).comp_continuousOn (hcv.clm_apply continuousOn_const)
+  have hint1 : IntegrableOn
+      (fun x => ∑ i, ∑ j, σ x i j * smallStrain (displacementGradient v x) i j) (Set.Icc a b) := by
+    refine ContinuousOn.integrableOn_compact isCompact_Icc ?_
+    have hc : ContinuousOn (fun x => ∑ i, ∑ j, σ x i j *
+        ((fderiv ℝ v x (Pi.single j 1) i + fderiv ℝ v x (Pi.single i 1) j) / 2)) (Set.Icc a b) := by
+      refine continuousOn_finsetSum _ fun i _ => continuousOn_finsetSum _ fun j _ => ?_
+      exact (((hσ i j).continuousOn).mul (((hgradc i j).add (hgradc j i)).div_const 2)).mono hbox
+    refine hc.congr fun x hx => ?_
+    simp only [smallStrain_apply, displacementGradient_eq_fderiv hU hv (hbox hx)]
+  have hint2 : IntegrableOn (fun x => body x ⬝ᵥ v x) (Set.Icc a b) := by
+    have hc : ContinuousOn (fun x => -(stressDivergence σ x ⬝ᵥ v x)) (Set.Icc a b) := by
+      simp only [stressDivergence, divergence, MathlibExt.Probability.FokkerPlanck.pderiv,
+        dotProduct]
+      refine (continuousOn_finsetSum _ fun i _ => ?_).neg
+      refine (continuousOn_finsetSum _ fun j _ => ?_).mul ?_
+      · exact (((hcσ i j).clm_apply continuousOn_const)).mono hbox
+      · exact ((contDiffOn_pi.1 hv i).continuousOn).mono hbox
+    refine (hc.integrableOn_compact isCompact_Icc).congr_fun (fun x hx => ?_) measurableSet_Icc
+    change -(stressDivergence σ x ⬝ᵥ v x) = body x ⬝ᵥ v x
+    rw [eq_neg_of_add_eq_zero_left (heq x hx), neg_dotProduct, neg_neg]
+  rw [integral_sub hint1 hint2] at hdiv
+  linarith
+
+/-! ## G. Clamped faces and rigid virtual displacements -/
+
+/-- The upper face `x i = b i` does no work if `v` vanishes on it. -/
+lemma upperFaceWork_eq_zero {a b : Fin 3 → ℝ} {σ : (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ}
+    {v : (Fin 3 → ℝ) → Fin 3 → ℝ} {i : Fin 3}
+    (hv : ∀ y ∈ Set.Icc (a ∘ i.succAbove) (b ∘ i.succAbove), v (i.insertNth (b i) y) = 0) :
+    upperFaceWork a b σ v i = 0 := by
+  unfold upperFaceWork
+  rw [setIntegral_congr_fun measurableSet_Icc (g := fun _ => (0 : ℝ))
+    fun y hy => by simp only [hv y hy, dotProduct_zero]]
+  simp
+
+/-- The lower face `x i = a i` does no work if `v` vanishes on it. -/
+lemma lowerFaceWork_eq_zero {a b : Fin 3 → ℝ} {σ : (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ}
+    {v : (Fin 3 → ℝ) → Fin 3 → ℝ} {i : Fin 3}
+    (hv : ∀ y ∈ Set.Icc (a ∘ i.succAbove) (b ∘ i.succAbove), v (i.insertNth (a i) y) = 0) :
+    lowerFaceWork a b σ v i = 0 := by
+  unfold lowerFaceWork
+  rw [setIntegral_congr_fun measurableSet_Icc (g := fun _ => (0 : ℝ))
+    fun y hy => by simp only [hv y hy, dotProduct_zero]]
+  simp
+
+/-- Removing a clamped face: if `v` vanishes on the lower face `x i₀ = a i₀`, the identity holds
+with that face, and only that face, removed. -/
+lemma virtualWork_box_of_lowerFace_eq_zero {a b : Fin 3 → ℝ} (hab : ∀ i, a i < b i)
+    {U : Set (Fin 3 → ℝ)} (hU : IsOpen U) (hbox : Set.Icc a b ⊆ U)
+    {σ : (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ} {v body : (Fin 3 → ℝ) → Fin 3 → ℝ}
+    (hσ : ∀ i j, ContDiffOn ℝ 1 (fun x => σ x i j) U)
+    (hsymm : ∀ x ∈ Set.Icc a b, IsSymmetricStress (σ x)) (hv : ContDiffOn ℝ 1 v U)
+    (heq : ∀ x ∈ Set.Icc a b, stressDivergence σ x + body x = 0) (i₀ : Fin 3)
+    (hclamp : ∀ y ∈ Set.Icc (a ∘ i₀.succAbove) (b ∘ i₀.succAbove), v (i₀.insertNth (a i₀) y) = 0) :
+    ∫ x in Set.Icc a b, ∑ i, ∑ j, σ x i j * smallStrain (displacementGradient v x) i j =
+      (∫ x in Set.Icc a b, body x ⬝ᵥ v x) + ∑ i, upperFaceWork a b σ v i +
+        ∑ i ∈ Finset.univ.erase i₀, lowerFaceWork a b σ v i := by
+  rw [virtualWork_box hab hU hbox hσ hsymm hv heq, boxTractionWork, Finset.sum_add_distrib,
+    ← Finset.add_sum_erase Finset.univ (fun i => lowerFaceWork a b σ v i) (Finset.mem_univ i₀),
+    lowerFaceWork_eq_zero hclamp, zero_add, add_assoc]
+
+/-- A rigid virtual displacement `v x = W x` with `Wᵀ = -W` does no internal work, so its
+external virtual work vanishes. -/
+lemma virtualWork_box_rigid {a b : Fin 3 → ℝ} (hab : ∀ i, a i < b i) {U : Set (Fin 3 → ℝ)}
+    (hU : IsOpen U) (hbox : Set.Icc a b ⊆ U) {σ : (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ}
+    {body : (Fin 3 → ℝ) → Fin 3 → ℝ} (hσ : ∀ i j, ContDiffOn ℝ 1 (fun x => σ x i j) U)
+    (hsymm : ∀ x ∈ Set.Icc a b, IsSymmetricStress (σ x))
+    (heq : ∀ x ∈ Set.Icc a b, stressDivergence σ x + body x = 0)
+    {W : Matrix (Fin 3) (Fin 3) ℝ} (hW : Wᵀ = -W) :
+    (∫ x in Set.Icc a b, body x ⬝ᵥ (W *ᵥ x)) + boxTractionWork a b σ (fun x => W *ᵥ x) = 0 := by
+  have hv : ContDiffOn ℝ 1 (fun x : Fin 3 → ℝ => W *ᵥ x) U := by
+    refine (contDiff_pi.2 fun i => ?_).contDiffOn
+    simp only [Matrix.mulVec, dotProduct]
+    fun_prop
+  have h := virtualWork_box hab hU hbox hσ hsymm hv heq
+  have h0 : ∀ x, smallStrain (displacementGradient (fun x => W *ᵥ x) x) = 0 :=
+    fun x => smallStrain_rigid W x hW
+  simp only [h0, Matrix.zero_apply, mul_zero, Finset.sum_const_zero, integral_zero] at h
+  linarith
+
+/-- A rigid virtual displacement stores no isotropic elastic energy, by
+`EarthScience.elastic_energy_of_skew`. -/
+lemma elasticEnergy_rigid {W : Matrix (Fin 3) (Fin 3) ℝ} (hW : Wᵀ = -W) (x : Fin 3 → ℝ)
+    (K μ : ℝ) :
+    (K / 2) * (∑ i, smallStrain (displacementGradient (fun y => W *ᵥ y) x) i i) ^ 2 +
+      μ * ∑ i, ∑ j, (smallStrain (displacementGradient (fun y => W *ᵥ y) x) i j -
+        (∑ k, smallStrain (displacementGradient (fun y => W *ᵥ y) x) k k) / 3 *
+          (if i = j then (1 : ℝ) else 0)) ^ 2 = 0 := by
+  rw [mulVec_eq_affine, displacementGradient_affine]
+  exact EarthScience.elastic_energy_of_skew W hW K μ
+
+/-! ## H. Validation of the virtual work identity -/
+
+/-- The simple-shear stress `τ (e₀ e₁ᵀ + e₁ e₀ᵀ)`. -/
+def simpleShearStress (τ : ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
+  !![0, τ, 0; τ, 0, 0; 0, 0, 0]
+
+/-- The engineering shear factor: for simple shear `u x = (γ x₁, 0, 0)` under the shear stress `τ`
+the virtual work density is `σ : ε = τ γ`; contracting with the engineering shear
+`γ₀₁ = 2 ε₀₁` in both off-diagonal slots gives `2 τ γ`, which differs for `τ γ ≠ 0`. -/
+lemma simpleShear_engineering_double_count {τ γ : ℝ} (hτ : τ ≠ 0) (hγ : γ ≠ 0) (x : Fin 3 → ℝ) :
+    ∑ i, ∑ j, simpleShearStress τ i j *
+        smallStrain (displacementGradient (simpleShearField γ) x) i j = τ * γ ∧
+      simpleShearStress τ 0 1 * engineeringShear (smallStrain (displacementGradient
+          (simpleShearField γ) x)) +
+        simpleShearStress τ 1 0 * engineeringShear (smallStrain (displacementGradient
+          (simpleShearField γ) x)) = 2 * (τ * γ) ∧
+      2 * (τ * γ) ≠ τ * γ := by
+  rw [simpleShear_smallStrain]
+  refine ⟨?_, ?_, ?_⟩
+  · simp [simpleShearStress, Fin.sum_univ_three]
+    ring
+  · simp [simpleShearStress, engineeringShear]
+    ring
+  · intro h
+    have : τ * γ = 0 := by linarith
+    exact mul_ne_zero hτ hγ this
+
+end VirtualWork
 
 end Elasticity.WeakAndVirtualWork
 
