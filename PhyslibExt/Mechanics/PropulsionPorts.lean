@@ -55,7 +55,7 @@ or an exact finite-step logarithmic law.
 A staged vehicle flies a finite sequence of burns `i = 0, …, n` in one fixed direction, burn `i` on
 its own interval `[0, tb i]` with positive mass `m i`, velocity `v i` and exhaust speed `ve i` under
 the law above. Between burn `i` and burn `i + 1` it jettisons the dry mass
-`m i (tb i) - m (i + 1) 0` with zero velocity relative to itself; momentum conservation
+`m i (tb i) - m (i + 1) 0 ≥ 0` with zero velocity relative to itself; momentum conservation
 `m (i + 1) 0 w + (m i (tb i) - m (i + 1) 0) v = m i (tb i) v` leaves the velocity unchanged,
 `w = v`, while the mass drops without any continuity across the event. Summing the burn
 increments, the velocity gained over the whole sequence is
@@ -530,7 +530,8 @@ lemma naive_limit_ne {m q v ve : ℝ} (hm : 0 < m) (hq : q ≠ 0) (hv : v ≠ ve
 /-- A jettison with zero relative velocity leaves the velocity unchanged: a vehicle of mass `m₁` at
 velocity `v` drops the mass `m₁ - m₂`, which keeps the velocity `v`, and the remaining mass `m₂`
 moves at `w`. If `m₂ ≠ 0` (a positive remaining mass in the model), momentum is conserved,
-`m₂ w + (m₁ - m₂) v = m₁ v`, exactly when `w = v`. -/
+`m₂ w + (m₁ - m₂) v = m₁ v`, exactly when `w = v`. The identity needs only `m₂ ≠ 0`; a jettison
+is the case `m₂ ≤ m₁`, which `staged_velocity_increment` requires of every transition. -/
 lemma jettison_velocity_eq {m₁ m₂ v w : ℝ} (hm₂ : m₂ ≠ 0) :
     m₂ * w + (m₁ - m₂) * v = m₁ * v ↔ w = v := by
   constructor
@@ -542,19 +543,22 @@ lemma jettison_velocity_eq {m₁ m₂ v w : ℝ} (hm₂ : m₂ ≠ 0) :
     ring
 
 /-- Staged burn and jettison accounting. Burns `i ≤ n` on `[0, tb i]` with positive mass, exhaust
-speed `ve i` and the reduced law; between burn `i` and burn `i + 1` a momentum-conserving jettison
-with zero relative velocity from mass `m i (tb i)` to mass `m (i + 1) 0`. The velocity gained from
-the start of burn `0` to the end of burn `n` is the sum of the burn increments
-`ve i * log (m i 0 / m i (tb i))`; the jettisoned masses enter no logarithm. The sign of the
-exhaust speeds is not needed, so the model's positive stage-specific `ve i` are a special case. -/
+speed `ve i` and the reduced law; between burn `i` and burn `i + 1` a jettison with zero relative
+velocity from mass `m i (tb i)` to mass `m (i + 1) 0 ≤ m i (tb i)` that conserves momentum. The
+velocity gained from the start of burn `0` to the end of burn `n` is the sum of the burn increments
+`ve i * log (m i 0 / m i (tb i))`; the jettisoned masses enter no logarithm. Neither the mass drop
+nor the sign of the exhaust speeds is needed for the identity: the drop restricts the statement to
+jettisons, and the model's positive stage-specific `ve i` are a special case. -/
 lemma staged_velocity_increment (n : ℕ) {m v m' v' : ℕ → ℝ → ℝ} {ve tb : ℕ → ℝ}
     (htb : ∀ i ≤ n, 0 ≤ tb i) (hm : ∀ i ≤ n, ∀ t ∈ Icc 0 (tb i), HasDerivAt (m i) (m' i t) t)
     (hv : ∀ i ≤ n, ∀ t ∈ Icc 0 (tb i), HasDerivAt (v i) (v' i t) t)
     (hpos : ∀ i ≤ n, ∀ t ∈ Icc 0 (tb i), 0 < m i t)
     (hlaw : ∀ i ≤ n, ∀ t ∈ Icc 0 (tb i), m i t * v' i t = -ve i * m' i t)
+    (_hdrop : ∀ i < n, m (i + 1) 0 ≤ m i (tb i))
     (hjet : ∀ i < n, m (i + 1) 0 * v (i + 1) 0 + (m i (tb i) - m (i + 1) 0) * v i (tb i) =
       m i (tb i) * v i (tb i)) :
     v n (tb n) - v 0 0 = ∑ i ∈ Finset.range (n + 1), ve i * Real.log (m i 0 / m i (tb i)) := by
+  clear _hdrop
   revert htb hm hv hpos hlaw hjet
   induction n with
   | zero =>

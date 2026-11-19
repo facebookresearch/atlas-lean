@@ -19,8 +19,8 @@ parcel step of the vehicle of mass `2` at rest with flow `1` and exhaust speed `
 lemmas applied to it, to the linear burning history `M s = 2 - s` and to the nonlinear burning
 history `M s = 2 - s - s ^ 2`, with forward steps for the histories, and a forward step that
 leaves no mass; finally staged burns: a burn from `4` to `3`, a jettison from `3` to `2` and a burn
-from `2` to `1` at `ve = 1`, and two stages with exhaust speeds `2` and `3` and a discarded dry mass
-`1`.
+from `2` to `1` at `ve = 1`, two stages with exhaust speeds `2` and `3` and a discarded dry mass
+`1`, and a mass increase that balances momentum but is no jettison.
 
 ## i. Overview
 
@@ -329,12 +329,15 @@ lemma twoStage_fixture :
 -- `2 log (4 / 3) + 3 log (2 / 1)`; the dropped mass `1` enters no logarithm.
 example : twoStageVelocity 1 1 - twoStageVelocity 0 0 =
     2 * Real.log (4 / 3) + 3 * Real.log (2 / 1) := by
-  obtain ⟨hdata, hjet, -⟩ := twoStage_fixture
+  obtain ⟨hdata, hjet, hdrop, -⟩ := twoStage_fixture
   have h := staged_velocity_increment 1 (m := twoStageMass) (v := twoStageVelocity)
     (m' := fun _ _ => -1) (v' := fun i t => twoStageExhaust i / twoStageMass i t)
     (ve := twoStageExhaust) (tb := fun _ => 1) (fun _ _ => zero_le_one)
     (fun i hi t ht => (hdata i hi t ht).1) (fun i hi t ht => (hdata i hi t ht).2.1)
     (fun i hi t ht => (hdata i hi t ht).2.2.1) (fun i hi t ht => (hdata i hi t ht).2.2.2)
+    (fun i hi => by
+      obtain rfl : i = 0 := by omega
+      exact hdrop.le)
     (fun i hi => by
       obtain rfl : i = 0 := by omega
       exact hjet)
@@ -352,5 +355,10 @@ example (w : ℝ) : 2 * w + (3 - 2) * (2 * Real.log (4 / 3)) = 3 * (2 * Real.log
 example : 1 * Real.log (4 / 2) = 1 * Real.log (4 / 3) + 1 * Real.log (3 / 2) ∧
     1 * Real.log (4 / 3) < 1 * Real.log (4 / 2) :=
   jettison_as_propellant_overstates one_pos (by norm_num) (by norm_num) (by norm_num)
+
+-- A momentum balance alone does not make a transition a jettison: the mass increase from `1` to `2`
+-- at zero velocity balances momentum, but it is no drop, so it is not a transition of the staged
+-- lemma.
+example : (2 : ℝ) * 0 + (1 - 2) * 0 = 1 * 0 ∧ ¬ (2 : ℝ) ≤ 1 := by norm_num
 
 end PhyslibExtTest.Mechanics.PropulsionPorts
