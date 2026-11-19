@@ -1,0 +1,3 @@
+# Wired translation invariance from the placement hypothesis
+
+Let $d \in \mathbb{N}$ and $0 < p < 1$. If the [wired placement hypothesis](lmc-wired-placement.md) holds for every $g \in \mathbb{Z}^d$, then $\phi^1_{p,2}$ is translation invariant: every shift $\tau_g$, $g \in \mathbb{Z}^d$, preserves it, where $\mathbb{Z}^d$ acts on configurations by $(\tau_g\omega)(e) = \omega(e - g)$, where $e - g$ is the pair $e$ translated by $-g$, and $\phi^1_{p,2}$ is the [wired infinite-volume random-cluster measure](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-infinite-volume.md) on $\mathbb{Z}^d$ (a chosen subsequential weak limit of the wired box measures).

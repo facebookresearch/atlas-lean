@@ -20,7 +20,8 @@ The endpoint drifts are `θ₁ / 2` at `0` and `-θ₂ / 2` at `1`. At `α = θ�
 
 @[expose] public section
 
-open MathlibExt.Biology.PopulationGenetics.Diffusion
+open Real Set Filter MathlibExt.Biology.PopulationGenetics.Diffusion
+open scoped Topology
 
 namespace MathlibExtTest.Biology.PopulationGenetics.Diffusion.Generator
 
@@ -31,10 +32,20 @@ example (α θ₁ θ₂ : ℝ) (f : ℝ → ℝ) (x : ℝ) :
         (fun y => y * (1 - y)) f x := by
   simp only [selectionMutationGenerator, diffusionGenerator]
 
--- Kimura's fixation probability is harmonic for the mutation-free combined generator.
+-- Kimura's fixation probability is harmonic for the mutation-free combined generator,
+-- via the bridge to the selection generator.
 example (α x : ℝ) : selectionMutationGenerator α 0 0 (kimuraFixation α) x = 0 := by
   rw [selectionMutationGenerator_zero_zero]
   exact generator_kimuraFixation α x
+
+-- Neutral uniqueness for the combined generator, via the same bridge: the only solution
+-- at `α = 0` is the identity on `[0, 1]`.
+example {u : ℝ → ℝ} (hcont : ContinuousOn u (Icc 0 1)) (hu : ContDiffOn ℝ 2 u (Ioo 0 1))
+    (hgen : ∀ x ∈ Ioo (0 : ℝ) 1, selectionMutationGenerator 0 0 0 u x = 0)
+    (h0 : u 0 = 0) (h1 : u 1 = 1) : ∀ x ∈ Icc (0 : ℝ) 1, u x = x := fun x hx => by
+  have hgen' : ∀ x ∈ Ioo (0 : ℝ) 1, generator 0 u x = 0 := fun x hx => by
+    rw [← selectionMutationGenerator_zero_zero]; exact hgen x hx
+  rw [eq_kimuraFixation_of_contDiffOn hcont hu hgen' h0 h1 x hx, kimuraFixation_neutral]
 
 -- Endpoints of `[0, 1]`: selection vanishes at both boundaries.
 example (α θ₁ θ₂ : ℝ) : selectionMutationGenerator α θ₁ θ₂ id 0 = θ₁ / 2 := by
