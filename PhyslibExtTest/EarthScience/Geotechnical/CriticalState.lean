@@ -140,11 +140,39 @@ example (σ : Matrix (Fin 3) (Fin 3) ℝ) :
     meanStress (compressionPositiveStress σ) = -meanStress σ := by
   simp [meanStress, compressionPositiveStress, Matrix.trace_neg, neg_div]
 
+/-- Symmetric (Cauchy) stress: the invariant is `√(3 J₂)`
+of the deviatoric part, here at a triaxial stress. -/
+example (a b : ℝ) :
+    deviatoricInvariant !![a, 0, 0; 0, b, 0; 0, 0, b]
+      = Real.sqrt (3 * (-stressInvariant2
+        (deviatoricStress !![a, 0, 0; 0, b, 0; 0, 0, b]))) :=
+  deviatoricInvariant_eq_sqrt_neg_stressInvariant2_deviatoric
+    (by
+      unfold IsSymmetricStress
+      ext i j
+      fin_cases i <;> fin_cases j <;> simp [Matrix.transpose_apply])
+
+/-- Nonsymmetric control: for the single-entry matrix
+`σ 0 1 = 1` the Frobenius-form invariant is `√(3/2)`,
+while `J₂` of its deviatoric part is `0`; the two notions
+agree only under symmetry. -/
+example : deviatoricInvariant !![0, 1, 0; 0, 0, 0; 0, 0, 0]
+      = Real.sqrt (3 / 2) ∧
+    stressInvariant2
+      (deviatoricStress !![0, 1, 0; 0, 0, 0; 0, 0, 0]) = 0 := by
+  constructor
+  · simp [deviatoricInvariant, deviatoricStress, meanStress,
+      Matrix.trace_fin_three, Matrix.mul_apply, Fin.sum_univ_three]
+  · simp [stressInvariant2, deviatoricStress, meanStress,
+      Matrix.trace_fin_three]
+
 #print axioms EarthScience.modifiedCamClayYield_eq_translated_ellipse
 #print axioms EarthScience.convex_modifiedCamClayElasticDomain
 #print axioms EarthScience.modifiedCamClayElasticDomain_bounds
 #print axioms EarthScience.meanStress_effectiveStressCompressionPositive
 #print axioms EarthScience.deviatoricInvariant_effectiveStressCompressionPositive
 #print axioms EarthScience.deviatoricInvariant_compressionPositiveStress
+#print axioms
+  EarthScience.deviatoricInvariant_eq_sqrt_neg_stressInvariant2_deviatoric
 
 end PhyslibExtTest.EarthScience.Geotechnical.CriticalState

@@ -25,8 +25,9 @@ stress ratio `M` and preconsolidation pressure `pc`. Here
 `p` is the compression-positive effective mean stress (the
 `meanStress` of the compression-positive effective tensor,
 the negative of the tension-positive mean stress) and `q`
-is the deviatoric invariant `√(3 J₂)`, equal to
-`|σa - σr|` in triaxial stress; the physical branch is
+is the deviatoric invariant, `√(3 J₂)` for symmetric
+(Cauchy) stress and equal to `|σa - σr|` in triaxial
+stress; the physical branch is
 `q ≥ 0`, while section A allows signed `q` with the same
 `M` in extension. The elastic domain is the translated
 ellipse `F(p, q) ≤ 0`, convex for every real `M` and `pc`
@@ -84,8 +85,11 @@ in the `(p, q)` plane. -/
 def modifiedCamClayElasticDomain (M pc : ℝ) : Set (ℝ × ℝ) :=
   {x | modifiedCamClayYield M pc x.1 x.2 ≤ 0}
 
-/-- Translated-ellipse form: center `(pc / 2, 0)`,
-semi-axes `pc / 2` and `M * pc / 2`. -/
+/-- Translated-ellipse form: center `(pc / 2, 0)`; for
+`M, pc > 0` the semi-axes are `pc / 2` and `M * pc / 2`
+(in signed generality the geometric lengths are
+`|pc| / 2` and `|M * pc| / 2`, degenerating at zero
+parameters). -/
 lemma modifiedCamClayYield_eq_translated_ellipse (M pc p q : ℝ) :
     modifiedCamClayYield M pc p q
       = M ^ 2 * (p - pc / 2) ^ 2 + q ^ 2 - (M * pc / 2) ^ 2 := by
@@ -160,10 +164,35 @@ theorem modifiedCamClayElasticDomain_bounds {M pc : ℝ} (hM : 0 < M)
 
 /-! ## B. Compression-positive invariant bridge -/
 
-/-- Deviatoric invariant
-`q = √(3/2 · tr (sᵀ s)) = √(3 J₂)`. -/
+/-- Deviatoric invariant in Frobenius form,
+`q = √(3/2 · tr (sᵀ s))` for the deviatoric part `s`.
+For symmetric (Cauchy) stress this is `√(3 J₂)` (see
+`deviatoricInvariant_eq_sqrt_neg_stressInvariant2_deviatoric`);
+for a nonsymmetric matrix it is the Frobenius extension,
+not `J₂`. -/
 noncomputable def deviatoricInvariant (σ : Matrix (Fin 3) (Fin 3) ℝ) : ℝ :=
   Real.sqrt (3 / 2 * ((deviatoricStress σ)ᵀ * deviatoricStress σ).trace)
+
+/-- For symmetric (Cauchy) stress, the Frobenius-form
+invariant is `√(3 J₂)`, with
+`J₂ = -stressInvariant2` of the deviatoric part. -/
+lemma deviatoricInvariant_eq_sqrt_neg_stressInvariant2_deviatoric
+    {σ : Matrix (Fin 3) (Fin 3) ℝ} (hσ : IsSymmetricStress σ) :
+    deviatoricInvariant σ
+      = Real.sqrt (3 * (-stressInvariant2 (deviatoricStress σ))) := by
+  have hσ' : σᵀ = σ := hσ
+  have hsymm : (deviatoricStress σ)ᵀ = deviatoricStress σ := by
+    unfold deviatoricStress
+    rw [Matrix.transpose_sub, Matrix.transpose_smul, Matrix.transpose_one, hσ']
+  have htr : (deviatoricStress σ).trace = 0 := by
+    unfold deviatoricStress meanStress
+    rw [Matrix.trace_sub, Matrix.trace_smul, Matrix.trace_one]
+    simp only [Fintype.card_fin, smul_eq_mul]
+    ring
+  unfold deviatoricInvariant stressInvariant2
+  rw [hsymm, htr]
+  congr 1
+  ring
 
 /-- Pore pressure lowers the compression-positive mean
 stress by `u`. -/
