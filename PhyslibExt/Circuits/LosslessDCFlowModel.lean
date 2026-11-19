@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Circuits.ArcPortSigns
+public import MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian
 public import PhyslibExt.Circuits.ACInjectionLossBalance
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
@@ -30,9 +31,11 @@ lossless DC model is the branch flow `f = diag(b) * Bᵀ * θ`, so
 which equals `L_b * θ` for the full weighted Laplacian
 `L_b = B * diag(b) * Bᵀ`. The two tail-positive signs cancel, so `L_b`
 is the arc-network weighted Laplacian of
-`MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian`, whose energy,
-kernel, and grounded-invertibility results apply to it. The injections
-sum to zero, and a uniform angle shift changes no flow.
+`MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian`, and its energy
+identity, its kernel for nonnegative susceptances, and the positive
+definiteness of its grounded block are restated here for `L_b`. The
+injections sum to zero, and a uniform angle shift changes no flow, for
+susceptances of any sign.
 
 The nonlinear comparison is the lossless unit-magnitude AC model built
 on the network of `PhyslibExt.Circuits.ACInjectionLossBalance`: node
@@ -62,6 +65,11 @@ resulting real-power formulas, which the DC flow does not represent.
 - `abs_acBranchRealPower_sub_dcBranchFlow_le`: the per-line angle
   error bound.
 - `abs_nodeRealPower_sub_dcInjection_le`: the nodal angle error bound.
+- `dotProduct_weightedLaplacian_mulVec`,
+  `weightedLaplacian_mulVec_eq_zero_iff`, and
+  `grounded_weightedLaplacian_isUnit`: the energy identity, the kernel for
+  nonnegative susceptances, and the invertibility of the grounded block,
+  transferred from the arc-network Laplacian.
 
 ## iii. Table of contents
 
@@ -93,6 +101,7 @@ namespace PhyslibExt.Circuits.LosslessDCFlowModel
 open PhyslibExt.Circuits.BalancedThreePhase
 open PhyslibExt.Circuits.ACInjectionLossBalance
 open PhyslibExt.Circuits.ArcPortSigns
+open MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian (positiveArcGraph)
 
 /-- DC branch flow `f = diag(b) * Bᵀ * θ` for branch susceptances `b` and
 node phase angles `θ`. -/
@@ -197,6 +206,60 @@ lemma weightedLaplacian_eq_incidenceMatrix (nN nE : ℕ) (tail head : Fin nE →
   rw [weightedLaplacian, electricalIncidence_eq_neg_incidence, Matrix.transpose_neg,
     Matrix.neg_mul, Matrix.neg_mul, Matrix.mul_neg, neg_neg]
 
+/-- Energy identity: `θ ⬝ᵥ L_b θ` is the susceptance-weighted sum of
+squared angle differences across the branches. -/
+lemma dotProduct_weightedLaplacian_mulVec (nN nE : ℕ) (tail head : Fin nE → Fin nN)
+    (b : Fin nE → ℝ) (θ : Fin nN → ℝ) :
+    dotProduct θ (Matrix.mulVec (weightedLaplacian nN nE tail head b) θ) =
+      ∑ e : Fin nE, b e * (θ (tail e) - θ (head e)) ^ 2 := by
+  rw [weightedLaplacian_eq_incidenceMatrix,
+    MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian.dotProduct_weightedLaplacian_mulVec]
+  refine Finset.sum_congr rfl fun e _ => ?_
+  ring
+
+/-- Kernel for nonnegative susceptances: `L_b * θ = 0` iff `θ` is constant
+on every connected component of the graph of positive-susceptance
+branches. -/
+lemma weightedLaplacian_mulVec_eq_zero_iff (nN nE : ℕ) (tail head : Fin nE → Fin nN)
+    (b : Fin nE → ℝ) (hb : ∀ e, 0 ≤ b e) (θ : Fin nN → ℝ) :
+    Matrix.mulVec (weightedLaplacian nN nE tail head b) θ = 0 ↔
+      ∀ u v, (positiveArcGraph tail head b).Reachable u v → θ u = θ v := by
+  rw [weightedLaplacian_eq_incidenceMatrix]
+  exact MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian.weightedLaplacian_mulVec_eq_zero_iff
+    tail head b hb θ
+
+open MathlibExt.Combinatorics.Graph in
+/-- Kernel for nonnegative susceptances with every node reachable from `r`
+through positive-susceptance branches: `L_b * θ = 0` iff `θ` is constant. -/
+lemma weightedLaplacian_mulVec_eq_zero_iff_of_reachable (nN nE : ℕ)
+    (tail head : Fin nE → Fin nN) (b : Fin nE → ℝ) (hb : ∀ e, 0 ≤ b e) (r : Fin nN)
+    (hconn : ∀ v, (positiveArcGraph tail head b).Reachable r v) (θ : Fin nN → ℝ) :
+    Matrix.mulVec (weightedLaplacian nN nE tail head b) θ = 0 ↔ ∀ v, θ v = θ r := by
+  rw [weightedLaplacian_eq_incidenceMatrix]
+  exact ArcNetworkLaplacian.weightedLaplacian_mulVec_eq_zero_iff_of_reachable
+    tail head b hb r hconn θ
+
+/-- Grounded block: with nonnegative susceptances and every node reachable
+from the reference `r` through positive-susceptance branches, `L_b` with
+the row and column of `r` deleted is positive definite. -/
+theorem grounded_weightedLaplacian_posDef (nN nE : ℕ) (tail head : Fin nE → Fin nN)
+    (b : Fin nE → ℝ) (hb : ∀ e, 0 ≤ b e) (r : Fin nN)
+    (hconn : ∀ v, (positiveArcGraph tail head b).Reachable r v) :
+    ((weightedLaplacian nN nE tail head b).submatrix
+      (Subtype.val : {v // v ≠ r} → Fin nN) Subtype.val).PosDef := by
+  rw [weightedLaplacian_eq_incidenceMatrix]
+  exact MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian.grounded_weightedLaplacian_posDef
+    tail head b hb r hconn
+
+/-- The grounded block of `L_b` is invertible under the hypotheses of
+`grounded_weightedLaplacian_posDef`. -/
+theorem grounded_weightedLaplacian_isUnit (nN nE : ℕ) (tail head : Fin nE → Fin nN)
+    (b : Fin nE → ℝ) (hb : ∀ e, 0 ≤ b e) (r : Fin nN)
+    (hconn : ∀ v, (positiveArcGraph tail head b).Reachable r v) :
+    IsUnit ((weightedLaplacian nN nE tail head b).submatrix
+      (Subtype.val : {v // v ≠ r} → Fin nN) (Subtype.val : {v // v ≠ r} → Fin nN)) :=
+  (grounded_weightedLaplacian_posDef nN nE tail head b hb r hconn).isUnit
+
 /-- DC injections are balanced: they sum to zero over all nodes, which is
 the full reference equation a grounded solve must respect. -/
 lemma sum_dcInjection_eq_zero (nN nE : ℕ) (tail head : Fin nE → Fin nN)
@@ -207,7 +270,8 @@ lemma sum_dcInjection_eq_zero (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     MathlibExt.Combinatorics.Graph.ArcNetwork.sum_incidenceMatrix_mulVec_eq_zero, neg_zero]
 
 /-- A uniform angle shift changes no DC flow: the full weighted Laplacian
-kills constant angle vectors. -/
+kills constant angle vectors. Unlike `weightedLaplacian_mulVec_eq_zero_iff`,
+this holds for susceptances of any sign. -/
 lemma weightedLaplacian_mulVec_const (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (c : ℝ) :
     Matrix.mulVec (weightedLaplacian nN nE tail head b) (fun _ => c) = 0 := by

@@ -84,6 +84,40 @@ example : Matrix.mulVec (weightedLaplacian 2 2 tl hd bb) th = ![5 / 2, -5 / 2] :
     simp [dcInjection, Matrix.mulVec, dotProduct, Fin.sum_univ_two, dcBranchFlow_apply,
       electricalIncidence_apply, tl, hd, bb, th] <;> norm_num
 
+/-- Energy `θ ⬝ᵥ L_b θ = 2 * (1/2)^2 + 3 * (-1/2)^2 = 5/4`. -/
+example : dotProduct th (Matrix.mulVec (weightedLaplacian 2 2 tl hd bb) th) = 5 / 4 := by
+  rw [dotProduct_weightedLaplacian_mulVec]
+  norm_num [Fin.sum_univ_two, tl, hd, bb, th]
+
+/-- Every node is reachable from the reference node `1` through a
+positive-susceptance branch. -/
+lemma reachable_from_one :
+    ∀ v, (MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian.positiveArcGraph tl hd bb).Reachable
+      1 v := by
+  have hadj : (MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian.positiveArcGraph
+      tl hd bb).Adj 1 0 :=
+    (SimpleGraph.fromRel_adj _ _ _).mpr
+      ⟨by decide, Or.inr ⟨0, by norm_num [bb], by simp [tl], by simp [hd]⟩⟩
+  intro v
+  fin_cases v
+  · exact hadj.reachable
+  · exact SimpleGraph.Reachable.refl _
+
+/-- The kernel of `L_b` is the constant angle vectors, so the angles
+`(1/2, 0)` are not in it. -/
+example : Matrix.mulVec (weightedLaplacian 2 2 tl hd bb) th ≠ 0 := by
+  rw [ne_eq, weightedLaplacian_mulVec_eq_zero_iff_of_reachable 2 2 tl hd bb
+    (fun e => (bb_pos e).le) 1 reachable_from_one]
+  intro h
+  have h0 := h 0
+  norm_num [th] at h0
+
+/-- Grounding node `1` leaves an invertible block. -/
+example : IsUnit ((weightedLaplacian 2 2 tl hd bb).submatrix
+    (Subtype.val : {v : Fin 2 // v ≠ 1} → Fin 2)
+    (Subtype.val : {v : Fin 2 // v ≠ 1} → Fin 2)) :=
+  grounded_weightedLaplacian_isUnit 2 2 tl hd bb (fun e => (bb_pos e).le) 1 reachable_from_one
+
 /-- The phase reference has unit voltage `1`. -/
 example : unitVoltage 2 th 1 = 1 :=
   unitVoltage_eq_one_of_angle_eq_zero 2 th 1 (by simp [th])
