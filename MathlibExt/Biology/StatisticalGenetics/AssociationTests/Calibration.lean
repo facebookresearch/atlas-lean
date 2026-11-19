@@ -224,7 +224,7 @@ inductive DependenceRegime
 /-- The hypothesis that a dependence regime imposes on the p-value vector `p` with true nulls
 `H0`: independence (`iIndepFun`), PRDS on `H0` (`IsPRDSOn`), or nothing. -/
 def DependenceRegime.Holds {m : ℕ} (r : DependenceRegime) (μ : Measure Ω) [IsFiniteMeasure μ]
-    (p : Fin m → Ω → ℝ) (H0 : Finset (Fin m)) : Prop :=
+    [NeZero μ] (p : Fin m → Ω → ℝ) (H0 : Finset (Fin m)) : Prop :=
   match r with
   | .independent => iIndepFun p μ
   | .prds => IsPRDSOn μ p H0

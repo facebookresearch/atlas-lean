@@ -473,3 +473,5 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Topology/algebraic-topology/brouwer-fixed-point-theorem/map-weights-apply.md"}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Topology/algebraic-topology/brouwer-fixed-point-theorem/marginal-prod-simplex.md"}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Topology/algebraic-topology/brouwer-fixed-point-theorem/prod-simplex.md"}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Topology/general-topology/bounded-components-of-the-complement/inside.md"}], "object": [{"location": {"declaration": "Set.inside"}}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Topology/general-topology/bounded-components-of-the-complement/README.md"}], "extensions": {"org.autoform": {"navigation": "module"}}}

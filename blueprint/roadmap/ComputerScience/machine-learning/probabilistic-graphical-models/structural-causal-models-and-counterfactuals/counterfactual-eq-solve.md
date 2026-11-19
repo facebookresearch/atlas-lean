@@ -10,3 +10,7 @@ agrees with $w$ on $W$, forcing $X_W = w$ changes nothing: $X_{W \leftarrow w}(u
 
 - [Observed outcome from potential outcomes](../../../../Probability/nonparametric-survival/potential-outcomes-and-causal-identification/observed.md):
   the same consistency rule, built into the potential-outcome framework.
+
+## Related topics
+
+- [Consistency of the single-node counterfactual](counterfactual-eq-solve-2.md): the single-node case, for a model with node-wise noise sets.
