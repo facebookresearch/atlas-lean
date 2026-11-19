@@ -234,7 +234,7 @@ theorem passivePipeFlow_reverse {V : Type*} [Fintype V]
 /-! ## C. Flow uniqueness -/
 
 /-- The signed-square law value is strictly monotone. -/
-theorem strictMono_mul_abs_self :
+private lemma strictMono_mul_abs_self :
     StrictMono (fun q : ℝ => q * |q|) := by
   intro a b hab
   show a * |a| < b * |b|
