@@ -76,12 +76,16 @@ def displacement (S : Finset (Fin N)) (h : Fin N) : ℕ :=
 
 /-- **Probes of a linear-probing insertion.** The number of times the comparison step is
 executed when an item with hash address `h` is entered into a cyclic table whose occupied cells
-form `S`: one more than its displacement. -/
+form `S`: one more than its displacement. This assumes that the table is not full
+(`S ≠ Finset.univ`). On a full table the scan stops after `N` cells and the value `N + 1` is
+not the cost of an insertion: a full one-cell table reports two probes. -/
 def probes (S : Finset (Fin N)) (h : Fin N) : ℕ :=
   displacement S h + 1
 
 /-- **Cell taken by a linear-probing insertion.** The cell `h + displacement S h` (modulo the
-table size) into which an item with hash address `h` falls. -/
+table size) into which an item with hash address `h` falls. This assumes that the table is not
+full (`S ≠ Finset.univ`), so that an empty cell exists. On a full table the scan wraps around to
+`h` itself, so the returned cell is occupied and is not an insertion target. -/
 def insertCell (S : Finset (Fin N)) (h : Fin N) : Fin N :=
   (finRotate N ^ displacement S h) h
 
