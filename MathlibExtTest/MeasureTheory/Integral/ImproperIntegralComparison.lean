@@ -51,4 +51,26 @@ example : ∃ L : ℝ,
   refine tendsto_const_nhds.congr fun x ↦ ?_
   rw [mul_div_assoc, div_self (Real.exp_pos _).ne', mul_one]
 
+-- Test section: limit comparison test, forward direction, at an arbitrary lower endpoint `a` and
+-- with a ratio `e^{-x} / (e^{-x} (1 + e^{-x})) = 1 / (1 + e^{-x})` that tends to `1` without being
+-- constant. Since `∫_a^∞ e^{-x}` converges, so does `∫_a^∞ e^{-x} (1 + e^{-x})`.
+example (a : ℝ) : ∃ L : ℝ,
+    Tendsto (fun b ↦ ∫ x in a..b, Real.exp (-x) * (1 + Real.exp (-x))) atTop (nhds L) := by
+  have hr : Tendsto (fun x ↦ Real.exp (-x) / (Real.exp (-x) * (1 + Real.exp (-x)))) atTop
+      (nhds 1) := by
+    have h := (tendsto_const_nhds (x := (1 : ℝ))).div
+      (tendsto_const_nhds.add Real.tendsto_exp_neg_atTop_nhds_zero)
+      (by norm_num : (1 : ℝ) + 0 ≠ 0)
+    rw [add_zero, div_one] at h
+    refine h.congr fun x ↦ ?_
+    rw [Pi.div_apply, div_mul_eq_div_div, div_self (Real.exp_pos _).ne']
+  exact (improper_integral_limit_comparison_test (L := 1) (f := fun x ↦ Real.exp (-x))
+    (g := fun x ↦ Real.exp (-x) * (1 + Real.exp (-x)))
+    (fun x _ ↦ by positivity) (fun x _ ↦ by positivity)
+    (fun b _ ↦ (by fun_prop : Continuous fun x ↦ Real.exp (-x)).intervalIntegrable a b)
+    (fun b _ ↦ (by fun_prop : Continuous fun x ↦ Real.exp (-x) * (1 + Real.exp (-x))
+      ).intervalIntegrable a b)
+    one_ne_zero hr).1
+    ⟨_, intervalIntegral_tendsto_integral_Ioi a (integrableOn_exp_neg_Ioi a) tendsto_id⟩
+
 end MathlibExtTest.ImproperIntegralComparison
