@@ -37,9 +37,9 @@ class BlueprintWorkflowTests(unittest.TestCase):
         for path in (
             "blueprint/**", "scripts/generate_wiki.py", "scripts/sync_wiki.py",
             "scripts/extract_v2_lean_dependencies.py", "scripts/dump_v2_dependencies.lean",
-            "scripts/check_blueprint_site.py", "scripts/taxonomy.json", "scripts/wiki-sync.json",
+            "scripts/check_blueprint_site.py", "scripts/check_graph_rules.py", "scripts/frontier_issues.py", "scripts/taxonomy.json", "scripts/wiki-sync.json",
             "scripts/requirements-blueprint.txt", "mkdocs.yml", "theme/**", "hooks/**",
-            "docs/BLUEPRINT.md", ".github/workflows/blueprint-pages.yml", ".github/autoform-ref",
+            "docs/BLUEPRINT.md", ".github/workflows/blueprint-pages.yml", ".github/workflows/claim.yml", ".github/autoform-ref",
             "lean-toolchain", "lake-manifest.json", "lakefile.toml",
         ):
             self.assertIn(path, paths)
@@ -157,6 +157,55 @@ class BlueprintWorkflowTests(unittest.TestCase):
                        "github.event_name != 'merge_group'"):
             self.assertIn(clause, condition)
         self.assertNotIn("BLUEPRINT_PAGES", condition)
+
+    def test_the_graph_rules_compare_with_the_merge_commits_first_parent(self):
+        step = self.step("Check the graph's rules")
+        self.assertIn('git fetch --no-tags --depth=2 origin "$GITHUB_SHA"', step["run"])
+        self.assertIn('--base "$(git rev-parse HEAD^1)"', step["run"])
+        self.assertNotIn("${{ github.event.pull_request.base.sha", self.text)
+
+    def test_the_audit_reports_without_blocking_and_fails_only_if_it_cannot_run(self):
+        audit = self.step("Audit the graph (report only)")
+        self.assertNotIn("if", audit)
+        self.assertNotIn("continue-on-error", audit)
+        # Actions runs a step with `bash -e`, so findings must not end it; a crash still does, through the
+        # JSON read below.
+        self.assertIn("|| status=$?", audit["run"])
+        self.assertIn("json.load", audit["run"])
+        self.assertIn("autoform audit blueprint --lean-root . --json", audit["run"])
+        self.assertIn("GITHUB_STEP_SUMMARY", audit["run"])
+        positions = {s.get("name"): i for i, s in enumerate(self.steps)}
+        self.assertLess(positions["Validate the theorem DAG and its declarations"], positions[audit["name"]])
+        self.assertLess(positions[audit["name"]], positions["Render the blueprint"])
+
+    def test_task_issues_sync_only_from_main_and_only_when_enabled(self):
+        sync = self.workflow["jobs"]["frontier-issues"]
+        self.assertEqual(sync["needs"], "wiki")
+        self.assertEqual(sync["permissions"], {"contents": "read", "issues": "write"})
+        for clause in ("github.ref == 'refs/heads/main'",
+                       "github.event_name != 'pull_request'",
+                       "github.event_name != 'merge_group'"):
+            self.assertIn(clause, sync["if"])
+            self.assertIn(clause, self.step("Keep the task frontier")["if"])
+        self.assertEqual(sync["concurrency"]["cancel-in-progress"], "false")
+        checkout = sync["steps"][0]
+        self.assertEqual(checkout["with"]["persist-credentials"], "false")
+        self.assertEqual(checkout["with"]["sparse-checkout"], "scripts/frontier_issues.py")
+        run = sync["steps"][-1]
+        self.assertEqual(run["env"]["FRONTIER_ISSUES"], "${{ vars.FRONTIER_ISSUES }}")
+        self.assertIn('if [ "${FRONTIER_ISSUES:-}" = "true" ]; then', run["run"])
+        self.assertNotIn("uv ", run["run"])
+        # No other job may write issues.
+        for name, job in self.workflow["jobs"].items():
+            if name != "frontier-issues":
+                self.assertNotIn("issues", job.get("permissions", {}))
+
+    def test_the_frontier_is_computed_after_the_lean_facts_on_every_run(self):
+        positions = {s.get("name"): i for i, s in enumerate(self.steps)}
+        frontier = self.step("Compute the task frontier")
+        self.assertNotIn("if", frontier)
+        self.assertLess(positions["Add the Lean-owned facts to the articles"], positions[frontier["name"]])
+        self.assertLess(positions[frontier["name"]], positions["Keep the task frontier"])
 
 
 if __name__ == "__main__":
