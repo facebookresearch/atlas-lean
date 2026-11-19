@@ -1,0 +1,16 @@
+# Arithmetical hierarchy
+
+- [The class Δₙ of the arithmetical hierarchy](is-delta.md)
+- [Computable predicates are closed under computable precomposition](computable-pred-comp.md)
+- [The first projection of the pairing function is computable](computable-unpair-fst.md)
+- [The second projection of the pairing function is computable](computable-unpair-snd.md)
+- [The pairing function is computable](computable-pair.md)
+- [Computable predicates are closed under precomposition with pairing](computable-pred-comp-prod.md)
+- [The hierarchy is closed under computable precomposition](comp-closure.md)
+- [Every Σₙ predicate is Πₙ₊₁](sigma-subset-pi-succ.md)
+- [Every Πₙ set is Σₙ₊₁](pi-subset-sigma-succ.md)
+- [Monotonicity of the hierarchy](mono-aux.md)
+- [Every Σₙ predicate is Σₙ₊₁](sigma-mono.md)
+- [Monotonicity of the Π hierarchy](pi-mono.md)
+- [Σₙ and Πₙ predicates are Δₙ₊₁](sigma-pi-subset-delta-succ.md)
+- [Σ₁ is the class of recursively enumerable predicates](sigma-one-eq-re.md)

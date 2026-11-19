@@ -256,4 +256,78 @@ theorem starLen_nonneg {α a b c : ℝ} (hα0 : 0 ≤ α) (hα1 : α ≤ 1) (ha 
 
 end Pair
 
+variable {Ω Ω' : Type*} {m : MeasurableSpace Ω} {m' : MeasurableSpace Ω'} {μ : Measure Ω}
+  {μ' : Measure Ω'}
+
+/-- The star tree and the admixture model have the same `f3` at every triple of populations. -/
+theorem f3_star_eq_f3_admix {α a b c : ℝ} {M : DriftModel μ (Fin 3) (Fin 3)}
+    {M' : DriftModel μ' (Fin 3) (Fin 3)} (hw : M.weight = starWeight)
+    (hl : M.len = starLen α a b c) (hw' : M'.weight = admixWeight α) (hl' : M'.len = ![a, b, c])
+    (C A B : Fin 3) : f3 μ M.freq C A B = f3 μ' M'.freq C A B := by
+  rw [f3_eq_f4, f3_eq_f4]
+  exact f4_star_eq_f4_admix hw hl hw' hl' C A C B
+
+/-- At `α = 0` the admixture model degenerates to the matching star tree: for every drift model
+with weights `admixWeight 0` and lengths `![a, b, c]` there is, on the same measure space, a
+star-tree drift model with weights `starWeight` and lengths `starLen 0 a b c` (that is,
+`![a + b, 0, c]`) whose population frequencies are exactly the same functions. -/
+theorem exists_star_freq_eq_of_admix_zero {a b c : ℝ} (M : DriftModel μ (Fin 3) (Fin 3))
+    (hw : M.weight = admixWeight 0) (hl : M.len = ![a, b, c]) :
+    ∃ M' : DriftModel μ (Fin 3) (Fin 3), M'.weight = starWeight ∧ M'.len = starLen 0 a b c ∧
+      M'.freq = M.freq := by
+  have hi : ∀ e f : Fin 3, Integrable (fun ω => M.incr e ω * M.incr f ω) μ := fun e f =>
+    (M.memLp_incr e).integrable_mul (M.memLp_incr f)
+  have h01 : ∫ ω, M.incr 0 ω * M.incr 1 ω ∂μ = 0 := M.inner_incr 0 1 (by decide)
+  have h02 : ∫ ω, M.incr 0 ω * M.incr 2 ω ∂μ = 0 := M.inner_incr 0 2 (by decide)
+  have h12 : ∫ ω, M.incr 1 ω * M.incr 2 ω ∂μ = 0 := M.inner_incr 1 2 (by decide)
+  have hl0 : ∫ ω, M.incr 0 ω ^ 2 ∂μ = a := by rw [M.sq_incr, hl]; rfl
+  have hl1 : ∫ ω, M.incr 1 ω ^ 2 ∂μ = b := by rw [M.sq_incr, hl]; rfl
+  have hl2 : ∫ ω, M.incr 2 ω ^ 2 ∂μ = c := by rw [M.sq_incr, hl]; rfl
+  have hsq : ∀ e : Fin 3, Integrable (fun ω => M.incr e ω ^ 2) μ := fun e =>
+    (M.memLp_incr e).integrable_sq
+  have hd0 : ∫ ω, (M.incr 0 ω - M.incr 1 ω) * M.incr 2 ω ∂μ = 0 := by
+    simp_rw [sub_mul]
+    rw [integral_sub (hi 0 2) (hi 1 2), h02, h12, sub_zero]
+  have hdd : ∫ ω, (M.incr 0 ω - M.incr 1 ω) * (M.incr 0 ω - M.incr 1 ω) ∂μ = a + b := by
+    have e1 : ∀ ω, (M.incr 0 ω - M.incr 1 ω) * (M.incr 0 ω - M.incr 1 ω) =
+        M.incr 0 ω ^ 2 + M.incr 1 ω ^ 2 - 2 * (M.incr 0 ω * M.incr 1 ω) := fun ω => by ring
+    have hsum : Integrable (fun ω => M.incr 0 ω ^ 2 + M.incr 1 ω ^ 2) μ := (hsq 0).add (hsq 1)
+    have hcross : Integrable (fun ω => 2 * (M.incr 0 ω * M.incr 1 ω)) μ := (hi 0 1).const_mul 2
+    simp_rw [e1]
+    rw [integral_sub hsum hcross, integral_add (hsq 0) (hsq 1), integral_const_mul, hl0, hl1, h01]
+    ring
+  refine ⟨{ root := fun ω => M.root ω + M.incr 1 ω
+            incr := ![fun ω => M.incr 0 ω - M.incr 1 ω, fun _ => 0, M.incr 2]
+            len := starLen 0 a b c
+            weight := starWeight
+            memLp_root := M.memLp_root.add (M.memLp_incr 1)
+            memLp_incr := ?_
+            inner_incr := ?_
+            sq_incr := ?_ }, rfl, rfl, ?_⟩
+  · intro e
+    fin_cases e
+    · exact (M.memLp_incr 0).sub (M.memLp_incr 1)
+    · exact MemLp.zero'
+    · exact M.memLp_incr 2
+  · intro e f hef
+    fin_cases e <;> fin_cases f <;> simp at hef ⊢
+    · exact hd0
+    · simp_rw [mul_comm (M.incr 2 _)]
+      exact hd0
+  · intro e
+    fin_cases e
+    · simp only [Fin.zero_eta, Matrix.cons_val_zero, starLen]
+      rw [show (fun ω => (M.incr 0 ω - M.incr 1 ω) ^ 2) =
+          fun ω => (M.incr 0 ω - M.incr 1 ω) * (M.incr 0 ω - M.incr 1 ω) from
+          funext fun ω => sq _, hdd]
+      ring
+    · simp [starLen]
+    · simp [starLen, hl2]
+  · funext X ω
+    fin_cases X
+    · simp [DriftModel.freq, hw, admixWeight, starWeight]
+    · simp [DriftModel.freq, hw, admixWeight, starWeight]
+    · simp [DriftModel.freq, hw, admixWeight, starWeight, Fin.sum_univ_three]
+      ring
+
 end MathlibExt.Biology.PopulationGenetics.FStatisticsCovariance
