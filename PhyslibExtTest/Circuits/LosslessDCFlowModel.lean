@@ -23,6 +23,7 @@ reversed line (node `1` to node `0`, `b = 3`) at angles `(1/2, 0)`.
 namespace PhyslibExtTest.Circuits.LosslessDCFlowModel
 
 open PhyslibExt.Circuits.ACInjectionLossBalance
+open PhyslibExt.Circuits.ArcPortSigns
 open PhyslibExt.Circuits.LosslessDCFlowModel
 
 /-- Branch tails: branch `0` leaves node `0`, branch `1` leaves node `1`. -/
@@ -44,8 +45,8 @@ lemma bb_pos : ∀ e, 0 < bb e := by
 
 /-- Incidence entries: `+1` at each tail, `-1` at each head. -/
 example :
-    electricalIncidence 2 2 tl hd 0 0 = 1 ∧ electricalIncidence 2 2 tl hd 1 0 = -1 ∧
-      electricalIncidence 2 2 tl hd 0 1 = -1 ∧ electricalIncidence 2 2 tl hd 1 1 = 1 := by
+    electricalIncidence tl hd 0 0 = 1 ∧ electricalIncidence tl hd 1 0 = -1 ∧
+      electricalIncidence tl hd 0 1 = -1 ∧ electricalIncidence tl hd 1 1 = 1 := by
   simp [electricalIncidence_apply, tl, hd]
 
 /-- Forward flow `2 * (1/2 - 0) = 1`; reversed-line flow `3 * (0 - 1/2) = -3/2`. -/
@@ -120,7 +121,7 @@ example : ∀ e, |acBranchRealPower 2 2 tl hd bb th e - dcBranchFlow 2 2 tl hd b
 
 /-- The lossless network absorbs zero total real power. -/
 example :
-    ∑ v : Fin 2, (nodeComplexPower 2 2 (electricalIncidence 2 2 tl hd) (unitVoltage 2 th)
+    ∑ v : Fin 2, (nodeComplexPower 2 2 (electricalIncidence tl hd) (unitVoltage 2 th)
       (losslessAdmittance 2 bb) (fun _ => 0) v).re = 0 :=
   sum_nodeRealPower_eq_zero 2 2 tl hd bb th
 
