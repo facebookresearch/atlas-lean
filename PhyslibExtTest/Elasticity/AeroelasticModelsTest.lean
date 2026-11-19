@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Elasticity.AeroelasticModels
+import Mathlib.Tactic.NormNum
 
 /-!
 # Tests for `PhyslibExt.Elasticity.AeroelasticModels`

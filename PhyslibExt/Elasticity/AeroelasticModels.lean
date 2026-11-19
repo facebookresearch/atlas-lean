@@ -8,10 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Calculus.Deriv.Mul
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 /-!
 # Typical-section static divergence
