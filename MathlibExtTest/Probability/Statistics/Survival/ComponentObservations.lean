@@ -52,7 +52,7 @@ private theorem htime2 : StrictMono (![10, 20] : Fin 2 → ℝ) := by
 /-! ## A. Tied counts and one competing failure -/
 
 /-- Tied failures are counted together: two of three components
-fail at the first inspection time, one is censored at the
+fail at the first recorded time, one is censored at the
 second. -/
 example : (componentFailureData ![10, 20] htime2 ![0, 0, 1]
     ![true, true, false]).events 0 0 = 2 := by
@@ -101,33 +101,34 @@ example : (ofSubjects ![10, 20] htime2 ![0, 0, 1]
   ofSubjects_kmTail_eq_one_of_all_censored _ _ _ _
     (fun i => by fin_cases i <;> simp)
 
-/-- Mass conservation and bounds at the tied table, as clients
-of the transported identities. -/
+/-- Mass conservation and bounds at the tied table, as direct
+clients of the canonical estimator identities. -/
 example : (∑ c, ∑ j,
       (ofSubjects ![10, 20] htime2 ![0, 0, 1]
         (![some 0, none, some 1] : Fin 3 → Option (Fin 2))).cifIncrement j c)
     + (ofSubjects ![10, 20] htime2 ![0, 0, 1]
         (![some 0, none, some 1] : Fin 3 → Option (Fin 2))).toCensoredData.kmTail = 1 :=
-  ofSubjects_mass_identity _ _ _ _
+  (ofSubjects ![10, 20] htime2 ![0, 0, 1]
+    (![some 0, none, some 1] : Fin 3 → Option (Fin 2))).sum_cumulativeIncidence_add_kmTail
 
 example : (componentFailureData ![10, 20] htime2 ![0, 0, 1]
       ![true, true, false]).cifIncrement 0 0
     = (componentFailureData ![10, 20] htime2 ![0, 0, 1]
         ![true, true, false]).toCensoredData.kmMass 0 :=
-  componentFailureData_cifIncrement_eq_kmMass _ _ _ _ 0
+  (componentFailureData ![10, 20] htime2 ![0, 0, 1]
+    ![true, true, false]).cifIncrement_of_single_cause 0
 
 example : 0 ≤ (ofSubjects ![10, 20] htime2 ![0, 0, 1]
       (![some 0, none, some 1] : Fin 3 → Option (Fin 2))).cumulativeIncidence 1 30
     ∧ (ofSubjects ![10, 20] htime2 ![0, 0, 1]
         (![some 0, none, some 1] : Fin 3 → Option (Fin 2))).cumulativeIncidence 1 30 ≤ 1 :=
-  ⟨(ofSubjects_cumulativeIncidence_bounds _ _ _ _ 1 30).1,
-    (ofSubjects_cumulativeIncidence_bounds _ _ _ _ 1 30).2.1⟩
+  ⟨(ofSubjects ![10, 20] htime2 ![0, 0, 1]
+      (![some 0, none, some 1] : Fin 3 → Option (Fin 2))).cumulativeIncidence_nonneg 1 30,
+    (ofSubjects ![10, 20] htime2 ![0, 0, 1]
+      (![some 0, none, some 1] : Fin 3 → Option (Fin 2))).cumulativeIncidence_le_one 1 30⟩
 
 #print axioms MathlibExt.Probability.Statistics.CompetingRisks.CompetingRiskData.componentFailureData_events
 #print axioms MathlibExt.Probability.Statistics.CompetingRisks.CompetingRiskData.ofSubjects_cifIncrement_eq_zero_of_all_censored
 #print axioms MathlibExt.Probability.Statistics.CompetingRisks.CompetingRiskData.ofSubjects_kmTail_eq_one_of_all_censored
-#print axioms MathlibExt.Probability.Statistics.CompetingRisks.CompetingRiskData.ofSubjects_mass_identity
-#print axioms MathlibExt.Probability.Statistics.CompetingRisks.CompetingRiskData.componentFailureData_cifIncrement_eq_kmMass
-#print axioms MathlibExt.Probability.Statistics.CompetingRisks.CompetingRiskData.ofSubjects_cumulativeIncidence_bounds
 
 end MathlibExtTest.Probability.Statistics.ComponentObservations
