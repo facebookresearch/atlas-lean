@@ -40,8 +40,8 @@ A plane slider of length `L > 0` carries an incompressible isoviscous lubricant 
 stated reduced model is the Reynolds equation `(h³ p')' = 6 μ U h'` on `[0, L]` with ambient
 pressure `p 0 = p L = 0` at both ends and no cavitation; it is a model input, not a proved thin
 film limit of the Navier-Stokes equations. Here the model is the predicate
-`IsReynoldsSolution`: `p` has derivative `p'` on `[0, L]` and the flux `h³ p'` has derivative
-`6 μ U (hL - h0) / L` there.
+`IsReynoldsSolution`: within `[0, L]` (one-sided at the ends) `p` has derivative `p'` and the
+flux `h³ p'` has derivative `6 μ U (hL - h0) / L`, so only values on `[0, L]` matter.
 
 For positive end thicknesses `h0 ≠ hL` the model has exactly one solution,
 `p = 6 μ U L (h0 - h) (h - hL) / ((h0² - hL²) h²)`, with gradient
@@ -99,13 +99,15 @@ outlet `x = L`. -/
 noncomputable def sliderFilm (h0 hL L x : ℝ) : ℝ :=
   h0 + (hL - h0) * x / L
 
-/-- The stated Reynolds model on `[0, L]`: the pressure `p` has derivative `p'`, the flux
-`h³ p'` has derivative `6 μ U h'` with the film slope `h' = (hL - h0) / L`, and `p` vanishes at
-both ends. -/
+/-- The stated Reynolds model on `[0, L]`: within `[0, L]` (one-sided at the ends) the pressure
+`p` has derivative `p'` and the flux `h³ p'` has derivative `6 μ U h'` with the film slope
+`h' = (hL - h0) / L`, and `p` vanishes at both ends. The predicate depends only on the values of
+`p` and `p'` on `[0, L]`. -/
 def IsReynoldsSolution (μ U h0 hL L : ℝ) (p p' : ℝ → ℝ) : Prop :=
-  (∀ x ∈ Set.Icc 0 L, HasDerivAt p (p' x) x) ∧
+  (∀ x ∈ Set.Icc 0 L, HasDerivWithinAt p (p' x) (Set.Icc 0 L) x) ∧
     (∀ x ∈ Set.Icc 0 L,
-      HasDerivAt (fun y => sliderFilm h0 hL L y ^ 3 * p' y) (6 * μ * U * ((hL - h0) / L)) x) ∧
+      HasDerivWithinAt (fun y => sliderFilm h0 hL L y ^ 3 * p' y) (6 * μ * U * ((hL - h0) / L))
+        (Set.Icc 0 L) x) ∧
     p 0 = 0 ∧ p L = 0
 
 /-- Closed-form plane-slider pressure `6 μ U L (h0 - h) (h - hL) / ((h0² - hL²) h²)` with
@@ -167,21 +169,12 @@ private lemma sliderFilm_right {h0 hL L : ℝ} (hL0 : 0 < L) : sliderFilm h0 hL 
   field_simp
   ring
 
-private lemma const_of_hasDerivAt_zero {f : ℝ → ℝ} {L : ℝ}
-    (hf : ∀ x ∈ Set.Icc 0 L, HasDerivAt f 0 x) :
-    ∀ x ∈ Set.Icc 0 L, f x = f 0 := by
-  intro x hx
-  obtain ⟨hx0, hxL⟩ := hx
-  have h1 : ∀ y ∈ Set.uIcc 0 x, HasDerivAt f ((fun _ : ℝ => (0 : ℝ)) y) y := by
-    intro y hy
-    rw [Set.uIcc_of_le hx0] at hy
-    obtain ⟨hy0, hyx⟩ := hy
-    exact hf y ⟨hy0, le_trans hyx hxL⟩
-  have h2 : IntervalIntegrable (fun _ : ℝ => (0 : ℝ)) MeasureTheory.volume 0 x :=
-    intervalIntegrable_const
-  have hInt := intervalIntegral.integral_eq_sub_of_hasDerivAt h1 h2
-  simp only [intervalIntegral.integral_const, smul_zero] at hInt
-  exact sub_eq_zero.mp hInt.symm
+private lemma const_of_hasDerivWithinAt_zero {f : ℝ → ℝ} {L : ℝ}
+    (hf : ∀ x ∈ Set.Icc 0 L, HasDerivWithinAt f 0 (Set.Icc 0 L) x) :
+    ∀ x ∈ Set.Icc 0 L, f x = f 0 :=
+  constant_of_has_deriv_right_zero (fun x hx => (hf x hx).continuousWithinAt)
+    (fun x hx => (hf x (Set.Ico_subset_Icc_self hx)).mono_of_mem_nhdsWithin
+      (Icc_mem_nhdsGE_of_mem hx))
 
 /-! ### A.2. Solution of the Reynolds model -/
 
@@ -201,6 +194,7 @@ lemma sliderPressure_isReynoldsSolution {μ U h0 hL L : ℝ} (h0pos : 0 < h0) (h
     exact mul_ne_zero hdiff_ne hsum_ne
   refine ⟨?_, ?_, ?_, ?_⟩
   · intro x hx
+    apply HasDerivAt.hasDerivWithinAt
     have hpos : 0 < sliderFilm h0 hL L x := sliderFilm_pos h0pos hLpos hL0 hx
     have hfilm_ne : sliderFilm h0 hL L x ≠ 0 := ne_of_gt hpos
     have hh : HasDerivAt (sliderFilm h0 hL L) ((hL - h0) / L) x := hasDerivAt_sliderFilm
@@ -252,6 +246,7 @@ lemma sliderPressure_isReynoldsSolution {μ U h0 hL L : ℝ} (h0pos : 0 < h0) (h
       simp only [Pi.div_apply]
       ring))
   · intro x hx
+    apply HasDerivAt.hasDerivWithinAt
     have hpos : 0 < sliderFilm h0 hL L x := sliderFilm_pos h0pos hLpos hL0 hx
     have hfilm_ne : sliderFilm h0 hL L x ≠ 0 := ne_of_gt hpos
     have hh : HasDerivAt (sliderFilm h0 hL L) ((hL - h0) / L) x := hasDerivAt_sliderFilm
@@ -297,14 +292,15 @@ lemma isReynoldsSolution_unique {μ U h0 hL L : ℝ} {p p' : ℝ → ℝ} (h0pos
   have hslope_ne : (hL - h0) / L ≠ 0 :=
     div_ne_zero (sub_ne_zero.mpr (Ne.symm hne)) hLne
   have hq : ∀ x ∈ Set.Icc 0 L,
-      HasDerivAt (fun y => sliderFilm h0 hL L y ^ 3 * p' y - sliderFilm h0 hL L y ^ 3 *
-        sliderPressureGradient μ U h0 hL L y) 0 x := by
+      HasDerivWithinAt (fun y => sliderFilm h0 hL L y ^ 3 * p' y - sliderFilm h0 hL L y ^ 3 *
+        sliderPressureGradient μ U h0 hL L y) 0 (Set.Icc 0 L) x := by
     intro x hx
     have hKK : (6 * μ * U * ((hL - h0) / L)) - (6 * μ * U * ((hL - h0) / L)) = 0 :=
       sub_self _
-    have h' : HasDerivAt (fun y => sliderFilm h0 hL L y ^ 3 * p' y - sliderFilm h0 hL L y ^ 3 *
-        sliderPressureGradient μ U h0 hL L y)
-        ((6 * μ * U * ((hL - h0) / L)) - (6 * μ * U * ((hL - h0) / L))) x :=
+    have h' : HasDerivWithinAt
+        (fun y => sliderFilm h0 hL L y ^ 3 * p' y - sliderFilm h0 hL L y ^ 3 *
+          sliderPressureGradient μ U h0 hL L y)
+        ((6 * μ * U * ((hL - h0) / L)) - (6 * μ * U * ((hL - h0) / L))) (Set.Icc 0 L) x :=
       (hp2 x hx).sub (hP2 x hx)
     rw [hKK] at h'
     exact h'
@@ -313,7 +309,7 @@ lemma isReynoldsSolution_unique {μ U h0 hL L : ℝ} {p p' : ℝ → ℝ} (h0pos
         sliderPressureGradient μ U h0 hL L x) =
       (sliderFilm h0 hL L 0 ^ 3 * p' 0 - sliderFilm h0 hL L 0 ^ 3 *
         sliderPressureGradient μ U h0 hL L 0) :=
-    const_of_hasDerivAt_zero hq
+    const_of_hasDerivWithinAt_zero hq
   set C := sliderFilm h0 hL L 0 ^ 3 * p' 0 - sliderFilm h0 hL L 0 ^ 3 *
     sliderPressureGradient μ U h0 hL L 0
   have hG : ∀ x ∈ Set.Icc 0 L,
@@ -348,22 +344,23 @@ lemma isReynoldsSolution_unique {μ U h0 hL L : ℝ} {p p' : ℝ → ℝ} (h0pos
     rw [hG'eq] at hG0
     exact hG0
   have hr : ∀ x ∈ Set.Icc 0 L,
-      HasDerivAt (fun y => (p y - sliderPressure μ U h0 hL L y) - C *
-        ((-(1 / (2 * ((hL - h0) / L)))) * (sliderFilm h0 hL L y ^ 2)⁻¹)) 0 x := by
+      HasDerivWithinAt (fun y => (p y - sliderPressure μ U h0 hL L y) - C *
+        ((-(1 / (2 * ((hL - h0) / L)))) * (sliderFilm h0 hL L y ^ 2)⁻¹)) 0 (Set.Icc 0 L) x := by
     intro x hx
     have hpos : 0 < sliderFilm h0 hL L x := sliderFilm_pos h0pos hLpos hL0 hx
     have hfilm_ne : sliderFilm h0 hL L x ≠ 0 := ne_of_gt hpos
-    have hsub1 : HasDerivAt (fun y => p y - sliderPressure μ U h0 hL L y)
-        (p' x - sliderPressureGradient μ U h0 hL L x) x :=
+    have hsub1 : HasDerivWithinAt (fun y => p y - sliderPressure μ U h0 hL L y)
+        (p' x - sliderPressureGradient μ U h0 hL L x) (Set.Icc 0 L) x :=
       (hp1 x hx).sub (hP1 x hx)
-    have hCG : HasDerivAt
+    have hCG : HasDerivWithinAt
         (fun y => C * ((-(1 / (2 * ((hL - h0) / L)))) * (sliderFilm h0 hL L y ^ 2)⁻¹))
-        (C * (sliderFilm h0 hL L x ^ 3)⁻¹) x :=
-      (hG x hx).const_mul C
-    have hr0 : HasDerivAt
+        (C * (sliderFilm h0 hL L x ^ 3)⁻¹) (Set.Icc 0 L) x :=
+      (hG x hx).hasDerivWithinAt.const_mul C
+    have hr0 : HasDerivWithinAt
         (fun y => (p y - sliderPressure μ U h0 hL L y) - C *
           ((-(1 / (2 * ((hL - h0) / L)))) * (sliderFilm h0 hL L y ^ 2)⁻¹))
-        ((p' x - sliderPressureGradient μ U h0 hL L x) - C * (sliderFilm h0 hL L x ^ 3)⁻¹) x :=
+        ((p' x - sliderPressureGradient μ U h0 hL L x) - C * (sliderFilm h0 hL L x ^ 3)⁻¹)
+        (Set.Icc 0 L) x :=
       hsub1.sub hCG
     have hqC : sliderFilm h0 hL L x ^ 3 * p' x - sliderFilm h0 hL L x ^ 3 *
         sliderPressureGradient μ U h0 hL L x = C := hqconst x hx
@@ -379,7 +376,7 @@ lemma isReynoldsSolution_unique {μ U h0 hL L : ℝ} {p p' : ℝ → ℝ} (h0pos
         ((-(1 / (2 * ((hL - h0) / L)))) * (sliderFilm h0 hL L x ^ 2)⁻¹)) =
       ((p 0 - sliderPressure μ U h0 hL L 0) - C *
         ((-(1 / (2 * ((hL - h0) / L)))) * (sliderFilm h0 hL L 0 ^ 2)⁻¹)) :=
-    const_of_hasDerivAt_zero hr
+    const_of_hasDerivWithinAt_zero hr
   have hGdiff_ne : ((-(1 / (2 * ((hL - h0) / L)))) * (sliderFilm h0 hL L L ^ 2)⁻¹) -
       ((-(1 / (2 * ((hL - h0) / L)))) * (sliderFilm h0 hL L 0 ^ 2)⁻¹) ≠ 0 := by
     have hfilmL : sliderFilm h0 hL L L = hL := sliderFilm_right hL0
@@ -535,7 +532,7 @@ lemma sliderLoad_eq {μ U h0 hL L : ℝ} (h0pos : 0 < h0) (hLpos : 0 < hL) (hne 
     exact hΦ0
   have hPcontIcc : ContinuousOn (sliderPressure μ U h0 hL L) (Set.Icc 0 L) := by
     intro y hy
-    exact ((hP1 y hy).continuousAt).continuousWithinAt
+    exact (hP1 y hy).continuousWithinAt
   have hPcont : ContinuousOn (sliderPressure μ U h0 hL L) (Set.uIcc 0 L) := by
     rw [Set.uIcc_of_le (le_of_lt hL0)]
     exact hPcontIcc
@@ -564,7 +561,7 @@ lemma sliderLoad_pos {μ U h0 hL L : ℝ} (hμ : 0 < μ) (hU : 0 < U) (hL0 : 0 <
   obtain ⟨hP1, -, -, hP4⟩ := hP
   have hcont : ContinuousOn (sliderPressure μ U h0 hL L) (Set.Icc 0 L) := by
     intro y hy
-    exact ((hP1 y hy).continuousAt).continuousWithinAt
+    exact (hP1 y hy).continuousWithinAt
   have hnonneg : ∀ x ∈ Set.Ioc 0 L, 0 ≤ sliderPressure μ U h0 hL L x := by
     intro x hx
     obtain ⟨hx0, hxL⟩ := hx
@@ -635,23 +632,24 @@ lemma not_isReynoldsSolution_of_hL_eq_zero {μ U h0 L : ℝ} {p p' : ℝ → ℝ
   obtain ⟨hp1, hp2, hp3, hp4⟩ := hp
   have hLne : L ≠ 0 := ne_of_gt hL0
   have hr0 : ∀ x ∈ Set.Icc 0 L,
-      HasDerivAt (fun y => sliderFilm h0 0 L y ^ 3 * p' y - (6 * μ * U) * sliderFilm h0 0 L y)
-        0 x := by
+      HasDerivWithinAt
+        (fun y => sliderFilm h0 0 L y ^ 3 * p' y - (6 * μ * U) * sliderFilm h0 0 L y) 0
+        (Set.Icc 0 L) x := by
     intro x hx
     have h6 : HasDerivAt (fun y => (6 * μ * U) * sliderFilm h0 0 L y)
         ((6 * μ * U) * ((0 - h0) / L)) x :=
       HasDerivAt.const_mul _ hasDerivAt_sliderFilm
     have hKK : (6 * μ * U * ((0 - h0) / L)) - (6 * μ * U) * ((0 - h0) / L) = 0 := by ring
-    have h' : HasDerivAt
+    have h' : HasDerivWithinAt
         (fun y => sliderFilm h0 0 L y ^ 3 * p' y - (6 * μ * U) * sliderFilm h0 0 L y)
-        ((6 * μ * U * ((0 - h0) / L)) - (6 * μ * U) * ((0 - h0) / L)) x :=
-      (hp2 x hx).sub h6
+        ((6 * μ * U * ((0 - h0) / L)) - (6 * μ * U) * ((0 - h0) / L)) (Set.Icc 0 L) x :=
+      (hp2 x hx).sub h6.hasDerivWithinAt
     rw [hKK] at h'
     exact h'
   have hrconst : ∀ x ∈ Set.Icc 0 L,
       (sliderFilm h0 0 L x ^ 3 * p' x - (6 * μ * U) * sliderFilm h0 0 L x) =
       (sliderFilm h0 0 L 0 ^ 3 * p' 0 - (6 * μ * U) * sliderFilm h0 0 L 0) :=
-    const_of_hasDerivAt_zero hr0
+    const_of_hasDerivWithinAt_zero hr0
   have hfilmL0 : sliderFilm h0 0 L L = 0 := sliderFilm_right hL0
   have hLmem : L ∈ Set.Icc 0 L := ⟨le_of_lt hL0, le_rfl⟩
   have hrL := hrconst L hLmem
@@ -672,11 +670,11 @@ lemma not_isReynoldsSolution_of_hL_eq_zero {μ U h0 L : ℝ} {p p' : ℝ → ℝ
     exact h2
   have hcont : ContinuousOn p (Set.Icc 0 L) := by
     intro y hy
-    exact ((hp1 y hy).continuousAt).continuousWithinAt
+    exact (hp1 y hy).continuousWithinAt
   have hderiv : ∀ x ∈ Set.Ioo 0 L, HasDerivAt p (p' x) x := by
     intro x hx
     obtain ⟨hx0, hxL⟩ := hx
-    exact hp1 x ⟨le_of_lt hx0, le_of_lt hxL⟩
+    exact (hp1 x ⟨le_of_lt hx0, le_of_lt hxL⟩).hasDerivAt (Icc_mem_nhds hx0 hxL)
   obtain ⟨c, hcIoo, hceq⟩ := exists_hasDerivAt_eq_slope p p' hL0 hcont hderiv
   obtain ⟨hc0, hcL⟩ := hcIoo
   have hcIcc : c ∈ Set.Icc 0 L := ⟨le_of_lt hc0, le_of_lt hcL⟩
