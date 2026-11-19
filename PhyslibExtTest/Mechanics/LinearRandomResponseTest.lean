@@ -7,10 +7,10 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import PhyslibExt.Mechanics.NonlinearRandomResponse
+public import PhyslibExt.Mechanics.LinearRandomResponse
 
 /-!
-# Tests for `PhyslibExt.Mechanics.NonlinearRandomResponse`
+# Tests for `PhyslibExt.Mechanics.LinearRandomResponse`
 
 * the fixture `c = 2`, `k = 8`, `σ = 4`: rate `θ = 4`, noise amplitude `σ' = 2` and the nonzero
   stationary variance `σ² / (2 c k) = 1 / 2`;
@@ -20,9 +20,9 @@ public import PhyslibExt.Mechanics.NonlinearRandomResponse
 
 @[expose] public section
 
-namespace PhyslibExtTest.Mechanics.NonlinearRandomResponse
+namespace PhyslibExtTest.Mechanics.LinearRandomResponse
 
-open MeasureTheory ProbabilityTheory _root_.Mechanics.NonlinearRandomResponse
+open MeasureTheory ProbabilityTheory _root_.Mechanics.LinearRandomResponse
 open scoped NNReal
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω}
@@ -46,4 +46,4 @@ example : ∃ μ : Measure (ℝ≥0 → ℝ), ∃ X : ℝ≥0 → (ℝ≥0 → �
   rw [stationaryResponse_variance (c := 2) (k := 8) (σ := 4) (by norm_num) hX t]
   norm_num
 
-end PhyslibExtTest.Mechanics.NonlinearRandomResponse
+end PhyslibExtTest.Mechanics.LinearRandomResponse

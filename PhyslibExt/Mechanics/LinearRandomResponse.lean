@@ -49,8 +49,13 @@ its dimension.
 
 Model inputs (hypotheses):
 
-* `W` is a standard Brownian motion and `σ` is the coefficient of `dW`, not a spectral density;
-  a two-sided force spectral density `S₀` corresponds to `σ² = 2 π S₀`;
+* `W` is a standard Brownian motion and `σ` is the coefficient of `dW`, not a spectral density.
+  The white-noise force `σ dW / dt` has autocorrelation `σ² δ(τ)`, so its constant spectral
+  density `S₀` depends on the Fourier convention: `σ² = 2 π S₀` for the two-sided density in
+  angular frequency `ω` normalized by `R(τ) = ∫ S(ω) e^{iωτ} dω` (Crandall and Mark 1963),
+  `σ² = S₀` for the two-sided density in cyclic frequency `f` normalized by
+  `R(τ) = ∫ S(f) e^{2πifτ} df`, and `σ² = G₀ / 2` for the one-sided cyclic density
+  `G(f) = 2 S(f)` on `f ≥ 0`. No statement of this module uses a spectral density;
 * `c > 0` and `k > 0`; the response is the stationary solution (stationary initialization);
 * scalar values are coordinates in one coherent unit choice: `x` a displacement, `c` a damping
   coefficient, `k` a translational stiffness, `σ` a force times the square root of a time.
@@ -100,7 +105,7 @@ open MeasureTheory ProbabilityTheory Dimension Units.QuantityDimensions
   Units.EngineeringQuantities
 open scoped NNReal
 
-namespace Mechanics.NonlinearRandomResponse
+namespace Mechanics.LinearRandomResponse
 
 /-! ## A. Dimensions of the physical parameters -/
 
@@ -337,4 +342,4 @@ lemma not_bdd_variance_brownian_diffQuot {B : ℝ≥0 → Ω → ℝ} (hB : IsPr
   have := le_abs_self C
   linarith
 
-end Mechanics.NonlinearRandomResponse
+end Mechanics.LinearRandomResponse
