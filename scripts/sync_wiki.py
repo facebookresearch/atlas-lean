@@ -19,8 +19,8 @@ the folders and folder pages generate_wiki lays out where scripts/taxonomy.json
 places it, and its topmost new folder joins its parent's list. A deprecated
 declaration gets no page: upstream is retiring it, and the wiki may have dropped
 its page. Nor does a held declaration (see held_name): its page stays unlinked
-until the Lean is fixed, and the run lists it as held, and a marker it cannot
-use as an error. It lists pages whose
+until the Lean is fixed, and the run lists it as held; a marker it cannot use
+is an error, and the run then writes nothing. It lists pages whose
 declaration is gone and docstrings that changed since the last run
 (scripts/wiki-sync.json keeps their digests), and changes no article that
 exists. Its first run records the digests only. The source-derived
@@ -458,7 +458,8 @@ def held_name(annotation: dict) -> str | None:
 
 def held_problem(annotation: dict, key: str | None, index) -> str | None:
     """What is wrong with an annotation's held marker, if it has one: it names no declaration, the row is linked
-    as well, or the Lean no longer declares the declaration it names (renamed by its fix, say)."""
+    as well, or the Lean index does not resolve the declaration it names (renamed by its fix, say, or declared twice).
+    apply_declarations also reports a held declaration that another row links or holds back."""
     own = annotation.get("extensions", {}).get(OWN)
     if not isinstance(own, dict) or "held" not in own:
         return None
@@ -468,7 +469,7 @@ def held_problem(annotation: dict, key: str | None, index) -> str | None:
     if key:
         return f"it holds {name} back but is linked to {key}"
     if not declared(name, index):
-        return f"it holds {name} back, which the Lean no longer declares"
+        return f"it holds {name} back, which the Lean index does not resolve"
     return None
 
 
@@ -1113,6 +1114,16 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     keyed = [(annotation_key(a, index), a) for rows in files.values() for a in rows]
     pages = {key: subject_path(a) for key, a in keyed if key}
     problems = {id(a): problem for key, a in keyed if (problem := held_problem(a, key, index))}
+    holders: dict[str, list[dict]] = defaultdict(list)
+    for _, a in keyed:
+        if id(a) not in problems and (name := held_name(a)):
+            holders[name].append(a)
+    for name, rows in holders.items():
+        if name in pages:
+            for a in rows:
+                problems[id(a)] = f"it holds {name} back, which {pages[name].relative_to(wiki.ROADMAP)} links"
+        for a in rows[1:] if name not in pages else []:
+            problems[id(a)] = f"it holds {name} back, as {subject_path(rows[0]).relative_to(wiki.ROADMAP)} does"
     held = {name: subject_path(a) for _, a in keyed if (name := held_name(a)) and id(a) not in problems}
     held_problems = sorted(f"{subject_path(a).relative_to(wiki.ROADMAP)}: {problems[id(a)]}" for _, a in keyed
                            if id(a) in problems)
@@ -1121,6 +1132,9 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
                                   "replaced": [], "appended": [], "unlisted": [],
                                   "held": sorted(f"{name} ({path.relative_to(wiki.ROADMAP)})" for name, path in held.items()),
                                   "held_problems": held_problems}
+    if held_problems:
+        # A marker the run cannot use could let its declaration through as a second page: write nothing.
+        return report
     # A declaration the index lacks, and a page an earlier sync wrote for one, wait for an editor: no page is ever
     # keyed by a name rebuilt from the source.
     report["unindexed"] = sorted(
@@ -1271,6 +1285,12 @@ def run_declarations() -> int:
     unindexed: list[str] = []
     generated = wiki.generate(None, None, targets, index, unindexed)
     report = apply_declarations(targets, index, generated, unindexed)
+    if report["held_problems"]:
+        # The run stopped before writing anything: only the markers to fix are worth reporting.
+        print(f"Held markers to fix: {len(report['held_problems'])}; the run wrote nothing")
+        for row in report["held_problems"]:
+            print(f"error: {row}; fix the marker and run again (the run wrote nothing)", file=sys.stderr)
+        return 1
     refresh_catalog(generated)
     for kind, title in (("added", "New pages, taken from docstrings"), ("folders", "New folders, as the taxonomy places their modules"),
                         ("gone", "Pages whose declaration is gone"), ("changed", "Pages whose declaration's docstring changed"),
@@ -1281,8 +1301,7 @@ def run_declarations() -> int:
                         ("appended", "New pages and folders listed at the end of a page that is not simple, to place"),
                         ("unlisted", "New pages and folders listed nowhere, as their page may hold raw HTML or code, the "
                          "site would show it as typed, or their item would not show where placed"),
-                        ("held", "Declarations held back, whose pages stay unlinked until the Lean is fixed"),
-                        ("held_problems", "Held markers to fix")):
+                        ("held", "Declarations held back, whose pages stay unlinked until the Lean is fixed")):
         print(f"{title}: {len(report[kind])}")
         for row in report[kind]:
             print(f"  {row}")
@@ -1290,10 +1309,7 @@ def run_declarations() -> int:
         print(f"error: {row} is listed on no folder page: that page has raw HTML or a code fence, which could take in "
               "its item, the site would show the page as typed, with no link, or the item would not show where it was "
               "placed, so the sync left the page as it is; list it by hand", file=sys.stderr)
-    for row in report["held_problems"]:
-        print(f"error: {row}; a held page needs a marker naming the declaration it holds back, and no Lean link",
-              file=sys.stderr)
-    return 1 if report["unlisted"] or report["held_problems"] else 0
+    return 1 if report["unlisted"] else 0
 
 
 def main(argv: list[str]) -> int:

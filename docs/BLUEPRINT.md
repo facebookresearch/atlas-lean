@@ -128,10 +128,12 @@ design>", "issue": <number>}`, where `issue` is the issue, or a list of
 issues, that tracks the Lean fix; a declaration private by design has none, and
 its marker goes once the declaration is public. When a declaration has several
 problems, `reason` names the one in its statement. `declarations` gives a held
-declaration no page and lists it as held; a marker that names no declaration,
-sits on a linked row or names a declaration the Lean no longer has is reported
-as an error. Relink the page once every listed issue is fixed and the
-declaration states what the page does: restore its `object` and remove `held`.
+declaration no page and lists it as held. A marker that names no declaration,
+sits on a linked row, names a declaration the Lean index does not resolve, or
+holds back a declaration that another row links or holds is reported as an
+error, and the run then writes nothing. Relink the page once every listed issue
+is fixed and the declaration states what the page does: restore its `object`
+and remove `held`.
 
 `scripts/wiki-sync.json` is the
 reviewed docstring-digest baseline. Removed declarations' articles are kept

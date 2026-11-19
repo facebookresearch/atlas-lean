@@ -9,6 +9,12 @@ module
 
 public import PhyslibExt.Mechanics.OrbitalPorts
 
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Complex.RealDeriv
+import Mathlib.Analysis.Real.Pi.Bounds
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -23,6 +29,33 @@ Nondimensional states with exact values, center `μ`, position `(1, 0, 0)`:
   alone does not give an ellipse of nonzero specific angular momentum;
 * a prograde tangential impulse on the circular state raises the semi-major axis;
 * an impulse with `Δv = -|v|` brings the body to rest, so no orbital plane remains.
+
+Circular-orbit premises for a low Earth orbit in kilometres and seconds,
+`μ = 398600.4418 km³/s²`, `R = 6778 km` (about 400 km altitude); the examples hold for every
+position and velocity that satisfy the premises:
+
+* the speed lies between `7.66` and `7.67 km/s` and the period between `5550` and `5560 s`;
+* the same orbit in metres satisfies the premises with `μ` and `R` rescaled, while time in hours
+  with `μ` left in `km³/s²` does not;
+* the state at rest at the center meets the trajectory clauses at `R = 0`, and only the
+  positivity clause rejects it.
+
+Spatial frame map with the quarter turn about the third axis, `quarterTurnZ`:
+
+* the planar point `1 + 2 i` has body components `(1, 2, 0)` and inertial components
+  `(-2, 1, 0)`; its squared length stays `5`, and it is orthogonal to the plane normal, which
+  the quarter turn leaves at `(0, 0, 1)`;
+* the planar path `s ↦ s (1 + 2 i)` has inertial velocity `(-2, 1, 0)`;
+* for every orbit that satisfies the premises with `μ = 4` and `R = 1`, the spatial position
+  stays at distance `1` from the center and the spatial velocity has derivative `-4 X`.
+
+Eccentricity vectors at the position `(1, 0, 0)`:
+
+* a noncircular bound state in the reference plane has `|e| = 3/4 < 1`, `E = -7/8` and
+  `a = 4/7`; its pericenter direction is defined, but its node vector vanishes;
+* the circular state has `e = 0`, so it has no pericenter direction;
+* a bound radial state has `h = 0` and `|e| = 1`;
+* a polar state has a nonzero node vector and a nonzero eccentricity vector.
 -/
 
 @[expose] public section
@@ -147,5 +180,243 @@ example :
     rw [hs]
     ext i
     fin_cases i <;> simp
+
+-- A nonzero circle: the speed lies between `7.66` and `7.67 km/s` and the period between
+-- `5550` and `5560 s` (about 92.6 min).
+example {r v : ℝ → ℂ} (h : IsCircularOrbit 398600.4418 6778 r v) (t : ℝ) :
+    7.66 < ‖v t‖ ∧ ‖v t‖ < 7.67 ∧
+      5550 < 2 * Real.pi * 6778 / ‖v t‖ ∧ 2 * Real.pi * 6778 / ‖v t‖ < 5560 := by
+  have hv_eq := h.norm_vel_eq t
+  have hlo : 7.66 < Real.sqrt (398600.4418 / 6778) := by
+    rw [Real.lt_sqrt (by norm_num)]
+    norm_num
+  have hhi : Real.sqrt (398600.4418 / 6778) < 7.67 := by
+    rw [Real.sqrt_lt (by norm_num) (by norm_num)]
+    norm_num
+  rw [hv_eq]
+  have hvpos : (0 : ℝ) < Real.sqrt (398600.4418 / 6778) :=
+    lt_trans (by norm_num) hlo
+  refine ⟨hlo, hhi, ?_, ?_⟩
+  · rw [lt_div_iff₀ hvpos]
+    have e1 : 5550 * Real.sqrt (398600.4418 / 6778) < 5550 * 7.67 :=
+      mul_lt_mul_of_pos_left hhi (by norm_num)
+    have e2 : (5550 : ℝ) * 7.67 < 2 * 3.1415 * 6778 := by norm_num
+    have e3 : 2 * 3.1415 * 6778 < 2 * Real.pi * 6778 := by
+      have hmul : 3.1415 * 6778 < Real.pi * 6778 :=
+        mul_lt_mul_of_pos_right Real.pi_gt_d4 (by norm_num)
+      linarith
+    linarith
+  · rw [div_lt_iff₀ hvpos]
+    have e1 : 2 * Real.pi * 6778 < 2 * 3.1416 * 6778 := by
+      have hmul : Real.pi * 6778 < 3.1416 * 6778 :=
+        mul_lt_mul_of_pos_right Real.pi_lt_d4 (by norm_num)
+      linarith
+    have e2 : (2 : ℝ) * 3.1416 * 6778 < 5560 * 7.66 := by norm_num
+    have e3 : 5560 * 7.66 < 5560 * Real.sqrt (398600.4418 / 6778) :=
+      mul_lt_mul_of_pos_left hlo (by norm_num)
+    linarith
+
+-- Consistent units: the same orbit in metres is a circular orbit with
+-- `μ = 398600441800000 m³/s²` and `R = 6778000 m`.
+example {r v : ℝ → ℂ} (h : IsCircularOrbit 398600.4418 6778 r v) :
+    IsCircularOrbit 398600441800000 6778000 (fun τ => (1000 : ℝ) • r τ)
+      (fun τ => (1000 : ℝ) • v τ) := by
+  have hU := h.unitChange (l := 1000) (s := 1) (by norm_num) (by norm_num)
+  simp only [div_one] at hU
+  convert hU using 2 <;> norm_num
+
+-- Wrong time units: the same orbit with time in hours but `μ` left in `km³/s²` is rejected.
+example {r v : ℝ → ℂ} (h : IsCircularOrbit 398600.4418 6778 r v) :
+    ¬ IsCircularOrbit 398600.4418 6778 (fun τ => r (3600 * τ))
+      (fun τ => (3600 : ℝ) • v (3600 * τ)) := by
+  have hN := h.not_wrong_time_unit (l := 1) (s := 1 / 3600) (by norm_num) (by norm_num)
+    (by norm_num)
+  have e1 : (1 : ℝ) ^ 3 * 398600.4418 = 398600.4418 := by norm_num
+  have e2 : (1 : ℝ) * 6778 = 6778 := by norm_num
+  have e3 : (fun τ : ℝ => (1 : ℝ) • r (τ / (1 / 3600))) = (fun τ => r (3600 * τ)) := by
+    funext τ
+    rw [one_smul]
+    congr 1
+    field_simp
+  have e4 : (fun τ : ℝ => ((1 : ℝ) / (1 / 3600)) • v (τ / (1 / 3600)))
+      = (fun τ => (3600 : ℝ) • v (3600 * τ)) := by
+    funext τ
+    rw [show (1 : ℝ) / (1 / 3600) = 3600 by norm_num]
+    congr 1
+    field_simp
+  rw [e1, e2, e3, e4] at hN
+  exact hN
+
+-- Collision radius zero: the state at rest at the center satisfies the trajectory clauses with
+-- `R = 0` (Lean's `μ / 0 = 0` makes the acceleration vanish), so the positivity clause is what
+-- rejects it.
+example (μ : ℝ) :
+    (∀ t : ℝ, ‖(0 : ℂ)‖ = 0 ∧ HasDerivAt (fun _ : ℝ => (0 : ℂ)) 0 t ∧
+      HasDerivAt (fun _ : ℝ => (0 : ℂ)) (-(μ / ‖(0 : ℂ)‖ ^ 3) • (0 : ℂ)) t) ∧
+      ¬ IsCircularOrbit μ 0 (fun _ => 0) (fun _ => 0) := by
+  refine ⟨?_, not_isCircularOrbit_zero_radius μ _ _⟩
+  intro t
+  refine ⟨norm_zero, hasDerivAt_const t 0, ?_⟩
+  simp only [smul_zero]
+  exact hasDerivAt_const t 0
+
+
+open _root_.Units.EngineeringFrames (bodyToInertialVec quarterTurnZ rotZ_degToRad_ninety)
+
+-- Mapped components: the planar point `1 + 2 i` has body components `(1, 2, 0)`, and the quarter
+-- turn about the third axis maps it to the inertial components `(-2, 1, 0)`.
+example (t : ℝ) :
+    planarToBody (1 + 2 * Complex.I) = ![1, 2, 0] ∧
+      spatialState quarterTurnZ (fun _ => 1 + 2 * Complex.I) t = ![-2, 1, 0] := by
+  have hq : (quarterTurnZ : Matrix (Fin 3) (Fin 3) ℝ) = !![0, -1, 0; 1, 0, 0; 0, 0, 1] :=
+    rotZ_degToRad_ninety
+  have hp : planarToBody (1 + 2 * Complex.I) = ![1, 2, 0] := by
+    ext i
+    fin_cases i <;> simp [planarToBody]
+  refine ⟨hp, ?_⟩
+  simp only [spatialState, bodyToInertialVec, hp, hq]
+  ext i
+  fin_cases i <;> simp [Matrix.mulVec, dotProduct, Fin.sum_univ_three]
+
+-- Length and plane: the mapped point keeps the squared length `‖1 + 2 i‖ ^ 2 = 5`, the quarter
+-- turn leaves the plane normal at `(0, 0, 1)`, and the mapped point is orthogonal to it.
+example (t : ℝ) :
+    spatialState quarterTurnZ (fun _ => 1 + 2 * Complex.I) t ⬝ᵥ
+        spatialState quarterTurnZ (fun _ => 1 + 2 * Complex.I) t = 5 ∧
+      bodyToInertialVec quarterTurnZ ![0, 0, 1] = ![0, 0, 1] ∧
+      spatialState quarterTurnZ (fun _ => 1 + 2 * Complex.I) t ⬝ᵥ ![0, 0, 1] = 0 := by
+  have hq : (quarterTurnZ : Matrix (Fin 3) (Fin 3) ℝ) = !![0, -1, 0; 1, 0, 0; 0, 0, 1] :=
+    rotZ_degToRad_ninety
+  have hn : bodyToInertialVec quarterTurnZ ![0, 0, 1] = ![0, 0, 1] := by
+    simp only [bodyToInertialVec, hq]
+    ext i
+    fin_cases i <;> simp [Matrix.mulVec, dotProduct, Fin.sum_univ_three]
+  refine ⟨?_, hn, ?_⟩
+  · rw [dotProduct_spatialState, Complex.sq_norm, Complex.normSq_apply]
+    norm_num
+  · rw [← hn]
+    exact spatialState_dotProduct_normal quarterTurnZ _ t
+
+-- Velocity: the planar path `s ↦ s (1 + 2 i)` has velocity `1 + 2 i`, so its image under the
+-- quarter turn has velocity `(-2, 1, 0)` at every time.
+example (t : ℝ) :
+    HasDerivAt (spatialState quarterTurnZ fun s => (s : ℂ) * (1 + 2 * Complex.I)) ![-2, 1, 0]
+      t := by
+  have hq : (quarterTurnZ : Matrix (Fin 3) (Fin 3) ℝ) = !![0, -1, 0; 1, 0, 0; 0, 0, 1] :=
+    rotZ_degToRad_ninety
+  have hz : HasDerivAt (fun s : ℝ => (s : ℂ) * (1 + 2 * Complex.I)) (1 + 2 * Complex.I) t := by
+    simpa using (hasDerivAt_id t).ofReal_comp.mul_const (1 + 2 * Complex.I)
+  have hw : bodyToInertialVec quarterTurnZ (planarToBody (1 + 2 * Complex.I)) = ![-2, 1, 0] := by
+    simp only [bodyToInertialVec, planarToBody, hq]
+    ext i
+    fin_cases i <;> simp [Matrix.mulVec, dotProduct, Fin.sum_univ_three]
+  rw [← hw]
+  exact hasDerivAt_spatialState quarterTurnZ hz
+
+-- Inverse-square law in inertial components: for every orbit that satisfies the premises with
+-- `μ = 4` and `R = 1`, the spatial position in the quarter-turn frame stays at distance `1` from
+-- the center, and the spatial velocity has derivative `-4 X`.
+example {r v : ℝ → ℂ} (h : IsCircularOrbit 4 1 r v) (t : ℝ) :
+    spatialState quarterTurnZ r t ⬝ᵥ spatialState quarterTurnZ r t = 1 ∧
+      HasDerivAt (spatialState quarterTurnZ v) ((-4 : ℝ) • spatialState quarterTurnZ r t) t := by
+  have hd : spatialState quarterTurnZ r t ⬝ᵥ spatialState quarterTurnZ r t = 1 := by
+    rw [h.dotProduct_spatialState]
+    norm_num
+  refine ⟨hd, ?_⟩
+  have hv := h.hasDerivAt_spatialVelocity quarterTurnZ t
+  rw [hd, Real.sqrt_one] at hv
+  simpa using hv
+
+-- A noncircular bound state in the reference plane: `μ = 1`, `v = (0, 1/2, 0)` has
+-- `e = (-3/4, 0, 0)`, `|e| = 3/4`, `E = -7/8` and `a = 4/7`; its pericenter direction `-e₁` is
+-- defined, but its node vector vanishes.
+example :
+    eccentricityVector 1 ![1, 0, 0] ![0, 1 / 2, 0] = ![-3 / 4, 0, 0] ∧
+      eccentricity 1 ![1, 0, 0] ![0, 1 / 2, 0] = 3 / 4 ∧
+      specificEnergy 1 ![1, 0, 0] ![0, 1 / 2, 0] = -7 / 8 ∧
+      semiMajorAxis 1 ![1, 0, 0] ![0, 1 / 2, 0] = 4 / 7 ∧
+      nodeVector ![1, 0, 0] ![0, 1 / 2, 0] = 0 := by
+  have hrad : radius ![1, 0, 0] = 1 := by
+    unfold radius
+    simp
+  have he : eccentricityVector 1 ![1, 0, 0] ![0, 1 / 2, 0] = ![-3 / 4, 0, 0] := by
+    unfold eccentricityVector
+    rw [hrad]
+    ext i
+    fin_cases i <;> norm_num [cross_apply]
+  have hecc : eccentricity 1 ![1, 0, 0] ![0, 1 / 2, 0] = 3 / 4 := by
+    unfold eccentricity
+    rw [he]
+    rw [Real.sqrt_eq_iff_mul_self_eq (by norm_num) (by norm_num)]
+    simp
+    norm_num
+  have hE : specificEnergy 1 ![1, 0, 0] ![0, 1 / 2, 0] = -7 / 8 := by
+    norm_num [specificEnergy, speedSq, hrad]
+  have ha : semiMajorAxis 1 ![1, 0, 0] ![0, 1 / 2, 0] = 4 / 7 := by
+    unfold semiMajorAxis
+    rw [hE]
+    norm_num
+  have hn : nodeVector ![1, 0, 0] ![0, 1 / 2, 0] = 0 := by
+    simp [nodeVector, cross_apply]
+  exact ⟨he, hecc, hE, ha, hn⟩
+
+-- The circular state `μ = 4`, `v = (0, 2, 0)` has `e = 0`: no pericenter direction.
+example :
+    eccentricityVector 4 ![1, 0, 0] ![0, 2, 0] = 0 ∧ eccentricity 4 ![1, 0, 0] ![0, 2, 0] = 0 := by
+  have hrad : radius ![1, 0, 0] = 1 := by
+    unfold radius
+    simp
+  have he : eccentricityVector 4 ![1, 0, 0] ![0, 2, 0] = 0 := by
+    unfold eccentricityVector
+    rw [hrad]
+    ext i
+    fin_cases i <;> norm_num [cross_apply]
+  have hecc : eccentricity 4 ![1, 0, 0] ![0, 2, 0] = 0 := by
+    unfold eccentricity
+    rw [he]
+    simp
+  exact ⟨he, hecc⟩
+
+-- The radial state `μ = 1`, `v = (1/2, 0, 0)` is bound (`E = -7/8`) but has `h = 0`,
+-- `e = (-1, 0, 0)` and `|e| = 1`.
+example :
+    specificEnergy 1 ![1, 0, 0] ![1 / 2, 0, 0] = -7 / 8 ∧
+      ![1, 0, 0] ⨯₃ ![1 / 2, 0, 0] = (0 : Fin 3 → ℝ) ∧
+      eccentricityVector 1 ![1, 0, 0] ![1 / 2, 0, 0] = ![-1, 0, 0] ∧
+      eccentricity 1 ![1, 0, 0] ![1 / 2, 0, 0] = 1 := by
+  have hrad : radius ![1, 0, 0] = 1 := by
+    unfold radius
+    simp
+  have hE : specificEnergy 1 ![1, 0, 0] ![1 / 2, 0, 0] = -7 / 8 := by
+    norm_num [specificEnergy, speedSq, hrad]
+  have hh : ![1, 0, 0] ⨯₃ ![1 / 2, 0, 0] = (0 : Fin 3 → ℝ) := by
+    simp [cross_apply]
+  have he : eccentricityVector 1 ![1, 0, 0] ![1 / 2, 0, 0] = ![-1, 0, 0] := by
+    unfold eccentricityVector
+    rw [hrad]
+    ext i
+    fin_cases i <;> norm_num [cross_apply]
+  have hecc : eccentricity 1 ![1, 0, 0] ![1 / 2, 0, 0] = 1 := by
+    unfold eccentricity
+    rw [he]
+    simp
+  exact ⟨hE, hh, he, hecc⟩
+
+-- A polar state, `μ = 1`, `v = (0, 0, 1/2)`, at its ascending node: `n = (1/2, 0, 0) ≠ 0` and
+-- `e = (-3/4, 0, 0) ≠ 0`, so both directions are defined.
+example :
+    nodeVector ![1, 0, 0] ![0, 0, 1 / 2] = ![1 / 2, 0, 0] ∧
+      eccentricityVector 1 ![1, 0, 0] ![0, 0, 1 / 2] = ![-3 / 4, 0, 0] := by
+  have hrad : radius ![1, 0, 0] = 1 := by
+    unfold radius
+    simp
+  have hn : nodeVector ![1, 0, 0] ![0, 0, 1 / 2] = ![1 / 2, 0, 0] := by
+    simp [nodeVector, cross_apply]
+  have he : eccentricityVector 1 ![1, 0, 0] ![0, 0, 1 / 2] = ![-3 / 4, 0, 0] := by
+    unfold eccentricityVector
+    rw [hrad]
+    ext i
+    fin_cases i <;> norm_num [cross_apply]
+  exact ⟨hn, he⟩
 
 end PhyslibExtTest.Mechanics.OrbitalPorts
