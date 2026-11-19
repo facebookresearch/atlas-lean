@@ -11,6 +11,7 @@ module
 public import Mathlib.Analysis.Matrix.Spectrum
 public import Mathlib.Analysis.InnerProductSpace.Trace
 public import Mathlib.Analysis.Convex.Birkhoff
+public import Mathlib.Algebra.Order.Rearrangement
 
 /-!
 # The trace of a product of symmetric matrices and their eigenvalues
@@ -26,8 +27,9 @@ For real symmetric `A` and `B` with eigenvalues `α`, `β` and orthonormal eigen
   `exists_eq_sum_perm_of_mem_doublyStochastic`);
 * `exists_perm_sum_mul_eigenvalues_le_trace_mul`, `exists_perm_trace_mul_le_sum_mul_eigenvalues`:
   **von Neumann's trace inequality** in pairing form. For some permutations `σ` and `τ`,
-  `∑ᵢ αᵢ β_{σ i} ≤ tr (A B) ≤ ∑ᵢ αᵢ β_{τ i}`. The sorted forms `∑ α↓ β↑ ≤ tr (A B) ≤ ∑ α↓ β↓`
-  follow by the rearrangement inequality; they are not stated here.
+  `∑ᵢ αᵢ β_{σ i} ≤ tr (A B) ≤ ∑ᵢ αᵢ β_{τ i}`;
+* `trace_mul_le_sum_eigenvalues₀_mul`, `sum_eigenvalues₀_mul_rev_le_trace_mul`: the sorted forms
+  `∑ α↓ β↑ ≤ tr (A B) ≤ ∑ α↓ β↓`, from the pairing form by the rearrangement inequality.
 
 This is the spectral step in maximum-likelihood problems over constrained covariances, such as
 Tipping and Bishop's principal-subspace theorem for probabilistic PCA.
@@ -145,5 +147,50 @@ theorem exists_perm_trace_mul_le_sum_mul_eigenvalues {A B : Matrix n n ℝ} (hA 
   rw [trace_mul_eq_sum_eigenvalues hA hB]
   simp only [of_apply, neg_mul, Finset.sum_neg_distrib, neg_le_neg_iff] at hσ
   exact hσ
+
+/- The pairing `∑ᵢ αᵢ β_{σ i}` is `∑ₖ α↓ₖ β↓_{τ k}` for the permutation `τ` of `Fin (card n)`
+induced by `σ`. A private helper: it unfolds Mathlib's choice of indexing in
+`IsHermitian.eigenvalues`. -/
+private theorem sum_mul_eigenvalues_eq_sum_eigenvalues₀ {A B : Matrix n n ℝ} (hA : A.IsHermitian)
+    (hB : B.IsHermitian) (σ : Equiv.Perm n) :
+    ∑ i, hA.eigenvalues i * hB.eigenvalues (σ i) =
+      ∑ k, hA.eigenvalues₀ k * hB.eigenvalues₀
+        (((Fintype.equivOfCardEq (Fintype.card_fin _)).trans
+          (σ.trans (Fintype.equivOfCardEq (Fintype.card_fin _)).symm)) k) := by
+  rw [← Equiv.sum_comp (Fintype.equivOfCardEq (Fintype.card_fin (Fintype.card n)))]
+  simp [IsHermitian.eigenvalues]
+
+/-- **Von Neumann's trace inequality, sorted upper form.** For real symmetric matrices `A` and
+`B` with eigenvalues `α↓₀ ≥ α↓₁ ≥ ⋯` and `β↓₀ ≥ β↓₁ ≥ ⋯` listed in decreasing order,
+`tr (A B) ≤ ∑ₖ α↓ₖ β↓ₖ` (C. M. Theobald, *An inequality for the trace of the product of two
+symmetric matrices*, Math. Proc. Cambridge Philos. Soc. 77 (1975), 265–267, the upper bound of
+its main inequality; the symmetric-matrix form of J. von Neumann's trace inequality, Tomsk Univ.
+Rev. 1 (1937)). -/
+theorem trace_mul_le_sum_eigenvalues₀_mul {A B : Matrix n n ℝ} (hA : A.IsHermitian)
+    (hB : B.IsHermitian) :
+    (A * B).trace ≤ ∑ k, hA.eigenvalues₀ k * hB.eigenvalues₀ k := by
+  obtain ⟨σ, hσ⟩ := exists_perm_trace_mul_le_sum_mul_eigenvalues hA hB
+  rw [sum_mul_eigenvalues_eq_sum_eigenvalues₀ hA hB σ] at hσ
+  exact hσ.trans (Antitone.monovary hA.eigenvalues₀_antitone
+    hB.eigenvalues₀_antitone).sum_mul_comp_perm_le_sum_mul
+
+/-- **Von Neumann's trace inequality, sorted lower form.** For real symmetric matrices `A` and
+`B` with eigenvalues `α↓₀ ≥ α↓₁ ≥ ⋯` and `β↓₀ ≥ β↓₁ ≥ ⋯` listed in decreasing order,
+`∑ₖ α↓ₖ β↓_{d-1-k} ≤ tr (A B)`, where `d` is the size of the matrices: the largest eigenvalues
+of `A` are paired with the smallest of `B` (C. M. Theobald, Math. Proc. Cambridge Philos. Soc.
+77 (1975), 265–267, the lower bound of its main inequality). -/
+theorem sum_eigenvalues₀_mul_rev_le_trace_mul {A B : Matrix n n ℝ} (hA : A.IsHermitian)
+    (hB : B.IsHermitian) :
+    ∑ k, hA.eigenvalues₀ k * hB.eigenvalues₀ (Fin.rev k) ≤ (A * B).trace := by
+  obtain ⟨σ, hσ⟩ := exists_perm_sum_mul_eigenvalues_le_trace_mul hA hB
+  rw [sum_mul_eigenvalues_eq_sum_eigenvalues₀ hA hB σ] at hσ
+  refine le_trans ?_ hσ
+  set τ := (Fintype.equivOfCardEq (Fintype.card_fin (Fintype.card n))).trans
+    (σ.trans (Fintype.equivOfCardEq (Fintype.card_fin (Fintype.card n))).symm)
+  have hmono : Monotone fun k => hB.eigenvalues₀ (Fin.rev k) :=
+    fun a b hab => hB.eigenvalues₀_antitone (Fin.rev_le_rev.mpr hab)
+  have := (Antitone.antivary hA.eigenvalues₀_antitone hmono).sum_mul_le_sum_mul_comp_perm
+    (σ := τ.trans Fin.revPerm)
+  simpa using this
 
 end MetaMathlibExt

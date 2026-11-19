@@ -68,7 +68,7 @@ theorem witness_gamma {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
     IsProbabilityMeasure (gammaMeasure a b) ∧ (∀ᵐ x ∂gammaMeasure a b, 0 ≤ x) ∧
       Integrable (fun x => x ^ 2) (gammaMeasure a b) := by
   refine ⟨isProbabilityMeasure_gammaMeasure ha hb, ae_nonneg_gammaMeasure a b, ?_⟩
-  simpa using integrable_pow_mul_exp_neg_mul_gammaMeasure ha hb le_rfl 2
+  simpa using integrable_pow_mul_exp_neg_mul_gammaMeasure (c := 0) ha hb (by linarith) 2
 
 /-- Greenwood–Yule on a concrete instance: the Poisson mixture over `Gamma(1, 1)` (an
 exponential rate) is geometric with `P(k) = 2^{-(k+1)}`. -/

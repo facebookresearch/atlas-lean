@@ -31,7 +31,8 @@ bound.
 The bound comes from three constructions. The (compact) Thompson ε-NFA of `r`
 (`Thompson.toεNFA`) has `Thompson.numStates r` states (`Thompson.card_state`); Mathlib's
 `εNFA.toNFA` keeps them and the subset construction `NFA.toDFA` gives a DFA on
-`Set (Thompson.State r)`, with `2 ^ card (State r)` states. The product DFA `DFA.symmDiff` of the DFAs of `r` and `s` accepts the words on which
+`Set (Thompson.State r)`, with `2 ^ card (State r)` states. The product DFA `DFA.symmDiff` of the
+DFAs of `r` and `s` accepts the words on which
 `r` and `s` disagree, and a DFA with `n` states that accepts some word accepts one of length
 `< n` (pump down with `DFA.pumping_lemma`). So expressions with different languages disagree
 on a word of length `< 2 ^ (card (State r) + card (State s))`.

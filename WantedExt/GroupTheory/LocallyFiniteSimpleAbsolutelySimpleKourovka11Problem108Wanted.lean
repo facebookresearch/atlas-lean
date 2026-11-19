@@ -22,6 +22,7 @@ public import Mathlib.Data.Finset.Defs
 public import Mathlib.GroupTheory.QuotientGroup.Defs
 public import Mathlib.GroupTheory.Subgroup.Simple
 public import Mathlib.Order.CompletePartialOrder
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
@@ -39,9 +40,7 @@ the members not containing `g` below the intersection of those containing it), s
 is never vacuous.
 -/
 
-/-- `G` is locally finite: every finitely generated subgroup is finite. -/
-def IsLocallyFinite (G : Type*) [Group G] : Prop :=
-  ∀ S : Finset G, (Subgroup.closure (S : Set G) : Set G).Finite
+open MathlibExt.GroupTheory.GroupClassesShared (IsLocallyFinite)
 
 /-- `S` is a composition series of `G` in Kurosh's sense: a chain of subgroups containing `1` and
 `G`, closed under arbitrary unions (suprema) and intersections (infima), such that for every jump

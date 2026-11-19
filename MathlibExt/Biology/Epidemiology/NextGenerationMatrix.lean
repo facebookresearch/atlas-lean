@@ -34,6 +34,9 @@ the **basic reproduction number** is its spectral radius `R₀ = ρ(F V⁻¹)`.
 ## Main results
 
 * `R0`: `R₀ = ρ(F V⁻¹)`.
+* `R0_smul_one`, `R0_smul_one_of_nonneg`, `smul_one_nonneg`: for scalar `F = β • 1`,
+  `V = γ • 1` (`γ > 0`), `R₀ = |β / γ|`, `= β / γ` when `β ≥ 0`; this covers one infected
+  compartment, `F = (β)`, `V = (γ)`.
 * `mem_spectrum_fromBlocks_zero₁₂`, `isHurwitz_fromBlocks_zero₁₂_iff`: the eigenvalues of a
   block lower-triangular matrix are those of its diagonal blocks.
 * `isHurwitz_sub_iff_R0_lt_one`: for `F ≥ 0` and `V` a nonsingular M-matrix, all
@@ -438,6 +441,29 @@ theorem exists_re_pos_iff_one_lt_R0 {F V : Matrix ι ι ℝ} (hF : ∀ i j, 0 �
         change z i ≤ (F *ᵥ a) i
         nlinarith
     exact absVec_ne_zero hx0 (eq_zero_of_le_mulVec hF hVε hHε hz hzle)
+
+omit [Fintype ι] in
+/-- `F = β • 1` is entrywise nonnegative for `β ≥ 0`. -/
+theorem smul_one_nonneg {β : ℝ} (hβ : 0 ≤ β) (i j : ι) : 0 ≤ (β • (1 : Matrix ι ι ℝ)) i j := by
+  by_cases h : i = j <;> simp [h, hβ]
+
+/-- **`R₀` for scalar matrices.** For `F = β • 1` and `V = γ • 1` with `γ > 0` (nonempty index
+type), `F V⁻¹ = (β / γ) • 1` has spectrum `{β / γ}`, so `R₀ = |β / γ|`. -/
+theorem R0_smul_one [Nonempty ι] (β : ℝ) {γ : ℝ} (hγ : 0 < γ) :
+    R0 (β • (1 : Matrix ι ι ℝ)) (γ • 1) = |β / γ| := by
+  have hinv : (γ • (1 : Matrix ι ι ℝ))⁻¹ = γ⁻¹ • 1 := by
+    refine Matrix.inv_eq_left_inv ?_
+    rw [smul_mul_smul, mul_one, inv_mul_cancel₀ hγ.ne', one_smul]
+  have hK : β • (1 : Matrix ι ι ℝ) * (γ • 1)⁻¹ = (β / γ) • 1 := by
+    rw [hinv, smul_mul_smul, mul_one, div_eq_mul_inv]
+  rw [R0, hK, spectralRadius, quasispectrum_eq_spectrum_union_zero, Matrix.spectrum_smul_one,
+    Set.union_singleton, iSup_insert, iSup_singleton]
+  simp [abs_div]
+
+/-- For `β ≥ 0` and `γ > 0`, `R₀ (β • 1) (γ • 1) = β / γ`. -/
+theorem R0_smul_one_of_nonneg [Nonempty ι] {β γ : ℝ} (hβ : 0 ≤ β) (hγ : 0 < γ) :
+    R0 (β • (1 : Matrix ι ι ℝ)) (γ • 1) = β / γ := by
+  rw [R0_smul_one β hγ, abs_of_nonneg (div_nonneg hβ hγ.le)]
 
 /-- The complex eigenvalues of a block lower-triangular real matrix `[[A, 0], [C, D]]` are
 those of `A` together with those of `D`. -/

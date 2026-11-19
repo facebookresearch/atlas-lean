@@ -17,6 +17,7 @@ public import Mathlib.Probability.Distributions.Gamma
 public import Mathlib.Probability.Moments.Basic
 public import Mathlib.Probability.Moments.IntegrableExpMul
 public import Mathlib.RingTheory.Polynomial.Pochhammer
+import MathlibExt.Analysis.SpecialFunctions.Gamma.AscPochhammer
 
 open MeasureTheory Set Filter Topology
 
@@ -298,47 +299,51 @@ private lemma gamma_integrand_eq {a b c x : ℝ} (ha : 0 < a) (hx : 0 < x) (k : 
     show -((b + c) * x) = -(b * x) + -(c * x) by ring, Real.exp_add]
   ring
 
-/-- For `a, b > 0` and `c ≥ 0`, `x ↦ x ^ k e^{-c x}` is integrable for `Gamma(a, b)`. -/
+/-- For `a, b > 0` and `b + c > 0`, `x ↦ x ^ k e^{-c x}` is integrable for
+`Gamma(a, b)`. The convergence condition is `0 < b + c`, so `c` may be
+negative as long as it does not cancel the rate. -/
 theorem integrable_pow_mul_exp_neg_mul_gammaMeasure {a b c : ℝ} (ha : 0 < a) (hb : 0 < b)
-    (hc : 0 ≤ c) (k : ℕ) :
+    (hbc : 0 < b + c) (k : ℕ) :
     Integrable (fun x => x ^ k * Real.exp (-(c * x))) (gammaMeasure a b) := by
   rw [integrable_gammaMeasure_iff, funext (gammaPDF_smul_eq_indicator ha hb k),
     integrable_indicator_iff measurableSet_Ici, integrableOn_Ici_iff_integrableOn_Ioi]
   have h := (integrableOn_rpow_mul_exp_neg_mul_Ioi (a := a + k) (s := b + c) (by positivity)
-    (by linarith)).const_mul (b ^ a / Real.Gamma a)
+    hbc).const_mul (b ^ a / Real.Gamma a)
   exact IntegrableOn.congr_fun h (fun x hx => (gamma_integrand_eq ha hx k).symm)
     measurableSet_Ioi
 
-/-- **Gamma integrals.** For shape `a > 0`, rate `b > 0` and `c ≥ 0`,
-`∫ x ^ k e^{-c x} dGamma(a, b) = a⁽ᵏ⁾ bᵃ / (b + c) ^ (a + k)`. -/
+/-- **Gamma integrals.** For shape `a > 0`, rate `b > 0` and `b + c > 0`,
+`∫ x ^ k e^{-c x} dGamma(a, b) = a⁽ᵏ⁾ bᵃ / (b + c) ^ (a + k)`. The convergence
+condition is `0 < b + c`, so `c` may be negative as long as it does not
+cancel the rate. -/
 theorem integral_pow_mul_exp_neg_mul_gammaMeasure {a b c : ℝ} (ha : 0 < a) (hb : 0 < b)
-    (hc : 0 ≤ c) (k : ℕ) :
+    (hbc : 0 < b + c) (k : ℕ) :
     ∫ x, x ^ k * Real.exp (-(c * x)) ∂gammaMeasure a b =
       (ascPochhammer ℝ k).eval a * b ^ a / (b + c) ^ (a + k) := by
-  have hbc : 0 < b + c := by linarith
   rw [integral_gammaMeasure_eq_integral_smul, funext (gammaPDF_smul_eq_indicator ha hb k),
     integral_indicator measurableSet_Ici, integral_Ici_eq_integral_Ioi,
     setIntegral_congr_fun measurableSet_Ioi (fun x hx => gamma_integrand_eq ha hx k),
     integral_const_mul, Real.integral_rpow_mul_exp_neg_mul_Ioi (by positivity) hbc,
-    Gamma_add_nat_eq ha, Real.div_rpow zero_le_one hbc.le, Real.one_rpow]
+    Real.Gamma_add_nat_eq k (fun j _ => by positivity), Real.div_rpow zero_le_one hbc.le, Real.one_rpow]
   have hG : Real.Gamma a ≠ 0 := (Real.Gamma_pos_of_pos ha).ne'
   have : (b + c) ^ (a + k) ≠ 0 := (Real.rpow_pos_of_pos hbc _).ne'
   field_simp
 
--- The mean (`integral_id_gammaMeasure`) and second moment (`integral_sq_gammaMeasure`) live
--- in `MathlibExt.Probability.Distributions.GammaMoments`; they are not redeclared here.
+-- The mean and second moment of `Gamma(a, b)` follow from the general
+-- integral theorem `integral_pow_mul_exp_neg_mul_gammaMeasure` at `c = 0`;
+-- only the integrability statements are recorded here.
 
 /-- `x ↦ x` is integrable for `Gamma(a, b)`. -/
 theorem integrable_id_gammaMeasure {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
     Integrable id (gammaMeasure a b) := by
-  have h := integrable_pow_mul_exp_neg_mul_gammaMeasure ha hb le_rfl 1
+  have h := integrable_pow_mul_exp_neg_mul_gammaMeasure (c := 0) ha hb (by linarith) 1
   simp only [pow_one, zero_mul, neg_zero, Real.exp_zero, mul_one] at h
   exact h
 
 /-- `x ↦ x²` is integrable for `Gamma(a, b)`. -/
 theorem integrable_sq_gammaMeasure {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
     Integrable (fun x => x ^ 2) (gammaMeasure a b) := by
-  have h := integrable_pow_mul_exp_neg_mul_gammaMeasure ha hb le_rfl 2
+  have h := integrable_pow_mul_exp_neg_mul_gammaMeasure (c := 0) ha hb (by linarith) 2
   simp only [zero_mul, neg_zero, Real.exp_zero, mul_one] at h
   exact h
 

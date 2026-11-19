@@ -23,14 +23,17 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.GroupTheory.Frobenius` — frobenius_kernel_isNormal (manifest `manifests/problems/frobenius_kernel_isNormal.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.GroupTheory.Frobenius` —
+frobenius_kernel_isNormal (manifest `manifests/problems/frobenius_kernel_isNormal.toml`, rev 1,
+submitter Kim Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
 and placed the declarations in the `MathlibExt.GroupTheory.FrobeniusWanted` namespace. Mathematical
-statements are unchanged. Source: G. Frobenius, Über auflösbare Gruppen IV, Sitzungsber. Akad. Wiss. Berlin (1901).
+statements are unchanged. Source: G. Frobenius, Über auflösbare Gruppen IV, Sitzungsber. Akad.
+Wiss. Berlin (1901).
 -/
 module
 
@@ -58,7 +61,8 @@ is a normal subgroup of `G`. The only known proof uses character theory
 group-theoretic proof has been found in over a century.
 -/
 
-/-- Source: G. Frobenius, Über auflösbare Gruppen IV, Sitzungsber. Akad. Wiss. Berlin (1901). Via leanprover/lean-eval@38361be, problem `frobenius_kernel_isNormal`. -/
+/-- Source: G. Frobenius, Über auflösbare Gruppen IV, Sitzungsber. Akad. Wiss. Berlin (1901). Via
+leanprover/lean-eval@38361be, problem `frobenius_kernel_isNormal`. -/
 public theorem_wanted frobenius_kernel_isNormal
     (G X : Type) [Group G] [Fintype G] [Fintype X]
     [MulAction G X] [FaithfulSMul G X]

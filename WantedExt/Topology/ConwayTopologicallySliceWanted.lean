@@ -23,14 +23,18 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.KnotTheory.ConwayTopologicallySlice` — conway_knot_topologically_slice (manifest `manifests/problems/conway_knot_topologically_slice.toml`, rev 1, submitter Kim Morrison, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.KnotTheory.ConwayTopologicallySlice` —
+conway_knot_topologically_slice (manifest `manifests/problems/conway_knot_topologically_slice.toml`,
+rev 1, submitter Kim Morrison, status active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Topology.ConwayTopologicallySliceWanted` namespace. Mathematical
-statements are unchanged. Source: Freedman, *The topology of four-dimensional manifolds*, J. Diff. Geom. 17 (1982). See also Freedman-Quinn, *Topology of 4-Manifolds*, Princeton 1990.
+and placed the declarations in the `MathlibExt.Topology.ConwayTopologicallySliceWanted` namespace.
+Mathematical
+statements are unchanged. Source: Freedman, *The topology of four-dimensional manifolds*, J. Diff.
+Geom. 17 (1982). See also Freedman-Quinn, *Topology of 4-Manifolds*, Princeton 1990.
 -/
 module
 
@@ -63,7 +67,9 @@ Freedman (1982): every knot with trivial Alexander polynomial bounds a
 locally flat topological disk in the 4-ball. The Conway knot has
 `Δ_K(t) = 1`, so applying this theorem yields a locally flat topological
 slice disk. -/
-/-- Source: Freedman, *The topology of four-dimensional manifolds*, J. Diff. Geom. 17 (1982). See also Freedman-Quinn, *Topology of 4-Manifolds*, Princeton 1990. Via leanprover/lean-eval@38361be, problem `conway_knot_topologically_slice`. -/
+/-- Source: Freedman, *The topology of four-dimensional manifolds*, J. Diff. Geom. 17 (1982). See
+also Freedman-Quinn, *Topology of 4-Manifolds*, Princeton 1990. Via leanprover/lean-eval@38361be,
+problem `conway_knot_topologically_slice`. -/
 public theorem_wanted conway_knot_topologically_slice : conwayKnot.TopologicallySlice
 
 end KnotTheory

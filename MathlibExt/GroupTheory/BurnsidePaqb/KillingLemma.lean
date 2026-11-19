@@ -17,8 +17,8 @@ public import MathlibExt.GroupTheory.BurnsidePaqb.CyclotomicField
 /-!
 Norm/killing stage of the complete Burnside proof.
 
-Authors: Muse Spark 1.3, @toskua, Avocado
-Source archive: genai_web_search/tree/users/akiezun/burnside_proof.zip
+Authors: Muse Spark 1.3, @toskua, Meta Muse
+Source archive: burnside_proof.zip
 SHA-256: d9da7df82e467d9fa587892eeef9f51e2b83df0588175653bd1d16264b09dd00
 
 This module is mechanically ported from the audited source `extracted/Burnside/KillingLemma.lean`.
