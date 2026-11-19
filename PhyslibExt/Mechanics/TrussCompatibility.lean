@@ -257,9 +257,13 @@ private theorem supported_virtualWork_iff_of {J M F : Type*}
 the supported load `f` (`(B S)ᵀ *ᵥ s = f`) iff internal
 virtual work `s ⬝ᵥ ((B S) *ᵥ v)` equals external virtual
 work `f ⬝ᵥ v` for every supported virtual displacement
-`v`. The coefficients `s` are separation-form (axial force
-divided by member length, tension positive; the
-unit-direction member force is `N e = s e * L e`). Test
+`v`. The coefficients `s` are separation-form; for a
+member with noncoincident endpoints (positive member
+length) they are axial force divided by member length,
+tension positive, with unit-direction member force
+`N e = s e * L e` (for a zero-length member there is no
+axial direction and the quotient reading does not apply;
+the algebraic equivalence is unaffected). Test
 displacements range over the free coordinates only, so
 support reactions are excluded. No injectivity, stiffness,
 or positivity hypothesis is used. -/
