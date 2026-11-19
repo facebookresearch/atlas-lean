@@ -30,6 +30,6 @@ Random walks on a finite group $G$ driven by a probability $Q$: the $k$-step law
   mixing and cutoff are defined there.
 - [Fourier transform on finite abelian groups](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-transform-on-finite-abelian-groups/README.md):
   the abelian transform used for walks on the circle and the cube.
-- Fisher–Yates shuffle:
+- [Fisher–Yates shuffle](../../../ComputerScience/randomized-algorithms/fisher-yates-shuffle/README.md):
   exact generation of a uniform permutation, the benchmark for card-shuffling walks.
 - [Dirichlet forms](../../markov-chains/dirichlet-forms/README.md): the Dirichlet form, spectral gap and log-Sobolev constant of a finite reversible chain.

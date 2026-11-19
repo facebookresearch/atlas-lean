@@ -178,5 +178,5 @@
 ## Related topics
 
 - [Kőnig's theorem](../../../../GraphTheory/matchings-and-flows/k-nig-s-theorem/README.md): in bipartite graphs a minimum vertex cover has the size of a maximum matching, so VERTEX-COVER restricted to bipartite graphs is solved by matching algorithms such as Hopcroft–Karp.
-- Vertex cover 2-approximation: the endpoints of a maximal matching form a vertex cover at most twice the minimum.
-- Weighted vertex cover by the pricing method: a primal-dual 2-approximation for the weighted version.
+- [Vertex cover 2-approximation](../../../../ComputerScience/approximation-algorithms/vertex-cover-2-approximation/README.md): the endpoints of a maximal matching form a vertex cover at most twice the minimum.
+- [Weighted vertex cover by the pricing method](../../../../ComputerScience/approximation-algorithms/weighted-vertex-cover-by-the-pricing-method/README.md): a primal-dual 2-approximation for the weighted version.
