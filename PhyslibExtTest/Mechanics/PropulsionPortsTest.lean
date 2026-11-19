@@ -16,7 +16,8 @@ Concrete consumers of `PhyslibExt.Mechanics.PropulsionPorts`: the linear mass hi
 `m t = 2 - t` on `[0, 1]` with `ve = 1` (increment, burn and boundary), a specific-impulse
 instance, constant mass, and the zero-mass input that the positivity hypothesis excludes; then a
 parcel step of the vehicle of mass `2` at rest with flow `1` and exhaust speed `3`, and the parcel
-lemmas applied to it and to the burning history `M s = 2 - s`.
+lemmas applied to it, to the linear burning history `M s = 2 - s` and to the nonlinear burning
+history `M s = 2 - s - s ^ 2`, with forward steps for the histories.
 
 ## i. Overview
 

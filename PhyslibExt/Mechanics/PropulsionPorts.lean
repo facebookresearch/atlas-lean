@@ -31,23 +31,24 @@ increment. In this pressure-matched model (no pressure-thrust term) the specific
 `ve / g0`, with `g0 > 0` the reference acceleration used to quote `Isp` in seconds, not
 necessarily local gravity. Signs: `m' < 0` during a burn, so `v' = -ve * m' / m > 0`.
 
-The law is consistent with an explicit momentum-conserving parcel model at one state `(m, v)`,
-`m > 0`: in a step of length `h` a parcel of mass `q h` leaves with velocity `v - ve` and the
-external force `F` delivers the impulse `F h`, so `(m - q h) v_h + q h (v - ve) = m v + F h`. The
-update is defined for every `h` near `0`, its slope is exactly
-`(v_h - v) / h = (ve q + F) / (m - q h)`, and it tends to `(ve q + F) / m`. These step identities
-and limits hold for every real `q` and `h`; a physical step has `q ≥ 0` and `h > 0`. For a
-differentiable mass history `M` that is burning at `t` (`M' < 0`), a forward step from `t` to
-`t + h`, `h > 0`, expels the actual mass `M t - M (t + h)`, at the rate
-`q_h = (M t - M (t + h)) / h`: for small `h` the expelled mass is nonnegative, the remaining mass
-is exactly `M (t + h)`, the step conserves momentum, `q_h` tends to `-M'`, and the slope tends to
-the acceleration `a` of `M a = -ve M' + F`, the law above when `F = 0`. A linear burning history
-expels mass at the constant rate `-M'`, so for it the constant-flow step is the actual step. With
-no expelled mass the update is
-the fixed-mass constant-force velocity of `PhyslibExt.Mechanics.PowerPorts`. Ignoring the
-expelled momentum gives the slope limit `(q v + F) / m` instead, wrong whenever
-`q (v - ve) ≠ 0`. This is local consistency of the parcel model, not convergence of a discrete
-integration scheme or an exact finite-step logarithmic law.
+The law is consistent with an explicit momentum-conserving parcel model at one state `(m, v)`:
+in a step of length `h` a parcel of mass `q h` leaves with velocity `v - ve` and the external
+force `F` delivers the impulse `F h`, so `(m - q h) v_h + q h (v - ve) = m v + F h`. The step
+identities hold for arbitrary real parameters whenever their denominators are nonzero: the update
+`v_h` is the unique solution of the balance when the remaining mass `m - q h` is nonzero, and its
+slope is exactly `(v_h - v) / h = (ve q + F) / (m - q h)` when also `h ≠ 0`. For `m > 0` both
+conditions hold for every `h ≠ 0` near `0`, and the slope tends to `(ve q + F) / m` as `h → 0`; a
+physical step also has `q ≥ 0` and `h > 0`. For a differentiable mass history `M` with `M t > 0`
+that is burning at `t` (`M' < 0`), a forward step from `t` to `t + h`, `h > 0`, expels the actual
+mass `M t - M (t + h)`, at the rate `q_h = (M t - M (t + h)) / h`: for small `h` the expelled mass
+is nonnegative, the remaining mass is exactly `M (t + h)`, the step conserves momentum, `q_h`
+tends to `-M'`, and the slope tends to the acceleration `a` of `M a = -ve M' + F`, the law above
+when `F = 0`. A linear burning history expels mass at the constant rate `-M'`, so for it the
+constant-flow step is the actual step. For `m > 0`, the update with no expelled mass is the
+fixed-mass constant-force velocity of `PhyslibExt.Mechanics.PowerPorts`, and ignoring the
+expelled momentum gives the slope limit `(q v + F) / m` instead, wrong whenever `q (v - ve) ≠ 0`.
+This is local consistency of the parcel model, not convergence of a discrete integration scheme
+or an exact finite-step logarithmic law.
 
 ## ii. Key results
 
@@ -57,15 +58,18 @@ integration scheme or an exact finite-step logarithmic law.
   equal end masses, positive exactly for a nonzero burn.
 - `specificImpulse_eq_of_law`: `Isp = ve / g0` at any burning instant.
 - `velocity_increment_const_mass`: constant positive mass gives zero increment.
-- `parcelVelocity`, `parcel_momentum_iff`, `eventually_parcel_mass_pos`, `parcel_slope_eq`: the
-  parcel step, its momentum balance and its exact slope.
-- `parcel_slope_tendsto`: the first-order limit of the parcel step.
+- `parcelVelocity`, `parcel_momentum_iff`, `parcel_slope_eq`: the parcel step, its momentum
+  balance when the remaining mass is nonzero, and its exact slope when also `h ≠ 0`.
+- `eventually_parcel_mass_pos`, `parcel_slope_tendsto`: for `m > 0`, the remaining mass is
+  positive for every `h` near `0`, and the first-order limit of the parcel step.
 - `parcel_continuum`, `parcel_continuum_linear`: for a burning mass history (`M' < 0`), the
   forward step with the actual, nonnegative expelled mass, its momentum balance and its continuum
   limit; a linear burning history expels mass at the constant rate `-M'`.
-- `parcelVelocity_zero_flow`: without expelled mass, the fixed-mass constant-force velocity.
-- `parcel_accel_pos`, `naive_slope_tendsto`, `naive_limit_ne`: a positive flow accelerates, and
-  ignoring the expelled momentum gives the wrong derivative.
+- `parcelVelocity_zero_flow`: for `m > 0` and no expelled mass, the fixed-mass constant-force
+  velocity.
+- `parcel_accel_pos`, `naive_slope_tendsto`, `naive_limit_ne`: for `m > 0`, a positive flow at a
+  positive exhaust speed accelerates the vehicle, and ignoring the expelled momentum gives the
+  wrong derivative whenever `q (v - ve) ≠ 0`.
 
 ## iii. Table of contents
 
@@ -233,25 +237,28 @@ open Filter Topology PhyslibExt.Mechanics.PowerPorts
 /-! ## D. One parcel step -/
 
 /-- Vehicle velocity after one parcel step of length `h` from the state `(m, v)`: the momentum
-balance `(m - q h) v_h + q h (v - ve) = m v + F h` solved for `v_h`. -/
+balance `(m - q h) v_h + q h (v - ve) = m v + F h` solved for `v_h`, which needs the remaining
+mass `m - q h` to be nonzero. -/
 noncomputable def parcelVelocity (m v q ve F h : ℝ) : ℝ :=
   (m * v + F * h - q * h * (v - ve)) / (m - q * h)
 
-/-- The update is the unique solution of the parcel momentum balance. -/
+/-- When the remaining mass `m - q h` is nonzero, the update is the unique solution of the parcel
+momentum balance. -/
 lemma parcel_momentum_iff {m q h : ℝ} (hmh : m - q * h ≠ 0) (v ve F w : ℝ) :
     (m - q * h) * w + q * h * (v - ve) = m * v + F * h ↔ w = parcelVelocity m v q ve F h := by
   unfold parcelVelocity
   rw [eq_div_iff hmh]
   constructor <;> intro hh <;> linear_combination hh
 
-/-- For `h` small enough the remaining mass `m - q h` is positive. -/
+/-- For `m > 0` and `h` small enough the remaining mass `m - q h` is positive. -/
 lemma eventually_parcel_mass_pos {m : ℝ} (hm : 0 < m) (q : ℝ) : ∀ᶠ h in 𝓝 0, 0 < m - q * h := by
   have hcont : ContinuousAt (fun h : ℝ => m - q * h) 0 := by fun_prop
   have hmem : (fun h : ℝ => m - q * h) 0 ∈ Set.Ioi (0 : ℝ) := by simpa using hm
   have hnbhd := isOpen_Ioi.mem_nhds hmem
   simpa using Tendsto.eventually hcont hnbhd
 
-/-- Exact slope of one step: `(v_h - v) / h = (ve q + F) / (m - q h)`. -/
+/-- Exact slope of one step with `h ≠ 0` and nonzero remaining mass `m - q h`:
+`(v_h - v) / h = (ve q + F) / (m - q h)`. -/
 lemma parcel_slope_eq {m q h : ℝ} (hh : h ≠ 0) (hmh : m - q * h ≠ 0) (v ve F : ℝ) :
     (parcelVelocity m v q ve F h - v) / h = (ve * q + F) / (m - q * h) := by
   unfold parcelVelocity
@@ -264,7 +271,7 @@ lemma parcel_slope_eq {m q h : ℝ} (hh : h ≠ 0) (hmh : m - q * h ≠ 0) (v ve
 
 /-! ## E. The first-order limit and the continuum model -/
 
-/-- The slope tends to the acceleration `(ve q + F) / m` as `h → 0`. -/
+/-- For `m > 0` the slope tends to the acceleration `(ve q + F) / m` as `h → 0`. -/
 lemma parcel_slope_tendsto {m : ℝ} (hm : 0 < m) (v q ve F : ℝ) :
     Tendsto (fun h => (parcelVelocity m v q ve F h - v) / h) (𝓝[≠] 0)
       (𝓝 ((ve * q + F) / m)) := by
@@ -403,7 +410,7 @@ lemma parcel_continuum_linear {M : ℝ → ℝ} {m' t : ℝ} (hlin : ∀ h, M (t
     rw [heq] at hlim
     exact hlim.mono_left (nhdsWithin_mono _ fun x hx => (Set.mem_Ioi.mp hx).ne')
 
-/-- With no expelled mass the parcel step is the fixed-mass constant-force velocity. -/
+/-- For `m > 0` and no expelled mass the parcel step is the fixed-mass constant-force velocity. -/
 lemma parcelVelocity_zero_flow {m : ℝ} (hm : 0 < m) (v ve F h : ℝ) :
     parcelVelocity m v 0 ve F h = constForceVelocity m v F h := by
   have hm' : m ≠ 0 := ne_of_gt hm
@@ -413,18 +420,19 @@ lemma parcelVelocity_zero_flow {m : ℝ} (hm : 0 < m) (v ve F h : ℝ) :
 
 /-! ## F. Validation -/
 
-/-- A positive mass flow with no external force gives a positive, hence nonzero, acceleration. -/
+/-- For `m > 0`, a positive mass flow at a positive exhaust speed with no external force gives a
+positive, hence nonzero, acceleration. -/
 lemma parcel_accel_pos {m q ve F : ℝ} (hm : 0 < m) (hq : 0 < q) (hve : 0 < ve) (hF : F = 0) :
     0 < (ve * q + F) / m := by
   subst hF
   positivity
 
 /-- Velocity after one step of the balance that ignores the expelled momentum,
-`(m - q h) w_h = m v + F h`. -/
+`(m - q h) w_h = m v + F h`, which needs the remaining mass `m - q h` to be nonzero. -/
 noncomputable def naiveParcelVelocity (m v q F h : ℝ) : ℝ :=
   (m * v + F * h) / (m - q * h)
 
-/-- Ignoring the expelled momentum, the slope tends to `(q v + F) / m`. -/
+/-- Ignoring the expelled momentum, the slope for `m > 0` tends to `(q v + F) / m`. -/
 lemma naive_slope_tendsto {m : ℝ} (hm : 0 < m) (v q F : ℝ) :
     Tendsto (fun h => (naiveParcelVelocity m v q F h - v) / h) (𝓝[≠] 0)
       (𝓝 ((q * v + F) / m)) := by
@@ -463,7 +471,7 @@ lemma naive_slope_tendsto {m : ℝ} (hm : 0 < m) (v q F : ℝ) :
     exact hnum.div hden hm'
   exact Tendsto.congr' heq.symm hlim
 
-/-- That limit is the wrong derivative whenever `q (v - ve) ≠ 0`. -/
+/-- For `m > 0` that limit is the wrong derivative whenever `q (v - ve) ≠ 0`. -/
 lemma naive_limit_ne {m q v ve : ℝ} (hm : 0 < m) (hq : q ≠ 0) (hv : v ≠ ve) (F : ℝ) :
     (q * v + F) / m ≠ (ve * q + F) / m := by
   intro h
