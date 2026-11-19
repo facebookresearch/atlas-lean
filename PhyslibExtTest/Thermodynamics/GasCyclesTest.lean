@@ -122,22 +122,26 @@ example :
     norm_num
   exact ⟨hcomp, hpeak, hexp, hheat, hwork, heff⟩
 
--- The monatomic loop through the general results: `otto_cycle` puts the compression leg on the
--- adiabat and gives positive rejected heat and net work, and `ottoNetWork_div_heatIn` identifies
--- the work-to-heat ratio with `ottoEfficiency 8 (5/3)`, which is `3/4` because `8 ^ (2/3) = 4`.
+-- The monatomic loop through the general results, at `V₁ = 1`: `otto_cycle` puts both legs on
+-- the adiabat, compression `T₂ * (V₁ / r) ^ (γ - 1) = T₁ * V₁ ^ (γ - 1)` and expansion
+-- `T₄ * V₁ ^ (γ - 1) = T₃ * (V₁ / r) ^ (γ - 1)`, and gives positive rejected heat and net work;
+-- `ottoNetWork_div_heatIn` identifies the work-to-heat ratio with `ottoEfficiency 8 (5/3)`, which
+-- is `3/4` because `8 ^ (2/3) = 4`.
 example :
     ottoCompressedTemp 300 8 (5 / 3) * (1 / 8) ^ ((5 : ℝ) / 3 - 1) = 300 * 1 ^ ((5 : ℝ) / 3 - 1) ∧
+      ottoExpandedTemp 300 8 (5 / 3) 3 3000 * 1 ^ ((5 : ℝ) / 3 - 1) =
+        ottoPeakTemp 300 8 (5 / 3) 3 3000 * (1 / 8) ^ ((5 : ℝ) / 3 - 1) ∧
       0 < ottoHeatOut 300 8 (5 / 3) 3 3000 ∧ 0 < ottoNetWork 300 8 (5 / 3) 3 3000 ∧
       ottoNetWork 300 8 (5 / 3) 3 3000 / 3000 = ottoEfficiency 8 (5 / 3) ∧
       ottoEfficiency 8 (5 / 3) = 3 / 4 := by
-  obtain ⟨hc, -, -, hq, hw, -⟩ := otto_cycle (T₁ := 300) (V₁ := 1) (r := 8) (γ := 5 / 3)
+  obtain ⟨hc, he, -, hq, hw, -⟩ := otto_cycle (T₁ := 300) (V₁ := 1) (r := 8) (γ := 5 / 3)
     (Cv := 3) (nR := 2) (Qin := 3000) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
     (by norm_num) (by norm_num) (by norm_num)
   have h8 : (8 : ℝ) ^ (1 - (5 : ℝ) / 3) = 1 / 4 := by
     rw [show (1 : ℝ) - 5 / 3 = -(2 / 3) by norm_num, Real.rpow_neg (by norm_num),
       show (8 : ℝ) = 2 ^ (3 : ℝ) by norm_num, ← Real.rpow_mul (by norm_num)]
     norm_num
-  refine ⟨hc, hq, hw,
+  refine ⟨hc, he, hq, hw,
     (ottoNetWork_div_heatIn (T₁ := 300) (by norm_num) (by norm_num) (by norm_num)).1, ?_⟩
   rw [ottoEfficiency, h8]
   norm_num
