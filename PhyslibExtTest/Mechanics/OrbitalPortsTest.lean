@@ -9,6 +9,9 @@ module
 
 public import PhyslibExt.Mechanics.OrbitalPorts
 
+import Mathlib.Analysis.Real.Pi.Bounds
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -23,6 +26,16 @@ Nondimensional states with exact values, center `μ`, position `(1, 0, 0)`:
   alone does not give an ellipse of nonzero specific angular momentum;
 * a prograde tangential impulse on the circular state raises the semi-major axis;
 * an impulse with `Δv = -|v|` brings the body to rest, so no orbital plane remains.
+
+Circular-orbit premises for a low Earth orbit in kilometres and seconds,
+`μ = 398600.4418 km³/s²`, `R = 6778 km` (about 400 km altitude); the examples hold for every
+position and velocity that satisfy the premises:
+
+* the speed lies between `7.66` and `7.67 km/s` and the period between `5550` and `5560 s`;
+* the same orbit in metres satisfies the premises with `μ` and `R` rescaled, while time in hours
+  with `μ` left in `km³/s²` does not;
+* the state at rest at the center meets the trajectory clauses at `R = 0`, and only the
+  positivity clause rejects it.
 -/
 
 @[expose] public section
@@ -147,5 +160,84 @@ example :
     rw [hs]
     ext i
     fin_cases i <;> simp
+
+-- A nonzero circle: the speed lies between `7.66` and `7.67 km/s` and the period between
+-- `5550` and `5560 s` (about 92.6 min).
+example {r v : ℝ → ℂ} (h : IsCircularOrbit 398600.4418 6778 r v) (t : ℝ) :
+    7.66 < ‖v t‖ ∧ ‖v t‖ < 7.67 ∧
+      5550 < 2 * Real.pi * 6778 / ‖v t‖ ∧ 2 * Real.pi * 6778 / ‖v t‖ < 5560 := by
+  have hv_eq := h.norm_vel_eq t
+  have hlo : 7.66 < Real.sqrt (398600.4418 / 6778) := by
+    rw [Real.lt_sqrt (by norm_num)]
+    norm_num
+  have hhi : Real.sqrt (398600.4418 / 6778) < 7.67 := by
+    rw [Real.sqrt_lt (by norm_num) (by norm_num)]
+    norm_num
+  rw [hv_eq]
+  have hvpos : (0 : ℝ) < Real.sqrt (398600.4418 / 6778) :=
+    lt_trans (by norm_num) hlo
+  refine ⟨hlo, hhi, ?_, ?_⟩
+  · rw [lt_div_iff₀ hvpos]
+    have e1 : 5550 * Real.sqrt (398600.4418 / 6778) < 5550 * 7.67 :=
+      mul_lt_mul_of_pos_left hhi (by norm_num)
+    have e2 : (5550 : ℝ) * 7.67 < 2 * 3.1415 * 6778 := by norm_num
+    have e3 : 2 * 3.1415 * 6778 < 2 * Real.pi * 6778 := by
+      have hmul : 3.1415 * 6778 < Real.pi * 6778 :=
+        mul_lt_mul_of_pos_right Real.pi_gt_d4 (by norm_num)
+      linarith
+    linarith
+  · rw [div_lt_iff₀ hvpos]
+    have e1 : 2 * Real.pi * 6778 < 2 * 3.1416 * 6778 := by
+      have hmul : Real.pi * 6778 < 3.1416 * 6778 :=
+        mul_lt_mul_of_pos_right Real.pi_lt_d4 (by norm_num)
+      linarith
+    have e2 : (2 : ℝ) * 3.1416 * 6778 < 5560 * 7.66 := by norm_num
+    have e3 : 5560 * 7.66 < 5560 * Real.sqrt (398600.4418 / 6778) :=
+      mul_lt_mul_of_pos_left hlo (by norm_num)
+    linarith
+
+-- Consistent units: the same orbit in metres is a circular orbit with
+-- `μ = 398600441800000 m³/s²` and `R = 6778000 m`.
+example {r v : ℝ → ℂ} (h : IsCircularOrbit 398600.4418 6778 r v) :
+    IsCircularOrbit 398600441800000 6778000 (fun τ => (1000 : ℝ) • r τ)
+      (fun τ => (1000 : ℝ) • v τ) := by
+  have hU := h.unitChange (l := 1000) (s := 1) (by norm_num) (by norm_num)
+  simp only [div_one] at hU
+  convert hU using 2 <;> norm_num
+
+-- Wrong time units: the same orbit with time in hours but `μ` left in `km³/s²` is rejected.
+example {r v : ℝ → ℂ} (h : IsCircularOrbit 398600.4418 6778 r v) :
+    ¬ IsCircularOrbit 398600.4418 6778 (fun τ => r (3600 * τ))
+      (fun τ => (3600 : ℝ) • v (3600 * τ)) := by
+  have hN := h.not_wrong_time_unit (l := 1) (s := 1 / 3600) (by norm_num) (by norm_num)
+    (by norm_num)
+  have e1 : (1 : ℝ) ^ 3 * 398600.4418 = 398600.4418 := by norm_num
+  have e2 : (1 : ℝ) * 6778 = 6778 := by norm_num
+  have e3 : (fun τ : ℝ => (1 : ℝ) • r (τ / (1 / 3600))) = (fun τ => r (3600 * τ)) := by
+    funext τ
+    rw [one_smul]
+    congr 1
+    field_simp
+  have e4 : (fun τ : ℝ => ((1 : ℝ) / (1 / 3600)) • v (τ / (1 / 3600)))
+      = (fun τ => (3600 : ℝ) • v (3600 * τ)) := by
+    funext τ
+    rw [show (1 : ℝ) / (1 / 3600) = 3600 by norm_num]
+    congr 1
+    field_simp
+  rw [e1, e2, e3, e4] at hN
+  exact hN
+
+-- Collision radius zero: the state at rest at the center satisfies the trajectory clauses with
+-- `R = 0` (Lean's `μ / 0 = 0` makes the acceleration vanish), so the positivity clause is what
+-- rejects it.
+example (μ : ℝ) :
+    (∀ t : ℝ, ‖(0 : ℂ)‖ = 0 ∧ HasDerivAt (fun _ : ℝ => (0 : ℂ)) 0 t ∧
+      HasDerivAt (fun _ : ℝ => (0 : ℂ)) (-(μ / ‖(0 : ℂ)‖ ^ 3) • (0 : ℂ)) t) ∧
+      ¬ IsCircularOrbit μ 0 (fun _ => 0) (fun _ => 0) := by
+  refine ⟨?_, not_isCircularOrbit_zero_radius μ _ _⟩
+  intro t
+  refine ⟨norm_zero, hasDerivAt_const t 0, ?_⟩
+  simp only [smul_zero]
+  exact hasDerivAt_const t 0
 
 end PhyslibExtTest.Mechanics.OrbitalPorts
