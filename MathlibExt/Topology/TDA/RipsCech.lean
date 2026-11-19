@@ -24,8 +24,10 @@ under nonempty subsets), so that the complexes at a negative scale are allowed a
 * `cechComplex ε`: the Čech complex, the nerve of the closed `ε`-balls centred at the points
   (the construction `Č(X, ε)` before Thm. 2.4, with closed balls).
 * `ripsComplex ε`: the Vietoris–Rips complex (Def. 2.5).
-* `ripsGraph ε`: its one-skeleton, the `ε`-neighbourhood graph; the Vietoris–Rips complex is the
-  clique (flag) complex of this graph (`mem_ripsComplex_iff_isClique`).
+* `ripsGraph ε`: for `ε ≥ 0`, its one-skeleton, the `ε`-neighbourhood graph, and the
+  Vietoris–Rips complex is the clique (flag) complex of this graph
+  (`mem_ripsComplex_iff_isClique`). At a negative scale the complex is empty while the graph keeps
+  its vertices.
 * `cechComplex_le_ripsComplex_two_mul`, `ripsComplex_le_cechComplex`: the inclusions
   `Č(X, ε) ⊆ VR(X, 2ε) ⊆ Č(X, 2ε)` of Prop. 2.6.
 * `cechComplex_mono`, `ripsComplex_mono`: both are filtrations, that is, `ℝ`-persistence
@@ -121,8 +123,9 @@ theorem cechComplex_le_ripsComplex_le_cechComplex (ε : ℝ) :
   ⟨cechComplex_le_ripsComplex_two_mul ε, ripsComplex_le_cechComplex (2 * ε)⟩
 
 /-- **The `ε`-neighbourhood graph.** Two distinct points are adjacent when their distance is at
-most `ε`; this is the one-skeleton of the Vietoris–Rips complex `VR(M, ε)` (Carlsson,
-*Topology and data*, Bull. AMS 2009, Def. 2.5 and §3.2). -/
+most `ε`; for `ε ≥ 0` this is the one-skeleton of the Vietoris–Rips complex `VR(M, ε)` (Carlsson,
+*Topology and data*, Bull. AMS 2009, Def. 2.5 and §3.2). For `ε < 0` the graph has no edges, while
+`VR(M, ε)` has no vertices. -/
 def ripsGraph (ε : ℝ) : SimpleGraph M where
   Adj x y := x ≠ y ∧ dist x y ≤ ε
   symm := ⟨fun _ _ h => ⟨h.1.symm, (dist_comm _ _).trans_le h.2⟩⟩

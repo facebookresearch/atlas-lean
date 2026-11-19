@@ -51,6 +51,14 @@ Stationary stochastic policies on finite discounted Markov decision processes, M
 - [No stochastic policy beats the optimal value](stoch-value-le-optimal-value.md)
 - [Values of bounded rewards are bounded](stoch-value-mem-icc.md)
 
+## Row-stochastic policies, occupancy and the performance difference lemma
+
+- [Expected reward under a row-stochastic policy](policy-reward-2.md)
+- [Advantage function of a row-stochastic policy](advantage.md)
+- [Discounted state-action occupancy of a row-stochastic policy](occupancy.md)
+- [Total mass of the state-action occupancy of a row-stochastic policy](sum-occupancy.md)
+- [Performance difference lemma for row-stochastic policies](performance-difference.md)
+
 ## Related topics
 
 - [Value iteration](../../../heuristic-search-and-planning/value-iteration/README.md)

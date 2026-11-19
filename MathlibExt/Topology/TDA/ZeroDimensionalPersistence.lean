@@ -18,8 +18,11 @@ public import Mathlib.CategoryTheory.Types.Basic
 The single-linkage clusters at all scales form an `ℝ`-persistence object in the category of sets
 (G. Carlsson, *Topology and data*, Bull. AMS 46 (2009), Def. 2.9 with `C = Sets`): the functor
 `r ↦ X / ∼_r`, whose structure maps send a cluster to the cluster containing it at a larger
-scale. For a metric space this is `π₀` of the Vietoris–Rips filtration
-(`slEquiv_dist_iff_reachable`), the set-level form of zero-dimensional persistent homology.
+scale. For a metric space and a nonnegative scale `r`, the clusters are `π₀` of the
+Vietoris–Rips complex `VR(X, r)`, whose one-skeleton is the `r`-neighbourhood graph
+(`slEquiv_dist_iff_reachable`), so on nonnegative scales the functor is the set-level form of
+zero-dimensional persistent homology. The comparison is restricted to nonnegative scales: at a
+negative scale every point is its own cluster, while `VR(X, r)` has no vertices.
 
 `clusterFunctorInterleaving`: if two dissimilarities on the same set differ by at most `η`
 everywhere, their cluster functors are `η`-interleaved in the sense of Chazal, de Silva, Glisse
@@ -42,7 +45,8 @@ variable {X : Type u}
 functor `ℝ ⥤ Type` sending `r` to the set of single-linkage clusters `X / ∼_r` at scale `r`, and
 `r ≤ s` to the map sending each `r`-cluster to the `s`-cluster containing it: an `ℝ`-persistence
 object in the category of sets (Carlsson, *Topology and data*, Bull. AMS 2009, Def. 2.9 and
-§3.2, where single-linkage clusters are `π₀` of the Vietoris–Rips complex). -/
+§3.2, where single-linkage clusters at a nonnegative scale are `π₀` of the Vietoris–Rips
+complex). -/
 def clusterFunctor (d : X → X → ℝ) : ℝ ⥤ Type u where
   obj r := Quot (SLEquiv d r)
   map {r s} h := TypeCat.ofHom (Quot.map id fun a b (hab : SLEquiv d r a b) => hab.mono (leOfHom h))

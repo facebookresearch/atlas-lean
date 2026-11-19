@@ -180,7 +180,8 @@ number.
 
 Source: Mohamadou Bachabi, Bakary Kourouma, and Alain Togbé, *On k-Pell-Lucas Numbers Close to
 a Power of 2*, INTEGERS 25 (2025), Article A67, Lemma 7 (`integers-2025-A67-lem-7`). -/
-public theorem_wanted lt_two_rpow_mul_mul_log_rpow (ℓ T x : ℝ) (hℓ : 1 ≤ ℓ) (hx : 1 < x)
+public theorem_wanted lt_two_rpow_mul_mul_log_rpow_of_one_lt (ℓ T x : ℝ)
+    (hℓ : 1 ≤ ℓ) (hx : 1 < x)
     (hT : (4 * ℓ ^ 2) ^ ℓ < T) (hTx : x / Real.log x ^ ℓ < T) :
     x < 2 ^ ℓ * T * Real.log T ^ ℓ
 
