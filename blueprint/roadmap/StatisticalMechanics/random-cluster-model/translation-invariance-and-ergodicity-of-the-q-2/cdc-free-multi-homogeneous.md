@@ -1,0 +1,3 @@
+# Free $q = 2$ multi-edge homogeneity under a translation
+
+For $d \in \mathbb{N}$, $0 < p < 1$ and $g \in \mathbb{Z}^d$, free multi-edge homogeneity under $g$ holds when $\phi^0_{p,2}(O_s) = \phi^0_{p,2}(O_{s - g})$ for every finite set $s$ of unordered pairs of sites, where $O_s$ is the event that every pair of the finite set $s$ is open, $s - g$ is its translate by $-g$, and $\phi^0_{p,2}$ is the [free infinite-volume random-cluster measure](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/free-infinite-volume.md) on $\mathbb{Z}^d$ (a chosen subsequential weak limit of the free box measures).

@@ -1,0 +1,3 @@
+# Probability of an ambient FK configuration
+
+Let $G = (V, E)$ be a simple graph on a finite set $V$ and $p, q \in \mathbb{R}$. The random-cluster probability of a configuration $\omega$ (an assignment of open/closed states to all unordered pairs of elements of $V$) is $\phi_{G,p,q}(\omega) = w_{G,p,q}(\omega)/Z_{G}(p, q)$, the [random-cluster weight](fk-weight.md) divided by the [partition function](fk-z.md) (read as $0$ if $Z_G(p, q) = 0$). For $0 \le p \le 1$ and $q > 0$ the weights are nonnegative and $Z_G(p, q) > 0$, so $\phi_{G,p,q}$ is a probability distribution on configurations (the states of non-edge pairs are independent fair coins); for other parameters it is only a normalized signed weight, possibly identically $0$.

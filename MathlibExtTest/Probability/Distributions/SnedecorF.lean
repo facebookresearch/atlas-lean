@@ -16,7 +16,9 @@ import MathlibExt.Probability.Distributions.SnedecorF
 
 Total mass `1` at `(1, 1)` and `(2, 3)`, the zero measure when either degree of freedom is `0`,
 no mass on `(-∞, 0]` (the density vanishes off `Ioi 0`), the closed form `(1 + x)^{-2}` of the
-`F(2, 2)` density, and the beta integral helper at its simplest parameters.
+`F(2, 2)` density, the beta integral helper at its simplest parameters, and the ratio law: it
+applies to the coordinates of a product of two chi-square laws, and a zero degree of freedom
+makes the target the zero measure.
 -/
 
 open MeasureTheory ProbabilityTheory Real Set
@@ -60,5 +62,30 @@ example : ∫⁻ x, ENNReal.ofReal (if 0 < x then x ^ ((1 : ℝ) - 1) * (1 + 1 *
     else 0) = 1 := by
   rw [lintegral_rpow_mul_one_add_mul_rpow_neg (by norm_num) (by norm_num) (by norm_num)]
   norm_num [Gamma_two]
+
+/-! ### The ratio law -/
+
+/-- Non-vacuity: the hypotheses are satisfiable. Coordinates of a product of two chi-square laws
+are independent with the right marginals, so the theorem applies to them. -/
+example : ((chiSquareMeasure 2).prod (chiSquareMeasure 3)).map
+    (fun p : ℝ × ℝ => (p.1 / (2 : ℕ)) / (p.2 / (3 : ℕ))) = snedecorFMeasure 2 3 := by
+  have := isProbabilityMeasure_chiSquareMeasure (by norm_num : 0 < 2)
+  have := isProbabilityMeasure_chiSquareMeasure (by norm_num : 0 < 3)
+  exact map_div_chiSquare_eq_snedecorF (by norm_num) (by norm_num)
+    ⟨measurable_fst.aemeasurable, by rw [Measure.map_fst_prod]; simp⟩
+    ⟨measurable_snd.aemeasurable, by rw [Measure.map_snd_prod]; simp⟩
+    (indepFun_prod measurable_id measurable_id)
+
+/-- Boundary: with `d₁ = 0` the target is the zero measure, so `0 < d₁` cannot be dropped. -/
+example (d : ℕ) : ¬ IsProbabilityMeasure (snedecorFMeasure 0 d) := by
+  intro h
+  apply IsProbabilityMeasure.ne_zero (snedecorFMeasure 0 d)
+  simp [snedecorFMeasure]
+
+/-- Boundary: with `d₂ = 0` the target is the zero measure, so `0 < d₂` cannot be dropped. -/
+example (d : ℕ) : ¬ IsProbabilityMeasure (snedecorFMeasure d 0) := by
+  intro h
+  apply IsProbabilityMeasure.ne_zero (snedecorFMeasure d 0)
+  simp [snedecorFMeasure]
 
 end MathlibExtTest.Probability.Distributions.SnedecorF

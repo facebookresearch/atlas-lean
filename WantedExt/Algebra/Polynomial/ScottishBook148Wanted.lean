@@ -34,9 +34,9 @@ the commentary in Mauldin (ed.), The Scottish Book, 2nd ed., 2015).
 -/
 theorem_wanted auerbachPolynomialZeroSetSeparatesIffFactorsSignDefinite :
     ∀ (n : ℕ) (P : MvPolynomial (Fin n) ℝ), P ≠ 0 →
-      IsConnected {x : Fin n → ℝ | (MvPolynomial.eval x) P ≠ 0} ↔
+      (IsConnected {x : Fin n → ℝ | (MvPolynomial.eval x) P ≠ 0} ↔
         ∀ Q : MvPolynomial (Fin n) ℝ, Irreducible Q → Q ∣ P →
           (∀ x : Fin n → ℝ, 0 ≤ (MvPolynomial.eval x) Q) ∨
-            ∀ x : Fin n → ℝ, (MvPolynomial.eval x) Q ≤ 0
+            ∀ x : Fin n → ℝ, (MvPolynomial.eval x) Q ≤ 0)
 
 end MathlibExt.Algebra.Polynomial.ScottishBook148Wanted

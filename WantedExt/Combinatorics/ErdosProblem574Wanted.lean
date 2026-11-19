@@ -18,8 +18,8 @@ public import Mathlib.Combinatorics.SimpleGraph.Copy
 public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
 public import Mathlib.Data.Fin.Basic
 public import Mathlib.Data.Nat.Cast.Basic
-public import Mathlib.Data.Nat.Lattice
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Order.Lattice.Nat
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Set.Card
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Topology.Basic

@@ -247,7 +247,8 @@ public theorem_wanted isLeast_longestAPLength_prime_of_mod_four_eq_three {p : �
     (h4 : p % 4 = 3) :
     IsLeast (Set.range fun m : ℤ => longestAPLength m p) ((p + 1) / 2)
 
-/-- Theorem 3, prime-power case: for a prime `p` and `r > 1`, `min_{m ∈ ℤ} f_m(p ^ r) = p ^ (r - 1)`.
+/-- Theorem 3, prime-power case: for a prime `p` and `r > 1`,
+`min_{m ∈ ℤ} f_m(p ^ r) = p ^ (r - 1)`.
 
 Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
 Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6,

@@ -10,7 +10,7 @@ module
 
 public import Mathlib.Data.Finset.Max
 public import Mathlib.Data.Fintype.Prod
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 
 namespace MathlibExt.Combinatorics.Order.ErdosSzekeres
 
