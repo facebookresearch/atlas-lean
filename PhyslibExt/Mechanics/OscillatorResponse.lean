@@ -9,9 +9,10 @@ module
 
 public import Physlib.ClassicalMechanics.DampedHarmonicOscillator.Solution
 public import PhyslibExt.Units.EngineeringQuantities
+import MathlibExt.Analysis.ODE.Duhamel
 
 /-!
-# Damping and forcing parameter correspondence
+# Damping and forcing parameter correspondence and forced response
 
 An engineering mass-spring-damper has mass `m > 0`, viscous damping coefficient `c ≥ 0`
 (force per velocity) and stiffness `k > 0` (force per length):
@@ -20,7 +21,8 @@ An engineering mass-spring-damper has mass `m > 0`, viscous damping coefficient 
 
 with initial position `x₀`, initial velocity `v₀` and a forcing amplitude `F` in force units.
 This module maps these parameters to Physlib's damped harmonic oscillator and to the
-forced-oscillator convention `x'' + 2 γ x' + ω₀ ^ 2 x = F cos (Ω t)`.
+forced-oscillator convention `x'' + 2 γ x' + ω₀ ^ 2 x = F cos (Ω t)`, and constructs the forced
+response with its uniqueness.
 
 ## i. Overview
 
@@ -30,8 +32,21 @@ off `c ^ 2 - 4 m k`, and its selected free trajectory is the unique smooth solut
 given initial position and velocity. The forced-oscillator convention uses `γ = c / (2 m)`,
 `ω₀ = √(k / m)` and the forcing amplitude `F / m`, which is an acceleration, not a force. The
 two damping conventions differ by the factor `2 m`, and `k = 0` is not a Physlib oscillator.
-Physlib's uniqueness statement is for smooth (`ContDiff ℝ ∞`) trajectories. Parameters,
-forcing and initial data are model inputs.
+Physlib's uniqueness statement is for smooth (`ContDiff ℝ ∞`) trajectories.
+
+For the force `F cos (Ω t)` let `D = (k - m Ω ^ 2) ^ 2 + (c Ω) ^ 2` be the steady-state
+denominator; it vanishes exactly at the undamped exact resonance `c = 0`, `k = m Ω ^ 2`, which
+is excluded. The particular response `x_p (t) = A cos (Ω t) + B sin (Ω t)` with
+`A = F (k - m Ω ^ 2) / D` and `B = F c Ω / D` is differentiated explicitly and solves the forced
+equation; its coefficients are those of the forced-oscillator convention. The forced response
+adds the free trajectory whose initial position and velocity are both corrected by the
+particular response, `x₀ - x_p (0)` and `v₀ - x_p' (0)`. On the phase space `(x, x')` the forced
+equation reads `z' = L z + b (t)` with `L (x, v) = (v, -(k x + c v) / m)` and
+`b (t) = (0, F cos (Ω t) / m)`, so twice continuously differentiable displacements correspond
+to phase-space solutions, and Duhamel's variation-of-constants theorem gives uniqueness of the
+forced response among them, a larger class than the smooth one above.
+
+Parameters, forcing and initial data are model inputs.
 
 ## ii. Key results
 
@@ -47,6 +62,18 @@ forcing and initial data are model inputs.
 - `energy_dissipation`: the mechanical energy decreases at the rate `c ‖x'‖ ^ 2`.
 - `atlasForcing_dimension`: the forcing amplitude `F / m` has dimension `L T⁻²`, not that of a
   force.
+- `steadyStateDenominator_ne_zero_iff`: the steady-state denominator is nonzero exactly off the
+  undamped exact resonance.
+- `steadyState_coefficients_convention`: the steady-state coefficients are those of the
+  forced-oscillator convention.
+- `hasDerivAt_particularResponse`, `hasDerivAt_particularVelocity`, `particularResponse_solves`:
+  the derivatives of the particular response and the forced equation it solves.
+- `forcedResponse_spec`: the forced response is twice continuously differentiable, solves the
+  forced equation and has initial position `x₀` and velocity `v₀`.
+- `phase_of_displacement`, `displacement_of_phase`: twice continuously differentiable solutions
+  of the forced equation correspond to solutions of the phase-space equation.
+- `forcedResponse_unique`: the forced response is the only twice continuously differentiable
+  solution with its initial data.
 
 ## iii. Table of contents
 
@@ -54,6 +81,11 @@ forcing and initial data are model inputs.
 - B. Parameter map
 - C. Regimes, free trajectories and dissipation
 - D. Force units
+- E. Forced-response model
+- F. Steady-state denominator and coefficients
+- G. The particular response
+- H. The forced response
+- I. Phase space and uniqueness
 
 ## iv. References
 
@@ -64,6 +96,10 @@ forcing and initial data are model inputs.
   equation of motion, regimes, energy dissipation and selected trajectory reused here.
 - `PhyslibExt.EarthScience.DampedOscillator`: the forced-oscillator convention
   `x'' + 2 γ x' + ω₀ ^ 2 x = F cos (ω t)`.
+- G. Teschl, *Ordinary Differential Equations and Dynamical Systems*, AMS (2012), Sections 1.1
+  and 3.2 (reduction to a first-order system, variation of constants).
+- `MathlibExt.Analysis.ODE.Duhamel`: Duhamel's variation-of-constants theorem, used for the
+  uniqueness of the forced response.
 -/
 
 @[expose] public section
@@ -211,5 +247,308 @@ lemma atlasForcing_dimension :
       Units.EngineeringQuantities.forceDim / Dimension.single ISQDimensionBase.mass ≠
         Units.EngineeringQuantities.forceDim := by
   exact ⟨by decide, by decide⟩
+
+/-! ## E. Forced-response model -/
+
+/-- The steady-state denominator `(k - m Ω ^ 2) ^ 2 + (c Ω) ^ 2` of the harmonic response to the
+force `F cos (Ω t)`. -/
+def steadyStateDenominator (m c k Ω : ℝ) : ℝ :=
+  (k - m * Ω ^ 2) ^ 2 + (c * Ω) ^ 2
+
+/-- The in-phase coefficient `A = F (k - m Ω ^ 2) / D` of the steady-state response. -/
+noncomputable def steadyStateCos (m c k F Ω : ℝ) : ℝ :=
+  F * (k - m * Ω ^ 2) / steadyStateDenominator m c k Ω
+
+/-- The quadrature coefficient `B = F c Ω / D` of the steady-state response. -/
+noncomputable def steadyStateSin (m c k F Ω : ℝ) : ℝ :=
+  F * (c * Ω) / steadyStateDenominator m c k Ω
+
+/-- The particular (steady-state) response `A cos (Ω t) + B sin (Ω t)`. -/
+noncomputable def particularResponse (m c k F Ω t : ℝ) : ℝ :=
+  steadyStateCos m c k F Ω * Real.cos (Ω * t) + steadyStateSin m c k F Ω * Real.sin (Ω * t)
+
+/-- The velocity `Ω (B cos (Ω t) - A sin (Ω t))` of the particular response. -/
+noncomputable def particularVelocity (m c k F Ω t : ℝ) : ℝ :=
+  Ω * (steadyStateSin m c k F Ω * Real.cos (Ω * t) -
+    steadyStateCos m c k F Ω * Real.sin (Ω * t))
+
+/-- The forced response with initial position `x₀` and velocity `v₀`: the particular response
+plus the Physlib free trajectory whose initial position and velocity are both corrected by the
+particular response, read on the real time line. -/
+noncomputable def forcedResponse (m c k : ℝ) (hm : 0 < m) (hc : 0 ≤ c) (hk : 0 < k)
+    (F Ω x₀ v₀ t : ℝ) : ℝ :=
+  particularResponse m c k F Ω t +
+    (massSpringDamper m c k hm hc hk).trajectory
+      (initialConditions (x₀ - particularResponse m c k F Ω 0)
+        (v₀ - particularVelocity m c k F Ω 0)) ⟨t⟩ 0
+
+/-- The phase-space operator `(x, v) ↦ (v, -(k x + c v) / m)` of the mass-spring-damper. -/
+noncomputable def phaseOperator (m c k : ℝ) : ℝ × ℝ →L[ℝ] ℝ × ℝ :=
+  (ContinuousLinearMap.snd ℝ ℝ ℝ).prod
+    ((-(k / m)) • ContinuousLinearMap.fst ℝ ℝ ℝ + (-(c / m)) • ContinuousLinearMap.snd ℝ ℝ ℝ)
+
+/-- The phase-space forcing `t ↦ (0, F cos (Ω t) / m)`. -/
+noncomputable def phaseForcing (m F Ω t : ℝ) : ℝ × ℝ :=
+  (0, F * Real.cos (Ω * t) / m)
+
+/-! ## F. Steady-state denominator and coefficients -/
+
+/-- For `k > 0` the steady-state denominator is nonzero exactly off the undamped exact
+resonance `c = 0`, `k = m Ω ^ 2`. -/
+lemma steadyStateDenominator_ne_zero_iff {m c k : ℝ} (hk : 0 < k) (Ω : ℝ) :
+    steadyStateDenominator m c k Ω ≠ 0 ↔ ¬ (c = 0 ∧ k = m * Ω ^ 2) := by
+  unfold steadyStateDenominator
+  constructor
+  · rintro hD ⟨rfl, hkΩ⟩
+    apply hD
+    rw [hkΩ]
+    ring
+  · intro h hD
+    apply h
+    have h1 : (k - m * Ω ^ 2) ^ 2 = 0 := by
+      nlinarith [sq_nonneg (k - m * Ω ^ 2), sq_nonneg (c * Ω)]
+    have h2 : (c * Ω) ^ 2 = 0 := by
+      nlinarith [sq_nonneg (k - m * Ω ^ 2), sq_nonneg (c * Ω)]
+    have hkΩ : k = m * Ω ^ 2 := by
+      have := pow_eq_zero_iff (n := 2) (by norm_num) |>.mp h1
+      linarith
+    have hΩ : Ω ≠ 0 := by
+      rintro rfl
+      simp at hkΩ
+      linarith
+    have hcΩ : c * Ω = 0 := pow_eq_zero_iff (n := 2) (by norm_num) |>.mp h2
+    exact ⟨(mul_eq_zero.mp hcΩ).resolve_right hΩ, hkΩ⟩
+
+/-- The coefficients are those of the forced-oscillator convention
+`x'' + 2 γ x' + ω₀ ^ 2 x = f cos (Ω t)` with `γ = c / (2 m)`, `ω₀ = √(k / m)`, `f = F / m`:
+`A = f (ω₀ ^ 2 - Ω ^ 2) / D'` and `B = f (2 γ Ω) / D'`, with
+`D' = (ω₀ ^ 2 - Ω ^ 2) ^ 2 + (2 γ Ω) ^ 2`. -/
+lemma steadyState_coefficients_convention {m c k : ℝ} (hm : 0 < m) (hk : 0 ≤ k) (F Ω : ℝ) :
+    steadyStateCos m c k F Ω =
+        atlasForcing m F * (atlasNaturalFrequency m k ^ 2 - Ω ^ 2) /
+          ((atlasNaturalFrequency m k ^ 2 - Ω ^ 2) ^ 2 + (2 * atlasDamping m c * Ω) ^ 2) ∧
+      steadyStateSin m c k F Ω =
+        atlasForcing m F * (2 * atlasDamping m c * Ω) /
+          ((atlasNaturalFrequency m k ^ 2 - Ω ^ 2) ^ 2 + (2 * atlasDamping m c * Ω) ^ 2) := by
+  have hm0 : m ≠ 0 := hm.ne'
+  have hω : atlasNaturalFrequency m k ^ 2 = k / m := Real.sq_sqrt (div_nonneg hk hm.le)
+  simp only [steadyStateCos, steadyStateSin, steadyStateDenominator, atlasForcing, atlasDamping, hω]
+  have hden : (k / m - Ω ^ 2) ^ 2 + (2 * (c / (2 * m)) * Ω) ^ 2 =
+      ((k - m * Ω ^ 2) ^ 2 + (c * Ω) ^ 2) / m ^ 2 := by
+    field_simp
+  have hnumA : F / m * (k / m - Ω ^ 2) = F * (k - m * Ω ^ 2) / m ^ 2 := by
+    field_simp
+  have hnumB : F / m * (2 * (c / (2 * m)) * Ω) = F * (c * Ω) / m ^ 2 := by
+    field_simp
+  rw [hden, hnumA, hnumB, div_div_div_cancel_right₀ (pow_ne_zero 2 hm0),
+    div_div_div_cancel_right₀ (pow_ne_zero 2 hm0)]
+  exact ⟨rfl, rfl⟩
+
+/-! ## G. The particular response -/
+
+/-- The particular response has velocity `particularVelocity`. -/
+lemma hasDerivAt_particularResponse (m c k F Ω t : ℝ) :
+    HasDerivAt (particularResponse m c k F Ω) (particularVelocity m c k F Ω t) t := by
+  have h1 : HasDerivAt (fun s => Ω * s) Ω t := by
+    simpa using (hasDerivAt_id t).const_mul Ω
+  have hc := (Real.hasDerivAt_cos (Ω * t)).comp t h1
+  have hs := (Real.hasDerivAt_sin (Ω * t)).comp t h1
+  have h := (hc.const_mul (steadyStateCos m c k F Ω)).add (hs.const_mul (steadyStateSin m c k F Ω))
+  have h' : HasDerivAt (particularResponse m c k F Ω) _ t := h
+  exact h'.congr_deriv (by unfold particularVelocity; ring)
+
+/-- The particular velocity has derivative `-Ω ^ 2 x_p (t)`. -/
+lemma hasDerivAt_particularVelocity (m c k F Ω t : ℝ) :
+    HasDerivAt (particularVelocity m c k F Ω) (-Ω ^ 2 * particularResponse m c k F Ω t) t := by
+  have h1 : HasDerivAt (fun s => Ω * s) Ω t := by
+    simpa using (hasDerivAt_id t).const_mul Ω
+  have hc := (Real.hasDerivAt_cos (Ω * t)).comp t h1
+  have hs := (Real.hasDerivAt_sin (Ω * t)).comp t h1
+  have h := ((hc.const_mul (steadyStateSin m c k F Ω)).sub
+    (hs.const_mul (steadyStateCos m c k F Ω))).const_mul Ω
+  have h' : HasDerivAt (particularVelocity m c k F Ω) _ t := h
+  exact h'.congr_deriv (by unfold particularResponse; ring)
+
+/-- With a nonzero steady-state denominator the particular response solves
+`m x'' + c x' + k x = F cos (Ω t)`. -/
+lemma particularResponse_solves {m c k F Ω : ℝ} (hD : steadyStateDenominator m c k Ω ≠ 0)
+    (t : ℝ) :
+    m * deriv (deriv (particularResponse m c k F Ω)) t +
+        c * deriv (particularResponse m c k F Ω) t + k * particularResponse m c k F Ω t =
+      F * Real.cos (Ω * t) := by
+  have hd : deriv (particularResponse m c k F Ω) = particularVelocity m c k F Ω :=
+    funext fun s => (hasDerivAt_particularResponse m c k F Ω s).deriv
+  rw [hd, (hasDerivAt_particularVelocity m c k F Ω t).deriv]
+  unfold particularResponse particularVelocity steadyStateCos steadyStateSin
+  unfold steadyStateDenominator at hD ⊢
+  set D := (k - m * Ω ^ 2) ^ 2 + (c * Ω) ^ 2 with hDdef
+  field_simp
+  rw [hDdef]
+  ring
+
+/-! ## H. The forced response -/
+
+/-- The forced response is twice continuously differentiable, solves the forced equation, and
+has initial position `x₀` and initial velocity `v₀`. -/
+lemma forcedResponse_spec {m c k : ℝ} (hm : 0 < m) (hc : 0 ≤ c) (hk : 0 < k) {F Ω : ℝ}
+    (hD : steadyStateDenominator m c k Ω ≠ 0) (x₀ v₀ : ℝ) :
+    ContDiff ℝ 2 (forcedResponse m c k hm hc hk F Ω x₀ v₀) ∧
+      (∀ t, m * deriv (deriv (forcedResponse m c k hm hc hk F Ω x₀ v₀)) t +
+          c * deriv (forcedResponse m c k hm hc hk F Ω x₀ v₀) t +
+          k * forcedResponse m c k hm hc hk F Ω x₀ v₀ t = F * Real.cos (Ω * t)) ∧
+      forcedResponse m c k hm hc hk F Ω x₀ v₀ 0 = x₀ ∧
+      deriv (forcedResponse m c k hm hc hk F Ω x₀ v₀) 0 = v₀ := by
+  set S := massSpringDamper m c k hm hc hk with hS
+  set IC := initialConditions (x₀ - particularResponse m c k F Ω 0)
+    (v₀ - particularVelocity m c k F Ω 0) with hIC
+  set w := S.trajectory IC with hw
+  have hwC : ContDiff ℝ ∞ w := S.trajectory_contDiff IC
+  have hwd : Differentiable ℝ w := hwC.differentiable (by simp)
+  have hw'd : Differentiable ℝ (∂ₜ w) := Time.deriv_differentiable_of_contDiff w hwC
+  have hcoord : ∀ u : Time → EuclideanSpace ℝ (Fin 1), Differentiable ℝ u → ∀ τ : ℝ,
+      HasDerivAt (fun t : ℝ => u ⟨t⟩ 0) (∂ₜ u ⟨τ⟩ 0) τ := by
+    intro u hu τ
+    exact (EuclideanSpace.proj (0 : Fin 1)).hasFDerivAt.comp_hasDerivAt τ
+      (Time.hasDerivAt_comp_toRealCLE_symm u τ (hu _))
+  set f : ℝ → ℝ := fun t => w ⟨t⟩ 0 with hf
+  have hfd : deriv f = fun t => ∂ₜ w ⟨t⟩ 0 := funext fun τ => (hcoord w hwd τ).deriv
+  have hfdd : deriv (deriv f) = fun t => ∂ₜ (∂ₜ w) ⟨t⟩ 0 := by
+    rw [hfd]
+    exact funext fun τ => (hcoord (∂ₜ w) hw'd τ).deriv
+  have hfC : ContDiff ℝ 2 f :=
+    ((EuclideanSpace.proj (0 : Fin 1)).contDiff.comp
+      (hwC.comp Time.toRealCLE.symm.contDiff)).of_le (by simp)
+  have hfdiff : Differentiable ℝ f := hfC.differentiable (by norm_num)
+  have hfdiff' : Differentiable ℝ (deriv f) :=
+    ((contDiff_succ_iff_deriv (n := 1)).mp hfC).2.2.differentiable (by norm_num)
+  have hEOM : ∀ t : Time, m • ∂ₜ (∂ₜ w) t + c • ∂ₜ w t + k • w t = 0 :=
+    S.trajectory_equationOfMotion IC
+  have hfEq : ∀ t, m * deriv (deriv f) t + c * deriv f t + k * f t = 0 := by
+    intro t
+    rw [hfdd, hfd]
+    have := congrArg (fun v : EuclideanSpace ℝ (Fin 1) => v 0) (hEOM ⟨t⟩)
+    simpa using this
+  set p := particularResponse m c k F Ω with hp
+  have hpC : ContDiff ℝ 2 p := by
+    rw [hp]
+    unfold particularResponse
+    fun_prop
+  have hpdiff : Differentiable ℝ p := hpC.differentiable (by norm_num)
+  have hpd : deriv p = particularVelocity m c k F Ω :=
+    funext fun s => (hasDerivAt_particularResponse m c k F Ω s).deriv
+  have hpdiff' : Differentiable ℝ (deriv p) := by
+    rw [hpd]
+    exact fun s => (hasDerivAt_particularVelocity m c k F Ω s).differentiableAt
+  have hxeq : forcedResponse m c k hm hc hk F Ω x₀ v₀ = fun t => p t + f t := rfl
+  have hd1 : deriv (forcedResponse m c k hm hc hk F Ω x₀ v₀) = fun t => deriv p t + deriv f t := by
+    rw [hxeq]
+    funext t
+    exact deriv_add (hpdiff t) (hfdiff t)
+  have hd2 : deriv (deriv (forcedResponse m c k hm hc hk F Ω x₀ v₀)) =
+      fun t => deriv (deriv p) t + deriv (deriv f) t := by
+    rw [hd1]
+    funext t
+    exact deriv_add (hpdiff' t) (hfdiff' t)
+  have h0T : (⟨0⟩ : Time) = 0 := by
+    ext
+    simp
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · rw [hxeq]
+    exact hpC.add hfC
+  · intro t
+    rw [hd2, hd1, hxeq]
+    have h1 := particularResponse_solves (F := F) hD t
+    have h2 := hfEq t
+    simp only [] at h1 h2 ⊢
+    linarith
+  · rw [hxeq]
+    simp only [hf, hw, h0T, S.trajectory_apply_zero, hIC, initialConditions]
+    simp
+  · rw [hd1, hfd, hpd]
+    simp only [hw, h0T, S.trajectory_velocity_at_zero, hIC, initialConditions]
+    simp
+
+/-! ## I. Phase space and uniqueness -/
+
+/-- A `C²` displacement solving the forced equation gives the phase-space solution
+`t ↦ (x t, x' t)` of `z' = A z + b (t)`. -/
+lemma phase_of_displacement {m c k : ℝ} (hm : 0 < m) (F Ω : ℝ) {x : ℝ → ℝ}
+    (hx : ContDiff ℝ 2 x)
+    (hEq : ∀ t, m * deriv (deriv x) t + c * deriv x t + k * x t = F * Real.cos (Ω * t))
+    (t : ℝ) :
+    HasDerivAt (fun s => (x s, deriv x s))
+      (phaseOperator m c k (x t, deriv x t) + phaseForcing m F Ω t) t := by
+  have hxd : Differentiable ℝ x := hx.differentiable (by norm_num)
+  have hxdd : Differentiable ℝ (deriv x) :=
+    ((contDiff_succ_iff_deriv (n := 1)).mp hx).2.2.differentiable (by norm_num)
+  have h : HasDerivAt (fun s => (x s, deriv x s)) (deriv x t, deriv (deriv x) t) t :=
+    (hxd t).hasDerivAt.prodMk (hxdd t).hasDerivAt
+  refine h.congr_deriv ?_
+  have hm0 : m ≠ 0 := hm.ne'
+  have hE := hEq t
+  simp only [phaseOperator, phaseForcing]
+  ext
+  · simp
+  · simp
+    field_simp
+    linarith
+
+/-- A phase-space solution of `z' = A z + b (t)` has a `C²` first component, whose derivative is
+the second component and which solves the forced equation. -/
+lemma displacement_of_phase {m c k : ℝ} (hm : 0 < m) (F Ω : ℝ) {z : ℝ → ℝ × ℝ}
+    (hz : ∀ t, HasDerivAt z (phaseOperator m c k (z t) + phaseForcing m F Ω t) t) :
+    ContDiff ℝ 2 (fun t : ℝ => (z t).1) ∧ deriv (fun t : ℝ => (z t).1) = (fun t => (z t).2) ∧
+      ∀ t : ℝ, m * deriv (deriv (fun s : ℝ => (z s).1)) t + c * deriv (fun s : ℝ => (z s).1) t +
+          k * (z t).1 = F * Real.cos (Ω * t) := by
+  have hm0 : m ≠ 0 := hm.ne'
+  have h1 : ∀ t : ℝ, HasDerivAt (fun s : ℝ => (z s).1) (z t).2 t := by
+    intro t
+    have h := (ContinuousLinearMap.fst ℝ ℝ ℝ).hasFDerivAt.comp_hasDerivAt t (hz t)
+    refine h.congr_deriv ?_
+    simp [phaseOperator, phaseForcing]
+  have h2 : ∀ t : ℝ, HasDerivAt (fun s : ℝ => (z s).2)
+      (-(k / m) * (z t).1 + -(c / m) * (z t).2 + F * Real.cos (Ω * t) / m) t := by
+    intro t
+    have h := (ContinuousLinearMap.snd ℝ ℝ ℝ).hasFDerivAt.comp_hasDerivAt t (hz t)
+    refine h.congr_deriv ?_
+    simp [phaseOperator, phaseForcing]
+  have hd1 : deriv (fun s : ℝ => (z s).1) = fun s => (z s).2 := funext fun t => (h1 t).deriv
+  have hd2 : deriv (fun s : ℝ => (z s).2) =
+      fun t : ℝ => -(k / m) * (z t).1 + -(c / m) * (z t).2 + F * Real.cos (Ω * t) / m :=
+    funext fun t => (h2 t).deriv
+  have hzc : Continuous z := continuous_iff_continuousAt.2 fun t => (hz t).continuousAt
+  refine ⟨?_, hd1, ?_⟩
+  · refine (contDiff_succ_iff_deriv (n := 1)).mpr ⟨fun t => (h1 t).differentiableAt, by simp, ?_⟩
+    rw [hd1]
+    refine (contDiff_succ_iff_deriv (n := 0)).mpr ⟨fun t => (h2 t).differentiableAt, by simp, ?_⟩
+    rw [hd2, contDiff_zero]
+    fun_prop
+  · intro t
+    rw [hd1, hd2]
+    field_simp
+    ring
+
+/-- Uniqueness in the `C²` class: a twice continuously differentiable solution of the forced
+equation with initial position `x₀` and velocity `v₀` is the forced response. -/
+lemma forcedResponse_unique {m c k : ℝ} (hm : 0 < m) (hc : 0 ≤ c) (hk : 0 < k) {F Ω : ℝ}
+    (hD : steadyStateDenominator m c k Ω ≠ 0) {x₀ v₀ : ℝ} {x : ℝ → ℝ} (hx : ContDiff ℝ 2 x)
+    (hEq : ∀ t, m * deriv (deriv x) t + c * deriv x t + k * x t = F * Real.cos (Ω * t))
+    (h0 : x 0 = x₀) (hv0 : deriv x 0 = v₀) :
+    x = forcedResponse m c k hm hc hk F Ω x₀ v₀ := by
+  obtain ⟨hyC, hyEq, hy0, hyv⟩ := forcedResponse_spec hm hc hk hD x₀ v₀
+  have hb : Continuous (phaseForcing m F Ω) := by
+    unfold phaseForcing
+    fun_prop
+  obtain ⟨u, -, -, -, huniq⟩ :=
+    MathlibExt.Analysis.ODE.DuhamelWanted.duhamel_variation_of_constants
+      (phaseOperator m c k) (phaseForcing m F Ω) 0 (x₀, v₀) hb
+  have e1 := huniq (fun s => (x s, deriv x s)) (by simp [h0, hv0])
+    (phase_of_displacement hm F Ω hx hEq)
+  have e2 := huniq (fun s => (forcedResponse m c k hm hc hk F Ω x₀ v₀ s,
+      deriv (forcedResponse m c k hm hc hk F Ω x₀ v₀) s)) (by simp [hy0, hyv])
+    (phase_of_displacement hm F Ω hyC hyEq)
+  funext t
+  have := congrFun (e1.trans e2.symm) t
+  exact (Prod.ext_iff.mp this).1
 
 end PhyslibExt.Mechanics.OscillatorResponse
