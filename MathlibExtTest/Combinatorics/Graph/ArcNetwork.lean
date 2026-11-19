@@ -261,6 +261,33 @@ theorem priced_cost_b : (∑ e, cost8 e * fb e) = 10 := by
 theorem priced_costs_differ : (∑ e, cost8 e * fa e) ≠ ∑ e, cost8 e * fb e := by
   rw [priced_cost_a, priced_cost_b]
   norm_num
+theorem signed_parallel_loop_total_zero :
+    ∑ v, (incidenceMatrix t8 h8).mulVec
+      (![2, 3, -4, 0, 0, 9, 0, 0] : Fin 8 → ℝ) v = 0 :=
+  sum_incidenceMatrix_mulVec_eq_zero t8 h8 ![2, 3, -4, 0, 0, 9, 0, 0]
+theorem stock_balance_signed_parallel_loop :
+    ∑ v, ((![1, -2, 5] : Fin 3 → ℝ) +
+        (incidenceMatrix t8 h8).mulVec (![2, 3, -4, 0, 0, 9, 0, 0] : Fin 8 → ℝ) +
+        (![1 / 2, 0, 3] : Fin 3 → ℝ) - (![0, 7, 1 / 3] : Fin 3 → ℝ)) v = 1 / 6 := by
+  have h := stock_level_arc_balance t8 h8 ![2, 3, -4, 0, 0, 9, 0, 0]
+    (m := ![1, -2, 5]) (s := ![1 / 2, 0, 3]) (r := ![0, 7, 1 / 3]) rfl
+  have hsum : (∑ v, (![1, -2, 5] : Fin 3 → ℝ) v) +
+      (∑ v, (![1 / 2, 0, 3] : Fin 3 → ℝ) v)
+      - (∑ v, (![0, 7, 1 / 3] : Fin 3 → ℝ) v) = 1 / 6 := by
+    norm_num [Fin.sum_univ_three]
+  exact h.trans hsum
+theorem stock_balance_one_way :
+    ∑ v, ((![10, 20] : Fin 2 → ℝ) +
+        (incidenceMatrix (![0] : Fin 1 → Fin 2) (![1] : Fin 1 → Fin 2)).mulVec
+          (![5] : Fin 1 → ℝ) +
+        (![1, 2] : Fin 2 → ℝ) - (![3, 4] : Fin 2 → ℝ)) v = 26 := by
+  have h := stock_level_arc_balance (![0] : Fin 1 → Fin 2) (![1] : Fin 1 → Fin 2) ![5]
+    (m := ![10, 20]) (s := ![1, 2]) (r := ![3, 4]) rfl
+  have hsum : (∑ v, (![10, 20] : Fin 2 → ℝ) v) +
+      (∑ v, (![1, 2] : Fin 2 → ℝ) v)
+      - (∑ v, (![3, 4] : Fin 2 → ℝ) v) = 26 := by
+    norm_num [Fin.sum_univ_two]
+  exact h.trans hsum
 
 def e0tail : Fin 0 → Fin 2 := fun e => e.elim0
 def e0head : Fin 0 → Fin 2 := fun e => e.elim0

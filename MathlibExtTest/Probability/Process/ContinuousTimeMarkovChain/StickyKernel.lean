@@ -86,4 +86,18 @@ example : (∑ i, ∑ j, ![1 / 2, 1 - 1 / 2] i * stickyKernel ![1 / 2, 1 - 1 / 2
         (∑ j, ![1 / 2, 1 - 1 / 2] j * ![(1 : ℝ), 0] j)) = 1 / 4 := by
   rw [covariance_indicator_stickyKernel_two]; norm_num
 
+-- Two-state chain with rates `1` (out of `0`) and `3` (out of `1`): `π = (3/4, 1/4)` and, at
+-- `x = 0`, the transition function is the identity.
+example : ctmcTransition !![-(1 : ℝ), 1; 3, -3] 0 0 0 = 1 := by
+  rw [ctmcTransition_twoStateRate (by norm_num), stickyKernel_apply]
+  norm_num
+
+-- Its off-diagonal entry at time `x` is `(1 - e^{-4 x}) / 4`.
+example (x : ℝ) : ctmcTransition !![-(1 : ℝ), 1; 3, -3] x 0 1 = (1 - Real.exp (-(4 * x))) / 4 := by
+  rw [ctmcTransition_twoStateRate (by norm_num), stickyKernel_apply]
+  norm_num
+  ring
+
+#print axioms ctmcTransition_twoStateRate
+
 end MathlibExtTest.Probability.Process.ContinuousTimeMarkovChain.StickyKernel

@@ -58,6 +58,8 @@ the stationary forward / Fokker–Planck equation):
 * `generator_kimuraFixation`: `L_σ u = 0` for Kimura's formula.
 * `eq_kimuraFixation_of_generator_eq_zero`, `eq_kimuraFixation_of_contDiffOn`: uniqueness of
   the solution of the fixation boundary-value problem.
+* `kimuraFixation_one_half`, `continuousAt_kimuraFixation_zero`, `kimuraFixation_two_mul_mul`:
+  the midpoint value, continuity in the selection coefficient at neutrality, and the `4Ns` form.
 * `kimuraFixation_nonneg`, `kimuraFixation_le_one`, `kimuraFixation_mem_Icc`,
   `lt_kimuraFixation`: `0 ≤ u(y)` for `y ≥ 0`, `u(y) ≤ 1` for `y ≤ 1` (every `σ`), and
   `x < u(x)` when `σ > 0`.
@@ -276,6 +278,53 @@ theorem eq_kimuraFixation_of_contDiffOn {σ : ℝ} {u : ℝ → ℝ}
   have h := (contDiffOn_succ_iff_deriv_of_isOpen (n := 1) isOpen_Ioo).1 hu
   exact eq_kimuraFixation_of_generator_eq_zero hcont h.1 (h.2.2.differentiableOn one_ne_zero)
     hgen h0 h1
+
+/-- The midpoint value at `α = 1`: `u_1(1/2) = 1 / (1 + e^{-1})`. -/
+theorem kimuraFixation_one_half : kimuraFixation 1 (1 / 2) = 1 / (1 + exp (-1)) := by
+  have ht : exp (-2) = exp (-1) * exp (-1) := by rw [← exp_add]; norm_num
+  have h1 : exp (-1) < 1 := Real.exp_lt_one_iff.2 (by norm_num)
+  have hpos := exp_pos (-1)
+  have hd1 : 1 - exp (-1) * exp (-1) ≠ 0 := by nlinarith
+  have hd2 : (1 : ℝ) + exp (-1) ≠ 0 := by linarith
+  simp only [kimuraFixation, one_ne_zero, ↓reduceIte]
+  rw [show -2 * (1 : ℝ) * (1 / 2) = -1 by norm_num, show -2 * (1 : ℝ) = -2 by norm_num, ht,
+    div_eq_div_iff hd1 hd2]
+  ring
+
+/-- `α ↦ u_α(x)` is continuous at the neutral point `α = 0`, where its value is `x`;
+so the explicit neutral branch is the continuous extension. -/
+theorem continuousAt_kimuraFixation_zero (x : ℝ) :
+    ContinuousAt (fun α => kimuraFixation α x) 0 := by
+  have hf : HasDerivAt (fun α : ℝ => 1 - exp (-2 * α * x)) (2 * x) 0 := by
+    have h : HasDerivAt (fun α : ℝ => -2 * α * x) (-2 * x) 0 := by
+      simpa using ((hasDerivAt_id (0 : ℝ)).const_mul (-2)).mul_const x
+    convert h.exp.const_sub 1 using 1
+    simp
+  have hg : HasDerivAt (fun α : ℝ => 1 - exp (-2 * α)) 2 0 := by
+    have h : HasDerivAt (fun α : ℝ => -2 * α) (-2) 0 := by
+      simpa using (hasDerivAt_id (0 : ℝ)).const_mul (-2)
+    convert h.exp.const_sub 1 using 1
+    simp
+  rw [← continuousWithinAt_compl_self, ContinuousWithinAt, kimuraFixation_neutral]
+  have key := hf.tendsto_slope_zero.div hg.tendsto_slope_zero two_ne_zero
+  rw [show 2 * x / 2 = x by ring] at key
+  refine key.congr' ?_
+  filter_upwards [self_mem_nhdsWithin] with α hα
+  have hα' : α ≠ 0 := hα
+  simp only [zero_add, smul_eq_mul, kimuraFixation, hα', ↓reduceIte, mul_zero, zero_mul,
+    exp_zero, sub_self, sub_zero]
+  exact mul_div_mul_left _ _ (inv_ne_zero hα')
+
+/-- Source bridge (Kimura 1962, `N_e = N`): with `α = 2Ns`, `u_α(p) = (1 - e^{-4Nsp}) / (1 - e^{-4Ns})`
+whenever `Ns ≠ 0`. -/
+theorem kimuraFixation_two_mul_mul (N s p : ℝ) (hNs : N * s ≠ 0) :
+    kimuraFixation (2 * N * s) p = (1 - exp (-(4 * N * s * p))) / (1 - exp (-(4 * N * s))) := by
+  have h : 2 * N * s ≠ 0 := by rw [mul_assoc]; exact mul_ne_zero two_ne_zero hNs
+  have hform : kimuraFixation (2 * N * s) p =
+      (1 - exp (-2 * (2 * N * s) * p)) / (1 - exp (-2 * (2 * N * s))) := by
+    simp [kimuraFixation, h]
+  rw [hform, show -2 * (2 * N * s) * p = -(4 * N * s * p) by ring,
+    show -2 * (2 * N * s) = -(4 * N * s) by ring]
 
 /-- Kimura's fixation probability is nonnegative at nonnegative frequencies, for every
 selection coefficient `σ`. -/
