@@ -24,7 +24,7 @@ import Mathlib.Tactic.Ring
 import PhyslibExt.EarthScience.PoissonAdiabat
 
 /-!
-# Perfect-gas ports: the stagnation state adapter, the isentropic mass flux and the sonic throat
+# Perfect-gas ports: stagnation state, isentropic mass flux and the area-velocity relation
 
 ## i. Overview
 
@@ -63,11 +63,12 @@ stagnation state, the stagnation energy balance and the mass flow `ρ u A = ṁ`
 `x₀`. Differentiating the stagnation density ratio and the energy balance gives
 `ρ' / ρ = -M ^ 2 u' / u`, and differentiating the mass flow gives `ρ' / ρ + u' / u + A' / A = 0`;
 together they give the area-velocity relation `A' / A = (M ^ 2 - 1) u' / u` for positive `A`,
-`ρ`, `u`. So a sonic station is a throat, `A' = 0`. The converse needs more than `A' = 0`:
-`u' ≠ 0` at the station gives `M = 1` through the relation, and so does a mass flow selected at
-the choked value `ṁ = G(1) A` of the sonic maximum, without any derivative. A throat alone does
-not: a subsonic venturi has a strict area minimum with `A' = 0`, `u' = 0` and `M < 1`. Both cases
-are constructed in the test module.
+`ρ`, `u`. So a sonic station has stationary area, `A' = 0`: a necessary condition for a throat,
+not an area minimum, which these results do not assert. The converse needs more than stationary
+area: `u' ≠ 0` at the station gives `M = 1` through the relation, and so does a mass flow selected
+at the choked value `ṁ = G(1) A` of the sonic maximum, without any derivative. Stationary area
+alone does not, even at a throat: a subsonic venturi has a strict area minimum, hence `A' = 0`,
+with `u' = 0` and `M < 1`. Both cases are constructed in the test module.
 
 ## ii. Key results
 
@@ -98,10 +99,10 @@ are constructed in the test module.
   `ρ' / ρ + u' / u + A' / A = 0`.
 - `FluidDynamics.PerfectGasPorts.area_velocity_relation`: `A' / A = (M ^ 2 - 1) u' / u`.
 - `FluidDynamics.PerfectGasPorts.area_deriv_eq_zero_of_mach_eq_one`: a sonic station has
-  `A' = 0`.
+  stationary area, `A' = 0`.
 - `FluidDynamics.PerfectGasPorts.mach_eq_one_of_area_deriv_eq_zero`,
-  `FluidDynamics.PerfectGasPorts.mach_eq_one_of_choked`: a throat with `u' ≠ 0`, or a station at
-  the choked mass flow, is sonic.
+  `FluidDynamics.PerfectGasPorts.mach_eq_one_of_choked`: a station of stationary area with
+  `u' ≠ 0`, or a station at the choked mass flow, is sonic.
 
 ## iii. Table of contents
 
@@ -113,15 +114,15 @@ are constructed in the test module.
 - F. Monotonicity and the sonic maximum
 - G. The critical-area ratio
 - H. The differentiated isentrope and mass conservation
-- I. The area-velocity relation and the sonic throat
+- I. The area-velocity relation and stationary area at a sonic station
 
 ## iv. References
 
 - J. D. Anderson, *Modern Compressible Flow*, 3rd ed., McGraw-Hill, 2003, ch. 3: the total
   temperature `T0 / T = 1 + (γ - 1) M ^ 2 / 2` from the adiabatic energy equation, and the total
   pressure and density ratios of an isentropic deceleration; ch. 5: the area-velocity and
-  area-Mach-number relations, the sonic throat and choked mass flow in quasi-one-dimensional
-  isentropic flow.
+  area-Mach-number relations, sonic flow at a minimum-area section and choked mass flow in
+  quasi-one-dimensional isentropic flow.
 - H. W. Liepmann and A. Roshko, *Elements of Gasdynamics*, Wiley, 1957, ch. 2: flow in a stream
   tube of varying area, the mass flux per unit area and its maximum at `M = 1`.
 - Y. A. Çengel and M. A. Boles, *Thermodynamics: An Engineering Approach*, McGraw-Hill, the
@@ -780,7 +781,7 @@ lemma mass_flow_derivative {mdot x₀ A' ρ' u' : ℝ} {A ρ u : ℝ → ℝ}
   field_simp
   linear_combination h0
 
-/-! ## I. The area-velocity relation and the sonic throat -/
+/-! ## I. The area-velocity relation and stationary area at a sonic station -/
 
 /-- **Area-velocity relation.** Under the hypotheses of `isentropic_density_derivative`, with
 `ρ u A = ṁ` near the station, `A > 0` at the station and `A` differentiable there with derivative
@@ -799,8 +800,8 @@ lemma area_velocity_relation {γ R cp T0 ρ0 p0 mdot a M x₀ A' ρ' u' : ℝ}
   have h2 := mass_flow_derivative hmass hρ.self_of_nhds hu hA hA' hρ' hu'
   linear_combination h2 - h1
 
-/-- **A sonic station is a throat.** Under the hypotheses of `area_velocity_relation`, `M = 1`
-gives `A' = 0`. -/
+/-- **A sonic station has stationary area.** Under the hypotheses of `area_velocity_relation`,
+`M = 1` gives `A' = 0`: a necessary condition for a throat, not an area minimum. -/
 lemma area_deriv_eq_zero_of_mach_eq_one {γ R cp T0 ρ0 p0 mdot a M x₀ A' ρ' u' : ℝ}
     {A ρ u T p : ℝ → ℝ} (hγ : 1 < γ) (hR : 0 < R) (hcp : cp = γ * R / (γ - 1))
     (hρ0 : 0 < ρ0) (hp0 : p0 = ρ0 * R * T0) (hT : ∀ᶠ x in 𝓝 x₀, 0 < T x)
@@ -817,9 +818,9 @@ lemma area_deriv_eq_zero_of_mach_eq_one {γ R cp T0 ρ0 p0 mdot a M x₀ A' ρ' 
   have h0 : A' / A x₀ = 0 := by rw [h]; ring
   exact (div_eq_zero_iff.mp h0).resolve_right hA.ne'
 
-/-- **A throat with accelerating flow is sonic.** Under the hypotheses of
-`area_velocity_relation` with `A' = 0`, a positive sound speed and `u' ≠ 0` at the station,
-`M = 1`. -/
+/-- **Stationary area with accelerating flow is sonic.** Under the hypotheses of
+`area_velocity_relation` with stationary area `A' = 0`, a positive sound speed and `u' ≠ 0` at the
+station, `M = 1`. -/
 lemma mach_eq_one_of_area_deriv_eq_zero {γ R cp T0 ρ0 p0 mdot a M x₀ ρ' u' : ℝ}
     {A ρ u T p : ℝ → ℝ} (hγ : 1 < γ) (hR : 0 < R) (hcp : cp = γ * R / (γ - 1))
     (hρ0 : 0 < ρ0) (hp0 : p0 = ρ0 * R * T0) (hT : ∀ᶠ x in 𝓝 x₀, 0 < T x)

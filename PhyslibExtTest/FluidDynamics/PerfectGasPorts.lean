@@ -36,9 +36,10 @@ Checks for `PhyslibExt.FluidDynamics.PerfectGasPorts`, mostly for air with `γ =
   in `(1, 2)` with the flux of `M = 1/2`;
 * the flux bridge at the sonic isentropic state, the sonic maximum and the area ratio from equal
   mass flow, with every hypothesis discharged, and zero flux at rest;
-* the sonic throat, for `γ = 2`, `R = 1`, `T0 = 3`, `ρ0 = 3` and the mass flow `4`: a smooth flow
-  through `M = 1` at a throat, where it meets every hypothesis of the sonic-throat lemma, and a
-  subsonic throat with `A' = 0`, `u' = 0` and `M < 1`.
+* stationary area at a sonic station, for `γ = 2`, `R = 1`, `T0 = 3`, `ρ0 = 3` and the mass flow
+  `4`: a smooth flow through `M = 1`, which meets every hypothesis of the stationary-area lemma at
+  its sonic station, and a subsonic throat, a strict area minimum with `A' = 0`, `u' = 0` and
+  `M < 1`.
 
 These are elaboration and non-vacuity checks, not new results.
 -/
@@ -224,7 +225,7 @@ example : (27 : ℝ) / 16 = isentropicMassFlux 1 1 1 (7 / 5) 1 / isentropicMassF
 /-- At rest the flux vanishes and the area-ratio quotient fails `≥ 1`. -/
 example : isentropicMassFlux 1 1 1 (7 / 5) 0 = 0 := (isentropicMassFlux_zero 1 1 1 (7 / 5)).1
 
-/-! ## The area-velocity relation and the sonic throat -/
+/-! ## The area-velocity relation and stationary area -/
 
 section AreaVelocity
 
@@ -359,9 +360,10 @@ lemma subsonic_throat :
       nlinarith [mul_pos hu (sub_pos.mpr hu1), sq_nonneg (1 - x ^ 2)]
     exact div_lt_div_of_pos_left (by norm_num) hg hlt
 
-/-- The sonic-throat lemma applies to an actual flow: the transonic parameterization meets every
-hypothesis of `area_deriv_eq_zero_of_mach_eq_one` at its sonic station `x₀ = 0`, with the sound
-speed `a = √(2 T 0)` and `M = 1`, so the lemma, not the construction, gives `A' = 0` there. -/
+/-- The stationary-area lemma applies to an actual flow: the transonic parameterization meets
+every hypothesis of `area_deriv_eq_zero_of_mach_eq_one` at its sonic station `x₀ = 0`, with the
+sound speed `a = √(2 T 0)` and `M = 1`, so the lemma, not the construction, gives `A' = 0`
+there. -/
 example : ∃ A : ℝ → ℝ, HasDerivAt A (deriv A 0) 0 ∧ deriv A 0 = 0 := by
   obtain ⟨A, ρ, u, T, p, hrel, hA, hρ, hu, -, hM0, -, -, -⟩ := transonic_parameterization
   have hmem : Ioo (-1 : ℝ) 1 ∈ 𝓝 (0 : ℝ) := Ioo_mem_nhds (by norm_num) (by norm_num)
