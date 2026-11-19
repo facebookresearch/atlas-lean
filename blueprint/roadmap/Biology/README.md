@@ -38,3 +38,7 @@ compatibility class.
 - [Statistical genetics](statistical-genetics/README.md)
 - [Cancer genomics](cancer-genomics/README.md)
 - [Bioinformatics](bioinformatics/README.md)
+- [Systems biology](systems-biology/README.md)
+- [Population and evolutionary dynamics](population-dynamics/README.md)
+- [Reaction–diffusion and pattern formation](pattern-formation/README.md)
+- [Mathematical epidemiology](epidemiology/README.md)
