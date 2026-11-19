@@ -10,4 +10,4 @@ and a $\rho$-correlated copy $y$ of $x$.
 
 It [agrees](noise-stability-eq-bool-noise-stab.md) with the correlation definition
 $\mathbb{E}[f \cdot T_\rho f]$ of
-noise stability on the Boolean cube.
+[noise stability on the Boolean cube](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/influences-and-the-noise-operator-on-the-boolean/bool-noise-stab.md).

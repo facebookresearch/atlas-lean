@@ -8,7 +8,7 @@ from $\beta \|u\|^2 \le \langle D u, D u \rangle = L(u) \le \|L\| \|u\|$.
 
 ## Informally uses
 
-- Stability bound for the variational solution: the same
+- [Stability bound for the variational solution](../../numerical-analysis/c-a-s-lemma/norm-variational-solution-le.md): the same
   bound for the Lax–Milgram solution of a coercive problem.
 
 ## Sources

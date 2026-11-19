@@ -6,7 +6,7 @@ $$
 \lVert w_t - w'_t \rVert \le \sum_{s < t,\ \iota(s) = k} 2\, \alpha_s L .
 $$
 
-Proof: by induction with the [growth recursion](norm-sub-le-min-mul-add-two-mul.md). When $\iota(s) \ne k$, both runs apply the same gradient update, which is non-expansive; when $\iota(s) = k$, both updates are $\alpha_s L$-bounded and the distance grows by at most $2\alpha_s L$.
+Proof: by induction with the [growth recursion](norm-sub-le-min-mul-add-two-mul.md). When $\iota(s) \ne k$, both runs apply the same gradient update, which is [non-expansive](../../../../Analysis/convex-analysis-and-variations/gradient-descent/norm-gradient-step-sub-le.md); when $\iota(s) = k$, both updates are [$\alpha_s L$-bounded](../../../../Analysis/convex-analysis-and-variations/gradient-descent/norm-smul-gradient-le.md) and the distance grows by at most $2\alpha_s L$.
 
 ## Sources
 

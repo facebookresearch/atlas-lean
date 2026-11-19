@@ -24,8 +24,8 @@ affine-gap, linear-space and wavefront alignment and profile hidden Markov model
 [LD score regression](statistical-genetics/ld-score-regression/README.md) and Mendelian randomization;
 [population structure](population-structure/README.md) uses Patterson's f-statistics and admixture graphs;
 [quantitative genetics](quantitative-genetics/README.md) has Fisher's decomposition of genetic variance; and in
-systems biology the
-deficiency-zero theorem gives a weakly
+[systems biology](systems-biology/README.md) the
+[deficiency-zero theorem](systems-biology/complex-balancing-and-the-deficiency-zero-theore/README.md) gives a weakly
 reversible mass-action network of deficiency zero exactly one equilibrium in each positive stoichiometric
 compatibility class.
 

@@ -12,7 +12,7 @@ and Wu.
 
 ## Background
 
-- Total variation distance:
+- [Total variation distance](../../../Probability/convergence-of-measures/total-variation-distance/total-variation-dist.md):
   the distance between rows.
 
 ## Sources
