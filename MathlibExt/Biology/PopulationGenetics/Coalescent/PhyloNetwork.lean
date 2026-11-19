@@ -23,8 +23,11 @@ import Mathlib.Tactic.Ring
 # Phylogenetic networks and their routing kernel
 
 A `PhyloNetwork` is a finite rooted acyclic digraph (`Digraph.IsAcyclic`) in which every
-non-root vertex has one or two parents, equipped with node ages (strictly decreasing along
-edges, so branch lengths `age u - age v` are nonnegative) and inheritance probabilities:
+non-root vertex has one or two parents, equipped with node ages (nonincreasing along edges,
+so branch lengths `age u - age v` are nonnegative; zero-length edges are allowed) and
+inheritance probabilities. Out-degrees are unrestricted and vertices carry no leaf labels:
+this is the parent-bounded routing skeleton of a phylogenetic network, not the fully binary
+notion (which would also bound out-degrees and label the leaves by taxa):
 at a reticulation vertex `v` with parents `u₁, u₂`, a lineage arriving at `v` continues to
 `u₁` with probability `γ = inherit v u₁ ∈ [0, 1]` and to `u₂` with probability `1 - γ`;
 at a tree vertex the unique parent has inheritance probability `1`. The routing kernel
@@ -52,13 +55,16 @@ namespace MathlibExt.Biology.PopulationGenetics.Coalescent
 def parentsOf {V : Type*} [Fintype V] (G : Digraph V) [DecidableRel G.Adj] (v : V) : Finset V :=
   {u | G.Adj u v}
 
-/-- A **time-consistent rooted binary phylogenetic network** with inheritance probabilities
-(Yu–Degnan–Nakhleh 2012; Zhang–Ogilvie–Drummond–Stadler 2018). The edges of the finite DAG `G` run
-from ancestor to descendant. The root is the only node without a parent; every other node is a
-*tree node* (one parent) or a *reticulation node* (two parents). Node ages `time` (measured
-backward from the present) make the network time-consistent: a parent is never younger than its
-child, and the branch length of an edge `u → v` is `time u - time v`. A lineage at `v` traces back
-to the parent `u` with probability `inherit v u`: this vanishes off the parents and sums to `1`
+/-- A **time-consistent parent-bounded routing network**: the routing skeleton of a rooted
+phylogenetic network with inheritance probabilities (Yu–Degnan–Nakhleh 2012;
+Zhang–Ogilvie–Drummond–Stadler 2018), without the binary out-degree classification or leaf
+labels of the fully binary notion. The edges of the finite DAG `G` run from ancestor to
+descendant. The root is the only node without a parent; every other node is a *tree node*
+(one parent) or a *reticulation node* (two parents); out-degrees are unrestricted. Node ages
+`time` (measured backward from the present) make the network time-consistent: a parent is
+never younger than its child (`time v ≤ time u`, so zero-length edges are allowed), and the
+branch length of an edge `u → v` is `time u - time v`. A lineage at `v` traces back to the
+parent `u` with probability `inherit v u`: this vanishes off the parents and sums to `1`
 over the parents, so it is `1` at a tree node and `γ, 1 - γ` at a reticulation node. -/
 structure PhyloNetwork (V : Type*) [Fintype V] where
   /-- The directed acyclic graph; `G.Adj u v` means `u` is a parent of `v`. -/
