@@ -21,7 +21,7 @@ import Mathlib.Tactic.Ring
 import MathlibExt.Analysis.ODE.InvariantRegions
 
 /-!
-# Heat exchangers: the parallel-flow solution
+# Heat exchangers: the parallel-flow and counterflow solutions
 
 ## i. Overview
 
@@ -43,6 +43,27 @@ differences coincide (`UA = 0` or equal inlets): there is no division by `log 1`
 inlet above the cold one the cold stream never rises above its hot partner, and with `UA > 0`
 the outlets are strictly ordered `Tci < Tc(L) < Th(L) < Thi`.
 
+In a counterflow exchanger of the same length, with `x` measured along the hot flow, the hot stream
+enters at `x = 0` with temperature `Thi` and the cold stream enters at the opposite end `x = L`
+with temperature `Tci` and flows toward `x = 0`. The temperatures satisfy
+`Ch Th' = -K (Th - Tc)` and `Cc Tc' = -K (Th - Tc)`,
+with derivatives taken within `[0, L]`; the cold equation carries the hot equation's sign because
+`x` runs against the cold flow. The data sit at opposite ends, `Th(0) = Thi` and `Tc(L) = Tci`, so
+this is a boundary-value problem. The difference `D = Th - Tc` obeys `D' = -s D` with
+`s = K (1 / Ch - 1 / Cc)`, so `D(x) = D(0) exp (-s x)`; each temperature is its value at `x = 0`
+minus a multiple of `∫₀ˣ exp (-s y) dy`, and the cold inlet condition fixes the boundary constant
+`D(0) = (Thi - Tci) / (1 + K / Cc * ∫₀ᴸ exp (-s y) dy)`. The integral is written with its `s = 0`
+branch `x`, so the formulas stay nonsingular when `Ch = Cc`. For `K ≥ 0` the solution exists and is
+unique on `[0, L]`; uniqueness applies `ODE_solution_unique_of_mem_Icc_right` to `Th - Tc`. For
+`Thi > Tci` the hot stream stays strictly above the cold one, `Tci ≤ Tc(x) ≤ Tc(0) < Thi` and
+`Tci < Th(L) ≤ Th(x) ≤ Thi`. No order between the outlets `Th(L)` and `Tc(0)` is imposed: a
+temperature cross `Tc(0) > Th(L)` is allowed. The heat lost by the hot stream between `0` and `x`
+equals the heat gained by the cold stream over the same stretch,
+`Ch (Thi - Th(x)) = Cc (Tc(0) - Tc(x))`; with the parallel-flow sign for the cold equation this
+accounting fails whenever the hot temperature changes. With equal capacity rates `Ch = Cc = C` the
+difference is the constant `(Thi - Tci) / (1 + UA / C)` and the duty is
+`UA (Thi - Tci) / (1 + UA / C)`.
+
 Model inputs: constant capacity rates and `UA`, no phase change or axial conduction; the
 exchanger equations are hypotheses of the solution predicate, not derived. Each result assumes
 only the hypotheses its proof uses.
@@ -60,18 +81,38 @@ only the hypotheses its proof uses.
 - `HeatTransfer.HeatExchangers.IsParallelFlowSolution.bounds` and
   `HeatTransfer.HeatExchangers.IsParallelFlowSolution.outlet_order`: `Tci ≤ Tc(x)`,
   `Th(x) ≤ Thi`, and the strict outlet order for `UA > 0`.
+- `HeatTransfer.HeatExchangers.isCounterflowSolution_closedForm` and
+  `HeatTransfer.HeatExchangers.IsCounterflowSolution.eq_closedForm`: existence and uniqueness of
+  the counterflow solution with the hot inlet at `x = 0` and the cold inlet at `x = L`.
+- `HeatTransfer.HeatExchangers.counterflowHotTemp_sub_counterflowColdTemp` and
+  `HeatTransfer.HeatExchangers.counterflowInletDiff_eq_of_ne`: the exponential difference and the
+  boundary constant for unequal capacity rates.
+- `HeatTransfer.HeatExchangers.IsCounterflowSolution.cold_lt_hot`,
+  `HeatTransfer.HeatExchangers.IsCounterflowSolution.cold_bounds` and
+  `HeatTransfer.HeatExchangers.IsCounterflowSolution.hot_bounds`: the hot stream stays above the
+  cold one, and the two streamwise bounds, with no outlet order.
+- `HeatTransfer.HeatExchangers.IsCounterflowSolution.heat_balance` and
+  `HeatTransfer.HeatExchangers.parallelSign_violates_counterflow_balance`: counterflow energy
+  accounting, and its failure under the parallel-flow sign.
+- `HeatTransfer.HeatExchangers.IsCounterflowSolution.equalCapacity_sub_const` and
+  `HeatTransfer.HeatExchangers.IsCounterflowSolution.equalCapacity_heat`: constant difference and
+  `Q = UA (Thi - Tci) / (1 + UA / C)` for equal capacity rates.
 
 ## iii. Table of contents
 
 - A. The parallel-flow solution
 - B. Outlets, heat duty and the logarithmic mean
+- C. The counterflow solution
+- D. Counterflow bounds, heat balance and equal capacity rates
 
 ## iv. References
 
 - F. P. Incropera, D. P. DeWitt, T. L. Bergman and A. S. Lavine, *Fundamentals of Heat and Mass
   Transfer*, 6th ed., Wiley (2007), Section 11.3: the parallel-flow exchanger, its energy
   balances `q = Ch (Thi - Tho) = Cc (Tco - Tci)` and `q = UA ΔT_lm` with
-  `ΔT_lm = (ΔT₁ - ΔT₂) / ln (ΔT₁ / ΔT₂)`, `ΔT₁ = Thi - Tci`, `ΔT₂ = Tho - Tco`.
+  `ΔT_lm = (ΔT₁ - ΔT₂) / ln (ΔT₁ / ΔT₂)`, `ΔT₁ = Thi - Tci`, `ΔT₂ = Tho - Tco`; the counterflow
+  exchanger, whose cold outlet may exceed the hot outlet, and its equal-capacity case with
+  constant `ΔT`.
 - Mathlib's `ODE_solution_unique_of_mem_Icc` and its one-sided variants for uniqueness.
 -/
 
@@ -478,5 +519,746 @@ lemma IsParallelFlowSolution.outlet_order {Ch Cc UA L Thi Tci : ℝ} {Th Tc : �
         Cc / (Ch + Cc) * (Thi - Tci) * (1 - Real.exp (-(UA * (1 / Ch + 1 / Cc)))) :=
       mul_pos (mul_pos hcc hΔ1) h1E
     linarith [hpos]
+
+/-! ## C. The counterflow solution -/
+
+/-- Decay rate `s = K (1 / Ch - 1 / Cc)` of the stream temperature difference in counterflow,
+for the conductance per unit length `K` and the capacity rates `Ch`, `Cc`. It vanishes for equal
+capacity rates and is negative when `Ch > Cc` and `K > 0`. -/
+noncomputable def counterflowRate (Ch Cc K : ℝ) : ℝ := K * (1 / Ch - 1 / Cc)
+
+/-- The integral `∫₀ˣ exp (-s y) dy` in closed form: `(1 - exp (-s x)) / s` for `s ≠ 0` and its
+limit `x` for `s = 0`, so that no value divides by zero. -/
+noncomputable def expDecayIntegral (s x : ℝ) : ℝ :=
+  if s = 0 then x else (1 - Real.exp (-(s * x))) / s
+
+/-- Boundary constant of the counterflow solution: the temperature difference
+`Th(0) - Tc(0) = (Thi - Tci) / (1 + K / Cc * ∫₀ᴸ exp (-s y) dy)` at the hot inlet, fixed by the
+cold inlet condition `Tc(L) = Tci`, with `s = counterflowRate Ch Cc K`. The denominator is at
+least `1` for `K, L ≥ 0` and `Cc > 0`. -/
+noncomputable def counterflowInletDiff (Ch Cc K L Thi Tci : ℝ) : ℝ :=
+  (Thi - Tci) / (1 + K / Cc * expDecayIntegral (counterflowRate Ch Cc K) L)
+
+/-- Hot-stream temperature of the counterflow solution with the hot inlet `Thi` at `x = 0` and the
+cold inlet `Tci` at `x = L`: `Th(x) = Thi - K / Ch * D₀ * ∫₀ˣ exp (-s y) dy`, where
+`D₀ = counterflowInletDiff Ch Cc K L Thi Tci`. Intended for `Ch, Cc > 0`. -/
+noncomputable def counterflowHotTemp (Ch Cc K L Thi Tci x : ℝ) : ℝ :=
+  Thi - K / Ch * counterflowInletDiff Ch Cc K L Thi Tci *
+    expDecayIntegral (counterflowRate Ch Cc K) x
+
+/-- Cold-stream temperature of the counterflow solution:
+`Tc(x) = Thi - D₀ - K / Cc * D₀ * ∫₀ˣ exp (-s y) dy`, so `Tc(0) = Thi - D₀` is the cold outlet.
+Intended for `Ch, Cc > 0`. -/
+noncomputable def counterflowColdTemp (Ch Cc K L Thi Tci x : ℝ) : ℝ :=
+  Thi - counterflowInletDiff Ch Cc K L Thi Tci -
+    K / Cc * counterflowInletDiff Ch Cc K L Thi Tci * expDecayIntegral (counterflowRate Ch Cc K) x
+
+/-- `(Th, Tc)` solves the counterflow exchanger equations on `[0, L]`, with `x` along the hot flow:
+the hot inlet value `Th 0 = Thi` at `x = 0`, the cold inlet value `Tc L = Tci` at `x = L`, and at
+every `x ∈ [0, L]` the stream enthalpy flows `Ch * Th` and `Cc * Tc` both have the derivative
+`-K * (Th x - Tc x)` within `[0, L]` (one-sided at the ends), that is `Ch * Th' = -K * (Th - Tc)`
+and `Cc * Tc' = -K * (Th - Tc)`. The cold equation has the hot equation's sign because `x` runs
+against the cold flow. For `0 ≤ L` the predicate depends only on the values of `Th` and `Tc` on
+`[0, L]`. -/
+def IsCounterflowSolution (Ch Cc K L Thi Tci : ℝ) (Th Tc : ℝ → ℝ) : Prop :=
+  Th 0 = Thi ∧ Tc L = Tci ∧ ∀ x ∈ Set.Icc 0 L,
+    HasDerivWithinAt (fun y => Ch * Th y) (-K * (Th x - Tc x)) (Set.Icc 0 L) x ∧
+      HasDerivWithinAt (fun y => Cc * Tc y) (-K * (Th x - Tc x)) (Set.Icc 0 L) x
+
+private lemma expDecayIntegral_zero (s : ℝ) : expDecayIntegral s 0 = 0 := by
+  unfold expDecayIntegral
+  by_cases hs : s = 0 <;> simp [hs]
+
+private lemma expDecayIntegral_nonneg {s L : ℝ} (hL : 0 ≤ L) :
+    0 ≤ expDecayIntegral s L := by
+  unfold expDecayIntegral
+  by_cases hs : s = 0
+  · simp [hs, hL]
+  · simp only [ite_eq_right hs]
+    rcases lt_or_gt_of_ne hs with hneg | hpos
+    · apply div_nonneg_of_nonpos _ hneg.le
+      have h : 0 ≤ -(s * L) := neg_nonneg.mpr (mul_nonpos_of_nonpos_of_nonneg hneg.le hL)
+      have hE := Real.one_le_exp h
+      linarith
+    · apply div_nonneg _ hpos.le
+      have h : -(s * L) ≤ 0 := neg_nonpos.mpr (mul_nonneg hpos.le hL)
+      have hE := Real.exp_le_one_iff.mpr h
+      linarith
+
+private lemma counterflowDenom_pos {Ch Cc K L : ℝ} (hCc : 0 < Cc) (hK : 0 ≤ K)
+    (hL : 0 ≤ L) :
+    0 < 1 + K / Cc * expDecayIntegral (counterflowRate Ch Cc K) L := by
+  have h : 0 ≤ K / Cc * expDecayIntegral (counterflowRate Ch Cc K) L :=
+    mul_nonneg (div_nonneg hK hCc.le) (expDecayIntegral_nonneg hL)
+  linarith
+
+private lemma hasDerivAt_expDecayIntegral (s x : ℝ) :
+    HasDerivAt (fun y => expDecayIntegral s y) (Real.exp (-(s * x))) x := by
+  by_cases hs : s = 0
+  · simp only [expDecayIntegral, ite_eq_left hs]
+    exact (hasDerivAt_id' x).congr_deriv (by simp [hs])
+  · simp only [expDecayIntegral, ite_eq_right hs]
+    have hsy : HasDerivAt (fun y : ℝ => s * y) s x :=
+      ((hasDerivAt_id' x).const_mul s).congr_deriv (by ring)
+    have hneg : HasDerivAt (fun y : ℝ => -(s * y)) (-s) x := hsy.neg
+    have hexp : HasDerivAt (fun y : ℝ => Real.exp (-(s * y)))
+        (Real.exp (-(s * x)) * (-s)) x := hneg.exp
+    have hsub : HasDerivAt (fun y : ℝ => 1 - Real.exp (-(s * y)))
+        (-(Real.exp (-(s * x)) * (-s))) x := hexp.const_sub 1
+    have hdiv : HasDerivAt (fun y : ℝ => (1 - Real.exp (-(s * y))) / s)
+        ((-(Real.exp (-(s * x)) * (-s))) / s) x := hsub.div_const s
+    exact hdiv.congr_deriv (by rw [div_eq_iff hs]; ring)
+
+private lemma counterflowBranchDenom_ne_zero {Ch Cc K L : ℝ} (hCh : 0 < Ch) (hCc : 0 < Cc)
+    (hK : 0 ≤ K) (hL : 0 ≤ L) (hne : Ch ≠ Cc) :
+    Cc - Ch * Real.exp (-(counterflowRate Ch Cc K * L)) ≠ 0 := by
+  rcases lt_or_gt_of_ne hne with hlt | hgt
+  · have h1 : (1 : ℝ) / Cc < 1 / Ch := one_div_lt_one_div_of_lt hCh hlt
+    have hs : 0 ≤ counterflowRate Ch Cc K := by
+      unfold counterflowRate
+      exact mul_nonneg hK (sub_nonneg.mpr h1.le)
+    have hE : Real.exp (-(counterflowRate Ch Cc K * L)) ≤ 1 :=
+      Real.exp_le_one_iff.mpr (neg_nonpos.mpr (mul_nonneg hs hL))
+    have hCE : Ch * Real.exp (-(counterflowRate Ch Cc K * L)) ≤ Ch * 1 :=
+      mul_le_mul_of_nonneg_left hE hCh.le
+    rw [mul_one] at hCE
+    have hpos : 0 < Cc - Ch * Real.exp (-(counterflowRate Ch Cc K * L)) := by linarith
+    exact ne_of_gt hpos
+  · have h1 : (1 : ℝ) / Ch < 1 / Cc := one_div_lt_one_div_of_lt hCc hgt
+    have hs : counterflowRate Ch Cc K ≤ 0 := by
+      unfold counterflowRate
+      exact mul_nonpos_of_nonneg_of_nonpos hK (sub_nonpos.mpr h1.le)
+    have hE : 1 ≤ Real.exp (-(counterflowRate Ch Cc K * L)) :=
+      Real.one_le_exp (neg_nonneg.mpr (mul_nonpos_of_nonpos_of_nonneg hs hL))
+    have hCE : Ch * 1 ≤ Ch * Real.exp (-(counterflowRate Ch Cc K * L)) :=
+      mul_le_mul_of_nonneg_left hE hCh.le
+    rw [mul_one] at hCE
+    have hneg : Cc - Ch * Real.exp (-(counterflowRate Ch Cc K * L)) < 0 := by linarith
+    exact ne_of_lt hneg
+
+private lemma eqOn_Icc_of_hasDerivWithinAt_zero {f : ℝ → ℝ} {a b : ℝ}
+    (hf : ∀ x ∈ Set.Icc a b, HasDerivWithinAt f 0 (Set.Icc a b) x) :
+    ∀ x ∈ Set.Icc a b, f x = f a := by
+  intro x hx
+  have h := norm_image_sub_le_of_norm_deriv_le_segment' (f := f) (a := a) (b := b)
+    (f' := fun _ => 0) (C := 0) hf (fun t _ => by simp) x hx
+  rw [zero_mul] at h
+  have h0 : f x - f a = 0 := norm_le_zero_iff.mp h
+  exact sub_eq_zero.mp h0
+
+private lemma IsCounterflowSolution.balance_aux {Ch Cc K L Thi Tci : ℝ} {Th Tc : ℝ → ℝ}
+    (h : IsCounterflowSolution Ch Cc K L Thi Tci Th Tc) :
+    ∀ x ∈ Set.Icc 0 L, Ch * (Thi - Th x) = Cc * (Tc 0 - Tc x) := by
+  have hF : ∀ x ∈ Set.Icc 0 L,
+      HasDerivWithinAt (fun y => Ch * Th y - Cc * Tc y) 0 (Set.Icc 0 L) x := by
+    intro x hx
+    obtain ⟨hH, hC⟩ := h.2.2 x hx
+    exact (hH.sub hC).congr_deriv (by ring)
+  intro x hx
+  have hconst := eqOn_Icc_of_hasDerivWithinAt_zero hF x hx
+  have hconst' : Ch * Th x - Cc * Tc x = Ch * Th 0 - Cc * Tc 0 := hconst
+  rw [h.1] at hconst'
+  linear_combination -hconst'
+
+private lemma counterflowInletDiff_eq_of_equalCap {C UA L Thi Tci : ℝ} (hC : 0 < C)
+    (hL : 0 < L) :
+    counterflowInletDiff C C (UA / L) L Thi Tci = (Thi - Tci) / (1 + UA / C) := by
+  have hs0 : counterflowRate C C (UA / L) = 0 := by simp [counterflowRate]
+  have hφ : expDecayIntegral (counterflowRate C C (UA / L)) L = L := by
+    simp [expDecayIntegral, hs0]
+  unfold counterflowInletDiff
+  rw [hφ]
+  congr 1
+  field_simp [hC.ne', hL.ne']
+
+/-- The stream temperature difference of the closed form is the scalar exponential
+`D₀ * exp (-s x)`. -/
+lemma counterflowHotTemp_sub_counterflowColdTemp (Ch Cc K L Thi Tci x : ℝ) :
+    counterflowHotTemp Ch Cc K L Thi Tci x - counterflowColdTemp Ch Cc K L Thi Tci x =
+      counterflowInletDiff Ch Cc K L Thi Tci * Real.exp (-(counterflowRate Ch Cc K * x)) := by
+  have key : ∀ φ : ℝ, Thi - K / Ch * counterflowInletDiff Ch Cc K L Thi Tci * φ -
+        (Thi - counterflowInletDiff Ch Cc K L Thi Tci -
+          K / Cc * counterflowInletDiff Ch Cc K L Thi Tci * φ)
+      = counterflowInletDiff Ch Cc K L Thi Tci *
+        (1 - counterflowRate Ch Cc K * φ) := by
+    intro φ
+    simp only [counterflowRate]
+    ring
+  unfold counterflowHotTemp counterflowColdTemp
+  rw [key]
+  by_cases hs : counterflowRate Ch Cc K = 0
+  · simp only [expDecayIntegral, ite_eq_left hs]
+    rw [hs]
+    simp
+  · simp only [expDecayIntegral, ite_eq_right hs]
+    field_simp [hs]
+    try ring
+
+/-- **Boundary constant for unequal capacity rates.** For `Ch ≠ Cc`, `K, L ≥ 0`, the inlet-end
+difference is `(Cc - Ch) (Thi - Tci) / (Cc - Ch exp (-s L))`, the textbook form, whose
+denominator does not vanish. -/
+lemma counterflowInletDiff_eq_of_ne {Ch Cc K L : ℝ} (hCh : 0 < Ch) (hCc : 0 < Cc) (hK : 0 ≤ K)
+    (hL : 0 ≤ L) (hne : Ch ≠ Cc) (Thi Tci : ℝ) :
+    counterflowInletDiff Ch Cc K L Thi Tci =
+      (Cc - Ch) * (Thi - Tci) / (Cc - Ch * Real.exp (-(counterflowRate Ch Cc K * L))) := by
+  have hCh0 : Ch ≠ 0 := ne_of_gt hCh
+  have hCc0 : Cc ≠ 0 := ne_of_gt hCc
+  have hCd : Cc - Ch ≠ 0 := sub_ne_zero.mpr (Ne.symm hne)
+  have hden2 := counterflowBranchDenom_ne_zero hCh hCc hK hL hne
+  by_cases hK0 : K = 0
+  · subst hK0
+    have hs0 : counterflowRate Ch Cc 0 = 0 := by simp [counterflowRate]
+    have hφ : expDecayIntegral (counterflowRate Ch Cc 0) L = L := by
+      simp [expDecayIntegral, hs0]
+    unfold counterflowInletDiff
+    rw [hφ, hs0]
+    simp only [zero_mul, neg_zero, Real.exp_zero, mul_one]
+    field_simp [hCd]
+    try ring
+  · have h11 : (1 : ℝ) / Ch ≠ 1 / Cc := by
+      intro hcon
+      apply hne
+      rw [one_div, one_div, inv_inj] at hcon
+      exact hcon
+    have hs : counterflowRate Ch Cc K ≠ 0 := by
+      unfold counterflowRate
+      exact mul_ne_zero hK0 (sub_ne_zero.mpr h11)
+    have hφ : expDecayIntegral (counterflowRate Ch Cc K) L
+        = (1 - Real.exp (-(counterflowRate Ch Cc K * L))) / counterflowRate Ch Cc K := by
+      simp only [expDecayIntegral, ite_eq_right hs]
+    have hrel : counterflowRate Ch Cc K * (Ch * Cc) = K * (Cc - Ch) := by
+      simp only [counterflowRate]
+      field_simp [hCh0, hCc0]
+    have hCcσ : Cc * counterflowRate Ch Cc K ≠ 0 := mul_ne_zero hCc0 hs
+    have hKeq : K / (Cc * counterflowRate Ch Cc K) = Ch / (Cc - Ch) := by
+      rw [div_eq_div_iff hCcσ hCd]
+      linear_combination -hrel
+    have hden : 1 + K / Cc * expDecayIntegral (counterflowRate Ch Cc K) L
+        = (Cc - Ch * Real.exp (-(counterflowRate Ch Cc K * L))) / (Cc - Ch) := by
+      have hKK : K / Cc * ((1 - Real.exp (-(counterflowRate Ch Cc K * L))) /
+          counterflowRate Ch Cc K)
+          = (K / (Cc * counterflowRate Ch Cc K)) *
+            (1 - Real.exp (-(counterflowRate Ch Cc K * L))) := by
+        field_simp [hCc0, hs]
+      rw [hφ, hKK, hKeq]
+      field_simp [hCd]
+      try ring
+    unfold counterflowInletDiff
+    rw [hden]
+    field_simp [hden2, hCd]
+
+/-- **Existence.** For `K ≥ 0` and `L ≥ 0` the closed form solves the counterflow equations on
+`[0, L]` with the hot inlet at `x = 0` and the cold inlet at `x = L`. -/
+lemma isCounterflowSolution_closedForm {Ch Cc K L : ℝ} (hCh : 0 < Ch) (hCc : 0 < Cc)
+    (hK : 0 ≤ K) (hL : 0 ≤ L) (Thi Tci : ℝ) :
+    IsCounterflowSolution Ch Cc K L Thi Tci (counterflowHotTemp Ch Cc K L Thi Tci)
+      (counterflowColdTemp Ch Cc K L Thi Tci) := by
+  have hCh0 : Ch ≠ 0 := ne_of_gt hCh
+  have hCc0 : Cc ≠ 0 := ne_of_gt hCc
+  have hden : 1 + K / Cc * expDecayIntegral (counterflowRate Ch Cc K) L ≠ 0 :=
+    ne_of_gt (counterflowDenom_pos hCc hK hL)
+  refine ⟨?_, ?_, ?_⟩
+  · -- Th 0 = Thi
+    simp [counterflowHotTemp, expDecayIntegral_zero]
+  · -- Tc L = Tci
+    unfold counterflowColdTemp counterflowInletDiff
+    have hcancel : (Thi - Tci) / (1 + K / Cc * expDecayIntegral (counterflowRate Ch Cc K) L) *
+        (1 + K / Cc * expDecayIntegral (counterflowRate Ch Cc K) L) = Thi - Tci :=
+      div_mul_cancel₀ _ hden
+    linear_combination -hcancel
+  · -- derivatives
+    intro x hx
+    have hsub := counterflowHotTemp_sub_counterflowColdTemp Ch Cc K L Thi Tci x
+    have hE := hasDerivAt_expDecayIntegral (counterflowRate Ch Cc K) x
+    constructor
+    · -- hot equation
+      have hfun : (fun y => Ch * counterflowHotTemp Ch Cc K L Thi Tci y)
+          = fun y => Ch * Thi - K * counterflowInletDiff Ch Cc K L Thi Tci *
+            expDecayIntegral (counterflowRate Ch Cc K) y := by
+        funext y
+        simp only [counterflowHotTemp]
+        field_simp [hCh0]
+      have hcomp : HasDerivAt (fun y => Ch * Thi - K * counterflowInletDiff Ch Cc K L Thi Tci *
+            expDecayIntegral (counterflowRate Ch Cc K) y)
+          (-((K * counterflowInletDiff Ch Cc K L Thi Tci) *
+            Real.exp (-(counterflowRate Ch Cc K * x)))) x :=
+        ((hE.const_mul _).const_sub _).congr_deriv (by ring)
+      rw [hfun]
+      have hder : -((K * counterflowInletDiff Ch Cc K L Thi Tci) *
+            Real.exp (-(counterflowRate Ch Cc K * x)))
+          = -K * (counterflowHotTemp Ch Cc K L Thi Tci x -
+            counterflowColdTemp Ch Cc K L Thi Tci x) := by
+        rw [hsub]
+        ring
+      exact hcomp.hasDerivWithinAt.congr_deriv hder
+    · -- cold equation
+      have hfun : (fun y => Cc * counterflowColdTemp Ch Cc K L Thi Tci y)
+          = fun y => Cc * (Thi - counterflowInletDiff Ch Cc K L Thi Tci) -
+            K * counterflowInletDiff Ch Cc K L Thi Tci *
+            expDecayIntegral (counterflowRate Ch Cc K) y := by
+        funext y
+        simp only [counterflowColdTemp]
+        field_simp [hCc0]
+      have hcomp : HasDerivAt (fun y => Cc * (Thi - counterflowInletDiff Ch Cc K L Thi Tci) -
+            K * counterflowInletDiff Ch Cc K L Thi Tci *
+            expDecayIntegral (counterflowRate Ch Cc K) y)
+          (-((K * counterflowInletDiff Ch Cc K L Thi Tci) *
+            Real.exp (-(counterflowRate Ch Cc K * x)))) x :=
+        ((hE.const_mul _).const_sub _).congr_deriv (by ring)
+      rw [hfun]
+      have hder : -((K * counterflowInletDiff Ch Cc K L Thi Tci) *
+            Real.exp (-(counterflowRate Ch Cc K * x)))
+          = -K * (counterflowHotTemp Ch Cc K L Thi Tci x -
+            counterflowColdTemp Ch Cc K L Thi Tci x) := by
+        rw [hsub]
+        ring
+      exact hcomp.hasDerivWithinAt.congr_deriv hder
+
+/-- **Uniqueness.** For `K ≥ 0`, every solution of the counterflow equations on `[0, L]` with the
+hot inlet `Thi` at `x = 0` and the cold inlet `Tci` at `x = L` is the closed form on `[0, L]`. -/
+lemma IsCounterflowSolution.eq_closedForm {Ch Cc K L Thi Tci : ℝ} {Th Tc : ℝ → ℝ}
+    (hCh : 0 < Ch) (hCc : 0 < Cc) (hK : 0 ≤ K)
+    (h : IsCounterflowSolution Ch Cc K L Thi Tci Th Tc) :
+    ∀ x ∈ Set.Icc 0 L,
+      Th x = counterflowHotTemp Ch Cc K L Thi Tci x ∧
+        Tc x = counterflowColdTemp Ch Cc K L Thi Tci x := by
+  have hCh0 : Ch ≠ 0 := ne_of_gt hCh
+  have hCc0 : Cc ≠ 0 := ne_of_gt hCc
+  have hD : ∀ t ∈ Set.Icc 0 L, HasDerivWithinAt (fun y => Th y - Tc y)
+      (-counterflowRate Ch Cc K * (Th t - Tc t)) (Set.Icc 0 L) t := by
+    intro t ht
+    have hH := (h.2.2 t ht).1
+    have hC := (h.2.2 t ht).2
+    have hTh : HasDerivWithinAt (fun y => Th y)
+        ((1 / Ch) * (-K * (Th t - Tc t))) (Set.Icc 0 L) t := by
+      have h1 := hH.const_mul (1 / Ch)
+      have hfun : (fun y => (1 / Ch) * (Ch * Th y)) = (fun y => Th y) := by
+        funext y; rw [← mul_assoc, one_div_mul_cancel hCh0, one_mul]
+      rw [hfun] at h1
+      exact h1
+    have hTc : HasDerivWithinAt (fun y => Tc y)
+        ((1 / Cc) * (-K * (Th t - Tc t))) (Set.Icc 0 L) t := by
+      have h1 := hC.const_mul (1 / Cc)
+      have hfun : (fun y => (1 / Cc) * (Cc * Tc y)) = (fun y => Tc y) := by
+        funext y; rw [← mul_assoc, one_div_mul_cancel hCc0, one_mul]
+      rw [hfun] at h1
+      exact h1
+    have hsub := hTh.sub hTc
+    have hder : (1 / Ch) * (-K * (Th t - Tc t)) - (1 / Cc) * (-K * (Th t - Tc t))
+        = -counterflowRate Ch Cc K * (Th t - Tc t) := by
+      simp only [counterflowRate]
+      ring
+    exact hsub.congr_deriv hder
+  have hE : ∀ t, HasDerivAt (fun t => (Th 0 - Tc 0) * Real.exp ((-counterflowRate Ch Cc K) * t))
+      ((-counterflowRate Ch Cc K) * ((Th 0 - Tc 0) *
+        Real.exp ((-counterflowRate Ch Cc K) * t))) t :=
+    (MetaMathlibExt.scalar_exp_solution
+      (x := fun t => (Th 0 - Tc 0) * Real.exp ((-counterflowRate Ch Cc K) * t))
+      (a := -counterflowRate Ch Cc K) (x₀ := Th 0 - Tc 0) (fun t => rfl)).2
+  have hDexp : ∀ t ∈ Set.Icc 0 L, Th t - Tc t
+      = (Th 0 - Tc 0) * Real.exp (-(counterflowRate Ch Cc K * t)) := by
+    have hlip : ∀ t ∈ Set.Ico (0 : ℝ) L, LipschitzOnWith ‖-counterflowRate Ch Cc K‖₊
+        ((fun _ y : ℝ => -counterflowRate Ch Cc K * y) t) Set.univ := by
+      intro t _
+      rw [lipschitzOnWith_iff_norm_sub_le]
+      intro y _ z _
+      change ‖-counterflowRate Ch Cc K * y - -counterflowRate Ch Cc K * z‖ ≤
+        ‖-counterflowRate Ch Cc K‖₊ * ‖y - z‖
+      have hyz : -counterflowRate Ch Cc K * y - -counterflowRate Ch Cc K * z =
+          -counterflowRate Ch Cc K * (y - z) := by ring
+      rw [hyz, norm_mul]
+      exact le_of_eq (by rw [coe_nnnorm])
+    have hf : ContinuousOn (fun y => Th y - Tc y) (Set.Icc 0 L) :=
+      fun y hy => (hD y hy).continuousWithinAt
+    have hf' : ∀ t ∈ Set.Ico (0 : ℝ) L, HasDerivWithinAt (fun y => Th y - Tc y)
+        (-counterflowRate Ch Cc K * (Th t - Tc t)) (Set.Ici t) t := fun t ht =>
+      (hD t (Set.mem_Icc_of_Ico ht)).mono_of_mem_nhdsWithin (Icc_mem_nhdsGE_of_mem ht)
+    have hg : ContinuousOn (fun t => (Th 0 - Tc 0) * Real.exp ((-counterflowRate Ch Cc K) * t))
+        (Set.Icc 0 L) := fun t _ => (hE t).continuousAt.continuousWithinAt
+    have hg' : ∀ t ∈ Set.Ico (0 : ℝ) L, HasDerivWithinAt
+        (fun t => (Th 0 - Tc 0) * Real.exp ((-counterflowRate Ch Cc K) * t))
+        ((-counterflowRate Ch Cc K) * ((Th 0 - Tc 0) *
+          Real.exp ((-counterflowRate Ch Cc K) * t))) (Set.Ici t) t :=
+      fun t _ => (hE t).hasDerivWithinAt
+    have huniq := ODE_solution_unique_of_mem_Icc_right
+      (v := fun _ y : ℝ => -counterflowRate Ch Cc K * y) (s := fun _ => Set.univ)
+      (K := ‖-counterflowRate Ch Cc K‖₊) (f := fun y => Th y - Tc y)
+      (g := fun t => (Th 0 - Tc 0) * Real.exp ((-counterflowRate Ch Cc K) * t))
+      (a := 0) (b := L) hlip hf hf' (fun _ _ => Set.mem_univ _) hg hg'
+      (fun _ _ => Set.mem_univ _) (by simp)
+    intro t ht
+    have hDx : Th t - Tc t = (Th 0 - Tc 0) * Real.exp ((-counterflowRate Ch Cc K) * t) :=
+      huniq ht
+    rw [hDx, neg_mul]
+  intro x hx
+  have hL : 0 ≤ L := le_trans hx.1 hx.2
+  have hLmem : L ∈ Set.Icc 0 L := Set.right_mem_Icc.mpr hL
+  have hbal := IsCounterflowSolution.balance_aux h L hLmem
+  rw [h.2.1] at hbal
+  have hDL := hDexp L hLmem
+  rw [h.2.1] at hDL
+  have hThL : Th L
+      = Tci + (Th 0 - Tc 0) * Real.exp (-(counterflowRate Ch Cc K * L)) := by
+    linarith [hDL]
+  have hTc0 : Tc 0 = Thi - (Th 0 - Tc 0) := by linarith [h.1]
+  rw [hTc0, hThL] at hbal
+  have hsol : (Th 0 - Tc 0) * (Cc - Ch * Real.exp (-(counterflowRate Ch Cc K * L)))
+      = (Cc - Ch) * (Thi - Tci) := by linear_combination hbal
+  by_cases hne : Ch = Cc
+  · -- Equal capacity rates: the difference is constant; integrate the hot equation.
+    subst hne
+    have hs0 : counterflowRate Ch Ch K = 0 := by simp [counterflowRate]
+    have hDconst : ∀ t ∈ Set.Icc 0 L, Th t - Tc t = Th 0 - Tc 0 := by
+      intro t ht
+      have hdt := hDexp t ht
+      rw [hs0] at hdt
+      simp only [zero_mul, neg_zero, Real.exp_zero, mul_one] at hdt
+      exact hdt
+    have hTh : ∀ t ∈ Set.Icc 0 L, HasDerivWithinAt (fun y => Th y)
+        ((1 / Ch) * (-K * (Th 0 - Tc 0))) (Set.Icc 0 L) t := by
+      intro t ht
+      have hH := (h.2.2 t ht).1
+      have h1 := hH.const_mul (1 / Ch)
+      have hfun : (fun y => (1 / Ch) * (Ch * Th y)) = (fun y => Th y) := by
+        funext y; rw [← mul_assoc, one_div_mul_cancel hCh0, one_mul]
+      rw [hfun] at h1
+      have hdt := hDconst t ht
+      have hder : (1 / Ch) * (-K * (Th t - Tc t))
+          = (1 / Ch) * (-K * (Th 0 - Tc 0)) := by rw [hdt]
+      exact h1.congr_deriv hder
+    have hW1 : ∀ t ∈ Set.Icc 0 L, HasDerivWithinAt
+        (fun y => Th y + (K / Ch) * (Th 0 - Tc 0) * y) 0 (Set.Icc 0 L) t := by
+      intro t ht
+      have hlin : HasDerivWithinAt (fun y : ℝ => (K / Ch) * (Th 0 - Tc 0) * y)
+          ((K / Ch) * (Th 0 - Tc 0) * 1) (Set.Icc 0 L) t :=
+        ((hasDerivAt_id' t).const_mul _).hasDerivWithinAt
+      have hadd := (hTh t ht).add hlin
+      apply hadd.congr_deriv
+      change (1 / Ch) * (-K * (Th 0 - Tc 0)) + (K / Ch) * (Th 0 - Tc 0) * 1 = 0
+      ring
+    have hThaff : ∀ t ∈ Set.Icc 0 L,
+        Th t = Thi - (K / Ch) * (Th 0 - Tc 0) * t := by
+      intro t ht
+      have hconst := eqOn_Icc_of_hasDerivWithinAt_zero hW1 t ht
+      have hconst' : Th t + (K / Ch) * (Th 0 - Tc 0) * t
+          = Th 0 + (K / Ch) * (Th 0 - Tc 0) * 0 := hconst
+      linear_combination hconst' + h.1
+    have hTc : ∀ t ∈ Set.Icc 0 L, HasDerivWithinAt (fun y => Tc y)
+        ((1 / Ch) * (-K * (Th 0 - Tc 0))) (Set.Icc 0 L) t := by
+      intro t ht
+      have hC := (h.2.2 t ht).2
+      have h1 := hC.const_mul (1 / Ch)
+      have hfun : (fun y => (1 / Ch) * (Ch * Tc y)) = (fun y => Tc y) := by
+        funext y; rw [← mul_assoc, one_div_mul_cancel hCh0, one_mul]
+      rw [hfun] at h1
+      have hdt := hDconst t ht
+      have hder : (1 / Ch) * (-K * (Th t - Tc t))
+          = (1 / Ch) * (-K * (Th 0 - Tc 0)) := by rw [hdt]
+      exact h1.congr_deriv hder
+    have hW1c : ∀ t ∈ Set.Icc 0 L, HasDerivWithinAt
+        (fun y => Tc y + (K / Ch) * (Th 0 - Tc 0) * y) 0 (Set.Icc 0 L) t := by
+      intro t ht
+      have hlin : HasDerivWithinAt (fun y : ℝ => (K / Ch) * (Th 0 - Tc 0) * y)
+          ((K / Ch) * (Th 0 - Tc 0) * 1) (Set.Icc 0 L) t :=
+        ((hasDerivAt_id' t).const_mul _).hasDerivWithinAt
+      have hadd := (hTc t ht).add hlin
+      apply hadd.congr_deriv
+      change (1 / Ch) * (-K * (Th 0 - Tc 0)) + (K / Ch) * (Th 0 - Tc 0) * 1 = 0
+      ring
+    have hTcaff : ∀ t ∈ Set.Icc 0 L,
+        Tc t = Tc 0 - (K / Ch) * (Th 0 - Tc 0) * t := by
+      intro t ht
+      have hconst := eqOn_Icc_of_hasDerivWithinAt_zero hW1c t ht
+      have hconst' : Tc t + (K / Ch) * (Th 0 - Tc 0) * t
+          = Tc 0 + (K / Ch) * (Th 0 - Tc 0) * 0 := hconst
+      linear_combination hconst'
+    have hTcL := hTcaff L hLmem
+    rw [h.2.1] at hTcL
+    have hD0eq : Th 0 - Tc 0 = counterflowInletDiff Ch Ch K L Thi Tci := by
+      have hden : (1 : ℝ) + K / Ch * expDecayIntegral (counterflowRate Ch Ch K) L ≠ 0 :=
+        ne_of_gt (counterflowDenom_pos hCc hK hL)
+      have hφ : expDecayIntegral (counterflowRate Ch Ch K) L = L := by
+        simp [expDecayIntegral, hs0]
+      unfold counterflowInletDiff
+      rw [eq_div_iff hden, hφ]
+      linear_combination hTcL + hTc0
+    have hφx : expDecayIntegral (counterflowRate Ch Ch K) x = x := by
+      simp [expDecayIntegral, hs0]
+    constructor
+    · have hGx : counterflowHotTemp Ch Ch K L Thi Tci x
+          = Thi - (K / Ch) * (Th 0 - Tc 0) * x := by
+        unfold counterflowHotTemp
+        rw [hφx, ← hD0eq]
+      rw [hGx]
+      exact hThaff x hx
+    · have hGcx : counterflowColdTemp Ch Ch K L Thi Tci x
+          = Tc 0 - (K / Ch) * (Th 0 - Tc 0) * x := by
+        unfold counterflowColdTemp
+        rw [hφx, ← hD0eq]
+        linear_combination -hTc0
+      rw [hGcx]
+      exact hTcaff x hx
+  · -- Unequal capacity rates: read off the boundary constant, then match each stream.
+    have hden := counterflowBranchDenom_ne_zero hCh hCc hK hL hne
+    have hD0eq : Th 0 - Tc 0 = counterflowInletDiff Ch Cc K L Thi Tci := by
+      rw [counterflowInletDiff_eq_of_ne hCh hCc hK hL hne]
+      rw [eq_div_iff hden]
+      exact hsol
+    have hex := isCounterflowSolution_closedForm hCh hCc hK hL Thi Tci
+    have hTh : ∀ t ∈ Set.Icc 0 L, HasDerivWithinAt (fun y => Th y)
+        ((1 / Ch) * (-K * ((Th 0 - Tc 0) *
+          Real.exp (-(counterflowRate Ch Cc K * t))))) (Set.Icc 0 L) t := by
+      intro t ht
+      have hH := (h.2.2 t ht).1
+      have h1 := hH.const_mul (1 / Ch)
+      have hfun : (fun y => (1 / Ch) * (Ch * Th y)) = (fun y => Th y) := by
+        funext y; rw [← mul_assoc, one_div_mul_cancel hCh0, one_mul]
+      rw [hfun] at h1
+      have hdt := hDexp t ht
+      have hder : (1 / Ch) * (-K * (Th t - Tc t))
+          = (1 / Ch) * (-K * ((Th 0 - Tc 0) *
+            Real.exp (-(counterflowRate Ch Cc K * t)))) := by rw [hdt]
+      exact h1.congr_deriv hder
+    have hG : ∀ t ∈ Set.Icc 0 L, HasDerivWithinAt
+        (fun y => counterflowHotTemp Ch Cc K L Thi Tci y)
+        ((1 / Ch) * (-K * ((Th 0 - Tc 0) *
+          Real.exp (-(counterflowRate Ch Cc K * t))))) (Set.Icc 0 L) t := by
+      intro t ht
+      have hH := (hex.2.2 t ht).1
+      have h1 := hH.const_mul (1 / Ch)
+      have hfun : (fun y => (1 / Ch) * (Ch * counterflowHotTemp Ch Cc K L Thi Tci y))
+          = (fun y => counterflowHotTemp Ch Cc K L Thi Tci y) := by
+        funext y; rw [← mul_assoc, one_div_mul_cancel hCh0, one_mul]
+      rw [hfun] at h1
+      have hsub := counterflowHotTemp_sub_counterflowColdTemp Ch Cc K L Thi Tci t
+      have hder : (1 / Ch) * (-K * (counterflowHotTemp Ch Cc K L Thi Tci t -
+            counterflowColdTemp Ch Cc K L Thi Tci t))
+          = (1 / Ch) * (-K * ((Th 0 - Tc 0) *
+            Real.exp (-(counterflowRate Ch Cc K * t)))) := by
+        rw [hsub, ← hD0eq]
+      exact h1.congr_deriv hder
+    have hW2 : ∀ t ∈ Set.Icc 0 L, HasDerivWithinAt
+        (fun y => Th y - counterflowHotTemp Ch Cc K L Thi Tci y) 0
+        (Set.Icc 0 L) t := by
+      intro t ht
+      have hsub := (hTh t ht).sub (hG t ht)
+      exact hsub.congr_deriv (by ring)
+    have hThx : Th x = counterflowHotTemp Ch Cc K L Thi Tci x := by
+      have hconst := eqOn_Icc_of_hasDerivWithinAt_zero hW2 x hx
+      have hconst' : Th x - counterflowHotTemp Ch Cc K L Thi Tci x
+          = Th 0 - counterflowHotTemp Ch Cc K L Thi Tci 0 := hconst
+      have hG0 : counterflowHotTemp Ch Cc K L Thi Tci 0 = Thi := hex.1
+      rw [h.1, hG0] at hconst'
+      have hzero : Th x - counterflowHotTemp Ch Cc K L Thi Tci x = 0 := by
+        linear_combination hconst'
+      exact sub_eq_zero.mp hzero
+    have hTcx : Tc x = counterflowColdTemp Ch Cc K L Thi Tci x := by
+      have hDx := hDexp x hx
+      have hsub := counterflowHotTemp_sub_counterflowColdTemp Ch Cc K L Thi Tci x
+      rw [← hD0eq] at hsub
+      have hzero : Tc x - counterflowColdTemp Ch Cc K L Thi Tci x = 0 := by
+        linear_combination -hDx + hsub + hThx
+      exact sub_eq_zero.mp hzero
+    exact ⟨hThx, hTcx⟩
+
+/-! ## D. Counterflow bounds, heat balance and equal capacity rates -/
+
+/-- **The hot stream stays above the cold one.** For `K ≥ 0` and `Thi > Tci`, every solution has
+`Tc x < Th x` on `[0, L]`. -/
+lemma IsCounterflowSolution.cold_lt_hot {Ch Cc K L Thi Tci : ℝ} {Th Tc : ℝ → ℝ} (hCh : 0 < Ch)
+    (hCc : 0 < Cc) (hK : 0 ≤ K) (hin : Tci < Thi)
+    (h : IsCounterflowSolution Ch Cc K L Thi Tci Th Tc) :
+    ∀ x ∈ Set.Icc 0 L, Tc x < Th x := by
+  intro x hx
+  have hL : 0 ≤ L := le_trans hx.1 hx.2
+  obtain ⟨hTh, hTc⟩ := IsCounterflowSolution.eq_closedForm hCh hCc hK h x hx
+  have hsub := counterflowHotTemp_sub_counterflowColdTemp Ch Cc K L Thi Tci x
+  have hD0 : 0 < counterflowInletDiff Ch Cc K L Thi Tci := by
+    unfold counterflowInletDiff
+    exact div_pos (sub_pos.mpr hin) (counterflowDenom_pos hCc hK hL)
+  have hpos : 0 < Th x - Tc x := by
+    rw [hTh, hTc, hsub]
+    exact mul_pos hD0 (Real.exp_pos _)
+  exact sub_pos.mp hpos
+
+/-- **Cold-stream bounds.** For `K ≥ 0`, `L ≥ 0` and `Thi > Tci`, the cold outlet
+`Tc_out = Tc 0` lies below the hot inlet, and `Tci ≤ Tc x ≤ Tc_out` on `[0, L]`. -/
+lemma IsCounterflowSolution.cold_bounds {Ch Cc K L Thi Tci : ℝ} {Th Tc : ℝ → ℝ}
+    (hCh : 0 < Ch) (hCc : 0 < Cc) (hK : 0 ≤ K) (hL : 0 ≤ L) (hin : Tci < Thi)
+    (h : IsCounterflowSolution Ch Cc K L Thi Tci Th Tc) :
+    Tc 0 < Thi ∧ ∀ x ∈ Set.Icc 0 L, Tci ≤ Tc x ∧ Tc x ≤ Tc 0 := by
+  have hCc0 : Cc ≠ 0 := ne_of_gt hCc
+  have h0mem : (0 : ℝ) ∈ Set.Icc 0 L := Set.left_mem_Icc.mpr hL
+  have hLmem : L ∈ Set.Icc 0 L := Set.right_mem_Icc.mpr hL
+  have hTc' : ∀ t ∈ Set.Icc 0 L, HasDerivWithinAt (fun y => Tc y)
+      ((1 / Cc) * (-K * (Th t - Tc t))) (Set.Icc 0 L) t := by
+    intro t ht
+    have hC := (h.2.2 t ht).2
+    have h1 := hC.const_mul (1 / Cc)
+    have hfun : (fun y => (1 / Cc) * (Cc * Tc y)) = (fun y => Tc y) := by
+      funext y; rw [← mul_assoc, one_div_mul_cancel hCc0, one_mul]
+    rw [hfun] at h1
+    exact h1
+  have hcont : ContinuousOn Tc (Set.Icc 0 L) :=
+    fun t ht => (hTc' t ht).continuousWithinAt
+  have hderiv : ∀ t ∈ interior (Set.Icc 0 L), HasDerivWithinAt (fun y => Tc y)
+      ((1 / Cc) * (-K * (Th t - Tc t))) (interior (Set.Icc 0 L)) t := by
+    intro t ht
+    have htIcc : t ∈ Set.Icc 0 L := interior_subset ht
+    have hmem : Set.Icc 0 L ∈ nhds t := mem_interior_iff_mem_nhds.mp ht
+    exact ((hTc' t htIcc).hasDerivAt hmem).hasDerivWithinAt
+  have hnonpos : ∀ t ∈ interior (Set.Icc 0 L),
+      (1 / Cc) * (-K * (Th t - Tc t)) ≤ 0 := by
+    intro t ht
+    have htIcc : t ∈ Set.Icc 0 L := interior_subset ht
+    have hlt := IsCounterflowSolution.cold_lt_hot hCh hCc hK hin h t htIcc
+    have hD : 0 < Th t - Tc t := sub_pos.mpr hlt
+    have h1 : (0 : ℝ) ≤ 1 / Cc := (div_pos zero_lt_one hCc).le
+    have h2 : -K * (Th t - Tc t) ≤ 0 :=
+      mul_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr hK) hD.le
+    exact mul_nonpos_of_nonneg_of_nonpos h1 h2
+  have hanti : AntitoneOn Tc (Set.Icc 0 L) :=
+    antitoneOn_of_hasDerivWithinAt_nonpos (convex_Icc 0 L) hcont hderiv hnonpos
+  have hTc0 : Tc 0 < Thi := by
+    have hlt := IsCounterflowSolution.cold_lt_hot hCh hCc hK hin h 0 h0mem
+    rw [h.1] at hlt
+    exact hlt
+  refine ⟨hTc0, fun x hx => ⟨?_, ?_⟩⟩
+  · have hle := hanti hx hLmem hx.2
+    rw [h.2.1] at hle
+    exact hle
+  · exact hanti h0mem hx hx.1
+
+/-- **Hot-stream bounds.** For `K ≥ 0`, `L ≥ 0` and `Thi > Tci`, the hot outlet `Th_out = Th L`
+lies above the cold inlet, and `Th_out ≤ Th x ≤ Thi` on `[0, L]`. No order between `Th_out` and
+`Tc_out` is asserted. -/
+lemma IsCounterflowSolution.hot_bounds {Ch Cc K L Thi Tci : ℝ} {Th Tc : ℝ → ℝ}
+    (hCh : 0 < Ch) (hCc : 0 < Cc) (hK : 0 ≤ K) (hL : 0 ≤ L) (hin : Tci < Thi)
+    (h : IsCounterflowSolution Ch Cc K L Thi Tci Th Tc) :
+    Tci < Th L ∧ ∀ x ∈ Set.Icc 0 L, Th L ≤ Th x ∧ Th x ≤ Thi := by
+  have hCh0 : Ch ≠ 0 := ne_of_gt hCh
+  have h0mem : (0 : ℝ) ∈ Set.Icc 0 L := Set.left_mem_Icc.mpr hL
+  have hLmem : L ∈ Set.Icc 0 L := Set.right_mem_Icc.mpr hL
+  have hTh' : ∀ t ∈ Set.Icc 0 L, HasDerivWithinAt (fun y => Th y)
+      ((1 / Ch) * (-K * (Th t - Tc t))) (Set.Icc 0 L) t := by
+    intro t ht
+    have hH := (h.2.2 t ht).1
+    have h1 := hH.const_mul (1 / Ch)
+    have hfun : (fun y => (1 / Ch) * (Ch * Th y)) = (fun y => Th y) := by
+      funext y; rw [← mul_assoc, one_div_mul_cancel hCh0, one_mul]
+    rw [hfun] at h1
+    exact h1
+  have hcont : ContinuousOn Th (Set.Icc 0 L) :=
+    fun t ht => (hTh' t ht).continuousWithinAt
+  have hderiv : ∀ t ∈ interior (Set.Icc 0 L), HasDerivWithinAt (fun y => Th y)
+      ((1 / Ch) * (-K * (Th t - Tc t))) (interior (Set.Icc 0 L)) t := by
+    intro t ht
+    have htIcc : t ∈ Set.Icc 0 L := interior_subset ht
+    have hmem : Set.Icc 0 L ∈ nhds t := mem_interior_iff_mem_nhds.mp ht
+    exact ((hTh' t htIcc).hasDerivAt hmem).hasDerivWithinAt
+  have hnonpos : ∀ t ∈ interior (Set.Icc 0 L),
+      (1 / Ch) * (-K * (Th t - Tc t)) ≤ 0 := by
+    intro t ht
+    have htIcc : t ∈ Set.Icc 0 L := interior_subset ht
+    have hlt := IsCounterflowSolution.cold_lt_hot hCh hCc hK hin h t htIcc
+    have hD : 0 < Th t - Tc t := sub_pos.mpr hlt
+    have h1 : (0 : ℝ) ≤ 1 / Ch := (div_pos zero_lt_one hCh).le
+    have h2 : -K * (Th t - Tc t) ≤ 0 :=
+      mul_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr hK) hD.le
+    exact mul_nonpos_of_nonneg_of_nonpos h1 h2
+  have hanti : AntitoneOn Th (Set.Icc 0 L) :=
+    antitoneOn_of_hasDerivWithinAt_nonpos (convex_Icc 0 L) hcont hderiv hnonpos
+  have hThL : Tci < Th L := by
+    have hlt := IsCounterflowSolution.cold_lt_hot hCh hCc hK hin h L hLmem
+    rw [h.2.1] at hlt
+    exact hlt
+  refine ⟨hThL, fun x hx => ⟨?_, ?_⟩⟩
+  · exact hanti hx hLmem hx.2
+  · have hle := hanti h0mem hx hx.1
+    rw [h.1] at hle
+    exact hle
+
+/-- **Counterflow heat balance.** Along a solution the heat lost by the hot stream between `0` and
+`x` equals the heat gained by the cold stream over the same stretch:
+`Ch * (Thi - Th x) = Cc * (Tc 0 - Tc x)`. At `x = L` this is the port balance
+`Ch (Thi - Th_out) = Cc (Tc_out - Tci)`. -/
+lemma IsCounterflowSolution.heat_balance {Ch Cc K L Thi Tci : ℝ} {Th Tc : ℝ → ℝ}
+    (h : IsCounterflowSolution Ch Cc K L Thi Tci Th Tc) :
+    ∀ x ∈ Set.Icc 0 L, Ch * (Thi - Th x) = Cc * (Tc 0 - Tc x) := by
+  exact IsCounterflowSolution.balance_aux h
+
+/-- **The parallel-flow sign breaks counterflow accounting.** If the cold equation is given the
+parallel-flow sign `Cc * Tc' = K * (Th - Tc)` while the cold stream still enters at `x = L`, then
+`Ch * Th + Cc * Tc` is conserved, and whenever the hot temperature changes between the ends the
+port balance `Ch (Th 0 - Th L) = Cc (Tc 0 - Tc L)` of counterflow fails. -/
+lemma parallelSign_violates_counterflow_balance {Ch Cc K L : ℝ} {Th Tc : ℝ → ℝ} (hCh : 0 < Ch)
+    (hL : 0 ≤ L)
+    (hpar : ∀ x ∈ Set.Icc 0 L,
+      HasDerivWithinAt (fun y => Ch * Th y) (-K * (Th x - Tc x)) (Set.Icc 0 L) x ∧
+        HasDerivWithinAt (fun y => Cc * Tc y) (K * (Th x - Tc x)) (Set.Icc 0 L) x)
+    (hQ : Th L ≠ Th 0) :
+    Ch * (Th 0 - Th L) ≠ Cc * (Tc 0 - Tc L) := by
+  have hLmem : L ∈ Set.Icc 0 L := Set.right_mem_Icc.mpr hL
+  have hG : ∀ x ∈ Set.Icc 0 L, HasDerivWithinAt (fun y => Ch * Th y + Cc * Tc y) 0
+      (Set.Icc 0 L) x := by
+    intro x hx
+    obtain ⟨hH, hC⟩ := hpar x hx
+    exact (hH.add hC).congr_deriv (by ring)
+  have hconst := eqOn_Icc_of_hasDerivWithinAt_zero hG L hLmem
+  have hconst' : Ch * Th L + Cc * Tc L = Ch * Th 0 + Cc * Tc 0 := hconst
+  intro heq
+  have hzero : Ch * (Th 0 - Th L) = 0 := by
+    linear_combination (1 / 2 : ℝ) * heq - (1 / 2 : ℝ) * hconst'
+  have hdiff : Th 0 - Th L = 0 := by
+    rcases mul_eq_zero.mp hzero with h' | h'
+    · exact absurd h' (ne_of_gt hCh)
+    · exact h'
+  have hEq : Th 0 = Th L := sub_eq_zero.mp hdiff
+  exact hQ hEq.symm
+
+/-- **Equal capacity rates: constant difference.** For `Ch = Cc = C > 0`, `K = UA / L` with
+`L > 0` and `UA ≥ 0`, the temperature difference is the same at every `x ∈ [0, L]`:
+`Th x - Tc x = (Thi - Tci) / (1 + UA / C)`. -/
+lemma IsCounterflowSolution.equalCapacity_sub_const {C UA L Thi Tci : ℝ} {Th Tc : ℝ → ℝ}
+    (hC : 0 < C) (hUA : 0 ≤ UA) (hL : 0 < L)
+    (h : IsCounterflowSolution C C (UA / L) L Thi Tci Th Tc) :
+    ∀ x ∈ Set.Icc 0 L, Th x - Tc x = (Thi - Tci) / (1 + UA / C) := by
+  have hK : 0 ≤ UA / L := div_nonneg hUA hL.le
+  have hs0 : counterflowRate C C (UA / L) = 0 := by simp [counterflowRate]
+  intro x hx
+  obtain ⟨hTh, hTc⟩ := IsCounterflowSolution.eq_closedForm hC hC hK h x hx
+  have hsub := counterflowHotTemp_sub_counterflowColdTemp C C (UA / L) L Thi Tci x
+  rw [hs0] at hsub
+  simp only [zero_mul, neg_zero, Real.exp_zero, mul_one] at hsub
+  rw [hTh, hTc, hsub]
+  exact counterflowInletDiff_eq_of_equalCap hC hL
+
+/-- **Equal capacity rates: heat duty.** Under the same hypotheses the heat lost by the hot stream
+and the heat gained by the cold stream are both `Q = UA * (Thi - Tci) / (1 + UA / C)`. -/
+lemma IsCounterflowSolution.equalCapacity_heat {C UA L Thi Tci : ℝ} {Th Tc : ℝ → ℝ}
+    (hC : 0 < C) (hUA : 0 ≤ UA) (hL : 0 < L)
+    (h : IsCounterflowSolution C C (UA / L) L Thi Tci Th Tc) :
+    C * (Thi - Th L) = UA * (Thi - Tci) / (1 + UA / C) ∧
+      C * (Tc 0 - Tci) = UA * (Thi - Tci) / (1 + UA / C) := by
+  have hK : 0 ≤ UA / L := div_nonneg hUA hL.le
+  have hs0 : counterflowRate C C (UA / L) = 0 := by simp [counterflowRate]
+  have hLmem : L ∈ Set.Icc 0 L := Set.right_mem_Icc.mpr hL.le
+  have hD0 : counterflowInletDiff C C (UA / L) L Thi Tci = (Thi - Tci) / (1 + UA / C) :=
+    counterflowInletDiff_eq_of_equalCap hC hL
+  have hleft : C * (Thi - Th L) = UA * (Thi - Tci) / (1 + UA / C) := by
+    have hThL := (IsCounterflowSolution.eq_closedForm hC hC hK h L hLmem).1
+    rw [hThL]
+    unfold counterflowHotTemp
+    have hφ : expDecayIntegral (counterflowRate C C (UA / L)) L = L := by
+      simp [expDecayIntegral, hs0]
+    rw [hφ, hD0]
+    field_simp [hC.ne', hL.ne']
+    try ring
+  have hbal := IsCounterflowSolution.balance_aux h L hLmem
+  rw [h.2.1] at hbal
+  have hright : C * (Tc 0 - Tci) = UA * (Thi - Tci) / (1 + UA / C) := by
+    rw [← hbal]
+    exact hleft
+  exact ⟨hleft, hright⟩
 
 end HeatTransfer.HeatExchangers
