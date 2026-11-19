@@ -705,10 +705,16 @@ def rendered(text: str) -> tuple[tuple, tuple, tuple]:
     return tuple(links), tuple(headings), tuple(items)
 
 
-def heading_text(line: str) -> str | None:
+def heading(line: str) -> tuple | None:
+    """The level, text and id of the one heading that *line* shows alone (see published and rendered), or None."""
     shown = published(line)
     headings = rendered(shown)[1] if shown is not None else ()
-    return headings[0][1] if len(headings) == 1 else None
+    return headings[0] if len(headings) == 1 else None
+
+
+def heading_text(line: str) -> str | None:
+    shown = heading(line)
+    return shown[1] if shown else None
 
 
 def parents(headings: list[tuple]) -> list[int]:
@@ -722,9 +728,10 @@ def verify_edit(before: str, after: str, items: list[tuple[str, str, tuple[int, 
     """Whether *after*, a folder page edited from *before*, is published as meant. Autoform's check of what the site may
     publish passes on both (see published), and what each publishes, rendered as the site renders it (see rendered),
     shows: every link *before* shows, but for the hrefs in *replaced*; the headings of *before*, in order, each with its
-    level, text and id, under the same parent, *added*, the ordinal and line of a heading the edit adds, aside; and each
-    of *items*, an item's line and href, with that href and as its line shows alone, in a list item under the heading
-    its ordinal and line name, or anywhere if None."""
+    level, text and id, under the same parent; *added*, the ordinal and line of a heading the edit adds, with the level,
+    text and id its line has alone, so that one whose id another heading's takes, before it or after, is no match; and
+    each of *items*, an item's line and href, with that href and as its line shows alone, in a list item under the
+    heading its ordinal and line name, or anywhere if None."""
     pages = [published(text) for text in (before, after)]
     if None in pages:
         return False
@@ -732,7 +739,7 @@ def verify_edit(before: str, after: str, items: list[tuple[str, str, tuple[int, 
     if Counter(old_links) - Counter(replaced) - Counter(links):
         return False
     at = added[0] if added is not None else len(headings)
-    if added is not None and (at >= len(headings) or headings[at][1] != heading_text(added[1])):
+    if added is not None and (at >= len(headings) or headings[at] != heading(added[1])):
         return False
     kept = [number for number in range(len(headings)) if number != at]
     if [headings[number] for number in kept] != list(old_headings):

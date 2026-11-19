@@ -1195,6 +1195,24 @@ class Declarations(Vault):
             "## Examples", "## Two Process\n\n- [Turn](turn.md)\n\n## Examples"))
         self.assertEqual((report["appended"], report["unlisted"]), ([], []))
 
+    def test_a_new_sections_heading_takes_no_id_an_earlier_heading_has(self) -> None:
+        # Another "Examples" after the page's own would be given "examples_1", so its id is not the one its title has:
+        # the section takes its module's name instead, and when that is taken too, the new page is listed nowhere.
+        for name, earlier, heading in (("title taken", "## Examples\n\n- [State](state.md)\n", "Two Process"),
+                                       ("title and name taken", "## Examples\n\n- [State](state.md)\n\n## Two Process\n\nText.\n",
+                                        None)):
+            with self.subTest(name):
+                text = f"# Bakery\n\n{earlier}\n## Mutual exclusion\n\n- [Invariant](invariant.md)\n"
+                self.page("Algebra/bakery/README.md", text)
+                self.annotate([])
+                (wiki.ROADMAP / "Algebra" / "bakery" / "turn.md").unlink(missing_ok=True)
+                turn = declaration("Ext.turn", "turn", "Turn", "Turn.", module=("Ext", "TwoProcess"))
+                turn.path, turn.module_title = wiki.ROADMAP / "Algebra" / "bakery" / "turn.md", "Examples"
+                report = sync.apply_declarations([turn], SimpleNamespace(declarations={"Ext.turn": None}))
+                self.assertEqual((wiki.ROADMAP / "Algebra" / "bakery" / "README.md").read_text(),
+                                 f"{text}\n## {heading}\n\n- [Turn](turn.md)\n" if heading else text)
+                self.assertEqual(report["unlisted"], [] if heading else ["Algebra/bakery/turn.md"])
+
     def test_a_line_break_only_autoform_reads_makes_a_page_not_simple(self) -> None:
         # Autoform splits lines wherever str.splitlines does, at a form feed or U+2028 too: such a page takes the new
         # page at its end.
