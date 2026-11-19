@@ -37,6 +37,20 @@ example {Q : Matrix ι ι ℝ} (hQ : Q.PosDef) {B : Matrix ι E ℝ} {f : ι →
     (h₂ : IsConstrainedMaximizer Q B f l₂) : B *ᵥ l₁ = B *ᵥ l₂ :=
   mulVec_eq_of_isConstrainedMaximizer hQ h₁ h₂
 
+example {Q : Matrix ι ι ℝ} (hQ : Q.PosDef) {B : Matrix ι E ℝ}
+    (hgram : (Bᵀ * Q⁻¹ * B).PosDef) {f : ι → ℝ} {l₁ l₂ : E → ℝ}
+    (h₁ : IsConstrainedMaximizer Q B f l₁) (h₂ : IsConstrainedMaximizer Q B f l₂) :
+    l₁ = l₂ :=
+  eq_of_isConstrainedMaximizer_of_posDef_gram hQ hgram h₁ h₂
+
+/-- On concrete full-rank data (`B = Q = 1` in dimension `1`, Gram matrix
+`1`), coefficient-level uniqueness identifies the maximizer with `0`. -/
+example {l : Fin 1 → ℝ}
+    (h : IsConstrainedMaximizer (1 : Matrix (Fin 1) (Fin 1) ℝ)
+      (1 : Matrix (Fin 1) (Fin 1) ℝ) (fun _ => (-1 : ℝ)) l) : l = 0 :=
+  eq_of_isConstrainedMaximizer_of_posDef_gram Matrix.PosDef.one (by
+    simpa using Matrix.PosDef.one (n := Fin 1)) h isConstrainedMaximizer_one_neg.1
+
 example :
     IsConstrainedMaximizer (1 : Matrix (Fin 1) (Fin 1) ℝ)
         (1 : Matrix (Fin 1) (Fin 1) ℝ) (fun _ => (-1 : ℝ)) 0 ∧

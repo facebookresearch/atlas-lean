@@ -73,7 +73,7 @@ noncomputable def scoreS1 [DecidableEq ι] (Q : Matrix ι ι ℝ) (f g : ι → 
 noncomputable def scoreS2 (Q : Matrix ι ι ℝ) (lam : ℝ) (f g : ι → ℝ) : ℝ :=
   -∑ i, (g i - f i) ^ 2 / (Q i i + lam)
 
-theorem mulVec_dotProduct {κ : Type*} [Fintype κ] (A : Matrix ι κ ℝ) (v : κ → ℝ)
+private theorem mulVec_dotProduct {κ : Type*} [Fintype κ] (A : Matrix ι κ ℝ) (v : κ → ℝ)
     (u : ι → ℝ) : (A *ᵥ v) ⬝ᵥ u = v ⬝ᵥ (Aᵀ *ᵥ u) := by
   rw [dotProduct_comm, dotProduct_mulVec, ← mulVec_transpose, dotProduct_comm]
 

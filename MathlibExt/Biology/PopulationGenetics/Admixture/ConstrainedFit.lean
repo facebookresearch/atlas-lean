@@ -53,11 +53,23 @@ namespace MathlibExt.Biology.PopulationGenetics.QpGraph
 
 variable {ι E : Type*} [Fintype ι] [DecidableEq ι] [Fintype E]
 
-/-- `l` maximizes `scoreS1 Q f (B *ᵥ ·)` over the nonnegative orthant. -/
+/-- `l` maximizes `scoreS1 Q f (B *ᵥ ·)` over the nonnegative orthant:
+feasibility plus Mathlib's `IsMaxOn` predicate on `Set.Ici 0`. -/
 def IsConstrainedMaximizer (Q : Matrix ι ι ℝ) (B : Matrix ι E ℝ) (f : ι → ℝ)
     (l : E → ℝ) : Prop :=
-  (∀ e, 0 ≤ l e) ∧ ∀ l' : E → ℝ, (∀ e, 0 ≤ l' e) →
-    scoreS1 Q f (B *ᵥ l') ≤ scoreS1 Q f (B *ᵥ l)
+  l ∈ Set.Ici 0 ∧ IsMaxOn (fun l => scoreS1 Q f (B *ᵥ l)) (Set.Ici 0) l
+
+theorem isConstrainedMaximizer_iff_forall {Q : Matrix ι ι ℝ} (B : Matrix ι E ℝ) (f : ι → ℝ)
+    {l : E → ℝ} :
+    IsConstrainedMaximizer Q B f l ↔ (∀ e, 0 ≤ l e) ∧ ∀ l' : E → ℝ, (∀ e, 0 ≤ l' e) →
+      scoreS1 Q f (B *ᵥ l') ≤ scoreS1 Q f (B *ᵥ l) := by
+  constructor
+  · rintro ⟨h1, h2⟩
+    exact ⟨fun e => Pi.le_def.mp h1 e,
+      fun l' hl' => isMaxOn_iff.mp h2 l' (Pi.le_def.mpr hl')⟩
+  · rintro ⟨h1, h2⟩
+    exact ⟨Pi.le_def.mpr h1,
+      isMaxOn_iff.mpr fun l' hl' => h2 l' (fun e => Pi.le_def.mp hl' e)⟩
 
 private theorem inv_transpose_eq_of_posDef {Q : Matrix ι ι ℝ} (hQ : Q.PosDef) :
     (Q⁻¹)ᵀ = Q⁻¹ := by
@@ -97,7 +109,8 @@ private theorem scoreS1_add {Q : Matrix ι ι ℝ} (hW : (Q⁻¹)ᵀ = Q⁻¹)
     rw [hsub, mulVec_neg, dotProduct_neg]
     congr 1
     rw [hs]
-    exact mulVec_dotProduct B d _
+    exact (by rw [dotProduct_comm, dotProduct_mulVec, ← mulVec_transpose,
+      dotProduct_comm] : (B *ᵥ d) ⬝ᵥ _ = d ⬝ᵥ (Bᵀ *ᵥ _))
   unfold scoreS1
   rw [hadd, mulVec_add, add_dotProduct, dotProduct_add, dotProduct_add, hsym, hcross]
   ring
@@ -289,7 +302,8 @@ theorem exists_isConstrainedMaximizer {Q : Matrix ι ι ℝ} (hQ : Q.PosDef)
     (B : Matrix ι E ℝ) (f : ι → ℝ) :
     ∃ l : E → ℝ, IsConstrainedMaximizer Q B f l := by
   obtain ⟨x, hx0, -, hxmax⟩ := exists_max_on_face hQ B f Finset.univ
-  exact ⟨x, hx0, fun l hl => hxmax l hl fun e he => absurd (Finset.mem_univ e) he⟩
+  exact ⟨x, (isConstrainedMaximizer_iff_forall B f).mpr
+    ⟨hx0, fun l hl => hxmax l hl fun e he => absurd (Finset.mem_univ e) he⟩⟩
 
 /-- KKT characterization with gradient `g = Bᵀ Q⁻¹ (f - B l)`: a feasible `l`
 is a maximizer iff `g ≤ 0` coordinatewise and `l e * g e = 0` for every `e`. -/
@@ -299,6 +313,7 @@ theorem isConstrainedMaximizer_iff {Q : Matrix ι ι ℝ} (hQ : Q.PosDef)
       (∀ e, 0 ≤ l e) ∧ (∀ e, (Bᵀ *ᵥ (Q⁻¹ *ᵥ (f - B *ᵥ l))) e ≤ 0) ∧
         ∀ e, l e * (Bᵀ *ᵥ (Q⁻¹ *ᵥ (f - B *ᵥ l))) e = 0 := by
   have hW : (Q⁻¹)ᵀ = Q⁻¹ := inv_transpose_eq_of_posDef hQ
+  rw [isConstrainedMaximizer_iff_forall]
   constructor
   · intro h
     obtain ⟨hfeas, hmax⟩ := h
@@ -436,9 +451,9 @@ theorem mulVec_eq_of_isConstrainedMaximizer {Q : Matrix ι ι ℝ} (hQ : Q.PosDe
     (h₁ : IsConstrainedMaximizer Q B f l₁) (h₂ : IsConstrainedMaximizer Q B f l₂) :
     B *ᵥ l₁ = B *ᵥ l₂ := by
   have hW : (Q⁻¹)ᵀ = Q⁻¹ := inv_transpose_eq_of_posDef hQ
-  obtain ⟨hfeas₁, hmax₁⟩ := h₁
-  obtain ⟨hfeas₂, hmax₂⟩ := h₂
-  have kkt₁ := (isConstrainedMaximizer_iff hQ B f).mp ⟨hfeas₁, hmax₁⟩
+  obtain ⟨hfeas₁, hmax₁⟩ := (isConstrainedMaximizer_iff_forall B f).mp h₁
+  obtain ⟨hfeas₂, hmax₂⟩ := (isConstrainedMaximizer_iff_forall B f).mp h₂
+  have kkt₁ := (isConstrainedMaximizer_iff hQ B f).mp h₁
   obtain ⟨_, hg₁, hcs₁⟩ := kkt₁
   have heq : scoreS1 Q f (B *ᵥ l₂) = scoreS1 Q f (B *ᵥ l₁) :=
     le_antisymm (hmax₁ l₂ hfeas₂) (hmax₂ l₁ hfeas₁)
@@ -512,9 +527,9 @@ theorem isConstrainedMaximizer_one_neg :
     rw [hscore l', h0val]
     have h0 : (0 : ℝ) ≤ l' 0 := hl' 0
     nlinarith [sq_nonneg (l' 0), h0]
-  refine ⟨⟨fun e => le_rfl, hall⟩, ?_⟩
+  refine ⟨(isConstrainedMaximizer_iff_forall 1 (fun _ => (-1 : ℝ))).mpr ⟨fun e => le_rfl, hall⟩, ?_⟩
   intro l hl
-  obtain ⟨hfeas, hmax⟩ := hl
+  obtain ⟨hfeas, hmax⟩ := (isConstrainedMaximizer_iff_forall 1 (fun _ => (-1 : ℝ))).mp hl
   have h1 := hall l hfeas
   have h2 := hmax 0 (fun e => le_rfl)
   have heq := le_antisymm h1 h2
