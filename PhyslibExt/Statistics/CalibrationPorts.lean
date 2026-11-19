@@ -11,15 +11,26 @@ public import PhyslibExt.Statistics.UncertaintyPropagation
 public import PhyslibExt.Units.QuantityDimensions
 public import PhyslibExt.Units.ElectricalDimensions
 
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.FunProp
+import Mathlib.Tactic.GCongr
+import Mathlib.Tactic.Group
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
+
 /-!
-# Strain-gauge affine calibration with covariance and units
+# Strain-gauge affine and quadratic calibration with covariance and units
 
 A strain gauge reports a voltage `V = g ε + b` for the strain `ε`, with a calibrated gain
 `g ≠ 0` and offset `b`. The calibration binds the strain `ε = (V - b) / g` as a dimensionless
 output of voltage inputs, and its mean, covariance and identifiability are instances of the
 existing finite-scenario uncertainty-propagation API. With several gauges the calibration is the
 diagonal affine map `ε = diag(g)⁻¹ (V - b)`, and the covariance of the strains keeps every
-cross-channel term.
+cross-channel term. A quadratic calibration `f v = c0 + c1 v + c2 v ^ 2` of a voltage keeps its
+exact Taylor remainder, and its output variance keeps the remainder variance and the
+linear/remainder cross term.
 
 ## i. Overview
 
@@ -42,6 +53,16 @@ cross-channel term.
 * Measure bridge (D). For a probability mass function `q` on the scenarios, Mathlib's covariance
   of two strain channels under `q.toMeasure` is the propagated finite covariance with the weights
   `(q ω).toReal`, which are nonnegative and sum to one.
+* Quadratic calibration (E). On a voltage interval `[a, b]` with Taylor base `v₀ ∈ [a, b]`, the
+  calibration `f v = c0 + c1 v + c2 v ^ 2` is exactly its first-order part
+  `f v₀ + f' v₀ (v - v₀)`, with the actual derivative `f' v₀ = c1 + 2 c2 v₀`, plus the remainder
+  `c2 (v - v₀) ^ 2`. With output dimension `d` the coefficients have dimensions `d`,
+  `d / voltageDim` and `d / voltageDim ^ 2`. The output variance is the variance of the
+  first-order part plus the variance of the remainder plus twice their covariance; with total
+  mass one these are `f' v₀ ^ 2 Var V`, `c2 ^ 2 Var (V - v₀) ^ 2` and
+  `f' v₀ c2 Cov(V, (V - v₀) ^ 2)`. The existing Hessian theorem gives only the pointwise bound
+  `|c2| (v - v₀) ^ 2` on the box, from which no moment conclusion follows, and the raw quadratic
+  is not globally Lipschitz.
 
 Model inputs (hypotheses):
 
@@ -54,9 +75,14 @@ Model inputs (hypotheses):
   division the bare formula would be `0` for every voltage at `g = 0`); only identifiability is
   characterized for every gain. The input and output dimensions are the declared ones (voltage
   in, dimension one out).
+* for the quadratic calibration the coefficients and the Taylor base are supplied, and a
+  scenario law in `[a, b]` (`ScenarioLawIn`) has positive weights of total mass one and voltages
+  in `[a, b]`; each lemma assumes only the conditions it uses.
 
-Non-goals: no nonlinear calibration, no bridge-circuit model, no estimator of `g` or `b`, no
-temperature compensation, no empirical adequacy or system safety claim.
+Non-goals: no nonlinear calibration beyond the quadratic map of section E, no Gaussian or
+unbounded input law for it and no moment bound from its pointwise Taylor bound, no bridge-circuit
+model, no estimator of `g`, `b` or the quadratic coefficients, no temperature compensation, no
+empirical adequacy or system safety claim.
 
 ## ii. Key results
 
@@ -71,6 +97,18 @@ temperature compensation, no empirical adequacy or system safety claim.
   variances.
 - `toReal_weights_isDistribution`, `covariance_gaugeStrain_toMeasure` : a probability mass
   function gives a finite distribution, and the bridge to measure-theoretic covariance.
+- `quadCalibration_hasDerivAt`, `quadCalibration_eq_linear_add_remainder` : the actual derivative
+  and the exact Taylor remainder of the quadratic calibration.
+- `quadCalibrationQty_val`, `quadCalibration_coord_dimScale` : the typed quadratic calibration and
+  its change of units.
+- `quadCalibrationVec_hessian_le`, `quadCalibrationVec_jacobianRemainder`,
+  `quadCalibrationVec_remainder_le` : the Hessian bound, the exact remainder in the Jacobian
+  carrier and the pointwise bound of the Hessian theorem.
+- `quadCalibration_not_lipschitzWith` : the raw quadratic is not globally Lipschitz.
+- `variance_quadCalibration_expansion`, `variance_quadLinearPart`,
+  `covariance_quadLinearPart_quadRemainder`, `variance_quadCalibration_of_scenarioLaw` : the
+  output variance with the remainder variance and the cross term.
+- `variance_quadCalibration_toMeasure` : the same split for Mathlib's variance.
 
 ## iii. Table of contents
 
@@ -78,11 +116,18 @@ temperature compensation, no empirical adequacy or system safety claim.
 - B. The calibration map and identifiability
 - C. Finite-scenario mean and covariance
 - D. Bridge to measure-theoretic covariance
+- E. Quadratic calibration with nonlinear and cross terms
+  - E.1. The quadratic map, its derivative and the exact remainder
+  - E.2. The Hessian theorem: a pointwise bound only
+  - E.3. Output covariance under a finite scenario law in the box
 
 ## iv. References
 
 - JCGM 100:2008, *Evaluation of measurement data — Guide to the expression of uncertainty in
-  measurement* (GUM), Section 5.2 (correlated input quantities).
+  measurement* (GUM), Section 5.1.2 (higher-order terms of the Taylor series) and Section 5.2
+  (correlated input quantities).
+- JCGM 101:2008, *Evaluation of measurement data — Supplement 1 to the GUM: Propagation of
+  distributions using a Monte Carlo method* (nonlinear models where the first-order law fails).
 - ISO 80000-6, *Quantities and units — Part 6: Electromagnetism* (electric potential).
 - `PhyslibExt.Units.ElectricalDimensions` (the voltage dimension and its ISQ exponents).
 - K. Hoffmann, *An Introduction to Stress Analysis and Transducer Design using Strain Gauges*,
@@ -266,5 +311,306 @@ lemma covariance_gaugeStrain_toMeasure {Ω : Type*} [Fintype Ω] [MeasurableSpac
       covMatrix (fun ω => (q ω).toReal) V i j / (g i * g j) := by
   rw [covariance_toMeasure_eq q]
   exact covMatrix_gaugeStrainVec_apply (sum_toReal_eq_one q) g b hg V i j
+
+/-! ## E. Quadratic calibration with nonlinear and cross terms -/
+
+/-! ### E.1. The quadratic map, its derivative and the exact remainder -/
+
+/-- The quadratic calibration `f v = c0 + c1 v + c2 v ^ 2` on real coordinates: the voltage `v`
+in, the output in the unit of `c0` out; `c1` is in output units per volt and `c2` in output
+units per volt squared. -/
+noncomputable def quadCalibration (c0 c1 c2 v : ℝ) : ℝ :=
+  c0 + c1 * v + c2 * v ^ 2
+
+/-- The first-order Taylor part of the calibration at the base voltage `v₀`:
+`f v₀ + f' v₀ (v - v₀)`, with the actual derivative `f' v₀ = c1 + 2 c2 v₀`. -/
+noncomputable def quadLinearPart (c0 c1 c2 v₀ v : ℝ) : ℝ :=
+  quadCalibration c0 c1 c2 v₀ + (c1 + 2 * c2 * v₀) * (v - v₀)
+
+/-- The exact Taylor remainder of the calibration at the base voltage `v₀`: `c2 (v - v₀) ^ 2`,
+in output units. -/
+noncomputable def quadRemainder (c2 v₀ v : ℝ) : ℝ :=
+  c2 * (v - v₀) ^ 2
+
+/-- The actual derivative of the calibration: `f' v = c1 + 2 c2 v`. -/
+lemma quadCalibration_hasDerivAt (c0 c1 c2 v : ℝ) :
+    HasDerivAt (quadCalibration c0 c1 c2) (c1 + 2 * c2 * v) v := by
+  unfold quadCalibration
+  have h := (((hasDerivAt_id' v).const_mul c1).const_add c0).add
+    ((hasDerivAt_pow 2 v).const_mul c2)
+  convert h using 1
+  norm_num
+  ring
+
+/-- Exact Taylor expansion at every base voltage `v₀`: the calibration is its first-order part
+plus the quadratic remainder, with no term dropped. -/
+lemma quadCalibration_eq_linear_add_remainder (c0 c1 c2 v₀ v : ℝ) :
+    quadCalibration c0 c1 c2 v = quadLinearPart c0 c1 c2 v₀ v + quadRemainder c2 v₀ v := by
+  simp only [quadLinearPart, quadRemainder, quadCalibration]
+  ring
+
+/-- The calibration on `WithDim` quantities: the voltage in, an output of dimension `d` out, with
+coefficients of dimensions `d`, `d / voltageDim` and `d / voltageDim ^ 2`. The two
+voltage-dependent terms are restored to dimension `d` by proved dimension identities. -/
+noncomputable def quadCalibrationQty {d : Dimension ISQDimensionBase} (c0 : WithDim d ℝ)
+    (c1 : WithDim (d * voltageDim⁻¹) ℝ) (c2 : WithDim (d * (voltageDim⁻¹ * voltageDim⁻¹)) ℝ)
+    (v : WithDim voltageDim ℝ) : WithDim d ℝ :=
+  c0 + WithDim.cast (c1 * v) (inv_mul_cancel_right d voltageDim) +
+    WithDim.cast (c2 * (v * v)) (by group)
+
+/-- The coordinate of the typed calibration is the real formula on the coordinates. -/
+lemma quadCalibrationQty_val {d : Dimension ISQDimensionBase} (c0 : WithDim d ℝ)
+    (c1 : WithDim (d * voltageDim⁻¹) ℝ) (c2 : WithDim (d * (voltageDim⁻¹ * voltageDim⁻¹)) ℝ)
+    (v : WithDim voltageDim ℝ) :
+    (quadCalibrationQty c0 c1 c2 v).val = quadCalibration c0.val c1.val c2.val v.val := by
+  simp only [quadCalibrationQty, quadCalibration, WithDim.val_add, WithDim.cast,
+    WithDim.withDim_hMul_val]
+  ring
+
+/-- Change of units: converting the voltage by the voltage factor and each coefficient by the
+factor of its dimension converts the output coordinate by the output factor. -/
+lemma quadCalibration_coord_dimScale (u1 u2 : UnitScale ISQDimensionBase)
+    (d : Dimension ISQDimensionBase) (c0 c1 c2 v : ℝ) :
+    quadCalibration ((u1.dimScale u2 d : ℝ) * c0)
+        ((u1.dimScale u2 (d * voltageDim⁻¹) : ℝ) * c1)
+        ((u1.dimScale u2 (d * (voltageDim⁻¹ * voltageDim⁻¹)) : ℝ) * c2)
+        ((u1.dimScale u2 voltageDim : ℝ) * v) =
+      (u1.dimScale u2 d : ℝ) * quadCalibration c0 c1 c2 v := by
+  have hV : (0 : ℝ) < (u1.dimScale u2 voltageDim : ℝ) :=
+    NNReal.coe_pos.mpr (dimScale_pos u1 u2 voltageDim)
+  simp only [dimScale_mul, dimScale_inv]
+  unfold quadCalibration
+  field_simp
+
+/-! ### E.2. The Hessian theorem: a pointwise bound only -/
+
+/-- The calibration as a map `(Fin 1 → ℝ) → (Fin 1 → ℝ)`, the carrier of the componentwise
+Jacobian remainder bounds. -/
+noncomputable def quadCalibrationVec (c0 c1 c2 : ℝ) : (Fin 1 → ℝ) → (Fin 1 → ℝ) :=
+  fun y _ => quadCalibration c0 c1 c2 (y 0)
+
+/-- Explicit Hessian bound: everywhere, the second Fréchet derivative of the calibration has
+operator norm at most `2 |c2|` for the sup norm on `Fin 1 → ℝ`. -/
+lemma quadCalibrationVec_hessian_le (c0 c1 c2 : ℝ) (y : Fin 1 → ℝ) :
+    ‖fderiv ℝ (fderiv ℝ (fun y => quadCalibrationVec c0 c1 c2 y 0)) y‖ ≤ 2 * |c2| := by
+  set π := ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 1 => ℝ) 0 with hπdef
+  have hg : ∀ y : Fin 1 → ℝ, HasFDerivAt (fun y : Fin 1 → ℝ => quadCalibrationVec c0 c1 c2 y 0)
+      ((c1 + 2 * c2 * y 0) • π) y := fun y =>
+    (quadCalibration_hasDerivAt c0 c1 c2 (y 0)).comp_hasFDerivAt y π.hasFDerivAt
+  have hD : fderiv ℝ (fun y : Fin 1 → ℝ => quadCalibrationVec c0 c1 c2 y 0) =
+      fun y => (c1 + 2 * c2 * y 0) • π := by
+    funext y
+    exact (hg y).fderiv
+  rw [hD]
+  have hs : HasFDerivAt (fun y : Fin 1 → ℝ => c1 + 2 * c2 * y 0) ((2 * c2) • π) y := by
+    have h1 := (π.hasFDerivAt (x := y)).const_mul (2 * c2)
+    have h2 := h1.const_add c1
+    simpa [hπdef] using h2
+  rw [(hs.smul_const π).fderiv]
+  have hπ1 : ‖π‖ ≤ 1 := by
+    refine ContinuousLinearMap.opNorm_le_bound _ zero_le_one fun k => ?_
+    simpa [hπdef] using norm_le_pi_norm k 0
+  have hc : ‖(2 * c2)‖ = 2 * |c2| := by
+    rw [Real.norm_eq_abs, abs_mul]
+    norm_num
+  calc ‖((2 * c2) • π).smulRight π‖ = ‖(2 * c2) • π‖ * ‖π‖ :=
+        ContinuousLinearMap.norm_smulRight_apply _ _
+    _ = 2 * |c2| * ‖π‖ * ‖π‖ := by rw [norm_smul, hc]
+    _ ≤ 2 * |c2| * 1 * 1 := by gcongr
+    _ = 2 * |c2| := by ring
+
+/-- In the Jacobian carrier the first-order remainder of the calibration at `x` is exactly the
+quadratic remainder at the base `x 0`. -/
+lemma quadCalibrationVec_jacobianRemainder (c0 c1 c2 : ℝ) (x δ : Fin 1 → ℝ) :
+    jacobianRemainder (quadCalibrationVec c0 c1 c2) x δ 0 =
+      quadRemainder c2 (x 0) (x 0 + δ 0) := by
+  set π := ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 1 => ℝ) 0 with hπdef
+  have hg : HasFDerivAt (fun y : Fin 1 → ℝ => quadCalibrationVec c0 c1 c2 y 0)
+      ((c1 + 2 * c2 * x 0) • π) x :=
+    (quadCalibration_hasDerivAt c0 c1 c2 (x 0)).comp_hasFDerivAt x π.hasFDerivAt
+  have hdiff : DifferentiableAt ℝ (quadCalibrationVec c0 c1 c2) x := by
+    rw [differentiableAt_pi]
+    intro i
+    exact hg.differentiableAt
+  have h2 : HasFDerivAt (fun y => quadCalibrationVec c0 c1 c2 y 0)
+      ((ContinuousLinearMap.proj 0).comp (fderiv ℝ (quadCalibrationVec c0 c1 c2) x)) x :=
+    (hasFDerivAt_apply (𝕜 := ℝ) 0 (quadCalibrationVec c0 c1 c2 x)).comp x hdiff.hasFDerivAt
+  have h3 := h2.unique hg
+  have hconn : fderiv ℝ (quadCalibrationVec c0 c1 c2) x δ 0 = (c1 + 2 * c2 * x 0) * δ 0 := by
+    have := congrArg (fun L => L δ) h3
+    simpa [hπdef] using this
+  unfold jacobianRemainder
+  simp only [Pi.sub_apply, hconn]
+  simp only [quadCalibrationVec, quadRemainder, quadCalibration, Pi.add_apply]
+  ring
+
+/-- The Hessian theorem `jacobianRemainder_component_le_of_hessian` with the Hessian bound
+`2 |c2|` on the voltage box `[a, b]`, both points in the box: the pointwise remainder bound. It
+bounds the remainder at one point and says nothing about its moments under a law. -/
+lemma quadCalibrationVec_remainder_le {a b c0 c1 c2 : ℝ} {x δ : Fin 1 → ℝ}
+    (hx : x ∈ Set.Icc (fun _ => a) (fun _ => b))
+    (hxδ : x + δ ∈ Set.Icc (fun _ => a) (fun _ => b)) :
+    |jacobianRemainder (quadCalibrationVec c0 c1 c2) x δ 0| ≤ 2 * |c2| / 2 * ‖δ‖ ^ 2 := by
+  set π := ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 1 => ℝ) 0 with hπdef
+  have hg : HasFDerivAt (fun y : Fin 1 → ℝ => quadCalibrationVec c0 c1 c2 y 0)
+      ((c1 + 2 * c2 * x 0) • π) x :=
+    (quadCalibration_hasDerivAt c0 c1 c2 (x 0)).comp_hasFDerivAt x π.hasFDerivAt
+  have hdiff : DifferentiableAt ℝ (quadCalibrationVec c0 c1 c2) x := by
+    rw [differentiableAt_pi]
+    intro i
+    exact hg.differentiableAt
+  have hcd : ContDiffOn ℝ 2 (fun y : Fin 1 → ℝ => quadCalibrationVec c0 c1 c2 y 0) Set.univ := by
+    apply ContDiff.contDiffOn
+    unfold quadCalibrationVec quadCalibration
+    fun_prop
+  have h := jacobianRemainder_component_le_of_hessian (quadCalibrationVec c0 c1 c2) x δ 0
+    (fun _ => 2 * |c2|) isOpen_univ (Set.subset_univ _) hdiff hcd
+    (fun y _ => quadCalibrationVec_hessian_le c0 c1 c2 y) hx hxδ
+  simpa using h
+
+/-- The global Lipschitz error budget does not apply to the raw quadratic: for `c2 ≠ 0` the
+calibration is not Lipschitz on `ℝ` with any constant. -/
+lemma quadCalibration_not_lipschitzWith {c0 c1 c2 : ℝ} (hc2 : c2 ≠ 0) (K : NNReal) :
+    ¬ LipschitzWith K (quadCalibration c0 c1 c2) := by
+  intro hL
+  have hc2pos : 0 < |c2| := abs_pos.mpr hc2
+  set x : ℝ := ((K : ℝ) + |c1| + 1) / |c2| with hx
+  have hxpos : 0 < x := by positivity
+  have h := hL.dist_le_mul x 0
+  rw [Real.dist_eq, Real.dist_eq, sub_zero, abs_of_pos hxpos] at h
+  have hdiff : quadCalibration c0 c1 c2 x - quadCalibration c0 c1 c2 0 = x * (c1 + c2 * x) := by
+    unfold quadCalibration
+    ring
+  rw [hdiff, abs_mul, abs_of_pos hxpos] at h
+  have h2 : |c1 + c2 * x| ≤ K := by
+    have h' : x * |c1 + c2 * x| ≤ x * K := by linarith
+    exact le_of_mul_le_mul_left h' hxpos
+  have h3 : |c2 * x| = (K : ℝ) + |c1| + 1 := by
+    rw [abs_mul, abs_of_pos hxpos, hx]
+    field_simp
+  have h4 : |c2 * x| ≤ |c1 + c2 * x| + |c1| := by
+    have := abs_sub (c1 + c2 * x) c1
+    simpa using this
+  linarith
+
+/-! ### E.3. Output covariance under a finite scenario law in the box -/
+
+/-- A finite scenario law entirely in the voltage interval `[a, b]`: positive weights `p` of
+total mass one and scenario voltages `V ω ∈ [a, b]`. -/
+def ScenarioLawIn {Ω : Type*} [Fintype Ω] (a b : ℝ) (p V : Ω → ℝ) : Prop :=
+  (∀ ω, 0 < p ω) ∧ ∑ ω, p ω = 1 ∧ ∀ ω, V ω ∈ Set.Icc a b
+
+/-- The output variance with the cross term kept: for every weight it is the variance of the
+first-order part plus the variance of the remainder plus twice their covariance. -/
+lemma variance_quadCalibration_expansion {Ω : Type*} [Fintype Ω] (p V : Ω → ℝ)
+    (c0 c1 c2 v₀ : ℝ) :
+    variance p (fun ω => quadCalibration c0 c1 c2 (V ω)) =
+      variance p (fun ω => quadLinearPart c0 c1 c2 v₀ (V ω)) +
+        variance p (fun ω => quadRemainder c2 v₀ (V ω)) +
+        2 * covariance p (fun ω => quadLinearPart c0 c1 c2 v₀ (V ω))
+          (fun ω => quadRemainder c2 v₀ (V ω)) := by
+  have hf : (fun ω => quadCalibration c0 c1 c2 (V ω)) =
+      fun ω => 1 * quadLinearPart c0 c1 c2 v₀ (V ω) + 1 * quadRemainder c2 v₀ (V ω) := by
+    funext ω
+    rw [quadCalibration_eq_linear_add_remainder c0 c1 c2 v₀ (V ω)]
+    ring
+  rw [hf, ← covariance_self, covariance_linear_left, covariance_linear_right,
+    covariance_linear_right, covariance_self, covariance_self,
+    covariance_comm p (fun ω => quadRemainder c2 v₀ (V ω))]
+  ring
+
+/-- The first-order part is affine in the voltage, so by the exact affine covariance law its
+variance is `f' v₀ ^ 2 Var V` for weights of total mass one. -/
+lemma variance_quadLinearPart {Ω : Type*} [Fintype Ω] {p : Ω → ℝ} (hp1 : ∑ ω, p ω = 1)
+    (V : Ω → ℝ) (c0 c1 c2 v₀ : ℝ) :
+    variance p (fun ω => quadLinearPart c0 c1 c2 v₀ (V ω)) =
+      (c1 + 2 * c2 * v₀) ^ 2 * variance p V := by
+  have h : (fun ω => quadLinearPart c0 c1 c2 v₀ (V ω)) =
+      fun ω => (c1 + 2 * c2 * v₀) * V ω +
+        (quadCalibration c0 c1 c2 v₀ - (c1 + 2 * c2 * v₀) * v₀) := by
+    funext ω
+    unfold quadLinearPart
+    ring
+  rw [h, variance_affine hp1]
+
+/-- The cross covariance of the first-order part and the remainder is
+`f' v₀ c2 Cov(V, (V - v₀) ^ 2)` for weights of total mass one; it is not zero in general. -/
+lemma covariance_quadLinearPart_quadRemainder {Ω : Type*} [Fintype Ω] {p : Ω → ℝ}
+    (hp1 : ∑ ω, p ω = 1) (V : Ω → ℝ) (c0 c1 c2 v₀ : ℝ) :
+    covariance p (fun ω => quadLinearPart c0 c1 c2 v₀ (V ω))
+        (fun ω => quadRemainder c2 v₀ (V ω)) =
+      (c1 + 2 * c2 * v₀) * c2 * covariance p V (fun ω => (V ω - v₀) ^ 2) := by
+  have hL : (fun ω => quadLinearPart c0 c1 c2 v₀ (V ω)) =
+      fun ω => (c1 + 2 * c2 * v₀) * V ω +
+        (quadCalibration c0 c1 c2 v₀ - (c1 + 2 * c2 * v₀) * v₀) * (fun _ => (1 : ℝ)) ω := by
+    funext ω
+    unfold quadLinearPart
+    ring
+  have hR : (fun ω => quadRemainder c2 v₀ (V ω)) =
+      fun ω => c2 * (fun ω => (V ω - v₀) ^ 2) ω + 0 * (fun _ => (1 : ℝ)) ω := by
+    funext ω
+    unfold quadRemainder
+    ring
+  have h1 : ∀ Y : Ω → ℝ, covariance p (fun _ => (1 : ℝ)) Y = 0 := by
+    intro Y
+    rw [covariance_eq_sub hp1, expectation_const hp1]
+    simp
+  rw [hL, covariance_linear_left, hR, covariance_linear_right, h1]
+  ring
+
+/-- Output covariance under a finite positive-weight scenario law entirely in `[a, b]`, with
+Taylor base `v₀ ∈ [a, b]`: the output variance keeps the remainder variance and the
+linear/remainder cross term,
+`Var f(V) = f' v₀ ^ 2 Var V + c2 ^ 2 Var (V - v₀) ^ 2 + 2 f' v₀ c2 Cov(V, (V - v₀) ^ 2)`,
+while the Hessian theorem bounds the remainder only pointwise, scenario by scenario. -/
+lemma variance_quadCalibration_of_scenarioLaw {Ω : Type*} [Fintype Ω] {a b : ℝ} {p V : Ω → ℝ}
+    (hlaw : ScenarioLawIn a b p V) {v₀ : ℝ} (hv₀ : v₀ ∈ Set.Icc a b) (c0 c1 c2 : ℝ) :
+    variance p (fun ω => quadCalibration c0 c1 c2 (V ω)) =
+        (c1 + 2 * c2 * v₀) ^ 2 * variance p V + c2 ^ 2 * variance p (fun ω => (V ω - v₀) ^ 2) +
+          2 * ((c1 + 2 * c2 * v₀) * c2) * covariance p V (fun ω => (V ω - v₀) ^ 2) ∧
+      ∀ ω, |quadRemainder c2 v₀ (V ω)| ≤ 2 * |c2| / 2 * (V ω - v₀) ^ 2 := by
+  obtain ⟨-, hp1, hV⟩ := hlaw
+  refine ⟨?_, fun ω => ?_⟩
+  · rw [variance_quadCalibration_expansion p V c0 c1 c2 v₀, variance_quadLinearPart hp1,
+      covariance_quadLinearPart_quadRemainder hp1]
+    have hR : (fun ω => quadRemainder c2 v₀ (V ω)) = fun ω => c2 * (V ω - v₀) ^ 2 + 0 := by
+      funext ω
+      unfold quadRemainder
+      ring
+    rw [hR, variance_affine hp1]
+    ring
+  · have hx : (fun _ : Fin 1 => v₀) ∈ Set.Icc (fun _ => a) (fun _ => b) :=
+      ⟨fun _ => hv₀.1, fun _ => hv₀.2⟩
+    have hxδ : (fun _ : Fin 1 => v₀) + (fun _ => V ω - v₀) ∈ Set.Icc (fun _ => a) (fun _ => b) := by
+      refine ⟨fun _ => ?_, fun _ => ?_⟩
+      · simp [(hV ω).1]
+      · simp [(hV ω).2]
+    have h := quadCalibrationVec_remainder_le (c0 := c0) (c1 := c1) (c2 := c2) hx hxδ
+    rw [quadCalibrationVec_jacobianRemainder] at h
+    have hn : ‖(fun _ : Fin 1 => V ω - v₀)‖ = |V ω - v₀| := by
+      rw [pi_norm_const, Real.norm_eq_abs]
+    rw [hn, sq_abs] at h
+    simpa using h
+
+set_option linter.unusedFintypeInType false in
+/-- Bridge to measure-theoretic variance: for a probability mass function `q` on the scenarios,
+`ProbabilityTheory.variance_add` splits Mathlib's variance of the output under `q.toMeasure`
+into the variance of the first-order part, twice the cross covariance and the variance of the
+remainder. -/
+lemma variance_quadCalibration_toMeasure {Ω : Type*} [Fintype Ω] [MeasurableSpace Ω]
+    [MeasurableSingletonClass Ω] (q : PMF Ω) (V : Ω → ℝ) (c0 c1 c2 v₀ : ℝ) :
+    ProbabilityTheory.variance (fun ω => quadCalibration c0 c1 c2 (V ω)) q.toMeasure =
+      ProbabilityTheory.variance (fun ω => quadLinearPart c0 c1 c2 v₀ (V ω)) q.toMeasure +
+        2 * ProbabilityTheory.covariance (fun ω => quadLinearPart c0 c1 c2 v₀ (V ω))
+          (fun ω => quadRemainder c2 v₀ (V ω)) q.toMeasure +
+        ProbabilityTheory.variance (fun ω => quadRemainder c2 v₀ (V ω)) q.toMeasure := by
+  have hsplit : (fun ω => quadCalibration c0 c1 c2 (V ω)) =
+      (fun ω => quadLinearPart c0 c1 c2 v₀ (V ω)) + (fun ω => quadRemainder c2 v₀ (V ω)) := by
+    funext ω
+    simp only [Pi.add_apply]
+    exact quadCalibration_eq_linear_add_remainder c0 c1 c2 v₀ (V ω)
+  rw [hsplit]
+  exact ProbabilityTheory.variance_add MeasureTheory.MemLp.of_discrete
+    MeasureTheory.MemLp.of_discrete
 
 end Statistics.CalibrationPorts
