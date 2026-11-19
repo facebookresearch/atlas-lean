@@ -26,6 +26,7 @@ The weighted Laplacian $L = B \operatorname{diag}(w) B^{\mathsf T}$ of a finite 
 - [Raising weights raises every Laplacian eigenvalue](eigenvalues-laplacian-mono.md)
 - [Algebraic connectivity is monotone in the weights](algebraic-connectivity-mono.md)
 - [Hall's spectral drawing is optimal](sum-eigenvalues-le-sum-quadratic-form.md)
+- [With positive weights, the graph of positive arcs is the underlying graph](positive-arc-graph-eq-of-pos.md)
 
 ## Related topics
 
