@@ -14,14 +14,32 @@ public meta import CSLibExt.Algorithms.Lean.Online.MatchingLowerBound
 /-!
 # Online matching lower bound tests
 
-Executed fixtures: for `n = 1, …, 6` and four deterministic algorithms (first free neighbour,
-last free neighbour, never match, and a history-dependent rule), the adversary's `2 n` arrivals
-have a perfect matching (`adversaryOpt`: distinct, each a neighbour of its arrival) while the
-algorithm matches at most `n`; the greedy rules match exactly `n`. Each run throws on a
-violation. Closed checks instantiate the theorems.
+Executed fixtures: for `n = 1, …, 6` and five deterministic algorithms (the production greedy
+matcher, first free neighbour, last free neighbour, never match, and a history-dependent rule),
+the adversary's `2 n` arrivals have a perfect matching (`adversaryOpt`: distinct, each a neighbour
+of its arrival) while the algorithm matches at most `n`; the greedy rules match exactly `n`.
+Focused production-matcher cases cover neighbour order, duplicates, replay, exhaustion, and empty
+inputs. Each run throws on a violation. Closed checks instantiate the lower-bound, bridge, and
+tightness theorems.
 -/
 
 namespace Cslib.Algorithms.Lean.Online.MatchingLowerBound
+
+#eval show IO Unit from do
+  let cases : List (String × List (List (Fin 3)) × List (Fin 3) × Option (Fin 3)) :=
+    [("out-of-order neighbours", [], [2, 1, 0], some 0),
+     ("duplicate neighbours", [], [2, 2, 1, 1], some 1),
+     ("replayed history", [[2, 1], [], [1, 0, 0]], [0, 1, 2], some 2),
+     ("used neighbour", [[1]], [1, 1], none),
+     ("exhausted vertices", [[2], [1], [0]], [0, 1, 2], none),
+     ("empty neighbours", [], [], none)]
+  for (name, h, nbrs, expected) in cases do
+    let actual := (greedyMatcher (a := 3)).choose h nbrs
+    unless actual == expected do
+      throw (IO.userError s!"{name}: got {actual}, expected {expected}")
+  unless (greedyMatcher (a := 0)).choose [] [] == none do
+    throw (IO.userError "empty left-vertex set: expected no proposal")
+  IO.println "greedyMatcher: six choice fixtures and the empty left-vertex set passed"
 
 /-- The left vertices proposed so far are not tracked by `choose`, so the greedy rules recompute
 them by replaying the history. -/
@@ -43,7 +61,8 @@ private meta def lastFree {a : ℕ} (used nbrs : List (Fin a)) : Option (Fin a) 
 #eval do
   for n in [1, 2, 3, 4, 5, 6] do
     let algs : List (String × OnlineMatcher (2 * n)) :=
-      [("first free", greedyBy firstFree), ("last free", greedyBy lastFree),
+      [("production greedy", greedyMatcher),
+       ("first free", greedyBy firstFree), ("last free", greedyBy lastFree),
        ("never", ⟨fun _ _ => none⟩),
        ("history", ⟨fun h nbrs => if h.length % 4 == 0 then nbrs.getLast? else nbrs.head?⟩)]
     for (name, A) in algs do
@@ -55,9 +74,9 @@ private meta def lastFree {a : ℕ} (used nbrs : List (Fin a)) : Option (Fin a) 
         throw (IO.userError s!"{name}, n = {n}: not a matching")
       let k := matched A [] [] σ
       unless k ≤ n do throw (IO.userError s!"{name}, n = {n}: matched {k}")
-      if (name == "first free" || name == "last free") && k != n then
+      if (name == "production greedy" || name == "first free" || name == "last free") && k != n then
         throw (IO.userError s!"{name}, n = {n}: greedy matched {k}")
-  IO.println "n = 1..6, four algorithms: perfect matching of size 2n, algorithm matches ≤ n"
+  IO.println "n = 1..6, five algorithms: perfect matching of size 2n, algorithm matches ≤ n"
 
 /-! Closed checks -/
 
@@ -79,6 +98,34 @@ example (A : OnlineMatcher 6) : ∃ σ : List (List (Fin 6)), ∃ M,
     BipartiteMatching.IsMatching (toAdj σ) M ∧ M.card = 6 ∧ matched A [] [] σ ≤ 3 :=
   exists_isMatching_matched_le 3 A
 
+example (σ : List (List (Fin 3))) :
+    matched greedyMatcher [] [] σ = (greedyUsed σ).length :=
+  matched_greedyMatcher σ
+
+example (σ : List (List (Fin 3))) :
+    matched greedyMatcher [] [] σ =
+      (BipartiteMatching.pairs (Online.BipartiteMatching.greedyAll (toAdj σ))).card :=
+  matched_greedyMatcher_eq_card σ
+
+example {σ : List (List (Fin 3))} {M : Finset (Fin 3 × Fin σ.length)}
+    (hM : BipartiteMatching.IsMatching (toAdj σ) M) :
+    M.card ≤ 2 * matched greedyMatcher [] [] σ :=
+  card_le_two_mul_matched_greedyMatcher hM
+
+example {σ : List (List (Fin 3))} {m : List (Fin 3)} (hm : IsPerfect σ m) :
+    m.length ≤ 2 * matched greedyMatcher [] [] σ :=
+  length_le_two_mul_matched_greedyMatcher hm
+
+example (n : ℕ) : ∃ σ m, IsPerfect σ m ∧ m.length = 2 * n ∧
+    2 * matched (greedyMatcher (a := 2 * n)) [] [] σ = m.length :=
+  greedy_tight n
+
+#print axioms greedyMatcher
+#print axioms matched_greedyMatcher
+#print axioms matched_greedyMatcher_eq_card
+#print axioms card_le_two_mul_matched_greedyMatcher
+#print axioms length_le_two_mul_matched_greedyMatcher
+#print axioms greedy_tight
 #print axioms not_competitive
 #print axioms not_competitive_of_lt
 #print axioms exists_perfect_matched_le

@@ -1,0 +1,4 @@
+# Satisfaction of a closed straight-line system
+
+String terms over an alphabet $\alpha$ with variables $x_0, x_1, \dots$ (indexed by $\mathbb{N}$) are built from constant words, variables, concatenation and letter-to-word morphisms; $\sigma(t)$ denotes the value of a term $t$ under an assignment $\sigma : \mathbb{N} \to \alpha^*$ of words to the variables, and string formulas are positive Boolean combinations (conjunction, disjunction, true, false) of atoms (term equations, regular memberships, length bounds). A closed straight-line system $S$ consists of a finite list of defining terms $t_0, \dots, t_{m-1}$ ($t_k$ defines $x_k$) and a query formula $\varphi$. An assignment $\sigma : \mathbb{N} \to \alpha^*$ satisfies $S$ if it obeys every definition,
+$\sigma(x_k) = \sigma(t_k)$ for all $k < m$, and satisfies the query $\varphi$.

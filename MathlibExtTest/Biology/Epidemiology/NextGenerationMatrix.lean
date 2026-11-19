@@ -22,47 +22,35 @@ namespace MathlibExtTest.Biology.Epidemiology.NextGenerationMatrix
 open MathlibExt.Biology.Epidemiology.NextGenerationMatrix
 
 /-- The complexification of the real `1 × 1` scalar matrix `c • 1` is the complex scalar. -/
-theorem map_smul_one (c : ℝ) :
+example (c : ℝ) :
     (c • (1 : Matrix (Fin 1) (Fin 1) ℝ)).map (algebraMap ℝ ℂ) =
-      algebraMap ℂ (Matrix (Fin 1) (Fin 1) ℂ) (c : ℂ) := by
-  ext i j
-  fin_cases i; fin_cases j
-  simp [Matrix.algebraMap_matrix_apply]
+      algebraMap ℂ (Matrix (Fin 1) (Fin 1) ℂ) (c : ℂ) :=
+  Matrix.map_smul_one_algebraMap c
 
-theorem spectrum_smul_one (c : ℝ) :
-    spectrum ℂ ((c • (1 : Matrix (Fin 1) (Fin 1) ℝ)).map (algebraMap ℝ ℂ)) = {(c : ℂ)} := by
-  rw [map_smul_one, spectrum.scalar_eq]
+example (c : ℝ) :
+    spectrum ℂ ((c • (1 : Matrix (Fin 1) (Fin 1) ℝ)).map (algebraMap ℝ ℂ)) = {(c : ℂ)} :=
+  Matrix.spectrum_smul_one c
 
 /-- **Non-vacuity witness.** The removal rate `γ > 0` gives a nonsingular M-matrix
 `V = (γ)`. -/
-theorem isNonsingularMMatrix_smul_one {γ : ℝ} (hγ : 0 < γ) :
-    (γ • (1 : Matrix (Fin 1) (Fin 1) ℝ)).IsNonsingularMMatrix := by
-  refine ⟨fun i j hij => absurd (Subsingleton.elim i j) hij, ?_⟩
-  intro μ hμ
-  rw [← neg_smul, spectrum_smul_one, Set.mem_singleton_iff] at hμ
-  simp [hμ, hγ]
+example {γ : ℝ} (hγ : 0 < γ) :
+    (γ • (1 : Matrix (Fin 1) (Fin 1) ℝ)).IsNonsingularMMatrix :=
+  isNonsingularMMatrix_smul_one hγ
 
 /-- **`R₀ = β / γ`** for one infected compartment. -/
-theorem R0_smul_one (β : ℝ) {γ : ℝ} (hγ : 0 < γ) :
-    R0 (β • (1 : Matrix (Fin 1) (Fin 1) ℝ)) (γ • 1) = |β / γ| := by
-  have hinv : (γ • (1 : Matrix (Fin 1) (Fin 1) ℝ))⁻¹ = γ⁻¹ • 1 := by
-    refine Matrix.inv_eq_left_inv ?_
-    rw [smul_mul_smul, mul_one, inv_mul_cancel₀ hγ.ne', one_smul]
-  have hK : β • (1 : Matrix (Fin 1) (Fin 1) ℝ) * (γ • 1)⁻¹ = (β / γ) • 1 := by
-    rw [hinv, smul_mul_smul, mul_one, div_eq_mul_inv]
-  rw [R0, hK, spectralRadius, quasispectrum_eq_spectrum_union_zero, spectrum_smul_one]
-  rw [Set.union_singleton, iSup_insert, iSup_singleton]
-  simp [abs_div]
+example (β : ℝ) {γ : ℝ} (hγ : 0 < γ) :
+    R0 (β • (1 : Matrix (Fin 1) (Fin 1) ℝ)) (γ • 1) = |β / γ| :=
+  R0_smul_one β hγ
 
 /-- For `β ≥ 0`, `R₀ = β / γ`. -/
-theorem R0_smul_one_of_nonneg {β γ : ℝ} (hβ : 0 ≤ β) (hγ : 0 < γ) :
-    R0 (β • (1 : Matrix (Fin 1) (Fin 1) ℝ)) (γ • 1) = β / γ := by
-  rw [R0_smul_one β hγ, abs_of_nonneg (div_nonneg hβ hγ.le)]
+example {β γ : ℝ} (hβ : 0 ≤ β) (hγ : 0 < γ) :
+    R0 (β • (1 : Matrix (Fin 1) (Fin 1) ℝ)) (γ • 1) = β / γ :=
+  R0_smul_one_of_nonneg hβ hγ
 
 /-- `F = (β)` is entrywise nonnegative for `β ≥ 0`. -/
-theorem smul_one_nonneg {β : ℝ} (hβ : 0 ≤ β) (i j : Fin 1) :
-    0 ≤ (β • (1 : Matrix (Fin 1) (Fin 1) ℝ)) i j := by
-  fin_cases i; fin_cases j; simpa using hβ
+example {β : ℝ} (hβ : 0 ≤ β) (i j : Fin 1) :
+    0 ≤ (β • (1 : Matrix (Fin 1) (Fin 1) ℝ)) i j :=
+  smul_one_nonneg hβ i j
 
 /-- **The threshold for one infected compartment**: `F - V = (β - γ)` is Hurwitz iff
 `β / γ < 1`. -/

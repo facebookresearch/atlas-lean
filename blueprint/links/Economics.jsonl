@@ -1,0 +1,3 @@
+{"subject": [{"type": "generic", "uri": "../roadmap/Economics/inventory-transport-and-spatial-models/urban-stock-nonneg-of-outgoing-le.md"}], "object": [{"location": {"declaration": "Urban.urbanStock_nonneg_of_outgoing_le"}}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Economics/README.md"}]}
+{"subject": [{"type": "generic", "uri": "../roadmap/Economics/inventory-transport-and-spatial-models/README.md"}]}

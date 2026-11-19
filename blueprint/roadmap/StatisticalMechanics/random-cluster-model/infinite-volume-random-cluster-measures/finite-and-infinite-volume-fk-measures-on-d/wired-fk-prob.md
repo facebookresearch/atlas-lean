@@ -1,0 +1,3 @@
+# Wired random-cluster probability of a configuration
+
+Let $G = (V, E)$ be a finite simple graph, $\partial \subseteq V$ and $p, q \in \mathbb{R}$. The wired random-cluster probability of an assignment $\omega$ of open/closed states to the unordered pairs of vertices is $w^w(\omega)/Z^w$, the [wired weight](wired-fk-weight.md) divided by the [wired partition function](wired-fk-z.md) (the quotient is read as $0$ if $Z^w = 0$). For $0 \le p \le 1$ and $q > 0$ the weights are nonnegative and $Z^w > 0$, so this is a probability distribution; for other parameters it is only a normalized signed weight, possibly identically $0$.

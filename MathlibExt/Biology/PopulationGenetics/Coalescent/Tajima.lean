@@ -43,6 +43,7 @@ zero.
 
 * `tajimaA1`, `tajimaA2`, `tajimaB1`, `tajimaB2`, `tajimaC1`, `tajimaC2`, `tajimaE1`,
   `tajimaE2`: Tajima's constants (Tajima 1989).
+* `tajimaA1_pos`: `a₁ > 0` for `n ≥ 2`.
 * `KingmanTimes.variance_totalLength`: `Var L = 4 a₂`.
 * `KingmanTimes.variance_segSites`: `Var S = θ a₁ + θ² a₂`.
 * `integral_meanPairDiff`: `E π = θ`.
@@ -108,6 +109,11 @@ theorem tajimaA1_eq_harmonic (n : ℕ) : tajimaA1 n = (harmonic (n - 1) : ℝ) :
       simp only [Nat.add_sub_cancel, harmonic_succ, Rat.cast_add, Rat.cast_inv,
         Rat.cast_natCast]
 
+/-- `a₁ = H_{n-1} > 0` for a sample of `n ≥ 2` genes. -/
+theorem tajimaA1_pos {n : ℕ} (hn : 2 ≤ n) : 0 < tajimaA1 n := by
+  rw [tajimaA1_eq_harmonic]
+  exact_mod_cast harmonic_pos (by omega)
+
 private theorem branch_variance_term {k : ℕ} (hk : 2 ≤ k) :
     (k : ℝ) ^ 2 * (((k.choose 2 : ℕ) : ℝ)⁻¹) ^ 2 =
       4 * ((((k - 1 : ℕ) : ℝ) ^ 2)⁻¹) := by
@@ -138,12 +144,6 @@ private theorem branch_variance_sum (n : ℕ) :
 namespace KingmanTimes
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} {n : ℕ} (K : KingmanTimes μ n)
-
-/-- Each holding time is square integrable. -/
-private theorem memLp_T {k : ℕ} (hk : k ∈ Icc 2 n) : MemLp (K.T k) 2 μ :=
-  (K.hasLaw k hk).memLp_comp (f := id)
-    ((memLp_two_iff_integrable_sq aestronglyMeasurable_id).2
-      (by simpa using integrable_pow_expMeasure (choose_two_pos hk) 2))
 
 /-- `Var[T k] = ((k.choose 2)⁻¹)²`. -/
 private theorem variance_T {k : ℕ} (hk : k ∈ Icc 2 n) :
@@ -270,9 +270,7 @@ theorem integral_tajimaVarEstimator {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ 
     rw [K.variance_segSites hm hS2 hmean hvar, hES] at h
     simp only [Pi.pow_apply] at h
     linarith
-  have ha1 : 0 < tajimaA1 n := by
-    rw [tajimaA1_eq_harmonic]
-    exact_mod_cast harmonic_pos (by omega)
+  have ha1 := tajimaA1_pos hn
   have ha2 : 0 ≤ tajimaA2 n := sum_nonneg fun i _ => by positivity
   have hsq : (fun ω => S ω * (S ω - 1)) = fun ω => S ω ^ 2 - S ω := by
     funext ω

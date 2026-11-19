@@ -1,0 +1,18 @@
+# Probabilistic principal component analysis
+
+- [The transpose of a real matrix is its adjoint](inner-to-euclidean-lin.md)
+- [Characteristic function of a linear image](char-fun-map-to-euclidean-lin.md)
+- [The marginal of probabilistic PCA and factor analysis is Gaussian](map-eq-multivariate-gaussian.md)
+- [The probabilistic PCA marginal](ppca-map-eq.md)
+- [The factor-analysis marginal](factor-analysis-map-eq.md)
+- [Probabilistic PCA covariance](ppca-cov.md)
+- [The density of the probabilistic PCA observation](ppca-map-eq-with-density.md)
+- [Probabilistic PCA log-likelihood](log-lik.md)
+- [Sample mean](sample-mean.md)
+- [Sample covariance](sample-cov.md)
+- [The log-likelihood of no data is zero](log-lik-of-n-eq-zero.md)
+- [The mean MLE is the sample mean](log-lik-le-sample-mean.md)
+- [The probabilistic PCA likelihood is at most the unconstrained Gaussian maximum](log-lik-le-gaussian-mle.md)
+- [Probabilistic PCA maximum-likelihood estimate](is-mle.md)
+- [Probabilistic PCA MLE when the sample covariance has the model form](is-mle-of-sample-cov-eq.md)
+- [No latent factors: the noise-variance MLE is the average sample variance](log-lik-zero-le.md)

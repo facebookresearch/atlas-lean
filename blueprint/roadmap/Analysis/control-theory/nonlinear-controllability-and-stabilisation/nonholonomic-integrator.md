@@ -1,0 +1,3 @@
+# The nonholonomic integrator
+
+The **nonholonomic integrator** is the control system $\dot x_1 = u_1$, $\dot x_2 = u_2$, $\dot x_3 = x_1 u_2 - x_2 u_1$ with state $x \in \mathbb{R}^3$ and control $u \in \mathbb{R}^2$ (Coron, *Control and Nonlinearity*, AMS 2007, (3.41) and (11.4); Brockett 1983). It is the driftless system $u_1 f_1 + u_2 f_2$ with $f_1(x) = (1, 0, -x_2)$ and $f_2(x) = (0, 1, x_1)$, whose bracket $[f_1, f_2] = (0, 0, 2)$ completes $f_1(x), f_2(x)$ to a basis; so it satisfies the Lie algebra rank condition everywhere and is small-time locally and globally controllable (Coron, Example 3.20).
