@@ -38,9 +38,11 @@ globally, hence locally, injective with everywhere injective derivative.
 * `threePopWeights`, `threePopF2`, `threePopF2_eq_f2`: the parametrization and
   its identification with drift-model `f2` statistics.
 * `threePopF2_jacobian_rank`: rank `3 < 5` when `a + b ≠ 0`.
-* `threePopF2_not_injective_fderiv`, `threePopF2_not_injOn_nhds`: the derivative
-  is nowhere injective, and the map is injective on no neighbourhood of any
-  parameter point (genuine failure of local identifiability).
+* `threePopF2_not_injective_fderiv`: the derivative is nowhere injective.
+* `threePopF2_not_injOn_nhds`, `threePopF2_not_injOn_nhdsWithin_isAdmissible`:
+  the map is injective on no neighbourhood of any parameter point, and the
+  same holds relative to the admissible set `0 ≤ α ≤ 1`, lengths `≥ 0`
+  (genuine failure of local identifiability, including at boundary points).
 * `threePopF2_eq_shift`: the unidentified directions.
 * `starTreeF2_injective`, `starTreeF2_injective_fderiv`: the tree example.
 
@@ -228,6 +230,48 @@ theorem threePopF2_not_injOn_nhds (p : Fin 5 → ℝ) :
       (a := p 2) (b := p 3) (c := p 4) (t := 0)
     simpa using h
   exact hne (hinj (hball hdist) (hball (by simp [hε])) heq)
+
+/-- The admissible parameter set of the three-population graph: admixture
+proportion `α = p 0` in `[0, 1]` and nonnegative edge lengths
+`s, a, b, c = p 1, p 2, p 3, p 4`. -/
+def IsAdmissible (p : Fin 5 → ℝ) : Prop :=
+  p 0 ∈ Set.Icc 0 1 ∧ 0 ≤ p 1 ∧ 0 ≤ p 2 ∧ 0 ≤ p 3 ∧ 0 ≤ p 4
+
+/-- **Local non-identifiability on the admissible parameter set.** At every
+admissible parameter point, including boundary points, `threePopF2` is
+injective on no relative neighbourhood inside the admissible set: increasing
+the stem length by an arbitrarily small amount stays admissible, gives a
+distinct parameter, and does not change any `f2` value. This, not the
+ambient statement, is the graph-identifiability claim. -/
+theorem threePopF2_not_injOn_nhdsWithin_isAdmissible {p : Fin 5 → ℝ}
+    (hp : IsAdmissible p) :
+    ¬ ∃ s ∈ 𝓝[{q : Fin 5 → ℝ | IsAdmissible q}] p, Set.InjOn threePopF2 s := by
+  rintro ⟨s, hs, hinj⟩
+  rw [Metric.mem_nhdsWithin_iff] at hs
+  obtain ⟨ε, hε, hball⟩ := hs
+  set p' : Fin 5 → ℝ := ![p 0, p 1 + ε / 2, p 2, p 3, p 4] with hp'
+  have hp_eq : p = ![p 0, p 1, p 2, p 3, p 4] := by
+    funext i
+    fin_cases i <;> simp
+  have hdist : dist p' p < ε := by
+    rw [dist_pi_lt_iff hε]
+    intro i
+    fin_cases i <;> simp [hp', abs_of_pos hε] <;> linarith [hε]
+  have hne : p' ≠ p := by
+    intro h
+    have h1 := congrFun h 1
+    simp [hp'] at h1
+    linarith [hε]
+  have hadm' : IsAdmissible p' :=
+    ⟨by simpa [hp'] using hp.1, by simp [hp']; linarith [hp.2.1, hε],
+      by simpa [hp'] using hp.2.2.1, by simpa [hp'] using hp.2.2.2.1,
+      by simpa [hp'] using hp.2.2.2.2⟩
+  have heq : threePopF2 p' = threePopF2 p := by
+    rw [hp', hp_eq]
+    have h := threePopF2_eq_shift (α := p 0) (s := p 1) (s' := p 1 + ε / 2)
+      (a := p 2) (b := p 3) (c := p 4) (t := 0)
+    simpa using h
+  exact hne (hinj (hball ⟨hdist, hadm'⟩) (hball ⟨by simp [hε], hp⟩) heq)
 
 /-- The length-to-`f2` map of the three-leaf star tree,
 `(x, y, z) ↦ (x + y, x + z, y + z)`. -/

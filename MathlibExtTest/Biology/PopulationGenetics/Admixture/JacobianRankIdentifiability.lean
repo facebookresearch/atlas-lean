@@ -38,9 +38,15 @@ example (p : Fin 5 → ℝ) :
     ¬ Function.Injective (fderiv ℝ threePopF2 p) :=
   threePopF2_not_injective_fderiv p
 
-/-- Local non-injectivity also at the rank-boundary point `a + b = 0`. -/
-example : ¬ ∃ s ∈ 𝓝 ![0, 0, 1, -1, 0], Set.InjOn threePopF2 s :=
-  threePopF2_not_injOn_nhds _
+/-- Local non-injectivity on the admissible set, also at the boundary point
+with `α = 1` and `a + b = 0` (all edge lengths `0`). -/
+example : ¬ ∃ s ∈ 𝓝[{q : Fin 5 → ℝ | IsAdmissible q}] ![1, 0, 0, 0, 0],
+    Set.InjOn threePopF2 s :=
+  threePopF2_not_injOn_nhdsWithin_isAdmissible (by norm_num [IsAdmissible])
+
+example {p : Fin 5 → ℝ} (hp : IsAdmissible p) :
+    ¬ ∃ s ∈ 𝓝[{q : Fin 5 → ℝ | IsAdmissible q}] p, Set.InjOn threePopF2 s :=
+  threePopF2_not_injOn_nhdsWithin_isAdmissible hp
 
 example (p : Fin 5 → ℝ) : ¬ ∃ s ∈ 𝓝 p, Set.InjOn threePopF2 s :=
   threePopF2_not_injOn_nhds p
