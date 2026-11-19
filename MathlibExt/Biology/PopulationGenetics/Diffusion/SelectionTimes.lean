@@ -19,8 +19,9 @@ is the Green integral
 
   `T_σ(p) = ∫₀¹ Ψ_σ(p, x) dx`
 
-of the sojourn kernel `selectionGreen` (the conditional density of the time spent at `x`).
-Specializing the Green boundary-value problem of `AlleleAge` to the constant function `1`
+of the sojourn kernel `selectionGreen` (the expected occupation-time density at `x` before
+absorption). Specializing the Green boundary-value problem of `AlleleAge` to the constant
+function `1`
 gives the backward equation `L_σ T_σ = -1` on `(0, 1)` with boundary values
 `T_σ(0) = T_σ(1) = 0`. The kernel bound `Ψ_σ(p, x) ≤ 2` for `p ∈ [0, 1]`, `x ∈ (0, 1]`
 (it is at most the conditional density at `x`) gives continuity of `T_σ` on the closed
