@@ -16,7 +16,9 @@ public import MathlibExt.Biology.PopulationGenetics.Admixture.QpAdmWeights
 qpAdm sees a drift model only through the `f4` entries of `ADMIXTOOLS.qpAdmSourceMatrix` and
 `ADMIXTOOLS.qpAdmTargetVector` (qpWave through `ADMIXTOOLS.f4Matrix`). Three standard failure
 modes of reading a fitted qpAdm model as history are made explicit, first as general theorems
-and then as concrete unit-length drift graphs:
+and then as concrete weight tables at unit edge lengths (the lineage weights of explicit
+admixture graphs; the theorems are stated for all real mixing parameters as second-moment
+drift-model statements, the graph reading applying for parameters in `[0, 1]`):
 
 1. **Proxy substitution** (`qpAdm_eq_of_proxy`, `f4Matrix_eq_of_proxy`): a population whose
    lineage weights agree with a source's on every edge seen by the right set gives the
@@ -45,13 +47,14 @@ forces them into `[0, 1]`, which is what the ghost and reversed examples exploit
 * `qpAdm_fit_of_reversed`: a target-descended source fits with weight `1 / β`, qpWave rank
   at most one.
 * `proxyWeight`, `ghostWeight`, `reversedWeight` and `proxy_counterexample`,
-  `ghost_counterexample`, `reversed_counterexample`: explicit graphs realizing each.
+  `ghost_counterexample`, `reversed_counterexample`: explicit weight tables realizing each.
 
 ## References
 
 * É. Harney et al., *Assessing the performance of qpAdm*, Genetics 217 (2021), iyab052.
-* O. Flegontova et al., on proxy sources, ghost admixture and proximal models in qpAdm
-  modelling.
+* R. Maier, P. Flegontov, O. Flegontova, U. Işıldak, P. Changmai, D. Reich, *On the limits
+  of fitting complex models of population history to f-statistics*, eLife 12 (2023), e85492
+  (proxy sources, ghost admixture and proximal models).
 -/
 
 @[expose] public section
@@ -164,9 +167,10 @@ theorem qpAdm_fit_of_reversed (M : DriftModel μ E P) {r : ℕ} {T S₀ S₁ : P
     rw [hF]
     exact Matrix.rank_vecMulVec_le _ _
 
-/-! ### Explicit drift-model graphs -/
+/-! ### Explicit weight tables -/
 
-/-- Proxy-substitution graph. Populations `0 = S₀`, `1 = S₁` (the true source), `2 = S₁'`
+/-- Proxy-substitution weight table: the lineage weights of the following admixture graph.
+Populations `0 = S₀`, `1 = S₁` (the true source), `2 = S₁'`
 (a proxy splitting from the lineage of `S₁`), `3 = T`, `4 = R₀`, `5 = R₁`, `6 = R₂`. Edges:
 `0` the stem shared by `S₀` and `R₂`, `1` the stem shared by `S₁`, `S₁'` and `R₁`, `2` private
 to `S₁`, `3` private to `S₁'`, `4`, `5`, `6` private to `R₀`, `R₁`, `R₂`, `7` private to `S₀`.
@@ -176,7 +180,8 @@ noncomputable def proxyWeight (α : ℝ) : Fin 7 → Fin 8 → ℝ :=
     ![1 - α, α, α, 0, 0, 0, 0, 1 - α], ![0, 0, 0, 0, 1, 0, 0, 0], ![0, 1, 0, 0, 0, 1, 0, 0],
     ![1, 0, 0, 0, 0, 0, 1, 0]]
 
-/-- Ghost-source graph. Populations `0 = S₀`, `1 = S₁`, `2 = G` (the true source, not sampled
+/-- Ghost-source weight table: the lineage weights of the following admixture graph.
+Populations `0 = S₀`, `1 = S₁`, `2 = G` (the true source, not sampled
 as a qpAdm source), `3 = T`, `4 = R₀`, `5 = R₁`, `6 = R₂`. Edges: `0` private to `S₀`, `1` the
 stem shared by `S₁`, `G`, `R₁`, `R₂`, `2` the continuation shared by `G`, `R₁`, `R₂`, `3`
 private to `S₁`, `4` private to `G`, `5`, `6`, `7` private to `R₀`, `R₁`, `R₂`. The target is
@@ -186,7 +191,8 @@ noncomputable def ghostWeight (α : ℝ) : Fin 7 → Fin 8 → ℝ :=
     ![1 - α, α, α, 0, α, 0, 0, 0], ![0, 0, 0, 0, 0, 1, 0, 0], ![0, 1, 1, 0, 0, 0, 1, 0],
     ![0, 1, 1, 0, 0, 0, 0, 1]]
 
-/-- Reversed-direction graph. Populations `0 = S₀`, `1 = T` (unadmixed), `2 = S₁` (admixed
+/-- Reversed-direction weight table: the lineage weights of the following admixture graph.
+Populations `0 = S₀`, `1 = T` (unadmixed), `2 = S₁` (admixed
 from `T` and `S₀`, then private drift), `3 = R₀`, `4 = R₁`, `5 = R₂`. Edges: `0` the stem shared
 by `S₀` and `R₂`, `1` the stem shared by `T` and `R₁`, `2` private to `T`, `3` private to `S₁`,
 `4`, `5`, `6` private to `R₀`, `R₁`, `R₂`, `7` private to `S₀`. The source is the mixture
@@ -195,7 +201,7 @@ noncomputable def reversedWeight (β : ℝ) : Fin 6 → Fin 8 → ℝ :=
   ![![1, 0, 0, 0, 0, 0, 0, 1], ![0, 1, 1, 0, 0, 0, 0, 0], ![1 - β, β, β, 1, 0, 0, 0, 1 - β],
     ![0, 0, 0, 0, 1, 0, 0, 0], ![0, 1, 0, 0, 0, 1, 0, 0], ![1, 0, 0, 0, 0, 0, 1, 0]]
 
-/-- **Counterexample (i), proxy substitution.** In the proxy graph with unit edge lengths and
+/-- **Counterexample (i), proxy substitution.** In the proxy weight table at unit edge lengths and
 `α ≠ 0`, the qpAdm systems with sources `(S₀, S₁')` and `(S₀, S₁)` are identical, as are the
 qpWave matrices of `(S₀, T, S₁')` and `(S₀, T, S₁)`; the weights are exactly `α` in both; the
 target is the mixture `α S₁ + (1 - α) S₀`, but no mixture of the proxy `S₁'` with `S₀`. -/
@@ -252,7 +258,7 @@ theorem proxy_counterexample {α : ℝ} (hα : α ≠ 0) (M : DriftModel μ (Fin
     simp [proxyWeight] at h2 h3
     exact hα h2
 
-/-- **Counterexample (ii), ghost absorption.** In the ghost graph with unit edge lengths, the
+/-- **Counterexample (ii), ghost absorption.** In the ghost weight table at unit edge lengths, the
 right contrasts of the ghost `G` are twice those of `S₁`, the target `T = α G + (1 - α) S₀` is
 fitted by the sampled sources `(S₀, S₁)` with weight exactly `2 α` on `S₁` (so `1 - 2 α` on
 `S₀`), and for `α ≠ 0` the target is no mixture of `S₁` and `S₀`. -/
@@ -294,7 +300,7 @@ theorem ghost_counterexample {α : ℝ} (hα : α ≠ 0) (M : DriftModel μ (Fin
     simp [ghostWeight] at h2
     exact hα h2
 
-/-- **Counterexample (iii), reversed direction.** In the reversed graph with unit edge lengths
+/-- **Counterexample (iii), reversed direction.** In the reversed weight table at unit edge lengths
 and `β ≠ 0`, the source `S₁` descends from the unadmixed target (`S₁ = β T + (1 - β) S₀` plus
 private drift, `T` with `0`/`1` weights), yet the target is fitted by the sources `(S₀, S₁)`
 with weight exactly `1 / β` on `S₁`, the qpWave matrix of `(S₀, T, S₁)` has rank exactly one,
