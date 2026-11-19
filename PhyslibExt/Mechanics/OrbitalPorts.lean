@@ -26,13 +26,20 @@ parameter `μ = G (m₁ + m₂) > 0`. Its specific energy is `E = |v|² / 2 - μ
 for `E < 0` the energy-defined semi-major axis is `a = -μ / (2 E)`. Then `a > 0`, and for a
 collision-free state (`r > 0`) the vis-viva identity `|v|² = μ (2 / r - 1 / a)` holds.
 
+A state at circular speed has `|v|² = μ / r`; it has `E = -μ / (2 r)` and `a = r` whatever the
+direction of `v`. A circular state also has its velocity transverse to its position,
+`x ⬝ᵥ v = 0`, and then its angular momentum satisfies `|x ⨯₃ v|² = μ r`; a radial state at
+circular speed has `x ⨯₃ v = 0`.
+
 The Euclidean squares are dot products, `|v|² = v ⬝ᵥ v`: the default norm on `Fin 3 → ℝ` is the
 sup norm and is not used. Angular momentum is the cross product `x ⨯₃ v`.
 
 A tangential impulse of signed magnitude `Δv` changes the velocity along the flight direction,
-`v' = v + (Δv / |v|) • v`, at the fixed position; the post-impulse speed is `|v| + Δv` in
-square, the orbital plane is unchanged, and vis-viva applied to the new state gives the new
-semi-major axis.
+`v' = v + (Δv / |v|) • v`, at the fixed position: the squared speed becomes `(|v| + Δv)²`, the
+angular momentum is multiplied by `1 + Δv / |v|`, and vis-viva applied to the new state gives
+the new semi-major axis. The angular momentum identity alone gives no orbital plane: there is
+none when `x ⨯₃ v = 0`, and none after an impulse with `Δv = -|v|`, which brings the body to
+rest.
 
 These are identities about one fixed state, not about a trajectory. No solution of the
 two-body equation is constructed, no elliptic trajectory is asserted (a state with `E < 0` and
@@ -45,8 +52,10 @@ Each result assumes only the hypotheses its proof uses.
 - `OrbitalPorts.visViva`: `|v|² = μ (2 / r - 1 / a)` for `μ, r > 0`, `E < 0`.
 - `OrbitalPorts.semiMajorAxis_pos`: `a > 0` follows from `μ > 0`, `E < 0`.
 - `OrbitalPorts.visViva_tangentialImpulse`: the identity after one tangential impulse.
-- `OrbitalPorts.semiMajorAxis_tangentialImpulse_eq_radius_iff`: one impulse from a circular
-  state keeps `a = r` only if it keeps the speed.
+- `OrbitalPorts.semiMajorAxis_of_circularSpeed`, `OrbitalPorts.semiMajorAxis_of_circular`:
+  circular speed gives `a = r`; a circular state also has `|x ⨯₃ v|² = μ r`.
+- `OrbitalPorts.semiMajorAxis_tangentialImpulse_eq_radius_iff`: at circular speed, one impulse
+  keeps `a = r` only if it keeps the speed or reverses the velocity.
 
 ## iii. Table of contents
 
@@ -116,8 +125,10 @@ lemma semiMajorAxis_of_specificEnergy_eq_zero {μ : ℝ} {x v : Fin 3 → ℝ}
     rw [hE, mul_zero, div_zero]
   exact ⟨h, by rw [h]; exact lt_irrefl 0⟩
 
-/-- A circular state, `|v|² = μ / r` with `μ, r > 0`, has `E = -μ / (2 r)` and `a = r`. -/
-lemma semiMajorAxis_of_circular {μ : ℝ} {x v : Fin 3 → ℝ} (hμ : 0 < μ) (hr : 0 < radius x)
+/-- A state at circular speed, `|v|² = μ / r` with `μ, r > 0`, has `E = -μ / (2 r)` and
+`a = r`. The speed does not fix the direction: a radial state at this speed has the same `E`
+and `a`. `semiMajorAxis_of_circular` adds the transverse condition of a circular state. -/
+lemma semiMajorAxis_of_circularSpeed {μ : ℝ} {x v : Fin 3 → ℝ} (hμ : 0 < μ) (hr : 0 < radius x)
     (hv : speedSq v = μ / radius x) :
     specificEnergy μ x v = -μ / (2 * radius x) ∧ semiMajorAxis μ x v = radius x := by
   have hr0 : radius x ≠ 0 := ne_of_gt hr
@@ -131,6 +142,29 @@ lemma semiMajorAxis_of_circular {μ : ℝ} {x v : Fin 3 → ℝ} (hμ : 0 < μ) 
   unfold semiMajorAxis
   rw [hE]
   field_simp
+
+/-- A circular state: circular speed `|v|² = μ / r` and a velocity transverse to the position,
+`x ⬝ᵥ v = 0`, with `μ, r > 0`. It has `E = -μ / (2 r)`, `a = r` and the circular angular
+momentum `|x ⨯₃ v|² = μ r`. -/
+lemma semiMajorAxis_of_circular {μ : ℝ} {x v : Fin 3 → ℝ} (hμ : 0 < μ) (hr : 0 < radius x)
+    (hv : speedSq v = μ / radius x) (hperp : x ⬝ᵥ v = 0) :
+    specificEnergy μ x v = -μ / (2 * radius x) ∧ semiMajorAxis μ x v = radius x ∧
+      (x ⨯₃ v) ⬝ᵥ (x ⨯₃ v) = μ * radius x := by
+  obtain ⟨hE, ha⟩ := semiMajorAxis_of_circularSpeed hμ hr hv
+  refine ⟨hE, ha, ?_⟩
+  have hxx : x ⬝ᵥ x = radius x ^ 2 := by
+    unfold radius
+    rw [Real.sq_sqrt]
+    unfold dotProduct
+    exact Finset.sum_nonneg fun i _ => mul_self_nonneg (x i)
+  have hvx : v ⬝ᵥ x = 0 := by
+    rw [dotProduct_comm]
+    exact hperp
+  have hr0 : radius x ≠ 0 := ne_of_gt hr
+  unfold speedSq at hv
+  rw [cross_dot_cross, hperp, hvx, hxx, hv]
+  field_simp
+  ring
 
 /-! ## B. One tangential impulse -/
 
@@ -164,8 +198,11 @@ lemma speedSq_tangentialImpulse {v : Fin 3 → ℝ} (hv : v ≠ 0) (Δv : ℝ) :
   field_simp
   linear_combination (-(Real.sqrt (v ⬝ᵥ v) + Δv) ^ 2) * hsq
 
-/-- A tangential impulse rescales the angular momentum `x ⨯₃ v` by `1 + Δv / |v|`: the orbital
-plane is unchanged. -/
+/-- A tangential impulse multiplies the angular momentum `x ⨯₃ v` by `1 + Δv / |v|`. The identity
+holds for all `x`, `v` and `Δv` and by itself gives no orbital plane: there is none when
+`x ⨯₃ v = 0` (a radial state, or `v = 0`) or when the factor vanishes (`Δv = -|v|` brings the
+body to rest). When both are nonzero, the new angular momentum is a nonzero multiple of the
+old one. -/
 lemma cross_tangentialImpulse (x v : Fin 3 → ℝ) (Δv : ℝ) :
     x ⨯₃ tangentialImpulse v Δv = (1 + Δv / Real.sqrt (speedSq v)) • (x ⨯₃ v) := by
   unfold tangentialImpulse
@@ -192,16 +229,17 @@ lemma visViva_tangentialImpulse {μ Δv : ℝ} {x v : Fin 3 → ℝ} (hμ : 0 < 
   field_simp at hvv ⊢
   linear_combination hvv
 
-/-- From a circular state, `|v|² = μ / r`, a tangential impulse with negative post-impulse
-energy keeps `a' = r` only if it keeps the speed (`Δv = 0`) or reverses the velocity
-(`Δv = -2 |v|`). So one impulse does not move a circular state onto a circle of another radius;
-no transfer cost or optimality is claimed. -/
+/-- At circular speed, `|v|² = μ / r`, a tangential impulse with negative post-impulse energy
+keeps `a' = r` only if it keeps the speed (`Δv = 0`) or reverses the velocity
+(`Δv = -2 |v|`). Only the speed enters: the statement holds for a circular state
+(`semiMajorAxis_of_circular`) and for a radial state at circular speed alike. No transfer
+cost or optimality is claimed. -/
 lemma semiMajorAxis_tangentialImpulse_eq_radius_iff {μ Δv : ℝ} {x v : Fin 3 → ℝ}
-    (hμ : 0 < μ) (hr : 0 < radius x) (hcirc : speedSq v = μ / radius x)
+    (hμ : 0 < μ) (hr : 0 < radius x) (hspeed : speedSq v = μ / radius x)
     (hE : specificEnergy μ x (tangentialImpulse v Δv) < 0) :
     semiMajorAxis μ x (tangentialImpulse v Δv) = radius x ↔
       Δv = 0 ∨ Δv = -2 * Real.sqrt (speedSq v) := by
-  have hs_pos : 0 < speedSq v := by rw [hcirc]; exact div_pos hμ hr
+  have hs_pos : 0 < speedSq v := by rw [hspeed]; exact div_pos hμ hr
   have hv0 : v ≠ 0 := by
     intro h0
     have hs0 : speedSq v = 0 := by
@@ -227,7 +265,7 @@ lemma semiMajorAxis_tangentialImpulse_eq_radius_iff {μ Δv : ℝ} {x v : Fin 3 
       field_simp at h2 ⊢
       linear_combination h2
     have ht2 : (Real.sqrt (speedSq v) + Δv) ^ 2 = Real.sqrt (speedSq v) ^ 2 := by
-      rw [hS_eq, ← hcirc, hsq]
+      rw [hS_eq, ← hspeed, hsq]
     have hfac : Δv * (Δv + 2 * Real.sqrt (speedSq v)) = 0 := by
       linear_combination ht2
     rcases mul_eq_zero.mp hfac with h0 | h0
@@ -242,7 +280,7 @@ lemma semiMajorAxis_tangentialImpulse_eq_radius_iff {μ Δv : ℝ} {x v : Fin 3 
       · rw [h0]
         ring
     have hS_eq : (Real.sqrt (speedSq v) + Δv) ^ 2 = μ / radius x := by
-      rw [ht2, hsq, hcirc]
+      rw [ht2, hsq, hspeed]
     rw [hS_eq] at h2
     have hdiv : 1 / semiMajorAxis μ x (tangentialImpulse v Δv) = 1 / radius x := by
       field_simp at h2 ⊢
