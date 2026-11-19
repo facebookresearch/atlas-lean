@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.CharP.Defs
@@ -243,6 +243,7 @@ set_option linter.unusedVariables false in
     5, formula (5.1), printed p. 29 / PDF p. 39.
 Proves `Wanted` entry `ramanujan_part1_ch2_entry5`.
 -/
+@[nolint unusedArguments]
 theorem ramanujan_part1_ch2_entry5 (n : ℕ) (hn : 0 < n) :
     (1 : ℝ) + 2 * ∑ k ∈ Finset.Icc 1 n, (1 : ℝ) / ((6 * (k : ℝ)) ^ 3 - 6 * (k : ℝ)) =
       (2 : ℝ) / 3 * ∑ k ∈ Finset.Icc 1 n, (1 : ℝ) / ((n : ℝ) + (k : ℝ)) +

@@ -26,6 +26,8 @@ differences converge to the constant `0`.
   normed spaces.
 * `MeasureTheory.TendstoInDistribution.delta_method_real`: the one-dimensional form with
   `HasDerivAt g g' θ`, limit `g' * Z`.
+* `MeasureTheory.TendstoInDistribution.delta_method_of_hasStrictFDerivAt`: deterministic
+  moving centres `c n → θ`, with strict differentiability controlling both moving endpoints.
 
 ## Proof
 
@@ -169,5 +171,123 @@ theorem TendstoInDistribution.delta_method_real {X : ι → Ω → ℝ} {Z : Ω'
       (fun _ ↦ μ) μ' :=
   (hXZ.delta_method hr hg.hasFDerivAt hX hgX).congr (fun _ ↦ ae_of_all _ fun _ ↦ rfl)
     (ae_of_all _ fun ω ↦ by simp [mul_comm])
+
+end MeasureTheory
+
+namespace MeasureTheory
+
+variable {ι Ω Ω' : Type*} {mΩ : MeasurableSpace Ω} {mΩ' : MeasurableSpace Ω'}
+  {μ : Measure Ω} {μ' : Measure Ω'} {l : Filter ι}
+
+/-- If `U n → u₀` in probability and the deterministic `c n → θ`, then `f (U n, c n)` tends to
+`f (u₀, θ)` in probability for `f` continuous at `(u₀, θ)`. -/
+private theorem tendstoInMeasure_comp_prodMk_seq {E G F : Type*} [PseudoMetricSpace E]
+    [PseudoMetricSpace G] [PseudoMetricSpace F] {U : ι → Ω → E} {c : ι → G} {u₀ : E} {θ : G}
+    {f : E × G → F} (hf : ContinuousAt f (u₀, θ)) (hU : TendstoInMeasure μ U l (fun _ ↦ u₀))
+    (hc : Tendsto c l (𝓝 θ)) :
+    TendstoInMeasure μ (fun n ω ↦ f (U n ω, c n)) l (fun _ ↦ f (u₀, θ)) := by
+  rw [tendstoInMeasure_iff_dist] at hU ⊢
+  intro ε hε
+  obtain ⟨δ, hδ, hδε⟩ := Metric.continuousAt_iff.1 hf ε hε
+  refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds (hU δ hδ)
+    (Eventually.of_forall fun _ ↦ zero_le) ?_
+  filter_upwards [hc (Metric.ball_mem_nhds θ hδ)] with n hn
+  refine measure_mono fun ω hω ↦ ?_
+  simp only [Set.mem_ofPred_eq] at hω ⊢
+  by_contra h
+  refine (hδε ?_).not_ge hω
+  rw [Prod.dist_eq, max_lt_iff]
+  exact ⟨not_le.1 h, hn⟩
+
+variable {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [SecondCountableTopology E]
+  [MeasurableSpace E] [BorelSpace E] [NormedAddCommGroup F] [NormedSpace ℝ F]
+  [SecondCountableTopology F] [MeasurableSpace F] [BorelSpace F]
+  [IsProbabilityMeasure μ] [IsProbabilityMeasure μ'] [l.IsCountablyGenerated]
+
+/-- **Delta method with a moving centre.** Let `r n → ∞`, let the deterministic centres
+`c n → θ`, and suppose `r n • (X n - c n)` converges in distribution to `Z`. If `g` is
+*strictly* differentiable at `θ` with derivative `L`, then `r n • (g (X n) - g (c n))`
+converges in distribution to `L Z`.
+
+Strict differentiability (`HasStrictFDerivAt`) is the right hypothesis here: the increment
+`g (X n) - g (c n)` is taken between two points that both move towards `θ`, and plain
+differentiability at `θ` only controls increments based at `θ` itself. This is the form used
+for the bootstrap, where `X n` is the bootstrap statistic and `c n` the observed one. -/
+theorem TendstoInDistribution.delta_method_of_hasStrictFDerivAt {X : ι → Ω → E} {c : ι → E}
+    {Z : Ω' → E} {θ : E} {r : ι → ℝ} {g : E → F} {L : E →L[ℝ] F}
+    (hXZ : TendstoInDistribution (fun n ω ↦ r n • (X n ω - c n)) l Z (fun _ ↦ μ) μ')
+    (hr : Tendsto r l atTop) (hc : Tendsto c l (𝓝 θ)) (hg : HasStrictFDerivAt g L θ)
+    (hX : ∀ n, AEMeasurable (X n) μ) (hgX : ∀ n, AEMeasurable (fun ω ↦ g (X n ω)) μ) :
+    TendstoInDistribution (fun n ω ↦ r n • (g (X n ω) - g (c n))) l (fun ω ↦ L (Z ω))
+      (fun _ ↦ μ) μ' := by
+  have hr_pos : ∀ᶠ n in l, 0 < r n := hr.eventually_gt_atTop 0
+  -- Step 1: `X n - c n → 0` in probability.
+  have h1 : TendstoInDistribution (fun n ω ↦ (r n)⁻¹ • (r n • (X n ω - c n))) l
+      (fun _ ↦ (0 : E)) (fun _ ↦ μ) μ' :=
+    (hXZ.smul_of_tendstoInMeasure_const
+      (DeltaMethod.tendstoInMeasure_const_seq (tendsto_inv_atTop_zero.comp hr))
+      (fun _ ↦ aemeasurable_const)).congr (fun _ ↦ ae_of_all _ fun _ ↦ rfl)
+      (ae_of_all _ fun ω ↦ zero_smul ℝ (Z ω))
+  have hU : TendstoInMeasure μ (fun n ω ↦ X n ω - c n) l (fun _ ↦ 0) := by
+    refine (tendstoInMeasure_of_tendstoInDistribution_const h1).congr' ?_ EventuallyEq.rfl
+    filter_upwards [hr_pos] with n hn
+    exact ae_of_all _ fun ω ↦ by simp [smul_smul, inv_mul_cancel₀ hn.ne']
+  -- Step 2: the normalised remainder tends to `0` in probability.
+  set ψ : E × E → F := fun q ↦ ‖q.1‖⁻¹ • (g (q.2 + q.1) - g q.2 - L q.1) with hψ_def
+  have hψ0 : ψ (0, θ) = 0 := by simp [ψ]
+  have hψ : ContinuousAt ψ (0, θ) := by
+    have hφ : Tendsto (fun q : E × E ↦ (q.2 + q.1, q.2)) (𝓝 (0, θ)) (𝓝 (θ, θ)) := by
+      have : Continuous fun q : E × E ↦ (q.2 + q.1, q.2) := by fun_prop
+      simpa using this.tendsto (0, θ)
+    have ho := (hasStrictFDerivAt_iff_isLittleO.1 hg).comp_tendsto hφ
+    rw [ContinuousAt, hψ0, Metric.tendsto_nhds]
+    intro ε hε
+    filter_upwards [Asymptotics.isLittleO_iff.1 ho (half_pos hε)] with q hq
+    simp only [Function.comp_apply, add_sub_cancel_left] at hq
+    rw [dist_zero_right, hψ_def, norm_smul, norm_inv, norm_norm]
+    rcases eq_or_ne ‖q.1‖ 0 with h0 | h0
+    · simp [h0, hε]
+    · calc ‖q.1‖⁻¹ * ‖g (q.2 + q.1) - g q.2 - L q.1‖ ≤ ‖q.1‖⁻¹ * (ε / 2 * ‖q.1‖) :=
+            mul_le_mul_of_nonneg_left hq (by positivity)
+        _ = ε / 2 := by field_simp
+        _ < ε := half_lt_self hε
+  set η : ι → Ω → F := fun n ω ↦
+    ‖X n ω - c n‖⁻¹ • (g (X n ω) - g (c n) - L (X n ω - c n)) with hη_def
+  have hηψ : ∀ n ω, η n ω = ψ (X n ω - c n, c n) := fun n ω ↦ by
+    simp [η, ψ, add_sub_cancel]
+  have hη : TendstoInMeasure μ η l (fun _ ↦ 0) := by
+    have h := tendstoInMeasure_comp_prodMk_seq hψ hU hc
+    rw [hψ0] at h
+    exact h.congr (fun n ↦ ae_of_all _ fun ω ↦ (hηψ n ω).symm) EventuallyEq.rfl
+  have hη_meas : ∀ n, AEMeasurable (η n) μ := fun n ↦
+    ((hX n).sub_const _).norm.inv.smul (((hgX n).sub_const _).sub
+      (L.continuous.measurable.comp_aemeasurable ((hX n).sub_const _)))
+  have hnorm : TendstoInDistribution (fun n ω ↦ ‖r n • (X n ω - c n)‖) l (fun ω ↦ ‖Z ω‖)
+      (fun _ ↦ μ) μ' := hXZ.continuous_comp continuous_norm
+  have hprod : TendstoInDistribution (fun n ω ↦ ‖r n • (X n ω - c n)‖ • η n ω) l
+      (fun _ ↦ (0 : F)) (fun _ ↦ μ) μ' :=
+    (hnorm.continuous_comp_prodMk_of_tendstoInMeasure_const
+      (g := fun p : ℝ × F ↦ p.1 • p.2) (by fun_prop) hη hη_meas).congr
+      (fun _ ↦ ae_of_all _ fun _ ↦ rfl) (ae_of_all _ fun _ ↦ smul_zero _)
+  have hrem : TendstoInMeasure μ (fun n ω ↦ r n • (g (X n ω) - g (c n) - L (X n ω - c n))) l
+      (fun _ ↦ 0) := by
+    refine (tendstoInMeasure_of_tendstoInDistribution_const hprod).congr' ?_ EventuallyEq.rfl
+    filter_upwards [hr_pos] with n hn
+    refine ae_of_all _ fun ω ↦ ?_
+    by_cases hv : X n ω - c n = 0
+    · have hXn : X n ω = c n := sub_eq_zero.1 hv
+      simp [η, hXn]
+    · simp only [η, norm_smul, Real.norm_of_nonneg hn.le, smul_smul, mul_assoc,
+        mul_inv_cancel₀ (norm_ne_zero_iff.2 hv), mul_one]
+  -- Step 3: assemble.
+  have hlin : TendstoInDistribution (fun n ω ↦ L (r n • (X n ω - c n))) l (fun ω ↦ L (Z ω))
+      (fun _ ↦ μ) μ' := hXZ.continuous_comp L.continuous
+  refine (hlin.add_of_tendstoInMeasure_const hrem fun n ↦ ?_).congr
+    (fun n ↦ ae_of_all _ fun ω ↦ ?_) (ae_of_all _ fun ω ↦ add_zero _)
+  · exact (((hgX n).sub_const _).sub
+      (L.continuous.measurable.comp_aemeasurable ((hX n).sub_const _))).const_smul _
+  · simp only [Pi.add_apply, map_smul, ← smul_add]
+    congr 1
+    abel
 
 end MeasureTheory

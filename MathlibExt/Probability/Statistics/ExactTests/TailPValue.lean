@@ -9,13 +9,15 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.MultipleTesting.Basic
+public import Mathlib.MeasureTheory.Measure.Continuity
 
 /-!
-# Upper-tail p-values of discrete tests are valid
+# Upper- and lower-tail p-values of discrete tests are valid
 
-Let `X` be a count with null law `ν` on `ℕ`, and reject for large values of `X`. The exact
-upper-tail p-value of the observation `X = k` is the null probability `ν {j | k ≤ j}` of a count
-at least as extreme. This file shows that it is a valid (super-uniform) p-value:
+Let `X` be a count with null law `ν` on `ℕ`. Rejecting for large values of `X` uses the exact
+upper-tail p-value of the observation `X = k`, the null probability `ν {j | k ≤ j}` of a count
+at least as extreme; rejecting for small values uses the lower-tail p-value, the null
+probability `ν {j | j ≤ k}`. This file shows that both are valid (super-uniform) p-values:
 `P(p(X) ≤ s) ≤ s` for every `s ∈ [0, 1]`. Equality fails in general because `ν` has atoms, which
 is why discrete exact tests are conservative.
 
@@ -23,11 +25,24 @@ is why discrete exact tests are conservative.
 
 * `upperTail ν k = ν {j | k ≤ j}`, as a real number.
 * `upperTailPValue ν X ω = upperTail ν (X ω)`.
+* `lowerTail ν k = ν {j | j ≤ k}`, as a real number.
+* `lowerTailPValue ν X ω = lowerTail ν (X ω)`.
 
 ## Main results
 
 * `upperTail_antitone`: the upper tail is antitone in the cutoff.
 * `isValidPValue_upperTailPValue`: if `X` has law `ν`, the upper-tail p-value is valid.
+* `measure_upperTailPValue_le_upperTail`: it is exactly calibrated at every attainable level
+  `upperTail ν k`.
+* `lowerTail_mono`: the lower tail is monotone in the cutoff.
+* `isValidPValue_lowerTailPValue`: if `X` has law `ν`, the lower-tail p-value is valid.
+* `isValidPValue_twoSided`: the doubled-minimum two-sided p-value
+  `min 1 (2 * min (upperTailPValue ν X) (lowerTailPValue ν X))` is valid.
+* `isValidPValue_survival`: for any law `ν` on `ℝ`, `y ↦ ν [y, ∞)` evaluated at a
+  variable with law `ν` is a valid p-value.
+
+The composite-null binomial mirrors live in `ExactTests.BinomialTest`; the two-sided
+binomial development is the Clopper–Pearson interval in `ExactTests.ClopperPearson`.
 
 ## References
 
@@ -80,5 +95,239 @@ theorem isValidPValue_upperTailPValue {μ : Measure Ω} {ν : Measure ℕ} [IsPr
   · have hset : {ω | upperTailPValue ν X ω ≤ s} = ∅ :=
       Set.eq_empty_of_forall_notMem fun ω h => hS ⟨X ω, h⟩
     simp [hset]
+
+/-- **Exact calibration at attainable levels.** If the count `X` has law `ν` under `μ`, the
+upper-tail p-value is exactly calibrated at every attainable level `s = upperTail ν k`:
+`μ {upperTailPValue ν X ≤ s} = s`. Between attainable levels it is conservative
+(`isValidPValue_upperTailPValue`).
+
+Source: Lehmann–Romano (2005), Lemma 3.3.1. -/
+theorem measure_upperTailPValue_le_upperTail {μ : Measure Ω} {ν : Measure ℕ}
+    [IsProbabilityMeasure ν] {X : Ω → ℕ} (hX : HasLaw X ν μ) (k : ℕ) :
+    μ {ω | upperTailPValue ν X ω ≤ upperTail ν k} = ENNReal.ofReal (upperTail ν k) := by
+  refine le_antisymm
+    (isValidPValue_upperTailPValue hX _ ⟨measureReal_nonneg, measureReal_le_one⟩) ?_
+  calc ENNReal.ofReal (upperTail ν k) = μ {ω | k ≤ X ω} := by
+        rw [hX.measure_eq (p := (k ≤ ·)) (measurableSet_Ici (a := k)), ← ofReal_measureReal]
+        rfl
+    _ ≤ _ := measure_mono fun ω h => upperTail_antitone ν h
+
+/-- The lower tail `ν {j | j ≤ k}` of a measure `ν` on `ℕ` at the cutoff `k`, as a real
+number. -/
+noncomputable def lowerTail (ν : Measure ℕ) (k : ℕ) : ℝ :=
+  ν.real {j | j ≤ k}
+
+/-- The exact lower-tail p-value of a count `X` with null law `ν`: the null probability of a
+count at most as large as the observed `X ω`. -/
+noncomputable def lowerTailPValue {Ω : Type*} (ν : Measure ℕ) (X : Ω → ℕ) (ω : Ω) : ℝ :=
+  lowerTail ν (X ω)
+
+/-- The lower tail of a finite measure on `ℕ` is monotone in the cutoff. -/
+theorem lowerTail_mono (ν : Measure ℕ) [IsFiniteMeasure ν] :
+    Monotone (lowerTail ν) := by
+  intro a b h
+  unfold lowerTail
+  exact measureReal_mono fun _ hj => le_trans hj h
+
+/-- **Validity of the lower-tail p-value.** If the count `X` has law `ν` under `μ`, then
+`μ {lowerTail ν X ≤ s} ≤ s` for every `s ∈ [0, 1]`. -/
+theorem isValidPValue_lowerTailPValue {Ω : Type*} [MeasurableSpace Ω]
+    {μ : Measure Ω} {ν : Measure ℕ} [IsProbabilityMeasure ν]
+    {X : Ω → ℕ} (hX : HasLaw X ν μ) :
+    IsValidPValue μ (lowerTailPValue ν X) := by
+  intro s hs
+  obtain ⟨hs0, hs1⟩ := Set.mem_Icc.mp hs
+  by_cases hs_lt : s < 1
+  · by_cases hS : ∃ k, lowerTail ν k ≤ s
+    · classical
+      have hmon_seq : Monotone (fun N : ℕ => ({j : ℕ | j ≤ N} : Set ℕ)) :=
+        fun _ _ h _ hj => le_trans hj h
+      have hunion : (⋃ N : ℕ, ({j : ℕ | j ≤ N} : Set ℕ)) = Set.univ := by
+        ext j
+        simp only [Set.mem_iUnion, Set.mem_ofPred_eq, Set.mem_univ, iff_true]
+        exact ⟨j, le_rfl⟩
+      have htend :=
+        tendsto_measure_iUnion_atTop (μ := ν)
+          (s := fun N : ℕ => ({j : ℕ | j ≤ N} : Set ℕ)) hmon_seq
+      rw [hunion, measure_univ] at htend
+      have hlt1 : ENNReal.ofReal s < 1 := by
+        rw [← ENNReal.ofReal_one, ENNReal.ofReal_lt_ofReal_iff zero_lt_one]
+        exact hs_lt
+      have hev := Filter.Tendsto.eventually_const_lt hlt1 htend
+      obtain ⟨N, hN⟩ := hev.exists
+      have hfin : ν {j : ℕ | j ≤ N} ≠ ⊤ := (measure_lt_top _ _).ne
+      have hNs : s < ν.real {j : ℕ | j ≤ N} := by
+        have h := (ENNReal.toReal_lt_toReal ENNReal.ofReal_ne_top hfin).mpr hN
+        rw [ENNReal.toReal_ofReal hs0] at h
+        exact h
+      have htailN : s < lowerTail ν N := by
+        unfold lowerTail
+        exact hNs
+      have hbound : ∀ k : ℕ, lowerTail ν k ≤ s → k ≤ N := by
+        intro k hk
+        by_contra hcon
+        have hlt' : N < k := lt_of_not_ge hcon
+        have hle : N ≤ k := le_of_lt hlt'
+        have hmono : lowerTail ν N ≤ lowerTail ν k := lowerTail_mono ν hle
+        have hlt : s < lowerTail ν k := lt_of_lt_of_le htailN hmono
+        have hss : s < s := lt_of_lt_of_le hlt hk
+        exact lt_irrefl _ hss
+      obtain ⟨k, hk⟩ := hS
+      have hk_le : k ≤ N := hbound k hk
+      have hk₀_spec : lowerTail ν (Nat.findGreatest (fun k => lowerTail ν k ≤ s) N) ≤ s :=
+        Nat.findGreatest_spec (P := fun k => lowerTail ν k ≤ s) hk_le hk
+      have hset : {ω | lowerTailPValue ν X ω ≤ s} =
+          {ω | X ω ≤ Nat.findGreatest (fun k => lowerTail ν k ≤ s) N} := by
+        ext ω
+        simp only [lowerTailPValue, Set.mem_ofPred_eq]
+        constructor
+        · intro h
+          have hleN : X ω ≤ N := hbound _ h
+          exact Nat.le_findGreatest (P := fun k => lowerTail ν k ≤ s) hleN h
+        · intro h
+          exact le_trans (lowerTail_mono ν h) hk₀_spec
+      rw [hset,
+        hX.measure_eq (p := (· ≤ Nat.findGreatest (fun k => lowerTail ν k ≤ s) N))
+          (measurableSet_Iic (a := Nat.findGreatest (fun k => lowerTail ν k ≤ s) N)),
+        ← ofReal_measureReal]
+      exact ENNReal.ofReal_le_ofReal hk₀_spec
+    · have hset : {ω | lowerTailPValue ν X ω ≤ s} = ∅ :=
+        Set.eq_empty_of_forall_notMem fun ω h => hS ⟨X ω, h⟩
+      simp [hset]
+  · have hs_eq : s = 1 := le_antisymm hs1 (le_of_not_gt hs_lt)
+    subst hs_eq
+    have hmeas : MeasurableSet {x : ℕ | lowerTail ν x ≤ 1} :=
+      MeasurableSet.of_discrete
+    have heq : μ {ω | lowerTailPValue ν X ω ≤ 1} = ν {x | lowerTail ν x ≤ 1} :=
+      hX.measure_eq hmeas
+    rw [heq]
+    calc ν {x | lowerTail ν x ≤ 1} ≤ ν Set.univ := measure_mono (Set.subset_univ _)
+      _ = 1 := measure_univ
+      _ = ENNReal.ofReal (1 : ℝ) := ENNReal.ofReal_one.symm
+
+/-- **Survival-function p-values are valid.** If `Y` has law `ν` on `ℝ`, then
+`ω ↦ ν [Y ω, ∞)` is a valid p-value, whatever `ν` (atoms allowed).
+
+The event `{ν [Y, ∞) ≤ t}` is `{Y ∈ A}` for an upper set `A`; `A` is covered by an increasing
+sequence of half-lines `[c n, ∞)` with each `c n ∈ A`, so `ν A ≤ t` by continuity from below.
+
+Source: Lehmann–Romano (2005), Lemma 3.3.1. -/
+theorem isValidPValue_survival {μ : Measure Ω} {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {Y : Ω → ℝ} (hY : HasLaw Y ν μ) : IsValidPValue μ (fun ω => ν.real (Set.Ici (Y ω))) := by
+  intro t _
+  set S : ℝ → ℝ := fun y => ν.real (Set.Ici y)
+  have hS : Antitone S := fun _ _ hxy => measureReal_mono (Set.Ici_subset_Ici.mpr hxy)
+  set A := {y | S y ≤ t}
+  have hup : ∀ {y z}, y ∈ A → y ≤ z → z ∈ A := fun hy hyz => (hS hyz).trans hy
+  have hA : MeasurableSet A := measurableSet_le hS.measurable measurable_const
+  rw [hY.measure_eq (p := fun y => S y ≤ t) hA]
+  -- `A` covered by `⋃ n, [c n, ∞)` with `c` antitone and `c n ∈ A` gives `ν A ≤ t`.
+  have key : ∀ c : ℕ → ℝ, Antitone c → (∀ n, c n ∈ A) → A ⊆ ⋃ n, Set.Ici (c n) →
+      ν A ≤ ENNReal.ofReal t := by
+    intro c hc hcA hcov
+    have hmono : Monotone fun n => Set.Ici (c n) := fun _ _ hmn =>
+      Set.Ici_subset_Ici.mpr (hc hmn)
+    refine (measure_mono hcov).trans
+      (le_of_tendsto' (tendsto_measure_iUnion_atTop hmono) fun n => ?_)
+    change ν (Set.Ici (c n)) ≤ _
+    rw [← ofReal_measureReal (measure_ne_top _ _)]
+    exact ENNReal.ofReal_le_ofReal (hcA n)
+  rcases Set.eq_empty_or_nonempty A with hE | ⟨y₀, hy₀⟩
+  · change ν A ≤ _
+    rw [hE]
+    simp
+  by_cases hb : BddBelow A
+  · by_cases hm : sInf A ∈ A
+    · exact key (fun _ => sInf A) antitone_const (fun _ => hm) fun y hy =>
+        Set.mem_iUnion.mpr ⟨0, csInf_le hb hy⟩
+    · refine key (fun n => sInf A + 1 / ((n : ℝ) + 1)) (fun m n hmn => ?_) (fun n => ?_)
+        fun y hy => ?_
+      · have : (m : ℝ) ≤ n := by exact_mod_cast hmn
+        simp only [add_le_add_iff_left]
+        exact one_div_le_one_div_of_le (by positivity) (by linarith)
+      · obtain ⟨z, hz, hzlt⟩ := exists_lt_of_csInf_lt ⟨y₀, hy₀⟩
+          (lt_add_of_pos_right (sInf A) (Nat.one_div_pos_of_nat (n := n)))
+        exact hup hz hzlt.le
+      · have hlt : sInf A < y := lt_of_le_of_ne (csInf_le hb hy) fun h => hm (h ▸ hy)
+        obtain ⟨n, hn⟩ := exists_nat_one_div_lt (sub_pos.mpr hlt)
+        exact Set.mem_iUnion.mpr ⟨n, by simp only [Set.mem_Ici]; linarith⟩
+  · rw [not_bddBelow_iff] at hb
+    refine key (fun n => -(n : ℝ)) (fun m n hmn => ?_) (fun n => ?_) fun y _ => ?_
+    · simp only [neg_le_neg_iff, Nat.cast_le]
+      exact hmn
+    · obtain ⟨z, hz, hzlt⟩ := hb (-(n : ℝ))
+      exact hup hz hzlt.le
+    · obtain ⟨n, hn⟩ := exists_nat_ge (-y)
+      exact Set.mem_iUnion.mpr ⟨n, by simp only [Set.mem_Ici]; linarith⟩
+
+open Finset in
+/-- **Validity of a discrete upper-tail p-value.** For nonnegative masses `q` on a finite set
+`s` and a statistic `T`, the upper-tail p-value `p x = ∑_{y ∈ s, T x ≤ T y} q y` satisfies
+`∑_{x ∈ s, p x ≤ t} q x ≤ t` for every `t ≥ 0`. -/
+theorem sum_upperTail_le {ι : Type*} (s : Finset ι) (q T : ι → ℝ) (hq : ∀ i ∈ s, 0 ≤ q i)
+    {t : ℝ} (ht : 0 ≤ t) :
+    ∑ x ∈ s with ∑ y ∈ s with T x ≤ T y, q y ≤ t, q x ≤ t := by
+  classical
+  set A := s.filter fun x => ∑ y ∈ s with T x ≤ T y, q y ≤ t with hA
+  rcases A.eq_empty_or_nonempty with h | h
+  · rw [h, sum_empty]
+    exact ht
+  obtain ⟨x₀, hx₀, hmin⟩ := A.exists_min_image T h
+  calc ∑ x ∈ A, q x ≤ ∑ y ∈ s with T x₀ ≤ T y, q y := by
+        refine sum_le_sum_of_subset_of_nonneg (fun x hx => ?_) fun y hy _ => ?_
+        · exact mem_filter.mpr ⟨(mem_filter.mp hx).1, hmin x hx⟩
+        · exact hq y (mem_filter.mp hy).1
+    _ ≤ t := (mem_filter.mp hx₀).2
+
+/-- Validity of the doubled-minimum two-sided p-value. If the count `X` has law `ν` under `μ`,
+then `P(2 · min(U(X), L(X)) ≤ s) ≤ s` for every `s ∈ [0, 1]`. -/
+theorem isValidPValue_twoSided {Ω : Type*} [MeasurableSpace Ω]
+    {μ : Measure Ω} {ν : Measure ℕ} [IsProbabilityMeasure ν]
+    {X : Ω → ℕ} (hX : HasLaw X ν μ) :
+    IsValidPValue μ
+      (fun ω => min 1 (2 * min (upperTailPValue ν X ω) (lowerTailPValue ν X ω))) := by
+  intro s hs
+  obtain ⟨hs0, hs1⟩ := Set.mem_Icc.mp hs
+  by_cases hs1' : s = 1
+  · subst hs1'
+    have hset : {ω | min 1 (2 * min (upperTailPValue ν X ω) (lowerTailPValue ν X ω)) ≤ 1} =
+        Set.univ := by
+      ext ω
+      simp only [Set.mem_ofPred_eq, Set.mem_univ, iff_true]
+      exact min_le_left 1 _
+    have hmu1 : μ Set.univ = 1 := by
+      have h := hX.measure_eq (p := fun _ => True) MeasurableSet.univ
+      rw [show ({x : ℕ | True}) = Set.univ from rfl, measure_univ,
+        show ({ω : Ω | True}) = Set.univ from rfl] at h
+      exact h
+    rw [hset, hmu1, ENNReal.ofReal_one]
+  · have hs_lt : s < 1 := lt_of_le_of_ne hs1 hs1'
+    have hmem : s / 2 ∈ Set.Icc (0 : ℝ) 1 := ⟨by linarith, by linarith⟩
+    have hU := isValidPValue_upperTailPValue hX (s / 2) hmem
+    have hL := isValidPValue_lowerTailPValue hX (s / 2) hmem
+    have hsub : {ω | min 1 (2 * min (upperTailPValue ν X ω) (lowerTailPValue ν X ω)) ≤ s} ⊆
+        {ω | upperTailPValue ν X ω ≤ s / 2} ∪ {ω | lowerTailPValue ν X ω ≤ s / 2} := by
+      intro ω h
+      simp only [Set.mem_ofPred_eq, Set.mem_union] at h ⊢
+      have hy : 2 * min (upperTailPValue ν X ω) (lowerTailPValue ν X ω) ≤ s := by
+        by_contra hc
+        have hc' : s < 2 * min (upperTailPValue ν X ω) (lowerTailPValue ν X ω) :=
+          lt_of_not_ge hc
+        have hlt : s < min 1 (2 * min (upperTailPValue ν X ω) (lowerTailPValue ν X ω)) :=
+          lt_min hs_lt hc'
+        exact absurd h (not_le_of_gt hlt)
+      have hmin : min (upperTailPValue ν X ω) (lowerTailPValue ν X ω) ≤ s / 2 := by
+        linarith
+      exact min_le_iff.mp hmin
+    calc μ {ω | min 1 (2 * min (upperTailPValue ν X ω) (lowerTailPValue ν X ω)) ≤ s}
+        ≤ μ ({ω | upperTailPValue ν X ω ≤ s / 2} ∪ {ω | lowerTailPValue ν X ω ≤ s / 2}) :=
+          measure_mono hsub
+      _ ≤ μ {ω | upperTailPValue ν X ω ≤ s / 2} + μ {ω | lowerTailPValue ν X ω ≤ s / 2} :=
+          measure_union_le _ _
+      _ ≤ ENNReal.ofReal (s / 2) + ENNReal.ofReal (s / 2) := add_le_add hU hL
+      _ = ENNReal.ofReal s := by
+          rw [← ENNReal.ofReal_add (by linarith) (by linarith)]
+          congr 1
+          ring
 
 end MathlibExt.Probability.Statistics.ExactTests

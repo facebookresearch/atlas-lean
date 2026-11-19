@@ -409,14 +409,15 @@ public theorem_wanted oddPart_factorial_congr_previous (e : ℕ) (he : 3 ≤ e) 
 
 /--
 There is a 2-adic integer `z` congruent to `od((2^(e-1))!)` modulo `2^e` for
-every `e≥1`.  The paper's limiting equality is represented by divisibility in
-`ℤ_[2]`; the explicit lower bound avoids a truncated exponent in the factorial.
+every `e≥3`.  The paper's limiting equality is represented by divisibility in
+`ℤ_[2]`.  The congruences start at `e=3`, as in Corollary 7: at `e=2` and `e=3`
+they would require `z ≡ 1 (mod 4)` and `z ≡ 3 (mod 8)`, which no `z` satisfies.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Corollary 8.
 -/
 public theorem_wanted exists_twoAdic_oddPart_factorial_limit :
-    ∃ z : ℤ_[2], ∀ e : ℕ, 1 ≤ e →
+    ∃ z : ℤ_[2], ∀ e : ℕ, 3 ≤ e →
       (2 : ℤ_[2]) ^ e ∣ z - (oddPart (Nat.factorial (2 ^ (e - 1))) : ℤ_[2])
 
 /--
@@ -476,7 +477,7 @@ Sequences 29 (2026), Article 26.3.1, Theorem 12.
 -/
 public theorem_wanted oddPart_factorial_difference_congr_product
     (z w : ℤ_[2])
-    (hz : ∀ e : ℕ, 1 ≤ e →
+    (hz : ∀ e : ℕ, 3 ≤ e →
       (2 : ℤ_[2]) ^ e ∣ z - (oddPart (Nat.factorial (2 ^ (e - 1))) : ℤ_[2]))
     (hw : ∀ e : ℕ, 3 ≤ e →
       (2 : ℤ_[2]) ^ (e - 1) ∣ w -
@@ -500,7 +501,7 @@ public theorem_wanted unstable_translation_eq_neg_product
     (K z w : ℤ_[2])
     (hK : ∀ d e : ℕ, d < e →
       (2 : ℤ_[2]) ^ d ∣ (unstableBits e d : ℤ_[2]) + K - (stableBits (e + 1) d : ℤ_[2]))
-    (hz : ∀ e : ℕ, 1 ≤ e →
+    (hz : ∀ e : ℕ, 3 ≤ e →
       (2 : ℤ_[2]) ^ e ∣ z - (oddPart (Nat.factorial (2 ^ (e - 1))) : ℤ_[2]))
     (hw : ∀ e : ℕ, 3 ≤ e →
       (2 : ℤ_[2]) ^ (e - 1) ∣ w -

@@ -14,7 +14,7 @@ import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Analysis.Normed.Ring.Lemmas
 import Mathlib.Computability.Reduce
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.LinearCombination
 
 @[expose] public section
@@ -446,6 +446,7 @@ It follows from `young_reverse_multiple_carry_path_iff_general`; the hypotheses 
 (and `hn`, which only serves to state them) are unused and keep the source's shape.
 Proves `Wanted` entry `young_reverse_multiple_carry_path_iff`.
 -/
+@[nolint unusedArguments]
 theorem young_reverse_multiple_carry_path_iff
     (g k n : ℕ) (hgk : 2 ≤ k) (hkg : k < g) (hn : 0 < n)
     (a : Fin n → ℕ) (hdigit : ∀ i, a i < g)

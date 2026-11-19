@@ -101,8 +101,33 @@ example (μ₁ μ₂ : Measure (Fin 2 → ℝ))
   have hEq := Measure.eq_of_forall_Ioc_eq 2 μ₁ μ₂ h
   rw [hEq]
 
+/-- The moment-determinacy theorem restates with the exact public signature. -/
+example {d : ℕ} {E : Set (Fin d → ℝ)} (hE : IsCompact E)
+    (μ ν : Measure (Fin d → ℝ)) [IsFiniteMeasure μ] [IsFiniteMeasure ν]
+    (hμ : μ Eᶜ = 0) (hν : ν Eᶜ = 0)
+    (h : ∀ β : Fin d → ℕ,
+      ∫ x, ∏ i, x i ^ β i ∂μ = ∫ x, ∏ i, x i ^ β i ∂ν) :
+    μ = ν :=
+  Measure.eq_of_forall_integral_monomial_eq hE μ ν hμ hν h
+
+/-- Mixed moments distinguish two two-point measures on `ℝ²`: for
+`δ₀₀ + δ_{(1/2, 1/2)}` the `x₀ x₁` moment is `1 / 4`, while for
+`δ_{(0, 1/2)} + δ_{(1/2, 0)}` it is `0`. -/
+example :
+    (∫ x, ∏ i, x i ^ ((![1, 1] : Fin 2 → ℕ) i)
+      ∂(Measure.dirac (![(0 : ℝ), 0] : Fin 2 → ℝ) +
+        Measure.dirac (![(1 / 2 : ℝ), 1 / 2] : Fin 2 → ℝ))) = 1 / 4 ∧
+    (∫ x, ∏ i, x i ^ ((![1, 1] : Fin 2 → ℕ) i)
+      ∂(Measure.dirac (![(0 : ℝ), 1 / 2] : Fin 2 → ℝ) +
+        Measure.dirac (![(1 / 2 : ℝ), 0] : Fin 2 → ℝ))) = 0 := by
+  constructor <;>
+    rw [integral_add_measure (integrable_dirac enorm_lt_top) (integrable_dirac enorm_lt_top),
+      integral_dirac, integral_dirac] <;>
+    norm_num [Fin.prod_univ_two]
+
 #print axioms MeasureTheory.Measure.ext_of_Iic_pi
 #print axioms MeasureTheory.Measure.eq_of_forall_Ioc_eq
 #print axioms MeasureTheory.Measure.eq_of_forall_rectangleValue_eq
+#print axioms MeasureTheory.Measure.eq_of_forall_integral_monomial_eq
 
 end MathlibExtTest.MeasureTheory.Measure.UniquenessOnRd

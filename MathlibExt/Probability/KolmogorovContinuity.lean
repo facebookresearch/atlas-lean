@@ -190,15 +190,6 @@ private lemma approxPt_eq_of_dyadic {q : ℝ} {a : ℤ} {n : ℕ} (hq : q = a / 
 
 /-! ### Telescoping -/
 
-/-- Telescoping sum over an interval of naturals. -/
-private lemma sum_Ico_sub (g : ℕ → ℝ) {m N : ℕ} (h : m ≤ N) :
-    ∑ k ∈ Finset.Ico m N, (g (k + 1) - g k) = g N - g m := by
-  induction N, h using Nat.le_induction with
-  | base => simp
-  | succ n hn ih =>
-      rw [Finset.sum_Ico_succ_top hn, ih]
-      ring
-
 /-- One grid step at level `m` from `a / 2^m` to `b / 2^m` can be
 decomposed into `b - a` adjacent steps. -/
 private lemma gridPath_bound {f : ℝ → ℝ} {γ D : ℝ}
@@ -211,7 +202,7 @@ private lemma gridPath_bound {f : ℝ → ℝ} {γ D : ℝ}
   have htel : f ((b : ℝ) / (2 : ℝ) ^ m) - f ((a : ℝ) / (2 : ℝ) ^ m)
       = ∑ k ∈ Finset.Ico a b,
         (f (((k + 1 : ℕ) : ℝ) / (2 : ℝ) ^ m) - f ((k : ℝ) / (2 : ℝ) ^ m)) := by
-    have h := sum_Ico_sub (fun k => f ((k : ℝ) / (2 : ℝ) ^ m)) hab
+    have h := Finset.sum_Ico_sub (fun k => f ((k : ℝ) / (2 : ℝ) ^ m)) hab
     rw [← h]
   rw [htel]
   calc |∑ k ∈ Finset.Ico a b,
@@ -316,7 +307,7 @@ private lemma tail_bound {f : ℝ → ℝ} {γ D : ℝ} (hγ : 0 < γ) (hD : 0 <
   have hA : approxPt q N = q := approxPt_eq_of_dyadic hqeq hNn
   have htel : f q - f (approxPt q m)
       = ∑ k ∈ Finset.Ico m N, (f (approxPt q (k + 1)) - f (approxPt q k)) := by
-    have h := sum_Ico_sub (fun k => f (approxPt q k)) hNm
+    have h := Finset.sum_Ico_sub (fun k => f (approxPt q k)) hNm
     rw [hA] at h
     exact h.symm
   have hρ0 : (0:ℝ) ≤ (2 : ℝ) ^ (-γ) := (Real.rpow_pos_of_pos (by norm_num) _).le
@@ -854,9 +845,13 @@ theorem kolmogorov_ae_holder_on_dyadics {Ω : Type*} [MeasurableSpace Ω] {μ : 
   · intro q r hq hr
     exact dyadic_holder_of_increment_bound (f := fun t => X t ω) hγ0 hDpos hinc hq hr
 
-/-- **Kolmogorov continuity theorem**, in the original modification formulation.
-The direct dyadic bound permits choosing `Y = X`. See the module docstring for
-the necessary moment-integrability correction to the archived v1 statement. -/
+/-- **Kolmogorov continuity theorem**, dyadic form. If
+`E |X s - X t|^β ≤ K |s - t|^{1 + α}` for all `s, t`, with integrable moments, then for every
+`0 < γ < α / β` there is a modification `Y` of `X` (here `Y = X`) that is almost surely
+`γ`-Hölder on the dyadic rationals of `[0, 1]`. The extension to all times is
+`MathlibExt.Probability.KolmogorovContinuousModification.exists_continuous_modification`. See the
+module docstring for the necessary moment-integrability correction to the archived v1
+statement. -/
 theorem kolmogorov_continuity_theorem {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
     [IsProbabilityMeasure μ] {X : ℝ → Ω → ℝ} {α β K : ℝ} (_hα : 0 < α) (hβ : 0 < β)
     (hK : 0 ≤ K)

@@ -12,7 +12,7 @@ public import MathlibExt.GroupTheory.Permutation.Betweenness
 public import MathlibExt.GroupTheory.Permutation.HighlyHomogeneous
 public import MathlibExt.GroupTheory.Permutation.PointwiseTopology
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.GroupTheory.GroupAction.SubMulAction.Combination
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.Tactic.FieldSimp

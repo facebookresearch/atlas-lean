@@ -1,0 +1,3 @@
+# The zig-zag expander family
+
+Let $H$ be a [rotation map](rotation-map.md) on $K \times L$ and $e : (L \times L) \times (L \times L) \to K$ a bijection. The zig-zag expander family is the sequence of rotation maps defined by $G_0 = H^2$ and $G_{t+1} = (G_t^2)^e \circledcirc H$, where $(G_t^2)^e$ is the [square](square.md) $G_t^2$ with its labels [renamed](relabel.md) by $e$ and $\circledcirc$ is the [zig-zag product](zigzag.md) (O. Reingold, S. Vadhan and A. Wigderson, Ann. of Math. 155 (2002), Section 1.2, $G_1 = H^2$ and $G_{i+1} = G_i^2 \circledcirc H$, indexed here from $0$). Every $G_t$ has labels $L \times L$, so it is $\lvert L\rvert^2$-regular.

@@ -51,7 +51,15 @@ Cost model: `nwScore` and `swCellScore` are exponential-time *specifications*, n
 memoized dynamic-programming tables: each unfolds three overlapping subproblems without
 sharing, so naive evaluation follows exponentially many paths. They are the right
 objects for proving the recurrences and the optimality / suffix-max characterizations;
-a tabulated `O(|xs| * |ys|)` implementation proved equal to them is future work.
+a tabulated `O((|xs| + 1) * (|ys| + 1))` implementation proved equal to them for every
+`σ` and `gap` is future work, but two `nwScore` scorings already have tabulated
+counterparts for a lawful `BEq` (`AlignmentBridges.lean`): the theorem
+`editDistance_distance_eq_neg_nwScore` equates the tabulated `editDistance` distance with
+`-nwScore` at substitution score `if a == b then 0 else -1` and gap `-1`, and
+`longestCommonSubsequence_length_eq_nwScore` equates the tabulated
+`longestCommonSubsequence` length with `nwScore` at substitution score
+`if a == b then 1 else 0` and gap `0` (costs: `editDistance_time`,
+`longestCommonSubsequence_time`).
 -/
 
 @[expose] public section

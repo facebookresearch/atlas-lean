@@ -61,14 +61,17 @@ is tight (`CSLibExtTest.Crypto.Framework.LazySamplingTests`). The proof is an "i
 bad" induction on the lazy runs (`lazy_switching`): with `m` unused values left, a fresh query is
 answered alike by both oracles unless the random function hits one of the `N - m` used values.
 
-**Coexistence.** Wave 3 unifies this file with the monadic (PPT) adversaries developed in
-parallel; nothing here depends on them. `Cslib.Crypto.PRF` samples its oracles eagerly and is not
-migrated. The lazy random oracle of the open random-oracle pull request (its `step`, `run`,
-`Table`, `Extends` and `runState`) is `rfStep`, `lazyRF`, `Table`, `Extends` and `runState` here;
-after both merge, one copy is deleted. The random-tape lemmas of the open CCA and modes pull
-requests concern stateless oracles with fresh randomness per query (`runState_stateless_map_fst`
-relates those to `runState`), not consistent random functions, so they are not instances of
-`runState_lazyStep_map_fst`.
+**Coexistence.** Wave 3 unifies this file with the monadic adversaries of
+`CSLibExt.Crypto.Framework.Monadic`, whose cost bounds (`OracleBoundedWith`, `SampleBoundedWith`)
+count oracle queries and sampling steps, not running time (a polynomial-cost class built on them is
+future work); nothing here depends on them.
+`Cslib.Crypto.PRF` samples its oracles eagerly and is not migrated. The random-oracle model
+(`CSLibExt.Crypto.Framework.RandomOracle`) uses `rfStep`, `lazyRF`, `Table`, `Extends` and
+`runState` here as its lazy random oracle, together with the lemmas `runState_bind`,
+`rfStep_of_none`, `mem_support_rfStep` and `lazyRF_query_query`. The random-tape lemmas of the open
+CCA and modes pull requests concern stateless oracles with fresh randomness per query
+(`runState_stateless_map_fst` relates those to `runState`), not consistent random functions, so
+they are not instances of `runState_lazyStep_map_fst`.
 
 ## References
 
@@ -201,9 +204,8 @@ def Extends (T T' : Table X Y) : Prop := ∀ x y, T x = some y → T' x = some y
 
 /-- Run an oracle computation against a **stateful randomized oracle** `O`, which answers the
 query `x` in state `s` by sampling an answer and a new state from `O s x`. This is oracle access
-to a stateful algorithm, e.g. a lazily sampled random oracle (Katz and Lindell, Section 5.5.1).
-The open random-oracle pull request defines the same function as `Cslib.Crypto.Framework.runState`;
-Wave 3 keeps one of the two. -/
+to a stateful algorithm, e.g. a lazily sampled random oracle (Katz and Lindell, Section 5.5.1;
+`CSLibExt.Crypto.Framework.RandomOracle`). -/
 noncomputable def runState {σ : Type*} {α : Type w} (O : σ → X → PMF (Y × σ)) :
     OracleComp X Y α → σ → PMF (α × σ)
   | .pure a, s => PMF.pure (a, s)
@@ -220,6 +222,21 @@ theorem runState_stateless_map_fst {σ : Type*} {α : Type w} (O : X → PMF Y) 
     congr 1
     funext y
     exact runState_stateless_map_fst O (k y) s
+
+/-- `runState` turns sequential composition into `PMF.bind`, threading the state. -/
+theorem runState_bind {σ : Type*} {α β : Type*} (O : σ → X → PMF (Y × σ))
+    (g : α → OracleComp X Y β) :
+    ∀ (c : OracleComp X Y α) (s : σ), runState O (PFunctor.FreeM.bind c g) s =
+      (runState O c s).bind fun p => runState O (g p.1) p.2
+  | .pure _, _ => by
+    change runState O (g _) _ = _
+    rw [runState, PMF.pure_bind]
+  | .liftBind x k, s => by
+    change (O s x).bind (fun p => runState O (PFunctor.FreeM.bind (k p.1) g) p.2) = _
+    rw [runState, PMF.bind_bind]
+    congr 1
+    funext p
+    exact runState_bind O g (k p.1) p.2
 
 variable [DecidableEq X]
 
@@ -414,6 +431,47 @@ omit [Fintype X] in
 theorem rfStep_of_some {T : Table X Y} {x : X} {y : Y} (hx : T x = some y) :
     rfStep T x = PMF.pure (y, T) :=
   lazyStep_of_some _ hx
+
+omit [Fintype X] in
+/-- A fresh query to the lazy random function samples a uniform answer and records it. -/
+theorem rfStep_of_none {T : Table X Y} {x : X} (hx : T x = none) :
+    rfStep T x = (uniformOfFintype Y).map fun y => (y, Function.update T x (some y)) :=
+  lazyStep_of_none _ hx
+
+omit [Fintype X] in
+/-- Every answer of the lazy random function is recorded in the new table, which extends the old
+one. -/
+theorem mem_support_rfStep {T : Table X Y} {x : X} {p : Y × Table X Y}
+    (hp : p ∈ (rfStep T x).support) : p.2 x = some p.1 ∧ Extends T p.2 := by
+  cases h : T x with
+  | some y =>
+    rw [rfStep_of_some h, PMF.support_pure, Set.mem_singleton_iff] at hp
+    subst hp
+    exact ⟨h, fun _ _ h => h⟩
+  | none =>
+    rw [rfStep_of_none h, PMF.support_map, Set.mem_image] at hp
+    obtain ⟨y, -, rfl⟩ := hp
+    refine ⟨Function.update_self .., fun z w hz => ?_⟩
+    change Function.update T x (some y) z = some w
+    rw [Function.update_of_ne]
+    · exact hz
+    · rintro rfl
+      rw [h] at hz
+      cases hz
+
+omit [Fintype X] in
+/-- **Consistency of repeated queries** (Katz and Lindell, Section 5.5.1): querying `x` twice is
+the same as querying it once and reusing the answer. -/
+theorem lazyRF_query_query {α : Type w} (x : X) (k : Y → Y → OracleComp X Y α) (T : Table X Y) :
+    lazyRF (OracleComp.query x fun y₁ => OracleComp.query x fun y₂ => k y₁ y₂) T =
+      lazyRF (OracleComp.query x fun y => k y y) T := by
+  simp only [lazyRF, runState]
+  cases h : T x with
+  | some y =>
+    simp only [rfStep_of_some h, PMF.pure_bind]
+  | none =>
+    simp only [rfStep_of_none h, PMF.bind_map, Function.comp_def,
+      rfStep_of_some (Function.update_self x (some _) T), PMF.pure_bind]
 
 omit [Fintype X] [Fintype Y] [Nonempty Y] in
 private theorem consistent_update {T : Table X Y} {x : X} (hx : T x = none) {f : X → Y}

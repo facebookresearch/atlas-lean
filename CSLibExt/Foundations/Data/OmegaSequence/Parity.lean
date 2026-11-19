@@ -12,6 +12,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Cslib.Foundations.Data.OmegaSequence.Init
+public import Cslib.Foundations.Data.OmegaSequence.InfOcc
 public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Order.Filter.Cofinite
@@ -47,6 +48,12 @@ every value occurring infinitely often is at most `n`. Larger values may still o
 often; for bounded sequences they eventually stop (`IsMaxInfOcc.eventually_le`). -/
 def IsMaxInfOcc (ps : ωSequence ℕ) (n : ℕ) : Prop :=
   (∃ᶠ k in atTop, ps k = n) ∧ ∀ m, (∃ᶠ k in atTop, ps k = m) → m ≤ n
+
+/-- `IsMaxInfOcc ps n` says that `n` is the greatest element of upstream
+`infOcc ps`, the set of values occurring infinitely often. -/
+theorem isMaxInfOcc_iff_isGreatest_infOcc {ps : ωSequence ℕ} {n : ℕ} :
+    IsMaxInfOcc ps n ↔ IsGreatest (infOcc ps) n :=
+  Iff.rfl
 
 /-- The max-parity condition, won by the even player: the largest priority occurring infinitely
 often exists and is even. -/

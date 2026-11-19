@@ -10,6 +10,10 @@ Adapted from `anthropics/fermats-last-theorem` at commit
 Sources in `P2M/Sol/`, with corresponding `Thm_` wrappers in `Theorems/`:
 https://github.com/anthropics/fermats-last-theorem/blob/6e837e75355538c7f80bab5b956861e86c4eacc2/P2M/Sol/S_MeasureTheory_lintegral_enorm_mul_eq_and_integral_mul_eq_of_forall_lintegral_comp_smul_eq_one.lean
 https://github.com/anthropics/fermats-last-theorem/blob/6e837e75355538c7f80bab5b956861e86c4eacc2/P2M/Sol/S_AutomorphicForm_integral_mul_eq_integral_mul_of_forall_integral_subgroup_mul_eq_one.lean
+The a.e.-measurable, a.e.-normalized extension also follows these source units:
+https://github.com/anthropics/fermats-last-theorem/blob/6e837e75355538c7f80bab5b956861e86c4eacc2/P2M/Sol/S_MeasureTheory_lintegral_mul_eq_lintegral_mul_of_forall_lintegral_subgroup_mul_eq_one.lean
+and
+https://github.com/anthropics/fermats-last-theorem/blob/6e837e75355538c7f80bab5b956861e86c4eacc2/P2M/Sol/S_MeasureTheory_lintegral_mul_eq_lintegral_mul_of_forall_mul_eq_of_ae_lintegral_comp_mul_eq_one.lean
 The extraction framework is removed. The nonnegative integral argument allows
 ENNReal-valued weights; integrability and integral equality are separate APIs.
 Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
@@ -57,6 +61,70 @@ variable {A X : Type*} [Group A] [MulAction A X]
   (τ : Measure A) [SFinite τ] [τ.IsInvInvariant]
   (μ : Measure X) [SFinite μ]
 
+/-- Nonnegative integrals of an a.e.-measurable invariant function agree for
+weights normalized almost everywhere on its support. Both the weights and the
+common integral may take the value infinity. -/
+theorem lintegral_mul_eq_of_ae_normalized_smul
+    (hact : Measurable fun p : A × X => p.1 • p.2)
+    (hμ : ∀ a : A, MeasurePreserving (fun x : X => a • x) μ μ)
+    {f w₁ w₂ : X → ℝ≥0∞} (hf : AEMeasurable f μ)
+    (hfinv : ∀ (a : A) (x : X), f (a • x) = f x)
+    (hw₁ : Measurable w₁) (hw₂ : Measurable w₂)
+    (h₁ : ∀ᵐ x ∂μ, f x ≠ 0 → ∫⁻ a, w₁ (a • x) ∂τ = 1)
+    (h₂ : ∀ᵐ x ∂μ, f x ≠ 0 → ∫⁻ a, w₂ (a • x) ∂τ = 1) :
+    ∫⁻ x, f x * w₁ x ∂μ = ∫⁻ x, f x * w₂ x ∂μ := by
+  have hactx (x : X) : Measurable fun a : A => a • x :=
+    hact.comp (measurable_id.prodMk measurable_const)
+  have hacta (a : A) : Measurable fun x : X => a • x :=
+    hact.comp (measurable_const.prodMk measurable_id)
+  have hF : AEMeasurable (fun p : X × A =>
+      f p.1 * w₁ p.1 * w₂ (p.2 • p.1)) (μ.prod τ) :=
+    (hf.comp_fst.mul (hw₁.comp measurable_fst).aemeasurable).mul
+      (hw₂.comp (hact.comp (measurable_snd.prodMk measurable_fst))).aemeasurable
+  have hF' : AEMeasurable (fun p : A × X =>
+      f p.2 * w₁ (p.1⁻¹ • p.2) * w₂ p.2) (τ.prod μ) :=
+    (hf.comp_snd.mul
+      (hw₁.comp (hact.comp (measurable_fst.inv.prodMk measurable_snd))).aemeasurable).mul
+      (hw₂.comp measurable_snd).aemeasurable
+  calc
+    ∫⁻ x, f x * w₁ x ∂μ =
+        ∫⁻ x, ∫⁻ a, f x * w₁ x * w₂ (a • x) ∂τ ∂μ := by
+      apply lintegral_congr_ae
+      filter_upwards [h₂] with x hx
+      have hm : Measurable fun a : A => w₂ (a • x) := hw₂.comp (hactx x)
+      rw [lintegral_const_mul _ hm]
+      by_cases h0 : f x = 0
+      · simp [h0]
+      · rw [hx h0, mul_one]
+    _ = ∫⁻ a, ∫⁻ x, f x * w₁ x * w₂ (a • x) ∂μ ∂τ :=
+      lintegral_lintegral_swap hF
+    _ = ∫⁻ a, ∫⁻ x, f x * w₁ (a⁻¹ • x) * w₂ x ∂μ ∂τ := by
+      refine lintegral_congr fun a => ?_
+      have hm : AEMeasurable (fun x : X => f x * w₁ (a⁻¹ • x) * w₂ x) μ :=
+        (hf.mul (hw₁.comp (hacta a⁻¹)).aemeasurable).mul hw₂.aemeasurable
+      have heq := lintegral_map' (μ := μ) (g := fun x : X => a • x)
+        (f := fun x => f x * w₁ (a⁻¹ • x) * w₂ x)
+        (by simpa only [(hμ a).map_eq] using hm) (hμ a).measurable.aemeasurable
+      rw [(hμ a).map_eq] at heq
+      rw [heq]
+      refine lintegral_congr fun x => ?_
+      simp only [hfinv, inv_smul_smul]
+    _ = ∫⁻ x, ∫⁻ a, f x * w₁ (a⁻¹ • x) * w₂ x ∂τ ∂μ :=
+      lintegral_lintegral_swap hF'
+    _ = ∫⁻ x, f x * w₂ x * ∫⁻ a, w₁ (a • x) ∂τ ∂μ := by
+      refine lintegral_congr fun x => ?_
+      have hm : Measurable fun a : A => w₁ (a⁻¹ • x) :=
+        hw₁.comp ((hactx x).comp measurable_inv)
+      simp_rw [mul_right_comm (f x)]
+      rw [lintegral_const_mul _ hm]
+      rw [lintegral_inv_eq_self (μ := τ) (fun a : A => w₁ (a • x))]
+    _ = ∫⁻ x, f x * w₂ x ∂μ := by
+      apply lintegral_congr_ae
+      filter_upwards [h₁] with x hx
+      by_cases h0 : f x = 0
+      · simp [h0]
+      · rw [hx h0, mul_one]
+
 /-- Nonnegative integrals of an invariant function agree for orbit-normalized
 weights. Normalization is needed only where the function is nonzero, and the
 common integral is allowed to be infinite. -/
@@ -68,52 +136,9 @@ theorem lintegral_mul_eq_of_normalized_smul
     (hw₁ : Measurable w₁) (hw₂ : Measurable w₂)
     (h₁ : ∀ x, f x ≠ 0 → ∫⁻ a, w₁ (a • x) ∂τ = 1)
     (h₂ : ∀ x, f x ≠ 0 → ∫⁻ a, w₂ (a • x) ∂τ = 1) :
-    ∫⁻ x, f x * w₁ x ∂μ = ∫⁻ x, f x * w₂ x ∂μ := by
-  have hactx (x : X) : Measurable fun a : A => a • x :=
-    hact.comp (measurable_id.prodMk measurable_const)
-  have hacta (a : A) : Measurable fun x : X => a • x :=
-    hact.comp (measurable_const.prodMk measurable_id)
-  have hF : Measurable fun p : X × A =>
-      f p.1 * w₁ p.1 * w₂ (p.2 • p.1) :=
-    ((hf.comp measurable_fst).mul (hw₁.comp measurable_fst)).mul
-      (hw₂.comp (hact.comp (measurable_snd.prodMk measurable_fst)))
-  have hF' : Measurable fun p : A × X =>
-      f p.2 * w₁ (p.1⁻¹ • p.2) * w₂ p.2 :=
-    ((hf.comp measurable_snd).mul
-      (hw₁.comp (hact.comp (measurable_fst.inv.prodMk measurable_snd)))).mul
-      (hw₂.comp measurable_snd)
-  calc
-    ∫⁻ x, f x * w₁ x ∂μ =
-        ∫⁻ x, ∫⁻ a, f x * w₁ x * w₂ (a • x) ∂τ ∂μ := by
-      refine lintegral_congr fun x => ?_
-      have hm : Measurable fun a : A => w₂ (a • x) := hw₂.comp (hactx x)
-      rw [lintegral_const_mul _ hm]
-      by_cases hx : f x = 0
-      · simp [hx]
-      · rw [h₂ x hx, mul_one]
-    _ = ∫⁻ a, ∫⁻ x, f x * w₁ x * w₂ (a • x) ∂μ ∂τ :=
-      lintegral_lintegral_swap hF.aemeasurable
-    _ = ∫⁻ a, ∫⁻ x, f x * w₁ (a⁻¹ • x) * w₂ x ∂μ ∂τ := by
-      refine lintegral_congr fun a => ?_
-      have hm : Measurable fun x : X => f x * w₁ (a⁻¹ • x) * w₂ x :=
-        (hf.mul (hw₁.comp (hacta a⁻¹))).mul hw₂
-      rw [← (hμ a).lintegral_comp hm]
-      refine lintegral_congr fun x => ?_
-      simp only [hfinv, inv_smul_smul]
-    _ = ∫⁻ x, ∫⁻ a, f x * w₁ (a⁻¹ • x) * w₂ x ∂τ ∂μ :=
-      lintegral_lintegral_swap hF'.aemeasurable
-    _ = ∫⁻ x, f x * w₂ x * ∫⁻ a, w₁ (a • x) ∂τ ∂μ := by
-      refine lintegral_congr fun x => ?_
-      have hm : Measurable fun a : A => w₁ (a⁻¹ • x) :=
-        hw₁.comp ((hactx x).comp measurable_inv)
-      simp_rw [mul_right_comm (f x)]
-      rw [lintegral_const_mul _ hm]
-      rw [lintegral_inv_eq_self (μ := τ) (fun a : A => w₁ (a • x))]
-    _ = ∫⁻ x, f x * w₂ x ∂μ := by
-      refine lintegral_congr fun x => ?_
-      by_cases hx : f x = 0
-      · simp [hx]
-      · rw [h₁ x hx, mul_one]
+    ∫⁻ x, f x * w₁ x ∂μ = ∫⁻ x, f x * w₂ x ∂μ :=
+  lintegral_mul_eq_of_ae_normalized_smul τ μ hact hμ hf.aemeasurable
+    hfinv hw₁ hw₂ (ae_of_all _ h₁) (ae_of_all _ h₂)
 
 variable {f : X → ℂ} {w₁ w₂ : X → ℝ}
 
