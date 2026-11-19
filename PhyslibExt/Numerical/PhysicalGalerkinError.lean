@@ -52,8 +52,10 @@ discretization error.
   or `√(L / 3)` (`L²`).
 
 Signs: `r > 0` means the approximate coefficient is too small (`c̃ < c`). For `Q > 0` the
-quadratic load points toward increasing `x` and the midpoint coefficient is too large; `Q` may
-have either sign, and the zero load is treated directly, without the inverse amplitude map.
+quadratic load points toward increasing `x`. The midpoint coefficient differs from the exact-load
+one by `β / 384`, which has the sign of `Q`: it is too large for `Q > 0` and too small for
+`Q < 0`. `Q` may have either sign, and the zero load is treated directly, without the inverse
+amplitude map.
 Derivatives follow the convention of the finite element module (`deriv` takes junk values at the
 mesh nodes, which no integral sees).
 
@@ -775,7 +777,8 @@ lemma quadMidpointCoeff_eq {EA L : ℝ} (hEA : EA ≠ 0) (hL : L ≠ 0) (Q : ℝ
   field_simp
   ring
 
-/-- The midpoint coefficient is too large by `β / 384`; the physical coefficient error is
+/-- The midpoint coefficient differs from the exact-load coefficient by `β / 384` (midpoint
+minus exact; for `EA > 0` it has the sign of `Q`); the physical coefficient error is
 `|β| / 384`. -/
 lemma quadMidpointCoeff_sub_quadCoeff {EA L : ℝ} (hEA : EA ≠ 0) (hL : 0 < L) (Q : ℝ) :
     quadMidpointCoeff EA L Q - quadCoeff EA L Q = quadAmplitude EA L Q / 384 ∧
@@ -1109,8 +1112,8 @@ lemma sqrt_sq_quad_error_le {EA L : ℝ} (hEA : 0 < EA) (hL : 0 < L) (Q c : ℝ)
 
 /-- Nodal exactness of the exact-load coefficient removes neither the quadrature error nor the
 off-node error: for `Q ≠ 0` the exact-load coefficient equals `u (L / 2)`, the midpoint
-coefficient does not, and at `x = L / 4` the exact-load reconstruction misses `u` by
-`7 β / 3072 ≠ 0`. -/
+coefficient does not, and at `x = L / 4` the exact-load reconstruction differs from `u` by
+`7 β / 3072 ≠ 0` (`u` minus the reconstruction). -/
 lemma nodal_exactness_not_enough {EA L Q : ℝ} (hEA : 0 < EA) (hL : 0 < L) (hQ : Q ≠ 0) :
     quadCoeff EA L Q = quadDisplacement EA L Q (L / 2) ∧
       quadMidpointCoeff EA L Q ≠ quadDisplacement EA L Q (L / 2) ∧
