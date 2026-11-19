@@ -12,6 +12,7 @@ import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import Mathlib.Tactic.NormNum
 
 /-!
 # Arrhenius equilibrium checks
@@ -33,6 +34,7 @@ No new definitions or results are introduced here.
 
 - A. Unit-parameter equilibrium
 - B. Semenov critical-ratio folds
+- C. Frank-Kamenetskii criticality and box exit
 
 ## iv. References
 
@@ -438,3 +440,93 @@ example : deriv (fun s : ℝ =>
     ((5 + Real.sqrt (5 ^ 2 - 4 * 5 * 1)) / 2) ≠ 0 :=
   (Chemistry.CombustionAcoustics.critRatio_two_folds_nondegenerate one_pos
     (by norm_num)).2
+
+/-! ## C. Frank-Kamenetskii criticality and box exit -/
+
+section FrankKamenetskii
+
+open Chemistry.CombustionAcoustics
+
+/-- Fixture `δ = 1`: supercritical with growth slope `1 + log 1 = 1`, and a solution from
+`θ₀ = 0` leaves the box `[0, 10]` through `10` by time `10`. -/
+example :
+    Real.exp (-1) < 1 ∧ 1 + Real.log 1 = (1 : ℝ) ∧
+      ∃ τ : ℝ, 0 < τ ∧ τ ≤ 10 ∧
+        ∃ θ : ℝ → ℝ, θ 0 = 0 ∧ θ τ = 10 ∧ (∀ s ∈ Set.Icc 0 τ, θ s ∈ Set.Icc 0 10) ∧
+          ∀ s ∈ Set.Icc 0 τ, HasDerivWithinAt θ (fkField 1 (θ s)) (Set.Icc 0 τ) s := by
+  have hexp1 : Real.exp (-1) < 1 := by
+    rw [Real.exp_lt_one_iff]
+    norm_num
+  refine ⟨hexp1, ?_, ?_⟩
+  · rw [Real.log_one]
+    norm_num
+  · obtain ⟨τ, hτpos, hτle, θ, h0, hτ, hbox, hode⟩ :=
+      fk_exists_box_exit (δ := 1) (a := 0) (b := 10) (θ₀ := 0) hexp1 (le_refl 0) (by norm_num)
+    refine ⟨τ, hτpos, ?_, θ, h0, hτ, hbox, hode⟩
+    rw [Real.log_one] at hτle
+    norm_num at hτle
+    exact hτle
+
+/-- Contrast, not a transfer: with `G = exp 1`, `H = B = Ta = 1` the exponential approximation
+at ambient has `δ = G * B * exp (-B / Ta) / (H * Ta ^ 2) = 1`, which has no equilibrium, but the
+exact Arrhenius rate has an equilibrium in `(1, 1 + exp 1)`. -/
+example :
+    Real.exp 1 * 1 * Real.exp (-1 / 1) / (1 * 1 ^ 2) = 1 ∧
+      (¬ ∃ θ : ℝ, 0 ≤ θ ∧ fkField 1 θ = 0) ∧
+      ∃ T ∈ Set.Ioo (1 : ℝ) (1 + Real.exp 1), arrheniusRate (Real.exp 1) 1 1 1 T = 0 := by
+  refine ⟨?_, ?_, ?_⟩
+  · have h : Real.exp 1 * Real.exp (-1) = 1 := by
+      have e : (1 : ℝ) + -1 = 0 := by norm_num
+      calc Real.exp 1 * Real.exp (-1) = Real.exp ((1 : ℝ) + -1) := (Real.exp_add _ _).symm
+        _ = Real.exp 0 := by rw [e]
+        _ = 1 := Real.exp_zero
+    have h1 : (-1 : ℝ) / 1 = -1 := by norm_num
+    have h2 : (1 : ℝ) * 1 ^ 2 = 1 := by norm_num
+    rw [h1, h2, div_one, mul_one]
+    exact h
+  · intro hex
+    have hle := (exists_nonneg_fkField_eq_zero_iff (zero_lt_one : (0 : ℝ) < 1)).mp hex
+    have hlt : Real.exp (-1) < 1 := by
+      rw [Real.exp_lt_one_iff]
+      norm_num
+    linarith
+  · have h := arrhenius_equilibrium_exists (G := Real.exp 1) (H := 1) (B := 1) (Ta := 1)
+      (Real.exp_pos 1) zero_lt_one zero_lt_one zero_lt_one
+    obtain ⟨T, hTmem, hTeq⟩ := h
+    refine ⟨T, ?_, hTeq⟩
+    simpa using hTmem
+
+/-- Subcritical `δ = exp (-2) < exp (-1)`: the criterion gives a nonnegative equilibrium. -/
+example : ∃ θ : ℝ, 0 ≤ θ ∧ fkField (Real.exp (-2)) θ = 0 :=
+  (exists_nonneg_fkField_eq_zero_iff (Real.exp_pos _)).2
+    (Real.exp_le_exp.2 (by norm_num))
+
+/-- Critical `δ = exp (-1)`: the only equilibrium is `θ = 1`. -/
+example (θ : ℝ) (h : fkField (Real.exp (-1)) θ = 0) : θ = 1 :=
+  fkField_critical_tangency.2.2 θ h
+
+/-- Supercritical `δ = 1`: the field is at least `1`, and the slope `1 + log 1` is positive. -/
+example (θ : ℝ) : 1 ≤ fkField 1 θ ∧ 0 < 1 + Real.log 1 := by
+  have h := one_add_log_le_fkField one_pos θ
+  rw [Real.log_one, add_zero] at h
+  exact ⟨h, (one_add_log_pos_iff one_pos).2 (by
+    have := Real.exp_lt_exp.2 (show (-1 : ℝ) < 0 by norm_num)
+    rwa [Real.exp_zero] at this)⟩
+
+/-- Growth and time-in-box bounds for `δ = 1`: a solution from `0` on `[0, t]` is at least `t`
+at time `t`, and if it stays at or below `10` then `t ≤ 10`. -/
+example {t : ℝ} (ht : 0 ≤ t) {θ : ℝ → ℝ} (h0 : θ 0 = 0)
+    (hθ : ∀ s ∈ Set.Icc 0 t, HasDerivWithinAt θ (fkField 1 (θ s)) (Set.Icc 0 t) s)
+    (hb : ∀ s ∈ Set.Icc 0 t, θ s ≤ 10) :
+    t ≤ θ t ∧ t ≤ 10 := by
+  have hlow := fk_solution_lower_bound one_pos ht hθ
+  have hδ : Real.exp (-1) < 1 := by
+    have := Real.exp_lt_exp.2 (show (-1 : ℝ) < 0 by norm_num)
+    rwa [Real.exp_zero] at this
+  have htime := fk_time_le_of_le hδ ht hθ hb
+  rw [Real.log_one, add_zero, h0] at hlow htime
+  constructor
+  · linarith
+  · simpa using htime
+
+end FrankKamenetskii
