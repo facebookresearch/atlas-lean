@@ -91,11 +91,13 @@ Model inputs:
   `Statistics.DesignSensitivity.abs_compliance_sub_computed_le`: the compliance error between two
   admissible parameter points, and its composition with supplied model, discretization, solver
   and arithmetic terms.
-- `Statistics.DesignSensitivity.abs_sub_le_residual_div`,
-  `Statistics.DesignSensitivity.not_exists_residual_error_bound`: a residual bounds the state and
-  compliance errors with the stability constant `1 / kmin`; without a lower stiffness bound no
-  constant turns it into a bound on the state error, for any `F`, nor on the compliance error,
-  for `F ≠ 0`.
+- `Statistics.DesignSensitivity.abs_sub_le_residual_div`: a residual bounds the state and
+  compliance errors with the stability constant `1 / kmin`.
+- `Statistics.DesignSensitivity.not_exists_residual_state_error_bound`,
+  `Statistics.DesignSensitivity.not_exists_residual_compliance_error_bound`,
+  `Statistics.DesignSensitivity.not_exists_residual_error_bound`: without a lower stiffness bound
+  no constant turns the residual into a bound on the state error, for any `F`, nor on the
+  compliance error, for `F ≠ 0`; the last lemma states both halves for `F ≠ 0`.
 
 ## iii. Table of contents
 
@@ -566,67 +568,81 @@ lemma abs_sub_le_residual_div {kmin k F u : ℝ} (hkmin : 0 < kmin) (hk : kmin �
       ≤ |F| * (|k * u - F| / kmin) := mul_le_mul_of_nonneg_left hstate (abs_nonneg F)
     _ = |F| * |k * u - F| / kmin := by ring
 
+/-- **A bare residual is not a state error.** For every end force `F`, over all stiffnesses
+`k > 0`, with no lower bound, no constant `C` makes `C |k u - F|` a bound on the state error: the
+trial `u = F / k + 1` has residual `k` and state error `1`. -/
+lemma not_exists_residual_state_error_bound (F : ℝ) :
+    ¬ ∃ C : ℝ, ∀ k u : ℝ, 0 < k → |tipDisplacement F k - u| ≤ C * |k * u - F| := by
+  rintro ⟨C, hC⟩
+  have key : ∀ k : ℝ, 0 < k → (1:ℝ) ≤ C * k := by
+    intro k hk
+    have h := hC k (F / k + 1) hk
+    have e1 : tipDisplacement F k - (F / k + 1) = -1 := by
+      unfold tipDisplacement
+      ring
+    have e2 : k * (F / k + 1) - F = k := by
+      have hkne : k ≠ 0 := ne_of_gt hk
+      field_simp
+      ring
+    rw [e1, abs_neg, abs_one, e2, abs_of_pos hk] at h
+    exact h
+  have hC1 : (1:ℝ) ≤ C := by
+    have h := key 1 one_pos
+    rwa [mul_one] at h
+  have hCpos : 0 < C := lt_of_lt_of_le one_pos hC1
+  have hCne : C ≠ 0 := ne_of_gt hCpos
+  have h2C : (0:ℝ) < 2 * C := by linarith
+  have h2Cne : (2:ℝ) * C ≠ 0 := mul_ne_zero two_ne_zero hCne
+  have hsmall := key (1 / (2 * C)) (div_pos one_pos h2C)
+  have hval : C * (1 / (2 * C)) = 1 / 2 := by
+    rw [mul_one_div, div_eq_iff h2Cne]
+    ring
+  rw [hval] at hsmall
+  norm_num at hsmall
+
+/-- **A bare residual is not a compliance error.** For an end force `F ≠ 0`, over all stiffnesses
+`k > 0`, with no lower bound, no constant `C` makes `C |k u - F|` a bound on the compliance error:
+the trial `u = F / k + 1` has residual `k` and compliance error `|F|`. At `F = 0` the compliance
+error `J - F u` vanishes, so the force must be nonzero. -/
+lemma not_exists_residual_compliance_error_bound {F : ℝ} (hF : F ≠ 0) :
+    ¬ ∃ C : ℝ, ∀ k u : ℝ, 0 < k → |compliance F k - F * u| ≤ C * |k * u - F| := by
+  rintro ⟨C, hC⟩
+  have key : ∀ k : ℝ, 0 < k → |F| ≤ C * k := by
+    intro k hk
+    have h := hC k (F / k + 1) hk
+    have e1 : compliance F k - F * (F / k + 1) = -F := by
+      unfold compliance tipDisplacement
+      ring
+    have e2 : k * (F / k + 1) - F = k := by
+      have hkne : k ≠ 0 := ne_of_gt hk
+      field_simp
+      ring
+    rw [e1, abs_neg, e2, abs_of_pos hk] at h
+    exact h
+  have hFpos : 0 < |F| := abs_pos.mpr hF
+  have hC1 : |F| ≤ C := by
+    have h := key 1 one_pos
+    rwa [mul_one] at h
+  have hCpos : 0 < C := lt_of_lt_of_le hFpos hC1
+  have hCne : C ≠ 0 := ne_of_gt hCpos
+  have h2C : (0:ℝ) < 2 * C := by linarith
+  have h2Cne : (2:ℝ) * C ≠ 0 := mul_ne_zero two_ne_zero hCne
+  have hsmall := key (|F| / (2 * C)) (div_pos hFpos h2C)
+  have hval2 : C * (|F| / (2 * C)) = |F| / 2 := by
+    rw [← mul_div_assoc, div_eq_div_iff h2Cne two_ne_zero]
+    ring
+  rw [hval2] at hsmall
+  linarith
+
 /-- **A bare residual is not an error.** Over all stiffnesses `k > 0`, with no lower bound, no
 constant `C` makes `C |k u - F|` a bound on the state error, and for `F ≠ 0` none makes it a
 bound on the compliance error: the trial `u = F / k + 1` has residual `k`, state error `1` and
-compliance error `|F|`. -/
+compliance error `|F|`. This combines `not_exists_residual_state_error_bound`, which holds for
+every `F`, and `not_exists_residual_compliance_error_bound`. -/
 lemma not_exists_residual_error_bound {F : ℝ} (hF : F ≠ 0) :
     (¬ ∃ C : ℝ, ∀ k u : ℝ, 0 < k → |tipDisplacement F k - u| ≤ C * |k * u - F|) ∧
       ¬ ∃ C : ℝ, ∀ k u : ℝ, 0 < k → |compliance F k - F * u| ≤ C * |k * u - F| := by
-  constructor
-  · rintro ⟨C, hC⟩
-    have key : ∀ k : ℝ, 0 < k → (1:ℝ) ≤ C * k := by
-      intro k hk
-      have h := hC k (F / k + 1) hk
-      have e1 : tipDisplacement F k - (F / k + 1) = -1 := by
-        unfold tipDisplacement
-        ring
-      have e2 : k * (F / k + 1) - F = k := by
-        have hkne : k ≠ 0 := ne_of_gt hk
-        field_simp
-        ring
-      rw [e1, abs_neg, abs_one, e2, abs_of_pos hk] at h
-      exact h
-    have hC1 : (1:ℝ) ≤ C := by
-      have h := key 1 one_pos
-      rwa [mul_one] at h
-    have hCpos : 0 < C := lt_of_lt_of_le one_pos hC1
-    have hCne : C ≠ 0 := ne_of_gt hCpos
-    have h2C : (0:ℝ) < 2 * C := by linarith
-    have h2Cne : (2:ℝ) * C ≠ 0 := mul_ne_zero two_ne_zero hCne
-    have hsmall := key (1 / (2 * C)) (div_pos one_pos h2C)
-    have hval : C * (1 / (2 * C)) = 1 / 2 := by
-      rw [mul_one_div, div_eq_iff h2Cne]
-      ring
-    rw [hval] at hsmall
-    norm_num at hsmall
-  · rintro ⟨C, hC⟩
-    have key : ∀ k : ℝ, 0 < k → |F| ≤ C * k := by
-      intro k hk
-      have h := hC k (F / k + 1) hk
-      have e1 : compliance F k - F * (F / k + 1) = -F := by
-        unfold compliance tipDisplacement
-        ring
-      have e2 : k * (F / k + 1) - F = k := by
-        have hkne : k ≠ 0 := ne_of_gt hk
-        field_simp
-        ring
-      rw [e1, abs_neg, e2, abs_of_pos hk] at h
-      exact h
-    have hFpos : 0 < |F| := abs_pos.mpr hF
-    have hC1 : |F| ≤ C := by
-      have h := key 1 one_pos
-      rwa [mul_one] at h
-    have hCpos : 0 < C := lt_of_lt_of_le hFpos hC1
-    have hCne : C ≠ 0 := ne_of_gt hCpos
-    have h2C : (0:ℝ) < 2 * C := by linarith
-    have h2Cne : (2:ℝ) * C ≠ 0 := mul_ne_zero two_ne_zero hCne
-    have hsmall := key (|F| / (2 * C)) (div_pos hFpos h2C)
-    have hval2 : C * (|F| / (2 * C)) = |F| / 2 := by
-      rw [← mul_div_assoc, div_eq_div_iff h2Cne two_ne_zero]
-      ring
-    rw [hval2] at hsmall
-    linarith
+  exact ⟨not_exists_residual_state_error_bound F, not_exists_residual_compliance_error_bound hF⟩
 
 end Statistics.DesignSensitivity
 

@@ -31,7 +31,8 @@ under the end force `F = 2`, and the feasible stiffness interval `[1, 4]`.
   composition with a supplied model term;
 * residuals: with `kmin = 1` the trial `u = 3/2` at `k = 2`, `F = 2` has residual `1`, state error
   `1/2` and compliance error `1`; without a lower stiffness bound, no constant turns the residual
-  into a bound on the compliance error for the nonzero force `F = 2`.
+  into a bound on the compliance error for the nonzero force `F = 2`, nor into a bound on the
+  state error even for `F = 0`, where the compliance error vanishes and the constant `0` bounds it.
 -/
 
 @[expose] public section
@@ -220,6 +221,16 @@ example : |tipDisplacement 2 2 - 3 / 2| ≤ |2 * (3 / 2) - 2| / 1 ∧
 -- error by `C` times the residual over all stiffnesses `k > 0`.
 example : ¬ ∃ C : ℝ, ∀ k u : ℝ, 0 < k → |compliance 2 k - 2 * u| ≤ C * |k * u - 2| :=
   (not_exists_residual_error_bound (by norm_num)).2
+
+-- The state-error half needs no condition on the force: even for `F = 0`, no constant `C` bounds
+-- the state error by `C` times the residual over all stiffnesses `k > 0`.
+example : ¬ ∃ C : ℝ, ∀ k u : ℝ, 0 < k → |tipDisplacement 0 k - u| ≤ C * |k * u - 0| :=
+  not_exists_residual_state_error_bound 0
+
+-- The compliance half does need `F ≠ 0`: at `F = 0` the compliance error vanishes, so the constant
+-- `0` bounds it by the residual.
+example : ∃ C : ℝ, ∀ k u : ℝ, 0 < k → |compliance 0 k - 0 * u| ≤ C * |k * u - 0| :=
+  ⟨0, fun _ _ _ => by simp [compliance, tipDisplacement]⟩
 
 end PhyslibExtTest.Statistics.DesignSensitivity
 
