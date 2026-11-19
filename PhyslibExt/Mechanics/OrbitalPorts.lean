@@ -15,6 +15,7 @@ public import PhyslibExt.Units.EngineeringFrames
 
 import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Complex.RealDeriv
 import Mathlib.Analysis.InnerProductSpace.Calculus
 import Mathlib.LinearAlgebra.Matrix.DotProduct
 import Mathlib.Tactic.FieldSimp
@@ -92,6 +93,27 @@ has `|e| = 1` whatever its energy, so `h ≠ 0` cannot be dropped from the bound
 of the state rotates `e` and keeps `|e|`. No conservation of `e` or `a` and no conic trajectory is
 asserted.
 
+Sections J to L embed a planar Kepler coast in the oriented plane of an orbit-plane frame. The
+coast is taken in the form of the comparison arcs of Physlib's
+`PhyslibAlpha.ClassicalMechanics.OrbitalMechanics.Hohmann.Optimality.KeplerConservation`: real
+coordinate functions `x, y, vx, vy` of time on a positive finite interval `[t₀, t₁]`, with no
+collision (`√(x² + y²) > 0`), position derivatives the velocity components and velocity
+derivatives the Newtonian central acceleration `-μ (x, y) / √(x² + y²)³` (`IsPlanarKeplerArc`).
+These are premises: this module constructs no trajectory and proves no planar conservation law.
+That Physlib module states the conservation of its planar energy `vx² + vy² - 2 μ / √(x² + y²)`,
+twice the specific energy, and of its signed angular momentum `x vy - y vx` as equalities of their
+values at `t₀` and `t₁`; here those two endpoint equalities are hypotheses, in that
+normalization. That Physlib module is not part of the Physlib version this repository depends on.
+
+The planar state embeds by the passive frame map `Q (x, y, 0)` of `spatialState`, `Q ∈ SO(3)`:
+the plane is spanned by `Q e₁` and `Q e₂`, and its oriented normal is `Q e₃ = Q e₁ ⨯₃ Q e₂`. The
+embedded arc stays away from the center, its position has derivative its velocity, and its
+velocity has derivative the inverse-square attraction `-(μ / |X| ^ 3) X`. The planar energy is
+twice the specific energy `|V|² / 2 - μ / |X|` of the spatial state, so the factor two of that
+normalization stays explicit. The specific angular momentum `X ⨯₃ V` is the planar signed angular
+momentum times `Q e₃`, so its component along the oriented normal is the planar value; an
+orthogonal map of determinant `-1` reverses that component.
+
 Each result assumes only the hypotheses its proof uses.
 
 ## ii. Key results
@@ -117,6 +139,17 @@ Each result assumes only the hypotheses its proof uses.
   `OrbitalPorts.eccentricityVector_of_cross_eq_zero`: where the pericenter and node directions
   are undefined, and the radial boundary `|e| = 1`.
 - `OrbitalPorts.eccentricityVector_mulVec`: frame covariance under proper rotations.
+- `OrbitalPorts.IsPlanarKeplerArc`: the planar Kepler arc premises.
+- `OrbitalPorts.two_mul_specificEnergy_spatialState`,
+  `OrbitalPorts.specificEnergy_spatialState_eq_of_energy_eq`: the planar energy is twice the
+  spatial specific energy, and equal planar energies give equal specific energies.
+- `OrbitalPorts.cross_spatialState`, `OrbitalPorts.cross_spatialState_dotProduct_normal`,
+  `OrbitalPorts.cross_spatialState_eq_of_angular_eq`: the specific angular momentum along the
+  oriented normal.
+- `OrbitalPorts.cross_dotProduct_normal_of_det_eq_neg_one`: a reflection reverses the signed
+  component.
+- `OrbitalPorts.IsPlanarKeplerArc.hasDerivAt_spatialVelocity`: the inverse-square law for the
+  embedded arc.
 
 ## iii. Table of contents
 
@@ -129,6 +162,9 @@ Each result assumes only the hypotheses its proof uses.
 - G. The eccentricity vector and the energy identity
 - H. Undefined pericenter and node directions
 - I. Frame covariance
+- J. The planar Kepler arc premises
+- K. Energy and angular momentum in the spatial plane
+- L. The spatial Kepler arc
 
 ## iv. References
 
@@ -142,6 +178,9 @@ Each result assumes only the hypotheses its proof uses.
   elements (circular and equatorial orbits).
 - Physlib, `PhyslibAlpha.ClassicalMechanics.OrbitalMechanics.Hohmann.Dynamics.Circular`: the
   circular orbits whose conclusions are the premises of section C.
+- Physlib, `PhyslibAlpha.ClassicalMechanics.OrbitalMechanics.Hohmann.Optimality.KeplerConservation`:
+  the planar comparison arcs whose fields are the premises of section J, and the planar energy and
+  signed angular momentum whose endpoint equalities are the hypotheses of section K.
 - `crossProduct` and `dotProduct` in Mathlib.
 
 ## A. State energy and vis-viva
@@ -934,5 +973,203 @@ lemma eccentricityVector_mulVec {R : Matrix (Fin 3) (Fin 3) ℝ}
     unfold eccentricity
     rw [hvec, orth_self]
   exact ⟨hvec, hecc⟩
+
+/-! ## J. The planar Kepler arc premises -/
+
+open Units.EngineeringFrames (bodyToInertialVec_cross)
+
+/-- The planar point `x t + y t i` of two real coordinate functions, in the complex carrier of
+`spatialState`. -/
+def planarPath (x y : ℝ → ℝ) (t : ℝ) : ℂ :=
+  ⟨x t, y t⟩
+
+/-- Premises of a planar Kepler coast with gravitational parameter `μ` over `[t₀, t₁]`: the fields
+of the upstream Physlib `KeplerArc` for the coordinate functions `x, y, vx, vy`. No conservation
+law is a premise. -/
+structure IsPlanarKeplerArc (μ t₀ t₁ : ℝ) (x y vx vy : ℝ → ℝ) : Prop where
+  /-- The coast takes positive time. -/
+  time_order : t₀ < t₁
+  /-- The coast stays away from the attracting center. -/
+  radius_pos : ∀ t ∈ Set.Icc t₀ t₁, 0 < Real.sqrt (x t ^ 2 + y t ^ 2)
+  /-- The first position derivative is the first velocity component. -/
+  dx : ∀ t ∈ Set.Icc t₀ t₁, HasDerivAt x (vx t) t
+  /-- The second position derivative is the second velocity component. -/
+  dy : ∀ t ∈ Set.Icc t₀ t₁, HasDerivAt y (vy t) t
+  /-- The first velocity derivative is the Newtonian central acceleration. -/
+  dvx : ∀ t ∈ Set.Icc t₀ t₁, HasDerivAt vx (-μ * x t / Real.sqrt (x t ^ 2 + y t ^ 2) ^ 3) t
+  /-- The second velocity derivative is the Newtonian central acceleration. -/
+  dvy : ∀ t ∈ Set.Icc t₀ t₁, HasDerivAt vy (-μ * y t / Real.sqrt (x t ^ 2 + y t ^ 2) ^ 3) t
+
+private lemma planarVec_cross (a b c d : ℝ) :
+    ![a, b, 0] ⨯₃ ![c, d, 0] = (a * d - b * c) • ![0, 0, 1] := by
+  ext i
+  fin_cases i <;> simp [cross_apply, Pi.smul_apply, smul_eq_mul]
+
+private lemma hasDerivAt_planarPath {x y : ℝ → ℝ} {vx vy t : ℝ}
+    (hx : HasDerivAt x vx t) (hy : HasDerivAt y vy t) :
+    HasDerivAt (planarPath x y) ⟨vx, vy⟩ t := by
+  have hdecomp : planarPath x y = fun t => (x t : ℂ) + (y t : ℂ) * Complex.I := by
+    ext t
+    exact Complex.mk_eq_add_mul_I (x t) (y t)
+  have hval : (⟨vx, vy⟩ : ℂ) = (vx : ℂ) + (vy : ℂ) * Complex.I :=
+    Complex.mk_eq_add_mul_I vx vy
+  rw [hdecomp, hval]
+  exact hx.ofReal_comp.add (hy.ofReal_comp.mul_const Complex.I)
+
+/-! ## K. Energy and angular momentum in the spatial plane -/
+
+/-- The spatial position `Q (x, y, 0)` is at the planar distance `√(x² + y²)` from the center. -/
+lemma radius_spatialState_planarPath (Q : Matrix.specialOrthogonalGroup (Fin 3) ℝ)
+    (x y : ℝ → ℝ) (t : ℝ) :
+    radius (spatialState Q (planarPath x y) t) = Real.sqrt (x t ^ 2 + y t ^ 2) := by
+  have hcc : ‖planarPath x y t‖ ^ 2 = x t * x t + y t * y t :=
+    RCLike.norm_sq_eq_def
+  simp only [radius, dotProduct_spatialState, hcc]
+  congr 1
+  ring
+
+/-- **Energy in the upstream normalization.** The planar energy `vx² + vy² - 2 μ / √(x² + y²)` is
+twice the specific energy `|V|² / 2 - μ / |X|` of the spatial state: the factor two is kept. -/
+lemma two_mul_specificEnergy_spatialState (Q : Matrix.specialOrthogonalGroup (Fin 3) ℝ) (μ : ℝ)
+    (x y vx vy : ℝ → ℝ) (t : ℝ) :
+    2 * specificEnergy μ (spatialState Q (planarPath x y) t)
+        (spatialState Q (planarPath vx vy) t) =
+      vx t ^ 2 + vy t ^ 2 - 2 * μ / Real.sqrt (x t ^ 2 + y t ^ 2) := by
+  have hV : spatialState Q (planarPath vx vy) t ⬝ᵥ spatialState Q (planarPath vx vy) t
+      = vx t * vx t + vy t * vy t := by
+    have hcc : ‖planarPath vx vy t‖ ^ 2 = vx t * vx t + vy t * vy t :=
+      RCLike.norm_sq_eq_def
+    rw [dotProduct_spatialState, hcc]
+  simp only [specificEnergy, speedSq, hV, radius_spatialState_planarPath]
+  ring
+
+/-- **Energy transport.** Equal planar energies at `t₀` and `t₁`, in the upstream normalization
+(the conclusion of the upstream energy conservation lemma), give equal specific energies of the
+spatial states. -/
+lemma specificEnergy_spatialState_eq_of_energy_eq (Q : Matrix.specialOrthogonalGroup (Fin 3) ℝ)
+    (μ : ℝ) {x y vx vy : ℝ → ℝ} {t₀ t₁ : ℝ}
+    (hE : vx t₀ ^ 2 + vy t₀ ^ 2 - 2 * μ / Real.sqrt (x t₀ ^ 2 + y t₀ ^ 2) =
+      vx t₁ ^ 2 + vy t₁ ^ 2 - 2 * μ / Real.sqrt (x t₁ ^ 2 + y t₁ ^ 2)) :
+    specificEnergy μ (spatialState Q (planarPath x y) t₀)
+        (spatialState Q (planarPath vx vy) t₀) =
+      specificEnergy μ (spatialState Q (planarPath x y) t₁)
+        (spatialState Q (planarPath vx vy) t₁) := by
+  have h0 := two_mul_specificEnergy_spatialState Q μ x y vx vy t₀
+  have h1 := two_mul_specificEnergy_spatialState Q μ x y vx vy t₁
+  rw [hE] at h0
+  have h2 : 2 * specificEnergy μ (spatialState Q (planarPath x y) t₀)
+        (spatialState Q (planarPath vx vy) t₀)
+      = 2 * specificEnergy μ (spatialState Q (planarPath x y) t₁)
+        (spatialState Q (planarPath vx vy) t₁) := by rw [h0, h1]
+  exact mul_left_cancel₀ (by norm_num) h2
+
+/-- **Angular momentum along the oriented normal.** The specific angular momentum `X ⨯₃ V` of the
+spatial state is the planar signed angular momentum `x vy - y vx` times the normal `Q e₃`. -/
+lemma cross_spatialState (Q : Matrix.specialOrthogonalGroup (Fin 3) ℝ) (x y vx vy : ℝ → ℝ)
+    (t : ℝ) :
+    spatialState Q (planarPath x y) t ⨯₃ spatialState Q (planarPath vx vy) t =
+      (x t * vy t - y t * vx t) • bodyToInertialVec Q ![0, 0, 1] := by
+  have hxy : planarToBody (planarPath x y t) = ![x t, y t, 0] := rfl
+  have hvv : planarToBody (planarPath vx vy t) = ![vx t, vy t, 0] := rfl
+  have hcross : planarToBody (planarPath x y t) ⨯₃ planarToBody (planarPath vx vy t)
+      = (x t * vy t - y t * vx t) • ![0, 0, 1] := by
+    rw [hxy, hvv, planarVec_cross]
+  simp only [spatialState, ← bodyToInertialVec_cross, hcross]
+  simp only [bodyToInertialVec, Matrix.mulVec_smul]
+
+/-- **Orientation is preserved.** The component of `X ⨯₃ V` along the oriented normal `Q e₃` is
+the planar signed angular momentum `x vy - y vx`. -/
+lemma cross_spatialState_dotProduct_normal (Q : Matrix.specialOrthogonalGroup (Fin 3) ℝ)
+    (x y vx vy : ℝ → ℝ) (t : ℝ) :
+    (spatialState Q (planarPath x y) t ⨯₃ spatialState Q (planarPath vx vy) t) ⬝ᵥ
+        bodyToInertialVec Q ![0, 0, 1] = x t * vy t - y t * vx t := by
+  have hn : bodyToInertialVec Q ![0, 0, 1] ⬝ᵥ bodyToInertialVec Q ![0, 0, 1] = 1 := by
+    rw [bodyToInertialVec_dotProduct]
+    simp [dotProduct, Fin.sum_univ_three]
+  rw [cross_spatialState, smul_dotProduct, hn, smul_eq_mul, mul_one]
+
+/-- **Angular-momentum transport.** Equal planar signed angular momenta at `t₀` and `t₁` (the
+conclusion of the upstream angular conservation lemma) give equal angular-momentum vectors of
+the spatial states. -/
+lemma cross_spatialState_eq_of_angular_eq (Q : Matrix.specialOrthogonalGroup (Fin 3) ℝ)
+    {x y vx vy : ℝ → ℝ} {t₀ t₁ : ℝ}
+    (hL : x t₀ * vy t₀ - y t₀ * vx t₀ = x t₁ * vy t₁ - y t₁ * vx t₁) :
+    spatialState Q (planarPath x y) t₀ ⨯₃ spatialState Q (planarPath vx vy) t₀ =
+      spatialState Q (planarPath x y) t₁ ⨯₃ spatialState Q (planarPath vx vy) t₁ := by
+  rw [cross_spatialState, cross_spatialState, hL]
+
+/-- **A reflection reverses the orientation.** For an orthogonal `P` with `det P = -1`, the
+component of `P (x, y, 0) ⨯₃ P (vx, vy, 0)` along the mapped normal `P e₃` is
+`-(x vy - y vx)`. -/
+lemma cross_dotProduct_normal_of_det_eq_neg_one {P : Matrix (Fin 3) (Fin 3) ℝ}
+    (hP : P ∈ Matrix.orthogonalGroup (Fin 3) ℝ) (hdet : P.det = -1) (x y vx vy : ℝ) :
+    ((P *ᵥ planarToBody ⟨x, y⟩) ⨯₃ (P *ᵥ planarToBody ⟨vx, vy⟩)) ⬝ᵥ (P *ᵥ ![0, 0, 1]) =
+      -(x * vy - y * vx) := by
+  have hxy : planarToBody (⟨x, y⟩ : ℂ) = ![x, y, 0] := rfl
+  have hvv : planarToBody (⟨vx, vy⟩ : ℂ) = ![vx, vy, 0] := rfl
+  have hcross : planarToBody (⟨x, y⟩ : ℂ) ⨯₃ planarToBody (⟨vx, vy⟩ : ℂ)
+      = (x * vy - y * vx) • ![0, 0, 1] := by
+    rw [hxy, hvv, planarVec_cross]
+  have hT : Pᵀ * P = 1 := (Matrix.mem_orthogonalGroup_iff' _ _).mp hP
+  have hn : (P *ᵥ ![0, 0, 1]) ⬝ᵥ (P *ᵥ ![0, 0, 1]) = 1 := by
+    rw [Matrix.dotProduct_mulVec, ← Matrix.mulVec_transpose, Matrix.mulVec_mulVec, hT,
+      Matrix.one_mulVec]
+    simp [dotProduct, Fin.sum_univ_three]
+  rw [Matrix.mulVec_cross_mulVec_of_mem_orthogonalGroup hP, hdet, hcross, Matrix.mulVec_smul,
+    smul_dotProduct, smul_dotProduct, hn, smul_eq_mul, smul_eq_mul]
+  ring
+
+/-! ## L. The spatial Kepler arc -/
+
+/-- The embedded arc stays away from the center on `[t₀, t₁]`. -/
+lemma IsPlanarKeplerArc.radius_spatialState_pos {μ t₀ t₁ : ℝ} {x y vx vy : ℝ → ℝ}
+    (h : IsPlanarKeplerArc μ t₀ t₁ x y vx vy) (Q : Matrix.specialOrthogonalGroup (Fin 3) ℝ)
+    {t : ℝ} (ht : t ∈ Set.Icc t₀ t₁) :
+    0 < radius (spatialState Q (planarPath x y) t) := by
+  rw [radius_spatialState_planarPath]
+  exact h.radius_pos t ht
+
+/-- The spatial position has derivative the spatial velocity on `[t₀, t₁]`. -/
+lemma IsPlanarKeplerArc.hasDerivAt_spatialPosition {μ t₀ t₁ : ℝ} {x y vx vy : ℝ → ℝ}
+    (h : IsPlanarKeplerArc μ t₀ t₁ x y vx vy) (Q : Matrix.specialOrthogonalGroup (Fin 3) ℝ)
+    {t : ℝ} (ht : t ∈ Set.Icc t₀ t₁) :
+    HasDerivAt (spatialState Q (planarPath x y)) (spatialState Q (planarPath vx vy) t) t := by
+  exact hasDerivAt_spatialState Q (hasDerivAt_planarPath (h.dx t ht) (h.dy t ht))
+
+/-- **The spatial Kepler equation.** The spatial velocity has derivative the inverse-square
+attraction `-(μ / |X| ^ 3) • X` on `[t₀, t₁]`. -/
+lemma IsPlanarKeplerArc.hasDerivAt_spatialVelocity {μ t₀ t₁ : ℝ} {x y vx vy : ℝ → ℝ}
+    (h : IsPlanarKeplerArc μ t₀ t₁ x y vx vy) (Q : Matrix.specialOrthogonalGroup (Fin 3) ℝ)
+    {t : ℝ} (ht : t ∈ Set.Icc t₀ t₁) :
+    HasDerivAt (spatialState Q (planarPath vx vy))
+      (-(μ / radius (spatialState Q (planarPath x y) t) ^ 3) •
+        spatialState Q (planarPath x y) t) t := by
+  have hvec : planarToBody (⟨-μ * x t / Real.sqrt (x t ^ 2 + y t ^ 2) ^ 3,
+        -μ * y t / Real.sqrt (x t ^ 2 + y t ^ 2) ^ 3⟩ : ℂ)
+      = (-(μ / Real.sqrt (x t ^ 2 + y t ^ 2) ^ 3)) • ![x t, y t, 0] := by
+    have h0 : planarToBody (⟨-μ * x t / Real.sqrt (x t ^ 2 + y t ^ 2) ^ 3,
+          -μ * y t / Real.sqrt (x t ^ 2 + y t ^ 2) ^ 3⟩ : ℂ)
+        = ![-μ * x t / Real.sqrt (x t ^ 2 + y t ^ 2) ^ 3,
+          -μ * y t / Real.sqrt (x t ^ 2 + y t ^ 2) ^ 3, 0] := rfl
+    rw [h0]
+    ext i
+    fin_cases i
+    · change -μ * x t / Real.sqrt (x t ^ 2 + y t ^ 2) ^ 3
+          = (-(μ / Real.sqrt (x t ^ 2 + y t ^ 2) ^ 3)) * x t
+      ring
+    · change -μ * y t / Real.sqrt (x t ^ 2 + y t ^ 2) ^ 3
+          = (-(μ / Real.sqrt (x t ^ 2 + y t ^ 2) ^ 3)) * y t
+      ring
+    · change (0 : ℝ) = (-(μ / Real.sqrt (x t ^ 2 + y t ^ 2) ^ 3)) * 0
+      ring
+  have hss : spatialState Q (planarPath x y) t = bodyToInertialVec Q ![x t, y t, 0] := rfl
+  have hval : (-(μ / Real.sqrt (x t ^ 2 + y t ^ 2) ^ 3)) • spatialState Q (planarPath x y) t
+      = bodyToInertialVec Q (planarToBody (⟨-μ * x t / Real.sqrt (x t ^ 2 + y t ^ 2) ^ 3,
+        -μ * y t / Real.sqrt (x t ^ 2 + y t ^ 2) ^ 3⟩ : ℂ)) := by
+    rw [hvec]
+    simp only [hss, bodyToInertialVec, Matrix.mulVec_smul]
+  have hbase := hasDerivAt_spatialState Q (hasDerivAt_planarPath (h.dvx t ht) (h.dvy t ht))
+  rw [radius_spatialState_planarPath, hval]
+  exact hbase
 
 end OrbitalPorts
