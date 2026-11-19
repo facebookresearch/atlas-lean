@@ -67,7 +67,9 @@ section Noise
 variable {Ω E F : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
   [AddCommGroup E] [MeasurableSpace E] [MeasurableAdd₂ E] [MeasurableSpace F]
 
-/-- The kernel `y ↦ law of f y + Z`, for `Z ~ ν`. -/
+/-- The kernel `y ↦ ν.map (f y + ·)`. For a probability measure `ν` it is `y ↦ law of f y + Z`
+with `Z ~ ν`, a Markov kernel (the instance below); for another `ν` it is only this pushforward,
+of mass `ν univ` at every `y`, not a law. -/
 noncomputable def noiseKernel (f : F → E) (hf : Measurable f) (ν : Measure E) : Kernel F E :=
   (Kernel.deterministic f hf ×ₖ Kernel.const F ν).map fun p => p.1 + p.2
 

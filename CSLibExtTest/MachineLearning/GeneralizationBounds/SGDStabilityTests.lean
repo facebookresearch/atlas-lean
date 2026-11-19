@@ -88,4 +88,16 @@ example (ν : Measure Bool) [IsProbabilityMeasure ν] :
     · rw [signedLoss_false]; exact LipschitzWith.id.neg
     · rw [signedLoss_true]; exact LipschitzWith.id
 
+/-! The index law needs a nonempty sample: for `n = 0` and `T = 1` there is no index sequence
+and the product measure would have mass `0`, so it does not elaborate. -/
+
+/--
+error: failed to synthesize instance of type class
+  NeZero 0
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+noncomputable example : MeasureTheory.Measure (Fin 1 → Fin 0) := indexMeasure 0 1
+
 end CSLibExt.MachineLearning.GeneralizationBounds

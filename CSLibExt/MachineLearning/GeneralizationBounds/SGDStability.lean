@@ -36,7 +36,7 @@ The second case happens at each step with probability `1 / n`.
 
 - `sgmIterate ℓ α w₀ S ι t`: the iterate `w_t` along the index sequence `ι`.
 - `sgmOutput ℓ α w₀ S T κ`: the output `w_T` for a finite index sequence `κ : Fin T → Fin n`.
-- `indexMeasure n T`: the law of `T` independent uniform indices.
+- `indexMeasure n T`: the law of `T` independent uniform indices, for `n ≥ 1`.
 
 ## Main results
 
@@ -117,12 +117,14 @@ noncomputable def sgmOutput {n : ℕ} [NeZero n] (ℓ : E → 𝒵 → ℝ) (α 
     (S : Fin n → 𝒵) (T : ℕ) (κ : Fin T → Fin n) : E :=
   sgmIterate ℓ α w₀ S (fun t => if h : t < T then κ ⟨t, h⟩ else 0) T
 
-/-- **Random selection rule.** The law of `T` independent indices, each uniform on `Fin n`.
+/-- **Random selection rule.** The law of `T` independent indices, each uniform on `Fin n`, for a
+nonempty sample (`n ≥ 1`). For `n = 0`, which is excluded, `Fin T → Fin 0` is empty when `T ≥ 1`
+and the product of the zero uniform measures on `Fin 0` would have mass `0`.
 
 Source: M. Hardt, B. Recht and Y. Singer, *Train faster, generalize better: stability of
 stochastic gradient descent*, ICML 2016, arXiv:1509.01240, Section 3 ("pick `i_t ∈ {1, …, n}`
 uniformly at random in each step"). -/
-noncomputable def indexMeasure (n T : ℕ) : Measure (Fin T → Fin n) :=
+noncomputable def indexMeasure (n T : ℕ) [NeZero n] : Measure (Fin T → Fin n) :=
   Measure.pi fun _ : Fin T => uniformOn (Set.univ : Set (Fin n))
 
 instance {n T : ℕ} [NeZero n] : IsProbabilityMeasure (indexMeasure n T) := by

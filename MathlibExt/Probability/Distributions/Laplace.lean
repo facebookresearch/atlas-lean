@@ -49,7 +49,10 @@ noncomputable def laplacePDFReal (m b z : ℝ) : ℝ :=
   Real.exp (-|z - m| / b) / (2 * b)
 
 /-- **Laplace distribution.** The measure on `ℝ` with density `laplacePDFReal m b` with respect
-to Lebesgue measure (Dwork and Roth, 2014, Definition 3.2). -/
+to Lebesgue measure (Dwork and Roth, 2014, Definition 3.2). It is a probability measure for a
+positive scale `b > 0` (`isProbabilityMeasure_laplaceMeasure`). Like Mathlib's exponential and
+gamma measures it is defined for every `b`: for `b ≤ 0` the density is never positive (at `b = 0`
+it is `0` by `x / 0 = 0`), so the measure is zero. -/
 noncomputable def laplaceMeasure (m b : ℝ) : Measure ℝ :=
   volume.withDensity fun z ↦ ENNReal.ofReal (laplacePDFReal m b z)
 
