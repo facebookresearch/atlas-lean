@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Elasticity.PrismaticMembers
+import Mathlib.Tactic.NormNum
 
 /-!
 # Tests for `PhyslibExt.Elasticity.PrismaticMembers`
@@ -68,6 +69,19 @@ example :
     fun x => cantileverDeflection_iteratedDeriv_four (by norm_num) 3 4 5 x, ?_⟩
   unfold cantileverDeflection
   norm_num
+
+/-! ## D. Positive cantilever span -/
+
+-- At the positive span `L = 3` the polynomial solves the cantilever problem.
+example : IsCantileverSolution 2 3 4 5 (cantileverDeflection 2 3 4 5) :=
+  isCantileverSolution_cantileverDeflection (by norm_num) (by norm_num) 4 5
+
+-- A nonpositive span admits no cantilever solution: the model requires `0 < L`.
+example (w : ℝ → ℝ) : ¬ IsCantileverSolution 2 (-3) 4 5 w := fun h => by
+  have h' := h.span_pos
+  norm_num at h'
+
+example (w : ℝ → ℝ) : ¬ IsCantileverSolution 2 0 4 5 w := fun h => lt_irrefl _ h.span_pos
 
 end PhyslibExtTest.Elasticity.PrismaticMembers
 
