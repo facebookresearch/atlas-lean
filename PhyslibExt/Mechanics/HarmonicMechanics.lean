@@ -75,6 +75,9 @@ carried as explicit hypotheses or definitions. Continuum stress and strain are i
   real-valued pair forces.
 * `moment2D_add`, `central_pair_moment_eq_zero`: 2D moment linearity and the
   single central-pair zero moment (no-body-couple model).
+* `moment2D_shift`, `moment2D_shift_eq_of_isEquilibrated`: shifting the moment
+  point changes the total moment by minus the moment of the resultant force, so
+  equilibrated families have origin-independent moment.
 * `memberEndpoint_resultantForce_eq_zero`, `memberEndpoint_moment2D_eq_zero`,
   `axialEndpointForce_eq_memberEndpointForce`: a finite axial-member table has
   zero resultant planar wrench, in coefficient and axial-force forms.
@@ -430,6 +433,58 @@ lemma totalWork_add {ρ ι : Type*} [Fintype ρ] [Fintype ι]
   intro i _
   simp only [Pi.add_apply]
   ring
+
+/-- Shifting the moment point to `o` changes the total moment
+by minus the moment of the resultant force. -/
+theorem moment2D_shift {ρ : Type*} [Fintype ρ]
+    (r F : ρ → (Fin 2 → ℝ)) (o : Fin 2 → ℝ) :
+    moment2D (fun i => r i - o) F
+      = moment2D r F
+        - (o 0 * resultantForce F 1
+          - o 1 * resultantForce F 0) := by
+  unfold moment2D resultantForce
+  simp only [Pi.sub_apply, Finset.sum_apply]
+  rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_sub_distrib,
+    ← Finset.sum_sub_distrib]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  ring
+
+/-- Under equilibrium (zero resultant force), the total
+moment is independent of the moment point. -/
+theorem moment2D_shift_eq_of_resultantForce_eq_zero
+    {ρ : Type*} [Fintype ρ] (r F : ρ → (Fin 2 → ℝ))
+    (o : Fin 2 → ℝ) (hF : resultantForce F = 0) :
+    moment2D (fun i => r i - o) F = moment2D r F := by
+  rw [moment2D_shift, hF]
+  simp
+
+/-- Conversely, moment agreement about the two unit shifts
+forces the resultant force to vanish. -/
+theorem resultantForce_eq_zero_of_moment2D_shift_eq
+    {ρ : Type*} [Fintype ρ] (r F : ρ → (Fin 2 → ℝ))
+    (h0 : moment2D (fun i => r i - ![1, 0]) F = moment2D r F)
+    (h1 : moment2D (fun i => r i - ![0, 1]) F = moment2D r F) :
+    resultantForce F = 0 := by
+  have hshift0 := moment2D_shift r F ![1, 0]
+  have hshift1 := moment2D_shift r F ![0, 1]
+  rw [h0] at hshift0
+  rw [h1] at hshift1
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one,
+    one_mul, zero_mul, sub_zero] at hshift0 hshift1
+  have hR1 : resultantForce F 1 = 0 := by linarith
+  have hR0 : resultantForce F 0 = 0 := by linarith
+  refine funext fun j => ?_
+  fin_cases j
+  · simpa using hR0
+  · simpa using hR1
+
+/-- Under `IsEquilibrated`, the total moment is independent
+of the moment point. -/
+theorem moment2D_shift_eq_of_isEquilibrated
+    {ρ : Type*} [Fintype ρ] (r F : ρ → (Fin 2 → ℝ))
+    (o : Fin 2 → ℝ) (hF : IsEquilibrated F) :
+    moment2D (fun i => r i - o) F = moment2D r F :=
+  moment2D_shift_eq_of_resultantForce_eq_zero r F o hF
 
 /-! ## C. Finite spring networks, stiffness matrices, and normal modes. -/
 
