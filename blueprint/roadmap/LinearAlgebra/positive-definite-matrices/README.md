@@ -17,4 +17,4 @@ Positive definite and semidefinite matrices, criteria for definiteness, and ineq
 
 ## Related topics
 
-- Graph Laplacians and Cheeger's inequality: graph Laplacians are positive semidefinite, and Loewner-order comparisons of Laplacians compare graphs.
+- [Graph Laplacians and Cheeger's inequality](../../GraphTheory/algebraic-graph-theory/part-01/graph-laplacians-and-cheeger-s-inequality/README.md): graph Laplacians are positive semidefinite, and Loewner-order comparisons of Laplacians compare graphs.

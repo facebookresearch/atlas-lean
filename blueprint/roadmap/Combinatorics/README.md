@@ -50,3 +50,5 @@ parking functions and set partitions.
 - [Polytopes, Ehrhart theory and simplicial complexes](polytopes-simplicial-complexes/README.md)
 - [Discrepancy theory](discrepancy-theory/README.md)
 - [Probabilistic combinatorics](probabilistic-combinatorics/README.md)
+- [Boolean functions](boolean-functions/README.md)
+- [Elementary enumeration](elementary-enumeration/README.md)
