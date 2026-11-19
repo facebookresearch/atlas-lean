@@ -26,8 +26,9 @@ step-by-step trace of the backlogged stock-flow model `Inventory.stockTrace` rep
 stock at every prefix, and the model's conservation identity gives the terminal accounting.
 `PrefixFeasible lo hi r s₀ flow N` checks every resource at every prefix `t ≤ N`, start and end
 included: the floor raised by the reserve, `lo i + r i ≤ stock`, and the capacity
-`stock ≤ hi i`. The reserve is deducted exactly once; deducting it at every step instead
-removes it once per step. The schedule and the bounds are model inputs. Pointing and navigation
+`stock ≤ hi i`. Reserves are nonnegative, so feasibility never certifies a stock below the
+floor. The reserve is deducted exactly once; deducting it at every step instead removes it once
+per step. The schedule and the bounds are model inputs. Pointing and navigation
 requirements stay external constraints; nothing here is a mission-success, qualification or
 safety claim.
 
@@ -36,6 +37,7 @@ safety claim.
 - `stock_eq_stockTrace`: prefix stocks are the zero-lead-time stock-flow trace.
 - `terminal_accounting`: the final stock is the initial stock plus all gains minus all draws.
 - `PrefixFeasible.terminal`: the prefix check contains the terminal check.
+- `PrefixFeasible.lo_le_stock`: a feasible schedule never goes below the floor.
 - `prefixFeasible_iff_reserve_deducted_once`: the reserve in the floor is one deduction from
   the initial stock.
 - `stock_reserve_every_step`: a per-step reserve deduction removes the reserve `t` times.
@@ -82,8 +84,10 @@ noncomputable def draws (flow : ι → ℕ → ℝ) (i : ι) (k : ℕ) : NNReal 
 /-- Prefix feasibility over a horizon of `N` steps: for every resource `i` and every prefix
 `t ≤ N` (the start `t = 0` and the end `t = N` included), the stock is at least the floor
 `lo i` plus the reserve `r i` and at most the capacity `hi i`. The reserve is deducted once,
-in this lower bound; it is not also a scheduled flow. -/
-def PrefixFeasible (lo hi r s₀ : ι → ℝ) (flow : ι → ℕ → ℝ) (N : ℕ) : Prop :=
+in this lower bound; it is not also a scheduled flow. Reserves are nonnegative (`NNReal`), so
+feasibility never certifies a stock below the floor (`PrefixFeasible.lo_le_stock`). -/
+def PrefixFeasible (lo hi : ι → ℝ) (r : ι → NNReal) (s₀ : ι → ℝ) (flow : ι → ℕ → ℝ) (N : ℕ) :
+    Prop :=
   ∀ i, ∀ t ≤ N, lo i + r i ≤ stock s₀ flow i t ∧ stock s₀ flow i t ≤ hi i
 
 /-- A finite schedule written as a list of flows, `0` after its end. -/
@@ -138,33 +142,42 @@ lemma terminal_accounting (s₀ : ι → ℝ) (flow : ι → ℕ → ℝ) (i : �
 /-! ## C. Prefix bounds and the reserve -/
 
 /-- The prefix check contains the terminal check. -/
-lemma PrefixFeasible.terminal {lo hi r s₀ : ι → ℝ} {flow : ι → ℕ → ℝ} {N : ℕ}
+lemma PrefixFeasible.terminal {lo hi s₀ : ι → ℝ} {r : ι → NNReal} {flow : ι → ℕ → ℝ} {N : ℕ}
     (h : PrefixFeasible lo hi r s₀ flow N) (i : ι) :
     lo i + r i ≤ s₀ i + ∑ k ∈ range N, flow i k ∧ s₀ i + ∑ k ∈ range N, flow i k ≤ hi i := by
   exact h i N le_rfl
 
+/-- A prefix-feasible schedule never takes a stock below its floor, because the reserve is
+nonnegative. -/
+lemma PrefixFeasible.lo_le_stock {lo hi s₀ : ι → ℝ} {r : ι → NNReal} {flow : ι → ℕ → ℝ}
+    {N : ℕ} (h : PrefixFeasible lo hi r s₀ flow N) (i : ι) {t : ℕ} (ht : t ≤ N) :
+    lo i ≤ stock s₀ flow i t := by
+  have h1 := (h i t ht).1
+  have h2 : (0 : ℝ) ≤ r i := (r i).2
+  linarith
+
 /-- The reserve is deducted exactly once: raising the floor by `r i` at every prefix is the
 same as deducting `r i` once from the initial stock, with the original floor and the capacity
 lowered by `r i`. -/
-lemma prefixFeasible_iff_reserve_deducted_once (lo hi r s₀ : ι → ℝ) (flow : ι → ℕ → ℝ)
-    (N : ℕ) :
-    PrefixFeasible lo hi r s₀ flow N ↔ PrefixFeasible lo (hi - r) 0 (s₀ - r) flow N := by
-  have hS : ∀ i t, stock (s₀ - r) flow i t = stock s₀ flow i t - r i := by
+lemma prefixFeasible_iff_reserve_deducted_once (lo hi : ι → ℝ) (r : ι → NNReal) (s₀ : ι → ℝ)
+    (flow : ι → ℕ → ℝ) (N : ℕ) :
+    PrefixFeasible lo hi r s₀ flow N ↔
+      PrefixFeasible lo (fun i => hi i - r i) 0 (fun i => s₀ i - r i) flow N := by
+  have hS : ∀ i t, stock (fun i => s₀ i - r i) flow i t = stock s₀ flow i t - r i := by
     intro i t
     unfold stock
-    rw [Pi.sub_apply]
     ring
   unfold PrefixFeasible
   constructor
   · intro h i t ht
     obtain ⟨hlo, hhi⟩ := h i t ht
     rw [hS i t]
-    simp only [Pi.zero_apply, Pi.sub_apply, add_zero]
+    simp only [Pi.zero_apply, NNReal.coe_zero, add_zero]
     exact ⟨by linarith, by linarith⟩
   · intro h i t ht
     obtain ⟨hlo, hhi⟩ := h i t ht
     rw [hS i t] at hlo hhi
-    simp only [Pi.zero_apply, Pi.sub_apply, add_zero] at hlo hhi
+    simp only [Pi.zero_apply, NNReal.coe_zero, add_zero] at hlo hhi
     exact ⟨by linarith, by linarith⟩
 
 /-- Deducting the reserve as a flow at every step removes it `t` times by prefix `t`; from the
