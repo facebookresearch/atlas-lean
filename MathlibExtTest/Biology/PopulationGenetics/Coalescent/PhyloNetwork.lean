@@ -105,7 +105,8 @@ example (γ : ℝ) (hγ : γ ∈ Set.Icc (0 : ℝ) 1) :
   refine ⟨?_, ?_, ?_, ?_, by ring, (network γ hγ).sum_routeProb (by show (3 : Fin 7) ≠ 0; decide) 2⟩ <;>
     simp [PhyloNetwork.routeProb, network, inherit, Fin.prod_univ_two] <;> ring_nf
 
-/-- With `γ = 3/10` the reticulation uses both parent edges: no displayed tree. -/
+/-- With `γ = 3/10` the reticulation uses both parent edges: the active graph is not a
+rooted tree (the network still displays trees by selecting one reticulation edge). -/
 example : ¬ PhyloNetwork.IsRootedTree (network (3 / 10) (by norm_num)).activeGraph
     (network (3 / 10) (by norm_num)).root :=
   (network (3 / 10) (by norm_num)).not_isRootedTree_activeGraph (parents_three _ _)

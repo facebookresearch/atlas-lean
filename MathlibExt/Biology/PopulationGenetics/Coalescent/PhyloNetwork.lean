@@ -55,17 +55,20 @@ namespace MathlibExt.Biology.PopulationGenetics.Coalescent
 def parentsOf {V : Type*} [Fintype V] (G : Digraph V) [DecidableRel G.Adj] (v : V) : Finset V :=
   {u | G.Adj u v}
 
-/-- A **time-consistent parent-bounded routing network**: the routing skeleton of a rooted
+/-- An **age-monotone parent-bounded routing network**: the routing skeleton of a rooted
 phylogenetic network with inheritance probabilities (Yu–Degnan–Nakhleh 2012;
-Zhang–Ogilvie–Drummond–Stadler 2018), without the binary out-degree classification or leaf
-labels of the fully binary notion. The edges of the finite DAG `G` run from ancestor to
-descendant. The root is the only node without a parent; every other node is a *tree node*
-(one parent) or a *reticulation node* (two parents); out-degrees are unrestricted. Node ages
-`time` (measured backward from the present) make the network time-consistent: a parent is
-never younger than its child (`time v ≤ time u`, so zero-length edges are allowed), and the
-branch length of an edge `u → v` is `time u - time v`. A lineage at `v` traces back to the
-parent `u` with probability `inherit v u`: this vanishes off the parents and sums to `1`
-over the parents, so it is `1` at a tree node and `γ, 1 - γ` at a reticulation node. -/
+Zhang–Ogilvie–Drummond–Stadler 2018), without the binary out-degree classification, leaf
+labels, or strict temporal constraints of the fully binary notion. The edges of the finite
+DAG `G` run from ancestor to descendant. The root is the only node without a parent; every
+other node is a *tree node* (one parent) or a *reticulation node* (two parents);
+out-degrees are unrestricted. Node ages `time` (measured backward from the present) are
+only weakly monotone along edges: a parent is never younger than its child
+(`time v ≤ time u`, so zero-length edges are allowed; constant ages are not excluded), and
+the branch length of an edge `u → v` is `time u - time v`. This is strictly weaker than
+time consistency in the phylogenetic sense, which would in addition force tree edges to
+advance strictly in time. A lineage at `v` traces back to the parent `u` with probability
+`inherit v u`: this vanishes off the parents and sums to `1` over the parents, so it is `1`
+at a tree node and `γ, 1 - γ` at a reticulation node. -/
 structure PhyloNetwork (V : Type*) [Fintype V] where
   /-- The directed acyclic graph; `G.Adj u v` means `u` is a parent of `v`. -/
   G : Digraph V
@@ -81,7 +84,7 @@ structure PhyloNetwork (V : Type*) [Fintype V] where
   card_parentsOf : ∀ v, v ≠ root → (parentsOf G v).card = 1 ∨ (parentsOf G v).card = 2
   /-- Node ages, measured backward in time. -/
   time : V → ℝ
-  /-- Time-consistency: a parent is at least as old as its child. -/
+  /-- Age monotonicity: a parent is at least as old as its child. -/
   time_le : ∀ u v, G.Adj u v → time v ≤ time u
   /-- `inherit v u`: the probability that a lineage at `v` traces back to the parent `u`. -/
   inherit : V → V → ℝ
@@ -110,7 +113,7 @@ def branchLength (u v : V) : ℝ := N.time u - N.time v
 /-- All branch lengths are nonnegative. -/
 def NonnegLengths : Prop := ∀ u v, N.G.Adj u v → 0 ≤ N.branchLength u v
 
-/-- **Time-consistency gives nonnegative branch lengths.** -/
+/-- **Age monotonicity gives nonnegative branch lengths.** -/
 theorem nonnegLengths : N.NonnegLengths := fun u v h => sub_nonneg.2 (N.time_le u v h)
 
 /-- Membership in `parents v` is adjacency into `v`. -/
