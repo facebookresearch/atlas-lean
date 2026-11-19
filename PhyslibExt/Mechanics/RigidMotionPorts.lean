@@ -8,12 +8,14 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Calculus.ContDiff.Defs
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Physlib.ClassicalMechanics.RigidBody.AngularMomentum
 public import Physlib.ClassicalMechanics.RigidBody.AngularVelocity
 public import Physlib.ClassicalMechanics.RigidBody.KineticEnergy
 public import PhyslibExt.Units.EngineeringFrames
 import Mathlib.Analysis.Calculus.ContDiff.Comp
+import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.Calculus.FDeriv.Bilinear
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.LinearAlgebra.Matrix.ToLin
@@ -28,7 +30,8 @@ import MathlibExt.LinearAlgebra.CrossProduct
 
 The acceleration of a point in a frame that rotates at a variable rate and translates, derived
 from Physlib's rigid-body angular velocity, the angular momentum of a rigid body in motion about
-its centre of mass, and Euler's equations as the body form of the rotational balance law.
+its centre of mass, Euler's equations as the body form of the rotational balance law, and a
+constructed torque-driven rotation about a fixed principal axis.
 
 ## i. Overview
 
@@ -64,6 +67,15 @@ positive-definite `I_B` they determine `ω_B' = I_B⁻¹ (Rᵀ τ_I - ω_B × (I
 `ω_B · (I_B ω_B) / 2` and the squared norm `|I_B ω_B|² = |L_COM|²` of the angular momentum are
 conserved.
 
+A body turning about its third body axis, a principal axis through its centre of mass, with the
+angle `θ(t) = ω₀ t + α t² / 2` has the explicit orientation `R(t) = Rz(θ(t))`, a `C^∞` curve in
+`SO(3)`; differentiating it gives `ω_B = (0, 0, θ')` and `ω_B' = (0, 0, α)`. For a diagonal
+inertia `diag(I_xx, I_yy, I_zz)` the gyroscopic term vanishes on the axis, so Euler's equations
+need the body torque `τ_B = (0, 0, I_zz α)`, which `Rz` leaves unchanged in inertial components.
+This torque port delivers the shaft power `τ_B · ω_B = I_zz α θ'`, the rate of the rotational
+kinetic energy. For `I_zz > 0` and `α ≠ 0` the torque is nonzero and the sign-flipped torque
+fails. This is existence for this driven example only.
+
 Model inputs (hypotheses of the module):
 
 * `R` (entry by entry), `o` and `x_B` are `C²` on an open set of times containing the interval
@@ -78,11 +90,13 @@ Model inputs (hypotheses of the module):
   positive definiteness of the inertia tensor is assumed only where Euler's equations are solved
   for `ω_B'`, since an arbitrary linear mass functional does not supply it;
 * the rotational balance law `dL_COM/dt = τ_I` is assumed, not derived from internal forces;
-  squared magnitudes are dot products, since the norm of `Fin 3 → ℝ` is the supremum norm.
+  squared magnitudes are dot products, since the norm of `Fin 3 → ℝ` is the supremum norm;
+* the constructed rotation takes a mass distribution with diagonal inertia about its centre of
+  mass at the origin of body coordinates, and a fixed rotation axis.
 
 Non-goals: fictitious forces and the equations of motion in the moving frame, existence of motions
-for a given torque, attitude parametrizations and reconstruction, and any empirical adequacy or
-system safety claim.
+for a general torque history (section F constructs one driven example), attitude
+parametrizations and reconstruction, and any empirical adequacy or system safety claim.
 
 ## ii. Key results
 
@@ -101,6 +115,14 @@ system safety claim.
   positive-definite `I_B` determines the body angular acceleration.
 - `torqueFree_conserved` : torque-free motion conserves the rotational kinetic energy and
   `|I_B ω_B|² = |L_COM|²` (`comAngularMomentum_dotProduct_self`).
+- `fixedAxisMotion`, `fixedAxisMotion_bodyAngularVelocity`,
+  `deriv_fixedAxisMotion_bodyAngularVelocity` : the constructed rotation about a fixed principal
+  axis, with `ω_B = (0, 0, θ')` and `ω_B' = (0, 0, α)`.
+- `fixedAxisMotion_euler`, `deriv_comAngularMomentum_fixedAxisMotion`,
+  `fixedAxisMotion_power_port` : the torque port `τ_B = (0, 0, I_zz α)`, the balance law it
+  satisfies and the shaft power it delivers.
+- `fixedAxisMotion_torque_ne_zero`, `fixedAxisMotion_neg_torque` : a nonzero angular acceleration
+  needs a nonzero torque, and the sign-flipped torque fails.
 
 ## iii. Table of contents
 
@@ -113,6 +135,7 @@ system safety claim.
 - E. Torque balance and Euler's equations
   - E.1. Private helpers
   - E.2. Euler's equations and torque-free motion
+- F. A constructed torque-driven rotation about a fixed principal axis
 
 ## iv. References
 
@@ -129,8 +152,10 @@ system safety claim.
   `RigidBodyMotion.deriv_orientation_mulVec_eq_orientation_bodyAngularVelocity_cross`,
   `RigidBody.angularMomentum_eq_inertiaTensor_mulVec`,
   `RigidBody.inertiaTensorAbout_eq_centerOfMass_add_pointMass` and
-  `RigidBody.rotationalKineticEnergy`, and the frame dictionary
-  `PhyslibExt.Units.EngineeringFrames`.
+  `RigidBody.rotationalKineticEnergy`, the frame dictionary
+  `PhyslibExt.Units.EngineeringFrames` and the typed shaft power of
+  `PhyslibExt.Units.EngineeringQuantities`.
+- ISO 80000-4, *Quantities and units — Part 4: Mechanics*: torque and power.
 -/
 
 @[expose] public section
@@ -801,5 +826,278 @@ lemma torqueFree_conserved (M : RigidBodyMotion 3) {U : Set Time} (hU : IsOpen U
   · exact hU.is_const_of_fderiv_eq_zero (𝕜 := ℝ) hU'
       (fun τ hτ => (hN τ hτ).differentiableAt.differentiableWithinAt)
       (fun τ hτ => (hN τ hτ).fderiv) hs ht
+
+/-! ## F. A constructed torque-driven rotation about a fixed principal axis -/
+
+open scoped ContDiff
+open Units.EngineeringQuantities
+
+/-- The rotation angle `θ(t) = ω₀ t + α t² / 2` about the third axis: initial rate `ω₀` and
+constant angular acceleration `α`. -/
+noncomputable def fixedAxisAngle (ω₀ α : ℝ) (t : Time) : ℝ := ω₀ * t.val + α * t.val ^ 2 / 2
+
+/-- The constructed motion of the mass distribution `B` about its third body axis: the centre of
+mass rests at the origin and the orientation is `R(t) = Rz(θ(t))`, a curve in `SO(3)`. -/
+noncomputable def fixedAxisMotion (B : RigidBody 3) (ω₀ α : ℝ) : RigidBodyMotion 3 where
+  toRigidBody := B
+  comTrajectory := fun _ => 0
+  orientation := fun t => ⟨rotZ (fixedAxisAngle ω₀ α t), rotZ_mem_specialOrthogonalGroup _⟩
+
+/-- The torque port of the fixed-axis motion: the body torque `τ_B = (0, 0, I_zz α)` about the
+centre of mass, which drives the constant angular acceleration `α`. -/
+noncomputable def fixedAxisTorque (Izz α : ℝ) : Fin 3 → ℝ := ![0, 0, Izz * α]
+
+/-- The angle `θ(t) = ω₀ t + α t² / 2` as a curve on `ℝ` has the rate `ω₀ + α t`. -/
+private lemma hasDerivAt_fixedAxisAngle (ω₀ α x : ℝ) :
+    HasDerivAt (fun y : ℝ => fixedAxisAngle ω₀ α ⟨y⟩) (ω₀ + α * x) x := by
+  have h := ((hasDerivAt_id x).const_mul ω₀).add (((hasDerivAt_pow 2 x).const_mul α).div_const 2)
+  convert h using 1
+  · funext y
+    simp [fixedAxisAngle]
+  · push_cast
+    ring
+
+/-- The constructed orientation is `C^∞` entry by entry. -/
+lemma contDiff_fixedAxisMotion_orientation_apply (B : RigidBody 3) (ω₀ α : ℝ) (i j : Fin 3) :
+    ContDiff ℝ ∞ (fun s => ((fixedAxisMotion B ω₀ α).orientation s).1 i j) := by
+  have hθ : ContDiff ℝ ∞ (fixedAxisAngle ω₀ α) := by
+    unfold fixedAxisAngle
+    fun_prop
+  have hc := Real.contDiff_cos.comp hθ
+  have hs := Real.contDiff_sin.comp hθ
+  fin_cases i <;> fin_cases j <;> simp only [fixedAxisMotion, rotZ] <;>
+    simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Matrix.of_apply, Matrix.cons_val',
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.empty_val',
+      Matrix.cons_val_fin_one] <;>
+    first
+      | exact hc
+      | exact hs
+      | exact hs.neg
+      | exact contDiff_const
+
+/-- The constructed orientation is differentiable with the default matrix instances. -/
+private lemma differentiableAt_fixedAxisMotion_orientation (B : RigidBody 3) (ω₀ α : ℝ)
+    (t : Time) : DifferentiableAt ℝ (fun s => ((fixedAxisMotion B ω₀ α).orientation s).1) t := by
+  have h : DifferentiableAt ℝ
+      (fun s => Matrix.of.symm ((fixedAxisMotion B ω₀ α).orientation s).1) t :=
+    differentiableAt_pi.2 fun i => differentiableAt_pi.2 fun j =>
+      ((contDiff_fixedAxisMotion_orientation_apply B ω₀ α i j).differentiable (by simp)) t
+  exact h
+
+/-- The angle has the rate `θ'(t) = ω₀ + α t` and the constant second derivative `θ'' = α`. -/
+lemma deriv_fixedAxisAngle (ω₀ α : ℝ) (t : Time) :
+    ∂ₜ (fixedAxisAngle ω₀ α) t = ω₀ + α * t.val ∧ ∂ₜ (∂ₜ (fixedAxisAngle ω₀ α)) t = α := by
+  have h1 : ∀ s : Time, ∂ₜ (fixedAxisAngle ω₀ α) s = ω₀ + α * s.val := fun s =>
+    Time.deriv_eq_of_hasDerivAt (hasDerivAt_fixedAxisAngle ω₀ α s.val)
+  refine ⟨h1 t, ?_⟩
+  have hfun : ∂ₜ (fixedAxisAngle ω₀ α) = fun s => ω₀ + α * s.val := funext h1
+  rw [hfun]
+  apply Time.deriv_eq_of_hasDerivAt
+  simpa using ((hasDerivAt_id t.val).const_mul α).const_add ω₀
+
+/-- The orientation has the derivative `Ṙ = θ' dRz/dθ`, with
+`dRz/dθ = [[-sin θ, -cos θ, 0], [cos θ, -sin θ, 0], [0, 0, 0]]`. -/
+lemma deriv_fixedAxisMotion_orientation (B : RigidBody 3) (ω₀ α : ℝ) (t : Time) :
+    ∂ₜ (fun s => ((fixedAxisMotion B ω₀ α).orientation s).1) t =
+      ∂ₜ (fixedAxisAngle ω₀ α) t •
+        !![-Real.sin (fixedAxisAngle ω₀ α t), -Real.cos (fixedAxisAngle ω₀ α t), 0;
+          Real.cos (fixedAxisAngle ω₀ α t), -Real.sin (fixedAxisAngle ω₀ α t), 0; 0, 0, 0] := by
+  have hθ := hasDerivAt_fixedAxisAngle ω₀ α t.val
+  have hθ' := (deriv_fixedAxisAngle ω₀ α t).1
+  have dc : ∂ₜ (fun s : Time => Real.cos (fixedAxisAngle ω₀ α s)) t =
+      ∂ₜ (fixedAxisAngle ω₀ α) t * -Real.sin (fixedAxisAngle ω₀ α t) := by
+    rw [hθ']
+    exact Time.deriv_eq_of_hasDerivAt
+      (((Real.hasDerivAt_cos _).comp t.val hθ).congr_deriv (by ring))
+  have ds : ∂ₜ (fun s : Time => Real.sin (fixedAxisAngle ω₀ α s)) t =
+      ∂ₜ (fixedAxisAngle ω₀ α) t * Real.cos (fixedAxisAngle ω₀ α t) := by
+    rw [hθ']
+    exact Time.deriv_eq_of_hasDerivAt
+      (((Real.hasDerivAt_sin _).comp t.val hθ).congr_deriv (by ring))
+  have dns : ∂ₜ (fun s : Time => -Real.sin (fixedAxisAngle ω₀ α s)) t =
+      ∂ₜ (fixedAxisAngle ω₀ α) t * -Real.cos (fixedAxisAngle ω₀ α t) := by
+    rw [hθ']
+    exact Time.deriv_eq_of_hasDerivAt
+      (((Real.hasDerivAt_sin _).comp t.val hθ).neg.congr_deriv (by ring))
+  ext i j
+  refine (Time.deriv_matrix_apply _ t
+    (differentiableAt_fixedAxisMotion_orientation B ω₀ α t) i j).symm.trans ?_
+  fin_cases i <;> fin_cases j <;> simp only [fixedAxisMotion, rotZ] <;>
+    simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Matrix.of_apply, Matrix.cons_val',
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.empty_val',
+      Matrix.cons_val_fin_one, Matrix.smul_apply, smul_eq_mul] <;>
+    first
+      | exact dc
+      | exact ds
+      | exact dns
+      | simp
+
+/-- The body angular velocity of the constructed motion is `ω_B = (0, 0, θ')`. -/
+lemma fixedAxisMotion_bodyAngularVelocity (B : RigidBody 3) (ω₀ α : ℝ) (t : Time) :
+    (fixedAxisMotion B ω₀ α).bodyAngularVelocity t = ![0, 0, ∂ₜ (fixedAxisAngle ω₀ α) t] := by
+  have h : (fixedAxisMotion B ω₀ α).bodyAngularVelocity t = Matrix.crossProductVee
+      ((((fixedAxisMotion B ω₀ α).orientation t : Matrix (Fin 3) (Fin 3) ℝ))ᵀ *
+        ∂ₜ (fun s => ((fixedAxisMotion B ω₀ α).orientation s).1) t) := rfl
+  rw [h, deriv_fixedAxisMotion_orientation]
+  have hR : (((fixedAxisMotion B ω₀ α).orientation t : Matrix (Fin 3) (Fin 3) ℝ)) =
+      rotZ (fixedAxisAngle ω₀ α t) := rfl
+  rw [hR]
+  have hcs := Real.cos_sq_add_sin_sq (fixedAxisAngle ω₀ α t)
+  ext i
+  fin_cases i
+  · simp [Matrix.crossProductVee, rotZ, Matrix.mul_apply, Fin.sum_univ_three]
+  · simp [Matrix.crossProductVee, rotZ, Matrix.mul_apply, Fin.sum_univ_three]
+  · simp [Matrix.crossProductVee, rotZ, Matrix.mul_apply, Fin.sum_univ_three]
+    linear_combination ∂ₜ (fixedAxisAngle ω₀ α) t * hcs
+
+/-- The body angular acceleration of the constructed motion is `ω_B' = (0, 0, α)`. -/
+lemma deriv_fixedAxisMotion_bodyAngularVelocity (B : RigidBody 3) (ω₀ α : ℝ) (t : Time) :
+    ∂ₜ (fixedAxisMotion B ω₀ α).bodyAngularVelocity t = ![0, 0, α] := by
+  have hω : (fixedAxisMotion B ω₀ α).bodyAngularVelocity =
+      fun s => (fun x : ℝ => ![0, 0, ω₀ + α * x]) (Time.toRealCLE s) := by
+    funext s
+    rw [fixedAxisMotion_bodyAngularVelocity, (deriv_fixedAxisAngle ω₀ α s).1]
+    rfl
+  have hγ : HasDerivAt (fun x : ℝ => ![0, 0, ω₀ + α * x]) ![0, 0, α] (Time.toRealCLE t) := by
+    rw [hasDerivAt_pi]
+    intro i
+    fin_cases i
+    · simpa using hasDerivAt_const (Time.toRealCLE t) (0 : ℝ)
+    · simpa using hasDerivAt_const (Time.toRealCLE t) (0 : ℝ)
+    · simpa using ((hasDerivAt_id (Time.toRealCLE t)).const_mul α).const_add ω₀
+  rw [hω]
+  exact Time.deriv_comp_toRealCLE_of_hasDerivAt _ t _ hγ
+
+/-- Euler's equations of the torque-balance section on the constructed motion: for a diagonal
+inertia `diag(I_xx, I_yy, I_zz)` about the centre of mass the gyroscopic term vanishes on the axis,
+and `I_B ω_B' + ω_B × (I_B ω_B) = (0, 0, I_zz α)`, the port torque. -/
+lemma fixedAxisMotion_euler {B : RigidBody 3} {Ixx Iyy Izz : ℝ}
+    (hI : B.inertiaTensorAbout B.centerOfMass = Matrix.diagonal ![Ixx, Iyy, Izz]) (ω₀ α : ℝ)
+    (t : Time) :
+    (fixedAxisMotion B ω₀ α).inertiaTensorAbout (fixedAxisMotion B ω₀ α).centerOfMass *ᵥ
+          ∂ₜ (fixedAxisMotion B ω₀ α).bodyAngularVelocity t +
+        (fixedAxisMotion B ω₀ α).bodyAngularVelocity t ⨯₃
+          ((fixedAxisMotion B ω₀ α).inertiaTensorAbout (fixedAxisMotion B ω₀ α).centerOfMass *ᵥ
+            (fixedAxisMotion B ω₀ α).bodyAngularVelocity t) =
+      fixedAxisTorque Izz α := by
+  have hI' : (fixedAxisMotion B ω₀ α).inertiaTensorAbout (fixedAxisMotion B ω₀ α).centerOfMass =
+      Matrix.diagonal ![Ixx, Iyy, Izz] := hI
+  rw [hI', fixedAxisMotion_bodyAngularVelocity, deriv_fixedAxisMotion_bodyAngularVelocity]
+  ext i
+  fin_cases i <;> simp [Matrix.mulVec_diagonal, cross_apply, fixedAxisTorque]
+
+/-- The balance law of the torque-balance section holds on the constructed motion with the port
+torque: for a mass distribution with centre of mass `0` and diagonal inertia,
+`dL_COM/dt = R τ_B`, and `R τ_B = τ_B = (0, 0, I_zz α)` since `Rz` fixes the third axis. -/
+lemma deriv_comAngularMomentum_fixedAxisMotion {B : RigidBody 3} (hc : B.centerOfMass = 0)
+    {Ixx Iyy Izz : ℝ} (hI : B.inertiaTensorAbout B.centerOfMass = Matrix.diagonal ![Ixx, Iyy, Izz])
+    (ω₀ α : ℝ) (t : Time) :
+    ∂ₜ (comAngularMomentum (fixedAxisMotion B ω₀ α)) t =
+        bodyToInertialVec ((fixedAxisMotion B ω₀ α).orientation t) (fixedAxisTorque Izz α) ∧
+      bodyToInertialVec ((fixedAxisMotion B ω₀ α).orientation t) (fixedAxisTorque Izz α) =
+        fixedAxisTorque Izz α := by
+  have hR : ∀ i j, ContDiffOn ℝ 2 (fun s => ((fixedAxisMotion B ω₀ α).orientation s).1 i j)
+      Set.univ := fun i j =>
+    (contDiff_infty.1 (contDiff_fixedAxisMotion_orientation_apply B ω₀ α i j) 2).contDiffOn
+  have hc' : (fixedAxisMotion B ω₀ α).centerOfMass = 0 := hc
+  refine ⟨?_, ?_⟩
+  · refine (deriv_comAngularMomentum_eq_iff_euler (fixedAxisMotion B ω₀ α) isOpen_univ hR hc'
+      (Set.mem_univ t) _).mpr ?_
+    rw [inertialToBodyVec_bodyToInertialVec]
+    exact fixedAxisMotion_euler hI ω₀ α t
+  · have hR' : (((fixedAxisMotion B ω₀ α).orientation t : Matrix (Fin 3) (Fin 3) ℝ)) =
+        rotZ (fixedAxisAngle ω₀ α t) := rfl
+    simp only [bodyToInertialVec, hR']
+    ext i
+    fin_cases i <;> simp [rotZ, Matrix.mulVec, dotProduct, Fin.sum_univ_three, fixedAxisTorque]
+
+/-- The torque port delivers the shaft power `P = τ ω` about the axis: the rotational kinetic
+energy `T = ω_B · (I_B ω_B) / 2 = I_zz θ'² / 2` is differentiable with rate
+`τ_B · ω_B = I_zz α θ'`, the coordinate of the typed shaft power of the torque `I_zz α` at the
+angular velocity `θ'`. -/
+lemma fixedAxisMotion_power_port {B : RigidBody 3} (hc : B.centerOfMass = 0) {Ixx Iyy Izz : ℝ}
+    (hI : B.inertiaTensorAbout B.centerOfMass = Matrix.diagonal ![Ixx, Iyy, Izz]) (ω₀ α : ℝ)
+    (t : Time) :
+    DifferentiableAt ℝ
+        (fun s => B.rotationalKineticEnergy ((fixedAxisMotion B ω₀ α).bodyAngularVelocity s)) t ∧
+      ∂ₜ (fun s => B.rotationalKineticEnergy ((fixedAxisMotion B ω₀ α).bodyAngularVelocity s)) t =
+        fixedAxisTorque Izz α ⬝ᵥ (fixedAxisMotion B ω₀ α).bodyAngularVelocity t ∧
+      fixedAxisTorque Izz α ⬝ᵥ (fixedAxisMotion B ω₀ α).bodyAngularVelocity t =
+        (shaftPower ⟨Izz * α⟩ ⟨∂ₜ (fixedAxisAngle ω₀ α) t⟩).val := by
+  have hT : B.inertiaTensor = Matrix.diagonal ![Ixx, Iyy, Izz] := by
+    rw [← RigidBody.inertiaTensorAbout_zero, ← hc, hI]
+  have hfun : (fun s => B.rotationalKineticEnergy ((fixedAxisMotion B ω₀ α).bodyAngularVelocity s))
+      = fun s => (fun x : ℝ => Izz * (ω₀ + α * x) ^ 2 / 2) (Time.toRealCLE s) := by
+    funext s
+    rw [RigidBody.rotationalKineticEnergy, hT, fixedAxisMotion_bodyAngularVelocity,
+      (deriv_fixedAxisAngle ω₀ α s).1]
+    have hv : Matrix.diagonal ![Ixx, Iyy, Izz] *ᵥ ![0, 0, ω₀ + α * s.val] =
+        ![0, 0, Izz * (ω₀ + α * s.val)] := by
+      ext i
+      fin_cases i <;> simp [Matrix.mulVec_diagonal]
+    rw [hv]
+    simp only [Matrix.cons_dotProduct, Matrix.head_cons, Matrix.tail_cons,
+      Matrix.dotProduct_of_isEmpty, zero_mul, zero_add, add_zero]
+    change _ = Izz * (ω₀ + α * s.val) ^ 2 / 2
+    ring
+  have hγ : HasDerivAt (fun x : ℝ => Izz * (ω₀ + α * x) ^ 2 / 2)
+      (Izz * α * (ω₀ + α * Time.toRealCLE t)) (Time.toRealCLE t) := by
+    have hl : HasDerivAt (fun x : ℝ => ω₀ + α * x) α (Time.toRealCLE t) := by
+      simpa using ((hasDerivAt_id (Time.toRealCLE t)).const_mul α).const_add ω₀
+    have h := ((hl.pow 2).const_mul Izz).div_const 2
+    convert h using 1
+    simp only [Nat.cast_ofNat, Nat.add_one_sub_one, pow_one]
+    ring
+  have hP : fixedAxisTorque Izz α ⬝ᵥ (fixedAxisMotion B ω₀ α).bodyAngularVelocity t =
+      Izz * α * (ω₀ + α * t.val) := by
+    rw [fixedAxisMotion_bodyAngularVelocity, (deriv_fixedAxisAngle ω₀ α t).1]
+    simp [fixedAxisTorque, dotProduct, Fin.sum_univ_three]
+  refine ⟨?_, ?_, ?_⟩
+  · rw [hfun]
+    exact hγ.differentiableAt.comp t Time.toRealCLE.differentiableAt
+  · rw [hfun, hP]
+    exact Time.deriv_comp_toRealCLE_of_hasDerivAt _ t _ hγ
+  · rw [shaftPower_val, hP, (deriv_fixedAxisAngle ω₀ α t).1]
+
+/-- A nonzero angular acceleration needs a nonzero torque: for `I_zz > 0` and `α ≠ 0` the port
+torque, the body angular acceleration and the rate of change `dL_COM/dt` are nonzero. -/
+lemma fixedAxisMotion_torque_ne_zero {B : RigidBody 3} (hc : B.centerOfMass = 0)
+    {Ixx Iyy Izz : ℝ} (hI : B.inertiaTensorAbout B.centerOfMass = Matrix.diagonal ![Ixx, Iyy, Izz])
+    (hIzz : 0 < Izz) {ω₀ α : ℝ} (hα : α ≠ 0) (t : Time) :
+    fixedAxisTorque Izz α ≠ 0 ∧ ∂ₜ (fixedAxisMotion B ω₀ α).bodyAngularVelocity t ≠ 0 ∧
+      ∂ₜ (comAngularMomentum (fixedAxisMotion B ω₀ α)) t ≠ 0 := by
+  have hτ : fixedAxisTorque Izz α ≠ 0 := by
+    intro h
+    exact mul_ne_zero hIzz.ne' hα (by simpa [fixedAxisTorque] using congrFun h 2)
+  refine ⟨hτ, ?_, ?_⟩
+  · rw [deriv_fixedAxisMotion_bodyAngularVelocity]
+    intro h
+    exact hα (by simpa using congrFun h 2)
+  · obtain ⟨h1, h2⟩ := deriv_comAngularMomentum_fixedAxisMotion hc hI ω₀ α t
+    rw [h1, h2]
+    exact hτ
+
+/-- A sign-flipped torque fails: for `I_zz > 0` and `α ≠ 0`, the constructed motion satisfies
+neither Euler's equations nor the balance law with the torque `-τ_B`. -/
+lemma fixedAxisMotion_neg_torque {B : RigidBody 3} (hc : B.centerOfMass = 0) {Ixx Iyy Izz : ℝ}
+    (hI : B.inertiaTensorAbout B.centerOfMass = Matrix.diagonal ![Ixx, Iyy, Izz]) (hIzz : 0 < Izz)
+    {ω₀ α : ℝ} (hα : α ≠ 0) (t : Time) :
+    (fixedAxisMotion B ω₀ α).inertiaTensorAbout (fixedAxisMotion B ω₀ α).centerOfMass *ᵥ
+          ∂ₜ (fixedAxisMotion B ω₀ α).bodyAngularVelocity t +
+        (fixedAxisMotion B ω₀ α).bodyAngularVelocity t ⨯₃
+          ((fixedAxisMotion B ω₀ α).inertiaTensorAbout (fixedAxisMotion B ω₀ α).centerOfMass *ᵥ
+            (fixedAxisMotion B ω₀ α).bodyAngularVelocity t) ≠
+        -fixedAxisTorque Izz α ∧
+      ∂ₜ (comAngularMomentum (fixedAxisMotion B ω₀ α)) t ≠ -fixedAxisTorque Izz α := by
+  have hne : fixedAxisTorque Izz α ≠ -fixedAxisTorque Izz α := by
+    intro h
+    have h2 : Izz * α = -(Izz * α) := by simpa [fixedAxisTorque] using congrFun h 2
+    exact mul_ne_zero hIzz.ne' hα (by linarith)
+  obtain ⟨h1, h2⟩ := deriv_comAngularMomentum_fixedAxisMotion hc hI ω₀ α t
+  refine ⟨?_, ?_⟩
+  · rw [fixedAxisMotion_euler hI ω₀ α t]
+    exact hne
+  · rw [h1, h2]
+    exact hne
 
 end Mechanics.RigidMotionPorts
