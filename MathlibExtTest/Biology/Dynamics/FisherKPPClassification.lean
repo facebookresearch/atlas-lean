@@ -81,6 +81,21 @@ example (D r : ℝ) (hD : 0 < D) (hr : 0 < r)
       IsLeast {c | ∃ U U' : ℝ → ℝ, IsFront D r c U U'} (2 * √(r * D)) :=
   ⟨frontSpeeds_eq_Ici hD hr hKPP, isLeast_frontSpeeds hD hr hKPP⟩
 
+/-- A closed front is a strict front, hence satisfies the speed bound. -/
+example {D r c : ℝ} {U U' : ℝ → ℝ} (hD : 0 < D) (hr : 0 < r)
+    (h : IsClosedFront D r c U U') : IsFront D r c U U' ∧ 2 * √(r * D) ≤ c :=
+  ⟨isFront_of_isClosedFront hD h, two_mul_sqrt_le_of_isClosedFront hD hr h⟩
+
+/-- No closed front has nonpositive speed. -/
+example {D r c : ℝ} {U U' : ℝ → ℝ} (hD : 0 < D) (hr : 0 < r) (hc : c ≤ 0) :
+    ¬ IsClosedFront D r c U U' :=
+  not_isClosedFront_of_nonpos hD hr hc
+
+/-- The Ablowitz–Zeppetella front is a closed front (non-vacuity). -/
+example {D r C : ℝ} (hD : 0 < D) (hr : 0 < r) (hC : 0 < C) :
+    IsClosedFront D r (azSpeed D r) (azWave D r C) (azWaveDeriv D r C) :=
+  isClosedFront_azWave hD hr hC
+
 #print axioms not_tendsto_of_nonpos
 #print axioms not_isFront_of_lt
 #print axioms strictAnti_azWave
