@@ -27,7 +27,9 @@ The finite Biot rate system with constant load rate `df` and
 constant source `s`: differentiable displacement and pressure
 paths `u, p` satisfying at every time the equilibrium rate
 equation `K *ᵥ u' + Q *ᵥ p' = df` and the storage balance
-`Qᵀ *ᵥ u' - C *ᵥ p' = s - H *ᵥ p`. With reduced storage
+`-Qᵀ *ᵥ u' + C *ᵥ p' = s - H *ᵥ p` (the dissipative sign
+convention of `PhyslibExt.Mechanics.PoroelasticEnergy`: with
+`Q = 0`, `C = H = I`, `s = 0` the pressure decays, `p' = -p`). With reduced storage
 `S = Qᵀ K⁻¹ Q + C`, the pressure rate solves the reduced
 storage equation (the canonical algebraic Biot rate identity),
 and when `S` is positive definite the coupled system has a
@@ -87,13 +89,11 @@ def biotStorage {n m : Type*} [Fintype n] [Fintype m]
     Matrix m m ℝ :=
   Qᵀ * Kinv * Q + C
 
-/-- The finite Biot rate system with constant load rate `df` and
-constant source `s`: paths `u, p` are differentiable and at
-every time the rates satisfy the equilibrium rate equation
-`K *ᵥ u' + Q *ᵥ p' = df` and the storage balance
-`Qᵀ *ᵥ u' - C *ᵥ p' = s - H *ᵥ p`. This is the finite rate model; nonsingularity hypotheses are
-carried by the theorems that need them. -/
-def SatisfiesBiotRateSystem {n m : Type*} [Fintype n] [Fintype m]
+/-- Auxiliary transported form of the rate system (opposite
+storage sign); the public predicate `SatisfiesBiotRateSystem`
+below is equivalent to this one at `(-Q, -H)` on the negated
+pressure path. -/
+private def SatisfiesBiotRateSystemAux {n m : Type*} [Fintype n] [Fintype m]
     (K : Matrix n n ℝ) (Q : Matrix n m ℝ) (C H : Matrix m m ℝ)
     (df : n → ℝ) (s : m → ℝ)
     (u : ℝ → n → ℝ) (p : ℝ → m → ℝ) : Prop :=
@@ -131,7 +131,7 @@ theorem biotStorage_posDef {n m : Type*} [Fintype n] [Fintype m]
 storage equation, and the displacement rate is recovered from
 the equilibrium rate equation, transported from the canonical
 algebraic Biot rate identity supplied as `hrate`. -/
-theorem biot_pressure_rate_eq_of {n m : Type*} [Fintype n] [Fintype m]
+private theorem biot_pressure_rate_eq_of {n m : Type*} [Fintype n] [Fintype m]
     [DecidableEq n] [DecidableEq m]
     (hrate : ∀ (K Kinv : Matrix n n ℝ),
       K * Kinv = 1 → Kinv * K = 1 →
@@ -146,7 +146,7 @@ theorem biot_pressure_rate_eq_of {n m : Type*} [Fintype n] [Fintype m]
     {K Kinv : Matrix n n ℝ} (hK : K * Kinv = 1) (hK' : Kinv * K = 1)
     {Q : Matrix n m ℝ} {C H : Matrix m m ℝ}
     {df : n → ℝ} {s : m → ℝ} {u : ℝ → n → ℝ} {p : ℝ → m → ℝ}
-    (hsat : SatisfiesBiotRateSystem K Q C H df s u p) (t : ℝ) :
+    (hsat : SatisfiesBiotRateSystemAux K Q C H df s u p) (t : ℝ) :
     biotStorage Kinv Q C *ᵥ deriv p t
         = Qᵀ *ᵥ (Kinv *ᵥ df) - s + H *ᵥ p t
       ∧ deriv u t = Kinv *ᵥ (df - Q *ᵥ deriv p t) := by
@@ -165,7 +165,7 @@ equation. The displacement is recovered by integrating its
 rate formula; no new linear-ODE or DAE theory is proved. At
 integration `Sinv` is obtained from positive-definite reduced
 storage (`biotStorage_posDef`). -/
-theorem biot_existsUnique_of {n m : Type*} [Fintype n] [Fintype m]
+private theorem biot_existsUnique_of {n m : Type*} [Fintype n] [Fintype m]
     [DecidableEq n] [DecidableEq m]
     (hrate : ∀ (K Kinv : Matrix n n ℝ),
       K * Kinv = 1 → Kinv * K = 1 →
@@ -189,10 +189,10 @@ theorem biot_existsUnique_of {n m : Type*} [Fintype n] [Fintype m]
     (hS' : Sinv * biotStorage Kinv Q C = 1)
     {df : n → ℝ} {s : m → ℝ} (u0 : n → ℝ) (p0 : m → ℝ) :
     ∃ u : ℝ → n → ℝ, ∃ p : ℝ → m → ℝ,
-      SatisfiesBiotRateSystem K Q C H df s u p
+      SatisfiesBiotRateSystemAux K Q C H df s u p
         ∧ u 0 = u0 ∧ p 0 = p0
         ∧ ∀ u' : ℝ → n → ℝ, ∀ p' : ℝ → m → ℝ,
-            SatisfiesBiotRateSystem K Q C H df s u' p'
+            SatisfiesBiotRateSystemAux K Q C H df s u' p'
             → u' 0 = u0 → p' 0 = p0 → u' = u ∧ p' = p := by
   obtain ⟨p, hp0, hp_diff, hp_eq, hp_unique⟩ :=
     hODE (Sinv * H) (Sinv *ᵥ (Qᵀ *ᵥ (Kinv *ᵥ df) - s)) p0
@@ -324,11 +324,11 @@ theorem biot_existsUnique_of {n m : Type*} [Fintype n] [Fintype m]
 `C = 0`, `df = 0`), a solution forces the source `s` to lie in
 the range of `H`; a source outside a singular `H` range admits
 no solution. -/
-theorem biot_source_mem_range_of_no_dynamics {n m : Type*}
+private theorem biot_source_mem_range_of_no_dynamics_of {n m : Type*}
     [Fintype n] [Fintype m] [DecidableEq n] [DecidableEq m]
     {K : Matrix n n ℝ} {H : Matrix m m ℝ}
     {s : m → ℝ} {u : ℝ → n → ℝ} {p : ℝ → m → ℝ}
-    (hsat : SatisfiesBiotRateSystem K 0 0 H 0 s u p) :
+    (hsat : SatisfiesBiotRateSystemAux K 0 0 H 0 s u p) :
     ∃ w : m → ℝ, s = H *ᵥ w := by
   obtain ⟨-, -, heq⟩ := hsat
   obtain ⟨-, heq2⟩ := heq 0
@@ -363,17 +363,130 @@ private theorem linearODE_existsUnique {m : Type*} [Fintype m]
 /-- The pressure rate of a Biot solution solves the reduced
 storage equation, and the displacement rate is recovered from
 the equilibrium rate equation. -/
-theorem biot_pressure_rate_eq {n m : Type*} [Fintype n] [Fintype m]
+private theorem biot_pressure_rate_eq_aux {n m : Type*} [Fintype n] [Fintype m]
     [DecidableEq n] [DecidableEq m]
+    {K Kinv : Matrix n n ℝ} (hK : K * Kinv = 1)
+    (hK' : Kinv * K = 1)
+    {Q : Matrix n m ℝ} {C H : Matrix m m ℝ}
+    {df : n → ℝ} {s : m → ℝ} {u : ℝ → n → ℝ} {p : ℝ → m → ℝ}
+    (hsat : SatisfiesBiotRateSystemAux K Q C H df s u p) (t : ℝ) :
+    biotStorage Kinv Q C *ᵥ deriv p t
+        = Qᵀ *ᵥ (Kinv *ᵥ df) - s + H *ᵥ p t
+      ∧ deriv u t = Kinv *ᵥ (df - Q *ᵥ deriv p t) :=
+  biot_pressure_rate_eq_of BiotSchur.biot_rate_equation hK hK' hsat t
+
+/-- Existence and uniqueness for the nonsingular finite Biot
+rate system with constant forcing and positive-definite
+reduced storage. -/
+private theorem biot_existsUnique_aux {n m : Type*} [Fintype n] [Fintype m]
+    [DecidableEq n] [DecidableEq m]
+    {K Kinv : Matrix n n ℝ} {Q : Matrix n m ℝ}
+    {C H : Matrix m m ℝ}
+    (hK : K * Kinv = 1) (hK' : Kinv * K = 1)
+    (hS : (biotStorage Kinv Q C).PosDef)
+    {df : n → ℝ} {s : m → ℝ} (u0 : n → ℝ) (p0 : m → ℝ) :
+    ∃ u : ℝ → n → ℝ, ∃ p : ℝ → m → ℝ,
+      SatisfiesBiotRateSystemAux K Q C H df s u p
+        ∧ u 0 = u0 ∧ p 0 = p0
+        ∧ ∀ u' : ℝ → n → ℝ, ∀ p' : ℝ → m → ℝ,
+            SatisfiesBiotRateSystemAux K Q C H df s u' p'
+            → u' 0 = u0 → p' 0 = p0 → u' = u ∧ p' = p := by
+  have hunit : IsUnit (biotStorage Kinv Q C).det :=
+    isUnit_iff_ne_zero.mpr hS.det_pos.ne'
+  letI := Matrix.invertibleOfIsUnitDet (biotStorage Kinv Q C) hunit
+  exact biot_existsUnique_of BiotSchur.biot_rate_equation
+    linearODE_existsUnique hK hK'
+    (Matrix.mul_inv_of_invertible _) (Matrix.inv_mul_of_invertible _)
+    u0 p0
+
+/-- The finite Biot rate system with constant load rate `df`
+and constant source `s`: paths `u, p` are differentiable and
+at every time the rates satisfy the equilibrium rate equation
+`K *ᵥ u' + Q *ᵥ p' = df` and the storage balance
+`-Qᵀ *ᵥ u' + C *ᵥ p' = s - H *ᵥ p`, the dissipative sign
+convention (with `Q = 0`, `C = H = I`, `s = 0` the pressure
+decays: `p' = -p`). Nonsingularity hypotheses are carried by
+the theorems that need them. -/
+def SatisfiesBiotRateSystem {n m : Type*} [Fintype n] [Fintype m]
+    (K : Matrix n n ℝ) (Q : Matrix n m ℝ) (C H : Matrix m m ℝ)
+    (df : n → ℝ) (s : m → ℝ)
+    (u : ℝ → n → ℝ) (p : ℝ → m → ℝ) : Prop :=
+  Differentiable ℝ u ∧ Differentiable ℝ p ∧ ∀ t : ℝ,
+    (K *ᵥ deriv u t + Q *ᵥ deriv p t = df)
+      ∧ (-(Qᵀ *ᵥ deriv u t) + C *ᵥ deriv p t = s - H *ᵥ p t)
+
+/-- The public (dissipative-sign) rate system is the auxiliary
+transported system at `(-Q, -H)` on the negated pressure
+path. -/
+private theorem satisfiesBiotRateSystem_iff_aux {n m : Type*}
+    [Fintype n] [Fintype m] {K : Matrix n n ℝ}
+    {Q : Matrix n m ℝ} {C H : Matrix m m ℝ} {df : n → ℝ}
+    {s : m → ℝ} {u : ℝ → n → ℝ} {p : ℝ → m → ℝ} :
+    SatisfiesBiotRateSystem K Q C H df s u p
+      ↔ SatisfiesBiotRateSystemAux K (-Q) C (-H) df s u
+          (fun t => -p t) := by
+  constructor
+  · rintro ⟨hu, hp, heq⟩
+    refine ⟨hu, hp.neg, fun t => ?_⟩
+    have hderiv : deriv (fun t => -p t) t = -deriv p t :=
+      ((hp t).hasDerivAt.neg).deriv
+    obtain ⟨h1, h2⟩ := heq t
+    refine ⟨?_, ?_⟩
+    · rw [hderiv, Matrix.neg_mulVec, Matrix.mulVec_neg, neg_neg]
+      exact h1
+    · rw [hderiv]
+      simp only [Matrix.transpose_neg, Matrix.neg_mulVec,
+        Matrix.mulVec_neg, neg_neg, sub_neg_eq_add]
+      exact h2
+  · rintro ⟨hu, hp, heq⟩
+    have hp' : Differentiable ℝ p := by
+      have h := hp.neg
+      simpa using h
+    refine ⟨hu, hp', fun t => ?_⟩
+    have hderiv : deriv (fun t => -p t) t = -deriv p t :=
+      ((hp' t).hasDerivAt.neg).deriv
+    obtain ⟨h1, h2⟩ := heq t
+    rw [hderiv, Matrix.neg_mulVec, Matrix.mulVec_neg, neg_neg] at h1
+    rw [hderiv] at h2
+    simp only [Matrix.transpose_neg, Matrix.neg_mulVec,
+      Matrix.mulVec_neg, neg_neg, sub_neg_eq_add] at h2
+    exact ⟨h1, h2⟩
+
+/-- Negating the coupling does not change reduced storage. -/
+private theorem biotStorage_neg {n m : Type*} [Fintype n]
+    [Fintype m] (Kinv : Matrix n n ℝ) (Q : Matrix n m ℝ)
+    (C : Matrix m m ℝ) :
+    biotStorage Kinv (-Q) C = biotStorage Kinv Q C := by
+  simp [biotStorage, Matrix.transpose_neg, Matrix.neg_mul,
+    Matrix.mul_neg]
+
+/-- The pressure rate of a Biot solution solves the reduced
+storage equation `S p' = Qᵀ K⁻¹ df + s - H p` (dissipative in
+`H`), and the displacement rate is recovered from the
+equilibrium rate equation. -/
+theorem biot_pressure_rate_eq {n m : Type*} [Fintype n]
+    [Fintype m] [DecidableEq n] [DecidableEq m]
     {K Kinv : Matrix n n ℝ} (hK : K * Kinv = 1)
     (hK' : Kinv * K = 1)
     {Q : Matrix n m ℝ} {C H : Matrix m m ℝ}
     {df : n → ℝ} {s : m → ℝ} {u : ℝ → n → ℝ} {p : ℝ → m → ℝ}
     (hsat : SatisfiesBiotRateSystem K Q C H df s u p) (t : ℝ) :
     biotStorage Kinv Q C *ᵥ deriv p t
-        = Qᵀ *ᵥ (Kinv *ᵥ df) - s + H *ᵥ p t
-      ∧ deriv u t = Kinv *ᵥ (df - Q *ᵥ deriv p t) :=
-  biot_pressure_rate_eq_of BiotSchur.biot_rate_equation hK hK' hsat t
+        = Qᵀ *ᵥ (Kinv *ᵥ df) + s - H *ᵥ p t
+      ∧ deriv u t = Kinv *ᵥ (df - Q *ᵥ deriv p t) := by
+  have haux := satisfiesBiotRateSystem_iff_aux.mp hsat
+  obtain ⟨h1, h2⟩ := biot_pressure_rate_eq_aux hK hK' haux t
+  rw [biotStorage_neg] at h1
+  have hderiv : deriv (fun t => -p t) t = -deriv p t :=
+    ((hsat.2.1 t).hasDerivAt.neg).deriv
+  rw [hderiv, Matrix.mulVec_neg] at h1
+  rw [hderiv] at h2
+  simp only [Matrix.transpose_neg, Matrix.neg_mulVec,
+    Matrix.mulVec_neg, neg_neg] at h1 h2
+  refine ⟨?_, h2⟩
+  apply neg_inj.mp
+  rw [h1, Matrix.mulVec_mulVec]
+  abel
 
 /-- Existence and uniqueness for the nonsingular finite Biot
 rate system with constant forcing and positive-definite
@@ -391,12 +504,32 @@ theorem biot_existsUnique {n m : Type*} [Fintype n] [Fintype m]
         ∧ ∀ u' : ℝ → n → ℝ, ∀ p' : ℝ → m → ℝ,
             SatisfiesBiotRateSystem K Q C H df s u' p'
             → u' 0 = u0 → p' 0 = p0 → u' = u ∧ p' = p := by
-  have hunit : IsUnit (biotStorage Kinv Q C).det :=
-    isUnit_iff_ne_zero.mpr hS.det_pos.ne'
-  letI := Matrix.invertibleOfIsUnitDet (biotStorage Kinv Q C) hunit
-  exact biot_existsUnique_of BiotSchur.biot_rate_equation
-    linearODE_existsUnique hK hK'
-    (Matrix.mul_inv_of_invertible _) (Matrix.inv_mul_of_invertible _)
-    u0 p0
+  rw [← biotStorage_neg Kinv Q C] at hS
+  obtain ⟨u, pq, hsat, hu0, hp0, huniq⟩ :=
+    biot_existsUnique_aux hK hK' hS u0 (-p0)
+  refine ⟨u, fun t => -pq t, ?_, hu0, by simp [hp0], ?_⟩
+  · exact satisfiesBiotRateSystem_iff_aux.mpr (by simpa using hsat)
+  · intro u' p' hsat' hu0' hp0'
+    have haux' := satisfiesBiotRateSystem_iff_aux.mp hsat'
+    obtain ⟨huu, hpq⟩ := huniq u' (fun t => -p' t) haux' hu0'
+      (by simp [hp0'])
+    refine ⟨huu, ?_⟩
+    funext t
+    have h := congrFun hpq t
+    simpa using congrArg Neg.neg h
+
+/-- Singular rejection: when no dynamics remain (`Q = 0`,
+`C = 0`, `df = 0`), a solution forces the source `s` to lie in
+the range of `H`. -/
+theorem biot_source_mem_range_of_no_dynamics {n m : Type*}
+    [Fintype n] [Fintype m] [DecidableEq n] [DecidableEq m]
+    {K : Matrix n n ℝ} {H : Matrix m m ℝ}
+    {s : m → ℝ} {u : ℝ → n → ℝ} {p : ℝ → m → ℝ}
+    (hsat : SatisfiesBiotRateSystem K 0 0 H 0 s u p) :
+    ∃ w : m → ℝ, s = H *ᵥ w := by
+  have haux := satisfiesBiotRateSystem_iff_aux.mp hsat
+  obtain ⟨w, hw⟩ := biot_source_mem_range_of_no_dynamics_of
+    (by simpa using haux)
+  exact ⟨-w, by simp [hw, Matrix.neg_mulVec, Matrix.mulVec_neg]⟩
 
 end EarthScience

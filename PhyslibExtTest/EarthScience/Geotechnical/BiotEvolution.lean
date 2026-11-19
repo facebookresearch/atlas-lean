@@ -9,6 +9,7 @@ module
 
 import PhyslibExt.EarthScience.Geotechnical.BiotEvolution
 import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Analysis.Calculus.Deriv.Basic
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
 
@@ -94,6 +95,38 @@ example : ∃ u : ℝ → Fin 1 → ℝ, ∃ p : ℝ → Fin 1 → ℝ,
       exact Matrix.PosDef.diagonal (fun _ => one_pos))
     0 0
   exact ⟨u, p, hsat, hu0, hp0⟩
+
+/-- Dissipative sign regression: with `Q = 0`, `C = H = I`
+and zero forcing, the unique pressure path decays
+(`p' = -p`), it does not grow. -/
+example : ∃ p : ℝ → Fin 1 → ℝ, p 0 = ![2]
+    ∧ ∀ t, deriv p t = -p t := by
+  obtain ⟨u, p, hsat, -, hp0, -⟩ := biot_existsUnique
+    (K := (1 : Matrix (Fin 1) (Fin 1) ℝ)) (Kinv := 1) (Q := 0)
+    (C := 1) (H := 1) (df := 0) (s := 0)
+    (by simp) (by simp)
+    (by
+      have h : biotStorage (1 : Matrix (Fin 1) (Fin 1) ℝ)
+            (0 : Matrix (Fin 1) (Fin 1) ℝ)
+            (1 : Matrix (Fin 1) (Fin 1) ℝ)
+          = Matrix.diagonal (fun _ => 1) := by
+        ext i j
+        fin_cases i <;> fin_cases j <;> simp [biotStorage]
+      rw [h]
+      exact Matrix.PosDef.diagonal (fun _ => one_pos))
+    0 ![2]
+  refine ⟨p, hp0, fun t => ?_⟩
+  have h := (biot_pressure_rate_eq
+    (show (1 : Matrix (Fin 1) (Fin 1) ℝ) * 1 = 1 by simp)
+    (show (1 : Matrix (Fin 1) (Fin 1) ℝ) * 1 = 1 by simp)
+    hsat t).1
+  have hS : biotStorage (1 : Matrix (Fin 1) (Fin 1) ℝ)
+        (0 : Matrix (Fin 1) (Fin 1) ℝ)
+        (1 : Matrix (Fin 1) (Fin 1) ℝ) = 1 := by
+    ext i j
+    fin_cases i <;> fin_cases j <;> simp [biotStorage]
+  rw [hS] at h
+  simpa using h
 
 /-! ## B. Singular rejection -/
 
