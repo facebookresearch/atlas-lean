@@ -11,6 +11,7 @@ public import PhyslibExt.Thermodynamics.GasCycles
 
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Positivity
 
 /-!
 # Tests for `PhyslibExt.Thermodynamics.GasCycles`
@@ -32,6 +33,18 @@ from `300 K` and heated by `3000 J`:
 * the general results apply to it: both legs lie on the adiabat, the rejected heat and the net
   work are positive, and the work-to-heat ratio is `ottoEfficiency 8 (5/3) = 3/4`;
 * with zero heat input it does no work, and `0 / 0` is not the efficiency.
+
+An ideal Diesel loop of the same gas at `r = 8` with cutoff ratio `rc = 125/64`:
+
+* its states are `1200 K`, `9375/4 K` and `234375/256 K`; it takes in `22875/4 J`, rejects
+  `472725/256 J`, does `991275/256 J` of net work and has efficiency `13217/19520`, below the Otto
+  value `3/4`;
+* the general results apply to it: the ideal-gas law places the cutoff state on the isobar of
+  state `2`, the heats and the net work are positive, and the work-to-heat ratio is the Diesel
+  efficiency, below the Otto efficiency;
+* at `rc = 1` no heat is added and Lean's value of the formula is not the Otto efficiency, which
+  is the limit as `rc` decreases to `1`; a cutoff ratio `16` above `r` turns the last adiabatic
+  leg into a compression.
 -/
 
 @[expose] public section
@@ -152,5 +165,140 @@ example :
     ottoNetWork 300 8 (5 / 3) 3 0 = 0 ∧
       ottoNetWork 300 8 (5 / 3) 3 0 / 0 ≠ ottoEfficiency 8 (5 / 3) :=
   otto_zero_heatIn (by norm_num) (by norm_num)
+
+private lemma cube_rpow (x y : ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) (h : y ^ 3 = x) :
+    x ^ ((1 / 3 : ℝ)) = y := by
+  have h1 : (1 / 3 : ℝ) = ((3 : ℕ)⁻¹ : ℝ) := by norm_num
+  have hroot : (x ^ ((1 / 3 : ℝ))) ^ 3 = x := by
+    rw [h1]
+    exact Real.rpow_inv_natCast_pow hx (by norm_num : 3 ≠ 0)
+  have heq : (x ^ ((1 / 3 : ℝ))) ^ 3 = y ^ 3 := by rw [hroot, ← h]
+  have hx' : 0 ≤ x ^ ((1 / 3 : ℝ)) := Real.rpow_nonneg hx _
+  have heq_rpow : (x ^ ((1 / 3 : ℝ))) ^ (((3 : ℕ)) : ℝ) = y ^ (((3 : ℕ)) : ℝ) := by
+    rw [Real.rpow_natCast, Real.rpow_natCast]
+    exact heq
+  have h3' : (((3 : ℕ)) : ℝ) ≠ 0 := by norm_num
+  exact (Real.rpow_left_inj hx' hy h3').mp heq_rpow
+
+private lemma rpow_two_thirds (x y : ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) (h : y ^ 3 = x ^ 2) :
+    x ^ ((2 / 3 : ℝ)) = y := by
+  have h23 : (2 / 3 : ℝ) = 2 * (1 / 3) := by ring
+  have hmul : x ^ ((2 / 3 : ℝ)) = (x ^ ((2 : ℝ))) ^ ((1 / 3 : ℝ)) := by
+    rw [h23, Real.rpow_mul hx]
+  have hsq : x ^ ((2 : ℝ)) = x ^ 2 := by
+    have h2 : (2 : ℝ) = (((2 : ℕ)) : ℝ) := by norm_num
+    rw [h2, Real.rpow_natCast]
+  rw [hmul, hsq]
+  have hx2 : 0 ≤ x ^ 2 := by positivity
+  exact cube_rpow _ _ hx2 hy h
+
+-- Fixture, a cutoff strictly between one and `r`: the monatomic gas of the Otto fixture
+-- (`Cv = 3`, `nR = 2`, `γ = 5 / 3`, `T₁ = 300`) at `r = 8` with cutoff ratio
+-- `rc = 125 / 64 = (5 / 4) ^ 3` has `T₂ = 1200`, `T₃ = 9375 / 4`, `T₄ = 234375 / 256`, heat input
+-- `22875 / 4`, rejected heat `472725 / 256`, net work `991275 / 256` and efficiency
+-- `13217 / 19520`, below the Otto efficiency `3 / 4` at the same `r`.
+example :
+    ottoCompressedTemp 300 8 (5 / 3) = 1200 ∧
+      dieselCutoffTemp 300 8 (5 / 3) (125 / 64) = 9375 / 4 ∧
+      dieselExpandedTemp 300 8 (5 / 3) (125 / 64) = 234375 / 256 ∧
+      dieselHeatIn 300 8 (5 / 3) 3 (125 / 64) = 22875 / 4 ∧
+      dieselHeatOut 300 8 (5 / 3) 3 (125 / 64) = 472725 / 256 ∧
+      dieselNetWork 300 8 (5 / 3) 3 2 (125 / 64) = 991275 / 256 ∧
+      dieselEfficiency 8 (5 / 3) (125 / 64) = 13217 / 19520 ∧
+      ottoEfficiency 8 (5 / 3) = 3 / 4 := by
+  have h8_23 : (8 : ℝ) ^ ((2 / 3 : ℝ)) = 4 :=
+    rpow_two_thirds _ _ (by norm_num) (by norm_num) (by norm_num)
+  have h512_23 : (125 / 512 : ℝ) ^ ((2 / 3 : ℝ)) = 25 / 64 :=
+    rpow_two_thirds _ _ (by norm_num) (by norm_num) (by norm_num)
+  have h64_23 : (125 / 64 : ℝ) ^ ((2 / 3 : ℝ)) = 25 / 16 :=
+    rpow_two_thirds _ _ (by norm_num) (by norm_num) (by norm_num)
+  have h53m1 : ((5 / 3 : ℝ) - 1) = 2 / 3 := by norm_num
+  have h1m53 : ((1 : ℝ) - 5 / 3) = -(2 / 3) := by norm_num
+  have h53 : (5 / 3 : ℝ) = 1 + 2 / 3 := by norm_num
+  have h8_53m1 : (8 : ℝ) ^ ((5 / 3 - 1 : ℝ)) = 4 := by rw [h53m1]; exact h8_23
+  have h8_1m53 : (8 : ℝ) ^ ((1 - 5 / 3 : ℝ)) = 1 / 4 := by
+    rw [h1m53, Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 8), h8_23]
+    norm_num
+  have hrr : ((125 / 64 : ℝ) / 8) = 125 / 512 := by norm_num
+  have h512_53m1 : ((125 / 64 : ℝ) / 8) ^ ((5 / 3 - 1 : ℝ)) = 25 / 64 := by
+    rw [hrr, h53m1]; exact h512_23
+  have h64_53 : (125 / 64 : ℝ) ^ ((5 / 3 : ℝ)) = 3125 / 1024 := by
+    rw [h53, Real.rpow_add (by norm_num : (0 : ℝ) < 125 / 64), Real.rpow_one, h64_23]
+    norm_num
+  have hT₂ : ottoCompressedTemp 300 8 (5 / 3) = 1200 := by
+    simp [ottoCompressedTemp, h8_53m1]
+    norm_num
+  have hT₃ : dieselCutoffTemp 300 8 (5 / 3) (125 / 64) = 9375 / 4 := by
+    simp [dieselCutoffTemp, hT₂]
+    norm_num
+  have hT₄ : dieselExpandedTemp 300 8 (5 / 3) (125 / 64) = 234375 / 256 := by
+    simp [dieselExpandedTemp, hT₃, h512_53m1]
+    norm_num
+  have hQin : dieselHeatIn 300 8 (5 / 3) 3 (125 / 64) = 22875 / 4 := by
+    simp [dieselHeatIn, hT₃, hT₂]
+    norm_num
+  have hQout : dieselHeatOut 300 8 (5 / 3) 3 (125 / 64) = 472725 / 256 := by
+    simp [dieselHeatOut, hT₄]
+    norm_num
+  have hW : dieselNetWork 300 8 (5 / 3) 3 2 (125 / 64) = 991275 / 256 := by
+    simp [dieselNetWork, hT₃, hT₄, hT₂]
+    norm_num
+  have hEff : dieselEfficiency 8 (5 / 3) (125 / 64) = 13217 / 19520 := by
+    simp [dieselEfficiency, h8_1m53, h64_53]
+    norm_num
+  have hOtto : ottoEfficiency 8 (5 / 3) = 3 / 4 := by
+    simp [ottoEfficiency, h8_1m53]
+    norm_num
+  exact ⟨hT₂, hT₃, hT₄, hQin, hQout, hW, hEff, hOtto⟩
+
+-- The monatomic Diesel loop through the general results, at `V₁ = 1`: `diesel_cycle` gives
+-- positive heat input, rejected heat and net work, `dieselNetWork_div_heatIn` identifies the
+-- work-to-heat ratio with `dieselEfficiency 8 (5/3) (125/64)`, and
+-- `dieselEfficiency_lt_ottoEfficiency` puts it below the Otto efficiency at `r = 8`.
+example :
+    0 < dieselHeatIn 300 8 (5 / 3) 3 (125 / 64) ∧ 0 < dieselHeatOut 300 8 (5 / 3) 3 (125 / 64) ∧
+      0 < dieselNetWork 300 8 (5 / 3) 3 2 (125 / 64) ∧
+      dieselNetWork 300 8 (5 / 3) 3 2 (125 / 64) / dieselHeatIn 300 8 (5 / 3) 3 (125 / 64) =
+        dieselEfficiency 8 (5 / 3) (125 / 64) ∧
+      dieselEfficiency 8 (5 / 3) (125 / 64) < ottoEfficiency 8 (5 / 3) := by
+  obtain ⟨-, -, -, -, -, hQin, hQout, hW, -, -⟩ := diesel_cycle (T₁ := 300) (V₁ := 1) (r := 8)
+    (γ := 5 / 3) (Cv := 3) (nR := 2) (rc := 125 / 64) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+  exact ⟨hQin, hQout, hW,
+    (dieselNetWork_div_heatIn (T₁ := 300) (nR := 2) (by norm_num) (by norm_num) (by norm_num)
+      (by norm_num) (by norm_num) (by norm_num) (by norm_num)).1,
+    dieselEfficiency_lt_ottoEfficiency (by norm_num) (by norm_num) (by norm_num)⟩
+
+-- The ideal-gas law fixes the cutoff state of the same loop at `V₁ = 1`: a state at the cutoff
+-- volume `125/64 * (1/8)` on the isobar of state `2` has temperature `rc * T₂`, and the first law
+-- on the isobaric leg gives the heat input `γ * Cv * (T₃ - T₂)`.
+example {p T₃ : ℝ} (h₂ : p * (1 / 8) = 2 * ottoCompressedTemp 300 8 (5 / 3))
+    (h₃ : p * (125 / 64 * (1 / 8)) = 2 * T₃) :
+    T₃ = dieselCutoffTemp 300 8 (5 / 3) (125 / 64) ∧
+      3 * (T₃ - ottoCompressedTemp 300 8 (5 / 3)) + p * (125 / 64 * (1 / 8) - 1 / 8) =
+        dieselHeatIn 300 8 (5 / 3) 3 (125 / 64) :=
+  dieselIsobaric_eos (V₁ := 1) (by norm_num) (by norm_num) (by norm_num) h₂ h₃
+
+-- Unit cutoff ratio on the same gas: no heat is added, the loop does no net work, and Lean's
+-- value `1` of the formula at `rc = 1` is not the Otto efficiency.
+example :
+    dieselHeatIn 300 8 (5 / 3) 3 1 = 0 ∧ dieselNetWork 300 8 (5 / 3) 3 2 1 = 0 ∧
+      dieselEfficiency 8 (5 / 3) 1 = 1 ∧ dieselEfficiency 8 (5 / 3) 1 ≠ ottoEfficiency 8 (5 / 3) :=
+  diesel_unit_cutoff (by norm_num)
+
+-- The Otto efficiency at `r = 8` is the limit of the Diesel efficiency as the cutoff ratio
+-- decreases to one.
+example : Filter.Tendsto (fun rc => dieselEfficiency 8 (5 / 3) rc) (nhdsWithin 1 (Set.Ioi 1))
+    (nhds (ottoEfficiency 8 (5 / 3))) :=
+  dieselEfficiency_tendsto_ottoEfficiency (by norm_num)
+
+-- A cutoff ratio `16` above `r = 8` is not the declared cycle: the cutoff volume exceeds
+-- `V₁ = 1`, so the leg back to `V₁` is a compression with negative work output.
+example :
+    (1 : ℝ) < 16 * (1 / 8) ∧
+      dieselCutoffTemp 300 8 (5 / 3) 16 < dieselExpandedTemp 300 8 (5 / 3) 16 ∧
+      3 * (dieselCutoffTemp 300 8 (5 / 3) 16 - dieselExpandedTemp 300 8 (5 / 3) 16) < 0 :=
+  diesel_cutoff_above_ratio (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 end PhyslibExtTest.Thermodynamics.GasCycles
