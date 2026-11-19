@@ -558,7 +558,7 @@ noncomputable def continuousBeamLoadVector (w1 L1 w2 L2 : ℝ) :
 
 /-- The free-rotation components of scattered element end
 forces are the three nodal moment sums. -/
-theorem supportInjection_transpose_scatter (e1 e2 : Fin 4 → ℝ) :
+lemma supportInjection_transpose_scatter (e1 e2 : Fin 4 → ℝ) :
     supportInjectionᵀ *ᵥ (spanOneGatherᵀ *ᵥ e1 + spanTwoGatherᵀ *ᵥ e2)
       = ![e1 1, e1 3 + e2 1, e2 3] := by
   ext i
@@ -569,7 +569,7 @@ theorem supportInjection_transpose_scatter (e1 e2 : Fin 4 → ℝ) :
 /-- With deflection and slope continuity at node 1, the
 gathered nodal data are the two element end-data
 vectors. -/
-theorem gather_continuousBeamNodalData {L1 L2 : ℝ} {y1 y2 : ℝ → ℝ}
+lemma gather_continuousBeamNodalData {L1 L2 : ℝ} {y1 y2 : ℝ → ℝ}
     (hv : y1 L1 = y2 0)
     (hθ : iteratedDeriv 1 y1 L1 = iteratedDeriv 1 y2 0) :
     spanOneGather *ᵥ continuousBeamNodalData L1 L2 y1 y2 = beamEndData L1 y1
@@ -587,7 +587,7 @@ theorem gather_continuousBeamNodalData {L1 L2 : ℝ} {y1 y2 : ℝ → ℝ}
 
 /-- The exact slopes inject to the global nodal data under
 simple supports. -/
-private theorem supportInjection_mulVec_nodalSlopes
+private lemma supportInjection_mulVec_nodalSlopes
     {L1 L2 : ℝ} {y1 y2 : ℝ → ℝ}
     (hs0 : y1 0 = 0) (hs1 : y1 L1 = 0) (hs2 : y2 L2 = 0) :
     supportInjection
@@ -601,7 +601,7 @@ private theorem supportInjection_mulVec_nodalSlopes
 /-- Conditional form: the exact nodal slopes solve the
 supported finite-element system, given the canonical
 quartic end-force identity. -/
-private theorem supportedStiffness_mulVec_nodalSlopes_of
+private lemma supportedStiffness_mulVec_nodalSlopes_of
     (hquartic : ∀ {EI L w : ℝ}, 0 < EI → 0 < L → ∀ {y : ℝ → ℝ} {a b c d e : ℝ},
       (∀ x : ℝ, y x = a + b * x + c * x ^ 2 + d * x ^ 3 + e * x ^ 4) →
       (∀ x ∈ Set.Icc 0 L, EI * iteratedDeriv 4 y x = w) →
@@ -688,7 +688,7 @@ theorem supportedStiffness_mulVec_nodalSlopes
 /-- Conditional nodal exactness, given the canonical
 quartic identity, positive definiteness, and unique
 supported response. -/
-private theorem continuousBeam_nodal_exact_of
+private lemma continuousBeam_nodal_exact_of
     (hquartic : ∀ {EI L w : ℝ}, 0 < EI → 0 < L → ∀ {y : ℝ → ℝ} {a b c d e : ℝ},
       (∀ x : ℝ, y x = a + b * x + c * x ^ 2 + d * x ^ 3 + e * x ^ 4) →
       (∀ x ∈ Set.Icc 0 L, EI * iteratedDeriv 4 y x = w) →
