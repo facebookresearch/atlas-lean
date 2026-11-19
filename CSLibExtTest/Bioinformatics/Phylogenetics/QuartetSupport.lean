@@ -12,9 +12,10 @@ import CSLibExt.Bioinformatics.Phylogenetics.QuartetSupport
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
-/-! Tests for quartet support: the two acceptance checks (a tree induces exactly one
-resolution per quartet; on five taxa there are 15 trees and the score bound is attained),
-and a tie example showing strict plurality cannot be dropped. -/
+/-! Tests for quartet support: a strict-plurality frequency vector with plurality value
+`2/5 < 1/2` whose unique support maximizer is the species tree; on five taxa there are 15
+trees, distinguished by their quartets; and a tie example showing strict plurality cannot
+be dropped. -/
 
 open MathlibExt.Biology.Phylogenetics.UnrootedTreeCount
 

@@ -14,13 +14,15 @@ public import CSLibExt.Bioinformatics.Phylogenetics.Splits
 # Quartet support and determination by quartets
 
 For an unrooted binary tree `T` on taxa `X` and a four-taxon set `q`, exactly one of the
-three resolutions `A | q \ A` is *induced* by `T` (displayed as a quartet). The
-`quartetScore S T` counts the four-taxon sets on which two trees `S` and `T` induce the same
-resolution. The score is maximal (all quartets agree) iff the trees are isomorphic, and a
-tree that scores strictly more than every other tree against a fixed `T` (a strict
-plurality winner) is isomorphic to `T`: a binary tree is determined by its quartets, and
-plurality quartet voting recovers it. On five taxa there are `15` unrooted binary trees and
-the bound is attained.
+three resolutions `A | q \ A` is *induced* by `T` (displayed as a quartet). Given
+resolution frequencies `f q ρ` (e.g. estimated quartet frequencies), the total quartet
+support of a tree is `quartetScore f T = ∑_q f q (T|q)`, summing the frequency of the
+resolution `T` induces on each quartet. If on every quartet the resolution induced by a
+species tree `S` is the strict plurality of `f` (`IsStrictPlurality f S`, no `> 1/2`
+needed), then `S` is the unique maximizer of total quartet support up to isomorphism:
+equal support forces the same induced quartet on every four-taxon set, hence an isomorphic
+tree, and every non-isomorphic tree scores strictly less. In particular a binary tree is
+determined by its quartets. On five taxa there are `15` unrooted binary trees.
 
 ## References
 
