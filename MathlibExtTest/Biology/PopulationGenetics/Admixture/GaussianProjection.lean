@@ -24,19 +24,25 @@ open MeasureTheory ProbabilityTheory Matrix Module
 namespace MathlibExtTest.Biology.PopulationGenetics.Admixture.GaussianProjection
 
 open MathlibExt.Biology.PopulationGenetics.Admixture
+open MathlibExt.LinearAlgebra.Matrix.QuadraticFormCongruence (quadForm)
 
 section Generic
 
 variable {n : Type*} [Fintype n] [DecidableEq n] {V : Matrix n n ℝ}
 
+/-- On the coordinates of a Euclidean vector `w`, `quadForm A` is `wᵀ A w` in coordinates. -/
+example (A : Matrix n n ℝ) (w : EuclideanSpace ℝ n) :
+    quadForm A (fun i => w i) = (fun i => w i) ⬝ᵥ A *ᵥ (fun i => w i) :=
+  rfl
+
 /-- The statistic is the minimum of the residual quadratic form over the subspace. -/
 example (hV : V.PosDef) (T : Submodule ℝ (EuclideanSpace ℝ n)) (z : EuclideanSpace ℝ n) :
-    gaussProjStat V T z = ⨅ u : T, quadForm V⁻¹ (z - (u : EuclideanSpace ℝ n)) :=
+    gaussProjStat V T z = ⨅ u : T, quadForm V⁻¹ (fun i => (z - (u : EuclideanSpace ℝ n)) i) :=
   (gaussProjStat_eq_iInf hV T z).1
 
 /-- The minimum is attained in the subspace. -/
 example (hV : V.PosDef) (T : Submodule ℝ (EuclideanSpace ℝ n)) (z : EuclideanSpace ℝ n) :
-    ∃ u ∈ T, gaussProjStat V T z = quadForm V⁻¹ (z - u) :=
+    ∃ u ∈ T, gaussProjStat V T z = quadForm V⁻¹ (fun i => (z - u) i) :=
   (gaussProjStat_eq_iInf hV T z).2
 
 /-- The Gaussian projection lemma: codimension `c > 0` gives the chi-square law with `c`
@@ -49,11 +55,13 @@ example (hV : V.PosDef) (T : Submodule ℝ (EuclideanSpace ℝ n))
 
 /-- The Hotelling form: `Zᵀ V⁻¹ Z` is chi-square with `card n` degrees of freedom. -/
 example (hV : V.PosDef) (hm : 0 < Fintype.card n) :
-    (multivariateGaussian 0 V).map (quadForm V⁻¹) = chiSquareMeasure (Fintype.card n) :=
+    (multivariateGaussian 0 V).map (fun w => quadForm V⁻¹ (fun i => w i)) =
+      chiSquareMeasure (Fintype.card n) :=
   map_quadForm_multivariateGaussian hV hm
 
 /-- `T = ⊥`: nothing is fitted, the statistic is the full quadratic form. -/
-example (hV : V.PosDef) (z : EuclideanSpace ℝ n) : gaussProjStat V ⊥ z = quadForm V⁻¹ z :=
+example (hV : V.PosDef) (z : EuclideanSpace ℝ n) :
+    gaussProjStat V ⊥ z = quadForm V⁻¹ (fun i => z i) :=
   gaussProjStat_bot hV z
 
 /-- `T = ⊥` through the main law: codimension `card n`. -/
@@ -94,7 +102,8 @@ example (z : EuclideanSpace ℝ n) : gaussProjStat 1 ⊥ z = ‖z‖ ^ 2 := by
 /-- Identity covariance: `‖Z‖²` for a standard Gaussian `Z` is chi-square with `card n` degrees
 of freedom. -/
 example (hm : 0 < Fintype.card n) :
-    (stdGaussian (EuclideanSpace ℝ n)).map (quadForm 1) = chiSquareMeasure (Fintype.card n) := by
+    (stdGaussian (EuclideanSpace ℝ n)).map (fun w => quadForm 1 (fun i => w i)) =
+      chiSquareMeasure (Fintype.card n) := by
   simpa using map_quadForm_multivariateGaussian (V := (1 : Matrix n n ℝ)) PosDef.one hm
 
 /-- A line in the plane, for every positive definite covariance: codimension one gives the

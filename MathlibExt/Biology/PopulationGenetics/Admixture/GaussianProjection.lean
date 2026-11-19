@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.LinearAlgebra.Matrix.QuadraticFormCongruence
 public import MathlibExt.Probability.Distributions.CochranTheorem
 public import Mathlib.Probability.Distributions.Gaussian.Multivariate
 public import Mathlib.LinearAlgebra.Matrix.ToLin
@@ -26,7 +27,9 @@ The statistic `gaussProjStat` is defined in whitened projection form: with `A = 
 `CFC.sqrt`), whitening sends `T` to the subspace `A '' T`, and the statistic is the squared norm
 of the orthogonal projection of `A z` onto `(A '' T)ᗮ`. This form is continuous in `z` and needs
 no choice of minimizer; `gaussProjStat_eq_iInf` identifies it with the minimum of the residual
-quadratic form. The definitions are total in `V`, and every theorem assumes `V.PosDef`.
+quadratic form. Quadratic forms are Atlas's `QuadraticFormCongruence.quadForm`, `x ⬝ᵥ (A *ᵥ x)` on
+coordinate vectors, applied to the coordinates `fun i => w i` of a Euclidean vector `w`. The
+definitions are total in `V`, and every theorem assumes `V.PosDef`.
 
 `chiSquareMeasure 0` is the zero measure (the gamma density at shape `0`), not the Dirac mass at
 `0`. The codimension-zero endpoint `T = ⊤` is therefore stated separately, with the law
@@ -34,8 +37,8 @@ quadratic form. The definitions are total in `V`, and every theorem assumes `V.P
 
 ## Main results
 
-* `gaussProjStat_eq_iInf`: the statistic is the minimum over `u ∈ T` of `quadForm V⁻¹ (z - u)`,
-  and the minimum is attained.
+* `gaussProjStat_eq_iInf`: the statistic is the minimum over `u ∈ T` of the residual quadratic
+  form `quadForm V⁻¹ (fun i => (z - u) i)`, and the minimum is attained.
 * `map_gaussProjStat_multivariateGaussian`: the Gaussian projection lemma, the chi-square law
   with `card ι - finrank ℝ T` degrees of freedom.
 * `gaussProjStat_top`, `map_gaussProjStat_top`: for `T = ⊤` the statistic vanishes and its law is
@@ -62,15 +65,12 @@ projection of it. Cochran's theorem in projection form
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory Matrix Module
+open MathlibExt.LinearAlgebra.Matrix.QuadraticFormCongruence (quadForm)
 open scoped RealInnerProductSpace MatrixOrder
 
 namespace MathlibExt.Biology.PopulationGenetics.Admixture
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
-
-/-- The quadratic form of a matrix on Euclidean vectors, through coordinates. -/
-def quadForm (A : Matrix ι ι ℝ) (w : EuclideanSpace ℝ ι) : ℝ :=
-  (fun i => w i) ⬝ᵥ A *ᵥ (fun i => w i)
 
 /-- The whitening matrix of `V`: the inverse of the CFC square root `√V`.
 Totalized as `(CFC.sqrt V)⁻¹` for arbitrary matrices. -/
@@ -122,11 +122,16 @@ private lemma injective_toEuclideanLin_whitening {V : Matrix ι ι ℝ} (hV : V.
 /-- The residual quadratic form is the squared norm of the whitened vector. -/
 private lemma quadForm_inv_eq_norm_sq {V : Matrix ι ι ℝ} (hV : V.PosDef)
     (w : EuclideanSpace ℝ ι) :
-    quadForm V⁻¹ w = ‖Matrix.toEuclideanLin (whitening V) w‖ ^ 2 := by
+    quadForm V⁻¹ (fun i => w i) = ‖Matrix.toEuclideanLin (whitening V) w‖ ^ 2 := by
   rw [EuclideanSpace.real_norm_sq_eq, quadForm, ← whitening_mul_whitening hV,
     ← Matrix.mulVec_mulVec, Matrix.dotProduct_mulVec, ← Matrix.mulVec_transpose,
     transpose_whitening]
   simp [dotProduct, Matrix.toLpLin_apply, pow_two]
+
+private lemma quadForm_inv_nonneg {V : Matrix ι ι ℝ} (hV : V.PosDef) (w : EuclideanSpace ℝ ι) :
+    0 ≤ quadForm V⁻¹ (fun i => w i) := by
+  rw [quadForm_inv_eq_norm_sq hV]
+  positivity
 
 /-- Whitening `N(0, V)` gives the standard Gaussian law. -/
 private lemma map_toEuclideanLin_whitening {V : Matrix ι ι ℝ} (hV : V.PosDef) :
@@ -199,14 +204,14 @@ private lemma whitened_min (V : Matrix ι ι ℝ) (T : Submodule ℝ (EuclideanS
 form, and the minimum is attained. -/
 theorem gaussProjStat_eq_iInf {V : Matrix ι ι ℝ} (hV : V.PosDef)
     (T : Submodule ℝ (EuclideanSpace ℝ ι)) (z : EuclideanSpace ℝ ι) :
-    gaussProjStat V T z = ⨅ u : T, quadForm V⁻¹ (z - (u : EuclideanSpace ℝ ι)) ∧
+    gaussProjStat V T z = ⨅ u : T, quadForm V⁻¹ (fun i => (z - (u : EuclideanSpace ℝ ι)) i) ∧
       ∃ u : EuclideanSpace ℝ ι, u ∈ T ∧
-        gaussProjStat V T z = quadForm V⁻¹ (z - u) := by
-  have hq : ∀ u : EuclideanSpace ℝ ι, quadForm V⁻¹ (z - u) =
+        gaussProjStat V T z = quadForm V⁻¹ (fun i => (z - u) i) := by
+  have hq : ∀ u : EuclideanSpace ℝ ι, quadForm V⁻¹ (fun i => (z - u) i) =
       ‖Matrix.toEuclideanLin (whitening V) z - Matrix.toEuclideanLin (whitening V) u‖ ^ 2 :=
     fun u => by rw [quadForm_inv_eq_norm_sq hV, map_sub]
   obtain ⟨hle, u₀, hu₀⟩ := whitened_min V T (Matrix.toEuclideanLin (whitening V) z)
-  have heq : gaussProjStat V T z = quadForm V⁻¹ (z - (u₀ : EuclideanSpace ℝ ι)) := by
+  have heq : gaussProjStat V T z = quadForm V⁻¹ (fun i => (z - (u₀ : EuclideanSpace ℝ ι)) i) := by
     rw [hq, gaussProjStat_eq_norm_sq]
     exact hu₀
   refine ⟨le_antisymm (le_ciInf fun u => ?_) ?_, u₀, u₀.2, heq⟩
@@ -215,9 +220,7 @@ theorem gaussProjStat_eq_iInf {V : Matrix ι ι ℝ} (hV : V.PosDef)
   · rw [heq]
     refine ciInf_le ⟨0, ?_⟩ u₀
     rintro _ ⟨u, rfl⟩
-    dsimp only
-    rw [hq]
-    positivity
+    exact quadForm_inv_nonneg hV _
 
 /-! ### The chi-square law -/
 
@@ -251,10 +254,8 @@ theorem gaussProjStat_top {V : Matrix ι ι ℝ} (hV : V.PosDef)
   rw [h]
   refine ciInf_le_of_le ⟨0, ?_⟩ ⟨z, Submodule.mem_top⟩ ?_
   · rintro _ ⟨u, rfl⟩
-    dsimp only
-    rw [quadForm_inv_eq_norm_sq hV]
-    positivity
-  · change quadForm V⁻¹ (z - z) ≤ 0
+    exact quadForm_inv_nonneg hV _
+  · change quadForm V⁻¹ (fun i => (z - z) i) ≤ 0
     rw [sub_self, quadForm_inv_eq_norm_sq hV, map_zero, norm_zero]
     norm_num
 
@@ -266,7 +267,7 @@ theorem map_gaussProjStat_top {V : Matrix ι ι ℝ} (hV : V.PosDef) :
 /-- Endpoint `T = ⊥`: the statistic is the full quadratic form `zᵀ V⁻¹ z`. -/
 theorem gaussProjStat_bot {V : Matrix ι ι ℝ} (hV : V.PosDef)
     (z : EuclideanSpace ℝ ι) :
-    gaussProjStat V ⊥ z = quadForm V⁻¹ z := by
+    gaussProjStat V ⊥ z = quadForm V⁻¹ (fun i => z i) := by
   obtain ⟨-, u, hu, h⟩ := gaussProjStat_eq_iInf hV ⊥ z
   rw [Submodule.mem_bot] at hu
   rw [h, hu, sub_zero]
@@ -275,8 +276,10 @@ theorem gaussProjStat_bot {V : Matrix ι ι ℝ} (hV : V.PosDef)
 `card ι` degrees of freedom. -/
 theorem map_quadForm_multivariateGaussian {V : Matrix ι ι ℝ} (hV : V.PosDef)
     (hm : 0 < Fintype.card ι) :
-    (multivariateGaussian 0 V).map (quadForm V⁻¹) = chiSquareMeasure (Fintype.card ι) := by
-  have hfun : quadForm V⁻¹ = gaussProjStat V ⊥ := funext fun z => (gaussProjStat_bot hV z).symm
+    (multivariateGaussian 0 V).map (fun w => quadForm V⁻¹ (fun i => w i)) =
+      chiSquareMeasure (Fintype.card ι) := by
+  have hfun : (fun w : EuclideanSpace ℝ ι => quadForm V⁻¹ (fun i => w i)) = gaussProjStat V ⊥ :=
+    funext fun z => (gaussProjStat_bot hV z).symm
   have h := map_gaussProjStat_multivariateGaussian hV ⊥ (by rwa [finrank_bot, Nat.sub_zero])
   rwa [finrank_bot, Nat.sub_zero, ← hfun] at h
 
