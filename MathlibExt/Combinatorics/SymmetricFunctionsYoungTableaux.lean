@@ -124,6 +124,7 @@ noncomputable def MvPolynomial.omegaAlgHom (σ R : Type*)
     (MvPolynomial.esymmAlgEquiv σ R rfl).symm.toAlgHom
 
 -- Combinatorics 494: Exponential Specialization
+
 /-- Let ℚ[[x₁,x₂,…]] be the ring of formal power
 series in the variables x₁,x₂,… with rational
 coefficients. Its elements are the formal sums
@@ -142,7 +143,6 @@ one variable t. The exponential specialization of f is
   ex(f)=∑_{m∈ℤ_{≥ 0}}
   tᵐ/(m!) [x₁⋯ xₘ]f.
 -/
-
 noncomputable def _root_.MvPowerSeries.exponentialSpecialization
     (f : MvPowerSeries ℕ ℚ) : PowerSeries ℚ :=
   PowerSeries.mk fun m => (Nat.factorial m : ℚ)⁻¹ *

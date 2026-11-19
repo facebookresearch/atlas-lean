@@ -12,6 +12,10 @@ public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import Mathlib.Basic.Sign.Basic
+public import Mathlib.Probability.Process.HittingTime
+public import MathlibExt.Probability.Reliability.SystemLifetime
+public import PhyslibExt.Elasticity.PrismaticMembers
 
 import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Mul
@@ -19,7 +23,7 @@ import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 
 /-!
-# Physical failure events: critical crack length in an LEFM model
+# Physical failure events: LEFM crack failure, demand margins and damage lifetimes
 
 ## i. Overview
 
@@ -36,6 +40,43 @@ The stress-intensity formula is an adopted model input with a
 small-scale-yielding validity regime. Nothing here validates the model
 empirically, and `σ` is a peak tensile stress, not a fatigue stress range.
 
+A declared nonnegative demand `s` (an equivalent stress, or a stress
+intensity) against a positive allowable `A` has the dimensional margin
+`A - s`, in the unit of the demand, and the equality-inclusive failure
+event `A ≤ s`; the crack event above is this event with demand `K_I`
+and allowable `K_IC`. For a positive demand the margin of safety
+`A / s - 1` has the sign of `A - s`; it takes a proof of `0 < s`, since
+at zero demand Lean's `A / 0 = 0` would report a false failure. One
+axial load path is instantiated: the fixed-fixed bar of
+`PhyslibExt.Elasticity.PrismaticMembers` (`0 < L`, axial rigidity
+`0 < EA`, cross-section area `0 < A_cs`) under a uniform load `q` has
+the axial stress `EA u'(x) / A_cs = q (L - 2 x) / (2 A_cs)`, and a
+supplied yield functional calibrated by the tensile test (it returns
+`|σ|` on the uniaxial state `diag(σ, 0, 0)`) turns it into the demand
+`|q (L - 2 x)| / (2 A_cs)`, largest at the ends. No yield functional is
+derived and no constitutive law is added.
+
+A component whose damage `d ω t` grows along a continuous nondecreasing
+path in time `t : ℝ≥0` fails when the damage reaches its threshold
+`D ω`, equality included: the hit condition `d ω t - D ω ∈ Ici 0` is
+the demand event above. Its lifetime is the hitting time
+`MeasureTheory.hittingAfter` of `d - D` into `Ici 0` from time zero, a
+value in `ℝ≥0∞`: `⊤` when the threshold is never reached, `0` when the
+component is failed at time zero. The hit set is closed and upward
+closed, so the infimum is attained and the component is up at a finite
+time `t` exactly when `d ω t < D ω`; this uses closedness, not the
+`WellFoundedLT` lemmas of the hitting-time API, which do not apply to
+real time. Through these level sets, measurable fixed-time damage and
+threshold maps give measurable lifetimes, and the lifetime of the
+monotone Boolean system of
+`MathlibExt.Probability.Reliability.SystemLifetime` is up at `t`
+exactly when the configuration of components still below threshold
+lies in the increasing system event. An increasing event is a monotone
+system, not necessarily a coherent one: the constant events `∅` and
+`univ` and systems with irrelevant components are included. No
+independence between components is assumed, no damage law is derived,
+and no stopping theorem in continuous time is claimed.
+
 ## ii. Key results
 
 - `Reliability.criticalCrackLength_pos`: the critical crack length is
@@ -51,11 +92,37 @@ empirically, and `σ` is a peak tensile stress, not a fatigue stress range.
   in the power (`m ≠ 2`) and logarithmic (`m = 2`) branches reach the
   critical length exactly at their Paris lives, with first-crossing
   characterizations `parisCrackPow_lt_iff` and `parisCrackExp_lt_iff`.
+- `Reliability.dimensionalMargin`, `Reliability.demandFailure` and
+  `Reliability.marginOfSafety`: the margin, the event and the ratio,
+  with `Reliability.sign_marginOfSafety`,
+  `Reliability.demandFailure_iff_marginOfSafety_nonpos` and
+  `Reliability.ratio_at_zero_demand_misreports`.
+- `Reliability.crackFailure_iff_demandFailure`: the crack event is a
+  demand event.
+- `Reliability.axialDemand_eq` and `Reliability.axialBar_failure_iff`:
+  the axial bar with a calibrated yield functional fails exactly when
+  `2 A_cs A ≤ |q| L`.
+- `Reliability.damageLifetime`, `Reliability.isClosed_damageHitSet`
+  and `Reliability.isUpperSet_damageHitSet`: the hitting-time lifetime
+  and its closed, upward-closed hit set.
+- `Reliability.lt_damageLifetime_iff` and
+  `Reliability.damageLifetime_le_iff`: up exactly below threshold;
+  failure, equality included, exactly by time `t`.
+- `Reliability.damageLifetime_eq_top_iff` and
+  `Reliability.damageLifetime_eq_zero`: never hit, initially failed.
+- `Reliability.measurable_damageLifetime`,
+  `Reliability.lt_systemLifetime_damage_iff` and
+  `Reliability.measurable_systemLifetime_damage`: measurable lifetimes
+  and the monotone-system event.
 
 ## iii. Table of contents
 
 - A. Mode-I stress intensity and the critical crack length
 - B. Paris-law crack growth to the critical length
+- C. Demand, allowable and margin
+- D. An axial load path with a supplied yield functional
+- E. Damage hitting times
+- F. Measurability and monotone systems
 
 ## iv. References
 
@@ -63,7 +130,19 @@ empirically, and `σ` is a peak tensile stress, not a fatigue stress range.
   for Deformation, Fracture, and Fatigue*, 4th ed., Pearson (2013): the
   mode-I stress intensity model and the critical-crack condition
   `K_I = K_IC` used here, and the Paris fatigue-crack-growth law
-  `da/dN = C * (ΔK)^m` reduced in section B.
+  `da/dN = C * (ΔK)^m` reduced in section B; yield criteria calibrated
+  by the uniaxial test and safety factors against yielding (sections C
+  and D).
+- S. Timoshenko and J. M. Gere, *Mechanics of Materials* (axially loaded
+  bars).
+- R. E. Barlow and F. Proschan, *Statistical Theory of Reliability and
+  Life Testing*, Holt, Rinehart and Winston (1975): structure functions
+  and system lifetimes (section F, for monotone systems; coherent
+  systems are the monotone systems in which every component is
+  relevant).
+- W. Q. Meeker and L. A. Escobar, *Statistical Methods for Reliability
+  Data*, Wiley (1998), degradation chapters: failure when a degradation
+  path reaches a threshold (section E).
 
 ## A. Mode-I stress intensity and the critical crack length
 
@@ -398,5 +477,300 @@ lemma parisCrackExp_lt_iff {K a0 ac N : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
       ↔ (Real.exp (K * N) < Real.exp (Real.log (ac / a0))) := by
     rw [hexp]
   exact hstep1.trans (c2.trans (Real.exp_lt_exp.trans hstep4))
+
+/-! ## C. Demand, allowable and margin -/
+
+/-- The dimensional margin `A - s` of a demand `s` against an allowable `A`, in the unit of the
+demand. -/
+def dimensionalMargin (A s : ℝ) : ℝ := A - s
+
+/-- The equality-inclusive failure event: the demand `s` reaches the allowable `A`. -/
+def demandFailure (A s : ℝ) : Prop := A ≤ s
+
+/-- The margin of safety `A / s - 1`, defined only for a positive demand `s`. -/
+noncomputable def marginOfSafety (A s : ℝ) (_hs : 0 < s) : ℝ := A / s - 1
+
+/-- Failure is a nonpositive dimensional margin. -/
+lemma demandFailure_iff_dimensionalMargin_nonpos (A s : ℝ) :
+    demandFailure A s ↔ dimensionalMargin A s ≤ 0 := by
+  unfold demandFailure dimensionalMargin
+  constructor <;> intro h <;> linarith
+
+/-- Equality is failure, with zero margin. -/
+lemma demandFailure_self (A : ℝ) : demandFailure A A ∧ dimensionalMargin A A = 0 := by
+  unfold demandFailure dimensionalMargin
+  exact ⟨le_refl A, sub_self A⟩
+
+/-- For a positive demand, `A - s = s * (A / s - 1)`. -/
+lemma dimensionalMargin_eq_mul_marginOfSafety {A s : ℝ} (hs : 0 < s) :
+    dimensionalMargin A s = s * marginOfSafety A s hs := by
+  unfold dimensionalMargin marginOfSafety
+  rw [mul_sub, mul_div_cancel₀ _ hs.ne', mul_one]
+
+/-- For a positive demand, the margin of safety has the sign of the dimensional margin. -/
+lemma sign_marginOfSafety {A s : ℝ} (hs : 0 < s) :
+    SignType.sign (marginOfSafety A s hs) = SignType.sign (dimensionalMargin A s) := by
+  rw [dimensionalMargin_eq_mul_marginOfSafety hs, sign_mul, sign_pos hs, one_mul]
+
+/-- For a positive demand, failure is a nonpositive margin of safety. -/
+lemma demandFailure_iff_marginOfSafety_nonpos {A s : ℝ} (hs : 0 < s) :
+    demandFailure A s ↔ marginOfSafety A s hs ≤ 0 := by
+  rw [demandFailure_iff_dimensionalMargin_nonpos, dimensionalMargin_eq_mul_marginOfSafety hs]
+  constructor
+  · intro h
+    by_contra h'
+    linarith [mul_pos hs (not_le.mp h')]
+  · intro h
+    exact mul_nonpos_of_nonneg_of_nonpos hs.le h
+
+/-- A change of the stress unit by a factor `c > 0` rescales the dimensional margin by `c` and
+changes neither the failure event nor the margin of safety. -/
+lemma margin_unit_change {c A s : ℝ} (hc : 0 < c) (hs : 0 < s) :
+    dimensionalMargin (c * A) (c * s) = c * dimensionalMargin A s ∧
+      (demandFailure (c * A) (c * s) ↔ demandFailure A s) ∧
+      marginOfSafety (c * A) (c * s) (mul_pos hc hs) = marginOfSafety A s hs := by
+  unfold dimensionalMargin demandFailure marginOfSafety
+  refine ⟨by ring,
+    ⟨fun h => le_of_mul_le_mul_left h hc, fun h => mul_le_mul_of_nonneg_left h hc.le⟩, ?_⟩
+  rw [mul_div_mul_left _ _ hc.ne']
+
+/-- At zero demand the dimensional margin is the allowable, and there is no failure. -/
+lemma dimensionalMargin_zero_demand {A : ℝ} (hA : 0 < A) :
+    dimensionalMargin A 0 = A ∧ ¬ demandFailure A 0 := by
+  unfold dimensionalMargin demandFailure
+  exact ⟨sub_zero A, fun h => absurd h (not_le.mpr hA)⟩
+
+/-- The ratio formula must not be used at zero demand: Lean's `A / 0 = 0` makes `A / 0 - 1`
+negative, a false failure signal, while the demand `0` does not fail. -/
+lemma ratio_at_zero_demand_misreports {A : ℝ} (hA : 0 < A) :
+    A / 0 - 1 < 0 ∧ ¬ demandFailure A 0 := by
+  unfold demandFailure
+  refine ⟨?_, fun h => absurd h (not_le.mpr hA)⟩
+  rw [div_zero]
+  norm_num
+
+/-- The mode-I crack event is the demand event with demand `K_I` and allowable `K_IC`. -/
+lemma crackFailure_iff_demandFailure (KIC Y σ a : ℝ) :
+    crackFailure KIC Y σ a ↔ demandFailure KIC (modeIStressIntensity Y σ a) := by
+  rfl
+
+/-! ## D. An axial load path with a supplied yield functional -/
+
+/-- A supplied yield functional on stress matrices (tension positive) is calibrated by the
+tensile test when it returns `|σ|` on every uniaxial state `diag(σ, 0, 0)`. -/
+def UniaxialCalibrated (Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ) : Prop :=
+  ∀ σ : ℝ, Φ (Matrix.diagonal ![σ, 0, 0]) = |σ|
+
+/-- The axial normal stress `EA u'(x) / A_cs` at the section `x` of cross-section area `A_cs` for
+the closed-form uniform-load displacement `u = axialDisplacement EA L q`, which for `0 < L` and
+`0 < EA` solves the fixed-fixed bar problem (`isFixedFixedSolution_axialDisplacement`). -/
+noncomputable def axialStress (EA L q Acs x : ℝ) : ℝ :=
+  EA * deriv (Elasticity.PrismaticMembers.axialDisplacement EA L q) x / Acs
+
+/-- For positive axial rigidity and cross-section area, the axial stress of the closed-form
+uniform-load displacement is `q (L - 2 x) / (2 A_cs)`; for `0 < L` this is the stress of the
+fixed-fixed bar. -/
+lemma axialStress_eq {EA Acs : ℝ} (hEA : 0 < EA) (hAcs : 0 < Acs) (L q x : ℝ) :
+    axialStress EA L q Acs x = q * (L - 2 * x) / (2 * Acs) := by
+  have hEA' : EA ≠ 0 := hEA.ne'
+  have hAcs' : Acs ≠ 0 := hAcs.ne'
+  have hd : deriv (Elasticity.PrismaticMembers.axialDisplacement EA L q) x =
+      q * (L - 2 * x) / (2 * EA) := by
+    have h : HasDerivAt (Elasticity.PrismaticMembers.axialDisplacement EA L q)
+        (q * (L - 2 * x) / (2 * EA)) x := by
+      have h1 := (((hasDerivAt_id x).const_mul q).mul ((hasDerivAt_id x).const_sub L)).div_const
+        (2 * EA)
+      have he : Elasticity.PrismaticMembers.axialDisplacement EA L q =
+          fun y => q * id y * (L - id y) / (2 * EA) := by
+        funext y
+        simp [Elasticity.PrismaticMembers.axialDisplacement]
+      rw [he]
+      convert h1 using 1
+      simp only [id]
+      ring
+    exact h.deriv
+  unfold axialStress
+  rw [hd]
+  field_simp
+
+/-- Through a calibrated yield functional, the demand at the section `x` is
+`|q (L - 2 x)| / (2 A_cs)`, for positive axial rigidity and cross-section area. -/
+lemma axialDemand_eq {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} (hΦ : UniaxialCalibrated Φ)
+    {EA Acs : ℝ} (hEA : 0 < EA) (hAcs : 0 < Acs) (L q x : ℝ) :
+    Φ (Matrix.diagonal ![axialStress EA L q Acs x, 0, 0]) = |q * (L - 2 * x)| / (2 * Acs) := by
+  unfold UniaxialCalibrated at hΦ
+  rw [hΦ, axialStress_eq hEA hAcs, abs_div, abs_of_pos (by positivity : (0 : ℝ) < 2 * Acs)]
+
+/-- The fixed-fixed bar (`0 < L`, `0 < EA`, `0 < A_cs`) fails at some section of `[0, L]` exactly
+when the end-section demand reaches the allowable: `2 A_cs A ≤ |q| L`. -/
+lemma axialBar_failure_iff {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} (hΦ : UniaxialCalibrated Φ)
+    {EA Acs L : ℝ} (hEA : 0 < EA) (hAcs : 0 < Acs) (hL : 0 < L) (q A : ℝ) :
+    (∃ x ∈ Set.Icc 0 L, demandFailure A (Φ (Matrix.diagonal ![axialStress EA L q Acs x, 0, 0]))) ↔
+      2 * Acs * A ≤ |q| * L := by
+  simp only [axialDemand_eq hΦ hEA hAcs, demandFailure]
+  have h2 : (0 : ℝ) < 2 * Acs := by positivity
+  constructor
+  · rintro ⟨x, ⟨hx0, hxL⟩, h⟩
+    rw [le_div_iff₀ h2] at h
+    have hb : |q * (L - 2 * x)| ≤ |q| * L := by
+      rw [abs_mul]
+      apply mul_le_mul_of_nonneg_left _ (abs_nonneg q)
+      rw [abs_le]
+      constructor <;> linarith
+    linarith
+  · intro h
+    refine ⟨0, ⟨le_refl 0, hL.le⟩, ?_⟩
+    rw [le_div_iff₀ h2, abs_mul, mul_zero, sub_zero, abs_of_pos hL]
+    linarith
+
+/-! ## E. Damage hitting times -/
+
+open MeasureTheory
+open scoped NNReal ENNReal
+
+/-- The lifetime of a component with damage path `d ω` and threshold `D ω`: the hitting time of
+`d - D` into `Ici 0` from time zero, `⊤` when the threshold is never reached. -/
+noncomputable def damageLifetime {Ω : Type*} (d : Ω → ℝ≥0 → ℝ) (D : Ω → ℝ) (ω : Ω) : ℝ≥0∞ :=
+  hittingAfter (fun t ω => d ω t - D ω) (Set.Ici 0) 0 ω
+
+variable {Ω : Type*}
+
+open scoped Classical in
+private lemma damageLifetime_eq_ite (d : Ω → ℝ≥0 → ℝ) (D : Ω → ℝ) (ω : Ω) :
+    damageLifetime d D ω = if ∃ j : ℝ≥0, 0 ≤ j ∧ d ω j - D ω ∈ Set.Ici (0 : ℝ)
+      then ((sInf {i : ℝ≥0 | 0 ≤ i ∧ d ω i - D ω ∈ Set.Ici (0 : ℝ)} : ℝ≥0) : ℝ≥0∞) else ⊤ :=
+  rfl
+
+/-- The hit condition is the equality-inclusive demand event: `d - D ∈ Ici 0` iff
+`demandFailure D d`. -/
+lemma mem_damageHitSet_iff (d : Ω → ℝ≥0 → ℝ) (D : Ω → ℝ) (ω : Ω) (t : ℝ≥0) :
+    d ω t - D ω ∈ Set.Ici (0 : ℝ) ↔ demandFailure (D ω) (d ω t) := by
+  rw [Set.mem_Ici, sub_nonneg]
+  rfl
+
+/-- For a continuous damage path the hit set is closed. -/
+lemma isClosed_damageHitSet {d : Ω → ℝ≥0 → ℝ} {D : Ω → ℝ} {ω : Ω} (hcont : Continuous (d ω)) :
+    IsClosed {t : ℝ≥0 | d ω t - D ω ∈ Set.Ici (0 : ℝ)} := by
+  exact isClosed_Ici.preimage (hcont.sub continuous_const)
+
+/-- For a nondecreasing damage path the hit set is upward closed. -/
+lemma isUpperSet_damageHitSet {d : Ω → ℝ≥0 → ℝ} {D : Ω → ℝ} {ω : Ω} (hmono : Monotone (d ω)) :
+    IsUpperSet {t : ℝ≥0 | d ω t - D ω ∈ Set.Ici (0 : ℝ)} := by
+  intro a b hab ha
+  simp only [Set.mem_ofPred_eq, Set.mem_Ici, sub_nonneg] at ha ⊢
+  exact ha.trans (hmono hab)
+
+/-- For a continuous nondecreasing damage path, the component is up at a finite time `t` exactly
+when its damage is still below the threshold. -/
+lemma lt_damageLifetime_iff {d : Ω → ℝ≥0 → ℝ} {D : Ω → ℝ} {ω : Ω} (hcont : Continuous (d ω))
+    (hmono : Monotone (d ω)) (t : ℝ≥0) :
+    (t : ℝ≥0∞) < damageLifetime d D ω ↔ d ω t < D ω := by
+  constructor
+  · intro h
+    have hn := notMem_of_lt_hittingAfter (u := fun t ω => d ω t - D ω) (s := Set.Ici (0 : ℝ))
+      (n := 0) (ω := ω) (k := t) h (zero_le : (0 : ℝ≥0) ≤ t)
+    simp only [Set.mem_Ici, sub_nonneg, not_le] at hn
+    exact hn
+  · intro h
+    rw [damageLifetime_eq_ite]
+    split_ifs with hex
+    · rw [ENNReal.coe_lt_coe]
+      set S := {i : ℝ≥0 | 0 ≤ i ∧ d ω i - D ω ∈ Set.Ici (0 : ℝ)} with hS
+      have hSeq : S = {i : ℝ≥0 | d ω i - D ω ∈ Set.Ici (0 : ℝ)} := by
+        ext i
+        simp only [hS, Set.mem_ofPred_eq, zero_le, true_and]
+      have hne : S.Nonempty := by
+        obtain ⟨j, hj⟩ := hex
+        exact ⟨j, hj⟩
+      have hcl : IsClosed S := by
+        rw [hSeq]
+        exact isClosed_damageHitSet hcont
+      have hmem : sInf S ∈ S := hcl.csInf_mem hne (OrderBot.bddBelow S)
+      by_contra hle
+      rw [not_lt] at hle
+      have hmem' : d ω (sInf S) - D ω ∈ Set.Ici (0 : ℝ) := hmem.2
+      have ht : d ω t - D ω ∈ Set.Ici (0 : ℝ) := isUpperSet_damageHitSet hmono hle hmem'
+      simp only [Set.mem_Ici, sub_nonneg] at ht
+      linarith
+    · exact ENNReal.coe_lt_top
+
+/-- Equality at the threshold is failure: for a continuous nondecreasing damage path the
+lifetime is at most `t` exactly when the demand event holds at `t`. -/
+lemma damageLifetime_le_iff {d : Ω → ℝ≥0 → ℝ} {D : Ω → ℝ} {ω : Ω} (hcont : Continuous (d ω))
+    (hmono : Monotone (d ω)) (t : ℝ≥0) :
+    damageLifetime d D ω ≤ t ↔ demandFailure (D ω) (d ω t) := by
+  rw [← not_lt, lt_damageLifetime_iff hcont hmono, not_lt]
+  rfl
+
+/-- The lifetime is `⊤` exactly when the damage stays below the threshold at every time. -/
+lemma damageLifetime_eq_top_iff (d : Ω → ℝ≥0 → ℝ) (D : Ω → ℝ) (ω : Ω) :
+    damageLifetime d D ω = ⊤ ↔ ∀ t, d ω t < D ω := by
+  rw [damageLifetime_eq_ite]
+  split_ifs with hex
+  · simp only [ENNReal.coe_ne_top, false_iff, not_forall, not_lt]
+    obtain ⟨j, -, hj⟩ := hex
+    exact ⟨j, by simpa only [Set.mem_Ici, sub_nonneg] using hj⟩
+  · simp only [true_iff]
+    intro t
+    by_contra hc
+    rw [not_lt] at hc
+    exact hex ⟨t, (zero_le : (0 : ℝ≥0) ≤ t), by simpa only [Set.mem_Ici, sub_nonneg] using hc⟩
+
+/-- A component that is failed at time zero has lifetime `0`. -/
+lemma damageLifetime_eq_zero {d : Ω → ℝ≥0 → ℝ} {D : Ω → ℝ} {ω : Ω} (h0 : D ω ≤ d ω 0) :
+    damageLifetime d D ω = 0 := by
+  have hmem0 : (0 : ℝ≥0) ≤ 0 ∧ d ω 0 - D ω ∈ Set.Ici (0 : ℝ) :=
+    ⟨le_rfl, by simpa only [Set.mem_Ici, sub_nonneg] using h0⟩
+  have hinf : sInf {i : ℝ≥0 | 0 ≤ i ∧ d ω i - D ω ∈ Set.Ici (0 : ℝ)} = 0 :=
+    le_antisymm (csInf_le (OrderBot.bddBelow _) hmem0) zero_le
+  rw [damageLifetime_eq_ite]
+  split_ifs with hex
+  · rw [hinf, ENNReal.coe_zero]
+  · exact absurd ⟨0, hmem0⟩ hex
+
+/-! ## F. Measurability and monotone systems -/
+
+/-- With measurable fixed-time damage maps, a measurable threshold and continuous nondecreasing
+paths, the lifetime is measurable: its level sets `{ω | t < lifetime ω}` are
+`{ω | d ω t < D ω}`. -/
+lemma measurable_damageLifetime [MeasurableSpace Ω] {d : Ω → ℝ≥0 → ℝ} {D : Ω → ℝ}
+    (hmeas : ∀ t, Measurable fun ω => d ω t) (hD : Measurable D)
+    (hcont : ∀ ω, Continuous (d ω)) (hmono : ∀ ω, Monotone (d ω)) :
+    Measurable (damageLifetime d D) := by
+  refine measurable_of_Ioi fun x => ?_
+  cases x with
+  | top => simp
+  | coe t =>
+    have hset : damageLifetime d D ⁻¹' Set.Ioi (t : ℝ≥0∞) = {ω | d ω t < D ω} := by
+      ext ω
+      simp only [Set.mem_preimage, Set.mem_Ioi, Set.mem_ofPred_eq]
+      exact lt_damageLifetime_iff (hcont ω) (hmono ω) t
+    rw [hset]
+    exact measurableSet_lt (hmeas t) hD
+
+/-- The monotone-system event: for an increasing event `A` (a monotone system, not necessarily
+coherent), the system with the damage lifetimes is up at a finite time `t` exactly when the
+configuration of components whose damage is still below threshold at `t` lies in `A`. -/
+lemma lt_systemLifetime_damage_iff {E : Type*} [Fintype E] (A : Set (StatMech.ConfigSpace E))
+    (hA : StatMech.IsIncreasing A) {d : E → Ω → ℝ≥0 → ℝ} {D : E → Ω → ℝ}
+    (hcont : ∀ i ω, Continuous (d i ω)) (hmono : ∀ i ω, Monotone (d i ω)) (ω : Ω) (t : ℝ≥0) :
+    (t : ℝ≥0∞) < systemLifetime E A (fun i => damageLifetime (d i) (D i) ω) ↔
+      (fun i => decide (d i ω t < D i ω)) ∈ A := by
+  rw [lt_systemLifetime_iff E A _ t hA]
+  have hcfg : upConfig E (fun i => damageLifetime (d i) (D i) ω) t =
+      fun i => decide (d i ω t < D i ω) := by
+    funext i
+    rw [Bool.eq_iff_iff, upConfig_apply_eq_true, decide_eq_true_iff]
+    exact lt_damageLifetime_iff (hcont i ω) (hmono i ω) t
+  rw [hcfg]
+
+/-- The system lifetime with the damage lifetimes is measurable. -/
+lemma measurable_systemLifetime_damage [MeasurableSpace Ω] {E : Type*} [Fintype E]
+    (A : Set (StatMech.ConfigSpace E)) {d : E → Ω → ℝ≥0 → ℝ} {D : E → Ω → ℝ}
+    (hmeas : ∀ i t, Measurable fun ω => d i ω t) (hD : ∀ i, Measurable (D i))
+    (hcont : ∀ i ω, Continuous (d i ω)) (hmono : ∀ i ω, Monotone (d i ω)) :
+    Measurable fun ω => systemLifetime E A (fun i => damageLifetime (d i) (D i) ω) := by
+  exact measurable_systemLifetime E A Ω (fun i ω => damageLifetime (d i) (D i) ω)
+    (fun i => measurable_damageLifetime (hmeas i) (hD i) (hcont i) (hmono i))
 
 end Reliability

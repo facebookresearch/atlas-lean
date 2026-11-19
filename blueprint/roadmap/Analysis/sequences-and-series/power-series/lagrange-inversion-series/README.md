@@ -1,0 +1,15 @@
+# Lagrange inversion series
+
+- [Ramanujan's series for powers of a root of $x = a \log x$ (Entry 13)](ramanujan-part1-ch3-entry13.md)
+- [Abel's binomial identity](schroder-abel-binomial.md)
+- [Schröder's exponential series](ramanujan-part1-ch3-entry13-corollary-sc.md)
+- [Ramanujan's series for powers of the Catalan generating function](ramanujan-part1-ch3-entry14-cor1-catalan.md)
+- [Lagrange series coefficients](lagrange-series-coefficient.md)
+- [Lagrange series coefficient of degree zero](lagrange-series-coefficient-zero.md)
+- [Lagrange series coefficients of positive degree](lagrange-series-coefficient-of-ne-zero.md)
+- [Hagen–Rothe convolution for Lagrange series coefficients](lagrange-series-coefficient-add.md)
+- [Ramanujan's Lagrange series](ramanujan-part1-ch3-entry14-lagrange-ser.md)
+- [Ramanujan's exponential series for powers of two](ramanujan-part1-ch3-entry15-example1-exp.md)
+- [Ramanujan's inverse series for $u - \log u$](ramanujan-part1-ch3-entry15-inverse-seri.md)
+- [Ramanujan's tree-function series (Chapter 3, Entry 15)](ramanujan-part1-ch3-entry15-treeseries.md)
+- [Taylor coefficients of the solution of $x^x = a^a e^h$ (Chapter 3, Entry 17)](ramanujan-part1-ch3-entry17.md)
