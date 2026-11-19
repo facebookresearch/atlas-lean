@@ -9,6 +9,7 @@ module
 
 public import PhyslibExt.Thermodynamics.GasCycles
 
+import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -20,6 +21,9 @@ A freezer between `250 K` and `300 K` that absorbs `4000 J` per cycle for `1000 
   reversible bounds `5` and `6`;
 * the general results apply to it: the Clausius inequality forces positive work, the bounds hold,
   and the reversible machine (`5000 J` absorbed, `6000 J` rejected) attains them.
+
+At equal reservoir temperatures `300 K` the coefficients have no finite bound: some admissible
+cycle has both coefficients above `10`.
 -/
 
 @[expose] public section
@@ -51,5 +55,20 @@ example :
       (by norm_num) (by norm_num) (by norm_num), ?_⟩
   exact (cop_eq_carnot_iff (Qh := 6000) (Qc := 5000) (W := 1000) (Tc := 250) (Th := 300)
     (by norm_num) (by norm_num) (by norm_num) (by norm_num)).1.2 (by norm_num)
+
+-- Equal reservoir temperatures, `T = 300` K, and the bound `M = 10`: `cop_unbounded_of_eq` gives
+-- an admissible cycle (`Qc > 0`, `W = Qh - Qc > 0`, Clausius inequality) whose coefficients of
+-- performance both exceed `10`, so `10` is not an upper bound on `COP_R` over all admissible
+-- cycles at that temperature.
+example :
+    (∃ Qh Qc W : ℝ, 0 < Qc ∧ W = Qh - Qc ∧ 0 < W ∧ 0 ≤ Qh / 300 - Qc / 300 ∧
+        10 < Qc / W ∧ 10 < Qh / W) ∧
+      ¬ ∀ Qh Qc W : ℝ, 0 < Qc → W = Qh - Qc → 0 < W → 0 ≤ Qh / 300 - Qc / 300 →
+        Qc / W ≤ 10 := by
+  have h := cop_unbounded_of_eq (T := 300) (by norm_num) 10
+  refine ⟨h, fun hall => ?_⟩
+  obtain ⟨Qh, Qc, W, hQc, hW, hWpos, hcl, hR, -⟩ := h
+  have hle := hall Qh Qc W hQc hW hWpos hcl
+  linarith
 
 end PhyslibExtTest.Thermodynamics.GasCycles
