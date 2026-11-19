@@ -95,10 +95,11 @@ reason. Beyond the mechanical rules, check what only a reader can:
 - **Faithful statements (rule 7).** Compare each changed page with its Lean
   declaration clause by clause. A page that adds, drops or strengthens a
   hypothesis is a mathematical finding.
-- **Expansions (rules 12–13).** Judge whether the children cover the node's
+- **Expansions (rules 12–13).** Judge whether the new pages cover the node's
   mathematics at a sensible granularity, whether each wanted statement is
   faithful to its source, and whether the order among new planned pages is
-  right.
+  right. Check that the node's page and annotation are gone and that no link
+  still points at it.
 - **Duplicates (rule 6).** Search the vault and pinned Mathlib for an existing
   page or declaration before accepting a new one.
 - **Findings the wiki batches raised most often.** Prose about the library's
