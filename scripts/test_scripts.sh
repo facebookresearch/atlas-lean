@@ -62,6 +62,25 @@ PY
 reset_fixture
 expect_pass "empty scaffold"
 
+# The fixture runs preflight without recursively running this test suite.
+cp "$REPO_ROOT/scripts/"{check.sh,check_diagnostics.sh} "$TMP_ROOT/repo/scripts/"
+touch "$TMP_ROOT/repo/"{lean-toolchain,README.md,REVIEWING.md}
+touch "$TMP_ROOT/repo/scripts/"{check_copyright.py,check_formal_math_sync.py}
+printf '#!/usr/bin/env bash\nexit 0\n' >"$TMP_ROOT/repo/scripts/test_scripts.sh"
+chmod +x "$TMP_ROOT/repo/scripts/test_scripts.sh"
+if ! "$TMP_ROOT/repo/scripts/check.sh" preflight >"$TMP_ROOT/output.log" 2>&1; then
+  cat "$TMP_ROOT/output.log" >&2
+  fail "preflight failed with valid shell scripts"
+fi
+printf '\nif then\n' >>"$TMP_ROOT/repo/scripts/check_diagnostics.sh"
+if "$TMP_ROOT/repo/scripts/check.sh" preflight >"$TMP_ROOT/output.log" 2>&1; then
+  fail "preflight did not detect a syntax error in check_diagnostics.sh"
+fi
+grep -q 'check_diagnostics.sh:.*syntax error' "$TMP_ROOT/output.log" || {
+  cat "$TMP_ROOT/output.log" >&2
+  fail "preflight reported the wrong shell syntax diagnostic"
+}
+
 PHYSLIB_SOURCE='git = "https://github.com/leanprover-community/physlib"'
 PHYSLIB_REV="$(python3 - "$REPO_ROOT/lakefile.toml" <<'PY'
 import sys
