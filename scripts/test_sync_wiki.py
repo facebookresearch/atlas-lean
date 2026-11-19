@@ -427,7 +427,8 @@ class Declarations(Vault):
         old = self.page("Algebra/groups/old.md", "# Old, as the wiki wrote it\n\nEdited text.\n")
         self.page("Algebra/README.md", "# Algebra\n\n- [Groups](groups/README.md)\n")
         self.annotate([
-            self.about("Algebra/groups/old.md", object=[{"location": {"declaration": "Ext.old"}}]),
+            self.about("Algebra/groups/old.md", id="af_000000000000000000000001",
+                       object=[{"location": {"declaration": "Ext.old"}}]),
             self.about("Algebra/groups/gone.md", object=[{"location": {"declaration": "Ext.gone"}}]),
         ])
         targets = [
@@ -460,6 +461,14 @@ class Declarations(Vault):
         self.assertEqual(rows["new.md"]["object"], [{"location": {"declaration": "Ext.new"}}])
         self.assertEqual(rows["new.md"]["extensions"], {"org.atlas-wiki": {"from": "docstring"}})
         self.assertNotIn("wanted.md", rows)
+        # Each row the sync adds gets a fresh id (graph rule 5); one it already had keeps its own, and one without
+        # stays without until the one-off fill.
+        self.assertEqual(rows["old.md"]["id"], "af_000000000000000000000001")
+        self.assertNotIn("id", rows["gone.md"])
+        added = [rows["new.md"]["id"], rows["lone.md"]["id"]]
+        for article_id in added:
+            self.assertRegex(article_id, r"^af_[0-9a-f]{24}$")
+        self.assertEqual(len(set(added + ["af_000000000000000000000001"])), 3)
 
     def test_a_held_declaration_keeps_its_page_unlinked_and_gets_no_other(self) -> None:
         self.page("Algebra/README.md", "# Algebra\n\n- [Claim](claim.md)\n")
@@ -659,7 +668,9 @@ class Declarations(Vault):
         self.assertEqual((wiki.ROADMAP / "Algebra" / "README.md").read_text(),
                          "# Algebra\n\n- [Fields](fields/README.md)\n- [Rings](rings/README.md)\n- [Topology](topology/README.md)\n")
         rows = {sync.subject_path(row).relative_to(wiki.ROADMAP).as_posix(): row for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
-        self.assertEqual(rows["Algebra/rings/README.md"], {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/rings/README.md"}]})
+        self.assertEqual(rows["Algebra/rings/README.md"]["subject"], [{"type": "generic", "uri": "../roadmap/Algebra/rings/README.md"}])
+        self.assertEqual(set(rows["Algebra/rings/README.md"]), {"subject", "id"})
+        self.assertRegex(rows["Algebra/rings/README.md"]["id"], r"^af_[0-9a-f]{24}$")
         self.assertEqual(rows["Algebra/rings/ideals/README.md"]["extensions"], {"org.autoform": {"navigation": "module"}})
         self.assertNotIn("Algebra/rings/ideals/old.md", rows)
 
