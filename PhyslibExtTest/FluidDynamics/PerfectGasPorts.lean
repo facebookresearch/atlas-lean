@@ -7,7 +7,11 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
+import Mathlib.Topology.Order.IntermediateValue
 import PhyslibExt.FluidDynamics.PerfectGasPorts
 
 /-!
@@ -22,7 +26,12 @@ Checks for `PhyslibExt.FluidDynamics.PerfectGasPorts`, mostly for air with `γ =
 * an isentropic deceleration with `γ = 2`, `R = 1`, `T = 2` and `M = 1`: `p0 / p = 9/4` and
   `ρ0 / ρ = 3/2`;
 * at rest the declared stagnation state is the static state;
-* the energy balance alone admits a state below the isentropic pressure ratio.
+* the energy balance alone admits a state below the isentropic pressure ratio;
+* the isentropic mass flux of air at `M = 1/2`, `1` and `2` (`4000/9261`, `125/216` and `250/729`
+  times `p0 √(γ / (R T0))`), the area ratios `343/256` and `27/16`, and a supersonic Mach number
+  in `(1, 2)` with the flux of `M = 1/2`;
+* the flux bridge at the sonic isentropic state, the sonic maximum and the area ratio from equal
+  mass flow, with every hypothesis discharged, and zero flux at rest.
 
 These are elaboration and non-vacuity checks, not new results.
 -/
@@ -80,3 +89,132 @@ example : ∃ ρ0 p0 : ℝ, 0 < ρ0 ∧ p0 = ρ0 * 287 * 369 ∧
   stagnation_energy_not_isentropic (γ := 7 / 5) (T := 205) (T0 := 369) (cp := 2009 / 2)
     (a := 287) (u := 574) (M := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
     (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) rfl
+
+/-! ## The isentropic mass flux -/
+
+namespace PhyslibExtTest.FluidDynamics.PerfectGasPorts
+
+/-- **Air values** (`γ = 7/5`): the subsonic `M = 1/2`, sonic `M = 1` and supersonic `M = 2`
+fluxes are `4000/9261`, `125/216` and `250/729` times `p0 √(γ / (R T0))`. -/
+lemma isentropicMassFlux_air (p0 T0 R : ℝ) :
+    isentropicMassFlux p0 T0 R (7 / 5) (1 / 2) =
+        p0 * Real.sqrt (7 / 5 / (R * T0)) * (4000 / 9261) ∧
+      isentropicMassFlux p0 T0 R (7 / 5) 1 = p0 * Real.sqrt (7 / 5 / (R * T0)) * (125 / 216) ∧
+      isentropicMassFlux p0 T0 R (7 / 5) 2 = p0 * Real.sqrt (7 / 5 / (R * T0)) * (250 / 729) := by
+  have hexp : (-(7/5 + 1) / (2 * (7/5 - 1)) : ℝ) = -3 := by norm_num
+  have h1 : isentropicMassFlux p0 T0 R (7 / 5) (1 / 2) =
+      p0 * Real.sqrt (7 / 5 / (R * T0)) * (4000 / 9261) := by
+    have hX : (1 + (7/5 - 1) * (1/2 : ℝ) ^ 2 / 2 : ℝ) = 21/20 := by norm_num
+    unfold isentropicMassFlux
+    rw [hexp, hX]
+    have hrpow : ((21/20 : ℝ) ^ (-3 : ℝ)) = 8000/9261 := by
+      have hexp2 : (-3 : ℝ) = -((3 : ℕ) : ℝ) := by norm_num
+      rw [hexp2, Real.rpow_neg (by norm_num : (0:ℝ) ≤ 21/20), Real.rpow_natCast]
+      norm_num
+    rw [hrpow]
+    ring
+  have h2 : isentropicMassFlux p0 T0 R (7 / 5) 1 =
+      p0 * Real.sqrt (7 / 5 / (R * T0)) * (125 / 216) := by
+    have hX : (1 + (7/5 - 1) * (1 : ℝ) ^ 2 / 2 : ℝ) = 6/5 := by norm_num
+    unfold isentropicMassFlux
+    rw [hexp, hX]
+    have hrpow : ((6/5 : ℝ) ^ (-3 : ℝ)) = 125/216 := by
+      have hexp2 : (-3 : ℝ) = -((3 : ℕ) : ℝ) := by norm_num
+      rw [hexp2, Real.rpow_neg (by norm_num : (0:ℝ) ≤ 6/5), Real.rpow_natCast]
+      norm_num
+    rw [hrpow]
+    ring
+  have h3 : isentropicMassFlux p0 T0 R (7 / 5) 2 =
+      p0 * Real.sqrt (7 / 5 / (R * T0)) * (250 / 729) := by
+    have hX : (1 + (7/5 - 1) * (2 : ℝ) ^ 2 / 2 : ℝ) = 9/5 := by norm_num
+    unfold isentropicMassFlux
+    rw [hexp, hX]
+    have hrpow : ((9/5 : ℝ) ^ (-3 : ℝ)) = 125/729 := by
+      have hexp2 : (-3 : ℝ) = -((3 : ℕ) : ℝ) := by norm_num
+      rw [hexp2, Real.rpow_neg (by norm_num : (0:ℝ) ≤ 9/5), Real.rpow_natCast]
+      norm_num
+    rw [hrpow]
+    ring
+  exact ⟨h1, h2, h3⟩
+
+/-- **Air area ratios** (`γ = 7/5`): `A / A* = 343/256` at the subsonic `M = 1/2` and `27/16` at
+the supersonic `M = 2`, both above `1`. -/
+example {p0 T0 R : ℝ} (hp0 : 0 < p0) (hT0 : 0 < T0) (hR : 0 < R) :
+    isentropicMassFlux p0 T0 R (7 / 5) 1 / isentropicMassFlux p0 T0 R (7 / 5) (1 / 2) =
+        343 / 256 ∧
+      isentropicMassFlux p0 T0 R (7 / 5) 1 / isentropicMassFlux p0 T0 R (7 / 5) 2 = 27 / 16 := by
+  obtain ⟨h12, h1, h2⟩ := isentropicMassFlux_air p0 T0 R
+  have hsqrt : 0 < Real.sqrt (7 / 5 / (R * T0)) := by
+    apply Real.sqrt_pos.mpr
+    positivity
+  have hC : p0 * Real.sqrt (7 / 5 / (R * T0)) ≠ 0 := ne_of_gt (mul_pos hp0 hsqrt)
+  rw [h1, h12, h2]
+  constructor
+  · field_simp
+    ring
+  · field_simp
+    ring
+
+/-- **Both sides of the sonic maximum** (air, `γ = 7/5`): a supersonic Mach number in `(1, 2)`
+carries the flux of the subsonic `M = 1/2`, hence the same area ratio `343/256`. -/
+example {p0 T0 R : ℝ} (hp0 : 0 < p0) (hT0 : 0 < T0) (hR : 0 < R) :
+    ∃ M₂ : ℝ, 1 < M₂ ∧ M₂ < 2 ∧
+      isentropicMassFlux p0 T0 R (7 / 5) M₂ = isentropicMassFlux p0 T0 R (7 / 5) (1 / 2) := by
+  obtain ⟨h12, h1, h2⟩ := isentropicMassFlux_air p0 T0 R
+  have hγ : (1:ℝ) < 7 / 5 := by norm_num
+  have hsqrt : 0 < Real.sqrt (7 / 5 / (R * T0)) := by
+    apply Real.sqrt_pos.mpr
+    positivity
+  have hC : 0 < p0 * Real.sqrt (7 / 5 / (R * T0)) := mul_pos hp0 hsqrt
+  have hlt1 : (250 / 729 : ℝ) < 4000 / 9261 := by norm_num
+  have hlt2 : (4000 / 9261 : ℝ) < 125 / 216 := by norm_num
+  have hG2_lt : isentropicMassFlux p0 T0 R (7 / 5) 2 <
+      isentropicMassFlux p0 T0 R (7 / 5) (1 / 2) := by
+    rw [h2, h12]
+    exact mul_lt_mul_of_pos_left hlt1 hC
+  have hG12_lt : isentropicMassFlux p0 T0 R (7 / 5) (1 / 2) <
+      isentropicMassFlux p0 T0 R (7 / 5) 1 := by
+    rw [h12, h1]
+    exact mul_lt_mul_of_pos_left hlt2 hC
+  have hcont : ContinuousOn (isentropicMassFlux p0 T0 R (7 / 5)) (Set.Icc 1 2) := fun x _ =>
+    (hasDerivAt_isentropicMassFlux hγ p0 T0 R x).continuousAt.continuousWithinAt
+  have hmem : isentropicMassFlux p0 T0 R (7 / 5) (1 / 2) ∈
+      Set.Ioo (isentropicMassFlux p0 T0 R (7 / 5) 2)
+        (isentropicMassFlux p0 T0 R (7 / 5) 1) := ⟨hG2_lt, hG12_lt⟩
+  have hsub := intermediate_value_Ioo' (a := (1:ℝ)) (b := (2:ℝ)) (by norm_num) hcont
+  have himg := hsub hmem
+  obtain ⟨M₂, hM₂mem, hM₂eq⟩ := himg
+  exact ⟨M₂, hM₂mem.1, hM₂mem.2, hM₂eq⟩
+
+/-- The flux of the isentropic state at the sonic deceleration above (`γ = 2`, `R = 1`, `T = 2`,
+`a = u = 2`, `M = 1`, `T0 = 3`, `ρ = 1`, `p0 = 9/2`): `ρ |u| = 2 = G(1)`. -/
+example : (1 : ℝ) * |(2 : ℝ)| = isentropicMassFlux (9 / 2) 3 1 2 1 := by
+  refine massFlux_eq_isentropicMassFlux (γ := 2) (R := 1) (T := 2) (T0 := 3) (cp := 2) (a := 2)
+    (u := 2) (M := 1) (ρ := 1) (ρ0 := 3 / 2) (p := 2) (p0 := 9 / 2) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) ?_
+  rw [show (2 : ℝ) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast, Real.rpow_natCast]
+  norm_num
+
+/-- The sonic maximum for air: `G(2) < G(1)` and `G(1/2) < G(1)`. -/
+example : isentropicMassFlux 1 1 1 (7 / 5) 2 < isentropicMassFlux 1 1 1 (7 / 5) 1 ∧
+    isentropicMassFlux 1 1 1 (7 / 5) (1 / 2) < isentropicMassFlux 1 1 1 (7 / 5) 1 :=
+  ⟨isentropicMassFlux_lt_sonic (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+      (by norm_num),
+    isentropicMassFlux_lt_sonic (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+      (by norm_num)⟩
+
+/-- The area ratio from equal mass flow for air at `M = 2`: sections `A = 27` and `A* = 16`
+carry the same flow, so `A / A* = G(1) / G(2) = 27/16 ≥ 1`. -/
+example : (27 : ℝ) / 16 = isentropicMassFlux 1 1 1 (7 / 5) 1 / isentropicMassFlux 1 1 1 (7 / 5) 2 ∧
+    1 ≤ (27 : ℝ) / 16 := by
+  obtain ⟨_, h1, h2⟩ := isentropicMassFlux_air 1 1 1
+  refine area_ratio_eq_and_one_le (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) ?_
+  rw [h1, h2]
+  ring
+
+/-- At rest the flux vanishes and the area-ratio quotient fails `≥ 1`. -/
+example : isentropicMassFlux 1 1 1 (7 / 5) 0 = 0 := (isentropicMassFlux_zero 1 1 1 (7 / 5)).1
+
+end PhyslibExtTest.FluidDynamics.PerfectGasPorts
