@@ -16,9 +16,10 @@ public import PhyslibExt.ContinuumMechanics.EngineeringScaling
   base quantities;
 * the dimension identities of the Reynolds, Prandtl, Nusselt (and
   Biot), Rayleigh and Froude monomials;
-* the coordinate formulas on concrete values: no numerator sign is
-  assumed, and one `h L` gives different Nusselt and Biot numbers
-  against a fluid and a solid conductivity;
+* the coordinate formulas on concrete values: the Reynolds, Mach and
+  Froude numbers see only the speed `|U|`, `ΔT` keeps its sign, and
+  one `h L` gives different Nusselt and Biot numbers against a fluid
+  and a solid conductivity;
 * unit invariance at arbitrary scales and the two-scale fixtures;
 * a molar heat capacity is not mass-specific, and the unconverted
   molar Prandtl expression is not unit invariant.
@@ -116,16 +117,19 @@ example : machNumber ⟨170⟩ ⟨340⟩ (by norm_num) = 1 / 2 := by
   rw [machNumber_val]
   norm_num
 
--- No numerator positivity is assumed: reversing the velocity
--- reverses the signs of `Re` and `Fr`, and a negative `ΔT` gives a
+-- `Re`, `Ma` and `Fr` use the speed `|U|`: reversing the velocity
+-- leaves them unchanged. `ΔT` keeps its sign: a negative `ΔT` gives a
 -- negative `Ra`.
 example :
-    reynoldsNumber ⟨1000⟩ ⟨-2⟩ ⟨1 / 10⟩ ⟨1 / 1000⟩ (by norm_num) = -200000 ∧
-      froudeNumber ⟨-3⟩ ⟨10⟩ ⟨5 / 2⟩ (by norm_num) = -(3 / 5) ∧
+    reynoldsNumber ⟨1000⟩ ⟨-2⟩ ⟨1 / 10⟩ ⟨1 / 1000⟩ (by norm_num) = 200000 ∧
+      machNumber ⟨-170⟩ ⟨340⟩ (by norm_num) = 1 / 2 ∧
+      froudeNumber ⟨-3⟩ ⟨10⟩ ⟨5 / 2⟩ (by norm_num) = 3 / 5 ∧
       rayleighNumber ⟨10⟩ ⟨1 / 300⟩ ⟨-30⟩ ⟨1⟩ ⟨1 / 1000⟩ ⟨1 / 1000⟩ (by norm_num)
         (by norm_num) = -1000000 := by
-  refine ⟨?_, ?_, ?_⟩
+  refine ⟨?_, ?_, ?_, ?_⟩
   · rw [reynoldsNumber_val]
+    norm_num
+  · rw [machNumber_val]
     norm_num
   · unfold froudeNumber
     dsimp only

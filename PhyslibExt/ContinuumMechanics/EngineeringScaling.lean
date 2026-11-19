@@ -25,8 +25,9 @@ the cast is the dimension identity, checked when the definition elaborates. A po
 hypothesis on every denominator is part of each definition, as for `logRatio` and
 `expScaledEnergy` in `PhyslibExt.Units.QuantityDimensions`.
 
-* `Re = ρ U L / μ`, `Pr = μ c_p / k`, `Nu = h L / k`, `Ra = g β ΔT L ^ 3 / (ν κ)`,
-  `Ma = U / a`, `Fr = U / √(g L)` and `Bi = h L / k_s`.
+* `Re = ρ |U| L / μ`, `Pr = μ c_p / k`, `Nu = h L / k`, `Ra = g β ΔT L ^ 3 / (ν κ)`,
+  `Ma = |U| / a`, `Fr = |U| / √(g L)` and `Bi = h L / k_s`. The velocity `U` is a signed
+  coordinate; the Reynolds, Mach and Froude numbers use its speed `|U|`, as in ISO 80000-11.
 * `c_p` is a mass-specific heat capacity `L² T⁻² Θ⁻¹`. A molar heat capacity has the dimension
   `gasConstantDim` of the molar gas constant, so it is a different type and cannot be passed to
   `prandtlNumber`; it must first be divided by a molar mass.
@@ -225,13 +226,13 @@ lemma heatTransferCoefficientDim_exponent (b : ISQDimensionBase) :
 
 /-! ## B. The dimensionless groups -/
 
-/-- The Reynolds number `Re = ρ U L / μ` of a mass density `ρ`, a velocity `U`, a length `L`
-and a dynamic viscosity `μ > 0`. -/
+/-- The Reynolds number `Re = ρ |U| L / μ` of a mass density `ρ`, the speed `|U|` of a velocity
+`U`, a length `L` and a dynamic viscosity `μ > 0`. -/
 noncomputable def reynoldsNumber (ρ : WithDim massDensityDim ℝ) (U : WithDim velocityDim ℝ)
     (L : WithDim (single ISQDimensionBase.length) ℝ) (μ : WithDim dynamicViscosityDim ℝ)
     (_hμ : 0 < μ.val) : ℝ :=
-  (WithDim.cast (ρ * U * L / μ) (by unfold dimensionlessDim; decide) :
-    WithDim dimensionlessDim ℝ).val
+  (WithDim.cast (ρ * (⟨|U.val|⟩ : WithDim velocityDim ℝ) * L / μ)
+    (by unfold dimensionlessDim; decide) : WithDim dimensionlessDim ℝ).val
 
 /-- The Prandtl number `Pr = μ c_p / k` of a dynamic viscosity `μ`, a mass-specific heat
 capacity `c_p` and a thermal conductivity `k > 0`. -/
@@ -259,17 +260,18 @@ noncomputable def rayleighNumber (g : WithDim accelerationDim ℝ)
   (WithDim.cast (g * β * ΔT * (L * L * L) / (ν * κ)) (by unfold dimensionlessDim; decide) :
     WithDim dimensionlessDim ℝ).val
 
-/-- The Mach number `Ma = U / a` of a velocity `U` and a speed of sound `a > 0`. -/
+/-- The Mach number `Ma = |U| / a` of the speed `|U|` of a velocity `U` and a speed of sound
+`a > 0`. -/
 noncomputable def machNumber (U a : WithDim velocityDim ℝ) (_ha : 0 < a.val) : ℝ :=
-  (WithDim.cast (U / a) (by unfold dimensionlessDim; decide) :
-    WithDim dimensionlessDim ℝ).val
+  (WithDim.cast ((⟨|U.val|⟩ : WithDim velocityDim ℝ) / a)
+    (by unfold dimensionlessDim; decide) : WithDim dimensionlessDim ℝ).val
 
-/-- The Froude number `Fr = U / √(g L)` of a velocity `U`, a gravitational acceleration `g`
-and a length `L` with `g L > 0`. The square root is taken on coordinates; its dimension
-identity is `froudeNumber_dimensionless`. -/
+/-- The Froude number `Fr = |U| / √(g L)` of the speed `|U|` of a velocity `U`, a gravitational
+acceleration `g` and a length `L` with `g L > 0`. The square root is taken on coordinates; its
+dimension identity is `froudeNumber_dimensionless`. -/
 noncomputable def froudeNumber (U : WithDim velocityDim ℝ) (g : WithDim accelerationDim ℝ)
     (L : WithDim (single ISQDimensionBase.length) ℝ) (_hgL : 0 < g.val * L.val) : ℝ :=
-  U.val / Real.sqrt (g.val * L.val)
+  |U.val| / Real.sqrt (g.val * L.val)
 
 /-- The Biot number `Bi = h L / k_s` of a heat transfer coefficient `h`, a conduction length `L`
 and the thermal conductivity `k_s > 0` of the solid. -/
@@ -310,11 +312,11 @@ lemma froudeNumber_dimensionless :
 
 /-! ## D. Coordinate formulas -/
 
-/-- `reynoldsNumber ρ U L μ` is `ρ U L / μ` on coordinates. -/
+/-- `reynoldsNumber ρ U L μ` is `ρ |U| L / μ` on coordinates. -/
 lemma reynoldsNumber_val (ρ : WithDim massDensityDim ℝ) (U : WithDim velocityDim ℝ)
     (L : WithDim (single ISQDimensionBase.length) ℝ) (μ : WithDim dynamicViscosityDim ℝ)
     (hμ : 0 < μ.val) :
-    reynoldsNumber ρ U L μ hμ = ρ.val * U.val * L.val / μ.val := by
+    reynoldsNumber ρ U L μ hμ = ρ.val * |U.val| * L.val / μ.val := by
   rfl
 
 /-- `prandtlNumber μ c_p k` is `μ c_p / k` on coordinates. -/
@@ -340,9 +342,9 @@ lemma rayleighNumber_val (g : WithDim accelerationDim ℝ) (β : WithDim tempera
   change g.val * β.val * ΔT.val * (L.val * L.val * L.val) / (ν.val * κ.val) = _
   ring
 
-/-- `machNumber U a` is `U / a` on coordinates. -/
+/-- `machNumber U a` is `|U| / a` on coordinates. -/
 lemma machNumber_val (U a : WithDim velocityDim ℝ) (ha : 0 < a.val) :
-    machNumber U a ha = U.val / a.val := by
+    machNumber U a ha = |U.val| / a.val := by
   rfl
 
 /-- `biotNumber h L k_s` is `h L / k_s` on coordinates. -/
@@ -374,11 +376,14 @@ lemma reynoldsNumber_dimScale (u1 u2 : UnitScale ISQDimensionBase)
     rw [← dimScale_mul, ← dimScale_mul, hd]
   have hne : (u1.dimScale u2 dynamicViscosityDim : ℝ) ≠ 0 :=
     (NNReal.coe_pos.mpr (dimScale_pos u1 u2 dynamicViscosityDim)).ne'
-  rw [reynoldsNumber_val, reynoldsNumber_val]
+  have hU : |(u1.dimScale u2 velocityDim : ℝ) * U.val| =
+      (u1.dimScale u2 velocityDim : ℝ) * |U.val| := by
+    rw [abs_mul, abs_of_pos (NNReal.coe_pos.mpr (dimScale_pos u1 u2 velocityDim))]
+  rw [reynoldsNumber_val, reynoldsNumber_val, hU]
   rw [show (u1.dimScale u2 massDensityDim : ℝ) * ρ.val *
-      ((u1.dimScale u2 velocityDim : ℝ) * U.val) *
+      ((u1.dimScale u2 velocityDim : ℝ) * |U.val|) *
       ((u1.dimScale u2 (single ISQDimensionBase.length) : ℝ) * L.val) =
-      (u1.dimScale u2 dynamicViscosityDim : ℝ) * (ρ.val * U.val * L.val) by rw [← hs]; ring]
+      (u1.dimScale u2 dynamicViscosityDim : ℝ) * (ρ.val * |U.val| * L.val) by rw [← hs]; ring]
   exact mul_div_mul_left _ _ hne
 
 /-- The Prandtl number is unchanged by a change of units. -/
@@ -476,7 +481,10 @@ lemma machNumber_dimScale (u1 u2 : UnitScale ISQDimensionBase) (U : WithDim velo
       machNumber U a ha := by
   have hne : (u1.dimScale u2 velocityDim : ℝ) ≠ 0 :=
     (NNReal.coe_pos.mpr (dimScale_pos u1 u2 velocityDim)).ne'
-  rw [machNumber_val, machNumber_val]
+  have hU : |(u1.dimScale u2 velocityDim : ℝ) * U.val| =
+      (u1.dimScale u2 velocityDim : ℝ) * |U.val| := by
+    rw [abs_mul, abs_of_pos (NNReal.coe_pos.mpr (dimScale_pos u1 u2 velocityDim))]
+  rw [machNumber_val, machNumber_val, hU]
   exact mul_div_mul_left _ _ hne
 
 /-- The Froude number is unchanged by a change of units: `g L` rescales by the square of the
@@ -502,6 +510,7 @@ lemma froudeNumber_dimScale (u1 u2 : UnitScale ISQDimensionBase) (U : WithDim ve
     NNReal.coe_pos.mpr (dimScale_pos u1 u2 velocityDim)
   unfold froudeNumber
   dsimp only
+  rw [abs_mul, abs_of_pos hpos]
   rw [show (u1.dimScale u2 accelerationDim : ℝ) * g.val *
       ((u1.dimScale u2 (single ISQDimensionBase.length) : ℝ) * L.val) =
       (u1.dimScale u2 velocityDim : ℝ) ^ 2 * (g.val * L.val) by rw [← hs]; ring]
@@ -616,6 +625,7 @@ lemma froudeNumber_si_mm :
   · unfold froudeNumber
     dsimp only
     rw [show (10 : ℝ) * (5 / 2) = 5 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+    norm_num
   · unfold froudeNumber
     dsimp only
     rw [show (10000 : ℝ) * 2500 = 5000 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
