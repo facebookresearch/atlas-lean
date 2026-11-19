@@ -43,8 +43,10 @@ that is burning at `t` (`M' < 0`), a forward step from `t` to `t + h`, `h > 0`, 
 mass `M t - M (t + h)`, at the rate `q_h = (M t - M (t + h)) / h`: for small `h` the expelled mass
 is nonnegative, the remaining mass is exactly `M (t + h)`, the step conserves momentum, `q_h`
 tends to `-M'`, and the slope tends to the acceleration `a` of `M a = -ve M' + F`, the law above
-when `F = 0`. A linear burning history expels mass at the constant rate `-M'`, so for it the
-constant-flow step is the actual step. For `m > 0`, the update with no expelled mass is the
+when `F = 0`. A linear burning history expels mass at exactly the constant rate `-M'` in every
+forward step that leaves positive mass, `0 < M (t + h)`, and for those steps the constant-flow
+step is the actual parcel step, with the momentum balance; a longer step would leave no mass or
+negative mass and is not a parcel step. For `m > 0`, the update with no expelled mass is the
 fixed-mass constant-force velocity of `PhyslibExt.Mechanics.PowerPorts`, and ignoring the
 expelled momentum gives the slope limit `(q v + F) / m` instead, wrong whenever `q (v - ve) ≠ 0`.
 This is local consistency of the parcel model, not convergence of a discrete integration scheme
@@ -64,7 +66,8 @@ or an exact finite-step logarithmic law.
   positive for every `h` near `0`, and the first-order limit of the parcel step.
 - `parcel_continuum`, `parcel_continuum_linear`: for a burning mass history (`M' < 0`), the
   forward step with the actual, nonnegative expelled mass, its momentum balance and its continuum
-  limit; a linear burning history expels mass at the constant rate `-M'`.
+  limit; a linear burning history expels mass at exactly the constant rate `-M'` in every forward
+  step that leaves positive mass, where the constant-flow step is the actual parcel step.
 - `parcelVelocity_zero_flow`: for `m > 0` and no expelled mass, the fixed-mass constant-force
   velocity.
 - `parcel_accel_pos`, `naive_slope_tendsto`, `naive_limit_ne`: for `m > 0`, a positive flow at a
@@ -389,20 +392,34 @@ lemma parcel_continuum {M : ℝ → ℝ} {m' t : ℝ} (hM : HasDerivAt M m' t) (
   rw [hval] at hlim
   exact ⟨hq', hstep, Tendsto.congr' heq.symm hlim⟩
 
-/-- A linear mass history `M (t + h) = M t + m' h` that is burning, `m' < 0`, expels the
-nonnegative mass `M t - M (t + h)` at the constant actual rate `-m'` in every forward step
-`h > 0`, so the parcel step with the constant flow `-m'` is the actual step, and its slope tends to
-`(F - ve m') / M t`. -/
+/-- A linear mass history `M (t + h) = M t + m' h` that is burning, `m' < 0`. Every forward step
+`h > 0` that leaves positive mass, `0 < M (t + h)` (that is, `h < M t / (-m')`), expels the
+nonnegative mass `M t - M (t + h)` at exactly the constant rate `-m'`, and the parcel step with the
+constant flow `-m'` leaves exactly the mass `M (t + h)` and conserves momentum: there it is the
+actual parcel step. A longer step would leave no mass or negative mass, and is not a parcel step.
+The slope of the constant-flow step tends to `(F - ve m') / M t` as `h → 0⁺`. -/
 lemma parcel_continuum_linear {M : ℝ → ℝ} {m' t : ℝ} (hlin : ∀ h, M (t + h) = M t + m' * h)
     (hdec : m' < 0) (hpos : 0 < M t) (v ve F : ℝ) :
-    (∀ h > 0, 0 ≤ M t - M (t + h) ∧ (M t - M (t + h)) / h = -m') ∧
+    (∀ h > 0, 0 < M (t + h) → 0 ≤ M t - M (t + h) ∧ (M t - M (t + h)) / h = -m' ∧
+      M t - -m' * h = M (t + h) ∧
+      M (t + h) * parcelVelocity (M t) v (-m') ve F h + (M t - M (t + h)) * (v - ve) =
+        M t * v + F * h) ∧
       Tendsto (fun h => (parcelVelocity (M t) v (-m') ve F h - v) / h) (𝓝[>] 0)
         (𝓝 ((F - ve * m') / M t)) := by
-  refine ⟨fun h hh => ⟨?_, ?_⟩, ?_⟩
-  · rw [hlin h]
-    nlinarith [mul_pos (neg_pos.mpr hdec) hh]
-  · rw [hlin h, show M t - (M t + m' * h) = -m' * h by ring, mul_div_assoc,
-      div_self (ne_of_gt hh), mul_one]
+  refine ⟨fun h hh hMh => ?_, ?_⟩
+  · have hrem : M t - -m' * h = M (t + h) := by
+      rw [hlin h]
+      ring
+    have hexp : M t - M (t + h) = -m' * h := by
+      rw [hlin h]
+      ring
+    have hmom := (parcel_momentum_iff (m := M t) (q := -m') (h := h)
+      (by rw [hrem]; exact hMh.ne') v ve F (parcelVelocity (M t) v (-m') ve F h)).mpr rfl
+    rw [hrem, ← hexp] at hmom
+    refine ⟨?_, ?_, hrem, hmom⟩
+    · rw [hexp]
+      exact (mul_pos (neg_pos.mpr hdec) hh).le
+    · rw [hexp, mul_div_assoc, div_self (ne_of_gt hh), mul_one]
   · have hlim := parcel_slope_tendsto hpos v (-m') ve F
     have heq : (ve * (-m') + F) / M t = (F - ve * m') / M t := by
       congr 1

@@ -17,7 +17,8 @@ Concrete consumers of `PhyslibExt.Mechanics.PropulsionPorts`: the linear mass hi
 instance, constant mass, and the zero-mass input that the positivity hypothesis excludes; then a
 parcel step of the vehicle of mass `2` at rest with flow `1` and exhaust speed `3`, and the parcel
 lemmas applied to it, to the linear burning history `M s = 2 - s` and to the nonlinear burning
-history `M s = 2 - s - s ^ 2`, with forward steps for the histories.
+history `M s = 2 - s - s ^ 2`, with forward steps for the histories, and a forward step that
+leaves no mass.
 
 ## i. Overview
 
@@ -158,14 +159,27 @@ example : (2 - 1 * (1 / 2)) * parcelVelocity 2 0 1 3 0 (1 / 2) + 1 * (1 / 2) * (
     2 * 0 + 0 * (1 / 2) :=
   (parcel_momentum_iff (by norm_num) 0 3 0 _).mpr rfl
 
-/-- The linear burning history `M s = 2 - s` at `t = 0` expels the nonnegative mass `h` at the
-constant actual rate `1` in each forward step `h > 0`, so the constant-flow step is the actual
-step; with `ve = 3` and `F = 0` its slope tends to `3 / 2`. -/
-example : (∀ h : ℝ, 0 < h → 0 ≤ 2 - (2 - h) ∧ (2 - (2 - h)) / h = 1) ∧
+/-- The linear burning history `M s = 2 - s` at `t = 0`: each forward step `0 < h < 2`, which
+leaves the positive mass `2 - h`, expels the nonnegative mass `h` at exactly the constant rate `1`,
+and the constant-flow step leaves `2 - h` and conserves momentum, so it is the actual parcel step;
+with `ve = 3` and `F = 0` its slope tends to `3 / 2`. -/
+example : (∀ h : ℝ, 0 < h → h < 2 → 0 ≤ 2 - (2 - h) ∧ (2 - (2 - h)) / h = 1 ∧
+      (2 - h) * parcelVelocity 2 0 1 3 0 h + (2 - (2 - h)) * (0 - 3) = 2 * 0 + 0 * h) ∧
     Tendsto (fun h => (parcelVelocity 2 0 1 3 0 h - 0) / h) (𝓝[>] 0) (𝓝 (3 / 2)) := by
   obtain ⟨h₁, h₂⟩ := parcel_continuum_linear (M := fun s : ℝ => 2 - s) (m' := -1) (t := 0)
     (fun h => by ring) (by norm_num) (by norm_num) 0 3 0
-  exact ⟨fun h hh => by simpa using h₁ h hh, by simpa using h₂⟩
+  refine ⟨fun h hh hh2 => ?_, by simpa using h₂⟩
+  obtain ⟨e₁, e₂, -, e₄⟩ := h₁ h hh (show (0 : ℝ) < 2 - (0 + h) by linarith)
+  exact ⟨by simpa using e₁, by simpa using e₂, by simpa using e₄⟩
+
+/-- Positive remaining mass is needed: for the same history the forward step `h = 2` leaves no
+mass, and the constant-flow update there, a division by zero, violates the momentum balance; the
+step `h = 3` would leave the negative mass `-1`. -/
+example : (2 : ℝ) - (0 + 2) = 0 ∧
+    (2 - 1 * 2) * parcelVelocity 2 0 1 3 0 2 + 1 * 2 * (0 - 3) ≠ 2 * 0 + 0 * 2 ∧
+    (2 : ℝ) - (0 + 3) < 0 := by
+  refine ⟨by norm_num, ?_, by norm_num⟩
+  norm_num
 
 /-- The nonlinear burning history `M s = 2 - s - s ^ 2` at `t = 0`, with `M' 0 = -1`: a forward
 parcel step `h > 0` with the actual flow `q_h = 1 + h` expels the nonnegative mass `h + h ^ 2` and
