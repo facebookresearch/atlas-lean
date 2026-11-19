@@ -27,5 +27,5 @@ configurations, the cost model and the ordered group of values; the data-structu
   lemma, combined through the per-operation form of the potential method.
 - [Disjoint-set data structure](../disjoint-sets-and-dynamic-trees/disjoint-set-data-structure/README.md):
   union by rank with path compression, whose inverse-Ackermann bound is an amortized one.
-- List update problem: move-to-front,
+- [List update problem](../../online-algorithms/list-update-problem/README.md): move-to-front,
   analysed with the inversion potential.

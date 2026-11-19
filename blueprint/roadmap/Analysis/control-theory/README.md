@@ -11,5 +11,5 @@ Mathematical control theory of finite-dimensional systems: controllability of li
 ## Related topics
 
 - Linear quadratic regulator: optimal state feedback for linear systems with quadratic cost, by dynamic programming (Recht).
-- Optimality of stationary policies and Stochastic shortest path problems: Bertsekas's dynamic programming for Markov decision processes, the discrete-state counterpart of feedback design by optimisation.
+- [Optimality of stationary policies](../../ComputerScience/heuristic-search-and-planning/optimality-of-stationary-policies/README.md) and Stochastic shortest path problems: Bertsekas's dynamic programming for Markov decision processes, the discrete-state counterpart of feedback design by optimisation.
 - [Viscosity solutions of Hamilton–Jacobi equations](../partial-differential-equations/viscosity-solutions-of-hamilton-jacobi-equations/README.md): value functions of continuous-time optimal control problems solve Hamilton–Jacobi–Bellman equations in the viscosity sense.

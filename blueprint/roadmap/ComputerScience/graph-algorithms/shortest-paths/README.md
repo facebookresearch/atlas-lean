@@ -12,4 +12,4 @@ Single-source and all-pairs shortest paths: Dijkstra, Bellman-Ford, DAG relaxati
 
 ## Related topics
 
-- Stochastic shortest path problems: deterministic shortest path problems are the special case of stochastic shortest path problems with deterministic transitions (Bertsekas, *Abstract Dynamic Programming*, 3rd ed., Example 1.2.7).
+- [Stochastic shortest path problems](../../heuristic-search-and-planning/stochastic-shortest-path-problems/README.md): deterministic shortest path problems are the special case of stochastic shortest path problems with deterministic transitions (Bertsekas, *Abstract Dynamic Programming*, 3rd ed., Example 1.2.7).

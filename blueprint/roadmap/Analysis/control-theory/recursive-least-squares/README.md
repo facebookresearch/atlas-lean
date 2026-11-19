@@ -45,7 +45,7 @@ as well.
 - [Linear least squares](../../../LinearAlgebra/matrix-decompositions/linear-least-squares/README.md): the same normal equations solved by matrix factorisations instead of rank-one updates.
 - Kalman filter: RLS is the Kalman filter for the constant state $\theta_{k+1} = \theta_k$ observed through $y_{k+1} = \varphi_k^\top \theta_k + v_{k+1}$ with unit noise variance, $P_k$ playing the role of the covariance.
 - Linear quadratic regulator: Recht's dynamic programming pages; adaptive linear-quadratic control combines least-squares estimates of the system with the Riccati feedback by certainty equivalence.
-- Optimality of stationary policies: Bertsekas's dynamic programming, the optimisation side of feedback design when the model is known.
+- [Optimality of stationary policies](../../../ComputerScience/heuristic-search-and-planning/optimality-of-stationary-policies/README.md): Bertsekas's dynamic programming, the optimisation side of feedback design when the model is known.
 - [Martingales and optional stopping](../../../Probability/martingales/README.md): the martingale convergence and estimation theorems on which the stochastic convergence theory rests.
 - [Capability and limits of feedback](../capability-and-limits-of-feedback/README.md): what feedback, adaptive or not, can achieve for uncertain systems.
 - [Pole placement](../pole-placement/README.md): Coron's stabilisation of known linear systems by state feedback, the problem adaptive control solves when the system is unknown.

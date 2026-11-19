@@ -11,6 +11,6 @@ Complexity-theoretic foundations of cryptography and derandomization: one-way fu
 ## Related topics
 
 - [Expander graphs](../../GraphTheory/graph-families-and-operations/expander-graphs/README.md): pseudorandom graphs; random walks on them reduce the randomness needed for error reduction, and they give unconditional derandomization of undirected connectivity.
-- Cryptography: the constructions built on these
+- [Cryptography](../../ComputerScience/cryptography/README.md): the constructions built on these
   foundations: pseudorandom functions, semantically secure encryption (Goldwasser–Micali) and
   zero-knowledge proofs.
