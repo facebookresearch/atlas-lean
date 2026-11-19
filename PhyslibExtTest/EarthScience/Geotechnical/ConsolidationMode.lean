@@ -78,6 +78,13 @@ example : deriv (fun τ => consolidationMode 100 4 2 τ 1) 3
 
 /-! ## B. Decay and misreading controls -/
 
+/-- Physical decay bound at the focused data. -/
+example : |consolidationMode 100 4 2 3 1| ≤ 100 := by
+  have h := consolidationMode_abs_le_amplitude (u0 := 100) (H := 4)
+    (cv := 2) (t := 3) (z := 1) (by norm_num) (by norm_num)
+    (by norm_num)
+  simpa using h
+
 /-- Mid-depth decays below the initial amplitude. -/
 example : consolidationMode 100 4 2 3 2 < 100 := by
   rw [consolidationMode_eq (by norm_num)]
@@ -127,5 +134,6 @@ example : consolidationMode 100 2 2 0 2 = 0 :=
 #print axioms EarthScience.consolidationMode_zero_right
 #print axioms EarthScience.consolidationMode_time_zero
 #print axioms EarthScience.consolidationMode_midpoint_time_zero
+#print axioms EarthScience.consolidationMode_abs_le_amplitude
 
 end PhyslibExtTest.EarthScience.Geotechnical.ConsolidationMode

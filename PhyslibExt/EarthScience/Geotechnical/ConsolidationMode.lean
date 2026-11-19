@@ -29,9 +29,14 @@ depth rescaling `z / H` and diffusivity rescaling `cv / H^2`,
 with the sine-basis normalization divided out:
 `u(z, t) = u0 * exp (-cv * (π / H)^2 * t) * sin (π * z / H)`.
 Depth `z` runs from one drained face (`z = 0`) to the other
-(`z = H`). No arbitrary initial data, Fourier-series
-completeness, or general consolidation existence theorem is
-included.
+(`z = H`). The definition is the totalized rescaled formula,
+meaningful as a physical consolidation mode for `0 < H` and
+`0 < cv`; the explicit form, PDE, face values, and initial
+profile below are algebraic identities valid for all real
+parameters (with `H ≠ 0` where stated), and the physical decay
+bound `consolidationMode_abs_le_amplitude` carries the physical
+domain. No arbitrary initial data, Fourier-series completeness,
+or general consolidation existence theorem is included.
 
 ## ii. Key results
 
@@ -45,6 +50,9 @@ included.
   `consolidationMode_midpoint_time_zero`: the sine initial
   profile, attaining the full initial amplitude
   value at mid-depth.
+- `EarthScience.consolidationMode_abs_le_amplitude`: in the
+  physical domain `0 < H`, `0 ≤ cv`, the mode never exceeds the
+  initial amplitude in absolute value.
 
 ## iii. Table of contents
 
@@ -55,8 +63,16 @@ included.
 
 - `MathlibExt.Analysis.ODE.ContinuumBalances` for the canonical
   unit-interval heat mode and its heat-equation witnesses.
-- Terzaghi one-dimensional consolidation: excess pore pressure
-  diffuses with coefficient `cv` between drained faces.
+- K. Terzaghi, *Theoretical Soil Mechanics*, Wiley, 1943,
+  Chapter 15 (consolidation of an ideally elastic clay layer):
+  the one-dimensional diffusion equation
+  `∂u/∂t = cv * ∂²u/∂z²` for excess pore pressure between
+  drained boundaries.
+- J. A. Knappett and R. F. Craig, *Craig's Soil Mechanics*,
+  9th edition, CRC Press, 2020, Chapter 5 (consolidation):
+  the same equation and the drainage-path convention used
+  here (full layer thickness `H`; drainage path `H / 2` for
+  double drainage).
 -/
 
 @[expose] public section
@@ -77,7 +93,9 @@ coefficient `cv`, and initial excess pore-pressure amplitude `u0`:
 the first canonical heat mode under the depth rescaling `z / H`
 and diffusivity rescaling `cv / H^2`, with the basis normalization
 divided out. Depth `z` runs from one drained face (`z = 0`) to the
-other (`z = H`). -/
+other (`z = H`). The formula is totalized over all real
+parameters; it is a physical consolidation mode for `0 < H`
+and `0 < cv` (see `consolidationMode_abs_le_amplitude`). -/
 noncomputable def consolidationMode (u0 H cv t z : ℝ) : ℝ :=
   (u0 / Real.sqrt 2) * heatMode (cv / H ^ 2) 1 t (z / H)
 
@@ -208,5 +226,36 @@ theorem consolidationMode_midpoint_time_zero {u0 H cv : ℝ} (hH : H ≠ 0) :
   have harg : Real.pi * (H / 2) / H = Real.pi / 2 := by
     field_simp
   rw [harg, Real.sin_pi_div_two, mul_one]
+
+/-- Physical decay bound: in the physical domain `0 < H`,
+`0 ≤ cv`, at nonnegative times the mode never exceeds the
+initial amplitude in absolute value, at any depth. -/
+theorem consolidationMode_abs_le_amplitude {u0 H cv t z : ℝ}
+    (hH : 0 < H) (hcv : 0 ≤ cv) (ht : 0 ≤ t) :
+    |consolidationMode u0 H cv t z| ≤ |u0| := by
+  rw [consolidationMode_eq hH.ne', abs_mul, abs_mul]
+  have hexp : Real.exp (-cv * (Real.pi / H) ^ 2 * t) ≤ 1 := by
+    have harg : -cv * (Real.pi / H) ^ 2 * t ≤ 0 := by
+      have hpos : (0 : ℝ) ≤ cv * (Real.pi / H) ^ 2 * t :=
+        mul_nonneg (mul_nonneg hcv (sq_nonneg _)) ht
+      linarith
+    calc Real.exp (-cv * (Real.pi / H) ^ 2 * t)
+        ≤ Real.exp 0 := Real.exp_monotone harg
+      _ = 1 := Real.exp_zero
+  have hsin : |Real.sin (Real.pi * z / H)| ≤ 1 :=
+    Real.abs_sin_le_one _
+  have hexp' : |Real.exp (-cv * (Real.pi / H) ^ 2 * t)| ≤ 1 := by
+    rw [abs_of_pos (Real.exp_pos _)]
+    exact hexp
+  have hprod : |Real.exp (-cv * (Real.pi / H) ^ 2 * t)|
+      * |Real.sin (Real.pi * z / H)| ≤ 1 * 1 :=
+    mul_le_mul hexp' hsin (abs_nonneg _) (by norm_num)
+  calc |u0| * |Real.exp (-cv * (Real.pi / H) ^ 2 * t)|
+        * |Real.sin (Real.pi * z / H)|
+      = |u0| * (|Real.exp (-cv * (Real.pi / H) ^ 2 * t)|
+        * |Real.sin (Real.pi * z / H)|) := by ring
+    _ ≤ |u0| * (1 * 1) :=
+        mul_le_mul_of_nonneg_left hprod (abs_nonneg _)
+    _ = |u0| := by ring
 
 end EarthScience
