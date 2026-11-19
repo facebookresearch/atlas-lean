@@ -11,6 +11,9 @@ public import Mathlib.Analysis.InnerProductSpace.Calculus
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+public import Mathlib.Analysis.Calculus.Gradient.Basic
+public import PhyslibExt.Mechanics.OrbitalPerturbations
+import PhyslibExt.EarthScience.PointMassGradient
 import PhyslibExt.EarthScience.NewtonianEnergy
 import PhyslibExt.Mechanics.HarmonicMechanics
 import Mathlib.Tactic.FieldSimp
@@ -35,8 +38,10 @@ work `= K(t₁) - K(t₀) = ⟪F, x t₁ - x t₀⟫`, and the momentum gives th
 `∫ F = m • v t₁ - m • v t₀`. The spring force `-k x` on the trajectory `A * cos (ω t)`,
 `ω = √(k / m)`, from `PhyslibExt.Mechanics.HarmonicMechanics.oscillator_explicit_solution` has
 power `⟪-k x, v⟫`, and its work is the change of kinetic energy and the decrease of the
-potential `k x ^ 2 / 2 + C` for every constant `C`. The inverse-square potential `-μ / ‖y‖` has
-no limit at the centre, so its work identity carries a collision-exclusion hypothesis. Mass is
+potential `k x ^ 2 / 2 + C` for every constant `C`. The inverse-square force is
+`-OrbitalPerturbations.inverseSquareField μ`, minus the gradient of the potential `-μ / ‖y‖`
+away from the centre; that potential has no limit at the centre, so the work identity carries a
+collision-exclusion hypothesis. Mass is
 constant throughout; nothing here applies to variable-mass motion. Forces, initial data and
 time intervals are model inputs.
 
@@ -47,6 +52,8 @@ time intervals are model inputs.
 - `constForce_work`, `constForce_impulse`: work and impulse identities over `[t₀, t₁]`.
 - `spring_power_port`, `spring_work`: the spring example on the oscillator trajectory.
 - `inverseSquare_work`: inverse-square work along a path that avoids the centre.
+- `hasGradientAt_inverseSquarePotential`: away from the centre the inverse-square field is the
+  gradient of `-μ / ‖y‖`.
 - `inverseSquarePotential_not_continuousAt_zero`: the inverse-square potential is not
   continuous at the centre.
 
@@ -65,6 +72,8 @@ time intervals are model inputs.
 - H. Goldstein, *Classical Mechanics*, central-force chapter (inverse-square potential).
 - `PhyslibExt.EarthScience.NewtonianEnergy` and `PhyslibExt.Mechanics.HarmonicMechanics`: the
   kinetic-energy derivative and the oscillator trajectory reused here.
+- `PhyslibExt.Mechanics.OrbitalPerturbations` and `PhyslibExt.EarthScience.PointMassGradient`:
+  the inverse-square field and the point-mass gradient reused here.
 -/
 
 @[expose] public section
@@ -284,12 +293,18 @@ lemma spring_work {m k A ω : ℝ} (hm : 0 < m) (hk : 0 < k) (hω : ω = Real.sq
 
 /-! ## E. Inverse-square work needs collision exclusion -/
 
-/-- Work of the inverse-square force `-(μ / ‖y‖ ^ 3) • y` along a path that never meets the
-centre on `[a, b]` equals the decrease of the potential `-μ / ‖y‖`. -/
+/-- Work of the inverse-square force `-OrbitalPerturbations.inverseSquareField μ y`
+(`= -(μ / ‖y‖ ^ 3) • y`) along a path that never meets the centre on `[a, b]` equals the
+decrease of the potential `-μ / ‖y‖`. -/
 lemma inverseSquare_work {μ a b : ℝ} {γ γ' : ℝ → E}
     (hγ : ∀ t ∈ Set.uIcc a b, HasDerivAt γ (γ' t) t) (hcoll : ∀ t ∈ Set.uIcc a b, γ t ≠ 0)
-    (hint : IntervalIntegrable (fun t => inner ℝ (-(μ / ‖γ t‖ ^ 3) • γ t) (γ' t)) volume a b) :
-    ∫ t in a..b, inner ℝ (-(μ / ‖γ t‖ ^ 3) • γ t) (γ' t) = -(-μ / ‖γ b‖ - -μ / ‖γ a‖) := by
+    (hint : IntervalIntegrable
+      (fun t => inner ℝ (-OrbitalPerturbations.inverseSquareField μ (γ t)) (γ' t)) volume a b) :
+    ∫ t in a..b, inner ℝ (-OrbitalPerturbations.inverseSquareField μ (γ t)) (γ' t) =
+      -(-μ / ‖γ b‖ - -μ / ‖γ a‖) := by
+  have hfield : ∀ y : E, -OrbitalPerturbations.inverseSquareField μ y = -(μ / ‖y‖ ^ 3) • y :=
+    fun y => by rw [OrbitalPerturbations.inverseSquareField, neg_smul]
+  simp only [hfield] at hint ⊢
   have hnorm_ne : ∀ s ∈ Set.uIcc a b, ‖γ s‖ ≠ 0 :=
     fun s hs => norm_ne_zero_iff.mpr (hcoll s hs)
   have hderiv : ∀ s ∈ Set.uIcc a b,
@@ -325,6 +340,14 @@ lemma inverseSquare_work {μ a b : ℝ} {γ γ' : ℝ → E}
   have hfinal : μ / ‖γ b‖ - μ / ‖γ a‖ = -(-μ / ‖γ b‖ - -μ / ‖γ a‖) := by
     ring
   rwa [hfinal] at hftc
+
+/-- Away from the centre the inverse-square field is the gradient of the potential `-μ / ‖y‖`
+(`EarthScience.hasGradientAt_pointMass_potential` with `G = μ`, `M = 1`), so the force in
+`inverseSquare_work` is minus that gradient. Completeness is needed only for `HasGradientAt`. -/
+lemma hasGradientAt_inverseSquarePotential [CompleteSpace E] {μ : ℝ} {x : E} (hx : x ≠ 0) :
+    HasGradientAt (fun y : E => -μ / ‖y‖) (OrbitalPerturbations.inverseSquareField μ x) x := by
+  have h := EarthScience.hasGradientAt_pointMass_potential (G := μ) (M := 1) hx
+  simpa [OrbitalPerturbations.inverseSquareField] using h
 
 /-- At the collision point the inverse-square potential (whose value there is the division-by-zero
 convention `-μ / 0 = 0`) is not continuous, so no gradient of it exists there. -/
