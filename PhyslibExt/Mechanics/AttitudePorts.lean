@@ -110,13 +110,16 @@ private lemma hasDerivAt_star' {q : ℝ → ℍ} {q' : ℍ} {t : ℝ} (hq : HasD
     HasDerivAt (fun s => star (q s)) (star q') t :=
   starCLM.hasFDerivAt.comp_hasDerivAt t hq
 
-/-- `R v` is the imaginary part of the conjugate `q (0, v) q⋆`, for every quaternion `q`. -/
+/-- `R v` is the imaginary part of the conjugate `q (0, v) q⋆`, for every quaternion `q`:
+`QuaternionRotation.rotMatrix_mulVec` at the pure quaternion `(0, v)`. -/
 private lemma rotMatrix_mulVec_eq (q : ℍ) (v : Fin 3 → ℝ) :
     rotMatrix q *ᵥ v = imCoords (q * pureQuat v * star q) := by
-  ext a
-  fin_cases a <;>
-    simp [rotMatrix, imCoords, imBasis, pureQuat, Matrix.mulVec, dotProduct, Fin.sum_univ_three] <;>
-    ring
+  have hv : pureQuat v ∈ pureIm := by simp [pureIm, pureQuat]
+  have hc : imCoords (pureQuat v) = v := by
+    ext i
+    fin_cases i <;> simp [imCoords, pureQuat]
+  have h := rotMatrix_mulVec (q := q) hv
+  rwa [hc] at h
 
 /-- Along `q' = (1/2) q (0, w)`, the derivative of `q (0, v) q⋆` is `q (0, w ⨯₃ v) q⋆`. -/
 private lemma conj_deriv_identity (q : ℍ) (w v : Fin 3 → ℝ) :
@@ -150,15 +153,6 @@ private lemma hasDerivAt_matrix_of_mulVec {f : ℝ → Matrix (Fin 3) (Fin 3) �
     simp only [mulVec_single] at hj
     exact hj
   exact h'
-
-/-- `Rᵀ R = |q|⁴ 1` for every quaternion `q`. -/
-private lemma rotMatrix_transpose_mul_self' (q : ℍ) :
-    (rotMatrix q)ᵀ * rotMatrix q = (normSq q) ^ 2 • (1 : Matrix (Fin 3) (Fin 3) ℝ) := by
-  ext a b
-  fin_cases a <;> fin_cases b <;>
-    simp [rotMatrix, imCoords, imBasis, Matrix.mul_apply, Matrix.transpose_apply,
-      Fin.sum_univ_three, Quaternion.normSq_def'] <;>
-    ring
 
 /-! ### A.2. The derivative of the rotation matrix -/
 
@@ -205,7 +199,7 @@ lemma crossProductVee_transpose_mul_deriv_rotMatrix {q : ℝ → ℍ} {ω : ℝ 
     rw [Quaternion.normSq_eq_norm_mul_self, hunit, mul_one]
   have hd : deriv (fun s => rotMatrix (q s)) t = rotMatrix (q t) * crossProductMatrix (ω t) := by
     exact HasDerivAt.deriv (F := Fin 3 → Fin 3 → ℝ) (hasDerivAt_rotMatrix hq)
-  rw [hd, ← Matrix.mul_assoc, rotMatrix_transpose_mul_self', hN, one_pow, one_smul,
+  rw [hd, ← Matrix.mul_assoc, rotMatrix_transpose_mul_self, hN, one_pow, one_smul,
     Matrix.one_mul]
   ext i
   fin_cases i <;> simp [crossProductVee, crossProductMatrix]
