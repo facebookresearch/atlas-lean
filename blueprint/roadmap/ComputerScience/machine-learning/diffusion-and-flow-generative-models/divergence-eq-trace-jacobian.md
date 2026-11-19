@@ -32,10 +32,10 @@ of the other; where the field is not differentiable they can differ.
 
 ## Background
 
-- Divergence of a vector field:
+- [Divergence of a vector field](../../../Probability/stochastic-calculus/fokker-planck-equation/divergence.md):
   mathematical prerequisite, the sum-of-partial-derivatives definition that the statement equates
   with the trace of the derivative.
-- Divergence:
+- [Divergence](../../../Analysis/partial-differential-equations/singularity-formation-for-the-euler-equations/div.md):
   background, the trace definition on three-dimensional Euclidean space, which agrees with the sum
   of partial derivatives for $n = 3$ at points of differentiability, after identifying that space
   with $\mathbb{R}^3$.

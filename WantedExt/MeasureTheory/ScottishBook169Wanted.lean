@@ -38,7 +38,7 @@ countably-additive reading of "additive" in Problem 169; the typescript
 does not say whether finite or countable additivity is meant. -/
 def IsCountablyAdditive (μ : Set (EuclideanSpace ℝ (Fin 2)) → ENNReal) : Prop :=
   ∀ E : ℕ → Set (EuclideanSpace ℝ (Fin 2)),
-    Pairwise fun i j => Disjoint (E i) (E j) → μ (⋃ i, E i) = ∑' i, μ (E i)
+    Pairwise (fun i j => Disjoint (E i) (E j)) → μ (⋃ i, E i) = ∑' i, μ (E i)
 
 /-- The countably additive reading of Problem 169: there is a function
 `μ`, defined for all plane sets, equal on congruent sets, countably

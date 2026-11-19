@@ -119,6 +119,22 @@ where it belongs is left out and reported the same way, and a line of a part
 list that the refresh replaces or removes is reported when it differs from the
 part's own entries.
 
+An annotation can hold its declaration back: its page states the mathematics
+while the declaration is false, vacuous or otherwise does not say it, or the
+declaration is private. The row then has no `object` and names the declaration
+under `org.atlas-wiki`, as `"held": {"declaration": "<Lean name>", "reason":
+"<false, vacuous, unsatisfiable, mis-specified, module-private or private by
+design>", "issue": <number>}`, where `issue` is the issue, or a list of
+issues, that tracks the Lean fix; a declaration private by design has none, and
+its marker goes once the declaration is public. When a declaration has several
+problems, `reason` names the one in its statement. `declarations` gives a held
+declaration no page and lists it as held. A marker that names no declaration,
+sits on a linked row, names a declaration the Lean index does not resolve, or
+holds back a declaration that another row links or holds is reported as an
+error, and the run then writes nothing. Relink the page once every listed issue
+is fixed and the declaration states what the page does: restore its `object`
+and remove `held`.
+
 `scripts/wiki-sync.json` is the
 reviewed docstring-digest baseline. Removed declarations' articles are kept
 as unlinked mathematical articles during rendering until an editor resolves
@@ -135,12 +151,13 @@ a literal dollar of that shape as `&#36;`, or inside inline code.
 
 Changing AutoformBot requires a reviewed `.github/autoform-ref` update and
 passing tests. The workflow has no automatic pin push, upstream-sync bot,
-model-driven audit, schedule, or required personal token.
+model-driven audit, or required personal token.
 
 ## GitHub Actions and publication
 
-`Blueprint Pages` runs on every merge group, on pushes and manual runs of
-`main`, and on PRs that touch the wiki: `blueprint/`, the wiki scripts and
+`Blueprint Pages` runs on `main` once a day at 03:17 UTC and on manual runs
+(**Actions → Blueprint Pages → Run workflow**), on every merge group, and on
+PRs that touch the wiki: `blueprint/`, the wiki scripts and
 their tests, `scripts/taxonomy.json`, `scripts/wiki-sync.json`, the site
 configuration (`mkdocs.yml`, `theme/`, `hooks/`), this document, the workflow,
 `.github/autoform-ref`, or the toolchain pins (`lean-toolchain`,

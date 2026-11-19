@@ -9,9 +9,14 @@ module
 
 public import PhyslibExt.Chemistry.Thermodynamics.FirstLaw
 
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
+import PhyslibExt.Chemistry.Thermodynamics.Thermochemistry
 
 /-!
 # Process ports: the engineering work-out sign adapter
@@ -33,6 +38,15 @@ existing declarations use only that product, so mass-specific work takes `(m, Rs
 of `(n, R)`, and the adiabatic pressure ratio is `idealGasP_ratio_of_log_relation` with
 coefficient `k = m * Rs`.
 
+Variable heat capacity: when the internal energy `U` has temperature derivative `Cv T`, the
+energy change `U T₂ = U T₁ + ∫ T in T₁..T₂, Cv T` is `kirchhoff_law` of
+`PhyslibExt.Chemistry.Thermodynamics.Thermochemistry` applied with `U` in place of the enthalpy,
+and the results of sections D and E are derived from it. The engineering balance is
+`Q_in - W_out = ∫ Cv`. A continuous positive `Cv` makes `U` strictly increasing. For the linear
+model `Cv T = a + b * T` the exact change minus the endpoint estimate `Cv T₁ * (T₂ - T₁)` is the
+signed amount `b * (T₂ - T₁) ^ 2 / 2`: for `T₁ ≠ T₂` its sign is that of `b`, and at `T₁ = T₂` it
+is zero. No heat-capacity fit is claimed and `Cv` is never inferred from a substance.
+
 Model inputs: the ideal-gas equation of state and the first law as encoded by the existing
 declarations; temperatures are absolute (`T > 0`); volumes, amounts, masses and gas constants
 are positive where a result says so. Each result assumes only the hypotheses its proof uses.
@@ -44,19 +58,27 @@ Celsius readings are affine and are never valid temperatures inside ratios or lo
 - `ProcessPorts.workOut_isothermalWorkOn`: `∫ p dV = W_out = n R T log (V₂ / V₁)`.
 - `ProcessPorts.workOut_irreversible_le_reversible`: `0 ≤ W_out,irr ≤ W_out,rev`.
 - `ProcessPorts.idealGasP_ratio_of_specific_log_relation`: the adiabat with `k = m * Rs`.
+- `ProcessPorts.heat_sub_workOut_eq_integral`: `Q_in - W_out = ∫ T in T₁..T₂, Cv T`.
+- `ProcessPorts.strictMonoOn_of_heatCapacity_pos`: continuous `Cv > 0` gives strict increase.
+- `ProcessPorts.sub_ne_endpoint_of_linear_heatCapacity`: the endpoint estimate is not exact.
 
 ## iii. Table of contents
 
 - A. The work-out sign adapter
 - B. Isothermal expansion work
 - C. Molar and mass-specific coefficients
+- D. Variable heat capacity
+- E. Linear heat capacity versus the endpoint estimate
 
 ## iv. References
 
 - E. R. Cohen et al., *Quantities, Units and Symbols in Physical Chemistry* (IUPAC Green Book),
   3rd ed., 2007: `ΔU = q + w` with `w` the work done on the system.
 - Y. A. Çengel and M. A. Boles, *Thermodynamics: An Engineering Approach*, McGraw-Hill, ch. 4:
-  `ΔU = Q_in - W_out`, boundary work `W_b = m R T ln (V₂ / V₁)` of an isothermal ideal gas.
+  `ΔU = Q_in - W_out`, boundary work `W_b = m R T ln (V₂ / V₁)` of an isothermal ideal gas, and
+  `Δu = ∫ cv(T) dT` for temperature-dependent specific heats.
+- P. Atkins and J. de Paula, *Atkins' Physical Chemistry*, Chapter 2: Kirchhoff's law, the
+  temperature dependence of an enthalpy change through `∫ ΔCp dT`.
 -/
 
 @[expose] public section
@@ -214,5 +236,90 @@ lemma idealGasP_ratio_of_specific_log_relation {m Rs cv γ T₁ T₂ V₁ V₂ :
     linear_combination m * had
   exact idealGasP_ratio_of_log_relation m Rs T₁ T₂ V₁ V₂ (m * cv) (m * Rs) γ
     hm hRs hT₁ hT₂ hV₁ hV₂ hCv hγ' had'
+
+/-! ## D. Variable heat capacity -/
+
+/-- Engineering energy balance with variable heat capacity: if `U` has temperature derivative
+`Cv T` between `T₁` and `T₂` with `Cv` interval-integrable (the hypotheses of `kirchhoff_law`)
+and the energy change obeys the IUPAC first law `U T₂ - U T₁ = q + w`, then
+`Q_in - W_out = q - workOut w = ∫ T in T₁..T₂, Cv T`. The temperatures may be in either order.
+The constant-`Cv` case is `heat_sub_workOut_eq`. -/
+lemma heat_sub_workOut_eq_integral (U Cv : ℝ → ℝ) (T₁ T₂ q w : ℝ)
+    (hU : ∀ T ∈ Set.uIcc T₁ T₂, HasDerivAt U (Cv T) T)
+    (hCv : IntervalIntegrable Cv MeasureTheory.volume T₁ T₂)
+    (hlaw : U T₂ - U T₁ = q + w) :
+    q - workOut w = ∫ T in T₁..T₂, Cv T := by
+  have h := kirchhoff_law U Cv T₁ T₂ hU hCv
+  unfold workOut
+  linarith
+
+/-- Positive continuous heat capacity: if `U' = Cv` on `[T₁, T₂]` with `Cv` continuous and
+positive there, then `U` is strictly increasing on `[T₁, T₂]` and
+`ΔU = ∫ T in T₁..T₂, Cv T`; heating at positive heat capacity raises the internal energy. -/
+lemma strictMonoOn_of_heatCapacity_pos (U Cv : ℝ → ℝ) {T₁ T₂ : ℝ} (hT : T₁ ≤ T₂)
+    (hU : ∀ T ∈ Set.Icc T₁ T₂, HasDerivAt U (Cv T) T)
+    (hcont : ContinuousOn Cv (Set.Icc T₁ T₂)) (hpos : ∀ T ∈ Set.Icc T₁ T₂, 0 < Cv T) :
+    StrictMonoOn U (Set.Icc T₁ T₂) ∧ U T₂ - U T₁ = ∫ T in T₁..T₂, Cv T := by
+  have hcontU : ContinuousOn U (Set.Icc T₁ T₂) :=
+    fun x hx => ((hU x hx).continuousAt).continuousWithinAt
+  have hderiv : ∀ x ∈ interior (Set.Icc T₁ T₂), 0 < deriv U x := by
+    intro x hx
+    have hxIcc : x ∈ Set.Icc T₁ T₂ := interior_subset hx
+    rw [(hU x hxIcc).deriv]
+    exact hpos x hxIcc
+  refine ⟨strictMonoOn_of_deriv_pos (convex_Icc T₁ T₂) hcontU hderiv, ?_⟩
+  have huIcc : Set.uIcc T₁ T₂ = Set.Icc T₁ T₂ := Set.uIcc_of_le hT
+  have hU' : ∀ T ∈ Set.uIcc T₁ T₂, HasDerivAt U (Cv T) T := by
+    rw [huIcc]
+    exact hU
+  have hCv : IntervalIntegrable Cv MeasureTheory.volume T₁ T₂ :=
+    ContinuousOn.intervalIntegrable_of_Icc hT hcont
+  have h := kirchhoff_law U Cv T₁ T₂ hU' hCv
+  linarith
+
+/-! ## E. Linear heat capacity versus the endpoint estimate -/
+
+/-- The exact energy change for the linear heat capacity `Cv T = a + b * T`:
+`∫ T in T₁..T₂, (a + b * T) = a * (T₂ - T₁) + b * (T₂ ^ 2 - T₁ ^ 2) / 2`. -/
+lemma integral_linear_heatCapacity (a b T₁ T₂ : ℝ) :
+    ∫ T in T₁..T₂, (a + b * T) = a * (T₂ - T₁) + b * (T₂ ^ 2 - T₁ ^ 2) / 2 := by
+  have h1 : IntervalIntegrable (fun _ : ℝ => a) MeasureTheory.volume T₁ T₂ :=
+    intervalIntegrable_const
+  have h2 : IntervalIntegrable (fun T : ℝ => b * T) MeasureTheory.volume T₁ T₂ :=
+    (continuous_id.const_mul b).intervalIntegrable T₁ T₂
+  rw [intervalIntegral.integral_add h1 h2, intervalIntegral.integral_const,
+    intervalIntegral.integral_const_mul, integral_id, smul_eq_mul]
+  ring
+
+/-- Endpoint error for the linear heat capacity: if `U' = a + b * T` at every temperature
+between `T₁` and `T₂`, the exact change minus the endpoint estimate `Cv T₁ * (T₂ - T₁)` is the
+signed amount `b * (T₂ - T₁) ^ 2 / 2`. For `T₁ ≠ T₂` its sign is that of `b`, for either
+temperature order: the estimate is low when `Cv` rises with temperature and high when it falls.
+At `T₁ = T₂` the error is zero and the estimate is exact. -/
+lemma sub_sub_endpoint_of_linear_heatCapacity (U : ℝ → ℝ) (a b T₁ T₂ : ℝ)
+    (hU : ∀ T ∈ Set.uIcc T₁ T₂, HasDerivAt U (a + b * T) T) :
+    U T₂ - U T₁ - (a + b * T₁) * (T₂ - T₁) = b * (T₂ - T₁) ^ 2 / 2 := by
+  have hCv : IntervalIntegrable (fun T : ℝ => a + b * T) MeasureTheory.volume T₁ T₂ :=
+    (continuous_const.add (continuous_id.const_mul b)).intervalIntegrable T₁ T₂
+  have h := kirchhoff_law U (fun T => a + b * T) T₁ T₂ hU hCv
+  rw [integral_linear_heatCapacity] at h
+  rw [h]
+  ring
+
+/-- A nonconstant linear heat capacity (`b ≠ 0`) over a nondegenerate interval (`T₁ ≠ T₂`):
+the endpoint estimate `Cv T₁ * (T₂ - T₁)` is not the exact energy change. -/
+lemma sub_ne_endpoint_of_linear_heatCapacity (U : ℝ → ℝ) {a b T₁ T₂ : ℝ}
+    (hU : ∀ T ∈ Set.uIcc T₁ T₂, HasDerivAt U (a + b * T) T) (hb : b ≠ 0) (hT : T₁ ≠ T₂) :
+    U T₂ - U T₁ ≠ (a + b * T₁) * (T₂ - T₁) := by
+  have h := sub_sub_endpoint_of_linear_heatCapacity U a b T₁ T₂ hU
+  have hsub : T₂ - T₁ ≠ 0 := by
+    intro h0
+    exact hT (sub_eq_zero.mp h0).symm
+  have hsq : (T₂ - T₁) ^ 2 ≠ 0 := pow_ne_zero 2 hsub
+  have hne : b * (T₂ - T₁) ^ 2 / 2 ≠ 0 :=
+    div_ne_zero (mul_ne_zero hb hsq) (by norm_num)
+  intro hcon
+  have h2 : b * (T₂ - T₁) ^ 2 / 2 = 0 := by rw [← h, hcon, sub_self]
+  exact hne h2
 
 end ProcessPorts

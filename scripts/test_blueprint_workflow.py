@@ -30,9 +30,10 @@ class BlueprintWorkflowTests(unittest.TestCase):
     def test_pull_requests_run_the_check_on_wiki_paths_and_merge_groups_always(self):
         events = self.workflow["on"]
         self.assertEqual(set(events), {
-            "push", "pull_request", "merge_group", "workflow_dispatch",
+            "schedule", "pull_request", "merge_group", "workflow_dispatch",
         })
-        self.assertEqual(events["push"]["branches"], ["main"])
+        # main is built once a day at 03:17 UTC (GitHub reads cron in UTC), not on every push.
+        self.assertEqual(events["schedule"], [{"cron": "17 3 * * *"}])
         paths = events["pull_request"]["paths"]
         for path in (
             "blueprint/**", "scripts/generate_wiki.py", "scripts/sync_wiki.py",
@@ -148,6 +149,8 @@ class BlueprintWorkflowTests(unittest.TestCase):
                            "github.event_name != 'pull_request'",
                            "github.event_name != 'merge_group'"):
                 self.assertIn(clause, condition)
+            # Scheduled and manual runs of main publish, so no clause may require a push.
+            self.assertNotIn("push", condition)
         self.assertTrue(all("uses" in step for step in deploy["steps"]))
 
     def test_built_site_is_kept_only_for_main_builds(self):
@@ -157,6 +160,7 @@ class BlueprintWorkflowTests(unittest.TestCase):
                        "github.event_name != 'merge_group'"):
             self.assertIn(clause, condition)
         self.assertNotIn("BLUEPRINT_PAGES", condition)
+        self.assertNotIn("push", condition)
 
 
 if __name__ == "__main__":

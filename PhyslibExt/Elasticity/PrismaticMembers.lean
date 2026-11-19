@@ -10,19 +10,25 @@ module
 public import MathlibExt.Analysis.ODE.FiniteElement1D
 public import MathlibExt.Analysis.ODE.SturmLiouvilleExistence
 public import MathlibExt.Analysis.ODE.SturmLiouvilleUniqueness
+public import PhyslibExt.Mechanics.EngineeringStatics
 public import PhyslibExt.Mechanics.EulerBernoulliBeam
 public import PhyslibExt.Units.EngineeringQuantities
 import MathlibExt.Analysis.Calculus.ZeroFourthDerivative
+import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Analysis.Calculus.IteratedDeriv.Lemmas
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.FunProp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
-# Prismatic members: bars and shafts with fixed or loaded ends, cantilever, simply supported beam
+# Prismatic members: bars and shafts, cantilever and simply supported beams, closed-cell torsion
 
 ## i. Overview
 
@@ -77,6 +83,25 @@ problem with `k = GJ`, handled by the same lemmas. With both ends free (end forc
 `x = 0`, outward normal `-x`, and `P₁` at `x = L`) a solution can be shifted by a rigid
 translation and exists only if the net load vanishes, `P₀ + P₁ + ∫₀ᴸ f = 0`.
 
+A prismatic member whose cross-section is a single thin closed rectangular cell, with median sides
+`a, b > 0` (the median rectangle `[-a/2, a/2] × [-b/2, b/2]` in the section plane), uniform wall
+thickness `t > 0` and shear modulus `G > 0`, carries a uniform shear flow `q` (force per length of
+median line) in torsion. On each straight wall the flow integrates to the resultant `q ℓ` along the
+wall, with line of action through the wall midpoint; positive `q` circulates counterclockwise
+about `+z`. The four wall resultants have zero sum, so they form a couple, and their moment
+`Mechanics.EngineeringStatics.momentAbout` about every reference point is `(0, 0, 2 a b q)`: the
+cell carries the torque `T = 2 a b q = 2 A q`, with `A = a b` the enclosed area. The stated
+thin-wall compatibility law, the declared reduced model of the twist (Bredt's second formula),
+equates the circulation `∑ walls (q / (G t)) ℓ` of the wall shear strain to `2 A θ'`; with the
+median perimeter `2 (a + b)` it gives the twist rate `θ' = T (a + b) / (2 G a² b² t)`. The wall
+shear stress is `τ = q / t = T / (2 a b t)`, and `T = G J θ'` with the torsion constant
+`J = 4 A² t / (2 (a + b)) = 2 a² b² t / (a + b)`, so `G J` is the cell's effective torsional
+rigidity, the `GJ` of the circular-shaft reading above. Not claimed: a convergence theorem from
+three-dimensional elasticity, warping restraint, or the open-section formula. Cutting one wall
+leaves wall resultants that do not sum to zero, so they are not a couple and no closed-cell torque
+is carried; at zero thickness the torsion constant vanishes, so no twist rate carries a nonzero
+torque.
+
 A prismatic Euler-Bernoulli beam of positive length `L` and constant bending stiffness `EI > 0`
 rests on a pin at `x = 0` and a pin (or roller) at `x = L` and carries a constant distributed load
 `q`; the deflection `w` and `q` are positive in the same transverse direction, and a support
@@ -116,6 +141,13 @@ conditions by clamped slopes gives the different solution `q * x ^ 2 * (L - x) ^
 - `fixedTractionDisplacement_const`: the uniform-load closed form.
 - `IsFreeFreeSolution.add_const`, `IsFreeFreeSolution.net_load`: two free ends admit rigid
   translations and need zero net load.
+- `resultantForce_cellWallForce`, `momentAbout_cellWall`: the four wall resultants of the thin
+  closed cell form a couple of moment `(0, 0, 2 a b q)` about every reference point.
+- `isClosedCellCompatible_iff`: under the compatibility law the twist rate is
+  `T (a + b) / (2 G a² b² t)`.
+- `wallShearStress_eq`, `closedCellTorsionConstant_eq`, `torque_eq_rigidity_mul_twistRate`:
+  `τ = q / t = T / (2 a b t)` for `t > 0`, Bredt's torsion constant `J = 4 A² / ∑ ℓ / t`, and
+  `T = G J θ'`.
 - `isSimplySupportedSolution_uniformLoadDeflection`, `IsSimplySupportedSolution.eqOn`,
   `isSimplySupportedSolution_iff`: the simply supported beam under a uniform load, existence and
   uniqueness on `[0, L]`.
@@ -135,9 +167,11 @@ conditions by clamped slopes gives the different solution `q * x ^ 2 * (L - x) ^
 - G. Fixed-traction bar and shaft: load path, existence and uniqueness
 - H. Fixed-traction bar: uniform load
 - I. Boundary example: two free ends
-- J. Simply supported beam: existence and uniqueness
-- K. Simply supported beam: support reactions and slopes
-- L. Simply supported beam: clamped slopes change the solution
+- J. Thin closed rectangular cell: wall resultants and torque
+- K. Thin closed rectangular cell: compatibility, shear stress and rigidity
+- L. Simply supported beam: existence and uniqueness
+- M. Simply supported beam: support reactions and slopes
+- N. Simply supported beam: clamped slopes change the solution
 
 ## iv. References
 
@@ -145,8 +179,11 @@ conditions by clamped slopes gives the different solution `q * x ^ 2 * (L - x) ^
   circular shafts, cantilever deflections).
 - J. M. Gere and B. J. Goodno, *Mechanics of Materials*, 8th edition, 2013 (statically
   indeterminate bars and shafts under distributed loads; bars with distributed axial loads and
-  nonuniform torsion; differential equations of the deflection curve; simply supported and
-  fixed-end beams under a uniform load).
+  nonuniform torsion; differential equations of the deflection curve; thin-walled tubes in
+  torsion: shear flow, `T = 2 q A_m`, `τ = T / (2 t A_m)`, `J = 4 A_m² / ∫ ds / t`; simply
+  supported and fixed-end beams under a uniform load).
+- S. Timoshenko and J. N. Goodier, *Theory of Elasticity*, 3rd edition, 1970 (torsion of thin
+  tubular members: the twist condition `∮ τ ds = 2 G θ' A`).
 -/
 
 @[expose] public section
@@ -1223,7 +1260,144 @@ lemma IsFreeFreeSolution.net_load {k L P₀ P₁ : ℝ} {f u : ℝ → ℝ} (hL 
   rw [hLend, hk0] at hFTC
   linarith
 
-/-! ## J. Simply supported beam: existence and uniqueness -/
+section ClosedCell
+
+open Mechanics.EngineeringStatics (momentAbout)
+open PhyslibExt.Mechanics.HarmonicMechanics (resultantForce)
+
+/-! ## J. Thin closed rectangular cell: wall resultants and torque -/
+
+/-- Midpoints of the four walls of the median rectangle `[-a/2, a/2] × [-b/2, b/2]` in the section
+plane `z = 0`, in counterclockwise order about `+z`: bottom, right, top, left. -/
+noncomputable def cellWallMidpoint (a b : ℝ) : Fin 4 → Fin 3 → ℝ :=
+  ![![0, -(b / 2), 0], ![a / 2, 0, 0], ![0, b / 2, 0], ![-(a / 2), 0, 0]]
+
+/-- Resultants of the uniform shear flow `q` on the four walls, in the order of
+`cellWallMidpoint`: on each straight wall the flow integrates to `q` times the wall length (`a` for
+the bottom and top walls, `b` for the right and left walls), directed along the wall in the
+counterclockwise sense about `+z` for `q > 0`, with line of action through the wall midpoint. -/
+noncomputable def cellWallForce (a b q : ℝ) : Fin 4 → Fin 3 → ℝ :=
+  ![![q * a, 0, 0], ![0, q * b, 0], ![-(q * a), 0, 0], ![0, -(q * b), 0]]
+
+/-- Lengths of the four walls along the median line, in the order of `cellWallMidpoint`. -/
+def cellWallLength (a b : ℝ) : Fin 4 → ℝ :=
+  ![a, b, a, b]
+
+/-- **The closed cell is self-equilibrated.** The four wall resultants sum to zero. -/
+lemma resultantForce_cellWallForce (a b q : ℝ) : resultantForce (cellWallForce a b q) = 0 := by
+  unfold resultantForce cellWallForce
+  rw [Fin.sum_univ_four]
+  ext i
+  fin_cases i <;> simp
+
+/-- **Torque from the four wall resultants.** About every reference point `O`, the wall resultants
+(no free couples) have the moment `(0, 0, 2 a b q)`: the cell carries the torque
+`T = 2 a b q = 2 A q` about the member axis `+z`, positive for counterclockwise shear flow. -/
+lemma momentAbout_cellWall (a b q : ℝ) (O : Fin 3 → ℝ) :
+    momentAbout (cellWallMidpoint a b) (cellWallForce a b q) (fun _ => 0) O =
+      ![0, 0, 2 * a * b * q] := by
+  unfold momentAbout cellWallMidpoint cellWallForce
+  rw [Fin.sum_univ_four]
+  simp only [add_zero, Pi.sub_apply, cross_apply]
+  ext i
+  fin_cases i <;> simp; ring
+
+/-! ## K. Thin closed rectangular cell: compatibility, shear stress and rigidity -/
+
+/-- The stated thin-wall compatibility law of a single closed cell (the declared reduced model):
+the circulation of the wall shear strain `q / (G t)` around the median line,
+`∑ walls (q / (G t)) ℓ`, equals twice the enclosed area `a b` times the twist rate `θ'`. -/
+def IsClosedCellCompatible (a b t G q θ' : ℝ) : Prop :=
+  ∑ i, q / (G * t) * cellWallLength a b i = 2 * (a * b) * θ'
+
+/-- Wall shear stress `τ = q / t` of the shear flow `q` in a wall of thickness `t`. -/
+noncomputable def wallShearStress (q t : ℝ) : ℝ :=
+  q / t
+
+/-- Torsion constant of the thin closed rectangular cell, `J = 4 A² t / S` with the enclosed area
+`A = a b` and the median perimeter `S = 2 (a + b)`: `J = 2 a² b² t / (a + b)`. `G J` is the
+effective torsional rigidity of the cell. -/
+noncomputable def closedCellTorsionConstant (a b t : ℝ) : ℝ :=
+  2 * a ^ 2 * b ^ 2 * t / (a + b)
+
+/-- **Twist rate under the compatibility law.** For `a, b, t, G > 0` and the torque `T` of the
+wall resultants about any reference point `O`, the compatibility law holds exactly when
+`θ' = T (a + b) / (2 G a² b² t)`. -/
+lemma isClosedCellCompatible_iff {a b t G q θ' T : ℝ} {O : Fin 3 → ℝ} (ha : 0 < a) (hb : 0 < b)
+    (ht : 0 < t) (hG : 0 < G)
+    (hT : T = momentAbout (cellWallMidpoint a b) (cellWallForce a b q) (fun _ => 0) O 2) :
+    IsClosedCellCompatible a b t G q θ' ↔ θ' = T * (a + b) / (2 * G * a ^ 2 * b ^ 2 * t) := by
+  have hT' : T = 2 * a * b * q := by
+    rw [hT, momentAbout_cellWall]
+    simp
+  unfold IsClosedCellCompatible cellWallLength
+  rw [Fin.sum_univ_four]
+  simp only [Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]
+  rw [hT']
+  have ha' : a ≠ 0 := ne_of_gt ha
+  have hb' : b ≠ 0 := ne_of_gt hb
+  have ht' : t ≠ 0 := ne_of_gt ht
+  have hG' : G ≠ 0 := ne_of_gt hG
+  have hab : a + b ≠ 0 := ne_of_gt (add_pos ha hb)
+  constructor
+  · intro h
+    field_simp at h ⊢
+    linear_combination -h / 2
+  · intro h
+    field_simp at h ⊢
+    linear_combination -2 * h
+
+/-- **Shear stress.** For `a, b ≠ 0` and a wall thickness `t > 0` the wall shear stress is
+`τ = q / t = T / (2 a b t)`, where `T` is the torque of the wall resultants. -/
+lemma wallShearStress_eq {a b t q T : ℝ} {O : Fin 3 → ℝ} (ha : a ≠ 0) (hb : b ≠ 0) (ht : 0 < t)
+    (hT : T = momentAbout (cellWallMidpoint a b) (cellWallForce a b q) (fun _ => 0) O 2) :
+    wallShearStress q t = T / (2 * a * b * t) := by
+  have hT' : T = 2 * a * b * q := by
+    rw [hT, momentAbout_cellWall]
+    simp
+  unfold wallShearStress
+  rw [hT']
+  have ht' : t ≠ 0 := ne_of_gt ht
+  field_simp
+
+/-- **The torsion constant is Bredt's.** For `a, b, t > 0`,
+`J = 4 A² / ∑ walls (ℓ / t)` with `A = a b`, and `J > 0`. -/
+lemma closedCellTorsionConstant_eq {a b t : ℝ} (ha : 0 < a) (hb : 0 < b) (ht : 0 < t) :
+    closedCellTorsionConstant a b t = 4 * (a * b) ^ 2 / ∑ i, cellWallLength a b i / t ∧
+      0 < closedCellTorsionConstant a b t := by
+  have ha' : a ≠ 0 := ne_of_gt ha
+  have hb' : b ≠ 0 := ne_of_gt hb
+  have ht' : t ≠ 0 := ne_of_gt ht
+  have hab : 0 < a + b := add_pos ha hb
+  have hab' : a + b ≠ 0 := ne_of_gt hab
+  unfold closedCellTorsionConstant cellWallLength
+  rw [Fin.sum_univ_four]
+  simp only [Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]
+  constructor
+  · field_simp
+    ring
+  · positivity
+
+/-- **Effective torsional rigidity.** For `a, b, t, G > 0`, under the compatibility law the torque
+of the wall resultants is the effective rigidity times the twist rate: `T = G J θ'`. -/
+lemma torque_eq_rigidity_mul_twistRate {a b t G q θ' T : ℝ} {O : Fin 3 → ℝ} (ha : 0 < a)
+    (hb : 0 < b) (ht : 0 < t) (hG : 0 < G)
+    (hT : T = momentAbout (cellWallMidpoint a b) (cellWallForce a b q) (fun _ => 0) O 2)
+    (h : IsClosedCellCompatible a b t G q θ') :
+    T = G * closedCellTorsionConstant a b t * θ' := by
+  have hθ := (isClosedCellCompatible_iff ha hb ht hG hT).mp h
+  unfold closedCellTorsionConstant
+  rw [hθ]
+  have ha' : a ≠ 0 := ne_of_gt ha
+  have hb' : b ≠ 0 := ne_of_gt hb
+  have ht' : t ≠ 0 := ne_of_gt ht
+  have hG' : G ≠ 0 := ne_of_gt hG
+  have hab : a + b ≠ 0 := ne_of_gt (add_pos ha hb)
+  field_simp
+
+end ClosedCell
+
+/-! ## L. Simply supported beam: existence and uniqueness -/
 
 open Mechanics.EulerBernoulli
 
@@ -1370,7 +1544,7 @@ lemma isSimplySupportedSolution_iff {EI L q : ℝ} {w : ℝ → ℝ} (hEI : 0 < 
   · rw [key 2 (by norm_num) L hLm]
     exact uniformLoadDeflection_secondDeriv_zero_right q EI L
 
-/-! ## K. Simply supported beam: support reactions and slopes -/
+/-! ## M. Simply supported beam: support reactions and slopes -/
 
 /-- Support reactions: every solution has the reaction `-(EI * w''' 0) = q * L / 2` at the left
 pin and `EI * w''' L = q * L / 2` at the right pin. -/
@@ -1406,7 +1580,7 @@ lemma IsSimplySupportedSolution.slopes {EI L q : ℝ} {w : ℝ → ℝ} (hEI : 0
   simp [iteratedDeriv_pow, iteratedDeriv_fun_id]
   ring
 
-/-! ## L. Simply supported beam: clamped slopes change the solution -/
+/-! ## N. Simply supported beam: clamped slopes change the solution -/
 
 /-- Clamped-clamped deflection under the uniform load `q`: `q * x ^ 2 * (L - x) ^ 2 / (24 * EI)`.
 -/

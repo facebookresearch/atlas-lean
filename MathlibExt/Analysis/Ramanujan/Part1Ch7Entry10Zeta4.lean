@@ -54,7 +54,8 @@ private theorem mero_ncpow_aux (n : ℕ) (hn : 0 < n) :
     fun x _ => hdiff.analyticAt x
   exact AnalyticOnNhd.meromorphicOn hanal
 
-private theorem diff_sin_piece_aux :
+/-- The function `r ↦ sin (π * r / 2)` is differentiable on `ℂ`. -/
+theorem differentiable_sin_pi_mul_div_two :
     Differentiable ℂ (fun r : ℂ => Complex.sin ((Real.pi : ℂ) * r / 2)) := by
   have hlin : Differentiable ℂ (fun r : ℂ => (Real.pi : ℂ) * r / 2) := by
     exact (differentiable_const ((Real.pi : ℂ))).mul differentiable_id |>.div_const 2
@@ -63,7 +64,8 @@ private theorem diff_sin_piece_aux :
 private theorem diff_add1_aux : Differentiable ℂ (fun r : ℂ => r + 1) :=
   differentiable_id.add_const 1
 
-private theorem diff_twopi_pow_aux :
+/-- The function `r ↦ (2 * π) ^ (r + 1)` is differentiable on `ℂ`. -/
+theorem differentiable_two_mul_pi_cpow_add_one :
     Differentiable ℂ (fun r : ℂ => Complex.cpow (2 * (Real.pi : ℂ)) (r + 1)) := by
   have hbase : (2 * (Real.pi : ℂ) : ℂ) ≠ 0 := by
     have hpi : (Real.pi : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
@@ -85,7 +87,7 @@ private theorem mero_bstar_comp_aux :
     meromorphicOn_riemannZeta.comp_analyticOnNhd hadd1 (Set.mapsTo_univ _ _)
   have hpow : MeromorphicOn (fun r : ℂ => Complex.cpow (2 * (Real.pi : ℂ)) (r + 1)) Set.univ := by
     have hanal : AnalyticOnNhd ℂ (fun r : ℂ => Complex.cpow (2 * (Real.pi : ℂ)) (r + 1)) Set.univ :=
-      fun x _ => diff_twopi_pow_aux.analyticAt x
+      fun x _ => differentiable_two_mul_pi_cpow_add_one.analyticAt x
     exact AnalyticOnNhd.meromorphicOn hanal
   have hconst : MeromorphicOn (fun _ : ℂ => (2 : ℂ)) Set.univ :=
     analyticOnNhd_const.meromorphicOn
@@ -101,7 +103,7 @@ private theorem mero_bernoulli_side_aux (n : ℕ) (hn : 0 < n) :
   have hsub : MeromorphicOn (fun r : ℂ => Complex.cpow (n : ℂ) (r + 1) - 1) Set.univ :=
     hpow.sub analyticOnNhd_const.meromorphicOn
   have hsin : MeromorphicOn (fun r : ℂ => Complex.sin ((Real.pi : ℂ) * r / 2)) Set.univ :=
-    AnalyticOnNhd.meromorphicOn (fun x _ => diff_sin_piece_aux.analyticAt x)
+    AnalyticOnNhd.meromorphicOn (fun x _ => differentiable_sin_pi_mul_div_two.analyticAt x)
   have hB := mero_bstar_comp_aux
   have hden : MeromorphicOn (fun r : ℂ => (r + 1 : ℂ)) Set.univ :=
     AnalyticOnNhd.meromorphicOn (fun x _ => diff_add1_aux.analyticAt x)

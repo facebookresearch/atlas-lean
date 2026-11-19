@@ -18,7 +18,7 @@ well.
 ## Background
 
 - [Size of a Hamming ball](card-ball.md): the exact volume formula.
-- Bounds on partial sums of binomial coefficients: sibling estimates of the same partial sums $\sum_{i \le r} \binom{D}{i}$, of the form $(e D / r)^r$ rather than entropy bounds.
+- [Bounds on partial sums of binomial coefficients](../../../Combinatorics/binomial-coefficients/binomial-sums/bounds-on-partial-sums-of-binomial-coefficients/README.md): sibling estimates of the same partial sums $\sum_{i \le r} \binom{D}{i}$, of the form $(e D / r)^r$ rather than entropy bounds.
 
 ## Sources
 

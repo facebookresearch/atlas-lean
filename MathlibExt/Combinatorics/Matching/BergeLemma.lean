@@ -24,7 +24,7 @@ import Mathlib.Combinatorics.SimpleGraph.Walk.Operations
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Finset.SymmDiff
 import Mathlib.Data.Fintype.Card
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 import Mathlib.Data.Set.Card
 import Mathlib.Data.Sym.Sym2
 import Mathlib.Order.Lattice.Nat
@@ -1242,6 +1242,76 @@ theorem Berge :
   have aug_iff' := aug_exists_subgraphOfFinset_iff G M hG
   rw [max_iff', aug_iff']
   exact hgen
+
+/-- **Augmenting path.** For a finite edge set `M` of a simple graph `G` (in practice a matching),
+a walk `p` from `u` to `v` is `M`-augmenting if `u ≠ v`, `p` has no repeated vertex and positive
+length, neither endpoint lies on an edge of `M`, and consecutive edges of `p` alternate between
+edges in `M` and edges not in `M`; this is the predicate of `Berge` (Hopcroft and Karp,
+*An n^{5/2} algorithm for maximum matchings in bipartite graphs*, SIAM J. Comput. 2 (1973),
+§2, definition of an augmenting path). -/
+def IsAugmentingWalk {V : Type*} {G : SimpleGraph V} (M : Finset (Sym2 V)) {u v : V}
+    (p : G.Walk u v) : Prop :=
+  u ≠ v ∧ p.support.Nodup ∧ (∀ e ∈ M, u ∉ e) ∧ (∀ e ∈ M, v ∉ e) ∧
+    List.IsChain (fun e₁ e₂ => (e₁ ∈ M) ≠ (e₂ ∈ M)) p.edges ∧ 0 < p.length
+
+set_option linter.unusedFintypeInType false in
+/-- **Berge's lemma with augmenting walks.** A matching `M` of a finite simple graph is maximum
+if and only if no walk is `M`-augmenting (Hopcroft and Karp, SIAM J. Comput. 2 (1973), §2,
+Corollary 1, attributed there to Berge). -/
+theorem berge_iff_not_exists_isAugmentingWalk {V : Type*} [Fintype V] (G : SimpleGraph V)
+    (M : Finset (Sym2 V)) (hG : ∀ e ∈ M, e ∈ G.edgeSet)
+    (hM : ∀ e₁ ∈ M, ∀ e₂ ∈ M, e₁ ≠ e₂ → ∀ v : V, v ∈ e₁ → v ∉ e₂) :
+    (∀ M' : Finset (Sym2 V), (∀ e ∈ M', e ∈ G.edgeSet) →
+        (∀ e₁ ∈ M', ∀ e₂ ∈ M', e₁ ≠ e₂ → ∀ v : V, v ∈ e₁ → v ∉ e₂) → M'.card ≤ M.card) ↔
+      ¬ ∃ (u v : V) (p : G.Walk u v), IsAugmentingWalk M p := by
+  rw [Berge G M hG hM]
+  constructor
+  · rintro h ⟨u, v, p, hne, hp⟩
+    exact h ⟨u, v, hne, p, hp⟩
+  · rintro h ⟨u, v, hne, p, hp⟩
+    exact h ⟨u, v, p, hne, hp⟩
+
+/-- **Augmenting along a path (Hopcroft–Karp, Lemma 1).** If `M` is a matching of `G` and `p` an
+`M`-augmenting walk, then the symmetric difference of `M` with the edges of `p` is a matching of
+`G` with one more edge than `M` (Hopcroft and Karp, SIAM J. Comput. 2 (1973), §2, Lemma 1). -/
+theorem IsAugmentingWalk.symmDiff_isMatching {V : Type*} [DecidableEq (Sym2 V)]
+    {G : SimpleGraph V} {M : Finset (Sym2 V)} (hG : ∀ e ∈ M, e ∈ G.edgeSet)
+    (hM : ∀ e₁ ∈ M, ∀ e₂ ∈ M, e₁ ≠ e₂ → ∀ v : V, v ∈ e₁ → v ∉ e₂)
+    {u v : V} {p : G.Walk u v} (hp : IsAugmentingWalk M p) :
+    (∀ e ∈ symmDiff M p.edges.toFinset, e ∈ G.edgeSet) ∧
+      (∀ e₁ ∈ symmDiff M p.edges.toFinset, ∀ e₂ ∈ symmDiff M p.edges.toFinset, e₁ ≠ e₂ →
+        ∀ w : V, w ∈ e₁ → w ∉ e₂) ∧
+      (symmDiff M p.edges.toFinset).card = M.card + 1 := by
+  obtain ⟨hne, hnodup, hexpu, hexpv, hchain, -⟩ := hp
+  have heq : symmDiff M p.edges.toFinset =
+      (M \ p.edges.toFinset) ∪ (p.edges.toFinset.filter (· ∉ M)) := by
+    ext e
+    simp only [Finset.mem_symmDiff, Finset.mem_union, Finset.mem_sdiff, Finset.mem_filter]
+  rw [heq]
+  refine ⟨?_, aug_matching G M hM p hnodup hexpu hexpv hchain, ?_⟩
+  · intro e he
+    rw [Finset.mem_union] at he
+    rcases he with he | he
+    · exact hG e (Finset.mem_sdiff.mp he).1
+    · exact p.edges_subset_edgeSet (List.mem_toFinset.mp (Finset.mem_filter.mp he).1)
+  · have hEnodup : p.edges.Nodup := SimpleGraph.Walk.edges_nodup_of_support_nodup hnodup
+    have hne_list : p.edges ≠ [] := by
+      intro h
+      have : p.length = 0 := by rw [← SimpleGraph.Walk.length_edges, h]; rfl
+      exact hne (p.eq_of_length_eq_zero this)
+    obtain ⟨e₀, he₀⟩ := Option.ne_none_iff_exists'.mp (by
+      intro hcon; rw [List.head?_eq_none_iff] at hcon; exact hne_list hcon)
+    obtain ⟨e₁, he₁⟩ := Option.ne_none_iff_exists'.mp (by
+      intro hcon; rw [List.getLast?_eq_none_iff] at hcon; exact hne_list hcon)
+    have he₀nm : e₀ ∉ M := fun hcon =>
+      absurd (walk_first_edge_mem G p e₀ he₀) (hexpu e₀ hcon)
+    have he₁nm : e₁ ∉ M := fun hcon =>
+      absurd (walk_end_mem_last_edge G p e₁ he₁) (hexpv e₁ hcon)
+    have hfirst : p.edges.head?.map (fun e => decide (e ∈ M)) = some false := by
+      simp only [he₀, Option.map_some, decide_eq_false he₀nm]
+    have hlast : p.edges.getLast?.map (fun e => decide (e ∈ M)) = some false := by
+      simp only [he₁, Option.map_some, decide_eq_false he₁nm]
+    exact aug_card G M p hEnodup hchain hfirst hlast
 
 end MetaMathlibExt
 end

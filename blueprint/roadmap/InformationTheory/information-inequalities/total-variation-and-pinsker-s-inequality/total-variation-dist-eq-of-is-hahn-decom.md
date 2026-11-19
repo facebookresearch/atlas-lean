@@ -12,7 +12,7 @@ A Hahn set exists for any two finite measures, so the supremum over events is al
 
 ## Background
 
-- Total variation distance:
+- [Total variation distance](../../../Probability/convergence-of-measures/total-variation-distance/total-variation-dist.md):
   the supremum definition.
 
 ## Sources

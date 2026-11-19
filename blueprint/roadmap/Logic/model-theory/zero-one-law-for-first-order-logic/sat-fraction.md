@@ -1,14 +1,14 @@
 # Proportion of labelled structures satisfying a sentence
 
-For a first-order sentence $\varphi$ over $L$ and $n \in \mathbb{N}$,
+For a relational language $L$ with finitely many symbols, a first-order sentence $\varphi$ over $L$
+and $n \in \mathbb{N}$,
 
 $$\mu_n(\varphi) = \frac{|\{M \text{ an } L\text{-structure on } \{1, \dots, n\} : M
 \models \varphi\}|}{|\{M \text{ an } L\text{-structure on } \{1, \dots, n\}\}|}.$$
 
 Structures are labelled: two isomorphic structures on $\{1, \dots, n\}$ count separately, so
 $\mu_n$ is the probability that $\varphi$ holds in a uniformly random structure on $n$ labelled
-elements. For a relational language with finitely many symbols both counts are finite and the
-denominator is positive.
+elements. Both counts are finite and the denominator is positive.
 
 ## Background
 

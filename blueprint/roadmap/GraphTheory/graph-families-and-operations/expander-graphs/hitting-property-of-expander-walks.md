@@ -14,5 +14,5 @@ Taking $B$ the set of random strings on which a one-sided-error algorithm errs, 
 
 - [Probability of an event for a random walk on a regular graph](walk-prob.md): the walk
   distribution used in the statement.
-- Bounded-error probabilistic classes RP and BPP:
+- [Bounded-error probabilistic classes RP and BPP](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-probabilistic-classes-rp-and-bpp/README.md):
   the hitting property is the tool for randomness-efficient error reduction of RP algorithms.

@@ -11,6 +11,6 @@ the single-linkage dendrogram (Lemma 12 and Cor. 14 there).
 
 ## Background
 
-- Ultrametric on taxa:
+- [Ultrametric on taxa](../../../../Biology/phylogenetics/splits-compatibility-ultrametrics-and-upgma/is-ultrametric.md):
   the three-point condition that $u^*$ satisfies; Carlsson and Mémoli represent every dendrogram
   by such an ultrametric (their Thm. 9), as phylogenetics represents dated trees.

@@ -22,7 +22,7 @@ parallel prefix scans use. In floating point it is associative only up to roundi
 
 ## Informally uses
 
-- Sequentially semiseparable matrices are semiseparable:
+- [Sequentially semiseparable matrices are semiseparable](../../../LinearAlgebra/special-matrices/semiseparable-matrices/is-semiseparable-of-sss.md):
   mathematical prerequisite, the "semiseparable" clause of the statement.
 
 ## Sources

@@ -14,6 +14,6 @@ matrix the distributed algorithm is the classical one at each sensor).
 
 ## Background
 
-- Kalman filter update: with the constant state $\theta' = \theta$, observation matrix $\varphi^\top$
+- [Kalman filter update](../../../ComputerScience/machine-learning/probabilistic-graphical-models/kalman-filter/update.md): with the constant state $\theta' = \theta$, observation matrix $\varphi^\top$
   and unit observation noise variance, the Kalman gain is $P \varphi / (1 + \varphi^\top P \varphi)$ and the Kalman
   update is exactly this step.

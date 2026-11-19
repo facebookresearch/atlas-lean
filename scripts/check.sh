@@ -53,12 +53,19 @@ check_structure() {
   done
 }
 
+# `bash -n` parses only its first operand (the others become its arguments),
+# so parse each script separately.
+check_shell_syntax() {
+  local path failed=0
+  for path in "$@"; do
+    bash -n "$path" || failed=1
+  done
+  return "$failed"
+}
+
 if [[ "$scope" == all || "$scope" == preflight ]]; then
   run_check "repository structure" check_structure
-  run_check "shell syntax" \
-    bash -n \
-      scripts/check.sh scripts/check_axioms.sh scripts/check_diagnostics.sh \
-      scripts/check_health.sh scripts/test_scripts.sh
+  run_check "shell syntax" check_shell_syntax scripts/*.sh
   run_check "maintenance script regressions" scripts/test_scripts.sh
   run_check "library policy" scripts/check_health.sh
   run_check "copyright headers" python3 scripts/check_copyright.py --all

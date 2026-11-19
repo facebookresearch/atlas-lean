@@ -12,4 +12,4 @@ about this density assume $b \neq 0$.
 
 ## Background
 
-- Density of the Laplace distribution: the same density with a location parameter and a real scale; for $b > 0$ this page's $f_b$ is its case of location $0$.
+- [Density of the Laplace distribution](../../../../Probability/distributions/continuous/laplace-distribution/laplace-pdfreal.md): the same density with a location parameter and a real scale; for $b > 0$ this page's $f_b$ is its case of location $0$.

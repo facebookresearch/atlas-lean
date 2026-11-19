@@ -30,6 +30,8 @@ cancels by reciprocity.
 
 ## ii. Key results
 
+- `ZoneHeatInventory.heat_inventory_hasDerivAt`: the inventory balance
+  at one time, from the zone equations at that time.
 - `ZoneHeatInventory.heat_inventory_deriv`: the inventory balance.
 
 ## iii. Table of contents
@@ -48,20 +50,19 @@ cancels by reciprocity.
 
 namespace ZoneHeatInventory
 
-/-- Zone heat inventory balance: for zones indexed by a fintype,
-with constant capacities `C i`, reciprocal conductances
-`G i j = G j i`, zone temperatures `T i t` with supplied derivatives
-`Tv i t`, and zone equations
-`C i * Tv i t = Σ j, G i j * (T j t - T i t) + b i t + P i t`,
-the total heat inventory `Σ i, C i * T i t` has derivative
-`Σ i, (b i t + P i t)`: internal exchange cancels by reciprocity. -/
-theorem heat_inventory_deriv {ι : Type*} [Fintype ι]
-    (C : ι → ℝ) (G : ι → ι → ℝ) (T Tv b P : ι → ℝ → ℝ)
+/-- Zone heat inventory balance at one time `t`: with constant
+capacities `C i`, reciprocal conductances `G i j = G j i`, zone
+temperatures with derivatives `Tv i t` at `t`, and the zone equations
+`C i * Tv i t = Σ j, G i j * (T j t - T i t) + b i t + P i t` at `t`,
+the total heat inventory `Σ i, C i * T i` has derivative
+`Σ i, (b i t + P i t)` at `t`: internal exchange cancels by
+reciprocity. Only data at the single time `t` is assumed. -/
+theorem heat_inventory_hasDerivAt {ι : Type*} [Fintype ι]
+    (C : ι → ℝ) (G : ι → ι → ℝ) (T Tv b P : ι → ℝ → ℝ) (t : ℝ)
     (hG : ∀ i j, G i j = G j i)
-    (hT : ∀ i t, HasDerivAt (T i) (Tv i t) t)
-    (hzone : ∀ i t, C i * Tv i t
-      = (∑ j, G i j * (T j t - T i t)) + b i t + P i t)
-    (t : ℝ) :
+    (hT : ∀ i, HasDerivAt (T i) (Tv i t) t)
+    (hzone : ∀ i, C i * Tv i t
+      = (∑ j, G i j * (T j t - T i t)) + b i t + P i t) :
     HasDerivAt (fun s => ∑ i, C i * T i s)
       (∑ i, (b i t + P i t)) t := by
   have hexch : ∀ i, (∑ j, G i j * (T j t - T i t))
@@ -78,8 +79,26 @@ theorem heat_inventory_deriv {ι : Type*} [Fintype ι]
         ((∑ j ∈ Finset.univ, (G j i * T j t - G i j * T i t)) + (b i t + P i t)) t
       have hder : C i * Tv i t
           = (∑ j ∈ Finset.univ, (G j i * T j t - G i j * T i t)) + (b i t + P i t) := by
-        rw [hzone i t, hexch i, add_assoc]
-      exact hder ▸ HasDerivAt.const_mul (C i) (hT i t))
+        rw [hzone i, hexch i, add_assoc]
+      exact hder ▸ HasDerivAt.const_mul (C i) (hT i))
   exact h
+
+/-- Zone heat inventory balance: for zones indexed by a fintype,
+with constant capacities `C i`, reciprocal conductances
+`G i j = G j i`, zone temperatures `T i t` with supplied derivatives
+`Tv i t`, and zone equations
+`C i * Tv i t = Σ j, G i j * (T j t - T i t) + b i t + P i t`,
+the total heat inventory `Σ i, C i * T i t` has derivative
+`Σ i, (b i t + P i t)`: internal exchange cancels by reciprocity. -/
+theorem heat_inventory_deriv {ι : Type*} [Fintype ι]
+    (C : ι → ℝ) (G : ι → ι → ℝ) (T Tv b P : ι → ℝ → ℝ)
+    (hG : ∀ i j, G i j = G j i)
+    (hT : ∀ i t, HasDerivAt (T i) (Tv i t) t)
+    (hzone : ∀ i t, C i * Tv i t
+      = (∑ j, G i j * (T j t - T i t)) + b i t + P i t)
+    (t : ℝ) :
+    HasDerivAt (fun s => ∑ i, C i * T i s)
+      (∑ i, (b i t + P i t)) t :=
+  heat_inventory_hasDerivAt C G T Tv b P t hG (fun i => hT i t) (fun i => hzone i t)
 
 end ZoneHeatInventory

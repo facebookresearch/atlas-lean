@@ -358,6 +358,7 @@
     {"slug": "soluble-finite-groups", "title": "Soluble and supersoluble finite groups", "description": "Structure of finite soluble groups: supersolubility criteria, p-solubility and p-length, chief factors and their complements, σ-solubility and σ-nilpotency, Schmidt subgroups, derived length bounds for finite groups of special type, and factorized groups; classes of groups closed under operations go to Formations and Fitting classes.", "msc": ["20D10"], "subfields": [
      {"slug": "formations", "title": "Formations and Fitting classes", "description": "Classes of finite groups: formations, local and hereditary formations, Fitting and radical classes, injectors, subgroup functors, residuals, and lattices of formations; varieties defined by laws go to Varieties, quasivarieties and equations."}
     ]},
+    {"slug": "factorized-groups", "title": "Factorized groups", "description": "Groups that are products G = AB of two or more subgroups, finite or infinite: solubility, nilpotency and derived length of products of abelian, nilpotent, minimax or soluble factors (Itô and Kegel–Wielandt type theorems), triple factorizations, subnormal subgroups of factorized groups, and classes of groups closed under such products; supersoluble factorizations and products of maximal subgroups stay in Soluble and supersoluble finite groups, formations and Fitting classes in general in Formations and Fitting classes, and products of periodic subgroups in Periodic and locally finite groups.", "msc": ["20D40", "20F16", "20F19"], "subfields": []},
     {"slug": "finite-p-groups", "title": "Finite p-groups", "description": "Groups of prime-power order: composition series, Frattini subgroups and Φ-extensions, special, powerful, metacyclic and Camina p-groups, conjugacy class sizes of p-groups, generalized quaternion groups, coclass and rank analogues, derived length bounds, and orders of automorphism groups of p-groups only when the p-group structure is the point.", "msc": ["20D15"], "subfields": []},
     {"slug": "characters-of-finite-groups", "title": "Characters of finite groups", "description": "Complex characters and representations used to study finite groups: class functions and orthogonality, irreducible character bases, character degrees and values, McKay conjecture, rational groups, permutation characters, blocks of defect zero, Frobenius group determinant, convolution on finite groups, and Burnside's p^a q^b theorem; general representation theory of algebras and Lie groups belongs to RepresentationTheory.", "msc": ["20C15", "20C20", "20C30"], "subfields": []},
     {"slug": "permutation-groups", "title": "Permutation groups and group actions", "description": "Groups acting on sets: orbits, stabilizers, fixed-point counts, transitivity, bases, closures, Frobenius groups, symmetric and alternating groups as permutation groups, and infinite permutation groups (highly homogeneous, cofinitary, oligomorphic, subdegree-finite).", "msc": ["20B05", "20B07", "20B20", "20B22", "20B27", "20B30"], "subfields": [
@@ -686,6 +687,7 @@
      {"slug": "paths-cycles-and-subgraphs", "title": "Paths, cycles, trees and subgraph problems", "description": "Hamiltonian paths and cycles, longest paths and cycles, disjoint paths and path covers, constrained spanning and Steiner trees, minimum equivalent digraph, traveling salesperson and vehicle routing, and (induced) subgraph isomorphism."},
      {"slug": "number-and-packing-problems", "title": "Number partitioning, knapsack and packing", "description": "Subset sum, subset product, partition, 3-partition, multiway partition, knapsack variants, bin and strip packing, numerical 3-dimensional matching and 0-1 integer programming."},
      {"slug": "set-systems-and-location", "title": "Set systems, assignment and location", "description": "3-dimensional matching, exact cover, set cover, set packing, set splitting, maximum coverage, minimum test set, generalized and quadratic assignment, facility location, k-center and k-median."},
+     {"slug": "databases-and-concurrency", "title": "Databases, concurrency control and protection", "description": "Relational database design and querying (keys, prime attributes, normal forms, covers of functional dependencies, evaluation, containment and folding of conjunctive queries, index selection, anonymization), concurrency control (serializability of histories, locking policies, deadlock) and safety of protection systems."},
      {"slug": "scheduling", "title": "Scheduling problems", "description": "Single-machine, parallel-machine, flow-shop, precedence-constrained and resource-constrained scheduling with deadlines, tardiness or weighted completion objectives."},
      {"slug": "strings-and-puzzles", "title": "Strings, puzzles and Latin squares", "description": "String problems (closest string, longest common subsequence, shortest common supersequence) and puzzles (Sudoku, Nonogram, Akari, Minesweeper, Latin square completion)."}
     ]},
@@ -711,22 +713,32 @@
   "Economics": {
    "title": "Mathematical Economics",
    "description": "Mathematical economics studies accounting identities, markets, decisions and the quantitative structures used in economic models.",
-   "fields": []
+   "fields": [
+    {"slug": "inventory-transport-and-spatial-models", "title": "Inventory, transport and spatial models", "description": "Quantitative models of stocks and of movement in space: inventory dynamics with lead times and backlogging, accessibility measures of transport networks, and spatial interaction models distributing trips or demand among destinations.", "msc": ["90B05", "90B06", "91B72", "91D10"], "subfields": []}
+   ]
   },
   "Physics": {
    "title": "Mathematical Physics",
    "description": "Mathematical physics describes mechanical, electromagnetic and quantum systems through mathematical models and their laws.",
-   "fields": []
+   "fields": [
+    {"slug": "elasticity-and-structures", "title": "Elasticity and structural mechanics", "description": "Linear elasticity and the mechanics of structures: Cauchy stress, small strain and Mohr's circle, isotropic elastic energy, Euler–Bernoulli beams and their vibration modes, rigid footings on elastic foundations, and fracture under linear elastic fracture mechanics.", "msc": ["74B05", "74A10", "74K10", "74H45", "74R10"], "subfields": []},
+    {"slug": "fluid-mechanics", "title": "Fluid mechanics", "description": "Hydrostatics and elementary fluid dynamics: hydrostatic pressure and buoyancy, Bernoulli's theorem, Stokes settling, and continuum models of traffic flow with their shocks. Rotating and stratified flows of the ocean and atmosphere, water waves and open-channel hydraulics are under Earth Science.", "msc": ["76A02", "76D07", "76A30", "35L65"], "subfields": []}
+   ]
   },
   "Chemistry": {
    "title": "Mathematical Chemistry",
    "description": "Mathematical chemistry studies quantitative models of chemical systems and reactions.",
-   "fields": []
+   "fields": [
+    {"slug": "solutions-and-aqueous-equilibria", "title": "Solutions and aqueous equilibria", "description": "Concentrations of solutions and the equilibria of aqueous systems: charge and mass balances and the proton condition, acid dissociation, carbonate speciation and alkalinity, Henry's law and air–water gas exchange.", "msc": ["92E20", "80A50", "26C10"], "subfields": []},
+    {"slug": "chemical-kinetics", "title": "Chemical kinetics and reactors", "description": "Rates of chemical reactions and well-mixed reactors: integrated rate laws and half-lives, the Arrhenius law, conservation laws of reaction networks, and stirred-tank and box reactors. Biochemical reaction networks are under Biology.", "msc": ["80A30", "92E20", "34A30"], "subfields": []}
+   ]
   },
   "EarthScience": {
    "title": "Earth Science",
    "description": "Earth science uses mathematical models to describe the Earth and its physical systems.",
-   "fields": []
+   "fields": [
+    {"slug": "hydrology-and-surface-processes", "title": "Hydrology and surface processes", "description": "Water at and below the land surface and the materials it moves through: catchment budgets, infiltration, hydrographs and flood routing, flood frequency, open-channel hydraulics, groundwater flow and solute transport, river water quality, hillslope evolution and soil mechanics.", "msc": ["86A05", "76S05", "35Q86", "74L10"], "subfields": []}
+   ]
   }
  },
  "placements": {
@@ -734,6 +746,7 @@
   "CSLibExt/Algorithms/CCS/AlternatingBitData": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Alternating bit protocol"},
   "CSLibExt/Algorithms/CCS/FiniteState": {"to": "ComputerScience/process-calculi", "title": "Finite-state CCS agents"},
   "CSLibExt/Algorithms/CCS/GoBackN": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Go-back-N protocol"},
+  "CSLibExt/Algorithms/Concurrency/Bakery": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Two-process bakery algorithm"},
   "CSLibExt/Algorithms/Concurrency/BakeryNProcesses": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Bakery algorithm"},
   "CSLibExt/Algorithms/Concurrency/Banker": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Banker's algorithm"},
   "CSLibExt/Algorithms/Concurrency/Deadlock": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Deadlock and circular wait"},
@@ -833,6 +846,7 @@
   "CSLibExt/Algorithms/Lean/DataStructures/UnionFind/ConnectedComponents": {"to": "ComputerScience/data-structures/disjoint-sets-and-dynamic-trees", "title": "Disjoint-set data structure"},
   "CSLibExt/Algorithms/Lean/DataStructures/UnionFind/Find": {"to": "ComputerScience/data-structures/disjoint-sets-and-dynamic-trees", "title": "Disjoint-set data structure"},
   "CSLibExt/Algorithms/Lean/DataStructures/UnionFind/Rank": {"to": "ComputerScience/data-structures/disjoint-sets-and-dynamic-trees", "title": "Disjoint-set data structure"},
+  "CSLibExt/Algorithms/Lean/DataStructures/UnionFind/RankBound": {"to": "ComputerScience/data-structures/disjoint-sets-and-dynamic-trees", "title": "Disjoint-set data structure"},
   "CSLibExt/Algorithms/Lean/DataStructures/UnionFind/SequenceCost": {"to": "ComputerScience/data-structures/disjoint-sets-and-dynamic-trees", "title": "Disjoint-set data structure"},
   "CSLibExt/Algorithms/Lean/DataStructures/UnionFind/Union": {"to": "ComputerScience/data-structures/disjoint-sets-and-dynamic-trees", "title": "Disjoint-set data structure"},
   "CSLibExt/Algorithms/Lean/DataStructures/UniversalHashing": {"to": "ComputerScience/data-structures/hashing", "title": "Universal hashing"},
@@ -1455,6 +1469,8 @@
   "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/NbeCanonical": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Normalization by evaluation"},
   "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/NbeCorrectness": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Normalization by evaluation"},
   "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/NbeEvaluation": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Normalization by evaluation"},
+  "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/NbeSubstitution": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Completeness of normalization by evaluation"},
+  "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/NbeSyntacticCompleteness": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Completeness of normalization by evaluation"},
   "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/Normalization": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Normalization of the simply typed lambda calculus"},
   "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/Semantics": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Operational semantics of the simply typed lambda calculus"},
   "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/Substitution": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Simply typed lambda calculus"},
@@ -1481,6 +1497,9 @@
   "CSLibExt/Languages/LambdaCalculus/References/Syntax": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Lambda calculus with references"},
   "CSLibExt/Languages/LambdaCalculus/References/Typing": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Lambda calculus with references"},
   "CSLibExt/Languages/LambdaCalculus/SystemF": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "System F"},
+  "CSLibExt/Languages/MiniImp/Semantics": {"to": "ComputerScience/programming-language-semantics", "title": "An imperative language with arrays"},
+  "CSLibExt/Languages/MiniImp/Syntax": {"to": "ComputerScience/programming-language-semantics", "title": "An imperative language with arrays"},
+  "CSLibExt/Languages/MiniImp/VC": {"to": "ComputerScience/program-logics-and-verification", "title": "Hoare logic for an imperative language with arrays"},
   "CSLibExt/Languages/PiCalculus": {"to": "ComputerScience/process-calculi", "title": "π-calculus"},
   "CSLibExt/Languages/PiCalculus/Basic": {"to": "ComputerScience/process-calculi", "title": "π-calculus"},
   "CSLibExt/Languages/SessionTypes": {"to": "ComputerScience/process-calculi/session-types", "title": "Finite binary sessions"},
@@ -1583,6 +1602,7 @@
   "CSLibExt/Logics/FirstOrder/PropositionalBridge": {"to": "Logic/first-order-logic", "title": "Embedding propositional logic into first-order logic"},
   "CSLibExt/Logics/FirstOrder/Symbols": {"to": "Logic/first-order-logic", "title": "First-order syntax"},
   "CSLibExt/Logics/FirstOrder/Syntax": {"to": "Logic/first-order-logic", "title": "First-order syntax"},
+  "CSLibExt/Logics/LTL/Basic": {"to": "Logic/temporal-logic", "title": "Linear temporal logic"},
   "CSLibExt/Logics/LTL/BuchiSize": {"to": "Logic/temporal-logic", "title": "Model checking for linear temporal logic"},
   "CSLibExt/Logics/LTL/DecidableModelChecking": {"to": "Logic/temporal-logic", "title": "Model checking for linear temporal logic"},
   "CSLibExt/Logics/LTL/Encoding": {"to": "Logic/temporal-logic", "title": "Linear temporal logic"},
@@ -1641,6 +1661,7 @@
   "CSLibExt/MachineLearning/BoostingMinimax": {"to": "ComputerScience/machine-learning/online-learning-and-boosting", "title": "Boosting and the minimax theorem"},
   "CSLibExt/MachineLearning/Classification/LogisticSVM": {"to": "ComputerScience/machine-learning/supervised-learning", "title": "Logistic regression and support vector machines"},
   "CSLibExt/MachineLearning/ClassificationCalibration": {"to": "ComputerScience/machine-learning/supervised-learning", "title": "Classification-calibrated losses"},
+  "CSLibExt/MachineLearning/Discriminative/ExponentialFamily": {"to": "Probability/statistical-estimation", "title": "Exponential families"},
   "CSLibExt/MachineLearning/Factorization/NMF": {"to": "ComputerScience/machine-learning/unsupervised-learning", "title": "Non-negative matrix factorization"},
   "CSLibExt/MachineLearning/FiniteSampleExpressivity": {"to": "ComputerScience/machine-learning/supervised-learning", "title": "Finite-sample expressivity of ReLU networks"},
   "CSLibExt/MachineLearning/GaussianProcessMarginalLikelihood": {"to": "ComputerScience/machine-learning/supervised-learning", "title": "Gaussian process regression"},
@@ -1663,6 +1684,7 @@
   "CSLibExt/MachineLearning/GraphicalModels/MarkovBlanket": {"to": "ComputerScience/machine-learning/probabilistic-graphical-models", "title": "Bayesian networks"},
   "CSLibExt/MachineLearning/GraphicalModels/MarkovFactorization": {"to": "ComputerScience/machine-learning/probabilistic-graphical-models", "title": "Bayesian networks"},
   "CSLibExt/MachineLearning/GraphicalModels/StructuralCausalModel": {"to": "ComputerScience/machine-learning/probabilistic-graphical-models", "title": "Structural causal models and counterfactuals"},
+  "CSLibExt/MachineLearning/GraphicalModels/StructuralCausalModels": {"to": "ComputerScience/machine-learning/probabilistic-graphical-models", "title": "Structural causal models and counterfactuals"},
   "CSLibExt/MachineLearning/GraphicalModels/VariableElimination": {"to": "ComputerScience/machine-learning/probabilistic-graphical-models", "title": "Variable elimination and belief propagation"},
   "CSLibExt/MachineLearning/Hedge": {"to": "ComputerScience/machine-learning/online-learning-and-boosting", "title": "Hedge algorithm"},
   "CSLibExt/MachineLearning/InformationTheory/InformationGain": {"to": "ComputerScience/machine-learning/supervised-learning", "title": "Information gain in decision trees"},
@@ -1855,6 +1877,7 @@
   "MathlibExt/Analysis/Calculus/ArcsinDivSinIntegral": {"to": "Analysis/real-functions/integration", "title": "Bhandari's arcsine-over-sine integral"},
   "MathlibExt/Analysis/Calculus/Bisection": {"to": "Analysis/numerical-analysis", "title": "Bisection method"},
   "MathlibExt/Analysis/Calculus/Borel": {"to": "Analysis/real-functions/differential-calculus", "title": "Borel's lemma"},
+  "MathlibExt/Analysis/Calculus/CubicOverSumSquaresPartialsBounded": {"to": "Analysis/real-functions/multivariable-calculus", "title": "Continuity and differentiability at the origin in the plane"},
   "MathlibExt/Analysis/Calculus/CurveLength": {"to": "Analysis/real-functions/multivariable-calculus", "title": "Length of a curve"},
   "MathlibExt/Analysis/Calculus/DotProductGradient": {"to": "Analysis/real-functions/multivariable-calculus", "title": "Gradient"},
   "MathlibExt/Analysis/Calculus/EulerMaclaurinFormula": {"to": "Analysis/asymptotic-analysis", "title": "Euler–Maclaurin formula"},
@@ -1885,6 +1908,7 @@
   "MathlibExt/Analysis/Complex/Loewner": {"to": "Analysis/complex-analysis/geometric-function-theory", "title": "Loewner equation"},
   "MathlibExt/Analysis/Complex/LoomanMenchoff": {"to": "Analysis/complex-analysis/cauchy-theory", "title": "Looman–Menchoff theorem"},
   "MathlibExt/Analysis/Complex/MittagLeffler": {"to": "Analysis/complex-analysis/entire-functions", "title": "Mittag-Leffler theorem"},
+  "MathlibExt/Analysis/Complex/MittagLefflerPolynomial": {"to": "Analysis/complex-analysis/entire-functions", "title": "Mittag-Leffler theorem"},
   "MathlibExt/Analysis/Complex/NormalConvergence": {"to": "Analysis/sequences-and-series/convergence", "title": "Normal convergence of series of functions"},
   "MathlibExt/Analysis/Complex/NormalFamilies": {"to": "Analysis/complex-analysis/cauchy-theory", "title": "Normal families"},
   "MathlibExt/Analysis/Complex/PeriodicEntire": {"to": "Analysis/complex-analysis/entire-functions", "title": "Periodic entire functions of exponential growth"},
@@ -2392,6 +2416,7 @@
   "MathlibExt/Biology/PopulationGenetics/AdmixtureGraph": {"to": "Biology/population-structure", "title": "Admixture graphs"},
   "MathlibExt/Biology/PopulationGenetics/AdmixtureLD": {"to": "Biology/population-structure", "title": "Admixture linkage disequilibrium"},
   "MathlibExt/Biology/PopulationGenetics/ChineseRestaurant": {"to": "Biology/population-genetics", "title": "Ewens sampling formula and the Chinese restaurant process"},
+  "MathlibExt/Biology/PopulationGenetics/Classical/MultiallelicLD": {"to": "Biology/population-genetics", "title": "Linkage disequilibrium and Haldane's map function"},
   "MathlibExt/Biology/PopulationGenetics/Coalescent/BlockCounting": {"to": "Biology/coalescent-theory", "title": "Ancestral lineage counting and Tavaré's formula"},
   "MathlibExt/Biology/PopulationGenetics/Coalescent/HKA": {"to": "Biology/detecting-selection", "title": "Hudson–Kreitman–Aguadé test"},
   "MathlibExt/Biology/PopulationGenetics/Coalescent/Kingman": {"to": "Biology/coalescent-theory", "title": "Kingman's coalescent and Watterson's estimator"},
@@ -2742,6 +2767,7 @@
   "MathlibExt/Combinatorics/Fundamentals/SpecialSequences": {"to": "Combinatorics/elementary-enumeration", "title": "Special counting sequences"},
   "MathlibExt/Combinatorics/GaleRyser": {"to": "Combinatorics/designs-latin-squares", "title": "Gale–Ryser theorem"},
   "MathlibExt/Combinatorics/GeneralizedBellPolynomial": {"to": "Combinatorics/stirling-bell-eulerian/bell-fubini-numbers", "title": "Generalized Bell polynomials"},
+  "MathlibExt/Combinatorics/Graph/ArcNetworkLaplacian": {"to": "GraphTheory/algebraic-graph-theory", "title": "Graph Laplacians and Cheeger's inequality"},
   "MathlibExt/Combinatorics/Graph/CompleteBipartiteCrossing": {"to": "GraphTheory/planar-graphs-and-minors", "title": "Crossing number of complete bipartite graphs"},
   "MathlibExt/Combinatorics/Graph/GraphMinor": {"to": "GraphTheory/planar-graphs-and-minors", "title": "Graph minors"},
   "MathlibExt/Combinatorics/Graph/KovariSosTuran": {"to": "GraphTheory/extremal-graph-theory", "title": "Kővári–Sós–Turán theorem"},
@@ -3015,6 +3041,7 @@
   "MathlibExt/Combinatorics/SimpleGraph/NashWilliams": {"to": "GraphTheory/graph-invariants-and-labelings", "title": "Nash-Williams arboricity theorem"},
   "MathlibExt/Combinatorics/SimpleGraph/OddIndependent": {"to": "GraphTheory/independence-and-domination", "title": "Odd independent sets"},
   "MathlibExt/Combinatorics/SimpleGraph/Ore": {"to": "GraphTheory/paths-cycles-connectivity", "title": "Hamiltonian cycles"},
+  "MathlibExt/Combinatorics/SimpleGraph/PartialListColoring": {"to": "GraphTheory/graph-coloring", "title": "List coloring"},
   "MathlibExt/Combinatorics/SimpleGraph/PerfectGraph": {"to": "GraphTheory/graph-coloring", "title": "Perfect graphs"},
   "MathlibExt/Combinatorics/SimpleGraph/Petersen": {"to": "GraphTheory/algebraic-graph-theory", "title": "Petersen graph"},
   "MathlibExt/Combinatorics/SimpleGraph/PetersenMatching": {"to": "GraphTheory/matchings-and-flows", "title": "Petersen's theorem"},
@@ -3179,6 +3206,7 @@
   "MathlibExt/GameTheory/NimSumLastPile": {"to": "GameTheory/combinatorial-games", "title": "Nim"},
   "MathlibExt/GameTheory/NoRegretDynamics": {"to": "GameTheory/noncooperative-games", "title": "No-regret dynamics"},
   "MathlibExt/GameTheory/PotentialGame": {"to": "GameTheory/noncooperative-games", "title": "Potential games"},
+  "MathlibExt/GameTheory/PotentialGames": {"to": "GameTheory/noncooperative-games", "title": "Potential games"},
   "MathlibExt/GameTheory/SelfishRouting": {"to": "GameTheory/noncooperative-games", "title": "Selfish routing and the price of anarchy"},
   "MathlibExt/GameTheory/ShapleyValue": {"to": "GameTheory/cooperative-games", "title": "Shapley value"},
   "MathlibExt/GameTheory/ShapleyValueFormula": {"to": "GameTheory/cooperative-games", "title": "Shapley value"},
@@ -3507,6 +3535,7 @@
   "MathlibExt/MeasureTheory/Group/GL2Haar": {"to": "MeasureTheory/haar-measure", "title": "Unimodular groups"},
   "MathlibExt/MeasureTheory/Group/LocallyConstantCutoff": {"to": "MeasureTheory/haar-measure", "title": "Bruhat functions"},
   "MathlibExt/MeasureTheory/Integral/CarlemanStieltjesCriterion": {"to": "Analysis/harmonic-analysis/integral-transforms", "title": "Stieltjes moment problem"},
+  "MathlibExt/MeasureTheory/Integral/ImproperIntegralComparison": {"to": "Analysis/real-functions/integration", "title": "Improper integrals"},
   "MathlibExt/MeasureTheory/Integral/LorentzianWidth": {"to": "MeasureTheory/integration", "title": "Lorentzian width monotonicity"},
   "MathlibExt/MeasureTheory/Integral/LyapunovConvexity": {"to": "MeasureTheory/measures", "title": "Lyapunov convexity theorem"},
   "MathlibExt/MeasureTheory/Integral/PrekopaLeindler": {"to": "Geometry/convex-geometry", "title": "Brunn–Minkowski and Prékopa–Leindler inequalities"},
@@ -4413,6 +4442,7 @@
   "MathlibExt/Probability/Statistics/MetaAnalysis": {"to": "Probability/hypothesis-testing", "title": "Meta-analysis"},
   "MathlibExt/Probability/Statistics/MonotoneLikelihoodRatio": {"to": "Probability/hypothesis-testing", "title": "Monotone likelihood ratio"},
   "MathlibExt/Probability/Statistics/MultiparameterCramerRao": {"to": "Probability/statistical-estimation", "title": "Fisher information and the Cramér–Rao bound"},
+  "MathlibExt/Probability/Statistics/MultipleTesting/Adaptive/UniversalInference": {"to": "Probability/hypothesis-testing", "title": "Universal inference"},
   "MathlibExt/Probability/Statistics/MultipleTesting/Basic": {"to": "Probability/hypothesis-testing", "title": "Valid p-values and false discovery proportion"},
   "MathlibExt/Probability/Statistics/MultipleTesting/BenjaminiHochberg": {"to": "Probability/hypothesis-testing", "title": "Benjamini–Hochberg procedure"},
   "MathlibExt/Probability/Statistics/MultipleTesting/Bonferroni": {"to": "Probability/hypothesis-testing", "title": "Bonferroni correction"},
@@ -4681,6 +4711,7 @@
   "MathlibExt/Topology/DirectLimit": {"to": "Topology/general-topology", "title": "Direct limits of topological spaces"},
   "MathlibExt/Topology/HomogeneousSpace": {"to": "Topology/general-topology", "title": "Homogeneous topological spaces"},
   "MathlibExt/Topology/Homotopy/BorsukUlam": {"to": "Topology/algebraic-topology", "title": "Borsuk–Ulam theorem"},
+  "MathlibExt/Topology/Inside": {"to": "Topology/general-topology", "title": "Bounded components of the complement"},
   "MathlibExt/Topology/InverseLimit": {"to": "Topology/general-topology", "title": "Inverse limits of topological spaces"},
   "MathlibExt/Topology/Knot/EuclideanLink": {"to": "Topology/knot-theory", "title": "Knots, links and ambient isotopy"},
   "MathlibExt/Topology/Knot/RegularProjection": {"to": "Topology/knot-theory", "title": "Knot diagrams"},
@@ -4710,6 +4741,7 @@
   "MathlibExt/Topology/TDA/SingleLinkageCharacterization": {"to": "ComputerScience/machine-learning/unsupervised-learning", "title": "Single-linkage hierarchical clustering"},
   "MathlibExt/Topology/TDA/ZeroDimensionalPersistence": {"to": "Topology/algebraic-topology", "title": "Persistence modules and barcodes"},
   "MathlibExt/Topology/ThreeManifold": {"to": "Topology/manifolds-geometric-topology", "title": "Topological 3-manifolds"},
+  "MathlibExt/Urban/StockNonneg": {"to": "Economics/inventory-transport-and-spatial-models", "title": "Stock balances on transfer networks"},
   "PhyslibExt/CondensedMatter/IsingModel": {"to": "StatisticalMechanics/spin-models", "title": "Ising model on a finite graph"},
   "PhyslibExt/CondensedMatter/IsingModel/AizenmanBarsky": {"to": "StatisticalMechanics/random-currents-and-sharpness", "title": "Sharpness of the phase transition for the Ising model"},
   "PhyslibExt/CondensedMatter/IsingModel/AizenmanHdom": {"to": "StatisticalMechanics/correlation-inequalities", "title": "Griffiths–Hurst–Sherman inequality"},
@@ -4912,6 +4944,15 @@
   "PhyslibExt/CondensedMatter/IsingModel/TailEventsErgodic": {"to": "StatisticalMechanics/gibbs-states-and-phase-transitions", "title": "Translation invariance and ergodicity of the plus state"},
   "PhyslibExt/CondensedMatter/IsingModel/TwoReplica": {"to": "StatisticalMechanics/random-currents-and-sharpness", "title": "Random currents and the switching lemma"},
   "PhyslibExt/CondensedMatter/IsingModel/TwoReplicaWeighted": {"to": "StatisticalMechanics/random-currents-and-sharpness", "title": "Random currents and the switching lemma"},
+  "PhyslibExt/EarthScience/FixedCarrierTransport": {"to": "EarthScience/hydrology-and-surface-processes", "title": "Solute transport with linear sorption"},
+  "PhyslibExt/EarthScience/Geotechnical/ConsolidationMode": {"to": "EarthScience/hydrology-and-surface-processes", "title": "Terzaghi consolidation"},
+  "PhyslibExt/EarthScience/Geotechnical/PorePressureRatio": {"to": "EarthScience/hydrology-and-surface-processes", "title": "Excess pore pressure and effective stress"},
+  "PhyslibExt/EarthScience/Geotechnical/RankineCoefficient": {"to": "EarthScience/hydrology-and-surface-processes", "title": "Rankine earth pressure"},
+  "PhyslibExt/Engineering/Process/CSTR": {"to": "Chemistry/chemical-kinetics", "title": "Continuous stirred-tank reactor"},
+  "PhyslibExt/Engineering/Process/MassTransfer": {"to": "Chemistry/solutions-and-aqueous-equilibria", "title": "Interphase mass transfer"},
+  "PhyslibExt/Engineering/Resource/DeclineCurve": {"to": "EarthScience/hydrology-and-surface-processes", "title": "Exponential production decline"},
+  "PhyslibExt/FluidDynamics/Hydraulics/PipeNetworkHeads": {"to": "Physics/fluid-mechanics", "title": "Pipe-flow networks"},
+  "PhyslibExt/Mechanics/TrussCompatibility": {"to": "Physics/elasticity-and-structures", "title": "Pin-jointed trusses"},
   "PhyslibExt/QuantumInfo/LiebConcavity": {"to": "LinearAlgebra/positive-definite-matrices", "title": "Lieb's concavity theorem"},
   "PhyslibExt/QuantumInfo/LownerHeinz": {"to": "Analysis/operator-algebras", "title": "Operator monotone and operator convex functions"},
   "PhyslibExt/StatisticalMechanics/RandomCluster": {"to": "StatisticalMechanics/random-cluster-model", "title": "Infinite-volume random-cluster measures"},
@@ -5054,7 +5095,6 @@
   "WantedExt/Analysis/BeurlingAhlforsWanted": {"to": "Analysis/harmonic-analysis/fourier-transform", "title": "Beurling–Ahlfors transform"},
   "WantedExt/Analysis/CKMRVInterpolationWanted": {"to": "Analysis/harmonic-analysis/fourier-transform", "title": "Fourier interpolation in dimensions 8 and 24"},
   "WantedExt/Analysis/Calculus/BesselTypeOdeInfinitelyManyZerosWanted": {"to": "Analysis/ordinary-differential-equations", "title": "Oscillation of solutions of xu″ + 2u′ + u = 0"},
-  "WantedExt/Analysis/Calculus/CubicOverSumSquaresPartialsBoundedWanted": {"to": "Analysis/real-functions/multivariable-calculus", "title": "Continuity and differentiability at the origin in the plane"},
   "WantedExt/Analysis/Calculus/EqualPartialsFactorSumWanted": {"to": "Analysis/real-functions/multivariable-calculus", "title": "Functions with equal partial derivatives"},
   "WantedExt/Analysis/Calculus/EvenC2SquareFactorWanted": {"to": "Analysis/real-functions/differential-calculus", "title": "Even C² functions as functions of x²"},
   "WantedExt/Analysis/Calculus/ExpTaylorPolyOddUniqueZeroWanted": {"to": "Analysis/real-functions/differential-calculus", "title": "Real zeros of Taylor polynomials of the exponential"},
@@ -5933,6 +5973,7 @@
   "WantedExt/Complexity/NPComplete/RCPSPWanted": {"to": "TheoryOfComputation/np-completeness/scheduling", "title": "Resource-constrained project scheduling"},
   "WantedExt/Complexity/NPComplete/ReleaseDeadlinesSchedulingWanted": {"to": "TheoryOfComputation/np-completeness/scheduling", "title": "Scheduling with release times and deadlines"},
   "WantedExt/Complexity/NPComplete/RomanDominationWanted": {"to": "TheoryOfComputation/np-completeness/graph-covering-and-domination", "title": "Roman domination"},
+  "WantedExt/Complexity/NPComplete/SerializabilityOfDatabaseHistoriesWanted": {"to": "TheoryOfComputation/np-completeness/databases-and-concurrency", "title": "Serializability of database histories"},
   "WantedExt/Complexity/NPComplete/SetCoverWanted": {"to": "TheoryOfComputation/np-completeness/set-systems-and-location", "title": "Set cover"},
   "WantedExt/Complexity/NPComplete/SetPackingWanted": {"to": "TheoryOfComputation/np-completeness/set-systems-and-location", "title": "Set packing"},
   "WantedExt/Complexity/NPComplete/SetSplittingWanted": {"to": "TheoryOfComputation/np-completeness/set-systems-and-location", "title": "Set splitting"},
@@ -5969,6 +6010,7 @@
   "WantedExt/ComputerScience/WeakLearnabilityWanted": {"to": "ComputerScience/machine-learning/pac-learning", "title": "Weak learnability"},
   "WantedExt/Dynamics/AMR43Problem1Wanted": {"to": "Dynamics/topological-symbolic-dynamics", "title": "Conjugacy of aperiodic parts of shifts"},
   "WantedExt/Dynamics/BourgainErgodicWanted": {"to": "Dynamics/ergodic-theory", "title": "Bourgain's polynomial ergodic theorem"},
+  "WantedExt/Dynamics/CremerCriticalPointAccessibleAMR52Problem0030Wanted": {"to": "Dynamics/complex-dynamics", "title": "Local connectivity of quadratic Julia sets"},
   "WantedExt/Dynamics/CubicParameterJordanBoundaryWanted": {"to": "Dynamics/complex-dynamics", "title": "Parameter space of cubic polynomials"},
   "WantedExt/Dynamics/EinsiedlerKatokLindenstraussWanted": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Littlewood conjecture"},
   "WantedExt/Dynamics/FurstenbergTopologicalWanted": {"to": "Dynamics/topological-symbolic-dynamics", "title": "Topological multiple recurrence"},
@@ -5983,6 +6025,7 @@
   "WantedExt/Dynamics/MoranDimensionWanted": {"to": "MeasureTheory/geometric-measure-theory", "title": "Hausdorff dimension of self-similar sets"},
   "WantedExt/Dynamics/MultStructureRecurrenceWanted": {"to": "Dynamics/ergodic-theory", "title": "Multiplicative recurrence along Pythagorean pairs"},
   "WantedExt/Dynamics/NExpansionGapsWanted": {"to": "Dynamics/low-dimensional-dynamics", "title": "N-continued fraction expansions"},
+  "WantedExt/Dynamics/NowhereDenseJuliaSetPositiveAreaAMR52Problem0041Wanted": {"to": "Dynamics/complex-dynamics", "title": "Julia sets of positive area"},
   "WantedExt/Dynamics/OrnsteinWeissWanted": {"to": "Dynamics/ergodic-theory", "title": "Rokhlin lemma"},
   "WantedExt/Dynamics/Periodic/BinaryRecurrenceRealizableDimensionWanted": {"to": "Dynamics/topological-symbolic-dynamics", "title": "Realizable sequences of periodic point counts"},
   "WantedExt/Dynamics/PoincareBendixsonWanted": {"to": "Dynamics/low-dimensional-dynamics", "title": "Poincaré–Bendixson theorem"},
@@ -6088,7 +6131,6 @@
   "WantedExt/GraphTheory/GridDominationTransferWanted": {"to": "GraphTheory/independence-and-domination", "title": "Domination polynomials of grids"},
   "WantedExt/GraphTheory/KirchhoffEffectiveResistanceWanted": {"to": "GraphTheory/algebraic-graph-theory", "title": "Effective resistance and electrical networks"},
   "WantedExt/GraphTheory/OddDistanceGraphInfiniteChromaticWanted": {"to": "GraphTheory/graph-coloring", "title": "Odd distance graph"},
-  "WantedExt/GraphTheory/PartialListColoringWanted": {"to": "GraphTheory/graph-coloring", "title": "List coloring"},
   "WantedExt/GraphTheory/PetersenColoringConjectureWanted": {"to": "GraphTheory/graph-coloring", "title": "Petersen coloring conjecture"},
   "WantedExt/GraphTheory/RamanujanGraphsWanted": {"to": "GraphTheory/graph-families-and-operations", "title": "Expander graphs"},
   "WantedExt/GraphTheory/RazborovTriangleDensityWanted": {"to": "GraphTheory/extremal-graph-theory", "title": "Triangle density and flag algebras"},
@@ -6248,6 +6290,7 @@
   "WantedExt/GroupTheory/FullyInvariantSubgroupsCyclicKourovka16Problem61Wanted": {"to": "GroupTheory/subgroup-embedding", "title": "Fully invariant subgroups"},
   "WantedExt/GroupTheory/GeneralizedTorsionFreeProductKourovka16Problem49Wanted": {"to": "GroupTheory/orderable-groups", "title": "Generalized torsion"},
   "WantedExt/GroupTheory/GeneralizedTorsionRightOrderableKourovka16Problem48Wanted": {"to": "GroupTheory/orderable-groups", "title": "Generalized torsion"},
+  "WantedExt/GroupTheory/GeneratedFormationSubformationsKourovka9Problem59Wanted": {"to": "GroupTheory/soluble-finite-groups/formations", "title": "Subformations of the formation generated by a group"},
   "WantedExt/GroupTheory/GenerationBySubgroupsRankKourovka12Problem71Wanted": {"to": "GroupTheory/generation", "title": "Rank of a group generated by two subgroups"},
   "WantedExt/GroupTheory/GenericFreeSubgroupsKourovka11Problem75Wanted": {"to": "GroupTheory/presentations-and-decision-problems", "title": "Generic properties of group presentations"},
   "WantedExt/GroupTheory/GlaubermanZStarWanted": {"to": "GroupTheory/finite-simple-groups", "title": "Glauberman Z*-theorem"},
@@ -6260,6 +6303,7 @@
   "WantedExt/GroupTheory/GroupLawsShared": {"to": "GroupTheory/varieties-and-equations", "title": "Independent bases of laws"},
   "WantedExt/GroupTheory/GroupRingRightIdealShared": {"to": "GroupTheory/group-rings", "title": "Augmentation ideals of group rings"},
   "WantedExt/GroupTheory/GroupVarietyShared": {"to": "GroupTheory/varieties-and-equations", "title": "Locally finite varieties of groups"},
+  "WantedExt/GroupTheory/GuralnickThompsonUnsolvedMathALG025Wanted": {"to": "GroupTheory/permutation-groups/finite-permutation-groups", "title": "Guralnick–Thompson conjecture"},
   "WantedExt/GroupTheory/HallGroupSelfExtensionKourovka12Problem44Wanted": {"to": "GroupTheory/extensions-and-cohomology", "title": "Self-extensions of groups"},
   "WantedExt/GroupTheory/HallMaximalPronormalSecondMaximalKourovka19Problem109Wanted": {"to": "GroupTheory/sylow-and-hall-subgroups", "title": "Groups with Hall maximal subgroups"},
   "WantedExt/GroupTheory/HallOvergroupCPiDPiKourovka17Problem44Wanted": {"to": "GroupTheory/sylow-and-hall-subgroups", "title": "Hall π-subgroups"},
@@ -6375,6 +6419,7 @@
   "WantedExt/GroupTheory/PolynomialGrowthWanted": {"to": "GroupTheory/geometric-group-theory", "title": "Growth of groups"},
   "WantedExt/GroupTheory/PolynormalParanormalSubgroupKourovka14Problem50Wanted": {"to": "GroupTheory/subgroup-embedding", "title": "Polynormal and paranormal subgroups"},
   "WantedExt/GroupTheory/PrimeOrderAutomorphismRankNilpotentKourovka13Problem58Wanted": {"to": "GroupTheory/automorphisms/fixed-points-of-automorphisms", "title": "Prime-order automorphisms with centralizer of finite rank"},
+  "WantedExt/GroupTheory/ProductAbelianMinimaxKourovka4Problem57Wanted": {"to": "GroupTheory/factorized-groups", "title": "Products of minimax groups"},
   "WantedExt/GroupTheory/ProductTheoremSpecialLinearWanted": {"to": "GroupTheory/combinatorics-in-groups", "title": "Product theorem for special linear groups"},
   "WantedExt/GroupTheory/ProductThreeConjugacyClassesAlternatingKourovka20Problem23Wanted": {"to": "GroupTheory/conjugacy-classes", "title": "Products of conjugacy classes in alternating groups"},
   "WantedExt/GroupTheory/ProfiniteCNGroupNotProsolubleKourovka20Problem90Wanted": {"to": "GroupTheory/profinite-and-topological-groups", "title": "Profinite CN-groups"},
@@ -6524,7 +6569,6 @@
   "WantedExt/MeasureTheory/IndicatorIccNotAEContinuousWanted": {"to": "MeasureTheory/real-functions", "title": "Almost everywhere continuous functions"},
   "WantedExt/MeasureTheory/InfConvolutionLipschitzWanted": {"to": "Analysis/convex-analysis-and-variations", "title": "Lipschitz regularization by inf-convolution"},
   "WantedExt/MeasureTheory/Integral/ImproperIntegralAbsoluteConditionalWanted": {"to": "Analysis/real-functions/integration", "title": "Improper integrals"},
-  "WantedExt/MeasureTheory/Integral/ImproperIntegralComparisonWanted": {"to": "Analysis/real-functions/integration", "title": "Improper integrals"},
   "WantedExt/MeasureTheory/JKOSchemeWanted": {"to": "MeasureTheory/optimal-transport", "title": "Wasserstein gradient flows and the JKO scheme"},
   "WantedExt/MeasureTheory/KantorovichDualityWanted": {"to": "MeasureTheory/optimal-transport", "title": "Kantorovich duality"},
   "WantedExt/MeasureTheory/L0MetricTendstoInMeasureWanted": {"to": "MeasureTheory/integration", "title": "Convergence in measure"},
@@ -6551,6 +6595,7 @@
   "WantedExt/MeasureTheory/StrictLiminfGapFiniteSetCountableWanted": {"to": "Analysis/real-functions/continuity-and-functional-equations", "title": "Strict liminf gaps of real functions"},
   "WantedExt/MeasureTheory/WassersteinWanted": {"to": "MeasureTheory/optimal-transport", "title": "Wasserstein distances"},
   "WantedExt/MeasureTheory/WeakLpConvergenceOfAeConvergenceWanted": {"to": "MeasureTheory/lp-spaces", "title": "Weak convergence in Lp spaces"},
+  "WantedExt/ModelTheory/HomomorphicImagesAxiomatizableKourovka1Problem68Wanted": {"to": "GroupTheory/varieties-and-equations", "title": "Axiomatizable classes of groups"},
   "WantedExt/ModelTheory/MorleyCategoricityWanted": {"to": "Logic/model-theory", "title": "Morley's categoricity theorem"},
   "WantedExt/ModelTheory/WilkiesConjectureWanted": {"to": "Logic/model-theory", "title": "Wilkie's conjecture"},
   "WantedExt/ModelTheory/ZeroOneLawWanted": {"to": "Logic/model-theory", "title": "Zero-one law for first-order logic"},
