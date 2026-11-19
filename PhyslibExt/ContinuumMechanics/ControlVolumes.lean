@@ -11,11 +11,12 @@ public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 public import Mathlib.MeasureTheory.Integral.DivergenceTheorem
 public import MathlibExt.Analysis.ODE.ContinuumBalances
+public import PhyslibExt.Thermodynamics.ProcessPorts
 import MathlibExt.Probability.Diffusion.FokkerPlanckFreeEnergy
 import Mathlib.Tactic.Ring
 
 /-!
-# Control volumes: moving-endpoint transport and fixed-box balance
+# Control volumes: moving-endpoint transport, fixed-box balance and energy ports
 
 ## i. Overview
 
@@ -47,6 +48,23 @@ boundary-divergence premise of
 local conservation stays the model input. No general smooth-domain
 trace or divergence theorem is claimed.
 
+For a declared local total-energy law `∂ₜE + div (G + J) = q̇ + ẇ` on
+the box, with `G = (E + p) v` the convective-plus-pressure flux, `J`
+every other energy flux, `q̇` the volumetric heating and `ẇ` the shaft
+power density delivered to the fluid, the storage rate is
+`(∫ q̇ - Φ_J) - Ẇ_out - Φ_G`, where
+`Ẇ_out = ProcessPorts.workOut (∫ ẇ)` is the engineering shaft work
+out. On a face with uniform density `ρ ≠ 0`, specific internal energy
+`e`, pressure `p`, velocity `v`, elevation `z` and outward normal
+velocity `v_n`, the outward rate `A v_n (ρ (e + |v|² / 2 + g z) + p)`
+equals `ṁ (h + |v|² / 2 + g z)` with `ṁ = ρ A v_n` and
+`h = e + p / ρ`, so the flow work `p / ρ` is counted once, inside `h`;
+adding it again overcounts the rate by `A v_n p`. With the inlet on
+the face `x₀ = a₀`, the outlet on `x₀ = b₀` and impermeable side faces,
+the storage rate is `Q̇ - Ẇ_out + ṁ_in θ_in - ṁ_out θ_out`,
+`θ = h + |v|² / 2 + g z`. The energy law is a model input, not derived
+from mass conservation.
+
 ## ii. Key results
 
 - `ControlVolumes.movingEndpoint_hasDerivAt`: the Leibniz
@@ -63,6 +81,15 @@ trace or divergence theorem is claimed.
   on a box, `∫_[a, b] div F = boxOutwardFlux a b F`.
 - `ControlVolumes.hasDerivAt_boxIntegral`: the fixed-box balance
   with explicit faces.
+- `ControlVolumes.portEnergyRate_eq_massFlow` and
+  `ControlVolumes.flowWork_double_count`: the port rate is
+  `ṁ (h + |v|² / 2 + g z)`, and counting `p / ρ` twice overcounts it.
+- `ControlVolumes.boxOutwardFlux_add` and
+  `ControlVolumes.boxOutwardFlux_uniform`: additivity of the outward
+  flux and its value for face-wise uniform normal components.
+- `ControlVolumes.hasDerivAt_energy_box` and
+  `ControlVolumes.hasDerivAt_energy_twoPort`: the energy balance of a
+  fixed box and its two-port form.
 
 ## iii. Table of contents
 
@@ -70,6 +97,10 @@ trace or divergence theorem is claimed.
 - B. Fixed-box balance with explicit faces
   - B.1. Faces and the divergence theorem
   - B.2. The balance
+- C. Energy ports
+  - C.1. Port rates and flow work
+  - C.2. Uniform faces
+  - C.3. The energy balance
 
 ## iv. References
 
@@ -79,7 +110,11 @@ trace or divergence theorem is claimed.
   `MeasureTheory.integral_divergence_of_hasFDerivAt_off_countable`.
 - R. B. Bird, W. E. Stewart and E. N. Lightfoot, *Transport
   Phenomena*, 2nd ed., Wiley (2002), Section 19.1 (the equation of
-  continuity for a fixed volume element).
+  continuity for a fixed volume element) and Section 11.1 (the equation
+  of change for total energy).
+- Y. A. Çengel and M. A. Boles, *Thermodynamics: An Engineering
+  Approach*, McGraw-Hill, ch. 5: flow work, enthalpy `h = u + p v` and
+  the control-volume energy balance.
 
 ## A. Moving-endpoint transport
 
@@ -477,5 +512,168 @@ lemma hasDerivAt_boxIntegral {n : ℕ} {a b : Fin (n + 1) → ℝ} (hab : ∀ i,
   rwa [neg_add_eq_sub] at h
 
 end FixedBox
+
+section EnergyPorts
+
+open Set MeasureTheory
+open MathlibExt.Probability.FokkerPlanck (divergence)
+
+/-! ## C. Energy ports -/
+
+/-! ### C.1. Port rates and flow work -/
+
+/-- The specific enthalpy `h = e + p / ρ` of a specific internal energy `e`, a pressure `p` and a
+density `ρ`. -/
+noncomputable def specificEnthalpy (e p ρ : ℝ) : ℝ := e + p / ρ
+
+/-- The outward convective internal, kinetic and potential energy plus pressure power through a
+uniform face of area `A` with outward normal velocity `vn`: `A vn (ρ (e + |v|² / 2 + g z) + p)`,
+with `|v|² = v ⬝ᵥ v`. -/
+noncomputable def portEnergyRate {m : ℕ} (ρ A vn e p g z : ℝ) (v : Fin m → ℝ) : ℝ :=
+  A * vn * (ρ * (e + v ⬝ᵥ v / 2 + g * z) + p)
+
+/-- **Flow work counted once**: with `ṁ = ρ A vn` and `h = e + p / ρ`, the port rate is
+`ṁ (h + |v|² / 2 + g z)`. -/
+lemma portEnergyRate_eq_massFlow {m : ℕ} {ρ : ℝ} (hρ : ρ ≠ 0) (A vn e p g z : ℝ)
+    (v : Fin m → ℝ) :
+    portEnergyRate ρ A vn e p g z v =
+      ρ * A * vn * (specificEnthalpy e p ρ + v ⬝ᵥ v / 2 + g * z) := by
+  unfold portEnergyRate specificEnthalpy
+  field_simp
+  ring
+
+/-- Adding `p / ρ` again after using the enthalpy overcounts the port rate by the pressure power
+`A vn p`. -/
+lemma flowWork_double_count {m : ℕ} {ρ : ℝ} (hρ : ρ ≠ 0) (A vn e p g z : ℝ) (v : Fin m → ℝ) :
+    ρ * A * vn * (specificEnthalpy e p ρ + p / ρ + v ⬝ᵥ v / 2 + g * z) =
+      portEnergyRate ρ A vn e p g z v + A * vn * p := by
+  unfold portEnergyRate specificEnthalpy
+  field_simp
+  ring
+
+/-! ### C.2. Uniform faces -/
+
+/-- The area `∏ⱼ (b - a)` of the two faces of the box `[a, b]` normal to `eᵢ`. -/
+def faceArea {n : ℕ} (a b : Fin (n + 1) → ℝ) (i : Fin (n + 1)) : ℝ :=
+  ∏ j : Fin n, (b (i.succAbove j) - a (i.succAbove j))
+
+/-- The outward flux is additive for fields continuous on a set containing the box. -/
+lemma boxOutwardFlux_add {n : ℕ} {a b : Fin (n + 1) → ℝ} (hab : ∀ i, a i < b i)
+    {U : Set (Fin (n + 1) → ℝ)} (hbox : Icc a b ⊆ U)
+    {F G : (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ} (hF : ContinuousOn F U)
+    (hG : ContinuousOn G U) :
+    boxOutwardFlux a b (F + G) = boxOutwardFlux a b F + boxOutwardFlux a b G := by
+  have hface : ∀ (i : Fin (n + 1)) (c : ℝ), c ∈ Icc (a i) (b i) →
+      ∀ H : (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ, ContinuousOn H U →
+      IntegrableOn (fun y => H (i.insertNth c y) i) (Icc (a ∘ i.succAbove) (b ∘ i.succAbove)) := by
+    intro i c hc H hH
+    refine ContinuousOn.integrableOn_compact isCompact_Icc ?_
+    have hmaps : MapsTo (fun y : Fin n → ℝ => (i.insertNth c y : Fin (n + 1) → ℝ))
+        (Icc (a ∘ i.succAbove) (b ∘ i.succAbove)) U := fun y hy =>
+      hbox (Fin.insertNth_mem_Icc.2 ⟨hc, hy⟩)
+    have hcont : Continuous fun y : Fin n → ℝ => (i.insertNth c y : Fin (n + 1) → ℝ) := by
+      fun_prop
+    exact (continuous_apply i).comp_continuousOn (hH.comp hcont.continuousOn hmaps)
+  have hbI : ∀ i, b i ∈ Icc (a i) (b i) := fun i => ⟨(hab i).le, le_rfl⟩
+  have haI : ∀ i, a i ∈ Icc (a i) (b i) := fun i => ⟨le_rfl, (hab i).le⟩
+  unfold boxOutwardFlux
+  rw [← Finset.sum_add_distrib]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  simp only [Pi.add_apply]
+  rw [integral_add (hface i _ (hbI i) F hF) (hface i _ (hbI i) G hG),
+    integral_add (hface i _ (haI i) F hF) (hface i _ (haI i) G hG)]
+  ring
+
+/-- A flux whose normal component is the constant `cU i` on the face `x i = b i` and `cL i` on
+the face `x i = a i` has outward flux `∑ᵢ Aᵢ (cU i - cL i)`. -/
+lemma boxOutwardFlux_uniform {n : ℕ} {a b : Fin (n + 1) → ℝ} (hab : ∀ i, a i < b i)
+    {F : (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ} {cU cL : Fin (n + 1) → ℝ}
+    (hU : ∀ i, ∀ y ∈ Icc (a ∘ i.succAbove) (b ∘ i.succAbove), F (i.insertNth (b i) y) i = cU i)
+    (hL : ∀ i, ∀ y ∈ Icc (a ∘ i.succAbove) (b ∘ i.succAbove), F (i.insertNth (a i) y) i = cL i) :
+    boxOutwardFlux a b F = ∑ i, faceArea a b i * (cU i - cL i) := by
+  unfold boxOutwardFlux faceArea
+  refine Finset.sum_congr rfl fun i _ => ?_
+  have hle : (a ∘ i.succAbove) ≤ (b ∘ i.succAbove) := fun j => (hab _).le
+  rw [setIntegral_congr_fun measurableSet_Icc (hU i),
+    setIntegral_congr_fun measurableSet_Icc (hL i),
+    setIntegral_const, setIntegral_const, smul_eq_mul, smul_eq_mul, measureReal_def,
+    Real.volume_Icc_pi_toReal hle]
+  simp only [Function.comp_apply]
+  ring
+
+/-! ### C.3. The energy balance -/
+
+/-- **Energy balance of a fixed box** under the declared law `∂ₜE + div (G + J) = q̇ + ẇ`: the
+storage rate is `(∫ q̇ - Φ_J) - workOut (∫ ẇ) - Φ_G`, heat in minus shaft work out minus the
+outward convective-plus-pressure flux. -/
+lemma hasDerivAt_energy_box {n : ℕ} {a b : Fin (n + 1) → ℝ} (hab : ∀ i, a i < b i)
+    {E qdot wdot : ℝ → (Fin (n + 1) → ℝ) → ℝ}
+    {G J : ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ} {t : ℝ}
+    {U : Set (Fin (n + 1) → ℝ)} (hU : IsOpen U) (hbox : Icc a b ⊆ U)
+    (hE : ContDiff ℝ 1 (Function.uncurry E)) (hG : ContDiffOn ℝ 1 (G t) U)
+    (hJ : ContDiffOn ℝ 1 (J t) U) (hq : IntegrableOn (qdot t) (Icc a b))
+    (hw : IntegrableOn (wdot t) (Icc a b))
+    (hlaw : ∀ x ∈ Icc a b,
+      deriv (fun τ => E τ x) t + divergence (G t + J t) x = qdot t x + wdot t x) :
+    HasDerivAt (fun τ => ∫ x in Icc a b, E τ x)
+      (((∫ x in Icc a b, qdot t x) - boxOutwardFlux a b (J t)) -
+        ProcessPorts.workOut (∫ x in Icc a b, wdot t x) - boxOutwardFlux a b (G t)) t := by
+  have h := hasDerivAt_boxIntegral (u := E) (s := fun τ x => qdot τ x + wdot τ x)
+    (q := fun τ => G τ + J τ) hab hU hbox hE (hG.add hJ) (hq.add hw) hlaw
+  rw [integral_add hq hw, boxOutwardFlux_add hab hbox hG.continuousOn hJ.continuousOn] at h
+  convert h using 1
+  unfold ProcessPorts.workOut
+  ring
+
+/-- **Two-port energy balance**: inlet on the face `x₀ = a₀` with velocity component `Vi` along
+`e₀`, outlet on `x₀ = b₀` with `Vo`, uniform port states, impermeable side faces. The storage
+rate is `Q̇ - Ẇ_out + ṁ_in θ_in - ṁ_out θ_out` with `ṁ = ρ A₀ V` and
+`θ = h + |v|² / 2 + g z`. -/
+lemma hasDerivAt_energy_twoPort {n : ℕ} {a b : Fin (n + 1) → ℝ} (hab : ∀ i, a i < b i)
+    {E qdot wdot : ℝ → (Fin (n + 1) → ℝ) → ℝ}
+    {G J : ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ} {t : ℝ}
+    {U : Set (Fin (n + 1) → ℝ)} (hU : IsOpen U) (hbox : Icc a b ⊆ U)
+    (hE : ContDiff ℝ 1 (Function.uncurry E)) (hG : ContDiffOn ℝ 1 (G t) U)
+    (hJ : ContDiffOn ℝ 1 (J t) U) (hq : IntegrableOn (qdot t) (Icc a b))
+    (hw : IntegrableOn (wdot t) (Icc a b))
+    (hlaw : ∀ x ∈ Icc a b,
+      deriv (fun τ => E τ x) t + divergence (G t + J t) x = qdot t x + wdot t x)
+    {m : ℕ} {g ρi Vi ei pi zi ρo Vo eo po zo : ℝ} {vi vo : Fin m → ℝ}
+    (hρi : ρi ≠ 0) (hρo : ρo ≠ 0)
+    (hin : ∀ y ∈ Icc (a ∘ (0 : Fin (n + 1)).succAbove) (b ∘ (0 : Fin (n + 1)).succAbove),
+      G t ((0 : Fin (n + 1)).insertNth (a 0) y) 0 = Vi * (ρi * (ei + vi ⬝ᵥ vi / 2 + g * zi) + pi))
+    (hout : ∀ y ∈ Icc (a ∘ (0 : Fin (n + 1)).succAbove) (b ∘ (0 : Fin (n + 1)).succAbove),
+      G t ((0 : Fin (n + 1)).insertNth (b 0) y) 0 = Vo * (ρo * (eo + vo ⬝ᵥ vo / 2 + g * zo) + po))
+    (hwall : ∀ i, i ≠ 0 → ∀ y ∈ Icc (a ∘ i.succAbove) (b ∘ i.succAbove),
+      G t (i.insertNth (b i) y) i = 0 ∧ G t (i.insertNth (a i) y) i = 0) :
+    HasDerivAt (fun τ => ∫ x in Icc a b, E τ x)
+      (((∫ x in Icc a b, qdot t x) - boxOutwardFlux a b (J t)) -
+          ProcessPorts.workOut (∫ x in Icc a b, wdot t x) +
+        ρi * faceArea a b 0 * Vi * (specificEnthalpy ei pi ρi + vi ⬝ᵥ vi / 2 + g * zi) -
+        ρo * faceArea a b 0 * Vo * (specificEnthalpy eo po ρo + vo ⬝ᵥ vo / 2 + g * zo)) t := by
+  have h := hasDerivAt_energy_box hab hU hbox hE hG hJ hq hw hlaw
+  have hflux : boxOutwardFlux a b (G t) =
+      faceArea a b 0 * (Vo * (ρo * (eo + vo ⬝ᵥ vo / 2 + g * zo) + po) -
+        Vi * (ρi * (ei + vi ⬝ᵥ vi / 2 + g * zi) + pi)) := by
+    rw [boxOutwardFlux_uniform hab
+      (cU := fun i => if i = 0 then Vo * (ρo * (eo + vo ⬝ᵥ vo / 2 + g * zo) + po) else 0)
+      (cL := fun i => if i = 0 then Vi * (ρi * (ei + vi ⬝ᵥ vi / 2 + g * zi) + pi) else 0)]
+    · rw [Fin.sum_univ_succ]
+      simp
+    · intro i y hy
+      by_cases hi : i = 0
+      · subst hi; simp only [ite_true]; exact hout y hy
+      · simp only [hi, ite_false]; exact (hwall i hi y hy).1
+    · intro i y hy
+      by_cases hi : i = 0
+      · subst hi; simp only [ite_true]; exact hin y hy
+      · simp only [hi, ite_false]; exact (hwall i hi y hy).2
+  rw [hflux] at h
+  convert h using 1
+  unfold specificEnthalpy
+  field_simp
+  ring
+
+end EnergyPorts
 
 end ControlVolumes

@@ -10,6 +10,9 @@ module
 public import PhyslibExt.ContinuumMechanics.ControlVolumes
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.FunProp
+import Mathlib.Tactic.NormNum
 
 /-!
 # Control-volume checks
@@ -27,19 +30,28 @@ the outward flux is minus the box volume, so the stored amount grows
 at the rate of the volume, and reversing the outward normal gives a
 false balance.
 
+On the unit cube a steady turbine with the flux `(3004 - 1800 x₀, 0, 0)`
+and the shaft power density `-1800` satisfies the declared energy law;
+its inlet and outlet carry `ṁ θ = 3004` and `1204` with `ṁ = 2`, so the
+two-port balance gives `Ẇ_out = 1800` at zero storage rate. Counting
+`p / ρ` twice breaks that balance, and a growing storage leaves a
+nonzero right-hand side.
+
 ## i. Overview
 
 These are elaboration and non-vacuity checks, not new results.
 
 ## ii. Key results
 
-No new definitions or results are introduced here. Section B names
-its fixture steps so that the later ones can reuse the earlier ones.
+No new results are introduced here. Sections B and C name the
+fixture steps that later ones reuse; section C defines the turbine
+flux it checks.
 
 ## iii. Table of contents
 
 - A. Linear field with unit-speed endpoint
 - B. Growing storage in a fixed box and the reversed normal
+- C. Energy ports of a steady turbine
 
 ## iv. References
 
@@ -246,5 +258,137 @@ lemma fixture_reversedNormal {a b : Fin 3 → ℝ} (hab : ∀ i, a i < b i) (t :
   have hpos := (fixture_balance_rhs hab).2
   rw [fixture_boxOutwardFlux hab] at h2
   linarith
+
+
+/-! ## C. Energy ports of a steady turbine -/
+
+/-- The convective-plus-pressure flux of the steady turbine fixture on the unit cube:
+`(3004 - 1800 x₀, 0, 0)`. -/
+def turbineFlux (y : Fin 3 → ℝ) : Fin 3 → ℝ := ![3004 - 1800 * y 0, 0, 0]
+
+/-- The steady turbine satisfies the declared law with `E = 1`, `J = 0`, `q̇ = 0` and the shaft
+power density `ẇ = -1800` delivered to the fluid. -/
+lemma fixture_turbine_law (t : ℝ) (x : Fin 3 → ℝ) :
+    deriv (fun _ : ℝ => (1 : ℝ)) t + divergence (turbineFlux + fun _ => 0) x = 0 + -1800 := by
+  have h1 : deriv (fun _ : ℝ => (1 : ℝ)) t = 0 := deriv_const t 1
+  have hz : (turbineFlux + fun _ => (0 : Fin 3 → ℝ)) = turbineFlux := by
+    funext y; simp
+  have e0 : fderiv ℝ (fun y : Fin 3 → ℝ => 3004 - 1800 * y 0) x (Pi.single 0 1) = -1800 := by
+    have h0 : HasFDerivAt (fun y : Fin 3 → ℝ => y 0)
+        (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 3 => ℝ) 0) x :=
+      hasFDerivAt_apply 0 x
+    have h := (h0.const_mul (1800 : ℝ)).const_sub (3004 : ℝ)
+    rw [h.fderiv]
+    simp
+  have h2 : divergence turbineFlux x = -1800 := by
+    unfold divergence MathlibExt.Probability.FokkerPlanck.pderiv
+    simp only [Fin.sum_univ_three, turbineFlux, Matrix.cons_val_zero, Matrix.cons_val_one,
+      Matrix.cons_val_two, Matrix.tail_cons]
+    rw [e0]
+    simp
+  rw [hz, h1, h2]
+
+/-- The port faces carry the uniform port rates per unit area: inlet `ρ = 1`, `V = 2`, `e = 1000`,
+`p = 500`, `z = 0`, `v = (2, 0, 0)`, rate `3004`; outlet `ρ = 1`, `V = 2`, `e = 400`, `p = 200`,
+`z = 0`, `v = (2, 0, 0)`, rate `1204`. -/
+lemma fixture_turbine_ports (y : Fin 2 → ℝ) :
+    turbineFlux ((0 : Fin 3).insertNth 0 y) 0 =
+        2 * (1 * (1000 + ![(2 : ℝ), 0, 0] ⬝ᵥ ![2, 0, 0] / 2 + 981 / 100 * 0) + 500) ∧
+      turbineFlux ((0 : Fin 3).insertNth 1 y) 0 =
+        2 * (1 * (400 + ![(2 : ℝ), 0, 0] ⬝ᵥ ![2, 0, 0] / 2 + 981 / 100 * 0) + 200) := by
+  constructor <;> simp [turbineFlux, dotProduct, Fin.sum_univ_three] <;> norm_num
+
+/-- The turbine is an instance of the two-port balance, with zero storage rate. -/
+example (t : ℝ) :
+    HasDerivAt (fun _ : ℝ => ∫ _ in Icc (0 : Fin 3 → ℝ) 1, (1 : ℝ))
+      (((∫ _ in Icc (0 : Fin 3 → ℝ) 1, (0 : ℝ)) -
+            boxOutwardFlux (0 : Fin 3 → ℝ) 1 (fun _ => 0)) -
+          ProcessPorts.workOut (∫ _ in Icc (0 : Fin 3 → ℝ) 1, (-1800 : ℝ)) +
+        1 * faceArea (0 : Fin 3 → ℝ) 1 0 * 2 *
+          (specificEnthalpy 1000 500 1 + ![(2 : ℝ), 0, 0] ⬝ᵥ ![2, 0, 0] / 2 + 981 / 100 * 0) -
+        1 * faceArea (0 : Fin 3 → ℝ) 1 0 * 2 *
+          (specificEnthalpy 400 200 1 + ![(2 : ℝ), 0, 0] ⬝ᵥ ![2, 0, 0] / 2 + 981 / 100 * 0)) t := by
+  refine hasDerivAt_energy_twoPort (E := fun _ _ => 1) (G := fun _ => turbineFlux)
+    (J := fun _ _ => 0) (qdot := fun _ _ => 0) (wdot := fun _ _ => -1800)
+    (fun i => by simp) isOpen_univ (subset_univ _) ?_ ?_ ?_ ?_ ?_ ?_ one_ne_zero one_ne_zero
+    ?_ ?_ ?_
+  · unfold Function.uncurry; fun_prop
+  · refine ContDiff.contDiffOn (contDiff_pi.2 fun i => ?_)
+    fin_cases i <;> simp [turbineFlux] <;> fun_prop
+  · exact contDiffOn_const
+  · exact integrableOn_zero
+  · exact integrableOn_const (by simp [Real.volume_Icc_pi]) (by simp)
+  · intro x _
+    have h := fixture_turbine_law t x
+    simpa using h
+  · intro y _
+    simpa using (fixture_turbine_ports y).1
+  · intro y _
+    simpa using (fixture_turbine_ports y).2
+  · intro i hi y _
+    fin_cases i
+    · exact absurd rfl hi
+    · simp [turbineFlux]
+    · simp [turbineFlux]
+
+/-- **Nonzero energy transfer**: the turbine delivers `Ẇ_out = 1800` from `ṁ θ_in = 3004` and
+`ṁ θ_out = 1204` with `ṁ = 2`, `Q̇ = 0` and zero storage rate. -/
+example :
+    ProcessPorts.workOut (∫ _ in Icc (0 : Fin 3 → ℝ) 1, (-1800 : ℝ)) = 1800 ∧
+      faceArea (0 : Fin 3 → ℝ) 1 0 = 1 ∧
+      2 * (specificEnthalpy 1000 500 1 + ![(2 : ℝ), 0, 0] ⬝ᵥ ![2, 0, 0] / 2) = 3004 ∧
+      2 * (specificEnthalpy 400 200 1 + ![(2 : ℝ), 0, 0] ⬝ᵥ ![2, 0, 0] / 2) = 1204 ∧
+      (0 : ℝ) - 1800 + 3004 - 1204 = 0 := by
+  have hvol : volume.real (Icc (0 : Fin 3 → ℝ) 1) = 1 := by
+    rw [measureReal_def,
+      Real.volume_Icc_pi_toReal (show (0 : Fin 3 → ℝ) ≤ 1 from fun i => zero_le_one)]
+    simp
+  refine ⟨?_, ?_, ?_, ?_, by norm_num⟩
+  · rw [setIntegral_const, smul_eq_mul, hvol]; unfold ProcessPorts.workOut; norm_num
+  · simp [faceArea]
+  · simp [specificEnthalpy, dotProduct, Fin.sum_univ_three]; norm_num
+  · simp [specificEnthalpy, dotProduct, Fin.sum_univ_three]; norm_num
+
+/-- **Flow work counted twice** breaks the turbine balance: with `p / ρ` added again at both
+ports the right-hand side becomes `600`, not the zero storage rate. -/
+example :
+    (0 : ℝ) - 1800 + 2 * (specificEnthalpy 1000 500 1 + 500 / 1 + 2) -
+        2 * (specificEnthalpy 400 200 1 + 200 / 1 + 2) = 600 := by
+  simp [specificEnthalpy]
+  norm_num
+
+/-- **A steady balance cannot erase nonzero storage**: with `E = t` and `ẇ = -1799` the same
+ports give the storage rate `1`, so the right-hand side `Q̇ - Ẇ_out + inflow - outflow` is `1`,
+not `0`. -/
+example (t : ℝ) :
+    HasDerivAt (fun τ => ∫ _ in Icc (0 : Fin 3 → ℝ) 1, τ)
+        (0 - ProcessPorts.workOut (∫ _ in Icc (0 : Fin 3 → ℝ) 1, (-1799 : ℝ)) + 3004 - 1204) t ∧
+      (0 - ProcessPorts.workOut (∫ _ in Icc (0 : Fin 3 → ℝ) 1, (-1799 : ℝ)) + 3004 - 1204 : ℝ) ≠
+        0 := by
+  have hvol : volume.real (Icc (0 : Fin 3 → ℝ) 1) = 1 := by
+    rw [measureReal_def,
+      Real.volume_Icc_pi_toReal (show (0 : Fin 3 → ℝ) ≤ 1 from fun i => zero_le_one)]
+    simp
+  have hrhs : (0 - ProcessPorts.workOut (∫ _ in Icc (0 : Fin 3 → ℝ) 1, (-1799 : ℝ)) + 3004 - 1204 :
+      ℝ) = 1 := by
+    rw [setIntegral_const, smul_eq_mul, hvol]; unfold ProcessPorts.workOut; norm_num
+  refine ⟨?_, by rw [hrhs]; norm_num⟩
+  rw [hrhs]
+  have hf : (fun τ : ℝ => ∫ _ in Icc (0 : Fin 3 → ℝ) 1, τ) = fun τ => τ := by
+    funext τ; rw [setIntegral_const, smul_eq_mul, hvol, one_mul]
+  rw [hf]
+  exact hasDerivAt_id t
+
+/-- The port lemmas at the turbine inlet: the inlet rate is `ṁ θ_in` with `ṁ = 2`, and counting
+`p / ρ` twice adds the pressure power `2 * 500`. -/
+example :
+    portEnergyRate 1 1 2 1000 500 (981 / 100) 0 ![(2 : ℝ), 0, 0] =
+        1 * 1 * 2 * (specificEnthalpy 1000 500 1 + ![(2 : ℝ), 0, 0] ⬝ᵥ ![2, 0, 0] / 2 +
+          981 / 100 * 0) ∧
+      1 * 1 * 2 * (specificEnthalpy 1000 500 1 + 500 / 1 + ![(2 : ℝ), 0, 0] ⬝ᵥ ![2, 0, 0] / 2 +
+          981 / 100 * 0) =
+        portEnergyRate 1 1 2 1000 500 (981 / 100) 0 ![(2 : ℝ), 0, 0] + 1 * 2 * 500 :=
+  ⟨portEnergyRate_eq_massFlow one_ne_zero 1 2 1000 500 (981 / 100) 0 ![2, 0, 0],
+    flowWork_double_count one_ne_zero 1 2 1000 500 (981 / 100) 0 ![2, 0, 0]⟩
 
 end PhyslibExtTest.ContinuumMechanics.ControlVolumes
