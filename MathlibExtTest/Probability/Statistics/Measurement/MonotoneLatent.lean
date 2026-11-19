@@ -89,6 +89,14 @@ private theorem test_chain_covariance :
   rw [hpmf0, hpmf1, hc00, hc01, hc10, hc11]
   norm_num
 
+private theorem test_chain_covariance_nonneg :
+    0 ≤ ProbabilityTheory.covariance (fun x : Fin 2 → Bool => if x 0 then (1 : ℝ) else 0)
+      (fun x : Fin 2 → Bool => if x 1 then (1 : ℝ) else 0)
+      (halfPMF.bind fun z =>
+        localIndepPMF (chainCurve z) (chainCurve_nonneg z) (chainCurve_le_one z)).toMeasure :=
+  covariance_items_nonneg_of_monotone halfPMF chainCurve chainCurve_nonneg chainCurve_le_one
+    (by decide) test_chain_hypotheses.1 test_chain_hypotheses.2
+
 private theorem test_opposite_hypotheses :
     (Monotone fun z => oppCurve z 0) ∧ (Antitone fun z => oppCurve z 1) ∧
       ¬ Monotone fun z => oppCurve z 1 := by
