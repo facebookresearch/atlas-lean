@@ -11,3 +11,7 @@ $\mathtt{if}\ b\ \mathtt{then}\ c_1\ \mathtt{else}\ c_2$ takes $s$ to $t$; if $b
 and $c_2$ takes $s$ to $t$, then it also takes $s$ to $t$. If $b$ is false in $s$, then the loop
 $\mathtt{while}\ b\ \mathtt{do}\ c$ takes $s$ to $s$; if $b$ is true in $s$, $c$ takes $s$ to $u$
 and the loop takes $u$ to $t$, then the loop takes $s$ to $t$.
+
+## Related topics
+
+- [Big-step semantics of the imperative language with arrays](../an-imperative-language-with-arrays/big-step.md): the language with string variable names, natural division, reads from immutable arrays and loops annotated with invariants.

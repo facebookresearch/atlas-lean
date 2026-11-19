@@ -1,6 +1,6 @@
 # Unsupervised learning and matrix factorization
 
-Structure in unlabelled data: k-means, single-linkage hierarchical clustering, archetypal analysis, nonnegative matrix factorization, the successive projection algorithm, and probabilistic PCA with the Gaussian factor-analysis marginal. Classical principal component analysis is under linear models and multivariate analysis.
+Structure in unlabelled data: k-means, single-linkage hierarchical clustering, archetypal analysis, nonnegative matrix factorization, the successive projection algorithm, and probabilistic PCA with the Gaussian factor-analysis marginal. Classical principal component analysis is under [linear models and multivariate analysis](../../../Probability/linear-models-multivariate/README.md).
 
 - [Archetypal analysis](archetypal-analysis/README.md)
 - [k-means clustering](k-means-clustering/README.md)

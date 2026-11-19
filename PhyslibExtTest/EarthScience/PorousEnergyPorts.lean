@@ -8,14 +8,24 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.EarthScience.PorousEnergyPorts
+import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
 
 /-!
-# Radial Darcy profile checks
+# Radial Darcy profile and well-ledger checks
 
 Concrete consumers of `PhyslibExt.EarthScience.PorousEnergyPorts`: on the annulus
 `1 ≤ r ≤ exp 1` with head `0` at the well, signed injection and extraction move the head at
 `r = exp 1` to `-1` and `1`, and with a negative transmissivity injection raises it to `1`.
+On a chain of three cells of volume `2` with one injection, one production and a nonzero outlet,
+one step takes the total mass from `30` to `29` and the total energy from `300` to `315`, as the
+general ledger predicts, and no no-flux step reproduces it. The cells store the fluid state
+`ρ = 20`, `e = 10` at porosity `1/4` (mass `5`, energy `50` per unit volume), so the producing
+cell's enthalpy `12` follows from its stored mass and energy. A zero density is outside the
+ledger's domain: its positivity premise is false, and the totalized enthalpy at `ρ = 0` would
+drop the flow work.
 
 ## i. Overview
 
@@ -28,13 +38,14 @@ No new definitions or results are introduced here.
 ## iii. Table of contents
 
 - A. Signed discharge and negative transmissivity
+- B. Well and boundary sources in the energy ledger
 
 ## iv. References
 
 - `PhyslibExt.EarthScience.PorousEnergyPorts`
 -/
 
-open EarthScience
+open EarthScience MathlibExt.Analysis.ODE.ContinuumBalances
 
 /-! ## A. Signed discharge and negative transmissivity -/
 
@@ -61,3 +72,116 @@ example :
   unfold radialDarcyHead
   simp only [div_one, Real.log_exp, mul_one, zero_sub]
   field_simp
+
+/-! ## B. Well and boundary sources in the energy ledger -/
+
+/-- Fixture: three cells of volume `Δx = 2`, each storing the fluid state `ρ = 20`, `e = 10`,
+`p = 40` at porosity `1/4`, that is the mass `5` and the energy `50` per unit volume; face mass
+fluxes `(1, 3, 2, 4)` (inflow `1` at the left face, outlet `4` at the right face) carrying the
+same state, of specific enthalpy `10 + 40 / 20 = 12`; one injection of `3` into cell `0` at
+specific enthalpy `30` and one production of `2` from cell `2` at that cell's specific enthalpy
+`12 = (50 + 40 / 4) / 5`. One step `dt = 1/2` takes the total mass from `30` to
+`29 = 30 + dt ((1 - 4) + (3 - 2))` and the total energy from `300` to
+`315 = 300 + dt ((12 - 48) + (90 - 24))`. -/
+example :
+    (2 : ℝ) * ∑ i : Fin 3, (![5, 5, 5] i + 1 / 2 *
+        wellCellRate ⟨2, two_pos⟩ ![1, 3, 2, 4] (fun i => ![3, 0, 0] i - ![0, 0, 2] i) i) = 29 ∧
+      (2 : ℝ) * ∑ i : Fin 3, (![50, 50, 50] i + 1 / 2 *
+        wellCellRate ⟨2, two_pos⟩
+          (faceEnthalpyFlux ![1, 3, 2, 4] (fun _ => 10) (fun _ => 40) (fun _ => 20)
+            (fun _ => by norm_num))
+          (wellEnergyRate ![3, 0, 0] ![0, 0, 2] ![30, 0, 0] (fun _ => 10) (fun _ => 40)
+            (fun _ => 20) (fun _ => by norm_num)) i) = 315 := by
+  refine ⟨?_, ?_⟩
+  · norm_num [Fin.sum_univ_three, wellCellRate, discreteBalance,
+      show ((⟨2, two_pos⟩ : {x : ℝ // 0 < x}) : ℝ) = 2 from rfl]
+  · norm_num [Fin.sum_univ_three, wellCellRate, discreteBalance, faceEnthalpyFlux,
+      wellEnergyRate, ControlVolumes.specificEnthalpy,
+      show ((⟨2, two_pos⟩ : {x : ℝ // 0 < x}) : ℝ) = 2 from rfl]
+
+/-- The no-flux specialization cannot represent this open chain: for every flux field with zero
+exterior fluxes, the no-flux step without wells keeps the fixture's total mass at `30`
+(`sum_add_mul_discreteBalance_of_noFlux`), so it differs from the fixture step with one
+injection, one production and a nonzero outlet, which ends at `29`. -/
+example (F : Fin 4 → ℝ) (h0 : F 0 = 0)
+    (h3 : F (Fin.last 3) = 0) :
+    (2 : ℝ) * ∑ i : Fin 3, (![5, 5, 5] i + 1 / 2 * discreteBalance ⟨2, two_pos⟩ F i) ≠
+      2 * ∑ i : Fin 3, (![5, 5, 5] i + 1 / 2 *
+        wellCellRate ⟨2, two_pos⟩ ![1, 3, 2, 4] (fun i => ![3, 0, 0] i - ![0, 0, 2] i) i) := by
+  have hL : (2 : ℝ) * ∑ i : Fin 3, (![5, 5, 5] i + 1 / 2 * discreteBalance ⟨2, two_pos⟩ F i)
+      = 30 := by
+    have h := sum_add_mul_discreteBalance_of_noFlux (⟨2, two_pos⟩ : {x : ℝ // 0 < x})
+      (1 / 2 : ℝ) ![5, 5, 5] h0 h3
+    rw [h]
+    norm_num [Fin.sum_univ_three]
+  have hR : (2 : ℝ) * ∑ i : Fin 3, (![5, 5, 5] i + 1 / 2 *
+      wellCellRate ⟨2, two_pos⟩ ![1, 3, 2, 4] (fun i => ![3, 0, 0] i - ![0, 0, 2] i) i) = 29 := by
+    norm_num [Fin.sum_univ_three, wellCellRate, discreteBalance,
+      show ((⟨2, two_pos⟩ : {x : ℝ // 0 < x}) : ℝ) = 2 from rfl]
+  rw [hL, hR]
+  norm_num
+
+/-- The fixture's cell rates through the generic ledger: they sum to the transport total
+`totalDiscreteChange = -(4 - 1) / 2` plus the well total `(3 - 2) / 2`, that is `-1`. -/
+example :
+    ∑ i : Fin 3, wellCellRate ⟨2, two_pos⟩ ![1, 3, 2, 4] (fun i => ![3, 0, 0] i - ![0, 0, 2] i) i =
+      -1 := by
+  have hlast : (![1, 3, 2, 4] : Fin 4 → ℝ) (Fin.last 3) = 4 := rfl
+  rw [(stock_add_mul_wellCellRate ⟨2, two_pos⟩ 0 ![0, 0, 0] ![1, 3, 2, 4]
+    (fun i => ![3, 0, 0] i - ![0, 0, 2] i)).1, totalDiscreteChange_eq]
+  norm_num [Fin.sum_univ_three, hlast,
+    show ((⟨2, two_pos⟩ : {x : ℝ // 0 < x}) : ℝ) = 2 from rfl]
+
+/-- The fixture's step through the mass and energy ledger. The stored state is consistent:
+`5 = (1/4) * 20` and `50 = 5 * 10`. The total mass changes by
+`dt ((Fm 0 - Fm 3) + ∑ (qI - qP)) = (1/2) ((1 - 4) + (3 - 2)) = -1`, from `30` to `29`, and the
+total energy by `dt` times the boundary enthalpy inflow `12 - 48` plus the well total
+`3 * 30 - 2 * (50 + (1/4) * 40) / 5 = 66`, from `300` to `315`. -/
+example :
+    ((⟨2, two_pos⟩ : {x : ℝ // 0 < x}) : ℝ) * ∑ i : Fin 3, (![5, 5, 5] i + 1 / 2 *
+        wellCellRate ⟨2, two_pos⟩ ![1, 3, 2, 4] (fun i => ![3, 0, 0] i - ![0, 0, 2] i) i) = 29 ∧
+      ((⟨2, two_pos⟩ : {x : ℝ // 0 < x}) : ℝ) * ∑ i : Fin 3, (![50, 50, 50] i + 1 / 2 *
+        wellCellRate ⟨2, two_pos⟩
+          (faceEnthalpyFlux ![1, 3, 2, 4] (fun _ => 10) (fun _ => 40) (fun _ => 20)
+            (fun _ => by norm_num))
+          (wellEnergyRate ![3, 0, 0] ![0, 0, 2] ![30, 0, 0] (fun _ => 10) (fun _ => 40)
+            (fun _ => 20) (fun _ => by norm_num)) i) = 315 := by
+  obtain ⟨hm, he⟩ := well_boundary_ledger ⟨2, two_pos⟩ (1 / 2) ![5, 5, 5] ![50, 50, 50]
+    ![1, 3, 2, 4] (fun _ => 10) (fun _ => 40) (fun _ => 20) ![3, 0, 0] ![0, 0, 2] ![30, 0, 0]
+    (fun _ => 10) (fun _ => 40) (fun _ => 20) (fun _ => 1 / 4) (fun _ => by norm_num)
+    (fun _ => by norm_num) (fun _ => by norm_num) (fun i => by fin_cases i <;> norm_num)
+    (fun i => by fin_cases i <;> norm_num)
+  have hlast : (![1, 3, 2, 4] : Fin 4 → ℝ) (Fin.last 3) = 4 := rfl
+  rw [hm, he]
+  norm_num [Fin.sum_univ_three, faceEnthalpyFlux, hlast, ControlVolumes.specificEnthalpy,
+    show ((⟨2, two_pos⟩ : {x : ℝ // 0 < x}) : ℝ) = 2 from rfl]
+
+/-- The producing cell's enthalpy from its stored state: with mass `5`, energy `50`, porosity
+`1/4` and pressure `40`, the produced enthalpy is `(50 + 10) / 5 = 12`, so the well energy rate
+of cell `2` is `-2 * 12 = -24`. -/
+example :
+    wellEnergyRate ![3, 0, 0] ![0, 0, 2] ![30, 0, 0] (fun _ => 10) (fun _ => 40) (fun _ => 20)
+      (fun _ => by norm_num) 2 = -24 := by
+  rw [wellEnergyRate_eq_stored (m := ![5, 5, 5]) (E := ![50, 50, 50]) (φ := fun _ => 1 / 4)
+    (fun _ => by norm_num) (fun _ => by norm_num) (fun i => by fin_cases i <;> norm_num)
+    (fun i => by fin_cases i <;> norm_num)]
+  norm_num
+
+/-- Storage consistency rejects a cell state that does not match the stored mass and energy:
+the state `ρ = 1`, `e = 8` with the stored mass `5` and energy `50` would need `50 = 5 * 8`,
+for every porosity. -/
+example : ¬ ∃ φ : ℝ, 0 < φ ∧ (5 : ℝ) = φ * 1 ∧ (50 : ℝ) = 5 * 8 := by
+  rintro ⟨φ, -, -, h⟩
+  norm_num at h
+
+/-- A zero face density is outside the ledger's domain: the positivity premise that
+`faceEnthalpyFlux` takes is false for the densities `(1, 0)`. -/
+example : ¬ ∀ j : Fin 2, (0 : ℝ) < ![1, 0] j := fun h => by
+  simpa using h 1
+
+/-- What the domain restriction excludes: Lean's `x / 0 = 0` turns the enthalpy
+`specificEnthalpy e p 0` into `e`, dropping the flow work, so at `e = 8` and `p = 2` a unit mass
+flux would carry `8` at `ρ = 0` instead of the `10` it carries at `ρ = 1`. -/
+example :
+    ControlVolumes.specificEnthalpy 8 2 0 = 8 ∧ ControlVolumes.specificEnthalpy 8 2 1 = 10 := by
+  norm_num [ControlVolumes.specificEnthalpy]

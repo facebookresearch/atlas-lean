@@ -12,5 +12,5 @@ Unlike the hitting property, the approximation error here is $\lambda + \varepsi
 
 - [Hitting property of expander walks](hitting-property-of-expander-walks.md): the one-sided
   analogue.
-- Bounded-error probabilistic classes RP and BPP:
+- [Bounded-error probabilistic classes RP and BPP](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-probabilistic-classes-rp-and-bpp/README.md):
   the application to BPP error reduction.

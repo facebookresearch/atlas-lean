@@ -36,6 +36,7 @@ No new definitions or results are introduced here.
 
 - A. Linear field at `t = 1`
 - B. Robin seam discharge
+- C. Fin fixtures
 
 ## iv. References
 
@@ -197,3 +198,82 @@ example {D L k h0 hL Ta T : ℝ} (hD : 0 ≤ D) (hL0 : 0 < L)
       (fun x hx => by rw [hPDE1 t ht x hx, hPDE2 t ht x hx]; ring)
       (hcont_w t ht) (hcont_wx t ht) (hcont_wxx t ht) (hEw0 t ht) (hintw t ht))
     hEcont hwcont hinit
+
+/-! ## C. Fin fixtures -/
+
+section FinFixtures
+
+open Real Set Filter Topology ConductionPorts MathlibExt.Biology.Biophysics.MembraneCable
+
+/-- Nonzero fixture: `k = A = h = P = L = 1` (so `m = 1`), `Ta = 300`, base excess `50`. The
+transfer solution with `q 0 = 50 * tanh 1` is a fin steady state with an adiabatic tip and a
+positive base heat rate. -/
+example :
+    IsFinSteadyState 1 1 1 1 300 1 (fun x => 300 + cableVoltage 1 1 50 (50 * Real.tanh 1) x)
+        (cableCurrent 1 1 50 (50 * Real.tanh 1)) ∧
+      cableCurrent 1 1 50 (50 * Real.tanh 1) 1 = 0 ∧
+      (300 + cableVoltage 1 1 50 (50 * Real.tanh 1) 0) - 300 = 50 ∧
+      0 < cableCurrent 1 1 50 (50 * Real.tanh 1) 0 := by
+  have e1 : (1:ℝ) / (1 * 1) = 1 := by norm_num
+  have hbase := isSteadyState_cable (show (0:ℝ) < 1 from zero_lt_one)
+    (show (0:ℝ) < 1 from zero_lt_one) (Icc (0:ℝ) 1) 50 (50 * Real.tanh 1)
+  have hfun : (fun x : ℝ => (300 + cableVoltage 1 1 50 (50 * Real.tanh 1) x) - 300) =
+      cableVoltage 1 1 50 (50 * Real.tanh 1) := by
+    funext x
+    ring
+  have hfin : IsFinSteadyState 1 1 1 1 300 1
+      (fun x => 300 + cableVoltage 1 1 50 (50 * Real.tanh 1) x)
+      (cableCurrent 1 1 50 (50 * Real.tanh 1)) := by
+    rw [isFinSteadyState_iff, e1, hfun]
+    exact hbase
+  have hlam1 : lengthConstant (1:ℝ) 1 = 1 := by
+    unfold lengthConstant
+    rw [div_one, Real.sqrt_one]
+  have hr1 : charResistance (1:ℝ) 1 = 1 := by
+    unfold charResistance
+    rw [mul_one, Real.sqrt_one]
+  have hc : Real.cosh (1:ℝ) ≠ 0 := (cosh_pos _).ne'
+  have htc : Real.sinh 1 / Real.cosh 1 * Real.cosh 1 = Real.sinh 1 :=
+    div_mul_cancel₀ _ hc
+  have hcc : cableCurrent 1 1 50 (50 * Real.tanh 1) 1 = 0 := by
+    simp only [cableCurrent, hlam1, hr1, div_one, Real.tanh_eq_sinh_div_cosh]
+    linear_combination 50 * htc
+  have hcv0 : cableVoltage 1 1 50 (50 * Real.tanh 1) 0 = 50 := by
+    simp only [cableVoltage, hlam1, hr1, div_one, Real.cosh_zero, Real.sinh_zero,
+      mul_one, mul_zero, sub_zero]
+  have ht1 : (0:ℝ) < Real.tanh 1 := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_pos (sinh_pos_iff.2 zero_lt_one) (cosh_pos _)
+  have hcc0 : cableCurrent 1 1 50 (50 * Real.tanh 1) 0 = 50 * Real.tanh 1 := by
+    simp only [cableCurrent, hlam1, hr1, div_one, Real.cosh_zero, Real.sinh_zero,
+      mul_one, mul_zero, sub_zero]
+  refine ⟨hfin, hcc, ?_, ?_⟩
+  · rw [hcv0]
+    norm_num
+  · rw [hcc0]
+    exact mul_pos (show (0:ℝ) < 50 by norm_num) ht1
+
+/-- Small `m L` is a limit: `tanh x / x → 1` as `x → 0⁺`, while the expression evaluated at
+`x = 0` is `0` (division by zero), not the limit. -/
+example :
+    Tendsto (fun x : ℝ => Real.tanh x / x) (𝓝[>] 0) (𝓝 1) ∧ Real.tanh 0 / 0 = 0 := by
+  have hsinh : Tendsto (fun x' : ℝ => Real.sinh x' / x') (𝓝[≠] 0) (𝓝 1) := by
+    have h := (Real.hasDerivAt_sinh 0).tendsto_slope
+    rw [slope_fun_def_field, Real.sinh_zero, Real.cosh_zero] at h
+    simpa only [sub_zero] using h
+  have hcosh : Tendsto (fun x' : ℝ => Real.cosh x') (𝓝[≠] 0) (𝓝 1) := by
+    have h : Tendsto (fun x' : ℝ => Real.cosh x') (𝓝 (0:ℝ)) (𝓝 (Real.cosh 0)) :=
+      Real.continuous_cosh.tendsto 0
+    have h2 := h.mono_left (nhdsWithin_le_nhds (s := ({0}ᶜ : Set ℝ)))
+    rwa [Real.cosh_zero] at h2
+  have hdiv := hsinh.div hcosh (by norm_num : (1:ℝ) ≠ 0)
+  rw [div_one] at hdiv
+  have hfun : (fun x' : ℝ => Real.tanh x' / x') =
+      fun x' => (Real.sinh x' / x') / Real.cosh x' := by
+    funext x'
+    rw [Real.tanh_eq_sinh_div_cosh, div_right_comm]
+  rw [hfun]
+  refine ⟨?_, div_zero _⟩
+  exact hdiv.mono_left (nhdsWithin_mono 0 (fun _ hx => ne_of_gt hx))
+
+end FinFixtures

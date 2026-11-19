@@ -7,10 +7,14 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import PhyslibExt.Mechanics.MachineElements
 import Mathlib.Data.Fin.VecNotation
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
@@ -19,7 +23,11 @@ import Mathlib.Tactic.Ring
 * a train with two external meshes and one internal mesh: its ratio `1/24`, its external-mesh
   count, a no-slip motion, lossless mesh port torques, the shaft loads and the cancelling port
   powers;
-* the same train with the output orientation swapped but the sign unchanged, which is rejected.
+* the same train with the output orientation swapped but the sign unchanged, which is rejected;
+* four-bar linkages: a non-Grashof linkage in a closed regular configuration with determinant
+  `-2` and velocity ratios `(1 / 2, 1)`, and its local branch with that velocity map; a
+  parallelogram linkage at a dead center, where the determinant vanishes; and a ground link
+  longer than the other three links together, which admits no closed configuration.
 -/
 
 @[expose] public section
@@ -128,6 +136,80 @@ example : ¬ ∃ g : Mesh, g.driverTeeth = 20 ∧ g.drivenTeeth = 20 ∧ g.kind 
 -- The same counts on an external mesh are a valid mesh, with ratio `-1`.
 example : (⟨20, 20, .external, by decide⟩ : Mesh).ratio = -1 := by
   simp [Mesh.ratio, MeshKind.sense]
+
+/-! ## D. Four-bar linkages -/
+
+/-- A four-bar with ground `1`, crank `1`, coupler `2` and rocker `√2`; it is not a Grashof
+linkage (`1 + 2 > 1 + √2`). -/
+noncomputable def exampleLinkage : FourBar :=
+  ⟨1, 1, 2, Real.sqrt 2, one_pos, one_pos, two_pos, Real.sqrt_pos.mpr two_pos⟩
+
+/-- A noncollinear closed configuration with nonzero transmission: crank vertical
+(`θ₂ = π / 2`), coupler horizontal (`θ₃ = 0`), rocker at `θ₄ = π / 4`; the dependent-angle
+determinant is `-2`, and the velocity ratios are `ω₃ / ω₂ = 1 / 2`, `ω₄ / ω₂ = 1`. -/
+lemma exampleLinkage_regular :
+    exampleLinkage.IsClosed (Real.pi / 2) 0 (Real.pi / 4) ∧
+      (exampleLinkage.dependentJacobian 0 (Real.pi / 4)).det = -2 ∧
+      exampleLinkage.velocityRatio (Real.pi / 2) 0 (Real.pi / 4) = (1 / 2, 1) := by
+  have h2 : Real.sqrt 2 * Real.sqrt 2 = 2 := Real.mul_self_sqrt (by norm_num)
+  have hs2 : Real.sqrt 2 ≠ 0 := by positivity
+  have e1 : (0 : ℝ) - Real.pi / 4 = -(Real.pi / 4) := by ring
+  have e2 : Real.pi / 4 - Real.pi / 2 = -(Real.pi / 4) := by ring
+  have e3 : (0 : ℝ) - Real.pi / 2 = -(Real.pi / 2) := by ring
+  refine ⟨?_, ?_, ?_⟩
+  · simp only [FourBar.IsClosed, FourBar.closure, exampleLinkage, Real.cos_pi_div_two,
+      Real.sin_pi_div_two, Real.cos_zero, Real.sin_zero, Real.cos_pi_div_four,
+      Real.sin_pi_div_four]
+    ext
+    · simp only [Prod.fst_zero]
+      nlinarith [h2]
+    · simp only [Prod.snd_zero]
+      nlinarith [h2]
+  · rw [FourBar.det_dependentJacobian]
+    simp only [exampleLinkage, e1, Real.sin_neg, Real.sin_pi_div_four]
+    nlinarith [h2]
+  · simp only [FourBar.velocityRatio, exampleLinkage, e1, e2, e3, Real.sin_neg,
+      Real.sin_pi_div_four, Real.sin_pi_div_two]
+    ext
+    · field_simp
+    · field_simp
+      nlinarith [h2]
+
+/-- A parallelogram four-bar: ground `2`, crank `1`, coupler `2`, rocker `1`. -/
+def parallelogramLinkage : FourBar :=
+  ⟨2, 1, 2, 1, two_pos, one_pos, two_pos, one_pos⟩
+
+/-- A dead center: with all links along the ground line (`θ₂ = θ₃ = θ₄ = 0`) the parallelogram
+four-bar is closed and its dependent-angle determinant vanishes. -/
+lemma parallelogramLinkage_deadCenter :
+    parallelogramLinkage.IsClosed 0 0 0 ∧ (parallelogramLinkage.dependentJacobian 0 0).det = 0 := by
+  refine ⟨?_, ?_⟩
+  · simp only [FourBar.IsClosed, FourBar.closure, parallelogramLinkage, Real.cos_zero,
+      Real.sin_zero]
+    ext <;> norm_num
+  · rw [FourBar.det_dependentJacobian]
+    simp
+
+/-- A four-bar whose ground `10` exceeds crank, coupler and rocker `1` together. -/
+def longGroundLinkage : FourBar :=
+  ⟨10, 1, 1, 1, by norm_num, one_pos, one_pos, one_pos⟩
+
+/-- Incompatible lengths have no closed configuration. -/
+lemma longGroundLinkage_not_isClosed (θ₂ θ₃ θ₄ : ℝ) :
+    ¬ longGroundLinkage.IsClosed θ₂ θ₃ θ₄ := by
+  exact longGroundLinkage.not_isClosed_of_lt_ground (by simp [longGroundLinkage]; norm_num) θ₂ θ₃ θ₄
+
+-- The regular configuration has a local branch through it whose velocity map is `(1 / 2, 1)`.
+example : ∃ ψ : ℝ → ℝ × ℝ, ψ (Real.pi / 2) = (0, Real.pi / 4) ∧
+    HasDerivAt ψ (1 / 2, 1) (Real.pi / 2) := by
+  obtain ⟨h, hdet, hv⟩ := exampleLinkage_regular
+  obtain ⟨ψ, h0, -, -, hD⟩ := exampleLinkage.exists_local_branch h (by rw [hdet]; norm_num)
+  exact ⟨ψ, h0, hv ▸ hD⟩
+
+-- The dead center satisfies the general criterion: coupler and rocker are collinear,
+-- `θ₃ - θ₄ = 0 * π`.
+example : (parallelogramLinkage.dependentJacobian 0 0).det = 0 :=
+  (parallelogramLinkage.det_dependentJacobian_eq_zero_iff 0 0).2 ⟨0, by simp⟩
 
 end PhyslibExtTest.Mechanics.MachineElements
 

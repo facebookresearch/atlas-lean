@@ -9,11 +9,6 @@
   <a href="https://github.com/leanprover/lean4/releases/tag/v4.35.0"><img src="https://img.shields.io/badge/Lean-v4.35.0-blue" alt="Lean v4.35.0" /></a>
 </p>
 
-<p align="center">
-  <strong>Autoformalized Textbook Library At Scale</strong><br />
-  A large-scale Lean 4 library of textbook mathematics formalized with LLMs.
-</p>
-
 > [!NOTE]
 > **ATLAS v2 is coming.** The original release is preserved in [`v1/`](v1/),
 > while the repository root is being prepared for the next generation of the
@@ -67,11 +62,9 @@ build, source ownership, and opt-in GitHub Pages deployment.
 
 ## About ATLAS
 
-ATLAS translates mathematical statements and proofs from undergraduate and
-graduate textbooks into Lean. Its goal is to provide reusable formal building
-blocks for human- and machine-assisted theorem proving across analysis,
-algebra, geometry, topology, probability, statistics, and theoretical
-computer science.
+ATLAS provides reusable formal building blocks for human- and machine-assisted
+theorem proving across analysis, algebra, geometry, topology, probability,
+statistics, and theoretical computer science.
 
 The project was generated with
 [AutoformBot](https://github.com/facebookresearch/autoform-bot), an

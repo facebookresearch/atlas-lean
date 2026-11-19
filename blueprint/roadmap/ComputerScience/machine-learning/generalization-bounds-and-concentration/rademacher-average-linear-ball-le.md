@@ -12,12 +12,12 @@ When $\|\varphi(x)\| \le R$ the bound is $D R / \sqrt{n}$, independent of the di
 
 ## Informally uses
 
-- Bound on the average Rademacher norm: mathematical prerequisite, used verbatim for the average over the signs.
+- [Bound on the average Rademacher norm](../../../Analysis/banach-spaces/geometry-of-banach-spaces/rademacher-type-and-cotype/average-rademacher-norm-le.md): mathematical prerequisite, used verbatim for the average over the signs.
 
 ## Background
 
-- Aronszajn's theorem: background, the feature map $\varphi$ of a positive-definite kernel, to which the bound applies.
-- Kernel Gram matrix: background, the kernel matrix whose trace is $\sum_i \|\varphi(x_i)\|^2$.
+- [Aronszajn's theorem](../../../Analysis/hilbert-spaces/positive-definite-kernels/is-pos-def-kernel-iff-exists-feature-map.md): background, the feature map $\varphi$ of a positive-definite kernel, to which the bound applies.
+- [Kernel Gram matrix](../../../Analysis/hilbert-spaces/representer-theorem/kernel-gram.md): background, the kernel matrix whose trace is $\sum_i \|\varphi(x_i)\|^2$.
 
 ## Sources
 

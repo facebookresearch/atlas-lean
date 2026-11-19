@@ -10,7 +10,7 @@ G. Carlsson, *Computing persistent homology*, Discrete Comput. Geom. 33 (2005)).
 
 ## Background
 
-- Smith normal form with a divisibility chain:
+- [Smith normal form with a divisibility chain](../../../LinearAlgebra/eigenvalues-and-canonical-forms/smith-normal-form/exists-smith-normal-form-dvd-chain.md):
   Carlsson identifies $\mathbb{N}$-persistence modules with graded $k[t]$-modules and appeals to the
   structure theorem for finitely generated graded modules over the principal ideal domain $k[t]$,
   proved like the ungraded case; barcodes are computed by Smith normal form over $k[t]$.

@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Reliability.PhysicalFailureEvents
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
@@ -22,7 +23,13 @@ case showing the positivity hypotheses cannot be dropped. A steel-like
 fixed-fixed bar in newtons and millimetres has the end demand `100` MPa
 for every calibrated yield functional, checked against allowables
 below, at and above it; a hydrostatic tension has zero von Mises
-stress yet a crack under it fails.
+stress yet a crack under it fails. Linear damage `d0 + r t` has the
+lifetime `(D - d0) / r`, `⊤` without growth and `0` when initially
+failed; at its lifetime the damage equals the threshold and the
+component is down; two components sharing one damage path have equal
+series and parallel lifetimes. A Paris crack with `m = 4`, `K = 1`,
+`a0 = 1` and `a_c = 2` has the Paris life `1/2` and, at `10` cycles per
+unit time, the lifetime `1/20`, before its blow-up time `1/10`.
 
 ## i. Overview
 
@@ -32,13 +39,16 @@ These are elaboration and non-vacuity checks, not new results.
 
 No new results are introduced here. Section C defines the von Mises
 functional as an example of a supplied yield functional and checks that
-it is calibrated by the tensile test.
+it is calibrated by the tensile test. Section D proves the closed-form
+lifetime of linear damage that its later examples use.
 
 ## iii. Table of contents
 
 - A. Unit-parameter threshold
 - B. Degenerate stress
 - C. Demand margins, the axial bar and the hydrostatic boundary
+- D. Damage hitting times and monotone systems
+- E. The Paris lifetime at a constant load frequency
 
 ## iv. References
 
@@ -214,5 +224,134 @@ example :
   have h' := (axialBar_failure_iff vonMisesStress_uniaxialCalibrated (by norm_num) (by norm_num)
     (by norm_num) 100 250).1 h
   norm_num at h'
+
+/-! ## D. Damage hitting times and monotone systems -/
+
+open MeasureTheory
+open scoped NNReal ENNReal
+
+variable {Ω : Type*}
+
+/-- Linear damage `d0 + r t` with `r > 0` below threshold at time zero (`d0 < D`) fails at
+`(D - d0) / r`; for example `d0 = 1`, `r = 2`, `D = 5` gives `2`. -/
+lemma linearDamage_lifetime {d0 r D : ℝ} (hr : 0 < r) (hd : d0 < D) (ω : Ω) :
+    damageLifetime (fun _ t => d0 + r * t) (fun _ => D) ω = ENNReal.ofReal ((D - d0) / r) := by
+  have hcont : Continuous fun t : ℝ≥0 => d0 + r * (t : ℝ) :=
+    continuous_const.add (continuous_const.mul NNReal.continuous_coe)
+  have hmono : Monotone fun t : ℝ≥0 => d0 + r * (t : ℝ) := by
+    intro a b hab
+    have hab' : (a : ℝ) ≤ b := hab
+    simp only
+    nlinarith
+  have hpos : 0 ≤ (D - d0) / r := div_nonneg (by linarith) hr.le
+  have hcoe : (((D - d0) / r).toNNReal : ℝ) = (D - d0) / r := Real.coe_toNNReal _ hpos
+  change damageLifetime (fun _ t => d0 + r * t) (fun _ => D) ω =
+    ((((D - d0) / r).toNNReal : ℝ≥0) : ℝ≥0∞)
+  apply le_antisymm
+  · refine (damageLifetime_le_iff (d := fun _ t => d0 + r * t) (D := fun _ => D) (ω := ω)
+      hcont hmono _).mpr ?_
+    change D ≤ d0 + r * (((D - d0) / r).toNNReal : ℝ)
+    rw [hcoe]
+    field_simp
+    linarith
+  · refine ENNReal.le_of_forall_nnreal_lt fun s hs => le_of_lt ?_
+    refine (lt_damageLifetime_iff (d := fun _ t => d0 + r * t) (D := fun _ => D) (ω := ω)
+      hcont hmono s).mpr ?_
+    have hs' : (s : ℝ) < (D - d0) / r := by
+      rw [ENNReal.coe_lt_coe, ← NNReal.coe_lt_coe, hcoe] at hs
+      exact hs
+    change d0 + r * (s : ℝ) < D
+    rw [lt_div_iff₀ hr] at hs'
+    linarith
+
+/-- Linear damage `1 + 2 t` against the threshold `5` fails at `t = 2`. -/
+example (ω : Ω) : damageLifetime (fun _ t => 1 + 2 * t) (fun _ => 5) ω = 2 := by
+  rw [linearDamage_lifetime (by norm_num) (by norm_num) ω]
+  norm_num
+
+/-- Linear damage with zero rate below threshold never fails: the lifetime is `⊤`. -/
+example {d0 D : ℝ} (hd : d0 < D) (ω : Ω) :
+    damageLifetime (fun _ t => d0 + 0 * t) (fun _ => D) ω = ⊤ := by
+  rw [damageLifetime_eq_top_iff]
+  intro t
+  simp only [zero_mul, add_zero]
+  exact hd
+
+/-- Initially failed linear damage (`D ≤ d0`) has lifetime `0`, not `⊤`, for every rate. -/
+example {d0 D : ℝ} (hd : D ≤ d0) (r : ℝ) (ω : Ω) :
+    damageLifetime (fun _ t => d0 + r * t) (fun _ => D) ω = 0 ∧
+      damageLifetime (fun _ t => d0 + r * t) (fun _ => D) ω ≠ ⊤ := by
+  have h0 : damageLifetime (fun _ t => d0 + r * t) (fun _ => D) ω = 0 :=
+    damageLifetime_eq_zero (by simp only [NNReal.coe_zero, mul_zero, add_zero]; exact hd)
+  exact ⟨h0, by rw [h0]; exact ENNReal.zero_ne_top⟩
+
+/-- Equality at the threshold is failure: at its lifetime `(D - d0) / r` the linear damage
+equals the threshold, the demand event holds, and the component is no longer up. -/
+example {d0 r D : ℝ} (hr : 0 < r) (hd : d0 < D) (ω : Ω) :
+    d0 + r * ((D - d0) / r).toNNReal = D ∧
+      demandFailure D (d0 + r * ((D - d0) / r).toNNReal) ∧
+      ¬ (((D - d0) / r).toNNReal : ℝ≥0∞) <
+        damageLifetime (fun _ t => d0 + r * t) (fun _ => D) ω := by
+  have hpos : 0 ≤ (D - d0) / r := div_nonneg (by linarith) hr.le
+  have hcoe : (((D - d0) / r).toNNReal : ℝ) = (D - d0) / r := Real.coe_toNNReal _ hpos
+  have heq : d0 + r * (((D - d0) / r).toNNReal : ℝ) = D := by
+    rw [hcoe]
+    field_simp
+    ring
+  refine ⟨heq, ?_, ?_⟩
+  · change D ≤ d0 + r * (((D - d0) / r).toNNReal : ℝ)
+    rw [heq]
+  · rw [linearDamage_lifetime hr hd ω]
+    exact lt_irrefl _
+
+/-- Dependent components stay dependent: two components sharing one damage path and threshold
+have equal series and parallel lifetimes, both the common lifetime; no product formula holds. -/
+example (d : Ω → ℝ≥0 → ℝ) (D : Ω → ℝ) (ω : Ω) :
+    systemLifetime (Fin 2) (seriesEvent (Fin 2)) (fun _ => damageLifetime d D ω) =
+        damageLifetime d D ω ∧
+      systemLifetime (Fin 2) (parallelEvent (Fin 2)) (fun _ => damageLifetime d D ω) =
+        damageLifetime d D ω := by
+  refine ⟨?_, ?_⟩
+  · rw [systemLifetime_series]
+    exact Finset.inf_const Finset.univ_nonempty _
+  · rw [systemLifetime_parallel]
+    exact Finset.sup_const Finset.univ_nonempty _
+
+/-! ## E. The Paris lifetime at a constant load frequency -/
+
+/-- **A nonzero finite life and its time conversion.** Growth exponent `m = 4` (`r = -1`),
+aggregate coefficient `K = 1`, initial crack `a0 = 1` and the critical length `a_c = 2` of the
+LEFM model with `K_IC = √(2 π)`, `Y = 1`, `σ = 1`: the Paris life is `Nf = 1/2` cycle, and at
+`f = 10` cycles per unit time the lifetime is `1/20`, strictly before the blow-up time `1/10`.
+The numbers are unit-free and chosen for exact arithmetic. -/
+example (ω : Ω) :
+    criticalCrackLength (Real.sqrt (2 * Real.pi)) 1 1 = 2 ∧ parisLifePow (-1) 1 1 2 = 1 / 2 ∧
+      damageLifetime (fun _ : Ω => saturatedCrackPath (parisCrackPow (-1) 1 1) 10
+          (parisLifePow (-1) 1 1 (criticalCrackLength (Real.sqrt (2 * Real.pi)) 1 1)))
+        (fun _ => criticalCrackLength (Real.sqrt (2 * Real.pi)) 1 1) ω = ENNReal.ofReal (1 / 20) ∧
+      parisLifePow (-1) 1 1 2 / 10 < (1 : ℝ) ^ (-1 : ℝ) / (-(-1 * 1)) / 10 := by
+  have hpi : 0 < Real.pi := Real.pi_pos
+  have h2pi : (0 : ℝ) ≤ 2 * Real.pi := le_of_lt (mul_pos (by norm_num) hpi)
+  have hac : criticalCrackLength (Real.sqrt (2 * Real.pi)) 1 1 = 2 := by
+    show (Real.sqrt (2 * Real.pi) / (1 * 1)) ^ 2 / Real.pi = 2
+    rw [mul_one, div_one, Real.sq_sqrt h2pi]
+    exact mul_div_cancel_right₀ 2 (ne_of_gt hpi)
+  have hNf : parisLifePow (-1) 1 1 2 = 1 / 2 := by
+    show ((2 : ℝ) ^ (-1 : ℝ) - (1 : ℝ) ^ (-1 : ℝ)) / ((-1 : ℝ) * 1) = 1 / 2
+    rw [Real.rpow_neg_one, Real.rpow_neg_one]
+    norm_num
+  have h1 : (1 : ℝ) ^ (-1 : ℝ) = 1 := by
+    rw [Real.rpow_neg_one]
+    norm_num
+  have hlife := damageLifetime_saturatedCrackPath_pow (r := -1) (K := 1) (a0 := 1)
+    (KIC := Real.sqrt (2 * Real.pi)) (Y := 1) (σ := 1) (f := 10)
+    (by norm_num) (by norm_num) (by rw [hac]; norm_num) (by norm_num) (by norm_num) ω
+  rw [hac] at hlife
+  rw [hNf] at hlife
+  refine ⟨hac, hNf, ?_, ?_⟩
+  · rw [hac, hNf]
+    exact hlife.trans (by congr 1; norm_num)
+  · rw [hNf, h1]
+    norm_num
 
 end PhyslibExtTest.Reliability.PhysicalFailureEvents

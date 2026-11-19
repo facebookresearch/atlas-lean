@@ -12,7 +12,7 @@ Ekert, Macchiavello and Mosca (equation (3.1)) display it without the normalisat
 ## Background
 
 - [Sylvester sign matrix](sylvester-sign-matrix.md): $H_n$ is $2^{-n/2}$ times this $\pm 1$ matrix, a Hadamard matrix (entries $\pm 1$, pairwise orthogonal rows).
-- Quantum Fourier transform matrix: the Fourier transform over $\mathbb{Z}_q$; $H_n$ is the Fourier transform over $\mathbb{Z}_2^n$.
+- [Quantum Fourier transform matrix](../../../QuantumInformation/quantum-operations/quantum-fourier-transform/qft-matrix.md): the Fourier transform over $\mathbb{Z}_q$; $H_n$ is the Fourier transform over $\mathbb{Z}_2^n$.
 
 ## Sources
 

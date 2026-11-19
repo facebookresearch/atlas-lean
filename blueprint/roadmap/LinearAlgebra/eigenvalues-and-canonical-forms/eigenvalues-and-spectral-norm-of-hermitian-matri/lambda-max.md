@@ -4,7 +4,7 @@ For a Hermitian matrix $A$ indexed by a nonempty finite set, $\lambda_{\max}(A) 
 
 ## Background
 
-- Courant–Fischer min-max theorem: background, the variational characterization of eigenvalues.
+- [Courant–Fischer min-max theorem](../../../Analysis/operator-theory/eigenvalue-inequalities/courant-fischer-min-max-theorem/README.md): background, the variational characterization of eigenvalues.
 - [Spectral norm of a positive semidefinite matrix](l2-op-norm-eq-max-real-root-charpoly.md): background, $\|A\| = \lambda_{\max}(A)$ for $A \succeq 0$.
 
 ## Sources

@@ -15,7 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 
 @[expose] public section
 
--- Source: Lean Definition Library (Airtable) records: Topology 667, Topology 668, Topology 737, Topology 739
+-- Source: Lean Definition Library (Airtable) records: Topology 667, Topology 668, Topology 737, Topology 739, Topology 744, Topology 745
 
 /-!
 # `MathlibExt.AlgebraicTopology.Barcodes.Basic`
@@ -26,6 +26,9 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 * https://ti.inf.ethz.ch/ew/courses/TDA24/Chapter6.pdf, See Definition 6.2 (for `bottleneckDist`)
 * https://ti.inf.ethz.ch/ew/courses/TDA24/Chapter6.pdf, See Definition 6.10 (for
   `wassersteinDist`)
+* https://arxiv.org/pdf/2506.21488, (see equation 2.4 for definition of erosion distance between
+  two barcodes) (for `erosionDist`)
+* https://www.jmlr.org/papers/volume16/bubenik15a/bubenik15a.pdf (for `persistenceLandscape`)
 -/
 
 /-! ### Informal statement of `wassersteinDist`
@@ -242,6 +245,80 @@ The full informal statement is in the module documentation directly above.
 -/
 noncomputable def wassersteinDist (p : ℝ) (B C : Barcode) : ENNReal :=
   sInf { δ : ENNReal | ∃ M : Matching B C, M.wassersteinCost p ≤ δ }
+
+-- Topology 744: Erosion Distance between Barcodes
+
+def ErosionCondition (B C : Barcode) (ε : ℝ) : Prop :=
+  ∀ (p : ℕ) (s t : ℝ), s ≤ t →
+    barcodeRank B p (s - ε) (t + ε) ≤ barcodeRank C p s t ∧
+    barcodeRank C p (s - ε) (t + ε) ≤ barcodeRank B p s t
+
+/-- \begin{definition}[Erosion condition]
+Let $\mathcal{B}$ and $\mathcal{C}$ be barcodes and let
+$\varepsilon \ge 0$. The erosion condition at $\varepsilon$ holds if
+for every $p \in \mathbb{N}$ and every $s \le t$ in $\mathbb{R}$,
+\[
+\operatorname{rank}_{\mathcal{B}}(p, s - \varepsilon, t + \varepsilon)
+\le \operatorname{rank}_{\mathcal{C}}(p, s, t)
+\]
+and
+\[
+\operatorname{rank}_{\mathcal{C}}(p, s - \varepsilon, t + \varepsilon)
+\le \operatorname{rank}_{\mathcal{B}}(p, s, t).
+\]
+\end{definition}
+
+\begin{definition}[Erosion distance]
+Let $\mathcal{B}$ and $\mathcal{C}$ be barcodes. The erosion distance
+is the infimum of $\varepsilon \ge 0$ satisfying the erosion condition:
+\[
+d_E(\mathcal{B}, \mathcal{C}) =
+\inf\{ \varepsilon \ge 0 \mid
+\text{the erosion condition holds at } \varepsilon \}.
+\]
+If no finite $\varepsilon$ satisfies the condition, then
+$d_E(\mathcal{B}, \mathcal{C}) = \infty$.
+\end{definition}
+-/
+noncomputable def erosionDist (B C : Barcode) : ENNReal :=
+  sInf { δ : ENNReal | ∃ (ε : ℝ) (_hε : 0 ≤ ε),
+    ErosionCondition B C ε ∧ ENNReal.ofReal ε ≤ δ }
+
+-- Topology 745: Persistence Landscapes
+
+noncomputable def PersistenceBar.tent (bar : PersistenceBar) (t : ℝ) : ℝ :=
+  match bar.death with
+  | ⊤ => max 0 (t - bar.birth)
+  | (d : ℝ) => max 0 (min (t - bar.birth) (d - t))
+
+/- For fixed D and p, persistenceLandscape D p is the landscape as a function ℕ × ℝ → ℝ, with persistenceLandscape D p k t = λ_k(t)
+-/
+
+/-- Let D be a barcode, that is a finite multiset of bars (k, b, d) with k in N, b in R, and d in R
+∪ {∞}, with b < d. Fix a degree p.
+
+For each bar (b, d) of degree p, define its tent function f_{b,d} : R → R by
+
+f_{b,d}(t) = max(0, min(t - b, d - t))
+
+if d is finite, and by
+
+f_{b,d}(t) = max(0, t - b)
+
+if d = ∞.
+
+For k ≥ 1 and t in R, the kth landscape function in degree p is
+
+λ_{p,k}(t) = the  kth largest value among  { f_{b,d}(t) ∣ (b,d)  in  D  of degree  p },
+
+with λ_{p,k}(t) = 0 if there are fewer than k bars of degree p. For k = 0, define λ_{p,0}(t) = 0 by
+convention. The persistence landscape in degree p is the sequence λ_{p,1}, λ_{p,2}, … : R → R,
+equivalently the function λₚ : N × R → R.
+-/
+noncomputable def persistenceLandscape (D : Barcode) (p : ℕ) (k : ℕ) (t : ℝ) : ℝ :=
+  let vals : List ℝ :=
+    ((D.filter (fun b => b.degree = p)).map (fun b => b.tent t)).sort (· ≤ ·)
+  if k = 0 ∨ vals.length < k then 0 else vals.getD (vals.length - k) 0
 
 end MetaMathlibExt
 
