@@ -22,7 +22,10 @@ public import PhyslibExt.ContinuumMechanics.EngineeringScaling
   Biot numbers against a fluid and a solid conductivity;
 * unit invariance at arbitrary scales and the two-scale fixtures;
 * a molar heat capacity is not mass-specific, and the unconverted
-  molar Prandtl expression is not unit invariant.
+  molar Prandtl expression is not unit invariant;
+* the scaled transport field `ĉ(t̂, x̂) = t̂ + x̂²` with `L = 2`, `U = 3`,
+  `C0 = 1`: nonzero physical derivatives, and the second-derivative
+  factor `C0 / L²` against the wrong first-power factor `C0 / L`.
 -/
 
 @[expose] public section
@@ -186,5 +189,112 @@ example :
   intro h
   obtain ⟨u1, u2, μ, c, k, hμ, hc, hk, hne⟩ := molarPrandtl_not_unitInvariant
   exact hne (h u1 u2 μ c k hμ hc hk)
+
+/-! ## F. A scaled transport field -/
+
+-- The nonconstant field `ĉ(t̂, x̂) = t̂ + x̂²` with `L = 2`, `U = 3`, `C0 = 1`, at the physical
+-- point `(t, x) = (1, 2)`, which corresponds to `(t̂, x̂) = (3 / 2, 1)`.
+
+-- Nonzero physical derivatives of the fixture: `c_t = 3 / 2`, `c_x = 1`, `c_xx = 1 / 2`.
+example :
+    deriv (fun t => scaledField 2 3 1 (fun s y => s + y ^ 2) t 2) 1 = 3 / 2 ∧
+      deriv (fun x => scaledField 2 3 1 (fun s y => s + y ^ 2) 1 x) 2 = 1 ∧
+      iteratedDeriv 2 (fun x => scaledField 2 3 1 (fun s y => s + y ^ 2) 1 x) 2 = 1 / 2 := by
+  have hfunT : (fun t => scaledField 2 3 1 (fun s y => s + y ^ 2) t 2)
+      = (fun t => 3 * t / 2 + (2 / 2) ^ 2) := by
+    funext t
+    simp only [scaledField, one_mul]
+  have hderivT : HasDerivAt (fun t : ℝ => 3 * t / 2 + (2 / 2) ^ 2) (3 * 1 / 2) 1 := by
+    have h := ((((hasDerivAt_id (1 : ℝ)).const_mul (3 : ℝ)).div_const (2 : ℝ)).add_const
+      (((2 : ℝ) / 2) ^ 2))
+    simpa using h
+  have hT : deriv (fun t => scaledField 2 3 1 (fun s y => s + y ^ 2) t 2) 1 = 3 / 2 := by
+    rw [hfunT, hderivT.deriv]
+    norm_num
+  have hfunX : (fun x => scaledField 2 3 1 (fun s y => s + y ^ 2) 1 x)
+      = (fun x => 3 * 1 / 2 + (x / 2) * (x / 2)) := by
+    funext x
+    simp only [scaledField, pow_two, one_mul]
+  have hder1 : ∀ x', deriv (fun x => scaledField 2 3 1 (fun s y => s + y ^ 2) 1 x) x'
+      = x' / 2 := by
+    intro x'
+    have hinner : HasDerivAt (fun x => x / 2) (1 / 2) x' := by
+      have h := (hasDerivAt_id x').div_const 2
+      simpa using h
+    have hmul : HasDerivAt (fun x => (x / 2) * (x / 2))
+        ((1 / 2) * (x' / 2) + (x' / 2) * (1 / 2)) x' :=
+      hinner.mul hinner
+    have h : HasDerivAt (fun x => 3 * 1 / 2 + (x / 2) * (x / 2))
+        ((1 / 2) * (x' / 2) + (x' / 2) * (1 / 2)) x' :=
+      hmul.const_add (3 * 1 / 2)
+    rw [hfunX, h.deriv]
+    ring
+  have hX : deriv (fun x => scaledField 2 3 1 (fun s y => s + y ^ 2) 1 x) 2 = 1 := by
+    rw [hder1]
+    norm_num
+  have hfun2 : deriv (fun x => scaledField 2 3 1 (fun s y => s + y ^ 2) 1 x)
+      = (fun x' => x' / 2) := funext hder1
+  have h2 : HasDerivAt (fun x' : ℝ => x' / 2) (1 / 2) 2 := by
+    have h := (hasDerivAt_id (2 : ℝ)).div_const (2 : ℝ)
+    simpa using h
+  have hXX : deriv (deriv (fun x => scaledField 2 3 1 (fun s y => s + y ^ 2) 1 x)) 2
+      = 1 / 2 := by
+    rw [hfun2]
+    exact h2.deriv
+  have e : iteratedDeriv 2 (fun x => scaledField 2 3 1 (fun s y => s + y ^ 2) 1 x)
+      = deriv (deriv (fun x => scaledField 2 3 1 (fun s y => s + y ^ 2) 1 x)) := by
+    have e1 := iteratedDeriv_succ
+      (n := 1) (f := (fun x => scaledField 2 3 1 (fun s y => s + y ^ 2) 1 x))
+    rwa [iteratedDeriv_one] at e1
+  have hI : iteratedDeriv 2 (fun x => scaledField 2 3 1 (fun s y => s + y ^ 2) 1 x) 2
+      = 1 / 2 := by
+    rw [e]
+    exact hXX
+  exact ⟨hT, hX, hI⟩
+
+-- `L = 2` makes an exponent error visible: the fixture's scaled second derivative is `2`, and
+-- the first-power factor `C0 / L` would give `1`, not the actual `c_xx = 1 / 2`.
+example :
+    iteratedDeriv 2 (fun y => (fun s y : ℝ => s + y ^ 2) (3 * 1 / 2) y) (2 / 2) = 2 ∧
+      iteratedDeriv 2 (fun x => scaledField 2 3 1 (fun s y => s + y ^ 2) 1 x) 2
+        ≠ 1 / 2 * iteratedDeriv 2 (fun y => (fun s y : ℝ => s + y ^ 2) (3 * 1 / 2) y) (2 / 2) := by
+  have hfun0 : (fun y => (fun s y : ℝ => s + y ^ 2) (3 * 1 / 2) y)
+      = (fun y : ℝ => 3 * 1 / 2 + y * y) := by
+    funext y
+    simp only [pow_two]
+  have hder1 : ∀ y', deriv (fun y : ℝ => 3 * 1 / 2 + y * y) y' = 1 * y' + y' * 1 := by
+    intro y'
+    have hid : HasDerivAt (fun y : ℝ => y) 1 y' := hasDerivAt_id' y'
+    have hmul : HasDerivAt (fun y : ℝ => y * y) (1 * y' + y' * 1) y' := hid.mul hid
+    have h : HasDerivAt (fun y : ℝ => 3 * 1 / 2 + y * y) (1 * y' + y' * 1) y' :=
+      hmul.const_add (3 * 1 / 2)
+    exact h.deriv
+  have hfun2 : deriv (fun y : ℝ => 3 * 1 / 2 + y * y) = (fun y' : ℝ => 2 * y') := by
+    funext y'
+    show deriv (fun y : ℝ => 3 * 1 / 2 + y * y) y' = 2 * y'
+    rw [hder1]
+    ring
+  have h2 : HasDerivAt (fun y' : ℝ => 2 * y') (2 * 1) (2 / 2) := by
+    have h := (hasDerivAt_id ((2 : ℝ) / 2)).const_mul (2 : ℝ)
+    simpa using h
+  have h1 : iteratedDeriv 2 (fun y => (fun s y : ℝ => s + y ^ 2) (3 * 1 / 2) y) (2 / 2)
+      = 2 := by
+    have e : iteratedDeriv 2 (fun y : ℝ => 3 * 1 / 2 + y * y)
+        = deriv (deriv (fun y : ℝ => 3 * 1 / 2 + y * y)) := by
+      have e1 := iteratedDeriv_succ
+        (n := 1) (f := (fun y : ℝ => 3 * 1 / 2 + y * y))
+      rwa [iteratedDeriv_one] at e1
+    rw [hfun0, e, hfun2, h2.deriv]
+    norm_num
+  have hc : ContDiff ℝ 2 (Function.uncurry fun s y : ℝ => s + y ^ 2) := by
+    change ContDiff ℝ 2 (fun p : ℝ × ℝ => p.1 + p.2 ^ 2)
+    fun_prop
+  have h2v : iteratedDeriv 2 (fun x => scaledField 2 3 1 (fun s y => s + y ^ 2) 1 x) 2
+      = 1 / 2 := by
+    rw [iteratedDeriv_two_scaledField_space hc 2 3 1 1 2, h1]
+    norm_num
+  refine ⟨h1, ?_⟩
+  rw [h2v, h1]
+  norm_num
 
 end PhyslibExtTest.ContinuumMechanics.EngineeringScaling
