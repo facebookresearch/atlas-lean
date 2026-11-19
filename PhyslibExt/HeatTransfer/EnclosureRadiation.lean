@@ -139,6 +139,8 @@ lemma netPower_eq_emitted_sub_absorbed {σ : ℝ} {A : ι → ℝ} {F : ι → �
       _ = A j * F j i * (σ * T j ^ 4) := by ring
   rw [hsplit, hfirst, hsecond]
 
+/-! ## B. Conservation and sign results -/
+
 /-- Power conservation: the net powers of a black enclosure sum to zero. Only reciprocity is
 used; no sign condition on `σ` or `T` is needed. -/
 lemma sum_netPower_eq_zero {A : ι → ℝ} {F : ι → ι → ℝ} (hE : IsBlackEnclosure A F)
@@ -192,6 +194,5 @@ lemma netPower_nonneg_of_hottest {σ : ℝ} {A : ι → ℝ} {F : ι → ι → 
   have hsub : 0 ≤ T k ^ 4 - T j ^ 4 := sub_nonneg.mpr hpow
   exact mul_nonneg (mul_nonneg (mul_nonneg hA hF) hs) hsub
 
-/-! ## Fixtures -/
 
 end HeatTransfer.EnclosureRadiation
