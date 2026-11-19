@@ -146,8 +146,10 @@ def Waiting : ProgramCounter N → Prop
 
 /-- **Process `i` is ahead of process `k`**: `k` is in its noncritical section; or `k` is
 choosing and either has still to read `number[i]` or its running maximum already bounds
-`number[i]`; or `k` holds a ticket and `(number[i], i) < (number[k], k)`. Whatever `k` does
-next, it does not overtake `i`. -/
+`number[i]`; or `k` holds a ticket and `(number[i], i) < (number[k], k)`. For `k ≠ i`, whatever
+`k` does next, it does not overtake `i` (`aheadOf_step_other`). For `k = i` a process's own step
+can falsify it: from `write 0` with `number[i] = 0`, the write step moves to `exit` with
+`number[i] = 1`, and `Before` is strict. -/
 def AheadOf (s : State N) (i k : Fin N) : Prop :=
   match s.pc k with
   | .ncs => True
