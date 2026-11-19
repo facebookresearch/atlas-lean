@@ -61,8 +61,10 @@ rate `q i` (injection `q i > 0`, production `q i < 0`). The cell rate is the tra
 with well mass rates `qI i - qP i`, and to energy, with the enthalpy flux `Fm j * h_j`
 (`h = e + p / ρ` the energy-port enthalpy `ControlVolumes.specificEnthalpy`, flow work counted
 once) and the well energy rate `qI i * hI i - qP i * h_i`: the produced fluid leaves at the
-production mass rate `qP i` with the cell's own enthalpy. This is accounting only: no positivity,
-monotonicity or convergence is claimed. The no-flux specialization
+production mass rate `qP i` with the cell's own enthalpy. Face and cell densities are positive, as
+`ControlVolumes.portEnergyRate_eq_massFlow` requires `ρ ≠ 0`: at `ρ = 0`, Lean's `x / 0 = 0`
+would drop the flow work from the enthalpy. This is accounting only: no positivity of the
+stocks, monotonicity or convergence is claimed. The no-flux specialization
 `sum_add_mul_discreteBalance_of_noFlux` conserves the stock and so cannot represent an open chain
 with wells and an outlet.
 
@@ -412,16 +414,19 @@ noncomputable def wellCellRate {n : ℕ} (Δx : {x : ℝ // 0 < x}) (F : Fin (n 
 
 /-- Enthalpy flux through face `j`: the signed mass flux `Fm j` times the specific enthalpy
 `specificEnthalpy (ef j) (pf j) (ρf j)` of the fluid crossing the face (flow work counted once,
-inside the enthalpy). -/
-noncomputable def faceEnthalpyFlux {n : ℕ} (Fm ef pf ρf : Fin (n + 1) → ℝ) (j : Fin (n + 1)) :
-    ℝ :=
+inside the enthalpy). The face densities are positive (`_hρf`): at `ρ = 0` Lean's `x / 0 = 0`
+would turn the enthalpy into `e` and drop the flow work. -/
+noncomputable def faceEnthalpyFlux {n : ℕ} (Fm ef pf ρf : Fin (n + 1) → ℝ)
+    (_hρf : ∀ j, 0 < ρf j) (j : Fin (n + 1)) : ℝ :=
   Fm j * ControlVolumes.specificEnthalpy (ef j) (pf j) (ρf j)
 
 /-- Well energy rate of cell `i`: the injection rate `qI i` at the injected specific enthalpy
 `hI i`, minus the production rate `qP i` at the cell's own specific enthalpy
 `specificEnthalpy (ec i) (pc i) (ρc i)`. The signed well mass rate of the cell is `qI i - qP i`,
-and the produced enthalpy leaves at the same production rate `qP i`. -/
-noncomputable def wellEnergyRate {n : ℕ} (qI qP hI ec pc ρc : Fin n → ℝ) (i : Fin n) : ℝ :=
+and the produced enthalpy leaves at the same production rate `qP i`. The cell densities are
+positive (`_hρc`), as the face densities of `faceEnthalpyFlux`. -/
+noncomputable def wellEnergyRate {n : ℕ} (qI qP hI ec pc ρc : Fin n → ℝ)
+    (_hρc : ∀ i, 0 < ρc i) (i : Fin n) : ℝ :=
   qI i * hI i - qP i * ControlVolumes.specificEnthalpy (ec i) (pc i) (ρc i)
 
 /-- **Finite-volume ledger with wells.** The cell rates sum to the transport total
@@ -453,24 +458,25 @@ lemma stock_add_mul_wellCellRate {n : ℕ} (Δx : {x : ℝ // 0 < x}) (dt : ℝ)
 
 /-- **Well and boundary sources in the energy ledger.** On a chain of `n` cells of common
 positive volume `Δx`, with signed face mass fluxes `Fm` (one per face, shared by the mass and the
-energy ledger), injection rates `qI` at specific enthalpies `hI` and production rates `qP` at the
-cell enthalpies `specificEnthalpy (ec i) (pc i) (ρc i)`, one explicit step of the mass densities
-`m` and the energy densities `E` changes the total mass by `dt ((Fm 0 - Fm n) + ∑ (qI - qP))`
-and the total energy by `dt` times the net boundary enthalpy inflow plus the well energy
-total. -/
+energy ledger), positive face densities `ρf` and cell densities `ρc`, injection rates `qI` at
+specific enthalpies `hI` and production rates `qP` at the cell enthalpies
+`specificEnthalpy (ec i) (pc i) (ρc i)`, one explicit step of the mass densities `m` and the
+energy densities `E` changes the total mass by `dt ((Fm 0 - Fm n) + ∑ (qI - qP))` and the total
+energy by `dt` times the net boundary enthalpy inflow plus the well energy total. -/
 lemma well_boundary_ledger {n : ℕ} (Δx : {x : ℝ // 0 < x}) (dt : ℝ) (m E : Fin n → ℝ)
-    (Fm ef pf ρf : Fin (n + 1) → ℝ) (qI qP hI ec pc ρc : Fin n → ℝ) :
+    (Fm ef pf ρf : Fin (n + 1) → ℝ) (qI qP hI ec pc ρc : Fin n → ℝ) (hρf : ∀ j, 0 < ρf j)
+    (hρc : ∀ i, 0 < ρc i) :
     Δx * ∑ i, (m i + dt * wellCellRate Δx Fm (fun i => qI i - qP i) i) =
         Δx * ∑ i, m i + dt * ((Fm 0 - Fm (Fin.last n)) + ∑ i, (qI i - qP i)) ∧
-      Δx * ∑ i, (E i + dt * wellCellRate Δx (faceEnthalpyFlux Fm ef pf ρf)
-          (wellEnergyRate qI qP hI ec pc ρc) i) =
-        Δx * ∑ i, E i + dt * ((faceEnthalpyFlux Fm ef pf ρf 0 -
-          faceEnthalpyFlux Fm ef pf ρf (Fin.last n)) +
-            ∑ i, wellEnergyRate qI qP hI ec pc ρc i) := by
+      Δx * ∑ i, (E i + dt * wellCellRate Δx (faceEnthalpyFlux Fm ef pf ρf hρf)
+          (wellEnergyRate qI qP hI ec pc ρc hρc) i) =
+        Δx * ∑ i, E i + dt * ((faceEnthalpyFlux Fm ef pf ρf hρf 0 -
+          faceEnthalpyFlux Fm ef pf ρf hρf (Fin.last n)) +
+            ∑ i, wellEnergyRate qI qP hI ec pc ρc hρc i) := by
   refine ⟨?_, ?_⟩
   · exact (stock_add_mul_wellCellRate Δx dt m Fm (fun i => qI i - qP i)).2
-  · exact (stock_add_mul_wellCellRate Δx dt E (faceEnthalpyFlux Fm ef pf ρf)
-      (wellEnergyRate qI qP hI ec pc ρc)).2
+  · exact (stock_add_mul_wellCellRate Δx dt E (faceEnthalpyFlux Fm ef pf ρf hρf)
+      (wellEnergyRate qI qP hI ec pc ρc hρc)).2
 
 end WellLedger
 
