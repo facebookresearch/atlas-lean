@@ -37,10 +37,13 @@ Model inputs (hypotheses of the module):
 
 Moving the reference point from `O` to `O'` keeps the resultant and adds `(O - O') ⨯₃ R` to the
 moment. The moment is therefore the same about every point when the resultant vanishes, and some
-reference point changes it when the resultant does not. Projecting the system onto the plane of
-the first two axes keeps only the third moment component, the planar moment
-`PhyslibExt.Mechanics.HarmonicMechanics.moment2D`, whose shift law is
-`PhyslibExt.Mechanics.HarmonicMechanics.moment2D_shift`; a force normal to that plane can carry a
+reference point changes it when the resultant does not.
+
+The planar projection concerns the forces alone, with the free couples discarded: the planar
+moment `PhyslibExt.Mechanics.HarmonicMechanics.moment2D` carries no couples. For the forces,
+projection onto the plane of the first two axes keeps only the third component of the moment about
+the origin, which is the planar moment of the projected forces; its shift law is
+`PhyslibExt.Mechanics.HarmonicMechanics.moment2D_shift`. A force normal to that plane can carry a
 nonzero moment that the projection loses.
 
 Non-goals: equilibrium of a constrained body, reactions, distributed loads, the central axis of a
@@ -52,17 +55,18 @@ wrench, and any empirical adequacy or system safety claim.
   `M_O' = M_O + (O - O') ⨯₃ R`, for the moment and for the wrench record.
 - `momentAbout_eq_of_resultantForce_eq_zero`, `exists_momentAbout_ne_of_resultantForce_ne_zero` :
   the moment is origin independent exactly when the resultant vanishes.
-- `wrenchAbout_smul` : the resultant scales with the force unit, the moment with the product of
-  the length and force units.
-- `moment2D_planarPart` : the planar moment of the projected system is the third component of the
-  moment.
+- `wrenchAbout_smul` : with positions and the reference point scaled by a length factor, forces
+  by a force factor and couples by the product of the two, the resultant scales with the force
+  factor and the moment with the product.
+- `moment2D_planarPart` : for the forces alone, free couples discarded, the planar moment of the
+  projected forces is the third component of their moment about the origin.
 
 ## iii. Table of contents
 
 - A. Resultant, moment and wrench of a finite load system
 - B. Origin transport and origin invariance
 - C. Units
-- D. Planar projection
+- D. Planar projection of the forces
 
 ## iv. References
 
@@ -195,14 +199,15 @@ lemma wrenchAbout_smul (ℓ f : ℝ) (r F C : ι → Fin 3 → ℝ) (O : Fin 3 �
     simp_rw [← smul_sub, hs, ← smul_add]
     exact Finset.smul_sum.symm
 
-/-! ## D. Planar projection -/
+/-! ## D. Planar projection of the forces -/
 
 /-- Components on the plane of the first two axes. -/
 def planarPart (v : Fin 3 → ℝ) : Fin 2 → ℝ :=
   ![v 0, v 1]
 
-/-- The planar moment of the projected forces about the origin is the third component of the
-moment about the origin of the forces alone. -/
+/-- Force-only planar projection: the planar moment of the projected forces about the origin is the
+third component of the moment about the origin of the forces alone, with the free couples discarded
+(`C = 0`), since the planar moment carries no couples. -/
 lemma moment2D_planarPart (r F : ι → Fin 3 → ℝ) :
     moment2D (fun i => planarPart (r i)) (fun i => planarPart (F i)) =
       momentAbout r F (fun _ => 0) 0 2 := by
