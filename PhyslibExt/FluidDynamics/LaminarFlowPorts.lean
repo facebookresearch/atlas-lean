@@ -17,8 +17,11 @@ public import Physlib.FluidDynamics.CauchyFlow.NavierStokes
 public import Physlib.FluidDynamics.FluidFlow.Incompressible
 public import PhyslibExt.EarthScience.BernoulliStreamline
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+public import Mathlib.Analysis.SpecialFunctions.PolarCoord
+public import PhyslibExt.FluidDynamics.PipeFrictionPorts
 import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+import Mathlib.MeasureTheory.Integral.Prod
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.Linarith
@@ -35,7 +38,9 @@ arbitrary origin, discharge the hypotheses of the coordinate streamline Bernoull
 Couette flow, with its Newtonian stress, satisfies Physlib's incompressibility, continuity and
 Navier-Stokes predicates, and so does plane Poiseuille flow, which carries the flow rate
 `G H³ / (12 μ)` per unit width. Cylindrical Poiseuille flow satisfies them on all of `Space` and
-vanishes on the lateral wall of the pipe.
+vanishes on the lateral wall of the pipe; integrated over a cross-section by the polar change of
+variables it carries the flow rate `π G R⁴ / (8 μ)`, and its laminar Darcy friction factor on the
+diameter is `64 / Re`.
 
 ## i. Overview
 
@@ -89,6 +94,25 @@ with no body force on all of `Space`. The velocity vanishes on the lateral wall
 the axial velocity is positive inside the pipe, with centerline value `G R² / (4 μ)`. Keeping the
 velocity but reversing the pressure gradient to `p₀ + G z` leaves the axial momentum residual
 `-2 G`, so that flow is not a Navier-Stokes solution for `G ≠ 0`.
+
+Parts P-Q integrate cylindrical Poiseuille flow over a cross-section. The cross-section
+`x 2 = z` has the transverse coordinates `q = (x 0, x 1) ∈ ℝ × ℝ` with Lebesgue measure, and the
+pipe disk is the Euclidean disk `q.1² + q.2² ≤ R²` (a ball of `ℝ × ℝ`, whose norm is the sup
+norm, would be a square). The flow rate is the integral of the disk indicator times the axial
+component of the velocity field; the integrand is integrable, and Mathlib's polar change of
+variables `integral_comp_polarCoord_symm` with the fundamental theorem of calculus
+`intervalIntegral.integral_eq_sub_of_hasDerivAt` gives `Q = π G R⁴ / (8 μ)` for `R > 0`. The disk
+has area `π R²`, so the mean velocity is `V = Q / (π R²) = G R² / (8 μ)`, half the centerline
+speed. The Darcy friction factor of a pressure drop `Δp` over a length `L` of a duct of diameter
+`D` at the mean velocity `V` is `f = 2 D Δp / (ρ V² L)`, the Darcy-Weisbach relation
+`Δp = f (L / D) ρ V² / 2` solved for `f`. For the Poiseuille drop `Δp = G L` on the diameter
+`D = 2 R` with `G, μ, R, L > 0`, `f = 64 / Re` with the Reynolds number `Re = ρ |V| D / μ` of
+`EngineeringScaling.reynoldsNumber`, and the Fanning factor is `f / 4 = 16 / Re`; a Reynolds
+number on the radius, or swapping the two conventions, fails these identities. With the
+Darcy-Weisbach loss coefficient of `FluidDynamics.PipeFrictionPorts`, the factor `64 / Re`
+reproduces the pressure drop `G L` at the flow rate `Q` in both flow directions, while the
+Fanning value read as a Darcy factor gives `G L / 4`. The law `f = 64 / Re` is derived here, not
+an empirical correlation, and no turbulent law is derived.
 
 ## ii. Key results
 
@@ -144,6 +168,20 @@ velocity but reversing the pressure gradient to `p₀ + G z` leaves the axial mo
   physical hypotheses `ρ, μ, G, R > 0`.
 - `FlowCoordinateBernoulli.pipeReversedFlow_not_navierStokes`: reversing the pressure gradient
   alone breaks the momentum balance.
+- `FlowCoordinateBernoulli.integrable_pipeAxialFlux`: the disk-restricted axial velocity is
+  integrable.
+- `FlowCoordinateBernoulli.pipeDisk_measureReal`: the pipe disk has area `π R²`.
+- `FlowCoordinateBernoulli.pipeFlowRate_eq`: the flow rate `π G R⁴ / (8 μ)`.
+- `FlowCoordinateBernoulli.pipeMeanVelocity_eq`, `FlowCoordinateBernoulli.pipeMeanVelocity_pos`:
+  the mean velocity `G R² / (8 μ)`, positive for `G, μ, R > 0`.
+- `FlowCoordinateBernoulli.pipeCenterline_eq_two_mul_meanVelocity`: the centerline speed is
+  twice the mean velocity.
+- `FlowCoordinateBernoulli.pipe_darcyFactor_eq`, `FlowCoordinateBernoulli.pipe_fanningFactor_eq`:
+  the laminar Darcy factor `64 / Re` and Fanning factor `16 / Re`.
+- `FlowCoordinateBernoulli.pipe_darcyFactor_checks`: a Reynolds number on the radius and the
+  Darcy/Fanning swaps fail the factor check.
+- `FlowCoordinateBernoulli.pipe_frictionPressureDrop_eq`: the Darcy-Weisbach loss with the
+  factor `64 / Re` is the Poiseuille pressure drop.
 
 ## iii. Table of contents
 
@@ -162,6 +200,8 @@ velocity but reversing the pressure gradient to `p₀ + G z` leaves the axial mo
 - M. Newtonian stress, continuity and Navier-Stokes for cylindrical Poiseuille flow
 - N. The pipe restriction and its lateral wall
 - O. Reversed pressure gradient
+- P. The pipe cross-section and its flow rate
+- Q. Reynolds number and the Darcy and Fanning factors
 
 ## iv. References
 
@@ -169,10 +209,16 @@ velocity but reversing the pressure gradient to `p₀ + G z` leaves the axial mo
 - Physlib's `FluidDynamics.Euler`, `FluidDynamics.CauchyFlow.HasBodyForcePotential` and
   `FluidDynamics.bernoulliFunction`.
 - F. M. White, *Viscous Fluid Flow*, 3rd ed., McGraw-Hill (2006), Chapter 3: Couette and
-  Poiseuille flow between parallel plates, and Hagen-Poiseuille flow in a circular pipe.
+  Poiseuille flow between parallel plates, and Hagen-Poiseuille flow in a circular pipe with its
+  flow rate, mean velocity and laminar friction factor.
+- F. M. White, *Fluid Mechanics*, McGraw-Hill, chapter 6: the Darcy-Weisbach relation, the Darcy
+  and Fanning friction factors (`f_D = 4 f_F`) and the laminar law `f = 64 / Re_d`.
 - Physlib's `FluidDynamics.NavierStokes`, `FluidDynamics.ConvectiveNavierStokes`,
   `FluidDynamics.CauchyFlow.IsNewtonian`, `FluidDynamics.FluidFlow.SmoothIncompressible` and
   `FluidDynamics.navier_stokes_iff_convective_navier_stokes`.
+- Mathlib's `integral_comp_polarCoord_symm` and `intervalIntegral.integral_eq_sub_of_hasDerivAt`;
+  `EngineeringScaling.reynoldsNumber` (`PhyslibExt.ContinuumMechanics.EngineeringScaling`) and the
+  Darcy-Weisbach loss of `PhyslibExt.FluidDynamics.PipeFrictionPorts`.
 -/
 
 @[expose] public section
@@ -1340,5 +1386,243 @@ lemma pipeReversedFlow_not_navierStokes {μ G : ℝ} (hμ : μ ≠ 0) (hG : G �
   simp [matrixDiv_apply, Fin.sum_univ_three, dp, d0, d1] at h2c
   apply hG
   linarith
+
+section PipeFlowRate
+
+open MeasureTheory Set Real EngineeringScaling FluidDynamics.PipeFrictionPorts
+
+/-! ## P. The pipe cross-section and its flow rate -/
+
+/-- The closed pipe disk `{q | q.1² + q.2² ≤ R²}` of a cross-section, in transverse
+coordinates `q = (x 0, x 1)`. -/
+def pipeDisk (R : ℝ) : Set (ℝ × ℝ) := {q | q.1 ^ 2 + q.2 ^ 2 ≤ R ^ 2}
+
+/-- The point of `Space` with transverse coordinates `q` on the cross-section `x 2 = z`. -/
+def crossSectionPoint (z : ℝ) (q : ℝ × ℝ) : Space := ⟨![q.1, q.2, z]⟩
+
+/-- The axial velocity of cylindrical Poiseuille flow on the cross-section `x 2 = z`, restricted
+to the pipe disk and extended by zero: the integrand of the volumetric flow rate. -/
+noncomputable def pipeAxialFlux (G μ R z : ℝ) : ℝ × ℝ → ℝ :=
+  (pipeDisk R).indicator fun q => pipePoiseuilleVelocity G μ R (crossSectionPoint z q) 2
+
+/-- The volumetric flow rate through the cross-section `x 2 = z`: the Lebesgue integral of the
+axial velocity over the pipe disk. -/
+noncomputable def pipeFlowRate (G μ R z : ℝ) : ℝ := ∫ q, pipeAxialFlux G μ R z q
+
+/-- The mean velocity `V = Q / (π R²)` of the pipe flow. -/
+noncomputable def pipeMeanVelocity (G μ R z : ℝ) : ℝ := pipeFlowRate G μ R z / (π * R ^ 2)
+
+/-- The axial velocity at a cross-section point. -/
+private lemma pipeVelocity_crossSectionPoint (G μ R z : ℝ) (q : ℝ × ℝ) :
+    pipePoiseuilleVelocity G μ R (crossSectionPoint z q) 2 =
+      G * (R ^ 2 - q.1 ^ 2 - q.2 ^ 2) / (4 * μ) := by
+  simp [pipePoiseuilleVelocity, crossSectionPoint]
+
+/-- The pipe disk is measurable. -/
+private lemma pipeDisk_measurableSet (R : ℝ) : MeasurableSet (pipeDisk R) :=
+  measurableSet_le (by fun_prop) measurable_const
+
+/-- The polar form of a disk integral of a radial function: for `R > 0`, the integral over the
+polar target of `r • 1_disk h (q.1² + q.2²)` at `q = (r cos θ, r sin θ)` is
+`2 π ∫₀ᴿ r h (r²) dr`. -/
+private lemma polar_pipeDisk_radial {R : ℝ} (hR : 0 < R) (h : ℝ → ℝ) :
+    ∫ p in polarCoord.target, p.1 • (pipeDisk R).indicator (fun q => h (q.1 ^ 2 + q.2 ^ 2))
+        (polarCoord.symm p) =
+      2 * π * ∫ r in (0 : ℝ)..R, r * h (r ^ 2) := by
+  have hcongr : EqOn
+      (fun p : ℝ × ℝ => p.1 • (pipeDisk R).indicator (fun q => h (q.1 ^ 2 + q.2 ^ 2))
+        (polarCoord.symm p))
+      (fun p : ℝ × ℝ => (Iic R).indicator (fun r => r * h (r ^ 2)) p.1 * (fun _ => (1 : ℝ)) p.2)
+      polarCoord.target := by
+    rintro ⟨r, θ⟩ ⟨hr, -⟩
+    have hr0 : 0 < r := hr
+    have hsq : (r * cos θ) ^ 2 + (r * sin θ) ^ 2 = r ^ 2 := by
+      linear_combination r ^ 2 * sin_sq_add_cos_sq θ
+    simp only [polarCoord_symm_apply, smul_eq_mul, mul_one]
+    by_cases hrR : r ≤ R
+    · have hmem : (r * cos θ, r * sin θ) ∈ pipeDisk R := by
+        simp only [pipeDisk, mem_ofPred_eq, hsq]
+        nlinarith
+      rw [indicator_of_mem hmem, indicator_of_mem (show r ∈ Iic R from hrR), hsq]
+    · have hnmem : (r * cos θ, r * sin θ) ∉ pipeDisk R := by
+        simp only [pipeDisk, mem_ofPred_eq, hsq, not_le]
+        nlinarith
+      rw [indicator_of_notMem hnmem, indicator_of_notMem (show r ∉ Iic R from hrR), mul_zero]
+  rw [setIntegral_congr_fun polarCoord.open_target.measurableSet hcongr, polarCoord_target,
+    Measure.volume_eq_prod,
+    setIntegral_prod_mul ((Iic R).indicator fun r => r * h (r ^ 2)) (fun _ => (1 : ℝ)),
+    setIntegral_const, smul_eq_mul, mul_one, volume_real_Ioo_of_le (by linarith [pi_pos]),
+    setIntegral_indicator measurableSet_Iic, Ioi_inter_Iic,
+    ← intervalIntegral.integral_of_le hR.le]
+  ring
+
+/-- **Integrability.** The disk-restricted axial velocity is Lebesgue integrable on the
+cross-section plane: it is continuous on the compact disk and zero outside it. -/
+lemma integrable_pipeAxialFlux (G μ R z : ℝ) : Integrable (pipeAxialFlux G μ R z) := by
+  have hsq : ∀ q ∈ pipeDisk R, q.1 ^ 2 ≤ R ^ 2 ∧ q.2 ^ 2 ≤ R ^ 2 := fun q hq => by
+    simp only [pipeDisk, mem_ofPred_eq] at hq
+    exact ⟨by nlinarith [sq_nonneg q.2], by nlinarith [sq_nonneg q.1]⟩
+  have hK : IsCompact (pipeDisk R) := by
+    refine Metric.isCompact_of_isClosed_isBounded
+      (isClosed_le (by fun_prop) continuous_const) ?_
+    refine (Metric.isBounded_closedBall (x := (0 : ℝ × ℝ)) (r := |R|)).subset fun q hq => ?_
+    rw [Metric.mem_closedBall, dist_zero_right, Prod.norm_def, Real.norm_eq_abs,
+      Real.norm_eq_abs]
+    exact max_le (sq_le_sq.mp (hsq q hq).1) (sq_le_sq.mp (hsq q hq).2)
+  have hcont :
+      Continuous fun q : ℝ × ℝ => pipePoiseuilleVelocity G μ R (crossSectionPoint z q) 2 := by
+    simp only [pipeVelocity_crossSectionPoint]
+    fun_prop
+  exact (hcont.continuousOn.integrableOn_compact hK).integrable_indicator
+    (pipeDisk_measurableSet R)
+
+/-- **Cross-section area.** For `R > 0` the pipe disk has Lebesgue measure `π R²`, by the polar
+change of variables. -/
+lemma pipeDisk_measureReal {R : ℝ} (hR : 0 < R) : volume.real (pipeDisk R) = π * R ^ 2 := by
+  have hF : ∀ r ∈ uIcc 0 R, HasDerivAt (fun r : ℝ => r ^ 2 / 2) (r * 1) r :=
+    fun r _ => ((hasDerivAt_pow 2 r).div_const 2).congr_deriv (by push_cast; ring)
+  have hint : IntervalIntegrable (fun r : ℝ => r * 1) volume 0 R :=
+    (by fun_prop : Continuous fun r : ℝ => r * 1).intervalIntegrable _ _
+  have hfun : (pipeDisk R).indicator (1 : ℝ × ℝ → ℝ) = (pipeDisk R).indicator fun _ => 1 := rfl
+  rw [← integral_indicator_one (pipeDisk_measurableSet R), hfun, ← integral_comp_polarCoord_symm,
+    polar_pipeDisk_radial hR (fun _ => 1), intervalIntegral.integral_eq_sub_of_hasDerivAt hF hint]
+  ring
+
+/-- **Flow rate (Hagen-Poiseuille).** For `R > 0` the flow rate of cylindrical Poiseuille flow
+through every cross-section is `Q = π G R⁴ / (8 μ)`: the polar change of variables turns the disk
+integral of the axial velocity into `2 π ∫₀ᴿ r G (R² - r²) / (4 μ) dr`. -/
+lemma pipeFlowRate_eq {R : ℝ} (hR : 0 < R) (G μ z : ℝ) :
+    pipeFlowRate G μ R z = π * G * R ^ 4 / (8 * μ) := by
+  have hF : ∀ r ∈ uIcc 0 R,
+      HasDerivAt (fun r : ℝ => G / (4 * μ) * (R ^ 2 * r ^ 2 / 2 - r ^ 4 / 4))
+        (r * (G * (R ^ 2 - r ^ 2) / (4 * μ))) r := fun r _ =>
+    (((((hasDerivAt_pow 2 r).const_mul (R ^ 2)).div_const 2).sub
+      ((hasDerivAt_pow 4 r).div_const 4)).const_mul (G / (4 * μ))).congr_deriv
+      (by push_cast; ring)
+  have hint : IntervalIntegrable (fun r : ℝ => r * (G * (R ^ 2 - r ^ 2) / (4 * μ))) volume 0 R :=
+    (by fun_prop : Continuous fun r : ℝ => r * (G * (R ^ 2 - r ^ 2) / (4 * μ))).intervalIntegrable
+      _ _
+  have hfun : pipeAxialFlux G μ R z =
+      (pipeDisk R).indicator fun q => G * (R ^ 2 - (q.1 ^ 2 + q.2 ^ 2)) / (4 * μ) := by
+    unfold pipeAxialFlux
+    congr 1
+    funext q
+    rw [pipeVelocity_crossSectionPoint]
+    ring
+  rw [pipeFlowRate, hfun, ← integral_comp_polarCoord_symm,
+    polar_pipeDisk_radial hR (fun s => G * (R ^ 2 - s) / (4 * μ)),
+    intervalIntegral.integral_eq_sub_of_hasDerivAt hF hint]
+  ring
+
+/-- **Mean velocity.** For `R > 0`, `V = Q / (π R²) = G R² / (8 μ)`. -/
+lemma pipeMeanVelocity_eq {R : ℝ} (hR : 0 < R) (G μ z : ℝ) :
+    pipeMeanVelocity G μ R z = G * R ^ 2 / (8 * μ) := by
+  rw [pipeMeanVelocity, pipeFlowRate_eq hR]
+  have hπ := pi_pos
+  rcases eq_or_ne μ 0 with rfl | hμ
+  · simp
+  · field_simp
+
+/-- The mean velocity is positive for `G, μ, R > 0`. -/
+lemma pipeMeanVelocity_pos {G μ R : ℝ} (hG : 0 < G) (hμ : 0 < μ) (hR : 0 < R) (z : ℝ) :
+    0 < pipeMeanVelocity G μ R z := by
+  rw [pipeMeanVelocity_eq hR]
+  positivity
+
+/-- **Centerline speed.** For `R > 0` the axial velocity on the axis is twice the mean velocity:
+`G R² / (4 μ) = 2 V`. -/
+lemma pipeCenterline_eq_two_mul_meanVelocity {R : ℝ} (hR : 0 < R) (G μ z : ℝ) :
+    pipePoiseuilleVelocity G μ R (crossSectionPoint z (0, 0)) 2 =
+      2 * pipeMeanVelocity G μ R z := by
+  rw [pipeVelocity_crossSectionPoint, pipeMeanVelocity_eq hR]
+  ring
+
+/-! ## Q. Reynolds number and the Darcy and Fanning factors -/
+
+/-- The Darcy friction factor `f = 2 D Δp / (ρ V² L)` of a pressure drop `Δp` over a length `L`
+of a duct of diameter `D` carrying a fluid of density `ρ` at the mean velocity `V`: the
+Darcy-Weisbach relation `Δp = f (L / D) ρ V² / 2` solved for `f`. -/
+noncomputable def darcyFactorOfDrop (Δp L D ρ V : ℝ) : ℝ := 2 * D * Δp / (ρ * V ^ 2 * L)
+
+/-- The Reynolds number of the pipe flow on the diameter: `ρ |V| (2 R) / μ = ρ G R³ / (4 μ²)`. -/
+private lemma pipe_reynolds_eq {ρ μ G R : ℝ} (hμ : 0 < μ) (hG : 0 < G) (hR : 0 < R) (z : ℝ) :
+    reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ = ρ * G * R ^ 3 / (4 * μ ^ 2) := by
+  rw [reynoldsNumber_val, pipeMeanVelocity_eq hR, abs_of_pos (by positivity)]
+  field_simp
+  ring
+
+/-- **Laminar Darcy factor.** For `G, μ, R, L > 0` (positive length, radius and mean flow), the
+Darcy factor of the Poiseuille pressure drop `G L` over the length `L` on the diameter `D = 2 R`
+at the mean velocity `V` is `64 / Re`, with `Re = ρ |V| D / μ`. -/
+lemma pipe_darcyFactor_eq {ρ μ G R L : ℝ} (hμ : 0 < μ) (hG : 0 < G) (hR : 0 < R) (hL : 0 < L)
+    (z : ℝ) :
+    darcyFactorOfDrop (G * L) L (2 * R) ρ (pipeMeanVelocity G μ R z) =
+      64 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ := by
+  rw [pipe_reynolds_eq hμ hG hR, darcyFactorOfDrop, pipeMeanVelocity_eq hR]
+  rcases eq_or_ne ρ 0 with rfl | hρ
+  · simp
+  · field_simp
+    ring
+
+/-- **Fanning factor.** Under the hypotheses of `pipe_darcyFactor_eq`, the Fanning factor
+`f / 4` of `FrictionConvention.fanning` is `16 / Re`. -/
+lemma pipe_fanningFactor_eq {ρ μ G R L : ℝ} (hμ : 0 < μ) (hG : 0 < G) (hR : 0 < R)
+    (hL : 0 < L) (z : ℝ) :
+    darcyFactorOfDrop (G * L) L (2 * R) ρ (pipeMeanVelocity G μ R z) / 4 =
+      16 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ := by
+  rw [pipe_darcyFactor_eq hμ hG hR hL]
+  ring
+
+/-- **Factor checks.** For `ρ, μ, G, R, L > 0` the laminar Darcy factor `f` is not `64` over the
+Reynolds number on the radius `R`, the Fanning factor `f / 4` is not `64 / Re`, and `f` is not
+`16 / Re`. -/
+lemma pipe_darcyFactor_checks {ρ μ G R L : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hG : 0 < G)
+    (hR : 0 < R) (hL : 0 < L) (z : ℝ) :
+    darcyFactorOfDrop (G * L) L (2 * R) ρ (pipeMeanVelocity G μ R z) ≠
+        64 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨R⟩ ⟨μ⟩ hμ ∧
+      darcyFactorOfDrop (G * L) L (2 * R) ρ (pipeMeanVelocity G μ R z) / 4 ≠
+        64 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ ∧
+      darcyFactorOfDrop (G * L) L (2 * R) ρ (pipeMeanVelocity G μ R z) ≠
+        16 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ := by
+  have hV := pipeMeanVelocity_pos hG hμ hR z
+  have hRe : reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨R⟩ ⟨μ⟩ hμ =
+      reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ / 2 := by
+    simp only [reynoldsNumber_val]
+    ring
+  have hpos : 0 < reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ := by
+    rw [reynoldsNumber_val]
+    simp only
+    rw [abs_of_pos hV]
+    positivity
+  rw [pipe_darcyFactor_eq hμ hG hR hL, hRe]
+  refine ⟨fun h => ?_, fun h => ?_, fun h => ?_⟩ <;> field_simp at h <;> linarith
+
+/-- **The Darcy-Weisbach loss of `PipeFrictionPorts`.** For `ρ, μ, R > 0` and every `G`, the
+loss coefficient `c = f L ρ / (2 D A²)` of the pipe (`D = 2 R`, `A = π R²`) with the laminar
+Darcy factor `f = 64 / Re` gives the oriented pressure drop `c Q |Q| = G L` at the flow rate `Q`,
+in both flow directions; the Fanning value `16 / Re` read as a Darcy factor gives `G L / 4`. -/
+lemma pipe_frictionPressureDrop_eq {ρ μ R : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hR : 0 < R)
+    (G L z : ℝ) :
+    frictionPressureDrop (darcyCoefficient
+        (64 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ) L (2 * R)
+        (π * R ^ 2) ρ) (pipeFlowRate G μ R z) = G * L ∧
+      frictionPressureDrop (darcyCoefficient
+        (16 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ) L (2 * R)
+        (π * R ^ 2) ρ) (pipeFlowRate G μ R z) = G * L / 4 := by
+  rcases eq_or_ne G 0 with rfl | hG
+  · simp [frictionPressureDrop, pipeFlowRate_eq hR]
+  have hπ := pi_pos
+  have hGa : 0 < |G| := abs_pos.mpr hG
+  have hV : |pipeMeanVelocity G μ R z| = |G| * R ^ 2 / (8 * μ) := by
+    rw [pipeMeanVelocity_eq hR, abs_div, abs_mul, abs_of_pos (by positivity : (0 : ℝ) < R ^ 2),
+      abs_of_pos (by positivity : (0 : ℝ) < 8 * μ)]
+  have hQ : |pipeFlowRate G μ R z| = π * |G| * R ^ 4 / (8 * μ) := by
+    rw [pipeFlowRate_eq hR, abs_div, abs_mul, abs_mul, abs_of_pos hπ,
+      abs_of_pos (by positivity : (0 : ℝ) < R ^ 4), abs_of_pos (by positivity : (0 : ℝ) < 8 * μ)]
+  simp only [frictionPressureDrop, darcyCoefficient, reynoldsNumber_val]
+  rw [hV, hQ, pipeFlowRate_eq hR]
+  constructor <;> field_simp <;> ring
+
+end PipeFlowRate
 
 end FlowCoordinateBernoulli

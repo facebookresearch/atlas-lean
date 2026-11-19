@@ -10,6 +10,7 @@ module
 public import PhyslibExt.FluidDynamics.LaminarFlowPorts
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 
 /-!
 # Tests for `PhyslibExt.FluidDynamics.LaminarFlowPorts`
@@ -36,7 +37,10 @@ Checked consumers:
   at water-like parameters;
 - cylindrical Poiseuille flow: the centerline velocity and a wall point
   at rest for `G = 4`, `μ = 1`, `R = 1`, and the witness and the
-  reversed-gradient failure at water-like parameters.
+  reversed-gradient failure at water-like parameters;
+- the pipe flow rate `π / 200000`, mean velocity `1 / 20`, centerline
+  speed `1 / 10`, Reynolds number `1000` and laminar Darcy factor
+  `8 / 125 = 64 / 1000` of a water-like pipe.
 -/
 
 @[expose] public section
@@ -255,5 +259,35 @@ example (lam p₀ : ℝ) (t : Time) :
     (by norm_num) 1000 lam p₀ (1 / 100)⟩
   rw [(hc t 0).1]
   norm_num
+
+section PipeFlowRate
+
+open Real EngineeringScaling
+
+/-- **Water-like fixture.** A pipe of radius `1 / 100` carrying a fluid of viscosity `1 / 1000`
+and density `1000` under the pressure-drop rate `G = 4`: flow rate `π / 200000`, mean velocity
+`1 / 20`, centerline speed `1 / 10 = 2 (1 / 20)`, Reynolds number `1000` on the diameter and
+Darcy factor `8 / 125 = 64 / 1000` over the length `1`. -/
+lemma pipe_fixture (z : ℝ) :
+    pipeFlowRate 4 (1 / 1000) (1 / 100) z = π / 200000 ∧
+      pipeMeanVelocity 4 (1 / 1000) (1 / 100) z = 1 / 20 ∧
+      pipePoiseuilleVelocity 4 (1 / 1000) (1 / 100) (crossSectionPoint z (0, 0)) 2 = 1 / 10 ∧
+      reynoldsNumber ⟨1000⟩ ⟨pipeMeanVelocity 4 (1 / 1000) (1 / 100) z⟩ ⟨2 * (1 / 100)⟩
+        ⟨1 / 1000⟩ (by norm_num) = 1000 ∧
+      darcyFactorOfDrop (4 * 1) 1 (2 * (1 / 100)) 1000
+        (pipeMeanVelocity 4 (1 / 1000) (1 / 100) z) = 8 / 125 := by
+  have hV : pipeMeanVelocity 4 (1 / 1000) (1 / 100) z = 1 / 20 := by
+    rw [pipeMeanVelocity_eq (by norm_num)]
+    norm_num
+  refine ⟨by rw [pipeFlowRate_eq (by norm_num)]; ring, hV, ?_, ?_, ?_⟩
+  · rw [pipeCenterline_eq_two_mul_meanVelocity (by norm_num), hV]
+    norm_num
+  · rw [reynoldsNumber_val]
+    simp only [hV]
+    norm_num
+  · rw [darcyFactorOfDrop, hV]
+    norm_num
+
+end PipeFlowRate
 
 end PhyslibExtTest.FluidDynamics.LaminarFlowPorts
