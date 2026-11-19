@@ -15,14 +15,13 @@
 ## About ATLAS
 
 ATLAS provides reusable formal building blocks for human- and machine-assisted
-theorem proving across analysis, algebra, geometry, topology, probability,
-statistics, and theoretical computer science.
+theorem proving across mathematics, theoretical computer science, and physics.
 
 The project was generated with
 [AutoformBot](https://github.com/facebookresearch/autoform-bot), an
 autoformalization pipeline for developing Lean libraries at scale.
 
-## Formalized mathematics libraries
+## Formalized libraries
 
 The root Lake package is limited to seven libraries:
 
@@ -45,12 +44,6 @@ scripts/check.sh
 
 The existing `Atlas/` developments and archived `v1/` release are not part of
 this root build. They retain their own build configuration.
-
-Much of `MathlibExt`, `CSLibExt`, `WantedExt` and their tests comes from
-`fairinternal/formal-math`, which is an upstream source snapshot, not a Lake
-dependency. [`provenance/formal-math-sync.json`](provenance/README.md) records
-the upstream commit and, for every file taken from it, whether it is a
-header-only copy, a reviewed divergence, or retired.
 
 ## Dependency explorer
 
