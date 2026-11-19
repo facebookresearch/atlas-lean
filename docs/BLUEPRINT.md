@@ -44,23 +44,28 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
 ### Hierarchy
 
 1. **A page sits where `scripts/taxonomy.json` places its module or field:**
-   region, subject, field, subfield, then module folders. A subject with
+   subject, field, subfield, then module folders; regions only group subjects
+   on the root page. A subject with
    fields holds only field folders; `not-yet-classified/` holds modules the
-   taxonomy has not placed yet. *Reason:* the explorer and the coverage
-   counts are built from the taxonomy, so a page elsewhere is invisible to
-   both.
+   taxonomy has not placed yet. *Reason:* the taxonomy is the one record of
+   the hierarchy: `generate_wiki.py` lays out the folders from it, and
+   `sync_wiki.py declarations` places a module with no pages yet where it
+   says. A page placed elsewhere makes the vault and the taxonomy disagree.
 2. **Every page and subfolder is listed on its folder page** (`README.md`).
-   *Reason:* the site's navigation and Autoform's containment come from those
-   lists, so an unlisted page has no parent.
+   *Reason:* those lists are the site's navigation and reading order. Autoform
+   takes a page's parent from its folder, so an unlisted statement still has
+   one but appears only under "Other statements", and an unlisted planned page
+   or subfolder does not appear in its chapter at all.
 3. **Child limits follow the generator and Autoform's audit:**
    `scripts/generate_wiki.py` splits a topic listing into parts above 20
-   entries, a `navigation: module` page may hold 120 articles, and `autoform
-   audit` reports any other article with more than 24 direct children
-   (`overfull-container`). *Reason:* past those sizes a folder page and its
+   entries, a `navigation: module` page may hold 120 articles, the root page
+   (the subject index) 64, and `autoform audit` reports any other article
+   with more than 24 direct children (`overfull-container`). *Reason:* past those sizes a folder page and its
    local graph stop being readable.
 4. **Moving a module or folder is a taxonomy change, made in the same PR,**
    with `autoform move` to rewrite the links. *Reason:* a move made only in the
-   vault is undone by the next declarations sync.
+   vault leaves the taxonomy describing the old place, so the next module the
+   sync places, and the next generated layout, follow the old hierarchy.
 
 ### Data and metadata
 
@@ -69,12 +74,13 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
    Lean declaration. An `id` (`af_` and 24 hex digits) is unique and never
    changes. `sync_wiki.py declarations` gives one to every annotation it adds;
    the annotations that have none yet get theirs in a one-off fill after the
-   relink of #4302's declarations. `autoform links set` cannot do this, because
-   it does not write these per-subject files. *Reason:* Autoform reads an article's facts from its
-   annotation, and two annotations for one page, or one page for two
-   declarations, make its status ambiguous; `autoform work` refuses an
-   unfinished formalizable leaf without an `id`, so rule 14's tasks cannot be
-   listed until every one has one.
+   relink of [#4302](https://github.com/facebookresearch/atlas-lean/pull/4302)'s declarations
+   ([#5355](https://github.com/facebookresearch/atlas-lean/pull/5355)). `autoform links set` cannot
+   do this, because it does not write these per-subject files. *Reason:*
+   Autoform reads an article's facts from its annotation, and two annotations
+   for one page, or one page for two declarations, make its status ambiguous;
+   `autoform work` refuses an unfinished formalizable leaf without an `id`, so
+   rule 14's tasks cannot be listed until every one has one.
 6. **Pages for documented declarations come from `sync_wiki.py
    declarations`,** then may be edited. Don't hand-write a second page for a
    declaration. *Reason:* the sync tracks docstring changes per declaration;
@@ -106,9 +112,10 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
    those edges, and lean-facts rewrites the sections anyway.
 10. **A page with no Lean declaration (a planned page) may write its own
     `## Depends on` and `## Proof depends on`.** They count toward its
-    readiness, as Autoform's format says, and `lean-facts` leaves them, and any
-    `kind` its annotation records, alone on a page whose annotation never named
-    a declaration. *Reason:* nothing else records a planned node's
+    readiness, as Autoform's format says, and `lean-facts` leaves them alone on
+    a page whose annotation names no declaration, a held page included (a page
+    an earlier sync wrote with only a module and a name counts as linked). Such
+    a page has no `kind`, so it is not a task (rule 14). *Reason:* nothing else records a planned node's
     prerequisites.
 11. **`## Informally uses` lists only results the cited proof uses** but the
     Lean need not. What the statement needs (its definitions and ingredients)
@@ -141,8 +148,9 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
 
 14. **Formalization tasks are the articles Autoform finds ready:** ready to
     state (a `def_wanted`, or a definition in a module with `sorry`) or ready to
-    prove (a `theorem_wanted`, or a theorem in a module with `sorry`), with
-    every prerequisite finished. Proved and Mathlib-backed articles are never
+    prove (a `theorem_wanted`, or a theorem in a module with `sorry`), once
+    its prerequisites are as far along as Autoform requires: statement
+    prerequisites stated, proof prerequisites proved. Proved and Mathlib-backed articles are never
     tasks. *Reason:* one readiness rule, Autoform's, for the site, `autoform
     work list` and the task list.
 15. **A graph PR keeps under 3,000 changed files, names the issue it

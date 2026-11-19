@@ -143,7 +143,7 @@ class LeanFacts(Vault):
         index = SimpleNamespace(declarations={})
         for _ in range(2):
             counts, unlinked = sync.apply_lean_facts(index, {})
-            # A page that never named a declaration is planned, not unresolved.
+            # A page whose annotation names no declaration is planned, not unresolved.
             self.assertEqual(counts, {"articles": 0, "unresolved": 0, "edges": 0})
             self.assertEqual(unlinked, [])
             self.assertEqual(page.read_text(), "# Unlinked\n\nKeep the edited statement.\n")
@@ -289,18 +289,21 @@ class LeanFacts(Vault):
         self.assertNotIn("kind", row)
         self.assertNotIn("status", row)
 
-    def test_a_planned_page_keeps_its_own_facts(self) -> None:
-        # A page that never had a Lean link records its kind and prerequisites by hand (graph rule 10).
+    def test_a_planned_page_keeps_its_prerequisites_but_is_no_task(self) -> None:
+        # A page whose annotation names no declaration records its prerequisites by hand (Graph rules, Edges); it has
+        # no kind or status, so Autoform never lists it as a task.
         body = ("# Main\n\nPlanned.\n\n## Depends on\n\n- [Base](base.md)\n\n"
                 "## Proof depends on\n\n- [Lemma](lemma.md)\n")
         page = self.page("Algebra/main.md", body)
-        self.annotate([self.about("Algebra/main.md", kind="theorem", id="af_1",
+        self.annotate([self.about("Algebra/main.md", kind="theorem", status="stated", id="af_0123456789abcdef01234567",
                                   extensions={"org.autoform": {"not_ready": True}})])
-        counts, unlinked = sync.apply_lean_facts(SimpleNamespace(declarations={}), {})
-        self.assertEqual((counts["unresolved"], unlinked), (0, []))
-        self.assertEqual(page.read_text(), body)
+        for _ in range(2):
+            counts, unlinked = sync.apply_lean_facts(SimpleNamespace(declarations={}), {})
+            self.assertEqual((counts["unresolved"], unlinked), (0, []))
+            self.assertEqual(page.read_text(), body)
         row = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][0]
-        self.assertEqual((row.get("kind"), row.get("id")), ("theorem", "af_1"))
+        self.assertEqual(row, self.about("Algebra/main.md", id="af_0123456789abcdef01234567",
+                                         extensions={"org.autoform": {"not_ready": True}}))
 
     def test_pages_taken_from_docstrings_get_their_facts(self) -> None:
         # declarations marks its pages with OWN's "from", which names a module only for a page with no Lean name.
@@ -461,7 +464,7 @@ class Declarations(Vault):
         self.assertEqual(rows["new.md"]["object"], [{"location": {"declaration": "Ext.new"}}])
         self.assertEqual(rows["new.md"]["extensions"], {"org.atlas-wiki": {"from": "docstring"}})
         self.assertNotIn("wanted.md", rows)
-        # Each row the sync adds gets a fresh id (graph rule 5); one it already had keeps its own, and one without
+        # Each row the sync adds gets a fresh id (Graph rules, Data and metadata); one it already had keeps its own, and one without
         # stays without until the one-off fill.
         self.assertEqual(rows["old.md"]["id"], "af_000000000000000000000001")
         self.assertNotIn("id", rows["gone.md"])

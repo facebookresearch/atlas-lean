@@ -11,8 +11,8 @@ tree under blueprint/roadmap/. Each article's annotation in blueprint/links/
 article id and origin. The Lean owns what lean-facts adds on the build's checkout:
 an article's `## Depends on` and `## Proof depends on`, from the dependency dump,
 and its annotation's kind and status, from the Lean sources. A planned page, one
-whose annotation never named a declaration, keeps the kind and prerequisites it
-records by hand.
+whose annotation names no declaration, keeps the prerequisites it records by
+hand, and gets no kind or status.
 
 declarations gives each declaration with a docstring and no page a page from its
 docstring, beside its module's other pages and listed on their page in source
@@ -276,11 +276,16 @@ def lean_facts_for(name: str | None, own: dict | None, index, sorry) -> tuple[st
     return None, None
 
 
+def has_legacy_name(own: dict | None) -> bool:
+    """Whether an earlier sync wrote this page with only a module and a name (see legacy_lean_name)."""
+    return bool(own and "module" in own and "name" in own)
+
+
 def legacy_lean_name(own: dict | None, index) -> str | None:
     """The Lean name of a page an earlier sync wrote with only a module and a name (no Lean link), read through
     the Lean index: the one declaration of that module whose last name component is that name; None when the
     index has none, or more than one, so no page is ever bound to a declaration by a guess."""
-    if not (own and "module" in own and "name" in own):
+    if not has_legacy_name(own):
         return None
     source = Path(*own["module"].split(".")).with_suffix(".lean")
     names = [name for name, declaration in index.declarations.items()
@@ -312,8 +317,10 @@ def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[st
             if path.name == "README.md":
                 continue
             name, own = lean_name(annotation), annotation.get("extensions", {}).get(OWN)
-            if not name and not (own and "module" in own and "name" in own):
-                # A planned page never had a Lean link: its kind and prerequisites are its own (graph rule 10).
+            if not name and not has_legacy_name(own):
+                # A planned page: its prerequisites are its own, and with no declaration it has no kind or status.
+                annotation.pop("kind", None)
+                annotation.pop("status", None)
                 continue
             kind, status = lean_facts_for(name, own, index, sorry)
             if kind is None:
