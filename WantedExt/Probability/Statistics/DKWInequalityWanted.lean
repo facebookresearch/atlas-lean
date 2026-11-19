@@ -23,7 +23,7 @@ that `F_N` is uniformly `ε`-far from `F`:
 
 Dvoretzky, Kiefer and Wolfowitz (Ann. Math. Statist. 27 (1956) 642–669) proved it with an
 unspecified constant `C`. Massart (Ann. Probab. 18 (1990) 1269–1283), Theorem 1, as stated on
-p. 2 of Reeve, arXiv:2403.16651v1 (the source read for this entry; Massart's paper was not),
+p. 3 of Reeve, arXiv:2403.16651v1 (the source read for this entry; Massart's paper was not),
 gives the one-sided bound `P(sup_x √N (F_N(x) - F(x)) > λ) ≤ exp(-2 λ²)` for
 `λ ≥ min {√(log 2 / 2), 1.0841 N^(-1/6)}`. Reeve's Corollary 2 gives the one-sided bound
 `exp(-2 λ²)` for every `λ ≥ 0`, for independent observations with an arbitrary distribution
@@ -57,7 +57,7 @@ independent real random variables on a probability space, each with the law of `
 `P(∃ x, |F_{n+1}(x) - F(x)| > ε) ≤ 2 exp(-2 (n + 1) ε²)`. This is the two-sided form of
 P. Massart, *The tight constant in the Dvoretzky–Kiefer–Wolfowitz inequality*, Ann. Probab. 18
 (1990) 1269–1283, Theorem 1 (a one-sided bound, as stated in H. W. J. Reeve, arXiv:2403.16651v1,
-p. 2), obtained by a union bound over the two deviations. Reeve's Corollary 2 gives the one-sided
+p. 3), obtained by a union bound over the two deviations. Reeve's Corollary 2 gives the one-sided
 bound for an arbitrary distribution function `F` and every level. The constant is unspecified in
 A. Dvoretzky, J. Kiefer and J. Wolfowitz, Ann. Math. Statist. 27 (1956) 642–669. -/
 theorem_wanted measure_exists_abs_empiricalCDF_sub_gt_le {Ω : Type*} [MeasurableSpace Ω]

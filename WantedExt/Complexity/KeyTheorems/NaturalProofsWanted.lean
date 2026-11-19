@@ -112,7 +112,8 @@ def PRFInPPoly (F : (n : ℕ) → (Fin (n ^ 2) → Bool) → (Fin n → Bool) �
 
 /-- A pseudorandom function family secure against polynomial-size truth-table
 distinguishers: no such distinguisher separates the family from a random function by a
-non-negligible advantage (negligible in the input length `n`). Keys are drawn from
+non-negligible advantage, where negligible is in the truth-table length `2 ^ n`: for every fixed
+`c` the advantage is at most `2 ^ (-c n)` for all large `n`. Keys are drawn from
 `Fin (n ^ 2) → Bool`, so the first fraction is over `2 ^ (n ^ 2)` keys. -/
 def PRFSecure (F : (n : ℕ) → (Fin (n ^ 2) → Bool) → (Fin n → Bool) → Bool) : Prop :=
   ∀ (D : (n : ℕ) → List Bool → Bool) (q : Polynomial ℕ),
