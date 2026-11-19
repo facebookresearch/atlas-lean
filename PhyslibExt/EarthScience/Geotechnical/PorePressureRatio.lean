@@ -26,10 +26,16 @@ vertical axis. The excess pore-pressure ratio is the
 Seed–Idriss observation coordinate
 `r_u(t) = (u t - u 0) / σ'_v(0)`, with reference pressure `u 0`
 at the time origin. It is not the Bishop–Morgenstern slope
-coefficient `u / (γ h)`. The identities
+coefficient `u / (γ h)`. The physical validity domain of
+the ratio is positive initial effective stress
+`σ'_v(0) > 0`; the definition itself uses totalized real
+division, so at `σ'_v(0) = 0` it returns `0` by
+totalization and carries no physical reading there. On the
+validity domain, the identities
 `σ'_v(t) = σ'_v(0) (1 - r_u(t))` and `r_u(t) = 1 ↔ σ'_v(t) = 0`
-are observation-coordinate identities only: no liquefaction or
-failure criterion is claimed.
+hold (their positivity hypotheses are exactly this validity
+condition); they are observation-coordinate identities
+only: no liquefaction or failure criterion is claimed.
 
 ## ii. Key results
 
@@ -69,7 +75,10 @@ def verticalEffectiveStress {n : ℕ} (σc : Matrix (Fin n) (Fin n) ℝ)
     (k : Fin n) (u : ℝ → ℝ) (t : ℝ) : ℝ :=
   effectiveStressCompressionPositive σc (u t) k k
 
-/-- Excess pore-pressure ratio `r_u(t) = (u t - u 0) / σ'_v(0)`. -/
+/-- Excess pore-pressure ratio `r_u(t) = (u t - u 0) / σ'_v(0)`
+(totalized real division; the physical validity domain is
+`σ'_v(0) > 0`, outside which the value is totalization
+junk). -/
 noncomputable def excessPorePressureRatio {n : ℕ}
     (σc : Matrix (Fin n) (Fin n) ℝ) (k : Fin n) (u : ℝ → ℝ) (t : ℝ) : ℝ :=
   (u t - u 0) / verticalEffectiveStress σc k u 0

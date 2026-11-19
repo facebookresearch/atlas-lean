@@ -18,8 +18,9 @@ import Mathlib.Tactic.NormNum
 Concrete consumers of
 `PhyslibExt.EarthScience.Geotechnical.PorePressureRatio`:
 unit ratio exactly at vanishing vertical effective stress,
-the ratio at the time origin, rejection of a zero initial
-effective stress, and independence of the shear entries.
+the ratio at the time origin, the totalized values at a
+zero initial effective stress (outside the validity
+domain), and independence of the shear entries.
 
 ## i. Overview
 
@@ -83,15 +84,30 @@ example : verticalEffectiveStress (!![10] : Matrix (Fin 1) (Fin 1) ℝ)
     rw [verticalEffectiveStress_eq]
     norm_num [uLin]
 
-/-- Zero initial effective stress is rejected by the positivity
-premise: with total stress `2` and `u(0) = 2`, the initial
-effective stress is `0`, not positive. -/
+/-- Zero initial effective stress is outside the validity
+domain: with total stress `2` and `u(0) = 2`, the initial
+effective stress is `0`, so the positivity premise of the
+identities cannot be met; the totalized ratio at `t = 1`
+is `8 / 0 = 0` while the effective stress is `-8`, so
+neither identity reads physically there. -/
 example : verticalEffectiveStress (!![2] : Matrix (Fin 1) (Fin 1) ℝ)
       0 uLin 0 = 0
     ∧ ¬ 0 < verticalEffectiveStress (!![2] : Matrix (Fin 1) (Fin 1) ℝ)
-      0 uLin 0 := by
-  rw [verticalEffectiveStress_eq]
-  norm_num [uLin]
+      0 uLin 0
+    ∧ excessPorePressureRatio (!![2] : Matrix (Fin 1) (Fin 1) ℝ)
+      0 uLin 1 = 0
+    ∧ verticalEffectiveStress (!![2] : Matrix (Fin 1) (Fin 1) ℝ)
+      0 uLin 1 = -8 := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · rw [verticalEffectiveStress_eq]
+    norm_num [uLin]
+  · rw [verticalEffectiveStress_eq]
+    norm_num [uLin]
+  · unfold excessPorePressureRatio
+    rw [verticalEffectiveStress_eq]
+    norm_num [uLin]
+  · rw [verticalEffectiveStress_eq]
+    norm_num [uLin]
 
 /-- Shear entries do not affect the vertical effective stress. -/
 example (u : ℝ → ℝ) (t : ℝ) :
