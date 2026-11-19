@@ -92,7 +92,7 @@ private lemma vadd_eq_repr_symm_add (o : Space) (v : EuclideanSpace ℝ (Fin 3))
 
 /-- Derivatives transport: the coordinate expression of `f` at the chart point of `p`
 has derivative `fderiv f p` precomposed with the linear part of the chart. -/
-theorem fderiv_comp_vadd {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
+lemma fderiv_comp_vadd {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
     (f : Space → F) (o p : Space) (w : EuclideanSpace ℝ (Fin 3)) :
     fderiv ℝ (fun v : EuclideanSpace ℝ (Fin 3) => f (v +ᵥ o)) (p -ᵥ o) w =
       fderiv ℝ f p (Space.basis.repr.symm w) := by
@@ -107,7 +107,7 @@ theorem fderiv_comp_vadd {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
 
 /-- Directional derivatives of a scalar field in coordinates are inner products with
 Physlib's gradient. -/
-theorem fderiv_comp_vadd_eq_inner_grad (f : Space → ℝ) (o p : Space)
+lemma fderiv_comp_vadd_eq_inner_grad (f : Space → ℝ) (o p : Space)
     (w : EuclideanSpace ℝ (Fin 3)) :
     fderiv ℝ (fun v : EuclideanSpace ℝ (Fin 3) => f (v +ᵥ o)) (p -ᵥ o) w =
       @inner ℝ _ _ (∇ f p) w := by
@@ -115,7 +115,7 @@ theorem fderiv_comp_vadd_eq_inner_grad (f : Space → ℝ) (o p : Space)
 
 /-- Gradients transport: Mathlib's gradient of the coordinate expression is Physlib's
 `∇`. -/
-theorem gradient_comp_vadd (f : Space → ℝ) (o p : Space) :
+lemma gradient_comp_vadd (f : Space → ℝ) (o p : Space) :
     gradient (fun v : EuclideanSpace ℝ (Fin 3) => f (v +ᵥ o)) (p -ᵥ o) = ∇ f p := by
   rw [gradient, LinearIsometryEquiv.symm_apply_eq]
   ext w
@@ -123,7 +123,7 @@ theorem gradient_comp_vadd (f : Space → ℝ) (o p : Space) :
 
 /-- The coordinate convective derivative `(fderiv u) u` is Physlib's convective term
 `(u · ∇) u`. -/
-theorem fderiv_comp_vadd_velocity_eq_convectiveTerm (fluid : FluidFlow 3) (t : Time)
+lemma fderiv_comp_vadd_velocity_eq_convectiveTerm (fluid : FluidFlow 3) (t : Time)
     (o p : Space) :
     fderiv ℝ (fun v : EuclideanSpace ℝ (Fin 3) => fluid.velocity t (v +ᵥ o)) (p -ᵥ o)
         (fluid.velocity t p) =
@@ -134,7 +134,7 @@ theorem fderiv_comp_vadd_velocity_eq_convectiveTerm (fluid : FluidFlow 3) (t : T
 /-- Integral curves transport: a curve in `Space` is an integral curve of `u` for
 Physlib's manifold structure exactly when its coordinate curve is an integral curve of
 the coordinate expression of `u`. -/
-theorem isMIntegralCurveOn_iff_coord (u : Space → EuclideanSpace ℝ (Fin 3))
+lemma isMIntegralCurveOn_iff_coord (u : Space → EuclideanSpace ℝ (Fin 3))
     (γ : ℝ → Space) (s : Set ℝ) (o : Space) :
     IsMIntegralCurveOn (I := 𝓡 3) γ u s ↔
       IsIntegralCurveOn (fun t => γ t -ᵥ o)
@@ -190,7 +190,7 @@ private lemma convective_balance
 /-- For a steady constant-density inviscid flow satisfying Physlib's Euler equations
 with body-force potential `Φ`, the projected Euler premise of
 `EarthScience.bernoulli_along_streamline` holds at every coordinate point. -/
-theorem projected_euler_coord
+lemma projected_euler_coord
     (flow : CauchyFlow 3) (pressure : ScalarField 3) (Φ : Space → ℝ) (ρ : ℝ)
     (hρ : 0 < ρ) (hrho : ∀ t x, flow.rho t x = ρ)
     (hsteady : ∀ t t' x, flow.velocity t x = flow.velocity t' x)
@@ -223,7 +223,7 @@ theorem projected_euler_coord
 /-- Bernoulli's theorem along a streamline in `Space`, for a steady constant-density
 inviscid Physlib Euler flow with body-force potential: the head `p / ρ + ‖u‖² / 2 + Φ`
 takes the same value at any two points of an integral curve of the velocity. -/
-theorem bernoulli_along_streamline_space
+lemma bernoulli_along_streamline_space
     (flow : CauchyFlow 3) (pressure : ScalarField 3) (Φ : Space → ℝ) (ρ : ℝ)
     (hρ : 0 < ρ) (hrho : ∀ t x, flow.rho t x = ρ)
     (hsteady : ∀ t t' x, flow.velocity t x = flow.velocity t' x)
@@ -257,7 +257,7 @@ theorem bernoulli_along_streamline_space
 /-- Physlib's enthalpy Bernoulli function is constant along a streamline when the
 specific enthalpy is `p / ρ + e₀` (constant specific internal energy `e₀`). Without that
 hypothesis the enthalpy field is independent data; see `polytropic_enthalpy_not_pOverRho`. -/
-theorem bernoulliFunction_along_streamline
+lemma bernoulliFunction_along_streamline
     (flow : ThermodynamicCauchyFlow 3) (pressure : ScalarField 3) (Φ : Space → ℝ) (ρ : ℝ)
     (hρ : 0 < ρ) (hrho : ∀ t x, flow.rho t x = ρ)
     (hsteady : ∀ t t' x, flow.velocity t x = flow.velocity t' x)
@@ -360,7 +360,7 @@ private lemma div_smul_rotVelocity (ρ Ω : ℝ) (x : Space) :
   simp [rotVelocity, basis_apply]
 
 /-- The rotating fixture satisfies Physlib's Euler equations with the balancing pressure. -/
-theorem rotFlow_euler (ρ Ω g : ℝ) :
+lemma rotFlow_euler (ρ Ω g : ℝ) :
     Euler 3 (rotFlow ρ Ω g) (fun _ => rotPressure ρ Ω g) := by
   have hInv : CauchyFlow.IsInviscid 3 (rotFlow ρ Ω g) (fun _ => rotPressure ρ Ω g) :=
     fun _ _ => rfl
@@ -383,7 +383,7 @@ theorem rotFlow_euler (ρ Ω g : ℝ) :
   fin_cases i <;> simp [rotVelocity, basis_apply] <;> ring
 
 /-- Gravity in the rotating fixture has the potential `g x₃`. -/
-theorem rotFlow_bodyForcePotential (ρ Ω g : ℝ) :
+lemma rotFlow_bodyForcePotential (ρ Ω g : ℝ) :
     CauchyFlow.HasBodyForcePotential 3 (rotFlow ρ Ω g) (gravPotential g) := by
   intro t x
   rw [grad_gravPotential]
@@ -391,7 +391,7 @@ theorem rotFlow_bodyForcePotential (ρ Ω g : ℝ) :
   fin_cases i <;> simp [rotFlow]
 
 /-- The fixture is a nonzero flow. -/
-theorem rotVelocity_ne_zero {Ω : ℝ} (hΩ : Ω ≠ 0) :
+lemma rotVelocity_ne_zero {Ω : ℝ} (hΩ : Ω ≠ 0) :
     rotVelocity Ω (circle 1 Ω 0 0) ≠ 0 := by
   intro h
   have h1 := congrArg (fun v : EuclideanSpace ℝ (Fin 3) => v 1) h
@@ -426,13 +426,13 @@ private lemma circle_hasDerivAt_coord (R Ω z : ℝ) (o : Space) (t : ℝ) :
   exact (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).symm.hasFDerivAt.comp_hasDerivAt t h
 
 /-- The circle is a streamline in `Space`. -/
-theorem circle_isMIntegralCurveOn (R Ω z : ℝ) :
+lemma circle_isMIntegralCurveOn (R Ω z : ℝ) :
     IsMIntegralCurveOn (I := 𝓡 3) (circle R Ω z) (rotVelocity Ω) Set.univ :=
   (isMIntegralCurveOn_iff_coord _ _ _ (circle R Ω z 0)).mpr fun t _ => by
     simpa only [vsub_vadd] using (circle_hasDerivAt_coord R Ω z (circle R Ω z 0) t).hasDerivWithinAt
 
 /-- The circle is a streamline in coordinates about any origin. -/
-theorem circle_isIntegralCurveOn_coord (R Ω z : ℝ) (o : Space) :
+lemma circle_isIntegralCurveOn_coord (R Ω z : ℝ) (o : Space) :
     IsIntegralCurveOn (fun t => circle R Ω z t -ᵥ o)
       (fun _ v => rotVelocity Ω (v +ᵥ o)) Set.univ := by
   intro t _
@@ -440,7 +440,7 @@ theorem circle_isIntegralCurveOn_coord (R Ω z : ℝ) (o : Space) :
 
 /-- The head is constant along each streamline but differs between streamlines, so the
 result is streamline constancy, not global constancy. -/
-theorem rot_head_differs_across_streamlines {ρ Ω g : ℝ} (hρ : 0 < ρ) (hΩ : Ω ≠ 0) :
+lemma rot_head_differs_across_streamlines {ρ Ω g : ℝ} (hρ : 0 < ρ) (hΩ : Ω ≠ 0) :
     rotPressure ρ Ω g (circle 1 Ω 0 0) / ρ + ‖rotVelocity Ω (circle 1 Ω 0 0)‖ ^ 2 / 2 +
         gravPotential g (circle 1 Ω 0 0) ≠
       rotPressure ρ Ω g (circle 2 Ω 0 0) / ρ + ‖rotVelocity Ω (circle 2 Ω 0 0)‖ ^ 2 / 2 +
@@ -467,7 +467,7 @@ noncomputable def polytropicFlow (ρ Ω g : ℝ) : ThermodynamicCauchyFlow 3 :=
 
 /-- Invalid example: a compressible-gas enthalpy is not automatically `p / ρ + e₀`, so the
 enthalpy hypothesis of `bernoulliFunction_along_streamline` cannot be dropped. -/
-theorem polytropic_enthalpy_not_pOverRho {ρ Ω g : ℝ} (hρ : 0 < ρ) (hg : g ≠ 0) :
+lemma polytropic_enthalpy_not_pOverRho {ρ Ω g : ℝ} (hρ : 0 < ρ) (hg : g ≠ 0) :
     ¬ ∃ e₀ : ℝ, ∀ t x,
       (polytropicFlow ρ Ω g).enthalpy t x = rotPressure ρ Ω g x / ρ + e₀ := by
   rintro ⟨e₀, he⟩
