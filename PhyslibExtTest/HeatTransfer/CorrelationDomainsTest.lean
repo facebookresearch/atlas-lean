@@ -14,12 +14,18 @@ import Mathlib.Tactic.NormNum
 # Range-guarded correlation checks
 
 Concrete consumer of `PhyslibExt.HeatTransfer.CorrelationDomains`: the
-Dittus-Boelter correlation for heating, recorded with its published
-domain `Re ≥ 10000`, `0.6 ≤ Pr ≤ 160` and the local tag. A test fluid
-with `Re = 100000` and `Pr = 1` lies in the domain and gives `Nu = 230`,
-`h = 2760` for `k = 3 / 5` and `D = 1 / 20`, and on `A = 1 / 10` the
-heat rate `±2760` for `ΔT = ±10`. Values outside the domain and a
-surface-averaged request are rejected.
+Dittus-Boelter correlation, one record per thermal direction, with its
+published domain `Re ≥ 10000`, `0.6 ≤ Pr ≤ 160`, `L / D ≥ 10`, the local
+tag, properties at the mean temperature and the exponent `2/5` for
+heating or `3/10` for cooling. A heated tube flow with `Re = 100000`,
+`Pr = 1`, `L / D = 20` and `ΔT = 10` is a valid request and gives
+`Nu = 230`, `h = 2760` for `k = 3 / 5` and `D = 1 / 20`, and on
+`A = 1 / 10` the heat rate `2760`; the same flow cooled with `ΔT = -10`
+uses the cooling record and gives `-2760`. At `Pr = 32` the exponent
+selected by the thermal direction changes the value. A cooled flow
+for the heating record, a short duct, values outside the domain,
+`ΔT = 0`, film-temperature properties and a surface-averaged request
+are rejected.
 
 ## i. Overview
 
@@ -28,7 +34,7 @@ These are elaboration and non-vacuity checks, not new results.
 ## ii. Key results
 
 No new results are introduced here. Section A defines the
-Dittus-Boelter record it checks.
+Dittus-Boelter records and the heated request it checks.
 
 ## iii. Table of contents
 
@@ -38,7 +44,7 @@ Dittus-Boelter record it checks.
 
 - F. P. Incropera, D. P. DeWitt, T. L. Bergman and A. S. Lavine,
   *Fundamentals of Heat and Mass Transfer*, Wiley, chapter 8 (the
-  Dittus-Boelter correlation and its range).
+  Dittus-Boelter correlation, its exponents and its range).
 -/
 
 @[expose] public section
@@ -50,79 +56,176 @@ open _root_.CorrelationDomains
 
 /-! ## A. The Dittus-Boelter correlation -/
 
-/-- The Dittus-Boelter correlation for heating, `Nu = 0.023 Re ^ (4/5) Pr ^ (2/5)`, local value
-for fully developed turbulent flow in a smooth circular tube, with the published domain
-`Re ≥ 10000`, `0.6 ≤ Pr ≤ 160`. -/
-noncomputable def dittusBoelterHeating : NusseltCorrelation :=
-  powerLawCorrelation (23 / 1000) (4 / 5) (2 / 5)
-    "Dittus-Boelter (heating), in Incropera et al., Fundamentals of Heat and Mass Transfer"
-    "fully developed turbulent flow in a smooth circular tube, L / D at least 10"
-    "mean (bulk) fluid temperature"
-    AveragingTag.localValue (Set.Ici 10000 ×ˢ Set.Icc (3 / 5) 160)
-    (fun p hp => ⟨by linarith [hp.1.out], by linarith [hp.2.1]⟩)
-    ⟨(10000, 1), ⟨le_refl _, by norm_num, by norm_num⟩⟩
+/-- The Dittus-Boelter Prandtl exponent: `2/5` when the fluid is heated, `3/10` when it is
+cooled. -/
+noncomputable def dittusBoelterExponent : ThermalMode → ℝ
+  | .heating => 2 / 5
+  | .cooling => 3 / 10
 
-/-- The test fluid's `(Re, Pr) = (100000, 1)` is a valid local request for the correlation. -/
-lemma dittusBoelter_applies :
-    dittusBoelterHeating.Applies AveragingTag.localValue 100000 1 := by
-  simp only [dittusBoelterHeating, powerLawCorrelation, NusseltCorrelation.Applies,
-    Set.mem_prod, Set.mem_Ici, Set.mem_Icc]
+/-- The Dittus-Boelter correlation for the thermal direction `m`:
+`Nu = 0.023 Re ^ (4/5) Pr ^ n` with `n = dittusBoelterExponent m`, the local value for fully
+developed turbulent flow in a smooth circular tube, properties at the mean (bulk) temperature, and
+the published domain `Re ≥ 10000`, `0.6 ≤ Pr ≤ 160`, `L / D ≥ 10`, with the request's temperature
+difference in the direction `m`. -/
+noncomputable def dittusBoelter (m : ThermalMode) : NusseltCorrelation :=
+  powerLawCorrelation (23 / 1000) (4 / 5) (dittusBoelterExponent m)
+    "Dittus-Boelter, in Incropera et al., Fundamentals of Heat and Mass Transfer"
+    "fully developed turbulent flow in a smooth circular tube"
+    AveragingTag.localValue PropertyTemperature.bulkMean
+    {s | 10000 ≤ s.reynolds ∧ 3 / 5 ≤ s.prandtl ∧ s.prandtl ≤ 160 ∧ 10 ≤ s.lengthRatio ∧
+      m.Holds s.temperatureDifference.val}
+    (fun s hs => ⟨by linarith [hs.1], by linarith [hs.2.1]⟩)
+    (by
+      cases m
+      · exact ⟨⟨10000, 1, 10, ⟨1⟩⟩, by norm_num [ThermalMode.Holds]⟩
+      · exact ⟨⟨10000, 1, 10, ⟨-1⟩⟩, by norm_num [ThermalMode.Holds]⟩)
+
+/-- Where a Dittus-Boelter record applies, it evaluates to `0.023 Re ^ (4/5) Pr ^ n`. -/
+lemma dittusBoelter_nusselt {m : ThermalMode} {r : CorrelationRequest}
+    (h : (dittusBoelter m).Applies r) :
+    (dittusBoelter m).nusselt r h =
+      23 / 1000 * r.reynolds ^ (4 / 5 : ℝ) * r.prandtl ^ dittusBoelterExponent m :=
+  powerLawCorrelation_nusselt h
+
+/-- A heated tube flow: `Re = 100000`, `Pr = 1`, `L / D = 20`, the surface `10` K above the mean
+fluid temperature, a local value requested, properties at the mean temperature. -/
+def heatingRequest : CorrelationRequest where
+  reynolds := 100000
+  prandtl := 1
+  lengthRatio := 20
+  temperatureDifference := ⟨10⟩
+  averaging := AveragingTag.localValue
+  propertyTemperature := PropertyTemperature.bulkMean
+
+/-- The heated tube flow is a valid request for the heating correlation. -/
+lemma dittusBoelter_applies_heating : (dittusBoelter .heating).Applies heatingRequest := by
+  simp only [dittusBoelter, powerLawCorrelation, NusseltCorrelation.Applies, heatingRequest,
+    Set.mem_ofPred_eq, ThermalMode.Holds]
   norm_num
 
 /-- A nonzero `ΔT` in the valid domain: with `ρ = 1000`, `U = 2`, `D = 1 / 20`, `μ = 1 / 1000`,
-`c_p = 600` and `k = 3 / 5` (SI), `Re = 100000` and `Pr = 1`; through the guard the correlation
-gives `Nu = 230`, so `h = 2760`; on `A = 1 / 10` the heat rate is `2760` for `ΔT = 10` and
-`-2760` for `ΔT = -10`. -/
+`c_p = 600` and `k = 3 / 5` (SI), `Re = 100000` and `Pr = 1`; through the guard the heating
+correlation gives `Nu = 230`, so `h = 2760`, and on `A = 1 / 10` the heat rate at the request's
+`ΔT = 10` is `2760`, into the fluid. -/
 example :
-    reynoldsNumber ⟨1000⟩ ⟨2⟩ ⟨1 / 20⟩ ⟨1 / 1000⟩ (by norm_num) = 100000 ∧
-      prandtlNumber ⟨1 / 1000⟩ ⟨600⟩ ⟨3 / 5⟩ (by norm_num) = 1 ∧
-      dittusBoelterHeating.nusselt AveragingTag.localValue 100000 1 dittusBoelter_applies =
-        230 ∧
+    reynoldsNumber ⟨1000⟩ ⟨2⟩ ⟨1 / 20⟩ ⟨1 / 1000⟩ (by norm_num) = heatingRequest.reynolds ∧
+      prandtlNumber ⟨1 / 1000⟩ ⟨600⟩ ⟨3 / 5⟩ (by norm_num) = heatingRequest.prandtl ∧
+      (dittusBoelter .heating).nusselt heatingRequest dittusBoelter_applies_heating = 230 ∧
       (heatTransferCoefficient 230 ⟨3 / 5⟩ ⟨1 / 20⟩ (by norm_num)).val = 2760 ∧
       (convectiveHeatRate (heatTransferCoefficient 230 ⟨3 / 5⟩ ⟨1 / 20⟩ (by norm_num)) ⟨1 / 10⟩
-        ⟨10⟩).val = 2760 ∧
-      (convectiveHeatRate (heatTransferCoefficient 230 ⟨3 / 5⟩ ⟨1 / 20⟩ (by norm_num)) ⟨1 / 10⟩
-        ⟨-10⟩).val = -2760 := by
+        heatingRequest.temperatureDifference).val = 2760 := by
   have h1 : (100000 : ℝ) ^ (4 / 5 : ℝ) = 10000 := by
     rw [show (100000 : ℝ) = 10 ^ (5 : ℝ) by norm_num, ← Real.rpow_mul (by norm_num)]
     norm_num
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
-  · rw [reynoldsNumber_val]; norm_num
-  · rw [prandtlNumber_val]; norm_num
-  · rw [show dittusBoelterHeating.nusselt AveragingTag.localValue 100000 1 dittusBoelter_applies =
-        23 / 1000 * (100000 : ℝ) ^ (4 / 5 : ℝ) * (1 : ℝ) ^ (2 / 5 : ℝ) from
-      powerLawCorrelation_nusselt dittusBoelter_applies, h1, Real.one_rpow]
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · rw [reynoldsNumber_val]; norm_num [heatingRequest]
+  · rw [prandtlNumber_val]; norm_num [heatingRequest]
+  · rw [dittusBoelter_nusselt dittusBoelter_applies_heating]
+    simp only [heatingRequest, dittusBoelterExponent]
+    rw [h1, Real.one_rpow]
     norm_num
   · simp only [heatTransferCoefficient]; norm_num
-  · rw [convectiveHeatRate_val]; simp only [heatTransferCoefficient]; norm_num
-  · rw [convectiveHeatRate_val]; simp only [heatTransferCoefficient]; norm_num
+  · rw [convectiveHeatRate_val]; simp only [heatTransferCoefficient, heatingRequest]; norm_num
 
-/-- Rejections: `Re = 5000` and `Pr = 1 / 2` lie outside the domain, and a surface-averaged
-request does not match the local correlation. -/
+/-- The same tube cooling the fluid, `ΔT = -10`, is a valid request for the cooling correlation
+with the exponent `3/10`; at `Pr = 1` it also gives `Nu = 230`, and the heat rate is `-2760`, out
+of the fluid. -/
 example :
-    ¬ dittusBoelterHeating.Applies AveragingTag.localValue 5000 1 ∧
-      ¬ dittusBoelterHeating.Applies AveragingTag.localValue 100000 (1 / 2) ∧
-      ¬ dittusBoelterHeating.Applies AveragingTag.surfaceAverage 100000 1 := by
-  simp only [dittusBoelterHeating, powerLawCorrelation, NusseltCorrelation.Applies,
-    Set.mem_prod, Set.mem_Ici, Set.mem_Icc]
-  norm_num
+    ∃ h : (dittusBoelter .cooling).Applies { heatingRequest with temperatureDifference := ⟨-10⟩ },
+      (dittusBoelter .cooling).nusselt _ h = 230 ∧
+      (convectiveHeatRate (heatTransferCoefficient 230 ⟨3 / 5⟩ ⟨1 / 20⟩ (by norm_num)) ⟨1 / 10⟩
+        ⟨-10⟩).val = -2760 := by
+  have happ : (dittusBoelter .cooling).Applies
+      { heatingRequest with temperatureDifference := ⟨-10⟩ } := by
+    simp only [dittusBoelter, powerLawCorrelation, NusseltCorrelation.Applies, heatingRequest,
+      Set.mem_ofPred_eq, ThermalMode.Holds]
+    norm_num
+  have h1 : (100000 : ℝ) ^ (4 / 5 : ℝ) = 10000 := by
+    rw [show (100000 : ℝ) = 10 ^ (5 : ℝ) by norm_num, ← Real.rpow_mul (by norm_num)]
+    norm_num
+  refine ⟨happ, ?_, ?_⟩
+  · rw [dittusBoelter_nusselt happ]
+    simp only [heatingRequest, dittusBoelterExponent]
+    rw [h1, Real.one_rpow]
+    norm_num
+  · rw [convectiveHeatRate_val]; simp only [heatTransferCoefficient]; norm_num
 
-/-- The guard and the power-law chain at the fixture data: the domain makes `Re` and `Pr`
+/-- The thermal direction selects the exponent: at `Re = 100000` and `Pr = 32` the heated flow has
+`Nu = 0.023 · 10000 · 32 ^ (2/5) = 920`, and the cooled flow has the smaller
+`Nu = 0.023 · 10000 · 32 ^ (3/10)`. -/
+example :
+    ∃ (hh : (dittusBoelter .heating).Applies { heatingRequest with prandtl := 32 })
+      (hc : (dittusBoelter .cooling).Applies
+        { heatingRequest with prandtl := 32, temperatureDifference := ⟨-10⟩ }),
+      (dittusBoelter .heating).nusselt _ hh = 920 ∧
+        (dittusBoelter .cooling).nusselt _ hc < (dittusBoelter .heating).nusselt _ hh := by
+  have hh : (dittusBoelter .heating).Applies { heatingRequest with prandtl := 32 } := by
+    simp only [dittusBoelter, powerLawCorrelation, NusseltCorrelation.Applies, heatingRequest,
+      Set.mem_ofPred_eq, ThermalMode.Holds]
+    norm_num
+  have hc : (dittusBoelter .cooling).Applies
+      { heatingRequest with prandtl := 32, temperatureDifference := ⟨-10⟩ } := by
+    simp only [dittusBoelter, powerLawCorrelation, NusseltCorrelation.Applies, heatingRequest,
+      Set.mem_ofPred_eq, ThermalMode.Holds]
+    norm_num
+  have h1 : (100000 : ℝ) ^ (4 / 5 : ℝ) = 10000 := by
+    rw [show (100000 : ℝ) = 10 ^ (5 : ℝ) by norm_num, ← Real.rpow_mul (by norm_num)]
+    norm_num
+  have h32 : (32 : ℝ) ^ (2 / 5 : ℝ) = 4 := by
+    rw [show (32 : ℝ) = 2 ^ (5 : ℝ) by norm_num, ← Real.rpow_mul (by norm_num)]
+    norm_num
+  have hlt : (32 : ℝ) ^ (3 / 10 : ℝ) < (32 : ℝ) ^ (2 / 5 : ℝ) :=
+    Real.rpow_lt_rpow_of_exponent_lt (by norm_num) (by norm_num)
+  refine ⟨hh, hc, ?_, ?_⟩
+  · rw [dittusBoelter_nusselt hh]
+    simp only [heatingRequest, dittusBoelterExponent]
+    rw [h1, h32]
+    norm_num
+  · rw [dittusBoelter_nusselt hh, dittusBoelter_nusselt hc]
+    simp only [heatingRequest, dittusBoelterExponent]
+    rw [h1]
+    nlinarith
+
+/-- Rejections: the heating correlation does not apply to the cooled flow (`ΔT = -10`), and no
+Dittus-Boelter correlation applies to a short duct (`L / D = 5`), to `Re = 5000` or `Pr = 1 / 2`,
+to a flow without a thermal direction (`ΔT = 0`), to properties at the film temperature, or to a
+surface-averaged request. -/
+example :
+    ¬ (dittusBoelter .heating).Applies { heatingRequest with temperatureDifference := ⟨-10⟩ } ∧
+      (∀ m, ¬ (dittusBoelter m).Applies { heatingRequest with lengthRatio := 5 }) ∧
+      (∀ m, ¬ (dittusBoelter m).Applies { heatingRequest with reynolds := 5000 }) ∧
+      (∀ m, ¬ (dittusBoelter m).Applies { heatingRequest with prandtl := 1 / 2 }) ∧
+      (∀ m, ¬ (dittusBoelter m).Applies { heatingRequest with temperatureDifference := ⟨0⟩ }) ∧
+      (∀ m, ¬ (dittusBoelter m).Applies
+        { heatingRequest with propertyTemperature := PropertyTemperature.film }) ∧
+      (∀ m, ¬ (dittusBoelter m).Applies
+        { heatingRequest with averaging := AveragingTag.surfaceAverage }) := by
+  refine ⟨?_, fun m => ?_, fun m => ?_, fun m => ?_, fun m => ?_, fun m => ?_, fun m => ?_⟩ <;>
+    (try cases m) <;>
+    simp only [dittusBoelter, powerLawCorrelation, NusseltCorrelation.Applies, heatingRequest,
+      Set.mem_ofPred_eq, ThermalMode.Holds] <;>
+    norm_num
+
+/-- The guard and the power-law chain at the heated flow: the domain makes `Re` and `Pr`
 positive, `h = Nu k / L` inverts the Nusselt group, and with the guarded Nusselt number the
-coefficient is positive and `Q` has the sign of `ΔT = -10`. -/
+coefficient is positive and the heat rate at the request's `ΔT` is positive. -/
 example :
-    (0 < (100000 : ℝ) ∧ 0 < (1 : ℝ)) ∧
+    (0 < heatingRequest.reynolds ∧ 0 < heatingRequest.prandtl) ∧
       nusseltNumber (heatTransferCoefficient 230 ⟨3 / 5⟩ ⟨1 / 20⟩ (by norm_num)) ⟨1 / 20⟩ ⟨3 / 5⟩
           (by norm_num) = 230 ∧
       0 < (heatTransferCoefficient
-          (dittusBoelterHeating.nusselt AveragingTag.localValue 100000 1 dittusBoelter_applies)
+          ((dittusBoelter .heating).nusselt heatingRequest dittusBoelter_applies_heating)
           ⟨3 / 5⟩ ⟨1 / 20⟩ (by norm_num)).val ∧
       SignType.sign (convectiveHeatRate (heatTransferCoefficient
-          (dittusBoelterHeating.nusselt AveragingTag.localValue 100000 1 dittusBoelter_applies)
-          ⟨3 / 5⟩ ⟨1 / 20⟩ (by norm_num)) ⟨1 / 10⟩ ⟨-10⟩).val = SignType.sign (-10 : ℝ) :=
-  ⟨NusseltCorrelation.applies_pos dittusBoelter_applies,
+          ((dittusBoelter .heating).nusselt heatingRequest dittusBoelter_applies_heating)
+          ⟨3 / 5⟩ ⟨1 / 20⟩ (by norm_num)) ⟨1 / 10⟩ heatingRequest.temperatureDifference).val =
+        1 := by
+  have hchain := powerLawCorrelation_heatRate_sign (by norm_num : (0 : ℝ) < 23 / 1000)
+    dittusBoelter_applies_heating (k := ⟨3 / 5⟩) (L := ⟨1 / 20⟩) (A := ⟨1 / 10⟩) (by norm_num)
+    (by norm_num) (by norm_num)
+  refine ⟨NusseltCorrelation.applies_pos dittusBoelter_applies_heating,
     nusseltNumber_heatTransferCoefficient 230 ⟨3 / 5⟩ ⟨1 / 20⟩ (by norm_num) (by norm_num),
-    powerLawCorrelation_heatRate_sign (by norm_num) dittusBoelter_applies (by norm_num)
-      (by norm_num) (by norm_num) ⟨-10⟩⟩
+    hchain.1, hchain.2.trans ?_⟩
+  simp [heatingRequest]
 
 end PhyslibExtTest.HeatTransfer.CorrelationDomains
