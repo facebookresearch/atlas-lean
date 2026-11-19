@@ -81,8 +81,9 @@ example : (axialCompatibilityUnit r3 ![0] ![1] *ᵥ u6) 0 = 2 := by
   simp [h8]
   norm_num
 
-/-- Supported energy with the identity injection and unit
-stiffness: `1 * 8 ^ 2 = 64` in separation form. -/
+/-- Supported quadratic form (twice linearized stored energy)
+with the identity injection and unit stiffness:
+`1 * 8 ^ 2 = 64` in separation form. -/
 example : u6 ⬝ᵥ (((axialCompatibility r3 ![0] ![1] * S6)ᵀ
           * Matrix.diagonal (![1] : Fin 1 → ℝ)
           * (axialCompatibility r3 ![0] ![1] * S6)) *ᵥ u6)

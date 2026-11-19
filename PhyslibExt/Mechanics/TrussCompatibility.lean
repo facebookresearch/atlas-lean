@@ -20,18 +20,22 @@ Geometric compatibility for the axial-member table of
 `PhyslibExt.Mechanics.HarmonicMechanics` (joints `J` at
 positions `r`, members `M` with endpoints `a e`, `b e`). The
 compatibility matrix `B : Matrix M (J × Fin 2) ℝ` has
-separation-vector rows: `(B *ᵥ u) e` pairs the separation
-vector with the relative joint displacement, i.e. `L e` times
-the elongation. The unit-direction variant scales rows by the
-inverse member length, so its rows give elongations and pair
-with member stiffness `EA / L`; the separation form pairs
-with `EA / L ^ 3`. The transpose collects endpoint forces at
+separation-vector rows: `(B *ᵥ u) e` pairs the initial
+separation vector with the relative joint displacement, i.e.
+`L e` times the linearized (small-displacement) elongation,
+not the exact change in member length (a transverse relative
+displacement changes length at second order and reads zero
+here). The unit-direction variant scales rows by the inverse
+member length, so its rows give linearized elongations and
+pair with member stiffness `EA / L` in the linearized energy;
+the separation form pairs with `EA / L ^ 3`. The transpose collects endpoint forces at
 each joint coordinate with a minus sign, so joint equilibrium
 reads `Bᵀ *ᵥ c = f_ext`, the `PlasticWork` orientation.
 Supported coordinates come from a supplied injection
-`S : Matrix (J × Fin 2) F ℝ`; the supported quadratic form is
-the member sum and is positive semidefinite for nonnegative
-stiffnesses. Zero-length members contribute zero rows in the
+`S : Matrix (J × Fin 2) F ℝ`; the supported stiffness
+quadratic form (twice the linearized stored energy, in the
+convention of `BeamStiffness`) is the member sum and is
+positive semidefinite for nonnegative stiffnesses. Zero-length members contribute zero rows in the
 unit form (totalized inverse); a physical energy reading
 needs distinct endpoints. No rigidity condition is proved.
 
@@ -50,7 +54,7 @@ needs distinct endpoints. No rigidity condition is proved.
 
 - A. Compatibility matrices and row action
 - B. Transpose force collection
-- C. Supported energy form
+- C. Supported quadratic form
 
 ## iv. References
 
@@ -155,9 +159,10 @@ private theorem axialCompatibilityUnit_transpose_mulVec_apply_of
   refine Finset.sum_congr rfl fun e _ => ?_
   ring
 
-/-! ## C. Supported energy form -/
+/-! ## C. Supported quadratic form -/
 
-/-- Supported stored-energy quadratic form is the member sum
+/-- Supported stiffness quadratic form (twice the linearized
+stored energy) is the member sum
 `∑ e, k e * ((B S *ᵥ u) e)^2`. -/
 theorem supported_quad_form_eq_sum {J M F : Type*}
     [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
