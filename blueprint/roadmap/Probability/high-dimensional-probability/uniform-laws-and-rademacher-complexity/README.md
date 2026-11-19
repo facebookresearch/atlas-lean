@@ -16,7 +16,7 @@ tools behind generalization bounds in learning theory (Wainwright, *High-Dimensi
 ## Related topics
 
 - [McDiarmid's inequality](../../concentration-inequalities/mcdiarmid-s-inequality/README.md)
-- Generalization bounds and concentration
+- [Generalization bounds and concentration](../../../ComputerScience/machine-learning/generalization-bounds-and-concentration/README.md)
 - [Glivenko–Cantelli theorem](../../nonparametric-survival/glivenko-cantelli-theorem/README.md)
 - [Generic chaining and Gaussian processes](../generic-chaining-and-gaussian-processes/README.md):
   conditionally on the sample, a Rademacher average is a sub-Gaussian process, so its expected

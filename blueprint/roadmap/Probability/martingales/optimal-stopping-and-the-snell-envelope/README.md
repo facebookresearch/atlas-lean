@@ -47,4 +47,4 @@ Backward induction solves the problem "in a stochastic sense" (Peskir–Shiryaev
 - [Secretary problem](../secretary-problem/README.md): the classical finite-horizon example solved by backward induction.
 - [Sequential tests and quickest change detection](../../hypothesis-testing/sequential-tests-and-quickest-change-detection/README.md): the statistical problems that Wald, Wolfowitz and Shiryaev reduce to optimal stopping.
 - [Strong Markov property of i.i.d. sequences](../../random-walks/strong-markov-property-of-i-i-d-sequences/README.md): stopping times of i.i.d. observations.
-- Optimality of stationary policies: the finite-horizon dynamic programming algorithm for Markov decision processes (Bertsekas); optimal stopping of a function of a finite Markov chain is the case of two actions, stop or continue.
+- [Optimality of stationary policies](../../../ComputerScience/heuristic-search-and-planning/optimality-of-stationary-policies/README.md): the finite-horizon dynamic programming algorithm for Markov decision processes (Bertsekas); optimal stopping of a function of a finite Markov chain is the case of two actions, stop or continue.

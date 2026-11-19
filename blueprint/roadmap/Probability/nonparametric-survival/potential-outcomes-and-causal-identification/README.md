@@ -37,8 +37,8 @@
 
 ## Related topics
 
-- Causal Bayesian networks:
+- [Causal Bayesian networks](../../../ComputerScience/machine-learning/probabilistic-graphical-models/causal-bayesian-networks/README.md):
   graphical identification; the back-door criterion is a graphical test for conditional
   ignorability.
-- Structural causal models and counterfactuals:
+- [Structural causal models and counterfactuals](../../../ComputerScience/machine-learning/probabilistic-graphical-models/structural-causal-models-and-counterfactuals/README.md):
   potential outcomes defined as solutions of submodels, with consistency as a theorem.

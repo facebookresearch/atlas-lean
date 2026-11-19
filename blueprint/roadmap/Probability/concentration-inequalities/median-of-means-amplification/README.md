@@ -17,4 +17,4 @@ With Hoeffding's inequality the median step gives the bound $e^{-9s/32}$ for $s$
 ## Related topics
 
 - [Hoeffding's inequality](../hoeffding-s-inequality/README.md): the tail bound used for the number of bad estimates.
-- Frequency moments of data streams: the streaming estimator of Alon, Matias and Szegedy, where median of means was introduced.
+- [Frequency moments of data streams](../../../ComputerScience/randomized-algorithms/frequency-moments-of-data-streams/README.md): the streaming estimator of Alon, Matias and Szegedy, where median of means was introduced.

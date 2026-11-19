@@ -47,5 +47,5 @@
 
 ## Related topics
 
-- Lattice of stable matchings: the structure of the set of stable matchings (Conway's join and the opposition of the two sides' interests).
-- Stable matching mechanisms and incentives: stable matchings chosen from stated preferences, and Roth's impossibility theorem.
+- [Lattice of stable matchings](../../../GameTheory/matching-markets/lattice-of-stable-matchings/README.md): the structure of the set of stable matchings (Conway's join and the opposition of the two sides' interests).
+- [Stable matching mechanisms and incentives](../../../GameTheory/matching-markets/stable-matching-mechanisms-and-incentives/README.md): stable matchings chosen from stated preferences, and Roth's impossibility theorem.

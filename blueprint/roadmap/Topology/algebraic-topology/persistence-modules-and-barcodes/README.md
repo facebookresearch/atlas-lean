@@ -42,6 +42,6 @@ decomposition, uniqueness and stability theorems.
 - [Smith normal form](../../../LinearAlgebra/eigenvalues-and-canonical-forms/smith-normal-form/README.md):
   barcodes of finite filtrations are computed by reducing boundary matrices over the principal
   ideal domain $k[t]$ to Smith normal form (Carlsson, *Topology and data*, §2.3).
-- Single-linkage hierarchical clustering:
+- [Single-linkage hierarchical clustering](../../../ComputerScience/machine-learning/unsupervised-learning/single-linkage-hierarchical-clustering/README.md):
   the zero-dimensional barcode of the Vietoris–Rips filtration records when single-linkage
   clusters merge.

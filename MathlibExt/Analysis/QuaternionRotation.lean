@@ -89,7 +89,9 @@ private theorem det_rotMatrix_general (q : ℍ) : (rotMatrix q).det = (normSq q)
   simp [rotMatrix, imCoords, imBasis, Matrix.det_fin_three, Quaternion.normSq_def']
   ring
 
-private theorem rotMatrix_transpose_mul_self (q : ℍ) :
+/-- For every quaternion `q`, `(rotMatrix q)ᵀ * rotMatrix q = (normSq q) ^ 2 • 1`, that is
+`Rᵀ R = |q|⁴ 1`; no unit hypothesis is needed. -/
+theorem rotMatrix_transpose_mul_self (q : ℍ) :
     Matrix.transpose (rotMatrix q) * rotMatrix q
       = (normSq q) ^ 2 • (1 : Matrix (Fin 3) (Fin 3) ℝ) := by
   ext a b

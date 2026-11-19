@@ -51,4 +51,4 @@ unique minimizer, and the scheme converges to the Fokker–Planck equation as $h
 - [Wasserstein distances](../wasserstein-distances/README.md): the metric of the scheme.
 - [Ekeland variational principle](../../../Analysis/convex-analysis-and-variations/ekeland-variational-principle/README.md):
   another variational principle on complete metric spaces built from a distance penalty.
-- Langevin Monte Carlo: the sampling algorithm obtained by discretizing the Langevin diffusion whose law is this gradient flow; its $W_2$ convergence for strongly log-concave targets.
+- [Langevin Monte Carlo](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/langevin-monte-carlo/README.md): the sampling algorithm obtained by discretizing the Langevin diffusion whose law is this gradient flow; its $W_2$ convergence for strongly log-concave targets.

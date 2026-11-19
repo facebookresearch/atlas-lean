@@ -18,6 +18,6 @@ small-set expansion, $\mathrm{Stab}_\rho[g] \le \|g\|_{1+\rho}^2$, at $\rho = 1/
 
 ## Informally uses
 
-- Small-Set Expansion Theorem:
+- [Small-Set Expansion Theorem](../../../Probability/concentration-inequalities/bonami-beckner-hypercontractivity/bool-noise-stab-le-rpow-of-indicator.md):
   the source proves the corollary from Corollary 9.8, the case $\rho = 1/3$ of small-set expansion,
   extended to $\{-1, 0, 1\}$-valued functions.

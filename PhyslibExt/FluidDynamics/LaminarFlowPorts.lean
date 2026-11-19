@@ -8,22 +8,32 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Geometry.Manifold.IntegralCurve.Basic
+public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Physlib.SpaceAndTime.Space.Derivatives.Grad
 public import Physlib.FluidDynamics.Euler.Basic
 public import Physlib.FluidDynamics.CauchyFlow.BodyForce
 public import Physlib.FluidDynamics.ThermodynamicCauchyFlow.Bernoulli
+public import Physlib.FluidDynamics.CauchyFlow.NavierStokes
+public import Physlib.FluidDynamics.FluidFlow.Incompressible
 public import PhyslibExt.EarthScience.BernoulliStreamline
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-!
-# Flow coordinates for Bernoulli's theorem along a streamline
+# Flow coordinates for Bernoulli's theorem and plane Couette and Poiseuille flow
 
 Physlib's derivatives, Euler equations and Bernoulli function, read in affine coordinates about an
-arbitrary origin, discharge the hypotheses of the coordinate streamline Bernoulli theorem.
+arbitrary origin, discharge the hypotheses of the coordinate streamline Bernoulli theorem. Plane
+Couette flow, with its Newtonian stress, satisfies Physlib's incompressibility, continuity and
+Navier-Stokes predicates, and so does plane Poiseuille flow, which carries the flow rate
+`G H³ / (12 μ)` per unit width.
 
 ## i. Overview
 
@@ -44,6 +54,28 @@ an explicit `h = p / ρ + e₀` hypothesis. Part C is a nonzero rotating fixture
 representations, and an invalid example where a polytropic enthalpy is not of the form
 `p / ρ + e₀`.
 
+Parts D-G treat plane Couette flow in the channel `0 ≤ y ≤ H`, `H > 0`, where `y = x 1` is the
+second coordinate of a point `x : Space`. The lower wall `y = 0` is at rest and the upper wall
+`y = H` moves with speed `Uwall` along the first axis. The velocity `u = (Uwall y / H, 0, 0)` is
+defined on all of `Space` as a smooth representative and restricts to the channel. The density
+`ρ`, the pressure `p₀`, the shear viscosity `μ` and the second viscosity `lam` are constants, and
+there is no body force. The stress is Physlib's Newtonian stress tensor
+`-p I + μ (∇u + ∇uᵀ) + lam (div u) I` of this velocity; it is the constant matrix with normal
+entries `-p₀` and shear entries `μ Uwall / H`. The flow satisfies Physlib's smooth continuity and
+smooth incompressibility predicates, whose differentiability clauses are proved, not assumed; the
+four differentiability premises of `FluidDynamics.navier_stokes_iff_convective_navier_stokes`
+hold; and the flow satisfies both the convective and the conservative Navier-Stokes predicates.
+The velocity vanishes on the lower wall and equals `(Uwall, 0, 0)` on the upper wall.
+
+Parts H-K treat plane Poiseuille flow in the channel `0 ≤ y ≤ H` between two stationary walls,
+driven by the pressure `p = p₀ - G x` with `x = x 0` the streamwise coordinate; `G = -∂p/∂x` is a
+signed parameter. The velocity `u = (G y (H - y) / (2 μ), 0, 0)` is a smooth representative on
+all of `Space`. For `μ ≠ 0` its Newtonian stress has normal entries `-p` and shear entries
+`G (H - 2 y) / 2`, and the flow satisfies Physlib's smooth continuity and smooth
+incompressibility predicates and both Navier-Stokes forms. Both walls are at rest, and the flow
+rate per unit width is `∫₀ᴴ u dy = G H³ / (12 μ)`, nonzero for `G ≠ 0`. With `G = 0` and
+stationary walls the flow vanishes, while plane Couette flow moves without a pressure gradient.
+
 ## ii. Key results
 
 - `FlowCoordinateBernoulli.fderiv_comp_vadd`: derivatives transport through the chart.
@@ -63,18 +95,54 @@ representations, and an invalid example where a polytropic enthalpy is not of th
   streamlines of the fixture.
 - `FlowCoordinateBernoulli.polytropic_enthalpy_not_pOverRho`: a polytropic enthalpy is not of the
   form `p / ρ + e₀`.
+- `FlowCoordinateBernoulli.couetteFlow_stress`: the Newtonian stress of plane Couette flow.
+- `FlowCoordinateBernoulli.couetteFlow_smoothContinuityEquation`: smooth continuity.
+- `FlowCoordinateBernoulli.couetteFlow_smoothIncompressible`: smooth incompressibility.
+- `FlowCoordinateBernoulli.couetteFlow_navierStokes_premises`: the differentiability premises
+  of the conservative-convective equivalence.
+- `FlowCoordinateBernoulli.couetteFlow_convectiveNavierStokes`: convective Navier-Stokes.
+- `FlowCoordinateBernoulli.couetteFlow_navierStokes`: conservative Navier-Stokes.
+- `FlowCoordinateBernoulli.couetteVelocity_lower_wall`,
+  `FlowCoordinateBernoulli.couetteVelocity_upper_wall`: the two no-slip walls.
+- `FlowCoordinateBernoulli.couetteFlow_witness`: plane Couette flow with the physical hypotheses
+  `H, μ, ρ > 0` and `Uwall ≠ 0`.
+- `FlowCoordinateBernoulli.planePoiseuilleFlow_stress`: the Newtonian stress of plane Poiseuille
+  flow.
+- `FlowCoordinateBernoulli.planePoiseuilleFlow_navierStokes`: plane Poiseuille flow satisfies the
+  conservative Navier-Stokes equations; the convective form, smooth continuity, smooth
+  incompressibility and the differentiability premises are proved alongside.
+- `FlowCoordinateBernoulli.planePoiseuilleVelocity_lower_wall`,
+  `FlowCoordinateBernoulli.planePoiseuilleVelocity_upper_wall`: the two no-slip walls.
+- `FlowCoordinateBernoulli.planePoiseuille_flowRate`: the flow rate `G H³ / (12 μ)`.
+- `FlowCoordinateBernoulli.planePoiseuilleFlow_witness`: plane Poiseuille flow with the physical
+  hypotheses `H, μ, ρ > 0` and `G ≠ 0`.
+- `FlowCoordinateBernoulli.planePoiseuille_zero_gradient_vs_couette`: no pressure gradient and
+  stationary walls give no flow, unlike a moving wall.
 
 ## iii. Table of contents
 
 - A. Transport through the fixed-origin chart
 - B. Discharging the projected Euler premise
 - C. Fixtures
+- D. Plane Couette flow
+- E. Newtonian stress
+- F. Continuity, incompressibility and Navier-Stokes
+- G. No-slip walls
+- H. Plane Poiseuille flow
+- I. Newtonian stress, continuity and Navier-Stokes for plane Poiseuille flow
+- J. No-slip walls and flow rate
+- K. No pressure gradient versus a moving wall
 
 ## iv. References
 
 - `EarthScience.bernoulli_along_streamline` (`PhyslibExt.EarthScience.BernoulliStreamline`).
 - Physlib's `FluidDynamics.Euler`, `FluidDynamics.CauchyFlow.HasBodyForcePotential` and
   `FluidDynamics.bernoulliFunction`.
+- F. M. White, *Viscous Fluid Flow*, 3rd ed., McGraw-Hill (2006), Chapter 3: Couette and
+  Poiseuille flow between parallel plates.
+- Physlib's `FluidDynamics.NavierStokes`, `FluidDynamics.ConvectiveNavierStokes`,
+  `FluidDynamics.CauchyFlow.IsNewtonian`, `FluidDynamics.FluidFlow.SmoothIncompressible` and
+  `FluidDynamics.navier_stokes_iff_convective_navier_stokes`.
 -/
 
 @[expose] public section
@@ -489,5 +557,471 @@ lemma polytropic_enthalpy_not_pOverRho {ρ Ω g : ℝ} (hρ : 0 < ρ) (hg : g �
   have e2 : -(ρ * g) / ρ = -g := by field_simp
   rw [e1, e2] at h1
   exact hg (by linarith)
+
+/-! ## D. Plane Couette flow -/
+
+/-- Plane Couette velocity `(Uwall * y / H, 0, 0)` with `y = x 1` the wall-normal coordinate.
+-/
+noncomputable def couetteVelocity (Uwall H : ℝ) : Space → EuclideanSpace ℝ (Fin 3) :=
+  fun x => WithLp.toLp 2 ![Uwall * x 1 / H, 0, 0]
+
+/-- Density and velocity of plane Couette flow with constant density `ρ`. -/
+noncomputable def couetteFluid (ρ Uwall H : ℝ) : FluidFlow 3 where
+  rho := fun _ _ => ρ
+  velocity := fun _ => couetteVelocity Uwall H
+
+/-- Plane Couette flow: constant density `ρ`, the steady Couette velocity, Physlib's Newtonian
+stress for constant pressure `p₀`, shear viscosity `μ` and second viscosity `lam`, and no body
+force. -/
+noncomputable def couetteFlow (ρ μ lam p₀ Uwall H : ℝ) : CauchyFlow 3 where
+  toFluidFlow := couetteFluid ρ Uwall H
+  stress := FluidFlow.newtonianStressTensor 3 (couetteFluid ρ Uwall H) (fun _ _ => p₀)
+    (fun _ _ => μ) (fun _ _ => lam)
+  specificBodyForce := fun _ _ => 0
+
+/-- The plane Couette velocity is differentiable. -/
+private lemma couetteVelocity_differentiable (Uwall H : ℝ) :
+    Differentiable ℝ (couetteVelocity Uwall H) := by
+  refine differentiable_euclidean.mpr fun i => ?_
+  unfold couetteVelocity
+  fin_cases i
+  · simp only [Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero]
+    fun_prop
+  · simp
+  · simp
+
+/-- The plane Couette velocity is linear, so its directional derivatives are its values on the
+basis. -/
+private lemma deriv_couetteVelocity (Uwall H : ℝ) (x : Space) (i : Fin 3) :
+    ∂[i] (couetteVelocity Uwall H) x = couetteVelocity Uwall H (basis i) := by
+  ext j
+  rw [← deriv_euclid (couetteVelocity_differentiable Uwall H), Space.deriv_eq]
+  unfold couetteVelocity
+  fin_cases j
+  · simp (disch := fun_prop) [fderiv_const_mul, div_eq_mul_inv, fderiv_mul_const]
+    ring
+  · simp
+  · simp
+
+/-- The plane Couette velocity on the basis: only `basis 1` has a nonzero image, with first
+component `Uwall / H`. -/
+private lemma couetteVelocity_basis (Uwall H : ℝ) (i j : Fin 3) :
+    couetteVelocity Uwall H (basis i) j =
+      if j = 0 ∧ i = 1 then Uwall / H else 0 := by
+  unfold couetteVelocity
+  fin_cases i <;> fin_cases j <;> simp [basis_apply]
+
+/-- The plane Couette velocity is divergence free. -/
+private lemma div_couetteVelocity (Uwall H : ℝ) (x : Space) :
+    (∇ ⬝ couetteVelocity Uwall H) x = 0 := by
+  unfold Space.div
+  simp only [deriv_euclid (couetteVelocity_differentiable Uwall H), deriv_couetteVelocity,
+    Fin.sum_univ_three, couetteVelocity_basis]
+  simp
+
+/-- The plane Couette mass flux `ρ u` is divergence free. -/
+private lemma div_smul_couetteVelocity (ρ Uwall H : ℝ) (x : Space) :
+    (∇ ⬝ fun x' => ρ • couetteVelocity Uwall H x') x = 0 := by
+  have hd : Differentiable ℝ (fun x' => ρ • couetteVelocity Uwall H x') :=
+    (couetteVelocity_differentiable Uwall H).const_smul ρ
+  have h : ∀ i, ∂[i] (fun x' => ρ • couetteVelocity Uwall H x') x =
+      ρ • couetteVelocity Uwall H (basis i) := by
+    intro i
+    change fderiv ℝ (ρ • couetteVelocity Uwall H) x (basis i) = _
+    rw [fderiv_const_smul ((couetteVelocity_differentiable Uwall H) x), _root_.smul_apply,
+      ← Space.deriv_eq, deriv_couetteVelocity]
+  unfold Space.div
+  simp only [deriv_euclid hd, h, Fin.sum_univ_three]
+  simp [couetteVelocity_basis]
+
+/-- The velocity gradient of plane Couette flow has the single nonzero entry
+`∂₁ u₀ = Uwall / H`. -/
+private lemma velocityGradient_couette (ρ Uwall H : ℝ) (t : Time) (x : Space) (i j : Fin 3) :
+    FluidFlow.velocityGradient 3 (couetteFluid ρ Uwall H) t x i j =
+      if i = 0 ∧ j = 1 then Uwall / H else 0 := by
+  unfold FluidFlow.velocityGradient
+  simp only [couetteFluid]
+  rw [deriv_euclid (couetteVelocity_differentiable Uwall H), deriv_couetteVelocity,
+    couetteVelocity_basis]
+
+/-! ## E. Newtonian stress -/
+
+/-- The Newtonian stress of plane Couette flow is the constant matrix with normal entries
+`-p₀` and shear entries `μ Uwall / H`; the second viscosity drops out. -/
+lemma couetteFlow_stress (ρ μ lam p₀ Uwall H : ℝ) (t : Time) (x : Space) :
+    (couetteFlow ρ μ lam p₀ Uwall H).stress t x =
+      !![-p₀, μ * Uwall / H, 0; μ * Uwall / H, -p₀, 0; 0, 0, -p₀] := by
+  ext i j
+  simp only [couetteFlow, FluidFlow.newtonianStressTensor]
+  have hdiv : (∇ ⬝ (couetteFluid ρ Uwall H).velocity t) x = 0 := div_couetteVelocity Uwall H x
+  rw [hdiv]
+  fin_cases i <;> fin_cases j <;>
+    simp [velocityGradient_couette, Matrix.transpose_apply] <;> ring
+
+/-! ## F. Continuity, incompressibility and Navier-Stokes -/
+
+/-- Plane Couette flow satisfies Physlib's smooth continuity equation: the density is
+differentiable in time, the mass flux is differentiable in space, and the continuity residual
+vanishes. -/
+lemma couetteFlow_smoothContinuityEquation (ρ μ lam p₀ Uwall H : ℝ) :
+    FluidFlow.SmoothContinuityEquation 3 (couetteFlow ρ μ lam p₀ Uwall H).toFluidFlow := by
+  refine ⟨fun x => differentiable_const ρ,
+    fun t => (couetteVelocity_differentiable Uwall H).const_smul ρ, fun t x => ?_⟩
+  simp only [FluidFlow.continuityResidual, couetteFlow, couetteFluid]
+  rw [Time.deriv_const, zero_add]
+  exact div_smul_couetteVelocity ρ Uwall H x
+
+/-- Plane Couette flow is smoothly incompressible: the velocity is differentiable and
+divergence free. -/
+lemma couetteFlow_smoothIncompressible (ρ μ lam p₀ Uwall H : ℝ) :
+    FluidFlow.SmoothIncompressible 3 (couetteFlow ρ μ lam p₀ Uwall H).toFluidFlow := by
+  exact ⟨fun t => couetteVelocity_differentiable Uwall H,
+    fun t x => div_couetteVelocity Uwall H x⟩
+
+/-- The four differentiability premises of
+`FluidDynamics.navier_stokes_iff_convective_navier_stokes` hold for plane Couette flow. -/
+lemma couetteFlow_navierStokes_premises (ρ μ lam p₀ Uwall H : ℝ) :
+    (∀ t x, DifferentiableAt ℝ ((couetteFlow ρ μ lam p₀ Uwall H).rho · x) t) ∧
+      (∀ t x, DifferentiableAt ℝ ((couetteFlow ρ μ lam p₀ Uwall H).velocity · x) t) ∧
+      (∀ t, Differentiable ℝ
+        (FluidFlow.momentumDensity 3 (couetteFlow ρ μ lam p₀ Uwall H).toFluidFlow t)) ∧
+      ∀ t, Differentiable ℝ ((couetteFlow ρ μ lam p₀ Uwall H).velocity t) := by
+  refine ⟨fun t x => differentiableAt_const ρ, fun t x => differentiableAt_const _, fun t => ?_,
+    fun t => couetteVelocity_differentiable Uwall H⟩
+  unfold FluidFlow.momentumDensity
+  exact (couetteVelocity_differentiable Uwall H).const_smul ρ
+
+/-- Plane Couette flow satisfies Physlib's convective Navier-Stokes equations with constant
+pressure `p₀`, shear viscosity `μ` and second viscosity `lam`. -/
+lemma couetteFlow_convectiveNavierStokes (ρ μ lam p₀ Uwall H : ℝ) :
+    ConvectiveNavierStokes 3 (couetteFlow ρ μ lam p₀ Uwall H) (fun _ _ => p₀) (fun _ _ => μ)
+      (fun _ _ => lam) := by
+  refine ⟨FluidFlow.classicalContinuityEquation_of_smoothContinuityEquation 3 _
+    (couetteFlow_smoothContinuityEquation ρ μ lam p₀ Uwall H), fun t x => ?_, fun t x => rfl⟩
+  have hσ : (couetteFlow ρ μ lam p₀ Uwall H).stress t =
+      fun _ => !![-p₀, μ * Uwall / H, 0; μ * Uwall / H, -p₀, 0; 0, 0, -p₀] := by
+    funext y
+    exact couetteFlow_stress ρ μ lam p₀ Uwall H t y
+  rw [hσ, matrixDiv_const]
+  simp only [FluidFlow.materialAcceleration, FluidFlow.convectiveTerm, couetteFlow, couetteFluid,
+    Time.deriv_const, zero_add, deriv_couetteVelocity, Fin.sum_univ_three]
+  ext i
+  fin_cases i <;> simp [couetteVelocity, basis_apply]
+
+/-- Plane Couette flow satisfies Physlib's conservative Navier-Stokes equations with constant
+pressure `p₀`, shear viscosity `μ` and second viscosity `lam`. -/
+lemma couetteFlow_navierStokes (ρ μ lam p₀ Uwall H : ℝ) :
+    NavierStokes 3 (couetteFlow ρ μ lam p₀ Uwall H) (fun _ _ => p₀) (fun _ _ => μ)
+      (fun _ _ => lam) := by
+  obtain ⟨h1, h2, h3, h4⟩ := couetteFlow_navierStokes_premises ρ μ lam p₀ Uwall H
+  exact (navier_stokes_iff_convective_navier_stokes 3 _ _ _ _ h1 h2 h3 h4).mpr
+    (couetteFlow_convectiveNavierStokes ρ μ lam p₀ Uwall H)
+
+/-! ## G. No-slip walls -/
+
+/-- The lower wall `y = 0` is at rest. -/
+lemma couetteVelocity_lower_wall (Uwall H : ℝ) (x : Space) (hx : x 1 = 0) :
+    couetteVelocity Uwall H x = 0 := by
+  ext i
+  fin_cases i <;> simp [couetteVelocity, hx]
+
+/-- The upper wall `y = H` moves with velocity `(Uwall, 0, 0)`. -/
+lemma couetteVelocity_upper_wall {Uwall H : ℝ} (hH : 0 < H) (x : Space) (hx : x 1 = H) :
+    couetteVelocity Uwall H x = WithLp.toLp 2 ![Uwall, 0, 0] := by
+  ext i
+  fin_cases i <;> simp [couetteVelocity, hx, hH.ne']
+
+/-- Plane Couette flow with the physical hypotheses `H, μ, ρ > 0`, constant pressure and
+`Uwall ≠ 0`: the density is positive, the flow is smoothly incompressible and satisfies the
+conservative Navier-Stokes equations, the lower wall is at rest, the upper wall moves with
+velocity `(Uwall, 0, 0)`, and the shear stress `μ Uwall / H` is nonzero. -/
+lemma couetteFlow_witness {ρ μ H Uwall : ℝ} (lam p₀ : ℝ) (hH : 0 < H) (hμ : 0 < μ)
+    (hρ : 0 < ρ) (hU : Uwall ≠ 0) :
+    (∀ t x, 0 < (couetteFlow ρ μ lam p₀ Uwall H).rho t x) ∧
+      FluidFlow.SmoothIncompressible 3 (couetteFlow ρ μ lam p₀ Uwall H).toFluidFlow ∧
+      NavierStokes 3 (couetteFlow ρ μ lam p₀ Uwall H) (fun _ _ => p₀) (fun _ _ => μ)
+        (fun _ _ => lam) ∧
+      (∀ t (x : Space), x 1 = 0 → (couetteFlow ρ μ lam p₀ Uwall H).velocity t x = 0) ∧
+      (∀ t (x : Space), x 1 = H →
+        (couetteFlow ρ μ lam p₀ Uwall H).velocity t x = WithLp.toLp 2 ![Uwall, 0, 0]) ∧
+      ∀ t x, (couetteFlow ρ μ lam p₀ Uwall H).stress t x 0 1 ≠ 0 := by
+  refine ⟨fun t x => hρ, couetteFlow_smoothIncompressible ρ μ lam p₀ Uwall H,
+    couetteFlow_navierStokes ρ μ lam p₀ Uwall H,
+    fun t x hx => couetteVelocity_lower_wall Uwall H x hx,
+    fun t x hx => couetteVelocity_upper_wall hH x hx, fun t x => ?_⟩
+  rw [couetteFlow_stress]
+  simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one,
+    Matrix.empty_val', Matrix.cons_val_fin_one]
+  exact div_ne_zero (mul_ne_zero hμ.ne' hU) hH.ne'
+
+/-! ## H. Plane Poiseuille flow -/
+
+/-- Plane Poiseuille velocity `(G y (H - y) / (2 μ), 0, 0)` with `y = x 1` the wall-normal
+coordinate and `G = -∂p/∂x` the signed pressure-drop rate. -/
+noncomputable def planePoiseuilleVelocity (G μ H : ℝ) : Space → EuclideanSpace ℝ (Fin 3) :=
+  fun x => WithLp.toLp 2 ![G * x 1 * (H - x 1) / (2 * μ), 0, 0]
+
+/-- The linear pressure `p₀ - G x` with `x = x 0` the streamwise coordinate. -/
+def planePoiseuillePressure (p₀ G : ℝ) : Space → ℝ :=
+  fun x => p₀ - G * x 0
+
+/-- Density and velocity of plane Poiseuille flow with constant density `ρ`. -/
+noncomputable def planePoiseuilleFluid (ρ G μ H : ℝ) : FluidFlow 3 where
+  rho := fun _ _ => ρ
+  velocity := fun _ => planePoiseuilleVelocity G μ H
+
+/-- Plane Poiseuille flow: constant density `ρ`, the steady Poiseuille velocity, Physlib's
+Newtonian stress for the pressure `p₀ - G x`, shear viscosity `μ` and second viscosity `lam`,
+and no body force. -/
+noncomputable def planePoiseuilleFlow (ρ μ lam p₀ G H : ℝ) : CauchyFlow 3 where
+  toFluidFlow := planePoiseuilleFluid ρ G μ H
+  stress := FluidFlow.newtonianStressTensor 3 (planePoiseuilleFluid ρ G μ H)
+    (fun _ x => planePoiseuillePressure p₀ G x) (fun _ _ => μ) (fun _ _ => lam)
+  specificBodyForce := fun _ _ => 0
+
+/-- The coordinate map `x ↦ x i` has derivative `coordCLM i`. -/
+private lemma hasFDerivAt_coord (i : Fin 3) (x : Space) :
+    HasFDerivAt (fun x' : Space => x' i) (coordCLM i) x := by
+  convert (coordCLM i).hasFDerivAt (x := x) using 1
+  funext y
+  simp [coordCLM_apply, coord_apply]
+
+/-- Directional derivative of a function of one coordinate. -/
+private lemma deriv_comp_coord {g : ℝ → ℝ} {g' : ℝ} (i j : Fin 3) {x : Space}
+    (hg : HasDerivAt g g' (x i)) :
+    ∂[j] (fun x' : Space => g (x' i)) x = if j = i then g' else 0 := by
+  have h := hg.comp_hasFDerivAt x (hasFDerivAt_coord i x)
+  rw [Space.deriv_eq, show (fun x' : Space => g (x' i)) = g ∘ (fun x' : Space => x' i) from rfl,
+    h.fderiv]
+  simp [coordCLM_apply, coord_apply, basis_apply]
+
+private lemma planePoiseuilleVelocity_differentiable (G μ H : ℝ) :
+    Differentiable ℝ (planePoiseuilleVelocity G μ H) := by
+  refine differentiable_euclidean.mpr fun i => ?_
+  unfold planePoiseuilleVelocity
+  fin_cases i
+  · simp only [Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero]
+    fun_prop
+  · simp
+  · simp
+
+private lemma deriv_planePoiseuilleVelocity (G μ H : ℝ) (x : Space) (i j : Fin 3) :
+    ∂[j] (fun x' => planePoiseuilleVelocity G μ H x' i) x =
+      if i = 0 ∧ j = 1 then G * (H - 2 * x 1) / (2 * μ) else 0 := by
+  fin_cases i
+  · have hg : HasDerivAt (fun y : ℝ => G * y * (H - y) / (2 * μ))
+        (G * (H - 2 * x 1) / (2 * μ)) (x 1) :=
+      ((((hasDerivAt_id (x 1)).const_mul G).mul ((hasDerivAt_id (x 1)).const_sub H)).div_const
+        (2 * μ)).congr_deriv (by simp only [id]; ring)
+    have h := deriv_comp_coord 1 j hg
+    simp only [Fin.zero_eta, Fin.isValue, true_and]
+    rw [← h]
+    rfl
+  · simp [planePoiseuilleVelocity]
+  · simp [planePoiseuilleVelocity]
+
+private lemma div_planePoiseuilleVelocity (G μ H : ℝ) (x : Space) :
+    (∇ ⬝ planePoiseuilleVelocity G μ H) x = 0 := by
+  unfold Space.div
+  simp [Fin.sum_univ_three, deriv_planePoiseuilleVelocity]
+
+private lemma div_smul_planePoiseuilleVelocity (ρ G μ H : ℝ) (x : Space) :
+    (∇ ⬝ fun x' => ρ • planePoiseuilleVelocity G μ H x') x = 0 := by
+  have hd : Differentiable ℝ (fun x' => ρ • planePoiseuilleVelocity G μ H x') :=
+    (planePoiseuilleVelocity_differentiable G μ H).const_smul ρ
+  have h : ∀ i, ∂[i] (fun x' => ρ • planePoiseuilleVelocity G μ H x') x =
+      ρ • ∂[i] (planePoiseuilleVelocity G μ H) x := by
+    intro i
+    change fderiv ℝ (ρ • planePoiseuilleVelocity G μ H) x (basis i) = _
+    rw [fderiv_const_smul ((planePoiseuilleVelocity_differentiable G μ H) x), _root_.smul_apply,
+      ← Space.deriv_eq]
+  unfold Space.div
+  simp only [deriv_euclid hd, h, Fin.sum_univ_three]
+  simp [← deriv_euclid (planePoiseuilleVelocity_differentiable G μ H),
+    deriv_planePoiseuilleVelocity]
+
+private lemma velocityGradient_planePoiseuille (ρ G μ H : ℝ) (t : Time) (x : Space)
+    (i j : Fin 3) :
+    FluidFlow.velocityGradient 3 (planePoiseuilleFluid ρ G μ H) t x i j =
+      if i = 0 ∧ j = 1 then G * (H - 2 * x 1) / (2 * μ) else 0 := by
+  unfold FluidFlow.velocityGradient
+  exact deriv_planePoiseuilleVelocity G μ H x i j
+/-! ## I. Newtonian stress, continuity and Navier-Stokes for plane Poiseuille flow -/
+
+/-- For `μ ≠ 0` the Newtonian stress of plane Poiseuille flow has normal entries `-p` and shear
+entries `G (H - 2 y) / 2`; the second viscosity drops out. -/
+lemma planePoiseuilleFlow_stress {μ : ℝ} (hμ : μ ≠ 0) (ρ lam p₀ G H : ℝ) (t : Time)
+    (x : Space) :
+    (planePoiseuilleFlow ρ μ lam p₀ G H).stress t x =
+      !![-(p₀ - G * x 0), G * (H - 2 * x 1) / 2, 0;
+        G * (H - 2 * x 1) / 2, -(p₀ - G * x 0), 0;
+        0, 0, -(p₀ - G * x 0)] := by
+  ext i j
+  simp only [planePoiseuilleFlow, FluidFlow.newtonianStressTensor]
+  have hdiv : (∇ ⬝ (planePoiseuilleFluid ρ G μ H).velocity t) x = 0 :=
+    div_planePoiseuilleVelocity G μ H x
+  rw [hdiv]
+  fin_cases i <;> fin_cases j <;>
+    simp [velocityGradient_planePoiseuille, Matrix.transpose_apply, planePoiseuillePressure] <;>
+    field_simp
+
+/-- Plane Poiseuille flow satisfies Physlib's smooth continuity equation: the density is
+differentiable in time, the mass flux is differentiable in space, and the continuity residual
+vanishes. -/
+lemma planePoiseuilleFlow_smoothContinuityEquation (ρ μ lam p₀ G H : ℝ) :
+    FluidFlow.SmoothContinuityEquation 3 (planePoiseuilleFlow ρ μ lam p₀ G H).toFluidFlow := by
+  refine ⟨fun x => differentiable_const ρ,
+    fun t => (planePoiseuilleVelocity_differentiable G μ H).const_smul ρ, fun t x => ?_⟩
+  simp only [FluidFlow.continuityResidual, planePoiseuilleFlow, planePoiseuilleFluid]
+  rw [Time.deriv_const, zero_add]
+  exact div_smul_planePoiseuilleVelocity ρ G μ H x
+
+/-- Plane Poiseuille flow is smoothly incompressible: the velocity is differentiable and
+divergence free. -/
+lemma planePoiseuilleFlow_smoothIncompressible (ρ μ lam p₀ G H : ℝ) :
+    FluidFlow.SmoothIncompressible 3 (planePoiseuilleFlow ρ μ lam p₀ G H).toFluidFlow := by
+  exact ⟨fun t => planePoiseuilleVelocity_differentiable G μ H,
+    fun t x => div_planePoiseuilleVelocity G μ H x⟩
+
+/-- The four differentiability premises of
+`FluidDynamics.navier_stokes_iff_convective_navier_stokes` hold for plane Poiseuille flow. -/
+lemma planePoiseuilleFlow_navierStokes_premises (ρ μ lam p₀ G H : ℝ) :
+    (∀ t x, DifferentiableAt ℝ ((planePoiseuilleFlow ρ μ lam p₀ G H).rho · x) t) ∧
+      (∀ t x, DifferentiableAt ℝ ((planePoiseuilleFlow ρ μ lam p₀ G H).velocity · x) t) ∧
+      (∀ t, Differentiable ℝ
+        (FluidFlow.momentumDensity 3 (planePoiseuilleFlow ρ μ lam p₀ G H).toFluidFlow t)) ∧
+      ∀ t, Differentiable ℝ ((planePoiseuilleFlow ρ μ lam p₀ G H).velocity t) := by
+  refine ⟨fun t x => differentiableAt_const ρ, fun t x => differentiableAt_const _, fun t => ?_,
+    fun t => planePoiseuilleVelocity_differentiable G μ H⟩
+  unfold FluidFlow.momentumDensity
+  exact (planePoiseuilleVelocity_differentiable G μ H).const_smul ρ
+
+/-- For `μ ≠ 0` plane Poiseuille flow satisfies Physlib's convective Navier-Stokes equations
+with the pressure `p₀ - G x`, shear viscosity `μ` and second viscosity `lam`. -/
+lemma planePoiseuilleFlow_convectiveNavierStokes {μ : ℝ} (hμ : μ ≠ 0) (ρ lam p₀ G H : ℝ) :
+    ConvectiveNavierStokes 3 (planePoiseuilleFlow ρ μ lam p₀ G H)
+      (fun _ x => planePoiseuillePressure p₀ G x) (fun _ _ => μ) (fun _ _ => lam) := by
+  refine ⟨FluidFlow.classicalContinuityEquation_of_smoothContinuityEquation 3 _
+    (planePoiseuilleFlow_smoothContinuityEquation ρ μ lam p₀ G H), fun t x => ?_, fun t x => rfl⟩
+  have hσ : (planePoiseuilleFlow ρ μ lam p₀ G H).stress t = fun y : Space =>
+      !![-(p₀ - G * y 0), G * (H - 2 * y 1) / 2, 0;
+        G * (H - 2 * y 1) / 2, -(p₀ - G * y 0), 0;
+        0, 0, -(p₀ - G * y 0)] := by
+    funext y
+    exact planePoiseuilleFlow_stress hμ ρ lam p₀ G H t y
+  have d0 : ∀ j, ∂[j] (fun y : Space => G * y 0 - p₀) x = if j = 0 then G else 0 := fun j =>
+    deriv_comp_coord (g := fun r => G * r - p₀) 0 j
+      ((((hasDerivAt_id (x 0)).const_mul G).sub_const p₀).congr_deriv (by simp))
+  have d1 : ∀ j, ∂[j] (fun y : Space => G * (H - 2 * y 1) / 2) x = if j = 1 then -G else 0 :=
+    fun j => deriv_comp_coord (g := fun r => G * (H - 2 * r) / 2) 1 j
+      (((((hasDerivAt_id (x 1)).const_mul 2).const_sub H).const_mul G).div_const 2 |>.congr_deriv
+        (by ring))
+  have hu0 : ∀ k, ∂[0] (fun x' => planePoiseuilleVelocity G μ H x' k) x = 0 := fun k => by
+    rw [deriv_planePoiseuilleVelocity]
+    simp
+  have hd := planePoiseuilleVelocity_differentiable G μ H
+  have hD0 : Space.deriv 0 (planePoiseuilleVelocity G μ H) x = 0 := by
+    ext k
+    rw [show (Space.deriv 0 (planePoiseuilleVelocity G μ H) x).ofLp k =
+        Space.deriv 0 (fun x' => planePoiseuilleVelocity G μ H x' k) x from
+          (deriv_euclid hd x).symm, hu0 k]
+    rfl
+  rw [hσ]
+  simp only [FluidFlow.materialAcceleration, FluidFlow.convectiveTerm, planePoiseuilleFlow,
+    planePoiseuilleFluid, Time.deriv_const, zero_add, Fin.sum_univ_three, hD0]
+  ext i
+  fin_cases i <;> simp [matrixDiv_apply, Fin.sum_univ_three, d0, d1, planePoiseuilleVelocity]
+
+/-- For `μ ≠ 0` plane Poiseuille flow satisfies Physlib's conservative Navier-Stokes equations
+with the pressure `p₀ - G x`, shear viscosity `μ` and second viscosity `lam`. -/
+lemma planePoiseuilleFlow_navierStokes {μ : ℝ} (hμ : μ ≠ 0) (ρ lam p₀ G H : ℝ) :
+    NavierStokes 3 (planePoiseuilleFlow ρ μ lam p₀ G H)
+      (fun _ x => planePoiseuillePressure p₀ G x) (fun _ _ => μ) (fun _ _ => lam) := by
+  obtain ⟨h1, h2, h3, h4⟩ := planePoiseuilleFlow_navierStokes_premises ρ μ lam p₀ G H
+  exact (navier_stokes_iff_convective_navier_stokes 3 _ _ _ _ h1 h2 h3 h4).mpr
+    (planePoiseuilleFlow_convectiveNavierStokes hμ ρ lam p₀ G H)
+
+/-! ## J. No-slip walls and flow rate -/
+
+/-- No slip on the lower wall `y = 0`. -/
+lemma planePoiseuilleVelocity_lower_wall (G μ H : ℝ) (x : Space) (hx : x 1 = 0) :
+    planePoiseuilleVelocity G μ H x = 0 := by
+  ext i
+  fin_cases i <;> simp [planePoiseuilleVelocity, hx]
+
+/-- No slip on the upper wall `y = H`. -/
+lemma planePoiseuilleVelocity_upper_wall (G μ H : ℝ) (x : Space) (hx : x 1 = H) :
+    planePoiseuilleVelocity G μ H x = 0 := by
+  ext i
+  fin_cases i <;> simp [planePoiseuilleVelocity, hx]
+
+/-- The flow rate per unit width through any cross-section `x = s`, `z` fixed, is
+`∫₀ᴴ u dy = G H³ / (12 μ)`. -/
+lemma planePoiseuille_flowRate (G μ H s z : ℝ) :
+    ∫ y in (0 : ℝ)..H, planePoiseuilleVelocity G μ H ⟨![s, y, z]⟩ 0 = G * H ^ 3 / (12 * μ) := by
+  have hF : ∀ y ∈ Set.uIcc (0 : ℝ) H, HasDerivAt
+      (fun y => G / (2 * μ) * (H * y ^ 2 / 2 - y ^ 3 / 3)) (G * y * (H - y) / (2 * μ)) y := by
+    intro y _
+    exact ((((hasDerivAt_pow 2 y).const_mul H).div_const 2).sub
+      ((hasDerivAt_pow 3 y).div_const 3)).const_mul (G / (2 * μ)) |>.congr_deriv
+        (by push_cast; ring)
+  have hint : IntervalIntegrable (fun y : ℝ => G * y * (H - y) / (2 * μ))
+      MeasureTheory.volume 0 H :=
+    (by fun_prop : Continuous fun y : ℝ => G * y * (H - y) / (2 * μ)).intervalIntegrable 0 H
+  have he : (fun y : ℝ => planePoiseuilleVelocity G μ H ⟨![s, y, z]⟩ 0) =
+      fun y => G * y * (H - y) / (2 * μ) := by
+    funext y
+    simp [planePoiseuilleVelocity]
+  rw [he, intervalIntegral.integral_eq_sub_of_hasDerivAt hF hint]
+  ring
+
+/-- Plane Poiseuille flow with the physical hypotheses `H, μ, ρ > 0` and `G ≠ 0`: the density is
+positive, the flow is smoothly incompressible and satisfies the conservative Navier-Stokes
+equations, both walls are at rest, and the flow rate per unit width is `G H³ / (12 μ) ≠ 0`. -/
+lemma planePoiseuilleFlow_witness {ρ μ H G : ℝ} (lam p₀ : ℝ) (hH : 0 < H) (hμ : 0 < μ)
+    (hρ : 0 < ρ) (hG : G ≠ 0) :
+    (∀ t x, 0 < (planePoiseuilleFlow ρ μ lam p₀ G H).rho t x) ∧
+      FluidFlow.SmoothIncompressible 3 (planePoiseuilleFlow ρ μ lam p₀ G H).toFluidFlow ∧
+      NavierStokes 3 (planePoiseuilleFlow ρ μ lam p₀ G H)
+        (fun _ x => planePoiseuillePressure p₀ G x) (fun _ _ => μ) (fun _ _ => lam) ∧
+      (∀ t (x : Space), x 1 = 0 → (planePoiseuilleFlow ρ μ lam p₀ G H).velocity t x = 0) ∧
+      (∀ t (x : Space), x 1 = H → (planePoiseuilleFlow ρ μ lam p₀ G H).velocity t x = 0) ∧
+      ∀ t s z, (∫ y in (0 : ℝ)..H, (planePoiseuilleFlow ρ μ lam p₀ G H).velocity t ⟨![s, y, z]⟩ 0) =
+          G * H ^ 3 / (12 * μ) ∧ G * H ^ 3 / (12 * μ) ≠ 0 := by
+  refine ⟨fun t x => hρ, planePoiseuilleFlow_smoothIncompressible ρ μ lam p₀ G H,
+    planePoiseuilleFlow_navierStokes hμ.ne' ρ lam p₀ G H,
+    fun t x hx => planePoiseuilleVelocity_lower_wall G μ H x hx,
+    fun t x hx => planePoiseuilleVelocity_upper_wall G μ H x hx, fun t s z => ⟨?_, ?_⟩⟩
+  · exact planePoiseuille_flowRate G μ H s z
+  · have : 0 < 12 * μ := by positivity
+    exact div_ne_zero (mul_ne_zero hG (pow_ne_zero 3 hH.ne')) this.ne'
+
+/-! ## K. No pressure gradient versus a moving wall -/
+
+/-- No pressure gradient and stationary walls give no flow: with `G = 0` the Poiseuille velocity
+vanishes everywhere, whereas plane Couette flow, also without a pressure gradient, has the
+nonzero flow rate `Uwall H / 2` when its upper wall moves with speed `Uwall ≠ 0`. -/
+lemma planePoiseuille_zero_gradient_vs_couette {Uwall H : ℝ} (hU : Uwall ≠ 0) (hH : 0 < H)
+    (μ s z : ℝ) :
+    (∀ x, planePoiseuilleVelocity 0 μ H x = 0) ∧
+      (∫ y in (0 : ℝ)..H, couetteVelocity Uwall H ⟨![s, y, z]⟩ 0) = Uwall * H / 2 ∧
+      Uwall * H / 2 ≠ 0 := by
+  refine ⟨fun x => ?_, ?_, div_ne_zero (mul_ne_zero hU hH.ne') two_ne_zero⟩
+  · ext i
+    fin_cases i <;> simp [planePoiseuilleVelocity]
+  · have hF : ∀ y ∈ Set.uIcc (0 : ℝ) H,
+        HasDerivAt (fun y => Uwall * y ^ 2 / (2 * H)) (Uwall * y / H) y := by
+      intro y _
+      exact (((hasDerivAt_pow 2 y).const_mul Uwall).div_const (2 * H)).congr_deriv (by
+        field_simp
+        ring)
+    have hint : IntervalIntegrable (fun y : ℝ => Uwall * y / H) MeasureTheory.volume 0 H :=
+      (by fun_prop : Continuous fun y : ℝ => Uwall * y / H).intervalIntegrable 0 H
+    have he : (fun y : ℝ => couetteVelocity Uwall H ⟨![s, y, z]⟩ 0) = fun y => Uwall * y / H := by
+      funext y
+      simp [couetteVelocity]
+    rw [he, intervalIntegral.integral_eq_sub_of_hasDerivAt hF hint]
+    field_simp
+    ring
 
 end FlowCoordinateBernoulli
