@@ -19,8 +19,9 @@ public import Mathlib.Topology.Order.Basic
 /-!
 # Finite-sample expressivity of two-layer ReLU networks
 
-A two-layer network with ReLU activations, `c(x) = ∑ⱼ wⱼ max(⟪a, x⟫ - bⱼ, 0)`, with `n` hidden
-units and `2 n + d` weights (`a ∈ ℝ^d`, `b, w ∈ ℝ^n`), can represent any function on a sample of
+A two-layer network with ReLU activations, `c(x) = ∑ⱼ wⱼ max(⟪a, x⟫ - bⱼ, 0)` on a real inner
+product space `E`, with `n` hidden units, a direction `a ∈ E` and `b, w ∈ ℝ^n` (`2 n + d` weights
+when `E = ℝ^d`), can represent any function on a sample of
 `n` distinct points (C. Zhang, S. Bengio, M. Hardt, B. Recht and O. Vinyals, *Understanding deep
 learning requires rethinking generalization*, ICLR 2017, arXiv:1611.03530, Theorem 1). The proof
 projects the points on a direction `a` that separates them and interleaves thresholds with the
@@ -99,9 +100,9 @@ private theorem exists_inner_injective {n : ℕ} {x : Fin n → E} (hx : Functio
   simpa [sub_eq_zero] using hij
 
 /-- **Finite-sample expressivity of two-layer ReLU networks.** Let `x₁, …, xₙ` be distinct points
-of a real inner product space and `y ∈ ℝⁿ` any targets. Then there are `a`, `b ∈ ℝⁿ` and `w ∈ ℝⁿ`
-such that the two-layer ReLU network `c(x) = ∑ⱼ wⱼ max(⟪a, x⟫ - bⱼ, 0)` (`reluNet`) satisfies
-`c(xᵢ) = yᵢ` for every `i`. In `ℝ^d` the network has `2 n + d` weights.
+of a real inner product space `E` and `y ∈ ℝⁿ` any targets. Then there are a direction `a ∈ E`
+and `b, w ∈ ℝⁿ` such that the two-layer ReLU network `c(x) = ∑ⱼ wⱼ max(⟪a, x⟫ - bⱼ, 0)`
+(`reluNet`) satisfies `c(xᵢ) = yᵢ` for every `i`. In `ℝ^d` the network has `2 n + d` weights.
 
 Source: C. Zhang, S. Bengio, M. Hardt, B. Recht and O. Vinyals, *Understanding deep learning
 requires rethinking generalization*, ICLR 2017, arXiv:1611.03530, Theorem 1 (stated for samples
