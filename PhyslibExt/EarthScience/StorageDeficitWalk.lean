@@ -83,7 +83,7 @@ def requiredStorageAt {n : ℕ} (R Q : Fin n → ℝ) (t : ℕ) : ℝ :=
   lindley ((deficitList R Q).take t)
 
 /-- Storage deficit at the end of the whole horizon. -/
-def requiredStorage {n : ℕ} (R Q : Fin n → ℝ) : ℝ :=
+def terminalStorageDeficit {n : ℕ} (R Q : Fin n → ℝ) : ℝ :=
   lindley (deficitList R Q)
 
 /-- The signed deficit accumulated over the suffix of steps
@@ -129,15 +129,16 @@ private theorem requiredStorageAt_succ_of
   unfold requiredStorageAt
   rw [htake, hconcat]
 
-/-- Required storage over the whole horizon is its value at
-`t = n`. -/
-theorem requiredStorage_eq_at_length {n : ℕ} (R Q : Fin n → ℝ) :
-    requiredStorage R Q = requiredStorageAt R Q n := by
+/-- The terminal storage deficit is the storage deficit at
+`t = n` (not the horizon capacity, which is
+`worstRequiredStorage`). -/
+theorem terminalStorageDeficit_eq_at_length {n : ℕ} (R Q : Fin n → ℝ) :
+    terminalStorageDeficit R Q = requiredStorageAt R Q n := by
   have hlen : (deficitList R Q).length = n := List.length_ofFn
   have htake : (deficitList R Q).take (deficitList R Q).length
       = deficitList R Q := List.take_length
   rw [hlen] at htake
-  unfold requiredStorage requiredStorageAt
+  unfold terminalStorageDeficit requiredStorageAt
   rw [htake]
 
 /-- Duality form, transported from the canonical Lindley/walkMax

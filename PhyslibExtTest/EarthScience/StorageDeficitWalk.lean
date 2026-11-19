@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.EarthScience.StorageDeficitWalk
+import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -94,6 +95,26 @@ example : suffixDeficitSum ![3, 0, 4] ![0, 3, 0] 0 3
     ≤ requiredStorageAt ![3, 0, 4] ![0, 3, 0] 3 :=
   suffixDeficitSum_le_requiredStorageAt _ _ (by norm_num) (by norm_num)
 
+/-- Terminal deficit below the peak: for releases `[3, 0]` and
+inflows `[0, 5]`, the reservoir refills, so the terminal deficit
+is `0` while the worst-required storage is at least `3`. -/
+example : terminalStorageDeficit ![3, 0] ![0, 5]
+    < worstRequiredStorage ![3, 0] ![0, 5] := by
+  have hk1 : requiredStorageAt ![3, 0] ![0, 5] 1 = 3 := by
+    change requiredStorageAt ![3, 0] ![0, 5] (0 + 1) = 3
+    rw [requiredStorageAt_succ _ _ (by norm_num : (0 : ℕ) < 2),
+      requiredStorageAt_zero]
+    norm_num
+  have hk2 : requiredStorageAt ![3, 0] ![0, 5] 2 = 0 := by
+    change requiredStorageAt ![3, 0] ![0, 5] (1 + 1) = 0
+    rw [requiredStorageAt_succ _ _ (by norm_num : (1 : ℕ) < 2), hk1]
+    norm_num
+  have hworst := (requiredStorageAt_le_worst_and_exists_eq
+    ![3, 0] ![0, 5]).1 1
+  rw [hk1] at hworst
+  rw [terminalStorageDeficit_eq_at_length, hk2]
+  linarith
+
 /-! ## B. Empty horizon and maximum-includes-zero -/
 
 /-- Empty horizon: no deficit, no worst-case storage. -/
@@ -130,7 +151,7 @@ example : 0 ≤ requiredStorageAt ![0, 0] ![1, 2] 2 :=
 
 #print axioms EarthScience.requiredStorageAt_zero
 #print axioms EarthScience.requiredStorageAt_succ
-#print axioms EarthScience.requiredStorage_eq_at_length
+#print axioms EarthScience.terminalStorageDeficit_eq_at_length
 #print axioms EarthScience.requiredStorageAt_eq_walkMax_reverse
 #print axioms EarthScience.suffixDeficitSum_le_requiredStorageAt
 #print axioms EarthScience.exists_suffixDeficitSum_eq_requiredStorageAt
