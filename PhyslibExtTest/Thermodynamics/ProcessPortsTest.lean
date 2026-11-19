@@ -10,8 +10,13 @@ module
 public import PhyslibExt.EarthScience.UnitsOrScaling
 public import PhyslibExt.Thermodynamics.ProcessPorts
 
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-!
 # Tests for `PhyslibExt.Thermodynamics.ProcessPorts`
@@ -22,6 +27,9 @@ One kilogram of air, `Rs = 287 J/(kg K)`, at `300 K`, expanding from `0.5 m³` t
 * against the final pressure `86100 Pa` the expansion does `43050 J`, strictly less than the
   reversible work;
 * Celsius readings are not absolute temperatures inside logarithms.
+
+A heat capacity `Cv T = 20 + T / 100 J/K`, positive and nonconstant on `[300 K, 400 K]`: the
+internal energy increases strictly, by `2350 J`, and the endpoint estimate `2300 J` is not exact.
 -/
 
 @[expose] public section
@@ -96,5 +104,41 @@ example :
   have hcon' := congrArg Real.exp hcon
   rw [Real.exp_log hpos1, Real.exp_log hpos2] at hcon'
   exact hcon'
+
+-- Fixture: `U T = 20 * T + T ^ 2 / 200` J has `Cv T = 20 + T / 100` J/K, positive and
+-- nonconstant on `[300, 400]` K, so `U` is strictly increasing there. Heating from `300` K to
+-- `400` K changes the energy by `∫ Cv = 2350` J; the endpoint estimate `Cv 300 * 100 = 2300` J is
+-- `50 = b * (T₂ - T₁) ^ 2 / 2` J short.
+example :
+    StrictMonoOn (fun T : ℝ => 20 * T + T ^ 2 / 200) (Set.Icc 300 400) ∧
+      (∫ T in (300 : ℝ)..400, (20 + 1 / 100 * T)) = 2350 ∧
+      ((20 : ℝ) + 1 / 100 * 300) * (400 - 300) = 2300 := by
+  have hT : (300 : ℝ) ≤ 400 := by norm_num
+  have hU : ∀ T ∈ Set.Icc (300 : ℝ) 400,
+      HasDerivAt (fun T : ℝ => 20 * T + T ^ 2 / 200) (20 + 1 / 100 * T) T := by
+    intro T _
+    have e1 : HasDerivAt (fun T : ℝ => 20 * T) 20 T := by
+      simpa using (hasDerivAt_id T).const_mul (20 : ℝ)
+    have e2 : HasDerivAt (fun T : ℝ => T ^ 2 / 200) (2 * T / 200) T := by
+      simpa using (hasDerivAt_pow 2 T).div_const (200 : ℝ)
+    have h := e1.add e2
+    have hfun : ((fun T : ℝ => 20 * T) + (fun T : ℝ => T ^ 2 / 200))
+        = fun T => 20 * T + T ^ 2 / 200 := rfl
+    have hder : (20 : ℝ) + 2 * T / 200 = 20 + 1 / 100 * T := by ring
+    rw [hfun, hder] at h
+    exact h
+  have hcont : ContinuousOn (fun T : ℝ => 20 + 1 / 100 * T) (Set.Icc 300 400) :=
+    (continuous_const.add (continuous_const.mul continuous_id')).continuousOn
+  have hpos : ∀ T ∈ Set.Icc (300 : ℝ) 400, 0 < 20 + 1 / 100 * T := by
+    intro T hTmem
+    have h300 : (300 : ℝ) ≤ T := hTmem.1
+    have hTnn : (0 : ℝ) ≤ T := by linarith
+    positivity
+  have hmono := strictMonoOn_of_heatCapacity_pos _ _ hT hU hcont hpos
+  refine ⟨hmono.1, ?_, ?_⟩
+  · have hI := integral_linear_heatCapacity (20 : ℝ) (1 / 100 : ℝ) (300 : ℝ) (400 : ℝ)
+    rw [hI]
+    norm_num
+  · norm_num
 
 end PhyslibExtTest.Thermodynamics.ProcessPorts
