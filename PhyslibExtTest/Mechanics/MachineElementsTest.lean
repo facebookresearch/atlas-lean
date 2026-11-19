@@ -31,7 +31,7 @@ open _root_.Mechanics.MachineElements
 /-! ## A. Two external meshes and one internal mesh -/
 
 /-- Two external meshes and one internal mesh: `20 → 40` external, `15 → 45` external,
-`18 → 72` internal (pinion driving a ring gear). -/
+`18 → 72` internal (pinion upstream, ring downstream). -/
 def exampleTrain : Fin 3 → Mesh :=
   ![⟨20, 40, .external, by decide⟩, ⟨15, 45, .external, by decide⟩,
     ⟨18, 72, .internal, by decide⟩]

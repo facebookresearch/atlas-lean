@@ -23,25 +23,26 @@ import Mathlib.Tactic.Ring
 
 A finite parallel-axis gear train: shafts `0, …, n`, all oriented along one common axis
 direction, and meshes `k = 0, …, n - 1`, mesh `k` joining the upstream shaft `k` to the
-downstream shaft `k + 1`. Mesh `k` has a driver gear with `driverTeeth` teeth on the upstream
-shaft and a driven gear with `drivenTeeth` teeth on the downstream shaft; both counts are
-positive integers (`ℕ+`), and in an internal mesh the driven gear is the ring (internal gear)
-with strictly more teeth than the driver pinion, so every mesh is a realizable gear pair: an
-internal pair with equal counts would have zero center distance. Angular velocities `ω j` are
-signed about the common axis direction.
+downstream shaft `k + 1`. Mesh `k` has a gear with `driverTeeth` teeth on the upstream shaft
+and a gear with `drivenTeeth` teeth on the downstream shaft; the names record these positions,
+not the direction of power flow. Both counts are positive integers (`ℕ+`), and in an internal
+mesh the downstream gear is the ring (internal gear) with strictly more teeth than the upstream
+pinion, so every mesh is a realizable gear pair: an internal pair with equal counts would have
+zero center distance. Angular velocities `ω j` are signed about the common axis direction.
 
 Model inputs:
 
 * rigid ideal no-slip gears: across mesh `k` the downstream speed is the signed ratio
   `sense * driverTeeth / drivenTeeth` times the upstream speed, where the sense is `-1` for
   an external mesh (the sense of rotation reverses) and `1` for an internal (ring-gear)
-  mesh (the sense is kept); in an internal mesh the pinion drives the ring, and a ring driving
-  a pinion is outside this model;
+  mesh (the sense is kept);
 * power-into-component signs: `a k` is the torque the upstream shaft applies to mesh `k` and
   `b k` the torque the downstream shaft applies to mesh `k`, both about the common axis
   direction, so the power into mesh `k` is `a k * ω k + b k * ω (k + 1)`;
 * the ideal lossless port convention: a mesh absorbs no power on any motion of its two shafts
-  allowed by its no-slip constraint;
+  allowed by its no-slip constraint; the port torques may have either sign, so power can flow
+  through a mesh in either direction, and in an internal mesh the ring can drive the pinion as
+  well as the pinion the ring;
 * massless rigid shafts in equilibrium: the external torque applied to shaft `j`, whose power
   into the train is that torque times `ω j`, equals the sum of the torques shaft `j` applies
   to its meshes (`shaftLoad`).
@@ -103,14 +104,16 @@ def MeshKind.sense : MeshKind → ℝ
   | .external => -1
   | .internal => 1
 
-/-- One mesh: `driverTeeth` teeth on the driver gear (upstream shaft), `drivenTeeth` teeth on
-the driven gear (downstream shaft), both positive, and the mesh kind. In an internal mesh the
-driven gear is the ring and has strictly more teeth than the driver pinion. -/
+/-- One mesh: `driverTeeth` teeth on the gear on the upstream shaft, `drivenTeeth` teeth on the
+gear on the downstream shaft, both positive, and the mesh kind. The names record positions, not
+the direction of power flow. In an internal mesh the downstream gear is the ring and has strictly
+more teeth than the upstream pinion. -/
 structure Mesh where
   driverTeeth : ℕ+
   drivenTeeth : ℕ+
   kind : MeshKind
-  /-- In an internal mesh the driven ring has strictly more teeth than the driver pinion. -/
+  /-- In an internal mesh the ring, on the downstream shaft, has strictly more teeth than the
+  pinion on the upstream shaft. -/
   driverTeeth_lt_drivenTeeth_of_internal : kind = MeshKind.internal → driverTeeth < drivenTeeth
 
 /-- Signed angular-speed ratio of a mesh, downstream over upstream:
@@ -231,8 +234,8 @@ lemma exists_isNoSlip (m : Fin n → Mesh) (ω₀ : ℝ) :
     ∃ ω : Fin (n + 1) → ℝ, IsNoSlip m ω ∧ ω 0 = ω₀ := by
   exact exists_aux n m ω₀
 
-/-- The train ratio is `(-1) ^ (number of external meshes)` times the product of the driver
-tooth counts over the product of the driven tooth counts. -/
+/-- The train ratio is `(-1) ^ (number of external meshes)` times the product of the upstream
+tooth counts `driverTeeth` over the product of the downstream tooth counts `drivenTeeth`. -/
 lemma trainRatio_eq (m : Fin n → Mesh) :
     trainRatio m = (-1) ^ externalCount m *
       ((∏ k, (((m k).driverTeeth : ℕ) : ℝ)) / ∏ k, (((m k).drivenTeeth : ℕ) : ℝ)) := by
@@ -302,13 +305,15 @@ lemma trainRatio_pos_iff {m : Fin n → Mesh} :
 
 /-- Ideal lossless port convention: mesh `k` absorbs no power, `a k * w + b k * w'`, on any
 motion `(w, w')` of its upstream and downstream shafts allowed by its no-slip constraint
-`w' = ratio * w`. -/
+`w' = ratio * w`. The port torques may have either sign, so power may enter the mesh through
+either shaft. -/
 def IsLossless (m : Fin n → Mesh) (a b : Fin n → ℝ) : Prop :=
   ∀ k : Fin n, ∀ w : ℝ, a k * w + b k * ((m k).ratio * w) = 0
 
 /-- External torque on shaft `j` of massless rigid shafts in equilibrium: the sum of the
-torques shaft `j` applies to the meshes it drives (`a k` when `j` is upstream of mesh `k`)
-and to the meshes that drive it (`b k` when `j` is downstream of mesh `k`). -/
+torques shaft `j` applies to the meshes it is the upstream shaft of (`a k` when `j` is upstream
+of mesh `k`) and to the meshes it is the downstream shaft of (`b k` when `j` is downstream of
+mesh `k`). -/
 def shaftLoad (a b : Fin n → ℝ) (j : Fin (n + 1)) : ℝ :=
   (∑ k : Fin n, if k.castSucc = j then a k else 0) +
     ∑ k : Fin n, if k.succ = j then b k else 0
