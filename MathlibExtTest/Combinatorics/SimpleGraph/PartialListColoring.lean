@@ -8,8 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Combinatorics.SimpleGraph.PartialListColoring
-import Mathlib.Tactic.FinCases
+import MathlibExt.Combinatorics.SimpleGraph.PartialListColoring
 
 @[expose] public section
 
@@ -17,41 +16,71 @@ namespace MathlibExt.GraphTheory.PartialListColoringWanted
 
 example : ¬ conjecture := conjecture_refuted
 
-/-- The explicit graph of the counterexample exists: it has 14 vertices. -/
+/-- Noel's graph has fourteen vertices. -/
 example : Fintype.card Noel.V = 14 := by decide
 
-/-- The explicit graph satisfies the hypothesis of `conjecture`: its choice number is `3`. -/
-example : Noel.G.IsChoiceNumber 3 := noel_isChoiceNumber
+/-- Noel's graph is the paper's: each `{u i, v i, p i}` is a triangle, the terminals are adjacent
+exactly to the non-private vertices `u i` and `v i`, and there are no other edges. -/
+example : ∀ a b : Noel.V, Noel.G.Adj a b ↔
+    (∃ i, (a = .u i ∨ a = .v i ∨ a = .p i) ∧ (b = .u i ∨ b = .v i ∨ b = .p i) ∧ a ≠ b) ∨
+    ((a = .s1 ∨ a = .s2) ∧ ∃ i, b = .u i ∨ b = .v i) ∨
+    ((b = .s1 ∨ b = .s2) ∧ ∃ i, a = .u i ∨ a = .v i) := by
+  decide
 
-/-- The explicit 2-list assignment of the paper is a genuine 2-list assignment. -/
-example : Noel.IsListAssignment Noel.L 2 := by
-  unfold Noel.IsListAssignment; decide
+/-- Noel's graph satisfies the hypothesis of `conjecture` with `χ_ℓ = 3`. -/
+example : Noel.G.IsChoiceNumber 3 := Noel.isChoiceNumber_three
 
-/-- The 2-list assignment is not trivially fully colorable: nine vertices can be coloured, and
-the colouring is a proper list colouring in the sense of `IsListColoring`. -/
-example : ∃ (S : Finset Noel.V) (f : Noel.V → ℕ),
-    IsListColoring Noel.G Noel.L f S ∧ S.card = 9 := by
-  refine ⟨Noel.S9, Noel.c9, ?_, by decide⟩
-  have hp : Noel.IsPartialListColoring Noel.G Noel.L
-      Noel.S9 Noel.c9 := by
-    unfold Noel.IsPartialListColoring
+/-- Noel's lists all have two colours. -/
+example : ∀ w : Noel.V, (Noel.L w).card = 2 := by decide
+
+/-- Each choice of one colour from each terminal's list is the list of a triangle, and the four
+triangles have distinct lists. -/
+example : (∀ a ∈ Noel.L .s1, ∀ b ∈ Noel.L .s2, ∃ i, Noel.listOf i = {a, b}) ∧
+    Function.Injective Noel.listOf := by
+  decide
+
+/-- Nine vertices can be coloured from Noel's lists, so `λ_L = 9`: the bound is attained. -/
+example : lambdaMax Noel.G Noel.L = 9 := by
+  let S : Finset Noel.V := {.s1, .s2, .p 0, .u 1, .p 1, .u 2, .p 2, .u 3, .v 3}
+  let c : Noel.V → ℕ
+    | .s1 => 0
+    | .s2 => 2
+    | .p 0 => 0
+    | .u 1 => 3
+    | .p 1 => 0
+    | .u 2 => 1
+    | .p 2 => 2
+    | .u 3 => 1
+    | .v 3 => 3
+    | _ => 0
+  have hS : IsListColoring Noel.G Noel.L c S := by
+    unfold IsListColoring
     decide
-  exact hp
+  have h9 : S.card = 9 := by decide
+  exact le_antisymm Noel.lambdaMax_L_le_nine (h9 ▸ card_le_lambdaMax hS)
 
-/-- `IsChoiceNumber` is not vacuously false: the one-vertex edgeless graph has choice number one,
-so `conjecture` has a nonempty class of graphs satisfying its hypothesis. -/
-example : (⊥ : SimpleGraph (Fin 1)).IsChoiceNumber 1 := by
-  constructor
-  · intro C _ lists hlists
-    obtain ⟨x, hx⟩ : ∃ x, x ∈ lists 0 :=
-      Finset.card_pos.mp (by have h := hlists 0; omega)
-    refine ⟨⟨fun _ => x, ?_⟩, ?_⟩
-    · intro a b hab; exact absurd hab (by simp)
-    · intro v; fin_cases v; exact hx
-  · intro r hr h
-    have hr0 : r = 0 := by omega
-    subst hr0
-    obtain ⟨color, hmem⟩ := h (ℕ) (fun _ => (∅ : Finset ℕ)) (by intro v; simp)
-    exact absurd (hmem 0) (by simp)
+/-- `λ_2 ≤ 9 < 14 = λ_3` for Noel's graph. -/
+example : lambdaMin Noel.G 2 ≤ 9 ∧ lambdaMin Noel.G 3 = 14 :=
+  ⟨Noel.lambdaMin_two_le_nine, Noel.lambdaMin_three⟩
+
+/-- On a graph without edges, nonempty lists colour every vertex. -/
+example : lambdaMin (⊥ : SimpleGraph (Fin 3)) 1 = 3 := by
+  apply le_antisymm
+  · calc lambdaMin (⊥ : SimpleGraph (Fin 3)) 1 ≤ lambdaMax ⊥ (fun _ => {0}) :=
+          lambdaMin_le_lambdaMax fun _ => by simp
+      _ ≤ 3 := (lambdaMax_le_card _ _).trans (by simp)
+  · refine le_lambdaMin fun L hL => ?_
+    have hne : ∀ v, (L v).Nonempty := fun v => Finset.card_pos.mp (by simp [hL v])
+    have h := card_le_lambdaMax (G := (⊥ : SimpleGraph (Fin 3))) (L := L) (S := Finset.univ)
+      (f := fun v => (hne v).choose) ⟨fun v _ => (hne v).choose_spec, by simp⟩
+    simpa using h
+
+/-- Empty lists colour no vertex. -/
+example : lambdaMin (⊤ : SimpleGraph (Fin 2)) 0 = 0 := by
+  refine Nat.le_zero.mp ((lambdaMin_le_lambdaMax (L := fun _ => ∅) fun _ => by simp).trans ?_)
+  refine lambdaMax_le fun S f h => ?_
+  rw [Nat.le_zero, Finset.card_eq_zero, Finset.eq_empty_iff_forall_notMem]
+  intro v hv
+  simpa using h.1 v hv
 
 end MathlibExt.GraphTheory.PartialListColoringWanted
