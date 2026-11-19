@@ -13,7 +13,7 @@ import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
 /-!
 # Tests for `PhyslibExt.FluidDynamics.ScalarShockPorts`
 
-Checked consumers, each discharging the transport input with `movingJumpTransport_holds`:
+Checked consumers:
 
 - the Burgers front with states `2 | 0` moving at speed `1` conserves mass on `[-1, 1]`;
 - the same states with a stationary front do not: the incorrect speed leaves the nonzero
@@ -30,9 +30,6 @@ namespace PhyslibExtTest.FluidDynamics.ScalarShockPorts
 
 open ScalarShock
 
--- The transport input holds.
-example : MovingJumpTransport := movingJumpTransport_holds
-
 /-- Burgers flux `u ^ 2 / 2`, states `2 | 0`, front `x = τ` (speed `1`): the mass on `[-1, 1]`
 changes at the conservation rate `f 2 - f 0` at time `0`. -/
 example :
@@ -41,7 +38,7 @@ example :
   have key := conservation_iff_rankineHugoniot (f := fun u : ℝ => u ^ 2 / 2)
     (uL := fun _ _ => 2) (uR := fun _ _ => 0) (vL := fun _ _ => 0) (vR := fun _ _ => 0)
     (gL := fun _ => 0) (gR := fun _ => 0) (s := fun τ => τ) (c := 1) (a := -1) (b := 1)
-    (t := 0) (UL := Set.univ) (UR := Set.univ) movingJumpTransport_holds (hasDerivAt_id' 0)
+    (t := 0) (UL := Set.univ) (UR := Set.univ) (hasDerivAt_id' 0)
     (by norm_num) (by norm_num) isOpen_univ (Set.subset_univ _) continuousOn_const
     (fun _ _ => hasDerivAt_const _ _) continuousOn_const continuousOn_const
     (fun _ _ => hasDerivAt_const _ _) (fun _ _ => by simp)
@@ -59,7 +56,7 @@ example :
   have key := conservation_iff_rankineHugoniot (f := fun u : ℝ => u ^ 2 / 2)
     (uL := fun _ _ => 2) (uR := fun _ _ => 0) (vL := fun _ _ => 0) (vR := fun _ _ => 0)
     (gL := fun _ => 0) (gR := fun _ => 0) (s := fun _ => 0) (c := 0) (a := -1) (b := 1)
-    (t := 0) (UL := Set.univ) (UR := Set.univ) movingJumpTransport_holds (hasDerivAt_const 0 0)
+    (t := 0) (UL := Set.univ) (UR := Set.univ) (hasDerivAt_const 0 0)
     (by norm_num) (by norm_num) isOpen_univ (Set.subset_univ _) continuousOn_const
     (fun _ _ => hasDerivAt_const _ _) continuousOn_const continuousOn_const
     (fun _ _ => hasDerivAt_const _ _) (fun _ _ => by simp)
@@ -72,7 +69,7 @@ example :
 
 open scoped ContDiff
 
--- The weak-residual formula of the straight moving step, with the transport input discharged.
+-- The weak-residual formula of the straight moving step, for an arbitrary admissible test.
 example {f : ℝ → ℝ} {uL uR c T0 T1 X0 X1 : ℝ} {φ φt φx : ℝ → ℝ → ℝ}
     (hφ : ContDiff ℝ ∞ (fun p : ℝ × ℝ => φ p.1 p.2))
     (hφt : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => φ τ x) (φt t x) t)
@@ -81,7 +78,7 @@ example {f : ℝ → ℝ} {uL uR c T0 T1 X0 X1 : ℝ} {φ φt φx : ℝ → ℝ 
       Set.Icc T0 T1 ×ˢ Set.Icc X0 X1) :
     weakResidual f (movingStep uL uR c) φt φx =
       -((f uR - f uL) - c * (uR - uL)) * ∫ t : ℝ, φ t (c * t) :=
-  weakResidual_movingStep movingJumpTransport_holds hφ hφt hφx hsupp
+  weakResidual_movingStep hφ hφt hφx hsupp
 
 /-- Non-vacuity and a concrete consumer: a smooth bump on the plane with value `1` at the
 origin, vanishing outside `[-1, 1] × [-1, 1]`, meets the test hypotheses; for it the Burgers
@@ -116,7 +113,7 @@ example : ∃ φ φt φx : ℝ → ℝ → ℝ,
     rw [Real.norm_eq_abs, abs_lt] at h1 h2
     exact ⟨⟨h1.1.le, h1.2.le⟩, ⟨h2.1.le, h2.2.le⟩⟩
   obtain ⟨hres1, hres0⟩ :=
-    burgers_step_two_zero_weakResidual movingJumpTransport_holds hφ hφt hφx hsupp
+    burgers_step_two_zero_weakResidual hφ hφt hφx hsupp
   refine ⟨fun t x => b (t, x), fun t x => deriv (fun τ : ℝ => b (τ, x)) t,
     fun t x => deriv (fun y : ℝ => b (t, y)) x, hφ, hφt, hφx, hsupp, ?_, hres1, hres0⟩
   exact b.one_of_mem_closedBall (by simp [b])

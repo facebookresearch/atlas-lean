@@ -29,28 +29,25 @@ classically on each side of an interface that is differentiable at time `t` with
 lies strictly inside a fixed interval `[a, b]`; each side field is only assumed regular on an open
 set around its closed side slice, so its one-sided trace at the interface is a value of a
 continuous field. Then the mass on `[a, b]` changes at the conservation rate
-`f (uL t a) - f (uR t b)` exactly when `c * [u] = [f]` at the interface. The one-dimensional
-moving interface transport identity enters as the proposition `MovingJumpTransport`, which
-restates `ControlVolumes.movingJumpTransport` binder for binder and is discharged by
-`movingJumpTransport_holds`. The proof extends each side field from its open set to the whole
-plane by composing with a time compression that is the identity near `t` and a spatial clamp,
-applies the transport identity to the extensions, and turns the time-derivative integrals into
-flux differences with the fundamental theorem of calculus and the side equations.
+`f (uL t a) - f (uR t b)` exactly when `c * [u] = [f]` at the interface. The proof extends each
+side field from its open set to the whole plane by composing with a time compression that is the
+identity near `t` and a spatial clamp, applies the moving interface transport theorem
+`ControlVolumes.movingJumpTransport` to the extensions, and turns the time-derivative integrals
+into flux differences with the fundamental theorem of calculus and the side equations.
 
 Part B evaluates the weak residual of the straight moving step, the field with the constant state
 `uL` left of the line `x = c * t` and the constant state `uR` right of it. For a flux `f`, its weak
 residual against a smooth test function `φ` vanishing outside a bounded rectangle is the plane
 integral `∫∫ (u * φ_t + f u * φ_x)`, a plain Bochner integral; it equals
 `-([f] - c * [u]) * ∫ φ (t, c * t) dt`. The proof splits each time slice at the interface, uses
-the transport identity (through `MovingJumpTransport`) for the time-derivative terms and the
-fundamental theorem of calculus for the flux terms, and uses Fubini to pass between the plane
-integral and iterated integrals. No divergence theorem across the nonsmooth interface and no
-distribution space is used, and only a straight single shock is treated.
+the moving interface transport theorem `ControlVolumes.movingJumpTransport` for the
+time-derivative terms and the fundamental theorem of calculus for the flux terms, and uses Fubini
+to pass between the plane integral and iterated integrals. No divergence theorem across the
+nonsmooth interface and no distribution space is used, and only a straight single shock is
+treated.
 
 ## ii. Key results
 
-- `ScalarShock.MovingJumpTransport`: the moving interface transport identity as a proposition.
-- `ScalarShock.movingJumpTransport_holds`: it holds, by `ControlVolumes.movingJumpTransport`.
 - `ScalarShock.conservation_iff_rankineHugoniot`: conservation on a fixed interval crossing the
   interface is equivalent to the Rankine-Hugoniot jump identity `c * (uR - uL) = f uR - f uL`.
 - `ScalarShock.movingStep` and `ScalarShock.weakResidual`: the straight moving step and the weak
@@ -81,32 +78,6 @@ distribution space is used, and only a straight single shock is treated.
 namespace ScalarShock
 
 /-! ## A. Rankine-Hugoniot from two classical sides -/
-
-/-- Restatement, binder for binder, of the one-dimensional moving interior
-jump transport theorem `ControlVolumes.movingJumpTransport`:
-time-first fields `u t x`, left field `uL` on the oriented piece `a..s t`,
-right field `uR` on `s t..b`, interface contribution
-`s' t * (uL t (s t) - uR t (s t))`. Its global joint-continuity and
-time-derivative hypotheses are exactly those of that theorem, and
-`movingJumpTransport_holds` proves it from that theorem. -/
-def MovingJumpTransport : Prop :=
-  ∀ {uL uR vL vR : ℝ → ℝ → ℝ} {s s' : ℝ → ℝ} {a b : ℝ} (t : ℝ),
-    HasDerivAt s (s' t) t →
-    (Continuous fun p : ℝ × ℝ => uL p.1 p.2) →
-    (∀ t x : ℝ, HasDerivAt (fun τ : ℝ => uL τ x) (vL t x) t) →
-    (Continuous fun p : ℝ × ℝ => vL p.1 p.2) →
-    (Continuous fun p : ℝ × ℝ => uR p.1 p.2) →
-    (∀ t x : ℝ, HasDerivAt (fun τ : ℝ => uR τ x) (vR t x) t) →
-    (Continuous fun p : ℝ × ℝ => vR p.1 p.2) →
-    HasDerivAt
-      (fun τ : ℝ => (∫ x in a..s τ, uL τ x) + (∫ x in s τ..b, uR τ x))
-      ((∫ x in a..s t, vL t x) + (∫ x in s t..b, vR t x) +
-        s' t * (uL t (s t) - uR t (s t))) t
-
-/-- The transport proposition holds: it is `ControlVolumes.movingJumpTransport`. -/
-theorem movingJumpTransport_holds : MovingJumpTransport := by
-  intro uL uR vL vR s s' a b t
-  exact ControlVolumes.movingJumpTransport t
 
 /-- A closed box around a compact time slice inside an open set. -/
 private lemma exists_box_subset {U : Set (ℝ × ℝ)} {t l r : ℝ} (hlr : l ≤ r)
@@ -243,7 +214,6 @@ No existence of such solutions is asserted. -/
 theorem conservation_iff_rankineHugoniot
     {f : ℝ → ℝ} {uL uR vL vR : ℝ → ℝ → ℝ} {gL gR : ℝ → ℝ}
     {s : ℝ → ℝ} {c a b t : ℝ} {UL UR : Set (ℝ × ℝ)}
-    (hMJT : MovingJumpTransport)
     (hs : HasDerivAt s c t) (has : a < s t) (hsb : s t < b)
     (hUL : IsOpen UL) (hKL : ({t} : Set ℝ) ×ˢ Set.Icc a (s t) ⊆ UL)
     (hjL : ContinuousOn (fun p : ℝ × ℝ => uL p.1 p.2) UL)
@@ -294,7 +264,8 @@ theorem conservation_iff_rankineHugoniot
       (fun τ : ℝ => (∫ x in a..s τ, uL (T τ) (XL x)) + (∫ x in s τ..b, uR (T τ) (XR x)))
       ((∫ x in a..s t, k t * vL (T t) (XL x)) + (∫ x in s t..b, k t * vR (T t) (XR x)) +
         c * (uL (T t) (XL (s t)) - uR (T t) (XR (s t)))) t :=
-    hMJT (uL := fun τ x => uL (T τ) (XL x)) (uR := fun τ x => uR (T τ) (XR x))
+    ControlVolumes.movingJumpTransport (uL := fun τ x => uL (T τ) (XL x))
+      (uR := fun τ x => uR (T τ) (XR x))
       (vL := fun τ x => k τ * vL (T τ) (XL x)) (vR := fun τ x => k τ * vR (T τ) (XR x))
       (s' := fun _ => c) t hs hcuL hduL hcvL' hcuR hduR hcvR'
   have ht0 : |t - t| ≤ δ / 2 := by
@@ -411,14 +382,14 @@ noncomputable def weakResidual (f : ℝ → ℝ) (u φt φx : ℝ → ℝ → �
 
 /-! ### Auxiliary lemmas -/
 
-private theorem phi_eq_zero_of_not_mem {T0 T1 X0 X1 : ℝ} {φ : ℝ → ℝ → ℝ}
+private lemma phi_eq_zero_of_not_mem {T0 T1 X0 X1 : ℝ} {φ : ℝ → ℝ → ℝ}
     (hsupp : Function.support (fun p : ℝ × ℝ => φ p.1 p.2) ⊆
       Set.Icc T0 T1 ×ˢ Set.Icc X0 X1)
     {t x : ℝ} (h : (t, x) ∉ Set.Icc T0 T1 ×ˢ Set.Icc X0 X1) : φ t x = 0 := by
   by_contra hne
   exact h (hsupp hne)
 
-private theorem partials_facts {T0 T1 X0 X1 : ℝ} {φ φt φx : ℝ → ℝ → ℝ}
+private lemma partials_facts {T0 T1 X0 X1 : ℝ} {φ φt φx : ℝ → ℝ → ℝ}
     (hφ : ContDiff ℝ ∞ (fun p : ℝ × ℝ => φ p.1 p.2))
     (hφt : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => φ τ x) (φt t x) t)
     (hφx : ∀ t x : ℝ, HasDerivAt (fun y : ℝ => φ t y) (φx t x) x)
@@ -462,15 +433,15 @@ private theorem partials_facts {T0 T1 X0 X1 : ℝ} {φ φt φx : ℝ → ℝ →
   · rw [hφx_eq, hzero _ h]
     rfl
 
-private theorem movingStep_of_lt {uL uR c t x : ℝ} (h : x < c * t) :
+private lemma movingStep_of_lt {uL uR c t x : ℝ} (h : x < c * t) :
     movingStep uL uR c t x = uL := by
   simp [movingStep, h]
 
-private theorem movingStep_of_not_lt {uL uR c t x : ℝ} (h : ¬x < c * t) :
+private lemma movingStep_of_not_lt {uL uR c t x : ℝ} (h : ¬x < c * t) :
     movingStep uL uR c t x = uR := by
   simp [movingStep, h]
 
-private theorem measurable_comp_movingStep (uL uR c : ℝ) (g : ℝ → ℝ) :
+private lemma measurable_comp_movingStep (uL uR c : ℝ) (g : ℝ → ℝ) :
     Measurable fun p : ℝ × ℝ => g (movingStep uL uR c p.1 p.2) := by
   have hset : MeasurableSet {p : ℝ × ℝ | p.2 < c * p.1} :=
     measurableSet_lt measurable_snd (measurable_const.mul measurable_fst)
@@ -482,7 +453,7 @@ private theorem measurable_comp_movingStep (uL uR c : ℝ) (g : ℝ → ℝ) :
   rw [heq]
   exact Measurable.ite hset measurable_const measurable_const
 
-private theorem norm_comp_movingStep_le (uL uR c : ℝ) (g : ℝ → ℝ) (t x : ℝ) :
+private lemma norm_comp_movingStep_le (uL uR c : ℝ) (g : ℝ → ℝ) (t x : ℝ) :
     ‖g (movingStep uL uR c t x)‖ ≤ max |g uL| |g uR| := by
   unfold movingStep
   split_ifs
@@ -491,32 +462,32 @@ private theorem norm_comp_movingStep_le (uL uR c : ℝ) (g : ℝ → ℝ) (t x :
   · rw [Real.norm_eq_abs]
     exact le_max_right _ _
 
-private theorem integrable_comp_movingStep_mul (uL uR c : ℝ) (g : ℝ → ℝ)
+private lemma integrable_comp_movingStep_mul (uL uR c : ℝ) (g : ℝ → ℝ)
     {ψ : ℝ × ℝ → ℝ} (hψ : MeasureTheory.Integrable ψ) :
     MeasureTheory.Integrable fun p : ℝ × ℝ => g (movingStep uL uR c p.1 p.2) * ψ p :=
   hψ.bdd_mul (measurable_comp_movingStep uL uR c g).aestronglyMeasurable
     (MeasureTheory.ae_of_all _ fun p => norm_comp_movingStep_le uL uR c g p.1 p.2)
 
-private theorem integrable_slice_comp_movingStep_mul (uL uR c t : ℝ) (g : ℝ → ℝ)
+private lemma integrable_slice_comp_movingStep_mul (uL uR c t : ℝ) (g : ℝ → ℝ)
     {ψ : ℝ → ℝ} (hψ : MeasureTheory.Integrable ψ) :
     MeasureTheory.Integrable fun x : ℝ => g (movingStep uL uR c t x) * ψ x :=
   hψ.bdd_mul ((measurable_comp_movingStep uL uR c g).comp
       measurable_prodMk_left).aestronglyMeasurable
     (MeasureTheory.ae_of_all _ fun x => norm_comp_movingStep_le uL uR c g t x)
 
-private theorem integrable_of_continuous_of_zero {g : ℝ → ℝ} {A B : ℝ}
+private lemma integrable_of_continuous_of_zero {g : ℝ → ℝ} {A B : ℝ}
     (hg : Continuous g) (h0 : ∀ x, x ∉ Set.Icc A B → g x = 0) :
     MeasureTheory.Integrable g :=
   hg.integrable_of_hasCompactSupport (HasCompactSupport.intro isCompact_Icc h0)
 
-private theorem integrable_plane_of_continuous_of_zero {g : ℝ × ℝ → ℝ}
+private lemma integrable_plane_of_continuous_of_zero {g : ℝ × ℝ → ℝ}
     {T0 T1 X0 X1 : ℝ} (hg : Continuous g)
     (h0 : ∀ p, p ∉ Set.Icc T0 T1 ×ˢ Set.Icc X0 X1 → g p = 0) :
     MeasureTheory.Integrable g :=
   hg.integrable_of_hasCompactSupport
     (HasCompactSupport.intro (isCompact_Icc.prod isCompact_Icc) h0)
 
-private theorem integral_eq_intervalIntegral_of_zero {g : ℝ → ℝ} {A B X0 X1 : ℝ}
+private lemma integral_eq_intervalIntegral_of_zero {g : ℝ → ℝ} {A B X0 X1 : ℝ}
     (hAB : A ≤ B) (hA : A < X0) (hB : X1 < B)
     (hg0 : ∀ x, x ∉ Set.Icc X0 X1 → g x = 0) :
     ∫ x, g x = ∫ x in A..B, g x := by
@@ -526,7 +497,7 @@ private theorem integral_eq_intervalIntegral_of_zero {g : ℝ → ℝ} {A B X0 X
   intro hx'
   exact hx ⟨by linarith [hx'.1], by linarith [hx'.2]⟩
 
-private theorem mem_uIoo_cases {a b x : ℝ} (hx : x ∈ Set.uIoo a b) :
+private lemma mem_uIoo_cases {a b x : ℝ} (hx : x ∈ Set.uIoo a b) :
     (a < x ∧ x < b) ∨ (b < x ∧ x < a) := by
   rcases le_total a b with h | h
   · rw [Set.uIoo_of_le h] at hx
@@ -535,7 +506,7 @@ private theorem mem_uIoo_cases {a b x : ℝ} (hx : x ∈ Set.uIoo a b) :
     exact Or.inr hx
 
 /-- One slice of the flux term: FTC on each side of the interface point `s`. -/
-private theorem slice_integral_step_deriv {ψ ψ' g : ℝ → ℝ} {α β s X0 X1 : ℝ}
+private lemma slice_integral_step_deriv {ψ ψ' g : ℝ → ℝ} {α β s X0 X1 : ℝ}
     (hψ : ∀ x, HasDerivAt ψ (ψ' x) x) (hψ0 : ∀ x, x ∉ Set.Icc X0 X1 → ψ x = 0)
     (hg : MeasureTheory.Integrable g) (hg0 : ∀ x, x ∉ Set.Icc X0 X1 → g x = 0)
     (hgl : ∀ x, x < s → g x = α * ψ' x) (hgr : ∀ x, s < x → g x = β * ψ' x) :
@@ -567,7 +538,7 @@ private theorem slice_integral_step_deriv {ψ ψ' g : ℝ → ℝ} {α β s X0 X
   ring
 
 /-- One slice of the time term: split at the interface point `s`. -/
-private theorem slice_integral_step_split {h g : ℝ → ℝ} {α β s a b X0 X1 : ℝ}
+private lemma slice_integral_step_split {h g : ℝ → ℝ} {α β s a b X0 X1 : ℝ}
     (hab : a ≤ b) (ha : a < X0) (hb : X1 < b)
     (hg : MeasureTheory.Integrable g) (hg0 : ∀ x, x ∉ Set.Icc X0 X1 → g x = 0)
     (hh0 : ∀ x, x ∉ Set.Icc X0 X1 → h x = 0)
@@ -591,8 +562,7 @@ private theorem slice_integral_step_split {h g : ℝ → ℝ} {α β s a b X0 X1
       simp only [hh0 x hx0, hg0 x hx0, mul_zero]
 
 /-- Time term: moving-interval transport plus FTC in time, then Fubini. -/
-private theorem time_part {uL uR c T0 T1 X0 X1 : ℝ} {φ φt : ℝ → ℝ → ℝ}
-    (hMJT : MovingJumpTransport)
+private lemma time_part {uL uR c T0 T1 X0 X1 : ℝ} {φ φt : ℝ → ℝ → ℝ}
     (hφc : Continuous fun p : ℝ × ℝ => φ p.1 p.2)
     (hφt : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => φ τ x) (φt t x) t)
     (hct : Continuous fun p : ℝ × ℝ => φt p.1 p.2)
@@ -628,7 +598,8 @@ private theorem time_part {uL uR c T0 T1 X0 X1 : ℝ} {φ φt : ℝ → ℝ → 
       (fun τ : ℝ => (∫ x in a..c * τ, uL * φ τ x) + (∫ x in c * τ..b, uR * φ τ x))
       ((∫ x in a..c * τ, uL * φt τ x) + (∫ x in c * τ..b, uR * φt τ x) +
         c * (uL * φ τ (c * τ) - uR * φ τ (c * τ))) τ := fun τ =>
-    hMJT (uL := fun τ x => uL * φ τ x) (uR := fun τ x => uR * φ τ x)
+    ControlVolumes.movingJumpTransport (uL := fun τ x => uL * φ τ x)
+      (uR := fun τ x => uR * φ τ x)
       (vL := fun τ x => uL * φt τ x) (vR := fun τ x => uR * φt τ x)
       (s := fun τ => c * τ) (s' := fun _ => c) (a := a) (b := b) τ (hs τ)
       (continuous_const.mul hφc) (fun t x => (hφt t x).const_mul uL)
@@ -689,7 +660,7 @@ private theorem time_part {uL uR c T0 T1 X0 X1 : ℝ} {φ φt : ℝ → ℝ → 
   linear_combination hftc - htrace
 
 /-- Flux term: Fubini, then FTC in space on each side of the interface. -/
-private theorem flux_part {f : ℝ → ℝ} {uL uR c T0 T1 X0 X1 : ℝ} {φ φx : ℝ → ℝ → ℝ}
+private lemma flux_part {f : ℝ → ℝ} {uL uR c T0 T1 X0 X1 : ℝ} {φ φx : ℝ → ℝ → ℝ}
     (hφx : ∀ t x : ℝ, HasDerivAt (fun y : ℝ => φ t y) (φx t x) x)
     (hcx : Continuous fun p : ℝ × ℝ => φx p.1 p.2)
     (hφ0 : ∀ t x : ℝ, (t, x) ∉ Set.Icc T0 T1 ×ˢ Set.Icc X0 X1 → φ t x = 0)
@@ -728,7 +699,7 @@ rectangle `[T0, T1] × [X0, X1]`, with time and space partial derivatives `φt`
 and `φx`, the residual integrand of the moving step and the trace
 `t ↦ φ t (c * t)` along the interface are both integrable, so the two integrals
 in `weakResidual_movingStep` are genuine. -/
-theorem integrable_weakResidual_movingStep {f : ℝ → ℝ} {uL uR c T0 T1 X0 X1 : ℝ}
+lemma integrable_weakResidual_movingStep {f : ℝ → ℝ} {uL uR c T0 T1 X0 X1 : ℝ}
     {φ φt φx : ℝ → ℝ → ℝ}
     (hφ : ContDiff ℝ ∞ (fun p : ℝ × ℝ => φ p.1 p.2))
     (hφt : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => φ τ x) (φt t x) t)
@@ -754,10 +725,10 @@ theorem integrable_weakResidual_movingStep {f : ℝ → ℝ} {uL uR c T0 T1 X0 X
 interface `x = c * t`, any flux `f`, and a smooth test `φ` vanishing outside a
 bounded rectangle, with partial derivatives `φt`, `φx`:
 `∫∫ (u * φ_t + f u * φ_x) = -((f uR - f uL) - c * (uR - uL)) * ∫ φ (t, c * t) dt`.
-The transport hypothesis is the moving-interval transport theorem restated by
-`MovingJumpTransport`. -/
+The time-derivative terms use the moving-interval transport theorem
+`ControlVolumes.movingJumpTransport`. -/
 theorem weakResidual_movingStep {f : ℝ → ℝ} {uL uR c T0 T1 X0 X1 : ℝ}
-    {φ φt φx : ℝ → ℝ → ℝ} (hMJT : MovingJumpTransport)
+    {φ φt φx : ℝ → ℝ → ℝ}
     (hφ : ContDiff ℝ ∞ (fun p : ℝ × ℝ => φ p.1 p.2))
     (hφt : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => φ τ x) (φt t x) t)
     (hφx : ∀ t x : ℝ, HasDerivAt (fun y : ℝ => φ t y) (φx t x) x)
@@ -780,7 +751,7 @@ theorem weakResidual_movingStep {f : ℝ → ℝ} {uL uR c T0 T1 X0 X1 : ℝ}
       (∫ p : ℝ × ℝ, movingStep uL uR c p.1 p.2 * φt p.1 p.2) +
         ∫ p : ℝ × ℝ, f (movingStep uL uR c p.1 p.2) * φx p.1 p.2 :=
     MeasureTheory.integral_add hU hF
-  rw [hsplit, time_part hMJT hφ.continuous hφt hct hφ0 (fun t x h => (hpz t x h).1) hU,
+  rw [hsplit, time_part hφ.continuous hφt hct hφ0 (fun t x h => (hpz t x h).1) hU,
     flux_part hφx hcx hφ0 (fun t x h => (hpz t x h).2) hF]
   ring
 
@@ -789,8 +760,8 @@ theorem weakResidual_movingStep {f : ℝ → ℝ} {uL uR c T0 T1 X0 X1 : ℝ}
 /-- A test that vanishes along the interface, in particular one supported away
 from it, gives zero residual for every flux and every pair of states: such a
 test alone cannot detect the jump. -/
-theorem weakResidual_movingStep_eq_zero_of_trace_eq_zero {f : ℝ → ℝ}
-    {uL uR c T0 T1 X0 X1 : ℝ} {φ φt φx : ℝ → ℝ → ℝ} (hMJT : MovingJumpTransport)
+lemma weakResidual_movingStep_eq_zero_of_trace_eq_zero {f : ℝ → ℝ}
+    {uL uR c T0 T1 X0 X1 : ℝ} {φ φt φx : ℝ → ℝ → ℝ}
     (hφ : ContDiff ℝ ∞ (fun p : ℝ × ℝ => φ p.1 p.2))
     (hφt : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => φ τ x) (φt t x) t)
     (hφx : ∀ t x : ℝ, HasDerivAt (fun y : ℝ => φ t y) (φx t x) x)
@@ -798,15 +769,15 @@ theorem weakResidual_movingStep_eq_zero_of_trace_eq_zero {f : ℝ → ℝ}
       Set.Icc T0 T1 ×ˢ Set.Icc X0 X1)
     (htrace : ∀ t : ℝ, φ t (c * t) = 0) :
     weakResidual f (movingStep uL uR c) φt φx = 0 := by
-  rw [weakResidual_movingStep hMJT hφ hφt hφx hsupp]
+  rw [weakResidual_movingStep hφ hφt hφx hsupp]
   simp [htrace]
 
 /-- Fixture: Burgers flux `u ^ 2 / 2` with the nonzero jump from `2` to `0`. At
 the Rankine-Hugoniot speed `1` the residual vanishes for every admissible test;
 at the incorrect stationary speed `0` it equals `2 * ∫ φ (t, 0) dt`, which is
 nonzero exactly when the test has nonzero integral along the front. -/
-theorem burgers_step_two_zero_weakResidual {T0 T1 X0 X1 : ℝ}
-    {φ φt φx : ℝ → ℝ → ℝ} (hMJT : MovingJumpTransport)
+lemma burgers_step_two_zero_weakResidual {T0 T1 X0 X1 : ℝ}
+    {φ φt φx : ℝ → ℝ → ℝ}
     (hφ : ContDiff ℝ ∞ (fun p : ℝ × ℝ => φ p.1 p.2))
     (hφt : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => φ τ x) (φt t x) t)
     (hφx : ∀ t x : ℝ, HasDerivAt (fun y : ℝ => φ t y) (φx t x) x)
@@ -816,9 +787,9 @@ theorem burgers_step_two_zero_weakResidual {T0 T1 X0 X1 : ℝ}
       weakResidual (fun u : ℝ => u ^ 2 / 2) (movingStep 2 0 0) φt φx =
         2 * ∫ t : ℝ, φ t 0 := by
   constructor
-  · rw [weakResidual_movingStep hMJT hφ hφt hφx hsupp]
+  · rw [weakResidual_movingStep hφ hφt hφx hsupp]
     norm_num
-  · rw [weakResidual_movingStep hMJT hφ hφt hφx hsupp]
+  · rw [weakResidual_movingStep hφ hφt hφx hsupp]
     norm_num
 
 end ScalarShock
