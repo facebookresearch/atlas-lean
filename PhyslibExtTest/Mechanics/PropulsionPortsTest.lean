@@ -14,7 +14,9 @@ public import PhyslibExt.Mechanics.PropulsionPorts
 
 Concrete consumers of `PhyslibExt.Mechanics.PropulsionPorts`: the linear mass history
 `m t = 2 - t` on `[0, 1]` with `ve = 1` (increment, burn and boundary), a specific-impulse
-instance, constant mass, and the zero-mass input that the positivity hypothesis excludes.
+instance, constant mass, and the zero-mass input that the positivity hypothesis excludes; then a
+parcel step of the vehicle of mass `2` at rest with flow `1` and exhaust speed `3`, and the parcel
+lemmas applied to it and to the burning history `M s = 2 - s`.
 
 ## i. Overview
 
@@ -28,6 +30,8 @@ No new definitions or results are introduced here.
 
 - A. Linear burn and zero mass
 - B. Burn, specific impulse and constant mass
+- C. Parcel fixture
+- D. Parcel lemmas on the fixture state
 
 ## iv. References
 
@@ -123,5 +127,53 @@ on `[0, 1]` ends where it starts. -/
 example (v v' : ℝ → ℝ) (hv : ∀ t ∈ Icc (0 : ℝ) 1, HasDerivAt v (v' t) t)
     (hlaw : ∀ t ∈ Icc (0 : ℝ) 1, 5 * v' t = -3 * 0) : v 1 = v 0 :=
   velocity_increment_const_mass zero_le_one (by norm_num) hv hlaw
+
+
+/-! ## C. Parcel fixture -/
+
+open Filter Topology PhyslibExt.Mechanics.PowerPorts
+
+/-- `m = 2`, `v = 0`, `q = 1`, `ve = 3`, `F = 0`: the step `h = 1 / 2` gives `v_h = 1` (momentum
+`(3 / 2) · 1 + (1 / 2) · (-3) = 0`), the slope tends to `3 / 2`, and the balance without the
+expelled momentum predicts no acceleration at all. -/
+example :
+    parcelVelocity 2 0 1 3 0 (1 / 2) = 1 ∧
+      Tendsto (fun h => (parcelVelocity 2 0 1 3 0 h - 0) / h) (𝓝[≠] 0) (𝓝 (3 / 2)) ∧
+      Tendsto (fun h => (naiveParcelVelocity 2 0 1 0 h - 0) / h) (𝓝[≠] 0) (𝓝 0) := by
+  refine ⟨?_, ?_, ?_⟩
+  · unfold parcelVelocity
+    norm_num
+  · have h := parcel_slope_tendsto (show (0 : ℝ) < 2 by norm_num) 0 1 3 0
+    have heq : ((3 : ℝ) * 1 + 0) / 2 = 3 / 2 := by norm_num
+    rwa [heq] at h
+  · have h := naive_slope_tendsto (show (0 : ℝ) < 2 by norm_num) 0 1 0
+    have heq : ((1 : ℝ) * 0 + 0) / 2 = 0 := by norm_num
+    rwa [heq] at h
+
+/-! ## D. Parcel lemmas on the fixture state -/
+
+/-- The fixture step `h = 1 / 2` satisfies the parcel momentum balance. -/
+example : (2 - 1 * (1 / 2)) * parcelVelocity 2 0 1 3 0 (1 / 2) + 1 * (1 / 2) * (0 - 3) =
+    2 * 0 + 0 * (1 / 2) :=
+  (parcel_momentum_iff (by norm_num) 0 3 0 _).mpr rfl
+
+/-- The burning history `M s = 2 - s` at `t = 0`: the expelled mass per unit time tends to the
+flow `1`, and with that flow, `ve = 3` and `F = 0` the parcel slope tends to `3 / 2`. -/
+example : Tendsto (fun h : ℝ => (2 - (2 - h)) / h) (𝓝[≠] 0) (𝓝 1) ∧
+    Tendsto (fun h => (parcelVelocity 2 0 1 3 0 h - 0) / h) (𝓝[≠] 0) (𝓝 (3 / 2)) := by
+  have hM : HasDerivAt (fun s : ℝ => 2 - s) (-1) 0 := by
+    simpa using (hasDerivAt_id (0 : ℝ)).const_sub 2
+  obtain ⟨h₁, h₂⟩ := parcel_continuum hM (by norm_num) 0 3 0
+  exact ⟨by simpa using h₁, by simpa using h₂⟩
+
+/-- Without expelled mass the parcel step of the fixture vehicle under the force `4` is the
+fixed-mass velocity `0 + (1 / 2) / 2 · 4 = 1`. -/
+example : parcelVelocity 2 0 0 3 4 (1 / 2) = constForceVelocity 2 0 4 (1 / 2) :=
+  parcelVelocity_zero_flow (by norm_num) 0 3 4 (1 / 2)
+
+/-- The fixture flow accelerates the vehicle, and ignoring the expelled momentum misses it. -/
+example : 0 < ((3 : ℝ) * 1 + 0) / 2 ∧ ((1 : ℝ) * 0 + 0) / 2 ≠ (3 * 1 + 0) / 2 :=
+  ⟨parcel_accel_pos (by norm_num) (by norm_num) (by norm_num) rfl,
+    naive_limit_ne (by norm_num) (by norm_num) (by norm_num) 0⟩
 
 end PhyslibExtTest.Mechanics.PropulsionPorts
