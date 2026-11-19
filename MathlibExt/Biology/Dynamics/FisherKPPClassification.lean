@@ -414,4 +414,31 @@ theorem isClosedFront_azWave {D r C : ℝ} (hD : 0 < D) (hr : 0 < r) (hC : 0 < C
   have h := isFront_azWave hD hr hC
   exact ⟨h.1, fun z => ⟨(h.2.1 z).1.le, (h.2.1 z).2.le⟩, h.2.2.1, h.2.2.2⟩
 
+/-- A strict front is a closed front. -/
+theorem isClosedFront_of_isFront {D r c : ℝ} {U U' : ℝ → ℝ}
+    (h : IsFront D r c U U') : IsClosedFront D r c U U' :=
+  ⟨h.1, fun z => ⟨(h.2.1 z).1.le, (h.2.1 z).2.le⟩, h.2.2.1, h.2.2.2⟩
+
+/-- **Closed-front speeds are exactly `[2 √(r D), ∞)`**: a closed front of
+speed `c` exists iff `2 √(r D) ≤ c`, given `hKPP`. -/
+theorem exists_isClosedFront_iff {D r : ℝ} (hD : 0 < D) (hr : 0 < r)
+    (hKPP : ∀ c, 2 * √(r * D) ≤ c → ∃ U U' : ℝ → ℝ, IsFront D r c U U' ∧ StrictAnti U)
+    (c : ℝ) : (∃ U U' : ℝ → ℝ, IsClosedFront D r c U U') ↔ 2 * √(r * D) ≤ c := by
+  refine ⟨fun ⟨_, _, h⟩ => two_mul_sqrt_le_of_isClosedFront hD hr h, fun hc => ?_⟩
+  obtain ⟨U, U', h, -⟩ := hKPP c hc
+  exact ⟨U, U', isClosedFront_of_isFront h⟩
+
+/-- **The set of closed-front speeds is `[2 √(r D), ∞)`**, given `hKPP`. -/
+theorem closedFrontSpeeds_eq_Ici {D r : ℝ} (hD : 0 < D) (hr : 0 < r)
+    (hKPP : ∀ c, 2 * √(r * D) ≤ c → ∃ U U' : ℝ → ℝ, IsFront D r c U U' ∧ StrictAnti U) :
+    {c | ∃ U U' : ℝ → ℝ, IsClosedFront D r c U U'} = Set.Ici (2 * √(r * D)) :=
+  Set.ext fun c => exists_isClosedFront_iff hD hr hKPP c
+
+/-- **`2 √(r D)` is the minimal closed-front speed**, given `hKPP`. -/
+theorem isLeast_closedFrontSpeeds {D r : ℝ} (hD : 0 < D) (hr : 0 < r)
+    (hKPP : ∀ c, 2 * √(r * D) ≤ c → ∃ U U' : ℝ → ℝ, IsFront D r c U U' ∧ StrictAnti U) :
+    IsLeast {c | ∃ U U' : ℝ → ℝ, IsClosedFront D r c U U'} (2 * √(r * D)) := by
+  rw [closedFrontSpeeds_eq_Ici hD hr hKPP]
+  exact isLeast_Ici
+
 end MathlibExt.Biology.Dynamics.FisherKPP
