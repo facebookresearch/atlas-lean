@@ -46,6 +46,11 @@ gyroscopic term `(0, 0, -6)` at `ω_B = (1, 1, 0)`; the singular inertia `diag(1
 inertia `diag(-8, -2, -10)` of a negative mass functional are not positive definite. Gliding
 without rotation, the four-point body is torque free.
 
+Driven about its third principal axis from the rate `1` with the angular acceleration `2`, the
+four-point body has `ω_B = (0, 0, 1 + 2 t)` and needs the torque `(0, 0, 20)`, which delivers the
+shaft power `20 (1 + 2 t)`; the sign-flipped torque fails, and with zero initial rate and unit
+angular acceleration the construction has the body angular velocity of the spin-up.
+
 The file activates no matrix norm: every regularity fact is stated and proved as a client would,
 with Mathlib's default instances on matrices or entry by entry.
 
@@ -63,6 +68,7 @@ with Mathlib's default instances on matrices or entry by entry.
 - D. Consumers of the angular-momentum lemmas
 - E. Euler's equations
 - F. Consumers of the Euler lemmas
+- G. A constructed torque-driven rotation
 
 ## iv. References
 
@@ -625,5 +631,81 @@ example (s t : Time) :
     simp
   exact torqueFree_conserved glide isOpen_univ isPreconnected_univ hR fourPointBody_centerOfMass
     (fun τ _ => by rw [hL]; exact Time.deriv_const 0) (Set.mem_univ s) (Set.mem_univ t)
+
+
+/-! ## G. A constructed torque-driven rotation -/
+
+-- The four-point body (centre of mass `0`, inertia `diag(8, 2, 10)` about it) driven from the rate
+-- `ω₀ = 1` with the angular acceleration `α = 2`: `ω_B(t) = (0, 0, 1 + 2 t)`, `ω_B' = (0, 0, 2)`,
+-- and the balance law needs `dL_COM/dt = (0, 0, 20)`.
+example (t : Time) :
+    (fixedAxisMotion fourPointBody 1 2).bodyAngularVelocity t = ![0, 0, 1 + 2 * t.val] ∧
+      ∂ₜ (fixedAxisMotion fourPointBody 1 2).bodyAngularVelocity t = ![0, 0, 2] ∧
+      ∂ₜ (comAngularMomentum (fixedAxisMotion fourPointBody 1 2)) t = ![0, 0, 20] := by
+  obtain ⟨h1, h2⟩ := deriv_comAngularMomentum_fixedAxisMotion fourPointBody_centerOfMass
+    fourPointBody_inertia 1 2 t
+  refine ⟨?_, deriv_fixedAxisMotion_bodyAngularVelocity _ 1 2 t, ?_⟩
+  · rw [fixedAxisMotion_bodyAngularVelocity, (deriv_fixedAxisAngle 1 2 t).1]
+  · rw [h1, h2]
+    ext i
+    fin_cases i <;> norm_num [fixedAxisTorque]
+
+-- The constructed orientation is `C²` entry by entry on all times, the regularity the transport and
+-- Euler lemmas take.
+example (B : RigidBody 3) (ω₀ α : ℝ) (i j : Fin 3) :
+    ContDiffOn ℝ 2 (fun s => ((fixedAxisMotion B ω₀ α).orientation s).1 i j) Set.univ :=
+  (contDiff_infty.1 (contDiff_fixedAxisMotion_orientation_apply B ω₀ α i j) 2).contDiffOn
+
+-- At `t = 0` the drive with the initial rate `1` has the angle `0` and the rate `1`, so `Ṙ(0)` is
+-- the generator of rotations about `e₃`.
+example (B : RigidBody 3) :
+    ∂ₜ (fun s => ((fixedAxisMotion B 1 2).orientation s).1) 0 =
+      !![0, -1, 0; 1, 0, 0; 0, 0, 0] := by
+  have h0 : fixedAxisAngle 1 2 0 = 0 := by simp [fixedAxisAngle, Time.zero_val]
+  rw [deriv_fixedAxisMotion_orientation, (deriv_fixedAxisAngle 1 2 0).1, h0]
+  ext i j
+  fin_cases i <;> fin_cases j <;> simp [Time.zero_val]
+
+-- With zero initial rate and unit angular acceleration the construction has the body angular
+-- velocity `(0, 0, t)` of the spin-up of section A.
+example (B : RigidBody 3) (t : Time) :
+    (fixedAxisMotion B 0 1).bodyAngularVelocity t = (spinUp B).bodyAngularVelocity t := by
+  rw [fixedAxisMotion_bodyAngularVelocity, (deriv_fixedAxisAngle 0 1 t).1,
+    spinUp_bodyAngularVelocity]
+  simp
+
+-- Euler's equations on the driven four-point body: the inertia `diag(8, 2, 10)` and the angular
+-- acceleration `2` need the body torque `(0, 0, 20)`.
+example (t : Time) :
+    (fixedAxisMotion fourPointBody 1 2).inertiaTensorAbout
+          (fixedAxisMotion fourPointBody 1 2).centerOfMass *ᵥ
+        ∂ₜ (fixedAxisMotion fourPointBody 1 2).bodyAngularVelocity t +
+      (fixedAxisMotion fourPointBody 1 2).bodyAngularVelocity t ⨯₃
+        ((fixedAxisMotion fourPointBody 1 2).inertiaTensorAbout
+            (fixedAxisMotion fourPointBody 1 2).centerOfMass *ᵥ
+          (fixedAxisMotion fourPointBody 1 2).bodyAngularVelocity t) = ![0, 0, 20] := by
+  rw [fixedAxisMotion_euler fourPointBody_inertia 1 2 t]
+  ext i
+  fin_cases i <;> norm_num [fixedAxisTorque]
+
+-- The torque port of the driven four-point body: the rotational kinetic energy `5 (1 + 2 t)²`
+-- changes at the shaft power `20 (1 + 2 t)` of the torque `20` at the angular velocity `1 + 2 t`.
+example (t : Time) :
+    ∂ₜ (fun s => fourPointBody.rotationalKineticEnergy
+        ((fixedAxisMotion fourPointBody 1 2).bodyAngularVelocity s)) t = 20 * (1 + 2 * t.val) := by
+  obtain ⟨-, h, hP⟩ := fixedAxisMotion_power_port fourPointBody_centerOfMass
+    fourPointBody_inertia 1 2 t
+  rw [h, hP, _root_.Units.EngineeringQuantities.shaftPower_val, (deriv_fixedAxisAngle 1 2 t).1]
+  norm_num
+
+-- A nonzero angular acceleration needs a nonzero torque: for the four-point body (`I_zz = 10`)
+-- and `α = 2` the port torque is nonzero, and the balance law fails for the sign-flipped torque.
+example (t : Time) :
+    fixedAxisTorque 10 2 ≠ 0 ∧
+      ∂ₜ (comAngularMomentum (fixedAxisMotion fourPointBody 1 2)) t ≠ -fixedAxisTorque 10 2 :=
+  ⟨(fixedAxisMotion_torque_ne_zero (ω₀ := 1) fourPointBody_centerOfMass fourPointBody_inertia
+      (by norm_num) (by norm_num) t).1,
+    (fixedAxisMotion_neg_torque (ω₀ := 1) fourPointBody_centerOfMass fourPointBody_inertia
+      (by norm_num) (by norm_num) t).2⟩
 
 end PhyslibExtTest.Mechanics.RigidMotionPorts
