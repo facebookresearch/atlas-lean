@@ -29,4 +29,4 @@ Regular multigraphs given by rotation maps, and the graph operations that build 
 
 - [Expander graphs](../expander-graphs/README.md): spectral expansion for simple graphs, the expander mixing lemma, the Alon-Boppana bound and random walks on expanders.
 - [Finite multigraphs](../finite-multigraphs/README.md): multigraphs given by edge endpoint maps, the encoding used for Laplacians and Cheeger's inequality; a rotation map lists the same edges by their labels at both endpoints.
-- Undirected s-t connectivity: Reingold's log-space algorithm turns each connected component into an expander by repeated squaring and zig-zag products.
+- [Undirected s-t connectivity](../../../TheoryOfComputation/polynomial-time-problems/undirected-s-t-connectivity/README.md): Reingold's log-space algorithm turns each connected component into an expander by repeated squaring and zig-zag products.
