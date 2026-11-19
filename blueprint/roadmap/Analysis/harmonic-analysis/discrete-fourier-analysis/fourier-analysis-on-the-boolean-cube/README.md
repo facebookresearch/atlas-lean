@@ -63,7 +63,7 @@
 ## Related topics
 
 - [Influences and the noise operator on the Boolean cube](../influences-and-the-noise-operator-on-the-boolean/README.md): influences, total influence, the Poincaré inequality and noise stability, all computed from this Fourier expansion.
-- Blum–Luby–Rubinfeld linearity test: the first application of the convolution theorem: testing whether a function is a character.
-- Goldreich–Levin theorem: the hardcore-bit theorem; its proof is an algorithm that finds the large Fourier coefficients of a function given query access.
+- [Blum–Luby–Rubinfeld linearity test](../../../../TheoryOfComputation/pcp-and-inapproximability/blum-luby-rubinfeld-linearity-test/README.md): the first application of the convolution theorem: testing whether a function is a character.
+- [Goldreich–Levin theorem](../../../../TheoryOfComputation/pseudorandomness-and-one-way-functions/goldreich-levin-theorem/README.md): the hardcore-bit theorem; its proof is an algorithm that finds the large Fourier coefficients of a function given query access.
 - [Fourier transform on finite abelian groups](../fourier-transform-on-finite-abelian-groups/README.md): the cube is the group $\mathbb{F}_2^n$, and this expansion is its Fourier transform.
 - [Haar system](../../wavelets/haar-system/README.md): identifying $\mathbb{F}_2^m$ with the dyadic intervals of length $2^{-m}$ in $[0,1)$, the characters become Walsh functions, and the first $m$ levels of the Haar basis are another orthonormal basis of the same step functions, localized in space rather than in frequency.

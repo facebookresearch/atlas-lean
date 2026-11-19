@@ -42,4 +42,4 @@ Expanders are sparse graphs that behave like random graphs. Two measures appear 
 - [Random walks on finite groups](../../../Probability/random-walks/random-walks-on-finite-groups/README.md): Cayley graphs, whose random walks mix fast exactly when the graph is a spectral expander.
 - [Mixing times of Markov chains](../../../Probability/markov-chains/mixing-times-of-markov-chains/README.md): the spectral gap $1 - \lambda$ controls the mixing time of the random walk.
 - [Explicit sum-product expanders over prime fields](../../../Combinatorics/additive-combinatorics/sumsets-inverse-theorems/explicit-sum-product-expanders-over-prime-fields/README.md): explicit expansion from arithmetic combinatorics.
-- Pseudorandomness and one-way functions: expanders are pseudorandom graphs; walks on them save random bits in derandomization.
+- [Pseudorandomness and one-way functions](../../../TheoryOfComputation/pseudorandomness-and-one-way-functions/README.md): expanders are pseudorandom graphs; walks on them save random bits in derandomization.

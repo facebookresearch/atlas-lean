@@ -9,11 +9,13 @@ module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+public import Mathlib.MeasureTheory.Integral.DivergenceTheorem
+public import MathlibExt.Analysis.ODE.ContinuumBalances
 import MathlibExt.Probability.Diffusion.FokkerPlanckFreeEnergy
 import Mathlib.Tactic.Ring
 
 /-!
-# Control volumes: one-dimensional moving-endpoint transport
+# Control volumes: moving-endpoint transport and fixed-box balance
 
 ## i. Overview
 
@@ -31,6 +33,20 @@ differentiation alone admit oscillating mass at the moving
 endpoint. No general moving-domain Reynolds theorem is
 claimed.
 
+For a fixed nondegenerate rectangular box `[a, b]` in
+`ℝⁿ⁺¹ = Fin (n + 1) → ℝ`, a jointly `C¹` density `u`, a flux `q`
+that is `C¹` on an open neighbourhood of the box and the local law
+`∂ₜu + div q = s`, the stored amount satisfies
+`d/dt ∫_[a, b] u = ∫_[a, b] s - boxOutwardFlux a b (q t)`. The
+outward flux is written face by face: the face `x i = b i` has
+outward normal `+eᵢ` and the face `x i = a i` has `-eᵢ`, so a
+positive `qᵢ` is outflow on the upper face and inflow on the lower
+one. Mathlib's divergence theorem for boxes discharges the
+boundary-divergence premise of
+`MathlibExt.Analysis.ODE.ContinuumBalances.hasDerivAt_setIntegral_of_divergence`;
+local conservation stays the model input. No general smooth-domain
+trace or divergence theorem is claimed.
+
 ## ii. Key results
 
 - `ControlVolumes.movingEndpoint_hasDerivAt`: the Leibniz
@@ -41,15 +57,29 @@ claimed.
 - `ControlVolumes.movingEndpoint_hasDerivAt_flux` and
   `movingEndpoint_deriv_flux`: the relative-flux forms exposing
   `f - u * endpointSpeed` at both ends.
+- `ControlVolumes.boxOutwardFlux`: the outward flux of a vector
+  field through the faces of a box.
+- `ControlVolumes.integral_divergence_box`: the divergence theorem
+  on a box, `∫_[a, b] div F = boxOutwardFlux a b F`.
+- `ControlVolumes.hasDerivAt_boxIntegral`: the fixed-box balance
+  with explicit faces.
 
 ## iii. Table of contents
 
 - A. Moving-endpoint transport
+- B. Fixed-box balance with explicit faces
+  - B.1. Faces and the divergence theorem
+  - B.2. The balance
 
 ## iv. References
 
 - The classical Leibniz integral rule; the statement is
   self-contained.
+- Mathlib's divergence theorem for rectangular boxes,
+  `MeasureTheory.integral_divergence_of_hasFDerivAt_off_countable`.
+- R. B. Bird, W. E. Stewart and E. N. Lightfoot, *Transport
+  Phenomena*, 2nd ed., Wiley (2002), Section 19.1 (the equation of
+  continuity for a fixed volume element).
 
 ## A. Moving-endpoint transport
 
@@ -379,5 +409,73 @@ theorem movingJumpTransport {uL uR vL vR : ℝ → ℝ → ℝ}
   convert h using 1
   ring
 
+
+section FixedBox
+
+open Set MeasureTheory
+open MathlibExt.Probability.FokkerPlanck (divergence)
+
+/-! ## B. Fixed-box balance with explicit faces -/
+
+/-! ### B.1. Faces and the divergence theorem -/
+
+/-- The outward flux of a vector field `F` through the boundary of the box `[a, b]` in
+`ℝⁿ⁺¹ = Fin (n + 1) → ℝ`, face by face: for each coordinate `i`, the integral of `Fᵢ` over the
+upper face `x i = b i` (outward normal `+eᵢ`) minus its integral over the lower face
+`x i = a i` (outward normal `-eᵢ`), both over the box `[a ∘ i.succAbove, b ∘ i.succAbove]` of the
+remaining coordinates. -/
+noncomputable def boxOutwardFlux {n : ℕ} (a b : Fin (n + 1) → ℝ)
+    (F : (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ) : ℝ :=
+  ∑ i : Fin (n + 1),
+    ((∫ y in Icc (a ∘ i.succAbove) (b ∘ i.succAbove), F (i.insertNth (b i) y) i) -
+      ∫ y in Icc (a ∘ i.succAbove) (b ∘ i.succAbove), F (i.insertNth (a i) y) i)
+
+/-- **Divergence theorem on a box**, in the notation of the conditional balance: for a vector
+field `F` of class `C¹` on an open set `U` containing the nondegenerate box `[a, b]`,
+`∫_[a, b] div F = boxOutwardFlux a b F`. -/
+lemma integral_divergence_box {n : ℕ} {a b : Fin (n + 1) → ℝ} (hab : ∀ i, a i < b i)
+    {U : Set (Fin (n + 1) → ℝ)} (hU : IsOpen U) (hbox : Icc a b ⊆ U)
+    {F : (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ} (hF : ContDiffOn ℝ 1 F U) :
+    ∫ x in Icc a b, divergence F x = boxOutwardFlux a b F := by
+  have hle : a ≤ b := fun i => (hab i).le
+  have hdiff : ∀ x ∈ U, HasFDerivAt F (fderiv ℝ F x) x := fun x hx =>
+    (((hF.differentiableOn one_ne_zero) x hx).differentiableAt (hU.mem_nhds hx)).hasFDerivAt
+  have hcont : ContinuousOn (fun x => fderiv ℝ F x) U :=
+    hF.continuousOn_fderiv_of_isOpen hU le_rfl
+  have hdiv : ∀ x ∈ U, divergence F x = ∑ i, fderiv ℝ F x (Pi.single i 1) i := by
+    intro x hx
+    unfold divergence MathlibExt.Probability.FokkerPlanck.pderiv
+    refine Finset.sum_congr rfl fun i _ => ?_
+    rw [((hasFDerivAt_pi'.1 (hdiff x hx)) i).fderiv]
+    simp
+  rw [setIntegral_congr_fun measurableSet_Icc (fun x hx => hdiv x (hbox hx))]
+  refine integral_divergence_of_hasFDerivAt_off_countable a b hle F (fderiv ℝ F) ∅
+    countable_empty (hF.continuousOn.mono hbox) (fun x hx => hdiff x (hbox ?_)) ?_
+  · exact ⟨fun i => (hx.1 i (Set.mem_univ i)).1.le, fun i => (hx.1 i (Set.mem_univ i)).2.le⟩
+  · refine ContinuousOn.integrableOn_compact isCompact_Icc ?_
+    refine continuousOn_finsetSum _ fun i _ => ?_
+    exact ((continuous_apply i).comp_continuousOn
+      ((hcont.clm_apply continuousOn_const))).mono hbox
+
+/-! ### B.2. The balance -/
+
+/-- **Fixed-box balance with explicit faces.** For a nondegenerate box `[a, b]`, a jointly `C¹`
+density `u`, a flux `q t` of class `C¹` on an open neighbourhood of the box, an integrable source
+`s t` and the local law `∂ₜu + div q = s` on the box at time `t`,
+`d/dt ∫_[a, b] u = ∫_[a, b] s - boxOutwardFlux a b (q t)`. -/
+lemma hasDerivAt_boxIntegral {n : ℕ} {a b : Fin (n + 1) → ℝ} (hab : ∀ i, a i < b i)
+    {u s : ℝ → (Fin (n + 1) → ℝ) → ℝ} {q : ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ} {t : ℝ}
+    {U : Set (Fin (n + 1) → ℝ)} (hU : IsOpen U) (hbox : Icc a b ⊆ U)
+    (hu : ContDiff ℝ 1 (Function.uncurry u)) (hq : ContDiffOn ℝ 1 (q t) U)
+    (hs : IntegrableOn (s t) (Icc a b))
+    (hlaw : ∀ x ∈ Icc a b, deriv (fun τ => u τ x) t + divergence (q t) x = s t x) :
+    HasDerivAt (fun τ => ∫ x in Icc a b, u τ x)
+      ((∫ x in Icc a b, s t x) - boxOutwardFlux a b (q t)) t := by
+  have h := MathlibExt.Analysis.ODE.ContinuumBalances.hasDerivAt_setIntegral_of_divergence
+    (Φ := fun _ => boxOutwardFlux a b (q t)) isCompact_Icc hu hs hlaw
+    (integral_divergence_box hab hU hbox hq)
+  rwa [neg_add_eq_sub] at h
+
+end FixedBox
 
 end ControlVolumes

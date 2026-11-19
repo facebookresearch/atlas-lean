@@ -129,4 +129,50 @@ example : (![(5 / 3 : ℝ)] ⊕ᵥ ![(-5 / 6 : ℝ)]) ⬝ᵥ
     ![(5 / 3 : ℝ)] ![(-5 / 6 : ℝ)]
     (by ext i; fin_cases i; simp [Matrix.mulVec, dotProduct]; norm_num)
 
+/-- Relabeling fixture with two interior nodes swapped:
+`A = 3`, `B = [1, 2]`, `D = [[2, 1], [1, 3]]` relabeled by the swap
+becomes `B' = [2, 1]`, `D' = [[3, 1], [1, 2]]`, a genuinely different
+coupling. -/
+example : (!![(2 : ℝ), 1]) ≠ !![1, 2] := by
+  intro h
+  have := congrFun (congrFun h 0) 0
+  norm_num at this
+
+/-- The swapped network has the same Schur complement, through the
+public interior reindexing theorem. -/
+example : schurComplement !![(3 : ℝ)] !![2, 1] !![3, 1; 1, 2]
+    = schurComplement !![(3 : ℝ)] !![1, 2] !![2, 1; 1, 3] := by
+  have hB : (!![(1 : ℝ), 2]).submatrix id (Equiv.swap (0 : Fin 2) 1) = !![2, 1] := by
+    ext i j; fin_cases i; fin_cases j <;> simp
+  have hD : (!![(2 : ℝ), 1; 1, 3]).submatrix (Equiv.swap (0 : Fin 2) 1)
+      (Equiv.swap (0 : Fin 2) 1) = !![3, 1; 1, 2] := by
+    ext i j; fin_cases i <;> fin_cases j <;> simp
+  have h := schurComplement_reindex_interior (Equiv.swap (0 : Fin 2) 1)
+    !![(3 : ℝ)] !![1, 2] !![2, 1; 1, 3]
+  rwa [hB, hD] at h
+
+/-- The common Schur complement in numbers: `3 - 7 / 5 = 8 / 5`. -/
+example : schurComplement !![(3 : ℝ)] !![1, 2] !![2, 1; 1, 3] = !![8 / 5] := by
+  ext i j
+  fin_cases i; fin_cases j
+  simp [schurComplement, Matrix.inv_def, Matrix.adjugate_fin_two, Matrix.det_fin_two_of,
+    vecMul, dotProduct, Fin.sum_univ_two]
+  norm_num
+
+/-- The swapped network has the same reduced port equation
+right-hand side, with interior injection `[1, 0]` relabeled to
+`[0, 1]`, through the public interior reindexing theorem. -/
+example : ![(1 : ℝ)] - !![(2 : ℝ), 1] *ᵥ ((!![(3 : ℝ), 1; 1, 2])⁻¹ *ᵥ ![0, 1])
+    = ![(1 : ℝ)] - !![(1 : ℝ), 2] *ᵥ ((!![(2 : ℝ), 1; 1, 3])⁻¹ *ᵥ ![1, 0]) := by
+  have hB : (!![(1 : ℝ), 2]).submatrix id (Equiv.swap (0 : Fin 2) 1) = !![2, 1] := by
+    ext i j; fin_cases i; fin_cases j <;> simp
+  have hD : (!![(2 : ℝ), 1; 1, 3]).submatrix (Equiv.swap (0 : Fin 2) 1)
+      (Equiv.swap (0 : Fin 2) 1) = !![3, 1; 1, 2] := by
+    ext i j; fin_cases i <;> fin_cases j <;> simp
+  have hj : (![(1 : ℝ), 0]) ∘ Equiv.swap (0 : Fin 2) 1 = ![0, 1] := by
+    ext i; fin_cases i <;> simp
+  have h := (kron_reduction_reindex_interior (Equiv.swap (0 : Fin 2) 1)
+    !![(3 : ℝ)] !![1, 2] !![2, 1; 1, 3] ![0] ![1] ![1, 0]).2.1
+  rwa [hB, hD, hj] at h
+
 end PhyslibExtTest.Circuits.KronPortReduction
