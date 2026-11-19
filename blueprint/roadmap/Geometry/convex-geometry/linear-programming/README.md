@@ -10,7 +10,7 @@
 ## Related topics
 
 - Von Neumann's minimax theorem: equivalent to LP duality.
-- Max-flow min-cut theorem: a combinatorial instance of LP duality.
+- [Max-flow min-cut theorem](../../../GraphTheory/matchings-and-flows/max-flow-min-cut-theorem/README.md): a combinatorial instance of LP duality.
 - Bondareva–Shapley theorem: nonemptiness of the core by LP duality.
 - Scheduling unrelated parallel machines: an approximation algorithm by rounding an LP relaxation.
 - Weighted vertex cover by the pricing method: a primal–dual approximation algorithm.

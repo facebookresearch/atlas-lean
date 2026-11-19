@@ -37,6 +37,9 @@ This combines the selection generator `generator` and the mutation generator
 
 @[expose] public section
 
+open Real Set Filter
+open scoped Topology
+
 namespace MathlibExt.Biology.PopulationGenetics.Diffusion
 
 /-- The backward generator of the Wright–Fisher diffusion with genic selection and two-way
