@@ -147,18 +147,21 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
     over the node's own prerequisites: each carries the ones it still needs. A
     low-level new page is a `theorem_wanted` or `def_wanted` statement in
     `WantedExt` with a docstring, whose page then comes from the sync (rule 6),
-    but only once every prerequisite it carries is in Lean; until then it stays
-    a planned page that records them in its own sections (rule 10). The sync
-    puts a page beside its module's other pages, so put the statements in a
-    module whose pages that folder holds, or place a new module there in
-    `scripts/taxonomy.json` in the same PR (rules 1 and 4). A new page that is
-    still high-level is a new marked node. Order among the new planned pages
-    goes in their own `## Depends on` (rule 10). *Reason:* a leaf becomes a
-    formalization task only once it names a declaration, and a wanted statement
-    is that declaration. A wanted statement's edges come only from the Lean,
-    and `lean-facts` drops an edge to a page with no Lean, so a wanted
-    statement made too early would look ready while a prerequisite is still
-    planned. A link to the removed node left under `## Depends on` or
+    but only once the Lean records every prerequisite that still blocks it:
+    each statement prerequisite appears in the declaration's statement, and
+    each proof prerequisite is already proved, since a wanted statement has no
+    proof and so no proof edges. Until then it stays a planned page that
+    records them in its own sections (rule 10). The sync puts a page beside its
+    module's other pages, so put the statements in a module whose pages that
+    folder holds, or place a new module there in `scripts/taxonomy.json` in the
+    same PR (rules 1 and 4). A new page that is still high-level is a new
+    marked node. Order among the new planned pages goes in their own
+    `## Depends on` (rule 10). *Reason:* a leaf becomes a formalization task
+    only once it names a declaration, and a wanted statement is that
+    declaration. A wanted statement's edges come only from its Lean statement,
+    and `lean-facts` replaces the hand-written ones, so a wanted statement made
+    too early would look ready while a prerequisite is still planned or
+    unproved. A link to the removed node left under `## Depends on` or
     `## Proof depends on` fails `autoform check` ("dependency target does not
     exist"), but one left under `## Informally uses` only warns, so a passing
     check does not show that every link was repointed. `autoform move` cannot
