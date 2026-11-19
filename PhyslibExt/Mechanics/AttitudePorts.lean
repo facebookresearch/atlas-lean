@@ -44,17 +44,22 @@ Matrix-valued derivatives use Mathlib's default topology on matrices, the produc
 matrix norm is chosen.
 
 A reaction wheel exchanges angular momentum with the body about a fixed axis, a principal axis
-common to body and wheel. With the body inertia `J > 0` about the axis, the body rate `ω`, the
-wheel's spin momentum `h` relative to the body, the motor torque `u` on the wheel (its reaction
-`-u` acts on the body) and the external torque `τ_ext`, the reduced model is
-`J ω' = τ_ext - u`, `h' = u`: on a fixed principal axis the gyroscopic term of Euler's equations
-vanishes. The total angular momentum `J ω + h` then has rate `τ_ext`, so without external torque
-it is conserved whatever the command, and the body rate changes by `-(h(t) - h(0)) / J`. The
-actuator limits `|u| ≤ umax` and `|h| ≤ hmax` on a horizon `[0, T]` become a condition on the
-command alone, `|h(0) + ∫₀ᵗ u| ≤ hmax`, which every command with `|u| ≤ umax` meets once
-`|h(0)| + umax T ≤ hmax`. A constant command `c` drives `h(t) = h(0) + c t`; for `c ≠ 0` it
-reaches the momentum limit at a finite time and is inadmissible on every longer horizon, whatever
-the torque limit.
+common to body and wheel, on which the gyroscopic term of Euler's equations vanishes. With `J_b`
+the axial inertia of the body without the wheel, `I_w` that of the wheel, the body rate `ω`, the
+wheel's spin rate `Ω` relative to the body, the motor torque `T_m` on the wheel (its reaction
+`-T_m` acts on the body) and the external torque `τ_ext`, the body obeys `J_b ω' = τ_ext - T_m`
+and the wheel `I_w (ω' + Ω') = T_m`. The locked inertia `J = J_b + I_w > 0`, the wheel's momentum
+`h = I_w Ω` relative to the body and the commanded momentum rate `u = h'` turn these exactly into
+the reduced model `J ω' = τ_ext - u`, `h' = u`, and `J ω + h = J_b ω + I_w (ω + Ω)` is the total
+angular momentum about the axis. The motor torque is `T_m = u + I_w ω'`: it equals `u` while the
+body rate is constant, so a motor-torque limit bounds `u` only up to `I_w |ω'|`. The total
+momentum has rate `τ_ext`, so without external torque it is conserved whatever the command, and
+the body rate changes by `-(h(t) - h(0)) / J`. The limits `|u| ≤ umax` on the commanded rate and
+`|h| ≤ hmax` on the relative momentum, a wheel-speed limit, over a horizon `[0, T]` with `T ≥ 0`
+become a condition on the command alone, `|h(0) + ∫₀ᵗ u| ≤ hmax`, which every command with
+`|u| ≤ umax` meets once `|h(0)| + umax T ≤ hmax`. A constant command `c` drives
+`h(t) = h(0) + c t`; for `c ≠ 0` it reaches the momentum limit at a finite time and is
+inadmissible on every longer horizon, whatever the command limit.
 
 Model inputs: the quaternion product order and the body-frame reading of `ω_B` are fixed as
 above; time is a real parameter; the wheel model is the scalar fixed-axis model above, with axial
@@ -291,14 +296,18 @@ open Set
 /-! ## D. Fixed-axis reaction wheel -/
 
 /-- A wheel command `u` with wheel momentum `h` is admissible on the horizon `[0, T]` for the
-torque limit `umax` and the momentum limit `hmax`: `|u t| ≤ umax` and `|h t| ≤ hmax` at every
-`t ∈ [0, T]`. -/
+command limit `umax` and the momentum limit `hmax`: the horizon is a duration, `0 ≤ T`, and
+`|u t| ≤ umax` and `|h t| ≤ hmax` at every `t ∈ [0, T]`. In the reduced model `h` is the wheel's
+momentum relative to the body, so `hmax` is a wheel-speed limit, and `u = h'` is its commanded
+rate. -/
 def WheelAdmissible (umax hmax T : ℝ) (u h : ℝ → ℝ) : Prop :=
-  ∀ t ∈ Icc 0 T, |u t| ≤ umax ∧ |h t| ≤ hmax
+  0 ≤ T ∧ ∀ t ∈ Icc 0 T, |u t| ≤ umax ∧ |h t| ≤ hmax
 
 /-- Momentum exchange: if the body obeys `J ω' = τ_ext - u` and the wheel `h' = u` at `t`, the
-total angular momentum `J ω + h` about the axis has derivative `τ_ext` at `t`. The identity does
-not use the value of `J`; the model takes `J > 0`. -/
+total angular momentum `J ω + h` about the axis has derivative `τ_ext` at `t`. With `J` the axial
+inertia of the body with the wheel locked and `h` the wheel's momentum relative to the body,
+`J ω + h` is the exact total angular momentum, and the body equation is exact when `u` is the rate
+`h'`. The identity does not use the value of `J`; the model takes `J > 0`. -/
 lemma hasDerivAt_wheel_totalMomentum {J : ℝ} {ω ω' h u τ : ℝ → ℝ} {t : ℝ}
     (hω : HasDerivAt ω (ω' t) t) (hh : HasDerivAt h (u t) t) (hbody : J * ω' t = τ t - u t) :
     HasDerivAt (fun s => J * ω s + h s) (τ t) t := by
@@ -309,7 +318,7 @@ lemma hasDerivAt_wheel_totalMomentum {J : ℝ} {ω ω' h u τ : ℝ → ℝ} {t 
 
 /-- Without external torque on `[0, T]` the total momentum `J ω + h` is conserved, whatever the
 command `u`, and for `J > 0` the body rate changes by `-(h t - h 0) / J`: the momentum the wheel
-gains, the body loses. -/
+gains relative to the body, the locked vehicle `J ω` loses. -/
 lemma wheel_momentum_exchange {J T : ℝ} (hJ : 0 < J) {ω ω' h u τ : ℝ → ℝ}
     (hω : ∀ t ∈ Icc 0 T, HasDerivAt ω (ω' t) t) (hh : ∀ t ∈ Icc 0 T, HasDerivAt h (u t) t)
     (hbody : ∀ t ∈ Icc 0 T, J * ω' t = τ t - u t) (hτ : ∀ t ∈ Icc 0 T, τ t = 0) :
@@ -334,13 +343,13 @@ lemma wheel_momentum_exchange {J T : ℝ} (hJ : 0 < J) {ω ω' h u τ : ℝ → 
   linarith
 
 /-- The momentum limit as a condition on the input: along the wheel equation `h' = u` on `[0, T]`,
-with `u` integrable there, the command is admissible on `[0, T]` exactly when `|u t| ≤ umax` and
-`|h 0 + ∫₀ᵗ u| ≤ hmax` for every `t ∈ [0, T]`. -/
+with `u` integrable there, the command is admissible on `[0, T]` exactly when `0 ≤ T` and
+`|u t| ≤ umax` and `|h 0 + ∫₀ᵗ u| ≤ hmax` for every `t ∈ [0, T]`. -/
 lemma wheelAdmissible_iff_integral {umax hmax T : ℝ} {u h : ℝ → ℝ}
     (hh : ∀ t ∈ Icc 0 T, HasDerivAt h (u t) t)
     (hu : IntervalIntegrable u MeasureTheory.volume 0 T) :
     WheelAdmissible umax hmax T u h ↔
-      ∀ t ∈ Icc 0 T, |u t| ≤ umax ∧ |h 0 + ∫ s in (0 : ℝ)..t, u s| ≤ hmax := by
+      0 ≤ T ∧ ∀ t ∈ Icc 0 T, |u t| ≤ umax ∧ |h 0 + ∫ s in (0 : ℝ)..t, u s| ≤ hmax := by
   have hftc : ∀ t ∈ Icc 0 T, h t = h 0 + ∫ s in (0 : ℝ)..t, u s := by
     intro t ht
     have hsub : ∫ s in (0 : ℝ)..t, u s = h t - h 0 := by
@@ -355,23 +364,25 @@ lemma wheelAdmissible_iff_integral {umax hmax T : ℝ} {u h : ℝ → ℝ}
     rw [hsub]
     ring
   constructor
-  · intro hadm t ht
+  · rintro ⟨hT, hadm⟩
+    refine ⟨hT, fun t ht => ?_⟩
     obtain ⟨hu1, hh1⟩ := hadm t ht
     refine ⟨hu1, ?_⟩
     rw [← hftc t ht]
     exact hh1
-  · intro hrhs t ht
+  · rintro ⟨hT, hrhs⟩
+    refine ⟨hT, fun t ht => ?_⟩
     obtain ⟨hu1, hh1⟩ := hrhs t ht
     refine ⟨hu1, ?_⟩
     rw [hftc t ht]
     exact hh1
 
-/-- Finite-horizon reserve condition: along the wheel equation `h' = u` on `[0, T]`, a command
-with `|u| ≤ umax` on `[0, T]` is admissible on `[0, T]` whenever `|h 0| + umax T ≤ hmax`. -/
-lemma wheelAdmissible_of_reserve {umax hmax T : ℝ} {u h : ℝ → ℝ}
+/-- Finite-horizon reserve condition: along the wheel equation `h' = u` on `[0, T]`, `T ≥ 0`, a
+command with `|u| ≤ umax` on `[0, T]` is admissible on `[0, T]` whenever `|h 0| + umax T ≤ hmax`. -/
+lemma wheelAdmissible_of_reserve {umax hmax T : ℝ} {u h : ℝ → ℝ} (hT : 0 ≤ T)
     (hh : ∀ t ∈ Icc 0 T, HasDerivAt h (u t) t) (hu : ∀ t ∈ Icc 0 T, |u t| ≤ umax)
     (hres : |h 0| + umax * T ≤ hmax) : WheelAdmissible umax hmax T u h := by
-  intro t ht
+  refine ⟨hT, fun t ht => ?_⟩
   have humax : 0 ≤ umax := le_trans (abs_nonneg _) (hu t ht)
   have hbound := norm_image_sub_le_of_norm_deriv_le_segment' (f := h) (f' := u) (C := umax)
     (a := 0) (b := T)
@@ -419,15 +430,15 @@ lemma constCommand_admissible_iff {umax hmax c T : ℝ} {h : ℝ → ℝ} (hT : 
   have h0mem : (0 : ℝ) ∈ Icc 0 T := ⟨le_refl 0, hT⟩
   have hTmem : T ∈ Icc 0 T := ⟨hT, le_refl T⟩
   constructor
-  · intro hadm
+  · rintro ⟨-, hadm⟩
     obtain ⟨huc, hh0⟩ := hadm 0 h0mem
     obtain ⟨-, hhT⟩ := hadm T hTmem
     refine ⟨?_, hh0, ?_⟩
     · simpa using huc
     · rw [hform T hTmem] at hhT
       exact hhT
-  · rintro ⟨huc, hh0, hhT⟩ t ht
-    refine ⟨?_, ?_⟩
+  · rintro ⟨huc, hh0, hhT⟩
+    refine ⟨hT, fun t ht => ⟨?_, ?_⟩⟩
     · simpa using huc
     · rw [hform t ht]
       by_cases hTeq : T = 0
@@ -460,7 +471,7 @@ lemma constCommand_admissible_iff {umax hmax c T : ℝ} {h : ℝ → ℝ} (hT : 
 /-- A constant command reaches a finite momentum limit: applied at every `t ≥ 0` from
 `|h 0| ≤ hmax`, a command `c ≠ 0` brings the wheel momentum to the limit, `|h T_sat| = hmax`, at a
 finite time `T_sat ≥ 0`, and the command is inadmissible on every horizon `[0, T]` with
-`T > T_sat`, whatever the torque limit `umax`. -/
+`T > T_sat`, whatever the command limit `umax`. -/
 lemma constCommand_momentum_limit {umax hmax c : ℝ} {h : ℝ → ℝ} (hc : c ≠ 0)
     (hh : ∀ t ∈ Ici (0 : ℝ), HasDerivAt h c t) (h0 : |h 0| ≤ hmax) :
     ∃ Tsat, 0 ≤ Tsat ∧ |h Tsat| = hmax ∧
@@ -481,7 +492,7 @@ lemma constCommand_momentum_limit {umax hmax c : ℝ} {h : ℝ → ℝ} (hc : c 
       rw [hform _ hTsat0]
       have e : h 0 + c * ((hmax - h 0) / c) = hmax := by field_simp; ring
       rw [e, abs_of_nonneg hhmax]
-    · intro T hT h_adm
+    · rintro T hT ⟨-, h_adm⟩
       have hTsat0 : 0 ≤ (hmax - h 0) / c := by
         apply div_nonneg _ (le_of_lt hcpos)
         have hle : h 0 ≤ hmax := le_trans (le_abs_self _) h0
@@ -507,7 +518,7 @@ lemma constCommand_momentum_limit {umax hmax c : ℝ} {h : ℝ → ℝ} (hc : c 
       rw [hform _ hTsat0]
       have e : h 0 + c * ((-hmax - h 0) / c) = -hmax := by field_simp; ring
       rw [e, abs_neg, abs_of_nonneg hhmax]
-    · intro T hT h_adm
+    · rintro T hT ⟨-, h_adm⟩
       have hTsat0 : 0 ≤ (-hmax - h 0) / c := by
         apply div_nonneg_of_nonpos _ (le_of_lt hcneg)
         have h1 : -h 0 ≤ hmax := le_trans (neg_le_abs _) h0

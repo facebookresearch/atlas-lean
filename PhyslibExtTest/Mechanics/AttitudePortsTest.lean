@@ -26,11 +26,12 @@ import Mathlib.Tactic.Ring
 * The vee of `Rᵀ R'` returns `ω_B = e₃` for the spin, and norm preservation applies to it.
 * Swapping the multiplication order changes the result: at the quarter turn about the first axis
   and `ω = e₃`, `R [ω]ₓ ≠ [ω]ₓ R`.
-* A reaction wheel with `J = 2`, no external torque and the command `u = 1` spins up from `h = 0`
-  while the body rate falls from `1`; the total momentum `J ω + h` stays `2`.
-* The command `u = 1` meets the torque limit `1` at every time, but from `h(0) = 0` it is
+* A reaction wheel with the locked inertia `J = 2`, no external torque and the command `u = 1`
+  spins up from `h = 0` while the body rate falls from `1`; the total momentum `J ω + h` stays `2`.
+* The command `u = 1` meets the command limit `1` at every time, but from `h(0) = 0` it is
   admissible for the momentum limit `1/4` exactly on horizons `T ≤ 1/4`; the reserve condition is
-  sharp there, and the momentum limit is reached at `T_sat = 1/4` whatever the torque limit.
+  sharp there, and the momentum limit is reached at `T_sat = 1/4` whatever the command limit.
+* A negative horizon is admissible for no command, even with impossible limits.
 -/
 
 @[expose] public section
@@ -120,10 +121,10 @@ example :
 
 open Set
 
-/-- Nonzero internal torque conserves the total momentum: `J = 2`, `τ_ext = 0`, the command
-`u = 1`, the body rate `ω(t) = 1 - t / 2` and the wheel momentum `h(t) = t` satisfy the model
-(`ω' = -1/2`, `h' = 1`, `2 · (-1/2) = 0 - 1`); the total `J ω + h` stays `2` on `[0, 4]` while the
-body rate falls from `1` to `-1`. -/
+/-- Nonzero internal exchange conserves the total momentum: the locked inertia `J = 2`,
+`τ_ext = 0`, the command `u = 1`, the body rate `ω(t) = 1 - t / 2` and the relative wheel momentum
+`h(t) = t` satisfy the model (`ω' = -1/2`, `h' = 1`, `2 · (-1/2) = 0 - 1`); the total `J ω + h`
+stays `2` on `[0, 4]` while the body rate falls from `1` to `-1`. -/
 lemma wheel_exchange_fixture :
     (∀ t : ℝ, HasDerivAt (fun s : ℝ => 1 - s / 2) (-1 / 2) t ∧ HasDerivAt (fun s : ℝ => s) 1 t ∧
         2 * (-1 / 2 : ℝ) = 0 - 1) ∧
@@ -140,7 +141,7 @@ lemma wheel_exchange_fixture :
     ring
   · norm_num
 
-/-- Ignoring the momentum limit: the command `u = 1` meets the torque limit `umax = 1` at every
+/-- Ignoring the momentum limit: the command `u = 1` meets the command limit `umax = 1` at every
 time, but from `h(0) = 0` the wheel momentum `h(t) = t` reaches `hmax = 1/4` at `t = 1/4`, so the
 command is admissible on `[0, T]`, `T ≥ 0`, exactly when `T ≤ 1/4`, and not on `[0, 1]`. The
 reserve `|h(0)| + umax T ≤ hmax` holds with equality at `T = 1/4`, where every command with
@@ -154,20 +155,20 @@ lemma constCommand_fixture :
   refine ⟨?_, ?_, ?_⟩
   · intro T hT
     constructor
-    · intro hadm
+    · rintro ⟨-, hadm⟩
       have hmem : T ∈ Icc (0 : ℝ) T := ⟨hT, le_refl T⟩
       obtain ⟨-, hhT⟩ := hadm T hmem
       have h2 : |T| ≤ 1 / 4 := hhT
       rwa [abs_of_nonneg hT] at h2
-    · intro hle t ht
-      refine ⟨?_, ?_⟩
+    · intro hle
+      refine ⟨hT, fun t ht => ⟨?_, ?_⟩⟩
       · show |(1 : ℝ)| ≤ 1
         norm_num
       · have h2 : |t| ≤ 1 / 4 := by
           rw [abs_of_nonneg ht.1]
           exact le_trans ht.2 hle
         exact h2
-  · intro hadm
+  · rintro ⟨-, hadm⟩
     have hmem : (1 : ℝ) ∈ Icc 0 1 := ⟨zero_le_one, le_refl 1⟩
     obtain ⟨-, hh1⟩ := hadm 1 hmem
     have h2 : |(1 : ℝ)| ≤ 1 / 4 := hh1
@@ -176,7 +177,7 @@ lemma constCommand_fixture :
     have hres : |h 0| + 1 * (1 / 4 : ℝ) ≤ 1 / 4 := by
       rw [h0]
       norm_num
-    exact wheelAdmissible_of_reserve hh hu hres
+    exact wheelAdmissible_of_reserve (by norm_num) hh hu hres
 
 -- The total momentum of the exchange fixture has rate `τ_ext = 0`: `J = 2`, `ω = 1 - t / 2` and
 -- `h = t` obey `J ω' = 0 - u` and `h' = u` for `u = 1`.
@@ -198,8 +199,7 @@ example : 2 * (1 - 4 / 2 : ℝ) + 4 = 2 * (1 - 0 / 2) + 0 ∧
 -- `∫₀ᵗ 1 = t`, so the command is admissible on `[0, 1/4]` for the limits `1` and `1/4`.
 example : WheelAdmissible 1 (1 / 4) (1 / 4) (fun _ => 1) (fun s => s) := by
   rw [wheelAdmissible_iff_integral (fun t _ => hasDerivAt_id' t) intervalIntegrable_const]
-  intro t ht
-  refine ⟨by norm_num, ?_⟩
+  refine ⟨by norm_num, fun t ht => ⟨by norm_num, ?_⟩⟩
   rw [intervalIntegral.integral_const, smul_eq_mul, mul_one, sub_zero, zero_add,
     abs_of_nonneg ht.1]
   exact ht.2
@@ -215,11 +215,16 @@ example : WheelAdmissible 1 (1 / 4) (3 / 4) (fun _ => -1 / 2) (fun s => 1 / 8 - 
   rw [constCommand_admissible_iff (by norm_num) hh]
   norm_num [abs_le]
 
--- A nonzero constant command reaches the momentum limit whatever the torque limit: with the torque
--- limit `5`, the command `1` from `h(0) = 0` reaches `|h| = 1/4` at a finite time and is
+-- A nonzero constant command reaches the momentum limit whatever the command limit: with the
+-- command limit `5`, the command `1` from `h(0) = 0` reaches `|h| = 1/4` at a finite time and is
 -- inadmissible on every longer horizon.
 example : ∃ Tsat, 0 ≤ Tsat ∧ |Tsat| = 1 / 4 ∧
     ∀ T, Tsat < T → ¬ WheelAdmissible 5 (1 / 4) T (fun _ => 1) (fun s => s) :=
   constCommand_momentum_limit one_ne_zero (fun t _ => hasDerivAt_id' t) (by norm_num)
+
+-- A negative horizon is not a duration: no command is admissible on it, even with the impossible
+-- limits `-1`, so admissibility cannot be certified by a negative `T`.
+example (u h : ℝ → ℝ) : ¬ WheelAdmissible (-1) (-1) (-1) u h :=
+  fun hadm => absurd hadm.1 (by norm_num)
 
 end PhyslibExtTest.Mechanics.AttitudePorts
