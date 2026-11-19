@@ -15,10 +15,10 @@ counts cover only the decomposed rows below; they are not repository-wide covera
 
 | Area | Coverage | Evidence |
 | --- | --- | --- |
-| v2 / MathlibExt | DECOMPOSED | [25848 documented public non-instance declarations](../roadmap/README.md) across 28 subjects; 333 instances and 5751 undocumented public non-instance declarations are not articles. |
-| v2 / CSLibExt | DECOMPOSED | [17566 documented public non-instance declarations](../roadmap/README.md) across 7 subjects; 330 instances and 4495 undocumented public non-instance declarations are not articles. |
-| v2 / PhyslibExt | DECOMPOSED | [6611 documented public non-instance declarations](../roadmap/README.md) across 6 subjects; 114 instances and 5254 undocumented public non-instance declarations are not articles. |
-| v2 / WantedExt | DECOMPOSED | [28175 documented public non-instance declarations](../roadmap/README.md) across 26 subjects; 163 instances and 113 undocumented public non-instance declarations are not articles. |
+| v2 / MathlibExt | DECOMPOSED | [28609 documented public non-instance declarations](../roadmap/README.md) across 28 subjects; 363 instances and 5972 undocumented public non-instance declarations are not articles. |
+| v2 / CSLibExt | DECOMPOSED | [18591 documented public non-instance declarations](../roadmap/README.md) across 10 subjects; 338 instances and 4645 undocumented public non-instance declarations are not articles. |
+| v2 / PhyslibExt | DECOMPOSED | [6925 documented public non-instance declarations](../roadmap/README.md) across 7 subjects; 114 instances and 5254 undocumented public non-instance declarations are not articles. |
+| v2 / WantedExt | DECOMPOSED | [28584 documented public non-instance declarations](../roadmap/README.md) across 27 subjects; 165 instances and 113 undocumented public non-instance declarations are not articles. |
 | v2 tests (MathlibExtTest, CSLibExtTest, PhyslibExtTest) | OUT | Tests and diagnostics rather than mathematical results. |
 | Atlas/StatisticalMechanics | MAPPED | Standalone Lean files; no roadmap articles yet. |
 | Atlas/FC | MAPPED | Standalone Lean files; no roadmap articles yet. |
