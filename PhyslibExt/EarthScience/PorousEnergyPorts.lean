@@ -8,8 +8,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import MathlibExt.Analysis.ODE.ContinuumBalances
+public import PhyslibExt.ContinuumMechanics.ControlVolumes
 public import PhyslibExt.EarthScience.ThiemWellFlow
 
+import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.Tactic.FieldSimp
@@ -19,11 +22,12 @@ import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
-# Radial Darcy head profile on an annulus
+# Radial Darcy head profile and well sources in a finite-volume energy ledger
 
 The steady radial Darcy discharge of a confined aquifer integrates to the logarithmic head
 profile on an annulus around a well; with the sign of its rate reversed, this is the Thiem
-profile.
+profile. On a fixed chain of finite volumes, wells and open boundary faces enter an exact mass and
+energy ledger.
 
 ## i. Overview
 
@@ -45,6 +49,30 @@ A zero well radius admits no head that stays finite at the axis with a nonzero d
 a negative transmissivity sends the discharge up the head gradient; both inputs are rejected.
 Multiphase flow, unconfined aquifers, leakage, recharge and transient storage are not treated.
 
+Well and boundary sources (sections D-E). A fixed one-dimensional chain of `n` cells of common
+positive volume `Δx` (per unit cross-section) carries signed face fluxes `F : Fin (n + 1) → ℝ`,
+positive towards increasing index, as in `MathlibExt.Analysis.ODE.ContinuumBalances`. There is one
+flux per face, so every interior face is shared by its two cells with the same signed value; the
+exterior faces `0` and `Fin.last n` may carry nonzero fluxes. A cell may hold a well with signed
+rate `q i` (injection `q i > 0`, production `q i < 0`). The cell rate is the transport rate
+`discreteBalance Δx F i` plus `q i / Δx`, and one explicit step of length `dt` changes the stock
+`Δx * ∑ i, c i` by `dt ((F 0 - F (Fin.last n)) + ∑ i, q i)`: the interior fluxes cancel
+(`totalDiscreteChange_eq`). The ledger is applied with the same face mass fluxes `Fm` to mass,
+with well mass rates `qI i - qP i`, and to energy, with the enthalpy flux `Fm j * h_j`
+(`h = e + p / ρ` the energy-port enthalpy `ControlVolumes.specificEnthalpy`, flow work counted
+once) and the well energy rate `qI i * hI i - qP i * h_i`: the produced fluid leaves at the
+production mass rate `qP i` with the cell's own enthalpy. That enthalpy is the stored cell state's:
+the cell stores the fluid mass `m i = φ i * ρc i` per unit volume (porosity `φ i > 0`) and the
+fluid energy `E i = m i * ec i`, so `h_i = (E i + φ i * pc i) / m i` (`wellEnergyRate_eq_stored`).
+No rock energy is stored, and the cell pressure `pc i` is an input (no equation of state is
+assumed). The face states are free: interior face values cancel, and exterior ones are boundary
+data. Face and cell densities are positive, as
+`ControlVolumes.portEnergyRate_eq_massFlow` requires `ρ ≠ 0`: at `ρ = 0`, Lean's `x / 0 = 0`
+would drop the flow work from the enthalpy. This is accounting only: no positivity of the
+stocks, monotonicity or convergence is claimed. The no-flux specialization
+`sum_add_mul_discreteBalance_of_noFlux` conserves the stock and so cannot represent an open chain
+with wells and an outlet.
+
 ## ii. Key results
 
 - `EarthScience.radialDarcy_head_sub`: the radial Darcy head difference on the annulus.
@@ -56,18 +84,33 @@ Multiphase flow, unconfined aquifers, leakage, recharge and transient storage ar
   difference for the pumping rate `-Q`.
 - `EarthScience.radialDarcy_no_head_at_axis`: a zero well radius is rejected.
 - `EarthScience.radialDischarge_upgradient_of_neg`: a negative transmissivity is rejected.
+- `EarthScience.stock_add_mul_wellCellRate`: the cell rates sum to `totalDiscreteChange` plus the
+  wells, and the stock changes by `dt` times the net boundary inflow plus the well total.
+- `EarthScience.wellEnergyRate_eq_stored`: the produced enthalpy is fixed by the stored mass and
+  energy, the porosity and the cell pressure.
+- `EarthScience.well_boundary_ledger`: the mass and the energy ledger with shared face fluxes and
+  production at the production mass rate with the enthalpy of the stored cell state.
 
 ## iii. Table of contents
 
 - A. Radial Darcy head profile
 - B. Matching the Thiem profile
 - C. Rejected inputs
+- D. Cells with wells
+- E. Mass and energy ledgers
 
 ## iv. References
 
 - J. Bear, *Dynamics of Fluids in Porous Media*, American Elsevier (1972): Darcy's law and
   steady radial flow to a well in a confined aquifer.
 - `EarthScience.thiem_head_difference` (`PhyslibExt.EarthScience.ThiemWellFlow`).
+- J. Bear, *Dynamics of Fluids in Porous Media*, American Elsevier (1972): mass and energy
+  balances with sources and sinks in porous media.
+- R. J. LeVeque, *Finite Volume Methods for Hyperbolic Problems*, Cambridge University Press
+  (2002), ch. 4: conservative finite-volume updates, whose interior fluxes cancel in the total.
+- `MathlibExt.Analysis.ODE.ContinuumBalances.totalDiscreteChange_eq`
+  (`MathlibExt.Analysis.ODE.ContinuumBalances`) and `ControlVolumes.specificEnthalpy`
+  (`PhyslibExt.ContinuumMechanics.ControlVolumes`).
 -/
 
 @[expose] public section
@@ -361,5 +404,107 @@ lemma radialDischarge_upgradient_of_neg {Tr r h' : ℝ} (hTr : Tr < 0) (hr : 0 <
   rw [h]
   have hpos : 0 < 2 * Real.pi * r * (-Tr) := by positivity
   positivity
+
+section WellLedger
+
+open MathlibExt.Analysis.ODE.ContinuumBalances
+
+/-! ## D. Cells with wells -/
+
+/-- Cell rate of a finite-volume chain with wells: the transport rate
+`discreteBalance Δx F i = -(F (i + 1) - F i) / Δx` of cell `i` plus its well source `q i / Δx`.
+`Δx > 0` is the common cell volume, `F j` the signed flux through face `j` and `q i` the signed
+well rate of cell `i` (injection `q i > 0`, production `q i < 0`). -/
+noncomputable def wellCellRate {n : ℕ} (Δx : {x : ℝ // 0 < x}) (F : Fin (n + 1) → ℝ)
+    (q : Fin n → ℝ) (i : Fin n) : ℝ :=
+  discreteBalance Δx F i + q i / Δx
+
+/-- Enthalpy flux through face `j`: the signed mass flux `Fm j` times the specific enthalpy
+`specificEnthalpy (ef j) (pf j) (ρf j)` of the fluid crossing the face (flow work counted once,
+inside the enthalpy). The face densities are positive (`_hρf`): at `ρ = 0` Lean's `x / 0 = 0`
+would turn the enthalpy into `e` and drop the flow work. -/
+noncomputable def faceEnthalpyFlux {n : ℕ} (Fm ef pf ρf : Fin (n + 1) → ℝ)
+    (_hρf : ∀ j, 0 < ρf j) (j : Fin (n + 1)) : ℝ :=
+  Fm j * ControlVolumes.specificEnthalpy (ef j) (pf j) (ρf j)
+
+/-- Well energy rate of cell `i`: the injection rate `qI i` at the injected specific enthalpy
+`hI i`, minus the production rate `qP i` at the cell's own specific enthalpy
+`specificEnthalpy (ec i) (pc i) (ρc i)`. The signed well mass rate of the cell is `qI i - qP i`,
+and the produced enthalpy leaves at the same production rate `qP i`. The cell densities are
+positive (`_hρc`), as the face densities of `faceEnthalpyFlux`. -/
+noncomputable def wellEnergyRate {n : ℕ} (qI qP hI ec pc ρc : Fin n → ℝ)
+    (_hρc : ∀ i, 0 < ρc i) (i : Fin n) : ℝ :=
+  qI i * hI i - qP i * ControlVolumes.specificEnthalpy (ec i) (pc i) (ρc i)
+
+/-- **Finite-volume ledger with wells.** The cell rates sum to the transport total
+`totalDiscreteChange Δx F` plus the well total over `Δx`, and one explicit step
+`c i ↦ c i + dt * wellCellRate Δx F q i` changes the stock `Δx * ∑ i, c i` by `dt` times the net
+boundary inflow `F 0 - F (Fin.last n)` plus the well total `∑ i, q i`. The exterior fluxes may
+be nonzero; the interior fluxes cancel (`totalDiscreteChange_eq`). -/
+lemma stock_add_mul_wellCellRate {n : ℕ} (Δx : {x : ℝ // 0 < x}) (dt : ℝ) (c : Fin n → ℝ)
+    (F : Fin (n + 1) → ℝ) (q : Fin n → ℝ) :
+    ∑ i, wellCellRate Δx F q i = totalDiscreteChange Δx F + (∑ i, q i) / Δx ∧
+      Δx * ∑ i, (c i + dt * wellCellRate Δx F q i) =
+        Δx * ∑ i, c i + dt * ((F 0 - F (Fin.last n)) + ∑ i, q i) := by
+  have hΔx : (Δx : ℝ) ≠ 0 := ne_of_gt Δx.2
+  have hsum : ∑ i, wellCellRate Δx F q i = totalDiscreteChange Δx F + (∑ i, q i) / Δx := by
+    simp only [wellCellRate, totalDiscreteChange]
+    rw [Finset.sum_add_distrib, ← Finset.sum_div]
+  refine ⟨hsum, ?_⟩
+  have hstep : ∑ i, (c i + dt * wellCellRate Δx F q i)
+      = ∑ i, (c i + dt * (q i / Δx)) + dt * totalDiscreteChange Δx F := by
+    rw [← sum_add_mul_discreteBalance Δx dt (fun i => c i + dt * (q i / Δx)) F]
+    refine Finset.sum_congr rfl fun i _ => ?_
+    simp only [wellCellRate]
+    ring
+  rw [hstep, totalDiscreteChange_eq, Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.sum_div]
+  field_simp
+  ring
+
+/-! ## E. Mass and energy ledgers -/
+
+/-- **Production enthalpy from the stored cell state.** If cell `i` stores the fluid mass
+`m i = φ i * ρc i` per unit volume (porosity `φ i > 0`, fluid density `ρc i > 0`) and the fluid
+energy `E i = m i * ec i` (specific internal energy `ec i`; no rock energy is stored), the
+produced specific enthalpy `specificEnthalpy (ec i) (pc i) (ρc i) = ec i + pc i / ρc i` is
+`(E i + φ i * pc i) / m i`, and the well energy rate is
+`qI i * hI i - qP i * ((E i + φ i * pc i) / m i)`: the production withdrawal is fixed by the stored
+mass and energy, the porosity and the cell pressure `pc i`. -/
+lemma wellEnergyRate_eq_stored {n : ℕ} {m E qI qP hI ec pc ρc φ : Fin n → ℝ}
+    (hρc : ∀ i, 0 < ρc i) (hφ : ∀ i, 0 < φ i) (hm : ∀ i, m i = φ i * ρc i)
+    (hE : ∀ i, E i = m i * ec i) (i : Fin n) :
+    wellEnergyRate qI qP hI ec pc ρc hρc i = qI i * hI i - qP i * ((E i + φ i * pc i) / m i) := by
+  have hρ : ρc i ≠ 0 := ne_of_gt (hρc i)
+  have hφ0 : φ i ≠ 0 := ne_of_gt (hφ i)
+  simp only [wellEnergyRate, ControlVolumes.specificEnthalpy]
+  rw [hE i, hm i]
+  field_simp
+
+/-- **Well and boundary sources in the energy ledger.** On a chain of `n` cells of common
+positive volume `Δx`, with signed face mass fluxes `Fm` (one per face, shared by the mass and the
+energy ledger) and positive face densities `ρf`, injection rates `qI` at specific enthalpies `hI`
+and production rates `qP`: if each cell stores the fluid mass `m i = φ i * ρc i` (porosity
+`φ i > 0`, fluid density `ρc i > 0`) and the fluid energy `E i = m i * ec i`, one explicit step of
+the stored mass and energy changes the total mass by `dt ((Fm 0 - Fm n) + ∑ (qI - qP))` and the
+total energy by `dt` times the net boundary enthalpy inflow plus `∑ (qI hI - qP h)`, where the
+produced enthalpy `h = (E i + φ i * pc i) / m i` is that of the stored cell state. The face states
+are free: the identity holds for every choice. -/
+lemma well_boundary_ledger {n : ℕ} (Δx : {x : ℝ // 0 < x}) (dt : ℝ) (m E : Fin n → ℝ)
+    (Fm ef pf ρf : Fin (n + 1) → ℝ) (qI qP hI ec pc ρc φ : Fin n → ℝ) (hρf : ∀ j, 0 < ρf j)
+    (hρc : ∀ i, 0 < ρc i) (hφ : ∀ i, 0 < φ i) (hm : ∀ i, m i = φ i * ρc i)
+    (hE : ∀ i, E i = m i * ec i) :
+    Δx * ∑ i, (m i + dt * wellCellRate Δx Fm (fun i => qI i - qP i) i) =
+        Δx * ∑ i, m i + dt * ((Fm 0 - Fm (Fin.last n)) + ∑ i, (qI i - qP i)) ∧
+      Δx * ∑ i, (E i + dt * wellCellRate Δx (faceEnthalpyFlux Fm ef pf ρf hρf)
+          (wellEnergyRate qI qP hI ec pc ρc hρc) i) =
+        Δx * ∑ i, E i + dt * ((faceEnthalpyFlux Fm ef pf ρf hρf 0 -
+          faceEnthalpyFlux Fm ef pf ρf hρf (Fin.last n)) +
+            ∑ i, (qI i * hI i - qP i * ((E i + φ i * pc i) / m i))) := by
+  refine ⟨(stock_add_mul_wellCellRate Δx dt m Fm (fun i => qI i - qP i)).2, ?_⟩
+  rw [(stock_add_mul_wellCellRate Δx dt E (faceEnthalpyFlux Fm ef pf ρf hρf)
+      (wellEnergyRate qI qP hI ec pc ρc hρc)).2,
+    Finset.sum_congr rfl fun i _ => wellEnergyRate_eq_stored hρc hφ hm hE i]
+
+end WellLedger
 
 end EarthScience
