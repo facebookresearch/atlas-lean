@@ -26,6 +26,23 @@ signature and identification schemes by reductions between games, and develops d
 privacy. [Databases](databases/README.md) covers relational algebra, functional dependencies and
 normal forms, and transaction concurrency control.
 
+[Process calculi](process-calculi/README.md), the third largest field, is mostly
+[session types](process-calculi/session-types/README.md) for the π-calculus, with subject reduction and progress for
+typed processes. [Type systems and lambda calculi](type-systems-and-lambda-calculi/README.md) has
+[Hindley–Milner type inference](type-systems-and-lambda-calculi/hindley-milner-type-inference/README.md), where
+Algorithm W is sound and complete and finds principal types, relational parametricity for
+[System F](type-systems-and-lambda-calculi/system-f/README.md) and
+[System Fω](type-systems-and-lambda-calculi/system-f-2/README.md), and strong normalization of the
+[calculus of constructions](type-systems-and-lambda-calculi/calculus-of-constructions/README.md).
+[Programming-language semantics](programming-language-semantics/README.md) gives the IMP language operational and
+denotational semantics and a correct compiler to a stack machine.
+
+[Machine learning](machine-learning/README.md), the second largest field, covers
+[probabilistic graphical models](machine-learning/probabilistic-graphical-models/README.md) such as Bayesian networks
+and hidden Markov models, Bayesian inference, supervised learning, and
+[online learning and boosting](machine-learning/online-learning-and-boosting/README.md), with Novikoff's perceptron
+mistake bound and the Freund–Schapire bound on the training error of AdaBoost.
+
 - [Data structures](data-structures/README.md)
 - [Graph algorithms](graph-algorithms/README.md)
 - [Sorting and searching](sorting-and-searching/README.md)
@@ -47,3 +64,4 @@ normal forms, and transaction concurrency control.
 - [Programming language semantics](programming-language-semantics/README.md)
 - [Type systems and lambda calculi](type-systems-and-lambda-calculi/README.md)
 - [Program logics and verification](program-logics-and-verification/README.md)
+- [Machine learning](machine-learning/README.md)

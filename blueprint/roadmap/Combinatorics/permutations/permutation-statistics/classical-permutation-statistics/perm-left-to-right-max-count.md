@@ -10,6 +10,6 @@ every position $j < i$, that is, the number of entries larger than every entry t
 
 ## Related topics
 
-- Hiring problem:
+- [Hiring problem](../../../../ComputerScience/randomized-algorithms/hiring-problem/README.md):
   the hire count of the hire-assistant scan is this statistic of the interview order, and its
   expectation over a random order is the harmonic number $H_n$.

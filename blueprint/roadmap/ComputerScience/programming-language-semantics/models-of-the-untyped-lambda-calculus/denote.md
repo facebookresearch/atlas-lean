@@ -9,8 +9,8 @@ This is the semantics of application and λ-abstraction in Scott's language LAMB
 
 ## Background
 
-- Application in the graph model: the meaning of application.
-- Graph of a function on `P(ω)`: the meaning of abstraction.
+- [Application in the graph model](../../../Order/fixed-points-domain-theory/scott-s-graph-model/app.md): the meaning of application.
+- [Graph of a function on `P(ω)`](../../../Order/fixed-points-domain-theory/scott-s-graph-model/graph.md): the meaning of abstraction.
 - [Extending a bound-variable environment](cons-env.md): the valuation under a binder.
 
 ## Sources

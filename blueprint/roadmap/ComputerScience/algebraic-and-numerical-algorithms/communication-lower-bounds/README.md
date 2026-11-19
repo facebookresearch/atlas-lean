@@ -2,7 +2,7 @@
 
 Moving data between levels of a memory hierarchy, or between processors, costs far more time and energy than arithmetic, so the cost of an algorithm is also measured by the number of words it moves. On a sequential machine with a fast memory of $M$ words, classical matrix multiplication of $n \times n$ matrices must move $\Omega(n^3/\sqrt{M})$ words between fast and slow memory (Hong and Kung, 1981; Irony, Toledo and Tiskin, 2004), and blocked or recursive algorithms attain this bound. Ballard, Demmel, Holtz and Schwartz (2011) showed that the same bound, $\Omega(\#\text{multiply-adds}/\sqrt{M})$, holds for every computation shaped like matrix multiplication: dense and sparse LU, Cholesky and $LDL^T$ factorisations, among others. Dividing by the largest message size $M$ gives a lower bound on the number of messages.
 
-The argument cuts the execution into segments of $M$ loads and stores, bounds by the discrete Loomis–Whitney inequality the number of multiply-adds a segment can perform with the at most $4M$ operands of each kind available to it, and counts segments.
+The argument cuts the execution into segments of $M$ loads and stores, bounds by the [discrete Loomis–Whitney inequality](../../../Combinatorics/extremal-set-theory/loomis-whitney-and-brascamp-lieb-inequalities/card-sq-le-card-mul-card-mul-card.md) the number of multiply-adds a segment can perform with the at most $4M$ operands of each kind available to it, and counts segments.
 
 - [Bandwidth lower bound, segment-counting form](card-div-sub-le-words.md)
 - [Evaluations per segment](card-le-of-card-image-le.md)

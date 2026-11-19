@@ -2,7 +2,7 @@
 
 Let $M$ be a Markov decision process with finitely many states, finitely many actions (at least one), real rewards and stochastic transition probabilities, and let $0 \le \gamma < 1$. The optimal value $V^*$, the unique solution of Bellman's equation $TV = V$, is the greatest value of a Markov policy: every Markov policy $\pi$ has value at most $V^*$ in every state, and the stationary policy greedy for $V^*$ has value exactly $V^*$. Optimal Markov policies may therefore be taken stationary.
 
-This is the deterministic Markov-policy case, for finite discounted MDPs, of the results listed by Bertsekas for monotone contractive models: Bellman's equation has the unique solution $J^*$, and a stationary policy $\mu^*$ is optimal if and only if $T_{\mu^*} J^* = T J^*$. The comparison is with deterministic Markov policies; randomized and history-dependent policies are not among them. Stationary randomized policies are compared with $V^*$ in No stochastic policy beats the optimal value.
+This is the deterministic Markov-policy case, for finite discounted MDPs, of the results listed by Bertsekas for monotone contractive models: Bellman's equation has the unique solution $J^*$, and a stationary policy $\mu^*$ is optimal if and only if $T_{\mu^*} J^* = T J^*$. The comparison is with deterministic Markov policies; randomized and history-dependent policies are not among them. Stationary randomized policies are compared with $V^*$ in [No stochastic policy beats the optimal value](../../machine-learning/reinforcement-learning/stochastic-policies-and-discounted-occupancy/stoch-value-le-optimal-value.md).
 
 ## Sources
 

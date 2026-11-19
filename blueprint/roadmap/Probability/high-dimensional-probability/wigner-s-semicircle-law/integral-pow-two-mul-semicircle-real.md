@@ -22,7 +22,7 @@ $\int_0^\pi \cos^{n+2} = \frac{n+1}{n+2}\int_0^\pi \cos^n$.
 
 ## Background
 
-- Stieltjes moment problem:
+- [Stieltjes moment problem](../../../Analysis/harmonic-analysis/integral-transforms/stieltjes-moment-problem/README.md):
   background on moment determinacy. Since $C_k \le 4^k$, the semicircle distribution is
   determined by its moments, which is what lets convergence of moments prove the semicircle law.
 

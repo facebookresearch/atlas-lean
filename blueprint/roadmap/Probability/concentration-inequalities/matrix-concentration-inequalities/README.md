@@ -24,4 +24,4 @@ Tail and expectation bounds for the extreme eigenvalues of random Hermitian matr
 - [Randomized range finder](../../../LinearAlgebra/matrix-decompositions/randomized-range-finder/README.md)
 - [Kadison–Singer problem](../../../Analysis/operator-algebras/kadison-singer-problem/README.md)
 - [Wigner's semicircle law](../../high-dimensional-probability/wigner-s-semicircle-law/README.md)
-- Generalization bounds and concentration
+- [Generalization bounds and concentration](../../../ComputerScience/machine-learning/generalization-bounds-and-concentration/README.md)
