@@ -23,5 +23,5 @@ that the proof uses.
 
 ## Background
 
-- Weighted Lindström–Gessel–Viennot lemma, noncrossing form: applied to each minor, it writes the minor as a sum of weights of vertex-disjoint path families.
-- Cluster algebras: Fomin and Zelevinsky introduced cluster algebras to explain the combinatorics of such positivity tests (double wiring diagrams and their mutations).
+- [Weighted Lindström–Gessel–Viennot lemma, noncrossing form](../../../Combinatorics/catalan-numbers-lattice-paths/dyck-paths-lattice-walks/lindstrom-gessel-viennot-weighted.md): applied to each minor, it writes the minor as a sum of weights of vertex-disjoint path families.
+- [Cluster algebras](../../../RingTheory/cluster-algebras/README.md): Fomin and Zelevinsky introduced cluster algebras to explain the combinatorics of such positivity tests (double wiring diagrams and their mutations).

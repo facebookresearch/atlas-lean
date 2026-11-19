@@ -57,21 +57,21 @@ statements above need no eigenbasis, and the Woodbury identity is not needed in 
 
 ## Informally uses
 
-- The marginal of a linear-Gaussian model:
+- [The marginal of a linear-Gaussian model](../../../Probability/distributions/continuous/gaussian-conditioning/map-linear-add-of-indep-fun.md):
   mathematical prerequisite, (a) with $F = I$, $x = X_0$, $S = \Sigma$, $w = \sigma \varepsilon$,
   $c = 0$ and $Q = \sigma^2 I$.
-- Bayes' theorem for a linear-Gaussian observation:
+- [Bayes' theorem for a linear-Gaussian observation](../../../Probability/distributions/continuous/gaussian-conditioning/cond-distrib-linear-add-of-indep-fun.md):
   mathematical prerequisite, (c) with $H = I$, $S = \Sigma$ and $R = \sigma^2 I$; its
   invertibility hypothesis is where $\sigma > 0$ is used.
-- The multivariate Gaussian density:
+- [The multivariate Gaussian density](../../../Probability/distributions/continuous/multivariate-normal-distribution/multivariate-gaussian-eq-with-density.md):
   mathematical prerequisite, the density in (b), for the positive definite covariance
   $\Sigma + \sigma^2 I$; the gradient of its logarithm is a further calculus step.
 
 ## Background
 
-- Tweedie's formula:
+- [Tweedie's formula](../../../Probability/bayesian-statistics/empirical-bayes-and-tweedie-s-formula/gaussian-posterior-mean-eq-add-mul-deriv.md):
   background, the general formula $\mathbb E[\mu \mid x] = x + \sigma^2 (\log f)'(x)$ for an arbitrary prior, proved in dimension one; (d) above is its Gaussian-data case in dimension $D$.
-- The quadratic form of a symmetric matrix in an orthonormal eigenbasis:
+- [The quadratic form of a symmetric matrix in an orthonormal eigenbasis](../../../LinearAlgebra/positive-definite-matrices/von-neumann-s-trace-inequality/inner-to-euclidean-lin-self-eq-sum.md):
   background, it uses the real orthonormal eigenbasis of a real symmetric matrix from the spectral
   theorem, which is the basis in the spectral form above; the basis-free statements do not need it.
 - [The probabilistic PCA marginal](../unsupervised-learning/probabilistic-principal-component-analysis/ppca-map-eq.md):

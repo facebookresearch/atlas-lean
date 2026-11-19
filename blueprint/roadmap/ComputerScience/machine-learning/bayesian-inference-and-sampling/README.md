@@ -1,6 +1,6 @@
 # Bayesian inference and sampling
 
-Bayes' rule and conjugate models, expectation-maximization for mixtures and latent-variable models, variational mean-field inference, and Monte Carlo, rejection, Gibbs and Metropolis-Hastings sampling. Bayesian nonparametric priors (the Dirichlet process and urn schemes, and the Chinese restaurant and Indian buffet processes as infinite limits of finite mixture and feature models) are under Bayesian statistics.
+Bayes' rule and conjugate models, expectation-maximization for mixtures and latent-variable models, variational mean-field inference, and Monte Carlo, rejection, Gibbs and Metropolis-Hastings sampling. Bayesian nonparametric priors (the Dirichlet process and urn schemes, and the Chinese restaurant and Indian buffet processes as infinite limits of finite mixture and feature models) are under [Bayesian statistics](../../../Probability/bayesian-statistics/README.md).
 
 - [Bayes' rule](bayes-rule/README.md)
 - [Conjugate priors](conjugate-priors/README.md)

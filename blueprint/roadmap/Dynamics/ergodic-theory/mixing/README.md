@@ -28,7 +28,7 @@ mixing examples.
   the condition under which time averages equal space averages.
 - [Kolmogorov–Sinai entropy](../kolmogorov-sinai-entropy/README.md): Bernoulli shifts, the basic mixing
   examples, are told apart by their entropy.
-- Translation invariance and ergodicity of the q = 2 random-cluster measures:
+- [Translation invariance and ergodicity of the q = 2 random-cluster measures](../../../StatisticalMechanics/random-cluster-model/translation-invariance-and-ergodicity-of-the-q-2/README.md):
   the same argument, mixing on cylinder events implies ergodicity, for translation actions on
   configuration spaces.
 - [Mixing times of Markov chains](../../../Probability/markov-chains/mixing-times-of-markov-chains/README.md):

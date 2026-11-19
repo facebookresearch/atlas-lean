@@ -16,7 +16,7 @@ theorem gives a weakly convergent subsequence, whose limit represents $f$.
 
 ## Background
 
-- Convergence of measures: tightness and Prokhorov's theorem, used in the source's proof in the parameter space $\mathbb{R} \times \mathbb{R}^d \times \mathbb{R}$.
+- [Convergence of measures](../../../../Probability/convergence-of-measures/README.md): tightness and Prokhorov's theorem, used in the source's proof in the parameter space $\mathbb{R} \times \mathbb{R}^d \times \mathbb{R}$.
 
 ## Sources
 

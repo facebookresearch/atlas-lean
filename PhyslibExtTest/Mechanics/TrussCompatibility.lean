@@ -18,8 +18,9 @@ import Mathlib.Tactic.NormNum
 Concrete consumers of
 `PhyslibExt.Mechanics.TrussCompatibility` on a three-joint
 table: horizontal-member elongation pairing, supported
-energy value, and a zero-length member contributing a zero
-unit row.
+energy value, a zero-length member contributing a zero
+unit row, and supported virtual work on the mechanism
+(one-member) truss.
 
 ## i. Overview
 
@@ -32,6 +33,7 @@ No new definitions or results are introduced here.
 ## iii. Table of contents
 
 - A. Row action and supported energy
+- B. Supported virtual work
 
 ## iv. References
 
@@ -109,6 +111,64 @@ example : ((axialCompatibility r3 ![0] ![1] * S6)ᵀ
   supported_posSemidef r3 ![0] ![1] S6 (![1] : Fin 1 → ℝ)
     (by intro i; fin_cases i <;> norm_num)
 
+/-! ## B. Supported virtual work -/
+
+/-- Supported load balanced by `s = 2` on the one-member
+table: `-8` at joint 0 `x`, `8` at joint 1 `x`. -/
+private def fB : Fin 3 × Fin 2 → ℝ :=
+  fun q => if q = (0, 0) then -8 else if q = (1, 0) then 8 else 0
+
+/-- The balanced-load identity `(B * 1)ᵀ *ᵥ ![2] = fB`,
+coordinate by coordinate. -/
+example : (axialCompatibility r3 ![0] ![1] * S6)ᵀ *ᵥ (![2] : Fin 1 → ℝ)
+    = fB := by
+  funext q
+  obtain ⟨j, k⟩ := q
+  fin_cases j <;> fin_cases k <;>
+    simp [Matrix.mulVec_apply, Matrix.transpose_apply, axialCompatibility,
+      Matrix.of_apply, dotProduct, fB, r3] <;> norm_num
+
+/-- Forward direction at the nonzero virtual displacement
+`u6`: internal and external virtual work are both `16`.
+The one-member table is a mechanism (its compatibility map
+has a large kernel); no injectivity is needed. -/
+example : (![2] : Fin 1 → ℝ)
+      ⬝ᵥ ((axialCompatibility r3 ![0] ![1] * S6) *ᵥ u6) = fB ⬝ᵥ u6 ∧
+    fB ⬝ᵥ u6 = 16 := by
+  have heq : (axialCompatibility r3 ![0] ![1] * S6)ᵀ *ᵥ (![2] : Fin 1 → ℝ)
+      = fB := by
+    funext q
+    obtain ⟨j, k⟩ := q
+    fin_cases j <;> fin_cases k <;>
+      simp [Matrix.mulVec_apply, Matrix.transpose_apply, axialCompatibility,
+        Matrix.of_apply, dotProduct, fB, r3] <;> norm_num
+  refine ⟨(supported_virtualWork_iff r3 ![0] ![1] S6 _ _).mp heq u6, ?_⟩
+  simp only [dotProduct, u6, fB, Fintype.sum_prod_type, Fin.sum_univ_three,
+    Fin.sum_univ_two]
+  norm_num
+
+/-- Reverse direction at the zero support map: virtual
+work (both sides zero) gives the zero equilibrium. -/
+example (s : Fin 1 → ℝ) :
+    (axialCompatibility r3 ![0] ![1] * (0 : Matrix (Fin 3 × Fin 2)
+        (Fin 3 × Fin 2) ℝ))ᵀ *ᵥ s = 0 :=
+  (supported_virtualWork_iff r3 ![0] ![1] 0 s 0).mpr (fun v => by simp)
+
+/-- Mechanism negative control: a transverse load at joint
+0 cannot be balanced by any member coefficient, because
+the transverse virtual displacement does no internal work. -/
+example (s : Fin 1 → ℝ) :
+    ¬ ∀ v : Fin 3 × Fin 2 → ℝ,
+      s ⬝ᵥ ((axialCompatibility r3 ![0] ![1] * S6) *ᵥ v)
+        = (fun q => if q = (0, 1) then (1 : ℝ) else 0) ⬝ᵥ v := by
+  intro h
+  have hv := h (fun q => if q = (0, 1) then (1 : ℝ) else 0)
+  simp only [dotProduct, Fintype.sum_prod_type, Fin.sum_univ_three,
+    Fin.sum_univ_two, Fin.sum_univ_one, Matrix.mulVec_apply, Matrix.row,
+    axialCompatibility, Matrix.of_apply, Matrix.one_apply,
+    Matrix.mul_apply] at hv
+  norm_num [r3] at hv
+
 #print axioms
   Mechanics.TrussCompatibility.axialCompatibility_mulVec_apply
 #print axioms
@@ -117,5 +177,6 @@ example : ((axialCompatibility r3 ![0] ![1] * S6)ᵀ
   Mechanics.TrussCompatibility.axialCompatibilityUnit_transpose_mulVec_apply
 #print axioms Mechanics.TrussCompatibility.supported_quad_form_eq_sum
 #print axioms Mechanics.TrussCompatibility.supported_posSemidef
+#print axioms Mechanics.TrussCompatibility.supported_virtualWork_iff
 
 end PhyslibExtTest.Mechanics.TrussCompatibility

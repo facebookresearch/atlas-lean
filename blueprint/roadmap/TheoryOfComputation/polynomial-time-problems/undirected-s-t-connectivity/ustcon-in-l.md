@@ -22,13 +22,13 @@ rotation maps (Reingold; Salil P. Vadhan, *Pseudorandomness* (2012), Section 4.4
 
 ## Informally uses
 
-- Zig-zag theorem, spectral-gap form:
+- [Zig-zag theorem, spectral-gap form](../../../GraphTheory/graph-families-and-operations/zig-zag-product-and-explicit-expanders/zig-zag-theorem-gap-form.md):
   the zig-zag step keeps a constant fraction of the spectral gap while restoring constant degree
   (Reingold's Theorem 2.9 cites the zig-zag theorem of Reingold, Vadhan and Wigderson; Vadhan's
   proof uses his Theorem 4.35).
-- Squaring squares the spectral parameter:
+- [Squaring squares the spectral parameter](../../../GraphTheory/graph-families-and-operations/zig-zag-product-and-explicit-expanders/is-ndlambda-graph-square.md):
   powering (Reingold's Proposition 2.7) is what enlarges the spectral gap.
-- Spectral expanders have logarithmic diameter:
+- [Spectral expanders have logarithmic diameter](../../../GraphTheory/graph-families-and-operations/expander-graphs/logarithmic-diameter.md):
   once every component is an expander, $s$ and $t$ are connected if and only if a walk of length
   $O(\log N)$ joins them (Reingold's Proposition 2.2).
 

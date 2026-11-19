@@ -9,17 +9,20 @@ module
 
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+public import Mathlib.LinearAlgebra.Matrix.Gershgorin
 public import PhyslibExt.EarthScience.BlackbodyFlux
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
-# Black enclosure radiation: power conservation
+# Enclosure radiation: black power conservation and gray radiosity
 
 ## i. Overview
 
@@ -34,6 +37,14 @@ is a net outflow. Results: total power cancels, an isothermal neighbourhood exch
 a hottest surface has nonnegative outflow, and `P i` is emission minus absorption of the
 Lambertian blackbody flux.
 
+Gray surfaces: with emissivities `0 < ε i ≤ 1` (absorptivity `ε i`, reflectivity `1 - ε i`) the
+radiosities `J` solve `J i = ε i * σ * T i ^ 4 + (1 - ε i) * ∑ j, F i j * J j`. The system matrix
+`1 - diag (1 - ε) * F` is strictly row diagonally dominant because every `ε i > 0`, so
+`det_ne_zero_of_sum_row_lt_diag` makes the solution exist and be unique. The gray net power
+`∑ j, A i * F i j * (J i - J j)` is radiosity minus irradiation times area and emission minus
+absorption; the gray powers sum to zero; with every `ε i = 1` the radiosity is `σ T⁴` and the
+gray power is `netPower`. With every `ε i = 0` each constant radiosity solves the equations.
+
 ## ii. Key results
 
 - `HeatTransfer.EnclosureRadiation.sum_netPower_eq_zero`: the net powers of all surfaces
@@ -42,11 +53,18 @@ Lambertian blackbody flux.
   hemispheric blackbody power minus absorbed power from every other surface.
 - `HeatTransfer.EnclosureRadiation.netPower_nonneg_of_hottest`: a hottest surface has
   nonnegative net outflow.
+- `HeatTransfer.EnclosureRadiation.existsUnique_isRadiosity`: the gray radiosities exist and are
+  unique when every emissivity is positive.
+- `HeatTransfer.EnclosureRadiation.sum_grayNetPower_eq_zero`: the gray net powers sum to zero.
+- `HeatTransfer.EnclosureRadiation.isRadiosity_iff_of_emissivity_eq_one`,
+  `HeatTransfer.EnclosureRadiation.grayNetPower_blackbody`: the black limit.
 
 ## iii. Table of contents
 
 - A. Enclosure data and net power
 - B. Conservation and sign results
+- C. Gray enclosures: radiosity
+- D. Gray net power: conservation and the black limit
 
 ## iv. References
 
@@ -54,6 +72,9 @@ Lambertian blackbody flux.
   heat transfer (e.g. Incropera and DeWitt, *Fundamentals of Heat and Mass Transfer*,
   the enclosure-theory chapter); the hemispheric blackbody flux `σ T⁴` is
   `PhyslibExt.EarthScience.BlackbodyFlux`.
+- Radiosity of opaque, diffuse, gray surfaces and the radiosity network: the same chapter of
+  Incropera and DeWitt; M. F. Modest, *Radiative Heat Transfer*, the chapter on exchange between
+  gray, diffuse surfaces.
 
 ## A. Enclosure data and net power
 -/
@@ -194,5 +215,236 @@ lemma netPower_nonneg_of_hottest {σ : ℝ} {A : ι → ℝ} {F : ι → ι → 
   have hsub : 0 ≤ T k ^ 4 - T j ^ 4 := sub_nonneg.mpr hpow
   exact mul_nonneg (mul_nonneg (mul_nonneg hA hF) hs) hsub
 
+
+/-! ## C. Gray enclosures: radiosity -/
+
+open scoped Matrix
+
+/-- The radiosity equations of a diffuse-gray enclosure: surface `i` leaves with its emitted
+power `ε i * σ * T i ^ 4` plus the reflected fraction `1 - ε i` of its irradiation
+`∑ j, F i j * J j`, so `J i = ε i * σ * T i ^ 4 + (1 - ε i) * ∑ j, F i j * J j` (watts per
+square metre). -/
+def IsRadiosity (σ : ℝ) (ε : ι → ℝ) (F : ι → ι → ℝ) (T J : ι → ℝ) : Prop :=
+  ∀ i, J i = ε i * σ * T i ^ 4 + (1 - ε i) * ∑ j, F i j * J j
+
+/-- The radiosity matrix `M = 1 - diag (1 - ε) * F`, with entries
+`M i j = δ i j - (1 - ε i) * F i j`. -/
+def radiosityMatrix [DecidableEq ι] (ε : ι → ℝ) (F : ι → ι → ℝ) : Matrix ι ι ℝ :=
+  1 - Matrix.of fun i j => (1 - ε i) * F i j
+
+/-- Matrix form of the radiosity equations: `M *ᵥ J = ε σ T⁴`. -/
+lemma radiosityMatrix_mulVec_eq_iff [DecidableEq ι] {σ : ℝ} {ε : ι → ℝ} {F : ι → ι → ℝ}
+    {T J : ι → ℝ} :
+    radiosityMatrix ε F *ᵥ J = (fun i => ε i * σ * T i ^ 4) ↔ IsRadiosity σ ε F T J := by
+  have hfac : ∀ i : ι, (∑ j, (1 - ε i) * F i j * J j)
+      = (1 - ε i) * ∑ j, F i j * J j := by
+    intro i
+    rw [Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro j _
+    ring
+  have hentry : ∀ i : ι, (radiosityMatrix ε F *ᵥ J) i
+      = J i - (1 - ε i) * ∑ j, F i j * J j := by
+    intro i
+    unfold radiosityMatrix
+    rw [Matrix.sub_mulVec, Matrix.one_mulVec]
+    change _ - ∑ j, (1 - ε i) * F i j * J j = _
+    rw [hfac i]
+  constructor
+  · intro h i
+    have hi := congrFun h i
+    rw [hentry i] at hi
+    linear_combination hi
+  · intro h
+    funext i
+    rw [hentry i]
+    linear_combination h i
+
+/-- Strict row diagonal dominance: for the view factors of an enclosure and emissivities
+`0 < ε i ≤ 1`, row `k` of the radiosity matrix has off-diagonal mass
+`(1 - ε k) * (1 - F k k)`, strictly below the diagonal entry `1 - (1 - ε k) * F k k`. -/
+lemma radiosityMatrix_sum_row_lt_diag [DecidableEq ι] {A : ι → ℝ} {F : ι → ι → ℝ}
+    {ε : ι → ℝ} (hE : IsBlackEnclosure A F) (hε : ∀ i, 0 < ε i) (hε₁ : ∀ i, ε i ≤ 1)
+    (k : ι) :
+    ∑ j ∈ Finset.univ.erase k, ‖radiosityMatrix ε F k j‖ < ‖radiosityMatrix ε F k k‖ := by
+  have h1e_nonneg : 0 ≤ 1 - ε k := by
+    have := hε₁ k
+    linarith
+  have hFkk_le : F k k ≤ 1 := by
+    have h := Finset.single_le_sum (fun j _ => hE.viewFactor_nonneg k j)
+      (Finset.mem_univ k)
+    rw [hE.rowSum_eq_one k] at h
+    exact h
+  have hdiag_nonneg : 0 ≤ 1 - (1 - ε k) * F k k := by
+    have h1e_le : 1 - ε k ≤ 1 := by
+      have := hε k
+      linarith
+    have hF_nonneg := hE.viewFactor_nonneg k k
+    have hprod : (1 - ε k) * F k k ≤ 1 := by
+      calc (1 - ε k) * F k k ≤ 1 * F k k :=
+            mul_le_mul_of_nonneg_right h1e_le hF_nonneg
+        _ = F k k := one_mul _
+        _ ≤ 1 := hFkk_le
+    linarith
+  have hM : ∀ i j : ι, radiosityMatrix ε F i j
+      = (if i = j then (1 : ℝ) else 0) - (1 - ε i) * F i j := by
+    intro i j
+    simp [radiosityMatrix, Matrix.one_apply]
+  have hoff : ∀ j ∈ Finset.univ.erase k,
+      ‖radiosityMatrix ε F k j‖ = (1 - ε k) * F k j := by
+    intro j hj
+    have hjk : j ≠ k := (Finset.mem_erase.mp hj).1
+    have hkj : k ≠ j := fun h => hjk h.symm
+    rw [hM k j, ite_eq_right hkj, zero_sub, Real.norm_eq_abs, abs_neg,
+      abs_of_nonneg (mul_nonneg h1e_nonneg (hE.viewFactor_nonneg k j))]
+  have hdiag : ‖radiosityMatrix ε F k k‖ = 1 - (1 - ε k) * F k k := by
+    rw [hM k k, ite_eq_left rfl, Real.norm_eq_abs, abs_of_nonneg hdiag_nonneg]
+  rw [hdiag]
+  have hsum : ∑ j ∈ Finset.univ.erase k, ‖radiosityMatrix ε F k j‖
+      = (1 - ε k) * (1 - F k k) := by
+    have hcongr : ∑ j ∈ Finset.univ.erase k, ‖radiosityMatrix ε F k j‖
+        = ∑ j ∈ Finset.univ.erase k, (1 - ε k) * F k j :=
+      Finset.sum_congr rfl (fun j hj => hoff j hj)
+    rw [hcongr, ← Finset.mul_sum]
+    congr 1
+    have hrow := hE.rowSum_eq_one k
+    have hadd := Finset.add_sum_erase Finset.univ (fun j => F k j) (Finset.mem_univ k)
+    linarith
+  rw [hsum]
+  have hεpos := hε k
+  have hdiff : (1 - (1 - ε k) * F k k) - (1 - ε k) * (1 - F k k) = ε k := by
+    ring
+  linarith
+
+/-- The radiosity matrix is invertible: `det_ne_zero_of_sum_row_lt_diag` applied to the strict
+row diagonal dominance. -/
+lemma radiosityMatrix_det_ne_zero [DecidableEq ι] {A : ι → ℝ} {F : ι → ι → ℝ} {ε : ι → ℝ}
+    (hE : IsBlackEnclosure A F) (hε : ∀ i, 0 < ε i) (hε₁ : ∀ i, ε i ≤ 1) :
+    (radiosityMatrix ε F).det ≠ 0 := by
+  exact det_ne_zero_of_sum_row_lt_diag
+    (fun k => radiosityMatrix_sum_row_lt_diag hE hε hε₁ k)
+
+/-- Existence and uniqueness of the gray radiosities: in an enclosure whose surfaces all have
+emissivity `0 < ε i ≤ 1`, the radiosity equations have exactly one solution, for every
+temperature field and every `σ`. -/
+lemma existsUnique_isRadiosity {A : ι → ℝ} {F : ι → ι → ℝ} {ε : ι → ℝ}
+    (hE : IsBlackEnclosure A F) (hε : ∀ i, 0 < ε i) (hε₁ : ∀ i, ε i ≤ 1) (σ : ℝ)
+    (T : ι → ℝ) :
+    ∃! J, IsRadiosity σ ε F T J := by
+  classical
+  have hdet : (radiosityMatrix ε F).det ≠ 0 :=
+    radiosityMatrix_det_ne_zero hE hε hε₁
+  have hU : IsUnit (radiosityMatrix ε F).det := isUnit_iff_ne_zero.mpr hdet
+  have hleft : (radiosityMatrix ε F)⁻¹ * radiosityMatrix ε F = 1 :=
+    Matrix.nonsing_inv_mul _ hU
+  have hright : radiosityMatrix ε F * (radiosityMatrix ε F)⁻¹ = 1 :=
+    Matrix.mul_nonsing_inv _ hU
+  have hex : ∃! J, radiosityMatrix ε F *ᵥ J = (fun i => ε i * σ * T i ^ 4) := by
+    refine ⟨(radiosityMatrix ε F)⁻¹ *ᵥ (fun i => ε i * σ * T i ^ 4), ?_, ?_⟩
+    · change radiosityMatrix ε F *ᵥ _ = _
+      rw [Matrix.mulVec_mulVec, hright, Matrix.one_mulVec]
+    · intro J hJ
+      have h1 : (radiosityMatrix ε F)⁻¹ *ᵥ (radiosityMatrix ε F *ᵥ J)
+          = (radiosityMatrix ε F)⁻¹ *ᵥ (fun i => ε i * σ * T i ^ 4) := by
+        rw [hJ]
+      rw [Matrix.mulVec_mulVec, hleft, Matrix.one_mulVec] at h1
+      exact h1
+  obtain ⟨J0, hJ0, huniq⟩ := hex
+  refine ⟨J0, radiosityMatrix_mulVec_eq_iff.mp hJ0, ?_⟩
+  intro J hJ
+  apply huniq
+  exact radiosityMatrix_mulVec_eq_iff.mpr hJ
+
+/-! ## D. Gray net power: conservation and the black limit -/
+
+/-- Net radiative power leaving gray surface `i` with radiosities `J`:
+`q i = ∑ j, A i * F i j * (J i - J j)` (watts), the black `netPower` with `σ * T ^ 4` replaced
+by the radiosity. Positive values are a net outflow. -/
+def grayNetPower (A : ι → ℝ) (F : ι → ι → ℝ) (J : ι → ℝ) (i : ι) : ℝ :=
+  ∑ j, A i * F i j * (J i - J j)
+
+/-- Radiosity minus irradiation: in an enclosure, `q i = A i * (J i - ∑ j, F i j * J j)`. -/
+lemma grayNetPower_eq_radiosity_sub_irradiation {A : ι → ℝ} {F : ι → ι → ℝ}
+    (hE : IsBlackEnclosure A F) (J : ι → ℝ) (i : ι) :
+    grayNetPower A F J i = A i * (J i - ∑ j, F i j * J j) := by
+  unfold grayNetPower
+  have h1 : ∀ j : ι, A i * F i j * (J i - J j)
+      = A i * (F i j * J i) - A i * (F i j * J j) := fun j => by ring
+  simp_rw [h1, Finset.sum_sub_distrib, ← Finset.mul_sum]
+  have hrow : (∑ j, F i j * J i) = J i := by
+    rw [← Finset.sum_mul, hE.rowSum_eq_one, one_mul]
+  rw [hrow]
+  ring
+
+/-- Emission minus absorption: for a radiosity solution in an enclosure, the net power of gray
+surface `i` is `A i * ε i * (σ * T i ^ 4 - ∑ j, F i j * J j)`, emitted power minus the absorbed
+fraction `ε i` of the irradiation. -/
+lemma grayNetPower_eq_emitted_sub_absorbed {A : ι → ℝ} {F : ι → ι → ℝ} {ε : ι → ℝ} {σ : ℝ}
+    {T J : ι → ℝ} (hE : IsBlackEnclosure A F) (hJ : IsRadiosity σ ε F T J) (i : ι) :
+    grayNetPower A F J i = A i * ε i * (σ * T i ^ 4 - ∑ j, F i j * J j) := by
+  rw [grayNetPower_eq_radiosity_sub_irradiation hE J i, hJ i]
+  ring
+
+/-- Power conservation: the gray net powers of an enclosure sum to zero, for every radiosity
+field. Only reciprocity is used. -/
+lemma sum_grayNetPower_eq_zero {A : ι → ℝ} {F : ι → ι → ℝ} (hE : IsBlackEnclosure A F)
+    (J : ι → ℝ) :
+    ∑ i, grayNetPower A F J i = 0 := by
+  unfold grayNetPower
+  simp_rw [mul_sub, Finset.sum_sub_distrib]
+  rw [sub_eq_zero]
+  have hrec : ∀ i j : ι, A i * F i j * J j = A j * F j i * J j := by
+    intro i j
+    rw [hE.reciprocity i j]
+  have hswap : (∑ i, ∑ j, A i * F i j * J j) = ∑ i, ∑ j, A j * F j i * J j := by
+    apply Finset.sum_congr rfl
+    intro i _
+    apply Finset.sum_congr rfl
+    intro j _
+    rw [hrec]
+  rw [hswap]
+  exact Finset.sum_comm
+
+/-- Black limit, radiosities: with every emissivity one, `J` solves the radiosity equations
+exactly when it is the blackbody emissive power, `J i = σ * T i ^ 4`. -/
+lemma isRadiosity_iff_of_emissivity_eq_one {σ : ℝ} {ε : ι → ℝ} {F : ι → ι → ℝ}
+    {T J : ι → ℝ} (hε : ∀ i, ε i = 1) :
+    IsRadiosity σ ε F T J ↔ ∀ i, J i = σ * T i ^ 4 := by
+  simp [IsRadiosity, hε]
+
+/-- Black limit, power: at the blackbody radiosities `J i = σ * T i ^ 4` the gray net power is
+the black `netPower`. -/
+lemma grayNetPower_blackbody (σ : ℝ) (A : ι → ℝ) (F : ι → ι → ℝ) (T : ι → ℝ) (i : ι) :
+    grayNetPower A F (fun j => σ * T j ^ 4) i = netPower σ A F T i := by
+  unfold grayNetPower netPower
+  apply Finset.sum_congr rfl
+  intro j _
+  ring
+
+/-- Reflectors only: with every emissivity zero, each constant radiosity solves the equations of
+an enclosure, whatever the temperatures. -/
+lemma isRadiosity_const_of_emissivity_eq_zero {A : ι → ℝ} {F : ι → ι → ℝ} {ε : ι → ℝ}
+    (hE : IsBlackEnclosure A F) (hε : ∀ i, ε i = 0) (σ : ℝ) (T : ι → ℝ) (c : ℝ) :
+    IsRadiosity σ ε F T (fun _ => c) := by
+  intro i
+  simp only [hε i, zero_mul, zero_add, sub_zero, one_mul]
+  rw [← Finset.sum_mul, hE.rowSum_eq_one, one_mul]
+
+/-- Hence a nonempty reflector-only enclosure has no unique radiosity: positive emissivity
+cannot be dropped from `existsUnique_isRadiosity`. -/
+lemma not_existsUnique_isRadiosity_of_emissivity_eq_zero [Nonempty ι] {A : ι → ℝ}
+    {F : ι → ι → ℝ} {ε : ι → ℝ} (hE : IsBlackEnclosure A F) (hε : ∀ i, ε i = 0) (σ : ℝ)
+    (T : ι → ℝ) :
+    ¬ ∃! J, IsRadiosity σ ε F T J := by
+  intro h
+  obtain ⟨J, -, huniq⟩ := h
+  have h0 := isRadiosity_const_of_emissivity_eq_zero hE hε σ T 0
+  have h1 := isRadiosity_const_of_emissivity_eq_zero hE hε σ T 1
+  have e0 := huniq _ h0
+  have e1 := huniq _ h1
+  have h01 : (fun _ : ι => (0 : ℝ)) = fun _ => (1 : ℝ) := e0.trans e1.symm
+  obtain ⟨i⟩ := (inferInstance : Nonempty ι)
+  have hcontra := congrFun h01 i
+  norm_num at hcontra
 
 end HeatTransfer.EnclosureRadiation

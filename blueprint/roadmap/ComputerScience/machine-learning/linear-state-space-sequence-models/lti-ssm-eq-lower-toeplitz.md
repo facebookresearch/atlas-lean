@@ -21,7 +21,7 @@ matrices need not be Toeplitz.
 
 ## Background
 
-- Lower-triangular Toeplitz matrix:
+- [Lower-triangular Toeplitz matrix](../../../LinearAlgebra/special-matrices/toeplitz-matrices/lower-toeplitz.md):
   mathematical prerequisite, the definition used in the statement.
 
 ## Sources

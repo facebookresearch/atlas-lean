@@ -94,14 +94,14 @@ Further properties (derived), for $s, t, \tau \in J$ in the variance-exploding s
 - [Score and optimal denoiser for Gaussian data](gaussian-data-score-and-denoiser.md):
   mathematical prerequisite, the score $-C_t^{-1} (x - \mu)$ that defines the probability-flow
   ODE.
-- Fundamental matrix of a linear system:
+- [Fundamental matrix of a linear system](../../../Analysis/ordinary-differential-equations/linear-systems-and-fundamental-matrices/fundamental-matrix-linear-system.md):
   mathematical prerequisite, uniqueness of the solution, applied after the coefficient is extended
   continuously from $J$ to $\mathbb{R}$, since that theorem asks for a coefficient continuous on
   all of $\mathbb{R}$; it does not reach the noise level $0$ when $\Sigma$ is singular.
 
 ## Background
 
-- Linear images of multivariate Gaussians:
+- [Linear images of multivariate Gaussians](../../../Probability/distributions/continuous/gaussian-conditioning/map-to-euclidean-lin-multivariate-gaussi.md):
   background, the linear step of (ii).
 
 ## Sources

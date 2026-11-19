@@ -20,7 +20,7 @@ permutation survives the sign-reversing involution.
 ## Background
 
 - [Lindström–Gessel–Viennot lemma](lindstrom-gessel-viennot.md): the unit-weight case, which counts nonintersecting path systems.
-- Total positivity: the lemma's main application, total nonnegativity of weight matrices of planar networks (Fomin–Zelevinsky, Corollaries 2 and 3).
+- [Total positivity](../../../LinearAlgebra/special-matrices/total-positivity/README.md): the lemma's main application, total nonnegativity of weight matrices of planar networks (Fomin–Zelevinsky, Corollaries 2 and 3).
 
 ## Sources
 

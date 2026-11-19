@@ -42,3 +42,5 @@
 - [Information Theory](InformationTheory/README.md)
 - [Quantum Information](QuantumInformation/README.md)
 - [Game Theory](GameTheory/README.md)
+- [Mathematical Biology](Biology/README.md)
+- [Statistical Mechanics](StatisticalMechanics/README.md)

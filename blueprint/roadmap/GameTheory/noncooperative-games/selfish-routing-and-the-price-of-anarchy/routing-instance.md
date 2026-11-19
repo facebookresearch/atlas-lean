@@ -12,7 +12,7 @@ resources.
 
 ## Background
 
-- Max-flow min-cut theorem: background; a routing instance with one commodity and
+- [Max-flow min-cut theorem](../../../GraphTheory/matchings-and-flows/max-flow-min-cut-theorem/README.md): background; a routing instance with one commodity and
   constant latencies is a flow problem, and a feasible path flow is a decomposition of an
   $s$–$t$ flow into paths.
 
