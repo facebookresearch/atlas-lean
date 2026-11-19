@@ -46,10 +46,12 @@ splits the error into a force step, bounded through the difference of squares by
 stiffnesses by `(Fmax² / kmin²) |k - khat|`; the triangle inequality adds them. Model,
 discretization, algebraic solver and floating-point arithmetic terms enter the same finite
 triangle inequality only as supplied bounds between named values of the same compliance. A
-residual `k u - F` of a trial tip displacement `u` is such a term only through a stability
-constant: for `k ≥ kmin > 0` it bounds the state error by `|k u - F| / kmin` and the compliance
-error by `|F| |k u - F| / kmin`, while over all `k > 0` no constant turns the residual into a
-bound on either error.
+residual `k u - F` of a trial tip displacement `u` bounds the state error, and for `F ≠ 0` the
+compliance error, only through a stability constant: for `k ≥ kmin > 0` it bounds the state error
+by `|k u - F| / kmin` and the compliance error by `|F| |k u - F| / kmin`, while over all `k > 0`
+no constant turns the residual into a bound on the state error, nor, for `F ≠ 0`, into a bound on
+the compliance error. The state-error half holds for every `F`; at `F = 0` the compliance error
+`J - F u` vanishes, so its half needs `F ≠ 0`.
 
 Model inputs:
 
@@ -91,8 +93,9 @@ Model inputs:
   and arithmetic terms.
 - `Statistics.DesignSensitivity.abs_sub_le_residual_div`,
   `Statistics.DesignSensitivity.not_exists_residual_error_bound`: a residual bounds the state and
-  compliance errors with the stability constant `1 / kmin`, and without a lower stiffness bound
-  it bounds neither.
+  compliance errors with the stability constant `1 / kmin`; without a lower stiffness bound no
+  constant turns it into a bound on the state error, for any `F`, nor on the compliance error,
+  for `F ≠ 0`.
 
 ## iii. Table of contents
 

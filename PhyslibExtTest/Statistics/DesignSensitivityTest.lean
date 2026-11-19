@@ -30,7 +30,8 @@ under the end force `F = 2`, and the feasible stiffness interval `[1, 4]`.
   with `Fmax = 2`, `kmin = 2`, the intermediate compliance `9/8`, the composed bound `2`, and the
   composition with a supplied model term;
 * residuals: with `kmin = 1` the trial `u = 3/2` at `k = 2`, `F = 2` has residual `1`, state error
-  `1/2` and compliance error `1`; without a lower stiffness bound no constant works.
+  `1/2` and compliance error `1`; without a lower stiffness bound, no constant turns the residual
+  into a bound on the compliance error for the nonzero force `F = 2`.
 -/
 
 @[expose] public section
