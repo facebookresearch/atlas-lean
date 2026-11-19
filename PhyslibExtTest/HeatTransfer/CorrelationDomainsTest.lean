@@ -25,8 +25,10 @@ A heated tube flow with `Re = 100000`, `Pr = 1`, `L / D = 20` and
 uses the cooling record and gives `-2760`. At `Pr = 32` the exponent
 selected by the thermal direction changes the value. A cooled flow
 for the heating record, a flat plate in parallel flow, a short duct,
-values outside the domain, `ΔT = 0`, film-temperature properties and
-a surface-averaged request are rejected.
+values outside the domain (including `Pr = 161`), `ΔT = 0`,
+film-temperature properties and a surface-averaged request are
+rejected; the bounds are inclusive, so `Pr = 160` and the corner
+`Re = 10000`, `Pr = 0.7`, `L / D = 10` are accepted.
 
 ## i. Overview
 
@@ -190,9 +192,9 @@ example :
 
 /-- Rejections: the heating correlation does not apply to the cooled flow (`ΔT = -10`), and no
 Dittus-Boelter correlation applies to a flat plate in parallel flow with otherwise identical
-data, to a short duct (`L / D = 5`), to `Re = 5000`, to `Pr = 13 / 20` (below `0.7`) or
-`Pr = 1 / 2`, to a flow without a thermal direction (`ΔT = 0`), to properties at the film
-temperature, or to a surface-averaged request. -/
+data, to a short duct (`L / D = 5`), to `Re = 5000`, to `Pr = 13 / 20` (below `0.7`),
+`Pr = 1 / 2` or `Pr = 161` (above `160`), to a flow without a thermal direction (`ΔT = 0`), to
+properties at the film temperature, or to a surface-averaged request. -/
 example :
     ¬ (dittusBoelter .heating).Applies { heatingRequest with temperatureDifference := ⟨-10⟩ } ∧
       (∀ m, ¬ (dittusBoelter m).Applies
@@ -201,14 +203,26 @@ example :
       (∀ m, ¬ (dittusBoelter m).Applies { heatingRequest with reynolds := 5000 }) ∧
       (∀ m, ¬ (dittusBoelter m).Applies { heatingRequest with prandtl := 13 / 20 }) ∧
       (∀ m, ¬ (dittusBoelter m).Applies { heatingRequest with prandtl := 1 / 2 }) ∧
+      (∀ m, ¬ (dittusBoelter m).Applies { heatingRequest with prandtl := 161 }) ∧
       (∀ m, ¬ (dittusBoelter m).Applies { heatingRequest with temperatureDifference := ⟨0⟩ }) ∧
       (∀ m, ¬ (dittusBoelter m).Applies
         { heatingRequest with propertyTemperature := PropertyTemperature.film }) ∧
       (∀ m, ¬ (dittusBoelter m).Applies
         { heatingRequest with averaging := AveragingTag.surfaceAverage }) := by
   refine ⟨?_, fun m => ?_, fun m => ?_, fun m => ?_, fun m => ?_, fun m => ?_, fun m => ?_,
-    fun m => ?_, fun m => ?_⟩ <;>
+    fun m => ?_, fun m => ?_, fun m => ?_⟩ <;>
     (try cases m) <;>
+    simp only [dittusBoelter, powerLawCorrelation, NusseltCorrelation.Applies, heatingRequest,
+      Set.mem_ofPred_eq, ThermalMode.Holds] <;>
+    norm_num
+
+/-- The published bounds are inclusive: the heated flow at the upper Prandtl endpoint `Pr = 160`
+and at the lower corner `Re = 10000`, `Pr = 7 / 10`, `L / D = 10` is a valid request. -/
+example :
+    (dittusBoelter .heating).Applies { heatingRequest with prandtl := 160 } ∧
+      (dittusBoelter .heating).Applies
+        { heatingRequest with reynolds := 10000, prandtl := 7 / 10, lengthRatio := 10 } := by
+  constructor <;>
     simp only [dittusBoelter, powerLawCorrelation, NusseltCorrelation.Applies, heatingRequest,
       Set.mem_ofPred_eq, ThermalMode.Holds] <;>
     norm_num
