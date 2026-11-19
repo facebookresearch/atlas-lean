@@ -26,18 +26,14 @@ classically on each side of an interface that is differentiable at time `t` with
 lies strictly inside a fixed interval `[a, b]`; each side field is only assumed regular on an open
 set around its closed side slice, so its one-sided trace at the interface is a value of a
 continuous field. Then the mass on `[a, b]` changes at the conservation rate
-`f (uL t a) - f (uR t b)` exactly when `c * [u] = [f]` at the interface. The one-dimensional
-moving interface transport identity enters as the proposition `MovingJumpTransport`, which
-restates `ControlVolumes.movingJumpTransport` binder for binder and is discharged by
-`movingJumpTransport_holds`. The proof extends each side field from its open set to the whole
-plane by composing with a time compression that is the identity near `t` and a spatial clamp,
-applies the transport identity to the extensions, and turns the time-derivative integrals into
-flux differences with the fundamental theorem of calculus and the side equations.
+`f (uL t a) - f (uR t b)` exactly when `c * [u] = [f]` at the interface. The proof extends each
+side field from its open set to the whole plane by composing with a time compression that is the
+identity near `t` and a spatial clamp, applies the moving interface transport theorem
+`ControlVolumes.movingJumpTransport` to the extensions, and turns the time-derivative integrals
+into flux differences with the fundamental theorem of calculus and the side equations.
 
 ## ii. Key results
 
-- `ScalarShock.MovingJumpTransport`: the moving interface transport identity as a proposition.
-- `ScalarShock.movingJumpTransport_holds`: it holds, by `ControlVolumes.movingJumpTransport`.
 - `ScalarShock.conservation_iff_rankineHugoniot`: conservation on a fixed interval crossing the
   interface is equivalent to the Rankine-Hugoniot jump identity `c * (uR - uL) = f uR - f uL`.
 
@@ -55,32 +51,6 @@ flux differences with the fundamental theorem of calculus and the side equations
 namespace ScalarShock
 
 /-! ## A. Rankine-Hugoniot from two classical sides -/
-
-/-- Restatement, binder for binder, of the one-dimensional moving interior
-jump transport theorem `ControlVolumes.movingJumpTransport`:
-time-first fields `u t x`, left field `uL` on the oriented piece `a..s t`,
-right field `uR` on `s t..b`, interface contribution
-`s' t * (uL t (s t) - uR t (s t))`. Its global joint-continuity and
-time-derivative hypotheses are exactly those of that theorem, and
-`movingJumpTransport_holds` proves it from that theorem. -/
-def MovingJumpTransport : Prop :=
-  ∀ {uL uR vL vR : ℝ → ℝ → ℝ} {s s' : ℝ → ℝ} {a b : ℝ} (t : ℝ),
-    HasDerivAt s (s' t) t →
-    (Continuous fun p : ℝ × ℝ => uL p.1 p.2) →
-    (∀ t x : ℝ, HasDerivAt (fun τ : ℝ => uL τ x) (vL t x) t) →
-    (Continuous fun p : ℝ × ℝ => vL p.1 p.2) →
-    (Continuous fun p : ℝ × ℝ => uR p.1 p.2) →
-    (∀ t x : ℝ, HasDerivAt (fun τ : ℝ => uR τ x) (vR t x) t) →
-    (Continuous fun p : ℝ × ℝ => vR p.1 p.2) →
-    HasDerivAt
-      (fun τ : ℝ => (∫ x in a..s τ, uL τ x) + (∫ x in s τ..b, uR τ x))
-      ((∫ x in a..s t, vL t x) + (∫ x in s t..b, vR t x) +
-        s' t * (uL t (s t) - uR t (s t))) t
-
-/-- The transport proposition holds: it is `ControlVolumes.movingJumpTransport`. -/
-theorem movingJumpTransport_holds : MovingJumpTransport := by
-  intro uL uR vL vR s s' a b t
-  exact ControlVolumes.movingJumpTransport t
 
 /-- A closed box around a compact time slice inside an open set. -/
 private lemma exists_box_subset {U : Set (ℝ × ℝ)} {t l r : ℝ} (hlr : l ≤ r)
@@ -217,7 +187,6 @@ No existence of such solutions is asserted. -/
 theorem conservation_iff_rankineHugoniot
     {f : ℝ → ℝ} {uL uR vL vR : ℝ → ℝ → ℝ} {gL gR : ℝ → ℝ}
     {s : ℝ → ℝ} {c a b t : ℝ} {UL UR : Set (ℝ × ℝ)}
-    (hMJT : MovingJumpTransport)
     (hs : HasDerivAt s c t) (has : a < s t) (hsb : s t < b)
     (hUL : IsOpen UL) (hKL : ({t} : Set ℝ) ×ˢ Set.Icc a (s t) ⊆ UL)
     (hjL : ContinuousOn (fun p : ℝ × ℝ => uL p.1 p.2) UL)
@@ -268,7 +237,8 @@ theorem conservation_iff_rankineHugoniot
       (fun τ : ℝ => (∫ x in a..s τ, uL (T τ) (XL x)) + (∫ x in s τ..b, uR (T τ) (XR x)))
       ((∫ x in a..s t, k t * vL (T t) (XL x)) + (∫ x in s t..b, k t * vR (T t) (XR x)) +
         c * (uL (T t) (XL (s t)) - uR (T t) (XR (s t)))) t :=
-    hMJT (uL := fun τ x => uL (T τ) (XL x)) (uR := fun τ x => uR (T τ) (XR x))
+    ControlVolumes.movingJumpTransport (uL := fun τ x => uL (T τ) (XL x))
+      (uR := fun τ x => uR (T τ) (XR x))
       (vL := fun τ x => k τ * vL (T τ) (XL x)) (vR := fun τ x => k τ * vR (T τ) (XR x))
       (s' := fun _ => c) t hs hcuL hduL hcvL' hcuR hduR hcvR'
   have ht0 : |t - t| ≤ δ / 2 := by

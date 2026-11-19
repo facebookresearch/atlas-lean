@@ -12,7 +12,7 @@ public import PhyslibExt.FluidDynamics.ScalarShockPorts
 /-!
 # Tests for `PhyslibExt.FluidDynamics.ScalarShockPorts`
 
-Checked consumers, each discharging the transport input with `movingJumpTransport_holds`:
+Checked consumers:
 
 - the Burgers front with states `2 | 0` moving at speed `1` conserves mass on `[-1, 1]`;
 - the same states with a stationary front do not: the incorrect speed leaves the nonzero
@@ -25,9 +25,6 @@ namespace PhyslibExtTest.FluidDynamics.ScalarShockPorts
 
 open ScalarShock
 
--- The transport input holds.
-example : MovingJumpTransport := movingJumpTransport_holds
-
 /-- Burgers flux `u ^ 2 / 2`, states `2 | 0`, front `x = τ` (speed `1`): the mass on `[-1, 1]`
 changes at the conservation rate `f 2 - f 0` at time `0`. -/
 example :
@@ -36,7 +33,7 @@ example :
   have key := conservation_iff_rankineHugoniot (f := fun u : ℝ => u ^ 2 / 2)
     (uL := fun _ _ => 2) (uR := fun _ _ => 0) (vL := fun _ _ => 0) (vR := fun _ _ => 0)
     (gL := fun _ => 0) (gR := fun _ => 0) (s := fun τ => τ) (c := 1) (a := -1) (b := 1)
-    (t := 0) (UL := Set.univ) (UR := Set.univ) movingJumpTransport_holds (hasDerivAt_id' 0)
+    (t := 0) (UL := Set.univ) (UR := Set.univ) (hasDerivAt_id' 0)
     (by norm_num) (by norm_num) isOpen_univ (Set.subset_univ _) continuousOn_const
     (fun _ _ => hasDerivAt_const _ _) continuousOn_const continuousOn_const
     (fun _ _ => hasDerivAt_const _ _) (fun _ _ => by simp)
@@ -54,7 +51,7 @@ example :
   have key := conservation_iff_rankineHugoniot (f := fun u : ℝ => u ^ 2 / 2)
     (uL := fun _ _ => 2) (uR := fun _ _ => 0) (vL := fun _ _ => 0) (vR := fun _ _ => 0)
     (gL := fun _ => 0) (gR := fun _ => 0) (s := fun _ => 0) (c := 0) (a := -1) (b := 1)
-    (t := 0) (UL := Set.univ) (UR := Set.univ) movingJumpTransport_holds (hasDerivAt_const 0 0)
+    (t := 0) (UL := Set.univ) (UR := Set.univ) (hasDerivAt_const 0 0)
     (by norm_num) (by norm_num) isOpen_univ (Set.subset_univ _) continuousOn_const
     (fun _ _ => hasDerivAt_const _ _) continuousOn_const continuousOn_const
     (fun _ _ => hasDerivAt_const _ _) (fun _ _ => by simp)
