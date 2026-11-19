@@ -36,6 +36,14 @@ position and velocity that satisfy the premises:
   with `μ` left in `km³/s²` does not;
 * the state at rest at the center meets the trajectory clauses at `R = 0`, and only the
   positivity clause rejects it.
+
+Eccentricity vectors at the position `(1, 0, 0)`:
+
+* a noncircular bound state in the reference plane has `|e| = 3/4 < 1`, `E = -7/8` and
+  `a = 4/7`; its pericenter direction is defined, but its node vector vanishes;
+* the circular state has `e = 0`, so it has no pericenter direction;
+* a bound radial state has `h = 0` and `|e| = 1`;
+* a polar state has a nonzero node vector and a nonzero eccentricity vector.
 -/
 
 @[expose] public section
@@ -239,5 +247,97 @@ example (μ : ℝ) :
   refine ⟨norm_zero, hasDerivAt_const t 0, ?_⟩
   simp only [smul_zero]
   exact hasDerivAt_const t 0
+
+-- A noncircular bound state in the reference plane: `μ = 1`, `v = (0, 1/2, 0)` has
+-- `e = (-3/4, 0, 0)`, `|e| = 3/4`, `E = -7/8` and `a = 4/7`; its pericenter direction `-e₁` is
+-- defined, but its node vector vanishes.
+example :
+    eccentricityVector 1 ![1, 0, 0] ![0, 1 / 2, 0] = ![-3 / 4, 0, 0] ∧
+      eccentricity 1 ![1, 0, 0] ![0, 1 / 2, 0] = 3 / 4 ∧
+      specificEnergy 1 ![1, 0, 0] ![0, 1 / 2, 0] = -7 / 8 ∧
+      semiMajorAxis 1 ![1, 0, 0] ![0, 1 / 2, 0] = 4 / 7 ∧
+      nodeVector ![1, 0, 0] ![0, 1 / 2, 0] = 0 := by
+  have hrad : radius ![1, 0, 0] = 1 := by
+    unfold radius
+    simp
+  have he : eccentricityVector 1 ![1, 0, 0] ![0, 1 / 2, 0] = ![-3 / 4, 0, 0] := by
+    unfold eccentricityVector
+    rw [hrad]
+    ext i
+    fin_cases i <;> norm_num [cross_apply]
+  have hecc : eccentricity 1 ![1, 0, 0] ![0, 1 / 2, 0] = 3 / 4 := by
+    unfold eccentricity
+    rw [he]
+    rw [Real.sqrt_eq_iff_mul_self_eq (by norm_num) (by norm_num)]
+    simp
+    norm_num
+  have hE : specificEnergy 1 ![1, 0, 0] ![0, 1 / 2, 0] = -7 / 8 := by
+    norm_num [specificEnergy, speedSq, hrad]
+  have ha : semiMajorAxis 1 ![1, 0, 0] ![0, 1 / 2, 0] = 4 / 7 := by
+    unfold semiMajorAxis
+    rw [hE]
+    norm_num
+  have hn : nodeVector ![1, 0, 0] ![0, 1 / 2, 0] = 0 := by
+    simp [nodeVector, cross_apply]
+  exact ⟨he, hecc, hE, ha, hn⟩
+
+-- The circular state `μ = 4`, `v = (0, 2, 0)` has `e = 0`: no pericenter direction.
+example :
+    eccentricityVector 4 ![1, 0, 0] ![0, 2, 0] = 0 ∧ eccentricity 4 ![1, 0, 0] ![0, 2, 0] = 0 := by
+  have hrad : radius ![1, 0, 0] = 1 := by
+    unfold radius
+    simp
+  have he : eccentricityVector 4 ![1, 0, 0] ![0, 2, 0] = 0 := by
+    unfold eccentricityVector
+    rw [hrad]
+    ext i
+    fin_cases i <;> norm_num [cross_apply]
+  have hecc : eccentricity 4 ![1, 0, 0] ![0, 2, 0] = 0 := by
+    unfold eccentricity
+    rw [he]
+    simp
+  exact ⟨he, hecc⟩
+
+-- The radial state `μ = 1`, `v = (1/2, 0, 0)` is bound (`E = -7/8`) but has `h = 0`,
+-- `e = (-1, 0, 0)` and `|e| = 1`.
+example :
+    specificEnergy 1 ![1, 0, 0] ![1 / 2, 0, 0] = -7 / 8 ∧
+      ![1, 0, 0] ⨯₃ ![1 / 2, 0, 0] = (0 : Fin 3 → ℝ) ∧
+      eccentricityVector 1 ![1, 0, 0] ![1 / 2, 0, 0] = ![-1, 0, 0] ∧
+      eccentricity 1 ![1, 0, 0] ![1 / 2, 0, 0] = 1 := by
+  have hrad : radius ![1, 0, 0] = 1 := by
+    unfold radius
+    simp
+  have hE : specificEnergy 1 ![1, 0, 0] ![1 / 2, 0, 0] = -7 / 8 := by
+    norm_num [specificEnergy, speedSq, hrad]
+  have hh : ![1, 0, 0] ⨯₃ ![1 / 2, 0, 0] = (0 : Fin 3 → ℝ) := by
+    simp [cross_apply]
+  have he : eccentricityVector 1 ![1, 0, 0] ![1 / 2, 0, 0] = ![-1, 0, 0] := by
+    unfold eccentricityVector
+    rw [hrad]
+    ext i
+    fin_cases i <;> norm_num [cross_apply]
+  have hecc : eccentricity 1 ![1, 0, 0] ![1 / 2, 0, 0] = 1 := by
+    unfold eccentricity
+    rw [he]
+    simp
+  exact ⟨hE, hh, he, hecc⟩
+
+-- A polar state, `μ = 1`, `v = (0, 0, 1/2)`, at its ascending node: `n = (1/2, 0, 0) ≠ 0` and
+-- `e = (-3/4, 0, 0) ≠ 0`, so both directions are defined.
+example :
+    nodeVector ![1, 0, 0] ![0, 0, 1 / 2] = ![1 / 2, 0, 0] ∧
+      eccentricityVector 1 ![1, 0, 0] ![0, 0, 1 / 2] = ![-3 / 4, 0, 0] := by
+  have hrad : radius ![1, 0, 0] = 1 := by
+    unfold radius
+    simp
+  have hn : nodeVector ![1, 0, 0] ![0, 0, 1 / 2] = ![1 / 2, 0, 0] := by
+    simp [nodeVector, cross_apply]
+  have he : eccentricityVector 1 ![1, 0, 0] ![0, 0, 1 / 2] = ![-3 / 4, 0, 0] := by
+    unfold eccentricityVector
+    rw [hrad]
+    ext i
+    fin_cases i <;> norm_num [cross_apply]
+  exact ⟨hn, he⟩
 
 end PhyslibExtTest.Mechanics.OrbitalPorts

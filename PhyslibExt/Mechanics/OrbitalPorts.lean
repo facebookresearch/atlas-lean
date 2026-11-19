@@ -24,9 +24,10 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
+import MathlibExt.LinearAlgebra.CrossProduct
 
 /-!
-# Orbital ports: energy-defined vis-viva, one tangential impulse and circular orbits
+# Orbital ports: vis-viva, one tangential impulse, circular orbits and the eccentricity vector
 
 ## i. Overview
 
@@ -80,6 +81,17 @@ collision radius `R = 0`. The planar state maps to inertial components by the pa
 keeps the distance `R`, the velocity and the inverse-square attraction, and stays in the plane
 normal to `Q e₃`.
 
+Sections G to I are algebra at one state again, stated without an angle chart. The eccentricity
+vector is `e = (v ⨯₃ h) / μ - x / r` with `h = x ⨯₃ v`, and `|e|² = 1 + 2 E |h|² / μ²` for
+`μ > 0` and `r > 0`; a bound state, `E < 0`, with `h ≠ 0` has `0 ≤ |e| < 1` and `a > 0`. The
+classical angles are charts that fail where their defining vectors vanish: the pericenter
+direction `e / |e|` is undefined exactly for circular states (`e = 0` iff `x ⬝ᵥ v = 0` and
+`|v|² = μ / r`), and the ascending-node direction `n = k ⨯₃ h`, with `k = (0, 0, 1)` the pole of
+the reference plane, is undefined exactly when `h` lies along the pole. A radial state (`h = 0`)
+has `|e| = 1` whatever its energy, so `h ≠ 0` cannot be dropped from the bound. A proper rotation
+of the state rotates `e` and keeps `|e|`. No conservation of `e` or `a` and no conic trajectory is
+asserted.
+
 Each result assumes only the hypotheses its proof uses.
 
 ## ii. Key results
@@ -98,6 +110,13 @@ Each result assumes only the hypotheses its proof uses.
   `OrbitalPorts.not_isCircularOrbit_zero_radius`: units, and the two rejected inputs.
 - `OrbitalPorts.IsCircularOrbit.hasDerivAt_spatialVelocity`: the inverse-square law in inertial
   components.
+- `OrbitalPorts.eccentricity_sq`, `OrbitalPorts.eccentricity_lt_one_and_semiMajorAxis_pos`: the
+  energy identity `|e|² = 1 + 2 E |h|² / μ²` and, for a bound state with `h ≠ 0`, `0 ≤ |e| < 1`
+  and `a > 0`.
+- `OrbitalPorts.eccentricityVector_eq_zero_iff`, `OrbitalPorts.nodeVector_eq_zero_iff`,
+  `OrbitalPorts.eccentricityVector_of_cross_eq_zero`: where the pericenter and node directions
+  are undefined, and the radial boundary `|e| = 1`.
+- `OrbitalPorts.eccentricityVector_mulVec`: frame covariance under proper rotations.
 
 ## iii. Table of contents
 
@@ -107,15 +126,20 @@ Each result assumes only the hypotheses its proof uses.
 - D. Speed and period
 - E. Units
 - F. Planar to spatial state
+- G. The eccentricity vector and the energy identity
+- H. Undefined pericenter and node directions
+- I. Frame covariance
 
 ## iv. References
 
 - H. D. Curtis, *Orbital Mechanics for Engineering Students*, ch. 2: specific energy,
   `a = -μ / (2 ε)`, the vis-viva equation and circular orbits (`v = √(μ / r)`,
-  `T = 2 π r ^ (3 / 2) / √μ`).
+  `T = 2 π r ^ (3 / 2) / √μ`), and the eccentricity vector with `e² = 1 + 2 ε h² / μ²`; ch. 4:
+  the node line `N = K × h`.
 - R. R. Bate, D. D. Mueller and J. E. White, *Fundamentals of Astrodynamics*, ch. 1-2.
 - D. A. Vallado, *Fundamentals of Astrodynamics and Applications*, ch. 1-2: the two-body
-  equation `r'' = -μ r / r ^ 3` and the orbital plane.
+  equation `r'' = -μ r / r ^ 3`, the orbital plane, and the special cases of the classical
+  elements (circular and equatorial orbits).
 - Physlib, `PhyslibAlpha.ClassicalMechanics.OrbitalMechanics.Hohmann.Dynamics.Circular`: the
   circular orbits whose conclusions are the premises of section C.
 - `crossProduct` and `dotProduct` in Mathlib.
@@ -659,5 +683,256 @@ lemma IsCircularOrbit.hasDerivAt_spatialVelocity {μ R : ℝ} {r v : ℝ → ℂ
   rw [hsqrt]
   rw [hlin] at h1
   exact h1
+
+/-! ## G. The eccentricity vector and the energy identity -/
+
+/-- Eccentricity vector `e = (v ⨯₃ h) / μ - x / r` of the state `(x, v)`, with `h = x ⨯₃ v` the
+specific angular momentum and `r = |x|`. Declared for `μ > 0` and `r > 0`; at `x = 0` or `μ = 0`
+Lean's convention `1 / 0 = 0` gives a meaningless value. -/
+noncomputable def eccentricityVector (μ : ℝ) (x v : Fin 3 → ℝ) : Fin 3 → ℝ :=
+  (1 / μ) • (v ⨯₃ (x ⨯₃ v)) - (1 / radius x) • x
+
+/-- Eccentricity `|e| = √(e ⬝ᵥ e)`, the Euclidean length of the eccentricity vector. -/
+noncomputable def eccentricity (μ : ℝ) (x v : Fin 3 → ℝ) : ℝ :=
+  Real.sqrt (eccentricityVector μ x v ⬝ᵥ eccentricityVector μ x v)
+
+/-- Dot squares are nonnegative. -/
+private lemma dot_sq_nonneg (v : Fin 3 → ℝ) : 0 ≤ v ⬝ᵥ v := by
+  rw [vec3_dotProduct]
+  exact add_nonneg (add_nonneg (mul_self_nonneg _) (mul_self_nonneg _)) (mul_self_nonneg _)
+
+/-- The dot square of a nonzero vector is positive. -/
+private lemma dot_sq_pos {v : Fin 3 → ℝ} (hv : v ≠ 0) : 0 < v ⬝ᵥ v :=
+  lt_of_le_of_ne (dot_sq_nonneg v) (Ne.symm fun h => hv (dotProduct_self_eq_zero.mp h))
+
+/-- The squared radius is the dot square of the position. -/
+private lemma radius_sq (x : Fin 3 → ℝ) : (radius x) ^ 2 = x ⬝ᵥ x :=
+  Real.sq_sqrt (dot_sq_nonneg x)
+
+/-- `|v ⨯₃ h|² = |v|² |h|²` for `h = x ⨯₃ v`, since `v ⬝ᵥ h = 0`. -/
+private lemma cross_h_dot_self (x v : Fin 3 → ℝ) :
+    (v ⨯₃ (x ⨯₃ v)) ⬝ᵥ (v ⨯₃ (x ⨯₃ v)) = (v ⬝ᵥ v) * ((x ⨯₃ v) ⬝ᵥ (x ⨯₃ v)) := by
+  have h1 : v ⬝ᵥ (x ⨯₃ v) = 0 := dot_cross_self x v
+  rw [cross_dot_cross, h1]
+  simp
+
+/-- `(v ⨯₃ h) ⬝ᵥ x = |h|²` for `h = x ⨯₃ v`, by the cyclic triple product. -/
+private lemma cross_h_dot_x (x v : Fin 3 → ℝ) :
+    (v ⨯₃ (x ⨯₃ v)) ⬝ᵥ x = (x ⨯₃ v) ⬝ᵥ (x ⨯₃ v) := by
+  rw [dotProduct_comm]
+  rw [triple_product_permutation x v (x ⨯₃ v)]
+  rw [triple_product_permutation v (x ⨯₃ v) x]
+
+/-- The energy identity of the eccentricity vector: for `μ > 0` and `r > 0`,
+`|e|² = 1 + 2 E |h|² / μ²` with `h = x ⨯₃ v`. It is algebra at one state, not a conservation law. -/
+lemma eccentricity_sq {μ : ℝ} {x v : Fin 3 → ℝ} (hμ : 0 < μ) (hr : 0 < radius x) :
+    eccentricity μ x v ^ 2 =
+      1 + 2 * specificEnergy μ x v * ((x ⨯₃ v) ⬝ᵥ (x ⨯₃ v)) / μ ^ 2 := by
+  have hμ' : μ ≠ 0 := ne_of_gt hμ
+  have hr' : radius x ≠ 0 := ne_of_gt hr
+  have hxx : x ⬝ᵥ x = (radius x) ^ 2 := (radius_sq x).symm
+  have e1 := cross_h_dot_self x v
+  have e2 := cross_h_dot_x x v
+  have e3 : x ⬝ᵥ (v ⨯₃ (x ⨯₃ v)) = (x ⨯₃ v) ⬝ᵥ (x ⨯₃ v) := by
+    rw [dotProduct_comm x]
+    exact e2
+  have hexpand : eccentricityVector μ x v ⬝ᵥ eccentricityVector μ x v =
+      (v ⬝ᵥ v) * ((x ⨯₃ v) ⬝ᵥ (x ⨯₃ v)) / μ ^ 2
+        - 2 * (((x ⨯₃ v) ⬝ᵥ (x ⨯₃ v)) / μ / radius x) + 1 := by
+    simp only [eccentricityVector, sub_dotProduct, dotProduct_sub, smul_dotProduct,
+      dotProduct_smul, e1, e2, e3, hxx, smul_eq_mul]
+    field_simp
+    ring
+  unfold eccentricity
+  rw [Real.sq_sqrt (dot_sq_nonneg _), hexpand]
+  unfold specificEnergy speedSq
+  field_simp
+  ring
+
+/-- A bound state with nonzero specific angular momentum has `0 ≤ |e| < 1` and `a > 0`: for
+`μ > 0`, `E < 0` and `h = x ⨯₃ v ≠ 0` (which forces `r > 0`). No ellipse is constructed. -/
+lemma eccentricity_lt_one_and_semiMajorAxis_pos {μ : ℝ} {x v : Fin 3 → ℝ} (hμ : 0 < μ)
+    (hE : specificEnergy μ x v < 0) (hh : x ⨯₃ v ≠ 0) :
+    0 ≤ eccentricity μ x v ∧ eccentricity μ x v < 1 ∧ 0 < semiMajorAxis μ x v := by
+  have hx : x ≠ 0 := by
+    intro h
+    apply hh
+    rw [h]
+    simp
+  have hr : 0 < radius x := by
+    unfold radius
+    exact Real.sqrt_pos.mpr (dot_sq_pos hx)
+  have hsq := eccentricity_sq (v := v) hμ hr
+  have hhdot : 0 < (x ⨯₃ v) ⬝ᵥ (x ⨯₃ v) := dot_sq_pos hh
+  have h2E : (2 : ℝ) * specificEnergy μ x v < 0 := mul_neg_of_pos_of_neg (by norm_num) hE
+  have hterm : 2 * specificEnergy μ x v * ((x ⨯₃ v) ⬝ᵥ (x ⨯₃ v)) / μ ^ 2 < 0 :=
+    div_neg_of_neg_of_pos (mul_neg_of_neg_of_pos h2E hhdot) (pow_pos hμ 2)
+  have he2 : eccentricity μ x v ^ 2 < 1 := by
+    rw [hsq]
+    linarith
+  have he_nonneg : 0 ≤ eccentricity μ x v := Real.sqrt_nonneg _
+  have h1sq : eccentricity μ x v ^ 2 < 1 ^ 2 := by
+    rw [one_pow]
+    exact he2
+  have he_lt : eccentricity μ x v < 1 :=
+    lt_of_le_of_lt (le_abs_self _) (abs_lt_of_sq_lt_sq h1sq (by norm_num))
+  have ha : 0 < semiMajorAxis μ x v := by
+    unfold semiMajorAxis
+    exact div_pos_of_neg_of_neg (neg_lt_zero.mpr hμ) h2E
+  exact ⟨he_nonneg, he_lt, ha⟩
+
+/-! ## H. Undefined pericenter and node directions -/
+
+/-- Ascending-node vector `n = k ⨯₃ h` of the state `(x, v)`, with `k = (0, 0, 1)` the pole of the
+reference plane and `h = x ⨯₃ v`. The node direction `n / |n|` is undefined where `n = 0`. -/
+def nodeVector (x v : Fin 3 → ℝ) : Fin 3 → ℝ := ![0, 0, 1] ⨯₃ (x ⨯₃ v)
+
+/-- The pericenter direction `e / |e|` is undefined exactly for circular states: for `μ > 0` and
+`r > 0`, `e = 0` iff the velocity is transverse (`x ⬝ᵥ v = 0`) at circular speed
+(`|v|² = μ / r`). -/
+lemma eccentricityVector_eq_zero_iff {μ : ℝ} {x v : Fin 3 → ℝ} (hμ : 0 < μ) (hr : 0 < radius x) :
+    eccentricityVector μ x v = 0 ↔ x ⬝ᵥ v = 0 ∧ speedSq v = μ / radius x := by
+  have hμ' : μ ≠ 0 := ne_of_gt hμ
+  have hr' : radius x ≠ 0 := ne_of_gt hr
+  have hxx : x ⬝ᵥ x = (radius x) ^ 2 := (radius_sq x).symm
+  constructor
+  · intro he
+    have hsub : (1 / μ) • (v ⨯₃ (x ⨯₃ v)) = (1 / radius x) • x := by
+      have h := he
+      unfold eccentricityVector at h
+      exact sub_eq_zero.mp h
+    have huv : (v ⨯₃ (x ⨯₃ v)) ⬝ᵥ v = 0 := by
+      rw [dotProduct_comm]
+      exact dot_self_cross v _
+    have hdotv := congrArg (fun w => w ⬝ᵥ v) hsub
+    simp only [smul_dotProduct, huv, smul_eq_mul, mul_zero] at hdotv
+    have hxv : x ⬝ᵥ v = 0 :=
+      (mul_eq_zero.mp hdotv.symm).resolve_left (div_ne_zero one_ne_zero hr')
+    have hdotx := congrArg (fun w => w ⬝ᵥ x) hsub
+    simp only [smul_dotProduct, cross_h_dot_x, hxx, smul_eq_mul] at hdotx
+    have hhl : (x ⨯₃ v) ⬝ᵥ (x ⨯₃ v) = μ * radius x := by
+      have h2 := congrArg (fun t => μ * radius x * t) hdotx
+      simp only [← mul_assoc] at h2
+      have eA : μ * radius x * (1 / μ) = radius x := by field_simp
+      have eB : μ * radius x * (1 / radius x) = μ := by field_simp
+      rw [eA, eB] at h2
+      have h3 : ((x ⨯₃ v) ⬝ᵥ (x ⨯₃ v)) * radius x = (μ * radius x) * radius x := by
+        linear_combination h2
+      exact mul_right_cancel₀ hr' h3
+    have hcross := cross_dot_cross x v x v
+    rw [hxv, hxx] at hcross
+    simp only [zero_mul, sub_zero] at hcross
+    have hSr : (v ⬝ᵥ v) * radius x = μ := by
+      have h := hcross.symm.trans hhl
+      have h2 : ((v ⬝ᵥ v) * radius x) * radius x = μ * radius x := by
+        linear_combination h
+      exact mul_right_cancel₀ hr' h2
+    refine ⟨hxv, ?_⟩
+    simp only [speedSq]
+    rw [eq_div_iff_mul_eq hr']
+    exact hSr
+  · rintro ⟨hxv, hS⟩
+    simp only [speedSq] at hS
+    have hexp : v ⨯₃ (x ⨯₃ v) = (v ⬝ᵥ v) • x - (x ⬝ᵥ v) • v :=
+      cross_cross_eq_smul_sub_smul' v x v
+    have hcoeff : (1 / μ) * (v ⬝ᵥ v) = 1 / radius x := by
+      rw [hS]
+      field_simp
+    unfold eccentricityVector
+    rw [hexp, hxv]
+    simp only [zero_smul, sub_zero, smul_smul, hcoeff, sub_self]
+
+/-- Radial boundary: a state with `h = x ⨯₃ v = 0` and `r > 0` has `e = -x / r` and `|e| = 1`,
+whatever its energy, so `h ≠ 0` cannot be dropped from
+`eccentricity_lt_one_and_semiMajorAxis_pos`. -/
+lemma eccentricityVector_of_cross_eq_zero {μ : ℝ} {x v : Fin 3 → ℝ} (hr : 0 < radius x)
+    (hh : x ⨯₃ v = 0) :
+    eccentricityVector μ x v = -((1 / radius x) • x) ∧ eccentricity μ x v = 1 := by
+  have hr' : radius x ≠ 0 := ne_of_gt hr
+  have hxx : x ⬝ᵥ x = (radius x) ^ 2 := (radius_sq x).symm
+  have hv0 : v ⨯₃ (x ⨯₃ v) = 0 := by
+    rw [hh]
+    simp
+  have he : eccentricityVector μ x v = -((1 / radius x) • x) := by
+    unfold eccentricityVector
+    rw [hv0]
+    simp
+  have hdot : eccentricityVector μ x v ⬝ᵥ eccentricityVector μ x v = 1 := by
+    rw [he]
+    simp only [neg_dotProduct, dotProduct_neg, smul_dotProduct, dotProduct_smul, smul_eq_mul,
+      hxx]
+    field_simp
+  have hecc : eccentricity μ x v = 1 := by
+    unfold eccentricity
+    rw [hdot]
+    exact Real.sqrt_one
+  exact ⟨he, hecc⟩
+
+/-- The node direction is undefined exactly when the specific angular momentum lies along the
+pole: `n = 0` iff `h₁ = h₂ = 0` for `h = x ⨯₃ v`, an orbit in the reference plane or `h = 0`. -/
+lemma nodeVector_eq_zero_iff (x v : Fin 3 → ℝ) :
+    nodeVector x v = 0 ↔ (x ⨯₃ v) 0 = 0 ∧ (x ⨯₃ v) 1 = 0 := by
+  have hcross := cross_apply (![0, 0, 1] : Fin 3 → ℝ) (x ⨯₃ v)
+  have n0 : nodeVector x v 0 = -((x ⨯₃ v) 1) := by
+    unfold nodeVector
+    rw [hcross]
+    simp
+  have n1 : nodeVector x v 1 = (x ⨯₃ v) 0 := by
+    unfold nodeVector
+    rw [hcross]
+    simp
+  have nvec : nodeVector x v = ![-((x ⨯₃ v) 1), (x ⨯₃ v) 0, 0] := by
+    unfold nodeVector
+    rw [hcross]
+    ext i
+    fin_cases i <;> simp
+  constructor
+  · intro h
+    have h0 : (x ⨯₃ v) 0 = 0 := by
+      have h1' := congrFun h 1
+      rw [n1] at h1'
+      simpa using h1'
+    have h1 : (x ⨯₃ v) 1 = 0 := by
+      have h0' := congrFun h 0
+      rw [n0] at h0'
+      simpa using h0'
+    exact ⟨h0, h1⟩
+  · rintro ⟨h0, h1⟩
+    rw [nvec, h0, h1]
+    ext i
+    fin_cases i <;> simp
+
+/-! ## I. Frame covariance -/
+
+/-- Chart-free: a proper rotation `R` of the frame rotates the eccentricity vector with the
+state, `e(R x, R v) = R e(x, v)`, and keeps the eccentricity `|e|`. -/
+lemma eccentricityVector_mulVec {R : Matrix (Fin 3) (Fin 3) ℝ}
+    (hR : R ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ) (μ : ℝ) (x v : Fin 3 → ℝ) :
+    eccentricityVector μ (R *ᵥ x) (R *ᵥ v) = R *ᵥ eccentricityVector μ x v ∧
+      eccentricity μ (R *ᵥ x) (R *ᵥ v) = eccentricity μ x v := by
+  have hQ : R ∈ Matrix.orthogonalGroup (Fin 3) ℝ :=
+    (Matrix.mem_specialOrthogonalGroup_iff.mp hR).1
+  have hdet : R.det = 1 := (Matrix.mem_specialOrthogonalGroup_iff.mp hR).2
+  have h2 : Rᵀ * R = 1 := (Matrix.mem_orthogonalGroup_iff' _ _).mp hQ
+  have orth_self : ∀ (y : Fin 3 → ℝ), (R *ᵥ y) ⬝ᵥ (R *ᵥ y) = y ⬝ᵥ y := by
+    intro y
+    calc (R *ᵥ y) ⬝ᵥ (R *ᵥ y) = ((R *ᵥ y) ᵥ* R) ⬝ᵥ y := dotProduct_mulVec _ _ _
+      _ = (y ᵥ* (Rᵀ * R)) ⬝ᵥ y := by rw [vecMul_mulVec]
+      _ = y ⬝ᵥ y := by rw [h2, vecMul_one]
+  have hcross : ∀ (a b : Fin 3 → ℝ), (R *ᵥ a) ⨯₃ (R *ᵥ b) = R *ᵥ (a ⨯₃ b) := by
+    intro a b
+    have h := Matrix.mulVec_cross_mulVec_of_mem_orthogonalGroup hQ a b
+    rw [hdet] at h
+    simpa using h
+  have hrad : radius (R *ᵥ x) = radius x := by
+    unfold radius
+    rw [orth_self]
+  have hvec : eccentricityVector μ (R *ᵥ x) (R *ᵥ v) = R *ᵥ eccentricityVector μ x v := by
+    unfold eccentricityVector
+    rw [hcross, hcross, hrad, ← mulVec_smul, ← mulVec_smul, ← mulVec_sub]
+  have hecc : eccentricity μ (R *ᵥ x) (R *ᵥ v) = eccentricity μ x v := by
+    unfold eccentricity
+    rw [hvec, orth_self]
+  exact ⟨hvec, hecc⟩
 
 end OrbitalPorts
