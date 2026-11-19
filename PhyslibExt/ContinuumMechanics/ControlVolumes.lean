@@ -60,10 +60,13 @@ velocity `v_n`, the outward rate `A v_n (ρ (e + |v|² / 2 + g z) + p)`
 equals `ṁ (h + |v|² / 2 + g z)` with `ṁ = ρ A v_n` and
 `h = e + p / ρ`, so the flow work `p / ρ` is counted once, inside `h`;
 adding it again overcounts the rate by `A v_n p`. With the inlet on
-the face `x₀ = a₀`, the outlet on `x₀ = b₀` and impermeable side faces,
-the storage rate is `Q̇ - Ẇ_out + ṁ_in θ_in - ṁ_out θ_out`,
-`θ = h + |v|² / 2 + g z`. The energy law is a model input, not derived
-from mass conservation.
+the face `x₀ = a₀`, the outlet on `x₀ = b₀` and zero normal component
+of `G` on the side faces, the storage rate is
+`Q̇ - Ẇ_out + ṁ_in θ_in - ṁ_out θ_out`, `θ = h + |v|² / 2 + g z`. The
+side-face hypothesis constrains only the flux `G`: no wall velocity and
+no relation `G = (E + p) v` enters the statement, so it is weaker than
+impermeability. The energy law is a model input, not derived from mass
+conservation.
 
 ## ii. Key results
 
@@ -626,9 +629,10 @@ lemma hasDerivAt_energy_box {n : ℕ} {a b : Fin (n + 1) → ℝ} (hab : ∀ i, 
   ring
 
 /-- **Two-port energy balance**: inlet on the face `x₀ = a₀` with velocity component `Vi` along
-`e₀`, outlet on `x₀ = b₀` with `Vo`, uniform port states, impermeable side faces. The storage
-rate is `Q̇ - Ẇ_out + ṁ_in θ_in - ṁ_out θ_out` with `ṁ = ρ A₀ V` and
-`θ = h + |v|² / 2 + g z`. -/
+`e₀`, outlet on `x₀ = b₀` with `Vo`, uniform port states, and zero normal component of `G` on
+the side faces (`hwall`, a hypothesis on the flux `G` only, with no wall velocity or relation
+`G = (E + p) v`; for that flux it holds on impermeable walls). The storage rate is
+`Q̇ - Ẇ_out + ṁ_in θ_in - ṁ_out θ_out` with `ṁ = ρ A₀ V` and `θ = h + |v|² / 2 + g z`. -/
 lemma hasDerivAt_energy_twoPort {n : ℕ} {a b : Fin (n + 1) → ℝ} (hab : ∀ i, a i < b i)
     {E qdot wdot : ℝ → (Fin (n + 1) → ℝ) → ℝ}
     {G J : ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ} {t : ℝ}

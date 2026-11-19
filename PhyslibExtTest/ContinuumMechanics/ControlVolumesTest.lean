@@ -379,16 +379,21 @@ example (t : ℝ) :
   rw [hf]
   exact hasDerivAt_id t
 
-/-- The port lemmas at the turbine inlet: the inlet rate is `ṁ θ_in` with `ṁ = 2`, and counting
-`p / ρ` twice adds the pressure power `2 * 500`. -/
+/-- The port lemmas at the turbine inlet `x₀ = 0`, whose outward normal is `-e₀`: the fluid
+velocity `2 e₀` gives the outward normal velocity `v_n = -2`, so the signed outward rate is
+`ṁ θ = -3004` (an inflow of `3004`), and counting `p / ρ` twice adds the signed pressure power
+`1 * (-2) * 500`. -/
 example :
-    portEnergyRate 1 1 2 1000 500 (981 / 100) 0 ![(2 : ℝ), 0, 0] =
-        1 * 1 * 2 * (specificEnthalpy 1000 500 1 + ![(2 : ℝ), 0, 0] ⬝ᵥ ![2, 0, 0] / 2 +
+    portEnergyRate 1 1 (-2) 1000 500 (981 / 100) 0 ![(2 : ℝ), 0, 0] = -3004 ∧
+      portEnergyRate 1 1 (-2) 1000 500 (981 / 100) 0 ![(2 : ℝ), 0, 0] =
+        1 * 1 * (-2) * (specificEnthalpy 1000 500 1 + ![(2 : ℝ), 0, 0] ⬝ᵥ ![2, 0, 0] / 2 +
           981 / 100 * 0) ∧
-      1 * 1 * 2 * (specificEnthalpy 1000 500 1 + 500 / 1 + ![(2 : ℝ), 0, 0] ⬝ᵥ ![2, 0, 0] / 2 +
+      1 * 1 * (-2) * (specificEnthalpy 1000 500 1 + 500 / 1 + ![(2 : ℝ), 0, 0] ⬝ᵥ ![2, 0, 0] / 2 +
           981 / 100 * 0) =
-        portEnergyRate 1 1 2 1000 500 (981 / 100) 0 ![(2 : ℝ), 0, 0] + 1 * 2 * 500 :=
-  ⟨portEnergyRate_eq_massFlow one_ne_zero 1 2 1000 500 (981 / 100) 0 ![2, 0, 0],
-    flowWork_double_count one_ne_zero 1 2 1000 500 (981 / 100) 0 ![2, 0, 0]⟩
+        portEnergyRate 1 1 (-2) 1000 500 (981 / 100) 0 ![(2 : ℝ), 0, 0] + 1 * (-2) * 500 := by
+  refine ⟨?_, portEnergyRate_eq_massFlow one_ne_zero 1 (-2) 1000 500 (981 / 100) 0 ![2, 0, 0],
+    flowWork_double_count one_ne_zero 1 (-2) 1000 500 (981 / 100) 0 ![2, 0, 0]⟩
+  simp [portEnergyRate, dotProduct, Fin.sum_univ_three]
+  norm_num
 
 end PhyslibExtTest.ContinuumMechanics.ControlVolumes
