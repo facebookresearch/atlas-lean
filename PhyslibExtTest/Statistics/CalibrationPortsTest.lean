@@ -44,7 +44,7 @@ algebraic propagation identities apply, but the strain of the voltages `(0, 1)` 
 and zero offset then has the negative "variance" `-2`. -/
 example :
     ∑ ω, ![(2 : ℝ), -1] ω = 1 ∧
-      variance ![2, -1] (fun ω => gaugeStrain 1 0 (![(0 : ℝ), 1] ω)) = -2 := by
+      variance ![2, -1] (fun ω => gaugeStrain 1 0 (![(0 : ℝ), 1] ω) one_ne_zero) = -2 := by
   constructor
   · simp [Fin.sum_univ_two]
     norm_num
@@ -59,7 +59,8 @@ distribution, and voltages `3/400` and `1/80` (7.5 mV and 12.5 mV) with offset `
 example :
     (∀ ω, 0 ≤ ![(1 : ℝ) / 2, 1 / 2] ω) ∧ ∑ ω, ![(1 : ℝ) / 2, 1 / 2] ω = 1 ∧
       variance ![1 / 2, 1 / 2] ![(3 : ℝ) / 400, 1 / 80] = 1 / 160000 ∧
-      variance ![1 / 2, 1 / 2] (fun ω => gaugeStrain (5 / 2) (1 / 100) (![3 / 400, 1 / 80] ω)) =
+      variance ![1 / 2, 1 / 2]
+          (fun ω => gaugeStrain (5 / 2) (1 / 100) (![3 / 400, 1 / 80] ω) (by norm_num)) =
         1 / 1000000 := by
   refine ⟨fun ω => ?_, ?_, ?_, ?_⟩
   · fin_cases ω <;> norm_num
@@ -77,13 +78,16 @@ example :
     covMatrix ![1 / 2, 1 / 2]
         (fun ω => Matrix.of ![![1 / 2, 1 / 2]] *ᵥ
           gaugeStrainVec ![5 / 2, 5 / 2] ![1 / 100, 1 / 100]
-            (![![(3 : ℝ) / 400, 3 / 400], ![1 / 80, 1 / 80]] ω)) 0 0 = 1 / 1000000 ∧
+            (![![(3 : ℝ) / 400, 3 / 400], ![1 / 80, 1 / 80]] ω)
+            (by intro i; fin_cases i <;> norm_num)) 0 0 = 1 / 1000000 ∧
       (1 / 2) ^ 2 * covMatrix ![1 / 2, 1 / 2]
           (fun ω => gaugeStrainVec ![5 / 2, 5 / 2] ![1 / 100, 1 / 100]
-            (![![(3 : ℝ) / 400, 3 / 400], ![1 / 80, 1 / 80]] ω)) 0 0 +
+            (![![(3 : ℝ) / 400, 3 / 400], ![1 / 80, 1 / 80]] ω)
+            (by intro i; fin_cases i <;> norm_num)) 0 0 +
         (1 / 2) ^ 2 * covMatrix ![1 / 2, 1 / 2]
           (fun ω => gaugeStrainVec ![5 / 2, 5 / 2] ![1 / 100, 1 / 100]
-            (![![(3 : ℝ) / 400, 3 / 400], ![1 / 80, 1 / 80]] ω)) 1 1 = 1 / 2000000 := by
+            (![![(3 : ℝ) / 400, 3 / 400], ![1 / 80, 1 / 80]] ω)
+            (by intro i; fin_cases i <;> norm_num)) 1 1 = 1 / 2000000 := by
   constructor <;>
     simp [covMatrix, covariance, expectation, Fin.sum_univ_two, gaugeStrainVec, gaugeStrain,
       Matrix.mulVec, dotProduct] <;> norm_num
