@@ -43,4 +43,15 @@ Annual ACM Symposium on Theory of Computing (STOC 1987), 77-82. -/
 public theorem_wanted smolensky :
     parityDec ∉ AC0Mod 3
 
+/-- **Razborov: majority is not in AC0[mod 2].** The majority language (more `true` than
+`false` bits) is not in `AC0[mod 2]`: no polynomial-size, constant-depth circuit family with
+AND/OR/NOT gates and `MOD₂` gates computes majority (A. A. Razborov, "Lower bounds on the size
+of bounded depth networks over a complete basis with logical addition", Mat. Zametki 41
+(1987), 598-607; English translation Math. Notes 41 (1987), 333-338). Razborov approximates
+each gate by a low-degree polynomial over `𝔽₂` and shows that majority has no such
+approximation. Smolensky extended the method to `MOD_p` gates for a prime `p`, which cannot
+compute `MOD_q` when `q` is not a power of `p`; `smolensky` is the case `p = 3`, `q = 2`. -/
+public theorem_wanted razborov_majority_not_in_ac0_mod_two :
+    majorityDec ∉ AC0Mod 2
+
 end MetaMathlibExt.Complexity.KeyTheorems.Smolensky
