@@ -18,7 +18,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Tests for `PhyslibExt.Mechanics.RigidMotionPorts`
 
-Consumers of the rotating and translating-frame acceleration and a spin-up fixture.
+Consumers of the rotating and translating-frame acceleration and of the angular momentum about
+the centre of mass, with a spin-up fixture and a four-point body.
 
 ## i. Overview
 
@@ -29,17 +30,27 @@ and centripetal terms vanish and the acceleration of the body point `e₁` is th
 public lemmas to a body-fixed vector, to a frame with constant orientation, and to the reflection
 boundary.
 
+Four unit point masses at `(±1, 0, 0)` and `(0, ±2, 0)` form a body of mass `4` with centre of
+mass `0` and unequal principal inertias `diag(8, 2, 10)`. Spun up about the third principal axis,
+its angular momentum about the centre of mass is `(0, 0, 10 t)` with rate of change `(0, 0, 10)`;
+about the mass point `(1, 0, 0)` the parallel-axis lemma adds the orbital term `(0, 0, 4)`; and
+gliding without rotation it has no angular momentum about its centre of mass but the orbital term
+`(0, 0, 4)` about the fixed point `(0, 1, 0)`.
+
 The file activates no matrix norm: every regularity fact is stated and proved as a client would,
 with Mathlib's default instances on matrices or entry by entry.
 
 ## ii. Key results
 
 - `spinUp`, `spinUp_bodyAngularVelocity`, `spinUp_euler_fixture` : the spin-up fixture.
+- `fourPointBody` : a four-point body with unequal principal inertias.
 
 ## iii. Table of contents
 
 - A. Spin-up fixture
 - B. Consumers of the public lemmas
+- C. Angular momentum: a four-point body
+- D. Consumers of the angular-momentum lemmas
 
 ## iv. References
 
@@ -232,5 +243,165 @@ example (M : RigidBodyMotion 3) (t : Time) :
 -- turns at the unit rate.
 example : ∃ B : RigidBody 3, (spinUp B).bodyAngularVelocity ⟨1⟩ = ![0, 0, 1] :=
   ⟨⟨0⟩, by rw [spinUp_bodyAngularVelocity]⟩
+
+/-! ## C. Angular momentum: a four-point body -/
+
+/-- A finite positive-mass body: four unit point masses at `(±1, 0, 0)` and `(0, ±2, 0)`. -/
+noncomputable def fourPointBody : RigidBody 3 where
+  ρ :=
+    { toFun := fun f => f ⟨![1, 0, 0]⟩ + f ⟨![-1, 0, 0]⟩ + f ⟨![0, 2, 0]⟩ + f ⟨![0, -2, 0]⟩
+      map_add' := fun f g => by
+        simp only [ContMDiffMap.coe_add, Pi.add_apply]
+        ring
+      map_smul' := fun r f => by
+        simp only [ContMDiffMap.coe_smul, Pi.smul_apply, smul_eq_mul, RingHom.id_apply]
+        ring }
+
+/-- The four-point body has mass `4`. -/
+private lemma fourPointBody_mass : fourPointBody.mass = 4 := by
+  norm_num [RigidBody.mass, fourPointBody]
+
+/-- The four-point body has its centre of mass at the origin. -/
+private lemma fourPointBody_centerOfMass : fourPointBody.centerOfMass = 0 := by
+  ext i
+  fin_cases i <;> simp [RigidBody.centerOfMass, fourPointBody]
+
+/-- The inertia tensor of the four-point body about its centre of mass is `diag(8, 2, 10)`. -/
+private lemma fourPointBody_inertia :
+    fourPointBody.inertiaTensorAbout fourPointBody.centerOfMass =
+      Matrix.diagonal ![8, 2, 10] := by
+  rw [fourPointBody_centerOfMass, RigidBody.inertiaTensorAbout_zero]
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [RigidBody.inertiaTensor, fourPointBody, Fin.sum_univ_three] <;> norm_num
+
+-- The four-point body has mass `4`, centre of mass `0` and unequal principal inertias: its
+-- inertia tensor about the centre of mass is `diag(8, 2, 10)`.
+example :
+    fourPointBody.mass = 4 ∧ fourPointBody.centerOfMass = 0 ∧
+      fourPointBody.inertiaTensorAbout fourPointBody.centerOfMass =
+        Matrix.diagonal ![8, 2, 10] :=
+  ⟨fourPointBody_mass, fourPointBody_centerOfMass, fourPointBody_inertia⟩
+
+-- With unequal principal inertias the gyroscopic term does not vanish: for
+-- `I_B = diag(8, 2, 10)` and `ω_B = (1, 1, 0)`, `I_B ω_B = (8, 2, 0)` and
+-- `ω_B × (I_B ω_B) = (0, 0, -6)`; along a motion with this constant body angular velocity,
+-- `dL_COM/dt = R (0, 0, -6) ≠ 0`.
+example :
+    fourPointBody.inertiaTensorAbout fourPointBody.centerOfMass *ᵥ ![1, 1, 0] = ![8, 2, 0] ∧
+      ![1, 1, 0] ⨯₃ (fourPointBody.inertiaTensorAbout fourPointBody.centerOfMass *ᵥ ![1, 1, 0]) =
+        ![0, 0, -6] := by
+  rw [fourPointBody_inertia]
+  constructor
+  · ext i
+    fin_cases i <;> simp [Matrix.mulVec_diagonal]
+  · ext i
+    fin_cases i <;> norm_num [Matrix.mulVec_diagonal, cross_apply]
+
+-- A shifted reference point needs the orbital term: about the mass point `p = (1, 0, 0)` the
+-- four-point body turning with `ω = (0, 0, 1)` has angular momentum `(0, 0, 14)`, the spin term
+-- `(0, 0, 10)` about the centre of mass plus the orbital term `(0, 0, 4)`.
+example :
+    fourPointBody.inertiaTensorAbout ⟨![1, 0, 0]⟩ *ᵥ ![0, 0, 1] = ![0, 0, 14] ∧
+      fourPointBody.inertiaTensorAbout fourPointBody.centerOfMass *ᵥ ![0, 0, 1] = ![0, 0, 10] := by
+  constructor
+  · ext i
+    fin_cases i <;>
+      norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_three, RigidBody.inertiaTensorAbout,
+        fourPointBody]
+  · rw [fourPointBody_inertia]
+    ext i
+    fin_cases i <;> simp [Matrix.mulVec_diagonal]
+
+/-! ## D. Consumers of the angular-momentum lemmas -/
+
+-- The parallel-axis lemma on the four-point body: about the mass point `p = (1, 0, 0)`, turning
+-- with `ω = e₃`, the orbital term of the total mass at the centre of mass is `(0, 0, 4)`.
+example :
+    fourPointBody.inertiaTensorAbout ⟨![1, 0, 0]⟩ *ᵥ ![0, 0, 1] =
+      fourPointBody.inertiaTensorAbout fourPointBody.centerOfMass *ᵥ ![0, 0, 1] + ![0, 0, 4] := by
+  rw [inertiaTensorAbout_mulVec_eq_add_orbital fourPointBody
+    (by rw [fourPointBody_mass]; norm_num) ⟨![1, 0, 0]⟩ ![0, 0, 1], fourPointBody_mass,
+    fourPointBody_centerOfMass]
+  congr 1
+  ext i
+  fin_cases i <;> norm_num [cross_apply]
+
+-- The four-point body spun up about its third principal axis: the angular momentum about the
+-- centre of mass is `R I_B ω_B = (0, 0, 10 t)`, along the spin axis.
+example (t : Time) : comAngularMomentum (spinUp fourPointBody) t = ![0, 0, 10 * t.val] := by
+  have hI : (spinUp fourPointBody).inertiaTensorAbout (spinUp fourPointBody).centerOfMass =
+      Matrix.diagonal ![8, 2, 10] := fourPointBody_inertia
+  have hR : (((spinUp fourPointBody).orientation t : Matrix (Fin 3) (Fin 3) ℝ)) =
+      rotZ (t.val ^ 2 / 2) := rfl
+  rw [(comAngularMomentum_eq (spinUp fourPointBody) t
+    (differentiableAt_spinUp_orientation _ t) fourPointBody_centerOfMass).2, hI, hR,
+    spinUp_bodyAngularVelocity]
+  ext i
+  fin_cases i <;> simp [rotZ, Matrix.mulVec, dotProduct, Fin.sum_univ_three]
+
+-- Spinning up with unit angular acceleration about the third principal axis takes the rate of
+-- change `I₃ e₃ = (0, 0, 10)` of the angular momentum about the centre of mass; on a principal
+-- axis the gyroscopic term `ω_B × (I_B ω_B)` vanishes.
+example (t : Time) : ∂ₜ (comAngularMomentum (spinUp fourPointBody)) t = ![0, 0, 10] := by
+  have hI : (spinUp fourPointBody).inertiaTensorAbout (spinUp fourPointBody).centerOfMass =
+      Matrix.diagonal ![8, 2, 10] := fourPointBody_inertia
+  have hR : (((spinUp fourPointBody).orientation t : Matrix (Fin 3) (Fin 3) ℝ)) =
+      rotZ (t.val ^ 2 / 2) := rfl
+  have hω : (spinUp fourPointBody).bodyAngularVelocity = fun s => s.val • ![(0 : ℝ), 0, 1] := by
+    funext s
+    rw [spinUp_bodyAngularVelocity]
+    ext i
+    fin_cases i <;> simp
+  have hval : DifferentiableAt ℝ (fun s : Time => s.val) t := Time.toRealCLM.differentiableAt
+  have hdω : ∂ₜ (spinUp fourPointBody).bodyAngularVelocity t = ![0, 0, 1] := by
+    rw [hω, deriv_smul_const_vec hval,
+      Time.deriv_eq_of_hasDerivAt (f := fun s : Time => s.val) (hasDerivAt_id _), one_smul]
+  rw [deriv_comAngularMomentum (spinUp fourPointBody) isOpen_univ
+    (fun i j => (contDiff_spinUp_orientation_apply fourPointBody i j).contDiffOn)
+    fourPointBody_centerOfMass (Set.mem_univ t), hdω, hI, hR, spinUp_bodyAngularVelocity]
+  ext i
+  fin_cases i <;> simp [rotZ, Matrix.mulVec, dotProduct, Fin.sum_univ_three, cross_apply]
+
+/-- The four-point body gliding without rotation: centre of mass at `(s, 0, 0)` at time `s`,
+identity orientation. -/
+private noncomputable def glide : RigidBodyMotion 3 where
+  toRigidBody := fourPointBody
+  comTrajectory := fun s => ⟨![s.val, 0, 0]⟩
+  orientation := fun _ => 1
+
+-- A shifted origin needs the translational orbital term: gliding without rotation, the body has
+-- no angular momentum about its centre of mass, but about the fixed point `O = (0, 1, 0)` it has
+-- the orbital term `m (X - O) × V = 4 (t, -1, 0) × (1, 0, 0) = (0, 0, 4)`.
+example (t : Time) :
+    comAngularMomentum glide t = 0 ∧ angularMomentumAbout glide ![0, 1, 0] t = ![0, 0, 4] := by
+  have hL : comAngularMomentum glide t = 0 := by
+    have hR : DifferentiableAt ℝ (fun s => (glide.orientation s).1) t := differentiableAt_const _
+    rw [(comAngularMomentum_eq glide t hR fourPointBody_centerOfMass).2,
+      RigidBodyMotion.bodyAngularVelocity_of_orientation_const glide 1 rfl]
+    simp
+  have hX : Differentiable ℝ glide.comTrajectory := by
+    refine Space.mk_differentiable.comp (differentiable_pi.mpr fun k => ?_)
+    fin_cases k
+    · exact Time.toRealCLM.differentiable
+    · exact differentiable_const _
+    · exact differentiable_const _
+  have hV : (fun j => glide.centerOfMassVelocity t j) = ![1, 0, 0] := by
+    funext j
+    rw [RigidBodyMotion.centerOfMassVelocity_eq, Time.derivVec_space hX t j]
+    fin_cases j
+    · exact Time.deriv_eq_of_hasDerivAt (f := fun s : Time => s.val) (hasDerivAt_id _)
+    · exact Time.deriv_const _
+    · exact Time.deriv_const _
+  have hm : glide.mass ≠ 0 := by
+    change fourPointBody.mass ≠ 0
+    rw [fourPointBody_mass]
+    norm_num
+  refine ⟨hL, ?_⟩
+  rw [angularMomentumAbout_eq glide hm ![0, 1, 0] t, hL, zero_add, hV]
+  change fourPointBody.mass • _ = _
+  rw [fourPointBody_mass]
+  ext i
+  fin_cases i <;> simp [glide, cross_apply]
 
 end PhyslibExtTest.Mechanics.RigidMotionPorts
