@@ -38,10 +38,14 @@ drag-dominated motion without gravity or lift, and finite entry data `(he, ve)`,
 equations of motion are assumed only on a nonempty finite time window `[t₀, t₁]`, `t₀ ≤ t₁`,
 that starts at entry, which is how the fixed finite altitude band enters. The infinite-entry
 normalization (dropping `exp (-he / H)`) does not meet the entry condition
-(`omitted_entry_term_ne`). The derivative and equation-of-motion results assume `β > 0`: at
-`β = 0` Lean's convention `x / 0 = 0` turns the drag term into `0`. Apart from the window
-condition `t₀ ≤ t₁`, which only excludes an empty window, each result assumes only the
-hypotheses its proof uses.
+(`omitted_entry_term_ne`). The derivative and equation-of-motion results assume `β > 0` and a
+downward path, `sin γ > 0`: at `β = 0` Lean's convention `x / 0 = 0` turns the drag term into
+`0`, and at `sin γ = 0` the altitude rate vanishes, so `dv/dh` is undefined. The isothermal
+corollary asks the trajectory to stay in a declared altitude band, where the isothermal layer
+model holds. Apart from the window condition `t₀ ≤ t₁` and that band, which restrict statements
+to their physical regime, each result assumes only the hypotheses its proof uses. The identity
+`ballisticVelocity_eq_exp_integral` holds for all parameters; it is the integrated drag equation
+for `β > 0` and `sin γ > 0`.
 
 ## ii. Key results
 
@@ -51,8 +55,8 @@ hypotheses its proof uses.
 - `EntryPorts.hasDerivAt_ballisticVelocity_comp`: conversely, the profile along an altitude
   trajectory with `h' = -v * sin γ` solves the drag equation.
 - `EntryPorts.ballisticVelocity_strictMono`: the speed falls as the vehicle descends.
-- `EntryPorts.ballisticVelocity_of_ode_isothermalDensity`: the same profile for the isothermal
-  layer density, with `H` its scale height.
+- `EntryPorts.ballisticVelocity_of_ode_isothermalDensity`: the same profile for a trajectory in a
+  declared band of the isothermal layer, with `H` its scale height.
 
 ## iii. Table of contents
 
@@ -133,7 +137,9 @@ lemma integral_exponentialDensity {H : ℝ} (hH : H ≠ 0) (ρ0 he h : ℝ) :
   ring
 
 /-- Integrated form of `dv/dh = ρ(h) * v / (2 * β * sin γ)`: the exponent of the profile is the
-column mass between `he` and `h` divided by `2 * β * sin γ`. -/
+column mass between `he` and `h` divided by `2 * β * sin γ`. The identity of the two formulas
+holds for all parameters; it is the integrated drag equation only for `β > 0` and `sin γ > 0`,
+where `2 * β * sin γ ≠ 0` (`hasDerivAt_ballisticVelocity`). -/
 lemma ballisticVelocity_eq_exp_integral {H : ℝ} (hH : H ≠ 0) (ρ0 β γ he ve h : ℝ) :
     ballisticVelocity ρ0 H β γ he ve h =
       ve * Real.exp ((∫ s in he..h, exponentialDensity ρ0 H s) / (2 * β * Real.sin γ)) := by
@@ -143,9 +149,10 @@ lemma ballisticVelocity_eq_exp_integral {H : ℝ} (hH : H ≠ 0) (ρ0 β γ he v
   congr 1
   ring
 
-/-- For `β > 0` the profile solves the altitude form of the equations of motion,
-`dv/dh = ρ(h) * v / (2 * β * sin γ)`. -/
-lemma hasDerivAt_ballisticVelocity {H : ℝ} (hH : H ≠ 0) (ρ0 β γ he ve h : ℝ) (hβ : 0 < β) :
+/-- For `β > 0` and a downward path, `sin γ > 0`, the profile solves the altitude form of the
+equations of motion, `dv/dh = ρ(h) * v / (2 * β * sin γ)`. -/
+lemma hasDerivAt_ballisticVelocity {H : ℝ} (hH : H ≠ 0) (ρ0 β γ he ve h : ℝ) (hβ : 0 < β)
+    (hγ : 0 < Real.sin γ) :
     HasDerivAt (ballisticVelocity ρ0 H β γ he ve)
       (exponentialDensity ρ0 H h * ballisticVelocity ρ0 H β γ he ve h /
         (2 * β * Real.sin γ)) h := by
@@ -162,24 +169,22 @@ lemma hasDerivAt_ballisticVelocity {H : ℝ} (hH : H ≠ 0) (ρ0 β γ he ve h :
       exponentialDensity ρ0 H h * ballisticVelocity ρ0 H β γ he ve h /
         (2 * β * Real.sin γ) := by
     unfold exponentialDensity ballisticVelocity ballisticK
-    by_cases hs : Real.sin γ = 0
-    · simp [hs]
-    · have hD : 2 * β * Real.sin γ ≠ 0 := mul_ne_zero (mul_ne_zero two_ne_zero hβ.ne') hs
-      field_simp
-      ring
+    have hD : 2 * β * Real.sin γ ≠ 0 := mul_ne_zero (mul_ne_zero two_ne_zero hβ.ne') hγ.ne'
+    field_simp
+    ring
   rw [heq] at hV
   exact hV
 
 /-! ## B. The equations of motion -/
 
 set_option linter.unusedVariables false in
-/-- Derivation from the equations of motion: for `β > 0`, if on the window `[t₀, t₁]`, `t₀ ≤ t₁`,
-the altitude and speed satisfy `h' = -v * sin γ` and `v' = -ρ(h) * v ^ 2 / (2 * β)` with entry
-state `h(t₀) = he`, `v(t₀) = ve`, then `v(t) = ballisticVelocity (h(t))` throughout the window.
-The proof does not use `t₀ ≤ t₁`; the hypothesis excludes the empty window, on which the
-statement says nothing. -/
+/-- Derivation from the equations of motion: for `β > 0` and a downward path, `sin γ > 0`, if on
+the window `[t₀, t₁]`, `t₀ ≤ t₁`, the altitude and speed satisfy `h' = -v * sin γ` and
+`v' = -ρ(h) * v ^ 2 / (2 * β)` with entry state `h(t₀) = he`, `v(t₀) = ve`, then
+`v(t) = ballisticVelocity (h(t))` throughout the window. The proof does not use `t₀ ≤ t₁`; the
+hypothesis excludes the empty window, on which the statement says nothing. -/
 lemma ballisticVelocity_of_ode {ρ0 H β γ he ve t₀ t₁ : ℝ} {h v : ℝ → ℝ} (hH : H ≠ 0)
-    (hβ : 0 < β) (hγ : Real.sin γ ≠ 0) (hwin : t₀ ≤ t₁)
+    (hβ : 0 < β) (hγ : 0 < Real.sin γ) (hwin : t₀ ≤ t₁)
     (hh : ∀ t ∈ Set.Icc t₀ t₁, HasDerivAt h (-(v t) * Real.sin γ) t)
     (hv : ∀ t ∈ Set.Icc t₀ t₁,
       HasDerivAt v (-(exponentialDensity ρ0 H (h t)) * v t ^ 2 / (2 * β)) t)
@@ -211,7 +216,7 @@ lemma ballisticVelocity_of_ode {ρ0 H β γ he ve t₀ t₁ : ℝ} {h v : ℝ �
               (0 - Real.exp (-h t / H) * (-(-(v t) * Real.sin γ) / H))))) = 0 := by
       unfold exponentialDensity ballisticK
       have h2β : (2 : ℝ) * β ≠ 0 := mul_ne_zero (by norm_num) hβ.ne'
-      have hD : 2 * β * Real.sin γ ≠ 0 := mul_ne_zero h2β hγ
+      have hD : 2 * β * Real.sin γ ≠ 0 := mul_ne_zero h2β hγ.ne'
       field_simp
       ring
     rw [hbal] at hw
@@ -251,16 +256,16 @@ lemma ballisticVelocity_of_ode {ρ0 H β γ he ve t₀ t₁ : ℝ} {h v : ℝ �
           (Real.exp (-he / H) - Real.exp (-h t / H))) := by rw [h1]
   exact h2
 
-/-- Converse: for `β > 0`, along an altitude trajectory with `h' = -v * sin γ` for
-`v = ballisticVelocity ∘ h`, the speed `ballisticVelocity ∘ h` satisfies the drag equation
-`v' = -ρ(h) * v ^ 2 / (2 * β)`. -/
+/-- Converse: for `β > 0` and a downward path, `sin γ > 0`, along an altitude trajectory with
+`h' = -v * sin γ` for `v = ballisticVelocity ∘ h`, the speed `ballisticVelocity ∘ h` satisfies the
+drag equation `v' = -ρ(h) * v ^ 2 / (2 * β)`. -/
 lemma hasDerivAt_ballisticVelocity_comp {ρ0 H β γ he ve t : ℝ} {h : ℝ → ℝ} (hH : H ≠ 0)
-    (hβ : 0 < β) (hγ : Real.sin γ ≠ 0)
+    (hβ : 0 < β) (hγ : 0 < Real.sin γ)
     (hh : HasDerivAt h (-(ballisticVelocity ρ0 H β γ he ve (h t)) * Real.sin γ) t) :
     HasDerivAt (fun τ => ballisticVelocity ρ0 H β γ he ve (h τ))
       (-(exponentialDensity ρ0 H (h t)) * ballisticVelocity ρ0 H β γ he ve (h t) ^ 2 /
         (2 * β)) t := by
-  have hV := hasDerivAt_ballisticVelocity hH ρ0 β γ he ve (h t) hβ
+  have hV := hasDerivAt_ballisticVelocity hH ρ0 β γ he ve (h t) hβ hγ
   have hcomp : HasDerivAt (fun τ => ballisticVelocity ρ0 H β γ he ve (h τ))
       (exponentialDensity ρ0 H (h t) * ballisticVelocity ρ0 H β γ he ve (h t) /
         (2 * β * Real.sin γ) * (-(ballisticVelocity ρ0 H β γ he ve (h t)) * Real.sin γ)) t :=
@@ -269,7 +274,7 @@ lemma hasDerivAt_ballisticVelocity_comp {ρ0 H β γ he ve t : ℝ} {h : ℝ →
         (2 * β * Real.sin γ) * (-(ballisticVelocity ρ0 H β γ he ve (h t)) * Real.sin γ) =
       -(exponentialDensity ρ0 H (h t)) * ballisticVelocity ρ0 H β γ he ve (h t) ^ 2 / (2 * β) := by
     have h2β : (2 : ℝ) * β ≠ 0 := mul_ne_zero (by norm_num) hβ.ne'
-    have hD : 2 * β * Real.sin γ ≠ 0 := mul_ne_zero h2β hγ
+    have hD : 2 * β * Real.sin γ ≠ 0 := mul_ne_zero h2β hγ.ne'
     field_simp
   rw [heq] at hcomp
   exact hcomp
@@ -318,12 +323,15 @@ lemma omitted_entry_term_ne {ρ0 H β γ ve : ℝ} (hρ0 : 0 < ρ0) (hH : 0 < H)
 
 /-! ## D. The isothermal layer -/
 
-/-- With the isothermal-layer density `isothermalDensity ρ0 g Rs T` as the atmosphere, `β > 0`
-and the window `t₀ ≤ t₁`, the derivation gives the same profile with `H` the scale height
-`Rs * T / |g|`. -/
-lemma ballisticVelocity_of_ode_isothermalDensity {ρ0 g Rs T β γ he ve t₀ t₁ : ℝ}
-    {h v : ℝ → ℝ} (hg : 0 < g) (hRs : 0 < Rs) (hT : 0 < T) (hβ : 0 < β) (hγ : Real.sin γ ≠ 0)
-    (hwin : t₀ ≤ t₁)
+set_option linter.unusedVariables false in
+/-- With the isothermal-layer density `isothermalDensity ρ0 g Rs T` as the atmosphere, `β > 0`, a
+downward path and the window `t₀ ≤ t₁`, the derivation gives the same profile with `H` the scale
+height `Rs * T / |g|`. The isothermal layer model holds only on a declared altitude band
+`[z₁, z₂]`, so the trajectory is required to stay in it on the window. The proof does not use the
+band; the hypothesis restricts the statement to the model's regime. -/
+lemma ballisticVelocity_of_ode_isothermalDensity {ρ0 g Rs T β γ he ve t₀ t₁ z₁ z₂ : ℝ}
+    {h v : ℝ → ℝ} (hg : 0 < g) (hRs : 0 < Rs) (hT : 0 < T) (hβ : 0 < β) (hγ : 0 < Real.sin γ)
+    (hwin : t₀ ≤ t₁) (hband : ∀ t ∈ Set.Icc t₀ t₁, h t ∈ Set.Icc z₁ z₂)
     (hh : ∀ t ∈ Set.Icc t₀ t₁, HasDerivAt h (-(v t) * Real.sin γ) t)
     (hv : ∀ t ∈ Set.Icc t₀ t₁,
       HasDerivAt v (-(isothermalDensity ρ0 g Rs T (h t)) * v t ^ 2 / (2 * β)) t)
