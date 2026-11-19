@@ -90,6 +90,61 @@ section Defs
 
 variable {K : Type*} [Field K] {ι κ : Type*} [Fintype ι] [Fintype κ]
 
+/-- At `F = 0` the tangent space is `⊥`: every left/right kernel condition is vacuous, so
+only `X = 0` is orthogonal to all of them. -/
+example : tangentSpace (0 : Matrix (Fin 2) (Fin 2) ℝ) = ⊥ := by
+  ext X
+  simp only [Submodule.mem_bot]
+  constructor
+  · intro hX
+    ext i j
+    have h := hX (Pi.single i 1) (Pi.single j 1) (Matrix.vecMul_zero _) (Matrix.zero_mulVec _)
+    fin_cases i <;> fin_cases j <;>
+      simpa [Matrix.mulVec, dotProduct, Fin.sum_univ_two] using h
+  · intro h
+    rw [h]
+    intro u v _ _
+    simp
+
+/-- At `F = 0` the normal space is everything. -/
+example : normalSpace (0 : Matrix (Fin 2) (Fin 2) ℝ) = ⊤ := by
+  ext Y
+  simp [normalSpace]
+
+/-- At the rank-one matrix `!![1, 0; 0, 0]`, `!![0, 0; 0, 1]` is normal and `F` itself is
+not. -/
+example : !![0, 0; 0, 1] ∈ normalSpace (!![1, 0; 0, 0] : Matrix (Fin 2) (Fin 2) ℝ) := by
+  constructor <;> ext i j <;> fin_cases i <;> fin_cases j <;>
+    simp [Matrix.mul_apply, Fin.sum_univ_two]
+
+example : !![1, 0; 0, 0] ∉ normalSpace (!![1, 0; 0, 0] : Matrix (Fin 2) (Fin 2) ℝ) := by
+  intro h
+  have h00 : (!![1, 0; 0, 0]ᵀ * !![1, 0; 0, 0] : Matrix (Fin 2) (Fin 2) ℝ) 0 0 = 0 := by
+    rw [h.1]
+    rfl
+  simp [Matrix.mul_apply, Fin.sum_univ_two] at h00
+
+/-- At `!![1, 0; 0, 0]` the swap matrix is tangent (its bottom-right entry is `0`), and
+`!![0, 0; 0, 1]` is not. -/
+example : !![0, 1; 1, 0] ∈ tangentSpace (!![1, 0; 0, 0] : Matrix (Fin 2) (Fin 2) ℝ) := by
+  intro u v hu hv
+  have hu0 : vecHead u = 0 := by
+    have h := congrFun hu 0
+    simpa [Matrix.vecMul, Fin.sum_univ_two] using h
+  have hv0 : vecHead v = 0 := by
+    have h := congrFun hv 0
+    simpa [Matrix.mulVec, Fin.sum_univ_two] using h
+  have hu0' : u 0 = 0 := hu0
+  have hv0' : v 0 = 0 := hv0
+  simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two, hu0', hv0']
+
+example : !![0, 0; 0, 1] ∉ tangentSpace (!![1, 0; 0, 0] : Matrix (Fin 2) (Fin 2) ℝ) := by
+  intro h
+  have h2 := h ![0, 1] ![0, 1]
+    (by ext j; fin_cases j <;> simp [Matrix.vecMul])
+    (by ext j; fin_cases j <;> simp [Matrix.mulVec])
+  simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two] at h2
+
 end Defs
 
 section Algebra

@@ -929,11 +929,11 @@ section LocalGraphHelpers
 open Filter
 
 /-- Parameter space `(A, B, C)` of the Schur block chart. -/
-abbrev ChartParam (k a b : ℕ) : Type :=
+private abbrev ChartParam (k a b : ℕ) : Type :=
   (Fin k → Fin k → ℝ) × (Fin k → Fin b → ℝ) × (Fin a → Fin k → ℝ)
 
 /-- Fibre space `D` of the Schur block chart. -/
-abbrev ChartFiber (a b : ℕ) : Type := Fin a → Fin b → ℝ
+private abbrev ChartFiber (a b : ℕ) : Type := Fin a → Fin b → ℝ
 
 private theorem finrank_fun_fun (a b : ℕ) : Module.finrank ℝ (Fin a → Fin b → ℝ) = a * b := by
   rw [Module.finrank_pi_fintype]
