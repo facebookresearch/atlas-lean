@@ -11,9 +11,18 @@ public import MathlibExt.Analysis.ODE.FiniteElement1D
 public import MathlibExt.Analysis.ODE.SturmLiouvilleExistence
 public import MathlibExt.Analysis.ODE.SturmLiouvilleUniqueness
 public import PhyslibExt.Units.EngineeringQuantities
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.Calculus.IteratedDeriv.Lemmas
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.FunProp
+import Mathlib.Tactic.Ring
 
 /-!
-# Constant-rigidity fixed-fixed bar and shaft
+# Prismatic members: fixed-fixed bar and shaft, clamped-free cantilever
 
 ## i. Overview
 
@@ -40,6 +49,18 @@ Model inputs: the constitutive laws above, constant rigidity, zero end values at
 Boundaries: a traction (free or loaded) end and a variable rigidity `k x` are not covered; the
 operator is `-u''`, not `-(p u')'`.
 
+A prismatic Euler-Bernoulli beam of length `L` and constant bending stiffness `EI`, clamped at
+`x = 0` and free at `x = L`, carries a constant distributed load `q` and a tip force `P`; the
+deflection `w`, `q` and `P` are positive in the same transverse direction. The model is
+`EI * w'''' = q` with `w 0 = 0`, `w' 0 = 0`, `EI * w'' L = 0` (zero moment at the free end) and
+`-(EI * w''' L) = P` (the shear force at the free end balances the tip force)
+(`IsCantileverSolution`). The polynomial `cantileverDeflection` satisfies the equation and the
+four conditions, and a solution is unique on `[0, L]`: the difference of two solutions has zero
+fourth derivative, so it is a cubic on `[0, L]`, and the four conditions force it to vanish.
+Model inputs: Euler-Bernoulli small deflection, constant `EI > 0`, the stated shear sign. This
+is a finite clamped-free problem, not a periodic model: the clamped-clamped profile
+`1 - cos (2 π x / L)` meets both clamped conditions but violates the free-end moment condition.
+
 ## ii. Key results
 
 - `isFixedFixedSolution_scale`, `exists_isFixedFixedSolution`, `IsFixedFixedSolution.eqOn`.
@@ -48,19 +69,31 @@ operator is `-u''`, not `-(p u')'`.
 - `axialDisplacement_dimension`, `twistAngle_dimension`.
 - `isClassicalSolution_axialDisplacement_scaled`.
 - `fixedFreeDisplacement_not_isFixedFixedSolution`: a traction-free end is not covered.
+- `cantileverDeflection_iteratedDeriv_four`, `cantileverDeflection_zero`,
+  `deriv_cantileverDeflection_zero`, `cantileverDeflection_moment_right`,
+  `cantileverDeflection_shear_right`, `isCantileverSolution_cantileverDeflection`: the
+  cantilever polynomial and its four boundary conditions.
+- `exists_cubic_of_iteratedDeriv_four_eq_zero`, `IsCantileverSolution.eqOn`: the homogeneous
+  cubic and uniqueness on `[0, L]`.
+- `cantileverDeflection_load_zero`, `cosine_profile_fails_moment`: the tip-force term and a
+  periodic profile that is not a cantilever solution.
 
 ## iii. Table of contents
 
 - A. The fixed-fixed problem, scaling, existence and uniqueness
 - B. Uniform axial load and uniform distributed torque
 - C. Boundary example
+- D. Clamped-free cantilever: the polynomial solution
+- E. Clamped-free cantilever: uniqueness
+- F. Clamped-free cantilever: tip-force term and boundary example
 
 ## iv. References
 
 - S. Timoshenko and J. M. Gere, *Mechanics of Materials*, 1972 (axially loaded bars, torsion of
-  circular shafts).
+  circular shafts, cantilever deflections).
 - J. M. Gere and B. J. Goodno, *Mechanics of Materials*, 8th edition, 2013 (statically
-  indeterminate bars and shafts under distributed loads).
+  indeterminate bars and shafts under distributed loads; differential equations of the
+  deflection curve).
 -/
 
 @[expose] public section
@@ -344,6 +377,295 @@ lemma fixedFreeDisplacement_not_isFixedFixedSolution {EA L q : ℝ} (hL : 0 < L)
     rcases mul_eq_zero.mp this with h1 | h1
     · exact hq h1
     · exact hL.ne' (pow_eq_zero_iff two_ne_zero |>.mp h1)
+
+/-! ## D. Clamped-free cantilever: the polynomial solution -/
+
+/-- Cantilever deflection under the uniform load `q` and the tip force `P`:
+`q * x ^ 2 * (6 * L ^ 2 - 4 * L * x + x ^ 2) / (24 * EI) + P * x ^ 2 * (3 * L - x) / (6 * EI)`. -/
+noncomputable def cantileverDeflection (EI L q P x : ℝ) : ℝ :=
+  q * x ^ 2 * (6 * L ^ 2 - 4 * L * x + x ^ 2) / (24 * EI) +
+    P * x ^ 2 * (3 * L - x) / (6 * EI)
+
+/-- The clamped-free cantilever problem: `w` is `C⁴`, satisfies `EI * w'''' = q` on `(0, L)`,
+and meets the clamped conditions at `0` and the free-end moment and shear conditions at `L`. -/
+structure IsCantileverSolution (EI L q P : ℝ) (w : ℝ → ℝ) : Prop where
+  contDiff : ContDiff ℝ 4 w
+  eq : ∀ x ∈ Set.Ioo (0 : ℝ) L, EI * iteratedDeriv 4 w x = q
+  zero_left : w 0 = 0
+  slope_left : deriv w 0 = 0
+  moment_right : EI * iteratedDeriv 2 w L = 0
+  shear_right : -(EI * iteratedDeriv 3 w L) = P
+
+/-- Normal form of the cantilever polynomial in powers of `x`. -/
+private lemma cd_eq (EI L q P : ℝ) : cantileverDeflection EI L q P = fun x =>
+    q / (24 * EI) * x ^ 4 + (-(q * L) / (6 * EI) - P / (6 * EI)) * x ^ 3 +
+      (q * L ^ 2 / (4 * EI) + P * L / (2 * EI)) * x ^ 2 := by
+  funext x
+  unfold cantileverDeflection
+  ring
+
+/-- The cantilever polynomial is `C⁴`. -/
+private lemma cd_contDiff (EI L q P : ℝ) : ContDiff ℝ 4 (cantileverDeflection EI L q P) := by
+  rw [cd_eq]
+  fun_prop
+
+/-- Iterated derivatives of the cantilever polynomial, term by term. -/
+private lemma iteratedDeriv_cd (EI L q P : ℝ) (n : ℕ) (x : ℝ) :
+    iteratedDeriv n (cantileverDeflection EI L q P) x =
+      q / (24 * EI) * iteratedDeriv n (fun x : ℝ => x ^ 4) x +
+      (-(q * L) / (6 * EI) - P / (6 * EI)) * iteratedDeriv n (fun x : ℝ => x ^ 3) x +
+      (q * L ^ 2 / (4 * EI) + P * L / (2 * EI)) * iteratedDeriv n (fun x : ℝ => x ^ 2) x := by
+  rw [cd_eq]
+  have h1 : ContDiffAt ℝ n (fun x : ℝ => q / (24 * EI) * x ^ 4 +
+      (-(q * L) / (6 * EI) - P / (6 * EI)) * x ^ 3) x := by fun_prop
+  have h2 : ContDiffAt ℝ n (fun x : ℝ => (q * L ^ 2 / (4 * EI) + P * L / (2 * EI)) * x ^ 2) x := by
+    fun_prop
+  have h3 : ContDiffAt ℝ n (fun x : ℝ => q / (24 * EI) * x ^ 4) x := by fun_prop
+  have h4 : ContDiffAt ℝ n (fun x : ℝ => (-(q * L) / (6 * EI) - P / (6 * EI)) * x ^ 3) x := by
+    fun_prop
+  rw [iteratedDeriv_fun_add h1 h2, iteratedDeriv_fun_add h3 h4]
+  simp only [iteratedDeriv_const_mul_field]
+
+/-- MVT: zero derivative on `(0, L)` gives a constant on `[0, L]`. -/
+private lemma eq_of_deriv_eq_zero {L : ℝ} {f : ℝ → ℝ} (hf : Differentiable ℝ f)
+    (h : ∀ x ∈ Set.Ioo (0 : ℝ) L, deriv f x = 0) {a x : ℝ} (ha : a ∈ Set.Icc (0 : ℝ) L)
+    (hx : x ∈ Set.Icc (0 : ℝ) L) : f x = f a := by
+  rcases lt_trichotomy a x with hax | rfl | hxa
+  · obtain ⟨c, hc, hcd⟩ := exists_deriv_eq_slope f hax hf.continuous.continuousOn
+      hf.differentiableOn
+    rw [h c ⟨by linarith [ha.1, hc.1], by linarith [hx.2, hc.2]⟩] at hcd
+    have hne : x - a ≠ 0 := by linarith
+    field_simp at hcd
+    linarith
+  · rfl
+  · obtain ⟨c, hc, hcd⟩ := exists_deriv_eq_slope f hxa hf.continuous.continuousOn
+      hf.differentiableOn
+    rw [h c ⟨by linarith [hx.1, hc.1], by linarith [ha.2, hc.2]⟩] at hcd
+    have hne : a - x ≠ 0 := by linarith
+    field_simp at hcd
+    linarith
+
+/-- The polynomial satisfies `EI * w'''' = q` at every point. -/
+lemma cantileverDeflection_iteratedDeriv_four {EI : ℝ} (hEI : EI ≠ 0) (L q P x : ℝ) :
+    EI * iteratedDeriv 4 (cantileverDeflection EI L q P) x = q := by
+  rw [iteratedDeriv_cd]
+  simp [iteratedDeriv_pow]
+  field_simp
+
+/-- Clamped end: zero deflection. -/
+lemma cantileverDeflection_zero (EI L q P : ℝ) : cantileverDeflection EI L q P 0 = 0 := by
+  unfold cantileverDeflection
+  ring
+
+/-- Clamped end: zero slope. -/
+lemma deriv_cantileverDeflection_zero (EI L q P : ℝ) :
+    deriv (cantileverDeflection EI L q P) 0 = 0 := by
+  rw [← iteratedDeriv_one, iteratedDeriv_cd]
+  simp [iteratedDeriv_pow]
+
+/-- Free end: zero bending moment. -/
+lemma cantileverDeflection_moment_right (EI L q P : ℝ) :
+    EI * iteratedDeriv 2 (cantileverDeflection EI L q P) L = 0 := by
+  rw [iteratedDeriv_cd]
+  have e4 : iteratedDeriv 2 (fun x : ℝ => x ^ 4) L = 12 * L ^ 2 := by
+    simp [iteratedDeriv_pow]
+  have e3 : iteratedDeriv 2 (fun x : ℝ => x ^ 3) L = 6 * L := by
+    simp [iteratedDeriv_pow]
+  have e2 : iteratedDeriv 2 (fun x : ℝ => x ^ 2) L = 2 := by
+    simp [iteratedDeriv_pow]
+  rw [e4, e3, e2]
+  ring
+
+/-- Free end: the shear force balances the tip force. -/
+lemma cantileverDeflection_shear_right {EI : ℝ} (hEI : EI ≠ 0) (L q P : ℝ) :
+    -(EI * iteratedDeriv 3 (cantileverDeflection EI L q P) L) = P := by
+  rw [iteratedDeriv_cd]
+  simp [iteratedDeriv_pow]
+  field_simp
+  ring
+
+/-- Existence: the polynomial solves the clamped-free problem. -/
+lemma isCantileverSolution_cantileverDeflection {EI : ℝ} (hEI : 0 < EI) (L q P : ℝ) :
+    IsCantileverSolution EI L q P (cantileverDeflection EI L q P) := by
+  exact ⟨cd_contDiff EI L q P, fun x _ => cantileverDeflection_iteratedDeriv_four hEI.ne' L q P x,
+    cantileverDeflection_zero EI L q P, deriv_cantileverDeflection_zero EI L q P,
+    cantileverDeflection_moment_right EI L q P, cantileverDeflection_shear_right hEI.ne' L q P⟩
+
+/-! ## E. Clamped-free cantilever: uniqueness -/
+
+/-- Homogeneous step: a `C⁴` function with zero fourth derivative on `(0, L)` is a cubic on
+`[0, L]`. -/
+lemma exists_cubic_of_iteratedDeriv_four_eq_zero {L : ℝ} {d : ℝ → ℝ} (hd : ContDiff ℝ 4 d)
+    (h4 : ∀ x ∈ Set.Ioo (0 : ℝ) L, iteratedDeriv 4 d x = 0) :
+    ∃ c₀ c₁ c₂ c₃ : ℝ, ∀ x ∈ Set.Icc (0 : ℝ) L, d x = c₀ + c₁ * x + c₂ * x ^ 2 + c₃ * x ^ 3 := by
+  rcases lt_or_ge L 0 with hL | hL
+  · exact ⟨0, 0, 0, 0, fun x hx => absurd (hx.1.trans hx.2) (not_le.mpr hL)⟩
+  have h0 : (0 : ℝ) ∈ Set.Icc (0 : ℝ) L := ⟨le_rfl, hL⟩
+  have hD : ∀ k : ℕ, k < 4 → Differentiable ℝ (iteratedDeriv k d) := fun k hk =>
+    hd.differentiable_iteratedDeriv k (by exact_mod_cast hk)
+  have hs : ∀ k : ℕ, deriv (iteratedDeriv k d) = iteratedDeriv (k + 1) d := fun k =>
+    (iteratedDeriv_succ).symm
+  set k3 := iteratedDeriv 3 d 0
+  set k2 := iteratedDeriv 2 d 0
+  set k1 := iteratedDeriv 1 d 0
+  have e3 : ∀ x ∈ Set.Icc (0 : ℝ) L, iteratedDeriv 3 d x = k3 := fun x hx =>
+    eq_of_deriv_eq_zero (hD 3 (by norm_num)) (fun y hy => by rw [hs 3]; exact h4 y hy) h0 hx
+  have e2 : ∀ x ∈ Set.Icc (0 : ℝ) L, iteratedDeriv 2 d x = k2 + k3 * x := by
+    intro x hx
+    have hg : Differentiable ℝ (fun y : ℝ => k3 * y) := by fun_prop
+    have := eq_of_deriv_eq_zero (f := fun y => iteratedDeriv 2 d y - k3 * y)
+      ((hD 2 (by norm_num)).sub hg) (fun y hy => by
+        have hgd : HasDerivAt (fun y : ℝ => k3 * y) k3 y := by
+          simpa using (hasDerivAt_id' y).const_mul k3
+        rw [deriv_fun_sub ((hD 2 (by norm_num)) y) (hg y), hgd.deriv, congrFun (hs 2) y,
+          e3 y (Set.Ioo_subset_Icc_self hy)]
+        ring) h0 hx
+    simp only [mul_zero, sub_zero] at this
+    linarith
+  have e1 : ∀ x ∈ Set.Icc (0 : ℝ) L, iteratedDeriv 1 d x = k1 + k2 * x + k3 / 2 * x ^ 2 := by
+    intro x hx
+    have hg : Differentiable ℝ (fun y : ℝ => k2 * y + k3 / 2 * y ^ 2) := by fun_prop
+    have := eq_of_deriv_eq_zero (f := fun y => iteratedDeriv 1 d y - (k2 * y + k3 / 2 * y ^ 2))
+      ((hD 1 (by norm_num)).sub hg) (fun y hy => by
+        have hgd : HasDerivAt (fun y : ℝ => k2 * y + k3 / 2 * y ^ 2) (k2 + k3 * y) y := by
+          have := ((hasDerivAt_id' y).const_mul k2).add ((hasDerivAt_pow 2 y).const_mul (k3 / 2))
+          convert this using 1
+          ring
+        rw [deriv_fun_sub ((hD 1 (by norm_num)) y) (hg y), hgd.deriv, congrFun (hs 1) y,
+          e2 y (Set.Ioo_subset_Icc_self hy)]
+        ring) h0 hx
+    simp only [mul_zero, zero_add, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
+      sub_zero] at this
+    linarith
+  refine ⟨d 0, k1, k2 / 2, k3 / 6, fun x hx => ?_⟩
+  have hg : Differentiable ℝ (fun y : ℝ => k1 * y + k2 / 2 * y ^ 2 + k3 / 6 * y ^ 3) := by
+    fun_prop
+  have hd0 : Differentiable ℝ d := by simpa using hD 0 (by norm_num)
+  have := eq_of_deriv_eq_zero (f := fun y => d y - (k1 * y + k2 / 2 * y ^ 2 + k3 / 6 * y ^ 3))
+    (hd0.sub hg) (fun y hy => by
+      have hgd : HasDerivAt (fun y : ℝ => k1 * y + k2 / 2 * y ^ 2 + k3 / 6 * y ^ 3)
+          (k1 + k2 * y + k3 / 2 * y ^ 2) y := by
+        have := (((hasDerivAt_id' y).const_mul k1).add
+          ((hasDerivAt_pow 2 y).const_mul (k2 / 2))).add
+          ((hasDerivAt_pow 3 y).const_mul (k3 / 6))
+        convert this using 1
+        ring
+      rw [deriv_fun_sub (hd0 y) (hg y), hgd.deriv, ← iteratedDeriv_one,
+        e1 y (Set.Ioo_subset_Icc_self hy)]
+      ring) h0 hx
+  simp only [mul_zero, zero_add, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
+    sub_zero] at this
+  linarith
+
+/-- Uniqueness: every solution of the clamped-free problem agrees with the polynomial on
+`[0, L]`. -/
+lemma IsCantileverSolution.eqOn {EI L q P : ℝ} {w : ℝ → ℝ} (hEI : 0 < EI)
+    (hw : IsCantileverSolution EI L q P w) :
+    Set.EqOn w (cantileverDeflection EI L q P) (Set.Icc 0 L) := by
+  intro x hx
+  set d := fun y => w y - cantileverDeflection EI L q P y with hd_def
+  have hdc : ContDiff ℝ 4 d := hw.contDiff.sub (cd_contDiff EI L q P)
+  have hsub : ∀ (k : ℕ) (y : ℝ), k ≤ 4 → iteratedDeriv k d y =
+      iteratedDeriv k w y - iteratedDeriv k (cantileverDeflection EI L q P) y := by
+    intro k y hk
+    have h1 : ContDiffAt ℝ k w y := (hw.contDiff.of_le (by exact_mod_cast hk)).contDiffAt
+    have h2 : ContDiffAt ℝ k (cantileverDeflection EI L q P) y :=
+      ((cd_contDiff EI L q P).of_le (by exact_mod_cast hk)).contDiffAt
+    exact iteratedDeriv_fun_sub h1 h2
+  have h4 : ∀ y ∈ Set.Ioo (0 : ℝ) L, iteratedDeriv 4 d y = 0 := by
+    intro y hy
+    rw [hsub 4 y le_rfl]
+    have e1 := hw.eq y hy
+    have e2 := cantileverDeflection_iteratedDeriv_four hEI.ne' L q P y
+    have : EI * (iteratedDeriv 4 w y - iteratedDeriv 4 (cantileverDeflection EI L q P) y) = 0 := by
+      rw [mul_sub, e1, e2, sub_self]
+    exact (mul_eq_zero.mp this).resolve_left hEI.ne'
+  obtain ⟨c₀, c₁, c₂, c₃, hc⟩ := exists_cubic_of_iteratedDeriv_four_eq_zero hdc h4
+  have hL : 0 ≤ L := hx.1.trans hx.2
+  have h0 : (0 : ℝ) ∈ Set.Icc (0 : ℝ) L := ⟨le_rfl, hL⟩
+  have hLm : L ∈ Set.Icc (0 : ℝ) L := ⟨hL, le_rfl⟩
+  have hD : ∀ k : ℕ, k < 4 → Differentiable ℝ (iteratedDeriv k d) := fun k hk =>
+    hdc.differentiable_iteratedDeriv k (by exact_mod_cast hk)
+  have hs : ∀ k : ℕ, deriv (iteratedDeriv k d) = iteratedDeriv (k + 1) d := fun k =>
+    (iteratedDeriv_succ).symm
+  -- third derivative: constant on [0, L], zero at L by the shear traces
+  have t3 : iteratedDeriv 3 d L = 0 := by
+    rw [hsub 3 L (by norm_num)]
+    have e1 := hw.shear_right
+    have e2 := cantileverDeflection_shear_right hEI.ne' L q P
+    have : EI * (iteratedDeriv 3 w L - iteratedDeriv 3 (cantileverDeflection EI L q P) L) = 0 := by
+      linarith [mul_sub EI (iteratedDeriv 3 w L)
+        (iteratedDeriv 3 (cantileverDeflection EI L q P) L)]
+    exact (mul_eq_zero.mp this).resolve_left hEI.ne'
+  have z3 : ∀ y ∈ Set.Icc (0 : ℝ) L, iteratedDeriv 3 d y = 0 := fun y hy => by
+    rw [eq_of_deriv_eq_zero (hD 3 (by norm_num)) (fun z hz => by rw [hs 3]; exact h4 z hz) hLm hy,
+      t3]
+  have t2 : iteratedDeriv 2 d L = 0 := by
+    rw [hsub 2 L (by norm_num)]
+    have e1 := hw.moment_right
+    have e2 := cantileverDeflection_moment_right EI L q P
+    have : EI * (iteratedDeriv 2 w L - iteratedDeriv 2 (cantileverDeflection EI L q P) L) = 0 := by
+      rw [mul_sub, e1, e2, sub_self]
+    exact (mul_eq_zero.mp this).resolve_left hEI.ne'
+  have z2 : ∀ y ∈ Set.Icc (0 : ℝ) L, iteratedDeriv 2 d y = 0 := fun y hy => by
+    rw [eq_of_deriv_eq_zero (hD 2 (by norm_num))
+      (fun z hz => by rw [hs 2]; exact z3 z (Set.Ioo_subset_Icc_self hz)) hLm hy, t2]
+  have t1 : iteratedDeriv 1 d 0 = 0 := by
+    rw [hsub 1 0 (by norm_num), iteratedDeriv_one, iteratedDeriv_one, hw.slope_left,
+      deriv_cantileverDeflection_zero, sub_self]
+  have z1 : ∀ y ∈ Set.Icc (0 : ℝ) L, iteratedDeriv 1 d y = 0 := fun y hy => by
+    rw [eq_of_deriv_eq_zero (hD 1 (by norm_num))
+      (fun z hz => by rw [hs 1]; exact z2 z (Set.Ioo_subset_Icc_self hz)) h0 hy, t1]
+  have hd0 : Differentiable ℝ d := by simpa using hD 0 (by norm_num)
+  have z0 := eq_of_deriv_eq_zero hd0
+    (fun z hz => by rw [← iteratedDeriv_one]; exact z1 z (Set.Ioo_subset_Icc_self hz)) h0 hx
+  have hd00 : d 0 = 0 := by
+    simp only [hd_def, hw.zero_left, cantileverDeflection_zero, sub_self]
+  have : d x = 0 := z0.trans hd00
+  simp only [hd_def] at this
+  linarith
+
+/-! ## F. Clamped-free cantilever: tip-force term and boundary example -/
+
+/-- With no distributed load the deflection is the tip-force term
+`P * x ^ 2 * (3 * L - x) / (6 * EI)`. -/
+lemma cantileverDeflection_load_zero (EI L P x : ℝ) :
+    cantileverDeflection EI L 0 P x = P * x ^ 2 * (3 * L - x) / (6 * EI) := by
+  unfold cantileverDeflection
+  ring
+
+/-- The clamped-clamped profile `1 - cos (2 π x / L)` meets both clamped conditions at `0`,
+but its free-end moment `EI * w'' L` is not zero, so it is not a cantilever solution. -/
+lemma cosine_profile_fails_moment {EI L : ℝ} (hEI : 0 < EI) (hL : 0 < L) :
+    (fun x : ℝ => 1 - Real.cos (2 * Real.pi * x / L)) 0 = 0 ∧
+      deriv (fun x : ℝ => 1 - Real.cos (2 * Real.pi * x / L)) 0 = 0 ∧
+      EI * iteratedDeriv 2 (fun x : ℝ => 1 - Real.cos (2 * Real.pi * x / L)) L ≠ 0 := by
+  have hL' : L ≠ 0 := hL.ne'
+  set c : ℝ := 2 * Real.pi / L with hc
+  have hfun :
+      (fun x : ℝ => 1 - Real.cos (2 * Real.pi * x / L)) = fun x => 1 - Real.cos (c * x) := by
+    funext x
+    rw [hc]
+    ring_nf
+  have hd1 : ∀ x, HasDerivAt (fun x : ℝ => 1 - Real.cos (c * x)) (c * Real.sin (c * x)) x := by
+    intro x
+    have h := ((hasDerivAt_id' x).const_mul c).cos.const_sub 1
+    convert h using 1
+    ring
+  have hderiv : deriv (fun x : ℝ => 1 - Real.cos (c * x)) = fun x => c * Real.sin (c * x) :=
+    funext fun x => (hd1 x).deriv
+  have hd2 : ∀ x, HasDerivAt (fun x : ℝ => c * Real.sin (c * x)) (c * c * Real.cos (c * x)) x := by
+    intro x
+    have h := (((hasDerivAt_id' x).const_mul c).sin).const_mul c
+    convert h using 1
+    ring
+  rw [hfun]
+  refine ⟨by simp, by rw [hderiv]; simp, ?_⟩
+  rw [iteratedDeriv_succ, iteratedDeriv_one, hderiv, (hd2 L).deriv]
+  have hcL : c * L = 2 * Real.pi := by rw [hc]; field_simp
+  rw [hcL, Real.cos_two_pi, mul_one]
+  have hc0 : c ≠ 0 := by rw [hc]; exact div_ne_zero (by positivity) hL'
+  exact mul_ne_zero hEI.ne' (mul_ne_zero hc0 hc0)
 
 end Elasticity.PrismaticMembers
 
