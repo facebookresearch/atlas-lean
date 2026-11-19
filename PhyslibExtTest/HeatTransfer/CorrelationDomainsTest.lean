@@ -8,15 +8,17 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.HeatTransfer.CorrelationDomains
+import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Positivity
 
 /-!
 # Range-guarded correlation checks
 
 Concrete consumer of `PhyslibExt.HeatTransfer.CorrelationDomains`: the
 Dittus-Boelter correlation, one record per thermal direction, for
-fully developed flow in a smooth circular tube at small to moderate
-temperature differences, with its published domain `Re ≥ 10000`,
+hydrodynamically and thermally fully developed flow in a smooth
+circular tube at small to moderate temperature differences, with its published domain `Re ≥ 10000`,
 `0.7 ≤ Pr ≤ 160`, `L / D ≥ 10`, the local tag, properties at the mean
 temperature and the exponent `2/5` for heating or `3/10` for cooling.
 A heated tube flow with `Re = 100000`, `Pr = 1`, `L / D = 20` and
@@ -25,12 +27,17 @@ A heated tube flow with `Re = 100000`, `Pr = 1`, `L / D = 20` and
 `A = 1 / 10` the heat rate `2760`; the same flow cooled with `ΔT = -10`
 uses the cooling record and gives `-2760`. At `Pr = 32` the exponent
 selected by the thermal direction changes the value. A cooled flow
-for the heating record, a flat plate in parallel flow, a developing
-flow and a large-property-variation flow with otherwise identical
-data, a short duct, values outside the domain (including `Pr = 161`),
-`ΔT = 0`, film-temperature properties and a surface-averaged request
-are rejected; the bounds are inclusive, so `Pr = 160` and the corner
-`Re = 10000`, `Pr = 0.7`, `L / D = 10` are accepted.
+for the heating record, a flat plate in parallel flow, a
+hydrodynamically or a thermally developing flow and a
+large-property-variation flow with otherwise identical data, a short
+duct, values outside the domain (including `Pr = 161`), `ΔT = 0`,
+film-temperature properties and a surface-averaged request are
+rejected; the bounds are inclusive, so `Pr = 160` and the corner
+`Re = 10000`, `Pr = 0.7`, `L / D = 10` are accepted. A guard probe
+recorded for a thermal entry length separates the two opposite
+one-sided development regimes, and the Sieder-Tate correlation for
+large property variation gives different values for two requests that
+differ only in the viscosity ratio `μ_m / μ_s`.
 
 ## i. Overview
 
@@ -39,7 +46,8 @@ These are elaboration and non-vacuity checks, not new results.
 ## ii. Key results
 
 No new results are introduced here. Section A defines the
-Dittus-Boelter records and the heated request it checks.
+Dittus-Boelter and Sieder-Tate records, the guard probe and the heated
+request it checks.
 
 ## iii. Table of contents
 
@@ -69,22 +77,23 @@ noncomputable def dittusBoelterExponent : ThermalMode → ℝ
 
 /-- The Dittus-Boelter correlation for the thermal direction `m`:
 `Nu = 0.023 Re ^ (4/5) Pr ^ n` with `n = dittusBoelterExponent m`, the local value for fully
-developed turbulent flow in a smooth circular tube at small to moderate temperature differences,
-properties at the mean (bulk) temperature, and the published domain `Re ≥ 10000`,
-`0.7 ≤ Pr ≤ 160`, `L / D ≥ 10`, with the request's temperature difference in the direction
-`m`. -/
+developed turbulent flow (hydrodynamically and thermally) in a smooth circular tube at small to
+moderate temperature differences, properties at the mean (bulk) temperature, and the published
+domain `Re ≥ 10000`, `0.7 ≤ Pr ≤ 160`, `L / D ≥ 10`, with the request's temperature difference
+in the direction `m`. -/
 noncomputable def dittusBoelter (m : ThermalMode) : NusseltCorrelation :=
   powerLawCorrelation (23 / 1000) (4 / 5) (dittusBoelterExponent m)
     "Dittus-Boelter, in Incropera et al., Fundamentals of Heat and Mass Transfer"
     FlowConfiguration.smoothCircularTube FlowDevelopment.fullyDeveloped
-    PropertyVariation.smallToModerate AveragingTag.localValue PropertyTemperature.bulkMean
+    FlowDevelopment.fullyDeveloped PropertyVariation.smallToModerate AveragingTag.localValue
+    PropertyTemperature.bulkMean
     {s | 10000 ≤ s.reynolds ∧ 7 / 10 ≤ s.prandtl ∧ s.prandtl ≤ 160 ∧ 10 ≤ s.lengthRatio ∧
       m.Holds s.temperatureDifference.val}
     (fun s hs => ⟨by linarith [hs.1], by linarith [hs.2.1]⟩)
     (by
       cases m
-      · exact ⟨⟨10000, 1, 10, ⟨1⟩⟩, by norm_num [ThermalMode.Holds]⟩
-      · exact ⟨⟨10000, 1, 10, ⟨-1⟩⟩, by norm_num [ThermalMode.Holds]⟩)
+      · exact ⟨⟨10000, 1, 10, ⟨1⟩, 1⟩, by norm_num [ThermalMode.Holds]⟩
+      · exact ⟨⟨10000, 1, 10, ⟨-1⟩, 1⟩, by norm_num [ThermalMode.Holds]⟩)
 
 /-- Where a Dittus-Boelter record applies, it evaluates to `0.023 Re ^ (4/5) Pr ^ n`. -/
 lemma dittusBoelter_nusselt {m : ThermalMode} {r : CorrelationRequest}
@@ -95,14 +104,17 @@ lemma dittusBoelter_nusselt {m : ThermalMode} {r : CorrelationRequest}
 
 /-- A heated, fully developed flow in a smooth circular tube: `Re = 100000`, `Pr = 1`,
 `L / D = 20`, the surface `10` K above the mean fluid temperature (a small temperature
-difference), a local value requested, properties at the mean temperature. -/
+difference, so the viscosity ratio is `μ_m / μ_s = 1`), a local value requested, properties at the
+mean temperature. -/
 def heatingRequest : CorrelationRequest where
   reynolds := 100000
   prandtl := 1
   lengthRatio := 20
   temperatureDifference := ⟨10⟩
+  viscosityRatio := 1
   configuration := FlowConfiguration.smoothCircularTube
-  development := FlowDevelopment.fullyDeveloped
+  hydrodynamicDevelopment := FlowDevelopment.fullyDeveloped
+  thermalDevelopment := FlowDevelopment.fullyDeveloped
   propertyVariation := PropertyVariation.smallToModerate
   averaging := AveragingTag.localValue
   propertyTemperature := PropertyTemperature.bulkMean
@@ -207,7 +219,9 @@ example :
       (∀ m, ¬ (dittusBoelter m).Applies
         { heatingRequest with configuration := FlowConfiguration.flatPlateParallelFlow }) ∧
       (∀ m, ¬ (dittusBoelter m).Applies
-        { heatingRequest with development := FlowDevelopment.developing }) ∧
+        { heatingRequest with hydrodynamicDevelopment := FlowDevelopment.developing }) ∧
+      (∀ m, ¬ (dittusBoelter m).Applies
+        { heatingRequest with thermalDevelopment := FlowDevelopment.developing }) ∧
       (∀ m, ¬ (dittusBoelter m).Applies
         { heatingRequest with propertyVariation := PropertyVariation.large }) ∧
       (∀ m, ¬ (dittusBoelter m).Applies { heatingRequest with lengthRatio := 5 }) ∧
@@ -221,21 +235,95 @@ example :
       (∀ m, ¬ (dittusBoelter m).Applies
         { heatingRequest with averaging := AveragingTag.surfaceAverage }) := by
   refine ⟨?_, fun m => ?_, fun m => ?_, fun m => ?_, fun m => ?_, fun m => ?_, fun m => ?_,
-    fun m => ?_, fun m => ?_, fun m => ?_, fun m => ?_, fun m => ?_⟩ <;>
+    fun m => ?_, fun m => ?_, fun m => ?_, fun m => ?_, fun m => ?_, fun m => ?_⟩ <;>
     (try cases m) <;>
     simp only [dittusBoelter, powerLawCorrelation, NusseltCorrelation.Applies, heatingRequest,
       Set.mem_ofPred_eq, ThermalMode.Holds] <;>
     norm_num
 
-/-- The flow-development guard separates two requests with identical numbers: the fully developed
-heated flow is a valid request for the heating record, and the same flow in the entrance region
-is not. -/
+/-- A guard probe, not a published correlation: `Nu = 1` on positive `Re` and `Pr`, recorded as
+calibrated for a smooth circular tube with a hydrodynamically fully developed, thermally developing
+flow (a thermal entry length). It only tests that the two development fields are guarded
+separately. -/
+noncomputable def thermalEntryProbe : NusseltCorrelation :=
+  powerLawCorrelation 1 0 0 "guard probe, not a published correlation"
+    FlowConfiguration.smoothCircularTube FlowDevelopment.fullyDeveloped FlowDevelopment.developing
+    PropertyVariation.smallToModerate AveragingTag.localValue PropertyTemperature.bulkMean
+    {s | 0 < s.reynolds ∧ 0 < s.prandtl} (fun _ hs => hs) ⟨⟨1, 1, 1, ⟨1⟩, 1⟩, by norm_num⟩
+
+/-- The hydrodynamic and the thermal development are guarded separately. The heating record
+accepts the fully developed flow and rejects both one-sided entrance regions with otherwise
+identical numbers; a record for hydrodynamically developed, thermally developing flow accepts that
+regime and rejects the opposite one, hydrodynamically developing and thermally developed. -/
 example :
     (dittusBoelter .heating).Applies heatingRequest ∧
       ¬ (dittusBoelter .heating).Applies
-        { heatingRequest with development := FlowDevelopment.developing } := by
-  refine ⟨dittusBoelter_applies_heating, fun h => ?_⟩
-  exact absurd h.2.1 (by simp [dittusBoelter, powerLawCorrelation])
+        { heatingRequest with hydrodynamicDevelopment := FlowDevelopment.developing } ∧
+      ¬ (dittusBoelter .heating).Applies
+        { heatingRequest with thermalDevelopment := FlowDevelopment.developing } ∧
+      thermalEntryProbe.Applies
+        { heatingRequest with thermalDevelopment := FlowDevelopment.developing } ∧
+      ¬ thermalEntryProbe.Applies
+        { heatingRequest with hydrodynamicDevelopment := FlowDevelopment.developing } := by
+  refine ⟨dittusBoelter_applies_heating, fun h => ?_, fun h => ?_, ?_, fun h => ?_⟩
+  · exact absurd h.2.1 (by simp [dittusBoelter, powerLawCorrelation])
+  · exact absurd h.2.2.1 (by simp [dittusBoelter, powerLawCorrelation])
+  · simp only [thermalEntryProbe, powerLawCorrelation, NusseltCorrelation.Applies, heatingRequest,
+      Set.mem_ofPred_eq]
+    norm_num
+  · exact absurd h.2.1 (by simp [thermalEntryProbe, powerLawCorrelation])
+
+/-- The Sieder-Tate correlation for large property variation,
+`Nu = 0.027 Re ^ (4/5) Pr ^ (1/3) (μ_m / μ_s) ^ 0.14`: the local value for hydrodynamically and
+thermally fully developed turbulent flow in a smooth circular tube, properties at the mean
+temperature except the surface viscosity in `μ_m / μ_s`, and the published domain `Re ≥ 10000`,
+`0.7 ≤ Pr ≤ 16700`, `L / D ≥ 10`. -/
+noncomputable def siederTate : NusseltCorrelation where
+  citation := "Sieder-Tate, in Incropera et al., Fundamentals of Heat and Mass Transfer"
+  configuration := FlowConfiguration.smoothCircularTube
+  hydrodynamicDevelopment := FlowDevelopment.fullyDeveloped
+  thermalDevelopment := FlowDevelopment.fullyDeveloped
+  propertyVariation := PropertyVariation.large
+  averaging := AveragingTag.localValue
+  propertyTemperature := PropertyTemperature.bulkMean
+  validity := {s | 10000 ≤ s.reynolds ∧ 7 / 10 ≤ s.prandtl ∧ s.prandtl ≤ 16700 ∧
+    10 ≤ s.lengthRatio ∧ 0 < s.viscosityRatio}
+  validity_pos _ hs := ⟨by linarith [hs.1], by linarith [hs.2.1]⟩
+  validity_nonempty := ⟨⟨10000, 1, 10, ⟨1⟩, 1⟩, by norm_num⟩
+  formula s _ := 27 / 1000 * s.reynolds ^ (4 / 5 : ℝ) * s.prandtl ^ (1 / 3 : ℝ) *
+    s.viscosityRatio ^ (7 / 50 : ℝ)
+
+/-- The viscosity ratio reaches the formula: two large-property-variation requests with identical
+`Re`, `Pr`, `L / D` and `ΔT` but viscosity ratios `1` and `2` are both valid for the Sieder-Tate
+record and give different Nusselt numbers, the larger at the ratio `2`; the Dittus-Boelter record,
+calibrated for small to moderate property variation, does not apply to them. -/
+example :
+    ∃ (h1 : siederTate.Applies { heatingRequest with propertyVariation := PropertyVariation.large })
+      (h2 : siederTate.Applies
+        { heatingRequest with propertyVariation := PropertyVariation.large, viscosityRatio := 2 }),
+      siederTate.nusselt _ h1 < siederTate.nusselt _ h2 ∧
+        ∀ m, ¬ (dittusBoelter m).Applies
+          { heatingRequest with
+            propertyVariation := PropertyVariation.large, viscosityRatio := 2 } := by
+  have h1 : siederTate.Applies
+      { heatingRequest with propertyVariation := PropertyVariation.large } := by
+    simp only [siederTate, NusseltCorrelation.Applies, heatingRequest, Set.mem_ofPred_eq]
+    norm_num
+  have h2 : siederTate.Applies
+      { heatingRequest with
+        propertyVariation := PropertyVariation.large, viscosityRatio := 2 } := by
+    simp only [siederTate, NusseltCorrelation.Applies, heatingRequest, Set.mem_ofPred_eq]
+    norm_num
+  refine ⟨h1, h2, ?_, fun m h => ?_⟩
+  · change 27 / 1000 * (100000 : ℝ) ^ (4 / 5 : ℝ) * (1 : ℝ) ^ (1 / 3 : ℝ) * (1 : ℝ) ^ (7 / 50 : ℝ) <
+      27 / 1000 * (100000 : ℝ) ^ (4 / 5 : ℝ) * (1 : ℝ) ^ (1 / 3 : ℝ) * (2 : ℝ) ^ (7 / 50 : ℝ)
+    have hpos : 0 < 27 / 1000 * (100000 : ℝ) ^ (4 / 5 : ℝ) * (1 : ℝ) ^ (1 / 3 : ℝ) := by
+      positivity
+    have hlt : (1 : ℝ) ^ (7 / 50 : ℝ) < (2 : ℝ) ^ (7 / 50 : ℝ) := by
+      rw [Real.one_rpow]
+      exact Real.one_lt_rpow (by norm_num) (by norm_num)
+    exact mul_lt_mul_of_pos_left hlt hpos
+  · cases m <;> exact absurd h.2.2.2.1 (by simp [dittusBoelter, powerLawCorrelation])
 
 /-- The published bounds are inclusive: the heated flow at the upper Prandtl endpoint `Pr = 160`
 and at the lower corner `Re = 10000`, `Pr = 7 / 10`, `L / D = 10` is a valid request. -/
