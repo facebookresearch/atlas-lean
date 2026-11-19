@@ -28,23 +28,25 @@ collision-free state (`r > 0`) the vis-viva identity `|v|² = μ (2 / r - 1 / a)
 
 A state at circular speed has `|v|² = μ / r`; it has `E = -μ / (2 r)` and `a = r` whatever the
 direction of `v`. A circular state also has its velocity transverse to its position,
-`x ⬝ᵥ v = 0`, and then its angular momentum satisfies `|x ⨯₃ v|² = μ r`; a radial state at
-circular speed has `x ⨯₃ v = 0`.
+`x ⬝ᵥ v = 0`, and then its specific angular momentum satisfies `|x ⨯₃ v|² = μ r`; a radial
+state at circular speed has `x ⨯₃ v = 0`.
 
 The Euclidean squares are dot products, `|v|² = v ⬝ᵥ v`: the default norm on `Fin 3 → ℝ` is the
-sup norm and is not used. Angular momentum is the cross product `x ⨯₃ v`.
+sup norm and is not used. The specific angular momentum, the angular momentum per unit reduced
+mass, is the cross product `x ⨯₃ v`.
 
 A tangential impulse of signed magnitude `Δv` changes the velocity along the flight direction,
 `v' = v + (Δv / |v|) • v`, at the fixed position: the squared speed becomes `(|v| + Δv)²`, the
-angular momentum is multiplied by `1 + Δv / |v|`, and vis-viva applied to the new state gives
-the new semi-major axis. The angular momentum identity alone gives no orbital plane: there is
-none when `x ⨯₃ v = 0`, and none after an impulse with `Δv = -|v|`, which brings the body to
-rest.
+specific angular momentum is multiplied by `1 + Δv / |v|`, and vis-viva applied to the new
+state gives the new semi-major axis. The specific angular momentum identity alone gives no
+orbital plane: there is none when `x ⨯₃ v = 0`, and none after an impulse with `Δv = -|v|`,
+which brings the body to rest.
 
 These are identities about one fixed state, not about a trajectory. No solution of the
 two-body equation is constructed, no elliptic trajectory is asserted (a state with `E < 0` and
-zero angular momentum is radial), and no transfer cost or two-impulse optimality is claimed. At
-`E = 0` the formula `-μ / (2 E)` returns Lean's junk value `0`, not a finite semi-major axis.
+zero specific angular momentum is radial), and no transfer cost or two-impulse optimality is
+claimed. At `E = 0` the formula `-μ / (2 E)` returns Lean's junk value `0`, not a finite
+semi-major axis.
 Each result assumes only the hypotheses its proof uses.
 
 ## ii. Key results
@@ -144,8 +146,8 @@ lemma semiMajorAxis_of_circularSpeed {μ : ℝ} {x v : Fin 3 → ℝ} (hμ : 0 <
   field_simp
 
 /-- A circular state: circular speed `|v|² = μ / r` and a velocity transverse to the position,
-`x ⬝ᵥ v = 0`, with `μ, r > 0`. It has `E = -μ / (2 r)`, `a = r` and the circular angular
-momentum `|x ⨯₃ v|² = μ r`. -/
+`x ⬝ᵥ v = 0`, with `μ, r > 0`. It has `E = -μ / (2 r)`, `a = r` and the circular specific
+angular momentum `|x ⨯₃ v|² = μ r`. -/
 lemma semiMajorAxis_of_circular {μ : ℝ} {x v : Fin 3 → ℝ} (hμ : 0 < μ) (hr : 0 < radius x)
     (hv : speedSq v = μ / radius x) (hperp : x ⬝ᵥ v = 0) :
     specificEnergy μ x v = -μ / (2 * radius x) ∧ semiMajorAxis μ x v = radius x ∧
@@ -198,11 +200,11 @@ lemma speedSq_tangentialImpulse {v : Fin 3 → ℝ} (hv : v ≠ 0) (Δv : ℝ) :
   field_simp
   linear_combination (-(Real.sqrt (v ⬝ᵥ v) + Δv) ^ 2) * hsq
 
-/-- A tangential impulse multiplies the angular momentum `x ⨯₃ v` by `1 + Δv / |v|`. The identity
-holds for all `x`, `v` and `Δv` and by itself gives no orbital plane: there is none when
-`x ⨯₃ v = 0` (a radial state, or `v = 0`) or when the factor vanishes (`Δv = -|v|` brings the
-body to rest). When both are nonzero, the new angular momentum is a nonzero multiple of the
-old one. -/
+/-- A tangential impulse multiplies the specific angular momentum `x ⨯₃ v` by `1 + Δv / |v|`.
+The identity holds for all `x`, `v` and `Δv` and by itself gives no orbital plane: there is none
+when `x ⨯₃ v = 0` (a radial state, or `v = 0`) or when the factor vanishes (`Δv = -|v|` brings
+the body to rest). When both are nonzero, the new specific angular momentum is a nonzero
+multiple of the old one. -/
 lemma cross_tangentialImpulse (x v : Fin 3 → ℝ) (Δv : ℝ) :
     x ⨯₃ tangentialImpulse v Δv = (1 + Δv / Real.sqrt (speedSq v)) • (x ⨯₃ v) := by
   unfold tangentialImpulse
