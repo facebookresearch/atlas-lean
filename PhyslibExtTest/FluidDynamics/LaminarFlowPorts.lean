@@ -19,7 +19,9 @@ Checked consumers:
   arbitrary origin;
 - the end-to-end Bernoulli head constancy along the unit circle of
   the rotating fixture, assembling the fixture's Euler and
-  body-force-potential lemmas with the streamline theorem;
+  body-force-potential lemmas with the streamline theorem, and the
+  corresponding constancy of Physlib's Bernoulli function for the
+  thermodynamic fixture with enthalpy `p / ρ + e₀`;
 - the head differing across streamlines, and the polytropic enthalpy
   not being of the form `p / ρ + e₀`.
 -/
@@ -76,6 +78,39 @@ example {ρ Ω g : ℝ} (hρ : 0 < ρ) (t₀ : Time) :
     (rotFlow_euler ρ Ω g) (rotFlow_bodyForcePotential ρ Ω g) t₀ (circle 1 Ω 0)
     isOpen_univ isPreconnected_univ (circle_isMIntegralCurveOn 1 Ω 0)
     (fun t _ => hpd _) (fun t _ => hgd _) trivial trivial
+
+/-- The rotating fixture as a thermodynamic flow with enthalpy
+`p / ρ + e₀` (constant specific internal energy `e₀`). -/
+noncomputable def thermoRotFlow (ρ Ω g e₀ : ℝ) : _root_.FluidDynamics.ThermodynamicCauchyFlow 3 :=
+  { rotFlow ρ Ω g with
+    entropy := fun _ _ => 0
+    enthalpy := fun _ x => rotPressure ρ Ω g x / ρ + e₀ }
+
+/-- End-to-end: Physlib's Bernoulli function is constant along the
+unit circle of the thermodynamic rotating fixture, assembled from
+the fixture's Euler and body-force-potential lemmas. -/
+example {ρ Ω g e₀ : ℝ} (hρ : 0 < ρ) (t₀ : Time) :
+    _root_.FluidDynamics.bernoulliFunction 3 (thermoRotFlow ρ Ω g e₀) (gravPotential g) t₀ (circle 1 Ω 0 0) =
+      _root_.FluidDynamics.bernoulliFunction 3 (thermoRotFlow ρ Ω g e₀) (gravPotential g) t₀ (circle 1 Ω 0 1) := by
+  have hvel : Differentiable ℝ (rotVelocity Ω) := by
+    refine differentiable_euclidean.mpr fun i => ?_
+    unfold rotVelocity
+    fin_cases i <;>
+      simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue, neg_mul,
+        Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, differentiable_fun_neg_iff,
+        differentiable_const] <;>
+      fun_prop
+  have hpd : Differentiable ℝ (rotPressure ρ Ω g) := by
+    unfold rotPressure
+    fun_prop
+  have hgd : Differentiable ℝ (gravPotential g) := by
+    unfold gravPotential
+    fun_prop
+  exact bernoulliFunction_along_streamline (thermoRotFlow ρ Ω g e₀)
+    (fun _ => rotPressure ρ Ω g) (gravPotential g) ρ hρ (fun _ _ => rfl) (fun _ _ _ => rfl)
+    (fun _ => hvel) (rotFlow_euler ρ Ω g) (rotFlow_bodyForcePotential ρ Ω g) t₀ e₀
+    (fun _ => rfl) (circle 1 Ω 0) isOpen_univ isPreconnected_univ
+    (circle_isMIntegralCurveOn 1 Ω 0) (fun t _ => hpd _) (fun t _ => hgd _) trivial trivial
 
 -- The head differs across streamlines (unit circle vs radius two),
 -- and a polytropic enthalpy is not of the form `p / ρ + e₀`.

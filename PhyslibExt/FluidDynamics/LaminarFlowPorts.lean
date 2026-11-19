@@ -31,9 +31,10 @@ A point `o : Space` is fixed as origin. The affine coordinate identification is 
 `v ↦ v +ᵥ o : EuclideanSpace ℝ (Fin 3) → Space` with inverse `p ↦ p -ᵥ o`. Physlib's own `∇`,
 `Space.deriv`, Euler predicate and Bernoulli function are used as they are; this file adds no
 instance and no new space or rotation type. Physlib's spatial derivatives are defined through the
-normed-space instance Physlib registers on `Space d` (`Physlib.SpaceAndTime.Space.Module`); nothing
-here restates or depends on that point carrier being a vector space beyond those existing
-definitions.
+normed-space instance Physlib registers on `Space d` (`Physlib.SpaceAndTime.Space.Module`), and
+the proofs use that registered module structure (including its addition on `Space`) exactly where
+Physlib's own derivative definitions do; no statement writes addition of points, and nothing here
+asserts that the point carrier is a vector space beyond Physlib's existing instance.
 
 Part A transports derivatives, gradients and integral curves through the chart. Part B discharges
 the projected Euler premise of `EarthScience.bernoulli_along_streamline` from Physlib's `Euler`
@@ -465,8 +466,13 @@ noncomputable def polytropicFlow (ρ Ω g : ℝ) : ThermodynamicCauchyFlow 3 :=
     entropy := fun _ _ => 0
     enthalpy := fun _ x => (7 / 2 : ℝ) * rotPressure ρ Ω g x / ρ }
 
-/-- Invalid example: a compressible-gas enthalpy is not automatically `p / ρ + e₀`, so the
-enthalpy hypothesis of `bernoulliFunction_along_streamline` cannot be dropped. -/
+/-- The enthalpy hypothesis is not automatic: a compressible-gas enthalpy
+`(7 / 2) p / ρ` is not of the form `p / ρ + e₀`, so
+`bernoulliFunction_along_streamline` cannot be applied to this fixture without
+checking the hypothesis. (Along each circular streamline of the fixture the
+Bernoulli function is nevertheless constant, since pressure, enthalpy, kinetic
+energy and potential are each constant there; this example shows the hypothesis
+must be checked, not that constancy fails without it.) -/
 lemma polytropic_enthalpy_not_pOverRho {ρ Ω g : ℝ} (hρ : 0 < ρ) (hg : g ≠ 0) :
     ¬ ∃ e₀ : ℝ, ∀ t x,
       (polytropicFlow ρ Ω g).enthalpy t x = rotPressure ρ Ω g x / ρ + e₀ := by
