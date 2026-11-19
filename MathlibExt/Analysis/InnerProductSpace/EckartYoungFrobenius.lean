@@ -12,7 +12,9 @@ public import Mathlib.Analysis.InnerProductSpace.SingularValues
 public import Mathlib.Analysis.Matrix.Normed
 public import Mathlib.Analysis.Matrix.Spectrum
 public import Mathlib.LinearAlgebra.Matrix.Rank
+import Mathlib.Analysis.InnerProductSpace.Trace
 import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+import MathlibExt.LinearAlgebra.Matrix.RankAddGeneral
 public import Mathlib.Analysis.InnerProductSpace.Trace
 
 /-!
@@ -26,10 +28,11 @@ decomposition `truncSVD A k`, and the minimal squared error is the tail sum
 another of lower rank", Psychometrika 1 (1936), 211–218).
 
 Two forms are given: with Mathlib's scoped Frobenius norm (`truncSVD` and
-`sum_sq_singularValues_le_frobenius_sub_sq`), and with the elementary squared
-Frobenius norm `frobSq A = ∑ i j, (A i j)²` (`singularTailSq_le_frobSq_sub`,
-`isLeast_frobSq_sub`, and the two-sided whitening form
-`isLeast_frobSq_whitened` used by weighted rank tests).
+`sum_sq_singularValues_le_frobenius_sub_sq`; this core implementation is
+shared with principal component analysis, which imports it from here), and
+with the elementary squared Frobenius norm `frobSq A = ∑ i j, (A i j)²`
+(`singularTailSq_le_frobSq_sub`, `isLeast_frobSq_sub`, and the two-sided
+whitening form `isLeast_frobSq_whitened` used by weighted rank tests).
 
 ## Main results
 
@@ -47,7 +50,6 @@ Frobenius norm `frobSq A = ∑ i j, (A i j)²` (`singularTailSq_le_frobSq_sub`,
 
 namespace Matrix.EckartYoungFrobenius
 
-open Matrix
 open scoped Matrix.Norms.Frobenius
 
 variable {m n : ℕ}
@@ -65,13 +67,8 @@ noncomputable def truncSVD (A : Matrix (Fin m) (Fin n) ℝ) (k : ℕ) : Matrix (
   A * ∑ i : Fin n with i.val < k,
     vecMulVec ⇑(rightSingularBasis A i) ⇑(rightSingularBasis A i)
 
-private lemma rank_add_bound {a b : ℕ} (M N : Matrix (Fin a) (Fin b) ℝ) :
-    (M + N).rank ≤ M.rank + N.rank := by
-  rw [Matrix.rank, Matrix.rank, Matrix.rank, Matrix.mulVecLin_add]
-  exact (Submodule.finrank_mono (LinearMap.range_add_le _ _)).trans
-    (Submodule.finrank_add_le_finrank_add_finrank _ _)
-
-private lemma rank_sum_bound {a b : ℕ} {ι : Type*} (s : Finset ι)
+/-- A sum of matrices of rank at most one has rank at most the number of summands. -/
+private theorem rank_sum_bound {a b : ℕ} {ι : Type*} (s : Finset ι)
     (M : ι → Matrix (Fin a) (Fin b) ℝ) (h : ∀ i ∈ s, (M i).rank ≤ 1) :
     (∑ i ∈ s, M i).rank ≤ s.card := by
   classical
@@ -79,18 +76,20 @@ private lemma rank_sum_bound {a b : ℕ} {ι : Type*} (s : Finset ι)
   | empty => simp
   | @insert i s hi ih =>
     rw [Finset.sum_insert hi, Finset.card_insert_of_notMem hi]
-    exact (rank_add_bound _ _).trans
+    exact (Matrix.rank_add_le _ _).trans
       (by have := h i (Finset.mem_insert_self i s)
           have := ih (fun j hj => h j (Finset.mem_insert_of_mem hj))
           omega)
 
-private lemma frobenius_sq_entries {a b : ℕ} (M : Matrix (Fin a) (Fin b) ℝ) :
+/-- The squared Frobenius norm is the sum of the squared entries. -/
+private theorem frobenius_sq_entries {a b : ℕ} (M : Matrix (Fin a) (Fin b) ℝ) :
     ‖M‖ ^ 2 = ∑ i, ∑ j, M i j ^ 2 := by
   rw [Matrix.frobenius_norm_def, ← Real.sqrt_eq_rpow, Real.sq_sqrt]
   · simp
   · exact Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ => by positivity
 
-private lemma frobenius_sq_basis {a b : ℕ} (M : Matrix (Fin a) (Fin b) ℝ)
+/-- The squared Frobenius norm is `∑ⱼ ‖M uⱼ‖²` over any orthonormal basis `u`. -/
+private theorem frobenius_sq_basis {a b : ℕ} (M : Matrix (Fin a) (Fin b) ℝ)
     (u : OrthonormalBasis (Fin b) ℝ (EuclideanSpace ℝ (Fin b))) :
     ‖M‖ ^ 2 = ∑ j, ‖Matrix.toEuclideanLin M (u j)‖ ^ 2 := by
   classical
@@ -108,13 +107,16 @@ private lemma frobenius_sq_basis {a b : ℕ} (M : Matrix (Fin a) (Fin b) ℝ)
   intro i _
   simp [T, Matrix.toLpLin_apply, EuclideanSpace.basisFun_apply]
 
-private lemma outer_action {b : ℕ} (u v x : EuclideanSpace ℝ (Fin b)) :
+/-- The outer product `u vᵀ` maps `x` to `⟪v, x⟫ u`. -/
+private theorem outer_action {b : ℕ} (u v x : EuclideanSpace ℝ (Fin b)) :
     Matrix.toEuclideanLin (vecMulVec ⇑u ⇑v) x = (inner ℝ v x) • u := by
   ext i
   simp [Matrix.toLpLin_apply, Matrix.mulVec, dotProduct, Matrix.vecMulVec,
     PiLp.inner_apply, Finset.mul_sum, mul_assoc, mul_comm]
 
-private lemma trunc_action {a b : ℕ} (A : Matrix (Fin a) (Fin b) ℝ)
+/-- The truncated SVD agrees with `A` on the first `k` right singular vectors and kills the
+others. -/
+private theorem trunc_action {a b : ℕ} (A : Matrix (Fin a) (Fin b) ℝ)
     (k : ℕ) (j : Fin b) :
     Matrix.toEuclideanLin (truncSVD A k) (rightSingularBasis A j) =
       if j.val < k then Matrix.toEuclideanLin A (rightSingularBasis A j) else 0 := by
@@ -132,7 +134,8 @@ private lemma trunc_action {a b : ℕ} (A : Matrix (Fin a) (Fin b) ℝ)
   rw [hp]
   split_ifs <;> simp
 
-private lemma singular_energy {a b : ℕ} (A : Matrix (Fin a) (Fin b) ℝ) (j : Fin b) :
+/-- `‖A vⱼ‖² = σⱼ²` for the right singular vectors. -/
+private theorem singular_energy {a b : ℕ} (A : Matrix (Fin a) (Fin b) ℝ) (j : Fin b) :
     ‖Matrix.toEuclideanLin A (rightSingularBasis A j)‖ ^ 2 =
       (Matrix.toEuclideanLin A).singularValues j ^ 2 := by
   rw [(Matrix.toEuclideanLin A).sq_singularValues_fin finrank_euclideanSpace_fin]
@@ -143,7 +146,8 @@ private lemma singular_energy {a b : ℕ} (A : Matrix (Fin a) (Fin b) ℝ) (j : 
   rw [rightSingularBasis, LinearMap.IsSymmetric.apply_eigenvectorBasis]
   simp [inner_smul_left]
 
-private lemma fin_tail_sum (b k : ℕ) (f : ℕ → ℝ) :
+/-- A tail sum over `Fin b` as a sum over `Finset.Ico k b`. -/
+private theorem fin_tail_sum (b k : ℕ) (f : ℕ → ℝ) :
     (∑ i : Fin b with k ≤ i.val, f i.val) = ∑ i ∈ Finset.Ico k b, f i := by
   classical
   apply Finset.sum_bij (fun i _ => i.val)
@@ -157,7 +161,8 @@ private lemma fin_tail_sum (b k : ℕ) (f : ℕ → ℝ) :
   · intro i _
     rfl
 
-private lemma energy_adjoint {a b r : ℕ}
+/-- `∑ⱼ ‖T wⱼ‖²` through the adjoint and the standard basis. -/
+private theorem energy_adjoint {a b r : ℕ}
     (T : EuclideanSpace ℝ (Fin b) →ₗ[ℝ] EuclideanSpace ℝ (Fin a))
     (w : Fin r → EuclideanSpace ℝ (Fin b)) :
     (∑ j, ‖T (w j)‖ ^ 2) =
@@ -173,7 +178,8 @@ private lemma energy_adjoint {a b r : ℕ}
       rw [← T.adjoint_inner_left, real_inner_comm]
     _ = _ := Finset.sum_comm
 
-private lemma orthonormal_energy_le {a b r : ℕ} (M : Matrix (Fin a) (Fin b) ℝ)
+/-- Bessel: `∑ⱼ ‖M wⱼ‖² ≤ ‖M‖²` for an orthonormal family `w`. -/
+private theorem orthonormal_energy_le {a b r : ℕ} (M : Matrix (Fin a) (Fin b) ℝ)
     (w : Fin r → EuclideanSpace ℝ (Fin b)) (hw : Orthonormal ℝ w) :
     (∑ j, ‖Matrix.toEuclideanLin M (w j)‖ ^ 2) ≤ ‖M‖ ^ 2 := by
   rw [energy_adjoint]
@@ -189,7 +195,8 @@ private lemma orthonormal_energy_le {a b r : ℕ} (M : Matrix (Fin a) (Fin b) �
       simp only [OrthonormalBasis.sum_sq_inner_right]
     _ = ‖M‖ ^ 2 := (frobenius_sq_basis M (EuclideanSpace.basisFun (Fin b) ℝ)).symm
 
-private lemma spectral_energy {a b : ℕ} (A : Matrix (Fin a) (Fin b) ℝ)
+/-- `‖A x‖² = ∑ᵢ σᵢ² ⟪vᵢ, x⟫²` in the right singular basis. -/
+private theorem spectral_energy {a b : ℕ} (A : Matrix (Fin a) (Fin b) ℝ)
     (x : EuclideanSpace ℝ (Fin b)) :
     ‖Matrix.toEuclideanLin A x‖ ^ 2 =
       ∑ i : Fin b, (Matrix.toEuclideanLin A).singularValues i ^ 2 *
@@ -215,7 +222,9 @@ private lemma spectral_energy {a b : ℕ} (A : Matrix (Fin a) (Fin b) ℝ)
     T.singularValues i ^ 2 * (inner ℝ (v i) x) ^ 2
   ring
 
-private lemma weighted_tail_le {b : ℕ} (k : ℕ) (hk : k < b)
+/-- For decreasing nonnegative `d` and weights `cᵢ ∈ [0, 1]` of total at least `b - k`,
+`∑_{i ≥ k} dᵢ ≤ ∑ dᵢ cᵢ`. -/
+private theorem weighted_tail_le {b : ℕ} (k : ℕ) (hk : k < b)
     (d c : Fin b → ℝ) (hd : Antitone d) (hd0 : ∀ i, 0 ≤ d i)
     (hc0 : ∀ i, 0 ≤ c i) (hc1 : ∀ i, c i ≤ 1)
     (hc : (b - k : ℕ) ≤ ∑ i, c i) :
@@ -333,6 +342,16 @@ theorem sum_sq_singularValues_le_frobenius_sub_sq (A : Matrix (Fin m) (Fin n) �
   rw [← fin_tail_sum n k (fun i => (Matrix.toEuclideanLin A).singularValues i ^ 2)]
   exact (weighted_tail_le k hkn _ c hord (fun _ => sq_nonneg _) hc0 hc1 hc).trans
     (hs ▸ hbound)
+
+/-- **Eckart–Young, best-approximation form.** The truncated SVD is a best rank-`k` approximation
+of `A` in the Frobenius norm: the least squared distance from `A` to a matrix of rank at most `k`
+is `∑_{k ≤ i < n} σᵢ²`, attained by `truncSVD A k`. -/
+theorem isLeast_frobenius_sub_sq (A : Matrix (Fin m) (Fin n) ℝ) (k : ℕ) :
+    IsLeast {r | ∃ B : Matrix (Fin m) (Fin n) ℝ, B.rank ≤ k ∧ r = ‖A - B‖ ^ 2}
+      (∑ i ∈ Finset.Ico k n, (Matrix.toEuclideanLin A).singularValues i ^ 2) := by
+  refine ⟨⟨truncSVD A k, rank_truncSVD_le A k, (frobenius_sub_truncSVD_sq A k).symm⟩, ?_⟩
+  rintro r ⟨B, hB, rfl⟩
+  exact sum_sq_singularValues_le_frobenius_sub_sq A B hB
 
 /-- The squared Frobenius norm of a finite real matrix. -/
 def frobSq (A : Matrix (Fin m) (Fin n) ℝ) : ℝ :=
