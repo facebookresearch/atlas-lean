@@ -17,6 +17,6 @@ Every continuous map of a simplex (equivalently, of a closed ball, or of any non
 ## Related topics
 
 - [Sperner's lemma](../../../Combinatorics/polytopes-simplicial-complexes/sperner-s-lemma/README.md): the combinatorial lemma behind the KKM lemma.
-- Nash's theorem: the main application, through the product form.
+- [Nash's theorem](../../../GameTheory/noncooperative-games/nash-s-theorem/README.md): the main application, through the product form.
 - [PPAD and the END-OF-THE-LINE problem](../../../TheoryOfComputation/completeness-other-classes/ppad-and-the-end-of-the-line-problem/README.md): the complexity of computing approximate fixed points.
 - [Fixed-point theory](../../../Analysis/fixed-point-theory/README.md): fixed points of nonexpansive and affine maps (Browder–Göhde–Kirk, Markov–Kakutani), which need no topology of the simplex.

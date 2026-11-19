@@ -36,4 +36,4 @@ statistics (Wainwright, *High-Dimensional Statistics*, 2019, Chapter 2).
 - [Hoeffding's inequality](../hoeffding-s-inequality/README.md)
 - [McDiarmid's inequality](../mcdiarmid-s-inequality/README.md)
 - [Lasso error bounds under restricted eigenvalues](../../linear-models-multivariate/lasso-error-bounds-under-restricted-eigenvalues/README.md)
-- Generalization bounds and concentration
+- [Generalization bounds and concentration](../../../ComputerScience/machine-learning/generalization-bounds-and-concentration/README.md)
