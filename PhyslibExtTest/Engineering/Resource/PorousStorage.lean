@@ -11,6 +11,7 @@ import PhyslibExt.Engineering.Resource.PorousStorage
 
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Data.Fin.VecNotation
+import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
 
 
@@ -24,39 +25,72 @@ namespace Engineering.Resource.PorousStorage.Tests
 
 open Engineering.Resource.PorousStorage
 
--- phi = 1/4, V_bulk = 8: pore volume 2.
-example : poreVolume (1 / 4) 8 = 2 := by
-  simp only [poreVolume]
-  norm_num
+/-- Two-phase saturations `(1/4, 3/4)`. -/
+noncomputable def S2 : Fin 2 → ℝ := ![1 / 4, 3 / 4]
 
--- Saturations (1/4, 3/4) on Fin 2 fill it: phase volumes (1/2, 3/2).
-example :
-    ∑ i, phaseVolume (1 / 4) 8 ![1 / 4, 3 / 4] i = 2 := by
-  simp only [phaseVolume, Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
-  norm_num
+/-- Two-phase densities `(2, 1)`. -/
+def rho2 : Fin 2 → ℝ := ![2, 1]
 
--- Phase masses for densities (1, 2) are (1/2, 3).
-example : poreInventory (1 / 4) 8 ![1 / 4, 3 / 4] ![1, 2] 0 = 1 / 2 := by
-  simp only [poreInventory, Matrix.cons_val_zero]
-  norm_num
+-- The partition theorem itself, at porosity 1 and bulk volume 8.
+example : ∑ i, phaseVolume 1 8 S2 i = poreVolume 1 8 := by
+  have hS0 : ∀ i, 0 ≤ S2 i := by
+    intro i
+    fin_cases i
+    · norm_num [S2]
+    · norm_num [S2]
+  have hS : ∑ i, S2 i = 1 := by norm_num [S2, Fin.sum_univ_two]
+  exact sum_phaseVolume_eq zero_le_one (by norm_num) hS0 hS
 
-example : poreInventory (1 / 4) 8 ![1 / 4, 3 / 4] ![1, 2] 1 = 3 := by
-  simp only [poreInventory, Matrix.cons_val_zero, Matrix.cons_val_one]
-  norm_num
+-- The factored total inventory theorem itself.
+example : ∑ i, poreInventory 1 8 S2 rho2 i = 1 * 8 * ∑ i, S2 i * rho2 i := by
+  exact sum_poreInventory 1 8 S2 rho2
 
--- Endpoint saturations S = 0 and S = 1.
-example : phaseVolume (1 / 4) 8 ![0, 1] 0 = 0 := by
-  simp only [phaseVolume, Matrix.cons_val_zero]
-  norm_num
+-- Each admissible saturation is at most one, and each phase volume lies
+-- in the pore volume.
+example : S2 0 ≤ 1 ∧ S2 1 ≤ 1 := by
+  have hS0 : ∀ i, 0 ≤ S2 i := by
+    intro i
+    fin_cases i
+    · norm_num [S2]
+    · norm_num [S2]
+  have hS : ∑ i, S2 i = 1 := by norm_num [S2, Fin.sum_univ_two]
+  exact ⟨saturation_le_one hS0 hS 0, saturation_le_one hS0 hS 1⟩
 
-example : phaseVolume (1 / 4) 8 ![0, 1] 1 = 2 := by
-  simp only [phaseVolume, Matrix.cons_val_zero, Matrix.cons_val_one]
-  norm_num
+example : phaseVolume 1 8 S2 0 ≤ poreVolume 1 8 ∧
+    0 ≤ phaseVolume 1 8 S2 0 := by
+  have hS0 : ∀ i, 0 ≤ S2 i := by
+    intro i
+    fin_cases i
+    · norm_num [S2]
+    · norm_num [S2]
+  have hS : ∑ i, S2 i = 1 := by norm_num [S2, Fin.sum_univ_two]
+  exact ⟨phaseVolume_le_poreVolume zero_le_one (by norm_num) hS0 hS 0,
+    phaseVolume_nonneg zero_le_one (by norm_num) hS0 0⟩
 
--- Saturations not summing to one do not fill the pore volume.
-example :
-    ∑ i, phaseVolume (1 / 4) 8 ![1 / 4, 1 / 4] i ≠ poreVolume (1 / 4) 8 := by
-  simp only [phaseVolume, poreVolume, Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
-  norm_num
+-- The velocity rewrite lemmas themselves.
+example : (2 : ℝ) * superficialFlux (2 * 3) 2 = 2 * 3 := by
+  exact volumetricFlow_eq 3 2 (by norm_num)
+
+example : (1 / 2 : ℝ) * poreVelocity 3 (1 / 2) = 3 := by
+  exact phi_mul_poreVelocity 3 (1 / 2) (by norm_num)
+
+-- Signed weights summing to one are not saturations: (-1, 2) sums to one
+-- but its first phase volume is negative, so the admissibility hypotheses
+-- cannot be dropped from the partition statement.
+example : (∑ i, (![-1, 2] : Fin 2 → ℝ) i) = 1 ∧
+    phaseVolume 1 1 (![-1, 2] : Fin 2 → ℝ) 0 = -1 := by
+  constructor
+  · norm_num [Fin.sum_univ_two]
+  · unfold phaseVolume
+    norm_num
+
+-- Zero denominators are totalized values outside the physical domain, and
+-- the velocity rewrite fails there without its hypothesis.
+example : poreVelocity 3 0 = 0 ∧ ¬ ((0 : ℝ) * poreVelocity 3 0 = 3) := by
+  have h1 : poreVelocity 3 0 = 0 := by simp [poreVelocity]
+  exact ⟨h1, by rw [h1]; norm_num⟩
+
+example : superficialFlux 3 0 = 0 := by
+  simp [superficialFlux]
 
 end Engineering.Resource.PorousStorage.Tests

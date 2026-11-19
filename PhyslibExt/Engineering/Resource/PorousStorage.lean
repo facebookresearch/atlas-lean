@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Field
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Basic.Real.Basic
 
 import Mathlib.Tactic.Ring
@@ -26,8 +27,9 @@ quantities and are kept distinct here.
 
 ## ii. Key results
 
-- `PorousStorage.sum_phaseVolume_eq`: saturations summing to one fill the
-  pore volume.
+- `PorousStorage.sum_phaseVolume_eq`: admissible saturations (nonnegative,
+  summing to one) fill the pore volume, each between zero and the pore
+  volume.
 - `PorousStorage.sum_poreInventory`: the total phase mass factors as
   `phi * V_bulk * (sum of S i * rho i)`.
 - `PorousStorage.phi_mul_poreVelocity`: pore velocity rescales the
@@ -84,12 +86,38 @@ lemma poreInventory_nonneg {ι : Type*} {phi V_bulk : ℝ} (hphi : 0 ≤ phi)
   unfold poreInventory
   exact mul_nonneg (mul_nonneg (mul_nonneg hphi hV) (hS i)) (hrho i)
 
-/-- **Saturation partition.** If the saturations sum to one, the phase
-volumes fill the pore volume: `∑ i, phi * V_bulk * S_i = phi * V_bulk`. -/
-lemma sum_phaseVolume_eq {ι : Type*} [Fintype ι] (phi V_bulk : ℝ)
-    {S : ι → ℝ} (hS : ∑ i, S i = 1) :
+set_option linter.unusedVariables false in
+/-- **Saturation partition.** For admissible data (nonnegative porosity,
+bulk volume, and saturations) with saturations summing to one, the phase
+volumes are nonnegative volumes filling the pore volume:
+`∑ i, phi * V_bulk * S_i = phi * V_bulk`. Nonnegativity is part of the
+physical statement: signed weights summing to one, such as `(-1, 2)`, are
+not saturations and are excluded here. -/
+lemma sum_phaseVolume_eq {ι : Type*} [Fintype ι] {phi V_bulk : ℝ}
+    (hphi : 0 ≤ phi) (hV : 0 ≤ V_bulk) {S : ι → ℝ} (hS0 : ∀ i, 0 ≤ S i)
+    (hS : ∑ i, S i = 1) :
     ∑ i, phaseVolume phi V_bulk S i = poreVolume phi V_bulk := by
-  simp only [phaseVolume, poreVolume, ← Finset.mul_sum, hS, mul_one]
+  unfold phaseVolume poreVolume
+  simp only [← Finset.mul_sum, hS, mul_one]
+
+/-- Each admissible saturation is at most one: a nonnegative family
+summing to one has every term at most one. -/
+lemma saturation_le_one {ι : Type*} [Fintype ι] {S : ι → ℝ}
+    (hS0 : ∀ i, 0 ≤ S i) (hS : ∑ i, S i = 1) (i : ι) :
+    S i ≤ 1 := by
+  calc S i ≤ ∑ j, S j := Finset.single_le_sum (fun j _ => hS0 j) (Finset.mem_univ i)
+    _ = 1 := hS
+
+/-- Each admissible phase volume lies between zero and the pore volume. -/
+lemma phaseVolume_le_poreVolume {ι : Type*} [Fintype ι] {phi V_bulk : ℝ}
+    (hphi : 0 ≤ phi) (hV : 0 ≤ V_bulk) {S : ι → ℝ} (hS0 : ∀ i, 0 ≤ S i)
+    (hS : ∑ i, S i = 1) (i : ι) :
+    phaseVolume phi V_bulk S i ≤ poreVolume phi V_bulk := by
+  have hSi : S i ≤ 1 := saturation_le_one hS0 hS i
+  have hPV : 0 ≤ phi * V_bulk := mul_nonneg hphi hV
+  unfold phaseVolume poreVolume
+  calc phi * V_bulk * S i ≤ phi * V_bulk * 1 := mul_le_mul_of_nonneg_left hSi hPV
+    _ = phi * V_bulk := mul_one _
 
 /-- Total phase mass factors: `∑ i, m_i = phi * V_bulk * ∑ i, S_i * rho_i`. -/
 lemma sum_poreInventory {ι : Type*} [Fintype ι] (phi V_bulk : ℝ)
@@ -103,12 +131,16 @@ lemma sum_poreInventory {ι : Type*} [Fintype ι] (phi V_bulk : ℝ)
   simp only [h, Finset.mul_sum]
 
 /-- Superficial (Darcy) flux `u` from volumetric flow `Q` over bulk area
-`A`: `u = Q / A`. Distinct from the pore velocity. -/
+`A`: `u = Q / A`. Distinct from the pore velocity. At `A = 0` the value is
+the totalized `0`, outside the physical domain; rewrite lemmas therefore
+carry `A ≠ 0`. -/
 noncomputable def superficialFlux (Q A : ℝ) : ℝ :=
   Q / A
 
 /-- Pore (interstitial) velocity `v = u / phi` for superficial flux `u` and
-porosity `phi`. Distinct from the superficial flux. -/
+porosity `phi`. Distinct from the superficial flux. At `phi = 0` the value
+is the totalized `0`, outside the physical domain; rewrite lemmas
+therefore carry `phi ≠ 0`. -/
 noncomputable def poreVelocity (u phi : ℝ) : ℝ :=
   u / phi
 
