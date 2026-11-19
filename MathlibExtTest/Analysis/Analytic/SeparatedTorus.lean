@@ -9,7 +9,9 @@ LICENSE file in the root directory of this source tree.
 /-
 The exact-source consumer below adapts the statement in
 Theorems/
-Thm_Polynomial_exists_mvPolynomial_forall_hasSum_torusWeight_mul_eq_of_separated_recurrence.lean
+Source filename (concatenate the next two lines):
+Thm_Polynomial_exists_mvPolynomial_forall_hasSum_torusWeight_mul_eq_of_
+separated_recurrence.lean
 from Fermat's Last Theorem in Lean 4, revision
 6e837e75355538c7f80bab5b956861e86c4eacc2.
 Copyright 2026 Anthropic, PBC. Licensed under Apache License, Version 2.0.
@@ -93,7 +95,8 @@ private theorem fibD_degree : fibD.natDegree = 2 := by
 
 private theorem fib_recurrence (m : ℕ) (hm : 2 ≤ m) :
     (∑ i ∈ range (fibD.natDegree + 1),
-      fibD.coeff i * seq (fun n => (Nat.fib (n + 1) : ℂ)) ((m : ℤ) - i)) = 0 := by
+      fibD.coeff i * seq (fun n => (Nat.fib (n + 1) : ℂ)) ((m : ℤ) - i)) = 0 :=
+          by
   obtain ⟨n, rfl⟩ : ∃ n : ℕ, m = n + 2 := ⟨m - 2, by omega⟩
   have h0 : (0 : ℤ) ≤ n + 2 := by omega
   have h1 : (1 : ℤ) ≤ n + 2 := by omega
@@ -179,7 +182,8 @@ private theorem repeatD_three_degree : (repeatD 3).natDegree = 2 := by
 private theorem repeat_recurrence (c : ℂ) (hd : (repeatD c).natDegree = 2)
     (m : ℕ) (hm : 2 ≤ m) :
     (∑ i ∈ range ((repeatD c).natDegree + 1),
-      (repeatD c).coeff i * seq (fun n => (n + 1 : ℂ) * c ^ n) ((m : ℤ) - i)) = 0 := by
+      (repeatD c).coeff i * seq (fun n => (n + 1 : ℂ) * c ^ n) ((m : ℤ) - i)) =
+          0 := by
   obtain ⟨n, rfl⟩ : ∃ n : ℕ, m = n + 2 := ⟨m - 2, by omega⟩
   have h0 : (0 : ℤ) ≤ n + 2 := by omega
   have h1 : (1 : ℤ) ≤ n + 2 := by omega
@@ -193,7 +197,8 @@ private theorem repeat_array_recurrence (m k : ℕ) (hmk : 2 ≤ m ∨ 2 ≤ k) 
     (∑ i ∈ range ((repeatD 2).natDegree + 1),
       ∑ l ∈ range ((repeatD 3).natDegree + 1),
         (repeatD 2).coeff i * (repeatD 3).coeff l *
-          array (-2) (fun n => (n + 1 : ℂ) * 2 ^ n) (fun n => (n + 1 : ℂ) * 3 ^ n)
+          array (-2) (fun n => (n + 1 : ℂ) * 2 ^ n) (fun n => (n + 1 : ℂ) * 3 ^
+              n)
             (-2 + (m : ℤ) - i, -2 + (k : ℤ) - l)) = 0 := by
   rw [array_convolution]
   rcases hmk with hm | hk
@@ -201,7 +206,8 @@ private theorem repeat_array_recurrence (m k : ℕ) (hmk : 2 ≤ m ∨ 2 ≤ k) 
   · rw [repeat_recurrence 3 repeatD_three_degree k hk, mul_zero]
 
 set_option maxHeartbeats 2000000 in
-/-- Repeated poles in both coordinates, obtained at the original support shift `-2`. -/
+/-- Repeated poles in both coordinates, obtained at the original support shift
+  `-2`. -/
 public theorem repeatedPoles :
     ∃ P : MvPolynomial (Fin 4) ℂ,
       P = 1 - 4 * MvPolynomial.X 0 ^ 2 * MvPolynomial.X 2 * MvPolynomial.X 3 ∧
@@ -219,7 +225,8 @@ public theorem repeatedPoles :
           MvPolynomial.eval (![X, Y, b₁, b₂] : Fin 4 → ℂ) P := by
   obtain ⟨P, hP, h⟩ := Polynomial.exists_torusWeight_sum
     (array (-2) (fun n => (n + 1 : ℂ) * 2 ^ n) (fun n => (n + 1 : ℂ) * 3 ^ n))
-    (-2) (repeatD 2) (repeatD 3) 2 (by norm_num [repeatD]) (by norm_num [repeatD])
+    (-2) (repeatD 2) (repeatD 3) 2 (by norm_num [repeatD]) (by norm_num
+        [repeatD])
     (array_support _ _ _) repeat_array_recurrence
   refine ⟨P, ?_, ?_⟩
   · rw [repeatD_two_degree] at hP
@@ -232,7 +239,8 @@ public theorem repeatedPoles :
   · simpa only [array_nat, repeatD, eval_pow, eval_sub, eval_one, eval_mul,
       eval_C, eval_X] using h
 
-/-- Confluence is the canonical two-variable geometric-sum identity, not division. -/
+/-- Confluence is the canonical two-variable geometric-sum identity, not
+  division. -/
 public theorem weight_self (b : ℂ) (m : ℕ) :
     (∑ i ∈ range (m + 1), b ^ i * b ^ (m - i)) = (m + 1 : ℂ) * b ^ m := by
   simpa using geom_sum₂_self b (m + 1)
@@ -273,7 +281,8 @@ public theorem repeated_weight_self (b : ℂ) (m : ℕ) :
   rw [weight_self, mul_pow]
   ring
 
-/-- One Fibonacci certificate covers every listed boundary pair, with positive radii. -/
+/-- One Fibonacci certificate covers every listed boundary pair, with positive
+  radii. -/
 public theorem fibonacci_boundary_pairs :
     ∃ P : MvPolynomial (Fin 4) ℂ,
       P = 1 + MvPolynomial.X 0 ^ 2 * MvPolynomial.X 2 * MvPolynomial.X 3 ∧
@@ -295,7 +304,8 @@ public theorem fibonacci_boundary_pairs :
   obtain ⟨r, hr, h⟩ := h p.1 p.2
   exact ⟨r, hr, fun X Y hX hY => by simpa [hP] using h X Y hX hY⟩
 
-/-- The repeated-pole certificate admits the same confluence, zero and imaginary pairs. -/
+/-- The repeated-pole certificate admits the same confluence, zero and imaginary
+  pairs. -/
 public theorem repeatedPoles_boundary_pairs :
     ∃ P : MvPolynomial (Fin 4) ℂ,
       P = 1 - 4 * MvPolynomial.X 0 ^ 2 * MvPolynomial.X 2 * MvPolynomial.X 3 ∧
@@ -317,7 +327,8 @@ public theorem repeatedPoles_boundary_pairs :
   obtain ⟨r, hr, h⟩ := h p.1 p.2
   exact ⟨r, hr, fun X Y hX hY => by simpa [hP] using h X Y hX hY⟩
 
-/-- The Fibonacci confluent rational identity retains a positive norm-summability radius. -/
+/-- The Fibonacci confluent rational identity retains a positive
+  norm-summability radius. -/
 public theorem fibonacci_equal (b : ℂ) :
     ∃ r : ℝ, 0 < r ∧ ∀ X Y : ℂ, ‖X‖ < r → ‖Y‖ < r →
       Summable (fun m : ℕ × ℕ =>
@@ -332,7 +343,8 @@ public theorem fibonacci_equal (b : ℂ) :
   exact ⟨r, hr, fun X Y hX hY => by
     simpa [hP, weight_self, pow_two] using h X Y hX hY⟩
 
-/-- Confluence raises the first-coordinate multiplicity while preserving the negative shift. -/
+/-- Confluence raises the first-coordinate multiplicity while preserving the
+  negative shift. -/
 public theorem repeatedPoles_equal (b : ℂ) :
     ∃ r : ℝ, 0 < r ∧ ∀ X Y : ℂ, ‖X‖ < r → ‖Y‖ < r →
       Summable (fun m : ℕ × ℕ =>
@@ -354,7 +366,8 @@ public theorem repeatedPoles_equal (b : ℂ) :
   simp only [ht] at hx
   simpa [hP, ← pow_add] using hx
 
-/-- With threshold zero, the nonzero constant coefficient solves every total-index step. -/
+/-- With threshold zero, the nonzero constant coefficient solves every
+  total-index step. -/
 public theorem threshold_zero
     (A : ℤ × ℤ → ℂ) (N : ℤ) (D₁ D₂ : Polynomial ℂ)
     (hD₁ : D₁.eval 0 ≠ 0) (hD₂ : D₂.eval 0 ≠ 0)
@@ -428,7 +441,8 @@ theorem factorial_axis_support :
 
 /-- An AND exterior condition leaves the entire horizontal axis unchecked. -/
 theorem factorial_axis_and (m k : ℕ) (h : 2 ≤ m ∧ 2 ≤ k) :
-    (∑ i ∈ range (axisD.natDegree + 1), ∑ l ∈ range ((1 : Polynomial ℂ).natDegree + 1),
+    (∑ i ∈ range (axisD.natDegree + 1), ∑ l ∈ range ((1 : Polynomial
+        ℂ).natDegree + 1),
       axisD.coeff i * (1 : Polynomial ℂ).coeff l *
         factorialAxis ((m : ℤ) - i, (k : ℤ) - l)) = 0 := by
   have hk : k ≠ 0 := by omega
@@ -437,11 +451,13 @@ theorem factorial_axis_and (m k : ℕ) (h : 2 ≤ m ∧ 2 ≤ k) :
 
 /-- The OR condition really fails: the residual at `(5, 0)` is `120 - 24`. -/
 theorem factorial_axis_residual :
-    (∑ i ∈ range (axisD.natDegree + 1), ∑ l ∈ range ((1 : Polynomial ℂ).natDegree + 1),
+    (∑ i ∈ range (axisD.natDegree + 1), ∑ l ∈ range ((1 : Polynomial
+        ℂ).natDegree + 1),
       axisD.coeff i * (1 : Polynomial ℂ).coeff l *
         factorialAxis ((5 : ℤ) - i, (0 : ℤ) - l)) = 96 := by
   rw [axisD_degree]
-  norm_num [axisD, sum_range_succ, coeff_one, coeff_X, factorialAxis, Nat.factorial]
+  norm_num [axisD, sum_range_succ, coeff_one, coeff_X, factorialAxis,
+      Nat.factorial]
 
 /-- This proves failure of OR, not a zero-radius or nonrationality claim. -/
 theorem factorial_axis_not_or :
@@ -456,7 +472,8 @@ theorem factorial_axis_not_or :
   rw [factorial_axis_residual] at hz
   norm_num at hz
 
-/-- Nonzero constant denominators also accept a nonzero finitely supported array. -/
+/-- Nonzero constant denominators also accept a nonzero finitely supported
+  array. -/
 public theorem constant_denominators :
     ∃ P : MvPolynomial (Fin 4) ℂ, P = MvPolynomial.C 60 ∧
       ∀ b₁ b₂ : ℂ, ∃ r : ℝ, 0 < r ∧ ∀ X Y : ℂ, ‖X‖ < r → ‖Y‖ < r →
@@ -505,7 +522,8 @@ public theorem fibonacci_zero (b : ℂ) :
   exact ⟨r, hr, fun X Y hX hY => by
     simpa [hP, weight_zero_left] using h X Y hX hY⟩
 
-/-- The repeated-pole zero specialization still has a nonconstant `Y` denominator. -/
+/-- The repeated-pole zero specialization still has a nonconstant `Y`
+  denominator. -/
 public theorem repeatedPoles_zero (b : ℂ) :
     ∃ r : ℝ, 0 < r ∧ ∀ X Y : ℂ, ‖X‖ < r → ‖Y‖ < r →
       Summable (fun m : ℕ × ℕ =>
@@ -519,7 +537,8 @@ public theorem repeatedPoles_zero (b : ℂ) :
   exact ⟨r, hr, fun X Y hX hY => by
     simpa [hP, weight_zero_left] using h X Y hX hY⟩
 
-/-- Both zero parameters retain exactly the `m = 0` slice of the Fibonacci array. -/
+/-- Both zero parameters retain exactly the `m = 0` slice of the Fibonacci
+  array. -/
 public theorem fibonacci_both_zero :
     ∃ r : ℝ, 0 < r ∧ ∀ X Y : ℂ, ‖X‖ < r → ‖Y‖ < r →
       Summable (fun m : ℕ × ℕ =>
@@ -546,7 +565,8 @@ public theorem repeatedPoles_both_zero :
   exact ⟨r, hr, fun X Y hX hY => by
     simpa [hP, weight_zero_zero] using h X Y hX hY⟩
 
-/-- The negative support shift is real: its corner is nonzero and either lower edge is zero. -/
+/-- The negative support shift is real: its corner is nonzero and either lower
+  edge is zero. -/
 theorem repeatedPoles_support_boundary :
     array (-2) (fun n => (n + 1 : ℂ) * 2 ^ n) (fun n => (n + 1 : ℂ) * 3 ^ n)
         (-2, -2) = 1 ∧
@@ -567,7 +587,8 @@ public theorem zero_threshold_certificate (N : ℤ) (D₁ D₂ : Polynomial ℂ)
     hD₁ hD₂ (by simp) (by simp)
   exact ⟨P, by simpa using hP, by simpa using h⟩
 
-/-- On the original integer quadrant, the fixture has exactly the stated shifted coefficients. -/
+/-- On the original integer quadrant, the fixture has exactly the stated shifted
+  coefficients. -/
 theorem repeatedPoles_unshifted (i j : ℤ) (hi : -2 ≤ i) (hj : -2 ≤ j) :
     array (-2) (fun n => (n + 1 : ℂ) * 2 ^ n) (fun n => (n + 1 : ℂ) * 3 ^ n)
         (i, j) =
