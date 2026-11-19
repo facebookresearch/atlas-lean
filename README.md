@@ -61,7 +61,7 @@ Lean-source links, and prerequisites derived from compiled Lean.
 See [building and maintaining the explorer](docs/BLUEPRINT.md) for the local
 build, source ownership, and opt-in GitHub Pages deployment.
 
-## Explore v1
+## Versions
 
 | Version | Status | Location | License |
 | --- | --- | --- | --- |
