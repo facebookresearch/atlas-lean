@@ -1,7 +1,7 @@
 # CDIS probability roadmap
 
 Formalization of the probability part of CDIS, the Mines Paris course by Boisgérault et al.,
-chapter by chapter. Chapter V (simulation) is the part Mathlib and ATLAS lacked.
+chapter by chapter. Chapter V (simulation) is the part Mathlib lacked.
 
 ## Chapters
 

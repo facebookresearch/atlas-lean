@@ -15,8 +15,7 @@ CDIS id 98. If `U, V` are independent and uniform on `]0,1[`, then
  `θ ∈ ]-π,π[`, and since `cos(θ + π) = -cos θ` and `sin(θ + π) = -sin θ`, the Box-Muller map
  becomes `-polarCoord.symm` (`CDIS.boxMuller_subst`). `lintegral_comp_polarCoord_symm` then
  identifies the law with the image of the standard Gaussian on `ℝ²` under `x ↦ -x`, which is
- the standard Gaussian again. No earlier public Lean
- proof was found (sosudo/ppl-pralean states it with `sorry`).
+ the standard Gaussian again.
 
 ## Depends on
 

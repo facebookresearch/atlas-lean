@@ -27,7 +27,8 @@ then `genInv F 1` is its genuine infimum: for the Dirac mass at `5` it is `5`
 course has it implicitly, and the value at `1` does not matter since `U ∈ ]0,1[` almost surely.
 
 Prior art: the same object is `Measure.quantile` in TauCeti (`TauCeti/Probability/Quantile.lean`)
-and `lowerQuantile` in the open Mathlib PR #42461. Neither is in Mathlib yet.
+and `lowerQuantile` in Mathlib PR #42461, which was closed without being merged. Mathlib
+`v4.34.0` has no quantile function.
 -/
 
 open MeasureTheory ProbabilityTheory Filter Topology Set
