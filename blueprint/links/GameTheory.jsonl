@@ -870,3 +870,5 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/GameTheory/cooperative-games/shapley-value/shapley-formula-satisfies-null-player-ax.md"}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/GameTheory/cooperative-games/shapley-value/shapley-weight.md"}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/GameTheory/cooperative-games/shapley-value/shapley-weight-telescope.md"}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/GameTheory/noncooperative-games/potential-games/is-exact-potential-2.md"}], "object": [{"location": {"declaration": "IsExactPotential"}}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/GameTheory/noncooperative-games/potential-games/is-pure-nash-2.md"}], "object": [{"location": {"declaration": "IsPureNash"}}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}

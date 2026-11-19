@@ -1199,3 +1199,6 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Logic/modal-logic/reflection-calculus-and-worms/exists-worm-ordinal.md"}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Logic/modal-logic/reflection-calculus-and-worms/not-worm-lt-zero-zero.md"}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Logic/modal-logic/reflection-calculus-and-worms/worm.md"}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Logic/temporal-logic/linear-temporal-logic/satisfies-2.md"}], "object": [{"location": {"declaration": "Cslib.LTL.Satisfies"}}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Logic/temporal-logic/linear-temporal-logic/until-expansion-2.md"}], "object": [{"location": {"declaration": "Cslib.LTL.Satisfies.until_expansion"}}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Logic/temporal-logic/linear-temporal-logic/satisfies-at-2.md"}], "object": [{"location": {"declaration": "Cslib.LTL.SatisfiesAt"}}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}

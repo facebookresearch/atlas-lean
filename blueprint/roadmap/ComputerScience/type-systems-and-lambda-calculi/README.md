@@ -3,6 +3,7 @@
 Typed lambda calculi and type inference: the simply typed lambda calculus (syntax, substitution, normalization, logical relations, normalization by evaluation, elaboration, its models), lambda calculus with references and type safety, and Hindley-Milner let-polymorphism with Algorithm W.
 
 - [Calculus of constructions](calculus-of-constructions/README.md)
+- [Completeness of normalization by evaluation](completeness-of-normalization-by-evaluation/README.md)
 - [Hindley–Milner type inference](hindley-milner-type-inference/README.md)
 - [Simply typed lambda calculus](simply-typed-lambda-calculus/README.md)
 - [System F](system-f/README.md)

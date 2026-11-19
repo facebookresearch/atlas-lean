@@ -4160,3 +4160,4 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Analysis/harmonic-analysis/real-variable-methods/dyadic-maximal-function/exists-lintegral-tsum-rpow-dyadic-maxima.md"}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Analysis/harmonic-analysis/fourier-transform/kakeya-sets/not-exists-e-lp-norm-ball-multiplier-le.md"}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Analysis/harmonic-analysis/real-variable-methods/dyadic-maximal-function/ae-tendsto-set-average-dyadic-interval.md"}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Analysis/complex-analysis/entire-functions/mittag-leffler-theorem/mittag-leffler-2.md"}], "object": [{"location": {"declaration": "Complex.mittag_leffler"}}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
