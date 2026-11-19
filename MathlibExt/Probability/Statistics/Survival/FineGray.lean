@@ -306,7 +306,7 @@ theorem one_sub_cif_eq [IsProbabilityMeasure P] {t : ℝ} (ht : 0 ≤ t) {f : �
 
 omit hT hJ in
 /-- If `T > 0` almost surely then `F_c(0) = 0`. -/
-theorem cif_zero_of_ae_pos [IsFiniteMeasure P] (hpos : ∀ᵐ ω ∂P, 0 < T ω) : cif P T J c 0 = 0 := by
+theorem cif_zero_of_ae_pos (hpos : ∀ᵐ ω ∂P, 0 < T ω) : cif P T J c 0 = 0 := by
   have h0 : P {ω | T ω ≤ 0 ∧ J ω = c} = 0 :=
     measure_mono_null (fun ω hω => not_lt.2 hω.1) (ae_iff.1 hpos)
   simp [cif, measureReal_def, h0]
@@ -518,7 +518,8 @@ theorem fgRiskSet_eq_riskSet_fgTime {i : Fin n} (hi : ε i = some c) :
 /-- The cause-`c` event indicator `δᵢ = (εᵢ = c)`. -/
 def causeIndicator (i : Fin n) : Bool := decide (ε i = some c)
 
-private lemma filter_causeIndicator :
+/-- The cause-`c` events selected by `causeIndicator` are the indices with `εᵢ = c`. -/
+lemma filter_causeIndicator :
     Finset.univ.filter (fun i : Fin n => causeIndicator ε c i = true) =
       Finset.univ.filter (fun i => ε i = some c) := by
   ext i

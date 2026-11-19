@@ -43,7 +43,8 @@ the same `f3` and `f4`, at every pair of populations (`f2_star_eq_f2_admix`,
 
 ## Main results
 
-* `centredCov`, `f2_eq_centredCov`, `centredCov_eq_doubleCenter_f2`, `f2_eq_iff_centredCov_eq`.
+* `centredCov`, `centredCov_comm`, `sum_centredCov_eq_zero`, `f2_eq_centredCov`,
+  `centredCov_eq_doubleCenter_f2`, `f2_eq_iff_centredCov_eq`.
 * `starWeight`, `admixWeight`, `starLen`: the tree and admixture models on three populations;
   `hasBinaryLoadings_star`, `not_hasBinaryLoadings_admix`, `admixWeight_two`.
 * `f2_star_eq_f2_admix`, `f4_star_eq_f4_admix`, `starLen_nonneg`: the f-indistinguishable
@@ -97,12 +98,15 @@ private theorem integrable_centred (hp : ∀ X, MemLp (p X) 2 μ) (X Y : P) :
     Integrable (fun ω => (p X ω - popMean p ω) * (p Y ω - popMean p ω)) μ :=
   (memLp_sub_popMean hp X).integrable_mul (memLp_sub_popMean hp Y)
 
-private theorem centredCov_comm (X Y : P) : centredCov μ p X Y = centredCov μ p Y X := by
+/-- The centred leaf covariance is symmetric in the two populations. -/
+theorem centredCov_comm (X Y : P) : centredCov μ p X Y = centredCov μ p Y X := by
   unfold centredCov
   congr 1 with ω
   ring
 
-private theorem sum_centredCov (hp : ∀ X, MemLp (p X) 2 μ) (X : P) :
+/-- Each row of the centred leaf covariance sums to zero: centring across populations makes
+`∑ Y, K X Y = 𝔼[(p X - p̄) * ∑ Y, (p Y - p̄)] = 0`. -/
+theorem sum_centredCov_eq_zero (hp : ∀ X, MemLp (p X) 2 μ) (X : P) :
     ∑ Y, centredCov μ p X Y = 0 := by
   have : Nonempty P := ⟨X⟩
   have hn : (Fintype.card P : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
@@ -136,20 +140,21 @@ theorem centredCov_eq_doubleCenter_f2 (hp : ∀ X, MemLp (p X) 2 μ) (X Y : P) :
   have hn : (Fintype.card P : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
   have hrow : ∑ k, f2 μ p X k = Fintype.card P * centredCov μ p X X + ∑ k, centredCov μ p k k := by
     simp_rw [f2_eq_centredCov hp X, Finset.sum_sub_distrib, Finset.sum_add_distrib,
-      ← Finset.mul_sum, sum_centredCov hp X, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+      ← Finset.mul_sum, sum_centredCov_eq_zero hp X, Finset.sum_const, Finset.card_univ,
+      nsmul_eq_mul]
     ring
   have hcol : ∑ k, f2 μ p k Y = ∑ k, centredCov μ p k k + Fintype.card P * centredCov μ p Y Y := by
     have : ∀ k, f2 μ p k Y =
         centredCov μ p k k + centredCov μ p Y Y - 2 * centredCov μ p Y k := fun k => by
       rw [f2_eq_centredCov hp k Y, centredCov_comm k Y]
     simp_rw [this, Finset.sum_sub_distrib, Finset.sum_add_distrib, ← Finset.mul_sum,
-      sum_centredCov hp Y, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+      sum_centredCov_eq_zero hp Y, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
     ring
   have hall : ∑ k, ∑ l, f2 μ p k l = 2 * Fintype.card P * ∑ k, centredCov μ p k k := by
     have : ∀ k, ∑ l, f2 μ p k l =
         Fintype.card P * centredCov μ p k k + ∑ k, centredCov μ p k k := fun k => by
       simp_rw [f2_eq_centredCov hp k, Finset.sum_sub_distrib, Finset.sum_add_distrib,
-        ← Finset.mul_sum, sum_centredCov hp k, Finset.sum_const, Finset.card_univ,
+        ← Finset.mul_sum, sum_centredCov_eq_zero hp k, Finset.sum_const, Finset.card_univ,
         nsmul_eq_mul]
       ring
     simp_rw [this, Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const,

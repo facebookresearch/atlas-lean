@@ -65,8 +65,8 @@ its coverage under the posterior is definitional.
 
 - `expectation_linear`, `expectation_indicator`, `sum_prob_filter_eq` : linearity, indicators and
   total probability.
-- `variance_nonneg`, `variance_affine`, `covariance_sum_mul_sum`, `covMatrix_mulVec` : second
-  moments and linear maps.
+- `variance_nonneg`, `variance_affine`, `covariance_sq_le_variance_mul_variance`,
+  `covariance_sum_mul_sum`, `covMatrix_mulVec` : second moments and linear maps.
 - `covariance_prod_eq_zero`, `exists_covariance_eq_zero_prob_ne` : independence gives zero
   covariance, and the converse fails.
 - `expectation_sampleVarUnbiased` : Bessel's correction for i.i.d. finite samples.
@@ -228,6 +228,38 @@ lemma covariance_eq_sub {α : Type*} [Fintype α] {p : α → ℝ} (hp : ∑ x, 
   rw [covariance, h, expectation_sub, expectation_sub, expectation_sub, expectation_const_mul,
     expectation_const_mul, expectation_const hp]
   ring
+
+/-- Cauchy--Schwarz for the finite-state covariance: `(Cov_P(X, Y)) ^ 2 ≤ Var_P(X) * Var_P(Y)`
+when the weights are nonnegative. From `Finset.sum_mul_sq_le_sq_mul_sq` with `√P` weights
+on the centered variables; it is the key step of the Hansen--Jagannathan bound. -/
+theorem covariance_sq_le_variance_mul_variance {α : Type*} [Fintype α] {p X Y : α → ℝ}
+    (hp : ∀ x, 0 ≤ p x) :
+    (covariance p X Y) ^ 2 ≤ variance p X * variance p Y := by
+  have hcov : covariance p X Y
+      = ∑ ω, (Real.sqrt (p ω) * (X ω - expectation p X))
+        * (Real.sqrt (p ω) * (Y ω - expectation p Y)) := by
+    unfold covariance
+    change (∑ x, p x * ((X x - expectation p X) * (Y x - expectation p Y))) = _
+    apply Finset.sum_congr rfl
+    intro ω _
+    conv_lhs => rw [← Real.mul_self_sqrt (hp ω)]
+    ring
+  have hvar1 : variance p X
+      = ∑ ω, (Real.sqrt (p ω) * (X ω - expectation p X)) ^ 2 := by
+    unfold variance
+    change (∑ x, p x * ((X x - expectation p X) ^ 2)) = _
+    apply Finset.sum_congr rfl
+    intro ω _
+    rw [mul_pow, Real.sq_sqrt (hp ω)]
+  have hvar2 : variance p Y
+      = ∑ ω, (Real.sqrt (p ω) * (Y ω - expectation p Y)) ^ 2 := by
+    unfold variance
+    change (∑ x, p x * ((Y x - expectation p Y) ^ 2)) = _
+    apply Finset.sum_congr rfl
+    intro ω _
+    rw [mul_pow, Real.sq_sqrt (hp ω)]
+  rw [hcov, hvar1, hvar2]
+  exact Finset.sum_mul_sq_le_sq_mul_sq Finset.univ _ _
 
 lemma variance_eq_sub {α : Type*} [Fintype α] {p : α → ℝ} (hp : ∑ x, p x = 1) (X : α → ℝ) :
     variance p X = expectation p (fun x => X x ^ 2) - expectation p X ^ 2 := by
@@ -793,6 +825,78 @@ lemma ols_unique_minimizer_iff {ι : Type*} [Fintype ι] (x y : ι → ℝ) :
     have ha := (mul_eq_zero.mp h3).resolve_left hne
     rw [hb, sub_self, zero_mul, add_zero] at ha
     exact ⟨sub_eq_zero.mp (pow_eq_zero_iff two_ne_zero |>.mp ha), hb⟩
+
+/-! ### Least squares is linear in the responses -/
+
+/-- `S_xy = ∑ i, (x i - x̄) * y i`: the centred cross product is linear in `y`. -/
+theorem sxy_eq_sum_sub_mul {ι : Type*} [Fintype ι] (x y : ι → ℝ) :
+    sxy x y = ∑ i, (x i - sampleMean x) * y i := by
+  have h : ∀ i, (x i - sampleMean x) * (y i - sampleMean y) =
+      (x i - sampleMean x) * y i - (x i - sampleMean x) * sampleMean y := fun i => by ring
+  rw [sxy]
+  simp only [h]
+  rw [Finset.sum_sub_distrib, ← Finset.sum_mul, sum_sub_sampleMean, zero_mul, sub_zero]
+
+/-- The least-squares slope of exactly affine responses `b₀ + b₁ x` is `b₁` when `S_xx ≠ 0`. -/
+theorem olsSlope_affine {ι : Type*} [Fintype ι] {x : ι → ℝ} (hx : sxy x x ≠ 0) (b₀ b₁ : ℝ) :
+    olsSlope x (fun i => b₀ + b₁ * x i) = b₁ := by
+  rw [olsSlope, eq_comm, eq_div_iff hx, sxy_eq_sum_sub_mul, sxy_eq_sum_sub_mul]
+  simp only [mul_add, Finset.sum_add_distrib, ← Finset.sum_mul, sum_sub_sampleMean, zero_mul,
+    zero_add, Finset.mul_sum]
+  exact Finset.sum_congr rfl fun i _ => by ring
+
+/-- The sample mean is affine: the mean of `b₀ + b₁ x` is `b₀ + b₁ x̄` (for nonempty index). -/
+theorem sampleMean_affine {ι : Type*} [Fintype ι] [Nonempty ι] (x : ι → ℝ) (b₀ b₁ : ℝ) :
+    sampleMean (fun i => b₀ + b₁ * x i) = b₀ + b₁ * sampleMean x := by
+  have hn : (Fintype.card ι : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
+  simp only [sampleMean_eq_sum_div, Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const,
+    Finset.card_univ, nsmul_eq_mul]
+  field_simp
+
+/-- The least-squares intercept of exactly affine responses `b₀ + b₁ x` is `b₀` when
+`S_xx ≠ 0`. -/
+theorem olsIntercept_affine {ι : Type*} [Fintype ι] {x : ι → ℝ} (hx : sxy x x ≠ 0) (b₀ b₁ : ℝ) :
+    olsIntercept x (fun i => b₀ + b₁ * x i) = b₀ := by
+  have : Nonempty ι := by
+    by_contra h
+    rw [not_nonempty_iff] at h
+    exact hx (by simp [sxy])
+  rw [olsIntercept, olsSlope_affine hx, sampleMean_affine]
+  ring
+
+open MeasureTheory in
+/-- The least-squares slope of integrable responses is integrable. -/
+theorem integrable_olsSlope {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} {ι : Type*}
+    [Fintype ι] (x : ι → ℝ) {Y : ι → Ω → ℝ} (hY : ∀ i, Integrable (Y i) μ) :
+    Integrable (fun ω => olsSlope x fun i => Y i ω) μ := by
+  simp only [olsSlope, sxy_eq_sum_sub_mul]
+  exact (integrable_finsetSum _ fun i _ => (hY i).const_mul _).div_const _
+
+open MeasureTheory in
+/-- Expectation commutes with the least-squares slope: for integrable responses `Y i`,
+`𝔼[b̂(x, Y)] = b̂(x, 𝔼 Y)`. -/
+theorem integral_olsSlope {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} {ι : Type*}
+    [Fintype ι] (x : ι → ℝ) {Y : ι → Ω → ℝ} (hY : ∀ i, Integrable (Y i) μ) :
+    ∫ ω, olsSlope x (fun i => Y i ω) ∂μ = olsSlope x fun i => ∫ ω, Y i ω ∂μ := by
+  simp only [olsSlope, sxy_eq_sum_sub_mul]
+  rw [integral_div, integral_finsetSum _ fun i _ => (hY i).const_mul _]
+  simp_rw [integral_const_mul]
+
+open MeasureTheory in
+/-- Expectation commutes with the least-squares intercept, for a probability measure and
+integrable responses. -/
+theorem integral_olsIntercept {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω}
+    [IsProbabilityMeasure μ] {ι : Type*} [Fintype ι] (x : ι → ℝ) {Y : ι → Ω → ℝ}
+    (hY : ∀ i, Integrable (Y i) μ) :
+    ∫ ω, olsIntercept x (fun i => Y i ω) ∂μ = olsIntercept x fun i => ∫ ω, Y i ω ∂μ := by
+  have hm : Integrable (fun ω => sampleMean fun i => Y i ω) μ := by
+    simp only [sampleMean_eq_sum_div]
+    exact (integrable_finsetSum _ fun i _ => hY i).div_const _
+  simp only [olsIntercept]
+  rw [integral_sub hm ((integrable_olsSlope x hY).mul_const _), integral_mul_const,
+    integral_olsSlope x hY]
+  simp only [sampleMean_eq_sum_div]
+  rw [integral_div, integral_finsetSum _ fun i _ => hY i]
 
 /-! ## H. Least squares in matrix form
 

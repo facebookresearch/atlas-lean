@@ -33,4 +33,9 @@ example : (1 / 2) * logReturn 2 + (1 / 2) * logReturn (1 / 2) = 0 := by
   rw [hlog]
   ring
 
+open MathlibExt.Economics.Finance.Returns MathlibExt.Probability.Finance.PortfolioLogReturn in
+/-- The portfolio module re-exports the shared returns operation, so opening both
+namespaces leaves `logReturn` unambiguous. -/
+example (G : ℝ) : logReturn G = Real.log G := rfl
+
 end MathlibExtTest.PortfolioLogReturn

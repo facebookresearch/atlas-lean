@@ -70,7 +70,10 @@ applies the one-dimensional theorem to the weighted arrays `a n k X n k`,
 
 * The quadratic-variation hypothesis is the realized `∑ X²` (McLeish). The conditional-variance
   form `∑ E[X n k² | F n k] → v` with the conditional Lindeberg condition (Brown 1971;
-  McLeish 1974, Corollary (3.8)) is not proved.
+  McLeish 1974, Corollary (3.8)) is proved in
+  `MathlibExt.Probability.Martingale.ConditionalVarianceCLT`
+  (`tendstoInDistribution_martingale_condVar` and its finite-dimensional forms), which reduces
+  to this file.
 * McLeish's (a) asks `sup_n E[max X²] < ∞`; here it is only required eventually, which is weaker.
   McLeish normalizes the limit variance to `1` (and `A t = t` in Theorem (3.2)); here `v ≥ 0` and
   `A` are arbitrary.
@@ -83,11 +86,23 @@ applies the one-dimensional theorem to the weighted arrays `a n k X n k`,
   step-to-polygon Slutsky step itself; `tendstoInDistribution_fdd_martingaleDifference_floor`
   concludes `hT81` verbatim. (It is not the input `hfdd` of
   `tendstoInDistribution_skorokhod_of_tight_of_fdd`, which concerns the continuous processes.)
-* Composing this file with T82 leaves two gaps, both explicit hypotheses of
-  `tendstoInDistribution_fdd_martingaleDifference_floor`: T82 assumes the predictable quadratic
-  variation `∑ E[ξ n j² | 𝓕 n j] → t`, while this file needs the realized `∑ ξ n j² → t`
-  alongside it; and T82 assumes `AEMeasurable Zc`, while this file needs `Measurable Zc` for
-  the limit `Zc : Ω' → C([0,1])`.
+* T82 assumes the predictable quadratic variation `∑ E[ξ n j² | 𝓕 n j] → t`, while
+  `tendstoInDistribution_fdd_martingaleDifference_floor` also asks for the realized
+  `∑ ξ n j² → t` (`hRQV`). `tendstoInDistribution_fdd_martingaleDifference_floor_condVar` in
+  `MathlibExt.Probability.Martingale.ConditionalVarianceCLT` drops `hRQV`. Two inputs that T82
+  does not assume remain hypotheses of both: `hZm`, measurability of the limit
+  `Zc : Ω' → C([0,1])` (T82 assumes only `AEMeasurable Zc`), and `hZ`, that `Zc` has the
+  centered Gaussian finite-dimensional laws of Brownian motion (covariance `min s u`). T82 takes
+  an arbitrary a.e.-measurable `Zc` together with `hT81`, so supplying `hT81` from these
+  theorems also needs a proof that the chosen limit has these Brownian laws.
+
+## Public helpers
+
+Public for reuse in other martingale files: `martingale_increment` (increments of a martingale
+are martingale differences), `tendstoInMeasure_add` (convergence in probability is additive),
+and `sum_range_cut_le` (the pointwise bound behind a predictable cut: terms kept while the
+running sum stays `≤ K` add up to at most `K`).
+`MathlibExt.Probability.Martingale.ConditionalVarianceCLT` uses all three.
 
 ## Sources
 
@@ -346,6 +361,23 @@ private lemma stopProd_bound (X : ℕ → Ω → ℝ) {K M : ℝ} (hK : 0 ≤ K)
       simp only [mul_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero,
         mul_one]
       refine ⟨fun h => absurd ((qvPrefix_mono X (Nat.le_succ k) ω).trans h) hk, ih2⟩
+
+/-- **Predictable cut bound.** The terms `c k` kept while the running sum `∑_{j ≤ k} c j` stays
+`≤ K` add up to at most `K`. No sign condition on `c` is needed. With `c k = E[X k² | F k]` this
+is the pointwise core of a predictable truncation of the conditional variances. -/
+lemma sum_range_cut_le (c : ℕ → ℝ) {K : ℝ} (hK : 0 ≤ K) (m : ℕ) :
+    ∑ k ∈ range m, (if ∑ j ∈ range (k + 1), c j ≤ K then c k else 0) ≤ K := by
+  suffices h : ∑ k ∈ range m, (if ∑ j ∈ range (k + 1), c j ≤ K then c k else 0) ≤
+      ∑ j ∈ range m, c j ∧
+      ∑ k ∈ range m, (if ∑ j ∈ range (k + 1), c j ≤ K then c k else 0) ≤ K from h.2
+  induction m with
+  | zero => simp [hK]
+  | succ m ih =>
+    rw [sum_range_succ, sum_range_succ]
+    split_ifs with h
+    · exact ⟨by linarith [ih.1], by linarith [ih.1]⟩
+    · push Not at h
+      exact ⟨by linarith [ih.2], by linarith [ih.2]⟩
 
 /-- The stopped quadratic variation is at most `K + M`. -/
 private lemma sum_sq_stopX_le (X : ℕ → Ω → ℝ) {K M : ℝ} (hK : 0 ≤ K) (hM : 0 ≤ M)
@@ -739,7 +771,7 @@ variable {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω} {F : Filtratio
 
 /-- Increments of a martingale `∑_{j<k} X_j` are martingale differences: `X_k` is
 `F_{k+1}`-measurable, integrable, and `E[X_k | F_k] = 0`. -/
-private lemma martingale_increment [IsFiniteMeasure μ]
+lemma martingale_increment [IsFiniteMeasure μ]
     (h : Martingale (fun k ω => ∑ j ∈ range k, X j ω) F μ) (k : ℕ) :
     StronglyMeasurable[F (k + 1)] (X k) ∧ Integrable (X k) μ ∧ μ[X k | F k] =ᵐ[μ] 0 := by
   have hX : X k = (fun ω => ∑ j ∈ range (k + 1), X j ω) - fun ω => ∑ j ∈ range k, X j ω := by
@@ -765,7 +797,8 @@ section InMeasure
 
 variable {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
 
-private lemma tendstoInMeasure_add {f f' : ℕ → Ω → ℝ} {g g' : Ω → ℝ}
+/-- Convergence in probability is additive. -/
+lemma tendstoInMeasure_add {f f' : ℕ → Ω → ℝ} {g g' : Ω → ℝ}
     (hf : TendstoInMeasure μ f atTop g) (hf' : TendstoInMeasure μ f' atTop g') :
     TendstoInMeasure μ (fun n ω => f n ω + f' n ω) atTop (fun ω => g ω + g' ω) := by
   rw [tendstoInMeasure_iff_dist] at hf hf' ⊢

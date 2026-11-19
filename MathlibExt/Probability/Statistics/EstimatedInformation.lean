@@ -78,9 +78,8 @@ here; all copies are private and faithful. Follow-up once it may be edited:
 * replace the note in the `VectorInference` module docstring that estimated-information
   versions and observed-information consistency "are not covered here" with a pointer to this
   file;
-* make one public `tendstoInMeasure_add_zero` and delete the private copies; the one here is
-  the fifth, after `MLEAsymptoticNormality`, `LikelihoodRatioTests`, `VectorInference` and
-  `LikelihoodRatioLocalPower`.
+* delete the private copy `tendstoInMeasure_add_zero'` in `VectorInference` and use the public
+  `MeasureTheory.tendstoInMeasure_add_zero` (in `MLEAsymptoticNormality`).
 
 ## References
 
@@ -141,21 +140,6 @@ theorem observedInformation_zero (p : E → 𝓧 → ℝ) (x : ℕ → 𝓧) (θ
 variable [MeasurableSpace E] [BorelSpace E]
   {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
   {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']
-
-omit [MeasurableSpace E] [BorelSpace E] [IsProbabilityMeasure P] in
-private theorem tendstoInMeasure_add_zero {U V : ℕ → Ω → ℝ}
-    (hU : TendstoInMeasure P U atTop 0) (hV : TendstoInMeasure P V atTop 0) :
-    TendstoInMeasure P (fun i ω => U i ω + V i ω) atTop 0 := by
-  rw [tendstoInMeasure_iff_norm] at hU hV ⊢
-  intro ε hε
-  have h2 := (hU (ε / 2) (by positivity)).add (hV (ε / 2) (by positivity))
-  rw [add_zero] at h2
-  refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds h2 (fun _ => zero_le)
-    fun i => (measure_mono fun ω hω => ?_).trans (measure_union_le _ _)
-  simp only [Set.mem_ofPred_eq, Pi.zero_apply, sub_zero, Real.norm_eq_abs] at hω ⊢
-  by_contra h
-  simp only [Set.mem_union, Set.mem_ofPred_eq, not_or, not_le] at h
-  linarith [abs_add_le (U i ω) (V i ω)]
 
 omit [MeasurableSpace E] [BorelSpace E] [IsProbabilityMeasure P] in
 /-- The observed information at `θ₀` along an i.i.d. sample is a.e. strongly measurable. -/

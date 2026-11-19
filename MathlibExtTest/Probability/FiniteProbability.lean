@@ -370,4 +370,12 @@ example (q : PMF (Fin 3)) (X : Fin 3 → ℝ) :
       ∑ a, (q a).toReal = 1 :=
   ⟨variance_toMeasure_eq q X, sum_toReal_eq_one q⟩
 
+/-- Exactly affine data `y = 2 + 3 x` on `x = (0, 1, 2)`: the least-squares slope is `3` and
+the intercept is `2` (`S_xx = 2 ≠ 0`). -/
+example : olsSlope (![0, 1, 2] : Fin 3 → ℝ) (fun i => 2 + 3 * (![0, 1, 2] : Fin 3 → ℝ) i) = 3 ∧
+    olsIntercept (![0, 1, 2] : Fin 3 → ℝ) (fun i => 2 + 3 * (![0, 1, 2] : Fin 3 → ℝ) i) = 2 := by
+  have hx : sxy (![0, 1, 2] : Fin 3 → ℝ) ![0, 1, 2] ≠ 0 := by
+    norm_num [sxy, sampleMean_eq_sum_div, Fin.sum_univ_three]
+  exact ⟨olsSlope_affine hx 2 3, olsIntercept_affine hx 2 3⟩
+
 end MathlibExtTest.Probability.FiniteProbability

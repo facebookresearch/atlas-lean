@@ -17,6 +17,7 @@ public import Mathlib.LinearAlgebra.Matrix.Rank
 public import MathlibExt.Analysis.InnerProductSpace.CourantFischer
 
 import Mathlib.Analysis.InnerProductSpace.Trace
+import MathlibExt.LinearAlgebra.Matrix.RankAddGeneral
 
 /-!
 # Principal component analysis
@@ -378,13 +379,6 @@ noncomputable def truncSVD (A : Matrix (Fin m) (Fin n) ℝ) (k : ℕ) : Matrix (
   A * ∑ i : Fin n with i.val < k,
     vecMulVec ⇑(rightSingularBasis A i) ⇑(rightSingularBasis A i)
 
-/-- Subadditivity of matrix rank. -/
-private theorem rank_add_bound {a b : ℕ} (M N : Matrix (Fin a) (Fin b) ℝ) :
-    (M + N).rank ≤ M.rank + N.rank := by
-  rw [Matrix.rank, Matrix.rank, Matrix.rank, Matrix.mulVecLin_add]
-  exact (Submodule.finrank_mono (LinearMap.range_add_le _ _)).trans
-    (Submodule.finrank_add_le_finrank_add_finrank _ _)
-
 /-- A sum of matrices of rank at most one has rank at most the number of summands. -/
 private theorem rank_sum_bound {a b : ℕ} {ι : Type*} (s : Finset ι)
     (M : ι → Matrix (Fin a) (Fin b) ℝ) (h : ∀ i ∈ s, (M i).rank ≤ 1) :
@@ -394,7 +388,7 @@ private theorem rank_sum_bound {a b : ℕ} {ι : Type*} (s : Finset ι)
   | empty => simp
   | @insert i s hi ih =>
     rw [Finset.sum_insert hi, Finset.card_insert_of_notMem hi]
-    exact (rank_add_bound _ _).trans
+    exact (Matrix.rank_add_le _ _).trans
       (by have := h i (Finset.mem_insert_self i s)
           have := ih (fun j hj => h j (Finset.mem_insert_of_mem hj))
           omega)

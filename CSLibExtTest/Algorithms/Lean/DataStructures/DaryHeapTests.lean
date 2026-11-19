@@ -10,6 +10,7 @@ module
 
 public import CSLibExt.Algorithms.Lean.DataStructures.BinaryHeap
 public import CSLibExt.Algorithms.Lean.DataStructures.DaryHeap
+meta import CSLibExt.Algorithms.Lean.DataStructures.DaryHeap
 
 /-!
 # Tests for configurable-arity min-heaps
@@ -180,5 +181,70 @@ example : (DaryMinHeap.empty 3 |>.push 5 |>.push 1 |>.push 4 |>.push 2).extractM
       have hrestElems : rest.elements = {2, 4, 5} :=
         (Multiset.cons_inj_right 1).mp hcons
       simp [hx, hrestElems]
+
+-- Bridge to the binary heap at arity two.
+example (i : Nat) : heapParent i = daryParent 2 i :=
+  heapParent_eq_daryParent_two i
+
+example (i : Nat) : heapLeft i = daryChild 2 i 0 ∧ heapRight i = daryChild 2 i 1 :=
+  ⟨heapLeft_eq_daryChild_two i, heapRight_eq_daryChild_two i⟩
+
+example (a : Array Nat) : HeapOrdered a ↔ DaryHeapOrdered 2 a :=
+  heapOrdered_iff_daryHeapOrdered_two a
+
+example : siftUp #[1, 5, 3, 7, 0] 4 = darySiftUp #[1, 5, 3, 7, 0] 4 2 le_rfl :=
+  siftUp_eq_darySiftUp_two _ _
+
+#guard siftUp #[1, 5, 3, 7, 0] 4 == #[0, 1, 3, 7, 5]
+
+#guard darySiftUp #[1, 5, 3, 7, 0] 4 2 le_rfl == #[0, 1, 3, 7, 5]
+
+example : siftDown #[9, 2, 1, 4, 3] 0 = darySiftDown #[9, 2, 1, 4, 3] 0 2 le_rfl :=
+  siftDown_eq_darySiftDown_two _ _
+
+#guard siftDown #[9, 2, 1, 4, 3] 0 == #[1, 2, 9, 4, 3]
+#guard darySiftDown #[9, 2, 1, 4, 3] 0 2 le_rfl == #[1, 2, 9, 4, 3]
+
+example : smallerChild #[0, 5, 5] 0 = darySmallestChild #[0, 5, 5] 2 0 :=
+  smallerChild_eq_darySmallestChild_two _ _
+
+-- Concrete child selection, including a tie: the first minimal child wins.
+example : smallerChild (#[9, 4, 4] : Array Nat) 0 = some 1 := by decide
+
+example : darySmallestChild (#[9, 4, 2] : Array Nat) 2 0 = some 2 := by
+  rw [← smallerChild_eq_darySmallestChild_two]
+  decide
+
+/-- A binary heap built by four insertions. -/
+def binaryHeap : MinHeap Nat :=
+  MinHeap.empty.push 4 |>.push 2 |>.push 9 |>.push 1
+
+/-- The same insertions into an arity-two heap. -/
+def daryTwoHeap : DaryMinHeap Nat :=
+  (DaryMinHeap.empty 2).push 4 |>.push 2 |>.push 9 |>.push 1
+
+example : binaryHeap.toDary = daryTwoHeap := by
+  simp only [binaryHeap, daryTwoHeap, MinHeap.toDary_push, MinHeap.toDary_empty]
+
+#guard binaryHeap.toDary.data == #[1, 2, 9, 4]
+#guard daryTwoHeap.data == #[1, 2, 9, 4]
+#guard (binaryHeap.extractMin.map (fun p => (p.1, p.2.toDary.data))) ==
+  (daryTwoHeap.extractMin.map (fun p => (p.1, p.2.data)))
+
+example (h : MinHeap Nat) (x : Nat) : (h.push x).toDary = h.toDary.push x :=
+  MinHeap.toDary_push h x
+
+example (h : MinHeap Nat) :
+    h.extractMin.map (fun p => (p.1, p.2.toDary)) = h.toDary.extractMin :=
+  MinHeap.toDary_extractMin h
+
+example (h : MinHeap Nat) : h.toDary.toBinary h.toDary_arity = h := by
+  simp
+
+example (h : DaryMinHeap Nat) (h2 : h.arity = 2) : (h.toBinary h2).toDary = h :=
+  DaryMinHeap.toBinary_toDary h h2
+
+example (h : MinHeap Nat) : h.toDary.elements = h.elements := by
+  simp
 
 end Cslib.Algorithms.Lean.DaryHeapTests

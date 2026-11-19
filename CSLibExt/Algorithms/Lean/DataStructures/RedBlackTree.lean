@@ -32,6 +32,14 @@ redex below a black node, and the public `insert` recolors the root black.
 Insertion preserves `blackHeight` exactly before the final recoloring, which
 can raise it by one.
 
+The invariants give the logarithmic height bound: a balanced tree of black
+height `b` has at least `2 ^ (b - 1) - 1` nodes (`two_pow_blackHeight_le`);
+if it also satisfies the red invariant `RedOk`, its height is at most
+`2 * (b - 1)`, plus one for a red root (`height_le_blackHeight`). `Balanced`
+alone does not bound the height, because it allows consecutive red nodes. So
+a valid tree with `n` nodes has height at most `2 * log2 (n + 1)`
+(`height_le_of_valid`).
+
 Deletion is out of scope for this module and is a staged follow-up.
 -/
 
@@ -615,7 +623,7 @@ public theorem blackHeight_insert {α : Type u} [LinearOrder α] {x : α}
     {tree : Tree α} :
     blackHeight (insert x tree) = blackHeight tree ∨
       blackHeight (insert x tree) = blackHeight tree + 1 := by
-  show blackHeight (makeBlack (ins x tree)) = blackHeight tree ∨
+  change blackHeight (makeBlack (ins x tree)) = blackHeight tree ∨
     blackHeight (makeBlack (ins x tree)) = blackHeight tree + 1
   rcases blackHeight_makeBlack (tree := ins x tree) with h | h
   · exact Or.inl (h.trans blackHeight_ins)
@@ -678,6 +686,74 @@ public theorem mem_fromList {α : Type u} [LinearOrder α] {x : α} {xs : List �
   induction xs with
   | nil => simp [fromList]
   | cons y ys ih => simp [fromList, mem_insert, ih]
+
+/-! ## Height bound -/
+
+/-- Every tree has black height at least one, since the leaf counts as black. -/
+public theorem one_le_blackHeight {α : Type u} : ∀ tree : Tree α, 1 ≤ blackHeight tree
+  | .empty => by simp [blackHeight]
+  | .node .red left _ _ => by simpa [blackHeight] using one_le_blackHeight left
+  | .node .black _ _ _ => by simp [blackHeight]
+
+/-- A balanced tree of black height `b` has at least `2 ^ (b - 1) - 1` nodes. -/
+public theorem two_pow_blackHeight_le {α : Type u} :
+    ∀ tree : Tree α, Balanced tree →
+      2 ^ (blackHeight tree - 1) ≤ (erase tree).numNodes + 1
+  | .empty, _ => by simp [blackHeight, BinaryTree.numNodes]
+  | .node .red left _ right, ⟨hl, _, _⟩ => by
+      have := two_pow_blackHeight_le left hl
+      simp only [blackHeight, erase_node, BinaryTree.numNodes]
+      omega
+  | .node .black left _ right, ⟨hl, hr, heq⟩ => by
+      have ihl := two_pow_blackHeight_le left hl
+      have ihr := two_pow_blackHeight_le right hr
+      have h1 := one_le_blackHeight left
+      rw [← heq] at ihr
+      have hpow : 2 ^ (blackHeight left + 1 - 1) = 2 * 2 ^ (blackHeight left - 1) := by
+        rw [show blackHeight left + 1 - 1 = blackHeight left - 1 + 1 by omega, Nat.pow_succ]
+        omega
+      simp only [blackHeight, erase_node, BinaryTree.numNodes]
+      omega
+
+/-- A tree with the red and black-height invariants has height at most twice
+its black height, not counting the leaf; a red root adds one more level. -/
+public theorem height_le_blackHeight {α : Type u} :
+    ∀ tree : Tree α, RedOk tree → Balanced tree →
+      (erase tree).height + 2 ≤
+        2 * blackHeight tree + (if colorOf tree = .red then 1 else 0)
+  | .empty, _, _ => by simp [blackHeight, colorOf, BinaryTree.height]
+  | .node .red left _ right, ⟨hRl, hRr, hcl, hcr⟩, ⟨hBl, hBr, heq⟩ => by
+      have ihl := height_le_blackHeight left hRl hBl
+      have ihr := height_le_blackHeight right hRr hBr
+      rw [hcl] at ihl
+      rw [hcr, ← heq] at ihr
+      simp only [blackHeight, colorOf, erase_node, BinaryTree.height] at ihl ihr ⊢
+      simp at ihl ihr ⊢
+      omega
+  | .node .black left _ right, ⟨hRl, hRr⟩, ⟨hBl, hBr, heq⟩ => by
+      have ihl := height_le_blackHeight left hRl hBl
+      have ihr := height_le_blackHeight right hRr hBr
+      rw [← heq] at ihr
+      have h1 := one_le_blackHeight left
+      have hl1 : (erase left).height + 2 ≤ 2 * blackHeight left + 1 := by
+        split at ihl <;> omega
+      have hr1 : (erase right).height + 2 ≤ 2 * blackHeight left + 1 := by
+        split at ihr <;> omega
+      simp only [blackHeight, colorOf, erase_node, BinaryTree.height]
+      simp
+      omega
+
+/-- A valid red-black tree with `n` nodes has height at most `2 * log2 (n + 1)`. -/
+public theorem height_le_of_valid {α : Type u} [LT α] {tree : Tree α} (h : Valid tree) :
+    (erase tree).height ≤ 2 * Nat.log2 ((erase tree).numNodes + 1) := by
+  obtain ⟨_, hR, hB, hc⟩ := h
+  have hh := height_le_blackHeight tree hR hB
+  rw [hc] at hh
+  have hp := two_pow_blackHeight_le tree hB
+  have hlog : blackHeight tree - 1 ≤ Nat.log2 ((erase tree).numNodes + 1) :=
+    (Nat.le_log2 (by omega)).2 hp
+  simp at hh
+  omega
 
 end RedBlackTree
 end Cslib.Algorithms.Lean

@@ -32,6 +32,15 @@ example {Ω : Type*} (n : ℕ) (hn : n ≠ 0) (X : ℕ → Ω → ℝ) (ω : Ω)
     donskerProcess_apply_eq (n := n) (X := X) (ω := ω)
       (t := ⟨1, zero_le_one, le_rfl⟩) hn
 
+-- At the left endpoint every polygonal path is pinned at `0`; Donsker's tightness step feeds this
+-- to `isTightMeasureSet_of_modulus`. For `n = 0` the process is `0` by definition.
+example {Ω : Type*} (n : ℕ) (X : ℕ → Ω → ℝ) (ω : Ω) :
+    donskerProcess n X ω ⟨0, le_rfl, zero_le_one⟩ = 0 := by
+  rcases eq_or_ne n 0 with rfl | hn
+  · simp [donskerProcess]
+  · rw [donskerProcess_apply_eq n X ω _ hn]
+    simp
+
 -- Equal finite-dimensional laws of two Dirac measures determine the paths themselves.
 example (f g : C(Set.Icc (0 : ℝ) 1, ℝ))
     (h : ∀ I : Finset (Set.Icc (0 : ℝ) 1),

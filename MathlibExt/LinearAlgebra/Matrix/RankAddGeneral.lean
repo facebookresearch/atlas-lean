@@ -20,12 +20,10 @@ Source: R. A. Horn and C. R. Johnson, *Matrix Analysis*, 2nd ed., Cambridge Univ
 2013, §0.4.5 (rank inequalities: `rank (A + B) ≤ rank A + rank B`).
 
 Mathlib has the cardinal-valued `LinearMap.rank_add_le` and `LinearMap.rank_finsetSum_le` for
-linear maps but no statement about `Matrix.rank`. The proof is the one already used for real
-`Fin a × Fin b` matrices in
-`MathlibExt.Probability.Statistics.PCA` (private `rank_add_bound`, made public for that case
-in T76) and in `MathlibExt.Biology.Omics.CovarianceBridge` (private `rank_add_le'`): the column
-space of `A + B` lies in the sum of the column spaces. Here it is stated for arbitrary row and
-column index types (only the columns need to be finite) and an arbitrary field.
+linear maps but no statement about `Matrix.rank`. The proof: the column space of `A + B` lies in
+the sum of the column spaces. It is stated for arbitrary row and column index types (only the
+columns need to be finite) and an arbitrary field. `MathlibExt.Probability.Statistics.PCA` and
+`MathlibExt.Biology.Omics.CovarianceBridge` use it for real `Fin a × Fin b` matrices.
 
 ## Main results
 

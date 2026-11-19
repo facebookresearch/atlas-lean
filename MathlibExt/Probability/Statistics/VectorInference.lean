@@ -30,7 +30,7 @@ The parameter `θ` ranges over a finite-dimensional real inner product space `E`
 `EuclideanSpace ℝ (Fin d)`), and `p θ` is a family of densities with respect to a reference
 measure `ν`. The **score** is the gradient `∇_θ log p θ x ∈ E` (`score`) and the **Fisher
 information** is the operator `I(θ) = E_θ [s sᵀ]` (`fisherInformation`), with quadratic form
-`⟪I(θ) u, u⟫ = E_θ ⟪s, u⟫²`. Every result here is the vector form of a one-parameter result in
+`⟪I(θ) u, u⟫ = E_θ ⟪s, u⟫²`. The likelihood results are vector forms of one-parameter results in
 `FisherInformation`, `MLEAsymptoticNormality` and `LikelihoodRatioTests`:
 
 * Cramér–Rao reduces to the scalar inequality along the line `t ↦ θ + t • u`, whose scalar

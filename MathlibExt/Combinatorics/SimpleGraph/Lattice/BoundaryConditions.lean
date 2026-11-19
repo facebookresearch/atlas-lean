@@ -148,6 +148,7 @@ theorem wiredGraph_adj (ω : Sym2 V → Bool) (x y : V) :
 instance (ω : Sym2 V → Bool) : DecidableRel (wiredGraph G bdry ω).Adj :=
   fun x y => inferInstanceAs (Decidable ((openGraph G ω ⊔ boundaryCliqueGraph bdry).Adj x y))
 
+omit [DecidablePred bdry] in
 theorem openGraph_le_wiredGraph (ω : Sym2 V → Bool) :
     openGraph G ω ≤ wiredGraph G bdry ω := le_sup_left
 
@@ -179,14 +180,17 @@ noncomputable def numClusters (bc : BoundaryCondition) (ω : Sym2 V → Bool) : 
   | BoundaryCondition.wired => numClustersWired G bdry ω
   | BoundaryCondition.periodic => numClustersFree G ω
 
+omit [DecidablePred bdry] in
 @[simp]
 theorem numClusters_free (ω : Sym2 V → Bool) :
     numClusters G bdry BoundaryCondition.free ω = numClustersFree G ω := rfl
 
+omit [DecidablePred bdry] in
 @[simp]
 theorem numClusters_wired (ω : Sym2 V → Bool) :
     numClusters G bdry BoundaryCondition.wired ω = numClustersWired G bdry ω := rfl
 
+omit [DecidablePred bdry] in
 @[simp]
 theorem numClusters_periodic (ω : Sym2 V → Bool) :
     numClusters G bdry BoundaryCondition.periodic ω = numClustersFree G ω := rfl

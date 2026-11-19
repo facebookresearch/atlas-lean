@@ -23,14 +23,19 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.NyquistShannon` — nyquist_shannon_sampling (manifest `manifests/problems/nyquist_shannon_sampling.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.NyquistShannon` —
+nyquist_shannon_sampling (manifest `manifests/problems/nyquist_shannon_sampling.toml`, rev 1,
+submitter Kim Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Analysis.NyquistShannonWanted` namespace. Mathematical
-statements are unchanged. Source: C. E. Shannon, *Communication in the presence of noise*, Proc. IRE 37 (1949); H. Nyquist (1928); E. T. Whittaker (1915). Knill, *Some fundamental theorems in mathematics*, §179.
+and placed the declarations in the `MathlibExt.Analysis.NyquistShannonWanted` namespace.
+Mathematical
+statements are unchanged. Source: C. E. Shannon, *Communication in the presence of noise*, Proc. IRE
+37 (1949); H. Nyquist (1928); E. T. Whittaker (1915). Knill, *Some fundamental theorems in
+mathematics*, §179.
 -/
 module
 
@@ -75,7 +80,9 @@ Nyquist band `[-1/2, 1/2]`.
 
 The explicit `Summable` conjunct records the convergence content of the
 cardinal series, rather than relying only on Lean's total `tsum`.
-Source: C. E. Shannon, *Communication in the presence of noise*, Proc. IRE 37 (1949); H. Nyquist (1928); E. T. Whittaker (1915). Knill, *Some fundamental theorems in mathematics*, §179. Via leanprover/lean-eval@38361be, problem `nyquist_shannon_sampling`.
+Source: C. E. Shannon, *Communication in the presence of noise*, Proc. IRE 37 (1949); H. Nyquist
+(1928); E. T. Whittaker (1915). Knill, *Some fundamental theorems in mathematics*, §179. Via
+leanprover/lean-eval@38361be, problem `nyquist_shannon_sampling`.
 -/
 public theorem_wanted nyquist_shannon_sampling (f : 𝓢(ℝ, ℂ)) (hf : FourierSupportedInNyquist f) :
     ∀ t : ℝ,

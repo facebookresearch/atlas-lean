@@ -12,10 +12,7 @@ Author: Stefan Trandafir
 module
 
 public import Mathlib.Combinatorics.Digraph.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Finite
 public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import Mathlib.Data.Fin.VecNotation
 
 @[expose] public section
 
@@ -38,10 +35,10 @@ Source records: Combinatorics 11, Combinatorics 12, Combinatorics 13, Combinator
 namespace MetaMathlibExt
 
 -- Combinatorics 11: $s$-arc
-
 /-- An *s-arc* in a graph is a sequence of vertices (v₀, …, vₛ) such that consecutive vertices are
 adjacent and vᵢ₋₁ ≠ vᵢ₊₁ when 0 < i < s.
 -/
+
 structure _root_.SimpleGraph.SArc {V : Type*} [Fintype V] (G : SimpleGraph V) (s : ℕ) where
   vertices : Fin (s + 1) → V
   adj : ∀ i : Fin s, G.Adj (vertices i.castSucc) (vertices i.succ)
@@ -82,12 +79,12 @@ def _root_.SimpleGraph.SArc.head {V : Type*} [Fintype V]
 def _root_.SimpleGraph.SArc.follows {V : Type*} [Fintype V]
     {G : SimpleGraph V} {s : ℕ} (a b : G.SArc s) : Prop :=
   ∃ c : G.SArc (s + 1), c.head = a ∧ c.tail = b
-
 /-- If s ≥ 1 and α = (x₀, …, xₛ), we define its *head* to be the (s-1)-arc (x₁, …, xₛ) and its
 *tail* to be the (s-1)-arc (x₀, …, xₛ₋₁). If α and β are s-arcs we say that β *follows* α if there
 is an (s+1)-arc whose tail is α and whose head is β. We use X⁽ˢ⁾ to denote the directed graph with
 the s-arcs of X as its vertices, such that (α, β) is an arc if and only if β follows α.
 -/
+
 def _root_.SimpleGraph.arcDigraph {V : Type*} [Fintype V]
     (G : SimpleGraph V) (s : ℕ) : Digraph (G.SArc s) where
   Adj a b := b.follows a

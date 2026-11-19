@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.PopulationGenetics.Coalescent.Tajima
+public import MathlibExt.Biology.PopulationGenetics.Coalescent.Topology
 public import Mathlib.Probability.Moments.Covariance
 import Mathlib.Probability.Independence.Integration
 import Mathlib.Data.Nat.Choose.Cast
@@ -42,8 +43,14 @@ the pairs `s` and `t`,
 * `E[S | m] = Var[S | m] = (θ / 2) L` (as in `Coalescent/Tajima.lean`).
 
 The genealogy enters through the following properties of Kingman's coalescent, which are
-**hypotheses here** (they are not derived from `KingmanTimes` and the random-joining law of
-`Coalescent/Topology.lean`, which are not coupled in the library):
+**hypotheses here**: the identities of this file hold for any genealogy with these properties.
+`Coalescent/MutationPairwise.lean` couples the epochs of `KingmanTimes` with the random-joining
+topology of `Coalescent/Topology.lean` in a concrete model (`kingmanGenealogyMeasure`,
+`kingmanTreeMutationMeasure`) and derives there the law of `τ s`
+(`hasLaw_pairCoalTime_kingmanGenealogyMeasure`), the product moments `4/3` and `11/9`
+(`integral_pairCoalTime_mul_shared`, `integral_pairCoalTime_mul_disjoint`) and the expected
+shared lengths `1` and `2/3` (`integral_pairPathOverlap_shared`,
+`integral_pairPathOverlap_disjoint`); the theorems below are not specialized to that model.
 
 * each `τ s` is exponential with rate `1`, so `E τ s = 1`, `E (τ s)² = 2`;
 * `E[τ s τ t] = 4/3` if the pairs share one gene and `11/9` if they are disjoint (the
@@ -53,8 +60,8 @@ The genealogy enters through the following properties of Kingman's coalescent, w
   `{j, k}` is the symmetric difference of the pairs); for disjoint pairs `E ℓ = 2/3`;
 * `E[τ s L] = 2 a₁ + (n + 2) / n`. `integral_pairTime_mul_totalLength` derives this from the
   representation `τ s = ∑_k 1[s separate while k lineages] T k` with the classical
-  probability `(k - 1) (n + 1) / ((n - 1) (k + 1))` that a given pair is still separate when
-  there are `k` lineages, under independence of topology and holding times.
+  probability `pairSeparateProb n k = (k - 1) (n + 1) / ((n - 1) (k + 1))` that a given pair is
+  still separate when there are `k` lineages, under independence of topology and holding times.
 
 The constants `4/3`, `11/9`, `2/3` follow by conditioning on the ranked topology of three or
 four genes (equally likely ranked histories, independent holding times `Exp(C(k, 2))`).
@@ -67,6 +74,7 @@ integral of a non-integrable function is `0`). The identities hold for every rea
 
 * `sum_samplePairs_card_inter`: among the `C(n, 2)` pairs, `1` equals a given pair, `2 (n - 2)`
   share one gene with it and `C(n - 2, 2)` are disjoint from it.
+* `memLp_meanPairDiff`: `π` is square integrable when each pairwise count is.
 * `variance_meanPairDiff`: `Var π = b₁ θ + b₂ θ²` (Tajima 1983).
 * `KingmanTimes.covariance_meanPairDiff_segSites`: `Cov(π, S) = θ + (n + 2) θ² / (2 n)`.
 * `KingmanTimes.variance_tajimaNumerator`: `Var(π - S / a₁) = c₁ θ + c₂ θ²` (Tajima 1989).
@@ -453,32 +461,14 @@ private theorem covariance_meanPairDiff_segSites_aux {Ω : Type*} {mΩ : Measura
   ring
 
 /-- The mean number of pairwise differences is square integrable when each `D s` is. -/
-private theorem memLp_meanPairDiff {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
+theorem memLp_meanPairDiff {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
     {n : ℕ} {D : Finset (Fin n) → Ω → ℝ} (hD2 : ∀ s ∈ samplePairs n, MemLp (D s) 2 μ) :
     MemLp (meanPairDiff n D) 2 μ :=
   (memLp_finsetSum (samplePairs n) hD2).const_mul _
 
-/-! ### The probability that a pair is still separate -/
+/-! ### A weighted sum of pair-separation probabilities
 
-/-- The probability `(k - 1) (n + 1) / ((n - 1) (k + 1))` that a given pair of a sample of
-size `n` is still in two distinct lineages while the genealogy has `k` lineages
-(`2 ≤ k ≤ n`, `n ≥ 2`; at `n = 1` the definition divides by zero and returns `0`). -/
-def pairSeparateProb (n k : ℕ) : ℝ :=
-  ((k : ℝ) - 1) * ((n : ℝ) + 1) / (((n : ℝ) - 1) * ((k : ℝ) + 1))
-
-/-- `∑_{k=2}^n 1 / (k (k + 1)) = 1/2 - 1/(n + 1)`. -/
-private theorem sum_recip_mul_succ (n : ℕ) (hn : 2 ≤ n) :
-    ∑ k ∈ Icc 2 n, 1 / ((k : ℝ) * ((k : ℝ) + 1)) =
-      1 / 2 - 1 / ((n : ℝ) + 1) := by
-  induction n, hn using Nat.le_induction with
-  | base => norm_num
-  | succ n hn ih =>
-    rw [sum_Icc_succ_top (Nat.le_trans hn (Nat.le_succ n)), ih]
-    norm_num only [Nat.cast_add, Nat.cast_one]
-    have h1 : (n : ℝ) + 1 ≠ 0 := by positivity
-    have h2 : (n : ℝ) + 1 + 1 ≠ 0 := by positivity
-    field_simp [h1, h2]
-    ring
+`pairSeparateProb` and `sum_pairSeparateProb_div_choose` are in `Topology.lean`. -/
 
 /-- `∑_{k=2}^n 1 / ((k - 1) k (k + 1)) = 1/4 - 1/(2 n (n + 1))`. -/
 private theorem sum_recip_pred_mul_succ (n : ℕ) (hn : 2 ≤ n) :
@@ -495,31 +485,6 @@ private theorem sum_recip_pred_mul_succ (n : ℕ) (hn : 2 ≤ n) :
     have h2 : (n : ℝ) + 1 + 1 ≠ 0 := by positivity
     field_simp [h0, h1, h2]
     ring
-
-/-- `∑_{k=2}^n p_k / C(k, 2) = 1`: the mean coalescence time of a pair is `1`. -/
-theorem sum_pairSeparateProb_div_choose {n : ℕ} (hn : 2 ≤ n) :
-    ∑ k ∈ Icc 2 n, pairSeparateProb n k * ((k.choose 2 : ℕ) : ℝ)⁻¹ = 1 := by
-  have hn' : (2 : ℝ) ≤ n := by exact_mod_cast hn
-  have hn1 : (n : ℝ) - 1 ≠ 0 := by linarith
-  have hn2 : (n : ℝ) + 1 ≠ 0 := by positivity
-  calc
-    _ = ∑ k ∈ Icc 2 n,
-        (2 * ((n : ℝ) + 1) / ((n : ℝ) - 1)) *
-          (1 / ((k : ℝ) * ((k : ℝ) + 1))) := by
-      apply sum_congr rfl
-      intro k hk
-      have hk' : (2 : ℝ) ≤ k := by exact_mod_cast (mem_Icc.mp hk).1
-      have hk0 : (k : ℝ) ≠ 0 := by linarith
-      have hk1 : (k : ℝ) - 1 ≠ 0 := by linarith
-      have hk2 : (k : ℝ) + 1 ≠ 0 := by positivity
-      rw [pairSeparateProb, Nat.cast_choose_two]
-      field_simp [hn1, hk0, hk1, hk2]
-    _ = (2 * ((n : ℝ) + 1) / ((n : ℝ) - 1)) *
-        (1 / 2 - 1 / ((n : ℝ) + 1)) := by
-      rw [← mul_sum, sum_recip_mul_succ n hn]
-    _ = 1 := by
-      field_simp [hn1, hn2]
-      ring
 
 /-- `∑_{k=2}^n k p_k / C(k, 2)² = (n + 2) / n`. -/
 theorem sum_mul_pairSeparateProb_div_choose_sq {n : ℕ} (hn : 2 ≤ n) :
@@ -603,9 +568,7 @@ theorem variance_tajimaNumerator [IsProbabilityMeasure μ] {m : MeasurableSpace 
       fun ω => θ ^ 2 / 2 * (τ s ω * K.totalLength ω) + θ * τ s ω) :
     Var[fun ω => meanPairDiff n D ω - S ω / tajimaA1 n; μ] =
       tajimaC1 n * θ + tajimaC2 n * θ ^ 2 := by
-  have ha1 : 0 < tajimaA1 n := by
-    rw [tajimaA1_eq_harmonic]
-    exact_mod_cast harmonic_pos (by omega)
+  have ha1 := tajimaA1_pos hn
   have hn0 : (n : ℝ) ≠ 0 := by positivity
   have hSa : MemLp (fun ω => S ω / tajimaA1 n) 2 μ := by
     simpa [div_eq_mul_inv, mul_comm] using hS2.const_mul (tajimaA1 n)⁻¹
@@ -621,30 +584,6 @@ theorem variance_tajimaNumerator [IsProbabilityMeasure μ] {m : MeasurableSpace 
   unfold tajimaC1 tajimaC2
   field_simp
   ring
-
-/-- `E[T k T k'] = C(k, 2)⁻¹ C(k', 2)⁻¹ + [k = k'] C(k, 2)⁻²` (independent exponential holding
-times). -/
-private theorem integral_T_mul_T [IsProbabilityMeasure μ] {k k' : ℕ} (hk : k ∈ Icc 2 n)
-    (hk' : k' ∈ Icc 2 n) :
-    μ[fun ω => K.T k ω * K.T k' ω] = ((k.choose 2 : ℕ) : ℝ)⁻¹ * ((k'.choose 2 : ℕ) : ℝ)⁻¹ +
-      if k = k' then (((k.choose 2 : ℕ) : ℝ)⁻¹) ^ 2 else 0 := by
-  by_cases h : k = k'
-  · subst h
-    have hm : MemLp (K.T k) 2 μ := (K.hasLaw k hk).memLp_comp (f := id)
-      ((memLp_two_iff_integrable_sq aestronglyMeasurable_id).2
-        (by simpa using integrable_pow_expMeasure (choose_two_pos hk) 2))
-    have hv := variance_eq_sub hm
-    rw [(K.hasLaw k hk).variance_eq_of_expMeasure (choose_two_pos hk), K.integral_T hk] at hv
-    have hsq : (fun ω => K.T k ω * K.T k ω) = K.T k ^ 2 := by
-      funext ω
-      simp [sq]
-    simp only [hsq, ↓reduceIte]
-    linarith
-  · have hind : IndepFun (K.T k) (K.T k') μ :=
-      K.indep.indepFun (i := ⟨k, hk⟩) (j := ⟨k', hk'⟩) (fun h' => h (congrArg Subtype.val h'))
-    rw [IndepFun.integral_fun_mul_eq_mul_integral hind (K.integrable_T hk).aestronglyMeasurable
-      (K.integrable_T hk').aestronglyMeasurable, K.integral_T hk, K.integral_T hk']
-    simp [h]
 
 /-- **Pair coalescence time against the total branch length**: if the coalescence time of a
 pair is `τ = ∑_{k=2}^n χ k T k`, where `χ k` indicates that the pair is still in two distinct

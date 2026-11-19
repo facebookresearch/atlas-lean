@@ -68,13 +68,14 @@ Morris 1983), and compares the result with the moment estimator.
   expected shape score vanishes at the truth) and positivity of the profile information. They are
   what make the sign hypothesis of `ae_eventually_exists_score_root` true for negative binomial
   counts; here that hypothesis is assumed, not derived.
-* The joint MLE as a global maximizer. The likelihood is not jointly concave; the classical
-  result (a finite joint MLE exists iff the biased sample variance exceeds the sample mean, and it
-  is then unique; conjectured by Anscombe 1950, proved by Aragón, Eberly and Eberly 1992) is
-  formalized only in part: overdispersion gives a solution of the score equations
-  (`exists_score_root_of_overdispersed`), but neither its uniqueness, nor that it maximizes the
-  likelihood, nor the converse is proved. The consistency theorem accordingly gives a consistent
-  root, not consistency of a unique global maximizer.
+* The converse half of the joint MLE characterization. The likelihood is not jointly concave; the
+  classical result (a finite joint MLE exists iff the biased sample variance exceeds the sample
+  mean, and it is then unique; conjectured by Anscombe 1950, proved by Levin and Reeds 1977 and by
+  Aragón, Eberly and Eberly 1992) is formalized in its forward direction in
+  `MathlibExt.Biology.Omics.HierarchicalCountMLEUniqueness`: under `0 < M < V` the MLE exists, is
+  unique and is the global maximizer (`existsUnique_isMaxOn_logMarginalLik`; Levin and Reeds 1977,
+  Theorem 2). The converse, no finite maximizer when `V ≤ M`, is still not proved. The consistency
+  theorem here gives a consistent root, not consistency of a unique global maximizer.
 * Consistency with heterogeneous size factors, and asymptotic normality or efficiency of the MLE
   relative to the moment estimator.
 
@@ -718,7 +719,10 @@ private lemma log_one_add_ge {x : ℝ} (hx : 0 ≤ x) : x - x ^ 2 / 2 ≤ log (1
     zero_pow, zero_div] at this
   linarith
 
-private lemma digammaIncrement_le_cubic {a : ℝ} (ha : 0 < a) (k : ℕ) :
+/-- Cubic upper bound on the digamma increment: for `a > 0`,
+`∑_{j<k} 1 / (a + j) ≤ k / a - (k (k - 1) / 2) / a² + k³ / a³`, from the termwise bound
+`1 / (a + j) ≤ 1 / a - j / a² + j² / a³`. -/
+lemma digammaIncrement_le_cubic {a : ℝ} (ha : 0 < a) (k : ℕ) :
     digammaIncrement a k ≤ k / a - (k * (k - 1) / 2) / a ^ 2 + (k : ℝ) ^ 3 / a ^ 3 := by
   have hterm : ∀ j : ℕ, (a + j)⁻¹ ≤ 1 / a - j / a ^ 2 + (j : ℝ) ^ 2 / a ^ 3 := fun j => by
     have hj : (0 : ℝ) ≤ j := j.cast_nonneg
@@ -816,8 +820,9 @@ private lemma exists_profileShapeScore_pos [Nonempty ι] {k : ι → ℕ} (hM : 
 /-- **Overdispersion gives a solution of the score equations.** At a common size factor
 `σ > 0`, if the sample is overdispersed, `0 < M < V` (exactly the condition under which the moment
 estimates `momShape M V`, `momRate σ M V` are positive), then the score equations of the marginal
-likelihood have a solution `(â, σ â / M)` with `â > 0`. Uniqueness, and that the solution is the
-global maximizer, are not proved here. -/
+likelihood have a solution `(â, σ â / M)` with `â > 0`. Uniqueness and global maximality are
+`existsUnique_score_root` and `logMarginalLik_lt_of_score_root` in
+`MathlibExt.Biology.Omics.HierarchicalCountMLEUniqueness`. -/
 theorem exists_score_root_of_overdispersed {σ : ℝ} [Nonempty ι] (hσ : 0 < σ) {k : ι → ℕ}
     (hM : 0 < countMean k) (hMV : countMean k < countVar k) :
     ∃ a b, 0 < a ∧ 0 < b ∧ shapeScore a b (fun _ => σ) k = 0 ∧

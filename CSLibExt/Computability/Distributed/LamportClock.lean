@@ -17,7 +17,7 @@ public import Mathlib.Logic.Function.Basic
 public import Mathlib.Data.List.Induction
 public import Mathlib.Data.List.GetD
 public import Mathlib.Order.Lex
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
 
 /-!
 # Lamport clocks satisfy the clock condition

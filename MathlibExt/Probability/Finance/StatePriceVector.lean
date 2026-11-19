@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Probability.Finance.FundamentalTheoremAssetPricing
+public import MathlibExt.Probability.Finance.FundedFTAP
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 public import Mathlib.Algebra.BigOperators.Field
@@ -19,23 +19,20 @@ import Mathlib.Tactic.Ring
 
 Source: Atlas roadmap FI08.T02. The risk-free funding convention is explicit: buying one unit of asset `a`
 at price `p a`, financed by borrowing `p a` at gross risk-free return `R`, has net
-funded gain `X a ω - R * p a` in state `ω`.
+funded gain `X a ω - R * p a` in state `ω`. The no-arbitrage predicate
+`NoFundedArbitrage` is the one defined next to the funded-gains FTAP in
+`MathlibExt.Probability.Finance.FundedFTAP`, re-exported here under its original name.
 -/
 
 @[expose] public section
 
 namespace MathlibExt.Probability.Finance.StatePriceVector
 
-open MathlibExt.Probability.Finance.FundamentalTheoremAssetPricing
+open MathlibExt.Probability.Finance.FundedFTAP
 
-/-- No arbitrage on funded gains: no portfolio `h` has nonnegative funded gain in
-every state and strictly positive funded gain in some state. The funded gain of
-buying `h a` units of asset `a` at price `p a`, financed at gross risk-free
-return `R`, is `h a * (X a ω - R * p a)` in state `ω`. -/
-def NoFundedArbitrage {Ω : Type*} [Fintype Ω] {A : Type*} [Fintype A]
-    (X : A → Ω → ℝ) (p : A → ℝ) (R : ℝ) : Prop :=
-  ¬ ∃ h : A → ℝ, (∀ ω : Ω, 0 ≤ ∑ a : A, h a * (X a ω - R * p a)) ∧
-    (∃ ω : Ω, 0 < ∑ a : A, h a * (X a ω - R * p a))
+-- The single funded-arbitrage predicate lives in `FundedFTAP`; this alias keeps the
+-- name `StatePriceVector.NoFundedArbitrage` for existing statements.
+export MathlibExt.Probability.Finance.FundedFTAP (NoFundedArbitrage)
 
 /-- The state-price vector induced by a normalized pricing probability `q` and gross
 risk-free return `R`: `ψ ω = q ω / R`. -/
@@ -45,9 +42,9 @@ noncomputable def statePriceVector {Ω : Type*} (q : Ω → ℝ) (R : ℝ) : Ω 
 /-- **State-price vector and replication pricing (FI08.T02).** Under no arbitrage on
 funded gains, `ψ = q / R` is strictly positive, sums to `1 / R`, and prices every
 replicated payoff: the `ψ`-value of the payoff `∑ a, h a * X a ω` of portfolio `h`
-equals its cost `∑ a, h a * p a`. The pricing probability `q` is the one supplied
-by `one_period_fundamental_theorem_asset_pricing_general` applied to the funded
-gains; it is not reproved here. -/
+equals its cost `∑ a, h a * p a`. The pricing probability `q` and its pricing
+identity `∑ ω, q ω * X a ω = R * p a` are the ones supplied by `funded_ftap`; they
+are not reproved here. -/
 theorem exists_statePriceVector_prices_replicated
     {Ω : Type*} [Fintype Ω] [Nonempty Ω]
     {A : Type*} [Fintype A]
@@ -56,11 +53,7 @@ theorem exists_statePriceVector_prices_replicated
     ∃ ψ : Ω → ℝ, (∀ ω : Ω, 0 < ψ ω) ∧ (∑ ω : Ω, ψ ω = 1 / R) ∧
       ∀ h : A → ℝ, ∑ ω : Ω, ψ ω * (∑ a : A, h a * X a ω) = ∑ a : A, h a * p a := by
   have hR' : R ≠ 0 := ne_of_gt hR
-  have hNA' : ¬ ∃ h : A → ℝ, (∀ ω : Ω, 0 ≤ ∑ a : A, h a * (X a ω - R * p a)) ∧
-      (∃ ω : Ω, 0 < ∑ a : A, h a * (X a ω - R * p a)) := hNA
-  obtain ⟨q, hqpos, hq1, hqg⟩ :=
-    (one_period_fundamental_theorem_asset_pricing_general
-      (fun a ω => X a ω - R * p a)).mp hNA'
+  obtain ⟨q, hqpos, hq1, key⟩ := (funded_ftap X p R).mp hNA
   refine ⟨statePriceVector q R, ?_, ?_, ?_⟩
   · intro ω
     change 0 < q ω / R
@@ -69,24 +62,6 @@ theorem exists_statePriceVector_prices_replicated
     rw [← Finset.sum_div, hq1]
   · intro h
     change (∑ ω : Ω, (q ω / R) * (∑ a : A, h a * X a ω)) = ∑ a : A, h a * p a
-    have key : ∀ a : A, ∑ ω : Ω, q ω * X a ω = R * p a := by
-      intro a
-      have h0 : ∑ ω : Ω, q ω * (X a ω - R * p a) = 0 := hqg a
-      have hfactor : (∑ ω : Ω, q ω * (R * p a)) = (R * p a) * (∑ ω : Ω, q ω) := by
-        rw [Finset.mul_sum]
-        apply Finset.sum_congr rfl
-        intro ω _
-        ring
-      have hexp : (∑ ω : Ω, q ω * (X a ω - R * p a))
-          = (∑ ω : Ω, q ω * X a ω) - R * p a := by
-        have h1 : (∑ ω : Ω, q ω * (X a ω - R * p a))
-            = ∑ ω : Ω, (q ω * X a ω - q ω * (R * p a)) :=
-          Finset.sum_congr rfl (fun ω _ => mul_sub _ _ _)
-        rw [h1, Finset.sum_sub_distrib, hfactor, hq1, mul_one]
-      have hsub : (∑ ω : Ω, q ω * X a ω) - R * p a = 0 := by
-        rw [← hexp]
-        exact h0
-      exact sub_eq_zero.mp hsub
     calc (∑ ω : Ω, (q ω / R) * (∑ a : A, h a * X a ω))
         = ∑ ω : Ω, ∑ a : A, (q ω / R) * (h a * X a ω) := by
           apply Finset.sum_congr rfl

@@ -37,7 +37,7 @@ theorem expenditure_indirectUtility_eq_of_secondWelfare {L : Type*} [Fintype L]
     (hLNS : MathlibExt.Economics.SecondWelfareTheorem.LocallyNonsatiated u)
     (hx : _root_.Economics.Consumer.IsMarshallianDemand u
       (MathlibExt.Economics.SecondWelfareTheorem.consumptionSet L) p w x) :
-    _root_.Economics.Consumer.expenditure u
+    Economics.Consumer.expenditure u
         (MathlibExt.Economics.SecondWelfareTheorem.consumptionSet L) p
         (_root_.Economics.Consumer.indirectUtility u
           (MathlibExt.Economics.SecondWelfareTheorem.consumptionSet L) p w) = w :=

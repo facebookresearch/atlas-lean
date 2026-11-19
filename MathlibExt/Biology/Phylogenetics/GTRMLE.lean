@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Biology.Phylogenetics.GTRIdentifiability
 public import MathlibExt.Biology.Phylogenetics.GTRInference
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Topology.UniformSpace.UniformConvergence
@@ -46,11 +47,17 @@ frequencies and sampling-law results are reused:
   patterns `a` in the support of `law θ₀`, and Chang needs none (he works over the closure of
   the parameter space). It is imposed here because of the convention `Real.log 0 = 0`, under
   which a model assigning probability `0` to an observed pattern would not be penalized.
-* **Identifiability (the T66 input), as an explicit hypothesis** `hId`: there is a class
-  `E ⊆ Θ` with `law θ = law θ₀ → θ ∈ E`, the parameters equivalent to `θ₀` under the permitted
-  symmetries. Its proof is the GTR identifiability theorem and is not repeated or imported.
-  Passing T66's identifiability theorem in as `hId` waits on #1565 (`GTRIdentifiability.lean`)
-  merging; it is a follow-up, not part of this file.
+* **Identifiability (the T66 input)** `hId`: there is a class `E ⊆ Θ` with
+  `law θ = law θ₀ → θ ∈ E`, the parameters equivalent to `θ₀` under the permitted symmetries.
+  For an arbitrary model `law` this is the identifiability statement itself, so the generic
+  theorems take it as a hypothesis. For the **GTR pair-site model** `gtrLaw` (one branch; each
+  `θ` gives base frequencies, exchangeabilities in the GTR domain and a branch length `t θ > 0`)
+  it is proved, not assumed: `mem_gtrClass_of_gtrLaw_eq` derives it from T66's single-branch
+  identifiability theorem `GTRIdentifiability.gtrPairLaw_eq_iff` (#1565), with `E = gtrClass`,
+  the parameters with the same base frequencies and the same off-diagonal products
+  `t * s i j`. The remaining symmetries are T66's: rate/time scaling and the unused diagonal of
+  `s`. The `gtrClass` theorems below are the consistency results with this `hId`; their
+  positivity and normalization hypotheses are discharged too.
 * **Sampling law, as a hypothesis**: the alignment columns `X i : Ω → σ` are measurable,
   pairwise independent, identically distributed, and `P (X 0 = a) = law θ₀ a`.
 
@@ -89,6 +96,13 @@ with the outer measure.
 * `ae_tendsto_mle_of_injective`: with full identifiability, `est n → θ₀` almost surely; the
   direct analogue of Chang's Lemma 5.1, under positivity.
 * `tendstoInMeasure_mle_of_injective`: with full identifiability, `est n → θ₀` in probability.
+* `mem_gtrClass_of_gtrLaw_eq`: **`hId` for the GTR pair-site model**, from T66
+  (`gtrLaw_eq_iff_mem_gtrClass` is the exact form).
+* `ae_tendsto_infDist_gtrClass_mle`, `tendstoInMeasure_infDist_gtrClass_mle`,
+  `tendstoInMeasure_infDist_gtrClass_mleEstimator`,
+  `ae_tendsto_mle_of_gtrClass_subset_singleton`,
+  `tendstoInMeasure_mle_of_gtrClass_subset_singleton`: the consistency theorems for the GTR
+  pair-site model, with `hId` supplied by T66.
 
 ## Scope
 
@@ -472,5 +486,167 @@ theorem tendstoInMeasure_mle_of_injective {law : Θ → σ → ℝ} (hlaw : Cont
   simpa [infDist_singleton] using h ε hε
 
 end Consistency
+
+/-! ## The GTR pair-site model: `hId` from GTR identifiability (T66) -/
+
+section GTRPairSite
+
+open GTRIdentifiability SubstitutionModels
+
+variable {ι : Type*} [Fintype ι] [DecidableEq ι]
+
+/-- The **GTR pair-site model**: the parameter `θ` gives base frequencies `π θ`,
+exchangeabilities `s θ` and a branch length `t θ`, and the law of an aligned site pattern
+`(i, j)` for two taxa is T66's pair-site law `gtrPairLaw (π θ) (s θ) (t θ) i j`. -/
+noncomputable def gtrLaw (π : Θ → ι → ℝ) (s : Θ → Matrix ι ι ℝ) (t : Θ → ℝ) (θ : Θ) :
+    ι × ι → ℝ :=
+  fun a => gtrPairLaw (π θ) (s θ) (t θ) a.1 a.2
+
+/-- The **identified class** of `θ₀` in the GTR pair-site model: the parameters with the same
+base frequencies and the same off-diagonal products `t * s i j` (T66's permitted symmetries at
+one branch: rate/time scaling and the unused diagonal of `s`). -/
+def gtrClass (π : Θ → ι → ℝ) (s : Θ → Matrix ι ι ℝ) (t : Θ → ℝ) (θ₀ : Θ) : Set Θ :=
+  {θ | π θ = π θ₀ ∧ ∀ i j, i ≠ j → t θ * s θ i j = t θ₀ * s θ₀ i j}
+
+variable {π : Θ → ι → ℝ} {s : Θ → Matrix ι ι ℝ} {t : Θ → ℝ}
+
+/-- **Identifiability of the GTR pair-site model, exact form** (T66's
+`gtrPairLaw_eq_iff`): on the GTR domain with positive branch lengths, two parameters have the
+same law iff they lie in the same `gtrClass`. -/
+theorem gtrLaw_eq_iff_mem_gtrClass (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ)
+    (θ₀ θ : Θ) : gtrLaw π s t θ = gtrLaw π s t θ₀ ↔ θ ∈ gtrClass π s t θ₀ := by
+  change _ ↔ π θ = π θ₀ ∧ ∀ i j, i ≠ j → t θ * s θ i j = t θ₀ * s θ₀ i j
+  rw [← gtrPairLaw_eq_iff (hp θ) (hp θ₀) (ht θ) (ht θ₀)]
+  exact ⟨fun h => funext fun i => funext fun j => congrFun h (i, j),
+    fun h => funext fun a => by simp only [gtrLaw, h]⟩
+
+/-- **`hId` for the GTR pair-site model**, from T66: every parameter with the law of `θ₀` lies
+in the identified class `gtrClass π s t θ₀`. This is the hypothesis `hId` of the generic
+consistency theorems, discharged by `GTRIdentifiability.gtrPairLaw_eq_iff`. -/
+theorem mem_gtrClass_of_gtrLaw_eq (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ)
+    (θ₀ : Θ) : ∀ θ, gtrLaw π s t θ = gtrLaw π s t θ₀ → θ ∈ gtrClass π s t θ₀ :=
+  fun θ => (gtrLaw_eq_iff_mem_gtrClass hp ht θ₀ θ).1
+
+/-- The GTR pair-site law is positive for positive branch lengths. -/
+theorem gtrLaw_pos (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ) (θ : Θ)
+    (a : ι × ι) : 0 < gtrLaw π s t θ a :=
+  mul_pos ((hp θ).pos a.1) ((isRateMatrix_gtrRate (fun k => ((hp θ).pos k).le)
+    fun i j h => ((hp θ).offDiag_pos i j h).le).ctmcTransition_pos
+      (fun i j h => by
+        rw [gtrRate_apply_of_ne _ _ h]
+        exact mul_pos ((hp θ).offDiag_pos i j h) ((hp θ).pos j))
+      (ht θ) a.1 a.2)
+
+/-- The GTR pair-site law is normalized. -/
+theorem sum_gtrLaw (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (θ : Θ) : ∑ a, gtrLaw π s t θ a = 1 := by
+  rw [Fintype.sum_prod_type]
+  exact sum_sum_gtrPairLaw (hp θ) (t θ)
+
+/-- `mem_of_logLik_self_le` for the GTR pair-site model, with `hId` from T66. -/
+theorem mem_gtrClass_of_logLik_self_le (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ)
+    {θ₀ : Θ} (θ : Θ)
+    (hθ : logLik (gtrLaw π s t) (gtrLaw π s t θ₀) θ₀ ≤
+      logLik (gtrLaw π s t) (gtrLaw π s t θ₀) θ) : θ ∈ gtrClass π s t θ₀ :=
+  mem_of_logLik_self_le (gtrLaw_pos hp ht) (sum_gtrLaw hp) (mem_gtrClass_of_gtrLaw_eq hp ht θ₀)
+    θ hθ
+
+variable [MetricSpace Θ] [CompactSpace Θ]
+
+/-- `tendsto_infDist_of_tendsto_freq` for the GTR pair-site model, with `hId` from T66. -/
+theorem tendsto_infDist_gtrClass_of_tendsto_freq (hlaw : Continuous (gtrLaw π s t))
+    (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ) {θ₀ : Θ} {f : ℕ → ι × ι → ℝ}
+    (hf : Tendsto f atTop (𝓝 (gtrLaw π s t θ₀))) {est : ℕ → Θ}
+    (hest : ∀ n θ, logLik (gtrLaw π s t) (f n) θ ≤ logLik (gtrLaw π s t) (f n) (est n)) :
+    Tendsto (fun n => infDist (est n) (gtrClass π s t θ₀)) atTop (𝓝 0) :=
+  tendsto_infDist_of_tendsto_freq hlaw (gtrLaw_pos hp ht) (sum_gtrLaw hp)
+    (mem_gtrClass_of_gtrLaw_eq hp ht θ₀) hf hest
+
+/-- `exists_pos_infDist_lt_of_dist_lt` for the GTR pair-site model, with `hId` from T66. -/
+theorem exists_pos_infDist_gtrClass_lt_of_dist_lt (hlaw : Continuous (gtrLaw π s t))
+    (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ) {θ₀ : Θ} {ε : ℝ} (hε : 0 < ε) :
+    ∃ η > 0, ∀ (f : ι × ι → ℝ) (θh : Θ), dist f (gtrLaw π s t θ₀) < η →
+      (∀ θ, logLik (gtrLaw π s t) f θ ≤ logLik (gtrLaw π s t) f θh) →
+        infDist θh (gtrClass π s t θ₀) < ε :=
+  exists_pos_infDist_lt_of_dist_lt hlaw (gtrLaw_pos hp ht) (sum_gtrLaw hp)
+    (mem_gtrClass_of_gtrLaw_eq hp ht θ₀) hε
+
+variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+
+/-- `tendstoInMeasure_infDist_mle_of_tendstoInMeasure` for the GTR pair-site model, with `hId`
+from T66. -/
+theorem tendstoInMeasure_infDist_gtrClass_mle_of_tendstoInMeasure
+    (hlaw : Continuous (gtrLaw π s t)) (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ)
+    {θ₀ : Θ} {freq : ℕ → Ω → ι × ι → ℝ} {est : ℕ → Ω → Θ} (hest : IsMLE (gtrLaw π s t) freq est)
+    (hfreq : TendstoInMeasure P freq atTop fun _ => gtrLaw π s t θ₀) :
+    TendstoInMeasure P (fun n ω => infDist (est n ω) (gtrClass π s t θ₀)) atTop fun _ => 0 :=
+  tendstoInMeasure_infDist_mle_of_tendstoInMeasure hlaw (gtrLaw_pos hp ht) (sum_gtrLaw hp)
+    (mem_gtrClass_of_gtrLaw_eq hp ht θ₀) hest hfreq
+
+variable [MeasurableSpace (ι × ι)] [MeasurableSingletonClass (ι × ι)] [IsFiniteMeasure P]
+
+/-- **Almost-sure consistency of the GTR pair-site MLE**: `ae_tendsto_infDist_mle` with `hId`
+from T66 (`mem_gtrClass_of_gtrLaw_eq`) and with positivity and normalization discharged. Every
+MLE approaches the identified class `gtrClass π s t θ₀` almost surely. -/
+theorem ae_tendsto_infDist_gtrClass_mle (hlaw : Continuous (gtrLaw π s t))
+    (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ) {θ₀ : Θ} {X : ℕ → Ω → ι × ι}
+    (hX : ∀ i, Measurable (X i)) (hindep : Pairwise ((· ⟂ᵢ[P] ·) on X))
+    (hident : ∀ i, IdentDistrib (X i) (X 0) P P)
+    (hsample : ∀ a, P.real (X 0 ⁻¹' {a}) = gtrLaw π s t θ₀ a) {est : ℕ → Ω → Θ}
+    (hest : IsMLE (gtrLaw π s t) (empiricalFreq X) est) :
+    ∀ᵐ ω ∂P, Tendsto (fun n => infDist (est n ω) (gtrClass π s t θ₀)) atTop (𝓝 0) :=
+  ae_tendsto_infDist_mle hlaw (gtrLaw_pos hp ht) (sum_gtrLaw hp)
+    (mem_gtrClass_of_gtrLaw_eq hp ht θ₀) hX hindep hident hsample hest
+
+/-- **Consistency in probability of the GTR pair-site MLE**: `tendstoInMeasure_infDist_mle`
+with `hId` from T66. -/
+theorem tendstoInMeasure_infDist_gtrClass_mle (hlaw : Continuous (gtrLaw π s t))
+    (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ) {θ₀ : Θ} {X : ℕ → Ω → ι × ι}
+    (hX : ∀ i, Measurable (X i)) (hindep : Pairwise ((· ⟂ᵢ[P] ·) on X))
+    (hident : ∀ i, IdentDistrib (X i) (X 0) P P)
+    (hsample : ∀ a, P.real (X 0 ⁻¹' {a}) = gtrLaw π s t θ₀ a) {est : ℕ → Ω → Θ}
+    (hest : IsMLE (gtrLaw π s t) (empiricalFreq X) est) :
+    TendstoInMeasure P (fun n ω => infDist (est n ω) (gtrClass π s t θ₀)) atTop fun _ => 0 :=
+  tendstoInMeasure_infDist_mle hlaw (gtrLaw_pos hp ht) (sum_gtrLaw hp)
+    (mem_gtrClass_of_gtrLaw_eq hp ht θ₀) hX hindep hident hsample hest
+
+/-- `tendstoInMeasure_infDist_mleEstimator` for the GTR pair-site model, with `hId` from T66. -/
+theorem tendstoInMeasure_infDist_gtrClass_mleEstimator [Nonempty Θ]
+    (hlaw : Continuous (gtrLaw π s t)) (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ)
+    {θ₀ : Θ} {X : ℕ → Ω → ι × ι} (hX : ∀ i, Measurable (X i))
+    (hindep : Pairwise ((· ⟂ᵢ[P] ·) on X)) (hident : ∀ i, IdentDistrib (X i) (X 0) P P)
+    (hsample : ∀ a, P.real (X 0 ⁻¹' {a}) = gtrLaw π s t θ₀ a) :
+    TendstoInMeasure P
+      (fun n ω => infDist (mle hlaw (gtrLaw_pos hp ht) (empiricalFreq X) n ω)
+        (gtrClass π s t θ₀)) atTop fun _ => 0 :=
+  tendstoInMeasure_infDist_mleEstimator hlaw (gtrLaw_pos hp ht) (sum_gtrLaw hp)
+    (mem_gtrClass_of_gtrLaw_eq hp ht θ₀) hX hindep hident hsample
+
+/-- **Point consistency of the GTR pair-site MLE, almost surely**: if the parametrization
+separates the T66 invariants at `θ₀` (`gtrClass π s t θ₀ ⊆ {θ₀}`, e.g. a known branch length
+and injective `(π, s)` off the diagonal), every MLE converges to `θ₀` almost surely.
+`ae_tendsto_mle_of_injective` with its `hId` from T66. -/
+theorem ae_tendsto_mle_of_gtrClass_subset_singleton (hlaw : Continuous (gtrLaw π s t))
+    (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ) {θ₀ : Θ}
+    (hsep : gtrClass π s t θ₀ ⊆ {θ₀}) {X : ℕ → Ω → ι × ι} (hX : ∀ i, Measurable (X i))
+    (hindep : Pairwise ((· ⟂ᵢ[P] ·) on X)) (hident : ∀ i, IdentDistrib (X i) (X 0) P P)
+    (hsample : ∀ a, P.real (X 0 ⁻¹' {a}) = gtrLaw π s t θ₀ a) {est : ℕ → Ω → Θ}
+    (hest : IsMLE (gtrLaw π s t) (empiricalFreq X) est) :
+    ∀ᵐ ω ∂P, Tendsto (fun n => est n ω) atTop (𝓝 θ₀) :=
+  ae_tendsto_mle_of_injective hlaw (gtrLaw_pos hp ht) (sum_gtrLaw hp)
+    (fun θ h => hsep (mem_gtrClass_of_gtrLaw_eq hp ht θ₀ θ h)) hX hindep hident hsample hest
+
+/-- **Point consistency of the GTR pair-site MLE, in probability**:
+`tendstoInMeasure_mle_of_injective` with its `hId` from T66. -/
+theorem tendstoInMeasure_mle_of_gtrClass_subset_singleton (hlaw : Continuous (gtrLaw π s t))
+    (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ) {θ₀ : Θ}
+    (hsep : gtrClass π s t θ₀ ⊆ {θ₀}) {X : ℕ → Ω → ι × ι} (hX : ∀ i, Measurable (X i))
+    (hindep : Pairwise ((· ⟂ᵢ[P] ·) on X)) (hident : ∀ i, IdentDistrib (X i) (X 0) P P)
+    (hsample : ∀ a, P.real (X 0 ⁻¹' {a}) = gtrLaw π s t θ₀ a) {est : ℕ → Ω → Θ}
+    (hest : IsMLE (gtrLaw π s t) (empiricalFreq X) est) :
+    TendstoInMeasure P est atTop fun _ => θ₀ :=
+  tendstoInMeasure_mle_of_injective hlaw (gtrLaw_pos hp ht) (sum_gtrLaw hp)
+    (fun θ h => hsep (mem_gtrClass_of_gtrLaw_eq hp ht θ₀ θ h)) hX hindep hident hsample hest
+
+end GTRPairSite
 
 end MathlibExt.Biology.Phylogenetics.GTRMLE

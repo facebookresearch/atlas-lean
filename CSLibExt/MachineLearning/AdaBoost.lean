@@ -12,10 +12,6 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import CSLibExt.MachineLearning.Perceptron
 import Mathlib.Algebra.BigOperators.Field
-import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Positivity
 
 /-!
 # AdaBoost: the training-error bound
@@ -33,10 +29,15 @@ Main results:
 
 * `normalizer_eq`: the round's normalizer is `Z_t = 2 √(ε_t (1 - ε_t))`.
 * `dist_mul_prod`: unrolling, `D_T(i) · m ∏_{t < T} Z_t = exp (-yᵢ F_T(xᵢ))`.
-* `trainErr_le_prod`, `trainErr_le_prod_sqrt`: **the training error is at most
-  `∏_t 2 √(ε_t (1 - ε_t))`**.
-* `trainErr_le_exp`: **with edge `γ` (`WeakLearner`: `0 < ε_t ≤ 1 / 2 - γ`), the training error
-  after `T` rounds is at most `exp (-2 γ² T)`**; `two_mul_sqrt_le_exp` is the per-round estimate.
+* `trainErr_le_prod`, `trainErr_le_prod_sqrt_of_round_errors`: **the training error is at most
+  `∏_t 2 √(ε_t (1 - ε_t))`**, requiring `0 < ε_t < 1` only for `t < T`.
+* `trainErr_le_exp_of_round_errors`: **with edge `γ` in the executed rounds
+  (`0 < ε_t ≤ 1 / 2 - γ` for `t < T`), the training error after `T` rounds is at most
+  `exp (-2 γ² T)`**; `two_mul_sqrt_le_exp` is the per-round estimate.
+
+`WeakLearner` is a stronger, global assumption on every positive distribution, including those
+never visited by the run. The existing `trainErr_le_prod_sqrt` and `trainErr_le_exp` APIs retain
+that assumption as corollaries of the round-error bounds.
 
 The weak-learning assumption excludes `ε_t = 0` (a perfect weak hypothesis, where `α_t` is
 infinite and boosting would stop). The scalar estimates `√(1 - 4 γ²) ≤ exp (-2 γ²)` and their
@@ -210,26 +211,47 @@ points, the weak hypothesis has weighted error in `(0, 1 / 2 - γ]`. -/
 def WeakLearner (y : Fin m → Bool) (wl : (Fin m → ℝ) → Fin m → Bool) (γ : ℝ) : Prop :=
   ∀ D : Fin m → ℝ, (∀ i, 0 < D i) → ∑ i, D i = 1 → 0 < err y D (wl D) ∧ err y D (wl D) ≤ 1 / 2 - γ
 
+/-- AdaBoost's product bound requires errors in `(0, 1)` only on the rounds it executes. -/
+theorem trainErr_le_prod_sqrt_of_round_errors (hm : 0 < m) (T : ℕ)
+    (hε : ∀ t < T, 0 < eps y wl t ∧ eps y wl t < 1) :
+    trainErr y wl T ≤ ∏ t ∈ Finset.range T, 2 * sqrt (eps y wl t * (1 - eps y wl t)) := by
+  refine (trainErr_le_prod hm T).trans (le_of_eq (Finset.prod_congr rfl fun t ht => ?_))
+  obtain ⟨h0, h1⟩ := hε t (Finset.mem_range.mp ht)
+  exact normalizer_eq y (sum_dist hm t) _ h0 h1
+
 /-- **AdaBoost's training error** (Freund and Schapire): at most `∏_t 2 √(ε_t (1 - ε_t))`. -/
 theorem trainErr_le_prod_sqrt (hm : 0 < m) {γ : ℝ} (hγ : 0 ≤ γ) (hwl : WeakLearner y wl γ)
     (T : ℕ) :
     trainErr y wl T ≤ ∏ t ∈ Finset.range T, 2 * sqrt (eps y wl t * (1 - eps y wl t)) := by
-  refine (trainErr_le_prod hm T).trans (le_of_eq (Finset.prod_congr rfl fun t _ => ?_))
+  apply trainErr_le_prod_sqrt_of_round_errors hm T
+  intro t _
   obtain ⟨h0, h1⟩ := hwl _ (dist_pos hm t) (sum_dist hm t)
-  exact normalizer_eq y (sum_dist hm t) _ h0 (lt_of_le_of_lt h1 (by linarith))
+  change eps y wl t ≤ 1 / 2 - γ at h1
+  exact ⟨h0, by linarith⟩
+
+/-- AdaBoost's exponential bound requires the edge only on the rounds it executes. -/
+theorem trainErr_le_exp_of_round_errors (hm : 0 < m) {γ : ℝ} (hγ : 0 ≤ γ) (T : ℕ)
+    (hε : ∀ t < T, 0 < eps y wl t ∧ eps y wl t ≤ 1 / 2 - γ) :
+    trainErr y wl T ≤ exp (-2 * γ ^ 2 * T) := by
+  have herr : ∀ t < T, 0 < eps y wl t ∧ eps y wl t < 1 := by
+    intro t ht
+    obtain ⟨h0, h1⟩ := hε t ht
+    exact ⟨h0, by linarith⟩
+  refine (trainErr_le_prod_sqrt_of_round_errors hm T herr).trans ?_
+  calc ∏ t ∈ Finset.range T, 2 * sqrt (eps y wl t * (1 - eps y wl t))
+      ≤ ∏ _t ∈ Finset.range T, exp (-2 * γ ^ 2) := by
+        refine Finset.prod_le_prod₀ (fun t _ => by positivity) fun t ht => ?_
+        exact two_mul_sqrt_le_exp hγ (hε t (Finset.mem_range.mp ht)).2
+    _ = exp (-2 * γ ^ 2 * T) := by
+        rw [Finset.prod_const, Finset.card_range, ← exp_nat_mul]
+        ring_nf
 
 /-- **AdaBoost drives the training error down exponentially**: with edge `γ` in every round, the
 training error after `T` rounds is at most `exp (-2 γ² T)`. -/
 theorem trainErr_le_exp (hm : 0 < m) {γ : ℝ} (hγ : 0 ≤ γ) (hwl : WeakLearner y wl γ) (T : ℕ) :
     trainErr y wl T ≤ exp (-2 * γ ^ 2 * T) := by
-  refine (trainErr_le_prod_sqrt hm hγ hwl T).trans ?_
-  calc ∏ t ∈ Finset.range T, 2 * sqrt (eps y wl t * (1 - eps y wl t))
-      ≤ ∏ _t ∈ Finset.range T, exp (-2 * γ ^ 2) := by
-        refine Finset.prod_le_prod₀ (fun t _ => by positivity) fun t _ => ?_
-        obtain ⟨h0, h1⟩ := hwl _ (dist_pos hm t) (sum_dist hm t)
-        exact two_mul_sqrt_le_exp hγ h1
-    _ = exp (-2 * γ ^ 2 * T) := by
-        rw [Finset.prod_const, Finset.card_range, ← exp_nat_mul]
-        ring_nf
+  apply trainErr_le_exp_of_round_errors hm hγ T
+  intro t _
+  exact hwl _ (dist_pos hm t) (sum_dist hm t)
 
 end Cslib.MachineLearning.AdaBoost

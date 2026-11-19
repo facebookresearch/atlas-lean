@@ -95,7 +95,7 @@ every exit time has `P(X ≥ X ω) > 0` (`ae_measure_Ici_ne_zero`), so `D = 0` a
   (`Mathlib/Topology/EMetricSpace/BoundedVariation.lean`).
 * `MeasureTheory.tendsto_measure_iInter_atTop`, `tendsto_measure_iInter_atBot`
   (`Mathlib/MeasureTheory/Measure/Continuity.lean`).
-* `historyFiltration`, `history_inter_or_subset`, `measurableSet_obsTime_le_history`,
+* `historyFiltration`, `history_inter_or_subset`, `trivialOn`, `measurableSet_obsTime_le_history`,
   `measurable_compensator_strictPast`, `martingale_compensatedProcess`, `compensator_eq`,
   `ae_measure_Ici_ne_zero`, `lintegral_hazardMeasure_Iic_obsTime_lt_top`
   (`MathlibExt/Probability/Statistics/Survival/CountingProcess.lean`).
@@ -114,24 +114,6 @@ open scoped ENNReal
 variable {Ω : Type*} {m0 : MeasurableSpace Ω}
 
 /-! ### The strict past is trivial on `{t ≤ X}` -/
-
-/-- The σ-algebra of sets that either contain `E` or miss it. -/
-@[instance_reducible]
-private def trivialOn (E : Set Ω) : MeasurableSpace Ω where
-  MeasurableSet' B := B ∩ E = ∅ ∨ E ⊆ B
-  measurableSet_empty := Or.inl (empty_inter E)
-  measurableSet_compl B hB := by
-    rcases hB with h | h
-    · exact Or.inr fun x hx hxB => (h.subset ⟨hxB, hx⟩ : x ∈ (∅ : Set Ω))
-    · exact Or.inl (eq_empty_of_forall_notMem fun x hx => hx.1 (h hx.2))
-  measurableSet_iUnion f hf := by
-    by_cases h : ∃ i, E ⊆ f i
-    · obtain ⟨i, hi⟩ := h
-      exact Or.inr (hi.trans (subset_iUnion f i))
-    · push Not at h
-      left
-      rw [iUnion_inter]
-      exact iUnion_eq_empty.2 fun i => (hf i).resolve_right (h i)
 
 /-- If every `ℱ s`-event contains or misses `{s < X}`, then a real random variable determined by
 the strict past `ℱ_{t-}` takes one value on `{t ≤ X}`. -/

@@ -112,26 +112,6 @@ variable {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
 
 section Cut
 
-/-- Pure-real core of the cut: the terms `c k` kept while the running sum `∑_{j ≤ k} c j`
-stays `≤ K` add up to at most `K` (no sign condition on `c` is needed). -/
-private lemma sum_cut_le (c : ℕ → ℝ) {K : ℝ} (hK : 0 ≤ K) (m : ℕ) :
-    ∑ k ∈ range m, (if ∑ j ∈ range (k + 1), c j ≤ K then c k else 0) ≤ K := by
-  suffices h : ∑ k ∈ range m, (if ∑ j ∈ range (k + 1), c j ≤ K then c k else 0) ≤
-      ∑ j ∈ range m, c j ∧
-      ∑ k ∈ range m, (if ∑ j ∈ range (k + 1), c j ≤ K then c k else 0) ≤ K from h.2
-  induction m with
-  | zero => simp [hK]
-  | succ m ih =>
-    rw [sum_range_succ, sum_range_succ]
-    split_ifs with h
-    · constructor
-      · linarith [ih.1]
-      · linarith [ih.1]
-    · push Not at h
-      constructor
-      · linarith [ih.2]
-      · linarith [ih.2]
-
 variable (μ) in
 /-- Conditional variance `E[X k² | F k]` of the `k`-th increment. -/
 private def condSq (F : Filtration ℕ m0) (X : ℕ → Ω → ℝ) (k : ℕ) : Ω → ℝ :=
@@ -167,7 +147,7 @@ private lemma condSq_nonneg [IsFiniteMeasure μ] :
 /-- The conditional variances kept by the cut add up to at most `K`. -/
 private lemma sum_indicator_condSq_le {K : ℝ} (hK : 0 ≤ K) (m : ℕ) (ω : Ω) :
     ∑ k ∈ range m, (cutSet μ F X K k).indicator (condSq μ F X k) ω ≤ K := by
-  have := sum_cut_le (fun k => condSq μ F X k ω) hK m
+  have := sum_range_cut_le (fun k => condSq μ F X k ω) hK m
   convert this using 2 with k
   simp only [cutSet, Set.indicator_apply, Set.mem_ofPred_eq]
 
@@ -586,26 +566,6 @@ private lemma tendsto_zero_of_forall_le {a : ℕ → ℝ} (h0 : ∀ n, 0 ≤ a n
 
 variable [IsFiniteMeasure μ]
 
--- Adapted from the private `tendstoInMeasure_add` in
--- `MathlibExt.Probability.Martingale.McLeishCLT`, with `measureReal` in place of the measure;
--- make that lemma public and delete this copy (tracking follow-up).
-private lemma tendstoInMeasure_add' {f f' : ℕ → Ω → ℝ} {g g' : Ω → ℝ}
-    (hf : TendstoInMeasure μ f atTop g) (hf' : TendstoInMeasure μ f' atTop g') :
-    TendstoInMeasure μ (fun n ω => f n ω + f' n ω) atTop (fun ω => g ω + g' ω) := by
-  rw [tendstoInMeasure_iff_measureReal_dist] at hf hf' ⊢
-  intro ε hε
-  have h := (hf (ε / 2) (by positivity)).add (hf' (ε / 2) (by positivity))
-  rw [add_zero] at h
-  refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds h
-    (fun _ => measureReal_nonneg) fun n => (measureReal_mono fun ω hω => ?_).trans
-      (measureReal_union_le _ _)
-  simp only [Set.mem_ofPred_eq, Set.mem_union, Real.dist_eq] at hω ⊢
-  by_contra hcon
-  push Not at hcon
-  have := abs_add_le (f n ω - g ω) (f' n ω - g' ω)
-  rw [show f n ω - g ω + (f' n ω - g' ω) = f n ω + f' n ω - (g ω + g' ω) by ring] at this
-  linarith [hcon.1, hcon.2]
-
 /-- If `f n = g n` almost surely outside sets `B n` of vanishing probability, `f` inherits the
 limit in probability of `g`. -/
 private lemma tendstoInMeasure_of_ae_eq_off {E : Type*} [PseudoMetricSpace E]
@@ -784,7 +744,7 @@ private lemma tendstoInMeasure_sum_sq_cutX (hX : ∀ n k, StronglyMeasurable[F n
     filter_upwards [cut_eq_off (μ := μ) (F := F) (X := X) (r := r) n (K := K)] with ω hω hgood
     exact sum_congr rfl fun k hk =>
       Set.indicator_of_mem (hω hgood (m n) (hmr n) k (mem_range.1 hk)) _
-  have h := tendstoInMeasure_add' (tendstoInMeasure_realized_sub hX hL2 hK hcondL hmr) hkept
+  have h := tendstoInMeasure_add (tendstoInMeasure_realized_sub hX hL2 hK hcondL hmr) hkept
   refine h.congr (fun n => ae_of_all _ fun ω => ?_) (ae_of_all _ fun ω => ?_)
   · simp
   · simp
@@ -796,26 +756,6 @@ end Array
 section Main
 
 variable [IsProbabilityMeasure μ]
-
--- Adapted from the private `martingale_increment` in
--- `MathlibExt.Probability.Martingale.McLeishCLT` (same proof, without the `Integrable`
--- conjunct); make that lemma public and delete this copy (tracking follow-up).
-/-- Increments of a martingale `∑_{j<k} X_j` are martingale differences. -/
-private lemma martingale_increment' {F : Filtration ℕ m0} {X : ℕ → Ω → ℝ}
-    (h : Martingale (fun k ω => ∑ j ∈ range k, X j ω) F μ) (k : ℕ) :
-    StronglyMeasurable[F (k + 1)] (X k) ∧ μ[X k | F k] =ᵐ[μ] 0 := by
-  have hX : X k = (fun ω => ∑ j ∈ range (k + 1), X j ω) - fun ω => ∑ j ∈ range k, X j ω := by
-    funext ω; simp [sum_range_succ]
-  refine ⟨?_, ?_⟩
-  · rw [hX]
-    exact (h.stronglyAdapted (k + 1)).sub ((h.stronglyAdapted k).mono (F.mono k.le_succ))
-  · rw [hX]
-    refine (condExp_sub (h.integrable (k + 1)) (h.integrable k) _).trans ?_
-    have h1 := h.condExp_ae_eq k.le_succ
-    have h2 : μ[fun ω => ∑ j ∈ range k, X j ω | F k] = fun ω => ∑ j ∈ range k, X j ω :=
-      condExp_of_stronglyMeasurable (F.le k) (h.stronglyAdapted k) (h.integrable k)
-    filter_upwards [h1] with ω hω
-    simp [hω, h2]
 
 omit [IsProbabilityMeasure μ] in
 /-- The predictable quadratic variation of the partial sums `∑_{j<k} X j` is
@@ -900,8 +840,8 @@ theorem tendstoInDistribution_martingale_condVar
     TendstoInDistribution (fun n ω => ∑ k ∈ range (r n), X n k ω) atTop id (fun _ => μ)
       (gaussianReal 0 v) := by
   have hX : ∀ n k, StronglyMeasurable[F n (k + 1)] (X n k) := fun n k =>
-    (martingale_increment' (hmart n) k).1
-  have hmds : ∀ n k, μ[X n k | F n k] =ᵐ[μ] 0 := fun n k => (martingale_increment' (hmart n) k).2
+    (martingale_increment (hmart n) k).1
+  have hmds : ∀ n k, μ[X n k | F n k] =ᵐ[μ] 0 := fun n k => (martingale_increment (hmart n) k).2.2
   have hpqv' : TendstoInMeasure μ (fun n ω => ∑ k ∈ range (r n), condSq μ (F n) (X n) k ω)
       atTop (fun _ => (v : ℝ)) :=
     hpqv.congr (fun n => ae_of_all _ fun ω => predictableQuadraticVariation_partialSum _ _ _ ω)
@@ -982,8 +922,8 @@ theorem tendstoInDistribution_fdd_martingale_condVar
     TendstoInDistribution (fun n ω => I.restrict fun s => ∑ k ∈ range (N n s), X n k ω) atTop
       (fun ω => I.restrict fun s => Z s ω) (fun _ => μ) P' := by
   have hX : ∀ n k, StronglyMeasurable[F n (k + 1)] (X n k) := fun n k =>
-    (martingale_increment' (hmart n) k).1
-  have hmds : ∀ n k, μ[X n k | F n k] =ᵐ[μ] 0 := fun n k => (martingale_increment' (hmart n) k).2
+    (martingale_increment (hmart n) k).1
+  have hmds : ∀ n k, μ[X n k | F n k] =ᵐ[μ] 0 := fun n k => (martingale_increment (hmart n) k).2.2
   have hcond : ∀ (m : ℕ → ℕ) (a : ℝ), TendstoInMeasure μ (fun n =>
       predictableQuadraticVariation μ (F n) (fun k ω => ∑ j ∈ range k, X n j ω) (m n)) atTop
       (fun _ => a) → TendstoInMeasure μ

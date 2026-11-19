@@ -10,8 +10,11 @@ module
 
 public import MathlibExt.Biology.StatisticalGenetics.LDScoreInflation
 public import MathlibExt.Probability.Distributions.ChiSquare
+public import MathlibExt.Probability.Statistics.ExactTests.TailPValue
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.Probability.HasLaw
+
+import Mathlib.Analysis.Complex.ExponentialBounds
 
 /-!
 # Genomic control: when dividing by `λ` calibrates association tests
@@ -50,6 +53,9 @@ Calibration inside the model:
   (`CommonInflationModel.typeI_eq`).
 * `CommonInflationModel.chiSqOneTail_lt_measure_reject_uncorrected`: without the correction, a
   real inflation `λ > 1` makes the uncorrected test strictly anti-conservative.
+* `CommonInflationModel.isValidPValue_gcPValue`: the same calibration in p-value form. The
+  genomic-control p-value `gcPValue λ x = P(χ²₁ > x / λ)` of every null marker is valid, because
+  `χ²_j / λ ∼ χ²₁` (`CommonInflationModel.hasLaw_sq_div`).
 
 Failure outside the model:
 
@@ -85,6 +91,10 @@ need not be a scaled central `χ²₁` (under Gaussianity it is a scaled noncent
 therefore do not imply the distributional ones, which independently assume the exact
 centered Gaussian laws above.
 
+Bounds on the `χ²₁` tail: `chiSqOneTail_antitone`, `chiSqOneTail_lt_one`, the Chernoff bound
+`P(χ²₁ > x) ≤ 2 e^{-x/2}` (`chiSqOneTail_toReal_le`) and `P(χ²₁ > 10) ≤ 0.05`
+(`chiSqOneTail_toReal_ten_le`).
+
 ## Reuse and sources (API-00 receipt)
 
 Reused, not redefined: `LDScore.Model`, `LDScore.ldScore`, `LDScore.IsStandardized`,
@@ -94,8 +104,10 @@ Reused, not redefined: `LDScore.Model`, `LDScore.ldScore`, `LDScore.IsStandardiz
 `ProbabilityTheory.gaussianReal_sq_preimage_Ioi_eq_chiSquareSurvival`,
 `LDScoreInflation.chiSqStrat`, `LDScoreInflation.meanLDScore`,
 `LDScoreInflation.integral_chiSqStrat_of_standardized`,
-`LDScoreInflation.mean_integral_chiSqStrat_of_const`; from Mathlib, `gaussianReal`,
-`ProbabilityTheory.HasLaw`, `gaussianReal_div_const`, `gaussianReal_absolutelyContinuous'`.
+`LDScoreInflation.mean_integral_chiSqStrat_of_const`, `MultipleTesting.IsValidPValue`,
+`ExactTests.isValidPValue_survival`, `ProbabilityTheory.gaussianReal_map_sq`; from Mathlib,
+`gaussianReal`, `ProbabilityTheory.HasLaw`, `gaussianReal_div_const`,
+`gaussianReal_absolutelyContinuous'`, `measure_ge_le_exp_mul_mgf`, `mgf_id_gaussianReal`.
 A search of `MathlibExt` and `WantedExt` for genomic control, `λ_GC`, and inflation-factor
 calibration found no existing development; `Eigenstrat` corrects by principal components, a
 different method.
@@ -154,6 +166,99 @@ theorem chiSqOneTail_lt_of_lt {a b : ℝ} (ha : 0 ≤ a) (hab : a < b) :
     _ = gaussianReal 0 1 ({x : ℝ | b < x ^ 2} ∪ I) :=
         (measure_union hdisj measurableSet_Ioo).symm
     _ ≤ gaussianReal 0 1 {x | a < x ^ 2} := measure_mono hsub
+
+/-- The `χ²₁` tail is antitone. -/
+theorem chiSqOneTail_antitone : Antitone chiSqOneTail := fun _ _ hab => by
+  simp only [chiSqOneTail, chiSquareSurvival]
+  exact measure_mono (Set.Ioi_subset_Ioi hab)
+
+/-- The `χ²₁` tail is finite. -/
+theorem chiSqOneTail_ne_top (c : ℝ) : chiSqOneTail c ≠ ⊤ := by
+  have := isProbabilityMeasure_chiSquareMeasure (p := 1) one_pos
+  simp only [chiSqOneTail, chiSquareSurvival]
+  exact measure_ne_top _ _
+
+/-- `P(χ²₁ > x) < 1` for `x > 0`. -/
+theorem chiSqOneTail_lt_one {x : ℝ} (hx : 0 < x) : chiSqOneTail x < 1 := by
+  have := isProbabilityMeasure_chiSquareMeasure (p := 1) one_pos
+  refine (chiSqOneTail_lt_of_lt le_rfl hx).trans_le ?_
+  simp only [chiSqOneTail, chiSquareSurvival]
+  exact prob_le_one
+
+/-- **Chernoff bound for `χ²₁`.** `P(χ²₁ > x) ≤ 2 e^{-x/2}` for `x ≥ 0`. -/
+theorem chiSqOneTail_toReal_le {x : ℝ} (hx : 0 ≤ x) :
+    (chiSqOneTail x).toReal ≤ 2 * Real.exp (-x / 2) := by
+  set a := √x with ha
+  have ha2 : a * a = x := Real.mul_self_sqrt hx
+  have hsub : {z : ℝ | x < z ^ 2} ⊆ {z | a ≤ id z} ∪ {z | id z ≤ -a} := by
+    intro z hz
+    have hz' : x ≤ z ^ 2 := le_of_lt hz
+    have : a ≤ |z| := by
+      rw [ha, ← Real.sqrt_sq_eq_abs]
+      exact Real.sqrt_le_sqrt hz'
+    rcases le_abs'.mp this with h | h
+    · exact Or.inr (by simp only [Set.mem_ofPred_eq, id]; linarith)
+    · exact Or.inl h
+  have hup : (gaussianReal 0 1).real {z | a ≤ id z} ≤ Real.exp (-x / 2) := by
+    have := measure_ge_le_exp_mul_mgf (μ := gaussianReal 0 1) (X := id) a (Real.sqrt_nonneg x)
+      (integrable_exp_mul_gaussianReal a)
+    rw [mgf_id_gaussianReal, ← Real.exp_add] at this
+    refine this.trans_eq (congrArg Real.exp ?_)
+    push_cast
+    nlinarith
+  have hlow : (gaussianReal 0 1).real {z | id z ≤ -a} ≤ Real.exp (-x / 2) := by
+    have := measure_le_le_exp_mul_mgf (μ := gaussianReal 0 1) (X := id) (-a)
+      (neg_nonpos.mpr (Real.sqrt_nonneg x)) (integrable_exp_mul_gaussianReal (-a))
+    rw [mgf_id_gaussianReal, ← Real.exp_add] at this
+    refine this.trans_eq (congrArg Real.exp ?_)
+    push_cast
+    nlinarith
+  calc (chiSqOneTail x).toReal = (gaussianReal 0 1).real {z | x < z ^ 2} := by
+        rw [chiSqOneTail_eq_gaussianReal, measureReal_def]
+    _ ≤ (gaussianReal 0 1).real ({z | a ≤ id z} ∪ {z | id z ≤ -a}) :=
+        measureReal_mono hsub
+    _ ≤ (gaussianReal 0 1).real {z | a ≤ id z} + (gaussianReal 0 1).real {z | id z ≤ -a} :=
+        measureReal_union_le _ _
+    _ ≤ _ := by linarith
+
+/-- `P(χ²₁ > 10) ≤ 0.05`: the level-`0.05` `χ²₁` test rejects a statistic of `10`. -/
+theorem chiSqOneTail_toReal_ten_le : (chiSqOneTail 10).toReal ≤ 1 / 20 := by
+  refine (chiSqOneTail_toReal_le (by norm_num)).trans ?_
+  have he : (2.7182818283 : ℝ) ^ 5 < Real.exp 5 := by
+    have h15 : Real.exp 1 ^ 5 = Real.exp 5 := by
+      rw [Real.exp_one_pow]
+      norm_num
+    rw [← h15]
+    exact pow_lt_pow_left₀ Real.exp_one_gt_d9 (by norm_num) (by norm_num)
+  have h5 : Real.exp (-10 / 2) = (Real.exp 5)⁻¹ := by
+    rw [← Real.exp_neg]
+    norm_num
+  rw [h5]
+  have hpos : 0 < Real.exp 5 := Real.exp_pos 5
+  rw [← div_eq_mul_inv, div_le_div_iff₀ hpos (by norm_num)]
+  nlinarith
+
+/-! ### Genomic-control p-values -/
+
+/-- The genomic-control p-value of a 1-df statistic `x` with inflation factor `lam` (`λ` in the
+literature): the `χ²₁` tail at `x / lam`, as a real number. -/
+noncomputable def gcPValue (lam x : ℝ) : ℝ :=
+  (chiSqOneTail (x / lam)).toReal
+
+theorem gcPValue_nonneg (lam x : ℝ) : 0 ≤ gcPValue lam x :=
+  ENNReal.toReal_nonneg
+
+/-- For `lam > 0` the genomic-control p-value is antitone in the statistic. -/
+theorem gcPValue_antitone {lam : ℝ} (hlam : 0 < lam) : Antitone (gcPValue lam) :=
+  fun _ _ hxy => ENNReal.toReal_mono (chiSqOneTail_ne_top _)
+    (chiSqOneTail_antitone (div_le_div_of_nonneg_right hxy hlam.le))
+
+/-- A positive statistic has genomic-control p-value below `1`. -/
+theorem gcPValue_lt_one {lam x : ℝ} (hlam : 0 < lam) (hx : 0 < x) : gcPValue lam x < 1 := by
+  have h := (ENNReal.toReal_lt_toReal (chiSqOneTail_ne_top (x / lam)) ENNReal.one_ne_top).mpr
+    (chiSqOneTail_lt_one (div_pos hx hlam))
+  rw [gcPValue]
+  rwa [ENNReal.toReal_one] at h
 
 /-! ### Rejection probability of a rescaled Gaussian score -/
 
@@ -222,6 +327,39 @@ theorem chiSqOneTail_lt_measure_reject_uncorrected (hlam : 1 < (G.lam : ℝ)) (j
   simp only [div_one, mul_one] at h
   rw [h]
   exact chiSqOneTail_lt_of_lt (div_nonneg hc.le G.lam.2) (div_lt_self hc hlam)
+
+/-- In the model the corrected statistic `χ²_j / λ` of every null marker has law `χ²₁`. -/
+theorem hasLaw_sq_div (j : ι) :
+    HasLaw (fun ω => G.score j ω ^ 2 / G.lam) (chiSquareMeasure 1) P := by
+  have hW := gaussianReal_div_const (G.hasLaw_score j) (√(G.lam : ℝ))
+  rw [zero_div] at hW
+  replace hW : HasLaw (fun ω => G.score j ω / √(G.lam : ℝ)) (gaussianReal 0 1) P := by
+    convert hW using 2
+    ext
+    simp [Real.sq_sqrt G.lam_pos.le, G.lam_pos.ne']
+  have hsq : HasLaw (fun z : ℝ => z ^ 2) (chiSquareMeasure 1) (gaussianReal 0 1) :=
+    ⟨by fun_prop, gaussianReal_map_sq⟩
+  have hfun : (fun ω => G.score j ω ^ 2 / G.lam) =
+      (fun z : ℝ => z ^ 2) ∘ fun ω => G.score j ω / √(G.lam : ℝ) := by
+    funext ω
+    simp [div_pow, Real.sq_sqrt G.lam_pos.le]
+  rw [hfun]
+  exact hsq.comp hW
+
+open MathlibExt.Probability.Statistics.MultipleTesting
+  MathlibExt.Probability.Statistics.ExactTests in
+/-- **Genomic-control p-values are valid in the model**: for every null marker `j`,
+`P(gcPValue λ χ²_j ≤ t) ≤ t` for every `t ∈ [0, 1]`. -/
+theorem isValidPValue_gcPValue (j : ι) :
+    IsValidPValue P (fun ω => gcPValue G.lam (G.score j ω ^ 2)) := by
+  have := isProbabilityMeasure_chiSquareMeasure (p := 1) one_pos
+  have heq : (fun ω => gcPValue G.lam (G.score j ω ^ 2)) =
+      fun ω => (chiSquareMeasure 1).real (Set.Ici (G.score j ω ^ 2 / G.lam)) := by
+    funext ω
+    rw [gcPValue, chiSqOneTail, chiSquareSurvival, measureReal_def,
+      measure_congr Ioi_ae_eq_Ici]
+  rw [heq]
+  exact isValidPValue_survival (G.hasLaw_sq_div j)
 
 end CommonInflationModel
 

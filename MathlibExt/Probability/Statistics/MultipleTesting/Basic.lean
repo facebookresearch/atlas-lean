@@ -34,6 +34,8 @@ error rate (FWER) is the probability of this event.
 ## Main results
 
 * `isValidPValue_of_hasLaw_uniform`: a p-value with law `Uniform[0, 1]` is valid.
+* `isValidPValue_of_forall_cond_of_ne_zero`: a p-value that is valid conditionally on each value
+  of positive probability of an unbounded count is valid unconditionally.
 * `isValidPValue_of_forall_cond`: a p-value that is valid conditionally on each value of a
   bounded count is valid unconditionally.
 * `falseDiscoveryProportion_nonneg`, `falseDiscoveryProportion_le_one`, `fdp_eq_sum`.
@@ -106,6 +108,43 @@ theorem isValidPValue_of_forall_cond {μ : Measure Ω} [IsProbabilityMeasure μ]
     _ = ENNReal.ofReal s * μ (⋃ t ∈ Finset.range (N + 1), S ⁻¹' {t}) := by
         rw [← Finset.mul_sum,
           measure_biUnion_finset hdisj fun t _ => hS (measurableSet_singleton t)]
+    _ ≤ ENNReal.ofReal s * 1 := by gcongr; exact prob_le_one
+    _ = ENNReal.ofReal s := mul_one _
+
+/-- **Validity from conditional validity, unbounded count.** Let `S` be a measurable count and
+let `P` agree almost everywhere with `q (S ω)`. If each `q t` is a valid p-value conditionally on
+`S = t` whenever `μ {S = t} ≠ 0`, then `P` is valid under `μ`. No bound on `S` is needed, and
+values of `S` of probability zero impose nothing.
+
+This is the law of total probability over the countable partition `{S = t}`:
+`μ {P ≤ s} ≤ ∑' t, μ {S = t} μ[P ≤ s | S = t] ≤ s`. -/
+theorem isValidPValue_of_forall_cond_of_ne_zero {μ : Measure Ω} [IsProbabilityMeasure μ]
+    {S : Ω → ℕ} (hS : Measurable S) {P : Ω → ℝ} {q : ℕ → Ω → ℝ}
+    (hPq : ∀ᵐ ω ∂μ, P ω = q (S ω) ω)
+    (hq : ∀ t, μ (S ⁻¹' {t}) ≠ 0 → IsValidPValue (μ[|S ⁻¹' {t}]) (q t)) :
+    IsValidPValue μ P := by
+  intro s hs
+  have hSm (t : ℕ) : MeasurableSet (S ⁻¹' {t}) := hS (measurableSet_singleton t)
+  have hdisj : Pairwise (Function.onFun Disjoint fun t => S ⁻¹' {t}) :=
+    fun a b hab => Set.disjoint_left.2 fun ω ha hb => hab (ha.symm.trans hb)
+  have hsub : {ω | P ω ≤ s} ≤ᵐ[μ] (⋃ t, S ⁻¹' {t} ∩ {ω | q t ω ≤ s} : Set Ω) := by
+    filter_upwards [hPq] with ω hω hP
+    simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff,
+      Set.mem_ofPred_eq]
+    exact ⟨S ω, rfl, by rwa [← hω]⟩
+  have hterm (t : ℕ) :
+      μ (S ⁻¹' {t} ∩ {ω | q t ω ≤ s}) ≤ ENNReal.ofReal s * μ (S ⁻¹' {t}) := by
+    by_cases ht : μ (S ⁻¹' {t}) = 0
+    · rw [ht, mul_zero]
+      exact (measure_mono Set.inter_subset_left).trans ht.le
+    rw [← cond_mul_eq_inter (hSm t)]
+    exact mul_le_mul_left (hq t ht s hs) _
+  calc μ {ω | P ω ≤ s}
+      ≤ μ (⋃ t, S ⁻¹' {t} ∩ {ω | q t ω ≤ s}) := measure_mono_ae hsub
+    _ ≤ ∑' t, μ (S ⁻¹' {t} ∩ {ω | q t ω ≤ s}) := measure_iUnion_le _
+    _ ≤ ∑' t, ENNReal.ofReal s * μ (S ⁻¹' {t}) := ENNReal.tsum_le_tsum hterm
+    _ = ENNReal.ofReal s * μ (⋃ t, S ⁻¹' {t}) := by
+        rw [ENNReal.tsum_mul_left, measure_iUnion hdisj hSm]
     _ ≤ ENNReal.ofReal s * 1 := by gcongr; exact prob_le_one
     _ = ENNReal.ofReal s := mul_one _
 

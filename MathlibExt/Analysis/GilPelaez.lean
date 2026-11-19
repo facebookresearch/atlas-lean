@@ -31,8 +31,8 @@ Copied verbatim (statements and proofs unchanged) from
 `MathlibExt/Biology/StatisticalGenetics/RareVariantInference/BurdenSKATO.lean`
 (T88, open PR #1621, commit 45948b862),
 section `GilPelaez`, where it feeds Davies' p-value formula. Only the namespace changed; the
-sine-integral lemmas it uses now live in `MathlibExt.Analysis.SineIntegral`. The BurdenSKATO
-copies are deleted after #1621 merges; until then both namespaces hold identical copies.
+sine-integral lemmas it uses now live in `MathlibExt.Analysis.SineIntegral`. PR #1621 deleted
+the BurdenSKATO copies and imports this module.
 
 ## API-00 receipt (base `origin/main` f8123a751)
 

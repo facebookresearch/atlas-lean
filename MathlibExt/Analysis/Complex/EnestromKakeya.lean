@@ -244,10 +244,10 @@ private theorem lower_of_anti {n : ℕ} (hn : 1 ≤ n) (c : ℕ → ℝ)
   linarith
 
 set_option backward.proofsInPublic true in
-/-- Classical Eneström–Kakeya theorem: if `f(z) = a₀ + a₁ z + ⋯ + aₙ zⁿ` has
-positive (real) coefficients, then every complex zero `z` of `f` satisfies
-`ρ₁ ≤ ‖z‖ ≤ ρ₂`, where `ρ₁` is the minimum and `ρ₂` the maximum of the adjacent
-ratios `aₖ / aₖ₊₁` for `0 ≤ k ≤ n - 1`.
+/-- **Eneström–Kakeya theorem.** Let $n \ge 1$ and let $a_0, a_1, \dots, a_n$ be positive real
+numbers. Then every complex zero $z$ of the polynomial $f(z) = a_0 + a_1 z + \dots + a_n z^n$
+satisfies $\rho_1 \le |z| \le \rho_2$, where $\rho_1$ and $\rho_2$ are the minimum and the maximum
+of the ratios $a_k / a_{k+1}$ for $0 \le k \le n - 1$.
 
 Source: Karl Dilcher and Larry Ericksen, "Polynomials Whose Coefficients Are Stern
 Numbers," Journal of Integer Sequences 24 (2021), Article 21.10.3, Theorem 4.1

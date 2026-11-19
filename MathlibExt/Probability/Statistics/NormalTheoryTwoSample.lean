@@ -16,6 +16,7 @@ public import Mathlib.Probability.HasLaw
 public import Mathlib.Probability.Independence.Basic
 public import MathlibExt.Probability.FiniteProbability
 import MathlibExt.Probability.Statistics.LinearModel.Inference
+import MathlibExt.Probability.Statistics.NormalTheory
 import MathlibExt.Probability.Statistics.Slutsky
 import MathlibExt.Probability.CdfContinuityPoints
 
@@ -43,9 +44,9 @@ and `R = S_X² / S_Y²` (`varianceRatio`), `R / (v₁ / v₂) ~ F(m - 1, n - 1)`
 
 **Quantiles.** Both laws have Lebesgue densities, hence no atoms and continuous cdfs, so the
 merged generalized inverse `cdfQuantile` hits every level in `(0, 1)` exactly; the `t` cdf is
-symmetric. These facts are proved here as private lemmas, because the public versions live in
-`NormalTheory.lean` (open PR #1566), which this file does not import. With them, coverage and
-size statements are equalities, not inequalities.
+symmetric (`studentTMeasure_singleton`, `cdf_studentTMeasure_neg`,
+`cdf_studentTMeasure_cdfQuantile`, `cdf_snedecorFMeasure_cdfQuantile` in `NormalTheory.lean`).
+With them, coverage and size statements are equalities, not inequalities.
 
 **Slutsky.** Without normality, if the known-variance statistic converges in distribution and
 `S_p² → σ²` in probability, the pooled `t` statistic has the same limit (inputs taken as
@@ -241,14 +242,8 @@ theorem hasLaw_twoSampleTStatistic {m n : ℕ} (hm : 1 ≤ m) (hn : 1 ≤ n) (hm
 
 /-! ### Quantile facts for the `t` and `F` laws
 
-TODO(#1566): after `NormalTheory.lean` (open PR #1566, not imported here) merges, replace the
-private copies `studentTMeasure_singleton'`, `studentTMeasure_Iic_neg'`,
-`cdf_studentTMeasure_neg'` and `snedecorFMeasure_singleton'` by its public
-`studentTMeasure_singleton`, `studentTMeasure_Iic_neg`, `cdf_studentTMeasure_neg` and
-`snedecorFMeasure_singleton`, and the uses of `cdf_cdfQuantile_of_noAtom` by
-`cdf_studentTMeasure_cdfQuantile` / `cdf_snedecorFMeasure_cdfQuantile`.
-`cdf_cdfQuantile_of_noAtom` itself, `measureReal_Icc_of_noAtom`, `studentT_central_mass` and
-`snedecorFMeasure_Iic_zero` have no public counterpart there and stay. -/
+No atoms, symmetry and exact quantiles come from `NormalTheory.lean`. The lemmas below have no
+public counterpart there. -/
 
 /-- A law without atoms has a continuous cdf, so the generalized inverse is exact on `(0, 1)`. -/
 private lemma cdf_cdfQuantile_of_noAtom {ν : Measure ℝ} [IsProbabilityMeasure ν]
@@ -275,34 +270,6 @@ private lemma measureReal_Icc_of_noAtom {ν : Measure ℝ} [IsProbabilityMeasure
     MathlibExt.Probability.CdfContinuityPoints.measure_Ioc_eq_ofReal_cdf,
     ENNReal.toReal_ofReal (sub_nonneg.mpr (monotone_cdf ν hab))]
 
-private lemma studentTMeasure_singleton' (k : ℕ) (x : ℝ) : studentTMeasure k {x} = 0 :=
-  withDensity_absolutelyContinuous _ _ Real.volume_singleton
-
-private lemma studentTMeasure_Iic_neg' (k : ℕ) (x : ℝ) :
-    studentTMeasure k (Set.Iic (-x)) = studentTMeasure k (Set.Ici x) := by
-  set f : ℝ → ENNReal := fun t => ENNReal.ofReal
-    (Gamma ((k + 1) / 2) / (√(k * π) * Gamma (k / 2)) *
-      (1 + t ^ 2 / k) ^ (-((k : ℝ) + 1) / 2)) with hf
-  have hfm : Measurable f := by fun_prop
-  have hpre : (Neg.neg : ℝ → ℝ) ⁻¹' Set.Iic (-x) = Set.Ici x := by
-    ext t; simp
-  have h := (Measure.measurePreserving_neg (volume : Measure ℝ)).setLIntegral_comp_preimage
-    (measurableSet_Iic (a := -x)) hfm
-  rw [hpre] at h
-  have heven : (fun t => f (-t)) = f := by funext t; simp [hf]
-  rw [heven] at h
-  rw [studentTMeasure, withDensity_apply _ measurableSet_Iic,
-    withDensity_apply _ measurableSet_Ici, ← hf, h]
-
-/-- Symmetry of the `t` cdf: `F(-x) = 1 - F(x)`. -/
-private lemma cdf_studentTMeasure_neg' {k : ℕ} (hk : 0 < k) (x : ℝ) :
-    cdf (studentTMeasure k) (-x) = 1 - cdf (studentTMeasure k) x := by
-  have := isProbabilityMeasure_studentTMeasure hk
-  rw [cdf_eq_real, cdf_eq_real, measureReal_def, studentTMeasure_Iic_neg', ← measureReal_def,
-    ← Set.Ioi_union_left, measureReal_union (by simp) (measurableSet_singleton x),
-    measureReal_def (s := {x}), studentTMeasure_singleton', ENNReal.toReal_zero, add_zero,
-    ← Set.compl_Iic, probReal_compl_eq_one_sub measurableSet_Iic]
-
 /-- The two-sided `t` critical value: `c = q_{t_k}(1 - α/2)` is positive and
 `t_k([-c, c]) = 1 - α`. -/
 private lemma studentT_central_mass {k : ℕ} (hk : 0 < k) {α : ℝ}
@@ -312,9 +279,9 @@ private lemma studentT_central_mass {k : ℕ} (hk : 0 < k) {α : ℝ}
         (cdfQuantile (studentTMeasure k) (1 - α / 2))) = 1 - α := by
   have := isProbabilityMeasure_studentTMeasure hk
   have hu : 1 - α / 2 ∈ Set.Ioo (0 : ℝ) 1 := ⟨by linarith [hα.2], by linarith [hα.1]⟩
-  have hq := cdf_cdfQuantile_of_noAtom (studentTMeasure_singleton' k) hu
+  have hq := cdf_studentTMeasure_cdfQuantile hk hu
   have h0 : cdf (studentTMeasure k) 0 = 1 / 2 := by
-    have := cdf_studentTMeasure_neg' hk 0
+    have := cdf_studentTMeasure_neg hk 0
     rw [neg_zero] at this
     linarith
   have hpos : 0 < cdfQuantile (studentTMeasure k) (1 - α / 2) := by
@@ -322,8 +289,8 @@ private lemma studentT_central_mass {k : ℕ} (hk : 0 < k) {α : ℝ}
     have := (cdfQuantile_le_iff _ hu).mp (not_lt.mp h)
     linarith [hα.2]
   refine ⟨hpos, ?_⟩
-  rw [measureReal_Icc_of_noAtom (studentTMeasure_singleton' k) (by linarith),
-    cdf_studentTMeasure_neg' hk, hq]
+  rw [measureReal_Icc_of_noAtom (studentTMeasure_singleton k) (by linarith),
+    cdf_studentTMeasure_neg hk, hq]
   ring
 
 /-! ### Exact two-sample `t` intervals and tests -/
@@ -342,7 +309,7 @@ private lemma twoSample_t_facts {m n : ℕ} (hm : 1 ≤ m) (hn : 1 ≤ n) (hmn :
   refine ⟨hT, ?_⟩
   have h0 : P ((fun ω => twoSampleTStatistic (μ₁ - μ₂) (X ω) (Y ω)) ⁻¹' {0}) = 0 := by
     rw [← Measure.map_apply_of_aemeasurable hT.aemeasurable (measurableSet_singleton 0),
-      hT.map_eq, studentTMeasure_singleton']
+      hT.map_eq, studentTMeasure_singleton]
   refine measure_mono_null (fun ω (hω : ¬ 0 < _) => ?_) h0
   rw [Set.mem_preimage, Set.mem_singleton_iff, twoSampleTStatistic,
     le_antisymm (not_lt.mp hω) (Real.sqrt_nonneg _), div_zero]
@@ -421,7 +388,7 @@ theorem twoSample_t_one_sided_test_size_eq {m n : ℕ} (hm : 1 ≤ m) (hn : 1 �
   rw [Set.ofPred_mem_eq] at h
   refine h.trans ?_
   rw [← Set.compl_Iic, probReal_compl_eq_one_sub measurableSet_Iic, ← cdf_eq_real,
-    cdf_cdfQuantile_of_noAtom (studentTMeasure_singleton' _) hu]
+    cdf_studentTMeasure_cdfQuantile (by omega) hu]
   ring
 
 /-! ### The variance-ratio `F` test -/
@@ -539,9 +506,6 @@ theorem hasLaw_varianceRatio {m n : ℕ} (hm : 2 ≤ m) (hn : 2 ≤ n) (μ₁ μ
   have hv0 : (v : ℝ) ≠ 0 := NNReal.coe_ne_zero.mpr hv
   simpa [div_self hv0] using hasLaw_varianceRatio_div hm hn μ₁ μ₂ hv hv hX hY hXY
 
-private lemma snedecorFMeasure_singleton' (d₁ d₂ : ℕ) (x : ℝ) : snedecorFMeasure d₁ d₂ {x} = 0 :=
-  withDensity_absolutelyContinuous _ _ Real.volume_singleton
-
 private lemma snedecorFMeasure_Iic_zero (d₁ d₂ : ℕ) : snedecorFMeasure d₁ d₂ (Set.Iic 0) = 0 := by
   rw [snedecorFMeasure, withDensity_apply _ measurableSet_Iic]
   refine (setLIntegral_congr_fun measurableSet_Iic fun x (hx : x ≤ 0) => ?_).trans
@@ -567,7 +531,7 @@ theorem varianceRatio_test_size_eq {m n : ℕ} (hm : 2 ≤ m) (hn : 2 ≤ n) (μ
   rw [Set.ofPred_mem_eq] at h
   refine h.trans ?_
   rw [← Set.compl_Iic, probReal_compl_eq_one_sub measurableSet_Iic, ← cdf_eq_real,
-    cdf_cdfQuantile_of_noAtom (snedecorFMeasure_singleton' _ _) hu]
+    cdf_snedecorFMeasure_cdfQuantile (by omega) (by omega) hu]
   ring
 
 /-- **Exact confidence interval for a variance ratio** (Lehmann–Romano, §5.3; inversion of
@@ -590,9 +554,8 @@ theorem varianceRatio_interval_coverage_eq {m n : ℕ} (hm : 2 ≤ m) (hn : 2 �
   have hhi : 1 - α / 2 ∈ Set.Ioo (0 : ℝ) 1 := ⟨by linarith [hα.2], by linarith [hα.1]⟩
   set a := cdfQuantile ν (α / 2)
   set b := cdfQuantile ν (1 - α / 2)
-  have ha : cdf ν a = α / 2 := cdf_cdfQuantile_of_noAtom (snedecorFMeasure_singleton' _ _) hlo
-  have hb : cdf ν b = 1 - α / 2 :=
-    cdf_cdfQuantile_of_noAtom (snedecorFMeasure_singleton' _ _) hhi
+  have ha : cdf ν a = α / 2 := cdf_snedecorFMeasure_cdfQuantile (by omega) (by omega) hlo
+  have hb : cdf ν b = 1 - α / 2 := cdf_snedecorFMeasure_cdfQuantile (by omega) (by omega) hhi
   have hcdf0 : cdf ν 0 = 0 := by
     rw [cdf_eq_real, measureReal_def, snedecorFMeasure_Iic_zero, ENNReal.toReal_zero]
   have hapos : 0 < a := by
@@ -605,7 +568,7 @@ theorem varianceRatio_interval_coverage_eq {m n : ℕ} (hm : 2 ≤ m) (hn : 2 �
     div_pos (NNReal.coe_pos.mpr (pos_iff_ne_zero.mpr hv₁))
       (NNReal.coe_pos.mpr (pos_iff_ne_zero.mpr hv₂))
   have h := hR.measureReal_eq (p := fun t => t ∈ Set.Icc a b) measurableSet_Icc
-  rw [Set.ofPred_mem_eq, measureReal_Icc_of_noAtom (snedecorFMeasure_singleton' _ _) hab, ha,
+  rw [Set.ofPred_mem_eq, measureReal_Icc_of_noAtom (snedecorFMeasure_singleton _ _) hab, ha,
     hb] at h
   refine Eq.trans ?_ (h.trans (by ring))
   congr 1

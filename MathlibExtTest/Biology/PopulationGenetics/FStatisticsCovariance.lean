@@ -36,6 +36,21 @@ example : f2 (Measure.dirac ()) pD 0 2 =
 example : centredCov (Measure.dirac ()) pD 0 2 = doubleCenter (f2 (Measure.dirac ()) pD) 0 2 / 2 :=
   centredCov_eq_doubleCenter_f2 (fun _ => MemLp.of_discrete) 0 2
 
+/-! ### Symmetry and row sums of the centred covariance -/
+
+example : centredCov (Measure.dirac ()) pD 0 2 = centredCov (Measure.dirac ()) pD 2 0 :=
+  centredCov_comm 0 2
+
+example : ∑ Y, centredCov (Measure.dirac ()) pD 0 Y = 0 :=
+  sum_centredCov_eq_zero (fun _ => MemLp.of_discrete) 0
+
+/-- Column sums vanish by symmetry. -/
+example : ∑ X, centredCov (Measure.dirac ()) pD X 2 = 0 := by
+  calc ∑ X, centredCov (Measure.dirac ()) pD X 2
+      = ∑ X, centredCov (Measure.dirac ()) pD 2 X :=
+        Finset.sum_congr rfl fun X _ => centredCov_comm X 2
+    _ = 0 := sum_centredCov_eq_zero (fun _ => MemLp.of_discrete) 2
+
 /-! ### The f-indistinguishable pair, realized on four points
 
 `Ω = Fin 4` with the uniform probability measure and the orthogonal mean-zero sign vectors
@@ -132,6 +147,8 @@ example : starLen (1/2) 1 1 0 2 < 0 := by
   norm_num
 
 #print axioms centredCov_eq_doubleCenter_f2
+#print axioms sum_centredCov_eq_zero
+#print axioms centredCov_comm
 #print axioms f2_eq_iff_centredCov_eq
 #print axioms f2_star_eq_f2_admix
 

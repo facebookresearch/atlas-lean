@@ -13,6 +13,7 @@ public import Mathlib.Analysis.Normed.Operator.Basic
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Topology.MetricSpace.Pseudo.Defs
+public import MathlibExt.Probability.Statistics.GLM.IRLS
 
 import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.Calculus.Deriv.Mul
@@ -32,13 +33,15 @@ iteration by the classical contraction argument, with the score `U` and its deri
 hypotheses.
 
 The model-specific identities (the canonical score `Xᵀ (y - μ(β))`, the Hessian `-Xᵀ W X`, and
-`newtonStep = irlsStep`) are not restated here; they are the subject of the GLM files
-`GLM/Canonical.lean` and `GLM/IRLS.lean`, which are open pull requests (#1126, #1555) and are not
-imported. Instead, the iteration map `T` is arbitrary and enters only through the Newton
-equations `H z (T z - z) = -U z` near the root (for IRLS, the weighted normal equations). Once
-#1555 merges, its IRLS step should satisfy these equations when the IRLS weights are nonzero and
-the weighted Gram matrix is invertible, after transporting its `Matrix` statement on `k → ℝ` to
-`E →L[ℝ] E`; that link is not proved here.
+`newtonStep = irlsStep`) are not restated here; they are the subject of `GLM/Basic.lean`,
+`GLM/Canonical.lean` and `GLM/IRLS.lean`. In the convergence theorems the iteration map `T` is
+arbitrary and enters only through the Newton equations `H z (T z - z) = -U z` near the root (for
+IRLS, the weighted normal equations). The last section proves that the IRLS step `irlsStep` of
+`GLM/IRLS.lean` satisfies these equations at every `β` where the IRLS weights are nonzero and the
+weighted Gram matrix is invertible, with its `Matrix` statements on `k → ℝ` transported to
+`(k → ℝ) →L[ℝ] (k → ℝ)` by `Matrix.toLin'` (`irlsStep_fisherScoring_eq`, `irlsStep_newton_eq`).
+Without those two assumptions `irlsStep` is a junk value of Mathlib's total matrix inverse and
+need not satisfy them (see the tests).
 
 ## Source receipt
 
@@ -84,6 +87,11 @@ the weighted Gram matrix is invertible, after transporting its `Matrix` statemen
 * `eq_of_score_eq_zero`: the root is the only score zero in `ball b ε`.
 * `fisherScoring_local_convergence`: the same convergence statement for the Fisher-scoring /
   IRLS equations `I x (T x - x) = U x` with `U' = -I`.
+* `irlsStep_fisherScoring_eq`, `irlsStep_newton_eq`: with nonzero IRLS weights and an invertible
+  weighted Gram matrix at `β`, `irlsStep` solves the Fisher-scoring equations
+  `Xᵀ W(β) X (T β - β) = Xᵀ (y - μ(β))` and, under the canonical-link hypotheses
+  `IsCanonicalScoreHessian`, the Newton equations `hess β (T β - β) = -score β`, as equations
+  between continuous linear maps on `k → ℝ`.
 -/
 
 @[expose] public section
@@ -382,5 +390,50 @@ theorem fisherScoring_local_convergence {U : E → E} {I : E → E →L[ℝ] E} 
     exact hI x hx y hy
   · simp [hleft]
   · simp [hT x hx]
+
+/-! ### The IRLS step satisfies the Newton equations -/
+
+section IRLSNewton
+
+open Matrix
+open MathlibExt.Probability.Statistics.GLM.IRLS
+
+variable {m k : Type*} [Fintype m] [DecidableEq m] [Fintype k] [DecidableEq k]
+  {X : Matrix m k ℝ} {y : m → ℝ} {mean weight : ℝ → ℝ}
+
+/-- **The IRLS step solves the Fisher-scoring equations.** With nonzero IRLS weights and an
+invertible weighted Gram matrix at `β`, the IRLS step `T = irlsStep X y mean weight` solves
+`I β (T β - β) = U β`, where the Fisher information `I β = Xᵀ W(β) X` acts on `k → ℝ` as a
+continuous linear map and `U β = Xᵀ (y - μ(β))` is the canonical score. At every point of a ball
+where the two assumptions hold, this is the hypothesis `hT` of `fisherScoring_local_convergence`
+for `T = irlsStep X y mean weight`. -/
+theorem irlsStep_fisherScoring_eq (β : k → ℝ) (hw : ∀ i, irlsWeights weight X β i ≠ 0)
+    (hG : IsUnit (weightedGram X (irlsWeights weight X β))) :
+    LinearMap.toContinuousLinearMap (Matrix.toLin' (weightedGram X (irlsWeights weight X β)))
+        (irlsStep X y mean weight β - β) =
+      Xᵀ *ᵥ (y - fun i => mean ((X *ᵥ β) i)) := by
+  have hdet := (isUnit_iff_isUnit_det _).mp hG
+  simp only [LinearMap.coe_toContinuousLinearMap', Matrix.toLin'_apply]
+  rw [irlsStep_eq β hw hG, add_sub_cancel_left, mulVec_mulVec, mul_nonsing_inv _ hdet,
+    one_mulVec]
+
+/-- **The IRLS step solves the Newton equations.** Under the canonical-link score and Hessian
+identities, with nonzero IRLS weights and an invertible weighted Gram matrix at `β`, the IRLS
+step `T = irlsStep X y mean weight` solves `H β (T β - β) = -score β`, where `H β` is `hess β`
+acting on `k → ℝ` as a continuous linear map. When `mean' = weight`, `H β` is the derivative of
+`score` at `β` (`IsCanonicalScoreHessian.hasFDerivAt`), so at every point of a ball where the two
+assumptions hold this is the hypothesis `hT` of `newton_local_convergence` for
+`U = score` and `T = irlsStep X y mean weight`. -/
+theorem irlsStep_newton_eq {score : (k → ℝ) → k → ℝ} {hess : (k → ℝ) → Matrix k k ℝ}
+    (h : IsCanonicalScoreHessian X y mean weight score hess) (β : k → ℝ)
+    (hw : ∀ i, irlsWeights weight X β i ≠ 0)
+    (hG : IsUnit (weightedGram X (irlsWeights weight X β))) :
+    LinearMap.toContinuousLinearMap (Matrix.toLin' (hess β)) (irlsStep X y mean weight β - β) =
+      -score β := by
+  have h₁ := irlsStep_fisherScoring_eq (y := y) (mean := mean) β hw hG
+  simp only [LinearMap.coe_toContinuousLinearMap', Matrix.toLin'_apply] at h₁ ⊢
+  rw [h.hess_eq, neg_mulVec, h₁, h.score_eq]
+
+end IRLSNewton
 
 end MathlibExt.Probability.Statistics.GLM.IRLSConvergence

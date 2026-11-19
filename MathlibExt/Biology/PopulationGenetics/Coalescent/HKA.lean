@@ -139,9 +139,7 @@ def hkaStatistic {L : ℕ} (nA nB : ℕ) (θ : Fin L → ℝ) (T f : ℝ) (SA SB
 
 /-- HKA's variances are positive in the biological domain: `θ > 0`, `n ≥ 2`. -/
 theorem hkaPolyVar_pos {θ : ℝ} (hθ : 0 < θ) {n : ℕ} (hn : 2 ≤ n) : 0 < hkaPolyVar θ n := by
-  have ha1 : 0 < tajimaA1 n := by
-    rw [tajimaA1_eq_harmonic]
-    exact_mod_cast harmonic_pos (by omega)
+  have ha1 := tajimaA1_pos hn
   have ha2 : 0 ≤ tajimaA2 n := sum_nonneg fun i _ => by positivity
   unfold hkaPolyVar
   positivity

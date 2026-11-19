@@ -12,14 +12,12 @@ Author: Mark Sepanski
 module
 
 public import Mathlib.Combinatorics.Young.YoungDiagram
-public import Mathlib.Data.List.GetD
 public import Mathlib.RingTheory.MvPolynomial.Symmetric.FundamentalTheorem
 public import Mathlib.RingTheory.PowerSeries.Basic
-public import Mathlib.Tactic.IntervalCases
 
 @[expose] public section
 
--- Source: Lean Definition Library (Airtable) records: Combinatorics 490, Combinatorics 494, Combinatorics 495, Combinatorics 497, Combinatorics 498, Combinatorics 500
+-- Source: Lean Definition Library (Airtable) records: Combinatorics 490, Combinatorics 494, Combinatorics 495, Combinatorics 497, Combinatorics 498, Combinatorics 500, Combinatorics 631
 
 /-!
 # `MathlibExt.Combinatorics.SymmetricFunctionsYoungTableaux`
@@ -31,12 +29,47 @@ public import Mathlib.Tactic.IntervalCases
 * ec2 7.15 p 336 (for `symmetricScalarProduct`)
 * ec2 7.10 p 309 (for `SkewShape`, `SkewSemistandardYoungTableau`)
 * ec2 7.10 p 312 (for `SkewStandardYoungTableau`)
+* ec2 7.11 p 318 (for `List.IsTwoLineArray`)
+-/
+
+/-! ### Informal statement of `MvPolynomial.omegaAlgHom`
+
+Let R be a commutative ring, let n∈ℤ_{≥ 0}, and
+let V be a finite set with n elements. A polynomial f in
+the polynomial ring R[xᵥ:v∈ V] is symmetric if, for every
+bijection π: V→ V, substituting x_{π(v)} for xᵥ
+for every v∈ V leaves f unchanged. For
+k∈ℤ_{≥ 0}, the elementary symmetric polynomial
+eₖ and the complete homogeneous symmetric polynomial hₖ are
+
+  eₖ=∑_T∏_{v∈ T}xᵥ
+
+and
+
+  hₖ=∑_M∏_{v∈ M}xᵥ,
+
+where T runs over all k-element subsets of V, M runs over
+all multisets of size k with elements from V, and each
+element of M appears in the product as often as it occurs in
+M. In particular e₀=h₀=1. By the fundamental theorem of
+symmetric polynomials, every symmetric polynomial f equals
+P(e₁,…,eₙ) for exactly one polynomial
+P∈ R[y₁,…,yₙ], where P(e₁,…,eₙ) is obtained
+from P by substituting eᵢ for yᵢ for 1≤ i≤ n. The
+omega involution ω sends such an f to
+
+  ω(f)=P(h₁,…,hₙ),
+
+obtained from P by substituting hᵢ for yᵢ for
+1≤ i≤ n. Thus ω is the R-algebra homomorphism
+from the symmetric polynomials to the symmetric polynomials with
+ω(eₖ)=hₖ for 1≤ k≤ n. When n=0, every
+polynomial is a constant and ω(f)=f.
 -/
 
 namespace MetaMathlibExt
 
 -- Combinatorics 490: Omega Involution
-
 
 /-! ### Informal statement of `MvPolynomial.omegaAlgHom`
 
@@ -91,8 +124,6 @@ noncomputable def MvPolynomial.omegaAlgHom (σ R : Type*)
     (MvPolynomial.esymmAlgEquiv σ R rfl).symm.toAlgHom
 
 -- Combinatorics 494: Exponential Specialization
-
-
 /-- Let ℚ[[x₁,x₂,…]] be the ring of formal power
 series in the variables x₁,x₂,… with rational
 coefficients. Its elements are the formal sums
@@ -111,6 +142,7 @@ one variable t. The exponential specialization of f is
   ex(f)=∑_{m∈ℤ_{≥ 0}}
   tᵐ/(m!) [x₁⋯ xₘ]f.
 -/
+
 noncomputable def _root_.MvPowerSeries.exponentialSpecialization
     (f : MvPowerSeries ℕ ℚ) : PowerSeries ℚ :=
   PowerSeries.mk fun m => (Nat.factorial m : ℚ)⁻¹ *
@@ -118,7 +150,6 @@ noncomputable def _root_.MvPowerSeries.exponentialSpecialization
       (∑ i ∈ Finset.range m, Finsupp.single i 1) f
 
 -- Combinatorics 495: Scalar Product of Symmetric Polynomials
-
 
 /-- Let n∈ℤ_{≥ 0}, write [n]={1,…,n}, so
 that [0]=∅, and let R be a commutative ring. A
@@ -159,7 +190,6 @@ noncomputable def symmetricScalarProduct {n : ℕ} {R : Type*}
 
 -- Combinatorics 497: Skew Shape
 
-
 /-- Let m∈ℤ_{≥ 0}. A partition is a list
 λ=[λ₁,…,λₘ] of integers, called its
 parts, such that, if m≥ 1,
@@ -192,7 +222,6 @@ structure SkewShape where
   inner_le_outer : inner ≤ outer
 
 -- Combinatorics 498: Semistandard Young Tableau of Skew Shape
-
 
 /-- Let λ/μ be a skew shape. For k∈ℤ_{≥ 1},
 write λₖ for the k-th part of λ if λ
@@ -243,7 +272,6 @@ structure SkewSemistandardYoungTableau (s : SkewShape) where
 
 -- Combinatorics 500: Standard Young Tableau of Skew Shape
 
-
 /-- Let λ/μ be a skew shape. For k∈ℤ_{≥ 1},
 write λₖ for the k-th part of λ if λ
 has at least k parts, and λₖ=0 otherwise, and define
@@ -269,6 +297,33 @@ structure SkewStandardYoungTableau (s : SkewShape) extends
   bijOn : Set.BijOn (fun c : ℕ × ℕ => entry c.1 c.2)
     ↑(s.outer.cells \ s.inner.cells)
     (Set.Icc 1 (s.outer.cells \ s.inner.cells).card)
+
+-- Combinatorics 631: Two-Line Array
+
+/-- Let m∈ℤ_{≥ 0} and let w be a list of m pairs
+of elements of ℤ_{≥ 0}. If m≥ 1, write
+
+  w=[(i₁,j₁),…,(iₘ,jₘ)],
+
+and read w as the array with two lines whose top line is
+i₁,…,iₘ and whose bottom line is j₁,…,jₘ. If
+m=0, write w as the empty list ∅. The list w
+is a two-line array, also called a generalized permutation, if
+the following two conditions hold. First, iᵣ≥ 1 and
+jᵣ≥ 1 for every r∈ℤ_{≥ 1} with r≤ m.
+Second, for all r,s∈ℤ_{≥ 1} with r<s≤ m,
+
+  iᵣ≤ iₛ,
+
+and if moreover iᵣ=iₛ, then jᵣ≤ jₛ. Pairs may repeat.
+If m=0, both conditions hold vacuously and the empty list
+∅ is a two-line array. If m=1, the second
+condition holds vacuously, so w=[(i₁,j₁)] is a two-line
+array exactly when i₁≥ 1 and j₁≥ 1.
+-/
+def List.IsTwoLineArray (w : List (ℕ × ℕ)) : Prop :=
+  (∀ p ∈ w, 1 ≤ p.1 ∧ 1 ≤ p.2) ∧
+    w.Pairwise fun p q => p.1 ≤ q.1 ∧ (p.1 = q.1 → p.2 ≤ q.2)
 
 end MetaMathlibExt
 

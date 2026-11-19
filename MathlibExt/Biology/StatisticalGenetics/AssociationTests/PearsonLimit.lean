@@ -78,7 +78,9 @@ proof, which also yields the exact identity `X² = N F̂²`.
   asymptotics, where the exact test is preferred, are not covered.
 * Only the null limit is proved; the law of `X²` under alternatives (`F ≠ 0`) is not treated.
 * The finite-sample discrepancy between `X²` and the exact (Levene–Haldane) test is the subject of
-  a separate development and is not used here.
+  `AssociationTests.ExactVsAsymptotic`, which imports this file; its heterozygote-count statistic
+  `hweChiSqOfHet` equals `hweStat` on every realizable table, and
+  `ExactVsAsymptotic.tendstoInDistribution_hweChiSqOfHet` transports the limit theorem to it.
 
 ## Source receipt
 

@@ -13,6 +13,7 @@ public import Mathlib.Analysis.Normed.Algebra.Spectrum
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.Topology.Instances.Matrix
+import Mathlib.Algebra.Group.Pi.Units
 import Mathlib.Analysis.Normed.Algebra.GelfandFormula
 import Mathlib.Analysis.Matrix.Normed
 import Mathlib.LinearAlgebra.Matrix.Charpoly.Eigs
@@ -100,6 +101,31 @@ theorem isNonsingularMMatrix_smul_one {c : ℝ} (hc : 0 < c) :
   refine ⟨fun i j hij => by simp [hij], ?_⟩
   rw [← neg_smul]
   exact isHurwitz_smul_one (by linarith)
+
+/-- A diagonal matrix with positive diagonal entries is a nonsingular M-matrix. -/
+theorem isNonsingularMMatrix_diagonal {e : ι → ℝ} (he : ∀ i, 0 < e i) :
+    (diagonal e).IsNonsingularMMatrix := by
+  refine ⟨fun i j hij => by simp [diagonal_apply_ne _ hij], fun μ hμ => ?_⟩
+  by_contra hre
+  push Not at hre
+  rw [spectrum.mem_iff] at hμ
+  apply hμ
+  have hM : algebraMap ℂ (Matrix ι ι ℂ) μ - (-diagonal e).map (algebraMap ℝ ℂ) =
+      diagonal fun i => μ + (e i : ℂ) := by
+    ext i j
+    by_cases h : i = j
+    · subst h; simp [algebraMap_matrix_apply]
+    · simp [algebraMap_matrix_apply, h]
+  rw [hM, isUnit_diagonal]
+  refine Pi.isUnit_iff.2 fun i => isUnit_iff_ne_zero.2 fun h0 => ?_
+  have := congrArg Complex.re h0
+  simp only [Complex.add_re, Complex.ofReal_re, Complex.zero_re] at this
+  linarith [he i]
+
+/-- A real matrix is Hurwitz iff its transpose is. -/
+theorem isHurwitz_transpose_iff {A : Matrix ι ι ℝ} : Aᵀ.IsHurwitz ↔ A.IsHurwitz := by
+  unfold IsHurwitz
+  rw [transpose_map, spectrum_transpose]
 
 /-- If `ρ(a) < r`, then `r⁻ⁿ aⁿ → 0` (Gelfand's formula). -/
 private theorem tendsto_smul_pow_zero (a : Matrix ι ι ℂ) {r : ℝ≥0} (hr : 0 < r)

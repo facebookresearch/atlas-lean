@@ -214,6 +214,222 @@ example : ∃ T : ℝ → ℝ, ∀ x ∈ ball (0 : ℝ) (1 / 2),
     (fun v => by simp [infoEx]) (by simp) le_rfl
     (by norm_num)
 
+/-! ### The IRLS step satisfies the Newton equations
+
+Values below are computed from the definitions of `irlsWeights`, `weightedGram`,
+`workingResponse` and `wlsClosedForm`, not through `irlsStep_fisherScoring_eq`. -/
+
+section IRLSNewton
+
+open Matrix
+open MathlibExt.Probability.Statistics.GLM.IRLS
+
+/-! #### Nonzero weights and an invertible Gram matrix
+
+Two observations `y = (2, 5)` with covariates `X = (1, 2)ᵀ`, one coefficient, mean function
+`mean η = η³/3 + η` and weight `weight η = η² + 1 = mean' η`. At `β = 1` the linear predictor is
+`η = (1, 2)`, the weights are `(2, 5)`, the Gram matrix is `[22]`, the score is
+`Xᵀ (y - μ) = 1 · (2 - 4/3) + 2 · (5 - 14/3) = 4/3`, and the IRLS step is `35/33`. -/
+
+/-- The design `X = (1, 2)ᵀ`. -/
+private def Xn : Matrix (Fin 2) (Fin 1) ℝ := !![1; 2]
+
+/-- The responses `y = (2, 5)`. -/
+private def yn : Fin 2 → ℝ := ![2, 5]
+
+/-- The mean function `η ↦ η³/3 + η`. -/
+private noncomputable def meann (η : ℝ) : ℝ := η ^ 3 / 3 + η
+
+/-- The weight function `η ↦ η² + 1`, the derivative of `meann`. -/
+private def weightn (η : ℝ) : ℝ := η ^ 2 + 1
+
+private theorem hasDerivAt_meann (x : ℝ) : HasDerivAt meann (weightn x) x := by
+  have h := ((hasDerivAt_pow 3 x).div_const 3).add (hasDerivAt_id x)
+  have hf : ((fun y : ℝ => y ^ 3 / 3) + id) = meann := by
+    funext y
+    simp [meann]
+  rw [hf] at h
+  convert h using 1
+  norm_num [weightn]
+
+private theorem irlsWeights_n : irlsWeights weightn Xn ![1] = ![2, 5] := by
+  funext i
+  fin_cases i <;> norm_num [irlsWeights, weightn, Xn, mulVec, dotProduct]
+
+private theorem weightedGram_n : weightedGram Xn ![2, 5] = !![22] := by
+  ext i j
+  fin_cases i
+  fin_cases j
+  norm_num [weightedGram, Xn, Matrix.mul_apply, Fin.sum_univ_two]
+
+private theorem irlsWeights_n_ne_zero : ∀ i, irlsWeights weightn Xn ![1] i ≠ 0 := by
+  rw [irlsWeights_n]
+  intro i
+  fin_cases i <;> norm_num
+
+private theorem isUnit_weightedGram_n : IsUnit (weightedGram Xn (irlsWeights weightn Xn ![1])) := by
+  rw [irlsWeights_n, weightedGram_n, isUnit_iff_isUnit_det]
+  norm_num
+
+-- The IRLS step from `β = 1`, computed from the closed form `(Xᵀ W X)⁻¹ Xᵀ W z` with the
+-- working response `z = η + (y - μ) / w = (4/3, 31/15)`.
+private theorem irlsStep_n : irlsStep Xn yn meann weightn ![1] = ![35 / 33] := by
+  rw [irlsStep, wlsClosedForm_eq irlsWeights_n_ne_zero, irlsWeights_n, weightedGram_n]
+  funext i
+  fin_cases i
+  norm_num [workingResponse, meann, weightn, Xn, yn, Matrix.inv_def, mulVec, dotProduct,
+    Fin.sum_univ_two]
+
+-- The Fisher-scoring equation at `β = 1`, computed from the definitions: `22 · (35/33 - 1)` and
+-- the score both equal `4/3`.
+example :
+    LinearMap.toContinuousLinearMap (Matrix.toLin' (weightedGram Xn (irlsWeights weightn Xn ![1])))
+        (![35 / 33] - ![1]) =
+      Xnᵀ *ᵥ (yn - fun i => meann ((Xn *ᵥ ![1]) i)) := by
+  rw [irlsWeights_n, weightedGram_n]
+  funext i
+  fin_cases i
+  norm_num [meann, Xn, yn, mulVec, dotProduct, Fin.sum_univ_two]
+
+-- `irlsStep_fisherScoring_eq` gives the same equation for `irlsStep`, whose value is `35/33`.
+example :
+    LinearMap.toContinuousLinearMap (Matrix.toLin' (weightedGram Xn (irlsWeights weightn Xn ![1])))
+        (irlsStep Xn yn meann weightn ![1] - ![1]) =
+      Xnᵀ *ᵥ (yn - fun i => meann ((Xn *ᵥ ![1]) i)) :=
+  irlsStep_fisherScoring_eq ![1] irlsWeights_n_ne_zero isUnit_weightedGram_n
+
+/-- The canonical score `Xᵀ (y - μ(β))` of the example. -/
+private noncomputable def scoren (β : Fin 1 → ℝ) : Fin 1 → ℝ :=
+  Xnᵀ *ᵥ (yn - fun i => meann ((Xn *ᵥ β) i))
+
+/-- The Hessian `-Xᵀ W(β) X` of the example. -/
+private def hessn (β : Fin 1 → ℝ) : Matrix (Fin 1) (Fin 1) ℝ :=
+  -weightedGram Xn (irlsWeights weightn Xn β)
+
+private theorem isCanonical_n : IsCanonicalScoreHessian Xn yn meann weightn scoren hessn :=
+  ⟨fun _ => rfl, fun _ => rfl⟩
+
+-- `hessn β` is the derivative of `scoren` at `β`, so the equation below is Newton's.
+example (β : Fin 1 → ℝ) :
+    HasFDerivAt scoren (LinearMap.toContinuousLinearMap (Matrix.toLin' (hessn β))) β :=
+  isCanonical_n.hasFDerivAt hasDerivAt_meann β
+
+-- The Newton equation `H β (T β - β) = -U β` at `β = 1` for `irlsStep`
+-- (`irlsStep_newton_eq`), and its value `-4/3` computed from the definitions.
+example :
+    LinearMap.toContinuousLinearMap (Matrix.toLin' (hessn ![1]))
+        (irlsStep Xn yn meann weightn ![1] - ![1]) = -scoren ![1] ∧
+      -scoren ![1] = ![-4 / 3] := by
+  refine ⟨irlsStep_newton_eq isCanonical_n ![1] irlsWeights_n_ne_zero isUnit_weightedGram_n, ?_⟩
+  funext i
+  fin_cases i
+  norm_num [scoren, meann, Xn, yn, mulVec, dotProduct, Fin.sum_univ_two, Matrix.vecHead,
+    Matrix.vecTail]
+
+/-! #### A zero weight: the Newton form is not claimed
+
+`X = (0, 1)ᵀ`, `y = (0, 2)`, `mean η = η²/2`, `weight η = η`, `β = 1`. The weights are
+`(0, 1)`, so the nonzero-weight hypothesis fails, although the Gram matrix `[1]` is invertible.
+The IRLS formula then inverts the singular `diag (0, 1)`, and `irlsStep` is the junk value `0`.
+The Newton step is `1 + 3/2 = 5/2`, but `irlsStep` misses it: `1 · (0 - 1) = -1 ≠ 3/2`. -/
+
+/-- The design `X = (0, 1)ᵀ`. -/
+private def Xz : Matrix (Fin 2) (Fin 1) ℝ := !![0; 1]
+
+/-- The responses `y = (0, 2)`. -/
+private def yz : Fin 2 → ℝ := ![0, 2]
+
+/-- The mean function `η ↦ η² / 2`. -/
+private noncomputable def meanz (η : ℝ) : ℝ := η ^ 2 / 2
+
+private theorem irlsWeights_z : irlsWeights id Xz ![1] = ![0, 1] := by
+  funext i
+  fin_cases i <;> norm_num [irlsWeights, Xz, mulVec, dotProduct]
+
+example : ¬ ∀ i, irlsWeights id Xz ![1] i ≠ 0 := by
+  rw [irlsWeights_z]
+  intro h
+  exact h 0 rfl
+
+example : IsUnit (weightedGram Xz (irlsWeights id Xz ![1])) := by
+  rw [irlsWeights_z, isUnit_iff_isUnit_det]
+  norm_num [weightedGram, Xz, Matrix.mul_apply, Fin.sum_univ_two]
+
+private theorem irlsStep_z : irlsStep Xz yz meanz id ![1] = ![0] := by
+  have hV : (diagonal (irlsWeights id Xz ![1])⁻¹)⁻¹ = 0 := by
+    refine Matrix.nonsing_inv_apply_not_isUnit _ ?_
+    rw [irlsWeights_z, det_diagonal]
+    norm_num [Fin.prod_univ_two]
+  funext i
+  fin_cases i
+  simp [irlsStep, wlsClosedForm,
+    MathlibExt.Probability.Statistics.GeneralizedLeastSquares.glsMatrix, hV]
+
+-- `irlsStep` does not solve the Fisher-scoring equation.
+example :
+    LinearMap.toContinuousLinearMap (Matrix.toLin' (weightedGram Xz (irlsWeights id Xz ![1])))
+        (irlsStep Xz yz meanz id ![1] - ![1]) ≠
+      Xzᵀ *ᵥ (yz - fun i => meanz ((Xz *ᵥ ![1]) i)) := by
+  rw [irlsStep_z, irlsWeights_z]
+  intro h
+  have := congrFun h 0
+  norm_num [weightedGram, meanz, Xz, yz, mulVec, dotProduct, Matrix.mul_apply,
+    Fin.sum_univ_two] at this
+
+-- The Newton step `5/2` does solve it, so the failure is the junk value, not the system.
+example :
+    LinearMap.toContinuousLinearMap (Matrix.toLin' (weightedGram Xz (irlsWeights id Xz ![1])))
+        (![5 / 2] - ![1]) =
+      Xzᵀ *ᵥ (yz - fun i => meanz ((Xz *ᵥ ![1]) i)) := by
+  rw [irlsWeights_z]
+  funext i
+  fin_cases i
+  norm_num [weightedGram, meanz, Xz, yz, mulVec, dotProduct, Matrix.mul_apply, Fin.sum_univ_two]
+
+/-! #### A singular Gram matrix: the Newton form is not claimed
+
+The Gaussian model with `X = [1 1]`, `y = 5`, `mean = id`, `weight = 1`, `β = 0`. The weights
+are nonzero, but the Gram matrix `Xᵀ X = [[1, 1], [1, 1]]` is singular and `irlsStep` is the
+junk value `0`. The Newton equation `Xᵀ X v = Xᵀ (y - X β) = (5, 5)` has solutions (for example
+`v = (5, 0)`), but `v = irlsStep - β = 0` is not one. -/
+
+/-- The design `X = [1 1]`. -/
+private def Xs : Matrix (Fin 1) (Fin 2) ℝ := !![1, 1]
+
+example : ∀ i, irlsWeights (fun _ => 1) Xs 0 i ≠ 0 := fun _ => one_ne_zero
+
+example : ¬ IsUnit (weightedGram Xs (irlsWeights (fun _ => 1) Xs 0)) := by
+  rw [isUnit_iff_isUnit_det]
+  norm_num [weightedGram, irlsWeights, Xs, Matrix.det_fin_two, Matrix.mul_apply]
+
+private theorem irlsStep_s : irlsStep Xs ![5] id (fun _ => 1) 0 = 0 := by
+  simp [irlsStep, wlsClosedForm, Xs,
+    MathlibExt.Probability.Statistics.GeneralizedLeastSquares.glsMatrix,
+    Matrix.inv_def, Matrix.det_fin_two, Matrix.mul_apply]
+
+-- `irlsStep` does not solve the Newton (here Fisher-scoring) equation.
+example :
+    LinearMap.toContinuousLinearMap
+        (Matrix.toLin' (weightedGram Xs (irlsWeights (fun _ => 1) Xs 0)))
+        (irlsStep Xs ![5] id (fun _ => 1) 0 - 0) ≠
+      Xsᵀ *ᵥ (![5] - fun i => id ((Xs *ᵥ 0) i)) := by
+  rw [irlsStep_s, sub_zero, map_zero]
+  intro h
+  have := congrFun h 0
+  norm_num [Xs, mulVec, dotProduct] at this
+
+-- The step `v = (5, 0)` does solve it.
+example :
+    LinearMap.toContinuousLinearMap
+        (Matrix.toLin' (weightedGram Xs (irlsWeights (fun _ => 1) Xs 0)))
+        ![5, 0] =
+      Xsᵀ *ᵥ (![5] - fun i => id ((Xs *ᵥ 0) i)) := by
+  funext i
+  fin_cases i <;> norm_num [weightedGram, irlsWeights, Xs, mulVec, dotProduct, Matrix.mul_apply,
+    Fin.sum_univ_two]
+
+end IRLSNewton
+
 #print axioms newton_local_convergence
 #print axioms fisherScoring_local_convergence
 #print axioms exists_newton_map
@@ -221,3 +437,5 @@ example : ∃ T : ℝ → ℝ, ∀ x ∈ ball (0 : ℝ) (1 / 2),
 #print axioms norm_sub_sub_fderiv_le
 #print axioms newton_step_error_le
 #print axioms norm_le_two_mul_norm_apply
+#print axioms irlsStep_fisherScoring_eq
+#print axioms irlsStep_newton_eq
