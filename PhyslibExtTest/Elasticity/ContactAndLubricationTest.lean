@@ -62,6 +62,35 @@ example {p p' : ℝ → ℝ} (hp : IsReynoldsSolution 1 1 2 1 1 p p') :
     (1 / 2) ⟨by norm_num, by norm_num⟩]
   norm_num [sliderPressure, sliderFilm]
 
+/-- The model only sees values on `[0, L]`: the closed-form pressure of the converging slider,
+changed to `1` for `x < 0`, still solves the Reynolds model, although the changed pressure jumps
+at the inlet and so has no derivative there. -/
+example :
+    IsReynoldsSolution 1 1 2 1 1 (fun x => if x < 0 then 1 else sliderPressure 1 1 2 1 1 x)
+        (sliderPressureGradient 1 1 2 1 1) ∧
+      ¬ DifferentiableAt ℝ (fun x => if x < 0 then 1 else sliderPressure 1 1 2 1 1 x) 0 := by
+  obtain ⟨h1, h2, h3, h4⟩ := sliderPressure_isReynoldsSolution (μ := 1) (U := 1) (h0 := 2)
+    (hL := 1) (L := 1) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+  have heq : ∀ y ∈ Set.Icc (0 : ℝ) 1,
+      (if y < 0 then 1 else sliderPressure 1 1 2 1 1 y) = sliderPressure 1 1 2 1 1 y :=
+    fun y hy => by simp [not_lt.mpr hy.1]
+  refine ⟨⟨fun x hx => (h1 x hx).congr_of_mem heq hx, h2, ?_, ?_⟩, ?_⟩
+  · have h00 : ¬ (0 : ℝ) < 0 := lt_irrefl 0
+    simpa [h00] using h3
+  · have h10 : ¬ (1 : ℝ) < 0 := by norm_num
+    simpa [h10] using h4
+  · intro hd
+    have hleft : Filter.Tendsto (fun x => if x < 0 then 1 else sliderPressure 1 1 2 1 1 x)
+        (nhdsWithin 0 (Set.Iio 0)) (nhds 1) :=
+      tendsto_const_nhds.congr'
+        (eventually_nhdsWithin_of_forall fun x hx => by simp [Set.mem_Iio.mp hx])
+    have hcont := hd.continuousAt.tendsto.mono_left (nhdsWithin_le_nhds (s := Set.Iio 0))
+    have hval := tendsto_nhds_unique hleft hcont
+    have h00 : ¬ (0 : ℝ) < 0 := lt_irrefl 0
+    simp only [h00, ↓reduceIte] at hval
+    rw [h3] at hval
+    norm_num at hval
+
 /-- Nonzero load for a converging film: `h0 = 2`, `hL = 1` and `μ = U = L = 1` give the load per
 unit width `6 log 2 - 4`, which is positive. -/
 example :
