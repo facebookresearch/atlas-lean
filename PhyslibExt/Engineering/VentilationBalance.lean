@@ -90,7 +90,7 @@ private noncomputable def ventilationConcentrationOf
     (A : ℝ → ℝ → ℝ → ℝ → ℝ) (V Q c_out G c0 t : ℝ) : ℝ :=
   A (Q / V) ((Q * c_out + G) / V) c0 t
 
-private theorem equilibrium_bridge {V Q : ℝ} (hV : 0 < V) (hQ : 0 < Q)
+private lemma equilibrium_bridge {V Q : ℝ} (hV : 0 < V) (hQ : 0 < Q)
     (c_out G : ℝ) :
     ((Q * c_out + G) / V) / (Q / V) = ventilationEquilibrium Q c_out G := by
   have hV' : V ≠ 0 := ne_of_gt hV
@@ -110,7 +110,7 @@ theorem ventilationEquilibrium_zero_source (Q c_out : ℝ) :
 /-- Explicit exponential form, transported from the canonical
 amount formula at nonzero rate: the concentration is the
 equilibrium plus the initial excess decayed at rate `Q / V`. -/
-private theorem ventilationConcentration_eq_explicit_of
+private lemma ventilationConcentration_eq_explicit_of
     {A : ℝ → ℝ → ℝ → ℝ → ℝ}
     (hA : ∀ {k : ℝ}, k ≠ 0 → ∀ R A₀ t : ℝ,
       A k R A₀ t = R / k + (A₀ - R / k) * Real.exp (-k * t))
@@ -129,7 +129,7 @@ private theorem ventilationConcentration_eq_explicit_of
 /-- The ventilation balance in CSTR form, transported from the
 canonical amount derivative: the rate of change is the flow term
 `(Q / V) * (c_out - c)` plus the indoor source term `G / V`. -/
-private theorem ventilationConcentration_hasDerivAt_of
+private lemma ventilationConcentration_hasDerivAt_of
     {A : ℝ → ℝ → ℝ → ℝ → ℝ}
     (hA : ∀ k R A₀ t : ℝ,
       HasDerivAt (A k R A₀) (R - k * A k R A₀ t) t)
@@ -147,7 +147,7 @@ private theorem ventilationConcentration_hasDerivAt_of
 
 /-- Initial value, transported from the canonical amount initial
 value. -/
-private theorem ventilationConcentration_zero_of
+private lemma ventilationConcentration_zero_of
     {A : ℝ → ℝ → ℝ → ℝ → ℝ}
     (hA : ∀ k R A₀ : ℝ, A k R A₀ 0 = A₀)
     (V Q c_out G c0 : ℝ) :
@@ -156,7 +156,7 @@ private theorem ventilationConcentration_zero_of
 
 /-- Starting at the equilibrium keeps the concentration at the
 equilibrium, transported from the canonical amount formula. -/
-private theorem ventilationConcentration_at_equilibrium_of
+private lemma ventilationConcentration_at_equilibrium_of
     {A : ℝ → ℝ → ℝ → ℝ → ℝ}
     (hA : ∀ {k : ℝ}, k ≠ 0 → ∀ R A₀ t : ℝ,
       A k R A₀ t = R / k + (A₀ - R / k) * Real.exp (-k * t))
@@ -172,7 +172,7 @@ private theorem ventilationConcentration_at_equilibrium_of
 
 /-- Starting below the equilibrium stays below it, transported
 from the canonical amount envelope. -/
-private theorem ventilationConcentration_le_equilibrium_of
+private lemma ventilationConcentration_le_equilibrium_of
     {A : ℝ → ℝ → ℝ → ℝ → ℝ}
     (hA : ∀ {k R A₀ : ℝ}, 0 < k → A₀ ≤ R / k → ∀ t : ℝ,
       A k R A₀ t ≤ R / k)
@@ -186,7 +186,7 @@ private theorem ventilationConcentration_le_equilibrium_of
 
 /-- Starting above the equilibrium stays above it, transported
 from the canonical amount envelope. -/
-private theorem ventilationConcentration_ge_equilibrium_of
+private lemma ventilationConcentration_ge_equilibrium_of
     {A : ℝ → ℝ → ℝ → ℝ → ℝ}
     (hA : ∀ {k R A₀ : ℝ}, 0 < k → R / k ≤ A₀ → ∀ t : ℝ,
       R / k ≤ A k R A₀ t)
@@ -200,7 +200,7 @@ private theorem ventilationConcentration_ge_equilibrium_of
 
 /-- Nonnegative data give a nonnegative concentration for
 nonnegative times, transported from the canonical amount sign. -/
-private theorem ventilationConcentration_nonneg_of
+private lemma ventilationConcentration_nonneg_of
     {A : ℝ → ℝ → ℝ → ℝ → ℝ}
     (hA : ∀ {k R A₀ t : ℝ}, 0 ≤ k → 0 ≤ R → 0 ≤ A₀ → 0 ≤ t →
       0 ≤ A k R A₀ t)
@@ -213,7 +213,7 @@ private theorem ventilationConcentration_nonneg_of
 
 /-- The concentration tends to the equilibrium, transported from
 the canonical amount limit. -/
-private theorem ventilationConcentration_tendsto_equilibrium_of
+private lemma ventilationConcentration_tendsto_equilibrium_of
     {A : ℝ → ℝ → ℝ → ℝ → ℝ}
     (hA : ∀ {k : ℝ}, 0 < k → ∀ R A₀ : ℝ,
       Tendsto (A k R A₀) atTop (𝓝 (R / k)))
