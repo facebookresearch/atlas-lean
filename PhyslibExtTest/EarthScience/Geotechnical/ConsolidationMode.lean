@@ -19,7 +19,8 @@ Concrete consumers of
 `PhyslibExt.EarthScience.Geotechnical.ConsolidationMode` at
 `(u0, H, cv) = (100, 4, 2)`: the explicit form, both drained
 faces, the initial profile and midpoint, decay at mid-depth,
-and the drainage-path misreading control.
+the drainage-path misreading control, and the depth average
+and settlement contribution.
 
 ## i. Overview
 
@@ -33,6 +34,7 @@ No new definitions or results are introduced here.
 
 - A. Focused mode values
 - B. Decay and misreading controls
+- C. Average and settlement checks
 
 ## iv. References
 
@@ -128,6 +130,52 @@ mid-depth amplitude value above. -/
 example : consolidationMode 100 2 2 0 2 = 0 :=
   consolidationMode_zero_right (by norm_num)
 
+/-! ## C. Average and settlement checks -/
+
+/-- The sine integral at the focused thickness: `8 / π`. -/
+example : (∫ z in (0 : ℝ)..(4 : ℝ), Real.sin (Real.pi * z / 4))
+    = 8 / Real.pi := by
+  have h := integral_sin_pi_mul_div (H := (4 : ℝ)) (by norm_num)
+  rw [h]
+  ring
+
+/-- Initial depth average: the sine factor `2 / π` times the
+amplitude, contrasting a uniform initial pressure. -/
+example : consolidationModeAverage 100 4 2 0 = 200 / Real.pi := by
+  rw [consolidationModeAverage_eq (by norm_num)]
+  simp
+  norm_num
+
+/-- Depth average at the focused time, as a client of the
+general statement. -/
+example : consolidationModeAverage 100 4 2 3
+    = 2 * 100 / Real.pi * Real.exp (-2 * (Real.pi / 4) ^ 2 * 3) :=
+  consolidationModeAverage_eq (by norm_num)
+
+/-- No settlement has accrued at `t = 0`. -/
+example (σ : ℝ → Matrix (Fin 1) (Fin 1) ℝ) :
+    consolidationModeSettlement (1 / 10) σ 0 100 4 2 0 = 0 := by
+  rw [consolidationModeSettlement_eq _ _ _ (by norm_num)]
+  simp
+
+/-- Settlement is `mv` times the depth integral of dissipated
+excess pore pressure, at constant total stress. -/
+example (mv u0 H cv t : ℝ) (σ : ℝ → Matrix (Fin 1) (Fin 1) ℝ) :
+    consolidationModeSettlement mv σ 0 u0 H cv t
+      = mv * ∫ z in (0 : ℝ)..H,
+        (consolidationMode u0 H cv 0 z - consolidationMode u0 H cv t z) := by
+  unfold consolidationModeSettlement
+  congr 1
+  apply intervalIntegral.integral_congr
+  intro z _
+  simp [effectiveStressCompressionPositive]
+
+/-- Nonnegative settlement at the focused data. -/
+example (σ : ℝ → Matrix (Fin 1) (Fin 1) ℝ) :
+    0 ≤ consolidationModeSettlement (1 / 10) σ 0 100 4 2 3 :=
+  consolidationModeSettlement_nonneg σ 0 (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num)
+
 #print axioms EarthScience.consolidationMode_eq
 #print axioms EarthScience.consolidationMode_pde
 #print axioms EarthScience.consolidationMode_zero_left
@@ -135,5 +183,8 @@ example : consolidationMode 100 2 2 0 2 = 0 :=
 #print axioms EarthScience.consolidationMode_time_zero
 #print axioms EarthScience.consolidationMode_midpoint_time_zero
 #print axioms EarthScience.consolidationMode_abs_le_amplitude
+#print axioms EarthScience.consolidationModeAverage_eq
+#print axioms EarthScience.consolidationModeSettlement_eq
+#print axioms EarthScience.consolidationModeSettlement_nonneg
 
 end PhyslibExtTest.EarthScience.Geotechnical.ConsolidationMode
