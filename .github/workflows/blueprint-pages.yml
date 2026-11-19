@@ -97,14 +97,16 @@ jobs:
       # doesn't already have, and is held to GitHub's diff size; a push to main reports.
       - name: Check the graph's rules
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha }}
+          EVENT: ${{ github.event_name }}
         run: |
           set -euo pipefail
           check=(uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
                  python scripts/check_graph_rules.py)
-          if [ -n "$BASE_SHA" ]; then
-            git fetch --no-tags --depth=1 origin "$BASE_SHA"
-            "${check[@]}" --base "$BASE_SHA"
+          if [ "$EVENT" = pull_request ] || [ "$EVENT" = merge_group ]; then
+            # The checkout is the merge commit, whose first parent is the base it
+            # merges into; pull_request.base.sha can be older than that.
+            git fetch --no-tags --depth=2 origin "$GITHUB_SHA"
+            "${check[@]}" --base "$(git rev-parse HEAD^1)"
           else
             "${check[@]}"
           fi
