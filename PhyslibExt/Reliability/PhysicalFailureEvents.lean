@@ -12,6 +12,8 @@ public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import Mathlib.Basic.Sign.Basic
+public import PhyslibExt.Elasticity.PrismaticMembers
 
 import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Mul
@@ -19,7 +21,7 @@ import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 
 /-!
-# Physical failure events: critical crack length in an LEFM model
+# Physical failure events: LEFM crack failure and demand margins
 
 ## i. Overview
 
@@ -36,6 +38,21 @@ The stress-intensity formula is an adopted model input with a
 small-scale-yielding validity regime. Nothing here validates the model
 empirically, and `σ` is a peak tensile stress, not a fatigue stress range.
 
+A declared nonnegative demand `s` (an equivalent stress, or a stress
+intensity) against a positive allowable `A` has the dimensional margin
+`A - s`, in the unit of the demand, and the equality-inclusive failure
+event `A ≤ s`; the crack event above is this event with demand `K_I`
+and allowable `K_IC`. For a positive demand the margin of safety
+`A / s - 1` has the sign of `A - s`; it takes a proof of `0 < s`, since
+at zero demand Lean's `A / 0 = 0` would report a false failure. One
+axial load path is instantiated: the fixed-fixed bar of
+`PhyslibExt.Elasticity.PrismaticMembers` under a uniform load `q` has
+the axial stress `EA u'(x) / A_cs = q (L - 2 x) / (2 A_cs)`, and a
+supplied yield functional calibrated by the tensile test (it returns
+`|σ|` on the uniaxial state `diag(σ, 0, 0)`) turns it into the demand
+`|q (L - 2 x)| / (2 A_cs)`, largest at the ends. No yield functional is
+derived and no constitutive law is added.
+
 ## ii. Key results
 
 - `Reliability.criticalCrackLength_pos`: the critical crack length is
@@ -51,11 +68,23 @@ empirically, and `σ` is a peak tensile stress, not a fatigue stress range.
   in the power (`m ≠ 2`) and logarithmic (`m = 2`) branches reach the
   critical length exactly at their Paris lives, with first-crossing
   characterizations `parisCrackPow_lt_iff` and `parisCrackExp_lt_iff`.
+- `Reliability.dimensionalMargin`, `Reliability.demandFailure` and
+  `Reliability.marginOfSafety`: the margin, the event and the ratio,
+  with `Reliability.sign_marginOfSafety`,
+  `Reliability.demandFailure_iff_marginOfSafety_nonpos` and
+  `Reliability.ratio_at_zero_demand_misreports`.
+- `Reliability.crackFailure_iff_demandFailure`: the crack event is a
+  demand event.
+- `Reliability.axialDemand_eq` and `Reliability.axialBar_failure_iff`:
+  the axial bar with a calibrated yield functional fails exactly when
+  `2 A_cs A ≤ |q| L`.
 
 ## iii. Table of contents
 
 - A. Mode-I stress intensity and the critical crack length
 - B. Paris-law crack growth to the critical length
+- C. Demand, allowable and margin
+- D. An axial load path with a supplied yield functional
 
 ## iv. References
 
@@ -63,7 +92,11 @@ empirically, and `σ` is a peak tensile stress, not a fatigue stress range.
   for Deformation, Fracture, and Fatigue*, 4th ed., Pearson (2013): the
   mode-I stress intensity model and the critical-crack condition
   `K_I = K_IC` used here, and the Paris fatigue-crack-growth law
-  `da/dN = C * (ΔK)^m` reduced in section B.
+  `da/dN = C * (ΔK)^m` reduced in section B; yield criteria calibrated
+  by the uniaxial test and safety factors against yielding (sections C
+  and D).
+- S. Timoshenko and J. M. Gere, *Mechanics of Materials* (axially loaded
+  bars).
 
 ## A. Mode-I stress intensity and the critical crack length
 
@@ -398,5 +431,145 @@ lemma parisCrackExp_lt_iff {K a0 ac N : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
       ↔ (Real.exp (K * N) < Real.exp (Real.log (ac / a0))) := by
     rw [hexp]
   exact hstep1.trans (c2.trans (Real.exp_lt_exp.trans hstep4))
+
+/-! ## C. Demand, allowable and margin -/
+
+/-- The dimensional margin `A - s` of a demand `s` against an allowable `A`, in the unit of the
+demand. -/
+def dimensionalMargin (A s : ℝ) : ℝ := A - s
+
+/-- The equality-inclusive failure event: the demand `s` reaches the allowable `A`. -/
+def demandFailure (A s : ℝ) : Prop := A ≤ s
+
+/-- The margin of safety `A / s - 1`, defined only for a positive demand `s`. -/
+noncomputable def marginOfSafety (A s : ℝ) (_hs : 0 < s) : ℝ := A / s - 1
+
+/-- Failure is a nonpositive dimensional margin. -/
+lemma demandFailure_iff_dimensionalMargin_nonpos (A s : ℝ) :
+    demandFailure A s ↔ dimensionalMargin A s ≤ 0 := by
+  unfold demandFailure dimensionalMargin
+  constructor <;> intro h <;> linarith
+
+/-- Equality is failure, with zero margin. -/
+lemma demandFailure_self (A : ℝ) : demandFailure A A ∧ dimensionalMargin A A = 0 := by
+  unfold demandFailure dimensionalMargin
+  exact ⟨le_refl A, sub_self A⟩
+
+/-- For a positive demand, `A - s = s * (A / s - 1)`. -/
+lemma dimensionalMargin_eq_mul_marginOfSafety {A s : ℝ} (hs : 0 < s) :
+    dimensionalMargin A s = s * marginOfSafety A s hs := by
+  unfold dimensionalMargin marginOfSafety
+  rw [mul_sub, mul_div_cancel₀ _ hs.ne', mul_one]
+
+/-- For a positive demand, the margin of safety has the sign of the dimensional margin. -/
+lemma sign_marginOfSafety {A s : ℝ} (hs : 0 < s) :
+    SignType.sign (marginOfSafety A s hs) = SignType.sign (dimensionalMargin A s) := by
+  rw [dimensionalMargin_eq_mul_marginOfSafety hs, sign_mul, sign_pos hs, one_mul]
+
+/-- For a positive demand, failure is a nonpositive margin of safety. -/
+lemma demandFailure_iff_marginOfSafety_nonpos {A s : ℝ} (hs : 0 < s) :
+    demandFailure A s ↔ marginOfSafety A s hs ≤ 0 := by
+  rw [demandFailure_iff_dimensionalMargin_nonpos, dimensionalMargin_eq_mul_marginOfSafety hs]
+  constructor
+  · intro h
+    by_contra h'
+    linarith [mul_pos hs (not_le.mp h')]
+  · intro h
+    exact mul_nonpos_of_nonneg_of_nonpos hs.le h
+
+/-- A change of the stress unit by a factor `c > 0` rescales the dimensional margin by `c` and
+changes neither the failure event nor the margin of safety. -/
+lemma margin_unit_change {c A s : ℝ} (hc : 0 < c) (hs : 0 < s) :
+    dimensionalMargin (c * A) (c * s) = c * dimensionalMargin A s ∧
+      (demandFailure (c * A) (c * s) ↔ demandFailure A s) ∧
+      marginOfSafety (c * A) (c * s) (mul_pos hc hs) = marginOfSafety A s hs := by
+  unfold dimensionalMargin demandFailure marginOfSafety
+  refine ⟨by ring,
+    ⟨fun h => le_of_mul_le_mul_left h hc, fun h => mul_le_mul_of_nonneg_left h hc.le⟩, ?_⟩
+  rw [mul_div_mul_left _ _ hc.ne']
+
+/-- At zero demand the dimensional margin is the allowable, and there is no failure. -/
+lemma dimensionalMargin_zero_demand {A : ℝ} (hA : 0 < A) :
+    dimensionalMargin A 0 = A ∧ ¬ demandFailure A 0 := by
+  unfold dimensionalMargin demandFailure
+  exact ⟨sub_zero A, fun h => absurd h (not_le.mpr hA)⟩
+
+/-- The ratio formula must not be used at zero demand: Lean's `A / 0 = 0` makes `A / 0 - 1`
+negative, a false failure signal, while the demand `0` does not fail. -/
+lemma ratio_at_zero_demand_misreports {A : ℝ} (hA : 0 < A) :
+    A / 0 - 1 < 0 ∧ ¬ demandFailure A 0 := by
+  unfold demandFailure
+  refine ⟨?_, fun h => absurd h (not_le.mpr hA)⟩
+  rw [div_zero]
+  norm_num
+
+/-- The mode-I crack event is the demand event with demand `K_I` and allowable `K_IC`. -/
+lemma crackFailure_iff_demandFailure (KIC Y σ a : ℝ) :
+    crackFailure KIC Y σ a ↔ demandFailure KIC (modeIStressIntensity Y σ a) := by
+  rfl
+
+/-! ## D. An axial load path with a supplied yield functional -/
+
+/-- A supplied yield functional on stress matrices (tension positive) is calibrated by the
+tensile test when it returns `|σ|` on every uniaxial state `diag(σ, 0, 0)`. -/
+def UniaxialCalibrated (Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ) : Prop :=
+  ∀ σ : ℝ, Φ (Matrix.diagonal ![σ, 0, 0]) = |σ|
+
+/-- The axial normal stress `EA u'(x) / A_cs` of the fixed-fixed bar with axial rigidity `EA`,
+length `L` and uniform load `q`, at the section `x` of cross-section area `A_cs`. -/
+noncomputable def axialStress (EA L q Acs x : ℝ) : ℝ :=
+  EA * deriv (Elasticity.PrismaticMembers.axialDisplacement EA L q) x / Acs
+
+/-- The axial stress of the uniformly loaded fixed-fixed bar is `q (L - 2 x) / (2 A_cs)`. -/
+lemma axialStress_eq {EA : ℝ} (hEA : EA ≠ 0) (L q Acs x : ℝ) :
+    axialStress EA L q Acs x = q * (L - 2 * x) / (2 * Acs) := by
+  have hd : deriv (Elasticity.PrismaticMembers.axialDisplacement EA L q) x =
+      q * (L - 2 * x) / (2 * EA) := by
+    have h : HasDerivAt (Elasticity.PrismaticMembers.axialDisplacement EA L q)
+        (q * (L - 2 * x) / (2 * EA)) x := by
+      have h1 := (((hasDerivAt_id x).const_mul q).mul ((hasDerivAt_id x).const_sub L)).div_const
+        (2 * EA)
+      have he : Elasticity.PrismaticMembers.axialDisplacement EA L q =
+          fun y => q * id y * (L - id y) / (2 * EA) := by
+        funext y
+        simp [Elasticity.PrismaticMembers.axialDisplacement]
+      rw [he]
+      convert h1 using 1
+      simp only [id]
+      ring
+    exact h.deriv
+  unfold axialStress
+  rw [hd]
+  field_simp
+
+/-- Through a calibrated yield functional, the demand at the section `x` is
+`|q (L - 2 x)| / (2 A_cs)`. -/
+lemma axialDemand_eq {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} (hΦ : UniaxialCalibrated Φ)
+    {EA Acs : ℝ} (hEA : EA ≠ 0) (hAcs : 0 < Acs) (L q x : ℝ) :
+    Φ (Matrix.diagonal ![axialStress EA L q Acs x, 0, 0]) = |q * (L - 2 * x)| / (2 * Acs) := by
+  unfold UniaxialCalibrated at hΦ
+  rw [hΦ, axialStress_eq hEA, abs_div, abs_of_pos (by positivity : (0 : ℝ) < 2 * Acs)]
+
+/-- The bar fails at some section of `[0, L]` exactly when the end-section demand reaches the
+allowable: `2 A_cs A ≤ |q| L`. -/
+lemma axialBar_failure_iff {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} (hΦ : UniaxialCalibrated Φ)
+    {EA Acs L : ℝ} (hEA : EA ≠ 0) (hAcs : 0 < Acs) (hL : 0 ≤ L) (q A : ℝ) :
+    (∃ x ∈ Set.Icc 0 L, demandFailure A (Φ (Matrix.diagonal ![axialStress EA L q Acs x, 0, 0]))) ↔
+      2 * Acs * A ≤ |q| * L := by
+  simp only [axialDemand_eq hΦ hEA hAcs, demandFailure]
+  have h2 : (0 : ℝ) < 2 * Acs := by positivity
+  constructor
+  · rintro ⟨x, ⟨hx0, hxL⟩, h⟩
+    rw [le_div_iff₀ h2] at h
+    have hb : |q * (L - 2 * x)| ≤ |q| * L := by
+      rw [abs_mul]
+      apply mul_le_mul_of_nonneg_left _ (abs_nonneg q)
+      rw [abs_le]
+      constructor <;> linarith
+    linarith
+  · intro h
+    refine ⟨0, ⟨le_refl 0, hL⟩, ?_⟩
+    rw [le_div_iff₀ h2, abs_mul, mul_zero, sub_zero, abs_of_nonneg hL]
+    linarith
 
 end Reliability
