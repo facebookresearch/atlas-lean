@@ -1089,15 +1089,17 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     for key, target in sorted(current.items()):
         if key in pages or deprecated(target):
             continue
-        # Beside the module's pages, in the last part of the folder that holds most of them when it is split into
-        # parts, as a module of many pages is; else on the generated path as the wiki's folders keep it (see
-        # kept_layout). A folder with no page of its own takes the folder pages generate_wiki lays out on the way to
-        # it; without them, the deepest folder on the way that has one.
+        # Beside the module's pages: in the folder that holds most of them, or, when that folder is split into parts,
+        # as a module of many pages is, in the last of its parts that holds one, so that a module whose pages share a
+        # topic's parts with others' stays beside its own; else on the generated path as the wiki's folders keep it
+        # (see kept_layout). A folder with no page of its own takes the folder pages generate_wiki lays out on the way
+        # to it; without them, the deepest folder on the way that has one.
         if folders[target.module]:
-            folder, laid_out = folders[target.module].most_common(1)[0][0], {}
-            while PART.fullmatch(folder.name):
-                folder = folder.parent
-            folder = parts(folder)[-1]
+            base, laid_out = folders[target.module].most_common(1)[0][0], {}
+            while PART.fullmatch(base.name):
+                base = base.parent
+            order = parts(base)
+            folder = max((held for held in folders[target.module] if held in order), key=order.index)
         else:
             folder, laid_out = kept_layout(target.path.parent, created)
         up, missing = folder, []

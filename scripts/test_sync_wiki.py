@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import io
 import json
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -715,6 +716,36 @@ class Declarations(Vault):
         self.assertEqual(report["added"], ["Ext.next -> Algebra/sylow/part-07/next.md"])
         self.assertEqual((sylow / "part-07" / "README.md").read_text(), "# Part 7 of 7\n\n- [lemma-120](lemma-120.md)\n- [Next](next.md)\n")
         self.assertTrue((sylow / "README.md").read_text().endswith("- [lemma-120](part-07/lemma-120.md)\n- [Next](part-07/next.md)\n"))
+
+    def test_a_new_page_of_a_module_on_a_split_page_stays_beside_its_own(self) -> None:
+        # A topic folder, or a page that merges several modules, split into parts holds other modules' pages in its
+        # last part: a module whose pages are all in an earlier part takes its next page there, beside its own.
+        for name, layout, module in (
+                ("topic folder", {"part-01": [("brooks", "Brooks"), ("greedy", "Greedy")], "part-02": [("hajos", "Hajos")]}, "Brooks"),
+                ("merged module page", {"part-01": [("grid", "Grid"), ("grid-two", "Grid")], "part-02": [("lower", "Lower")],
+                                        "part-03": [("theta", "Theta"), ("upper", "Upper")]}, "Grid"),
+                ("pages in an earlier and a later part", {"part-01": [("first", "Many")], "part-02": [("other", "Other")],
+                                                         "part-03": [("third", "Many"), ("fourth", "Many")]}, "Many")):
+            with self.subTest(name):
+                shutil.rmtree(wiki.ROADMAP / "Combinatorics", ignore_errors=True)
+                shutil.rmtree(sync.LINKS, ignore_errors=True)
+                lines = ["# Coloring", ""]
+                for number, (part, pages) in enumerate(layout.items(), 1):
+                    self.page(f"Combinatorics/coloring/{part}/README.md",
+                              f"# Part {number} of {len(layout)}\n\n" + "".join(f"- [{page}]({page}.md)\n" for page, _ in pages))
+                    for page, _ in pages:
+                        self.page(f"Combinatorics/coloring/{part}/{page}.md", f"# {page}\n")
+                    lines += [f"## [Part {number} of {len(layout)}]({part}/README.md)", "", *(f"- [{page}]({part}/{page}.md)" for page, _ in pages), ""]
+                self.page("Combinatorics/coloring/README.md", "\n".join(lines))
+                self.annotate([self.about(f"Combinatorics/coloring/{part}/{page}.md", object=[{"location": {"declaration": f"Ext.{page}"}}])
+                               for part, pages in layout.items() for page, _ in pages])
+                targets = [declaration(f"Ext.{page}", page, page, f"{page}.", module=("Ext", owner))
+                           for pages in layout.values() for page, owner in pages]
+                last = declaration("Ext.next", "next", "Next", "Next.", module=("Ext", module))
+                index = SimpleNamespace(declarations={f"Ext.{page}": None for pages in layout.values() for page, _ in pages} | {"Ext.next": None})
+                report = sync.apply_declarations([*targets, last], index)
+                home = max((part for part, pages in layout.items() if any(owner == module for _, owner in pages)))
+                self.assertEqual(report["added"], [f"Ext.next -> Combinatorics/coloring/{home}/next.md"])
 
     def test_a_new_page_joins_the_last_part_whatever_part_generate_wiki_names(self) -> None:
         # generate_wiki's part numbers are its own partition of the folder, so a part of the wiki's that has the number
