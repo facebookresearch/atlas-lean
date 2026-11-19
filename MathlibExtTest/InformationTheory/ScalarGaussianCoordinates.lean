@@ -59,24 +59,53 @@ example :
   rw [measureMutualInformation_map_scalarCoordPair]
   exact measureMutualInformation_diagonalGaussian_eq_top
 
+/-- Chain rule in scalar coordinates with a shared kernel: the conditional term vanishes, so the
+embedded joint divergence equals the embedded input divergence. -/
+example (μ ν : Measure ℝ) [IsFiniteMeasure μ] [IsFiniteMeasure ν] (κ : Kernel ℝ ℝ)
+    [IsMarkovKernel κ] :
+    klDiv ((μ ⊗ₘ κ).map (Prod.map scalarCoord scalarCoord))
+        ((ν ⊗ₘ κ).map (Prod.map scalarCoord scalarCoord)) =
+      klDiv (μ.map scalarCoord) (ν.map scalarCoord) := by
+  rw [klDiv_map_scalarCoordPair_compProd_eq_add, klDiv_self, add_zero]
+
+/-- Reference-output chain rule in scalar coordinates: among embedded output references, the
+embedded true output marginal gives the smallest divergence. -/
+example (μ : ProbabilityMeasure (ℝ × ℝ)) (Q : Measure ℝ) [IsProbabilityMeasure Q] :
+    klDiv ((μ : Measure (ℝ × ℝ)).map (Prod.map scalarCoord scalarCoord))
+        ((((μ : Measure (ℝ × ℝ)).map Prod.fst).map scalarCoord).prod
+          (((μ : Measure (ℝ × ℝ)).map Prod.snd).map scalarCoord)) ≤
+      klDiv ((μ : Measure (ℝ × ℝ)).map (Prod.map scalarCoord scalarCoord))
+        ((((μ : Measure (ℝ × ℝ)).map Prod.fst).map scalarCoord).prod (Q.map scalarCoord)) := by
+  rw [klDiv_map_scalarCoordPair_prod_reference_eq_add μ Q]
+  exact le_self_add
+
 /-- The input `N(1, 2)` embeds into the vector power model at `P = 1 ^ 2 + 2 = 3`. -/
 example :
     PowerConstraint (gaussianReal 1 ⟨2, by norm_num⟩) (fun x => scalarCoord (id x)) 3 := by
   have h := scalarPowerBound_gaussianReal 1 2 (by norm_num)
   norm_num at h
-  exact (scalarPowerBound_iff_powerConstraint _ _ _).2 ⟨by norm_num, h⟩
+  exact (scalarPowerBound_iff_powerConstraint _ _ _).2 h
 
 /-- The input `N(1, 2)` has a finite second moment, from its scalar power bound at `P = 3`. -/
 example : MemLp id 2 (gaussianReal 1 ⟨2, by norm_num⟩) := by
   have h := scalarPowerBound_gaussianReal 1 2 (by norm_num)
   norm_num at h
-  exact memLp_of_scalarPowerBound (by norm_num) h aestronglyMeasurable_id
+  exact memLp_of_scalarPowerBound h aestronglyMeasurable_id
 
 /-- The constant input `2` fails the vector power model at `P = 0`. -/
 example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ] :
     ¬ PowerConstraint μ (fun _ => scalarCoord 2) 0 := by
   rw [scalarPowerBound_iff_powerConstraint μ (fun _ => 2) 0]
-  exact fun h => not_scalarPowerBound_zero_const (μ := μ) (by norm_num) h.2
+  exact not_scalarPowerBound_zero_const (μ := μ) (by norm_num)
+
+/-- Negative-budget boundary: the zero input fails the scalar power bound at `P = -1`, where
+`ENNReal.ofReal` alone would compare `0 ≤ 0`, and so fails the vector power model there too. -/
+example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} :
+    ¬ scalarPowerBound μ (fun _ => (0 : ℝ)) (-1) ∧
+      ¬ PowerConstraint μ (fun _ => scalarCoord 0) (-1) := by
+  refine ⟨not_scalarPowerBound_of_neg (by norm_num), ?_⟩
+  rw [scalarPowerBound_iff_powerConstraint μ (fun _ => 0) (-1)]
+  exact not_scalarPowerBound_of_neg (by norm_num)
 
 /-- The scalar divergence `KL(N(0, 1) ‖ N(0, 2))` is the vector closed form at dimension one,
 `(log 2 - 1 + 1 / 2) / 2`. -/

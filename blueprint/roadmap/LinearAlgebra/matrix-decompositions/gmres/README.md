@@ -14,4 +14,4 @@ The generalized minimal residual method minimizes $\|b - Ax\|_2$ over the affine
 - [Arnoldi and Lanczos iterations](../arnoldi-and-lanczos-iterations/README.md)
 - [Conjugate gradient method](../conjugate-gradient-method/README.md)
 - [Linear least squares](../linear-least-squares/README.md)
-- Minimax property of the Chebyshev polynomials
+- [Minimax property of the Chebyshev polynomials](../../../Analysis/approximation-theory/minimax-property-of-the-chebyshev-polynomials/README.md)

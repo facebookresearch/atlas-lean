@@ -18,6 +18,6 @@ The statements follow J. W. Demmel's graduate course (Math 221, UC Berkeley, Lec
 
 ## Related topics
 
-- Rounding error analysis: backward error bounds for floating-point dot products, matrix products and LU factorization, which this theory turns into forward error bounds.
-- Bauer–Fike theorem: perturbation theory for eigenvalues.
+- [Rounding error analysis](../../../ComputerScience/algebraic-and-numerical-algorithms/rounding-error-analysis/README.md): backward error bounds for floating-point dot products, matrix products and LU factorization, which this theory turns into forward error bounds.
+- [Bauer–Fike theorem](../../../Analysis/operator-theory/eigenvalue-inequalities/bauer-fike-theorem/README.md): perturbation theory for eigenvalues.
 - [Singular value decomposition](../singular-value-decomposition/README.md): in the 2-norm $\kappa_2(A) = \sigma_{\max}/\sigma_{\min}$.

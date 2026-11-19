@@ -37,7 +37,7 @@ Möbius inversion and the product theorem in algebra form.
 
 ## Related topics
 
-- Möbius algebras and flag vectors:
+- [Möbius algebras and flag vectors](../../../Combinatorics/partially-ordered-sets/m-bius-algebras-and-flag-vectors/README.md):
   the Möbius algebra of a lattice, whose basis $\delta_t$ is built from $\mu$ and which Stanley uses
   to prove Weisner's and the crosscut theorem.
 - [Multiplicative functions and mean values](../../../NumberTheory/arithmetic-functions/multiplicative-functions/README.md):

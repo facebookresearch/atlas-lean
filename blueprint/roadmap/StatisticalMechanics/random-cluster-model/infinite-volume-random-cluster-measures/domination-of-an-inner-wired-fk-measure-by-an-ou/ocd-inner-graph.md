@@ -1,0 +1,3 @@
+# Inner cluster graph with the induced wiring
+
+Let $G_{\mathrm{in}}$ and $G_{\mathrm{out}}$ be simple graphs on finite sets $V_{\mathrm{in}}$ and $V_{\mathrm{out}}$, and $\iota : V_{\mathrm{in}} \to V_{\mathrm{out}}$ a map, and let $\partial_{\mathrm{out}} \subseteq V_{\mathrm{out}}$ be a set of boundary vertices. For configurations $\omega$ on $V_{\mathrm{in}}$ and $\psi$ on $V_{\mathrm{out}}$, the inner cluster graph $I_{\omega,\psi}$ is the graph on $V_{\mathrm{in}}$ whose edges are the edges of $G_{\mathrm{in}}$ open in $\omega$ together with the edges of the [induced wiring](ocd-induced-wiring.md) $W_\psi$ on $V_{\mathrm{in}}$ (distinct $x, y$ with $\iota x$ and $\iota y$ joined by a path in $O_\psi$).
