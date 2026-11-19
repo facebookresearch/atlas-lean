@@ -72,9 +72,9 @@ A planar Kepler arc in a tilted plane, with the quarter turn about the first axi
   rejects it, as it rejects every `μ ≤ 0`.
 
 Equal-speed plane changes in declared planes through the third axis, the line of nodes, with the
-rotation `rotZ` of the frame dictionary: the impulse is `2 v sin(i / 2)`; a right-angle change at
-unit speed costs `√2`, no change costs `0`, and the reversal `i = π` of the orbital sense costs
-`2 v`.
+rotation `rotZ` of the frame dictionary: the plane-change lemma at the node `(0, 0, 1)` gives the
+impulse `2 v sin(i / 2)`; a right-angle change at unit speed costs `√2`, no change costs `0`, and
+the reversal `i = π` of the orbital sense costs `2 v`.
 -/
 
 @[expose] public section
@@ -571,25 +571,45 @@ lemma impulseMagnitude_rotZ {v i : ℝ} (hv : 0 < v) (hi₀ : 0 ≤ i) (hiπ : i
   have w0 : (rotZ i *ᵥ ![v, 0, 0]) 0 = Real.cos i * v := by simp [rotZ, mulVec]
   have w1 : (rotZ i *ᵥ ![v, 0, 0]) 1 = Real.sin i * v := by simp [rotZ, mulVec]
   have w2 : (rotZ i *ᵥ ![v, 0, 0]) 2 = 0 := by simp [rotZ, mulVec]
-  have u0 : (![v, 0, 0] : Fin 3 → ℝ) 0 = v := by simp
-  have u1 : (![v, 0, 0] : Fin 3 → ℝ) 1 = 0 := by simp
-  have u2 : (![v, 0, 0] : Fin 3 → ℝ) 2 = 0 := by simp
-  have h1 : speedSq ![v, 0, 0] = v ^ 2 := by
+  have htrig := Real.sin_sq_add_cos_sq i
+  -- The node `(0, 0, 1)` on the line of nodes, at unit distance from the center.
+  have hr : 0 < radius ![(0 : ℝ), 0, 1] := by
+    unfold radius
+    rw [vec3_dotProduct']
+    norm_num
+  have h₁ : ![(0 : ℝ), 0, 1] ⬝ᵥ ![v, 0, 0] = 0 := by
+    rw [vec3_dotProduct']
+    ring
+  have h₂ : ![(0 : ℝ), 0, 1] ⬝ᵥ (rotZ i *ᵥ ![v, 0, 0]) = 0 := by
+    rw [vec3_dotProduct, w2]
+    simp
+  have hv₁ : speedSq ![v, 0, 0] = v ^ 2 := by
     unfold speedSq
     rw [vec3_dotProduct']
     ring
-  have h2 : speedSq (rotZ i *ᵥ ![v, 0, 0]) = v ^ 2 := by
-    have htrig := Real.sin_sq_add_cos_sq i
+  have hv₂ : speedSq (rotZ i *ᵥ ![v, 0, 0]) = v ^ 2 := by
     unfold speedSq
     rw [vec3_dotProduct, w0, w1, w2]
     linear_combination v ^ 2 * htrig
-  have h3 : ![v, 0, 0] ⬝ᵥ (rotZ i *ᵥ ![v, 0, 0]) = v ^ 2 * Real.cos i := by
-    rw [vec3_dotProduct, u0, u1, u2, w0, w1, w2]
+  -- The specific angular momenta at the node, `(0, v, 0)` and `(-v sin i, v cos i, 0)`, both of
+  -- length `v` and at the angle `i`.
+  have c₁ : ![(0 : ℝ), 0, 1] ⨯₃ ![v, 0, 0] = ![0, v, 0] := by
+    ext k
+    fin_cases k <;> simp [cross_apply]
+  have c₂ : ![(0 : ℝ), 0, 1] ⨯₃ (rotZ i *ᵥ ![v, 0, 0]) =
+      ![-(Real.sin i * v), Real.cos i * v, 0] := by
+    ext k
+    fin_cases k <;> simp [cross_apply, w0, w1]
+  have n₁ : ![(0 : ℝ), v, 0] ⬝ᵥ ![0, v, 0] = v ^ 2 := by
+    rw [vec3_dotProduct']
     ring
-  have hsub := speedSq_sub_of_speedSq_eq h1 h2 h3
-  unfold impulseMagnitude
-  rw [hsub]
-  exact sqrt_two_mul_sq_mul_one_sub_cos hv.le hi₀ hiπ
+  have n₂ : ![-(Real.sin i * v), Real.cos i * v, 0] ⬝ᵥ ![-(Real.sin i * v), Real.cos i * v, 0] =
+      v ^ 2 := by
+    rw [vec3_dotProduct']
+    linear_combination v ^ 2 * htrig
+  refine impulseMagnitude_planeChange hr h₁ h₂ hv hv₁ hv₂ hi₀ hiπ ?_
+  rw [c₁, c₂, n₁, n₂, Real.sqrt_sq hv.le, vec3_dotProduct']
+  ring
 
 -- A right-angle plane change at unit speed costs `√2`, a nonzero impulse.
 example :
