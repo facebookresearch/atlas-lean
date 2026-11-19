@@ -61,7 +61,12 @@ rate `q i` (injection `q i > 0`, production `q i < 0`). The cell rate is the tra
 with well mass rates `qI i - qP i`, and to energy, with the enthalpy flux `Fm j * h_j`
 (`h = e + p / ρ` the energy-port enthalpy `ControlVolumes.specificEnthalpy`, flow work counted
 once) and the well energy rate `qI i * hI i - qP i * h_i`: the produced fluid leaves at the
-production mass rate `qP i` with the cell's own enthalpy. Face and cell densities are positive, as
+production mass rate `qP i` with the cell's own enthalpy. That enthalpy is the stored cell state's:
+the cell stores the fluid mass `m i = φ i * ρc i` per unit volume (porosity `φ i > 0`) and the
+fluid energy `E i = m i * ec i`, so `h_i = (E i + φ i * pc i) / m i` (`wellEnergyRate_eq_stored`).
+No rock energy is stored, and the cell pressure `pc i` is an input (no equation of state is
+assumed). The face states are free: interior face values cancel, and exterior ones are boundary
+data. Face and cell densities are positive, as
 `ControlVolumes.portEnergyRate_eq_massFlow` requires `ρ ≠ 0`: at `ρ = 0`, Lean's `x / 0 = 0`
 would drop the flow work from the enthalpy. This is accounting only: no positivity of the
 stocks, monotonicity or convergence is claimed. The no-flux specialization
@@ -81,8 +86,10 @@ with wells and an outlet.
 - `EarthScience.radialDischarge_upgradient_of_neg`: a negative transmissivity is rejected.
 - `EarthScience.stock_add_mul_wellCellRate`: the cell rates sum to `totalDiscreteChange` plus the
   wells, and the stock changes by `dt` times the net boundary inflow plus the well total.
+- `EarthScience.wellEnergyRate_eq_stored`: the produced enthalpy is fixed by the stored mass and
+  energy, the porosity and the cell pressure.
 - `EarthScience.well_boundary_ledger`: the mass and the energy ledger with shared face fluxes and
-  production enthalpy at the production mass rate.
+  production at the production mass rate with the enthalpy of the stored cell state.
 
 ## iii. Table of contents
 
@@ -456,27 +463,47 @@ lemma stock_add_mul_wellCellRate {n : ℕ} (Δx : {x : ℝ // 0 < x}) (dt : ℝ)
 
 /-! ## E. Mass and energy ledgers -/
 
+/-- **Production enthalpy from the stored cell state.** If cell `i` stores the fluid mass
+`m i = φ i * ρc i` per unit volume (porosity `φ i > 0`, fluid density `ρc i > 0`) and the fluid
+energy `E i = m i * ec i` (specific internal energy `ec i`; no rock energy is stored), the
+produced specific enthalpy `specificEnthalpy (ec i) (pc i) (ρc i) = ec i + pc i / ρc i` is
+`(E i + φ i * pc i) / m i`, and the well energy rate is
+`qI i * hI i - qP i * ((E i + φ i * pc i) / m i)`: the production withdrawal is fixed by the stored
+mass and energy, the porosity and the cell pressure `pc i`. -/
+lemma wellEnergyRate_eq_stored {n : ℕ} {m E qI qP hI ec pc ρc φ : Fin n → ℝ}
+    (hρc : ∀ i, 0 < ρc i) (hφ : ∀ i, 0 < φ i) (hm : ∀ i, m i = φ i * ρc i)
+    (hE : ∀ i, E i = m i * ec i) (i : Fin n) :
+    wellEnergyRate qI qP hI ec pc ρc hρc i = qI i * hI i - qP i * ((E i + φ i * pc i) / m i) := by
+  have hρ : ρc i ≠ 0 := ne_of_gt (hρc i)
+  have hφ0 : φ i ≠ 0 := ne_of_gt (hφ i)
+  simp only [wellEnergyRate, ControlVolumes.specificEnthalpy]
+  rw [hE i, hm i]
+  field_simp
+
 /-- **Well and boundary sources in the energy ledger.** On a chain of `n` cells of common
 positive volume `Δx`, with signed face mass fluxes `Fm` (one per face, shared by the mass and the
-energy ledger), positive face densities `ρf` and cell densities `ρc`, injection rates `qI` at
-specific enthalpies `hI` and production rates `qP` at the cell enthalpies
-`specificEnthalpy (ec i) (pc i) (ρc i)`, one explicit step of the mass densities `m` and the
-energy densities `E` changes the total mass by `dt ((Fm 0 - Fm n) + ∑ (qI - qP))` and the total
-energy by `dt` times the net boundary enthalpy inflow plus the well energy total. -/
+energy ledger) and positive face densities `ρf`, injection rates `qI` at specific enthalpies `hI`
+and production rates `qP`: if each cell stores the fluid mass `m i = φ i * ρc i` (porosity
+`φ i > 0`, fluid density `ρc i > 0`) and the fluid energy `E i = m i * ec i`, one explicit step of
+the stored mass and energy changes the total mass by `dt ((Fm 0 - Fm n) + ∑ (qI - qP))` and the
+total energy by `dt` times the net boundary enthalpy inflow plus `∑ (qI hI - qP h)`, where the
+produced enthalpy `h = (E i + φ i * pc i) / m i` is that of the stored cell state. The face states
+are free: the identity holds for every choice. -/
 lemma well_boundary_ledger {n : ℕ} (Δx : {x : ℝ // 0 < x}) (dt : ℝ) (m E : Fin n → ℝ)
-    (Fm ef pf ρf : Fin (n + 1) → ℝ) (qI qP hI ec pc ρc : Fin n → ℝ) (hρf : ∀ j, 0 < ρf j)
-    (hρc : ∀ i, 0 < ρc i) :
+    (Fm ef pf ρf : Fin (n + 1) → ℝ) (qI qP hI ec pc ρc φ : Fin n → ℝ) (hρf : ∀ j, 0 < ρf j)
+    (hρc : ∀ i, 0 < ρc i) (hφ : ∀ i, 0 < φ i) (hm : ∀ i, m i = φ i * ρc i)
+    (hE : ∀ i, E i = m i * ec i) :
     Δx * ∑ i, (m i + dt * wellCellRate Δx Fm (fun i => qI i - qP i) i) =
         Δx * ∑ i, m i + dt * ((Fm 0 - Fm (Fin.last n)) + ∑ i, (qI i - qP i)) ∧
       Δx * ∑ i, (E i + dt * wellCellRate Δx (faceEnthalpyFlux Fm ef pf ρf hρf)
           (wellEnergyRate qI qP hI ec pc ρc hρc) i) =
         Δx * ∑ i, E i + dt * ((faceEnthalpyFlux Fm ef pf ρf hρf 0 -
           faceEnthalpyFlux Fm ef pf ρf hρf (Fin.last n)) +
-            ∑ i, wellEnergyRate qI qP hI ec pc ρc hρc i) := by
-  refine ⟨?_, ?_⟩
-  · exact (stock_add_mul_wellCellRate Δx dt m Fm (fun i => qI i - qP i)).2
-  · exact (stock_add_mul_wellCellRate Δx dt E (faceEnthalpyFlux Fm ef pf ρf hρf)
-      (wellEnergyRate qI qP hI ec pc ρc hρc)).2
+            ∑ i, (qI i * hI i - qP i * ((E i + φ i * pc i) / m i))) := by
+  refine ⟨(stock_add_mul_wellCellRate Δx dt m Fm (fun i => qI i - qP i)).2, ?_⟩
+  rw [(stock_add_mul_wellCellRate Δx dt E (faceEnthalpyFlux Fm ef pf ρf hρf)
+      (wellEnergyRate qI qP hI ec pc ρc hρc)).2,
+    Finset.sum_congr rfl fun i _ => wellEnergyRate_eq_stored hρc hφ hm hE i]
 
 end WellLedger
 
