@@ -158,6 +158,12 @@ class BlueprintWorkflowTests(unittest.TestCase):
             self.assertIn(clause, condition)
         self.assertNotIn("BLUEPRINT_PAGES", condition)
 
+    def test_the_graph_rules_compare_with_the_merge_commits_first_parent(self):
+        step = self.step("Check the graph's rules")
+        self.assertIn('git fetch --no-tags --depth=2 origin "$GITHUB_SHA"', step["run"])
+        self.assertIn('--base "$(git rev-parse HEAD^1)"', step["run"])
+        self.assertNotIn("${{ github.event.pull_request.base.sha", self.text)
+
     def test_the_audit_reports_without_blocking_and_fails_only_if_it_cannot_run(self):
         audit = self.step("Audit the graph (report only)")
         self.assertNotIn("if", audit)
