@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.GraphTheory.PartialListColoring
+public import MathlibExt.Combinatorics.SimpleGraph.PartialListColoring
 import Mathlib.Tactic.FinCases
 
 @[expose] public section
