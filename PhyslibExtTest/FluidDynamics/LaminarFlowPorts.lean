@@ -277,10 +277,10 @@ lemma pipe_fixture (z : ℝ) :
       darcyFactorOfDrop (4 * 1) 1 (2 * (1 / 100)) 1000
         (pipeMeanVelocity 4 (1 / 1000) (1 / 100) z) = 8 / 125 := by
   have hV : pipeMeanVelocity 4 (1 / 1000) (1 / 100) z = 1 / 20 := by
-    rw [pipeMeanVelocity_eq (by norm_num)]
+    rw [pipeMeanVelocity_eq (by norm_num) (by norm_num)]
     norm_num
-  refine ⟨by rw [pipeFlowRate_eq (by norm_num)]; ring, hV, ?_, ?_, ?_⟩
-  · rw [pipeCenterline_eq_two_mul_meanVelocity (by norm_num), hV]
+  refine ⟨by rw [pipeFlowRate_eq (by norm_num) (by norm_num)]; ring, hV, ?_, ?_, ?_⟩
+  · rw [pipeCenterline_eq_two_mul_meanVelocity (by norm_num) (by norm_num), hV]
     norm_num
   · rw [reynoldsNumber_val]
     simp only [hV]

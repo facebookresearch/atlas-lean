@@ -17,9 +17,9 @@ public import Physlib.FluidDynamics.CauchyFlow.NavierStokes
 public import Physlib.FluidDynamics.FluidFlow.Incompressible
 public import PhyslibExt.EarthScience.BernoulliStreamline
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
-public import Mathlib.Analysis.SpecialFunctions.PolarCoord
 public import PhyslibExt.FluidDynamics.PipeFrictionPorts
 import Mathlib.Analysis.Calculus.Deriv.Prod
+import Mathlib.Analysis.SpecialFunctions.PolarCoord
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.MeasureTheory.Integral.Prod
 import Mathlib.Tactic.FieldSimp
@@ -101,18 +101,21 @@ pipe disk is the Euclidean disk `q.1² + q.2² ≤ R²` (a ball of `ℝ × ℝ`,
 norm, would be a square). The flow rate is the integral of the disk indicator times the axial
 component of the velocity field; the integrand is integrable, and Mathlib's polar change of
 variables `integral_comp_polarCoord_symm` with the fundamental theorem of calculus
-`intervalIntegral.integral_eq_sub_of_hasDerivAt` gives `Q = π G R⁴ / (8 μ)` for `R > 0`. The disk
-has area `π R²`, so the mean velocity is `V = Q / (π R²) = G R² / (8 μ)`, half the centerline
-speed. The Darcy friction factor of a pressure drop `Δp` over a length `L` of a duct of diameter
-`D` at the mean velocity `V` is `f = 2 D Δp / (ρ V² L)`, the Darcy-Weisbach relation
+`intervalIntegral.integral_eq_sub_of_hasDerivAt` gives `Q = π G R⁴ / (8 μ)` for `μ, R > 0`. The
+disk has area `π R²`, so the mean velocity is `V = Q / (π R²) = G R² / (8 μ)`, half the
+centerline speed. The Darcy friction factor of a pressure drop `Δp` over a length `L` of a duct of
+diameter `D` at the mean velocity `V` is `f = 2 D Δp / (ρ V² L)`, the Darcy-Weisbach relation
 `Δp = f (L / D) ρ V² / 2` solved for `f`. For the Poiseuille drop `Δp = G L` on the diameter
-`D = 2 R` with `G, μ, R, L > 0`, `f = 64 / Re` with the Reynolds number `Re = ρ |V| D / μ` of
+`D = 2 R` with `ρ, μ, G, R, L > 0`, `f = 64 / Re` with the Reynolds number `Re = ρ |V| D / μ` of
 `EngineeringScaling.reynoldsNumber`, and the Fanning factor is `f / 4 = 16 / Re`; a Reynolds
 number on the radius, or swapping the two conventions, fails these identities. With the
 Darcy-Weisbach loss coefficient of `FluidDynamics.PipeFrictionPorts`, the factor `64 / Re`
-reproduces the pressure drop `G L` at the flow rate `Q` in both flow directions, while the
-Fanning value read as a Darcy factor gives `G L / 4`. The law `f = 64 / Re` is derived here, not
-an empirical correlation, and no turbulent law is derived.
+reproduces the pressure drop `G L` at the flow rate `Q` for every `G ≠ 0`, in both flow
+directions, while the Fanning value read as a Darcy factor gives `G L / 4`. At `G = 0` there is no
+flow and `Re = 0`, and no friction factor is assigned. Every identity of parts P-Q assumes positive
+density, viscosity and radius where they enter a denominator, so none holds at a degenerate
+parameter only through Lean's convention `x / 0 = 0`. The law `f = 64 / Re` is derived here, not an
+empirical correlation, and no turbulent law is derived.
 
 ## ii. Key results
 
@@ -1488,10 +1491,10 @@ lemma pipeDisk_measureReal {R : ℝ} (hR : 0 < R) : volume.real (pipeDisk R) = �
     polar_pipeDisk_radial hR (fun _ => 1), intervalIntegral.integral_eq_sub_of_hasDerivAt hF hint]
   ring
 
-/-- **Flow rate (Hagen-Poiseuille).** For `R > 0` the flow rate of cylindrical Poiseuille flow
+/-- **Flow rate (Hagen-Poiseuille).** For `μ, R > 0` the flow rate of cylindrical Poiseuille flow
 through every cross-section is `Q = π G R⁴ / (8 μ)`: the polar change of variables turns the disk
 integral of the axial velocity into `2 π ∫₀ᴿ r G (R² - r²) / (4 μ) dr`. -/
-lemma pipeFlowRate_eq {R : ℝ} (hR : 0 < R) (G μ z : ℝ) :
+lemma pipeFlowRate_eq {μ R : ℝ} (hμ : 0 < μ) (hR : 0 < R) (G z : ℝ) :
     pipeFlowRate G μ R z = π * G * R ^ 4 / (8 * μ) := by
   have hF : ∀ r ∈ uIcc 0 R,
       HasDerivAt (fun r : ℝ => G / (4 * μ) * (R ^ 2 * r ^ 2 / 2 - r ^ 4 / 4))
@@ -1512,29 +1515,28 @@ lemma pipeFlowRate_eq {R : ℝ} (hR : 0 < R) (G μ z : ℝ) :
   rw [pipeFlowRate, hfun, ← integral_comp_polarCoord_symm,
     polar_pipeDisk_radial hR (fun s => G * (R ^ 2 - s) / (4 * μ)),
     intervalIntegral.integral_eq_sub_of_hasDerivAt hF hint]
+  field_simp
   ring
 
-/-- **Mean velocity.** For `R > 0`, `V = Q / (π R²) = G R² / (8 μ)`. -/
-lemma pipeMeanVelocity_eq {R : ℝ} (hR : 0 < R) (G μ z : ℝ) :
+/-- **Mean velocity.** For `μ, R > 0`, `V = Q / (π R²) = G R² / (8 μ)`. -/
+lemma pipeMeanVelocity_eq {μ R : ℝ} (hμ : 0 < μ) (hR : 0 < R) (G z : ℝ) :
     pipeMeanVelocity G μ R z = G * R ^ 2 / (8 * μ) := by
-  rw [pipeMeanVelocity, pipeFlowRate_eq hR]
+  rw [pipeMeanVelocity, pipeFlowRate_eq hμ hR]
   have hπ := pi_pos
-  rcases eq_or_ne μ 0 with rfl | hμ
-  · simp
-  · field_simp
+  field_simp
 
 /-- The mean velocity is positive for `G, μ, R > 0`. -/
 lemma pipeMeanVelocity_pos {G μ R : ℝ} (hG : 0 < G) (hμ : 0 < μ) (hR : 0 < R) (z : ℝ) :
     0 < pipeMeanVelocity G μ R z := by
-  rw [pipeMeanVelocity_eq hR]
+  rw [pipeMeanVelocity_eq hμ hR]
   positivity
 
-/-- **Centerline speed.** For `R > 0` the axial velocity on the axis is twice the mean velocity:
-`G R² / (4 μ) = 2 V`. -/
-lemma pipeCenterline_eq_two_mul_meanVelocity {R : ℝ} (hR : 0 < R) (G μ z : ℝ) :
+/-- **Centerline speed.** For `μ, R > 0` the axial velocity on the axis is twice the mean
+velocity: `G R² / (4 μ) = 2 V`. -/
+lemma pipeCenterline_eq_two_mul_meanVelocity {μ R : ℝ} (hμ : 0 < μ) (hR : 0 < R) (G z : ℝ) :
     pipePoiseuilleVelocity G μ R (crossSectionPoint z (0, 0)) 2 =
       2 * pipeMeanVelocity G μ R z := by
-  rw [pipeVelocity_crossSectionPoint, pipeMeanVelocity_eq hR]
+  rw [pipeVelocity_crossSectionPoint, pipeMeanVelocity_eq hμ hR]
   ring
 
 /-! ## Q. Reynolds number and the Darcy and Fanning factors -/
@@ -1547,30 +1549,29 @@ noncomputable def darcyFactorOfDrop (Δp L D ρ V : ℝ) : ℝ := 2 * D * Δp / 
 /-- The Reynolds number of the pipe flow on the diameter: `ρ |V| (2 R) / μ = ρ G R³ / (4 μ²)`. -/
 private lemma pipe_reynolds_eq {ρ μ G R : ℝ} (hμ : 0 < μ) (hG : 0 < G) (hR : 0 < R) (z : ℝ) :
     reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ = ρ * G * R ^ 3 / (4 * μ ^ 2) := by
-  rw [reynoldsNumber_val, pipeMeanVelocity_eq hR, abs_of_pos (by positivity)]
+  rw [reynoldsNumber_val, pipeMeanVelocity_eq hμ hR, abs_of_pos (by positivity)]
   field_simp
   ring
 
-/-- **Laminar Darcy factor.** For `G, μ, R, L > 0` (positive length, radius and mean flow), the
-Darcy factor of the Poiseuille pressure drop `G L` over the length `L` on the diameter `D = 2 R`
-at the mean velocity `V` is `64 / Re`, with `Re = ρ |V| D / μ`. -/
-lemma pipe_darcyFactor_eq {ρ μ G R L : ℝ} (hμ : 0 < μ) (hG : 0 < G) (hR : 0 < R) (hL : 0 < L)
-    (z : ℝ) :
+/-- **Laminar Darcy factor.** For `ρ, μ, G, R, L > 0` (positive density and viscosity, positive
+length, radius and mean flow), the Darcy factor of the Poiseuille pressure drop `G L` over the
+length `L` on the diameter `D = 2 R` at the mean velocity `V` is `64 / Re`, with
+`Re = ρ |V| D / μ`. -/
+lemma pipe_darcyFactor_eq {ρ μ G R L : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hG : 0 < G) (hR : 0 < R)
+    (hL : 0 < L) (z : ℝ) :
     darcyFactorOfDrop (G * L) L (2 * R) ρ (pipeMeanVelocity G μ R z) =
       64 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ := by
-  rw [pipe_reynolds_eq hμ hG hR, darcyFactorOfDrop, pipeMeanVelocity_eq hR]
-  rcases eq_or_ne ρ 0 with rfl | hρ
-  · simp
-  · field_simp
-    ring
+  rw [pipe_reynolds_eq hμ hG hR, darcyFactorOfDrop, pipeMeanVelocity_eq hμ hR]
+  field_simp
+  ring
 
 /-- **Fanning factor.** Under the hypotheses of `pipe_darcyFactor_eq`, the Fanning factor
 `f / 4` of `FrictionConvention.fanning` is `16 / Re`. -/
-lemma pipe_fanningFactor_eq {ρ μ G R L : ℝ} (hμ : 0 < μ) (hG : 0 < G) (hR : 0 < R)
+lemma pipe_fanningFactor_eq {ρ μ G R L : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hG : 0 < G) (hR : 0 < R)
     (hL : 0 < L) (z : ℝ) :
     darcyFactorOfDrop (G * L) L (2 * R) ρ (pipeMeanVelocity G μ R z) / 4 =
       16 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ := by
-  rw [pipe_darcyFactor_eq hμ hG hR hL]
+  rw [pipe_darcyFactor_eq hρ hμ hG hR hL]
   ring
 
 /-- **Factor checks.** For `ρ, μ, G, R, L > 0` the laminar Darcy factor `f` is not `64` over the
@@ -1594,33 +1595,32 @@ lemma pipe_darcyFactor_checks {ρ μ G R L : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) 
     simp only
     rw [abs_of_pos hV]
     positivity
-  rw [pipe_darcyFactor_eq hμ hG hR hL, hRe]
+  rw [pipe_darcyFactor_eq hρ hμ hG hR hL, hRe]
   refine ⟨fun h => ?_, fun h => ?_, fun h => ?_⟩ <;> field_simp at h <;> linarith
 
-/-- **The Darcy-Weisbach loss of `PipeFrictionPorts`.** For `ρ, μ, R > 0` and every `G`, the
-loss coefficient `c = f L ρ / (2 D A²)` of the pipe (`D = 2 R`, `A = π R²`) with the laminar
-Darcy factor `f = 64 / Re` gives the oriented pressure drop `c Q |Q| = G L` at the flow rate `Q`,
-in both flow directions; the Fanning value `16 / Re` read as a Darcy factor gives `G L / 4`. -/
-lemma pipe_frictionPressureDrop_eq {ρ μ R : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hR : 0 < R)
-    (G L z : ℝ) :
+/-- **The Darcy-Weisbach loss of `PipeFrictionPorts`.** For `ρ, μ, R > 0` and `G ≠ 0`, the loss
+coefficient `c = f L ρ / (2 D A²)` of the pipe (`D = 2 R`, `A = π R²`) with the laminar Darcy
+factor `f = 64 / Re` gives the oriented pressure drop `c Q |Q| = G L` at the flow rate `Q`, in
+both flow directions; the Fanning value `16 / Re` read as a Darcy factor gives `G L / 4`. At
+`G = 0` there is no flow and `Re = 0`, and no friction factor is assigned. -/
+lemma pipe_frictionPressureDrop_eq {ρ μ R G : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hR : 0 < R)
+    (hG : G ≠ 0) (L z : ℝ) :
     frictionPressureDrop (darcyCoefficient
         (64 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ) L (2 * R)
         (π * R ^ 2) ρ) (pipeFlowRate G μ R z) = G * L ∧
       frictionPressureDrop (darcyCoefficient
         (16 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ) L (2 * R)
         (π * R ^ 2) ρ) (pipeFlowRate G μ R z) = G * L / 4 := by
-  rcases eq_or_ne G 0 with rfl | hG
-  · simp [frictionPressureDrop, pipeFlowRate_eq hR]
   have hπ := pi_pos
   have hGa : 0 < |G| := abs_pos.mpr hG
   have hV : |pipeMeanVelocity G μ R z| = |G| * R ^ 2 / (8 * μ) := by
-    rw [pipeMeanVelocity_eq hR, abs_div, abs_mul, abs_of_pos (by positivity : (0 : ℝ) < R ^ 2),
+    rw [pipeMeanVelocity_eq hμ hR, abs_div, abs_mul, abs_of_pos (by positivity : (0 : ℝ) < R ^ 2),
       abs_of_pos (by positivity : (0 : ℝ) < 8 * μ)]
   have hQ : |pipeFlowRate G μ R z| = π * |G| * R ^ 4 / (8 * μ) := by
-    rw [pipeFlowRate_eq hR, abs_div, abs_mul, abs_mul, abs_of_pos hπ,
+    rw [pipeFlowRate_eq hμ hR, abs_div, abs_mul, abs_mul, abs_of_pos hπ,
       abs_of_pos (by positivity : (0 : ℝ) < R ^ 4), abs_of_pos (by positivity : (0 : ℝ) < 8 * μ)]
   simp only [frictionPressureDrop, darcyCoefficient, reynoldsNumber_val]
-  rw [hV, hQ, pipeFlowRate_eq hR]
+  rw [hV, hQ, pipeFlowRate_eq hμ hR]
   constructor <;> field_simp <;> ring
 
 end PipeFlowRate
