@@ -429,7 +429,7 @@ theorem card_le_nine {S : Finset V} {c : V → ℕ} (h : IsListColoring G L c S)
       (card_le_card inter_subset_right).trans (by simp [terminals])
     have ha : c V.s1 = 0 ∨ c V.s1 = 1 := by simpa [L] using h.1 _ hboth.1
     have hb : c V.s2 = 2 ∨ c V.s2 = 3 := by simpa [L] using h.1 _ hboth.2
-    -- The triangle whose list consists of the two terminal colours has one coloured vertex.
+    -- The triangle whose list is the two terminal colours has at most one coloured vertex.
     obtain ⟨i₀, hi₀⟩ : ∃ i₀ : Fin 4, L (V.u i₀) = {c V.s1, c V.s2} := by
       rcases ha with ha | ha <;> rcases hb with hb | hb <;> rw [ha, hb]
       exacts [⟨0, rfl⟩, ⟨1, rfl⟩, ⟨2, rfl⟩, ⟨3, rfl⟩]
