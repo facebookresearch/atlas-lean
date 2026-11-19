@@ -26,9 +26,11 @@ sign of `ΔT`.
 * Request. A `CorrelationRequest` carries the complete application context in typed fields: the
   flow conditions (`Re`, `Pr`, the length ratio `L / D` and the surface-minus-fluid temperature
   difference `ΔT`), the flow configuration (`FlowConfiguration`: the geometry and flow
-  arrangement, such as a smooth circular tube or a flat plate in parallel flow), the requested
-  local or surface-averaged value, and the temperature at which the request's fluid properties
-  were evaluated. The thermal direction is not a separate field:
+  arrangement, such as a smooth circular tube or a flat plate in parallel flow), the flow
+  development at the evaluated section (`FlowDevelopment`: fully developed or in the entrance
+  region), the size of the fluid-property variation caused by `ΔT` (`PropertyVariation`), the
+  requested local or surface-averaged value, and the temperature at which the request's fluid
+  properties were evaluated. The thermal direction is not a separate field:
   heating is `0 < ΔT` and cooling is `ΔT < 0` (`ThermalMode.Holds`), so it cannot disagree with
   the `ΔT` that drives the heat rate.
 * Record. `NusseltCorrelation` stores the supplied formula, its citation (provenance only, not an
@@ -39,9 +41,10 @@ sign of `ΔT`.
   leaves the field unconstrained.
 * Guard. The formula field takes a proof that the flow conditions lie in the validity domain, so
   no out-of-domain value can be formed. `NusseltCorrelation.Applies C r` also requires the
-  correlation's flow configuration, local/average tag and property-evaluation temperature, and
-  `NusseltCorrelation.nusselt` takes a proof of it; a correlation for another geometry does not
-  apply.
+  correlation's flow configuration, flow development, property-variation class, local/average
+  tag and property-evaluation temperature, and `NusseltCorrelation.nusselt` takes a proof of it;
+  a correlation for another geometry, or for fully developed flow evaluated in an entrance
+  region, does not apply.
 * Groups. `Re` and `Pr` are, for example, the dimensionless groups
   `EngineeringScaling.reynoldsNumber` and `EngineeringScaling.prandtlNumber`;
   `heatTransferCoefficient Nu k L = Nu k / L` inverts `EngineeringScaling.nusseltNumber`.
@@ -55,8 +58,9 @@ no empirical adequacy or system safety claim is made.
 
 ## ii. Key results
 
-- `FlowConfiguration`, `AveragingTag`, `PropertyTemperature`, `ThermalMode`, `ThermalMode.Holds`,
-  `FlowConditions`, `CorrelationRequest` : the application context.
+- `FlowConfiguration`, `FlowDevelopment`, `PropertyVariation`, `AveragingTag`,
+  `PropertyTemperature`, `ThermalMode`, `ThermalMode.Holds`, `FlowConditions`,
+  `CorrelationRequest` : the application context.
 - `NusseltCorrelation`, `NusseltCorrelation.Applies`, `NusseltCorrelation.nusselt`,
   `NusseltCorrelation.exists_applies`, `powerLawCorrelation`, `powerLawCorrelation_nusselt` : the
   guarded interface.
@@ -80,7 +84,8 @@ no empirical adequacy or system safety claim is made.
   external flow, mean temperature for internal flow), and the Dittus-Boelter correlation
   `Nu_D = 0.023 Re_D ^ (4/5) Pr ^ n` (`n = 0.4` for heating, `n = 0.3` for cooling) for fully
   developed turbulent flow in smooth circular tubes, `0.7 ≤ Pr ≤ 160`, `Re_D ≥ 10000`,
-  `L / D ≥ 10`, properties at the mean temperature.
+  `L / D ≥ 10`, small to moderate temperature differences `T_s - T_m`, properties at the mean
+  temperature.
 - ISO 80000-11, *Quantities and units — Part 11: Characteristic numbers*.
 -/
 
@@ -104,6 +109,28 @@ inductive FlowConfiguration where
   | cylinderCrossFlow
   /-- External flow over a sphere. -/
   | sphere
+  deriving DecidableEq
+
+/-- The development of the flow at the evaluated section. A correlation calibrated for one state
+applies only to requests in that state. -/
+inductive FlowDevelopment where
+  /-- Hydrodynamically and thermally fully developed: the velocity profile and the
+  dimensionless temperature profile no longer change along the flow. -/
+  | fullyDeveloped
+  /-- In the hydrodynamic or thermal entrance region. -/
+  | developing
+  deriving DecidableEq
+
+/-- The size of the fluid-property variation across the boundary layer caused by the
+surface-minus-fluid temperature difference. A correlation calibrated for one class applies only
+to requests in that class. -/
+inductive PropertyVariation where
+  /-- Small to moderate temperature differences: properties evaluated at one reference
+  temperature represent the flow. -/
+  | smallToModerate
+  /-- Large temperature differences, which need a property-ratio correction such as a wall
+  viscosity factor. -/
+  | large
   deriving DecidableEq
 
 /-- Whether a correlation gives the local value at one surface position or the value averaged
@@ -151,26 +178,34 @@ structure FlowConditions where
   /-- The surface-minus-fluid temperature difference `T_s - T_m`. -/
   temperatureDifference : WithDim temperatureDim ℝ
 
-/-- A correlation request: its flow conditions, its flow configuration, the requested local or
-surface-averaged value, and the temperature at which the request's fluid properties were
-evaluated. -/
+/-- A correlation request: its flow conditions, its flow configuration, the flow development at
+the evaluated section, the property-variation class, the requested local or surface-averaged
+value, and the temperature at which the request's fluid properties were evaluated. -/
 structure CorrelationRequest extends FlowConditions where
   /-- The geometry and flow arrangement of the request. -/
   configuration : FlowConfiguration
+  /-- The flow development at the evaluated section. -/
+  development : FlowDevelopment
+  /-- The size of the fluid-property variation caused by the temperature difference. -/
+  propertyVariation : PropertyVariation
   /-- Local or surface-averaged value requested. -/
   averaging : AveragingTag
   /-- The temperature at which the fluid properties in `Re`, `Pr` and `h` were evaluated. -/
   propertyTemperature : PropertyTemperature
 
-/-- A supplied empirical Nusselt correlation: its citation, the flow configuration, local/average
-tag and property-evaluation temperature it was calibrated with, its validity domain of flow
-conditions, which is nonempty with positive `Re` and `Pr`, and its formula, which takes a proof
-that the flow conditions lie in the domain. -/
+/-- A supplied empirical Nusselt correlation: its citation, the flow configuration, flow
+development, property-variation class, local/average tag and property-evaluation temperature it
+was calibrated with, its validity domain of flow conditions, which is nonempty with positive `Re`
+and `Pr`, and its formula, which takes a proof that the flow conditions lie in the domain. -/
 structure NusseltCorrelation where
   /-- The published source of the correlation (provenance, not an applicability condition). -/
   citation : String
   /-- The geometry and flow arrangement the correlation was calibrated for. -/
   configuration : FlowConfiguration
+  /-- The flow development the correlation was calibrated for. -/
+  development : FlowDevelopment
+  /-- The property-variation class the correlation was calibrated for. -/
+  propertyVariation : PropertyVariation
   /-- Local or surface-averaged value. -/
   averaging : AveragingTag
   /-- The temperature at which the calibration evaluated the fluid properties. -/
@@ -183,34 +218,40 @@ structure NusseltCorrelation where
   formula : ∀ s ∈ validity, ℝ
 
 /-- The correlation applies to a request: the request has the correlation's flow configuration,
-asks for its local/average value, its fluid properties were evaluated at the correlation's
-property temperature, and its flow conditions lie in the validity domain. -/
+flow development and property-variation class, asks for its local/average value, its fluid
+properties were evaluated at the correlation's property temperature, and its flow conditions lie
+in the validity domain. -/
 def NusseltCorrelation.Applies (C : NusseltCorrelation) (r : CorrelationRequest) : Prop :=
-  r.configuration = C.configuration ∧ r.averaging = C.averaging ∧
+  r.configuration = C.configuration ∧ r.development = C.development ∧
+    r.propertyVariation = C.propertyVariation ∧ r.averaging = C.averaging ∧
     r.propertyTemperature = C.propertyTemperature ∧ r.toFlowConditions ∈ C.validity
 
 /-- The Nusselt number of the correlation for a request, evaluated only where the correlation
 applies. -/
 def NusseltCorrelation.nusselt (C : NusseltCorrelation) (r : CorrelationRequest)
     (h : C.Applies r) : ℝ :=
-  C.formula r.toFlowConditions h.2.2.2
+  C.formula r.toFlowConditions h.2.2.2.2.2
 
 /-- Every correlation applies to some request: the guard is satisfiable. -/
 lemma NusseltCorrelation.exists_applies (C : NusseltCorrelation) :
     ∃ r : CorrelationRequest, C.Applies r := by
   obtain ⟨s, hs⟩ := C.validity_nonempty
-  exact ⟨⟨s, C.configuration, C.averaging, C.propertyTemperature⟩, rfl, rfl, rfl, hs⟩
+  exact ⟨⟨s, C.configuration, C.development, C.propertyVariation, C.averaging,
+    C.propertyTemperature⟩, rfl, rfl, rfl, rfl, rfl, hs⟩
 
 /-- The power-law correlation `Nu = c Re ^ a Pr ^ b` (real powers) with its citation, flow
-configuration, tags and validity domain. -/
+configuration, flow development, property-variation class, tags and validity domain. -/
 noncomputable def powerLawCorrelation (c a b : ℝ) (citation : String)
-    (configuration : FlowConfiguration) (averaging : AveragingTag)
+    (configuration : FlowConfiguration) (development : FlowDevelopment)
+    (propertyVariation : PropertyVariation) (averaging : AveragingTag)
     (propertyTemperature : PropertyTemperature)
     (validity : Set FlowConditions)
     (validity_pos : ∀ s ∈ validity, 0 < s.reynolds ∧ 0 < s.prandtl)
     (validity_nonempty : validity.Nonempty) : NusseltCorrelation where
   citation := citation
   configuration := configuration
+  development := development
+  propertyVariation := propertyVariation
   averaging := averaging
   propertyTemperature := propertyTemperature
   validity := validity
@@ -220,21 +261,23 @@ noncomputable def powerLawCorrelation (c a b : ℝ) (citation : String)
 
 /-- Where the power-law correlation applies, it evaluates to `c Re ^ a Pr ^ b`. -/
 lemma powerLawCorrelation_nusselt {c a b : ℝ} {citation : String}
-    {configuration : FlowConfiguration} {averaging : AveragingTag}
+    {configuration : FlowConfiguration} {development : FlowDevelopment}
+    {propertyVariation : PropertyVariation} {averaging : AveragingTag}
     {propertyTemperature : PropertyTemperature}
     {validity : Set FlowConditions}
     {validity_pos : ∀ s ∈ validity, 0 < s.reynolds ∧ 0 < s.prandtl}
     {validity_nonempty : validity.Nonempty} {r : CorrelationRequest}
-    (h : (powerLawCorrelation c a b citation configuration averaging propertyTemperature validity
-      validity_pos validity_nonempty).Applies r) :
-    (powerLawCorrelation c a b citation configuration averaging propertyTemperature validity
-      validity_pos validity_nonempty).nusselt r h = c * r.reynolds ^ a * r.prandtl ^ b :=
+    (h : (powerLawCorrelation c a b citation configuration development propertyVariation
+      averaging propertyTemperature validity validity_pos validity_nonempty).Applies r) :
+    (powerLawCorrelation c a b citation configuration development propertyVariation averaging
+      propertyTemperature validity validity_pos validity_nonempty).nusselt r h =
+      c * r.reynolds ^ a * r.prandtl ^ b :=
   rfl
 
 /-- Where a correlation applies, `Re` and `Pr` are positive. -/
 lemma NusseltCorrelation.applies_pos {C : NusseltCorrelation} {r : CorrelationRequest}
     (h : C.Applies r) : 0 < r.reynolds ∧ 0 < r.prandtl := by
-  exact C.validity_pos _ h.2.2.2
+  exact C.validity_pos _ h.2.2.2.2.2
 
 /-- The Reynolds number of a positive density, a nonzero velocity and a positive length is
 positive. -/
@@ -322,21 +365,24 @@ applies to a request, its Nusselt number gives a positive `h = Nu k / L`, and th
 `Q = h A ΔT` at the request's own temperature difference has the sign of that difference. The
 positivity of `Re` and `Pr` comes from the validity domain. -/
 lemma powerLawCorrelation_heatRate_sign {c a b : ℝ} (hc : 0 < c) {citation : String}
-    {configuration : FlowConfiguration} {averaging : AveragingTag}
+    {configuration : FlowConfiguration} {development : FlowDevelopment}
+    {propertyVariation : PropertyVariation} {averaging : AveragingTag}
     {propertyTemperature : PropertyTemperature}
     {validity : Set FlowConditions}
     {validity_pos : ∀ s ∈ validity, 0 < s.reynolds ∧ 0 < s.prandtl}
     {validity_nonempty : validity.Nonempty} {r : CorrelationRequest}
-    (h : (powerLawCorrelation c a b citation configuration averaging propertyTemperature validity
-      validity_pos validity_nonempty).Applies r)
+    (h : (powerLawCorrelation c a b citation configuration development propertyVariation
+      averaging propertyTemperature validity validity_pos validity_nonempty).Applies r)
     {k : WithDim thermalConductivityDim ℝ} {L : WithDim (single ISQDimensionBase.length) ℝ}
     {A : WithDim (single ISQDimensionBase.length ^ (2 : ℕ)) ℝ} (hk : 0 < k.val) (hL : 0 < L.val)
     (hA : 0 < A.val) :
-    0 < (heatTransferCoefficient ((powerLawCorrelation c a b citation configuration averaging
-        propertyTemperature validity validity_pos validity_nonempty).nusselt r h) k L hL).val ∧
+    0 < (heatTransferCoefficient ((powerLawCorrelation c a b citation configuration development
+        propertyVariation averaging propertyTemperature validity validity_pos
+        validity_nonempty).nusselt r h) k L hL).val ∧
       SignType.sign (convectiveHeatRate (heatTransferCoefficient ((powerLawCorrelation c a b
-          citation configuration averaging propertyTemperature validity validity_pos
-          validity_nonempty).nusselt r h) k L hL) A r.temperatureDifference).val =
+          citation configuration development propertyVariation averaging propertyTemperature
+          validity validity_pos validity_nonempty).nusselt r h) k L hL) A
+          r.temperatureDifference).val =
         SignType.sign r.temperatureDifference.val := by
   have hRP := NusseltCorrelation.applies_pos h
   rw [powerLawCorrelation_nusselt h]
