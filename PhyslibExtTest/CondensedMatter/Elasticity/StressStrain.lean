@@ -238,7 +238,7 @@ example : traction !![(1:ℝ),2,3;4,5,6;7,8,10] ![1,-2,3] = ![6,12,21] := by
   ext i
   fin_cases i <;> simp [traction, Matrix.mulVec] <;> norm_num
 
--- The converted stress negates traction on the same face.
+-- The converted stress negates the tension-positive Cauchy map on the same face.
 example : traction (compressionPositiveStress !![(1:ℝ),2,3;4,5,6;7,8,10]) ![1,-2,3]
     = ![-6,-12,-21] := by
   rw [traction_compressionPositiveStress]
@@ -291,7 +291,8 @@ example : ¬ IsSymmetricStress
   have h01 := congrFun (congrFun heq 0) 1
   simp [Matrix.transpose_apply] at h01
 
--- Hydrostatic pressure `p = 3`: converted traction is `3 • v`, unit and non-unit normals.
+-- Hydrostatic pressure `p = 3`: the tension-positive map on the converted
+-- stress is `3 • v`, for unit and non-unit normals.
 example : traction (compressionPositiveStress
     (-(3:ℝ) • (1 : Matrix (Fin 3) (Fin 3) ℝ))) ![0,0,1] = ![0,0,3] := by
   rw [traction_compressionPositiveStress_neg_smul_one]
@@ -305,6 +306,43 @@ example : traction (compressionPositiveStress
 example : traction (compressionPositiveStress
     (-(3:ℝ) • (1 : Matrix (Fin 3) (Fin 3) ℝ))) ![0,0,1] ≠ (-(3:ℝ)) • ![0,0,1] := by
   rw [traction_compressionPositiveStress_neg_smul_one]
+  intro h
+  have h2 := congrFun h 2
+  simp at h2
+  norm_num at h2
+
+/-- Physical traction is preserved by conversion on the non-symmetric
+witness and flips on the opposite face. -/
+example : compressionPositiveTraction
+    (compressionPositiveStress !![(1:ℝ),2,3;4,5,6;7,8,10]) ![1,-2,3]
+    = ![6,12,21] := by
+  rw [compressionPositiveTraction_compressionPositiveStress]
+  ext i
+  fin_cases i <;> simp [traction, Matrix.mulVec] <;> norm_num
+
+example : compressionPositiveTraction
+    (compressionPositiveStress !![(1:ℝ),2,3;4,5,6;7,8,10]) (-![1,-2,3])
+    = ![-6,-12,-21] := by
+  rw [compressionPositiveTraction_compressionPositiveStress_neg]
+  ext i
+  fin_cases i <;> simp [traction] <;> norm_num
+
+/-- Hydrostatic physical traction is inward: `-3 • v`. -/
+example : compressionPositiveTraction (compressionPositiveStress
+    (-(3:ℝ) • (1 : Matrix (Fin 3) (Fin 3) ℝ))) ![0,0,1] = ![0,0,-3] := by
+  rw [compressionPositiveTraction_neg_smul_one]
+  ext i
+  fin_cases i <;> simp
+
+example : compressionPositiveTraction (compressionPositiveStress
+    (-(3:ℝ) • (1 : Matrix (Fin 3) (Fin 3) ℝ))) ![1,-2,3]
+    = (-(3:ℝ)) • ![1,-2,3] :=
+  compressionPositiveTraction_neg_smul_one 3 ![1,-2,3]
+
+example : compressionPositiveTraction (compressionPositiveStress
+    (-(3:ℝ) • (1 : Matrix (Fin 3) (Fin 3) ℝ))) ![0,0,1]
+    ≠ (3:ℝ) • ![0,0,1] := by
+  rw [compressionPositiveTraction_neg_smul_one]
   intro h
   have h2 := congrFun h 2
   simp at h2

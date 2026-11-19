@@ -35,8 +35,10 @@ and this module does not claim to derive symmetry from force balance alone.
 The traction on a face with normal `n` is `t = σ *ᵥ n`. It flips sign on opposite faces and is
 linear in `n`, both as direct `mulVec` consequences; the statements hold for general `n`, and the
 unit-normal case `‖n‖ = 1` is the physical reading. The compression-positive form of the same
-tensor is `compressionPositiveStress σ = -σ`; the conversion is involutive, preserves symmetry,
-and negates traction on a fixed face. Given symmetry, Mathlib's spectral theorem
+tensor is `compressionPositiveStress σ = -σ`; the conversion is involutive and preserves
+symmetry. It negates the tension-positive Cauchy map `traction` on a fixed face, while
+`compressionPositiveTraction`, defined as the negative of that map for a
+compression-positive stress, preserves the physical traction. Given symmetry, Mathlib's spectral theorem
 for Hermitian matrices (`Matrix.IsHermitian.spectral_theorem`, reused, not re-proved) gives real
 principal stresses, an orthonormal eigenbasis, and the spectral decomposition; for real symmetric
 matrices conjugation by the eigenvector unitary is conjugation by an orthogonal matrix. The
@@ -72,7 +74,10 @@ yield/failure criteria, and no beam or pressure-vessel applications.
 - `Elasticity.compressionPositiveStress`, `Elasticity.compressionPositiveStress_involutive`,
   `Elasticity.traction_compressionPositiveStress`, and
   `Elasticity.traction_compressionPositiveStress_neg` : the compression-positive sign
-  conversion and its traction laws.
+  conversion and its sign identities for the tension-positive Cauchy map.
+- `Elasticity.compressionPositiveTraction` and
+  `Elasticity.compressionPositiveTraction_compressionPositiveStress` : the
+  compression-positive physical traction, preserved by the conversion.
 - `Elasticity.principalStresses_real` : principal stresses are real.
 - `Elasticity.spectral_decomposition` : the spectral decomposition of `σ`.
 - `Elasticity.principalDirection_eigen` : the eigenvector equation for principal directions.
@@ -156,6 +161,14 @@ def compressionPositiveStress {n : ℕ} (σ : Matrix (Fin n) (Fin n) ℝ) :
     Matrix (Fin n) (Fin n) ℝ :=
   -σ
 
+/-- Physical traction for a compression-positive stress. The
+existing `traction` is the tension-positive Cauchy map
+`σ *ᵥ v`; with compression-positive sign convention the physical
+traction is its negative, `-σ *ᵥ v`. -/
+def compressionPositiveTraction {n : ℕ} (σ : Matrix (Fin n) (Fin n) ℝ)
+    (v : Fin n → ℝ) : Fin n → ℝ :=
+  -traction σ v
+
 /-- Converting the stress sign twice returns the original
 stress. -/
 lemma compressionPositiveStress_involutive {n : ℕ}
@@ -170,27 +183,62 @@ lemma compressionPositiveStress_isSymmetricStress {n : ℕ}
   unfold IsSymmetricStress compressionPositiveStress at *
   rw [Matrix.transpose_neg, hσ]
 
-/-- Traction under the converted stress is the negative of the
-traction under the original stress, on the same face normal. -/
+/-- For the tension-positive Cauchy map `traction`, applying it
+to the converted stress negates its value on the same face
+normal. This is a sign identity for that map; the
+compression-positive physical traction is
+`compressionPositiveTraction`. -/
 lemma traction_compressionPositiveStress {n : ℕ}
     (σ : Matrix (Fin n) (Fin n) ℝ) (v : Fin n → ℝ) :
     traction (compressionPositiveStress σ) v = -traction σ v := by
   simp [traction, compressionPositiveStress, Matrix.neg_mulVec]
 
 /-- With both the stress sign converted and the face normal
-reversed, the traction vector is the original traction. -/
+reversed, the tension-positive Cauchy map returns its original
+value. -/
 lemma traction_compressionPositiveStress_neg {n : ℕ}
     (σ : Matrix (Fin n) (Fin n) ℝ) (v : Fin n → ℝ) :
     traction (compressionPositiveStress σ) (-v) = traction σ v := by
   simp [traction, compressionPositiveStress, Matrix.neg_mulVec_neg]
 
 /-- Hydrostatic tension-positive stress `-p • 1` converts to
-the compression-positive stress whose traction is `p • v`. -/
+the compression-positive stress whose tension-positive Cauchy
+map value is `p • v`. Its compression-positive physical
+traction is `-p • v` (see
+`compressionPositiveTraction_neg_smul_one`). -/
 lemma traction_compressionPositiveStress_neg_smul_one {n : ℕ}
     (p : ℝ) (v : Fin n → ℝ) :
     traction (compressionPositiveStress
       (-p • (1 : Matrix (Fin n) (Fin n) ℝ))) v = p • v := by
   simp [traction, compressionPositiveStress, Matrix.smul_mulVec, Matrix.one_mulVec]
+
+/-- Conversion preserves physical traction: the
+compression-positive traction of the converted stress is the
+tension-positive traction of the original stress. -/
+lemma compressionPositiveTraction_compressionPositiveStress {n : ℕ}
+    (σ : Matrix (Fin n) (Fin n) ℝ) (v : Fin n → ℝ) :
+    compressionPositiveTraction (compressionPositiveStress σ) v
+      = traction σ v := by
+  rw [compressionPositiveTraction, traction_compressionPositiveStress,
+    neg_neg]
+
+/-- On the opposite face, the preserved physical traction flips
+sign, as the tension-positive traction does. -/
+lemma compressionPositiveTraction_compressionPositiveStress_neg {n : ℕ}
+    (σ : Matrix (Fin n) (Fin n) ℝ) (v : Fin n → ℝ) :
+    compressionPositiveTraction (compressionPositiveStress σ) (-v)
+      = -traction σ v := by
+  rw [compressionPositiveTraction_compressionPositiveStress, traction_neg]
+
+/-- Hydrostatic pressure: the compression-positive physical
+traction of the converted stress `-p • 1` is the inward
+traction `-p • v`. -/
+lemma compressionPositiveTraction_neg_smul_one {n : ℕ}
+    (p : ℝ) (v : Fin n → ℝ) :
+    compressionPositiveTraction (compressionPositiveStress
+      (-p • (1 : Matrix (Fin n) (Fin n) ℝ))) v = (-p) • v := by
+  rw [compressionPositiveTraction_compressionPositiveStress,
+    traction_smul_one]
 
 /-! ## B. Principal stresses, invariants, and the deviatoric split -/
 
