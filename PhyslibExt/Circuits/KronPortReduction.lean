@@ -77,8 +77,9 @@ supplies the retained source term `jI ⬝ᵥ (D⁻¹ *ᵥ jI)`.
 
 - G. Kron, "Numerical solution of ordinary and partial differential
   equations by means of equivalent circuits", *Journal of Applied
-  Physics* 15(4), 1944, pp. 273-291: elimination of interior nodes
-  of a network by equivalent circuits, the origin of Kron reduction.
+  Physics* 16(3), 1945, pp. 172-186, DOI 10.1063/1.1707568:
+  elimination of interior nodes of a network by equivalent circuits,
+  the origin of Kron reduction.
 - F. Zhang (ed.), *The Schur Complement and Its Applications*,
   Springer, 2005: the Schur complement, its block elimination
   identities and its positivity for positive-definite block
