@@ -22,6 +22,11 @@ Checked consumers, each discharging the transport input with `movingJumpTranspor
 - non-vacuity of the test hypotheses: a smooth bump on the plane with value `1` at the origin
   meets them, and for it the Burgers step `2 | 0` has zero residual at speed `1` and residual
   `2 * ∫ φ (t, 0) dt` at the incorrect speed `0`.
+- the Burgers front `2 | 0` conserves mass exactly at its Rankine-Hugoniot speed `1` (and not
+  when stationary), through the Burgers conservation-speed equivalence;
+- a decreasing jump `3 | 1` at speed `2` has production `-2 / 3 ≤ 0` and speed between the
+  states, and an expansion jump `-1 | 1` at speed `0` satisfies the jump identity but has positive
+  production.
 -/
 
 @[expose] public section
@@ -120,5 +125,48 @@ example : ∃ φ φt φx : ℝ → ℝ → ℝ,
   refine ⟨fun t x => b (t, x), fun t x => deriv (fun τ : ℝ => b (τ, x)) t,
     fun t x => deriv (fun y : ℝ => b (t, y)) x, hφ, hφt, hφx, hsupp, ?_, hres1, hres0⟩
   exact b.one_of_mem_closedBall (by simp [b])
+
+/-- The Burgers front `2 | 0` along `x = τ` conserves mass on `[-1, 1]` at time `0`: its speed
+`1` is the Rankine-Hugoniot speed `(2 + 0) / 2`. -/
+example :
+    HasDerivAt (fun τ : ℝ => (∫ _x in (-1 : ℝ)..τ, (2 : ℝ)) + (∫ _x in τ..(1 : ℝ), (0 : ℝ)))
+      (burgersFlux 2 - burgersFlux 0) 0 := by
+  have key := burgers_conservation_iff_speed (uL := 2) (uR := 0) (a := -1) (b := 1) (t := 0)
+    (s := fun τ => τ) movingJumpTransport_holds (by norm_num) (hasDerivAt_id' 0)
+    (by norm_num) (by norm_num)
+  exact key.mpr (by norm_num)
+
+/-- The same states with a stationary front do not conserve mass: speed `0` is not
+`(2 + 0) / 2`. -/
+example :
+    ¬ HasDerivAt
+      (fun _τ : ℝ => (∫ _x in (-1 : ℝ)..(0 : ℝ), (2 : ℝ)) + (∫ _x in (0 : ℝ)..(1 : ℝ), (0 : ℝ)))
+      (burgersFlux 2 - burgersFlux 0) 0 := by
+  have key := burgers_conservation_iff_speed (uL := 2) (uR := 0) (a := -1) (b := 1) (t := 0)
+    (s := fun _ => 0) movingJumpTransport_holds (by norm_num) (hasDerivAt_const 0 0)
+    (by norm_num) (by norm_num)
+  intro h
+  have hc := key.mp h
+  norm_num at hc
+
+/-- A decreasing jump `3 | 1` at its Rankine-Hugoniot speed `2`: entropy production `-2 / 3`,
+nonpositive, and `1 < 2 < 3`. -/
+example :
+    burgersEntropyProduction 2 3 1 = -2 / 3 ∧ burgersEntropyProduction 2 3 1 ≤ 0 ∧
+      (1 : ℝ) < 2 ∧ (2 : ℝ) < 3 := by
+  have hRH : (2 : ℝ) * (1 - 3) = burgersFlux 1 - burgersFlux 3 := by
+    unfold burgersFlux
+    norm_num
+  have hval : burgersEntropyProduction 2 3 1 = -2 / 3 := by
+    have h := burgers_entropyProduction_mean 3 1
+    rw [show ((3 : ℝ) + 1) / 2 = 2 by norm_num] at h
+    rw [h]
+    norm_num
+  exact ⟨hval, burgers_decreasingJump_admissible (by norm_num) hRH⟩
+
+/-- An expansion jump `-1 | 1` with the stationary front satisfies the jump identity
+`0 * (1 - (-1)) = f 1 - f (-1)` but has positive entropy production. -/
+example : 0 < burgersEntropyProduction 0 (-1) 1 :=
+  burgers_expansionJump_rejected (by norm_num) (by unfold burgersFlux; norm_num)
 
 end PhyslibExtTest.FluidDynamics.ScalarShockPorts
