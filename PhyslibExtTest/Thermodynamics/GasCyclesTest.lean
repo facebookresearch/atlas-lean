@@ -24,6 +24,14 @@ A freezer between `250 K` and `300 K` that absorbs `4000 J` per cycle for `1000 
 
 At equal reservoir temperatures `300 K` the coefficients have no finite bound: some admissible
 cycle has both coefficients above `10`.
+
+An ideal Otto loop of a monatomic gas (`Cv = 3 J/K`, `nR = 2 J/K`, `γ = 5/3`) compressed by `8`
+from `300 K` and heated by `3000 J`:
+
+* its states are `1200 K`, `2200 K` and `550 K`; it rejects `750 J` and does `2250 J` of net work;
+* the general results apply to it: both legs lie on the adiabat, the rejected heat and the net
+  work are positive, and the work-to-heat ratio is `ottoEfficiency 8 (5/3) = 3/4`;
+* with zero heat input it does no work, and `0 / 0` is not the efficiency.
 -/
 
 @[expose] public section
@@ -70,5 +78,75 @@ example :
   obtain ⟨Qh, Qc, W, hQc, hW, hWpos, hcl, hR, -⟩ := h
   have hle := hall Qh Qc W hQc hW hWpos hcl
   linarith
+
+-- Fixture: a monatomic ideal gas (`Cv = 3` J/K, `nR = 2` J/K, so `γ = 5/3`) compressed by
+-- `r = 8` from `T₁ = 300` K and heated by `Qin = 3000` J reaches `T₂ = 1200` K, `T₃ = 2200` K and
+-- `T₄ = 550` K, rejects `750` J and does `2250` J of net work: `η = 3/4 = 1 - 8 ^ (1 - 5/3)`.
+example :
+    ottoCompressedTemp 300 8 (5 / 3) = 1200 ∧ ottoPeakTemp 300 8 (5 / 3) 3 3000 = 2200 ∧
+      ottoExpandedTemp 300 8 (5 / 3) 3 3000 = 550 ∧ ottoHeatOut 300 8 (5 / 3) 3 3000 = 750 ∧
+      ottoNetWork 300 8 (5 / 3) 3 3000 = 2250 ∧ ottoEfficiency 8 (5 / 3) = 3 / 4 := by
+  have h8_23 : (8 : ℝ) ^ ((2 : ℝ) / 3) = 4 := by
+    have h8 : (8 : ℝ) = 2 ^ (3 : ℕ) := by norm_num
+    rw [h8, ← Real.rpow_natCast, ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 2)]
+    have hexp : ((3 : ℕ) : ℝ) * ((2 : ℝ) / 3) = 2 := by norm_num
+    rw [hexp, Real.rpow_two]
+    norm_num
+  have h23 : (5 / 3 - 1 : ℝ) = (2 : ℝ) / 3 := by norm_num
+  have h8_comp : (8 : ℝ) ^ (5 / 3 - 1 : ℝ) = 4 := by
+    rw [h23, h8_23]
+  have hneg : (1 - 5 / 3 : ℝ) = -((2 : ℝ) / 3) := by norm_num
+  have h8_neg : (8 : ℝ) ^ (1 - 5 / 3 : ℝ) = 1 / 4 := by
+    rw [hneg, Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 8), h8_23]
+    norm_num
+  have hcomp : ottoCompressedTemp 300 8 (5 / 3) = 1200 := by
+    simp only [ottoCompressedTemp]
+    rw [h8_comp]
+    norm_num
+  have hpeak : ottoPeakTemp 300 8 (5 / 3) 3 3000 = 2200 := by
+    simp only [ottoPeakTemp, hcomp]
+    norm_num
+  have hexp : ottoExpandedTemp 300 8 (5 / 3) 3 3000 = 550 := by
+    simp only [ottoExpandedTemp, hpeak]
+    rw [h8_neg]
+    norm_num
+  have hheat : ottoHeatOut 300 8 (5 / 3) 3 3000 = 750 := by
+    simp only [ottoHeatOut, hexp]
+    norm_num
+  have hwork : ottoNetWork 300 8 (5 / 3) 3 3000 = 2250 := by
+    simp only [ottoNetWork, hpeak, hexp, hcomp]
+    norm_num
+  have heff : ottoEfficiency 8 (5 / 3) = 3 / 4 := by
+    simp only [ottoEfficiency]
+    rw [h8_neg]
+    norm_num
+  exact ⟨hcomp, hpeak, hexp, hheat, hwork, heff⟩
+
+-- The monatomic loop through the general results: `otto_cycle` puts the compression leg on the
+-- adiabat and gives positive rejected heat and net work, and `ottoNetWork_div_heatIn` identifies
+-- the work-to-heat ratio with `ottoEfficiency 8 (5/3)`, which is `3/4` because `8 ^ (2/3) = 4`.
+example :
+    ottoCompressedTemp 300 8 (5 / 3) * (1 / 8) ^ ((5 : ℝ) / 3 - 1) = 300 * 1 ^ ((5 : ℝ) / 3 - 1) ∧
+      0 < ottoHeatOut 300 8 (5 / 3) 3 3000 ∧ 0 < ottoNetWork 300 8 (5 / 3) 3 3000 ∧
+      ottoNetWork 300 8 (5 / 3) 3 3000 / 3000 = ottoEfficiency 8 (5 / 3) ∧
+      ottoEfficiency 8 (5 / 3) = 3 / 4 := by
+  obtain ⟨hc, -, -, hq, hw, -⟩ := otto_cycle (T₁ := 300) (V₁ := 1) (r := 8) (γ := 5 / 3)
+    (Cv := 3) (nR := 2) (Qin := 3000) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num)
+  have h8 : (8 : ℝ) ^ (1 - (5 : ℝ) / 3) = 1 / 4 := by
+    rw [show (1 : ℝ) - 5 / 3 = -(2 / 3) by norm_num, Real.rpow_neg (by norm_num),
+      show (8 : ℝ) = 2 ^ (3 : ℝ) by norm_num, ← Real.rpow_mul (by norm_num)]
+    norm_num
+  refine ⟨hc, hq, hw,
+    (ottoNetWork_div_heatIn (T₁ := 300) (by norm_num) (by norm_num) (by norm_num)).1, ?_⟩
+  rw [ottoEfficiency, h8]
+  norm_num
+
+-- Zero heat input on the same gas: the loop does no net work, and the work-to-heat ratio `0 / 0`
+-- is not the Otto efficiency.
+example :
+    ottoNetWork 300 8 (5 / 3) 3 0 = 0 ∧
+      ottoNetWork 300 8 (5 / 3) 3 0 / 0 ≠ ottoEfficiency 8 (5 / 3) :=
+  otto_zero_heatIn (by norm_num) (by norm_num)
 
 end PhyslibExtTest.Thermodynamics.GasCycles
