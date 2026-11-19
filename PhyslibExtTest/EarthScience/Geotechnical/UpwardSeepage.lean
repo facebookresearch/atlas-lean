@@ -61,7 +61,7 @@ example (z : ℝ) :
 `1.03125`) gives negative effective stress at depth `1`. -/
 example : (1 : ℝ) * (submergedUnitWeight 2.65 0.6 10 - 2 * 10) < 0 := by
   have hiff := upwardSeepage_nonneg_iff (Gs := 2.65) (e := 0.6)
-    (γw := (10 : ℝ)) (i := 2) (by norm_num) (by norm_num)
+    (γw := (10 : ℝ)) (i := 2) (by norm_num) (by norm_num) (by norm_num)
   by_contra hcon
   have hnn : 0 ≤ (1 : ℝ) * (submergedUnitWeight 2.65 0.6 10 - 2 * 10) :=
     le_of_not_gt hcon

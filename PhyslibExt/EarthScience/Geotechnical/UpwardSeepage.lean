@@ -119,10 +119,13 @@ lemma porePressureOfHead_upwardHead_zero_eq_hydrostatic (ρ g z : ℝ) :
 
 /-- Main result: effective stress is nonnegative at every
 positive depth exactly when `i ≤ (Gs - 1) / (1 + e)`. The
-premise `_hi` marks the upward-flow domain; the equivalence
-itself is algebraic in `i`. -/
+premises `_hi` and `_he` mark the physical domain (upward
+flow, nonnegative void ratio, so the critical gradient is
+the source formula's value, not its totalized value at the
+singular `e = -1`); the equivalence itself is algebraic
+in `i`. -/
 theorem upwardSeepage_nonneg_iff {Gs e γw i : ℝ} (hγ : 0 < γw)
-    (_hi : 0 ≤ i) :
+    (_hi : 0 ≤ i) (_he : 0 ≤ e) :
     (∀ z > 0, 0 ≤ z * (submergedUnitWeight Gs e γw - i * γw)) ↔
       i ≤ (Gs - 1) / (1 + e) := by
   have hratio : submergedUnitWeight Gs e γw / γw = (Gs - 1) / (1 + e) :=
@@ -145,7 +148,8 @@ canonical submerged-weight bridge. -/
 private lemma upwardSeepage_nonneg_total_iff_of
     (hsub : ∀ {Gs e γw : ℝ}, (1 : ℝ) + e ≠ 0 →
       submergedUnitWeight Gs e γw = bulkUnitWeight Gs 1 e γw - γw)
-    {Gs e γw i : ℝ} (he : 1 + e ≠ 0) (hγ : 0 < γw) (_hi : 0 ≤ i) :
+    {Gs e γw i : ℝ} (he : 1 + e ≠ 0) (hγ : 0 < γw) (_hi : 0 ≤ i)
+    (_he : 0 ≤ e) :
     (∀ z > 0, 0 ≤ bulkUnitWeight Gs 1 e γw * z
         - porePressureOfHead γw (upwardHead i z) z) ↔
       i ≤ (Gs - 1) / (1 + e) := by
@@ -154,16 +158,17 @@ private lemma upwardSeepage_nonneg_total_iff_of
       = z * (submergedUnitWeight Gs e γw - i * γw) :=
     fun z => upwardSeepage_effectiveStress_of hsub he
   simp_rw [heff]
-  exact upwardSeepage_nonneg_iff hγ _hi
+  exact upwardSeepage_nonneg_iff hγ _hi _he
 
 /-- The threshold stated on total stress minus pore pressure
-(requires `1 + e ≠ 0`, unlike the closed-form version). -/
+(requires `1 + e ≠ 0` for the submerged-weight bridge, on
+the physical void-ratio domain `0 ≤ e`). -/
 theorem upwardSeepage_nonneg_total_iff {Gs e γw i : ℝ}
-    (he : 1 + e ≠ 0) (hγ : 0 < γw) (_hi : 0 ≤ i) :
+    (he : 1 + e ≠ 0) (hγ : 0 < γw) (_hi : 0 ≤ i) (_he : 0 ≤ e) :
     (∀ z > 0, 0 ≤ bulkUnitWeight Gs 1 e γw * z
         - porePressureOfHead γw (upwardHead i z) z) ↔
       i ≤ (Gs - 1) / (1 + e) :=
   upwardSeepage_nonneg_total_iff_of
-    (fun he => submerged_eq_sat_sub_water he) he hγ _hi
+    (fun he => submerged_eq_sat_sub_water he) he hγ _hi _he
 
 end EarthScience
