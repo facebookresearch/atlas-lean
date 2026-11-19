@@ -34,7 +34,8 @@ import Mathlib.Tactic.Ring
 For a parallel shear velocity `(U(t, y), 0, 0)` with constant density and viscosity and no
 pressure gradient, Physlib's Navier-Stokes equations reduce to `U_t = ν U_yy`, `ν = μ / ρ`. The
 kinetic energy per unit wall area then changes by viscous dissipation plus the work of the wall
-shear stress, and a moving-wall startup profile gains kinetic energy although it dissipates.
+shear stress, and a single-mode transient driven by a moving wall gains kinetic energy for
+`t ≥ 0` although it dissipates.
 
 ## i. Overview
 
@@ -52,9 +53,13 @@ heat-energy identity with explicit boundary work (`ConductionPorts.heatEnergy_ha
 reduced equation gives `K'(t) = -μ ∫₀ᴸ U_y² dy + μ (U U_y)(t, L) - μ (U U_y)(t, 0)`: viscous
 dissipation plus the power `U σ_xy` delivered by the wall shear stress `σ_xy = μ U_y`.
 
-The startup profile `U = A y / L - (A / π) sin(π y / L) exp(-ν (π / L)² t)`, `ν = μ / ρ`, solves
-the reduced equation with wall velocities `0` and `A`. With `s = exp(-ν (π / L)² t)`, its
-dissipation is `μ A² (1 + s² / 2) / L > 0`, its wall work is `μ A² (1 + s) / L`, and
+The single-mode transient `U = A y / L - (A / π) sin(π y / L) exp(-ν (π / L)² t)`,
+`ν = μ / ρ`, is the plane Couette profile `A y / L` minus one decaying sine mode. It solves the
+reduced equation with wall velocities `0` and `A` at every time. It is not a start from rest: its
+initial data `A y / L - (A / π) sin(π y / L)` is nonzero at every interior point for `A ≠ 0`
+(`1/2 - 1/π` at `y = 1/2` when `A = L = 1`), and for `ν > 0` it relaxes to the plane Couette
+profile as `t → ∞`. With `s = exp(-ν (π / L)² t)`, its dissipation is
+`μ A² (1 + s² / 2) / L > 0`, its wall work is `μ A² (1 + s) / L`, and
 `K'(t) = μ A² s (2 - s) / (2 L)`. For `A ≠ 0` and `t ≥ 0` the kinetic energy is positive and
 strictly increasing although energy is dissipated; dropping the wall-work term would predict
 `K' < 0`, which is false for this flow.
@@ -67,22 +72,24 @@ Existence for other data, uniqueness, stability and boundary-layer limits are no
 - `ShearReduction.shearFlow_navierStokes_iff`: Navier-Stokes holds exactly when
   `U_t = (μ / ρ) U_yy`.
 - `ShearReduction.shearFlow_kineticEnergy_hasDerivAt`: the energy balance with wall work.
-- `ShearReduction.startupFlow_navierStokes`: the startup profile is a Navier-Stokes solution.
-- `ShearReduction.startupProfile_energy_balance`: dissipation, wall work and `K'`.
-- `ShearReduction.startupProfile_energy_strictMonoOn`: the kinetic energy increases.
-- `ShearReduction.startupProfile_no_wall_work`: the identity without wall work fails.
+- `ShearReduction.singleModeFlow_navierStokes`: the single-mode transient is a Navier-Stokes
+  solution.
+- `ShearReduction.singleModeProfile_energy_balance`: dissipation, wall work and `K'`.
+- `ShearReduction.singleModeProfile_energy_strictMonoOn`: the kinetic energy increases on
+  `t ≥ 0`.
+- `ShearReduction.singleModeProfile_no_wall_work`: the identity without wall work fails.
 
 ## iii. Table of contents
 
 - A. Parallel shear flow
 - B. Reduction to the heat equation
 - C. Kinetic energy with wall work
-- D. The moving-wall startup profile
+- D. A single-mode transient with a moving wall
 
 ## iv. References
 
 - F. M. White, *Viscous Fluid Flow*, 3rd ed., McGraw-Hill (2006), Chapter 3: unsteady parallel
-  flows and the impulsively started plate.
+  flows.
 - R. B. Bird, W. E. Stewart and E. N. Lightfoot, *Transport Phenomena*, 2nd ed., Wiley (2002),
   Chapter 3: the mechanical energy balance.
 - `ConductionPorts.heatEnergy_hasDerivAt` (`PhyslibExt.HeatTransfer.ConductionPorts`) and
@@ -409,20 +416,23 @@ lemma shearFlow_kineticEnergy_hasDerivAt {ρ L : ℝ} (hρ : 0 < ρ) (hL : 0 ≤
   simp only [mul_zero, intervalIntegral.integral_zero, add_zero]
   field_simp
 
-/-! ## D. The moving-wall startup profile -/
+/-! ## D. A single-mode transient with a moving wall -/
 
-/-- The moving-wall startup profile
-`U(t, y) = A y / L - (A / π) sin(π y / L) exp(-ν (π / L)² t)`. -/
-noncomputable def startupProfile (A L ν t y : ℝ) : ℝ :=
+/-- Single-mode transient between a wall at rest at `y = 0` and a wall moving with velocity `A`
+at `y = L`: `U(t, y) = A y / L - (A / π) sin(π y / L) exp(-ν (π / L)² t)`, the plane Couette
+profile minus one decaying sine mode. It is not a start from rest: the initial data
+`A y / L - (A / π) sin(π y / L)` is nonzero inside the channel for `A ≠ 0`, and the wall `y = L`
+moves at every time. -/
+noncomputable def singleModeProfile (A L ν t y : ℝ) : ℝ :=
   A * y / L - A / Real.pi * Real.sin (Real.pi * y / L) * Real.exp (-ν * (Real.pi / L) ^ 2 * t)
 
-/-- Phase derivative used by the startup profile. -/
+/-- Phase derivative used by the single-mode profile. -/
 private lemma hasDerivAt_phase (L y : ℝ) :
     HasDerivAt (fun y : ℝ => Real.pi * y / L) (Real.pi / L) y :=
   (((hasDerivAt_id y).const_mul Real.pi).div_const L).congr_deriv (by simp)
 
-private lemma hasDerivAt_startupProfile_space (A L ν t y : ℝ) :
-    HasDerivAt (startupProfile A L ν t)
+private lemma hasDerivAt_singleModeProfile_space (A L ν t y : ℝ) :
+    HasDerivAt (singleModeProfile A L ν t)
       (A / L - A / L * Real.exp (-ν * (Real.pi / L) ^ 2 * t) * Real.cos (Real.pi * y / L)) y := by
   have hπ : Real.pi ≠ 0 := Real.pi_ne_zero
   have h1 : HasDerivAt (fun y : ℝ => A * y / L) (A / L) y :=
@@ -431,14 +441,14 @@ private lemma hasDerivAt_startupProfile_space (A L ν t y : ℝ) :
     (A / Real.pi)).mul_const (Real.exp (-ν * (Real.pi / L) ^ 2 * t))
   exact (h1.sub h2).congr_deriv (by field_simp)
 
-private lemma deriv_startupProfile_space (A L ν t : ℝ) :
-    deriv (startupProfile A L ν t) = fun y =>
+private lemma deriv_singleModeProfile_space (A L ν t : ℝ) :
+    deriv (singleModeProfile A L ν t) = fun y =>
       A / L - A / L * Real.exp (-ν * (Real.pi / L) ^ 2 * t) * Real.cos (Real.pi * y / L) :=
-  funext fun y => (hasDerivAt_startupProfile_space A L ν t y).deriv
-/-- The startup profile is jointly `C²`. -/
-lemma startupProfile_contDiff (A L ν : ℝ) :
-    ContDiff ℝ 2 (Function.uncurry (startupProfile A L ν)) := by
-  have h : Function.uncurry (startupProfile A L ν) = fun q : ℝ × ℝ =>
+  funext fun y => (hasDerivAt_singleModeProfile_space A L ν t y).deriv
+/-- The single-mode profile is jointly `C²`. -/
+lemma singleModeProfile_contDiff (A L ν : ℝ) :
+    ContDiff ℝ 2 (Function.uncurry (singleModeProfile A L ν)) := by
+  have h : Function.uncurry (singleModeProfile A L ν) = fun q : ℝ × ℝ =>
       A * q.2 / L - A / Real.pi * Real.sin (Real.pi * q.2 / L) *
         Real.exp (-ν * (Real.pi / L) ^ 2 * q.1) := by
     funext q
@@ -446,13 +456,13 @@ lemma startupProfile_contDiff (A L ν : ℝ) :
   rw [h]
   fun_prop
 
-/-- The startup profile solves `U_t = ν U_yy` at every time and height; its derivatives are
+/-- The single-mode profile solves `U_t = ν U_yy` at every time and height; its derivatives are
 computed from the explicit formula. -/
-lemma startupProfile_heat (A L ν t y : ℝ) :
-    deriv (fun s => startupProfile A L ν s y) t =
-      ν * iteratedDeriv 2 (startupProfile A L ν t) y := by
+lemma singleModeProfile_heat (A L ν t y : ℝ) :
+    deriv (fun s => singleModeProfile A L ν s y) t =
+      ν * iteratedDeriv 2 (singleModeProfile A L ν t) y := by
   have hπ : Real.pi ≠ 0 := Real.pi_ne_zero
-  have ht : HasDerivAt (fun s => startupProfile A L ν s y)
+  have ht : HasDerivAt (fun s => singleModeProfile A L ν s y)
       (-(A / Real.pi * Real.sin (Real.pi * y / L)) *
         (Real.exp (-ν * (Real.pi / L) ^ 2 * t) * (-ν * (Real.pi / L) ^ 2))) t := by
     have he : HasDerivAt (fun s : ℝ => Real.exp (-ν * (Real.pi / L) ^ 2 * s))
@@ -460,53 +470,53 @@ lemma startupProfile_heat (A L ν t y : ℝ) :
       (((hasDerivAt_id t).const_mul (-ν * (Real.pi / L) ^ 2)).exp).congr_deriv (by simp)
     exact ((he.const_mul (A / Real.pi * Real.sin (Real.pi * y / L))).const_sub
       (A * y / L)).congr_deriv (by ring)
-  have hxx : HasDerivAt (deriv (startupProfile A L ν t))
+  have hxx : HasDerivAt (deriv (singleModeProfile A L ν t))
       (A / L * Real.exp (-ν * (Real.pi / L) ^ 2 * t) * Real.sin (Real.pi * y / L) *
         (Real.pi / L)) y := by
-    rw [deriv_startupProfile_space]
+    rw [deriv_singleModeProfile_space]
     exact ((((Real.hasDerivAt_cos _).comp y (hasDerivAt_phase L y)).const_mul
       (A / L * Real.exp (-ν * (Real.pi / L) ^ 2 * t))).const_sub (A / L)).congr_deriv
         (by ring)
   rw [ht.deriv, iteratedDeriv_succ, iteratedDeriv_one, hxx.deriv]
   field_simp
 
-/-- The startup profile is at rest on the wall `y = 0` and moves with velocity `A` on the wall
+/-- The single-mode profile is at rest on the wall `y = 0` and moves with velocity `A` on the wall
 `y = L`. -/
-lemma startupProfile_walls {L : ℝ} (hL : L ≠ 0) (A ν t : ℝ) :
-    startupProfile A L ν t 0 = 0 ∧ startupProfile A L ν t L = A := by
+lemma singleModeProfile_walls {L : ℝ} (hL : L ≠ 0) (A ν t : ℝ) :
+    singleModeProfile A L ν t 0 = 0 ∧ singleModeProfile A L ν t L = A := by
   refine ⟨?_, ?_⟩
-  · simp [startupProfile]
-  · simp only [startupProfile]
+  · simp [singleModeProfile]
+  · simp only [singleModeProfile]
     rw [show Real.pi * L / L = Real.pi by field_simp, Real.sin_pi]
     field_simp
     try ring
 
-/-- With `ν = μ / ρ` and `ρ > 0` the startup flow satisfies Physlib's Navier-Stokes
+/-- With `ν = μ / ρ` and `ρ > 0` the single-mode flow satisfies Physlib's Navier-Stokes
 equations. -/
-lemma startupFlow_navierStokes {ρ : ℝ} (hρ : 0 < ρ) (A L μ lam : ℝ) (p : Time → ℝ) :
-    NavierStokes 3 (shearFlow ρ μ lam p (startupProfile A L (μ / ρ))) (fun t _ => p t)
+lemma singleModeFlow_navierStokes {ρ : ℝ} (hρ : 0 < ρ) (A L μ lam : ℝ) (p : Time → ℝ) :
+    NavierStokes 3 (shearFlow ρ μ lam p (singleModeProfile A L (μ / ρ))) (fun t _ => p t)
       (fun _ _ => μ) (fun _ _ => lam) := by
-  refine (shearFlow_navierStokes_iff hρ μ lam p (startupProfile_contDiff A L (μ / ρ))).mpr ?_
+  refine (shearFlow_navierStokes_iff hρ μ lam p (singleModeProfile_contDiff A L (μ / ρ))).mpr ?_
   intro τ y
-  exact startupProfile_heat A L (μ / ρ) τ y
+  exact singleModeProfile_heat A L (μ / ρ) τ y
 
-/-- Energy balance of the startup flow with `ν = μ / ρ` and `s = exp(-ν (π / L)² t)`: the
+/-- Energy balance of the single-mode flow with `ν = μ / ρ` and `s = exp(-ν (π / L)² t)`: the
 dissipation is `μ A² (1 + s² / 2) / L`, the work of the moving wall is `μ A² (1 + s) / L`,
 and the kinetic energy has derivative `μ A² s (2 - s) / (2 L)`. -/
-lemma startupProfile_energy_balance {ρ L : ℝ} (hρ : 0 < ρ) (hL : 0 < L) (A μ t : ℝ) :
-    μ * (∫ y in (0 : ℝ)..L, deriv (startupProfile A L (μ / ρ) t) y ^ 2) =
+lemma singleModeProfile_energy_balance {ρ L : ℝ} (hρ : 0 < ρ) (hL : 0 < L) (A μ t : ℝ) :
+    μ * (∫ y in (0 : ℝ)..L, deriv (singleModeProfile A L (μ / ρ) t) y ^ 2) =
         μ * A ^ 2 * (1 + Real.exp (-(μ / ρ) * (Real.pi / L) ^ 2 * t) ^ 2 / 2) / L ∧
-      μ * deriv (startupProfile A L (μ / ρ) t) L * A =
+      μ * deriv (singleModeProfile A L (μ / ρ) t) L * A =
         μ * A ^ 2 * (1 + Real.exp (-(μ / ρ) * (Real.pi / L) ^ 2 * t)) / L ∧
-      HasDerivAt (shearKineticEnergy ρ L (startupProfile A L (μ / ρ)))
+      HasDerivAt (shearKineticEnergy ρ L (singleModeProfile A L (μ / ρ)))
         (μ * A ^ 2 * Real.exp (-(μ / ρ) * (Real.pi / L) ^ 2 * t) *
           (2 - Real.exp (-(μ / ρ) * (Real.pi / L) ^ 2 * t)) / (2 * L)) t := by
   have hπ : Real.pi ≠ 0 := Real.pi_ne_zero
   have hL0 : L ≠ 0 := hL.ne'
   set s := Real.exp (-(μ / ρ) * (Real.pi / L) ^ 2 * t) with hs
-  have hdx := deriv_startupProfile_space A L (μ / ρ) t
+  have hdx := deriv_singleModeProfile_space A L (μ / ρ) t
   rw [← hs] at hdx
-  have hdiss : (∫ y in (0 : ℝ)..L, deriv (startupProfile A L (μ / ρ) t) y ^ 2) =
+  have hdiss : (∫ y in (0 : ℝ)..L, deriv (singleModeProfile A L (μ / ρ) t) y ^ 2) =
       A ^ 2 * (1 + s ^ 2 / 2) / L := by
     rw [hdx]
     have hF : ∀ y ∈ Set.uIcc (0 : ℝ) L, HasDerivAt
@@ -535,26 +545,26 @@ lemma startupProfile_energy_balance {ρ L : ℝ} (hρ : 0 < ρ) (hL : 0 < L) (A 
     simp only [mul_zero, zero_div, Real.sin_zero, Real.sin_pi, Real.sin_two_pi]
     field_simp
     try ring
-  have hwall : deriv (startupProfile A L (μ / ρ) t) L = A * (1 + s) / L := by
+  have hwall : deriv (singleModeProfile A L (μ / ρ) t) L = A * (1 + s) / L := by
     rw [hdx]
     simp only
     rw [show Real.pi * L / L = Real.pi by field_simp, Real.cos_pi]
     field_simp
     try ring
-  have hwalls := startupProfile_walls hL0 A (μ / ρ) t
+  have hwalls := singleModeProfile_walls hL0 A (μ / ρ) t
   have hK := shearFlow_kineticEnergy_hasDerivAt hρ hL.le μ 0 (fun _ => 0)
-    (startupProfile_contDiff A L (μ / ρ)) (startupFlow_navierStokes hρ A L μ 0 (fun _ => 0)) t
+    (singleModeProfile_contDiff A L (μ / ρ)) (singleModeFlow_navierStokes hρ A L μ 0 (fun _ => 0)) t
   refine ⟨by rw [hdiss]; ring, by rw [hwall]; ring, ?_⟩
   refine hK.congr_deriv ?_
   rw [hdiss, hwalls.1, hwalls.2, hwall]
   field_simp
   ring
 
-/-- Nonzero kinetic energy: for `ρ, μ, L > 0`, `A ≠ 0` and `t ≥ 0` the startup flow has
+/-- Nonzero kinetic energy: for `ρ, μ, L > 0`, `A ≠ 0` and `t ≥ 0` the single-mode flow has
 positive kinetic energy. -/
-lemma startupProfile_energy_pos {ρ μ L A t : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hL : 0 < L)
+lemma singleModeProfile_energy_pos {ρ μ L A t : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hL : 0 < L)
     (hA : A ≠ 0) (ht : 0 ≤ t) :
-    0 < shearKineticEnergy ρ L (startupProfile A L (μ / ρ)) t := by
+    0 < shearKineticEnergy ρ L (singleModeProfile A L (μ / ρ)) t := by
   have hπ : 0 < Real.pi := Real.pi_pos
   have hν : 0 ≤ μ / ρ := (div_pos hμ hρ).le
   have hs1 : Real.exp (-(μ / ρ) * (Real.pi / L) ^ 2 * t) ≤ 1 := by
@@ -565,8 +575,8 @@ lemma startupProfile_energy_pos {ρ μ L A t : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ
   unfold shearKineticEnergy
   apply intervalIntegral.intervalIntegral_pos_of_pos_on _ _ hL
   · apply Continuous.intervalIntegrable
-    have := (startupProfile_contDiff A L (μ / ρ)).continuous
-    have hc : Continuous (startupProfile A L (μ / ρ) t) :=
+    have := (singleModeProfile_contDiff A L (μ / ρ)).continuous
+    have hc : Continuous (singleModeProfile A L (μ / ρ) t) :=
       this.comp (continuous_const.prodMk continuous_id)
     fun_prop
   · intro y hy
@@ -576,14 +586,14 @@ lemma startupProfile_energy_pos {ρ μ L A t : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ
       nlinarith [hy.2]
     have hsin : 0 < Real.sin (Real.pi * y / L) := Real.sin_pos_of_pos_of_lt_pi hz0 hzπ
     have hlt := Real.sin_lt hz0
-    have hU : startupProfile A L (μ / ρ) t y = A / Real.pi * (Real.pi * y / L -
+    have hU : singleModeProfile A L (μ / ρ) t y = A / Real.pi * (Real.pi * y / L -
         Real.exp (-(μ / ρ) * (Real.pi / L) ^ 2 * t) * Real.sin (Real.pi * y / L)) := by
-      unfold startupProfile
+      unfold singleModeProfile
       field_simp
     have hpos : 0 < Real.pi * y / L -
         Real.exp (-(μ / ρ) * (Real.pi / L) ^ 2 * t) * Real.sin (Real.pi * y / L) := by
       nlinarith
-    have hne : startupProfile A L (μ / ρ) t y ≠ 0 := by
+    have hne : singleModeProfile A L (μ / ρ) t y ≠ 0 := by
       rw [hU]
       exact mul_ne_zero (div_ne_zero hA hπ.ne') hpos.ne'
     have := pow_pos (abs_pos.mpr hne) 2
@@ -591,14 +601,14 @@ lemma startupProfile_energy_pos {ρ μ L A t : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ
     positivity
 
 /-- Increasing kinetic energy despite viscous dissipation: for `ρ, μ, L > 0` and `A ≠ 0` the
-kinetic energy of the startup flow is strictly increasing on `t ≥ 0`. -/
-lemma startupProfile_energy_strictMonoOn {ρ μ L A : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hL : 0 < L)
+kinetic energy of the single-mode flow is strictly increasing on `t ≥ 0`. -/
+lemma singleModeProfile_energy_strictMonoOn {ρ μ L A : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hL : 0 < L)
     (hA : A ≠ 0) :
-    StrictMonoOn (shearKineticEnergy ρ L (startupProfile A L (μ / ρ))) (Set.Ici 0) := by
-  have hd : ∀ t, HasDerivAt (shearKineticEnergy ρ L (startupProfile A L (μ / ρ)))
+    StrictMonoOn (shearKineticEnergy ρ L (singleModeProfile A L (μ / ρ))) (Set.Ici 0) := by
+  have hd : ∀ t, HasDerivAt (shearKineticEnergy ρ L (singleModeProfile A L (μ / ρ)))
       (μ * A ^ 2 * Real.exp (-(μ / ρ) * (Real.pi / L) ^ 2 * t) *
         (2 - Real.exp (-(μ / ρ) * (Real.pi / L) ^ 2 * t)) / (2 * L)) t :=
-    fun t => (startupProfile_energy_balance hρ hL A μ t).2.2
+    fun t => (singleModeProfile_energy_balance hρ hL A μ t).2.2
   apply strictMonoOn_of_deriv_pos (convex_Ici 0)
   · exact fun t _ => (hd t).continuousAt.continuousWithinAt
   · intro t ht
@@ -618,14 +628,14 @@ lemma startupProfile_energy_strictMonoOn {ρ μ L A : ℝ} (hρ : 0 < ρ) (hμ :
     positivity
 
 /-- Dropping the moving-wall term falsely predicts decay: for `ρ, μ, L > 0`, `A ≠ 0` and
-`t ≥ 0` the kinetic energy of the startup flow does not have the derivative
+`t ≥ 0` the kinetic energy of the single-mode flow does not have the derivative
 `-μ ∫₀ᴸ U_y² dy`, which is negative. -/
-lemma startupProfile_no_wall_work {ρ μ L A t : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hL : 0 < L)
+lemma singleModeProfile_no_wall_work {ρ μ L A t : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hL : 0 < L)
     (hA : A ≠ 0) (ht : 0 ≤ t) :
-    ¬ HasDerivAt (shearKineticEnergy ρ L (startupProfile A L (μ / ρ)))
-      (-μ * ∫ y in (0 : ℝ)..L, deriv (startupProfile A L (μ / ρ) t) y ^ 2) t := by
+    ¬ HasDerivAt (shearKineticEnergy ρ L (singleModeProfile A L (μ / ρ)))
+      (-μ * ∫ y in (0 : ℝ)..L, deriv (singleModeProfile A L (μ / ρ) t) y ^ 2) t := by
   intro h
-  obtain ⟨hdiss, -, hK⟩ := startupProfile_energy_balance hρ hL A μ t
+  obtain ⟨hdiss, -, hK⟩ := singleModeProfile_energy_balance hρ hL A μ t
   have heq := h.unique hK
   have hs0 := Real.exp_pos (-(μ / ρ) * (Real.pi / L) ^ 2 * t)
   have hs1 : Real.exp (-(μ / ρ) * (Real.pi / L) ^ 2 * t) ≤ 1 := by
@@ -640,7 +650,7 @@ lemma startupProfile_no_wall_work {ρ μ L A t : ℝ} (hρ : 0 < ρ) (hμ : 0 < 
       (2 - Real.exp (-(μ / ρ) * (Real.pi / L) ^ 2 * t)) / (2 * L) := by
     have h2 : 0 < 2 - Real.exp (-(μ / ρ) * (Real.pi / L) ^ 2 * t) := by linarith
     positivity
-  have hneg : -μ * (∫ y in (0 : ℝ)..L, deriv (startupProfile A L (μ / ρ) t) y ^ 2) < 0 := by
+  have hneg : -μ * (∫ y in (0 : ℝ)..L, deriv (singleModeProfile A L (μ / ρ) t) y ^ 2) < 0 := by
     rw [neg_mul, hdiss]
     have : 0 < μ * A ^ 2 * (1 + Real.exp (-(μ / ρ) * (Real.pi / L) ^ 2 * t) ^ 2 / 2) / L := by
       positivity
