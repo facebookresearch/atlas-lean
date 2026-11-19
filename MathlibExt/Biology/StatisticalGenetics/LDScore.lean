@@ -60,7 +60,8 @@ convention `x / 0 = 0`.
 * `Model.integral_chiSq`: `𝔼[χ² j] = N h² / M * ℓ j + (1 - h²) * (∑ i, X i j ^ 2) / N` for
   any genotype matrix, with `β̂` the `N`-normalized score.
 * `IsStandardized`: every marker column has mean `0` and sum of squares `N`; then `ldCorr` is
-  the sample correlation (`IsStandardized.ldCorr_self`, `IsStandardized.ldCorr_sq_le_one`).
+  the sample correlation (`IsStandardized.ldCorr_self`, `IsStandardized.ldCorr_sq_le_one`,
+  `IsStandardized.one_le_ldScore`).
 * `Model.integral_chiSq_of_standardized`: for a standardized genotype matrix,
   `𝔼[χ² j] = N h² / M * ℓ j + (1 - h²)`.
 
@@ -102,6 +103,14 @@ theorem IsStandardized.ldCorr_self {X : Matrix (Fin N) (Fin M) ℝ} (hX : IsStan
   have h := (hX k).2
   simp only [pow_two] at h
   rw [ldCorr, h, div_self (Nat.cast_ne_zero.mpr hN)]
+
+/-- For a standardized matrix, the LD score of each marker is at least `1`. -/
+theorem IsStandardized.one_le_ldScore {X : Matrix (Fin N) (Fin M) ℝ} (hX : IsStandardized X)
+    (hN : N ≠ 0) (j : Fin M) : 1 ≤ ldScore X j := by
+  have h := Finset.single_le_sum (f := fun k => ldCorr X j k ^ 2)
+    (fun k _ => sq_nonneg _) (Finset.mem_univ j)
+  simp only [hX.ldCorr_self hN, one_pow] at h
+  exact h
 
 /-- For a standardized matrix the correlations lie in `[-1, 1]` (Cauchy–Schwarz). -/
 theorem IsStandardized.ldCorr_sq_le_one {X : Matrix (Fin N) (Fin M) ℝ} (hX : IsStandardized X)

@@ -1,0 +1,3 @@
+# The general Green kernel specializes to Kimura's sojourn density
+
+For every real $\sigma$, every $p \in [0, 1]$ and every $x \in (0, 1)$, the [Green's function](../selection-duality-and-general-one-dimensional-di/green-function.md) of the diffusion with drift $b(y) = \sigma y(1 - y)$ and infinitesimal variance $a(y) = y(1 - y)$ equals the [sojourn density](selection-green.md) $\Psi_\sigma(p, x)$. Indeed the scale function is $S(y) = u_\sigma(y)/K_\sigma$, with [Kimura's fixation probability](../wright-fisher-diffusion/kimura-fixation.md) $u_\sigma$ and its [slope constant](../wright-fisher-diffusion/kimura-slope.md) $K_\sigma$: both sides have derivative $e^{-2\sigma y}$ and vanish at $0$.

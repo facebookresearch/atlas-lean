@@ -25,7 +25,8 @@ open scoped BigOperators
 private lemma conv_symm (N : ℕ) :
     ∑ k ∈ Finset.range (N + 1), k * (Nat.centralBinom k * Nat.centralBinom (N - k)) =
     ∑ k ∈ Finset.range (N + 1), (N - k) * (Nat.centralBinom k * Nat.centralBinom (N - k)) := by
-  rw [← Finset.sum_range_reflect (fun k => k * (Nat.centralBinom k * Nat.centralBinom (N - k))) (N + 1)]
+  rw [← Finset.sum_range_reflect
+      (fun k => k * (Nat.centralBinom k * Nat.centralBinom (N - k))) (N + 1)]
   apply Finset.sum_congr rfl
   intro j hj
   simp only [Finset.mem_range] at hj
@@ -36,7 +37,8 @@ private lemma conv_symm (N : ℕ) :
 private lemma conv_symm_succ (N : ℕ) :
     ∑ k ∈ Finset.range (N + 1), ((N - k) + 1) * (Nat.centralBinom k * Nat.centralBinom (N - k)) =
     ∑ k ∈ Finset.range (N + 1), (k + 1) * (Nat.centralBinom k * Nat.centralBinom (N - k)) := by
-  rw [← Finset.sum_range_reflect (fun k => (k + 1) * (Nat.centralBinom k * Nat.centralBinom (N - k))) (N + 1)]
+  rw [← Finset.sum_range_reflect
+      (fun k => (k + 1) * (Nat.centralBinom k * Nat.centralBinom (N - k))) (N + 1)]
   apply Finset.sum_congr rfl
   intro j hj
   simp only [Finset.mem_range] at hj
@@ -77,7 +79,8 @@ private lemma conv_centralBinom (n : ℕ) :
           = 2 * ∑ k ∈ Finset.range (n + 1),
             (2 * (n - k) + 1) * (Nat.centralBinom k * Nat.centralBinom (n - k)) := by
       rw [Finset.sum_range_succ]
-      have hlast : (n + 1 - (n + 1)) * (Nat.centralBinom (n + 1) * Nat.centralBinom (n + 1 - (n + 1))) = 0 := by simp
+      have hlast : (n + 1 - (n + 1)) *
+          (Nat.centralBinom (n + 1) * Nat.centralBinom (n + 1 - (n + 1))) = 0 := by simp
       rw [hlast, add_zero, Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro k hk
@@ -267,7 +270,8 @@ private lemma pair_nonneg (x : ℝ) (hx : |x| < 1 / 4) (hxn : x < 0) (j : ℕ) :
     have := abs_nonneg x
     linarith
   have h812 : (0 : ℝ) ≤ 8 * (j : ℝ) + 12 := by positivity
-  have hprod1 : (0 : ℝ) ≤ (1 / 4 - |x|) * ((8 * (j : ℝ) + 12) * (Nat.centralBinom (2 * j + 2) : ℝ)) :=
+  have hprod1 : (0 : ℝ) ≤ (1 / 4 - |x|) *
+      ((8 * (j : ℝ) + 12) * (Nat.centralBinom (2 * j + 2) : ℝ)) :=
     mul_nonneg h14 (mul_nonneg h812 hCnn)
   have hprod2 : (0 : ℝ) ≤ 2 * |x| * (Nat.centralBinom (2 * j + 2) : ℝ) :=
     mul_nonneg (mul_nonneg (by norm_num) (abs_nonneg _)) hCnn
@@ -495,19 +499,24 @@ private lemma step_rec (k : ℕ) (x : ℝ) (hx : |x| < 1 / 4) :
     ring
   have hRHS : HasSum (fun n : ℕ => 2 * (2 * (n : ℝ) + 1) * x
       * ((Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n))
-      (4 * x * (∑' n : ℕ, (n : ℝ) * ((Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n))
-        + 2 * x * (∑' n : ℕ, (Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n)) := by
+      (4 * x * (∑' n : ℕ, (n : ℝ) *
+          ((Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n))
+        + 2 * x * (∑' n : ℕ, (Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) *
+            x ^ n)) := by
     have h1 := (hsU.hasSum.mul_left (4 * x)).add (hsT.hasSum.mul_left (2 * x))
     refine HasSum.congr_fun h1 (fun n => ?_)
     ring
-  have hVals : (∑' n : ℕ, (n : ℝ) * ((Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n))
+  have hVals : (∑' n : ℕ, (n : ℝ) *
+      ((Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n))
       - (k : ℝ) * ((∑' n : ℕ, (Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n)
         - (Nat.centralBinom 0 : ℝ) * (((0).descFactorial k : ℕ) : ℝ) * x ^ 0)
-      = 4 * x * (∑' n : ℕ, (n : ℝ) * ((Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n))
+      = 4 * x * (∑' n : ℕ, (n : ℝ) *
+          ((Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n))
         + 2 * x * (∑' n : ℕ, (Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n) :=
     HasSum.unique
       (HasSum.congr_fun hLHS (fun n => (pw_shift k n x).symm)) hRHS
-  have hk_a0 : (k : ℝ) * ((Nat.centralBinom 0 : ℝ) * (((0).descFactorial k : ℕ) : ℝ) * x ^ 0) = 0 := by
+  have hk_a0 : (k : ℝ) *
+      ((Nat.centralBinom 0 : ℝ) * (((0).descFactorial k : ℕ) : ℝ) * x ^ 0) = 0 := by
     by_cases hk0 : k = 0
     · subst hk0
       simp
@@ -515,24 +524,29 @@ private lemma step_rec (k : ℕ) (x : ℝ) (hx : |x| < 1 / 4) :
       have z : (0).descFactorial k = 0 := Nat.descFactorial_eq_zero_iff_lt.mpr hpos
       rw [z]
       simp
-  have h_alg1 : (∑' n : ℕ, (n : ℝ) * ((Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n))
+  have h_alg1 : (∑' n : ℕ, (n : ℝ) *
+      ((Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n))
       * (1 - 4 * x)
       = ((k : ℝ) + 2 * x)
         * (∑' n : ℕ, (Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n) := by
     linear_combination hVals - hk_a0
-  have hUeq : (∑' n : ℕ, (n : ℝ) * ((Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n))
+  have hUeq : (∑' n : ℕ, (n : ℝ) *
+      ((Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n))
       = (∑' n : ℕ, (Nat.centralBinom n : ℝ) * ((n.descFactorial (k + 1) : ℕ) : ℝ) * x ^ n)
-        + (k : ℝ) * (∑' n : ℕ, (Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n) := by
+        + (k : ℝ) * (∑' n : ℕ,
+            (Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n) := by
     have h1 := hsT'.hasSum.add (hsT.hasSum.mul_left (k : ℝ))
     have h2 : HasSum (fun n : ℕ => (n : ℝ)
         * ((Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n))
         ((∑' n : ℕ, (Nat.centralBinom n : ℝ) * ((n.descFactorial (k + 1) : ℕ) : ℝ) * x ^ n)
-          + (k : ℝ) * (∑' n : ℕ, (Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n)) :=
+          + (k : ℝ) * (∑' n : ℕ,
+              (Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n)) :=
       HasSum.congr_fun h1 (fun n => hpt n)
     exact (HasSum.unique h2 hsU.hasSum).symm
   have hfin : (∑' n : ℕ, (Nat.centralBinom n : ℝ) * ((n.descFactorial (k + 1) : ℕ) : ℝ) * x ^ n)
       = 2 * x * (2 * (k : ℝ) + 1)
-        * (∑' n : ℕ, (Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n) / (1 - 4 * x) := by
+        * (∑' n : ℕ, (Nat.centralBinom n : ℝ) * ((n.descFactorial k : ℕ) : ℝ) * x ^ n) /
+            (1 - 4 * x) := by
     rw [eq_div_iff h14]
     linear_combination h_alg1 - (1 - 4 * x) * hUeq
   rw [div_mul_eq_mul_div]

@@ -32,13 +32,15 @@ Let the network have deficiency zero.
 * If it is not weakly reversible, then for no choice of positive rate constants does the
   mass-action system have a positive equilibrium.
 
-Feinberg's theorem also asserts that the equilibrium in the weakly reversible case is complex
-balanced (stated here as `exists_pos_isComplexBalanced`) and locally asymptotically stable, and
-the second part holds for arbitrary kinetics; stability and general kinetics are not stated
-here. The reaction networks, the stoichiometric subspace, the mass-action vector field and
-complex balancing are defined in `MathlibExt.Biology.Dynamics.ComplexBalanced`, which also
-proves the Horn–Jackson theorem: given one positive complex-balanced equilibrium, each positive
-stoichiometric compatibility class contains exactly one positive equilibrium.
+The weakly reversible case, together with complex balancing of the equilibrium, is proved in
+`MathlibExt.Biology.Dynamics.DeficiencyZero.Integration` (`exists_pos_isComplexBalanced`,
+`existsUnique_equilibrium`); only the second case is stated here. Feinberg's theorem also
+asserts local asymptotic stability in the weakly reversible case, and the second part holds for
+arbitrary kinetics; stability and general kinetics are not stated here. The reaction networks,
+the stoichiometric subspace, the mass-action vector field and complex balancing are defined in
+`MathlibExt.Biology.Dynamics.ComplexBalanced`, which also proves the Horn–Jackson theorem: given
+one positive complex-balanced equilibrium, each positive stoichiometric compatibility class
+contains exactly one positive equilibrium.
 
 Sources: M. Feinberg, "Chemical reaction network structure and the stability of complex
 isothermal reactors — I. The deficiency zero and deficiency one theorems", Chem. Eng. Sci. 42
@@ -52,7 +54,7 @@ Mech. Anal. 49 (1972) 187–194; M. Feinberg, *Foundations of Chemical Reaction 
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Biology.Dynamics.ComplexBalanced
+public import MathlibExt.Biology.Dynamics.DeficiencyZero.API
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import Mathlib.LinearAlgebra.Dimension.Finrank
 public import Mathlib.Logic.Relation
@@ -68,56 +70,6 @@ variable {S ρ : Type*}
 namespace ReactionNetwork
 
 variable (N : ReactionNetwork S ρ)
-
-/-- The complexes of the network: the sources and products of its reactions. -/
-def complexes : Set (S → ℕ) :=
-  Set.range N.src ∪ Set.range N.prod
-
-/-- The directed reaction relation on complexes: `y ⟶ y'` if some reaction has source `y` and
-product `y'`. -/
-def Reacts (y y' : S → ℕ) : Prop :=
-  ∃ r, N.src r = y ∧ N.prod r = y'
-
-/-- The undirected reaction graph on the complexes: distinct complexes are adjacent when one
-reacts to the other. -/
-def linkageGraph : SimpleGraph N.complexes :=
-  SimpleGraph.fromRel fun c c' => N.Reacts c c'
-
-/-- The number of linkage classes: connected components of the undirected reaction graph. -/
-noncomputable def numLinkageClasses : ℕ :=
-  Nat.card N.linkageGraph.ConnectedComponent
-
-/-- The deficiency `δ = n - ℓ - s` (number of complexes, linkage classes, dimension of the
-stoichiometric subspace). -/
-noncomputable def deficiency : ℤ :=
-  (Nat.card N.complexes : ℤ) - N.numLinkageClasses -
-    Module.finrank ℝ N.stoichiometricSubspace
-
-/-- The network is weakly reversible: for every reaction `y → y'` there is a directed path of
-reactions from `y'` back to `y`. -/
-def IsWeaklyReversible : Prop :=
-  ∀ r, Relation.ReflTransGen N.Reacts (N.prod r) (N.src r)
-
-/-- **Horn–Feinberg: complex balancing for every choice of rate constants.** A weakly
-reversible mass-action network of deficiency zero has, for any positive rate constants, a
-positive complex-balanced equilibrium. Together with
-`existsUnique_equilibrium_of_isComplexBalanced` this gives `existsUnique_equilibrium`.
-
-Source: Horn (1972); Feinberg (1972); Feinberg (1987). -/
-theorem_wanted exists_pos_isComplexBalanced [Fintype S] [Fintype ρ] (hδ : N.deficiency = 0)
-    (hwr : N.IsWeaklyReversible) {k : ρ → ℝ} (hk : ∀ r, 0 < k r) :
-    ∃ c : S → ℝ, (∀ s, 0 < c s) ∧ N.IsComplexBalanced k c
-
-/-- **Deficiency-zero theorem, weakly reversible case.** A weakly reversible mass-action
-network of deficiency zero has, for any positive rate constants, exactly one equilibrium in
-each positive stoichiometric compatibility class.
-
-Source: Horn (1972); Horn & Jackson (1972); Feinberg (1987). -/
-theorem_wanted existsUnique_equilibrium [Fintype S] [Fintype ρ] (hδ : N.deficiency = 0)
-    (hwr : N.IsWeaklyReversible) {k : ρ → ℝ} (hk : ∀ r, 0 < k r)
-    {x₀ : S → ℝ} (hx₀ : ∀ s, 0 < x₀ s) :
-    ∃! x : S → ℝ, (∀ s, 0 < x s) ∧ x - x₀ ∈ N.stoichiometricSubspace ∧
-      N.massActionField k x = 0
 
 /-- **Deficiency-zero theorem, non-weakly-reversible case.** A mass-action network of
 deficiency zero that is not weakly reversible has no positive equilibrium for any positive

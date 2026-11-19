@@ -260,7 +260,7 @@ discrete-logarithm advantage of `reduction A`, both over `h ← paramGen q g`. -
 theorem bindingAdvantage_le [Fact q.Prime] {g : G} (hg : g ^ q = 1) (hg1 : g ≠ 1)
     (A : BindingAdversary G (ZMod q) G (ZMod q) R) :
     bindingAdvantage q g A ≤ dlAdvantage q g (reduction A) := by
-  refine winProb_bind_map_mono _ _ fun h hh r hw => ?_
+  refine Cslib.Crypto.Framework.winProb_bind_map_mono _ _ fun h hh r hw => ?_
   obtain ⟨h₁, h₂, hne⟩ := of_decide_eq_true hw
   exact decide_eq_true (extract_spec hg hg1 (pow_eq_one_of_mem_support_paramGen hg hh) hne
     (accepts_iff.mp h₁) (accepts_iff.mp h₂))

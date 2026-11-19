@@ -518,7 +518,7 @@ theorem tiePartition_snoc_eq_seat_some_iff {n : ℕ} (xs : Fin n → X) (x : X)
     exact Subtype.ext ((tiePartition xs).eq_of_mem_parts B'.2 B.2 hB' hi)
 
 /-- The event that the draws have a given tie partition is measurable. -/
-theorem measurableSet_tiePartition_eq [MeasurableSingletonClass X]
+theorem measurableSet_tiePartition_eq
     [MeasurableSpace.CountablySeparated X] {n : ℕ} (π : Finpartition (univ : Finset (Fin n))) :
     MeasurableSet {xs : Fin n → X | tiePartition xs = π} := by
   obtain ⟨f, hf, hinj⟩ := MeasurableSpace.measurable_injection_nat_bool_of_countablySeparated X

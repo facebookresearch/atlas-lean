@@ -23,7 +23,9 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.RisingSun` — rising_sun_lemma (manifest `manifests/problems/rising_sun_lemma.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.RisingSun` — rising_sun_lemma
+(manifest `manifests/problems/rising_sun_lemma.toml`, rev 1, submitter Kim Morrison, status
+archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
@@ -77,7 +79,8 @@ def HasRisingSunProperty (a b : ℝ) (f : ℝ → ℝ) : Prop :=
 
 /- **Riesz's rising sun lemma.** Every continuous real function on a compact
 interval has the rising-sun property. -/
-/-- Source: F. Riesz (1932). Knill, §163. Via leanprover/lean-eval@38361be, problem `rising_sun_lemma`. -/
+/-- Source: F. Riesz (1932). Knill, §163. Via leanprover/lean-eval@38361be, problem
+`rising_sun_lemma`. -/
 public theorem_wanted rising_sun_lemma {a b : ℝ} (hab : a < b) {f : ℝ → ℝ}
     (hf : ContinuousOn f (Icc a b)) :
     HasRisingSunProperty a b f

@@ -52,7 +52,8 @@ absolute value. -/
 def IsBounded (x : ℕ → ℝ) : Prop :=
   ∃ B : ℝ, ∀ n : ℕ, |x n| ≤ B
 
-/-- Mazur's Problem 5 (bounded case): some permanent matrix method sums exactly the bounded asymptotically convergent sequences. -/
+/-- Mazur's Problem 5 (bounded case): some permanent matrix method sums exactly the bounded
+asymptotically convergent sequences. -/
 def ScottishBookProblem5Claim : Prop :=
   ∃ a : ℕ → ℕ → ℝ, IsPermanent a ∧
     ∀ x : ℕ → ℝ, IsBounded x →

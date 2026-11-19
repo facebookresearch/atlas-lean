@@ -127,4 +127,21 @@ example {y : ℝ} (hy : y ∈ Icc (0 : ℝ) 1) :
 `2`, so `kimuraFixation_le_one` needs `y ≤ 1`. -/
 example : kimuraFixation 0 2 = 2 := kimuraFixation_neutral 2
 
+-- The midpoint value at `α = 1`.
+example : kimuraFixation 1 (1 / 2) = 1 / (1 + exp (-1)) :=
+  kimuraFixation_one_half
+
+-- Continuity in the selection coefficient at neutrality.
+example (x : ℝ) : ContinuousAt (fun α => kimuraFixation α x) 0 :=
+  continuousAt_kimuraFixation_zero x
+
+-- The `4Ns` form of Kimura's formula.
+example (N s p : ℝ) (hNs : N * s ≠ 0) :
+    kimuraFixation (2 * N * s) p = (1 - exp (-(4 * N * s * p))) / (1 - exp (-(4 * N * s))) :=
+  kimuraFixation_two_mul_mul N s p hNs
+
+#print axioms kimuraFixation_one_half
+#print axioms continuousAt_kimuraFixation_zero
+#print axioms kimuraFixation_two_mul_mul
+
 end MathlibExtTest.Biology.PopulationGenetics.Diffusion.WrightFisher

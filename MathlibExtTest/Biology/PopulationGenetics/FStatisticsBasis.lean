@@ -71,7 +71,29 @@ example : ∫ ω, (∑ i : Fin 4, (![1/2, 1/2, -1/2, -1/2] i : ℝ) •
         (![0, 1, 0, 1] i) (![2, 2, 2, 0] i) :=
   integral_sum_smul_f2Form (fun _ => MemLp.of_discrete) _ _ _ _
 
+/-- The Dirac value of an `f2` statistic is the corresponding per-locus form. -/
+example : f2 (Measure.dirac PUnit.unit) (fun X (_ : PUnit) => ![1/5, 1/2, 9/10] X) 0 2 =
+    f2Form 0 2 ![1/5, 1/2, 9/10] :=
+  f2_dirac _ _ _
+
+/-- A nonzero `f2` form, so the Dirac converse is not vacuous. -/
+example : f2Form (0 : Fin 2) 1 ≠ 0 := by
+  intro h
+  have hx := congrFun h (fun i => (i : ℝ))
+  simp [f2Form] at hx
+
+/-- The named transfer theorem applied to the symmetry relation between `f2Form 0 1` and
+`f2Form 1 0`: since the form combination is zero, every model has the same statistic relation. -/
+example (Ω : Type) [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
+    (p : Fin 2 → Ω → ℝ) (hp : ∀ X, MemLp (p X) 2 μ) :
+    ∑ i : Fin 2, (![1, -1] i : ℝ) * f2 μ p (![0, 1] i) (![1, 0] i) = 0 := by
+  have hform : ∑ i : Fin 2, (![1, -1] i : ℝ) • f2Form (![0, 1] i : Fin 2) (![1, 0] i) = 0 := by
+    simp [Fin.sum_univ_two, f2Form_comm]
+  exact (sum_smul_f2Form_eq_zero_iff Finset.univ _ _ _).mp hform Ω μ p hp
+
 #print axioms finrank_fSpace
+#print axioms sum_smul_f2Form_eq_zero_iff
+#print axioms f2_dirac
 #print axioms span_f3Form
 #print axioms linearIndependent_f3Form
 
