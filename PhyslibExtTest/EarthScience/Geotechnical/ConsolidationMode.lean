@@ -153,27 +153,32 @@ example : consolidationModeAverage 100 4 2 3
   consolidationModeAverage_eq (by norm_num)
 
 /-- No settlement has accrued at `t = 0`. -/
-example (σ : ℝ → Matrix (Fin 1) (Fin 1) ℝ) :
-    consolidationModeSettlement (1 / 10) σ 0 100 4 2 0 = 0 := by
-  rw [consolidationModeSettlement_eq _ _ _ (by norm_num)]
+example : consolidationModeSettlement (1 / 10) 100 4 2 0 = 0 := by
+  rw [consolidationModeSettlement_eq _ (by norm_num)]
   simp
 
-/-- Settlement is `mv` times the depth integral of dissipated
-excess pore pressure, at constant total stress. -/
+/-- Scalar settlement at the focused time, as a client of
+the general statement. -/
+example : consolidationModeSettlement (1 / 10) 100 4 2 3
+    = 2 * (1 / 10) * 100 * 4 / Real.pi
+      * (1 - Real.exp (-2 * (Real.pi / 4) ^ 2 * 3)) :=
+  consolidationModeSettlement_eq _ (by norm_num)
+
+/-- The scalar settlement is `mv` times the depth integral
+of the effective stress increase for an arbitrary constant
+total stress field: the stress terms cancel. -/
 example (mv u0 H cv t : ℝ) (σ : ℝ → Matrix (Fin 1) (Fin 1) ℝ) :
-    consolidationModeSettlement mv σ 0 u0 H cv t
+    consolidationModeSettlement mv u0 H cv t
       = mv * ∫ z in (0 : ℝ)..H,
-        (consolidationMode u0 H cv 0 z - consolidationMode u0 H cv t z) := by
-  unfold consolidationModeSettlement
-  congr 1
-  apply intervalIntegral.integral_congr
-  intro z _
-  simp [effectiveStressCompressionPositive]
+        (effectiveStressCompressionPositive (σ z)
+            (consolidationMode u0 H cv t z) 0 0
+          - effectiveStressCompressionPositive (σ z)
+            (consolidationMode u0 H cv 0 z) 0 0) :=
+  consolidationModeSettlement_eq_effectiveStress_integral mv σ 0 u0 H cv t
 
 /-- Nonnegative settlement at the focused data. -/
-example (σ : ℝ → Matrix (Fin 1) (Fin 1) ℝ) :
-    0 ≤ consolidationModeSettlement (1 / 10) σ 0 100 4 2 3 :=
-  consolidationModeSettlement_nonneg σ 0 (by norm_num) (by norm_num)
+example : 0 ≤ consolidationModeSettlement (1 / 10) 100 4 2 3 :=
+  consolidationModeSettlement_nonneg (by norm_num) (by norm_num)
     (by norm_num) (by norm_num) (by norm_num)
 
 #print axioms EarthScience.consolidationMode_eq
@@ -186,5 +191,7 @@ example (σ : ℝ → Matrix (Fin 1) (Fin 1) ℝ) :
 #print axioms EarthScience.consolidationModeAverage_eq
 #print axioms EarthScience.consolidationModeSettlement_eq
 #print axioms EarthScience.consolidationModeSettlement_nonneg
+#print axioms
+  EarthScience.consolidationModeSettlement_eq_effectiveStress_integral
 
 end PhyslibExtTest.EarthScience.Geotechnical.ConsolidationMode

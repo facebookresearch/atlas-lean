@@ -63,9 +63,13 @@ consolidation existence theorem is included.
 - `EarthScience.consolidationModeAverage_eq`: the depth average
   is `(2 u0 / π) exp (-cv (π / H)^2 t)`.
 - `EarthScience.consolidationModeSettlement_eq` and
-  `consolidationModeSettlement_nonneg`: the settlement increment
-  `(2 mv u0 H / π) (1 - exp (-cv (π / H)^2 t))`, nonnegative on
-  the physical domain.
+  `consolidationModeSettlement_nonneg`: the scalar settlement
+  increment `(2 mv u0 H / π) (1 - exp (-cv (π / H)^2 t))`,
+  nonnegative on the physical domain.
+- `EarthScience.consolidationModeSettlement_eq_effectiveStress_integral`:
+  the scalar settlement is `mv` times the depth integral of
+  the effective stress increase, for any total stress field
+  and vertical index.
 
 ## iii. Table of contents
 
@@ -279,17 +283,48 @@ layer `[0, H]` (totalized division by `H`). -/
 noncomputable def consolidationModeAverage (u0 H cv t : ℝ) : ℝ :=
   (∫ z in (0 : ℝ)..H, consolidationMode u0 H cv t z) / H
 
-/-- Settlement increment over `[0, t]` of the sine-mode
-contribution: `mv` times the depth integral of the increase
-of the vertical (index `k`) compression-positive effective
-stress (Biot coefficient one), with the total stress field
-`σ` constant in time and the excess pore pressure given by
-the consolidation mode. -/
-noncomputable def consolidationModeSettlement {n : ℕ} (mv : ℝ)
+/-- Stress-entry form of the settlement increment: `mv`
+times the depth integral of the increase of the vertical
+(index `k`) compression-positive effective stress (Biot
+coefficient one), with total stress field `σ` constant in
+time and excess pore pressure the consolidation mode. The
+two `σ z k k` terms cancel pointwise, so the value is
+independent of `n`, `σ`, and `k`; the public API is the
+scalar `consolidationModeSettlement` below, related to
+this form by
+`consolidationModeSettlement_eq_effectiveStress_integral`. -/
+private noncomputable def consolidationModeSettlementOfStress {n : ℕ} (mv : ℝ)
     (σ : ℝ → Matrix (Fin n) (Fin n) ℝ) (k : Fin n) (u0 H cv t : ℝ) : ℝ :=
   mv * ∫ z in (0 : ℝ)..H,
     (effectiveStressCompressionPositive (σ z) (consolidationMode u0 H cv t z) k k
       - effectiveStressCompressionPositive (σ z) (consolidationMode u0 H cv 0 z) k k)
+
+/-- Settlement increment over `[0, t]` of the sine-mode
+contribution: `mv` times the depth integral of the
+dissipated excess pore pressure
+`consolidationMode u0 H cv 0 z - consolidationMode u0 H cv t z`.
+At Biot coefficient one and time-constant total stress
+this is `mv` times the depth integral of the effective
+stress increase, for any stress field and vertical index;
+see `consolidationModeSettlement_eq_effectiveStress_integral`. -/
+noncomputable def consolidationModeSettlement (mv u0 H cv t : ℝ) : ℝ :=
+  mv * ∫ z in (0 : ℝ)..H,
+    (consolidationMode u0 H cv 0 z - consolidationMode u0 H cv t z)
+
+/-- The scalar settlement is the stress-entry form, for
+every total stress field and vertical index: the
+`σ z k k` terms cancel pointwise. -/
+private lemma consolidationModeSettlement_eq_ofStress {n : ℕ} (mv : ℝ)
+    (σ : ℝ → Matrix (Fin n) (Fin n) ℝ) (k : Fin n) (u0 H cv t : ℝ) :
+    consolidationModeSettlement mv u0 H cv t
+      = consolidationModeSettlementOfStress mv σ k u0 H cv t := by
+  unfold consolidationModeSettlement consolidationModeSettlementOfStress
+  congr 1
+  apply intervalIntegral.integral_congr
+  intro z _
+  simp only [effectiveStressCompressionPositive, Matrix.sub_apply,
+    Matrix.smul_apply, Matrix.one_apply_eq, smul_eq_mul, mul_one]
+  ring
 
 /-- The one sine integral: `∫₀ᴴ sin (π z / H) dz = 2 H / π`. -/
 lemma integral_sin_pi_mul_div {H : ℝ} (hH : H ≠ 0) :
@@ -323,13 +358,13 @@ theorem consolidationModeAverage_eq {u0 H cv t : ℝ} (hH : H ≠ 0) :
   have hpi : Real.pi ≠ 0 := Real.pi_ne_zero
   field_simp
 
-/-- Settlement increment
+/-- Settlement increment, stress-entry form:
 `(2 mv u0 H / π) (1 - exp (-cv (π / H)^2 t))`. -/
-theorem consolidationModeSettlement_eq {n : ℕ} (mv : ℝ)
+private theorem consolidationModeSettlementOfStress_eq {n : ℕ} (mv : ℝ)
     (σ : ℝ → Matrix (Fin n) (Fin n) ℝ) (k : Fin n) {u0 H cv t : ℝ} (hH : H ≠ 0) :
-    consolidationModeSettlement mv σ k u0 H cv t
+    consolidationModeSettlementOfStress mv σ k u0 H cv t
       = 2 * mv * u0 * H / Real.pi * (1 - Real.exp (-cv * (Real.pi / H) ^ 2 * t)) := by
-  unfold consolidationModeSettlement
+  unfold consolidationModeSettlementOfStress
   have hmat : ∀ (z : ℝ) (u : ℝ),
       effectiveStressCompressionPositive (σ z) u k k = (σ z) k k - u := by
     intro z u
@@ -358,13 +393,14 @@ theorem consolidationModeSettlement_eq {n : ℕ} (mv : ℝ)
   have hpi : Real.pi ≠ 0 := Real.pi_ne_zero
   field_simp
 
-/-- Nonnegative settlement on the physical domain. -/
-theorem consolidationModeSettlement_nonneg {n : ℕ} {mv : ℝ}
+/-- Nonnegative settlement, stress-entry form, on the
+physical domain. -/
+private theorem consolidationModeSettlementOfStress_nonneg {n : ℕ} {mv : ℝ}
     (σ : ℝ → Matrix (Fin n) (Fin n) ℝ) (k : Fin n) {u0 H cv t : ℝ}
     (hH : 0 < H) (hcv : 0 ≤ cv) (hmv : 0 ≤ mv) (hu0 : 0 ≤ u0) (ht : 0 ≤ t) :
-    0 ≤ consolidationModeSettlement mv σ k u0 H cv t := by
+    0 ≤ consolidationModeSettlementOfStress mv σ k u0 H cv t := by
   have hHne : H ≠ 0 := ne_of_gt hH
-  rw [consolidationModeSettlement_eq _ _ _ hHne]
+  rw [consolidationModeSettlementOfStress_eq _ _ _ hHne]
   have hpi : 0 ≤ Real.pi := Real.pi_pos.le
   have h2 : (0:ℝ) ≤ 2 := by norm_num
   have hHle : 0 ≤ H := hH.le
@@ -386,5 +422,36 @@ theorem consolidationModeSettlement_nonneg {n : ℕ} {mv : ℝ}
   have hexp_le : Real.exp (-cv * (Real.pi / H) ^ 2 * t) ≤ 1 := Real.exp_le_one_iff.mpr hexp_arg
   have hsub : (0:ℝ) ≤ 1 - Real.exp (-cv * (Real.pi / H) ^ 2 * t) := sub_nonneg.mpr hexp_le
   exact mul_nonneg hfrac hsub
+
+/-- The scalar settlement is `mv` times the depth integral
+of the increase of the vertical (index `k`)
+compression-positive effective stress, for any
+time-constant total stress field `σ` and any index `k`:
+the two total-stress terms cancel pointwise. -/
+lemma consolidationModeSettlement_eq_effectiveStress_integral {n : ℕ} (mv : ℝ)
+    (σ : ℝ → Matrix (Fin n) (Fin n) ℝ) (k : Fin n) (u0 H cv t : ℝ) :
+    consolidationModeSettlement mv u0 H cv t
+      = mv * ∫ z in (0 : ℝ)..H,
+        (effectiveStressCompressionPositive (σ z) (consolidationMode u0 H cv t z) k k
+          - effectiveStressCompressionPositive (σ z) (consolidationMode u0 H cv 0 z) k k) := by
+  rw [consolidationModeSettlement_eq_ofStress mv σ k u0 H cv t]
+  rfl
+
+/-- Settlement increment
+`(2 mv u0 H / π) (1 - exp (-cv (π / H)^2 t))`. -/
+theorem consolidationModeSettlement_eq (mv : ℝ) {u0 H cv t : ℝ} (hH : H ≠ 0) :
+    consolidationModeSettlement mv u0 H cv t
+      = 2 * mv * u0 * H / Real.pi * (1 - Real.exp (-cv * (Real.pi / H) ^ 2 * t)) := by
+  rw [consolidationModeSettlement_eq_ofStress mv
+    (fun _ => (0 : Matrix (Fin 1) (Fin 1) ℝ)) 0 u0 H cv t]
+  exact consolidationModeSettlementOfStress_eq mv _ 0 hH
+
+/-- Nonnegative settlement on the physical domain. -/
+theorem consolidationModeSettlement_nonneg {mv u0 H cv t : ℝ}
+    (hH : 0 < H) (hcv : 0 ≤ cv) (hmv : 0 ≤ mv) (hu0 : 0 ≤ u0) (ht : 0 ≤ t) :
+    0 ≤ consolidationModeSettlement mv u0 H cv t := by
+  rw [consolidationModeSettlement_eq_ofStress mv
+    (fun _ => (0 : Matrix (Fin 1) (Fin 1) ℝ)) 0 u0 H cv t]
+  exact consolidationModeSettlementOfStress_nonneg _ 0 hH hcv hmv hu0 ht
 
 end EarthScience
