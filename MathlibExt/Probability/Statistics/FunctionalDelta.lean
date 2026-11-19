@@ -512,7 +512,8 @@ theorem gridIncrements_cumsum (x : Fin k → ℝ) :
       omega
     simp [hIic]
 
-private theorem abs_prod_one_add_le (x : Fin k → ℝ) (t : Finset (Fin k)) :
+/-- For `x : Fin k → ℝ` and `t : Finset (Fin k)`, `|∏ l ∈ t, (1 + x l)| ≤ exp (∑ l, |x l|)`. -/
+theorem abs_prod_one_add_le (x : Fin k → ℝ) (t : Finset (Fin k)) :
     |∏ l ∈ t, (1 + x l)| ≤ Real.exp (∑ l, |x l|) := by
   rw [abs_prod]
   calc ∏ l ∈ t, |1 + x l| ≤ ∏ l ∈ t, Real.exp |x l| :=

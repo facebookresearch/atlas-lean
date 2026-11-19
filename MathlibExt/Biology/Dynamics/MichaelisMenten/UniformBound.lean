@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Biology.Dynamics.MichaelisMenten
 import MathlibExt.Analysis.ODE.ComparisonBounds
+import MathlibExt.Biology.Dynamics.MichaelisMenten.QSSAContract
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.Calculus.Deriv.Inv
@@ -145,10 +146,6 @@ private lemma exp_lower_le {f f' : ℝ → ℝ} {T M : ℝ}
     nlinarith
 
 /-! ### Algebraic identities -/
-
-private lemma michaelisConstant_pos' {k₁ kb k₂ : ℝ} (hk₁ : 0 < k₁) (hkb : 0 ≤ kb)
-    (hk₂ : 0 < k₂) : 0 < michaelisConstant k₁ kb k₂ :=
-  div_pos (by linarith) hk₁
 
 private lemma mul_michaelisConstant {k₁ kb k₂ : ℝ} (hk₁ : 0 < k₁) :
     k₁ * michaelisConstant k₁ kb k₂ = kb + k₂ := by
@@ -412,7 +409,7 @@ theorem IsSolution.abs_complex_sub_qss_le (h : IsSolution k₁ kb k₂ s c e p) 
       |c 0 - qssComplex k₁ kb k₂ (e 0 + c 0) (s 0)| * exp (-(kb + k₂) * t) +
         (e 0 + c 0) ^ 2 * (k₁ * (s 0 + c 0) + kb) / michaelisConstant k₁ kb k₂ /
           (kb + k₂) := by
-  have hK := michaelisConstant_pos' hk₁ hkb hk₂
+  have hK := michaelisConstant_pos hk₁ hkb hk₂
   have hKk := mul_michaelisConstant (kb := kb) (k₂ := k₂) hk₁
   set K := michaelisConstant k₁ kb k₂
   set eT := e 0 + c 0
@@ -474,7 +471,7 @@ theorem IsSolution.abs_substrate_sub_reduced_le (h : IsSolution k₁ kb k₂ s c
       (|c 0 - qssComplex k₁ kb k₂ (e 0 + c 0) (s 0)| / (kb + k₂) +
         (e 0 + c 0) ^ 2 * (k₁ * (s 0 + c 0) + kb) / michaelisConstant k₁ kb k₂ / (kb + k₂) *
           t) := by
-  have hK := michaelisConstant_pos' hk₁ hkb hk₂
+  have hK := michaelisConstant_pos hk₁ hkb hk₂
   have hpos := fun r (hr : 0 ≤ r) ↦ h.substrate_pos hk₁ hkb hk₂ hs0 hc0 he0 hr
   have hw := fun r (hr : 0 ≤ r) ↦ h.abs_complex_sub_qss_le hk₁ hkb hk₂ hs0 hc0 he0 hr
   have hsle := fun r (hr : 0 ≤ r) ↦ h.substrate_le hk₁ hkb hk₂ hs0 hc0 he0 hr
@@ -561,7 +558,7 @@ theorem abs_substrate_sub_reduced_le_mul (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk
     (hS0 : S 0 = s₀) (h : IsSolution k₁ kb k₂ s c e p) (hs : s 0 = s₀) (hc : c 0 = 0)
     (he : e 0 = ε) {τ : ℝ} (hτ : τ ∈ Icc 0 T) :
     |s (τ / ε) - S τ| ≤ substrateErrorConst k₁ kb k₂ s₀ T * ε := by
-  have hK := michaelisConstant_pos' hk₁ hkb hk₂
+  have hK := michaelisConstant_pos hk₁ hkb hk₂
   have key := h.abs_substrate_sub_reduced_le hk₁ hkb hk₂ (hs ▸ hs₀) hc.ge (he ▸ hε.le) hS
     (hS0 ▸ hs₀) (t := τ / ε) (div_nonneg hτ.1 hε.le)
   rw [hc, he, hs, hS0, add_zero, add_zero, sub_self, abs_zero, zero_add, zero_sub, abs_neg,
@@ -634,7 +631,7 @@ theorem IsSolution.abs_rate_sub_mmRate_le (h : IsSolution k₁ kb k₂ s c e p) 
           exp (-(kb + k₂) * τ / (e 0 + c 0)) +
         (e 0 + c 0) * (k₁ * (s 0 + c 0) + kb) / michaelisConstant k₁ kb k₂ / (kb + k₂) +
         |s (τ / (e 0 + c 0)) - S τ| / michaelisConstant k₁ kb k₂) := by
-  have hK := michaelisConstant_pos' hk₁ hkb hk₂
+  have hK := michaelisConstant_pos hk₁ hkb hk₂
   have ht : 0 ≤ τ / (e 0 + c 0) := div_nonneg hτ heT.le
   have hw := h.abs_complex_sub_qss_le hk₁ hkb hk₂ hs0 hc0 he0 ht
   have hst := h.substrate_pos hk₁ hkb hk₂ hs0 hc0 he0 ht
@@ -695,7 +692,7 @@ theorem abs_rate_sub_mmRate_le (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < 
     (he : e 0 = ε) (hτ₀ : 0 ≤ τ₀) {τ : ℝ} (hτ : τ ∈ Icc τ₀ T) :
     |k₂ * c (τ / ε) / ε - mmRate k₂ (michaelisConstant k₁ kb k₂) (S τ)| ≤
       rateErrorBound k₁ kb k₂ s₀ T τ₀ ε := by
-  have hK := michaelisConstant_pos' hk₁ hkb hk₂
+  have hK := michaelisConstant_pos hk₁ hkb hk₂
   have hτ0 : 0 ≤ τ := hτ₀.trans hτ.1
   have key := h.abs_rate_sub_mmRate_le hk₁ hkb hk₂ (hs ▸ hs₀) hc.ge (he ▸ hε.le)
     (by rw [he, hc, add_zero]; exact hε) hS (hS0 ▸ hs₀) hτ0
@@ -761,7 +758,7 @@ theorem abs_rate_sub_mmRate_le_of_prepared (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (
     (hc : c 0 = qssComplex k₁ kb k₂ ε s₀) (he : e 0 + c 0 = ε) {τ : ℝ} (hτ : τ ∈ Icc 0 T) :
     |k₂ * c (τ / ε) / ε - mmRate k₂ (michaelisConstant k₁ kb k₂) (S τ)| ≤
       preparedRateBound k₁ kb k₂ s₀ T ε := by
-  have hK := michaelisConstant_pos' hk₁ hkb hk₂
+  have hK := michaelisConstant_pos hk₁ hkb hk₂
   have hlam : 0 < kb + k₂ := by linarith
   have hq0 : 0 ≤ qssComplex k₁ kb k₂ ε s₀ := by unfold qssComplex; positivity
   have hqε : qssComplex k₁ kb k₂ ε s₀ ≤ ε := by

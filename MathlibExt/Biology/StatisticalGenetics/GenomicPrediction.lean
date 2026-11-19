@@ -87,7 +87,9 @@ section Moments
 
 variable {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω}
 
-private theorem integral_sum_mul_sum {ι κ : Type*} [Fintype ι] [Fintype κ]
+/-- If every `f k` and `g l` is in `L²(μ)`, then
+`∫ (∑ k, a k * f k) * (∑ l, b l * g l) ∂μ = ∑ k, ∑ l, a k * b l * ∫ f k * g l ∂μ`. -/
+theorem integral_sum_mul_sum {ι κ : Type*} [Fintype ι] [Fintype κ]
     (f : ι → Ω → ℝ) (g : κ → Ω → ℝ) (a : ι → ℝ) (b : κ → ℝ)
     (hf : ∀ k, MemLp (f k) 2 μ) (hg : ∀ l, MemLp (g l) 2 μ) :
     ∫ ω, (∑ k, a k * f k ω) * (∑ l, b l * g l ω) ∂μ =
