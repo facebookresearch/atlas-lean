@@ -23,7 +23,12 @@ Checked consumers:
   corresponding constancy of Physlib's Bernoulli function for the
   thermodynamic fixture with enthalpy `p / ρ + e₀`;
 - the head differing across streamlines, and the polytropic enthalpy
-  not being of the form `p / ρ + e₀`.
+  not being of the form `p / ρ + e₀`;
+- plane Couette flow: a nonzero shear stress and wall speed; the
+  witness applied and destructured for a water-like film, with the
+  smooth continuity and convective momentum results; and, for positive
+  density, a Bernoulli head that is constant along each streamline but
+  differs between streamlines.
 -/
 
 @[expose] public section
@@ -122,5 +127,65 @@ example {ρ Ω g : ℝ} (hρ : 0 < ρ) (hΩ : Ω ≠ 0) (hg : g ≠ 0) :
       ¬ ∃ e₀ : ℝ, ∀ t x,
         (polytropicFlow ρ Ω g).enthalpy t x = rotPressure ρ Ω g x / ρ + e₀ :=
   ⟨rot_head_differs_across_streamlines hρ hΩ, polytropic_enthalpy_not_pOverRho hρ hg⟩
+
+/-- Nonzero shear and wall speed: with `μ = 3`, `Uwall = 2` and `H = 1` the shear stress is `6`
+everywhere, and the upper wall point `(0, 1, 0)` moves with velocity `(2, 0, 0)`. -/
+example (ρ lam p₀ : ℝ) (t : Time) (x : Space) :
+    (couetteFlow ρ 3 lam p₀ 2 1).stress t x 0 1 = 6 ∧
+      couetteVelocity 2 1 ⟨![0, 1, 0]⟩ = WithLp.toLp 2 ![2, 0, 0] := by
+  refine ⟨?_, ?_⟩
+  · rw [couetteFlow_stress]
+    norm_num
+  · ext i
+    fin_cases i <;> simp [couetteVelocity]
+
+/-- End-to-end consumer of the plane Couette witness at concrete positive parameters: a
+water-like film with `ρ = 1000`, `μ = 1 / 1000`, `lam = 0`, `p₀ = 100000`, wall speed `Uwall = 1`
+and gap `H = 1 / 1000`. Applying and destructuring `couetteFlow_witness` gives a positive density
+and a vanishing incompressibility residual at the mid-gap point `y = 1 / 2000`, the conservative
+momentum balance, both wall velocities and a nonzero shear stress there; the smooth continuity
+equation gives a vanishing continuity residual at the same point, and the convective momentum
+balance holds too. -/
+example (t : Time) :
+    0 < (couetteFlow 1000 (1 / 1000) 0 100000 1 (1 / 1000)).rho t ⟨![0, 1 / 2000, 0]⟩ ∧
+      _root_.FluidDynamics.FluidFlow.continuityResidual 3
+        (couetteFlow 1000 (1 / 1000) 0 100000 1 (1 / 1000)).toFluidFlow t ⟨![0, 1 / 2000, 0]⟩ =
+          0 ∧
+      _root_.FluidDynamics.FluidFlow.incompressibilityResidual 3
+        (couetteFlow 1000 (1 / 1000) 0 100000 1 (1 / 1000)).toFluidFlow t ⟨![0, 1 / 2000, 0]⟩ =
+          0 ∧
+      _root_.FluidDynamics.CauchyFlow.CauchyMomentumEquation 3
+        (couetteFlow 1000 (1 / 1000) 0 100000 1 (1 / 1000)) ∧
+      _root_.FluidDynamics.CauchyFlow.ConvectiveCauchyMomentumEquation 3
+        (couetteFlow 1000 (1 / 1000) 0 100000 1 (1 / 1000)) ∧
+      (couetteFlow 1000 (1 / 1000) 0 100000 1 (1 / 1000)).velocity t ⟨![0, 0, 0]⟩ = 0 ∧
+      (couetteFlow 1000 (1 / 1000) 0 100000 1 (1 / 1000)).velocity t ⟨![0, 1 / 1000, 0]⟩ =
+        WithLp.toLp 2 ![1, 0, 0] ∧
+      (couetteFlow 1000 (1 / 1000) 0 100000 1 (1 / 1000)).stress t ⟨![0, 1 / 2000, 0]⟩ 0 1 ≠
+        0 := by
+  obtain ⟨hρ, hinc, hNS, hlow, hup, hshear⟩ := couetteFlow_witness (ρ := 1000) (μ := 1 / 1000)
+    (H := 1 / 1000) (Uwall := 1) 0 100000 (by norm_num) (by norm_num) (by norm_num) one_ne_zero
+  exact ⟨hρ t _,
+    (couetteFlow_smoothContinuityEquation 1000 (1 / 1000) 0 100000 1 (1 / 1000)).2.2 t _,
+    hinc.2 t _, hNS.2.1,
+    (couetteFlow_convectiveNavierStokes 1000 (1 / 1000) 0 100000 1 (1 / 1000)).2.1,
+    hlow t _ rfl, hup t _ rfl, hshear t _⟩
+
+/-- The Bernoulli head varies across streamlines. For `Uwall = H = 2`, so `u = (y, 0, 0)` on the
+channel `0 ≤ y ≤ 2`, and a positive density `ρ`, the head `p₀ / ρ + ‖u‖² / 2` is `p₀ / ρ + 1/2`
+all along the streamline `y = 1, z = 0` and `p₀ / ρ + 2` all along the streamline `y = 2, z = 0`
+(the moving wall), and the total pressure `p₀ + ρ ‖u‖² / 2` is larger on the second. The head is
+constant along each streamline but not across them, so no global Bernoulli constant follows. -/
+example (ρ p₀ s : ℝ) (hρ : 0 < ρ) :
+    p₀ / ρ + ‖couetteVelocity 2 2 ⟨![s, 1, 0]⟩‖ ^ 2 / 2 = p₀ / ρ + 1 / 2 ∧
+      p₀ / ρ + ‖couetteVelocity 2 2 ⟨![s, 2, 0]⟩‖ ^ 2 / 2 = p₀ / ρ + 2 ∧
+      p₀ + ρ * ‖couetteVelocity 2 2 ⟨![s, 1, 0]⟩‖ ^ 2 / 2 <
+        p₀ + ρ * ‖couetteVelocity 2 2 ⟨![s, 2, 0]⟩‖ ^ 2 / 2 := by
+  have h1 : ‖couetteVelocity 2 2 ⟨![s, 1, 0]⟩‖ ^ 2 = 1 := by
+    norm_num [couetteVelocity, EuclideanSpace.norm_sq_eq, Fin.sum_univ_three]
+  have h2 : ‖couetteVelocity 2 2 ⟨![s, 2, 0]⟩‖ ^ 2 = 4 := by
+    norm_num [couetteVelocity, EuclideanSpace.norm_sq_eq, Fin.sum_univ_three]
+  rw [h1, h2]
+  exact ⟨by ring, by ring, by linarith⟩
 
 end PhyslibExtTest.FluidDynamics.LaminarFlowPorts
