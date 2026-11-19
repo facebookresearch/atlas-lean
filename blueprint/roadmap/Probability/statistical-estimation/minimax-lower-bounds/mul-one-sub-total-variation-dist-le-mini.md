@@ -22,20 +22,20 @@ $1$ (Polyanskiy and Wu, Remark 28.4). The proof reduces a randomised estimator $
 [deterministic bound](mul-one-sub-total-variation-dist-le-two.md) for the identity estimator on
 the output laws $\kappa \circ P_{\theta_i}$, whose total variation is at most
 $\mathrm{TV}(P_{\theta_0}, P_{\theta_1})$ by the
-data-processing inequality for total variation.
+[data-processing inequality for total variation](../../../InformationTheory/information-inequalities/strong-data-processing-and-dobrushin-s-coefficie/total-variation-dist-comp-le-self.md).
 
 ## Informally uses
 
 - [Le Cam's two-point lower bound for one deterministic estimator](mul-one-sub-total-variation-dist-le-two.md):
   applied to the identity estimator on the output laws.
-- Data-processing inequality for total variation:
+- [Data-processing inequality for total variation](../../../InformationTheory/information-inequalities/strong-data-processing-and-dobrushin-s-coefficie/total-variation-dist-comp-le-self.md):
   a randomised estimator does not increase total variation.
 
 ## Background
 
 - [Contiguity and Le Cam's lemmas](../contiguity-and-le-cam-s-lemmas/README.md):
   Le Cam's asymptotic theory of experiments, the other half of his approach to lower bounds.
-- Fano's inequality:
+- [Fano's inequality](../../../InformationTheory/information-inequalities/fano-s-inequality/fano-inequality.md):
   the information-theoretic route to lower bounds with many hypotheses.
 
 ## Sources

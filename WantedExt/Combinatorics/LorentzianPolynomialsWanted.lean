@@ -29,12 +29,16 @@ distributed under the Apache License, Version 2.0. lean-eval ships no
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Combinatorics.LorentzianPolynomialsWanted` namespace. Mathematical
+and placed the declarations in the `MathlibExt.Combinatorics.LorentzianPolynomialsWanted` namespace.
+Later ATLAS change: the body of `IsMConvex` now refers to the identical general
+predicate `MathlibExt.Combinatorics.Matroid.MConvex.IsMConvex` (definitionally the same
+condition), so that M-convexity has a single definition. Mathematical
 statements are unchanged. Source: P. Brändén and J. Huh, `Lorentzian polynomials`, Annals of Math, 192 (3) 2020. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2020-192-3-LorentzianPolynomials.lean
 -/
 module
 
 public import Batteries.Util.ProofWanted
+public import MathlibExt.Combinatorics.Matroid.MConvex
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import Mathlib.LinearAlgebra.Matrix.Charpoly.Basic
@@ -89,7 +93,7 @@ def Ŀ (n d : ℕ) : Set (H n d) := match d with
 /-- A subset `J ⊆ ℕⁿ` is said to be M-convex, if for any `α, β ∈ J` and any index `i`
 satisfying `αᵢ > βᵢ`, there is an index `j` satisfying `αⱼ < βⱼ` and `α - eᵢ + eⱼ ∈ J`. -/
 def IsMConvex {n : ℕ} (J : Set (Fin n →₀ ℕ)) : Prop :=
-  ∀ α ∈ J, ∀ β ∈ J, ∀ i, α i > β i → ∃ j, α j < β j ∧ α - single i 1 + single j 1 ∈ J
+  MathlibExt.Combinatorics.Matroid.MConvex.IsMConvex J
 
 /-- We write `M n d` for the set of all degree `d` homogeneous polynomials with non-negative
 coefficients in `ℝ[w₁,...,wₙ]` whose supports are M-convex. -/

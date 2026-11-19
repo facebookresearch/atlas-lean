@@ -8,7 +8,7 @@ where $\|\cdot\|$ is the spectral norm. Here $\sigma_1 \ge \sigma_2 \ge \cdots$ 
 
 ## Background
 
-- Eckart–Young theorem in operator norm: background, the best rank-$k$ error $\sigma_{k+1}$ (indexed from $0$ there as $\sigma_k$) that serves as the benchmark.
+- [Eckart–Young theorem in operator norm](../../../Analysis/operator-theory/eigenvalue-inequalities/eckart-young-best-rank-approx-operator-n.md): background, the best rank-$k$ error $\sigma_{k+1}$ (indexed from $0$ there as $\sigma_k$) that serves as the benchmark.
 - [Real singular value decomposition](../singular-value-decomposition/real-singular-value-decomposition.md): background, the singular values $\sigma_j$ used in the bound.
 
 ## Sources

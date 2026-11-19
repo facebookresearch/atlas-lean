@@ -103,6 +103,38 @@ only the editorial/source changes. It creates pages for new documented
 non-deprecated declarations, preserves existing article prose, and reports
 removed declarations and changed docstrings. It also refreshes the source-derived
 area catalog and coverage metadata without replacing article prose.
+It edits within a folder page only where every line of the page is simple: a
+blank line, a heading, a single-line `- [title](page)` item with plain text
+after it, or a line of plain text that opens no other block, with no item next to
+text. On any other page, a new page's item goes at the end, after a blank line,
+and is reported for an editor to place; a page with raw HTML or a code fence is
+left as it is and the new page reported as an error. A part list
+on a page that is not simple is left as it is and reported too. Every edit is
+checked before it is written: Autoform's check of what the site may publish
+must pass on the page, as `autoform render` would otherwise show it as typed,
+with no link, and the text it publishes is rendered with the site's Markdown
+extensions, read from `mkdocs.yml`, and read as a browser builds the page. An
+edit that would lose a link, move a heading or its id, or not show the new link
+where it belongs is left out and reported the same way, and a line of a part
+list that the refresh replaces or removes is reported when it differs from the
+part's own entries.
+
+An annotation can hold its declaration back: its page states the mathematics
+while the declaration is false, vacuous or otherwise does not say it, or the
+declaration is private. The row then has no `object` and names the declaration
+under `org.atlas-wiki`, as `"held": {"declaration": "<Lean name>", "reason":
+"<false, vacuous, unsatisfiable, mis-specified, module-private or private by
+design>", "issue": <number>}`, where `issue` is the issue, or a list of
+issues, that tracks the Lean fix; a declaration private by design has none, and
+its marker goes once the declaration is public. When a declaration has several
+problems, `reason` names the one in its statement. `declarations` gives a held
+declaration no page and lists it as held. A marker that names no declaration,
+sits on a linked row, names a declaration the Lean index does not resolve, or
+holds back a declaration that another row links or holds is reported as an
+error, and the run then writes nothing. Relink the page once every listed issue
+is fixed and the declaration states what the page does: restore its `object`
+and remove `held`.
+
 `scripts/wiki-sync.json` is the
 reviewed docstring-digest baseline. Removed declarations' articles are kept
 as unlinked mathematical articles during rendering until an editor resolves

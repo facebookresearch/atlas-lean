@@ -176,6 +176,7 @@ def SetComposition {α : Type*} [DecidableEq α]
   }
 
 -- Combinatorics 444: Conjugate Partition
+
 /-- Let L∈ℤ_{≥ 0} and let
 λ=[λ₁,…,λ_L] be a
 partition, presented as the list of its parts in
@@ -199,7 +200,6 @@ again weakly decreasing with
 partition. For L=0 the conjugate partition is
 the empty list.
 -/
-
 def _root_.List.partitionConjugate (l : List ℕ) : List ℕ :=
   (List.range (l.head?.getD 0)).map fun j =>
     (l.filter fun p => decide (j + 1 ≤ p)).length
@@ -369,6 +369,7 @@ def List.IsUnimodal (d : List ℕ) : Prop :=
         (d.drop j).Pairwise (· ≥ ·)
 
 -- Combinatorics 489: Dominance Order
+
 /-- Let n∈ℤ_{≥ 0}. A partition of n is a list
 λ=[λ₁,…,λₘ] of integers with
 m∈ℤ_{≥ 0}, whose entries are called the parts of
@@ -390,7 +391,6 @@ every integer j>m. For partitions λ and μ of n,
 for every i∈ℤ_{≥ 0}, where both sums are 0 when
 i=0. When n=0, the empty partition dominates itself.
 -/
-
 def _root_.Nat.Partition.Dominates {n : ℕ} (p q : n.Partition) : Prop :=
   ∀ i : ℕ, ((q.parts.sort (· ≥ ·)).take i).sum ≤
     ((p.parts.sort (· ≥ ·)).take i).sum

@@ -8,7 +8,7 @@ is concave on the convex cone of positive-definite matrices, where $\log A$ is t
 
 ## Background
 
-- Peierls' inequality for the exponential: background, an elementary trace-convexity inequality for $\operatorname{tr} e^{A}$ of the same family.
+- [Peierls' inequality for the exponential](../../../Analysis/operator-theory/eigenvalue-inequalities/peierls-and-klein-inequalities/peierls-exp.md): background, an elementary trace-convexity inequality for $\operatorname{tr} e^{A}$ of the same family.
 
 ## Sources
 

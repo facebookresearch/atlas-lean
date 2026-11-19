@@ -37,9 +37,9 @@ Volumes of ellipsoids are proportional to $\sqrt{\det A}$, and the determinant o
 
 ## Related topics
 
-- Linear programming feasibility: Khachiyan's theorem that rational linear programming is in P, proved with the ellipsoid method.
+- [Linear programming feasibility](../../../TheoryOfComputation/polynomial-time-problems/linear-programming-feasibility/README.md): Khachiyan's theorem that rational linear programming is in P, proved with the ellipsoid method.
 - [Linear programming](../../../Geometry/convex-geometry/linear-programming/README.md): the problems the method solves in polynomial time.
 - [Gradient descent](../gradient-descent/README.md): the subgradient method, the other black-box method of Nemirovski and Yudin's complexity theory; its rate does not depend on the dimension, the ellipsoid method's does.
 - [Self-concordant functions and barriers](../self-concordant-functions-and-barriers/README.md): interior-point methods, the other polynomial-time approach to convex programming; they too work with ellipsoids, the Dikin ellipsoids of a barrier.
-- Theta function of a graph: Grötschel, Lovász and Schrijver compute it with the ellipsoid method, which yields polynomial algorithms for perfect graphs.
-- Matching polytope: a polytope with exponentially many facets over which the method optimises through a separation routine.
+- [Theta function of a graph](../../../GraphTheory/graph-invariants-and-labelings/theta-function-of-a-graph/README.md): Grötschel, Lovász and Schrijver compute it with the ellipsoid method, which yields polynomial algorithms for perfect graphs.
+- [Matching polytope](../../../GraphTheory/matchings-and-flows/matching-polytope/README.md): a polytope with exponentially many facets over which the method optimises through a separation routine.

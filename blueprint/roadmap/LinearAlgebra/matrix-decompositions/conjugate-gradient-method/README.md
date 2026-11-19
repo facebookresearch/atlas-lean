@@ -24,7 +24,7 @@
 - [Arnoldi and Lanczos iterations](../arnoldi-and-lanczos-iterations/README.md)
 - [GMRES](../gmres/README.md)
 - [Minimax property of the Chebyshev polynomials](../../../Analysis/approximation-theory/minimax-property-of-the-chebyshev-polynomials/README.md)
-- Effective resistance and electrical networks: Laplacian systems $Lv = b$ compute electrical potentials; fast Laplacian solvers precondition such iterative methods.
+- [Effective resistance and electrical networks](../../../GraphTheory/algebraic-graph-theory/part-01/effective-resistance-and-electrical-networks/README.md): Laplacian systems $Lv = b$ compute electrical potentials; fast Laplacian solvers precondition such iterative methods.
 - [Nonlinear conjugate gradient methods](../../../Analysis/numerical-analysis/nonlinear-conjugate-gradient-methods/README.md):
   the extension to smooth unconstrained minimisation, which reduces to this method on strictly
   convex quadratics with exact line searches.

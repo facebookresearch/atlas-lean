@@ -10,7 +10,7 @@ The entries of $B_k(M) - M$ are $-m_{ij}$ off the band and $0$ on it, so its col
 
 ## Informally uses
 
-- Schur's test for the matrix operator norm: inequality (A2), the operator norm bounded by row and column sums.
+- [Schur's test for the matrix operator norm](../../../Analysis/operator-theory/integral-and-multiplication/schur-test/norm-matrix-l2-le.md): inequality (A2), the operator norm bounded by row and column sums.
 
 ## Sources
 

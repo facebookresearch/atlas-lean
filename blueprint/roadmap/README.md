@@ -33,3 +33,18 @@
 ## Discrete Mathematics & Computer Science
 
 - [Combinatorics](Combinatorics/README.md)
+- [Graph Theory](GraphTheory/README.md)
+- [Theory of Computation](TheoryOfComputation/README.md)
+- [Computer Science](ComputerScience/README.md)
+
+## Applied Mathematics
+
+- [Information Theory](InformationTheory/README.md)
+- [Quantum Information](QuantumInformation/README.md)
+- [Game Theory](GameTheory/README.md)
+- [Mathematical Economics](Economics/README.md)
+- [Mathematical Biology](Biology/README.md)
+- [Statistical Mechanics](StatisticalMechanics/README.md)
+- [Mathematical Physics](Physics/README.md)
+- [Mathematical Chemistry](Chemistry/README.md)
+- [Earth Science](EarthScience/README.md)

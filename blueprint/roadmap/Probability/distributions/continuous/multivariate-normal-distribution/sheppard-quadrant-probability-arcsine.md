@@ -23,7 +23,7 @@ probability is then $1/2$ or $0$), and the same argument covers it; the statemen
 
 ## Background
 
-- Goemans–Williamson Lemma 3.2:
+- [Goemans–Williamson Lemma 3.2](../../../../ComputerScience/approximation-algorithms/goemans-williamson-max-cut-algorithm/measure-real-sign-ne.md):
   the same fact in hyperplane form, which is how semidefinite rounding uses it.
 
 ## Sources
