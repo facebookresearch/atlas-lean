@@ -274,4 +274,36 @@ example {U a Γ x y : ℝ} (ha : 0 < a) (h : x ^ 2 + y ^ 2 ≠ 0) :
         -CylinderFlow.cylV U a Γ x y :=
   ⟨CylinderFlow.cylStream_deriv_y ha h, CylinderFlow.cylStream_deriv_x ha h⟩
 
+/- Nonzero lift of both signs at `a = ρ = U = 1` and `p∞ = 1`. With `Γ = 2 * π`
+(counterclockwise) the surface force is `(0, -2 * π)`, downward; with `Γ = -2 * π`
+(clockwise) it is `(0, 2 * π)`, upward. Integrating with the normal that points into the
+fluid, `∫ p (cos θ, sin θ) a dθ` without the minus sign, gives `+2 * π` for the first flow:
+the opposite sign. Likewise, if clockwise circulation is counted positive, the second flow has
+circulation `2 * π` and lift `+ρ * U * Γ`, again the opposite sign of `-ρ * U * Γ`. -/
+example :
+    CylinderPressure.surfaceForceX
+        (fun z => 1 + (1 - ‖JoukowskiBranch.circleVelocity 1 1 (2 * Real.pi) 0 z‖ ^ 2) / 2)
+        1 = 0 ∧
+      CylinderPressure.surfaceForceY
+        (fun z => 1 + (1 - ‖JoukowskiBranch.circleVelocity 1 1 (2 * Real.pi) 0 z‖ ^ 2) / 2)
+        1 = -(2 * Real.pi) ∧
+      CylinderPressure.surfaceForceY
+        (fun z => 1 + (1 - ‖JoukowskiBranch.circleVelocity 1 1 (-(2 * Real.pi)) 0 z‖ ^ 2) / 2)
+        1 = 2 * Real.pi ∧
+      (∫ θ in (0 : ℝ)..2 * Real.pi,
+        (1 + (1 - ‖JoukowskiBranch.circleVelocity 1 1 (2 * Real.pi) 0 (circleMap 0 1 θ)‖ ^ 2) /
+          2) * Real.sin θ) = 2 * Real.pi := by
+  have h1 := CylinderPressure.surfaceForce_eq (p := fun z =>
+      1 + (1 - ‖JoukowskiBranch.circleVelocity 1 1 (2 * Real.pi) 0 z‖ ^ 2) / 2)
+    (pInf := 1) (ρ := 1) (a := 1) (U := 1) (Γ := 2 * Real.pi) one_pos (fun z _ => by ring)
+  have h2 := CylinderPressure.surfaceForce_eq (p := fun z =>
+      1 + (1 - ‖JoukowskiBranch.circleVelocity 1 1 (-(2 * Real.pi)) 0 z‖ ^ 2) / 2)
+    (pInf := 1) (ρ := 1) (a := 1) (U := 1) (Γ := -(2 * Real.pi)) one_pos (fun z _ => by ring)
+  refine ⟨h1.1, ?_, ?_, ?_⟩
+  · rw [h1.2]; ring
+  · rw [h2.2]; ring
+  · have h := h1.2
+    unfold CylinderPressure.surfaceForceY at h
+    linarith
+
 end FluidDynamics.IdealAirfoilModels
