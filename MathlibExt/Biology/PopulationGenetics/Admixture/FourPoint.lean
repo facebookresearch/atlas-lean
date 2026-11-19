@@ -10,7 +10,6 @@ module
 
 public import MathlibExt.Biology.PopulationGenetics.FStatistics
 public import MathlibExt.Biology.Phylogenetics.Buneman
-import MathlibExt.Biology.PopulationGenetics.Admixture.ConditionalNegDef
 
 /-!
 # The quartet f4 trichotomy from the f2 pair sums
