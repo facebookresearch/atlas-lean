@@ -17,7 +17,10 @@ import Mathlib.Tactic.NormNum
   the amplitude scaling;
 * the same bar: the amplitude is nonzero, the reconstruction is fixed at both ends, and the
   physical error obeys the mesh estimates;
-* the zero load, treated without the inverse amplitude map.
+* the zero load, treated without the inverse amplitude map;
+* a body of heat capacity `500` coupled through `G = 5` to a bath at `300` (`τ = 100`), started
+  at `350`: ten Euler steps of size `10` give `T_10 = 300 + 50 (9 / 10) ^ 10`, with
+  `0 < |T_10 - T(100)| ≤ 5`.
 -/
 
 @[expose] public section
@@ -69,6 +72,31 @@ example :
       (barAmplitude 2 3 0)⁻¹ * Elasticity.PrismaticMembers.axialDisplacement 2 3 0 (3 * (1 / 2)) ≠
         unitProfile (1 / 2) :=
   ⟨(zero_load twoCells 2 3).2.2.2 (3 / 4), zero_load_inverse_ne 2 3⟩
+
+/-! ## C. A body cooling in a fixed bath -/
+
+/-- **Nonzero temperature excess.** A body of heat capacity `500` coupled through `G = 5` to a
+bath at `300` has `τ = 100`. Started at `350` (`Δ = 50`), ten Euler steps of `10` (that is
+`τ / 10`, in the same time unit as `τ`) give `T_10 = 300 + 50 (9 / 10) ^ 10`, and
+`0 < |T_10 - T(100)| ≤ 5`. -/
+lemma bathEuler_fixture {X : ℕ → ℝ} (h0 : X 0 = 350)
+    (hstep : ∀ j, X (j + 1) = bathEulerStep 500 5 300 10 (X j)) :
+    X 10 = 300 + 50 * (9 / 10) ^ 10 ∧
+      0 < |X 10 - bathTrajectory 500 5 300 50 100| ∧
+      |X 10 - bathTrajectory 500 5 300 50 100| ≤ 5 := by
+  have hτ : thermalTimeConstant 500 5 = 100 := by norm_num [thermalTimeConstant]
+  have h0' : X 0 = 300 + 50 := by rw [h0]; norm_num
+  have hstep' : ∀ j, X (j + 1) =
+      bathEulerStep 500 5 300 (thermalTimeConstant 500 5 / 10) (X j) := by
+    intro j
+    rw [hτ, hstep]
+    norm_num
+  have herr := bathEuler_tenStep_error (by norm_num) (by norm_num) h0' hstep'
+  have hpos := bathEuler_tenStep_error_pos (by norm_num) (by norm_num) (by norm_num) h0' hstep'
+  rw [hτ] at herr hpos
+  refine ⟨bathEuler_closed_form (by norm_num) (by norm_num) h0' hstep' 10, hpos, ?_⟩
+  norm_num at herr
+  exact herr
 
 end PhyslibExtTest.Numerical.PhysicalErrorBudgets
 
