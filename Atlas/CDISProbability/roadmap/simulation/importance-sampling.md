@@ -14,6 +14,11 @@ CDIS id 99. `E_f[h(X)] = ∫ h (f/g) g` when `g > 0` almost everywhere where `h 
  under the same condition. The self-normalised estimator does too when `f` is a density and
  `g > 0` almost everywhere where `f ≠ 0`.
 
+Note: related root-library results in this repository: `Cslib.MachineLearning.Sampling.integral_isEstimate`
+and `Cslib.MachineLearning.Sampling.tendsto_isEstimate`
+(`CSLibExt/MachineLearning/Sampling/MonteCarlo.lean`), unbiasedness and almost sure convergence of
+the plain estimator when the target is given by its density with respect to the proposal.
+
 ## Depends on
 
 No prerequisite in this chapter.

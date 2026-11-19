@@ -26,9 +26,11 @@ then `genInv F 1` is its genuine infimum: for the Dirac mass at `5` it is `5`
 (`genInv_cdf_dirac_one`). Every statement below carries the hypothesis `u ∈ ]0,1[` where the
 course has it implicitly, and the value at `1` does not matter since `U ∈ ]0,1[` almost surely.
 
-Prior art: the same object is `Measure.quantile` in TauCeti (`TauCeti/Probability/Quantile.lean`)
-and `lowerQuantile` in Mathlib PR #42461, which was closed without being merged. Mathlib
-`v4.34.0` has no quantile function.
+Prior art: the same object is `ProbabilityTheory.cdfQuantile` in this repository's root library
+(`MathlibExt/Probability/Quantile.lean`, with the inversion method as
+`map_cdfQuantile_restrict_Icc`), `Measure.quantile` in TauCeti
+(`TauCeti/Probability/Quantile.lean`), and `lowerQuantile` in Mathlib PR #42461, which was closed
+without being merged. Mathlib `v4.34.0` has no quantile function.
 -/
 
 open MeasureTheory ProbabilityTheory Filter Topology Set

@@ -13,6 +13,10 @@ declaration the statement needs. This entry formalizes 37 more, chosen where Mat
 result or part of it, or states it in a different form, with priority on the simulation chapter:
 5 definitions, and 32 results stated and proved. The remaining 10 are described in the roadmap
 and not formalized yet. Everything lives in namespace `CDIS`; the module prefix is `Code`.
+The entry is a standalone Lake project and does not import the repository's root libraries;
+where these prove a related result (the generalized inverse and the inversion method, importance
+sampling, the multidimensional central limit theorem, Lévy's continuity theorem), the roadmap
+article names it.
 
 ## Main results
 
