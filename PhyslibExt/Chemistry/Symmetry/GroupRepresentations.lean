@@ -15,6 +15,7 @@ public import Mathlib.LinearAlgebra.UnitaryGroup
 public import Mathlib.RepresentationTheory.Character
 public import Mathlib.RingTheory.SimpleModule.Rank
 public import MathlibExt.RepresentationTheory.CharacterInnerProduct
+import MathlibExt.LinearAlgebra.CrossProduct
 
 /-!
 
@@ -367,25 +368,6 @@ a permutation `π : G →* Equiv.Perm (Fin N)` of the nuclei, with
 `R g *ᵥ (x i - centreOfMass m x) = x (π g i) - centreOfMass m x`.
 
 -/
-
-/-- The cross product transforms with the cofactor matrix: `(Q a) ⨯₃ (Q b) = (adj Q)ᵀ (a ⨯₃ b)`. -/
-lemma mulVec_cross_mulVec (Q : Matrix (Fin 3) (Fin 3) ℝ) (a b : Fin 3 → ℝ) :
-    (Q *ᵥ a) ⨯₃ (Q *ᵥ b) = (adjugate Q)ᵀ *ᵥ (a ⨯₃ b) := by
-  ext i
-  fin_cases i <;>
-  · simp [cross_apply, adjugate_fin_three, mulVec, dotProduct, Fin.sum_univ_three]
-    ring
-
-/-- An orthogonal matrix `Q` maps cross products to `det Q •` cross products. -/
-lemma mulVec_cross_mulVec_of_mem_orthogonalGroup {Q : Matrix (Fin 3) (Fin 3) ℝ}
-    (hQ : Q ∈ Matrix.orthogonalGroup (Fin 3) ℝ) (a b : Fin 3 → ℝ) :
-    (Q *ᵥ a) ⨯₃ (Q *ᵥ b) = Q.det • (Q *ᵥ (a ⨯₃ b)) := by
-  have h2 : Qᵀ * Q = 1 := (Matrix.mem_orthogonalGroup_iff' _ _).mp hQ
-  have hadj : adjugate Q = Q.det • Qᵀ := by
-    calc adjugate Q = Qᵀ * Q * adjugate Q := by rw [h2, Matrix.one_mul]
-      _ = Qᵀ * (Q.det • 1) := by rw [Matrix.mul_assoc, mul_adjugate]
-      _ = Q.det • Qᵀ := by rw [Matrix.mul_smul, Matrix.mul_one]
-  rw [mulVec_cross_mulVec, hadj, transpose_smul, transpose_transpose, smul_mulVec]
 
 lemma det_mul_self_of_mem_orthogonalGroup {Q : Matrix (Fin 3) (Fin 3) ℝ}
     (hQ : Q ∈ Matrix.orthogonalGroup (Fin 3) ℝ) : Q.det * Q.det = 1 := by
