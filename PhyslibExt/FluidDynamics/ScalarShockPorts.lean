@@ -7,9 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+public import Mathlib.MeasureTheory.Integral.Prod
 import PhyslibExt.ContinuumMechanics.ControlVolumes
+import Mathlib.Analysis.Calculus.Deriv.Mul
 
 /-!
 # Scalar shocks: jump relations for one-dimensional conservation laws
@@ -34,20 +37,43 @@ plane by composing with a time compression that is the identity near `t` and a s
 applies the transport identity to the extensions, and turns the time-derivative integrals into
 flux differences with the fundamental theorem of calculus and the side equations.
 
+Part B evaluates the weak residual of the straight moving step, the field with the constant state
+`uL` left of the line `x = c * t` and the constant state `uR` right of it. For a flux `f`, its weak
+residual against a smooth test function `φ` vanishing outside a bounded rectangle is the plane
+integral `∫∫ (u * φ_t + f u * φ_x)`, a plain Bochner integral; it equals
+`-([f] - c * [u]) * ∫ φ (t, c * t) dt`. The proof splits each time slice at the interface, uses
+the transport identity (through `MovingJumpTransport`) for the time-derivative terms and the
+fundamental theorem of calculus for the flux terms, and uses Fubini to pass between the plane
+integral and iterated integrals. No divergence theorem across the nonsmooth interface and no
+distribution space is used, and only a straight single shock is treated.
+
 ## ii. Key results
 
 - `ScalarShock.MovingJumpTransport`: the moving interface transport identity as a proposition.
 - `ScalarShock.movingJumpTransport_holds`: it holds, by `ControlVolumes.movingJumpTransport`.
 - `ScalarShock.conservation_iff_rankineHugoniot`: conservation on a fixed interval crossing the
   interface is equivalent to the Rankine-Hugoniot jump identity `c * (uR - uL) = f uR - f uL`.
+- `ScalarShock.movingStep` and `ScalarShock.weakResidual`: the straight moving step and the weak
+  residual of a field against a test function.
+- `ScalarShock.integrable_weakResidual_movingStep`: both integrals in the residual formula are
+  genuine integrals.
+- `ScalarShock.weakResidual_movingStep`: the residual of the moving step is
+  `-((f uR - f uL) - c * (uR - uL)) * ∫ φ (t, c * t) dt`.
+- `ScalarShock.weakResidual_movingStep_eq_zero_of_trace_eq_zero`: a test vanishing along the
+  interface cannot detect the jump.
+- `ScalarShock.burgers_step_two_zero_weakResidual`: for Burgers states `2 | 0` the residual
+  vanishes at speed `1` and is `2 * ∫ φ (t, 0) dt` at the incorrect speed `0`.
 
 ## iii. Table of contents
 
 - A. Rankine-Hugoniot from two classical sides
+- B. Weak residual of a straight moving step
 
 ## iv. References
 
 - `ControlVolumes.movingJumpTransport` (`PhyslibExt.ContinuumMechanics.ControlVolumes`).
+- Mathlib's `MeasureTheory.integral_prod` (Fubini) and
+  `intervalIntegral.integral_eq_sub_of_hasDerivAt` (fundamental theorem of calculus).
 -/
 
 @[expose] public section
@@ -364,5 +390,435 @@ theorem conservation_iff_rankineHugoniot
     linear_combination heq
   · intro h
     exact hMD.congr_deriv (by linear_combination -h)
+
+
+/-! ## B. Weak residual of a straight moving step -/
+
+open scoped ContDiff
+
+/-- Straight moving step, time first: the state `uL` where `x < c * t` and the
+state `uR` where `c * t ≤ x`. The value on the line `x = c * t`, a null set of
+the plane, does not affect any integral below. -/
+noncomputable def movingStep (uL uR c : ℝ) (t x : ℝ) : ℝ :=
+  if x < c * t then uL else uR
+
+/-- Weak residual `∫∫ (u * φ_t + f u * φ_x)` over the whole `(t, x)` plane
+(Lebesgue measure on `ℝ × ℝ`, time first) of a field `u` against a test function
+whose time and space partial derivatives are `φt` and `φx`. This is a plain
+Bochner integral; no distribution space is introduced. -/
+noncomputable def weakResidual (f : ℝ → ℝ) (u φt φx : ℝ → ℝ → ℝ) : ℝ :=
+  ∫ p : ℝ × ℝ, (u p.1 p.2 * φt p.1 p.2 + f (u p.1 p.2) * φx p.1 p.2)
+
+/-! ### Auxiliary lemmas -/
+
+private theorem phi_eq_zero_of_not_mem {T0 T1 X0 X1 : ℝ} {φ : ℝ → ℝ → ℝ}
+    (hsupp : Function.support (fun p : ℝ × ℝ => φ p.1 p.2) ⊆
+      Set.Icc T0 T1 ×ˢ Set.Icc X0 X1)
+    {t x : ℝ} (h : (t, x) ∉ Set.Icc T0 T1 ×ˢ Set.Icc X0 X1) : φ t x = 0 := by
+  by_contra hne
+  exact h (hsupp hne)
+
+private theorem partials_facts {T0 T1 X0 X1 : ℝ} {φ φt φx : ℝ → ℝ → ℝ}
+    (hφ : ContDiff ℝ ∞ (fun p : ℝ × ℝ => φ p.1 p.2))
+    (hφt : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => φ τ x) (φt t x) t)
+    (hφx : ∀ t x : ℝ, HasDerivAt (fun y : ℝ => φ t y) (φx t x) x)
+    (hsupp : Function.support (fun p : ℝ × ℝ => φ p.1 p.2) ⊆
+      Set.Icc T0 T1 ×ˢ Set.Icc X0 X1) :
+    (Continuous fun p : ℝ × ℝ => φt p.1 p.2) ∧ (Continuous fun p : ℝ × ℝ => φx p.1 p.2) ∧
+      ∀ t x : ℝ, (t, x) ∉ Set.Icc T0 T1 ×ˢ Set.Icc X0 X1 → φt t x = 0 ∧ φx t x = 0 := by
+  set Φ : ℝ × ℝ → ℝ := fun p => φ p.1 p.2
+  have hdiff : Differentiable ℝ Φ := hφ.differentiable (by simp)
+  have hcontD : Continuous (fderiv ℝ Φ) := hφ.continuous_fderiv (by simp)
+  have hφt_eq : ∀ t x, φt t x = fderiv ℝ Φ (t, x) (1, 0) := by
+    intro t x
+    have hl : HasDerivAt (fun τ : ℝ => (τ, x)) ((1 : ℝ), (0 : ℝ)) t :=
+      (hasDerivAt_id t).prodMk (hasDerivAt_const t x)
+    have h1 : HasDerivAt (Φ ∘ fun τ : ℝ => (τ, x)) (fderiv ℝ Φ (t, x) (1, 0)) t :=
+      (hdiff (t, x)).hasFDerivAt.comp_hasDerivAt t hl
+    exact (hφt t x).unique h1
+  have hφx_eq : ∀ t x, φx t x = fderiv ℝ Φ (t, x) (0, 1) := by
+    intro t x
+    have hl : HasDerivAt (fun y : ℝ => (t, y)) ((0 : ℝ), (1 : ℝ)) x :=
+      (hasDerivAt_const x t).prodMk (hasDerivAt_id x)
+    have h1 : HasDerivAt (Φ ∘ fun y : ℝ => (t, y)) (fderiv ℝ Φ (t, x) (0, 1)) x :=
+      (hdiff (t, x)).hasFDerivAt.comp_hasDerivAt x hl
+    exact (hφx t x).unique h1
+  have hzero : ∀ p ∉ Set.Icc T0 T1 ×ˢ Set.Icc X0 X1, fderiv ℝ Φ p = 0 := by
+    intro p hp
+    have hK : IsClosed (Set.Icc T0 T1 ×ˢ Set.Icc X0 X1) := isClosed_Icc.prod isClosed_Icc
+    have hev : Φ =ᶠ[nhds p] fun _ => 0 := by
+      filter_upwards [hK.isOpen_compl.mem_nhds hp] with q hq
+      by_contra hne
+      exact hq (hsupp hne)
+    rw [hev.fderiv_eq]
+    simp
+  refine ⟨?_, ?_, fun t x h => ⟨?_, ?_⟩⟩
+  · simp only [hφt_eq]
+    exact hcontD.clm_apply continuous_const
+  · simp only [hφx_eq]
+    exact hcontD.clm_apply continuous_const
+  · rw [hφt_eq, hzero _ h]
+    rfl
+  · rw [hφx_eq, hzero _ h]
+    rfl
+
+private theorem movingStep_of_lt {uL uR c t x : ℝ} (h : x < c * t) :
+    movingStep uL uR c t x = uL := by
+  simp [movingStep, h]
+
+private theorem movingStep_of_not_lt {uL uR c t x : ℝ} (h : ¬x < c * t) :
+    movingStep uL uR c t x = uR := by
+  simp [movingStep, h]
+
+private theorem measurable_comp_movingStep (uL uR c : ℝ) (g : ℝ → ℝ) :
+    Measurable fun p : ℝ × ℝ => g (movingStep uL uR c p.1 p.2) := by
+  have hset : MeasurableSet {p : ℝ × ℝ | p.2 < c * p.1} :=
+    measurableSet_lt measurable_snd (measurable_const.mul measurable_fst)
+  have heq : (fun p : ℝ × ℝ => g (movingStep uL uR c p.1 p.2)) =
+      fun p => if p.2 < c * p.1 then g uL else g uR := by
+    funext p
+    unfold movingStep
+    split_ifs <;> rfl
+  rw [heq]
+  exact Measurable.ite hset measurable_const measurable_const
+
+private theorem norm_comp_movingStep_le (uL uR c : ℝ) (g : ℝ → ℝ) (t x : ℝ) :
+    ‖g (movingStep uL uR c t x)‖ ≤ max |g uL| |g uR| := by
+  unfold movingStep
+  split_ifs
+  · rw [Real.norm_eq_abs]
+    exact le_max_left _ _
+  · rw [Real.norm_eq_abs]
+    exact le_max_right _ _
+
+private theorem integrable_comp_movingStep_mul (uL uR c : ℝ) (g : ℝ → ℝ)
+    {ψ : ℝ × ℝ → ℝ} (hψ : MeasureTheory.Integrable ψ) :
+    MeasureTheory.Integrable fun p : ℝ × ℝ => g (movingStep uL uR c p.1 p.2) * ψ p :=
+  hψ.bdd_mul (measurable_comp_movingStep uL uR c g).aestronglyMeasurable
+    (MeasureTheory.ae_of_all _ fun p => norm_comp_movingStep_le uL uR c g p.1 p.2)
+
+private theorem integrable_slice_comp_movingStep_mul (uL uR c t : ℝ) (g : ℝ → ℝ)
+    {ψ : ℝ → ℝ} (hψ : MeasureTheory.Integrable ψ) :
+    MeasureTheory.Integrable fun x : ℝ => g (movingStep uL uR c t x) * ψ x :=
+  hψ.bdd_mul ((measurable_comp_movingStep uL uR c g).comp
+      measurable_prodMk_left).aestronglyMeasurable
+    (MeasureTheory.ae_of_all _ fun x => norm_comp_movingStep_le uL uR c g t x)
+
+private theorem integrable_of_continuous_of_zero {g : ℝ → ℝ} {A B : ℝ}
+    (hg : Continuous g) (h0 : ∀ x, x ∉ Set.Icc A B → g x = 0) :
+    MeasureTheory.Integrable g :=
+  hg.integrable_of_hasCompactSupport (HasCompactSupport.intro isCompact_Icc h0)
+
+private theorem integrable_plane_of_continuous_of_zero {g : ℝ × ℝ → ℝ}
+    {T0 T1 X0 X1 : ℝ} (hg : Continuous g)
+    (h0 : ∀ p, p ∉ Set.Icc T0 T1 ×ˢ Set.Icc X0 X1 → g p = 0) :
+    MeasureTheory.Integrable g :=
+  hg.integrable_of_hasCompactSupport
+    (HasCompactSupport.intro (isCompact_Icc.prod isCompact_Icc) h0)
+
+private theorem integral_eq_intervalIntegral_of_zero {g : ℝ → ℝ} {A B X0 X1 : ℝ}
+    (hAB : A ≤ B) (hA : A < X0) (hB : X1 < B)
+    (hg0 : ∀ x, x ∉ Set.Icc X0 X1 → g x = 0) :
+    ∫ x, g x = ∫ x in A..B, g x := by
+  rw [intervalIntegral.integral_of_le hAB]
+  refine (MeasureTheory.setIntegral_eq_integral_of_forall_compl_eq_zero
+    fun x hx => hg0 x ?_).symm
+  intro hx'
+  exact hx ⟨by linarith [hx'.1], by linarith [hx'.2]⟩
+
+private theorem mem_uIoo_cases {a b x : ℝ} (hx : x ∈ Set.uIoo a b) :
+    (a < x ∧ x < b) ∨ (b < x ∧ x < a) := by
+  rcases le_total a b with h | h
+  · rw [Set.uIoo_of_le h] at hx
+    exact Or.inl hx
+  · rw [Set.uIoo_of_ge h] at hx
+    exact Or.inr hx
+
+/-- One slice of the flux term: FTC on each side of the interface point `s`. -/
+private theorem slice_integral_step_deriv {ψ ψ' g : ℝ → ℝ} {α β s X0 X1 : ℝ}
+    (hψ : ∀ x, HasDerivAt ψ (ψ' x) x) (hψ0 : ∀ x, x ∉ Set.Icc X0 X1 → ψ x = 0)
+    (hg : MeasureTheory.Integrable g) (hg0 : ∀ x, x ∉ Set.Icc X0 X1 → g x = 0)
+    (hgl : ∀ x, x < s → g x = α * ψ' x) (hgr : ∀ x, s < x → g x = β * ψ' x) :
+    ∫ x, g x = (α - β) * ψ s := by
+  have hAs : min X0 s - 1 ≤ s := by linarith [min_le_right X0 s]
+  have hsB : s ≤ max X1 s + 1 := by linarith [le_max_right X1 s]
+  have hAX : min X0 s - 1 < X0 := by linarith [min_le_left X0 s]
+  have hXB : X1 < max X1 s + 1 := by linarith [le_max_left X1 s]
+  have hψc : Continuous ψ := continuous_iff_continuousAt.2 fun x => (hψ x).continuousAt
+  have hl : ∫ x in (min X0 s - 1)..s, g x = α * ψ s - α * ψ (min X0 s - 1) :=
+    intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le (f := fun x => α * ψ x) hAs
+      (continuous_const.mul hψc).continuousOn
+      (fun x hx => by
+        rw [hgl x hx.2]
+        exact (hψ x).const_mul α)
+      hg.intervalIntegrable
+  have hr : ∫ x in s..(max X1 s + 1), g x = β * ψ (max X1 s + 1) - β * ψ s :=
+    intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le (f := fun x => β * ψ x) hsB
+      (continuous_const.mul hψc).continuousOn
+      (fun x hx => by
+        rw [hgr x hx.1]
+        exact (hψ x).const_mul β)
+      hg.intervalIntegrable
+  have hψA : ψ (min X0 s - 1) = 0 := hψ0 _ fun h => by linarith [h.1]
+  have hψB : ψ (max X1 s + 1) = 0 := hψ0 _ fun h => by linarith [h.2]
+  rw [integral_eq_intervalIntegral_of_zero (hAs.trans hsB) hAX hXB hg0,
+    ← intervalIntegral.integral_add_adjacent_intervals (b := s) hg.intervalIntegrable
+      hg.intervalIntegrable, hl, hr, hψA, hψB]
+  ring
+
+/-- One slice of the time term: split at the interface point `s`. -/
+private theorem slice_integral_step_split {h g : ℝ → ℝ} {α β s a b X0 X1 : ℝ}
+    (hab : a ≤ b) (ha : a < X0) (hb : X1 < b)
+    (hg : MeasureTheory.Integrable g) (hg0 : ∀ x, x ∉ Set.Icc X0 X1 → g x = 0)
+    (hh0 : ∀ x, x ∉ Set.Icc X0 X1 → h x = 0)
+    (hgl : ∀ x, x < s → g x = α * h x) (hgr : ∀ x, s < x → g x = β * h x) :
+    (∫ x in a..s, α * h x) + (∫ x in s..b, β * h x) = ∫ x, g x := by
+  rw [integral_eq_intervalIntegral_of_zero hab ha hb hg0,
+    ← intervalIntegral.integral_add_adjacent_intervals (b := s) hg.intervalIntegrable
+      hg.intervalIntegrable]
+  congr 1
+  · apply intervalIntegral.integral_congr_uIoo
+    intro x hx
+    rcases mem_uIoo_cases hx with ⟨_, hxs⟩ | ⟨_, hxa⟩
+    · exact (hgl x hxs).symm
+    · have hx0 : x ∉ Set.Icc X0 X1 := fun hm => by linarith [hm.1]
+      simp only [hh0 x hx0, hg0 x hx0, mul_zero]
+  · apply intervalIntegral.integral_congr_uIoo
+    intro x hx
+    rcases mem_uIoo_cases hx with ⟨hsx, _⟩ | ⟨hbx, _⟩
+    · exact (hgr x hsx).symm
+    · have hx0 : x ∉ Set.Icc X0 X1 := fun hm => by linarith [hm.2]
+      simp only [hh0 x hx0, hg0 x hx0, mul_zero]
+
+/-- Time term: moving-interval transport plus FTC in time, then Fubini. -/
+private theorem time_part {uL uR c T0 T1 X0 X1 : ℝ} {φ φt : ℝ → ℝ → ℝ}
+    (hMJT : MovingJumpTransport)
+    (hφc : Continuous fun p : ℝ × ℝ => φ p.1 p.2)
+    (hφt : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => φ τ x) (φt t x) t)
+    (hct : Continuous fun p : ℝ × ℝ => φt p.1 p.2)
+    (hφ0 : ∀ t x : ℝ, (t, x) ∉ Set.Icc T0 T1 ×ˢ Set.Icc X0 X1 → φ t x = 0)
+    (hφt0 : ∀ t x : ℝ, (t, x) ∉ Set.Icc T0 T1 ×ˢ Set.Icc X0 X1 → φt t x = 0)
+    (hU : MeasureTheory.Integrable fun p : ℝ × ℝ =>
+      movingStep uL uR c p.1 p.2 * φt p.1 p.2) :
+    ∫ p : ℝ × ℝ, movingStep uL uR c p.1 p.2 * φt p.1 p.2 =
+      c * (uR - uL) * ∫ t : ℝ, φ t (c * t) := by
+  obtain ⟨a, b, hab, ha, hb⟩ : ∃ a b : ℝ, a ≤ b ∧ a < X0 ∧ X1 < b :=
+    ⟨min X0 X1 - 1, max X0 X1 + 1, by linarith [min_le_left X0 X1, le_max_left X0 X1],
+      by linarith [min_le_left X0 X1], by linarith [le_max_right X0 X1]⟩
+  obtain ⟨A, B, hAB, hA, hB⟩ : ∃ A B : ℝ, A ≤ B ∧ A < T0 ∧ T1 < B :=
+    ⟨min T0 T1 - 1, max T0 T1 + 1, by linarith [min_le_left T0 T1, le_max_left T0 T1],
+      by linarith [min_le_left T0 T1], by linarith [le_max_right T0 T1]⟩
+  have hsplit : ∀ τ : ℝ, (∫ x in a..c * τ, uL * φt τ x) + (∫ x in c * τ..b, uR * φt τ x) =
+      ∫ x, movingStep uL uR c τ x * φt τ x := by
+    intro τ
+    have hcτ : Continuous fun x : ℝ => φt τ x :=
+      hct.comp (continuous_const.prodMk continuous_id)
+    have hint : MeasureTheory.Integrable fun x : ℝ => φt τ x :=
+      integrable_of_continuous_of_zero (A := X0) (B := X1) hcτ
+        fun x hx => hφt0 τ x fun h => hx h.2
+    exact slice_integral_step_split (h := fun x => φt τ x) (α := uL) (β := uR) (s := c * τ)
+      hab ha hb (integrable_slice_comp_movingStep_mul uL uR c τ (fun u => u) hint)
+      (fun x hx => by rw [hφt0 τ x fun h => hx h.2, mul_zero])
+      (fun x hx => hφt0 τ x fun h => hx h.2)
+      (fun x hx => by rw [movingStep_of_lt hx])
+      (fun x hx => by rw [movingStep_of_not_lt (not_lt.2 hx.le)])
+  have hs : ∀ τ : ℝ, HasDerivAt (fun τ : ℝ => c * τ) ((fun _ : ℝ => c) τ) τ := fun τ => by
+    simpa using (hasDerivAt_id τ).const_mul c
+  have hMd : ∀ τ : ℝ, HasDerivAt
+      (fun τ : ℝ => (∫ x in a..c * τ, uL * φ τ x) + (∫ x in c * τ..b, uR * φ τ x))
+      ((∫ x in a..c * τ, uL * φt τ x) + (∫ x in c * τ..b, uR * φt τ x) +
+        c * (uL * φ τ (c * τ) - uR * φ τ (c * τ))) τ := fun τ =>
+    hMJT (uL := fun τ x => uL * φ τ x) (uR := fun τ x => uR * φ τ x)
+      (vL := fun τ x => uL * φt τ x) (vR := fun τ x => uR * φt τ x)
+      (s := fun τ => c * τ) (s' := fun _ => c) (a := a) (b := b) τ (hs τ)
+      (continuous_const.mul hφc) (fun t x => (hφt t x).const_mul uL)
+      (continuous_const.mul hct)
+      (continuous_const.mul hφc) (fun t x => (hφt t x).const_mul uR)
+      (continuous_const.mul hct)
+  have hMd' : ∀ τ : ℝ, HasDerivAt
+      (fun τ : ℝ => (∫ x in a..c * τ, uL * φ τ x) + (∫ x in c * τ..b, uR * φ τ x))
+      ((∫ x, movingStep uL uR c τ x * φt τ x) +
+        c * (uL * φ τ (c * τ) - uR * φ τ (c * τ))) τ := by
+    intro τ
+    have h := hMd τ
+    rw [hsplit τ] at h
+    exact h
+  have hD1 : MeasureTheory.Integrable fun τ : ℝ => ∫ x, movingStep uL uR c τ x * φt τ x :=
+    hU.integral_prod_left
+  have hD2 : MeasureTheory.Integrable fun τ : ℝ =>
+      c * (uL * φ τ (c * τ) - uR * φ τ (c * τ)) := by
+    have htc : Continuous fun τ : ℝ => φ τ (c * τ) :=
+      hφc.comp (continuous_id.prodMk (continuous_const.mul continuous_id))
+    refine integrable_of_continuous_of_zero (A := T0) (B := T1)
+      (continuous_const.mul ((continuous_const.mul htc).sub (continuous_const.mul htc)))
+      fun τ hτ => ?_
+    rw [hφ0 τ (c * τ) fun h => hτ h.1]
+    ring
+  have hftc : ∫ τ in A..B, ((∫ x, movingStep uL uR c τ x * φt τ x) +
+      c * (uL * φ τ (c * τ) - uR * φ τ (c * τ))) =
+      ((∫ x in a..c * B, uL * φ B x) + (∫ x in c * B..b, uR * φ B x)) -
+      ((∫ x in a..c * A, uL * φ A x) + (∫ x in c * A..b, uR * φ A x)) :=
+    intervalIntegral.integral_eq_sub_of_hasDerivAt (fun τ _ => hMd' τ)
+      (hD1.add hD2).intervalIntegrable
+  have hMB : (∫ x in a..c * B, uL * φ B x) + (∫ x in c * B..b, uR * φ B x) = 0 := by
+    have h0 : ∀ x, φ B x = 0 := fun x => hφ0 B x fun h => by linarith [h.1.2]
+    simp [h0]
+  have hMA : (∫ x in a..c * A, uL * φ A x) + (∫ x in c * A..b, uR * φ A x) = 0 := by
+    have h0 : ∀ x, φ A x = 0 := fun x => hφ0 A x fun h => by linarith [h.1.1]
+    simp [h0]
+  have hfull : ∫ τ in A..B, ((∫ x, movingStep uL uR c τ x * φt τ x) +
+      c * (uL * φ τ (c * τ) - uR * φ τ (c * τ))) =
+      ∫ τ, ((∫ x, movingStep uL uR c τ x * φt τ x) +
+        c * (uL * φ τ (c * τ) - uR * φ τ (c * τ))) := by
+    refine (integral_eq_intervalIntegral_of_zero hAB hA hB fun τ hτ => ?_).symm
+    have h1 : ∀ x, movingStep uL uR c τ x * φt τ x = 0 := fun x => by
+      rw [hφt0 τ x fun h => hτ h.1, mul_zero]
+    rw [hφ0 τ (c * τ) fun h => hτ h.1]
+    simp [h1]
+  rw [hMB, hMA, sub_zero, hfull, MeasureTheory.integral_add hD1 hD2] at hftc
+  have hfub : ∫ p : ℝ × ℝ, movingStep uL uR c p.1 p.2 * φt p.1 p.2 =
+      ∫ τ : ℝ, ∫ x : ℝ, movingStep uL uR c τ x * φt τ x :=
+    MeasureTheory.integral_prod _ hU
+  have htrace : ∫ τ : ℝ, c * (uL * φ τ (c * τ) - uR * φ τ (c * τ)) =
+      c * (uL - uR) * ∫ τ : ℝ, φ τ (c * τ) := by
+    rw [← MeasureTheory.integral_const_mul]
+    congr 1
+    funext τ
+    ring
+  rw [hfub]
+  linear_combination hftc - htrace
+
+/-- Flux term: Fubini, then FTC in space on each side of the interface. -/
+private theorem flux_part {f : ℝ → ℝ} {uL uR c T0 T1 X0 X1 : ℝ} {φ φx : ℝ → ℝ → ℝ}
+    (hφx : ∀ t x : ℝ, HasDerivAt (fun y : ℝ => φ t y) (φx t x) x)
+    (hcx : Continuous fun p : ℝ × ℝ => φx p.1 p.2)
+    (hφ0 : ∀ t x : ℝ, (t, x) ∉ Set.Icc T0 T1 ×ˢ Set.Icc X0 X1 → φ t x = 0)
+    (hφx0 : ∀ t x : ℝ, (t, x) ∉ Set.Icc T0 T1 ×ˢ Set.Icc X0 X1 → φx t x = 0)
+    (hF : MeasureTheory.Integrable fun p : ℝ × ℝ =>
+      f (movingStep uL uR c p.1 p.2) * φx p.1 p.2) :
+    ∫ p : ℝ × ℝ, f (movingStep uL uR c p.1 p.2) * φx p.1 p.2 =
+      (f uL - f uR) * ∫ t : ℝ, φ t (c * t) := by
+  have hslice : ∀ t : ℝ, ∫ x, f (movingStep uL uR c t x) * φx t x =
+      (f uL - f uR) * φ t (c * t) := by
+    intro t
+    have hcxt : Continuous fun x : ℝ => φx t x :=
+      hcx.comp (continuous_const.prodMk continuous_id)
+    have hxint : MeasureTheory.Integrable fun x : ℝ => φx t x :=
+      integrable_of_continuous_of_zero (A := X0) (B := X1) hcxt
+        fun x hx => hφx0 t x fun h => hx h.2
+    exact slice_integral_step_deriv (ψ := fun y => φ t y) (ψ' := fun y => φx t y)
+      (α := f uL) (β := f uR) (s := c * t) (X0 := X0) (X1 := X1) (hφx t)
+      (fun x hx => hφ0 t x fun h => hx h.2)
+      (integrable_slice_comp_movingStep_mul uL uR c t f hxint)
+      (fun x hx => by rw [hφx0 t x fun h => hx h.2, mul_zero])
+      (fun x hx => by rw [movingStep_of_lt hx])
+      (fun x hx => by rw [movingStep_of_not_lt (not_lt.2 hx.le)])
+  have hfub : ∫ p : ℝ × ℝ, f (movingStep uL uR c p.1 p.2) * φx p.1 p.2 =
+      ∫ t : ℝ, ∫ x : ℝ, f (movingStep uL uR c t x) * φx t x :=
+    MeasureTheory.integral_prod _ hF
+  rw [hfub, ← MeasureTheory.integral_const_mul]
+  congr 1
+  funext t
+  exact hslice t
+
+/-! ### Integrability and the residual formula -/
+
+/-- Explicit integrability. For a smooth test `φ` vanishing outside the bounded
+rectangle `[T0, T1] × [X0, X1]`, with time and space partial derivatives `φt`
+and `φx`, the residual integrand of the moving step and the trace
+`t ↦ φ t (c * t)` along the interface are both integrable, so the two integrals
+in `weakResidual_movingStep` are genuine. -/
+theorem integrable_weakResidual_movingStep {f : ℝ → ℝ} {uL uR c T0 T1 X0 X1 : ℝ}
+    {φ φt φx : ℝ → ℝ → ℝ}
+    (hφ : ContDiff ℝ ∞ (fun p : ℝ × ℝ => φ p.1 p.2))
+    (hφt : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => φ τ x) (φt t x) t)
+    (hφx : ∀ t x : ℝ, HasDerivAt (fun y : ℝ => φ t y) (φx t x) x)
+    (hsupp : Function.support (fun p : ℝ × ℝ => φ p.1 p.2) ⊆
+      Set.Icc T0 T1 ×ˢ Set.Icc X0 X1) :
+    MeasureTheory.Integrable (fun p : ℝ × ℝ =>
+        movingStep uL uR c p.1 p.2 * φt p.1 p.2 +
+          f (movingStep uL uR c p.1 p.2) * φx p.1 p.2) ∧
+      MeasureTheory.Integrable (fun t : ℝ => φ t (c * t)) := by
+  obtain ⟨hct, hcx, hpz⟩ := partials_facts hφ hφt hφx hsupp
+  refine ⟨?_, ?_⟩
+  · exact (integrable_comp_movingStep_mul uL uR c (fun u => u)
+      (integrable_plane_of_continuous_of_zero hct fun p hp => (hpz p.1 p.2 hp).1)).add
+      (integrable_comp_movingStep_mul uL uR c f
+        (integrable_plane_of_continuous_of_zero hcx fun p hp => (hpz p.1 p.2 hp).2))
+  · have htc : Continuous fun t : ℝ => φ t (c * t) :=
+      hφ.continuous.comp (continuous_id.prodMk (continuous_const.mul continuous_id))
+    exact integrable_of_continuous_of_zero (A := T0) (B := T1) htc
+      fun t ht => phi_eq_zero_of_not_mem hsupp fun h => ht h.1
+
+/-- Weak residual of a straight moving step. For constant states `uL`, `uR`,
+interface `x = c * t`, any flux `f`, and a smooth test `φ` vanishing outside a
+bounded rectangle, with partial derivatives `φt`, `φx`:
+`∫∫ (u * φ_t + f u * φ_x) = -((f uR - f uL) - c * (uR - uL)) * ∫ φ (t, c * t) dt`.
+The transport hypothesis is the moving-interval transport theorem restated by
+`MovingJumpTransport`. -/
+theorem weakResidual_movingStep {f : ℝ → ℝ} {uL uR c T0 T1 X0 X1 : ℝ}
+    {φ φt φx : ℝ → ℝ → ℝ} (hMJT : MovingJumpTransport)
+    (hφ : ContDiff ℝ ∞ (fun p : ℝ × ℝ => φ p.1 p.2))
+    (hφt : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => φ τ x) (φt t x) t)
+    (hφx : ∀ t x : ℝ, HasDerivAt (fun y : ℝ => φ t y) (φx t x) x)
+    (hsupp : Function.support (fun p : ℝ × ℝ => φ p.1 p.2) ⊆
+      Set.Icc T0 T1 ×ˢ Set.Icc X0 X1) :
+    weakResidual f (movingStep uL uR c) φt φx =
+      -((f uR - f uL) - c * (uR - uL)) * ∫ t : ℝ, φ t (c * t) := by
+  obtain ⟨hct, hcx, hpz⟩ := partials_facts hφ hφt hφx hsupp
+  have hφ0 : ∀ t x : ℝ, (t, x) ∉ Set.Icc T0 T1 ×ˢ Set.Icc X0 X1 → φ t x = 0 :=
+    fun _ _ h => phi_eq_zero_of_not_mem hsupp h
+  have hU : MeasureTheory.Integrable fun p : ℝ × ℝ =>
+      movingStep uL uR c p.1 p.2 * φt p.1 p.2 :=
+    integrable_comp_movingStep_mul uL uR c (fun u => u)
+      (integrable_plane_of_continuous_of_zero hct fun p hp => (hpz p.1 p.2 hp).1)
+  have hF : MeasureTheory.Integrable fun p : ℝ × ℝ =>
+      f (movingStep uL uR c p.1 p.2) * φx p.1 p.2 :=
+    integrable_comp_movingStep_mul uL uR c f
+      (integrable_plane_of_continuous_of_zero hcx fun p hp => (hpz p.1 p.2 hp).2)
+  have hsplit : weakResidual f (movingStep uL uR c) φt φx =
+      (∫ p : ℝ × ℝ, movingStep uL uR c p.1 p.2 * φt p.1 p.2) +
+        ∫ p : ℝ × ℝ, f (movingStep uL uR c p.1 p.2) * φx p.1 p.2 :=
+    MeasureTheory.integral_add hU hF
+  rw [hsplit, time_part hMJT hφ.continuous hφt hct hφ0 (fun t x h => (hpz t x h).1) hU,
+    flux_part hφx hcx hφ0 (fun t x h => (hpz t x h).2) hF]
+  ring
+
+/-! ### Fixtures -/
+
+/-- A test that vanishes along the interface, in particular one supported away
+from it, gives zero residual for every flux and every pair of states: such a
+test alone cannot detect the jump. -/
+theorem weakResidual_movingStep_eq_zero_of_trace_eq_zero {f : ℝ → ℝ}
+    {uL uR c T0 T1 X0 X1 : ℝ} {φ φt φx : ℝ → ℝ → ℝ} (hMJT : MovingJumpTransport)
+    (hφ : ContDiff ℝ ∞ (fun p : ℝ × ℝ => φ p.1 p.2))
+    (hφt : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => φ τ x) (φt t x) t)
+    (hφx : ∀ t x : ℝ, HasDerivAt (fun y : ℝ => φ t y) (φx t x) x)
+    (hsupp : Function.support (fun p : ℝ × ℝ => φ p.1 p.2) ⊆
+      Set.Icc T0 T1 ×ˢ Set.Icc X0 X1)
+    (htrace : ∀ t : ℝ, φ t (c * t) = 0) :
+    weakResidual f (movingStep uL uR c) φt φx = 0 := by
+  rw [weakResidual_movingStep hMJT hφ hφt hφx hsupp]
+  simp [htrace]
+
+/-- Fixture: Burgers flux `u ^ 2 / 2` with the nonzero jump from `2` to `0`. At
+the Rankine-Hugoniot speed `1` the residual vanishes for every admissible test;
+at the incorrect stationary speed `0` it equals `2 * ∫ φ (t, 0) dt`, which is
+nonzero exactly when the test has nonzero integral along the front. -/
+theorem burgers_step_two_zero_weakResidual {T0 T1 X0 X1 : ℝ}
+    {φ φt φx : ℝ → ℝ → ℝ} (hMJT : MovingJumpTransport)
+    (hφ : ContDiff ℝ ∞ (fun p : ℝ × ℝ => φ p.1 p.2))
+    (hφt : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => φ τ x) (φt t x) t)
+    (hφx : ∀ t x : ℝ, HasDerivAt (fun y : ℝ => φ t y) (φx t x) x)
+    (hsupp : Function.support (fun p : ℝ × ℝ => φ p.1 p.2) ⊆
+      Set.Icc T0 T1 ×ˢ Set.Icc X0 X1) :
+    weakResidual (fun u : ℝ => u ^ 2 / 2) (movingStep 2 0 1) φt φx = 0 ∧
+      weakResidual (fun u : ℝ => u ^ 2 / 2) (movingStep 2 0 0) φt φx =
+        2 * ∫ t : ℝ, φ t 0 := by
+  constructor
+  · rw [weakResidual_movingStep hMJT hφ hφt hφx hsupp]
+    norm_num
+  · rw [weakResidual_movingStep hMJT hφ hφt hφx hsupp]
+    norm_num
 
 end ScalarShock
