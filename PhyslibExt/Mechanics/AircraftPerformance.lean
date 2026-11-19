@@ -48,19 +48,25 @@ with thrust along the velocity imposes the vertical balance `L = W`, which fixes
 `CL = 2 * W / (ρ * V ^ 2 * S)`. Substituting gives `D(V) = a * V ^ 2 + b / V ^ 2` with
 `a = ρ * S * CD0 / 2` (parasite drag) and `b = 2 * k * W ^ 2 / (ρ * S)` (induced drag). By the
 arithmetic-geometric mean inequality `D(V) ≥ 2 * √(a * b)`, with equality exactly when
-`V ^ 4 = b / a`; for `CD0, k > 0` and `W ≠ 0` this is the minimum-drag speed
+`V ^ 4 = b / a`; for `CD0, k > 0` and positive weight this is the minimum-drag speed
 `V_md = (b / a) ^ (1 / 4)`. The density input may be the isothermal-layer density above
 (`two_sqrt_le_levelDrag_isothermalDensity`).
 
 Level-flight model inputs: steady level flight with thrust aligned with the velocity (an
 inclined thrust line would add a vertical thrust component to the lift balance, which is not
-modelled), the declared polar with positive coefficients `CD0, k`, positive `ρ, S`, nonzero
-weight, and positive weight `W > 0` in the stall-validity results. The minimum-drag results
-assume `CD0, k > 0` and `W ≠ 0`: if `CD0 = 0`, `k = 0` or `W = 0`, one drag term vanishes, `D(V)`
-has no minimum over positive speeds, and `minDragSpeed` takes the meaningless value `0`. The
-polar is valid only up
-to a declared maximum lift coefficient `CLmax`; at a positive speed this is the stall-validity
-interval `V ≥ V_s = √(2 * W / (ρ * S * CLmax))`, whose radicand is positive only for `W > 0`.
+modelled), the declared polar with positive coefficients `CD0, k`, and positive `ρ, S` and
+weight `W`. The results that describe the airplane (its least drag and minimum-drag speed, its
+stall-validity interval) take `W > 0`, and so does the lift-to-drag remark at
+`two_sqrt_mul_dragFactor_eq`: in level flight the lift equals the weight. The least-drag results
+`levelDrag_eq_two_sqrt_iff_eq_minDragSpeed` and `isLeast_levelDrag` take `W > 0` although their
+proofs need only `W ≠ 0`; apart from them, each result assumes only the hypotheses its proof
+uses. Lemmas about the drag formulas alone (`inducedDragFactor_pos`, `minDragSpeed_pos`,
+`minDragSpeed_pow_four`, `two_sqrt_mul_dragFactor_eq`) hold for any nonzero `W`, or any `W`,
+because the drag depends on `W` only through `W ^ 2`. If `CD0 = 0`, `k = 0` or `W = 0`, one drag
+term vanishes, `D(V)` has no minimum over positive speeds, and `minDragSpeed` takes the
+meaningless value `0`. The polar is valid only up to a declared maximum lift coefficient
+`CLmax`; at a positive speed this is the stall-validity interval
+`V ≥ V_s = √(2 * W / (ρ * S * CLmax))`, whose radicand is positive only for `W > 0`.
 The algebraic minimizer is an operating point only when it lies in that interval:
 `exists_levelDrag_eq_two_sqrt_iff` and `two_sqrt_lt_levelDrag_of_minDragSpeed_lt_stallSpeed`. At
 `V = 0` Lean's convention `x / 0 = 0` gives meaningless values; no statement uses them.
@@ -95,7 +101,8 @@ The algebraic minimizer is an operating point only when it lies in that interval
 - J. D. Anderson, *Introduction to Flight*, McGraw-Hill, ch. 3 (the standard atmosphere and
   its isothermal layers, `ρ / ρ₁ = exp (-(g₀ / (R T)) (h - h₁))`) and ch. 6 (drag polar
   `CD = CD0 + K * CL ^ 2`, thrust required in level flight, minimum thrust required where
-  zero-lift drag equals drag due to lift, `(L / D)max = 1 / (2 * √(K * CD0))`).
+  zero-lift drag equals drag due to lift, and for positive weight
+  `(L / D)max = 1 / (2 * √(K * CD0))`).
 - D. P. Raymer, *Aircraft Design: A Conceptual Approach*, AIAA, ch. 17 (level-flight
   performance and stall speed `V_s = √(2 * W / (ρ * S * CLmax))`).
 - ISO 2533:1975, *Standard Atmosphere*: the layer from 11 km to 20 km is isothermal at
@@ -312,7 +319,8 @@ lemma parasiteDragFactor_pos {ρ S CD0 : ℝ} (hρ : 0 < ρ) (hS : 0 < S) (hCD0 
   unfold parasiteDragFactor
   positivity
 
-/-- The induced-drag factor is positive for nonzero weight and `ρ, S, k > 0`. -/
+/-- The induced-drag factor is positive for `W ≠ 0` and `ρ, S, k > 0`. A fact about the formula:
+`b = 2 * k * W ^ 2 / (ρ * S)` depends on `W` only through `W ^ 2`. -/
 lemma inducedDragFactor_pos {W ρ S k : ℝ} (hW : W ≠ 0) (hρ : 0 < ρ) (hS : 0 < S) (hk : 0 < k) :
     0 < inducedDragFactor W ρ S k := by
   unfold inducedDragFactor
@@ -353,9 +361,12 @@ private lemma two_sqrt_mul_eq_add_iff {x y : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y) 
 
 /-! ## E. Minimum drag -/
 
-/-- Minimum-drag speed `V_md = √(√(b / a))`, the positive root of `V ^ 4 = b / a` when
-`W ≠ 0` and `ρ, S, CD0, k > 0` (`minDragSpeed_pos`, `minDragSpeed_pow_four`). If `CD0 = 0`,
-`k = 0` or `W = 0`, Lean's conventions `x / 0 = 0` and `√0 = 0` give the meaningless value `0`. -/
+/-- Minimum-drag speed `V_md = √(√(b / a))`. For positive weight and `ρ, S, CD0, k > 0` it is the
+unique positive speed of least level-flight drag
+(`levelDrag_eq_two_sqrt_iff_eq_minDragSpeed`). As a formula it is the positive root of
+`V ^ 4 = b / a` whenever `W ≠ 0` and `ρ, S, CD0, k > 0` (`minDragSpeed_pos`,
+`minDragSpeed_pow_four`). If `CD0 = 0`, `k = 0` or `W = 0`, Lean's conventions `x / 0 = 0` and
+`√0 = 0` give the meaningless value `0`. -/
 noncomputable def minDragSpeed (W ρ S CD0 k : ℝ) : ℝ :=
   Real.sqrt (Real.sqrt (inducedDragFactor W ρ S k / parasiteDragFactor ρ S CD0))
 
@@ -410,7 +421,8 @@ lemma levelDrag_eq_two_sqrt_iff {W ρ S CD0 k V : ℝ} (hρ : 0 < ρ) (hS : 0 < 
     rw [hb_eq, eq_div_iff hV2]
     ring
 
-/-- For nonzero weight and `ρ, S, CD0, k > 0` the minimum-drag speed solves `V ^ 4 = b / a`. -/
+/-- Identity for the formula `minDragSpeed`: for `W ≠ 0` and `ρ, S, CD0, k > 0` it solves
+`V ^ 4 = b / a`. It depends on `W` only through `W ^ 2`. -/
 lemma minDragSpeed_pow_four {W ρ S CD0 k : ℝ} (hW : W ≠ 0) (hρ : 0 < ρ) (hS : 0 < S)
     (hCD0 : 0 < CD0) (hk : 0 < k) :
     minDragSpeed W ρ S CD0 k ^ 4 = inducedDragFactor W ρ S k / parasiteDragFactor ρ S CD0 := by
@@ -427,7 +439,8 @@ lemma minDragSpeed_pow_four {W ρ S CD0 k : ℝ} (hW : W ≠ 0) (hρ : 0 < ρ) (
     _ = (Real.sqrt (inducedDragFactor W ρ S k / parasiteDragFactor ρ S CD0)) ^ 2 := by rw [h1]
     _ = inducedDragFactor W ρ S k / parasiteDragFactor ρ S CD0 := Real.sq_sqrt ht
 
-/-- The minimum-drag speed is positive for nonzero weight and `ρ, S, CD0, k > 0`. -/
+/-- The formula `minDragSpeed` is positive for `W ≠ 0` and `ρ, S, CD0, k > 0`; it depends on `W`
+only through `W ^ 2`. -/
 lemma minDragSpeed_pos {W ρ S CD0 k : ℝ} (hW : W ≠ 0) (hρ : 0 < ρ) (hS : 0 < S) (hCD0 : 0 < CD0)
     (hk : 0 < k) : 0 < minDragSpeed W ρ S CD0 k := by
   have ha := parasiteDragFactor_pos hρ hS hCD0
@@ -436,9 +449,9 @@ lemma minDragSpeed_pos {W ρ S CD0 k : ℝ} (hW : W ≠ 0) (hρ : 0 < ρ) (hS : 
   rw [Real.sqrt_pos, Real.sqrt_pos]
   exact div_pos hb ha
 
-/-- For nonzero weight and `ρ, S, CD0, k > 0`, among positive speeds the bound is attained exactly
-at the minimum-drag speed. -/
-lemma levelDrag_eq_two_sqrt_iff_eq_minDragSpeed {W ρ S CD0 k V : ℝ} (hW : W ≠ 0) (hρ : 0 < ρ)
+/-- For positive weight and `ρ, S, CD0, k > 0`, among positive speeds the bound is attained
+exactly at the minimum-drag speed. -/
+lemma levelDrag_eq_two_sqrt_iff_eq_minDragSpeed {W ρ S CD0 k V : ℝ} (hW : 0 < W) (hρ : 0 < ρ)
     (hS : 0 < S) (hCD0 : 0 < CD0) (hk : 0 < k) (hV : 0 < V) :
     levelDrag W ρ S CD0 k V =
         2 * Real.sqrt (parasiteDragFactor ρ S CD0 * inducedDragFactor W ρ S k) ↔
@@ -473,17 +486,18 @@ lemma levelDrag_eq_two_sqrt_iff_eq_minDragSpeed {W ρ S CD0 k V : ℝ} (hW : W �
       linarith
   · intro hVeq
     rw [hVeq]
-    have hmd := minDragSpeed_pow_four hW hρ hS hCD0 hk
+    have hmd := minDragSpeed_pow_four hW.ne' hρ hS hCD0 hk
     unfold minDragSpeed at hmd
     exact hmd
 
-/-- The least level-flight drag over positive speeds is `2 * √(a * b)`. -/
-lemma isLeast_levelDrag {W ρ S CD0 k : ℝ} (hW : W ≠ 0) (hρ : 0 < ρ) (hS : 0 < S)
+/-- For positive weight and `ρ, S, CD0, k > 0`, the least level-flight drag over positive speeds
+is `2 * √(a * b)`. -/
+lemma isLeast_levelDrag {W ρ S CD0 k : ℝ} (hW : 0 < W) (hρ : 0 < ρ) (hS : 0 < S)
     (hCD0 : 0 < CD0) (hk : 0 < k) :
     IsLeast (levelDrag W ρ S CD0 k '' Set.Ioi 0)
       (2 * Real.sqrt (parasiteDragFactor ρ S CD0 * inducedDragFactor W ρ S k)) := by
   constructor
-  · have hmd := minDragSpeed_pos hW hρ hS hCD0 hk
+  · have hmd := minDragSpeed_pos hW.ne' hρ hS hCD0 hk
     have hmem : levelDrag W ρ S CD0 k (minDragSpeed W ρ S CD0 k)
         = 2 * Real.sqrt (parasiteDragFactor ρ S CD0 * inducedDragFactor W ρ S k) :=
       (levelDrag_eq_two_sqrt_iff_eq_minDragSpeed hW hρ hS hCD0 hk hmd).mpr rfl
@@ -493,9 +507,12 @@ lemma isLeast_levelDrag {W ρ S CD0 k : ℝ} (hW : W ≠ 0) (hρ : 0 < ρ) (hS :
     have hV : 0 < V := hVmem
     exact two_sqrt_le_levelDrag hρ hS hCD0.le hk.le hV.ne'
 
-/-- Engineering form of the bound: `2 * √(a * b) = 2 * |W| * √(CD0 * k)` for all parameters. For
-`W ≠ 0` and `ρ, S, CD0, k > 0` it is the minimum drag (`isLeast_levelDrag`), so the greatest
-lift-to-drag ratio is `1 / (2 * √(CD0 * k))`. -/
+/-- Engineering form of the bound, an identity for all parameters:
+`2 * √(a * b) = 2 * |W| * √(CD0 * k)`. For positive weight and `ρ, S, CD0, k > 0` it is the
+minimum drag (`isLeast_levelDrag`); in level flight the lift equals the weight `W`, so the
+greatest lift-to-drag ratio is `W / (2 * W * √(CD0 * k)) = 1 / (2 * √(CD0 * k))`. That
+consequence needs `W > 0`: for `W < 0` the lift is negative and the ratio at minimum drag is
+`-1 / (2 * √(CD0 * k))`. -/
 lemma two_sqrt_mul_dragFactor_eq {W ρ S CD0 k : ℝ} (hρ : ρ ≠ 0) (hS : S ≠ 0) :
     2 * Real.sqrt (parasiteDragFactor ρ S CD0 * inducedDragFactor W ρ S k) =
       2 * |W| * Real.sqrt (CD0 * k) := by
@@ -550,7 +567,7 @@ lemma exists_levelDrag_eq_two_sqrt_iff {W ρ S CD0 k CLmax : ℝ} (hW : 0 < W) (
   constructor
   · rintro ⟨V, hV, hadm, hD⟩
     have hVeq : V = minDragSpeed W ρ S CD0 k :=
-      (levelDrag_eq_two_sqrt_iff_eq_minDragSpeed hW.ne' hρ hS hCD0 hk hV).mp hD
+      (levelDrag_eq_two_sqrt_iff_eq_minDragSpeed hW hρ hS hCD0 hk hV).mp hD
     have hVs : stallSpeed W ρ S CLmax ≤ V :=
       (levelLiftCoeff_le_iff_stallSpeed_le hW hρ hS hCL hV).mp hadm
     rw [hVeq] at hVs
@@ -559,7 +576,7 @@ lemma exists_levelDrag_eq_two_sqrt_iff {W ρ S CD0 k CLmax : ℝ} (hW : 0 < W) (
     have hmd := minDragSpeed_pos hW.ne' hρ hS hCD0 hk
     refine ⟨minDragSpeed W ρ S CD0 k, hmd, ?_, ?_⟩
     · exact (levelLiftCoeff_le_iff_stallSpeed_le hW hρ hS hCL hmd).mpr hle
-    · exact (levelDrag_eq_two_sqrt_iff_eq_minDragSpeed hW.ne' hρ hS hCD0 hk hmd).mpr rfl
+    · exact (levelDrag_eq_two_sqrt_iff_eq_minDragSpeed hW hρ hS hCD0 hk hmd).mpr rfl
 
 /-- An unconstrained minimizer below the stall speed is not an operating point: for positive
 weight and `CD0, k > 0`, every positive speed with lift coefficient at most `CLmax` has drag
@@ -579,7 +596,7 @@ lemma two_sqrt_lt_levelDrag_of_minDragSpeed_lt_stallSpeed {W ρ S CD0 k CLmax V 
   have hiff : levelDrag W ρ S CD0 k V
         = 2 * Real.sqrt (parasiteDragFactor ρ S CD0 * inducedDragFactor W ρ S k) ↔
       V = minDragSpeed W ρ S CD0 k :=
-    levelDrag_eq_two_sqrt_iff_eq_minDragSpeed hW.ne' hρ hS hCD0 hk hV
+    levelDrag_eq_two_sqrt_iff_eq_minDragSpeed hW hρ hS hCD0 hk hV
   have hDne : levelDrag W ρ S CD0 k V
       ≠ 2 * Real.sqrt (parasiteDragFactor ρ S CD0 * inducedDragFactor W ρ S k) := by
     intro hcon
