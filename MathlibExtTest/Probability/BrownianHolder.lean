@@ -41,8 +41,8 @@ example : ∃ (μ : Measure (ℝ≥0 → ℝ)) (W : ℝ≥0 → (ℝ≥0 → ℝ
     IsProbabilityMeasure μ ∧ ∀ᵐ ω ∂μ,
       (∃ C : ℝ≥0, HolderOnWith C (1 / 4) (fun t ↦ W t ω) (Set.Icc 0 1)) ∧
       (∃ C : ℝ≥0, HolderOnWith C 0 (fun t ↦ W t ω) (Set.Icc 0 10)) := by
-  obtain ⟨μ, W, hμ, -, -, hW⟩ := exists_isBrownianReal
-  refine ⟨μ, W, hμ, ?_⟩
+  obtain ⟨μ, W, hW⟩ := exists_isBrownianReal
+  refine ⟨μ, W, (hW.hasLaw_eval 0).isProbabilityMeasure, ?_⟩
   filter_upwards [hW.ae_holderOnWith (α := 1 / 4) (by norm_num) 1,
     hW.ae_holderOnWith (α := 0) (by norm_num) 10] with ω h1 h2
   exact ⟨h1, h2⟩

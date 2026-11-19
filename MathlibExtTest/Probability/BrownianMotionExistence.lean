@@ -10,13 +10,16 @@ module
 
 public import MathlibExt.Probability.BrownianMotionExistence
 public import MathlibExt.Probability.BrownianQuadraticVariation
+public import MathlibExt.Probability.OrnsteinUhlenbeck
 
 /-!
 # Tests for the existence of Brownian motion
 
 The fourth Gaussian moment at variance `0` and `1`, Kolmogorov's condition at equal times, and
-non-vacuity: the Brownian motion produced by `exists_isBrownianReal` has the Brownian one-time
-laws, starts at `0` and has continuous paths everywhere.
+non-vacuity: `exists_isBrownianReal` produces a Brownian motion, and the continuous modification
+(`IsPreBrownianReal.exists_isBrownianReal_modification`) of the coordinate process of
+`exists_isPreBrownianReal_eval` has the Brownian one-time laws, starts at `0`, has continuous
+paths everywhere and satisfies Kolmogorov's condition.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -38,9 +41,19 @@ and Kolmogorov's fourth-moment condition. -/
 example : ∃ (μ : Measure (ℝ≥0 → ℝ)) (W : ℝ≥0 → (ℝ≥0 → ℝ) → ℝ),
     (∀ ω, Continuous fun t ↦ W t ω) ∧ (∀ᵐ ω ∂μ, W 0 ω = 0) ∧
       HasLaw (W 1) (gaussianReal 0 1) μ ∧ IsKolmogorovProcess W μ 4 2 3 := by
-  obtain ⟨μ, W, -, hWm, hWc, hW⟩ := exists_isBrownianReal
+  obtain ⟨μ, hB⟩ := exists_isPreBrownianReal_eval
+  have : IsProbabilityMeasure μ := (hB.hasLaw_eval 0).isProbabilityMeasure
+  obtain ⟨W, hWm, hWc, -, hW⟩ :=
+    hB.exists_isBrownianReal_modification fun t ↦ measurable_pi_apply t
   exact ⟨μ, W, hWc, hW.eval_zero_ae_eq_zero, by simpa using hW.hasLaw_eval 1,
     hW.isKolmogorovProcess hWm⟩
+
+/-- `exists_isBrownianReal` produces a Brownian motion, whose underlying measure is a
+probability measure. -/
+example : ∃ (μ : Measure (ℝ≥0 → ℝ)) (W : ℝ≥0 → (ℝ≥0 → ℝ) → ℝ),
+    IsProbabilityMeasure μ ∧ IsBrownianReal W μ := by
+  obtain ⟨μ, W, hW⟩ := exists_isBrownianReal
+  exact ⟨μ, W, (hW.hasLaw_eval 0).isProbabilityMeasure, hW⟩
 
 /-- The continuous modification agrees with the original pre-Brownian motion at each time. -/
 example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]

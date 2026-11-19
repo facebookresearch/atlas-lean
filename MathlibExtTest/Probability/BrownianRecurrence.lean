@@ -28,7 +28,8 @@ after `N`, for all `A` and `N`. -/
 example : ∃ (μ : Measure (ℝ≥0 → ℝ)) (W : ℝ≥0 → (ℝ≥0 → ℝ) → ℝ),
     IsProbabilityMeasure μ ∧ ∀ᵐ ω ∂μ, ∀ A : ℝ, ∀ N : ℕ,
       (∃ n ≥ N, A < W n ω) ∧ (∃ n ≥ N, W n ω < -A) := by
-  obtain ⟨μ, W, hμ, -, -, hW⟩ := exists_isBrownianReal
+  obtain ⟨μ, W, hW⟩ := exists_isBrownianReal
+  have hμ : IsProbabilityMeasure μ := (hW.hasLaw_eval 0).isProbabilityMeasure
   refine ⟨μ, W, hμ, ?_⟩
   filter_upwards [hW.ae_unbounded_atTop] with ω h A N
   exact ⟨(h A N).1, (h (-A) N).2⟩
@@ -37,7 +38,8 @@ example : ∃ (μ : Measure (ℝ≥0 → ℝ)) (W : ℝ≥0 → (ℝ≥0 → ℝ
 example : ∃ (μ : Measure (ℝ≥0 → ℝ)) (W : ℝ≥0 → (ℝ≥0 → ℝ) → ℝ),
     IsProbabilityMeasure μ ∧ ∀ᵐ ω ∂μ,
       (∃ t, W t ω = -1) ∧ (∃ t, W t ω = 0) ∧ (∃ t, W t ω = 10 ^ 6) := by
-  obtain ⟨μ, W, hμ, -, -, hW⟩ := exists_isBrownianReal
+  obtain ⟨μ, W, hW⟩ := exists_isBrownianReal
+  have hμ : IsProbabilityMeasure μ := (hW.hasLaw_eval 0).isProbabilityMeasure
   refine ⟨μ, W, hμ, ?_⟩
   filter_upwards [hW.ae_exists_eq] with ω h
   exact ⟨h _, h _, h _⟩

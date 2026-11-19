@@ -14,4 +14,4 @@ In numerical linear algebra these inequalities give communication lower bounds: 
 ## Related topics
 
 - Shearer's entropy inequality: the entropy form of projection inequalities.
-- Communication lower bounds: the application to matrix multiplication and numerical linear algebra.
+- [Communication lower bounds](../../../ComputerScience/algebraic-and-numerical-algorithms/communication-lower-bounds/README.md): the application to matrix multiplication and numerical linear algebra.

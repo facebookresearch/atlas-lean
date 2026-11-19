@@ -17,4 +17,4 @@ The first moment method shows that a nonnegative integer count $X$ is $0$ with h
 - [Moment bounds for counting](../moment-bounds-for-counting/README.md): Chebyshev-type bounds on finite counts from their first two moments.
 - [Thresholds and expectation thresholds](../thresholds-and-expectation-thresholds/README.md): the first moment method gives the expectation threshold as a lower bound for the threshold.
 - [Concentration inequalities](../../../Probability/concentration-inequalities/README.md): Chebyshev, Paley–Zygmund and the exponential tail bounds behind these methods.
-- Graph colouring: Erdős's graphs of high girth and high chromatic number come from the first moment method with alterations.
+- [Graph colouring](../../../GraphTheory/graph-coloring/README.md): Erdős's graphs of high girth and high chromatic number come from the first moment method with alterations.

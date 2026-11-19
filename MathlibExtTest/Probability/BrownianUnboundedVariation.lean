@@ -39,7 +39,8 @@ example (t : ℝ≥0) :
 /-- Non-vacuity: some Brownian motion has, almost surely, unbounded variation on `[0, 1]`. -/
 example : ∃ (μ : Measure (ℝ≥0 → ℝ)) (W : ℝ≥0 → (ℝ≥0 → ℝ) → ℝ),
     IsProbabilityMeasure μ ∧ ∀ᵐ ω ∂μ, ¬ BoundedVariationOn (fun s ↦ W s ω) (Set.Icc 0 1) := by
-  obtain ⟨μ, W, hμ, -, -, hW⟩ := exists_isBrownianReal
+  obtain ⟨μ, W, hW⟩ := exists_isBrownianReal
+  have hμ : IsProbabilityMeasure μ := (hW.hasLaw_eval 0).isProbabilityMeasure
   exact ⟨μ, W, hμ, hW.ae_not_boundedVariationOn one_pos⟩
 
 end MathlibExtTest.Probability.BrownianUnboundedVariation
