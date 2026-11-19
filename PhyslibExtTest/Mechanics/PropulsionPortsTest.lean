@@ -27,7 +27,7 @@ No new definitions or results are introduced here.
 ## iii. Table of contents
 
 - A. Linear burn and zero mass
-- B. Minimal forms, specific impulse and constant mass
+- B. Burn, specific impulse and constant mass
 
 ## iv. References
 
@@ -78,14 +78,10 @@ example :
     Real.log (2 / (2 - 1)) - Real.log (2 / (2 - 0)) = 1 * Real.log ((2 - 0) / (2 - 1)) ∧
     Real.log (2 / (2 - 1)) - Real.log (2 / (2 - 0)) = Real.log 2 ∧
     0 < Real.log 2 := by
-  have hv'c : ContinuousOn (fun s : ℝ => 1 / (2 - s)) (Icc 0 1) :=
-    continuousOn_const.div (continuousOn_const.sub continuousOn_id)
-      (fun s hs => ne_of_gt (by linarith [hs.2]))
   have hinc := velocity_increment_eq_log (m := fun s : ℝ => 2 - s)
     (v := fun s : ℝ => Real.log (2 / (2 - s))) (m' := fun _ => -1) (v' := fun s => 1 / (2 - s))
-    (ve := 1) (tb := 1) zero_le_one one_pos (fun t ht => (linearBurn_data t ht).1)
-    (fun t ht => (linearBurn_data t ht).2.1) continuousOn_const hv'c
-    (fun t ht => (linearBurn_data t ht).2.2.1)
+    (ve := 1) (tb := 1) zero_le_one (fun t ht => (linearBurn_data t ht).1)
+    (fun t ht => (linearBurn_data t ht).2.1) (fun t ht => (linearBurn_data t ht).2.2.1)
     (fun t ht => (linearBurn_data t ht).2.2.2)
   refine ⟨linearBurn_data, hinc, ?_, Real.log_pos (by norm_num)⟩
   norm_num [Real.log_one]
@@ -102,28 +98,15 @@ example :
     refine ⟨hasDerivAt_const t 0, hasDerivAt_id t, by norm_num⟩
   · simp
 
-/-! ## B. Minimal forms, specific impulse and constant mass -/
+/-! ## B. Burn, specific impulse and constant mass -/
 
-/-- The minimal rocket equation applies to the linear burn with no continuity obligation. -/
-example : Real.log (2 / (2 - 1)) - Real.log (2 / (2 - 0)) = 1 * Real.log ((2 - 0) / (2 - 1)) :=
-  velocity_increment_eq_log_of_law (m := fun s : ℝ => 2 - s)
-    (v := fun s : ℝ => Real.log (2 / (2 - s))) (m' := fun _ => -1) (v' := fun s => 1 / (2 - s))
-    (ve := 1) (tb := 1) zero_le_one (fun t ht => (linearBurn_data t ht).1)
-    (fun t ht => (linearBurn_data t ht).2.1) (fun t ht => (linearBurn_data t ht).2.2.1)
-    (fun t ht => (linearBurn_data t ht).2.2.2)
-
-/-- The linear burn expels mass (`m 1 = 1 < 2 = m 0`), so its increment is positive; the
-contracted form is used, with continuous derivative witnesses. -/
+/-- The linear burn expels mass (`m 1 = 1 < 2 = m 0`), so its increment is positive. -/
 example : 0 < Real.log (2 / (2 - 1)) - Real.log (2 / (2 - 0)) := by
-  have hv'c : ContinuousOn (fun s : ℝ => 1 / (2 - s)) (Icc 0 1) :=
-    continuousOn_const.div (continuousOn_const.sub continuousOn_id)
-      (fun s hs => ne_of_gt (by linarith [hs.2]))
   have hb := velocity_increment_burn_and_boundary (m := fun s : ℝ => 2 - s)
     (v := fun s : ℝ => Real.log (2 / (2 - s))) (m' := fun _ => -1) (v' := fun s => 1 / (2 - s))
     (ve := 1) (tb := 1) zero_le_one one_pos (fun t ht => (linearBurn_data t ht).1)
-    (fun t ht => (linearBurn_data t ht).2.1) continuousOn_const hv'c
-    (fun t ht => (linearBurn_data t ht).2.2.1) (fun t ht => (linearBurn_data t ht).2.2.2)
-    (fun x _ y _ hxy => by simp only; linarith)
+    (fun t ht => (linearBurn_data t ht).2.1) (fun t ht => (linearBurn_data t ht).2.2.1)
+    (fun t ht => (linearBurn_data t ht).2.2.2) (fun x _ y _ hxy => by simp only; linarith)
   exact hb.2.2.mpr (by norm_num)
 
 /-- Specific impulse at a burning instant: mass `1000`, velocity rate `6`, mass rate `-2` and

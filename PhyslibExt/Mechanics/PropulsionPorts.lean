@@ -29,11 +29,10 @@ necessarily local gravity. Signs: `m' < 0` during a burn, so `v' = -ve * m' / m 
 
 ## ii. Key results
 
-- `velocity_increment_eq_log_of_law`: the ideal rocket equation from the reduced law, with only
-  derivative data, positive mass and the law; `velocity_increment_eq_log` adds the contracted
-  model class (`ve > 0`, continuous derivatives).
-- `velocity_increment_burn_and_boundary_of_law`, `velocity_increment_burn_and_boundary`:
-  nonnegative increment, zero exactly at equal end masses, positive exactly for a nonzero burn.
+- `velocity_increment_eq_log`: the ideal rocket equation from derivative data, positive mass and
+  the law.
+- `velocity_increment_burn_and_boundary`: for `ve > 0`, nonnegative increment, zero exactly at
+  equal end masses, positive exactly for a nonzero burn.
 - `specificImpulse_eq_of_law`: `Isp = ve / g0` at any burning instant.
 - `velocity_increment_const_mass`: constant positive mass gives zero increment.
 
@@ -58,11 +57,12 @@ open Set
 
 /-! ## A. Integrated velocity increment -/
 
-/-- Minimal form of the ideal rocket equation: derivative data `m'`, `v'` for mass and velocity
-on `[0, tb]`, positive mass and the law `m * v' = -ve * m'` give
-`v tb - v 0 = ve * log (m 0 / m tb)`. No sign of `ve` and no continuity of the derivatives is
-needed. -/
-lemma velocity_increment_eq_log_of_law {m v m' v' : ℝ → ℝ} {ve tb : ℝ} (htb : 0 ≤ tb)
+/-- Ideal rocket equation from the reduced variable-mass law. For mass `m` and velocity `v`
+with derivatives `m'`, `v'` on `[0, tb]`, positive mass and the law `m * v' = -ve * m'` on
+`[0, tb]`, the velocity increment is `ve * log (m 0 / m tb)`. Neither the sign of `ve` nor
+continuity of the derivatives is needed, so the identity covers the model's `C¹` histories with
+`ve > 0` as a special case. -/
+lemma velocity_increment_eq_log {m v m' v' : ℝ → ℝ} {ve tb : ℝ} (htb : 0 ≤ tb)
     (hm : ∀ t ∈ Icc 0 tb, HasDerivAt m (m' t) t) (hv : ∀ t ∈ Icc 0 tb, HasDerivAt v (v' t) t)
     (hpos : ∀ t ∈ Icc 0 tb, 0 < m t) (hlaw : ∀ t ∈ Icc 0 tb, m t * v' t = -ve * m' t) :
     v tb - v 0 = ve * Real.log (m 0 / m tb) := by
@@ -97,28 +97,15 @@ lemma velocity_increment_eq_log_of_law {m v m' v' : ℝ → ℝ} {ve tb : ℝ} (
   rw [hlogdiv]
   linear_combination hzero
 
-/-- Ideal rocket equation from the reduced variable-mass law. For mass `m` and velocity `v`
-with derivatives `m'`, `v'` on `[0, tb]` (continuous there, so both are `C¹`), positive mass,
-constant `ve > 0` and `m * v' = -ve * m'` on `[0, tb]`, the velocity increment is
-`ve * log (m 0 / m tb)`. The identity does not use `ve > 0` or the continuity of the
-derivatives (those binders are underscored); they are kept as the contracted model class, and
-`velocity_increment_eq_log_of_law` is the form without them. -/
-lemma velocity_increment_eq_log {m v m' v' : ℝ → ℝ} {ve tb : ℝ} (htb : 0 ≤ tb) (_hve : 0 < ve)
-    (hm : ∀ t ∈ Icc 0 tb, HasDerivAt m (m' t) t) (hv : ∀ t ∈ Icc 0 tb, HasDerivAt v (v' t) t)
-    (_hm'c : ContinuousOn m' (Icc 0 tb)) (_hv'c : ContinuousOn v' (Icc 0 tb))
-    (hpos : ∀ t ∈ Icc 0 tb, 0 < m t) (hlaw : ∀ t ∈ Icc 0 tb, m t * v' t = -ve * m' t) :
-    v tb - v 0 = ve * Real.log (m 0 / m tb) :=
-  velocity_increment_eq_log_of_law htb hm hv hpos hlaw
-
-/-- Minimal form of `velocity_increment_burn_and_boundary`: for nonincreasing positive mass and
-`ve > 0` the increment is nonnegative, zero exactly at equal end masses and positive exactly for
-a nonzero burn, with no continuity assumption on the derivatives. -/
-lemma velocity_increment_burn_and_boundary_of_law {m v m' v' : ℝ → ℝ} {ve tb : ℝ} (htb : 0 ≤ tb)
+/-- Nonincreasing mass admits both cases: for `ve > 0` the increment is nonnegative, zero exactly
+when the end masses are equal (no net burn), and positive exactly when mass was expelled. No
+continuity of the derivatives is needed. -/
+lemma velocity_increment_burn_and_boundary {m v m' v' : ℝ → ℝ} {ve tb : ℝ} (htb : 0 ≤ tb)
     (hve : 0 < ve) (hm : ∀ t ∈ Icc 0 tb, HasDerivAt m (m' t) t)
     (hv : ∀ t ∈ Icc 0 tb, HasDerivAt v (v' t) t) (hpos : ∀ t ∈ Icc 0 tb, 0 < m t)
     (hlaw : ∀ t ∈ Icc 0 tb, m t * v' t = -ve * m' t) (hanti : AntitoneOn m (Icc 0 tb)) :
     0 ≤ v tb - v 0 ∧ (v tb - v 0 = 0 ↔ m tb = m 0) ∧ (0 < v tb - v 0 ↔ m tb < m 0) := by
-  have hmain := velocity_increment_eq_log_of_law htb hm hv hpos hlaw
+  have hmain := velocity_increment_eq_log htb hm hv hpos hlaw
   have h0mem : (0 : ℝ) ∈ Icc 0 tb := ⟨le_refl 0, htb⟩
   have htbmem : tb ∈ Icc 0 tb := ⟨htb, le_refl tb⟩
   have hm0_pos : 0 < m 0 := hpos 0 h0mem
@@ -156,18 +143,6 @@ lemma velocity_increment_burn_and_boundary_of_law {m v m' v' : ℝ → ℝ} {ve 
       rw [h, div_self hm0_ne, Real.log_one, mul_zero]
   · rw [hmain, mul_pos_iff_of_pos_left hve, Real.log_pos_iff hr_nonneg,
       lt_div_iff₀ hmtb_pos, one_mul]
-
-/-- Nonincreasing mass admits both cases: the increment is nonnegative, zero exactly when the
-end masses are equal (no net burn), and positive exactly when mass was expelled. The continuity
-binders record the contracted model class; `velocity_increment_burn_and_boundary_of_law` is the
-form without them. -/
-lemma velocity_increment_burn_and_boundary {m v m' v' : ℝ → ℝ} {ve tb : ℝ} (htb : 0 ≤ tb)
-    (hve : 0 < ve) (hm : ∀ t ∈ Icc 0 tb, HasDerivAt m (m' t) t)
-    (hv : ∀ t ∈ Icc 0 tb, HasDerivAt v (v' t) t) (_hm'c : ContinuousOn m' (Icc 0 tb))
-    (_hv'c : ContinuousOn v' (Icc 0 tb)) (hpos : ∀ t ∈ Icc 0 tb, 0 < m t)
-    (hlaw : ∀ t ∈ Icc 0 tb, m t * v' t = -ve * m' t) (hanti : AntitoneOn m (Icc 0 tb)) :
-    0 ≤ v tb - v 0 ∧ (v tb - v 0 = 0 ↔ m tb = m 0) ∧ (0 < v tb - v 0 ↔ m tb < m 0) :=
-  velocity_increment_burn_and_boundary_of_law htb hve hm hv hpos hlaw hanti
 
 /-! ## B. Specific impulse -/
 
