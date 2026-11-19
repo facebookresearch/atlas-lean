@@ -24,7 +24,11 @@ import Mathlib.Tactic.NormNum
 * two free ends: an incompatible net load and a rigid translation;
 * the thin closed rectangular cell: a nonzero torque and its reversal at SI data, an open wall
   whose resultants are not a couple, and a zero thickness, whose torsion constant vanishes, so that
-  no twist rate carries the cell torque.
+  no twist rate carries the cell torque;
+* the simply supported beam `EI = 2`, `L = 4`, `q = 3`: equal support reactions `6`, the slopes
+  `± 4` at the pins, the midspan deflection `5` of every solution, the fixed-end polynomial with
+  midspan deflection `1`, which is not a simply supported solution, and no solution on a span of
+  length `0`.
 -/
 
 @[expose] public section
@@ -254,6 +258,49 @@ lemma zeroThickness_rejected {a b G q : ℝ} (ha : 0 < a) (hb : 0 < b) (hq : q �
     simp [ne_of_gt ha, ne_of_gt hb, hq]
 
 end ClosedCell
+
+/-! ## H. Simply supported beam -/
+
+open _root_.Mechanics.EulerBernoulli
+
+-- Nonzero-load fixture `EI = 2`, `L = 4`, `q = 3`: equal support reactions `q * L / 2 = 6`,
+-- which together carry the total load `q * L = 12`, and the midspan deflection
+-- `5 * q * L ^ 4 / (384 * EI) = 5`.
+example :
+    -(2 * iteratedDeriv 3 (uniformLoadDeflection 3 2 4) 0) = 6 ∧
+      2 * iteratedDeriv 3 (uniformLoadDeflection 3 2 4) 4 = 6 ∧
+      uniformLoadDeflection 3 2 4 2 = 5 := by
+  obtain ⟨h0, hL⟩ := (isSimplySupportedSolution_uniformLoadDeflection (EI := 2) (L := 4)
+    (by norm_num) (by norm_num) 3).reactions (by norm_num)
+  refine ⟨by rw [h0]; norm_num, by rw [hL]; norm_num, ?_⟩
+  unfold uniformLoadDeflection
+  norm_num
+
+-- The same data: the pins leave the slopes free, `4` at the left pin and `-4` at the right.
+example :
+    deriv (uniformLoadDeflection 3 2 4) 0 = 4 ∧ deriv (uniformLoadDeflection 3 2 4) 4 = -4 := by
+  obtain ⟨h0, hL⟩ := (isSimplySupportedSolution_uniformLoadDeflection (EI := 2) (L := 4)
+    (by norm_num) (by norm_num) 3).slopes (by norm_num)
+  exact ⟨by rw [h0]; norm_num, by rw [hL]; norm_num⟩
+
+-- Uniqueness: every solution with these data has the midspan deflection `5`.
+example (w : ℝ → ℝ) (hw : IsSimplySupportedSolution 2 4 3 w) : w 2 = 5 := by
+  rw [hw.eqOn (by norm_num) ⟨by norm_num, by norm_num⟩]
+  unfold uniformLoadDeflection
+  norm_num
+
+-- Clamped slopes instead of the moment conditions: the fixed-end polynomial is not a simply
+-- supported solution, and its midspan deflection is `1`, not `5`.
+example :
+    ¬ IsSimplySupportedSolution 2 4 3 (clampedClampedDeflection 2 4 3) ∧
+      clampedClampedDeflection 2 4 3 2 = 1 := by
+  refine ⟨(clampedSlopes_change_solution (EI := 2) (L := 4) (q := 3) (by norm_num) (by norm_num)
+    (by norm_num)).2.2.2.2.2.1, ?_⟩
+  unfold clampedClampedDeflection
+  norm_num
+
+-- A span of length `0` admits no simply supported solution.
+example (w : ℝ → ℝ) : ¬ IsSimplySupportedSolution 2 0 3 w := fun h => lt_irrefl _ h.span_pos
 
 end PhyslibExtTest.Elasticity.PrismaticMembers
 
