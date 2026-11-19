@@ -19,13 +19,15 @@ a steady level turn.
 
 ## i. Overview
 
-Straight flight of a mass distribution of mass `m ≠ 0`, with identity orientation and centre of
+Straight flight of a mass distribution of mass `m > 0`, with identity orientation and centre of
 mass at `(t, 0, 0)`, has the nonzero position rate `(1, 0, 0)`, but its reduced state, the body
 velocity `(1, 0, 0)` and the body angular velocity `0`, has zero rate: with gravity `(0, 0, -1)`
 and a lift map giving the body force `(0, 0, m)` and no moment, the plant holds and its residual
 vanishes. The lift maps are admitted only at states with positive forward body velocity, and the
-plant fails elsewhere. A unit point mass at the origin has positive mass and centre of mass `0`, so
-the hypotheses of the package are satisfiable.
+plant fails elsewhere. A massless motion is never a plant, and a plant's body velocity is
+differentiable, so the rate in its translational equation is a genuine derivative. A unit point mass
+at the origin has positive mass and centre of mass `0`, so the hypotheses of the package are
+satisfiable.
 
 A steady level turn at unit speed and unit yaw rate, with orientation `Rz(t)` and centre of mass on
 the circle `(sin t, 1 - cos t, 0)` of radius `1` about `(0, 1, 0)`, has the constant body velocity
@@ -119,11 +121,11 @@ private lemma bodyAngularVelocity_straightFlight (B : RigidBody 3) :
     (straightFlight B).bodyAngularVelocity = 0 :=
   RigidBodyMotion.bodyAngularVelocity_of_orientation_const _ 1 rfl
 
-/-- A nonzero straight-flight trajectory: for a mass distribution of nonzero mass `m`, the
+/-- A nonzero straight-flight trajectory: for a mass distribution of positive mass `m`, the
 position rate of the centre of mass is `(1, 0, 0) ≠ 0`, but the reduced state, the body velocity
 `(1, 0, 0)` and the body angular velocity `0`, has zero rate, and the plant holds with gravity
 `(0, 0, -1)` and the lift maps of the mass `m`, so its residual vanishes. -/
-lemma straightFlight_fixture (B : RigidBody 3) (hm : B.mass ≠ 0) (t : Time) :
+lemma straightFlight_fixture (B : RigidBody 3) (hm : 0 < B.mass) (t : Time) :
     ∂ₜ (fun s j => (straightFlight B).comTrajectory s j) t = ![1, 0, 0] ∧
       bodyVelocity (straightFlight B) t = ![1, 0, 0] ∧
       ∂ₜ (bodyVelocity (straightFlight B)) t = 0 ∧
@@ -143,11 +145,12 @@ lemma straightFlight_fixture (B : RigidBody 3) (hm : B.mass ≠ 0) (t : Time) :
     rw [hv]
     change (0 : ℝ) < ![(1 : ℝ), 0, 0] 0
     norm_num
-  refine ⟨hdom, ?_, ?_⟩
+  refine ⟨hm, ⟨Set.univ, isOpen_univ, Set.mem_univ t, contDiffOn_straightFlight_orientation B,
+    contDiffOn_straightFlight_comTrajectory B⟩, hdom, ?_, ?_⟩
   · have hF : (liftMaps B.mass).force ⟨_, hdom⟩ = ![0, 0, B.mass] := rfl
     rw [hF, hdv, hv, hω]
     ext i
-    fin_cases i <;> simp [inertialToBodyVec, straightFlight, hm]
+    fin_cases i <;> simp [inertialToBodyVec, straightFlight, hm.ne']
   · have hM : (liftMaps B.mass).moment ⟨_, hdom⟩ = 0 := rfl
     rw [hM, hdω, hω]
     simp
@@ -161,7 +164,7 @@ lemma straightFlight_balanceLaws (B : RigidBody 3) (hc : B.centerOfMass = 0) (hm
           B.mass • ![0, 0, -1] ∧
       ∂ₜ (comAngularMomentum (straightFlight B)) t =
         bodyToInertialVec ((straightFlight B).orientation t) 0 := by
-  obtain ⟨_, hbody⟩ := (straightFlight_fixture B hm.ne' t).2.2.2.2
+  obtain ⟨-, -, _, hbody⟩ := (straightFlight_fixture B hm t).2.2.2.2
   exact (balanceLaws_iff_sixDofBodyEquations (straightFlight B) isOpen_univ
     (contDiffOn_straightFlight_orientation B) (contDiffOn_straightFlight_comTrajectory B) hc hm
     _ _ _ (Set.mem_univ t)).mpr hbody
@@ -171,7 +174,7 @@ are not admitted, and the plant fails whatever the motion, the mass the maps are
 gravity. -/
 lemma liftMaps_not_sixDofPlant (M : RigidBodyMotion 3) (m : ℝ) (g : Fin 3 → ℝ) {t : Time}
     (h : bodyVelocity M t 0 ≤ 0) : ¬ SixDofPlant (liftMaps m) (bodyVelocity M) M g t := by
-  rintro ⟨hx, -⟩
+  rintro ⟨-, -, hx, -⟩
   exact absurd hx (not_lt.mpr h)
 
 /-! ## B. Consumers of the public lemmas -/
@@ -193,9 +196,24 @@ example (B : RigidBody 3) (hc : B.centerOfMass = 0) (hm : 0 < B.mass) (t : Time)
         ∂ₜ (comAngularMomentum (straightFlight B)) t =
           bodyToInertialVec ((straightFlight B).orientation t)
             ((liftMaps B.mass).moment ⟨bodyVelocity (straightFlight B) t, hx⟩) :=
-  (sixDofPlant_iff (liftMaps B.mass) _ (straightFlight B) isOpen_univ
-    (contDiffOn_straightFlight_orientation B) (contDiffOn_straightFlight_comTrajectory B) hc hm _
-    (Set.mem_univ t)).mp (straightFlight_fixture B hm.ne' t).2.2.2.2
+  ((sixDofPlant_iff (liftMaps B.mass) _ (straightFlight B) hc _ t).mp
+    (straightFlight_fixture B hm t).2.2.2.2).2.2
+
+-- A massless motion is never a plant: at `M.mass = 0` the totalized inverse `M.mass⁻¹ = 0` would
+-- drop the force from the translational equation, and the plant excludes that case.
+example {S : Type*} (c : ForceMomentMaps S) (x : Time → S) (M : RigidBodyMotion 3)
+    (g : Fin 3 → ℝ) (t : Time) (h0 : M.mass = 0) : ¬ SixDofPlant c x M g t := by
+  rintro ⟨hm, -⟩
+  rw [h0] at hm
+  exact lt_irrefl 0 hm
+
+-- A plant's body velocity is differentiable at `t`, so `∂ₜ` of it in the translational equation is
+-- a genuine derivative, not a fallback value.
+example {S : Type*} (c : ForceMomentMaps S) (x : Time → S) (M : RigidBodyMotion 3)
+    (g : Fin 3 → ℝ) (t : Time) (h : SixDofPlant c x M g t) :
+    DifferentiableAt ℝ (bodyVelocity M) t := by
+  obtain ⟨-, ⟨U, hU, ht, hR, hX⟩, -⟩ := h
+  exact differentiableAt_bodyVelocity M hU hR hX ht
 
 /-- A unit point mass at the origin of body coordinates. -/
 private noncomputable def unitPointMass : RigidBody 3 where

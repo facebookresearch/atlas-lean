@@ -42,8 +42,11 @@ does.
 
 Aerodynamic and propulsive maps are explicit model inputs with admitted domains: a force map and a
 moment map defined only on the admitted states (a polar validity region, for example), so they are
-never evaluated elsewhere. The plant holds at a time exactly when the state is admitted there and
-the inertial laws hold with the force and the moment the maps give.
+never evaluated elsewhere. The plant itself requires positive mass and `C²` data on an open set of
+times around the given time: without them the totalized inverse `m⁻¹ = 0` at `m = 0` would drop the
+force from the translational equation, and `∂ₜ` of a nondifferentiable curve is a fallback value.
+For a body frame centered at the centre of mass, the plant holds exactly when, in addition, the
+state is admitted and the inertial laws hold with the force and the moment the maps give.
 
 Model inputs (hypotheses of the module):
 
@@ -69,7 +72,7 @@ trajectories for given maps, and any empirical adequacy or system safety claim.
 - `SixDofBodyEquations`, `balanceLaws_iff_sixDofBodyEquations` : the translational body equation
   paired with Euler's equations, equivalent to both inertial balance laws.
 - `ForceMomentMaps`, `SixDofPlant`, `sixDofPlant_iff` : force and moment maps on an admitted
-  domain, and the plant they define.
+  domain, and the plant they define, which requires positive mass and `C²` data.
 
 ## iii. Table of contents
 
@@ -235,25 +238,40 @@ structure ForceMomentMaps (S : Type*) where
   moment : domain → Fin 3 → ℝ
 
 /-- The six-degree-of-freedom plant of the motion `M` at time `t` along the state trajectory `x`,
-the state the maps read: the state is admitted, and the body equations hold with the force and the
-moment the maps give there. -/
+the state the maps read: the motion has positive mass, its orientation (entry by entry) and its
+centre-of-mass trajectory (component by component) are `C²` on an open set of times containing
+`t`, the state is admitted, and the body equations hold with the force and the moment the maps give
+there. Positive mass keeps the force in the translational equation, and the regularity makes the
+derivatives in the body equations genuine. -/
 def SixDofPlant {S : Type*} (c : ForceMomentMaps S) (x : Time → S) (M : RigidBodyMotion 3)
     (g : Fin 3 → ℝ) (t : Time) : Prop :=
-  ∃ hx : x t ∈ c.domain, SixDofBodyEquations M g (c.force ⟨x t, hx⟩) (c.moment ⟨x t, hx⟩) t
+  0 < M.mass ∧
+    (∃ U : Set Time, IsOpen U ∧ t ∈ U ∧
+      (∀ i j, ContDiffOn ℝ 2 (fun s => (M.orientation s).1 i j) U) ∧
+      ∀ j, ContDiffOn ℝ 2 (fun s => M.comTrajectory s j) U) ∧
+    ∃ hx : x t ∈ c.domain, SixDofBodyEquations M g (c.force ⟨x t, hx⟩) (c.moment ⟨x t, hx⟩) t
 
-/-- The coefficient-map domain wrapper: under the hypotheses of the package, the plant holds at
-`t ∈ U` exactly when the state is admitted there and both inertial balance laws hold with the
-force and the moment the maps give at that state. -/
+/-- The coefficient-map domain wrapper: for a body frame centered at the centre of mass, the plant
+holds at `t` exactly when the motion has positive mass and `C²` data on an open set of times
+containing `t`, the state is admitted there, and both inertial balance laws hold with the force and
+the moment the maps give at that state. -/
 lemma sixDofPlant_iff {S : Type*} (c : ForceMomentMaps S) (x : Time → S) (M : RigidBodyMotion 3)
-    {U : Set Time} (hU : IsOpen U)
-    (hR : ∀ i j, ContDiffOn ℝ 2 (fun s => (M.orientation s).1 i j) U)
-    (hX : ∀ j, ContDiffOn ℝ 2 (fun s => M.comTrajectory s j) U) (hc : M.centerOfMass = 0)
-    (hm : 0 < M.mass) (g : Fin 3 → ℝ) {t : Time} (ht : t ∈ U) :
-    SixDofPlant c x M g t ↔ ∃ hx : x t ∈ c.domain,
-      M.mass • ∂ₜ (∂ₜ (fun s j => M.comTrajectory s j)) t =
-          bodyToInertialVec (M.orientation t) (c.force ⟨x t, hx⟩) + M.mass • g ∧
-        ∂ₜ (comAngularMomentum M) t = bodyToInertialVec (M.orientation t) (c.moment ⟨x t, hx⟩) := by
-  exact exists_congr fun _ =>
-    (balanceLaws_iff_sixDofBodyEquations M hU hR hX hc hm g _ _ ht).symm
+    (hc : M.centerOfMass = 0) (g : Fin 3 → ℝ) (t : Time) :
+    SixDofPlant c x M g t ↔ 0 < M.mass ∧
+      (∃ U : Set Time, IsOpen U ∧ t ∈ U ∧
+        (∀ i j, ContDiffOn ℝ 2 (fun s => (M.orientation s).1 i j) U) ∧
+        ∀ j, ContDiffOn ℝ 2 (fun s => M.comTrajectory s j) U) ∧
+      ∃ hx : x t ∈ c.domain,
+        M.mass • ∂ₜ (∂ₜ (fun s j => M.comTrajectory s j)) t =
+            bodyToInertialVec (M.orientation t) (c.force ⟨x t, hx⟩) + M.mass • g ∧
+          ∂ₜ (comAngularMomentum M) t =
+            bodyToInertialVec (M.orientation t) (c.moment ⟨x t, hx⟩) := by
+  constructor
+  · rintro ⟨hm, ⟨U, hU, ht, hR, hX⟩, hx, hbody⟩
+    exact ⟨hm, ⟨U, hU, ht, hR, hX⟩, hx,
+      (balanceLaws_iff_sixDofBodyEquations M hU hR hX hc hm g _ _ ht).mpr hbody⟩
+  · rintro ⟨hm, ⟨U, hU, ht, hR, hX⟩, hx, hlaws⟩
+    exact ⟨hm, ⟨U, hU, ht, hR, hX⟩, hx,
+      (balanceLaws_iff_sixDofBodyEquations M hU hR hX hc hm g _ _ ht).mp hlaws⟩
 
 end Mechanics.FlightPlant
