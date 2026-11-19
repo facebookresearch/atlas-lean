@@ -59,7 +59,6 @@ Euler's equations, attitude parametrizations, and any empirical adequacy or syst
   translating origin.
 - `deriv_deriv_bodyToInertial_of_const` : a constant rate and a fixed origin give the
   constant-rate decomposition.
-- `orientation_ne_reflectX` : no rigid-body motion has a reflection as an orientation.
 
 ## iii. Table of contents
 
@@ -67,7 +66,6 @@ Euler's equations, attitude parametrizations, and any empirical adequacy or syst
   - A.1. Private calculus helpers
   - A.2. The transport law
 - B. Acceleration in a rotating and translating frame
-- C. The reflection boundary
 
 ## iv. References
 
@@ -309,17 +307,5 @@ lemma deriv_deriv_bodyToInertial_of_const (M : RigidBodyMotion 3) (o₀ : Fin 3 
     exact Time.deriv_const 0
   rw [h, hdo, hdω, hΩ t ht, zero_add]
   simp
-
-/-! ## C. The reflection boundary -/
-
-/-- Reflections are inadmissible: no rigid-body motion has the reflection `diag(-1, 1, 1)` as an
-orientation. -/
-lemma orientation_ne_reflectX (M : RigidBodyMotion 3) (t : Time) :
-    (M.orientation t : Matrix (Fin 3) (Fin 3) ℝ) ≠ reflectX := by
-  intro h
-  have hdet := (Matrix.mem_specialOrthogonalGroup_iff.mp (M.orientation t).2).2
-  rw [h] at hdet
-  simp [reflectX, Matrix.det_diagonal, Fin.prod_univ_three] at hdet
-  norm_num at hdet
 
 end Mechanics.RigidMotionPorts

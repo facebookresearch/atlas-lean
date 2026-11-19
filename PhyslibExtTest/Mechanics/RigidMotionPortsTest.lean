@@ -222,10 +222,11 @@ example (B : RigidBody 3) (v : Fin 3 → ℝ) (t : Time) :
   rw [deriv_bodyToInertialVec (spinUp B) (fun _ => v) t (differentiableAt_spinUp_orientation B t)
     (differentiableAt_const v), Time.deriv_const, zero_add, spinUp_bodyAngularVelocity]
 
--- The spin-up is an admissible rigid motion: its orientation is never the reflection.
-example (B : RigidBody 3) (t : Time) :
-    ((spinUp B).orientation t : Matrix (Fin 3) (Fin 3) ℝ) ≠ reflectX :=
-  orientation_ne_reflectX (spinUp B) t
+-- Reflections are not orientations: no rigid-body motion, the spin-up included, has the
+-- reflection `diag(-1, 1, 1)` as an orientation, since the reflection is not in `SO(3)`.
+example (M : RigidBodyMotion 3) (t : Time) :
+    (M.orientation t : Matrix (Fin 3) (Fin 3) ℝ) ≠ reflectX := fun h =>
+  reflectX_not_mem_specialOrthogonalGroup (h ▸ (M.orientation t).2)
 
 -- The spin-up is defined for every mass distribution, the zero one included; at `t = 1` it
 -- turns at the unit rate.
