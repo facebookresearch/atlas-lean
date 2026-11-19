@@ -63,7 +63,8 @@ Poisson relation `EarthScience.poisson_temperature_ratio` forces `T₂` and `T�
 those adiabats. Each leg is a steady-flow device with specific enthalpy `cp T`; its balance
 `q - workOut w = cp T_out - cp T_in` (a model input) uses the engineering work output
 `ProcessPorts.workOut`. Then `Qin = cp (T₃ - T₂) > 0`, `Qout = Qin / a`,
-`Wnet = Qin - Qout = cp (1 - 1 / a) (T₃ - T₂) > 0` and `η = Wnet / Qin = 1 - 1 / a < 1 - T₁ / T₃`.
+`Wnet = Qin - Qout = cp (1 - 1 / a) (T₃ - T₂) > 0` and `η = Wnet / Qin = 1 - 1 / a`, below the
+Carnot efficiency `1 - T₁ / T₃` between the coldest state `T₁` and the hottest `T₃`.
 A pressure ratio `rp > 1` alone does not give positive work: the work is positive exactly when
 `T₃ > T₂`, and it vanishes at `T₃ = T₂` and at `rp = 1`.
 
@@ -86,7 +87,8 @@ A pressure ratio `rp > 1` alone does not give positive work: the work is positiv
 - `GasCycles.brayton_closed_loop`: `Qout = Qin / a` and
   `Wnet = Qin - Qout = cp (1 - 1 / a) (T₃ - T₂)`.
 - `GasCycles.braytonNetWork_div_heatIn`, `GasCycles.braytonEfficiency_lt_carnot`:
-  `η = 1 - 1 / a < 1 - T₁ / T₃`.
+  `η = 1 - 1 / a`, below the Carnot efficiency `1 - T₁ / T₃` between the coldest state `T₁` and
+  the hottest `T₃` (for `0 < R < cp` and `rp > 1`).
 - `GasCycles.brayton_cycle`: the nondegenerate loop under the cycle's hypotheses.
 - `GasCycles.braytonNetWork_pos_iff`, `GasCycles.brayton_zero_work`: positive work exactly when
   `T₃ > T₂`; zero work at `T₃ = T₂` and at `rp = 1`.
@@ -773,18 +775,30 @@ lemma braytonNetWork_div_heatIn {cp R rp T₁ T₃ : ℝ} (hrp : 0 < rp)
   · field_simp
 
 /-- The Brayton efficiency is below the Carnot efficiency between the loop's extreme
-temperatures: for `rp > 0`, `T₁ > 0` and `T₃ > T₂ = a T₁`, `1 - 1 / a < 1 - T₁ / T₃`. -/
-lemma braytonEfficiency_lt_carnot {cp R rp T₁ T₃ : ℝ} (hrp : 0 < rp) (hT₁ : 0 < T₁)
-    (hT₃ : braytonCompressedTemp T₁ rp R cp < T₃) :
-    braytonEfficiency rp R cp < 1 - T₁ / T₃ := by
-  have ha : 0 < braytonTempRatio rp R cp := by
+temperatures: for `0 < R < cp` and `rp > 1` (so `a > 1`), `T₁ > 0` and a turbine inlet temperature
+`T₃ > T₂ = a T₁`, the compressor inlet `T₁` is the coldest and the turbine inlet `T₃` the hottest
+of the four states (`T₁ < T₂ < T₃` and `T₁ < T₄ < T₃`), and `1 - 1 / a < 1 - T₁ / T₃`. -/
+lemma braytonEfficiency_lt_carnot {cp R rp T₁ T₃ : ℝ} (hR : 0 < R) (hRcp : R < cp)
+    (hrp : 1 < rp) (hT₁ : 0 < T₁) (hT₃ : braytonCompressedTemp T₁ rp R cp < T₃) :
+    T₁ < braytonCompressedTemp T₁ rp R cp ∧ T₁ < braytonExpandedTemp T₃ rp R cp ∧
+      braytonExpandedTemp T₃ rp R cp < T₃ ∧ braytonEfficiency rp R cp < 1 - T₁ / T₃ := by
+  have hcp : 0 < cp := lt_trans hR hRcp
+  have ha1 : 1 < braytonTempRatio rp R cp := by
     simp only [braytonTempRatio]
-    exact Real.rpow_pos_of_pos hrp _
-  have hT₃pos : 0 < T₃ := by
-    have h2 : 0 < braytonCompressedTemp T₁ rp R cp := by
-      simp only [braytonCompressedTemp]
-      exact mul_pos ha hT₁
-    exact lt_trans h2 hT₃
+    exact Real.one_lt_rpow hrp (div_pos hR hcp)
+  have ha : 0 < braytonTempRatio rp R cp := lt_trans zero_lt_one ha1
+  have hT₂ : T₁ < braytonCompressedTemp T₁ rp R cp := by
+    simp only [braytonCompressedTemp]
+    nlinarith
+  have hT₃pos : 0 < T₃ := by linarith
+  have hT₄ : T₁ < braytonExpandedTemp T₃ rp R cp := by
+    simp only [braytonExpandedTemp, braytonCompressedTemp] at hT₃ ⊢
+    rw [lt_div_iff₀ ha]
+    linear_combination hT₃
+  have hT₄' : braytonExpandedTemp T₃ rp R cp < T₃ := by
+    simp only [braytonExpandedTemp]
+    exact div_lt_self hT₃pos ha1
+  refine ⟨hT₂, hT₄, hT₄', ?_⟩
   simp only [braytonEfficiency, braytonCompressedTemp] at hT₃ ⊢
   have h : T₁ / T₃ < 1 / braytonTempRatio rp R cp := by
     rw [div_lt_div_iff₀ hT₃pos ha, one_mul]
@@ -808,7 +822,7 @@ lemma brayton_cycle {cp R rp T₁ T₃ : ℝ} (hR : 0 < R) (hRcp : R < cp) (hrp 
   have hpos := brayton_heat_work_pos hR hRcp hrp hT₃
   have hloop := brayton_closed_loop (cp := cp) (R := R) (T₁ := T₁) (T₃ := T₃) hrp0
   have hdiv := (braytonNetWork_div_heatIn hrp0 (ne_of_gt hpos.1)).1
-  have hcarnot := braytonEfficiency_lt_carnot hrp0 hT₁ hT₃
+  have hcarnot := (braytonEfficiency_lt_carnot hR hRcp hrp hT₁ hT₃).2.2.2
   simp only [braytonEfficiency] at hdiv hcarnot
   exact ⟨hpos.1, hloop.2.2, hpos.2.2, hdiv, hcarnot⟩
 
