@@ -10,9 +10,6 @@ module
 public import PhyslibExt.EarthScience.WeakDiffusion
 public import PhyslibExt.Elasticity.PrismaticMembers
 
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.AbsolutelyContinuousFun
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.LebesgueDifferentiationThm
-
 /-!
 # Variable-rigidity bar: the weak Dirichlet problem on `[0, L]`
 
@@ -401,106 +398,6 @@ lemma weakBar_exists_unique {L : ℝ} (hL : 0 < L) {EA q : ℝ → ℝ} {EAmin E
 
 /-! ## D. Validation examples -/
 
-/-- An `L²(0, 1)` function is interval integrable on `[0, 1]`. Adapted from the private lemma of
-the same name in `PhyslibExt.EarthScience.WeakDiffusion`, as are the next eight lemmas, which
-give integration by parts against `WeakH10` test functions. -/
-private lemma intervalIntegrable_of_memLp_two {g : ℝ → ℝ}
-    (hg : MemLp g 2 (volume.restrict (Set.Icc 0 1))) :
-    IntervalIntegrable g volume 0 1 := by
-  have hU : Set.uIcc (0 : ℝ) 1 = Set.Icc 0 1 := Set.uIcc_of_le (by norm_num)
-  have hInt : Integrable g (volume.restrict (Set.uIcc (0 : ℝ) 1)) := by
-    rw [hU]
-    exact hg.integrable one_le_two
-  exact MeasureTheory.IntegrableOn.intervalIntegrable hInt
-
-/-- A `WeakH10` element vanishes at `0`. -/
-private lemma weakH10_toFun_zero (v : WeakH10) : v.toFun 0 = 0 := by
-  rw [v.toFun_eq_integral 0 (by simp)]
-  simp
-
-/-- A `WeakH10` element vanishes at `1`. -/
-private lemma weakH10_toFun_one (v : WeakH10) : v.toFun 1 = 0 := by
-  rw [v.toFun_eq_integral 1 (by simp)]
-  exact v.integral_weakDeriv_eq_zero
-
-/-- The primitive of an `L²(0, 1)` function is absolutely continuous on `[0, 1]`. -/
-private lemma ac_primitive_of_memLp {g : ℝ → ℝ} (hg : MemLp g 2 (volume.restrict (Set.Icc 0 1))) :
-    AbsolutelyContinuousOnInterval (fun x => ∫ t in (0 : ℝ)..x, g t) 0 1 :=
-  (intervalIntegrable_of_memLp_two hg).absolutelyContinuousOnInterval_intervalIntegral (by simp)
-
-/-- The representative of a `WeakH10` element is absolutely continuous on `[0, 1]`. -/
-private lemma weakH10_absolutelyContinuous_toFun (v : WeakH10) :
-    AbsolutelyContinuousOnInterval v.toFun 0 1 := by
-  have hG := ac_primitive_of_memLp v.weakDeriv_memLp
-  apply hG.congr
-  intro x hx
-  rw [Set.uIcc_of_le (by norm_num : (0 : ℝ) ≤ 1)] at hx
-  exact (v.toFun_eq_integral x hx).symm
-
-/-- The primitive of an `L²(0, 1)` function has derivative `g x` at almost every `x ∈ [0, 1]`. -/
-private lemma hasDerivAt_primitive_of_memLp {g : ℝ → ℝ}
-    (hg : MemLp g 2 (volume.restrict (Set.Icc 0 1))) :
-    ∀ᵐ x, x ∈ Set.uIcc (0 : ℝ) 1 → HasDerivAt (fun x => ∫ t in (0 : ℝ)..x, g t) (g x) x := by
-  have hInt := intervalIntegrable_of_memLp_two hg
-  filter_upwards [hInt.ae_hasDerivAt_integral] with x hx
-  intro hxIcc
-  exact hx hxIcc 0 (by simp)
-
-/-- The derivative of the primitive of an `L²(0, 1)` function is `g` almost everywhere on
-`(0, 1]`. -/
-private lemma deriv_primitive_eq_of_memLp {g : ℝ → ℝ}
-    (hg : MemLp g 2 (volume.restrict (Set.Icc 0 1))) :
-    ∀ᵐ x ∂volume, x ∈ Set.uIoc (0 : ℝ) 1 → deriv (fun x => ∫ t in (0 : ℝ)..x, g t) x = g x := by
-  filter_upwards [hasDerivAt_primitive_of_memLp hg] with x hx
-  intro hxIoc
-  exact (hx (Set.uIoc_subset_uIcc hxIoc)).deriv
-
-/-- The derivative of the representative of a `WeakH10` element is its weak derivative almost
-everywhere on `(0, 1]`. -/
-private lemma weakH10_deriv_toFun_eq_weakDeriv (v : WeakH10) :
-    ∀ᵐ x ∂volume, x ∈ Set.uIoc (0 : ℝ) 1 → deriv v.toFun x = v.weakDeriv x := by
-  have h1 : ∀ᵐ x : ℝ, x ≠ (1 : ℝ) := by
-    rw [ae_iff]
-    have hset : {x : ℝ | ¬x ≠ 1} = {1} := by ext x; simp
-    rw [hset]
-    exact Real.volume_singleton
-  filter_upwards [hasDerivAt_primitive_of_memLp v.weakDeriv_memLp, h1] with x hx hxNe
-  intro hxIoc
-  have hxIcc : x ∈ Set.uIcc (0 : ℝ) 1 := Set.uIoc_subset_uIcc hxIoc
-  have hIoo : x ∈ Set.Ioo (0 : ℝ) 1 := by
-    rw [Set.uIoc_of_le (by norm_num : (0 : ℝ) ≤ 1)] at hxIoc
-    exact ⟨hxIoc.1, lt_of_le_of_ne hxIoc.2 hxNe⟩
-  have hIccMem : Set.Icc (0 : ℝ) 1 ∈ nhds x :=
-    Filter.mem_of_superset (Ioo_mem_nhds hIoo.1 hIoo.2) Set.Ioo_subset_Icc_self
-  have hEq : v.toFun =ᶠ[nhds x] (fun y => ∫ t in (0 : ℝ)..y, v.weakDeriv t) := by
-    filter_upwards [hIccMem] with y hy
-    exact v.toFun_eq_integral y hy
-  exact ((hx hxIcc).congr_of_eventuallyEq hEq).deriv
-
-/-- Integration by parts for the primitive `F` of an `L²(0, 1)` function `f` against a `WeakH10`
-test function `v`: `∫ F * v' = -∫ f * v`; the boundary terms vanish because `v 0 = v 1 = 0`. -/
-private lemma weak_diffusion_ibp {f : ℝ → ℝ} (hf : MemLp f 2 (volume.restrict (Set.Icc 0 1)))
-    (v : WeakH10) :
-    ∫ x in (0 : ℝ)..1, (∫ s in (0 : ℝ)..x, f s) * v.weakDeriv x =
-      -∫ x in (0 : ℝ)..1, f x * v.toFun x := by
-  have hIbp := (ac_primitive_of_memLp hf).integral_mul_deriv_eq_deriv_mul
-    (weakH10_absolutelyContinuous_toFun v)
-  rw [weakH10_toFun_zero v, weakH10_toFun_one v, mul_zero, mul_zero, sub_zero, zero_sub] at hIbp
-  have hLHS : ∫ x in (0 : ℝ)..1, (∫ s in (0 : ℝ)..x, f s) * deriv v.toFun x =
-      ∫ x in (0 : ℝ)..1, (∫ s in (0 : ℝ)..x, f s) * v.weakDeriv x := by
-    apply intervalIntegral.integral_congr_ae
-    filter_upwards [weakH10_deriv_toFun_eq_weakDeriv v] with x hx
-    intro hxIoc
-    rw [hx hxIoc]
-  have hRHS : ∫ x in (0 : ℝ)..1, deriv (fun x => ∫ s in (0 : ℝ)..x, f s) x * v.toFun x =
-      ∫ x in (0 : ℝ)..1, f x * v.toFun x := by
-    apply intervalIntegral.integral_congr_ae
-    filter_upwards [deriv_primitive_eq_of_memLp hf] with x hx
-    intro hxIoc
-    rw [hx hxIoc]
-  rw [hLHS, hRHS] at hIbp
-  exact hIbp
-
 /-- The derivative of `t ↦ c * (t - t ^ 2)` is `c * (1 - 2 * t)`. -/
 private lemma hasDerivAt_const_mul_sub_sq (c t : ℝ) :
     HasDerivAt (fun t : ℝ => c * (t - t ^ 2)) (c * (1 - 2 * t)) t :=
@@ -548,8 +445,9 @@ lemma IsWeakBarSolution.eqOn_axialDisplacement {L EA q : ℝ} (hL : 0 < L) (hEA 
     Set.EqOn u.toFun (axialDisplacement EA L q) (Set.Icc 0 L) := by
   have hL0 := hL.ne'
   have hEA0 := hEA.ne'
-  have hv1 : ∀ v : WeakH10, IntervalIntegrable v.weakDeriv volume 0 1 :=
-    fun v => intervalIntegrable_of_memLp_two v.weakDeriv_memLp
+  have hv1 : ∀ v : WeakH10, IntervalIntegrable v.weakDeriv volume 0 1 := fun v =>
+    (intervalIntegrable_iff_integrableOn_Icc_of_le zero_le_one).2
+      (v.weakDeriv_memLp.integrable one_le_two)
   have hw : ∀ v : WeakH10,
       ∫ ξ in (0 : ℝ)..1, scaledRigidity (fun _ => EA) L ξ *
           (quadUnit (q * L ^ 2 / (2 * EA))).weakDeriv ξ * v.weakDeriv ξ =
