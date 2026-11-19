@@ -8,6 +8,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.HeatTransfer.ConductionPorts
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import Mathlib.Data.Fin.VecNotation
+import Mathlib.Tactic.FinCases
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Pow
@@ -37,6 +41,7 @@ No new definitions or results are introduced here.
 - A. Linear field at `t = 1`
 - B. Robin seam discharge
 - C. Fin fixtures
+- D. Thermal network fixtures
 
 ## iv. References
 
@@ -277,3 +282,103 @@ example :
   exact hdiv.mono_left (nhdsWithin_mono 0 (fun _ hx => ne_of_gt hx))
 
 end FinFixtures
+
+/-! ## D. Thermal network fixtures -/
+
+section ThermalNetworkFixtures
+
+open ConductionPorts
+
+/-- Two-node fixture: `C = (1, 2)`, `G 0 1 = G 1 0 = 2`, no self-conductance, no inputs, initial
+temperatures `400` and `300`. The pair `T 0 t = 1000/3 + (200/3) e^{-3t}`,
+`T 1 t = 1000/3 - (100/3) e^{-3t}` solves the network equations for every `t`, keeps the stored
+heat at `1000`, and has quadratic-functional rate `-20000` at `t = 0`. -/
+example :
+    let C : Fin 2 → ℝ := ![1, 2]
+    let G : Fin 2 → Fin 2 → ℝ := ![![0, 2], ![2, 0]]
+    let T : Fin 2 → ℝ → ℝ :=
+      ![fun t => 1000 / 3 + 200 / 3 * Real.exp (-3 * t),
+        fun t => 1000 / 3 - 100 / 3 * Real.exp (-3 * t)]
+    let dT : Fin 2 → ℝ → ℝ :=
+      ![fun t => -200 * Real.exp (-3 * t), fun t => 100 * Real.exp (-3 * t)]
+    IsThermalNetwork C G ∧
+      (∀ i t, HasDerivAt (T i) (dT i t) t) ∧
+      (∀ i t, C i * dT i t = ∑ j, G i j * (T j t - T i t)) ∧
+      T 0 0 = 400 ∧ T 1 0 = 300 ∧
+      (∀ t, ∑ i, C i * T i t = 1000) ∧
+      -∑ i, ∑ j, G i j * (T i 0 - T j 0) ^ 2 / 2 = -20000 := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · refine ⟨?_, ?_, ?_⟩
+    · intro i
+      fin_cases i <;> simp
+    · intro i j
+      fin_cases i <;> fin_cases j <;> simp
+    · intro i j
+      fin_cases i <;> fin_cases j <;> simp
+  · intro i t
+    fin_cases i
+    · simp only [Fin.mk_zero, Matrix.cons_val_zero]
+      have hinner : HasDerivAt (fun t : ℝ => -3 * t) (-3 * 1) t := by
+        simpa using (hasDerivAt_id t).const_mul (-3)
+      have hexp := hinner.exp
+      have hmul := hexp.const_mul (200 / 3)
+      have hadd := hmul.const_add (1000 / 3)
+      convert hadd using 1
+      ring
+    · simp only [Fin.mk_one, Matrix.cons_val_zero, Matrix.cons_val_one]
+      have hinner : HasDerivAt (fun t : ℝ => -3 * t) (-3 * 1) t := by
+        simpa using (hasDerivAt_id t).const_mul (-3)
+      have hexp := hinner.exp
+      have hmul := hexp.const_mul (100 / 3)
+      have hsub := (hasDerivAt_const t (1000 / 3)).sub hmul
+      convert hsub using 1
+      ring
+  · intro i t
+    fin_cases i
+    · simp only [Fin.sum_univ_two, Fin.mk_zero, Matrix.cons_val_zero, Matrix.cons_val_one]
+      ring
+    · simp only [Fin.sum_univ_two, Fin.mk_one, Matrix.cons_val_zero, Matrix.cons_val_one]
+      ring
+  · have e0 : Real.exp (-3 * (0 : ℝ)) = 1 := by rw [mul_zero, Real.exp_zero]
+    simp only [Matrix.cons_val_zero, e0]
+    norm_num
+  · have e0 : Real.exp (-3 * (0 : ℝ)) = 1 := by rw [mul_zero, Real.exp_zero]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one, e0]
+    norm_num
+  · intro t
+    simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
+    ring
+  · have e0 : Real.exp (-3 * (0 : ℝ)) = 1 := by rw [mul_zero, Real.exp_zero]
+    simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one, e0]
+    norm_num
+
+/-- Invalid: a negative conductance `G 0 1 = G 1 0 = -1` breaks the network contract and makes
+the quadratic functional grow: at `T = (1, 0)` the rate is `1 > 0`. -/
+example :
+    let G : Fin 2 → Fin 2 → ℝ := ![![0, -1], ![-1, 0]]
+    let T : Fin 2 → ℝ := ![1, 0]
+    ¬ IsThermalNetwork (![1, 1] : Fin 2 → ℝ) G ∧
+      0 < -∑ i, ∑ j, G i j * (T i - T j) ^ 2 / 2 := by
+  refine ⟨?_, ?_⟩
+  · intro h
+    have h01 := h.conductance_nonneg 0 1
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at h01
+    norm_num at h01
+  · simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
+    norm_num
+
+/-- Invalid: a negative capacity `C = (1, -2)` breaks the network contract and makes the
+quadratic functional indefinite: at `T = (0, 1)` it is `-1 < 0`. -/
+example :
+    let C : Fin 2 → ℝ := ![1, -2]
+    let T : Fin 2 → ℝ := ![0, 1]
+    ¬ IsThermalNetwork C (fun _ _ => 0) ∧ ∑ i, C i * T i ^ 2 / 2 < 0 := by
+  refine ⟨?_, ?_⟩
+  · intro h
+    have h1 := h.capacity_pos 1
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at h1
+    norm_num at h1
+  · simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
+    norm_num
+
+end ThermalNetworkFixtures
