@@ -18,7 +18,7 @@ error of a test between $\mu$ and $\nu$ is exactly $1 - \mathrm{TV}(\mu, \nu)$.
 
 ## Background
 
-- Neyman–Pearson lemma:
+- [Neyman–Pearson lemma](../../../Probability/hypothesis-testing/neyman-pearson-dominated-two-simple.md):
   the likelihood-ratio test minimising one error under a constraint on the other; here the two errors are added with equal weights.
 
 ## Sources

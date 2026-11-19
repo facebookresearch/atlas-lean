@@ -9,5 +9,5 @@ holds automatically, since every agent is matched to an acceptable partner.
 ## Background
 
 - [Stable matching with singles](is-stable-single.md): the stability notion with singles.
-- Stable perfect matching: the stability notion of the stable marriage problem.
+- [Stable perfect matching](../../../GraphTheory/matchings-and-flows/stable-marriage-problem/is-stable.md): the stability notion of the stable marriage problem.
 - [Remaining single ranked last](single-ranked-last.md): the preferences used to compare the two.

@@ -18,7 +18,7 @@ The probability is over the coins of the mechanism only: the database is fixed, 
 
 ## Background
 
-- Total variation distance between finite measures: for probability measures and a symmetric neighbouring relation, the case $\varepsilon = 0$ of the definition says that $M(x)$ and $M(y)$ are at total variation distance at most $\delta$.
+- [Total variation distance between finite measures](../../../Probability/convergence-of-measures/total-variation-distance/total-variation-dist.md): for probability measures and a symmetric neighbouring relation, the case $\varepsilon = 0$ of the definition says that $M(x)$ and $M(y)$ are at total variation distance at most $\delta$.
 
 ## Sources
 

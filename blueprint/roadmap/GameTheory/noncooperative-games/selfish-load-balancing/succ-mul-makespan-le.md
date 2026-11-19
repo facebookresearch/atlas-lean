@@ -19,4 +19,4 @@ while it is at most $m$ times the makespan of $B$.
 
 ## Background
 
-- List scheduling on identical machines: Graham's analysis of the greedy algorithm, which this argument follows (Vöcking, Section 20.2.1).
+- [List scheduling on identical machines](../../../ComputerScience/approximation-algorithms/list-scheduling-on-identical-machines/README.md): Graham's analysis of the greedy algorithm, which this argument follows (Vöcking, Section 20.2.1).

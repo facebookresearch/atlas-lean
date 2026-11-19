@@ -12,11 +12,11 @@ On complex-valued functions this is the usual convolution on a finite group, wri
 
 ## Background
 
-- Convolution on a finite group (complex-valued):
+- [Convolution on a finite group (complex-valued)](../../../GroupTheory/characters-of-finite-groups/convolution-on-finite-groups/conv.md):
   the same operation on complex-valued functions, written $(f * g)(x) = \sum_y f(y)\, g(y^{-1}x)$, with its
   associativity and the one-dimensional convolution theorem.
 
-- Convolution on a finite abelian group:
+- [Convolution on a finite abelian group](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/young-s-convolution-inequality-on-finite-groups/fin-group-conv.md):
   the additive, complex-valued convolution used for abelian groups.
 
 ## Sources

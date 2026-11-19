@@ -11,7 +11,7 @@ equilibria $(x, y) \in \Delta(M) \times \Delta(N)$ is finite and has odd cardina
 ## Background
 
 - [Nash's theorem](../nash-s-theorem/exists-is-mixed-nash.md): existence of an equilibrium in every finite game, proved from Brouwer's theorem.
-- Every END-OF-THE-LINE instance has a sink: the parity principle that the Lemke–Howson path instantiates.
+- [Every END-OF-THE-LINE instance has a sink](../../../TheoryOfComputation/completeness-other-classes/ppad-and-the-end-of-the-line-problem/exists-sink.md): the parity principle that the Lemke–Howson path instantiates.
 
 ## Sources
 

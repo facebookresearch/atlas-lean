@@ -14,13 +14,13 @@ would lower the total, so it equals $\mu$, and no man prefers $\nu(m)$ to $\mu(m
 
 ## Informally uses
 
-- Existence of stable perfect matchings: the set of stable matchings is nonempty.
+- [Existence of stable perfect matchings](../../../GraphTheory/matchings-and-flows/stable-marriage-problem/gale-shapley-exists-stable-matching-gene.md): the set of stable matchings is nonempty.
 - [The men's join of two stable matchings is stable](is-stable-men-join.md): the join of the minimiser with any stable matching is a competitor.
 - [No man prefers his first partner to the join](not-lt-men-join-fun-left.md): the join is weakly better for every man.
 
 ## Background
 
-- Proposer-optimality: the algorithmic proof, for deferred acceptance on $n$ proposers and $n$ receivers.
+- [Proposer-optimality](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/gale-shapley-algorithm/gs-matching-proposer-optimal.md): the algorithmic proof, for deferred acceptance on $n$ proposers and $n$ receivers.
 
 ## Sources
 
