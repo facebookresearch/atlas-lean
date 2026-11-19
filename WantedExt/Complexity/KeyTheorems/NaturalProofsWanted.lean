@@ -34,27 +34,34 @@ open MetaMathlibExt.ComplexityTheory
 
 A *natural property* is a property of Boolean functions that is constructive (decidable by
 polynomial-size circuits given the truth table) and large (holding for at least a
-`2 ^ (-c * n)` fraction of all `n`-bit functions). It is *useful* against `P/poly` if
-every function family satisfying it infinitely often lies outside `P/poly`:
-a family satisfying the property at infinitely many lengths but lying in
-`P/poly` would contradict usefulness. Mere all-lengths usefulness would
-not suffice for the Razborov-Rudich argument: a `P/poly` family could
-satisfy the property at every sufficiently large length and fail once,
-giving no contradiction with the asymptotic `PRFSecure` condition. A natural proof
-of `P ≠ NP` would be a natural property useful against `P/poly` (in particular, one that
-holds of an NP function). Razborov and Rudich showed that if pseudorandom function families
-secure against polynomial-size truth-table distinguishers exist in `P/poly`, then no
-natural property is useful against `P/poly`: the constructivity decider would
-distinguish the pseudorandom family (none of whose members satisfies the property, by
-usefulness) from a random function (which satisfies it with probability at least the
-largeness density). So no natural proof can show `P ≠ NP`, or even superpolynomial
-circuit lower bounds for a function in `P/poly`. The PRF here has key length `n ^ 2`,
-quadratic in the input length `n`: with an `n`-bit key there are only `N = 2 ^ n`
-functions in the family, and a nonuniform truth-table distinguisher of size `O(N ^ 2)`
-could hardcode all of them and distinguish perfectly, so the assumption would be
-impossible. With key length `n ^ 2` the family has `2 ^ (n ^ 2)` members, superpolynomial
-in the truth-table size `2 ^ n`, and the assumption is the standard sufficiently strong
-PRF assumption (it follows from subexponentially secure one-way functions).
+`2 ^ (-c * n)` fraction of all `n`-bit functions). Razborov and Rudich call it *useful*
+against `P/poly` when every sequence `f_n ∈ C_n` has superpolynomial circuit size: for every
+`k`, `f_n` needs more than `n ^ k` gates for all large `n`. `UsefulAgainstPPoly` uses the
+equivalent infinitely-often form: a family that satisfies the property at infinitely many
+lengths is not in `P/poly`. (If a `P/poly` family met `C_n` infinitely often, filling the other
+lengths with members of `C_n` would give a sequence in `C` that is not superpolynomial almost
+everywhere; conversely a sequence in `C` that has circuits of size `n ^ k` at infinitely many
+lengths, set to a constant elsewhere, is a `P/poly` family meeting `C` infinitely often.)
+Changing a property at finitely many lengths preserves usefulness, so requiring largeness at
+every length rather than at all large lengths loses nothing.
+
+A natural proof of `P ≠ NP` would be a natural property useful against `P/poly` (in
+particular, one that holds of an NP function). Razborov and Rudich showed that if pseudorandom
+function families secure against polynomial-size truth-table distinguishers exist in `P/poly`,
+then no natural property is useful against `P/poly`: the constructivity decider would
+distinguish the pseudorandom family (none of whose members satisfies the property at large
+lengths, by usefulness) from a random function (which satisfies it with probability at least
+the largeness density). So no natural proof can show superpolynomial circuit lower bounds for
+an explicit function. The keyed family here has key length `n ^ 2`, quadratic in the input
+length `n`: with an `n`-bit key there are only `N = 2 ^ n` functions in the family, and a
+nonuniform truth-table distinguisher of size `O(N ^ 2)` could hardcode all of them and
+distinguish perfectly, so the assumption would be impossible. With key length `n ^ 2` the
+family has `2 ^ (n ^ 2)` members, superpolynomial in the truth-table size `2 ^ n`. In Razborov
+and Rudich's argument the key length is a polynomial in `n` fixed by the hardness exponent of
+the pseudorandom generator they start from, and their theorem assumes a pseudorandom generator
+rather than a pseudorandom function; this statement follows from their theorem once the key
+length is fixed to `n ^ 2` (evaluating the keyed function at fixed inputs turns it into a
+generator).
 -/
 
 /-- A gate of a flat Boolean circuit, encoded as `(kind, refs)`: the shared
@@ -105,7 +112,8 @@ def PRFInPPoly (F : (n : ℕ) → (Fin (n ^ 2) → Bool) → (Fin n → Bool) �
 
 /-- A pseudorandom function family secure against polynomial-size truth-table
 distinguishers: no such distinguisher separates the family from a random function by a
-non-negligible advantage (negligible in the input length `n`). Keys are drawn from
+non-negligible advantage, where negligible is in the truth-table length `2 ^ n`: for every fixed
+`c` the advantage is at most `2 ^ (-c n)` for all large `n`. Keys are drawn from
 `Fin (n ^ 2) → Bool`, so the first fraction is over `2 ^ (n ^ 2)` keys. -/
 def PRFSecure (F : (n : ℕ) → (Fin (n ^ 2) → Bool) → (Fin n → Bool) → Bool) : Prop :=
   ∀ (D : (n : ℕ) → List Bool → Bool) (q : Polynomial ℕ),
