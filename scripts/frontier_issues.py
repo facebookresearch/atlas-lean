@@ -700,6 +700,8 @@ def summarize(plan: Plan, frontier: dict, applied: int | None, max_writes: int) 
 CLAIM = re.compile(r"\A/(claim|unclaim)(?:[ \t]+@([A-Za-z0-9](?:[A-Za-z0-9-]{0,38})))?[ \t]*\Z")
 # Repository roles that may free a task someone else holds (the collaborator permission API's role_name).
 MAINTAINER_ROLES = frozenset({"admin", "maintain", "write"})
+# GitHub's limit on assignees per issue.
+MAX_HOLDERS = 10
 
 
 @dataclass(frozen=True)
@@ -754,6 +756,11 @@ def decide_claim(event: dict, maintainer: bool = False) -> ClaimDecision | None:
             return ClaimDecision(reply=f"@{login} this task is closed, so it can't be claimed.")
         if login in holders:
             return ClaimDecision(react=True)
+        # A field issue lists many modules, so several people may hold it at once, one module each, up to
+        # GitHub's ten assignees; they say in the comment which module they take.
+        shared = "<!-- atlas-task: field:" in (issue.get("body") or "")
+        if holders and shared and len(holders) < MAX_HOLDERS:
+            return ClaimDecision(add=login, react=True)
         if holders:
             others = ", ".join(f"@{holder}" for holder in holders)
             return ClaimDecision(reply=(

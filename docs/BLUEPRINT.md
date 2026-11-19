@@ -300,7 +300,8 @@ Writes are paced and capped at 250 per run, so the first fill opens over
 several `main` builds.
 
 A `/claim` comment on a task issue assigns the commenter when nobody holds
-the task, and `/unclaim` releases it; a maintainer may `/unclaim @someone`. A
+the task (a field issue takes up to ten holders, one module each, named in
+the comment), and `/unclaim` releases it; a maintainer may `/unclaim @someone`. A
 claim lapses after seven days without an open pull request that references
 the issue, as an AutoformBot claim does: the sync unassigns it and says so on
 the issue.

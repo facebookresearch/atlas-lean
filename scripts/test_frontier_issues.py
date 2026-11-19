@@ -323,6 +323,13 @@ class Claims(unittest.TestCase):
         self.assertIn("`/unclaim @bob`", decision.reply)
         self.assertEqual(fi.decide_claim(comment_event(assignees=["ada"])), fi.ClaimDecision(react=True))
 
+    def test_a_field_issue_takes_several_holders_up_to_githubs_limit(self) -> None:
+        event = comment_event(assignees=["bob"])
+        event["issue"]["body"] = "<!-- atlas-task: field:A/f -->\n"
+        self.assertEqual(fi.decide_claim(event), fi.ClaimDecision(add="ada", react=True))
+        event["issue"]["assignees"] = [{"login": f"u{n}"} for n in range(fi.MAX_HOLDERS)]
+        self.assertIn("already claimed", fi.decide_claim(event).reply)
+
     def test_claim_is_for_yourself_and_for_open_tasks(self) -> None:
         self.assertIn("@bob can claim it", fi.decide_claim(comment_event("/claim @bob")).reply)
         self.assertIn("closed", fi.decide_claim(comment_event(state="closed")).reply)

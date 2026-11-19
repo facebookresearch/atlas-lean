@@ -32,8 +32,10 @@ gh issue list -R facebookresearch/atlas-lean --label task:formalize --search "no
 
 ## 2. Claim it
 
-Comment `/claim` on the issue before you start. A bot assigns you, or says
-who already holds the task. Work one issue at a time unless you are asked to
+Comment `/claim` on the issue before you start, and on a field issue name the
+module you take (`/claim` then, on the next line, `Taking <module>`). A bot
+assigns you, or says who already holds the task; a field issue takes several
+holders, one module each, so check the earlier claims first. Work one issue at a time unless you are asked to
 batch:
 
 ```sh
