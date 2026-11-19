@@ -18,13 +18,13 @@ import Mathlib.Tactic.Positivity
 
 Concrete consumers of `PhyslibExt.FluidDynamics.PipeFrictionPorts`: the Blasius smooth-pipe law
 `f_D = 0.316 Re ^ (-1/4)` recorded in the Darcy convention for fully developed flow in a smooth
-circular tube with `4000 ≤ Re ≤ 100000`, and the same law in the Fanning convention. Water at
+circular tube with `4000 < Re < 100000`, and the same law in the Fanning convention. Water at
 `Q = 1/1000` m³/s in a tube of diameter `1/20` m and length `10` m has `Re = 80000 / π`, inside
 the box; the forward flow has a positive pressure drop, the reverse flow a negative one, and both
-dissipate a positive power. A laminar request is rejected, the Fanning record never supplies a
-Darcy factor, and inside the box the Fanning value is a quarter of the Darcy one. The guarded
-chain applies to the water request, and a steady segment turns the pressure-drop power into an
-internal-energy rise.
+dissipate a positive power. A laminar request and requests at the endpoints of the open interval
+are rejected, the Fanning record never supplies a Darcy factor, and inside the box the Fanning
+value is a quarter of the Darcy one. The guarded chain applies to the water request, and a steady
+segment turns the pressure-drop power into an internal-energy rise.
 
 ## i. Overview
 
@@ -54,18 +54,18 @@ open CorrelationDomains EngineeringScaling _root_.FluidDynamics.PipeFrictionPort
 /-! ## A. The Blasius smooth-pipe law -/
 
 /-- The Blasius smooth-pipe law in the Darcy convention, `f_D = 0.316 Re ^ (-1/4)`, for fully
-developed flow in a smooth circular tube with `4000 ≤ Re ≤ 100000`. -/
+developed flow in a smooth circular tube with `4000 < Re < 100000`. -/
 noncomputable def blasiusDarcy : FrictionCorrelation :=
   powerLawFriction (79 / 250) (-1 / 4) "Blasius smooth-pipe law, in White, Fluid Mechanics"
     FrictionConvention.darcy FlowConfiguration.smoothCircularTube FlowDevelopment.fullyDeveloped
-    {s | 4000 ≤ s.reynolds ∧ s.reynolds ≤ 100000} (fun s hs => by linarith [hs.1])
+    {s | 4000 < s.reynolds ∧ s.reynolds < 100000} (fun s hs => by linarith [hs.1])
     ⟨⟨10000, 1, 10, ⟨0⟩, 1⟩, by norm_num⟩
 
 /-- The same law in the Fanning convention, `f_F = f_D / 4 = 0.079 Re ^ (-1/4)`. -/
 noncomputable def blasiusFanning : FrictionCorrelation :=
   powerLawFriction (79 / 1000) (-1 / 4) "Blasius smooth-pipe law, Fanning form"
     FrictionConvention.fanning FlowConfiguration.smoothCircularTube FlowDevelopment.fullyDeveloped
-    {s | 4000 ≤ s.reynolds ∧ s.reynolds ≤ 100000} (fun s hs => by linarith [hs.1])
+    {s | 4000 < s.reynolds ∧ s.reynolds < 100000} (fun s hs => by linarith [hs.1])
     ⟨⟨10000, 1, 10, ⟨0⟩, 1⟩, by norm_num⟩
 
 /-- Isothermal water (`ρ = 1000`, `μ = 1/1000`, `Pr = 7`) at `Q = 1/1000` m³/s in a smooth
@@ -88,14 +88,14 @@ noncomputable def waterRequest : CorrelationRequest where
 noncomputable def laminarRequest : CorrelationRequest :=
   { waterRequest with reynolds := 2000 }
 
-/-- The water request lies in the Blasius box: `4000 ≤ 80000 / π ≤ 100000`. -/
+/-- The water request lies in the Blasius box: `4000 < 80000 / π < 100000`. -/
 lemma blasius_applies_water : blasiusDarcy.DarcyApplies waterRequest := by
   refine ⟨rfl, rfl, rfl, ?_, ?_⟩
-  · change 4000 ≤ 80000 / Real.pi
-    rw [le_div_iff₀ Real.pi_pos]
+  · change 4000 < 80000 / Real.pi
+    rw [lt_div_iff₀ Real.pi_pos]
     nlinarith [Real.pi_le_four]
-  · change 80000 / Real.pi ≤ 100000
-    rw [div_le_iff₀ Real.pi_pos]
+  · change 80000 / Real.pi < 100000
+    rw [div_lt_iff₀ Real.pi_pos]
     nlinarith [Real.two_le_pi]
 
 /-- **Nonzero forward and reverse flows.** The water request carries the Reynolds number of
@@ -145,11 +145,24 @@ example :
   refine ⟨?_, fun r => FrictionCorrelation.not_darcyApplies (Or.inl rfl), ?_⟩
   · refine FrictionCorrelation.not_darcyApplies (Or.inr ?_)
     rintro ⟨h1, -⟩
-    change (4000 : ℝ) ≤ 2000 at h1
+    change (4000 : ℝ) < 2000 at h1
     norm_num at h1
   · intro s hs hs'
     change 79 / 1000 * s.reynolds ^ (-1 / 4 : ℝ) = 79 / 250 * s.reynolds ^ (-1 / 4 : ℝ) / 4
     ring
+
+/-- The cited interval is open: requests at the endpoints `Re = 4000` and `Re = 100000` get no
+Darcy factor. -/
+example : ¬ blasiusDarcy.DarcyApplies { waterRequest with reynolds := 4000 } ∧
+    ¬ blasiusDarcy.DarcyApplies { waterRequest with reynolds := 100000 } := by
+  refine ⟨FrictionCorrelation.not_darcyApplies (Or.inr ?_),
+    FrictionCorrelation.not_darcyApplies (Or.inr ?_)⟩
+  · rintro ⟨h1, -⟩
+    change (4000 : ℝ) < 4000 at h1
+    exact lt_irrefl _ h1
+  · rintro ⟨-, h2⟩
+    change (100000 : ℝ) < 100000 at h2
+    exact lt_irrefl _ h2
 
 /-- The guarded chain at the water request: the Blasius coefficient is positive, the reverse flow
 has the same Reynolds number, the forward dissipated power is nonnegative and the reverse pressure
