@@ -9,11 +9,14 @@ module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+public import Mathlib.MeasureTheory.Integral.DivergenceTheorem
+public import MathlibExt.Analysis.ODE.ContinuumBalances
+public import PhyslibExt.Thermodynamics.ProcessPorts
 import MathlibExt.Probability.Diffusion.FokkerPlanckFreeEnergy
 import Mathlib.Tactic.Ring
 
 /-!
-# Control volumes: one-dimensional moving-endpoint transport
+# Control volumes: moving-endpoint transport, fixed-box balance and energy ports
 
 ## i. Overview
 
@@ -31,6 +34,42 @@ differentiation alone admit oscillating mass at the moving
 endpoint. No general moving-domain Reynolds theorem is
 claimed.
 
+For a fixed nondegenerate rectangular box `[a, b]` in
+`ℝⁿ⁺¹ = Fin (n + 1) → ℝ`, a jointly `C¹` density `u`, a flux `q`
+that is `C¹` on an open neighbourhood of the box and the local law
+`∂ₜu + div q = s`, the stored amount satisfies
+`d/dt ∫_[a, b] u = ∫_[a, b] s - boxOutwardFlux a b (q t)`. The
+outward flux is written face by face: the face `x i = b i` has
+outward normal `+eᵢ` and the face `x i = a i` has `-eᵢ`, so a
+positive `qᵢ` is outflow on the upper face and inflow on the lower
+one. Mathlib's divergence theorem for boxes discharges the
+boundary-divergence premise of
+`MathlibExt.Analysis.ODE.ContinuumBalances.hasDerivAt_setIntegral_of_divergence`;
+local conservation stays the model input. No general smooth-domain
+trace or divergence theorem is claimed.
+
+For a declared local total-energy law `∂ₜE + div (G + J) = q̇ + ẇ` on
+the box, with `G = (E + p) v` the convective-plus-pressure flux, `J`
+every other energy flux, `q̇` the volumetric heating and `ẇ` the shaft
+power density delivered to the fluid, the storage rate is
+`(∫ q̇ - Φ_J) - Ẇ_out - Φ_G`, where
+`Ẇ_out = ProcessPorts.workOut (∫ ẇ)` is the engineering shaft work
+out. On a face with uniform density `ρ ≠ 0`, specific internal energy
+`e`, pressure `p`, velocity `v`, elevation `z` and outward normal
+velocity `v_n`, the outward rate `A v_n (ρ (e + |v|² / 2 + g z) + p)`
+equals `ṁ (h + |v|² / 2 + g z)` with `ṁ = ρ A v_n` and
+`h = e + p / ρ`, so the flow work `p / ρ` is counted once, inside `h`;
+adding it again overcounts the rate by `A v_n p`. With the inlet on
+the face `x₀ = a₀`, the outlet on `x₀ = b₀` and zero normal component
+of `G` on the side faces, the storage rate is
+`Q̇ - Ẇ_out + ṁ_in θ_in - ṁ_out θ_out`, `θ = h + |v|² / 2 + g z`, where
+each port's velocity is one vector of the box's space, giving both its
+mass flow `ρ A₀ v₀` and its kinetic energy. The
+side-face hypothesis constrains only the flux `G`: no wall velocity and
+no relation `G = (E + p) v` enters the statement, so it is weaker than
+impermeability. The energy law is a model input, not derived from mass
+conservation.
+
 ## ii. Key results
 
 - `ControlVolumes.movingEndpoint_hasDerivAt`: the Leibniz
@@ -41,15 +80,46 @@ claimed.
 - `ControlVolumes.movingEndpoint_hasDerivAt_flux` and
   `movingEndpoint_deriv_flux`: the relative-flux forms exposing
   `f - u * endpointSpeed` at both ends.
+- `ControlVolumes.boxOutwardFlux`: the outward flux of a vector
+  field through the faces of a box.
+- `ControlVolumes.integral_divergence_box`: the divergence theorem
+  on a box, `∫_[a, b] div F = boxOutwardFlux a b F`.
+- `ControlVolumes.hasDerivAt_boxIntegral`: the fixed-box balance
+  with explicit faces.
+- `ControlVolumes.portEnergyRate_eq_massFlow` and
+  `ControlVolumes.flowWork_double_count`: the port rate is
+  `ṁ (h + |v|² / 2 + g z)`, and counting `p / ρ` twice overcounts it.
+- `ControlVolumes.boxOutwardFlux_add` and
+  `ControlVolumes.boxOutwardFlux_uniform`: additivity of the outward
+  flux and its value for face-wise uniform normal components.
+- `ControlVolumes.hasDerivAt_energy_box` and
+  `ControlVolumes.hasDerivAt_energy_twoPort`: the energy balance of a
+  fixed box and its two-port form.
 
 ## iii. Table of contents
 
 - A. Moving-endpoint transport
+- B. Fixed-box balance with explicit faces
+  - B.1. Faces and the divergence theorem
+  - B.2. The balance
+- C. Energy ports
+  - C.1. Port rates and flow work
+  - C.2. Uniform faces
+  - C.3. The energy balance
 
 ## iv. References
 
 - The classical Leibniz integral rule; the statement is
   self-contained.
+- Mathlib's divergence theorem for rectangular boxes,
+  `MeasureTheory.integral_divergence_of_hasFDerivAt_off_countable`.
+- R. B. Bird, W. E. Stewart and E. N. Lightfoot, *Transport
+  Phenomena*, 2nd ed., Wiley (2002), Section 19.1 (the equation of
+  continuity for a fixed volume element) and Section 11.1 (the equation
+  of change for total energy).
+- Y. A. Çengel and M. A. Boles, *Thermodynamics: An Engineering
+  Approach*, McGraw-Hill, ch. 5: flow work, enthalpy `h = u + p v` and
+  the control-volume energy balance.
 
 ## A. Moving-endpoint transport
 
@@ -335,5 +405,288 @@ theorem movingEndpoint_deriv_flux {u ut f fx src : ℝ → ℝ → ℝ}
           (f t (a t) - u t (a t) * a' t) := by
   exact (movingEndpoint_hasDerivAt_flux t ha hb hjoint hut hcont_ut hfx hcont_fx hPDE
     hint_src).deriv
+
+
+/-- Moving interior jump transport: for an interface curve
+`s` differentiable at `t` inside the fixed interval `[a, b]`, with left and right
+fields `uL`, `uR` (time partials `vL`, `vR`), the split integral
+`(∫ x in a..s t, uL t x) + (∫ x in s t..b, uR t x)` has
+derivative the two classical integrals plus the interface
+contribution `s' t * (uL t (s t) - uR t (s t))`. This is the
+two instantiations of `movingEndpoint_hasDerivAt` (moving right
+endpoint on the left piece, moving left endpoint on the right
+piece) added together. As stated this is an oriented-integral
+identity with no ordering hypothesis on `s t`; in the physical
+interior-interface case, where `s t` lies inside `[a, b]`, the two
+integrals are the genuine left and right pieces of `[a, b]`. -/
+theorem movingJumpTransport {uL uR vL vR : ℝ → ℝ → ℝ}
+    {s s' : ℝ → ℝ} {a b : ℝ} (t : ℝ) (hs : HasDerivAt s (s' t) t)
+    (hjL : Continuous fun p : ℝ × ℝ => uL p.1 p.2)
+    (hvL : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => uL τ x) (vL t x) t)
+    (hcvL : Continuous fun p : ℝ × ℝ => vL p.1 p.2)
+    (hjR : Continuous fun p : ℝ × ℝ => uR p.1 p.2)
+    (hvR : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => uR τ x) (vR t x) t)
+    (hcvR : Continuous fun p : ℝ × ℝ => vR p.1 p.2) :
+    HasDerivAt
+      (fun τ : ℝ => (∫ x in a..s τ, uL τ x) + (∫ x in s τ..b, uR τ x))
+      ((∫ x in a..s t, vL t x) + (∫ x in s t..b, vR t x) +
+        s' t * (uL t (s t) - uR t (s t))) t := by
+  have hL := movingEndpoint_hasDerivAt (u := uL) (ut := vL)
+    (a := fun _ : ℝ => a) (b := s) (a' := fun _ : ℝ => 0) (b' := s')
+    t (hasDerivAt_const t a) hs hjL hvL hcvL
+  have hR := movingEndpoint_hasDerivAt (u := uR) (ut := vR)
+    (a := s) (b := fun _ : ℝ => b) (a' := s') (b' := fun _ : ℝ => 0)
+    t hs (hasDerivAt_const t b) hjR hvR hcvR
+  have hL' : HasDerivAt (fun τ : ℝ => ∫ x in a..s τ, uL τ x)
+      ((∫ x in a..s t, vL t x) + s' t * uL t (s t)) t := by
+    convert hL using 1
+    ring
+  have hR' : HasDerivAt (fun τ : ℝ => ∫ x in s τ..b, uR τ x)
+      ((∫ x in s t..b, vR t x) - s' t * uR t (s t)) t := by
+    convert hR using 1
+    ring
+  have h := hL'.add hR'
+  convert h using 1
+  ring
+
+
+section FixedBox
+
+open Set MeasureTheory
+open MathlibExt.Probability.FokkerPlanck (divergence)
+
+/-! ## B. Fixed-box balance with explicit faces -/
+
+/-! ### B.1. Faces and the divergence theorem -/
+
+/-- The outward flux of a vector field `F` through the boundary of the box `[a, b]` in
+`ℝⁿ⁺¹ = Fin (n + 1) → ℝ`, face by face: for each coordinate `i`, the integral of `Fᵢ` over the
+upper face `x i = b i` (outward normal `+eᵢ`) minus its integral over the lower face
+`x i = a i` (outward normal `-eᵢ`), both over the box `[a ∘ i.succAbove, b ∘ i.succAbove]` of the
+remaining coordinates. -/
+noncomputable def boxOutwardFlux {n : ℕ} (a b : Fin (n + 1) → ℝ)
+    (F : (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ) : ℝ :=
+  ∑ i : Fin (n + 1),
+    ((∫ y in Icc (a ∘ i.succAbove) (b ∘ i.succAbove), F (i.insertNth (b i) y) i) -
+      ∫ y in Icc (a ∘ i.succAbove) (b ∘ i.succAbove), F (i.insertNth (a i) y) i)
+
+/-- **Divergence theorem on a box**, in the notation of the conditional balance: for a vector
+field `F` of class `C¹` on an open set `U` containing the nondegenerate box `[a, b]`,
+`∫_[a, b] div F = boxOutwardFlux a b F`. -/
+lemma integral_divergence_box {n : ℕ} {a b : Fin (n + 1) → ℝ} (hab : ∀ i, a i < b i)
+    {U : Set (Fin (n + 1) → ℝ)} (hU : IsOpen U) (hbox : Icc a b ⊆ U)
+    {F : (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ} (hF : ContDiffOn ℝ 1 F U) :
+    ∫ x in Icc a b, divergence F x = boxOutwardFlux a b F := by
+  have hle : a ≤ b := fun i => (hab i).le
+  have hdiff : ∀ x ∈ U, HasFDerivAt F (fderiv ℝ F x) x := fun x hx =>
+    (((hF.differentiableOn one_ne_zero) x hx).differentiableAt (hU.mem_nhds hx)).hasFDerivAt
+  have hcont : ContinuousOn (fun x => fderiv ℝ F x) U :=
+    hF.continuousOn_fderiv_of_isOpen hU le_rfl
+  have hdiv : ∀ x ∈ U, divergence F x = ∑ i, fderiv ℝ F x (Pi.single i 1) i := by
+    intro x hx
+    unfold divergence MathlibExt.Probability.FokkerPlanck.pderiv
+    refine Finset.sum_congr rfl fun i _ => ?_
+    rw [((hasFDerivAt_pi'.1 (hdiff x hx)) i).fderiv]
+    simp
+  rw [setIntegral_congr_fun measurableSet_Icc (fun x hx => hdiv x (hbox hx))]
+  refine integral_divergence_of_hasFDerivAt_off_countable a b hle F (fderiv ℝ F) ∅
+    countable_empty (hF.continuousOn.mono hbox) (fun x hx => hdiff x (hbox ?_)) ?_
+  · exact ⟨fun i => (hx.1 i (Set.mem_univ i)).1.le, fun i => (hx.1 i (Set.mem_univ i)).2.le⟩
+  · refine ContinuousOn.integrableOn_compact isCompact_Icc ?_
+    refine continuousOn_finsetSum _ fun i _ => ?_
+    exact ((continuous_apply i).comp_continuousOn
+      ((hcont.clm_apply continuousOn_const))).mono hbox
+
+/-! ### B.2. The balance -/
+
+/-- **Fixed-box balance with explicit faces.** For a nondegenerate box `[a, b]`, a jointly `C¹`
+density `u`, a flux `q t` of class `C¹` on an open neighbourhood of the box, an integrable source
+`s t` and the local law `∂ₜu + div q = s` on the box at time `t`,
+`d/dt ∫_[a, b] u = ∫_[a, b] s - boxOutwardFlux a b (q t)`. -/
+lemma hasDerivAt_boxIntegral {n : ℕ} {a b : Fin (n + 1) → ℝ} (hab : ∀ i, a i < b i)
+    {u s : ℝ → (Fin (n + 1) → ℝ) → ℝ} {q : ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ} {t : ℝ}
+    {U : Set (Fin (n + 1) → ℝ)} (hU : IsOpen U) (hbox : Icc a b ⊆ U)
+    (hu : ContDiff ℝ 1 (Function.uncurry u)) (hq : ContDiffOn ℝ 1 (q t) U)
+    (hs : IntegrableOn (s t) (Icc a b))
+    (hlaw : ∀ x ∈ Icc a b, deriv (fun τ => u τ x) t + divergence (q t) x = s t x) :
+    HasDerivAt (fun τ => ∫ x in Icc a b, u τ x)
+      ((∫ x in Icc a b, s t x) - boxOutwardFlux a b (q t)) t := by
+  have h := MathlibExt.Analysis.ODE.ContinuumBalances.hasDerivAt_setIntegral_of_divergence
+    (Φ := fun _ => boxOutwardFlux a b (q t)) isCompact_Icc hu hs hlaw
+    (integral_divergence_box hab hU hbox hq)
+  rwa [neg_add_eq_sub] at h
+
+end FixedBox
+
+section EnergyPorts
+
+open Set MeasureTheory
+open MathlibExt.Probability.FokkerPlanck (divergence)
+
+/-! ## C. Energy ports -/
+
+/-! ### C.1. Port rates and flow work -/
+
+/-- The specific enthalpy `h = e + p / ρ` of a specific internal energy `e`, a pressure `p` and a
+density `ρ`. -/
+noncomputable def specificEnthalpy (e p ρ : ℝ) : ℝ := e + p / ρ
+
+/-- The outward convective internal, kinetic and potential energy plus pressure power through a
+uniform face of area `A` with outward normal velocity `vn`: `A vn (ρ (e + |v|² / 2 + g z) + p)`,
+with `|v|² = v ⬝ᵥ v`. Physically `vn` is the component of the velocity `v` along the face's
+outward unit normal; this definition and the two identities below take both as arguments and
+hold for all values, and `hasDerivAt_energy_twoPort` takes the normal components from the port
+velocity vectors. -/
+noncomputable def portEnergyRate {m : ℕ} (ρ A vn e p g z : ℝ) (v : Fin m → ℝ) : ℝ :=
+  A * vn * (ρ * (e + v ⬝ᵥ v / 2 + g * z) + p)
+
+/-- **Flow work counted once**: with `ṁ = ρ A vn` and `h = e + p / ρ`, the port rate is
+`ṁ (h + |v|² / 2 + g z)`. -/
+lemma portEnergyRate_eq_massFlow {m : ℕ} {ρ : ℝ} (hρ : ρ ≠ 0) (A vn e p g z : ℝ)
+    (v : Fin m → ℝ) :
+    portEnergyRate ρ A vn e p g z v =
+      ρ * A * vn * (specificEnthalpy e p ρ + v ⬝ᵥ v / 2 + g * z) := by
+  unfold portEnergyRate specificEnthalpy
+  field_simp
+  ring
+
+/-- Adding `p / ρ` again after using the enthalpy overcounts the port rate by the pressure power
+`A vn p`. -/
+lemma flowWork_double_count {m : ℕ} {ρ : ℝ} (hρ : ρ ≠ 0) (A vn e p g z : ℝ) (v : Fin m → ℝ) :
+    ρ * A * vn * (specificEnthalpy e p ρ + p / ρ + v ⬝ᵥ v / 2 + g * z) =
+      portEnergyRate ρ A vn e p g z v + A * vn * p := by
+  unfold portEnergyRate specificEnthalpy
+  field_simp
+  ring
+
+/-! ### C.2. Uniform faces -/
+
+/-- The area `∏ⱼ (b - a)` of the two faces of the box `[a, b]` normal to `eᵢ`. -/
+def faceArea {n : ℕ} (a b : Fin (n + 1) → ℝ) (i : Fin (n + 1)) : ℝ :=
+  ∏ j : Fin n, (b (i.succAbove j) - a (i.succAbove j))
+
+/-- The outward flux is additive for fields continuous on a set containing the box. -/
+lemma boxOutwardFlux_add {n : ℕ} {a b : Fin (n + 1) → ℝ} (hab : ∀ i, a i < b i)
+    {U : Set (Fin (n + 1) → ℝ)} (hbox : Icc a b ⊆ U)
+    {F G : (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ} (hF : ContinuousOn F U)
+    (hG : ContinuousOn G U) :
+    boxOutwardFlux a b (F + G) = boxOutwardFlux a b F + boxOutwardFlux a b G := by
+  have hface : ∀ (i : Fin (n + 1)) (c : ℝ), c ∈ Icc (a i) (b i) →
+      ∀ H : (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ, ContinuousOn H U →
+      IntegrableOn (fun y => H (i.insertNth c y) i) (Icc (a ∘ i.succAbove) (b ∘ i.succAbove)) := by
+    intro i c hc H hH
+    refine ContinuousOn.integrableOn_compact isCompact_Icc ?_
+    have hmaps : MapsTo (fun y : Fin n → ℝ => (i.insertNth c y : Fin (n + 1) → ℝ))
+        (Icc (a ∘ i.succAbove) (b ∘ i.succAbove)) U := fun y hy =>
+      hbox (Fin.insertNth_mem_Icc.2 ⟨hc, hy⟩)
+    have hcont : Continuous fun y : Fin n → ℝ => (i.insertNth c y : Fin (n + 1) → ℝ) := by
+      fun_prop
+    exact (continuous_apply i).comp_continuousOn (hH.comp hcont.continuousOn hmaps)
+  have hbI : ∀ i, b i ∈ Icc (a i) (b i) := fun i => ⟨(hab i).le, le_rfl⟩
+  have haI : ∀ i, a i ∈ Icc (a i) (b i) := fun i => ⟨le_rfl, (hab i).le⟩
+  unfold boxOutwardFlux
+  rw [← Finset.sum_add_distrib]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  simp only [Pi.add_apply]
+  rw [integral_add (hface i _ (hbI i) F hF) (hface i _ (hbI i) G hG),
+    integral_add (hface i _ (haI i) F hF) (hface i _ (haI i) G hG)]
+  ring
+
+/-- A flux whose normal component is the constant `cU i` on the face `x i = b i` and `cL i` on
+the face `x i = a i` has outward flux `∑ᵢ Aᵢ (cU i - cL i)`. -/
+lemma boxOutwardFlux_uniform {n : ℕ} {a b : Fin (n + 1) → ℝ} (hab : ∀ i, a i < b i)
+    {F : (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ} {cU cL : Fin (n + 1) → ℝ}
+    (hU : ∀ i, ∀ y ∈ Icc (a ∘ i.succAbove) (b ∘ i.succAbove), F (i.insertNth (b i) y) i = cU i)
+    (hL : ∀ i, ∀ y ∈ Icc (a ∘ i.succAbove) (b ∘ i.succAbove), F (i.insertNth (a i) y) i = cL i) :
+    boxOutwardFlux a b F = ∑ i, faceArea a b i * (cU i - cL i) := by
+  unfold boxOutwardFlux faceArea
+  refine Finset.sum_congr rfl fun i _ => ?_
+  have hle : (a ∘ i.succAbove) ≤ (b ∘ i.succAbove) := fun j => (hab _).le
+  rw [setIntegral_congr_fun measurableSet_Icc (hU i),
+    setIntegral_congr_fun measurableSet_Icc (hL i),
+    setIntegral_const, setIntegral_const, smul_eq_mul, smul_eq_mul, measureReal_def,
+    Real.volume_Icc_pi_toReal hle]
+  simp only [Function.comp_apply]
+  ring
+
+/-! ### C.3. The energy balance -/
+
+/-- **Energy balance of a fixed box** under the declared law `∂ₜE + div (G + J) = q̇ + ẇ`: the
+storage rate is `(∫ q̇ - Φ_J) - workOut (∫ ẇ) - Φ_G`, heat in minus shaft work out minus the
+outward convective-plus-pressure flux. -/
+lemma hasDerivAt_energy_box {n : ℕ} {a b : Fin (n + 1) → ℝ} (hab : ∀ i, a i < b i)
+    {E qdot wdot : ℝ → (Fin (n + 1) → ℝ) → ℝ}
+    {G J : ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ} {t : ℝ}
+    {U : Set (Fin (n + 1) → ℝ)} (hU : IsOpen U) (hbox : Icc a b ⊆ U)
+    (hE : ContDiff ℝ 1 (Function.uncurry E)) (hG : ContDiffOn ℝ 1 (G t) U)
+    (hJ : ContDiffOn ℝ 1 (J t) U) (hq : IntegrableOn (qdot t) (Icc a b))
+    (hw : IntegrableOn (wdot t) (Icc a b))
+    (hlaw : ∀ x ∈ Icc a b,
+      deriv (fun τ => E τ x) t + divergence (G t + J t) x = qdot t x + wdot t x) :
+    HasDerivAt (fun τ => ∫ x in Icc a b, E τ x)
+      (((∫ x in Icc a b, qdot t x) - boxOutwardFlux a b (J t)) -
+        ProcessPorts.workOut (∫ x in Icc a b, wdot t x) - boxOutwardFlux a b (G t)) t := by
+  have h := hasDerivAt_boxIntegral (u := E) (s := fun τ x => qdot τ x + wdot τ x)
+    (q := fun τ => G τ + J τ) hab hU hbox hE (hG.add hJ) (hq.add hw) hlaw
+  rw [integral_add hq hw, boxOutwardFlux_add hab hbox hG.continuousOn hJ.continuousOn] at h
+  convert h using 1
+  unfold ProcessPorts.workOut
+  ring
+
+/-- **Two-port energy balance**: inlet on the face `x₀ = a₀` and outlet on `x₀ = b₀`, with
+uniform port states whose velocities `vi`, `vo` are vectors of the box's space, and zero normal
+component of `G` on the side faces (`hwall`, a hypothesis on the flux `G` only, with no wall
+velocity or relation `G = (E + p) v`; for that flux it holds on impermeable walls). Each port's
+mass flow and kinetic energy come from its one velocity vector: the storage rate is
+`Q̇ - Ẇ_out + ṁ_in θ_in - ṁ_out θ_out` with `ṁ = ρ A₀ v₀`, the component `v₀` of the port velocity
+along `e₀`, and `θ = h + |v|² / 2 + g z`. -/
+lemma hasDerivAt_energy_twoPort {n : ℕ} {a b : Fin (n + 1) → ℝ} (hab : ∀ i, a i < b i)
+    {E qdot wdot : ℝ → (Fin (n + 1) → ℝ) → ℝ}
+    {G J : ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ} {t : ℝ}
+    {U : Set (Fin (n + 1) → ℝ)} (hU : IsOpen U) (hbox : Icc a b ⊆ U)
+    (hE : ContDiff ℝ 1 (Function.uncurry E)) (hG : ContDiffOn ℝ 1 (G t) U)
+    (hJ : ContDiffOn ℝ 1 (J t) U) (hq : IntegrableOn (qdot t) (Icc a b))
+    (hw : IntegrableOn (wdot t) (Icc a b))
+    (hlaw : ∀ x ∈ Icc a b,
+      deriv (fun τ => E τ x) t + divergence (G t + J t) x = qdot t x + wdot t x)
+    {g ρi ei pi zi ρo eo po zo : ℝ} {vi vo : Fin (n + 1) → ℝ}
+    (hρi : ρi ≠ 0) (hρo : ρo ≠ 0)
+    (hin : ∀ y ∈ Icc (a ∘ (0 : Fin (n + 1)).succAbove) (b ∘ (0 : Fin (n + 1)).succAbove),
+      G t ((0 : Fin (n + 1)).insertNth (a 0) y) 0 =
+        vi 0 * (ρi * (ei + vi ⬝ᵥ vi / 2 + g * zi) + pi))
+    (hout : ∀ y ∈ Icc (a ∘ (0 : Fin (n + 1)).succAbove) (b ∘ (0 : Fin (n + 1)).succAbove),
+      G t ((0 : Fin (n + 1)).insertNth (b 0) y) 0 =
+        vo 0 * (ρo * (eo + vo ⬝ᵥ vo / 2 + g * zo) + po))
+    (hwall : ∀ i, i ≠ 0 → ∀ y ∈ Icc (a ∘ i.succAbove) (b ∘ i.succAbove),
+      G t (i.insertNth (b i) y) i = 0 ∧ G t (i.insertNth (a i) y) i = 0) :
+    HasDerivAt (fun τ => ∫ x in Icc a b, E τ x)
+      (((∫ x in Icc a b, qdot t x) - boxOutwardFlux a b (J t)) -
+          ProcessPorts.workOut (∫ x in Icc a b, wdot t x) +
+        ρi * faceArea a b 0 * vi 0 * (specificEnthalpy ei pi ρi + vi ⬝ᵥ vi / 2 + g * zi) -
+        ρo * faceArea a b 0 * vo 0 * (specificEnthalpy eo po ρo + vo ⬝ᵥ vo / 2 + g * zo)) t := by
+  have h := hasDerivAt_energy_box hab hU hbox hE hG hJ hq hw hlaw
+  have hflux : boxOutwardFlux a b (G t) =
+      faceArea a b 0 * (vo 0 * (ρo * (eo + vo ⬝ᵥ vo / 2 + g * zo) + po) -
+        vi 0 * (ρi * (ei + vi ⬝ᵥ vi / 2 + g * zi) + pi)) := by
+    rw [boxOutwardFlux_uniform hab
+      (cU := fun i => if i = 0 then vo 0 * (ρo * (eo + vo ⬝ᵥ vo / 2 + g * zo) + po) else 0)
+      (cL := fun i => if i = 0 then vi 0 * (ρi * (ei + vi ⬝ᵥ vi / 2 + g * zi) + pi) else 0)]
+    · rw [Fin.sum_univ_succ]
+      simp
+    · intro i y hy
+      by_cases hi : i = 0
+      · subst hi; simp only [ite_true]; exact hout y hy
+      · simp only [hi, ite_false]; exact (hwall i hi y hy).1
+    · intro i y hy
+      by_cases hi : i = 0
+      · subst hi; simp only [ite_true]; exact hin y hy
+      · simp only [hi, ite_false]; exact (hwall i hi y hy).2
+  rw [hflux] at h
+  convert h using 1
+  unfold specificEnthalpy
+  field_simp
+  ring
+
+end EnergyPorts
 
 end ControlVolumes
