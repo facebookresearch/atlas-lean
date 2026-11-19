@@ -60,18 +60,22 @@ class Rendering(unittest.TestCase):
         self.assertIn("`theorem_wanted` is gone", body)
         self.assertIn("`unexpanded` marker is gone", fi.issue_body(task(kind="dag-work", phase=None), REPO))
 
-    def test_a_module_issue_lists_its_ready_results(self) -> None:
-        items = [{"title": f"R{n}", "page": f"blueprint/roadmap/A/r{n}.md", "phase": "proof" if n else "statement",
-                  "declarations": [f"X.r{n}"], "unlocks": 0} for n in range(fi.ITEM_LIMIT + 3)]
-        module = task("module:A", phase="module", title="Module A", items=items, declarations=[], statement="")
-        self.assertEqual(fi.issue_title(module), "Formalize: Module A")
-        body = fi.issue_body(module, REPO)
-        self.assertIn(f"Ready now ({fi.ITEM_LIMIT + 3})", body)
+    def test_a_field_issue_lists_its_ready_results_by_module(self) -> None:
+        items = [{"title": f"R{n}", "page": f"blueprint/roadmap/A/f/m{n % 2}/r{n}.md", "phase": "proof" if n else "statement",
+                  "declarations": [f"X.r{n}"], "unlocks": 0, "module": f"Module {n % 2}",
+                  "module_page": f"blueprint/roadmap/A/f/m{n % 2}/README.md"}
+                 for n in sorted(range(fi.ITEM_LIMIT + 3), key=lambda n: (n % 2, n))]
+        field = task("field:A/f", phase="field", title="Field F", items=items, declarations=[], statement="")
+        self.assertEqual(fi.issue_title(field), "Formalize: Field F")
+        body = fi.issue_body(field, REPO)
+        self.assertIn(f"Ready now: {fi.ITEM_LIMIT + 3} result(s) in 2 module(s)", body)
+        self.assertIn("**[Module 0](https://github.com/facebookresearch/atlas-lean/blob/main/blueprint/roadmap/A/f/m0/README.md)**", body)
+        self.assertIn("**[Module 1]", body)
         self.assertIn("- [ ] State [R0]", body)
-        self.assertIn("- [ ] Prove [R1]", body)
-        self.assertIn("(`X.r1`)", body)
-        self.assertIn("and 3 more on the module page", body)
-        self.assertIn("the issue closes when nothing in the module is ready", body)
+        self.assertIn("- [ ] Prove [R2]", body)
+        self.assertIn("(`X.r2`)", body)
+        self.assertIn("and 3 more in 1 module(s)", body)
+        self.assertIn("closes when nothing in the field is ready", body)
 
     def test_labels_name_the_kind_the_graph_and_the_area(self) -> None:
         self.assertEqual(fi.issue_labels(task()), ["task:formalize", "math graph", "area:A"])
@@ -465,30 +469,31 @@ class Frontier(unittest.TestCase):
     def tearDown(self) -> None:
         self.tmp.cleanup()
 
-    def test_the_frontier_holds_one_issue_per_module_and_per_node_to_expand(self) -> None:
+    def test_the_frontier_holds_one_issue_per_field_and_per_node_to_expand(self) -> None:
         result = fi.build_frontier(self.blueprint, "abc")
         tasks = {t["key"]: t for t in result["tasks"]}
-        self.assertEqual(set(tasks), {"module:T", "module:T/second", "node:T/hodge"})
-        topoi = tasks["module:T"]
-        self.assertEqual((topoi["kind"], topoi["phase"], topoi["title"]), ("formalize", "module", "Topoi"))
+        self.assertEqual(set(tasks), {"field:T", "field:T/second", "node:T/hodge"})
+        topoi = tasks["field:T"]
+        self.assertEqual((topoi["kind"], topoi["phase"], topoi["title"]), ("formalize", "field", "Topoi"))
+        self.assertEqual({i["module"] for i in topoi["items"]}, {"Topoi"})
         self.assertEqual([(i["title"], i["phase"]) for i in topoi["items"]], [("Slice", "proof"), ("Jacobian", "statement")])
         self.assertEqual(topoi["items"][0]["declarations"], ["X.slice"])
         self.assertEqual((topoi["unlocks"], topoi["subject"], topoi["page"]), (1, "T", "blueprint/roadmap/T/README.md"))
-        # A module split into parts is still one module.
-        self.assertEqual([i["title"] for i in tasks["module:T/second"]["items"]], ["Far"])
+        # A second-level folder is a field (with no taxonomy to say otherwise); its module's parts are one module.
+        self.assertEqual([(i["title"], i["module"]) for i in tasks["field:T/second"]["items"]], [("Far", "Second module")])
         self.assertEqual((tasks["node:T/hodge"]["kind"], tasks["node:T/hodge"]["phase"]), ("dag-work", None))
         self.assertIn("decl:X.Topos", result["finished"])
         self.assertIn("node:T/topos", result["finished"])
-        self.assertNotIn("module:T", result["finished"])  # Deep is unfinished, though not ready
-        self.assertEqual(result["tasks"][0]["key"], "module:T")  # what it unblocks comes first
+        self.assertNotIn("field:T", result["finished"])  # Deep is unfinished, though not ready
+        self.assertEqual(result["tasks"][0]["key"], "field:T")  # what it unblocks comes first
 
-    def test_a_module_with_nothing_left_is_finished(self) -> None:
+    def test_a_field_with_nothing_left_is_finished(self) -> None:
         links = self.blueprint / "links" / "T.jsonl"
         links.write_text(links.read_text().replace('"status": "stated"}', '"status": "formalized"}')
                          .replace('"X.far"}}], "kind": "theorem"', '"X.far"}}], "kind": "theorem"'))
         result = fi.build_frontier(self.blueprint, "abc")
-        self.assertIn("module:T/second", result["finished"])
-        self.assertNotIn("module:T/second", {t["key"] for t in result["tasks"]})
+        self.assertIn("field:T/second", result["finished"])
+        self.assertNotIn("field:T/second", {t["key"] for t in result["tasks"]})
 
     def test_two_pages_for_one_declaration_are_one_task(self) -> None:
         page = self.blueprint / "roadmap" / "T" / "slice-again.md"
@@ -499,7 +504,7 @@ class Frontier(unittest.TestCase):
         row = {"subject": [{"type": "generic", "uri": "../roadmap/T/slice-again.md"}],
                "object": [{"location": {"declaration": "X.slice"}}], "kind": "theorem", "status": "stated"}
         links.write_text(links.read_text() + json.dumps(row) + "\n")
-        topoi = next(t for t in fi.build_frontier(self.blueprint, "abc")["tasks"] if t["key"] == "module:T")
+        topoi = next(t for t in fi.build_frontier(self.blueprint, "abc")["tasks"] if t["key"] == "field:T")
         self.assertEqual([i["declarations"] for i in topoi["items"]].count(["X.slice"]), 1)
 
     def test_the_command_writes_the_frontier(self) -> None:

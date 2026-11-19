@@ -278,21 +278,24 @@ the articles that are ready to state or to prove by Autoform's readiness rule
 (`autoform work list`), and the nodes marked unexpanded (rule 12). On `main`,
 the `sync task issues` job then keeps the task issues in step with it:
 
-- **One `task:formalize` issue per Lean module** that has a ready article,
-  listing every ready article of the module. A module is the unit of a Lean
-  PR, so its ready results are usually done together, and a frontier of
-  thousands of small statements stays a list of modules. The list follows the
-  graph: a result leaves it once finished, newly unblocked ones join it, and
-  the issue closes when nothing in the module is ready.
+- **One `task:formalize` issue per field of the taxonomy** (a subject's
+  field, or the subject when it has no fields) that has a ready article. The
+  issue lists every ready article of the field, grouped by Lean module. The
+  frontier holds thousands of small statements; a field is a node of the
+  graph's hierarchy with its own page, and a few hundred of them keep the
+  issue list reviewable, while the modules inside each issue are the usual
+  unit of a PR. The list follows the graph: a result leaves it once finished,
+  newly unblocked ones join it, and the issue closes when nothing in the field
+  is ready.
 - **One `task:dag-work` issue per node to expand,** since each expansion is
   its own reviewed PR.
 
 Issues carry `math graph` and the subject's `area:` label. The sync opens
 issues for new tasks, updates changed ones, and closes the issues of tasks
-that left the frontier: completed when the module or node is finished, not
+that left the frontier: completed when the field or node is finished, not
 planned otherwise, and reopens its own closes when the task is back. An issue
 a person closed as not planned is never reopened. A hidden
-`<!-- atlas-task: … -->` line ties each issue to its module page or node.
+`<!-- atlas-task: … -->` line ties each issue to its field page or node.
 Writes are paced and capped at 250 per run, so the first fill opens over
 several `main` builds.
 
