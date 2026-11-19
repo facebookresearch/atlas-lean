@@ -11,4 +11,4 @@ For a finite relational vocabulary with no nullary relation symbol, every first-
 ## Related topics
 
 - [Random graphs](../../../GraphTheory/random-graphs/README.md): for one binary relation the law concerns uniformly random labelled directed graphs with loops; the analogous law for simple graphs, about the random graph $G(n, 1/2)$, is the best-known case.
-- Descriptive complexity: logics on finite structures that capture complexity classes; existential second-order logic captures NP and has no zero-one law.
+- [Descriptive complexity](../../../TheoryOfComputation/descriptive-complexity/README.md): logics on finite structures that capture complexity classes; existential second-order logic captures NP and has no zero-one law.

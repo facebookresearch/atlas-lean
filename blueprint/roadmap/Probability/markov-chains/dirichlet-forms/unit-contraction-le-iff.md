@@ -16,7 +16,7 @@ $m$.
 
 ## Background
 
-- Laplacian Rayleigh quotient of a spectral expander: graph Laplacians $D - A$ are the
+- [Laplacian Rayleigh quotient of a spectral expander](../../../GraphTheory/graph-families-and-operations/expander-graphs/laplacian-rayleigh-quotient.md): graph Laplacians $D - A$ are the
   conservative examples (zero row sums).
 - [Rate matrices](../finite-continuous-time-markov-chains/rate-matrices-of-finite-continuous-time-markov-c/is-rate-matrix.md): $-A$ is a symmetric rate matrix exactly when the row sums of $A$ vanish.
 

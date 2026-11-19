@@ -53,4 +53,4 @@ approximating the largest multiplicity of a data stream needs linear memory.
 
 - [Deterministic communication protocols](../deterministic-communication-protocols/README.md): the deterministic model these protocols randomize, and the $n + 1$ lower bound for equality.
 - [Yao's minimax principle](../../randomized-and-quantum-complexity/yao-s-minimax-principle/README.md): the same principle for finitely many algorithms and inputs with arbitrary costs.
-- Frequency moments of data streams: streaming space lower bounds obtained from the disjointness bound, the memory content being the message.
+- [Frequency moments of data streams](../../../ComputerScience/randomized-algorithms/frequency-moments-of-data-streams/README.md): streaming space lower bounds obtained from the disjointness bound, the memory content being the message.
