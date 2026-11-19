@@ -16,7 +16,8 @@ public import Mathlib.Tactic.IntervalCases
 
 Concrete runs of the rotation count, cost and focus on a left path, including the odd-depth
 case where the recursive splay performs its single rotation at the bottom of the path, and
-instances of the access lemma and the balance theorem.
+instances of the access lemma and the balance theorem. Also concrete runs of the
+`splayMax`, `delete`, and book's `insert` costs, and instances of their amortized bounds.
 -/
 
 @[expose] public section
@@ -99,5 +100,64 @@ example : (cost 1 path4 : ℝ) + potentialW (fun i : ℕ => (i : ℝ) + 1) (spla
 /-- A single node has potential zero. -/
 example : potential (.node (7 : ℕ) .nil .nil) = 0 := by
   simp [potential]
+
+/-! ### Splay-max, delete, and the book's insert: costs and amortized bounds -/
+
+/-- The right path `1 → 2 → 3 → 4`. -/
+def rpath : BinaryTree ℕ :=
+  .node 1 .nil (.node 2 .nil (.node 3 .nil (.node 4 .nil .nil)))
+
+/-- Splaying the maximum of a right path performs one zig-zig and one zig. -/
+example : rotationsMax rpath = 3 := rfl
+
+example : costMax rpath = 3 := rfl
+
+example : splayMax rpath =
+    .node 4 (.node 2 (.node 1 .nil .nil) (.node 3 .nil .nil)) .nil := rfl
+
+/-- Splaying the maximum of a left path performs no rotation. -/
+example : rotationsMax path4 = 0 := rfl
+
+example : costMax path4 = 1 := rfl
+
+example : splayMax path4 = path4 := rfl
+
+/-- Deleting the deepest key of the path: the splay costs 3, the `splayMax`
+on the empty left subtree costs 1. -/
+example : costDelete 1 path4 = 4 := rfl
+
+/-- Deleting an absent key larger than every key costs the splay alone. -/
+example : costDelete 5 path4 = 1 := rfl
+
+example : delete 1 path4 = .node 3 (.node 2 .nil .nil) (.node 4 .nil .nil) := rfl
+
+/-- Inserting below the minimum costs the splay alone; the rebuild is free. -/
+example : costInsert 0 path4 = cost 0 path4 := rfl
+
+/-- The right path is a search tree. -/
+theorem ordered_rpath : BinarySearchTree.Ordered rpath := by
+  simp [rpath, BinarySearchTree.Ordered, BinarySearchTree.All]
+
+/-- Splaying for the maximum costs as many rotations as splaying for that key. -/
+example : rotationsMax rpath = rotations 4 rpath :=
+  rotationsMax_eq_rotations ordered_rpath (by
+    intro y hy
+    simp [rpath, Membership.mem, BinarySearchTree.Mem] at hy
+    omega)
+
+/-- The `splayMax` amortized bound on the path. -/
+example : (costMax path4 : ℝ) + potential (splayMax path4) - potential path4 ≤
+    3 * Real.logb 2 (path4.numNodes : ℝ) + 1 :=
+  amortized_splayMax_le path4 ordered_path4
+
+/-- The `delete` amortized bound on the path. -/
+example : (costDelete 1 path4 : ℝ) + potential (delete 1 path4) - potential path4 ≤
+    5 * Real.logb 2 (path4.numNodes : ℝ) + 2 :=
+  amortized_delete_le 1 path4 ordered_path4
+
+/-- The book's `insert` amortized bound on the path. -/
+example : (costInsert 0 path4 : ℝ) + potential (nipkowInsert 0 path4) - potential path4 ≤
+    4 * Real.logb 2 (path4.numNodes : ℝ) + 2 :=
+  amortized_nipkowInsert_le 0 path4
 
 end Cslib.Algorithms.Lean.SplayTreeAmortizedTests
