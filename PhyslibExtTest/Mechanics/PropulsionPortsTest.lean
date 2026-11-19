@@ -18,9 +18,11 @@ instance, constant mass, and the zero-mass input that the positivity hypothesis 
 parcel step of the vehicle of mass `2` at rest with flow `1` and exhaust speed `3`, and the parcel
 lemmas applied to it, to the linear burning history `M s = 2 - s` and to the nonlinear burning
 history `M s = 2 - s - s ^ 2`, with forward steps for the histories, and a forward step that
-leaves no mass; finally staged burns: a burn from `4` to `3`, a jettison from `3` to `2` and a burn
-from `2` to `1` at `ve = 1`, two stages with exhaust speeds `2` and `3` and a discarded dry mass
-`1`, and a mass increase that balances momentum but is no jettison.
+leaves no mass; the separate-flow thrust of a rocket and of a turbojet, and a steady duct flow on
+the unit square that satisfies the box momentum balance with a nonzero wall thrust; finally staged
+burns: a burn from `4` to `3`, a jettison from `3` to `2` and a burn from `2` to `1` at `ve = 1`,
+two stages with exhaust speeds `2` and `3` and a discarded dry mass `1`, and a mass increase that
+balances momentum but is no jettison.
 
 ## i. Overview
 
@@ -28,7 +30,9 @@ These are elaboration and non-vacuity checks, not new results.
 
 ## ii. Key results
 
-No new definitions or results are introduced here.
+No new general results are introduced here; section E defines the fixture stress
+`shearDuctStress`, and section F the two-stage fixture data `twoStageMass`, `twoStageExhaust` and
+`twoStageVelocity`.
 
 ## iii. Table of contents
 
@@ -36,7 +40,8 @@ No new definitions or results are introduced here.
 - B. Burn, specific impulse and constant mass
 - C. Parcel fixture
 - D. Parcel lemmas on the fixture state
-- E. Staged burns and dry-mass jettison
+- E. Separate-flow thrust
+- F. Staged burns and dry-mass jettison
 
 ## iv. References
 
@@ -212,7 +217,153 @@ example : 0 < ((3 : ℝ) * 1 + 0) / 2 ∧ ((1 : ℝ) * 0 + 0) / 2 ≠ (3 * 1 + 0
   ⟨parcel_accel_pos (by norm_num) (by norm_num) (by norm_num) rfl,
     naive_limit_ne (by norm_num) (by norm_num) (by norm_num) 0⟩
 
-/-! ## E. Staged burns and dry-mass jettison -/
+/-! ## E. Separate-flow thrust -/
+
+section SeparateFlowThrust
+
+open MeasureTheory ControlVolumes
+open MathlibExt.Probability.FokkerPlanck (divergence)
+
+/-- **Rocket fixture.** Propellant flow `100`, exhaust velocity `3000`, exit pressure `120000`
+in the ambient `100000` and exit area `1 / 2`: thrust `310000 = 300000 + 10000` (momentum and
+pressure terms), effective exhaust velocity `3100` and specific impulse `3100 / g0`. -/
+lemma rocket_fixture (vIn pIn g0 : ℝ) :
+    separateFlowThrust 0 vIn pIn 0 100 3000 120000 (1 / 2) 100000 = 310000 ∧
+      effectiveExhaustVelocity (separateFlowThrust 0 vIn pIn 0 100 3000 120000 (1 / 2) 100000)
+        100 = 3100 ∧
+      specificImpulse (separateFlowThrust 0 vIn pIn 0 100 3000 120000 (1 / 2) 100000) 100 g0 =
+        3100 / g0 := by
+  have hT : separateFlowThrust 0 vIn pIn 0 100 3000 120000 (1 / 2) 100000 = 310000 := by
+    rw [separateFlowThrust]
+    norm_num
+  have hc : effectiveExhaustVelocity
+      (separateFlowThrust 0 vIn pIn 0 100 3000 120000 (1 / 2) 100000) 100 = 3100 := by
+    rw [hT, effectiveExhaustVelocity]
+    norm_num
+  exact ⟨hT, hc, by rw [specificImpulse_totalFlow_eq, hc]⟩
+
+/-- **Turbojet fixture.** Inlet flow `50` at `250` with `p_in = p_a`, fuel flow `1`, exhaust flow
+`51` at `600` with `p_e = p_a`: thrust `18100`; the equal-flow formula gives `17500`, short by
+`ṁ_f v_e = 600`; the fuel-flow specific impulse is `51` times the total-flow one. -/
+lemma turbojet_fixture (pA AIn AE g0 : ℝ) (hg0 : 0 < g0) :
+    separateFlowThrust 50 250 pA AIn 51 600 pA AE pA = 18100 ∧
+      separateFlowThrust 50 250 pA AIn 50 600 pA AE pA = 17500 ∧
+      specificImpulse (separateFlowThrust 50 250 pA AIn 51 600 pA AE pA) 1 g0 =
+        51 * specificImpulse (separateFlowThrust 50 250 pA AIn 51 600 pA AE pA) 51 g0 := by
+  have hT : separateFlowThrust 50 250 pA AIn 51 600 pA AE pA = 18100 := by
+    rw [separateFlowThrust]
+    ring
+  refine ⟨hT, by rw [separateFlowThrust]; ring, ?_⟩
+  rw [hT, specificImpulse, specificImpulse]
+  field_simp
+
+/-- Partial derivatives of `A (y 0) + B (y 0) y 1 + C (y 0) y 1²` on `Fin 2 → ℝ`. -/
+private lemma fderiv_quad_apply {A B C : ℝ → ℝ} {A' B' C' : ℝ} (x : Fin 2 → ℝ)
+    (hA : HasDerivAt A A' (x 0)) (hB : HasDerivAt B B' (x 0)) (hC : HasDerivAt C C' (x 0))
+    (i : Fin 2) :
+    fderiv ℝ (fun y : Fin 2 → ℝ => A (y 0) + B (y 0) * y 1 + C (y 0) * y 1 ^ 2) x
+        (Pi.single i 1) =
+      (A' + B' * x 1 + C' * x 1 ^ 2) * (Pi.single i 1 : Fin 2 → ℝ) 0 +
+        (B (x 0) + 2 * C (x 0) * x 1) * (Pi.single i 1 : Fin 2 → ℝ) 1 := by
+  have h0 : HasFDerivAt (fun y : Fin 2 → ℝ => y 0)
+      (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 2 => ℝ) 0) x := hasFDerivAt_apply 0 x
+  have h1 : HasFDerivAt (fun y : Fin 2 → ℝ => y 1)
+      (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 2 => ℝ) 1) x := hasFDerivAt_apply 1 x
+  have h := ((hA.comp_hasFDerivAt x h0).add ((hB.comp_hasFDerivAt x h0).mul h1)).add
+    ((hC.comp_hasFDerivAt x h0).mul (h1.pow 2))
+  rw [show (fun y : Fin 2 → ℝ => A (y 0) + B (y 0) * y 1 + C (y 0) * y 1 ^ 2) =
+    ((A ∘ fun y : Fin 2 → ℝ => y 0) + (B ∘ fun y : Fin 2 → ℝ => y 0) * fun y => y 1) +
+      (C ∘ fun y : Fin 2 → ℝ => y 0) * fun y => y 1 ^ 2 from rfl, h.fderiv]
+  simp only [Function.comp_apply, add_apply, smul_apply,
+    ContinuousLinearMap.proj_apply, smul_eq_mul]
+  ring
+
+/-- Stress of a steady shear-driven duct on the unit square: the pressure
+`p = x₀² / 2 - x₀³ / 3` along the duct, the symmetric shear `σ₀₁ = σ₁₀ = (x₀ - x₀²) x₁`, which
+vanishes on the port faces `x₀ = 0, 1`, and the transverse normal stress
+`σ₁₁ = -(1 - 2 x₀) x₁² / 2` that balances the transverse momentum. -/
+noncomputable def shearDuctStress (x : Fin 2 → ℝ) : Fin 2 → Fin 2 → ℝ :=
+  ![![-(x 0 ^ 2 / 2 - x 0 ^ 3 / 3), (x 0 - x 0 ^ 2) * x 1],
+    ![(x 0 - x 0 ^ 2) * x 1, -((1 - 2 * x 0) * x 1 ^ 2 / 2)]]
+
+/-- **A steady duct with nonzero wall thrust.** On the unit square, density `1`, the uniform
+velocity `(1, 0)`, the stress `shearDuctStress` and no body force satisfy the hypotheses of
+`wallForce_eq_separateFlowThrust`, with shear-free ports at the pressures `0` (inlet) and `1 / 6`
+(exhaust) and impermeable side walls: the axial wall force on the fluid is the thrust `1 / 6`. -/
+lemma shearDuct_wallForce :
+    (∑ i : Fin 1, faceTractionResultant (0 : Fin 2 → ℝ) 1 shearDuctStress i.succ) 0 = 1 / 6 := by
+  have hA : faceArea (0 : Fin 2 → ℝ) 1 0 = 1 := by simp [faceArea]
+  have h := wallForce_eq_separateFlowThrust (n := 1) (a := 0) (b := 1) (ρ := fun _ _ => 1)
+    (v := fun _ _ => ![1, 0])
+    (σ := fun _ => shearDuctStress) (f := fun _ _ => 0) (U := univ) (t := 0) (pi := 0)
+    (po := 1 / 6) (fun i => by simp) isOpen_univ (subset_univ _) contDiff_const contDiff_const
+    ?_ (fun _ => integrableOn_const isCompact_Icc.measure_lt_top.ne) ?_ (fun _ _ => rfl)
+    (fun _ _ => rfl) ?_ (fun _ _ => rfl) (fun _ _ => rfl) ?_ ?_ (hasDerivAt_const _ _)
+    (by simp) 0
+  · rw [h, hA, separateFlowThrust]
+    norm_num
+  · refine ContDiff.contDiffOn (contDiff_pi.2 fun j => contDiff_pi.2 fun i => ?_)
+    fin_cases j <;> fin_cases i <;>
+      simp only [shearDuctStress, Fin.zero_eta, Fin.mk_one, Fin.isValue, Matrix.cons_val_zero,
+        Matrix.cons_val_one, Matrix.cons_val_fin_one] <;>
+      fun_prop
+  · intro j x _
+    have hpA : HasDerivAt (fun s : ℝ => 1 + (s ^ 2 / 2 - s ^ 3 / 3)) (x 0 - x 0 ^ 2) (x 0) :=
+      ((((hasDerivAt_pow 2 (x 0)).div_const 2).sub ((hasDerivAt_pow 3 (x 0)).div_const
+        3)).const_add 1).congr_deriv (by push_cast; ring)
+    have hgB : HasDerivAt (fun s : ℝ => -(s - s ^ 2)) (-(1 - 2 * x 0)) (x 0) :=
+      ((hasDerivAt_id' (x 0)).sub (hasDerivAt_pow 2 (x 0))).neg.congr_deriv (by push_cast; ring)
+    have hcC : HasDerivAt (fun s : ℝ => (1 - 2 * s) / 2) (-1) (x 0) :=
+      (((hasDerivAt_id' (x 0)).const_mul 2).const_sub 1).div_const 2 |>.congr_deriv (by norm_num)
+    have hz : ∀ c : ℝ, HasDerivAt (fun _ : ℝ => c) 0 (x 0) := fun c => hasDerivAt_const _ c
+    unfold divergence MathlibExt.Probability.FokkerPlanck.pderiv
+    rw [Fin.sum_univ_two]
+    fin_cases j
+    · have hF0 : (fun y => momentumFlux (fun _ => 1) (fun _ => ![1, 0]) shearDuctStress 0 y 0) =
+          fun y : Fin 2 → ℝ => (fun s : ℝ => 1 + (s ^ 2 / 2 - s ^ 3 / 3)) (y 0) +
+            (fun _ : ℝ => (0 : ℝ)) (y 0) * y 1 + (fun _ : ℝ => (0 : ℝ)) (y 0) * y 1 ^ 2 := by
+        funext y
+        simp [momentumFlux, shearDuctStress]
+        ring
+      have hF1 : (fun y => momentumFlux (fun _ => 1) (fun _ => ![1, 0]) shearDuctStress 0 y 1) =
+          fun y : Fin 2 → ℝ => (fun _ : ℝ => (0 : ℝ)) (y 0) +
+            (fun s : ℝ => -(s - s ^ 2)) (y 0) * y 1 + (fun _ : ℝ => (0 : ℝ)) (y 0) * y 1 ^ 2 := by
+        funext y
+        simp [momentumFlux, shearDuctStress]
+        ring
+      simp only [Fin.zero_eta, Fin.isValue]
+      rw [hF0, hF1, fderiv_quad_apply x hpA (hz 0) (hz 0), fderiv_quad_apply x (hz 0) hgB (hz 0)]
+      simp
+    · have hF0 : (fun y => momentumFlux (fun _ => 1) (fun _ => ![1, 0]) shearDuctStress 1 y 0) =
+          fun y : Fin 2 → ℝ => (fun _ : ℝ => (0 : ℝ)) (y 0) +
+            (fun s : ℝ => -(s - s ^ 2)) (y 0) * y 1 + (fun _ : ℝ => (0 : ℝ)) (y 0) * y 1 ^ 2 := by
+        funext y
+        simp [momentumFlux, shearDuctStress]
+        ring
+      have hF1 : (fun y => momentumFlux (fun _ => 1) (fun _ => ![1, 0]) shearDuctStress 1 y 1) =
+          fun y : Fin 2 → ℝ => (fun _ : ℝ => (0 : ℝ)) (y 0) + (fun _ : ℝ => (0 : ℝ)) (y 0) * y 1 +
+            (fun s : ℝ => (1 - 2 * s) / 2) (y 0) * y 1 ^ 2 := by
+        funext y
+        simp [momentumFlux, shearDuctStress]
+        ring
+      simp only [Fin.mk_one, Fin.isValue]
+      rw [hF0, hF1, fderiv_quad_apply x (hz 0) hgB (hz 0), fderiv_quad_apply x (hz 0) (hz 0) hcC]
+      simp
+      ring
+  · intro y _
+    funext j
+    fin_cases j <;> simp [shearDuctStress]
+  · intro y _
+    funext j
+    fin_cases j <;> norm_num [shearDuctStress]
+  · intro i hi y _
+    fin_cases i
+    · exact absurd rfl hi
+    · simp
+
+end SeparateFlowThrust
+
+/-! ## F. Staged burns and dry-mass jettison -/
 
 private lemma hasDerivAt_log_div_sub {c t : ℝ} (hc : c ≠ 0) (hct : c - t ≠ 0) :
     HasDerivAt (fun u => Real.log (c / (c - u))) (1 / (c - t)) t := by

@@ -13,6 +13,7 @@ public import PhyslibExt.ContinuumMechanics.ControlVolumes
 
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
@@ -23,7 +24,7 @@ import Mathlib.Tactic.Ring
 import PhyslibExt.EarthScience.PoissonAdiabat
 
 /-!
-# Perfect-gas ports: the stagnation state adapter and the isentropic mass flux
+# Perfect-gas ports: stagnation state, isentropic mass flux and the area-velocity relation
 
 ## i. Overview
 
@@ -56,6 +57,19 @@ same mass flow at the same stagnation state, `G(M) A = G(1) A*`, therefore have
 `x / 0 = 0`, so the area ratio needs `M > 0`. Both branches occur, and strict monotonicity on each
 side makes the inverse Mach number of an area ratio unique only once a branch is selected.
 
+In steady quasi-one-dimensional flow along the duct coordinate `x`, with area `A(x)`, density
+`ρ(x)` and speed `u(x)`, let the ideal-gas law, the declared isentropic connection to one
+stagnation state, the stagnation energy balance and the mass flow `ρ u A = ṁ` hold near a station
+`x₀`. Differentiating the stagnation density ratio and the energy balance gives
+`ρ' / ρ = -M ^ 2 u' / u`, and differentiating the mass flow gives `ρ' / ρ + u' / u + A' / A = 0`;
+together they give the area-velocity relation `A' / A = (M ^ 2 - 1) u' / u` for positive `A`,
+`ρ`, `u`. So a sonic station has stationary area, `A' = 0`: a necessary condition for a throat,
+not an area minimum, which these results do not assert. The converse needs more than stationary
+area: `u' ≠ 0` at the station gives `M = 1` through the relation, and so does a mass flow selected
+at the choked value `ṁ = G(1) A` of the sonic maximum, without any derivative. Stationary area
+alone does not, even at a throat: a subsonic venturi has a strict area minimum, hence `A' = 0`,
+with `u' = 0` and `M < 1`. Both cases are constructed in the test module.
+
 ## ii. Key results
 
 - `FluidDynamics.PerfectGasPorts.specificEnthalpy_perfectGas`: the port enthalpy is `cp T`.
@@ -80,6 +94,15 @@ side makes the inverse Mach number of an area ratio unique only once a branch is
 - `FluidDynamics.PerfectGasPorts.area_ratio_eq_and_one_le`: `A / A* = G(1) / G(M) ≥ 1`.
 - `FluidDynamics.PerfectGasPorts.isentropicMassFlux_zero`: zero flux and no area ratio at
   `M = 0`.
+- `FluidDynamics.PerfectGasPorts.isentropic_density_derivative`,
+  `FluidDynamics.PerfectGasPorts.mass_flow_derivative`: `ρ' / ρ = -M ^ 2 u' / u` and
+  `ρ' / ρ + u' / u + A' / A = 0`.
+- `FluidDynamics.PerfectGasPorts.area_velocity_relation`: `A' / A = (M ^ 2 - 1) u' / u`.
+- `FluidDynamics.PerfectGasPorts.area_deriv_eq_zero_of_mach_eq_one`: a sonic station has
+  stationary area, `A' = 0`.
+- `FluidDynamics.PerfectGasPorts.mach_eq_one_of_area_deriv_eq_zero`,
+  `FluidDynamics.PerfectGasPorts.mach_eq_one_of_choked`: a station of stationary area with
+  `u' ≠ 0`, or a station at the choked mass flow, is sonic.
 
 ## iii. Table of contents
 
@@ -90,15 +113,18 @@ side makes the inverse Mach number of an area ratio unique only once a branch is
 - E. The isentropic mass flux
 - F. Monotonicity and the sonic maximum
 - G. The critical-area ratio
+- H. The differentiated isentrope and mass conservation
+- I. The area-velocity relation and stationary area at a sonic station
 
 ## iv. References
 
 - J. D. Anderson, *Modern Compressible Flow*, 3rd ed., McGraw-Hill, 2003, ch. 3: the total
   temperature `T0 / T = 1 + (γ - 1) M ^ 2 / 2` from the adiabatic energy equation, and the total
-  pressure and density ratios of an isentropic deceleration; ch. 5: the area-Mach-number relation
-  and choked mass flow in quasi-one-dimensional isentropic flow.
-- H. W. Liepmann and A. Roshko, *Elements of Gasdynamics*, Wiley, 1957, ch. 2: the mass flux per
-  unit area and its maximum at `M = 1`.
+  pressure and density ratios of an isentropic deceleration; ch. 5: the area-velocity and
+  area-Mach-number relations, sonic flow at a minimum-area section and choked mass flow in
+  quasi-one-dimensional isentropic flow.
+- H. W. Liepmann and A. Roshko, *Elements of Gasdynamics*, Wiley, 1957, ch. 2: flow in a stream
+  tube of varying area, the mass flux per unit area and its maximum at `M = 1`.
 - Y. A. Çengel and M. A. Boles, *Thermodynamics: An Engineering Approach*, McGraw-Hill, the
   compressible-flow chapter: stagnation enthalpy `h0 = h + V ^ 2 / 2` and stagnation properties.
 - ISO 80000-11, *Quantities and units, Part 11: Characteristic numbers*: the Mach number.
@@ -679,5 +705,166 @@ lemma isentropicMassFlux_zero (p0 T0 R γ : ℝ) :
   have h0 : isentropicMassFlux p0 T0 R γ 0 = 0 := by
     simp [isentropicMassFlux]
   exact ⟨h0, by rw [h0, div_zero]; norm_num⟩
+
+/-! ## H. The differentiated isentrope and mass conservation -/
+
+open scoped Topology
+
+/-- **Differentiated isentrope.** Near the station `x₀` let the temperature and density be
+positive and the ideal-gas law, the declared isentropic connection to the stagnation state and the
+stagnation energy balance hold, with `γ > 1`, `R > 0`, `cp = γ R / (γ - 1)`, `ρ0 > 0` and
+`p0 = ρ0 R T0`. At the station let `u > 0`, `a ^ 2 = γ R T` and `M = |u| / a`. If `ρ` and `u`
+have the derivatives `ρ'` and `u'` there, then `ρ' / ρ = -M ^ 2 u' / u`. -/
+lemma isentropic_density_derivative {γ R cp T0 ρ0 p0 a M x₀ ρ' u' : ℝ} {ρ u T p : ℝ → ℝ}
+    (hγ : 1 < γ) (hR : 0 < R) (hcp : cp = γ * R / (γ - 1)) (hρ0 : 0 < ρ0)
+    (hp0 : p0 = ρ0 * R * T0) (hT : ∀ᶠ x in 𝓝 x₀, 0 < T x) (hρ : ∀ᶠ x in 𝓝 x₀, 0 < ρ x)
+    (hp : ∀ᶠ x in 𝓝 x₀, p x = ρ x * R * T x)
+    (hs : ∀ᶠ x in 𝓝 x₀, p x / ρ x ^ γ = p0 / ρ0 ^ γ)
+    (hen : ∀ᶠ x in 𝓝 x₀, cp * T x + u x ^ 2 / 2 = cp * T0) (hu : 0 < u x₀)
+    (ha2 : a ^ 2 = γ * R * T x₀) (hM : M = |u x₀| / a) (hρ' : HasDerivAt ρ ρ' x₀)
+    (hu' : HasDerivAt u u' x₀) :
+    ρ' / ρ x₀ = -(M ^ 2) * (u' / u x₀) := by
+  have hγ1pos : 0 < γ - 1 := by linarith
+  have hγpos : 0 < γ := by linarith
+  have hcp_pos : 0 < cp := by rw [hcp]; exact div_pos (mul_pos hγpos hR) hγ1pos
+  have hTx := hT.self_of_nhds
+  have hρx := hρ.self_of_nhds
+  have henx := hen.self_of_nhds
+  have hT0pos : 0 < T0 := by
+    have h1 : 0 < cp * T0 := by rw [← henx]; positivity
+    exact pos_of_mul_pos_right h1 hcp_pos.le
+  have hlog : ∀ᶠ x in 𝓝 x₀, Real.log (ρ x) =
+      Real.log ρ0 - 1 / (γ - 1) * (Real.log T0 - Real.log (T x)) := by
+    filter_upwards [hT, hρ, hp, hs, hen] with x hTx' hρx' hpx hsx henx'
+    have hdr := (stagnation_density_ratio (a := Real.sqrt (γ * R * T x))
+      (M := |u x| / Real.sqrt (γ * R * T x)) hγ hR hTx' hcp (Real.sq_sqrt (by positivity)) rfl
+      henx' hρx' hρ0 hpx hp0 hsx).1
+    have h1 := congrArg Real.log hdr
+    rw [Real.log_div hρ0.ne' hρx'.ne', Real.log_rpow (div_pos hT0pos hTx'),
+      Real.log_div hT0pos.ne' hTx'.ne'] at h1
+    linarith
+  have hTeq : ∀ᶠ x in 𝓝 x₀, T x = T0 - u x ^ 2 / (2 * cp) := by
+    filter_upwards [hen] with x hx
+    field_simp
+    linarith
+  have hTd : HasDerivAt T (-(u x₀ * u') / cp) x₀ := by
+    have h := ((hu'.pow 2).div_const (2 * cp)).const_sub T0
+    have h' := h.congr_of_eventuallyEq hTeq
+    convert h' using 1
+    field_simp
+    ring
+  have hrhs : HasDerivAt (fun x => Real.log ρ0 - 1 / (γ - 1) * (Real.log T0 - Real.log (T x)))
+      (1 / (γ - 1) * (-(u x₀ * u') / cp / T x₀)) x₀ := by
+    have h := (((hTd.log hTx.ne').const_sub (Real.log T0)).const_mul (1 / (γ - 1))).const_sub
+      (Real.log ρ0)
+    convert h using 1
+    ring
+  have hlhs : HasDerivAt (fun x => Real.log (ρ x)) (ρ' / ρ x₀) x₀ := hρ'.log hρx.ne'
+  have heq := hlhs.unique (hrhs.congr_of_eventuallyEq hlog)
+  have hM2 : M ^ 2 = u x₀ ^ 2 / a ^ 2 := by rw [hM, div_pow, sq_abs]
+  rw [heq, hM2, ha2, hcp]
+  field_simp
+
+/-- **Differentiated mass conservation.** If `ρ u A = ṁ` near the station `x₀`, the three
+factors are positive at the station and have the derivatives `ρ'`, `u'`, `A'` there, then
+`ρ' / ρ + u' / u + A' / A = 0`. -/
+lemma mass_flow_derivative {mdot x₀ A' ρ' u' : ℝ} {A ρ u : ℝ → ℝ}
+    (hmass : ∀ᶠ x in 𝓝 x₀, ρ x * u x * A x = mdot) (hρ : 0 < ρ x₀) (hu : 0 < u x₀)
+    (hA : 0 < A x₀) (hA' : HasDerivAt A A' x₀) (hρ' : HasDerivAt ρ ρ' x₀)
+    (hu' : HasDerivAt u u' x₀) :
+    ρ' / ρ x₀ + u' / u x₀ + A' / A x₀ = 0 := by
+  have hprod := (hρ'.mul hu').mul hA'
+  have hconst : HasDerivAt (fun x => ρ x * u x * A x) 0 x₀ :=
+    (hasDerivAt_const x₀ mdot).congr_of_eventuallyEq hmass
+  have h0 := hprod.unique hconst
+  simp only [Pi.mul_apply] at h0
+  field_simp
+  linear_combination h0
+
+/-! ## I. The area-velocity relation and stationary area at a sonic station -/
+
+/-- **Area-velocity relation.** Under the hypotheses of `isentropic_density_derivative`, with
+`ρ u A = ṁ` near the station, `A > 0` at the station and `A` differentiable there with derivative
+`A'`, the steady isentropic quasi-one-dimensional flow has `A' / A = (M ^ 2 - 1) u' / u`. -/
+lemma area_velocity_relation {γ R cp T0 ρ0 p0 mdot a M x₀ A' ρ' u' : ℝ}
+    {A ρ u T p : ℝ → ℝ} (hγ : 1 < γ) (hR : 0 < R) (hcp : cp = γ * R / (γ - 1))
+    (hρ0 : 0 < ρ0) (hp0 : p0 = ρ0 * R * T0) (hT : ∀ᶠ x in 𝓝 x₀, 0 < T x)
+    (hρ : ∀ᶠ x in 𝓝 x₀, 0 < ρ x) (hp : ∀ᶠ x in 𝓝 x₀, p x = ρ x * R * T x)
+    (hs : ∀ᶠ x in 𝓝 x₀, p x / ρ x ^ γ = p0 / ρ0 ^ γ)
+    (hen : ∀ᶠ x in 𝓝 x₀, cp * T x + u x ^ 2 / 2 = cp * T0)
+    (hmass : ∀ᶠ x in 𝓝 x₀, ρ x * u x * A x = mdot) (hu : 0 < u x₀) (hA : 0 < A x₀)
+    (ha2 : a ^ 2 = γ * R * T x₀) (hM : M = |u x₀| / a) (hA' : HasDerivAt A A' x₀)
+    (hρ' : HasDerivAt ρ ρ' x₀) (hu' : HasDerivAt u u' x₀) :
+    A' / A x₀ = (M ^ 2 - 1) * (u' / u x₀) := by
+  have h1 := isentropic_density_derivative hγ hR hcp hρ0 hp0 hT hρ hp hs hen hu ha2 hM hρ' hu'
+  have h2 := mass_flow_derivative hmass hρ.self_of_nhds hu hA hA' hρ' hu'
+  linear_combination h2 - h1
+
+/-- **A sonic station has stationary area.** Under the hypotheses of `area_velocity_relation`,
+`M = 1` gives `A' = 0`: a necessary condition for a throat, not an area minimum. -/
+lemma area_deriv_eq_zero_of_mach_eq_one {γ R cp T0 ρ0 p0 mdot a M x₀ A' ρ' u' : ℝ}
+    {A ρ u T p : ℝ → ℝ} (hγ : 1 < γ) (hR : 0 < R) (hcp : cp = γ * R / (γ - 1))
+    (hρ0 : 0 < ρ0) (hp0 : p0 = ρ0 * R * T0) (hT : ∀ᶠ x in 𝓝 x₀, 0 < T x)
+    (hρ : ∀ᶠ x in 𝓝 x₀, 0 < ρ x) (hp : ∀ᶠ x in 𝓝 x₀, p x = ρ x * R * T x)
+    (hs : ∀ᶠ x in 𝓝 x₀, p x / ρ x ^ γ = p0 / ρ0 ^ γ)
+    (hen : ∀ᶠ x in 𝓝 x₀, cp * T x + u x ^ 2 / 2 = cp * T0)
+    (hmass : ∀ᶠ x in 𝓝 x₀, ρ x * u x * A x = mdot) (hu : 0 < u x₀) (hA : 0 < A x₀)
+    (ha2 : a ^ 2 = γ * R * T x₀) (hM : M = |u x₀| / a) (hA' : HasDerivAt A A' x₀)
+    (hρ' : HasDerivAt ρ ρ' x₀) (hu' : HasDerivAt u u' x₀) (hM1 : M = 1) :
+    A' = 0 := by
+  have h := area_velocity_relation hγ hR hcp hρ0 hp0 hT hρ hp hs hen hmass hu hA ha2 hM hA' hρ'
+    hu'
+  rw [hM1] at h
+  have h0 : A' / A x₀ = 0 := by rw [h]; ring
+  exact (div_eq_zero_iff.mp h0).resolve_right hA.ne'
+
+/-- **Stationary area with accelerating flow is sonic.** Under the hypotheses of
+`area_velocity_relation` with stationary area `A' = 0`, a positive sound speed and `u' ≠ 0` at the
+station, `M = 1`. -/
+lemma mach_eq_one_of_area_deriv_eq_zero {γ R cp T0 ρ0 p0 mdot a M x₀ ρ' u' : ℝ}
+    {A ρ u T p : ℝ → ℝ} (hγ : 1 < γ) (hR : 0 < R) (hcp : cp = γ * R / (γ - 1))
+    (hρ0 : 0 < ρ0) (hp0 : p0 = ρ0 * R * T0) (hT : ∀ᶠ x in 𝓝 x₀, 0 < T x)
+    (hρ : ∀ᶠ x in 𝓝 x₀, 0 < ρ x) (hp : ∀ᶠ x in 𝓝 x₀, p x = ρ x * R * T x)
+    (hs : ∀ᶠ x in 𝓝 x₀, p x / ρ x ^ γ = p0 / ρ0 ^ γ)
+    (hen : ∀ᶠ x in 𝓝 x₀, cp * T x + u x ^ 2 / 2 = cp * T0)
+    (hmass : ∀ᶠ x in 𝓝 x₀, ρ x * u x * A x = mdot) (hu : 0 < u x₀) (hA : 0 < A x₀)
+    (ha : 0 < a) (ha2 : a ^ 2 = γ * R * T x₀) (hM : M = |u x₀| / a) (hA' : HasDerivAt A 0 x₀)
+    (hρ' : HasDerivAt ρ ρ' x₀) (hu' : HasDerivAt u u' x₀) (hu'0 : u' ≠ 0) :
+    M = 1 := by
+  have h := area_velocity_relation hγ hR hcp hρ0 hp0 hT hρ hp hs hen hmass hu hA ha2 hM hA' hρ'
+    hu'
+  rw [zero_div] at h
+  have hq : u' / u x₀ ≠ 0 := div_ne_zero hu'0 hu.ne'
+  have hM2 : M ^ 2 = 1 := by
+    rcases mul_eq_zero.mp h.symm with h1 | h1
+    · linarith
+    · exact absurd h1 hq
+  have hMnn : 0 ≤ M := by rw [hM]; exact div_nonneg (abs_nonneg _) ha.le
+  nlinarith
+
+/-- **The choked mass flow makes the station sonic.** Under the hypotheses of
+`massFlux_eq_isentropicMassFlux` at a station of area `A > 0`, if its mass flow `ρ u A = ṁ` is
+selected at the choked value `ṁ = G(1) A`, the sonic maximum of the isentropic mass flux, then
+`M = 1`. -/
+lemma mach_eq_one_of_choked {γ R T T0 cp a u M ρ ρ0 p p0 A mdot : ℝ} (hγ : 1 < γ) (hR : 0 < R)
+    (hT : 0 < T) (hcp : cp = γ * R / (γ - 1)) (ha : 0 < a) (ha2 : a ^ 2 = γ * R * T)
+    (hM : M = |u| / a) (hen : cp * T + u ^ 2 / 2 = cp * T0) (hρ : 0 < ρ) (hρ0 : 0 < ρ0)
+    (hp : p = ρ * R * T) (hp0 : p0 = ρ0 * R * T0) (hs : p / ρ ^ γ = p0 / ρ0 ^ γ) (hA : 0 < A)
+    (hmass : ρ * u * A = mdot) (hchoke : mdot = isentropicMassFlux p0 T0 R γ 1 * A) :
+    M = 1 := by
+  have hflux := massFlux_eq_isentropicMassFlux hγ hR hT hcp ha ha2 hM hen hρ hρ0 hp hp0 hs
+  have hγpos : 0 < γ := by linarith
+  have hγ1pos : 0 < γ - 1 := by linarith
+  have hcp_pos : 0 < cp := by rw [hcp]; exact div_pos (mul_pos hγpos hR) hγ1pos
+  have hT0pos : 0 < T0 := by
+    have h1 : 0 < cp * T0 := by rw [← hen]; positivity
+    exact pos_of_mul_pos_right h1 hcp_pos.le
+  have hp0pos : 0 < p0 := by rw [hp0]; positivity
+  have hρu : ρ * u = isentropicMassFlux p0 T0 R γ 1 :=
+    mul_right_cancel₀ hA.ne' (hmass.trans hchoke)
+  by_contra hM1
+  have hlt := isentropicMassFlux_lt_sonic hp0pos hT0pos hR hγ hM1
+  have hle : ρ * u ≤ ρ * |u| := mul_le_mul_of_nonneg_left (le_abs_self u) hρ.le
+  linarith
 
 end FluidDynamics.PerfectGasPorts
