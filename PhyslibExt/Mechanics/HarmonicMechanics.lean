@@ -449,15 +449,6 @@ theorem moment2D_shift {ρ : Type*} [Fintype ρ]
   refine Finset.sum_congr rfl fun i _ => ?_
   ring
 
-/-- Under equilibrium (zero resultant force), the total
-moment is independent of the moment point. -/
-theorem moment2D_shift_eq_of_resultantForce_eq_zero
-    {ρ : Type*} [Fintype ρ] (r F : ρ → (Fin 2 → ℝ))
-    (o : Fin 2 → ℝ) (hF : resultantForce F = 0) :
-    moment2D (fun i => r i - o) F = moment2D r F := by
-  rw [moment2D_shift, hF]
-  simp
-
 /-- Conversely, moment agreement about the two unit shifts
 forces the resultant force to vanish. -/
 theorem resultantForce_eq_zero_of_moment2D_shift_eq
@@ -483,8 +474,9 @@ of the moment point. -/
 theorem moment2D_shift_eq_of_isEquilibrated
     {ρ : Type*} [Fintype ρ] (r F : ρ → (Fin 2 → ℝ))
     (o : Fin 2 → ℝ) (hF : IsEquilibrated F) :
-    moment2D (fun i => r i - o) F = moment2D r F :=
-  moment2D_shift_eq_of_resultantForce_eq_zero r F o hF
+    moment2D (fun i => r i - o) F = moment2D r F := by
+  rw [moment2D_shift, hF]
+  simp
 
 /-! ## C. Finite spring networks, stiffness matrices, and normal modes. -/
 
