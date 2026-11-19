@@ -130,6 +130,40 @@ example : ∃ x : Fin 5 → ℂ, ∃ h : Fin 2 → ℂ,
   overlapAdd_ne_linearConvolution_of_short_fft 2 5 2 2 (by norm_num) (by norm_num) (by norm_num)
     (by norm_num)
 
+/-- The circular-aliasing theorem at `Q = L = M = 2`: the last linear
+coefficient wraps onto index `L + M - 2 - Q = 0`. -/
+example : ∃ x : Fin 5 → ℂ, ∃ h : Fin 2 → ℂ,
+    linearConvolution 5 2 x h 2 = 1 ∧ linearConvolution 5 2 x h 0 = 0 ∧
+      overlapAdd 2 5 2 2 x h 0 = 1 :=
+  overlapAdd_aliases_of_short_fft 2 5 2 2 (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
+
+/-- The circular-aliasing theorem at `Q = L = M = 3`, wrapping index `4`
+onto index `1`. -/
+example : ∃ x : Fin 3 → ℂ, ∃ h : Fin 3 → ℂ,
+    linearConvolution 3 3 x h 4 = 1 ∧ linearConvolution 3 3 x h 1 = 0 ∧
+      overlapAdd 3 3 3 3 x h 1 = 1 :=
+  overlapAdd_aliases_of_short_fft 3 3 3 3 (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
+
+/-! FFT size `Q = 1 < L = 2` with `N = L = 2` and `M = 1`: zero extension to
+length `1` discards the block sample at offset `1`, so the output is wrong by
+truncation, with nothing wrapped. -/
+
+/-- The discarded sample `1` never reaches the output at index `1`. -/
+example : overlapAdd 1 2 2 1 ![0, 1] ![1] 1 = 0 := by
+  norm_num [overlapAdd, blockCount, blockFrame]
+
+/-- The linear convolution keeps it. -/
+example : linearConvolution 2 1 ![0, 1] ![1] 1 = 1 := by
+  norm_num [linearConvolution, extendNat, Finset.sum_range_succ]
+
+/-- The generic short-FFT failure theorem still applies in this regime. -/
+example : ∃ x : Fin 2 → ℂ, ∃ h : Fin 1 → ℂ,
+    overlapAdd 1 2 2 1 x h ≠ linearConvolution 2 1 x h :=
+  overlapAdd_ne_linearConvolution_of_short_fft 1 2 2 1 (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
+
 /-! Keeping only the first `N = 5` samples drops the tail coefficient `7`. -/
 
 /-- Truncation to the input length differs from the linear convolution. -/

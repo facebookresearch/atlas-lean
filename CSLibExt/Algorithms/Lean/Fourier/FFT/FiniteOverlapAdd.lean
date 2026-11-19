@@ -27,14 +27,19 @@ The proof splits into a transform-free reindexing of the convolution sum
 (`linearConvolution_eq_sum_shifted_blocks`) and the zero-padding identity for
 each frame (`blockFrame_eq_linearConvolution`, from `padded_cyclic_eq_linear`).
 
-Two boundary results show the hypotheses matter:
+Three boundary results show the hypotheses matter:
 
 - `truncation_to_input_length_fails`: for `M ≥ 2`, keeping only the first `N`
   output samples loses the tail;
 - `overlapAdd_ne_linearConvolution_of_short_fft`: once the signal holds a full
   first block (`L ≤ N`), every FFT size `Q < L + M - 1` gives a wrong output.
+  When `Q < L` or `Q < M` the cause is truncation, not wraparound: zero
+  extension to length `Q` discards block or kernel entries;
+- `overlapAdd_aliases_of_short_fft`: when also `L ≤ Q` and `M ≤ Q`, the
+  failure is circular aliasing; the last linear coefficient, at index
+  `L + M - 2`, wraps onto index `L + M - 2 - Q`.
 
-Both restrictions are needed: for `M = 1` the tail is empty, and a signal
+The restrictions are needed: for `M = 1` the tail is empty, and a signal
 shorter than one block can make a short FFT size harmless.
 
 Reference: A. V. Oppenheim and R. W. Schafer, *Discrete-Time Signal
@@ -448,9 +453,14 @@ theorem truncation_to_input_length_fails (Q : ℕ) [NeZero Q] (N L M : ℕ)
   rw [htrunc, hlin] at hcongr
   simp at hcongr
 
-/-- An FFT size below `L + M - 1` aliases: once the signal holds a full
-first block, some signal and kernel make overlap-add differ from the
-linear convolution. -/
+/-- An FFT size below `L + M - 1` gives a wrong output: once the signal
+holds a full first block, some signal and kernel make overlap-add differ
+from the linear convolution. Two mechanisms are covered. When `Q < L` or
+`Q < M`, zero extension to length `Q` keeps only the first `Q` entries of
+a block or of the kernel, so input is discarded before the cyclic
+convolution and no coefficient need wrap (for example `N = L = 2`,
+`M = Q = 1`). When `L ≤ Q` and `M ≤ Q` the failure is circular aliasing,
+stated in `overlapAdd_aliases_of_short_fft`. -/
 theorem overlapAdd_ne_linearConvolution_of_short_fft (Q : ℕ) [NeZero Q] (N L M : ℕ)
     (hL : 1 ≤ L) (hM : 1 ≤ M) (hLN : L ≤ N) (hQ : Q < L + M - 1) :
     ∃ x : Fin N → ℂ, ∃ h : Fin M → ℂ,
@@ -533,5 +543,104 @@ theorem overlapAdd_ne_linearConvolution_of_short_fft (Q : ℕ) [NeZero Q] (N L M
     have hcongr := congrFun heq (L + M - 2)
     rw [hola, hlin] at hcongr
     simp at hcongr
+
+/-- Circular aliasing at a short FFT size. When the block length and the
+kernel length both fit the FFT size (`L ≤ Q`, `M ≤ Q`) but `Q < L + M - 1`,
+unit impulses at the end of the first block and at the end of the kernel
+have last linear coefficient `1` at index `L + M - 2`. Overlap-add wraps it
+onto index `L + M - 2 - Q`, where the linear convolution is `0` and
+overlap-add returns `1`. -/
+theorem overlapAdd_aliases_of_short_fft (Q : ℕ) [NeZero Q] (N L M : ℕ)
+    (hLN : L ≤ N) (hLQ : L ≤ Q) (hMQ : M ≤ Q) (hQ : Q < L + M - 1) :
+    ∃ x : Fin N → ℂ, ∃ h : Fin M → ℂ,
+      linearConvolution N M x h (L + M - 2) = 1 ∧
+      linearConvolution N M x h (L + M - 2 - Q) = 0 ∧
+      overlapAdd Q N L M x h (L + M - 2 - Q) = 1 := by
+  have hQ1 : 1 ≤ Q := Nat.pos_of_ne_zero (NeZero.ne Q)
+  refine ⟨fun i => if i.val = L - 1 then 1 else 0, fun j => if j.val = M - 1 then 1 else 0, ?_⟩
+  have hLN1 : L - 1 < N := by omega
+  have hM1 : M - 1 < M := by omega
+  have hL1L : L - 1 < L := by omega
+  have hL1Q : L - 1 < Q := by omega
+  have hM1Q : M - 1 < Q := by omega
+  have hn0Q : L + M - 2 - Q < Q := by omega
+  have hx : ∀ j, extendNat N (fun i : Fin N => if i.val = L - 1 then (1 : ℂ) else 0) j =
+      if j = L - 1 then 1 else 0 := by
+    intro j
+    unfold extendNat
+    by_cases hj : j = L - 1
+    · subst hj
+      simp [hLN1]
+    · by_cases hjN : j < N <;> simp [hjN, hj]
+  have hy : ∀ k, extendNat M (fun j : Fin M => if j.val = M - 1 then (1 : ℂ) else 0) k =
+      if k = M - 1 then 1 else 0 := by
+    intro k
+    unfold extendNat
+    by_cases hk : k = M - 1
+    · subst hk
+      simp [hM1]
+    · by_cases hkM : k < M <;> simp [hkM, hk]
+  refine ⟨?_, ?_, ?_⟩
+  · have ht : (L + M - 2) - (L - 1) = M - 1 := by omega
+    have hmem : L - 1 ∈ Finset.range (L + M - 2 + 1) := by
+      simp only [Finset.mem_range]
+      omega
+    unfold linearConvolution
+    rw [Finset.sum_eq_single (L - 1) (fun b _ hb => by simp [hx, hb])
+      (fun h => absurd hmem h)]
+    simp [hx, hy, ht]
+  · unfold linearConvolution
+    apply Finset.sum_eq_zero
+    intro j hj
+    simp only [Finset.mem_range] at hj
+    by_cases hjL : j = L - 1
+    · have hne : L + M - 2 - Q - (L - 1) ≠ M - 1 := by omega
+      rw [hjL, hx, hy]
+      simp [hne]
+    · rw [hx]
+      simp [hjL]
+  · have hbc : 0 < blockCount N L := by
+      have hcover := le_blockCount_mul N L (by omega)
+      rcases Nat.eq_zero_or_pos (blockCount N L) with h0 | h0
+      · rw [h0, zero_mul] at hcover
+        omega
+      · exact h0
+    simp only [overlapAdd]
+    refine (Finset.sum_eq_single 0 ?_ ?_).trans ?_
+    · intro b _ hb0
+      have hbL : L ≤ b * L := by
+        have hmul := Nat.mul_le_mul_right L (Nat.pos_of_ne_zero hb0)
+        omega
+      have hnot : ¬ b * L ≤ L + M - 2 - Q := by omega
+      simp [hnot]
+    · intro h0
+      exact absurd (Finset.mem_range.mpr hbc) h0
+    · rw [if_pos (by omega)]
+      simp only [zero_mul, Nat.sub_zero]
+      unfold blockFrame
+      simp only [hn0Q, ↓reduceIte]
+      simp only [cyclicConvolution]
+      refine (Finset.sum_eq_single ((L - 1 : ℕ) : ZMod Q) ?_ ?_).trans ?_
+      · intro j _ hj
+        have hjval : j.val ≠ L - 1 := by
+          intro hcontra
+          apply hj
+          have hjc := ZMod.natCast_zmod_val j
+          rw [hcontra] at hjc
+          exact hjc.symm
+        simp only [zeroExtend]
+        rw [extendNat_block, hx]
+        by_cases hjL : j.val < L <;> simp [hjL, hjval]
+      · intro h0
+        exact absurd (Finset.mem_univ _) h0
+      · have hcast : ((L + M - 2 - Q : ℕ) : ZMod Q) - ((L - 1 : ℕ) : ZMod Q) =
+            ((M - 1 : ℕ) : ZMod Q) := by
+          rw [sub_eq_iff_eq_add, ← Nat.cast_add]
+          have hsum : M - 1 + (L - 1) = (L + M - 2 - Q) + Q := by omega
+          rw [hsum, Nat.cast_add, ZMod.natCast_self, add_zero]
+        rw [hcast]
+        simp only [zeroExtend, ZMod.val_natCast_of_lt hL1Q, ZMod.val_natCast_of_lt hM1Q]
+        rw [extendNat_block, hx, hy]
+        simp [hL1L]
 
 end CSLibExt.Algorithms.Lean.Fourier.FFT.FiniteOverlapAdd
