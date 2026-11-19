@@ -21,8 +21,10 @@ transfers, external additions and retirements. With a constant
 positive dry-air inventory (one real number, the same at both
 ends of the interval), the humidity ratio is vapor mass
 divided by dry-air mass, and the mass/ratio conversion is
-reversible. A time-varying dry-air denominator would need a
-quotient derivative and is not included. The dry-air mass here
+reversible. A changing dry-air inventory would need both
+endpoint denominators and a denominator-change term (or a
+separate dry-air balance) and is not included; a quotient
+derivative belongs to a continuous-time extension. The dry-air mass here
 is a total over the same inventory nodes, held constant over
 the interval; it is not a per-node field.
 
@@ -100,7 +102,7 @@ the shared stock balance (supplied as `hbalance`): the
 updated total ratio is the initial total ratio plus external
 additions minus retirements, all over the same constant
 dry-air mass. -/
-private theorem totalHumidityRatio_update_of {V : Type*} [Fintype V]
+private lemma totalHumidityRatio_update_of {V : Type*} [Fintype V]
     [DecidableEq V] {E : Type*} [Fintype E] [DecidableEq E]
     (hbalance : ∀ (tail head : E → V) (F : E → ℝ)
         {m m' s r : V → ℝ},
@@ -120,7 +122,7 @@ private theorem totalHumidityRatio_update_of {V : Type*} [Fintype V]
 updated total ratio is the initial total ratio plus external
 additions minus retirements, all over the same constant
 dry-air mass. -/
-theorem totalHumidityRatio_update {V : Type*} [Fintype V]
+lemma totalHumidityRatio_update {V : Type*} [Fintype V]
     [DecidableEq V] {E : Type*} [Fintype E] [DecidableEq E]
     (tail head : E → V) (F : E → ℝ) {m m' s r : V → ℝ}
     (h : m' = m + (incidenceMatrix tail head).mulVec F + s - r)
