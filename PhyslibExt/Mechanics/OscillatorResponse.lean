@@ -49,9 +49,10 @@ forced response among them, a larger class than the smooth one above.
 At the excluded undamped exact resonance, `c = 0` and forcing at the natural angular frequency
 `ω₀` with `k = m ω₀ ^ 2`, the steady-state formula has no meaning. There the secular response
 `x (t) = F t sin (ω₀ t) / (2 m ω₀)` is differentiated explicitly and solves
-`m x'' + k x = F cos (ω₀ t)` from rest at the origin. Its envelope is `|F| |t| / (2 m ω₀)`, and
-at the peak times `t_n = (2 π n + π / 2) / ω₀` its amplitude grows without bound when `F ≠ 0`.
-With any nonzero damping the same function is not a solution.
+`m x'' + k x = F cos (ω₀ t)` from rest at the origin. Its envelope is `|F| |t| / (2 m ω₀)`. It
+touches the envelope at the times `t_n = (2 π n + π / 2) / ω₀`, where `sin (ω₀ t_n) = 1`; these are
+not extrema of the response, whose velocity there is `F / (2 m ω₀)`. Along them the amplitude grows
+without bound when `F ≠ 0`. With any nonzero damping the same function is not a solution.
 
 Parameters, forcing and initial data are model inputs.
 
@@ -86,9 +87,10 @@ Parameters, forcing and initial data are model inputs.
 - `hasDerivAt_resonantResponse`, `hasDerivAt_resonantVelocity`, `resonantResponse_solves`,
   `resonantResponse_initial`: the derivatives of the secular response, which solves the undamped
   resonant equation from rest at the origin.
-- `abs_resonantResponse_le`, `resonantResponse_resonancePeak`, `tendsto_resonancePeak`,
-  `tendsto_abs_resonantResponse_resonancePeak`: the envelope, the peak values and the unbounded
-  amplitude along the peak times.
+- `abs_resonantResponse_le`, `resonantResponse_resonanceEnvelopeTime`,
+  `tendsto_resonanceEnvelopeTime`, `tendsto_abs_resonantResponse_resonanceEnvelopeTime`: the
+  envelope, the values at the times where the response touches it, and the unbounded amplitude
+  along those times.
 - `resonantResponse_not_solves_damped`: with nonzero damping the secular response is not a
   solution.
 
@@ -588,8 +590,10 @@ noncomputable def resonantResponse (m ω₀ F t : ℝ) : ℝ :=
 noncomputable def resonantVelocity (m ω₀ F t : ℝ) : ℝ :=
   F * (Real.sin (ω₀ * t) + ω₀ * t * Real.cos (ω₀ * t)) / (2 * m * ω₀)
 
-/-- The peak times `t_n = (2 π n + π / 2) / ω₀`, at which `sin (ω₀ t_n) = 1`. -/
-noncomputable def resonancePeak (ω₀ : ℝ) (n : ℕ) : ℝ :=
+/-- The envelope-touch times `t_n = (2 π n + π / 2) / ω₀`, at which `sin (ω₀ t_n) = 1`, so the
+resonant response meets its envelope `|F| |t| / (2 m ω₀)` there. They are not extrema of the
+response: its velocity there is `F / (2 m ω₀)`. -/
+noncomputable def resonanceEnvelopeTime (ω₀ : ℝ) (n : ℕ) : ℝ :=
   (2 * Real.pi * n + Real.pi / 2) / ω₀
 
 /-! ## K. The resonance branch -/
@@ -707,12 +711,14 @@ lemma abs_resonantResponse_le {m ω₀ : ℝ} (hm : 0 < m) (hω₀ : 0 < ω₀) 
         mul_le_mul_of_nonneg_left h (by positivity)
     _ = |F| * |t| := mul_one _
 
-/-- At the peak times the resonant response reaches its envelope `F t_n / (2 m ω₀)`. -/
-lemma resonantResponse_resonancePeak {ω₀ : ℝ} (hω₀ : 0 < ω₀) (m F : ℝ) (n : ℕ) :
-    resonantResponse m ω₀ F (resonancePeak ω₀ n) = F * resonancePeak ω₀ n / (2 * m * ω₀) := by
+/-- At the envelope-touch times the resonant response equals `F t_n / (2 m ω₀)`, so its absolute
+value meets the envelope. -/
+lemma resonantResponse_resonanceEnvelopeTime {ω₀ : ℝ} (hω₀ : 0 < ω₀) (m F : ℝ) (n : ℕ) :
+    resonantResponse m ω₀ F (resonanceEnvelopeTime ω₀ n) =
+      F * resonanceEnvelopeTime ω₀ n / (2 * m * ω₀) := by
   have hω' : ω₀ ≠ 0 := ne_of_gt hω₀
-  have harg : ω₀ * resonancePeak ω₀ n = 2 * Real.pi * n + Real.pi / 2 := by
-    unfold resonancePeak
+  have harg : ω₀ * resonanceEnvelopeTime ω₀ n = 2 * Real.pi * n + Real.pi / 2 := by
+    unfold resonanceEnvelopeTime
     field_simp
   have hsin : Real.sin (2 * Real.pi * (n : ℝ) + Real.pi / 2) = 1 := by
     have h : (2 * Real.pi * (n : ℝ) + Real.pi / 2) = Real.pi / 2 + n * (2 * Real.pi) := by ring
@@ -721,39 +727,42 @@ lemma resonantResponse_resonancePeak {ω₀ : ℝ} (hω₀ : 0 < ω₀) (m F : �
   rw [harg, hsin]
   ring
 
-/-- The peak times tend to infinity. -/
-lemma tendsto_resonancePeak {ω₀ : ℝ} (hω₀ : 0 < ω₀) : Tendsto (resonancePeak ω₀) atTop atTop := by
+/-- The envelope-touch times tend to infinity. -/
+lemma tendsto_resonanceEnvelopeTime {ω₀ : ℝ} (hω₀ : 0 < ω₀) :
+    Tendsto (resonanceEnvelopeTime ω₀) atTop atTop := by
   have hω' : ω₀ ≠ 0 := ne_of_gt hω₀
   have hbase :
       Tendsto (fun n : ℕ => (2 * Real.pi / ω₀) * (n : ℝ) + (Real.pi / 2) / ω₀) atTop atTop := by
     have h1 : Tendsto (fun n : ℕ => (n : ℝ)) atTop atTop := tendsto_natCast_atTop_atTop
     have h2 := h1.const_mul_atTop (show (0 : ℝ) < 2 * Real.pi / ω₀ by positivity)
     exact tendsto_atTop_add_const_right _ _ h2
-  have heq : resonancePeak ω₀ = fun n : ℕ => (2 * Real.pi / ω₀) * (n : ℝ) + (Real.pi / 2) / ω₀ := by
+  have heq : resonanceEnvelopeTime ω₀ =
+      fun n : ℕ => (2 * Real.pi / ω₀) * (n : ℝ) + (Real.pi / 2) / ω₀ := by
     funext n
-    unfold resonancePeak
+    unfold resonanceEnvelopeTime
     field_simp
   rw [heq]
   exact hbase
 
-/-- Unbounded amplitude: for `F ≠ 0` the amplitude at the peak times tends to infinity. -/
-lemma tendsto_abs_resonantResponse_resonancePeak {m ω₀ F : ℝ} (hm : 0 < m) (hω₀ : 0 < ω₀)
+/-- Unbounded amplitude: for `F ≠ 0` the amplitude at the envelope-touch times tends to
+infinity. -/
+lemma tendsto_abs_resonantResponse_resonanceEnvelopeTime {m ω₀ F : ℝ} (hm : 0 < m) (hω₀ : 0 < ω₀)
     (hF : F ≠ 0) :
-    Tendsto (fun n : ℕ => |resonantResponse m ω₀ F (resonancePeak ω₀ n)|) atTop atTop := by
+    Tendsto (fun n : ℕ => |resonantResponse m ω₀ F (resonanceEnvelopeTime ω₀ n)|) atTop atTop := by
   have hD : 0 < 2 * m * ω₀ := by positivity
-  have hpeak : ∀ n : ℕ, 0 < resonancePeak ω₀ n := by
+  have htime : ∀ n : ℕ, 0 < resonanceEnvelopeTime ω₀ n := by
     intro n
-    unfold resonancePeak
+    unfold resonanceEnvelopeTime
     apply div_pos _ hω₀
     positivity
-  have heq : (fun n : ℕ => |resonantResponse m ω₀ F (resonancePeak ω₀ n)|) =
-      fun n : ℕ => (|F| / (2 * m * ω₀)) * resonancePeak ω₀ n := by
+  have heq : (fun n : ℕ => |resonantResponse m ω₀ F (resonanceEnvelopeTime ω₀ n)|) =
+      fun n : ℕ => (|F| / (2 * m * ω₀)) * resonanceEnvelopeTime ω₀ n := by
     funext n
-    rw [resonantResponse_resonancePeak hω₀ m F n, abs_div, abs_mul, abs_of_pos hD,
-      abs_of_pos (hpeak n)]
+    rw [resonantResponse_resonanceEnvelopeTime hω₀ m F n, abs_div, abs_mul, abs_of_pos hD,
+      abs_of_pos (htime n)]
     ring
   rw [heq]
-  exact (tendsto_resonancePeak hω₀).const_mul_atTop (div_pos (abs_pos.mpr hF) hD)
+  exact (tendsto_resonanceEnvelopeTime hω₀).const_mul_atTop (div_pos (abs_pos.mpr hF) hD)
 
 /-! ## N. Damping leaves the branch -/
 

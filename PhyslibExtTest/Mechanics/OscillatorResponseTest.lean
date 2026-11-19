@@ -196,17 +196,18 @@ example :
 
 /-! ## C. Undamped resonance -/
 
-/-- Growth fixture: `m = ω₀ = k = 1` and `F = 2` give `x (t) = t sin t`; at the peak times
-`t_n = 2 π n + π / 2` the response equals `t_n`, a strictly increasing sequence. -/
+/-- Growth fixture: `m = ω₀ = k = 1` and `F = 2` give `x (t) = t sin t`; at the envelope-touch
+times `t_n = 2 π n + π / 2` the response equals `t_n`, a strictly increasing sequence. -/
 example :
     (∀ t, resonantResponse 1 1 2 t = t * Real.sin t) ∧
-      (∀ n : ℕ, resonantResponse 1 1 2 (resonancePeak 1 n) = 2 * Real.pi * n + Real.pi / 2) ∧
-      StrictMono (fun n : ℕ => resonantResponse 1 1 2 (resonancePeak 1 n)) := by
-  have h2 : ∀ n : ℕ, resonantResponse 1 1 2 (resonancePeak 1 n)
+      (∀ n : ℕ,
+        resonantResponse 1 1 2 (resonanceEnvelopeTime 1 n) = 2 * Real.pi * n + Real.pi / 2) ∧
+      StrictMono (fun n : ℕ => resonantResponse 1 1 2 (resonanceEnvelopeTime 1 n)) := by
+  have h2 : ∀ n : ℕ, resonantResponse 1 1 2 (resonanceEnvelopeTime 1 n)
       = 2 * Real.pi * n + Real.pi / 2 := by
     intro n
-    rw [resonantResponse_resonancePeak zero_lt_one 1 2 n]
-    unfold resonancePeak
+    rw [resonantResponse_resonanceEnvelopeTime zero_lt_one 1 2 n]
+    unfold resonanceEnvelopeTime
     ring
   refine ⟨?_, h2, ?_⟩
   · intro t
