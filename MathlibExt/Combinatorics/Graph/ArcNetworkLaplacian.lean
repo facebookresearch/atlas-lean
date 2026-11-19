@@ -215,4 +215,20 @@ theorem grounded_weightedLaplacian_isUnit (tail head : E → V) (w : E → ℝ)
       (Subtype.val : {v // v ≠ r} → V) (Subtype.val : {v // v ≠ r} → V)) :=
   (grounded_weightedLaplacian_posDef tail head w hw r hconn).isUnit
 
+/-- With strictly positive weights `r`, the `r`-weighted
+arc graph is the constant-weight (underlying) graph. -/
+theorem positiveArcGraph_eq_of_pos {V E : Type*} (tail head : E → V)
+    {r : E → ℝ} (hr : ∀ e, 0 < r e) :
+    positiveArcGraph tail head r
+      = positiveArcGraph tail head (fun _ => (1 : ℝ)) := by
+  ext u v
+  simp only [positiveArcGraph, SimpleGraph.fromRel_adj]
+  constructor
+  · rintro ⟨hne, ⟨e, _, ht, hh⟩ | ⟨e, _, ht, hh⟩⟩
+    · exact ⟨hne, Or.inl ⟨e, zero_lt_one, ht, hh⟩⟩
+    · exact ⟨hne, Or.inr ⟨e, zero_lt_one, ht, hh⟩⟩
+  · rintro ⟨hne, ⟨e, _, ht, hh⟩ | ⟨e, _, ht, hh⟩⟩
+    · exact ⟨hne, Or.inl ⟨e, hr e, ht, hh⟩⟩
+    · exact ⟨hne, Or.inr ⟨e, hr e, ht, hh⟩⟩
+
 end MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian

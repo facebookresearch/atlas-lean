@@ -40,8 +40,9 @@ claimed.
 - `pipeFlowEquations_unique_of_anchor` and
   `passivePipeFlow_unique_of_anchor`: full anchored
   uniqueness of flows and heads.
-- `positiveArcGraph_eq_of_pos`: with strictly positive
-  weights the weighted arc graph is the underlying graph.
+- The weighted-graph identity at strictly positive weights
+  is the generic
+  `MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian.positiveArcGraph_eq_of_pos`.
 
 ## iii. Table of contents
 
@@ -225,21 +226,5 @@ theorem passivePipeFlow_unique_of_anchor {V : Type*} [Fintype V]
       eq_of_energy_eq_zero tail head w hw x h0 huv)
     (fun hr hp₁ hp₂ => passivePipeFlow_flow_unique hr hp₁ hp₂)
     hr hconn hp₁ hp₂ hanchor
-
-/-- With strictly positive weights `r`, the `r`-weighted
-arc graph is the constant-weight (underlying) graph. -/
-theorem positiveArcGraph_eq_of_pos {V E : Type*} (tail head : E → V)
-    {r : E → ℝ} (hr : ∀ e, 0 < r e) :
-    positiveArcGraph tail head r
-      = positiveArcGraph tail head (fun _ => (1 : ℝ)) := by
-  ext u v
-  simp only [positiveArcGraph, SimpleGraph.fromRel_adj]
-  constructor
-  · rintro ⟨hne, ⟨e, _, ht, hh⟩ | ⟨e, _, ht, hh⟩⟩
-    · exact ⟨hne, Or.inl ⟨e, zero_lt_one, ht, hh⟩⟩
-    · exact ⟨hne, Or.inr ⟨e, zero_lt_one, ht, hh⟩⟩
-  · rintro ⟨hne, ⟨e, _, ht, hh⟩ | ⟨e, _, ht, hh⟩⟩
-    · exact ⟨hne, Or.inl ⟨e, hr e, ht, hh⟩⟩
-    · exact ⟨hne, Or.inr ⟨e, hr e, ht, hh⟩⟩
 
 end FluidDynamics.Hydraulics.PipeNetwork

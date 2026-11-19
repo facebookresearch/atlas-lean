@@ -196,6 +196,6 @@ example : ¬ (positiveArcGraph (![0] : Fin 1 → Fin 2) ![1]
 #print axioms
   FluidDynamics.Hydraulics.PipeNetwork.passivePipeFlow_unique_of_anchor
 #print axioms
-  FluidDynamics.Hydraulics.PipeNetwork.positiveArcGraph_eq_of_pos
+  MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian.positiveArcGraph_eq_of_pos
 
 end PhyslibExtTest.FluidDynamics.Hydraulics.PipeNetworkHeads
