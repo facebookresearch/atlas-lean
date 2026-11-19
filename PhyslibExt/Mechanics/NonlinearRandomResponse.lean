@@ -9,6 +9,8 @@ module
 
 public import MathlibExt.Probability.OrnsteinUhlenbeck
 public import PhyslibExt.Units.EngineeringQuantities
+import MathlibExt.Probability.BrownianMotionExistence
+import MathlibExt.Probability.OrnsteinUhlenbeckSDE
 
 /-!
 # First-order random response through the stationary Ornstein–Uhlenbeck law
@@ -34,13 +36,16 @@ its dimension.
   form of the Langevin equation with `θ = k / c` and `σ' = σ / c`. Its unique continuous
   solution on `t ≥ 0` is the existing `ouPathSolution (k / c) (σ / c) x₀ w`.
 * Stationary law (C). The stationary response is a stationary OU process with rate `k / c` and
-  noise amplitude `σ / c`; one exists for all `c, k > 0` and `σ`. Its covariance is
-  `σ² / (2 c k) · e^{-(k / c)|t - s|}`, its variance `σ² / (2 c k)` and its one-time law
-  `N(0, σ² / (2 c k))`. Stationary initialization is part of the reused predicate.
-* Boundaries (D). The stationary variance vanishes exactly when `σ = 0`. White noise is not an
-  ordinary forcing function: the difference quotients `(W (t + h) - W t) / h` of a Brownian
-  motion have variance `1 / h`, unbounded as `h → 0`, so `dW / dt` has no finite-variance
-  values and the equation is read in integral form.
+  noise amplitude `σ / c`. For all `c, k > 0` and `σ` there is a probability space carrying a
+  Brownian motion `B` and an independent start `X₀ ~ N(0, σ² / (2 c k))` on which the OU path
+  solution driven by `B` solves the physical integral equation along almost every path and is
+  such a stationary process. Its covariance is `σ² / (2 c k) · e^{-(k / c)|t - s|}`, its variance
+  `σ² / (2 c k)` and its one-time law `N(0, σ² / (2 c k))`.
+* Boundaries (D). The stationary variance vanishes exactly when `σ = 0`. The difference
+  quotients `(W (t + h) - W t) / h` of a Brownian motion have variance `1 / h`, unbounded as
+  `h → 0`; this is the reason the equation is read in integral form. No statement about
+  convergence of the difference quotients, or about pathwise or mean-square derivatives, is
+  made.
 
 Model inputs (hypotheses):
 
@@ -62,13 +67,14 @@ stochastic integral beyond the reused OU objects; no empirical adequacy or syste
 - `stationaryVariance_coord_dimScale` : the variance formula commutes with a change of units.
 - `physical_iff_langevin`, `ouPathSolution_solves_physical`, `eq_ouPathSolution_of_physical` :
   the physical equation is the Langevin equation with `θ = k / c` and `σ' = σ / c`.
-- `exists_stationaryResponse`, `stationaryResponse_covariance`, `stationaryResponse_variance`,
-  `stationaryResponse_hasLaw` : existence, covariance, variance and law of the stationary
-  response.
+- `exists_stationaryResponse` : a pathwise stationary response exists, driven by a Brownian
+  motion with an independent stationary start.
+- `stationaryResponse_covariance`, `stationaryResponse_variance`, `stationaryResponse_hasLaw` :
+  covariance, variance and law of the stationary response.
 - `stationaryResponse_variance_eq_zero_iff` : nonzero noise gives nonzero variance, and only
   nonzero noise does.
-- `variance_brownian_diffQuot`, `not_bdd_variance_brownian_diffQuot` : white noise is not an
-  ordinary function.
+- `variance_brownian_diffQuot`, `not_bdd_variance_brownian_diffQuot` : the difference quotients
+  of a Brownian motion have variance `1 / h`, which is unbounded as `h → 0`.
 
 ## iii. Table of contents
 
@@ -224,12 +230,35 @@ lemma eq_ouPathSolution_of_physical {c k σ x₀ : ℝ} (hc : 0 < c) {w x : ℝ 
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω}
 
-/-- **Existence.** For `c, k > 0` and every `σ` there is a stationary OU process with rate
-`k / c` and noise amplitude `σ / c`: a stationary response of `c dx = -k x dt + σ dW`. -/
+/-- **Existence of a pathwise stationary response.** For `c, k > 0` and every `σ` there is a
+probability space carrying a Brownian motion `B` and a start `X₀ ~ N(0, σ² / (2 c k))` independent
+of `B` such that the OU path solution `X t ω = ouPathSolution (k / c) (σ / c) (X₀ ω) (B · ω) t`
+solves the physical equation `c (x t - x₀) = -k ∫₀ᵗ x + σ (w t - w 0)` with `w = B · ω` along
+almost every path, and is a stationary OU process with rate `k / c` and noise amplitude
+`σ / c`. -/
 lemma exists_stationaryResponse {c k : ℝ} (hc : 0 < c) (hk : 0 < k) (σ : ℝ) :
-    ∃ μ : Measure (ℝ≥0 → ℝ), ∃ X : ℝ≥0 → (ℝ≥0 → ℝ) → ℝ,
-      IsStationaryOrnsteinUhlenbeck (k / c) (σ / c) X μ := by
-  exact exists_isStationaryOrnsteinUhlenbeck (div_pos hk hc) (σ / c)
+    ∃ μ : Measure (ℝ≥0 → ℝ), ∃ B : ℝ≥0 → (ℝ≥0 → ℝ) → ℝ, ∃ X₀ : (ℝ≥0 → ℝ) → ℝ,
+      IsBrownianReal B μ ∧ HasLaw X₀ (gaussianReal 0 (σ ^ 2 / (2 * c * k)).toNNReal) μ ∧
+      IndepFun X₀ (fun ω t ↦ B t ω) μ ∧
+      (∀ᵐ ω ∂μ, ∀ t : ℝ,
+        c * (ouPathSolution (k / c) (σ / c) (X₀ ω) (fun u ↦ B u.toNNReal ω) t - X₀ ω) =
+          -k * (∫ u in (0 : ℝ)..t,
+            ouPathSolution (k / c) (σ / c) (X₀ ω) (fun u ↦ B u.toNNReal ω) u) +
+            σ * (B t.toNNReal ω - B 0 ω)) ∧
+      IsStationaryOrnsteinUhlenbeck (k / c) (σ / c)
+        (fun t ω ↦ ouPathSolution (k / c) (σ / c) (X₀ ω) (fun u ↦ B u.toNNReal ω) t) μ := by
+  obtain ⟨μ, B, X₀, hB, hX₀, hind⟩ :=
+    exists_isBrownianReal_indepFun_gaussianReal (σ ^ 2 / (2 * c * k)).toNNReal
+  have hc0 : c ≠ 0 := hc.ne'
+  have hk0 : k ≠ 0 := hk.ne'
+  have hv : (σ / c) ^ 2 / (2 * (k / c)) = σ ^ 2 / (2 * c * k) := by field_simp
+  refine ⟨μ, B, X₀, hB, hX₀, hind, ?_, ?_⟩
+  · filter_upwards [hB.cont] with ω hω t
+    have hw : Continuous fun u : ℝ ↦ B u.toNNReal ω := hω.comp continuous_real_toNNReal
+    have h := ouPathSolution_solves_physical hc k σ (X₀ ω) hw t
+    rwa [Real.toNNReal_zero] at h
+  · exact IsBrownianReal.isStationaryOrnsteinUhlenbeck_ouPathSolution hB (div_pos hk hc)
+      (σ / c) (by rwa [hv]) hind
 
 /-- **Covariance of the stationary response**:
 `cov(X s, X t) = σ² / (2 c k) · e^{-(k / c)|t - s|}`. -/
@@ -277,7 +306,7 @@ lemma stationaryResponse_variance_eq_zero_iff {c k σ : ℝ} (hc : 0 < c) {X : �
   rw [stationaryResponse_variance hc hX t]
   simp [hc.ne', hk.ne']
 
-/-- **White noise has no finite-variance values.** The difference quotient
+/-- **Variance of a Brownian difference quotient.** The difference quotient
 `(W (t + h) - W t) / h` of a pre-Brownian motion has variance `1 / h` for every `h > 0`. -/
 lemma variance_brownian_diffQuot {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P) (t h : ℝ≥0)
     (hh : 0 < h) :
@@ -293,9 +322,10 @@ lemma variance_brownian_diffQuot {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownia
   rw [heq, variance_const_mul, hvar]
   field_simp
 
-/-- **White noise is not an ordinary forcing function.** No bound holds for the variance of the
-difference quotients of a pre-Brownian motion as `h → 0`, so `dW / dt` is not a finite-variance
-function of time and the physical equation is read in the integral form of section B. -/
+/-- **Unbounded difference-quotient variance.** No bound holds for the variances of the
+difference quotients `(W (t + h) - W t) / h` of a pre-Brownian motion over `h > 0`; they grow
+like `1 / h` as `h → 0`. This is the formal content behind reading the physical equation in the
+integral form of section B. -/
 lemma not_bdd_variance_brownian_diffQuot {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P)
     (t : ℝ≥0) :
     ¬ ∃ C : ℝ, ∀ h : ℝ≥0, 0 < h → Var[fun ω => (B (t + h) ω - B t ω) / (h : ℝ); P] ≤ C := by

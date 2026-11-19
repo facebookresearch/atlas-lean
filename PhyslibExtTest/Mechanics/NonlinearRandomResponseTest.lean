@@ -14,8 +14,8 @@ public import PhyslibExt.Mechanics.NonlinearRandomResponse
 
 * the fixture `c = 2`, `k = 8`, `σ = 4`: rate `θ = 4`, noise amplitude `σ' = 2` and the nonzero
   stationary variance `σ² / (2 c k) = 1 / 2`;
-* nonvacuity: a stationary response with these parameters exists, and its variance is `1 / 2`
-  at every time.
+* nonvacuity: a pathwise stationary response with these parameters exists, and its variance is
+  `1 / 2` at every time.
 -/
 
 @[expose] public section
@@ -35,14 +35,14 @@ example {X : ℝ≥0 → Ω → ℝ}
   rw [stationaryResponse_variance (c := 2) (k := 8) (σ := 4) (by norm_num) hX t]
   norm_num
 
-/-- Nonvacuity: a stationary response with `c = 2`, `k = 8` and `σ = 4` exists, and its
+/-- Nonvacuity: a pathwise stationary response with `c = 2`, `k = 8` and `σ = 4` exists, and its
 variance is `1 / 2` at every time. -/
 example : ∃ μ : Measure (ℝ≥0 → ℝ), ∃ X : ℝ≥0 → (ℝ≥0 → ℝ) → ℝ,
     IsStationaryOrnsteinUhlenbeck ((8 : ℝ) / 2) ((4 : ℝ) / 2) X μ ∧
       ∀ t, Var[X t; μ] = 1 / 2 := by
-  obtain ⟨μ, X, hX⟩ :=
+  obtain ⟨μ, B, X₀, -, -, -, -, hX⟩ :=
     exists_stationaryResponse (c := 2) (k := 8) (by norm_num) (by norm_num) 4
-  refine ⟨μ, X, hX, fun t => ?_⟩
+  refine ⟨μ, _, hX, fun t => ?_⟩
   rw [stationaryResponse_variance (c := 2) (k := 8) (σ := 4) (by norm_num) hX t]
   norm_num
 
