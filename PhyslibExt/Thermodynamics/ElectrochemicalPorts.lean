@@ -7,9 +7,11 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Basic.Sign.Defs
 public import PhyslibExt.Chemistry.Thermodynamics.Thermochemistry
 public import PhyslibExt.Thermodynamics.ProcessPorts
 
+import Mathlib.Basic.Sign.Basic
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Linarith
@@ -24,7 +26,8 @@ One reaction orientation of an operating fuel cell, per mole of reaction as writ
 enthalpy `ΔH` (in the main result `reactionEnthalpy H ν`, products positive), a supplied reaction
 Gibbs energy `ΔG` at the cell temperature and pressure, `n > 0` electrons per mole of reaction and
 the Faraday constant `F > 0`. The reversible voltage is `Erev = -ΔG / (n F)` and the thermoneutral
-voltage `Etn = -ΔH / (n F)`; both are positive when `ΔG, ΔH < 0`. That `-ΔG` is the reversible
+voltage `Etn = -ΔH / (n F)`; for `n, F > 0` both are positive when `ΔG, ΔH < 0`, and the gap
+`Etn - Erev = (ΔG - ΔH) / (n F)` has the sign of `ΔG - ΔH`. That `-ΔG` is the reversible
 electrical work, so that `V ≤ Erev`, is a supplied model input, not derived here; no cell
 potential is derived from composition (no Nernst law).
 
@@ -33,15 +36,21 @@ The cell runs at current `I ≥ 0` and terminal voltage `0 ≤ V ≤ Erev`. Mode
 and work `w` received by the cell (the IUPAC signs of `ΔU = q + w`), and the electrical port law
 `W_out = I V` for the power delivered at the terminals, with `W_out = -w` the work-out adapter of
 the process ports. Then the heat rejected is `-q = I (Etn - V)`, which splits into the reversible
-part `I (Etn - Erev)` and the irreversible part `I (Erev - V) ≥ 0`, and the voltage efficiency
-satisfies `0 ≤ V / Etn ≤ Erev / Etn`. The reversible part has the sign of `ΔG - ΔH` and can be
-negative, and `Erev / Etn` can exceed `1`: neither follows without entropy assumptions.
+part `I (Etn - Erev)` and the irreversible part `I (Erev - V)`, nonnegative for `I ≥ 0` and
+`V ≤ Erev`; for an exothermic reaction (`ΔH < 0`) the voltage efficiency satisfies
+`0 ≤ V / Etn ≤ Erev / Etn`. For a positive current `I > 0` the reversible part has the sign of
+`ΔG - ΔH` (at `I = 0` it vanishes), which can be negative, and `Erev / Etn` can exceed `1`:
+without entropy assumptions neither `I (Etn - Erev) ≥ 0` nor `Erev / Etn ≤ 1` follows.
 
 ## ii. Key results
 
 - `ElectrochemicalPorts.heatReleased_eq`: the heat rejected is `I (Etn - V)` and its split.
-- `ElectrochemicalPorts.irreversibleHeat_nonneg`: the irreversible part is nonnegative.
-- `ElectrochemicalPorts.voltageRatio_le`: `V / Etn ≤ Erev / Etn`.
+- `ElectrochemicalPorts.sign_reversibleHeat`: for `n, F > 0` and `I > 0` the reversible part has
+  the sign of `ΔG - ΔH`.
+- `ElectrochemicalPorts.irreversibleHeat_nonneg`: the irreversible part is nonnegative for
+  `I ≥ 0` and `V ≤ Erev`.
+- `ElectrochemicalPorts.voltageRatio_le`: `V / Etn ≤ Erev / Etn` for `ΔH < 0`, `n, F > 0` and
+  `V ≤ Erev`.
 - `ElectrochemicalPorts.fuelCell_heat_accounting`: the combined statement with
   `ΔH = reactionEnthalpy H ν`.
 
@@ -81,24 +90,33 @@ reaction as written. -/
 noncomputable def thermoneutralVoltage (ΔH n F : ℝ) : ℝ :=
   -ΔH / (n * F)
 
-/-- A spontaneous reaction, `ΔG < 0`, has a positive reversible voltage. -/
+/-- For `n, F > 0`, a spontaneous reaction, `ΔG < 0`, has a positive reversible voltage. -/
 lemma reversibleVoltage_pos {ΔG n F : ℝ} (hΔG : ΔG < 0) (hn : 0 < n) (hF : 0 < F) :
     0 < reversibleVoltage ΔG n F := by
   unfold reversibleVoltage
   exact div_pos (by linarith) (mul_pos hn hF)
 
-/-- An exothermic reaction, `ΔH < 0`, has a positive thermoneutral voltage. -/
+/-- For `n, F > 0`, an exothermic reaction, `ΔH < 0`, has a positive thermoneutral voltage. -/
 lemma thermoneutralVoltage_pos {ΔH n F : ℝ} (hΔH : ΔH < 0) (hn : 0 < n) (hF : 0 < F) :
     0 < thermoneutralVoltage ΔH n F := by
   unfold thermoneutralVoltage
   exact div_pos (by linarith) (mul_pos hn hF)
 
-/-- The gap between the two voltages is `Etn - Erev = (ΔG - ΔH) / (n F)`: the reversible heat
-per unit current has the sign of `ΔG - ΔH`, which the supplied data may make either sign. -/
+/-- The gap between the two voltages is `Etn - Erev = (ΔG - ΔH) / (n F)`, for all inputs. For
+`n, F > 0` it has the sign of `ΔG - ΔH` (`sign_thermoneutralVoltage_sub_reversibleVoltage`). -/
 lemma thermoneutralVoltage_sub_reversibleVoltage (ΔG ΔH n F : ℝ) :
     thermoneutralVoltage ΔH n F - reversibleVoltage ΔG n F = (ΔG - ΔH) / (n * F) := by
   unfold thermoneutralVoltage reversibleVoltage
   ring
+
+/-- Sign of the voltage gap: for `n, F > 0`, `Etn - Erev` has the sign of `ΔG - ΔH`, so the
+reversible heat per unit current is released, zero or absorbed as `ΔH < ΔG`, `ΔG = ΔH` or
+`ΔG < ΔH`; the supplied data may make it either sign. -/
+lemma sign_thermoneutralVoltage_sub_reversibleVoltage {ΔG ΔH n F : ℝ} (hn : 0 < n) (hF : 0 < F) :
+    SignType.sign (thermoneutralVoltage ΔH n F - reversibleVoltage ΔG n F) =
+      SignType.sign (ΔG - ΔH) := by
+  rw [thermoneutralVoltage_sub_reversibleVoltage, div_eq_mul_inv, sign_mul,
+    sign_pos (inv_pos.mpr (mul_pos hn hF)), mul_one]
 
 /-! ## B. Heat accounting -/
 
@@ -123,6 +141,14 @@ lemma heatReleased_eq {ΔG ΔH n F I V r q w : ℝ} (hn : 0 < n) (hF : 0 < F)
     rw [mul_sub, hE]
     linear_combination hbal - hport'
   exact ⟨hmain, by linear_combination hmain⟩
+
+/-- Sign of the reversible heat: for `n, F > 0` and a current `I > 0`, the reversible part
+`I * (Etn - Erev)` of the heat rejected has the sign of `ΔG - ΔH`, so it is released when
+`ΔH < ΔG` and absorbed when `ΔG < ΔH`. At `I = 0` it vanishes. -/
+lemma sign_reversibleHeat {ΔG ΔH n F I : ℝ} (hn : 0 < n) (hF : 0 < F) (hI : 0 < I) :
+    SignType.sign (I * (thermoneutralVoltage ΔH n F - reversibleVoltage ΔG n F)) =
+      SignType.sign (ΔG - ΔH) := by
+  rw [sign_mul, sign_pos hI, one_mul, sign_thermoneutralVoltage_sub_reversibleVoltage hn hF]
 
 /-- The irreversible heat `I * (Erev - V)` is nonnegative for a current `I ≥ 0` at a terminal
 voltage `V ≤ Erev`. -/

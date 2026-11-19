@@ -124,11 +124,31 @@ example :
     (by norm_num) (by norm_num) (by norm_num) (by norm_num [ProcessPorts.workOut])
   linarith
 
--- The gap `Etn - Erev = (ΔG - ΔH) / (n F)` is negative when `ΔG < ΔH`: `-3/10` V for the
--- entropy-gain inputs, so the reversible heat at a positive current is absorbed.
+-- With `n, F > 0` the gap `Etn - Erev = (ΔG - ΔH) / (n F)` is negative when `ΔG < ΔH`: `-3/10` V
+-- for the entropy-gain inputs, so the reversible heat at a positive current is absorbed.
 example :
     thermoneutralVoltage (-212267) 2 96485 - reversibleVoltage (-270158) 2 96485 = -3 / 10 := by
   rw [thermoneutralVoltage_sub_reversibleVoltage]
   norm_num
+
+-- `sign_reversibleHeat` at `n = 2`, `F = 96485` C/mol and `I = 100` A: the reversible heat is
+-- released (sign `1`) for the hydrogen-like inputs, where `ΔH < ΔG`, and absorbed (sign `-1`) for
+-- the entropy-gain inputs, where `ΔG < ΔH`.
+example :
+    SignType.sign (100 * (thermoneutralVoltage (-289455) 2 96485 -
+        reversibleVoltage (-231564) 2 96485)) = 1 ∧
+      SignType.sign (100 * (thermoneutralVoltage (-212267) 2 96485 -
+        reversibleVoltage (-270158) 2 96485)) = -1 := by
+  rw [sign_reversibleHeat (by norm_num) (by norm_num) (by norm_num),
+    sign_reversibleHeat (by norm_num) (by norm_num) (by norm_num)]
+  exact ⟨sign_pos (by norm_num), sign_neg (by norm_num)⟩
+
+-- Invalid without `0 < n`: `n = -1`, `F = 1`, `ΔG = 1` and `ΔH = 0` give `ΔG - ΔH = 1` but the gap
+-- `Etn - Erev = -1`, so `sign_thermoneutralVoltage_sub_reversibleVoltage` needs its hypotheses.
+example :
+    SignType.sign (thermoneutralVoltage 0 (-1) 1 - reversibleVoltage 1 (-1) 1) = -1 ∧
+      SignType.sign ((1 : ℝ) - 0) = 1 := by
+  refine ⟨sign_neg ?_, sign_pos (by norm_num)⟩
+  norm_num [thermoneutralVoltage, reversibleVoltage]
 
 end PhyslibExtTest.Thermodynamics.ElectrochemicalPorts
