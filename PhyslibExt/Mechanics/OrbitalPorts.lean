@@ -7,16 +7,26 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.LinearAlgebra.CrossProduct
+public import PhyslibExt.EarthScience.KeplerThirdLaw
+public import PhyslibExt.Units.EngineeringFrames
 
+import Mathlib.Analysis.Calculus.Deriv.Comp
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.InnerProductSpace.Calculus
 import Mathlib.LinearAlgebra.Matrix.DotProduct
 import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
-# Orbital ports: energy-defined vis-viva and one tangential impulse
+# Orbital ports: energy-defined vis-viva, one tangential impulse and circular orbits
 
 ## i. Overview
 
@@ -42,11 +52,34 @@ state gives the new semi-major axis. The specific angular momentum identity alon
 orbital plane: there is none when `x ⨯₃ v = 0`, and none after an impulse with `Δv = -|v|`,
 which brings the body to rest.
 
-These are identities about one fixed state, not about a trajectory. No solution of the
+Sections A and B give identities about one fixed state, not about a trajectory. No solution of the
 two-body equation is constructed, no elliptic trajectory is asserted (a state with `E < 0` and
 zero specific angular momentum is radial), and no transfer cost or two-impulse optimality is
 claimed. At `E = 0` the formula `-μ / (2 E)` returns Lean's junk value `0`, not a finite
 semi-major axis.
+
+A circular orbit is taken in the form of the circular-orbit lemmas of Physlib's
+`PhyslibAlpha.ClassicalMechanics.OrbitalMechanics.Hohmann.Dynamics.Circular`: a planar position
+`r t` and velocity `v t`, complex numbers whose real and imaginary parts are the coordinates
+along two in-plane axes, relative to the center, with gravitational parameter `μ > 0` and radius
+`R > 0`, such that `‖r t‖ = R`, `r' = v` and `v' = -(μ / ‖r t‖ ^ 3) • r t` for all `t`
+(`IsCircularOrbit`). These are premises: this module constructs no circular trajectory and
+proves no circular dynamics, and the premises do not follow from the speed balance
+`v ^ 2 = μ / R` alone. That Physlib module is not part of the Physlib version this repository
+depends on, so its circular position and velocity do not yet discharge the premises here; that
+discharge waits for a Physlib update.
+
+From the premises the circular balance `‖v‖ ^ 2 = μ / R` is derived, and the existing
+circular-speed algebra (`EarthScience.kepler_circular_speed`, `EarthScience.kepler_third_law`)
+gives the speed `√(μ / R)` and the period `2 π R / ‖v‖` with `T ^ 2 = 4 π ^ 2 R ^ 3 / μ`.
+Engineering units map onto the premises: with `l, s > 0` new length and time units per old
+unit, lengths scale by `l`, times by `s`, speeds by `l / s` and the gravitational parameter by
+`l ^ 3 / s ^ 2`; a time-unit change without the factor `s⁻²` on `μ` is rejected, and so is the
+collision radius `R = 0`. The planar state maps to inertial components by the passive frame map
+`Q (x, y, 0)`, `Q ∈ SO(3)`, of `Units.EngineeringFrames.bodyToInertialVec`: the spatial state
+keeps the distance `R`, the velocity and the inverse-square attraction, and stays in the plane
+normal to `Q e₃`.
+
 Each result assumes only the hypotheses its proof uses.
 
 ## ii. Key results
@@ -58,17 +91,33 @@ Each result assumes only the hypotheses its proof uses.
   circular speed gives `a = r`; a circular state also has `|x ⨯₃ v|² = μ r`.
 - `OrbitalPorts.semiMajorAxis_tangentialImpulse_eq_radius_iff`: at circular speed, one impulse
   keeps `a = r` only if it keeps the speed or reverses the velocity.
+- `OrbitalPorts.IsCircularOrbit`: the circular-orbit premises.
+- `OrbitalPorts.IsCircularOrbit.norm_vel_eq`, `OrbitalPorts.IsCircularOrbit.period_sq`: speed
+  `√(μ / R)` and Kepler's third law.
+- `OrbitalPorts.IsCircularOrbit.unitChange`, `OrbitalPorts.IsCircularOrbit.not_wrong_time_unit`,
+  `OrbitalPorts.not_isCircularOrbit_zero_radius`: units, and the two rejected inputs.
+- `OrbitalPorts.IsCircularOrbit.hasDerivAt_spatialVelocity`: the inverse-square law in inertial
+  components.
 
 ## iii. Table of contents
 
 - A. State energy and vis-viva
 - B. One tangential impulse
+- C. The circular-orbit premises
+- D. Speed and period
+- E. Units
+- F. Planar to spatial state
 
 ## iv. References
 
 - H. D. Curtis, *Orbital Mechanics for Engineering Students*, ch. 2: specific energy,
-  `a = -μ / (2 ε)` and the vis-viva equation.
+  `a = -μ / (2 ε)`, the vis-viva equation and circular orbits (`v = √(μ / r)`,
+  `T = 2 π r ^ (3 / 2) / √μ`).
 - R. R. Bate, D. D. Mueller and J. E. White, *Fundamentals of Astrodynamics*, ch. 1-2.
+- D. A. Vallado, *Fundamentals of Astrodynamics and Applications*, ch. 1-2: the two-body
+  equation `r'' = -μ r / r ^ 3` and the orbital plane.
+- Physlib, `PhyslibAlpha.ClassicalMechanics.OrbitalMechanics.Hohmann.Dynamics.Circular`: the
+  circular orbits whose conclusions are the premises of section C.
 - `crossProduct` and `dotProduct` in Mathlib.
 
 ## A. State energy and vis-viva
@@ -289,5 +338,326 @@ lemma semiMajorAxis_tangentialImpulse_eq_radius_iff {μ Δv : ℝ} {x v : Fin 3 
       linear_combination h2
     field_simp at hdiv
     exact hdiv.symm
+
+open EarthScience (kepler_circular_speed kepler_third_law)
+open Units.EngineeringFrames (bodyToInertialVec bodyToInertialVec_dotProduct)
+
+/-! ## C. The circular-orbit premises -/
+
+/-- Circular-orbit premises for a planar position `r` and velocity `v` relative to the attracting
+center (complex numbers: real part along the first in-plane axis, imaginary part along the
+second), gravitational parameter `μ` and radius `R`. They are the conclusions of the upstream
+circular-orbit lemmas, taken as premises. -/
+structure IsCircularOrbit (μ R : ℝ) (r v : ℝ → ℂ) : Prop where
+  /-- The gravitational parameter is positive. -/
+  mu_pos : 0 < μ
+  /-- The radius is positive: the collision orbit `R = 0` is excluded. -/
+  radius_pos : 0 < R
+  /-- The position stays on the circle of radius `R` about the center. -/
+  norm_eq : ∀ t, ‖r t‖ = R
+  /-- The velocity is the time derivative of the position. -/
+  hasDerivAt_pos : ∀ t, HasDerivAt r (v t) t
+  /-- The acceleration is the inverse-square attraction toward the center. -/
+  hasDerivAt_vel : ∀ t, HasDerivAt v (-(μ / ‖r t‖ ^ 3) • r t) t
+
+/-- Collision radius zero is rejected: no circular orbit has radius `0`. -/
+lemma not_isCircularOrbit_zero_radius (μ : ℝ) (r v : ℝ → ℂ) : ¬ IsCircularOrbit μ 0 r v := by
+  intro h
+  exact absurd h.radius_pos (lt_irrefl 0)
+
+/-! ## D. Speed and period -/
+
+/-- The circular balance `‖v‖ ^ 2 = μ / R`, derived from the premises. -/
+lemma IsCircularOrbit.norm_vel_sq {μ R : ℝ} {r v : ℝ → ℂ} (h : IsCircularOrbit μ R r v)
+    (t : ℝ) : ‖v t‖ ^ 2 = μ / R := by
+  have hnorm : ∀ u, inner ℂ (r u) (r u) = ((R ^ 2 : ℝ) : ℂ) := by
+    intro u
+    rw [inner_self_eq_norm_sq_to_K, h.norm_eq u]
+    norm_cast
+  have hconst1 : ∀ u, HasDerivAt (fun u => inner ℂ (r u) (r u)) 0 u := by
+    intro u
+    have heq : (fun u => inner ℂ (r u) (r u)) = fun _ => ((R ^ 2 : ℝ) : ℂ) :=
+      funext hnorm
+    rw [heq]
+    exact hasDerivAt_const u _
+  have hort : ∀ u, inner ℂ (r u) (v u) + inner ℂ (v u) (r u) = 0 := fun u =>
+    (HasDerivAt.inner ℂ (h.hasDerivAt_pos u) (h.hasDerivAt_pos u)).unique (hconst1 u)
+  have hre : ∀ u, RCLike.re (inner ℂ (r u) (v u)) = 0 := by
+    intro u
+    have h2 := congrArg RCLike.re (hort u)
+    rw [map_add, map_zero, inner_re_symm] at h2
+    rw [inner_re_symm]
+    linarith
+  have hderiv2 : HasDerivAt (fun u => inner ℂ (r u) (v u))
+      (inner ℂ (r t) (-(μ / ‖r t‖ ^ 3) • r t) + inner ℂ (v t) (v t)) t :=
+    HasDerivAt.inner ℂ (h.hasDerivAt_pos t) (h.hasDerivAt_vel t)
+  have hderiv2re : HasDerivAt (⇑RCLike.reCLM ∘ (fun u => inner ℂ (r u) (v u)))
+      (RCLike.reCLM (inner ℂ (r t) (-(μ / ‖r t‖ ^ 3) • r t) + inner ℂ (v t) (v t))) t :=
+    HasFDerivAt.comp_hasDerivAt t (ContinuousLinearMap.hasFDerivAt RCLike.reCLM) hderiv2
+  have hconst2 : HasDerivAt (⇑RCLike.reCLM ∘ (fun u => inner ℂ (r u) (v u))) 0 t := by
+    have heq : ⇑RCLike.reCLM ∘ (fun u => inner ℂ (r u) (v u)) = fun _ => (0 : ℝ) := by
+      funext u
+      simp only [Function.comp_apply, RCLike.reCLM_apply]
+      exact hre u
+    rw [heq]
+    exact hasDerivAt_const t _
+  have hsum := hderiv2re.unique hconst2
+  rw [map_add] at hsum
+  have hvself : RCLike.reCLM (inner ℂ (v t) (v t)) = ‖v t‖ ^ 2 := by
+    have hs := inner_self_eq_norm_sq (𝕜 := ℂ) (v t)
+    rwa [RCLike.reCLM_apply]
+  have hrv : RCLike.reCLM (inner ℂ (r t) (-(μ / ‖r t‖ ^ 3) • r t)) = -(μ / R) := by
+    have hsmul : (-(μ / ‖r t‖ ^ 3) : ℝ) • r t
+        = ((-(μ / ‖r t‖ ^ 3) : ℝ) : ℂ) • r t :=
+      RCLike.real_smul_eq_coe_smul _ _
+    rw [hsmul, inner_smul_right, hnorm t, ← Complex.ofReal_mul]
+    have hoR : ∀ x : ℝ, RCLike.reCLM ((x : ℝ) : ℂ) = x := fun x => by
+      rw [RCLike.reCLM_apply]
+      exact RCLike.ofReal_re x
+    rw [hoR, h.norm_eq t]
+    have hRne : R ≠ 0 := ne_of_gt h.radius_pos
+    field_simp
+  rw [hrv, hvself] at hsum
+  linarith
+
+/-- The speed is the circular speed `√(μ / R)` of the existing algebra (`kepler_circular_speed`
+with `G = μ`, `M = 1`). -/
+lemma IsCircularOrbit.norm_vel_eq {μ R : ℝ} {r v : ℝ → ℂ} (h : IsCircularOrbit μ R r v)
+    (t : ℝ) : ‖v t‖ = Real.sqrt (μ / R) := by
+  have hsq := h.norm_vel_sq t
+  have hpos : 0 < μ / R := div_pos h.mu_pos h.radius_pos
+  have hne : ‖v t‖ ≠ 0 := by
+    intro hz
+    rw [hz, zero_pow two_ne_zero] at hsq
+    linarith
+  have hv : 0 < ‖v t‖ := lt_of_le_of_ne (norm_nonneg _) hne.symm
+  have hbal : ‖v t‖ ^ 2 = μ * 1 / R := by
+    rw [hsq, mul_one]
+  have hcs := kepler_circular_speed h.mu_pos one_pos h.radius_pos hv hbal
+  rwa [mul_one] at hcs
+
+/-- The period `T = 2 π R / ‖v‖`, the time to travel the circumference at the constant speed,
+satisfies Kepler's third law `T ^ 2 = 4 π ^ 2 R ^ 3 / μ` (`kepler_third_law`). -/
+lemma IsCircularOrbit.period_sq {μ R : ℝ} {r v : ℝ → ℂ} (h : IsCircularOrbit μ R r v) (t : ℝ) :
+    (2 * Real.pi * R / ‖v t‖) ^ 2 = 4 * Real.pi ^ 2 * R ^ 3 / μ := by
+  have hsq := h.norm_vel_sq t
+  have hpos : 0 < μ / R := div_pos h.mu_pos h.radius_pos
+  have hne : ‖v t‖ ≠ 0 := by
+    intro hz
+    rw [hz, zero_pow two_ne_zero] at hsq
+    linarith
+  have hv : 0 < ‖v t‖ := lt_of_le_of_ne (norm_nonneg _) hne.symm
+  have hbal : ‖v t‖ ^ 2 = μ * 1 / R := by
+    rw [hsq, mul_one]
+  have htl := kepler_third_law h.mu_pos one_pos h.radius_pos hv hbal rfl
+  rwa [mul_one] at htl
+
+/-! ## E. Units
+
+With `l, s > 0` new length and time units per old unit (kilometres to metres `l = 1000`, seconds
+to hours `s = 1 / 3600`), a coordinate of dimension `L^a T^b` is multiplied by `l ^ a * s ^ b`:
+lengths by `l`, times by `s`, speeds by `l / s`, the gravitational parameter (`L³ T⁻²`) by
+`l ^ 3 / s ^ 2`. In the new units the state at the new time `τ` is the old state at `τ / s`. -/
+
+/-- The premises are preserved by a change of units with the gravitational parameter scaled by
+`l ^ 3 / s ^ 2` and the radius by `l`. -/
+lemma IsCircularOrbit.unitChange {μ R l s : ℝ} {r v : ℝ → ℂ} (h : IsCircularOrbit μ R r v)
+    (hl : 0 < l) (hs : 0 < s) :
+    IsCircularOrbit (l ^ 3 / s ^ 2 * μ) (l * R) (fun τ => l • r (τ / s))
+      (fun τ => (l / s) • v (τ / s)) := by
+  have hμ := h.mu_pos
+  have hR := h.radius_pos
+  have hsne : s ≠ 0 := ne_of_gt hs
+  have hlne : l ≠ 0 := ne_of_gt hl
+  have hRne : R ≠ 0 := ne_of_gt hR
+  have hdiv : ∀ τ, HasDerivAt (fun τ : ℝ => τ / s) (1 / s) τ := fun τ =>
+    (hasDerivAt_id' τ).div_const s
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · positivity
+  · exact mul_pos hl hR
+  · intro τ
+    rw [norm_smul, Real.norm_eq_abs, abs_of_pos hl, h.norm_eq]
+  · intro τ
+    have hcomp : HasDerivAt (fun τ => r (τ / s)) ((1 / s) • v (τ / s)) τ :=
+      HasDerivAt.scomp τ (h.hasDerivAt_pos (τ / s)) (hdiv τ)
+    have hsmul := HasDerivAt.const_smul l hcomp
+    have hscal : l • ((1 / s) • v (τ / s)) = (l / s) • v (τ / s) := by
+      rw [← smul_assoc, smul_eq_mul, mul_one_div]
+    rw [hscal] at hsmul
+    exact hsmul
+  · intro τ
+    show HasDerivAt (fun τ => (l / s) • v (τ / s))
+      (-((l ^ 3 / s ^ 2 * μ) / ‖l • r (τ / s)‖ ^ 3) • (l • r (τ / s))) τ
+    have hnorm_new : ‖l • r (τ / s)‖ = l * R := by
+      rw [norm_smul, Real.norm_eq_abs, abs_of_pos hl, h.norm_eq]
+    rw [hnorm_new]
+    have hcompv : HasDerivAt (fun τ => v (τ / s))
+        ((1 / s) • (-(μ / ‖r (τ / s)‖ ^ 3) • r (τ / s))) τ :=
+      HasDerivAt.scomp τ (h.hasDerivAt_vel (τ / s)) (hdiv τ)
+    have hsmulv := HasDerivAt.const_smul (l / s) hcompv
+    rw [h.norm_eq] at hsmulv
+    have hscalv : (l / s) • (1 / s) • (-(μ / R ^ 3) • r (τ / s))
+        = (-((l ^ 3 / s ^ 2 * μ) / (l * R) ^ 3)) • (l • r (τ / s)) := by
+      rw [← smul_assoc, ← smul_assoc, ← smul_assoc]
+      simp only [smul_eq_mul]
+      congr 1
+      field_simp
+    rw [hscalv] at hsmulv
+    exact hsmulv
+
+/-- Wrong time units are rejected: a change of time unit (`s ≠ 1`) that leaves out the factor
+`s⁻²` of the gravitational parameter gives no circular orbit. -/
+lemma IsCircularOrbit.not_wrong_time_unit {μ R l s : ℝ} {r v : ℝ → ℂ}
+    (h : IsCircularOrbit μ R r v) (hl : 0 < l) (hs : 0 < s) (hs1 : s ≠ 1) :
+    ¬ IsCircularOrbit (l ^ 3 * μ) (l * R) (fun τ => l • r (τ / s))
+      (fun τ => (l / s) • v (τ / s)) := by
+  intro hw
+  have htrue := h.norm_vel_sq 0
+  have hwrong := hw.norm_vel_sq 0
+  simp only [zero_div] at hwrong
+  rw [norm_smul, Real.norm_eq_abs, abs_of_pos (div_pos hl hs), mul_pow, htrue] at hwrong
+  have hμR : μ / R ≠ 0 := ne_of_gt (div_pos h.mu_pos h.radius_pos)
+  have hlne : l ≠ 0 := ne_of_gt hl
+  have hsne : s ≠ 0 := ne_of_gt hs
+  have hRne : R ≠ 0 := ne_of_gt h.radius_pos
+  have hrhs : l ^ 3 * μ / (l * R) = l ^ 2 * (μ / R) := by
+    field_simp
+  rw [hrhs] at hwrong
+  have hsq : (l / s) ^ 2 = l ^ 2 := mul_right_cancel₀ hμR hwrong
+  rw [div_pow] at hsq
+  have hl2 : (l ^ 2 : ℝ) ≠ 0 := pow_ne_zero 2 hlne
+  have hs2ne : s ^ 2 ≠ 0 := pow_ne_zero 2 hsne
+  rw [div_eq_iff hs2ne] at hsq
+  have hs2 : s ^ 2 = 1 := mul_left_cancel₀ hl2 (by rw [mul_one]; exact hsq.symm)
+  have hs1eq : s = 1 := by
+    have hfac : (s - 1) * (s + 1) = 0 := by
+      have hring : (s - 1) * (s + 1) = s ^ 2 - 1 := by ring
+      rw [hring, hs2]
+      norm_num
+    rcases mul_eq_zero.mp hfac with hcase | hcase
+    · linarith
+    · linarith
+  exact hs1 hs1eq
+
+/-- Consistent speed and period units: under the change of units the circular speed `√(μ / R)`
+scales by `l / s` and the period `2 π R / √(μ / R)` by `s`. -/
+lemma speed_period_unitChange {μ R l s : ℝ} (hμ : 0 < μ) (hR : 0 < R) (hl : 0 < l)
+    (hs : 0 < s) :
+    Real.sqrt (l ^ 3 / s ^ 2 * μ / (l * R)) = l / s * Real.sqrt (μ / R) ∧
+      2 * Real.pi * (l * R) / Real.sqrt (l ^ 3 / s ^ 2 * μ / (l * R)) =
+        s * (2 * Real.pi * R / Real.sqrt (μ / R)) := by
+  have hμR : 0 < μ / R := div_pos hμ hR
+  have hls : 0 < l / s := div_pos hl hs
+  have hsne : s ≠ 0 := ne_of_gt hs
+  have hlne : l ≠ 0 := ne_of_gt hl
+  have hRne : R ≠ 0 := ne_of_gt hR
+  have harg : l ^ 3 / s ^ 2 * μ / (l * R) = (l / s) ^ 2 * (μ / R) := by
+    field_simp
+  have hsqrt : Real.sqrt (l ^ 3 / s ^ 2 * μ / (l * R)) = l / s * Real.sqrt (μ / R) := by
+    rw [harg, Real.sqrt_mul (sq_nonneg _), Real.sqrt_sq hls.le]
+  refine ⟨hsqrt, ?_⟩
+  rw [hsqrt]
+  have hsqne : Real.sqrt (μ / R) ≠ 0 := ne_of_gt (Real.sqrt_pos.mpr hμR)
+  have hlsne : l / s ≠ 0 := ne_of_gt hls
+  field_simp
+
+/-! ## F. Planar to spatial state -/
+
+/-- Body components `(x, y, 0)` of the point `x + y i` of the orbit plane, the plane of the first
+two body axes. -/
+def planarToBody (z : ℂ) : Fin 3 → ℝ :=
+  ![z.re, z.im, 0]
+
+/-- Inertial components `Q (x, y, 0)` of the planar state `z t`, for the orbit-plane frame of
+orientation `Q ∈ SO(3)` (passive free-vector map of the frame dictionary). -/
+def spatialState (Q : Matrix.specialOrthogonalGroup (Fin 3) ℝ) (z : ℝ → ℂ) (t : ℝ) :
+    Fin 3 → ℝ :=
+  bodyToInertialVec Q (planarToBody (z t))
+
+/-- The planar-to-spatial map preserves Euclidean length: `X ⬝ᵥ X = ‖z‖ ^ 2`. -/
+lemma dotProduct_spatialState (Q : Matrix.specialOrthogonalGroup (Fin 3) ℝ) (z : ℝ → ℂ)
+    (t : ℝ) : spatialState Q z t ⬝ᵥ spatialState Q z t = ‖z t‖ ^ 2 := by
+  simp only [spatialState, bodyToInertialVec_dotProduct, planarToBody]
+  have hcc : ‖z t‖ ^ 2 = (z t).re * (z t).re + (z t).im * (z t).im :=
+    RCLike.norm_sq_eq_def
+  rw [hcc]
+  simp
+
+/-- The spatial state stays in the orbit plane: it is orthogonal to the plane normal `Q e₃`. -/
+lemma spatialState_dotProduct_normal (Q : Matrix.specialOrthogonalGroup (Fin 3) ℝ)
+    (z : ℝ → ℂ) (t : ℝ) : spatialState Q z t ⬝ᵥ bodyToInertialVec Q ![0, 0, 1] = 0 := by
+  simp only [spatialState, bodyToInertialVec_dotProduct, planarToBody]
+  simp
+
+/-- The planar-to-spatial map commutes with time derivatives. -/
+lemma hasDerivAt_spatialState (Q : Matrix.specialOrthogonalGroup (Fin 3) ℝ) {z : ℝ → ℂ}
+    {w : ℂ} {t : ℝ} (hz : HasDerivAt z w t) :
+    HasDerivAt (spatialState Q z) (bodyToInertialVec Q (planarToBody w)) t := by
+  let L : ℂ →L[ℝ] (Fin 3 → ℝ) :=
+    { toFun := fun z => bodyToInertialVec Q (planarToBody z)
+      map_add' := fun a b => by
+        have hadd : planarToBody (a + b) = planarToBody a + planarToBody b := by
+          ext i
+          fin_cases i <;> simp [planarToBody, Complex.add_re, Complex.add_im]
+        simp only [bodyToInertialVec, hadd, Matrix.mulVec_add]
+      map_smul' := fun c x => by
+        simp only [RingHom.id_apply]
+        have hsmul : planarToBody (c • x) = c • planarToBody x := by
+          ext i
+          fin_cases i <;> simp [planarToBody]
+        simp only [bodyToInertialVec, hsmul, Matrix.mulVec_smul]
+      cont := by
+        have hvec : Continuous fun z : ℂ => ![z.re, z.im, (0 : ℝ)] := by
+          rw [continuous_pi_iff]
+          intro i
+          fin_cases i
+          · exact Complex.continuous_re.congr (fun z => by simp)
+          · exact Complex.continuous_im.congr (fun z => by simp)
+          · exact (continuous_const : Continuous fun _ : ℂ => (0 : ℝ)).congr
+              (fun z => by simp)
+        have hmul : Continuous fun v : Fin 3 → ℝ
+            => (Q : Matrix (Fin 3) (Fin 3) ℝ) *ᵥ v := by
+          rw [continuous_pi_iff]
+          intro i
+          simp only [Matrix.mulVec, dotProduct]
+          exact continuous_finsetSum _ (fun j _ => continuous_const.mul (continuous_apply j))
+        simp only [bodyToInertialVec, planarToBody]
+        exact hmul.comp hvec }
+  have hL := HasFDerivAt.comp_hasDerivAt t L.hasFDerivAt hz
+  have hfun : ⇑L ∘ z = spatialState Q z := rfl
+  have hval : L w = bodyToInertialVec Q (planarToBody w) := rfl
+  rw [hfun, hval] at hL
+  exact hL
+
+/-- The spatial position of a circular orbit stays at Euclidean distance `R` from the center. -/
+lemma IsCircularOrbit.dotProduct_spatialState {μ R : ℝ} {r v : ℝ → ℂ}
+    (h : IsCircularOrbit μ R r v) (Q : Matrix.specialOrthogonalGroup (Fin 3) ℝ) (t : ℝ) :
+    spatialState Q r t ⬝ᵥ spatialState Q r t = R ^ 2 := by
+  rw [OrbitalPorts.dotProduct_spatialState, h.norm_eq]
+
+/-- The inverse-square law in inertial components: the spatial velocity has derivative
+`-(μ / |X| ^ 3) • X` with `X` the spatial position and `|X| = √(X ⬝ᵥ X)`. -/
+lemma IsCircularOrbit.hasDerivAt_spatialVelocity {μ R : ℝ} {r v : ℝ → ℂ}
+    (h : IsCircularOrbit μ R r v) (Q : Matrix.specialOrthogonalGroup (Fin 3) ℝ) (t : ℝ) :
+    HasDerivAt (spatialState Q v)
+      (-(μ / Real.sqrt (spatialState Q r t ⬝ᵥ spatialState Q r t) ^ 3) • spatialState Q r t)
+      t := by
+  have h1 := OrbitalPorts.hasDerivAt_spatialState Q (h.hasDerivAt_vel t)
+  have hsqrt : Real.sqrt (spatialState Q r t ⬝ᵥ spatialState Q r t) = ‖r t‖ := by
+    rw [OrbitalPorts.dotProduct_spatialState]
+    exact Real.sqrt_sq (norm_nonneg _)
+  have hlin : bodyToInertialVec Q (planarToBody (-(μ / ‖r t‖ ^ 3) • r t))
+      = (-(μ / ‖r t‖ ^ 3)) • bodyToInertialVec Q (planarToBody (r t)) := by
+    have hsmul : planarToBody (-(μ / ‖r t‖ ^ 3) • r t)
+        = (-(μ / ‖r t‖ ^ 3)) • planarToBody (r t) := by
+      have gen : ∀ (c : ℝ) (z : ℂ), planarToBody (c • z) = c • planarToBody z := by
+        intro c z
+        ext i
+        fin_cases i <;> simp [planarToBody]
+      exact gen _ _
+    simp only [bodyToInertialVec, hsmul, Matrix.mulVec_smul]
+  rw [hsqrt]
+  rw [hlin] at h1
+  exact h1
 
 end OrbitalPorts
