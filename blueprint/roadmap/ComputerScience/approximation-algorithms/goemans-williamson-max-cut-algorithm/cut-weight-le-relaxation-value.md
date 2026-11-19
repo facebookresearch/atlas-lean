@@ -12,7 +12,7 @@ statement since there are finitely many cuts.
 
 ## Background
 
-- Weak Lagrange duality:
+- [Weak Lagrange duality](../../../Analysis/convex-analysis-and-variations/lagrange-duality/dual-value-le-primal-value.md):
   the dual semidefinite program $\frac14 \min\{\sum_j d_j : \operatorname{Diag}(d) \succeq L(G)\}$
   bounds $Z_P$ from above in the same way (Goemans, *Math. Programming* 79 (1997), §5).
 

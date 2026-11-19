@@ -14,7 +14,7 @@ $-\Delta u = f$, $u = 0$ on $\partial U$; the concrete statement on domains is
 ## Informally uses
 
 - [Poincaré-type bound gives coercivity](is-coercive-gradient-form.md): the Lax–Milgram hypothesis.
-- Solution of a coercive variational problem: the Lax–Milgram
+- [Solution of a coercive variational problem](../../numerical-analysis/c-a-s-lemma/variational-solution.md): the Lax–Milgram
   theorem, together with Céa's lemma.
 
 ## Sources

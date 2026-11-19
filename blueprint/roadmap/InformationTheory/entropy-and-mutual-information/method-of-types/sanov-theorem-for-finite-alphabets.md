@@ -29,10 +29,10 @@ the [non-asymptotic upper bound](iid-prob-empirical-mem-le.md) and the
 
 ## Background
 
-- Sanov's theorem:
+- [Sanov's theorem](../../../Probability/large-deviations/sanov-s-theorem/satisfies-ldp-sample-empirical-measure.md):
   the large deviation principle for empirical measures on a Polish space (Varadhan's notes), of which
   this is the finite-alphabet case in the form Csiszár proves by counting.
-- Large deviations: rate functions and the
+- [Large deviations](../../../Probability/large-deviations/README.md): rate functions and the
   general principles; on a finite alphabet the rate $D(\cdot\|Q)$ is continuous on the simplex when
   $Q > 0$, and in general on the distributions supported in the support of $Q$.
 

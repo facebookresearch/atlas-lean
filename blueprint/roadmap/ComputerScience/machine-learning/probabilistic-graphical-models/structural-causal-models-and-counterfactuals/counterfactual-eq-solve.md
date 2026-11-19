@@ -8,5 +8,5 @@ agrees with $w$ on $W$, forcing $X_W = w$ changes nothing: $X_{W \leftarrow w}(u
 
 ## Background
 
-- Observed outcome from potential outcomes:
+- [Observed outcome from potential outcomes](../../../../Probability/nonparametric-survival/potential-outcomes-and-causal-identification/observed.md):
   the same consistency rule, built into the potential-outcome framework.

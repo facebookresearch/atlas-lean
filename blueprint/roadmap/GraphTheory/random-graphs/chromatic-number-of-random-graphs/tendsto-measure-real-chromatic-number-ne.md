@@ -10,7 +10,7 @@ The lower bound follows from $\chi \ge n/\alpha$ and the independence number $\a
 
 ## Background
 
-- Janson's inequalities: the tool used in later proofs of the upper bound.
+- [Janson's inequalities](../../../Combinatorics/probabilistic-combinatorics/janson-s-inequalities/README.md): the tool used in later proofs of the upper bound.
 - [Kim's lower bound for R(3, t)](../../graph-ramsey-theory/graph-ramsey-numbers/graph-ramsey-three-lower.md): a semi-random construction of triangle-free graphs with small independence number, a sparse counterpart of the dense colouring problem.
 
 ## Sources

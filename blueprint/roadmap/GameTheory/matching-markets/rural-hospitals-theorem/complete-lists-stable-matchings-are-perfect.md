@@ -11,7 +11,7 @@ matching.
 
 ## Informally uses
 
-- Existence of stable perfect matchings: a stable perfect matching exists.
+- [Existence of stable perfect matchings](../../../GraphTheory/matchings-and-flows/stable-marriage-problem/gale-shapley-exists-stable-matching-gene.md): a stable perfect matching exists.
 - [Bridge to the stable marriage model](stable-with-singles-iff-stable-perfect-matching.md): it is stable as a matching with singles.
 - [Rural hospitals theorem, marriage case: every stable matching matches the same men](rural-hospitals-same-men.md): its matched men are matched at every stable matching.
 

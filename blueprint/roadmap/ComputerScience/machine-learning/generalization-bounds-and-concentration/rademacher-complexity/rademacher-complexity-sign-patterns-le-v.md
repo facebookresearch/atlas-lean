@@ -9,8 +9,8 @@ This is the bound in terms of $\sum_{k \le d} \binom{n}{k}$ combined with the co
 ## Informally uses
 
 - [Rademacher complexity of a VC class](rademacher-complexity-sign-patterns-le.md): builds on.
-- Partial binomial sums are at most $(eD/r)^r$: builds on.
-- The VC dimension is at most the size of the ground set: builds on, for the hypothesis $d \le n$ of the counting bound.
+- [Partial binomial sums are at most $(eD/r)^r$](../../../../Combinatorics/binomial-coefficients/binomial-sums/bounds-on-partial-sums-of-binomial-coefficients/sum-choose-le-exp-mul-div-pow.md): builds on.
+- [The VC dimension is at most the size of the ground set](../../../../Combinatorics/extremal-set-theory/vc-dim-le-card.md): builds on, for the hypothesis $d \le n$ of the counting bound.
 
 ## Sources
 

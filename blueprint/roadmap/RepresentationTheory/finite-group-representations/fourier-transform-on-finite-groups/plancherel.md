@@ -17,7 +17,7 @@ Taking $P$ the point mass at the identity gives $\sum_i d_i^2 = |G|$.
 
 ## Background
 
-- Plancherel formula on a finite abelian group:
+- [Plancherel formula on a finite abelian group](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-transform-on-finite-abelian-groups/dft-plancherel.md):
   the case where every $d_i = 1$ and the $V_i$ are the characters.
 - [Sum of squares of the Wedderburn block sizes](../characters-of-representations/wedderburn-sum-sq-eq-card.md):
   the identity $\sum_i d_i^2 = |G|$, the point-mass case.

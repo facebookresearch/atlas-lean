@@ -22,7 +22,7 @@ the 1951 argument, with Brouwer's theorem for products of simplices.
 
 ## Informally uses
 
-- Brouwer's fixed-point theorem for products of simplices: applied to Nash's map.
+- [Brouwer's fixed-point theorem for products of simplices](../../../Topology/algebraic-topology/brouwer-fixed-point-theorem/exists-fixed-point-pi.md): applied to Nash's map.
 
 ## Sources
 

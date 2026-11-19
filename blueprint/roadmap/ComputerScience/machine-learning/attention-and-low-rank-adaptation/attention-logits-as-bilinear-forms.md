@@ -35,12 +35,12 @@ Caveats (derived; the paper states the attention equations, not these bounds):
 
 ## Informally uses
 
-- Rank of a product of matrices:
+- [Rank of a product of matrices](../../../LinearAlgebra/linear-maps-and-duality/rank-of-a-product.md):
   mathematical prerequisite, the bound $\operatorname{rank} M_i \le d_h$.
 
 ## Background
 
-- Rank of a bilinear form:
+- [Rank of a bilinear form](../../../LinearAlgebra/bilinear-and-quadratic-forms/rank-of-a-bilinear-form/bilin-form-rank.md):
   background, which defines the rank of a bilinear form as the rank of its matrix in a basis
   (that page's Gram matrix $(B(b_i, b_j))$); in the standard basis this matrix is $M_i$.
 
