@@ -24,49 +24,60 @@ mass `m > 0` meets a stationary wall. Velocities are components along the line o
 ## i. Overview
 
 The event map solves momentum conservation `m₁ u₁ + m₂ u₂ = m₁ v₁ + m₂ v₂` together with
-Newton's restitution law `u₂ - u₁ = -e (v₂ - v₁)` for a coefficient of restitution `e ∈ [0, 1]`,
-and the solution is unique. The kinetic energy drops by
-`(1 - e²) m₁ m₂ / (2 (m₁ + m₂)) (v₁ - v₂)²`: no loss for `e = 1`, and a gain for `e > 1`, which is
-therefore outside the model.
+Newton's restitution law `u₂ - u₁ = -e (v₂ - v₁)`, and the solution is unique. For every real `e`
+the kinetic energy `K` of the pair satisfies the identity
+`K⁻ - K⁺ = (1 - e²) m₁ m₂ / (2 (m₁ + m₂)) (v₁ - v₂)²`. Its sign needs the range of the
+coefficient of restitution: for `e ∈ [0, 1]` the kinetic energy does not rise, for `e = 1` it is
+kept, and for `e > 1` with a nonzero relative velocity it would rise, which puts `e > 1` outside
+the model.
 
 During the event body 1 receives the impulse `J = -(1 + e) μ (v₁ - v₂)`, with the reduced mass
-`μ = m₁ m₂ / (m₁ + m₂)`, and body 2 receives `-J`; each momentum jump is the impulse received,
-the event form of the impulse identity of `PhyslibExt.Mechanics.PowerPorts`. After the event each
-body follows the actual constant-force trajectory of that module started at its post-impact
-velocity: the total momentum is the pre-impact total plus the external impulse, and in free
-flight the kinetic energy stays at its pre-impact value minus the event loss.
+`μ = m₁ m₂ / (m₁ + m₂)`, and body 2 receives `-J`, for every real `e`; each momentum jump is the
+impulse received, the event form of the impulse identity of `PhyslibExt.Mechanics.PowerPorts`.
+After the event each body follows the actual constant-force trajectory of that module started at
+its post-impact velocity: for every real `e` the total momentum is the pre-impact total plus the
+external impulse, and in free flight the kinetic energy stays at its pre-impact value minus
+`(1 - e²) μ (v₁ - v₂)² / 2`.
 
-At a fixed wall the normal axis points from the wall into the body's side, so an incoming body has
-`v⁻ < 0`, and the event maps `v⁻` to `v⁺ = -e v⁻`: the body leaves the wall, or rests on it when
-`e = 0`. The wall delivers the impulse `J = m (v⁺ - v⁻) = -(1 + e) m v⁻ > 0`, the body's momentum
-jumps by exactly `J`, and so the body alone does not conserve momentum. Its kinetic energy changes
-by `-(1 - e²) m v⁻² / 2`: a strict loss exactly when `e < 1`, none exactly when `e = 1`, and a gain
-exactly when `e > 1`. After the event the body follows the same constant-force trajectory from
-`v⁺`, and its momentum at time `t` is `m v⁻ + J + t F`.
+At a fixed wall the normal axis points from the wall into the body's side, and the event maps the
+normal velocity `v⁻` to `v⁺ = -e v⁻`. For every real `e` the wall impulse is
+`J = m (v⁺ - v⁻) = -(1 + e) m v⁻`, the body's momentum jumps by exactly `J`, its kinetic energy
+changes by `K⁺ - K⁻ = -(1 - e²) m v⁻² / 2`, and after the event, on the same constant-force
+trajectory from `v⁺`, its momentum at time `t` is `m v⁻ + J + t F`. The sign conclusions need
+`e ≥ 0`: an incoming body (`v⁻ < 0`) then leaves the wall, or rests on it exactly when `e = 0`,
+and the impulse `J` points out of the wall; for `v⁻ ≠ 0` the body alone does not conserve
+momentum, and its kinetic energy falls exactly when `e < 1`, is kept exactly when `e = 1` and
+rises exactly when `e > 1`.
 
 Model inputs: a one-dimensional isolated two-body instantaneous impact, with no external impulse
-during the event; `e` is the coefficient of restitution, and the event algebra holds for every
-real `e`, only the sign of the energy loss using the range `[0, 1]`. Contact forces during the
-impact, oblique or rotational impact, multiple simultaneous contacts, event detection, Zeno
-behavior, and empirical adequacy or system safety are not treated. The fixed wall is an
-external-impulse model with one normal direction, not a limit of the finite-mass collision.
+during the event, or one body at a fixed wall; `e` is the coefficient of restitution. The event
+maps, the impulses and the energy identities hold for every real `e`; only the sign conclusions
+use a range, `e ∈ [0, 1]` for two bodies (and `e > 1` for the excluded gain) and `e ≥ 0` at the
+wall. Contact forces during the impact, oblique or rotational impact, multiple simultaneous
+contacts, event detection, Zeno behavior, and empirical adequacy or system safety are not
+treated. The fixed wall is an external-impulse model with one normal direction, not a limit of
+the finite-mass collision.
 
 ## ii. Key results
 
-- `impact_solve_iff`: the event map is the unique solution of momentum conservation and the
-  restitution law.
-- `impact_energy_loss`: the kinetic-energy loss `(1 - e²) m₁ m₂ / (2 (m₁ + m₂)) (v₁ - v₂)²`.
+- `impact_solve_iff`: for every real `e`, the event map is the unique solution of momentum
+  conservation and the restitution law.
+- `impact_energy_loss`: for every real `e`, the kinetic-energy identity
+  `K⁻ - K⁺ = (1 - e²) m₁ m₂ / (2 (m₁ + m₂)) (v₁ - v₂)²`.
 - `impact_energy_le`, `impact_energy_eq_of_elastic`, `impact_energy_lt_of_one_lt`: no gain for
-  `e ∈ [0, 1]`, conservation for `e = 1`, a gain for `e > 1`.
-- `impact_impulse`: equal and opposite event impulses.
+  `e ∈ [0, 1]`, conservation for `e = 1`, and a gain for `e > 1` with a nonzero relative
+  velocity.
+- `impact_impulse`: equal and opposite event impulses, for every real `e`.
 - `impact_then_flight_momentum`, `impact_then_free_flight_energy`: momentum and kinetic energy
-  across the event and the following constant-force phase.
-- `wallReboundVelocity_nonneg`, `wallImpulse_eq`, `wallImpulse_pos`, `body_momentum_ne`: the
-  fixed-wall rebound, its outward impulse and the body's momentum change.
-- `wall_energy_change`, `wall_energy_cases`: the body's exact kinetic-energy change and its sign
-  for each range of the restitution coefficient.
-- `rebound_then_flight_momentum`: the wall impulse and the impulse of the following
-  constant-force phase in one momentum balance.
+  across the event and the following constant-force phase, for every real `e`.
+- `wallImpulse_eq`, `wall_energy_change`: the wall impulse `-(1 + e) m v⁻` and the body's
+  kinetic-energy change, for every real `e`.
+- `wallReboundVelocity_nonneg`, `wallImpulse_pos`, `body_momentum_ne`: for `e ≥ 0`, the rebound
+  direction, the outward impulse and the body's momentum change.
+- `wall_energy_cases`: for `e ≥ 0` and `v⁻ ≠ 0`, the sign of the body's kinetic-energy change in
+  each of the cases `e < 1`, `e = 1` and `e > 1`.
+- `rebound_then_flight_momentum`: for every real `e`, the wall impulse and the impulse of the
+  following constant-force phase in one momentum balance.
 
 ## iii. Table of contents
 
@@ -252,8 +263,8 @@ def wallReboundVelocity (e v : ℝ) : ℝ :=
 def wallImpulse (m e v : ℝ) : ℝ :=
   m * (wallReboundVelocity e v - v)
 
-/-- An incoming body leaves the wall or rests on it: `v⁺ ≥ 0`, with `v⁺ > 0` exactly when
-`e > 0`. -/
+/-- For `e ≥ 0` an incoming body leaves the wall or rests on it: `v⁺ ≥ 0`, with `v⁺ > 0` exactly
+when `e > 0`. -/
 lemma wallReboundVelocity_nonneg {e v : ℝ} (he : 0 ≤ e) (hv : v < 0) :
     0 ≤ wallReboundVelocity e v ∧ (0 < wallReboundVelocity e v ↔ 0 < e) := by
   unfold wallReboundVelocity
@@ -275,7 +286,7 @@ lemma wallImpulse_eq (m e v : ℝ) : wallImpulse m e v = -((1 + e) * m * v) := b
   unfold wallImpulse wallReboundVelocity
   ring
 
-/-- For an incoming body the wall impulse points out of the wall. -/
+/-- For `e ≥ 0` and an incoming body the wall impulse points out of the wall. -/
 lemma wallImpulse_pos {m e v : ℝ} (hm : 0 < m) (he : 0 ≤ e) (hv : v < 0) :
     0 < wallImpulse m e v := by
   rw [wallImpulse_eq]
@@ -283,7 +294,7 @@ lemma wallImpulse_pos {m e v : ℝ} (hm : 0 < m) (he : 0 ≤ e) (hv : v < 0) :
   have h2 : (1 + e) * m * v < 0 := mul_neg_of_pos_of_neg h1 hv
   linarith
 
-/-- The body alone does not conserve momentum: for `v⁻ ≠ 0` its momentum changes. -/
+/-- The body alone does not conserve momentum: for `e ≥ 0` and `v⁻ ≠ 0` its momentum changes. -/
 lemma body_momentum_ne {m e v : ℝ} (hm : 0 < m) (he : 0 ≤ e) (hv : v ≠ 0) :
     m * wallReboundVelocity e v ≠ m * v := by
   unfold wallReboundVelocity
