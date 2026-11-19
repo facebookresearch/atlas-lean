@@ -23,7 +23,8 @@ public import PhyslibExt.Statistics.CalibrationPorts
   calibration and its change of units, the Hessian bound and the attained pointwise remainder
   bound, the failure of a global Lipschitz bound, a law with zero linearized variance, the
   rejection of a scenario outside the box, the cross term `21/4` that separates `171/16` from
-  `87/16`, and the measure-theoretic split.
+  `87/16`, a zero-probability scenario that leaves the output variance unchanged, the weights of a
+  probability mass function as a scenario law, and the measure-theoretic split.
 -/
 
 @[expose] public section
@@ -231,6 +232,34 @@ example :
     norm_num
   · rw [covariance_quadLinearPart_quadRemainder hp1, hC]
     norm_num
+
+/-- A zero-probability scenario is allowed: the voltages `(0, 2, 1)` with weights `(1/2, 1/2, 0)`
+form a scenario law in `[0, 2]`. For `f v = v ^ 2` with base `1` the output variance is `4`, the
+same as for the two scenarios of positive weight alone. -/
+example :
+    ScenarioLawIn 0 2 ![1 / 2, 1 / 2, 0] ![0, 2, 1] ∧
+      variance ![1 / 2, 1 / 2, 0] (fun ω => quadCalibration 0 0 1 (![0, 2, 1] ω)) = 4 ∧
+      variance ![1 / 2, 1 / 2] (fun ω => quadCalibration 0 0 1 (![0, 2] ω)) = 4 := by
+  have hp1 : ∑ ω, ![(1 : ℝ) / 2, 1 / 2, 0] ω = 1 := by
+    simp [Fin.sum_univ_three]
+    norm_num
+  have hlaw : ScenarioLawIn 0 2 ![1 / 2, 1 / 2, 0] ![0, 2, 1] := by
+    refine ⟨fun ω => ?_, hp1, fun ω => ?_⟩
+    · fin_cases ω <;> norm_num
+    · fin_cases ω <;> norm_num
+  refine ⟨hlaw, ?_, ?_⟩
+  · rw [(variance_quadCalibration_of_scenarioLaw hlaw (v₀ := 1) ⟨by norm_num, by norm_num⟩
+      0 0 1).1]
+    simp [variance, covariance, expectation, Fin.sum_univ_three]
+    norm_num
+  · simp [variance, expectation, Fin.sum_univ_two, quadCalibration]
+    norm_num
+
+/-- The weights of a probability mass function, which may vanish, form a scenario law with any
+voltages in the box. -/
+example (q : PMF (Fin 3)) : ScenarioLawIn 0 2 (fun ω => (q ω).toReal) ![0, 1, 2] := by
+  obtain ⟨h0, h1⟩ := toReal_weights_isDistribution q
+  exact ⟨h0, h1, fun ω => by fin_cases ω <;> norm_num⟩
 
 /-- The measure-theoretic split for a probability mass function on the three voltages `0, 1, 2`:
 the output variance keeps twice the cross covariance of the first-order part and the remainder. -/

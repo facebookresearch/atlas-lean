@@ -76,8 +76,9 @@ Model inputs (hypotheses):
   characterized for every gain. The input and output dimensions are the declared ones (voltage
   in, dimension one out).
 * for the quadratic calibration the coefficients and the Taylor base are supplied, and a
-  scenario law in `[a, b]` (`ScenarioLawIn`) has positive weights of total mass one and voltages
-  in `[a, b]`; each lemma assumes only the conditions it uses.
+  scenario law in `[a, b]` (`ScenarioLawIn`) is a finite distribution, nonnegative weights of
+  total mass one, so zero-probability scenarios are allowed, with every scenario voltage in
+  `[a, b]`; each lemma assumes only the conditions it uses.
 
 Non-goals: no nonlinear calibration beyond the quadratic map of section E, no Gaussian or
 unbounded input law for it and no moment bound from its pointwise Taylor bound, no bridge-circuit
@@ -495,10 +496,12 @@ lemma quadCalibration_not_lipschitzWith {c0 c1 c2 : ℝ} (hc2 : c2 ≠ 0) (K : N
 
 /-! ### E.3. Output covariance under a finite scenario law in the box -/
 
-/-- A finite scenario law entirely in the voltage interval `[a, b]`: positive weights `p` of
-total mass one and scenario voltages `V ω ∈ [a, b]`. -/
+/-- A finite scenario law entirely in the voltage interval `[a, b]`: nonnegative weights `p` of
+total mass one, a finite distribution, so zero-probability scenarios are allowed (the weights of
+a probability mass function qualify, `toReal_weights_isDistribution`), and scenario voltages
+`V ω ∈ [a, b]` for every scenario. -/
 def ScenarioLawIn {Ω : Type*} [Fintype Ω] (a b : ℝ) (p V : Ω → ℝ) : Prop :=
-  (∀ ω, 0 < p ω) ∧ ∑ ω, p ω = 1 ∧ ∀ ω, V ω ∈ Set.Icc a b
+  (∀ ω, 0 ≤ p ω) ∧ ∑ ω, p ω = 1 ∧ ∀ ω, V ω ∈ Set.Icc a b
 
 /-- The output variance with the cross term kept: for every weight it is the variance of the
 first-order part plus the variance of the remainder plus twice their covariance. -/
@@ -558,9 +561,9 @@ lemma covariance_quadLinearPart_quadRemainder {Ω : Type*} [Fintype Ω] {p : Ω 
   rw [hL, covariance_linear_left, hR, covariance_linear_right, h1]
   ring
 
-/-- Output covariance under a finite positive-weight scenario law entirely in `[a, b]`, with
-Taylor base `v₀ ∈ [a, b]`: the output variance keeps the remainder variance and the
-linear/remainder cross term,
+/-- Output covariance under a finite scenario law entirely in `[a, b]` (nonnegative weights of
+total mass one), with Taylor base `v₀ ∈ [a, b]`: the output variance keeps the remainder
+variance and the linear/remainder cross term,
 `Var f(V) = f' v₀ ^ 2 Var V + c2 ^ 2 Var (V - v₀) ^ 2 + 2 f' v₀ c2 Cov(V, (V - v₀) ^ 2)`,
 while the Hessian theorem bounds the remainder only pointwise, scenario by scenario. -/
 lemma variance_quadCalibration_of_scenarioLaw {Ω : Type*} [Fintype Ω] {a b : ℝ} {p V : Ω → ℝ}
