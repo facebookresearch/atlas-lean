@@ -150,6 +150,54 @@ class BlueprintWorkflowTests(unittest.TestCase):
                 self.assertIn(clause, condition)
         self.assertTrue(all("uses" in step for step in deploy["steps"]))
 
+    def test_the_mathlib_layer_cannot_hold_back_the_site(self):
+        # The layer has its own job and check after the wiki job, and deployment waits for the wiki job alone.
+        jobs = self.workflow["jobs"]
+        mathlib = jobs["mathlib"]
+        self.assertEqual(mathlib["needs"], "wiki")
+        self.assertEqual(jobs["deploy"]["needs"], "wiki")
+        self.assertNotIn("permissions", mathlib)
+        self.assertNotIn("continue-on-error", mathlib)
+        checkout = next(step for step in mathlib["steps"] if step.get("name") == "Check out project")
+        self.assertEqual(checkout["with"]["persist-credentials"], "false")
+        self.assertIn("!/v1/", checkout["with"]["sparse-checkout"])
+        self.assertIn("!/Atlas/", checkout["with"]["sparse-checkout"])
+        # In the wiki job only the dump of the v2 declarations, which needs the ATLAS build. It comes after every
+        # step the site needs, cannot fail the job, and has a timeout, so a hang cannot hold the job until its own
+        # timeout either; its upload cannot fail the job. A missing dump fails the layer's job instead.
+        dump = "Dump the v2 declarations with their Mathlib uses"
+        wiki_steps = [step["name"] for step in self.steps if "extract_mathlib_graph.py" in step.get("run", "")]
+        self.assertEqual(wiki_steps, [dump])
+        self.assertEqual(self.step(dump)["continue-on-error"], "true")
+        self.assertLessEqual(int(self.step(dump)["timeout-minutes"]), 30)
+        self.assertIn("--jobs 1 --shards 1", self.step(dump)["run"])
+        names = [step.get("name") for step in self.steps]
+        upload = "Keep the v2 declarations with their Mathlib uses"
+        self.assertEqual(names[-2:], [dump, upload])
+        for site_step in ("Check routes, anchors, and article cards", "Keep dependency diagnostics",
+                          "Keep the built site", "Upload Pages artifact"):
+            self.assertLess(names.index(site_step), names.index(dump), site_step)
+        self.assertEqual(self.step(upload)["continue-on-error"], "true")
+        self.assertEqual(self.step(upload)["with"]["name"], "v2-mathlib-dump")
+        self.assertNotIn("mathlib-graph", self.step("Keep dependency diagnostics")["with"]["path"])
+        steps = {step.get("name"): step for step in mathlib["steps"]}
+        self.assertEqual(steps["Fetch the v2 extraction"]["with"]["name"], "blueprint-dependencies")
+        fetch = steps["Fetch the v2 declarations with their Mathlib uses"]["with"]
+        self.assertEqual((fetch["name"], fetch["path"]), ("v2-mathlib-dump", "mathlib-graph"))
+        extract = steps["Extract the Mathlib layer"]["run"]
+        self.assertIn("set -euo pipefail", extract)
+        self.assertIn("test -s mathlib-graph/v2-mathlib-dump.jsonl.gz", extract)
+        self.assertIn("--check-v2 build/lean-dependencies.json", extract)
+        self.assertIn("join --strict", extract)
+        for command in ("dump", "graph", "bridge", "stats"):
+            self.assertTrue(any(f"extract_mathlib_graph.py {command}" in step.get("run", "")
+                                for step in mathlib["steps"]), command)
+        # Only the upload may fail without failing the layer's check.
+        self.assertEqual([name for name, step in steps.items() if "continue-on-error" in step],
+                         ["Keep the Mathlib layer"])
+        self.assertEqual(steps["Keep the Mathlib layer"]["with"]["name"], "mathlib-graph")
+        self.assertEqual(steps["Keep the Mathlib layer"]["if"], "always()")
+
     def test_built_site_is_kept_only_for_main_builds(self):
         condition = self.step("Keep the built site")["if"]
         for clause in ("github.ref == 'refs/heads/main'",
