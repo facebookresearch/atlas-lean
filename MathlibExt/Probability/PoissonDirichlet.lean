@@ -21,8 +21,9 @@ The **GEM(θ)** law (`gemMeasure`) is the distribution of the stick-breaking wei
 Sethuraman stick-breaking measure `sethuraman θ hθ` under the weight map, its coordinates
 have mean `(θ / (1 + θ))^k / (1 + θ)`, and almost every sequence under it sums to `1`.
 
-`rankDesc p k` is the `k`-th largest value of a real sequence `p` (decreasing
-rearrangement), defined through the counting characterization
+`rankDesc p k` is the supremal `k`-th largest value of a real sequence `p` (its decreasing
+rearrangement when the supremum is attained, e.g. for nonnegative summable `p`), defined
+through the counting characterization
 `t < rankDesc p k ↔ (k + 1 : ℝ≥0∞) ≤ {i | t < p i}.encard`. It is antitone, nonnegative on
 nonnegative sequences, preserves `HasSum` (by the layer-cake formula: ranking preserves
 every superlevel count), is invariant under permutations of the indices, and is measurable.
@@ -81,7 +82,7 @@ instance isProbabilityMeasure_gemMeasure (θ : ℝ) (hθ : 0 < θ) :
   exact (Measure.isProbabilityMeasure_map_iff measurable_stickWeight_seq.aemeasurable).2
     inferInstance
 
-/-- **Mean GEM weights**: `E[P_k] = θ^k / (1 + θ)^(k+1)`; in particular `E[P_1] = 1 / (1 + θ)`
+/-- **Mean GEM weights**: `E[P_k] = θ^k / (1 + θ)^(k+1)`; in particular `E[P_0] = 1 / (1 + θ)`
 for the first weight (index `0` here). -/
 theorem integral_gemMeasure_apply (θ : ℝ) (hθ : 0 < θ) (k : ℕ) :
     ∫ p, p k ∂gemMeasure θ hθ = θ ^ k / (1 + θ) ^ (k + 1) := by
@@ -122,10 +123,12 @@ theorem ae_hasSum_gemMeasure (θ : ℝ) (hθ : 0 < θ) :
 
 /-! ### Decreasing rearrangement and PD(θ) -/
 
-/-- The **`k`-th largest entry** (counted with multiplicity, from `k = 0`) of a sequence:
-`max` over `(k + 1)`-element index sets `s` of `min_{i ∈ s} p i`. For a nonnegative sequence
-tending to `0` this is its decreasing rearrangement, padded with zeros when fewer than `k + 1`
-entries are positive. -/
+/-- The **supremal `k`-th largest value** (counted with multiplicity, from `k = 0`) of a
+sequence: the supremum over `(k + 1)`-element index sets `s` of `min_{i ∈ s} p i`. This is
+in general a supremum, not an entry of `p` (e.g. `p n = 1 - 1 / (n + 1)` gives
+`rankDesc p 0 = 1`, attained by no entry). For a nonnegative sequence tending to `0` the
+supremum is attained and this is the `k`-th entry of the decreasing rearrangement, padded
+with zeros when fewer than `k + 1` entries are positive. -/
 noncomputable def rankDesc (p : ℕ → ℝ) (k : ℕ) : ℝ :=
   ⨆ s : {s : Finset ℕ // s.card = k + 1}, ⨅ i : s.1, p i
 
