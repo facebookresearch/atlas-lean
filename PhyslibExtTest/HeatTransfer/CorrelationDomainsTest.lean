@@ -62,15 +62,22 @@ noncomputable def dittusBoelterHeating : NusseltCorrelation :=
     (fun p hp => ⟨by linarith [hp.1.out], by linarith [hp.2.1]⟩)
     ⟨(10000, 1), ⟨le_refl _, by norm_num, by norm_num⟩⟩
 
+/-- The test fluid's `(Re, Pr) = (100000, 1)` is a valid local request for the correlation. -/
+lemma dittusBoelter_applies :
+    dittusBoelterHeating.Applies AveragingTag.localValue 100000 1 := by
+  simp only [dittusBoelterHeating, powerLawCorrelation, NusseltCorrelation.Applies,
+    Set.mem_prod, Set.mem_Ici, Set.mem_Icc]
+  norm_num
+
 /-- A nonzero `ΔT` in the valid domain: with `ρ = 1000`, `U = 2`, `D = 1 / 20`, `μ = 1 / 1000`,
-`c_p = 600` and `k = 3 / 5` (SI), `Re = 100000` and `Pr = 1`; the correlation applies and gives
-`Nu = 230`, so `h = 2760`; on `A = 1 / 10` the heat rate is `2760` for `ΔT = 10` and `-2760` for
-`ΔT = -10`. -/
+`c_p = 600` and `k = 3 / 5` (SI), `Re = 100000` and `Pr = 1`; through the guard the correlation
+gives `Nu = 230`, so `h = 2760`; on `A = 1 / 10` the heat rate is `2760` for `ΔT = 10` and
+`-2760` for `ΔT = -10`. -/
 example :
     reynoldsNumber ⟨1000⟩ ⟨2⟩ ⟨1 / 20⟩ ⟨1 / 1000⟩ (by norm_num) = 100000 ∧
       prandtlNumber ⟨1 / 1000⟩ ⟨600⟩ ⟨3 / 5⟩ (by norm_num) = 1 ∧
-      dittusBoelterHeating.Applies AveragingTag.localValue 100000 1 ∧
-      dittusBoelterHeating.formula 100000 1 = 230 ∧
+      dittusBoelterHeating.nusselt AveragingTag.localValue 100000 1 dittusBoelter_applies =
+        230 ∧
       (heatTransferCoefficient 230 ⟨3 / 5⟩ ⟨1 / 20⟩ (by norm_num)).val = 2760 ∧
       (convectiveHeatRate (heatTransferCoefficient 230 ⟨3 / 5⟩ ⟨1 / 20⟩ (by norm_num)) ⟨1 / 10⟩
         ⟨10⟩).val = 2760 ∧
@@ -79,14 +86,12 @@ example :
   have h1 : (100000 : ℝ) ^ (4 / 5 : ℝ) = 10000 := by
     rw [show (100000 : ℝ) = 10 ^ (5 : ℝ) by norm_num, ← Real.rpow_mul (by norm_num)]
     norm_num
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
   · rw [reynoldsNumber_val]; norm_num
   · rw [prandtlNumber_val]; norm_num
-  · simp only [dittusBoelterHeating, powerLawCorrelation, NusseltCorrelation.Applies,
-      Set.mem_prod, Set.mem_Ici, Set.mem_Icc]
-    norm_num
-  · simp only [dittusBoelterHeating, powerLawCorrelation]
-    rw [h1, Real.one_rpow]
+  · rw [show dittusBoelterHeating.nusselt AveragingTag.localValue 100000 1 dittusBoelter_applies =
+        23 / 1000 * (100000 : ℝ) ^ (4 / 5 : ℝ) * (1 : ℝ) ^ (2 / 5 : ℝ) from
+      powerLawCorrelation_nusselt dittusBoelter_applies, h1, Real.one_rpow]
     norm_num
   · simp only [heatTransferCoefficient]; norm_num
   · rw [convectiveHeatRate_val]; simp only [heatTransferCoefficient]; norm_num
@@ -103,24 +108,21 @@ example :
   norm_num
 
 /-- The guard and the power-law chain at the fixture data: the domain makes `Re` and `Pr`
-positive, `h = Nu k / L` inverts the Nusselt group, and with `Nu = 0.023 Re ^ (4/5) Pr ^ (2/5)`
-the coefficient is positive and `Q` has the sign of `ΔT = -10`. -/
+positive, `h = Nu k / L` inverts the Nusselt group, and with the guarded Nusselt number the
+coefficient is positive and `Q` has the sign of `ΔT = -10`. -/
 example :
     (0 < (100000 : ℝ) ∧ 0 < (1 : ℝ)) ∧
       nusseltNumber (heatTransferCoefficient 230 ⟨3 / 5⟩ ⟨1 / 20⟩ (by norm_num)) ⟨1 / 20⟩ ⟨3 / 5⟩
           (by norm_num) = 230 ∧
-      0 < (heatTransferCoefficient (23 / 1000 * (100000 : ℝ) ^ (4 / 5 : ℝ) * (1 : ℝ) ^ (2 / 5 : ℝ))
+      0 < (heatTransferCoefficient
+          (dittusBoelterHeating.nusselt AveragingTag.localValue 100000 1 dittusBoelter_applies)
           ⟨3 / 5⟩ ⟨1 / 20⟩ (by norm_num)).val ∧
       SignType.sign (convectiveHeatRate (heatTransferCoefficient
-          (23 / 1000 * (100000 : ℝ) ^ (4 / 5 : ℝ) * (1 : ℝ) ^ (2 / 5 : ℝ)) ⟨3 / 5⟩ ⟨1 / 20⟩
-          (by norm_num)) ⟨1 / 10⟩ ⟨-10⟩).val = SignType.sign (-10 : ℝ) := by
-  have happ : dittusBoelterHeating.Applies AveragingTag.localValue 100000 1 := by
-    simp only [dittusBoelterHeating, powerLawCorrelation, NusseltCorrelation.Applies,
-      Set.mem_prod, Set.mem_Ici, Set.mem_Icc]
-    norm_num
-  exact ⟨NusseltCorrelation.applies_pos happ,
+          (dittusBoelterHeating.nusselt AveragingTag.localValue 100000 1 dittusBoelter_applies)
+          ⟨3 / 5⟩ ⟨1 / 20⟩ (by norm_num)) ⟨1 / 10⟩ ⟨-10⟩).val = SignType.sign (-10 : ℝ) :=
+  ⟨NusseltCorrelation.applies_pos dittusBoelter_applies,
     nusseltNumber_heatTransferCoefficient 230 ⟨3 / 5⟩ ⟨1 / 20⟩ (by norm_num) (by norm_num),
-    powerLaw_heatRate_sign (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      (by norm_num) ⟨-10⟩⟩
+    powerLawCorrelation_heatRate_sign (by norm_num) dittusBoelter_applies (by norm_num)
+      (by norm_num) (by norm_num) ⟨-10⟩⟩
 
 end PhyslibExtTest.HeatTransfer.CorrelationDomains

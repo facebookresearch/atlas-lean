@@ -25,9 +25,10 @@ law `Nu = c Re ^ a Pr ^ b` at positive `Re` and `Pr`, the heat transfer coeffici
 * Record. `NusseltCorrelation` stores the supplied formula and its provenance. The validity domain
   is calibration evidence supplied with the correlation, not a proved fluid law; nothing here
   asserts that the formula is physically correct inside or outside it.
-* Guard. `NusseltCorrelation.Applies C tag Re Pr` requires the requested local/average tag and
-  `(Re, Pr)` in the validity domain; `NusseltCorrelation.nusselt` takes a proof of it, so an
-  out-of-domain value or a local/average mismatch cannot be evaluated.
+* Guard. The formula field takes a proof that `(Re, Pr)` lies in the validity domain, so no
+  out-of-domain value can be formed. `NusseltCorrelation.Applies C tag Re Pr` adds the requested
+  local/average tag; `NusseltCorrelation.nusselt` takes a proof of it, so a local/average
+  mismatch cannot be evaluated either.
 * Groups. `Re` and `Pr` are the dimensionless groups `EngineeringScaling.reynoldsNumber` and
   `EngineeringScaling.prandtlNumber`; `heatTransferCoefficient Nu k L = Nu k / L` inverts
   `EngineeringScaling.nusseltNumber`.
@@ -46,7 +47,8 @@ no empirical adequacy or system safety claim is made.
   `powerLaw_nusselt_pos` : positivity.
 - `heatTransferCoefficient`, `heatTransferCoefficient_pos`, `nusseltNumber_heatTransferCoefficient`,
   `convectiveHeatRate`, `convectiveHeatRate_val`, `sign_convectiveHeatRate` : `h` and `Q`.
-- `powerLaw_heatRate_sign` : the power-law chain.
+- `powerLaw_heatRate_sign`, `powerLawCorrelation_nusselt`, `powerLawCorrelation_heatRate_sign` :
+  the power-law chain, on the expression and through the guard.
 
 ## iii. Table of contents
 
@@ -79,12 +81,11 @@ inductive AveragingTag where
   | surfaceAverage
   deriving DecidableEq
 
-/-- A supplied empirical Nusselt correlation `Nu = formula Re Pr` with its citation, geometry,
-property-evaluation temperature, local/average tag and validity domain in the `(Re, Pr)` plane,
-which is positive and nonempty. -/
+/-- A supplied empirical Nusselt correlation with its citation, geometry, property-evaluation
+temperature, local/average tag, validity domain in the `(Re, Pr)` plane, which is positive and
+nonempty, and its formula `Nu = formula (Re, Pr) h`, which takes a proof `h` that `(Re, Pr)` lies
+in the domain. -/
 structure NusseltCorrelation where
-  /-- The supplied formula `Nu = formula Re Pr`. -/
-  formula : ℝ → ℝ → ℝ
   /-- The published source of the correlation. -/
   citation : String
   /-- The geometry and flow configuration the correlation was calibrated for. -/
@@ -97,6 +98,8 @@ structure NusseltCorrelation where
   validity : Set (ℝ × ℝ)
   validity_pos : ∀ p ∈ validity, 0 < p.1 ∧ 0 < p.2
   validity_nonempty : validity.Nonempty
+  /-- The supplied formula, defined only on the validity domain. -/
+  formula : ∀ p ∈ validity, ℝ
 
 /-- The correlation applies to a request for a `tag` value at `(Re, Pr)`: the tags agree and
 `(Re, Pr)` lies in the validity domain. -/
@@ -104,10 +107,11 @@ def NusseltCorrelation.Applies (C : NusseltCorrelation) (tag : AveragingTag) (Re
     Prop :=
   C.averaging = tag ∧ (Re, Pr) ∈ C.validity
 
-/-- The Nusselt number of the correlation, evaluated only where it applies. -/
+/-- The Nusselt number of the correlation for a request with tag `tag` at `(Re, Pr)`, evaluated
+only where the correlation applies. -/
 def NusseltCorrelation.nusselt (C : NusseltCorrelation) (tag : AveragingTag) (Re Pr : ℝ)
-    (_h : C.Applies tag Re Pr) : ℝ :=
-  C.formula Re Pr
+    (h : C.Applies tag Re Pr) : ℝ :=
+  C.formula (Re, Pr) h.2
 
 /-- The power-law correlation `Nu = c Re ^ a Pr ^ b` (real powers) with its recorded provenance
 and validity domain. -/
@@ -115,7 +119,6 @@ noncomputable def powerLawCorrelation (c a b : ℝ) (citation geometry propertyT
     (averaging : AveragingTag) (validity : Set (ℝ × ℝ))
     (validity_pos : ∀ p ∈ validity, 0 < p.1 ∧ 0 < p.2) (validity_nonempty : validity.Nonempty) :
     NusseltCorrelation where
-  formula Re Pr := c * Re ^ a * Pr ^ b
   citation := citation
   geometry := geometry
   propertyTemperature := propertyTemperature
@@ -123,6 +126,18 @@ noncomputable def powerLawCorrelation (c a b : ℝ) (citation geometry propertyT
   validity := validity
   validity_pos := validity_pos
   validity_nonempty := validity_nonempty
+  formula p _ := c * p.1 ^ a * p.2 ^ b
+
+/-- Where the power-law correlation applies, it evaluates to `c Re ^ a Pr ^ b`. -/
+lemma powerLawCorrelation_nusselt {c a b : ℝ} {citation geometry propertyTemperature : String}
+    {averaging : AveragingTag} {validity : Set (ℝ × ℝ)}
+    {validity_pos : ∀ p ∈ validity, 0 < p.1 ∧ 0 < p.2} {validity_nonempty : validity.Nonempty}
+    {tag : AveragingTag} {Re Pr : ℝ}
+    (h : (powerLawCorrelation c a b citation geometry propertyTemperature averaging validity
+      validity_pos validity_nonempty).Applies tag Re Pr) :
+    (powerLawCorrelation c a b citation geometry propertyTemperature averaging validity
+      validity_pos validity_nonempty).nusselt tag Re Pr h = c * Re ^ a * Pr ^ b :=
+  rfl
 
 /-- Where a correlation applies, `Re` and `Pr` are positive. -/
 lemma NusseltCorrelation.applies_pos {C : NusseltCorrelation} {tag : AveragingTag} {Re Pr : ℝ}
@@ -209,5 +224,28 @@ lemma powerLaw_heatRate_sign {c a b Re Pr : ℝ} (hc : 0 < c) (hRe : 0 < Re) (hP
   have hNu := powerLaw_nusselt_pos (a := a) (b := b) hc hRe hPr
   have hh := heatTransferCoefficient_pos hNu hk hL
   exact ⟨hh, sign_convectiveHeatRate hh hA ΔT⟩
+
+/-- The power-law chain through the guard: where a positive-coefficient power-law correlation
+applies, its Nusselt number gives a positive `h = Nu k / L`, and `Q = h A ΔT` has the sign of `ΔT`.
+The positivity of `Re` and `Pr` comes from the validity domain. -/
+lemma powerLawCorrelation_heatRate_sign {c a b : ℝ} (hc : 0 < c)
+    {citation geometry propertyTemperature : String} {averaging : AveragingTag}
+    {validity : Set (ℝ × ℝ)} {validity_pos : ∀ p ∈ validity, 0 < p.1 ∧ 0 < p.2}
+    {validity_nonempty : validity.Nonempty} {tag : AveragingTag} {Re Pr : ℝ}
+    (h : (powerLawCorrelation c a b citation geometry propertyTemperature averaging validity
+      validity_pos validity_nonempty).Applies tag Re Pr)
+    {k : WithDim thermalConductivityDim ℝ} {L : WithDim (single ISQDimensionBase.length) ℝ}
+    {A : WithDim (single ISQDimensionBase.length ^ (2 : ℕ)) ℝ} (hk : 0 < k.val) (hL : 0 < L.val)
+    (hA : 0 < A.val) (ΔT : WithDim temperatureDim ℝ) :
+    0 < (heatTransferCoefficient ((powerLawCorrelation c a b citation geometry
+        propertyTemperature averaging validity validity_pos validity_nonempty).nusselt tag Re Pr h)
+        k L hL).val ∧
+      SignType.sign (convectiveHeatRate (heatTransferCoefficient ((powerLawCorrelation c a b
+          citation geometry propertyTemperature averaging validity validity_pos
+          validity_nonempty).nusselt tag Re Pr h) k L hL) A ΔT).val =
+        SignType.sign ΔT.val := by
+  have hRP := NusseltCorrelation.applies_pos h
+  rw [powerLawCorrelation_nusselt h]
+  exact powerLaw_heatRate_sign hc hRP.1 hRP.2 hk hL hA ΔT
 
 end CorrelationDomains
