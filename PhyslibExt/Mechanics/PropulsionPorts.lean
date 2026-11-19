@@ -36,12 +36,15 @@ The law is consistent with an explicit momentum-conserving parcel model at one s
 external force `F` delivers the impulse `F h`, so `(m - q h) v_h + q h (v - ve) = m v + F h`. The
 update is defined for every `h` near `0`, its slope is exactly
 `(v_h - v) / h = (ve q + F) / (m - q h)`, and it tends to `(ve q + F) / m`. For a differentiable
-mass history `M` the expelled mass per unit time is `q = -M'`, and the limit `a` then satisfies
-`M a = -ve M' + F`, the law above when `F = 0`. With no expelled mass the update is the
-fixed-mass constant-force velocity of `PhyslibExt.Mechanics.PowerPorts`. Ignoring the expelled
-momentum gives the slope limit `(q v + F) / m` instead, wrong whenever `q (v - ve) ≠ 0`. This is
-local consistency of the parcel model, not convergence of a discrete integration scheme or an
-exact finite-step logarithmic law.
+mass history `M` the step from `t` to `t + h` expels the actual mass `M t - M (t + h)`, at the
+rate `q_h = (M t - M (t + h)) / h`: the remaining mass is exactly `M (t + h)`, the step conserves
+momentum, `q_h` tends to `-M'`, and the slope tends to the acceleration `a` of
+`M a = -ve M' + F`, the law above when `F = 0`. A linear history expels mass at the constant rate
+`-M'`, so for it the constant-flow step is the actual step. With no expelled mass the update is
+the fixed-mass constant-force velocity of `PhyslibExt.Mechanics.PowerPorts`. Ignoring the
+expelled momentum gives the slope limit `(q v + F) / m` instead, wrong whenever
+`q (v - ve) ≠ 0`. This is local consistency of the parcel model, not convergence of a discrete
+integration scheme or an exact finite-step logarithmic law.
 
 ## ii. Key results
 
@@ -53,8 +56,10 @@ exact finite-step logarithmic law.
 - `velocity_increment_const_mass`: constant positive mass gives zero increment.
 - `parcelVelocity`, `parcel_momentum_iff`, `eventually_parcel_mass_pos`, `parcel_slope_eq`: the
   parcel step, its momentum balance and its exact slope.
-- `parcel_slope_tendsto`, `parcel_continuum`: the first-order limit and the continuum flow
-  `q = -M'`.
+- `parcel_slope_tendsto`: the first-order limit of the parcel step.
+- `parcel_continuum`, `parcel_continuum_linear`: the step with the actual expelled mass of a
+  differentiable mass history, its momentum balance and its continuum limit; a linear history
+  expels mass at the constant rate `-M'`.
 - `parcelVelocity_zero_flow`: without expelled mass, the fixed-mass constant-force velocity.
 - `parcel_accel_pos`, `naive_slope_tendsto`, `naive_limit_ne`: a positive flow accelerates, and
   ignoring the expelled momentum gives the wrong derivative.
@@ -285,21 +290,26 @@ lemma parcel_slope_tendsto {m : ℝ} (hm : 0 < m) (v q ve F : ℝ) :
     exact hnum.div hden hm'
   exact Tendsto.congr' heq.symm hlim
 
-/-- A differentiable mass history `M` with `M' = m'` at `t` expels mass at the rate `q = -m'`, and
-with that flow the parcel slope at the state `(M t, v)` tends to `(F - ve m') / M t`: the
-acceleration `a` of the reduced law `M a = -ve M' + F`. -/
+/-- A differentiable mass history `M` with `M' = m'` at `t`. The parcel step from `t` to `t + h`
+expels the actual mass `M t - M (t + h)`, at the rate `q_h = (M t - M (t + h)) / h`, which tends
+to `-m'`. With that actual flow the remaining mass `M t - q_h h` is exactly `M (t + h)`, positive
+for small `h`; the step conserves momentum; and its slope at the state `(M t, v)` tends to
+`(F - ve m') / M t`: the acceleration `a` of the reduced law `M a = -ve M' + F`. -/
 lemma parcel_continuum {M : ℝ → ℝ} {m' t : ℝ} (hM : HasDerivAt M m' t) (hpos : 0 < M t)
     (v ve F : ℝ) :
     Tendsto (fun h => (M t - M (t + h)) / h) (𝓝[≠] 0) (𝓝 (-m')) ∧
-      Tendsto (fun h => (parcelVelocity (M t) v (-m') ve F h - v) / h) (𝓝[≠] 0)
-        (𝓝 ((F - ve * m') / M t)) := by
-  constructor
-  · have hslope := hM.tendsto_slope
-    have hbase : Tendsto (fun h : ℝ => t + h) (𝓝 (0 : ℝ)) (𝓝 t) := by
-      have ht : Tendsto (fun _ : ℝ => t) (𝓝 (0 : ℝ)) (𝓝 t) := tendsto_const_nhds
-      have hid : Tendsto (fun h : ℝ => h) (𝓝 (0 : ℝ)) (𝓝 0) := tendsto_id
-      have h1 := ht.add hid
-      simpa using h1
+      (∀ᶠ h in 𝓝[≠] 0, M t - (M t - M (t + h)) / h * h = M (t + h) ∧ 0 < M (t + h) ∧
+        M (t + h) * parcelVelocity (M t) v ((M t - M (t + h)) / h) ve F h +
+            (M t - M (t + h)) * (v - ve) = M t * v + F * h) ∧
+      Tendsto (fun h => (parcelVelocity (M t) v ((M t - M (t + h)) / h) ve F h - v) / h)
+        (𝓝[≠] 0) (𝓝 ((F - ve * m') / M t)) := by
+  have hbase : Tendsto (fun h : ℝ => t + h) (𝓝 (0 : ℝ)) (𝓝 t) := by
+    have ht : Tendsto (fun _ : ℝ => t) (𝓝 (0 : ℝ)) (𝓝 t) := tendsto_const_nhds
+    have hid : Tendsto (fun h : ℝ => h) (𝓝 (0 : ℝ)) (𝓝 0) := tendsto_id
+    have h1 := ht.add hid
+    simpa using h1
+  have hq : Tendsto (fun h => (M t - M (t + h)) / h) (𝓝[≠] 0) (𝓝 (-m')) := by
+    have hslope := hM.tendsto_slope
     have hbase' : Tendsto (fun h : ℝ => t + h) (𝓝[≠] (0 : ℝ)) (𝓝 t) :=
       Tendsto.mono_left hbase nhdsWithin_le_nhds
     have hwith : ∀ᶠ h in 𝓝[≠] (0 : ℝ), t + h ∈ ({t}ᶜ : Set ℝ) := by
@@ -324,6 +334,51 @@ lemma parcel_continuum {M : ℝ → ℝ} {m' t : ℝ} (hM : HasDerivAt M m' t) (
       ring
     have h3 : Tendsto (fun h : ℝ => -(slope M t (t + h))) (𝓝[≠] 0) (𝓝 (-m')) := h2'.neg
     exact Tendsto.congr' heq.symm h3
+  have hMt : Tendsto (fun h : ℝ => M (t + h)) (𝓝 (0 : ℝ)) (𝓝 (M t)) :=
+    hM.continuousAt.tendsto.comp hbase
+  have hposev : ∀ᶠ h in 𝓝 (0 : ℝ), 0 < M (t + h) := hMt.eventually (lt_mem_nhds hpos)
+  have hstep : ∀ᶠ h in 𝓝[≠] (0 : ℝ), M t - (M t - M (t + h)) / h * h = M (t + h) ∧
+      0 < M (t + h) ∧ M (t + h) * parcelVelocity (M t) v ((M t - M (t + h)) / h) ve F h +
+        (M t - M (t + h)) * (v - ve) = M t * v + F * h := by
+    filter_upwards [self_mem_nhdsWithin, hposev.filter_mono nhdsWithin_le_nhds] with h hh hp
+    have hh0 : h ≠ 0 := by simpa using hh
+    have hrem : M t - (M t - M (t + h)) / h * h = M (t + h) := by
+      rw [div_mul_cancel₀ _ hh0]
+      ring
+    have hmom := (parcel_momentum_iff (m := M t) (q := (M t - M (t + h)) / h) (h := h)
+      (by rw [hrem]; exact hp.ne') v ve F
+      (parcelVelocity (M t) v ((M t - M (t + h)) / h) ve F h)).mpr rfl
+    rw [hrem, div_mul_cancel₀ _ hh0] at hmom
+    exact ⟨hrem, hp, hmom⟩
+  have heq : (fun h => (parcelVelocity (M t) v ((M t - M (t + h)) / h) ve F h - v) / h)
+      =ᶠ[𝓝[≠] 0] ((fun h => ve * ((M t - M (t + h)) / h) + F) / (fun h => M (t + h))) := by
+    filter_upwards [self_mem_nhdsWithin, hstep] with h hh hs
+    have hh0 : h ≠ 0 := by simpa using hh
+    have hmh : M t - (M t - M (t + h)) / h * h ≠ 0 := by
+      rw [hs.1]
+      exact hs.2.1.ne'
+    simp only [Pi.div_apply]
+    rw [parcel_slope_eq hh0 hmh v ve F, hs.1]
+  have hlim : Tendsto ((fun h => ve * ((M t - M (t + h)) / h) + F) / (fun h => M (t + h)))
+      (𝓝[≠] 0) (𝓝 ((ve * -m' + F) / M t)) :=
+    ((hq.const_mul ve).add_const F).div (hMt.mono_left nhdsWithin_le_nhds) hpos.ne'
+  have hval : (ve * -m' + F) / M t = (F - ve * m') / M t := by
+    congr 1
+    ring
+  rw [hval] at hlim
+  exact ⟨hq, hstep, Tendsto.congr' heq.symm hlim⟩
+
+/-- A linear mass history `M (t + h) = M t + m' h` expels mass at the constant actual rate `-m'`
+at every step `h ≠ 0`, so the parcel step with the constant flow `-m'` is the actual step, and its
+slope tends to `(F - ve m') / M t`. -/
+lemma parcel_continuum_linear {M : ℝ → ℝ} {m' t : ℝ} (hlin : ∀ h, M (t + h) = M t + m' * h)
+    (hpos : 0 < M t) (v ve F : ℝ) :
+    (∀ h ≠ 0, (M t - M (t + h)) / h = -m') ∧
+      Tendsto (fun h => (parcelVelocity (M t) v (-m') ve F h - v) / h) (𝓝[≠] 0)
+        (𝓝 ((F - ve * m') / M t)) := by
+  refine ⟨fun h hh => ?_, ?_⟩
+  · rw [hlin h, show M t - (M t + m' * h) = -m' * h by ring, mul_div_assoc, div_self hh,
+      mul_one]
   · have hlim := parcel_slope_tendsto hpos v (-m') ve F
     have heq : (ve * (-m') + F) / M t = (F - ve * m') / M t := by
       congr 1
