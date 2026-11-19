@@ -9,8 +9,11 @@ module
 
 public import PhyslibExt.Mechanics.OrbitalPorts
 
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Complex.RealDeriv
 import Mathlib.Analysis.Real.Pi.Bounds
 import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
@@ -36,6 +39,15 @@ position and velocity that satisfy the premises:
   with `μ` left in `km³/s²` does not;
 * the state at rest at the center meets the trajectory clauses at `R = 0`, and only the
   positivity clause rejects it.
+
+Spatial frame map with the quarter turn about the third axis, `quarterTurnZ`:
+
+* the planar point `1 + 2 i` has body components `(1, 2, 0)` and inertial components
+  `(-2, 1, 0)`; its squared length stays `5`, and it is orthogonal to the plane normal, which
+  the quarter turn leaves at `(0, 0, 1)`;
+* the planar path `s ↦ s (1 + 2 i)` has inertial velocity `(-2, 1, 0)`;
+* for every orbit that satisfies the premises with `μ = 4` and `R = 1`, the spatial position
+  stays at distance `1` from the center and the spatial velocity has derivative `-4 X`.
 
 Eccentricity vectors at the position `(1, 0, 0)`:
 
@@ -252,6 +264,73 @@ example (μ : ℝ) :
   refine ⟨norm_zero, hasDerivAt_const t 0, ?_⟩
   simp only [smul_zero]
   exact hasDerivAt_const t 0
+
+
+open _root_.Units.EngineeringFrames (bodyToInertialVec quarterTurnZ rotZ_degToRad_ninety)
+
+-- Mapped components: the planar point `1 + 2 i` has body components `(1, 2, 0)`, and the quarter
+-- turn about the third axis maps it to the inertial components `(-2, 1, 0)`.
+example (t : ℝ) :
+    planarToBody (1 + 2 * Complex.I) = ![1, 2, 0] ∧
+      spatialState quarterTurnZ (fun _ => 1 + 2 * Complex.I) t = ![-2, 1, 0] := by
+  have hq : (quarterTurnZ : Matrix (Fin 3) (Fin 3) ℝ) = !![0, -1, 0; 1, 0, 0; 0, 0, 1] :=
+    rotZ_degToRad_ninety
+  have hp : planarToBody (1 + 2 * Complex.I) = ![1, 2, 0] := by
+    ext i
+    fin_cases i <;> simp [planarToBody]
+  refine ⟨hp, ?_⟩
+  simp only [spatialState, bodyToInertialVec, hp, hq]
+  ext i
+  fin_cases i <;> simp [Matrix.mulVec, dotProduct, Fin.sum_univ_three]
+
+-- Length and plane: the mapped point keeps the squared length `‖1 + 2 i‖ ^ 2 = 5`, the quarter
+-- turn leaves the plane normal at `(0, 0, 1)`, and the mapped point is orthogonal to it.
+example (t : ℝ) :
+    spatialState quarterTurnZ (fun _ => 1 + 2 * Complex.I) t ⬝ᵥ
+        spatialState quarterTurnZ (fun _ => 1 + 2 * Complex.I) t = 5 ∧
+      bodyToInertialVec quarterTurnZ ![0, 0, 1] = ![0, 0, 1] ∧
+      spatialState quarterTurnZ (fun _ => 1 + 2 * Complex.I) t ⬝ᵥ ![0, 0, 1] = 0 := by
+  have hq : (quarterTurnZ : Matrix (Fin 3) (Fin 3) ℝ) = !![0, -1, 0; 1, 0, 0; 0, 0, 1] :=
+    rotZ_degToRad_ninety
+  have hn : bodyToInertialVec quarterTurnZ ![0, 0, 1] = ![0, 0, 1] := by
+    simp only [bodyToInertialVec, hq]
+    ext i
+    fin_cases i <;> simp [Matrix.mulVec, dotProduct, Fin.sum_univ_three]
+  refine ⟨?_, hn, ?_⟩
+  · rw [dotProduct_spatialState, Complex.sq_norm, Complex.normSq_apply]
+    norm_num
+  · rw [← hn]
+    exact spatialState_dotProduct_normal quarterTurnZ _ t
+
+-- Velocity: the planar path `s ↦ s (1 + 2 i)` has velocity `1 + 2 i`, so its image under the
+-- quarter turn has velocity `(-2, 1, 0)` at every time.
+example (t : ℝ) :
+    HasDerivAt (spatialState quarterTurnZ fun s => (s : ℂ) * (1 + 2 * Complex.I)) ![-2, 1, 0]
+      t := by
+  have hq : (quarterTurnZ : Matrix (Fin 3) (Fin 3) ℝ) = !![0, -1, 0; 1, 0, 0; 0, 0, 1] :=
+    rotZ_degToRad_ninety
+  have hz : HasDerivAt (fun s : ℝ => (s : ℂ) * (1 + 2 * Complex.I)) (1 + 2 * Complex.I) t := by
+    simpa using (hasDerivAt_id t).ofReal_comp.mul_const (1 + 2 * Complex.I)
+  have hw : bodyToInertialVec quarterTurnZ (planarToBody (1 + 2 * Complex.I)) = ![-2, 1, 0] := by
+    simp only [bodyToInertialVec, planarToBody, hq]
+    ext i
+    fin_cases i <;> simp [Matrix.mulVec, dotProduct, Fin.sum_univ_three]
+  rw [← hw]
+  exact hasDerivAt_spatialState quarterTurnZ hz
+
+-- Inverse-square law in inertial components: for every orbit that satisfies the premises with
+-- `μ = 4` and `R = 1`, the spatial position in the quarter-turn frame stays at distance `1` from
+-- the center, and the spatial velocity has derivative `-4 X`.
+example {r v : ℝ → ℂ} (h : IsCircularOrbit 4 1 r v) (t : ℝ) :
+    spatialState quarterTurnZ r t ⬝ᵥ spatialState quarterTurnZ r t = 1 ∧
+      HasDerivAt (spatialState quarterTurnZ v) ((-4 : ℝ) • spatialState quarterTurnZ r t) t := by
+  have hd : spatialState quarterTurnZ r t ⬝ᵥ spatialState quarterTurnZ r t = 1 := by
+    rw [h.dotProduct_spatialState]
+    norm_num
+  refine ⟨hd, ?_⟩
+  have hv := h.hasDerivAt_spatialVelocity quarterTurnZ t
+  rw [hd, Real.sqrt_one] at hv
+  simpa using hv
 
 -- A noncircular bound state in the reference plane: `μ = 1`, `v = (0, 1/2, 0)` has
 -- `e = (-3/4, 0, 0)`, `|e| = 3/4`, `E = -7/8` and `a = 4/7`; its pericenter direction `-e₁` is
