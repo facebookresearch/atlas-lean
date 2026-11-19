@@ -30,9 +30,9 @@ namespace ControlTheory
 
 /-- The homogeneous block matrix of a linear map `R` and a
 translation `p`, acting on extended coordinates indexed by
-`m ⊕ Unit`: the rotation block `R`, the translation column
+`m ⊕ Unit`: the linear block `R`, the translation column
 `p`, a zero row, and the scalar `1`. -/
-def homogeneousMatrix {m : Type*} [Fintype m] [DecidableEq m]
+def homogeneousMatrix {m : Type*}
     (R : Matrix m m ℝ) (p : m → ℝ) :
     Matrix (m ⊕ Unit) (m ⊕ Unit) ℝ :=
   Matrix.fromBlocks R (Matrix.of fun i _ => p i) 0 1
@@ -44,7 +44,7 @@ the homogeneous matrix acts as
 is the point action `R *ᵥ q + p`; at `w = 0` the translation
 vanishes, the vector action. -/
 theorem homogeneousMatrix_mulVec_elim {m : Type*} [Fintype m]
-    [DecidableEq m] (R : Matrix m m ℝ) (p q : m → ℝ) (w : ℝ) :
+    (R : Matrix m m ℝ) (p q : m → ℝ) (w : ℝ) :
     homogeneousMatrix R p *ᵥ (Sum.elim q (fun _ => w))
       = Sum.elim (R *ᵥ q + w • p) (fun _ => w) := by
   unfold homogeneousMatrix
