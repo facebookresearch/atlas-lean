@@ -14,18 +14,19 @@ import Mathlib.Tactic.NormNum
 # Range-guarded correlation checks
 
 Concrete consumer of `PhyslibExt.HeatTransfer.CorrelationDomains`: the
-Dittus-Boelter correlation, one record per thermal direction, with its
-published domain `Re ≥ 10000`, `0.6 ≤ Pr ≤ 160`, `L / D ≥ 10`, the local
-tag, properties at the mean temperature and the exponent `2/5` for
-heating or `3/10` for cooling. A heated tube flow with `Re = 100000`,
-`Pr = 1`, `L / D = 20` and `ΔT = 10` is a valid request and gives
+Dittus-Boelter correlation, one record per thermal direction, for a
+smooth circular tube, with its published domain `Re ≥ 10000`,
+`0.7 ≤ Pr ≤ 160`, `L / D ≥ 10`, the local tag, properties at the mean
+temperature and the exponent `2/5` for heating or `3/10` for cooling.
+A heated tube flow with `Re = 100000`, `Pr = 1`, `L / D = 20` and
+`ΔT = 10` is a valid request and gives
 `Nu = 230`, `h = 2760` for `k = 3 / 5` and `D = 1 / 20`, and on
 `A = 1 / 10` the heat rate `2760`; the same flow cooled with `ΔT = -10`
 uses the cooling record and gives `-2760`. At `Pr = 32` the exponent
 selected by the thermal direction changes the value. A cooled flow
-for the heating record, a short duct, values outside the domain,
-`ΔT = 0`, film-temperature properties and a surface-averaged request
-are rejected.
+for the heating record, a flat plate in parallel flow, a short duct,
+values outside the domain, `ΔT = 0`, film-temperature properties and
+a surface-averaged request are rejected.
 
 ## i. Overview
 
@@ -65,14 +66,13 @@ noncomputable def dittusBoelterExponent : ThermalMode → ℝ
 /-- The Dittus-Boelter correlation for the thermal direction `m`:
 `Nu = 0.023 Re ^ (4/5) Pr ^ n` with `n = dittusBoelterExponent m`, the local value for fully
 developed turbulent flow in a smooth circular tube, properties at the mean (bulk) temperature, and
-the published domain `Re ≥ 10000`, `0.6 ≤ Pr ≤ 160`, `L / D ≥ 10`, with the request's temperature
+the published domain `Re ≥ 10000`, `0.7 ≤ Pr ≤ 160`, `L / D ≥ 10`, with the request's temperature
 difference in the direction `m`. -/
 noncomputable def dittusBoelter (m : ThermalMode) : NusseltCorrelation :=
   powerLawCorrelation (23 / 1000) (4 / 5) (dittusBoelterExponent m)
     "Dittus-Boelter, in Incropera et al., Fundamentals of Heat and Mass Transfer"
-    "fully developed turbulent flow in a smooth circular tube"
-    AveragingTag.localValue PropertyTemperature.bulkMean
-    {s | 10000 ≤ s.reynolds ∧ 3 / 5 ≤ s.prandtl ∧ s.prandtl ≤ 160 ∧ 10 ≤ s.lengthRatio ∧
+    FlowConfiguration.smoothCircularTube AveragingTag.localValue PropertyTemperature.bulkMean
+    {s | 10000 ≤ s.reynolds ∧ 7 / 10 ≤ s.prandtl ∧ s.prandtl ≤ 160 ∧ 10 ≤ s.lengthRatio ∧
       m.Holds s.temperatureDifference.val}
     (fun s hs => ⟨by linarith [hs.1], by linarith [hs.2.1]⟩)
     (by
@@ -87,13 +87,15 @@ lemma dittusBoelter_nusselt {m : ThermalMode} {r : CorrelationRequest}
       23 / 1000 * r.reynolds ^ (4 / 5 : ℝ) * r.prandtl ^ dittusBoelterExponent m :=
   powerLawCorrelation_nusselt h
 
-/-- A heated tube flow: `Re = 100000`, `Pr = 1`, `L / D = 20`, the surface `10` K above the mean
-fluid temperature, a local value requested, properties at the mean temperature. -/
+/-- A heated flow in a smooth circular tube: `Re = 100000`, `Pr = 1`, `L / D = 20`, the surface
+`10` K above the mean fluid temperature, a local value requested, properties at the mean
+temperature. -/
 def heatingRequest : CorrelationRequest where
   reynolds := 100000
   prandtl := 1
   lengthRatio := 20
   temperatureDifference := ⟨10⟩
+  configuration := FlowConfiguration.smoothCircularTube
   averaging := AveragingTag.localValue
   propertyTemperature := PropertyTemperature.bulkMean
 
@@ -187,20 +189,25 @@ example :
     nlinarith
 
 /-- Rejections: the heating correlation does not apply to the cooled flow (`ΔT = -10`), and no
-Dittus-Boelter correlation applies to a short duct (`L / D = 5`), to `Re = 5000` or `Pr = 1 / 2`,
-to a flow without a thermal direction (`ΔT = 0`), to properties at the film temperature, or to a
-surface-averaged request. -/
+Dittus-Boelter correlation applies to a flat plate in parallel flow with otherwise identical
+data, to a short duct (`L / D = 5`), to `Re = 5000`, to `Pr = 13 / 20` (below `0.7`) or
+`Pr = 1 / 2`, to a flow without a thermal direction (`ΔT = 0`), to properties at the film
+temperature, or to a surface-averaged request. -/
 example :
     ¬ (dittusBoelter .heating).Applies { heatingRequest with temperatureDifference := ⟨-10⟩ } ∧
+      (∀ m, ¬ (dittusBoelter m).Applies
+        { heatingRequest with configuration := FlowConfiguration.flatPlateParallelFlow }) ∧
       (∀ m, ¬ (dittusBoelter m).Applies { heatingRequest with lengthRatio := 5 }) ∧
       (∀ m, ¬ (dittusBoelter m).Applies { heatingRequest with reynolds := 5000 }) ∧
+      (∀ m, ¬ (dittusBoelter m).Applies { heatingRequest with prandtl := 13 / 20 }) ∧
       (∀ m, ¬ (dittusBoelter m).Applies { heatingRequest with prandtl := 1 / 2 }) ∧
       (∀ m, ¬ (dittusBoelter m).Applies { heatingRequest with temperatureDifference := ⟨0⟩ }) ∧
       (∀ m, ¬ (dittusBoelter m).Applies
         { heatingRequest with propertyTemperature := PropertyTemperature.film }) ∧
       (∀ m, ¬ (dittusBoelter m).Applies
         { heatingRequest with averaging := AveragingTag.surfaceAverage }) := by
-  refine ⟨?_, fun m => ?_, fun m => ?_, fun m => ?_, fun m => ?_, fun m => ?_, fun m => ?_⟩ <;>
+  refine ⟨?_, fun m => ?_, fun m => ?_, fun m => ?_, fun m => ?_, fun m => ?_, fun m => ?_,
+    fun m => ?_, fun m => ?_⟩ <;>
     (try cases m) <;>
     simp only [dittusBoelter, powerLawCorrelation, NusseltCorrelation.Applies, heatingRequest,
       Set.mem_ofPred_eq, ThermalMode.Holds] <;>
