@@ -44,6 +44,11 @@ Eccentricity vectors at the position `(1, 0, 0)`:
 * the circular state has `e = 0`, so it has no pericenter direction;
 * a bound radial state has `h = 0` and `|e| = 1`;
 * a polar state has a nonzero node vector and a nonzero eccentricity vector.
+
+Equal-speed plane changes in declared planes through the third axis, the line of nodes, with the
+rotation `rotZ` of the frame dictionary: the impulse is `2 v sin(i / 2)`; a right-angle change at
+unit speed costs `√2`, no change costs `0`, and the reversal `i = π` of the orbital sense costs
+`2 v`.
 -/
 
 @[expose] public section
@@ -339,5 +344,65 @@ example :
     ext i
     fin_cases i <;> norm_num [cross_apply]
   exact ⟨hn, he⟩
+
+section PlaneChange
+
+open Units.EngineeringFrames (rotZ)
+
+/-- Declared planes through one line of nodes: in a frame whose third axis is the line of nodes,
+the velocity `v₁ = (v, 0, 0)` is tangent at every node `(0, 0, r)`, and the rotation `rotZ i` by the
+plane-change angle `i ∈ [0, π]` about the line of nodes gives the velocity `v₂ = rotZ i v₁` of the
+plane tilted by `i`. The impulse is `|v₂ - v₁| = 2 v sin(i / 2)`. -/
+lemma impulseMagnitude_rotZ {v i : ℝ} (hv : 0 < v) (hi₀ : 0 ≤ i) (hiπ : i ≤ Real.pi) :
+    impulseMagnitude ![v, 0, 0] (rotZ i *ᵥ ![v, 0, 0]) = 2 * v * Real.sin (i / 2) := by
+  have w0 : (rotZ i *ᵥ ![v, 0, 0]) 0 = Real.cos i * v := by simp [rotZ, mulVec]
+  have w1 : (rotZ i *ᵥ ![v, 0, 0]) 1 = Real.sin i * v := by simp [rotZ, mulVec]
+  have w2 : (rotZ i *ᵥ ![v, 0, 0]) 2 = 0 := by simp [rotZ, mulVec]
+  have u0 : (![v, 0, 0] : Fin 3 → ℝ) 0 = v := by simp
+  have u1 : (![v, 0, 0] : Fin 3 → ℝ) 1 = 0 := by simp
+  have u2 : (![v, 0, 0] : Fin 3 → ℝ) 2 = 0 := by simp
+  have h1 : speedSq ![v, 0, 0] = v ^ 2 := by
+    unfold speedSq
+    rw [vec3_dotProduct']
+    ring
+  have h2 : speedSq (rotZ i *ᵥ ![v, 0, 0]) = v ^ 2 := by
+    have htrig := Real.sin_sq_add_cos_sq i
+    unfold speedSq
+    rw [vec3_dotProduct, w0, w1, w2]
+    linear_combination v ^ 2 * htrig
+  have h3 : ![v, 0, 0] ⬝ᵥ (rotZ i *ᵥ ![v, 0, 0]) = v ^ 2 * Real.cos i := by
+    rw [vec3_dotProduct, u0, u1, u2, w0, w1, w2]
+    ring
+  have hsub := speedSq_sub_of_speedSq_eq h1 h2 h3
+  unfold impulseMagnitude
+  rw [hsub]
+  exact sqrt_two_mul_sq_mul_one_sub_cos hv.le hi₀ hiπ
+
+-- A right-angle plane change at unit speed costs `√2`, a nonzero impulse.
+example :
+    impulseMagnitude ![1, 0, 0] (rotZ (Real.pi / 2) *ᵥ ![1, 0, 0]) = Real.sqrt 2 ∧
+      0 < Real.sqrt 2 := by
+  have h := impulseMagnitude_rotZ (v := 1) (i := Real.pi / 2) (by norm_num)
+    (by linarith [Real.pi_nonneg]) (by linarith [Real.pi_nonneg])
+  refine ⟨?_, Real.sqrt_pos.mpr (by norm_num)⟩
+  rw [h]
+  have h4 : (Real.pi / 2) / 2 = Real.pi / 4 := by ring
+  rw [h4, Real.sin_pi_div_four]
+  ring
+
+-- No plane change costs nothing, and the reversal `i = π` of the orbital sense costs `2 v`.
+example {v : ℝ} (hv : 0 < v) :
+    impulseMagnitude ![v, 0, 0] (rotZ 0 *ᵥ ![v, 0, 0]) = 0 ∧
+      impulseMagnitude ![v, 0, 0] (rotZ Real.pi *ᵥ ![v, 0, 0]) = 2 * v := by
+  have h0 := impulseMagnitude_rotZ (v := v) (i := 0) hv (le_refl 0) Real.pi_nonneg
+  have hpi := impulseMagnitude_rotZ (v := v) (i := Real.pi) hv Real.pi_nonneg le_rfl
+  refine ⟨?_, ?_⟩
+  · rw [h0]
+    have hz : (0 : ℝ) / 2 = 0 := by norm_num
+    rw [hz, Real.sin_zero, mul_zero]
+  · rw [hpi, Real.sin_pi_div_two]
+    ring
+
+end PlaneChange
 
 end PhyslibExtTest.Mechanics.OrbitalPorts
