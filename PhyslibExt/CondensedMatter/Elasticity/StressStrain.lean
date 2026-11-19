@@ -34,7 +34,9 @@ and this module does not claim to derive symmetry from force balance alone.
 
 The traction on a face with normal `n` is `t = σ *ᵥ n`. It flips sign on opposite faces and is
 linear in `n`, both as direct `mulVec` consequences; the statements hold for general `n`, and the
-unit-normal case `‖n‖ = 1` is the physical reading. Given symmetry, Mathlib's spectral theorem
+unit-normal case `‖n‖ = 1` is the physical reading. The compression-positive form of the same
+tensor is `compressionPositiveStress σ = -σ`; the conversion is involutive, preserves symmetry,
+and negates traction on a fixed face. Given symmetry, Mathlib's spectral theorem
 for Hermitian matrices (`Matrix.IsHermitian.spectral_theorem`, reused, not re-proved) gives real
 principal stresses, an orthonormal eigenbasis, and the spectral decomposition; for real symmetric
 matrices conjugation by the eigenvector unitary is conjugation by an orthogonal matrix. The
@@ -67,6 +69,10 @@ yield/failure criteria, and no beam or pressure-vessel applications.
 - `Elasticity.traction_neg` : traction flips sign on the opposite face.
 - `Elasticity.traction_linear` : traction is linear in the normal vector.
 - `Elasticity.traction_smul_one` : hydrostatic stress `s • 1` has traction `s • v`.
+- `Elasticity.compressionPositiveStress`, `Elasticity.compressionPositiveStress_involutive`,
+  `Elasticity.traction_compressionPositiveStress`, and
+  `Elasticity.traction_compressionPositiveStress_neg` : the compression-positive sign
+  conversion and its traction laws.
 - `Elasticity.principalStresses_real` : principal stresses are real.
 - `Elasticity.spectral_decomposition` : the spectral decomposition of `σ`.
 - `Elasticity.principalDirection_eigen` : the eigenvector equation for principal directions.
@@ -142,6 +148,49 @@ is along the normal, outward for `s > 0` (tension-positive). -/
 lemma traction_smul_one {n : ℕ} (s : ℝ) (v : Fin n → ℝ) :
     traction (s • (1 : Matrix (Fin n) (Fin n) ℝ)) v = s • v := by
   rw [traction, Matrix.smul_mulVec, Matrix.one_mulVec]
+
+/-- Compression-positive form of a tension-positive Cauchy
+stress: `σ_c = -σ_t`, on the same Euclidean reference space and
+with the same tensor and normal conventions. -/
+def compressionPositiveStress {n : ℕ} (σ : Matrix (Fin n) (Fin n) ℝ) :
+    Matrix (Fin n) (Fin n) ℝ :=
+  -σ
+
+/-- Converting the stress sign twice returns the original
+stress. -/
+lemma compressionPositiveStress_involutive {n : ℕ}
+    (σ : Matrix (Fin n) (Fin n) ℝ) :
+    compressionPositiveStress (compressionPositiveStress σ) = σ := by
+  simp [compressionPositiveStress]
+
+/-- Symmetry is preserved by the stress-sign conversion. -/
+lemma compressionPositiveStress_isSymmetricStress {n : ℕ}
+    {σ : Matrix (Fin n) (Fin n) ℝ} (hσ : IsSymmetricStress σ) :
+    IsSymmetricStress (compressionPositiveStress σ) := by
+  unfold IsSymmetricStress compressionPositiveStress at *
+  rw [Matrix.transpose_neg, hσ]
+
+/-- Traction under the converted stress is the negative of the
+traction under the original stress, on the same face normal. -/
+lemma traction_compressionPositiveStress {n : ℕ}
+    (σ : Matrix (Fin n) (Fin n) ℝ) (v : Fin n → ℝ) :
+    traction (compressionPositiveStress σ) v = -traction σ v := by
+  simp [traction, compressionPositiveStress, Matrix.neg_mulVec]
+
+/-- With both the stress sign converted and the face normal
+reversed, the traction vector is the original traction. -/
+lemma traction_compressionPositiveStress_neg {n : ℕ}
+    (σ : Matrix (Fin n) (Fin n) ℝ) (v : Fin n → ℝ) :
+    traction (compressionPositiveStress σ) (-v) = traction σ v := by
+  simp [traction, compressionPositiveStress, Matrix.neg_mulVec_neg]
+
+/-- Hydrostatic tension-positive stress `-p • 1` converts to
+the compression-positive stress whose traction is `p • v`. -/
+lemma traction_compressionPositiveStress_neg_smul_one {n : ℕ}
+    (p : ℝ) (v : Fin n → ℝ) :
+    traction (compressionPositiveStress
+      (-p • (1 : Matrix (Fin n) (Fin n) ℝ))) v = p • v := by
+  simp [traction, compressionPositiveStress, Matrix.smul_mulVec, Matrix.one_mulVec]
 
 /-! ## B. Principal stresses, invariants, and the deviatoric split -/
 
