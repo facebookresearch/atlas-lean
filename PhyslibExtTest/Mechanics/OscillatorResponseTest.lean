@@ -13,16 +13,18 @@ import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.FunProp
+import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
 /-!
-# Oscillator parameter correspondence and forced response checks
+# Oscillator parameter correspondence, forced response and resonance checks
 
 Concrete consumers of `PhyslibExt.Mechanics.OscillatorResponse`: the critically damped
 mass-spring-damper `m = 1`, `c = 2`, `k = 1` with initial data `x₀ = v₀ = 1`, the boundary
 cases of the parameter map, the forced response of the same system to `25 cos (2 t)` from
-`x₀ = 0`, `v₀ = 1`, and the excluded undamped exact resonance.
+`x₀ = 0`, `v₀ = 1`, the excluded undamped exact resonance, and the secular response `t sin t`
+of `x'' + x = 2 cos t` at that resonance.
 
 ## i. Overview
 
@@ -36,6 +38,7 @@ No new definitions or results are introduced here.
 
 - A. Critical damping and conventions
 - B. Forced response
+- C. Undamped resonance
 
 ## iv. References
 
@@ -190,3 +193,43 @@ example :
   have h0 := h 0
   rw [show particularResponse 1 0 1 1 1 = fun _ => 0 from funext hp] at h0
   simp at h0
+
+/-! ## C. Undamped resonance -/
+
+/-- Growth fixture: `m = ω₀ = k = 1` and `F = 2` give `x (t) = t sin t`; at the peak times
+`t_n = 2 π n + π / 2` the response equals `t_n`, a strictly increasing sequence. -/
+example :
+    (∀ t, resonantResponse 1 1 2 t = t * Real.sin t) ∧
+      (∀ n : ℕ, resonantResponse 1 1 2 (resonancePeak 1 n) = 2 * Real.pi * n + Real.pi / 2) ∧
+      StrictMono (fun n : ℕ => resonantResponse 1 1 2 (resonancePeak 1 n)) := by
+  have h2 : ∀ n : ℕ, resonantResponse 1 1 2 (resonancePeak 1 n)
+      = 2 * Real.pi * n + Real.pi / 2 := by
+    intro n
+    rw [resonantResponse_resonancePeak zero_lt_one 1 2 n]
+    unfold resonancePeak
+    ring
+  refine ⟨?_, h2, ?_⟩
+  · intro t
+    unfold resonantResponse
+    rw [one_mul]
+    ring
+  · simp only [h2]
+    apply strictMono_nat_of_lt_succ
+    intro n
+    push_cast
+    have hpi := Real.pi_pos
+    linarith
+
+/-- Damped boundary: for `m = ω₀ = k = 1` and `F = 2` the resonant velocity at `t = π / 2` is `1`,
+so with damping `c = 1` the term `c x'` is not cancelled and the damped equation fails. -/
+example :
+    deriv (resonantResponse 1 1 2) (Real.pi / 2) = 1 ∧
+      ¬ ∀ t, 1 * deriv (deriv (resonantResponse 1 1 2)) t + 1 * deriv (resonantResponse 1 1 2) t +
+        1 * resonantResponse 1 1 2 t = 2 * Real.cos (1 * t) := by
+  constructor
+  · rw [(hasDerivAt_resonantResponse 1 1 2 (Real.pi / 2)).deriv]
+    unfold resonantVelocity
+    rw [one_mul, Real.sin_pi_div_two, Real.cos_pi_div_two]
+    norm_num
+  · exact resonantResponse_not_solves_damped (m := 1) (ω₀ := 1) (k := 1) zero_lt_one zero_lt_one
+      (by norm_num) (c := 1) (F := 2) one_ne_zero two_ne_zero

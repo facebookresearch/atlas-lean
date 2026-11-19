@@ -12,7 +12,7 @@ public import PhyslibExt.Units.EngineeringQuantities
 import MathlibExt.Analysis.ODE.Duhamel
 
 /-!
-# Damping and forcing parameter correspondence and forced response
+# Damping and forcing parameter correspondence, forced response and resonance
 
 An engineering mass-spring-damper has mass `m > 0`, viscous damping coefficient `c ≥ 0`
 (force per velocity) and stiffness `k > 0` (force per length):
@@ -21,8 +21,8 @@ An engineering mass-spring-damper has mass `m > 0`, viscous damping coefficient 
 
 with initial position `x₀`, initial velocity `v₀` and a forcing amplitude `F` in force units.
 This module maps these parameters to Physlib's damped harmonic oscillator and to the
-forced-oscillator convention `x'' + 2 γ x' + ω₀ ^ 2 x = F cos (Ω t)`, and constructs the forced
-response with its uniqueness.
+forced-oscillator convention `x'' + 2 γ x' + ω₀ ^ 2 x = F cos (Ω t)`, constructs the forced
+response with its uniqueness, and treats the undamped exact resonance as a separate branch.
 
 ## i. Overview
 
@@ -45,6 +45,13 @@ equation reads `z' = L z + b (t)` with `L (x, v) = (v, -(k x + c v) / m)` and
 `b (t) = (0, F cos (Ω t) / m)`, so twice continuously differentiable displacements correspond
 to phase-space solutions, and Duhamel's variation-of-constants theorem gives uniqueness of the
 forced response among them, a larger class than the smooth one above.
+
+At the excluded undamped exact resonance, `c = 0` and forcing at the natural angular frequency
+`ω₀` with `k = m ω₀ ^ 2`, the steady-state formula has no meaning. There the secular response
+`x (t) = F t sin (ω₀ t) / (2 m ω₀)` is differentiated explicitly and solves
+`m x'' + k x = F cos (ω₀ t)` from rest at the origin. Its envelope is `|F| |t| / (2 m ω₀)`, and
+at the peak times `t_n = (2 π n + π / 2) / ω₀` its amplitude grows without bound when `F ≠ 0`.
+With any nonzero damping the same function is not a solution.
 
 Parameters, forcing and initial data are model inputs.
 
@@ -74,6 +81,16 @@ Parameters, forcing and initial data are model inputs.
   of the forced equation correspond to solutions of the phase-space equation.
 - `forcedResponse_unique`: the forced response is the only twice continuously differentiable
   solution with its initial data.
+- `resonance_branch_params`, `steadyStateDenominator_eq_zero_iff`: the resonance branch is forcing
+  at the natural frequency without damping, exactly where the steady-state denominator vanishes.
+- `hasDerivAt_resonantResponse`, `hasDerivAt_resonantVelocity`, `resonantResponse_solves`,
+  `resonantResponse_initial`: the derivatives of the secular response, which solves the undamped
+  resonant equation from rest at the origin.
+- `abs_resonantResponse_le`, `resonantResponse_resonancePeak`, `tendsto_resonancePeak`,
+  `tendsto_abs_resonantResponse_resonancePeak`: the envelope, the peak values and the unbounded
+  amplitude along the peak times.
+- `resonantResponse_not_solves_damped`: with nonzero damping the secular response is not a
+  solution.
 
 ## iii. Table of contents
 
@@ -86,12 +103,19 @@ Parameters, forcing and initial data are model inputs.
 - G. The particular response
 - H. The forced response
 - I. Phase space and uniqueness
+- J. Undamped resonance model
+- K. The resonance branch
+- L. Resonant derivatives and equation of motion
+- M. Unbounded amplitude
+- N. Damping leaves the branch
 
 ## iv. References
 
 - S. S. Rao, *Mechanical Vibrations*, 6th edition, chapters 2-3 (viscously damped free and
   harmonically forced single-degree-of-freedom systems).
 - L. D. Landau and E. M. Lifshitz, *Mechanics*, §25 (damped oscillations).
+- D. J. Inman, *Engineering Vibration*, 4th edition, Section 2.1 (harmonic excitation of undamped
+  systems and resonance).
 - `Physlib.ClassicalMechanics.DampedHarmonicOscillator.Basic` and `.Solution`: the carrier,
   equation of motion, regimes, energy dissipation and selected trajectory reused here.
 - `PhyslibExt.EarthScience.DampedOscillator`: the forced-oscillator convention
@@ -550,5 +574,218 @@ lemma forcedResponse_unique {m c k : ℝ} (hm : 0 < m) (hc : 0 ≤ c) (hk : 0 < 
   funext t
   have := congrFun (e1.trans e2.symm) t
   exact (Prod.ext_iff.mp this).1
+
+/-! ## J. Undamped resonance model -/
+
+open Filter
+
+/-- The undamped resonant response `F t sin (ω₀ t) / (2 m ω₀)` of a mass `m` to the force
+`F cos (ω₀ t)` at the natural angular frequency `ω₀`. -/
+noncomputable def resonantResponse (m ω₀ F t : ℝ) : ℝ :=
+  F * t * Real.sin (ω₀ * t) / (2 * m * ω₀)
+
+/-- The velocity `F (sin (ω₀ t) + ω₀ t cos (ω₀ t)) / (2 m ω₀)` of the resonant response. -/
+noncomputable def resonantVelocity (m ω₀ F t : ℝ) : ℝ :=
+  F * (Real.sin (ω₀ * t) + ω₀ * t * Real.cos (ω₀ * t)) / (2 * m * ω₀)
+
+/-- The peak times `t_n = (2 π n + π / 2) / ω₀`, at which `sin (ω₀ t_n) = 1`. -/
+noncomputable def resonancePeak (ω₀ : ℝ) (n : ℕ) : ℝ :=
+  (2 * Real.pi * n + Real.pi / 2) / ω₀
+
+/-! ## K. The resonance branch -/
+
+/-- Forcing at the angular frequency `ω₀` of `k = m ω₀ ^ 2` is forcing at the convention's natural
+frequency `√(k / m)`, and zero damping is the convention's damping rate `0`. -/
+lemma resonance_branch_params {m ω₀ k : ℝ} (hm : 0 < m) (hω₀ : 0 < ω₀) (hk : k = m * ω₀ ^ 2) :
+    atlasNaturalFrequency m k = ω₀ ∧ atlasDamping m 0 = 0 := by
+  have hm' : m ≠ 0 := ne_of_gt hm
+  constructor
+  · have hkm : k / m = ω₀ ^ 2 := by rw [hk]; field_simp
+    unfold atlasNaturalFrequency
+    rw [hkm]
+    exact Real.sqrt_sq (le_of_lt hω₀)
+  · unfold atlasDamping
+    exact zero_div _
+
+/-- The steady-state denominator `(k - m Ω ^ 2) ^ 2 + (c Ω) ^ 2` vanishes exactly on this
+branch: for `k = m ω₀ ^ 2` and a forcing frequency `Ω ≥ 0` it is zero iff `c = 0` and `Ω = ω₀`. -/
+lemma steadyStateDenominator_eq_zero_iff {m ω₀ k : ℝ} (hm : 0 < m) (hω₀ : 0 < ω₀)
+    (hk : k = m * ω₀ ^ 2) {c Ω : ℝ} (hΩ : 0 ≤ Ω) :
+    (k - m * Ω ^ 2) ^ 2 + (c * Ω) ^ 2 = 0 ↔ c = 0 ∧ Ω = ω₀ := by
+  constructor
+  · intro h
+    have h1 := sq_nonneg (k - m * Ω ^ 2)
+    have h2 := sq_nonneg (c * Ω)
+    have hA : (k - m * Ω ^ 2) ^ 2 = 0 := by linarith
+    have hB : (c * Ω) ^ 2 = 0 := by linarith
+    have hA' : k - m * Ω ^ 2 = 0 := sq_eq_zero_iff.mp hA
+    have hB' : c * Ω = 0 := sq_eq_zero_iff.mp hB
+    have hm' : m ≠ 0 := ne_of_gt hm
+    have hΩ2 : Ω ^ 2 = ω₀ ^ 2 := by
+      have hmeq : m * Ω ^ 2 = m * ω₀ ^ 2 := by rw [hk] at hA'; linarith
+      exact mul_left_cancel₀ hm' hmeq
+    have hΩω : Ω = ω₀ ∨ Ω = -ω₀ := sq_eq_sq_iff_eq_or_eq_neg.mp hΩ2
+    have hΩpos : Ω = ω₀ := by
+      rcases hΩω with h | h
+      · exact h
+      · exfalso; rw [h] at hΩ; linarith [hω₀]
+    have hc : c = 0 := by
+      rw [hΩpos] at hB'
+      exact (mul_eq_zero.mp hB').resolve_right (ne_of_gt hω₀)
+    exact ⟨hc, hΩpos⟩
+  · rintro ⟨rfl, rfl⟩
+    rw [hk]
+    simp
+
+/-! ## L. Resonant derivatives and equation of motion -/
+
+/-- The resonant response has velocity `resonantVelocity`: the product rule on the secular
+factor `t` and the chain rule on `sin (ω₀ t)`. -/
+lemma hasDerivAt_resonantResponse (m ω₀ F t : ℝ) :
+    HasDerivAt (resonantResponse m ω₀ F) (resonantVelocity m ω₀ F t) t := by
+  have h1 : HasDerivAt (fun t : ℝ => F * t) (F * 1) t := (hasDerivAt_id' t).const_mul F
+  have haff : HasDerivAt (fun t : ℝ => ω₀ * t) (ω₀ * 1) t := (hasDerivAt_id' t).const_mul ω₀
+  have h2 : HasDerivAt (fun t : ℝ => Real.sin (ω₀ * t)) (Real.cos (ω₀ * t) * (ω₀ * 1)) t :=
+    (Real.hasDerivAt_sin (ω₀ * t)).comp t haff
+  have h4 := (h1.mul h2).div_const (2 * m * ω₀)
+  unfold resonantResponse resonantVelocity
+  convert h4 using 1
+  ring
+
+/-- The resonant velocity has derivative `F (2 ω₀ cos (ω₀ t) - ω₀ ^ 2 t sin (ω₀ t)) / (2 m ω₀)`. -/
+lemma hasDerivAt_resonantVelocity (m ω₀ F t : ℝ) :
+    HasDerivAt (resonantVelocity m ω₀ F)
+      (F * (2 * ω₀ * Real.cos (ω₀ * t) - ω₀ ^ 2 * t * Real.sin (ω₀ * t)) / (2 * m * ω₀)) t := by
+  have haff : HasDerivAt (fun t : ℝ => ω₀ * t) (ω₀ * 1) t := (hasDerivAt_id' t).const_mul ω₀
+  have hsin : HasDerivAt (fun t : ℝ => Real.sin (ω₀ * t)) (Real.cos (ω₀ * t) * (ω₀ * 1)) t :=
+    (Real.hasDerivAt_sin (ω₀ * t)).comp t haff
+  have hcos : HasDerivAt (fun t : ℝ => Real.cos (ω₀ * t)) ((-Real.sin (ω₀ * t)) * (ω₀ * 1)) t :=
+    (Real.hasDerivAt_cos (ω₀ * t)).comp t haff
+  have hprod := haff.mul hcos
+  have hadd := hsin.add hprod
+  have hF := hadd.const_mul F
+  have h4 := hF.div_const (2 * m * ω₀)
+  unfold resonantVelocity
+  convert h4 using 1
+  ring
+
+/-- The resonant response solves `m x'' + k x = F cos (ω₀ t)` for `k = m ω₀ ^ 2`. -/
+lemma resonantResponse_solves {m ω₀ k : ℝ} (hm : 0 < m) (hω₀ : 0 < ω₀) (hk : k = m * ω₀ ^ 2)
+    (F t : ℝ) :
+    m * deriv (deriv (resonantResponse m ω₀ F)) t + k * resonantResponse m ω₀ F t =
+      F * Real.cos (ω₀ * t) := by
+  have h1 : deriv (resonantResponse m ω₀ F) = resonantVelocity m ω₀ F :=
+    funext fun t => (hasDerivAt_resonantResponse m ω₀ F t).deriv
+  rw [h1, (hasDerivAt_resonantVelocity m ω₀ F t).deriv]
+  have hm' : m ≠ 0 := ne_of_gt hm
+  have hω' : ω₀ ≠ 0 := ne_of_gt hω₀
+  unfold resonantResponse
+  rw [hk]
+  field_simp
+  ring
+
+/-- The resonant response starts from rest at the origin. -/
+lemma resonantResponse_initial (m ω₀ F : ℝ) :
+    resonantResponse m ω₀ F 0 = 0 ∧ deriv (resonantResponse m ω₀ F) 0 = 0 := by
+  constructor
+  · unfold resonantResponse
+    simp
+  · rw [(hasDerivAt_resonantResponse m ω₀ F 0).deriv]
+    unfold resonantVelocity
+    simp
+
+/-! ## M. Unbounded amplitude -/
+
+/-- The envelope of the resonant response is `|F| |t| / (2 m ω₀)`. -/
+lemma abs_resonantResponse_le {m ω₀ : ℝ} (hm : 0 < m) (hω₀ : 0 < ω₀) (F t : ℝ) :
+    |resonantResponse m ω₀ F t| ≤ |F| * |t| / (2 * m * ω₀) := by
+  have hD : 0 < 2 * m * ω₀ := by positivity
+  unfold resonantResponse
+  rw [abs_div, abs_mul, abs_mul, abs_of_pos hD, div_le_div_iff_of_pos_right hD]
+  have h := Real.abs_sin_le_one (ω₀ * t)
+  calc |F| * |t| * |Real.sin (ω₀ * t)| ≤ |F| * |t| * 1 :=
+        mul_le_mul_of_nonneg_left h (by positivity)
+    _ = |F| * |t| := mul_one _
+
+/-- At the peak times the resonant response reaches its envelope `F t_n / (2 m ω₀)`. -/
+lemma resonantResponse_resonancePeak {ω₀ : ℝ} (hω₀ : 0 < ω₀) (m F : ℝ) (n : ℕ) :
+    resonantResponse m ω₀ F (resonancePeak ω₀ n) = F * resonancePeak ω₀ n / (2 * m * ω₀) := by
+  have hω' : ω₀ ≠ 0 := ne_of_gt hω₀
+  have harg : ω₀ * resonancePeak ω₀ n = 2 * Real.pi * n + Real.pi / 2 := by
+    unfold resonancePeak
+    field_simp
+  have hsin : Real.sin (2 * Real.pi * (n : ℝ) + Real.pi / 2) = 1 := by
+    have h : (2 * Real.pi * (n : ℝ) + Real.pi / 2) = Real.pi / 2 + n * (2 * Real.pi) := by ring
+    rw [h, Real.sin_add_nat_mul_two_pi, Real.sin_pi_div_two]
+  unfold resonantResponse
+  rw [harg, hsin]
+  ring
+
+/-- The peak times tend to infinity. -/
+lemma tendsto_resonancePeak {ω₀ : ℝ} (hω₀ : 0 < ω₀) : Tendsto (resonancePeak ω₀) atTop atTop := by
+  have hω' : ω₀ ≠ 0 := ne_of_gt hω₀
+  have hbase :
+      Tendsto (fun n : ℕ => (2 * Real.pi / ω₀) * (n : ℝ) + (Real.pi / 2) / ω₀) atTop atTop := by
+    have h1 : Tendsto (fun n : ℕ => (n : ℝ)) atTop atTop := tendsto_natCast_atTop_atTop
+    have h2 := h1.const_mul_atTop (show (0 : ℝ) < 2 * Real.pi / ω₀ by positivity)
+    exact tendsto_atTop_add_const_right _ _ h2
+  have heq : resonancePeak ω₀ = fun n : ℕ => (2 * Real.pi / ω₀) * (n : ℝ) + (Real.pi / 2) / ω₀ := by
+    funext n
+    unfold resonancePeak
+    field_simp
+  rw [heq]
+  exact hbase
+
+/-- Unbounded amplitude: for `F ≠ 0` the amplitude at the peak times tends to infinity. -/
+lemma tendsto_abs_resonantResponse_resonancePeak {m ω₀ F : ℝ} (hm : 0 < m) (hω₀ : 0 < ω₀)
+    (hF : F ≠ 0) :
+    Tendsto (fun n : ℕ => |resonantResponse m ω₀ F (resonancePeak ω₀ n)|) atTop atTop := by
+  have hD : 0 < 2 * m * ω₀ := by positivity
+  have hpeak : ∀ n : ℕ, 0 < resonancePeak ω₀ n := by
+    intro n
+    unfold resonancePeak
+    apply div_pos _ hω₀
+    positivity
+  have heq : (fun n : ℕ => |resonantResponse m ω₀ F (resonancePeak ω₀ n)|) =
+      fun n : ℕ => (|F| / (2 * m * ω₀)) * resonancePeak ω₀ n := by
+    funext n
+    rw [resonantResponse_resonancePeak hω₀ m F n, abs_div, abs_mul, abs_of_pos hD,
+      abs_of_pos (hpeak n)]
+    ring
+  rw [heq]
+  exact (tendsto_resonancePeak hω₀).const_mul_atTop (div_pos (abs_pos.mpr hF) hD)
+
+/-! ## N. Damping leaves the branch -/
+
+/-- With nonzero damping `c` and nonzero force amplitude the resonant response does not solve
+`m x'' + c x' + k x = F cos (ω₀ t)`. -/
+lemma resonantResponse_not_solves_damped {m ω₀ k : ℝ} (hm : 0 < m) (hω₀ : 0 < ω₀)
+    (hk : k = m * ω₀ ^ 2) {c F : ℝ} (hc : c ≠ 0) (hF : F ≠ 0) :
+    ¬ ∀ t, m * deriv (deriv (resonantResponse m ω₀ F)) t + c * deriv (resonantResponse m ω₀ F) t +
+        k * resonantResponse m ω₀ F t = F * Real.cos (ω₀ * t) := by
+  intro h
+  have hsol : ∀ t, m * deriv (deriv (resonantResponse m ω₀ F)) t +
+      k * resonantResponse m ω₀ F t = F * Real.cos (ω₀ * t) :=
+    fun t => resonantResponse_solves hm hω₀ hk F t
+  have hcx : ∀ t, c * deriv (resonantResponse m ω₀ F) t = 0 := by
+    intro t
+    have h1 := h t
+    have h2 := hsol t
+    linarith
+  have hderiv : deriv (resonantResponse m ω₀ F) = resonantVelocity m ω₀ F :=
+    funext fun t => (hasDerivAt_resonantResponse m ω₀ F t).deriv
+  have hω' : ω₀ ≠ 0 := ne_of_gt hω₀
+  set t₀ : ℝ := Real.pi / 2 / ω₀ with ht₀
+  have hωt₀ : ω₀ * t₀ = Real.pi / 2 := by
+    rw [ht₀]
+    field_simp
+  have hx' : deriv (resonantResponse m ω₀ F) t₀ ≠ 0 := by
+    rw [hderiv]
+    unfold resonantVelocity
+    rw [hωt₀, Real.sin_pi_div_two, Real.cos_pi_div_two, mul_zero, add_zero, mul_one]
+    exact div_ne_zero hF (ne_of_gt (by positivity : (0 : ℝ) < 2 * m * ω₀))
+  have h0 := hcx t₀
+  rw [mul_eq_zero] at h0
+  exact hx' (h0.resolve_left hc)
 
 end PhyslibExt.Mechanics.OscillatorResponse
