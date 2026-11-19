@@ -221,6 +221,22 @@ example :
     have hpi := Real.pi_pos
     linarith
 
+/-- Envelope contact with a negative force amplitude: for `m = ω₀ = 1` and `F = -2` the response
+at the first envelope-touch time `t₀ = π / 2` is `-π / 2`, and its absolute value `π / 2` is the
+envelope `|F| |t₀| / (2 m ω₀)`. -/
+example :
+    resonantResponse 1 1 (-2) (resonanceEnvelopeTime 1 0) = -(Real.pi / 2) ∧
+      |resonantResponse 1 1 (-2) (resonanceEnvelopeTime 1 0)| =
+        |(-2 : ℝ)| * |resonanceEnvelopeTime 1 0| / (2 * 1 * 1) ∧
+      |resonantResponse 1 1 (-2) (resonanceEnvelopeTime 1 0)| = Real.pi / 2 := by
+  have hval : resonantResponse 1 1 (-2) (resonanceEnvelopeTime 1 0) = -(Real.pi / 2) := by
+    rw [resonantResponse_resonanceEnvelopeTime one_pos 1 (-2) 0]
+    simp only [resonanceEnvelopeTime]
+    push_cast
+    ring
+  refine ⟨hval, abs_resonantResponse_resonanceEnvelopeTime one_pos one_pos (-2) 0, ?_⟩
+  rw [hval, abs_neg, abs_of_pos (by positivity)]
+
 /-- Damped boundary: for `m = ω₀ = k = 1` and `F = 2` the resonant velocity at `t = π / 2` is `1`,
 so with damping `c = 1` the term `c x'` is not cancelled and the damped equation fails. -/
 example :

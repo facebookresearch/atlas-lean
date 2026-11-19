@@ -49,10 +49,11 @@ forced response among them, a larger class than the smooth one above.
 At the excluded undamped exact resonance, `c = 0` and forcing at the natural angular frequency
 `ω₀` with `k = m ω₀ ^ 2`, the steady-state formula has no meaning. There the secular response
 `x (t) = F t sin (ω₀ t) / (2 m ω₀)` is differentiated explicitly and solves
-`m x'' + k x = F cos (ω₀ t)` from rest at the origin. Its envelope is `|F| |t| / (2 m ω₀)`. It
-touches the envelope at the times `t_n = (2 π n + π / 2) / ω₀`, where `sin (ω₀ t_n) = 1`; these are
-not extrema of the response, whose velocity there is `F / (2 m ω₀)`. Along them the amplitude grows
-without bound when `F ≠ 0`. With any nonzero damping the same function is not a solution.
+`m x'' + k x = F cos (ω₀ t)` from rest at the origin. For `m, ω₀ > 0` its envelope is
+`|F| |t| / (2 m ω₀)`, and its absolute value meets the envelope at the times
+`t_n = (2 π n + π / 2) / ω₀`, where `sin (ω₀ t_n) = 1`. For `F ≠ 0` these times are not extrema of
+the response, whose velocity there is `F / (2 m ω₀) ≠ 0`, and along them the amplitude grows
+without bound. With any nonzero damping the same function is not a solution.
 
 Parameters, forcing and initial data are model inputs.
 
@@ -88,9 +89,10 @@ Parameters, forcing and initial data are model inputs.
   `resonantResponse_initial`: the derivatives of the secular response, which solves the undamped
   resonant equation from rest at the origin.
 - `abs_resonantResponse_le`, `resonantResponse_resonanceEnvelopeTime`,
-  `tendsto_resonanceEnvelopeTime`, `tendsto_abs_resonantResponse_resonanceEnvelopeTime`: the
-  envelope, the values at the times where the response touches it, and the unbounded amplitude
-  along those times.
+  `abs_resonantResponse_resonanceEnvelopeTime`: the envelope, the signed values at the
+  envelope-touch times, and the envelope attained there by the absolute value.
+- `tendsto_resonanceEnvelopeTime`, `tendsto_abs_resonantResponse_resonanceEnvelopeTime`: the
+  envelope-touch times and the amplitude along them tend to infinity.
 - `resonantResponse_not_solves_damped`: with nonzero damping the secular response is not a
   solution.
 
@@ -590,9 +592,10 @@ noncomputable def resonantResponse (m ω₀ F t : ℝ) : ℝ :=
 noncomputable def resonantVelocity (m ω₀ F t : ℝ) : ℝ :=
   F * (Real.sin (ω₀ * t) + ω₀ * t * Real.cos (ω₀ * t)) / (2 * m * ω₀)
 
-/-- The envelope-touch times `t_n = (2 π n + π / 2) / ω₀`, at which `sin (ω₀ t_n) = 1`, so the
-resonant response meets its envelope `|F| |t| / (2 m ω₀)` there. They are not extrema of the
-response: its velocity there is `F / (2 m ω₀)`. -/
+/-- The envelope-touch times `t_n = (2 π n + π / 2) / ω₀`, at which `sin (ω₀ t_n) = 1`. For
+`m, ω₀ > 0` the absolute value of the resonant response meets its envelope `|F| |t| / (2 m ω₀)`
+there (`abs_resonantResponse_resonanceEnvelopeTime`). For `F ≠ 0` they are not extrema of the
+response: its velocity there is `F / (2 m ω₀) ≠ 0`. -/
 noncomputable def resonanceEnvelopeTime (ω₀ : ℝ) (n : ℕ) : ℝ :=
   (2 * Real.pi * n + Real.pi / 2) / ω₀
 
@@ -711,8 +714,8 @@ lemma abs_resonantResponse_le {m ω₀ : ℝ} (hm : 0 < m) (hω₀ : 0 < ω₀) 
         mul_le_mul_of_nonneg_left h (by positivity)
     _ = |F| * |t| := mul_one _
 
-/-- At the envelope-touch times the resonant response equals `F t_n / (2 m ω₀)`, so its absolute
-value meets the envelope. -/
+/-- At the envelope-touch times the resonant response takes the signed value
+`F t_n / (2 m ω₀)`. -/
 lemma resonantResponse_resonanceEnvelopeTime {ω₀ : ℝ} (hω₀ : 0 < ω₀) (m F : ℝ) (n : ℕ) :
     resonantResponse m ω₀ F (resonanceEnvelopeTime ω₀ n) =
       F * resonanceEnvelopeTime ω₀ n / (2 * m * ω₀) := by
@@ -726,6 +729,16 @@ lemma resonantResponse_resonanceEnvelopeTime {ω₀ : ℝ} (hω₀ : 0 < ω₀) 
   unfold resonantResponse
   rw [harg, hsin]
   ring
+
+/-- Envelope contact: for `m, ω₀ > 0`, at the envelope-touch times the absolute value of the
+resonant response equals the envelope `|F| |t| / (2 m ω₀)` of `abs_resonantResponse_le`, so the
+envelope is attained there. -/
+lemma abs_resonantResponse_resonanceEnvelopeTime {m ω₀ : ℝ} (hm : 0 < m) (hω₀ : 0 < ω₀) (F : ℝ)
+    (n : ℕ) :
+    |resonantResponse m ω₀ F (resonanceEnvelopeTime ω₀ n)| =
+      |F| * |resonanceEnvelopeTime ω₀ n| / (2 * m * ω₀) := by
+  rw [resonantResponse_resonanceEnvelopeTime hω₀ m F n, abs_div, abs_mul,
+    abs_of_pos (by positivity : (0 : ℝ) < 2 * m * ω₀)]
 
 /-- The envelope-touch times tend to infinity. -/
 lemma tendsto_resonanceEnvelopeTime {ω₀ : ℝ} (hω₀ : 0 < ω₀) :
@@ -758,8 +771,7 @@ lemma tendsto_abs_resonantResponse_resonanceEnvelopeTime {m ω₀ F : ℝ} (hm :
   have heq : (fun n : ℕ => |resonantResponse m ω₀ F (resonanceEnvelopeTime ω₀ n)|) =
       fun n : ℕ => (|F| / (2 * m * ω₀)) * resonanceEnvelopeTime ω₀ n := by
     funext n
-    rw [resonantResponse_resonanceEnvelopeTime hω₀ m F n, abs_div, abs_mul, abs_of_pos hD,
-      abs_of_pos (htime n)]
+    rw [abs_resonantResponse_resonanceEnvelopeTime hm hω₀ F n, abs_of_pos (htime n)]
     ring
   rw [heq]
   exact (tendsto_resonanceEnvelopeTime hω₀).const_mul_atTop (div_pos (abs_pos.mpr hF) hD)
