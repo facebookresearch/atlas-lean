@@ -12,6 +12,19 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Monotone.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
+/-!
+Primary source: C. de Boor, "On calculating with B-splines",
+Journal of Approximation Theory 6 (1972), 50-62,
+doi:10.1016/0021-9045(72)90080-9, Section 1, recurrence (10).
+`B t i k` uses degree `k` where de Boor's `N_{i,k}` uses order `k`
+(degree `k-1`), so `B t i k = N_{i,k+1}` with knots `t_j = t j`;
+(10) is then the successor case of `B`. The half-open
+`t i ≤ x < t (i+1)` span is de Boor's right-continuity rule; a zero
+denominator gives `0` by Lean real division, the `0/0 = 0` rule at
+repeated knots. `B_partition_of_unity` sums `B t i k`, `i < m-k`,
+over `[t k, t (m-k))` for knots `t 0, …, t m`.
+-/
+
 @[expose] public section
 
 namespace Cslib.Algorithms.Lean.Geometry.BSpline
