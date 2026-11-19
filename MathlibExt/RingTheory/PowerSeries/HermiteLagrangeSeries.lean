@@ -20,7 +20,7 @@ import Mathlib.Tactic.Ring
 
 @[expose] public section
 
--- Author: @toskua, Avocado
+-- Author: @toskua, Meta Muse
 
 namespace MetaMathlibExt
 

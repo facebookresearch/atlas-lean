@@ -65,6 +65,7 @@ example : ∃ hc : ℝ, hc = 1 ∧
     have hthis := (hmin h hh).1
     rw [hhc1] at hthis
     have h32 : (1 : ℝ) + 1 ^ 2 / (2 * 1 * (1 : ℝ) ^ 2) = 3 / 2 := by norm_num
+    unfold EarthScience.rectangularSpecificEnergy at hthis
     linarith
 
 /-! ## B. Values above the minimum -/

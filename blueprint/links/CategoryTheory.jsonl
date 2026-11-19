@@ -1,0 +1,7 @@
+{"subject": [{"type": "generic", "uri": "../roadmap/CategoryTheory/README.md"}], "id": "af_352c74b89c489984df8accf0"}
+{"subject": [{"type": "generic", "uri": "../roadmap/CategoryTheory/monoidal-categories/README.md"}]}
+{"subject": [{"type": "generic", "uri": "../roadmap/CategoryTheory/monoidal-categories/nonempty-iso-of-tensor-iso-tensor-unit.md"}], "object": [{"location": {"declaration": "CategoryTheory.MonoidalCategory.nonempty_iso_of_tensor_iso_tensorUnit"}}]}
+{"subject": [{"type": "generic", "uri": "../roadmap/CategoryTheory/topos-theory/README.md"}]}
+{"subject": [{"type": "generic", "uri": "../roadmap/CategoryTheory/topos-theory/elementary-toposes/README.md"}], "extensions": {"org.autoform": {"navigation": "module"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/CategoryTheory/topos-theory/elementary-toposes/fundamental-topos-theory.md"}], "object": [{"location": {"declaration": "MathlibExt.CategoryTheory.FundamentalToposWanted.ToposTheory.fundamental_topos_theory"}}], "id": "af_308391f58b50b0a8c2aa29aa"}
+{"subject": [{"type": "generic", "uri": "../roadmap/CategoryTheory/topos-theory/elementary-toposes/is-topos.md"}], "object": [{"location": {"declaration": "MathlibExt.CategoryTheory.FundamentalToposWanted.ToposTheory.IsTopos"}}], "id": "af_224b09abe36a29b48c352d8f"}

@@ -78,13 +78,23 @@ example : satisfiesDispersionEquation 1 1 1 0 (propagationConstant 1 1 1 0) ∧
   dispersion_verification 1 1 1 0 (by norm_num) (by norm_num) (by norm_num) (by norm_num)
 
 /-- The real plane wave at the unit wavenumber is the real part of
-the corresponding phasor, at `E0 = 2`, `x = 1`, `t = 0`. -/
+the conjugate of the forward phasor, at `E0 = 2`, `x = 1`, `t = 0`. -/
 example : PhyslibExt.Electromagnetism.ElectrostaticsAndLinearWaves.planeWave
       2 (phaseConstant 1 1 1 0) 1 1 0 =
     (Complex.exp (Complex.I *
       ((phaseConstant 1 1 1 0 * 1 - 1 * 0 : ℝ) : ℂ)) * (2 : ℂ)).re :=
   planeWave_eq_re_phasor_at_zero_sigma 2 1 1 1 (by norm_num) (by norm_num)
     (by norm_num) 1 0
+
+/-- The real plane wave at the unit wavenumber is the real part of
+the forward phasor of the declared convention, at `E0 = 2`, `x = 1`,
+`t = 2`. -/
+example : PhyslibExt.Electromagnetism.ElectrostaticsAndLinearWaves.planeWave
+      2 (phaseConstant 1 1 1 0) 1 1 2 =
+    (Complex.exp (Complex.I * ((1 * 2 : ℝ) : ℂ)) *
+      Complex.exp (-propagationConstant 1 1 1 0 * ((1 : ℝ) : ℂ)) * (2 : ℂ)).re :=
+  planeWave_eq_re_forward_phasor_at_zero_sigma 2 1 1 1 (by norm_num) (by norm_num)
+    (by norm_num) 1 2
 
 /-! ## B. Positive conductivity with `epsilon = mu = omega = sigma = 1` -/
 
@@ -139,3 +149,4 @@ open PhyslibExt.Electromagnetism.ConductingPlaneWave
 #print axioms opposite_sign_equation_ne
 #print axioms abs_exp_neg_propagationConstant_mul
 #print axioms planeWave_eq_re_phasor_at_zero_sigma
+#print axioms planeWave_eq_re_forward_phasor_at_zero_sigma

@@ -76,6 +76,10 @@ positivity assumptions are needed.
 - `abs_exp_neg_propagationConstant_mul`: the modulus of
   `exp (-gamma * z)` at real depth `z` is the real decay
   `exp (-alpha * z)`.
+- `planeWave_eq_re_forward_phasor_at_zero_sigma`: at zero
+  conductivity the real cosine plane wave is the real part of the
+  forward phasor `exp (+i * omega * t) * exp (-gamma * x)` of the
+  declared convention.
 
 ## iii. Table of contents
 
@@ -439,9 +443,15 @@ lemma abs_exp_neg_propagationConstant_mul (epsilon mu omega sigma : ℝ)
     Complex.mul_re, Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im,
     Complex.I_re, Complex.I_im]
 
-/-- The real cosine plane wave is the real part of the corresponding
-lossless phasor at zero conductivity, with wavenumber given by the
-phase constant. -/
+/-- At zero conductivity, the real cosine plane wave with wavenumber
+the phase constant `beta` is the real part of
+`exp (i * (beta * x - omega * t)) * E0`. This is the complex conjugate
+of the forward phasor `exp (i * (omega * t - beta * x)) * E0` of the
+declared convention, that is the phasor of the opposite time
+convention; the two have the same real part because cosine is even,
+so this identity does not check the sign convention. The phasor of
+the declared convention is
+`planeWave_eq_re_forward_phasor_at_zero_sigma`. -/
 lemma planeWave_eq_re_phasor_at_zero_sigma (E0 epsilon mu omega : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega) (x t : ℝ) :
     PhyslibExt.Electromagnetism.ElectrostaticsAndLinearWaves.planeWave
@@ -455,6 +465,31 @@ lemma planeWave_eq_re_phasor_at_zero_sigma (E0 epsilon mu omega : ℝ)
   rw [harg]
   simp only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, mul_zero, sub_zero]
   rw [Complex.exp_ofReal_mul_I_re]
+  ring
+
+/-- At zero conductivity, the real cosine plane wave with wavenumber
+the phase constant is the real part of the forward phasor of the
+declared convention, `exp (+i * omega * t) * exp (-gamma * x) * E0`
+with `gamma` the propagation constant. -/
+lemma planeWave_eq_re_forward_phasor_at_zero_sigma (E0 epsilon mu omega : ℝ)
+    (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega) (x t : ℝ) :
+    PhyslibExt.Electromagnetism.ElectrostaticsAndLinearWaves.planeWave
+        E0 (phaseConstant epsilon mu omega 0) omega x t =
+      (Complex.exp (Complex.I * ((omega * t : ℝ) : ℂ)) *
+        Complex.exp (-propagationConstant epsilon mu omega 0 * (x : ℂ)) *
+          (E0 : ℂ)).re := by
+  unfold PhyslibExt.Electromagnetism.ElectrostaticsAndLinearWaves.planeWave
+  rw [← Complex.exp_add]
+  have harg : Complex.I * ((omega * t : ℝ) : ℂ) +
+      -propagationConstant epsilon mu omega 0 * (x : ℂ) =
+      ((omega * t - phaseConstant epsilon mu omega 0 * x : ℝ) : ℂ) * Complex.I := by
+    rw [propagationConstant_eq, attenuationConstant_zero_sigma epsilon mu omega hepsilon hmu
+      homega]
+    push_cast
+    ring
+  rw [harg]
+  simp only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, mul_zero, sub_zero]
+  rw [Complex.exp_ofReal_mul_I_re, ← Real.cos_neg, neg_sub]
   ring
 
 end PhyslibExt.Electromagnetism.ConductingPlaneWave
