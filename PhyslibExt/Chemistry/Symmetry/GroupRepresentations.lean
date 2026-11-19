@@ -14,8 +14,8 @@ public import Mathlib.LinearAlgebra.Matrix.DotProduct
 public import Mathlib.LinearAlgebra.UnitaryGroup
 public import Mathlib.RepresentationTheory.Character
 public import Mathlib.RingTheory.SimpleModule.Rank
+public import MathlibExt.LinearAlgebra.CrossProduct
 public import MathlibExt.RepresentationTheory.CharacterInnerProduct
-import MathlibExt.LinearAlgebra.CrossProduct
 
 /-!
 
@@ -746,5 +746,12 @@ lemma inversion_activity :
     inversion_vector_decomposition.2, inversion_quadratic_decomposition.1,
     inversion_quadratic_decomposition.2]
   decide
+
+@[deprecated (since := "2026-11-18")]
+alias mulVec_cross_mulVec := Matrix.mulVec_cross_mulVec
+
+@[deprecated (since := "2026-11-18")]
+alias mulVec_cross_mulVec_of_mem_orthogonalGroup :=
+  Matrix.mulVec_cross_mulVec_of_mem_orthogonalGroup
 
 end Chemistry.Symmetry
