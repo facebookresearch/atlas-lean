@@ -447,6 +447,44 @@ class Declarations(Vault):
         self.assertEqual(rows["new.md"]["extensions"], {"org.atlas-wiki": {"from": "docstring"}})
         self.assertNotIn("wanted.md", rows)
 
+    def test_a_held_declaration_keeps_its_page_unlinked_and_gets_no_other(self) -> None:
+        self.page("Algebra/README.md", "# Algebra\n\n- [Claim](claim.md)\n")
+        claim = self.page("Algebra/claim.md", "# Claim\n\nThe source's statement.\n")
+        held = {"declaration": "Ext.claim", "reason": "false", "issue": 1}
+        self.annotate([self.about("Algebra/claim.md", extensions={"org.atlas-wiki": {"held": held}})])
+        targets = [declaration("Ext.claim", "claim", "Claim", "A statement that is false as written."),
+                   declaration("Ext.new", "new", "New result", "A new statement.")]
+        report = sync.apply_declarations(targets, SimpleNamespace(declarations={"Ext.claim": None, "Ext.new": None}))
+        self.assertEqual(report["added"], ["Ext.new -> Algebra/new.md"])
+        self.assertEqual(report["held"], ["Ext.claim (Algebra/claim.md)"])
+        self.assertEqual(claim.read_text(), "# Claim\n\nThe source's statement.\n")
+        self.assertFalse((wiki.ROADMAP / "Algebra" / "claim-2.md").exists())
+        rows = {sync.subject_path(row).name: row for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
+        self.assertNotIn("object", rows["claim.md"])
+        self.assertEqual(rows["claim.md"]["extensions"], {"org.atlas-wiki": {"held": held}})
+
+    def test_a_held_marker_that_cannot_hold_its_declaration_back_is_reported(self) -> None:
+        self.page("Algebra/README.md", "# Algebra\n\n- [A](a.md)\n- [B](b.md)\n- [C](c.md)\n- [D](d.md)\n")
+        for name in "abcd":
+            self.page(f"Algebra/{name}.md", f"# {name.upper()}\n")
+        held = lambda value: {"org.atlas-wiki": {"held": value}}
+        self.annotate([
+            self.about("Algebra/a.md", extensions=held("Ext.a")),
+            self.about("Algebra/b.md", extensions=held({"declaration": ["Ext.b"]})),
+            self.about("Algebra/c.md", object=[{"location": {"declaration": "Ext.c"}}],
+                       extensions=held({"declaration": "Ext.c", "reason": "false"})),
+            self.about("Algebra/d.md", extensions=held({"declaration": "Ext.renamed", "reason": "false"})),
+        ])
+        report = sync.apply_declarations([declaration("Ext.c", "c", "C", "C.")],
+                                         SimpleNamespace(declarations={"Ext.c": None}))
+        self.assertEqual(report["held"], [])
+        self.assertEqual(report["held_problems"], [
+            "Algebra/a.md: its held marker names no declaration",
+            "Algebra/b.md: its held marker names no declaration",
+            "Algebra/c.md: it holds Ext.c back but is linked to Ext.c",
+            "Algebra/d.md: it holds Ext.renamed back, which the Lean no longer declares",
+        ])
+
     def test_a_new_page_never_takes_the_name_of_its_folder_page(self) -> None:
         self.page("Algebra/groups/README.md", "# Groups\n")
         self.page("Algebra/groups/old.md", "# Old\n")
@@ -1035,7 +1073,8 @@ class Declarations(Vault):
                 self.assertEqual((report["appended"], report["unlisted"]), (["Algebra/groups/sylow.md"], []))
 
     def test_a_page_listed_nowhere_fails_the_run(self) -> None:
-        report = {kind: [] for kind in ("added", "folders", "gone", "changed", "unindexed", "parts", "replaced", "appended")}
+        report = {kind: [] for kind in ("added", "folders", "gone", "changed", "unindexed", "parts", "replaced", "appended",
+                                         "held", "held_problems")}
         report["unlisted"] = ["Algebra/groups/sylow.md"]
         lean = SimpleNamespace(index_project=lambda *args, **kwargs: SimpleNamespace(declarations={}))
         with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean), "autoform_cli.lean": lean}), \

@@ -18,9 +18,12 @@ order, and marks it as taken from the docstring. A module with no pages yet gets
 the folders and folder pages generate_wiki lays out where scripts/taxonomy.json
 places it, and its topmost new folder joins its parent's list. A deprecated
 declaration gets no page: upstream is retiring it, and the wiki may have dropped
-its page. It lists pages whose declaration is gone and docstrings that changed
-since the last run (scripts/wiki-sync.json keeps their digests), and changes no
-article that exists. Its first run records the digests only. The source-derived
+its page. Nor does a held declaration (see held_name): its page stays unlinked
+until the Lean is fixed, and the run lists it as held, and a marker it cannot
+use as an error. It lists pages whose
+declaration is gone and docstrings that changed since the last run
+(scripts/wiki-sync.json keeps their digests), and changes no article that
+exists. Its first run records the digests only. The source-derived
 area catalog and coverage summary are refreshed with the same source snapshot.
 A folder page is edited within only when it is simple (see simple_page): a page
 with no listed neighbour then ends the folder page's own list, ahead of "Related
@@ -441,6 +444,32 @@ def declaration_key(target) -> str | None:
     """How the sync finds a declaration's page: its Lean name. A declaration the Lean index lacks has none, and
     gets no page (generate_wiki leaves it out and the sync reports it)."""
     return target.lean
+
+
+def held_name(annotation: dict) -> str | None:
+    """The declaration an annotation holds back, from `"held"` under OWN: its page states the mathematics the
+    declaration fails to (it is false, vacuous or mis-specified), or the declaration is private, so the page carries no
+    Lean link until the Lean is fixed and gets no second page from the declaration's docstring (see docs/BLUEPRINT.md)."""
+    own = annotation.get("extensions", {}).get(OWN)
+    held = own.get("held") if isinstance(own, dict) else None
+    name = held.get("declaration") if isinstance(held, dict) else None
+    return name if isinstance(name, str) and name else None
+
+
+def held_problem(annotation: dict, key: str | None, index) -> str | None:
+    """What is wrong with an annotation's held marker, if it has one: it names no declaration, the row is linked
+    as well, or the Lean no longer declares the declaration it names (renamed by its fix, say)."""
+    own = annotation.get("extensions", {}).get(OWN)
+    if not isinstance(own, dict) or "held" not in own:
+        return None
+    name = held_name(annotation)
+    if name is None:
+        return "its held marker names no declaration"
+    if key:
+        return f"it holds {name} back but is linked to {key}"
+    if not declared(name, index):
+        return f"it holds {name} back, which the Lean no longer declares"
+    return None
 
 
 def annotation_key(annotation: dict, index=None) -> str | None:
@@ -1083,9 +1112,15 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     files = read_annotations()
     keyed = [(annotation_key(a, index), a) for rows in files.values() for a in rows]
     pages = {key: subject_path(a) for key, a in keyed if key}
+    problems = {id(a): problem for key, a in keyed if (problem := held_problem(a, key, index))}
+    held = {name: subject_path(a) for _, a in keyed if (name := held_name(a)) and id(a) not in problems}
+    held_problems = sorted(f"{subject_path(a).relative_to(wiki.ROADMAP)}: {problems[id(a)]}" for _, a in keyed
+                           if id(a) in problems)
     current = {declaration_key(target): target for target in targets if declaration_key(target)}
     report: dict[str, list[str]] = {"added": [], "folders": [], "gone": [], "changed": [], "unindexed": [], "parts": [],
-                                  "replaced": [], "appended": [], "unlisted": []}
+                                  "replaced": [], "appended": [], "unlisted": [],
+                                  "held": sorted(f"{name} ({path.relative_to(wiki.ROADMAP)})" for name, path in held.items()),
+                                  "held_problems": held_problems}
     # A declaration the index lacks, and a page an earlier sync wrote for one, wait for an editor: no page is ever
     # keyed by a name rebuilt from the source.
     report["unindexed"] = sorted(
@@ -1101,7 +1136,7 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
         in_source_order[target.module].append(target)
     created: dict[Path, str] = {}
     for key, target in sorted(current.items()):
-        if key in pages or deprecated(target):
+        if key in pages or key in held or deprecated(target):
             continue
         # Beside the module's pages: in the folder that holds most of them, or, when that folder is split into parts,
         # as a module of many pages is, in the last of its parts that holds one, so that a module whose pages share a
@@ -1245,7 +1280,9 @@ def run_declarations() -> int:
                          "part's own entries, to check"),
                         ("appended", "New pages and folders listed at the end of a page that is not simple, to place"),
                         ("unlisted", "New pages and folders listed nowhere, as their page may hold raw HTML or code, the "
-                         "site would show it as typed, or their item would not show where placed")):
+                         "site would show it as typed, or their item would not show where placed"),
+                        ("held", "Declarations held back, whose pages stay unlinked until the Lean is fixed"),
+                        ("held_problems", "Held markers to fix")):
         print(f"{title}: {len(report[kind])}")
         for row in report[kind]:
             print(f"  {row}")
@@ -1253,7 +1290,10 @@ def run_declarations() -> int:
         print(f"error: {row} is listed on no folder page: that page has raw HTML or a code fence, which could take in "
               "its item, the site would show the page as typed, with no link, or the item would not show where it was "
               "placed, so the sync left the page as it is; list it by hand", file=sys.stderr)
-    return 1 if report["unlisted"] else 0
+    for row in report["held_problems"]:
+        print(f"error: {row}; a held page needs a marker naming the declaration it holds back, and no Lean link",
+              file=sys.stderr)
+    return 1 if report["unlisted"] or report["held_problems"] else 0
 
 
 def main(argv: list[str]) -> int:
