@@ -73,7 +73,7 @@ noncomputable def scoreS1 [DecidableEq ι] (Q : Matrix ι ι ℝ) (f g : ι → 
 noncomputable def scoreS2 (Q : Matrix ι ι ℝ) (lam : ℝ) (f g : ι → ℝ) : ℝ :=
   -∑ i, (g i - f i) ^ 2 / (Q i i + lam)
 
-private theorem mulVec_dotProduct {κ : Type*} [Fintype κ] (A : Matrix ι κ ℝ) (v : κ → ℝ)
+theorem mulVec_dotProduct {κ : Type*} [Fintype κ] (A : Matrix ι κ ℝ) (v : κ → ℝ)
     (u : ι → ℝ) : (A *ᵥ v) ⬝ᵥ u = v ⬝ᵥ (Aᵀ *ᵥ u) := by
   rw [dotProduct_comm, dotProduct_mulVec, ← mulVec_transpose, dotProduct_comm]
 
@@ -141,7 +141,7 @@ private theorem transpose_inv_of_posDef [DecidableEq ι] {Q : Matrix ι ι ℝ} 
 
 /-- The Pythagorean decomposition behind GLS: for symmetric `W = Q⁻¹` and a solution `ℓ̂` of
 the normal equations, `S1(B ℓ) = S1(B ℓ̂) - ½ (B (ℓ - ℓ̂))ᵀ Q⁻¹ (B (ℓ - ℓ̂))`. -/
-private theorem scoreS1_eq_sub [DecidableEq ι] [Fintype E] {Q : Matrix ι ι ℝ}
+theorem scoreS1_eq_sub [DecidableEq ι] [Fintype E] {Q : Matrix ι ι ℝ}
     (hW : (Q⁻¹)ᵀ = Q⁻¹) (B : Matrix ι E ℝ) (f : ι → ℝ) {lhat : E → ℝ}
     (hnorm : (Bᵀ * Q⁻¹ * B) *ᵥ lhat = (Bᵀ * Q⁻¹) *ᵥ f) (l : E → ℝ) :
     scoreS1 Q f (B *ᵥ l) = scoreS1 Q f (B *ᵥ lhat) -
