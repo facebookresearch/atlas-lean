@@ -24,9 +24,11 @@ import Mathlib.Tactic.Ring
   planar projection loses it;
 * a 3-4-5 triangle truss on a pin and a roller: a verified injective equilibrium matrix and the
   unique balance of the load `(8, -12)` at its apex;
-* a two-bar collinear chain pinned at both ends (`m + r = 2 j`): a state of self-stress, no
-  balance for a transverse load, and a one-parameter family for an axial load; the same chain on a
-  pin and a roller (`m + r < 2 j`): injective, yet the transverse load has no balance.
+* a two-bar collinear chain pinned at both ends (`m + r = 2 j`): a state of self-stress, hence a
+  one-parameter family of balances for an axial load, and a transverse mechanism of the middle
+  joint, hence no balance for a transverse load; the same chain on a pin and a roller
+  (`m + r < 2 j`): injective (no self-stress), yet the same mechanism leaves the transverse load
+  without balance.
 -/
 
 @[expose] public section
@@ -265,7 +267,7 @@ example :
 example (e : Fin 3) : triangleJoints (triangleTail e) ≠ triangleJoints (triangleHead e) :=
   endpoints_ne_of_injective triangle_injective.2 e
 
-/-! ## E. A collinear mechanism -/
+/-! ## E. A collinear chain: self-stress and mechanism -/
 
 /-- Joints of a two-bar collinear chain: `(0, 0)`, `(1, 0)`, `(2, 0)`. -/
 def chainJoints : Fin 3 → (Fin 2 → ℝ) :=

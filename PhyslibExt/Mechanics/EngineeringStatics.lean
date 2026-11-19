@@ -63,9 +63,14 @@ the balance is exact; substituting the reference geometry needs small displaceme
 (`Matrix.exists_unique_mulVec_eq` after renumbering the equations). In general a load has a balance
 exactly when the equilibrium matrix and the augmented matrix `(A | f)` have equal rank
 (`MetaMathlibExt.rouche_capelli`). Injectivity alone (full column rank) gives at most one balance,
-not one for every load, and it rules out members with coincident endpoints, whose unit column is
-zero. The count `m + r = 2 j` alone is not enough: a collinear chain pinned at both ends has a state
-of self-stress, so a transverse load has no balance while an axial load has a one-parameter family.
+not one for every load, and it rules out members with coincident endpoints: their unit column is
+zero, so a unit force in such a member would balance zero loads, a spurious state of self-stress.
+The count `m + r = 2 j` alone is not enough. A collinear chain pinned at both ends has a state of
+self-stress (member forces and reactions that balance zero loads), so the balance of an axial load
+at the middle joint is not unique but a one-parameter family. Its square equilibrium matrix is then
+not surjective either: a transverse load at the middle joint has no balance, because neither member
+has a transverse component there; that joint can move transversally without stretching either member
+to first order, an infinitesimal mechanism.
 
 Non-goals: equilibrium of a general constrained rigid body, distributed loads, the central axis of
 a wrench, and any empirical adequacy or system safety claim.
@@ -338,7 +343,8 @@ lemma jointBalance_unique_of_injective {J M R : Type*} [Fintype J] [DecidableEq 
 
 /-- **Nonzero member lengths.** An injective equilibrium matrix has noncoincident endpoints for
 every member, the two-force-member domain of `memberLength_pos_of_ne`: coincident endpoints give
-a zero unit column (Lean's `x / 0 = 0`), a spurious mechanism. -/
+a zero unit column (Lean's `x / 0 = 0`), so a unit force in that member balances zero loads, a
+spurious state of self-stress. -/
 lemma endpoints_ne_of_injective {J M R : Type*} [DecidableEq J] [Fintype M] [Fintype R]
     {r : J → (Fin 2 → ℝ)} {a b : M → J} {sj : R → J} {sd : R → (Fin 2 → ℝ)}
     (hinj : Function.Injective (equilibriumMatrix r a b sj sd).mulVec) (e : M) :
