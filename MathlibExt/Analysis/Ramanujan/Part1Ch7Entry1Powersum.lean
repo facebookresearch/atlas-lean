@@ -450,8 +450,7 @@ theorem ch7Entry1_sum_int_eq_powerSum (r : ℂ) (n : ℕ) :
   · intro k hk
     norm_cast
 
-/-- `∑ k ∈ Finset.Icc 1 N, f k = ∑ j ∈ Finset.range N, f (j + 1)`. -/
-theorem ch7Entry1_sum_Icc_eq_range {M : Type*} [AddCommMonoid M]
+private theorem ch7Entry1_sum_Icc_eq_range {M : Type*} [AddCommMonoid M]
     (N : ℕ) (f : ℕ → M) :
     (∑ k ∈ Finset.Icc 1 N, f k) = ∑ j ∈ Finset.range N, f (j + 1) := by
   rw [eq_comm]

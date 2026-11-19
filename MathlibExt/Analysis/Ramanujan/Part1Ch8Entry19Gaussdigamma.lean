@@ -602,6 +602,25 @@ private theorem ch8e19_eulerMaclaurin_raw
   rw [hlast] at hem
   exact hem
 
+private theorem ch8e19_sum_Icc_eq_range {M : Type*} [AddCommMonoid M]
+    (N : ℕ) (f : ℕ → M) :
+    (∑ k ∈ Finset.Icc 1 N, f k) = ∑ j ∈ Finset.range N, f (j + 1) := by
+  rw [eq_comm]
+  apply Finset.sum_bij (fun j _ => j + 1)
+  · intro j hj
+    simp only [Finset.mem_range, Finset.mem_Icc] at hj ⊢
+    omega
+  · intro j₁ hj₁ j₂ hj₂ h
+    omega
+  · intro k hk
+    simp only [Finset.mem_Icc] at hk
+    refine ⟨k - 1, ?_, ?_⟩
+    · simp only [Finset.mem_range]
+      omega
+    · omega
+  · intro j hj
+    rfl
+
 private theorem ch8e19_exact_expansion
     (r : ℂ) (N n : ℕ) (hr : r ≠ -1) (hN : 0 < N) (hu : r.re < 2 * N)
     (hn : 1 < n) :
@@ -618,7 +637,7 @@ private theorem ch8e19_exact_expansion
             (chapter7NatCpow n (r - (2 * k : ℕ) + 1) - 1)) =
       (∑ j ∈ Finset.range N, chapter7Entry1Term r n j) -
         ∑ j ∈ Finset.range N, chapter7Entry1Term r 1 j := by
-    rw [ch7Entry1_sum_Icc_eq_range]
+    rw [ch8e19_sum_Icc_eq_range]
     rw [← Finset.sum_sub_distrib]
     apply Finset.sum_congr rfl
     intro j hj
