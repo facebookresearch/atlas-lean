@@ -34,7 +34,9 @@ public def Mem {α : Type u} (x : α) : BinaryTree α → Prop
   | .nil => False
   | .node key left right => Mem x left ∨ x = key ∨ Mem x right
 
-public instance {α : Type u} : Membership α (BinaryTree α) :=
+-- Preserve the instance name when consumers add a module prefix.
+public instance instMembershipBinaryTree_cSLibExt {α : Type u} :
+    Membership α (BinaryTree α) :=
   ⟨fun tree x => Mem x tree⟩
 
 @[simp] private theorem mem_nil {α : Type u} {x : α} :

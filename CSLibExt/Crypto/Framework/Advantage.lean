@@ -38,12 +38,20 @@ Reusable lemmas:
 * `advantage_le_winProb_of_eq_of_not_bad` (the **difference lemma**, "identical until bad":
   Shoup, Lemma 1; Boneh and Shoup, Theorem 4.7);
 * `advantage_eq_dist`, `advantage_map_le_dist` (statistical distance bounds every
-  distinguishing advantage; Boneh and Shoup, Theorem 3.13).
+  distinguishing advantage; Boneh and Shoup, Theorem 3.13);
+* `winProb_bind_map_mono` (monotonicity of a two-stage experiment `a ← μ; b ← ν; f a b` in its
+  outcome map, on the support of `μ`): a reduction that runs the adversary on the same key and the
+  same coins, and wins whenever the adversary does, has at least its success probability.
 
 The existing games in `CSLibExt/Crypto` (`Cslib.Crypto.PublicKey.ElGamal.eavAdvantage`,
 `Cslib.Crypto.PRF.prfAdvantage`, `Cslib.Crypto.Signatures.Lamport.forgeGame`) are literally of
 these shapes (`|(G true).toReal - 1/2|`, `|(G₀ true).toReal - (G₁ true).toReal|`,
-`(G true).toReal`); migrating them onto `winProb`/`advantage` is a Wave-2 step.
+`(G true).toReal`). They keep their own definitions. For adversaries with uniform coins,
+`ElGamal.eavGame`, `Lamport.forgeGame` and the PRF file's MAC game equal generic games of
+`CSLibExt.Crypto.Framework.Games`, whose advantages use `winProb`, `advantage` and
+`guessAdvantage`, and so does the PRF file's CPA game for adversaries making at most `q` queries
+(`CSLibExt.Crypto.PublicKey.ElGamalCPA`, `CSLibExt.Crypto.Framework.Migration`). The PRF
+distinguishing game behind `prfAdvantage` has no generic counterpart.
 
 ## References
 
@@ -264,5 +272,21 @@ theorem advantage_map_le_dist {Ω : Type*} [Fintype Ω] (p q : PMF Ω) (D : Ω �
     advantage (p.map D) (q.map D) ≤ dist p q := by
   rw [advantage_eq_dist]
   exact Cslib.Probability.PMF.dist_map_le p q D
+
+/-- **Monotonicity of a two-stage experiment**: if, for every `a` in the support of `μ` and all
+`b`, the outcome `f a b` implies the outcome `g a b`, then `Pr[f] ≤ Pr[g]`. -/
+theorem winProb_bind_map_mono {α β : Type*} (μ : PMF α) (ν : PMF β) {f g : α → β → Bool}
+    (h : ∀ a ∈ μ.support, ∀ b, f a b = true → g a b = true) :
+    winProb (μ.bind fun a => ν.map (f a)) ≤ winProb (μ.bind fun a => ν.map (g a)) := by
+  rw [winProb, winProb]
+  refine ENNReal.toReal_mono (PMF.apply_ne_top _ _) ?_
+  simp only [PMF.bind_apply, PMF.map_apply]
+  refine ENNReal.tsum_le_tsum fun a => ?_
+  by_cases ha : a ∈ μ.support
+  · gcongr with b
+    by_cases hf : f a b = true
+    · simp [hf, h a ha b hf]
+    · simp [hf]
+  · simp [(PMF.mem_support_iff _ _).not.mp ha |> not_not.mp]
 
 end Cslib.Crypto.Framework

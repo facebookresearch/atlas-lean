@@ -23,14 +23,20 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.AnnulusTheoremDimFour` — annulus_theorem_dim_four (manifest `manifests/problems/annulus_theorem_dim_four.toml`, rev 1, submitter Kim Morrison, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.AnnulusTheoremDimFour` —
+annulus_theorem_dim_four (manifest `manifests/problems/annulus_theorem_dim_four.toml`, rev 1,
+submitter Kim Morrison, status active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Topology.AnnulusTheoremDimFourWanted` namespace. The shared annulus infrastructure is imported from `WantedExt.Topology.AnnulusShared` instead of being copied here. Mathematical
-statements are unchanged. Source: F. Quinn, *Ends of maps III: dimensions 4 and 5*, J. Differential Geom. 17 (1982), building on M. H. Freedman, *The topology of four-dimensional manifolds*, J. Differential Geom. 17 (1982).
+and placed the declarations in the `MathlibExt.Topology.AnnulusTheoremDimFourWanted` namespace. The
+shared annulus infrastructure is imported from `WantedExt.Topology.AnnulusShared` instead of being
+copied here. Mathematical
+statements are unchanged. Source: F. Quinn, *Ends of maps III: dimensions 4 and 5*, J. Differential
+Geom. 17 (1982), building on M. H. Freedman, *The topology of four-dimensional manifolds*, J.
+Differential Geom. 17 (1982).
 -/
 module
 
@@ -55,7 +61,8 @@ in `ℝ⁴` is homeomorphic to `S³ × [0,1]`. This four-dimensional case of the
 annulus theorem is of an entirely different difficulty from the `n ≥ 5` case: it
 was settled by Quinn (1982), building on Freedman's topology of 4-manifolds.
 
-See `AnnulusShared` (`WantedExt.Topology.AnnulusShared`) for the shared definitions (`FlatSphere`, `inside`,
+See `AnnulusShared` (`WantedExt.Topology.AnnulusShared`) for the shared definitions (`FlatSphere`,
+`inside`,
 `regionBetween`, local flatness). The `n ≥ 5` case (Kirby) is a separate eval
 problem, `annulus_theorem_high_dim`.
 -/
@@ -65,7 +72,9 @@ Let `f` be a locally flat embedded `3`-sphere in `ℝ⁴` and `g` a second one n
 strictly inside `f`: the two images are disjoint and `g`'s image lies in the
 inside of `f`. Then the closed region between them is homeomorphic to the product
 `S³ × [0,1]`. -/
-/-- Source: F. Quinn, *Ends of maps III: dimensions 4 and 5*, J. Differential Geom. 17 (1982), building on M. H. Freedman, *The topology of four-dimensional manifolds*, J. Differential Geom. 17 (1982). Via leanprover/lean-eval@38361be, problem `annulus_theorem_dim_four`. -/
+/-- Source: F. Quinn, *Ends of maps III: dimensions 4 and 5*, J. Differential Geom. 17 (1982),
+building on M. H. Freedman, *The topology of four-dimensional manifolds*, J. Differential Geom. 17
+(1982). Via leanprover/lean-eval@38361be, problem `annulus_theorem_dim_four`. -/
 public theorem_wanted annulus_theorem_dim_four
     (f g : FlatSphere 4)
     (hdisj : Disjoint (Set.range f.toFun) (Set.range g.toFun))

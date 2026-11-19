@@ -80,17 +80,34 @@ example (x : ℝ) (hx : x ∈ Ioo (0 : ℝ) 1) :
   simp only [kimuraSlope, show (5 : ℝ) ≠ 0 by norm_num, ↓reduceIte]
   ring
 
+/-- The explicit current, restated: for `σ ≠ 0` it is `θ σ / (1 - e^{-2σ})`. -/
+example (θ : ℝ) {σ : ℝ} (hσ : σ ≠ 0) {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
+    σ * (x * (1 - x) * prfDensity θ σ x) -
+      deriv (fun y => y * (1 - y) * prfDensity θ σ y) x / 2 = θ * σ / (1 - exp (-2 * σ)) :=
+  current_prfDensity_of_ne_zero θ hσ hx
+
 /-- The ODE characterization pins down the neutral density: a density whose weighted density
 is the line
-`F(x) = θ (1 - x)` is `θ / x`. -/
-example (θ : ℝ) (hθ : θ ≠ 0) (φ : ℝ → ℝ) (hφ : ∀ x ∈ Ioo (0 : ℝ) 1, θ * (1 - x) = x * (1 - x) * φ x)
+`F(x) = θ (1 - x)` is `θ / x`. This holds for every `θ`, including `θ = 0`. -/
+example (θ : ℝ) (φ : ℝ → ℝ) (hφ : ∀ x ∈ Ioo (0 : ℝ) 1, θ * (1 - x) = x * (1 - x) * φ x)
     (x : ℝ) (hx : x ∈ Ioo (0 : ℝ) 1) : φ x = θ / x := by
   have hd : ∀ y, HasDerivAt (fun y : ℝ => θ * (1 - y)) (-θ) y := fun y => by
     simpa using ((hasDerivAt_id' y).const_sub 1).const_mul θ
   have hD : deriv (fun y : ℝ => θ * (1 - y)) = fun _ => -θ := funext fun y => (hd y).deriv
-  rw [eq_prfDensity_of_forward (σ := 0) hθ hφ (by fun_prop)
+  rw [eq_prfDensity_of_forward (θ := θ) (σ := 0) hφ (by fun_prop)
     (fun y _ => (hd y).differentiableAt.differentiableWithinAt)
     (by rw [hD]; exact differentiableOn_const _) (fun y _ => by simp [hD]) (by simp) (by simp)
     x hx, prfDensity_zero θ hx.2.ne]
+
+/-- At `θ = 0` the characterization says the only such density is `0`: applied to the zero
+weighted density it returns `φ = prfDensity 0 σ = 0` on `(0, 1)`. -/
+example (σ : ℝ) (φ : ℝ → ℝ) (hφ : ∀ x ∈ Ioo (0 : ℝ) 1, (0 : ℝ) = x * (1 - x) * φ x)
+    (x : ℝ) (hx : x ∈ Ioo (0 : ℝ) 1) : φ x = 0 := by
+  have hder : deriv (fun _ : ℝ => (0 : ℝ)) = fun _ => 0 := funext fun x => deriv_const x (0 : ℝ)
+  have h := eq_prfDensity_of_forward (θ := 0) (σ := σ) (F := fun _ => 0) hφ
+    continuousOn_const (by fun_prop) (by rw [hder]; fun_prop) (fun y _ => by simp [hder])
+    rfl rfl x hx
+  rw [h]
+  simp [prfDensity]
 
 end MathlibExtTest.Biology.PopulationGenetics.Diffusion.PoissonRandomField

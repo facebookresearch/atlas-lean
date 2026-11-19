@@ -23,13 +23,16 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Combinatorics.AlternatingSignMatrix` — alternating_sign_matrix_count (manifest `manifests/problems/alternating_sign_matrix_count.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Combinatorics.AlternatingSignMatrix` —
+alternating_sign_matrix_count (manifest `manifests/problems/alternating_sign_matrix_count.toml`, rev
+1, submitter Kim Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Combinatorics.AlternatingSignMatrixWanted` namespace. Mathematical
+and placed the declarations in the `MathlibExt.Combinatorics.AlternatingSignMatrixWanted` namespace.
+Mathematical
 statements are unchanged. Source: D. Zeilberger (1996); G. Kuperberg (1996). Knill, §168.
 -/
 module
@@ -86,7 +89,8 @@ def robbinsProduct (n : ℕ) : ℚ :=
 
 /- **Alternating sign matrix theorem.** The number of `n × n` ASMs equals the
 Robbins product. -/
-/-- Source: D. Zeilberger (1996); G. Kuperberg (1996). Knill, §168. Via leanprover/lean-eval@38361be, problem `alternating_sign_matrix_count`. -/
+/-- Source: D. Zeilberger (1996); G. Kuperberg (1996). Knill, §168. Via
+leanprover/lean-eval@38361be, problem `alternating_sign_matrix_count`. -/
 public theorem_wanted alternating_sign_matrix_count (n : ℕ) :
     (Nat.card (ASMatrix n) : ℚ) = robbinsProduct n
 

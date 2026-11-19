@@ -163,7 +163,7 @@ needed. These functions normalize subgroup integrals; they are not sections
 of the quotient map. -/
 theorem exists_hasCompactSupport_integral_subgroup_translate_eq_one_of_subset_mul
     {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
-    [LocallyCompactSpace G] [SecondCountableTopology G] [MeasurableSpace G]
+    [LocallyCompactSpace G] [MeasurableSpace G]
     [BorelSpace G] (T : Subgroup G) (hT : IsClosed (T : Set G))
     [MeasurableSpace T] [BorelSpace T] (τ : Measure T) [τ.IsHaarMeasure]
     [τ.IsMulRightInvariant] {E C : Set G} (hC : IsCompact C)

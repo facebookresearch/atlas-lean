@@ -120,6 +120,7 @@ private lemma sum_kernel_row_le (c : Matrix ι ι R) (P : R)
 
 set_option linter.unusedDecidableInType false in
 set_option linter.unusedSectionVars false in
+omit [DecidableEq ι] in
 /-- A kernel vanishing on pairs with no common endpoint has weighted quadratic sum at most
 `4 * P * totalWeight * m`. Neither nonnegativity nor symmetry of the kernel is required;
 diagonal weights are permitted, and no separate nonnegativity assumption on `P` is needed. -/

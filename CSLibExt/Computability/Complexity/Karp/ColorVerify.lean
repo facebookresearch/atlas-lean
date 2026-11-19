@@ -46,16 +46,21 @@ open Cslib.Complexity.SatVerifier (Sym)
 
 /-! ### The verifier as a pure function -/
 
-/-- The color code of vertex `i`: witness bits `2 i` and `2 i + 1` (`00`, `01`, `10` are the
-colors `0`, `1`, `2`; `11` is invalid). -/
+/-- **Color code of a vertex in a witness.** The color code of vertex $i$ in a bit string $w$ is
+the pair of bits at positions $2i$ and $2i + 1$ of $w$ (counting from $0$), where a position past
+the end of $w$ reads as $0$. The codes $00$, $01$, $10$ stand for the colors $0$, $1$, $2$; $11$
+is invalid. -/
 def col (w : List Bool) (i : ℕ) : Bool × Bool := (w.getD (2 * i) false, w.getD (2 * i + 1) false)
 
-/-- A color code is valid: not `11`. -/
+/-- **Valid color code.** A color code, a pair of bits $(c_1, c_2)$, is valid when it is not
+$11$, that is, when $c_1$ and $c_2$ are not both $1$. -/
 def okCol (c : Bool × Bool) : Bool := !(c.1 && c.2)
 
-/-- The verifier: `x` decodes to `(n, es)`, every edge endpoint is below `n`, `w` has at least
-`2 n` bits, every vertex `i < n` has a valid color, and the two ends of every edge `(u, v)` with
-`u ≠ v` have different colors. -/
+/-- **The 3-COLOR verifier.** The verifier accepts an input $x$ and a witness $w$ (bit strings)
+iff $x$ decodes to a number $n$ and an edge list $E$, every endpoint of an edge in $E$ is less
+than $n$, $w$ has at least $2n$ bits, every vertex $i < n$ has a valid color code in $w$ (bits
+$2i$ and $2i + 1$, not $11$), and the two ends of every edge $(u, v) \in E$ with $u \ne v$ have
+different color codes. -/
 def colCheck (x w : List Bool) : Bool :=
   match decodeE x with
   | none => false
@@ -63,7 +68,12 @@ def colCheck (x w : List Bool) : Bool :=
       decide (2 * n ≤ w.length) && (List.range n).all (fun i => okCol (col w i)) &&
       es.all fun e => e.1 == e.2 || col w e.1 != col w e.2
 
-/-- The verifier's conditions, spelled out. -/
+/-- **Acceptance condition of the 3-COLOR verifier.** For all bit strings $x$ and $w$, the verifier
+accepts $(x, w)$ iff there are a natural number $n$ and a list $E$ of pairs of natural numbers
+such that $x$ is the encoding of the graph with $n$ vertices and edge list $E$, both entries of
+every pair in $E$ are less than $n$, $w$ has at least $2n$ bits, the color code of every vertex
+$i < n$ in $w$ is valid, and for every $(u, v) \in E$ with $u \ne v$ the color codes of $u$ and
+$v$ in $w$ differ. -/
 theorem colCheck_iff (x w : List Bool) : colCheck x w = true ↔
     ∃ n es, encodeE n es = x ∧ (∀ e ∈ es, e.1 < n ∧ e.2 < n) ∧ 2 * n ≤ w.length ∧
       (∀ i < n, okCol (col w i) = true) ∧ ∀ e ∈ es, e.1 ≠ e.2 → col w e.1 ≠ col w e.2 := by
@@ -85,49 +95,65 @@ theorem colCheck_iff (x w : List Bool) : colCheck x w = true ↔
 
 /-! ### Bridge to `SimpleGraph.Colorable` -/
 
-/-- The code of a color: `0 ↦ 00`, `1 ↦ 01`, `2 ↦ 10`. -/
+/-- **Two-bit code of a color.** The code of a color $c \in \{0, 1, 2\}$ is the pair of bits whose
+first bit is $1$ iff $c = 2$ and whose second bit is $1$ iff $c = 1$: $0 \mapsto 00$,
+$1 \mapsto 01$ and $2 \mapsto 10$. -/
 def code (c : Fin 3) : Bool × Bool := (decide (c = 2), decide (c = 1))
 
-/-- The color of a code; the invalid code `11` reads as `0`. -/
+/-- **Decoding a color code.** The color in $\{0, 1, 2\}$ of a pair of bits $(a, b)$, writing $0$
+for false and $1$ for true: $(0, 1)$ decodes to $1$, $(1, 0)$ decodes to $2$, and both $(0, 0)$
+and the invalid code $(1, 1)$ decode to $0$. -/
 def uncode : Bool × Bool → Fin 3
   | (false, true) => 1
   | (true, false) => 2
   | _ => 0
 
-/-- `uncode` inverts `code`. -/
+/-- **Decoding a color code recovers the color.** For every color $c \in \{0, 1, 2\}$, decoding
+the two-bit code of $c$ (where $0 \mapsto 00$, $1 \mapsto 01$, $2 \mapsto 10$) gives back $c$. -/
 theorem uncode_code (c : Fin 3) : uncode (code c) = c := by
   fin_cases c <;> rfl
 
-/-- Codes of colors are valid. -/
+/-- **Color codes are valid.** For each color $c \in \{0, 1, 2\}$, the code of $c$ (which is
+$00$, $01$ or $10$) is a valid color code, that is, it is not $11$. -/
 theorem okCol_code (c : Fin 3) : okCol (code c) = true := by
   fin_cases c <;> rfl
 
-/-- `code` inverts `uncode` on valid codes. -/
+/-- **Re-encoding a decoded valid color.** For every valid color code $c$ (a pair of bits other
+than $11$), the code of the color that $c$ decodes to is $c$. -/
 theorem code_uncode {c : Bool × Bool} (h : okCol c = true) : code (uncode c) = c := by
   obtain ⟨a, b⟩ := c
   cases a <;> cases b <;> first | rfl | simp [okCol] at h
 
-/-- Pairs of bits, flattened. -/
+/-- **Flattening pairs of bits.** The flattening of a list $[(a_1, b_1), \dots, (a_k, b_k)]$ of
+pairs of bits is the list of bits $[a_1, b_1, \dots, a_k, b_k]$. -/
 def flat (cs : List (Bool × Bool)) : List Bool := cs.flatMap fun c => [c.1, c.2]
 
-/-- No pairs, no bits. -/
+/-- **Flattening the empty list.** The flattening of the empty list of pairs of bits is the empty
+list of bits. -/
 @[simp] theorem flat_nil : flat [] = [] := rfl
 
-/-- The first pair comes first. -/
+/-- **Flattening a nonempty list.** For a pair of bits $c = (a, b)$ and a list $cs$ of pairs of
+bits, the flattening of the list with head $c$ and tail $cs$ is the list with $a$ first, then $b$,
+then the flattening of $cs$. -/
 @[simp] theorem flat_cons (c : Bool × Bool) (cs : List (Bool × Bool)) :
     flat (c :: cs) = c.1 :: c.2 :: flat cs := rfl
 
-/-- Flattening distributes over `++`. -/
+/-- **Flattening a concatenation.** For lists $cs$ and $ds$ of pairs of bits, the flattening of
+the concatenation of $cs$ and $ds$ is the concatenation of the flattening of $cs$ and the
+flattening of $ds$. -/
 theorem flat_append (cs ds : List (Bool × Bool)) : flat (cs ++ ds) = flat cs ++ flat ds :=
   List.flatMap_append
 
-/-- Two bits per pair. -/
+/-- **Length of a flattening.** For every list $cs$ of pairs of bits, the flattening of $cs$ has
+length $2|cs|$, two bits per pair. -/
 @[simp] theorem length_flat (cs : List (Bool × Bool)) : (flat cs).length = 2 * cs.length := by
   induction cs with
   | nil => rfl
   | cons c cs ih => simp [ih]; omega
 
-/-- The color code of vertex `i` in flattened pairs is pair `i`. -/
+/-- **Color codes of flattened pairs.** For every list $cs$ of pairs of bits and every natural
+number $i$, the color code of vertex $i$ in the flattening of $cs$ is the $i$-th pair of $cs$
+(counting from $0$) if $i$ is less than the length of $cs$, and $00$ otherwise. -/
 theorem col_flat : ∀ (cs : List (Bool × Bool)) (i : ℕ), col (flat cs) i = cs.getD i (false, false)
   | [], i => by simp [col]
   | c :: cs, 0 => by simp [col]
@@ -136,15 +162,20 @@ theorem col_flat : ∀ (cs : List (Bool × Bool)) (i : ℕ), col (flat cs) i = c
         show 2 * (i + 1) = 2 * i + 1 + 1 by omega]
       simp only [List.getD_cons_succ]
 
-/-- The color code of vertex `i` in the flattened codes `f`. -/
+/-- **Color codes of a flattened coloring.** For every $n$, every map $f$ from $\{0, \dots, n - 1\}$
+to pairs of bits and every $i < n$, the color code of vertex $i$ in the flattening of the list
+$f(0), \dots, f(n - 1)$ is $f(i)$. -/
 theorem col_flat_ofFn {n : ℕ} (f : Fin n → Bool × Bool) (i : Fin n) :
     col (flat (List.ofFn f)) i = f i := by
   rw [col_flat, List.getD_eq_getElem?_getD, List.getElem?_ofFn]
   simp
 
-/-- **3-colorability by witness bits.** `edgeGraph n es` is 3-colorable iff some witness of
-`2 n` bits gives each vertex a valid color, the two ends of every edge `(u, v)` with `u ≠ v`
-getting different colors. -/
+/-- **3-colorability by witness bits.** Let $n \in \mathbb{N}$ and let $es$ be a list of pairs of
+natural numbers whose entries are all less than $n$. The graph on the vertices $0, \dots, n-1$
+with edge list $es$ (symmetrized, loops dropped) is 3-colorable iff there is a list $w$ of exactly
+$2n$ bits such that, writing the color code of vertex $i$ for the pair of bits $2i$ and $2i+1$ of
+$w$, the color code of every vertex $i < n$ is valid (not $11$), and for every edge $(u, v)$ in
+$es$ with $u \ne v$ the color codes of $u$ and $v$ differ. -/
 theorem colorable_iff (n : ℕ) (es : List (ℕ × ℕ)) (hb : ∀ e ∈ es, e.1 < n ∧ e.2 < n) :
     (edgeGraph n es).Colorable 3 ↔ ∃ w : List Bool, w.length = 2 * n ∧
       (∀ i < n, okCol (col w i) = true) ∧ ∀ e ∈ es, e.1 ≠ e.2 → col w e.1 ≠ col w e.2 := by
@@ -171,7 +202,8 @@ theorem colorable_iff (n : ℕ) (es : List (ℕ × ℕ)) (hb : ∀ e ∈ es, e.1
     · exact hp _ h hne' hc'
     · exact hp _ h hne'.symm hc'.symm
 
-/-- **3-COLOR is verified by `colCheck`**, with witnesses at most twice as long as the input. -/
+/-- **3-COLOR is verified by the witness check.** A bit string $x$ is in 3-COLOR iff some bit
+string $w$ of length at most $2|x|$ is accepted together with $x$ by the 3-COLOR verifier. -/
 theorem col3Dec_iff (x : List Bool) :
     col3Dec x = true ↔ ∃ w, w.length ≤ 2 * x.length ∧ colCheck x w = true := by
   simp only [col3Dec, decide_eq_true_eq, colCheck_iff]
@@ -192,38 +224,53 @@ theorem col3Dec_iff (x : List Bool) :
 
 /-! ### The machine's view of the check -/
 
-/-- The witness colors of the vertices `0, …, n - 1`. -/
+/-- **Witness colors of the first $n$ vertices.** For a bit list $w$ and $n \in \mathbb{N}$, the
+list of the color codes of the vertices $0, 1, \dots, n-1$ in $w$, in that order, where the color
+code of vertex $i$ is the pair of bits $2i$ and $2i+1$ of $w$ (a missing bit reads as false). -/
 def cols (w : List Bool) (n : ℕ) : List (Bool × Bool) := (List.range n).map (col w)
 
-/-- The verdict on one edge `(u, v)` with vertex colors `cs`: both ends are vertices, and a
-non-loop's ends have different colors. -/
+/-- **Edge verdict.** For a list $cs$ of color codes (pairs of bits), one per vertex, and
+$u, v \in \mathbb{N}$, the edge $(u, v)$ passes iff $u$ and $v$ are both less than the length of
+$cs$ and either $u = v$ or entries $u$ and $v$ of $cs$ differ. -/
 def edgeOk (cs : List (Bool × Bool)) (u v : ℕ) : Bool :=
   decide (u < cs.length) && decide (v < cs.length) &&
     (u == v || cs.getD u (false, false) != cs.getD v (false, false))
 
-/-- The verdict of the edge loop on the rest `r` of the input: it parses, and every edge passes
-`edgeOk`. -/
+/-- **Edge-loop verdict.** For a list $cs$ of color codes and a bit list $r$, the verdict is true
+iff $r$ parses as a list of edges, each written as two unary numbers $u$ and $v$ (a number $k$ as
+$k$ ones, then a zero), and every edge $(u, v)$ of that list passes the edge verdict with vertex
+colors $cs$. -/
 def edgesOk (cs : List (Bool × Bool)) (r : List Bool) : Bool :=
   match decodeEs r with
   | none => false
   | some es => es.all fun e => edgeOk cs e.1 e.2
 
-/-- There are `n` witness colors. -/
+/-- **Number of witness colors.** For every list of bits $w$ and every $n \in \mathbb{N}$, the
+list of the witness color codes of the vertices $0, \dots, n - 1$ read from $w$ has length $n$. -/
 @[simp] theorem length_cols (w : List Bool) (n : ℕ) : (cols w n).length = n := by
   simp [cols]
 
-/-- Reading the color of a vertex `i < n`. -/
+/-- **Reading a witness color.** For a list of bits $w$ and natural numbers $i$ and $n$, write
+$c_w(j)$ for the color code of vertex $j$ in $w$: the pair of bits $2j$ and $2j + 1$ of $w$
+(counting from $0$), each read as false past the end of $w$. If $i < n$, then entry $i$
+(counting from $0$) of the list $c_w(0), \dots, c_w(n - 1)$ of witness colors is $c_w(i)$. -/
 theorem getD_cols {w : List Bool} {n i : ℕ} (hi : i < n) :
     (cols w n).getD i (false, false) = col w i := by
   simp [cols, List.getD_eq_getElem?_getD, hi]
 
-/-- Peeling the first two witness bits off. -/
+/-- **Peeling a vertex off the witness colors.** For bits $a, b$, a bit list $w$ and
+$n \in \mathbb{N}$, the color codes of the vertices $0, \dots, n$ read from the bit list $a, b, w$
+(the list $w$ with $a$ and $b$ prepended) are $(a, b)$ followed by the color codes of the vertices
+$0, \dots, n-1$ read from $w$. -/
 theorem cols_cons_cons (a b : Bool) (w : List Bool) (n : ℕ) :
     cols (a :: b :: w) (n + 1) = (a, b) :: cols w n := by
   rw [cols, List.range_succ_eq_map, List.map_cons, List.map_map]
   congr 1
 
-/-- The verifier as the machine runs it: read `n`, check the witness, then the edge loop. -/
+/-- **The 3-COLOR verifier as an edge loop.** For all bit strings $x$ and $w$, the verifier accepts
+$(x, w)$ iff reading a unary prefix $1^n 0$ off $x$ succeeds, giving $n$ and the rest $r$ of $x$,
+and then $w$ has at least $2n$ bits, each of the witness colors $c_0, \dots, c_{n-1}$ of $w$ is
+valid (not $11$), and the edge loop accepts $r$ with the vertex colors $c_0, \dots, c_{n-1}$. -/
 theorem colCheck_eq (x w : List Bool) : colCheck x w = match readUnaryLength x with
     | none => false
     | some (n, r) => decide (2 * n ≤ w.length) && (cols w n).all okCol && edgesOk (cols w n) r := by
@@ -251,16 +298,18 @@ theorem colCheck_eq (x w : List Bool) : colCheck x w = match readUnaryLength x w
             have := (h e he).2
             rwa [← cols, getD_cols (h e he).1.1, getD_cols (h e he).1.2] at this
 
-/-- An edge whose ends are both past the first color, seen from the second one. -/
+/-- **Shifting the edge verdict past the first color.** For a color code $c$, a list $cs$ of color
+codes and $u, v \in \mathbb{N}$, the edge verdict for $(u + 1, v + 1)$ with vertex colors $c$
+followed by $cs$ equals the edge verdict for $(u, v)$ with vertex colors $cs$. -/
 theorem edgeOk_cons_succ (c : Bool × Bool) (cs : List (Bool × Bool)) (u v : ℕ) :
     edgeOk (c :: cs) (u + 1) (v + 1) = edgeOk cs u v := by
   simp [edgeOk]
 
 /-! ### The machine -/
 
-/-- Stacks: the input `X` and the witness `W`; the counter `N` (for `n`); the color stack `P`
-(the `n` color codes, vertex `0` on top) and its scratch stack `T`; the endpoint counters `U`
-and `V`. -/
+/-- **Stacks of the 3-COLOR verifier.** The verifier has seven stacks: the input $X$ and the
+witness $W$; the counter $N$ (for the number $n$ of vertices); the color stack $P$ (the $n$ color
+codes, vertex $0$ on top) and its scratch stack $T$; and the endpoint counters $U$ and $V$. -/
 inductive K | X | W | N | P | T | U | V
   deriving DecidableEq
 
@@ -269,9 +318,12 @@ instance K.instFintypeEnumFix : Fintype K where
   elems := ⟨↑[K.X, .W, .N, .P, .T, .U, .V], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- Labels: read `n`; load the witness colors onto `T`; move them onto `P`; start an edge; read
-its endpoints; walk the colors towards both endpoints; walk on towards the farther endpoint,
-holding the nearer one's color `(a, b)` (counter `U` or `V`); restore `P`; accept; reject. -/
+/-- **Labels of the 3-COLOR verifier.** The labels are: read the number $n$ of vertices onto the
+counter stack $N$; load the witness colors onto the scratch stack $T$; move them onto the color
+stack $P$; start an edge; read its first endpoint onto the counter stack $U$; read its second
+endpoint onto the counter stack $V$; walk the colors towards both endpoints; for each pair of
+bits $(a, b)$, walk on towards the farther endpoint holding the nearer one's color $(a, b)$, one
+label for counter $U$ and one for counter $V$; restore $P$; accept; reject. -/
 inductive Lab | rdN | load | mkP | edge | rdU | rdV | walk | walkU (a b : Bool)
   | walkV (a b : Bool) | back | yes | no
   deriving DecidableEq
@@ -285,18 +337,28 @@ instance Lab.instFintypeEnumFix : Fintype Lab where
   complete := by
     rintro (_ | _ | _ | _ | _ | _ | _ | ⟨_ | _, _ | _⟩ | ⟨_ | _, _ | _⟩ | _ | _ | _) <;> decide
 
-/-- Statements of the verifier. -/
+/-- **Statements of the 3-COLOR verifier.** The type of statements of the verifier as a
+multi-stack Turing machine in Mathlib's model: each of the seven stacks (the input, the witness,
+the counter for the number of vertices, the color stack and its scratch stack, and the two
+endpoint counters) holds symbols of the SAT verifier's alphabet, the labels are the verifier's
+labels, and the internal state is a single bit. -/
 abbrev Stmt := TM2.Stmt (fun _ : K => Sym) Lab Bool
 
-/-- Read a unary number off `X` onto the counter `c`: a `true` adds a unit, the `false`
-terminator moves on to `next`, an exhausted `X` rejects. -/
+/-- **Unary reader of the 3-COLOR verifier.** Given a counter stack $c$ and labels $s$ (its own)
+and $t$ (the next): if the input stack $X$ is empty, reject; otherwise pop a bit off $X$; if it
+is $1$, push a unit onto $c$ and go back to $s$, and if it is $0$, go to $t$. A symbol of $X$
+that is not a bit is read as $0$. -/
 def readU (c : K) (self next : Lab) : Stmt :=
   .peek .X (fun _ o => o.isNone) <| .branch id (.goto fun _ => .no) <|
     .pop .X (fun _ o => bitOf Sym.bit? o) <| .branch id
       (.push c (fun _ => .bit true) (.goto fun _ => self)) (.goto fun _ => next)
 
-/-- Load one color per unit of `N`: pop two bits of `W` onto `T` (so the codes end up reversed
-on `T`). Rejects if `W` runs out or a code is `11`. -/
+/-- **Load step of the 3-COLOR verifier.** If the counter stack $N$ is empty, go to the label
+that moves the codes onto the color stack $P$. Otherwise pop one symbol off $N$ and two bits $a$,
+$b$ off the witness stack $W$, pushing each onto the scratch stack $T$ as it is popped (so the
+codes end up reversed on $T$), and go back to the load label; reject instead if $W$ is empty
+when a bit is due, or if $a$ and $b$ are both $1$ (the invalid code $11$). A symbol of $W$ that
+is not a bit is read as $0$. -/
 def loadS : Stmt :=
   .pop .N (fun _ o => o.isSome) <| .branch id
     (.peek .W (fun _ o => o.isNone) <| .branch id (.goto fun _ => .no) <|
@@ -309,36 +371,56 @@ def loadS : Stmt :=
             .goto fun _ => .load))
     (.goto fun _ => .mkP)
 
-/-- Start an edge: accept if `X` is exhausted, else read the endpoints. -/
+/-- **Edge-loop start of the 3-COLOR verifier.** The verifier statement that begins checking the
+next edge: if the input stack $X$ is empty it goes to the accepting label, and otherwise it goes
+to the label that reads the first endpoint of the next edge onto the counter $U$. -/
 def edgeS : Stmt :=
   .peek .X (fun _ o => o.isNone) <| .branch id (.goto fun _ => .yes) (.goto fun _ => .rdU)
 
-/-- Move the next color code `(a, b)` from `P` to `T` and go to `f a b`; reject if `P` is
-empty (an endpoint past the last vertex). -/
+/-- **Moving one color code in the 3-COLOR verifier.** Given a map $f$ from pairs of bits to
+labels: if the color stack $P$ is empty, reject (an endpoint lies past the last vertex);
+otherwise pop two bits $a$, $b$ off $P$, push them onto the scratch stack $T$ in that order (so
+$b$ ends on top), and go to the label $f(a, b)$. A missing or non-bit symbol is read as $0$. -/
 def mvP (f : Bool → Bool → Lab) : Stmt :=
   .peek .P (fun _ o => o.isNone) <| .branch id (.goto fun _ => .no) <|
     .pop .P (fun _ o => bitOf Sym.bit? o) <| .push .T (fun a => .bit a) <| .branch id
       (.pop .P (fun _ o => bitOf Sym.bit? o) <| .push .T (fun b => .bit b) <| .goto (f true))
       (.pop .P (fun _ o => bitOf Sym.bit? o) <| .push .T (fun b => .bit b) <| .goto (f false))
 
-/-- A step of the joint walk: take a unit off both `U` and `V` and pass a color. When one
-counter runs out first, its endpoint's color is the one passed, and the walk goes on towards
-the other endpoint; when both run out together the edge is a loop, which passes once its
-endpoint's color exists. -/
+/-- **One step of the joint walk of the 3-COLOR verifier.** The statement pops the top symbol of
+each of the endpoint counters $U$ and $V$ (a pop from an empty counter leaves it empty) and then
+moves the next color code $(a, b)$ from the color stack $P$ onto the scratch stack $T$, rejecting
+if $P$ is empty. It continues at the joint walk again if both counters were nonempty; at the walk
+towards the endpoint of $U$, holding the color $(a, b)$, if only $U$ was nonempty (so $(a, b)$ is
+the color of the endpoint of $V$); at the walk towards the endpoint of $V$, holding $(a, b)$, if
+only $V$ was nonempty; and at the restoring label $\mathsf{back}$ if both were empty. In the last
+case the edge is a loop, which passes once its endpoint's color exists. -/
 def walkS : Stmt :=
   .pop .U (fun _ o => o.isSome) <| .branch id
     (.pop .V (fun _ o => o.isSome) <| .branch id (mvP fun _ _ => .walk) (mvP .walkU))
     (.pop .V (fun _ o => o.isSome) <| .branch id (mvP .walkV) (mvP fun _ _ => .back))
 
-/-- A step of the walk towards the farther endpoint (counter `k`), holding the nearer one's
-color `(a, b)`: pass a color per unit of `k`; at the end the color passed is the farther
-endpoint's, and the edge passes iff it differs from `(a, b)`. -/
+/-- **One step of the walk towards the farther endpoint.** Given a stack $k$ of the 3-COLOR
+verifier (used as a counter), a label $\ell$ and a pair of bits $(a, b)$ (the color of the
+nearer endpoint), the statement pops the top symbol of $k$ and then moves the next color code
+$(a', b')$ from the color stack $P$ onto the scratch stack $T$, rejecting if $P$ is empty. If $k$
+was nonempty it continues at $\ell$. Otherwise $(a', b')$ is the color of the farther endpoint,
+and the statement rejects if $(a', b') = (a, b)$ and continues at the restoring label
+$\mathsf{back}$ if not. -/
 def walk1S (k : K) (self : Lab) (a b : Bool) : Stmt :=
   .pop k (fun _ o => o.isSome) <| .branch id (mvP fun _ _ => self)
     (mvP fun a' b' => if a' = a ∧ b' = b then .no else .back)
 
-/-- The verifier: read `n`, load the witness colors and check them, then check the edges one by
-one, restoring the colors after each. -/
+/-- **The 3-COLOR verifier machine.** The verifier is the program on the seven stacks $X$
+(input), $W$ (witness), $N$, $P$, $T$, $U$, $V$, with internal state a bit, that runs as follows.
+It reads the unary number $n$ off $X$ onto the counter $N$; loads the first $n$ color codes of
+$W$ onto $T$, rejecting if $W$ runs out or one of these $n$ codes is $11$; moves the bits on top
+of $T$ onto the color stack $P$; and then repeatedly starts an edge, accepting if $X$ is
+exhausted and otherwise reading the endpoints $u$ and $v$ in unary onto the counters $U$ and
+$V$, walking the colors from $P$ onto $T$ towards both endpoints, and moving the passed colors
+back from $T$ onto $P$ before the next edge. Reading a number rejects if $X$ runs out; the walk
+rejects if an endpoint has no color or if the two endpoints of a non-loop edge have the same
+color. The accepting and rejecting labels halt. -/
 def prog : Lab → TM2.Stmt (fun _ : K => Sym) Lab Bool
   | .rdN => readU .N .rdN .load
   | .load => loadS
@@ -353,24 +435,38 @@ def prog : Lab → TM2.Stmt (fun _ : K => Sym) Lab Bool
   | .yes => .halt
   | .no => .halt
 
-/-- The start label. -/
+/-- **Start label of the 3-coloring verifier.** The 3-coloring verifier machine starts at the
+label that reads the vertex count $n$, written in unary on the input stack $X$, onto the counter
+stack $N$. -/
 def start : Lab := .rdN
 
 /-! ### Runs of the phases -/
 
-/-- A step whose label is known: some state and stacks follow. -/
+/-- **One step of the 3-COLOR verifier.** Let $l$ and $l'$ be labels, $v$ an internal state and
+$S$ an assignment of stacks. If executing the verifier's statement at $l$ from state $v$ and
+stacks $S$ ends at label $l'$, then for some internal state $v'$ and stacks $S'$ the verifier
+goes in one step from label $l$ with state $v$ and stacks $S$ to label $l'$ with state $v'$ and
+stacks $S'$. -/
 theorem run_one {l l' : Lab} {v : Bool} {S : ∀ _ : K, List Sym}
     (h : (TM2.stepAux (prog l) v S).l = some l') :
     ∃ v' S', Run prog 1 ⟨some l, v, S⟩ ⟨some l', v', S'⟩ :=
   ⟨_, _, Run.single (by rw [← h])⟩
 
-/-- Two updates of `a` interleaved with two of `b` leave the last of each. -/
+/-- **Interleaved updates of two stacks of the 3-COLOR verifier.** Let $a \ne b$ be two stacks of
+the verifier, $S$ an assignment of a list of symbols to every stack, and $p, p', t, t'$ lists of
+symbols. Setting stack $a$ to $p$, then $b$ to $t$, then $a$ to $p'$, then $b$ to $t'$ gives the
+same assignment as setting $a$ to $p'$ and then $b$ to $t'$. -/
 theorem update_update_update_update {a b : K} (hab : a ≠ b) (S : ∀ _ : K, List Sym)
     (p p' t t' : List Sym) :
     update (update (update (update S a p) b t) a p') b t' = update (update S a p') b t' := by
   rw [update_comm hab.symm, update_idem, update_idem]
 
-/-- `mvP` on a nonempty color stack: one color code moves to `T`. -/
+/-- **Moving one color code from the color stack.** Let $f$ assign a label to each pair of
+bits, and suppose the color stack $P$ of stacks $S$ holds, from the top, the bit symbols $c_1$
+and $c_2$ followed by a rest $r$. Then executing the color-moving block with continuation $f$,
+from any internal value and the stacks $S$, ends at label $f(c_1, c_2)$ with internal value
+$c_2$ and with the stacks $S$ changed only in that $P$ becomes $r$ and the scratch stack $T$
+gets $c_1$ and then $c_2$ pushed on top (so $c_2$ is on top). -/
 theorem stepAux_mvP_cons (f : Bool → Bool → Lab) (c : Bool × Bool) (rest : List Sym) (s : Bool)
     (S : ∀ _ : K, List Sym) (hP : S .P = .bit c.1 :: .bit c.2 :: rest) :
     TM2.stepAux (mvP f) s S =
@@ -379,27 +475,52 @@ theorem stepAux_mvP_cons (f : Bool → Bool → Lab) (c : Bool × Bool) (rest : 
   cases a <;> cases b <;>
     simp [mvP, TM2.stepAux, hP, bitOf, Sym.bit?, update_update_update_update]
 
-/-- `mvP` on an exhausted color stack rejects. -/
+/-- **The color-moving block rejects on an empty color stack.** If the color stack $P$ of
+stacks $S$ is empty, then for every continuation $f$ (a label for each pair of bits), executing
+the color-moving block with continuation $f$ from any internal value and the stacks $S$ ends at
+the rejecting label with internal value true and the stacks $S$ unchanged. -/
 theorem stepAux_mvP_nil (f : Bool → Bool → Lab) (s : Bool) (S : ∀ _ : K, List Sym)
     (hP : S .P = []) : TM2.stepAux (mvP f) s S = ⟨some .no, true, S⟩ := by
   simp [mvP, TM2.stepAux, hP]
 
-/-- The walk-on step with the counter exhausted: the farther endpoint's color is next. -/
+/-- **Walk-on step with the counter exhausted.** Let $k$ be a stack, $\ell$ a label and $a, b$
+bits. If stack $k$ of stacks $S$ is empty, then executing the walk-on block for counter $k$,
+label $\ell$ and held color $(a, b)$, from any internal value and the stacks $S$, has the same
+outcome as executing, from internal value false and the stacks $S$, the color-moving block
+that continues to the rejecting label if the color it moves is $(a, b)$ and to the label that
+restores the color stack otherwise. -/
 theorem stepAux_walk1S_nil (k : K) (self : Lab) (a b s : Bool) (St : ∀ _ : K, List Sym)
     (hk : St k = []) : TM2.stepAux (walk1S k self a b) s St =
       TM2.stepAux (mvP fun a' b' => if a' = a ∧ b' = b then .no else .back) false St := by
   have : update St k [] = St := by rw [← hk, update_eq_self]
   simp [walk1S, TM2.stepAux, hk, this]
 
-/-- The walk-on step with a unit on the counter: pass a color. -/
+/-- **Walk-on step with a unit on the counter.** Write $1^j$ for the stack of $j$ copies of the
+bit symbol for true. Let $k$ be a stack, $\ell$ a label and $a, b$ bits. If stack $k$ of
+stacks $S$ holds $1^{j+1}$, then executing the walk-on block for counter $k$, label $\ell$ and
+held color $(a, b)$, from any internal value and the stacks $S$, has the same outcome as
+executing, from internal value true and the stacks $S$ with stack $k$ replaced by $1^j$, the
+color-moving block that continues to $\ell$ whatever color it moves. -/
 theorem stepAux_walk1S_cons (k : K) (self : Lab) (a b s : Bool) (St : ∀ _ : K, List Sym)
     (j : ℕ) (hk : St k = cnt (Sym.bit true) (j + 1)) : TM2.stepAux (walk1S k self a b) s St =
       TM2.stepAux (mvP fun _ _ => self) true (update St k (cnt (Sym.bit true) j)) := by
   simp [walk1S, TM2.stepAux, hk, cnt_succ]
 
-/-- The walk towards the farther endpoint: from `self` with `j` units on `k`, the colors `post`
-on `P` and the colors `pre` passed so far (reversed) on `T`, it passes `j + 1` colors and
-reaches `back` iff color `j` of `post` exists and differs from `(a, b)`. -/
+/-- **The walk towards the farther endpoint decides the edge.** Let $k$ be a stack of the 3-COLOR
+verifier other than the color stack $P$ and the scratch stack $T$, $(a, b)$ a pair of bits, and
+$\ell$ a label whose statement is the step of the walk towards the farther endpoint on the
+counter $k$, holding the color $(a, b)$ and continuing at $\ell$. Let $j$ be a natural number,
+$\mathit{pre}$ and $\mathit{post}$ lists of color codes, $s$ a bit and $S$ an assignment of a list
+of symbols to every stack. Suppose that $S$ holds $j$ unit symbols on $k$, the bits of
+$\mathit{post}$ on $P$ (each code $(a', b')$ contributing $a'$ then $b'$, the first code on top),
+and the bits of $\mathit{pre}$, flattened the same way, in reverse order on $T$. Started at $\ell$
+with internal state $s$ and stacks $S$, the verifier reaches within at most $j + 1$ steps, with
+some internal state and stacks $S'$, the label $\mathsf{back}$ if $j$ is less than the length of
+$\mathit{post}$ and the code at position $j$ of $\mathit{post}$ differs from $(a, b)$, and the
+label $\mathsf{no}$ otherwise. If $j$ is less than the length of $\mathit{post}$, the stacks $S'$
+hold the bits of $\mathit{post}$ after its first $j + 1$ codes on $P$, the bits of $\mathit{pre}$
+followed by those of the first $j + 1$ codes of $\mathit{post}$, flattened and in reverse order,
+on $T$, nothing on $k$, and agree with $S$ on every other stack. -/
 theorem walk1_run {k : K} {self : Lab} {a b : Bool} (hp : prog self = walk1S k self a b)
     (hkP : k ≠ .P) (hkT : k ≠ .T) : ∀ (j : ℕ) (pre post : List (Bool × Bool)) (s : Bool)
     (St : ∀ _ : K, List Sym), St k = cnt (Sym.bit true) j → St .P = (flat post).map Sym.bit →
@@ -448,14 +569,24 @@ theorem walk1_run {k : K} {self : Lab} {a b : Bool} (hp : prog self = walk1S k s
         refine ⟨by simpa using h1, by simpa using h2, h3, fun q q1 q2 q3 => ?_⟩
         rw [h4 q q1 q2 q3, hSt₁, update_of_ne q3, update_of_ne q2, update_of_ne q1]
 
-/-- A joint-walk step with a unit on both counters. -/
+/-- **Joint-walk step with both counters nonempty.** Write $1^j$ for the stack of $j$ copies of
+the bit symbol for true. If the endpoint counters of stacks $S$ hold $U = 1^{u+1}$ and
+$V = 1^{v+1}$, then executing the joint-walk block from any internal value and the stacks $S$
+has the same outcome as executing, from internal value true and the stacks $S$ with $U$
+replaced by $1^u$ and $V$ by $1^v$, the color-moving block that continues to the joint-walk
+label whatever color it moves. -/
 theorem stepAux_walkS_cons_cons (s : Bool) (St : ∀ _ : K, List Sym) (u v : ℕ)
     (hU : St .U = cnt (Sym.bit true) (u + 1)) (hV : St .V = cnt (Sym.bit true) (v + 1)) :
     TM2.stepAux walkS s St = TM2.stepAux (mvP fun _ _ => .walk) true
       (update (update St .U (cnt (Sym.bit true) u)) .V (cnt (Sym.bit true) v)) := by
   simp [walkS, TM2.stepAux, hU, hV, cnt_succ]
 
-/-- A joint-walk step with `V` exhausted first: `v`'s color is next. -/
+/-- **Joint-walk step when the second endpoint counter runs out first.** Write $1^j$ for the
+stack of $j$ copies of the bit symbol for true. If the endpoint counters of stacks $S$ hold
+$U = 1^{u+1}$ and $V$ empty, then executing the joint-walk block from any internal value and
+the stacks $S$ has the same outcome as executing, from internal value false and the stacks $S$
+with $U$ replaced by $1^u$, the color-moving block that, after moving a color $(a, b)$,
+continues to the label that walks on along $U$ holding $(a, b)$. -/
 theorem stepAux_walkS_cons_nil (s : Bool) (St : ∀ _ : K, List Sym) (u : ℕ)
     (hU : St .U = cnt (Sym.bit true) (u + 1)) (hV : St .V = []) :
     TM2.stepAux walkS s St = TM2.stepAux (mvP .walkU) false
@@ -465,7 +596,12 @@ theorem stepAux_walkS_cons_nil (s : Bool) (St : ∀ _ : K, List Sym) (u : ℕ)
     rw [← hV, ← update_of_ne (show K.V ≠ K.U by decide) (cnt (Sym.bit true) u) St, update_eq_self]
   simp [walkS, TM2.stepAux, hU, hV, cnt_succ, this]
 
-/-- A joint-walk step with `U` exhausted first: `u`'s color is next. -/
+/-- **Joint-walk step when the first endpoint counter runs out first.** Write $1^j$ for the
+stack of $j$ copies of the bit symbol for true. If the endpoint counters of stacks $S$ hold
+$U$ empty and $V = 1^{v+1}$, then executing the joint-walk block from any internal value and
+the stacks $S$ has the same outcome as executing, from internal value true and the stacks $S$
+with $V$ replaced by $1^v$, the color-moving block that, after moving a color $(a, b)$,
+continues to the label that walks on along $V$ holding $(a, b)$. -/
 theorem stepAux_walkS_nil_cons (s : Bool) (St : ∀ _ : K, List Sym) (v : ℕ)
     (hU : St .U = []) (hV : St .V = cnt (Sym.bit true) (v + 1)) :
     TM2.stepAux walkS s St = TM2.stepAux (mvP .walkV) true
@@ -473,26 +609,48 @@ theorem stepAux_walkS_nil_cons (s : Bool) (St : ∀ _ : K, List Sym) (v : ℕ)
   have : update St .U [] = St := by rw [← hU, update_eq_self]
   simp [walkS, TM2.stepAux, hU, hV, cnt_succ, this]
 
-/-- A joint-walk step with both counters exhausted: a loop. -/
+/-- **Joint-walk step with both counters exhausted.** If the endpoint counters $U$ and $V$ of
+stacks $S$ are both empty, then executing the joint-walk block from any internal value and the
+stacks $S$ has the same outcome as executing, from internal value false and the same stacks
+$S$, the color-moving block that continues to the label restoring the color stack whatever
+color it moves.
+
+This is the case of a loop edge. -/
 theorem stepAux_walkS_nil_nil (s : Bool) (St : ∀ _ : K, List Sym) (hU : St .U = [])
     (hV : St .V = []) : TM2.stepAux walkS s St = TM2.stepAux (mvP fun _ _ => .back) false St := by
   have h₁ : update St .U [] = St := by rw [← hU, update_eq_self]
   have h₂ : update St .V [] = St := by rw [← hV, update_eq_self]
   simp [walkS, TM2.stepAux, hU, hV, h₁, h₂]
 
-/-- The walk-on result decides `edgeOk` when one endpoint is the first color. -/
+/-- **Edge verdict for an edge starting at vertex 0.** For a color code $c$, a list $cs$ of color
+codes and $v \in \mathbb{N}$, the edge $(0, v + 1)$ passes the edge verdict with vertex colors $c$
+followed by $cs$ iff $v$ is less than the length of $cs$ and entry $v$ of $cs$ differs from $c$. -/
 theorem edgeOk_zero_succ (c : Bool × Bool) (cs : List (Bool × Bool)) (v : ℕ) :
     edgeOk (c :: cs) 0 (v + 1) = true ↔ v < cs.length ∧ cs.getD v (false, false) ≠ (c.1, c.2) := by
   simp [edgeOk, ne_comm]
 
-/-- The walk-on result decides `edgeOk` when one endpoint is the first color. -/
+/-- **Edge verdict for an edge ending at vertex 0.** For a color code $c$, a list $cs$ of color
+codes and $u \in \mathbb{N}$, the edge $(u + 1, 0)$ passes the edge verdict with vertex colors $c$
+followed by $cs$ iff $u$ is less than the length of $cs$ and entry $u$ of $cs$ differs from $c$. -/
 theorem edgeOk_succ_zero (c : Bool × Bool) (cs : List (Bool × Bool)) (u : ℕ) :
     edgeOk (c :: cs) (u + 1) 0 = true ↔ u < cs.length ∧ cs.getD u (false, false) ≠ (c.1, c.2) := by
   simp [edgeOk]
 
-/-- The joint walk: from `walk` with `u` units on `U`, `v` on `V`, the colors `post` on `P` and
-the colors `pre` passed so far (reversed) on `T`, it passes `max u v + 1` colors and reaches
-`back` iff `edgeOk post u v`, with both counters empty. -/
+/-- **The joint walk of the 3-COLOR verifier decides one edge.** Let $u, v$ be natural numbers,
+$\mathit{pre}$ and $\mathit{post}$ lists of color codes (pairs of bits), $s$ a bit and $S$ an
+assignment of a list of symbols to every stack. Suppose that $S$ holds $u$ unit symbols on the
+counter $U$ and $v$ on the counter $V$, the bits of $\mathit{post}$ on the color stack $P$ (each
+code $(a, b)$ contributing $a$ then $b$, the first code on top), and the bits of $\mathit{pre}$,
+flattened the same way, in reverse order on the scratch stack $T$. Started at the label
+$\mathsf{walk}$ with internal state $s$ and stacks $S$, the verifier reaches within at most
+$\max(u, v) + 1$ steps, with some internal state and stacks $S'$, the label $\mathsf{back}$ if the
+edge $(u, v)$ passes against the colors $\mathit{post}$ and the label $\mathsf{no}$ otherwise. The
+edge passes when $u$ and $v$ are both less than the length of $\mathit{post}$ and either $u = v$
+or the codes at positions $u$ and $v$ of $\mathit{post}$ differ. If it passes then, with
+$m = \max(u, v) + 1$, the stacks $S'$ hold the bits of $\mathit{post}$ after its first $m$ codes
+on $P$, the bits of $\mathit{pre}$ followed by those of the first $m$ codes of $\mathit{post}$,
+flattened and in reverse order, on $T$, nothing on $U$ and $V$, and agree with $S$ on every other
+stack. -/
 theorem walk_run : ∀ (u v : ℕ) (pre post : List (Bool × Bool)) (s : Bool)
     (St : ∀ _ : K, List Sym), St .U = cnt (Sym.bit true) u → St .V = cnt (Sym.bit true) v →
     St .P = (flat post).map Sym.bit → St .T = (flat pre).reverse.map Sym.bit →
@@ -577,8 +735,12 @@ theorem walk_run : ∀ (u v : ℕ) (pre post : List (Bool × Bool)) (s : Bool)
         rw [h5 q q1 q2 q3 q4, hSt₁, update_of_ne q4, update_of_ne q3, update_of_ne q2,
           update_of_ne q1]
 
-/-- `readU` on `k` in unary: `k + 1` steps to `next`, with `k` more units on the counter and
-the rest of `X` left. -/
+/-- **The unary reader on a terminated number.** Let $c \ne X$ be a stack and $s$, $t$ labels
+such that the verifier runs, at $s$, the unary reader from $X$ onto the counter $c$ that loops at
+$s$ and exits to $t$. Let $k, j$ be natural numbers and $r$ a list of bits. If $X$ holds $k$ ones,
+then a zero, then $r$, and $c$ holds exactly $j$ units, then from label $s$, in any internal
+state, the verifier reaches label $t$ in exactly $k + 1$ steps, with $X$ holding $r$, $c$ holding
+exactly $k + j$ units, and every other stack as at the start. -/
 theorem readU_some {c : K} {self next : Lab} (hp : prog self = readU c self next)
     (hc : c ≠ .X) : ∀ (k j : ℕ) (r : List Bool) (v : Bool) (St : ∀ _ : K, List Sym),
       St .X = (List.replicate k true ++ false :: r).map Sym.bit → St c = cnt (Sym.bit true) j →
@@ -605,7 +767,11 @@ theorem readU_some {c : K} {self next : Lab} (hp : prog self = readU c self next
         fun q h1 h2 => by rw [hF' q h1 h2, hSt₁, update_of_ne h2, update_of_ne h1]⟩
       simp [TM2.step, hp, readU, TM2.stepAux, hX, bitOf, Sym.bit?, hSt₁, update_of_ne hc]
 
-/-- `readU` on an unterminated unary prefix rejects. -/
+/-- **The unary reader rejects an unterminated number.** Let $c \ne X$ be a stack and $s$, $t$
+labels such that the verifier runs, at $s$, the unary reader from $X$ onto the counter $c$ that
+loops at $s$ and exits to $t$. If $X$ holds a bit list $l$ on which reading a unary number
+fails, that is, $l$ consists of ones only, then from label $s$, in any internal state and with
+any other stacks, the verifier reaches the rejecting label within at most $|l| + 1$ steps. -/
 theorem readU_none {c : K} {self next : Lab} (hp : prog self = readU c self next)
     (hc : c ≠ .X) : ∀ (l : List Bool) (v : Bool) (St : ∀ _ : K, List Sym),
       readUnaryLength l = none → St .X = l.map Sym.bit →
@@ -629,9 +795,15 @@ theorem readU_none {c : K} {self next : Lab} (hp : prog self = readU c self next
           refine ⟨v', S', (((Run.single ?_).le le_rfl).trans h).mono (by simp; omega)⟩
           simp [hp, readU, TM2.stepAux, hX, bitOf, Sym.bit?, update_of_ne hc]
 
-/-- The load phase: from `n` units on `N`, the witness `w` on `W` and `acc` on `T`, it reaches
-`mkP` if `w` has at least `2 n` bits and the first `n` color codes are valid, and `no`
-otherwise; on success those codes sit on `T`, reversed. -/
+/-- **Run of the load phase of the 3-COLOR verifier.** Let $n$ be a natural number and $w$, $a$
+lists of bits. Start the verifier at its load label, in any internal state, with stacks in which
+the counter $N$ holds exactly $n$ units, the witness stack $W$ holds $w$ and the scratch stack $T$
+holds $a$. Then within at most $n + 1$ steps the verifier reaches the label that moves the codes
+onto the color stack $P$ if $w$ has at least $2n$ bits and the color codes of the vertices
+$0, \dots, n - 1$ (vertex $i$ has the code $w_{2i} w_{2i+1}$) are all valid, that is, none is
+$11$; otherwise it reaches the rejecting label. In the first case $T$ then holds the first $2n$
+bits of $w$ in reverse order on top of $a$, and every stack other than $N$, $W$ and $T$ is as at
+the start. -/
 theorem load_run : ∀ (n : ℕ) (w acc : List Bool) (v : Bool) (St : ∀ _ : K, List Sym),
     St .N = cnt (Sym.bit true) n → St .W = w.map Sym.bit → St .T = acc.map Sym.bit →
     ∃ v' S', RunLe prog (n + 1) ⟨some .load, v, St⟩
@@ -690,7 +862,11 @@ theorem load_run : ∀ (n : ℕ) (w acc : List Bool) (v : Bool) (St : ∀ _ : K,
               refine ⟨by simp [h1, cols_cons_cons], fun q q1 q2 q3 => ?_⟩
               rw [h2 q q1 q2 q3, hSt₁, update_of_ne q3, update_of_ne q2, update_of_ne q1]
 
-/-- A parsed edge, then the rest: the loop's verdict is the edge's and the rest's. -/
+/-- **Edge-loop verdict after one parsed edge.** Let $cs$ be a list of color codes and $r$ a bit
+list. If $r$ begins with $u$ in unary ($u$ ones, then a zero) followed by the rest $r_1$, and
+$r_1$ begins with $v$ in unary followed by the rest $r_2$, then the edge-loop verdict on $r$ with
+vertex colors $cs$ holds iff the edge verdict for $(u, v)$ holds and the edge-loop verdict on
+$r_2$ holds. -/
 theorem edgesOk_of_some_some (cs : List (Bool × Bool)) {r r₁ r₂ : List Bool} {u v : ℕ}
     (h₁ : readUnaryLength r = some (u, r₁)) (h₂ : readUnaryLength r₁ = some (v, r₂)) :
     edgesOk cs r = (edgeOk cs u v && edgesOk cs r₂) := by
@@ -698,7 +874,14 @@ theorem edgesOk_of_some_some (cs : List (Bool × Bool)) {r r₁ r₂ : List Bool
   rw [decodeEs_of_some_some h₁ h₂]
   cases decodeEs r₂ <;> simp
 
-/-- Putting the passed colors back: `back` moves `T` onto `P`. -/
+/-- **Restoring the color stack in the 3-COLOR verifier.** Let $\mathit{pre}$ and $\mathit{post}$
+be lists of pairs of bits, let $s$ be a Boolean state, and let $S$ assign to each stack a list of
+symbols. Suppose that in $S$ the stack $P$ holds the bits of the flattening of $\mathit{post}$
+and the stack $T$ holds the bits of the flattening of $\mathit{pre}$ in reverse order (as bit
+symbols, top first). Then the verifier program runs in exactly $2 |\mathit{pre}| + 1$ steps from
+the label back with state $s$ and stacks $S$ to the label edge with some state $s'$ and stacks
+$S'$ such that $T$ is empty in $S'$, $P$ holds the bits of the flattening of $\mathit{pre}$
+followed by $\mathit{post}$, and every stack other than $T$ and $P$ is unchanged. -/
 theorem back_run (pre post : List (Bool × Bool)) (s : Bool) (St : ∀ _ : K, List Sym)
     (hP : St .P = (flat post).map Sym.bit) (hT : St .T = (flat pre).reverse.map Sym.bit) :
     ∃ s' S', Run prog (2 * pre.length + 1) ⟨some .back, s, St⟩ ⟨some .edge, s', S'⟩ ∧
@@ -709,8 +892,16 @@ theorem back_run (pre post : List (Bool × Bool)) (s : Bool) (St : ∀ _ : K, Li
     (by simp [hT]) (by simp [IsBitBlock, Sym.bit?, Function.comp_def]) (by simp [EndsBitBlock])
   exact ⟨s', S', by simpa using h, hT', by simp [hP', hP, flat_append, List.map_reverse], hF⟩
 
-/-- The edge loop: from `edge` with the rest `r` of the input on `X`, the colors `cs` on `P`
-and `T`, `U`, `V` empty, it reaches `yes` iff `edgesOk cs r`, within `4 |r| + 1` steps. -/
+/-- **Correctness and running time of the edge loop.** Let $cs$ be a list of color codes (pairs
+of bits) and $r$ a list of bits, and encode an edge $(u, v)$ of natural numbers as $u$ ones, a
+zero, $v$ ones and a zero. Call $r$ good for $cs$ when $r$ is a concatenation of encoded edges
+such that, for every edge $(u, v)$ among them, $u$ and $v$ are below the length of $cs$ and, if
+$u \ne v$, entries $u$ and $v$ of $cs$ (counting from $0$) differ. Suppose the 3-COLOR verifier
+is at its edge label, in any internal state, with the input stack $X$ holding the bits of $r$
+(first bit on top), the color stack $P$ holding the bits of the flattening of $cs$, the stacks
+$T$, $U$ and $V$ empty, and the other stacks arbitrary. Then in at most $4|r| + 1$ steps it
+reaches, in some internal state and with some stack contents, the accepting label if $r$ is good
+for $cs$, and the rejecting label otherwise. -/
 theorem edges_run (cs : List (Bool × Bool)) (r : List Bool) : ∀ (s : Bool)
     (St : ∀ _ : K, List Sym), St .X = r.map Sym.bit → St .P = (flat cs).map Sym.bit →
     St .T = [] → St .U = [] → St .V = [] →
@@ -793,9 +984,13 @@ theorem edges_run (cs : List (Bool × Bool)) (r : List Bool) : ∀ (s : Bool)
             have hm : max u v ≤ u + v := by omega
             omega
 
-/-- **The verifier machine.** From `start` with `x` on `X`, `w` on `W` and the other stacks
-empty, `prog` reaches `yes` if `colCheck x w` and `no` otherwise, within
-`8 (|x| + |w| + 1)³` steps (linearly many, in fact). -/
+/-- **Correctness and time bound of the 3-coloring verifier machine.** Let $x$ and $w$ be
+bit strings. Start the verifier machine at its start label, with any internal value, with $x$
+written as bit symbols on the input stack $X$, $w$ written as bit symbols on the witness stack
+$W$, and all other stacks empty. Then within at most $8(|x| + |w| + 1)^3$ steps it reaches the
+accepting label if the 3-coloring check accepts $(x, w)$, and the rejecting label otherwise.
+
+The machine in fact runs in linearly many steps; only the cubic bound is stated here. -/
 theorem run (x w : List Bool) (v : Bool) (St : ∀ _ : K, List Sym)
     (hX : St .X = x.map Sym.bit) (hW : St .W = w.map Sym.bit)
     (h0 : ∀ k, k ≠ .X → k ≠ .W → St k = []) :

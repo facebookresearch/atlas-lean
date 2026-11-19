@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Computability.TuringMachine.ExactStackEmbedding
-meta import Mathlib.Computability.TuringMachine.StackTuringMachine
 
 @[expose] public section
 
@@ -58,7 +57,8 @@ private theorem source_one :
   Run.single rfl
 
 -- This importing client requires the new supplied-endpoint theorem.
-example : Run hostOne 1 ⟨some (), false, hostStart⟩ ⟨none, false, hostAfter⟩ := by
+private theorem one_exact :
+    Run hostOne 1 ⟨some (), false, hostStart⟩ ⟨none, false, hostAfter⟩ := by
   apply run_embed_exact_of_agree_frame middle id one_matches source_one initial_agree
   · intro k
     have hk : k = 0 := Subsingleton.elim _ _
@@ -67,11 +67,14 @@ example : Run hostOne 1 ⟨some (), false, hostStart⟩ ⟨none, false, hostAfte
   · intro k hk
     exact Function.update_of_ne (hk 0).symm _ _
 
-#eval let c := TM2.stepAux (hostOne ()) false hostStart
-  (c.l, c.var, [c.stk 0, c.stk 1, c.stk 2])
+private theorem one_step_literal :
+    let c := TM2.stepAux (hostOne ()) false hostStart
+    (c.l, c.var, [c.stk 0, c.stk 1, c.stk 2]) =
+      (none, false, [[true, true], [false], [false, true, false]]) := by decide
 
 -- The existential adapter must determine the three literal host-stack outputs.
-example : ∃ T', Run hostOne 1 ⟨some (), false, hostStart⟩ ⟨none, false, T'⟩ ∧
+private theorem one_existential :
+    ∃ T', Run hostOne 1 ⟨some (), false, hostStart⟩ ⟨none, false, T'⟩ ∧
     T' 0 = [true, true] ∧ T' 1 = [false] ∧ T' 2 = [false, true, false] := by
   obtain ⟨T', hr, hA, hF⟩ := run_embed_exact middle id one_matches source_one initial_agree
   exact ⟨T', hr, hF 0 (fun _ => (by decide : (1 : Fin 3) ≠ 0)), hA 0,
@@ -100,36 +103,41 @@ private theorem source_two :
   simp [sourceTwo, sourceAfter, emptySource, TM2.stepAux]
 
 -- Swapped labels and the inverse alphabet map recover the popped source symbol as state.
-example : Run hostTwo 2 ⟨some true, false, hostStart⟩ ⟨none, true, hostStart⟩ :=
+private theorem two_exact :
+    Run hostTwo 2 ⟨some true, false, hostStart⟩ ⟨none, true, hostStart⟩ :=
   run_embed_exact_of_agree_frame middle Bool.not two_matches source_two initial_agree
     initial_agree (Frame.refl hostStart)
 
 private def hostTwoFirst := TM2.step hostTwo ⟨some true, false, hostStart⟩
 private def hostTwoResult := hostTwoFirst.bind (TM2.step hostTwo)
 
-#guard hostTwoFirst.map (fun c => (c.l, c.var, [c.stk 0, c.stk 1, c.stk 2])) =
-  some (some false, false, [[true, true], [false], [false, true, false]])
-#guard hostTwoResult.map (fun c => (c.l, c.var, [c.stk 0, c.stk 1, c.stk 2])) =
-  some (none, true, [[true, true], [], [false, true, false]])
-#guard (hostTwoResult.bind (TM2.step hostTwo)).map TM2.Cfg.l = none
-#eval hostTwoResult.map (fun c => (c.l, c.var, [c.stk 0, c.stk 1, c.stk 2]))
+private theorem two_first_literal :
+    hostTwoFirst.map (fun c => (c.l, c.var, [c.stk 0, c.stk 1, c.stk 2])) =
+      some (some false, false, [[true, true], [false], [false, true, false]]) := by decide
+private theorem two_final_literal :
+    hostTwoResult.map (fun c => (c.l, c.var, [c.stk 0, c.stk 1, c.stk 2])) =
+      some (none, true, [[true, true], [], [false, true, false]]) := by decide
+private theorem two_overrun_empty :
+    (hostTwoResult.bind (TM2.step hostTwo)).map TM2.Cfg.l = none := by decide
 
 -- A tight budget and one spare step preserve the same populated endpoint.
-example : ∃ T', RunLe hostTwo 2 ⟨some true, false, hostStart⟩ ⟨none, true, T'⟩ ∧
+private theorem two_le_tight :
+    ∃ T', RunLe hostTwo 2 ⟨some true, false, hostStart⟩ ⟨none, true, T'⟩ ∧
     Agree middle emptySource T' ∧ Frame middle hostStart T' :=
   runLe_embed_exact middle Bool.not two_matches ⟨2, by decide, source_two⟩ initial_agree
 
-example : ∃ T', RunLe hostTwo 3 ⟨some true, false, hostStart⟩ ⟨none, true, T'⟩ ∧
+private theorem two_le_spare :
+    ∃ T', RunLe hostTwo 3 ⟨some true, false, hostStart⟩ ⟨none, true, T'⟩ ∧
     Agree middle emptySource T' ∧ Frame middle hostStart T' :=
   runLe_embed_exact middle Bool.not two_matches ⟨2, by decide, source_two⟩ initial_agree
-
 
 -- Halted inputs, zero budget, and compatibility with the existing live-endpoint adapter.
-example : Run hostOne 0 ⟨none, false, hostStart⟩ ⟨none, false, hostStart⟩ :=
+private theorem halted_zero :
+    Run hostOne 0 ⟨none, false, hostStart⟩ ⟨none, false, hostStart⟩ :=
   run_embed_exact_of_agree_frame middle id one_matches
     (Run.zero ⟨none, false, emptySource⟩) initial_agree initial_agree (Frame.refl hostStart)
 
-example {n : ℕ} {c : TM2.Cfg (fun _ : Fin 1 => Bool) Unit Bool} :
+private theorem halted_positive_impossible {n : ℕ} {c : TM2.Cfg (fun _ : Fin 1 => Bool) Unit Bool} :
     ¬ Run sourceOne (n + 1) ⟨none, false, emptySource⟩ c := by
   intro h
   unfold Run at h
@@ -138,17 +146,21 @@ example {n : ℕ} {c : TM2.Cfg (fun _ : Fin 1 => Bool) Unit Bool} :
   rw [iter_none] at h
   cases h
 
-example : ∃ T', RunLe hostOne 0 ⟨none, false, hostStart⟩ ⟨none, false, T'⟩ ∧
+private theorem halted_le_zero :
+    ∃ T', RunLe hostOne 0 ⟨none, false, hostStart⟩ ⟨none, false, T'⟩ ∧
     Agree middle emptySource T' ∧ Frame middle hostStart T' :=
   runLe_embed_exact middle id one_matches (RunLe.refl 0 ⟨none, false, emptySource⟩) initial_agree
 
-#guard (TM2.step hostOne ⟨none, false, hostStart⟩).map TM2.Cfg.l = none
+private theorem halted_step_empty :
+    (TM2.step hostOne ⟨none, false, hostStart⟩).map TM2.Cfg.l = none := by decide
 
-example : ∃ T', Run hostTwo 1 ⟨some true, false, hostStart⟩ ⟨some false, false, T'⟩ ∧
+private theorem live_exact :
+    ∃ T', Run hostTwo 1 ⟨some true, false, hostStart⟩ ⟨some false, false, T'⟩ ∧
     Agree middle sourceAfter T' ∧ Frame middle hostStart T' :=
   run_embed_exact middle Bool.not two_matches source_live initial_agree
 
-example : ∃ T', Run hostTwo 1 ⟨some true, false, hostStart⟩ ⟨some false, false, T'⟩ ∧
+private theorem live_compatible :
+    ∃ T', Run hostTwo 1 ⟨some true, false, hostStart⟩ ⟨some false, false, T'⟩ ∧
     Agree middle sourceAfter T' ∧ Frame middle hostStart T' :=
   run_embed Bool.not (show Embeds middle Bool.not sourceTwo hostTwo from
     fun l => Or.inl (two_matches l)) 1 (some false) false emptySource true false
@@ -161,12 +173,13 @@ private def collapse : Bool → Unit := fun _ => ()
 private theorem collapsed_matches (l : Bool) :
     hostOne (collapse l) = mapS middle collapse (collapsedSource l) := rfl
 
-example : ¬ Function.Injective collapse := by
+private theorem collapse_noninjective : ¬ Function.Injective collapse := by
   intro h
   have hf : false = true := h rfl
   cases hf
 
-example : Run hostOne 1 ⟨some (), false, hostStart⟩ ⟨none, false, hostAfter⟩ := by
+private theorem collapse_exact :
+    Run hostOne 1 ⟨some (), false, hostStart⟩ ⟨none, false, hostAfter⟩ := by
   apply run_embed_exact_of_agree_frame middle collapse collapsed_matches
     (Run.single (M := collapsedSource) (l := true) rfl) initial_agree
   · intro k
@@ -189,13 +202,16 @@ private def noHostProgram : Unit → TM2.Stmt (fun _ : Fin 3 => Bool) Unit Bool 
 private theorem no_matches (l : Unit) :
     noHostProgram l = mapS noStacks id (noProgram l) := rfl
 
-example : Run noHostProgram 1 ⟨some (), false, hostStart⟩ ⟨none, true, hostStart⟩ :=
+private theorem zero_stack_exact :
+    Run noHostProgram 1 ⟨some (), false, hostStart⟩ ⟨none, true, hostStart⟩ :=
   run_embed_exact_of_agree_frame noStacks id no_matches
     (Run.single (M := noProgram) (l := ()) (v := false) (S := noSource) rfl)
     (fun k => Fin.elim0 k) (fun k => Fin.elim0 k) (Frame.refl hostStart)
 
-#eval let c := TM2.stepAux (noHostProgram ()) false hostStart
-  (c.l, c.var, [c.stk 0, c.stk 1, c.stk 2])
+private theorem zero_stack_literal :
+    let c := TM2.stepAux (noHostProgram ()) false hostStart
+    (c.l, c.var, [c.stk 0, c.stk 1, c.stk 2]) =
+      (none, true, [[true, true], [], [false, true, false]]) := by decide
 
 -- Swapped stack indices carry different Nat and Bool alphabets.
 private abbrev depAlphabet : Bool → Type
@@ -224,7 +240,7 @@ private theorem dep_run :
     Run depProgram 1 ⟨some (), false, depSource⟩
       ⟨none, true, Function.update depSource false [11, 7, 9]⟩ := Run.single rfl
 
-example : Run depHostProgram 1 ⟨some (), false, depHost⟩
+private theorem dependent_exact : Run depHostProgram 1 ⟨some (), false, depHost⟩
     ⟨none, true, Function.update depHost true [11, 7, 9]⟩ :=
   run_embed_exact_of_agree_frame depEmbed id dep_matches dep_run
     (by
@@ -239,39 +255,45 @@ example : Run depHostProgram 1 ⟨some (), false, depHost⟩
       · exact False.elim (hk true rfl)
       · exact False.elim (hk false rfl))
 
-#guard (TM2.stepAux (depHostProgram ()) false depHost).stk true = [11, 7, 9]
-#guard (TM2.stepAux (depHostProgram ()) false depHost).stk false = [true, false]
-#eval let c := TM2.stepAux (depHostProgram ()) false depHost
-  (c.l, c.var, c.stk true, c.stk false)
+private theorem dep_nat_literal :
+    (TM2.stepAux (depHostProgram ()) false depHost).stk true = [11, 7, 9] := by decide
+private theorem dep_bool_literal :
+    (TM2.stepAux (depHostProgram ()) false depHost).stk false = [true, false] := by decide
+private theorem dependent_step_literal :
+    let c := TM2.stepAux (depHostProgram ()) false depHost
+    (c.l, c.var, c.stk true, c.stk false) = (none, true, [11, 7, 9], [true, false]) := by decide
 
 -- Old Embeds accepts source halt versus host goto-self; exact matching excludes it.
 private def sourceHalt : Unit → TM2.Stmt (fun _ : Fin 1 => Bool) Unit Bool := fun _ => .halt
 private def hostLoop : Unit → TM2.Stmt (fun _ : Fin 3 => Bool) Unit Bool :=
   fun _ => .goto (fun _ => ())
 
-example : Embeds middle id sourceHalt hostLoop := fun _ => Or.inr rfl
+private theorem loop_embeds : Embeds middle id sourceHalt hostLoop := fun _ => Or.inr rfl
 
-example : Run sourceHalt 1 ⟨some (), false, emptySource⟩ ⟨none, false, emptySource⟩ :=
+private theorem source_halts :
+    Run sourceHalt 1 ⟨some (), false, emptySource⟩ ⟨none, false, emptySource⟩ :=
   Run.single rfl
 
-example : Run hostLoop 1 ⟨some (), false, hostStart⟩ ⟨some (), false, hostStart⟩ :=
+private theorem host_loops :
+    Run hostLoop 1 ⟨some (), false, hostStart⟩ ⟨some (), false, hostStart⟩ :=
   Run.single rfl
 
-example : ¬ Run hostLoop 1 ⟨some (), false, hostStart⟩ ⟨none, false, hostStart⟩ := by
+private theorem loop_not_halted :
+    ¬ Run hostLoop 1 ⟨some (), false, hostStart⟩ ⟨none, false, hostStart⟩ := by
   intro h
   change some (⟨some (), false, hostStart⟩ : TM2.Cfg (fun _ : Fin 3 => Bool) Unit Bool) =
     some ⟨none, false, hostStart⟩ at h
   have hl := congrArg (fun c => c.map TM2.Cfg.l) h
   cases hl
 
-example : ¬ (∀ l, hostLoop (id l) = mapS middle id (sourceHalt l)) := by
+private theorem loop_not_exact : ¬ (∀ l, hostLoop (id l) = mapS middle id (sourceHalt l)) := by
   intro h
   have hl := congrArg (fun q => (TM2.stepAux q false hostStart).l) (h ())
   cases hl
 
-#guard (TM2.stepAux (sourceHalt ()) false emptySource).l = none
-#guard (TM2.stepAux (hostLoop ()) false hostStart).l = some ()
-#eval ((TM2.stepAux (sourceHalt ()) false emptySource).l,
-  (TM2.stepAux (hostLoop ()) false hostStart).l)
+private theorem source_halt_label :
+    (TM2.stepAux (sourceHalt ()) false emptySource).l = none := by decide
+private theorem host_loop_label :
+    (TM2.stepAux (hostLoop ()) false hostStart).l = some () := by decide
 
 end ExactStackEmbeddingTest

@@ -87,8 +87,8 @@ they are positive and every invariant vector is a multiple of them.
 ## Not covered
 
 Infinite closed classes of the stochastic chain (where normalizability must be shown), the
-existence of a complex-balanced `c` (the deficiency-zero theorem, recorded as wanted in
-`WantedExt/Biology/Dynamics/DeficiencyZeroWanted.lean`), networks with conservation laws in
+existence of a complex-balanced `c` (the deficiency-zero theorem, proved in
+`MathlibExt.Biology.Dynamics.DeficiencyZero.Integration`), networks with conservation laws in
 metabolic control analysis (singular Jacobian, link matrices), and Thomas' rules for Boolean
 networks with cycles. Piecewise linearity and differentiability of the FBA value are in
 `MathlibExt.Biology.Dynamics.FluxBalanceValue`; the existence of a balancing for symmetric

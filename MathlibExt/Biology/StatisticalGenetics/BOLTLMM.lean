@@ -136,10 +136,6 @@ noncomputable def proj {n p : ℕ} (M : Model n) (X : Matrix (Fin n) (Fin p) ℝ
 private lemma isUnit_det_V {n : ℕ} (M : Model n) : IsUnit M.V.det :=
   (Matrix.isUnit_iff_isUnit_det _).mp M.posDef_V.isUnit
 
-private lemma transpose_V_inv {n : ℕ} (M : Model n) : (M.V⁻¹)ᵀ = M.V⁻¹ := by
-  have h := M.posDef_V.inv.isHermitian
-  rwa [Matrix.IsHermitian, conjTranspose_eq_transpose_of_trivial] at h
-
 private lemma posDef_S {n p : ℕ} (M : Model n) {X : Matrix (Fin n) (Fin p) ℝ}
     (hX : Function.Injective X.mulVec) : (Xᵀ * M.V⁻¹ * X).PosDef := by
   simpa [conjTranspose_eq_transpose_of_trivial] using
@@ -148,10 +144,6 @@ private lemma posDef_S {n p : ℕ} (M : Model n) {X : Matrix (Fin n) (Fin p) ℝ
 private lemma isUnit_det_S {n p : ℕ} (M : Model n) {X : Matrix (Fin n) (Fin p) ℝ}
     (hX : Function.Injective X.mulVec) : IsUnit (Xᵀ * M.V⁻¹ * X).det :=
   (Matrix.isUnit_iff_isUnit_det _).mp (posDef_S M hX).isUnit
-
-private lemma dotProduct_mulVec_comm {n : ℕ} {W : Matrix (Fin n) (Fin n) ℝ} (hW : Wᵀ = W)
-    (a b : Fin n → ℝ) : a ⬝ᵥ (W *ᵥ b) = b ⬝ᵥ (W *ᵥ a) := by
-  rw [Matrix.dotProduct_mulVec, ← Matrix.mulVec_transpose, hW, dotProduct_comm]
 
 private lemma mulVec_dotProduct_mulVec {n p : ℕ} (W : Matrix (Fin n) (Fin n) ℝ)
     (X : Matrix (Fin n) (Fin p) ℝ) (u : Fin n → ℝ) (d : Fin p → ℝ) :
@@ -185,7 +177,7 @@ private lemma quad_eq {n p : ℕ} (M : Model n) {X : Matrix (Fin n) (Fin p) ℝ}
     have h1 : (X *ᵥ d) ⬝ᵥ (M.V⁻¹ *ᵥ u) = 0 := by
       rw [mulVec_dotProduct_mulVec, hn, dotProduct_zero]
     have h2 : u ⬝ᵥ (M.V⁻¹ *ᵥ (X *ᵥ d)) = 0 := by
-      rw [dotProduct_mulVec_comm (transpose_V_inv M), h1]
+      rw [IsSymm.dotProduct_mulVec_comm M.posDef_V.inv.isHermitian.isSymm, h1]
     have h3 : (X *ᵥ d) ⬝ᵥ (M.V⁻¹ *ᵥ (X *ᵥ d)) = d ⬝ᵥ ((Xᵀ * M.V⁻¹ * X) *ᵥ d) := by
       rw [mulVec_dotProduct_mulVec, mulVec_mulVec, mulVec_mulVec]
     rw [mulVec_sub, dotProduct_sub, sub_dotProduct, sub_dotProduct, h1, h2, h3]
@@ -202,13 +194,13 @@ private lemma quad_gls {n p : ℕ} (M : Model n) {X : Matrix (Fin n) (Fin p) ℝ
   rw [proj_mulVec, sub_dotProduct, mulVec_dotProduct_mulVec, normal_eq M hX y, dotProduct_zero,
     sub_zero]
 
-private lemma transpose_proj {n p : ℕ} (M : Model n) (X : Matrix (Fin n) (Fin p) ℝ) :
-    (M.proj X)ᵀ = M.proj X := by
+private lemma isSymm_proj {n p : ℕ} (M : Model n) (X : Matrix (Fin n) (Fin p) ℝ) :
+    (M.proj X).IsSymm := by
   have hV : M.Vᵀ = M.V := by
     have h := M.posDef_V.isHermitian
     rwa [Matrix.IsHermitian, conjTranspose_eq_transpose_of_trivial] at h
-  simp only [proj, transpose_sub, transpose_mul, transpose_transpose, transpose_nonsing_inv, hV,
-    Matrix.mul_assoc]
+  simp only [IsSymm, proj, transpose_sub, transpose_mul, transpose_transpose,
+    transpose_nonsing_inv, hV, Matrix.mul_assoc]
 
 private lemma logLik_mulVec {n p : ℕ} (M : Model n) (X : Matrix (Fin n) (Fin p) ℝ)
     (y : Fin n → ℝ) (β : Fin p → ℝ) :
@@ -305,7 +297,7 @@ theorem profileLogLik_eq_quadratic {n p : ℕ} {M : Model n} {X : Matrix (Fin n)
     M.profileLogLik X x y γ = M.profileLogLik X x y 0 + γ * (x ⬝ᵥ (M.proj X *ᵥ y)) -
       γ ^ 2 / 2 * (x ⬝ᵥ (M.proj X *ᵥ x)) := by
   have hsym : y ⬝ᵥ (M.proj X *ᵥ x) = x ⬝ᵥ (M.proj X *ᵥ y) :=
-    dotProduct_mulVec_comm (transpose_proj M X) y x
+    IsSymm.dotProduct_mulVec_comm (isSymm_proj M X)
   rw [profileLogLik_eq hX, profileLogLik_eq hX, zero_smul, sub_zero]
   simp only [mulVec_sub, mulVec_smul, dotProduct_sub, sub_dotProduct, dotProduct_smul,
     smul_dotProduct, smul_eq_mul, hsym]

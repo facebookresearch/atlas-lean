@@ -10,7 +10,7 @@ module
 
 public import CSLibExt.Algorithms.Lean.Geometry.SegmentIntersection
 public import Mathlib.Data.List.Chain
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
 
 /-!
 # Convex hull by Andrew's monotone chain: the lower chain

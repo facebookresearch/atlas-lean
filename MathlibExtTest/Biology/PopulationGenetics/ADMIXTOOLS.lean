@@ -193,4 +193,12 @@ example (mA mB : ℕ) (qA qB : I) :
     measurable_snd.aemeasurable]
   simp
 
+
+/-- Frequency form of a zero-private-drift affine mixture. -/
+example {Ω P E : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} [Fintype E]
+    (M : DriftModel μ E P) {ι : Type*} [Fintype ι] {T : P} (S : ι → P) (w : ι → ℝ)
+    (hw : ∑ k, w k = 1) (hT : M.weight T = ∑ k, w k • M.weight (S k)) (ω : Ω) :
+    M.freq T ω = ∑ k, w k * M.freq (S k) ω :=
+  M.freq_eq_sum_of_weight_eq_sum S w hw hT ω
+
 end MathlibExtTest.Biology.PopulationGenetics.ADMIXTOOLS

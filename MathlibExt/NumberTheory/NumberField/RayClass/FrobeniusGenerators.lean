@@ -9,7 +9,8 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.NumberTheory.NumberField.RayClass.PrimeGeneration
 import Mathlib.RingTheory.Frobenius
 import Mathlib.RingTheory.Ideal.Over
-import Mathlib.RingTheory.Ideal.Quotient.HasFiniteQuotients
+import Mathlib.RingTheory.Ideal.Quotient.HasFiniteQuotients.Basic
+import Mathlib.RingTheory.Ideal.Quotient.HasFiniteQuotients.Norm
 import Mathlib.FieldTheory.Galois.IsGaloisGroup
 import Mathlib.NumberTheory.RamificationInertia.Galois
 
@@ -75,6 +76,7 @@ variable (m : Modulus K)
 /-- A number-field extension `L / K` is unramified outside `m` when every finite
 prime of `K` outside the finite support of `m` is unramified in `𝓞 L`, in the
 sense of Mathlib's `Algebra.IsUnramifiedIn`. -/
+@[nolint unusedArguments] -- Deleting it would orphan `[NumberField L]` in `at_coprimePrime`.
 def IsUnramifiedOutside (L : Type*) [Field L] [NumberField L] [Algebra K L] :
     Prop :=
   ∀ v : IsDedekindDomain.HeightOneSpectrum (𝓞 K), ¬ m.finiteSupported v →

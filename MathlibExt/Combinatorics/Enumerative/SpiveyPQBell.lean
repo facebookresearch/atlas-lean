@@ -1037,6 +1037,7 @@ private def spivey_finish_public : Lean.Elab.Tactic.TacticM Unit := do
     goal.assign proof
     Lean.Elab.Tactic.replaceMainGoal []
 
+set_option linter.unusedVariables false in
 /-- (p, q)-deformation of Spivey's Bell number formula: the `(p, q)`-Bell value
 `tildeB (n + m) 1` expands as the double sum over `k ≤ m` and `j ≤ n` of
 `C(n,j) * tildeS m k * bracket k ^ (n - j) * q ^ (j * k) * tildeB j (p ^ (n + m - j))`.
@@ -1050,6 +1051,7 @@ Proves `Wanted` entry `spivey_pq_bell`.
 Proof: We formalize the operator proof around equations `eq1`, `eq2'`, `eq4`, `meq`,
 `pqexpn`, and `lasteq` in Oussi's paper, using formal power series in place of convergent series.
 -/
+@[nolint unusedArguments] -- `hp1` keeps the `Wanted` entry's statement
 public theorem spivey_pq_bell :
   ∀ (p q : ℝ) (hq0 : 0 < q) (hqp : q < p) (hp1 : p ≤ 1),
     let bracket : ℕ → ℝ := fun k => (p ^ k - q ^ k) / (p - q);
@@ -1075,5 +1077,14 @@ public theorem spivey_pq_bell :
     exact ne_of_gt (spivey_bracket_pos p q hq0 hqp k hk)
   dsimp only [tildeB, tildeS]
   run_tac spivey_finish_public
+
+/-- The numbers `S n k` of the `let rec` in the statement of `spivey_pq_bell`, built from `p`, `q`
+and `bracket k = (p ^ k - q ^ k) / (p - q)`: `S 0 k` is `1` at `k = 0` and `0` otherwise,
+`S (n + 1) 0 = 0`, and for `k ≠ 0`,
+`S (n + 1) k = p ^ (n + 1 - k) * q ^ (k - 1) * S n (k - 1) + bracket k * S n k`. -/
+add_decl_doc spivey_pq_bell.S
+
+-- The name comes from the theorem that declares the `let rec`.
+attribute [nolint defsWithUnderscore] spivey_pq_bell.S
 
 end MetaMathlibExt

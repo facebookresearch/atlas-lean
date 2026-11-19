@@ -43,7 +43,9 @@ open Computability MetaMathlibExt
 
 /-! ### Binary codes of `2 ^ k - 1` -/
 
-/-- The binary code of `2 ^ k - 1` is `k` ones. -/
+/-- **The binary code of $2^k - 1$.** For every natural number $k$, the binary code of
+$2^k - 1$ (Mathlib's encoding of natural numbers as bit lists, least significant bit first) is
+the list of $k$ ones. -/
 theorem encodeNat_two_pow_sub_one (k : ℕ) : encodeNat (2 ^ k - 1) = List.replicate k true := by
   induction k with
   | zero => rfl
@@ -68,7 +70,8 @@ theorem encodeNat_two_pow_sub_one (k : ℕ) : encodeNat (2 ^ k - 1) = List.repli
           omega
         rw [this, hm]; rfl
 
-/-- `rep [true, true] k ++ [false]` self-delimits `k` ones. -/
+/-- **Self-delimiting code of a block of ones.** For every $k \in \mathbb{N}$, the self-delimiting
+form of the bit string of $k$ ones is $k$ copies of $11$ followed by a single $0$. -/
 theorem delimit_replicate (k : ℕ) :
     BitstringEncoding.delimit (List.replicate k true) =
       TM2Program.rep [true, true] k ++ [false] := by
@@ -78,7 +81,9 @@ theorem delimit_replicate (k : ℕ) :
       rw [List.replicate_succ, BitstringEncoding.delimit, ih, TM2Program.rep_succ]
       rfl
 
-/-- The binary literal code of `(2 ^ k - 1, b)`. -/
+/-- **Binary codes of literals on variables one less than a power of two.** For every
+$k \in \mathbb{N}$ and every truth value $b$, the binary code of the literal of polarity $b$ on
+variable $2^k - 1$ is $k$ copies of $11$, followed by $0$, followed by the bit $b$. -/
 theorem encodeLit_two_pow (k : ℕ) (b : Bool) :
     Cslib.CookLevin.encodeLit (2 ^ k - 1, b) = TM2Program.rep [true, true] k ++ [false, b] := by
   simp [Cslib.CookLevin.encodeLit, Cslib.CookLevin.encodeNatPrefix, encodeNat_two_pow_sub_one,
@@ -86,13 +91,21 @@ theorem encodeLit_two_pow (k : ℕ) (b : Bool) :
 
 /-! ### The translated formula -/
 
-/-- Slot `j` of `c` becomes the literal on variable `2 ^ (k₀ + #slots after j) - 1`. -/
+/-- **Binary-index translation of a dense clause.** Let $k_0 \in \mathbb{N}$ and let $c$ be a dense
+clause with slots $s_0, \dots, s_{L-1}$. Its binary-index translation with offset $k_0$ is the
+clause that has, for each slot $j$ holding a literal of polarity $b$, the literal of polarity $b$
+on variable $2^{k_0 + L - 1 - j} - 1$, listed in increasing order of $j$; absent slots contribute
+no literal. -/
 def binClause (k₀ : ℕ) : Clause → Cslib.CookLevin.CNFClause
   | [] => []
   | none :: c => binClause k₀ c
   | some b :: c => (2 ^ (k₀ + c.length) - 1, b) :: binClause k₀ c
 
-/-- The translated formula. -/
+/-- **Binary-index translation of a dense formula.** The translation of a dense CNF formula
+$\varphi$ replaces each clause $c$ of $\varphi$, keeping their order, by its binary-index
+translation with offset $0$: if $c$ has length $L$, each slot $j$ of $c$ holding a literal of
+polarity $b$ becomes the literal of polarity $b$ on variable $2^{L - 1 - j} - 1$, and absent slots
+are dropped. -/
 def binCNF (φ : CNF) : Cslib.CookLevin.CNF := φ.map (binClause 0)
 
 theorem mem_binClause (c : Clause) (x : ℕ) (b : Bool) :
@@ -128,7 +141,11 @@ theorem mem_binClause (c : Clause) (x : ℕ) (b : Bool) :
             | none => exact h
             | some b' => exact List.mem_cons_of_mem _ h
 
-/-- **Satisfiability is preserved** for formulas whose clauses all have length `V`. -/
+/-- **The binary-index translation preserves satisfiability when all clauses have equal length.**
+Let $\varphi$ be a dense CNF formula all of whose clauses have the same length $V$. Then the
+binary-index translation of $\varphi$ is satisfiable (some assignment of truth values to the
+variables satisfies every clause) if and only if some finite list of truth values satisfies
+$\varphi$. -/
 theorem cnfSat_binCNF_iff {φ : CNF} {V : ℕ} (hV : ∀ c ∈ φ, c.length = V) :
     Cslib.CookLevin.CNFSat (binCNF φ) ↔ ∃ a, cnfSat φ a := by
   constructor
@@ -157,15 +174,33 @@ theorem cnfSat_binCNF_iff {φ : CNF} {V : ℕ} (hV : ∀ c ∈ φ, c.length = V)
 
 /-! ### The translation on the reversed bit string -/
 
-/-- Close a clause with `n` literals: its unary count, emitted in front of the literals. -/
+/-- **Closing a clause in the translated output.** For a natural number $n$ and a bit string
+$o$, closing a clause with $n$ literals in front of $o$ gives the bit string consisting of $n$
+ones, then a zero, then $o$; that is, the unary count of $n$ is prepended to $o$.
+
+In the translation, $o$ starts with the codes of the clause's $n$ literals, already emitted. -/
 def endClause (n : ℕ) (o : List Bool) : List Bool := List.replicate n true ++ false :: o
 
-/-- The translation, reading the dense bit string **backwards** two bits at a time (`s₂` before
-`s₁` for a slot `s₁ s₂`) and prepending to the output `o`. `ins` says whether a clause is open
-(the reversed string starts with a terminator), `n` counts its literals, `k` its slots so far, and
-`m` the clauses. A terminator `00` closes the open clause and opens the next; an absent slot `01`
-bumps `k`; a present slot `1s` emits the literal `(2 ^ k - 1, !s)` inside a clause and is skipped
-outside one; at the end the clause count is emitted. -/
+/-- **The dense-to-binary translation on the reversed bit string.** The function
+$\mathrm{conv}(w, \iota, n, k, m, o)$ consumes the bit string $w$ two bits at a time and prepends
+to the output bit string $o$. The truth value $\iota$ records whether a clause is open, $n$ counts
+the literals of the open clause, $k$ counts slots and $m$ counts clauses. Juxtaposition of bit
+strings is concatenation, $1^n$ is $n$ ones, $(11)^k$ is $k$ copies of $11$, $\bar s$ is the
+negation of a bit $s$, and $C$ is $1^n 0\, o$ if $\iota$ is true and $o$ otherwise. For every bit
+$s$ and bit string $r$:
+
+* $\mathrm{conv}(00\, r, \iota, n, k, m, o) = \mathrm{conv}(r, \mathrm{true}, 0, 0, m + 1, C)$;
+* $\mathrm{conv}(10\, r, \iota, n, k, m, o) = \mathrm{conv}(r, \iota, n, k + 1, m, o)$;
+* $\mathrm{conv}(s1\, r, \iota, n, k, m, o)$ is
+  $\mathrm{conv}(r, \mathrm{true}, n + 1, k + 1, m, (11)^k 0 \bar s\, o)$ if $\iota$ is true and
+  $\mathrm{conv}(r, \mathrm{false}, n, k, m, o)$ otherwise;
+* if $w$ has fewer than two bits, $\mathrm{conv}(w, \iota, n, k, m, o) = 1^m 0\, C$.
+
+On the reversed dense encoding a slot $s_1 s_2$ is read as $s_2 s_1$: $00$ is a terminator, which
+closes the open clause and opens the next, $10$ is an absent slot, and $s1$ is a present slot,
+whose literal $(2^k - 1, \bar s)$ is emitted (its binary code is $(11)^k 0 \bar s$) inside a
+clause and skipped outside one. At the end the open clause is closed and the unary clause count
+is emitted. -/
 def conv : List Bool → Bool → ℕ → ℕ → ℕ → List Bool → List Bool
   | false :: false :: r, ins, n, _, m, o =>
       conv r true 0 0 (m + 1) (if ins then endClause n o else o)
@@ -176,7 +211,16 @@ def conv : List Bool → Bool → ℕ → ℕ → ℕ → List Bool → List Boo
       else conv r false n k m o
   | _, ins, n, _, m, o => List.replicate m true ++ false :: (if ins then endClause n o else o)
 
-/-- The slots of a clause, read backwards from slot count `k`. -/
+/-- **The translation on the slots of a clause.** Write $\mathrm{conv}(w, \iota, n, k, m, o)$ for
+the reversed-string translation run on the bit string $w$ with open-clause flag $\iota$, literal
+count $n$, slot count $k$, clause count $m$ and output $o$; juxtaposition of bit strings is
+concatenation, $w^R$ is the reversal of $w$ and $|x|$ is the length of a list $x$. Let $c$ be a
+dense clause, $r$ and $o$ bit strings and $n, k, m \in \mathbb{N}$. Let $s(c)$ be the
+concatenation of the two-bit codes of the slots of $c$, let $c'$ be the binary-index translation
+of $c$ with offset $k$, and let $e$ be the concatenation of the binary codes of the literals of
+$c'$. Then
+$\mathrm{conv}(s(c)^R r, \mathrm{true}, n, k, m, o) =
+\mathrm{conv}(r, \mathrm{true}, n + |c'|, k + |c|, m, e\, o)$. -/
 theorem conv_slots (c : Clause) (r : List Bool) (n k m : ℕ) (o : List Bool) :
     conv ((c.flatMap encodeSlot).reverse ++ r) true n k m o =
       conv r true (n + (binClause k c).length) (k + c.length) m
@@ -195,7 +239,17 @@ theorem conv_slots (c : Clause) (r : List Bool) (n k m : ℕ) (o : List Bool) :
             List.cons_append, conv, binClause, ite_true, List.length_cons,
             List.flatMap_cons, encodeLit_two_pow, List.append_assoc, Bool.not_not, Nat.add_assoc]
 
-/-- One whole clause (terminator first), from any state. -/
+/-- **The translation on a whole clause.** Write $\mathrm{conv}(w, \iota, n, k, m, o)$ for the
+reversed-string translation run on the bit string $w$ with open-clause flag $\iota$, literal count
+$n$, slot count $k$, clause count $m$ and output $o$; juxtaposition of bit strings is
+concatenation, $w^R$ is the reversal of $w$, $1^n$ is $n$ ones and $|x|$ is the length of a list
+$x$. Let $c$ be a dense clause, $r$ and $o$ bit strings, $\iota$ a truth value and
+$n, k, m \in \mathbb{N}$. Let $E(c)$ be the dense encoding of $c$ (its slot codes followed by the
+terminator $00$), $c'$ the binary-index translation of $c$ with offset $0$, and $e$ the
+concatenation of the binary codes of the literals of $c'$. Put $o' = 1^n 0\, o$ if $\iota$ is true
+and $o' = o$ otherwise. Then
+$\mathrm{conv}(E(c)^R r, \iota, n, k, m, o) =
+\mathrm{conv}(r, \mathrm{true}, |c'|, |c|, m + 1, e\, o')$. -/
 theorem conv_clause (c : Clause) (r : List Bool) (ins : Bool) (n k m : ℕ) (o : List Bool) :
     conv ((encodeClause c).reverse ++ r) ins n k m o =
       conv r true (binClause 0 c).length c.length (m + 1)
@@ -206,7 +260,16 @@ theorem conv_clause (c : Clause) (r : List Bool) (ins : Bool) (n k m : ℕ) (o :
   rw [conv_slots]
   simp
 
-/-- The remaining clauses (in reverse order), with clause `c₀` open. -/
+/-- **The translation on the remaining clauses.** Write $\mathrm{conv}(w, \iota, n, k, m, o)$ for
+the reversed-string translation run on the bit string $w$ with open-clause flag $\iota$, literal
+count $n$, slot count $k$, clause count $m$ and output $o$; juxtaposition of bit strings is
+concatenation, $w^R$ is the reversal of $w$, $1^n$ is $n$ ones and $|x|$ is the length of a list
+$x$. For a dense clause $c$, let $E(c)$ be its dense encoding, $c'$ its binary-index translation
+with offset $0$, $e(c)$ the concatenation of the binary codes of the literals of $c'$, and $B(c)$
+the binary code of the clause $c'$. Let $p, k, m \in \mathbb{N}$, let $c_0, c_1, \dots, c_p$ be
+dense clauses and let $D$ be a bit string. Then
+$\mathrm{conv}(E(c_1)^R \cdots E(c_p)^R, \mathrm{true}, |c_0'|, k, m, e(c_0)\, D) =
+1^{m + p} 0\, B(c_p) \cdots B(c_1) B(c_0) D$. -/
 theorem conv_clauses (ψ : List Clause) (c₀ : Clause) (k m : ℕ) (D : List Bool) :
     conv (ψ.flatMap fun c => (encodeClause c).reverse) true (binClause 0 c₀).length k m
         ((binClause 0 c₀).flatMap Cslib.CookLevin.encodeLit ++ D) =
@@ -229,7 +292,10 @@ theorem conv_clauses (ψ : List Clause) (c₀ : Clause) (k m : ℕ) (D : List Bo
       congr 2
       omega
 
-/-- **The translation computes the binary encoding** of `binCNF φ` from the dense encoding. -/
+/-- **The translation computes the binary encoding.** Let $\varphi$ be a dense CNF formula. Run the
+reversed-string translation on the reversal of the dense encoding of $\varphi$, starting with no
+clause open, literal count $0$, slot count $0$, clause count $0$ and empty output. The result is
+the binary encoding of the binary-index translation of $\varphi$. -/
 theorem conv_encodeCNF (φ : CNF) :
     conv (encodeCNF φ).reverse false 0 0 0 [] = Cslib.CookLevin.encodeCNF (binCNF φ) := by
   rw [encodeCNF, List.reverse_flatMap]
@@ -254,6 +320,9 @@ theorem conv_encodeCNF (φ : CNF) :
 
 /-! ### `satDec` on an encoding -/
 
+/-- **SAT accepts the code of a formula exactly when it is satisfiable.** For every CNF formula
+$\psi$, the SAT decision problem returns true on the length-prefixed binary code of $\psi$ if and
+only if $\psi$ is satisfiable. -/
 theorem satDec_encodeCNF (ψ : Cslib.CookLevin.CNF) :
     Cslib.CookLevin.satDec (Cslib.CookLevin.encodeCNF ψ) = true ↔
       Cslib.CookLevin.CNFSat ψ := by
@@ -269,7 +338,8 @@ theorem satDec_encodeCNF (ψ : Cslib.CookLevin.CNF) :
     have hm : Cslib.CookLevin.encodeCNF ψ ∈ Cslib.CookLevin.SATLang := ⟨ψ, rfl, h⟩
     simp [hm]
 
-/-- Input that does not parse as a CNF formula is not in SAT. -/
+/-- **Unparsable input is not in SAT.** If the decoder for binary-encoded CNF formulas fails on
+a bit string $x$, then the SAT decision problem rejects $x$. -/
 theorem satDec_of_decodeCNF_eq_none {x : List Bool} (h : Cslib.CookLevin.decodeCNF x = none) :
     Cslib.CookLevin.satDec x = false := by
   unfold Cslib.CookLevin.satDec
