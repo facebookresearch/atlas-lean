@@ -13,6 +13,10 @@ public import Mathlib.Analysis.Complex.SqrtDeriv
 public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 public import Mathlib.MeasureTheory.Integral.CircleIntegral
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Comp
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Ring
@@ -54,12 +58,17 @@ far-field expansion are hypotheses, not derived from flow equations.
   at the Kutta circulation, signed lift `-ρUΓ`, lift coefficient
   `2π sin α` at chord `4a`, and the small-angle bound
   `π |α|^3 / 3`.
+- `FluidDynamics.IdealAirfoilModels.CylinderFlow.cylStream_deriv_y` and
+  `cylStream_deriv_x`: the single-valued stream function
+  `ψ = U(y - a²y/r²) - (Γ / 2π) log (r / a)` generates the cylinder
+  velocity, `u = ψ_y`, `v = -ψ_x`.
 
 ## iii. Table of contents
 
 - A. The Joukowski far-field branch
 - B. Blasius force from a far-field expansion
 - C. Signed lift and lift coefficient
+- D. Cylinder velocity and single-valued stream function
 
 ## iv. References
 
@@ -1165,5 +1174,205 @@ lemma signedLift_liftCoefficient_kutta {a ρ U α R : ℝ}
     exact abs_two_pi_sin_sub_two_pi_le
 
 end KuttaJoukowski
+
+/-! ## D. Cylinder velocity and single-valued stream function -/
+
+namespace CylinderFlow
+
+/-- Horizontal velocity of the ideal cylinder flow with circulation:
+for freestream `U`, radius `a`, circulation `Γ`, at `(x, y)` with
+`r² = x² + y²`,
+`u = U * (1 - a²(x² - y²)/r⁴) - Γy/(2πr²)`. This is the real part
+of `W(z) = U(1 - a²/z²) + Γ/(2πiz)` read as `u - iv`. -/
+noncomputable def cylU (U a Γ x y : ℝ) : ℝ :=
+  U * (1 - a ^ 2 * (x ^ 2 - y ^ 2) / (x ^ 2 + y ^ 2) ^ 2) -
+    Γ * y / (2 * Real.pi * (x ^ 2 + y ^ 2))
+
+/-- Vertical velocity: `v = -2Ua²xy/r⁴ + Γx/(2πr²)`, the negative
+imaginary part of `W` under the `u - iv` convention. -/
+noncomputable def cylV (U a Γ x y : ℝ) : ℝ :=
+  -2 * U * a ^ 2 * x * y / (x ^ 2 + y ^ 2) ^ 2 +
+    Γ * x / (2 * Real.pi * (x ^ 2 + y ^ 2))
+
+/-- Stream function
+`ψ(x, y) = U(y - a²y/r²) - (Γ/2π) log(r/a)`, a single-valued real
+function on `r > 0` (no logarithmic potential or branch choice):
+`u = ψ_y`, `v = -ψ_x`. -/
+noncomputable def cylStream (U a Γ x y : ℝ) : ℝ :=
+  U * (y - a ^ 2 * y / (x ^ 2 + y ^ 2)) -
+    Γ / (2 * Real.pi) * Real.log (Real.sqrt (x ^ 2 + y ^ 2) / a)
+
+/-! ### Derivative rules used below
+
+The derivative computations use Mathlib's `HasDerivAt` rules in the
+argument order of the proofs; the private names keep the nested
+applications readable. -/
+
+/-- Sum rule (Mathlib's `HasDerivAt.add`). -/
+private lemma hd_add {f g : ℝ → ℝ} {f' g' x : ℝ} (hf : HasDerivAt f f' x)
+    (hg : HasDerivAt g g' x) : HasDerivAt (fun s => f s + g s) (f' + g') x :=
+  hf.add hg
+
+/-- Difference rule (Mathlib's `HasDerivAt.sub`). -/
+private lemma hd_sub {f g : ℝ → ℝ} {f' g' x : ℝ} (hf : HasDerivAt f f' x)
+    (hg : HasDerivAt g g' x) : HasDerivAt (fun s => f s - g s) (f' - g') x :=
+  hf.sub hg
+
+/-- Product rule (Mathlib's `HasDerivAt.mul`). -/
+private lemma hd_mul {f g : ℝ → ℝ} {f' g' x : ℝ} (hf : HasDerivAt f f' x)
+    (hg : HasDerivAt g g' x) : HasDerivAt (fun s => f s * g s) (f' * g x + f x * g') x :=
+  hf.mul hg
+
+/-- Quotient rule (Mathlib's `HasDerivAt.div`, with `g x * g x`). -/
+private lemma hd_div {f g : ℝ → ℝ} {f' g' x : ℝ} (hf : HasDerivAt f f' x)
+    (hg : HasDerivAt g g' x) (hx : g x ≠ 0) :
+    HasDerivAt (fun s => f s / g s) ((f' * g x - f x * g') / (g x * g x)) x := by
+  convert hf.div hg hx using 2
+  rw [pow_two]
+
+/-- Square rule, from the product rule. -/
+private lemma hd_sq {f : ℝ → ℝ} {f' x : ℝ} (hf : HasDerivAt f f' x) :
+    HasDerivAt (fun s => f s ^ 2) (f' * f x + f x * f') x := by
+  convert hf.pow 2 using 1
+  ring
+
+/-- Chain rule (Mathlib's `HasDerivAt.comp`). -/
+private lemma hd_comp {f g : ℝ → ℝ} {f' g' x : ℝ} (hf : HasDerivAt f f' (g x))
+    (hg : HasDerivAt g g' x) : HasDerivAt (fun s => f (g s)) (f' * g') x :=
+  hf.comp x hg
+
+/-- The derivative of `Real.log` at `y > 0` is `y⁻¹`
+(Mathlib's `Real.hasDerivAt_log`). -/
+private lemma hd_log {y : ℝ} (hy : 0 < y) : HasDerivAt Real.log y⁻¹ y :=
+  Real.hasDerivAt_log hy.ne'
+
+/-- No penetration on the cylinder: on `x² + y² = a²` with
+`a ≠ 0`, the radial velocity vanishes, `x * u + y * v = 0`
+(the circulation terms cancel and the freestream part is
+`U * x * (1 - a²/r²)`). -/
+lemma cyl_normal_zero {U a Γ x y : ℝ} (ha : a ≠ 0)
+    (h : x ^ 2 + y ^ 2 = a ^ 2) :
+    x * cylU U a Γ x y + y * cylV U a Γ x y = 0 := by
+  have ha2 : a ^ 2 ≠ 0 := pow_ne_zero 2 ha
+  have hr : x ^ 2 + y ^ 2 ≠ 0 := by rw [h]; exact ha2
+  have hpi : Real.pi ≠ 0 := Real.pi_ne_zero
+  have key : x * cylU U a Γ x y + y * cylV U a Γ x y =
+      U * x * (1 - a ^ 2 / (x ^ 2 + y ^ 2)) := by
+    unfold cylU cylV
+    field_simp
+    ring
+  rw [key, h, div_self ha2, sub_self, mul_zero]
+
+/-- The velocity is divergence-free away from the origin:
+`u_x + v_y = 0` whenever `x² + y² ≠ 0`. -/
+lemma cyl_divergence_free {U a Γ x y : ℝ} (h : x ^ 2 + y ^ 2 ≠ 0) :
+    deriv (fun s : ℝ => cylU U a Γ s y) x +
+      deriv (fun s : ℝ => cylV U a Γ x s) y = 0 := by
+  have hpi : Real.pi ≠ 0 := Real.pi_ne_zero
+  have hR2 : (x ^ 2 + y ^ 2) ^ 2 ≠ 0 := pow_ne_zero 2 h
+  have hpiR : 2 * Real.pi * (x ^ 2 + y ^ 2) ≠ 0 :=
+    mul_ne_zero (mul_ne_zero two_ne_zero hpi) h
+  have hBx : HasDerivAt (fun s : ℝ => s ^ 2 + y ^ 2) _ x :=
+    hd_add (hd_sq (hasDerivAt_id' x)) (hasDerivAt_const x (y ^ 2))
+  have hBy : HasDerivAt (fun s : ℝ => x ^ 2 + s ^ 2) _ y :=
+    hd_add (hasDerivAt_const y (x ^ 2)) (hd_sq (hasDerivAt_id' y))
+  have hux : HasDerivAt (fun s : ℝ => cylU U a Γ s y) _ x :=
+    hd_sub (hd_mul (hasDerivAt_const x U) (hd_sub (hasDerivAt_const x 1)
+        (hd_div (hd_mul (hasDerivAt_const x (a ^ 2))
+          (hd_sub (hd_sq (hasDerivAt_id' x)) (hasDerivAt_const x (y ^ 2)))) (hd_sq hBx) hR2)))
+      (hd_div (hasDerivAt_const x (Γ * y)) (hd_mul (hasDerivAt_const x (2 * Real.pi)) hBx) hpiR)
+  have hvy : HasDerivAt (fun s : ℝ => cylV U a Γ x s) _ y :=
+    hd_add (hd_div (hd_mul (hasDerivAt_const y (-2 * U * a ^ 2 * x)) (hasDerivAt_id' y))
+        (hd_sq hBy) hR2)
+      (hd_div (hasDerivAt_const y (Γ * x)) (hd_mul (hasDerivAt_const y (2 * Real.pi)) hBy) hpiR)
+  rw [hux.deriv, hvy.deriv]
+  field_simp
+  ring
+
+/-- The velocity is curl-free away from the origin:
+`v_x - u_y = 0` whenever `x² + y² ≠ 0`. -/
+lemma cyl_curl_free {U a Γ x y : ℝ} (h : x ^ 2 + y ^ 2 ≠ 0) :
+    deriv (fun s : ℝ => cylV U a Γ s y) x -
+      deriv (fun s : ℝ => cylU U a Γ x s) y = 0 := by
+  have hpi : Real.pi ≠ 0 := Real.pi_ne_zero
+  have hR2 : (x ^ 2 + y ^ 2) ^ 2 ≠ 0 := pow_ne_zero 2 h
+  have hpiR : 2 * Real.pi * (x ^ 2 + y ^ 2) ≠ 0 :=
+    mul_ne_zero (mul_ne_zero two_ne_zero hpi) h
+  have hBx : HasDerivAt (fun s : ℝ => s ^ 2 + y ^ 2) _ x :=
+    hd_add (hd_sq (hasDerivAt_id' x)) (hasDerivAt_const x (y ^ 2))
+  have hBy : HasDerivAt (fun s : ℝ => x ^ 2 + s ^ 2) _ y :=
+    hd_add (hasDerivAt_const y (x ^ 2)) (hd_sq (hasDerivAt_id' y))
+  have hvx : HasDerivAt (fun s : ℝ => cylV U a Γ s y) _ x :=
+    hd_add (hd_div (hd_mul (hd_mul (hasDerivAt_const x (-2 * U * a ^ 2)) (hasDerivAt_id' x))
+          (hasDerivAt_const x y)) (hd_sq hBx) hR2)
+      (hd_div (hd_mul (hasDerivAt_const x Γ) (hasDerivAt_id' x))
+        (hd_mul (hasDerivAt_const x (2 * Real.pi)) hBx) hpiR)
+  have huy : HasDerivAt (fun s : ℝ => cylU U a Γ x s) _ y :=
+    hd_sub (hd_mul (hasDerivAt_const y U) (hd_sub (hasDerivAt_const y 1)
+        (hd_div (hd_mul (hasDerivAt_const y (a ^ 2))
+          (hd_sub (hasDerivAt_const y (x ^ 2)) (hd_sq (hasDerivAt_id' y)))) (hd_sq hBy) hR2)))
+      (hd_div (hd_mul (hasDerivAt_const y Γ) (hasDerivAt_id' y))
+        (hd_mul (hasDerivAt_const y (2 * Real.pi)) hBy) hpiR)
+  rw [hvx.deriv, huy.deriv]
+  field_simp
+  ring
+
+/-- The stream function generates the horizontal velocity:
+`∂ψ/∂y = u` for `0 < a` and `x² + y² ≠ 0`. -/
+lemma cylStream_deriv_y {U a Γ x y : ℝ} (ha : 0 < a)
+    (h : x ^ 2 + y ^ 2 ≠ 0) :
+    deriv (fun s : ℝ => cylStream U a Γ x s) y = cylU U a Γ x y := by
+  have hpi : Real.pi ≠ 0 := Real.pi_ne_zero
+  have hRpos : 0 < x ^ 2 + y ^ 2 := lt_of_le_of_ne (by positivity) (Ne.symm h)
+  have hR : HasDerivAt (fun s : ℝ => x ^ 2 + s ^ 2) _ y :=
+    hd_add (hasDerivAt_const y (x ^ 2)) (hd_sq (hasDerivAt_id' y))
+  have hψ : HasDerivAt (fun s : ℝ => U * (s - a ^ 2 * s / (x ^ 2 + s ^ 2)) -
+      Γ / (2 * Real.pi) * (Real.log (x ^ 2 + s ^ 2) / 2 - Real.log a)) _ y :=
+    hd_sub (hd_mul (hasDerivAt_const y U) (hd_sub (hasDerivAt_id' y)
+        (hd_div (hd_mul (hasDerivAt_const y (a ^ 2)) (hasDerivAt_id' y)) hR h)))
+      (hd_mul (hasDerivAt_const y (Γ / (2 * Real.pi)))
+        (hd_sub (hd_div (hd_comp (hd_log hRpos) hR) (hasDerivAt_const y 2) two_ne_zero)
+          (hasDerivAt_const y (Real.log a))))
+  have heq : (fun s : ℝ => cylStream U a Γ x s) =ᶠ[nhds y] fun s : ℝ =>
+      U * (s - a ^ 2 * s / (x ^ 2 + s ^ 2)) -
+        Γ / (2 * Real.pi) * (Real.log (x ^ 2 + s ^ 2) / 2 - Real.log a) := by
+    filter_upwards [hR.continuousAt.eventually_ne h] with s hs
+    have hspos : 0 < x ^ 2 + s ^ 2 := lt_of_le_of_ne (by positivity) (Ne.symm hs)
+    unfold cylStream
+    rw [Real.log_div (Real.sqrt_pos.mpr hspos).ne' ha.ne', Real.log_sqrt hspos.le]
+  rw [(hψ.congr_of_eventuallyEq heq).deriv]
+  unfold cylU
+  field_simp
+  ring
+
+/-- The stream function generates the vertical velocity:
+`-∂ψ/∂x = v` for `0 < a` and `x² + y² ≠ 0`. -/
+lemma cylStream_deriv_x {U a Γ x y : ℝ} (ha : 0 < a)
+    (h : x ^ 2 + y ^ 2 ≠ 0) :
+    deriv (fun s : ℝ => cylStream U a Γ s y) x = -cylV U a Γ x y := by
+  have hpi : Real.pi ≠ 0 := Real.pi_ne_zero
+  have hRpos : 0 < x ^ 2 + y ^ 2 := lt_of_le_of_ne (by positivity) (Ne.symm h)
+  have hR : HasDerivAt (fun s : ℝ => s ^ 2 + y ^ 2) _ x :=
+    hd_add (hd_sq (hasDerivAt_id' x)) (hasDerivAt_const x (y ^ 2))
+  have hψ : HasDerivAt (fun s : ℝ => U * (y - a ^ 2 * y / (s ^ 2 + y ^ 2)) -
+      Γ / (2 * Real.pi) * (Real.log (s ^ 2 + y ^ 2) / 2 - Real.log a)) _ x :=
+    hd_sub (hd_mul (hasDerivAt_const x U) (hd_sub (hasDerivAt_const x y)
+        (hd_div (hasDerivAt_const x (a ^ 2 * y)) hR h)))
+      (hd_mul (hasDerivAt_const x (Γ / (2 * Real.pi)))
+        (hd_sub (hd_div (hd_comp (hd_log hRpos) hR) (hasDerivAt_const x 2) two_ne_zero)
+          (hasDerivAt_const x (Real.log a))))
+  have heq : (fun s : ℝ => cylStream U a Γ s y) =ᶠ[nhds x] fun s : ℝ =>
+      U * (y - a ^ 2 * y / (s ^ 2 + y ^ 2)) -
+        Γ / (2 * Real.pi) * (Real.log (s ^ 2 + y ^ 2) / 2 - Real.log a) := by
+    filter_upwards [hR.continuousAt.eventually_ne h] with s hs
+    have hspos : 0 < s ^ 2 + y ^ 2 := lt_of_le_of_ne (by positivity) (Ne.symm hs)
+    unfold cylStream
+    rw [Real.log_div (Real.sqrt_pos.mpr hspos).ne' ha.ne', Real.log_sqrt hspos.le]
+  rw [(hψ.congr_of_eventuallyEq heq).deriv]
+  unfold cylV
+  field_simp
+  ring
+
+end CylinderFlow
 
 end FluidDynamics.IdealAirfoilModels

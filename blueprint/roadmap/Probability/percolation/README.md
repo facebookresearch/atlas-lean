@@ -11,4 +11,4 @@ Bernoulli bond and site percolation: percolation probability, critical points, n
 - [Harris, FKG and BK inequalities](../correlation-inequalities/harris-fkg-bk/README.md): the correlation inequalities and Russo's formula that every argument in this topic relies on.
 - Random-cluster model: the dependent percolation model that contains Bernoulli percolation as the case $q = 1$ and is coupled to the Potts and Ising models.
 - Random currents and sharpness: the sharpness of the Ising phase transition, the spin-model counterpart of the sharpness of percolation (Duminil-Copin and Tassion prove both with parallel arguments).
-- OSSS inequality for decision trees: the decision-tree route to sharpness of Duminil-Copin, Raoufi and Tassion.
+- [OSSS inequality for decision trees](../../Combinatorics/boolean-functions/osss-inequality-for-decision-trees/README.md): the decision-tree route to sharpness of Duminil-Copin, Raoufi and Tassion.
