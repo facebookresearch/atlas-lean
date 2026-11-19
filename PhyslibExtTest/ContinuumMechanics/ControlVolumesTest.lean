@@ -298,18 +298,20 @@ lemma fixture_turbine_ports (y : Fin 2 → ℝ) :
         2 * (1 * (400 + ![(2 : ℝ), 0, 0] ⬝ᵥ ![2, 0, 0] / 2 + 981 / 100 * 0) + 200) := by
   constructor <;> simp [turbineFlux, dotProduct, Fin.sum_univ_three] <;> norm_num
 
-/-- The turbine is an instance of the two-port balance, with zero storage rate. -/
+/-- The turbine is an instance of the two-port balance, with zero storage rate. Both ports have the
+velocity `(2, 0, 0)`; the mass flows use its component `2` along `e₀`. -/
 example (t : ℝ) :
     HasDerivAt (fun _ : ℝ => ∫ _ in Icc (0 : Fin 3 → ℝ) 1, (1 : ℝ))
       (((∫ _ in Icc (0 : Fin 3 → ℝ) 1, (0 : ℝ)) -
             boxOutwardFlux (0 : Fin 3 → ℝ) 1 (fun _ => 0)) -
           ProcessPorts.workOut (∫ _ in Icc (0 : Fin 3 → ℝ) 1, (-1800 : ℝ)) +
-        1 * faceArea (0 : Fin 3 → ℝ) 1 0 * 2 *
+        1 * faceArea (0 : Fin 3 → ℝ) 1 0 * ![(2 : ℝ), 0, 0] 0 *
           (specificEnthalpy 1000 500 1 + ![(2 : ℝ), 0, 0] ⬝ᵥ ![2, 0, 0] / 2 + 981 / 100 * 0) -
-        1 * faceArea (0 : Fin 3 → ℝ) 1 0 * 2 *
+        1 * faceArea (0 : Fin 3 → ℝ) 1 0 * ![(2 : ℝ), 0, 0] 0 *
           (specificEnthalpy 400 200 1 + ![(2 : ℝ), 0, 0] ⬝ᵥ ![2, 0, 0] / 2 + 981 / 100 * 0)) t := by
   refine hasDerivAt_energy_twoPort (E := fun _ _ => 1) (G := fun _ => turbineFlux)
     (J := fun _ _ => 0) (qdot := fun _ _ => 0) (wdot := fun _ _ => -1800)
+    (vi := ![2, 0, 0]) (vo := ![2, 0, 0]) (g := 981 / 100) (zi := 0) (zo := 0)
     (fun i => by simp) isOpen_univ (subset_univ _) ?_ ?_ ?_ ?_ ?_ ?_ one_ne_zero one_ne_zero
     ?_ ?_ ?_
   · unfold Function.uncurry; fun_prop

@@ -62,7 +62,9 @@ equals `ṁ (h + |v|² / 2 + g z)` with `ṁ = ρ A v_n` and
 adding it again overcounts the rate by `A v_n p`. With the inlet on
 the face `x₀ = a₀`, the outlet on `x₀ = b₀` and zero normal component
 of `G` on the side faces, the storage rate is
-`Q̇ - Ẇ_out + ṁ_in θ_in - ṁ_out θ_out`, `θ = h + |v|² / 2 + g z`. The
+`Q̇ - Ẇ_out + ṁ_in θ_in - ṁ_out θ_out`, `θ = h + |v|² / 2 + g z`, where
+each port's velocity is one vector of the box's space, giving both its
+mass flow `ρ A₀ v₀` and its kinetic energy. The
 side-face hypothesis constrains only the flux `G`: no wall velocity and
 no relation `G = (E + p) v` enters the statement, so it is weaker than
 impermeability. The energy law is a model input, not derived from mass
@@ -531,7 +533,10 @@ noncomputable def specificEnthalpy (e p ρ : ℝ) : ℝ := e + p / ρ
 
 /-- The outward convective internal, kinetic and potential energy plus pressure power through a
 uniform face of area `A` with outward normal velocity `vn`: `A vn (ρ (e + |v|² / 2 + g z) + p)`,
-with `|v|² = v ⬝ᵥ v`. -/
+with `|v|² = v ⬝ᵥ v`. Physically `vn` is the component of the velocity `v` along the face's
+outward unit normal; this definition and the two identities below take both as arguments and
+hold for all values, and `hasDerivAt_energy_twoPort` takes the normal components from the port
+velocity vectors. -/
 noncomputable def portEnergyRate {m : ℕ} (ρ A vn e p g z : ℝ) (v : Fin m → ℝ) : ℝ :=
   A * vn * (ρ * (e + v ⬝ᵥ v / 2 + g * z) + p)
 
@@ -628,11 +633,13 @@ lemma hasDerivAt_energy_box {n : ℕ} {a b : Fin (n + 1) → ℝ} (hab : ∀ i, 
   unfold ProcessPorts.workOut
   ring
 
-/-- **Two-port energy balance**: inlet on the face `x₀ = a₀` with velocity component `Vi` along
-`e₀`, outlet on `x₀ = b₀` with `Vo`, uniform port states, and zero normal component of `G` on
-the side faces (`hwall`, a hypothesis on the flux `G` only, with no wall velocity or relation
-`G = (E + p) v`; for that flux it holds on impermeable walls). The storage rate is
-`Q̇ - Ẇ_out + ṁ_in θ_in - ṁ_out θ_out` with `ṁ = ρ A₀ V` and `θ = h + |v|² / 2 + g z`. -/
+/-- **Two-port energy balance**: inlet on the face `x₀ = a₀` and outlet on `x₀ = b₀`, with
+uniform port states whose velocities `vi`, `vo` are vectors of the box's space, and zero normal
+component of `G` on the side faces (`hwall`, a hypothesis on the flux `G` only, with no wall
+velocity or relation `G = (E + p) v`; for that flux it holds on impermeable walls). Each port's
+mass flow and kinetic energy come from its one velocity vector: the storage rate is
+`Q̇ - Ẇ_out + ṁ_in θ_in - ṁ_out θ_out` with `ṁ = ρ A₀ v₀`, the component `v₀` of the port velocity
+along `e₀`, and `θ = h + |v|² / 2 + g z`. -/
 lemma hasDerivAt_energy_twoPort {n : ℕ} {a b : Fin (n + 1) → ℝ} (hab : ∀ i, a i < b i)
     {E qdot wdot : ℝ → (Fin (n + 1) → ℝ) → ℝ}
     {G J : ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ} {t : ℝ}
@@ -642,26 +649,28 @@ lemma hasDerivAt_energy_twoPort {n : ℕ} {a b : Fin (n + 1) → ℝ} (hab : ∀
     (hw : IntegrableOn (wdot t) (Icc a b))
     (hlaw : ∀ x ∈ Icc a b,
       deriv (fun τ => E τ x) t + divergence (G t + J t) x = qdot t x + wdot t x)
-    {m : ℕ} {g ρi Vi ei pi zi ρo Vo eo po zo : ℝ} {vi vo : Fin m → ℝ}
+    {g ρi ei pi zi ρo eo po zo : ℝ} {vi vo : Fin (n + 1) → ℝ}
     (hρi : ρi ≠ 0) (hρo : ρo ≠ 0)
     (hin : ∀ y ∈ Icc (a ∘ (0 : Fin (n + 1)).succAbove) (b ∘ (0 : Fin (n + 1)).succAbove),
-      G t ((0 : Fin (n + 1)).insertNth (a 0) y) 0 = Vi * (ρi * (ei + vi ⬝ᵥ vi / 2 + g * zi) + pi))
+      G t ((0 : Fin (n + 1)).insertNth (a 0) y) 0 =
+        vi 0 * (ρi * (ei + vi ⬝ᵥ vi / 2 + g * zi) + pi))
     (hout : ∀ y ∈ Icc (a ∘ (0 : Fin (n + 1)).succAbove) (b ∘ (0 : Fin (n + 1)).succAbove),
-      G t ((0 : Fin (n + 1)).insertNth (b 0) y) 0 = Vo * (ρo * (eo + vo ⬝ᵥ vo / 2 + g * zo) + po))
+      G t ((0 : Fin (n + 1)).insertNth (b 0) y) 0 =
+        vo 0 * (ρo * (eo + vo ⬝ᵥ vo / 2 + g * zo) + po))
     (hwall : ∀ i, i ≠ 0 → ∀ y ∈ Icc (a ∘ i.succAbove) (b ∘ i.succAbove),
       G t (i.insertNth (b i) y) i = 0 ∧ G t (i.insertNth (a i) y) i = 0) :
     HasDerivAt (fun τ => ∫ x in Icc a b, E τ x)
       (((∫ x in Icc a b, qdot t x) - boxOutwardFlux a b (J t)) -
           ProcessPorts.workOut (∫ x in Icc a b, wdot t x) +
-        ρi * faceArea a b 0 * Vi * (specificEnthalpy ei pi ρi + vi ⬝ᵥ vi / 2 + g * zi) -
-        ρo * faceArea a b 0 * Vo * (specificEnthalpy eo po ρo + vo ⬝ᵥ vo / 2 + g * zo)) t := by
+        ρi * faceArea a b 0 * vi 0 * (specificEnthalpy ei pi ρi + vi ⬝ᵥ vi / 2 + g * zi) -
+        ρo * faceArea a b 0 * vo 0 * (specificEnthalpy eo po ρo + vo ⬝ᵥ vo / 2 + g * zo)) t := by
   have h := hasDerivAt_energy_box hab hU hbox hE hG hJ hq hw hlaw
   have hflux : boxOutwardFlux a b (G t) =
-      faceArea a b 0 * (Vo * (ρo * (eo + vo ⬝ᵥ vo / 2 + g * zo) + po) -
-        Vi * (ρi * (ei + vi ⬝ᵥ vi / 2 + g * zi) + pi)) := by
+      faceArea a b 0 * (vo 0 * (ρo * (eo + vo ⬝ᵥ vo / 2 + g * zo) + po) -
+        vi 0 * (ρi * (ei + vi ⬝ᵥ vi / 2 + g * zi) + pi)) := by
     rw [boxOutwardFlux_uniform hab
-      (cU := fun i => if i = 0 then Vo * (ρo * (eo + vo ⬝ᵥ vo / 2 + g * zo) + po) else 0)
-      (cL := fun i => if i = 0 then Vi * (ρi * (ei + vi ⬝ᵥ vi / 2 + g * zi) + pi) else 0)]
+      (cU := fun i => if i = 0 then vo 0 * (ρo * (eo + vo ⬝ᵥ vo / 2 + g * zo) + po) else 0)
+      (cL := fun i => if i = 0 then vi 0 * (ρi * (ei + vi ⬝ᵥ vi / 2 + g * zi) + pi) else 0)]
     · rw [Fin.sum_univ_succ]
       simp
     · intro i y hy
