@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Elasticity.PrismaticMembers
+import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -17,7 +18,8 @@ import Mathlib.Tactic.NormNum
 * the uniform-load displacement as a fixed-fixed solution at concrete data;
 * a fixed-free displacement at concrete data, which is not a fixed-fixed solution;
 * the fixed-traction bar `EA = 2`, `L = 3`, `P = 6`, `q = 4`: the constructed solution, its end
-  displacement, the support reaction from the load path, and the same data read as a shaft;
+  displacement, the internal axial force at the fixed end from the load path, the support
+  reaction there, which balances the loads, and the same data read as a shaft;
 * two free ends: an incompatible net load and a rigid translation.
 -/
 
@@ -89,8 +91,8 @@ example (w : ℝ → ℝ) : ¬ IsCantileverSolution 2 0 4 5 w := fun h => lt_irr
 /-! ## E. Fixed-traction bar and shaft -/
 
 -- Nonzero fixture `EA = 2`, `L = 3`, `P = 6`, `q = 4`: the constructed displacement solves the
--- problem, the end displacement is `P * L / EA + q * L ^ 2 / (2 * EA) = 9 + 9 = 18`, and the axial
--- force at the fixed end is the support reaction `P + q * L = 18`.
+-- problem, the end displacement is `P * L / EA + q * L ^ 2 / (2 * EA) = 9 + 9 = 18`, and the
+-- internal axial force at the fixed end is `EA * u' 0 = P + q * L = 18` (tension).
 example :
     IsFixedTractionSolution 2 3 6 (fun _ => 4) (fixedTractionDisplacement 2 3 6 fun _ => 4) ∧
       fixedTractionDisplacement 2 3 6 (fun _ => 4) 3 = 18 ∧
@@ -115,12 +117,23 @@ example :
     rw [intervalIntegral.integral_const, smul_eq_mul]
     norm_num
 
--- In every solution of the fixed-traction bar `EA = 2`, `L = 3`, `P = 6`, `q = 4` the axial
--- force at the fixed end is the support reaction `P + q * L = 18`, by the load path.
+-- In every solution of the fixed-traction bar `EA = 2`, `L = 3`, `P = 6`, `q = 4` the internal
+-- axial force at the fixed end is `EA * u' 0 = P + q * L = 18` (tension), by the load path.
 example (u : ℝ → ℝ) (hu : IsFixedTractionSolution 2 3 6 (fun _ => 4) u) :
     2 * derivWithin u (Set.Icc 0 3) 0 = 18 := by
   rw [hu.axialForce_eq 0 ⟨le_rfl, by norm_num⟩, intervalIntegral.integral_const, smul_eq_mul]
   norm_num
+
+-- The support reaction at the fixed end: the outward normal there is `-x` (the end-force
+-- convention of `IsFreeFreeSolution`), so the force the support exerts on the bar along `+x` is
+-- `-(EA * u' 0) = -18`, and it balances the end force `P = 6` and the distributed load
+-- `q * L = 12`.
+example (u : ℝ → ℝ) (hu : IsFixedTractionSolution 2 3 6 (fun _ => 4) u) :
+    -(2 * derivWithin u (Set.Icc 0 3) 0) = -18 ∧
+      -(2 * derivWithin u (Set.Icc 0 3) 0) + 6 + 4 * 3 = 0 := by
+  have h := hu.axialForce_eq 0 ⟨le_rfl, by norm_num⟩
+  rw [intervalIntegral.integral_const, smul_eq_mul] at h
+  constructor <;> linarith
 
 -- A circular shaft with `GJ = 2`, `L = 3`, end torque `T = 6` and uniform distributed torque
 -- `t = 4`: every twist solution has the end twist `T * L / GJ + t * L ^ 2 / (2 * GJ) = 18`.
