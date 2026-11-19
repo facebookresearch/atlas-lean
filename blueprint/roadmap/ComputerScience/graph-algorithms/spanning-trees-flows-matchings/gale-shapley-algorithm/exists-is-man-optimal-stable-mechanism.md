@@ -8,7 +8,7 @@ For every natural number $n$ there is a matching mechanism on $n$ men and $n$ wo
 
 ## Background
 
-- Strategy-proofness of the man-optimal stable mechanism for the men: the incentive property of this mechanism.
+- [Strategy-proofness of the man-optimal stable mechanism for the men](../../../../GameTheory/matching-markets/stable-matching-mechanisms-and-incentives/man-optimal-mechanism-strategy-proof-for-men.md): the incentive property of this mechanism.
 
 ## Sources
 

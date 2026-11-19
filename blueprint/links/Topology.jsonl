@@ -464,10 +464,9 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Topology/algebraic-topology/persistence-modules-and-barcodes/hausdorff-edist-icc-icc.md"}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Topology/algebraic-topology/brouwer-fixed-point-theorem/README.md"}], "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Topology/algebraic-topology/brouwer-fixed-point-theorem/continuous-of-continuous-weights.md"}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
-{"subject": [{"type": "generic", "uri": "../roadmap/Topology/algebraic-topology/brouwer-fixed-point-theorem/exists-fixed-point.md"}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Topology/algebraic-topology/brouwer-fixed-point-theorem/exists-fixed-point.md"}], "object": [{"location": {"declaration": "MathlibExt.Analysis.Convex.BrouwerFixedPoint.exists_fixedPoint_stdSimplex"}}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Topology/algebraic-topology/brouwer-fixed-point-theorem/exists-fixed-point-of-finite.md"}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Topology/algebraic-topology/brouwer-fixed-point-theorem/exists-fixed-point-pi.md"}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
-{"subject": [{"type": "generic", "uri": "../roadmap/Topology/algebraic-topology/brouwer-fixed-point-theorem/exists-is-fixed-pt.md"}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Topology/algebraic-topology/brouwer-fixed-point-theorem/exists-pos-weights-le.md"}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Topology/algebraic-topology/brouwer-fixed-point-theorem/of-fun.md"}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Topology/algebraic-topology/brouwer-fixed-point-theorem/continuous-prod-simplex.md"}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}

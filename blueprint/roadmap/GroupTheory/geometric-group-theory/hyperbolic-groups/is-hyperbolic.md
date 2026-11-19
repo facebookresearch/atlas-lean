@@ -6,7 +6,7 @@ This is Gromov's Definition 2.1.A. Gromov shows (Corollary 2.3.E) that the choic
 
 ## Background
 
-- Gromov $\delta$-hyperbolic space: the metric notion applied to the word metric.
+- [Gromov $\delta$-hyperbolic space](../../../Geometry/metric-geometry/gromov-hyperbolic-spaces/is-delta-hyperbolic.md): the metric notion applied to the word metric.
 
 ## Sources
 

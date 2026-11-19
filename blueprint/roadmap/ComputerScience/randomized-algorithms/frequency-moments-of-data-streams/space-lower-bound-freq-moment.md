@@ -19,7 +19,7 @@ whatever the size of the seed space.
 
 ## Background
 
-- Randomized communication complexity of disjointness: the two-party special case of the communication bound behind this theorem.
+- [Randomized communication complexity of disjointness](../../../TheoryOfComputation/communication-complexity/randomized-communication-protocols/rand-complexity-disj-fn-ge.md): the two-party special case of the communication bound behind this theorem.
 - [Frequency moment of a stream](freq-moment.md): the quantity being approximated; for $k \ge 1$ it agrees with the source's $F_k$.
 
 ## Sources

@@ -15,5 +15,5 @@ The Hellinger distance $d_{\mathrm{Hell}}(\mu, \nu) = \big(\tfrac12 \int (\sqrt{
 ## Related topics
 
 - [Total variation distance](../total-variation-distance/README.md): the other distance used for posterior stability; for probability measures $d_{\mathrm{TV}}/\sqrt2 \le d_{\mathrm{Hell}} \le d_{\mathrm{TV}}^{1/2}$ (Dashti and Stuart, Lemma 7.12).
-- Total variation and Pinsker's inequality: the comparison of total variation with the Kullback–Leibler divergence.
+- [Total variation and Pinsker's inequality](../../../InformationTheory/information-inequalities/total-variation-and-pinsker-s-inequality/README.md): the comparison of total variation with the Kullback–Leibler divergence.
 - [Bayesian inverse problems](../../bayesian-statistics/bayesian-inverse-problems/README.md): posteriors are Lipschitz in the data, and stable under approximation of the forward model, in the Hellinger distance.
