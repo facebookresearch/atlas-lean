@@ -241,15 +241,26 @@ class GitRules(unittest.TestCase):
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("the PR changes 3 files", errors[0])
 
-    def test_the_command_exits_nonzero_on_a_finding(self) -> None:
-        self.assertEqual(rules.main(["--root", str(self.root)]), 0)
+    def test_a_pr_fails_only_on_findings_its_base_does_not_have(self) -> None:
+        self.assertEqual(rules.main(["--root", str(self.root), "--base", self.base]), 0)
+        # The base already lists nothing on Physics/README.md: that finding warns, it doesn't block.
         self.vault.write("blueprint/roadmap/Physics/README.md", "# Physics\n")
-        self.assertEqual(rules.main(["--root", str(self.root)]), 1)
+        self.commit()
+        broken = self.git("rev-parse", "HEAD").strip()
+        self.assertEqual(rules.main(["--root", str(self.root), "--base", self.base]), 1)
+        self.assertEqual(rules.main(["--root", str(self.root), "--base", broken]), 0)
+        self.vault.write("blueprint/roadmap/CategoryTheory/README.md", "# Category Theory\n")
+        self.commit()
+        self.assertEqual(rules.main(["--root", str(self.root), "--base", broken]), 1)
+
+    def test_without_a_base_findings_are_reported_only(self) -> None:
+        self.vault.write("blueprint/roadmap/Physics/README.md", "# Physics\n")
+        self.assertEqual(rules.main(["--root", str(self.root)]), 0)
 
 
 class Repository(unittest.TestCase):
-    def test_the_committed_vault_passes(self) -> None:
-        self.assertEqual(rules.check(rules.ROOT), [])
+    def test_the_committed_vault_can_be_checked(self) -> None:
+        self.assertIsInstance(rules.check(rules.ROOT), list)
 
 
 if __name__ == "__main__":

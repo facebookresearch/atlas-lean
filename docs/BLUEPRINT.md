@@ -139,8 +139,9 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
 
 `build the wiki` checks these rules on every PR that touches the wiki:
 
-- `python scripts/check_graph_rules.py --base <base>` fails the PR on a broken
-  mechanical rule: annotations and article ids (rule 5), placement and folder
+- `python scripts/check_graph_rules.py --base <base>` fails the PR on a
+  mechanical rule it newly breaks (a finding the base branch already has is
+  printed as a warning, so old breakage on `main` doesn't block every PR): annotations and article ids (rule 5), placement and folder
   listings (rules 1 and 2), committed Lean-owned sections and informal edges
   (rules 9 and 11, read with Autoform's own parser), the DAG-work marker
   (rule 12), build outputs (rule 8) and PR size (rule 15).

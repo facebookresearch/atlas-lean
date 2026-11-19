@@ -96,10 +96,11 @@ jobs:
           scripts.test_frontier_issues
 
       # The wiki's own conventions (Graph rules, docs/BLUEPRINT.md), on the committed tree
-      # before lean-facts changes it. A PR is also held to GitHub's diff size.
+      # before lean-facts changes it. A PR or merge group fails only on findings its base
+      # doesn't already have, and is held to GitHub's diff size; a push to main reports.
       - name: Check the graph's rules
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha }}
         run: |
           set -euo pipefail
           check=(uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
