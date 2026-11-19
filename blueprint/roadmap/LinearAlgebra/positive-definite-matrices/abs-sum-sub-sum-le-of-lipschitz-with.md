@@ -22,7 +22,7 @@ apply Cauchy–Schwarz, and conclude with the Hoffman–Wielandt inequality.
 
 ## Background
 
-- Wigner's semicircle law:
+- [Wigner's semicircle law](../../Probability/high-dimensional-probability/wigner-s-semicircle-law/wigner-semicircle.md):
   background; the truncation step of its proof uses this estimate.
 
 ## Sources

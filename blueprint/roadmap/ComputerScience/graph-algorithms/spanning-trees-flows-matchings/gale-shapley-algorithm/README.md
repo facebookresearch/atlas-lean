@@ -54,4 +54,4 @@
 
 ## Related topics
 
-- Stable matching mechanisms and incentives: deferred acceptance read as a mechanism, and its incentive properties (Roth 1982).
+- [Stable matching mechanisms and incentives](../../../../GameTheory/matching-markets/stable-matching-mechanisms-and-incentives/README.md): deferred acceptance read as a mechanism, and its incentive properties (Roth 1982).

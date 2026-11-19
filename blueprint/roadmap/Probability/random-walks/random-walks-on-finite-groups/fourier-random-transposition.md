@@ -7,7 +7,7 @@ transform of the [random-transposition measure](random-transposition.md) $T$ at 
 $$\hat T(\rho) = \Bigl(\frac1n + \frac{n-1}{n}\,\frac{\chi_\rho(\tau)}{d_\rho}\Bigr) I .$$
 
 $T$ is a class function, so its transform is a scalar by
-Fourier transform of a class function at an irreducible representation;
+[Fourier transform of a class function at an irreducible representation](../../../RepresentationTheory/finite-group-representations/fourier-transform-on-finite-groups/fourier-eq-smul-one-of-is-class-function.md);
 the scalar follows from $T(\mathrm{id}) = 1/n$, the $\binom n2$ transpositions of mass $2/n^2$ and
 the constancy of $\chi_\rho$ on transpositions. With the convolution law
 $\widehat{T^{*k}}(\rho) = \hat T(\rho)^k$ this reduces the analysis of $k$ random transpositions to

@@ -6,5 +6,5 @@ matrices.
 
 ## Background
 
-- Positive definite matrices and matrix inequalities:
+- [Positive definite matrices and matrix inequalities](../../../LinearAlgebra/positive-definite-matrices/README.md):
   inverses and sums of positive definite and semidefinite matrices.

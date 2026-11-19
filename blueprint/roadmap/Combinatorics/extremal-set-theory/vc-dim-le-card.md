@@ -6,7 +6,7 @@ By the Sauer–Shelah lemma, $\lvert \mathcal{A} \rvert \le \sum_{k \le d} \bino
 
 ## Background
 
-- Rademacher complexity of a VC class, explicit rate: where the bound is used, for families of subsets of an $n$-point sample.
+- [Rademacher complexity of a VC class, explicit rate](../../ComputerScience/machine-learning/generalization-bounds-and-concentration/rademacher-complexity/rademacher-complexity-sign-patterns-le-v.md): where the bound is used, for families of subsets of an $n$-point sample.
 
 ## Sources
 

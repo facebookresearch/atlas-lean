@@ -22,4 +22,4 @@ Theorems saying that a Boolean function $f : \{-1, 1\}^n \to \{-1, 1\}$ with a s
 - [Majority is least stable conjecture](../majority-is-least-stable-conjecture/README.md): the opposite question: whether majority minimizes noise stability among linear threshold functions.
 - [Junta approximation of monotone Boolean functions](../junta-approximation-of-monotone-boolean-function/README.md): a junta approximation problem for monotone functions, in the spirit of Friedgut's theorem.
 - [Inapproximability of MAX-CUT](../../../TheoryOfComputation/pcp-and-inapproximability/inapproximability-of-max-cut/README.md): Majority Is Stablest gives Unique-Games hardness of Max-Cut at the Goemans–Williamson ratio.
-- Arrow's impossibility theorem: Kalai's Fourier-analytic proof of Arrow's theorem; its robust version (O'Donnell, Corollary 2.60) follows from the FKN Theorem.
+- [Arrow's impossibility theorem](../../../GameTheory/social-choice/arrow-s-impossibility-theorem/README.md): Kalai's Fourier-analytic proof of Arrow's theorem; its robust version (O'Donnell, Corollary 2.60) follows from the FKN Theorem.

@@ -11,9 +11,9 @@
 
 ## Related topics
 
-- Total variation and Pinsker's inequality
-- Strong data processing and Dobrushin's coefficient
-- Differential privacy: for probability measures and a symmetric neighbouring relation, $(0, \delta)$-differential privacy says that the output laws on neighbouring databases are at total variation distance at most $\delta$; $(\varepsilon, \delta)$-privacy is the multiplicative refinement.
+- [Total variation and Pinsker's inequality](../../../InformationTheory/information-inequalities/total-variation-and-pinsker-s-inequality/README.md)
+- [Strong data processing and Dobrushin's coefficient](../../../InformationTheory/information-inequalities/strong-data-processing-and-dobrushin-s-coefficie/README.md)
+- [Differential privacy](../../../ComputerScience/cryptography/differential-privacy/README.md): for probability measures and a symmetric neighbouring relation, $(0, \delta)$-differential privacy says that the output laws on neighbouring databases are at total variation distance at most $\delta$; $(\varepsilon, \delta)$-privacy is the multiplicative refinement.
 - [Wasserstein distances](../../../MeasureTheory/optimal-transport/wasserstein-distances/README.md):
   on a space of diameter $D$, the Wasserstein distance $W_1$ is at most $D$ times the total variation
   distance, and total variation is the optimal transport cost for the cost $1_{x \ne y}$.

@@ -183,4 +183,47 @@ example : -((![1, 2] : Fin 2 → ℝ) ⬝ᵥ ![-1, 1]) = -1 := by
 #print axioms FluidDynamics.Hydraulics.PipeNetwork.passivePipeFlow_reverse
 #print axioms FluidDynamics.Hydraulics.PipeNetwork.pipeFlowEquations_dissipation
 
+/-- One pipe, demand from flow 2: the unique flow is 2, for
+any heads compatible with the law. -/
+example {q₂ : Fin 1 → ℝ} {h₁ h₂ : Fin 2 → ℝ}
+    (hp₁ : IsPassivePipeFlow (![0] : Fin 1 → Fin 2) ![1] ![1]
+      ![2] (![-2, 2]) h₁)
+    (hp₂ : IsPassivePipeFlow (![0] : Fin 1 → Fin 2) ![1] ![1]
+      q₂ (![-2, 2]) h₂) :
+    q₂ = ![2] :=
+  passivePipeFlow_flow_unique (by intro e; fin_cases e; norm_num)
+    hp₂ hp₁
+
+/-- Strict positivity is essential: with two parallel
+zero-resistance arcs, `(1, -1)` and `(0, 0)` both satisfy the
+passive equations at zero demand with constant heads. -/
+example : IsPassivePipeFlow (![0, 0] : Fin 2 → Fin 2) ![1, 1]
+      ![0, 0] ![1, -1] 0 0
+    ∧ IsPassivePipeFlow (![0, 0] : Fin 2 → Fin 2) ![1, 1]
+      ![0, 0] ![0, 0] 0 0
+    ∧ (![1, -1] : Fin 2 → ℝ) ≠ ![0, 0] := by
+  refine ⟨⟨⟨?_, ?_⟩, ?_⟩, ⟨⟨?_, ?_⟩, ?_⟩, ?_⟩
+  · funext v
+    fin_cases v <;> simp [incidence_mulVec, Finset.sum_filter, Fin.sum_univ_two]
+  · funext e
+    fin_cases e <;>
+      simp [Matrix.mulVec, dotProduct, incidenceMatrix,
+        Fin.sum_univ_two]
+  · intro e
+    fin_cases e <;> norm_num
+  · funext v
+    fin_cases v <;> simp [incidence_mulVec, Finset.sum_filter, Fin.sum_univ_two]
+  · funext e
+    fin_cases e <;>
+      simp [Matrix.mulVec, dotProduct, incidenceMatrix,
+        Fin.sum_univ_two]
+  · intro e
+    fin_cases e <;> norm_num
+  · simp
+
+#print axioms
+  FluidDynamics.Hydraulics.PipeNetwork.pipeFlowEquations_flow_unique
+#print axioms
+  FluidDynamics.Hydraulics.PipeNetwork.passivePipeFlow_flow_unique
+
 end PhyslibExtTest.FluidDynamics.Hydraulics.PipeNetwork

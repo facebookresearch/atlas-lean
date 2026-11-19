@@ -15,4 +15,4 @@ The MA-ProofBench formulation for $C^2$ functions on an open convex subset of a 
 - [Second-order condition for convexity](../second-order-condition-for-convexity/README.md)
 - [Lagrange duality](../lagrange-duality/README.md)
 - [Gradient descent](../gradient-descent/README.md)
-- Least squares, ridge and lasso regression
+- [Least squares, ridge and lasso regression](../../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/README.md)

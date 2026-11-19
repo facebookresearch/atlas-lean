@@ -9,7 +9,7 @@ least $K$.
 
 ## Informally uses
 
-- Edmonds–Karp augmentation bound (Edmonds and Karp): in a network with $v$ vertices and no parallel arcs, augmenting along shortest augmenting paths reaches a maximum flow after at most $(v^3 - v)/4$ augmentations, whatever the capacities. An encoded instance is first reduced to such a network: parallel arcs are merged into one arc whose capacity is the sum of theirs, and only $s$, $t$ and the endpoints of listed edges are kept and renumbered, so that $v \le 2m + 2$ for $m$ listed edges. Each augmentation is computed with arithmetic on numbers of polynomially many bits, so the running time is polynomial in the length of the encoding.
+- [Edmonds–Karp augmentation bound (Edmonds and Karp)](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/edmonds-karp-algorithm/four-mul-le-of-reachable.md): in a network with $v$ vertices and no parallel arcs, augmenting along shortest augmenting paths reaches a maximum flow after at most $(v^3 - v)/4$ augmentations, whatever the capacities. An encoded instance is first reduced to such a network: parallel arcs are merged into one arc whose capacity is the sum of theirs, and only $s$, $t$ and the endpoints of listed edges are kept and renumbered, so that $v \le 2m + 2$ for $m$ listed edges. Each augmentation is computed with arithmetic on numbers of polynomially many bits, so the running time is polynomial in the length of the encoding.
 
 ## Sources
 

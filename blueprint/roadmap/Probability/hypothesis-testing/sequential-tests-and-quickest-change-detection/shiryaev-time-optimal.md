@@ -15,4 +15,4 @@ Veeravalli and Banerjee prove it through a Lagrangian relaxation $\min_\tau \mat
 ## Background
 
 - [Optimal stopping and the Snell envelope](../../martingales/optimal-stopping-and-the-snell-envelope/README.md): the relaxed problem is an optimal stopping problem for the posterior process.
-- Optimality of the dynamic programming algorithm: dynamic programming for Markov decision processes, the method of the cited proof.
+- [Optimality of the dynamic programming algorithm](../../../ComputerScience/heuristic-search-and-planning/optimality-of-stationary-policies/is-greatest-n-stage-value.md): dynamic programming for Markov decision processes, the method of the cited proof.

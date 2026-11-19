@@ -22,4 +22,4 @@ Approximation and interpolation of functions: Chebyshev equioscillation, best ap
 
 ## Related topics
 
-- Two-layer neural networks and Barron space: the quantitative counterpart of the [universal approximation theorem](universal-approximation.md); on the Barron space two-layer ReLU networks of width $m$ approximate at the dimension-free rate $m^{-1/2}$ in $L^2$, with controlled path norm.
+- [Two-layer neural networks and Barron space](../../ComputerScience/machine-learning/supervised-learning/two-layer-neural-networks-and-barron-space/README.md): the quantitative counterpart of the [universal approximation theorem](universal-approximation.md); on the Barron space two-layer ReLU networks of width $m$ approximate at the dimension-free rate $m^{-1/2}$ in $L^2$, with controlled path norm.

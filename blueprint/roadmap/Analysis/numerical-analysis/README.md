@@ -23,4 +23,4 @@ Algorithms with error analysis: bisection and Newton's method, Euler and Rungeâ€
 - [Chebyshev series and interpolation](../approximation-theory/chebyshev-series-and-interpolation/README.md)
 - [Minimax property of the Chebyshev polynomials](../approximation-theory/minimax-property-of-the-chebyshev-polynomials/README.md)
 - [Perturbation theory for linear systems](../../LinearAlgebra/matrix-decompositions/perturbation-theory-for-linear-systems/README.md)
-- Rounding error analysis
+- [Rounding error analysis](../../ComputerScience/algebraic-and-numerical-algorithms/rounding-error-analysis/README.md)

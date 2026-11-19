@@ -16,7 +16,7 @@ The statement assumes the $u_n$ smooth with compact support, which makes every i
 
 - [Gagliardo–Nirenberg inequality](gagliardo-nirenberg-inequality/README.md): the case of one function is an inequality of this type.
 - [Sobolev embedding theorem](sobolev-embedding-theorem/README.md): the Lieb–Thirring inequality is a Sobolev inequality for orthonormal families.
-- Araki–Lieb–Thirring inequality: the matrix trace inequality that Lieb and Thirring proved in their 1976 paper on the eigenvalue moments.
+- [Araki–Lieb–Thirring inequality](../../LinearAlgebra/positive-definite-matrices/araki-lieb-thirring-inequality/araki-lieb-thirring.md): the matrix trace inequality that Lieb and Thirring proved in their 1976 paper on the eigenvalue moments.
 
 ## Sources
 

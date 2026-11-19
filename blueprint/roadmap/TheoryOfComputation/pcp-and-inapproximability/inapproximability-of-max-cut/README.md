@@ -8,5 +8,5 @@
 
 ## Related topics
 
-- Goemans–Williamson MAX-CUT algorithm: the algorithmic side, a
+- [Goemans–Williamson MAX-CUT algorithm](../../../ComputerScience/approximation-algorithms/goemans-williamson-max-cut-algorithm/README.md): the algorithmic side, a
   $0.87856$-approximation by semidefinite programming.
