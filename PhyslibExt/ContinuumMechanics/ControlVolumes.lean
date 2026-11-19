@@ -82,7 +82,8 @@ uniform port density and velocity and pressure-only port tractions `σ e₀ = -p
 `ṁ_in v_in - ṁ_out v_out - ∑_ports p A n + F_body + F_wall` with `ṁ = ρ A₀ v₀`, where `F_wall`, the
 traction resultant of the walls, includes the wall pressure and shear: pressure enters once, on the
 ports through the port term and on the walls inside `F_wall`. A viscous port traction `τ`
-(`σ e₀ = -p e₀ + τ`) adds the term `A₀ (τ_out - τ_in)`. The momentum law is a model input;
+(`σ e₀ = -p e₀ + τ`) adds the term `A₀ (τ_out - τ_in)`: the outlet face carries `τ_out`, and the
+inlet face, whose outward normal is `-e₀`, carries `-τ_in`. The momentum law is a model input;
 neither a constitutive law nor the symmetry of `σ` is used.
 
 ## ii. Key results
@@ -850,7 +851,10 @@ density and velocity are uniform and the traction column is `σ e₀ = -p e₀ +
 a uniform viscous traction `τ`. Then, with `ṁ = ρ A₀ v₀` at each port and `F_wall` the traction
 resultant of the walls,
 `P' = ṁ_in v_in - ṁ_out v_out - (p_in A₀ (-e₀) + p_out A₀ e₀) + F_body + F_wall`
-`+ A₀ (τ_out - τ_in)`. The last term, `∑_ports A τ n`, is where viscous port tractions enter. -/
+`+ A₀ (τ_out - τ_in)`. The last term is where viscous port tractions enter: the vector `τ` is the
+viscous part of the traction on a surface of unit normal `+e₀`, so the outlet face (outward normal
+`+e₀`) carries the viscous traction `τ_out` and the inlet face (outward normal `-e₀`) carries
+`-τ_in`. -/
 lemma hasDerivAt_momentum_twoPort_viscous {n : ℕ} {a b : Fin (n + 1) → ℝ} (hab : ∀ i, a i < b i)
     {ρ : ℝ → (Fin (n + 1) → ℝ) → ℝ} {v f : ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ}
     {σ : ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → Fin (n + 1) → ℝ} {t : ℝ}

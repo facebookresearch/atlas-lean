@@ -46,6 +46,14 @@ cancel, the pressure difference pushes with `(1, 0)` and the walls react
 with `(0, 1)`, so the momentum grows at `(1, 0)`. Reversing the inlet's
 outward normal while keeping `-p A n` predicts `(-3, 0)` and is refuted.
 
+With the symmetric shear stress `1 + 2 x₀` added and the weight `(0, -3)`,
+the same channel carries the viscous port tractions `τ_in = (0, 1)` and
+`τ_out = (0, 3)`. The viscous two-port balance applies; its viscous term
+`A₀ (τ_out - τ_in) = (0, 2)` and the wall reaction `(0, 1)` balance the
+weight, so the predicted rate is the directly computed momentum rate
+`(1, 0)`. Counting the inlet's viscous traction with the wrong sign
+predicts `(1, 2)` and is refuted.
+
 ## i. Overview
 
 These are elaboration and non-vacuity checks, not new results.
@@ -54,14 +62,14 @@ These are elaboration and non-vacuity checks, not new results.
 
 No new results are introduced here. Sections B, C and D name the
 fixture steps that later ones reuse; sections C and D define the
-turbine flux and the channel stress they check.
+turbine flux and the channel stresses they check.
 
 ## iii. Table of contents
 
 - A. Linear field with unit-speed endpoint
 - B. Growing storage in a fixed box and the reversed normal
 - C. Energy ports of a steady turbine
-- D. Momentum ports of a pressure-driven channel
+- D. Momentum ports of pressure-driven channels
 
 ## iv. References
 
@@ -409,7 +417,7 @@ example :
   norm_num
 
 
-/-! ## D. Momentum ports of a pressure-driven channel -/
+/-! ## D. Momentum ports of pressure-driven channels -/
 
 /-- Directional derivative of an affine function of one coordinate. -/
 private lemma fderiv_affine_apply {n : ℕ} (c d : ℝ) (k i : Fin (n + 1)) (x : Fin (n + 1) → ℝ) :
@@ -561,5 +569,156 @@ example (t : ℝ) :
   have hA : faceArea (0 : Fin 2 → ℝ) 1 0 = 1 := by simp [faceArea]
   rw [hW, hB, hA] at h2
   norm_num [Matrix.vecHead] at h2
+
+
+/-- Stress field of the viscous channel fixture on the unit square, per unit depth: the normal
+stresses of `channelStress` and the symmetric shear stress `σ₀₁ = σ₁₀ = 1 + 2 x₀`, which grows
+along the channel. On a surface of unit normal `+e₀` its viscous traction is `(0, 1 + 2 x₀)`:
+`τ_in = (0, 1)` on the inlet face `x₀ = 0` and `τ_out = (0, 3)` on the outlet face `x₀ = 1`. -/
+def viscousChannelStress (x : Fin 2 → ℝ) : Fin 2 → Fin 2 → ℝ :=
+  ![![-(2 - x 0), 1 + 2 * x 0], ![1 + 2 * x 0, -(2 - x 1)]]
+
+/-- **Nonzero viscous port tractions**: the channel with density `1`, velocity `(1 + t, 0)`, the
+stress `viscousChannelStress` and the body force `(0, -3)` is an instance of
+`hasDerivAt_momentum_twoPort_viscous`, with the inlet pressure `2` and viscous traction
+`τ_in = (0, 1)` and the outlet pressure `1` and viscous traction `τ_out = (0, 3)`. -/
+lemma fixture_viscousChannel_balance (t : ℝ) :
+    HasDerivAt (fun τ => fun j => ∫ _ in Icc (0 : Fin 2 → ℝ) 1, (1 : ℝ) * ![1 + τ, 0] j)
+      ((1 * faceArea (0 : Fin 2 → ℝ) 1 0 * ![1 + t, 0] 0) • ![1 + t, 0] -
+          (1 * faceArea (0 : Fin 2 → ℝ) 1 0 * ![1 + t, 0] 0) • ![1 + t, 0] -
+          ((2 * faceArea (0 : Fin 2 → ℝ) 1 0) • -(Pi.single 0 1 : Fin 2 → ℝ) +
+            (1 * faceArea (0 : Fin 2 → ℝ) 1 0) • (Pi.single 0 1 : Fin 2 → ℝ)) +
+          (fun j => ∫ _ in Icc (0 : Fin 2 → ℝ) 1, ![(0 : ℝ), -3] j) +
+          ∑ i : Fin 1, faceTractionResultant (0 : Fin 2 → ℝ) 1 viscousChannelStress i.succ +
+        faceArea (0 : Fin 2 → ℝ) 1 0 • (![(0 : ℝ), 3] - ![0, 1])) t := by
+  refine hasDerivAt_momentum_twoPort_viscous (ρ := fun _ _ => 1) (v := fun τ _ => ![1 + τ, 0])
+    (σ := fun _ => viscousChannelStress) (f := fun _ _ => ![0, -3]) (U := univ)
+    (fun i => by simp) isOpen_univ (subset_univ _) ?_ ?_ ?_
+    (fun _ => integrableOn_const isCompact_Icc.measure_lt_top.ne) ?_
+    (fun _ _ => rfl) (fun _ _ => rfl) ?_ (fun _ _ => rfl) (fun _ _ => rfl) ?_ ?_
+  · exact contDiff_const
+  · refine contDiff_pi.2 fun i => ?_
+    fin_cases i
+    · simp only [Function.uncurry, Fin.zero_eta, Matrix.cons_val_zero]
+      fun_prop
+    · simp only [Function.uncurry, Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_fin_one]
+      fun_prop
+  · refine ContDiff.contDiffOn (contDiff_pi.2 fun j => contDiff_pi.2 fun i => ?_)
+    fin_cases j <;> fin_cases i <;>
+      simp only [viscousChannelStress, Fin.zero_eta, Fin.mk_one, Fin.isValue,
+        Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one] <;>
+      fun_prop
+  · intro j x _
+    fin_cases j
+    · have hd : deriv (fun τ : ℝ => (1 : ℝ) * ![1 + τ, 0] 0) t = 1 := by simp
+      have hF0 : (fun y => momentumFlux (fun _ => 1) (fun _ => ![1 + t, 0]) viscousChannelStress 0
+          y 0) = fun y : Fin 2 → ℝ => ((1 + t) * (1 + t) + 2) + (-1) * y 0 := by
+        funext y
+        simp [momentumFlux, viscousChannelStress]
+        ring
+      have hF1 : (fun y => momentumFlux (fun _ => 1) (fun _ => ![1 + t, 0]) viscousChannelStress 0
+          y 1) = fun y : Fin 2 → ℝ => -1 + (-2) * y 0 := by
+        funext y
+        simp [momentumFlux, viscousChannelStress]
+        ring
+      simp only [Fin.zero_eta] at hd ⊢
+      rw [hd]
+      unfold divergence MathlibExt.Probability.FokkerPlanck.pderiv
+      rw [Fin.sum_univ_two, hF0, hF1, fderiv_affine_apply, fderiv_affine_apply]
+      simp
+    · have hd : deriv (fun τ : ℝ => (1 : ℝ) * ![1 + τ, 0] 1) t = 0 := by simp
+      have hF0 : (fun y => momentumFlux (fun _ => 1) (fun _ => ![1 + t, 0]) viscousChannelStress 1
+          y 0) = fun y : Fin 2 → ℝ => -1 + (-2) * y 0 := by
+        funext y
+        simp [momentumFlux, viscousChannelStress]
+        ring
+      have hF1 : (fun y => momentumFlux (fun _ => 1) (fun _ => ![1 + t, 0]) viscousChannelStress 1
+          y 1) = fun y : Fin 2 → ℝ => 2 + (-1) * y 1 := by
+        funext y
+        simp [momentumFlux, viscousChannelStress]
+        ring
+      simp only [Fin.mk_one] at hd ⊢
+      rw [hd]
+      unfold divergence MathlibExt.Probability.FokkerPlanck.pderiv
+      rw [Fin.sum_univ_two, hF0, hF1, fderiv_affine_apply, fderiv_affine_apply]
+      norm_num
+  · intro y _
+    funext j
+    fin_cases j <;> norm_num [viscousChannelStress]
+  · intro y _
+    funext j
+    fin_cases j <;> norm_num [viscousChannelStress]
+  · intro i hi y _
+    fin_cases i
+    · exact absurd rfl hi
+    · simp
+
+/-- The terms of the viscous channel balance: the shear stresses on the two walls cancel, so the
+walls react with `(0, 1)` as in the inviscid channel; the body force is `(0, -3)`; and the viscous
+port term is `A₀ (τ_out - τ_in) = (0, 3) - (0, 1) = (0, 2)`, the outlet face (outward normal `+e₀`)
+carrying `τ_out` and the inlet face (outward normal `-e₀`) carrying `-τ_in`. -/
+lemma fixture_viscousChannel_values :
+    ∑ i : Fin 1, faceTractionResultant (0 : Fin 2 → ℝ) 1 viscousChannelStress i.succ = ![0, 1] ∧
+      (fun j => ∫ _ in Icc (0 : Fin 2 → ℝ) 1, ![(0 : ℝ), -3] j) = ![0, -3] ∧
+      faceArea (0 : Fin 2 → ℝ) 1 0 • (![(0 : ℝ), 3] - ![0, 1]) = ![0, 2] := by
+  have hA : faceArea (0 : Fin 2 → ℝ) 1 0 = 1 := by simp [faceArea]
+  have hvol : volume.real (Icc (0 : Fin 1 → ℝ) 1) = 1 := by
+    rw [measureReal_def,
+      Real.volume_Icc_pi_toReal (show (0 : Fin 1 → ℝ) ≤ 1 from fun k => zero_le_one)]
+    simp
+  have hins : ∀ (c : ℝ) (y : Fin 1 → ℝ), (Fin.insertNth (1 : Fin 2) c y : Fin 2 → ℝ) 0 = y 0 :=
+    fun _ _ => rfl
+  refine ⟨?_, ?_, ?_⟩
+  · rw [Fin.sum_univ_one]
+    funext j
+    unfold faceTractionResultant
+    fin_cases j
+    · simp [viscousChannelStress, hins]
+    · norm_num [viscousChannelStress, hvol]
+  · funext j
+    rw [setIntegral_const, volume_real_unitSquare, one_smul]
+  · rw [hA, one_smul]
+    funext j
+    fin_cases j <;> norm_num
+
+/-- **The viscous balance predicts the directly computed rate**: the pressure term `(1, 0)`, the
+body force `(0, -3)`, the wall reaction `(0, 1)` and the viscous term `(0, 2)` add up to `(1, 0)`,
+the derivative of the momentum `(1 + t, 0)` computed without any balance law. -/
+example (t : ℝ) :
+    ((1 * faceArea (0 : Fin 2 → ℝ) 1 0 * ![1 + t, 0] 0) • ![1 + t, 0] -
+        (1 * faceArea (0 : Fin 2 → ℝ) 1 0 * ![1 + t, 0] 0) • ![1 + t, 0] -
+        ((2 * faceArea (0 : Fin 2 → ℝ) 1 0) • -(Pi.single 0 1 : Fin 2 → ℝ) +
+          (1 * faceArea (0 : Fin 2 → ℝ) 1 0) • (Pi.single 0 1 : Fin 2 → ℝ)) +
+        (fun j => ∫ _ in Icc (0 : Fin 2 → ℝ) 1, ![(0 : ℝ), -3] j) +
+        ∑ i : Fin 1, faceTractionResultant (0 : Fin 2 → ℝ) 1 viscousChannelStress i.succ +
+      faceArea (0 : Fin 2 → ℝ) 1 0 • (![(0 : ℝ), 3] - ![0, 1])) = ![1, 0] ∧
+      HasDerivAt (fun τ => fun j => ∫ _ in Icc (0 : Fin 2 → ℝ) 1, (1 : ℝ) * ![1 + τ, 0] j)
+        ![1, 0] t := by
+  obtain ⟨hW, hB, hV⟩ := fixture_viscousChannel_values
+  obtain ⟨-, -, hP, hD⟩ := fixture_channel_values t
+  refine ⟨?_, hD⟩
+  rw [hW, hB, hV, sub_self, zero_sub, hP]
+  funext j
+  fin_cases j <;> norm_num
+
+/-- **The inlet sign of the viscous term matters**: with the inlet's viscous traction counted as
+`+τ_in`, that is `A₀ (τ_out + τ_in)` in place of `A₀ (τ_out - τ_in)`, the predicted rate is
+`(1, 2)`, which the momentum rate `(1, 0)` refutes. -/
+example (t : ℝ) :
+    ¬ HasDerivAt (fun τ => fun j => ∫ _ in Icc (0 : Fin 2 → ℝ) 1, (1 : ℝ) * ![1 + τ, 0] j)
+      ((1 * faceArea (0 : Fin 2 → ℝ) 1 0 * ![1 + t, 0] 0) • ![1 + t, 0] -
+          (1 * faceArea (0 : Fin 2 → ℝ) 1 0 * ![1 + t, 0] 0) • ![1 + t, 0] -
+          ((2 * faceArea (0 : Fin 2 → ℝ) 1 0) • -(Pi.single 0 1 : Fin 2 → ℝ) +
+            (1 * faceArea (0 : Fin 2 → ℝ) 1 0) • (Pi.single 0 1 : Fin 2 → ℝ)) +
+          (fun j => ∫ _ in Icc (0 : Fin 2 → ℝ) 1, ![(0 : ℝ), -3] j) +
+          ∑ i : Fin 1, faceTractionResultant (0 : Fin 2 → ℝ) 1 viscousChannelStress i.succ +
+        faceArea (0 : Fin 2 → ℝ) 1 0 • (![(0 : ℝ), 3] + ![0, 1])) t := by
+  intro h
+  obtain ⟨hW, hB, -⟩ := fixture_viscousChannel_values
+  obtain ⟨-, -, -, hD⟩ := fixture_channel_values t
+  have h2 := congrFun (hD.unique h) 1
+  have hA : faceArea (0 : Fin 2 → ℝ) 1 0 = 1 := by simp [faceArea]
+  rw [hW, hB, hA] at h2
+  norm_num [Matrix.vecHead, Matrix.vecTail] at h2
 
 end PhyslibExtTest.ContinuumMechanics.ControlVolumes
