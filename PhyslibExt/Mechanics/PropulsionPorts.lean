@@ -1,0 +1,506 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+public import PhyslibExt.Mechanics.PowerPorts
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.Positivity
+
+/-!
+# Variable-mass propulsion: logarithmic velocity increment and parcel consistency
+
+Reduced collinear model of an ideal rocket burn on `[0, tb]`: positive mass `m`, velocity `v`,
+constant exhaust speed `ve > 0` relative to the vehicle, directed backward, and the declared law
+`m t * v' t = -ve * m' t` (thrust equals mass flow `-m'` times exhaust speed).
+
+## i. Overview
+
+No external force (gravity, drag) acts in this law, and it is a stated model input, not a
+consequence of a fixed-mass Newtonian system. Integrating it gives the ideal rocket equation
+`v tb - v 0 = ve * log (m 0 / m tb)`. For nonincreasing mass the increment is nonnegative, zero
+exactly at equal end masses and positive exactly for a nonzero burn; constant mass gives no
+increment. In this pressure-matched model (no pressure-thrust term) the specific impulse is
+`ve / g0`, with `g0 > 0` the reference acceleration used to quote `Isp` in seconds, not
+necessarily local gravity. Signs: `m' < 0` during a burn, so `v' = -ve * m' / m > 0`.
+
+The law is consistent with an explicit momentum-conserving parcel model at one state `(m, v)`:
+in a step of length `h` a parcel of mass `q h` leaves with velocity `v - ve` and the external
+force `F` delivers the impulse `F h`, so `(m - q h) v_h + q h (v - ve) = m v + F h`. The step
+identities hold for arbitrary real parameters whenever their denominators are nonzero: the update
+`v_h` is the unique solution of the balance when the remaining mass `m - q h` is nonzero, and its
+slope is exactly `(v_h - v) / h = (ve q + F) / (m - q h)` when also `h ≠ 0`. For `m > 0` both
+conditions hold for every `h ≠ 0` near `0`, and the slope tends to `(ve q + F) / m` as `h → 0`; a
+physical step also has `q ≥ 0` and `h > 0`. For a differentiable mass history `M` with `M t > 0`
+that is burning at `t` (`M' < 0`), a forward step from `t` to `t + h`, `h > 0`, expels the actual
+mass `M t - M (t + h)`, at the rate `q_h = (M t - M (t + h)) / h`: for small `h` the expelled mass
+is nonnegative, the remaining mass is exactly `M (t + h)`, the step conserves momentum, `q_h`
+tends to `-M'`, and the slope tends to the acceleration `a` of `M a = -ve M' + F`, the law above
+when `F = 0`. A linear burning history expels mass at exactly the constant rate `-M'` in every
+forward step that leaves positive mass, `0 < M (t + h)`, and for those steps the constant-flow
+step is the actual parcel step, with the momentum balance; a longer step would leave no mass or
+negative mass and is not a parcel step. For `m > 0`, the update with no expelled mass is the
+fixed-mass constant-force velocity of `PhyslibExt.Mechanics.PowerPorts`, and ignoring the
+expelled momentum gives the slope limit `(q v + F) / m` instead, wrong whenever `q (v - ve) ≠ 0`.
+This is local consistency of the parcel model, not convergence of a discrete integration scheme
+or an exact finite-step logarithmic law.
+
+## ii. Key results
+
+- `velocity_increment_eq_log`: the ideal rocket equation from derivative data, positive mass and
+  the law.
+- `velocity_increment_burn_and_boundary`: for `ve > 0`, nonnegative increment, zero exactly at
+  equal end masses, positive exactly for a nonzero burn.
+- `specificImpulse_eq_of_law`: `Isp = ve / g0` at any burning instant.
+- `velocity_increment_const_mass`: constant positive mass gives zero increment.
+- `parcelVelocity`, `parcel_momentum_iff`, `parcel_slope_eq`: the parcel step, its momentum
+  balance when the remaining mass is nonzero, and its exact slope when also `h ≠ 0`.
+- `eventually_parcel_mass_pos`, `parcel_slope_tendsto`: for `m > 0`, the remaining mass is
+  positive for every `h` near `0`, and the first-order limit of the parcel step.
+- `parcel_continuum`, `parcel_continuum_linear`: for a burning mass history (`M' < 0`), the
+  forward step with the actual, nonnegative expelled mass, its momentum balance and its continuum
+  limit; a linear burning history expels mass at exactly the constant rate `-M'` in every forward
+  step that leaves positive mass, where the constant-flow step is the actual parcel step.
+- `parcelVelocity_zero_flow`: for `m > 0` and no expelled mass, the fixed-mass constant-force
+  velocity.
+- `parcel_accel_pos`, `naive_slope_tendsto`, `naive_limit_ne`: for `m > 0`, a positive flow at a
+  positive exhaust speed accelerates the vehicle, and ignoring the expelled momentum gives the
+  wrong derivative whenever `q (v - ve) ≠ 0`.
+
+## iii. Table of contents
+
+- A. Integrated velocity increment
+- B. Specific impulse
+- C. Constant mass
+- D. One parcel step
+- E. The first-order limit and the continuum model
+- F. Validation
+
+## iv. References
+
+- G. P. Sutton and O. Biblarz, *Rocket Propulsion Elements*, 9th edition, chapters 2 and 4
+  (specific impulse, effective exhaust velocity, ideal rocket equation).
+- H. D. Curtis, *Orbital Mechanics for Engineering Students*, rocket vehicle dynamics chapter.
+- D. Kleppner and R. Kolenkow, *An Introduction to Mechanics*, 2nd edition, chapter 4 (momentum
+  of a system with a varying mass; the rocket).
+- `PhyslibExt.Mechanics.PowerPorts`: the fixed-mass constant-force velocity.
+-/
+
+@[expose] public section
+
+namespace PhyslibExt.Mechanics.PropulsionPorts
+
+open Set
+
+/-! ## A. Integrated velocity increment -/
+
+/-- Ideal rocket equation from the reduced variable-mass law. For mass `m` and velocity `v`
+with derivatives `m'`, `v'` on `[0, tb]`, positive mass and the law `m * v' = -ve * m'` on
+`[0, tb]`, the velocity increment is `ve * log (m 0 / m tb)`. Neither the sign of `ve` nor
+continuity of the derivatives is needed, so the identity covers the model's `C¹` histories with
+`ve > 0` as a special case. -/
+lemma velocity_increment_eq_log {m v m' v' : ℝ → ℝ} {ve tb : ℝ} (htb : 0 ≤ tb)
+    (hm : ∀ t ∈ Icc 0 tb, HasDerivAt m (m' t) t) (hv : ∀ t ∈ Icc 0 tb, HasDerivAt v (v' t) t)
+    (hpos : ∀ t ∈ Icc 0 tb, 0 < m t) (hlaw : ∀ t ∈ Icc 0 tb, m t * v' t = -ve * m' t) :
+    v tb - v 0 = ve * Real.log (m 0 / m tb) := by
+  have h0mem : (0 : ℝ) ∈ Icc 0 tb := ⟨le_refl 0, htb⟩
+  have htbmem : tb ∈ Icc 0 tb := ⟨htb, le_refl tb⟩
+  have hm0_ne : m 0 ≠ 0 := ne_of_gt (hpos 0 h0mem)
+  have hmtb_ne : m tb ≠ 0 := ne_of_gt (hpos tb htbmem)
+  have hlog : ∀ t ∈ Icc 0 tb, HasDerivAt (fun t => Real.log (m t)) (m' t / m t) t :=
+    fun t ht => (hm t ht).log (ne_of_gt (hpos t ht))
+  have hder0 : ∀ t ∈ Icc 0 tb, v' t + ve * (m' t / m t) = 0 := by
+    intro t ht
+    have hne : m t ≠ 0 := ne_of_gt (hpos t ht)
+    have h1 := hlaw t ht
+    field_simp
+    linear_combination h1
+  have hF : ∀ t ∈ Icc 0 tb,
+      HasDerivAt (fun t => v t + ve * Real.log (m t)) 0 t := by
+    intro t ht
+    have h := (hv t ht).fun_add (HasDerivAt.const_mul ve (hlog t ht))
+    simpa [hder0 t ht] using h
+  have huIcc : uIcc 0 tb = Icc 0 tb := uIcc_of_le htb
+  have hderiv : ∀ x ∈ uIcc 0 tb,
+      HasDerivAt (fun t => v t + ve * Real.log (m t)) ((fun _ => (0 : ℝ)) x) x := by
+    rw [huIcc]
+    simpa using hF
+  have hint : IntervalIntegrable (fun _ => (0 : ℝ)) MeasureTheory.volume 0 tb :=
+    intervalIntegrable_const
+  have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint
+  have hzero : (v tb + ve * Real.log (m tb)) - (v 0 + ve * Real.log (m 0)) = 0 := by
+    simpa using hFTC.symm
+  have hlogdiv := Real.log_div hm0_ne hmtb_ne
+  rw [hlogdiv]
+  linear_combination hzero
+
+/-- Nonincreasing mass admits both cases: for `ve > 0` the increment is nonnegative, zero exactly
+when the end masses are equal (no net burn), and positive exactly when mass was expelled. No
+continuity of the derivatives is needed. -/
+lemma velocity_increment_burn_and_boundary {m v m' v' : ℝ → ℝ} {ve tb : ℝ} (htb : 0 ≤ tb)
+    (hve : 0 < ve) (hm : ∀ t ∈ Icc 0 tb, HasDerivAt m (m' t) t)
+    (hv : ∀ t ∈ Icc 0 tb, HasDerivAt v (v' t) t) (hpos : ∀ t ∈ Icc 0 tb, 0 < m t)
+    (hlaw : ∀ t ∈ Icc 0 tb, m t * v' t = -ve * m' t) (hanti : AntitoneOn m (Icc 0 tb)) :
+    0 ≤ v tb - v 0 ∧ (v tb - v 0 = 0 ↔ m tb = m 0) ∧ (0 < v tb - v 0 ↔ m tb < m 0) := by
+  have hmain := velocity_increment_eq_log htb hm hv hpos hlaw
+  have h0mem : (0 : ℝ) ∈ Icc 0 tb := ⟨le_refl 0, htb⟩
+  have htbmem : tb ∈ Icc 0 tb := ⟨htb, le_refl tb⟩
+  have hm0_pos : 0 < m 0 := hpos 0 h0mem
+  have hmtb_pos : 0 < m tb := hpos tb htbmem
+  have hm0_ne : m 0 ≠ 0 := ne_of_gt hm0_pos
+  have hmtb_ne : m tb ≠ 0 := ne_of_gt hmtb_pos
+  have hle : m tb ≤ m 0 := hanti h0mem htbmem htb
+  have hr_pos : 0 < m 0 / m tb := div_pos hm0_pos hmtb_pos
+  have hr_nonneg : 0 ≤ m 0 / m tb := le_of_lt hr_pos
+  have h1le : 1 ≤ m 0 / m tb := by
+    rw [le_div_iff₀ hmtb_pos, one_mul]
+    exact hle
+  have hlog_nonneg : 0 ≤ Real.log (m 0 / m tb) := Real.log_nonneg h1le
+  have hve_ne : ve ≠ 0 := ne_of_gt hve
+  have hinc_nonneg : 0 ≤ v tb - v 0 := by
+    rw [hmain]
+    exact mul_nonneg (le_of_lt hve) hlog_nonneg
+  refine ⟨hinc_nonneg, ?_, ?_⟩
+  · rw [hmain]
+    constructor
+    · intro h
+      have hlog0 : Real.log (m 0 / m tb) = 0 := by
+        rcases (mul_eq_zero.mp h) with hve0 | hlog0
+        · exact absurd hve0 hve_ne
+        · exact hlog0
+      have hr1 : m 0 / m tb = 1 := by
+        rcases (Real.log_eq_zero.mp hlog0) with h0 | h1 | hneg
+        · exact absurd h0 hr_pos.ne'
+        · exact h1
+        · exfalso
+          linarith [hr_pos, hneg]
+      have heq : m 0 = m tb := (div_eq_one_iff_eq hmtb_ne).mp hr1
+      exact heq.symm
+    · intro h
+      rw [h, div_self hm0_ne, Real.log_one, mul_zero]
+  · rw [hmain, mul_pos_iff_of_pos_left hve, Real.log_pos_iff hr_nonneg,
+      lt_div_iff₀ hmtb_pos, one_mul]
+
+/-! ## B. Specific impulse -/
+
+/-- Specific impulse `T / (mdot * g0)` of thrust `T` at propellant mass flow `mdot`, quoted
+with the reference acceleration `g0` (a fixed standard value, not necessarily local
+gravity). -/
+noncomputable def specificImpulse (T mdot g0 : ℝ) : ℝ :=
+  T / (mdot * g0)
+
+/-- In the pressure-matched model the thrust is the momentum rate `m * v' = (-m') * ve`, so at
+any burning instant (`m' t < 0`) the specific impulse is `ve / g0`. -/
+lemma specificImpulse_eq_of_law {m v' m' : ℝ → ℝ} {ve g0 t : ℝ} (hg0 : 0 < g0)
+    (hburn : m' t < 0) (hlaw : m t * v' t = -ve * m' t) :
+    specificImpulse (m t * v' t) (-m' t) g0 = ve / g0 := by
+  have hmdot_ne : -m' t ≠ 0 := ne_of_gt (neg_pos.mpr hburn)
+  have hm'_ne : m' t ≠ 0 := ne_of_lt hburn
+  have hg0_ne : g0 ≠ 0 := ne_of_gt hg0
+  unfold specificImpulse
+  rw [hlaw]
+  field_simp
+
+/-! ## C. Constant mass -/
+
+/-- Boundary: with constant positive mass the law forces `v' = 0`, so the increment is zero
+(`ve * log (M / M) = 0`). -/
+lemma velocity_increment_const_mass {v v' : ℝ → ℝ} {M ve tb : ℝ} (htb : 0 ≤ tb) (hM : 0 < M)
+    (hv : ∀ t ∈ Icc 0 tb, HasDerivAt v (v' t) t) (hlaw : ∀ t ∈ Icc 0 tb, M * v' t = -ve * 0) :
+    v tb = v 0 := by
+  have hM_ne : M ≠ 0 := ne_of_gt hM
+  have hv0 : ∀ t ∈ Icc 0 tb, HasDerivAt v 0 t := by
+    intro t ht
+    have h1 := hlaw t ht
+    have hzero : M * v' t = 0 := by simpa using h1
+    have hv'_eq : v' t = 0 := by
+      rcases mul_eq_zero.mp hzero with hM0 | hv0
+      · exact absurd hM0 hM_ne
+      · exact hv0
+    simpa [hv'_eq] using hv t ht
+  have huIcc : uIcc 0 tb = Icc 0 tb := uIcc_of_le htb
+  have hderiv : ∀ x ∈ uIcc 0 tb, HasDerivAt v ((fun _ => (0 : ℝ)) x) x := by
+    rw [huIcc]
+    simpa using hv0
+  have hint : IntervalIntegrable (fun _ => (0 : ℝ)) MeasureTheory.volume 0 tb :=
+    intervalIntegrable_const
+  have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint
+  have hsub : v tb - v 0 = 0 := by simpa using hFTC.symm
+  exact sub_eq_zero.mp hsub
+
+open Filter Topology PhyslibExt.Mechanics.PowerPorts
+
+/-! ## D. One parcel step -/
+
+/-- Vehicle velocity after one parcel step of length `h` from the state `(m, v)`: the momentum
+balance `(m - q h) v_h + q h (v - ve) = m v + F h` solved for `v_h`, which needs the remaining
+mass `m - q h` to be nonzero. -/
+noncomputable def parcelVelocity (m v q ve F h : ℝ) : ℝ :=
+  (m * v + F * h - q * h * (v - ve)) / (m - q * h)
+
+/-- When the remaining mass `m - q h` is nonzero, the update is the unique solution of the parcel
+momentum balance. -/
+lemma parcel_momentum_iff {m q h : ℝ} (hmh : m - q * h ≠ 0) (v ve F w : ℝ) :
+    (m - q * h) * w + q * h * (v - ve) = m * v + F * h ↔ w = parcelVelocity m v q ve F h := by
+  unfold parcelVelocity
+  rw [eq_div_iff hmh]
+  constructor <;> intro hh <;> linear_combination hh
+
+/-- For `m > 0` and `h` small enough the remaining mass `m - q h` is positive. -/
+lemma eventually_parcel_mass_pos {m : ℝ} (hm : 0 < m) (q : ℝ) : ∀ᶠ h in 𝓝 0, 0 < m - q * h := by
+  have hcont : ContinuousAt (fun h : ℝ => m - q * h) 0 := by fun_prop
+  have hmem : (fun h : ℝ => m - q * h) 0 ∈ Set.Ioi (0 : ℝ) := by simpa using hm
+  have hnbhd := isOpen_Ioi.mem_nhds hmem
+  simpa using Tendsto.eventually hcont hnbhd
+
+/-- Exact slope of one step with `h ≠ 0` and nonzero remaining mass `m - q h`:
+`(v_h - v) / h = (ve q + F) / (m - q h)`. -/
+lemma parcel_slope_eq {m q h : ℝ} (hh : h ≠ 0) (hmh : m - q * h ≠ 0) (v ve F : ℝ) :
+    (parcelVelocity m v q ve F h - v) / h = (ve * q + F) / (m - q * h) := by
+  unfold parcelVelocity
+  have hmh' : m - h * q ≠ 0 := by
+    intro hc
+    apply hmh
+    linear_combination hc
+  field_simp
+  ring
+
+/-! ## E. The first-order limit and the continuum model -/
+
+/-- For `m > 0` the slope tends to the acceleration `(ve q + F) / m` as `h → 0`. -/
+lemma parcel_slope_tendsto {m : ℝ} (hm : 0 < m) (v q ve F : ℝ) :
+    Tendsto (fun h => (parcelVelocity m v q ve F h - v) / h) (𝓝[≠] 0)
+      (𝓝 ((ve * q + F) / m)) := by
+  have hm' : m ≠ 0 := ne_of_gt hm
+  have heq : (fun h : ℝ => (parcelVelocity m v q ve F h - v) / h)
+      =ᶠ[𝓝[≠] 0] ((fun _ : ℝ => ve * q + F) / (fun h : ℝ => m - q * h)) := by
+    have hpos : ∀ᶠ h in 𝓝[≠] (0 : ℝ), 0 < m - q * h :=
+      Eventually.filter_mono nhdsWithin_le_nhds (eventually_parcel_mass_pos hm q)
+    filter_upwards [self_mem_nhdsWithin, hpos] with h hh0 hpos
+    have hh : h ≠ 0 := by simpa using hh0
+    have hmh : m - q * h ≠ 0 := ne_of_gt hpos
+    simp only [Pi.div_apply]
+    exact parcel_slope_eq hh hmh v ve F
+  have hden : Tendsto (fun h : ℝ => m - q * h) (𝓝[≠] (0 : ℝ)) (𝓝 m) := by
+    have h0 : Tendsto (fun h : ℝ => m - q * h) (𝓝 (0 : ℝ)) (𝓝 m) := by
+      have hq : Tendsto (fun _ : ℝ => q) (𝓝 (0 : ℝ)) (𝓝 q) := tendsto_const_nhds
+      have hid : Tendsto (fun h : ℝ => h) (𝓝 (0 : ℝ)) (𝓝 0) := tendsto_id
+      have hm : Tendsto (fun _ : ℝ => m) (𝓝 (0 : ℝ)) (𝓝 m) := tendsto_const_nhds
+      have h1 := hm.sub (hq.mul hid)
+      simpa using h1
+    exact Tendsto.mono_left h0 nhdsWithin_le_nhds
+  have hlim : Tendsto ((fun _ : ℝ => ve * q + F) / (fun h : ℝ => m - q * h)) (𝓝[≠] 0)
+      (𝓝 ((ve * q + F) / m)) := by
+    have hnum : Tendsto (fun _ : ℝ => ve * q + F) (𝓝[≠] (0 : ℝ)) (𝓝 (ve * q + F)) :=
+      tendsto_const_nhds
+    exact hnum.div hden hm'
+  exact Tendsto.congr' heq.symm hlim
+
+/-- A differentiable mass history `M` that is burning at `t`, `M' = m' < 0`. A forward parcel step
+from `t` to `t + h`, `h > 0`, expels the actual mass `M t - M (t + h)`, at the rate
+`q_h = (M t - M (t + h)) / h`, which tends to `-m'`. For small `h > 0` the expelled mass is
+nonnegative, the remaining mass `M t - q_h h` is exactly `M (t + h)` and positive, and the step
+conserves momentum; its slope at the state `(M t, v)` tends to `(F - ve m') / M t`: the
+acceleration `a` of the reduced law `M a = -ve M' + F`. -/
+lemma parcel_continuum {M : ℝ → ℝ} {m' t : ℝ} (hM : HasDerivAt M m' t) (hdec : m' < 0)
+    (hpos : 0 < M t) (v ve F : ℝ) :
+    Tendsto (fun h => (M t - M (t + h)) / h) (𝓝[>] 0) (𝓝 (-m')) ∧
+      (∀ᶠ h in 𝓝[>] 0, 0 ≤ M t - M (t + h) ∧ M t - (M t - M (t + h)) / h * h = M (t + h) ∧
+        0 < M (t + h) ∧
+        M (t + h) * parcelVelocity (M t) v ((M t - M (t + h)) / h) ve F h +
+            (M t - M (t + h)) * (v - ve) = M t * v + F * h) ∧
+      Tendsto (fun h => (parcelVelocity (M t) v ((M t - M (t + h)) / h) ve F h - v) / h)
+        (𝓝[>] 0) (𝓝 ((F - ve * m') / M t)) := by
+  have hbase : Tendsto (fun h : ℝ => t + h) (𝓝 (0 : ℝ)) (𝓝 t) := by
+    have ht : Tendsto (fun _ : ℝ => t) (𝓝 (0 : ℝ)) (𝓝 t) := tendsto_const_nhds
+    have hid : Tendsto (fun h : ℝ => h) (𝓝 (0 : ℝ)) (𝓝 0) := tendsto_id
+    have h1 := ht.add hid
+    simpa using h1
+  have hq : Tendsto (fun h => (M t - M (t + h)) / h) (𝓝[≠] 0) (𝓝 (-m')) := by
+    have hslope := hM.tendsto_slope
+    have hbase' : Tendsto (fun h : ℝ => t + h) (𝓝[≠] (0 : ℝ)) (𝓝 t) :=
+      Tendsto.mono_left hbase nhdsWithin_le_nhds
+    have hwith : ∀ᶠ h in 𝓝[≠] (0 : ℝ), t + h ∈ ({t}ᶜ : Set ℝ) := by
+      filter_upwards [self_mem_nhdsWithin] with h hh
+      simp only [Set.mem_compl_iff, Set.mem_singleton_iff] at hh ⊢
+      intro hcon
+      exact hh (by linear_combination hcon)
+    have hcomp : Tendsto (fun h : ℝ => t + h) (𝓝[≠] (0 : ℝ)) (𝓝[≠] t) :=
+      tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within _ hbase' hwith
+    have h2 := hslope.comp hcomp
+    have h2' : Tendsto (fun h : ℝ => slope M t (t + h)) (𝓝[≠] (0 : ℝ)) (𝓝 m') := h2
+    have heq : (fun h : ℝ => (M t - M (t + h)) / h)
+        =ᶠ[𝓝[≠] 0] (fun h : ℝ => -(slope M t (t + h))) := by
+      filter_upwards [self_mem_nhdsWithin] with h hh
+      have hh0 : h ≠ 0 := by simpa using hh
+      have hht : t + h - t ≠ 0 := by
+        intro hc
+        exact hh0 (by linear_combination hc)
+      unfold slope
+      simp only [smul_eq_mul, vsub_eq_sub]
+      field_simp
+      ring
+    have h3 : Tendsto (fun h : ℝ => -(slope M t (t + h))) (𝓝[≠] 0) (𝓝 (-m')) := h2'.neg
+    exact Tendsto.congr' heq.symm h3
+  have hq' : Tendsto (fun h => (M t - M (t + h)) / h) (𝓝[>] 0) (𝓝 (-m')) :=
+    hq.mono_left (nhdsWithin_mono _ fun x hx => (Set.mem_Ioi.mp hx).ne')
+  have hMt : Tendsto (fun h : ℝ => M (t + h)) (𝓝 (0 : ℝ)) (𝓝 (M t)) :=
+    hM.continuousAt.tendsto.comp hbase
+  have hposev : ∀ᶠ h in 𝓝 (0 : ℝ), 0 < M (t + h) := hMt.eventually (lt_mem_nhds hpos)
+  have hrate : ∀ᶠ h in 𝓝[>] (0 : ℝ), 0 < (M t - M (t + h)) / h :=
+    hq'.eventually (lt_mem_nhds (neg_pos.mpr hdec))
+  have hstep : ∀ᶠ h in 𝓝[>] (0 : ℝ), 0 ≤ M t - M (t + h) ∧
+      M t - (M t - M (t + h)) / h * h = M (t + h) ∧ 0 < M (t + h) ∧
+      M (t + h) * parcelVelocity (M t) v ((M t - M (t + h)) / h) ve F h +
+        (M t - M (t + h)) * (v - ve) = M t * v + F * h := by
+    filter_upwards [self_mem_nhdsWithin, hposev.filter_mono nhdsWithin_le_nhds, hrate]
+      with h hh hp hr
+    have hh0 : h ≠ 0 := (Set.mem_Ioi.mp hh).ne'
+    have hrem : M t - (M t - M (t + h)) / h * h = M (t + h) := by
+      rw [div_mul_cancel₀ _ hh0]
+      ring
+    have hexp : 0 ≤ M t - M (t + h) := by
+      have h1 := (mul_pos hr (Set.mem_Ioi.mp hh)).le
+      rwa [div_mul_cancel₀ _ hh0] at h1
+    have hmom := (parcel_momentum_iff (m := M t) (q := (M t - M (t + h)) / h) (h := h)
+      (by rw [hrem]; exact hp.ne') v ve F
+      (parcelVelocity (M t) v ((M t - M (t + h)) / h) ve F h)).mpr rfl
+    rw [hrem, div_mul_cancel₀ _ hh0] at hmom
+    exact ⟨hexp, hrem, hp, hmom⟩
+  have heq : (fun h => (parcelVelocity (M t) v ((M t - M (t + h)) / h) ve F h - v) / h)
+      =ᶠ[𝓝[>] 0] ((fun h => ve * ((M t - M (t + h)) / h) + F) / (fun h => M (t + h))) := by
+    filter_upwards [self_mem_nhdsWithin, hstep] with h hh hs
+    have hh0 : h ≠ 0 := (Set.mem_Ioi.mp hh).ne'
+    have hmh : M t - (M t - M (t + h)) / h * h ≠ 0 := by
+      rw [hs.2.1]
+      exact hs.2.2.1.ne'
+    simp only [Pi.div_apply]
+    rw [parcel_slope_eq hh0 hmh v ve F, hs.2.1]
+  have hlim : Tendsto ((fun h => ve * ((M t - M (t + h)) / h) + F) / (fun h => M (t + h)))
+      (𝓝[>] 0) (𝓝 ((ve * -m' + F) / M t)) :=
+    ((hq'.const_mul ve).add_const F).div (hMt.mono_left nhdsWithin_le_nhds) hpos.ne'
+  have hval : (ve * -m' + F) / M t = (F - ve * m') / M t := by
+    congr 1
+    ring
+  rw [hval] at hlim
+  exact ⟨hq', hstep, Tendsto.congr' heq.symm hlim⟩
+
+/-- A linear mass history `M (t + h) = M t + m' h` that is burning, `m' < 0`. Every forward step
+`h > 0` that leaves positive mass, `0 < M (t + h)` (that is, `h < M t / (-m')`), expels the
+nonnegative mass `M t - M (t + h)` at exactly the constant rate `-m'`, and the parcel step with the
+constant flow `-m'` leaves exactly the mass `M (t + h)` and conserves momentum: there it is the
+actual parcel step. A longer step would leave no mass or negative mass, and is not a parcel step.
+The slope of the constant-flow step tends to `(F - ve m') / M t` as `h → 0⁺`. -/
+lemma parcel_continuum_linear {M : ℝ → ℝ} {m' t : ℝ} (hlin : ∀ h, M (t + h) = M t + m' * h)
+    (hdec : m' < 0) (hpos : 0 < M t) (v ve F : ℝ) :
+    (∀ h > 0, 0 < M (t + h) → 0 ≤ M t - M (t + h) ∧ (M t - M (t + h)) / h = -m' ∧
+      M t - -m' * h = M (t + h) ∧
+      M (t + h) * parcelVelocity (M t) v (-m') ve F h + (M t - M (t + h)) * (v - ve) =
+        M t * v + F * h) ∧
+      Tendsto (fun h => (parcelVelocity (M t) v (-m') ve F h - v) / h) (𝓝[>] 0)
+        (𝓝 ((F - ve * m') / M t)) := by
+  refine ⟨fun h hh hMh => ?_, ?_⟩
+  · have hrem : M t - -m' * h = M (t + h) := by
+      rw [hlin h]
+      ring
+    have hexp : M t - M (t + h) = -m' * h := by
+      rw [hlin h]
+      ring
+    have hmom := (parcel_momentum_iff (m := M t) (q := -m') (h := h)
+      (by rw [hrem]; exact hMh.ne') v ve F (parcelVelocity (M t) v (-m') ve F h)).mpr rfl
+    rw [hrem, ← hexp] at hmom
+    refine ⟨?_, ?_, hrem, hmom⟩
+    · rw [hexp]
+      exact (mul_pos (neg_pos.mpr hdec) hh).le
+    · rw [hexp, mul_div_assoc, div_self (ne_of_gt hh), mul_one]
+  · have hlim := parcel_slope_tendsto hpos v (-m') ve F
+    have heq : (ve * (-m') + F) / M t = (F - ve * m') / M t := by
+      congr 1
+      ring
+    rw [heq] at hlim
+    exact hlim.mono_left (nhdsWithin_mono _ fun x hx => (Set.mem_Ioi.mp hx).ne')
+
+/-- For `m > 0` and no expelled mass the parcel step is the fixed-mass constant-force velocity. -/
+lemma parcelVelocity_zero_flow {m : ℝ} (hm : 0 < m) (v ve F h : ℝ) :
+    parcelVelocity m v 0 ve F h = constForceVelocity m v F h := by
+  have hm' : m ≠ 0 := ne_of_gt hm
+  unfold parcelVelocity constForceVelocity
+  simp only [smul_eq_mul, zero_mul, sub_zero]
+  field_simp
+
+/-! ## F. Validation -/
+
+/-- For `m > 0`, a positive mass flow at a positive exhaust speed with no external force gives a
+positive, hence nonzero, acceleration. -/
+lemma parcel_accel_pos {m q ve F : ℝ} (hm : 0 < m) (hq : 0 < q) (hve : 0 < ve) (hF : F = 0) :
+    0 < (ve * q + F) / m := by
+  subst hF
+  positivity
+
+/-- Velocity after one step of the balance that ignores the expelled momentum,
+`(m - q h) w_h = m v + F h`, which needs the remaining mass `m - q h` to be nonzero. -/
+noncomputable def naiveParcelVelocity (m v q F h : ℝ) : ℝ :=
+  (m * v + F * h) / (m - q * h)
+
+/-- Ignoring the expelled momentum, the slope for `m > 0` tends to `(q v + F) / m`. -/
+lemma naive_slope_tendsto {m : ℝ} (hm : 0 < m) (v q F : ℝ) :
+    Tendsto (fun h => (naiveParcelVelocity m v q F h - v) / h) (𝓝[≠] 0)
+      (𝓝 ((q * v + F) / m)) := by
+  have hm' : m ≠ 0 := ne_of_gt hm
+  have hslope : ∀ h : ℝ, h ≠ 0 → m - q * h ≠ 0 →
+      (naiveParcelVelocity m v q F h - v) / h = (q * v + F) / (m - q * h) := by
+    intro h hh hmh
+    unfold naiveParcelVelocity
+    have hmh' : m - h * q ≠ 0 := by
+      intro hc
+      apply hmh
+      linear_combination hc
+    field_simp
+    ring
+  have heq : (fun h : ℝ => (naiveParcelVelocity m v q F h - v) / h)
+      =ᶠ[𝓝[≠] 0] ((fun _ : ℝ => q * v + F) / (fun h : ℝ => m - q * h)) := by
+    have hpos : ∀ᶠ h in 𝓝[≠] (0 : ℝ), 0 < m - q * h :=
+      Eventually.filter_mono nhdsWithin_le_nhds (eventually_parcel_mass_pos hm q)
+    filter_upwards [self_mem_nhdsWithin, hpos] with h hh0 hpos
+    have hh : h ≠ 0 := by simpa using hh0
+    have hmh : m - q * h ≠ 0 := ne_of_gt hpos
+    simp only [Pi.div_apply]
+    exact hslope h hh hmh
+  have hden : Tendsto (fun h : ℝ => m - q * h) (𝓝[≠] (0 : ℝ)) (𝓝 m) := by
+    have h0 : Tendsto (fun h : ℝ => m - q * h) (𝓝 (0 : ℝ)) (𝓝 m) := by
+      have hq : Tendsto (fun _ : ℝ => q) (𝓝 (0 : ℝ)) (𝓝 q) := tendsto_const_nhds
+      have hid : Tendsto (fun h : ℝ => h) (𝓝 (0 : ℝ)) (𝓝 0) := tendsto_id
+      have hm : Tendsto (fun _ : ℝ => m) (𝓝 (0 : ℝ)) (𝓝 m) := tendsto_const_nhds
+      have h1 := hm.sub (hq.mul hid)
+      simpa using h1
+    exact Tendsto.mono_left h0 nhdsWithin_le_nhds
+  have hlim : Tendsto ((fun _ : ℝ => q * v + F) / (fun h : ℝ => m - q * h)) (𝓝[≠] 0)
+      (𝓝 ((q * v + F) / m)) := by
+    have hnum : Tendsto (fun _ : ℝ => q * v + F) (𝓝[≠] (0 : ℝ)) (𝓝 (q * v + F)) :=
+      tendsto_const_nhds
+    exact hnum.div hden hm'
+  exact Tendsto.congr' heq.symm hlim
+
+/-- For `m > 0` that limit is the wrong derivative whenever `q (v - ve) ≠ 0`. -/
+lemma naive_limit_ne {m q v ve : ℝ} (hm : 0 < m) (hq : q ≠ 0) (hv : v ≠ ve) (F : ℝ) :
+    (q * v + F) / m ≠ (ve * q + F) / m := by
+  intro h
+  have hm' : m ≠ 0 := ne_of_gt hm
+  have h2 : q * v + F = ve * q + F := by
+    have hcon := congrArg (fun x : ℝ => x * m) h
+    rwa [div_mul_cancel₀ _ hm', div_mul_cancel₀ _ hm'] at hcon
+  have h3 : q * (v - ve) = 0 := by linear_combination h2
+  have h4 : v - ve = 0 := by
+    rcases mul_eq_zero.mp h3 with hq0 | hv0
+    · exact absurd hq0 hq
+    · exact hv0
+  exact hv (sub_eq_zero.mp h4)
+
+end PhyslibExt.Mechanics.PropulsionPorts

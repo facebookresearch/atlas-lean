@@ -98,4 +98,153 @@ example {Ω : Type*} (X : Matrix (Fin 0) (Fin 1) ℝ) (β : Fin 1 → ℝ) (ε :
     (ω : Ω) : marginalEffect X β ε 0 ω = 0 := by
   simp [marginalEffect]
 
+/-! ### Gaussian response laws
+
+Concrete checks for the response laws: zero-matrix PSD (proved, not assumed), a small
+`phenCov` computation, zero-mean regression, nonzero fixed effects exercising the mean
+theorems, a within-cluster contrast, and a singular (zero) residual covariance. -/
+
+section GaussianResponse
+
+open ProbabilityTheory MetaMathlibExt
+
+/-- Zero matrix is positive semidefinite (proved here, not assumed). -/
+theorem test_posSemidef_zero :
+    (0 : Matrix (Fin 2) (Fin 2) ℝ).PosSemidef := by
+  exact Matrix.PosSemidef.zero
+
+/-- Small `phenCov` computation: all-ones `Z` with zero `G` and zero `R`
+gives zero. -/
+theorem test_phenCov_zero_eq :
+    phenCov (Matrix.of fun _ _ => (1 : ℝ))
+      (0 : Matrix (Fin 1) (Fin 1) ℝ)
+      (0 : Matrix (Fin 2) (Fin 2) ℝ) = 0 := by
+  simp [phenCov]
+
+/-- PSD of the small zero `phenCov`, via the production PSD theorem with
+proved (not assumed) zero PSD facts. -/
+theorem test_phenCov_zero_psd :
+    (phenCov (Matrix.of fun _ _ => (1 : ℝ))
+      (0 : Matrix (Fin 1) (Fin 1) ℝ)
+      (0 : Matrix (Fin 2) (Fin 2) ℝ)).PosSemidef := by
+  apply posSemidef_phenCov_of_posSemidef
+  · exact Matrix.PosSemidef.zero
+  · exact Matrix.PosSemidef.zero
+
+/-- Zero-mean regression: with `X = 0` and `β = 0`, the mean is zero. -/
+theorem test_integral_zero_mean {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (γ : Ω → EuclideanSpace ℝ (Fin 1))
+    (ε : Ω → EuclideanSpace ℝ (Fin 2))
+    (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
+    (Z : Matrix (Fin 2) (Fin 1) ℝ)
+    (G : Matrix (Fin 1) (Fin 1) ℝ) (R : Matrix (Fin 2) (Fin 2) ℝ)
+    (hG : G.PosSemidef) (hR : R.PosSemidef)
+    (hγl : P.map γ = multivariateGaussian 0 G)
+    (hεl : P.map ε = multivariateGaussian 0 R) :
+    ∫ ω, (toEuclideanLin (0 : Matrix (Fin 2) (Fin 1) ℝ) 0 +
+      toEuclideanLin Z (γ ω) + ε ω) ∂P = 0 := by
+  have h := integral_mixedModel_response γ ε hγ hε hind
+    (0 : Matrix (Fin 2) (Fin 1) ℝ) (0 : EuclideanSpace ℝ (Fin 1)) Z G R hG hR
+    hγl hεl
+  simpa using h
+
+/-- Nonzero fixed effects exercise the mean theorem: `X ≠ 0`, `β ≠ 0`.
+E.g., `X = [[1], [2]]`, `β = [3]` gives `X β = [3, 6]` (hand computation
+in the report). -/
+theorem test_integral_nonzero_mean {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (γ : Ω → EuclideanSpace ℝ (Fin 1))
+    (ε : Ω → EuclideanSpace ℝ (Fin 2))
+    (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
+    (X : Matrix (Fin 2) (Fin 1) ℝ) (β : EuclideanSpace ℝ (Fin 1))
+    (hX : X ≠ 0) (hβ : β ≠ 0) (Z : Matrix (Fin 2) (Fin 1) ℝ)
+    (G : Matrix (Fin 1) (Fin 1) ℝ) (R : Matrix (Fin 2) (Fin 2) ℝ)
+    (hG : G.PosSemidef) (hR : R.PosSemidef)
+    (hγl : P.map γ = multivariateGaussian 0 G)
+    (hεl : P.map ε = multivariateGaussian 0 R) :
+    ∫ ω, (toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω) ∂P =
+      toEuclideanLin X β := by
+  -- `hX`/`hβ` are contract witnesses (nonzero fixed effects); the mean law
+  -- itself needs no nondegeneracy.
+  have _hX' := hX
+  have _hβ' := hβ
+  exact integral_mixedModel_response γ ε hγ hε hind X β Z G R hG hR hγl hεl
+
+/-- Nonzero fixed effects exercise the marginal-law theorem: `X ≠ 0`,
+`β ≠ 0`. Same `[[1], [2]]`, `[3]` example as above. -/
+theorem test_map_nonzero_mean {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (γ : Ω → EuclideanSpace ℝ (Fin 1))
+    (ε : Ω → EuclideanSpace ℝ (Fin 2))
+    (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
+    (X : Matrix (Fin 2) (Fin 1) ℝ) (β : EuclideanSpace ℝ (Fin 1))
+    (hX : X ≠ 0) (hβ : β ≠ 0) (Z : Matrix (Fin 2) (Fin 1) ℝ)
+    (G : Matrix (Fin 1) (Fin 1) ℝ) (R : Matrix (Fin 2) (Fin 2) ℝ)
+    (hG : G.PosSemidef) (hR : R.PosSemidef)
+    (hγl : P.map γ = multivariateGaussian 0 G)
+    (hεl : P.map ε = multivariateGaussian 0 R) :
+    P.map (fun ω => toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω) =
+      multivariateGaussian (toEuclideanLin X β) (phenCov Z G R) := by
+  -- `hX`/`hβ` are contract witnesses (nonzero fixed effects); the marginal
+  -- law itself needs no nondegeneracy.
+  have _hX' := hX
+  have _hβ' := hβ
+  exact map_mixedModel_response γ ε hγ hε hind X β Z G R hG hR hγl hεl
+
+/-- Closed hand computation: `X = [[1], [2]]`, `β = [3]` gives `X β = [3, 6]`. -/
+theorem test_toEuclideanLin_hand :
+    WithLp.ofLp (toEuclideanLin (!![1; 2] : Matrix (Fin 2) (Fin 1) ℝ)
+      (WithLp.toLp 2 ![3])) = ![3, 6] := by
+  have h : WithLp.ofLp (toEuclideanLin (!![1; 2] : Matrix (Fin 2) (Fin 1) ℝ)
+      (WithLp.toLp 2 ![3])) =
+      (!![1; 2] : Matrix (Fin 2) (Fin 1) ℝ) *ᵥ ![3] := rfl
+  rw [h]
+  ext i
+  fin_cases i
+  simp [Matrix.mulVec]
+  norm_num [Matrix.of_apply]
+
+/-- Focused check of `variance_contrast_mixedModel_response`: in one cluster of two observations
+(`Z` all ones) with `G = 5 • 1` and `R = 1`, the within-cluster difference `y₀ - y₁` has
+variance `2`; the shared random effect cancels. -/
+theorem test_variance_contrast_within_cluster {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (γ : Ω → EuclideanSpace ℝ (Fin 1))
+    (ε : Ω → EuclideanSpace ℝ (Fin 2))
+    (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
+    (X : Matrix (Fin 2) (Fin 1) ℝ) (β : EuclideanSpace ℝ (Fin 1))
+    (hγl : P.map γ = multivariateGaussian 0 ((5 : ℝ) • (1 : Matrix (Fin 1) (Fin 1) ℝ)))
+    (hεl : P.map ε = multivariateGaussian 0 (1 : Matrix (Fin 2) (Fin 2) ℝ)) :
+    Var[fun ω => ∑ k, ![(1 : ℝ), -1] k * (toEuclideanLin X β +
+      toEuclideanLin (Matrix.of fun _ _ => (1 : ℝ) : Matrix (Fin 2) (Fin 1) ℝ) (γ ω) +
+      ε ω).ofLp k; P] = 2 := by
+  rw [variance_contrast_mixedModel_response γ ε hγ hε hind X β
+    (Matrix.of fun _ _ => (1 : ℝ) : Matrix (Fin 2) (Fin 1) ℝ)
+    ((5 : ℝ) • (1 : Matrix (Fin 1) (Fin 1) ℝ)) (1 : Matrix (Fin 2) (Fin 2) ℝ)
+    (Matrix.PosSemidef.one.smul (by norm_num)) Matrix.PosSemidef.one hγl hεl ![1, -1]]
+  simp [phenCov, dotProduct, Matrix.mulVec, Fin.sum_univ_two, Matrix.mul_apply,
+    Matrix.one_apply]
+  norm_num
+
+/-- Singular residual covariance is allowed: with `R = 0` (deterministic residuals) the response
+covariance is `Z G Zᵀ`. -/
+theorem test_covariance_zero_residual {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (γ : Ω → EuclideanSpace ℝ (Fin 1))
+    (ε : Ω → EuclideanSpace ℝ (Fin 2))
+    (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
+    (X : Matrix (Fin 2) (Fin 1) ℝ) (β : EuclideanSpace ℝ (Fin 1))
+    (Z : Matrix (Fin 2) (Fin 1) ℝ) (G : Matrix (Fin 1) (Fin 1) ℝ) (hG : G.PosSemidef)
+    (hγl : P.map γ = multivariateGaussian 0 G)
+    (hεl : P.map ε = multivariateGaussian 0 (0 : Matrix (Fin 2) (Fin 2) ℝ)) (i j : Fin 2) :
+    cov[fun ω => (toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω).ofLp i,
+      fun ω => (toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω).ofLp j; P] =
+      (Z * G * Zᵀ) i j := by
+  rw [covariance_mixedModel_response γ ε hγ hε hind X β Z G 0 hG Matrix.PosSemidef.zero
+    hγl hεl i j]
+  simp [phenCov]
+
+end GaussianResponse
+
 end MathlibExtTest.MixedModel

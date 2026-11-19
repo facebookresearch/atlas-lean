@@ -10,6 +10,7 @@ module
 
 public import CSLibExt.Algorithms.Lean.DataStructures.SuffixArray
 public import CSLibExt.Bioinformatics.Indexing.BWT
+import Mathlib.Data.List.GetD
 
 /-!
 # Suffix arrays and the Burrows–Wheeler transform; FM-index locate
@@ -146,11 +147,6 @@ private theorem suffix_injective (t : List α) {i j : ℕ} (hi : i ≤ t.length)
   simp only [suffix_length, length_withSentinel] at this
   omega
 
-omit [LinearOrder α] in
-private theorem getD_of_lt {β : Type*} (l : List β) (d : β) {r : ℕ} (h : r < l.length) :
-    l.getD r d = l[r] := by
-  simp [List.getD_eq_getElem?_getD, h]
-
 private theorem length_bwt (t : List α) : (bwt t).length = t.length + 1 := by
   unfold bwt sortedRotations
   rw [List.length_map, (List.mergeSort_perm _ _).length_eq, List.length_range]
@@ -258,7 +254,7 @@ private theorem getD_suffixArray_le (t : List α) {r : ℕ} (hr : r < t.length +
     (suffixArray (withSentinel t)).getD r 0 ≤ t.length := by
   have hr' : r < (suffixArray (withSentinel t)).length := by
     rwa [suffixArray_length, length_withSentinel]
-  rw [getD_of_lt _ _ hr']
+  rw [List.getD_eq_getElem _ _ hr']
   exact (mem_suffixArray_withSentinel t).mp (List.getElem_mem hr')
 
 /-- **Backward-search intervals are suffix-array intervals**: row `r ≤ |t|` lies in the interval
@@ -299,7 +295,7 @@ theorem mem_occurrences_iff (t P : List α) (i : ℕ) :
   have hget : ∀ k (hk : k < (occurrences t P).length),
       (occurrences t P)[k] = SA.getD (sp + k) 0 := by
     intro k hk
-    rw [getD_of_lt _ _ (by omega)]
+    rw [List.getD_eq_getElem _ _ (by omega)]
     simp only [occurrences, List.getElem_take, List.getElem_drop]
     rfl
   constructor
@@ -315,10 +311,10 @@ theorem mem_occurrences_iff (t P : List α) (i : ℕ) :
     obtain ⟨r, hr, he⟩ := List.getElem_of_mem hm
     have hr' : r < t.length + 1 := by omega
     obtain ⟨hspr, hrep⟩ := (backwardSearch_iff_prefix t P r hr').mpr (by
-      rw [getD_of_lt _ _ hr, he]
+      rw [List.getD_eq_getElem _ _ hr, he]
       exact hp)
     refine List.mem_iff_getElem.mpr ⟨r - sp, by omega, ?_⟩
-    rw [hget _ (by omega), show sp + (r - sp) = r by omega, getD_of_lt _ _ hr, he]
+    rw [hget _ (by omega), show sp + (r - sp) = r by omega, List.getD_eq_getElem _ _ hr, he]
 
 /-- Each occurrence is reported once. -/
 theorem occurrences_nodup (t P : List α) : (occurrences t P).Nodup :=

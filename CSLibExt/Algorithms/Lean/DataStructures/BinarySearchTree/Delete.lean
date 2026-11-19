@@ -236,11 +236,6 @@ private theorem erase_cons_tail_of_ne {α : Type u} [LinearOrder α] {a b : α}
     {l : List α} (h : b ≠ a) : (b :: l).erase a = b :: l.erase a :=
   List.erase_cons_tail (fun hb => h (beq_iff_eq.mp hb))
 
-private theorem erase_append_of_not_mem_left {α : Type u} [LinearOrder α]
-    {x : α} {left right : List α} (hx : x ∉ left) :
-    (left ++ right).erase x = left ++ right.erase x := by
-  rw [List.erase_append, ite_eq_right hx]
-
 private theorem erase_append_of_not_mem_right {α : Type u} [LinearOrder α]
     {x : α} {left right : List α} (hx : x ∉ right) :
     (left ++ right).erase x = left.erase x ++ right := by
@@ -277,7 +272,7 @@ public theorem inorder_delete {α : Type u} [LinearOrder α] {x : α}
           exact lt_asymm hKeyX ((all_iff_forall_mem.mp hAllLeft) x hx)
         simp only [delete, ite_eq_right hxKey, ite_eq_left hKeyX, inorder_node,
           ihRight hRight]
-        rw [erase_append_of_not_mem_left hxLeft,
+        rw [List.erase_append_right _ hxLeft,
           erase_cons_tail_of_ne (ne_of_lt hKeyX)]
       · have hxEq : x = key :=
           le_antisymm (le_of_not_gt hKeyX) (le_of_not_gt hxKey)
@@ -287,7 +282,7 @@ public theorem inorder_delete {α : Type u} [LinearOrder α] {x : α}
           intro hx
           exact lt_irrefl key ((all_iff_forall_mem.mp hAllLeft) key hx)
         simp only [delete, ite_eq_right hxKey, inorder_join, inorder_node]
-        rw [erase_append_of_not_mem_left hKeyLeft, List.erase_cons_head]
+        rw [List.erase_append_right _ hKeyLeft, List.erase_cons_head]
 
 end BinarySearchTree
 end Cslib.Algorithms.Lean

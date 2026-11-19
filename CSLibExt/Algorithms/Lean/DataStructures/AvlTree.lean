@@ -74,8 +74,12 @@ public def CacheCorrect : Tree α → Prop
       CacheCorrect left ∧ CacheCorrect right ∧
         cached = max (height left) (height right) + 1
 
-/-- The AVL balance invariant: at every node, the heights of the two subtrees
-differ by at most one, so the balance factor lies in `{-1, 0, 1}`. -/
+/-- The AVL balance condition on cached heights: at every node, the cached
+heights `height` of the two subtrees differ by at most one. The comparison
+reads the cache fields, not the true heights, so on its own `Balanced` holds
+for trees of any shape whose caches happen to agree; it is the AVL balance
+invariant (balance factor in `{-1, 0, 1}` for the true heights) only together
+with `CacheCorrect`. The bundled invariant `Valid` includes both. -/
 public def Balanced : Tree α → Prop
   | .empty => True
   | .node _ left _ right =>
@@ -833,6 +837,21 @@ public theorem contains_eq_true_iff [LinearOrder α] {x : α} {tree : Tree α}
   rw [contains_eq_bstContains]
   exact BinarySearchTree.contains_eq_true_iff hTree
 
+/-- A valid AVL tree: strictly ordered, with correct cached heights, and
+balanced. With `CacheCorrect`, the cached-height condition `Balanced` is the
+AVL balance invariant on true heights. -/
+public def Valid [LT α] (tree : Tree α) : Prop :=
+  Ordered tree ∧ CacheCorrect tree ∧ Balanced tree
+
+/-- The empty tree is a valid AVL tree. -/
+public theorem valid_empty [LT α] : Valid (.empty : Tree α) :=
+  ⟨trivial, trivial, trivial⟩
+
+/-- Insertion preserves validity. -/
+public theorem valid_insert [LinearOrder α] {x : α} {tree : Tree α}
+    (h : Valid tree) : Valid (insert x tree) :=
+  ⟨ordered_insert h.1, cacheCorrect_insert h.2.1, balanced_insert h.2.1 h.2.2⟩
+
 /-- Trees built by insertion have correct caches. -/
 public theorem cacheCorrect_fromList [LinearOrder α] {xs : List α} :
     CacheCorrect (fromList xs) := by
@@ -860,6 +879,11 @@ public theorem mem_fromList [LinearOrder α] {x : α} {xs : List α} :
   induction xs with
   | nil => simp [fromList]
   | cons y ys ih => simp [fromList, mem_insert, ih]
+
+/-- Building a tree by insertion always produces a valid tree. -/
+public theorem valid_fromList [LinearOrder α] {xs : List α} :
+    Valid (fromList xs) :=
+  ⟨ordered_fromList, cacheCorrect_fromList, balanced_fromList⟩
 
 end AvlTree
 end Cslib.Algorithms.Lean

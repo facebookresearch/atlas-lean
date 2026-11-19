@@ -29,14 +29,21 @@ namespace Cslib.Complexity.Karp
 
 open Cslib.CookLevin Cslib.Logic.PL
 
-/-- **The construction has a Hamiltonian path iff the formula is satisfiable.** -/
+/-- **The construction has a Hamiltonian path iff the formula is satisfiable.** Let
+$\varphi$ be a CNF formula with $m$ clauses and $k$ distinct variables, and let
+$t_i = m + i(3m + 2)$ be the top vertex of diamond $i$ in Sipser's construction. The digraph on
+the vertices $0, \dots, t_k$ whose arcs are the arcs of the construction for $\varphi$ has a
+Hamiltonian path from $t_0$ to $t_k$ if and only if $\varphi$ is satisfiable. -/
 theorem exists_isHamPath_iff_cnfSat (φ : CNF) :
     (∃ p, IsHamPath (hpT φ.length (hamVars φ).length + 1) (hamEdges φ)
       (hpT φ.length 0) (hpT φ.length (hamVars φ).length) p) ↔ CNFSat φ :=
   ⟨fun ⟨_, hp⟩ => cnfSat_of_isHamPath hp (detoursNormal_of_isHamPath hp),
     exists_isHamPath_of_cnfSat⟩
 
-/-- `hamPathDec` on an encoded instance. -/
+/-- **HAMPATH on an encoded instance.** For all natural numbers $s$, $t$, $n$ and every list $E$
+of pairs of natural numbers, the HAMPATH decision problem accepts the PATH encoding of
+$(s, t, n, E)$ if and only if the digraph on $0, \dots, n - 1$ with edge list $E$ has a
+Hamiltonian path from $s$ to $t$. -/
 theorem hamPathDec_encodeP (s t n : ℕ) (es : List (ℕ × ℕ)) :
     hamPathDec (Path.encodeP s t n es) = true ↔ ∃ p, IsHamPath n es s t p := by
   classical
@@ -48,7 +55,9 @@ theorem hamPathDec_encodeP (s t n : ℕ) (es : List (ℕ × ℕ)) :
     exact hp
   · exact fun hp => ⟨s, t, n, es, rfl, hp⟩
 
-/-- `noHam` is a no-instance: a path from `0` to `0` through two vertices repeats `0`. -/
+/-- **HAMPATH rejects the fixed no-instance.** The HAMPATH decision problem rejects the PATH
+encoding of the digraph on the two vertices $0, 1$ with no arcs and $s = t = 0$: a path from $0$
+to $0$ that visits both vertices would repeat $0$. -/
 theorem hamPathDec_noHam : hamPathDec noHam = false := by
   rw [Bool.eq_false_iff, ne_eq, noHam, hamPathDec_encodeP]
   rintro ⟨p, hnd, hlen, -, hhd, hlast, -⟩
@@ -59,7 +68,8 @@ theorem hamPathDec_noHam : hamPathDec noHam = false := by
       subst hhd hlast
       simp at hnd
 
-/-- **SAT ≤ HAMPATH preserves membership.** -/
+/-- **SAT ≤ HAMPATH preserves membership.** For every bit string $x$, SAT accepts $x$ if and only
+if HAMPATH accepts the image of $x$ under the SAT-to-HAMPATH reduction map. -/
 theorem satDec_eq_hamPathDec_reduceHam (x : List Bool) : satDec x = hamPathDec (reduceHam x) := by
   unfold reduceHam
   split

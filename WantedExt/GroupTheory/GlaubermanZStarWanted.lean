@@ -23,14 +23,18 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.GroupTheory.GlaubermanZStar` — glauberman_zStar (manifest `manifests/problems/glauberman_zStar.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.GroupTheory.GlaubermanZStar` —
+glauberman_zStar (manifest `manifests/problems/glauberman_zStar.toml`, rev 1, submitter Kim
+Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.GroupTheory.GlaubermanZStarWanted` namespace. Mathematical
-statements are unchanged. Source: G. Glauberman, Central elements in core-free groups, J. Algebra 4 (1966).
+and placed the declarations in the `MathlibExt.GroupTheory.GlaubermanZStarWanted` namespace.
+Mathematical
+statements are unchanged. Source: G. Glauberman, Central elements in core-free groups, J. Algebra 4
+(1966).
 -/
 module
 
@@ -64,7 +68,8 @@ is a cornerstone of the classification of finite simple groups: it is what
 allows the local analysis to "fuse" 2-elements via odd-order normal subgroups.
 -/
 
-/-- Source: G. Glauberman, Central elements in core-free groups, J. Algebra 4 (1966). Via leanprover/lean-eval@38361be, problem `glauberman_zStar`. -/
+/-- Source: G. Glauberman, Central elements in core-free groups, J. Algebra 4 (1966). Via
+leanprover/lean-eval@38361be, problem `glauberman_zStar`. -/
 public theorem_wanted glauberman_zStar
     (G : Type) [Group G] [Fintype G]
     (t : G) (ht1 : t ≠ 1) (ht2 : t * t = 1)

@@ -110,3 +110,43 @@ example (hσ : 0 < σ) (β : Fin 1 → ℝ) :
     (a := ![1]) (by simp) 1
 
 end MathlibExtTest.LinearModelInference
+
+/-! ### The one-sample `t` statistic -/
+
+namespace MathlibExtTest.LinearModelInferenceOneSampleT
+
+open MeasureTheory ProbabilityTheory Real
+
+/-- Smallest admissible sample, `n = 2`: the statistic of two standard normal observations has
+law `t₁` (the Cauchy law). Uses the pinned theorem. -/
+example : (Measure.pi fun _ : Fin 2 => gaussianReal 0 1).map
+    (fun x : Fin 2 → ℝ => √(2 : ℕ) * ((∑ i, x i) / (2 : ℕ) - 0) /
+      √((∑ i, (x i - (∑ j, x j) / (2 : ℕ)) ^ 2) / (((2 : ℕ) : ℝ) - 1))) =
+    studentTMeasure 1 := by
+  exact map_tStatistic_pi_gaussianReal le_rfl 0 one_ne_zero
+
+/-- Boundary `n = 1`: the target `studentTMeasure 0` is the zero measure, so `2 ≤ n` cannot be
+weakened to `1 ≤ n`. -/
+example : ¬ IsProbabilityMeasure (studentTMeasure 0) := by
+  intro h
+  have h0 : studentTMeasure 0 = 0 := by
+    simp [studentTMeasure]
+  exact IsProbabilityMeasure.ne_zero _ h0
+
+/-- Boundary `v = 0`: the sample is a.s. constant, the statistic is `0 / 0 = 0`, and its law is
+the Dirac mass at `0`, not a `t` law, so `v ≠ 0` cannot be dropped. -/
+example (μ : ℝ) : (Measure.pi fun _ : Fin 2 => gaussianReal μ 0).map
+    (fun x : Fin 2 → ℝ => √(2 : ℕ) * ((∑ i, x i) / (2 : ℕ) - μ) /
+      √((∑ i, (x i - (∑ j, x j) / (2 : ℕ)) ^ 2) / (((2 : ℕ) : ℝ) - 1))) =
+    Measure.dirac 0 := by
+  have hpi : (Measure.pi fun _ : Fin 2 => gaussianReal μ 0) = Measure.dirac fun _ => μ := by
+    simp_rw [gaussianReal_zero_var]
+    refine Measure.pi_eq fun s hs => ?_
+    rw [Measure.dirac_apply' _ (MeasurableSet.univ_pi hs), Fin.prod_univ_two,
+      Measure.dirac_apply' _ (hs 0), Measure.dirac_apply' _ (hs 1)]
+    by_cases h0 : μ ∈ s 0 <;> by_cases h1 : μ ∈ s 1 <;> simp [Fin.forall_fin_two, h0, h1]
+  rw [hpi, Measure.map_dirac]
+  congr 1
+  norm_num
+
+end MathlibExtTest.LinearModelInferenceOneSampleT

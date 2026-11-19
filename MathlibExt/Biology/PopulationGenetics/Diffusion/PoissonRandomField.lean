@@ -41,11 +41,12 @@ facts about `φ` and `E ξ_i`.
   forward (Fokker–Planck) equation `½ F'' - σ F' = 0` on `(0, 1)`, with boundary
   normalizations `F(0⁺) = θ` and `F(1⁻) = 0` (`tendsto_weighted_prfDensity_zero`,
   `tendsto_weighted_prfDensity_one`).
-* `current_prfDensity`: the probability current `J = σ F - F' / 2` of the forward equation is
-  the constant `θ · u_σ'(0) / 2 = θ σ / (1 - e^{-2σ})` on `(0, 1)` (`θ / 2` when `σ = 0`):
-  the rate at which mutant frequency enters at `0` and is carried to fixation at `1`.
+* `current_prfDensity`, `current_prfDensity_of_ne_zero`: the probability current
+  `J = σ F - F' / 2` of the forward equation is the constant `θ · u_σ'(0) / 2`, which for
+  `σ ≠ 0` is `θ σ / (1 - e^{-2σ})`, on `(0, 1)` (`θ / 2` when `σ = 0`): the rate at which
+  mutant frequency enters at `0` and is carried to fixation at `1`.
 * `eq_prfDensity_of_forward`: the forward equation with these boundary normalizations
-  characterizes `φ` on `(0, 1)`.
+  characterizes `φ` on `(0, 1)`, for every `θ` (for `θ = 0` it says `φ = 0`).
 * `expectedSFS_neutral`: `E ξ_i = θ / i` for `σ = 0` and `1 ≤ i < n`.
 * `expectedSFS_neutral_self`: the same integral at `i = n` is `θ / n`; it counts sites at which
   every sampled copy carries the derived allele, which are monomorphic in the sample and not part
@@ -160,6 +161,15 @@ theorem current_prfDensity (θ σ : ℝ) {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) 
     field_simp
     ring
 
+/-- **Probability current, explicit form.** For `σ ≠ 0` the constant current `σ F - F' / 2`
+of `current_prfDensity` is `θ σ / (1 - e^{-2σ})` on `(0, 1)`. -/
+theorem current_prfDensity_of_ne_zero (θ : ℝ) {σ : ℝ} (hσ : σ ≠ 0) {x : ℝ}
+    (hx : x ∈ Ioo (0 : ℝ) 1) :
+    σ * (x * (1 - x) * prfDensity θ σ x) -
+      deriv (fun y => y * (1 - y) * prfDensity θ σ y) x / 2 = θ * σ / (1 - exp (-2 * σ)) := by
+  rw [current_prfDensity θ σ hx, kimuraSlope, ite_eq_right hσ]
+  ring
+
 /-- **Boundary normalization at `0`.** As `x → 0⁺` the weighted density `x (1 - x) φ(x)` tends
 to `θ`. (This is not the probability current, which is `current_prfDensity`.) -/
 theorem tendsto_weighted_prfDensity_zero (θ σ : ℝ) :
@@ -184,12 +194,13 @@ theorem tendsto_weighted_prfDensity_one (θ σ : ℝ) :
   filter_upwards [Ioo_mem_nhdsLT (zero_lt_one' ℝ)] with y hy
   exact (weighted_prfDensity θ σ hy).symm
 
-/-- **ODE characterization of the Poisson-random-field density.** Let `θ ≠ 0` and let `φ` be
-a density on `(0, 1)` whose weighted density `x (1 - x) φ(x)` extends to a function `F`
-continuous on `[0, 1]`, twice differentiable on `(0, 1)`, solving the stationary forward
-equation `½ F'' - σ F' = 0` there, with boundary normalizations `F(0) = θ` and `F(1) = 0`.
-Then `φ` is the Sawyer–Hartl density on `(0, 1)`. -/
-theorem eq_prfDensity_of_forward {θ σ : ℝ} (hθ : θ ≠ 0) {φ F : ℝ → ℝ}
+/-- The ODE characterization of the Poisson-random-field density for `θ ≠ 0`
+(`eq_prfDensity_of_forward` removes the hypothesis `θ ≠ 0`): a density `φ` on `(0, 1)`
+whose weighted density `x (1 - x) φ(x)` extends to a function `F` continuous on `[0, 1]`,
+twice differentiable on `(0, 1)`, solving the stationary forward equation `½ F'' - σ F' = 0`
+there, with boundary normalizations `F(0) = θ` and `F(1) = 0`, is the Sawyer–Hartl density
+on `(0, 1)`. -/
+private theorem eq_prfDensity_of_forward_of_ne_zero {θ σ : ℝ} (hθ : θ ≠ 0) {φ F : ℝ → ℝ}
     (hF : ∀ x ∈ Ioo (0 : ℝ) 1, F x = x * (1 - x) * φ x) (hcont : ContinuousOn F (Icc 0 1))
     (hdiff : DifferentiableOn ℝ F (Ioo 0 1)) (hdiff' : DifferentiableOn ℝ (deriv F) (Ioo 0 1))
     (hfwd : ∀ x ∈ Ioo (0 : ℝ) 1, deriv (deriv F) x / 2 - σ * deriv F x = 0)
@@ -231,6 +242,61 @@ theorem eq_prfDensity_of_forward {θ σ : ℝ} (hθ : θ ≠ 0) {φ F : ℝ → 
   have hk := hkim (1 - x) ⟨sub_nonneg.2 hx.2.le, by linarith [hx.1]⟩
   simp only [hu, sub_sub_cancel] at hk
   rw [prfDensity, ← hk, mul_div_cancel₀ _ hθ, hF x hx, mul_div_cancel_left₀ _ hx0]
+
+/-- **ODE characterization of the Poisson-random-field density, for every `θ`.** Let `φ` be
+a density on `(0, 1)` whose weighted density `x (1 - x) φ(x)` extends to a function `F`
+continuous on `[0, 1]`, twice differentiable on `(0, 1)`, solving the stationary forward
+equation `½ F'' - σ F' = 0` there, with boundary normalizations `F(0) = θ` and `F(1) = 0`.
+Then `φ` is the Sawyer–Hartl density on `(0, 1)`. For `θ = 0` this says `φ = 0`; the proof
+adds the `θ = 1` weighted density and applies the `θ ≠ 0` case. -/
+theorem eq_prfDensity_of_forward {θ σ : ℝ} {φ F : ℝ → ℝ}
+    (hF : ∀ x ∈ Ioo (0 : ℝ) 1, F x = x * (1 - x) * φ x) (hcont : ContinuousOn F (Icc 0 1))
+    (hdiff : DifferentiableOn ℝ F (Ioo 0 1)) (hdiff' : DifferentiableOn ℝ (deriv F) (Ioo 0 1))
+    (hfwd : ∀ x ∈ Ioo (0 : ℝ) 1, deriv (deriv F) x / 2 - σ * deriv F x = 0)
+    (h0 : F 0 = θ) (h1 : F 1 = 0) :
+    ∀ x ∈ Ioo (0 : ℝ) 1, φ x = prfDensity θ σ x := by
+  rcases ne_or_eq θ 0 with hθ | rfl
+  · exact eq_prfDensity_of_forward_of_ne_zero hθ hF hcont hdiff hdiff' hfwd h0 h1
+  -- `θ = 0`: add the `θ = 1` weighted density `y ↦ u_σ(1 - y)` and use the `θ = 1` case.
+  have hKd : ∀ y, HasDerivAt (fun y => kimuraFixation σ (1 - y))
+      (-(kimuraSlope σ * exp (-2 * σ * (1 - y)))) y := fun y =>
+    ((hasDerivAt_kimuraFixation σ (1 - y)).comp y
+      ((hasDerivAt_id' y).const_sub 1)).congr_deriv (by ring)
+  have hKd' : ∀ y, HasDerivAt (fun y => -(kimuraSlope σ * exp (-2 * σ * (1 - y))))
+      (-(kimuraSlope σ * (exp (-2 * σ * (1 - y)) * (-2 * σ * -1)))) y := fun y =>
+    (((((hasDerivAt_id' y).const_sub 1).const_mul (-2 * σ)).exp).const_mul
+      (kimuraSlope σ)).neg.congr_deriv (by ring)
+  have hFd : ∀ y ∈ Ioo (0 : ℝ) 1, HasDerivAt F (deriv F y) y := fun y hy =>
+    (hdiff.differentiableAt (isOpen_Ioo.mem_nhds hy)).hasDerivAt
+  have hF'd : ∀ y ∈ Ioo (0 : ℝ) 1, HasDerivAt (deriv F) (deriv (deriv F) y) y := fun y hy =>
+    (hdiff'.differentiableAt (isOpen_Ioo.mem_nhds hy)).hasDerivAt
+  have hsum : ∀ y ∈ Ioo (0 : ℝ) 1, deriv (fun z => F z + kimuraFixation σ (1 - z)) y =
+      deriv F y + -(kimuraSlope σ * exp (-2 * σ * (1 - y))) := fun y hy =>
+    ((hFd y hy).add (hKd y)).deriv
+  have hsum2 : ∀ y ∈ Ioo (0 : ℝ) 1, HasDerivAt (deriv fun z => F z + kimuraFixation σ (1 - z))
+      (deriv (deriv F) y + -(kimuraSlope σ * (exp (-2 * σ * (1 - y)) * (-2 * σ * -1)))) y :=
+    fun y hy => ((hF'd y hy).add (hKd' y)).congr_of_eventuallyEq
+      (eventually_of_mem (isOpen_Ioo.mem_nhds hy) fun z hz => hsum z hz)
+  have key := eq_prfDensity_of_forward_of_ne_zero (θ := 1) (σ := σ) one_ne_zero
+    (φ := fun y => φ y + prfDensity 1 σ y) (F := fun y => F y + kimuraFixation σ (1 - y))
+    (fun x hx => by
+      have hx0 : x * (1 - x) ≠ 0 := mul_ne_zero hx.1.ne' (sub_pos.2 hx.2).ne'
+      simp only [prfDensity]
+      rw [hF x hx, mul_add, mul_div_cancel₀ _ hx0, one_mul])
+    (hcont.add ((continuous_kimuraFixation σ).comp
+      (continuous_const.sub continuous_id)).continuousOn)
+    (fun y hy => ((hFd y hy).add (hKd y)).differentiableAt.differentiableWithinAt)
+    (fun y hy => (hsum2 y hy).differentiableAt.differentiableWithinAt)
+    (fun x hx => by
+      rw [(hsum2 x hx).deriv, hsum x hx]
+      linear_combination hfwd x hx)
+    (by simp [h0, kimuraFixation_one_right])
+    (by simp [h1, kimuraFixation_zero_right])
+  intro x hx
+  have h := key x hx
+  have hz : prfDensity 0 σ x = 0 := by simp [prfDensity]
+  rw [hz]
+  linarith
 
 /-- The expected unfolded site-frequency spectrum of a sample of `n` gene copies under the
 Poisson random field: the expected number of sites where exactly `i` of the `n` sampled copies

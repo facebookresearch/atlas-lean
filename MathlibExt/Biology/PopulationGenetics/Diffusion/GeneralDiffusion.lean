@@ -80,9 +80,13 @@ sojourn density `G(p, x) u(x) / u(p)`. In the neutral case the conditional mean 
   `IsRegularDiffusion`.
 * `diffusionGenerator_fixationProb`, `eq_fixationProb_of_diffusionGenerator_eq_zero`: the
   scale-function ratio is the unique solution of `L u = 0`, `u(0) = 0`, `u(1) = 1`.
+* `IsRegularDiffusion.fixationProb_solves`, `eq_fixationProb_of_contDiffOn`: the ratio is itself
+  in `C[0, 1] ∩ C²(0, 1)`, and is the unique solution in that class.
 * `diffusionGenerator_integral_greenFunction`, `integral_greenFunction_zero_left`,
-  `integral_greenFunction_one_left`, `eq_of_diffusionGenerator_eq`: `G` inverts `-L` with
-  Dirichlet conditions, and that problem has at most one regular solution.
+  `integral_greenFunction_one_left`, `eq_of_diffusionGenerator_eq`,
+  `eq_integral_greenFunction_of_diffusionGenerator_eq_neg`: `G` inverts `-L` with
+  Dirichlet conditions, and a regular solution is the Green integral when that integral
+  also lies in the regularity class.
 * `fixationProb_wrightFisher`, `greenFunction_neutral`, `fixationProb_dominance`.
   `greenFunction_eq_selectionGreen` (in `AlleleAge`) identifies `greenFunction` at genic
   selection with `selectionGreen`, so there is one Green-kernel representation, not two.
@@ -490,6 +494,39 @@ theorem fixationProb_mem_Icc (h : IsRegularDiffusion b a) {p : ℝ} (hp : p ∈ 
     h.strictMonoOn_scaleFunction.monotoneOn hp ⟨zero_le_one, le_rfl⟩ hp.2
   exact ⟨div_nonneg h0 h.scaleFunction_one_pos.le, (div_le_one h.scaleFunction_one_pos).2 h1⟩
 
+/-- The scale density is `C¹` on `(0, 1)`: `ψ' = -(2 b / a) ψ` with `b / a` continuous there. -/
+theorem contDiffOn_scaleDensity (h : IsRegularDiffusion b a) :
+    ContDiffOn ℝ 1 (scaleDensity b a) (Ioo 0 1) := by
+  have hd : ∀ x ∈ Ioo (0 : ℝ) 1,
+      HasDerivAt (scaleDensity b a) (-(2 * b x / a x) * scaleDensity b a x) x :=
+    fun x hx => h.hasDerivAt_scaleDensity hx
+  have hc : ContinuousOn (fun x => -(2 * b x / a x) * scaleDensity b a x) (Ioo 0 1) := by
+    have h2 : ContinuousOn (fun x => 2 * (b x / a x)) (Ioo 0 1) :=
+      continuousOn_const.mul h.continuousOn_div
+    simp only [mul_div_assoc]
+    exact h2.neg.mul (h.continuousOn_scaleDensity.mono Ioo_subset_Icc_self)
+  have key := (contDiffOn_succ_iff_deriv_of_isOpen (n := 0) (𝕜 := ℝ) (f := scaleDensity b a)
+    isOpen_Ioo).2 ⟨fun x hx => (hd x hx).differentiableAt.differentiableWithinAt, by simp,
+      contDiffOn_zero.2 (hc.congr fun x hx => (hd x hx).deriv)⟩
+  simpa using key
+
+/-- The scale function is `C²` on `(0, 1)`. -/
+theorem contDiffOn_scaleFunction (h : IsRegularDiffusion b a) :
+    ContDiffOn ℝ 2 (scaleFunction b a) (Ioo 0 1) := by
+  exact (contDiffOn_succ_iff_deriv_of_isOpen (n := 1) isOpen_Ioo).2
+    ⟨fun x hx => (h.hasDerivAt_scaleFunction hx).differentiableAt.differentiableWithinAt,
+      by simp, h.contDiffOn_scaleDensity.congr fun x hx => (h.hasDerivAt_scaleFunction hx).deriv⟩
+
+/-- The scale-function ratio `S / S(1)` is `C²` on `(0, 1)`. -/
+theorem contDiffOn_fixationProb (h : IsRegularDiffusion b a) :
+    ContDiffOn ℝ 2 (fixationProb b a) (Ioo 0 1) := by
+  exact h.contDiffOn_scaleFunction.div_const _
+
+/-- The scale-function ratio `S / S(1)` is continuous on `[0, 1]`. -/
+theorem continuousOn_fixationProb (h : IsRegularDiffusion b a) :
+    ContinuousOn (fixationProb b a) (Icc 0 1) := by
+  exact h.continuousOn_scaleFunction.div_const _
+
 end IsRegularDiffusion
 
 /-- An absent allele is never fixed (for every `b`, `a`). -/
@@ -574,6 +611,25 @@ theorem eq_fixationProb_of_diffusionGenerator_eq_zero {b a u : ℝ → ℝ}
   intro x hx
   rw [eq_of_diffusionGenerator_eq_zero h hcont hdiff hdiff' hgen x hx, h0, h1]
   ring
+
+/-- **Existence**: `S / S(1)` lies in `C[0, 1] ∩ C²(0, 1)` and solves the Dirichlet problem
+`a u'' / 2 + b u' = 0` on `(0, 1)`, `u 0 = 0`, `u 1 = 1`. -/
+theorem IsRegularDiffusion.fixationProb_solves {b a : ℝ → ℝ} (h : IsRegularDiffusion b a) :
+    ContinuousOn (fixationProb b a) (Icc 0 1) ∧ ContDiffOn ℝ 2 (fixationProb b a) (Ioo 0 1) ∧
+      (∀ x ∈ Ioo (0 : ℝ) 1, diffusionGenerator b a (fixationProb b a) x = 0) ∧
+      fixationProb b a 0 = 0 ∧ fixationProb b a 1 = 1 := by
+  exact ⟨h.continuousOn_fixationProb, h.contDiffOn_fixationProb,
+    fun x hx => diffusionGenerator_fixationProb h hx, fixationProb_zero b a, h.fixationProb_one⟩
+
+/-- **Uniqueness** in `C[0, 1] ∩ C²(0, 1)`: a function continuous on `[0, 1]`, `C²` on `(0, 1)`,
+solving `L u = 0` on `(0, 1)` with `u 0 = 0` and `u 1 = 1` equals `S / S(1)` on `[0, 1]`. -/
+theorem eq_fixationProb_of_contDiffOn {b a u : ℝ → ℝ} (h : IsRegularDiffusion b a)
+    (hcont : ContinuousOn u (Icc 0 1)) (hu : ContDiffOn ℝ 2 u (Ioo 0 1))
+    (hgen : ∀ x ∈ Ioo (0 : ℝ) 1, diffusionGenerator b a u x = 0) (h0 : u 0 = 0) (h1 : u 1 = 1) :
+    ∀ x ∈ Icc (0 : ℝ) 1, u x = fixationProb b a x := by
+  have h2 := (contDiffOn_succ_iff_deriv_of_isOpen (n := 1) isOpen_Ioo).1 hu
+  exact eq_fixationProb_of_diffusionGenerator_eq_zero h hcont h2.1
+    (h2.2.2.differentiableOn one_ne_zero) hgen h0 h1
 
 /-- **Uniqueness for the Dirichlet problem.** Two functions continuous on `[0, 1]`,
 differentiable on `(0, 1)` with derivatives differentiable on `(0, 1)`, with `L u = L v` on
@@ -733,6 +789,34 @@ theorem integral_greenFunction_one_left (b a g : ℝ → ℝ) :
     (ae_of_all _ fun x hx => ?_)).trans (by simp)
   rw [uIoc_of_le zero_le_one] at hx
   simp [greenFunction, max_eq_left hx.2]
+
+/-- Bundled Dirichlet uniqueness for the Green integral: a function `u` in
+Atlas's regularity class (`C[0,1]`, differentiable with differentiable
+derivative on `(0,1)`) satisfying `L u = -g` on `(0,1)` and `u 0 = u 1 = 0`
+equals the Green integral on `[0,1]`, provided the Green integral also lies in
+that class (`hv`, `hv'`, `hv''`). -/
+theorem eq_integral_greenFunction_of_diffusionGenerator_eq_neg {b a g : ℝ → ℝ}
+    (h : IsRegularDiffusion b a) (hg : ContinuousOn g (Ioo 0 1))
+    (hL : ∀ q ∈ Ioo (0 : ℝ) 1, IntervalIntegrable
+      (fun x => scaleFunction b a x * g x / (a x * scaleDensity b a x)) MeasureTheory.volume 0 q)
+    (hR : ∀ q ∈ Ioo (0 : ℝ) 1, IntervalIntegrable
+      (fun x => (scaleFunction b a 1 - scaleFunction b a x) * g x / (a x * scaleDensity b a x))
+      MeasureTheory.volume q 1) {u : ℝ → ℝ}
+    (hu : ContinuousOn u (Icc 0 1))
+    (hu' : DifferentiableOn ℝ u (Ioo 0 1))
+    (hu'' : DifferentiableOn ℝ (deriv u) (Ioo 0 1))
+    (hv : ContinuousOn (fun q => ∫ x in (0 : ℝ)..1, greenFunction b a q x * g x) (Icc 0 1))
+    (hv' : DifferentiableOn ℝ (fun q => ∫ x in (0 : ℝ)..1, greenFunction b a q x * g x)
+      (Ioo 0 1))
+    (hv'' : DifferentiableOn ℝ
+      (deriv (fun q => ∫ x in (0 : ℝ)..1, greenFunction b a q x * g x)) (Ioo 0 1))
+    (hgen : ∀ x ∈ Ioo (0 : ℝ) 1, diffusionGenerator b a u x = -g x)
+    (h0 : u 0 = 0) (h1 : u 1 = 0) :
+    ∀ x ∈ Icc (0 : ℝ) 1, u x = ∫ y in (0 : ℝ)..1, greenFunction b a x y * g y :=
+  eq_of_diffusionGenerator_eq h hu hv hu' hv' hu'' hv''
+    (fun x hx => by rw [hgen x hx, diffusionGenerator_integral_greenFunction h hg hL hR hx])
+    (by rw [h0, integral_greenFunction_zero_left])
+    (by rw [h1, integral_greenFunction_one_left])
 
 /-! ### Genic selection and dominance -/
 

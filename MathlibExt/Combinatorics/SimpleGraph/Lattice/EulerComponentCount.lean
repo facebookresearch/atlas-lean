@@ -45,7 +45,7 @@ namespace Lattice
 
 variable {V : Type*} [Finite V] [DecidableEq V]
 
-omit [DecidableEq V] in
+omit [DecidableEq V] [Finite V] in
 theorem ecc_deleteEdge_card_nonbridge (A : SimpleGraph V) {a b : V}
     (he : s(a, b) ∈ A.edgeSet) (hr : (A.deleteEdges {s(a, b)}).Reachable a b) :
     Nat.card (A.deleteEdges {s(a, b)}).ConnectedComponent = Nat.card A.ConnectedComponent := by
@@ -138,7 +138,7 @@ theorem ecc_two_components_of_dualModel (A : SimpleGraph V) (B' : Set (Sym2 V)) 
   exact ecc_two_components_tree_plus_bridge A B' hconn he hbridge
 
 omit [DecidableEq V] in
-theorem ecc_cycle_dual_two_components {W : Type*} [Finite W]
+theorem ecc_cycle_dual_two_components {W : Type*}
     {G : SimpleGraph W} {w : W}
     (c : G.Walk w w) (hc : c.IsCycle)
     (A : SimpleGraph V) (B' : Set (Sym2 V)) {a b : V} (h : ecc_DualCutModel A B' a b) :

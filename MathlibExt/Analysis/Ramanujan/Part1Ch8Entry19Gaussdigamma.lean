@@ -66,6 +66,7 @@ namespace Entry19Gaussdigamma
 open scoped Nat Real BigOperators Interval Polynomial ContDiff
 open Asymptotics Filter Finset Complex Topology MeasureTheory
 open MathlibExt.Analysis.Ramanujan.Part1Ch7.Entry1Powersum
+open MetaMathlibExt (bernoulliKernel bernoulliKernel_continuous bernoulliKernel_norm_le)
 
 noncomputable section
 
@@ -123,38 +124,23 @@ private theorem ch8e19_iteratedDeriv_re (m : ℕ) (s : ℝ) (hs : s ≠ 1) :
             ((analyticOn_riemannZeta.iteratedFDeriv m (s : ℂ) hsC).differentiableAt)
       exact hd.hasDerivAt.real_of_complex.deriv
 
-private noncomputable def ch8e19Kernel (p : ℕ) (x : ℝ) : ℝ :=
-  bernoulliFun p (Int.fract x)
-
-private theorem ch8e19Kernel_periodic (p : ℕ) :
-    Function.Periodic (ch8e19Kernel p) 1 := by
-  intro x
-  simp [ch8e19Kernel, Int.fract_add_one]
-
-private theorem ch8e19Kernel_continuous {p : ℕ} (hp : p ≠ 1) :
-    Continuous (ch8e19Kernel p) := by
-  change Continuous (fun x : ℝ => bernoulliFun p (Int.fract x))
-  simpa [Function.comp_def] using
-    (continuous_bernoulliFun p).continuousOn.comp_fract''
-      (bernoulliFun_endpoints_eq_of_ne_one hp).symm
-
 private theorem ch8e19Kernel_one (N : ℕ) (hN : 0 < N) :
-    ch8e19Kernel (2 * N + 1) 1 = 0 := by
+    bernoulliKernel (2 * N + 1) 1 = 0 := by
   have hodd : Odd (2 * N + 1) := ⟨N, by omega⟩
   have hgt : 1 < 2 * N + 1 := by omega
-  simp [ch8e19Kernel, bernoulliFun_eval_zero,
+  simp [bernoulliKernel, bernoulliFun_eval_zero,
     bernoulli_eq_zero_of_odd hodd hgt]
 
 private noncomputable def ch8e19MellinBase (N : ℕ) (x : ℝ) : ℂ :=
-  if 1 ≤ x then (ch8e19Kernel (2 * N + 1) x : ℂ) else 0
+  if 1 ≤ x then (bernoulliKernel (2 * N + 1) x : ℂ) else 0
 
 private theorem ch8e19MellinBase_continuous (N : ℕ) (hN : 0 < N) :
     Continuous (ch8e19MellinBase N) := by
   have hp : 2 * N + 1 ≠ 1 := by omega
-  have hk : Continuous (fun x => (ch8e19Kernel (2 * N + 1) x : ℂ)) :=
-    Complex.continuous_ofReal.comp (ch8e19Kernel_continuous hp)
+  have hk : Continuous (fun x => (bernoulliKernel (2 * N + 1) x : ℂ)) :=
+    Complex.continuous_ofReal.comp (bernoulliKernel_continuous hp)
   change Continuous (fun x : ℝ => if 1 ≤ x then
-    (ch8e19Kernel (2 * N + 1) x : ℂ) else 0)
+    (bernoulliKernel (2 * N + 1) x : ℂ) else 0)
   refine hk.if_le continuous_const continuous_const continuous_id ?_
   intro x hx
   have : x = 1 := by linarith
@@ -165,16 +151,9 @@ private theorem ch8e19MellinBase_locallyIntegrable (N : ℕ) (hN : 0 < N) :
     LocallyIntegrableOn (ch8e19MellinBase N) (Set.Ioi 0) :=
   (ch8e19MellinBase_continuous N hN).continuousOn.locallyIntegrableOn measurableSet_Ioi
 
-private theorem ch8e19Kernel_norm_le (N : ℕ) (hN : 0 < N) :
-    ∃ C : ℝ, ∀ x : ℝ, ‖ch8e19Kernel (2 * N + 1) x‖ ≤ C := by
-  have hp : 2 * N + 1 ≠ 1 := by omega
-  obtain ⟨C, hC⟩ := ((ch8e19Kernel_periodic (2 * N + 1)).isBounded_of_continuous
-    one_ne_zero (ch8e19Kernel_continuous hp)).exists_norm_le
-  exact ⟨C, fun x => hC _ ⟨x, rfl⟩⟩
-
 private theorem ch8e19MellinBase_isBigO_atTop (N : ℕ) (hN : 0 < N) :
     ch8e19MellinBase N =O[atTop] (fun _ : ℝ => (1 : ℝ)) := by
-  obtain ⟨C, hC⟩ := ch8e19Kernel_norm_le N hN
+  obtain ⟨C, hC⟩ := bernoulliKernel_norm_le N hN
   refine isBigO_iff.mpr ⟨C, ?_⟩
   filter_upwards [eventually_ge_atTop (1 : ℝ)] with x hx
   simpa [ch8e19MellinBase, hx] using hC x
@@ -215,7 +194,7 @@ private theorem ch8e19MellinIntegral_eq_integral
     (N : ℕ) (hN : 0 < N) (r : ℂ) :
     ch8e19MellinIntegral N r =
       ∫ x : ℝ in Set.Ioi 1,
-        (x : ℂ) ^ (r - (2 * N + 1 : ℕ)) * (ch8e19Kernel (2 * N + 1) x : ℂ) := by
+        (x : ℂ) ^ (r - (2 * N + 1 : ℕ)) * (bernoulliKernel (2 * N + 1) x : ℂ) := by
   unfold ch8e19MellinIntegral mellin
   rw [setIntegral_eq_of_subset_of_forall_sdiff_eq_zero measurableSet_Ioi
     (Set.Ioi_subset_Ioi zero_le_one)]
@@ -230,13 +209,13 @@ private theorem ch8e19MellinIntegral_eq_integral
 
 private noncomputable def ch8e19Tail (N : ℕ) (r : ℂ) (n : ℕ) : ℂ :=
   ∫ x : ℝ in Set.Ioi (n : ℝ),
-    (x : ℂ) ^ (r - (2 * N + 1 : ℕ)) * (ch8e19Kernel (2 * N + 1) x : ℂ)
+    (x : ℂ) ^ (r - (2 * N + 1 : ℕ)) * (bernoulliKernel (2 * N + 1) x : ℂ)
 
 private theorem ch8e19Tail_integrable
     (N : ℕ) (hN : 0 < N) (r : ℂ) (hu : r.re < 2 * N) :
     IntegrableOn
       (fun x : ℝ => (x : ℂ) ^ (r - (2 * N + 1 : ℕ)) *
-        (ch8e19Kernel (2 * N + 1) x : ℂ)) (Set.Ioi 1) := by
+        (bernoulliKernel (2 * N + 1) x : ℂ)) (Set.Ioi 1) := by
   let s : ℂ := r - (2 * N + 1 : ℕ) + 1
   have hs : s.re < 0 := by
     dsimp [s]
@@ -258,8 +237,8 @@ private theorem ch8e19Tail_norm_le_uniform (N : ℕ) (hN : 0 < N) :
     ∃ D : ℝ, 0 ≤ D ∧ ∀ r ∈ Metric.sphere (0 : ℂ) (1 / 2 : ℝ), ∀ x : ℕ, 1 ≤ x →
       ‖ch8e19Tail N r x‖ ≤
         D * Real.rpow (x : ℝ) (-2 * (N : ℝ) + 1 / 2) := by
-  obtain ⟨C, hC⟩ := ch8e19Kernel_norm_le N hN
-  have hC0 : 0 ≤ C := (norm_nonneg (ch8e19Kernel (2 * N + 1) 0)).trans (hC 0)
+  obtain ⟨C, hC⟩ := bernoulliKernel_norm_le N hN
+  have hC0 : 0 ≤ C := (norm_nonneg (bernoulliKernel (2 * N + 1) 0)).trans (hC 0)
   let a : ℝ := -2 * (N : ℝ) - 1 / 2
   have hNreal : (1 : ℝ) ≤ N := by exact_mod_cast hN
   have ha : a < -1 := by
@@ -279,7 +258,7 @@ private theorem ch8e19Tail_norm_le_uniform (N : ℕ) (hN : 0 < N) :
     (integrableOn_Ioi_rpow_of_lt ha hxpos).const_mul C
   have hpoint (t : ℝ) (ht : t ∈ Set.Ioi (x : ℝ)) :
       ‖(t : ℂ) ^ (r - (2 * N + 1 : ℕ)) *
-          (ch8e19Kernel (2 * N + 1) t : ℂ)‖ ≤ C * t ^ a := by
+          (bernoulliKernel (2 * N + 1) t : ℂ)‖ ≤ C * t ^ a := by
     have htpos : 0 < t := hxpos.trans ht
     have ht_one : 1 ≤ t := by
       have hx_one : (1 : ℝ) ≤ x := by exact_mod_cast hx
@@ -290,9 +269,9 @@ private theorem ch8e19Tail_norm_le_uniform (N : ℕ) (hN : 0 < N) :
       linarith
     calc
       ‖(t : ℂ) ^ (r - (2 * N + 1 : ℕ)) *
-          (ch8e19Kernel (2 * N + 1) t : ℂ)‖ =
+          (bernoulliKernel (2 * N + 1) t : ℂ)‖ =
           t ^ (r - (2 * N + 1 : ℕ)).re *
-            ‖ch8e19Kernel (2 * N + 1) t‖ := by
+            ‖bernoulliKernel (2 * N + 1) t‖ := by
         rw [norm_mul, Complex.norm_cpow_eq_rpow_re_of_pos htpos, Complex.norm_real]
       _ ≤ t ^ a * C := by
         exact mul_le_mul (Real.rpow_le_rpow_of_exponent_le ht_one hexp) (hC t)
@@ -301,7 +280,7 @@ private theorem ch8e19Tail_norm_le_uniform (N : ℕ) (hN : 0 < N) :
   have hnorm :
       ‖∫ t : ℝ in Set.Ioi (x : ℝ),
           (t : ℂ) ^ (r - (2 * N + 1 : ℕ)) *
-            (ch8e19Kernel (2 * N + 1) t : ℂ)‖ ≤
+            (bernoulliKernel (2 * N + 1) t : ℂ)‖ ≤
         ∫ t : ℝ in Set.Ioi (x : ℝ), C * t ^ a :=
     MeasureTheory.norm_integral_le_of_norm_le hg
       ((ae_restrict_mem measurableSet_Ioi).mono hpoint)
@@ -309,7 +288,7 @@ private theorem ch8e19Tail_norm_le_uniform (N : ℕ) (hN : 0 < N) :
   calc
     ‖∫ t : ℝ in Set.Ioi (x : ℝ),
         (t : ℂ) ^ (r - (2 * N + 1 : ℕ)) *
-          (ch8e19Kernel (2 * N + 1) t : ℂ)‖ ≤
+          (bernoulliKernel (2 * N + 1) t : ℂ)‖ ≤
       ∫ t : ℝ in Set.Ioi (x : ℝ), C * t ^ a := hnorm
     _ = C * (∫ t : ℝ in Set.Ioi (x : ℝ), t ^ a) := by
       rw [MeasureTheory.integral_const_mul]
@@ -373,7 +352,7 @@ private theorem ch8e19Kernel_eq_of_spec
       ∑ j ∈ Finset.range (p + 1), (Nat.choose p j : ℝ) *
         (if j = 1 then (-1 / 2 : ℝ) else (bernoulli j : ℝ)) * x ^ (p - j))
     (x : ℝ) :
-    P p x = ch8e19Kernel p x := by
+    P p x = bernoulliKernel p x := by
   have hp : Function.Periodic (P p) 1 := hper p
   have hfract : P p (Int.fract x) = P p x := by
     rw [Int.fract]
@@ -391,7 +370,7 @@ private theorem ch8e19EulerMaclaurin_real
             (iteratedDerivWithin (2 * k - 1) f (Set.Icc (a : ℝ) (b : ℝ)) b -
               iteratedDerivWithin (2 * k - 1) f (Set.Icc (a : ℝ) (b : ℝ)) a)) +
         ((-1 : ℝ) ^ (p + 1) / (Nat.factorial p : ℝ) *
-          (∫ x in (a : ℝ)..(b : ℝ), ch8e19Kernel p x *
+          (∫ x in (a : ℝ)..(b : ℝ), bernoulliKernel p x *
             iteratedDerivWithin p f (Set.Icc (a : ℝ) (b : ℝ)) x)) := by
   obtain ⟨P, hper, hunit, hformula⟩ :=
     MetaMathlibExt.eulerMaclaurinFormula a b p f hab hp hdf
@@ -429,7 +408,7 @@ private theorem ch8e19EulerMaclaurin_complex
             (iteratedDerivWithin (2 * k - 1) f (Set.Icc (a : ℝ) (b : ℝ)) b -
               iteratedDerivWithin (2 * k - 1) f (Set.Icc (a : ℝ) (b : ℝ)) a)) +
         ((((-1 : ℝ) ^ (p + 1) / (Nat.factorial p : ℝ) : ℝ) : ℂ) *
-          (∫ x in (a : ℝ)..(b : ℝ), (ch8e19Kernel p x : ℂ) *
+          (∫ x in (a : ℝ)..(b : ℝ), (bernoulliKernel p x : ℂ) *
             iteratedDerivWithin p f (Set.Icc (a : ℝ) (b : ℝ)) x)) := by
   let s : Set ℝ := Set.Icc (a : ℝ) (b : ℝ)
   have habr : (a : ℝ) < (b : ℝ) := by exact_mod_cast hab
@@ -455,37 +434,37 @@ private theorem ch8e19EulerMaclaurin_complex
   have hdcont : ContinuousOn (iteratedDerivWithin p f s) s :=
     hdf.continuousOn_iteratedDerivWithin le_rfl hs
   have hremint : IntervalIntegrable
-      (fun x => (ch8e19Kernel p x : ℂ) * iteratedDerivWithin p f s x)
+      (fun x => (bernoulliKernel p x : ℂ) * iteratedDerivWithin p f s x)
       volume (a : ℝ) (b : ℝ) :=
-    (((Complex.continuous_ofReal.comp (ch8e19Kernel_continuous hp1)).continuousOn.mul
+    (((Complex.continuous_ofReal.comp (bernoulliKernel_continuous hp1)).continuousOn.mul
       hdcont).mono (by simp [s, Set.uIcc_of_le habr.le])).intervalIntegrable
   have hrem_re :
-      (∫ x in (a : ℝ)..(b : ℝ), ch8e19Kernel p x *
+      (∫ x in (a : ℝ)..(b : ℝ), bernoulliKernel p x *
           iteratedDerivWithin p (fun y => (f y).re) s x) =
-        (∫ x in (a : ℝ)..(b : ℝ), (ch8e19Kernel p x : ℂ) *
+        (∫ x in (a : ℝ)..(b : ℝ), (bernoulliKernel p x : ℂ) *
           iteratedDerivWithin p f s x).re := by
     calc
       _ = ∫ x in (a : ℝ)..(b : ℝ),
-          ((ch8e19Kernel p x : ℂ) * iteratedDerivWithin p f s x).re := by
+          ((bernoulliKernel p x : ℂ) * iteratedDerivWithin p f s x).re := by
         apply intervalIntegral.integral_congr
         intro x hx
-        change ch8e19Kernel p x * iteratedDerivWithin p (fun y => (f y).re) s x =
-          ((ch8e19Kernel p x : ℂ) * iteratedDerivWithin p f s x).re
+        change bernoulliKernel p x * iteratedDerivWithin p (fun y => (f y).re) s x =
+          ((bernoulliKernel p x : ℂ) * iteratedDerivWithin p f s x).re
         rw [hder_re p le_rfl x (by simpa [s, Set.uIcc_of_le habr.le] using hx)]
         simp
       _ = _ := intervalIntegral.intervalIntegral_re hremint
   have hrem_im :
-      (∫ x in (a : ℝ)..(b : ℝ), ch8e19Kernel p x *
+      (∫ x in (a : ℝ)..(b : ℝ), bernoulliKernel p x *
           iteratedDerivWithin p (fun y => (f y).im) s x) =
-        (∫ x in (a : ℝ)..(b : ℝ), (ch8e19Kernel p x : ℂ) *
+        (∫ x in (a : ℝ)..(b : ℝ), (bernoulliKernel p x : ℂ) *
           iteratedDerivWithin p f s x).im := by
     calc
       _ = ∫ x in (a : ℝ)..(b : ℝ),
-          ((ch8e19Kernel p x : ℂ) * iteratedDerivWithin p f s x).im := by
+          ((bernoulliKernel p x : ℂ) * iteratedDerivWithin p f s x).im := by
         apply intervalIntegral.integral_congr
         intro x hx
-        change ch8e19Kernel p x * iteratedDerivWithin p (fun y => (f y).im) s x =
-          ((ch8e19Kernel p x : ℂ) * iteratedDerivWithin p f s x).im
+        change bernoulliKernel p x * iteratedDerivWithin p (fun y => (f y).im) s x =
+          ((bernoulliKernel p x : ℂ) * iteratedDerivWithin p f s x).im
         rw [hder_im p le_rfl x (by simpa [s, Set.uIcc_of_le habr.le] using hx)]
         simp
       _ = _ := intervalIntegral.intervalIntegral_im hremint
@@ -600,10 +579,10 @@ private noncomputable def ch8e19Constant (N : ℕ) (r : ℂ) : ℂ :=
 private theorem ch8e19_intervalIntegral_eq_mellin_sub_tail
     (N : ℕ) (hN : 0 < N) (r : ℂ) (hu : r.re < 2 * N) (n : ℕ) (hn : 1 < n) :
     (∫ x : ℝ in (1 : ℝ)..(n : ℝ),
-        (x : ℂ) ^ (r - (2 * N + 1 : ℕ)) * (ch8e19Kernel (2 * N + 1) x : ℂ)) =
+        (x : ℂ) ^ (r - (2 * N + 1 : ℕ)) * (bernoulliKernel (2 * N + 1) x : ℂ)) =
       ch8e19MellinIntegral N r - ch8e19Tail N r n := by
   let g : ℝ → ℂ := fun x => (x : ℂ) ^ (r - (2 * N + 1 : ℕ)) *
-    (ch8e19Kernel (2 * N + 1) x : ℂ)
+    (bernoulliKernel (2 * N + 1) x : ℂ)
   have hIoi : IntegrableOn g (Set.Ioi 1) := ch8e19Tail_integrable N hN r hu
   have hIci : IntegrableOn g (Set.Ici 1) :=
     (integrableOn_Ici_iff_integrableOn_Ioi).mpr hIoi
@@ -705,21 +684,21 @@ private theorem ch8e19_eulerMaclaurin_raw
     rw [hpow, Complex.one_cpow]
     ring
   have hrem :
-      (∫ x : ℝ in (1 : ℝ)..(n : ℝ), (ch8e19Kernel p x : ℂ) *
+      (∫ x : ℝ in (1 : ℝ)..(n : ℝ), (bernoulliKernel p x : ℂ) *
         iteratedDerivWithin p (fun y : ℝ => (y : ℂ) ^ r)
           (Set.Icc (1 : ℝ) (n : ℝ)) x) =
       chapter7FallingGammaRatio r p *
         (ch8e19MellinIntegral N r - ch8e19Tail N r n) := by
     calc
       _ = ∫ x : ℝ in (1 : ℝ)..(n : ℝ), chapter7FallingGammaRatio r p *
-          ((x : ℂ) ^ (r - (p : ℕ)) * (ch8e19Kernel p x : ℂ)) := by
+          ((x : ℂ) ^ (r - (p : ℕ)) * (bernoulliKernel p x : ℂ)) := by
         apply intervalIntegral.integral_congr
         intro x hx
-        change (ch8e19Kernel p x : ℂ) *
+        change (bernoulliKernel p x : ℂ) *
             iteratedDerivWithin p (fun y : ℝ => (y : ℂ) ^ r)
               (Set.Icc (1 : ℝ) (n : ℝ)) x =
           chapter7FallingGammaRatio r p *
-            ((x : ℂ) ^ (r - (p : ℕ)) * (ch8e19Kernel p x : ℂ))
+            ((x : ℂ) ^ (r - (p : ℕ)) * (bernoulliKernel p x : ℂ))
         have hx' : x ∈ Set.Icc (1 : ℝ) (n : ℝ) := by
           rcases Set.mem_uIcc.mp hx with hx | hx
           · exact hx
@@ -728,7 +707,7 @@ private theorem ch8e19_eulerMaclaurin_raw
         ring
       _ = chapter7FallingGammaRatio r p *
           (∫ x : ℝ in (1 : ℝ)..(n : ℝ),
-            (x : ℂ) ^ (r - (p : ℕ)) * (ch8e19Kernel p x : ℂ)) :=
+            (x : ℂ) ^ (r - (p : ℕ)) * (bernoulliKernel p x : ℂ)) :=
         intervalIntegral.integral_const_mul _ _
       _ = _ := by
         rw [show p = 2 * N + 1 by rfl,

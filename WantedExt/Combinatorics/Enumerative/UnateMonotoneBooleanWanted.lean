@@ -290,15 +290,6 @@ quoting Bakoev. -/
 public theorem_wanted monotone_boolFunConcat_iff {n : ℕ} (g h : (Fin n → Bool) → Bool) :
     Monotone (boolFunConcat g h) ↔ Monotone g ∧ Monotone h ∧ g ≤ h
 
-/-- Proposition 5 (OEIS A003183): if `f` is monotone then so is
-`\overline{f^r}`, i.e. `x ↦ ¬ f(x̄)`, the existing `booleanFunctionDual`.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Proposition 5 (`jis-2025-25.3.4-prop-5`). -/
-public theorem_wanted monotone_booleanFunctionDual {n : ℕ} {f : (Fin n → Bool) → Bool}
-    (hf : Monotone f) : Monotone (booleanFunctionDual n f)
-
 /-- Proposition 6: `g || h` is unate if and only if `g` and `h` are unate,
 (a) for each variable both are increasing or both are decreasing, and
 (b) `g ≤ h` or `h ≤ g`.

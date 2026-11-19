@@ -38,6 +38,7 @@ replicator equation (Taylor and Jonker 1978) is
 * `IsSolution.mem_simplex`: for continuous fitness, the standard simplex is invariant.
 * `isRestPoint_iff`: an interior state (all `x i > 0`) is a rest point iff it is an equalizer,
   i.e. all strategies have the same fitness (equal to `f̄(x)`).
+* `isSolution_const`: a rest point gives a constant solution.
 
 ## References
 
@@ -76,6 +77,13 @@ theorem isRestPoint_iff {f : (ι → ℝ) → ι → ℝ} {x : ι → ℝ} (hx :
     IsRestPoint f x ↔ ∀ i, f x i = meanFitness f x := by
   refine forall_congr' fun i => ?_
   rw [mul_eq_zero, sub_eq_zero, or_iff_right (hx i).ne']
+
+/-- A rest point gives a constant solution of the replicator equation. -/
+theorem isSolution_const {f : (ι → ℝ) → ι → ℝ} {x : ι → ℝ} (hx : IsRestPoint f x) :
+    IsSolution f fun _ => x :=
+  ⟨fun i t _ => by
+    rw [hx i]
+    exact hasDerivAt_const t (x i)⟩
 
 namespace IsSolution
 

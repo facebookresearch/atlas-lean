@@ -81,28 +81,6 @@ private theorem coeff_mul_X (F : PowerSeries ℝ) (N : ℕ) :
     have hm : m + 1 - 1 = m := by omega
     rw [hm]
 
-/-- Coefficient shift for multiplication by `X ^ 2` on the right. -/
-private theorem coeff_mul_X_pow_two (F : PowerSeries ℝ) (N : ℕ) :
-    PowerSeries.coeff N (F * PowerSeries.X ^ 2) =
-      (if 2 ≤ N then PowerSeries.coeff (N - 2) F else 0) := by
-  have hEq : F * PowerSeries.X ^ 2 =
-      PowerSeries.X * (PowerSeries.X * F) := by ring
-  rw [hEq]
-  cases N with
-  | zero =>
-    rw [PowerSeries.coeff_zero_X_mul]
-    rw [ite_eq_right (by omega : ¬ 2 ≤ 0)]
-  | succ m =>
-    cases m with
-    | zero =>
-      rw [PowerSeries.coeff_succ_X_mul, PowerSeries.coeff_zero_X_mul]
-      rw [ite_eq_right (by omega : ¬ 2 ≤ 1)]
-    | succ k =>
-      rw [PowerSeries.coeff_succ_X_mul, PowerSeries.coeff_succ_X_mul]
-      rw [ite_eq_left (by omega : 2 ≤ k + 1 + 1)]
-      have hk : k + 1 + 1 - 2 = k := by omega
-      rw [hk]
-
 /-- Coefficients of `1 - C lam * X - C mu * X ^ 2`. -/
 private theorem coeff_one_sub (lam mu : ℝ) (N : ℕ) :
     PowerSeries.coeff N
@@ -226,7 +204,7 @@ private theorem meixner_to_recurrence (d h : PowerSeries ℝ) (L : ℕ → ℕ �
     rw [map_add, map_add, PowerSeries.coeff_C_mul, PowerSeries.coeff_C_mul,
       coeff_one_sub lam mu N] at hCoeff
     rw [hL N 0, pow_zero, mul_one]
-    rw [coeff_mul_X d N, coeff_mul_X_pow_two d N] at hCoeff
+    rw [coeff_mul_X d N, PowerSeries.coeff_mul_X_pow' d 2 N] at hCoeff
     have e1 : (if 1 ≤ N then PowerSeries.coeff (N - 1) d else 0) =
         (if 1 ≤ N then L (N - 1) 0 else 0) := by
       by_cases hN : 1 ≤ N
@@ -280,7 +258,7 @@ private theorem meixner_to_recurrence (d h : PowerSeries ℝ) (L : ℕ → ℕ �
         rw [hm, hL m j]
     rw [hRhs] at hCoeff
     rw [coeff_mul_X (d * h ^ (j + 1)) N,
-      coeff_mul_X_pow_two (d * h ^ (j + 1)) N] at hCoeff
+      PowerSeries.coeff_mul_X_pow' (d * h ^ (j + 1)) 2 N] at hCoeff
     have e1 : (if 1 ≤ N then PowerSeries.coeff (N - 1) (d * h ^ (j + 1)) else 0) =
         (if 1 ≤ N then L (N - 1) (j + 1) else 0) := by
       by_cases hN : 1 ≤ N
@@ -331,7 +309,7 @@ private theorem recurrence_to_meixner (d h : PowerSeries ℝ) (L : ℕ → ℕ �
     rw [hMid, sub_zero, ite_eq_left rfl] at hR
     rw [map_add, map_add, PowerSeries.coeff_C_mul, PowerSeries.coeff_C_mul,
       coeff_one_sub lam mu N]
-    rw [coeff_mul_X d N, coeff_mul_X_pow_two d N]
+    rw [coeff_mul_X d N, PowerSeries.coeff_mul_X_pow' d 2 N]
     have e1 : (if 1 ≤ N then PowerSeries.coeff (N - 1) d else 0) =
         (if 1 ≤ N then L (N - 1) 0 else 0) := by
       by_cases hN : 1 ≤ N
@@ -380,7 +358,7 @@ private theorem recurrence_to_meixner (d h : PowerSeries ℝ) (L : ℕ → ℕ �
       rw [hMid] at hR
       rw [map_add, map_add, PowerSeries.coeff_C_mul, PowerSeries.coeff_C_mul]
       rw [coeff_mul_X (d * h ^ (0 + 1)) N,
-        coeff_mul_X_pow_two (d * h ^ (0 + 1)) N]
+        PowerSeries.coeff_mul_X_pow' (d * h ^ (0 + 1)) 2 N]
       have hX : PowerSeries.coeff N (PowerSeries.X * d) =
           (if 1 ≤ N then L (N - 1) 0 else 0) := by
         cases N with

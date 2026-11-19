@@ -15,8 +15,8 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 import Mathlib.Data.Nat.Cast.Field
-import Mathlib.Data.Nat.SuccPred
-import Mathlib.Data.Rat.Star
+import Mathlib.Order.SuccPred.Nat
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.GCongr
 import Mathlib.Tactic.Linarith

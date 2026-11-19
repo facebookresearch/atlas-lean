@@ -47,6 +47,15 @@ state type (the pattern of `Cslib.Crypto.PRF.CPAAdversary`).
 * `cpaExp S A b`, `cpaGame S A = bitGame (cpaExp S A)`, `cpaAdvantage`: `PrivK^cpa`
   (Definition 3.22). The eavesdropping experiment `PrivK^eav` (Definition 3.8) is the case of
   adversaries making no queries, `CPAAdversary.QueryBounded 0`.
+  `cpaGame_eq_tape`: for a scheme with uniform keys whose encryption is a deterministic algorithm
+  on uniform randomness, and a query-bounded adversary with uniform coins, the CPA game is a
+  deterministic test `cpaTapeGuess` of one uniform sample, with the encryption randomness drawn up
+  front (`OracleComp.runTape`). `cpaTapeReduction` turns a CPA adversary into a distinguisher for
+  the keyed function that the encryption algorithm queries (`run_cpaTapeReduction`); modes of
+  operation (`CSLibExt.Crypto.SymmetricKey.Modes`) instantiate it. This is the private-key
+  counterpart of `PubOracleCPAAdversary.toEav` below: there the reduction knows `pk` and replaces
+  the oracle by presampled coins (`OracleComp.runCoins`); here it has no key, so it keeps the
+  randomness on a tape and queries the keyed function (`OracleComp.simTape`).
 * `ccaExp`, `ccaGame`, `ccaAdvantage`: `PrivK^cca` (Definition 3.33), with oracles for both
   `Enc_k` and `Dec_k`; in the second stage the decryption oracle answers `⊥` on the challenge
   ciphertext (equivalent to forbidding that query).
@@ -67,6 +76,7 @@ state type (the pattern of `Cslib.Crypto.PRF.CPAAdversary`).
 * `pubCcaExp`, `pubCcaGame`, `pubCcaAdvantage`: `PubK^cca` (Definition 11.8).
 * `macGame`, `macAdvantage`: `Mac-forge` (Definition 4.2), existential unforgeability under an
   adaptive chosen-message attack; `macStrongGame` is the strong variant (Definition 4.3).
+  `MACForger.relabel e A` moves a forger along a map `e` of messages.
 * `sigGame`, `sigAdvantage`: `Sig-forge` (Definition 12.2). One-time security (Section 12.6.1,
   Lamport) is the case `SigForger.QueryBounded 1`.
 
@@ -81,8 +91,11 @@ concrete (fixed-size) games, and `CSLibExt.Crypto.Framework.Asymptotic` indexes 
 **Coexistence with existing files.** `Cslib.Crypto.PublicKey.ElGamal.eavGame` has the shape of
 `pubCpaGame` with uniform coins; `Cslib.Crypto.PRF.cpaGame` and `Cslib.Crypto.PRF.macGame` have the
 shape of `cpaGame` and `macGame`, but sample the oracle's randomness up front instead of per query;
-`Cslib.Crypto.Signatures.Lamport.forgeGame` has the shape of a one-query `sigGame`. None is
-migrated here; the Wave-2 migration must prove each equal to its generic instance.
+`Cslib.Crypto.Signatures.Lamport.forgeGame` has the shape of a one-query `sigGame`. Each is proved
+equal to its generic instance elsewhere: `ElGamal.pubCpaGame_eq_eavGame`
+(`CSLibExt.Crypto.PublicKey.ElGamalCPA`), and the PRF and Lamport games in
+`CSLibExt.Crypto.Framework.Migration`, all for adversaries with uniform coins (the PRF-CPA equality
+also needs a query bound).
 
 ## References
 
@@ -187,6 +200,95 @@ theorem cpaAdvantage_eq (S : SymmEncScheme M K C) (A : CPAAdversary M C R) :
   guessAdvantage_bitGame _
 
 end CPA
+
+/-! ### The CPA experiment with eagerly sampled randomness -/
+
+section CPATape
+
+local notation "U" => Cslib.Probability.PMF.uniformOfFintype
+
+variable {M K C R Rnd : Type*}
+
+/-- The guess of a CPA adversary (as a function of its coins: `c = A.run r`) in the experiment
+with deterministic encryption `e`, encryption randomness `ρ` for its oracle queries (in order),
+challenge randomness `rs` and challenge bit `b`. An adversary exceeding `q` queries guesses
+`false`. -/
+def cpaTapeGuess (e : M → Rnd → C) (c : OracleComp M C ((M × M) × (C → OracleComp M C Bool)))
+    (q : ℕ) (ρ : Fin q → Rnd) (rs : Rnd) (b : Bool) : Bool :=
+  runTape e false
+    (fun out n ρ' => runTape e false (fun g _ _ => g) (out.2 (e (pick out.1 b) rs)) n ρ') c q ρ
+
+variable [Fintype K] [Nonempty K] [Fintype R] [Nonempty R] [Fintype Rnd] [Nonempty Rnd]
+
+/-- **The CPA experiment, eagerly sampled**: for a scheme with uniform keys whose encryption
+applies a deterministic algorithm `e k m` to uniform randomness, and an adversary with uniform
+coins making at most `q` queries, the left-or-right experiment `cpaExp` samples the key, the
+coins, the `q` encryption randomness values and the challenge randomness up front. -/
+theorem cpaExp_eq_tape (S : SymmEncScheme M K C) (e : K → M → Rnd → C) (hgen : S.gen = U K)
+    (henc : ∀ k m, S.enc k m = (U Rnd).map (e k m)) (A : CPAAdversary M C R) (hA : A.coins = U R)
+    {q : ℕ} (hq : A.QueryBounded q) (b : Bool) :
+    cpaExp S A b = (U K).bind fun k => (U R).bind fun r => (U (Fin q → Rnd)).bind fun ρ =>
+      (U Rnd).bind fun rs => PMF.pure (cpaTapeGuess (e k) (A.run r) q ρ rs b) := by
+  unfold cpaExp
+  rw [hgen, hA]
+  congr 1; funext k; congr 1; funext r
+  have hS : S.enc k = fun m => (U Rnd).map (e k m) := funext (henc k)
+  rw [hS, evalPMF_bind_eq_runTape (e k) ((U Rnd).bind fun _ => PMF.pure false) _
+    (fun out n ρ' => (U Rnd).bind fun rs =>
+      PMF.pure (runTape (e k) false (fun g _ _ => g) (out.2 (e k (pick out.1 b) rs)) n ρ'))
+    (fun out n hout => ?_) (hq r)]
+  · congr 1
+    funext ρ
+    exact runTape_bind (U Rnd) (e k) (fun _ => false)
+      (fun out n ρ' rs => runTape (e k) false (fun g _ _ => g) (out.2 (e k (pick out.1 b) rs)) n
+        ρ') (A.run r) q ρ
+  · rw [PMF.bind_comm, PMF.bind_map]
+    congr 1
+    funext rs
+    exact (evalPMF_eq_runTape (e k) false (hout _)).symm
+
+/-- **The CPA game, eagerly sampled**, as a deterministic test of one uniform sample
+`(k, b, r, ρ, rs)`. -/
+theorem cpaGame_eq_tape (S : SymmEncScheme M K C) (e : K → M → Rnd → C) (hgen : S.gen = U K)
+    (henc : ∀ k m, S.enc k m = (U Rnd).map (e k m)) (A : CPAAdversary M C R) (hA : A.coins = U R)
+    {q : ℕ} (hq : A.QueryBounded q) :
+    cpaGame S A = (U (K × Bool × R × (Fin q → Rnd) × Rnd)).map fun ω =>
+      cpaTapeGuess (e ω.1) (A.run ω.2.2.1) q ω.2.2.2.1 ω.2.2.2.2 ω.2.1 == ω.2.1 := by
+  simp only [cpaGame, bitGame, cpaExp_eq_tape S e hgen henc A hA hq, PMF.map_bind, PMF.pure_map,
+    fairCoin]
+  rw [PMF.bind_comm]
+  simp only [uniformOfFintype_bind_bind]
+  rfl
+
+variable {Q A : Type*}
+
+/-- The distinguisher (for the keyed function queried by `encQ`) built from a CPA adversary: with
+its own coins `(b, r, ρ, rs)` it runs the adversary on coins `r`, simulating each encryption query
+and the challenge `Enc(m_b)` with `encQ` and the randomness `ρ` and `rs`, and outputs whether the
+adversary guessed `b`. -/
+def cpaTapeReduction (encQ : M → Rnd → OracleComp Q A C) (Adv : CPAAdversary M C R) (q : ℕ)
+    (s : Bool × R × (Fin q → Rnd) × Rnd) : OracleComp Q A Bool :=
+  PFunctor.FreeM.bind (simTape encQ false (fun out n ρ' =>
+      PFunctor.FreeM.bind (encQ (pick out.1 s.1) s.2.2.2) fun ch =>
+        simTape encQ false (fun g _ _ => .pure g) (out.2 ch) n ρ') (Adv.run s.2.1) q s.2.2.1)
+    fun g => .pure (g == s.1)
+
+omit [Fintype R] [Nonempty R] [Fintype Rnd] [Nonempty Rnd] in
+/-- Running the reduction against the keyed function `O` runs the CPA experiment with the
+encryption algorithm `m r ↦ (encQ m r).run O` and outputs whether the guess is the bit. -/
+theorem run_cpaTapeReduction (O : Q → A) (encQ : M → Rnd → OracleComp Q A C)
+    (Adv : CPAAdversary M C R) (q : ℕ) (s : Bool × R × (Fin q → Rnd) × Rnd) :
+    (cpaTapeReduction encQ Adv q s).run O =
+      (cpaTapeGuess (fun m r => (encQ m r).run O) (Adv.run s.2.1) q s.2.2.1 s.2.2.2 s.1 ==
+        s.1) := by
+  rw [cpaTapeReduction, run_bind, run_simTape, cpaTapeGuess]
+  change (_ == s.1) = (_ == s.1)
+  congr 2
+  funext out n ρ'
+  rw [run_bind, run_simTape]
+  rfl
+
+end CPATape
 
 /-- The oracle interface of a CCA adversary: a query `.inl m` asks for an encryption of `m`
 (answered in `C`), a query `.inr c` asks for the decryption of `c` (answered in `Option M`). -/
@@ -516,6 +618,14 @@ structure MACForger (M T R : Type*) where
 /-- The forger makes at most `q` tagging queries. -/
 def MACForger.QueryBounded {M T R : Type*} (q : ℕ) (A : MACForger M T R) : Prop :=
   ∀ r, IsQueryBounded q (A.forge r)
+
+/-- A forger against messages in `M` as a forger against messages in `M'`, along `e : M → M'`: its
+queries and its forged message are relabeled by `e` (`OracleComp.relabel`), and its coins are
+unchanged. -/
+def MACForger.relabel {M M' T R : Type*} (e : M → M') (A : MACForger M T R) :
+    MACForger M' T R where
+  coins := A.coins
+  forge r := OracleComp.relabel e (A.forge r)
 
 section MAC
 
