@@ -19,11 +19,12 @@ public import PhyslibExt.Elasticity.PrismaticMembers
 
 import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 
 /-!
-# Physical failure events: LEFM crack failure, demand margins and damage lifetimes
+# Physical failure events: LEFM crack failure, demand margins, damage lifetimes and Paris lifetimes
 
 ## i. Overview
 
@@ -77,6 +78,22 @@ system, not necessarily a coherent one: the constant events `∅` and
 independence between components is assumed, no damage law is derived,
 and no stopping theorem in continuous time is claimed.
 
+The Paris crack of section B, of initial length `0 < a0 < a_c`, becomes
+a damage path in time under a constant load frequency `f ≥ 0` (cycles
+per unit time): the event path `d t = a (min (f t) Nf)` follows the
+crack after `f t` cycles up to the Paris life `Nf` and stays at
+`a Nf = a_c` afterwards (`saturatedCrackPath`). The part after failure
+is an event model, not continued crack growth, and the event path never
+evaluates the power-branch solution at or beyond its blow-up. The event
+path is continuous and nondecreasing, so the hitting time of section E
+applies: for `f > 0` the lifetime against `a_c` is `Nf / f`; for `f = 0`
+the event path is the constant `a0` and the lifetime is `⊤`; a crack
+that starts at or above `a_c` is the initially failed constant event
+path, with lifetime `0`, and no growth law is used for it. Before
+failure the crack in time solves the Paris law at `f` cycles per unit
+time, and for `m > 2` the failure time `Nf / f` is strictly before the
+blow-up time.
+
 ## ii. Key results
 
 - `Reliability.criticalCrackLength_pos`: the critical crack length is
@@ -114,6 +131,23 @@ and no stopping theorem in continuous time is claimed.
   `Reliability.lt_systemLifetime_damage_iff` and
   `Reliability.measurable_systemLifetime_damage`: measurable lifetimes
   and the monotone-system event.
+- `Reliability.saturatedCrackPath`: the saturated crack event path.
+- `Reliability.continuous_monotone_saturatedCrackPath_pow` and
+  `Reliability.continuous_monotone_saturatedCrackPath_exp`: the event
+  path is continuous and nondecreasing.
+- `Reliability.hasDerivAt_parisCrackPow_time` and
+  `Reliability.hasDerivAt_parisCrackExp_time`: before failure, the
+  crack in time solves the Paris law at `f` cycles per unit time.
+- `Reliability.damageLifetime_saturatedCrackPath_pow` and
+  `Reliability.damageLifetime_saturatedCrackPath_exp`: the lifetime is
+  `Nf / f` for `f > 0`.
+- `Reliability.damageLifetime_saturatedCrackPath_pow_zero`,
+  `Reliability.damageLifetime_saturatedCrackPath_exp_zero` and
+  `Reliability.damageLifetime_initiallyFailed`: no load gives `⊤`, an
+  initially failed crack `0`.
+- `Reliability.saturatedCrackPath_pow_base_pos` and
+  `Reliability.failureTime_lt_blowupTime`: the event path stays on the
+  power-branch domain and fails before blow-up.
 
 ## iii. Table of contents
 
@@ -123,6 +157,9 @@ and no stopping theorem in continuous time is claimed.
 - D. An axial load path with a supplied yield functional
 - E. Damage hitting times
 - F. Measurability and monotone systems
+- G. The saturated crack event path
+- H. The Paris lifetime: power branch
+- I. The Paris lifetime: logarithmic branch and initial failure
 
 ## iv. References
 
@@ -130,7 +167,8 @@ and no stopping theorem in continuous time is claimed.
   for Deformation, Fracture, and Fatigue*, 4th ed., Pearson (2013): the
   mode-I stress intensity model and the critical-crack condition
   `K_I = K_IC` used here, and the Paris fatigue-crack-growth law
-  `da/dN = C * (ΔK)^m` reduced in section B; yield criteria calibrated
+  `da/dN = C * (ΔK)^m` reduced in section B, with its life in time at a
+  constant load frequency (sections G to I); yield criteria calibrated
   by the uniaxial test and safety factors against yielding (sections C
   and D).
 - S. Timoshenko and J. M. Gere, *Mechanics of Materials* (axially loaded
@@ -142,7 +180,7 @@ and no stopping theorem in continuous time is claimed.
   relevant).
 - W. Q. Meeker and L. A. Escobar, *Statistical Methods for Reliability
   Data*, Wiley (1998), degradation chapters: failure when a degradation
-  path reaches a threshold (section E).
+  path reaches a threshold (sections E and G to I).
 
 ## A. Mode-I stress intensity and the critical crack length
 
@@ -772,5 +810,531 @@ lemma measurable_systemLifetime_damage [MeasurableSpace Ω] {E : Type*} [Fintype
     Measurable fun ω => systemLifetime E A (fun i => damageLifetime (d i) (D i) ω) := by
   exact measurable_systemLifetime E A Ω (fun i ω => damageLifetime (d i) (D i) ω)
     (fun i => measurable_damageLifetime (hmeas i) (hD i) (hcont i) (hmono i))
+
+/-! ## G. The saturated crack event path -/
+
+/-- The event path `t ↦ a (min (f t) Nf)` of a crack path `a` (crack length against the cycle
+count) under the constant load frequency `f`, at time `t : ℝ≥0`: it is the crack after `f t`
+cycles up to `Nf` cycles and stays at `a Nf` afterwards. The part after `Nf` cycles is an event
+model, not continued crack growth. -/
+noncomputable def saturatedCrackPath (a : ℝ → ℝ) (f Nf : ℝ) (t : ℝ≥0) : ℝ :=
+  a (min (f * t) Nf)
+
+/-- Saturation: from the time `Nf / f` on, the event path stays at `a Nf`. -/
+lemma saturatedCrackPath_of_le (a : ℝ → ℝ) {f Nf : ℝ} (hf : 0 < f) {t : ℝ≥0}
+    (ht : Nf / f ≤ t) : saturatedCrackPath a f Nf t = a Nf := by
+  change a (min (f * (t : ℝ)) Nf) = a Nf
+  have h : Nf ≤ f * (t : ℝ) := by
+    have h1 := (div_le_iff₀ hf).mp ht
+    linarith
+  rw [min_eq_right h]
+
+private lemma pow_base_pos_of_mem {r K a0 ac N : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
+    (hac : a0 < ac) (hr : r ≠ 0) (h0 : 0 ≤ N) (hNf : N ≤ parisLifePow r K a0 ac) :
+    0 < a0 ^ r + r * K * N := by
+  have hac0 : 0 < ac := lt_trans ha0 hac
+  have hrK : r * K ≠ 0 := mul_ne_zero hr (ne_of_gt hK)
+  have hbaseNf : a0 ^ r + r * K * parisLifePow r K a0 ac = ac ^ r := by
+    change a0 ^ r + r * K * ((ac ^ r - a0 ^ r) / (r * K)) = ac ^ r
+    rw [mul_div_cancel₀ _ hrK]
+    ring
+  rcases lt_or_gt_of_ne hr with hneg | hpos
+  · have hs : r * K < 0 := mul_neg_of_neg_of_pos hneg hK
+    have hle : r * K * parisLifePow r K a0 ac ≤ r * K * N :=
+      mul_le_mul_of_nonpos_left hNf (le_of_lt hs)
+    have hpos : 0 < ac ^ r := Real.rpow_pos_of_pos hac0 _
+    linarith
+  · have hs : 0 < r * K := mul_pos hpos hK
+    have hnn : 0 ≤ r * K * N := mul_nonneg (le_of_lt hs) h0
+    have hpos : 0 < a0 ^ r := Real.rpow_pos_of_pos ha0 _
+    linarith
+
+/-! ## H. The Paris lifetime: power branch -/
+
+/-- **The event path never reaches the singularity.** For `K > 0`, `0 < a0 < a_c` with `a_c` the
+critical crack length, `r ≠ 0` and `f ≥ 0`, the base `a0 ^ r + r K N` of the power-branch solution
+is positive at every cycle count `N = min (f t) Nf` of the event path, `Nf` the Paris life. -/
+lemma saturatedCrackPath_pow_base_pos {r K a0 KIC Y σ f : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
+    (hac : a0 < criticalCrackLength KIC Y σ) (hr : r ≠ 0) (hf : 0 ≤ f) (t : ℝ≥0) :
+    0 < a0 ^ r + r * K * min (f * t) (parisLifePow r K a0 (criticalCrackLength KIC Y σ)) := by
+  have hNf : 0 < parisLifePow r K a0 (criticalCrackLength KIC Y σ) :=
+    parisLifePow_pos hK ha0 hac hr
+  exact pow_base_pos_of_mem hK ha0 hac hr
+    (le_min (mul_nonneg hf t.coe_nonneg) (le_of_lt hNf)) (min_le_right _ _)
+
+/-- **A continuous nondecreasing event path.** Under the hypotheses of
+`saturatedCrackPath_pow_base_pos`, the event path of the power-branch crack is continuous and
+nondecreasing. -/
+lemma continuous_monotone_saturatedCrackPath_pow {r K a0 KIC Y σ f : ℝ} (hK : 0 < K)
+    (ha0 : 0 < a0) (hac : a0 < criticalCrackLength KIC Y σ) (hr : r ≠ 0) (hf : 0 ≤ f) :
+    Continuous (saturatedCrackPath (parisCrackPow r K a0) f
+        (parisLifePow r K a0 (criticalCrackLength KIC Y σ))) ∧
+      Monotone (saturatedCrackPath (parisCrackPow r K a0) f
+        (parisLifePow r K a0 (criticalCrackLength KIC Y σ))) := by
+  have hNf : 0 < parisLifePow r K a0 (criticalCrackLength KIC Y σ) :=
+    parisLifePow_pos hK ha0 hac hr
+  have hinner_cont : Continuous
+      (fun t : ℝ≥0 => min (f * (t : ℝ)) (parisLifePow r K a0 (criticalCrackLength KIC Y σ))) :=
+    (continuous_const.mul NNReal.continuous_coe).min continuous_const
+  have hinner_mono : Monotone
+      (fun t : ℝ≥0 => min (f * (t : ℝ)) (parisLifePow r K a0 (criticalCrackLength KIC Y σ))) := by
+    intro s t hst
+    exact min_le_min (mul_le_mul_of_nonneg_left (NNReal.coe_le_coe.mpr hst) hf) le_rfl
+  have hinner_mem : ∀ t : ℝ≥0, min (f * (t : ℝ)) (parisLifePow r K a0 (criticalCrackLength KIC Y σ))
+      ∈ Set.Icc (0 : ℝ) (parisLifePow r K a0 (criticalCrackLength KIC Y σ)) := by
+    intro t
+    exact ⟨le_min (mul_nonneg hf t.coe_nonneg) (le_of_lt hNf), min_le_right _ _⟩
+  have hbase : ∀ N ∈ Set.Icc (0 : ℝ) (parisLifePow r K a0 (criticalCrackLength KIC Y σ)),
+      0 < a0 ^ r + r * K * N := by
+    intro N hN
+    exact pow_base_pos_of_mem hK ha0 hac hr hN.1 hN.2
+  have hcrack_cont : ∀ N ∈ Set.Icc (0 : ℝ) (parisLifePow r K a0 (criticalCrackLength KIC Y σ)),
+      ContinuousAt (parisCrackPow r K a0) N := by
+    intro N hN
+    exact (hasDerivAt_parisCrackPow hr (hbase N hN)).continuousAt
+  have hcrack_mono : MonotoneOn (parisCrackPow r K a0)
+      (Set.Icc (0 : ℝ) (parisLifePow r K a0 (criticalCrackLength KIC Y σ))) := by
+    intro x hx y hy hxy
+    change (a0 ^ r + r * K * x) ^ r⁻¹ ≤ (a0 ^ r + r * K * y) ^ r⁻¹
+    have hbx := hbase x hx
+    have hby := hbase y hy
+    rcases lt_or_gt_of_ne hr with hneg | hpos
+    · have hs : r * K < 0 := mul_neg_of_neg_of_pos hneg hK
+      have hbase_le : a0 ^ r + r * K * y ≤ a0 ^ r + r * K * x := by
+        have h := mul_le_mul_of_nonpos_left hxy (le_of_lt hs)
+        linarith
+      have hexp : r⁻¹ < 0 := inv_lt_zero.mpr hneg
+      rcases eq_or_lt_of_le hbase_le with heq | hlt
+      · rw [heq]
+      · exact le_of_lt (Real.rpow_lt_rpow_of_neg hby hlt hexp)
+    · have hs : 0 < r * K := mul_pos hpos hK
+      have hbase_le : a0 ^ r + r * K * x ≤ a0 ^ r + r * K * y := by
+        have h := mul_le_mul_of_nonneg_left hxy (le_of_lt hs)
+        linarith
+      have hexp : 0 ≤ r⁻¹ := le_of_lt (inv_pos.mpr hpos)
+      exact Real.rpow_le_rpow (le_of_lt hbx) hbase_le hexp
+  constructor
+  · change Continuous fun t : ℝ≥0 =>
+      parisCrackPow r K a0 (min (f * (t : ℝ)) (parisLifePow r K a0 (criticalCrackLength KIC Y σ)))
+    rw [continuous_iff_continuousAt]
+    intro t
+    have hcomp : ContinuousAt ((parisCrackPow r K a0) ∘
+        (fun t : ℝ≥0 => min (f * (t : ℝ)) (parisLifePow r K a0 (criticalCrackLength KIC Y σ)))) t :=
+      ContinuousAt.comp
+        (f := fun t : ℝ≥0 => min (f * (t : ℝ)) (parisLifePow r K a0 (criticalCrackLength KIC Y σ)))
+        (x := t) (g := parisCrackPow r K a0)
+        (hcrack_cont _ (hinner_mem t)) hinner_cont.continuousAt
+    exact hcomp
+  · change Monotone fun t : ℝ≥0 =>
+      parisCrackPow r K a0 (min (f * (t : ℝ)) (parisLifePow r K a0 (criticalCrackLength KIC Y σ)))
+    intro s t hst
+    exact hcrack_mono (hinner_mem s) (hinner_mem t) (hinner_mono hst)
+
+/-- **Before failure the event path is the crack in real time.** Under the hypotheses of
+`saturatedCrackPath_pow_base_pos` with `f > 0`, up to the failure time `Nf / f` the event path is
+the crack after `f t` cycles, and `s ↦ a (f s)` solves the Paris law in time,
+`da/dt = f K a ^ (1 - r)`, on the solution's domain. -/
+lemma hasDerivAt_parisCrackPow_time {r K a0 KIC Y σ f : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
+    (hac : a0 < criticalCrackLength KIC Y σ) (hr : r ≠ 0) (hf : 0 < f) {t : ℝ≥0}
+    (ht : (t : ℝ) ≤ parisLifePow r K a0 (criticalCrackLength KIC Y σ) / f) :
+    saturatedCrackPath (parisCrackPow r K a0) f
+        (parisLifePow r K a0 (criticalCrackLength KIC Y σ)) t = parisCrackPow r K a0 (f * t) ∧
+      HasDerivAt (fun s : ℝ => parisCrackPow r K a0 (f * s))
+        (f * (K * parisCrackPow r K a0 (f * t) ^ (1 - r))) t := by
+  have hNf : 0 < parisLifePow r K a0 (criticalCrackLength KIC Y σ) :=
+    parisLifePow_pos hK ha0 hac hr
+  have hle : f * (t : ℝ) ≤ parisLifePow r K a0 (criticalCrackLength KIC Y σ) := by
+    have h1 := (le_div_iff₀ hf).mp ht
+    linarith
+  have hmin : min (f * (t : ℝ)) (parisLifePow r K a0 (criticalCrackLength KIC Y σ))
+      = f * (t : ℝ) := min_eq_left hle
+  have hnn : 0 ≤ f * (t : ℝ) := mul_nonneg (le_of_lt hf) t.coe_nonneg
+  have hbase : 0 < a0 ^ r + r * K * (f * (t : ℝ)) :=
+    pow_base_pos_of_mem hK ha0 hac hr hnn hle
+  have hderiv : HasDerivAt (parisCrackPow r K a0)
+      (K * parisCrackPow r K a0 (f * (t : ℝ)) ^ (1 - r)) (f * (t : ℝ)) :=
+    hasDerivAt_parisCrackPow hr hbase
+  have hinner : HasDerivAt (fun s : ℝ => f * s) f (t : ℝ) := by
+    have h := HasDerivAt.const_mul f (hasDerivAt_id (t : ℝ))
+    simpa using h
+  have hcomp : HasDerivAt ((parisCrackPow r K a0) ∘ (fun s : ℝ => f * s))
+      ((K * parisCrackPow r K a0 (f * (t : ℝ)) ^ (1 - r)) * f) (t : ℝ) :=
+    HasDerivAt.comp (t : ℝ) (h := fun s : ℝ => f * s) (h₂ := parisCrackPow r K a0)
+      hderiv hinner
+  constructor
+  · change parisCrackPow r K a0
+          (min (f * (t : ℝ)) (parisLifePow r K a0 (criticalCrackLength KIC Y σ)))
+        = parisCrackPow r K a0 (f * (t : ℝ))
+    rw [hmin]
+  · have heq : (K * parisCrackPow r K a0 (f * (t : ℝ)) ^ (1 - r)) * f
+        = f * (K * parisCrackPow r K a0 (f * (t : ℝ)) ^ (1 - r)) := by ring
+    rw [heq] at hcomp
+    exact hcomp
+
+/-- **Physical lifetime, power branch.** For `K > 0`, `0 < a0 < a_c`, `r ≠ 0` and a positive load
+frequency `f`, the damage lifetime of the event path against the critical crack length is
+`Nf / f`, the Paris life in cycles over the cycles per unit time. -/
+lemma damageLifetime_saturatedCrackPath_pow {r K a0 KIC Y σ f : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
+    (hac : a0 < criticalCrackLength KIC Y σ) (hr : r ≠ 0) (hf : 0 < f) (ω : Ω) :
+    damageLifetime (fun _ : Ω => saturatedCrackPath (parisCrackPow r K a0) f
+        (parisLifePow r K a0 (criticalCrackLength KIC Y σ)))
+      (fun _ => criticalCrackLength KIC Y σ) ω =
+      ENNReal.ofReal (parisLifePow r K a0 (criticalCrackLength KIC Y σ) / f) := by
+  obtain ⟨hcont, hmono⟩ :=
+    continuous_monotone_saturatedCrackPath_pow hK ha0 hac hr (le_of_lt hf)
+  have hNf : 0 < parisLifePow r K a0 (criticalCrackLength KIC Y σ) :=
+    parisLifePow_pos hK ha0 hac hr
+  have hac0 : 0 < criticalCrackLength KIC Y σ := lt_trans ha0 hac
+  have hq : 0 ≤ parisLifePow r K a0 (criticalCrackLength KIC Y σ) / f :=
+    le_of_lt (div_pos hNf hf)
+  have hofReal : ENNReal.ofReal (parisLifePow r K a0 (criticalCrackLength KIC Y σ) / f)
+      = ↑(NNReal.mk (parisLifePow r K a0 (criticalCrackLength KIC Y σ) / f) hq) :=
+    ENNReal.ofReal_eq_coe_nnreal hq
+  rw [hofReal]
+  have key : ∀ t : ℝ≥0, ((t : ℝ≥0∞)
+      < damageLifetime (fun _ : Ω => saturatedCrackPath (parisCrackPow r K a0) f
+          (parisLifePow r K a0 (criticalCrackLength KIC Y σ)))
+        (fun _ => criticalCrackLength KIC Y σ) ω
+      ↔ (t : ℝ) < parisLifePow r K a0 (criticalCrackLength KIC Y σ) / f) := by
+    intro t
+    refine (lt_damageLifetime_iff
+      (d := fun _ : Ω => saturatedCrackPath (parisCrackPow r K a0) f
+        (parisLifePow r K a0 (criticalCrackLength KIC Y σ)))
+      (D := fun _ => criticalCrackLength KIC Y σ) (ω := ω) hcont hmono t).trans ?_
+    show saturatedCrackPath (parisCrackPow r K a0) f
+          (parisLifePow r K a0 (criticalCrackLength KIC Y σ)) t
+        < criticalCrackLength KIC Y σ
+      ↔ (t : ℝ) < parisLifePow r K a0 (criticalCrackLength KIC Y σ) / f
+    constructor
+    · intro h
+      by_contra hcon
+      rw [not_lt] at hcon
+      have hge : parisLifePow r K a0 (criticalCrackLength KIC Y σ) ≤ f * (t : ℝ) := by
+        have h1 := (div_le_iff₀ hf).mp hcon
+        linarith
+      have hmin : min (f * (t : ℝ)) (parisLifePow r K a0 (criticalCrackLength KIC Y σ))
+          = parisLifePow r K a0 (criticalCrackLength KIC Y σ) := min_eq_right hge
+      have hsat : saturatedCrackPath (parisCrackPow r K a0) f
+          (parisLifePow r K a0 (criticalCrackLength KIC Y σ)) t
+          = criticalCrackLength KIC Y σ := by
+        change parisCrackPow r K a0
+            (min (f * (t : ℝ)) (parisLifePow r K a0 (criticalCrackLength KIC Y σ)))
+          = criticalCrackLength KIC Y σ
+        rw [hmin]
+        exact parisCrackPow_at_life hK ha0 hac0 hr
+      rw [hsat] at h
+      exact lt_irrefl _ h
+    · intro h
+      have hlt : f * (t : ℝ) < parisLifePow r K a0 (criticalCrackLength KIC Y σ) := by
+        have h1 := (lt_div_iff₀ hf).mp h
+        linarith
+      have hmin : min (f * (t : ℝ)) (parisLifePow r K a0 (criticalCrackLength KIC Y σ))
+          = f * (t : ℝ) := min_eq_left (le_of_lt hlt)
+      have hnn : 0 ≤ f * (t : ℝ) := mul_nonneg (le_of_lt hf) t.coe_nonneg
+      have hbase : 0 < a0 ^ r + r * K * (f * (t : ℝ)) :=
+        pow_base_pos_of_mem hK ha0 hac hr hnn (le_of_lt hlt)
+      have hiff := parisCrackPow_lt_iff hK ha0 hac hr hbase
+      change parisCrackPow r K a0
+          (min (f * (t : ℝ)) (parisLifePow r K a0 (criticalCrackLength KIC Y σ)))
+        < criticalCrackLength KIC Y σ
+      rw [hmin]
+      exact hiff.mpr hlt
+  apply le_antisymm
+  · refine (damageLifetime_le_iff
+      (d := fun _ : Ω => saturatedCrackPath (parisCrackPow r K a0) f
+        (parisLifePow r K a0 (criticalCrackLength KIC Y σ)))
+      (D := fun _ => criticalCrackLength KIC Y σ) (ω := ω)
+      (t := NNReal.mk (parisLifePow r K a0 (criticalCrackLength KIC Y σ) / f) hq)
+      hcont hmono).mpr ?_
+    change criticalCrackLength KIC Y σ ≤ saturatedCrackPath (parisCrackPow r K a0) f
+        (parisLifePow r K a0 (criticalCrackLength KIC Y σ))
+        (NNReal.mk (parisLifePow r K a0 (criticalCrackLength KIC Y σ) / f) hq)
+    have ht : parisLifePow r K a0 (criticalCrackLength KIC Y σ) / f
+        ≤ ↑(NNReal.mk (parisLifePow r K a0 (criticalCrackLength KIC Y σ) / f) hq) := le_rfl
+    have hsat := saturatedCrackPath_of_le (parisCrackPow r K a0) hf ht
+    rw [hsat, parisCrackPow_at_life hK ha0 hac0 hr]
+  · by_contra hcon
+    rw [not_le] at hcon
+    have hLtop : damageLifetime (fun _ : Ω => saturatedCrackPath (parisCrackPow r K a0) f
+          (parisLifePow r K a0 (criticalCrackLength KIC Y σ)))
+        (fun _ => criticalCrackLength KIC Y σ) ω ≠ ⊤ :=
+      lt_top_iff_ne_top.mp (lt_of_lt_of_le hcon (le_of_lt ENNReal.coe_lt_top))
+    have hLcoe : (((damageLifetime (fun _ : Ω => saturatedCrackPath (parisCrackPow r K a0) f
+          (parisLifePow r K a0 (criticalCrackLength KIC Y σ)))
+        (fun _ => criticalCrackLength KIC Y σ) ω).toNNReal : ℝ≥0) : ℝ≥0∞)
+        = damageLifetime (fun _ : Ω => saturatedCrackPath (parisCrackPow r K a0) f
+          (parisLifePow r K a0 (criticalCrackLength KIC Y σ)))
+        (fun _ => criticalCrackLength KIC Y σ) ω :=
+      ENNReal.coe_toNNReal hLtop
+    have hlt : (damageLifetime (fun _ : Ω => saturatedCrackPath (parisCrackPow r K a0) f
+          (parisLifePow r K a0 (criticalCrackLength KIC Y σ)))
+        (fun _ => criticalCrackLength KIC Y σ) ω).toNNReal
+        < NNReal.mk (parisLifePow r K a0 (criticalCrackLength KIC Y σ) / f) hq := by
+      rw [← ENNReal.coe_lt_coe, hLcoe]
+      exact hcon
+    have hltR : (((damageLifetime (fun _ : Ω => saturatedCrackPath (parisCrackPow r K a0) f
+          (parisLifePow r K a0 (criticalCrackLength KIC Y σ)))
+        (fun _ => criticalCrackLength KIC Y σ) ω).toNNReal : ℝ≥0) : ℝ)
+        < parisLifePow r K a0 (criticalCrackLength KIC Y σ) / f :=
+      NNReal.coe_lt_coe.mpr hlt
+    have hmem := (key _).mpr hltR
+    rw [hLcoe] at hmem
+    exact lt_irrefl _ hmem
+
+/-- **No load, power branch.** At frequency `0` the event path is the constant `a0`, and below
+the critical crack length its lifetime is `⊤`. -/
+lemma damageLifetime_saturatedCrackPath_pow_zero {r K a0 KIC Y σ : ℝ} (hK : 0 < K)
+    (ha0 : 0 < a0) (hac : a0 < criticalCrackLength KIC Y σ) (hr : r ≠ 0) (ω : Ω) :
+    (∀ t, saturatedCrackPath (parisCrackPow r K a0) 0
+        (parisLifePow r K a0 (criticalCrackLength KIC Y σ)) t = a0) ∧
+      damageLifetime (fun _ : Ω => saturatedCrackPath (parisCrackPow r K a0) 0
+          (parisLifePow r K a0 (criticalCrackLength KIC Y σ)))
+        (fun _ => criticalCrackLength KIC Y σ) ω = ⊤ := by
+  have hNf : 0 < parisLifePow r K a0 (criticalCrackLength KIC Y σ) :=
+    parisLifePow_pos hK ha0 hac hr
+  have hconst : ∀ t : ℝ≥0, saturatedCrackPath (parisCrackPow r K a0) 0
+      (parisLifePow r K a0 (criticalCrackLength KIC Y σ)) t = a0 := by
+    intro t
+    change parisCrackPow r K a0
+        (min (0 * (t : ℝ)) (parisLifePow r K a0 (criticalCrackLength KIC Y σ))) = a0
+    have h0 : (0 : ℝ) * (t : ℝ) = 0 := zero_mul _
+    rw [h0]
+    have hmin : min (0 : ℝ) (parisLifePow r K a0 (criticalCrackLength KIC Y σ)) = 0 :=
+      min_eq_left (le_of_lt hNf)
+    rw [hmin]
+    exact parisCrackPow_zero hr ha0
+  constructor
+  · exact hconst
+  · rw [damageLifetime_eq_top_iff]
+    intro t
+    show saturatedCrackPath (parisCrackPow r K a0) 0
+        (parisLifePow r K a0 (criticalCrackLength KIC Y σ)) t
+        < criticalCrackLength KIC Y σ
+    rw [hconst t]
+    exact hac
+
+/-- **Failure strictly before blow-up (`m > 2`).** For `r < 0` and `f > 0`, the failure time
+`Nf / f` is strictly before the time `a0 ^ r / (-(r K)) / f` at which the power-branch base would
+reach zero. -/
+lemma failureTime_lt_blowupTime {r K a0 KIC Y σ f : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
+    (hac : a0 < criticalCrackLength KIC Y σ) (hr : r < 0) (hf : 0 < f) :
+    parisLifePow r K a0 (criticalCrackLength KIC Y σ) / f < a0 ^ r / (-(r * K)) / f := by
+  have h := parisLifePow_lt_blowup hK ha0 hac hr
+  rw [div_lt_iff₀ hf, div_mul_cancel₀ _ (ne_of_gt hf)]
+  exact h
+
+/-! ## I. The Paris lifetime: logarithmic branch and initial failure -/
+
+/-- **A continuous nondecreasing event path, logarithmic branch.** For `K > 0`, `a0 > 0` and
+`f ≥ 0` the event path of the logarithmic-branch crack is continuous and nondecreasing. -/
+lemma continuous_monotone_saturatedCrackPath_exp {K a0 KIC Y σ f : ℝ} (hK : 0 < K)
+    (ha0 : 0 < a0) (hf : 0 ≤ f) :
+    Continuous (saturatedCrackPath (parisCrackExp K a0) f
+        (parisLifeExp K a0 (criticalCrackLength KIC Y σ))) ∧
+      Monotone (saturatedCrackPath (parisCrackExp K a0) f
+        (parisLifeExp K a0 (criticalCrackLength KIC Y σ))) := by
+  have hinner_cont : Continuous
+      (fun t : ℝ≥0 => min (f * (t : ℝ)) (parisLifeExp K a0 (criticalCrackLength KIC Y σ))) :=
+    (continuous_const.mul NNReal.continuous_coe).min continuous_const
+  have hinner_mono : Monotone
+      (fun t : ℝ≥0 => min (f * (t : ℝ)) (parisLifeExp K a0 (criticalCrackLength KIC Y σ))) := by
+    intro s t hst
+    exact min_le_min (mul_le_mul_of_nonneg_left (NNReal.coe_le_coe.mpr hst) hf) le_rfl
+  have hcrack_cont : Continuous (parisCrackExp K a0) := by
+    change Continuous fun N : ℝ => a0 * Real.exp (K * N)
+    exact continuous_const.mul
+      (Real.continuous_exp.comp (continuous_const.mul continuous_id))
+  have hcrack_mono : Monotone (parisCrackExp K a0) := by
+    intro x y hxy
+    change a0 * Real.exp (K * x) ≤ a0 * Real.exp (K * y)
+    have hexp : Real.exp (K * x) ≤ Real.exp (K * y) :=
+      Real.exp_monotone (mul_le_mul_of_nonneg_left hxy (le_of_lt hK))
+    exact mul_le_mul_of_nonneg_left hexp (le_of_lt ha0)
+  constructor
+  · change Continuous fun t : ℝ≥0 =>
+      parisCrackExp K a0 (min (f * (t : ℝ)) (parisLifeExp K a0 (criticalCrackLength KIC Y σ)))
+    exact hcrack_cont.comp hinner_cont
+  · change Monotone fun t : ℝ≥0 =>
+      parisCrackExp K a0 (min (f * (t : ℝ)) (parisLifeExp K a0 (criticalCrackLength KIC Y σ)))
+    exact hcrack_mono.comp hinner_mono
+
+/-- **Before failure the event path is the crack in real time, logarithmic branch.** For `f > 0`,
+up to the failure time `Nf / f` the event path is the crack after `f t` cycles, and
+`s ↦ a (f s)` solves `da/dt = f K a`. -/
+lemma hasDerivAt_parisCrackExp_time {K a0 KIC Y σ f : ℝ} (hf : 0 < f) {t : ℝ≥0}
+    (ht : (t : ℝ) ≤ parisLifeExp K a0 (criticalCrackLength KIC Y σ) / f) :
+    saturatedCrackPath (parisCrackExp K a0) f
+        (parisLifeExp K a0 (criticalCrackLength KIC Y σ)) t = parisCrackExp K a0 (f * t) ∧
+      HasDerivAt (fun s : ℝ => parisCrackExp K a0 (f * s))
+        (f * (K * parisCrackExp K a0 (f * t))) t := by
+  have hle : f * (t : ℝ) ≤ parisLifeExp K a0 (criticalCrackLength KIC Y σ) := by
+    have h1 := (le_div_iff₀ hf).mp ht
+    linarith
+  have hmin : min (f * (t : ℝ)) (parisLifeExp K a0 (criticalCrackLength KIC Y σ))
+      = f * (t : ℝ) := min_eq_left hle
+  have hderiv : HasDerivAt (parisCrackExp K a0)
+      (K * parisCrackExp K a0 (f * (t : ℝ))) (f * (t : ℝ)) :=
+    hasDerivAt_parisCrackExp K a0 (f * (t : ℝ))
+  have hinner : HasDerivAt (fun s : ℝ => f * s) f (t : ℝ) := by
+    have h := HasDerivAt.const_mul f (hasDerivAt_id (t : ℝ))
+    simpa using h
+  have hcomp : HasDerivAt ((parisCrackExp K a0) ∘ (fun s : ℝ => f * s))
+      ((K * parisCrackExp K a0 (f * (t : ℝ))) * f) (t : ℝ) :=
+    HasDerivAt.comp (t : ℝ) (h := fun s : ℝ => f * s) (h₂ := parisCrackExp K a0)
+      hderiv hinner
+  constructor
+  · change parisCrackExp K a0
+          (min (f * (t : ℝ)) (parisLifeExp K a0 (criticalCrackLength KIC Y σ)))
+        = parisCrackExp K a0 (f * (t : ℝ))
+    rw [hmin]
+  · have heq : (K * parisCrackExp K a0 (f * (t : ℝ))) * f
+        = f * (K * parisCrackExp K a0 (f * (t : ℝ))) := by ring
+    rw [heq] at hcomp
+    exact hcomp
+
+/-- **Physical lifetime, logarithmic branch.** For `K > 0`, `0 < a0 < a_c` and `f > 0` the
+damage lifetime of the event path against the critical crack length is `Nf / f`. -/
+lemma damageLifetime_saturatedCrackPath_exp {K a0 KIC Y σ f : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
+    (hac : a0 < criticalCrackLength KIC Y σ) (hf : 0 < f) (ω : Ω) :
+    damageLifetime (fun _ : Ω => saturatedCrackPath (parisCrackExp K a0) f
+        (parisLifeExp K a0 (criticalCrackLength KIC Y σ)))
+      (fun _ => criticalCrackLength KIC Y σ) ω =
+      ENNReal.ofReal (parisLifeExp K a0 (criticalCrackLength KIC Y σ) / f) := by
+  obtain ⟨hcont, hmono⟩ :=
+    continuous_monotone_saturatedCrackPath_exp hK ha0 (le_of_lt hf)
+  have hNf : 0 < parisLifeExp K a0 (criticalCrackLength KIC Y σ) :=
+    parisLifeExp_pos hK ha0 hac
+  have hac0 : 0 < criticalCrackLength KIC Y σ := lt_trans ha0 hac
+  have hq : 0 ≤ parisLifeExp K a0 (criticalCrackLength KIC Y σ) / f :=
+    le_of_lt (div_pos hNf hf)
+  have hofReal : ENNReal.ofReal (parisLifeExp K a0 (criticalCrackLength KIC Y σ) / f)
+      = ↑(NNReal.mk (parisLifeExp K a0 (criticalCrackLength KIC Y σ) / f) hq) :=
+    ENNReal.ofReal_eq_coe_nnreal hq
+  rw [hofReal]
+  have key : ∀ t : ℝ≥0, ((t : ℝ≥0∞)
+      < damageLifetime (fun _ : Ω => saturatedCrackPath (parisCrackExp K a0) f
+          (parisLifeExp K a0 (criticalCrackLength KIC Y σ)))
+        (fun _ => criticalCrackLength KIC Y σ) ω
+      ↔ (t : ℝ) < parisLifeExp K a0 (criticalCrackLength KIC Y σ) / f) := by
+    intro t
+    refine (lt_damageLifetime_iff
+      (d := fun _ : Ω => saturatedCrackPath (parisCrackExp K a0) f
+        (parisLifeExp K a0 (criticalCrackLength KIC Y σ)))
+      (D := fun _ => criticalCrackLength KIC Y σ) (ω := ω) hcont hmono t).trans ?_
+    show saturatedCrackPath (parisCrackExp K a0) f
+          (parisLifeExp K a0 (criticalCrackLength KIC Y σ)) t
+        < criticalCrackLength KIC Y σ
+      ↔ (t : ℝ) < parisLifeExp K a0 (criticalCrackLength KIC Y σ) / f
+    constructor
+    · intro h
+      by_contra hcon
+      rw [not_lt] at hcon
+      have hge : parisLifeExp K a0 (criticalCrackLength KIC Y σ) ≤ f * (t : ℝ) := by
+        have h1 := (div_le_iff₀ hf).mp hcon
+        linarith
+      have hmin : min (f * (t : ℝ)) (parisLifeExp K a0 (criticalCrackLength KIC Y σ))
+          = parisLifeExp K a0 (criticalCrackLength KIC Y σ) := min_eq_right hge
+      have hsat : saturatedCrackPath (parisCrackExp K a0) f
+          (parisLifeExp K a0 (criticalCrackLength KIC Y σ)) t
+          = criticalCrackLength KIC Y σ := by
+        change parisCrackExp K a0
+            (min (f * (t : ℝ)) (parisLifeExp K a0 (criticalCrackLength KIC Y σ)))
+          = criticalCrackLength KIC Y σ
+        rw [hmin]
+        exact parisCrackExp_at_life hK ha0 hac0
+      rw [hsat] at h
+      exact lt_irrefl _ h
+    · intro h
+      have hlt : f * (t : ℝ) < parisLifeExp K a0 (criticalCrackLength KIC Y σ) := by
+        have h1 := (lt_div_iff₀ hf).mp h
+        linarith
+      have hmin : min (f * (t : ℝ)) (parisLifeExp K a0 (criticalCrackLength KIC Y σ))
+          = f * (t : ℝ) := min_eq_left (le_of_lt hlt)
+      have hiff := parisCrackExp_lt_iff (N := f * (t : ℝ)) hK ha0 hac
+      change parisCrackExp K a0
+          (min (f * (t : ℝ)) (parisLifeExp K a0 (criticalCrackLength KIC Y σ)))
+        < criticalCrackLength KIC Y σ
+      rw [hmin]
+      exact hiff.mpr hlt
+  apply le_antisymm
+  · refine (damageLifetime_le_iff
+      (d := fun _ : Ω => saturatedCrackPath (parisCrackExp K a0) f
+        (parisLifeExp K a0 (criticalCrackLength KIC Y σ)))
+      (D := fun _ => criticalCrackLength KIC Y σ) (ω := ω)
+      (t := NNReal.mk (parisLifeExp K a0 (criticalCrackLength KIC Y σ) / f) hq)
+      hcont hmono).mpr ?_
+    change criticalCrackLength KIC Y σ ≤ saturatedCrackPath (parisCrackExp K a0) f
+        (parisLifeExp K a0 (criticalCrackLength KIC Y σ))
+        (NNReal.mk (parisLifeExp K a0 (criticalCrackLength KIC Y σ) / f) hq)
+    have ht : parisLifeExp K a0 (criticalCrackLength KIC Y σ) / f
+        ≤ ↑(NNReal.mk (parisLifeExp K a0 (criticalCrackLength KIC Y σ) / f) hq) := le_rfl
+    have hsat := saturatedCrackPath_of_le (parisCrackExp K a0) hf ht
+    rw [hsat, parisCrackExp_at_life hK ha0 hac0]
+  · by_contra hcon
+    rw [not_le] at hcon
+    have hLtop : damageLifetime (fun _ : Ω => saturatedCrackPath (parisCrackExp K a0) f
+          (parisLifeExp K a0 (criticalCrackLength KIC Y σ)))
+        (fun _ => criticalCrackLength KIC Y σ) ω ≠ ⊤ :=
+      lt_top_iff_ne_top.mp (lt_of_lt_of_le hcon (le_of_lt ENNReal.coe_lt_top))
+    have hLcoe : (((damageLifetime (fun _ : Ω => saturatedCrackPath (parisCrackExp K a0) f
+          (parisLifeExp K a0 (criticalCrackLength KIC Y σ)))
+        (fun _ => criticalCrackLength KIC Y σ) ω).toNNReal : ℝ≥0) : ℝ≥0∞)
+        = damageLifetime (fun _ : Ω => saturatedCrackPath (parisCrackExp K a0) f
+          (parisLifeExp K a0 (criticalCrackLength KIC Y σ)))
+        (fun _ => criticalCrackLength KIC Y σ) ω :=
+      ENNReal.coe_toNNReal hLtop
+    have hlt : (damageLifetime (fun _ : Ω => saturatedCrackPath (parisCrackExp K a0) f
+          (parisLifeExp K a0 (criticalCrackLength KIC Y σ)))
+        (fun _ => criticalCrackLength KIC Y σ) ω).toNNReal
+        < NNReal.mk (parisLifeExp K a0 (criticalCrackLength KIC Y σ) / f) hq := by
+      rw [← ENNReal.coe_lt_coe, hLcoe]
+      exact hcon
+    have hltR : (((damageLifetime (fun _ : Ω => saturatedCrackPath (parisCrackExp K a0) f
+          (parisLifeExp K a0 (criticalCrackLength KIC Y σ)))
+        (fun _ => criticalCrackLength KIC Y σ) ω).toNNReal : ℝ≥0) : ℝ)
+        < parisLifeExp K a0 (criticalCrackLength KIC Y σ) / f :=
+      NNReal.coe_lt_coe.mpr hlt
+    have hmem := (key _).mpr hltR
+    rw [hLcoe] at hmem
+    exact lt_irrefl _ hmem
+
+/-- **No load, logarithmic branch.** At frequency `0` the event path is the constant `a0`, and
+below the critical crack length its lifetime is `⊤`. -/
+lemma damageLifetime_saturatedCrackPath_exp_zero {K a0 KIC Y σ : ℝ} (hK : 0 < K)
+    (ha0 : 0 < a0) (hac : a0 < criticalCrackLength KIC Y σ) (ω : Ω) :
+    (∀ t, saturatedCrackPath (parisCrackExp K a0) 0
+        (parisLifeExp K a0 (criticalCrackLength KIC Y σ)) t = a0) ∧
+      damageLifetime (fun _ : Ω => saturatedCrackPath (parisCrackExp K a0) 0
+          (parisLifeExp K a0 (criticalCrackLength KIC Y σ)))
+        (fun _ => criticalCrackLength KIC Y σ) ω = ⊤ := by
+  have hNf : 0 < parisLifeExp K a0 (criticalCrackLength KIC Y σ) :=
+    parisLifeExp_pos hK ha0 hac
+  have hconst : ∀ t : ℝ≥0, saturatedCrackPath (parisCrackExp K a0) 0
+      (parisLifeExp K a0 (criticalCrackLength KIC Y σ)) t = a0 := by
+    intro t
+    change parisCrackExp K a0
+        (min (0 * (t : ℝ)) (parisLifeExp K a0 (criticalCrackLength KIC Y σ))) = a0
+    have h0 : (0 : ℝ) * (t : ℝ) = 0 := zero_mul _
+    rw [h0]
+    have hmin : min (0 : ℝ) (parisLifeExp K a0 (criticalCrackLength KIC Y σ)) = 0 :=
+      min_eq_left (le_of_lt hNf)
+    rw [hmin]
+    exact parisCrackExp_zero K a0
+  constructor
+  · exact hconst
+  · rw [damageLifetime_eq_top_iff]
+    intro t
+    show saturatedCrackPath (parisCrackExp K a0) 0
+        (parisLifeExp K a0 (criticalCrackLength KIC Y σ)) t
+        < criticalCrackLength KIC Y σ
+    rw [hconst t]
+    exact hac
+
+/-- **Initially failed.** An initial crack at or above the critical length is the constant event
+path at `a0`, with lifetime `0`; no crack-growth law is used. -/
+lemma damageLifetime_initiallyFailed {a0 KIC Y σ : ℝ} (hfail : criticalCrackLength KIC Y σ ≤ a0)
+    (ω : Ω) :
+    damageLifetime (fun (_ : Ω) (_ : ℝ≥0) => a0) (fun _ => criticalCrackLength KIC Y σ) ω = 0 := by
+  exact damageLifetime_eq_zero hfail
 
 end Reliability
