@@ -67,12 +67,15 @@ closed, so the infimum is attained and the component is up at a finite
 time `t` exactly when `d ω t < D ω`; this uses closedness, not the
 `WellFoundedLT` lemmas of the hitting-time API, which do not apply to
 real time. Through these level sets, measurable fixed-time damage and
-threshold maps give measurable lifetimes, and the coherent-system
-lifetime of `MathlibExt.Probability.Reliability.SystemLifetime` is up
-at `t` exactly when the configuration of components still below
-threshold lies in the increasing system event. No independence between
-components is assumed, no damage law is derived, and no stopping
-theorem in continuous time is claimed.
+threshold maps give measurable lifetimes, and the lifetime of the
+monotone Boolean system of
+`MathlibExt.Probability.Reliability.SystemLifetime` is up at `t`
+exactly when the configuration of components still below threshold
+lies in the increasing system event. An increasing event is a monotone
+system, not necessarily a coherent one: the constant events `∅` and
+`univ` and systems with irrelevant components are included. No
+independence between components is assumed, no damage law is derived,
+and no stopping theorem in continuous time is claimed.
 
 ## ii. Key results
 
@@ -110,7 +113,7 @@ theorem in continuous time is claimed.
 - `Reliability.measurable_damageLifetime`,
   `Reliability.lt_systemLifetime_damage_iff` and
   `Reliability.measurable_systemLifetime_damage`: measurable lifetimes
-  and the coherent-system event.
+  and the monotone-system event.
 
 ## iii. Table of contents
 
@@ -119,7 +122,7 @@ theorem in continuous time is claimed.
 - C. Demand, allowable and margin
 - D. An axial load path with a supplied yield functional
 - E. Damage hitting times
-- F. Measurability and coherent systems
+- F. Measurability and monotone systems
 
 ## iv. References
 
@@ -133,8 +136,10 @@ theorem in continuous time is claimed.
 - S. Timoshenko and J. M. Gere, *Mechanics of Materials* (axially loaded
   bars).
 - R. E. Barlow and F. Proschan, *Statistical Theory of Reliability and
-  Life Testing*, Holt, Rinehart and Winston (1975): coherent systems
-  and their lifetimes (section F).
+  Life Testing*, Holt, Rinehart and Winston (1975): structure functions
+  and system lifetimes (section F, for monotone systems; coherent
+  systems are the monotone systems in which every component is
+  relevant).
 - W. Q. Meeker and L. A. Escobar, *Statistical Methods for Reliability
   Data*, Wiley (1998), degradation chapters: failure when a degradation
   path reaches a threshold (section E).
@@ -723,7 +728,7 @@ lemma damageLifetime_eq_zero {d : Ω → ℝ≥0 → ℝ} {D : Ω → ℝ} {ω :
   · rw [hinf, ENNReal.coe_zero]
   · exact absurd ⟨0, hmem0⟩ hex
 
-/-! ## F. Measurability and coherent systems -/
+/-! ## F. Measurability and monotone systems -/
 
 /-- With measurable fixed-time damage maps, a measurable threshold and continuous nondecreasing
 paths, the lifetime is measurable: its level sets `{ω | t < lifetime ω}` are
@@ -743,9 +748,9 @@ lemma measurable_damageLifetime [MeasurableSpace Ω] {d : Ω → ℝ≥0 → ℝ
     rw [hset]
     exact measurableSet_lt (hmeas t) hD
 
-/-- The coherent-system event: for an increasing event `A`, the system with the damage
-lifetimes is up at a finite time `t` exactly when the configuration of components whose damage
-is still below threshold at `t` lies in `A`. -/
+/-- The monotone-system event: for an increasing event `A` (a monotone system, not necessarily
+coherent), the system with the damage lifetimes is up at a finite time `t` exactly when the
+configuration of components whose damage is still below threshold at `t` lies in `A`. -/
 lemma lt_systemLifetime_damage_iff {E : Type*} [Fintype E] (A : Set (StatMech.ConfigSpace E))
     (hA : StatMech.IsIncreasing A) {d : E → Ω → ℝ≥0 → ℝ} {D : E → Ω → ℝ}
     (hcont : ∀ i ω, Continuous (d i ω)) (hmono : ∀ i ω, Monotone (d i ω)) (ω : Ω) (t : ℝ≥0) :

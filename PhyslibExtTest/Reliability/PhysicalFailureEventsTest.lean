@@ -45,7 +45,7 @@ lifetime of linear damage that its later examples use.
 - A. Unit-parameter threshold
 - B. Degenerate stress
 - C. Demand margins, the axial bar and the hydrostatic boundary
-- D. Damage hitting times and coherent systems
+- D. Damage hitting times and monotone systems
 
 ## iv. References
 
@@ -222,7 +222,7 @@ example :
     (by norm_num) 100 250).1 h
   norm_num at h'
 
-/-! ## D. Damage hitting times and coherent systems -/
+/-! ## D. Damage hitting times and monotone systems -/
 
 open MeasureTheory
 open scoped NNReal ENNReal
