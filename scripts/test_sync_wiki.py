@@ -691,6 +691,31 @@ class Declarations(Vault):
                          "- [Old](part-01/old.md)\n\n## [Part 2 of 2](part-02/README.md)\n\n- [Late](part-02/late.md)\n"
                          "- [Burnside](part-02/burnside.md)\n\n## Related topics\n\n- [Rings](../rings/README.md): rings.\n")
 
+    def test_a_new_page_of_a_module_split_into_parts_joins_its_last_part(self) -> None:
+        # A module of more than MAX_MODULE_CHILDREN pages fills parts of MAX_CHILDREN in turn: its next page goes in its
+        # last part, not in the full early part that holds most of its pages.
+        sylow = wiki.ROADMAP / "Algebra" / "sylow"
+        names = [f"lemma-{number:03}" for number in range(wiki.MAX_MODULE_CHILDREN + 1)]
+        chunks = [names[start:start + wiki.MAX_CHILDREN] for start in range(0, len(names), wiki.MAX_CHILDREN)]
+        lines = ["# Sylow", ""]
+        for number, chunk in enumerate(chunks, 1):
+            part = f"part-{number:02}"
+            self.page(f"Algebra/sylow/{part}/README.md",
+                      f"# Part {number} of {len(chunks)}\n\n" + "".join(f"- [{name}]({name}.md)\n" for name in chunk))
+            for name in chunk:
+                self.page(f"Algebra/sylow/{part}/{name}.md", f"# {name}\n")
+            lines += [f"## [Part {number} of {len(chunks)}]({part}/README.md)", "", *(f"- [{name}]({part}/{name}.md)" for name in chunk), ""]
+        self.page("Algebra/sylow/README.md", "\n".join(lines))
+        self.annotate([self.about(f"Algebra/sylow/part-{number:02}/{name}.md", object=[{"location": {"declaration": f"Ext.{name}"}}])
+                       for number, chunk in enumerate(chunks, 1) for name in chunk])
+        targets = [declaration(f"Ext.{name}", name, name, f"{name}.", module=("Ext", "Sylow")) for name in names]
+        last = declaration("Ext.next", "next", "Next", "Next.", module=("Ext", "Sylow"))
+        report = sync.apply_declarations([*targets, last], SimpleNamespace(declarations={f"Ext.{n}": None for n in [*names, "next"]}))
+        self.assertEqual(len(chunks), 7)
+        self.assertEqual(report["added"], ["Ext.next -> Algebra/sylow/part-07/next.md"])
+        self.assertEqual((sylow / "part-07" / "README.md").read_text(), "# Part 7 of 7\n\n- [lemma-120](lemma-120.md)\n- [Next](next.md)\n")
+        self.assertTrue((sylow / "README.md").read_text().endswith("- [lemma-120](part-07/lemma-120.md)\n- [Next](part-07/next.md)\n"))
+
     def test_a_new_page_joins_the_last_part_whatever_part_generate_wiki_names(self) -> None:
         # generate_wiki's part numbers are its own partition of the folder, so a part of the wiki's that has the number
         # takes nothing for it; a topic still keeps its folder, in whichever part holds it.
@@ -1197,12 +1222,16 @@ class Declarations(Vault):
 
     def test_a_new_sections_heading_takes_no_id_an_earlier_heading_has(self) -> None:
         # Another "Examples" after the page's own would be given "examples_1", so its id is not the one its title has:
-        # the section takes its module's name instead, and when that is taken too, the new page is listed nowhere.
-        for name, earlier, heading in (("title taken", "## Examples\n\n- [State](state.md)\n", "Two Process"),
-                                       ("title and name taken", "## Examples\n\n- [State](state.md)\n\n## Two Process\n\nText.\n",
-                                        None)):
+        # the section takes its module's name instead, and when that is taken too, the new page is listed nowhere. A
+        # section named as the page itself is kept: its id takes "_1" after the title's, which keeps its own, so no id
+        # moves; but not when a section has that name too.
+        for name, title, earlier, heading in (
+                ("title taken", "Bakery", "## Examples\n\n- [State](state.md)\n", "Two Process"),
+                ("title and name taken", "Bakery", "## Examples\n\n- [State](state.md)\n\n## Two Process\n\nText.\n", None),
+                ("the page's title", "Examples", "## Basics\n\n- [State](state.md)\n", "Examples"),
+                ("the page's title and a section's", "Examples", "## Examples\n\n- [State](state.md)\n", "Two Process")):
             with self.subTest(name):
-                text = f"# Bakery\n\n{earlier}\n## Mutual exclusion\n\n- [Invariant](invariant.md)\n"
+                text = f"# {title}\n\n{earlier}\n## Mutual exclusion\n\n- [Invariant](invariant.md)\n"
                 self.page("Algebra/bakery/README.md", text)
                 self.annotate([])
                 (wiki.ROADMAP / "Algebra" / "bakery" / "turn.md").unlink(missing_ok=True)
@@ -1212,6 +1241,20 @@ class Declarations(Vault):
                 self.assertEqual((wiki.ROADMAP / "Algebra" / "bakery" / "README.md").read_text(),
                                  f"{text}\n## {heading}\n\n- [Turn](turn.md)\n" if heading else text)
                 self.assertEqual(report["unlisted"], [] if heading else ["Algebra/bakery/turn.md"])
+
+    def test_a_section_named_as_its_page_is_kept(self) -> None:
+        # The "Resolution" module on the "Resolution" page: its "## Resolution" is given "resolution_1", while the
+        # title keeps "resolution", so links to the title still land on it.
+        text = ("# Resolution\n\n- [Resolvent](resolvent.md)\n\n## Soundness\n\n- [Soundness](satisfies.md)\n\n"
+                "## Completeness\n\n- [Completeness](completeness.md)\n\n## Related topics\n\n- [Size](../size/README.md)\n")
+        self.page("Logic/resolution/README.md", text)
+        self.annotate([])
+        lit = declaration("Ext.lit", "lit", "Lit", "A literal.", module=("Ext", "Resolution"))
+        lit.path, lit.module_title = wiki.ROADMAP / "Logic" / "resolution" / "lit.md", "Resolution"
+        report = sync.apply_declarations([lit], SimpleNamespace(declarations={"Ext.lit": None}))
+        self.assertEqual((wiki.ROADMAP / "Logic" / "resolution" / "README.md").read_text(), text.replace(
+            "## Related topics", "## Resolution\n\n- [Lit](lit.md)\n\n## Related topics"))
+        self.assertEqual((report["appended"], report["unlisted"]), ([], []))
 
     def test_a_line_break_only_autoform_reads_makes_a_page_not_simple(self) -> None:
         # Autoform splits lines wherever str.splitlines does, at a form feed or U+2028 too: such a page takes the new
@@ -1255,6 +1298,22 @@ class Declarations(Vault):
                 text = f"# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n- [A](part-01/a.md)\n{under}"
                 self.page("Algebra/groups/README.md", text)
                 self.page("Algebra/groups/part-01/README.md", "# Part 1 of 1\n\n- [A](a.md)\n- [B](b.md)\n")
+                sync.LINKS.mkdir(parents=True, exist_ok=True)
+                report = sync.apply_declarations([], SimpleNamespace(declarations={}))
+                self.assertEqual((groups / "README.md").read_text(), text)
+                self.assertEqual(report["parts"], ["Algebra/groups/part-01"])
+
+    def test_a_part_page_with_a_section_within_its_own_part_is_left_to_an_editor(self) -> None:
+        # A part split into parts lists its own parts under their headings: a section within one of them, with items
+        # under it or none, could make those items read as the part's own entries, so the outer copy stays as it is.
+        groups = wiki.ROADMAP / "Algebra" / "groups"
+        copy = "- [Part 1 of 2](part-01/part-01/README.md)\n- [Part 2 of 2](part-01/part-02/README.md)\n"
+        for name, note in (("items under it", "\n### Note\n\n- [C](c.md)\n"), ("nothing under it", "\n### Note\n")):
+            with self.subTest(name):
+                text = f"# Groups\n\n## [Part 1 of 1](part-01/README.md)\n\n{copy}"
+                self.page("Algebra/groups/README.md", text)
+                self.page("Algebra/groups/part-01/README.md", "# Part 1 of 1\n\n## [Part 1 of 2](part-01/README.md)\n\n- [A](part-01/a.md)\n\n"
+                          f"## [Part 2 of 2](part-02/README.md)\n\n- [B](part-02/b.md)\n{note}")
                 sync.LINKS.mkdir(parents=True, exist_ok=True)
                 report = sync.apply_declarations([], SimpleNamespace(declarations={}))
                 self.assertEqual((groups / "README.md").read_text(), text)

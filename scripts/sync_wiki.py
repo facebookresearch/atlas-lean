@@ -729,9 +729,10 @@ def verify_edit(before: str, after: str, items: list[tuple[str, str, tuple[int, 
     publish passes on both (see published), and what each publishes, rendered as the site renders it (see rendered),
     shows: every link *before* shows, but for the hrefs in *replaced*; the headings of *before*, in order, each with its
     level, text and id, under the same parent; *added*, the ordinal and line of a heading the edit adds, with the level,
-    text and id its line has alone, so that one whose id another heading's takes, before it or after, is no match; and
-    each of *items*, an item's line and href, with that href and as its line shows alone, in a list item under the
-    heading its ordinal and line name, or anywhere if None."""
+    text and id its line has alone, so that one whose id another heading's takes, before it or after, is no match, but
+    for one that only the page's title, its first line, has before it, whose id then takes the suffix "_1" while the
+    title keeps its own; and each of *items*, an item's line and href, with that href and as its line shows alone, in a
+    list item under the heading its ordinal and line name, or anywhere if None."""
     pages = [published(text) for text in (before, after)]
     if None in pages:
         return False
@@ -739,8 +740,17 @@ def verify_edit(before: str, after: str, items: list[tuple[str, str, tuple[int, 
     if Counter(old_links) - Counter(replaced) - Counter(links):
         return False
     at = added[0] if added is not None else len(headings)
-    if added is not None and (at >= len(headings) or headings[at] != heading(added[1])):
-        return False
+    if added is not None:
+        alone = heading(added[1])
+        if at >= len(headings) or alone is None:
+            return False
+        # A section named as its page: the title, its first line and the one heading before it with its id, keeps
+        # that id, so the section's takes "_1" and no id moves.
+        titled = (headings[at][:2] == alone[:2] and headings[at][2] == f"{alone[2]}_1" and headings[0][0] == 1
+                  and [number for number in range(at) if headings[number][2] == alone[2]] == [0]
+                  and re.match(r"#(?: |$)", before.lstrip("\n")))
+        if headings[at] != alone and not titled:
+            return False
     kept = [number for number in range(len(headings)) if number != at]
     if [headings[number] for number in kept] != list(old_headings):
         return False
@@ -887,19 +897,22 @@ def part_entries(text: str) -> list[tuple[str, str, str]] | None:
     """A folder page's entries, as its parent copies them: the title, page and text after it of each list item that
     links a page of its folder, and of an item for each of its parts in place of the items under the part's heading.
     None when such a heading, the page (see simple_page, with no code allowed), or a list item outside the parts that
-    is not a simple item linking a page of the folder is not simple."""
+    is not a simple item linking a page of the folder is not simple, and when a part's heading has a section within it,
+    whose items could read as the folder's own."""
     if not simple_page(text):
         return None
-    entries, in_part = [], False
+    entries, in_part = [], 0
     for block in text.split("\n"):
         part = PART_HEADING.match(block)
+        if HEADING.match(block):
+            level = len(re.match(" *(#+)", block).group(1))
+            if in_part and level > in_part:
+                return None
+            in_part = level if part else 0
         if part:
             if not re.fullmatch(f"{PLAIN}+", part.group(1)):
                 return None
             entries.append((*part.groups(), ""))
-            in_part = True
-        elif HEADING.match(block):
-            in_part = False
         elif not in_part and LIST_ITEM.match(block):
             item = simple_item(block)
             if not item or destination(item.group(2)) != "child":
@@ -1076,11 +1089,17 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     for key, target in sorted(current.items()):
         if key in pages or deprecated(target):
             continue
-        # Beside the module's pages, else on the generated path as the wiki's folders keep it (see kept_layout). A
-        # folder with no page of its own takes the folder pages generate_wiki lays out on the way to it; without them,
-        # the deepest folder on the way that has one.
-        folder, laid_out = ((folders[target.module].most_common(1)[0][0], {}) if folders[target.module]
-                            else kept_layout(target.path.parent, created))
+        # Beside the module's pages, in the last part of the folder that holds most of them when it is split into
+        # parts, as a module of many pages is; else on the generated path as the wiki's folders keep it (see
+        # kept_layout). A folder with no page of its own takes the folder pages generate_wiki lays out on the way to
+        # it; without them, the deepest folder on the way that has one.
+        if folders[target.module]:
+            folder, laid_out = folders[target.module].most_common(1)[0][0], {}
+            while PART.fullmatch(folder.name):
+                folder = folder.parent
+            folder = parts(folder)[-1]
+        else:
+            folder, laid_out = kept_layout(target.path.parent, created)
         up, missing = folder, []
         while not (up / "README.md").is_file() and up / "README.md" not in created and up != wiki.ROADMAP:
             missing.append(up / "README.md")
