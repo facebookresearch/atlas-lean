@@ -21,7 +21,7 @@ import Mathlib.Tactic.FunProp
 import Mathlib.Tactic.Ring
 
 /-!
-# Prismatic members: fixed-fixed bar and shaft, clamped-free cantilever
+# Prismatic members: bars and shafts with fixed or loaded ends, clamped-free cantilever
 
 ## i. Overview
 
@@ -45,8 +45,9 @@ the second a plane angle. The scaled uniform-load bar is a classical solution of
 Dirichlet problem treated by the one-dimensional finite element module.
 
 Model inputs: the constitutive laws above, constant rigidity, zero end values at both ends.
-Boundaries: a traction (free or loaded) end and a variable rigidity `k x` are not covered; the
-operator is `-u''`, not `-(p u')'`.
+Boundaries: the fixed-fixed problem has no traction (free or loaded) end; a member fixed at one
+end and loaded at the other is the fixed-traction problem below. A variable rigidity `k x` is
+not covered: the operator is `-u''`, not `-(p u')'`.
 
 A prismatic Euler-Bernoulli beam of positive length `L` and constant bending stiffness `EI`,
 clamped at `x = 0` and free at `x = L`, carries a constant distributed load `q` and a tip force
@@ -61,6 +62,20 @@ four conditions force it to vanish. Model inputs: Euler-Bernoulli small deflecti
 the clamped-clamped profile `1 - cos (2 π x / L)` meets both clamped conditions but violates
 the free-end moment condition.
 
+A bar of length `L > 0` and constant rigidity `k = EA` fixed at `x = 0` and loaded at `x = L` by
+an end force `P`, positive along the outward normal `+x` (tension positive), under a distributed
+axial load `f` continuous on `[0, L]`, solves `-(k * u'') = f` on `[0, L]` with `u 0 = 0` and
+`k * u' L = P` (`IsFixedTractionSolution`; derivatives within `[0, L]`). Integrating once from
+`x` to the loaded end gives the load path `k * u' x = P + ∫ y in x..L, f y`: the internal axial
+force is the end force plus the load carried between `x` and `L`. So
+`u' x = (P + ∫ y in x..L, f y) / k` (`fixedTractionStrain`), `u` is its primitive from the fixed
+end (`fixedTractionDisplacement`), this function solves the problem, and every solution equals
+it on `[0, L]`. Under a uniform load `q` it is `P * x / k` plus `fixedFreeDisplacement`. A
+circular shaft fixed at `x = 0` under a distributed torque `t` and an end torque `T` is the same
+problem with `k = GJ`, handled by the same lemmas. With both ends free (end forces `P₀` at
+`x = 0`, outward normal `-x`, and `P₁` at `x = L`) a solution can be shifted by a rigid
+translation and exists only if the net load vanishes, `P₀ + P₁ + ∫₀ᴸ f = 0`.
+
 ## ii. Key results
 
 - `isFixedFixedSolution_scale`, `exists_isFixedFixedSolution`, `IsFixedFixedSolution.eqOn`.
@@ -68,7 +83,8 @@ the free-end moment condition.
   `isFixedFixedSolution_twistAngle`, `IsFixedFixedSolution.eqOn_twistAngle`.
 - `axialDisplacement_dimension`, `twistAngle_dimension`.
 - `isClassicalSolution_axialDisplacement_scaled`.
-- `fixedFreeDisplacement_not_isFixedFixedSolution`: a traction-free end is not covered.
+- `fixedFreeDisplacement_not_isFixedFixedSolution`: a traction-free end is not a fixed-fixed
+  problem; with `P = 0` it is the fixed-traction problem of section G.
 - `cantileverDeflection_iteratedDeriv_four`, `cantileverDeflection_zero`,
   `deriv_cantileverDeflection_zero`, `cantileverDeflection_moment_right`,
   `cantileverDeflection_shear_right`, `isCantileverSolution_cantileverDeflection`: the
@@ -77,6 +93,14 @@ the free-end moment condition.
   `MathlibExt.Analysis.Calculus.ZeroFourthDerivative.exists_cubic_of_iteratedDeriv_four_eq_zero`.
 - `cantileverDeflection_load_zero`, `cosine_profile_fails_moment`: the tip-force term and a
   periodic profile that is not a cantilever solution.
+- `derivWithin_fixedTractionDisplacement`, `derivWithin_fixedTractionStrain`,
+  `isFixedTractionSolution_fixedTractionDisplacement`: the constructed fixed-traction solution.
+- `IsFixedTractionSolution.axialForce_eq`: the load path `k * u' x = P + ∫ y in x..L, f y`.
+- `IsFixedTractionSolution.eqOn_fixedTractionDisplacement`, `IsFixedTractionSolution.eqOn`:
+  uniqueness on `[0, L]`; `IsFixedTractionSolution.twist`: the circular-shaft reading.
+- `fixedTractionDisplacement_const`: the uniform-load closed form.
+- `IsFreeFreeSolution.add_const`, `IsFreeFreeSolution.net_load`: two free ends admit rigid
+  translations and need zero net load.
 
 ## iii. Table of contents
 
@@ -86,14 +110,17 @@ the free-end moment condition.
 - D. Clamped-free cantilever: the polynomial solution
 - E. Clamped-free cantilever: uniqueness
 - F. Clamped-free cantilever: tip-force term and boundary example
+- G. Fixed-traction bar and shaft: load path, existence and uniqueness
+- H. Fixed-traction bar: uniform load
+- I. Boundary example: two free ends
 
 ## iv. References
 
 - S. Timoshenko and J. M. Gere, *Mechanics of Materials*, 1972 (axially loaded bars, torsion of
   circular shafts, cantilever deflections).
 - J. M. Gere and B. J. Goodno, *Mechanics of Materials*, 8th edition, 2013 (statically
-  indeterminate bars and shafts under distributed loads; differential equations of the
-  deflection curve).
+  indeterminate bars and shafts under distributed loads; bars with distributed axial loads and
+  nonuniform torsion; differential equations of the deflection curve).
 -/
 
 @[expose] public section
@@ -350,9 +377,9 @@ lemma isClassicalSolution_axialDisplacement_scaled {EA : ℝ} (hEA : 0 < EA) (L 
 noncomputable def fixedFreeDisplacement (EA L q x : ℝ) : ℝ :=
   q * x * (2 * L - x) / (2 * EA)
 
-/-- A traction-free end is not covered: the fixed-free displacement satisfies the equation,
-the fixed end and the traction-free end `EA * u' L = 0`, but for `q ≠ 0` it is not a solution
-of the fixed-fixed problem. -/
+/-- A traction-free end is not a fixed-fixed problem: the fixed-free displacement satisfies the
+equation, the fixed end and the traction-free end `EA * u' L = 0`, but for `q ≠ 0` it is not a
+solution of the fixed-fixed problem. -/
 lemma fixedFreeDisplacement_not_isFixedFixedSolution {EA L q : ℝ} (hL : 0 < L) (hEA : 0 < EA)
     (hq : q ≠ 0) :
     (∀ x : ℝ, -(EA * iteratedDeriv 2 (fixedFreeDisplacement EA L q) x) = q) ∧
@@ -598,6 +625,577 @@ lemma cosine_profile_fails_moment {EI L : ℝ} (hEI : 0 < EI) (hL : 0 < L) :
   rw [hcL, Real.cos_two_pi, mul_one]
   have hc0 : c ≠ 0 := by rw [hc]; exact div_ne_zero (by positivity) hL'
   exact mul_ne_zero hEI.ne' (mul_ne_zero hc0 hc0)
+
+/-! ## G. Fixed-traction bar and shaft: load path, existence and uniqueness -/
+
+/-- Fixed-traction problem on `[0, L]` for rigidity `k`, distributed load `f` and end force `P`:
+`u` is `C²` on `[0, L]`, satisfies `-(k * u'') = f` on `[0, L]` with derivatives taken within
+`[0, L]`, vanishes at the fixed end `x = 0`, and has end force `k * u' L = P` at `x = L`, where
+the outward normal is `+x` and tension is positive. -/
+def IsFixedTractionSolution (k L P : ℝ) (f u : ℝ → ℝ) : Prop :=
+  ContDiffOn ℝ 2 u (Set.Icc 0 L) ∧
+    (∀ x ∈ Set.Icc (0 : ℝ) L, -(k * iteratedDerivWithin 2 u (Set.Icc 0 L) x) = f x) ∧
+    u 0 = 0 ∧ k * derivWithin u (Set.Icc 0 L) L = P
+
+/-- The strain of the load path, `u' x = (P + ∫ y in x..L, f y) / k`. -/
+noncomputable def fixedTractionStrain (k L P : ℝ) (f : ℝ → ℝ) (x : ℝ) : ℝ :=
+  (P + ∫ y in x..L, f y) / k
+
+/-- The displacement, the primitive of `fixedTractionStrain` from the fixed end `x = 0`. -/
+noncomputable def fixedTractionDisplacement (k L P : ℝ) (f : ℝ → ℝ) (x : ℝ) : ℝ :=
+  ∫ y in (0 : ℝ)..x, fixedTractionStrain k L P f y
+
+/-- For a load continuous on `[0, L]`, the constructed strain is continuous on `[0, L]`. -/
+private lemma continuousOn_fixedTractionStrain {k L P : ℝ} {f : ℝ → ℝ} (hL : 0 < L)
+    (hf : ContinuousOn f (Set.Icc 0 L)) :
+    ContinuousOn (fixedTractionStrain k L P f) (Set.Icc 0 L) := by
+  have hL0 : (0 : ℝ) ≤ L := le_of_lt hL
+  have huIcc : Set.uIcc (0 : ℝ) L = Set.Icc 0 L := Set.uIcc_of_le hL0
+  have hf_uIcc : ContinuousOn f (Set.uIcc 0 L) := by simpa [huIcc] using hf
+  have hint : MeasureTheory.IntegrableOn f (Set.uIcc 0 L) MeasureTheory.volume :=
+    hf_uIcc.integrableOn_uIcc
+  have hprim : ContinuousOn (fun x => ∫ y in x..L, f y) (Set.uIcc 0 L) :=
+    intervalIntegral.continuousOn_primitive_interval_left hint
+  have hprim' : ContinuousOn (fun x => ∫ y in x..L, f y) (Set.Icc 0 L) := by
+    simpa [huIcc] using hprim
+  have hadd : ContinuousOn (fun x => P + ∫ y in x..L, f y) (Set.Icc 0 L) :=
+    hprim'.const_add P
+  have hdiv : ContinuousOn (fun x => (P + ∫ y in x..L, f y) / k) (Set.Icc 0 L) :=
+    hadd.div_const k
+  change ContinuousOn (fun x => (P + ∫ y in x..L, f y) / k) (Set.Icc 0 L)
+  exact hdiv
+
+/-- The constructed displacement has derivative `fixedTractionStrain k L P f x` within `[0, L]`
+at every `x ∈ [0, L]`. -/
+private lemma hasDerivWithinAt_fixedTractionDisplacement {k L P : ℝ} {f : ℝ → ℝ} (hL : 0 < L)
+    (hf : ContinuousOn f (Set.Icc 0 L)) (x : ℝ) (hx : x ∈ Set.Icc (0 : ℝ) L) :
+    HasDerivWithinAt (fixedTractionDisplacement k L P f) (fixedTractionStrain k L P f x)
+      (Set.Icc 0 L) x := by
+  have : Fact (x ∈ Set.Icc (0 : ℝ) L) := Fact.mk hx
+  have hstr : ContinuousOn (fixedTractionStrain k L P f) (Set.Icc 0 L) :=
+    continuousOn_fixedTractionStrain hL hf
+  have hcont : ContinuousWithinAt (fixedTractionStrain k L P f) (Set.Icc 0 L) x :=
+    hstr.continuousWithinAt hx
+  have hmeas := ContinuousOn.stronglyMeasurableAtFilter_nhdsWithin
+    (μ:=MeasureTheory.volume) hstr measurableSet_Icc x
+  have hx0 : (0 : ℝ) ≤ x := hx.1
+  have hxL : x ≤ L := hx.2
+  have hsub : Set.Icc (0 : ℝ) x ⊆ Set.Icc 0 L := Set.Icc_subset_Icc_right hxL
+  have hstr0 : ContinuousOn (fixedTractionStrain k L P f) (Set.Icc 0 x) := hstr.mono hsub
+  have hint := ContinuousOn.intervalIntegrable_of_Icc (μ:=MeasureTheory.volume) hx0 hstr0
+  have h : HasDerivWithinAt (fun u => ∫ y in (0 : ℝ)..u, fixedTractionStrain k L P f y)
+      (fixedTractionStrain k L P f x) (Set.Icc 0 L) x :=
+    intervalIntegral.integral_hasDerivWithinAt_right hint hmeas hcont
+  change HasDerivWithinAt (fun u => ∫ y in (0 : ℝ)..u, fixedTractionStrain k L P f y)
+    (fixedTractionStrain k L P f x) (Set.Icc 0 L) x
+  exact h
+
+/-- The constructed strain has derivative `-f x / k` within `[0, L]` at every `x ∈ [0, L]`. -/
+private lemma hasDerivWithinAt_fixedTractionStrain {k L P : ℝ} {f : ℝ → ℝ}
+    (hf : ContinuousOn f (Set.Icc 0 L)) (x : ℝ) (hx : x ∈ Set.Icc (0 : ℝ) L) :
+    HasDerivWithinAt (fixedTractionStrain k L P f) (-f x / k) (Set.Icc 0 L) x := by
+  have : Fact (x ∈ Set.Icc (0 : ℝ) L) := Fact.mk hx
+  have hcont : ContinuousWithinAt f (Set.Icc 0 L) x := hf.continuousWithinAt hx
+  have hmeas := ContinuousOn.stronglyMeasurableAtFilter_nhdsWithin
+    (μ:=MeasureTheory.volume) hf measurableSet_Icc x
+  have hx0 : (0 : ℝ) ≤ x := hx.1
+  have hxL : x ≤ L := hx.2
+  have hsub : Set.Icc x L ⊆ Set.Icc (0 : ℝ) L := Set.Icc_subset_Icc_left hx0
+  have hf0 : ContinuousOn f (Set.Icc x L) := hf.mono hsub
+  have hint := ContinuousOn.intervalIntegrable_of_Icc (μ:=MeasureTheory.volume) hxL hf0
+  have hG : HasDerivWithinAt (fun u => ∫ y in u..L, f y) (-f x) (Set.Icc 0 L) x :=
+    intervalIntegral.integral_hasDerivWithinAt_left hint hmeas hcont
+  have hPG : HasDerivWithinAt (fun u => P + ∫ y in u..L, f y) (-f x) (Set.Icc 0 L) x :=
+    HasDerivWithinAt.const_add P hG
+  have hstr : HasDerivWithinAt (fun u => (P + ∫ y in u..L, f y) / k) (-f x / k)
+      (Set.Icc 0 L) x :=
+    HasDerivWithinAt.div_const hPG k
+  change HasDerivWithinAt (fun u => (P + ∫ y in u..L, f y) / k) (-f x / k) (Set.Icc 0 L) x
+  exact hstr
+
+/-- For a load continuous on `[0, L]`, the constructed strain is `C¹` on `[0, L]`. -/
+private lemma contDiffOn_fixedTractionStrain {k L P : ℝ} {f : ℝ → ℝ} (hL : 0 < L)
+    (hf : ContinuousOn f (Set.Icc 0 L)) :
+    ContDiffOn ℝ 1 (fixedTractionStrain k L P f) (Set.Icc 0 L) := by
+  have hU : UniqueDiffOn ℝ (Set.Icc 0 L) := uniqueDiffOn_Icc hL
+  rw [contDiffOn_one_iff_derivWithin hU]
+  constructor
+  · intro x hx
+    exact (hasDerivWithinAt_fixedTractionStrain hf x hx).differentiableWithinAt
+  · have h2 : ∀ x ∈ Set.Icc (0 : ℝ) L,
+        derivWithin (fixedTractionStrain k L P f) (Set.Icc 0 L) x = -f x / k := by
+      intro x hx
+      exact (hasDerivWithinAt_fixedTractionStrain hf x hx).derivWithin
+        (hU.uniqueDiffWithinAt hx)
+    have hfc : ContinuousOn (fun x => -f x / k) (Set.Icc 0 L) := hf.neg.div_const k
+    exact hfc.congr h2
+
+/-- For a load continuous on `[0, L]`, the constructed displacement is `C²` on `[0, L]`. -/
+private lemma contDiffOn_two_fixedTractionDisplacement {k L P : ℝ} {f : ℝ → ℝ} (hL : 0 < L)
+    (hf : ContinuousOn f (Set.Icc 0 L)) :
+    ContDiffOn ℝ 2 (fixedTractionDisplacement k L P f) (Set.Icc 0 L) := by
+  have hU : UniqueDiffOn ℝ (Set.Icc 0 L) := uniqueDiffOn_Icc hL
+  have hstr1 : ContDiffOn ℝ 1 (fixedTractionStrain k L P f) (Set.Icc 0 L) :=
+    contDiffOn_fixedTractionStrain hL hf
+  have hEq : ∀ x ∈ Set.Icc (0 : ℝ) L,
+      derivWithin (fixedTractionDisplacement k L P f) (Set.Icc 0 L) x =
+        fixedTractionStrain k L P f x := by
+    intro x hx
+    exact (hasDerivWithinAt_fixedTractionDisplacement hL hf x hx).derivWithin
+      (hU.uniqueDiffWithinAt hx)
+  have hC1 : ContDiffOn ℝ 1
+      (derivWithin (fixedTractionDisplacement k L P f) (Set.Icc 0 L)) (Set.Icc 0 L) :=
+    hstr1.congr hEq
+  have hdiff : DifferentiableOn ℝ (fixedTractionDisplacement k L P f) (Set.Icc 0 L) := by
+    intro x hx
+    exact (hasDerivWithinAt_fixedTractionDisplacement hL hf x hx).differentiableWithinAt
+  change ContDiffOn ℝ (1 + 1) (fixedTractionDisplacement k L P f) (Set.Icc 0 L)
+  rw [contDiffOn_succ_iff_derivWithin hU]
+  exact ⟨hdiff, by simp, hC1⟩
+
+/-- The constructed displacement has derivative `fixedTractionStrain` within `[0, L]`. -/
+lemma derivWithin_fixedTractionDisplacement {k L P : ℝ} {f : ℝ → ℝ} (hL : 0 < L)
+    (hf : ContinuousOn f (Set.Icc 0 L)) :
+    ∀ x ∈ Set.Icc (0 : ℝ) L, derivWithin (fixedTractionDisplacement k L P f) (Set.Icc 0 L) x =
+      fixedTractionStrain k L P f x := by
+  intro x hx
+  have hU : UniqueDiffOn ℝ (Set.Icc 0 L) := uniqueDiffOn_Icc hL
+  have hU' : UniqueDiffWithinAt ℝ (Set.Icc 0 L) x := hU.uniqueDiffWithinAt hx
+  exact (hasDerivWithinAt_fixedTractionDisplacement hL hf x hx).derivWithin hU'
+
+/-- The strain decreases at the rate of the load: `(u')' = -f / k` within `[0, L]`. -/
+lemma derivWithin_fixedTractionStrain {k L P : ℝ} {f : ℝ → ℝ} (hL : 0 < L)
+    (hf : ContinuousOn f (Set.Icc 0 L)) :
+    ∀ x ∈ Set.Icc (0 : ℝ) L, derivWithin (fixedTractionStrain k L P f) (Set.Icc 0 L) x =
+      -f x / k := by
+  intro x hx
+  have hU : UniqueDiffOn ℝ (Set.Icc 0 L) := uniqueDiffOn_Icc hL
+  have hU' : UniqueDiffWithinAt ℝ (Set.Icc 0 L) x := hU.uniqueDiffWithinAt hx
+  exact (hasDerivWithinAt_fixedTractionStrain hf x hx).derivWithin hU'
+
+/-- Existence: for a load continuous on `[0, L]` the constructed displacement solves the
+fixed-traction problem. -/
+lemma isFixedTractionSolution_fixedTractionDisplacement {k L P : ℝ} {f : ℝ → ℝ} (hL : 0 < L)
+    (hk : k ≠ 0) (hf : ContinuousOn f (Set.Icc 0 L)) :
+    IsFixedTractionSolution k L P f (fixedTractionDisplacement k L P f) := by
+  have hC2 : ContDiffOn ℝ 2 (fixedTractionDisplacement k L P f) (Set.Icc 0 L) :=
+    contDiffOn_two_fixedTractionDisplacement hL hf
+  have hDu : ∀ x ∈ Set.Icc (0 : ℝ) L,
+      derivWithin (fixedTractionDisplacement k L P f) (Set.Icc 0 L) x =
+        fixedTractionStrain k L P f x :=
+    derivWithin_fixedTractionDisplacement hL hf
+  have hDs : ∀ x ∈ Set.Icc (0 : ℝ) L,
+      derivWithin (fixedTractionStrain k L P f) (Set.Icc 0 L) x = -f x / k :=
+    derivWithin_fixedTractionStrain hL hf
+  have h2 : ∀ x ∈ Set.Icc (0 : ℝ) L,
+      iteratedDerivWithin 2 (fixedTractionDisplacement k L P f) (Set.Icc 0 L) x =
+        -f x / k := by
+    intro x hx
+    have hiter : iteratedDerivWithin 2 (fixedTractionDisplacement k L P f) (Set.Icc 0 L) x =
+        derivWithin (derivWithin (fixedTractionDisplacement k L P f) (Set.Icc 0 L))
+          (Set.Icc 0 L) x := by
+      have h1 : iteratedDerivWithin (1 + 1) (fixedTractionDisplacement k L P f)
+          (Set.Icc 0 L) x =
+          derivWithin (derivWithin (fixedTractionDisplacement k L P f) (Set.Icc 0 L))
+            (Set.Icc 0 L) x := by
+        have hs := congrFun (iteratedDerivWithin_succ (n:=1)
+          (f:=fixedTractionDisplacement k L P f) (s:=Set.Icc 0 L)) x
+        have ho : iteratedDerivWithin 1 (fixedTractionDisplacement k L P f) (Set.Icc 0 L) =
+            derivWithin (fixedTractionDisplacement k L P f) (Set.Icc 0 L) :=
+          iteratedDerivWithin_one
+        rw [ho] at hs
+        exact hs
+      exact h1
+    rw [hiter]
+    have hcongr : derivWithin (derivWithin (fixedTractionDisplacement k L P f) (Set.Icc 0 L))
+        (Set.Icc 0 L) x =
+        derivWithin (fixedTractionStrain k L P f) (Set.Icc 0 L) x :=
+      derivWithin_congr hDu (hDu x hx)
+    rw [hcongr]
+    exact hDs x hx
+  refine ⟨hC2, ?_, ?_, ?_⟩
+  · intro x hx
+    have hx2 := h2 x hx
+    rw [hx2]
+    field_simp
+  · change (∫ y in (0 : ℝ)..(0 : ℝ), fixedTractionStrain k L P f y) = 0
+    exact intervalIntegral.integral_same
+  · have hLmem : L ∈ Set.Icc (0 : ℝ) L := ⟨le_of_lt hL, le_rfl⟩
+    have hDL := hDu L hLmem
+    rw [hDL]
+    change k * ((P + ∫ y in L..L, f y) / k) = P
+    rw [intervalIntegral.integral_same]
+    field_simp
+    ring
+
+/-- The load of a fixed-traction solution is continuous on `[0, L]`, being `-(k * u'')`. -/
+private lemma continuousOn_f_of_fixedTraction {k L P : ℝ} {f u : ℝ → ℝ} (hL : 0 < L)
+    (hu : IsFixedTractionSolution k L P f u) : ContinuousOn f (Set.Icc 0 L) := by
+  have hU : UniqueDiffOn ℝ (Set.Icc 0 L) := uniqueDiffOn_Icc hL
+  obtain ⟨huC, heq, _hu0, _hend⟩ := hu
+  have hiter : ContinuousOn (iteratedDerivWithin 2 u (Set.Icc 0 L)) (Set.Icc 0 L) :=
+    huC.continuousOn_iteratedDerivWithin le_rfl hU
+  have hkmul : ContinuousOn (fun x => k * iteratedDerivWithin 2 u (Set.Icc 0 L) x)
+      (Set.Icc 0 L) :=
+    hiter.const_mul k
+  have hneg : ContinuousOn (fun x => -(k * iteratedDerivWithin 2 u (Set.Icc 0 L) x))
+      (Set.Icc 0 L) :=
+    hkmul.neg
+  have hEq : ∀ x ∈ Set.Icc (0 : ℝ) L,
+      f x = -(k * iteratedDerivWithin 2 u (Set.Icc 0 L) x) := by
+    intro x hx
+    exact (heq x hx).symm
+  exact hneg.congr hEq
+
+/-- Inside `(0, L)`, a function that is `C²` on `[0, L]` has its derivative within `[0, L]` as
+its derivative. -/
+private lemma hasDerivAt_of_contDiffOn_two {L : ℝ} {u : ℝ → ℝ}
+    (huC : ContDiffOn ℝ 2 u (Set.Icc 0 L)) {y : ℝ} (hy : y ∈ Set.Ioo (0 : ℝ) L) :
+    HasDerivAt u (derivWithin u (Set.Icc 0 L) y) y := by
+  have hy_mem : y ∈ Set.Icc (0 : ℝ) L := ⟨le_of_lt hy.1, le_of_lt hy.2⟩
+  have hdiff : DifferentiableOn ℝ u (Set.Icc 0 L) := huC.differentiableOn (by simp)
+  have hwithin := (hdiff y hy_mem).hasDerivWithinAt
+  exact hwithin.hasDerivAt (Icc_mem_nhds hy.1 hy.2)
+
+/-- Inside `(0, L)`, the derivative within `[0, L]` of a function that is `C²` on `[0, L]` has
+the second derivative within `[0, L]` as its derivative. -/
+private lemma hasDerivAt_second_of_contDiffOn_two {L : ℝ} {u : ℝ → ℝ} (hL : 0 < L)
+    (huC : ContDiffOn ℝ 2 u (Set.Icc 0 L)) {y : ℝ} (hy : y ∈ Set.Ioo (0 : ℝ) L) :
+    HasDerivAt (derivWithin u (Set.Icc 0 L))
+      (iteratedDerivWithin 2 u (Set.Icc 0 L) y) y := by
+  have hU : UniqueDiffOn ℝ (Set.Icc 0 L) := uniqueDiffOn_Icc hL
+  have hC1 : ContDiffOn ℝ 1 (derivWithin u (Set.Icc 0 L)) (Set.Icc 0 L) :=
+    huC.derivWithin hU le_rfl
+  have hy_mem : y ∈ Set.Icc (0 : ℝ) L := ⟨le_of_lt hy.1, le_of_lt hy.2⟩
+  have hdiff : DifferentiableOn ℝ (derivWithin u (Set.Icc 0 L)) (Set.Icc 0 L) :=
+    hC1.differentiableOn (by simp)
+  have hwithin := (hdiff y hy_mem).hasDerivWithinAt
+  have hat := hwithin.hasDerivAt (Icc_mem_nhds hy.1 hy.2)
+  have hiter : derivWithin (derivWithin u (Set.Icc 0 L)) (Set.Icc 0 L) y =
+      iteratedDerivWithin 2 u (Set.Icc 0 L) y := by
+    have h1 : derivWithin (derivWithin u (Set.Icc 0 L)) (Set.Icc 0 L) y =
+        iteratedDerivWithin (1 + 1) u (Set.Icc 0 L) y := by
+      have hs := congrFun (iteratedDerivWithin_succ (n:=1) (f:=u) (s:=Set.Icc 0 L)) y
+      have ho : iteratedDerivWithin 1 u (Set.Icc 0 L) = derivWithin u (Set.Icc 0 L) :=
+        iteratedDerivWithin_one
+      rw [ho] at hs
+      exact hs.symm
+    exact h1
+  rw [hiter] at hat
+  exact hat
+
+/-- Load path: in every solution the internal axial force at `x` is the end force plus the load
+carried between `x` and `L`, `k * u' x = P + ∫ y in x..L, f y`. -/
+lemma IsFixedTractionSolution.axialForce_eq {k L P : ℝ} {f u : ℝ → ℝ}
+    (hu : IsFixedTractionSolution k L P f u) :
+    ∀ x ∈ Set.Icc (0 : ℝ) L, k * derivWithin u (Set.Icc 0 L) x = P + ∫ y in x..L, f y := by
+  by_cases hLpos : 0 < L
+  · have hU : UniqueDiffOn ℝ (Set.Icc 0 L) := uniqueDiffOn_Icc hLpos
+    have hf : ContinuousOn f (Set.Icc 0 L) :=
+      continuousOn_f_of_fixedTraction hLpos hu
+    obtain ⟨huC, heq, _hu0, hend⟩ := hu
+    have hC1 : ContDiffOn ℝ 1 (derivWithin u (Set.Icc 0 L)) (Set.Icc 0 L) :=
+      huC.derivWithin hU le_rfl
+    have hDu_cont : ContinuousOn (derivWithin u (Set.Icc 0 L)) (Set.Icc 0 L) :=
+      hC1.continuousOn
+    have hg_cont_full : ContinuousOn (fun y => k * derivWithin u (Set.Icc 0 L) y)
+        (Set.Icc 0 L) :=
+      hDu_cont.const_mul k
+    have hneg_cont_full : ContinuousOn (fun y => -f y) (Set.Icc 0 L) := hf.neg
+    intro x hx
+    have hxL : x ≤ L := hx.2
+    have hx0 : (0 : ℝ) ≤ x := hx.1
+    have hsub : Set.Icc x L ⊆ Set.Icc (0 : ℝ) L := Set.Icc_subset_Icc_left hx0
+    have hg_cont : ContinuousOn (fun y => k * derivWithin u (Set.Icc 0 L) y)
+        (Set.Icc x L) :=
+      hg_cont_full.mono hsub
+    have hderiv : ∀ y ∈ Set.Ioo x L,
+        HasDerivAt (fun y => k * derivWithin u (Set.Icc 0 L) y) (-f y) y := by
+      intro y hy
+      have hy0 : (0 : ℝ) < y := lt_of_le_of_lt hx0 hy.1
+      have hyL : y < L := hy.2
+      have hyIoo : y ∈ Set.Ioo (0 : ℝ) L := ⟨hy0, hyL⟩
+      have hy_mem : y ∈ Set.Icc (0 : ℝ) L := ⟨le_of_lt hy0, le_of_lt hyL⟩
+      have h2nd := hasDerivAt_second_of_contDiffOn_two hLpos huC hyIoo
+      have hkmul := HasDerivAt.const_mul k h2nd
+      have heqy := heq y hy_mem
+      have hval : k * iteratedDerivWithin 2 u (Set.Icc 0 L) y = -f y := by linarith
+      rw [hval] at hkmul
+      exact hkmul
+    have hneg_cont : ContinuousOn (fun y => -f y) (Set.Icc x L) :=
+      hneg_cont_full.mono hsub
+    have hint := ContinuousOn.intervalIntegrable_of_Icc (μ:=MeasureTheory.volume) hxL
+      hneg_cont
+    have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le hxL hg_cont hderiv hint
+    have hneg_eq : (∫ y in x..L, -f y) = -(∫ y in x..L, f y) :=
+      intervalIntegral.integral_neg
+    rw [hneg_eq] at hFTC
+    rw [hend] at hFTC
+    linarith
+  · have hLle : L ≤ 0 := le_of_not_gt hLpos
+    intro x hx
+    have hx0 : (0 : ℝ) ≤ x := hx.1
+    have hxL : x ≤ L := hx.2
+    have h0L : (0 : ℝ) ≤ L := hx0.trans hxL
+    have hL0 : L = 0 := le_antisymm hLle h0L
+    have hxL0 : x ≤ 0 := by rw [hL0] at hxL; exact hxL
+    have hx0' : x = 0 := le_antisymm hxL0 hx0
+    subst hL0
+    subst hx0'
+    have hend : k * derivWithin u (Set.Icc 0 0) 0 = P := hu.2.2.2
+    rw [intervalIntegral.integral_same]
+    simpa using hend
+
+/-- Every solution equals the constructed displacement on `[0, L]`. -/
+lemma IsFixedTractionSolution.eqOn_fixedTractionDisplacement {k L P : ℝ} {f u : ℝ → ℝ}
+    (hk : k ≠ 0) (hu : IsFixedTractionSolution k L P f u) :
+    Set.EqOn u (fixedTractionDisplacement k L P f) (Set.Icc 0 L) := by
+  by_cases hLpos : 0 < L
+  · have hf : ContinuousOn f (Set.Icc 0 L) :=
+      continuousOn_f_of_fixedTraction hLpos hu
+    have haxial := hu.axialForce_eq
+    obtain ⟨huC, _heq, hu0, _hend⟩ := hu
+    have hconstr : IsFixedTractionSolution k L P f (fixedTractionDisplacement k L P f) :=
+      isFixedTractionSolution_fixedTractionDisplacement hLpos hk hf
+    obtain ⟨hcC, _heqC, hc0, _hendC⟩ := hconstr
+    have hderiv_eq : ∀ x ∈ Set.Icc (0 : ℝ) L,
+        derivWithin u (Set.Icc 0 L) x = fixedTractionStrain k L P f x := by
+      intro x hx
+      have hax := haxial x hx
+      have hstr : k * fixedTractionStrain k L P f x = P + ∫ y in x..L, f y := by
+        change k * ((P + ∫ y in x..L, f y) / k) = P + ∫ y in x..L, f y
+        field_simp
+      have hkk : k * derivWithin u (Set.Icc 0 L) x =
+          k * fixedTractionStrain k L P f x := by
+        rw [hax, hstr]
+      exact mul_left_cancel₀ hk hkk
+    intro x hx
+    have hxL : x ≤ L := hx.2
+    have hx0 : (0 : ℝ) ≤ x := hx.1
+    have hsub_full : Set.Icc (0 : ℝ) x ⊆ Set.Icc 0 L := Set.Icc_subset_Icc_right hxL
+    have hu_cont : ContinuousOn u (Set.Icc (0 : ℝ) x) := huC.continuousOn.mono hsub_full
+    have hu_deriv : ∀ y ∈ Set.Ioo (0 : ℝ) x,
+        HasDerivAt u (derivWithin u (Set.Icc 0 L) y) y := by
+      intro y hy
+      have hyL : y < L := lt_of_lt_of_le hy.2 hxL
+      exact hasDerivAt_of_contDiffOn_two huC ⟨hy.1, hyL⟩
+    have hC1u : ContDiffOn ℝ 1 (derivWithin u (Set.Icc 0 L)) (Set.Icc 0 L) :=
+      huC.derivWithin (uniqueDiffOn_Icc hLpos) le_rfl
+    have hu'_cont : ContinuousOn (derivWithin u (Set.Icc 0 L)) (Set.Icc (0 : ℝ) x) :=
+      hC1u.continuousOn.mono hsub_full
+    have hu'_int := ContinuousOn.intervalIntegrable_of_Icc (μ:=MeasureTheory.volume) hx0
+      hu'_cont
+    have huFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le hx0 hu_cont hu_deriv
+      hu'_int
+    have hc_cont : ContinuousOn (fixedTractionDisplacement k L P f) (Set.Icc (0 : ℝ) x) :=
+      hcC.continuousOn.mono hsub_full
+    have hc_deriv : ∀ y ∈ Set.Ioo (0 : ℝ) x,
+        HasDerivAt (fixedTractionDisplacement k L P f)
+          (fixedTractionStrain k L P f y) y := by
+      intro y hy
+      have hyL : y < L := lt_of_lt_of_le hy.2 hxL
+      have hy_mem : y ∈ Set.Icc (0 : ℝ) L := ⟨le_of_lt hy.1, le_of_lt hyL⟩
+      have hat := hasDerivAt_of_contDiffOn_two hcC ⟨hy.1, hyL⟩
+      have hdy : derivWithin (fixedTractionDisplacement k L P f) (Set.Icc 0 L) y =
+          fixedTractionStrain k L P f y :=
+        derivWithin_fixedTractionDisplacement hLpos hf y hy_mem
+      rw [hdy] at hat
+      exact hat
+    have hstr_cont : ContinuousOn (fixedTractionStrain k L P f) (Set.Icc (0 : ℝ) x) :=
+      (continuousOn_fixedTractionStrain hLpos hf).mono hsub_full
+    have hstr_int := ContinuousOn.intervalIntegrable_of_Icc (μ:=MeasureTheory.volume) hx0
+      hstr_cont
+    have hcFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le hx0 hc_cont hc_deriv
+      hstr_int
+    have hint_eq : (∫ y in (0 : ℝ)..x, derivWithin u (Set.Icc 0 L) y) =
+        (∫ y in (0 : ℝ)..x, fixedTractionStrain k L P f y) := by
+      apply intervalIntegral.integral_congr
+      have huIcc : Set.uIcc (0 : ℝ) x = Set.Icc 0 x := Set.uIcc_of_le hx0
+      rw [huIcc]
+      intro y hy
+      exact hderiv_eq y (hsub_full hy)
+    rw [hu0] at huFTC
+    rw [hc0] at hcFTC
+    linarith
+  · have hLle : L ≤ 0 := le_of_not_gt hLpos
+    intro x hx
+    have hx0 : (0 : ℝ) ≤ x := hx.1
+    have hxL : x ≤ L := hx.2
+    have h0L : (0 : ℝ) ≤ L := hx0.trans hxL
+    have hL0 : L = 0 := le_antisymm hLle h0L
+    have hxL0 : x ≤ 0 := by rw [hL0] at hxL; exact hxL
+    have hx0' : x = 0 := le_antisymm hxL0 hx0
+    subst hL0
+    subst hx0'
+    have hu0 : u 0 = 0 := hu.2.2.1
+    have hc0 : fixedTractionDisplacement k 0 P f 0 = 0 := by
+      change (∫ y in (0 : ℝ)..(0 : ℝ), fixedTractionStrain k 0 P f y) = 0
+      exact intervalIntegral.integral_same
+    rw [hu0, hc0]
+
+/-- Uniqueness: two solutions agree on `[0, L]`. -/
+lemma IsFixedTractionSolution.eqOn {k L P : ℝ} {f u v : ℝ → ℝ} (hk : k ≠ 0)
+    (hu : IsFixedTractionSolution k L P f u) (hv : IsFixedTractionSolution k L P f v) :
+    Set.EqOn u v (Set.Icc 0 L) := by
+  have huE := IsFixedTractionSolution.eqOn_fixedTractionDisplacement hk hu
+  have hvE := IsFixedTractionSolution.eqOn_fixedTractionDisplacement hk hv
+  intro x hx
+  have hux : u x = fixedTractionDisplacement k L P f x := huE hx
+  have hvx : v x = fixedTractionDisplacement k L P f x := hvE hx
+  rw [hux, hvx]
+
+/-- Torsional port: a circular shaft fixed at `x = 0`, with distributed torque `t` and end torque
+`T` at `x = L`, is the same problem with `k = GJ`. Its twist equals
+`fixedTractionDisplacement GJ L T t` on `[0, L]` and its internal torque is
+`GJ * φ' x = T + ∫ y in x..L, t y`, by the bar lemmas; no second solver is used. -/
+lemma IsFixedTractionSolution.twist {GJ L T : ℝ} {t φ : ℝ → ℝ} (hGJ : 0 < GJ)
+    (hφ : IsFixedTractionSolution GJ L T t φ) :
+    Set.EqOn φ (fixedTractionDisplacement GJ L T t) (Set.Icc 0 L) ∧
+      ∀ x ∈ Set.Icc (0 : ℝ) L, GJ * derivWithin φ (Set.Icc 0 L) x = T + ∫ y in x..L, t y := by
+  have hk : GJ ≠ 0 := ne_of_gt hGJ
+  constructor
+  · exact IsFixedTractionSolution.eqOn_fixedTractionDisplacement hk hφ
+  · exact IsFixedTractionSolution.axialForce_eq hφ
+
+/-! ## H. Fixed-traction bar: uniform load -/
+
+/-- Uniform load `q`: the constructed displacement is the end-force term `P * x / k` plus the
+fixed-free displacement. -/
+lemma fixedTractionDisplacement_const (k L P q x : ℝ) :
+    fixedTractionDisplacement k L P (fun _ => q) x = P * x / k + fixedFreeDisplacement k L q x := by
+  have hstrain : ∀ y : ℝ, fixedTractionStrain k L P (fun _ => q) y =
+      (P + (L - y) * q) / k := by
+    intro y
+    change (P + ∫ z in y..L, (fun _ => q) z) / k = _
+    rw [intervalIntegral.integral_const, smul_eq_mul]
+  have hint_eq : (∫ y in (0 : ℝ)..x, fixedTractionStrain k L P (fun _ => q) y) =
+      (∫ y in (0 : ℝ)..x, (P + (L - y) * q) / k) := by
+    apply intervalIntegral.integral_congr
+    intro y _
+    exact hstrain y
+  have hcont_aff : Continuous (fun y : ℝ => (P + (L - y) * q) / k) := by fun_prop
+  have hint_aff := hcont_aff.intervalIntegrable (μ:=MeasureTheory.volume) 0 x
+  have hderiv_G : ∀ y ∈ Set.uIcc (0 : ℝ) x,
+      HasDerivAt (fun y : ℝ => ((P + q * L) * y - q * (y * y) / 2) / k)
+        ((P + (L - y) * q) / k) y := by
+    intro y _
+    have h_id : HasDerivAt (fun y : ℝ => y) (1 : ℝ) y := hasDerivAt_id y
+    have h_yy : HasDerivAt (fun y : ℝ => y * y) (1 * y + y * 1) y := h_id.mul h_id
+    have h_qyy : HasDerivAt (fun y : ℝ => q * (y * y)) (q * (1 * y + y * 1)) y :=
+      HasDerivAt.const_mul q h_yy
+    have h_qyy2 : HasDerivAt (fun y : ℝ => q * (y * y) / 2) (q * (1 * y + y * 1) / 2) y :=
+      HasDerivAt.div_const h_qyy 2
+    have h_Ay : HasDerivAt (fun y : ℝ => (P + q * L) * y) ((P + q * L) * 1) y :=
+      HasDerivAt.const_mul (P + q * L) h_id
+    have h_sub : HasDerivAt (fun y : ℝ => (P + q * L) * y - q * (y * y) / 2)
+        ((P + q * L) * 1 - q * (1 * y + y * 1) / 2) y :=
+      h_Ay.sub h_qyy2
+    have h_G : HasDerivAt (fun y : ℝ => ((P + q * L) * y - q * (y * y) / 2) / k)
+        (((P + q * L) * 1 - q * (1 * y + y * 1) / 2) / k) y :=
+      HasDerivAt.div_const h_sub k
+    have hval : (((P + q * L) * 1 - q * (1 * y + y * 1) / 2) / k) =
+        ((P + (L - y) * q) / k) := by ring
+    rw [hval] at h_G
+    exact h_G
+  have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv_G hint_aff
+  have hLHS : fixedTractionDisplacement k L P (fun _ => q) x =
+      ∫ y in (0 : ℝ)..x, fixedTractionStrain k L P (fun _ => q) y := rfl
+  rw [hLHS, hint_eq, hFTC]
+  change ((P + q * L) * x - q * (x * x) / 2) / k -
+      (((P + q * L) * 0 - q * (0 * 0) / 2) / k) =
+      P * x / k + q * x * (2 * L - x) / (2 * k)
+  ring
+
+/-! ## I. Boundary example: two free ends -/
+
+/-- Free-free problem on `[0, L]`: end force `P₀` at `x = 0`, where the outward normal is `-x` so
+the end force is `-(k * u' 0)`, and end force `P₁ = k * u' L` at `x = L`. -/
+def IsFreeFreeSolution (k L P₀ P₁ : ℝ) (f u : ℝ → ℝ) : Prop :=
+  ContDiffOn ℝ 2 u (Set.Icc 0 L) ∧
+    (∀ x ∈ Set.Icc (0 : ℝ) L, -(k * iteratedDerivWithin 2 u (Set.Icc 0 L) x) = f x) ∧
+    -(k * derivWithin u (Set.Icc 0 L) 0) = P₀ ∧ k * derivWithin u (Set.Icc 0 L) L = P₁
+
+/-- Two free ends admit a rigid translation: a free-free solution shifted by any constant `c` is
+again a solution. -/
+lemma IsFreeFreeSolution.add_const {k L P₀ P₁ : ℝ} {f u : ℝ → ℝ}
+    (hu : IsFreeFreeSolution k L P₀ P₁ f u) (c : ℝ) :
+    IsFreeFreeSolution k L P₀ P₁ f (fun x => u x + c) := by
+  obtain ⟨huC, heq, h0, hL⟩ := hu
+  have hC : ContDiffOn ℝ 2 (fun x => u x + c) (Set.Icc 0 L) :=
+    huC.add contDiffOn_const
+  refine ⟨hC, ?_, ?_, ?_⟩
+  · intro x hx
+    have hiter : iteratedDerivWithin 2 (fun x => u x + c) (Set.Icc 0 L) x =
+        iteratedDerivWithin 2 u (Set.Icc 0 L) x := by
+      have hfun : (fun x : ℝ => u x + c) = (fun x : ℝ => c + u x) := by
+        ext y
+        exact add_comm _ _
+      rw [hfun]
+      exact iteratedDerivWithin_const_add (by norm_num : 0 < 2) c
+    rw [hiter]
+    exact heq x hx
+  · have hd0 : derivWithin (fun x => u x + c) (Set.Icc 0 L) 0 =
+        derivWithin u (Set.Icc 0 L) 0 :=
+      derivWithin_add_const c
+    rw [hd0]
+    exact h0
+  · have hdL : derivWithin (fun x => u x + c) (Set.Icc 0 L) L =
+        derivWithin u (Set.Icc 0 L) L :=
+      derivWithin_add_const c
+    rw [hdL]
+    exact hL
+
+/-- The load of a free-free solution is continuous on `[0, L]`, being `-(k * u'')`. -/
+private lemma continuousOn_f_of_freeFree {k L P₀ P₁ : ℝ} {f u : ℝ → ℝ} (hL : 0 < L)
+    (hu : IsFreeFreeSolution k L P₀ P₁ f u) : ContinuousOn f (Set.Icc 0 L) := by
+  have hU : UniqueDiffOn ℝ (Set.Icc 0 L) := uniqueDiffOn_Icc hL
+  obtain ⟨huC, heq, _h0, _hL⟩ := hu
+  have hiter : ContinuousOn (iteratedDerivWithin 2 u (Set.Icc 0 L)) (Set.Icc 0 L) :=
+    huC.continuousOn_iteratedDerivWithin le_rfl hU
+  have hkmul : ContinuousOn (fun x => k * iteratedDerivWithin 2 u (Set.Icc 0 L) x)
+      (Set.Icc 0 L) :=
+    hiter.const_mul k
+  have hneg : ContinuousOn (fun x => -(k * iteratedDerivWithin 2 u (Set.Icc 0 L) x))
+      (Set.Icc 0 L) :=
+    hkmul.neg
+  have hEq : ∀ x ∈ Set.Icc (0 : ℝ) L,
+      f x = -(k * iteratedDerivWithin 2 u (Set.Icc 0 L) x) := by
+    intro x hx
+    exact (heq x hx).symm
+  exact hneg.congr hEq
+
+/-- Equilibrium of a free-free bar requires zero net load: `P₀ + P₁ + ∫₀ᴸ f = 0`. -/
+lemma IsFreeFreeSolution.net_load {k L P₀ P₁ : ℝ} {f u : ℝ → ℝ} (hL : 0 < L)
+    (hu : IsFreeFreeSolution k L P₀ P₁ f u) : P₀ + P₁ + ∫ x in (0 : ℝ)..L, f x = 0 := by
+  have hU : UniqueDiffOn ℝ (Set.Icc 0 L) := uniqueDiffOn_Icc hL
+  have hf : ContinuousOn f (Set.Icc 0 L) := continuousOn_f_of_freeFree hL hu
+  obtain ⟨huC, heq, h0, hLend⟩ := hu
+  have hC1 : ContDiffOn ℝ 1 (derivWithin u (Set.Icc 0 L)) (Set.Icc 0 L) :=
+    huC.derivWithin hU le_rfl
+  have hg_cont : ContinuousOn (fun y => k * derivWithin u (Set.Icc 0 L) y)
+      (Set.Icc 0 L) :=
+    hC1.continuousOn.const_mul k
+  have hderiv : ∀ y ∈ Set.Ioo (0 : ℝ) L,
+      HasDerivAt (fun y => k * derivWithin u (Set.Icc 0 L) y) (-f y) y := by
+    intro y hy
+    have hy_mem : y ∈ Set.Icc (0 : ℝ) L := ⟨le_of_lt hy.1, le_of_lt hy.2⟩
+    have h2nd := hasDerivAt_second_of_contDiffOn_two hL huC hy
+    have hkmul := HasDerivAt.const_mul k h2nd
+    have heqy := heq y hy_mem
+    have hval : k * iteratedDerivWithin 2 u (Set.Icc 0 L) y = -f y := by linarith
+    rw [hval] at hkmul
+    exact hkmul
+  have hneg_cont : ContinuousOn (fun y => -f y) (Set.Icc 0 L) := hf.neg
+  have hint := ContinuousOn.intervalIntegrable_of_Icc (μ:=MeasureTheory.volume)
+    (le_of_lt hL) hneg_cont
+  have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le (le_of_lt hL) hg_cont
+    hderiv hint
+  have hneg_eq : (∫ x in (0 : ℝ)..L, -f x) = -(∫ x in (0 : ℝ)..L, f x) :=
+    intervalIntegral.integral_neg
+  rw [hneg_eq] at hFTC
+  have hk0 : k * derivWithin u (Set.Icc 0 L) 0 = -P₀ := by linarith
+  rw [hLend, hk0] at hFTC
+  linarith
 
 end Elasticity.PrismaticMembers
 
