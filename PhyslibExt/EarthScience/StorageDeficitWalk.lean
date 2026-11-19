@@ -55,7 +55,18 @@ Skorokhod map, or periodic wrap.
 - `CSLibExt.Bioinformatics.Alignment.ScoreSignificance.SingleSequence`
   for `lindley`, `walkMax`, `maxSegScore`, and their duality,
   prefix, and maximal-segment identification results.
-- Sequent-peak (Rippl) storage analysis for reservoir sizing.
+- W. Rippl, "The capacity of storage reservoirs for water
+  supply", *Minutes of the Proceedings of the Institution of
+  Civil Engineers* 71 (1883), 270-278: the mass-curve
+  (sequent-peak) construction of required storage from
+  cumulative inflow and release over a finite horizon.
+- V. T. Chow, D. R. Maidment, and L. W. Mays, *Applied
+  Hydrology*, McGraw-Hill, 1988, Section 10.5 (reservoir
+  capacity by the sequent-peak algorithm): the deficit
+  recursion `K_{t+1} = max 0 (K_t + R_t - Q_t)` for an
+  initially full reservoir that spills excess inflow, the
+  finite nonperiodic horizon, and capacity as the maximum
+  deficit over the horizon.
 -/
 
 @[expose] public section
@@ -99,7 +110,7 @@ def worstRequiredStorage {n : ℕ} (R Q : Fin n → ℝ) : ℝ :=
 /-! ## B. Transported Lindley results -/
 
 /-- A prefix of a list is the take of its length. -/
-private theorem take_of_prefix {l s : List ℝ} (h : s <+: l) : l.take s.length = s := by
+private lemma take_of_prefix {l s : List ℝ} (h : s <+: l) : l.take s.length = s := by
   obtain ⟨t, rfl⟩ := h
   rw [List.take_append, List.take_length, Nat.sub_self, List.take_zero, List.append_nil]
 
@@ -111,7 +122,7 @@ theorem requiredStorageAt_zero {n : ℕ} (R Q : Fin n → ℝ) :
 /-- One-step update of required storage, transported from the
 canonical Lindley concatenation rule: append step `t`'s deficit
 and reflect at zero. -/
-private theorem requiredStorageAt_succ_of
+private lemma requiredStorageAt_succ_of
     (hconcat : ∀ (l : List ℝ) (a : ℝ),
       lindley (l ++ [a]) = max 0 (lindley l + a))
     {n : ℕ} (R Q : Fin n → ℝ) {t : ℕ} (ht : t < n) :
@@ -144,7 +155,7 @@ theorem terminalStorageDeficit_eq_at_length {n : ℕ} (R Q : Fin n → ℝ) :
 /-- Duality form, transported from the canonical Lindley/walkMax
 duality: required storage at `t` is the walk maximum of the
 time-reversed first `t` deficits. -/
-private theorem requiredStorageAt_eq_walkMax_reverse_of
+private lemma requiredStorageAt_eq_walkMax_reverse_of
     (hdual : ∀ l : List ℝ, lindley l = walkMax l.reverse)
     {n : ℕ} (R Q : Fin n → ℝ) (t : ℕ) :
     requiredStorageAt R Q t
@@ -155,7 +166,7 @@ private theorem requiredStorageAt_eq_walkMax_reverse_of
 /-- Every suffix deficit is at most the required storage at `t`,
 transported from the canonical prefix bound for `walkMax` and
 the duality. -/
-private theorem suffixDeficitSum_le_requiredStorageAt_of
+private lemma suffixDeficitSum_le_requiredStorageAt_of
     (hdual : ∀ l : List ℝ, lindley l = walkMax l.reverse)
     (hwm : ∀ {s l : List ℝ}, s <+: l → s.sum ≤ walkMax l)
     {n : ℕ} (R Q : Fin n → ℝ) {i t : ℕ} (hi : i ≤ t) (_ht : t ≤ n) :
@@ -178,7 +189,7 @@ from the canonical prefix attainment for `walkMax` and the
 duality. Hence the storage deficit at `t` is exactly the maximum
 suffix deficit over `0 ≤ i ≤ t`, with the maximum including
 zero. -/
-private theorem exists_suffixDeficitSum_eq_requiredStorageAt_of
+private lemma exists_suffixDeficitSum_eq_requiredStorageAt_of
     (hdual : ∀ l : List ℝ, lindley l = walkMax l.reverse)
     (hwm : ∀ l : List ℝ, ∃ p, p <+: l ∧ p.sum = walkMax l)
     {n : ℕ} (R Q : Fin n → ℝ) {t : ℕ} (ht : t ≤ n) :
@@ -213,7 +224,7 @@ theorem suffixDeficitSum_self {n : ℕ} (R Q : Fin n → ℝ) (t : ℕ) :
 
 /-- Required storage is nonnegative: the maximum defining it
 includes the empty suffix. -/
-private theorem requiredStorageAt_nonneg_of
+private lemma requiredStorageAt_nonneg_of
     (hdual : ∀ l : List ℝ, lindley l = walkMax l.reverse)
     (hnn : ∀ l : List ℝ, 0 ≤ walkMax l)
     {n : ℕ} (R Q : Fin n → ℝ) (t : ℕ) :
@@ -225,7 +236,7 @@ private theorem requiredStorageAt_nonneg_of
 /-- Required storage at every time is at most the worst over the
 horizon, and some time attains the worst, transported from the
 canonical maximal-segment/Lindley identification. -/
-private theorem requiredStorageAt_le_worst_and_exists_eq_of
+private lemma requiredStorageAt_le_worst_and_exists_eq_of
     (hmax : ∀ l : List ℝ,
       (∀ p, p <+: l → lindley p ≤ maxSegScore l)
         ∧ ∃ p, p <+: l ∧ lindley p = maxSegScore l)
