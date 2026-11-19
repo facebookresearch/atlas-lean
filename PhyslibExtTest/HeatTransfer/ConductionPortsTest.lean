@@ -289,11 +289,8 @@ section ThermalNetworkFixtures
 
 open ConductionPorts
 
-/-- Two-node fixture: `C = (1, 2)`, `G 0 1 = G 1 0 = 2`, no self-conductance, no inputs, initial
-temperatures `400` and `300`. The pair `T 0 t = 1000/3 + (200/3) e^{-3t}`,
-`T 1 t = 1000/3 - (100/3) e^{-3t}` solves the network equations for every `t`, keeps the stored
-heat at `1000`, and has quadratic-functional rate `-20000` at `t = 0`. -/
-example :
+/-- Derivatives and network equations of the two-node solution, shared by the checks below. -/
+private lemma twoNode_trajectory :
     let C : Fin 2 → ℝ := ![1, 2]
     let G : Fin 2 → Fin 2 → ℝ := ![![0, 2], ![2, 0]]
     let T : Fin 2 → ℝ → ℝ :=
@@ -301,20 +298,9 @@ example :
         fun t => 1000 / 3 - 100 / 3 * Real.exp (-3 * t)]
     let dT : Fin 2 → ℝ → ℝ :=
       ![fun t => -200 * Real.exp (-3 * t), fun t => 100 * Real.exp (-3 * t)]
-    IsThermalNetwork C G ∧
-      (∀ i t, HasDerivAt (T i) (dT i t) t) ∧
-      (∀ i t, C i * dT i t = ∑ j, G i j * (T j t - T i t)) ∧
-      T 0 0 = 400 ∧ T 1 0 = 300 ∧
-      (∀ t, ∑ i, C i * T i t = 1000) ∧
-      -∑ i, ∑ j, G i j * (T i 0 - T j 0) ^ 2 / 2 = -20000 := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · refine ⟨?_, ?_, ?_⟩
-    · intro i
-      fin_cases i <;> simp
-    · intro i j
-      fin_cases i <;> fin_cases j <;> simp
-    · intro i j
-      fin_cases i <;> fin_cases j <;> simp
+    (∀ i t, HasDerivAt (T i) (dT i t) t) ∧
+      ∀ i t, C i * dT i t = ∑ j, G i j * (T j t - T i t) := by
+  refine ⟨?_, ?_⟩
   · intro i t
     fin_cases i
     · simp only [Fin.mk_zero, Matrix.cons_val_zero]
@@ -339,43 +325,124 @@ example :
       ring
     · simp only [Fin.sum_univ_two, Fin.mk_one, Matrix.cons_val_zero, Matrix.cons_val_one]
       ring
-  · have e0 : Real.exp (-3 * (0 : ℝ)) = 1 := by rw [mul_zero, Real.exp_zero]
-    simp only [Matrix.cons_val_zero, e0]
+
+/-- Two-node fixture: `C = (1, 2)`, `G 0 1 = G 1 0 = 2`, no self-conductance, no inputs, initial
+temperatures `400` and `300`. The pair `T 0 t = 1000/3 + (200/3) e^{-3t}`,
+`T 1 t = 1000/3 - (100/3) e^{-3t}` solves the network equations for every `t`, keeps the stored
+heat at `1000`, and has quadratic-functional rate `-20000` at `t = 0`. -/
+example :
+    let C : Fin 2 → ℝ := ![1, 2]
+    let G : Fin 2 → Fin 2 → ℝ := ![![0, 2], ![2, 0]]
+    let T : Fin 2 → ℝ → ℝ :=
+      ![fun t => 1000 / 3 + 200 / 3 * Real.exp (-3 * t),
+        fun t => 1000 / 3 - 100 / 3 * Real.exp (-3 * t)]
+    let dT : Fin 2 → ℝ → ℝ :=
+      ![fun t => -200 * Real.exp (-3 * t), fun t => 100 * Real.exp (-3 * t)]
+    (∀ i, 0 < C i) ∧ (∀ i j, 0 ≤ G i j) ∧ (∀ i j, G i j = G j i) ∧
+      (∀ i t, HasDerivAt (T i) (dT i t) t) ∧
+      (∀ i t, C i * dT i t = ∑ j, G i j * (T j t - T i t)) ∧
+      T 0 0 = 400 ∧ T 1 0 = 300 ∧
+      (∀ t, ∑ i, C i * T i t = 1000) ∧
+      -∑ i, ∑ j, G i j * (T i 0 - T j 0) ^ 2 / 2 = -20000 := by
+  obtain ⟨hT, hbal⟩ := twoNode_trajectory
+  have e0 : Real.exp (-3 * (0 : ℝ)) = 1 := by rw [mul_zero, Real.exp_zero]
+  refine ⟨?_, ?_, ?_, hT, hbal, ?_, ?_, ?_, ?_⟩
+  · intro i
+    fin_cases i <;> simp
+  · intro i j
+    fin_cases i <;> fin_cases j <;> simp
+  · intro i j
+    fin_cases i <;> fin_cases j <;> simp
+  · simp only [Matrix.cons_val_zero, e0]
     norm_num
-  · have e0 : Real.exp (-3 * (0 : ℝ)) = 1 := by rw [mul_zero, Real.exp_zero]
-    simp only [Matrix.cons_val_zero, Matrix.cons_val_one, e0]
+  · simp only [Matrix.cons_val_zero, Matrix.cons_val_one, e0]
     norm_num
   · intro t
     simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
     ring
-  · have e0 : Real.exp (-3 * (0 : ℝ)) = 1 := by rw [mul_zero, Real.exp_zero]
+  · simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one, e0]
+    norm_num
+
+/-- Consumers on the two-node solution: the storage balance gives stored-heat derivative `0` at
+every time, and the quadratic identity gives the derivative `-20000` at `t = 0`. -/
+example :
+    let C : Fin 2 → ℝ := ![1, 2]
+    let T : Fin 2 → ℝ → ℝ :=
+      ![fun t => 1000 / 3 + 200 / 3 * Real.exp (-3 * t),
+        fun t => 1000 / 3 - 100 / 3 * Real.exp (-3 * t)]
+    (∀ t, HasDerivAt (fun τ => ∑ i, C i * T i τ) 0 t) ∧
+      HasDerivAt (fun τ => ∑ i, C i * T i τ ^ 2 / 2) (-20000) 0 := by
+  obtain ⟨hT, hbal⟩ := twoNode_trajectory
+  have hG : ∀ i j, (![![0, 2], ![2, 0]] : Fin 2 → Fin 2 → ℝ) i j =
+      (![![0, 2], ![2, 0]] : Fin 2 → Fin 2 → ℝ) j i := by
+    intro i j
+    fin_cases i <;> fin_cases j <;> rfl
+  have e0 : Real.exp (-3 * (0 : ℝ)) = 1 := by rw [mul_zero, Real.exp_zero]
+  refine ⟨fun t => ?_, ?_⟩
+  · have h := hasDerivAt_thermalStorage (Q := fun _ => 0) hG (fun i => hT i t)
+      (fun i => (hbal i t).trans (add_zero _).symm)
+    simp only [Finset.sum_const_zero] at h
+    exact h
+  · have h := hasDerivAt_quadraticFunctional hG (fun i => hT i 0) (fun i => hbal i 0)
+    convert h using 1
     simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one, e0]
     norm_num
 
-/-- Invalid: a negative conductance `G 0 1 = G 1 0 = -1` breaks the network contract and makes
-the quadratic functional grow: at `T = (1, 0)` the rate is `1 > 0`. -/
+/-- Consumers of the sign lemmas at `T = (400, 300)`: the quadratic functional is nonnegative
+for `C = (1, 2)` and its rate is nonpositive for the nonnegative conductances. -/
+example :
+    0 ≤ ∑ i, (![1, 2] : Fin 2 → ℝ) i * (![400, 300] : Fin 2 → ℝ) i ^ 2 / 2 ∧
+      -∑ i, ∑ j, (![![0, 2], ![2, 0]] : Fin 2 → Fin 2 → ℝ) i j *
+        ((![400, 300] : Fin 2 → ℝ) i - (![400, 300] : Fin 2 → ℝ) j) ^ 2 / 2 ≤ 0 :=
+  ⟨quadraticFunctional_nonneg (fun i => by fin_cases i <;> norm_num) _,
+    quadraticFunctional_rate_nonpos (fun i j => by fin_cases i <;> fin_cases j <;> norm_num) _⟩
+
+/-- Invalid: a negative conductance `G 0 1 = G 1 0 = -1` violates the sign hypothesis of
+`quadraticFunctional_rate_nonpos` and makes the quadratic functional grow: at `T = (1, 0)` the
+rate is `1 > 0`. -/
 example :
     let G : Fin 2 → Fin 2 → ℝ := ![![0, -1], ![-1, 0]]
     let T : Fin 2 → ℝ := ![1, 0]
-    ¬ IsThermalNetwork (![1, 1] : Fin 2 → ℝ) G ∧
-      0 < -∑ i, ∑ j, G i j * (T i - T j) ^ 2 / 2 := by
+    ¬ (∀ i j, 0 ≤ G i j) ∧ 0 < -∑ i, ∑ j, G i j * (T i - T j) ^ 2 / 2 := by
   refine ⟨?_, ?_⟩
   · intro h
-    have h01 := h.conductance_nonneg 0 1
+    have h01 := h 0 1
     simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at h01
     norm_num at h01
   · simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
     norm_num
 
-/-- Invalid: a negative capacity `C = (1, -2)` breaks the network contract and makes the
-quadratic functional indefinite: at `T = (0, 1)` it is `-1 < 0`. -/
+/-- The same negative conductance through the derivative identity, which needs only symmetry:
+with `C = (1, 1)`, the motion `T 0 s = 1 + s`, `T 1 s = -s` obeys the network equations at
+`s = 0`, and the quadratic functional has derivative `1 > 0` there. -/
+example :
+    HasDerivAt (fun τ => ∑ i, (![1, 1] : Fin 2 → ℝ) i *
+        (![fun s => 1 + s, fun s => -s] : Fin 2 → ℝ → ℝ) i τ ^ 2 / 2) 1 0 := by
+  have hG : ∀ i j, (![![0, -1], ![-1, 0]] : Fin 2 → Fin 2 → ℝ) i j =
+      (![![0, -1], ![-1, 0]] : Fin 2 → Fin 2 → ℝ) j i := by
+    intro i j
+    fin_cases i <;> fin_cases j <;> rfl
+  have hT : ∀ i, HasDerivAt ((![fun s => 1 + s, fun s => -s] : Fin 2 → ℝ → ℝ) i)
+      ((![1, -1] : Fin 2 → ℝ) i) 0 := by
+    intro i
+    fin_cases i
+    · simpa using (hasDerivAt_id' (0 : ℝ)).const_add 1
+    · simpa using hasDerivAt_neg (0 : ℝ)
+  have h := hasDerivAt_quadraticFunctional (C := ![1, 1]) hG hT (fun i => by
+    fin_cases i <;> norm_num [Fin.sum_univ_two])
+  convert h using 1
+  norm_num [Fin.sum_univ_two]
+
+/-- Invalid: a negative capacity `C = (1, -2)` violates the sign hypothesis of
+`quadraticFunctional_nonneg` and makes the quadratic functional indefinite: at `T = (0, 1)` it
+is `-1 < 0`. -/
 example :
     let C : Fin 2 → ℝ := ![1, -2]
     let T : Fin 2 → ℝ := ![0, 1]
-    ¬ IsThermalNetwork C (fun _ _ => 0) ∧ ∑ i, C i * T i ^ 2 / 2 < 0 := by
+    ¬ (∀ i, 0 ≤ C i) ∧ ∑ i, C i * T i ^ 2 / 2 < 0 := by
   refine ⟨?_, ?_⟩
   · intro h
-    have h1 := h.capacity_pos 1
+    have h1 := h 1
     simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at h1
     norm_num at h1
   · simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
