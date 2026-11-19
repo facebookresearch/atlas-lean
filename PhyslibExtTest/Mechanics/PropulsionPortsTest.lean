@@ -157,30 +157,32 @@ example : (2 - 1 * (1 / 2)) * parcelVelocity 2 0 1 3 0 (1 / 2) + 1 * (1 / 2) * (
     2 * 0 + 0 * (1 / 2) :=
   (parcel_momentum_iff (by norm_num) 0 3 0 _).mpr rfl
 
-/-- The linear burning history `M s = 2 - s` at `t = 0` expels mass at the constant actual rate
-`1`, so the constant-flow step is the actual step; with `ve = 3` and `F = 0` its slope tends to
-`3 / 2`. -/
-example : (∀ h : ℝ, h ≠ 0 → (2 - (2 - h)) / h = 1) ∧
-    Tendsto (fun h => (parcelVelocity 2 0 1 3 0 h - 0) / h) (𝓝[≠] 0) (𝓝 (3 / 2)) := by
+/-- The linear burning history `M s = 2 - s` at `t = 0` expels the nonnegative mass `h` at the
+constant actual rate `1` in each forward step `h > 0`, so the constant-flow step is the actual
+step; with `ve = 3` and `F = 0` its slope tends to `3 / 2`. -/
+example : (∀ h : ℝ, 0 < h → 0 ≤ 2 - (2 - h) ∧ (2 - (2 - h)) / h = 1) ∧
+    Tendsto (fun h => (parcelVelocity 2 0 1 3 0 h - 0) / h) (𝓝[>] 0) (𝓝 (3 / 2)) := by
   obtain ⟨h₁, h₂⟩ := parcel_continuum_linear (M := fun s : ℝ => 2 - s) (m' := -1) (t := 0)
-    (fun h => by ring) (by norm_num) 0 3 0
+    (fun h => by ring) (by norm_num) (by norm_num) 0 3 0
   exact ⟨fun h hh => by simpa using h₁ h hh, by simpa using h₂⟩
 
-/-- The nonlinear history `M s = 2 - s - s ^ 2` at `t = 0`, with `M' 0 = -1`: the parcel step with
-the actual flow `q_h = 1 + h` leaves exactly the mass `M h` for small `h ≠ 0`, and with `ve = 3`,
-`F = 0` its slope tends to `3 / 2`. The constant flow `1` would leave `2 - h` instead: at
-`h = 1 / 2`, `3 / 2` against `M (1 / 2) = 5 / 4`. -/
+/-- The nonlinear burning history `M s = 2 - s - s ^ 2` at `t = 0`, with `M' 0 = -1`: a forward
+parcel step `h > 0` with the actual flow `q_h = 1 + h` expels the nonnegative mass `h + h ^ 2` and
+leaves exactly the mass `M h` for small `h`, and with `ve = 3`, `F = 0` its slope tends to
+`3 / 2`. The constant flow `1` would leave `2 - h` instead: at `h = 1 / 2`, `3 / 2` against
+`M (1 / 2) = 5 / 4`. -/
 example :
-    (∀ᶠ h in 𝓝[≠] (0 : ℝ), 2 - (2 - (2 - h - h ^ 2)) / h * h = 2 - h - h ^ 2) ∧
+    (∀ᶠ h in 𝓝[>] (0 : ℝ), 0 ≤ 2 - (2 - h - h ^ 2) ∧
+      2 - (2 - (2 - h - h ^ 2)) / h * h = 2 - h - h ^ 2) ∧
       Tendsto (fun h => (parcelVelocity 2 0 ((2 - (2 - h - h ^ 2)) / h) 3 0 h - 0) / h)
-        (𝓝[≠] 0) (𝓝 (3 / 2)) ∧
+        (𝓝[>] 0) (𝓝 (3 / 2)) ∧
       (2 : ℝ) - 1 * (1 / 2) ≠ 2 - 1 / 2 - (1 / 2) ^ 2 := by
   have hM : HasDerivAt (fun s : ℝ => 2 - s - s ^ 2) (-1) 0 := by
     simpa using ((hasDerivAt_id' (0 : ℝ)).const_sub 2).fun_sub (hasDerivAt_pow 2 (0 : ℝ))
-  obtain ⟨-, h₂, h₃⟩ := parcel_continuum hM (by norm_num) 0 3 0
+  obtain ⟨-, h₂, h₃⟩ := parcel_continuum hM (by norm_num) (by norm_num) 0 3 0
   refine ⟨?_, by simpa using h₃, by norm_num⟩
   filter_upwards [h₂] with h hh
-  simpa using hh.1
+  exact ⟨by simpa using hh.1, by simpa using hh.2.1⟩
 
 /-- Without expelled mass the parcel step of the fixture vehicle under the force `4` is the
 fixed-mass velocity `0 + (1 / 2) / 2 · 4 = 1`. -/
