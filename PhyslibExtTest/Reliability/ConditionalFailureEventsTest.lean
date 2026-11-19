@@ -22,6 +22,8 @@ probability is `1/3`, the second scenario failing at equality. The alarm `z ≥ 
 failure event, the bin and the failure event are dependent under the joint law, and the bin
 `[4, 5]` is null. The normalized weights form a distribution, the general conditional-probability
 theorem applies to the fixture, and the calibration returns the damage plus the scaled error.
+Signed weights `(2, -1)` with positive total mass give the normalized weight `2`, so the
+probability reading needs nonnegative weights.
 
 ## i. Overview
 
@@ -144,14 +146,27 @@ example (hA : 0 < prob fixtureWeight fixtureBin) :
     (condWeights_isDistribution (fun ω => by fin_cases ω <;> norm_num [fixtureWeight]) hA).2.1⟩
 
 /-- The general conditional failure theorem applies to the fixture with every hypothesis
-discharged. -/
+discharged: the conditional failure probability is the ratio and lies in `[0, 1]`. -/
 example (hA : 0 < prob fixtureWeight fixtureBin) :
     prob (condWeights fixtureWeight fixtureBin hA) fixtureFailure =
-      prob fixtureWeight (fixtureBin ∩ fixtureFailure) / prob fixtureWeight fixtureBin :=
-  (prob_condWeights_systemFailureEvent (isIncreasing_seriesEvent (Fin 1))
+        prob fixtureWeight (fixtureBin ∩ fixtureFailure) / prob fixtureWeight fixtureBin ∧
+      prob (condWeights fixtureWeight fixtureBin hA) fixtureFailure ∈ Set.Icc 0 1 := by
+  have h := prob_condWeights_systemFailureEvent (isIncreasing_seriesEvent (Fin 1))
     (d0 := fun _ _ => 0) (D := fun _ _ => 2)
     (fun i ω => by fin_cases ω <;> norm_num [fixtureRate]) one_ne_zero 0 fixtureError
-    fixtureWeight 1 rfl rfl hA).1
+    fixtureWeight (fun ω => by fin_cases ω <;> norm_num [fixtureWeight]) 1 rfl rfl hA
+  exact ⟨h.2.2.1, h.2.2.2.1⟩
+
+/-- Signed weights are not a scenario law: the weights `(2, -1)` on two scenarios have total
+mass `1 > 0`, and the ratio identity gives the first scenario the normalized weight `2`, which no
+probability takes. -/
+example : ∃ hA : 0 < prob ![(2 : ℝ), -1] Finset.univ,
+    prob (condWeights ![(2 : ℝ), -1] Finset.univ hA) {0} = 2 := by
+  have hA : 0 < prob ![(2 : ℝ), -1] Finset.univ := by
+    simp [prob, Fin.sum_univ_two]
+  refine ⟨hA, ?_⟩
+  rw [prob_condWeights]
+  norm_num [prob, Fin.sum_univ_two]
 
 /-- Failure at equality through the fixed-time criterion: in the second scenario the damage
 `2 * 1` equals the threshold `2`, so the lifetime is at most `1`. -/

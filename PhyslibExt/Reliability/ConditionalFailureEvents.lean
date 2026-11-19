@@ -36,11 +36,12 @@ through the scenario, and no independence is assumed.
   `z = g d + b + ε` with gain `g ≠ 0`; the calibration `Statistics.CalibrationPorts.gaugeStrain`
   returns `d + ε / g`, so the error is scaled, not removed. The bin event is
   `A = {ω | zlo ≤ z ω ≤ zhi}`.
-* Conditioning. For `P(A) > 0` the weights normalized on `A` are a finite distribution, and the
-  conditional failure probability is `P(A ∩ F) / P(A)` with `F` the system failure event at `t`;
-  `A ∩ F` is the set of scenarios whose reading is in the bin and whose damage configuration at `t`
-  is not in `S`. With positive weights `P(A) > 0` exactly when the bin holds a scenario; a null
-  bin has no conditional law.
+* Conditioning. For nonnegative weights with `P(A) > 0` the weights normalized on `A` are a finite
+  distribution, and the conditional failure probability is `P(A ∩ F) / P(A) ∈ [0, 1]` with `F` the
+  system failure event at `t`; `A ∩ F` is the set of scenarios whose reading is in the bin and whose
+  damage configuration at `t` is not in `S`. With positive weights `P(A) > 0` exactly when the bin
+  holds a scenario; a null bin has no conditional law. Signed weights with `P(A) > 0` still satisfy
+  the ratio identity, but they are not a scenario law and the ratio can exceed one.
 
 One epoch and one bin only. The sensor equation is a declared model, neither learned nor
 certified by the probability identity. No empirical adequacy or system safety claim is made.
@@ -196,7 +197,8 @@ lemma mem_binEvent_sensorReading_iff [Fintype Ω] {E : Type*} {g b : ℝ} (hg : 
 /-! ## C. Weights normalized on a nonzero-mass event -/
 
 /-- The weights normalized on the event `A`: `p ω / P(A)` on `A` and `0` off it. The proof of
-`0 < P(A)` is part of the definition, so a null event has no normalized law. -/
+`0 < P(A)` is part of the definition, so a null event has no normalized weights. For nonnegative
+weights they are a finite distribution (`condWeights_isDistribution`). -/
 noncomputable def condWeights [DecidableEq Ω] (p : Ω → ℝ) (A : Finset Ω)
     (_hA : 0 < prob p A) : Ω → ℝ :=
   fun ω => if ω ∈ A then p ω / prob p A else 0
@@ -216,8 +218,10 @@ lemma condWeights_isDistribution [Fintype Ω] [DecidableEq Ω] {p : Ω → ℝ} 
     rw [Finset.sum_ite_mem, Finset.univ_inter, ← Finset.sum_div]
     exact div_self hA.ne'
 
-/-- **Conditional probability.** Under the weights normalized on `A`, an event `F` has the
-probability `P(A ∩ F) / P(A)`. -/
+/-- **Ratio identity.** Under the weights normalized on `A`, an event `F` has the weight
+`P(A ∩ F) / P(A)`. Only `P(A) > 0` is used, so the identity also holds for signed weights, which
+are not a scenario law; for nonnegative weights it is the conditional probability of `F` given `A`
+(`prob_condWeights_systemFailureEvent`). -/
 lemma prob_condWeights [DecidableEq Ω] (p : Ω → ℝ) {A : Finset Ω}
     (hA : 0 < prob p A) (F : Finset Ω) :
     prob (condWeights p A hA) F = prob p (A ∩ F) / prob p A := by
@@ -239,23 +243,31 @@ lemma prob_pos_iff_nonempty {p : Ω → ℝ} (hp : ∀ ω, 0 < p ω) (A : Finset
 
 /-! ## D. The conditional failure probability -/
 
-/-- **Single-epoch conditional failure probability.** For an increasing system event `S`,
-nonnegative rates, a sensor with gain `g ≠ 0` on component `i₀`, its bin event `A` at time `t` with
-`P(A) > 0`, and the system failure event `F` at `t`, the weights normalized on `A` give `F` the
-probability `P(A ∩ F) / P(A)`, and `A ∩ F` is the set of scenarios whose reading is in the bin and
-whose configuration of components still below threshold at `t` is not in `S`. -/
+/-- **Single-epoch conditional failure probability.** For nonnegative scenario weights `p`, an
+increasing system event `S`, nonnegative rates, a sensor with gain `g ≠ 0` on component `i₀`, its
+bin event `A` at time `t` with `P(A) > 0`, and the system failure event `F` at `t`: the weights
+normalized on `A` are a finite distribution, they give `F` the probability `P(A ∩ F) / P(A)`, which
+lies in `[0, 1]`, and `A ∩ F` is the set of scenarios whose reading is in the bin and whose
+configuration of components still below threshold at `t` is not in `S`. -/
 lemma prob_condWeights_systemFailureEvent [Fintype Ω] [DecidableEq Ω] {E : Type*} [Fintype E]
     {S : Set (StatMech.ConfigSpace E)} (hS : StatMech.IsIncreasing S) {d0 r D : E → Ω → ℝ}
-    (hr : ∀ i ω, 0 ≤ r i ω) {g b zlo zhi : ℝ} (hg : g ≠ 0) (i₀ : E) (ε p : Ω → ℝ) (t : ℝ≥0)
-    {A F : Finset Ω}
+    (hr : ∀ i ω, 0 ≤ r i ω) {g b zlo zhi : ℝ} (hg : g ≠ 0) (i₀ : E) (ε p : Ω → ℝ)
+    (hp : ∀ ω, 0 ≤ p ω) (t : ℝ≥0) {A F : Finset Ω}
     (hAdef : A = binEvent (fun ω => sensorReading g b hg (d0 i₀ ω + r i₀ ω * t) (ε ω)) zlo zhi)
     (hFdef : F = systemFailureEvent S d0 r D t) (hA : 0 < prob p A) :
-    prob (condWeights p A hA) F = prob p (A ∩ F) / prob p A ∧
+    (∀ ω, 0 ≤ condWeights p A hA ω) ∧ ∑ ω, condWeights p A hA ω = 1 ∧
+      prob (condWeights p A hA) F = prob p (A ∩ F) / prob p A ∧
+      prob (condWeights p A hA) F ∈ Set.Icc 0 1 ∧
       ∀ ω, ω ∈ A ∩ F ↔
         (zlo ≤ g * (d0 i₀ ω + r i₀ ω * t) + b + ε ω ∧
           g * (d0 i₀ ω + r i₀ ω * t) + b + ε ω ≤ zhi) ∧
         (fun i => decide (d0 i ω + r i ω * t < D i ω)) ∉ S := by
-  refine ⟨prob_condWeights p hA F, fun ω => ?_⟩
+  obtain ⟨h0, h1, -⟩ := condWeights_isDistribution hp hA
+  have hle : prob (condWeights p A hA) F ≤ 1 := by
+    calc prob (condWeights p A hA) F ≤ ∑ ω, condWeights p A hA ω :=
+          Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ F) fun ω _ _ => h0 ω
+      _ = 1 := h1
+  refine ⟨h0, h1, prob_condWeights p hA F, ⟨prob_nonneg h0 F, hle⟩, fun ω => ?_⟩
   rw [Finset.mem_inter, hAdef, hFdef, mem_binEvent_sensorReading_iff,
     mem_systemFailureEvent_iff hS hr]
 
