@@ -42,9 +42,10 @@ transport law.
 
 Model inputs (hypotheses of the module):
 
-* `R`, `o` and `x_B` are `C²` on an open set of times containing the interval considered;
-* time derivatives are Physlib's `∂ₜ`; matrices carry the operator norm Physlib uses for
-  differentiating orientations (all norms on matrices give the same topology);
+* `R` (entry by entry), `o` and `x_B` are `C²` on an open set of times containing the interval
+  considered;
+* time derivatives are Physlib's `∂ₜ`; the statements use only Mathlib's default instances on
+  matrices (the product topology), so no matrix norm is chosen;
 * orientations are proper rotations, as in Physlib's `RigidBodyMotion`; reflections are not
   admissible.
 
@@ -85,9 +86,6 @@ Euler's equations, attitude parametrizations, and any empirical adequacy or syst
 open scoped Matrix
 open Time
 
-attribute [local instance] Matrix.linftyOpNormedAddCommGroup Matrix.linftyOpNormedSpace
-  Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra
-
 namespace Mechanics.RigidMotionPorts
 
 open Units.EngineeringFrames
@@ -95,6 +93,16 @@ open Units.EngineeringFrames
 /-! ## A. Transport of body components -/
 
 /-! ### A.1. Private calculus helpers -/
+
+section Helpers
+
+/- The helpers differentiate matrix-valued functions, which needs a norm on matrices. They use the
+operator norm of Physlib's angular-velocity file, activated in this section only, so no public
+statement depends on it. Mathlib builds that norm with the product topology, so a matrix
+differentiability fact stated with the default instances is definitionally the same fact for this
+norm. -/
+attribute [local instance] Matrix.linftyOpNormedAddCommGroup Matrix.linftyOpNormedSpace
+  Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra
 
 /-- The matrix-vector product as a continuous bilinear map. -/
 private noncomputable def mulVecCLM :
@@ -142,6 +150,19 @@ private lemma contDiffOn_deriv_of_two {E : Type} [NormedAddCommGroup E] [NormedS
   have h := hf.fderiv_of_isOpen hU (m := 1) (by norm_num)
   exact h.clm_apply contDiffOn_const
 
+/-- Entrywise `C²` regularity of the orientation gives `C²` regularity for the matrix norm of this
+section. -/
+private lemma contDiffOn_orientation_of_entries (M : RigidBodyMotion 3) {U : Set Time}
+    (hR : ∀ i j, ContDiffOn ℝ 2 (fun s => (M.orientation s).1 i j) U) :
+    ContDiffOn ℝ 2 (fun s => (M.orientation s).1) U := by
+  have hpi : ContDiffOn ℝ 2 (fun s => Matrix.of.symm (M.orientation s).1) U :=
+    contDiffOn_pi.2 fun i => contDiffOn_pi.2 fun j => hR i j
+  have h := ((Matrix.ofLinearEquiv ℝ).toContinuousLinearEquiv :
+    (Fin 3 → Fin 3 → ℝ) ≃L[ℝ] Matrix (Fin 3) (Fin 3) ℝ).contDiff.comp_contDiffOn hpi
+  convert h using 1
+  funext s
+  rfl
+
 /-- The body angular velocity is differentiable where the orientation is `C²`. -/
 private lemma differentiableAt_bodyAngularVelocity (M : RigidBodyMotion 3) {U : Set Time}
     (hU : IsOpen U) (hR : ContDiffOn ℝ 2 (fun s => (M.orientation s).1) U) {t : Time}
@@ -159,11 +180,9 @@ private lemma differentiableAt_bodyAngularVelocity (M : RigidBodyMotion 3) {U : 
   rw [this]
   exact veeCLM.differentiableAt.comp t hprod
 
-/-! ### A.2. The transport law -/
-
-/-- Transport law: a vector with time-dependent body components `u` has inertial components
-`R u`, and `d(R u)/dt = R (u' + ω_B × u)`, with `ω_B` the body angular velocity of the motion. -/
-lemma deriv_bodyToInertialVec (M : RigidBodyMotion 3) (u : Time → Fin 3 → ℝ) (t : Time)
+/-- The transport law with the matrix norm of this section; `deriv_bodyToInertialVec` states it
+with the default matrix instances. -/
+private lemma deriv_bodyToInertialVec_aux (M : RigidBodyMotion 3) (u : Time → Fin 3 → ℝ) (t : Time)
     (hR : DifferentiableAt ℝ (fun s => (M.orientation s).1) t) (hu : DifferentiableAt ℝ u t) :
     ∂ₜ (fun s => bodyToInertialVec (M.orientation s) (u s)) t =
       bodyToInertialVec (M.orientation t) (∂ₜ u t + M.bodyAngularVelocity t ⨯₃ u t) := by
@@ -174,8 +193,6 @@ lemma deriv_bodyToInertialVec (M : RigidBodyMotion 3) (u : Time → Fin 3 → �
   simp only [bodyToInertialVec]
   rw [h, M.deriv_orientation_mulVec_eq_orientation_bodyAngularVelocity_cross (u t) t hR,
     Matrix.mulVec_add]
-
-/-! ## B. Acceleration in a rotating and translating frame -/
 
 /-- Velocity in the moving frame at every time of the open set `U`:
 `x' = o' + R (x_B' + ω_B × x_B)`. -/
@@ -195,12 +212,11 @@ private lemma deriv_bodyToInertial_of_mem (M : RigidBodyMotion 3) (o xB : Time �
     differentiableAt_bilin mulVecCLM hRd hxd
   have : (fun s => bodyToInertial (o s) (M.orientation s) (xB s)) =
       fun s => o s + bodyToInertialVec (M.orientation s) (xB s) := rfl
-  rw [this, Time.deriv_add _ _ hod hv, deriv_bodyToInertialVec M xB τ hRd hxd]
+  rw [this, Time.deriv_add _ _ hod hv, deriv_bodyToInertialVec_aux M xB τ hRd hxd]
 
-/-- Acceleration of a point in a frame with variable rotation rate and translating origin: for
-`x = o + R x_B` with `R`, `o`, `x_B` of class `C²` on the open set `U`, at every `t ∈ U`,
-`x'' = o'' + R (x_B'' + 2 ω_B × x_B' + ω_B' × x_B + ω_B × (ω_B × x_B))`. -/
-lemma deriv_deriv_bodyToInertial (M : RigidBodyMotion 3) (o xB : Time → Fin 3 → ℝ)
+/-- The acceleration with the matrix norm of this section; `deriv_deriv_bodyToInertial` states it
+with the default matrix instances and entrywise regularity of `R`. -/
+private lemma deriv_deriv_bodyToInertial_aux (M : RigidBodyMotion 3) (o xB : Time → Fin 3 → ℝ)
     {U : Set Time} (hU : IsOpen U) (hR : ContDiffOn ℝ 2 (fun s => (M.orientation s).1) U)
     (ho : ContDiffOn ℝ 2 o U) (hx : ContDiffOn ℝ 2 xB U) {t : Time} (ht : t ∈ U) :
     ∂ₜ (∂ₜ (fun s => bodyToInertial (o s) (M.orientation s) (xB s))) t =
@@ -235,10 +251,38 @@ lemma deriv_deriv_bodyToInertial (M : RigidBodyMotion 3) (o xB : Time → Fin 3 
       M.bodyAngularVelocity t ⨯₃ ∂ₜ xB t + ∂ₜ M.bodyAngularVelocity t ⨯₃ xB t :=
     deriv_bilin crossCLM hω hxd
   rw [Time.deriv_eq, hev.fderiv_eq, ← Time.deriv_eq, Time.deriv_add _ _ hdo hw,
-    deriv_bodyToInertialVec M _ t hRd hvd, Time.deriv_add _ _ hdx hcr, hdcr]
+    deriv_bodyToInertialVec_aux M _ t hRd hvd, Time.deriv_add _ _ hdx hcr, hdcr]
   congr 2
   simp only [map_add, two_smul]
   abel
+
+end Helpers
+
+/-! ### A.2. The transport law -/
+
+/-- Transport law: a vector with time-dependent body components `u` has inertial components
+`R u`, and `d(R u)/dt = R (u' + ω_B × u)`, with `ω_B` the body angular velocity of the motion. -/
+lemma deriv_bodyToInertialVec (M : RigidBodyMotion 3) (u : Time → Fin 3 → ℝ) (t : Time)
+    (hR : DifferentiableAt ℝ (fun s => (M.orientation s).1) t) (hu : DifferentiableAt ℝ u t) :
+    ∂ₜ (fun s => bodyToInertialVec (M.orientation s) (u s)) t =
+      bodyToInertialVec (M.orientation t) (∂ₜ u t + M.bodyAngularVelocity t ⨯₃ u t) := by
+  exact deriv_bodyToInertialVec_aux M u t hR hu
+
+/-! ## B. Acceleration in a rotating and translating frame -/
+
+/-- Acceleration of a point in a frame with variable rotation rate and translating origin: for
+`x = o + R x_B` with `R` (entry by entry), `o`, `x_B` of class `C²` on the open set `U`, at every
+`t ∈ U`, `x'' = o'' + R (x_B'' + 2 ω_B × x_B' + ω_B' × x_B + ω_B × (ω_B × x_B))`. -/
+lemma deriv_deriv_bodyToInertial (M : RigidBodyMotion 3) (o xB : Time → Fin 3 → ℝ)
+    {U : Set Time} (hU : IsOpen U)
+    (hR : ∀ i j, ContDiffOn ℝ 2 (fun s => (M.orientation s).1 i j) U)
+    (ho : ContDiffOn ℝ 2 o U) (hx : ContDiffOn ℝ 2 xB U) {t : Time} (ht : t ∈ U) :
+    ∂ₜ (∂ₜ (fun s => bodyToInertial (o s) (M.orientation s) (xB s))) t =
+      ∂ₜ (∂ₜ o) t + bodyToInertialVec (M.orientation t)
+        (∂ₜ (∂ₜ xB) t + 2 • (M.bodyAngularVelocity t ⨯₃ ∂ₜ xB t) +
+          ∂ₜ M.bodyAngularVelocity t ⨯₃ xB t +
+          M.bodyAngularVelocity t ⨯₃ (M.bodyAngularVelocity t ⨯₃ xB t)) := by
+  exact deriv_deriv_bodyToInertial_aux M o xB hU (contDiffOn_orientation_of_entries M hR) ho hx ht
 
 /-- Constant rate and fixed origin recover the existing constant-rate contract: with
 `ω_B = Ω` on `U` and the origin fixed at `o₀`, the acceleration has body components
@@ -246,7 +290,7 @@ lemma deriv_deriv_bodyToInertial (M : RigidBodyMotion 3) (o xB : Time → Fin 3 
 `EarthScience.rotating_acceleration_decomposition`, with no transport law assumed. -/
 lemma deriv_deriv_bodyToInertial_of_const (M : RigidBodyMotion 3) (o₀ : Fin 3 → ℝ)
     (xB : Time → Fin 3 → ℝ) (Ω : Fin 3 → ℝ) {U : Set Time} (hU : IsOpen U)
-    (hR : ContDiffOn ℝ 2 (fun s => (M.orientation s).1) U) (hx : ContDiffOn ℝ 2 xB U)
+    (hR : ∀ i j, ContDiffOn ℝ 2 (fun s => (M.orientation s).1 i j) U) (hx : ContDiffOn ℝ 2 xB U)
     (hΩ : ∀ s ∈ U, M.bodyAngularVelocity s = Ω) {t : Time} (ht : t ∈ U) :
     ∂ₜ (∂ₜ (fun s => bodyToInertial o₀ (M.orientation s) (xB s))) t =
       bodyToInertialVec (M.orientation t)

@@ -29,6 +29,9 @@ and centripetal terms vanish and the acceleration of the body point `e₁` is th
 public lemmas to a body-fixed vector, to a frame with constant orientation, and to the reflection
 boundary.
 
+The file activates no matrix norm: every regularity fact is stated and proved as a client would,
+with Mathlib's default instances on matrices or entry by entry.
+
 ## ii. Key results
 
 - `spinUp`, `spinUp_bodyAngularVelocity`, `spinUp_euler_fixture` : the spin-up fixture.
@@ -48,9 +51,6 @@ boundary.
 open scoped Matrix
 open Time
 
-attribute [local instance] Matrix.linftyOpNormedAddCommGroup Matrix.linftyOpNormedSpace
-  Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra
-
 namespace PhyslibExtTest.Mechanics.RigidMotionPorts
 
 open _root_.Mechanics.RigidMotionPorts _root_.Units.EngineeringFrames
@@ -65,31 +65,35 @@ noncomputable def spinUp (B : RigidBody 3) : RigidBodyMotion 3 where
   comTrajectory := fun _ => 0
   orientation := fun t => ⟨rotZ (t.val ^ 2 / 2), rotZ_mem_specialOrthogonalGroup _⟩
 
-/-- The rotation about the third axis as a combination of constant matrices. -/
-private lemma rotZ_eq_comb (θ : ℝ) :
-    rotZ θ = Real.cos θ • !![(1 : ℝ), 0, 0; 0, 1, 0; 0, 0, 0] +
-      Real.sin θ • !![(0 : ℝ), -1, 0; 1, 0, 0; 0, 0, 0] + !![(0 : ℝ), 0, 0; 0, 0, 0; 0, 0, 1] := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> simp [rotZ]
-
 /-- The spin angle `s ↦ s.val ^ 2 / 2` is smooth. -/
 private lemma contDiff_spinAngle : ContDiff ℝ 2 (fun s : Time => s.val ^ 2 / 2) := by
   have h : (fun s : Time => s.val) = Time.toRealCLM := rfl
   have := ((Time.toRealCLM.contDiff (n := 2)).pow 2).div_const 2
   simpa [← h] using this
 
-/-- The spin-up orientation is smooth. -/
-private lemma contDiff_spinUp_orientation (B : RigidBody 3) :
-    ContDiff ℝ 2 (fun s => ((spinUp B).orientation s : Matrix (Fin 3) (Fin 3) ℝ)) := by
-  have h : (fun s => ((spinUp B).orientation s : Matrix (Fin 3) (Fin 3) ℝ)) =
-      fun s => Real.cos (s.val ^ 2 / 2) • !![(1 : ℝ), 0, 0; 0, 1, 0; 0, 0, 0] +
-        Real.sin (s.val ^ 2 / 2) • !![(0 : ℝ), -1, 0; 1, 0, 0; 0, 0, 0] +
-          !![(0 : ℝ), 0, 0; 0, 0, 0; 0, 0, 1] := by
-    funext s
-    exact rotZ_eq_comb _
-  rw [h]
-  exact (((Real.contDiff_cos.comp contDiff_spinAngle).smul contDiff_const).add
-    ((Real.contDiff_sin.comp contDiff_spinAngle).smul contDiff_const)).add contDiff_const
+/-- Every entry of the spin-up orientation is smooth. -/
+private lemma contDiff_spinUp_orientation_apply (B : RigidBody 3) (i j : Fin 3) :
+    ContDiff ℝ 2 (fun s => ((spinUp B).orientation s).1 i j) := by
+  have hc := Real.contDiff_cos.comp contDiff_spinAngle
+  have hs := Real.contDiff_sin.comp contDiff_spinAngle
+  fin_cases i <;> fin_cases j <;> simp only [spinUp, rotZ] <;>
+    simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Matrix.of_apply, Matrix.cons_val',
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.empty_val',
+      Matrix.cons_val_fin_one] <;>
+    first
+      | exact hc
+      | exact hs
+      | exact hs.neg
+      | exact contDiff_const
+
+/-- The spin-up orientation is differentiable, stated with the default matrix instances: a client
+obtains this from its entries. -/
+private lemma differentiableAt_spinUp_orientation (B : RigidBody 3) (t : Time) :
+    DifferentiableAt ℝ (fun s => ((spinUp B).orientation s).1) t := by
+  have h : DifferentiableAt ℝ (fun s => Matrix.of.symm ((spinUp B).orientation s).1) t :=
+    differentiableAt_pi.2 fun i => differentiableAt_pi.2 fun j =>
+      ((contDiff_spinUp_orientation_apply B i j).differentiable (by norm_num)) t
+  exact h
 
 /-- Time derivative of a scalar multiple of a constant vector. -/
 private lemma deriv_smul_const_vec {F : Type} [NormedAddCommGroup F] [NormedSpace ℝ F]
@@ -105,37 +109,30 @@ private lemma hasDerivAt_spinAngle (τ : ℝ) : HasDerivAt (fun x : ℝ => x ^ 2
   push_cast
   ring
 
-/-- Time derivative of the spin-up orientation. -/
+/-- Time derivative of the spin-up orientation, entry by entry. -/
 private lemma deriv_spinUp_orientation (B : RigidBody 3) (t : Time) :
-    ∂ₜ (fun s => ((spinUp B).orientation s : Matrix (Fin 3) (Fin 3) ℝ)) t =
-      (-Real.sin (t.val ^ 2 / 2) * t.val) • !![(1 : ℝ), 0, 0; 0, 1, 0; 0, 0, 0] +
-        (Real.cos (t.val ^ 2 / 2) * t.val) • !![(0 : ℝ), -1, 0; 1, 0, 0; 0, 0, 0] := by
-  have hc : DifferentiableAt ℝ (fun s : Time => Real.cos (s.val ^ 2 / 2)) t :=
-    ((Real.contDiff_cos.comp contDiff_spinAngle).differentiable (by norm_num)) t
-  have hs : DifferentiableAt ℝ (fun s : Time => Real.sin (s.val ^ 2 / 2)) t :=
-    ((Real.contDiff_sin.comp contDiff_spinAngle).differentiable (by norm_num)) t
+    ∂ₜ (fun s => ((spinUp B).orientation s).1) t =
+      !![-Real.sin (t.val ^ 2 / 2) * t.val, -(Real.cos (t.val ^ 2 / 2) * t.val), 0;
+        Real.cos (t.val ^ 2 / 2) * t.val, -Real.sin (t.val ^ 2 / 2) * t.val, 0; 0, 0, 0] := by
   have dc : ∂ₜ (fun s : Time => Real.cos (s.val ^ 2 / 2)) t = -Real.sin (t.val ^ 2 / 2) * t.val :=
     Time.deriv_eq_of_hasDerivAt ((Real.hasDerivAt_cos _).comp t.val (hasDerivAt_spinAngle t.val))
   have ds : ∂ₜ (fun s : Time => Real.sin (s.val ^ 2 / 2)) t = Real.cos (t.val ^ 2 / 2) * t.val :=
     Time.deriv_eq_of_hasDerivAt ((Real.hasDerivAt_sin _).comp t.val (hasDerivAt_spinAngle t.val))
-  have hD : HasFDerivAt (fun s : Time =>
-      Real.cos (s.val ^ 2 / 2) • !![(1 : ℝ), 0, 0; 0, 1, 0; 0, 0, 0] +
-        Real.sin (s.val ^ 2 / 2) • !![(0 : ℝ), -1, 0; 1, 0, 0; 0, 0, 0] +
-          !![(0 : ℝ), 0, 0; 0, 0, 0; 0, 0, 1])
-      ((fderiv ℝ (fun s : Time => Real.cos (s.val ^ 2 / 2)) t).smulRight
-          !![(1 : ℝ), 0, 0; 0, 1, 0; 0, 0, 0] +
-        (fderiv ℝ (fun s : Time => Real.sin (s.val ^ 2 / 2)) t).smulRight
-          !![(0 : ℝ), -1, 0; 1, 0, 0; 0, 0, 0]) t :=
-    ((hc.hasFDerivAt.smul_const _).add (hs.hasFDerivAt.smul_const _)).add_const _
-  have h : (fun s => ((spinUp B).orientation s : Matrix (Fin 3) (Fin 3) ℝ)) =
-      fun s : Time => Real.cos (s.val ^ 2 / 2) • !![(1 : ℝ), 0, 0; 0, 1, 0; 0, 0, 0] +
-        Real.sin (s.val ^ 2 / 2) • !![(0 : ℝ), -1, 0; 1, 0, 0; 0, 0, 0] +
-          !![(0 : ℝ), 0, 0; 0, 0, 0; 0, 0, 1] := by
-    funext s
-    exact rotZ_eq_comb _
-  rw [h, Time.deriv_eq, hD.fderiv]
-  simp only [add_apply, ContinuousLinearMap.smulRight_apply]
-  rw [← Time.deriv_eq, ← Time.deriv_eq, dc, ds]
+  have dns : ∂ₜ (fun s : Time => -Real.sin (s.val ^ 2 / 2)) t =
+      -(Real.cos (t.val ^ 2 / 2) * t.val) :=
+    Time.deriv_eq_of_hasDerivAt
+      ((Real.hasDerivAt_sin _).comp t.val (hasDerivAt_spinAngle t.val)).neg
+  ext i j
+  refine (Time.deriv_matrix_apply _ t (differentiableAt_spinUp_orientation B t) i j).symm.trans ?_
+  fin_cases i <;> fin_cases j <;> simp only [spinUp, rotZ] <;>
+    simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Matrix.of_apply, Matrix.cons_val',
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.empty_val',
+      Matrix.cons_val_fin_one] <;>
+    first
+      | exact dc
+      | exact ds
+      | exact dns
+      | exact Time.deriv_const _
 
 /-- The spin-up has body angular velocity `(0, 0, t)`. -/
 lemma spinUp_bodyAngularVelocity (B : RigidBody 3) (t : Time) :
@@ -143,7 +140,7 @@ lemma spinUp_bodyAngularVelocity (B : RigidBody 3) (t : Time) :
   have hd := deriv_spinUp_orientation B t
   have h : (spinUp B).bodyAngularVelocity t = Matrix.crossProductVee
       ((((spinUp B).orientation t : Matrix (Fin 3) (Fin 3) ℝ))ᵀ *
-        ∂ₜ (fun s => ((spinUp B).orientation s : Matrix (Fin 3) (Fin 3) ℝ)) t) := rfl
+        ∂ₜ (fun s => ((spinUp B).orientation s).1) t) := rfl
   rw [h, hd]
   have hR : (((spinUp B).orientation t : Matrix (Fin 3) (Fin 3) ℝ)) = rotZ (t.val ^ 2 / 2) := rfl
   rw [hR]
@@ -174,8 +171,9 @@ lemma spinUp_euler_fixture (B : RigidBody 3) :
       Time.deriv_eq_of_hasDerivAt (f := fun s : Time => s.val) (hasDerivAt_id _), one_smul]
   refine ⟨hdω, ?_⟩
   have h := deriv_deriv_bodyToInertial (spinUp B) (fun _ => (0 : Fin 3 → ℝ))
-    (fun _ => ![(1 : ℝ), 0, 0]) isOpen_univ (contDiff_spinUp_orientation B).contDiffOn
-    contDiffOn_const contDiffOn_const (Set.mem_univ (⟨0⟩ : Time))
+    (fun _ => ![(1 : ℝ), 0, 0]) isOpen_univ
+    (fun i j => (contDiff_spinUp_orientation_apply B i j).contDiffOn) contDiffOn_const
+    contDiffOn_const (Set.mem_univ (⟨0⟩ : Time))
   rw [h, hdω, hω]
   have hR : (((spinUp B).orientation ⟨0⟩ : Matrix (Fin 3) (Fin 3) ℝ)) =
       rotZ ((0 : ℝ) ^ 2 / 2) := rfl
@@ -205,8 +203,8 @@ example (M : RigidBodyMotion 3) (R : Matrix.specialOrthogonalGroup (Fin 3) ℝ)
     (hx : ContDiff ℝ 2 xB) (t : Time) :
     ∂ₜ (∂ₜ (fun s => bodyToInertial o₀ (M.orientation s) (xB s))) t =
       bodyToInertialVec R (∂ₜ (∂ₜ xB) t) := by
-  have hR : ContDiffOn ℝ 2 (fun s => (M.orientation s : Matrix (Fin 3) (Fin 3) ℝ)) Set.univ := by
-    rw [hM]
+  have hR : ∀ i j, ContDiffOn ℝ 2 (fun s => (M.orientation s).1 i j) Set.univ := fun i j => by
+    simp only [hM]
     exact contDiffOn_const
   have hΩ : ∀ s ∈ Set.univ, M.bodyAngularVelocity s = 0 := fun s _ => by
     rw [RigidBodyMotion.bodyAngularVelocity_of_orientation_const M R hM]
@@ -214,6 +212,15 @@ example (M : RigidBodyMotion 3) (R : Matrix.specialOrthogonalGroup (Fin 3) ℝ)
   rw [deriv_deriv_bodyToInertial_of_const M o₀ xB 0 isOpen_univ hR hx.contDiffOn hΩ
     (Set.mem_univ t), hM]
   simp
+
+-- A concrete client: the spin-up's default-instance differentiability, obtained from its
+-- entries, feeds the transport law, and a body-fixed vector `v` has inertial velocity
+-- `R (t e₃ × v)`.
+example (B : RigidBody 3) (v : Fin 3 → ℝ) (t : Time) :
+    ∂ₜ (fun s => bodyToInertialVec ((spinUp B).orientation s) v) t =
+      bodyToInertialVec ((spinUp B).orientation t) (![0, 0, t.val] ⨯₃ v) := by
+  rw [deriv_bodyToInertialVec (spinUp B) (fun _ => v) t (differentiableAt_spinUp_orientation B t)
+    (differentiableAt_const v), Time.deriv_const, zero_add, spinUp_bodyAngularVelocity]
 
 -- The spin-up is an admissible rigid motion: its orientation is never the reflection.
 example (B : RigidBody 3) (t : Time) :
