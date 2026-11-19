@@ -23,6 +23,9 @@ Two parallel-flow exchangers with `Ch = 3 kW/K`, `Cc = 3/2 kW/K`, `L = 2 m`, `Th
   `30 / log 2`, and `UA ΔT_lm = 30 kW`, the heat lost by the hot stream;
 * `UA = 0`: no exchange, and the logarithmic mean of the equal end differences takes its
   equal-difference branch instead of the junk value of `0 / log 1`.
+
+The solution predicate only sees the exchanger: the `UA = log 2` closed forms replaced by `0` for
+`x < 0` still solve the exchanger equations.
 -/
 
 @[expose] public section
@@ -90,5 +93,19 @@ lemma fixture_parallel_no_exchange :
   · have h0 : ((360 : ℝ) - 300 - (360 - 300)) = 0 := by norm_num
     rw [h0]
     exact zero_div _
+
+/-- The solution predicate only sees `[0, L]`: the closed forms replaced by `0` for `x < 0`, which
+jump at the inlet, still solve the exchanger equations, so uniqueness covers them. -/
+example : IsParallelFlowSolution 3 (3 / 2) (Real.log 2 / 2) 2 360 300
+    (fun x => if x < 0 then 0 else parallelHotTemp 3 (3 / 2) (Real.log 2 / 2) 360 300 x)
+    (fun x => if x < 0 then 0 else parallelColdTemp 3 (3 / 2) (Real.log 2 / 2) 360 300 x) := by
+  obtain ⟨h0, h1, h2⟩ := isParallelFlowSolution_closedForm (Ch := 3) (Cc := 3 / 2)
+    (by norm_num) (by norm_num) (Real.log 2 / 2) 2 360 300
+  have hnot : ∀ y ∈ Set.Icc (0 : ℝ) 2, ¬ y < 0 := fun y hy => not_lt.mpr hy.1
+  refine ⟨by simpa using h0, by simpa using h1, fun x hx => ?_⟩
+  obtain ⟨hh, hc⟩ := h2 x hx
+  simp only [hnot x hx, ite_false]
+  exact ⟨hh.congr (fun y hy => by simp [hnot y hy]) (by simp [hnot x hx]),
+    hc.congr (fun y hy => by simp [hnot y hy]) (by simp [hnot x hx])⟩
 
 end PhyslibExtTest.HeatTransfer.HeatExchangers

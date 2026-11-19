@@ -31,8 +31,9 @@ stream's energy port changes by `C ΔT`), the exchanger has constant overall con
 and `K = UA / L` is the conductance per unit length. With both inlets at `x = 0` (inlet
 temperatures `Thi`, `Tci`), no phase change and no axial conduction, the stream temperatures
 satisfy
-`Ch Th' = -K (Th - Tc)` and `Cc Tc' = K (Th - Tc)`.
-The difference `Th - Tc` obeys the scalar linear equation `D' = -r D` with
+`Ch Th' = -K (Th - Tc)` and `Cc Tc' = K (Th - Tc)`,
+with derivatives taken within `[0, L]` (one-sided at the ends), so a solution is constrained only
+on the exchanger. The difference `Th - Tc` obeys the scalar linear equation `D' = -r D` with
 `r = K (1 / Ch + 1 / Cc)`, so it is `(Thi - Tci) exp (-r x)` (the scalar exponential solution
 `MetaMathlibExt.scalar_exp_solution`), and `Ch Th + Cc Tc` is constant. The solution is unique
 on `[0, L]`. At the outlet `r L = UA (1 / Ch + 1 / Cc)`. The heat lost by the hot stream equals
@@ -95,12 +96,15 @@ noncomputable def parallelColdTemp (Ch Cc K Thi Tci x : ℝ) : ℝ :=
   Tci + Ch / (Ch + Cc) * (Thi - Tci) * (1 - Real.exp (-(parallelDecayRate Ch Cc K * x)))
 
 /-- `(Th, Tc)` solves the parallel-flow exchanger equations on `[0, L]` with both inlets at
-`x = 0`: `Th 0 = Thi`, `Tc 0 = Tci`, and at every `x ∈ [0, L]` both temperatures are
-differentiable with `Ch * Th' = -K * (Th - Tc)` and `Cc * Tc' = K * (Th - Tc)`. -/
+`x = 0`: `Th 0 = Thi`, `Tc 0 = Tci`, and at every `x ∈ [0, L]` the stream enthalpy flows
+`Ch * Th` and `Cc * Tc` have the derivatives `-K * (Th x - Tc x)` and `K * (Th x - Tc x)` within
+`[0, L]` (one-sided at the ends), that is `Ch * Th' = -K * (Th - Tc)` and
+`Cc * Tc' = K * (Th - Tc)`. For `0 ≤ L` the predicate depends only on the values of `Th` and `Tc`
+on `[0, L]`. -/
 def IsParallelFlowSolution (Ch Cc K L Thi Tci : ℝ) (Th Tc : ℝ → ℝ) : Prop :=
-  Th 0 = Thi ∧ Tc 0 = Tci ∧ ∀ x ∈ Set.Icc 0 L, DifferentiableAt ℝ Th x ∧
-    DifferentiableAt ℝ Tc x ∧ Ch * deriv Th x = -K * (Th x - Tc x) ∧
-      Cc * deriv Tc x = K * (Th x - Tc x)
+  Th 0 = Thi ∧ Tc 0 = Tci ∧ ∀ x ∈ Set.Icc 0 L,
+    HasDerivWithinAt (fun y => Ch * Th y) (-K * (Th x - Tc x)) (Set.Icc 0 L) x ∧
+      HasDerivWithinAt (fun y => Cc * Tc y) (K * (Th x - Tc x)) (Set.Icc 0 L) x
 
 /-- The stream temperature difference of the closed form is the scalar exponential
 `(Thi - Tci) * exp (-r x)`. -/
@@ -152,12 +156,14 @@ lemma isParallelFlowSolution_closedForm {Ch Cc : ℝ} (hCh : 0 < Ch) (hCc : 0 < 
     unfold parallelColdTemp
     simp only [mul_zero, neg_zero, Real.exp_zero, sub_self, mul_zero, add_zero]
   have hdiff := parallelHotTemp_sub_parallelColdTemp hCh hCc K Thi Tci
-  refine ⟨hTh0, hTc0, fun x _ => ⟨(hTh x).differentiableAt, (hTc x).differentiableAt, ?_, ?_⟩⟩
-  · rw [(hTh x).deriv, hdiff x]
+  refine ⟨hTh0, hTc0, fun x _ => ⟨?_, ?_⟩⟩
+  · refine ((hTh x).const_mul Ch).hasDerivWithinAt.congr_deriv ?_
+    rw [hdiff x]
     unfold parallelDecayRate
     field_simp
     ring
-  · rw [(hTc x).deriv, hdiff x]
+  · refine ((hTc x).const_mul Cc).hasDerivWithinAt.congr_deriv ?_
+    rw [hdiff x]
     unfold parallelDecayRate
     field_simp
     ring
@@ -173,18 +179,26 @@ lemma IsParallelFlowSolution.eq_closedForm {Ch Cc K L Thi Tci : ℝ} {Th Tc : �
   · have hCh' : Ch ≠ 0 := ne_of_gt hCh
     have hCc' : Cc ≠ 0 := ne_of_gt hCc
     have hCC : Ch + Cc ≠ 0 := ne_of_gt (add_pos hCh hCc)
-    have hDv : ∀ x ∈ Set.Icc 0 L, deriv Th x - deriv Tc x =
-        -(parallelDecayRate Ch Cc K) * (Th x - Tc x) := by
+    have hD_at : ∀ x ∈ Set.Icc 0 L, HasDerivWithinAt (fun x => Th x - Tc x)
+        (-(parallelDecayRate Ch Cc K) * (Th x - Tc x)) (Set.Icc 0 L) x := by
       intro x hx
-      obtain ⟨_, _, heq1, heq2⟩ := hsol x hx
+      obtain ⟨h1, h2⟩ := hsol x hx
+      have hTh' : HasDerivWithinAt Th (Ch⁻¹ * (-K * (Th x - Tc x))) (Set.Icc 0 L) x := by
+        have h := h1.const_mul Ch⁻¹
+        have hfun : (fun y => Ch⁻¹ * (Ch * Th y)) = Th := by
+          funext y
+          rw [← mul_assoc, inv_mul_cancel₀ hCh', one_mul]
+        rwa [hfun] at h
+      have hTc' : HasDerivWithinAt Tc (Cc⁻¹ * (K * (Th x - Tc x))) (Set.Icc 0 L) x := by
+        have h := h2.const_mul Cc⁻¹
+        have hfun : (fun y => Cc⁻¹ * (Cc * Tc y)) = Tc := by
+          funext y
+          rw [← mul_assoc, inv_mul_cancel₀ hCc', one_mul]
+        rwa [hfun] at h
+      refine (hTh'.sub hTc').congr_deriv ?_
       unfold parallelDecayRate
-      field_simp at ⊢
-      linear_combination Cc * heq1 - Ch * heq2
-    have hD_at : ∀ x ∈ Set.Icc 0 L, HasDerivAt (fun x => Th x - Tc x)
-        (-(parallelDecayRate Ch Cc K) * (Th x - Tc x)) x := by
-      intro x hx
-      obtain ⟨hdTh, hdTc, _, _⟩ := hsol x hx
-      exact (hdTh.hasDerivAt.sub hdTc.hasDerivAt).congr_deriv (hDv x hx)
+      field_simp
+      ring
     have hE_closed : ∀ t, HasDerivAt
         (fun t => (Thi - Tci) * Real.exp (-(parallelDecayRate Ch Cc K * t)))
         (-(parallelDecayRate Ch Cc K) *
@@ -204,15 +218,13 @@ lemma IsParallelFlowSolution.eq_closedForm {Ch Cc K L Thi Tci : ℝ} {Th Tc : �
           -(parallelDecayRate Ch Cc K) * (x - y) := by ring
       rw [h1, norm_mul]
       exact le_of_eq (by rw [coe_nnnorm])
-    have hdiffD : DifferentiableOn ℝ (fun x => Th x - Tc x) (Set.Icc 0 L) := by
-      intro x hx
-      obtain ⟨hdTh, hdTc, _, _⟩ := hsol x hx
-      exact (hdTh.sub hdTc).differentiableWithinAt
-    have hf : ContinuousOn (fun x => Th x - Tc x) (Set.Icc 0 L) := hdiffD.continuousOn
+    have hf : ContinuousOn (fun x => Th x - Tc x) (Set.Icc 0 L) :=
+      fun x hx => (hD_at x hx).continuousWithinAt
     have hf' : ∀ t ∈ Set.Ico (0 : ℝ) L, HasDerivWithinAt (fun x => Th x - Tc x)
         (-(parallelDecayRate Ch Cc K) * (Th t - Tc t)) (Set.Ici t) t := by
       intro t ht
-      exact (hD_at t (Set.mem_Icc_of_Ico ht)).hasDerivWithinAt
+      exact (hD_at t (Set.mem_Icc_of_Ico ht)).mono_of_mem_nhdsWithin
+        (Icc_mem_nhdsGE_of_mem ht)
     have hfs : ∀ t ∈ Set.Ico (0 : ℝ) L,
         (fun x => Th x - Tc x) t ∈ (fun _ => Set.univ) t :=
       fun t _ => Set.mem_univ _
@@ -245,25 +257,18 @@ lemma IsParallelFlowSolution.eq_closedForm {Ch Cc K L Thi Tci : ℝ} {Th Tc : �
         (a := 0) (b := L) hlip hf hf' hfs hg hg' hgs ha
       intro y hy
       exact huniq hy
-    have hS_at : ∀ x ∈ Set.Icc 0 L, HasDerivAt (fun x => Ch * Th x + Cc * Tc x) 0 x := by
+    have hS_at : ∀ x ∈ Set.Icc 0 L,
+        HasDerivWithinAt (fun x => Ch * Th x + Cc * Tc x) 0 (Set.Icc 0 L) x := by
       intro x hx
-      obtain ⟨hdTh, hdTc, heq1, heq2⟩ := hsol x hx
-      have h1 : HasDerivAt (fun x => Ch * Th x) (Ch * deriv Th x) x :=
-        hdTh.hasDerivAt.const_mul Ch
-      have h2 : HasDerivAt (fun x => Cc * Tc x) (Cc * deriv Tc x) x :=
-        hdTc.hasDerivAt.const_mul Cc
-      have hadd := h1.add h2
-      have hval : Ch * deriv Th x + Cc * deriv Tc x = 0 := by
-        linear_combination heq1 + heq2
-      exact hadd.congr_deriv hval
+      obtain ⟨h1, h2⟩ := hsol x hx
+      exact (h1.add h2).congr_deriv (by ring)
     have hS : ∀ y ∈ Set.Icc 0 L, Ch * Th y + Cc * Tc y = Ch * Thi + Cc * Tci := by
-      have hdiffS : DifferentiableOn ℝ (fun x => Ch * Th x + Cc * Tc x) (Set.Icc 0 L) :=
-        fun x hx => (hS_at x hx).differentiableAt.differentiableWithinAt
       have hconst := eq_of_has_deriv_right_eq (f := fun x => Ch * Th x + Cc * Tc x)
         (g := fun _ => Ch * Thi + Cc * Tci) (f' := fun _ => 0) (a := 0) (b := L)
-        (fun x hx => (hS_at x (Set.mem_Icc_of_Ico hx)).hasDerivWithinAt)
+        (fun x hx => (hS_at x (Set.mem_Icc_of_Ico hx)).mono_of_mem_nhdsWithin
+          (Icc_mem_nhdsGE_of_mem hx))
         (fun x _ => (hasDerivAt_const x (Ch * Thi + Cc * Tci)).hasDerivWithinAt)
-        hdiffS.continuousOn continuous_const.continuousOn
+        (fun x hx => (hS_at x hx).continuousWithinAt) continuous_const.continuousOn
         (by show Ch * Th 0 + Cc * Tc 0 = Ch * Thi + Cc * Tci; rw [hTh0, hTc0])
       intro y hy
       exact hconst y hy
