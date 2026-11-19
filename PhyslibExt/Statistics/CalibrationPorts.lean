@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Statistics.UncertaintyPropagation
-public import PhyslibExt.Units.EngineeringQuantities
+public import PhyslibExt.Units.QuantityDimensions
 public import PhyslibExt.Units.ElectricalDimensions
 
 /-!
@@ -91,8 +91,8 @@ temperature compensation, no empirical adequacy or system safety claim.
 
 @[expose] public section
 
-open Matrix Dimension Units.QuantityDimensions Units.EngineeringQuantities
-  MathlibExt.Probability.FiniteProbability Statistics.UncertaintyPropagation
+open Matrix Dimension Units.QuantityDimensions MathlibExt.Probability.FiniteProbability
+  Statistics.UncertaintyPropagation
 
 namespace Statistics.CalibrationPorts
 
