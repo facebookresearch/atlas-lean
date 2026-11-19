@@ -8,11 +8,14 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Calculus.ContDiff.Defs
+public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Physlib.ClassicalMechanics.RigidBody.AngularMomentum
 public import Physlib.ClassicalMechanics.RigidBody.AngularVelocity
+public import Physlib.ClassicalMechanics.RigidBody.KineticEnergy
 public import PhyslibExt.Units.EngineeringFrames
 import Mathlib.Analysis.Calculus.ContDiff.Comp
 import Mathlib.Analysis.Calculus.FDeriv.Bilinear
+import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.LinearAlgebra.Matrix.ToLin
 import Mathlib.Tactic.Abel
 import Mathlib.Tactic.FinCases
@@ -21,11 +24,11 @@ import Mathlib.Topology.Algebra.Module.FiniteDimension
 import MathlibExt.LinearAlgebra.CrossProduct
 
 /-!
-# Rotating and translating frames: acceleration and angular momentum
+# Rotating and translating frames: acceleration, angular momentum and Euler's equations
 
 The acceleration of a point in a frame that rotates at a variable rate and translates, derived
-from Physlib's rigid-body angular velocity, and the angular momentum of a rigid body in motion
-about its centre of mass.
+from Physlib's rigid-body angular velocity, the angular momentum of a rigid body in motion about
+its centre of mass, and Euler's equations as the body form of the rotational balance law.
 
 ## i. Overview
 
@@ -53,6 +56,14 @@ point `O` the angular momentum gains the orbital term `m (X - O) × V` of the to
 with the centre of mass; about a body point `p`, Physlib's parallel-axis theorem gives
 `I_p ω = I_c ω + m (c - p) × (ω × (c - p))`.
 
+The rotational balance law `dL_COM/dt = τ_I`, with `τ_I` the external torque about the centre of
+mass in inertial components, is a model input. Since `R` is orthogonal, it holds exactly when
+Euler's equations `I_B ω_B' + ω_B × (I_B ω_B) = Rᵀ τ_I` hold in body components; for a symmetric
+positive-definite `I_B` they determine `ω_B' = I_B⁻¹ (Rᵀ τ_I - ω_B × (I_B ω_B))`. Without torque,
+`I_B ω_B'` is orthogonal to `ω_B` and to `I_B ω_B`, so the rotational kinetic energy
+`ω_B · (I_B ω_B) / 2` and the squared norm `|I_B ω_B|² = |L_COM|²` of the angular momentum are
+conserved.
+
 Model inputs (hypotheses of the module):
 
 * `R` (entry by entry), `o` and `x_B` are `C²` on an open set of times containing the interval
@@ -63,11 +74,15 @@ Model inputs (hypotheses of the module):
   admissible;
 * the mass functional is body-fixed; the total mass is nonzero where the centre of mass enters
   (the shifted reference points); the inertia identity and its derivative take a body frame
-  centered at the centre of mass (`centerOfMass = 0`); positivity of the mass or of the inertia
-  tensor is not used.
+  centered at the centre of mass (`centerOfMass = 0`); positivity of the mass is not used, and
+  positive definiteness of the inertia tensor is assumed only where Euler's equations are solved
+  for `ω_B'`, since an arbitrary linear mass functional does not supply it;
+* the rotational balance law `dL_COM/dt = τ_I` is assumed, not derived from internal forces;
+  squared magnitudes are dot products, since the norm of `Fin 3 → ℝ` is the supremum norm.
 
-Non-goals: fictitious forces and the equations of motion in the moving frame, torque balance and
-Euler's equations, attitude parametrizations, and any empirical adequacy or system safety claim.
+Non-goals: fictitious forces and the equations of motion in the moving frame, existence of motions
+for a given torque, attitude parametrizations and reconstruction, and any empirical adequacy or
+system safety claim.
 
 ## ii. Key results
 
@@ -80,6 +95,12 @@ Euler's equations, attitude parametrizations, and any empirical adequacy or syst
 - `deriv_comAngularMomentum` : `dL_COM/dt = R (I_B ω_B' + ω_B × (I_B ω_B))`.
 - `angularMomentumAbout_eq` : `L_O = L_COM + m (X - O) × V` about a fixed point `O`.
 - `inertiaTensorAbout_mulVec_eq_add_orbital` : the parallel-axis theorem for angular momentum.
+- `deriv_comAngularMomentum_eq_iff_euler` : the balance law `dL_COM/dt = τ_I` holds exactly when
+  Euler's equations `I_B ω_B' + ω_B × (I_B ω_B) = Rᵀ τ_I` hold.
+- `euler_solve_iff`, `deriv_comAngularMomentum_eq_iff_deriv_bodyAngularVelocity` : a
+  positive-definite `I_B` determines the body angular acceleration.
+- `torqueFree_conserved` : torque-free motion conserves the rotational kinetic energy and
+  `|I_B ω_B|² = |L_COM|²` (`comAngularMomentum_dotProduct_self`).
 
 ## iii. Table of contents
 
@@ -89,21 +110,26 @@ Euler's equations, attitude parametrizations, and any empirical adequacy or syst
 - B. Acceleration in a rotating and translating frame
 - C. Angular momentum about the centre of mass
 - D. Other reference points
+- E. Torque balance and Euler's equations
+  - E.1. Private helpers
+  - E.2. Euler's equations and torque-free motion
 
 ## iv. References
 
-- L. D. Landau and E. M. Lifshitz, *Mechanics*, Sections 31, 32 and 39 (angular velocity; the
-  angular momentum of a rigid body about its centre of mass and about a fixed point; motion in a
-  non-inertial frame of reference, with the translational, Euler, Coriolis and centrifugal
-  terms).
+- L. D. Landau and E. M. Lifshitz, *Mechanics*, Sections 31, 32, 34, 36, 37 and 39 (angular
+  velocity; the angular momentum of a rigid body about its centre of mass and about a fixed point;
+  the equations of motion of a rigid body; Euler's equations; the asymmetrical top, whose free
+  rotation conserves the energy and the squared angular momentum; motion in a non-inertial frame
+  of reference, with the translational, Euler, Coriolis and centrifugal terms).
 - H. Goldstein, C. Poole and J. Safko, *Classical Mechanics*, 3rd edition, 2002, Sections 4.9
-  and 4.10 (rate of change of a vector; the Coriolis effect) and Sections 5.1 to 5.3 and 5.5
+  and 4.10 (rate of change of a vector; the Coriolis effect) and Sections 5.1 to 5.3, 5.5 and 5.6
   (angular momentum and the inertia tensor; the parallel-axis theorem; Euler's equations in body
-  axes).
+  axes; torque-free motion of a rigid body).
 - Physlib's `RigidBodyMotion.bodyAngularVelocity`,
   `RigidBodyMotion.deriv_orientation_mulVec_eq_orientation_bodyAngularVelocity_cross`,
-  `RigidBody.angularMomentum_eq_inertiaTensor_mulVec` and
-  `RigidBody.inertiaTensorAbout_eq_centerOfMass_add_pointMass`, and the frame dictionary
+  `RigidBody.angularMomentum_eq_inertiaTensor_mulVec`,
+  `RigidBody.inertiaTensorAbout_eq_centerOfMass_add_pointMass` and
+  `RigidBody.rotationalKineticEnergy`, and the frame dictionary
   `PhyslibExt.Units.EngineeringFrames`.
 -/
 
@@ -544,5 +570,236 @@ lemma inertiaTensorAbout_mulVec_eq_add_orbital (B : RigidBody 3) (h : B.mass ≠
   · simp [cross_apply, Matrix.mulVec, dotProduct, Matrix.vecMulVec_apply, Space.sub_apply,
       Fin.sum_univ_three, Matrix.one_apply, Matrix.sub_apply, Matrix.smul_apply]
     ring
+
+/-! ## E. Torque balance and Euler's equations -/
+
+/-! ### E.1. Private helpers -/
+
+section EulerHelpers
+
+/- The differentiability of `ω_B` comes from the private helpers of section A.1, which use the
+operator norm on matrices; it is activated in this section only. -/
+attribute [local instance] Matrix.linftyOpNormedAddCommGroup Matrix.linftyOpNormedSpace
+  Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra
+
+/-- The body angular velocity is differentiable where the orientation is `C²` entry by entry. -/
+private lemma differentiableAt_bodyAngularVelocity_of_entries (M : RigidBodyMotion 3)
+    {U : Set Time} (hU : IsOpen U)
+    (hR : ∀ i j, ContDiffOn ℝ 2 (fun s => (M.orientation s).1 i j) U) {t : Time} (ht : t ∈ U) :
+    DifferentiableAt ℝ M.bodyAngularVelocity t :=
+  differentiableAt_bodyAngularVelocity M hU (contDiffOn_orientation_of_entries M hR) ht
+
+end EulerHelpers
+
+/-- A time increment is its value times the unit time. -/
+private lemma time_eq_val_smul_one (h : Time) : h = h.val • (1 : Time) := by
+  ext
+  simp [Time.smul_real_val, Time.one_val]
+
+/-- The derivative of `(A f) · (B f)` along a curve `f`, for constant matrices `A` and `B`: its
+value on a time increment `h` is `h (A f' · B f + A f · B f')`. -/
+private lemma hasFDerivAt_dotProduct_mulVec {f : Time → Fin 3 → ℝ} {t : Time}
+    (hf : DifferentiableAt ℝ f t) (A B : Matrix (Fin 3) (Fin 3) ℝ) :
+    ∃ L : Time →L[ℝ] ℝ, HasFDerivAt (fun s => (A *ᵥ f s) ⬝ᵥ (B *ᵥ f s)) L t ∧
+      ∀ h : Time, L h = h.val * ((A *ᵥ ∂ₜ f t) ⬝ᵥ (B *ᵥ f t) + (A *ᵥ f t) ⬝ᵥ (B *ᵥ ∂ₜ f t)) := by
+  set f' := fderiv ℝ f t
+  let LA : (Fin 3 → ℝ) →L[ℝ] (Fin 3 → ℝ) := LinearMap.toContinuousLinearMap (Matrix.mulVecLin A)
+  let LB : (Fin 3 → ℝ) →L[ℝ] (Fin 3 → ℝ) := LinearMap.toContinuousLinearMap (Matrix.mulVecLin B)
+  have hA : HasFDerivAt (fun s => A *ᵥ f s) (LA.comp f') t := LA.hasFDerivAt.comp t hf.hasFDerivAt
+  have hB : HasFDerivAt (fun s => B *ᵥ f s) (LB.comp f') t := LB.hasFDerivAt.comp t hf.hasFDerivAt
+  -- differentiate the dot product term by term
+  have hcomp : ∀ i ∈ (Finset.univ : Finset (Fin 3)),
+      HasFDerivAt (fun s => (A *ᵥ f s) i * (B *ᵥ f s) i)
+        ((A *ᵥ f t) i • ((ContinuousLinearMap.proj i).comp (LB.comp f')) +
+          (B *ᵥ f t) i • ((ContinuousLinearMap.proj i).comp (LA.comp f'))) t := by
+    intro i _
+    have hAi : HasFDerivAt (fun s => (A *ᵥ f s) i)
+        ((ContinuousLinearMap.proj i).comp (LA.comp f')) t :=
+      (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 3 => ℝ) i).hasFDerivAt.comp t hA
+    have hBi : HasFDerivAt (fun s => (B *ᵥ f s) i)
+        ((ContinuousLinearMap.proj i).comp (LB.comp f')) t :=
+      (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 3 => ℝ) i).hasFDerivAt.comp t hB
+    exact hAi.mul hBi
+  refine ⟨∑ i, ((A *ᵥ f t) i • (ContinuousLinearMap.proj i).comp (LB.comp f') +
+    (B *ᵥ f t) i • (ContinuousLinearMap.proj i).comp (LA.comp f')), ?_, fun h => ?_⟩
+  · convert HasFDerivAt.sum hcomp using 1
+    funext s
+    simp [dotProduct, Finset.sum_apply]
+  · -- on the increment `h`, the derivative of `f` is `h.val • ∂ₜ f t`
+    have h1 : f' h = h.val • ∂ₜ f t := by
+      conv_lhs => rw [time_eq_val_smul_one h]
+      rw [map_smul]
+      rfl
+    simp only [sum_apply, add_apply, smul_apply, ContinuousLinearMap.comp_apply,
+      ContinuousLinearMap.proj_apply, smul_eq_mul, h1]
+    simp only [LA, LB, LinearMap.coe_toContinuousLinearMap', Matrix.mulVecLin_apply,
+      Matrix.mulVec_smul, Pi.smul_apply, smul_eq_mul, dotProduct, Finset.mul_sum,
+      ← Finset.sum_add_distrib]
+    refine Finset.sum_congr rfl fun i _ => ?_
+    ring
+
+/-! ### E.2. Euler's equations and torque-free motion -/
+
+/-- Transport of the declared balance law: along a motion whose orientation is `C²` entry by entry
+on an open set `U` of times, with a centre-of-mass-centered body frame, at every `t ∈ U` the
+inertial law `dL_COM/dt = τ_I` holds exactly when Euler's equations
+`I_B ω_B' + ω_B × (I_B ω_B) = Rᵀ τ_I` hold in body components. -/
+lemma deriv_comAngularMomentum_eq_iff_euler (M : RigidBodyMotion 3) {U : Set Time} (hU : IsOpen U)
+    (hR : ∀ i j, ContDiffOn ℝ 2 (fun s => (M.orientation s).1 i j) U) (hc : M.centerOfMass = 0)
+    {t : Time} (ht : t ∈ U) (τI : Fin 3 → ℝ) :
+    ∂ₜ (comAngularMomentum M) t = τI ↔
+      M.inertiaTensorAbout M.centerOfMass *ᵥ ∂ₜ M.bodyAngularVelocity t +
+          M.bodyAngularVelocity t ⨯₃
+            (M.inertiaTensorAbout M.centerOfMass *ᵥ M.bodyAngularVelocity t) =
+        inertialToBodyVec (M.orientation t) τI := by
+  rw [deriv_comAngularMomentum M hU hR hc ht]
+  constructor
+  · intro h
+    rw [← h]
+    exact (inertialToBodyVec_bodyToInertialVec (M.orientation t) _).symm
+  · intro h
+    change bodyToInertialVec (M.orientation t) _ = τI
+    rw [h]
+    exact bodyToInertialVec_inertialToBodyVec (M.orientation t) τI
+
+/-- For a symmetric positive-definite inertia `I`, Euler's equations `I a + ω × (I ω) = τ_B` in the
+angular acceleration `a` have the unique solution `a = I⁻¹ (τ_B - ω × (I ω))`. -/
+lemma euler_solve_iff {I : Matrix (Fin 3) (Fin 3) ℝ} (hI : I.PosDef) (ω a τB : Fin 3 → ℝ) :
+    I *ᵥ a + ω ⨯₃ (I *ᵥ ω) = τB ↔ a = I⁻¹ *ᵥ (τB - ω ⨯₃ (I *ᵥ ω)) := by
+  have hdet : IsUnit I.det := (Matrix.isUnit_iff_isUnit_det I).mp hI.isUnit
+  constructor
+  · intro h
+    rw [← h, add_sub_cancel_right, Matrix.mulVec_mulVec, Matrix.nonsing_inv_mul I hdet,
+      Matrix.one_mulVec]
+  · intro h
+    rw [h, Matrix.mulVec_mulVec, Matrix.mul_nonsing_inv I hdet, Matrix.one_mulVec, sub_add_cancel]
+
+/-- For a positive-definite inertia tensor about the centre of mass the balance law determines the
+body angular acceleration: at every `t ∈ U`, `dL_COM/dt = τ_I` exactly when
+`ω_B' = I_B⁻¹ (Rᵀ τ_I - ω_B × (I_B ω_B))`. -/
+lemma deriv_comAngularMomentum_eq_iff_deriv_bodyAngularVelocity (M : RigidBodyMotion 3)
+    {U : Set Time} (hU : IsOpen U)
+    (hR : ∀ i j, ContDiffOn ℝ 2 (fun s => (M.orientation s).1 i j) U) (hc : M.centerOfMass = 0)
+    (hI : (M.inertiaTensorAbout M.centerOfMass).PosDef) {t : Time} (ht : t ∈ U)
+    (τI : Fin 3 → ℝ) :
+    ∂ₜ (comAngularMomentum M) t = τI ↔
+      ∂ₜ M.bodyAngularVelocity t = (M.inertiaTensorAbout M.centerOfMass)⁻¹ *ᵥ
+        (inertialToBodyVec (M.orientation t) τI -
+          M.bodyAngularVelocity t ⨯₃
+            (M.inertiaTensorAbout M.centerOfMass *ᵥ M.bodyAngularVelocity t)) := by
+  rw [deriv_comAngularMomentum_eq_iff_euler M hU hR hc ht τI]
+  exact euler_solve_iff hI _ _ _
+
+/-- The body and inertial angular momenta have the same Euclidean norm:
+`L_COM · L_COM = (I_B ω_B) · (I_B ω_B)` for a centre-of-mass-centered body frame. -/
+lemma comAngularMomentum_dotProduct_self (M : RigidBodyMotion 3) (t : Time)
+    (hR : DifferentiableAt ℝ (fun s => (M.orientation s).1) t) (hc : M.centerOfMass = 0) :
+    comAngularMomentum M t ⬝ᵥ comAngularMomentum M t =
+      (M.inertiaTensorAbout M.centerOfMass *ᵥ M.bodyAngularVelocity t) ⬝ᵥ
+        (M.inertiaTensorAbout M.centerOfMass *ᵥ M.bodyAngularVelocity t) := by
+  rw [(comAngularMomentum_eq M t hR hc).2]
+  exact bodyToInertialVec_dotProduct (M.orientation t) _ _
+
+/-- Torque-free consequence for the kinetic energy: if `dL_COM/dt = 0` at `t ∈ U`, the rotational
+kinetic energy `ω_B · (I_B ω_B) / 2` (Physlib's `rotationalKineticEnergy` of the body-fixed
+distribution, the rotational part of the total kinetic energy) has derivative zero at `t`. -/
+lemma hasFDerivAt_rotationalKineticEnergy_of_torqueFree (M : RigidBodyMotion 3) {U : Set Time}
+    (hU : IsOpen U) (hR : ∀ i j, ContDiffOn ℝ 2 (fun s => (M.orientation s).1 i j) U)
+    (hc : M.centerOfMass = 0) {t : Time} (ht : t ∈ U)
+    (hfree : ∂ₜ (comAngularMomentum M) t = 0) :
+    HasFDerivAt (fun s => M.toRigidBody.rotationalKineticEnergy (M.bodyAngularVelocity s))
+      (0 : Time →L[ℝ] ℝ) t := by
+  have hω := differentiableAt_bodyAngularVelocity_of_entries M hU hR ht
+  -- without torque, Euler's equations read `I_B ω_B' = -(ω_B × (I_B ω_B))`
+  have heul := (deriv_comAngularMomentum_eq_iff_euler M hU hR hc ht 0).mp hfree
+  simp only [inertialToBodyVec, Matrix.mulVec_zero] at heul
+  have hI : M.toRigidBody.inertiaTensor = M.inertiaTensorAbout M.centerOfMass := by
+    rw [hc, RigidBody.inertiaTensorAbout_zero]
+  set I := M.inertiaTensorAbout M.centerOfMass
+  have hsymm : Iᵀ = I := by
+    ext i j
+    exact RigidBody.inertiaTensorAbout_symmetric _ _ j i
+  obtain ⟨L, hL, hLv⟩ := hasFDerivAt_dotProduct_mulVec hω 1 I
+  have hfun : (fun s => M.toRigidBody.rotationalKineticEnergy (M.bodyAngularVelocity s)) =
+      fun s => (1 / (2 : ℝ)) * ((1 : Matrix (Fin 3) (Fin 3) ℝ) *ᵥ M.bodyAngularVelocity s) ⬝ᵥ
+        (I *ᵥ M.bodyAngularVelocity s) := by
+    funext s
+    simp [RigidBody.rotationalKineticEnergy, hI]
+  rw [hfun]
+  -- by the symmetry of `I_B`, the derivative is `ω_B · (I_B ω_B') = -ω_B · (ω_B × (I_B ω_B)) = 0`
+  have hL0 : (1 / (2 : ℝ)) • L = 0 := by
+    refine ContinuousLinearMap.ext fun h => ?_
+    rw [smul_apply, hLv h, zero_apply]
+    simp only [Matrix.one_mulVec]
+    set ω := M.bodyAngularVelocity t
+    set a := ∂ₜ M.bodyAngularVelocity t
+    have e1 : a ⬝ᵥ (I *ᵥ ω) = ω ⬝ᵥ (I *ᵥ a) := by
+      rw [Matrix.dotProduct_mulVec, ← Matrix.mulVec_transpose, hsymm, dotProduct_comm]
+    have e2 : I *ᵥ a = -(ω ⨯₃ (I *ᵥ ω)) := eq_neg_of_add_eq_zero_left heul
+    rw [e1, e2, dotProduct_neg, dot_self_cross]
+    simp
+  have h := hL.const_mul (1 / (2 : ℝ))
+  rw [hL0] at h
+  exact h
+
+/-- Torque-free consequence for the angular momentum: if `dL_COM/dt = 0` at `t ∈ U`, the squared
+Euclidean norm `(I_B ω_B) · (I_B ω_B)` of the body angular momentum has derivative zero at `t`. -/
+lemma hasFDerivAt_angularMomentum_normSq_of_torqueFree (M : RigidBodyMotion 3) {U : Set Time}
+    (hU : IsOpen U) (hR : ∀ i j, ContDiffOn ℝ 2 (fun s => (M.orientation s).1 i j) U)
+    (hc : M.centerOfMass = 0) {t : Time} (ht : t ∈ U)
+    (hfree : ∂ₜ (comAngularMomentum M) t = 0) :
+    HasFDerivAt (fun s => (M.inertiaTensorAbout M.centerOfMass *ᵥ M.bodyAngularVelocity s) ⬝ᵥ
+        (M.inertiaTensorAbout M.centerOfMass *ᵥ M.bodyAngularVelocity s))
+      (0 : Time →L[ℝ] ℝ) t := by
+  have hω := differentiableAt_bodyAngularVelocity_of_entries M hU hR ht
+  -- without torque, Euler's equations read `I_B ω_B' = -(ω_B × (I_B ω_B))`
+  have heul := (deriv_comAngularMomentum_eq_iff_euler M hU hR hc ht 0).mp hfree
+  simp only [inertialToBodyVec, Matrix.mulVec_zero] at heul
+  set I := M.inertiaTensorAbout M.centerOfMass
+  obtain ⟨L, hL, hLv⟩ := hasFDerivAt_dotProduct_mulVec hω I I
+  -- the derivative is `2 (I_B ω_B) · (I_B ω_B') = -2 (I_B ω_B) · (ω_B × (I_B ω_B)) = 0`
+  have hL0 : L = 0 := by
+    refine ContinuousLinearMap.ext fun h => ?_
+    rw [hLv h, zero_apply]
+    set ω := M.bodyAngularVelocity t
+    set a := ∂ₜ M.bodyAngularVelocity t
+    have e2 : I *ᵥ a = -(ω ⨯₃ (I *ᵥ ω)) := eq_neg_of_add_eq_zero_left heul
+    have z1 : (I *ᵥ ω) ⬝ᵥ (ω ⨯₃ (I *ᵥ ω)) = 0 := dot_cross_self _ _
+    have z2 : (ω ⨯₃ (I *ᵥ ω)) ⬝ᵥ (I *ᵥ ω) = 0 := by
+      rw [dotProduct_comm]
+      exact z1
+    rw [e2]
+    simp only [neg_dotProduct, dotProduct_neg, z1, z2, neg_zero, add_zero, mul_zero]
+  rw [hL0] at hL
+  exact hL
+
+/-- Conservation on a preconnected open set of times: torque-free motion keeps the rotational
+kinetic energy and the squared norm `|I_B ω_B|² = |L_COM|²` of the angular momentum constant. -/
+lemma torqueFree_conserved (M : RigidBodyMotion 3) {U : Set Time} (hU : IsOpen U)
+    (hU' : IsPreconnected U) (hR : ∀ i j, ContDiffOn ℝ 2 (fun s => (M.orientation s).1 i j) U)
+    (hc : M.centerOfMass = 0) (hfree : ∀ s ∈ U, ∂ₜ (comAngularMomentum M) s = 0) {s t : Time}
+    (hs : s ∈ U) (ht : t ∈ U) :
+    M.toRigidBody.rotationalKineticEnergy (M.bodyAngularVelocity s) =
+        M.toRigidBody.rotationalKineticEnergy (M.bodyAngularVelocity t) ∧
+      (M.inertiaTensorAbout M.centerOfMass *ᵥ M.bodyAngularVelocity s) ⬝ᵥ
+          (M.inertiaTensorAbout M.centerOfMass *ᵥ M.bodyAngularVelocity s) =
+        (M.inertiaTensorAbout M.centerOfMass *ᵥ M.bodyAngularVelocity t) ⬝ᵥ
+          (M.inertiaTensorAbout M.centerOfMass *ᵥ M.bodyAngularVelocity t) := by
+  have hE : ∀ τ ∈ U, HasFDerivAt
+      (fun s => M.toRigidBody.rotationalKineticEnergy (M.bodyAngularVelocity s))
+      (0 : Time →L[ℝ] ℝ) τ := fun τ hτ =>
+    hasFDerivAt_rotationalKineticEnergy_of_torqueFree M hU hR hc hτ (hfree τ hτ)
+  have hN : ∀ τ ∈ U, HasFDerivAt
+      (fun s => (M.inertiaTensorAbout M.centerOfMass *ᵥ M.bodyAngularVelocity s) ⬝ᵥ
+        (M.inertiaTensorAbout M.centerOfMass *ᵥ M.bodyAngularVelocity s))
+      (0 : Time →L[ℝ] ℝ) τ := fun τ hτ =>
+    hasFDerivAt_angularMomentum_normSq_of_torqueFree M hU hR hc hτ (hfree τ hτ)
+  refine ⟨?_, ?_⟩
+  · exact hU.is_const_of_fderiv_eq_zero (𝕜 := ℝ) hU'
+      (fun τ hτ => (hE τ hτ).differentiableAt.differentiableWithinAt)
+      (fun τ hτ => (hE τ hτ).fderiv) hs ht
+  · exact hU.is_const_of_fderiv_eq_zero (𝕜 := ℝ) hU'
+      (fun τ hτ => (hN τ hτ).differentiableAt.differentiableWithinAt)
+      (fun τ hτ => (hN τ hτ).fderiv) hs ht
 
 end Mechanics.RigidMotionPorts
