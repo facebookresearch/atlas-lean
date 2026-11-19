@@ -11,7 +11,6 @@ public import Mathlib.Analysis.SpecificLimits.Basic
 public import Mathlib.Data.Set.Finite.Basic
 public import MathlibExt.Robotics.Hybrid.DwellDivergence
 public import PhyslibExt.Mechanics.PowerPorts
-import Mathlib.Algebra.Order.Floor.Semiring
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Linarith
@@ -68,7 +67,8 @@ time. For `0 < e < 1` the durations sum to `t_∞ = 2 u₀ / (g (1 - e))`, and t
 increase strictly, stay below `t_∞` and tend to it: infinitely many impacts occur before a finite
 time (Zeno accumulation), while the take-off speeds tend to `0`. For `e ≥ 0` the durations are
 summable exactly when `e < 1`. Any sequence of step durations with a positive lower bound `δ` has
-only finitely many events up to a finite horizon, so the Zeno family has no such bound. For `e = 1`
+only finitely many events up to a finite horizon (`Robotics.Hybrid.events_finite_of_dwell` of
+`MathlibExt.Robotics.Hybrid.DwellDivergence`), so the Zeno family has no such bound. For `e = 1`
 every flight lasts `2 u₀ / g` and finitely many impacts occur on every finite horizon. For `e = 0`
 the motion terminates: the first arc is the only active one and ends at `2 u₀ / g`, and the ball
 then rests on the floor, with every later take-off speed and flight duration `0` and the elapsed
@@ -113,8 +113,9 @@ external-impulse model with one normal direction, not a limit of the finite-mass
 - `hasSum_flightDuration`, `zeno_accumulation`, `summable_flightDuration_iff`: for `0 < e < 1` the
   durations sum to `2 u₀ / (g (1 - e))` and the contact times accumulate there; for `e ≥ 0` the
   durations are summable exactly when `e < 1`.
-- `events_finite_of_dwell`, `zeno_no_dwell`: a positive dwell-time lower bound gives finitely many
-  events up to every horizon; the Zeno family has none.
+- `zeno_no_dwell`: the Zeno family has no positive dwell-time lower bound, the hypothesis of the
+  finite-event criterion `Robotics.Hybrid.events_finite_of_dwell`; the old name
+  `events_finite_of_dwell` of this module is a deprecated alias of that criterion.
 - `elastic_events_finite`, `inelastic_stops`: for `e = 1` finitely many impacts on every horizon;
   for `e = 0` the first arc is the only active one, and the motion terminates after the first
   impact at `2 u₀ / g`.
@@ -129,7 +130,7 @@ external-impulse model with one normal direction, not a limit of the finite-mass
 - F. The wall impulse and the continuous phase
 - G. Ballistic arcs and the bounce sequence
 - H. The finite sum and Zeno accumulation
-- I. A dwell-time lower bound gives finitely many events
+- I. No dwell-time lower bound for the Zeno family
 - J. The boundary cases `e = 1` and `e = 0`
 
 ## iv. References
@@ -145,8 +146,8 @@ external-impulse model with one normal direction, not a limit of the finite-mass
 - R. Goebel, R. G. Sanfelice and A. R. Teel, *Hybrid Dynamical Systems*, Princeton University
   Press (2012): dwell-time conditions and finitely many jumps on bounded time intervals.
 - `PhyslibExt.Mechanics.PowerPorts`: the constant-force trajectory and the impulse identity.
-- `MathlibExt.Robotics.Hybrid.DwellDivergence`: the elapsed time of a duration sequence and its
-  linear lower bound under a dwell time.
+- `MathlibExt.Robotics.Hybrid.DwellDivergence`: the elapsed time of a duration sequence, its
+  linear lower bound under a dwell time, and the finite-event criterion.
 -/
 
 @[expose] public section
@@ -623,24 +624,10 @@ lemma summable_flightDuration_iff {g e u₀ : ℝ} (hg : 0 < g) (hu : 0 < u₀) 
     have hmul := hgeom.mul_left (2 * u₀ / g)
     exact (summable_congr (flightDuration_eq g e u₀)).mpr hmul
 
-/-! ## I. A dwell-time lower bound gives finitely many events -/
+/-! ## I. No dwell-time lower bound for the Zeno family -/
 
-/-- **Finite-event criterion.** If every step duration `d k` is at least `δ > 0`, only finitely
-many events occur up to any horizon `H`: every step count `n` with elapsed time
-`dwellElapsed d n ≤ H` satisfies `n δ ≤ H`. -/
-lemma events_finite_of_dwell {d : ℕ → ℝ} {δ : ℝ} (hδ : 0 < δ) (hd : ∀ k, δ ≤ d k) (H : ℝ) :
-    {n : ℕ | dwellElapsed d n ≤ H}.Finite ∧ ∀ n, dwellElapsed d n ≤ H → (n : ℝ) * δ ≤ H := by
-  have hbound : ∀ n, dwellElapsed d n ≤ H → (n : ℝ) ≤ H / δ := by
-    intro n hn
-    rw [le_div_iff₀ hδ]
-    exact le_trans (dwellElapsed_ge hd n) hn
-  refine ⟨?_, fun n hn => le_trans (dwellElapsed_ge hd n) hn⟩
-  refine Set.Finite.subset (Set.finite_lt_nat (⌊H / δ⌋₊ + 1)) ?_
-  intro n hn
-  simp only [Set.mem_ofPred_eq] at hn ⊢
-  have h2 : (n : ℝ) ≤ H / δ := hbound n hn
-  have h3 : n ≤ ⌊H / δ⌋₊ := Nat.le_floor h2
-  omega
+@[deprecated (since := "2026-11-19")]
+alias events_finite_of_dwell := Robotics.Hybrid.events_finite_of_dwell
 
 /-- The Zeno family has no positive dwell-time lower bound: for `g > 0`, `u₀ > 0` and
 `0 < e < 1`, no `δ > 0` bounds every flight duration from below. -/
@@ -675,7 +662,7 @@ lemma elastic_events_finite {g u₀ : ℝ} (hg : 0 < g) (hu : 0 < u₀) :
     have hzero : 2 * u₀ / g = 0 := tendsto_const_nhds_iff.mp htend
     linarith
   · intro H
-    exact (events_finite_of_dwell hc (fun k => (hconst k).ge) H).1
+    exact (Robotics.Hybrid.events_finite_of_dwell hc (fun k => (hconst k).ge) H).1
 
 /-- **Termination for `e = 0`.** For `g > 0` and `u₀ > 0` the first arc, with take-off speed
 `u₀`, is the only active arc, and it ends at the positive time `2 u₀ / g`, the first and only

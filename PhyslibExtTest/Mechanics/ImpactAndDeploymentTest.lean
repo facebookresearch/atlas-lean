@@ -211,7 +211,7 @@ example :
 /-- The finite-event criterion with the dwell time `1` of the elastic flights: at most `10`
 impacts occur before `t = 10`. -/
 example (n : ℕ) (hn : dwellElapsed (flightDuration 10 1 5) n ≤ 10) : n ≤ 10 := by
-  have h := (events_finite_of_dwell (δ := 1) (by norm_num)
+  have h := (Robotics.Hybrid.events_finite_of_dwell (δ := 1) (by norm_num)
     (fun k => by rw [flightDuration_eq]; norm_num) 10).2 n hn
   exact_mod_cast (by linarith : (n : ℝ) ≤ 10)
 
@@ -231,5 +231,10 @@ example :
 /-- In contrast, with `e = 1 / 2` every arc of the fixture is active: the bounces never stop. -/
 example (n : ℕ) : IsActiveArc (1 / 2) 5 n :=
   isActiveArc_of_pos (by norm_num) (by norm_num) n
+
+-- The pre-move name still elaborates, as a deprecated alias with the same statement.
+set_option linter.deprecated false in
+example : @PhyslibExt.Mechanics.ImpactAndDeployment.events_finite_of_dwell =
+    @Robotics.Hybrid.events_finite_of_dwell := rfl
 
 end PhyslibExtTest.Mechanics.ImpactAndDeployment
