@@ -1,11 +1,12 @@
 name: Blueprint Pages
 
 # PRs that touch the wiki, its tooling, the site or the toolchain pins check
-# the graph; every merge group and every push to main checks it too. Only the
-# default branch can publish, and publishing is opt-in.
+# the graph; every merge group checks it too. main is built once a day and on
+# manual runs, not on every push: merges land faster than a build finishes.
+# Only the default branch can publish, and publishing is opt-in.
 on:
-  push:
-    branches: [main]
+  schedule:
+    - cron: "17 3 * * *" # Daily at 03:17 UTC, off the busy top of the hour.
   pull_request:
     paths:
       - "blueprint/**"

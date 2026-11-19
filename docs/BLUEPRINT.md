@@ -151,12 +151,13 @@ a literal dollar of that shape as `&#36;`, or inside inline code.
 
 Changing AutoformBot requires a reviewed `.github/autoform-ref` update and
 passing tests. The workflow has no automatic pin push, upstream-sync bot,
-model-driven audit, schedule, or required personal token.
+model-driven audit, or required personal token.
 
 ## GitHub Actions and publication
 
-`Blueprint Pages` runs on every merge group, on pushes and manual runs of
-`main`, and on PRs that touch the wiki: `blueprint/`, the wiki scripts and
+`Blueprint Pages` runs on `main` once a day at 03:17 UTC and on manual runs
+(**Actions → Blueprint Pages → Run workflow**), on every merge group, and on
+PRs that touch the wiki: `blueprint/`, the wiki scripts and
 their tests, `scripts/taxonomy.json`, `scripts/wiki-sync.json`, the site
 configuration (`mkdocs.yml`, `theme/`, `hooks/`), this document, the workflow,
 `.github/autoform-ref`, or the toolchain pins (`lean-toolchain`,
