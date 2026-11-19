@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import MathlibExt.Biology.PopulationGenetics.Diffusion.BoundaryClassification
+import MathlibExt.Biology.PopulationGenetics.Diffusion.SpeedDensity
 
 /-! Tests for speed density and the canonical form: generic restatements and
 the neutral specializations. -/
@@ -16,7 +16,7 @@ the neutral specializations. -/
 open Real Set MeasureTheory
 open MathlibExt.Biology.PopulationGenetics.Diffusion
 
-namespace MathlibExtTest.Biology.PopulationGenetics.Diffusion.BoundaryClassification
+namespace MathlibExtTest.Biology.PopulationGenetics.Diffusion.SpeedDensity
 
 example {b a : ℝ → ℝ} (h : IsRegularDiffusion b a) {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
     0 < speedDensity b a x :=
@@ -62,4 +62,4 @@ example (θ₁ θ₂ x : ℝ) :
   rw [show 2 * (θ₁ / 2) - 1 = θ₁ - 1 from by ring, show 2 * (θ₂ / 2) - 1 = θ₂ - 1 from by ring]
   ring
 
-end MathlibExtTest.Biology.PopulationGenetics.Diffusion.BoundaryClassification
+end MathlibExtTest.Biology.PopulationGenetics.Diffusion.SpeedDensity
