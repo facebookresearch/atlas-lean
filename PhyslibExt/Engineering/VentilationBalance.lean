@@ -98,9 +98,12 @@ private lemma equilibrium_bridge {V Q : ℝ} (hV : 0 < V) (hQ : 0 < Q)
   unfold ventilationEquilibrium
   field_simp
 
-/-- With no indoor source, the equilibrium is the outdoor
-concentration. -/
-theorem ventilationEquilibrium_zero_source (Q c_out : ℝ) :
+/-- With positive flow and no indoor source, the equilibrium
+is the outdoor concentration. (At zero flow every constant
+concentration is an equilibrium of the balance, so the
+positive-flow domain is part of the claim.) -/
+theorem ventilationEquilibrium_zero_source {Q : ℝ} (_hQ : 0 < Q)
+    (c_out : ℝ) :
     ventilationEquilibrium Q c_out 0 = c_out := by
   simp [ventilationEquilibrium]
 

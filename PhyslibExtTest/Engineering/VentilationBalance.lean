@@ -128,10 +128,10 @@ example : 0 ≤ ventilationConcentration 5 5 2 10 1 3 :=
 /-- No indoor source: the equilibrium is the outdoor
 concentration, in the CSTR steady form `Q * c_out / (Q + 0 * V)`. -/
 example : ventilationEquilibrium 5 2 0 = 2 :=
-  ventilationEquilibrium_zero_source 5 2
+  ventilationEquilibrium_zero_source (by norm_num) 2
 
 example : (5 : ℝ) * 2 / (5 + 0 * 5) = ventilationEquilibrium 5 2 0 := by
-  rw [ventilationEquilibrium_zero_source]
+  rw [ventilationEquilibrium_zero_source (show (0:ℝ) < 5 by norm_num)]
   norm_num
 
 /-- The CSTR steady-state identity at zero reaction rate is the
@@ -145,7 +145,7 @@ example : (5 / 5 : ℝ) * (2 - 5 * 2 / (5 + 0 * 5))
 example : ventilationConcentration 5 5 2 0 1 3
     = 2 + (1 - 2) * Real.exp (-(5 / 5) * 3) := by
   rw [ventilationConcentration_eq_explicit (by norm_num) (by norm_num),
-    ventilationEquilibrium_zero_source]
+    ventilationEquilibrium_zero_source (show (0:ℝ) < 5 by norm_num)]
 
 /-- A ppm figure is not a mass concentration: `1000` ppm by
 volume of a gas of density `17988 / 10000` (kg/m³) is
