@@ -49,23 +49,35 @@ namespace PhyslibExtTest.FluidDynamics.Hydraulics.PipeNetwork
 `d = (-1, 1)` is a passive pipe flow. -/
 example : IsPassivePipeFlow (![0] : Fin 1 → Fin 2) ![1] ![1] ![1]
     ![-1, 1] ![2, 1] := by
-  constructor <;> ext x <;> fin_cases x <;>
-    simp [incidenceMatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> norm_num
+  refine ⟨⟨?_, ?_⟩, ?_⟩
+  · ext x <;> fin_cases x <;>
+      simp [incidenceMatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> norm_num
+  · ext x <;> fin_cases x <;>
+      simp [incidenceMatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> norm_num
+  · intro e <;> fin_cases e <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons]
 
 /-- Focused head drop and dissipation are both `1`. -/
 example : (![2, 1] : Fin 2 → ℝ) 0 - (![2, 1] : Fin 2 → ℝ) 1
     = (1 : ℝ) * 1 * |1| :=
   passivePipeFlow_head_drop (by
-    constructor <;> ext x <;> fin_cases x <;>
-      simp [incidenceMatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> norm_num :
+    refine ⟨⟨?_, ?_⟩, ?_⟩
+    · ext x <;> fin_cases x <;>
+        simp [incidenceMatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> norm_num
+    · ext x <;> fin_cases x <;>
+        simp [incidenceMatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> norm_num
+    · intro e <;> fin_cases e <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons] :
     IsPassivePipeFlow (![0] : Fin 1 → Fin 2) ![1] ![1] ![1]
       ![-1, 1] ![2, 1]) 0
 
 example : -((![2, 1] : Fin 2 → ℝ) ⬝ᵥ ![-1, 1]) = 1 := by
   have hp : IsPassivePipeFlow (![0] : Fin 1 → Fin 2) ![1] ![1] ![1]
       ![-1, 1] ![2, 1] := by
-    constructor <;> ext x <;> fin_cases x <;>
-      simp [incidenceMatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> norm_num
+    refine ⟨⟨?_, ?_⟩, ?_⟩
+    · ext x <;> fin_cases x <;>
+        simp [incidenceMatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> norm_num
+    · ext x <;> fin_cases x <;>
+        simp [incidenceMatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> norm_num
+    · intro e <;> fin_cases e <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons]
   rw [passivePipeFlow_dissipation hp]
   norm_num [Fin.sum_univ_one]
 
@@ -73,8 +85,12 @@ example : -((![2, 1] : Fin 2 → ℝ) ⬝ᵥ ![-1, 1]) = 1 := by
 `r = (1, 4)` satisfies the same node inflow and heads. -/
 example : IsPassivePipeFlow (![0, 0] : Fin 2 → Fin 2) ![1, 1]
     ![1, 4] ![1, 1 / 2] ![-3 / 2, 3 / 2] ![2, 1] := by
-  constructor <;> ext x <;> fin_cases x <;>
-    simp [incidenceMatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> norm_num
+  refine ⟨⟨?_, ?_⟩, ?_⟩
+  · ext x <;> fin_cases x <;>
+      simp [incidenceMatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> norm_num
+  · ext x <;> fin_cases x <;>
+      simp [incidenceMatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> norm_num
+  · intro e <;> fin_cases e <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons]
 
 /-- Collapsing the parallel flow onto one arc is rejected. -/
 example : ¬ IsPassivePipeFlow (![0, 0] : Fin 2 → Fin 2) ![1, 1]
@@ -86,8 +102,12 @@ example : ¬ IsPassivePipeFlow (![0, 0] : Fin 2 → Fin 2) ![1, 1]
 /-- Antiparallel arcs with signed flows satisfy the predicate. -/
 example : IsPassivePipeFlow (![0, 1] : Fin 2 → Fin 2) ![1, 0]
     ![1, 1] ![1, -1] ![-2, 2] ![2, 1] := by
-  constructor <;> ext x <;> fin_cases x <;>
-    simp [incidenceMatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> norm_num
+  refine ⟨⟨?_, ?_⟩, ?_⟩
+  · ext x <;> fin_cases x <;>
+      simp [incidenceMatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> norm_num
+  · ext x <;> fin_cases x <;>
+      simp [incidenceMatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> norm_num
+  · intro e <;> fin_cases e <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons]
 
 /-- The antiparallel wrong-sign flow is rejected. -/
 example : ¬ IsPassivePipeFlow (![0, 1] : Fin 2 → Fin 2) ![1, 0]
@@ -102,8 +122,12 @@ example : ¬ IsPassivePipeFlow (![0, 1] : Fin 2 → Fin 2) ![1, 0]
 example : IsPassivePipeFlow (![1] : Fin 1 → Fin 2) ![0] ![1] (-![1])
     ![-1, 1] ![2, 1] :=
   passivePipeFlow_reverse (by
-    constructor <;> ext x <;> fin_cases x <;>
-      simp [incidenceMatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> norm_num :
+    refine ⟨⟨?_, ?_⟩, ?_⟩
+    · ext x <;> fin_cases x <;>
+        simp [incidenceMatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> norm_num
+    · ext x <;> fin_cases x <;>
+        simp [incidenceMatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> norm_num
+    · intro e <;> fin_cases e <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons] :
     IsPassivePipeFlow (![0] : Fin 1 → Fin 2) ![1] ![1] ![1]
       ![-1, 1] ![2, 1])
 
@@ -111,7 +135,8 @@ example : IsPassivePipeFlow (![1] : Fin 1 → Fin 2) ![0] ![1] (-![1])
 example : ¬ IsPassivePipeFlow (![1] : Fin 1 → Fin 2) ![0] ![1] ![1]
     ![-1, 1] ![2, 1] := by
   intro hp
-  have h := congrFun hp.1 0
+  obtain ⟨hBq, -⟩ := hp.1
+  have h := congrFun hBq 0
   simp [incidenceMatrix, Matrix.mulVec, dotProduct] at h
   norm_num at h
 
@@ -119,7 +144,8 @@ example : ¬ IsPassivePipeFlow (![1] : Fin 1 → Fin 2) ![0] ![1] ![1]
 example : ¬ IsPassivePipeFlow (![0] : Fin 1 → Fin 2) ![1] ![1] ![1]
     ![1, -1] ![2, 1] := by
   intro hp
-  have h := congrFun hp.1 0
+  obtain ⟨hBq, -⟩ := hp.1
+  have h := congrFun hBq 0
   simp [incidenceMatrix, Matrix.mulVec, dotProduct] at h
   norm_num at h
 
@@ -130,25 +156,31 @@ example : ¬ IsPassivePipeFlow (![0] : Fin 1 → Fin 2) ![1] ![1] ![1]
   have h := passivePipeFlow_head_drop hp 0
   norm_num at h
 
-/-- Negative resistance satisfies the predicate but gives negative
-dissipation, so the nonnegativity hypothesis is necessary. -/
-example : IsPassivePipeFlow (![0] : Fin 1 → Fin 2) ![1] ![-1] ![1]
+/-- Negative resistance satisfies the pipe-flow equations but is
+not passive, and its dissipation is negative. -/
+example : IsPipeFlowEquations (![0] : Fin 1 → Fin 2) ![1] ![-1] ![1]
     ![-1, 1] ![1, 2] := by
   constructor <;> ext x <;> fin_cases x <;>
     simp [incidenceMatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> norm_num
 
+example : ¬ IsPassivePipeFlow (![0] : Fin 1 → Fin 2) ![1] ![-1] ![1]
+    ![-1, 1] ![1, 2] := by
+  intro hp
+  have h := hp.2 0
+  norm_num [Matrix.cons_val_zero] at h
+
 example : -((![1, 2] : Fin 2 → ℝ) ⬝ᵥ ![-1, 1]) = -1 := by
-  have hp : IsPassivePipeFlow (![0] : Fin 1 → Fin 2) ![1] ![-1] ![1]
+  have hp : IsPipeFlowEquations (![0] : Fin 1 → Fin 2) ![1] ![-1] ![1]
       ![-1, 1] ![1, 2] := by
     constructor <;> ext x <;> fin_cases x <;>
       simp [incidenceMatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> norm_num
-  rw [passivePipeFlow_dissipation hp]
+  rw [pipeFlowEquations_dissipation hp]
   norm_num [Fin.sum_univ_one]
 
-#print axioms FluidDynamics.Hydraulics.PipeNetwork.incidenceMatrix_pairing
 #print axioms FluidDynamics.Hydraulics.PipeNetwork.passivePipeFlow_head_drop
 #print axioms FluidDynamics.Hydraulics.PipeNetwork.passivePipeFlow_dissipation
 #print axioms FluidDynamics.Hydraulics.PipeNetwork.passivePipeFlow_dissipation_nonneg
 #print axioms FluidDynamics.Hydraulics.PipeNetwork.passivePipeFlow_reverse
+#print axioms FluidDynamics.Hydraulics.PipeNetwork.pipeFlowEquations_dissipation
 
 end PhyslibExtTest.FluidDynamics.Hydraulics.PipeNetwork
