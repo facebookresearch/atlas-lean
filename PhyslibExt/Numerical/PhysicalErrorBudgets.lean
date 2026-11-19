@@ -9,9 +9,18 @@ module
 
 public import MathlibExt.Analysis.ODE.FiniteElement1D
 public import PhyslibExt.Elasticity.PrismaticMembers
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
+import MathlibExt.Analysis.ODE.InvariantRegions
+import MathlibExt.Analysis.ODE.TimeStepping
+import PhyslibExt.HeatTransfer.ConductionPorts
 
 /-!
-# Physical bar pullback of the one-dimensional P1 error estimates
+# Physical error budgets: bar pullback of the P1 estimates and a ten-step thermal Euler error
 
 ## i. Overview
 
@@ -47,6 +56,28 @@ Model inputs: small-strain linear elastic bar with constant `EA`, both ends fixe
 Non-goals: no second assembled finite element carrier, no variable `EA`, no claim that zero nodal
 error means zero reconstructed error, and no empirical adequacy or system safety claim.
 
+Sections F-H treat a lumped body of heat capacity `C > 0` coupled through the conductance `G > 0`
+to a fixed bath at temperature `T_amb`, which delivers the power `Q(T) = -G (T - T_amb)`. The bath
+is an external reservoir: `Q` is the source of a one-node thermal network of `ConductionPorts`
+with no internal conductance, whose storage law `d(C T)/dt = Q` the trajectory satisfies; with
+`Q = 0` the same one-node law keeps the temperature constant instead of relaxing it to `T_amb`.
+The trajectory `T(t) = T_amb + Δ exp(-t / τ)`, `τ = C / G`, is the shifted scalar exponential
+solution `MetaMathlibExt.scalar_exp_solution` with rate `-1 / τ` and solves `C T' = Q(T)`. One
+explicit Euler step of size `dt` maps `T` to `T + dt Q(T) / C = T_amb + (1 - dt / τ) (T - T_amb)`.
+At `dt = τ / 10` every real sequence obeying this recurrence from `T_amb + Δ` is
+`T_amb + Δ (9 / 10) ^ j`. After ten steps the time is `τ`, and
+`T_10 - T(τ) = Δ ((9 / 10) ^ 10 - exp (-1))` is the temperature amplitude times the evaluated
+decay error of `MathlibExt.Analysis.ODE.TimeStepping.decay_euler_numeric_bound`, so
+`|T_10 - T(τ)| ≤ |Δ| / 10`, and the error is positive for `Δ ≠ 0`. The step depends on `dt` and
+`τ` only through `dt / τ`: expressing both times in a common unit leaves it unchanged, while a
+step entered in seconds against a time constant in minutes is `60` times too large. The bath is
+stable for every step size, but the Euler step `dt = 3 τ` has the amplification `-2`; that
+unstable step is outside the selected `dt = τ / 10`.
+
+Model inputs of sections F-H: constant `C`, `G` and `T_amb`, the linear bath law and the lumped
+body. Non-goals: no general Euler convergence theorem and no arithmetic or floating-point
+refinement.
+
 ## ii. Key results
 
 - `unitProfile_isClassicalSolution`, `axialDisplacement_eq_barAmplitude_mul`,
@@ -60,6 +91,16 @@ error means zero reconstructed error, and no empirical adequacy or system safety
   instances of the existing mesh estimates.
 - `twoCells`, `unitError_twoCells`, `physicalError_twoCells`: the two-cell record; the nonunit
   numeric fixture is in `PhyslibExtTest.Numerical.PhysicalErrorBudgetsTest`.
+- `bathPower`, `thermalTimeConstant`, `bathTrajectory`, `bathEulerStep`: the bath model, its
+  trajectory and one Euler step.
+- `bathTrajectory_solves`, `bathTrajectory_storage`, `oneNode_noSource_const`: the trajectory
+  solves `C T' = Q(T)` and the one-node storage law with the bath source; without a source the
+  temperature stays constant.
+- `bathEuler_closed_form`, `bathEuler_tenStep_error`, `bathEuler_tenStep_error_pos`: the Euler
+  recurrence at `dt = τ / 10` and the ten-step error `|T_10 - T(τ)| ≤ |Δ| / 10`, positive for
+  `Δ ≠ 0`; the numeric fixture is in the test module.
+- `bathEulerStep_timeUnit`, `bathEulerStep_minutes_seconds`, `bathEuler_threeTau`: time units
+  and the unstable step `dt = 3 τ`.
 
 ## iii. Table of contents
 
@@ -68,6 +109,9 @@ error means zero reconstructed error, and no empirical adequacy or system safety
 - C. Scaling of the two error integrals
 - D. The mesh estimates in physical form
 - E. Two uniform cells
+- F. The bath-cooling trajectory and the one-node storage law
+- G. Ten Euler steps of size `τ / 10`
+- H. Time units and the unstable step
 
 ## iv. References
 
@@ -77,6 +121,13 @@ error means zero reconstructed error, and no empirical adequacy or system safety
   Analysis*, Dover, 2000, chapter 1 (the one-dimensional bar model problem).
 - J. M. Gere and B. J. Goodno, *Mechanics of Materials*, 8th ed., 2013 (statically indeterminate
   bars under distributed axial loads).
+- F. P. Incropera, D. P. DeWitt, T. L. Bergman and A. S. Lavine, *Fundamentals of Heat and Mass
+  Transfer*, 7th ed., Wiley (2011), Section 5.1 (the lumped capacitance method and the thermal
+  time constant).
+- E. Hairer, S. P. Nørsett and G. Wanner, *Solving Ordinary Differential Equations I*, 2nd ed.,
+  Springer (1993), Section I.7 (the explicit Euler method).
+- `MathlibExt.Analysis.ODE.TimeStepping.decay_euler_numeric_bound`,
+  `MetaMathlibExt.scalar_exp_solution` and `ConductionPorts.hasDerivAt_thermalStorage`.
 -/
 
 @[expose] public section
@@ -453,6 +504,167 @@ lemma physicalError_twoCells {L : ℝ} (hL : 0 < L) (EA q : ℝ) :
     ring
   · rw [integral_sq_physicalError twoCells hL EA q, hS]
     ring
+
+/-! ## F. The bath-cooling trajectory and the one-node storage law -/
+
+/-- The power `Q(T) = -G (T - T_amb)` that a fixed bath at temperature `T_amb` delivers through the
+conductance `G` to a body at temperature `T`. -/
+def bathPower (G Tamb T : ℝ) : ℝ := -G * (T - Tamb)
+
+/-- The thermal time constant `τ = C / G` of a body of heat capacity `C` coupled to a bath through
+the conductance `G`. -/
+noncomputable def thermalTimeConstant (C G : ℝ) : ℝ := C / G
+
+/-- The bath-cooling trajectory `T(t) = T_amb + Δ exp(-t / τ)` with `τ = C / G`. -/
+noncomputable def bathTrajectory (C G Tamb Δ t : ℝ) : ℝ :=
+  Tamb + Δ * Real.exp (-t / thermalTimeConstant C G)
+
+/-- One explicit Euler step `T ↦ T + dt Q(T) / C` of `C T' = Q(T)` with the time step `dt`. -/
+noncomputable def bathEulerStep (C G Tamb dt T : ℝ) : ℝ := T + dt * bathPower G Tamb T / C
+
+/-- **The trajectory solves the bath equation.** For `C, G > 0`, `T(0) = T_amb + Δ` and
+`T' = Q(T) / C`, that is `C T' = Q(T)`, at every time: the excess `T - T_amb` is the scalar
+exponential solution with rate `-1 / τ`. -/
+lemma bathTrajectory_solves {C G : ℝ} (hC : 0 < C) (hG : 0 < G) (Tamb Δ : ℝ) :
+    bathTrajectory C G Tamb Δ 0 = Tamb + Δ ∧
+      ∀ t, HasDerivAt (bathTrajectory C G Tamb Δ)
+        (bathPower G Tamb (bathTrajectory C G Tamb Δ t) / C) t := by
+  have hx : ∀ t, bathTrajectory C G Tamb Δ t - Tamb =
+      Δ * Real.exp (-1 / thermalTimeConstant C G * t) := by
+    intro t
+    rw [bathTrajectory, add_sub_cancel_left]
+    congr 2
+    ring
+  obtain ⟨h0, hd⟩ := MetaMathlibExt.scalar_exp_solution hx
+  refine ⟨by linarith, fun t => ?_⟩
+  have h := (hd t).add_const Tamb
+  simp only [sub_add_cancel] at h
+  convert h using 1
+  unfold bathPower thermalTimeConstant
+  field_simp
+
+/-- **The one-node storage law with the bath source.** For `C, G > 0` the stored heat `C T` of the
+trajectory has the rate `Q(T(t))`: `ConductionPorts.hasDerivAt_thermalStorage` for one node with
+capacity `C`, no internal conductance and the bath power as its source. -/
+lemma bathTrajectory_storage {C G : ℝ} (hC : 0 < C) (hG : 0 < G) (Tamb Δ t : ℝ) :
+    HasDerivAt (fun s => C * bathTrajectory C G Tamb Δ s)
+      (bathPower G Tamb (bathTrajectory C G Tamb Δ t)) t := by
+  have h := ConductionPorts.hasDerivAt_thermalStorage (ι := Unit) (C := fun _ => C)
+    (G := fun _ _ => 0) (T := fun _ => bathTrajectory C G Tamb Δ)
+    (dT := fun _ => bathPower G Tamb (bathTrajectory C G Tamb Δ t) / C)
+    (Q := fun _ => bathPower G Tamb (bathTrajectory C G Tamb Δ t)) (fun _ _ => rfl)
+    (fun _ => (bathTrajectory_solves hC hG Tamb Δ).2 t)
+    (fun _ => by simp only [zero_mul, Finset.sum_const_zero, zero_add]; field_simp)
+  simpa using h
+
+/-- **No source, constant temperature.** A one-node network with capacity `C > 0`, no internal
+conductance and no source (`C T' = 0`) keeps its temperature: the storage law gives a constant
+`C T`. -/
+lemma oneNode_noSource_const {C : ℝ} (hC : 0 < C) {T dT : ℝ → ℝ}
+    (hT : ∀ t, HasDerivAt T (dT t) t) (hbal : ∀ t, C * dT t = 0) (t : ℝ) : T t = T 0 := by
+  have hstore : ∀ s, HasDerivAt (fun τ => C * T τ) 0 s := by
+    intro s
+    have h := ConductionPorts.hasDerivAt_thermalStorage (ι := Unit) (C := fun _ => C)
+      (G := fun _ _ => 0) (T := fun _ => T) (dT := fun _ => dT s) (Q := fun _ => 0)
+      (fun _ _ => rfl) (fun _ => hT s) (fun _ => by simpa using hbal s)
+    simpa using h
+  have hconst := is_const_of_deriv_eq_zero (fun s => (hstore s).differentiableAt)
+    (fun s => (hstore s).deriv) t 0
+  exact mul_left_cancel₀ hC.ne' hconst
+
+/-! ## G. Ten Euler steps of size `τ / 10` -/
+
+/-- **The actual Euler recurrence at `dt = τ / 10`.** For `C, G > 0`, every real sequence with
+`X 0 = T_amb + Δ` and `X (j + 1) = X j + (τ / 10) Q(X j) / C` is `X j = T_amb + Δ (9 / 10) ^ j`. -/
+lemma bathEuler_closed_form {C G : ℝ} (hC : 0 < C) (hG : 0 < G) {Tamb Δ : ℝ} {X : ℕ → ℝ}
+    (h0 : X 0 = Tamb + Δ)
+    (hstep : ∀ j, X (j + 1) = bathEulerStep C G Tamb (thermalTimeConstant C G / 10) (X j))
+    (j : ℕ) : X j = Tamb + Δ * (9 / 10) ^ j := by
+  induction j with
+  | zero => simpa using h0
+  | succ j ih =>
+    rw [hstep, ih, bathEulerStep, bathPower, thermalTimeConstant, pow_succ]
+    field_simp
+    ring
+
+/-- **Ten-step error bound.** For `C, G > 0`, the actual Euler recurrence at `dt = τ / 10` started
+at `T_amb + Δ` satisfies `|T_10 - T(τ)| ≤ |Δ| / 10`: the temperature amplitude `|Δ|` times the
+evaluated decay error `|(9 / 10) ^ 10 - exp (-1)| ≤ 1 / 10`. -/
+lemma bathEuler_tenStep_error {C G : ℝ} (hC : 0 < C) (hG : 0 < G) {Tamb Δ : ℝ} {X : ℕ → ℝ}
+    (h0 : X 0 = Tamb + Δ)
+    (hstep : ∀ j, X (j + 1) = bathEulerStep C G Tamb (thermalTimeConstant C G / 10) (X j)) :
+    |X 10 - bathTrajectory C G Tamb Δ (thermalTimeConstant C G)| ≤ |Δ| / 10 := by
+  have hτ : thermalTimeConstant C G ≠ 0 := (div_pos hC hG).ne'
+  have hbound := MathlibExt.Analysis.ODE.TimeStepping.decay_euler_numeric_bound
+  rw [bathEuler_closed_form hC hG h0 hstep 10, bathTrajectory, neg_div, div_self hτ]
+  calc |Tamb + Δ * (9 / 10) ^ 10 - (Tamb + Δ * Real.exp (-1))|
+      = |Δ| * |(9 / 10 : ℝ) ^ 10 - Real.exp (-1)| := by
+        rw [← abs_mul]
+        ring_nf
+    _ ≤ |Δ| * (1 * (1 / 10)) := mul_le_mul_of_nonneg_left hbound (abs_nonneg Δ)
+    _ = |Δ| / 10 := by ring
+
+/-- **The error is not zero.** Under the hypotheses of `bathEuler_tenStep_error` with `Δ ≠ 0`,
+`|T_10 - T(τ)| > 0`: `(9 / 10) ^ 10 < 0.3487 < exp (-1)`. -/
+lemma bathEuler_tenStep_error_pos {C G : ℝ} (hC : 0 < C) (hG : 0 < G) {Tamb Δ : ℝ}
+    (hΔ : Δ ≠ 0) {X : ℕ → ℝ} (h0 : X 0 = Tamb + Δ)
+    (hstep : ∀ j, X (j + 1) = bathEulerStep C G Tamb (thermalTimeConstant C G / 10) (X j)) :
+    0 < |X 10 - bathTrajectory C G Tamb Δ (thermalTimeConstant C G)| := by
+  have hτ : thermalTimeConstant C G ≠ 0 := (div_pos hC hG).ne'
+  have hlt : (9 / 10 : ℝ) ^ 10 < Real.exp (-1) := by
+    have he : Real.exp 1 < 2.7182818286 := Real.exp_one_lt_d9
+    have hexp : Real.exp (-1 : ℝ) = 1 / Real.exp 1 := by rw [Real.exp_neg, one_div]
+    rw [hexp, lt_div_iff₀ (Real.exp_pos 1)]
+    nlinarith
+  rw [bathEuler_closed_form hC hG h0 hstep 10, bathTrajectory, neg_div, div_self hτ,
+    show Tamb + Δ * (9 / 10) ^ 10 - (Tamb + Δ * Real.exp (-1)) =
+      Δ * ((9 / 10) ^ 10 - Real.exp (-1)) by ring, abs_mul]
+  exact mul_pos (abs_pos.mpr hΔ) (abs_pos.mpr (by linarith))
+
+/-! ## H. Time units and the unstable step -/
+
+/-- **Common time unit.** Expressing both times in a unit `k > 0` times smaller (`dt ↦ k dt`,
+`G ↦ G / k`) multiplies the time constant by `k` and leaves the Euler step unchanged: the step
+depends on `dt` and `τ` only through `dt / τ`. -/
+lemma bathEulerStep_timeUnit {k : ℝ} (hk : 0 < k) (C G Tamb dt T : ℝ) :
+    thermalTimeConstant C (G / k) = k * thermalTimeConstant C G ∧
+      bathEulerStep C (G / k) Tamb (k * dt) T = bathEulerStep C G Tamb dt T := by
+  unfold thermalTimeConstant bathEulerStep bathPower
+  rcases eq_or_ne G 0 with rfl | hG
+  · simp
+  · constructor <;> field_simp
+
+/-- **Mismatched time units.** A step `τ / 10` entered in seconds against a time constant in
+minutes is `60` times too large: for `C, G > 0` it multiplies the excess by `1 - 6 = -5`. -/
+lemma bathEulerStep_minutes_seconds {C G : ℝ} (hC : 0 < C) (hG : 0 < G) (Tamb θ : ℝ) :
+    bathEulerStep C G Tamb (60 * (thermalTimeConstant C G / 10)) (Tamb + θ) = Tamb - 5 * θ := by
+  unfold bathEulerStep bathPower thermalTimeConstant
+  field_simp
+  ring
+
+/-- **The unstable step of a stable bath.** For `C, G > 0` the exact excess never exceeds its
+initial size, `|T(t) - T_amb| ≤ |Δ|` for `t ≥ 0`, but the Euler recurrence with `dt = 3 τ` has
+the amplification `-2`: `X j = T_amb + Δ (-2) ^ j` and `|X j - T_amb| = 2 ^ j |Δ|`. -/
+lemma bathEuler_threeTau {C G : ℝ} (hC : 0 < C) (hG : 0 < G) {Tamb Δ : ℝ} {X : ℕ → ℝ}
+    (h0 : X 0 = Tamb + Δ)
+    (hstep : ∀ j, X (j + 1) = bathEulerStep C G Tamb (3 * thermalTimeConstant C G) (X j)) :
+    (∀ t, 0 ≤ t → |bathTrajectory C G Tamb Δ t - Tamb| ≤ |Δ|) ∧
+      ∀ j, X j = Tamb + Δ * (-2) ^ j ∧ |X j - Tamb| = 2 ^ j * |Δ| := by
+  have hτ : 0 < thermalTimeConstant C G := div_pos hC hG
+  have hX : ∀ j, X j = Tamb + Δ * (-2) ^ j := by
+    intro j
+    induction j with
+    | zero => simpa using h0
+    | succ j ih =>
+      rw [hstep, ih, bathEulerStep, bathPower, thermalTimeConstant, pow_succ]
+      field_simp
+      ring
+  refine ⟨fun t ht => ?_, fun j => ⟨hX j, ?_⟩⟩
+  · rw [bathTrajectory, add_sub_cancel_left, abs_mul, Real.abs_exp]
+    have h1 : Real.exp (-t / thermalTimeConstant C G) ≤ 1 :=
+      Real.exp_le_one_iff.mpr (div_nonpos_of_nonpos_of_nonneg (by linarith) hτ.le)
+    nlinarith [abs_nonneg Δ]
+  · rw [hX j, add_sub_cancel_left, abs_mul, abs_pow, abs_neg, abs_two, mul_comm]
 
 end PhysicalErrorBudgets
 
