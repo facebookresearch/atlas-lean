@@ -26,6 +26,7 @@ on:
       - "scripts/test_extract_v2_lean_dependencies.py"
       - "scripts/test_extract_mathlib_graph.py"
       - "scripts/test_check_blueprint_site_navigation.py"
+      - "scripts/test_site_chrome.py"
       - "scripts/test_blueprint_workflow.py"
       - "scripts/test_blueprint_taxonomy.py"
       - "mkdocs.yml"
@@ -84,6 +85,9 @@ jobs:
         run: >-
           uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
           --with PyYAML==6.0.3
+          --with mkdocs==1.6.1
+          --with mkdocs-material==9.8.0
+          --with mkdocs-literate-nav==0.6.2
           python -m unittest
           scripts.test_generate_wiki_navigation
           scripts.test_generate_wiki_docstrings
@@ -91,6 +95,7 @@ jobs:
           scripts.test_extract_v2_lean_dependencies
           scripts.test_extract_mathlib_graph
           scripts.test_check_blueprint_site_navigation
+          scripts.test_site_chrome
           scripts.test_blueprint_workflow
           scripts.test_blueprint_taxonomy
 

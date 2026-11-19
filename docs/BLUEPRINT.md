@@ -46,6 +46,7 @@ python -m unittest \
   scripts.test_extract_v2_lean_dependencies \
   scripts.test_extract_mathlib_graph \
   scripts.test_check_blueprint_site_navigation \
+  scripts.test_site_chrome \
   scripts.test_blueprint_workflow \
   scripts.test_blueprint_taxonomy
 ```
@@ -196,6 +197,18 @@ a literal dollar of that shape as `&#36;`, or inside inline code.
 Changing AutoformBot requires a reviewed `.github/autoform-ref` update and
 passing tests. The workflow has no automatic pin push, upstream-sync bot,
 model-driven audit, or required personal token.
+
+## Page chrome
+
+GitHub Pages publishes a site of at most 1 GB, so the theme's share of each
+page is kept small. Readers with JavaScript browse with the explorer, which
+hides Material's header, sidebars and footer; the theme's layout serves readers
+without JavaScript and the explorer's fallback. `theme/partials/nav.html` lists
+Home, the sections above the page, the page's siblings and its own entries;
+each folder page lists its children too. `hooks/trim_pages.py` publishes the
+renderer's notices for moved explorer URLs as bare redirects and collapses the
+theme's indentation, and `hooks/title_only_search.py` keeps one title record
+per page in the search index.
 
 ## GitHub Actions and publication
 
