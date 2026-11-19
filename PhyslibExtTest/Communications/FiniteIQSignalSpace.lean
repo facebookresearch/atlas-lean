@@ -97,4 +97,34 @@ example :
       ≠ 0 :=
   quarterCycleCarrier_crossIntegral_ne_zero
 
+/-- Through the bridge lemmas, the existing quadrature-average result
+for root-mean-square phasor waveforms gives the orthogonality of the
+first-carrier in-phase and quadrature waveforms over one period. -/
+example (T : ℝ) (hT : 0 < T) :
+    (∫ t in (0 : ℝ)..(0 + 2 * Real.pi / (2 * Real.pi * ((1 : ℕ) : ℝ) / T)),
+        inPhaseWaveform T 1 t * quadratureWaveform T 1 t)
+        / (2 * Real.pi / (2 * Real.pi * ((1 : ℕ) : ℝ) / T)) = 0 := by
+  simp only [inPhaseWaveform_eq_rmsWaveform, quadratureWaveform_eq_rmsWaveform]
+  exact PhyslibExt.Circuits.RMSAveragePower.average_rmsWaveform_mul_quadrature
+    (Real.sqrt (1 / T) : ℂ)
+    (div_pos (mul_pos (mul_pos two_pos Real.pi_pos) (by norm_num)) hT) 0
+
+/-- Through the bridge lemma, the existing self-average result for
+root-mean-square phasor waveforms gives the first-carrier combined
+waveform the mean power `(a ^ 2 + b ^ 2) / T` over one period,
+matching its energy `a ^ 2 + b ^ 2` on `[0, T]`. -/
+example (a b T : ℝ) (hT : 0 < T) :
+    (∫ t in (0 : ℝ)..(0 + 2 * Real.pi / (2 * Real.pi * ((1 : ℕ) : ℝ) / T)),
+        iqWaveform a b T 1 t * iqWaveform a b T 1 t)
+        / (2 * Real.pi / (2 * Real.pi * ((1 : ℕ) : ℝ) / T)) = (a ^ 2 + b ^ 2) / T := by
+  simp only [iqWaveform_eq_rmsWaveform]
+  rw [PhyslibExt.Circuits.RMSAveragePower.average_rmsWaveform_mul_self_re_im _
+    (div_pos (mul_pos (mul_pos two_pos Real.pi_pos) (by norm_num)) hT) 0]
+  have hs : Real.sqrt (1 / T) ^ 2 = 1 / T := Real.sq_sqrt (by positivity)
+  rw [show (a ^ 2 + b ^ 2) / T = (a ^ 2 + b ^ 2) * Real.sqrt (1 / T) ^ 2 by
+    rw [hs]; ring]
+  simp only [Complex.mul_re, Complex.mul_im, Complex.add_re, Complex.add_im,
+    Complex.ofReal_re, Complex.ofReal_im, Complex.I_re, Complex.I_im]
+  ring
+
 end PhyslibExtTest.Communications.FiniteIQSignalSpace

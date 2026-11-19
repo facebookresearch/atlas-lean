@@ -1,0 +1,3 @@
+# Boundary-preserving automorphisms preserve the wired FK probability
+
+Let $G = (V, E)$ be a simple graph on a finite set $V$, $\partial \subseteq V$, and let $\sigma$ be a permutation of $V$ with $\sigma(x) \sim \sigma(y) \iff x \sim y$ for all $x, y$ and $\sigma(x) \in \partial \iff x \in \partial$. For all $p, q \in \mathbb{R}$ and every configuration $\omega$, $\phi^w_{G,\partial,p,q}(\omega^\sigma) = \phi^w_{G,\partial,p,q}(\omega)$, where $\phi^w_{G,\partial,p,q}$ is the [wired random-cluster probability](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-fk-prob.md) and $\omega^\sigma$ is the [relabelled configuration](re-cfg.md) $\omega^\sigma(e) = \omega(\sigma(e))$.

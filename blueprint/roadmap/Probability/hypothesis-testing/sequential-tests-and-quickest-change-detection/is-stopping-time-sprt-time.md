@@ -1,0 +1,3 @@
+# The SPRT stopping time is a stopping time
+
+Let $P_0$ and $P_1$ be mutually absolutely continuous probability measures on a measurable space $\mathcal{X}$ ($P_1 \ll P_0$ and $P_0 \ll P_1$), and let the observations $X_1, X_2, \dots$ be the coordinates of $\omega \in \mathcal{X}^{\mathbb{N}}$, $X_{i+1}(\omega) = \omega_i$. Write $L = dP_1/dP_0$ (a real number almost everywhere) and $\Lambda_n = \sum_{i=1}^n \log L(X_i)$. For all $a, b \in \mathbb{R}$, the [SPRT time](sprt-time.md) $N = \inf\{n \ge 1 : \Lambda_n \le a \text{ or } \Lambda_n \ge b\}$ is a stopping time, possibly infinite, of the [observation filtration](observation-filtration.md) (Lai 2001, §2, equation (2.1)).
