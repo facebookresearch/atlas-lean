@@ -14,20 +14,29 @@ public import Mathlib.Analysis.SpecialFunctions.Exp
 /-!
 # Stability of one-step methods
 
-A one-step method for `x' = f(t, x)` on a grid `t₀ ≤ t₁ ≤ ⋯ ≤ t_J` computes
+A one-step method for `x' = f(t, x)` on a grid `t₀ < t₁ < ⋯ < t_J` computes
 `x_{j+1} = x_j + h_j • Φ(t_j, x_j, h_j)` with step `h_j = t_{j+1} - t_j` and increment function
 `Φ` (for explicit Euler, `Φ(t, x, h) = f(t, x)`). The method is *stable* on `[t₀, T]` if one
-constant `S`, independent of the grid, bounds the gap between an exact run `x` and a perturbed
-run `z_{j+1} = z_j + h_j • Φ(t_j, z_j, h_j) + δ_{j+1}`:
+constant `S`, independent of the grid, bounds the gap between a run `x` and a perturbed run
+`z_{j+1} = z_j + h_j • Φ(t_j, z_j, h_j) + δ_{j+1}`:
 `‖x_j - z_j‖ ≤ S (‖x_0 - z_0‖ + ∑_{k=1}^J ‖δ_k‖)` for every `1 ≤ j ≤ J`.
 
 ## Main results
 
-* `OneStepMethod.IsStable`: stability of an increment function on `[t₀, T]`.
-* `OneStepMethod.norm_sub_le`: if `Φ` is `L`-Lipschitz in the state along the grid, then
-  `‖x_j - z_j‖ ≤ e^{L (t_j - t_0)} ‖x_0 - z_0‖ + ∑_{k=1}^j e^{L (t_j - t_k)} ‖δ_k‖`.
-* `OneStepMethod.isStable_of_lipschitz`: a method whose increment is `L`-Lipschitz in the state
-  for all `t ∈ [t₀, T]` and `h ∈ (0, T - t₀]` is stable with `S = e^{L (T - t₀)}`.
+* `OneStepMethod.IsStableWith`: stability of an increment function on `[t₀, T]` with a given
+  constant `S`; `OneStepMethod.IsStable`: stability with some constant.
+* `OneStepMethod.norm_sub_le_of_lipschitzWith`: if `Φ` is `L`-Lipschitz in the state along the
+  grid, then `‖x_j - z_j‖ ≤ e^{L (t_j - t_0)} ‖x_0 - z_0‖ + ∑_{k=1}^j e^{L (t_j - t_k)} ‖δ_k‖`.
+* `OneStepMethod.isStableWith_of_lipschitzWith`: a method whose increment is `L`-Lipschitz in the
+  state for all `t ∈ [t₀, T]` and `h ∈ (0, T - t₀]` is stable with `S = e^{L (T - t₀)}`;
+  `OneStepMethod.isStable_of_lipschitzWith` forgets the constant.
+
+## Implementation notes
+
+The grid is a sequence `t : ℕ → ℝ` of which only `t 0, …, t J` matter, and the runs are
+sequences in `E` constrained only up to index `J`. The source asks for `S > 0`; any real `S` is
+allowed here, which is equivalent for `IsStable` since the bound only weakens as `S` grows. When
+`T ≤ t₀` no grid has a step, so every increment function is stable on `[t₀, T]`.
 
 ## References
 
@@ -46,18 +55,23 @@ open Finset Real
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
-/-- The increment function `Φ` of a one-step method is *stable* on `[t₀, T]`: there is a constant
-`S` such that, for every grid `t₀ = t 0 < t 1 < ⋯ < t J = T`, every run
+/-- The increment function `Φ` of a one-step method is *stable on `[t₀, T]` with constant `S`*:
+for every grid `t₀ = t 0 < t 1 < ⋯ < t J = T`, every run
 `x (j + 1) = x j + h_j • Φ (t j) (x j) h_j` and every perturbed run
 `z (j + 1) = z j + h_j • Φ (t j) (z j) h_j + δ (j + 1)` (with `h_j = t (j + 1) - t j`) satisfy
 `‖x j - z j‖ ≤ S * (‖x 0 - z 0‖ + ∑ k ∈ Icc 1 J, ‖δ k‖)` for all `1 ≤ j ≤ J`. -/
-def IsStable (Φ : ℝ → E → ℝ → E) (t₀ T : ℝ) : Prop :=
-  ∃ S : ℝ, ∀ (J : ℕ) (t : ℕ → ℝ), t 0 = t₀ → t J = T → (∀ j < J, t j < t (j + 1)) →
+def IsStableWith (S : ℝ) (Φ : ℝ → E → ℝ → E) (t₀ T : ℝ) : Prop :=
+  ∀ (J : ℕ) (t : ℕ → ℝ), t 0 = t₀ → t J = T → (∀ j < J, t j < t (j + 1)) →
     ∀ x z δ : ℕ → E,
       (∀ j < J, x (j + 1) = x j + (t (j + 1) - t j) • Φ (t j) (x j) (t (j + 1) - t j)) →
       (∀ j < J, z (j + 1) =
         z j + (t (j + 1) - t j) • Φ (t j) (z j) (t (j + 1) - t j) + δ (j + 1)) →
       ∀ j ∈ Icc 1 J, ‖x j - z j‖ ≤ S * (‖x 0 - z 0‖ + ∑ k ∈ Icc 1 J, ‖δ k‖)
+
+/-- The increment function `Φ` of a one-step method is *stable* on `[t₀, T]`: it is stable with
+some constant `S` (`IsStableWith`), the same for every grid from `t₀` to `T`. -/
+def IsStable (Φ : ℝ → E → ℝ → E) (t₀ T : ℝ) : Prop :=
+  ∃ S : ℝ, IsStableWith S Φ t₀ T
 
 /-- One step of the error recursion: `‖x_{j+1} - z_{j+1}‖ ≤ e^{L h_j} ‖x_j - z_j‖ + ‖δ_{j+1}‖`,
 using `1 + L h ≤ e^{L h}`. -/
@@ -84,10 +98,10 @@ private lemma norm_sub_succ_le {Φ : ℝ → E → ℝ → E} {L s s' : ℝ} (hs
         gcongr
         linarith [add_one_le_exp (L * (s' - s))]
 
-/-- If the increment `Φ` is `L`-Lipschitz in the state at every grid step, an exact run `x` and a
+/-- If the increment `Φ` is `L`-Lipschitz in the state at every grid step, a run `x` and a
 perturbed run `z` of the one-step method satisfy, for every `j ≤ J`,
 `‖x j - z j‖ ≤ e^{L (t j - t 0)} ‖x 0 - z 0‖ + ∑ k ∈ Icc 1 j, e^{L (t j - t k)} ‖δ k‖`. -/
-theorem norm_sub_le {Φ : ℝ → E → ℝ → E} {L : NNReal} {J : ℕ} {t : ℕ → ℝ}
+theorem norm_sub_le_of_lipschitzWith {Φ : ℝ → E → ℝ → E} {L : NNReal} {J : ℕ} {t : ℕ → ℝ}
     (ht : ∀ j < J, t j ≤ t (j + 1))
     (hΦ : ∀ j < J, LipschitzWith L fun a ↦ Φ (t j) a (t (j + 1) - t j))
     {x z δ : ℕ → E}
@@ -115,7 +129,7 @@ theorem norm_sub_le {Φ : ℝ → E → ℝ → E} {L : NNReal} {J : ℕ} {t : �
             ∑ k ∈ Icc 1 (j + 1), exp (L * (t (j + 1) - t k)) * ‖δ k‖ := by
           have e1 : ∀ (u c : ℝ), exp (L * (t (j + 1) - t j)) * (exp (L * (t j - u)) * c) =
               exp (L * (t (j + 1) - u)) * c := fun u c ↦ by
-            rw [← mul_assoc, ← exp_add]; ring_nf
+            rw [← mul_assoc, ← exp_add, ← mul_add, sub_add_sub_cancel]
           rw [sum_Icc_succ_top (Nat.le_add_left 1 j), mul_add, mul_sum, e1]
           simp_rw [e1]
           simp only [sub_self, mul_zero, exp_zero, one_mul]
@@ -124,10 +138,10 @@ theorem norm_sub_le {Φ : ℝ → E → ℝ → E} {L : NNReal} {J : ℕ} {t : �
 /-- **Sufficient condition for stability.** If the increment `Φ` is `L`-Lipschitz in the state,
 uniformly for `t ∈ [t₀, T]` and step `h ∈ (0, T - t₀]`, the one-step method is stable on
 `[t₀, T]` with constant `e^{L (T - t₀)}`. -/
-theorem isStable_of_lipschitz {Φ : ℝ → E → ℝ → E} {L : NNReal} {t₀ T : ℝ}
+theorem isStableWith_of_lipschitzWith {Φ : ℝ → E → ℝ → E} {L : NNReal} {t₀ T : ℝ}
     (hΦ : ∀ s ∈ Set.Icc t₀ T, ∀ h ∈ Set.Ioc 0 (T - t₀), LipschitzWith L fun a ↦ Φ s a h) :
-    IsStable Φ t₀ T := by
-  refine ⟨exp (L * (T - t₀)), fun J t ht0 htJ ht' x z δ hx hz j hj' ↦ ?_⟩
+    IsStableWith (exp (L * (T - t₀))) Φ t₀ T := by
+  intro J t ht0 htJ ht' x z δ hx hz j hj'
   have ht : ∀ j < J, t j ≤ t (j + 1) := fun j hj ↦ (ht' j hj).le
   have hj : j ≤ J := (mem_Icc.1 hj').2
   -- The grid is increasing, so every node lies in `[t₀, T]` and every step in `(0, T - t₀]`.
@@ -147,7 +161,7 @@ theorem isStable_of_lipschitz {Φ : ℝ → E → ℝ → E} {L : NNReal} {t₀ 
     have h1 := (hmem (i + 1) hi).2
     have h2 := (hmem i hi.le).1
     linarith
-  have hbound := norm_sub_le ht hΦgrid hx hz j hj
+  have hbound := norm_sub_le_of_lipschitzWith ht hΦgrid hx hz j hj
   have hjT : t j - t 0 ≤ T - t₀ := by rw [ht0]; linarith [(hmem j hj).2]
   calc ‖x j - z j‖
       ≤ exp (L * (t j - t 0)) * ‖x 0 - z 0‖ + ∑ k ∈ Icc 1 j, exp (L * (t j - t k)) * ‖δ k‖ :=
@@ -167,5 +181,12 @@ theorem isStable_of_lipschitz {Φ : ℝ → E → ℝ → E} {L : NNReal} {t₀ 
                   fun _ _ _ ↦ by positivity
     _ = exp (L * (T - t₀)) * (‖x 0 - z 0‖ + ∑ k ∈ Icc 1 J, ‖δ k‖) := by
         rw [mul_add, mul_sum]
+
+/-- A one-step method whose increment is `L`-Lipschitz in the state, uniformly for `t ∈ [t₀, T]`
+and step `h ∈ (0, T - t₀]`, is stable on `[t₀, T]`. -/
+theorem isStable_of_lipschitzWith {Φ : ℝ → E → ℝ → E} {L : NNReal} {t₀ T : ℝ}
+    (hΦ : ∀ s ∈ Set.Icc t₀ T, ∀ h ∈ Set.Ioc 0 (T - t₀), LipschitzWith L fun a ↦ Φ s a h) :
+    IsStable Φ t₀ T :=
+  ⟨_, isStableWith_of_lipschitzWith hΦ⟩
 
 end MathlibExt.Analysis.ODE.OneStepMethod
