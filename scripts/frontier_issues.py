@@ -7,10 +7,11 @@
 `frontier` runs in the wiki build, after `sync_wiki.py lean-facts` has added
 the Lean's facts, and needs Autoform. It writes the tasks that can start now:
 
-- `formalize`: a Lean module with at least one article whose statement can
-  be written in Lean, or whose statement is in Lean and whose proof can start,
-  by Autoform's own readiness rule (the derived `can_state` and `can_prove`
-  states behind `autoform work list`). The module's issue lists them all;
+- `formalize`: a field of the taxonomy with at least one article whose
+  statement can be written in Lean, or whose statement is in Lean and whose
+  proof can start, by Autoform's own readiness rule (the derived `can_state`
+  and `can_prove` states behind `autoform work list`). The field's issue
+  lists them all, grouped by Lean module;
 - `dag-work`: an article whose annotation carries
   `"org.atlas-wiki": {"unexpanded": true}`, a node still to be broken down
   (rule 12 of the graph rules in docs/BLUEPRINT.md).
@@ -51,7 +52,7 @@ NODE_MARK = re.compile(r"<!-- atlas-node: (\S+) -->")
 OFF_FRONTIER = "<!-- atlas-closed: off-frontier -->"
 STATEMENT_LIMIT = 1500
 DEPENDENCY_LIMIT = 20
-# Results listed in one module issue; the rest are on the module page. Keeps a body far below GitHub's limit.
+# Results listed in one field issue; the rest are on the field's page. Keeps a body far below GitHub's limit.
 ITEM_LIMIT = 100
 TITLE_LIMIT = 200
 LABEL_COLORS = {"task:formalize": "0064e0", "task:dag-work": "f7b928"}
@@ -114,6 +115,15 @@ def module_folders(blueprint: Path) -> set[Path]:
                     if page.name == "README.md":
                         folders.add(page.parent)
     return folders
+
+
+def taxonomy_fields(path: Path) -> dict[str, set[str]] | None:
+    """Each subject's field slugs from scripts/taxonomy.json, or None without it."""
+    try:
+        subjects = json.loads(path.read_text(encoding="utf-8"))["subjects"]
+    except (OSError, ValueError, KeyError):
+        return None
+    return {name: {field["slug"] for field in subject.get("fields", [])} for name, subject in subjects.items()}
 
 
 def page_title(page: Path) -> str | None:
@@ -191,10 +201,13 @@ def build_frontier(blueprint: Path, commit: str | None = None) -> dict:
     seen: set[str] = set()
     tasks = [task for task in tasks if not (task["key"] in seen or seen.add(task["key"]))]
 
-    # One formalization issue per Lean module: the ready results of a module are one unit of work, usually one
-    # PR, so a module's issue lists them all. Nodes to expand stay one issue each.
+    # One formalization issue per field of the taxonomy (subject, then field): a node of the graph's hierarchy
+    # with its own page, a few hundred in all, where a Lean module would give over a thousand. The issue lists
+    # the field's ready results grouped by Lean module, the usual unit of one PR. Nodes to expand stay one issue
+    # each.
     modules = module_folders(blueprint)
     roadmap = (blueprint / "roadmap").resolve()
+    fields = taxonomy_fields(repository / "scripts" / "taxonomy.json")
 
     def module_of(path: Path) -> Path:
         for folder in path.parents:
@@ -204,30 +217,50 @@ def build_frontier(blueprint: Path, commit: str | None = None) -> dict:
                 break
         return path.parent
 
+    def field_of(path: Path) -> Path:
+        parts = path.relative_to(roadmap).parts
+        if len(parts) < 2:
+            return roadmap
+        subject = roadmap / parts[0]
+        if len(parts) >= 3 and (fields is None or parts[1] in fields.get(parts[0], ())):
+            return subject / parts[1]
+        return subject
+
+    def node_name(folder: Path) -> str:
+        return folder.relative_to(roadmap).as_posix() if folder != roadmap else "."
+
     groups: dict[Path, list[dict]] = {}
     for task in tasks:
         if task["kind"] == "formalize":
-            groups.setdefault(module_of((repository / task["page"]).resolve()), []).append(task)
+            path = (repository / task["page"]).resolve()
+            folder = module_of(path)
+            task["module"] = page_title(folder / "README.md") or folder.name
+            task["module_page"] = (folder / "README.md").relative_to(repository).as_posix()
+            groups.setdefault(field_of(path), []).append(task)
     unfinished = {
-        module_of(page(node).resolve())
+        field_of(page(node).resolve())
         for node in runtime.nodes
         if node.dispatchable and not node.status.proved and not node.mathlib
     }
     for node in runtime.nodes:
-        folder = module_of(page(node).resolve())
+        folder = field_of(page(node).resolve())
         if (node.status.proved or node.mathlib) and folder not in unfinished:
-            finished.append(f"module:{folder.relative_to(roadmap).as_posix() if folder != roadmap else '.'}")
+            finished.append(f"field:{node_name(folder)}")
 
     grouped = [task for task in tasks if task["kind"] == "dag-work"]
     for folder, items in groups.items():
-        module_id = folder.relative_to(roadmap).as_posix() if folder != roadmap else "."
         readme = folder / "README.md"
         parts = Path(items[0]["page"]).parts
+        # Modules that unblock the most come first, and within a module its results that unblock the most.
+        weight: dict[str, int] = {}
+        for item in items:
+            weight[item["module_page"]] = weight.get(item["module_page"], 0) + item["unlocks"]
+        items.sort(key=lambda item: (-weight[item["module_page"]], item["module_page"], -item["unlocks"], item["page"]))
         grouped.append({
-            "key": f"module:{module_id}",
+            "key": f"field:{node_name(folder)}",
             "kind": "formalize",
-            "phase": "module",
-            "node_id": module_id,
+            "phase": "field",
+            "node_id": node_name(folder),
             "article_id": None,
             "title": page_title(readme) or folder.name,
             "page": readme.relative_to(repository).as_posix() if readme.is_file() else items[0]["page"],
@@ -236,7 +269,8 @@ def build_frontier(blueprint: Path, commit: str | None = None) -> dict:
             "declarations": [],
             "dependencies": [],
             "items": [
-                {key: item[key] for key in ("title", "page", "phase", "declarations", "unlocks")} for item in items
+                {key: item[key] for key in ("title", "page", "phase", "declarations", "unlocks", "module", "module_page")}
+                for item in items
             ],
             "unlocks": sum(item["unlocks"] for item in items),
         })
@@ -255,7 +289,7 @@ def build_frontier(blueprint: Path, commit: str | None = None) -> dict:
 
 
 def issue_title(task: dict) -> str:
-    verb = {"module": "Formalize", "proof": "Prove", "statement": "State in Lean"}.get(task["phase"] or "", "Expand")
+    verb = {"field": "Formalize", "proof": "Prove", "statement": "State in Lean"}.get(task["phase"] or "", "Expand")
     title = f"{verb}: {task['title']}"
     return title if len(title) <= TITLE_LIMIT else title[: TITLE_LIMIT - 1].rstrip() + "…"
 
@@ -280,7 +314,7 @@ def merged_labels(issue: dict, task: dict) -> list[str]:
 def issue_body(task: dict, repo: str) -> str:
     blob = f"https://github.com/{repo}/blob/main/"
     kind = {
-        "module": "formalize the ready results of this Lean module",
+        "field": "formalize the ready results of this field, grouped by Lean module",
         "proof": "prove a result whose statement is already in Lean",
         "statement": "write this article's statement in Lean",
         None: "break this node down into child articles (DAG work)",
@@ -296,13 +330,21 @@ def issue_body(task: dict, repo: str) -> str:
         lines.append("")
     items = task.get("items") or []
     if items:
-        lines += [f"Ready now ({len(items)}); each one's prerequisites are all finished:", ""]
+        modules = len({item.get("module_page") for item in items})
+        lines += [f"Ready now: {len(items)} result(s) in {modules} module(s), each with every prerequisite finished.", ""]
+        current = None
         for item in items[:ITEM_LIMIT]:
+            if item.get("module_page") != current:
+                current = item.get("module_page")
+                if lines[-1] != "":
+                    lines.append("")
+                lines += [f"**[{item.get('module', current)}]({blob}{urllib.parse.quote(current or '')})**", ""]
             verb = "Prove" if item["phase"] == "proof" else "State"
             lean = ", ".join(f"`{name}`" for name in item["declarations"])
             lines.append(f"- [ ] {verb} [{item['title']}]({blob}{urllib.parse.quote(item['page'])})" + (f" ({lean})" if lean else ""))
         if len(items) > ITEM_LIMIT:
-            lines.append(f"- … and {len(items) - ITEM_LIMIT} more on the module page")
+            rest = items[ITEM_LIMIT:]
+            lines += ["", f"… and {len(rest)} more in {len({item.get('module_page') for item in rest})} module(s), listed on the field's page."]
         lines.append("")
     lines.append(f"- **Page:** [`{task['page']}`]({blob}{urllib.parse.quote(task['page'])})")
     if task["declarations"]:
@@ -316,17 +358,18 @@ def issue_body(task: dict, repo: str) -> str:
         more = len(dependencies) - DEPENDENCY_LIMIT
         lines.append(f"- **Depends on:** {shown}" + (f", and {more} more" if more > 0 else ""))
     if task["unlocks"]:
-        what = "these results" if task["phase"] == "module" else "this one"
+        what = "these results" if task["phase"] == "field" else "this one"
         lines.append(f"- **Unblocks:** {task['unlocks']} unfinished node(s) that depend on {what}")
     lines += ["", "### Done when", ""]
-    if task["phase"] == "module":
+    if task["phase"] == "field":
         lines += [
             "- each result above is stated or proved in its library with no `sorry`, axioms or `native_decide`, and",
             "  its `theorem_wanted` or `def_wanted` is gone (`WantedExt/README.md`);",
             "- each article's annotation names the declaration that now formalizes it, and `scripts/check.sh` passes.",
             "",
-            "One PR may do the whole list or part of it. The list follows the graph on `main`: a result leaves it once",
-            "it is finished, newly unblocked ones join it, and the issue closes when nothing in the module is ready.",
+            "Work it one module at a time: a PR usually takes one module of the list, or part of one. The list follows",
+            "the graph on `main`: a result leaves it once finished, newly unblocked ones join it, and the issue",
+            "closes when nothing in the field is ready.",
         ]
     elif task["kind"] == "dag-work":
         lines += [
@@ -352,7 +395,7 @@ def issue_body(task: dict, repo: str) -> str:
         "this issue in the PR (`Closes #<this issue>` when it finishes the list).",
         "",
         "<sub>Opened from the graph on `main` by `scripts/frontier_issues.py`. It is updated while the",
-        "task is on the frontier and closed when its module or node is finished or leaves it.</sub>",
+        "task is on the frontier and closed when its field or node is finished or leaves it.</sub>",
     ]
     return "\n".join(lines) + "\n"
 
