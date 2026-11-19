@@ -11,8 +11,8 @@ tree under blueprint/roadmap/. Each article's annotation in blueprint/links/
 article id and origin. The Lean owns what lean-facts adds on the build's checkout:
 an article's `## Depends on` and `## Proof depends on`, from the dependency dump,
 and its annotation's kind and status, from the Lean sources. A planned page, one
-whose annotation names no declaration, keeps the prerequisites it records by
-hand, and gets no kind or status.
+whose annotation has no Lean link, keeps the prerequisites it records by hand,
+and gets no kind or status.
 
 declarations gives each declaration with a docstring and no page a page from its
 docstring, beside its module's other pages and listed on their page in source

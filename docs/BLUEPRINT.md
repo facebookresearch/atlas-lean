@@ -44,13 +44,13 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
 ### Hierarchy
 
 1. **A page sits where `scripts/taxonomy.json` places its module or field:**
-   subject, field, subfield, then module folders; regions only group subjects
-   on the root page. A subject with
-   fields holds only field folders; `not-yet-classified/` holds modules the
-   taxonomy has not placed yet. *Reason:* the taxonomy is the one record of
-   the hierarchy: `generate_wiki.py` lays out the folders from it, and
-   `sync_wiki.py declarations` places a module with no pages yet where it
-   says. A page placed elsewhere makes the vault and the taxonomy disagree.
+   subject, field, an optional subfield, then topic folders; regions only group
+   subjects on the root page. A subject with fields holds only field folders;
+   `not-yet-classified/` holds modules the taxonomy has not placed yet.
+   *Reason:* the taxonomy is the one record of the hierarchy:
+   `generate_wiki.py` lays out the folders from it, and `sync_wiki.py
+   declarations` places a module with no pages yet where it says. A page placed
+   elsewhere makes the vault and the taxonomy disagree.
 2. **Every page and subfolder is listed on its folder page** (`README.md`).
    *Reason:* those lists are the site's navigation and reading order. Autoform
    takes a page's parent from its folder, so an unlisted statement still has
@@ -63,9 +63,12 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
    with more than 24 direct children (`overfull-container`). *Reason:* past those sizes a folder page and its
    local graph stop being readable.
 4. **Moving a module or folder is a taxonomy change, made in the same PR,**
-   with `autoform move` to rewrite the links. *Reason:* a move made only in the
-   vault leaves the taxonomy describing the old place, so the next module the
-   sync places, and the next generated layout, follow the old hierarchy.
+   with `autoform move` to rewrite the links; then list the page on its new
+   folder page and, across subjects, move its annotation to the new subject's
+   links file (rules 2 and 5), which `autoform move` does not do. *Reason:* a
+   move made only in the vault leaves the taxonomy describing the old place, so
+   the next module the sync places, and the next generated layout, follow the
+   old hierarchy.
 
 ### Data and metadata
 
@@ -111,12 +114,12 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
    compiled Lean at build time. *Reason:* Lean is the source of truth for
    those edges, and lean-facts rewrites the sections anyway.
 10. **A page with no Lean declaration (a planned page) may write its own
-    `## Depends on` and `## Proof depends on`.** They count toward its
-    readiness, as Autoform's format says, and `lean-facts` leaves them alone on
-    a page whose annotation names no declaration, a held page included (a page
+    `## Depends on` and `## Proof depends on`.** They count toward its readiness,
+    as Autoform's format says, and `lean-facts` leaves them alone on a page
+    whose annotation has no Lean link (`object`), a held page included (a row
     an earlier sync wrote with only a module and a name counts as linked). Such
-    a page has no `kind`, so it is not a task (rule 14). *Reason:* nothing else records a planned node's
-    prerequisites.
+    a page has no `kind`, so it is not a task (rule 14). *Reason:* nothing else
+    records a planned node's prerequisites.
 11. **`## Informally uses` lists only results the cited proof uses** but the
     Lean need not. What the statement needs (its definitions and ingredients)
     is described in the page's prose, not listed here. A result the Lean also
@@ -137,12 +140,15 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
     counts such leaves in their scope's status bar and item count, so a folder
     of nodes still to expand does not look finished on the site.
 13. **Expanding a node** removes the marker and adds children under the same
-    folder. A low-level child is a `theorem_wanted` or `def_wanted` statement in
-    `WantedExt` with a docstring, whose page then comes from the sync (rule 6).
-    A child that is still high-level is a new marked node. Order among the new
-    planned pages goes in their own `## Depends on` (rule 10). *Reason:* a
-    leaf becomes a formalization task only once it names a declaration, and a
-    wanted statement is that declaration.
+    folder. A low-level child is a `theorem_wanted` or `def_wanted` statement
+    in `WantedExt` with a docstring, whose page then comes from the sync (rule
+    6). The sync puts a page beside its module's other pages, so put the
+    statements in a module whose pages that folder holds, or place a new module
+    there in `scripts/taxonomy.json` in the same PR (rules 1 and 4). A child
+    that is still high-level is a new marked node. Order among the new planned
+    pages goes in their own `## Depends on` (rule 10). *Reason:* a leaf becomes
+    a formalization task only once it names a declaration, and a wanted
+    statement is that declaration.
 
 ### Tasks and review
 

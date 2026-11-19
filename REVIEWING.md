@@ -111,6 +111,8 @@ reason. Beyond the mechanical rules, check what only a reader can:
   declaration is private by design, that its issue is linked.
 
 Every graph PR also needs a code owner's approval (`.github/CODEOWNERS`).
+That approval is a person's, not a finding: don't request changes because it
+is missing.
 
 ## Findings and verdict
 
