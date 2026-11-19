@@ -28,20 +28,22 @@ and then as concrete unit-length drift graphs:
    the sampled system is solved exactly, with weights `α • c` of any sign or size.
    `ghost_counterexample` realizes weights `(-1/2, 3/2)`.
 3. **Reversed direction** (`qpAdm_fit_of_reversed`): a source descending from the target fits
-   the target with weight `1 / β` and the qpWave matrix has rank exactly one, so a fitting
-   rank-one model cannot orient the relationship. `reversed_counterexample` realizes weights
-   `(-1, 2)` with an unadmixed target.
+   the target with weight `1 / β` and the qpWave matrix has rank at most one (exactly one in
+   `reversed_counterexample`), so a fitting rank-one model cannot orient the relationship.
+   `reversed_counterexample` realizes weights `(-1, 2)` with an unadmixed target.
 
-A "fitting" model means an exact solution of the qpAdm system (and qpWave rank one where
-stated); fitted weights are not required to lie in `[0, 1]` or to sum to one, which is exactly
-what the ghost and reversed examples exploit.
+A "fitting" model means an exact solution of the qpAdm system (and qpWave rank at most one
+where stated). The qpAdm solution vector lists only the non-reference weights (the reference
+source's weight is `1` minus their sum, so the full weights always sum to one); nothing
+forces them into `[0, 1]`, which is what the ghost and reversed examples exploit.
 
 ## Main results
 
 * `qpAdm_eq_of_proxy`, `f4Matrix_eq_of_proxy`: proxy substitution leaves qpAdm and qpWave
   unchanged.
 * `qpAdm_mulVec_eq_of_ghost`: a ghost source in the contrast span is absorbed exactly.
-* `qpAdm_fit_of_reversed`: a target-descended source fits with weight `1 / β`, rank one.
+* `qpAdm_fit_of_reversed`: a target-descended source fits with weight `1 / β`, qpWave rank
+  at most one.
 * `proxyWeight`, `ghostWeight`, `reversedWeight` and `proxy_counterexample`,
   `ghost_counterexample`, `reversed_counterexample`: explicit graphs realizing each.
 
