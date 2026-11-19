@@ -38,10 +38,11 @@ with independent terminal data (sections D-F).
 
 The restricted three-body problem (sections A-C). Two primaries of masses `1 - μ` and `μ` move on
 circles about their barycenter, at unit separation and unit angular speed (gravitational constant
-one). In the frame that rotates with them, `R(t) = rotZ t` about the third axis, the larger
-primary sits at `(-μ, 0, 0)` and the smaller at `(1 - μ, 0, 0)`. A massless particle with
-rotating-frame coordinates `(x, y, 0)` has inertial position `X = R(t) (x, y, 0)`, by the frame
-dictionary's convention `x_I = o + R x_B` with the barycenter as origin `o = 0`.
+one). In the frame that rotates with them, `R(t) = rotZ t` about the third axis, the first
+primary (mass `1 - μ`) sits at `(-μ, 0, 0)` and the second (mass `μ`) at `(1 - μ, 0, 0)`. A
+massless particle with rotating-frame coordinates `(x, y, 0)` has inertial position
+`X = R(t) (x, y, 0)`, by the frame dictionary's convention `x_I = o + R x_B` with the barycenter
+as origin `o = 0`.
 
 The effective potential is `Ω = (x² + y²) / 2 + (1 - μ) / r₁ + μ / r₂`, with `r₁`, `r₂` the
 distances to the primaries. If `X` obeys Newton's law in the inertial frame under the attraction
@@ -55,8 +56,9 @@ two-body equations, so unit angular speed is consistent with unit separation and
 mass.
 
 Model inputs of sections A-C: the test particle is massless (it does not move the primaries); the
-motion is in the primaries' orbital plane; collisions are excluded by `r₁, r₂ > 0`. The physical
-mass ratio is `0 < μ < 1`; the statements hold for every real `μ`, since no proof uses the range.
+motion is in the primaries' orbital plane; collisions are excluded by `r₁, r₂ > 0`. The
+literature names the primaries larger and smaller under the convention `0 < μ ≤ 1/2`; this module
+calls them first and second, and its lemmas hold for every real `μ`, since no proof uses a range.
 Not covered: stability of the triangular points, the collinear points, the Jacobi integral, the
 spatial problem, and any limit from three positive masses.
 
@@ -108,8 +110,8 @@ safety claim.
   displacement as the integral of the velocity.
 - `hasDerivAt_targetPosition`, `rendezvous`: the target's constant speed and the matched
   terminal position and velocity at `t = 1`.
-- The triangular points for a mass ratio in `(0, 1)`, the collision boundary, a non-equilibrium
-  point, the nonzero burn and the excluded depletion time are checked in
+- The triangular points for `μ = 1/10`, the collision boundary, a non-equilibrium point, the
+  nonzero burn and the excluded depletion time are checked in
   `PhyslibExtTest.Mechanics.SpaceTrajectoryModelsTest`.
 
 ## iii. Table of contents
@@ -169,10 +171,12 @@ noncomputable def primaryGravity (μ t : ℝ) (X : Fin 3 → ℝ) : Fin 3 → �
   pointMassPull (1 - μ) (X - rotatingToInertial ![-μ, 0, 0] t) +
     pointMassPull μ (X - rotatingToInertial ![1 - μ, 0, 0] t)
 
-/-- Distance `r₁` from the rotating-frame point `(x, y)` to the larger primary at `(-μ, 0)`. -/
+/-- Distance `r₁` from the rotating-frame point `(x, y)` to the first primary, of mass `1 - μ`, at
+`(-μ, 0)`. -/
 noncomputable def primaryDistOne (μ x y : ℝ) : ℝ := Real.sqrt ((x + μ) ^ 2 + y ^ 2)
 
-/-- Distance `r₂` from the rotating-frame point `(x, y)` to the smaller primary at `(1 - μ, 0)`. -/
+/-- Distance `r₂` from the rotating-frame point `(x, y)` to the second primary, of mass `μ`, at
+`(1 - μ, 0)`. -/
 noncomputable def primaryDistTwo (μ x y : ℝ) : ℝ := Real.sqrt ((x - (1 - μ)) ^ 2 + y ^ 2)
 
 /-- Effective potential `Ω = (x² + y²) / 2 + (1 - μ) / r₁ + μ / r₂` of the rotating frame. At a

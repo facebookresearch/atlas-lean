@@ -116,7 +116,7 @@ example :
   rw [show (2 / 5 : ℝ) = 1 / 2 - 1 / 10 by norm_num]
   exact ⟨h1, h2⟩
 
-/-- Collisions are excluded explicitly: at the larger primary `r₁ = 0`, and the effective potential
+/-- Collisions are excluded explicitly: at the first primary `r₁ = 0`, and the effective potential
 returns the finite junk value `μ² / 2 + μ`, where the physical potential is unbounded. -/
 example (μ : ℝ) :
     primaryDistOne μ (-μ) 0 = 0 ∧ effectivePotential μ (-μ) 0 = μ ^ 2 / 2 + μ := by
