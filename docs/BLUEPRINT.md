@@ -76,12 +76,11 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
    (`roadmap.jsonl` for the root page), and an annotation names at most one
    Lean declaration. An `id` (`af_` and 24 hex digits) is unique and never
    changes. `sync_wiki.py declarations` gives one to every annotation it adds;
-   the annotations that have none yet get theirs in a one-off fill after the
-   relink of [#4302](https://github.com/facebookresearch/atlas-lean/pull/4302)'s declarations
-   ([#5355](https://github.com/facebookresearch/atlas-lean/pull/5355)). `autoform links set` cannot
-   do this, because it does not write these per-subject files. *Reason:*
-   Autoform reads an article's facts from its annotation, and two annotations
-   for one page, or one page for two declarations, make its status ambiguous;
+   the annotations that have none yet get theirs in a one-off fill, still to
+   come. `autoform links set` cannot do this, because it does not write these
+   per-subject files. *Reason:* Autoform reads an article's facts from its
+   annotation, and two annotations for one page, or one page for two
+   declarations, make its status ambiguous;
    `autoform work` refuses an unfinished formalizable leaf without an `id`, so
    rule 14's tasks cannot be listed until every one has one.
 6. **Pages for documented declarations come from `sync_wiki.py
