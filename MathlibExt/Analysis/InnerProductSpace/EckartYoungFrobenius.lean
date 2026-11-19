@@ -15,7 +15,6 @@ public import Mathlib.LinearAlgebra.Matrix.Rank
 import Mathlib.Analysis.InnerProductSpace.Trace
 import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 import MathlibExt.LinearAlgebra.Matrix.RankAddGeneral
-public import Mathlib.Analysis.InnerProductSpace.Trace
 
 /-!
 # Eckart–Young in the Frobenius norm
