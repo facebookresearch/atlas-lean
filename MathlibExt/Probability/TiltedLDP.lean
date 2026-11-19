@@ -87,7 +87,11 @@ section Def
 variable {X : Type*} [MeasurableSpace X]
 
 /-- **Tilted measures.** The measure `Qₙ = (∫ exp (n F) dμₙ)⁻¹ • exp (n F) μₙ`, the `n`-th
-measure `μₙ` reweighted by the density `exp (n F)` and renormalised. -/
+measure `μₙ` reweighted by the density `exp (n F)` and renormalised. It is a probability measure
+when the normaliser `Zₙ = ∫ exp (n F) dμₙ` is positive and finite, for example for a probability
+measure `μₙ` and a bounded `F`, the setting of `satisfiesLDP_tiltedMeasure`. Otherwise it is the
+zero measure: for `Zₙ = ∞` because `∞⁻¹ = 0`, and for `Zₙ = 0` because then the reweighted
+measure is zero. -/
 noncomputable def tiltedMeasure (μ : ℕ → Measure X) (F : X → ℝ) (n : ℕ) : Measure X :=
   (∫⁻ x, ENNReal.ofReal (Real.exp (n * F x)) ∂(μ n))⁻¹ •
     (μ n).withDensity fun x => ENNReal.ofReal (Real.exp (n * F x))

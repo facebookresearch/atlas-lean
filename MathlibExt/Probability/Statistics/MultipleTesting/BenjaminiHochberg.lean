@@ -565,7 +565,10 @@ regular conditional distribution `condDistrib P (p i) μ`, which is determined o
 significant, so `D` increasing means "closed under making p-values larger". It is stated for a
 nonzero finite measure, and depends on `μ` only up to a positive factor; under the zero measure,
 which is excluded, every almost-everywhere statement holds and every p-value vector would be
-PRDS. -/
+PRDS. It is a statement about the laws of the p-values only when they are almost everywhere
+measurable, as in every result below: for a non-measurable `p i`, `μ.map (p i)` is not the law
+of `p i` but Mathlib's fallback, an arbitrary Dirac mass, and the condition then holds with a
+constant `g`. -/
 def IsPRDSOn {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsFiniteMeasure μ] [NeZero μ]
     (p : Fin m → Ω → ℝ) (H0 : Finset (Fin m)) : Prop :=
   ∀ i ∈ H0, ∀ D : Set (Fin m → ℝ), MeasurableSet D → IsUpperSet D →

@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Analysis.Calculus.FDeriv.Measurable
 public import Mathlib.Analysis.Calculus.Gradient.Basic
 public import Mathlib.Probability.Distributions.Gaussian.Multivariate
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
@@ -24,10 +25,14 @@ optimization: Langevin Monte Carlo and gradient descent*, arXiv:1704.04752v2, eq
 Euler discretization of the Langevin diffusion `dL = -∇f(L) dt + √2 dW`, and gradient descent
 plus Gaussian noise.
 
-This file defines the update on laws, `lmcStep f h μ`: the law of `ϑ - h ∇f ϑ + √(2h) ξ` when
-`ϑ ∼ μ` and `ξ` is an independent standard Gaussian vector, and computes one step from a point
-(`lmcStep_dirac`). The `W₂` convergence of the iterates for strongly log-concave targets is
-recorded in `WantedExt/Probability/LangevinMonteCarloWanted.lean`.
+This file defines the update on laws, `lmcStep f h μ`: for a probability measure `μ`, the law of
+`ϑ - h ∇f ϑ + √(2h) ξ` when `ϑ ∼ μ` and `ξ` is an independent standard Gaussian vector. The update
+map is measurable for every `f` (`measurable_lmcUpdate`), since the gradient of any function is
+Borel measurable, so the pushforward is the genuine image law, never `Measure.map`'s fallback for
+non-measurable maps (an arbitrary Dirac mass), and the step is again a probability measure
+(`isProbabilityMeasure_lmcStep`). One step from a point is computed in
+`lmcStep_dirac`. The `W₂` convergence of the iterates for strongly log-concave targets is recorded
+in `WantedExt/Probability/LangevinMonteCarloWanted.lean`.
 -/
 
 @[expose] public section
@@ -39,13 +44,34 @@ namespace MathlibExt.Probability.LangevinMonteCarlo
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
   [MeasurableSpace E] [BorelSpace E]
 
-/-- **One step of the Langevin Monte Carlo algorithm, on laws.** If `ϑ ∼ μ` and `ξ` is a standard
-Gaussian vector independent of `ϑ`, then `lmcStep f h μ` is the law of
-`ϑ - h ∇f(ϑ) + √(2h) ξ`: the pushforward of `μ ⊗ 𝒩(0, I)` by that map (A. S. Dalalyan,
-arXiv:1704.04752v2, update rule (2)). -/
-noncomputable def lmcStep (f : E → ℝ) (h : ℝ) (μ : Measure E) : Measure E :=
+/-- **The Langevin Monte Carlo update map is measurable** for every `f`: the gradient of any
+function on a finite-dimensional space is Borel measurable (`measurable_fderiv`), so
+`(ϑ, ξ) ↦ ϑ - h ∇f(ϑ) + √(2h) ξ` is measurable. -/
+theorem measurable_lmcUpdate (f : E → ℝ) (h : ℝ) :
+    Measurable (fun q : E × E => q.1 - h • gradient f q.1 + Real.sqrt (2 * h) • q.2) := by
+  have hg : Measurable (gradient f) :=
+    (InnerProductSpace.toDual ℝ E).symm.continuous.measurable.comp (measurable_fderiv ℝ f)
+  fun_prop
+
+/-- **One step of the Langevin Monte Carlo algorithm, on laws.** For a probability measure `μ`, if
+`ϑ ∼ μ` and `ξ` is a standard Gaussian vector independent of `ϑ`, then `lmcStep f h μ` is the law
+of `ϑ - h ∇f(ϑ) + √(2h) ξ`: the pushforward of `μ ⊗ 𝒩(0, I)` by that map (A. S. Dalalyan,
+arXiv:1704.04752v2, update rule (2)), again a probability measure
+(`isProbabilityMeasure_lmcStep`). The map is measurable for every `f` (`measurable_lmcUpdate`), so
+the pushforward is never `Measure.map`'s fallback for a non-measurable map, an arbitrary Dirac
+mass. Here `∇f` is Mathlib's `gradient`,
+which is `0` where `f` is not differentiable, and `√(2h)` is `Real.sqrt`, which is `0` for a
+step size `h < 0`; the algorithm uses `h > 0`. -/
+noncomputable def lmcStep (f : E → ℝ) (h : ℝ) (μ : Measure E) [IsProbabilityMeasure μ] :
+    Measure E :=
   (μ.prod (stdGaussian E)).map
     (fun q : E × E => q.1 - h • gradient f q.1 + Real.sqrt (2 * h) • q.2)
+
+/-- **A Langevin Monte Carlo step maps laws to laws.** -/
+instance isProbabilityMeasure_lmcStep (f : E → ℝ) (h : ℝ) (μ : Measure E)
+    [IsProbabilityMeasure μ] : IsProbabilityMeasure (lmcStep f h μ) := by
+  unfold lmcStep
+  infer_instance
 
 /-- **One Langevin Monte Carlo step from a point is Gaussian.** If `∇f` is continuous, then
 from a deterministic point `x` the law of `x - h ∇f(x) + √(2h) ξ` is the standard Gaussian pushed

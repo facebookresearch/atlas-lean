@@ -46,4 +46,9 @@ example : ((⨆ y, ((Real.cos y : EReal) - (diracRate (0 : ℝ) y : EReal))) -
   · rw [diracRate_apply_of_ne hy, EReal.coe_ennreal_top, diracRate_apply_self]
     simp
 
+/-- With an infinite normaliser the tilted measure is the zero measure, as its docstring states:
+here `μₙ = ∞ • δ₀` and `F = 0`. -/
+example : tiltedMeasure (fun _ => (∞ : ℝ≥0∞) • Measure.dirac (0 : ℝ)) (fun _ => 0) 1 = 0 := by
+  simp [tiltedMeasure]
+
 end MathlibExtTest.Probability.TiltedLDP

@@ -66,4 +66,16 @@ example (θ θ' : R2) :
 example (θ θ' : R2) : ‖gradient quadratic θ - gradient quadratic θ'‖ ≤ 1 * ‖θ - θ'‖ := by
   simp [quadratic_gradient]
 
+/-! The step is defined on probability laws: under the zero measure, for which the step would be
+the zero measure, it does not elaborate. -/
+
+/--
+error: failed to synthesize instance of type class
+  IsProbabilityMeasure 0
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+noncomputable example : Measure R2 := lmcStep (fun _ : R2 => (0 : ℝ)) 1 0
+
 end MathlibExtTest.LangevinMonteCarlo

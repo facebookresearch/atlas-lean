@@ -413,4 +413,17 @@ Hint: Type class instance resolution failures can be inspected with the `set_opt
 #guard_msgs in
 example : Prop := IsPRDSOn (0 : Measure (Fin 3)) slabP {0}
 
+/-- For a p-value that is not almost everywhere measurable, `μ.map (p i)` is Mathlib's fallback
+Dirac mass and the PRDS condition holds with a constant `g`, as the docstring of `IsPRDSOn`
+states; the theorems therefore assume measurable p-values. -/
+example {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsFiniteMeasure μ] [NeZero μ]
+    (p : Fin 1 → Ω → ℝ) (hp : ¬ AEMeasurable (p 0) μ) : IsPRDSOn μ p {0} := by
+  intro i hi D _ _
+  have hi0 : i = 0 := by simpa using hi
+  subst hi0
+  rw [Measure.map_of_not_aemeasurable_of_ne_zero hp (NeZero.ne μ)]
+  refine ⟨fun _ => condDistrib (fun ω j => p j ω) (p 0) μ Classical.ofNonempty D,
+    monotone_const, ?_⟩
+  rw [Filter.EventuallyEq, ae_dirac_eq, Filter.eventually_pure]
+
 end MathlibExtTest.Probability.Statistics.MultipleTesting.BenjaminiHochberg
