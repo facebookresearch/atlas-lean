@@ -49,11 +49,11 @@ Thm. 1).
   dendrogram.
 - [Mapper](../../../../Topology/algebraic-topology/mapper/README.md): Mapper clusters the
   preimages of a cover by single linkage.
-- Splits, compatibility, ultrametrics and UPGMA:
+- [Splits, compatibility, ultrametrics and UPGMA](../../../../Biology/phylogenetics/splits-compatibility-ultrametrics-and-upgma/README.md):
   ultrametrics and the average-linkage method UPGMA in phylogenetics.
 - [Kruskal's algorithm](../../../graph-algorithms/spanning-trees-flows-matchings/kruskal-s-algorithm/README.md):
   adding edges in increasing order of length and merging components, as Kruskal's algorithm does,
   computes the single-linkage merges.
 - [k-means clustering](../k-means-clustering/README.md): a flat, centroid-based alternative.
-- Optimal leaf ordering of dendrograms:
+- [Optimal leaf ordering of dendrograms](../../../../Biology/bioinformatics/optimal-leaf-ordering-of-dendrograms/README.md):
   how to draw a dendrogram, such as the single-linkage one, with similar leaves adjacent.
