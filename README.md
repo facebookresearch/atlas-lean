@@ -10,17 +10,16 @@
 </p>
 
 > [!NOTE]
-> **ATLAS V2 is live.** The original release is preserved in [`v1/`](v1/).
+> **ATLAS v2 is coming.** The original release is preserved in [`v1/`](v1/),
+> while the repository root is being prepared for the next generation of the
+> project.
 
-## About ATLAS
+## Versions
 
-ATLAS provides reusable formal building blocks for human- and machine-assisted
-theorem proving across analysis, algebra, geometry, topology, probability,
-statistics, and theoretical computer science.
-
-The project was generated with
-[AutoformBot](https://github.com/facebookresearch/autoform-bot), an
-autoformalization pipeline for developing Lean libraries at scale.
+| Version | Status | Location | License |
+| --- | --- | --- | --- |
+| **v2** | In development | Repository root | [Apache 2.0](LICENSE) |
+| **v1** | Archived and available | [`v1/`](v1/README.md) | [Original v1 license](v1/LICENSE) |
 
 ## Formalized mathematics libraries
 
@@ -61,12 +60,17 @@ Lean-source links, and prerequisites derived from compiled Lean.
 See [building and maintaining the explorer](docs/BLUEPRINT.md) for the local
 build, source ownership, and opt-in GitHub Pages deployment.
 
-## Explore v1
+## About ATLAS
 
-| Version | Status | Location | License |
-| --- | --- | --- | --- |
-| **v2** | Live | Repository root | [Apache 2.0](LICENSE) |
-| **v1** | Archived and available | [`v1/`](v1/README.md) | [Original v1 license](v1/LICENSE) |
+ATLAS provides reusable formal building blocks for human- and machine-assisted
+theorem proving across analysis, algebra, geometry, topology, probability,
+statistics, and theoretical computer science.
+
+The project was generated with
+[AutoformBot](https://github.com/facebookresearch/autoform-bot), an
+autoformalization pipeline for developing Lean libraries at scale.
+
+## Explore v1
 
 The complete first release—including its Lean sources, evaluation reports,
 build configuration, documentation, and companion paper—is available under
