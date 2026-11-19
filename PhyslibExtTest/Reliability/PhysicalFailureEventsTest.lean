@@ -329,7 +329,7 @@ example (d : Ω → ℝ≥0 → ℝ) (D : Ω → ℝ) (ω : Ω) :
 calibrated functionals exist. -/
 lemma vonMisesStress_bendingTorsionCalibrated :
     BendingTorsionCalibrated PhyslibExtTest.Reliability.PhysicalFailureEvents.vonMisesStress 3 := by
-  intro σ τ
+  refine ⟨by norm_num, fun σ τ => ?_⟩
   simp only [PhyslibExtTest.Reliability.PhysicalFailureEvents.vonMisesStress, bendingTorsionState]
   simp
 
@@ -340,7 +340,7 @@ example : UniaxialCalibrated vonMisesStress :=
 -- Nonzero combined loading in newtons and millimetres: `M = 10⁶` N·mm and `T = 2 × 10⁶` N·mm
 -- with `c = 3` against the allowable `250` MPa. Then `4 M ^ 2 + 3 T ^ 2 = (4 × 10⁶) ^ 2`; the
 -- demand is `512 / π ≈ 163` MPa at `d = 50` mm (no failure) and `1000 / π ≈ 318` MPa at
--- `d = 40` mm (failure); the minimum diameter is `(256000 / π) ^ (1 / 3) ≈ 43.4` mm. 
+-- `d = 40` mm (failure); the minimum diameter is `(256000 / π) ^ (1 / 3) ≈ 43.4` mm.
 example {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ}
     (hΦ : BendingTorsionCalibrated Φ 3) :
     Φ (bendingTorsionState (shaftBendingStress 1000000 50) (shaftShearStress 2000000 50)) =
@@ -409,6 +409,24 @@ example :
       (2 * shaftBendingStress 1000000 (shaftMinDiameter 3 1000000 2000000 250))
       (shaftShearStress 2000000 (shaftMinDiameter 3 1000000 2000000 250))) :=
   (stressConcentration_exceeds_at_minDiameter vonMisesStress_bendingTorsionCalibrated
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) 2000000).2
+    (by norm_num) (by norm_num) (by norm_num) 2000000).2
+
+-- A shear factor `c ≤ 0` is not a calibration: such a factor would give a pure torque zero
+-- demand through the truncation of `Real.sqrt`.
+example (Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ) {c : ℝ} (hc : c ≤ 0) :
+    ¬ BendingTorsionCalibrated Φ c := fun h => absurd h.shearFactor_pos (not_lt.mpr hc)
+
+-- With a calibrated functional a pure nonzero torque has positive demand at every positive
+-- diameter, so a diameter is accepted only at or above the positive minimum diameter.
+example {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} {c : ℝ} (hΦ : BendingTorsionCalibrated Φ c) {d T : ℝ}
+    (hd : 0 < d) (hT : T ≠ 0) :
+    0 < Φ (bendingTorsionState (shaftBendingStress 0 d) (shaftShearStress T d)) := by
+  rw [shaftDemand_eq hΦ hd]
+  have hc := hΦ.shearFactor_pos
+  have hT2 : 0 < T ^ 2 := by positivity
+  have hpos : 0 < 4 * (0 : ℝ) ^ 2 + c * T ^ 2 := by nlinarith
+  have := Real.sqrt_pos.mpr hpos
+  have := Real.pi_pos
+  positivity
 
 end PhyslibExtTest.Reliability.PhysicalFailureEvents
