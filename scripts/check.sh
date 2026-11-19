@@ -62,6 +62,9 @@ if [[ "$scope" == all || "$scope" == preflight ]]; then
   run_check "maintenance script regressions" scripts/test_scripts.sh
   run_check "library policy" scripts/check_health.sh
   run_check "copyright headers" python3 scripts/check_copyright.py --all
+  # Scoped to files synced from formal-math (see provenance/README.md): files without a manifest
+  # row are ignored, so only a PR that changes or deletes a synced file must record it.
+  run_check "formal-math sync manifest" python3 scripts/check_formal_math_sync.py
 fi
 
 if [[ "$scope" == all || "$scope" == build ]]; then

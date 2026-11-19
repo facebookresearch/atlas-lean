@@ -2183,42 +2183,6 @@ private theorem inv_one_sub_inv_eq (p : ℕ) (hp : 2 ≤ p) :
   field_simp
   ring
 
-/-- Product inequality over `ℝ` by induction. -/
-private theorem prod_le_prod_of_nonneg {ι : Type*} {s : Finset ι} {f g : ι → ℝ}
-    (h0 : ∀ i ∈ s, 0 ≤ f i) (h1 : ∀ i ∈ s, f i ≤ g i) :
-    ∏ i ∈ s, f i ≤ ∏ i ∈ s, g i := by
-  classical
-  revert h0 h1
-  refine Finset.induction_on s ?_ ?_
-  · intro h0 h1
-    simp
-  · intro a t hat ih h0 h1
-    rw [Finset.prod_insert hat, Finset.prod_insert hat]
-    have h0t : ∀ i ∈ t, 0 ≤ f i :=
-      fun i hi => h0 i (Finset.mem_insert_of_mem hi)
-    have h1t : ∀ i ∈ t, f i ≤ g i :=
-      fun i hi => h1 i (Finset.mem_insert_of_mem hi)
-    have hag : f a ≤ g a := h1 a (Finset.mem_insert_self a t)
-    have ha0 : 0 ≤ f a := h0 a (Finset.mem_insert_self a t)
-    exact mul_le_mul hag (ih h0t h1t) (Finset.prod_nonneg h0t) (le_trans ha0 hag)
-
-/-- A product of terms `≥ 1` is `≥ 1`, over `ℝ`. -/
-private theorem one_le_prod_of_one_le {ι : Type*} {s : Finset ι} {f : ι → ℝ}
-    (h : ∀ i ∈ s, 1 ≤ f i) : 1 ≤ ∏ i ∈ s, f i := by
-  classical
-  revert h
-  refine Finset.induction_on s ?_ ?_
-  · intro h
-    simp
-  · intro a t hat ih h
-    rw [Finset.prod_insert hat]
-    have ha : 1 ≤ f a := h a (Finset.mem_insert_self a t)
-    have ht : ∀ i ∈ t, 1 ≤ f i := fun i hi => h i (Finset.mem_insert_of_mem hi)
-    have h1t : 1 ≤ ∏ i ∈ t, f i := ih ht
-    calc (1 : ℝ) ≤ ∏ i ∈ t, f i := h1t
-      _ ≤ f a * ∏ i ∈ t, f i :=
-        le_mul_of_one_le_left (zero_le_one.trans h1t) ha
-
 /-- Lower bound `r^#s ≤ ∏ f` over `ℝ` by induction. -/
 private theorem pow_card_le_prod_of_le {ι : Type*} {s : Finset ι} {f : ι → ℝ}
     {r : ℝ} (hr : 0 ≤ r) (h : ∀ i ∈ s, r ≤ f i) : r ^ s.card ≤ ∏ i ∈ s, f i := by
@@ -2322,7 +2286,7 @@ private theorem sigma_div_self_le_mertensP_mul_exp (n : ℕ) (hn : 1 ≤ n) (y :
         (((∑ i ∈ Finset.range (n.factorization p + 1), p ^ (i * 1) : ℕ) : ℝ) /
           ((p ^ n.factorization p : ℕ) : ℝ)) ≤
       ∏ p ∈ n.primeFactors, (1 - (p : ℝ)⁻¹)⁻¹ :=
-    prod_le_prod_of_nonneg
+    Finset.prod_le_prod₀
       (fun p _ => div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)) hfac
   refine le_trans hstep1 ?_
   have hsplit := Finset.prod_filter_mul_prod_filter_not n.primeFactors
@@ -2349,7 +2313,7 @@ private theorem sigma_div_self_le_mertensP_mul_exp (n : ℕ) (hn : 1 ≤ n) (y :
       Finset.prod_sdiff hsub
     have hdiff1 : 1 ≤ ∏ p ∈ Nat.primesLE ⌊y⌋₊ \
         n.primeFactors.filter (fun p => p ≤ ⌊y⌋₊), (1 - (p : ℝ)⁻¹)⁻¹ := by
-      apply one_le_prod_of_one_le
+      apply Finset.one_le_prod₀
       intro p hp
       rw [Finset.mem_sdiff] at hp
       exact h1 p hp.1 hp.2
@@ -2437,7 +2401,7 @@ private theorem sigma_div_self_le_mertensP_mul_exp (n : ℕ) (hn : 1 ≤ n) (y :
         Finset.prod_sdiff hsubf
       have hdiff1 : 1 ≤ ∏ p ∈ n.primeFactors \
           n.primeFactors.filter (fun p => ¬ p ≤ ⌊y⌋₊), (p : ℝ) := by
-        apply one_le_prod_of_one_le
+        apply Finset.one_le_prod₀
         intro p hp
         rw [Finset.mem_sdiff] at hp
         exact h1 p hp.1 hp.2
@@ -2657,7 +2621,7 @@ private theorem sigma_div_prod_primesLE_pow_ge (m a : ℕ) :
       ∏ p ∈ Nat.primesLE m,
         (((ArithmeticFunction.sigma 1 (p ^ a) : ℕ) : ℝ) /
           ((p ^ a : ℕ) : ℝ)) :=
-    prod_le_prod_of_nonneg (fun p hp => by
+    Finset.prod_le_prod₀ (fun p hp => by
       have hpp := Nat.prime_of_mem_primesLE hp
       have h1 := one_le_inv_one_sub_inv_prime p hpp
       have h10 : (0 : ℝ) ≤ 1 - (2 : ℝ) ^ (-((a : ℝ) + 1)) := by

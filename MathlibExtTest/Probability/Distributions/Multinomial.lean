@@ -110,4 +110,12 @@ example :
     binomial_real_singleton]
   norm_num [Nat.choose]
 
+/-- Non-vacuity of the `HasLaw` form: on the witness, the first coordinate given the total
+`N` has a binomial law. -/
+example (a b : ℝ≥0) (hab : 0 < a + b) (N : ℕ) :
+    ∃ q : unitInterval, HasLaw (fun ω : ℕ × ℕ => ω.1) (binomial N q)
+      (((poissonMeasure a).prod (poissonMeasure b))[|{ω : ℕ × ℕ | ω.1 + ω.2 = N}]) :=
+  have h := witness_prod a b
+  ⟨_, hasLaw_cond_binomial hab measurable_fst measurable_snd h.1 h.2.1 h.2.2 N⟩
+
 end MathlibExtTest.Probability.Distributions.Multinomial

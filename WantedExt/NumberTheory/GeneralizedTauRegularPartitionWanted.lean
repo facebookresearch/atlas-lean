@@ -99,7 +99,9 @@ public theorem generalizedTau_natCast (k n : ℕ) :
 partitions of `n` with every frequency `f ≤ k` of `∏ (-1)^f * C(k, f)`; (b) the sum over all
 partitions of `n` of `∏ C(f + k - 1, k - 1)`, the products running over the distinct parts.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 1 (`integers-2024-A39-thm-1`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 1 (`integers-2024-A39-thm-1`). -/
 public theorem_wanted generalizedTau_succ_eq_partition_sum (k : ℕ) (hk : 0 < k) (n : ℕ) :
     (generalizedTau k (n + 1) =
         ∑ p ∈ Finset.univ.filter
@@ -113,7 +115,9 @@ public theorem_wanted generalizedTau_succ_eq_partition_sum (k : ℕ) (hk : 0 < k
 /-- Parity of `τ_k(n + 1)`: with `A = {a : 1 ≤ a ≤ k, C(k, a) odd}`, `τ_k(n + 1) ≡ F_A(n) (mod 2)`,
 where `F_A(n)` counts partitions of `n` whose every frequency lies in `A`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 2 (`integers-2024-A39-thm-2`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 2 (`integers-2024-A39-thm-2`). -/
 public theorem_wanted generalizedTau_succ_modEq_card_frequency_two (k : ℕ) (hk : 0 < k) (n : ℕ) :
     generalizedTau k (n + 1) ≡
       ((Finset.univ.filter fun p : Nat.Partition n =>
@@ -124,21 +128,27 @@ public theorem_wanted generalizedTau_succ_modEq_card_frequency_two (k : ℕ) (hk
 /-- Parity of the `4`-regular partition function: `R_4(n)` is odd exactly when `n` is a
 triangular number `m(m + 1)/2`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 3 (`integers-2024-A39-thm-3`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 3 (`integers-2024-A39-thm-3`). -/
 public theorem_wanted odd_card_four_regular_iff_triangular (n : ℕ) (hn : 0 < n) :
     Odd (Nat.Partition.restricted n (¬ 4 ∣ ·)).card ↔ ∃ m : ℕ, n = m * (m + 1) / 2
 
 /-- (a) `τ_{14}(2n + 1) ≡ R_8(n) (mod 2)`; (b) `τ_6(2n + 1)` is odd exactly when `n` is
 triangular.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 4 (`integers-2024-A39-thm-4`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 4 (`integers-2024-A39-thm-4`). -/
 public theorem_wanted generalizedTau_fourteen_six_odd_index_mod_two (n : ℕ) (hn : 0 < n) :
     generalizedTau 14 (2 * n + 1) ≡ ((Nat.Partition.restricted (n) (¬ 8 ∣ ·)).card : ℤ) [ZMOD 2] ∧
       (Odd (generalizedTau 6 (2 * n + 1)) ↔ ∃ m : ℕ, n = m * (m + 1) / 2)
 
 /-- `R_{2^s}(n) ≡ τ_{2^s - 1}(n + 1) (mod 2)` for every positive integer `s`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 5 (`integers-2024-A39-thm-5`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 5 (`integers-2024-A39-thm-5`). -/
 public theorem_wanted card_two_pow_regular_modEq_generalizedTau (s : ℕ) (hs : 0 < s) (n : ℕ) :
     ((Nat.Partition.restricted (n) (¬ 2 ^ s ∣ ·)).card : ℤ)
         ≡ generalizedTau ((2 : ℤ) ^ s - 1) (n + 1) [ZMOD 2]
@@ -146,33 +156,43 @@ public theorem_wanted card_two_pow_regular_modEq_generalizedTau (s : ℕ) (hs : 
 /-- Ramanujan's `τ` modulo `3`: `τ(n + 1) ≡ R_9(n/3)` if `3 ∣ n` and `≡ 0` otherwise. Here
 `τ = generalizedTau 24`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 6 (`integers-2024-A39-thm-6`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 6 (`integers-2024-A39-thm-6`). -/
 public theorem_wanted ramanujanTau_succ_modEq_nine_regular (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (n + 1) ≡
       (if 3 ∣ n then ((Nat.Partition.restricted (n / 3) (¬ 9 ∣ ·)).card : ℤ) else 0) [ZMOD 3]
 
 /-- Ramanujan's congruence `τ(3n) ≡ 0 (mod 3)`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Corollary 1 (`integers-2024-A39-cor-1`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Corollary 1 (`integers-2024-A39-cor-1`). -/
 public theorem_wanted ramanujanTau_three_mul_modEq_zero (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (3 * n) ≡ 0 [ZMOD 3]
 
 /-- `R_9(n) ≡ σ(3n + 1) (mod 3)`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Corollary 2 (`integers-2024-A39-cor-2`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Corollary 2 (`integers-2024-A39-cor-2`). -/
 public theorem_wanted card_nine_regular_modEq_sigma (n : ℕ) (hn : 0 < n) :
     ((Nat.Partition.restricted (n) (¬ 9 ∣ ·)).card : ℤ)
         ≡ (ArithmeticFunction.sigma 1 (3 * n + 1) : ℤ) [ZMOD 3]
 
 /-- `τ(n + 1) ≡ R_{25}(n) (mod 5)`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 7 (`integers-2024-A39-thm-7`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 7 (`integers-2024-A39-thm-7`). -/
 public theorem_wanted ramanujanTau_succ_modEq_twentyfive_regular (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (n + 1) ≡ ((Nat.Partition.restricted (n) (¬ 25 ∣ ·)).card : ℤ) [ZMOD 5]
 
 /-- `R_{25}(n) ≡ (n + 1) σ(n + 1) (mod 5)`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Corollary 3 (`integers-2024-A39-cor-3`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Corollary 3 (`integers-2024-A39-cor-3`). -/
 public theorem_wanted card_twentyfive_regular_modEq_mul_sigma (n : ℕ) (hn : 0 < n) :
     ((Nat.Partition.restricted (n) (¬ 25 ∣ ·)).card : ℤ) ≡ ((n + 1 : ℕ) : ℤ)
         * (ArithmeticFunction.sigma 1 (n + 1) : ℤ) [ZMOD 5]
@@ -180,7 +200,9 @@ public theorem_wanted card_twentyfive_regular_modEq_mul_sigma (n : ℕ) (hn : 0 
 /-- `τ(n + 1) ≡ ∑ (-1)^(m + r) (2m + 1)(2r + 1) (mod 7)`, the sum over `m, r ≥ 0` with
 `n = m(m + 1)/2 + 7 r(r + 1)/2`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 8 (`integers-2024-A39-thm-8`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 8 (`integers-2024-A39-thm-8`). -/
 public theorem_wanted ramanujanTau_succ_modEq_triangular_sum_seven (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (n + 1) ≡
       ∑ m ∈ Finset.range (n + 1), ∑ r ∈ Finset.range (n + 1),
@@ -191,7 +213,9 @@ public theorem_wanted ramanujanTau_succ_modEq_triangular_sum_seven (n : ℕ) (hn
 /-- `τ(n + 1) ≡ ∑ (-1)^(l + m + s + r) (mod 11)`, the sum over generalized pentagonal indices
 with `n = P(l) + P(m) + 11 P(s) + 11 P(r)`, `P(r) = r(3r - 1)/2`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 9 (`integers-2024-A39-thm-9`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 9 (`integers-2024-A39-thm-9`). -/
 public theorem_wanted ramanujanTau_succ_modEq_pentagonal_sum_eleven (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (n + 1) ≡
       ∑ l ∈ Finset.Icc (-(n : ℤ)) n, ∑ m ∈ Finset.Icc (-(n : ℤ)) n, ∑ s ∈ Finset.Icc (-(n : ℤ)) n,
@@ -205,7 +229,9 @@ public theorem_wanted ramanujanTau_succ_modEq_pentagonal_sum_eleven (n : ℕ) (h
 `∏ (1 - q^m)^11 (1 - q^(13m)) = ∑ (-1)^r τ_11(s + 1) q^(13 P(r) + s)`, from Definition 1.1,
 gives the shifted index used here.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 10 (`integers-2024-A39-thm-10`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 10 (`integers-2024-A39-thm-10`). -/
 public theorem_wanted ramanujanTau_succ_modEq_pentagonal_tau_eleven (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (n + 1) ≡
       ∑ r ∈ Finset.Icc (-(n : ℤ)) n,
@@ -218,7 +244,9 @@ public theorem_wanted ramanujanTau_succ_modEq_pentagonal_tau_eleven (n : ℕ) (h
 `∏ (1 - q^m)^7 (1 - q^(17m)) = ∑ (-1)^r τ_7(s + 1) q^(17 P(r) + s)`, from Definition 1.1,
 gives the shifted index used here.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 11 (`integers-2024-A39-thm-11`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 11 (`integers-2024-A39-thm-11`). -/
 public theorem_wanted ramanujanTau_succ_modEq_pentagonal_tau_seven (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (n + 1) ≡
       ∑ r ∈ Finset.Icc (-(n : ℤ)) n,
@@ -231,7 +259,9 @@ public theorem_wanted ramanujanTau_succ_modEq_pentagonal_tau_seven (n : ℕ) (hn
 `∏ (1 - q^m)^5 (1 - q^(19m)) = ∑ (-1)^r τ_5(s + 1) q^(19 P(r) + s)`, from Definition 1.1,
 gives the shifted index used here.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 12 (`integers-2024-A39-thm-12`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 12 (`integers-2024-A39-thm-12`). -/
 public theorem_wanted ramanujanTau_succ_modEq_pentagonal_tau_five (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (n + 1) ≡
       ∑ r ∈ Finset.Icc (-(n : ℤ)) n,
@@ -241,7 +271,9 @@ public theorem_wanted ramanujanTau_succ_modEq_pentagonal_tau_five (n : ℕ) (hn 
 
 /-- `τ(n + 1) ≡ ∑ (-1)^(r + s) (mod 23)` over `n = P(r) + 23 P(s)`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 13 (`integers-2024-A39-thm-13`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 13 (`integers-2024-A39-thm-13`). -/
 public theorem_wanted ramanujanTau_succ_modEq_pentagonal_sum_twentythree (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (n + 1) ≡
       ∑ r ∈ Finset.Icc (-(n : ℤ)) n, ∑ s ∈ Finset.Icc (-(n : ℤ)) n,
@@ -251,7 +283,9 @@ public theorem_wanted ramanujanTau_succ_modEq_pentagonal_sum_twentythree (n : �
 /-- `τ(n + 1) ≡ ∑ (-1)^(s + t) (2s + 1) R_5(r) (mod 25)` over `n = r + 5 s(s + 1)/2 + 5 P(t)`
 with `r, s ≥ 0`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 14 (`integers-2024-A39-thm-14`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 14 (`integers-2024-A39-thm-14`). -/
 public theorem_wanted ramanujanTau_succ_modEq_five_regular_sum_twentyfive (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (n + 1) ≡
       ∑ s ∈ Finset.range (n + 1), ∑ t ∈ Finset.Icc (-(n : ℤ)) n,
@@ -264,7 +298,9 @@ public theorem_wanted ramanujanTau_succ_modEq_five_regular_sum_twentyfive (n : �
 /-- `τ_{p^s}(n + 1) ≡ (-1)^t (mod p)` if `n = p^s P(t)` and `≡ 0` otherwise, written as a sum
 over `t` that has at most one nonzero term (`pentagonal` is injective).
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 15 (`integers-2024-A39-thm-15`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 15 (`integers-2024-A39-thm-15`). -/
 public theorem_wanted generalizedTau_prime_pow_succ_modEq (p : ℕ) (hp : p.Prime) (s : ℕ)
     (hs : 0 < s) (n : ℕ) :
     generalizedTau ((p ^ s : ℕ) : ℤ) (n + 1) ≡
@@ -275,7 +311,9 @@ public theorem_wanted generalizedTau_prime_pow_succ_modEq (p : ℕ) (hp : p.Prim
 record prints the side condition as `n + 1 = p(P(r) + P(s))`; that is false and the proof's
 identity `∑ τ_{2p}(n + 1) q^n ≡ ∏ (1 - q^(pm))^2 (mod p)` gives `n = p(P(r) + P(s))`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 16 (`integers-2024-A39-thm-16`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 16 (`integers-2024-A39-thm-16`). -/
 public theorem_wanted generalizedTau_two_mul_prime_succ_modEq (p : ℕ) (hp : p.Prime) (hodd : Odd p)
     (n : ℕ) :
     generalizedTau (2 * p) (n + 1) ≡
@@ -287,7 +325,9 @@ public theorem_wanted generalizedTau_two_mul_prime_succ_modEq (p : ℕ) (hp : p.
 as `p ∤ n + 1`; that is false, and the corollary follows from Theorem 3.26 (the record's
 Theorem 16) in its corrected form, which forces `p ∣ n` for a nonzero residue.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Corollary 4 (`integers-2024-A39-cor-4`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Corollary 4 (`integers-2024-A39-cor-4`). -/
 public theorem_wanted generalizedTau_two_mul_prime_succ_modEq_zero (p : ℕ) (hp : p.Prime)
     (hodd : Odd p) (n : ℕ) (hn : ¬ p ∣ n) :
     generalizedTau (2 * p) (n + 1) ≡ 0 [ZMOD p]
@@ -296,7 +336,9 @@ public theorem_wanted generalizedTau_two_mul_prime_succ_modEq_zero (p : ℕ) (hp
 prime. The record prints `n + 1 = ...`; that is false and the proof's identity
 `∑ τ_{2p+1}(n + 1) q^n ≡ ∏ (1 - q^m)(1 - q^(pm))^2 (mod p)` gives the index `n`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 17 (`integers-2024-A39-thm-17`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 17 (`integers-2024-A39-thm-17`). -/
 public theorem_wanted generalizedTau_two_mul_prime_add_one_succ_modEq (p : ℕ) (hp : p.Prime)
     (hodd : Odd p) (n : ℕ) :
     generalizedTau (2 * p + 1) (n + 1) ≡
@@ -309,7 +351,9 @@ public theorem_wanted generalizedTau_two_mul_prime_add_one_succ_modEq (p : ℕ) 
 record prints `n + 1 = ...`; that is false and the proof's identity
 `∑ τ_{p²+1}(n + 1) q^n ≡ ∏ (1 - q^m)(1 - q^(p² m)) (mod p)` gives the index `n`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 18 (`integers-2024-A39-thm-18`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 18 (`integers-2024-A39-thm-18`). -/
 public theorem_wanted generalizedTau_prime_sq_add_one_succ_modEq (p : ℕ) (hp : p.Prime)
     (hodd : Odd p) (n : ℕ) :
     generalizedTau (p ^ 2 + 1) (n + 1) ≡
@@ -319,7 +363,9 @@ public theorem_wanted generalizedTau_prime_sq_add_one_succ_modEq (p : ℕ) (hp :
 
 /-- `R_9(4n + 1) ≡ R_9(n) (mod 3)`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 19 (`integers-2024-A39-thm-19`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 19 (`integers-2024-A39-thm-19`). -/
 public theorem_wanted card_nine_regular_four_mul_add_one_modEq (n : ℕ) (hn : 0 < n) :
     ((Nat.Partition.restricted (4 * n + 1) (¬ 9 ∣ ·)).card : ℤ)
     ≡ ((Nat.Partition.restricted (n) (¬ 9 ∣ ·)).card : ℤ) [ZMOD 3]
@@ -327,7 +373,9 @@ public theorem_wanted card_nine_regular_four_mul_add_one_modEq (n : ℕ) (hn : 0
 /-- `R_9((r - 1) 4^(s-1) + (4^s - 1)/3) ≡ R_9(r) (mod 3)`, with the particular cases
 `R_9((4^s - 1)/3) ≡ 1`, `R_9(4^(s-1) + (4^s - 1)/3) ≡ 2`, `R_9(2·4^(s-1) + (4^s - 1)/3) ≡ 0`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Corollary 5 (`integers-2024-A39-cor-5`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Corollary 5 (`integers-2024-A39-cor-5`). -/
 public theorem_wanted card_nine_regular_iterate_modEq (r s : ℕ) (hr : 0 < r) (hs : 0 < s) :
     ((Nat.Partition.restricted ((r - 1) * 4 ^ (s - 1) + (4 ^ s - 1) / 3) (¬ 9 ∣ ·)).card : ℤ)
         ≡ ((Nat.Partition.restricted (r) (¬ 9 ∣ ·)).card : ℤ) [ZMOD 3] ∧
@@ -338,7 +386,9 @@ public theorem_wanted card_nine_regular_iterate_modEq (r s : ℕ) (hr : 0 < r) (
 
 /-- `R_p(n) ≡ τ_{p-1}(n + 1) (mod p)` for every prime `p`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 20 (`integers-2024-A39-thm-20`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 20 (`integers-2024-A39-thm-20`). -/
 public theorem_wanted card_prime_regular_modEq_generalizedTau_pred (p : ℕ) (hp : p.Prime) (n : ℕ) :
     ((Nat.Partition.restricted (n) (¬ p ∣ ·)).card : ℤ)
         ≡ generalizedTau ((p : ℤ) - 1) (n + 1) [ZMOD p]
@@ -346,7 +396,9 @@ public theorem_wanted card_prime_regular_modEq_generalizedTau_pred (p : ℕ) (hp
 /-- For an odd prime `l`, `1 ≤ k < l` and `r = n mod l`: `C(n + k, k) ≡ (-1)^r C(l - k - 1, r)
 (mod l)` when `r ≤ l - k - 1`, and `≡ 0` when `r ≥ l - k`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Lemma 1 (`integers-2024-A39-lem-1`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Lemma 1 (`integers-2024-A39-lem-1`). -/
 public theorem_wanted choose_add_modEq_prime (l : ℕ) (hl : l.Prime) (hodd : Odd l) (k : ℕ)
     (hk : 1 ≤ k) (hkl : k < l) (n : ℕ) :
     ((n + k).choose k : ℤ) ≡
@@ -360,7 +412,9 @@ proof's identity `∏ (1 - q^m)^(-k) ≡ ∏ (1 - q^m)^(l-k) (1 - q^(lm))^(-1) (
 Definition 1.1 (`∏ (1 - q^m)^j = ∑ τ_j(t + 1) q^t`) gives `τ_{l-k}(t + 1)`; Corollary 4.3 (the
 record's Corollary 6) uses this shifted form, `ω(t) = τ_1(t + 1)`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 21 (`integers-2024-A39-thm-21`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 21 (`integers-2024-A39-thm-21`). -/
 public theorem_wanted generalizedTau_neg_succ_modEq_partition_convolution (k : ℕ) (hk : 2 ≤ k)
     (l : ℕ) (hl : l.Prime) (hodd : Odd l) (hkl : k < l) (n : ℕ) :
     generalizedTau (-(k : ℤ)) (n + 1) ≡
@@ -376,7 +430,9 @@ public theorem_wanted generalizedTau_neg_succ_modEq_partition_convolution (k : �
 /-- `∑_{a + b = n} p(a) p(b) ≡ ∑_{n = t + 3s} ω(t) p(s) (mod 3)`, where `ω(t)` is the `q^t`
 coefficient of `∏ (1 - q^m)` (Euler's pentagonal series).
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Corollary 6 (`integers-2024-A39-cor-6`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Corollary 6 (`integers-2024-A39-cor-6`). -/
 public theorem_wanted partition_convolution_two_modEq_three (n : ℕ) :
     (∑ x ∈ Finset.antidiagonal n,
         (Fintype.card (Nat.Partition x.1) : ℤ) * (Fintype.card (Nat.Partition x.2) : ℤ)) ≡
@@ -388,7 +444,9 @@ public theorem_wanted partition_convolution_two_modEq_three (n : ℕ) :
 `0 ≤ r ≤ (l - 3)/2`: every `n ≡ m (mod l)` has
 `∑_{a_1 + ⋯ + a_{l-3} = n} p(a_1)⋯p(a_{l-3}) ≡ 0 (mod l)`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Corollary 7 (`integers-2024-A39-cor-7`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Corollary 7 (`integers-2024-A39-cor-7`). -/
 public theorem_wanted partition_composition_sum_modEq_zero (l : ℕ) (hl : l.Prime) (h5 : 5 ≤ l)
     (m : ℕ) (hm0 : ¬ (m : ℤ) ≡ 0 [ZMOD l])
     (hm : ∀ r ≤ (l - 3) / 2, ¬ (m : ℤ) ≡ (-1 : ℤ) ^ r * ((l - 3).choose r : ℤ) [ZMOD l])
@@ -398,14 +456,18 @@ public theorem_wanted partition_composition_sum_modEq_zero (l : ℕ) (hl : l.Pri
 
 /-- Ramanujan's congruence `τ(7n) ≡ 0 (mod 7)`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Corollary 8 (`integers-2024-A39-cor-8`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Corollary 8 (`integers-2024-A39-cor-8`). -/
 public theorem_wanted ramanujanTau_seven_mul_modEq_zero (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (7 * n) ≡ 0 [ZMOD 7]
 
 /-- If `k - 1` is prime and `k - 1 ∤ n - 1 - P` for every generalized pentagonal number
 `P ≤ n - 1`, then `τ_k(n) ≡ 0 (mod k - 1)`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Proposition 1 (`integers-2024-A39-prop-1`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Proposition 1 (`integers-2024-A39-prop-1`). -/
 public theorem_wanted generalizedTau_modEq_zero_of_pentagonal (n : ℕ) (hn : 0 < n) (k : ℕ)
     (hk : (k - 1).Prime)
     (h : ∀ t : ℤ, pentagonal t ≤ n - 1 → ¬ (k - 1) ∣ n - 1 - pentagonal t) :
@@ -413,7 +475,9 @@ public theorem_wanted generalizedTau_modEq_zero_of_pentagonal (n : ℕ) (hn : 0 
 
 /-- `n τ_k(n + 1) ≡ 0 (mod |k|)` for `|k| ≥ 2`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Proposition 2 (`integers-2024-A39-prop-2`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Proposition 2 (`integers-2024-A39-prop-2`). -/
 public theorem_wanted mul_generalizedTau_succ_modEq_zero (n : ℕ) (hn : 0 < n) (k : ℤ) (hk : 2 ≤ |k|)
     :
     (n : ℤ) * generalizedTau k (n + 1) ≡ 0 [ZMOD |k|]
@@ -421,7 +485,9 @@ public theorem_wanted mul_generalizedTau_succ_modEq_zero (n : ℕ) (hn : 0 < n) 
 /-- `τ_k(|k| m + d r + 1) ≡ 0 (mod |k|/d)` for every divisor `d < |k|` of `|k|` and every `r`
 coprime to `|k|/d`.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Proposition 3 (`integers-2024-A39-prop-3`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Proposition 3 (`integers-2024-A39-prop-3`). -/
 public theorem_wanted generalizedTau_modEq_zero_of_coprime (m : ℕ) (k : ℤ) (hk : 2 ≤ |k|) (d : ℕ)
     (hd : d ∣ k.natAbs) (hdk : d < k.natAbs) (r : ℕ)
     (hr : Nat.gcd r (k.natAbs / d) = 1) :
@@ -431,7 +497,9 @@ public theorem_wanted generalizedTau_modEq_zero_of_coprime (m : ℕ) (k : ℤ) (
 Items 1 and 3 are as printed. Items 2, 4, 5 are false as printed (moduli `12`, `6`, `4`); the
 moduli `|k|/gcd(r, 24)` that Proposition 2.4 gives (`6`, `3`, `2`) are used instead.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Proposition 4 (`integers-2024-A39-prop-4`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Proposition 4 (`integers-2024-A39-prop-4`). -/
 public theorem_wanted ramanujanTau_modEq_divisors_twentyfour (m : ℕ) :
     (∀ r ∈ ({1, 5, 7, 11, 13, 17, 19, 23} : Finset ℕ),
         generalizedTau 24 (24 * m + r + 1) ≡ 0 [ZMOD 24]) ∧

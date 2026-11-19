@@ -22,6 +22,7 @@ import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Inv
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Pow
+import MathlibExt.Biology.Dynamics.PlanarStability
 
 /-!
 # Turing patterns: diffusion-driven instability of two-species reaction-diffusion systems
@@ -186,70 +187,14 @@ theorem det_modeMatrix (J : Matrix (Fin 2) (Fin 2) ℝ) (du dv k : ℝ) :
   ring
 
 /-- **Routh–Hurwitz for `2 × 2` matrices.** A real `2 × 2` matrix has a complex eigenvalue with
-positive real part iff its trace is positive or its determinant is negative. -/
+positive real part iff its trace is positive or its determinant is negative. This is the
+eigenvector form of `PlanarStability.exists_spectrum_re_pos_iff`. -/
 theorem exists_eigenvalue_re_pos_iff (M : Matrix (Fin 2) (Fin 2) ℝ) :
     (∃ μ : ℂ, 0 < μ.re ∧ ∃ v : Fin 2 → ℂ, v ≠ 0 ∧ M.map (↑) *ᵥ v = μ • v) ↔
       0 < M.trace ∨ M.det < 0 := by
-  classical
-  have eigen_iff (μ : ℂ) :
-      (∃ v : Fin 2 → ℂ, v ≠ 0 ∧ M.map (↑) *ᵥ v = μ • v) ↔
-        μ ^ 2 - (M.trace : ℂ) * μ + (M.det : ℂ) = 0 := by
-    have hdet : (μ • (1 : Matrix (Fin 2) (Fin 2) ℂ) - M.map Complex.ofReal).det =
-        μ ^ 2 - (M.trace : ℂ) * μ + (M.det : ℂ) := by
-      simp [Matrix.det_fin_two, Matrix.trace_fin_two,
-        Matrix.smul_apply, Matrix.sub_apply, Matrix.map_apply]
-      ring
-    rw [← hdet, ← Matrix.exists_mulVec_eq_zero_iff]
-    simp only [Matrix.sub_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec,
-      sub_eq_zero, eq_comm]
-  simp_rw [eigen_iff]
-  constructor
-  · rintro ⟨μ, hpos, hroot⟩
-    have hre := congrArg Complex.re hroot
-    have him := congrArg Complex.im hroot
-    simp only [pow_two, Complex.add_re, Complex.sub_re, Complex.mul_re,
-      Complex.ofReal_re, Complex.ofReal_im, Complex.zero_re, zero_mul, sub_zero] at hre
-    simp only [pow_two, Complex.add_im, Complex.sub_im, Complex.mul_im,
-      Complex.ofReal_re, Complex.ofReal_im, Complex.zero_im, zero_mul, add_zero] at him
-    by_cases hb : μ.im = 0
-    · rw [hb] at hre
-      by_cases ht : 0 < M.trace
-      · exact Or.inl ht
-      · right
-        have ht' : M.trace ≤ 0 := le_of_not_gt ht
-        nlinarith [mul_nonpos_of_nonpos_of_nonneg ht' (le_of_lt hpos)]
-    · left
-      have hfactor : μ.im * (2 * μ.re - M.trace) = 0 := by nlinarith [him]
-      have ht := (mul_eq_zero.mp hfactor).resolve_left hb
-      linarith
-  · intro h
-    by_cases hd : 0 ≤ M.trace ^ 2 - 4 * M.det
-    · let s := Real.sqrt (M.trace ^ 2 - 4 * M.det)
-      have hs : 0 ≤ s := Real.sqrt_nonneg _
-      have hs2 : s ^ 2 = M.trace ^ 2 - 4 * M.det := Real.sq_sqrt hd
-      have hpos : 0 < (M.trace + s) / 2 := by
-        rcases h with ht | hdet
-        · linarith
-        · have hlt : -M.trace < s := by
-            by_contra hle
-            have hle' : s ≤ -M.trace := le_of_not_gt hle
-            nlinarith [sq_nonneg (s + M.trace)]
-          linarith
-      refine ⟨((M.trace + s) / 2 : ℝ), ?_, ?_⟩
-      · exact hpos
-      · apply Complex.ext <;> simp [pow_two, Complex.mul_re, Complex.mul_im]
-        nlinarith [hs2]
-    · have hd' : 0 ≤ 4 * M.det - M.trace ^ 2 := by linarith
-      have ht : 0 < M.trace := by
-        rcases h with ht | hdet
-        · exact ht
-        · nlinarith [sq_nonneg M.trace]
-      let s := Real.sqrt (4 * M.det - M.trace ^ 2)
-      have hs2 : s ^ 2 = 4 * M.det - M.trace ^ 2 := Real.sq_sqrt hd'
-      refine ⟨⟨M.trace / 2, s / 2⟩, by dsimp; linarith, ?_⟩
-      apply Complex.ext <;> simp [pow_two, Complex.mul_re, Complex.mul_im]
-      · nlinarith [hs2]
-      · ring
+  rw [← PlanarStability.isLinearlyUnstable_iff, PlanarStability.IsLinearlyUnstable]
+  simp only [PlanarStability.exists_mulVec_eq_smul_iff_isCharRoot]
+  exact ⟨fun ⟨μ, hre, hμ⟩ => ⟨μ, hμ, hre⟩, fun ⟨μ, hμ, hre⟩ => ⟨μ, hre, hμ⟩⟩
 
 /-- Mode `k` is unstable iff `0 < tr (J - k² D)` or `det (J - k² D) < 0`. -/
 theorem isUnstableMode_iff {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv k : ℝ} :

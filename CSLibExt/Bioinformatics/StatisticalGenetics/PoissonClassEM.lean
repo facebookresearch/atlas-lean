@@ -11,7 +11,6 @@ module
 public import MathlibExt.Biology.StatisticalGenetics.GeneConstraint
 public import CSLibExt.MachineLearning.LatentVariable.ExpectationMaximization
 
-import CSLibExt.MachineLearning.LatentVariable.BernoulliMixture
 
 /-!
 # EM for the class weights of a Poisson constraint mixture (pLI)
@@ -53,8 +52,7 @@ namespace Cslib.Bioinformatics.StatisticalGenetics.PoissonClassEM
 variable {ι : Type*} [Fintype ι] {N : ℕ}
 
 /-- Strictly positive class weights summing to one. -/
-def PosWeights (ι : Type*) [Fintype ι] : Type _ :=
-  {w : ι → ℝ // (∀ c, 0 < w c) ∧ ∑ c, w c = 1}
+abbrev PosWeights := Cslib.MachineLearning.LatentVariable.ExpectationMaximization.PosWeights
 
 /-- A gene's data: observed LoF count `o` and positive expected count `E`. -/
 structure GeneData where
@@ -76,59 +74,39 @@ theorem joint_pos {rate : ι → ℝ} (hrate : ∀ c, 0 < rate c) (w : PosWeight
 /-- The expected number of genes in class `z` under the posteriors at weights `w`:
 `∑_n P_w(z | o_n)`. -/
 noncomputable def mass (rate : ι → ℝ) (xs : Fin N → GeneData) (w : PosWeights ι) (z : ι) : ℝ :=
-  ∑ n, posterior (joint rate) w (xs n) z
-
-private theorem posterior_pos [Nonempty ι] {rate : ι → ℝ} (hrate : ∀ c, 0 < rate c)
-    (w : PosWeights ι) (x : GeneData) (z : ι) : 0 < posterior (joint rate) w x z :=
-  div_pos (joint_pos hrate w x z)
-    (Finset.sum_pos (fun z _ => joint_pos hrate w x z) Finset.univ_nonempty)
+  weightMass (fun x z => poissonLik (rate z * x.E) x.o) xs w z
 
 /-- The class masses are positive when there is at least one gene. -/
 theorem mass_pos [Nonempty ι] {rate : ι → ℝ} (hrate : ∀ c, 0 < rate c)
     (xs : Fin N → GeneData) (hN : 0 < N) (w : PosWeights ι) (z : ι) : 0 < mass rate xs w z := by
-  have : Nonempty (Fin N) := ⟨⟨0, hN⟩⟩
-  exact Finset.sum_pos (fun n _ => posterior_pos hrate w (xs n) z) Finset.univ_nonempty
+  unfold mass
+  apply weightMass_pos _ xs hN w z
+  intro x z
+  exact poissonLik_pos (mul_pos (hrate z) x.E_pos) x.o
 
 /-- The class masses add up to the number of genes. -/
 theorem sum_mass [Nonempty ι] {rate : ι → ℝ} (hrate : ∀ c, 0 < rate c)
     (xs : Fin N → GeneData) (w : PosWeights ι) : ∑ z, mass rate xs w z = N := by
   unfold mass
-  rw [Finset.sum_comm]
-  simp [(isDist_posterior (fun w x z => joint_pos hrate w x z) w _).2]
+  apply sum_weightMass _ xs w
+  intro x z
+  exact poissonLik_pos (mul_pos (hrate z) x.E_pos) x.o
 
-/-- The EM update `w'_z = (1/N) ∑_n P_w(z | o_n)`, for `N > 0` genes and positive rates. -/
+/-- The EM update `w'_z = (1/N) ∑_n P_w(z | o_n)`, for `N > 0` genes and positive rates: the
+generic posterior-average weight step at the Poisson likelihood. -/
 noncomputable def emStep [Nonempty ι] {rate : ι → ℝ} (hrate : ∀ c, 0 < rate c)
     (xs : Fin N → GeneData) (hN : 0 < N) (w : PosWeights ι) : PosWeights ι :=
-  ⟨fun z => mass rate xs w z / N, fun z => div_pos (mass_pos hrate xs hN w z)
-    (by exact_mod_cast hN), by
-    rw [← Finset.sum_div, sum_mass hrate xs w]
-    exact div_self (by exact_mod_cast hN.ne')⟩
-
-private theorem emQ_eq [Nonempty ι] {rate : ι → ℝ} (hrate : ∀ c, 0 < rate c)
-    (xs : Fin N → GeneData) (w' w : PosWeights ι) :
-    emQ (joint rate) xs w' w = ∑ z, mass rate xs w z * log (w'.1 z) +
-      ∑ n, ∑ z, posterior (joint rate) w (xs n) z *
-        log (poissonLik (rate z * (xs n).E) (xs n).o) := by
-  unfold emQ mass
-  simp_rw [joint, log_mul (w'.2.1 _).ne'
-    (poissonLik_pos (mul_pos (hrate _) (GeneData.E_pos _)) _).ne', mul_add,
-    Finset.sum_add_distrib, Finset.sum_mul]
-  rw [Finset.sum_comm (s := Finset.univ) (t := Finset.univ)
-    (f := fun n z => posterior (joint rate) w (xs n) z * log (w'.1 z))]
+  weightStep (lik := fun x z => poissonLik (rate z * x.E) x.o)
+    (fun x z => poissonLik_pos (mul_pos (hrate z) x.E_pos) x.o) xs hN w
 
 /-- **The M-step maximizes `Q(· | w)`** over admissible weights. -/
 theorem emQ_le_emStep [Nonempty ι] {rate : ι → ℝ} (hrate : ∀ c, 0 < rate c)
     (xs : Fin N → GeneData) (hN : 0 < N) (w' w : PosWeights ι) :
     emQ (joint rate) xs w' w ≤ emQ (joint rate) xs (emStep hrate xs hN w) w := by
-  rw [emQ_eq hrate, emQ_eq hrate]
-  have hNr : (0 : ℝ) < N := by exact_mod_cast hN
-  have h := Cslib.MachineLearning.LatentVariable.BernoulliMixture.sum_mul_log_le_sum_mul_log_div
-    (fun z => (mass_pos hrate xs hN w z).le) (by rw [sum_mass hrate xs w]; exact hNr)
-    w'.2.1 w'.2.2
-  rw [sum_mass hrate xs w] at h
-  have : ∑ z, mass rate xs w z * log ((emStep hrate xs hN w).1 z) =
-      ∑ z, mass rate xs w z * log (mass rate xs w z / N) := rfl
-  linarith
+  have hj : joint rate = weightJoint (fun x z => poissonLik (rate z * x.E) x.o) := rfl
+  rw [hj]
+  unfold emStep
+  apply emQ_le_weightStep _ xs hN w' w
 
 /-- **EM does not decrease the likelihood** of the class weights. -/
 theorem logLik_le_logLik_emStep [Nonempty ι] {rate : ι → ℝ} (hrate : ∀ c, 0 < rate c)
