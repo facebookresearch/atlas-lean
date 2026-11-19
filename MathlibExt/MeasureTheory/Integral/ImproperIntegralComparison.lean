@@ -16,6 +16,10 @@ import Mathlib.Topology.Order.MonotoneConvergence
 # Comparison tests for improper integrals
 
 The improper integral `∫_a^∞ f` converges when `b ↦ ∫_a^b f` has a finite limit as `b → ∞`.
+Both tests assume that `f` and `g` are interval integrable on `[a, b]` for every `b ≥ a`. For a
+function that is nonnegative on `[a, ∞)`, this convergence is equivalent to Lebesgue
+integrability on `(a, ∞)`: see `MeasureTheory.integrableOn_Ioi_of_intervalIntegral_norm_tendsto`
+and `MeasureTheory.intervalIntegral_tendsto_integral_Ioi`.
 
 ## Main results
 
@@ -29,7 +33,7 @@ The improper integral `∫_a^∞ f` converges when `b ↦ ∫_a^b f` has a finit
 
 * Mathlib, `docs/undergrad.yaml`, "Single Variable Real Analysis / Integration", "comparison test
   for improper integrals".
-* T. Apostol, *Mathematical Analysis*, 2nd ed., §10.23.
+* G. Hartman et al., *APEX Calculus*, §6.8, "Limit Comparison Test for Improper Integrals".
 -/
 
 @[expose] public section
@@ -103,13 +107,13 @@ theorem improper_integral_comparison_test {f g : ℝ → ℝ} {a : ℝ}
   filter_upwards [eventually_ge_atTop a] with b hab
   simp only [F, max_eq_right hab]
 
-/-- Limit comparison test for improper integrals: two eventually strictly positive
-functions whose ratio tends to a nonzero limit are improper-integrable together.
+/-- Limit comparison test for improper integrals: two functions that are strictly positive on
+`[a, ∞)` and whose ratio tends to a nonzero limit are improper-integrable together.
 
 Sources:
 - Mathlib `docs/undergrad.yaml`, section "Single Variable Real Analysis / Integration",
   entry "comparison test for improper integrals" (currently missing).
-- T. Apostol, *Mathematical Analysis*, 2nd ed., §10.23 (limit comparison test).
+- G. Hartman et al., *APEX Calculus*, §6.8, "Limit Comparison Test for Improper Integrals".
 
 Proves `Wanted` entry `improper_integral_limit_comparison_test`.
 -/
