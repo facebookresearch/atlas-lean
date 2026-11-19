@@ -28,11 +28,11 @@ the interval; it is not a per-node field.
 
 ## ii. Key results
 
-- `Engineering.humidityRatio`: vapor mass per unit dry-air
+- `Engineering.HumidityRatio.humidityRatio`: vapor mass per unit dry-air
   mass.
-- `Engineering.vaporMass_eq_humidityRatio_mul` and
+- `Engineering.HumidityRatio.vaporMass_eq_humidityRatio_mul` and
   `humidityRatio_mul_dryAir`: the reversible conversion.
-- `Engineering.totalHumidityRatio_update`: the total ratio
+- `Engineering.HumidityRatio.totalHumidityRatio_update`: the total ratio
   over one inventory interval, from the shared balance.
 
 ## iii. Table of contents
@@ -53,7 +53,7 @@ the interval; it is not a per-node field.
 
 open Matrix MathlibExt.Combinatorics.Graph.ArcNetwork
 
-namespace Engineering
+namespace Engineering.HumidityRatio
 
 /-! ## A. Humidity ratio and conversion -/
 
@@ -131,4 +131,4 @@ theorem totalHumidityRatio_update {V : Type*} [Fintype V]
   totalHumidityRatio_update_of stock_level_arc_balance
     tail head F h _hda
 
-end Engineering
+end Engineering.HumidityRatio

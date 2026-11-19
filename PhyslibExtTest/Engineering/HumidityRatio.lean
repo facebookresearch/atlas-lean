@@ -39,7 +39,7 @@ No new definitions or results are introduced here.
 -/
 
 open Matrix
-open Engineering
+open Engineering.HumidityRatio
 open MathlibExt.Combinatorics.Graph.ArcNetwork
 
 namespace PhyslibExtTest.Engineering.HumidityRatio
@@ -90,8 +90,8 @@ example : humidityRatio 2 2 = 1
     ∧ humidityRatio 2 2 ≠ humidityRatio 1 1 + (2 - 1) / 1 := by
   norm_num [humidityRatio]
 
-#print axioms Engineering.vaporMass_eq_humidityRatio_mul
-#print axioms Engineering.humidityRatio_mul_dryAir
-#print axioms Engineering.totalHumidityRatio_update
+#print axioms Engineering.HumidityRatio.vaporMass_eq_humidityRatio_mul
+#print axioms Engineering.HumidityRatio.humidityRatio_mul_dryAir
+#print axioms Engineering.HumidityRatio.totalHumidityRatio_update
 
 end PhyslibExtTest.Engineering.HumidityRatio
