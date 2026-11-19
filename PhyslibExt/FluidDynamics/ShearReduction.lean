@@ -31,10 +31,11 @@ import Mathlib.Tactic.Ring
 /-!
 # Parallel shear flow: reduction to the heat equation and the wall-work energy balance
 
-For a parallel shear velocity `(U(t, y), 0, 0)` with constant density and viscosity and no
-pressure gradient, Physlib's Navier-Stokes equations reduce to `U_t = ν U_yy`, `ν = μ / ρ`. The
-kinetic energy per unit wall area then changes by viscous dissipation plus the work of the wall
-shear stress, and a single-mode transient driven by a moving wall gains kinetic energy for
+For a parallel shear velocity `(U(t, y), 0, 0)` with a jointly `C²` profile, constant density
+`ρ > 0` and viscosity `μ`, and no pressure gradient, Physlib's Navier-Stokes equations reduce to
+`U_t = ν U_yy`, `ν = μ / ρ`. The kinetic energy per unit wall area then changes by the viscous
+term, a dissipation for `μ ≥ 0`, plus the work of the wall shear stress. For `μ, L > 0` and a
+nonzero wall speed, a single-mode transient driven by a moving wall gains kinetic energy for
 `t ≥ 0` although it dissipates.
 
 ## i. Overview
@@ -48,36 +49,44 @@ is Physlib's Newtonian stress tensor of this velocity: normal entries `-p(t)` an
 Physlib's Navier-Stokes equations exactly when `U_t = (μ / ρ) U_yy` everywhere. The steady
 member `U = Uwall y / H` is the plane Couette field.
 
-The kinetic energy per unit wall area is `K(t) = ∫₀ᴸ ρ U² / 2 dy`. Applying the quadratic
-heat-energy identity with explicit boundary work (`ConductionPorts.heatEnergy_hasDerivAt`) to the
-reduced equation gives `K'(t) = -μ ∫₀ᴸ U_y² dy + μ (U U_y)(t, L) - μ (U U_y)(t, 0)`: viscous
-dissipation plus the power `U σ_xy` delivered by the wall shear stress `σ_xy = μ U_y`.
+The kinetic energy per unit wall area is `K(t) = ∫₀ᴸ ρ U² / 2 dy`. For a Navier-Stokes shear flow
+with `ρ > 0`, a jointly `C²` profile and `0 ≤ L`, applying the quadratic heat-energy identity with
+explicit boundary work (`ConductionPorts.heatEnergy_hasDerivAt`) to the reduced equation gives
+`K'(t) = -μ ∫₀ᴸ U_y² dy + μ (U U_y)(t, L) - μ (U U_y)(t, 0)`. The first term is the viscous
+dissipation, nonpositive when `μ ≥ 0`; the boundary terms are the power `U σ_xy` delivered by the
+wall shear stress `σ_xy = μ U_y`.
 
 The single-mode transient `U = A y / L - (A / π) sin(π y / L) exp(-ν (π / L)² t)`,
 `ν = μ / ρ`, is the plane Couette profile `A y / L` minus one decaying sine mode. It solves the
-reduced equation with wall velocities `0` and `A` at every time. It is not a start from rest: its
-initial data `A y / L - (A / π) sin(π y / L)` is nonzero at every interior point for `A ≠ 0`
-(`1/2 - 1/π` at `y = 1/2` when `A = L = 1`), and for `ν > 0` it relaxes to the plane Couette
-profile as `t → ∞`. With `s = exp(-ν (π / L)² t)`, its dissipation is
-`μ A² (1 + s² / 2) / L > 0`, its wall work is `μ A² (1 + s) / L`, and
-`K'(t) = μ A² s (2 - s) / (2 L)`. For `A ≠ 0` and `t ≥ 0` the kinetic energy is positive and
-strictly increasing although energy is dissipated; dropping the wall-work term would predict
-`K' < 0`, which is false for this flow.
+reduced equation at every time and height, and for `L ≠ 0` its wall velocities are `0` at `y = 0`
+and `A` at `y = L` at every time. It is not a start from rest: for `L > 0` and `A ≠ 0` its
+initial data `A y / L - (A / π) sin(π y / L)` is nonzero at every interior point `0 < y < L`
+(`1/2 - 1/π` at `y = 1/2` when `A = L = 1`). For `ρ > 0` and `L > 0`, with
+`s = exp(-ν (π / L)² t)`, its dissipation is `μ A² (1 + s² / 2) / L`, its wall work is
+`μ A² (1 + s) / L`, and `K'(t) = μ A² s (2 - s) / (2 L)`; the dissipation is positive when also
+`μ > 0` and `A ≠ 0`. For `ρ, μ, L > 0` and `A ≠ 0` the kinetic energy is positive at every
+`t ≥ 0` and strictly increasing on `t ≥ 0` although energy is dissipated, and at each `t ≥ 0`
+dropping the wall-work term would predict `K' < 0`, which is false for this flow. For `ν > 0` and
+`L > 0` the sine mode decays as `t → ∞`, so the profile tends to the plane Couette profile; no
+limit statement is proved here.
 
 Existence for other data, uniqueness, stability and boundary-layer limits are not treated.
 
 ## ii. Key results
 
 - `ShearReduction.shearFlow_stress`: the Newtonian stress of the shear flow.
-- `ShearReduction.shearFlow_navierStokes_iff`: Navier-Stokes holds exactly when
-  `U_t = (μ / ρ) U_yy`.
-- `ShearReduction.shearFlow_kineticEnergy_hasDerivAt`: the energy balance with wall work.
-- `ShearReduction.singleModeFlow_navierStokes`: the single-mode transient is a Navier-Stokes
-  solution.
-- `ShearReduction.singleModeProfile_energy_balance`: dissipation, wall work and `K'`.
-- `ShearReduction.singleModeProfile_energy_strictMonoOn`: the kinetic energy increases on
-  `t ≥ 0`.
-- `ShearReduction.singleModeProfile_no_wall_work`: the identity without wall work fails.
+- `ShearReduction.shearFlow_navierStokes_iff`: for `ρ > 0` and a jointly `C²` profile,
+  Navier-Stokes holds exactly when `U_t = (μ / ρ) U_yy`.
+- `ShearReduction.shearFlow_kineticEnergy_hasDerivAt`: the energy balance with wall work, for
+  `ρ > 0`, a jointly `C²` profile and `0 ≤ L`.
+- `ShearReduction.singleModeFlow_navierStokes`: for `ρ > 0` the single-mode transient with
+  `ν = μ / ρ` is a Navier-Stokes solution.
+- `ShearReduction.singleModeProfile_energy_balance`: dissipation, wall work and `K'`, for
+  `ρ, L > 0`.
+- `ShearReduction.singleModeProfile_energy_strictMonoOn`: for `ρ, μ, L > 0` and `A ≠ 0` the
+  kinetic energy increases on `t ≥ 0`.
+- `ShearReduction.singleModeProfile_no_wall_work`: for `ρ, μ, L > 0`, `A ≠ 0` and `t ≥ 0` the
+  identity without wall work fails.
 
 ## iii. Table of contents
 
@@ -123,7 +132,8 @@ noncomputable def shearFlow (ρ μ lam : ℝ) (p : Time → ℝ) (U : ℝ → �
   specificBodyForce := fun _ _ => 0
 
 /-- Kinetic energy per unit wall area of the shear layer `0 ≤ y ≤ L`,
-`K(t) = ∫₀ᴸ ρ U(t, y)² / 2 dy`. -/
+`K(t) = ∫₀ᴸ ρ U(t, y)² / 2 dy`. For `L < 0` the interval integral is signed and is not the energy
+of a layer. -/
 noncomputable def shearKineticEnergy (ρ L : ℝ) (U : ℝ → ℝ → ℝ) (t : ℝ) : ℝ :=
   ∫ y in (0 : ℝ)..L, ρ * U t y ^ 2 / 2
 
@@ -419,10 +429,11 @@ lemma shearFlow_kineticEnergy_hasDerivAt {ρ L : ℝ} (hρ : 0 < ρ) (hL : 0 ≤
 /-! ## D. A single-mode transient with a moving wall -/
 
 /-- Single-mode transient between a wall at rest at `y = 0` and a wall moving with velocity `A`
-at `y = L`: `U(t, y) = A y / L - (A / π) sin(π y / L) exp(-ν (π / L)² t)`, the plane Couette
-profile minus one decaying sine mode. It is not a start from rest: the initial data
-`A y / L - (A / π) sin(π y / L)` is nonzero inside the channel for `A ≠ 0`, and the wall `y = L`
-moves at every time. -/
+at `y = L` (for `L ≠ 0`, `singleModeProfile_walls`):
+`U(t, y) = A y / L - (A / π) sin(π y / L) exp(-ν (π / L)² t)`, the plane Couette profile minus one
+decaying sine mode. It is not a start from rest: for `L > 0` and `A ≠ 0` the initial data
+`A y / L - (A / π) sin(π y / L)` is nonzero at every interior point `0 < y < L`, and the wall
+`y = L` moves at every time. -/
 noncomputable def singleModeProfile (A L ν t y : ℝ) : ℝ :=
   A * y / L - A / Real.pi * Real.sin (Real.pi * y / L) * Real.exp (-ν * (Real.pi / L) ^ 2 * t)
 
@@ -480,8 +491,8 @@ lemma singleModeProfile_heat (A L ν t y : ℝ) :
   rw [ht.deriv, iteratedDeriv_succ, iteratedDeriv_one, hxx.deriv]
   field_simp
 
-/-- The single-mode profile is at rest on the wall `y = 0` and moves with velocity `A` on the wall
-`y = L`. -/
+/-- For `L ≠ 0` the single-mode profile is at rest on the wall `y = 0` and moves with velocity `A`
+on the wall `y = L`. -/
 lemma singleModeProfile_walls {L : ℝ} (hL : L ≠ 0) (A ν t : ℝ) :
     singleModeProfile A L ν t 0 = 0 ∧ singleModeProfile A L ν t L = A := by
   refine ⟨?_, ?_⟩
@@ -500,9 +511,9 @@ lemma singleModeFlow_navierStokes {ρ : ℝ} (hρ : 0 < ρ) (A L μ lam : ℝ) (
   intro τ y
   exact singleModeProfile_heat A L (μ / ρ) τ y
 
-/-- Energy balance of the single-mode flow with `ν = μ / ρ` and `s = exp(-ν (π / L)² t)`: the
-dissipation is `μ A² (1 + s² / 2) / L`, the work of the moving wall is `μ A² (1 + s) / L`,
-and the kinetic energy has derivative `μ A² s (2 - s) / (2 L)`. -/
+/-- Energy balance of the single-mode flow for `ρ, L > 0`, with `ν = μ / ρ` and
+`s = exp(-ν (π / L)² t)`: the dissipation is `μ A² (1 + s² / 2) / L`, the work of the moving wall
+is `μ A² (1 + s) / L`, and the kinetic energy has derivative `μ A² s (2 - s) / (2 L)`. -/
 lemma singleModeProfile_energy_balance {ρ L : ℝ} (hρ : 0 < ρ) (hL : 0 < L) (A μ t : ℝ) :
     μ * (∫ y in (0 : ℝ)..L, deriv (singleModeProfile A L (μ / ρ) t) y ^ 2) =
         μ * A ^ 2 * (1 + Real.exp (-(μ / ρ) * (Real.pi / L) ^ 2 * t) ^ 2 / 2) / L ∧
