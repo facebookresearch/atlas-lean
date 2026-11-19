@@ -101,12 +101,12 @@ example : ¬ Module.End.HasEigenvalue
 
 /-- Multiplication by the constant `2` on `L² (Fin 1)` has spectrum `{2}`. -/
 example : spectrum ℂ (lpMulCLM (μ := Measure.count) (fun _ : Fin 1 => (2 : ℂ))
-    (memLp_const_top (μ := Measure.count) (2 : ℂ))) = {2} := by
+    (memLp_top_const (μ := Measure.count) (2 : ℂ))) = {2} := by
   rw [spectrum_lpMulCLM, essentialRange_const count_univ_ne_zero]
 
 /-- Multiplication by the constant `2` on `L² (Fin 1)` has operator norm `2`. -/
 example : ‖lpMulCLM (μ := Measure.count) (fun _ : Fin 1 => (2 : ℂ))
-    (memLp_const_top (μ := Measure.count) (2 : ℂ))‖ = 2 := by
+    (memLp_top_const (μ := Measure.count) (2 : ℂ))‖ = 2 := by
   rw [norm_lpMulCLM, eLpNorm_exponent_top aestronglyMeasurable_const,
     eLpNormEssSup_const _ count_ne_zero]
   simp
@@ -114,12 +114,12 @@ example : ‖lpMulCLM (μ := Measure.count) (fun _ : Fin 1 => (2 : ℂ))
 /-- Multiplication by the constant `2` on `L² (Fin 1)` is scalar multiplication. -/
 example (f : Lp ℂ 2 (Measure.count : Measure (Fin 1))) :
     lpMulCLM (μ := Measure.count) (fun _ : Fin 1 => (2 : ℂ))
-      (memLp_const_top (μ := Measure.count) (2 : ℂ)) f = (2 : ℂ) • f :=
+      (memLp_top_const (μ := Measure.count) (2 : ℂ)) f = (2 : ℂ) • f :=
   lpMulCLM_const_apply 2 f
 
 /-- Multiplication by the constant `2` on `L² (ℕ)` has spectrum `{2}`. -/
 example : spectrum ℂ (lpMulCLM (μ := Measure.count) (fun _ : ℕ => (2 : ℂ))
-    (memLp_const_top (μ := Measure.count) (2 : ℂ))) = {2} := by
+    (memLp_top_const (μ := Measure.count) (2 : ℂ))) = {2} := by
   rw [spectrum_lpMulCLM, essentialRange_const count_univ_ne_zero]
 
 end MathlibExtTest.Analysis.FunctionalAnalysis.LpMultiplicationOperatorTests

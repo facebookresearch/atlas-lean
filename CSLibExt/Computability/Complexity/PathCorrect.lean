@@ -34,12 +34,17 @@ open Cslib.CookLevin
 
 /-! ### The instance codec -/
 
-/-- `decodeP` reads back an encoding. -/
+/-- **Decoding inverts the PATH instance encoding.** For natural numbers $s, t, n$ and a list $E$
+of pairs of natural numbers, the PATH instance parser applied to the PATH instance encoding of
+$(s, t, n, E)$ succeeds and returns $(s, t, n, E)$. -/
 @[simp] theorem decodeP_encodeP (s t n : ℕ) (es : List (ℕ × ℕ)) :
     decodeP (encodeP s t n es) = some (s, t, n, es) := by
   simp [decodeP, encodeP, Karp.decodeE_encodeE]
 
-/-- `decodeP` succeeds exactly on encodings. -/
+/-- **The PATH instance parser succeeds exactly on encodings.** For a bit string $x$, natural
+numbers $s, t, n$ and a list $E$ of pairs of natural numbers, the PATH instance parser applied to
+$x$ succeeds with result $(s, t, n, E)$ if and only if $x$ is the PATH instance encoding of
+$(s, t, n, E)$. -/
 theorem decodeP_eq_some {x : List Bool} {s t n : ℕ} {es : List (ℕ × ℕ)} :
     decodeP x = some (s, t, n, es) ↔ encodeP s t n es = x := by
   refine ⟨fun h => ?_, fun h => h ▸ decodeP_encodeP s t n es⟩
@@ -60,14 +65,20 @@ theorem decodeP_eq_some {x : List Bool} {s t n : ℕ} {es : List (ℕ × ℕ)} :
             ← Karp.encodeE_of_decodeE he]
           rfl
 
-/-- `encodeP` is injective. -/
+/-- **The PATH instance encoding is injective.** Let $s, t, n, s', t', n'$ be natural numbers and
+$E, E'$ lists of pairs of natural numbers. If the PATH instance encodings of $(s, t, n, E)$ and
+$(s', t', n', E')$ are equal, then $s = s'$, $t = t'$, $n = n'$ and $E = E'$. -/
 theorem encodeP_inj {s t n s' t' n' : ℕ} {es es' : List (ℕ × ℕ)}
     (h : encodeP s t n es = encodeP s' t' n' es') : s = s' ∧ t = t' ∧ n = n' ∧ es = es' := by
   simpa using congrArg decodeP h
 
 /-! ### Marks -/
 
-/-- Setting a mark adds exactly that index, if it is in range. -/
+/-- **Setting an entry of a boolean list to true.** Let $m$ be a list of booleans and $v, w$
+natural numbers, and read a position at or beyond the end of a list as $\mathrm{false}$. Set
+the entry of $m$ at position $w$ to $\mathrm{true}$, leaving $m$ unchanged if $w$ is not less
+than the length of $m$. Then position $v$ of the result holds $\mathrm{true}$ if and only if
+position $v$ of $m$ holds $\mathrm{true}$, or $v = w$ and $w$ is less than the length of $m$. -/
 theorem getD_set_true {m : List Bool} {w v : ℕ} :
     (m.set w true).getD v false = true ↔ m.getD v false = true ∨ (v = w ∧ w < m.length) := by
   simp only [List.getD_eq_getElem?_getD, List.getElem?_set]
@@ -78,13 +89,18 @@ theorem getD_set_true {m : List Bool} {w v : ℕ} :
     · simp [hw]
   · simp [hwv, Ne.symm hwv]
 
-/-- The initial marks: `s` only. -/
+/-- **The initial marks mark exactly the source, if it is a vertex.** Let $n, s, v$ be natural
+numbers, and read a position at or beyond the end of a list as $\mathrm{false}$. Position $v$ of
+the initial marks for $n$ vertices and source $s$ holds $\mathrm{true}$ if and only if $v < n$
+and $v = s$. -/
 theorem initMarks_getD {n s v : ℕ} : (initMarks n s).getD v false = true ↔ v < n ∧ v = s := by
   by_cases hv : v < n
   · simp [initMarks, List.getD_eq_getElem?_getD, hv]
   · simp [initMarks, List.getD_eq_getElem?_getD, hv]
 
-/-- A pass keeps the length. -/
+/-- **A marking pass preserves the length.** Let $n$ be a natural number, $E$ a list of pairs of
+natural numbers and $m$ a list of booleans. A marking pass over $E$ for $n$ vertices, applied to
+$m$, gives a list of the same length as $m$. -/
 theorem length_markPass (n : ℕ) :
     ∀ (es : List (ℕ × ℕ)) (m : List Bool), (markPass n es m).length = m.length
   | [], _ => rfl
@@ -92,7 +108,10 @@ theorem length_markPass (n : ℕ) :
       rw [markPass, length_markPass n es]
       split_ifs <;> simp
 
-/-- Marks only grow during a pass. -/
+/-- **Marks persist through a pass.** Let $n, v \in \mathbb{N}$, let $E$ be a list of pairs of
+natural numbers and let $m$ be a list of booleans. If $v < |m|$ and the $v$-th entry of $m$
+(counting from $0$) is true, then the same holds for the result of the marking pass of $E$ with
+bound $n$ on $m$. -/
 theorem markPass_mono (n : ℕ) {v : ℕ} : ∀ (es : List (ℕ × ℕ)) {m : List Bool},
     m.getD v false = true → (markPass n es m).getD v false = true
   | [], _, h => h
@@ -103,8 +122,11 @@ theorem markPass_mono (n : ℕ) {v : ℕ} : ∀ (es : List (ℕ × ℕ)) {m : Li
       · exact getD_set_true.2 (Or.inl h)
       · exact h
 
-/-- Soundness of a pass: if `P` is closed under the listed arcs below `n` and holds at every mark,
-it holds at every mark after the pass. -/
+/-- **Soundness of a pass.** Let $n \in \mathbb{N}$, let $P$ be a property of natural numbers and
+let $E$ be a list of pairs of natural numbers such that $P(u)$ implies $P(v)$ whenever
+$(u, v) \in E$, $u < n$ and $v < n$. If $m$ is a list of booleans such that $P(v)$ holds for every
+$v < |m|$ whose entry in $m$ is true, then $P(v)$ holds for every $v$ whose entry is true in the
+result of the marking pass of $E$ with bound $n$ on $m$. -/
 theorem markPass_sound {n : ℕ} {P : ℕ → Prop} : ∀ (es : List (ℕ × ℕ)),
     (∀ u v, (u, v) ∈ es → u < n → v < n → P u → P v) → ∀ {m : List Bool},
     (∀ v, m.getD v false = true → P v) → ∀ v, (markPass n es m).getD v false = true → P v
@@ -119,7 +141,11 @@ theorem markPass_sound {n : ℕ} {P : ℕ → Prop} : ∀ (es : List (ℕ × ℕ
         · exact hP _ _ List.mem_cons_self hab.1 hab.2.1 (hm a hab.2.2)
       · exact hm
 
-/-- A pass marks the head of every arc whose tail is marked. -/
+/-- **A pass marks the heads of arcs with marked tails.** Let $n \in \mathbb{N}$, let $E$ be a
+list of pairs of natural numbers and let $m$ be a list of booleans, where $m$ marks $w$ when
+$w < |m|$ and the $w$-th entry of $m$ (counting from $0$) is true. If $(u, v) \in E$ with $u < n$
+and $v < n$, $v < |m|$ and $m$ marks $u$, then the result of the marking pass of $E$ with bound $n$
+on $m$ marks $v$. -/
 theorem markPass_closed {n u v : ℕ} (hu : u < n) (hv : v < n) :
     ∀ {es : List (ℕ × ℕ)} {m : List Bool}, (u, v) ∈ es → v < m.length →
       m.getD u false = true → (markPass n es m).getD v false = true
@@ -136,8 +162,10 @@ theorem markPass_closed {n u v : ℕ} (hu : u < n) (hv : v < n) :
           · exact getD_set_true.2 (Or.inl hm)
           · exact hm
 
-/-- Growing marks of equal length: the count of marks does not drop, and grows unless the lists
-are equal. -/
+/-- **Counting true entries of pointwise dominated boolean lists.** Let $l_1$ and $l_2$ be lists
+of booleans of the same length such that every position holding $\mathrm{true}$ in $l_1$ also
+holds $\mathrm{true}$ in $l_2$. Then $l_1$ has at most as many $\mathrm{true}$ entries as $l_2$,
+and strictly fewer if $l_1 \ne l_2$. -/
 theorem count_lt_of_getD_imp : ∀ {l₁ l₂ : List Bool}, l₁.length = l₂.length →
     (∀ i, l₁.getD i false = true → l₂.getD i false = true) →
     l₁.count true ≤ l₂.count true ∧ (l₁ ≠ l₂ → l₁.count true < l₂.count true)
@@ -151,7 +179,10 @@ theorem count_lt_of_getD_imp : ∀ {l₁ l₂ : List Bool}, l₁.length = l₂.l
       cases a <;> cases b <;> simp_all
       omega
 
-/-- A pass changes nothing or sets a new mark. -/
+/-- **A pass either changes nothing or adds a mark.** For every $n \in \mathbb{N}$, every list $E$
+of pairs of natural numbers and every list $m$ of booleans, let $m'$ be the result of the marking
+pass of $E$ with bound $n$ on $m$. Then $m' = m$, or $m'$ has strictly more entries equal to true
+than $m$. -/
 theorem markPass_eq_or_count_lt (n : ℕ) (es : List (ℕ × ℕ)) (m : List Bool) :
     markPass n es m = m ∨ m.count true < (markPass n es m).count true := by
   by_cases he : m = markPass n es m
@@ -159,13 +190,19 @@ theorem markPass_eq_or_count_lt (n : ℕ) (es : List (ℕ × ℕ)) (m : List Boo
   · exact Or.inr ((count_lt_of_getD_imp (length_markPass n es m).symm
       (fun _ => markPass_mono n es)).2 he)
 
-/-- Repeated passes keep the length. -/
+/-- **Repeated marking passes preserve the length.** Let $n$ be a natural number, $E$ a list of
+pairs of natural numbers and $m$ a list of booleans. For every natural number $k$, applying $k$
+marking passes over $E$ for $n$ vertices to $m$ gives a list of the same length as $m$. -/
 theorem length_iterate_markPass (n : ℕ) (es : List (ℕ × ℕ)) (m : List Bool) :
     ∀ k, ((markPass n es)^[k] m).length = m.length
   | 0 => rfl
   | k + 1 => by rw [Function.iterate_succ_apply', length_markPass, length_iterate_markPass]
 
-/-- Marks only grow over repeated passes. -/
+/-- **Marks survive repeated passes.** Let $n$ and $v$ be natural numbers, $E$ a list of pairs of
+natural numbers and $m$ a list of booleans whose position $v$ holds $\mathrm{true}$ (positions at
+or beyond the end read as $\mathrm{false}$). Then for every natural number $k$, position $v$
+still holds $\mathrm{true}$ after $k$ marking passes over $E$ for $n$ vertices, starting from
+$m$. -/
 theorem iterate_markPass_mono (n : ℕ) (es : List (ℕ × ℕ)) {m : List Bool} {v : ℕ}
     (h : m.getD v false = true) : ∀ k, ((markPass n es)^[k] m).getD v false = true
   | 0 => h
@@ -173,13 +210,20 @@ theorem iterate_markPass_mono (n : ℕ) (es : List (ℕ × ℕ)) {m : List Bool}
       rw [Function.iterate_succ_apply']
       exact markPass_mono n es (iterate_markPass_mono n es h k)
 
-/-- The final marks are `n` long. -/
+/-- **The final marks have one entry per vertex.** For natural numbers $n, s$ and a list $E$ of
+pairs of natural numbers, the marks after $n$ marking passes over $E$ for $n$ vertices, starting
+from the initial marks for source $s$, form a list of length $n$. -/
 theorem length_reachMarks (n s : ℕ) (es : List (ℕ × ℕ)) : (reachMarks n s es).length = n := by
   rw [reachMarks, length_iterate_markPass]
   simp [initMarks]
 
-/-- `n` passes reach a fixpoint: each pass that changes the marks adds one, `initMarks n s` has
-one mark and there are at most `n`. -/
+/-- **Repeated passes reach a fixpoint.** Let $n, s \in \mathbb{N}$ with $s < n$ and let $E$ be a
+list of pairs of natural numbers. Let $r$ be the list obtained from the initial marks (only $s$
+marked among $0, \dots, n - 1$) by $n$ marking passes of $E$ with bound $n$. Then one more
+marking pass of $E$ with bound $n$ leaves $r$ unchanged.
+
+Each pass that changes the marks adds at least one mark, the initial marks contain one mark, and
+there are at most $n$ marks. -/
 theorem markPass_reachMarks {n s : ℕ} (es : List (ℕ × ℕ)) (hs : s < n) :
     markPass n es (reachMarks n s es) = reachMarks n s es := by
   have key : ∀ k, markPass n es ((markPass n es)^[k] (initMarks n s)) =
@@ -209,7 +253,11 @@ theorem markPass_reachMarks {n s : ℕ} (es : List (ℕ × ℕ)) (hs : s < n) :
 
 /-! ### Correctness -/
 
-/-- After `n` passes, `t < n` is marked iff it is reachable from `s < n`. -/
+/-- **The final marks are exactly the reachable vertices.** Let $n, s, t \in \mathbb{N}$ with
+$s < n$ and $t < n$, and let $E$ be a list of pairs of natural numbers. Start from the marks on
+$0, \dots, n - 1$ in which only $s$ is marked and apply $n$ marking passes of $E$ with bound $n$.
+Then $t$ is marked if and only if $t$ is reachable from $s$ in zero or more steps along the arcs
+of $E$ below $n$, the pairs $(u, v) \in E$ with $u < n$ and $v < n$. -/
 theorem reachMarks_getD_iff {n s t : ℕ} (es : List (ℕ × ℕ)) (hs : s < n) (ht : t < n) :
     (reachMarks n s es).getD t false = true ↔ Relation.ReflTransGen (arc n es) s t := by
   constructor
@@ -233,7 +281,8 @@ theorem reachMarks_getD_iff {n s t : ℕ} (es : List (ℕ × ℕ)) (hs : s < n) 
         rw [← markPass_reachMarks es hs]
         exact markPass_closed hb hc hmem ((length_reachMarks n s es).symm ▸ ht) (ih hb)
 
-/-- The marking algorithm decides PATH. -/
+/-- **The marking algorithm decides PATH.** For every bit string $x$, the marking algorithm
+returns the same answer on $x$ as the decision problem PATH. -/
 theorem pathDec_eq_pathCheck (x : List Bool) : pathDec x = pathCheck x := by
   rw [Bool.eq_iff_iff]
   simp only [pathDec, decide_eq_true_eq]

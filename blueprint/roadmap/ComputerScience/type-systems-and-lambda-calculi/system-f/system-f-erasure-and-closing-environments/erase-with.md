@@ -1,0 +1,3 @@
+# Type erasure under an untyped environment
+
+For an environment $\sigma$ assigning an untyped term $\sigma(i)$ to each $i < m$ (among the untyped λ-terms (locally nameless, with free variables named by natural numbers and bound variables given by de Bruijn indices)), the erasure $|t|_\sigma$ of a [System F term](../scoped-pure-system-f/tm.md) $t \in \mathrm{Tm}_{n,m}$ is defined by $|x_i|_\sigma = \sigma(i)$, $|\lambda A.\,b|_\sigma = \lambda.\,|b|_{\sigma'}$ with the [lifted environment](lift-raw.md) $\sigma'$, $|f\,a|_\sigma = |f|_\sigma\,|a|_\sigma$, $|\Lambda b|_\sigma = |b|_\sigma$ and $|f\,[A]|_\sigma = |f|_\sigma$: type annotations, type abstractions and type applications are erased.

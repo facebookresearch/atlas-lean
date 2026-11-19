@@ -12,7 +12,7 @@ public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.Recurrences.SquareFibonacciLucas
 public import MathlibExt.NumberTheory.Recurrences.CohnTwiceSquareLucas
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Data.Nat.Fib.Basic
 import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 import Mathlib.Tactic.IntervalCases

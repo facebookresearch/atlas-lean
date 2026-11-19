@@ -78,19 +78,6 @@ namespace Matrix
 open Finset
 open scoped Topology MatrixOrder ComplexOrder
 
-/-- A product of reals, each at least `1`, is at least `1`. -/
-private lemma one_le_prod_of_one_le {ι : Type*} [DecidableEq ι] {f : ι → ℝ} {s : Finset ι}
-    (h : ∀ i ∈ s, 1 ≤ f i) : 1 ≤ ∏ i ∈ s, f i := by
-  induction s using Finset.induction with
-  | empty => simp
-  | @insert a s ha ih =>
-    rw [Finset.prod_insert ha]
-    have h1 : 1 ≤ f a := h a (Finset.mem_insert_self a s)
-    have h2 : 1 ≤ ∏ i ∈ s, f i := ih (fun i hi => h i (Finset.mem_insert_of_mem hi))
-    calc (1 : ℝ) = 1 * 1 := (mul_one 1).symm
-      _ ≤ f a * ∏ i ∈ s, f i :=
-        mul_le_mul h1 h2 zero_le_one (by linarith [h1])
-
 /-- If a product of reals, each at least `1`, equals `1`, then each
 factor equals `1`. -/
 private lemma eq_one_of_prod_eq_one {ι : Type*} [DecidableEq ι] {f : ι → ℝ} {s : Finset ι}
@@ -102,7 +89,7 @@ private lemma eq_one_of_prod_eq_one {ι : Type*} [DecidableEq ι] {f : ι → �
     rw [Finset.prod_insert ha] at hprod
     have h1 : 1 ≤ f a := h a (Finset.mem_insert_self a s)
     have hrest : ∀ j ∈ s, 1 ≤ f j := fun j hj => h j (Finset.mem_insert_of_mem hj)
-    have h2 : 1 ≤ ∏ j ∈ s, f j := one_le_prod_of_one_le hrest
+    have h2 : 1 ≤ ∏ j ∈ s, f j := one_le_prod₀ hrest
     have hfa : f a = 1 := by
       apply le_antisymm _ h1
       calc f a = f a * 1 := (mul_one _).symm
@@ -154,7 +141,7 @@ theorem one_le_det_of_posSemidef_sub_one {n : Type*} [Fintype n] [DecidableEq n]
   have hdet : W.det = ∏ i, hW.eigenvalues i := by
     simpa using hW.det_eq_prod_eigenvalues
   rw [hdet]
-  exact one_le_prod_of_one_le fun i _ =>
+  exact one_le_prod₀ fun i _ =>
     eigenvalues_ge_one_of_posSemidef_sub_one hW h i
 
 private theorem complexify_posSemidef {n : ℕ}

@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import CSLibExt.Algorithms.Lean.Search.LowerBound
 public import Mathlib.Data.List.Basic
 public import Mathlib.Data.List.Sort
 public import Mathlib.Order.Basic
@@ -51,6 +52,8 @@ total input size.
   bridge pointers, as indices into the next catalog.
 * `FractionalCascading.lowerBound` is the lower-bound specification and
   `FractionalCascading.searchAll` searches every catalog for one value.
+  On a sorted array it agrees with the costed binary search
+  `TimeM.lowerBound` (`lowerBound_toList_eq_ret_lowerBound`).
 
 ## Deferred
 
@@ -438,6 +441,34 @@ theorem searchAugmented_eq_map_lowerBound (x : α) (cs : List (List α)) :
     searchAugmented x cs = (augmented cs).map (lowerBound x) := by
   rw [searchAugmented,
     List.map_congr_left (fun c _ => countLT_eq_lowerBound x c)]
+
+/-- On a sorted array, the lower-bound specification of the array's list agrees with the index
+returned by the costed binary search `TimeM.lowerBound`. -/
+theorem lowerBound_toList_eq_ret_lowerBound {β : Type*} [LinearOrder β] (xs : Array β) (key : β)
+    (hs : xs.Pairwise (fun x y => x ≤ y)) :
+    lowerBound key xs.toList = (TimeM.lowerBound xs key).ret := by
+  obtain ⟨hle, hlt, hge⟩ := TimeM.lowerBound_spec xs key hs
+  unfold lowerBound
+  rw [← List.take_append_drop (TimeM.lowerBound xs key).ret xs.toList, List.filter_append,
+    List.length_append]
+  have h1 : (xs.toList.take (TimeM.lowerBound xs key).ret).filter (· < key) =
+      xs.toList.take (TimeM.lowerBound xs key).ret := by
+    rw [List.filter_eq_self]
+    intro y hy
+    obtain ⟨j, hj, rfl⟩ := List.getElem_of_mem hy
+    simp only [List.length_take, Array.length_toList] at hj
+    simp only [List.getElem_take, Array.getElem_toList, decide_eq_true_eq]
+    exact hlt j (by omega) (by omega)
+  have h2 : (xs.toList.drop (TimeM.lowerBound xs key).ret).filter (· < key) = [] := by
+    rw [List.filter_eq_nil_iff]
+    intro y hy
+    obtain ⟨j, hj, rfl⟩ := List.getElem_of_mem hy
+    simp only [List.length_drop, Array.length_toList] at hj
+    simp only [List.getElem_drop, Array.getElem_toList, decide_eq_true_eq, not_lt]
+    exact hge _ (by omega) (by omega)
+  rw [h1, h2]
+  simp only [List.length_take, Array.length_toList, List.length_nil, Nat.add_zero]
+  omega
 
 end FractionalCascading
 

@@ -46,6 +46,7 @@ finite-sample guarantee from Chebyshev's inequality and none is claimed.
 * `tajimaC1_two`, `tajimaC2_two`, `tajimaC1_three`, `tajimaC2_three`: the degenerate sample
   sizes.
 * `tajimaC1_pos`, `tajimaC2_pos`: `c₁ > 0` and `c₂ > 0` for `n ≥ 4`.
+* `tajimaE1_pos`, `tajimaE2_pos`: `e₁ > 0` and `e₂ > 0` for `n ≥ 4`.
 * `tajimaVarEstimator_pos`: `e₁ S + e₂ S (S - 1) > 0` for `n ≥ 4` and `S ≥ 1`.
 * `measure_tajimaChebyshevTest_le`: the Chebyshev test has level at most `α`.
 
@@ -144,10 +145,7 @@ private theorem c1_key {n : ℕ} (hn : 4 ≤ n) : 3 * ((n : ℝ) - 1) < ((n : �
 /-- `c₁ = (n + 1) / (3 (n - 1)) - 1 / a₁ > 0` for `n ≥ 4`. -/
 theorem tajimaC1_pos {n : ℕ} (hn : 4 ≤ n) : 0 < tajimaC1 n := by
   have hn' : (4 : ℝ) ≤ n := by exact_mod_cast hn
-  have ha : 0 < tajimaA1 n := by
-    have := tajimaA1_mono hn
-    rw [tajimaA1_four] at this
-    linarith
+  have ha := tajimaA1_pos (n := n) (by omega)
   have hk := c1_key hn
   unfold tajimaC1 tajimaB1
   rw [sub_pos, div_lt_div_iff₀ ha (by linarith)]
@@ -157,10 +155,7 @@ theorem tajimaC1_pos {n : ℕ} (hn : 4 ≤ n) : 0 < tajimaC1 n := by
 /-- `c₂ = b₂ - (n + 2) / (a₁ n) + a₂ / a₁² > 0` for `n ≥ 4`. -/
 theorem tajimaC2_pos {n : ℕ} (hn : 4 ≤ n) : 0 < tajimaC2 n := by
   have hn' : (4 : ℝ) ≤ n := by exact_mod_cast hn
-  have ha : 0 < tajimaA1 n := by
-    have := tajimaA1_mono hn
-    rw [tajimaA1_four] at this
-    linarith
+  have ha := tajimaA1_pos (n := n) (by omega)
   have ha2 : 49 / 36 ≤ tajimaA2 n := by
     have := tajimaA2_mono hn
     rwa [tajimaA2_four] at this
@@ -194,16 +189,22 @@ theorem tajimaC2_pos {n : ℕ} (hn : 4 ≤ n) : 0 < tajimaC2 n := by
   positivity
 
 
+/-- `e₁ = c₁ / a₁ > 0` for `n ≥ 4`. -/
+theorem tajimaE1_pos {n : ℕ} (hn : 4 ≤ n) : 0 < tajimaE1 n :=
+  div_pos (tajimaC1_pos hn) (tajimaA1_pos (by omega))
+
+/-- `e₂ = c₂ / (a₁² + a₂) > 0` for `n ≥ 4`. -/
+theorem tajimaE2_pos {n : ℕ} (hn : 4 ≤ n) : 0 < tajimaE2 n := by
+  have ha1 := tajimaA1_pos (n := n) (by omega)
+  have ha2 : 0 ≤ tajimaA2 n := sum_nonneg fun i _ => by positivity
+  exact div_pos (tajimaC2_pos hn) (by positivity)
+
 /-- The denominator of Tajima's `D` is well defined: `e₁ S + e₂ S (S - 1) > 0` for `n ≥ 4` and
 `S ≥ 1`. -/
 theorem tajimaVarEstimator_pos {n : ℕ} (hn : 4 ≤ n) {S : ℝ} (hS : 1 ≤ S) :
     0 < tajimaE1 n * S + tajimaE2 n * (S * (S - 1)) := by
-  have ha1 : 0 < tajimaA1 n := by
-    rw [tajimaA1_eq_harmonic]
-    exact_mod_cast harmonic_pos (by omega)
-  have ha2 : 0 ≤ tajimaA2 n := sum_nonneg fun i _ => by positivity
-  have he1 : 0 < tajimaE1 n := div_pos (tajimaC1_pos hn) ha1
-  have he2 : 0 < tajimaE2 n := div_pos (tajimaC2_pos hn) (by positivity)
+  have he1 := tajimaE1_pos hn
+  have he2 := tajimaE2_pos hn
   have hSS : 0 ≤ S * (S - 1) := mul_nonneg (by linarith) (by linarith)
   have := mul_nonneg he2.le hSS
   nlinarith

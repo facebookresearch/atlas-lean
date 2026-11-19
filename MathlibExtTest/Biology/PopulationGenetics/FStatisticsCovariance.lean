@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.PopulationGenetics.FStatisticsCovariance
+import MathlibExt.Biology.PopulationGenetics.Admixture.F3SufficientNotNecessary
+import MathlibExt.Biology.PopulationGenetics.Admixture.ConditionalNegDef
 
 @[expose] public section
 
@@ -35,6 +37,21 @@ example : f2 (Measure.dirac ()) pD 0 2 =
 
 example : centredCov (Measure.dirac ()) pD 0 2 = doubleCenter (f2 (Measure.dirac ()) pD) 0 2 / 2 :=
   centredCov_eq_doubleCenter_f2 (fun _ => MemLp.of_discrete) 0 2
+
+/-! ### Symmetry and row sums of the centred covariance -/
+
+example : centredCov (Measure.dirac ()) pD 0 2 = centredCov (Measure.dirac ()) pD 2 0 :=
+  centredCov_comm 0 2
+
+example : ∑ Y, centredCov (Measure.dirac ()) pD 0 Y = 0 :=
+  sum_centredCov_eq_zero (fun _ => MemLp.of_discrete) 0
+
+/-- Column sums vanish by symmetry. -/
+example : ∑ X, centredCov (Measure.dirac ()) pD X 2 = 0 := by
+  calc ∑ X, centredCov (Measure.dirac ()) pD X 2
+      = ∑ X, centredCov (Measure.dirac ()) pD 2 X :=
+        Finset.sum_congr rfl fun X _ => centredCov_comm X 2
+    _ = 0 := sum_centredCov_eq_zero (fun _ => MemLp.of_discrete) 2
 
 /-! ### The f-indistinguishable pair, realized on four points
 
@@ -132,7 +149,57 @@ example : starLen (1/2) 1 1 0 2 < 0 := by
   norm_num
 
 #print axioms centredCov_eq_doubleCenter_f2
+#print axioms sum_centredCov_eq_zero
+#print axioms centredCov_comm
 #print axioms f2_eq_iff_centredCov_eq
 #print axioms f2_star_eq_f2_admix
+
+/-! ### Star tree versus admixture: f3 corollaries -/
+
+variable {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω}
+
+-- Acceptance "α = 0 degenerates to identical models": `admixWeight 0` is a tree (binary
+-- loadings), the matching star lengths are `![a + b, 0, c]`, and frequencies coincide exactly.
+example : ∀ X e, admixWeight 0 X e = 0 ∨ admixWeight 0 X e = 1 := by
+  intro X e; fin_cases X <;> fin_cases e <;> simp [admixWeight, starWeight]
+example (a b c : ℝ) : starLen 0 a b c = ![a + b, 0, c] := by
+  funext e; fin_cases e <;> simp [starLen]
+
+-- The degeneration is non-vacuous: for every `a, b, c ≥ 0` there are realized admixed models at
+-- `α = 0`, and each has a star-tree partner with identical frequencies.
+example {a b c : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
+    ∃ (Ω : Type) (_ : MeasurableSpace Ω) (μ : Measure Ω) (_ : IsProbabilityMeasure μ)
+      (M M' : DriftModel μ (Fin 3) (Fin 3)), M.weight = admixWeight 0 ∧ M.len = ![a, b, c] ∧
+        M'.weight = starWeight ∧ M'.len = ![a + b, 0, c] ∧ M'.freq = M.freq := by
+  obtain ⟨Ω, hΩ, μ, hμ, M, hw, hl⟩ :=
+    MathlibExt.Biology.PopulationGenetics.Admixture.exists_driftModel (admixWeight 0) ![a, b, c]
+      (by intro e; fin_cases e <;> simp [ha, hb, hc])
+  obtain ⟨M', hw', hl', hf⟩ := exists_star_freq_eq_of_admix_zero M hw hl
+  refine ⟨Ω, hΩ, μ, hμ, M, M', hw, hl, hw', ?_, hf⟩
+  rw [hl']; funext e; fin_cases e <;> simp [starLen]
+
+-- Both directions of the iff are exercised. Boundary `c = α (1 - α) (a + b)`: at `α = 1/2`,
+-- `a = b = 1`, `c = 1/2` the star lengths are `(1, 1, 0)` and `f3 = 0`.
+example {M : DriftModel μ (Fin 3) (Fin 3)} (hw : M.weight = admixWeight (1 / 2))
+    (hl : M.len = ![1, 1, 1 / 2]) :
+    f3 μ M.freq 2 0 1 = 0 ∧ (∀ e, 0 ≤ starLen (1 / 2) 1 1 (1 / 2) e) := by
+  refine ⟨by rw [f3_admixWeight hw hl]; norm_num, ?_⟩
+  rw [starLen_nonneg_iff_f3_nonneg (by norm_num) (by norm_num) (by norm_num) (by norm_num) hw hl,
+    f3_admixWeight hw hl]
+  norm_num
+-- Below the boundary (`c = 1/4`): `f3 = -1/4 < 0` and the star tree's leaf `C` would need a
+-- negative length, so no star-tree drift model has those lengths (`len_nonneg`).
+example {M : DriftModel μ (Fin 3) (Fin 3)} (hw : M.weight = admixWeight (1 / 2))
+    (hl : M.len = ![1, 1, 1 / 4]) :
+    f3 μ M.freq 2 0 1 < 0 ∧ ¬ (∀ e, 0 ≤ starLen (1 / 2) 1 1 (1 / 4) e) ∧
+      ∀ M' : DriftModel μ (Fin 3) (Fin 3), M'.len ≠ starLen (1 / 2) 1 1 (1 / 4) := by
+  have hf : f3 μ M.freq 2 0 1 = -1 / 4 := by rw [f3_admixWeight hw hl]; norm_num
+  refine ⟨by rw [hf]; norm_num, ?_, fun M' h => ?_⟩
+  · rw [starLen_nonneg_iff_f3_nonneg (by norm_num) (by norm_num) (by norm_num) (by norm_num) hw hl,
+      hf]
+    norm_num
+  · have := M'.len_nonneg 2
+    rw [h] at this
+    norm_num [starLen] at this
 
 end MathlibExtTest.Biology.PopulationGenetics.FStatisticsCovariance

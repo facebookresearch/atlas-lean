@@ -1,0 +1,3 @@
+# The first join of neighbor joining on a perturbed tree metric joins a cherry
+
+Under the hypotheses on $(G, \iota)$, $w$, $d$, $\mu$ and $D$ of the [robust cherry lemma](exists-adj-adj-of-q-criterion-min-of-abs.md), let $a \ne b$ be singleton clusters, with at least four singleton clusters, such that $(a, b)$ minimizes the [Q-criterion](../neighbor-joining/q-criterion.md) of the [initial dissimilarity](../neighbor-joining/initial-dist.md) of $D$ over all pairs of distinct singletons. Then $a = \{x\}$ and $b = \{y\}$ for distinct taxa $x, y$ such that $\iota(x)$ and $\iota(y)$ have a common neighbour.

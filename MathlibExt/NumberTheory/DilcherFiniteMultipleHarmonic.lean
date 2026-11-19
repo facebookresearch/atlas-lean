@@ -15,7 +15,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Data.Nat.Choose.Sum
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.GroupTheory.Finiteness
 import Mathlib.Tactic.LinearCombination
 
@@ -350,6 +350,7 @@ It follows from `dilcher_finite_multiple_harmonic_identity_general`; the hypothe
 unused and keeps the source's shape.
 Proves `Wanted` entry `dilcher_finite_multiple_harmonic_identity`.
 -/
+@[nolint unusedArguments]
 theorem dilcher_finite_multiple_harmonic_identity (m n : ℕ)
     (hm : 0 < m) (hn : 0 < n) :
     (∑ k ∈ Finset.Icc 1 n,
