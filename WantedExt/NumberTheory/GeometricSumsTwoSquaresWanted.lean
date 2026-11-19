@@ -27,10 +27,11 @@ base-`q` reading already fails for `p = 3, k = 2, n = 1`).
 The sign patterns of `phi4pX1` and `phi4pY1` were pinned
 by solving `X_1^2 + Y_1^2 = Φ_{4p}(x)` for small primes.
 
-Not stated (see the source audit table): Proposition 1
-(its parity conclusions are truncated in the
-extraction) and Proposition 12 (a summary paragraph,
-not a statement).
+Proposition 1 is stated from the journal text (its
+parity conclusions are truncated in the extraction).
+Not stated (see the source audit table): Proposition 12
+(a summary paragraph restating Theorem 10 and
+Corollary 11, both stated here).
 -/
 module
 
@@ -219,5 +220,33 @@ theorem_wanted altBigeom_pythagorean (x y : ℤ) (n : ℕ)
         (∑ j ∈ Finset.range (2 * n + 1),
           (-1 : ℤ) ^ j * x ^ (4 * n - 2 * j) * y ^ (2 * j)) =
           (a : ℤ) ^ 2 + (b : ℤ) ^ 2 ∧ Nat.Coprime a b
+
+/-- **Proposition 1**: for an odd prime `p` there are
+`X_j, Y_j ∈ ℚ[x]` with
+`Φ_{4p} = X_1^2 + Y_1^2 = X_2^2 + p Y_2^2 = X_3^2 - p Y_3^2`,
+where `X_1, Y_1, 2X_2, 2Y_2, 2X_3, 2Y_3 ∈ ℤ[x]`; if
+`p ≡ 1 (mod 4)` then `X_2, Y_2 ∈ ℤ[x]`, and if
+`p ≡ 3 (mod 4)` then `X_3, Y_3 ∈ ℤ[x]`; `X_1, X_2, X_3`
+are even and `Y_1` is odd; for `p ≡ 1 (mod 4)`, `Y_2` is
+odd and `Y_3` even, and for `p ≡ 3 (mod 4)`, `Y_2` is even
+and `Y_3` odd. "In `ℤ[x]`" means integer coefficients;
+`f` is even (odd) when `f(-x) = f(x)` (`= -f(x)`).
+
+Source: Lorenz Halbeisen, Norbert Hungerbühler, and
+Franz Lemmermeyer, "Geometric Sums as Sums of Two
+Squares", INTEGERS 26 (2026), Article A30,
+Proposition 1. -/
+theorem_wanted cyclotomicFourMul_three_quadratic_forms (p : ℕ) (hp : p.Prime)
+    (hp2 : p ≠ 2) :
+    ∃ X₁ Y₁ X₂ Y₂ X₃ Y₃ : ℚ[X],
+      Polynomial.cyclotomic (4 * p) ℚ = X₁ ^ 2 + Y₁ ^ 2 ∧
+      Polynomial.cyclotomic (4 * p) ℚ = X₂ ^ 2 + C (p : ℚ) * Y₂ ^ 2 ∧
+      Polynomial.cyclotomic (4 * p) ℚ = X₃ ^ 2 - C (p : ℚ) * Y₃ ^ 2 ∧
+      (∀ f ∈ [X₁, Y₁, 2 * X₂, 2 * Y₂, 2 * X₃, 2 * Y₃], ∀ i, ∃ z : ℤ, f.coeff i = z) ∧
+      (p % 4 = 1 → ∀ f ∈ [X₂, Y₂], ∀ i, ∃ z : ℤ, f.coeff i = z) ∧
+      (p % 4 = 3 → ∀ f ∈ [X₃, Y₃], ∀ i, ∃ z : ℤ, f.coeff i = z) ∧
+      (∀ f ∈ [X₁, X₂, X₃], f.comp (-X) = f) ∧ Y₁.comp (-X) = -Y₁ ∧
+      (p % 4 = 1 → Y₂.comp (-X) = -Y₂ ∧ Y₃.comp (-X) = Y₃) ∧
+      (p % 4 = 3 → Y₂.comp (-X) = Y₂ ∧ Y₃.comp (-X) = -Y₃)
 
 end MathlibExt.NumberTheory.GeometricSumsTwoSquaresWanted

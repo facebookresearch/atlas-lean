@@ -117,4 +117,4 @@ Before relying on a parser change, compare every `(book, ordinal)` decoded
 source/hash against a frozen prior inventory and retain any differences in the
 run output. Raw-span hashes may legitimately change when the span definition
 changes; they must not be confused with source-identity hashes. Primary-source
-fidelity and any later VMVM/semantic review are separate workflows.
+fidelity and any later semantic review are separate workflows.

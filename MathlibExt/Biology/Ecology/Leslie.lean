@@ -280,8 +280,10 @@ end Irreducible
 `isIrreducible_leslieMatrix`), the Perron–Frobenius theorem
 `Matrix.IsIrreducible.perron_frobenius` gives a positive eigenvalue `r` with a positive
 eigenvector that dominates every complex eigenvalue in modulus; since `r > 0` and `v 0 > 0`,
-`r` satisfies the discrete Euler–Lotka equation. Nothing here asserts convergence of normalized
-iterates `L^t v₀` (that needs primitivity and is not proved). -/
+`r` satisfies the discrete Euler–Lotka equation. Convergence of normalized iterates `L^t v₀` (which needs primitivity) is
+proved in `MathlibExt.Biology.Demography.Leslie`: see
+`tendsto_leslie_age_distribution` for the stable age distribution and
+`exists_stable_age_distribution` for existence of the Perron eigen-data. -/
 theorem exists_perron_root_sum_eq_one [NeZero n] {f s : Fin n → ℝ}
     (hL : (leslieMatrix f s).IsIrreducible) :
     ∃ (r : ℝ) (v : Fin n → ℝ),

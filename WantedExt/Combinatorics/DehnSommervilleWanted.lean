@@ -23,14 +23,19 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Combinatorics.DehnSommerville` — dehn_sommerville (manifest `manifests/problems/dehn_sommerville.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Combinatorics.DehnSommerville` —
+dehn_sommerville (manifest `manifests/problems/dehn_sommerville.toml`, rev 1, submitter Kim
+Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Combinatorics.DehnSommervilleWanted` namespace. Mathematical
-statements are unchanged. Source: M. Dehn (1905); D. M. Y. Sommerville (1927); see Stanley, *Combinatorics and Commutative Algebra*. Knill, *Some fundamental theorems in mathematics*, §142.
+and placed the declarations in the `MathlibExt.Combinatorics.DehnSommervilleWanted` namespace.
+Mathematical
+statements are unchanged. Source: M. Dehn (1905); D. M. Y. Sommerville (1927); see
+Stanley, *Combinatorics and Commutative Algebra*. Knill, *Some fundamental theorems in mathematics*,
+§142.
 -/
 module
 
@@ -62,7 +67,9 @@ Category-(b) candidate from §142 of the Knill survey.
 
 /- **Dehn–Sommerville equations.** The h-vector of a finite simplicial sphere
 is symmetric: `h_j = h_{d-j}`. -/
-/-- Source: M. Dehn (1905); D. M. Y. Sommerville (1927); see Stanley, *Combinatorics and Commutative Algebra*. Knill, *Some fundamental theorems in mathematics*, §142. Via leanprover/lean-eval@38361be, problem `dehn_sommerville`. -/
+/-- Source: M. Dehn (1905); D. M. Y. Sommerville (1927); see Stanley, *Combinatorics and Commutative
+Algebra*. Knill, *Some fundamental theorems in mathematics*, §142. Via
+leanprover/lean-eval@38361be, problem `dehn_sommerville`. -/
 public theorem_wanted dehn_sommerville
     {d j : ℕ} (X : FiniteSimplicialSphere d) (hj : j ≤ d) :
     hVector X j = hVector X (d - j)

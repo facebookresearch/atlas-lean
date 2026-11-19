@@ -25,8 +25,9 @@ the slice `(toList.drop l).take (r - l)`; it prunes empty, left-disjoint, and
 right-disjoint segments, uses cached aggregates for fully covered nodes, and clamps
 out-of-range bounds through the slice. Point update replaces the in-range leaf at
 an index and leaves the leaf list unchanged out of range. Building splits the list
-in half recursively, evaluating each recursive build once. No complexity bounds
-are proved.
+in half recursively, evaluating each recursive build once. The tree built from
+`n` entries has exactly `2 * n - 1` nodes, and none when `n = 0`
+(`nodeCount_build`). No running time bounds are proved.
 -/
 
 @[expose] public section
@@ -59,6 +60,13 @@ def size {α : Type u} : SegmentTree α → Nat
   | .empty => 0
   | .leaf _ => 1
   | .node _ cachedSize _ _ => cachedSize
+
+/-- The number of leaves and internal nodes of a tree; the empty tree has
+none. -/
+def nodeCount {α : Type u} : SegmentTree α → Nat
+  | .empty => 0
+  | .leaf _ => 1
+  | .node _ _ left right => left.nodeCount + right.nodeCount + 1
 
 /-- Accumulator traversal threading the output suffix, so collecting the
 leaves of an `n`-leaf tree takes linear time instead of repeatedly
@@ -206,6 +214,56 @@ theorem agg_build {α : Type u} [AddMonoid α] (xs : List α) :
     (build xs).agg = (build xs).toList.sum :=
       agg_eq_sum_toList (valid_build xs)
     _ = xs.sum := by rw [toList_build]
+
+/-- Storage bound: the tree built from a list of length `n` has exactly
+`2 * n - 1` nodes. For `n = 0` both sides are `0` (`build []` is the empty
+tree), and for `n = 1` the tree is one leaf. For `n ≥ 2` both halves of the
+split are nonempty, and halves of lengths `a` and `b` give
+`(2 * a - 1) + (2 * b - 1) + 1 = 2 * (a + b) - 1` nodes. -/
+theorem nodeCount_build {α : Type u} [AddMonoid α] (xs : List α) :
+    (build xs).nodeCount = 2 * xs.length - 1 := by
+  induction hn : xs.length using Nat.strongRecOn generalizing xs with
+  | _ n ih =>
+      cases xs with
+      | nil =>
+          rw [build]
+          simp only [List.length_nil] at hn
+          subst hn
+          rfl
+      | cons x xs =>
+          cases xs with
+          | nil =>
+              rw [build]
+              simp only [List.length_cons, List.length_nil] at hn
+              subst hn
+              rfl
+          | cons y ys =>
+              have htake :
+                  ((x :: y :: ys).take ((x :: y :: ys).length / 2)).length < n := by
+                rw [← hn]
+                simp only [List.length_take, List.length_cons]
+                omega
+              have hdrop :
+                  ((x :: y :: ys).drop ((x :: y :: ys).length / 2)).length < n := by
+                rw [← hn]
+                simp only [List.length_drop, List.length_cons]
+                omega
+              have hsum :
+                  ((x :: y :: ys).take ((x :: y :: ys).length / 2)).length +
+                    ((x :: y :: ys).drop ((x :: y :: ys).length / 2)).length = n := by
+                rw [← hn, ← List.length_append, List.take_append_drop]
+              have hLeftPos :
+                  0 < ((x :: y :: ys).take ((x :: y :: ys).length / 2)).length := by
+                simp only [List.length_take, List.length_cons]
+                omega
+              have hRightPos :
+                  0 < ((x :: y :: ys).drop ((x :: y :: ys).length / 2)).length := by
+                simp only [List.length_drop, List.length_cons]
+                omega
+              rw [build]
+              simp only [nodeCount]
+              rw [ih _ htake _ rfl, ih _ hdrop _ rfl]
+              omega
 
 /--
 The range aggregate over `[l, r)`, with indices relative to the tree's segment.

@@ -242,13 +242,6 @@ private lemma coe_Gamma0_one_eq_SL :
   ext x
   simp [Subgroup.mem_map, MonoidHom.mem_range]
 
-/-- The image of `Γ(1)` in `GL(2, ℝ)` is the full special linear group. -/
-private lemma coe_Gamma_one_eq_SL :
-    ((CongruenceSubgroup.Gamma 1 : Subgroup SL(2, ℤ)) : Subgroup (GL (Fin 2) ℝ)) = 𝒮ℒ := by
-  rw [CongruenceSubgroup.Gamma_one_top]
-  ext x
-  simp [Subgroup.mem_map, MonoidHom.mem_range]
-
 /-- Transfer a vanishing statement for cusp forms along an equality of
 subgroups. -/
 private lemma cuspForm_eq_zero_of_subgroup_eq {Γ₁ Γ₂ : Subgroup (GL (Fin 2) ℝ)}
@@ -260,7 +253,7 @@ private lemma cuspForm_eq_zero_of_subgroup_eq {Γ₁ Γ₂ : Subgroup (GL (Fin 2
 /-- There is no nonzero weight-six cusp form on the full modular group:
 the dimension formula gives rank zero below weight 12. -/
 private theorem S6_levelOne_eq_zero (f : CuspForm Γ(1) 6) : f = 0 :=
-  cuspForm_eq_zero_of_subgroup_eq coe_Gamma_one_eq_SL.symm
+  cuspForm_eq_zero_of_subgroup_eq CongruenceSubgroup.Gamma_one_coe_eq_SL.symm
     (fun g : CuspForm 𝒮ℒ 6 => rank_zero_iff_forall_zero.mp
       (CuspForm.rank_eq_zero_of_weight_lt_twelve (k := 6) (by norm_num)) g) f
 

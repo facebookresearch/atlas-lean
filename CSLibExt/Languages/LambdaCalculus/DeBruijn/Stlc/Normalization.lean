@@ -58,8 +58,16 @@ theorem value_unique {t v w : Tm Γ A} (htv : Steps t v) (hv : Value v)
 
 end Steps
 
-/-- A closed term normalizes when it evaluates to a normal form. -/
+/-- A closed term normalizes when it evaluates under the call-by-value step relation `Step`
+to a `Step` normal form.  This is upstream `Relation.Normalizable Step` (see
+`normalizes_iff_normalizable`). -/
 def Normalizes (t : Tm [] A) : Prop := ∃ n, Steps t n ∧ Step.NormalForm n
+
+/-- `Normalizes` is the upstream normalizability predicate `Relation.Normalizable` for
+`Step`. -/
+theorem normalizes_iff_normalizable {t : Tm [] A} :
+    Normalizes t ↔ Relation.Normalizable Step t :=
+  exists_congr fun _ => and_congr Iff.rfl Step.normalForm_iff_normal
 
 namespace Normalizes
 

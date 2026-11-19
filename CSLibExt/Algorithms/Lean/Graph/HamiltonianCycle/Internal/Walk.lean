@@ -76,7 +76,7 @@ lemma hamiltonianCycle_of_order (m : Nat) (hm : 3 ≤ m) (G : SimpleGraph (Fin m
     rw [hh, hl]
     exact he'
   exact hamiltonianCycle_of_chain m hm G _ List.length_ofFn
-    (ofFn_nodup_of_injective m f hf) (ofFn_chain_of_cycle_edges m hm' f he) hne hc
+    (List.nodup_ofFn_ofInjective hf) (ofFn_chain_of_cycle_edges m hm' f he) hne hc
 
 lemma graph_of_validated_array (x : Array Bool) (m : Nat)
     (hd : ∀ i : Fin m, x[i.val * m + i.val]? = some false)

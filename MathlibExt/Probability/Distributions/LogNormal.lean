@@ -22,6 +22,7 @@ the mean and `v` the variance of `log X`, not of `X`. No density is constructed.
 * `ProbabilityTheory.isProbabilityMeasure_logNormalMeasure`.
 * `ProbabilityTheory.logNormalMeasure_Iic_zero`: no mass on `(-∞, 0]`.
 * `ProbabilityTheory.logNormalMeasure_real_Iic`: `P(X ≤ t) = P(Y ≤ log t)` for `t > 0`.
+* `ProbabilityTheory.logNormalMeasure_real_Ioi`: `P(X > t) = P(Y > log t)` for `t > 0`.
 * `ProbabilityTheory.integral_id_logNormalMeasure`: the mean is `exp(μ + v / 2)`, from the
   Gaussian moment generating function at `1`.
 -/
@@ -63,6 +64,15 @@ theorem logNormalMeasure_real_Iic (μ : ℝ) (v : ℝ≥0) {t : ℝ} (ht : 0 < t
   congr 1
   ext y
   exact (le_log_iff_exp_le ht).symm
+
+/-- **Log-normal survival function**: for `t > 0`, `P(X > t) = P(Y > log t)` with
+`Y ~ N(μ, v)`. -/
+theorem logNormalMeasure_real_Ioi (μ : ℝ) (v : ℝ≥0) {t : ℝ} (ht : 0 < t) :
+    (logNormalMeasure μ v).real (Ioi t) = (gaussianReal μ v).real (Ioi (log t)) := by
+  rw [logNormalMeasure, map_measureReal_apply measurable_exp measurableSet_Ioi]
+  congr 1
+  ext y
+  exact (log_lt_iff_lt_exp ht).symm
 
 /-- **Log-normal mean**: `E[X] = exp(μ + v / 2)`, the Gaussian moment generating function
 `mgf_id_gaussianReal` at `1`. -/

@@ -54,7 +54,8 @@ no corresponding polarized tree claim is made.
 * `f4_eq_sum_of_sub_eq_sum`: `f4` is linear in its first pair; `f4_affine_combination`: the
   qpAdm model equation `f4 T X Y Z = ∑ k, w k * f4 (S k) X Y Z` when `p T = ∑ k, w k * p (S k)`
   with `∑ k, w k = 1` (weights of any sign); `DriftModel.f4_affine_combination`: the same for
-  admixture-graph weights.
+  admixture-graph weights; `DriftModel.freq_eq_sum_of_weight_eq_sum`: the
+  frequency form of a zero-private-drift affine mixture.
 * `rank_f4Matrix_le`: qpWave. If every left population is an affine combination of `k + 1`
   sources, the matrix `f4 (L i) (L 0) (R j) (R 0)` (`i, j ≠ 0`) has rank at most `k`.
 * `integral_hetHat`, `integral_f2Hat`, `integral_f3Hat`, `integral_f4Hat`: unbiased
@@ -651,5 +652,27 @@ theorem f4_affine_combination {ι : Type*} [Fintype ι] {T X Y Z : P} (S : ι �
     simp [Finset.sum_apply, mul_sub, Finset.sum_sub_distrib, ← Finset.sum_mul, hw]
   rw [this, Finset.sum_mul, Finset.sum_mul]
   exact Finset.sum_congr rfl fun k _ => by ring
+
+/-- Zero private drift in a drift model, frequency form: if the lineage
+weights of `T` are the affine combination `∑ k, w k • weight (S k)` of the
+sources' weights (`∑ k, w k = 1`), with no extra private-edge term, then the
+frequency of `T` is the same combination of the source frequencies,
+pointwise. This is the drift-model statement behind the global-ancestry
+bridge: such a `T` is a mixture node with zero private drift. -/
+theorem freq_eq_sum_of_weight_eq_sum {ι : Type*} [Fintype ι] {T : P} (S : ι → P) (w : ι → ℝ) (hw : ∑ k, w k = 1)
+    (hT : M.weight T = ∑ k, w k • M.weight (S k)) (ω : Ω) :
+    M.freq T ω = ∑ k, w k * M.freq (S k) ω := by
+  have hTe : ∀ e, M.weight T e = ∑ k, w k * M.weight (S k) e := fun e => by
+    have h := congrFun hT e
+    simpa using h
+  have e1 : ∀ e, (∑ k, w k * M.weight (S k) e) * M.incr e ω =
+      ∑ k, w k * (M.weight (S k) e * M.incr e ω) := fun e => by
+    rw [Finset.sum_mul]
+    exact Finset.sum_congr rfl fun k _ => by ring
+  have e2 : ∀ k, w k * (M.root ω + ∑ e, M.weight (S k) e * M.incr e ω) =
+      w k * M.root ω + ∑ e, w k * (M.weight (S k) e * M.incr e ω) := fun k => by
+    rw [mul_add, Finset.mul_sum]
+  simp only [freq, hTe, e1, e2]
+  rw [Finset.sum_comm, Finset.sum_add_distrib, ← Finset.sum_mul, hw, one_mul]
 
 end MathlibExt.Biology.PopulationGenetics.FStatistics.DriftModel
