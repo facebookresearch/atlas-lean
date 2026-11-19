@@ -11,6 +11,7 @@ module
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.GroupTheory.GroupAction.Basic
+public import MathlibExt.Robotics.SLAM.RelativeObservation
 
 /-!
 # Observation-factorized objective gauge invariance
@@ -40,6 +41,6 @@ theorem objective_invariant_of_relative {G ι L D : Type*}
   apply Finset.sum_congr rfl
   intro i _
   congr 1
-  simp [mul_inv_rev, mul_smul]
+  exact relativeObservation_invariant h (g i) (l i)
 
 end Robotics.SLAM
