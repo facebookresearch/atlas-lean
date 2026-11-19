@@ -24,4 +24,4 @@ The two basic ways of achieving pure differential privacy (Dwork and Roth 2014, 
 
 - [Differential privacy](../differential-privacy/README.md): the definition these mechanisms satisfy, and the composition theorems used to combine them.
 - [Laplace distribution](../../../Probability/distributions/continuous/laplace-distribution/README.md): the noise law of the Laplace mechanism, its normalisation and the density shift bound behind its privacy.
-- Least squares, ridge and lasso regression: the same Laplace density appears there as the prior whose MAP estimate is the lasso.
+- [Least squares, ridge and lasso regression](../../machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/README.md): the same Laplace density appears there as the prior whose MAP estimate is the lasso.

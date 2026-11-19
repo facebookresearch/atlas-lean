@@ -31,6 +31,6 @@ Convex functions and sets in analysis and optimization: first-order and second-o
 ## Related topics
 
 - [Linear programming](../../Geometry/convex-geometry/linear-programming/README.md)
-- Least squares, ridge and lasso regression
+- [Least squares, ridge and lasso regression](../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/README.md)
 - [Newton's method](../numerical-analysis/newton-s-method/README.md)
 - [Conjugate gradient method](../../LinearAlgebra/matrix-decompositions/conjugate-gradient-method/README.md)
