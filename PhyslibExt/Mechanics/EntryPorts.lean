@@ -35,10 +35,13 @@ with `v(he) = ve`. The exponent is the column mass `∫ ρ` between `he` and `h`
 
 Model inputs: the exponential density with `ρ0, H > 0`, `β > 0`, a constant downward angle,
 drag-dominated motion without gravity or lift, and finite entry data `(he, ve)`, `ve > 0`. The
-equations of motion are assumed only on a finite time window `[t₀, t₁]` that starts at entry,
-which is how the fixed finite altitude band enters. The infinite-entry normalization (dropping
-`exp (-he / H)`) does not meet the entry condition (`omitted_entry_term_ne`). Each result assumes
-only the hypotheses its proof uses.
+equations of motion are assumed only on a nonempty finite time window `[t₀, t₁]`, `t₀ ≤ t₁`,
+that starts at entry, which is how the fixed finite altitude band enters. The infinite-entry
+normalization (dropping `exp (-he / H)`) does not meet the entry condition
+(`omitted_entry_term_ne`). The derivative and equation-of-motion results assume `β > 0`: at
+`β = 0` Lean's convention `x / 0 = 0` turns the drag term into `0`. Apart from the window
+condition `t₀ ≤ t₁`, which only excludes an empty window, each result assumes only the
+hypotheses its proof uses.
 
 ## ii. Key results
 
@@ -140,9 +143,9 @@ lemma ballisticVelocity_eq_exp_integral {H : ℝ} (hH : H ≠ 0) (ρ0 β γ he v
   congr 1
   ring
 
-/-- The profile solves the altitude form of the equations of motion,
+/-- For `β > 0` the profile solves the altitude form of the equations of motion,
 `dv/dh = ρ(h) * v / (2 * β * sin γ)`. -/
-lemma hasDerivAt_ballisticVelocity {H : ℝ} (hH : H ≠ 0) (ρ0 β γ he ve h : ℝ) :
+lemma hasDerivAt_ballisticVelocity {H : ℝ} (hH : H ≠ 0) (ρ0 β γ he ve h : ℝ) (hβ : 0 < β) :
     HasDerivAt (ballisticVelocity ρ0 H β γ he ve)
       (exponentialDensity ρ0 H h * ballisticVelocity ρ0 H β γ he ve h /
         (2 * β * Real.sin γ)) h := by
@@ -159,20 +162,24 @@ lemma hasDerivAt_ballisticVelocity {H : ℝ} (hH : H ≠ 0) (ρ0 β γ he ve h :
       exponentialDensity ρ0 H h * ballisticVelocity ρ0 H β γ he ve h /
         (2 * β * Real.sin γ) := by
     unfold exponentialDensity ballisticVelocity ballisticK
-    by_cases hD : 2 * β * Real.sin γ = 0
-    · simp [hD]
-    · field_simp
+    by_cases hs : Real.sin γ = 0
+    · simp [hs]
+    · have hD : 2 * β * Real.sin γ ≠ 0 := mul_ne_zero (mul_ne_zero two_ne_zero hβ.ne') hs
+      field_simp
       ring
   rw [heq] at hV
   exact hV
 
 /-! ## B. The equations of motion -/
 
-/-- Derivation from the equations of motion: if on the window `[t₀, t₁]` the altitude and speed
-satisfy `h' = -v * sin γ` and `v' = -ρ(h) * v ^ 2 / (2 * β)` with entry state `h(t₀) = he`,
-`v(t₀) = ve`, then `v(t) = ballisticVelocity (h(t))` throughout the window. -/
+set_option linter.unusedVariables false in
+/-- Derivation from the equations of motion: for `β > 0`, if on the window `[t₀, t₁]`, `t₀ ≤ t₁`,
+the altitude and speed satisfy `h' = -v * sin γ` and `v' = -ρ(h) * v ^ 2 / (2 * β)` with entry
+state `h(t₀) = he`, `v(t₀) = ve`, then `v(t) = ballisticVelocity (h(t))` throughout the window.
+The proof does not use `t₀ ≤ t₁`; the hypothesis excludes the empty window, on which the
+statement says nothing. -/
 lemma ballisticVelocity_of_ode {ρ0 H β γ he ve t₀ t₁ : ℝ} {h v : ℝ → ℝ} (hH : H ≠ 0)
-    (hγ : Real.sin γ ≠ 0)
+    (hβ : 0 < β) (hγ : Real.sin γ ≠ 0) (hwin : t₀ ≤ t₁)
     (hh : ∀ t ∈ Set.Icc t₀ t₁, HasDerivAt h (-(v t) * Real.sin γ) t)
     (hv : ∀ t ∈ Set.Icc t₀ t₁,
       HasDerivAt v (-(exponentialDensity ρ0 H (h t)) * v t ^ 2 / (2 * β)) t)
@@ -203,12 +210,10 @@ lemma ballisticVelocity_of_ode {ρ0 H β γ he ve t₀ t₁ : ℝ} {h v : ℝ �
             (-(ballisticK ρ0 H β γ *
               (0 - Real.exp (-h t / H) * (-(-(v t) * Real.sin γ) / H))))) = 0 := by
       unfold exponentialDensity ballisticK
-      by_cases hβ : β = 0
-      · simp [hβ]
-      · have h2β : (2 : ℝ) * β ≠ 0 := mul_ne_zero (by norm_num) hβ
-        have hD : 2 * β * Real.sin γ ≠ 0 := mul_ne_zero h2β hγ
-        field_simp
-        ring
+      have h2β : (2 : ℝ) * β ≠ 0 := mul_ne_zero (by norm_num) hβ.ne'
+      have hD : 2 * β * Real.sin γ ≠ 0 := mul_ne_zero h2β hγ
+      field_simp
+      ring
     rw [hbal] at hw
     exact hw
   have hconst : ∀ t ∈ Set.Icc t₀ t₁,
@@ -246,15 +251,16 @@ lemma ballisticVelocity_of_ode {ρ0 H β γ he ve t₀ t₁ : ℝ} {h v : ℝ �
           (Real.exp (-he / H) - Real.exp (-h t / H))) := by rw [h1]
   exact h2
 
-/-- Converse: along an altitude trajectory with `h' = -v * sin γ` for `v = ballisticVelocity ∘ h`,
-the speed `ballisticVelocity ∘ h` satisfies the drag equation `v' = -ρ(h) * v ^ 2 / (2 * β)`. -/
+/-- Converse: for `β > 0`, along an altitude trajectory with `h' = -v * sin γ` for
+`v = ballisticVelocity ∘ h`, the speed `ballisticVelocity ∘ h` satisfies the drag equation
+`v' = -ρ(h) * v ^ 2 / (2 * β)`. -/
 lemma hasDerivAt_ballisticVelocity_comp {ρ0 H β γ he ve t : ℝ} {h : ℝ → ℝ} (hH : H ≠ 0)
-    (hγ : Real.sin γ ≠ 0)
+    (hβ : 0 < β) (hγ : Real.sin γ ≠ 0)
     (hh : HasDerivAt h (-(ballisticVelocity ρ0 H β γ he ve (h t)) * Real.sin γ) t) :
     HasDerivAt (fun τ => ballisticVelocity ρ0 H β γ he ve (h τ))
       (-(exponentialDensity ρ0 H (h t)) * ballisticVelocity ρ0 H β γ he ve (h t) ^ 2 /
         (2 * β)) t := by
-  have hV := hasDerivAt_ballisticVelocity hH ρ0 β γ he ve (h t)
+  have hV := hasDerivAt_ballisticVelocity hH ρ0 β γ he ve (h t) hβ
   have hcomp : HasDerivAt (fun τ => ballisticVelocity ρ0 H β γ he ve (h τ))
       (exponentialDensity ρ0 H (h t) * ballisticVelocity ρ0 H β γ he ve (h t) /
         (2 * β * Real.sin γ) * (-(ballisticVelocity ρ0 H β γ he ve (h t)) * Real.sin γ)) t :=
@@ -262,11 +268,9 @@ lemma hasDerivAt_ballisticVelocity_comp {ρ0 H β γ he ve t : ℝ} {h : ℝ →
   have heq : exponentialDensity ρ0 H (h t) * ballisticVelocity ρ0 H β γ he ve (h t) /
         (2 * β * Real.sin γ) * (-(ballisticVelocity ρ0 H β γ he ve (h t)) * Real.sin γ) =
       -(exponentialDensity ρ0 H (h t)) * ballisticVelocity ρ0 H β γ he ve (h t) ^ 2 / (2 * β) := by
-    by_cases hβ : β = 0
-    · simp [hβ]
-    · have h2β : (2 : ℝ) * β ≠ 0 := mul_ne_zero (by norm_num) hβ
-      have hD : 2 * β * Real.sin γ ≠ 0 := mul_ne_zero h2β hγ
-      field_simp
+    have h2β : (2 : ℝ) * β ≠ 0 := mul_ne_zero (by norm_num) hβ.ne'
+    have hD : 2 * β * Real.sin γ ≠ 0 := mul_ne_zero h2β hγ
+    field_simp
   rw [heq] at hcomp
   exact hcomp
 
@@ -314,10 +318,12 @@ lemma omitted_entry_term_ne {ρ0 H β γ ve : ℝ} (hρ0 : 0 < ρ0) (hH : 0 < H)
 
 /-! ## D. The isothermal layer -/
 
-/-- With the isothermal-layer density `isothermalDensity ρ0 g Rs T` as the atmosphere, the
-derivation gives the same profile with `H` the scale height `Rs * T / |g|`. -/
+/-- With the isothermal-layer density `isothermalDensity ρ0 g Rs T` as the atmosphere, `β > 0`
+and the window `t₀ ≤ t₁`, the derivation gives the same profile with `H` the scale height
+`Rs * T / |g|`. -/
 lemma ballisticVelocity_of_ode_isothermalDensity {ρ0 g Rs T β γ he ve t₀ t₁ : ℝ}
-    {h v : ℝ → ℝ} (hg : 0 < g) (hRs : 0 < Rs) (hT : 0 < T) (hγ : Real.sin γ ≠ 0)
+    {h v : ℝ → ℝ} (hg : 0 < g) (hRs : 0 < Rs) (hT : 0 < T) (hβ : 0 < β) (hγ : Real.sin γ ≠ 0)
+    (hwin : t₀ ≤ t₁)
     (hh : ∀ t ∈ Set.Icc t₀ t₁, HasDerivAt h (-(v t) * Real.sin γ) t)
     (hv : ∀ t ∈ Set.Icc t₀ t₁,
       HasDerivAt v (-(isothermalDensity ρ0 g Rs T (h t)) * v t ^ 2 / (2 * β)) t)
@@ -332,6 +338,6 @@ lemma ballisticVelocity_of_ode_isothermalDensity {ρ0 g Rs T β γ he ve t₀ t�
       (-(exponentialDensity ρ0 (scaleHeight Rs T g) (h t)) * v t ^ 2 / (2 * β)) t := by
     intro t ht
     simpa [heq (h t)] using hv t ht
-  exact ballisticVelocity_of_ode hH' hγ hh hv' h0 v0
+  exact ballisticVelocity_of_ode hH' hβ hγ hwin hh hv' h0 v0
 
 end EntryPorts
