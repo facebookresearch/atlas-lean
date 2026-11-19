@@ -25,16 +25,22 @@ wiki's own conventions:
 - no build output is committed;
 - with --base, the PR changes fewer than 3,000 files.
 
-It exits 1 and lists every finding when a rule is broken, and 0 otherwise.
+With --base, a PR fails only on findings the base commit doesn't already have:
+a finding already on main is printed as a warning, so the check blocks new
+breakage without blocking every PR on old breakage. Without --base (a push to
+main, a manual run), every finding is reported and the exit status is 0.
 """
 
 from __future__ import annotations
 
 import argparse
+import io
 import json
 import re
 import subprocess
 import sys
+import tarfile
+import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -300,18 +306,45 @@ def check(root: Path = ROOT, base: str | None = None) -> list[str]:
     return report.errors
 
 
+def base_findings(root: Path, base: str) -> list[str]:
+    """The findings the base commit already has: its vault and taxonomy, exported from git and checked alone."""
+    with tempfile.TemporaryDirectory() as directory:
+        archive = subprocess.run(
+            ["git", "-C", str(root), "archive", "--format=tar", base, "blueprint", "scripts/taxonomy.json"],
+            check=True, capture_output=True,
+        ).stdout
+        with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
+            try:
+                tar.extractall(directory, filter="data")
+            except TypeError:  # Python before 3.11.4 has no extraction filters; the archive is our own commit
+                tar.extractall(directory)
+        return check(Path(directory))
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--base", help="the commit the PR merges into, to check the PR's size")
+    parser.add_argument("--base", help="the commit the PR merges into: fail only on findings it doesn't have")
     parser.add_argument("--root", type=Path, default=ROOT, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
-    errors = check(args.root.resolve(), args.base)
+    root = args.root.resolve()
+    errors = check(root, args.base)
+    if not args.base:
+        # Nothing to compare with (a push to main, a manual run): report, and leave blocking to PRs.
+        for error in errors:
+            print(f"warning: {error}", file=sys.stderr)
+        print(f"graph rules: {len(errors)} finding(s), reported only" if errors else "graph rules: OK")
+        return 0
+    known = set(base_findings(root, args.base))
+    new = [error for error in errors if error not in known]
     for error in errors:
+        if error in known:
+            print(f"warning (already on the base branch): {error}", file=sys.stderr)
+    for error in new:
         print(error, file=sys.stderr)
-    if errors:
-        print(f"{len(errors)} graph rule finding(s); see Graph rules in docs/BLUEPRINT.md", file=sys.stderr)
+    if new:
+        print(f"{len(new)} new graph rule finding(s); see Graph rules in docs/BLUEPRINT.md", file=sys.stderr)
         return 1
-    print("graph rules: OK")
+    print(f"graph rules: no new findings ({len(errors)} already on the base branch)" if errors else "graph rules: OK")
     return 0
 
 
