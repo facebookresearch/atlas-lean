@@ -59,7 +59,7 @@ example : consolidationMode 100 4 2 3 0 = 0 :=
 example : consolidationMode 100 4 2 3 4 = 0 :=
   consolidationMode_zero_right (by norm_num)
 
-/-- The initial profile and its mid-depth peak. -/
+/-- The initial profile and its mid-depth amplitude value. -/
 example : consolidationMode 100 4 2 0 1
     = 100 * Real.sin (Real.pi * 1 / 4) :=
   consolidationMode_time_zero (by norm_num)
@@ -117,7 +117,7 @@ example : ¬ consolidationMode 100 4 2 3 2
 
 /-- Drainage-path misreading control: with `H` halved, the mode
 vanishes at `z = 2` (its own right face), unlike the true
-mid-depth peak above. -/
+mid-depth amplitude value above. -/
 example : consolidationMode 100 2 2 0 2 = 0 :=
   consolidationMode_zero_right (by norm_num)
 

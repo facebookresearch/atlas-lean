@@ -43,7 +43,8 @@ included.
   `consolidationMode_zero_right`: the drained face values.
 - `EarthScience.consolidationMode_time_zero` and
   `consolidationMode_midpoint_time_zero`: the sine initial
-  profile, peaking at mid-depth.
+  profile, attaining the full initial amplitude
+  value at mid-depth.
 
 ## iii. Table of contents
 
@@ -199,7 +200,8 @@ theorem consolidationMode_time_zero {u0 H cv z : ℝ} (hH : H ≠ 0) :
   simp
 
 /-- At `t = 0` the mid-depth value is the full initial amplitude:
-`H` is the full layer thickness, so the mode peaks at `H / 2`. -/
+`H` is the full layer thickness, so the sine factor is `1`
+at `H / 2`. -/
 theorem consolidationMode_midpoint_time_zero {u0 H cv : ℝ} (hH : H ≠ 0) :
     consolidationMode u0 H cv 0 (H / 2) = u0 := by
   rw [consolidationMode_time_zero hH]
