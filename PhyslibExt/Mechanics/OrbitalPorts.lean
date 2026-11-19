@@ -98,8 +98,10 @@ coast is taken in the form of the comparison arcs of Physlib's
 `PhyslibAlpha.ClassicalMechanics.OrbitalMechanics.Hohmann.Optimality.KeplerConservation`: real
 coordinate functions `x, y, vx, vy` of time on a positive finite interval `[t₀, t₁]`, with no
 collision (`√(x² + y²) > 0`), position derivatives the velocity components and velocity
-derivatives the Newtonian central acceleration `-μ (x, y) / √(x² + y²)³` (`IsPlanarKeplerArc`).
-These are premises: this module constructs no trajectory and proves no planar conservation law.
+derivatives the Newtonian central acceleration `-μ (x, y) / √(x² + y²)³`, for a gravitational
+parameter `μ > 0` (`IsPlanarKeplerArc`). The Physlib arcs take any real `μ`; here `μ = 0`, which
+admits a body at rest, and a repulsive `μ < 0` are excluded. These are premises: this module
+constructs no trajectory and proves no planar conservation law.
 That Physlib module states the conservation of its planar energy `vx² + vy² - 2 μ / √(x² + y²)`,
 twice the specific energy, and of its signed angular momentum `x vy - y vx` as equalities of their
 values at `t₀` and `t₁`; here those two endpoint equalities are hypotheses, in that
@@ -139,7 +141,7 @@ Each result assumes only the hypotheses its proof uses.
   `OrbitalPorts.eccentricityVector_of_cross_eq_zero`: where the pericenter and node directions
   are undefined, and the radial boundary `|e| = 1`.
 - `OrbitalPorts.eccentricityVector_mulVec`: frame covariance under proper rotations.
-- `OrbitalPorts.IsPlanarKeplerArc`: the planar Kepler arc premises.
+- `OrbitalPorts.IsPlanarKeplerArc`: the planar Kepler arc premises, with `μ > 0`.
 - `OrbitalPorts.two_mul_specificEnergy_spatialState`,
   `OrbitalPorts.specificEnergy_spatialState_eq_of_energy_eq`: the planar energy is twice the
   spatial specific energy, and equal planar energies give equal specific energies.
@@ -983,10 +985,12 @@ open Units.EngineeringFrames (bodyToInertialVec_cross)
 def planarPath (x y : ℝ → ℝ) (t : ℝ) : ℂ :=
   ⟨x t, y t⟩
 
-/-- Premises of a planar Kepler coast with gravitational parameter `μ` over `[t₀, t₁]`: the fields
-of the upstream Physlib `KeplerArc` for the coordinate functions `x, y, vx, vy`. No conservation
-law is a premise. -/
+/-- Premises of a planar Kepler coast with gravitational parameter `μ` over `[t₀, t₁]`: `μ > 0`
+and the fields of the upstream Physlib `KeplerArc` for the coordinate functions `x, y, vx, vy`.
+No conservation law is a premise. -/
 structure IsPlanarKeplerArc (μ t₀ t₁ : ℝ) (x y vx vy : ℝ → ℝ) : Prop where
+  /-- The gravitational parameter is positive: the central force attracts. -/
+  mu_pos : 0 < μ
   /-- The coast takes positive time. -/
   time_order : t₀ < t₁
   /-- The coast stays away from the attracting center. -/

@@ -67,7 +67,9 @@ A planar Kepler arc in a tilted plane, with the quarter turn about the first axi
   planar value `1` along the tilted normal `-e₂`, and its specific energy is `-1/2`, half the
   planar energy `-1`;
 * at `t = 0` the component along the oriented normal is `1`, and the reflection `reflectX`
-  (determinant `-1`) reverses it to `-1`.
+  (determinant `-1`) reverses it to `-1`;
+* with `μ = 0` the body at rest at `(1, 0)` meets every clause but the positivity of `μ`, which
+  rejects it, as it rejects every `μ ≤ 0`.
 -/
 
 @[expose] public section
@@ -437,7 +439,8 @@ open _root_.Units.EngineeringFrames (reflectX reflectX_mem_orthogonalGroup)
 -- with `μ = 1` on `[0, 1]`.
 example :
     IsPlanarKeplerArc 1 0 1 Real.cos Real.sin (fun t => -Real.sin t) Real.cos := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · exact zero_lt_one
   · exact zero_lt_one
   · intro t _
     have h := Real.cos_sq_add_sin_sq t
@@ -530,5 +533,24 @@ example :
       simp [reflectX, Matrix.det_diagonal, Fin.prod_univ_three]
     rw [cross_dotProduct_normal_of_det_eq_neg_one reflectX_mem_orthogonalGroup hdet]
     norm_num
+
+-- Zero gravitational parameter is rejected: with `μ = 0` the body at rest at `(1, 0)` stays away
+-- from the center and meets the position and velocity clauses on `[0, 1]` (the central
+-- acceleration vanishes), and only the positivity of `μ` rejects it.
+example :
+    (∀ t ∈ Set.Icc (0 : ℝ) 1, 0 < Real.sqrt ((1 : ℝ) ^ 2 + 0 ^ 2) ∧
+        HasDerivAt (fun _ : ℝ => (1 : ℝ)) 0 t ∧ HasDerivAt (fun _ : ℝ => (0 : ℝ)) 0 t ∧
+        HasDerivAt (fun _ : ℝ => (0 : ℝ)) (-0 * 1 / Real.sqrt ((1 : ℝ) ^ 2 + 0 ^ 2) ^ 3) t ∧
+        HasDerivAt (fun _ : ℝ => (0 : ℝ)) (-0 * 0 / Real.sqrt ((1 : ℝ) ^ 2 + 0 ^ 2) ^ 3) t) ∧
+      ¬ IsPlanarKeplerArc 0 0 1 (fun _ => 1) (fun _ => 0) (fun _ => 0) (fun _ => 0) := by
+  refine ⟨fun t _ => ⟨by norm_num, hasDerivAt_const t 1, hasDerivAt_const t 0, ?_, ?_⟩,
+    fun h => lt_irrefl 0 h.mu_pos⟩
+  · simpa using hasDerivAt_const t (0 : ℝ)
+  · simpa using hasDerivAt_const t (0 : ℝ)
+
+-- A vanishing or repulsive parameter is rejected: no planar Kepler arc has `μ ≤ 0`.
+example {μ t₀ t₁ : ℝ} {x y vx vy : ℝ → ℝ} (hμ : μ ≤ 0) :
+    ¬ IsPlanarKeplerArc μ t₀ t₁ x y vx vy :=
+  fun h => absurd h.mu_pos (not_lt.mpr hμ)
 
 end PhyslibExtTest.Mechanics.OrbitalPorts
