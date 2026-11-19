@@ -23,7 +23,10 @@ Checked consumers:
   corresponding constancy of Physlib's Bernoulli function for the
   thermodynamic fixture with enthalpy `p / ρ + e₀`;
 - the head differing across streamlines, and the polytropic enthalpy
-  not being of the form `p / ρ + e₀`.
+  not being of the form `p / ρ + e₀`;
+- plane Couette flow: a nonzero shear stress and wall speed, and a
+  Bernoulli head that is constant along each streamline but differs
+  between streamlines.
 -/
 
 @[expose] public section
@@ -122,5 +125,28 @@ example {ρ Ω g : ℝ} (hρ : 0 < ρ) (hΩ : Ω ≠ 0) (hg : g ≠ 0) :
       ¬ ∃ e₀ : ℝ, ∀ t x,
         (polytropicFlow ρ Ω g).enthalpy t x = rotPressure ρ Ω g x / ρ + e₀ :=
   ⟨rot_head_differs_across_streamlines hρ hΩ, polytropic_enthalpy_not_pOverRho hρ hg⟩
+
+/-- Nonzero shear and wall speed: with `μ = 3`, `Uwall = 2` and `H = 1` the shear stress is `6`
+everywhere, and the upper wall point `(0, 1, 0)` moves with velocity `(2, 0, 0)`. -/
+example (ρ lam p₀ : ℝ) (t : Time) (x : Space) :
+    (couetteFlow ρ 3 lam p₀ 2 1).stress t x 0 1 = 6 ∧
+      couetteVelocity 2 1 ⟨![0, 1, 0]⟩ = WithLp.toLp 2 ![2, 0, 0] := by
+  refine ⟨?_, ?_⟩
+  · rw [couetteFlow_stress]
+    norm_num
+  · ext i
+    fin_cases i <;> simp [couetteVelocity]
+
+/-- The Bernoulli head varies across streamlines. For `Uwall = H = 2`, so `u = (y, 0, 0)` on the
+channel `0 ≤ y ≤ 2`, the head `p₀ / ρ + ‖u‖² / 2` is `p₀ / ρ + 1/2` all along the streamline
+`y = 1, z = 0` and `p₀ / ρ + 2` all along the streamline `y = 2, z = 0` (the moving wall). The
+head is constant along each streamline but not across them, so no global Bernoulli constant
+follows. -/
+example (ρ p₀ s : ℝ) :
+    p₀ / ρ + ‖couetteVelocity 2 2 ⟨![s, 1, 0]⟩‖ ^ 2 / 2 = p₀ / ρ + 1 / 2 ∧
+      p₀ / ρ + ‖couetteVelocity 2 2 ⟨![s, 2, 0]⟩‖ ^ 2 / 2 = p₀ / ρ + 2 := by
+  constructor
+  · norm_num [couetteVelocity, EuclideanSpace.norm_sq_eq, Fin.sum_univ_three]
+  · norm_num [couetteVelocity, EuclideanSpace.norm_sq_eq, Fin.sum_univ_three]
 
 end PhyslibExtTest.FluidDynamics.LaminarFlowPorts
