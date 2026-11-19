@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Reliability.PhysicalFailureEvents
+import Mathlib.Analysis.Real.Pi.Bounds
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
@@ -30,6 +31,12 @@ component is down; two components sharing one damage path have equal
 series and parallel lifetimes. A Paris crack with `m = 4`, `K = 1`,
 `a0 = 1` and `a_c = 2` has the Paris life `1/2` and, at `10` cycles per
 unit time, the lifetime `1/20`, before its blow-up time `1/10`.
+A solid shaft under `M = 10⁶` N·mm and `T = 2 × 10⁶` N·mm has the demand
+`512 / π` MPa at `d = 50` mm and `1000 / π` MPa at `d = 40` mm for every
+functional calibrated on bending-torsion states with `c = 3`, the von
+Mises functional among them; the minimum diameter lies between, and a
+zero diameter or a stress concentration at the minimum diameter is not
+covered.
 
 ## i. Overview
 
@@ -40,7 +47,9 @@ These are elaboration and non-vacuity checks, not new results.
 No new results are introduced here. Section C defines the von Mises
 functional as an example of a supplied yield functional and checks that
 it is calibrated by the tensile test. Section D proves the closed-form
-lifetime of linear damage that its later examples use.
+lifetime of linear damage that its later examples use. Section F checks
+that the von Mises functional is calibrated on bending-torsion states
+with shear factor `3`.
 
 ## iii. Table of contents
 
@@ -49,6 +58,7 @@ lifetime of linear damage that its later examples use.
 - C. Demand margins, the axial bar and the hydrostatic boundary
 - D. Damage hitting times and monotone systems
 - E. The Paris lifetime at a constant load frequency
+- F. A solid circular shaft under bending and torsion
 
 ## iv. References
 
@@ -353,5 +363,111 @@ example (ω : Ω) :
     exact hlife.trans (by congr 1; norm_num)
   · rw [hNf, h1]
     norm_num
+
+/-! ## F. A solid circular shaft under bending and torsion -/
+
+/-- The von Mises functional is calibrated on bending-torsion states with shear factor `3`, so
+calibrated functionals exist. -/
+lemma vonMisesStress_bendingTorsionCalibrated :
+    BendingTorsionCalibrated PhyslibExtTest.Reliability.PhysicalFailureEvents.vonMisesStress 3 := by
+  refine ⟨by norm_num, fun σ τ => ?_⟩
+  simp only [PhyslibExtTest.Reliability.PhysicalFailureEvents.vonMisesStress, bendingTorsionState]
+  simp
+
+-- The bending-torsion calibration of the von Mises functional contains its tensile calibration.
+example : UniaxialCalibrated vonMisesStress :=
+  vonMisesStress_bendingTorsionCalibrated.uniaxialCalibrated
+
+-- Nonzero combined loading in newtons and millimetres: `M = 10⁶` N·mm and `T = 2 × 10⁶` N·mm
+-- with `c = 3` against the allowable `250` MPa. Then `4 M ^ 2 + 3 T ^ 2 = (4 × 10⁶) ^ 2`; the
+-- demand is `512 / π ≈ 163` MPa at `d = 50` mm (no failure) and `1000 / π ≈ 318` MPa at
+-- `d = 40` mm (failure); the minimum diameter is `(256000 / π) ^ (1 / 3) ≈ 43.4` mm.
+example {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ}
+    (hΦ : BendingTorsionCalibrated Φ 3) :
+    Φ (bendingTorsionState (shaftBendingStress 1000000 50) (shaftShearStress 2000000 50)) =
+        512 / Real.pi ∧
+      ¬ Reliability.demandFailure 250
+        (Φ (bendingTorsionState (shaftBendingStress 1000000 50) (shaftShearStress 2000000 50))) ∧
+      Φ (bendingTorsionState (shaftBendingStress 1000000 40) (shaftShearStress 2000000 40)) =
+        1000 / Real.pi ∧
+      Reliability.demandFailure 250
+        (Φ (bendingTorsionState (shaftBendingStress 1000000 40) (shaftShearStress 2000000 40))) ∧
+      shaftMinDiameter 3 1000000 2000000 250 ^ 3 = 256000 / Real.pi := by
+  have h50 := shaftDemand_eq hΦ (by norm_num : (0 : ℝ) < 50) 1000000 2000000
+  have h40 := shaftDemand_eq hΦ (by norm_num : (0 : ℝ) < 40) 1000000 2000000
+  have hs : Real.sqrt (4 * 1000000 ^ 2 + 3 * 2000000 ^ 2) = 4000000 := by
+    rw [show (4 * 1000000 ^ 2 + 3 * 2000000 ^ 2 : ℝ) = 4000000 ^ 2 by norm_num]
+    exact Real.sqrt_sq (by norm_num)
+  rw [hs] at h50 h40
+  have hπ : 0 < Real.pi := Real.pi_pos
+  have h3 : 3 < Real.pi := Real.pi_gt_three
+  have h4 : Real.pi < 4 := Real.pi_lt_four
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · rw [h50]
+    field_simp
+    ring
+  · rw [h50]
+    unfold Reliability.demandFailure
+    rw [not_le, div_lt_iff₀ (by positivity)]
+    nlinarith
+  · rw [h40]
+    field_simp
+    ring
+  · rw [h40]
+    unfold Reliability.demandFailure
+    rw [le_div_iff₀ (by positivity)]
+    nlinarith
+  · unfold shaftMinDiameter
+    rw [hs, ← Real.rpow_natCast, ← Real.rpow_mul (by positivity)]
+    norm_num
+    field_simp
+    ring
+
+-- With these loads the minimum diameter is positive and below `50` mm for every functional
+-- calibrated with `c = 3`.
+example {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} (hΦ : BendingTorsionCalibrated Φ 3) :
+    0 < shaftMinDiameter 3 1000000 2000000 250 ∧ shaftMinDiameter 3 1000000 2000000 250 < 50 := by
+  refine ⟨shaftMinDiameter_pos (by norm_num) (by norm_num) (Or.inl (by norm_num)), ?_⟩
+  refine (not_demandFailure_iff hΦ (by norm_num) (by norm_num) 1000000 2000000).1 ?_
+  rw [shaftDemand_eq hΦ (by norm_num),
+    show (4 * 1000000 ^ 2 + 3 * 2000000 ^ 2 : ℝ) = 4000000 ^ 2 by norm_num,
+    Real.sqrt_sq (by norm_num)]
+  unfold demandFailure
+  rw [not_le, div_lt_iff₀ (by positivity)]
+  nlinarith [Real.pi_gt_three]
+
+-- The zero diameter misreports with the von Mises functional too: zero demand, no failure.
+example :
+    ¬ demandFailure 250 (vonMisesStress (bendingTorsionState (shaftBendingStress 1000000 0)
+      (shaftShearStress 2000000 0))) :=
+  (zero_diameter_misreports vonMisesStress_bendingTorsionCalibrated (by norm_num) 1000000
+    2000000).2
+
+-- At the minimum diameter for these loads a bending stress-concentration factor `2` raises the
+-- von Mises demand above the allowable `250`.
+example :
+    250 < vonMisesStress (bendingTorsionState
+      (2 * shaftBendingStress 1000000 (shaftMinDiameter 3 1000000 2000000 250))
+      (shaftShearStress 2000000 (shaftMinDiameter 3 1000000 2000000 250))) :=
+  (stressConcentration_exceeds_at_minDiameter vonMisesStress_bendingTorsionCalibrated
+    (by norm_num) (by norm_num) (by norm_num) 2000000).2
+
+-- A shear factor `c ≤ 0` is not a calibration: such a factor would give a pure torque zero
+-- demand through the truncation of `Real.sqrt`.
+example (Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ) {c : ℝ} (hc : c ≤ 0) :
+    ¬ BendingTorsionCalibrated Φ c := fun h => absurd h.shearFactor_pos (not_lt.mpr hc)
+
+-- With a calibrated functional a pure nonzero torque has positive demand at every positive
+-- diameter, so a diameter is accepted only at or above the positive minimum diameter.
+example {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} {c : ℝ} (hΦ : BendingTorsionCalibrated Φ c) {d T : ℝ}
+    (hd : 0 < d) (hT : T ≠ 0) :
+    0 < Φ (bendingTorsionState (shaftBendingStress 0 d) (shaftShearStress T d)) := by
+  rw [shaftDemand_eq hΦ hd]
+  have hc := hΦ.shearFactor_pos
+  have hT2 : 0 < T ^ 2 := by positivity
+  have hpos : 0 < 4 * (0 : ℝ) ^ 2 + c * T ^ 2 := by nlinarith
+  have := Real.sqrt_pos.mpr hpos
+  have := Real.pi_pos
+  positivity
 
 end PhyslibExtTest.Reliability.PhysicalFailureEvents
