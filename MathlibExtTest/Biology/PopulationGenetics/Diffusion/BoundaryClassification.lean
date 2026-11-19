@@ -38,7 +38,15 @@ example {θ₁ θ₂ : ℝ} (hθ₁ : 0 < θ₁) (hθ₂ : 0 < θ₂) :
   integral_mutationSpeedDensity hθ₁ hθ₂
 
 example (b a : ℝ → ℝ) : speedMeasure b a =
-    volume.withDensity (fun x => ENNReal.ofReal (speedDensity b a x)) := rfl
+    (volume.restrict (Ioo 0 1)).withDensity
+      (fun x => ENNReal.ofReal (speedDensity b a x)) := rfl
+
+/-- Total mass for `b = 0`, `a = 1` (speed density `2` on `(0, 1)`): the
+speed measure has mass `2`, not infinite mass from outside the state space. -/
+example : speedMeasure (fun _ => (0 : ℝ)) (fun _ => (1 : ℝ)) Set.univ = 2 := by
+  have hψ : ∀ x, scaleDensity (fun _ => (0 : ℝ)) (fun _ => (1 : ℝ)) x = 1 := fun x => by
+    simp [scaleDensity]
+  simp [speedMeasure, speedDensity, hψ]
 
 -- Neutral case through the mutation formulas: `α = θ₁ = θ₂ = 0` gives `m = 2/(x(1-x))`.
 example {x : ℝ} (hx : x ∈ Set.Ioo (0 : ℝ) 1) :

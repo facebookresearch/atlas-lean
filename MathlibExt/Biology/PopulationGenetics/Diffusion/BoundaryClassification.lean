@@ -56,9 +56,11 @@ variable {b a : ℝ → ℝ}
 noncomputable def speedDensity (b a : ℝ → ℝ) (x : ℝ) : ℝ :=
   2 / (a x * scaleDensity b a x)
 
-/-- Speed measure: Lebesgue measure with density `speedDensity b a`. -/
+/-- Speed measure on the state space `(0, 1)`: Lebesgue measure restricted
+to `(0, 1)` with density `speedDensity b a`. Coefficient values outside
+`(0, 1)` do not affect it. -/
 noncomputable def speedMeasure (b a : ℝ → ℝ) : Measure ℝ :=
-  volume.withDensity (fun x => ENNReal.ofReal (speedDensity b a x))
+  (volume.restrict (Ioo 0 1)).withDensity (fun x => ENNReal.ofReal (speedDensity b a x))
 
 /-- For a regular diffusion the speed density is positive on `(0, 1)`. -/
 theorem speedDensity_pos_of_isRegular (h : IsRegularDiffusion b a) {x : ℝ}
