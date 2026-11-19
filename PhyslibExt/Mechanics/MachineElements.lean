@@ -8,15 +8,13 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Fin
-public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Data.Fin.VecNotation
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.FinCases
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Positivity
+public import Mathlib.Data.PNat.Basic
+import Mathlib.Algebra.Order.BigOperators.Ring.Finset
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 
 /-!
 # Signed ideal gear-train ratio and port power
@@ -26,7 +24,8 @@ public import Mathlib.Tactic.Positivity
 A finite parallel-axis gear train: shafts `0, …, n`, all oriented along one common axis
 direction, and meshes `k = 0, …, n - 1`, mesh `k` joining the upstream shaft `k` to the
 downstream shaft `k + 1`. Mesh `k` has a driver gear with `driverTeeth` teeth on the upstream
-shaft and a driven gear with `drivenTeeth` teeth on the downstream shaft. Angular velocities
+shaft and a driven gear with `drivenTeeth` teeth on the downstream shaft; both counts are
+positive integers (`ℕ+`), so every mesh ratio is that of an actual gear pair. Angular velocities
 `ω j` are signed about the common axis direction.
 
 Model inputs:
@@ -46,8 +45,8 @@ Model inputs:
 
 Results: the speed of the last shaft is the product of the signed mesh ratios times the speed
 of the first shaft; the product equals `(-1) ^ (number of external meshes)` times the ratio of
-the tooth-count products, so with positive tooth counts its sign is set by the parity of the
-external meshes; each mesh carries the torque relation `a k + ratio * b k = 0`; the total power
+the tooth-count products, so it is nonzero and its sign is set by the parity of the external
+meshes; each mesh carries the torque relation `a k + ratio * b k = 0`; the total power
 into the train through its shaft ports vanishes; and for a train loaded only at its first and
 last shafts the port torques satisfy `τ_in + R * τ_out = 0`, so `τ_out = -τ_in / R`.
 
@@ -102,22 +101,18 @@ def MeshKind.sense : MeshKind → ℝ
   | .internal => 1
 
 /-- One mesh: `driverTeeth` teeth on the driver gear (upstream shaft), `drivenTeeth` teeth on
-the driven gear (downstream shaft), and the mesh kind. -/
+the driven gear (downstream shaft), both positive, and the mesh kind. -/
 structure Mesh where
-  driverTeeth : ℕ
-  drivenTeeth : ℕ
+  driverTeeth : ℕ+
+  drivenTeeth : ℕ+
   kind : MeshKind
 
 /-- Signed angular-speed ratio of a mesh, downstream over upstream:
 `sense * driverTeeth / drivenTeeth`. -/
 noncomputable def Mesh.ratio (g : Mesh) : ℝ :=
-  g.kind.sense * ((g.driverTeeth : ℝ) / g.drivenTeeth)
+  g.kind.sense * (((g.driverTeeth : ℕ) : ℝ) / (g.drivenTeeth : ℕ))
 
 variable {n : ℕ}
-
-/-- Every tooth count of the train is positive. -/
-def PositiveTeeth (m : Fin n → Mesh) : Prop :=
-  ∀ k, 0 < (m k).driverTeeth ∧ 0 < (m k).drivenTeeth
 
 /-- Number of external meshes of the train. -/
 def externalCount (m : Fin n → Mesh) : ℕ :=
@@ -234,7 +229,7 @@ lemma exists_isNoSlip (m : Fin n → Mesh) (ω₀ : ℝ) :
 tooth counts over the product of the driven tooth counts. -/
 lemma trainRatio_eq (m : Fin n → Mesh) :
     trainRatio m = (-1) ^ externalCount m *
-      ((∏ k, ((m k).driverTeeth : ℝ)) / ∏ k, ((m k).drivenTeeth : ℝ)) := by
+      ((∏ k, (((m k).driverTeeth : ℕ) : ℝ)) / ∏ k, (((m k).drivenTeeth : ℕ) : ℝ)) := by
   unfold trainRatio externalCount Mesh.ratio
   rw [Finset.prod_mul_distrib]
   rw [Finset.prod_div_distrib]
@@ -256,8 +251,8 @@ lemma trainRatio_eq (m : Fin n → Mesh) :
   rw [h2]
   rw [Finset.prod_const]
 
-/-- With positive tooth counts the train ratio is nonzero. -/
-lemma trainRatio_ne_zero {m : Fin n → Mesh} (h : PositiveTeeth m) : trainRatio m ≠ 0 := by
+/-- The train ratio is nonzero. -/
+lemma trainRatio_ne_zero {m : Fin n → Mesh} : trainRatio m ≠ 0 := by
   unfold trainRatio
   rw [Finset.prod_ne_zero_iff]
   intro k _
@@ -267,22 +262,23 @@ lemma trainRatio_ne_zero {m : Fin n → Mesh} (h : PositiveTeeth m) : trainRatio
     | external => simp [MeshKind.sense]
     | internal => simp [MeshKind.sense]
   · apply div_ne_zero
-    · exact_mod_cast ne_of_gt (h k).1
-    · exact_mod_cast ne_of_gt (h k).2
+    · exact_mod_cast (m k).driverTeeth.ne_zero
+    · exact_mod_cast (m k).drivenTeeth.ne_zero
 
-/-- With positive tooth counts the last shaft turns in the sense of the first exactly when the
+/-- The last shaft turns in the sense of the first exactly when the
 number of external meshes is even. -/
-lemma trainRatio_pos_iff {m : Fin n → Mesh} (h : PositiveTeeth m) :
+lemma trainRatio_pos_iff {m : Fin n → Mesh} :
     0 < trainRatio m ↔ Even (externalCount m) := by
   rw [trainRatio_eq]
-  have hPos : 0 < (∏ k, ((m k).driverTeeth : ℝ)) / ∏ k, ((m k).drivenTeeth : ℝ) := by
+  have hPos :
+      0 < (∏ k, (((m k).driverTeeth : ℕ) : ℝ)) / ∏ k, (((m k).drivenTeeth : ℕ) : ℝ) := by
     apply div_pos
     · apply Finset.prod_pos
       intro k _
-      exact_mod_cast (h k).1
+      exact_mod_cast (m k).driverTeeth.pos
     · apply Finset.prod_pos
       intro k _
-      exact_mod_cast (h k).2
+      exact_mod_cast (m k).drivenTeeth.pos
   rw [mul_pos_iff_of_pos_right hPos]
   constructor
   · intro hPow
@@ -428,12 +424,11 @@ lemma torque_relation {m : Fin n → Mesh} {a b : Fin n → ℝ} (hl : IsLossles
     rw [hComm] at hPower
     simpa using hPower
 
-/-- With positive tooth counts the output port torque is `τ_out = -τ_in / R`. -/
-lemma torque_out_eq {m : Fin n → Mesh} {a b : Fin n → ℝ} (ht : PositiveTeeth m)
-    (hl : IsLossless m a b)
+/-- The output port torque is `τ_out = -τ_in / R`. -/
+lemma torque_out_eq {m : Fin n → Mesh} {a b : Fin n → ℝ} (hl : IsLossless m a b)
     (htwo : ∀ j : Fin (n + 1), j ≠ 0 → j ≠ Fin.last n → shaftLoad a b j = 0) :
     shaftLoad a b (Fin.last n) = -shaftLoad a b 0 / trainRatio m := by
-  have hR : trainRatio m ≠ 0 := trainRatio_ne_zero ht
+  have hR : trainRatio m ≠ 0 := trainRatio_ne_zero
   have hRel : shaftLoad a b 0 + trainRatio m * shaftLoad a b (Fin.last n) = 0 :=
     torque_relation hl htwo
   rw [eq_div_iff hR]
@@ -444,11 +439,11 @@ lemma torque_out_eq {m : Fin n → Mesh} {a b : Fin n → ℝ} (ht : PositiveTee
 /-- Swapping the orientation of the last shaft negates its signed speed, so the reoriented
 speed follows the negated ratio; keeping the old sign is rejected on every motion with a
 nonzero first-shaft speed. -/
-lemma orientation_swap {m : Fin n → Mesh} {ω : Fin (n + 1) → ℝ} (ht : PositiveTeeth m)
-    (hω : IsNoSlip m ω) (h0 : ω 0 ≠ 0) :
+lemma orientation_swap {m : Fin n → Mesh} {ω : Fin (n + 1) → ℝ} (hω : IsNoSlip m ω)
+    (h0 : ω 0 ≠ 0) :
     -ω (Fin.last n) = -trainRatio m * ω 0 ∧ -ω (Fin.last n) ≠ trainRatio m * ω 0 := by
   have hLast : ω (Fin.last n) = trainRatio m * ω 0 := IsNoSlip.last_eq hω
-  have hR : trainRatio m ≠ 0 := trainRatio_ne_zero ht
+  have hR : trainRatio m ≠ 0 := trainRatio_ne_zero
   constructor
   · rw [hLast]
     ring

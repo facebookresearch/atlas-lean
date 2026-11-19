@@ -8,6 +8,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Mechanics.MachineElements
+import Mathlib.Data.Fin.VecNotation
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 
 /-!
 # Tests for `PhyslibExt.Mechanics.MachineElements`
@@ -98,6 +102,17 @@ lemma exampleTrain_orientation_rejected :
   have hR := exampleTrain_ratio.1
   rw [hR]
   norm_num
+
+/-! ## B. Positive tooth counts -/
+
+-- Tooth counts are positive by construction, so no positivity hypothesis is needed: the
+-- example train has a nonzero ratio, and its single-mesh restriction to the first external
+-- mesh turns the output against the input.
+example : trainRatio exampleTrain ≠ 0 := trainRatio_ne_zero
+
+example : ¬ 0 < trainRatio (fun _ : Fin 1 => exampleTrain 0) := by
+  rw [trainRatio_pos_iff]
+  decide
 
 end PhyslibExtTest.Mechanics.MachineElements
 
