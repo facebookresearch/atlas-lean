@@ -25,9 +25,11 @@ the cast is the dimension identity, checked when the definition elaborates. A po
 hypothesis on every denominator is part of each definition, as for `logRatio` and
 `expScaledEnergy` in `PhyslibExt.Units.QuantityDimensions`.
 
-* `Re = ρ |U| L / μ`, `Pr = μ c_p / k`, `Nu = h L / k`, `Ra = g β ΔT L ^ 3 / (ν κ)`,
-  `Ma = |U| / a`, `Fr = |U| / √(g L)` and `Bi = h L / k_s`. The velocity `U` is a signed
-  coordinate; the Reynolds, Mach and Froude numbers use its speed `|U|`, as in ISO 80000-11.
+* `Re = ρ |U| L / μ`, `Pr = μ c_p / k`, `Nu = h L / k`, `Ra = |g| β ΔT L ^ 3 / (ν κ)`,
+  `Ma = |U| / a`, `Fr = |U| / √(g L)` and `Bi = h L / k_s`. As in ISO 80000-11, the Reynolds,
+  Mach and Froude numbers use the speed `|U|` of the signed velocity coordinate `U`, and the
+  Rayleigh number uses the magnitude `|g|` of the gravitational acceleration; `ΔT` keeps its
+  sign.
 * `c_p` is a mass-specific heat capacity `L² T⁻² Θ⁻¹`. A molar heat capacity has the dimension
   `gasConstantDim` of the molar gas constant, so it is a different type and cannot be passed to
   `prandtlNumber`; it must first be divided by a molar mass.
@@ -250,15 +252,15 @@ noncomputable def nusseltNumber (h : WithDim heatTransferCoefficientDim ℝ)
   (WithDim.cast (h * L / k) (by unfold dimensionlessDim; decide) :
     WithDim dimensionlessDim ℝ).val
 
-/-- The Rayleigh number `Ra = g β ΔT L ^ 3 / (ν κ)` of a gravitational acceleration `g`, a
-thermal expansion coefficient `β`, a temperature difference `ΔT`, a length `L`, a kinematic
-viscosity `ν > 0` and a thermal diffusivity `κ > 0`. -/
+/-- The Rayleigh number `Ra = |g| β ΔT L ^ 3 / (ν κ)` of the magnitude `|g|` of a gravitational
+acceleration `g`, a thermal expansion coefficient `β`, a temperature difference `ΔT`, a length
+`L`, a kinematic viscosity `ν > 0` and a thermal diffusivity `κ > 0`. -/
 noncomputable def rayleighNumber (g : WithDim accelerationDim ℝ)
     (β : WithDim temperatureDim⁻¹ ℝ) (ΔT : WithDim temperatureDim ℝ)
     (L : WithDim (single ISQDimensionBase.length) ℝ) (ν κ : WithDim diffusivityDim ℝ)
     (_hν : 0 < ν.val) (_hκ : 0 < κ.val) : ℝ :=
-  (WithDim.cast (g * β * ΔT * (L * L * L) / (ν * κ)) (by unfold dimensionlessDim; decide) :
-    WithDim dimensionlessDim ℝ).val
+  (WithDim.cast ((⟨|g.val|⟩ : WithDim accelerationDim ℝ) * β * ΔT * (L * L * L) / (ν * κ))
+    (by unfold dimensionlessDim; decide) : WithDim dimensionlessDim ℝ).val
 
 /-- The Mach number `Ma = |U| / a` of the speed `|U|` of a velocity `U` and a speed of sound
 `a > 0`. -/
@@ -333,13 +335,13 @@ lemma nusseltNumber_val (h : WithDim heatTransferCoefficientDim ℝ)
     nusseltNumber h L k hk = h.val * L.val / k.val := by
   rfl
 
-/-- `rayleighNumber g β ΔT L ν κ` is `g β ΔT L ^ 3 / (ν κ)` on coordinates. -/
+/-- `rayleighNumber g β ΔT L ν κ` is `|g| β ΔT L ^ 3 / (ν κ)` on coordinates. -/
 lemma rayleighNumber_val (g : WithDim accelerationDim ℝ) (β : WithDim temperatureDim⁻¹ ℝ)
     (ΔT : WithDim temperatureDim ℝ) (L : WithDim (single ISQDimensionBase.length) ℝ)
     (ν κ : WithDim diffusivityDim ℝ) (hν : 0 < ν.val) (hκ : 0 < κ.val) :
     rayleighNumber g β ΔT L ν κ hν hκ =
-      g.val * β.val * ΔT.val * L.val ^ 3 / (ν.val * κ.val) := by
-  change g.val * β.val * ΔT.val * (L.val * L.val * L.val) / (ν.val * κ.val) = _
+      |g.val| * β.val * ΔT.val * L.val ^ 3 / (ν.val * κ.val) := by
+  change |g.val| * β.val * ΔT.val * (L.val * L.val * L.val) / (ν.val * κ.val) = _
   ring
 
 /-- `machNumber U a` is `|U| / a` on coordinates. -/
@@ -459,13 +461,16 @@ lemma rayleighNumber_dimScale (u1 u2 : UnitScale ISQDimensionBase)
   have hne : (u1.dimScale u2 diffusivityDim : ℝ) * (u1.dimScale u2 diffusivityDim : ℝ) ≠ 0 :=
     (mul_pos (NNReal.coe_pos.mpr (dimScale_pos u1 u2 diffusivityDim))
       (NNReal.coe_pos.mpr (dimScale_pos u1 u2 diffusivityDim))).ne'
-  rw [rayleighNumber_val, rayleighNumber_val]
-  rw [show (u1.dimScale u2 accelerationDim : ℝ) * g.val *
+  have hg : |(u1.dimScale u2 accelerationDim : ℝ) * g.val| =
+      (u1.dimScale u2 accelerationDim : ℝ) * |g.val| := by
+    rw [abs_mul, abs_of_pos (NNReal.coe_pos.mpr (dimScale_pos u1 u2 accelerationDim))]
+  rw [rayleighNumber_val, rayleighNumber_val, hg]
+  rw [show (u1.dimScale u2 accelerationDim : ℝ) * |g.val| *
       ((u1.dimScale u2 temperatureDim⁻¹ : ℝ) * β.val) *
       ((u1.dimScale u2 temperatureDim : ℝ) * ΔT.val) *
       ((u1.dimScale u2 (single ISQDimensionBase.length) : ℝ) * L.val) ^ 3 =
       ((u1.dimScale u2 diffusivityDim : ℝ) * (u1.dimScale u2 diffusivityDim : ℝ)) *
-        (g.val * β.val * ΔT.val * L.val ^ 3) by rw [← hs]; ring]
+        (|g.val| * β.val * ΔT.val * L.val ^ 3) by rw [← hs]; ring]
   rw [show (u1.dimScale u2 diffusivityDim : ℝ) * ν.val *
       ((u1.dimScale u2 diffusivityDim : ℝ) * κ.val) =
       ((u1.dimScale u2 diffusivityDim : ℝ) * (u1.dimScale u2 diffusivityDim : ℝ)) *

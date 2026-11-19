@@ -17,9 +17,9 @@ public import PhyslibExt.ContinuumMechanics.EngineeringScaling
 * the dimension identities of the Reynolds, Prandtl, Nusselt (and
   Biot), Rayleigh and Froude monomials;
 * the coordinate formulas on concrete values: the Reynolds, Mach and
-  Froude numbers see only the speed `|U|`, `ΔT` keeps its sign, and
-  one `h L` gives different Nusselt and Biot numbers against a fluid
-  and a solid conductivity;
+  Froude numbers see only the speed `|U|` and the Rayleigh number only
+  `|g|`, `ΔT` keeps its sign, and one `h L` gives different Nusselt and
+  Biot numbers against a fluid and a solid conductivity;
 * unit invariance at arbitrary scales and the two-scale fixtures;
 * a molar heat capacity is not mass-specific, and the unconverted
   molar Prandtl expression is not unit invariant.
@@ -117,16 +117,18 @@ example : machNumber ⟨170⟩ ⟨340⟩ (by norm_num) = 1 / 2 := by
   rw [machNumber_val]
   norm_num
 
--- `Re`, `Ma` and `Fr` use the speed `|U|`: reversing the velocity
--- leaves them unchanged. `ΔT` keeps its sign: a negative `ΔT` gives a
--- negative `Ra`.
+-- `Re`, `Ma` and `Fr` use the speed `|U|` and `Ra` uses `|g|`:
+-- reversing the velocity or the vertical axis (`g = -10`) leaves them
+-- unchanged. `ΔT` keeps its sign: a negative `ΔT` gives a negative `Ra`.
 example :
     reynoldsNumber ⟨1000⟩ ⟨-2⟩ ⟨1 / 10⟩ ⟨1 / 1000⟩ (by norm_num) = 200000 ∧
       machNumber ⟨-170⟩ ⟨340⟩ (by norm_num) = 1 / 2 ∧
       froudeNumber ⟨-3⟩ ⟨10⟩ ⟨5 / 2⟩ (by norm_num) = 3 / 5 ∧
+      rayleighNumber ⟨-10⟩ ⟨1 / 300⟩ ⟨30⟩ ⟨1⟩ ⟨1 / 1000⟩ ⟨1 / 1000⟩ (by norm_num)
+        (by norm_num) = 1000000 ∧
       rayleighNumber ⟨10⟩ ⟨1 / 300⟩ ⟨-30⟩ ⟨1⟩ ⟨1 / 1000⟩ ⟨1 / 1000⟩ (by norm_num)
         (by norm_num) = -1000000 := by
-  refine ⟨?_, ?_, ?_, ?_⟩
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · rw [reynoldsNumber_val]
     norm_num
   · rw [machNumber_val]
@@ -134,6 +136,8 @@ example :
   · unfold froudeNumber
     dsimp only
     rw [show (10 : ℝ) * (5 / 2) = 5 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+    norm_num
+  · rw [rayleighNumber_val]
     norm_num
   · rw [rayleighNumber_val]
     norm_num
