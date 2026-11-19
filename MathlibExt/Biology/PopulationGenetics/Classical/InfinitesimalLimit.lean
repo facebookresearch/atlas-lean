@@ -297,4 +297,28 @@ theorem abs_mendelian_segregation_cdf_sub_le {P : Measure Ω} [IsProbabilityMeas
   rw [← hlaw l, Measure.map_apply (hXm l) measurableSet_Icc.compl] at h
   exact ae_iff.2 h
 
+/-- **Segregation Berry–Esseen bound for Mendelian draws, explicit variance form.** As in
+`abs_mendelian_segregation_cdf_sub_le`, but with the variance premise replaced by its
+explicit Mendelian value: if `g₁ l, g₂ l ≤ 2` at every locus and
+`∑ l ∈ range M, a l ^ 2 * (g₁ l / 2 * (1 - g₁ l / 2) + g₂ l / 2 * (1 - g₂ l / 2)) = σ ^ 2`,
+then the same bound `336 B³ / (σ³ √M)` holds. -/
+theorem abs_mendelian_segregation_cdf_sub_le_of_variance_eq {P : Measure Ω}
+    [IsProbabilityMeasure P] {M : ℕ} {B σ : ℝ} {a : ℕ → ℝ} {X : ℕ → Ω → ℝ} {g₁ g₂ : ℕ → ℕ}
+    (hXm : ∀ l, Measurable (X l)) (hind : iIndepFun X P)
+    (hlaw : ∀ l, P.map (X l) = mendelLaw (g₁ l) (g₂ l)) (hg₁ : ∀ l, g₁ l ≤ 2)
+    (hg₂ : ∀ l, g₂ l ≤ 2) (ha : ∀ l < M, |a l| ≤ B / √M) (hσ : 0 < σ)
+    (hvar : ∑ l ∈ range M, a l ^ 2 * ((g₁ l : ℝ) / 2 * (1 - (g₁ l : ℝ) / 2) +
+      (g₂ l : ℝ) / 2 * (1 - (g₂ l : ℝ) / 2)) = σ ^ 2) (x : ℝ) :
+    |P.real {ω | segregationDeviation P M a X ω ≤ x} -
+        (gaussianReal 0 1).real (Set.Iic (x / σ))| ≤ 336 * B ^ 3 / (σ ^ 3 * √M) := by
+  have hX : ∀ l, ∀ᵐ ω ∂P, X l ω ∈ Set.Icc (0 : ℝ) 2 := fun l => by
+    have h := mendelLaw_compl_Icc (g₁ l) (g₂ l)
+    rw [← hlaw l, Measure.map_apply (hXm l) measurableSet_Icc.compl] at h
+    exact ae_iff.2 h
+  have hvar' : Var[segregationDeviation P M a X; P] = σ ^ 2 := by
+    rw [variance_segregationDeviation hXm hind hX]
+    refine (Finset.sum_congr rfl fun l _ => ?_).trans hvar
+    rw [← variance_id_map (hXm l).aemeasurable, hlaw l, variance_mendelLaw (hg₁ l) (hg₂ l)]
+  exact abs_mendelian_segregation_cdf_sub_le hXm hind hlaw ha hσ hvar' x
+
 end MathlibExt.Biology.PopulationGenetics.Classical.InfinitesimalLimit

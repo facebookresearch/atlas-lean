@@ -52,6 +52,18 @@ example {P : Measure Ω} [IsProbabilityMeasure P] {M : ℕ} {B σ : ℝ} {a : �
         (gaussianReal 0 1).real (Set.Iic (x / σ))| ≤ 336 * B ^ 3 / (σ ^ 3 * √M) :=
   abs_mendelian_segregation_cdf_sub_le hXm hind hlaw ha hσ hvar x
 
+/-- The explicit-variance Mendelian form, restated: the variance premise is the explicit
+sum of per-locus Mendelian variances. -/
+example {P : Measure Ω} [IsProbabilityMeasure P] {M : ℕ} {B σ : ℝ} {a : ℕ → ℝ}
+    {X : ℕ → Ω → ℝ} {g₁ g₂ : ℕ → ℕ} (hXm : ∀ l, Measurable (X l)) (hind : iIndepFun X P)
+    (hlaw : ∀ l, P.map (X l) = mendelLaw (g₁ l) (g₂ l)) (hg₁ : ∀ l, g₁ l ≤ 2)
+    (hg₂ : ∀ l, g₂ l ≤ 2) (ha : ∀ l < M, |a l| ≤ B / √M) (hσ : 0 < σ)
+    (hvar : ∑ l ∈ range M, a l ^ 2 * ((g₁ l : ℝ) / 2 * (1 - (g₁ l : ℝ) / 2) +
+      (g₂ l : ℝ) / 2 * (1 - (g₂ l : ℝ) / 2)) = σ ^ 2) (x : ℝ) :
+    |P.real {ω | segregationDeviation P M a X ω ≤ x} -
+        (gaussianReal 0 1).real (Set.Iic (x / σ))| ≤ 336 * B ^ 3 / (σ ^ 3 * √M) :=
+  abs_mendelian_segregation_cdf_sub_le_of_variance_eq hXm hind hlaw hg₁ hg₂ ha hσ hvar x
+
 /-- Two heterozygous parents (`g₁ = g₂ = 1`): mean count `1`, variance `1 / 2`. -/
 example : ∫ x, x ∂(mendelLaw 1 1) = 1 := by
   rw [integral_mendelLaw _ (by norm_num) (by norm_num)]
