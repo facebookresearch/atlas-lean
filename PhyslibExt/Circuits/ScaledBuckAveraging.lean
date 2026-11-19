@@ -30,8 +30,8 @@ system `x' = A x + s • b` with `A = [[0, -1/L], [1/C, -1/(R C)]]`
 and `b = (Vin / L, 0)`.
 
 The switched trajectory uses the pulse-width signal
-`s = pwmSignal ε d` with period `ε > 0` and a duty `d` with values
-in `[0, 1]` that is `Ld`-Lipschitz on `[0, T]`; the averaged
+`s = pwmSignal ε d` with switching-cycle length `ε > 0` and a duty
+`d` with values in `[0, 1]` that is `Ld`-Lipschitz on `[0, T]`; the averaged
 trajectory uses `d` itself. Both are continuous on `[0, T]` and are
 given in integral-equation form there.
 
@@ -57,8 +57,9 @@ alternative diode-conduction topology is treated, and the factor
 
 - `buck_switched_averaged_error_le`: the per-coordinate current and
   voltage bounds `Iref * B` and `Vref * B` on `[0, T]`.
-- `buck_switched_averaged_error_le_of_constDuty`: a fixed duty
-  reduces the ripple term to `|Vin| / (L Iref) * ε`.
+- `buck_switched_averaged_error_le_of_constDuty`: a fixed duty `D`
+  reduces the ripple term to `|Vin| / (L Iref) * (D (1 - D) ε)`, zero
+  at `D = 0` and `D = 1`.
 - `scaledState_switched_averaged_error_le`: the sup-norm bound on
   the scaled state, with the operator norm `‖Ã‖` in the exponent.
 - `stateScaling_mul_scaledBuckMatrix`,
@@ -332,6 +333,38 @@ lemma scaledState_switched_averaged_error_le (L C R Vin Iref Vref : ℝ)
     exact scaledState_integral_eq L C R Vin Iref Vref T hL hC hR hI hV hT d iAvg vAvg
       iAvg₀ vAvg₀ hdi hiAvg_cont hvAvg_cont hiAvg hvAvg t ht
 
+/-- A scaled-state bound with ripple factor `Q ≥ 0` translates into the
+per-coordinate current and voltage bounds, with `‖Ã‖` replaced by `κ`. -/
+private lemma coord_error_le_of_scaledState_error_le (L C R Vin Iref Vref T Q : ℝ)
+    (hL : 0 < L) (hC : 0 < C) (hR : 0 < R) (hI : 0 < Iref) (hV : 0 < Vref) (hT : 0 ≤ T)
+    (hQ : 0 ≤ Q) (i v i' v' i₀ v₀ i₀' v₀' : ℝ)
+    (h : ‖scaledState Iref Vref i v - scaledState Iref Vref i' v'‖ ≤
+      Real.exp (‖scaledBuckOperator L C R Iref Vref‖ * T) *
+        (‖scaledState Iref Vref i₀ v₀ - scaledState Iref Vref i₀' v₀'‖ +
+          ‖scaledBuckInput L Vin Iref‖ * Q)) :
+    |i - i'| ≤
+        Iref * (Real.exp (scaledBuckGrowthRate L C R Iref Vref * T) *
+          (max (|i₀ - i₀'| / Iref) (|v₀ - v₀'| / Vref) + |Vin| / (L * Iref) * Q)) ∧
+      |v - v'| ≤
+        Vref * (Real.exp (scaledBuckGrowthRate L C R Iref Vref * T) *
+          (max (|i₀ - i₀'| / Iref) (|v₀ - v₀'| / Vref) + |Vin| / (L * Iref) * Q)) := by
+  rw [norm_scaledState_sub _ _ _ _ _ _ hI hV, norm_scaledState_sub _ _ _ _ _ _ hI hV,
+    norm_scaledBuckInput L Vin Iref hL hI] at h
+  have hop := norm_scaledBuckOperator_le L C R Iref Vref hL hC hR hI hV
+  have hin : 0 ≤ max (|i₀ - i₀'| / Iref) (|v₀ - v₀'| / Vref) + |Vin| / (L * Iref) * Q :=
+    add_nonneg (le_max_of_le_left (by positivity)) (mul_nonneg (by positivity) hQ)
+  have hexp : Real.exp (‖scaledBuckOperator L C R Iref Vref‖ * T) ≤
+      Real.exp (scaledBuckGrowthRate L C R Iref Vref * T) :=
+    Real.exp_le_exp.2 (mul_le_mul_of_nonneg_right hop hT)
+  have hB := h.trans (mul_le_mul_of_nonneg_right hexp hin)
+  constructor
+  · have h1 := (le_max_left _ _).trans hB
+    rw [div_le_iff₀ hI] at h1
+    linarith
+  · have h1 := (le_max_right _ _).trans hB
+    rw [div_le_iff₀ hV] at h1
+    linarith
+
 /-- **Scaled ideal-buck averaging bound.** Under the hypotheses above,
 the switched and averaged inductor currents differ by at most
 `Iref * B` and the capacitor voltages by at most `Vref * B` at every
@@ -360,30 +393,15 @@ lemma buck_switched_averaged_error_le (L C R Vin Iref Vref : ℝ)
   have h := scaledState_switched_averaged_error_le L C R Vin Iref Vref hL hC hR hI hV T ε Ld d
     hT hε hd hLip i v iAvg vAvg i₀ v₀ iAvg₀ vAvg₀ hi_cont hv_cont hiAvg_cont hvAvg_cont
     hi hv hiAvg hvAvg t ht
-  rw [norm_scaledState_sub _ _ _ _ _ _ hI hV, norm_scaledState_sub _ _ _ _ _ _ hI hV,
-    norm_scaledBuckInput L Vin Iref hL hI] at h
-  have hop := norm_scaledBuckOperator_le L C R Iref Vref hL hC hR hI hV
-  have hin : 0 ≤ max (|i₀ - iAvg₀| / Iref) (|v₀ - vAvg₀| / Vref) +
-      |Vin| / (L * Iref) * ε * (1 + (Ld : ℝ) * T / 2) := by
-    have : 0 ≤ max (|i₀ - iAvg₀| / Iref) (|v₀ - vAvg₀| / Vref) :=
-      le_max_of_le_left (by positivity)
-    positivity
-  have hexp : Real.exp (‖scaledBuckOperator L C R Iref Vref‖ * T) ≤
-      Real.exp (scaledBuckGrowthRate L C R Iref Vref * T) :=
-    Real.exp_le_exp.2 (mul_le_mul_of_nonneg_right hop hT)
-  have hB : max (|i t - iAvg t| / Iref) (|v t - vAvg t| / Vref) ≤
-      scaledBuckErrorBound L C R Vin Iref Vref T ε Ld (i₀ - iAvg₀) (v₀ - vAvg₀) :=
-    h.trans (mul_le_mul_of_nonneg_right hexp hin)
-  constructor
-  · have h1 := (le_max_left _ _).trans hB
-    rw [div_le_iff₀ hI] at h1
-    linarith
-  · have h1 := (le_max_right _ _).trans hB
-    rw [div_le_iff₀ hV] at h1
-    linarith
+  rw [mul_assoc ‖scaledBuckInput L Vin Iref‖] at h
+  unfold scaledBuckErrorBound
+  rw [mul_assoc (|Vin| / (L * Iref))]
+  exact coord_error_le_of_scaledState_error_le L C R Vin Iref Vref T _ hL hC hR hI hV hT
+    (by positivity) _ _ _ _ _ _ _ _ h
 
 /-- Fixed duty `D ∈ [0, 1]`: the ripple term reduces to
-`|Vin| / (L Iref) * ε`. -/
+`|Vin| / (L Iref) * (D (1 - D) ε)`, which vanishes at `D = 0` and
+`D = 1`, where the pulse-width signal equals the duty. -/
 lemma buck_switched_averaged_error_le_of_constDuty (L C R Vin Iref Vref : ℝ)
     (hL : 0 < L) (hC : 0 < C) (hR : 0 < R) (hI : 0 < Iref) (hV : 0 < Vref)
     (T ε D : ℝ) (hT : 0 ≤ T) (hε : 0 < ε) (hD : D ∈ Set.Icc 0 1)
@@ -401,14 +419,28 @@ lemma buck_switched_averaged_error_le_of_constDuty (L C R Vin Iref Vref : ℝ)
     (t : ℝ) (ht : t ∈ Set.Icc 0 T) :
     |i t - iAvg t| ≤
         Iref * (Real.exp (scaledBuckGrowthRate L C R Iref Vref * T) *
-          (max (|i₀ - iAvg₀| / Iref) (|v₀ - vAvg₀| / Vref) + |Vin| / (L * Iref) * ε)) ∧
+          (max (|i₀ - iAvg₀| / Iref) (|v₀ - vAvg₀| / Vref) +
+            |Vin| / (L * Iref) * (D * (1 - D) * ε))) ∧
       |v t - vAvg t| ≤
         Vref * (Real.exp (scaledBuckGrowthRate L C R Iref Vref * T) *
-          (max (|i₀ - iAvg₀| / Iref) (|v₀ - vAvg₀| / Vref) + |Vin| / (L * Iref) * ε)) := by
-  have h := buck_switched_averaged_error_le L C R Vin Iref Vref hL hC hR hI hV T ε 0
-    (fun _ => D) hT hε (fun _ _ => hD) (LipschitzWith.const D).lipschitzOnWith
-    i v iAvg vAvg i₀ v₀ iAvg₀ vAvg₀ hi_cont hv_cont hiAvg_cont hvAvg_cont hi hv hiAvg hvAvg t ht
-  simpa only [scaledBuckErrorBound, NNReal.coe_zero, zero_mul, zero_div, add_zero,
-    mul_one] using h
+          (max (|i₀ - iAvg₀| / Iref) (|v₀ - vAvg₀| / Vref) +
+            |Vin| / (L * Iref) * (D * (1 - D) * ε))) := by
+  refine coord_error_le_of_scaledState_error_le L C R Vin Iref Vref T _ hL hC hR hI hV hT
+    (mul_nonneg (mul_nonneg hD.1 (sub_nonneg.2 hD.2)) hε.le) _ _ _ _ _ _ _ _
+    (MathlibExt.Analysis.ODE.AffinePWMErrorBound.switched_averaged_error_le_of_constDuty_sharp
+      (scaledBuckOperator L C R Iref Vref) (scaledBuckInput L Vin Iref) 0 continuous_const
+      T ε D hT hε hD (fun t => scaledState Iref Vref (i t) (v t))
+      (fun t => scaledState Iref Vref (iAvg t) (vAvg t))
+      (scaledState Iref Vref i₀ v₀) (scaledState Iref Vref iAvg₀ vAvg₀) ?_ ?_ t ht)
+  · intro t ht
+    simp only [Pi.zero_apply, add_zero]
+    exact scaledState_integral_eq L C R Vin Iref Vref T hL hC hR hI hV hT
+      (pwmSignal ε fun _ => D) i v i₀ v₀ (intervalIntegrable_pwmSignal ε _ 0 T)
+      hi_cont hv_cont hi hv t ht
+  · intro t ht
+    simp only [Pi.zero_apply, add_zero]
+    exact scaledState_integral_eq L C R Vin Iref Vref T hL hC hR hI hV hT
+      (fun _ => D) iAvg vAvg iAvg₀ vAvg₀ intervalIntegrable_const
+      hiAvg_cont hvAvg_cont hiAvg hvAvg t ht
 
 end PhyslibExt.Circuits.ScaledBuckAveraging

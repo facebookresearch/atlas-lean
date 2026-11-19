@@ -20,8 +20,8 @@ open scoped NNReal
 
 namespace PhyslibExtTest.Circuits.ScaledBuckAveraging
 
-/-! Fixture: `L = C = R = Iref = Vref = 1`, `Vin = 2`, period `ε = 1/10`,
-horizon `T = 1`, duty `1`. -/
+/-! Fixture: `L = C = R = Iref = Vref = 1`, `Vin = 2`, switching-cycle length
+`ε = 1/10`, horizon `T = 1`, duty `1`. -/
 
 /-- At duty one the state `(i, v) = (2, 2)` is an equilibrium of the
 two-state laws: both right-hand sides vanish. -/
@@ -51,6 +51,29 @@ mismatch, ripple `|Vin| / (L Iref) * ε = 1/5`, growth rate `2`. -/
 example : scaledBuckErrorBound 1 1 1 2 1 1 1 (1 / 10) 0 0 0 = Real.exp 2 / 5 := by
   norm_num [scaledBuckErrorBound, scaledBuckGrowthRate]
   ring
+
+/-- At the endpoint duty `D = 0` the sharp constant-duty bound has no
+switching contribution: any switched and averaged trajectories with
+the same initial state coincide on `[0, 1]`. -/
+example (i v iAvg vAvg : ℝ → ℝ) (i₀ v₀ : ℝ)
+    (hi_cont : ContinuousOn i (Set.Icc 0 1)) (hv_cont : ContinuousOn v (Set.Icc 0 1))
+    (hiAvg_cont : ContinuousOn iAvg (Set.Icc 0 1))
+    (hvAvg_cont : ContinuousOn vAvg (Set.Icc 0 1))
+    (hi : ∀ t ∈ Set.Icc (0 : ℝ) 1,
+      i t = i₀ + ∫ u in (0 : ℝ)..t, (pwmSignal (1 / 10) (fun _ => 0) u * 2 - v u) / 1)
+    (hv : ∀ t ∈ Set.Icc (0 : ℝ) 1, v t = v₀ + ∫ u in (0 : ℝ)..t, (i u - v u / 1) / 1)
+    (hiAvg : ∀ t ∈ Set.Icc (0 : ℝ) 1,
+      iAvg t = i₀ + ∫ u in (0 : ℝ)..t, (0 * 2 - vAvg u) / 1)
+    (hvAvg : ∀ t ∈ Set.Icc (0 : ℝ) 1,
+      vAvg t = v₀ + ∫ u in (0 : ℝ)..t, (iAvg u - vAvg u / 1) / 1)
+    (t : ℝ) (ht : t ∈ Set.Icc (0 : ℝ) 1) :
+    i t = iAvg t ∧ v t = vAvg t := by
+  have h := buck_switched_averaged_error_le_of_constDuty 1 1 1 2 1 1 one_pos one_pos one_pos
+    one_pos one_pos 1 (1 / 10) 0 zero_le_one (by norm_num) ⟨le_rfl, zero_le_one⟩
+    i v iAvg vAvg i₀ v₀ i₀ v₀ hi_cont hv_cont hiAvg_cont hvAvg_cont hi hv hiAvg hvAvg t ht
+  simp only [sub_self, abs_zero, zero_div, max_self, zero_mul, mul_zero, zero_add,
+    abs_nonpos_iff, sub_eq_zero] at h
+  exact h
 
 /-- At unit parameters the sup-norm operator norm of the scaled buck
 matrix equals the growth rate `κ = 2`: `‖Ã‖ ≤ κ` from the module and
