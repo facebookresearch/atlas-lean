@@ -27,7 +27,9 @@ stress yet a crack under it fails. Linear damage `d0 + r t` has the
 lifetime `(D - d0) / r`, `⊤` without growth and `0` when initially
 failed; at its lifetime the damage equals the threshold and the
 component is down; two components sharing one damage path have equal
-series and parallel lifetimes.
+series and parallel lifetimes. A Paris crack with `m = 4`, `K = 1`,
+`a0 = 1` and `a_c = 2` has the Paris life `1/2` and, at `10` cycles per
+unit time, the lifetime `1/20`, before its blow-up time `1/10`.
 
 ## i. Overview
 
@@ -46,6 +48,7 @@ lifetime of linear damage that its later examples use.
 - B. Degenerate stress
 - C. Demand margins, the axial bar and the hydrostatic boundary
 - D. Damage hitting times and monotone systems
+- E. The Paris lifetime at a constant load frequency
 
 ## iv. References
 
@@ -313,5 +316,42 @@ example (d : Ω → ℝ≥0 → ℝ) (D : Ω → ℝ) (ω : Ω) :
     exact Finset.inf_const Finset.univ_nonempty _
   · rw [systemLifetime_parallel]
     exact Finset.sup_const Finset.univ_nonempty _
+
+/-! ## E. The Paris lifetime at a constant load frequency -/
+
+/-- **A nonzero finite life and its time conversion.** Growth exponent `m = 4` (`r = -1`),
+aggregate coefficient `K = 1`, initial crack `a0 = 1` and the critical length `a_c = 2` of the
+LEFM model with `K_IC = √(2 π)`, `Y = 1`, `σ = 1`: the Paris life is `Nf = 1/2` cycle, and at
+`f = 10` cycles per unit time the lifetime is `1/20`, strictly before the blow-up time `1/10`.
+The numbers are unit-free and chosen for exact arithmetic. -/
+example (ω : Ω) :
+    criticalCrackLength (Real.sqrt (2 * Real.pi)) 1 1 = 2 ∧ parisLifePow (-1) 1 1 2 = 1 / 2 ∧
+      damageLifetime (fun _ : Ω => saturatedCrackPath (parisCrackPow (-1) 1 1) 10
+          (parisLifePow (-1) 1 1 (criticalCrackLength (Real.sqrt (2 * Real.pi)) 1 1)))
+        (fun _ => criticalCrackLength (Real.sqrt (2 * Real.pi)) 1 1) ω = ENNReal.ofReal (1 / 20) ∧
+      parisLifePow (-1) 1 1 2 / 10 < (1 : ℝ) ^ (-1 : ℝ) / (-(-1 * 1)) / 10 := by
+  have hpi : 0 < Real.pi := Real.pi_pos
+  have h2pi : (0 : ℝ) ≤ 2 * Real.pi := le_of_lt (mul_pos (by norm_num) hpi)
+  have hac : criticalCrackLength (Real.sqrt (2 * Real.pi)) 1 1 = 2 := by
+    show (Real.sqrt (2 * Real.pi) / (1 * 1)) ^ 2 / Real.pi = 2
+    rw [mul_one, div_one, Real.sq_sqrt h2pi]
+    exact mul_div_cancel_right₀ 2 (ne_of_gt hpi)
+  have hNf : parisLifePow (-1) 1 1 2 = 1 / 2 := by
+    show ((2 : ℝ) ^ (-1 : ℝ) - (1 : ℝ) ^ (-1 : ℝ)) / ((-1 : ℝ) * 1) = 1 / 2
+    rw [Real.rpow_neg_one, Real.rpow_neg_one]
+    norm_num
+  have h1 : (1 : ℝ) ^ (-1 : ℝ) = 1 := by
+    rw [Real.rpow_neg_one]
+    norm_num
+  have hlife := damageLifetime_saturatedCrackPath_pow (r := -1) (K := 1) (a0 := 1)
+    (KIC := Real.sqrt (2 * Real.pi)) (Y := 1) (σ := 1) (f := 10)
+    (by norm_num) (by norm_num) (by rw [hac]; norm_num) (by norm_num) (by norm_num) ω
+  rw [hac] at hlife
+  rw [hNf] at hlife
+  refine ⟨hac, hNf, ?_, ?_⟩
+  · rw [hac, hNf]
+    exact hlife.trans (by congr 1; norm_num)
+  · rw [hNf, h1]
+    norm_num
 
 end PhyslibExtTest.Reliability.PhysicalFailureEvents
