@@ -31,7 +31,8 @@ and no tension-crack or tension-cutoff model is included. The
 admission premises `_horder`, `_hσ3`, and `_hc` are domain
 markers the proof does not use: the equivalence is algebraic
 for all real `σ1`, `σ3`, and `c` on the `φ` range, and
-`_horder` in fact follows from the other premises.
+`_horder` in fact follows from `_hσ3`, `_hc`, the angle
+bounds, and either side of the equivalence.
 
 ## ii. Key results
 
@@ -66,6 +67,23 @@ namespace EarthScience
 /-- Rankine active earth-pressure coefficient, sine form. -/
 noncomputable def rankineActiveCoefficient (φ : ℝ) : ℝ :=
   (1 - Real.sin φ) / (1 + Real.sin φ)
+
+/-- Range of the active coefficient on the physical
+friction-angle domain: `0 < K_a ≤ 1` (the positivity is
+what the wall pressure and resultant consumers need). -/
+lemma rankineActiveCoefficient_pos_le_one {φ : ℝ} (h0 : 0 ≤ φ)
+    (h1 : φ < Real.pi / 2) :
+    0 < rankineActiveCoefficient φ ∧ rankineActiveCoefficient φ ≤ 1 := by
+  have hcos : 0 < Real.cos φ :=
+    Real.cos_pos_of_mem_Ioo ⟨by linarith [Real.pi_pos], h1⟩
+  have hsin0 : 0 ≤ Real.sin φ :=
+    Real.sin_nonneg_of_nonneg_of_le_pi h0 (by linarith [Real.pi_pos])
+  have hs1 : Real.sin φ < 1 := by
+    nlinarith [Real.sin_sq_add_cos_sq φ, Real.sin_le_one φ,
+      Real.neg_one_le_sin φ, mul_pos hcos hcos]
+  unfold rankineActiveCoefficient
+  exact ⟨div_pos (by linarith) (by linarith),
+    (div_le_one (by linarith)).2 (by linarith)⟩
 
 /-- Square-root identity in the `cos φ / (1 + sin φ)` form. -/
 lemma sqrt_rankineActiveCoefficient {φ : ℝ} (h0 : 0 ≤ φ)

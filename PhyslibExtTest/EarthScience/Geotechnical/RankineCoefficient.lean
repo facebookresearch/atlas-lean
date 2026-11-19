@@ -138,17 +138,8 @@ example : ((3 : ℝ) - 1) / 2
 
 /-- Range on the domain: `0 < K_a ≤ 1`. -/
 example {φ : ℝ} (h0 : 0 ≤ φ) (h1 : φ < Real.pi / 2) :
-    0 < rankineActiveCoefficient φ ∧ rankineActiveCoefficient φ ≤ 1 := by
-  have hcos : 0 < Real.cos φ :=
-    Real.cos_pos_of_mem_Ioo ⟨by linarith [Real.pi_pos], h1⟩
-  have hsin0 : 0 ≤ Real.sin φ :=
-    Real.sin_nonneg_of_nonneg_of_le_pi h0 (by linarith [Real.pi_pos])
-  have hs1 : Real.sin φ < 1 := by
-    nlinarith [Real.sin_sq_add_cos_sq φ, Real.sin_le_one φ,
-      Real.neg_one_le_sin φ, mul_pos hcos hcos]
-  unfold rankineActiveCoefficient
-  exact ⟨div_pos (by linarith) (by linarith),
-    (div_le_one (by linarith)).2 (by linarith)⟩
+    0 < rankineActiveCoefficient φ ∧ rankineActiveCoefficient φ ≤ 1 :=
+  rankineActiveCoefficient_pos_le_one h0 h1
 
 /-- Wall consumer: with `c = 0` and `σ1 = γ z`, the limit
 states `σ3 = rankineActivePressure K_a γ z`. -/
@@ -158,26 +149,10 @@ example {γ z φ : ℝ} (hγz : 0 ≤ γ * z) (h0 : 0 ≤ φ)
       = ((γ * z
           + rankineActivePressure (rankineActiveCoefficient φ) γ z) / 2)
           * Real.sin φ + 0 * Real.cos φ := by
-  have hK1 : rankineActiveCoefficient φ ≤ 1 := by
-    have hcos : 0 < Real.cos φ :=
-      Real.cos_pos_of_mem_Ioo ⟨by linarith [Real.pi_pos], h1⟩
-    have hsin0 : 0 ≤ Real.sin φ :=
-      Real.sin_nonneg_of_nonneg_of_le_pi h0 (by linarith [Real.pi_pos])
-    have hs1 : Real.sin φ < 1 := by
-      nlinarith [Real.sin_sq_add_cos_sq φ, Real.sin_le_one φ,
-        Real.neg_one_le_sin φ, mul_pos hcos hcos]
-    unfold rankineActiveCoefficient
-    exact (div_le_one (by linarith)).2 (by linarith)
-  have hK0 : 0 ≤ rankineActiveCoefficient φ := by
-    have hcos : 0 < Real.cos φ :=
-      Real.cos_pos_of_mem_Ioo ⟨by linarith [Real.pi_pos], h1⟩
-    have hsin0 : 0 ≤ Real.sin φ :=
-      Real.sin_nonneg_of_nonneg_of_le_pi h0 (by linarith [Real.pi_pos])
-    have hs1 : Real.sin φ < 1 := by
-      nlinarith [Real.sin_sq_add_cos_sq φ, Real.sin_le_one φ,
-        Real.neg_one_le_sin φ, mul_pos hcos hcos]
-    unfold rankineActiveCoefficient
-    exact div_nonneg (by linarith) (by linarith)
+  have hK1 : rankineActiveCoefficient φ ≤ 1 :=
+    (rankineActiveCoefficient_pos_le_one h0 h1).2
+  have hK0 : 0 ≤ rankineActiveCoefficient φ :=
+    (rankineActiveCoefficient_pos_le_one h0 h1).1.le
   have hp : rankineActivePressure (rankineActiveCoefficient φ) γ z
       = rankineActiveCoefficient φ * (γ * z) := by
     unfold rankineActivePressure
@@ -194,16 +169,8 @@ example {γ H φ : ℝ} (hγ : 0 < γ) (hH : 0 < H) (h0 : 0 ≤ φ)
           (rankineActiveCoefficient φ * γ) 1 0 H
         / PhyslibExt.Mechanics.LinearPressurePanel.linearPressureForce
           (rankineActiveCoefficient φ * γ) 1 0 H = H / 3 := by
-  have hK0 : 0 < rankineActiveCoefficient φ := by
-    have hcos : 0 < Real.cos φ :=
-      Real.cos_pos_of_mem_Ioo ⟨by linarith [Real.pi_pos], h1⟩
-    have hsin0 : 0 ≤ Real.sin φ :=
-      Real.sin_nonneg_of_nonneg_of_le_pi h0 (by linarith [Real.pi_pos])
-    have hs1 : Real.sin φ < 1 := by
-      nlinarith [Real.sin_sq_add_cos_sq φ, Real.sin_le_one φ,
-        Real.neg_one_le_sin φ, mul_pos hcos hcos]
-    unfold rankineActiveCoefficient
-    exact div_pos (by linarith) (by linarith)
+  have hK0 : 0 < rankineActiveCoefficient φ :=
+    (rankineActiveCoefficient_pos_le_one h0 h1).1
   exact rankine_resultant_height hK0 hγ hH
 
 /-! ## C. Domain controls -/
@@ -244,6 +211,7 @@ example : ((3 : ℝ) - 1) / 2
   simp [rankineActiveCoefficient]
   norm_num
 
+#print axioms EarthScience.rankineActiveCoefficient_pos_le_one
 #print axioms EarthScience.sqrt_rankineActiveCoefficient
 #print axioms EarthScience.sqrt_rankineActiveCoefficient'
 #print axioms EarthScience.rankine_principal_limit_iff
