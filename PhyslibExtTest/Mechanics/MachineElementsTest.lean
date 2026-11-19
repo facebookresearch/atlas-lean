@@ -33,7 +33,8 @@ open _root_.Mechanics.MachineElements
 /-- Two external meshes and one internal mesh: `20 → 40` external, `15 → 45` external,
 `18 → 72` internal (pinion driving a ring gear). -/
 def exampleTrain : Fin 3 → Mesh :=
-  ![⟨20, 40, .external⟩, ⟨15, 45, .external⟩, ⟨18, 72, .internal⟩]
+  ![⟨20, 40, .external, by decide⟩, ⟨15, 45, .external, by decide⟩,
+    ⟨18, 72, .internal, by decide⟩]
 
 /-- Mesh port torques of the example train loaded with `5` at the input. -/
 def exampleUp : Fin 3 → ℝ := ![5, -10, 30]
@@ -113,6 +114,20 @@ example : trainRatio exampleTrain ≠ 0 := trainRatio_ne_zero
 example : ¬ 0 < trainRatio (fun _ : Fin 1 => exampleTrain 0) := by
   rw [trainRatio_pos_iff]
   decide
+
+/-! ## C. Realizable internal meshes -/
+
+-- An internal mesh needs a ring with more teeth than its pinion: no mesh has equal tooth counts
+-- `20` and `20` on an internal pair.
+example : ¬ ∃ g : Mesh, g.driverTeeth = 20 ∧ g.drivenTeeth = 20 ∧ g.kind = .internal := by
+  rintro ⟨g, h1, h2, h3⟩
+  have h := g.driverTeeth_lt_drivenTeeth_of_internal h3
+  rw [h1, h2] at h
+  exact lt_irrefl _ h
+
+-- The same counts on an external mesh are a valid mesh, with ratio `-1`.
+example : (⟨20, 20, .external, by decide⟩ : Mesh).ratio = -1 := by
+  simp [Mesh.ratio, MeshKind.sense]
 
 end PhyslibExtTest.Mechanics.MachineElements
 

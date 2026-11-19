@@ -25,15 +25,18 @@ A finite parallel-axis gear train: shafts `0, …, n`, all oriented along one co
 direction, and meshes `k = 0, …, n - 1`, mesh `k` joining the upstream shaft `k` to the
 downstream shaft `k + 1`. Mesh `k` has a driver gear with `driverTeeth` teeth on the upstream
 shaft and a driven gear with `drivenTeeth` teeth on the downstream shaft; both counts are
-positive integers (`ℕ+`), so every mesh ratio is that of an actual gear pair. Angular velocities
-`ω j` are signed about the common axis direction.
+positive integers (`ℕ+`), and in an internal mesh the driven gear is the ring (internal gear)
+with strictly more teeth than the driver pinion, so every mesh is a realizable gear pair: an
+internal pair with equal counts would have zero center distance. Angular velocities `ω j` are
+signed about the common axis direction.
 
 Model inputs:
 
 * rigid ideal no-slip gears: across mesh `k` the downstream speed is the signed ratio
   `sense * driverTeeth / drivenTeeth` times the upstream speed, where the sense is `-1` for
   an external mesh (the sense of rotation reverses) and `1` for an internal (ring-gear)
-  mesh (the sense is kept);
+  mesh (the sense is kept); in an internal mesh the pinion drives the ring, and a ring driving
+  a pinion is outside this model;
 * power-into-component signs: `a k` is the torque the upstream shaft applies to mesh `k` and
   `b k` the torque the downstream shaft applies to mesh `k`, both about the common axis
   direction, so the power into mesh `k` is `a k * ω k + b k * ω (k + 1)`;
@@ -101,11 +104,14 @@ def MeshKind.sense : MeshKind → ℝ
   | .internal => 1
 
 /-- One mesh: `driverTeeth` teeth on the driver gear (upstream shaft), `drivenTeeth` teeth on
-the driven gear (downstream shaft), both positive, and the mesh kind. -/
+the driven gear (downstream shaft), both positive, and the mesh kind. In an internal mesh the
+driven gear is the ring and has strictly more teeth than the driver pinion. -/
 structure Mesh where
   driverTeeth : ℕ+
   drivenTeeth : ℕ+
   kind : MeshKind
+  /-- In an internal mesh the driven ring has strictly more teeth than the driver pinion. -/
+  driverTeeth_lt_drivenTeeth_of_internal : kind = MeshKind.internal → driverTeeth < drivenTeeth
 
 /-- Signed angular-speed ratio of a mesh, downstream over upstream:
 `sense * driverTeeth / drivenTeeth`. -/
