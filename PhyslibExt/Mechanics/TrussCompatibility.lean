@@ -49,12 +49,16 @@ needs distinct endpoints. No rigidity condition is proved.
   collection at joints.
 - `supported_quad_form_eq_sum`, `supported_pairing`,
   `supported_posSemidef`: supported energy form.
+- `supported_virtualWork_iff`: supported equilibrium iff
+  internal and external virtual work agree on every
+  supported virtual displacement.
 
 ## iii. Table of contents
 
 - A. Compatibility matrices and row action
 - B. Transpose force collection
 - C. Supported quadratic form
+- D. Supported virtual work
 
 ## iv. References
 
@@ -218,5 +222,54 @@ theorem axialCompatibilityUnit_transpose_mulVec_apply
   axialCompatibilityUnit_transpose_mulVec_apply_of
     (fun r a b N => axialEndpointForce_eq_memberEndpointForce
       r a b N) r a b N j k
+
+/-! ## D. Supported virtual work -/
+
+/-- Conditional form of the supported virtual-work
+characterization, given the canonical supported pairing. -/
+private theorem supported_virtualWork_iff_of {J M F : Type*}
+    [Fintype J] [DecidableEq J] [Fintype M] [Fintype F]
+    (hpair : ∀ (r : J → (Fin 2 → ℝ)) (a b : M → J)
+        (S : Matrix (J × Fin 2) F ℝ) (u : F → ℝ) (N : M → ℝ),
+      ((axialCompatibility r a b * S) *ᵥ u) ⬝ᵥ N
+        = u ⬝ᵥ ((axialCompatibility r a b * S)ᵀ *ᵥ N))
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (s : M → ℝ) (f : F → ℝ) :
+    (axialCompatibility r a b * S)ᵀ *ᵥ s = f ↔
+      ∀ v : F → ℝ, s ⬝ᵥ ((axialCompatibility r a b * S) *ᵥ v) = f ⬝ᵥ v := by
+  constructor
+  · intro h v
+    calc s ⬝ᵥ ((axialCompatibility r a b * S) *ᵥ v)
+        = ((axialCompatibility r a b * S) *ᵥ v) ⬝ᵥ s := dotProduct_comm _ _
+      _ = v ⬝ᵥ ((axialCompatibility r a b * S)ᵀ *ᵥ s) := hpair r a b S v s
+      _ = v ⬝ᵥ f := by rw [h]
+      _ = f ⬝ᵥ v := dotProduct_comm _ _
+  · intro h
+    apply dotProduct_eq_iff.mp
+    intro v
+    calc ((axialCompatibility r a b * S)ᵀ *ᵥ s) ⬝ᵥ v
+        = v ⬝ᵥ ((axialCompatibility r a b * S)ᵀ *ᵥ s) := dotProduct_comm _ _
+      _ = ((axialCompatibility r a b * S) *ᵥ v) ⬝ᵥ s := (hpair r a b S v s).symm
+      _ = s ⬝ᵥ ((axialCompatibility r a b * S) *ᵥ v) := dotProduct_comm _ _
+      _ = f ⬝ᵥ v := h v
+
+/-- Supported virtual work: member coefficients `s` balance
+the supported load `f` (`(B S)ᵀ *ᵥ s = f`) iff internal
+virtual work `s ⬝ᵥ ((B S) *ᵥ v)` equals external virtual
+work `f ⬝ᵥ v` for every supported virtual displacement
+`v`. The coefficients `s` are separation-form (axial force
+divided by member length, tension positive; the
+unit-direction member force is `N e = s e * L e`). Test
+displacements range over the free coordinates only, so
+support reactions are excluded. No injectivity, stiffness,
+or positivity hypothesis is used. -/
+theorem supported_virtualWork_iff {J M F : Type*}
+    [Fintype J] [DecidableEq J] [Fintype M] [Fintype F]
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (s : M → ℝ) (f : F → ℝ) :
+    (axialCompatibility r a b * S)ᵀ *ᵥ s = f ↔
+      ∀ v : F → ℝ, s ⬝ᵥ ((axialCompatibility r a b * S) *ᵥ v) = f ⬝ᵥ v :=
+  supported_virtualWork_iff_of
+    (fun r a b S u N => supported_pairing r a b S u N) r a b S s f
 
 end Mechanics.TrussCompatibility
