@@ -12,8 +12,6 @@ public import PhyslibExt.ContinuumMechanics.ControlVolumes
 public import PhyslibExt.EarthScience.WeakDiffusion
 public import PhyslibExt.Elasticity.PrismaticMembers
 
-import PhyslibExt.EarthScience.ElasticEnergy
-
 /-!
 # The weak bar problem and virtual work on a box
 
@@ -65,7 +63,9 @@ strain and the face sum (`boxTractionWork`) has the outward normal `+eᵢ` on th
 `div (σᵀ v) = (div σ) · v + σ : ∇v` and, for symmetric `σ`, `σ : ∇v = σ : ε(v)`. A face on which
 `v` vanishes contributes nothing and is removed from the identity; no other face is. A rigid
 virtual displacement `v x = W x`, `Wᵀ = -W`, has zero small strain, so its external virtual work
-vanishes, and it stores no elastic energy.
+vanishes. That it stores no elastic energy is `EarthScience.elastic_energy_of_skew` once
+`Elasticity.mulVec_eq_affine` and `Elasticity.displacementGradient_affine` rewrite its strain to
+`smallStrain W`.
 
 Validation: for simple shear, `σ : ε = τ γ`, while contracting `σ` with the engineering shear
 `γ = 2 ε₀₁` in both off-diagonal slots gives `2 τ γ`. The test file checks the constant uniaxial
@@ -96,7 +96,7 @@ adequacy or system safety claim is made.
 - `virtualWork_box`: the virtual work identity.
 - `upperFaceWork_eq_zero`, `lowerFaceWork_eq_zero`, `virtualWork_box_of_lowerFace_eq_zero`:
   removing a face where `v = 0`.
-- `virtualWork_box_rigid`, `elasticEnergy_rigid`: rigid virtual displacements.
+- `virtualWork_box_rigid`: a rigid virtual displacement does no external virtual work.
 - `simpleShear_engineering_double_count`: the engineering shear factor.
 
 The numeric fixtures are in `PhyslibExtTest.Elasticity.WeakAndVirtualWorkTest`.
@@ -822,17 +822,6 @@ lemma virtualWork_box_rigid {a b : Fin 3 → ℝ} (hab : ∀ i, a i < b i) {U : 
     fun x => smallStrain_rigid W x hW
   simp only [h0, Matrix.zero_apply, mul_zero, Finset.sum_const_zero, integral_zero] at h
   linarith
-
-/-- A rigid virtual displacement stores no isotropic elastic energy, by
-`EarthScience.elastic_energy_of_skew`. -/
-lemma elasticEnergy_rigid {W : Matrix (Fin 3) (Fin 3) ℝ} (hW : Wᵀ = -W) (x : Fin 3 → ℝ)
-    (K μ : ℝ) :
-    (K / 2) * (∑ i, smallStrain (displacementGradient (fun y => W *ᵥ y) x) i i) ^ 2 +
-      μ * ∑ i, ∑ j, (smallStrain (displacementGradient (fun y => W *ᵥ y) x) i j -
-        (∑ k, smallStrain (displacementGradient (fun y => W *ᵥ y) x) k k) / 3 *
-          (if i = j then (1 : ℝ) else 0)) ^ 2 = 0 := by
-  rw [mulVec_eq_affine, displacementGradient_affine]
-  exact EarthScience.elastic_energy_of_skew W hW K μ
 
 /-! ## H. Validation of the virtual work identity -/
 
