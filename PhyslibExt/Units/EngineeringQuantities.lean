@@ -19,8 +19,7 @@ import PhyslibExt.Chemistry.Symmetry.GroupRepresentations
 Engineering dimension names over the seven-base ISQ, their exponents, and unit-conversion
 fixtures obtained by instantiating the existing `UnitScale.dimScale` results. The coordinate
 formulas `σ = F / A`, `P = τ ω` and `ṁ = ρ v A` commute with every change of positive ISQ unit
-scales, and their outputs are restored as typed quantities.
-fixtures obtained by instantiating the existing `UnitScale.dimScale` results. A body-to-inertial
+scales, and their outputs are restored as typed quantities. A body-to-inertial
 frame convention `x_I = o + R x_B` with `R ∈ SO(3)` comes with its active and passive component
 maps, the tension-positive mean pressure `p = -tr σ / 3` and the degree-to-radian factor
 `π / 180`.
@@ -202,14 +201,10 @@ system safety claim.
 
 - ISO/IEC 80000-1, *Quantities and units — Part 1: General*: the seven ISQ base quantities and
   the dimension of plane angle.
-- ISO 80000-3, *Quantities and units — Part 3: Space and time*: angular velocity, and plane
-  angle as a quantity of dimension one.
+- ISO 80000-3, *Quantities and units — Part 3: Space and time*: angular velocity, plane
+  angle as a quantity of dimension one, and the degree `π / 180` rad.
 - ISO 80000-4, *Quantities and units — Part 4: Mechanics*: force, normal stress, power,
-  impulse, torque, mass flow rate.
-- ISO 80000-3, *Quantities and units — Part 3: Space and time*: plane angle and the degree
-  `π / 180` rad.
-- ISO 80000-4, *Quantities and units — Part 4: Mechanics*: force, power, impulse, torque, normal
-  stress and pressure.
+  impulse, torque, mass flow rate and pressure.
 - L. D. Landau and E. M. Lifshitz, *Mechanics*, Section 32: the motion of a rigid body as a
   translation of its centre of mass and a rotation about it.
 - `Physlib.Units.ParametricUnits`, `Physlib.Units.ISQDimensionBase` and
