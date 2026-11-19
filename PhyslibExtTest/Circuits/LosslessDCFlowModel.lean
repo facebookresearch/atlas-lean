@@ -61,7 +61,7 @@ example : dcBranchFlow 2 2 hd tl bb th 0 = -1 := by
   norm_num [tl, hd, bb, th]
 
 /-- Injections `p = (5/2, -5/2)`, balanced over the two nodes. -/
-example :
+lemma dcInjection_fixture :
     dcInjection 2 2 tl hd bb th 0 = 5 / 2 ∧ dcInjection 2 2 tl hd bb th 1 = -5 / 2 ∧
       ∑ v : Fin 2, dcInjection 2 2 tl hd bb th v = 0 := by
   refine ⟨?_, ?_, sum_dcInjection_eq_zero 2 2 tl hd bb th⟩ <;>
@@ -152,6 +152,63 @@ example : |3 * Real.sin (-(1 / 2)) + 3 / 2| ≤ 1 / 16 := by
 example : ∀ e, |acBranchRealPower 2 2 tl hd bb th e - dcBranchFlow 2 2 tl hd bb th e| ≤
     bb e * |th (tl e) - th (hd e)| ^ 3 / 6 :=
   (model_correct 2 2 tl hd bb bb_pos th).2.2.2
+
+/-- AC nodal real power on the fixture through the signed sum of branch sine
+flows: node `0` sends `2 sin(1/2)` out of the forward line and receives
+`3 sin(-1/2)` on the reversed line, for `5 sin(1/2)`; node `1` gets the
+negation. -/
+lemma nodeRealPower_fixture :
+    (nodeComplexPower 2 2 (electricalIncidence tl hd) (unitVoltage 2 th)
+        (losslessAdmittance 2 bb) (fun _ => 0) 0).re = 5 * Real.sin (1 / 2) ∧
+      (nodeComplexPower 2 2 (electricalIncidence tl hd) (unitVoltage 2 th)
+        (losslessAdmittance 2 bb) (fun _ => 0) 1).re = -(5 * Real.sin (1 / 2)) := by
+  simp only [nodeRealPower_eq_sum_mul_sin, Fin.sum_univ_two, electricalIncidence_apply]
+  norm_num [tl, hd, bb, th, Real.sin_neg]
+  constructor <;> ring
+
+/-- The right-hand side of the nodal bound is `2/48 + 3/48 = 5/48` at both
+nodes, since each line meets each node once. -/
+lemma nodeBound_fixture :
+    (∑ e : Fin 2, |electricalIncidence tl hd 0 e| *
+        (bb e * |th (tl e) - th (hd e)| ^ 3 / 6)) = 5 / 48 ∧
+      (∑ e : Fin 2, |electricalIncidence tl hd 1 e| *
+        (bb e * |th (tl e) - th (hd e)| ^ 3 / 6)) = 5 / 48 := by
+  simp only [Fin.sum_univ_two, electricalIncidence_apply]
+  norm_num [tl, hd, bb, th]
+
+/-- Nodal bound at the injecting node `0`, `|5 sin(1/2) - 5/2| ≤ 5/48`, with a
+strictly positive gap. -/
+example :
+    |5 * Real.sin (1 / 2) - 5 / 2| ≤ 5 / 48 ∧ 0 < |5 * Real.sin (1 / 2) - 5 / 2| := by
+  have h := abs_nodeRealPower_sub_dcInjection_le 2 2 tl hd bb bb_pos th 0
+  rw [nodeRealPower_fixture.1, dcInjection_fixture.1] at h
+  refine ⟨h.trans_eq nodeBound_fixture.1, abs_pos.mpr ?_⟩
+  have hlt := Real.sin_lt (show (0 : ℝ) < 1 / 2 by norm_num)
+  linarith
+
+/-- Nodal bound at the withdrawing node `1`, `|-5 sin(1/2) + 5/2| ≤ 5/48`. -/
+example : |-(5 * Real.sin (1 / 2)) - -5 / 2| ≤ 5 / 48 := by
+  have h := abs_nodeRealPower_sub_dcInjection_le 2 2 tl hd bb bb_pos th 1
+  rw [nodeRealPower_fixture.2, dcInjection_fixture.2.1] at h
+  exact h.trans_eq nodeBound_fixture.2
+
+/-- The nodal comparison is sign-sensitive: the node powers have opposite
+signs, and pairing the AC power of node `0` with the DC injection of node `1`
+(equivalently, flipping the incidence sign on one side) misses by more than
+the `5/48` bound. -/
+example :
+    0 < (nodeComplexPower 2 2 (electricalIncidence tl hd) (unitVoltage 2 th)
+        (losslessAdmittance 2 bb) (fun _ => 0) 0).re ∧
+      (nodeComplexPower 2 2 (electricalIncidence tl hd) (unitVoltage 2 th)
+        (losslessAdmittance 2 bb) (fun _ => 0) 1).re < 0 ∧
+      5 / 48 < |(nodeComplexPower 2 2 (electricalIncidence tl hd) (unitVoltage 2 th)
+        (losslessAdmittance 2 bb) (fun _ => 0) 0).re - dcInjection 2 2 tl hd bb th 1| := by
+  rw [nodeRealPower_fixture.1, nodeRealPower_fixture.2, dcInjection_fixture.2.1]
+  have hpos := Real.sin_pos_of_pos_of_lt_pi (show (0 : ℝ) < 1 / 2 by norm_num)
+    (by linarith [Real.two_le_pi])
+  refine ⟨by linarith, by linarith, ?_⟩
+  rw [abs_of_pos (by linarith)]
+  linarith
 
 /-- The lossless network absorbs zero total real power. -/
 example :
