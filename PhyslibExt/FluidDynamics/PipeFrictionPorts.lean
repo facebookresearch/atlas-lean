@@ -34,14 +34,16 @@ coefficient `c = f L ρ / (2 D A ^ 2)`, where `f` is the Darcy friction factor.
 * Record. The factor comes from a supplied empirical correlation, guarded like the Nusselt
   correlations of `CorrelationDomains`: a `FrictionCorrelation` stores its citation, its
   friction-factor convention (Darcy `f_D` or Fanning `f_F = f_D / 4`), the duct shape,
-  hydrodynamic development and relative roughness it was calibrated for, and its nonempty
-  validity domain of positive Reynolds numbers; its formula takes a proof that the Reynolds
-  number lies in the domain. `FrictionCorrelation.DarcyApplies C r` also requires the Darcy
-  convention and the request's duct shape, development and relative roughness, compared by
-  equality, and `FrictionCorrelation.darcyFactor` takes a proof of it. No value is formed outside
-  the validity box or for another roughness, and a Fanning record cannot be read as a Darcy
-  factor. A correlation that reads the roughness, such as a Colebrook-type formula, is recorded
-  once per relative roughness, with that roughness in its formula.
+  hydrodynamic development and relative roughness it was calibrated for, with a proof that the
+  relative roughness is nonnegative, and its nonempty validity domain of positive Reynolds
+  numbers; its formula takes a proof that the Reynolds number lies in the domain.
+  `FrictionCorrelation.DarcyApplies C r` also requires the Darcy convention and the request's
+  duct shape, development and relative roughness, compared by equality, and
+  `FrictionCorrelation.darcyFactor` takes a proof of it. No value is formed outside the validity
+  box or for another roughness, a request with a negative relative roughness gets no factor from
+  any record, and a Fanning record cannot be read as a Darcy factor. A correlation that reads the
+  roughness, such as a Colebrook-type formula, is recorded once per relative roughness in its
+  documented range, with that roughness in its formula.
 * Coefficient. For one positive Darcy factor `f` read through the guard at a request whose
   Reynolds number and relative roughness are those of the flow and the pipe,
   `Re = ρ |Q / A| D / μ` (`EngineeringScaling.reynoldsNumber`, the speed `|V|`) and `ε / D`, the
@@ -66,6 +68,8 @@ validated, and no empirical adequacy or system safety claim is made.
 - `FluidDynamics.PipeFrictionPorts.DuctShape`, `FrictionRequest`: the request data.
 - `FluidDynamics.PipeFrictionPorts.FrictionCorrelation`, `FrictionCorrelation.DarcyApplies`,
   `FrictionCorrelation.darcyFactor`, `FrictionCorrelation.not_darcyApplies`: the guarded record.
+- `FluidDynamics.PipeFrictionPorts.FrictionCorrelation.relativeRoughness_nonneg_of_darcyApplies`,
+  `FrictionCorrelation.not_darcyApplies_of_neg`: the roughness-domain evidence.
 - `FluidDynamics.PipeFrictionPorts.powerLawFriction`, `powerLawFriction_darcyFactor`,
   `powerLawFriction_darcyFactor_pos`: power-law friction correlations.
 - `FluidDynamics.PipeFrictionPorts.darcyWeisbach_eq`, `darcyCoefficient_pos`:
@@ -74,8 +78,9 @@ validated, and no empirical adequacy or system safety claim is made.
   reversal and sign.
 - `FluidDynamics.PipeFrictionPorts.dissipatedPower_nonneg`, `dissipatedPower_pos`: the
   dissipated power.
-- `FluidDynamics.PipeFrictionPorts.dissipatedPower_eq_internalEnergyRise`,
-  `internalEnergyRise_frictionPressureDrop`: the power through the energy ports.
+- `FluidDynamics.PipeFrictionPorts.portEnergyRate_add_eq_zero_iff`,
+  `dissipatedPower_eq_internalEnergyRise`, `internalEnergyRise_frictionPressureDrop`: the power
+  through the energy ports.
 - `FluidDynamics.PipeFrictionPorts.darcyFactor_frictionPressureDrop`: the guarded chain.
 
 ## iii. Table of contents
@@ -139,11 +144,11 @@ structure FrictionRequest where
   hydrodynamicDevelopment : FlowDevelopment
 
 /-- A supplied empirical friction-factor correlation: its citation, its convention, the duct
-shape, hydrodynamic development and wall relative roughness it was calibrated for, its validity
-domain of Reynolds numbers, which is nonempty and positive, and its formula, which takes a proof
-that the Reynolds number lies in the domain. A correlation that reads the roughness, such as a
-Colebrook-type formula, is recorded once per relative roughness, with that roughness in its
-formula. -/
+shape, hydrodynamic development and wall relative roughness it was calibrated for, which is
+nonnegative, its validity domain of Reynolds numbers, which is nonempty and positive, and its
+formula, which takes a proof that the Reynolds number lies in the domain. A correlation that
+reads the roughness, such as a Colebrook-type formula, is recorded once per relative roughness in
+its documented range, with that roughness in its formula. -/
 structure FrictionCorrelation where
   /-- The published source of the correlation (provenance, not an applicability condition). -/
   citation : String
@@ -155,6 +160,7 @@ structure FrictionCorrelation where
   hydrodynamicDevelopment : FlowDevelopment
   /-- The relative roughness `ε / D` the correlation was calibrated for, `0` for a smooth wall. -/
   relativeRoughness : ℝ
+  relativeRoughness_nonneg : 0 ≤ relativeRoughness
   /-- The validity domain of Reynolds numbers, supplied as calibration evidence. -/
   validity : Set ℝ
   validity_pos : ∀ Re ∈ validity, 0 < Re
@@ -188,11 +194,25 @@ lemma FrictionCorrelation.not_darcyApplies {C : FrictionCorrelation} {r : Fricti
   · exact h hε
   · exact h hv
 
+/-- **Roughness-domain evidence.** A request that a correlation applies to has the correlation's
+relative roughness, so it is nonnegative. -/
+lemma FrictionCorrelation.relativeRoughness_nonneg_of_darcyApplies {C : FrictionCorrelation}
+    {r : FrictionRequest} (h : C.DarcyApplies r) : 0 ≤ r.relativeRoughness := by
+  rw [h.2.2.2.1]
+  exact C.relativeRoughness_nonneg
+
+/-- **No factor for a negative roughness.** A request with a negative relative roughness gets no
+Darcy factor from any correlation. -/
+lemma FrictionCorrelation.not_darcyApplies_of_neg {C : FrictionCorrelation} {r : FrictionRequest}
+    (h : r.relativeRoughness < 0) : ¬ C.DarcyApplies r := fun hA =>
+  absurd (FrictionCorrelation.relativeRoughness_nonneg_of_darcyApplies hA) (not_le.mpr h)
+
 /-- The power-law friction correlation `f = c Re ^ a` (real power) with its citation, convention,
-duct shape, hydrodynamic development, relative roughness and validity domain. -/
+duct shape, hydrodynamic development, nonnegative relative roughness and validity domain. -/
 noncomputable def powerLawFriction (c a : ℝ) (citation : String)
     (convention : FrictionConvention) (ductShape : DuctShape)
-    (hydrodynamicDevelopment : FlowDevelopment) (relativeRoughness : ℝ) (validity : Set ℝ)
+    (hydrodynamicDevelopment : FlowDevelopment) (relativeRoughness : ℝ)
+    (relativeRoughness_nonneg : 0 ≤ relativeRoughness) (validity : Set ℝ)
     (validity_pos : ∀ Re ∈ validity, 0 < Re) (validity_nonempty : validity.Nonempty) :
     FrictionCorrelation where
   citation := citation
@@ -200,6 +220,7 @@ noncomputable def powerLawFriction (c a : ℝ) (citation : String)
   ductShape := ductShape
   hydrodynamicDevelopment := hydrodynamicDevelopment
   relativeRoughness := relativeRoughness
+  relativeRoughness_nonneg := relativeRoughness_nonneg
   validity := validity
   validity_pos := validity_pos
   validity_nonempty := validity_nonempty
@@ -208,26 +229,32 @@ noncomputable def powerLawFriction (c a : ℝ) (citation : String)
 /-- Where a power-law friction correlation applies, its Darcy factor is `c Re ^ a`. -/
 lemma powerLawFriction_darcyFactor {c a : ℝ} {citation : String}
     {convention : FrictionConvention} {ductShape : DuctShape}
-    {hydrodynamicDevelopment : FlowDevelopment} {relativeRoughness : ℝ} {validity : Set ℝ}
+    {hydrodynamicDevelopment : FlowDevelopment} {relativeRoughness : ℝ}
+    {relativeRoughness_nonneg : 0 ≤ relativeRoughness} {validity : Set ℝ}
     {validity_pos : ∀ Re ∈ validity, 0 < Re} {validity_nonempty : validity.Nonempty}
     {r : FrictionRequest}
     (h : (powerLawFriction c a citation convention ductShape hydrodynamicDevelopment
-      relativeRoughness validity validity_pos validity_nonempty).DarcyApplies r) :
+      relativeRoughness relativeRoughness_nonneg validity validity_pos
+      validity_nonempty).DarcyApplies r) :
     (powerLawFriction c a citation convention ductShape hydrodynamicDevelopment relativeRoughness
-      validity validity_pos validity_nonempty).darcyFactor r h = c * r.reynolds ^ a := by
+      relativeRoughness_nonneg validity validity_pos validity_nonempty).darcyFactor r h =
+      c * r.reynolds ^ a := by
   rfl
 
 /-- A positive-coefficient power-law correlation gives a positive Darcy factor where it applies,
 for every real exponent: the validity domain makes `Re` positive. -/
 lemma powerLawFriction_darcyFactor_pos {c a : ℝ} (hc : 0 < c) {citation : String}
     {convention : FrictionConvention} {ductShape : DuctShape}
-    {hydrodynamicDevelopment : FlowDevelopment} {relativeRoughness : ℝ} {validity : Set ℝ}
+    {hydrodynamicDevelopment : FlowDevelopment} {relativeRoughness : ℝ}
+    {relativeRoughness_nonneg : 0 ≤ relativeRoughness} {validity : Set ℝ}
     {validity_pos : ∀ Re ∈ validity, 0 < Re} {validity_nonempty : validity.Nonempty}
     {r : FrictionRequest}
     (h : (powerLawFriction c a citation convention ductShape hydrodynamicDevelopment
-      relativeRoughness validity validity_pos validity_nonempty).DarcyApplies r) :
+      relativeRoughness relativeRoughness_nonneg validity validity_pos
+      validity_nonempty).DarcyApplies r) :
     0 < (powerLawFriction c a citation convention ductShape hydrodynamicDevelopment
-      relativeRoughness validity validity_pos validity_nonempty).darcyFactor r h := by
+      relativeRoughness relativeRoughness_nonneg validity validity_pos
+      validity_nonempty).darcyFactor r h := by
   rw [powerLawFriction_darcyFactor h]
   exact mul_pos hc (Real.rpow_pos_of_pos (validity_pos _ h.2.2.2.2) a)
 
@@ -293,6 +320,19 @@ lemma dissipatedPower_pos {c Q : ℝ} (hc : 0 < c) (hQ : Q ≠ 0) :
 
 /-! ## C. Dissipated power through the energy ports -/
 
+/-- **Port balance and internal-energy rise.** For a duct segment with inlet and outlet faces of
+area `A`, density `ρ`, the same port velocity `v` with axial component `V` (outward normal
+velocity `V` at the outlet and `-V` at the inlet) and the same elevation `z`, the outward port
+energy rates, with the flow work counted once, sum to zero exactly when the internal-energy rise
+carried by the mass flow `ρ A V` equals the pressure-drop power `(p_in - p_out) A V`. -/
+lemma portEnergyRate_add_eq_zero_iff {m : ℕ} {ρ A V ein eout pin pout g z : ℝ}
+    (v : Fin m → ℝ) :
+    ControlVolumes.portEnergyRate ρ A V eout pout g z v +
+        ControlVolumes.portEnergyRate ρ A (-V) ein pin g z v = 0 ↔
+      ρ * (A * V) * (eout - ein) = (pin - pout) * (A * V) := by
+  unfold ControlVolumes.portEnergyRate
+  constructor <;> intro h <;> linear_combination h
+
 /-- **The dissipated power is the internal-energy rise.** A duct segment with inlet and outlet
 faces of area `A`, density `ρ`, the same port velocity `v` with axial component `V` (outward
 normal velocity `V` at the outlet and `-V` at the inlet) and the same elevation `z`, in a steady
@@ -304,8 +344,7 @@ lemma dissipatedPower_eq_internalEnergyRise {m : ℕ} {ρ A V ein eout pin pout 
     (hbal : ControlVolumes.portEnergyRate ρ A V eout pout g z v +
       ControlVolumes.portEnergyRate ρ A (-V) ein pin g z v = 0) :
     ρ * (A * V) * (eout - ein) = (pin - pout) * (A * V) := by
-  unfold ControlVolumes.portEnergyRate at hbal
-  linear_combination hbal
+  exact (portEnergyRate_add_eq_zero_iff v).mp hbal
 
 /-- With the Darcy loss `p_in - p_out = c Q |Q|` at `Q = A V` and `c ≥ 0`, the internal-energy
 rise of the steady segment is `c Q ^ 2 |Q| ≥ 0`, in both flow directions. -/
