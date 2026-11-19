@@ -15,7 +15,10 @@ import Mathlib.Tactic.NormNum
 
 * a nonzero uniform axial load with exact endpoint values;
 * the uniform-load displacement as a fixed-fixed solution at concrete data;
-* a fixed-free displacement at concrete data, which is not a fixed-fixed solution.
+* a fixed-free displacement at concrete data, which is not a fixed-fixed solution;
+* the fixed-traction bar `EA = 2`, `L = 3`, `P = 6`, `q = 4`: the constructed solution, its end
+  displacement, the support reaction from the load path, and the same data read as a shaft;
+* two free ends: an incompatible net load and a rigid translation.
 -/
 
 @[expose] public section
@@ -82,6 +85,87 @@ example (w : ℝ → ℝ) : ¬ IsCantileverSolution 2 (-3) 4 5 w := fun h => by
   norm_num at h'
 
 example (w : ℝ → ℝ) : ¬ IsCantileverSolution 2 0 4 5 w := fun h => lt_irrefl _ h.span_pos
+
+/-! ## E. Fixed-traction bar and shaft -/
+
+-- Nonzero fixture `EA = 2`, `L = 3`, `P = 6`, `q = 4`: the constructed displacement solves the
+-- problem, the end displacement is `P * L / EA + q * L ^ 2 / (2 * EA) = 9 + 9 = 18`, and the axial
+-- force at the fixed end is the support reaction `P + q * L = 18`.
+example :
+    IsFixedTractionSolution 2 3 6 (fun _ => 4) (fixedTractionDisplacement 2 3 6 fun _ => 4) ∧
+      fixedTractionDisplacement 2 3 6 (fun _ => 4) 3 = 18 ∧
+      2 * derivWithin (fixedTractionDisplacement 2 3 6 fun _ => 4) (Set.Icc 0 3) 0 = 18 := by
+  have hL : (0 : ℝ) < 3 := by norm_num
+  have hk : (2 : ℝ) ≠ 0 := by norm_num
+  have hf : ContinuousOn (fun _ : ℝ => (4 : ℝ)) (Set.Icc 0 3) := continuousOn_const
+  have hsol : IsFixedTractionSolution 2 3 6 (fun _ => (4 : ℝ))
+      (fixedTractionDisplacement 2 3 6 fun _ => 4) :=
+    isFixedTractionSolution_fixedTractionDisplacement hL hk hf
+  refine ⟨hsol, ?_, ?_⟩
+  · have hconst := fixedTractionDisplacement_const 2 3 6 4 3
+    rw [hconst]
+    show (6 : ℝ) * 3 / 2 + 4 * 3 * (2 * 3 - 3) / (2 * 2) = 18
+    norm_num
+  · have hDu : derivWithin (fixedTractionDisplacement 2 3 6 fun _ => (4 : ℝ)) (Set.Icc 0 3)
+        0 =
+        fixedTractionStrain 2 3 6 (fun _ => (4 : ℝ)) 0 :=
+      derivWithin_fixedTractionDisplacement hL hf 0 ⟨le_rfl, by norm_num⟩
+    rw [hDu]
+    show (2 : ℝ) * ((6 + ∫ y in (0 : ℝ)..3, (fun _ => (4 : ℝ)) y) / 2) = 18
+    rw [intervalIntegral.integral_const, smul_eq_mul]
+    norm_num
+
+-- In every solution of the fixed-traction bar `EA = 2`, `L = 3`, `P = 6`, `q = 4` the axial
+-- force at the fixed end is the support reaction `P + q * L = 18`, by the load path.
+example (u : ℝ → ℝ) (hu : IsFixedTractionSolution 2 3 6 (fun _ => 4) u) :
+    2 * derivWithin u (Set.Icc 0 3) 0 = 18 := by
+  rw [hu.axialForce_eq 0 ⟨le_rfl, by norm_num⟩, intervalIntegral.integral_const, smul_eq_mul]
+  norm_num
+
+-- A circular shaft with `GJ = 2`, `L = 3`, end torque `T = 6` and uniform distributed torque
+-- `t = 4`: every twist solution has the end twist `T * L / GJ + t * L ^ 2 / (2 * GJ) = 18`.
+example (φ : ℝ → ℝ) (hφ : IsFixedTractionSolution 2 3 6 (fun _ => 4) φ) : φ 3 = 18 := by
+  rw [(hφ.twist (by norm_num)).1 ⟨by norm_num, le_rfl⟩, fixedTractionDisplacement_const]
+  unfold fixedFreeDisplacement
+  norm_num
+
+-- Two free ends: a free-free solution shifted by a constant is again a free-free solution.
+example (u : ℝ → ℝ) (hu : IsFreeFreeSolution 2 3 1 (-1) (fun _ => 0) u) (c : ℝ) :
+    IsFreeFreeSolution 2 3 1 (-1) (fun _ => 0) (fun x => u x + c) :=
+  hu.add_const c
+
+/-! ## F. Two free ends -/
+
+-- Incompatible net load: a unit bar with unit distributed load and unloaded ends has no
+-- free-free solution, while the unloaded free-free bar admits the nonzero translation `u = 1`,
+-- which violates the fixed-end condition `u 0 = 0`.
+example (k : ℝ) :
+    (∀ u : ℝ → ℝ, ¬ IsFreeFreeSolution k 1 0 0 (fun _ => 1) u) ∧
+      IsFreeFreeSolution k 1 0 0 (fun _ => 0) (fun _ => 1) := by
+  constructor
+  · intro u hu
+    have hL : (0 : ℝ) < 1 := by norm_num
+    have hnet := hu.net_load hL
+    have hint : (∫ x in (0 : ℝ)..(1 : ℝ), (fun _ => (1 : ℝ)) x) = 1 := by
+      rw [intervalIntegral.integral_const, smul_eq_mul]
+      norm_num
+    rw [hint] at hnet
+    norm_num at hnet
+  · refine ⟨contDiffOn_const, ?_, ?_, ?_⟩
+    · intro x hx
+      have hiter : iteratedDerivWithin 2 (fun _ : ℝ => (1 : ℝ)) (Set.Icc 0 1) x = 0 := by
+        rw [iteratedDerivWithin_const]
+        simp
+      rw [hiter]
+      simp
+    · have hd0 : derivWithin (fun _ : ℝ => (1 : ℝ)) (Set.Icc 0 1) 0 = 0 :=
+        congrFun (derivWithin_fun_const (Set.Icc 0 1) 1) 0
+      rw [hd0]
+      simp
+    · have hdL : derivWithin (fun _ : ℝ => (1 : ℝ)) (Set.Icc 0 1) 1 = 0 :=
+        congrFun (derivWithin_fun_const (Set.Icc 0 1) 1) 1
+      rw [hdL]
+      simp
 
 end PhyslibExtTest.Elasticity.PrismaticMembers
 
