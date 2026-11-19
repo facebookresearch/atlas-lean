@@ -447,6 +447,54 @@ class Declarations(Vault):
         self.assertEqual(rows["new.md"]["extensions"], {"org.atlas-wiki": {"from": "docstring"}})
         self.assertNotIn("wanted.md", rows)
 
+    def test_a_held_declaration_keeps_its_page_unlinked_and_gets_no_other(self) -> None:
+        self.page("Algebra/README.md", "# Algebra\n\n- [Claim](claim.md)\n")
+        claim = self.page("Algebra/claim.md", "# Claim\n\nThe source's statement.\n")
+        held = {"declaration": "Ext.claim", "reason": "false", "issue": 1}
+        self.annotate([self.about("Algebra/claim.md", extensions={"org.atlas-wiki": {"held": held}})])
+        targets = [declaration("Ext.claim", "claim", "Claim", "A statement that is false as written."),
+                   declaration("Ext.new", "new", "New result", "A new statement.")]
+        report = sync.apply_declarations(targets, SimpleNamespace(declarations={"Ext.claim": None, "Ext.new": None}))
+        self.assertEqual(report["added"], ["Ext.new -> Algebra/new.md"])
+        self.assertEqual(report["held"], ["Ext.claim (Algebra/claim.md)"])
+        self.assertEqual(claim.read_text(), "# Claim\n\nThe source's statement.\n")
+        self.assertFalse((wiki.ROADMAP / "Algebra" / "claim-2.md").exists())
+        rows = {sync.subject_path(row).name: row for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
+        self.assertNotIn("object", rows["claim.md"])
+        self.assertEqual(rows["claim.md"]["extensions"], {"org.atlas-wiki": {"held": held}})
+
+    def test_a_held_marker_that_cannot_hold_its_declaration_back_is_reported(self) -> None:
+        self.page("Algebra/README.md", "# Algebra\n\n" + "".join(f"- [{n.upper()}]({n}.md)\n" for n in "abcdefgh"))
+        for name in "abcdefgh":
+            self.page(f"Algebra/{name}.md", f"# {name.upper()}\n")
+        held = lambda value: {"org.atlas-wiki": {"held": value}}
+        self.annotate([
+            self.about("Algebra/a.md", extensions=held("Ext.a")),
+            self.about("Algebra/b.md", extensions=held({"declaration": ["Ext.b"]})),
+            self.about("Algebra/c.md", object=[{"location": {"declaration": "Ext.c"}}],
+                       extensions=held({"declaration": "Ext.c", "reason": "false"})),
+            self.about("Algebra/d.md", extensions=held({"declaration": "Ext.renamed", "reason": "false"})),
+            self.about("Algebra/e.md", object=[{"location": {"declaration": "Ext.e"}}]),
+            self.about("Algebra/f.md", extensions=held({"declaration": "Ext.e", "reason": "false"})),
+            self.about("Algebra/g.md", extensions=held({"declaration": "Ext.g", "reason": "false"})),
+            self.about("Algebra/h.md", extensions=held({"declaration": "Ext.g", "reason": "vacuous"})),
+        ])
+        targets = [declaration("Ext.c", "c", "C", "C."), declaration("Ext.e", "e", "E", "E."),
+                   declaration("Ext.g", "g", "G", "G."), declaration("Ext.new", "new", "New", "A new statement.")]
+        report = sync.apply_declarations(targets, SimpleNamespace(declarations={f"Ext.{n}": None for n in ("c", "e", "g", "new")}))
+        self.assertEqual(report["held"], ["Ext.g (Algebra/g.md)"])
+        self.assertEqual(report["held_problems"], [
+            "Algebra/a.md: its held marker names no declaration",
+            "Algebra/b.md: its held marker names no declaration",
+            "Algebra/c.md: it holds Ext.c back but is linked to Ext.c",
+            "Algebra/d.md: it holds Ext.renamed back, which the Lean index does not resolve",
+            "Algebra/f.md: it holds Ext.e back, which Algebra/e.md links",
+            "Algebra/h.md: it holds Ext.g back, as Algebra/g.md does",
+        ])
+        # A marker the run cannot use stops it before it writes anything.
+        self.assertEqual(report["added"], [])
+        self.assertFalse((wiki.ROADMAP / "Algebra" / "new.md").exists())
+
     def test_a_new_page_never_takes_the_name_of_its_folder_page(self) -> None:
         self.page("Algebra/groups/README.md", "# Groups\n")
         self.page("Algebra/groups/old.md", "# Old\n")
@@ -1035,7 +1083,8 @@ class Declarations(Vault):
                 self.assertEqual((report["appended"], report["unlisted"]), (["Algebra/groups/sylow.md"], []))
 
     def test_a_page_listed_nowhere_fails_the_run(self) -> None:
-        report = {kind: [] for kind in ("added", "folders", "gone", "changed", "unindexed", "parts", "replaced", "appended")}
+        report = {kind: [] for kind in ("added", "folders", "gone", "changed", "unindexed", "parts", "replaced", "appended",
+                                         "held", "held_problems")}
         report["unlisted"] = ["Algebra/groups/sylow.md"]
         lean = SimpleNamespace(index_project=lambda *args, **kwargs: SimpleNamespace(declarations={}))
         with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean), "autoform_cli.lean": lean}), \
@@ -1045,6 +1094,21 @@ class Declarations(Vault):
             self.assertEqual(sync.run_declarations(), 1)
         self.assertIn("error: Algebra/groups/sylow.md is listed on no folder page", errors.getvalue())
         self.assertIn("Lines of a part list that the refresh replaced or removed", output.getvalue())
+
+    def test_a_held_marker_to_fix_stops_the_run_before_the_catalog(self) -> None:
+        report = {kind: [] for kind in ("added", "folders", "gone", "changed", "unindexed", "parts", "replaced", "appended",
+                                         "unlisted", "held")}
+        report["held_problems"] = ["Algebra/a.md: its held marker names no declaration"]
+        refreshed = []
+        lean = SimpleNamespace(index_project=lambda *args, **kwargs: SimpleNamespace(declarations={}))
+        with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean), "autoform_cli.lean": lean}), \
+                patch.object(wiki, "generate", lambda *args: {}), patch.object(sync, "apply_declarations", lambda *args: report), \
+                patch.object(sync, "refresh_catalog", refreshed.append), \
+                patch("sys.stdout", new_callable=io.StringIO) as output, patch("sys.stderr", new_callable=io.StringIO) as errors:
+            self.assertEqual(sync.run_declarations(), 1)
+        self.assertEqual(refreshed, [])
+        self.assertEqual(output.getvalue(), "Held markers to fix: 1; the run wrote nothing\n")
+        self.assertIn("error: Algebra/a.md: its held marker names no declaration; fix the marker", errors.getvalue())
 
     def test_an_edit_that_does_not_render_as_meant_is_left_out(self) -> None:
         # The whitelist admits a heading holding raw HTML, but a browser builds the rest of the page inside the

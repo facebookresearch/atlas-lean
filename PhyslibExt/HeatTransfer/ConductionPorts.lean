@@ -12,6 +12,7 @@ public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
+public import MathlibExt.Biology.Biophysics.MembraneCable
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
@@ -39,6 +40,14 @@ dissipation-plus-source form.
 This quadratic functional is a mathematical energy for the linear
 model; it is not claimed to be thermodynamic stored energy.
 
+Section D treats a straight fin (conductivity `k`, cross-section `A`,
+perimeter `P`, film coefficient `h`, length `L`) as the steady passive
+cable of `MathlibExt.Biology.Biophysics.MembraneCable`: the temperature
+excess `θ = T - Ta` is the voltage, the conducted heat rate `q` (in the
+`+x` direction) is the axial current, `ri = 1 / (k A)` and
+`rm = 1 / (h P)`. The existing sealed-end and transfer solutions then
+give the fin results; no new ODE solution is built.
+
 ## ii. Key results
 
 - `ConductionPorts.heatEnergy_hasDerivAt`: the full identity with
@@ -65,17 +74,35 @@ model; it is not claimed to be thermodynamic stored energy.
   `ConductionPorts.wrongLeftSign_boundaryInput` and
   `ConductionPorts.negativeH_boundaryInput` show the sign
   conventions are sharp.
+- `ConductionPorts.isFinSteadyState_iff`: Fourier's law and the
+  lateral convection balance of a fin are the steady cable equations,
+  with length constant `1 / m`, `m = sqrt (h P / (k A))`
+  (`ConductionPorts.lengthConstant_fin`), and characteristic resistance
+  `1 / sqrt (h P k A)` (`ConductionPorts.charResistance_fin`).
+- `ConductionPorts.IsFinSteadyState.temperature_adiabatic`,
+  `ConductionPorts.IsFinSteadyState.heatRate_adiabatic`,
+  `ConductionPorts.IsFinSteadyState.efficiency_adiabatic`: adiabatic
+  tip, `q 0 = sqrt (h P k A) θ 0 tanh (m L)` and efficiency
+  `tanh (m L) / (m L)`.
+- `ConductionPorts.IsFinSteadyState.heatRate_convectiveTip`: convective
+  tip `q L = h A θ L` through the transfer solution;
+  `ConductionPorts.IsFinSteadyState.heatRate_pos_of_base_pos`: a hot
+  base feeds heat into the fin.
 
 ## iii. Table of contents
 
 - A. The quadratic energy identity
 - B. Outward Robin/Neumann dissipation
 - C. Fixtures
+- D. Fins as passive cables
 
 ## iv. References
 
 - The calculation is the standard multiplier-by-`u` energy argument
   for the linear heat equation; the statement is self-contained.
+- Fins: F. P. Incropera, D. P. DeWitt, T. L. Bergman, A. S. Lavine,
+  *Fundamentals of Heat and Mass Transfer*, 7th ed., Wiley (2011),
+  Section 3.6.
 
 ## A. The quadratic energy identity
 
@@ -567,5 +594,272 @@ lemma negativeH_boundaryInput :
       0 < D * (θL * uxL - θ0 * ux0) := by
   exact ⟨1, -1, 1, 1, -1, 0, 0, by norm_num, by norm_num, by norm_num, by norm_num,
     by norm_num, by norm_num⟩
+
+
+/-! ## D. Fins as passive cables -/
+
+section FinCable
+
+open Real Set MathlibExt.Biology.Biophysics.MembraneCable
+
+/-- Steady one-dimensional fin on `[0, L]`: Fourier's law `T' = -q / (k A)` and the lateral
+convection balance `q' = -h P (T - Ta)`, as derivatives within `[0, L]`. `q` is the conducted
+heat rate in the `+x` direction. -/
+structure IsFinSteadyState (k A h P Ta L : ℝ) (T q : ℝ → ℝ) : Prop where
+  hasDerivWithinAt_temperature :
+    ∀ x ∈ Icc 0 L, HasDerivWithinAt T (-(q x / (k * A))) (Icc 0 L) x
+  hasDerivWithinAt_heat :
+    ∀ x ∈ Icc 0 L, HasDerivWithinAt q (-(h * P * (T x - Ta))) (Icc 0 L) x
+
+/-- Fin parameter `m = sqrt (h P / (k A))` (inverse length). -/
+noncomputable def finParameter (h P k A : ℝ) : ℝ := Real.sqrt (h * P / (k * A))
+
+/-- Division by a reciprocal is multiplication (holds even for `b = 0`). -/
+private lemma div_one_div_eq (a b : ℝ) : a / (1 / b) = a * b := by
+  rw [one_div, div_inv_eq_mul]
+
+/-- The fin parameter of positive data is positive. -/
+private lemma finParameter_pos {k A h P : ℝ} (hk : 0 < k) (hA : 0 < A) (hh : 0 < h)
+    (hP : 0 < P) : 0 < finParameter h P k A := by
+  unfold finParameter
+  exact Real.sqrt_pos.2 (div_pos (mul_pos hh hP) (mul_pos hk hA))
+
+/-- The fin's membrane resistance `1 / (h * P)` is positive. -/
+private lemma fin_rm_pos {h P : ℝ} (hh : 0 < h) (hP : 0 < P) : 0 < 1 / (h * P) :=
+  one_div_pos.2 (mul_pos hh hP)
+
+/-- The fin's axial resistance `1 / (k * A)` is positive. -/
+private lemma fin_ri_pos {k A : ℝ} (hk : 0 < k) (hA : 0 < A) : 0 < 1 / (k * A) :=
+  one_div_pos.2 (mul_pos hk hA)
+
+/-- `sqrt (h * P * k * A)` of positive data is positive. -/
+private lemma fin_sqrt_pos {k A h P : ℝ} (hk : 0 < k) (hA : 0 < A) (hh : 0 < h)
+    (hP : 0 < P) : 0 < Real.sqrt (h * P * k * A) :=
+  Real.sqrt_pos.2 (mul_pos (mul_pos (mul_pos hh hP) hk) hA)
+
+/-- `sqrt (h * P * k * A) * m = h * P`. -/
+private lemma fin_sqrt_mul_finParameter {k A h P : ℝ} (hk : 0 < k) (hA : 0 < A) (hh : 0 < h)
+    (hP : 0 < P) : Real.sqrt (h * P * k * A) * finParameter h P k A = h * P := by
+  have hnn : (0:ℝ) ≤ h * P * k * A := (mul_pos (mul_pos (mul_pos hh hP) hk) hA).le
+  unfold finParameter
+  rw [← Real.sqrt_mul hnn]
+  have hid : (h * P * k * A) * (h * P / (k * A)) = (h * P)^2 := by
+    field_simp
+  rw [hid, Real.sqrt_sq (mul_pos hh hP).le]
+
+/-- `A * (m * k) = sqrt (h * P * k * A)`. -/
+private lemma fin_sqrt_eq_mul {k A h P : ℝ} (hk : 0 < k) (hA : 0 < A) (hh : 0 < h)
+    (hP : 0 < P) : A * (finParameter h P k A * k) = Real.sqrt (h * P * k * A) := by
+  have hmpos := finParameter_pos hk hA hh hP
+  have hnn : (0:ℝ) ≤ A * (finParameter h P k A * k) :=
+    mul_nonneg hA.le (mul_nonneg hmpos.le hk.le)
+  have hnn2 : (0:ℝ) ≤ h * P / (k * A) := (div_pos (mul_pos hh hP) (mul_pos hk hA)).le
+  have hsq : (A * (finParameter h P k A * k))^2 = h * P * k * A := by
+    unfold finParameter
+    rw [mul_pow, mul_pow, Real.sq_sqrt hnn2]
+    field_simp
+  rw [← Real.sqrt_sq hnn, hsq]
+
+/-- The fin equations are the steady cable equations for `θ = T - Ta` and `q`, with
+`rm = 1 / (h P)` and `ri = 1 / (k A)`. -/
+lemma isFinSteadyState_iff {k A h P Ta L : ℝ} {T q : ℝ → ℝ} :
+    IsFinSteadyState k A h P Ta L T q ↔
+      IsSteadyState (1 / (h * P)) (1 / (k * A)) (Icc 0 L) (fun x => T x - Ta) q := by
+  have htemp : ∀ x : ℝ, (-(q x / (k * A))) = (-((1:ℝ) / (k * A) * q x)) := fun x => by ring
+  have hheat : ∀ x : ℝ, (-(h * P * (T x - Ta))) = (-((T x - Ta) / (1 / (h * P)))) := by
+    intro x
+    rw [div_one_div_eq]
+    ring
+  constructor
+  · intro hfin
+    refine ⟨fun x hx => ?_, fun x hx => ?_⟩
+    · have h := hfin.hasDerivWithinAt_temperature x hx
+      rw [htemp x] at h
+      exact h.sub_const Ta
+    · have h := hfin.hasDerivWithinAt_heat x hx
+      rw [hheat x] at h
+      exact h
+  · intro hcable
+    refine ⟨fun x hx => ?_, fun x hx => ?_⟩
+    · have hV : HasDerivWithinAt (fun x => T x - Ta) (-((1:ℝ) / (k * A) * q x))
+        (Icc 0 L) x := hcable.hasDerivWithinAt_voltage x hx
+      rw [← htemp x] at hV
+      simpa using hV.add_const Ta
+    · have hC : HasDerivWithinAt q (-((T x - Ta) / (1 / (h * P)))) (Icc 0 L) x :=
+        hcable.hasDerivWithinAt_current x hx
+      rw [← hheat x] at hC
+      exact hC
+
+/-- The cable length constant of the fin is `1 / m`. -/
+lemma lengthConstant_fin {k A h P : ℝ} (hk : 0 < k) (hA : 0 < A) (hh : 0 < h) (hP : 0 < P) :
+    lengthConstant (1 / (h * P)) (1 / (k * A)) = 1 / finParameter h P k A := by
+  have hdiv : (1:ℝ) / (h * P) / (1 / (k * A)) = (k * A) / (h * P) := by
+    field_simp
+  have hinv : (k * A) / (h * P) = ((h * P) / (k * A))⁻¹ := (inv_div _ _).symm
+  unfold lengthConstant finParameter
+  rw [hdiv, hinv, Real.sqrt_inv, one_div]
+
+/-- The cable characteristic resistance of the fin is `1 / sqrt (h P k A)`. -/
+lemma charResistance_fin {k A h P : ℝ} (hk : 0 < k) (hA : 0 < A) (hh : 0 < h) (hP : 0 < P) :
+    charResistance (1 / (h * P)) (1 / (k * A)) = 1 / Real.sqrt (h * P * k * A) := by
+  have hmul : (1:ℝ) / (h * P) * (1 / (k * A)) = (h * P * k * A)⁻¹ := by
+    field_simp
+  unfold charResistance
+  rw [hmul, Real.sqrt_inv, ← one_div]
+
+/-- Division by the fin's cable length constant is multiplication by `m`. -/
+private lemma div_lengthConstant_fin {k A h P : ℝ} (hk : 0 < k) (hA : 0 < A) (hh : 0 < h)
+    (hP : 0 < P) (y : ℝ) :
+    y / lengthConstant (1 / (h * P)) (1 / (k * A)) = finParameter h P k A * y := by
+  rw [lengthConstant_fin hk hA hh hP, div_one_div_eq]
+  exact mul_comm _ _
+
+/-- Adiabatic tip (`q L = 0`), from the sealed-end solution: the excess is
+`θ x = θ 0 * cosh (m (L - x)) / cosh (m L)` on `[0, L]`. -/
+lemma IsFinSteadyState.temperature_adiabatic {k A h P Ta L : ℝ} {T q : ℝ → ℝ}
+    (hfin : IsFinSteadyState k A h P Ta L T q) (hk : 0 < k) (hA : 0 < A) (hh : 0 < h)
+    (hP : 0 < P) (hL : 0 < L) (htip : q L = 0) :
+    ∀ x ∈ Icc 0 L, T x - Ta =
+      (T 0 - Ta) * Real.cosh (finParameter h P k A * (L - x)) /
+        Real.cosh (finParameter h P k A * L) := by
+  have hcable : IsSteadyState (1 / (h * P)) (1 / (k * A)) (Icc 0 L) (fun x => T x - Ta) q :=
+    isFinSteadyState_iff.mp hfin
+  have hsealed := hcable.sealedEnd (fin_rm_pos hh hP) (fin_ri_pos hk hA) hL htip
+  intro x hx
+  have hx' := hsealed.2 x hx
+  simp only [div_lengthConstant_fin hk hA hh hP] at hx'
+  exact hx'
+
+/-- Adiabatic-tip heat rate, from the sealed-end input relation:
+`q 0 = sqrt (h P k A) * θ 0 * tanh (m L)`. -/
+lemma IsFinSteadyState.heatRate_adiabatic {k A h P Ta L : ℝ} {T q : ℝ → ℝ}
+    (hfin : IsFinSteadyState k A h P Ta L T q) (hk : 0 < k) (hA : 0 < A) (hh : 0 < h)
+    (hP : 0 < P) (hL : 0 < L) (htip : q L = 0) :
+    q 0 = Real.sqrt (h * P * k * A) * (T 0 - Ta) * Real.tanh (finParameter h P k A * L) := by
+  have hcable : IsSteadyState (1 / (h * P)) (1 / (k * A)) (Icc 0 L) (fun x => T x - Ta) q :=
+    isFinSteadyState_iff.mp hfin
+  have hrel := (hcable.sealedEnd (fin_rm_pos hh hP) (fin_ri_pos hk hA) hL htip).1
+  have harg : L / lengthConstant (1 / (h * P)) (1 / (k * A)) = finParameter h P k A * L :=
+    div_lengthConstant_fin hk hA hh hP L
+  rw [harg, charResistance_fin hk hA hh hP] at hrel
+  have hS0 : Real.sqrt (h * P * k * A) ≠ 0 := (fin_sqrt_pos hk hA hh hP).ne'
+  have hc0 : Real.cosh (finParameter h P k A * L) ≠ 0 := (cosh_pos _).ne'
+  have h1 : (T 0 - Ta) * Real.sinh (finParameter h P k A * L) =
+      (1 / Real.sqrt (h * P * k * A)) * (q 0 * Real.cosh (finParameter h P k A * L)) := by
+    rw [← mul_assoc]
+    exact hrel
+  have hmul : ∀ a : ℝ, Real.sqrt (h * P * k * A) * ((1 / Real.sqrt (h * P * k * A)) * a)
+      = a := by
+    intro a
+    rw [← mul_assoc, mul_one_div_cancel hS0, one_mul]
+  have h2 := congrArg (fun v => Real.sqrt (h * P * k * A) * v) h1
+  rw [hmul] at h2
+  rw [Real.tanh_eq_sinh_div_cosh]
+  have hrw : Real.sqrt (h * P * k * A) * (T 0 - Ta) *
+        (Real.sinh (finParameter h P k A * L) / Real.cosh (finParameter h P k A * L)) =
+      (Real.sqrt (h * P * k * A) * ((T 0 - Ta) * Real.sinh (finParameter h P k A * L))) /
+        Real.cosh (finParameter h P k A * L) := by ring
+  rw [hrw, eq_div_iff hc0]
+  exact h2.symm
+
+/-- Adiabatic-tip efficiency: the heat rate over the rate `h (P L) θ 0` of a fin at the base
+temperature is `tanh (m L) / (m L)`, for a nonzero base excess. -/
+lemma IsFinSteadyState.efficiency_adiabatic {k A h P Ta L : ℝ} {T q : ℝ → ℝ}
+    (hfin : IsFinSteadyState k A h P Ta L T q) (hk : 0 < k) (hA : 0 < A) (hh : 0 < h)
+    (hP : 0 < P) (hL : 0 < L) (htip : q L = 0) (hθ : T 0 - Ta ≠ 0) :
+    q 0 / (h * (P * L) * (T 0 - Ta)) =
+      Real.tanh (finParameter h P k A * L) / (finParameter h P k A * L) := by
+  have hq := hfin.heatRate_adiabatic hk hA hh hP hL htip
+  have hmpos := finParameter_pos hk hA hh hP
+  have hden1 : h * (P * L) * (T 0 - Ta) ≠ 0 :=
+    mul_ne_zero (mul_ne_zero hh.ne' (mul_ne_zero hP.ne' hL.ne')) hθ
+  have hden2 : finParameter h P k A * L ≠ 0 := mul_ne_zero hmpos.ne' hL.ne'
+  have hSm := fin_sqrt_mul_finParameter hk hA hh hP
+  rw [hq, div_eq_div_iff hden1 hden2]
+  linear_combination (T 0 - Ta) * Real.tanh (finParameter h P k A * L) * L * hSm
+
+/-- Convective tip `q L = h A (T L - Ta)` (outward normal `+x`), through the transfer solution:
+`q 0 = sqrt (h P k A) θ 0 (sinh (m L) + (h / (m k)) cosh (m L)) /
+(cosh (m L) + (h / (m k)) sinh (m L))`. -/
+lemma IsFinSteadyState.heatRate_convectiveTip {k A h P Ta L : ℝ} {T q : ℝ → ℝ}
+    (hfin : IsFinSteadyState k A h P Ta L T q) (hk : 0 < k) (hA : 0 < A) (hh : 0 < h)
+    (hP : 0 < P) (hL : 0 < L) (htip : q L = h * A * (T L - Ta)) :
+    q 0 = Real.sqrt (h * P * k * A) * (T 0 - Ta) *
+      ((Real.sinh (finParameter h P k A * L) +
+          h / (finParameter h P k A * k) * Real.cosh (finParameter h P k A * L)) /
+        (Real.cosh (finParameter h P k A * L) +
+          h / (finParameter h P k A * k) * Real.sinh (finParameter h P k A * L))) := by
+  have hcable : IsSteadyState (1 / (h * P)) (1 / (k * A)) (Icc 0 L) (fun x => T x - Ta) q :=
+    isFinSteadyState_iff.mp hfin
+  have hLmem : L ∈ Icc (0:ℝ) L := ⟨hL.le, le_rfl⟩
+  have htrans := hcable.eq_cable_Icc (fin_rm_pos hh hP) (fin_ri_pos hk hA) hLmem
+  have hmpos := finParameter_pos hk hA hh hP
+  have hSpos := fin_sqrt_pos hk hA hh hP
+  have hS0 : Real.sqrt (h * P * k * A) ≠ 0 := hSpos.ne'
+  have hm0 : finParameter h P k A ≠ 0 := hmpos.ne'
+  simp only [cableVoltage, cableCurrent, div_lengthConstant_fin hk hA hh hP,
+    charResistance_fin hk hA hh hP] at htrans
+  have hdiv1 : ∀ a : ℝ, a / (1 / Real.sqrt (h * P * k * A))
+      = a * Real.sqrt (h * P * k * A) := fun a => div_one_div_eq a _
+  simp only [hdiv1] at htrans
+  have h1 : T L - Ta = (T 0 - Ta) * Real.cosh (finParameter h P k A * L) -
+      (1 / Real.sqrt (h * P * k * A)) * q 0 * Real.sinh (finParameter h P k A * L) :=
+    htrans.1
+  have h2 : q L = q 0 * Real.cosh (finParameter h P k A * L) -
+      (T 0 - Ta) * Real.sqrt (h * P * k * A) * Real.sinh (finParameter h P k A * L) :=
+    htrans.2
+  have hmain : q 0 * Real.cosh (finParameter h P k A * L) -
+        (T 0 - Ta) * Real.sqrt (h * P * k * A) * Real.sinh (finParameter h P k A * L) =
+      h * A * ((T 0 - Ta) * Real.cosh (finParameter h P k A * L) -
+        (1 / Real.sqrt (h * P * k * A)) * q 0 * Real.sinh (finParameter h P k A * L)) := by
+    linear_combination -h2 + htip + h * A * h1
+  have hAmk := fin_sqrt_eq_mul hk hA hh hP
+  have hK : h * A / Real.sqrt (h * P * k * A) = h / (finParameter h P k A * k) := by
+    rw [div_eq_div_iff hS0 (mul_ne_zero hm0 hk.ne')]
+    linear_combination h * hAmk
+  have h4 : (1:ℝ) / Real.sqrt (h * P * k * A) * Real.sqrt (h * P * k * A) = 1 :=
+    one_div_mul_cancel hS0
+  have hfield : q 0 * (Real.cosh (finParameter h P k A * L) +
+        h * A / Real.sqrt (h * P * k * A) * Real.sinh (finParameter h P k A * L)) =
+      Real.sqrt (h * P * k * A) * (T 0 - Ta) *
+        (Real.sinh (finParameter h P k A * L) +
+          h * A / Real.sqrt (h * P * k * A) * Real.cosh (finParameter h P k A * L)) := by
+    linear_combination hmain -
+      (h * A) * (T 0 - Ta) * Real.cosh (finParameter h P k A * L) * h4
+  have hKpos : 0 < h / (finParameter h P k A * k) := div_pos hh (mul_pos hmpos hk)
+  have hspos : 0 < Real.sinh (finParameter h P k A * L) :=
+    sinh_pos_iff.2 (mul_pos hmpos hL)
+  have hden : Real.cosh (finParameter h P k A * L) +
+      h / (finParameter h P k A * k) * Real.sinh (finParameter h P k A * L) ≠ 0 :=
+    (add_pos (cosh_pos _) (mul_pos hKpos hspos)).ne'
+  rw [← hK] at hden ⊢
+  have hrw : Real.sqrt (h * P * k * A) * (T 0 - Ta) *
+        ((Real.sinh (finParameter h P k A * L) +
+            h * A / Real.sqrt (h * P * k * A) * Real.cosh (finParameter h P k A * L)) /
+          (Real.cosh (finParameter h P k A * L) +
+            h * A / Real.sqrt (h * P * k * A) * Real.sinh (finParameter h P k A * L))) =
+      (Real.sqrt (h * P * k * A) * (T 0 - Ta) *
+        (Real.sinh (finParameter h P k A * L) +
+          h * A / Real.sqrt (h * P * k * A) * Real.cosh (finParameter h P k A * L))) /
+        (Real.cosh (finParameter h P k A * L) +
+          h * A / Real.sqrt (h * P * k * A) * Real.sinh (finParameter h P k A * L)) := by
+    ring
+  rw [hrw, eq_div_iff hden]
+  exact hfield
+
+/-- Sign check: with an adiabatic tip, a base hotter than the fluid feeds heat into the fin
+(`q 0 > 0`, flow in `+x`, out of the wall). -/
+lemma IsFinSteadyState.heatRate_pos_of_base_pos {k A h P Ta L : ℝ} {T q : ℝ → ℝ}
+    (hfin : IsFinSteadyState k A h P Ta L T q) (hk : 0 < k) (hA : 0 < A) (hh : 0 < h)
+    (hP : 0 < P) (hL : 0 < L) (htip : q L = 0) (hθ : 0 < T 0 - Ta) :
+    0 < q 0 := by
+  have hq := hfin.heatRate_adiabatic hk hA hh hP hL htip
+  rw [hq]
+  have ht : 0 < Real.tanh (finParameter h P k A * L) := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_pos (sinh_pos_iff.2 (mul_pos (finParameter_pos hk hA hh hP) hL)) (cosh_pos _)
+  exact mul_pos (mul_pos (fin_sqrt_pos hk hA hh hP) hθ) ht
+
+end FinCable
 
 end ConductionPorts

@@ -128,4 +128,17 @@ theorem exists_admix_star_f3_nonneg {α a b c : ℝ} (hα0 : 0 < α) (hα1 : α 
   intro C A B
   rw [f3_eq_f4, f3_eq_f4, (f4_star_eq_f4_admix hw' hl' hw hl C A C B).symm]
 
+/-- For `0 ≤ α ≤ 1` and `a, b ≥ 0`, the matching star tree has nonnegative edge lengths exactly
+when `f3 C A B ≥ 0` in the admixture model (`A = 0`, `B = 1`, `C = 2`). -/
+theorem starLen_nonneg_iff_f3_nonneg {α a b c : ℝ} (hα0 : 0 ≤ α) (hα1 : α ≤ 1) (ha : 0 ≤ a)
+    (hb : 0 ≤ b) {M : DriftModel μ (Fin 3) (Fin 3)} (hw : M.weight = admixWeight α)
+    (hl : M.len = ![a, b, c]) :
+    (∀ e, 0 ≤ starLen α a b c e) ↔ 0 ≤ f3 μ M.freq 2 0 1 := by
+  rw [f3_admixWeight hw hl]
+  constructor
+  · intro h
+    simpa [starLen] using h 2
+  · intro h
+    exact starLen_nonneg hα0 hα1 ha hb (by linarith)
+
 end MathlibExt.Biology.PopulationGenetics.FStatisticsCovariance

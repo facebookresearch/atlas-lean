@@ -68,6 +68,11 @@ treated.
 
 ## iv. References
 
+- L. C. Evans, *Partial Differential Equations*, 2nd ed., American Mathematical Society, 2010,
+  §3.4.1 (shocks: the Rankine-Hugoniot condition for a curve of discontinuity separating smooth
+  solutions of a scalar conservation law).
+- R. J. LeVeque, *Finite Volume Methods for Hyperbolic Problems*, Cambridge University Press,
+  2002, §11.8 (shock speed from the integral form of a scalar conservation law).
 - `ControlVolumes.movingJumpTransport` (`PhyslibExt.ContinuumMechanics.ControlVolumes`).
 - Mathlib's `MeasureTheory.integral_prod` (Fubini) and
   `intervalIntegral.integral_eq_sub_of_hasDerivAt` (fundamental theorem of calculus).
@@ -210,7 +215,9 @@ Then the split mass on `[a, b]` changes at the conservation rate
 `f (uL t a) - f (uR t b)` (flux in at `a` minus flux out at `b`) exactly
 when the Rankine-Hugoniot jump identity
 `c * (uR t (s t) - uL t (s t)) = f (uR t (s t)) - f (uL t (s t))` holds.
-No existence of such solutions is asserted. -/
+This is the classical Rankine-Hugoniot condition for scalar conservation laws
+(Evans, *Partial Differential Equations*, §3.4.1; LeVeque, *Finite Volume Methods
+for Hyperbolic Problems*, §11.8). No existence of such solutions is asserted. -/
 theorem conservation_iff_rankineHugoniot
     {f : ℝ → ℝ} {uL uR vL vR : ℝ → ℝ → ℝ} {gL gR : ℝ → ℝ}
     {s : ℝ → ℝ} {c a b t : ℝ} {UL UR : Set (ℝ × ℝ)}

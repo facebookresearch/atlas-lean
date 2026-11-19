@@ -14,7 +14,7 @@ The proof applies Lebesgue's differentiation theorem for uniformly locally doubl
 
 ## Background
 
-- Lebesgue differentiation along shrinking off-center intervals: for real-valued $f$ that statement already contains the theorem, since $x \in I_n(x)$ lies within half the length of the midpoint of $I_n(x)$.
+- [Lebesgue differentiation along shrinking off-center intervals](../../../../Probability/stochastic-calculus/it-integral/ae-tendsto-average-icc.md): for real-valued $f$ that statement already contains the theorem, since $x \in I_n(x)$ lies within half the length of the midpoint of $I_n(x)$.
 
 ## Sources
 

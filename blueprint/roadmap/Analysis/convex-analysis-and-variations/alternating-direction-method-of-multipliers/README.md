@@ -8,5 +8,5 @@ ADMM solves $\min f(x) + g(z)$ subject to $Ax + Bz = c$ by alternately minimizin
 
 - [Lagrange duality](../lagrange-duality/README.md)
 - [Moreau decomposition](../moreau-decomposition/README.md)
-- Least squares, ridge and lasso regression
-- Logistic regression and support vector machines
+- [Least squares, ridge and lasso regression](../../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/README.md)
+- [Logistic regression and support vector machines](../../../ComputerScience/machine-learning/supervised-learning/logistic-regression-and-support-vector-machines/README.md)

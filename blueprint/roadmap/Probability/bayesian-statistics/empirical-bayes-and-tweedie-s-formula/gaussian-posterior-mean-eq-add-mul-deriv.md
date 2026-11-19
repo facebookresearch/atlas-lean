@@ -18,8 +18,8 @@ The second-order formula is [Tweedie's formula for the posterior variance](gauss
 
 ## Background
 
-- Finite-support Tweedie score identity: the same identity as a finite-sum calculation for a prior with finitely many atoms in $\mathbb R^d$, with scaling $\lambda$.
-- Score and optimal denoiser for Gaussian data: the identity $x + \sigma^2 \nabla \log p_\sigma(x) = \mathbb E[X_0 \mid X = x]$ checked directly for Gaussian data in $\mathbb R^D$, the form used for denoising in diffusion models.
+- [Finite-support Tweedie score identity](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/mixture-models/has-gradient-at-log-marginal-joint-of-me.md): the same identity as a finite-sum calculation for a prior with finitely many atoms in $\mathbb R^d$, with scaling $\lambda$.
+- [Score and optimal denoiser for Gaussian data](../../../ComputerScience/machine-learning/diffusion-and-flow-generative-models/gaussian-data-score-and-denoiser.md): the identity $x + \sigma^2 \nabla \log p_\sigma(x) = \mathbb E[X_0 \mid X = x]$ checked directly for Gaussian data in $\mathbb R^D$, the form used for denoising in diffusion models.
 - [Posterior mean in the normal–normal model](gaussian-posterior-mean-gaussian-real.md): the Gaussian prior, where the formula gives linear shrinkage.
 
 ## Sources
