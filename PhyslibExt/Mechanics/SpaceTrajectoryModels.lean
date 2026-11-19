@@ -7,14 +7,60 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Analysis.Calculus.ContDiff.Defs
+public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import PhyslibExt.Mechanics.PropulsionPorts
+public import PhyslibExt.Units.EngineeringFrames
 
+import Mathlib.Analysis.Calculus.ContDiff.Deriv
+import Mathlib.Analysis.Calculus.Deriv.Inv
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.SpecialFunctions.Sqrt
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+import Mathlib.LinearAlgebra.Matrix.DotProduct
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 
 /-!
-# Space trajectory models: a thrust-only rendezvous with independent terminal data
+# Space trajectory models: restricted three-body equilibria and a thrust-only rendezvous
 
+Two models in normalized units: the circular restricted three-body problem in the frame that
+rotates with its primaries (sections A-C), and a gravity-free, collinear thrust-only rendezvous
+with independent terminal data (sections D-F).
+
+## i. Overview
+
+The restricted three-body problem (sections A-C). Two primaries of masses `1 - μ` and `μ` move on
+circles about their barycenter, at unit separation and unit angular speed (gravitational constant
+one). In the frame that rotates with them, `R(t) = rotZ t` about the third axis, the larger
+primary sits at `(-μ, 0, 0)` and the smaller at `(1 - μ, 0, 0)`. A massless particle with
+rotating-frame coordinates `(x, y, 0)` has inertial position `X = R(t) (x, y, 0)`, by the frame
+dictionary's convention `x_I = o + R x_B` with the barycenter as origin `o = 0`.
+
+The effective potential is `Ω = (x² + y²) / 2 + (1 - μ) / r₁ + μ / r₂`, with `r₁`, `r₂` the
+distances to the primaries. If `X` obeys Newton's law in the inertial frame under the attraction
+of both primaries, then away from collisions the rotating coordinates obey
+`x'' - 2 y' = Ω_x` and `y'' + 2 x' = Ω_y`, where `Ω_x`, `Ω_y` are the partial derivatives of `Ω`;
+the equations are derived from the inertial field, not assumed. At the triangular points
+`(1/2 - μ, ±√3/2)` both distances are one and both partial derivatives vanish, so they are
+equilibria of the rotating equations: a particle there co-rotates with the primaries on a circle
+that solves the inertial equations of motion. The primaries' own circular motion solves their
+two-body equations, so unit angular speed is consistent with unit separation and unit total
+mass.
+
+Model inputs of sections A-C: the test particle is massless (it does not move the primaries); the
+motion is in the primaries' orbital plane; collisions are excluded by `r₁, r₂ > 0`. The physical
+mass ratio is `0 < μ < 1`; the statements hold for every real `μ`, since no proof uses the range.
+Not covered: stability of the triangular points, the collinear points, the Jacobi integral, the
+spatial problem, and any limit from three positive masses.
+
+The thrust-only rendezvous (sections D-F).
 A gravity-free, collinear pilot of a thrust-only rendezvous in normalized units. The vehicle
 starts from rest at the origin with mass `2`, expels propellant at the constant mass flow `1`
 with exhaust speed `1` on the burn interval `[0, 1]`, so `m t = 2 - t` and the thrust is `1`.
@@ -23,8 +69,6 @@ solved by `v t = log (2 / (2 - t))`, whose integral from the origin is
 `x t = t + (2 - t) * log ((2 - t) / 2)`. A target coasting at the constant speed `log 2` along
 `x_target t = 1 - 2 * log 2 + t * log 2` is met at `t = 1` with equal position `1 - log 2` and
 equal velocity `log 2`, while the mass stays positive.
-
-## i. Overview
 
 * The burn. `burnMass`, `burnVelocity` and `burnPosition` are the prescribed histories. On
   `[0, 1]` the mass is positive, the law holds with exhaust speed `1`, and its common value, the
@@ -41,12 +85,21 @@ equal velocity `log 2`, while the mass stays positive.
 Signs: positions and velocities are measured along the thrust direction; the exhaust leaves
 backward, `m' = -1 < 0`, and the vehicle speeds up, `v' = 1 / (2 - t) > 0`.
 
-Model inputs: no gravity, drag or other external force; one line of motion; the mass history,
-exhaust speed and target are fixed explicitly. This is not a general orbital rendezvous, not a
-guidance law and not an optimality result; no empirical adequacy or vehicle safety claim.
+Model inputs of sections D-F: no gravity, drag or other external force; one line of motion; the
+mass history, exhaust speed and target are fixed explicitly. This is not a general orbital
+rendezvous, not a guidance law and not an optimality result; no empirical adequacy or vehicle
+safety claim.
 
 ## ii. Key results
 
+- `rotatingFrame`, `rotatingToInertial`, `primaryGravity`, `effectivePotential`: the rotating
+  frame, the inertial field of the two primaries and the effective potential.
+- `hasDerivAt_effectivePotential_fst`, `hasDerivAt_effectivePotential_snd`: the partial
+  derivatives of `Ω` away from the primaries.
+- `rotating_equations`: the rotating equations from the inertial two-primary field.
+- `triangular_equilibrium`, `triangular_inertial_orbit`, `primaries_two_body`: the triangular
+  points are collision-free equilibria and co-rotate on solutions of the inertial equations, and
+  the primaries' circles solve their two-body equations.
 - `burnMass`, `burnVelocity`, `burnPosition`, `targetPosition`: the prescribed histories.
 - `hasDerivAt_burnMass`, `burnMass_pos`, `hasDerivAt_burnVelocity`, `burn_law`: mass flow `1`,
   positive mass, the law with exhaust speed `1` and thrust `1`.
@@ -55,28 +108,394 @@ guidance law and not an optimality result; no empirical adequacy or vehicle safe
   displacement as the integral of the velocity.
 - `hasDerivAt_targetPosition`, `rendezvous`: the target's constant speed and the matched
   terminal position and velocity at `t = 1`.
-- The nonzero burn and the excluded depletion time are checked in
+- The triangular points for a mass ratio in `(0, 1)`, the collision boundary, a non-equilibrium
+  point, the nonzero burn and the excluded depletion time are checked in
   `PhyslibExtTest.Mechanics.SpaceTrajectoryModelsTest`.
 
 ## iii. Table of contents
 
+- A. The rotating frame, the primaries and the effective potential
+- B. The rotating equations
+  - B.1. Private helpers
+  - B.2. Derivation from the inertial field
+- C. The triangular equilibria
 - D. The prescribed burn
 - E. Velocity and position histories
 - F. The target and the rendezvous
 
 ## iv. References
 
+- V. Szebehely, *Theory of Orbits: The Restricted Problem of Three Bodies*, ch. 1 and 4.
+- C. D. Murray and S. F. Dermott, *Solar System Dynamics*, ch. 3: the circular restricted
+  three-body problem, `Ω`, the equations of motion in the rotating frame and the Lagrangian
+  points.
 - G. P. Sutton and O. Biblarz, *Rocket Propulsion Elements*, 9th edition, chapters 2 and 4
   (thrust, effective exhaust velocity, ideal rocket equation).
-- H. D. Curtis, *Orbital Mechanics for Engineering Students*, rocket vehicle dynamics chapter.
+- H. D. Curtis, *Orbital Mechanics for Engineering Students*, ch. 2 (the restricted three-body
+  problem and the Lagrange points) and the rocket vehicle dynamics chapter.
+- `PhyslibExt.Units.EngineeringFrames` (`bodyToInertial`, `rotZ`): the frame convention.
 - `PhyslibExt.Mechanics.PropulsionPorts` (`velocity_increment_eq_log`).
 -/
 
 @[expose] public section
 
+open scoped Matrix
+
 namespace PhyslibExt.Mechanics.SpaceTrajectoryModels
 
-open Set PhyslibExt.Mechanics.PropulsionPorts
+open Set PhyslibExt.Mechanics.PropulsionPorts Units.EngineeringFrames
+
+/-! ## A. The rotating frame, the primaries and the effective potential -/
+
+/-- Orientation at time `t` of the frame rotating with the primaries: the rotation by the angle `t`
+about the third axis (unit angular speed). -/
+noncomputable def rotatingFrame (t : ℝ) : Matrix.specialOrthogonalGroup (Fin 3) ℝ :=
+  ⟨rotZ t, rotZ_mem_specialOrthogonalGroup t⟩
+
+/-- Inertial position at time `t` of the point with rotating-frame coordinates `ξ`:
+`X = R(t) ξ`, the frame dictionary's `x_I = o + R x_B` with the barycenter as origin `o = 0`. -/
+noncomputable def rotatingToInertial (ξ : Fin 3 → ℝ) (t : ℝ) : Fin 3 → ℝ :=
+  bodyToInertial 0 (rotatingFrame t) ξ
+
+/-- Newtonian attraction `-m d / |d|³` toward a point mass `m` at relative position `d`, with
+gravitational constant one and the Euclidean length `|d| = √(d ⬝ᵥ d)`. At `d = 0` Lean's
+convention `x / 0 = 0` gives a meaningless value. -/
+noncomputable def pointMassPull (m : ℝ) (d : Fin 3 → ℝ) : Fin 3 → ℝ :=
+  -(m / Real.sqrt (d ⬝ᵥ d) ^ 3) • d
+
+/-- Inertial gravitational field at the position `X` and time `t` of the two primaries: mass
+`1 - μ` fixed at `(-μ, 0, 0)` and mass `μ` fixed at `(1 - μ, 0, 0)` in the rotating frame. -/
+noncomputable def primaryGravity (μ t : ℝ) (X : Fin 3 → ℝ) : Fin 3 → ℝ :=
+  pointMassPull (1 - μ) (X - rotatingToInertial ![-μ, 0, 0] t) +
+    pointMassPull μ (X - rotatingToInertial ![1 - μ, 0, 0] t)
+
+/-- Distance `r₁` from the rotating-frame point `(x, y)` to the larger primary at `(-μ, 0)`. -/
+noncomputable def primaryDistOne (μ x y : ℝ) : ℝ := Real.sqrt ((x + μ) ^ 2 + y ^ 2)
+
+/-- Distance `r₂` from the rotating-frame point `(x, y)` to the smaller primary at `(1 - μ, 0)`. -/
+noncomputable def primaryDistTwo (μ x y : ℝ) : ℝ := Real.sqrt ((x - (1 - μ)) ^ 2 + y ^ 2)
+
+/-- Effective potential `Ω = (x² + y²) / 2 + (1 - μ) / r₁ + μ / r₂` of the rotating frame. At a
+primary Lean's convention `x / 0 = 0` gives a finite meaningless value. -/
+noncomputable def effectivePotential (μ x y : ℝ) : ℝ :=
+  (x ^ 2 + y ^ 2) / 2 + (1 - μ) / primaryDistOne μ x y + μ / primaryDistTwo μ x y
+
+/-- The partial derivative `Ω_x = x - (1 - μ) (x + μ) / r₁³ - μ (x - 1 + μ) / r₂³` away from the
+primaries. -/
+lemma hasDerivAt_effectivePotential_fst {μ x y : ℝ} (h₁ : 0 < primaryDistOne μ x y)
+    (h₂ : 0 < primaryDistTwo μ x y) :
+    HasDerivAt (fun ξ => effectivePotential μ ξ y)
+      (x - (1 - μ) * (x + μ) / primaryDistOne μ x y ^ 3 -
+        μ * (x - (1 - μ)) / primaryDistTwo μ x y ^ 3) x := by
+  have hq1 : (x + μ) ^ 2 + y ^ 2 ≠ 0 := by
+    intro h
+    unfold primaryDistOne at h₁
+    rw [h, Real.sqrt_zero] at h₁
+    exact lt_irrefl 0 h₁
+  have hq2 : (x - (1 - μ)) ^ 2 + y ^ 2 ≠ 0 := by
+    intro h
+    unfold primaryDistTwo at h₂
+    rw [h, Real.sqrt_zero] at h₂
+    exact lt_irrefl 0 h₂
+  have hd1 : HasDerivAt (fun ξ => (ξ + μ) ^ 2 + y ^ 2) (2 * (x + μ)) x := by
+    have := (((hasDerivAt_id x).add_const μ).pow 2).add_const (y ^ 2)
+    convert this using 1 <;> simp
+  have hd2 : HasDerivAt (fun ξ => (ξ - (1 - μ)) ^ 2 + y ^ 2) (2 * (x - (1 - μ))) x := by
+    have := (((hasDerivAt_id x).sub_const (1 - μ)).pow 2).add_const (y ^ 2)
+    convert this using 1 <;> simp
+  have hs1 : HasDerivAt (fun ξ => primaryDistOne μ ξ y)
+      (2 * (x + μ) / (2 * primaryDistOne μ x y)) x := hd1.sqrt hq1
+  have hs2 : HasDerivAt (fun ξ => primaryDistTwo μ ξ y)
+      (2 * (x - (1 - μ)) / (2 * primaryDistTwo μ x y)) x := hd2.sqrt hq2
+  have hp : HasDerivAt (fun ξ : ℝ => (ξ ^ 2 + y ^ 2) / 2) x x := by
+    have := ((hasDerivAt_pow 2 x).add_const (y ^ 2)).div_const 2
+    convert this using 1
+    ring
+  have h := (hp.add ((hasDerivAt_const x (1 - μ)).div hs1 h₁.ne')).add
+    ((hasDerivAt_const x μ).div hs2 h₂.ne')
+  unfold effectivePotential
+  convert h using 1
+  field_simp
+  ring
+
+/-- The partial derivative `Ω_y = y - (1 - μ) y / r₁³ - μ y / r₂³` away from the primaries. -/
+lemma hasDerivAt_effectivePotential_snd {μ x y : ℝ} (h₁ : 0 < primaryDistOne μ x y)
+    (h₂ : 0 < primaryDistTwo μ x y) :
+    HasDerivAt (fun η => effectivePotential μ x η)
+      (y - (1 - μ) * y / primaryDistOne μ x y ^ 3 - μ * y / primaryDistTwo μ x y ^ 3) y := by
+  have hq1 : (x + μ) ^ 2 + y ^ 2 ≠ 0 := by
+    intro h
+    unfold primaryDistOne at h₁
+    rw [h, Real.sqrt_zero] at h₁
+    exact lt_irrefl 0 h₁
+  have hq2 : (x - (1 - μ)) ^ 2 + y ^ 2 ≠ 0 := by
+    intro h
+    unfold primaryDistTwo at h₂
+    rw [h, Real.sqrt_zero] at h₂
+    exact lt_irrefl 0 h₂
+  have hd1 : HasDerivAt (fun η => (x + μ) ^ 2 + η ^ 2) (2 * y) y := by
+    have := (hasDerivAt_pow 2 y).const_add ((x + μ) ^ 2)
+    convert this using 1
+    simp
+  have hd2 : HasDerivAt (fun η => (x - (1 - μ)) ^ 2 + η ^ 2) (2 * y) y := by
+    have := (hasDerivAt_pow 2 y).const_add ((x - (1 - μ)) ^ 2)
+    convert this using 1
+    simp
+  have hs1 : HasDerivAt (fun η => primaryDistOne μ x η)
+      (2 * y / (2 * primaryDistOne μ x y)) y := hd1.sqrt hq1
+  have hs2 : HasDerivAt (fun η => primaryDistTwo μ x η)
+      (2 * y / (2 * primaryDistTwo μ x y)) y := hd2.sqrt hq2
+  have hp : HasDerivAt (fun η : ℝ => (x ^ 2 + η ^ 2) / 2) y y := by
+    have := ((hasDerivAt_pow 2 y).const_add (x ^ 2)).div_const 2
+    convert this using 1
+    ring
+  have h := (hp.add ((hasDerivAt_const y (1 - μ)).div hs1 h₁.ne')).add
+    ((hasDerivAt_const y μ).div hs2 h₂.ne')
+  unfold effectivePotential
+  convert h using 1
+  field_simp
+  ring
+
+/-! ## B. The rotating equations -/
+
+/-! ### B.1. Private helpers -/
+
+/-- Components of the rotating-to-inertial map: `R(t) (a, b, c)` is
+`(a cos t - b sin t, a sin t + b cos t, c)`. -/
+private lemma rti_apply (a b c t : ℝ) :
+    rotatingToInertial ![a, b, c] t =
+      ![Real.cos t * a - Real.sin t * b, Real.sin t * a + Real.cos t * b, c] := by
+  ext k
+  fin_cases k <;> simp [rotatingToInertial, bodyToInertial, rotatingFrame, rotZ] <;> ring
+
+/-- A point `(a, b, 0)` of the rotating plane in inertial components, as a combination of the
+first two inertial axes. -/
+private lemma rti_eq_smul (a b t : ℝ) :
+    rotatingToInertial ![a, b, 0] t =
+      (Real.cos t * a - Real.sin t * b) • ![(1 : ℝ), 0, 0] +
+        (Real.sin t * a + Real.cos t * b) • ![(0 : ℝ), 1, 0] := by
+  rw [rti_apply]
+  ext k
+  fin_cases k <;> simp
+
+/-- The second time derivative of `R(s) (x(s), y(s), 0)` for `C²` coordinates, in the first two
+inertial axes: the relative, Coriolis and centripetal terms of the unit-rate rotation. -/
+private lemma deriv_deriv_rti {x y : ℝ → ℝ} (hx : ContDiff ℝ 2 x) (hy : ContDiff ℝ 2 y) (t : ℝ) :
+    deriv (deriv fun s => rotatingToInertial ![x s, y s, 0] s) t =
+      (Real.cos t * (deriv (deriv x) t - 2 * deriv y t - x t) -
+          Real.sin t * (deriv (deriv y) t + 2 * deriv x t - y t)) • ![(1 : ℝ), 0, 0] +
+        (Real.sin t * (deriv (deriv x) t - 2 * deriv y t - x t) +
+          Real.cos t * (deriv (deriv y) t + 2 * deriv x t - y t)) • ![(0 : ℝ), 1, 0] := by
+  have hx1 : ∀ s, HasDerivAt x (deriv x s) s :=
+    fun s => (hx.differentiable (by norm_num) s).hasDerivAt
+  have hy1 : ∀ s, HasDerivAt y (deriv y s) s :=
+    fun s => (hy.differentiable (by norm_num) s).hasDerivAt
+  have hx2 : ∀ s, HasDerivAt (deriv x) (deriv (deriv x) s) s :=
+    fun s => (hx.differentiable_deriv_two s).hasDerivAt
+  have hy2 : ∀ s, HasDerivAt (deriv y) (deriv (deriv y) s) s :=
+    fun s => (hy.differentiable_deriv_two s).hasDerivAt
+  have hfun : (fun s => rotatingToInertial ![x s, y s, 0] s) = fun s =>
+      (Real.cos s * x s - Real.sin s * y s) • ![(1 : ℝ), 0, 0] +
+        (Real.sin s * x s + Real.cos s * y s) • ![(0 : ℝ), 1, 0] := by
+    funext s
+    exact rti_eq_smul (x s) (y s) s
+  have hd1 : ∀ s, HasDerivAt (fun s =>
+      (Real.cos s * x s - Real.sin s * y s) • ![(1 : ℝ), 0, 0] +
+        (Real.sin s * x s + Real.cos s * y s) • ![(0 : ℝ), 1, 0])
+      ((Real.cos s * deriv x s - Real.sin s * deriv y s - Real.sin s * x s - Real.cos s * y s) •
+          ![(1 : ℝ), 0, 0] +
+        (Real.sin s * deriv x s + Real.cos s * deriv y s + Real.cos s * x s -
+          Real.sin s * y s) • ![(0 : ℝ), 1, 0]) s := by
+    intro s
+    have hu := ((Real.hasDerivAt_cos s).mul (hx1 s)).sub ((Real.hasDerivAt_sin s).mul (hy1 s))
+    have hw := ((Real.hasDerivAt_sin s).mul (hx1 s)).add ((Real.hasDerivAt_cos s).mul (hy1 s))
+    have h := (hu.smul_const ![(1 : ℝ), 0, 0]).add (hw.smul_const ![(0 : ℝ), 1, 0])
+    convert h using 2
+    · ring_nf
+    · ring_nf
+  have hderiv : deriv (fun s =>
+      (Real.cos s * x s - Real.sin s * y s) • ![(1 : ℝ), 0, 0] +
+        (Real.sin s * x s + Real.cos s * y s) • ![(0 : ℝ), 1, 0]) = fun s =>
+      (Real.cos s * deriv x s - Real.sin s * deriv y s - Real.sin s * x s - Real.cos s * y s) •
+          ![(1 : ℝ), 0, 0] +
+        (Real.sin s * deriv x s + Real.cos s * deriv y s + Real.cos s * x s -
+          Real.sin s * y s) • ![(0 : ℝ), 1, 0] :=
+    funext fun s => (hd1 s).deriv
+  rw [hfun, hderiv]
+  have hu2 := ((((Real.hasDerivAt_cos t).mul (hx2 t)).sub ((Real.hasDerivAt_sin t).mul (hy2 t))).sub
+    ((Real.hasDerivAt_sin t).mul (hx1 t))).sub ((Real.hasDerivAt_cos t).mul (hy1 t))
+  have hw2 := ((((Real.hasDerivAt_sin t).mul (hx2 t)).add ((Real.hasDerivAt_cos t).mul (hy2 t))).add
+    ((Real.hasDerivAt_cos t).mul (hx1 t))).sub ((Real.hasDerivAt_sin t).mul (hy1 t))
+  have h := (hu2.smul_const ![(1 : ℝ), 0, 0]).add (hw2.smul_const ![(0 : ℝ), 1, 0])
+  have hd2 : HasDerivAt (fun s =>
+      (Real.cos s * deriv x s - Real.sin s * deriv y s - Real.sin s * x s - Real.cos s * y s) •
+          ![(1 : ℝ), 0, 0] +
+        (Real.sin s * deriv x s + Real.cos s * deriv y s + Real.cos s * x s -
+          Real.sin s * y s) • ![(0 : ℝ), 1, 0])
+      ((Real.cos t * (deriv (deriv x) t - 2 * deriv y t - x t) -
+          Real.sin t * (deriv (deriv y) t + 2 * deriv x t - y t)) • ![(1 : ℝ), 0, 0] +
+        (Real.sin t * (deriv (deriv x) t - 2 * deriv y t - x t) +
+          Real.cos t * (deriv (deriv y) t + 2 * deriv x t - y t)) • ![(0 : ℝ), 1, 0]) t := by
+    convert h using 2
+    · ring_nf
+    · ring_nf
+  exact hd2.deriv
+
+/-- The rotation keeps squared distances between points of the rotating plane. -/
+private lemma rti_sub_dot (a b p q t : ℝ) :
+    (rotatingToInertial ![a, b, 0] t - rotatingToInertial ![p, q, 0] t) ⬝ᵥ
+        (rotatingToInertial ![a, b, 0] t - rotatingToInertial ![p, q, 0] t) =
+      (a - p) ^ 2 + (b - q) ^ 2 := by
+  rw [rti_apply, rti_apply]
+  simp [dotProduct, Fin.sum_univ_three]
+  linear_combination ((a - p) ^ 2 + (b - q) ^ 2) * Real.cos_sq_add_sin_sq t
+
+/-- The inertial field of the primaries at the point `(a, b, 0)` of the rotating plane, in the
+first two inertial axes. -/
+private lemma primaryGravity_rti (μ t a b : ℝ) :
+    primaryGravity μ t (rotatingToInertial ![a, b, 0] t) =
+      (Real.cos t * (-(1 - μ) * (a + μ) / primaryDistOne μ a b ^ 3 -
+            μ * (a - (1 - μ)) / primaryDistTwo μ a b ^ 3) -
+          Real.sin t * (-(1 - μ) * b / primaryDistOne μ a b ^ 3 -
+            μ * b / primaryDistTwo μ a b ^ 3)) • ![(1 : ℝ), 0, 0] +
+        (Real.sin t * (-(1 - μ) * (a + μ) / primaryDistOne μ a b ^ 3 -
+            μ * (a - (1 - μ)) / primaryDistTwo μ a b ^ 3) +
+          Real.cos t * (-(1 - μ) * b / primaryDistOne μ a b ^ 3 -
+            μ * b / primaryDistTwo μ a b ^ 3)) • ![(0 : ℝ), 1, 0] := by
+  have h1 := rti_sub_dot a b (-μ) 0 t
+  have h2 := rti_sub_dot a b (1 - μ) 0 t
+  unfold primaryGravity pointMassPull
+  rw [h1, h2]
+  have e1 : Real.sqrt ((a - -μ) ^ 2 + (b - 0) ^ 2) = primaryDistOne μ a b := by
+    unfold primaryDistOne
+    congr 1
+    ring
+  have e2 : Real.sqrt ((a - (1 - μ)) ^ 2 + (b - 0) ^ 2) = primaryDistTwo μ a b := by
+    unfold primaryDistTwo
+    congr 1
+    ring
+  rw [e1, e2, rti_apply, rti_apply, rti_apply]
+  ext k
+  fin_cases k <;> simp <;> ring
+
+/-! ### B.2. Derivation from the inertial field -/
+
+/-- The rotating equations of the restricted three-body problem, derived from the inertial field.
+Let the rotating-frame coordinates `x`, `y` be `C²` and the particle avoid both primaries at time
+`t`. If its inertial position `X(s) = R(s) (x(s), y(s), 0)` obeys Newton's law at `t` under the
+attraction of the two primaries, then `x'' - 2 y' = Ω_x` and `y'' + 2 x' = Ω_y` at `t`, with the
+partial derivatives of the effective potential. -/
+lemma rotating_equations {μ t : ℝ} {x y : ℝ → ℝ} (hx : ContDiff ℝ 2 x) (hy : ContDiff ℝ 2 y)
+    (h₁ : 0 < primaryDistOne μ (x t) (y t)) (h₂ : 0 < primaryDistTwo μ (x t) (y t))
+    (hN : deriv (deriv fun s => rotatingToInertial ![x s, y s, 0] s) t =
+      primaryGravity μ t (rotatingToInertial ![x t, y t, 0] t)) :
+    deriv (deriv x) t - 2 * deriv y t = deriv (fun ξ => effectivePotential μ ξ (y t)) (x t) ∧
+      deriv (deriv y) t + 2 * deriv x t =
+        deriv (fun η => effectivePotential μ (x t) η) (y t) := by
+  have hA := deriv_deriv_rti hx hy t
+  have hG := primaryGravity_rti μ t (x t) (y t)
+  rw [hA, hG] at hN
+  have h0 := congrFun hN 0
+  have h1 := congrFun hN 1
+  simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Matrix.smul_cons, smul_eq_mul, mul_one, mul_zero,
+    Matrix.smul_empty, Fin.isValue, Pi.add_apply, Matrix.cons_val_zero, add_zero, neg_sub,
+    Matrix.cons_val_one, zero_add] at h0 h1
+  have hcs := Real.cos_sq_add_sin_sq t
+  have ha : deriv (deriv x) t - 2 * deriv y t - x t =
+      -(1 - μ) * (x t + μ) / primaryDistOne μ (x t) (y t) ^ 3 -
+        μ * (x t - (1 - μ)) / primaryDistTwo μ (x t) (y t) ^ 3 := by
+    linear_combination Real.cos t * h0 + Real.sin t * h1 -
+      (deriv (deriv x) t - 2 * deriv y t - x t -
+        (-(1 - μ) * (x t + μ) / primaryDistOne μ (x t) (y t) ^ 3 -
+          μ * (x t - (1 - μ)) / primaryDistTwo μ (x t) (y t) ^ 3)) * hcs
+  have hb : deriv (deriv y) t + 2 * deriv x t - y t =
+      -(1 - μ) * y t / primaryDistOne μ (x t) (y t) ^ 3 -
+        μ * y t / primaryDistTwo μ (x t) (y t) ^ 3 := by
+    linear_combination -Real.sin t * h0 + Real.cos t * h1 -
+      (deriv (deriv y) t + 2 * deriv x t - y t -
+        (-(1 - μ) * y t / primaryDistOne μ (x t) (y t) ^ 3 -
+          μ * y t / primaryDistTwo μ (x t) (y t) ^ 3)) * hcs
+  rw [(hasDerivAt_effectivePotential_fst h₁ h₂).deriv,
+    (hasDerivAt_effectivePotential_snd h₁ h₂).deriv]
+  constructor
+  · linear_combination ha
+  · linear_combination hb
+
+/-! ## C. The triangular equilibria -/
+
+/-- The triangular points `(1/2 - μ, s √3/2)`, `s = 1` and `s = -1`, are at unit distance from both
+primaries (so collision-free), and both partial derivatives of the effective potential vanish
+there: they are equilibria of the rotating equations. No stability is claimed. -/
+lemma triangular_equilibrium (μ : ℝ) {s : ℝ} (hs : s = 1 ∨ s = -1) :
+    primaryDistOne μ (1 / 2 - μ) (s * (Real.sqrt 3 / 2)) = 1 ∧
+      primaryDistTwo μ (1 / 2 - μ) (s * (Real.sqrt 3 / 2)) = 1 ∧
+      HasDerivAt (fun ξ => effectivePotential μ ξ (s * (Real.sqrt 3 / 2))) 0 (1 / 2 - μ) ∧
+      HasDerivAt (fun η => effectivePotential μ (1 / 2 - μ) η) 0 (s * (Real.sqrt 3 / 2)) := by
+  have hs2 : s ^ 2 = 1 := by
+    rcases hs with rfl | rfl <;> norm_num
+  have h3 : Real.sqrt 3 ^ 2 = 3 := Real.sq_sqrt (by norm_num)
+  have hd1 : primaryDistOne μ (1 / 2 - μ) (s * (Real.sqrt 3 / 2)) = 1 := by
+    unfold primaryDistOne
+    rw [show (1 / 2 - μ + μ) ^ 2 + (s * (Real.sqrt 3 / 2)) ^ 2 = (1 : ℝ) by
+      linear_combination (3 / 4) * hs2 + (s ^ 2 / 4) * h3]
+    exact Real.sqrt_one
+  have hd2 : primaryDistTwo μ (1 / 2 - μ) (s * (Real.sqrt 3 / 2)) = 1 := by
+    unfold primaryDistTwo
+    rw [show (1 / 2 - μ - (1 - μ)) ^ 2 + (s * (Real.sqrt 3 / 2)) ^ 2 = (1 : ℝ) by
+      linear_combination (3 / 4) * hs2 + (s ^ 2 / 4) * h3]
+    exact Real.sqrt_one
+  have hp1 : 0 < primaryDistOne μ (1 / 2 - μ) (s * (Real.sqrt 3 / 2)) := by rw [hd1]; norm_num
+  have hp2 : 0 < primaryDistTwo μ (1 / 2 - μ) (s * (Real.sqrt 3 / 2)) := by rw [hd2]; norm_num
+  refine ⟨hd1, hd2, ?_, ?_⟩
+  · have h := hasDerivAt_effectivePotential_fst hp1 hp2
+    rw [hd1, hd2] at h
+    convert h using 1
+    ring
+  · have h := hasDerivAt_effectivePotential_snd hp1 hp2
+    rw [hd1, hd2] at h
+    convert h using 1
+    ring
+
+/-- A particle fixed at a triangular point of the rotating frame moves on a circle in the inertial
+frame, and that circle solves the inertial equations of motion under both primaries at every
+time. -/
+lemma triangular_inertial_orbit (μ : ℝ) {s : ℝ} (hs : s = 1 ∨ s = -1) (t : ℝ) :
+    deriv (deriv (rotatingToInertial ![1 / 2 - μ, s * (Real.sqrt 3 / 2), 0])) t =
+      primaryGravity μ t (rotatingToInertial ![1 / 2 - μ, s * (Real.sqrt 3 / 2), 0] t) := by
+  obtain ⟨hd1, hd2, -, -⟩ := triangular_equilibrium μ hs
+  have hA := deriv_deriv_rti (x := fun _ => 1 / 2 - μ) (y := fun _ => s * (Real.sqrt 3 / 2))
+    contDiff_const contDiff_const t
+  simp only [deriv_const', deriv_const] at hA
+  rw [hA, primaryGravity_rti, hd1, hd2]
+  congr 2
+  · ring
+  · ring
+
+/-- Model consistency: the primaries' circular motion at unit angular speed and unit separation
+solves their two-body equations, each primary pulled by the other's mass. -/
+lemma primaries_two_body (μ t : ℝ) :
+    deriv (deriv (rotatingToInertial ![-μ, 0, 0])) t =
+        pointMassPull μ (rotatingToInertial ![-μ, 0, 0] t - rotatingToInertial ![1 - μ, 0, 0] t) ∧
+      deriv (deriv (rotatingToInertial ![1 - μ, 0, 0])) t =
+        pointMassPull (1 - μ)
+          (rotatingToInertial ![1 - μ, 0, 0] t - rotatingToInertial ![-μ, 0, 0] t) := by
+  have hdist : ∀ c d : ℝ, (rotatingToInertial ![c, 0, 0] t - rotatingToInertial ![d, 0, 0] t) ⬝ᵥ
+      (rotatingToInertial ![c, 0, 0] t - rotatingToInertial ![d, 0, 0] t) = (c - d) ^ 2 := by
+    intro c d
+    rw [rti_sub_dot]
+    ring
+  have hA := fun c : ℝ => deriv_deriv_rti (x := fun _ => c) (y := fun _ => (0 : ℝ))
+    contDiff_const contDiff_const t
+  simp only [deriv_const', deriv_const] at hA
+  refine ⟨?_, ?_⟩
+  · rw [hA, pointMassPull, hdist]
+    rw [show (-μ - (1 - μ)) ^ 2 = (1 : ℝ) by ring, Real.sqrt_one, rti_eq_smul, rti_eq_smul]
+    ext k
+    fin_cases k <;> simp <;> ring
+  · rw [hA, pointMassPull, hdist]
+    rw [show (1 - μ - -μ) ^ 2 = (1 : ℝ) by ring, Real.sqrt_one, rti_eq_smul, rti_eq_smul]
+    ext k
+    fin_cases k <;> simp <;> ring
 
 /-! ## D. The prescribed burn -/
 
