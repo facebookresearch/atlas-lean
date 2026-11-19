@@ -10,7 +10,9 @@ tree under blueprint/roadmap/. Each article's annotation in blueprint/links/
 (literature-links, read by Autoform) ties it to its Lean declaration and holds its
 article id and origin. The Lean owns what lean-facts adds on the build's checkout:
 an article's `## Depends on` and `## Proof depends on`, from the dependency dump,
-and its annotation's kind and status, from the Lean sources.
+and its annotation's kind and status, from the Lean sources. A planned page, one
+whose annotation never named a declaration, keeps the kind and prerequisites it
+records by hand.
 
 declarations gives each declaration with a docstring and no page a page from its
 docstring, beside its module's other pages and listed on their page in source
@@ -308,6 +310,9 @@ def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[st
             if path.name == "README.md":
                 continue
             name, own = lean_name(annotation), annotation.get("extensions", {}).get(OWN)
+            if not name and not (own and "module" in own and "name" in own):
+                # A planned page never had a Lean link: its kind and prerequisites are its own (graph rule 10).
+                continue
             kind, status = lean_facts_for(name, own, index, sorry)
             if kind is None:
                 counts["unresolved"] += 1

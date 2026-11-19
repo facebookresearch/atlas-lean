@@ -66,14 +66,15 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
 
 5. **Each page has one annotation, in `blueprint/links/<Subject>.jsonl`**
    (`roadmap.jsonl` for the root page), and an annotation names at most one
-   Lean declaration. Every annotation has a unique `id` (`af_` and 24 hex
-   digits): `sync_wiki.py declarations` gives one to each annotation it adds,
-   and a one-off PR fills in the ones missing today. `autoform links set`
-   cannot do this, because it does not write these per-subject files.
-   *Reason:* Autoform reads an article's facts from its annotation, and two
-   annotations for one page, or one page for two declarations, make its status
-   ambiguous; `autoform work` refuses an unfinished formalizable leaf without
-   an `id`, so rule 14's tasks cannot be listed until every one has one.
+   Lean declaration. An `id` (`af_` and 24 hex digits) is unique. A new
+   annotation should get one; annotations without one, most of them today,
+   get theirs from the sync and a one-off fill tracked in #ISSUE.
+   `autoform links set` cannot do this, because it does not write these
+   per-subject files. *Reason:* Autoform reads an article's facts from its
+   annotation, and two annotations for one page, or one page for two
+   declarations, make its status ambiguous; `autoform work` refuses an
+   unfinished formalizable leaf without an `id`, so rule 14's tasks cannot be
+   listed until every one has one.
 6. **Pages for documented declarations come from `sync_wiki.py
    declarations`,** then may be edited. Don't hand-write a second page for a
    declaration. *Reason:* the sync tracks docstring changes per declaration;
@@ -85,9 +86,10 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
    goes into the Lean docstring on `main`, in the same PR or in a linked issue.
    **Exception:** when the declaration is false, vacuous, unsatisfiable,
    mis-specified or private, the page states the source's mathematics, and its
-   annotation records the declaration under `org.atlas-wiki` `held` (with the
-   reason and, unless it is private by design, the `bug` issue tracking the Lean
-   fix) instead of linking it. *Reason:* readers trust the page, not the Lean,
+   annotation holds the declaration back with a `held` marker instead of
+   linking it, as [Maintaining articles](#maintaining-articles) describes: the
+   reason and, unless it is private by design, the issue or issues tracking
+   the Lean fix. *Reason:* readers trust the page, not the Lean,
    and the sync reports docstring drift only one way; a fix in a linked issue
    keeps the docstrings converging without making every wiki fix a Lean PR, and
    a held page should not be relinked to a declaration that is wrong.
@@ -104,11 +106,14 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
    those edges, and lean-facts rewrites the sections anyway.
 10. **A page with no Lean declaration (a planned page) may write its own
     `## Depends on` and `## Proof depends on`.** They count toward its
-    readiness, as Autoform's format says. *Reason:* nothing else records a
-    planned node's prerequisites.
+    readiness, as Autoform's format says, and `lean-facts` leaves them, and any
+    `kind` its annotation records, alone on a page whose annotation never named
+    a declaration. *Reason:* nothing else records a planned node's
+    prerequisites.
 11. **`## Informally uses` lists only results the cited proof uses** but the
     Lean need not. What the statement needs (its definitions and ingredients)
-    is described in the page's prose, not listed here. It links an existing
+    is described in the page's prose, not listed here. A result the Lean also
+    uses may be listed; that is redundant, not a finding. It links an existing
     page, never the page itself, and closes no cycle. It never counts toward
     readiness. *Reason:* it records the source's argument without changing
     what is ready; reviews of the 21 wiki batches moved hundreds of statement

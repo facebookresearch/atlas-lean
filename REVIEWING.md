@@ -107,7 +107,8 @@ reason. Beyond the mechanical rules, check what only a reader can:
   nonnegativity or normalisation it needs; and a citation not checked against
   the cited edition, including theorem numbers nobody verified.
 - **Held pages (rule 7).** Don't ask to relink a page whose annotation records
-  a `held` declaration; check that the reason holds and the issue is linked.
+  a `held` declaration; check that the reason holds and, unless the
+  declaration is private by design, that its issue is linked.
 
 Every graph PR also needs a code owner's approval (`.github/CODEOWNERS`).
 

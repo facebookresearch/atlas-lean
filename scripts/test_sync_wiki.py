@@ -143,7 +143,8 @@ class LeanFacts(Vault):
         index = SimpleNamespace(declarations={})
         for _ in range(2):
             counts, unlinked = sync.apply_lean_facts(index, {})
-            self.assertEqual(counts, {"articles": 0, "unresolved": 1, "edges": 0})
+            # A page that never named a declaration is planned, not unresolved.
+            self.assertEqual(counts, {"articles": 0, "unresolved": 0, "edges": 0})
             self.assertEqual(unlinked, [])
             self.assertEqual(page.read_text(), "# Unlinked\n\nKeep the edited statement.\n")
         row = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][0]
@@ -287,6 +288,19 @@ class LeanFacts(Vault):
         row = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][0]
         self.assertNotIn("kind", row)
         self.assertNotIn("status", row)
+
+    def test_a_planned_page_keeps_its_own_facts(self) -> None:
+        # A page that never had a Lean link records its kind and prerequisites by hand (graph rule 10).
+        body = ("# Main\n\nPlanned.\n\n## Depends on\n\n- [Base](base.md)\n\n"
+                "## Proof depends on\n\n- [Lemma](lemma.md)\n")
+        page = self.page("Algebra/main.md", body)
+        self.annotate([self.about("Algebra/main.md", kind="theorem", id="af_1",
+                                  extensions={"org.autoform": {"not_ready": True}})])
+        counts, unlinked = sync.apply_lean_facts(SimpleNamespace(declarations={}), {})
+        self.assertEqual((counts["unresolved"], unlinked), (0, []))
+        self.assertEqual(page.read_text(), body)
+        row = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][0]
+        self.assertEqual((row.get("kind"), row.get("id")), ("theorem", "af_1"))
 
     def test_pages_taken_from_docstrings_get_their_facts(self) -> None:
         # declarations marks its pages with OWN's "from", which names a module only for a page with no Lean name.
