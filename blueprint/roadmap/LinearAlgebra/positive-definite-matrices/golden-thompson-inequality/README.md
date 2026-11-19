@@ -10,5 +10,5 @@ The Golden–Thompson inequality $\operatorname{tr} e^{A+B} \le \operatorname{tr
 ## Related topics
 
 - [Araki–Lieb–Thirring inequality](../araki-lieb-thirring-inequality/README.md): its case $q = 1$, the Lieb–Thirring trace inequality, is the step from which the usual proof of Golden–Thompson starts.
-- Exponential limits and the Lie–Trotter formula: the product formula used in the usual proof.
-- Peierls and Klein inequalities: the other classical trace-exponential bounds, including Peierls–Bogoliubov.
+- [Exponential limits and the Lie–Trotter formula](../../../Analysis/operator-algebras/exponential-limits-and-the-lie-trotter-formula/README.md): the product formula used in the usual proof.
+- [Peierls and Klein inequalities](../../../Analysis/operator-theory/eigenvalue-inequalities/peierls-and-klein-inequalities/README.md): the other classical trace-exponential bounds, including Peierls–Bogoliubov.

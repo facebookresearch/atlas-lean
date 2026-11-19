@@ -8,7 +8,7 @@ Proof: the case $k = 0$ of the Eckart–Young theorem, the only map of rank $0$ 
 
 ## Informally uses
 
-- Eckart–Young theorem in operator norm: Eckart–Young in operator norm, at $k = 0$.
+- [Eckart–Young theorem in operator norm](../../../Analysis/operator-theory/eigenvalue-inequalities/eckart-young-best-rank-approx-operator-n.md): Eckart–Young in operator norm, at $k = 0$.
 
 ## Sources
 

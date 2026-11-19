@@ -1,0 +1,3 @@
+# Adjacency criterion for the free induced wiring
+
+Let $d, n \in \mathbb{N}$, $\Lambda_m = \{-m, \dots, m\}^d$ (so $\Lambda_n \subseteq \Lambda_{n+1}$), and let $\psi$ be a configuration of $\Lambda_{n+1}$ (an assignment of open/closed states to the unordered pairs of vertices of $\Lambda_{n+1}$). Two vertices $x, y \in \Lambda_n$ are adjacent in the [free induced wiring](induced-wiring-free.md) $W^0_\psi$ if and only if $x \ne y$ and $x, y$ are joined by a path in the [outer open graph](../boundary-conditions-induced-on-a-box-by-the-oute/outside-open-graph.md) $O^0_\psi$ on $\Lambda_{n+1}$ (the edges of $\Lambda_{n+1}$ open in $\psi$ that do not have both endpoints in $\Lambda_n$).
