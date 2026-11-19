@@ -10,7 +10,6 @@
 </p>
 
 <p align="center">
-  <strong>Autoformalized Textbook Library At Scale</strong><br />
   A large-scale Lean 4 library of textbook mathematics formalized with LLMs.
 </p>
 
