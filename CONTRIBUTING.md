@@ -56,8 +56,10 @@ article URL, or an exact citation in the checker.
 A filesystem-path match wholly inside an HTTP(S) URL path is exempt only for
 a public-looking DNS authority with no user information, valid labels and
 port syntax, no local or special-use suffix, and no drive-letter path segment.
-Local names, IP literals, and malformed authorities stay strict. Other rules
-still apply inside the URL, and query and fragment text remains checked.
+Local names, IP literals, and malformed authorities stay strict. A control
+character (C0, DEL, or C1) ends the URL path, so text after one is checked.
+Other rules still apply inside the URL, and query and fragment text remains
+checked.
 The checker does not resolve DNS, so a public-looking name is not proof that
 its destination is public. New citation forms need a reviewed base-checker
 change. These exceptions do not waive other findings or missing inputs.

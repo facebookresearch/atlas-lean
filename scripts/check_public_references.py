@@ -195,9 +195,11 @@ def citation_slots(text, start):
 # can accept is at most 260 characters. Longer authorities never match, so they
 # are neither copied nor cached and their paths stay strict.
 MAX_AUTHORITY_CHARS = 253 + 1 + 6
+# A control character (C0, DEL or C1) ends the path: it is never part of a
+# URL, so text after one is checked like any other text.
 URL_PATH = re.compile(
-    r"(?<![\w+.-])(?i:https?)://([^\s/?#\\\"'<>`]{1,%d})(/[^\s?#\\\"'<>`]*)"
-    % MAX_AUTHORITY_CHARS
+    r"(?<![\w+.-])(?i:https?)://([^\s/?#\\\"'<>`]{1,%d})"
+    r"(/[^\s?#\\\"'<>`\x00-\x1f\x7f-\x9f]*)" % MAX_AUTHORITY_CHARS
 )
 FILESYSTEM_PATH_RULES = ("personal-workspace", "temporary-workspace")
 # Only a public-looking DNS authority earns the URL-path reading: no userinfo,

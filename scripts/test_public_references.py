@@ -1062,6 +1062,57 @@ class PublicUrlPaths(unittest.TestCase):
             with self.subTest(text=text):
                 self.assertIn("personal-workspace", self.rules(text))
 
+    def test_control_characters_end_url_paths(self):
+        url = "https://www.math.cmu.edu/users/mubayi"
+        home = "/".join(["", "home", "Example", "private.txt"])
+        controls = [*range(0x00, 0x20), 0x7F, *range(0x80, 0xA0)]
+        for code in controls:
+            c = chr(code)
+            for text in (
+                url + c + home,
+                "https://www.math.cmu.edu/" + c + home,
+                "https://www.math.cmu.edu/pub" + c + "lic" + home,
+                url + c + c + home,
+                url + c + " " + home,
+                "https://www.math" + c + "cmu.edu" + home,
+                "https://www.math.cmu.edu/x?q" + c + "=" + home,
+            ):
+                with self.subTest(code=hex(code), text=ascii(text)):
+                    self.assertIn("personal-workspace", self.rules(text))
+            with self.subTest(code=hex(code), case="prefix before control"):
+                # A path wholly inside the URL before the control keeps its
+                # exemption; only text from the control on is outside it.
+                self.assertEqual(self.rules(url + home + c + "tail"), [])
+                # A later drive-letter path no longer voids that prefix; it
+                # is checked as text after the control.
+                drive = "/".join(["", "C:", "Users", "Example", "x.txt"])
+                self.assertEqual(
+                    self.rules(url + home + c + drive), ["personal-workspace"]
+                )
+        # Not controls: unchanged URL-path behavior.
+        for text in (
+            url + "\ufffd" + home,
+            url + "\u200b" + home,
+            url + "\u202e" + home,
+            url + "%00" + home,
+            url + "%7F" + home,
+            url + home,
+        ):
+            with self.subTest(text=ascii(text)):
+                self.assertEqual(self.rules(text), [])
+        lone = (url.encode() + b"\x80" + home.encode()).decode(
+            "utf-8", errors="replace"
+        )
+        self.assertEqual(self.rules(lone), [])
+        # Literal contexts never had the URL-path exemption.
+        self.assertIn(
+            "personal-workspace",
+            [
+                f["rule"]
+                for f in gate.scan(url + home, "x", rules=gate.LITERAL_RULES)
+            ],
+        )
+
     def test_url_heavy_input_is_bounded(self):
         text = "\n".join(PUBLIC_URLS) * 20000
         self.assertEqual(gate.scan(text, "text", citation_start=0), [])
@@ -2950,6 +3001,50 @@ class Repository(unittest.TestCase):
                 self.assertEqual(run.returncode, 1, run.stdout)
                 report = json.loads(run.stdout)
                 self.assertEqual(len(report["findings"]), 4)
+                self.assertNotIn("Example", run.stdout + run.stderr)
+
+    def test_cli_control_characters_end_url_paths(self):
+        url = "https://www.math.cmu.edu/users/mubayi"
+        home = "/".join(["", "home", "Example", "private.txt"])
+        for code in (0x00, 0x07, 0x1B, 0x7F, 0x85, 0x9B):
+            with self.subTest(code=hex(code)):
+                self.base = self.head()
+                text = url + chr(code) + home
+                self.write("notes.md", text + "\n")
+                (self.root / "data.bin").write_bytes(
+                    b"\x00BIN\x00" + text.encode() + b"\x00\n"
+                )
+                self.commit("Add notes")
+                metadata = self.root / "pr.json"
+                metadata.write_text(json.dumps({"title": text, "body": text}))
+                run = subprocess.run(
+                    [
+                        sys.executable,
+                        gate.__file__,
+                        "--repo-root",
+                        str(self.root),
+                        "--base",
+                        self.base,
+                        "--head",
+                        self.head(),
+                        "--metadata",
+                        str(metadata),
+                    ],
+                    capture_output=True,
+                    text=True,
+                )
+                metadata.unlink()
+                self.assertEqual(run.returncode, 1, run.stdout)
+                report = json.loads(run.stdout)
+                where = sorted(
+                    f["location"].split(" @ ")[0] for f in report["findings"]
+                )
+                self.assertEqual(
+                    where, ["PR body", "PR title", "data.bin", "notes.md"]
+                )
+                # A NUL makes the text file binary too; both are scanned.
+                binary = 2 if code == 0 else 1
+                self.assertEqual(report["binary_files"], binary)
                 self.assertNotIn("Example", run.stdout + run.stderr)
 
     def test_cli_distinguishes_public_and_local_url_paths(self):
