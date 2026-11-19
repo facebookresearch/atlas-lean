@@ -42,9 +42,9 @@ Variable heat capacity: when the internal energy `U` has temperature derivative 
 energy change is `ΔU = ∫ T in T₁..T₂, Cv T`, which is `kirchhoff_law` of
 `PhyslibExt.Chemistry.Thermodynamics.Thermochemistry` read with `U` in place of the enthalpy, and
 the engineering balance is `Q_in - W_out = ∫ Cv`. A continuous positive `Cv` makes `U` strictly
-increasing. For the linear model `Cv T = a + b * T` the endpoint estimate `Cv T₁ * (T₂ - T₁)`
-misses the exact change by `b * (T₂ - T₁) ^ 2 / 2`. No heat-capacity fit is claimed and `Cv` is
-never inferred from a substance.
+increasing. For the linear model `Cv T = a + b * T` the exact change minus the endpoint estimate
+`Cv T₁ * (T₂ - T₁)` is the signed amount `b * (T₂ - T₁) ^ 2 / 2`, whose sign is that of `b`. No
+heat-capacity fit is claimed and `Cv` is never inferred from a substance.
 
 Model inputs: the ideal-gas equation of state and the first law as encoded by the existing
 declarations; temperatures are absolute (`T > 0`); volumes, amounts, masses and gas constants
@@ -301,8 +301,9 @@ lemma integral_linear_heatCapacity (a b T₁ T₂ : ℝ) :
   ring
 
 /-- Endpoint error for the linear heat capacity: if `U' = a + b * T` at every temperature
-between `T₁` and `T₂`, the exact change exceeds the endpoint estimate `Cv T₁ * (T₂ - T₁)` by
-`b * (T₂ - T₁) ^ 2 / 2`. -/
+between `T₁` and `T₂`, the exact change minus the endpoint estimate `Cv T₁ * (T₂ - T₁)` is the
+signed amount `b * (T₂ - T₁) ^ 2 / 2`. Its sign is that of `b`, for either temperature order: the
+estimate is low when `Cv` rises with temperature and high when it falls. -/
 lemma sub_sub_endpoint_of_linear_heatCapacity (U : ℝ → ℝ) (a b T₁ T₂ : ℝ)
     (hU : ∀ T ∈ Set.uIcc T₁ T₂, HasDerivAt U (a + b * T) T) :
     U T₂ - U T₁ - (a + b * T₁) * (T₂ - T₁) = b * (T₂ - T₁) ^ 2 / 2 := by
