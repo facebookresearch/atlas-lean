@@ -47,9 +47,6 @@ edition, Wiley, 2016: the Hertzian dipole, its `sin²θ` pattern,
   directivity `1.5`, and radiation resistance.
 
 ## A. Short-dipole radiation metrics
-
-Discharges ECE roadmap leaf `ECE.EM.RADIATION.METRICS`
-(short-dipole metrics).
 -/
 
 @[expose] public section

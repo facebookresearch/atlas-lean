@@ -54,9 +54,6 @@ Systems*, fifth edition, Oxford University Press, 2019: photodetection, Poisson 
   responsivity.
 
 ## A. Moments of the ideal detector current
-
-Discharges ECE roadmap leaf `ECE.EM.PHOTODETECTOR.L2`
-(photodetector moments).
 -/
 
 @[expose] public section

@@ -47,8 +47,6 @@ Systems*, fifth edition, Oxford University Press, 2019: binary signaling over th
   Q-function error form.
 
 ## A. The sign-detector error probability
-
-Discharges ECE roadmap leaf `ECE.COM.BPSK.L1` (BPSK sign error).
 -/
 
 @[expose] public section
