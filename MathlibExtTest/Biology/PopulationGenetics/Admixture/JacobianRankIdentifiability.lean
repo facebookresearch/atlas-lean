@@ -34,9 +34,32 @@ example {p : Fin 5 → ℝ} (hp : p 2 + p 3 ≠ 0) :
     (MetaMathlibExt.jacobianMatrix threePopF2 p).rank = 3 :=
   threePopF2_jacobian_rank hp
 
-example {p : Fin 5 → ℝ} (hp : p 2 + p 3 ≠ 0) :
+example (p : Fin 5 → ℝ) :
     ¬ Function.Injective (fderiv ℝ threePopF2 p) :=
-  threePopF2_not_injective_fderiv hp
+  threePopF2_not_injective_fderiv p
+
+/-- Local non-injectivity also at the rank-boundary point `a + b = 0`. -/
+example : ¬ ∃ s ∈ 𝓝 ![0, 0, 1, -1, 0], Set.InjOn threePopF2 s :=
+  threePopF2_not_injOn_nhds _
+
+example (p : Fin 5 → ℝ) : ¬ ∃ s ∈ 𝓝 p, Set.InjOn threePopF2 s :=
+  threePopF2_not_injOn_nhds p
+
+/-- Concrete drift-model bridge: with weights `threePopWeights (1/2)` and edge
+lengths `(1, 2, 3, 4)`, the polynomial is the realized `f2` vector, with the
+explicit value `![5, 21/4, 21/4]`. -/
+example : threePopF2 ![1 / 2, 1, 2, 3, 4] =
+    ![f2 Measure.count
+        (DriftModel.ofLen (threePopWeights (1 / 2)) ![1, 2, 3, 4]
+          (fun e => by fin_cases e <;> norm_num)).freq 0 1,
+      f2 Measure.count
+        (DriftModel.ofLen (threePopWeights (1 / 2)) ![1, 2, 3, 4]
+          (fun e => by fin_cases e <;> norm_num)).freq 0 2,
+      f2 Measure.count
+        (DriftModel.ofLen (threePopWeights (1 / 2)) ![1, 2, 3, 4]
+          (fun e => by fin_cases e <;> norm_num)).freq 1 2] ∧
+    threePopF2 ![1 / 2, 1, 2, 3, 4] = ![5, 21 / 4, 21 / 4] :=
+  ⟨threePopF2_eq_f2 _ rfl rfl, by norm_num [threePopF2]⟩
 
 example {α s s' a b c t : ℝ} :
     threePopF2 ![α, s', a + t, b - t, c] = threePopF2 ![α, s, a, b, c] :=

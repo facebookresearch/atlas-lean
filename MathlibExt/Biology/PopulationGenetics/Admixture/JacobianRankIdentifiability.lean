@@ -37,8 +37,10 @@ globally, hence locally, injective with everywhere injective derivative.
 
 * `threePopWeights`, `threePopF2`, `threePopF2_eq_f2`: the parametrization and
   its identification with drift-model `f2` statistics.
-* `threePopF2_jacobian_rank`, `threePopF2_not_injective_fderiv`: rank `3 < 5`
-  and failure of local identifiability.
+* `threePopF2_jacobian_rank`: rank `3 < 5` when `a + b ≠ 0`.
+* `threePopF2_not_injective_fderiv`, `threePopF2_not_injOn_nhds`: the derivative
+  is nowhere injective, and the map is injective on no neighbourhood of any
+  parameter point (genuine failure of local identifiability).
 * `threePopF2_eq_shift`: the unidentified directions.
 * `starTreeF2_injective`, `starTreeF2_injective_fderiv`: the tree example.
 
@@ -46,8 +48,6 @@ globally, hence locally, injective with everywhere injective derivative.
 
 * N. Patterson et al., "Ancient admixture in human history", *Genetics* 192
   (2012), 1065–1093 (admixture graphs and f-statistics).
-* S. Sankararaman et al. / qpGraph literature on graph parameter
-  identifiability from f-statistics.
 -/
 
 @[expose] public section
@@ -176,29 +176,22 @@ theorem threePopF2_jacobian_rank {p : Fin 5 → ℝ} (hp : p 2 + p 3 ≠ 0) :
     threePopF2_fderiv p, threePopJac_eq_toMatrix p]
   exact threePopJac_rank hp
 
-/-- The derivative is nowhere injective at such points: the five parameters are
-not locally identifiable from the three `f2` values. -/
-theorem threePopF2_not_injective_fderiv {p : Fin 5 → ℝ} (hp : p 2 + p 3 ≠ 0) :
+/-- The derivative is nowhere injective, at every parameter point (including
+`a + b = 0`): it kills the stem coordinate direction, which `threePopF2`
+does not depend on. This is derivative singularity only; local
+non-injectivity itself is `threePopF2_not_injOn_nhds` below. -/
+theorem threePopF2_not_injective_fderiv (p : Fin 5 → ℝ) :
     ¬ Function.Injective (fderiv ℝ threePopF2 p) := by
   intro hinj
-  have hd : DifferentiableAt ℝ threePopF2 p := (threePopF2_hasFDerivAt p).differentiableAt
-  have hmul : Function.Injective (MetaMathlibExt.jacobianMatrix threePopF2 p).mulVec := by
-    intro x y hxy
-    apply hinj
-    rw [← MetaMathlibExt.jacobianMatrix_mulVec_eq_fderiv threePopF2 p hd x,
-      ← MetaMathlibExt.jacobianMatrix_mulVec_eq_fderiv threePopF2 p hd y]
-    exact hxy
-  have hrank5 : (MetaMathlibExt.jacobianMatrix threePopF2 p).rank = 5 := by
-    have hiff : Function.Injective (MetaMathlibExt.jacobianMatrix threePopF2 p).mulVec ↔
-        (MetaMathlibExt.jacobianMatrix threePopF2 p).rank = Fintype.card (Fin 5) := by
-      rw [Matrix.mulVec_injective_iff, Matrix.rank_eq_finrank_span_cols,
-        linearIndependent_iff_card_eq_finrank_span, Set.finrank]
-      exact eq_comm
-    have := hiff.mp hmul
-    simpa using this
-  have hrank3 := threePopF2_jacobian_rank hp
-  rw [hrank3] at hrank5
-  exact absurd hrank5 (by norm_num)
+  have h0 : fderiv ℝ threePopF2 p (Pi.single 1 (1 : ℝ)) = 0 := by
+    rw [threePopF2_fderiv]
+    funext i
+    fin_cases i <;> simp [threePopJacCLM, coordProj]
+  have h1 : (Pi.single 1 (1 : ℝ) : Fin 5 → ℝ) ≠ 0 := by
+    intro h
+    have h10 := congrFun h 1
+    simp at h10
+  exact h1 (hinj (by rw [h0, map_zero]))
 
 /-- Unidentified directions, exhibited globally: the shared stem length and the
 split of `a + b` between the two source edges are invisible to `f2`. -/
@@ -206,6 +199,35 @@ theorem threePopF2_eq_shift {α s s' a b c t : ℝ} :
     threePopF2 ![α, s', a + t, b - t, c] = threePopF2 ![α, s, a, b, c] := by
   funext i
   fin_cases i <;> simp [threePopF2]
+
+/-- **Local non-identifiability everywhere.** At every parameter point,
+`threePopF2` fails to be injective on every neighbourhood: shifting the stem
+length by an arbitrarily small amount gives a distinct, arbitrarily close
+parameter with the same `f2` values (by `threePopF2_eq_shift`). -/
+theorem threePopF2_not_injOn_nhds (p : Fin 5 → ℝ) :
+    ¬ ∃ s ∈ 𝓝 p, Set.InjOn threePopF2 s := by
+  rintro ⟨s, hs, hinj⟩
+  rw [Metric.mem_nhds_iff] at hs
+  obtain ⟨ε, hε, hball⟩ := hs
+  set p' : Fin 5 → ℝ := ![p 0, p 1 + ε / 2, p 2, p 3, p 4] with hp'
+  have hp_eq : p = ![p 0, p 1, p 2, p 3, p 4] := by
+    funext i
+    fin_cases i <;> simp
+  have hdist : dist p' p < ε := by
+    rw [dist_pi_lt_iff hε]
+    intro i
+    fin_cases i <;> simp [hp', abs_of_pos hε] <;> linarith [hε]
+  have hne : p' ≠ p := by
+    intro h
+    have h1 := congrFun h 1
+    simp [hp'] at h1
+    linarith [hε]
+  have heq : threePopF2 p' = threePopF2 p := by
+    rw [hp', hp_eq]
+    have h := threePopF2_eq_shift (α := p 0) (s := p 1) (s' := p 1 + ε / 2)
+      (a := p 2) (b := p 3) (c := p 4) (t := 0)
+    simpa using h
+  exact hne (hinj (hball hdist) (hball (by simp [hε])) heq)
 
 /-- The length-to-`f2` map of the three-leaf star tree,
 `(x, y, z) ↦ (x + y, x + z, y + z)`. -/
