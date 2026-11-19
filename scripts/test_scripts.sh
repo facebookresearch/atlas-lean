@@ -68,17 +68,32 @@ touch "$TMP_ROOT/repo/"{lean-toolchain,README.md,REVIEWING.md}
 touch "$TMP_ROOT/repo/scripts/"{check_copyright.py,check_formal_math_sync.py}
 printf '#!/usr/bin/env bash\nexit 0\n' >"$TMP_ROOT/repo/scripts/test_scripts.sh"
 chmod +x "$TMP_ROOT/repo/scripts/test_scripts.sh"
-if ! "$TMP_ROOT/repo/scripts/check.sh" preflight >"$TMP_ROOT/output.log" 2>&1; then
+# LC_ALL=C keeps bash's syntax-error messages untranslated for the greps below.
+run_preflight() {
+  LC_ALL=C "$TMP_ROOT/repo/scripts/check.sh" preflight \
+    >"$TMP_ROOT/output.log" 2>&1
+}
+if ! run_preflight; then
   cat "$TMP_ROOT/output.log" >&2
   fail "preflight failed with valid shell scripts"
 fi
 printf '\nif then\n' >>"$TMP_ROOT/repo/scripts/check_diagnostics.sh"
-if "$TMP_ROOT/repo/scripts/check.sh" preflight >"$TMP_ROOT/output.log" 2>&1; then
+if run_preflight; then
   fail "preflight did not detect a syntax error in check_diagnostics.sh"
 fi
 grep -q 'check_diagnostics.sh:.*syntax error' "$TMP_ROOT/output.log" || {
   cat "$TMP_ROOT/output.log" >&2
   fail "preflight reported the wrong shell syntax diagnostic"
+}
+# A script added to scripts/ is checked without being listed anywhere.
+cp "$REPO_ROOT/scripts/check_diagnostics.sh" "$TMP_ROOT/repo/scripts/"
+printf 'if then\n' >"$TMP_ROOT/repo/scripts/new_check.sh"
+if run_preflight; then
+  fail "preflight did not detect a syntax error in a new script"
+fi
+grep -q 'new_check.sh:.*syntax error' "$TMP_ROOT/output.log" || {
+  cat "$TMP_ROOT/output.log" >&2
+  fail "preflight reported the wrong diagnostic for a new script"
 }
 
 PHYSLIB_SOURCE='git = "https://github.com/leanprover-community/physlib"'
