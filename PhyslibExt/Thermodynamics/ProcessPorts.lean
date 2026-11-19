@@ -11,12 +11,12 @@ public import PhyslibExt.Chemistry.Thermodynamics.FirstLaw
 
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
+import PhyslibExt.Chemistry.Thermodynamics.Thermochemistry
 
 /-!
 # Process ports: the engineering work-out sign adapter
@@ -39,14 +39,13 @@ of `(n, R)`, and the adiabatic pressure ratio is `idealGasP_ratio_of_log_relatio
 coefficient `k = m * Rs`.
 
 Variable heat capacity: when the internal energy `U` has temperature derivative `Cv T`, the
-energy change is `ΔU = ∫ T in T₁..T₂, Cv T`, the identity of `kirchhoff_law` in
-`PhyslibExt.Chemistry.Thermodynamics.Thermochemistry` read with `U` in place of the enthalpy; it
-is proved here directly from the fundamental theorem of calculus, without importing the chemistry
-library. The engineering balance is `Q_in - W_out = ∫ Cv`. A continuous positive `Cv` makes `U`
-strictly increasing. For the linear model `Cv T = a + b * T` the exact change minus the endpoint
-estimate `Cv T₁ * (T₂ - T₁)` is the signed amount `b * (T₂ - T₁) ^ 2 / 2`: for `T₁ ≠ T₂` its sign
-is that of `b`, and at `T₁ = T₂` it is zero. No heat-capacity fit is claimed and `Cv` is never
-inferred from a substance.
+energy change `U T₂ = U T₁ + ∫ T in T₁..T₂, Cv T` is `kirchhoff_law` of
+`PhyslibExt.Chemistry.Thermodynamics.Thermochemistry` applied with `U` in place of the enthalpy,
+and the results of sections D and E are derived from it. The engineering balance is
+`Q_in - W_out = ∫ Cv`. A continuous positive `Cv` makes `U` strictly increasing. For the linear
+model `Cv T = a + b * T` the exact change minus the endpoint estimate `Cv T₁ * (T₂ - T₁)` is the
+signed amount `b * (T₂ - T₁) ^ 2 / 2`: for `T₁ ≠ T₂` its sign is that of `b`, and at `T₁ = T₂` it
+is zero. No heat-capacity fit is claimed and `Cv` is never inferred from a substance.
 
 Model inputs: the ideal-gas equation of state and the first law as encoded by the existing
 declarations; temperatures are absolute (`T > 0`); volumes, amounts, masses and gas constants
@@ -59,7 +58,6 @@ Celsius readings are affine and are never valid temperatures inside ratios or lo
 - `ProcessPorts.workOut_isothermalWorkOn`: `∫ p dV = W_out = n R T log (V₂ / V₁)`.
 - `ProcessPorts.workOut_irreversible_le_reversible`: `0 ≤ W_out,irr ≤ W_out,rev`.
 - `ProcessPorts.idealGasP_ratio_of_specific_log_relation`: the adiabat with `k = m * Rs`.
-- `ProcessPorts.internalEnergy_sub_eq_integral`: `ΔU = ∫ T in T₁..T₂, Cv T`.
 - `ProcessPorts.heat_sub_workOut_eq_integral`: `Q_in - W_out = ∫ T in T₁..T₂, Cv T`.
 - `ProcessPorts.strictMonoOn_of_heatCapacity_pos`: continuous `Cv > 0` gives strict increase.
 - `ProcessPorts.sub_ne_endpoint_of_linear_heatCapacity`: the endpoint estimate is not exact.
@@ -241,28 +239,17 @@ lemma idealGasP_ratio_of_specific_log_relation {m Rs cv γ T₁ T₂ V₁ V₂ :
 
 /-! ## D. Variable heat capacity -/
 
-/-- Variable-heat-capacity energy change, the identity of `kirchhoff_law`
-(`PhyslibExt.Chemistry.Thermodynamics.Thermochemistry`) for the internal energy, proved here
-directly from the fundamental theorem of calculus: if `U` has temperature derivative `Cv T` at
-every temperature between `T₁` and `T₂` and `Cv` is interval-integrable, then
-`ΔU = U T₂ - U T₁ = ∫ T in T₁..T₂, Cv T`. The temperatures may be in either order (heating or
-cooling). -/
-lemma internalEnergy_sub_eq_integral (U Cv : ℝ → ℝ) (T₁ T₂ : ℝ)
-    (hU : ∀ T ∈ Set.uIcc T₁ T₂, HasDerivAt U (Cv T) T)
-    (hCv : IntervalIntegrable Cv MeasureTheory.volume T₁ T₂) :
-    U T₂ - U T₁ = ∫ T in T₁..T₂, Cv T := by
-  exact (intervalIntegral.integral_eq_sub_of_hasDerivAt hU hCv).symm
-
-/-- Engineering energy balance with variable heat capacity: if the energy change obeys the
-IUPAC first law `U T₂ - U T₁ = q + w` and `U' = Cv` as in `internalEnergy_sub_eq_integral`, then
-`Q_in - W_out = q - workOut w = ∫ T in T₁..T₂, Cv T`. The constant-`Cv` case is
-`heat_sub_workOut_eq`. -/
+/-- Engineering energy balance with variable heat capacity: if `U` has temperature derivative
+`Cv T` between `T₁` and `T₂` with `Cv` interval-integrable (the hypotheses of `kirchhoff_law`)
+and the energy change obeys the IUPAC first law `U T₂ - U T₁ = q + w`, then
+`Q_in - W_out = q - workOut w = ∫ T in T₁..T₂, Cv T`. The temperatures may be in either order.
+The constant-`Cv` case is `heat_sub_workOut_eq`. -/
 lemma heat_sub_workOut_eq_integral (U Cv : ℝ → ℝ) (T₁ T₂ q w : ℝ)
     (hU : ∀ T ∈ Set.uIcc T₁ T₂, HasDerivAt U (Cv T) T)
     (hCv : IntervalIntegrable Cv MeasureTheory.volume T₁ T₂)
     (hlaw : U T₂ - U T₁ = q + w) :
     q - workOut w = ∫ T in T₁..T₂, Cv T := by
-  have h := internalEnergy_sub_eq_integral U Cv T₁ T₂ hU hCv
+  have h := kirchhoff_law U Cv T₁ T₂ hU hCv
   unfold workOut
   linarith
 
@@ -287,7 +274,8 @@ lemma strictMonoOn_of_heatCapacity_pos (U Cv : ℝ → ℝ) {T₁ T₂ : ℝ} (h
     exact hU
   have hCv : IntervalIntegrable Cv MeasureTheory.volume T₁ T₂ :=
     ContinuousOn.intervalIntegrable_of_Icc hT hcont
-  exact internalEnergy_sub_eq_integral U Cv T₁ T₂ hU' hCv
+  have h := kirchhoff_law U Cv T₁ T₂ hU' hCv
+  linarith
 
 /-! ## E. Linear heat capacity versus the endpoint estimate -/
 
@@ -313,10 +301,9 @@ lemma sub_sub_endpoint_of_linear_heatCapacity (U : ℝ → ℝ) (a b T₁ T₂ :
     U T₂ - U T₁ - (a + b * T₁) * (T₂ - T₁) = b * (T₂ - T₁) ^ 2 / 2 := by
   have hCv : IntervalIntegrable (fun T : ℝ => a + b * T) MeasureTheory.volume T₁ T₂ :=
     (continuous_const.add (continuous_id.const_mul b)).intervalIntegrable T₁ T₂
-  have h := internalEnergy_sub_eq_integral U (fun T => a + b * T) T₁ T₂ hU hCv
-  have hI := integral_linear_heatCapacity a b T₁ T₂
-  have h' : U T₂ - U T₁ = a * (T₂ - T₁) + b * (T₂ ^ 2 - T₁ ^ 2) / 2 := h.trans hI
-  rw [h']
+  have h := kirchhoff_law U (fun T => a + b * T) T₁ T₂ hU hCv
+  rw [integral_linear_heatCapacity] at h
+  rw [h]
   ring
 
 /-- A nonconstant linear heat capacity (`b ≠ 0`) over a nondegenerate interval (`T₁ ≠ T₂`):

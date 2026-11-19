@@ -17,6 +17,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
+import PhyslibExt.Chemistry.Thermodynamics.Thermochemistry
 
 /-!
 # Tests for `PhyslibExt.Thermodynamics.ProcessPorts`
@@ -160,8 +161,8 @@ example (T : ℝ) : HasDerivAt (fun T : ℝ => 20 * T + T ^ 2 / 200) (20 + 1 / 1
   ring
 
 -- Heating `300 K → 400 K` at `Cv T = 20 + T / 100` J/K: for every internal energy `U` with that
--- derivative, `U 400 - U 300 = 2350` J (`internalEnergy_sub_eq_integral`); the exact change minus
--- the endpoint estimate `Cv 300 * 100 = 2300` J is `b * (T₂ - T₁) ^ 2 / 2 = 50` J
+-- derivative, `U 400 - U 300 = 2350` J (`kirchhoff_law` with `U` for the enthalpy); the exact
+-- change minus the endpoint estimate `Cv 300 * 100 = 2300` J is `b * (T₂ - T₁) ^ 2 / 2 = 50` J
 -- (`sub_sub_endpoint_of_linear_heatCapacity`); and the estimate is not the exact change
 -- (`sub_ne_endpoint_of_linear_heatCapacity`).
 example (U : ℝ → ℝ) (hU : ∀ T ∈ Set.uIcc (300 : ℝ) 400, HasDerivAt U (20 + 1 / 100 * T) T) :
@@ -169,7 +170,7 @@ example (U : ℝ → ℝ) (hU : ∀ T ∈ Set.uIcc (300 : ℝ) 400, HasDerivAt U
       U 400 - U 300 ≠ (20 + 1 / 100 * 300) * (400 - 300) := by
   have hCv : IntervalIntegrable (fun T : ℝ => 20 + 1 / 100 * T) MeasureTheory.volume 300 400 :=
     (continuous_const.add (continuous_const.mul continuous_id)).intervalIntegrable 300 400
-  have hΔU := internalEnergy_sub_eq_integral U (fun T => 20 + 1 / 100 * T) 300 400 hU hCv
+  have hΔU := kirchhoff_law U (fun T => 20 + 1 / 100 * T) 300 400 hU hCv
   rw [integral_linear_heatCapacity] at hΔU
   have hend := sub_sub_endpoint_of_linear_heatCapacity U 20 (1 / 100) 300 400 hU
   refine ⟨?_, ?_, sub_ne_endpoint_of_linear_heatCapacity U hU (by norm_num) (by norm_num)⟩
@@ -186,7 +187,7 @@ example (U : ℝ → ℝ) (hU : ∀ T ∈ Set.uIcc (400 : ℝ) 300, HasDerivAt U
       U 300 - U 400 ≠ (20 + 1 / 100 * 400) * (300 - 400) := by
   have hCv : IntervalIntegrable (fun T : ℝ => 20 + 1 / 100 * T) MeasureTheory.volume 400 300 :=
     (continuous_const.add (continuous_const.mul continuous_id)).intervalIntegrable 400 300
-  have hΔU := internalEnergy_sub_eq_integral U (fun T => 20 + 1 / 100 * T) 400 300 hU hCv
+  have hΔU := kirchhoff_law U (fun T => 20 + 1 / 100 * T) 400 300 hU hCv
   rw [integral_linear_heatCapacity] at hΔU
   have hend := sub_sub_endpoint_of_linear_heatCapacity U 20 (1 / 100) 400 300 hU
   refine ⟨?_, ?_, sub_ne_endpoint_of_linear_heatCapacity U hU (by norm_num) (by norm_num)⟩
