@@ -305,6 +305,24 @@ class LeanFacts(Vault):
         self.assertEqual(row, self.about("Algebra/main.md", id="af_0123456789abcdef01234567",
                                          extensions={"org.autoform": {"not_ready": True}}))
 
+    def test_an_expansion_keeps_a_planned_prerequisite_only_on_a_planned_page(self) -> None:
+        # Graph rules, expanding a node: a new page whose proof needs the planned page B stays planned and keeps that
+        # edge; made a wanted statement too early, it would lose it, since its edges come only from the Lean.
+        source = self.tmp / "Ext" / "Groups.lean"
+        source.parent.mkdir(parents=True)
+        source.write_text("theorem_wanted early : True\n")
+        self.page("Algebra/b.md", "# B\n\nStill planned.\n")
+        waiting = "# Waiting\n\nPlanned.\n\n## Depends on\n\nThis node has no prerequisites.\n\n## Proof depends on\n\n- [B](b.md)\n"
+        kept = self.page("Algebra/waiting.md", waiting)
+        early = self.page("Algebra/early.md", "# Early\n\nWanted.\n\n## Proof depends on\n\n- [B](b.md)\n")
+        self.annotate([self.about("Algebra/b.md"), self.about("Algebra/waiting.md"),
+                       self.about("Algebra/early.md", object=[{"location": {"declaration": "Ext.early"}}])])
+        index = SimpleNamespace(declarations={"Ext.early": SimpleNamespace(keyword="theorem_wanted",
+                                                                           path=Path("Ext/Groups.lean"))})
+        sync.apply_lean_facts(index, {"Ext.early": {"module": "Ext.Groups", "statement": [], "proof": []}})
+        self.assertEqual(kept.read_text(), waiting)
+        self.assertEqual(early.read_text(), "# Early\n\nWanted.\n\n## Depends on\n\nThis node has no prerequisites.\n")
+
     def test_pages_taken_from_docstrings_get_their_facts(self) -> None:
         # declarations marks its pages with OWN's "from", which names a module only for a page with no Lean name.
         source = self.tmp / "Ext" / "Groups.lean"

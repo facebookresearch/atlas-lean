@@ -143,29 +143,40 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
     node's page and its annotation; its `id` is never reused. Its prose and
     sources move to the folder page or to the new pages, and every link to the
     node, in a `## Depends on`, `## Proof depends on` or `## Informally uses`,
-    is repointed to the new pages that link actually needs. A low-level new
-    page is a `theorem_wanted` or `def_wanted` statement in `WantedExt` with a
-    docstring, whose page then comes from the sync (rule 6). The sync puts a
-    page beside its module's other pages, so put the statements in a module
-    whose pages that folder holds, or place a new module there in
+    is repointed to the new pages that link actually needs. The new pages take
+    over the node's own prerequisites: each carries the ones it still needs. A
+    low-level new page is a `theorem_wanted` or `def_wanted` statement in
+    `WantedExt` with a docstring, whose page then comes from the sync (rule 6),
+    but only once every prerequisite it carries is in Lean; until then it stays
+    a planned page that records them in its own sections (rule 10). The sync
+    puts a page beside its module's other pages, so put the statements in a
+    module whose pages that folder holds, or place a new module there in
     `scripts/taxonomy.json` in the same PR (rules 1 and 4). A new page that is
     still high-level is a new marked node. Order among the new planned pages
     goes in their own `## Depends on` (rule 10). *Reason:* a leaf becomes a
-    formalization task only once it names a declaration, and a wanted
-    statement is that declaration; a link left pointing at the removed node
-    fails `autoform check` ("dependency target does not exist"). `autoform
-    move` cannot turn a page into a folder page, so replacing the node keeps
-    the expansion to steps the tools support.
+    formalization task only once it names a declaration, and a wanted statement
+    is that declaration. A wanted statement's edges come only from the Lean,
+    and `lean-facts` drops an edge to a page with no Lean, so a wanted
+    statement made too early would look ready while a prerequisite is still
+    planned. A link to the removed node left under `## Depends on` or
+    `## Proof depends on` fails `autoform check` ("dependency target does not
+    exist"), but one left under `## Informally uses` only warns, so a passing
+    check does not show that every link was repointed. `autoform move` cannot
+    turn a page into a folder page, so replacing the node keeps the expansion
+    to steps the tools support.
 
 ### Tasks and review
 
 14. **Formalization tasks are the articles Autoform finds ready:** ready to
-    state (a `def_wanted`, or a definition in a module with `sorry`) or ready to
-    prove (a `theorem_wanted`, or a theorem in a module with `sorry`), once
+    state (a `def_wanted`, or a definition in a module with `sorry`) or ready
+    to prove (a `theorem_wanted`, or a theorem in a module with `sorry`), once
     its prerequisites are as far along as Autoform requires: statement
-    prerequisites stated, proof prerequisites proved. Proved and Mathlib-backed articles are never
-    tasks. *Reason:* one readiness rule, Autoform's, for the site, `autoform
-    work list` and the task list.
+    prerequisites stated, proof prerequisites proved. Proved and Mathlib-backed
+    articles are never tasks. Autoform finds them on the checkout after
+    `sync_wiki.py lean-facts`, as the wiki build runs it: committed annotations
+    carry no `kind`, so `autoform work list` on the committed tree lists no
+    task, with or without ids. *Reason:* one readiness rule, Autoform's, for
+    the site, `autoform work list` and the task list.
 15. **A graph PR keeps under 3,000 changed files, names the issue it
     closes, and an expansion changes no Lean outside `WantedExt`.** *Reason:*
     GitHub shows at most 3,000 files in one diff, and a reviewer judging an
