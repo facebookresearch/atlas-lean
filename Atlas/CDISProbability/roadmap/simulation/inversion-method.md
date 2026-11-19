@@ -13,8 +13,8 @@ CDIS id 94. If `U` is uniform on `]0,1[`, then `F⁻(U)` has distribution functi
  the same distribution function.
 
 Note: related root-library result in this repository: `ProbabilityTheory.map_cdfQuantile_restrict_Icc`
-(`MathlibExt/Probability/Quantile.lean`), for the same generalized inverse
-`ProbabilityTheory.cdfQuantile`.
+(`MathlibExt/Probability/Quantile.lean`), for `ProbabilityTheory.cdfQuantile`, which agrees with
+`F⁻` on `]0,1[`.
 
 ## Depends on
 

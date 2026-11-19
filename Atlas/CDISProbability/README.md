@@ -14,9 +14,9 @@ result or part of it, or states it in a different form, with priority on the sim
 5 definitions, and 32 results stated and proved. The remaining 10 are described in the roadmap
 and not formalized yet. Everything lives in namespace `CDIS`; the module prefix is `Code`.
 The entry is a standalone Lake project and does not import the repository's root libraries;
-where these prove a related result (the generalized inverse and the inversion method, importance
-sampling, the multidimensional central limit theorem, Lévy's continuity theorem), the roadmap
-article names it.
+where these prove a related result (for example the generalized inverse and the inversion method,
+importance sampling, the multidimensional central limit theorem and Lévy's continuity theorem),
+the roadmap article names it.
 
 ## Main results
 
@@ -47,8 +47,13 @@ corrected versions.
   (`CDIS.not_forall_integral_withDensity_ratio_eq`); corrected with that hypothesis
   (`CDIS.integral_mul_eq_integral_ratio`).
 
-Two more need a hypothesis the course leaves implicit: the conditional density (id 51) needs
-`f_X(x) < ∞` as well as `f_X(x) > 0`, and `F⁻(F(x)) ≤ x` (id 101) needs `F(x) > 0`.
+The course also misprints a sign: it ends Poincaré's formula (id 5) with
+`(-1)^n P(A_1 ∩ ... ∩ A_n)`, where the sign is `(-1)^(n+1)` (with `n = 1` its right side is
+`-P(A_1)`); `CDIS.prob_properties` uses the correct sign.
+
+Three more need a hypothesis the course leaves implicit: the conditional density (id 51) needs
+`f_X(x) < ∞` as well as `f_X(x) > 0`, `F⁻(F(x)) ≤ x` (id 101) needs `F(x) > 0`, and the optimal
+instrumental density (id 100) needs `0 < ∫ |h| f < ∞`.
 
 ## Roadmap
 

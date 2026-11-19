@@ -8,12 +8,16 @@ lean: CDIS.variance_estimator_optimal_le, CDIS.isMinOn_variance_optimalDensity, 
 
 # Optimal instrumental density
 
-CDIS id 100. `g* = |h| f / ∫ |h| f` minimises the variance of the importance sampling
- estimator, for every sample size `n` (`CDIS.variance_estimator_optimal_le`). The estimator has
- variance `V_g((f / g) h) / n`, one term has variance `∫ (h f)² / g − (E_f h)²`, and `g*`
- minimises `∫ (h f)² / g` by Cauchy-Schwarz. The admissible `g` are the probability densities
- with `g > 0` almost everywhere where `h f ≠ 0` and `∫ (h f)² / g < ∞`; since `g*` vanishes
- where `h` does, the support condition is on `h f`, not on `f`.
+CDIS id 100. When `h f` is integrable and `∫ |h| f > 0`, `g* = |h| f / ∫ |h| f` minimises the
+ variance of the importance sampling estimator, for every sample size `n`
+ (`CDIS.variance_estimator_optimal_le`). The estimator has variance `V_g((f / g) h) / n`, one
+ term has variance `∫ (h f)² / g − (E_f h)²`, and `g*` minimises `∫ (h f)² / g` by
+ Cauchy-Schwarz. The admissible `g` are the probability densities with `g > 0` almost everywhere
+ where `h f ≠ 0` and `∫ (h f)² / g < ∞`; since `g*` vanishes where `h` does, the support
+ condition is on `h f`, not on `f`.
+
+Note: the course leaves `0 < ∫ |h| f < ∞` implicit. If `∫ |h| f = 0`, `g*` is not defined: the
+Lean `CDIS.optimalDensity` is then `0`, which is not a density.
 
 ## Depends on
 

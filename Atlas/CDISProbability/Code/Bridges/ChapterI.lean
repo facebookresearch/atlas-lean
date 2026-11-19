@@ -30,7 +30,8 @@ variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasur
 /-- CDIS P.I, id 5 (elementary properties of a probability), all five items: `P(A) ∈ [0,1]` and
 `P(Aᶜ) = 1 - P(A)`; monotonicity; `P(A ∪ B) = P(A) + P(B) - P(A ∩ B)`; Boole's inequality; and
 Poincaré's formula (inclusion-exclusion). The course writes the alternating sum by intersection
-size; here it is indexed by the nonempty subsets `u`. -/
+size; here it is indexed by the nonempty subsets `u`. The course prints the sign of its last term,
+`P(A_1 ∩ ... ∩ A_n)`, as `(-1)^n`; the correct sign, used here, is `(-1)^(n+1)`. -/
 theorem prob_properties {A B : Set Ω} (hA : MeasurableSet A) (hB : MeasurableSet B)
     {ι : Type*} (s : Finset ι) {C : ι → Set Ω} (hC : ∀ i ∈ s, MeasurableSet (C i)) :
     (P.real A ∈ Icc (0 : ℝ) 1 ∧ P.real Aᶜ = 1 - P.real A) ∧

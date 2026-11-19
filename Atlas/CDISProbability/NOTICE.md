@@ -18,7 +18,7 @@ the Lean code in `Code/` and `Verify/` is original work.
 
 ## Licence
 
-The entry is distributed under the repository [LICENSE](../../LICENSE). As in
-`Atlas/CPythonListsort/sources`, each file of `sources/` states the course license for the titles
-it quotes. The roadmap headings quote the same titles; if the maintainers want them covered the
-same way, the notice goes in the Markdown files of `roadmap/` and does not affect the Lean code.
+The entry is distributed under the repository [LICENSE](../../LICENSE), except for the course's
+chapter, section and statement titles that it quotes, mainly in the headings of the `roadmap/`
+articles and in `sources/`: these remain subject to CC BY-NC-SA 4.0. As in
+`Atlas/CPythonListsort/sources`, each file of `sources/` also states this for the titles it quotes.
