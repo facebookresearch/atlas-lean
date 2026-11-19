@@ -477,12 +477,24 @@ lemma isCantileverSolution_cantileverDeflection {EI L : ℝ} (hEI : 0 < EI) (hL 
 
 /-! ## E. Clamped-free cantilever: uniqueness -/
 
+/-- The first three derivatives of a cubic. -/
+private lemma iteratedDeriv_cubic (c₀ c₁ c₂ c₃ x : ℝ) :
+    iteratedDeriv 1 (fun y : ℝ => c₀ + c₁ * y + c₂ * y ^ 2 + c₃ * y ^ 3) x =
+        c₁ + 2 * c₂ * x + 3 * c₃ * x ^ 2 ∧
+      iteratedDeriv 2 (fun y : ℝ => c₀ + c₁ * y + c₂ * y ^ 2 + c₃ * y ^ 3) x =
+        2 * c₂ + 6 * c₃ * x ∧
+      iteratedDeriv 3 (fun y : ℝ => c₀ + c₁ * y + c₂ * y ^ 2 + c₃ * y ^ 3) x = 6 * c₃ := by
+  refine ⟨?_, ?_, ?_⟩ <;>
+  · simp (disch := fun_prop) [iteratedDeriv_fun_add, iteratedDeriv_const_mul_field,
+      iteratedDeriv_pow, iteratedDeriv_const, iteratedDeriv_const_mul_field c₁ (fun y : ℝ => y),
+      iteratedDeriv_fun_id]
+    ring
+
 /-- Uniqueness: every solution of the clamped-free problem agrees with the polynomial on
 `[0, L]`. -/
 lemma IsCantileverSolution.eqOn {EI L q P : ℝ} {w : ℝ → ℝ} (hEI : 0 < EI)
     (hw : IsCantileverSolution EI L q P w) :
     Set.EqOn w (cantileverDeflection EI L q P) (Set.Icc 0 L) := by
-  intro x hx
   set d := fun y => w y - cantileverDeflection EI L q P y with hd_def
   have hdc : ContDiff ℝ 4 d := hw.contDiff.sub (cd_contDiff EI L q P)
   have hsub : ∀ (k : ℕ) (y : ℝ), k ≤ 4 → iteratedDeriv k d y =
@@ -500,15 +512,19 @@ lemma IsCantileverSolution.eqOn {EI L q P : ℝ} {w : ℝ → ℝ} (hEI : 0 < EI
     have : EI * (iteratedDeriv 4 w y - iteratedDeriv 4 (cantileverDeflection EI L q P) y) = 0 := by
       rw [mul_sub, e1, e2, sub_self]
     exact (mul_eq_zero.mp this).resolve_left hEI.ne'
+  -- the difference is a cubic on `[0, L]`, so its derivatives on `[0, L]` are the cubic's
   obtain ⟨c₀, c₁, c₂, c₃, hc⟩ := exists_cubic_of_iteratedDeriv_four_eq_zero hdc h4
-  have hL : 0 ≤ L := hx.1.trans hx.2
-  have h0 : (0 : ℝ) ∈ Set.Icc (0 : ℝ) L := ⟨le_rfl, hL⟩
-  have hLm : L ∈ Set.Icc (0 : ℝ) L := ⟨hL, le_rfl⟩
-  have hD : ∀ k : ℕ, k < 4 → Differentiable ℝ (iteratedDeriv k d) := fun k hk =>
-    hdc.differentiable_iteratedDeriv k (by exact_mod_cast hk)
-  have hs : ∀ k : ℕ, deriv (iteratedDeriv k d) = iteratedDeriv (k + 1) d := fun k =>
-    (iteratedDeriv_succ).symm
-  -- third derivative: constant on [0, L], zero at L by the shear traces
+  have hU : UniqueDiffOn ℝ (Set.Icc (0 : ℝ) L) := uniqueDiffOn_Icc hw.span_pos
+  have hcub : ∀ k ≤ 3, ∀ y ∈ Set.Icc (0 : ℝ) L, iteratedDeriv k d y =
+      iteratedDeriv k (fun x : ℝ => c₀ + c₁ * x + c₂ * x ^ 2 + c₃ * x ^ 3) y := by
+    intro k hk y hy
+    rw [← iteratedDerivWithin_eq_iteratedDeriv hU
+        ((hdc.of_le (by exact_mod_cast (show k ≤ 4 by omega))).contDiffAt) hy,
+      ← iteratedDerivWithin_eq_iteratedDeriv hU (by fun_prop) hy]
+    exact iteratedDerivWithin_congr hc hy
+  have h0 : (0 : ℝ) ∈ Set.Icc (0 : ℝ) L := ⟨le_rfl, hw.span_pos.le⟩
+  have hLm : L ∈ Set.Icc (0 : ℝ) L := ⟨hw.span_pos.le, le_rfl⟩
+  -- the four traces of the difference vanish: shear and moment at `L`, slope and deflection at `0`
   have t3 : iteratedDeriv 3 d L = 0 := by
     rw [hsub 3 L (by norm_num)]
     have e1 := hw.shear_right
@@ -517,10 +533,6 @@ lemma IsCantileverSolution.eqOn {EI L q P : ℝ} {w : ℝ → ℝ} (hEI : 0 < EI
       linarith [mul_sub EI (iteratedDeriv 3 w L)
         (iteratedDeriv 3 (cantileverDeflection EI L q P) L)]
     exact (mul_eq_zero.mp this).resolve_left hEI.ne'
-  have z3 : ∀ y ∈ Set.Icc (0 : ℝ) L, iteratedDeriv 3 d y = 0 := fun y hy => by
-    rw [eq_of_deriv_eq_zero_on_Ioo (hD 3 (by norm_num))
-      (fun z hz => by rw [hs 3]; exact h4 z hz) hLm hy,
-      t3]
   have t2 : iteratedDeriv 2 d L = 0 := by
     rw [hsub 2 L (by norm_num)]
     have e1 := hw.moment_right
@@ -528,23 +540,22 @@ lemma IsCantileverSolution.eqOn {EI L q P : ℝ} {w : ℝ → ℝ} (hEI : 0 < EI
     have : EI * (iteratedDeriv 2 w L - iteratedDeriv 2 (cantileverDeflection EI L q P) L) = 0 := by
       rw [mul_sub, e1, e2, sub_self]
     exact (mul_eq_zero.mp this).resolve_left hEI.ne'
-  have z2 : ∀ y ∈ Set.Icc (0 : ℝ) L, iteratedDeriv 2 d y = 0 := fun y hy => by
-    rw [eq_of_deriv_eq_zero_on_Ioo (hD 2 (by norm_num))
-      (fun z hz => by rw [hs 2]; exact z3 z (Set.Ioo_subset_Icc_self hz)) hLm hy, t2]
   have t1 : iteratedDeriv 1 d 0 = 0 := by
     rw [hsub 1 0 (by norm_num), iteratedDeriv_one, iteratedDeriv_one, hw.slope_left,
       deriv_cantileverDeflection_zero, sub_self]
-  have z1 : ∀ y ∈ Set.Icc (0 : ℝ) L, iteratedDeriv 1 d y = 0 := fun y hy => by
-    rw [eq_of_deriv_eq_zero_on_Ioo (hD 1 (by norm_num))
-      (fun z hz => by rw [hs 1]; exact z2 z (Set.Ioo_subset_Icc_self hz)) h0 hy, t1]
-  have hd0 : Differentiable ℝ d := by simpa using hD 0 (by norm_num)
-  have z0 := eq_of_deriv_eq_zero_on_Ioo hd0
-    (fun z hz => by rw [← iteratedDeriv_one]; exact z1 z (Set.Ioo_subset_Icc_self hz)) h0 hx
-  have hd00 : d 0 = 0 := by
+  have t0 : d 0 = 0 := by
     simp only [hd_def, hw.zero_left, cantileverDeflection_zero, sub_self]
-  have : d x = 0 := z0.trans hd00
-  simp only [hd_def] at this
-  linarith
+  -- so the four coefficients of the cubic vanish
+  obtain ⟨-, p2, p3⟩ := iteratedDeriv_cubic c₀ c₁ c₂ c₃ L
+  obtain ⟨p1, -, -⟩ := iteratedDeriv_cubic c₀ c₁ c₂ c₃ 0
+  have e3 : c₃ = 0 := by linarith [hcub 3 le_rfl L hLm]
+  have e2 : c₂ = 0 := by
+    have h6 : 6 * c₃ * L = 0 := by rw [e3]; ring
+    linarith [hcub 2 (by norm_num) L hLm]
+  have e1 : c₁ = 0 := by linarith [hcub 1 (by norm_num) 0 h0]
+  have e0 : c₀ = 0 := by linarith [hc 0 h0]
+  intro x hx
+  simpa [hd_def, e0, e1, e2, e3, sub_eq_zero] using hc x hx
 
 /-! ## F. Clamped-free cantilever: tip-force term and boundary example -/
 
