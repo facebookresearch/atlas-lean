@@ -15,7 +15,7 @@ import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Positivity
 
 /-!
-# Variable-mass propulsion: logarithmic velocity increment and parcel consistency
+# Variable-mass propulsion: logarithmic velocity increment, parcel consistency and staging
 
 Reduced collinear model of an ideal rocket burn on `[0, tb]`: positive mass `m`, velocity `v`,
 constant exhaust speed `ve > 0` relative to the vehicle, directed backward, and the declared law
@@ -52,6 +52,19 @@ expelled momentum gives the slope limit `(q v + F) / m` instead, wrong whenever 
 This is local consistency of the parcel model, not convergence of a discrete integration scheme
 or an exact finite-step logarithmic law.
 
+A staged vehicle flies a finite sequence of burns `i = 0, …, n` in one fixed direction, burn `i` on
+its own interval `[0, tb i]` with positive mass `m i`, velocity `v i` and exhaust speed `ve i` under
+the law above. Between burn `i` and burn `i + 1` it jettisons the dry mass
+`m i (tb i) - m (i + 1) 0` with zero velocity relative to itself; momentum conservation
+`m (i + 1) 0 w + (m i (tb i) - m (i + 1) 0) v = m i (tb i) v` leaves the velocity unchanged,
+`w = v`, while the mass drops without any continuity across the event. Summing the burn
+increments, the velocity gained over the whole sequence is
+`∑ i, ve i * log (m i 0 / m i (tb i))` with stage-specific exhaust speeds, and no jettisoned mass
+enters a logarithm. Counting a dry-mass drop from `m₁` to `m₂ < m₁` as propellant instead adds
+`ve * log (m₁ / m₂) > 0` for `ve > 0`: it overstates the available increment. For collinear burns
+the sum is a net velocity increment; for burns in different directions it would be only a scalar
+burn cost, about which nothing is stated here.
+
 ## ii. Key results
 
 - `velocity_increment_eq_log`: the ideal rocket equation from derivative data, positive mass and
@@ -73,6 +86,13 @@ or an exact finite-step logarithmic law.
 - `parcel_accel_pos`, `naive_slope_tendsto`, `naive_limit_ne`: for `m > 0`, a positive flow at a
   positive exhaust speed accelerates the vehicle, and ignoring the expelled momentum gives the
   wrong derivative whenever `q (v - ve) ≠ 0`.
+- `jettison_velocity_eq`: a zero-relative-velocity jettison conserves momentum exactly when the
+  velocity is unchanged.
+- `staged_velocity_increment`: the velocity gained over burns separated by such jettisons is the
+  sum of the burn increments, with stage-specific exhaust speeds and the jettisoned masses outside
+  every logarithm.
+- `jettison_as_propellant_overstates`: counting a dry-mass drop as propellant overstates the
+  increment.
 
 ## iii. Table of contents
 
@@ -82,12 +102,14 @@ or an exact finite-step logarithmic law.
 - D. One parcel step
 - E. The first-order limit and the continuum model
 - F. Validation
+- G. Staged burns and dry-mass jettison
 
 ## iv. References
 
 - G. P. Sutton and O. Biblarz, *Rocket Propulsion Elements*, 9th edition, chapters 2 and 4
-  (specific impulse, effective exhaust velocity, ideal rocket equation).
-- H. D. Curtis, *Orbital Mechanics for Engineering Students*, rocket vehicle dynamics chapter.
+  (specific impulse, effective exhaust velocity, ideal rocket equation; multistage vehicles).
+- H. D. Curtis, *Orbital Mechanics for Engineering Students*, rocket vehicle dynamics chapter
+  (staging).
 - D. Kleppner and R. Kolenkow, *An Introduction to Mechanics*, 2nd edition, chapter 4 (momentum
   of a system with a varying mass; the rocket).
 - `PhyslibExt.Mechanics.PowerPorts`: the fixed-mass constant-force velocity.
@@ -502,5 +524,96 @@ lemma naive_limit_ne {m q v ve : ℝ} (hm : 0 < m) (hq : q ≠ 0) (hv : v ≠ ve
     · exact absurd hq0 hq
     · exact hv0
   exact hv (sub_eq_zero.mp h4)
+
+/-! ## G. Staged burns and dry-mass jettison -/
+
+/-- A jettison with zero relative velocity leaves the velocity unchanged: a vehicle of mass `m₁` at
+velocity `v` drops the mass `m₁ - m₂`, which keeps the velocity `v`, and the remaining mass `m₂`
+moves at `w`. If `m₂ ≠ 0` (a positive remaining mass in the model), momentum is conserved,
+`m₂ w + (m₁ - m₂) v = m₁ v`, exactly when `w = v`. -/
+lemma jettison_velocity_eq {m₁ m₂ v w : ℝ} (hm₂ : m₂ ≠ 0) :
+    m₂ * w + (m₁ - m₂) * v = m₁ * v ↔ w = v := by
+  constructor
+  · intro h
+    have h2 : m₂ * w = m₂ * v := by linear_combination h
+    exact mul_left_cancel₀ hm₂ h2
+  · intro h
+    rw [h]
+    ring
+
+/-- Staged burn and jettison accounting. Burns `i ≤ n` on `[0, tb i]` with positive mass, exhaust
+speed `ve i` and the reduced law; between burn `i` and burn `i + 1` a momentum-conserving jettison
+with zero relative velocity from mass `m i (tb i)` to mass `m (i + 1) 0`. The velocity gained from
+the start of burn `0` to the end of burn `n` is the sum of the burn increments
+`ve i * log (m i 0 / m i (tb i))`; the jettisoned masses enter no logarithm. The sign of the
+exhaust speeds is not needed, so the model's positive stage-specific `ve i` are a special case. -/
+lemma staged_velocity_increment (n : ℕ) {m v m' v' : ℕ → ℝ → ℝ} {ve tb : ℕ → ℝ}
+    (htb : ∀ i ≤ n, 0 ≤ tb i) (hm : ∀ i ≤ n, ∀ t ∈ Icc 0 (tb i), HasDerivAt (m i) (m' i t) t)
+    (hv : ∀ i ≤ n, ∀ t ∈ Icc 0 (tb i), HasDerivAt (v i) (v' i t) t)
+    (hpos : ∀ i ≤ n, ∀ t ∈ Icc 0 (tb i), 0 < m i t)
+    (hlaw : ∀ i ≤ n, ∀ t ∈ Icc 0 (tb i), m i t * v' i t = -ve i * m' i t)
+    (hjet : ∀ i < n, m (i + 1) 0 * v (i + 1) 0 + (m i (tb i) - m (i + 1) 0) * v i (tb i) =
+      m i (tb i) * v i (tb i)) :
+    v n (tb n) - v 0 0 = ∑ i ∈ Finset.range (n + 1), ve i * Real.log (m i 0 / m i (tb i)) := by
+  revert htb hm hv hpos hlaw hjet
+  induction n with
+  | zero =>
+    intro htb hm hv hpos hlaw hjet
+    change v 0 (tb 0) - v 0 0 = ∑ i ∈ Finset.range 1, ve i * Real.log (m i 0 / m i (tb i))
+    rw [Finset.sum_range_one]
+    exact velocity_increment_eq_log (htb 0 le_rfl) (hm 0 le_rfl) (hv 0 le_rfl)
+      (hpos 0 le_rfl) (hlaw 0 le_rfl)
+  | succ n ih =>
+    intro htb hm hv hpos hlaw hjet
+    have htb' : ∀ i ≤ n, 0 ≤ tb i := fun i hi => htb i (le_trans hi (Nat.le_succ n))
+    have hm' : ∀ i ≤ n, ∀ t ∈ Icc 0 (tb i), HasDerivAt (m i) (m' i t) t :=
+      fun i hi => hm i (le_trans hi (Nat.le_succ n))
+    have hv' : ∀ i ≤ n, ∀ t ∈ Icc 0 (tb i), HasDerivAt (v i) (v' i t) t :=
+      fun i hi => hv i (le_trans hi (Nat.le_succ n))
+    have hpos' : ∀ i ≤ n, ∀ t ∈ Icc 0 (tb i), 0 < m i t :=
+      fun i hi => hpos i (le_trans hi (Nat.le_succ n))
+    have hlaw' : ∀ i ≤ n, ∀ t ∈ Icc 0 (tb i), m i t * v' i t = -ve i * m' i t :=
+      fun i hi => hlaw i (le_trans hi (Nat.le_succ n))
+    have hjet' : ∀ i < n, m (i + 1) 0 * v (i + 1) 0 + (m i (tb i) - m (i + 1) 0) *
+        v i (tb i) = m i (tb i) * v i (tb i) :=
+      fun i hi => hjet i (lt_of_lt_of_le hi (Nat.le_succ n))
+    have ih' := ih htb' hm' hv' hpos' hlaw' hjet'
+    have hburn := velocity_increment_eq_log (htb (n + 1) le_rfl) (hm (n + 1) le_rfl)
+      (hv (n + 1) le_rfl) (hpos (n + 1) le_rfl) (hlaw (n + 1) le_rfl)
+    have hjmass : m (n + 1) 0 ≠ 0 :=
+      ne_of_gt (hpos (n + 1) le_rfl 0 ⟨le_refl 0, htb (n + 1) le_rfl⟩)
+    have hveq : v (n + 1) 0 = v n (tb n) :=
+      (jettison_velocity_eq hjmass).mp (hjet n (Nat.lt_succ_self n))
+    rw [Finset.sum_range_succ]
+    linear_combination hburn + hveq + ih'
+
+/-- Counting dry mass as propellant overstates the increment: for `ve > 0`, `m₀ > 0` and a
+nonzero drop from `m₁` to `m₂ > 0`, a burn logarithm that also covers the drop exceeds the true
+burn increment by `ve * log (m₁ / m₂) > 0`. -/
+lemma jettison_as_propellant_overstates {ve m₀ m₁ m₂ : ℝ} (hve : 0 < ve) (hm₀ : 0 < m₀)
+    (hm₂ : 0 < m₂) (hdrop : m₂ < m₁) :
+    ve * Real.log (m₀ / m₂) = ve * Real.log (m₀ / m₁) + ve * Real.log (m₁ / m₂) ∧
+      ve * Real.log (m₀ / m₁) < ve * Real.log (m₀ / m₂) := by
+  have hm₁ : 0 < m₁ := lt_trans hm₂ hdrop
+  have hne₀₁ : m₀ / m₁ ≠ 0 := div_ne_zero (ne_of_gt hm₀) (ne_of_gt hm₁)
+  have hne₁₂ : m₁ / m₂ ≠ 0 := div_ne_zero (ne_of_gt hm₁) (ne_of_gt hm₂)
+  have hm₁' : m₁ ≠ 0 := ne_of_gt hm₁
+  have hm₂' : m₂ ≠ 0 := ne_of_gt hm₂
+  have hsplit : m₀ / m₂ = (m₀ / m₁) * (m₁ / m₂) := by
+    field_simp
+  have hlog : Real.log (m₀ / m₂) = Real.log (m₀ / m₁) + Real.log (m₁ / m₂) := by
+    rw [hsplit, Real.log_mul hne₀₁ hne₁₂]
+  have heq : ve * Real.log (m₀ / m₂)
+      = ve * Real.log (m₀ / m₁) + ve * Real.log (m₁ / m₂) := by
+    rw [hlog]
+    ring
+  have hpos : 0 < ve * Real.log (m₁ / m₂) := by
+    apply mul_pos hve
+    apply Real.log_pos
+    rw [one_lt_div hm₂]
+    exact hdrop
+  refine ⟨heq, ?_⟩
+  rw [heq]
+  linarith
 
 end PhyslibExt.Mechanics.PropulsionPorts
