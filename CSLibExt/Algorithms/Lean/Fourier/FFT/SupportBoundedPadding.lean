@@ -28,6 +28,17 @@ two-dimensional cyclic convolution equal to their full two-dimensional
 linear convolution. No dyadic length is assumed for the inputs; the
 dyadic padding route is a special case. One slot too short aliases the
 last linear coefficient onto an earlier cropped coefficient.
+
+The zero-extension maps are total in their lengths. For nonzero cyclic
+lengths and nonempty supports they are faithful extensions exactly when
+the cyclic length covers the support (`zeroExtend_injective_iff`,
+`zeroExtend2_injective_iff`); a shorter nonzero cyclic length keeps only
+the leading entries. Cyclic length zero is degenerate: `ZMod 0` is `ℤ`
+and `ZMod.val` is the absolute value there, so every source entry is read
+back at its natural index and the map is injective whatever the support
+length. Every convolution and transform result assumes nonzero cyclic
+lengths, and every result that uses the extension property carries
+length bounds that imply coverage.
 -/
 
 @[expose] public section
@@ -42,7 +53,14 @@ open MathlibExt.Analysis.Fourier.RectangularDFTAdapter
 def extendNat (M : ℕ) (x : Fin M → ℂ) : ℕ → ℂ :=
   fun i => if h : i < M then x ⟨i, h⟩ else 0
 
-/-- Zero extension of a finite signal to a cyclic index type. -/
+/-- Zero extension of a finite signal to a cyclic index type: the cyclic
+index `i` reads source entry `i.val` when it lies below `M` and zero
+otherwise. When `M ≤ N` this is a faithful extension
+(`zeroExtend_natCast`, `zeroExtend_injective`). For nonzero `N` the
+converse holds (`zeroExtend_injective_iff`): when `0 < N < M` it keeps
+only the first `N` source entries. At `N = 0`, where `ZMod 0` is `ℤ`,
+every source entry is read back at its natural index and the map is
+injective for every `M`. -/
 def zeroExtend (M N : ℕ) (x : Fin M → ℂ) : ZMod N → ℂ :=
   fun i => extendNat M x i.val
 
@@ -63,6 +81,37 @@ theorem extendNat_eq_zero_of_le (M : ℕ) (x : Fin M → ℂ) (i : ℕ) (hi : M 
 theorem zeroExtend_apply_of_lt (M N : ℕ) (x : Fin M → ℂ) (i : ZMod N)
     (hi : i.val < M) : zeroExtend M N x i = x ⟨i.val, hi⟩ := by
   simp [zeroExtend, extendNat, hi]
+
+/-- When the cyclic length covers the support, zero extension preserves
+every source entry. -/
+theorem zeroExtend_natCast (M N : ℕ) (hMN : M ≤ N) (x : Fin M → ℂ) (i : Fin M) :
+    zeroExtend M N x (i.val : ZMod N) = x i := by
+  have hiN : i.val < N := lt_of_lt_of_le i.isLt hMN
+  simp [zeroExtend, extendNat, ZMod.val_natCast_of_lt hiN]
+
+/-- When the cyclic length covers the support, zero extension loses no
+information. -/
+theorem zeroExtend_injective (M N : ℕ) (hMN : M ≤ N) :
+    Function.Injective (zeroExtend M N) := by
+  intro x x' h
+  funext i
+  rw [← zeroExtend_natCast M N hMN x i, ← zeroExtend_natCast M N hMN x' i, h]
+
+/-- For a nonzero cyclic length, zero extension is injective exactly
+when the cyclic length covers the support. A shorter length identifies
+signals that differ only at source index `N`. -/
+theorem zeroExtend_injective_iff (M N : ℕ) [NeZero N] :
+    Function.Injective (zeroExtend M N) ↔ M ≤ N := by
+  refine ⟨fun hinj => ?_, zeroExtend_injective M N⟩
+  by_contra hcon
+  have hNM : N < M := by omega
+  have h : (fun i : Fin M => if i.val = N then (1 : ℂ) else 0) = fun _ => 0 :=
+    hinj (by
+      funext i
+      have hi : i.val ≠ N := (ZMod.val_lt i).ne
+      simp [zeroExtend, extendNat, hi])
+  have h1 := congrFun h ⟨N, hNM⟩
+  simp at h1
 
 private theorem sum_zmod_eq_sum_range (N : ℕ) [NeZero N] (F : ZMod N → ℂ) :
     ∑ j : ZMod N, F j = ∑ n ∈ Finset.range N, F (n : ZMod N) := by
@@ -308,9 +357,58 @@ theorem one_short_padding_aliases (M K : ℕ) [NeZero (M + K - 2)] (hM : 2 ≤ M
 def extendNat2 (M K : ℕ) (x : Fin M × Fin K → ℂ) : ℕ × ℕ → ℂ :=
   fun p => if h1 : p.1 < M then if h2 : p.2 < K then x (⟨p.1, h1⟩, ⟨p.2, h2⟩) else 0 else 0
 
-/-- Zero extension of a rectangularly supported array to cyclic pairs. -/
+/-- Zero extension of a rectangularly supported array to cyclic pairs,
+coordinatewise as in `zeroExtend`. When `M ≤ N1` and `K ≤ N2` this is a
+faithful extension (`zeroExtend2_natCast`, `zeroExtend2_injective`).
+For nonzero lengths and a nonempty support the converse holds
+(`zeroExtend2_injective_iff`): a shorter length keeps only the leading
+`N1 x N2` block. As in `zeroExtend`, a zero length on either axis reads
+that axis back at its natural indices. -/
 def zeroExtend2 (M K N1 N2 : ℕ) (x : Fin M × Fin K → ℂ) : ZMod N1 × ZMod N2 → ℂ :=
   fun p => extendNat2 M K x (p.1.val, p.2.val)
+
+/-- When both cyclic lengths cover the rectangular support, zero
+extension preserves every source entry. -/
+theorem zeroExtend2_natCast (M K N1 N2 : ℕ) (hM : M ≤ N1) (hK : K ≤ N2)
+    (x : Fin M × Fin K → ℂ) (i : Fin M) (j : Fin K) :
+    zeroExtend2 M K N1 N2 x ((i.val : ZMod N1), (j.val : ZMod N2)) = x (i, j) := by
+  have hi : i.val < N1 := lt_of_lt_of_le i.isLt hM
+  have hj : j.val < N2 := lt_of_lt_of_le j.isLt hK
+  simp [zeroExtend2, extendNat2, ZMod.val_natCast_of_lt hi, ZMod.val_natCast_of_lt hj]
+
+/-- When both cyclic lengths cover the rectangular support, zero
+extension loses no information. -/
+theorem zeroExtend2_injective (M K N1 N2 : ℕ) (hM : M ≤ N1) (hK : K ≤ N2) :
+    Function.Injective (zeroExtend2 M K N1 N2) := by
+  intro x x' h
+  funext p
+  rw [← zeroExtend2_natCast M K N1 N2 hM hK x p.1 p.2,
+    ← zeroExtend2_natCast M K N1 N2 hM hK x' p.1 p.2, h]
+
+/-- For nonzero cyclic lengths and a nonempty rectangular support, zero
+extension is injective exactly when both cyclic lengths cover the
+support. -/
+theorem zeroExtend2_injective_iff (M K N1 N2 : ℕ) [NeZero N1] [NeZero N2]
+    (hM : 1 ≤ M) (hK : 1 ≤ K) :
+    Function.Injective (zeroExtend2 M K N1 N2) ↔ M ≤ N1 ∧ K ≤ N2 := by
+  refine ⟨fun hinj => ?_, fun h => zeroExtend2_injective M K N1 N2 h.1 h.2⟩
+  by_contra hcon
+  rcases Nat.lt_or_ge N1 M with h1 | h1
+  · have h : (fun p : Fin M × Fin K => if p.1.val = N1 then (1 : ℂ) else 0) = fun _ => 0 :=
+      hinj (by
+        funext p
+        have hp : p.1.val ≠ N1 := (ZMod.val_lt p.1).ne
+        simp [zeroExtend2, extendNat2, hp])
+    have h2 := congrFun h (⟨N1, h1⟩, ⟨0, hK⟩)
+    simp at h2
+  · have hN2K : N2 < K := by omega
+    have h : (fun p : Fin M × Fin K => if p.2.val = N2 then (1 : ℂ) else 0) = fun _ => 0 :=
+      hinj (by
+        funext p
+        have hp : p.2.val ≠ N2 := (ZMod.val_lt p.2).ne
+        simp [zeroExtend2, extendNat2, hp])
+    have h2 := congrFun h (⟨0, hM⟩, ⟨N2, hN2K⟩)
+    simp at h2
 
 /-- Full two-dimensional linear convolution of rectangular supports. -/
 def linearConvolution2 (M K P Q : ℕ) (x : Fin M × Fin K → ℂ)
@@ -506,39 +604,16 @@ theorem padded_cyclic_eq_linear_two_dim (M K P Q N1 N2 : ℕ) [NeZero N1] [NeZer
     sub_val_eq_of_le N2 t2 n2 ht2N2 hn2N2 hle2
   rw [hval1, hval2]
 
-private theorem columnInvDFT_columnDFT (m n : ℕ) [NeZero m] [NeZero n]
-    (w : ZMod m × ZMod n → ℂ) : columnInvDFT (columnDFT w) = w := by
-  ext ⟨a, b⟩
-  simp only [columnInvDFT, columnDFT]
-  have h : (fun k : ZMod m => ZMod.dft (fun i : ZMod m => w (i, b)) k)
-      = ZMod.dft (fun i : ZMod m => w (i, b)) := rfl
-  rw [h, LinearEquiv.symm_apply_apply]
-
-private theorem rowInvDFT_rowDFT (m n : ℕ) [NeZero m] [NeZero n]
-    (v : ZMod m × ZMod n → ℂ) : rowInvDFT (rowDFT v) = v := by
-  ext ⟨a, b⟩
-  simp only [rowInvDFT, rowDFT]
-  have h : (fun l : ZMod n => ZMod.dft (fun j : ZMod n => v (a, j)) l)
-      = ZMod.dft (fun j : ZMod n => v (a, j)) := rfl
-  rw [h, LinearEquiv.symm_apply_apply]
-
-private theorem rectangularInvDFT_rowColumnDFT (m n : ℕ) [NeZero m] [NeZero n]
-    (z : ZMod m × ZMod n → ℂ) : rectangularInvDFT (rowColumnDFT z) = z := by
-  simp only [rectangularInvDFT, rowColumnDFT]
-  rw [columnInvDFT_columnDFT, rowInvDFT_rowDFT]
-
 /-- The rectangular cyclic convolution is the rectangular inverse
 transform of the pointwise product of the row-then-column transforms
-of the zero extensions. -/
+of the zero extensions. This is the rectangular convolution theorem
+`rectangularInvDFT_mul_rowColumnDFT` specialized to zero-extended
+arrays. -/
 theorem rectangular_cyclic_eq_inverse_transform_product (M K P Q N1 N2 : ℕ)
     [NeZero N1] [NeZero N2] (x : Fin M × Fin K → ℂ) (y : Fin P × Fin Q → ℂ) :
     circularConvolution2 (zeroExtend2 M K N1 N2 x) (zeroExtend2 P Q N1 N2 y) =
       rectangularInvDFT (fun p => rowColumnDFT (zeroExtend2 M K N1 N2 x) p *
-        rowColumnDFT (zeroExtend2 P Q N1 N2 y) p) := by
-  have hforward := rowColumnDFT_circularConvolution2
-    (zeroExtend2 M K N1 N2 x) (zeroExtend2 P Q N1 N2 y)
-  have h := congrArg rectangularInvDFT hforward
-  rw [rectangularInvDFT_rowColumnDFT] at h
-  exact h
+        rowColumnDFT (zeroExtend2 P Q N1 N2 y) p) :=
+  (rectangularInvDFT_mul_rowColumnDFT _ _).symm
 
 end CSLibExt.Algorithms.Lean.Fourier.FFT.SupportBoundedPadding

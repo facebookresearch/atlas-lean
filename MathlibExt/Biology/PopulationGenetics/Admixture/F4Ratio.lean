@@ -39,6 +39,12 @@ A two-edge example whose reference has weight on only the first edge gives
 ratio `2α`, hence a
 value outside `[0, 1]` when `α > 1/2`.
 
+The f4-equality itself has a graph criterion: `f4(A, O; Y, C) = f4(A, O; B, C)`
+if and only if the weighted overlap
+`∑ e, (w A e - w O e) * (w Y e - w B e) * len e` vanishes, equivalently if and
+only if `f4(A, O; Y, B) = 0`. In particular it holds when no edge separates
+both `A` from `O` and `Y` from `B`.
+
 ## References
 
 * N. Patterson et al., *Ancient admixture in human history*, Genetics 192
@@ -47,7 +53,7 @@ value outside `[0, 1]` when `α > 1/2`.
 
 @[expose] public section
 
-open scoped BigOperators
+open scoped BigOperators symmDiff
 
 namespace MathlibExt.Biology.PopulationGenetics.Admixture
 
@@ -154,5 +160,66 @@ theorem DriftModel.f4_ratio_eq_two_mul_of_split_reference {Ω P : Type*}
   rw [M.f4_freq, M.f4_freq]
   exact MathlibExt.Biology.PopulationGenetics.Admixture.sum_ratio_eq_two_mul_of_split_reference
     hℓ hl hA hO hY hBw hC h
+
+/-! ### The sister condition -/
+
+variable {Ω P E : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} [Fintype E]
+
+/-- The difference of the two f4 statistics in the sister condition of
+`DriftModel.f4_ratio` is the weighted overlap of the `A`–`O` path with the
+`Y`–`B` difference: `f4(A,O;Y,C) - f4(A,O;B,C)` equals
+`∑ e, (w A e - w O e) * (w Y e - w B e) * len e`. The reference population `C`
+cancels. -/
+theorem DriftModel.f4_sub_f4_eq_sum (M : DriftModel μ E P) (A O Y B C : P) :
+    f4 μ M.freq A O Y C - f4 μ M.freq A O B C =
+      ∑ e, (M.weight A e - M.weight O e) * (M.weight Y e - M.weight B e) * M.len e := by
+  rw [M.f4_freq, M.f4_freq, ← Finset.sum_sub_distrib]
+  refine Finset.sum_congr rfl fun e _ => ?_
+  ring
+
+/-- **Graph criterion for the f4-ratio sister condition**: in a drift model,
+`f4(A,O;Y,C) = f4(A,O;B,C)` if and only if
+`∑ e, (w A e - w O e) * (w Y e - w B e) * len e = 0`. -/
+theorem DriftModel.f4_sister_iff_sum_eq_zero (M : DriftModel μ E P) (A O Y B C : P) :
+    f4 μ M.freq A O Y C = f4 μ M.freq A O B C ↔
+      ∑ e, (M.weight A e - M.weight O e) * (M.weight Y e - M.weight B e) * M.len e = 0 := by
+  rw [← sub_eq_zero, M.f4_sub_f4_eq_sum]
+
+/-- The sister condition `f4(A,O;Y,C) = f4(A,O;B,C)` holds if and only if
+`f4(A,O;Y,B) = 0`: the criterion sum is itself an f4 statistic. -/
+theorem DriftModel.f4_sister_iff_f4_eq_zero (M : DriftModel μ E P) (A O Y B C : P) :
+    f4 μ M.freq A O Y C = f4 μ M.freq A O B C ↔ f4 μ M.freq A O Y B = 0 := by
+  rw [M.f4_sister_iff_sum_eq_zero, M.f4_freq]
+
+/-- Sufficient condition for the sister equality: if every edge separating
+`Y` from `B` (every edge with `w Y e ≠ w B e`) lies off the `A`–`O` path
+(`w A e = w O e`), i.e. `(w A e - w O e) * (w Y e - w B e) = 0` for every edge,
+then `f4(A,O;Y,C) = f4(A,O;B,C)`. Cancellation between edges can also give the
+equality, so this is not necessary. -/
+theorem DriftModel.f4_sister_of_disjoint (M : DriftModel μ E P) (A O Y B C : P)
+    (h : ∀ e, (M.weight A e - M.weight O e) * (M.weight Y e - M.weight B e) = 0) :
+    f4 μ M.freq A O Y C = f4 μ M.freq A O B C :=
+  (M.f4_sister_iff_f4_eq_zero A O Y B C).mpr (M.f4_eq_zero_of_disjoint h)
+
+/-- Binary-loading form of the sufficient condition: if the lineage symmetric
+difference of `A` and `O` (on a tree, the `A`–`O` path) is disjoint from that
+of `Y` and `B`, then `f4(A,O;Y,C) = f4(A,O;B,C)`. -/
+theorem DriftModel.f4_sister_of_lineage_disjoint [DecidableEq E] (M : DriftModel μ E P)
+    (hM : M.HasBinaryLoadings) (A O Y B C : P)
+    (h : Disjoint (M.lineage A ∆ M.lineage O) (M.lineage Y ∆ M.lineage B)) :
+    f4 μ M.freq A O Y C = f4 μ M.freq A O B C := by
+  refine M.f4_sister_of_disjoint A O Y B C fun e => ?_
+  by_cases h1 : M.weight A e - M.weight O e = 0
+  · simp [h1]
+  by_cases h2 : M.weight Y e - M.weight B e = 0
+  · simp [h2]
+  exfalso
+  have mem1 : e ∈ M.lineage A ∆ M.lineage O := by
+    rcases hM A e with hA | hA <;> rcases hM O e with hO | hO <;>
+      simp_all [DriftModel.lineage, Finset.mem_symmDiff]
+  have mem2 : e ∈ M.lineage Y ∆ M.lineage B := by
+    rcases hM Y e with hY | hY <;> rcases hM B e with hB | hB <;>
+      simp_all [DriftModel.lineage, Finset.mem_symmDiff]
+  exact Finset.disjoint_left.mp h mem1 mem2
 
 end MathlibExt.Biology.PopulationGenetics.FStatistics
