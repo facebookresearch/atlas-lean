@@ -62,10 +62,13 @@ stall-validity interval) take `W > 0`, and so does the lift-to-drag remark at
 proofs need only `W ≠ 0`; apart from them, each result assumes only the hypotheses its proof
 uses. Lemmas about the drag formulas alone (`inducedDragFactor_pos`, `minDragSpeed_pos`,
 `minDragSpeed_pow_four`, `two_sqrt_mul_dragFactor_eq`) hold for any nonzero `W`, or any `W`,
-because the drag depends on `W` only through `W ^ 2`. If `CD0 = 0`, `k = 0` or `W = 0`, one drag
-term vanishes, `D(V)` has no minimum over positive speeds, and `minDragSpeed` takes the
-meaningless value `0`. The polar is valid only up to a declared maximum lift coefficient
-`CLmax`; at a positive speed this is the stall-validity interval
+because the drag depends on `W` only through `W ^ 2`. Outside the regime, with `ρ, S > 0` and
+`CD0, k ≥ 0`, the parasite term `a * V ^ 2` vanishes exactly when `CD0 = 0` and the induced term
+`b / V ^ 2` exactly when `k = 0` or `W = 0`. If exactly one of them vanishes, `D(V)` is the other
+term alone, strictly monotone over positive speeds, and has no minimum there; if both vanish,
+`D(V) = 0` at every speed, so every positive speed minimizes it. In each of these cases
+`minDragSpeed` takes the value `0`, which is not a positive speed. The polar is valid only up to a
+declared maximum lift coefficient `CLmax`; at a positive speed this is the stall-validity interval
 `V ≥ V_s = √(2 * W / (ρ * S * CLmax))`, whose radicand is positive only for `W > 0`.
 The algebraic minimizer is an operating point only when it lies in that interval:
 `exists_levelDrag_eq_two_sqrt_iff` and `two_sqrt_lt_levelDrag_of_minDragSpeed_lt_stallSpeed`. At
@@ -366,7 +369,9 @@ unique positive speed of least level-flight drag
 (`levelDrag_eq_two_sqrt_iff_eq_minDragSpeed`). As a formula it is the positive root of
 `V ^ 4 = b / a` whenever `W ≠ 0` and `ρ, S, CD0, k > 0` (`minDragSpeed_pos`,
 `minDragSpeed_pow_four`). If `CD0 = 0`, `k = 0` or `W = 0`, Lean's conventions `x / 0 = 0` and
-`√0 = 0` give the meaningless value `0`. -/
+`√0 = 0` give the value `0`, which is not a positive speed: with `ρ, S > 0` and `CD0, k ≥ 0` the
+drag then has no minimum over positive speeds when exactly one of its two terms vanishes, and
+every positive speed is a minimizer when both vanish. -/
 noncomputable def minDragSpeed (W ρ S CD0 k : ℝ) : ℝ :=
   Real.sqrt (Real.sqrt (inducedDragFactor W ρ S k / parasiteDragFactor ρ S CD0))
 
