@@ -215,13 +215,21 @@ example (n : ℕ) (hn : dwellElapsed (flightDuration 10 1 5) n ≤ 10) : n ≤ 1
     (fun k => by rw [flightDuration_eq]; norm_num) 10).2 n hn
   exact_mod_cast (by linarith : (n : ℝ) ≤ 10)
 
-/-- The inelastic boundary `e = 0`: the fixture's ball stops at its first impact, every later
-flight lasts `0`, and every later contact time is `1`. -/
-example (n : ℕ) :
-    flightDuration 10 0 5 (n + 1) = 0 ∧ dwellElapsed (flightDuration 10 0 5) (n + 1) = 1 := by
-  obtain ⟨-, h1, h2⟩ := inelastic_stops 10 5 n
-  refine ⟨h1, ?_⟩
-  rw [h2]
-  norm_num
+/-- The inelastic boundary `e = 0`: the fixture's ball has one active arc, the first, which ends
+at `t = 1`; it then rests on the floor, every later flight lasting `0` and the elapsed time staying
+at `1`. -/
+example :
+    {n : ℕ | IsActiveArc 0 5 n} = {0} ∧ dwellElapsed (flightDuration 10 0 5) 1 = 1 ∧
+      ∀ n, flightDuration 10 0 5 (n + 1) = 0 ∧
+        dwellElapsed (flightDuration 10 0 5) (n + 1) = 1 := by
+  obtain ⟨hact, -, hrest⟩ := inelastic_stops (g := 10) (u₀ := 5) (by norm_num) (by norm_num)
+  have h1 : ∀ n, dwellElapsed (flightDuration 10 0 5) (n + 1) = 1 := fun n => by
+    rw [(hrest n).2.2]
+    norm_num
+  exact ⟨hact, h1 0, fun n => ⟨(hrest n).2.1, h1 n⟩⟩
+
+/-- In contrast, with `e = 1 / 2` every arc of the fixture is active: the bounces never stop. -/
+example (n : ℕ) : IsActiveArc (1 / 2) 5 n :=
+  isActiveArc_of_pos (by norm_num) (by norm_num) n
 
 end PhyslibExtTest.Mechanics.ImpactAndDeployment
