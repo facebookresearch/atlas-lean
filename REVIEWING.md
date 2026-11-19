@@ -101,6 +101,13 @@ reason. Beyond the mechanical rules, check what only a reader can:
   right.
 - **Duplicates (rule 6).** Search the vault and pinned Mathlib for an existing
   page or declaration before accepting a new one.
+- **Findings the wiki batches raised most often.** Prose about the library's
+  state ("the Lean proof", "not formalized"), which goes stale as the Lean
+  changes; a formula read as a probability or an expectation without the
+  nonnegativity or normalisation it needs; and a citation not checked against
+  the cited edition, including theorem numbers nobody verified.
+- **Held pages (rule 7).** Don't ask to relink a page whose annotation records
+  a `held` declaration; check that the reason holds and the issue is linked.
 
 Every graph PR also needs a code owner's approval (`.github/CODEOWNERS`).
 

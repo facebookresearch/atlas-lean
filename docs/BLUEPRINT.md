@@ -66,9 +66,14 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
 
 5. **Each page has one annotation, in `blueprint/links/<Subject>.jsonl`**
    (`roadmap.jsonl` for the root page), and an annotation names at most one
-   Lean declaration. `article_id`s are unique. *Reason:* Autoform reads an
-   article's facts from its annotation, and two annotations for one page, or
-   one page for two declarations, make its status ambiguous.
+   Lean declaration. Every annotation has a unique `id` (`af_` and 24 hex
+   digits): `sync_wiki.py declarations` gives one to each annotation it adds,
+   and a one-off PR fills in the ones missing today. `autoform links set`
+   cannot do this, because it does not write these per-subject files.
+   *Reason:* Autoform reads an article's facts from its annotation, and two
+   annotations for one page, or one page for two declarations, make its status
+   ambiguous; `autoform work` refuses an unfinished formalizable leaf without
+   an `id`, so rule 14's tasks cannot be listed until every one has one.
 6. **Pages for documented declarations come from `sync_wiki.py
    declarations`,** then may be edited. Don't hand-write a second page for a
    declaration. *Reason:* the sync tracks docstring changes per declaration;
@@ -77,8 +82,15 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
 7. **A page states what its declaration states,** with every hypothesis and
    convention that changes the meaning (`x / 0 = 0`, truncated subtraction, a
    `[NeZero q]` argument, a list's default entry). A fix to a statement also
-   goes into the Lean docstring on `main`. *Reason:* readers trust the page,
-   not the Lean, and the sync reports docstring drift only one way.
+   goes into the Lean docstring on `main`, in the same PR or in a linked issue.
+   **Exception:** when the declaration is false, vacuous, unsatisfiable,
+   mis-specified or private, the page states the source's mathematics, and its
+   annotation records the declaration under `org.atlas-wiki` `held` (with the
+   reason and, unless it is private by design, the `bug` issue tracking the Lean
+   fix) instead of linking it. *Reason:* readers trust the page, not the Lean,
+   and the sync reports docstring drift only one way; a fix in a linked issue
+   keeps the docstrings converging without making every wiki fix a Lean PR, and
+   a held page should not be relinked to a declaration that is wrong.
 8. **Build outputs are never committed:** `lean-facts` output, `site-src/`,
    `site/`, the dependency dump. `scripts/wiki-sync.json` and
    `blueprint/atlas.json` change only as [Maintaining articles](#maintaining-articles)
@@ -94,21 +106,24 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
     `## Depends on` and `## Proof depends on`.** They count toward its
     readiness, as Autoform's format says. *Reason:* nothing else records a
     planned node's prerequisites.
-11. **Any other edge goes in `## Informally uses`:** an argument the source
-    cites but the Lean need not use. It links an existing page, never the page
-    itself, and closes no cycle. It never counts toward readiness. *Reason:*
-    it records the mathematics without changing what is ready.
+11. **`## Informally uses` lists only results the cited proof uses** but the
+    Lean need not. What the statement needs (its definitions and ingredients)
+    is described in the page's prose, not listed here. It links an existing
+    page, never the page itself, and closes no cycle. It never counts toward
+    readiness. *Reason:* it records the source's argument without changing
+    what is ready; reviews of the 21 wiki batches moved hundreds of statement
+    ingredients out of this section.
 
 ### Nodes without Lean
 
 12. **A node still to be broken down (DAG work) is a planned page whose
-    annotation carries** `"extensions": {"org.atlas-wiki": {"unexpanded": true}}`.
+    annotation carries Autoform's** `"extensions": {"org.autoform": {"not_ready": true}}`.
     It is an article, not a folder page, and names no declaration. Its page
     says what the node covers, which sources it follows, and what a good
-    expansion contains. *Reason:* Autoform lists leaves to formalize, not
-    nodes to split, so the split needs its own marker; it lives in the
-    annotation because Autoform's loader refuses frontmatter keys it doesn't
-    know.
+    expansion contains. *Reason:* Autoform defines `not_ready` as "needs more
+    blueprint work before it can be attempted", never lists it as a task, and
+    counts such leaves in their scope's status bar and item count, so a folder
+    of nodes still to expand does not look finished on the site.
 13. **Expanding a node** removes the marker and adds children under the same
     folder. A low-level child is a `theorem_wanted` or `def_wanted` statement in
     `WantedExt` with a docstring, whose page then comes from the sync (rule 6).
