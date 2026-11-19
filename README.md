@@ -56,6 +56,15 @@ dependency. [`provenance/formal-math-sync.json`](provenance/README.md) records
 the upstream commit and, for every file taken from it, whether it is a
 header-only copy, a reviewed divergence, or retired.
 
+## Dependency explorer
+
+The [blueprint](blueprint/README.md) presents the v2 libraries as a
+mathematical reading tree and interactive dependency graph, with statements,
+Lean-source links, and prerequisites derived from compiled Lean.
+
+See [building and maintaining the explorer](docs/BLUEPRINT.md) for the local
+build, source ownership, and opt-in GitHub Pages deployment.
+
 ## About ATLAS
 
 ATLAS translates mathematical statements and proofs from undergraduate and
