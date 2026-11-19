@@ -28,15 +28,15 @@ namespace Robotics.SLAM
 /-- Observation-factorized objective gauge invariance.
 For finitely many observed pose-landmark pairs with fixed
 data `d`, an objective that is a sum of per-pair losses of
-the relative observations `g⁻¹ • l i` does not change when
-every pose and landmark is transformed by a common `h`:
-the relative observations, and hence every summand, are
-unchanged. -/
+the relative observations `(g i)⁻¹ • l i` does not change
+when every pose and landmark is transformed by a common
+`h`: each relative observation, and hence every summand,
+is unchanged. -/
 theorem objective_invariant_of_relative {G ι L D : Type*}
     [Group G] [MulAction G L] [Fintype ι]
-    (g h : G) (l : ι → L) (d : ι → D) (loss : L → D → ℝ) :
-    (∑ i, loss ((h * g)⁻¹ • (h • l i)) (d i))
-      = ∑ i, loss (g⁻¹ • l i) (d i) := by
+    (g : ι → G) (h : G) (l : ι → L) (d : ι → D) (loss : L → D → ℝ) :
+    (∑ i, loss ((h * g i)⁻¹ • (h • l i)) (d i))
+      = ∑ i, loss ((g i)⁻¹ • l i) (d i) := by
   apply Finset.sum_congr rfl
   intro i _
   congr 1
