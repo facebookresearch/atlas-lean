@@ -33,7 +33,10 @@ Checked consumers:
   differs between streamlines;
 - plane Poiseuille flow: the centerline velocity and the flow rate for
   `G = 12`, `μ = 1`, `H = 1`, and the witness applied and destructured
-  at water-like parameters.
+  at water-like parameters;
+- cylindrical Poiseuille flow: the centerline velocity and a wall point
+  at rest for `G = 4`, `μ = 1`, `R = 1`, and the witness and the
+  reversed-gradient failure at water-like parameters.
 -/
 
 @[expose] public section
@@ -221,6 +224,36 @@ example (lam p₀ : ℝ) (t : Time) :
     (H := 1 / 100) (G := 12) lam p₀ (by norm_num) (by norm_num) (by norm_num) (by norm_num)
   refine ⟨hNS, h0 t _ rfl, hH t _ rfl, ?_⟩
   rw [(hQ t 0 0).1]
+  norm_num
+
+/-- Nonzero `G` and positive centerline flow: with `G = 4`, `μ = 1` and `R = 1` the centerline
+velocity is `(0, 0, 1)` and the wall point `(1, 0, z)` is at rest. -/
+example (z : ℝ) :
+    pipePoiseuilleVelocity 4 1 1 ⟨![0, 0, z]⟩ = WithLp.toLp 2 ![0, 0, 1] ∧
+      pipePoiseuilleVelocity 4 1 1 ⟨![1, 0, z]⟩ = 0 := by
+  refine ⟨?_, ?_⟩
+  · ext i
+    fin_cases i <;> norm_num [pipePoiseuilleVelocity]
+  · ext i
+    fin_cases i <;> norm_num [pipePoiseuilleVelocity]
+
+/-- Cylindrical Poiseuille witness for a water-like pipe: `ρ = 1000`, `μ = 1/1000`, radius
+`R = 1/100` and `G = 4`. Applying and destructuring `pipePoiseuilleFlow_witness` gives the
+conservative momentum balance, a wall point at rest and the centerline velocity `(0, 0, 1/10)`;
+with the pressure gradient reversed the same velocity is not a Navier-Stokes solution. -/
+example (lam p₀ : ℝ) (t : Time) :
+    _root_.FluidDynamics.NavierStokes 3 (pipePoiseuilleFlow 1000 (1 / 1000) lam p₀ 4 (1 / 100))
+        (fun _ x => pipePoiseuillePressure p₀ 4 x) (fun _ _ => 1 / 1000) (fun _ _ => lam) ∧
+      (pipePoiseuilleFlow 1000 (1 / 1000) lam p₀ 4 (1 / 100)).velocity t ⟨![1 / 100, 0, 0]⟩ = 0 ∧
+      (pipePoiseuilleFlow 1000 (1 / 1000) lam p₀ 4 (1 / 100)).velocity t ⟨![0, 0, 0]⟩ =
+        WithLp.toLp 2 ![0, 0, 1 / 10] ∧
+      ¬ _root_.FluidDynamics.NavierStokes 3 (pipeReversedFlow 1000 (1 / 1000) lam p₀ 4 (1 / 100))
+        (fun _ x => pipePoiseuillePressure p₀ (-4) x) (fun _ _ => 1 / 1000) (fun _ _ => lam) := by
+  obtain ⟨-, -, -, hNS, hwall, hc⟩ := pipePoiseuilleFlow_witness (ρ := 1000) (μ := 1 / 1000)
+    (G := 4) (R := 1 / 100) lam p₀ (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+  refine ⟨hNS, hwall t _ (by norm_num), ?_, pipeReversedFlow_not_navierStokes (by norm_num)
+    (by norm_num) 1000 lam p₀ (1 / 100)⟩
+  rw [(hc t 0).1]
   norm_num
 
 end PhyslibExtTest.FluidDynamics.LaminarFlowPorts
