@@ -36,7 +36,8 @@ This file compares three ways of turning an observed `n_AB` into a p-value.
 2. **Asymptotic test.** Pearson's statistic `X²` with the allele frequency estimated from the
    sample, the canonical `PearsonLimit.hweStat`, compared with the `χ²₁` law through the shared
    tail `chiSqOneTail` of `RareVariantInference.GenomicControl` (`asymptoticHWEPValue`).
-   Pearson's theorem (`PearsonLimit.tendstoInDistribution_hweStat`) says `X²` converges in law
+   Pearson's theorem (`PearsonLimit.tendstoInDistribution_hweStat`, restated for this file's
+   statistic as `tendstoInDistribution_hweChiSqOfHet`) says `X²` converges in law
    to `χ²₁` as `N → ∞` with the allele frequency fixed in `(0, 1)`, which forces every expected
    genotype count to infinity; the usual finite-sample proxy is Cochran's rule that every
    expected count is at least `5` (`InChiSqRegime`). This file proves the failure side. With
@@ -81,6 +82,10 @@ This file compares three ways of turning an observed `n_AB` into a p-value.
   Levene's law; `isValidPValue_hweExactPValue` and `isValidPValue_hweDeficitPValue`.
 * `hweStat_one_homozygote`: one `AA` homozygote among `m + 1` individuals with two `A` alleles
   gives `X² = m + 1`, for every `m ≥ 1`.
+* `hweChiSqOfHet_eq_hweStat`, `hweChiSqOfHet_eq_hweStat_cellCount`: the heterozygote-count
+  statistic is `PearsonLimit.hweStat` of the genotype table, and of a sample's cell counts.
+* `tendstoInDistribution_hweChiSqOfHet`: under i.i.d. Hardy–Weinberg sampling with `0 < p < 1`,
+  `hweChiSqOfHet` at the observed counts converges in law to `χ²₁`.
 * `not_isValidPValue_asymptoticHWEPValue_sparse`: the asymptotic p-value is anti-conservative
   in the sparse case.
 * `not_isValidPValue_gcPValue_sparse`, `gcPValue_sparse_rejection_ge`: genomic control does not
@@ -339,6 +344,69 @@ in `(0, 1)` and lets `N → ∞`, which sends every expected count to infinity; 
 finite-sample rule takes `c = 5`. -/
 def InChiSqRegime (c : ℝ) (N : ℕ) (n : Fin 3 → ℝ) : Prop :=
   ∀ i, c ≤ N * hweProb (alleleFreqHat n) i
+
+/-- **The heterozygote-count statistic is the genotype-table statistic.** For a genotype table
+with `n₀` individuals of class `0` (`BB`), `n₁` of class `1` (`AB`) and `n₂` of class `2` (`AA`),
+`hweChiSqOfHet` at the sample size `N = n₀ + n₁ + n₂`, the allele count `n_A = n₁ + 2 n₂` and the
+heterozygote count `n₁` is Pearson's fitted statistic `hweStat` of the table: the floor divisions
+and truncated subtractions in `hweChiSqOfHet` are exact on every realizable table. -/
+theorem hweChiSqOfHet_eq_hweStat (n₀ n₁ n₂ : ℕ) :
+    hweChiSqOfHet (n₀ + n₁ + n₂) (n₁ + 2 * n₂) n₁ =
+      hweStat (n₀ + n₁ + n₂) ![(n₀ : ℝ), n₁, n₂] := by
+  have h0 : (2 * (n₀ + n₁ + n₂) - (n₁ + 2 * n₂) - n₁) / 2 = n₀ := by omega
+  have h2 : (n₁ + 2 * n₂ - n₁) / 2 = n₂ := by omega
+  rw [hweChiSqOfHet, h0, h2]
+
+omit [MeasurableSpace Ω] in
+/-- **Sample form.** For genotypes `X 0, X 1, …` (number of copies of `A`), `hweChiSqOfHet` at the
+sample size `N`, the observed allele count `∑_{m < N} X m` and the observed heterozygote count
+`#{m < N | X m = 1}` is the statistic `hweStat N (cellCount X N ω)` of
+`PearsonLimit.tendstoInDistribution_hweStat`, for every sample. -/
+theorem hweChiSqOfHet_eq_hweStat_cellCount (X : ℕ → Ω → Fin 3) (N : ℕ) (ω : Ω) :
+    hweChiSqOfHet N (∑ m ∈ range N, (X m ω : ℕ)) #{m ∈ range N | X m ω = 1} =
+      hweStat N (cellCount X N ω) := by
+  set c : Fin 3 → ℕ := fun i => #{m ∈ range N | X m ω = i} with hc
+  have hcell : cellCount X N ω = ![(c 0 : ℝ), c 1, c 2] := by
+    funext i
+    fin_cases i <;> simp [cellCount, hc, sum_boole]
+  have hN : N = c 0 + c 1 + c 2 := by
+    have := card_eq_sum_card_fiberwise (s := range N) (t := univ) (f := fun m => X m ω)
+      fun _ _ => mem_univ _
+    simpa [Fin.sum_univ_three, hc, add_assoc] using this
+  have hA : ∑ m ∈ range N, (X m ω : ℕ) = c 1 + 2 * c 2 := by
+    rw [← sum_fiberwise (range N) (fun m => X m ω) fun m => (X m ω : ℕ), Fin.sum_univ_three]
+    have hfib : ∀ i : Fin 3, ∑ m ∈ range N with X m ω = i, (X m ω : ℕ) = c i * i := fun i => by
+      rw [sum_congr rfl fun m hm => by rw [(mem_filter.1 hm).2], sum_const, smul_eq_mul]
+    rw [hfib, hfib, hfib]
+    simp only [Fin.val_zero, Fin.val_one, Fin.val_two, mul_zero, zero_add, mul_one]
+    ring
+  have key : ∀ {M A h n₀ n₁ n₂ : ℕ}, M = n₀ + n₁ + n₂ → A = n₁ + 2 * n₂ → h = n₁ →
+      hweChiSqOfHet M A h = hweStat M ![(n₀ : ℝ), n₁, n₂] := by
+    intro M A h n₀ n₁ n₂ hM hA hh
+    subst hM hA
+    rw [hh]
+    exact hweChiSqOfHet_eq_hweStat n₀ n₁ n₂
+  rw [hcell]
+  exact key hN hA rfl
+
+/-- **Pearson's limit theorem for the asymptotic HWE test of this file.** For i.i.d. genotypes in
+Hardy–Weinberg proportions at a polymorphic allele frequency `0 < p < 1`, the statistic
+`hweChiSqOfHet` behind `asymptoticHWEPValue`, evaluated at the observed sample size, allele count
+and heterozygote count, converges in distribution to `χ²₁`. This is
+`PearsonLimit.tendstoInDistribution_hweStat` transported along
+`hweChiSqOfHet_eq_hweStat_cellCount`; the sparse counterexamples above show that the limit says
+nothing about a fixed small sample. -/
+theorem tendstoInDistribution_hweChiSqOfHet [IsProbabilityMeasure μ] {X : ℕ → Ω → Fin 3}
+    {p : ℝ} (hX0 : ∀ i, μ.real (X 0 ⁻¹' {i}) = hweProb p i) (hp0 : 0 < p) (hp1 : p < 1)
+    (hindep : iIndepFun X μ) (hident : ∀ m, IdentDistrib (X m) (X 0) μ μ)
+    {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']
+    {Z : Ω' → ℝ} (hZ : HasLaw Z (chiSquareMeasure 1) P') :
+    TendstoInDistribution
+      (fun N ω => hweChiSqOfHet N (∑ m ∈ range N, (X m ω : ℕ)) #{m ∈ range N | X m ω = 1})
+      atTop Z (fun _ => μ) P' :=
+  (tendstoInDistribution_hweStat hX0 hp0 hp1 hindep hident hZ).congr
+    (fun N => ae_of_all _ fun ω => (hweChiSqOfHet_eq_hweStat_cellCount X N ω).symm)
+    (ae_of_all _ fun _ => rfl)
 
 /-- **Sparse-count statistic.** With two `A` alleles carried by a single `AA` homozygote among
 `m + 1` individuals (`m ≥ 1`), Pearson's statistic is `X² = m + 1`: it grows linearly in the

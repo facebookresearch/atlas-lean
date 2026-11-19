@@ -111,4 +111,49 @@ example {A : ℝ → ℝ} (h : IsSolution (1 / 5) 3 A) (hA : A 0 = 0) :
     A 10 = amount (1 / 5) 3 0 10 := by
   rw [h.eq_amount (by norm_num), hA]
 
+/-- Absolute reconstruction through the canonical concentration curve:
+dose `100`, volume `10`, clearance `2` are recovered from `concentration`
+at times `0` and `3`. -/
+example : (10 : ℝ) = 100 / concentration 2 10 0 100 0 ∧
+    (2 : ℝ) = -(10 / 3) * log (concentration 2 10 0 100 3 / concentration 2 10 0 100 0) := by
+  have hC0 : concentration 2 10 0 100 0 = 100 / 10 := by simp [concentration]
+  have hCt : concentration 2 10 0 100 3 = 100 / 10 * exp (-(2 / 10) * 3) := by
+    rw [concentration_bolus, elimRate]
+  have h := bolus_absolute_reconstruction (show (0 : ℝ) < 100 by norm_num)
+    (show (0 : ℝ) < 10 by norm_num) (show (0 : ℝ) ≤ 2 by norm_num)
+    (show (0 : ℝ) < 3 by norm_num) hC0 hCt
+  exact ⟨h.2.2.1, h.2.2.2.2⟩
+
+/-- Boundary `CL = 0`: the concentration is constant and reconstruction
+returns clearance `0`. -/
+example : (0 : ℝ) = -(10 / 3) * log ((100 / 10 * exp (-(0 / 10) * 3)) / (100 / 10)) := by
+  have h := bolus_absolute_reconstruction (show (0 : ℝ) < 100 by norm_num)
+    (show (0 : ℝ) < 10 by norm_num) (show (0 : ℝ) ≤ 0 by norm_num)
+    (show (0 : ℝ) < 3 by norm_num) rfl rfl
+  exact h.2.2.2.2
+
+/-- Distinct clearances give distinct concentrations at `t = 3`. -/
+example : concentration 2 10 0 100 3 ≠ concentration 3 10 0 100 3 := by
+  intro hcon
+  have e2 : concentration 2 10 0 100 3 = 100 / 10 * exp (-(2 / 10) * 3) := by
+    rw [concentration_bolus, elimRate]
+  have e3 : concentration 3 10 0 100 3 = 100 / 10 * exp (-(3 / 10) * 3) := by
+    rw [concentration_bolus, elimRate]
+  have h := bolus_absolute_injective (show (0 : ℝ) < 100 by norm_num)
+    (show (0 : ℝ) < 10 by norm_num) (show (0 : ℝ) < 10 by norm_num)
+    (show (0 : ℝ) ≤ 2 by norm_num) (show (0 : ℝ) ≤ 3 by norm_num)
+    (show (0 : ℝ) < 3 by norm_num) rfl (by rw [← e2, ← e3]; exact hcon)
+  norm_num at h
+
+/-- Normalized washout at `D = 100`, `V = 10`, `CL = 2`, `t = 3`
+recovers the rate `2 / 10`. -/
+example : -Real.log (((100 / 10) * Real.exp (-(2 / 10) * 3)) / (100 / 10)) / 3 = 2 / 10 :=
+  normalized_washout_rate (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+
+/-- Doubling both `V` and `CL` leaves the washout unchanged but
+changes the volume. -/
+example : (∀ t : ℝ, Real.exp (-((2 * 2) / (2 * 10)) * t) =
+    Real.exp (-(2 / 10) * t)) ∧ (2 : ℝ) * 10 ≠ 10 :=
+  normalized_scaling_same_washout (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+
 end MathlibExtTest.Biology.Biophysics.CompartmentKinetics

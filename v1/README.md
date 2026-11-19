@@ -2,13 +2,12 @@
   <img src="../assets/logo.svg" alt="ATLAS Logo" width="800"/>
 </p>
 
-# ATLAS - Autoformalized Textbook Library At Scale
+# ATLAS v1
 
-ATLAS is a Lean 4 library of textbook mathematics autoformalized by LLMs:
-informal statements and proofs translated into Lean code. It draws from
-undergraduate and graduate textbooks across analysis, algebra, geometry,
-topology, combinatorics, probability, statistics, PDEs, number theory, and
-theoretical computer science.
+ATLAS v1 is a Lean 4 library of mathematics autoformalized by LLMs:
+informal statements and proofs translated into Lean code. It covers analysis,
+algebra, geometry, topology, combinatorics, probability, statistics, PDEs,
+number theory, and theoretical computer science.
 
 The goal of ATLAS is to provide reusable formal building blocks for future
 human- and machine-driven Lean formalization. This is an active effort: we are

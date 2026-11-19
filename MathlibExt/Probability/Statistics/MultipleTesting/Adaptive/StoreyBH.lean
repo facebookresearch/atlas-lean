@@ -65,13 +65,16 @@ unbiased estimator of `π₀` whose plug-in BH procedure has FDR `1/3` at `q = 1
 * `storeyPi0Plus1_eq_storeyPi0_add`, `storeyPi0_le_storeyPi0Plus1`: relation to
   `TwoGroupsTesting.storeyPi0`.
 * `le_integral_storeyPi0Plus1`: `E[storeyPi0Plus1] ≥ |H0| / m`, derived from main's lemma.
+* `measurable_storeyBHIndex_comp`: measurability of the Storey-BH index along a measurable
+  family of p-value vectors.
 
 ## Not covered
 
 FDR control of the Storey q-value procedure (`TwoGroupsTesting.qValue` applied to a pFDR estimate)
 or of Storey-BH with a data-dependent `lam` (or a `lam`-grid chosen by bootstrap), FDR control
-under PRDS or arbitrary dependence (where Storey-BH can fail), and the asymptotic results of Storey
-et al. (2004, §4) are not formalized.
+under arbitrary dependence, and the asymptotic results of Storey et al. (2004, §4) are not
+formalized. Under PRDS, level-`q` control fails; the attained bound
+`E[FDP] ≤ q (1 - lam) |H0|` and the counterexample are in `MultipleTesting.Adaptive.StoreyPRDS`.
 
 ## Implementation notes
 
@@ -269,7 +272,9 @@ private theorem measurable_storeyPi0Plus1_comp {Y : Type*} [MeasurableSpace Y] (
   exact (((measurable_of_countable (fun n : ℕ => (n : ℝ))).comp
     (measurable_numAbove_comp x hx lam)).add_const 1).div_const _
 
-private theorem measurable_storeyBHIndex_comp {Y : Type*} [MeasurableSpace Y] (q lam : ℝ)
+/-- The Storey-BH index of a measurable family of p-value vectors is measurable: if every
+coordinate `fun y => x y j` is measurable, so is `fun y => storeyBHIndex q lam (x y)`. -/
+theorem measurable_storeyBHIndex_comp {Y : Type*} [MeasurableSpace Y] (q lam : ℝ)
     (x : Y → Fin m → ℝ) (hx : ∀ j, Measurable fun y => x y j) :
     Measurable fun y => storeyBHIndex q lam (x y) := by
   refine measurable_stepUpIndex_comp (fun y => storeyThreshold q lam (x y)) x (fun k => ?_) hx

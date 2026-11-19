@@ -77,4 +77,42 @@ example {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityM
     HasLaw (∑ i ∈ ∅, X i) (Measure.dirac 0) P := by
   simpa [poissonMeasure_zero] using iIndepFun.hasLaw_sum_poissonMeasure hind hX ∅
 
+/-- Distinct rates give distinct Poisson laws. -/
+example : poissonMeasure 1 ≠ poissonMeasure 2 := by
+  intro h
+  have h12 : (1 : ℝ≥0) = 2 := poissonMeasure_injective h
+  norm_num at h12
+
+/-- Boundary: the zero rate gives a law different from the rate-1 law. -/
+example : poissonMeasure 0 ≠ poissonMeasure 1 := by
+  intro h
+  have h01 : (0 : ℝ≥0) = 1 := poissonMeasure_injective h
+  norm_num at h01
+
+/-- Two positive coordinates and a zero coordinate: changing one positive coordinate
+changes the product law. -/
+example : (Measure.pi fun i : Fin 3 => poissonMeasure (![1, 2, 0] i)) ≠
+    (Measure.pi fun i : Fin 3 => poissonMeasure (![1, 3, 0] i)) := by
+  intro h
+  have hv := pi_poissonMeasure_injective h
+  have h1 := congrFun hv 1
+  simp only [Matrix.cons_val_one, Matrix.cons_val_zero] at h1
+  norm_num at h1
+
+/-- The kernel form, used as an importing client would: distinct rate vectors give
+distinct output measures of `piPoissonKernel`. -/
+example : piPoissonKernel (Fin 2) ![1, 2] ≠ piPoissonKernel (Fin 2) ![1, 3] := by
+  intro h
+  have hv := piPoissonKernel_injective h
+  have h1 := congrFun hv 1
+  simp only [Matrix.cons_val_one, Matrix.cons_val_zero] at h1
+  norm_num at h1
+
+/-- Empty index type: equality of the (trivial) product laws still recovers the
+rate vector. -/
+example (r s : Fin 0 → ℝ≥0)
+    (h : (Measure.pi fun i => poissonMeasure (r i)) =
+      (Measure.pi fun i => poissonMeasure (s i))) : r = s :=
+  pi_poissonMeasure_injective h
+
 end MathlibExtTest.Probability.Distributions.PoissonKernel

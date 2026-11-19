@@ -250,3 +250,103 @@ theorem PosSemidef.trace_mul_nonneg_re (hA : A.PosSemidef) (hB : B.PosSemidef) :
   exact (RCLike.nonneg_iff.mp hpsd.trace_nonneg).1
 
 end Matrix
+
+
+namespace Matrix
+
+open scoped ComplexOrder in
+/-- Hadamard's inequality for real positive semidefinite matrices over an arbitrary finite
+index type: `det A ≤ ∏ i, A i i`. To be derived from the complex `Fin n` Atlas theorem by
+complexification and reindexing, not re-proved. -/
+theorem PosSemidef.det_le_prod_diag {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {A : Matrix ι ι ℝ} (hA : A.PosSemidef) :
+    A.det ≤ ∏ i, A i i := by
+  set e : ι ≃ Fin (Fintype.card ι) := Fintype.equivFin ι with he
+  set B : Matrix (Fin (Fintype.card ι)) (Fin (Fintype.card ι)) ℝ :=
+    A.submatrix e.symm e.symm with hB
+  set C : Matrix (Fin (Fintype.card ι)) (Fin (Fintype.card ι)) ℂ :=
+    B.map Complex.ofReal with hC
+  have hBpsd : B.PosSemidef := hA.submatrix e.symm
+  have hBdet : B.det = A.det := Matrix.det_submatrix_equiv_self e.symm A
+  have hBdiag : ∏ i, B i i = ∏ i, A i i := Equiv.prod_comp e.symm (fun j => A j j)
+  have hsym : ∀ i j, B i j = B j i := by
+    intro i j
+    have h2 : Bᴴ = B := hBpsd.isHermitian
+    have h := congrFun (congrFun h2 j) i
+    rwa [Matrix.conjTranspose_apply, star_trivial] at h
+  have hCherm : C.IsHermitian := by
+    show Cᴴ = C
+    refine Matrix.ext fun i j => ?_
+    simp only [Matrix.conjTranspose_apply, hC, Matrix.map_apply, Complex.star_def,
+      Complex.conj_ofReal, hsym i j]
+  have hz : ∀ x : Fin (Fintype.card ι) → ℂ, star x ⬝ᵥ (C *ᵥ x)
+      = ∑ i, ∑ j, (starRingEnd ℂ) (x i) * (Complex.ofReal (B i j) * x j) := by
+    intro x
+    simp only [dotProduct, Matrix.mulVec, hC, Matrix.map_apply, Pi.star_apply,
+      Complex.star_def, Finset.mul_sum]
+  have hterm_re : ∀ (a b : ℂ) (c : ℝ),
+      ((starRingEnd ℂ) a * (Complex.ofReal c * b)).re
+        = c * (a.re * b.re) + c * (a.im * b.im) := by
+    intro a b c
+    simp only [Complex.mul_re, Complex.mul_im, Complex.conj_re, Complex.conj_im,
+      Complex.ofReal_re, Complex.ofReal_im]
+    ring
+  have hterm_im : ∀ (a b : ℂ) (c : ℝ),
+      ((starRingEnd ℂ) a * (Complex.ofReal c * b)).im
+        = c * (a.re * b.im - a.im * b.re) := by
+    intro a b c
+    simp only [Complex.mul_re, Complex.mul_im, Complex.conj_re, Complex.conj_im,
+      Complex.ofReal_re, Complex.ofReal_im]
+    ring
+  have hquad : ∀ u : Fin (Fintype.card ι) → ℝ, star u ⬝ᵥ (B *ᵥ u)
+      = ∑ i, ∑ j, B i j * (u i * u j) := by
+    intro u
+    simp only [dotProduct, Matrix.mulVec, star_trivial, Finset.mul_sum]
+    apply Finset.sum_congr rfl; intro i _
+    apply Finset.sum_congr rfl; intro j _
+    ring
+  have hCpsd : C.PosSemidef := by
+    refine Matrix.PosSemidef.of_dotProduct_mulVec_nonneg hCherm fun x => ?_
+    have hz' := hz x
+    apply RCLike.nonneg_iff.mpr
+    constructor
+    · show 0 ≤ Complex.re (star x ⬝ᵥ (C *ᵥ x))
+      rw [hz']
+      simp only [Complex.re_sum, hterm_re, Finset.sum_add_distrib]
+      have eU : (∑ i, ∑ j, B i j * ((x i).re * (x j).re))
+          = star (fun i => (x i).re) ⬝ᵥ (B *ᵥ fun i => (x i).re) := (hquad _).symm
+      have eV : (∑ i, ∑ j, B i j * ((x i).im * (x j).im))
+          = star (fun i => (x i).im) ⬝ᵥ (B *ᵥ fun i => (x i).im) := (hquad _).symm
+      rw [eU, eV]
+      exact add_nonneg (hBpsd.dotProduct_mulVec_nonneg _)
+        (hBpsd.dotProduct_mulVec_nonneg _)
+    · show Complex.im (star x ⬝ᵥ (C *ᵥ x)) = 0
+      rw [hz']
+      simp only [Complex.im_sum, hterm_im]
+      have hSS : (∑ i, ∑ j, B i j * ((x i).re * (x j).im - (x i).im * (x j).re))
+          = -(∑ i, ∑ j, B i j * ((x i).re * (x j).im - (x i).im * (x j).re)) :=
+        Finset.sum_comm.trans (by
+          rw [← Finset.sum_neg_distrib]
+          apply Finset.sum_congr rfl; intro a _
+          rw [← Finset.sum_neg_distrib]
+          apply Finset.sum_congr rfl; intro b _
+          rw [hsym b a]
+          ring)
+      linarith [hSS]
+  have hCdet : (C.det).re = B.det := by
+    have h := Complex.ofRealHom.map_det B
+    have hCeq : C = Complex.ofRealHom.mapMatrix B := by
+      refine Matrix.ext fun i j => ?_
+      rfl
+    have hcoe : ⇑Complex.ofRealHom B.det = Complex.ofReal B.det := rfl
+    rw [hCeq, ← h, hcoe, Complex.ofReal_re]
+  have hCdiag : ∀ i, (C i i).re = B i i := by
+    intro i
+    simp only [hC, Matrix.map_apply, Complex.ofReal_re]
+  have hmirror := Matrix.PosSemidef.det_re_le_prod_diag_re hCpsd
+  rw [hCdet] at hmirror
+  simp only [hCdiag] at hmirror
+  rw [hBdet, hBdiag] at hmirror
+  exact hmirror
+
+end Matrix

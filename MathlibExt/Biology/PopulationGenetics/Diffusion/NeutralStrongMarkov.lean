@@ -11,7 +11,7 @@ module
 public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
 public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 public import Mathlib.Probability.Process.Stopping
-public import MathlibExt.Biology.PopulationGenetics.Diffusion.NeutralMartingaleProblem.Realization
+public import MathlibExt.Biology.PopulationGenetics.Diffusion.NeutralMartingaleProblem.Markov
 import Mathlib.MeasureTheory.Function.Floor
 import Mathlib.Analysis.SpecificLimits.Basic
 
@@ -28,10 +28,11 @@ through `Set.projIcc`). This file proves that `X` is then **strongly** Markov: f
 `ℱ`-stopping time `τ : Ω → WithTop ℝ≥0`, every `t ≥ 0` and every continuous `g`,
 `μ[1_{τ < ∞} g (X (τ + t)) | ℱ_τ] = 1_{τ < ∞} (wfSemigroup t g) (X τ)` almost surely.
 
-The Markov property is a hypothesis: for the selected realization `modifiedProcess x` with its
-natural filtration it is the subject of a separate, not yet merged, development, which proves
-it in exactly the form assumed here. `condExp_modifiedProcess_stoppedValue_add` specializes the
-general result to that realization.
+The Markov property is a hypothesis of the general result. For the selected realization
+`modifiedProcess x` with its natural filtration it is proved, in exactly the form assumed here,
+by `NeutralMartingaleProblem.condExp_modifiedProcess_eq_wfSemigroup`;
+`condExp_modifiedProcess_stoppedValue_add` specializes the general result to that realization
+and `condExp_modifiedState_stoppedValue_add` discharges the hypothesis.
 
 ## Main results
 
@@ -42,6 +43,7 @@ general result to that realization.
   without indicators.
 * `condExp_modifiedProcess_stoppedValue_add`: the specialization to the neutral Wright–Fisher
   realization `modifiedProcess x` under `rawMeasure x` with `naturalFiltration x`.
+* `condExp_modifiedState_stoppedValue_add`: the same with the Markov hypothesis discharged.
 
 ## Method
 
@@ -57,16 +59,16 @@ measurable.
 ## Scope
 
 Proved for one-time functionals `g (X (τ + t))` with `g` continuous on `[0, 1]`, the class used
-by the Markov hypothesis. Not covered: bounded measurable `g` (a monotone-class extension) and
-multi-time or path functionals of the post-`τ` process.
+by the Markov hypothesis. Bounded measurable `g` and multi-time and path functionals of the
+post-`τ` process are the monotone-class extensions in `Diffusion.NeutralMonotoneClass`.
 
 ## References
 
 * S. N. Ethier and T. G. Kurtz, *Markov Processes: Characterization and Convergence*, Wiley
-  (1986), ch. 4, §1 (Markov processes; Prop. 1.7) and ch. 4, Thm. 2.7 (Feller processes are
+  (1986), ch. 4, §1 (Markov processes) and ch. 4, Thm. 2.7 (Feller processes are
   strong Markov, via dyadic approximation of stopping times).
 * D. Revuz and M. Yor, *Continuous Martingales and Brownian Motion*, 3rd ed., Springer (1999),
-  ch. III, Thm. 3.1 (strong Markov property of Feller processes).
+  ch. III, §3 (strong Markov property of Feller processes).
 -/
 
 @[expose] public section
@@ -257,7 +259,7 @@ Then for every `ℱ`-stopping time `τ`, every `A ∈ ℱ_τ`, every `t ≥ 0` a
 on `[0, 1]`,
 `∫_{A ∩ {τ < ∞}} g (X (τ + t)) dμ = ∫_{A ∩ {τ < ∞}} (wfSemigroup t g) (X τ) dμ`.
 
-Source: Ethier & Kurtz (1986), ch. 4, Thm. 2.7; Revuz & Yor (1999), ch. III, Thm. 3.1
+Source: Ethier & Kurtz (1986), ch. 4, Thm. 2.7; Revuz & Yor (1999), ch. III, §3
 (dyadic approximation of `τ` from above and right continuity of the paths). -/
 theorem setIntegral_stoppedValue_add_eq [IsFiniteMeasure μ]
     (hcont : ∀ ω, Continuous fun t => X t ω) (hadapt : StronglyAdapted ℱ X)
@@ -307,7 +309,7 @@ theorem setIntegral_stoppedValue_add_eq [IsFiniteMeasure μ]
 continuous `g` on `[0, 1]`,
 `μ[1_{τ < ∞} g (X (τ + t)) | ℱ_τ] = 1_{τ < ∞} (wfSemigroup t g) (X τ)` almost surely.
 
-Source: Ethier & Kurtz (1986), ch. 4, Thm. 2.7; Revuz & Yor (1999), ch. III, Thm. 3.1. -/
+Source: Ethier & Kurtz (1986), ch. 4, Thm. 2.7; Revuz & Yor (1999), ch. III, §3. -/
 theorem condExp_stoppedValue_add_ae_eq [IsFiniteMeasure μ]
     (hcont : ∀ ω, Continuous fun t => X t ω) (hadapt : StronglyAdapted ℱ X)
     (hmarkov : ∀ s t : ℝ≥0, s ≤ t → ∀ g : C(I, ℝ),
@@ -393,6 +395,19 @@ theorem condExp_modifiedProcess_stoppedValue_add (x : I)
     fun ρ ω => projIcc_of_mem _ (modifiedProcess_mem_Icc x _ ω)
   simpa only [hproj] using condExp_stoppedValue_add_ae_eq (continuous_modifiedProcess x)
     (stronglyAdapted_naturalFiltration x) hmarkov hτ t g
+
+/-- **Strong Markov property of the neutral Wright–Fisher realization, unconditional.**
+`condExp_modifiedProcess_stoppedValue_add` with its Markov hypothesis discharged by
+`condExp_modifiedProcess_eq_wfSemigroup`. -/
+theorem condExp_modifiedState_stoppedValue_add (x : I) {τ : SamplePath → WithTop ℝ≥0}
+    (hτ : IsStoppingTime (naturalFiltration x) τ) (t : ℝ≥0) (g : C(I, ℝ)) :
+    (rawMeasure x)[{ω | τ ω ≠ ⊤}.indicator
+        (fun ω => g (stoppedValue (modifiedState x) (fun ω => τ ω + t) ω)) |
+        hτ.measurableSpace] =ᵐ[rawMeasure x]
+      {ω | τ ω ≠ ⊤}.indicator
+        (fun ω => wfSemigroup t g (stoppedValue (modifiedState x) τ ω)) :=
+  condExp_modifiedProcess_stoppedValue_add x (fun _ _ hst g =>
+    condExp_modifiedProcess_eq_wfSemigroup x hst g) hτ t g
 
 end
 

@@ -58,9 +58,7 @@ example : ¬ IsUnit ((Matrix.of fun (_ : Fin 3) (_ : Fin 2) => (1 : ℝ))ᵀ *
 /-- Degenerate endpoint: chi-square with zero degrees of freedom is not a Dirac mass,
 which is why the `0 < q` and `p < n` hypotheses cannot be dropped. -/
 example : chiSquareMeasure 0 ≠ Measure.dirac (0 : ℝ) := by
-  have hac : chiSquareMeasure 0 ≪ (volume : Measure ℝ) :=
-    withDensity_absolutelyContinuous _ _
-  have h0 : chiSquareMeasure 0 ({0} : Set ℝ) = 0 := hac Real.volume_singleton
+  have h0 : chiSquareMeasure 0 ({0} : Set ℝ) = 0 := chiSquareMeasure_singleton 0 0
   have hd : Measure.dirac (0 : ℝ) ({0} : Set ℝ) = 1 := by simp
   intro h
   rw [h] at h0

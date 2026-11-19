@@ -113,6 +113,24 @@ example (c a : List Nat) :
     (augmentOne c a).length ≤ c.length + (a.length + 1) / 2 :=
   length_augmentOne_le c a
 
+/-- On a sorted array, the specification count agrees with the costed binary search. -/
+example (xs : Array Nat) (key : Nat) (hs : xs.Pairwise (fun x y => x ≤ y)) :
+    lowerBound key xs.toList = (TimeM.lowerBound xs key).ret :=
+  lowerBound_toList_eq_ret_lowerBound xs key hs
+
+universe u
+
+/-- The bridge applies to element types in every universe. -/
+example {β : Type u} [LinearOrder β] (xs : Array β) (key : β)
+    (hs : xs.Pairwise (fun x y => x ≤ y)) :
+    lowerBound key xs.toList = (TimeM.lowerBound xs key).ret :=
+  lowerBound_toList_eq_ret_lowerBound xs key hs
+
+/-- A sorted array with duplicates: both searches return index `1` for key `2`. -/
+example : (TimeM.lowerBound #[1, 2, 2, 5] 2).ret = 1 := by
+  rw [← lowerBound_toList_eq_ret_lowerBound _ _ (by decide)]
+  decide
+
 #check Cslib.Algorithms.Lean.FractionalCascading.length_sample_le
 #check Cslib.Algorithms.Lean.FractionalCascading.length_augmentOne_le
 
@@ -120,5 +138,6 @@ example (c a : List Nat) :
 #print axioms Cslib.Algorithms.Lean.FractionalCascading.searchAll_eq_map_lowerBound
 #print axioms Cslib.Algorithms.Lean.FractionalCascading.lowerBound_augmentOne
 #print axioms Cslib.Algorithms.Lean.FractionalCascading.length_mem_augmented_le
+#print axioms Cslib.Algorithms.Lean.FractionalCascading.lowerBound_toList_eq_ret_lowerBound
 
 end Cslib.Algorithms.Lean.FractionalCascadingTests

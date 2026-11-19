@@ -9,22 +9,18 @@
   <a href="https://github.com/leanprover/lean4/releases/tag/v4.35.0"><img src="https://img.shields.io/badge/Lean-v4.35.0-blue" alt="Lean v4.35.0" /></a>
 </p>
 
-<p align="center">
-  <strong>Autoformalized Textbook Library At Scale</strong><br />
-  A large-scale Lean 4 library of textbook mathematics formalized with LLMs.
-</p>
-
 > [!NOTE]
-> **ATLAS v2 is coming.** The original release is preserved in [`v1/`](v1/),
-> while the repository root is being prepared for the next generation of the
-> project.
+> **ATLAS V2 is live.** The original release is preserved in [`v1/`](v1/).
 
-## Versions
+## About ATLAS
 
-| Version | Status | Location | License |
-| --- | --- | --- | --- |
-| **v2** | In development | Repository root | [Apache 2.0](LICENSE) |
-| **v1** | Archived and available | [`v1/`](v1/README.md) | [Original v1 license](v1/LICENSE) |
+ATLAS provides reusable formal building blocks for human- and machine-assisted
+theorem proving across analysis, algebra, geometry, topology, probability,
+statistics, and theoretical computer science.
+
+The project was generated with
+[AutoformBot](https://github.com/facebookresearch/autoform-bot), an
+autoformalization pipeline for developing Lean libraries at scale.
 
 ## Formalized mathematics libraries
 
@@ -50,19 +46,27 @@ scripts/check.sh
 The existing `Atlas/` developments and archived `v1/` release are not part of
 this root build. They retain their own build configuration.
 
-## About ATLAS
+Much of `MathlibExt`, `CSLibExt`, `WantedExt` and their tests comes from
+`fairinternal/formal-math`, which is an upstream source snapshot, not a Lake
+dependency. [`provenance/formal-math-sync.json`](provenance/README.md) records
+the upstream commit and, for every file taken from it, whether it is a
+header-only copy, a reviewed divergence, or retired.
 
-ATLAS translates mathematical statements and proofs from undergraduate and
-graduate textbooks into Lean. Its goal is to provide reusable formal building
-blocks for human- and machine-assisted theorem proving across analysis,
-algebra, geometry, topology, probability, statistics, and theoretical
-computer science.
+## Dependency explorer
 
-The project was generated with
-[AutoformBot](https://github.com/facebookresearch/autoform-bot), an
-autoformalization pipeline for developing Lean libraries at scale.
+The [blueprint](blueprint/README.md) presents the v2 libraries as a
+mathematical reading tree and interactive dependency graph, with statements,
+Lean-source links, and prerequisites derived from compiled Lean.
 
-## Explore v1
+See [building and maintaining the explorer](docs/BLUEPRINT.md) for the local
+build, source ownership, and opt-in GitHub Pages deployment.
+
+## Versions
+
+| Version | Status | Location | License |
+| --- | --- | --- | --- |
+| **v2** | Live | Repository root | [Apache 2.0](LICENSE) |
+| **v1** | Archived and available | [`v1/`](v1/README.md) | [Original v1 license](v1/LICENSE) |
 
 The complete first release—including its Lean sources, evaluation reports,
 build configuration, documentation, and companion paper—is available under

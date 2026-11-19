@@ -180,7 +180,7 @@ theorem real_forall_lt_le [IsProbabilityMeasure P] (I : LadderInput P M) (m : �
   simp only [h, Finset.prod_const, Finset.card_range]
 
 /-- `F ≥ 0`. -/
-theorem F_nonneg [IsProbabilityMeasure P] (I : LadderInput P M) (t : ℝ) : 0 ≤ I.F t :=
+theorem F_nonneg (I : LadderInput P M) (t : ℝ) : 0 ≤ I.F t :=
   I.real_Y_le 0 t ▸ measureReal_nonneg
 
 /-- `F ≤ 1`. -/

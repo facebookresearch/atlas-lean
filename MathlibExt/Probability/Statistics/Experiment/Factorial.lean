@@ -10,13 +10,24 @@ module
 
 public import MathlibExt.Probability.Statistics.Experiment.Assignment
 public import MathlibExt.Probability.Causality.CausalIdentification
+public import MathlibExt.Probability.WeightLaw
+import Mathlib.MeasureTheory.Integral.Pi
 
 /-!
-# Fixed-cell-size 2x2 factorial designs: cell laws and unbiased contrasts
+# 2x2 factorial designs: cell laws and unbiased contrasts
 
 Complete randomization over four cells of fixed positive sizes; observed
 main-effect and interaction contrasts are unbiased with no additivity
 assumption. Cell sizes need not be equal.
+
+Independent categorical assignment: each unit `i` goes to cell `c` with known probability
+`π i c > 0`, independently across units (`bernoulliCell`, joint law
+`Measure.pi fun i => bernoulliCell π i`). Realized cell sizes are random and a cell can be
+empty, so the observed cell means are replaced by the inverse-probability-weighted
+(Horvitz–Thompson) cell means `ipwCellMean`, `∑_{i : f i = c} Y i / (N π i c)`. These are unbiased
+for the population cell means (`integral_ipwCellMean`), so the main-effect and interaction
+contrasts built from them are unbiased too (`integral_ipwMainEffectA`, `integral_ipwMainEffectB`,
+`integral_ipwInteractionAB`), with no additivity assumption and no nonempty-cell condition.
 
 ## Coding and normalization
 
@@ -37,6 +48,9 @@ for a `±1` contrast vector `g`, here with `K = 2`.
 
 * T. Dasgupta, N. S. Pillai and D. B. Rubin, *Causal inference from `2^K` factorial designs
   using the potential outcomes model*, arXiv:1211.2481, Section 3.1, equations (1) and (2).
+* D. G. Horvitz and D. J. Thompson, *A generalization of sampling without replacement from a
+  finite universe*, J. Amer. Statist. Assoc. 47 (1952), 663–685 (the inverse-probability-weighted
+  estimator behind `ipwCellMean`).
 -/
 
 @[expose] public section
@@ -436,5 +450,240 @@ theorem integral_interactionAB {ι : Type*} [Fintype ι] [DecidableEq ι]
   rw [e y₁₁ 3, e y₁₀ 2, e y₀₁ 1, e y₀₀ 0, div_div,
     div_eq_div_iff (mul_ne_zero (by norm_num) hS0) (by norm_num)]
   ring
+
+/-- **Per-unit assignment law**: unit `i` goes to cell `c` with probability `π i c`. This is the
+finite law `weightLaw (π i)` of `MathlibExt.Probability.WeightLaw`; independent assignment of all
+units is the product law `Measure.pi fun i => bernoulliCell π i`. -/
+noncomputable abbrev bernoulliCell {ι : Type*} (π : ι → Fin 4 → ℝ) (i : ι) : Measure (Fin 4) :=
+  weightLaw (π i)
+
+/-- **Inverse-probability-weighted (Horvitz–Thompson) cell mean** of cell `c` under the
+assignment `f`: `∑_{i : f i = c} Y i / (N π i c)`, where `N = card ι`. An empty realized cell
+gives `0`. -/
+noncomputable def ipwCellMean {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (Y : ι → ℝ) (π : ι → Fin 4 → ℝ) (c : Fin 4)
+    (f : ι → Fin 4) : ℝ :=
+  (∑ i ∈ Finset.univ.filter fun i => f i = c,
+    Y i / ((Fintype.card ι : ℝ) * π i c))
+
+/-- The per-unit assignment law is a probability measure under nonnegativity and per-unit
+normalization of the cell probabilities. -/
+theorem isProbabilityMeasure_bernoulliCell {ι : Type*} (π : ι → Fin 4 → ℝ) (i : ι)
+    (hnn : ∀ i c, 0 ≤ π i c) (hnorm : ∀ i, ∑ c, π i c = 1) :
+    IsProbabilityMeasure (bernoulliCell π i) :=
+  isProbabilityMeasure_weightLaw (π i) (hnn i) (hnorm i)
+
+/-- Per-unit mean-value property: the integral of the single-unit IPW
+contribution under `bernoulliCell π i` is the unit's outcome share `Y i / N`. -/
+private theorem integral_bernoulliCell_ite {ι : Type*} [Fintype ι]
+    (Y : ι → ℝ) (π : ι → Fin 4 → ℝ)
+    (hpos : ∀ i c, 0 < π i c)
+    (hN : 0 < Fintype.card ι) (i : ι) (c : Fin 4) :
+    ∫ a, (if a = c then Y i / ((Fintype.card ι : ℝ) * π i c) else 0)
+      ∂(bernoulliCell π i) = Y i / Fintype.card ι := by
+  rw [bernoulliCell, integral_weightLaw (π i) fun c' => (hpos i c').le]
+  simp only [mul_ite, mul_zero]
+  rw [Finset.sum_ite_eq']
+  simp only [Finset.mem_univ, ite_true]
+  have hπ : π i c ≠ 0 := ne_of_gt (hpos i c)
+  have hN' : (Fintype.card ι : ℝ) ≠ 0 := ne_of_gt (Nat.cast_pos.mpr hN)
+  field_simp
+
+/-- The IPW cell mean as a sum over all units of the single-unit contributions
+`1{f i = c} Y i / (N π i c)`. -/
+theorem ipwCellMean_eq_sum {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (Y : ι → ℝ) (π : ι → Fin 4 → ℝ) (c : Fin 4) (f : ι → Fin 4) :
+    ipwCellMean Y π c f =
+      ∑ i, (if f i = c then Y i / ((Fintype.card ι : ℝ) * π i c) else 0) := by
+  rw [ipwCellMean, Finset.sum_filter]
+
+/-- Each single-unit contribution is integrable over the product law. -/
+private theorem integrable_ipwCellMean_term {ι : Type*} [Fintype ι]
+    (Y : ι → ℝ) (π : ι → Fin 4 → ℝ)
+    (hpos : ∀ i c, 0 < π i c) (hnorm : ∀ i, ∑ c, π i c = 1)
+    (i : ι) (c : Fin 4) :
+    Integrable (fun f : ι → Fin 4 => if f i = c then Y i / ((Fintype.card ι : ℝ) * π i c) else 0)
+      (Measure.pi fun i => bernoulliCell π i) := by
+  have _hprob : ∀ j, IsProbabilityMeasure (bernoulliCell π j) :=
+    fun j => isProbabilityMeasure_bernoulliCell π j (fun i c => le_of_lt (hpos i c)) hnorm
+  exact integrable_comp_eval (μ := fun j => bernoulliCell π j) (i := i)
+    (f := fun a => if a = c then Y i / ((Fintype.card ι : ℝ) * π i c) else 0)
+    (Integrable.of_finite)
+
+/-- Each single-unit contribution integrates to the outcome share `Y i / N`. -/
+private theorem integral_ipwCellMean_term {ι : Type*} [Fintype ι]
+    (Y : ι → ℝ) (π : ι → Fin 4 → ℝ)
+    (hpos : ∀ i c, 0 < π i c) (hnorm : ∀ i, ∑ c, π i c = 1)
+    (hN : 0 < Fintype.card ι) (i : ι) (c : Fin 4) :
+    (∫ f, (if f i = c then Y i / ((Fintype.card ι : ℝ) * π i c) else 0)
+      ∂(Measure.pi fun i => bernoulliCell π i)) = Y i / Fintype.card ι := by
+  have _hprob : ∀ j, IsProbabilityMeasure (bernoulliCell π j) :=
+    fun j => isProbabilityMeasure_bernoulliCell π j (fun i c => le_of_lt (hpos i c)) hnorm
+  have hcomp := integral_comp_eval (μ := fun j => bernoulliCell π j) (i := i)
+    (f := fun a => if a = c then Y i / ((Fintype.card ι : ℝ) * π i c) else 0)
+    (Measurable.of_discrete.aestronglyMeasurable)
+  exact hcomp.trans (integral_bernoulliCell_ite Y π hpos hN i c)
+
+/-- IPW cell means are integrable over the product law. -/
+private theorem integrable_ipwCellMean {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (Y : ι → ℝ) (π : ι → Fin 4 → ℝ)
+    (hpos : ∀ i c, 0 < π i c) (hnorm : ∀ i, ∑ c, π i c = 1)
+    (c : Fin 4) :
+    Integrable (fun f => ipwCellMean Y π c f)
+      (Measure.pi fun i => bernoulliCell π i) := by
+  simp only [ipwCellMean_eq_sum]
+  exact integrable_finsetSum Finset.univ
+    (fun i _ => integrable_ipwCellMean_term Y π hpos hnorm i c)
+
+/-- Halving commutes with integration. -/
+private theorem integral_div_two {ι : Type*} {g : (ι → Fin 4) → ℝ}
+    {μ : Measure (ι → Fin 4)} :
+    (∫ f, g f / 2 ∂μ) = (∫ f, g f ∂μ) / 2 := by
+  have hdiv : ∀ f, g f / 2 = (2⁻¹ : ℝ) * g f := fun f => div_eq_inv_mul _ _
+  simp only [hdiv, integral_const_mul, div_eq_inv_mul]
+
+/-- IPW cell means are unbiased for the population cell means: the integral of
+`ipwCellMean Y π c` over the product assignment law equals `popMean Y`.
+
+Clause map: "independent Bernoulli assignment" → the product law
+`Measure.pi fun i => bernoulliCell π i`; "known strictly positive cell
+probabilities" → `π` with `hpos : ∀ i c, 0 < π i c`; "per-unit normalization" →
+`hnorm : ∀ i, ∑ c, π i c = 1`; "fixed potential outcomes" → `Y`; "finite
+population with `N > 0`" → `hN : 0 < Fintype.card ι`; "IPW cell mean" →
+`ipwCellMean Y π c f`; "unbiased for the population cell mean" → the equation
+with `popMean Y`; "empty realized cells allowed" → no nonempty-cell hypothesis
+(see the boundary example with an empty realized cell). -/
+theorem integral_ipwCellMean {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (Y : ι → ℝ) (π : ι → Fin 4 → ℝ)
+    (hpos : ∀ i c, 0 < π i c) (hnorm : ∀ i, ∑ c, π i c = 1)
+    (hN : 0 < Fintype.card ι) (c : Fin 4) :
+    ∫ f, ipwCellMean Y π c f ∂(Measure.pi fun i => bernoulliCell π i) =
+      popMean Y := by
+  simp only [ipwCellMean_eq_sum]
+  rw [integral_finsetSum Finset.univ
+    (fun i _ => integrable_ipwCellMean_term Y π hpos hnorm i c)]
+  simp only [integral_ipwCellMean_term Y π hpos hnorm hN]
+  unfold popMean
+  rw [Finset.sum_div]
+
+/-- **The IPW main effect of `A` is unbiased**: under independent assignment with known positive,
+normalized cell probabilities, `mainEffectA` of the four IPW cell means has expectation
+`mainEffectA` of the population cell means. -/
+theorem integral_ipwMainEffectA {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (y₀₀ y₀₁ y₁₀ y₁₁ : ι → ℝ) (π : ι → Fin 4 → ℝ)
+    (hpos : ∀ i c, 0 < π i c) (hnorm : ∀ i, ∑ c, π i c = 1)
+    (hN : 0 < Fintype.card ι) :
+    ∫ f, mainEffectA (ipwCellMean y₀₀ π 0 f) (ipwCellMean y₀₁ π 1 f)
+      (ipwCellMean y₁₀ π 2 f) (ipwCellMean y₁₁ π 3 f)
+      ∂(Measure.pi fun i => bernoulliCell π i) =
+      mainEffectA (popMean y₀₀) (popMean y₀₁) (popMean y₁₀)
+        (popMean y₁₁) := by
+  have hI : ∀ (Y : ι → ℝ) (c : Fin 4),
+      Integrable (fun f => ipwCellMean Y π c f)
+        (Measure.pi fun i => bernoulliCell π i) :=
+    fun Y c => integrable_ipwCellMean Y π hpos hnorm c
+  have e1 : (∫ f, ipwCellMean y₁₁ π 3 f + ipwCellMean y₁₀ π 2 f
+        ∂(Measure.pi fun i => bernoulliCell π i))
+        = (∫ f, ipwCellMean y₁₁ π 3 f ∂(Measure.pi fun i => bernoulliCell π i))
+          + ∫ f, ipwCellMean y₁₀ π 2 f ∂(Measure.pi fun i => bernoulliCell π i) :=
+    integral_add (hI y₁₁ 3) (hI y₁₀ 2)
+  have e2 : (∫ f, ipwCellMean y₁₁ π 3 f + ipwCellMean y₁₀ π 2 f - ipwCellMean y₀₁ π 1 f
+        ∂(Measure.pi fun i => bernoulliCell π i))
+        = (∫ f, ipwCellMean y₁₁ π 3 f + ipwCellMean y₁₀ π 2 f
+          ∂(Measure.pi fun i => bernoulliCell π i))
+          - ∫ f, ipwCellMean y₀₁ π 1 f ∂(Measure.pi fun i => bernoulliCell π i) :=
+    integral_sub ((hI y₁₁ 3).add (hI y₁₀ 2)) (hI y₀₁ 1)
+  have e3 : (∫ f, ipwCellMean y₁₁ π 3 f + ipwCellMean y₁₀ π 2 f - ipwCellMean y₀₁ π 1 f
+        - ipwCellMean y₀₀ π 0 f ∂(Measure.pi fun i => bernoulliCell π i))
+        = (∫ f, ipwCellMean y₁₁ π 3 f + ipwCellMean y₁₀ π 2 f - ipwCellMean y₀₁ π 1 f
+          ∂(Measure.pi fun i => bernoulliCell π i))
+          - ∫ f, ipwCellMean y₀₀ π 0 f ∂(Measure.pi fun i => bernoulliCell π i) :=
+    integral_sub (((hI y₁₁ 3).add (hI y₁₀ 2)).sub (hI y₀₁ 1)) (hI y₀₀ 0)
+  unfold mainEffectA
+  rw [integral_div_two, e3, e2, e1,
+    integral_ipwCellMean y₁₁ π hpos hnorm hN 3,
+    integral_ipwCellMean y₁₀ π hpos hnorm hN 2,
+    integral_ipwCellMean y₀₁ π hpos hnorm hN 1,
+    integral_ipwCellMean y₀₀ π hpos hnorm hN 0]
+
+/-- **The IPW main effect of `B` is unbiased**: under independent assignment with known positive,
+normalized cell probabilities, `mainEffectB` of the four IPW cell means has expectation
+`mainEffectB` of the population cell means. -/
+theorem integral_ipwMainEffectB {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (y₀₀ y₀₁ y₁₀ y₁₁ : ι → ℝ) (π : ι → Fin 4 → ℝ)
+    (hpos : ∀ i c, 0 < π i c) (hnorm : ∀ i, ∑ c, π i c = 1)
+    (hN : 0 < Fintype.card ι) :
+    ∫ f, mainEffectB (ipwCellMean y₀₀ π 0 f) (ipwCellMean y₀₁ π 1 f)
+      (ipwCellMean y₁₀ π 2 f) (ipwCellMean y₁₁ π 3 f)
+      ∂(Measure.pi fun i => bernoulliCell π i) =
+      mainEffectB (popMean y₀₀) (popMean y₀₁) (popMean y₁₀)
+        (popMean y₁₁) := by
+  have hI : ∀ (Y : ι → ℝ) (c : Fin 4),
+      Integrable (fun f => ipwCellMean Y π c f)
+        (Measure.pi fun i => bernoulliCell π i) :=
+    fun Y c => integrable_ipwCellMean Y π hpos hnorm c
+  have e1 : (∫ f, ipwCellMean y₁₁ π 3 f + ipwCellMean y₀₁ π 1 f
+        ∂(Measure.pi fun i => bernoulliCell π i))
+        = (∫ f, ipwCellMean y₁₁ π 3 f ∂(Measure.pi fun i => bernoulliCell π i))
+          + ∫ f, ipwCellMean y₀₁ π 1 f ∂(Measure.pi fun i => bernoulliCell π i) :=
+    integral_add (hI y₁₁ 3) (hI y₀₁ 1)
+  have e2 : (∫ f, ipwCellMean y₁₁ π 3 f + ipwCellMean y₀₁ π 1 f - ipwCellMean y₁₀ π 2 f
+        ∂(Measure.pi fun i => bernoulliCell π i))
+        = (∫ f, ipwCellMean y₁₁ π 3 f + ipwCellMean y₀₁ π 1 f
+          ∂(Measure.pi fun i => bernoulliCell π i))
+          - ∫ f, ipwCellMean y₁₀ π 2 f ∂(Measure.pi fun i => bernoulliCell π i) :=
+    integral_sub ((hI y₁₁ 3).add (hI y₀₁ 1)) (hI y₁₀ 2)
+  have e3 : (∫ f, ipwCellMean y₁₁ π 3 f + ipwCellMean y₀₁ π 1 f - ipwCellMean y₁₀ π 2 f
+        - ipwCellMean y₀₀ π 0 f ∂(Measure.pi fun i => bernoulliCell π i))
+        = (∫ f, ipwCellMean y₁₁ π 3 f + ipwCellMean y₀₁ π 1 f - ipwCellMean y₁₀ π 2 f
+          ∂(Measure.pi fun i => bernoulliCell π i))
+          - ∫ f, ipwCellMean y₀₀ π 0 f ∂(Measure.pi fun i => bernoulliCell π i) :=
+    integral_sub (((hI y₁₁ 3).add (hI y₀₁ 1)).sub (hI y₁₀ 2)) (hI y₀₀ 0)
+  unfold mainEffectB
+  rw [integral_div_two, e3, e2, e1,
+    integral_ipwCellMean y₁₁ π hpos hnorm hN 3,
+    integral_ipwCellMean y₀₁ π hpos hnorm hN 1,
+    integral_ipwCellMean y₁₀ π hpos hnorm hN 2,
+    integral_ipwCellMean y₀₀ π hpos hnorm hN 0]
+
+/-- **The IPW interaction is unbiased**: under independent assignment with known positive,
+normalized cell probabilities, `interactionAB` of the four IPW cell means has expectation
+`interactionAB` of the population cell means. -/
+theorem integral_ipwInteractionAB {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (y₀₀ y₀₁ y₁₀ y₁₁ : ι → ℝ) (π : ι → Fin 4 → ℝ)
+    (hpos : ∀ i c, 0 < π i c) (hnorm : ∀ i, ∑ c, π i c = 1)
+    (hN : 0 < Fintype.card ι) :
+    ∫ f, interactionAB (ipwCellMean y₀₀ π 0 f) (ipwCellMean y₀₁ π 1 f)
+      (ipwCellMean y₁₀ π 2 f) (ipwCellMean y₁₁ π 3 f)
+      ∂(Measure.pi fun i => bernoulliCell π i) =
+      interactionAB (popMean y₀₀) (popMean y₀₁) (popMean y₁₀)
+        (popMean y₁₁) := by
+  have hI : ∀ (Y : ι → ℝ) (c : Fin 4),
+      Integrable (fun f => ipwCellMean Y π c f)
+        (Measure.pi fun i => bernoulliCell π i) :=
+    fun Y c => integrable_ipwCellMean Y π hpos hnorm c
+  have e1 : (∫ f, ipwCellMean y₁₁ π 3 f - ipwCellMean y₁₀ π 2 f
+        ∂(Measure.pi fun i => bernoulliCell π i))
+        = (∫ f, ipwCellMean y₁₁ π 3 f ∂(Measure.pi fun i => bernoulliCell π i))
+          - ∫ f, ipwCellMean y₁₀ π 2 f ∂(Measure.pi fun i => bernoulliCell π i) :=
+    integral_sub (hI y₁₁ 3) (hI y₁₀ 2)
+  have e2 : (∫ f, ipwCellMean y₁₁ π 3 f - ipwCellMean y₁₀ π 2 f - ipwCellMean y₀₁ π 1 f
+        ∂(Measure.pi fun i => bernoulliCell π i))
+        = (∫ f, ipwCellMean y₁₁ π 3 f - ipwCellMean y₁₀ π 2 f
+          ∂(Measure.pi fun i => bernoulliCell π i))
+          - ∫ f, ipwCellMean y₀₁ π 1 f ∂(Measure.pi fun i => bernoulliCell π i) :=
+    integral_sub ((hI y₁₁ 3).sub (hI y₁₀ 2)) (hI y₀₁ 1)
+  have e3 : (∫ f, ipwCellMean y₁₁ π 3 f - ipwCellMean y₁₀ π 2 f - ipwCellMean y₀₁ π 1 f
+        + ipwCellMean y₀₀ π 0 f ∂(Measure.pi fun i => bernoulliCell π i))
+        = (∫ f, ipwCellMean y₁₁ π 3 f - ipwCellMean y₁₀ π 2 f - ipwCellMean y₀₁ π 1 f
+          ∂(Measure.pi fun i => bernoulliCell π i))
+          + ∫ f, ipwCellMean y₀₀ π 0 f ∂(Measure.pi fun i => bernoulliCell π i) :=
+    integral_add (((hI y₁₁ 3).sub (hI y₁₀ 2)).sub (hI y₀₁ 1)) (hI y₀₀ 0)
+  unfold interactionAB
+  rw [integral_div_two, e3, e2, e1,
+    integral_ipwCellMean y₁₁ π hpos hnorm hN 3,
+    integral_ipwCellMean y₁₀ π hpos hnorm hN 2,
+    integral_ipwCellMean y₀₁ π hpos hnorm hN 1,
+    integral_ipwCellMean y₀₀ π hpos hnorm hN 0]
 
 end MathlibExt.Probability.Statistics.Experiment

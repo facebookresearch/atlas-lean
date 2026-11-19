@@ -411,7 +411,7 @@ theorem integral_map_stratumShift {P : Measure (𝒳 × Bool × ℝ)} [IsFiniteM
 
 /-- If the stratum `x = x₀` has no respondents, the stratum shift preserves the conditional
 independence of response and outcome given the covariate (missingness at random). -/
-theorem condIndepDiscrete_map_stratumShift [Countable 𝒳]
+theorem condIndepDiscrete_map_stratumShift
     {P : Measure (𝒳 × Bool × ℝ)} {x₀ : 𝒳}
     (hMAR : MissingOutcomes.MissingAtRandom P {z | z.2.1 = true} (fun z => z.2.2) Prod.fst)
     (hpos : P ({z | z.2.1 = true} ∩ Prod.fst ⁻¹' {x₀}) = 0) (c : ℝ) :

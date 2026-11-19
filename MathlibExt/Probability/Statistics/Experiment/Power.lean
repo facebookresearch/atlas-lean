@@ -114,4 +114,112 @@ theorem measureReal_zTestReject_eq_cdf {n : ℕ} (hn : 0 < n) (μ0 δ c : ℝ) {
       = cdf (gaussianReal 0 1) (Real.sqrt (n : ℝ) * δ / Real.sqrt (v : ℝ) - c) := by
   rw [measureReal_zTestReject hn μ0 δ c hv, ← cdf_gaussianReal_neg, neg_sub]
 
+/-- Conservative integer sample-size certificate for the one-sided z test: with
+`z_α = Φ⁻¹(1 - α)` and `z_β = Φ⁻¹(1 - β)`, any `n ≥ ⌈(√v (z_α + z_β) / δ)²⌉` gives power
+at least `1 - β` against the shift `δ > 0`. -/
+theorem power_ge_of_le_ceil {α β δ μ0 : ℝ} {v : NNReal}
+    (hα : α ∈ Set.Ioo 0 (1 / 2)) (hβ : β ∈ Set.Ioo 0 (1 / 2)) (hδ : 0 < δ) (hv : v ≠ 0)
+    {n : ℕ}
+    (hN : ⌈(Real.sqrt (v : ℝ) * (cdfQuantile (gaussianReal 0 1) (1 - α)
+        + cdfQuantile (gaussianReal 0 1) (1 - β)) / δ) ^ 2⌉₊ ≤ n) :
+    1 - β ≤ (Measure.pi fun _ : Fin n => gaussianReal (μ0 + δ) v).real
+      (zTestReject n μ0 v (cdfQuantile (gaussianReal 0 1) (1 - α))) := by
+  have hzα : 0 < cdfQuantile (gaussianReal 0 1) (1 - α) := by
+    apply cdfQuantile_gaussianReal_pos
+    obtain ⟨h0, h1⟩ := hα
+    exact ⟨by linarith, by linarith⟩
+  have hzβ : 0 < cdfQuantile (gaussianReal 0 1) (1 - β) := by
+    apply cdfQuantile_gaussianReal_pos
+    obtain ⟨h0, h1⟩ := hβ
+    exact ⟨by linarith, by linarith⟩
+  have hvR : 0 < (v : ℝ) := by
+    have h : (0 : NNReal) < v := pos_iff_ne_zero.mpr hv
+    exact_mod_cast h
+  have hsv : 0 < Real.sqrt (v : ℝ) := Real.sqrt_pos.mpr hvR
+  have hxnn : 0 ≤ Real.sqrt (v : ℝ) *
+      (cdfQuantile (gaussianReal 0 1) (1 - α) +
+        cdfQuantile (gaussianReal 0 1) (1 - β)) / δ :=
+    div_nonneg (mul_nonneg (Real.sqrt_nonneg _)
+      (le_of_lt (add_pos hzα hzβ))) (le_of_lt hδ)
+  have hx2 : (Real.sqrt (v : ℝ) *
+      (cdfQuantile (gaussianReal 0 1) (1 - α) +
+        cdfQuantile (gaussianReal 0 1) (1 - β)) / δ) ^ 2 ≤ (n : ℝ) :=
+    (Nat.le_ceil _).trans (by exact_mod_cast hN)
+  have hxn : Real.sqrt (v : ℝ) *
+      (cdfQuantile (gaussianReal 0 1) (1 - α) +
+        cdfQuantile (gaussianReal 0 1) (1 - β)) / δ ≤ Real.sqrt (n : ℝ) := by
+    have h := Real.sqrt_le_sqrt hx2
+    rwa [Real.sqrt_sq hxnn] at h
+  have h1 : Real.sqrt (v : ℝ) *
+      (cdfQuantile (gaussianReal 0 1) (1 - α) +
+        cdfQuantile (gaussianReal 0 1) (1 - β)) ≤ Real.sqrt (n : ℝ) * δ :=
+    (div_le_iff₀ hδ).mp hxn
+  have h2 : cdfQuantile (gaussianReal 0 1) (1 - α) +
+      cdfQuantile (gaussianReal 0 1) (1 - β) ≤
+      Real.sqrt (n : ℝ) * δ / Real.sqrt (v : ℝ) := by
+    rw [le_div_iff₀ hsv]
+    calc (cdfQuantile (gaussianReal 0 1) (1 - α) +
+          cdfQuantile (gaussianReal 0 1) (1 - β)) * Real.sqrt (v : ℝ)
+        = Real.sqrt (v : ℝ) * (cdfQuantile (gaussianReal 0 1) (1 - α) +
+          cdfQuantile (gaussianReal 0 1) (1 - β)) := mul_comm _ _
+      _ ≤ Real.sqrt (n : ℝ) * δ := h1
+  have hkey : cdfQuantile (gaussianReal 0 1) (1 - β) ≤
+      Real.sqrt (n : ℝ) * δ / Real.sqrt (v : ℝ) -
+        cdfQuantile (gaussianReal 0 1) (1 - α) := by
+    rw [le_sub_iff_add_le]
+    linarith [h2]
+  have hn : 0 < n := lt_of_lt_of_le
+    (Nat.ceil_pos.mpr (pow_pos (div_pos (mul_pos hsv (add_pos hzα hzβ)) hδ) 2)) hN
+  rw [measureReal_zTestReject_eq_cdf hn μ0 δ _ hv]
+  have hu : 1 - β ∈ Set.Ioo (0 : ℝ) 1 := by
+    obtain ⟨h0, h1⟩ := hβ
+    exact ⟨by linarith, by linarith⟩
+  exact (cdfQuantile_mem (gaussianReal 0 1) hu).trans
+    (monotone_cdf (gaussianReal 0 1) hkey)
+
+/-- Exact size of the one-sided z test at the point null: with the cutoff
+`z₁₋α = Φ⁻¹(1 - α)`, the rejection probability under the null mean `μ0` is exactly `α`. -/
+theorem measureReal_zTestReject_quantile {n : ℕ} (hn : 0 < n) {v : NNReal} (hv : v ≠ 0)
+    (μ0 : ℝ) {α : ℝ} (hα : α ∈ Set.Ioo 0 1) :
+    (Measure.pi fun _ : Fin n => gaussianReal μ0 v).real
+      (zTestReject n μ0 v (cdfQuantile (gaussianReal 0 1) (1 - α))) = α := by
+  have h := measureReal_zTestReject hn μ0 0 (cdfQuantile (gaussianReal 0 1) (1 - α)) hv
+  simp only [add_zero, mul_zero, zero_div, sub_zero] at h
+  have hu : 1 - α ∈ Set.Ioo (0 : ℝ) 1 := by
+    obtain ⟨h0, h1⟩ := hα
+    exact ⟨by linarith, by linarith⟩
+  rw [h, cdf_cdfQuantile_eq_of_continuous _ (continuous_cdf_gaussianReal 0 one_ne_zero) hu,
+    sub_sub_cancel]
+
+/-- Level `α` of the one-sided z test over the composite null `μ ≤ μ0`: with the cutoff
+`z₁₋α = Φ⁻¹(1 - α)`, the rejection probability under any true mean `μ ≤ μ0` is at most `α`. -/
+theorem measureReal_zTestReject_le_of_le {n : ℕ} (hn : 0 < n) {v : NNReal} (hv : v ≠ 0)
+    {μ μ0 α : ℝ} (hμ : μ ≤ μ0) (hα : α ∈ Set.Ioo 0 1) :
+    (Measure.pi fun _ : Fin n => gaussianReal μ v).real
+      (zTestReject n μ0 v (cdfQuantile (gaussianReal 0 1) (1 - α))) ≤ α := by
+  have h := measureReal_zTestReject_eq_cdf hn μ0 (μ - μ0)
+    (cdfQuantile (gaussianReal 0 1) (1 - α)) hv
+  rw [add_sub_cancel] at h
+  have h0 := measureReal_zTestReject_eq_cdf hn μ0 0
+    (cdfQuantile (gaussianReal 0 1) (1 - α)) hv
+  simp only [add_zero, mul_zero, zero_div, zero_sub] at h0
+  have hle : Real.sqrt (n : ℝ) * (μ - μ0) / Real.sqrt (v : ℝ)
+      - cdfQuantile (gaussianReal 0 1) (1 - α)
+      ≤ -cdfQuantile (gaussianReal 0 1) (1 - α) := by
+    have hnonpos : Real.sqrt (n : ℝ) * (μ - μ0) / Real.sqrt (v : ℝ) ≤ 0 :=
+      div_nonpos_of_nonpos_of_nonneg
+        (mul_nonpos_of_nonneg_of_nonpos (Real.sqrt_nonneg _)
+          (sub_nonpos.mpr hμ))
+        (Real.sqrt_nonneg _)
+    linarith
+  calc (Measure.pi fun _ : Fin n => gaussianReal μ v).real
+          (zTestReject n μ0 v (cdfQuantile (gaussianReal 0 1) (1 - α)))
+      = cdf (gaussianReal 0 1) (Real.sqrt (n : ℝ) * (μ - μ0) / Real.sqrt (v : ℝ)
+          - cdfQuantile (gaussianReal 0 1) (1 - α)) := h
+    _ ≤ cdf (gaussianReal 0 1) (-cdfQuantile (gaussianReal 0 1) (1 - α)) :=
+        monotone_cdf (gaussianReal 0 1) hle
+    _ = (Measure.pi fun _ : Fin n => gaussianReal μ0 v).real
+          (zTestReject n μ0 v (cdfQuantile (gaussianReal 0 1) (1 - α))) := h0.symm
+    _ = α := measureReal_zTestReject_quantile hn hv μ0 hα
+
 end MathlibExt.Probability.Statistics.Experiment

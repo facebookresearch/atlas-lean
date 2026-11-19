@@ -14,12 +14,13 @@ this file records the modeling conventions that make results in different files 
 | Established results whose proof is deferred | `WantedExt/Biology/…`, `WantedExt/Probability/…` |
 | Tests | the mirror path under `MathlibExtTest/` or `CSLibExtTest/` |
 
-Areas: `PopulationGenetics` (with `Coalescent/` and `Diffusion/`), `Phylogenetics`,
+Areas: `PopulationGenetics` (with `Admixture/`, `Coalescent/` and `Diffusion/`), `Phylogenetics`,
 `StatisticalGenetics`, `Epidemiology`, `Dynamics`, `CancerGenomics`, `Ecology` (structured
 population models), `Biophysics` (compartment and pharmacokinetic models), `Omics`
-(compositional normalization of count data). Distributions, Markov chains, statistics
-and combinatorics that are not specific to biology go under `MathlibExt/Probability/…` or
-`MathlibExt/Combinatorics/…`.
+(compositional normalization of count data), `Demography` (life-table quantities, crude and
+standardized rates over population categories, and Leslie-matrix demography). Distributions,
+Markov chains, statistics and combinatorics that are not specific to biology go under
+`MathlibExt/Probability/…` or `MathlibExt/Combinatorics/…`.
 
 Namespaces follow the path: `MathlibExt.Biology.<Area>.<Topic>` for models,
 `Cslib.Bioinformatics.<Area>.<Topic>` for algorithms, and Mathlib's own namespaces

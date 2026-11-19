@@ -166,4 +166,98 @@ example (n : ℕ) (hn : 0 < n) :
     simp [ENNReal.toReal_inv]
   exact hmain.trans hval
 
+/-- Use: at `n = 1` the one-coordinate tuple has the product base measure with density
+`F.iidLikelihood 1 θ` as its law. -/
+example {Ω S Θ : Type*} [MeasurableSpace Ω] [MeasurableSpace S]
+    {μ : Measure Ω} [IsProbabilityMeasure μ] {μ₀ : Measure S} [SigmaFinite μ₀]
+    {F : NormalizedDensityFamily S Θ μ₀} {θ : Θ}
+    {X : Fin 1 → Ω → S}
+    (hlaw : ∀ i, HasLaw (X i) (F.law θ) μ) (hind : iIndepFun X μ) :
+    HasLaw (fun ω i => X i ω)
+      ((Measure.pi fun _ : Fin 1 => μ₀).withDensity (F.iidLikelihood 1 θ)) μ := by
+  exact MathlibExt.Probability.Statistics.HasLaw_tuple_of_iidLikelihood hlaw hind
+
+/-- Boundary: the empty product is `1`. -/
+example {S Θ : Type*} [MeasurableSpace S]
+    {μ₀ : Measure S} {F : NormalizedDensityFamily S Θ μ₀} {θ : Θ}
+    (x : Fin 0 → S) : F.iidLikelihood 0 θ x = 1 := by
+  exact F.iidLikelihood_nil θ x
+
+/-- Use: statistics push through the product-density law. -/
+example {Ω S U Θ : Type*} [MeasurableSpace Ω] [MeasurableSpace S] [MeasurableSpace U]
+    {μ : Measure Ω} [IsProbabilityMeasure μ] {μ₀ : Measure S} [SigmaFinite μ₀]
+    {F : NormalizedDensityFamily S Θ μ₀} {θ : Θ} {n : ℕ}
+    {X : Fin n → Ω → S} {T : (Fin n → S) → U} (hT : Measurable T)
+    (hlaw : ∀ i, HasLaw (X i) (F.law θ) μ) (hind : iIndepFun X μ) :
+    HasLaw (fun ω => T fun i => X i ω)
+      (((Measure.pi fun _ : Fin n => μ₀).withDensity (F.iidLikelihood n θ)).map T) μ := by
+  have htuple := MathlibExt.Probability.Statistics.HasLaw_tuple_of_iidLikelihood hlaw hind
+  have hmap : HasLaw T (((Measure.pi fun _ : Fin n => μ₀).withDensity
+      (F.iidLikelihood n θ)).map T)
+      ((Measure.pi fun _ : Fin n => μ₀).withDensity (F.iidLikelihood n θ)) :=
+    hasLaw_map hT.aemeasurable
+  exact HasLaw.comp hmap htuple
+
+/-- Negative: without independence the tuple law need not be the product law. Duplicating
+one fair coin gives a tuple supported on the diagonal, while the product law charges the
+singleton `{(true, true)}` only `1 / 4` against the tuple law's `1 / 2`. -/
+example : ¬ HasLaw (fun ω : Bool => fun _ : Fin 2 => ω)
+    (Measure.pi fun _ : Fin 2 => fairCoin) fairCoin := by
+  intro h
+  have hmeas : MeasurableSet {(fun _ : Fin 2 => true)} := MeasurableSet.of_discrete
+  have heq := h.measure_eq (p := fun x : Fin 2 → Bool => x = fun _ => true) hmeas
+  have hpre : {ω : Bool | (fun _ : Fin 2 => ω) = fun _ => true} = {true} := by
+    ext ω
+    simp [funext_iff]
+  have heq2 : fairCoin {true} = (Measure.pi fun _ : Fin 2 => fairCoin) {(fun _ : Fin 2 => true)} := by
+    have := heq
+    rwa [hpre] at this
+  simp only [Measure.pi_singleton, Fin.prod_univ_two] at heq2
+  simp [fairCoin] at heq2
+  have hreal := congrArg ENNReal.toReal heq2
+  simp [ENNReal.toReal_mul, ENNReal.toReal_inv] at hreal
+
+/-- Non-vacuous Gaussian case: the joint law of two iid standard normals is the product
+density, here written out as `∏ i, F.dens () (x i)`, which is `F.iidLikelihood 2 ()` by
+definition. The normalized family is built from `gaussianPDF 0 1` over Lebesgue measure;
+the iid structure comes from the canonical product model. -/
+example :
+    let F : NormalizedDensityFamily ℝ Unit volume :=
+      { dens := fun _ => gaussianPDF 0 1,
+        measurable := fun _ =>
+          (measurable_gaussianPDFReal 0 1).ennreal_ofReal.aemeasurable,
+        normalized := fun _ => lintegral_gaussianPDFReal_eq_one 0 (by norm_num) };
+    let μ : Measure (Fin 2 → ℝ) := Measure.pi fun _ : Fin 2 => gaussianReal 0 1;
+    HasLaw (fun (ω : Fin 2 → ℝ) (i : Fin 2) => ω i)
+      ((Measure.pi fun _ : Fin 2 => volume).withDensity
+        fun x : Fin 2 → ℝ => ∏ i, F.dens () (x i)) μ := by
+  intro F μ
+  have hbridge : F.law () = gaussianReal 0 1 := by
+    rw [NormalizedDensityFamily.law]
+    show volume.withDensity (F.dens ()) = _
+    have hdens : F.dens () = gaussianPDF 0 1 := rfl
+    rw [hdens]
+    rw [gaussianReal_of_var_ne_zero 0 (by norm_num : (1 : NNReal) ≠ 0)]
+  have hlaw : ∀ i : Fin 2, HasLaw (fun ω : Fin 2 → ℝ => ω i) (F.law ()) μ := by
+    intro i
+    have hmp := (measurePreserving_eval (fun _ : Fin 2 => gaussianReal 0 1) i).hasLaw.comp
+      (HasLaw.id (μ := μ))
+    simp only [Function.comp_id] at hmp
+    rw [hbridge]
+    exact hmp
+  have hind : iIndepFun (fun i (ω : Fin 2 → ℝ) => ω i) μ :=
+    ProbabilityTheory.iIndepFun_pi (fun _ => aemeasurable_id)
+  exact MathlibExt.Probability.Statistics.HasLaw_tuple_of_iidLikelihood hlaw hind
+
+/-- Boundary: at `n = 0` the empty tuple has the product base measure with density
+`F.iidLikelihood 0 θ` as its law. -/
+example {Ω S Θ : Type*} [MeasurableSpace Ω] [MeasurableSpace S]
+    {μ : Measure Ω} [IsProbabilityMeasure μ] {μ₀ : Measure S} [SigmaFinite μ₀]
+    {F : NormalizedDensityFamily S Θ μ₀} {θ : Θ}
+    {X : Fin 0 → Ω → S}
+    (hlaw : ∀ i, HasLaw (X i) (F.law θ) μ) (hind : iIndepFun X μ) :
+    HasLaw (fun ω i => X i ω)
+      ((Measure.pi fun _ : Fin 0 => μ₀).withDensity (F.iidLikelihood 0 θ)) μ := by
+  exact MathlibExt.Probability.Statistics.HasLaw_tuple_of_iidLikelihood hlaw hind
+
 end MathlibExtTest.Probability.Statistics.SampleLaw

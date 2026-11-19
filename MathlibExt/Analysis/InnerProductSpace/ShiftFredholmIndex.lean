@@ -104,6 +104,7 @@ theorem shiftFun_iterate_apply (n : ℕ) (x : ℕ → 𝕜) (i : ℕ) :
           rfl
 
 set_option linter.unusedSectionVars false in
+omit [RCLike 𝕜] in
 /-- Iterating the backward-shift function `n` times drops the first
 `n` coordinates. -/
 theorem backwardFun_iterate_apply (n : ℕ) (x : ℕ → 𝕜) (i : ℕ) :

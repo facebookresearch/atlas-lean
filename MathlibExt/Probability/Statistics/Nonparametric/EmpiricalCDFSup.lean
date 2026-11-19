@@ -27,7 +27,7 @@ namespace ProbabilityTheory
 
 /-- Finite-sample empirical CDFs are right-continuous step functions. -/
 theorem empCDF_rightContinuous {n : ℕ}
-    {Ω : Type*} [MeasurableSpace Ω] (X : Fin n → Ω → ℝ) (ω : Ω) (x : ℝ) :
+    {Ω : Type*} (X : Fin n → Ω → ℝ) (ω : Ω) (x : ℝ) :
     ContinuousWithinAt (fun t => empCDF (fun i => X i ω) t) (Set.Ici x) x := by
   have hev : ∀ i, ∀ᶠ t in 𝓝[Set.Ici x] x, (X i ω ≤ t ↔ X i ω ≤ x) := by
     intro i

@@ -18,7 +18,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.PushoutI
 public import WantedExt.GroupTheory.KourovkaNotebookShared
-public import WantedExt.GroupTheory.UniqueProductPresentationPolycyclicKourovka13Problem11Wanted
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
@@ -30,13 +30,13 @@ Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Pro
 Tang). UnsolvedMath record UM-00700518 (`KOU-8.70`), dataset ulamai/UnsolvedMath v1.8.0.
 
 The amalgamated free product of `A = G 0` and `B = G 1` over `H`, embedded in both by injective `φ
-i`, is Mathlib's `Monoid.PushoutI φ`. Polycyclic-by-finite is `IsAlmostPolycyclic` from
-`WantedExt/GroupTheory/UniqueProductPresentationPolycyclicKourovka13Problem11Wanted.lean`; conjugacy
-separable is `IsConjugacySeparable` (`WantedExt/GroupTheory/KourovkaNotebookShared.lean`).
+i`, is Mathlib's `Monoid.PushoutI φ`. Polycyclic-by-finite is `IsAlmostPolycyclic` of
+`WantedExt/GroupTheory/GroupClassesShared.lean`; conjugacy separable is `IsConjugacySeparable`
+(`WantedExt/GroupTheory/KourovkaNotebookShared.lean`).
 -/
 
 open MathlibExt.GroupTheory.KourovkaNotebookShared (IsConjugacySeparable)
-open MathlibExt.GroupTheory.UniqueProductPresentationPolycyclicKourovka13Problem11Wanted
+open MathlibExt.GroupTheory.GroupClassesShared (IsAlmostPolycyclic)
 
 /-- Kourovka 8.70 (C. Y. Tang): the free product `A *_H B` of two polycyclic-by-finite groups
 `A = G 0` and `B = G 1` amalgamating a cyclic subgroup `H` (embedded in both by `φ`) is conjugacy

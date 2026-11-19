@@ -74,7 +74,7 @@ def colliderPa : (k : Fin 3) → Finset (Fin k)
   | ⟨2, _⟩ => {0, 1}
   | ⟨_ + 3, h⟩ => absurd h (by omega)
 
-theorem chain_edge {α : Type*} [Nonempty α]
+theorem chain_edge {α : Type*}
     (cpt : (k : Fin 3) → (chainPa k → α) → StdSimplex ℝ α) {i j : Fin 3} :
     (BayesNet.mk chainPa cpt).Edge i j ↔ (i = 0 ∧ j = 1) ∨ (i = 1 ∧ j = 2) := by
   change (∃ h : (i : ℕ) < j, (⟨i, h⟩ : Fin j) ∈ chainPa j) ↔ _
@@ -160,7 +160,7 @@ theorem chain_dsep {α : Type*} [Nonempty α]
           subst ha
           fin_cases b <;> fin_cases c <;> fin_cases d <;> simp at hnd
 
-theorem fork_edge {α : Type*} [Nonempty α]
+theorem fork_edge {α : Type*}
     (cpt : (k : Fin 3) → (forkPa k → α) → StdSimplex ℝ α) {i j : Fin 3} :
     (BayesNet.mk forkPa cpt).Edge i j ↔ (i = 0 ∧ j = 1) ∨ (i = 0 ∧ j = 2) := by
   change (∃ h : (i : ℕ) < j, (⟨i, h⟩ : Fin j) ∈ forkPa j) ↔ _

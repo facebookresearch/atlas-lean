@@ -306,22 +306,6 @@ private theorem abs_taylor_two_le {f f₁ f₂ f₃ : ℝ → ℝ} {θ₀ δ θ 
   calc |φ θ| ≤ m * |θ - θ₀| ^ 2 * |θ - θ₀| := key
     _ = m * |θ - θ₀| ^ 3 := by ring
 
-omit [IsProbabilityMeasure P] in
-/-- A sum of two sequences tending to `0` in probability tends to `0` in probability. -/
-private theorem tendstoInMeasure_add_zero' {U V : ℕ → Ω → ℝ}
-    (hU : TendstoInMeasure P U atTop 0) (hV : TendstoInMeasure P V atTop 0) :
-    TendstoInMeasure P (fun i ω => U i ω + V i ω) atTop 0 := by
-  rw [tendstoInMeasure_iff_norm] at hU hV ⊢
-  intro ε hε
-  have h2 := (hU (ε / 2) (by positivity)).add (hV (ε / 2) (by positivity))
-  rw [add_zero] at h2
-  refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds h2 (fun _ => zero_le)
-    fun i => (measure_mono fun ω hω => ?_).trans (measure_union_le _ _)
-  simp only [Set.mem_ofPred_eq, Pi.zero_apply, sub_zero, Real.norm_eq_abs] at hω ⊢
-  by_contra h
-  simp only [Set.mem_union, Set.mem_ofPred_eq, not_or, not_le] at h
-  linarith [abs_add_le (U i ω) (V i ω)]
-
 /-- **Rao's score test, known information.** Under the conditions of
 `tendstoInDistribution_score` and `0 < I(θ₀)`, the score statistic
 `(n^{-1/2} ∑_{i<n} score p θ₀ (X i))² / I(θ₀)` converges in distribution to `χ²₁`.
@@ -587,7 +571,7 @@ theorem tendstoInMeasure_two_mul_logLikelihood_sub_sub
       ).mul_tendstoInMeasure_zero hdθ
       (fun n => continuous_abs.measurable.comp_aemeasurable ((hθ_meas n).sub_const _))
     simpa only [mul_comm] using h
-  have hη : TendstoInMeasure P η atTop 0 := tendstoInMeasure_add_zero' hBI hrem
+  have hη : TendstoInMeasure P η atTop 0 := tendstoInMeasure_add_zero hBI hrem
   -- the good events
   set G : ℕ → Set Ω := fun n => {ω | ∑ i ∈ Finset.range n, score p (θhat n ω) (X i ω) = 0} ∩
     {ω | |θhat n ω - θ₀| < δ} with hG_def

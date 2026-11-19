@@ -9,16 +9,19 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.StatisticalGenetics.AssociationTests.ExactVsAsymptotic
+public import MathlibExtTest.Biology.StatisticalGenetics.AssociationTests.PearsonLimit
 
 import Mathlib.Tactic.NormNum
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory Finset
+open MeasureTheory ProbabilityTheory Finset Filter
 open MathlibExt.Probability.Statistics.ExactTests MathlibExt.Probability.Statistics.MultipleTesting
 open MathlibExt.Biology.StatisticalGenetics.AssociationTests.ExactVsAsymptotic
 open MathlibExt.Biology.StatisticalGenetics.RareVariantInference.GenomicControl
 open MathlibExt.Biology.StatisticalGenetics.PearsonLimit
+open MathlibExtTest.Biology.StatisticalGenetics.PearsonLimit (X4 μH μH_real_singleton
+  hasLaw_sq_chiSquare)
 
 namespace MathlibExtTest.Biology.StatisticalGenetics.AssociationTests.ExactVsAsymptotic
 
@@ -133,5 +136,72 @@ example : orderedPValue (fun _ => 1 / 3) (fun _ => 0) 3 1 = 1 := by
 
 example (f g : ℕ → ℝ) : orderedPValue f g 0 0 = 0 := by
   simp [orderedPValue]
+
+/-! ### Connection to Pearson's limit theorem -/
+
+/-- The sparse observation, computed from the definitions on both sides: the heterozygote-count
+statistic at `(N, n_A, n_AB) = (10, 2, 0)` and `hweStat` of the table `(9, 0, 1)` are both `10`. -/
+example : hweChiSqOfHet 10 2 0 = 10 ∧ hweStat 10 ![9, 0, 1] = 10 := by
+  constructor
+  · norm_num [hweChiSqOfHet, hweStat, pearsonStatistic, hweProb, alleleFreqHat,
+      Fin.sum_univ_three]
+  · norm_num [hweStat, pearsonStatistic, hweProb, alleleFreqHat, Fin.sum_univ_three]
+
+/-- The table identity at `(9, 0, 1)` states exactly the equality of those two numbers. -/
+example : hweChiSqOfHet 10 2 0 = hweStat 10 ![9, 0, 1] := by
+  simpa using hweChiSqOfHet_eq_hweStat 9 0 1
+
+/-- A table with every cell nonzero, `(2, 3, 5)`: `N = 10`, `n_A = 13`, `n_AB = 3`. Both sides,
+computed from the definitions, equal `X² = N F̂² = 10 (31/91)² = 9610/8281`. -/
+example : hweChiSqOfHet 10 13 3 = 9610 / 8281 ∧ hweStat 10 ![2, 3, 5] = 9610 / 8281 := by
+  constructor
+  · norm_num [hweChiSqOfHet, hweStat, pearsonStatistic, hweProb, alleleFreqHat,
+      Fin.sum_univ_three]
+  · norm_num [hweStat, pearsonStatistic, hweProb, alleleFreqHat, Fin.sum_univ_three]
+
+example : hweChiSqOfHet 10 13 3 = hweStat 10 ![2, 3, 5] := by
+  simpa using hweChiSqOfHet_eq_hweStat 2 3 5
+
+/-- An infeasible input is outside the identity: `(N, n_A, n_AB) = (1, 1, 0)` has `n_A - n_AB`
+odd, so no genotype table realizes it, and the floor divisions collapse every cell to `0`. -/
+example : hweChiSqOfHet 1 1 0 = hweStat 1 ![0, 0, 0] := by
+  norm_num [hweChiSqOfHet]
+
+/-- The concrete sample `0, 1, 2, 2` of `PearsonLimit`'s tests: allele count `5`, one
+heterozygote, and `hweChiSqOfHet 4 5 1 = 196/225`, computed from the definition. -/
+example : ∑ m ∈ range 4, (X4 m () : ℕ) = 5 ∧
+    #{m ∈ range 4 | X4 m () = 1} = 1 ∧
+    hweChiSqOfHet 4 5 1 = 196 / 225 := by
+  refine ⟨by decide, by decide, ?_⟩
+  norm_num [hweChiSqOfHet, hweStat, pearsonStatistic, hweProb, alleleFreqHat, Fin.sum_univ_three]
+
+/-- The sample form on that sample. -/
+example : hweChiSqOfHet 4
+      (∑ m ∈ range 4, (X4 m () : ℕ))
+      #{m ∈ range 4 | X4 m () = 1} =
+    hweStat 4 (cellCount X4 4 ()) :=
+  hweChiSqOfHet_eq_hweStat_cellCount _ 4 ()
+
+/-- **Non-vacuity of `tendstoInDistribution_hweChiSqOfHet`.** For an i.i.d. sample from the
+Hardy–Weinberg population at `p = 1/2` (two fair alleles), the heterozygote-count statistic at
+the observed counts converges in distribution to `x ↦ x²` under `N(0, 1)`, i.e. to `χ²₁`. -/
+theorem exists_hweChiSqOfHet_tendsto_chiSquare :
+    ∃ (Ω : Type) (_ : MeasurableSpace Ω) (P : Measure Ω) (_ : IsProbabilityMeasure P)
+      (X : ℕ → Ω → Fin 3),
+      (∀ m, HasLaw (X m) μH P) ∧
+        iIndepFun X P ∧
+        TendstoInDistribution
+          (fun N ω => hweChiSqOfHet N (∑ m ∈ range N, (X m ω : ℕ)) #{m ∈ range N | X m ω = 1})
+          atTop (fun x : ℝ => x ^ 2) (fun _ => P) (gaussianReal 0 1) := by
+  obtain ⟨Ω, _, P, X, hmeas, hlaw, hindep, hP⟩ :=
+    exists_iid ℕ μH
+  refine ⟨Ω, _, P, hP, X, hlaw, hindep, ?_⟩
+  have hident : ∀ m, IdentDistrib (X m) (X 0) P P := fun m =>
+    ⟨(hmeas m).aemeasurable, (hmeas 0).aemeasurable, (hlaw m).map_eq.trans (hlaw 0).map_eq.symm⟩
+  have hX0 : ∀ i, P.real (X 0 ⁻¹' {i}) = hweProb (1 / 2) i := fun i => by
+    rw [← map_measureReal_apply (hmeas 0) (measurableSet_singleton i), (hlaw 0).map_eq,
+      μH_real_singleton]
+  exact tendstoInDistribution_hweChiSqOfHet hX0 (by norm_num) (by norm_num) hindep hident
+    hasLaw_sq_chiSquare
 
 end MathlibExtTest.Biology.StatisticalGenetics.AssociationTests.ExactVsAsymptotic

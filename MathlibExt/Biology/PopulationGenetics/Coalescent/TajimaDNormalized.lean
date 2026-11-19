@@ -83,18 +83,6 @@ namespace MathlibExt.Biology.PopulationGenetics.Coalescent
 
 /-! ### Positivity of Tajima's constants -/
 
-private theorem tajimaA1_pos {n : ℕ} (hn : 2 ≤ n) : 0 < tajimaA1 n := by
-  rw [tajimaA1_eq_harmonic]
-  exact_mod_cast harmonic_pos (by omega)
-
-private theorem tajimaE1_pos {n : ℕ} (hn : 4 ≤ n) : 0 < tajimaE1 n := by
-  simpa using tajimaVarEstimator_pos hn (S := 1) le_rfl
-
-private theorem tajimaE2_pos {n : ℕ} (hn : 4 ≤ n) : 0 < tajimaE2 n := by
-  have ha2 : 0 ≤ tajimaA2 n := sum_nonneg fun i _ => by positivity
-  have := tajimaA1_pos (n := n) (by omega)
-  exact div_pos (tajimaC2_pos hn) (by positivity)
-
 /-- `Var(π - S / a₁) = c₁ θ + c₂ θ²` is positive for `n ≥ 4` and `θ > 0`. -/
 theorem tajimaVariance_pos {n : ℕ} (hn : 4 ≤ n) {θ : ℝ} (hθ : 0 < θ) :
     0 < tajimaC1 n * θ + tajimaC2 n * θ ^ 2 := by
@@ -171,7 +159,7 @@ theorem integral_tajimaD_eq_covariance {n : ℕ} (K : KingmanTimes μ n) [IsProb
     μ[fun ω => tajimaD n (meanPairDiff n D ω) (S ω)] =
       cov[fun ω => meanPairDiff n D ω - S ω / tajimaA1 n,
         fun ω => (Real.sqrt (tajimaE1 n * S ω + tajimaE2 n * (S ω * (S ω - 1))))⁻¹; μ] := by
-  have hπ : MemLp (meanPairDiff n D) 2 μ := (memLp_finsetSum (samplePairs n) hD2).const_mul _
+  have hπ := memLp_meanPairDiff hD2
   have hN : MemLp (fun ω => meanPairDiff n D ω - S ω / tajimaA1 n) 2 μ :=
     hπ.sub (by simpa [div_eq_mul_inv, mul_comm] using hS2.const_mul (tajimaA1 n)⁻¹)
   rw [integral_tajimaD_eq hN

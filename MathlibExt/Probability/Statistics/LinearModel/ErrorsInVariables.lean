@@ -43,6 +43,11 @@ implies them, and no mean-zero hypothesis is needed for the slope.
 ## Main results
 
 * `attenuationFactor`: `λ = σ_ξ² / (σ_ξ² + σ_u²)`.
+* `measurementError_population_attenuation_of_cov_eq_zero`: for square-integrable, pairwise
+  uncorrelated `ξ`, `u`, `ε`, the totalized ratio `cov[x, y] / Var[x]` for `y = β₀ + β ξ + ε` and
+  `x = ξ + u` is `λ β`; `measurementError_population_attenuation` is the independence form.
+* `measurementError_population_slope_of_cov_eq_zero`: when `Var[x] ≠ 0`, `λ β` is the population
+  least-squares slope of `y` on `x`, the unique `b` with `cov[x, y - b x] = 0`.
 * `correctedSlope`: `S_xy / (S_xx - n σ²)`, and `correctedSlope_eq_olsSlope_div`.
 * `ae_tendsto_sxy_div`: for i.i.d. square-integrable pairs, `S_xy / n → cov[X, Y]` a.s.
 * `ae_tendsto_olsSlope_attenuation`, `tendstoInMeasure_olsSlope_attenuation`: the naive OLS
@@ -148,6 +153,114 @@ theorem ae_tendsto_sxy_div [IsProbabilityMeasure μ] {X Y : ℕ → Ω → ℝ}
   rw [covariance_eq_sub hX hY]
   exact (hxy.sub (hx.mul hy)).congr
     fun n => (sxy_div_eq (fun i => X i ω) (fun i => Y i ω) n).symm
+
+/-! ### Population attenuation identity -/
+
+/-- **Population attenuation identity**, totalized ratio form: if `X`, `e` and `ε` are square
+integrable and pairwise uncorrelated, then for `Y = α + β X + ε` and the mismeasured regressor
+`W = X + e`, the ratio `cov[W, Y] / Var[W]` equals `λ β`, with attenuation factor
+`λ = Var[X] / (Var[X] + Var[e])`. This is an identity of totalized real ratios and carries no
+`Var[W] ≠ 0` hypothesis: if `Var[W] = 0`, both sides are `0` only because real division by zero
+is zero, and there is no population least-squares slope. When `Var[W] ≠ 0` the ratio is that
+slope; `measurementError_population_slope_of_cov_eq_zero` states the nondegenerate slope form.
+The hypotheses are the moment conditions of `ClassicalErrorsInVariables`;
+`measurementError_population_attenuation` is the form with independence hypotheses. The condition
+`cov[X, ε] = 0` (exogeneity) cannot be dropped: with `e = 0` and nonconstant `ε = X` the slope is
+`β + 1`, not `β`.
+
+This is the population form of the attenuation result in W. A. Fuller, *Measurement Error
+Models*, Wiley (1987), Chapter 1. -/
+theorem measurementError_population_attenuation_of_cov_eq_zero [IsProbabilityMeasure μ]
+    {X e ε : Ω → ℝ} {α β : ℝ} (hX : MemLp X 2 μ) (he : MemLp e 2 μ) (hε : MemLp ε 2 μ)
+    (hXe : cov[X, e; μ] = 0) (hXε : cov[X, ε; μ] = 0) (heε : cov[e, ε; μ] = 0) :
+    cov[fun ω => X ω + e ω, fun ω => α + β * X ω + ε ω; μ] / Var[fun ω => X ω + e ω; μ] =
+      attenuationFactor Var[X; μ] Var[e; μ] * β := by
+  have hWmem : MemLp (fun ω => X ω + e ω) 2 μ := hX.add he
+  have hβX : MemLp (fun ω => β * X ω) 2 μ := hX.const_mul β
+  have hβXε_int : Integrable (fun ω => β * X ω + ε ω) μ := (hβX.add hε).integrable one_le_two
+  have hα : (fun ω => α + β * X ω + ε ω) = fun ω => α + (β * X ω + ε ω) := by
+    funext ω; ring
+  have hcov0 : covariance (fun ω => X ω + e ω) (fun ω => α + β * X ω + ε ω) μ
+      = covariance (fun ω => X ω + e ω) (fun ω => β * X ω + ε ω) μ := by
+    rw [hα]
+    exact covariance_const_add_right hβXε_int α
+  have hcov1 : covariance (fun ω => X ω + e ω) (fun ω => β * X ω + ε ω) μ
+      = covariance (fun ω => X ω + e ω) (fun ω => β * X ω) μ
+        + covariance (fun ω => X ω + e ω) ε μ :=
+    covariance_add_right (X := fun ω => X ω + e ω) (Y := fun ω => β * X ω)
+      (Z := ε) hWmem hβX hε
+  have hsmuleq : (fun ω => β * X ω) = β • X := by
+    funext ω; exact (smul_eq_mul β (X ω)).symm
+  have hcov2 : covariance (fun ω => X ω + e ω) (fun ω => β * X ω) μ
+      = β * covariance (fun ω => X ω + e ω) X μ := by
+    rw [hsmuleq]
+    exact covariance_smul_right β
+  have hcovWX : covariance (fun ω => X ω + e ω) X μ = variance X μ := by
+    have h := covariance_add_left (X := X) (Y := e) (Z := X) hX he hX
+    have hself : covariance X X μ = variance X μ :=
+      covariance_self hX.aestronglyMeasurable.aemeasurable
+    have hzero : covariance e X μ = 0 := by rw [covariance_comm]; exact hXe
+    rw [hself, hzero, add_zero] at h
+    exact h
+  have hcovWε : covariance (fun ω => X ω + e ω) ε μ = 0 := by
+    have h := covariance_add_left (X := X) (Y := e) (Z := ε) hX he hε
+    rw [hXε, heε, add_zero] at h
+    exact h
+  have hVarW : variance (fun ω => X ω + e ω) μ = variance X μ + variance e μ := by
+    rw [← covariance_self hWmem.aemeasurable]
+    change cov[X + e, X + e; μ] = _
+    rw [covariance_add_left hX he (hX.add he), covariance_add_right hX hX he,
+      covariance_add_right he hX he, covariance_self hX.aemeasurable,
+      covariance_self he.aemeasurable, covariance_comm e X, hXe]
+    ring
+  have hCov : covariance (fun ω => X ω + e ω) (fun ω => α + β * X ω + ε ω) μ
+      = β * variance X μ := by
+    rw [hcov0, hcov1, hcov2, hcovWX, hcovWε]
+    ring
+  rw [hCov, hVarW, attenuationFactor]
+  ring
+
+/-- **Population attenuation of the least-squares slope**: under the hypotheses of
+`measurementError_population_attenuation_of_cov_eq_zero` and `Var[W] ≠ 0`, the population
+least-squares slope of `Y = α + β X + ε` on `W = X + e` is `λ β`: it is the unique `b` for which
+the residual `Y - b W` is uncorrelated with `W` (the population normal equation). Without
+`Var[W] ≠ 0` every `b` solves the normal equation. -/
+theorem measurementError_population_slope_of_cov_eq_zero [IsProbabilityMeasure μ]
+    {X e ε : Ω → ℝ} {α β : ℝ} (hX : MemLp X 2 μ) (he : MemLp e 2 μ) (hε : MemLp ε 2 μ)
+    (hXe : cov[X, e; μ] = 0) (hXε : cov[X, ε; μ] = 0) (heε : cov[e, ε; μ] = 0)
+    (hW : Var[fun ω => X ω + e ω; μ] ≠ 0) (b : ℝ) :
+    cov[fun ω => X ω + e ω, fun ω => α + β * X ω + ε ω - b * (X ω + e ω); μ] = 0 ↔
+      b = attenuationFactor Var[X; μ] Var[e; μ] * β := by
+  have hWmem : MemLp (fun ω => X ω + e ω) 2 μ := hX.add he
+  have hYmem : MemLp (fun ω => α + β * X ω + ε ω) 2 μ :=
+    ((memLp_const α).add (hX.const_mul β)).add hε
+  have hbW : MemLp (fun ω => b * (X ω + e ω)) 2 μ := hWmem.const_mul b
+  have hcovWY : cov[fun ω => X ω + e ω, fun ω => α + β * X ω + ε ω; μ] =
+      attenuationFactor Var[X; μ] Var[e; μ] * β * Var[fun ω => X ω + e ω; μ] := by
+    rw [← measurementError_population_attenuation_of_cov_eq_zero (α := α) (β := β) hX he hε
+      hXe hXε heε, div_mul_cancel₀ _ hW]
+  have hres : cov[fun ω => X ω + e ω, fun ω => α + β * X ω + ε ω - b * (X ω + e ω); μ] =
+      (attenuationFactor Var[X; μ] Var[e; μ] * β - b) * Var[fun ω => X ω + e ω; μ] := by
+    rw [show (fun ω => α + β * X ω + ε ω - b * (X ω + e ω)) =
+        (fun ω => α + β * X ω + ε ω) - fun ω => b * (X ω + e ω) from rfl,
+      covariance_sub_right hWmem hYmem hbW, covariance_const_mul_right,
+      covariance_self hWmem.aemeasurable, hcovWY]
+    ring
+  rw [hres, mul_eq_zero, or_iff_left hW, sub_eq_zero, eq_comm]
+
+/-- **Population attenuation identity**, independence form: if `X`, `e` and `ε` are square
+integrable and pairwise independent, then `cov[W, Y] / Var[W] = λ β` for `W = X + e` and
+`Y = α + β X + ε` (`measurementError_population_attenuation_of_cov_eq_zero`, since independent
+square-integrable variables are uncorrelated). Like that theorem, this is an identity of totalized
+ratios; `measurementError_population_slope_of_cov_eq_zero` gives the slope when `Var[W] ≠ 0`. -/
+theorem measurementError_population_attenuation [IsProbabilityMeasure μ] {X e ε : Ω → ℝ}
+    {α β : ℝ} (hX : MemLp X 2 μ) (he : MemLp e 2 μ) (hε : MemLp ε 2 μ)
+    (hXe : IndepFun X e μ) (hXε : IndepFun X ε μ) (heε : IndepFun e ε μ) :
+    covariance (fun ω => X ω + e ω) (fun ω => α + β * X ω + ε ω) μ /
+        variance (fun ω => X ω + e ω) μ =
+      attenuationFactor (variance X μ) (variance e μ) * β :=
+  measurementError_population_attenuation_of_cov_eq_zero hX he hε
+    (hXe.covariance_eq_zero hX he) (hXε.covariance_eq_zero hX hε) (heε.covariance_eq_zero he hε)
 
 /-! ### The classical errors-in-variables model -/
 
