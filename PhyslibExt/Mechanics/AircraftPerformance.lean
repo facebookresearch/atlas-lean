@@ -54,9 +54,10 @@ the isothermal-layer density above (`two_sqrt_le_levelDrag_isothermalDensity`).
 Level-flight model inputs: steady level flight with thrust aligned with the velocity (an
 inclined thrust line would add a vertical thrust component to the lift balance, which is not
 modelled), the declared polar with positive coefficients `CD0, k`, positive `ρ, S`, nonzero
-weight. The polar is valid only up to a declared maximum lift coefficient `CLmax`; at a positive
-speed this is the stall-validity interval `V ≥ V_s = √(2 * W / (ρ * S * CLmax))`. The algebraic
-minimizer is an operating point only when it lies in that interval:
+weight, and positive weight `W > 0` in the stall-validity results. The polar is valid only up
+to a declared maximum lift coefficient `CLmax`; at a positive speed this is the stall-validity
+interval `V ≥ V_s = √(2 * W / (ρ * S * CLmax))`, whose radicand is positive only for `W > 0`.
+The algebraic minimizer is an operating point only when it lies in that interval:
 `exists_levelDrag_eq_two_sqrt_iff` and `two_sqrt_lt_levelDrag_of_minDragSpeed_lt_stallSpeed`. At
 `V = 0` Lean's convention `x / 0 = 0` gives meaningless values; no statement uses them.
 
@@ -510,26 +511,31 @@ lemma two_sqrt_mul_dragFactor_eq {W ρ S CD0 k : ℝ} (hρ : ρ ≠ 0) (hS : S �
 /-! ## F. The stall-validity interval -/
 
 /-- Stall speed `V_s = √(2 * W / (ρ * S * CLmax))` for the polar's maximum lift coefficient
-`CLmax`. -/
+`CLmax`. The physical regime is `W, ρ, S, CLmax > 0`; for `W ≤ 0` the radicand is not positive
+and `Real.sqrt` returns the meaningless value `0`, so the stall results assume `0 < W`. -/
 noncomputable def stallSpeed (W ρ S CLmax : ℝ) : ℝ :=
   Real.sqrt (2 * W / (ρ * S * CLmax))
 
-/-- The stall-validity interval: at a positive speed the level-flight lift coefficient is at most
-`CLmax` exactly when the speed is at least the stall speed. -/
-lemma levelLiftCoeff_le_iff_stallSpeed_le {W ρ S CLmax V : ℝ} (hρ : 0 < ρ) (hS : 0 < S)
-    (hCL : 0 < CLmax) (hV : 0 < V) :
+/-- The stall-validity interval: for positive weight, at a positive speed the level-flight lift
+coefficient is at most `CLmax` exactly when the speed is at least the stall speed. -/
+lemma levelLiftCoeff_le_iff_stallSpeed_le {W ρ S CLmax V : ℝ} (hW : 0 < W) (hρ : 0 < ρ)
+    (hS : 0 < S) (hCL : 0 < CLmax) (hV : 0 < V) :
     levelLiftCoeff W ρ S V ≤ CLmax ↔ stallSpeed W ρ S CLmax ≤ V := by
   have hd1 : 0 < ρ * V ^ 2 * S := by positivity
   have hd2 : 0 < ρ * S * CLmax := by positivity
-  unfold levelLiftCoeff stallSpeed
-  rw [div_le_iff₀ hd1, Real.sqrt_le_left hV.le, div_le_iff₀ hd2]
+  have hs : 0 ≤ stallSpeed W ρ S CLmax := Real.sqrt_nonneg _
+  have hsq : stallSpeed W ρ S CLmax ^ 2 = 2 * W / (ρ * S * CLmax) :=
+    Real.sq_sqrt (div_pos (mul_pos two_pos hW) hd2).le
+  rw [← sq_le_sq₀ hs hV.le, hsq]
+  unfold levelLiftCoeff
+  rw [div_le_iff₀ hd1, div_le_iff₀ hd2]
   have heq : CLmax * (ρ * V ^ 2 * S) = V ^ 2 * (ρ * S * CLmax) := by ring
   rw [heq]
 
-/-- Subject to the stall-validity interval: some positive speed with lift coefficient at most
-`CLmax` attains the bound `2 * √(a * b)` exactly when the stall speed is at most the
-minimum-drag speed. -/
-lemma exists_levelDrag_eq_two_sqrt_iff {W ρ S CD0 k CLmax : ℝ} (hW : W ≠ 0) (hρ : 0 < ρ)
+/-- Subject to the stall-validity interval: for positive weight, some positive speed with lift
+coefficient at most `CLmax` attains the bound `2 * √(a * b)` exactly when the stall speed is at
+most the minimum-drag speed. -/
+lemma exists_levelDrag_eq_two_sqrt_iff {W ρ S CD0 k CLmax : ℝ} (hW : 0 < W) (hρ : 0 < ρ)
     (hS : 0 < S) (hCD0 : 0 < CD0) (hk : 0 < k) (hCL : 0 < CLmax) :
     (∃ V, 0 < V ∧ levelLiftCoeff W ρ S V ≤ CLmax ∧
         levelDrag W ρ S CD0 k V =
@@ -540,25 +546,26 @@ lemma exists_levelDrag_eq_two_sqrt_iff {W ρ S CD0 k CLmax : ℝ} (hW : W ≠ 0)
     have hVeq : V = minDragSpeed W ρ S CD0 k :=
       (levelDrag_eq_two_sqrt_iff_eq_minDragSpeed hρ hS hCD0 hk.le hV).mp hD
     have hVs : stallSpeed W ρ S CLmax ≤ V :=
-      (levelLiftCoeff_le_iff_stallSpeed_le hρ hS hCL hV).mp hadm
+      (levelLiftCoeff_le_iff_stallSpeed_le hW hρ hS hCL hV).mp hadm
     rw [hVeq] at hVs
     exact hVs
   · intro hle
-    have hmd := minDragSpeed_pos hW hρ hS hCD0 hk
+    have hmd := minDragSpeed_pos hW.ne' hρ hS hCD0 hk
     refine ⟨minDragSpeed W ρ S CD0 k, hmd, ?_, ?_⟩
-    · exact (levelLiftCoeff_le_iff_stallSpeed_le hρ hS hCL hmd).mpr hle
+    · exact (levelLiftCoeff_le_iff_stallSpeed_le hW hρ hS hCL hmd).mpr hle
     · exact (levelDrag_eq_two_sqrt_iff_eq_minDragSpeed hρ hS hCD0 hk.le hmd).mpr rfl
 
-/-- An unconstrained minimizer below the stall speed is not an operating point: every positive
-speed with lift coefficient at most `CLmax` has drag strictly above `2 * √(a * b)`. -/
+/-- An unconstrained minimizer below the stall speed is not an operating point: for positive
+weight, every positive speed with lift coefficient at most `CLmax` has drag strictly above
+`2 * √(a * b)`. -/
 lemma two_sqrt_lt_levelDrag_of_minDragSpeed_lt_stallSpeed {W ρ S CD0 k CLmax V : ℝ}
-    (hρ : 0 < ρ) (hS : 0 < S) (hCD0 : 0 < CD0) (hk : 0 ≤ k) (hCL : 0 < CLmax)
+    (hW : 0 < W) (hρ : 0 < ρ) (hS : 0 < S) (hCD0 : 0 < CD0) (hk : 0 ≤ k) (hCL : 0 < CLmax)
     (hmd : minDragSpeed W ρ S CD0 k < stallSpeed W ρ S CLmax) (hV : 0 < V)
     (hadm : levelLiftCoeff W ρ S V ≤ CLmax) :
     2 * Real.sqrt (parasiteDragFactor ρ S CD0 * inducedDragFactor W ρ S k) <
       levelDrag W ρ S CD0 k V := by
   have hVs : stallSpeed W ρ S CLmax ≤ V :=
-    (levelLiftCoeff_le_iff_stallSpeed_le hρ hS hCL hV).mp hadm
+    (levelLiftCoeff_le_iff_stallSpeed_le hW hρ hS hCL hV).mp hadm
   have hne : V ≠ minDragSpeed W ρ S CD0 k := ne_of_gt (lt_of_lt_of_le hmd hVs)
   have hle : 2 * Real.sqrt (parasiteDragFactor ρ S CD0 * inducedDragFactor W ρ S k)
       ≤ levelDrag W ρ S CD0 k V :=
