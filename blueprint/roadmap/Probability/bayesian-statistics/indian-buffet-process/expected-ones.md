@@ -8,7 +8,7 @@ $$NK \cdot \frac{\alpha/K}{\alpha/K + 1}$$
 
 ## Informally uses
 
-- Prior predictive probability of a success: a Bernoulli trial whose success probability is $\mathrm{Beta}(a, b)$ succeeds with probability $a/(a + b)$.
+- [Prior predictive probability of a success](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/conjugate-priors/binomial-kernel-one-comp-beta-measure.md): a Bernoulli trial whose success probability is $\mathrm{Beta}(a, b)$ succeeds with probability $a/(a + b)$.
 
 ## Sources
 

@@ -5,7 +5,7 @@ For every term $M$ and valuation $bs$ of its bound variables, the denotation $\r
 ## Background
 
 - [Scott's continuity theorem for the graph model](scott-continuous-denote.md): continuity in the bound variables, used for the soundness of β.
-- Application in `P(ω)` is jointly Scott-continuous: the application case.
+- [Application in `P(ω)` is jointly Scott-continuous](../../../Order/fixed-points-domain-theory/scott-s-graph-model/scott-continuous-app.md): the application case.
 
 ## Sources
 

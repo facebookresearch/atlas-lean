@@ -4,7 +4,7 @@ If $(\lambda.M)\,N$ contracts to $M[N]$ by a β-step (with $\lambda.M$ and $N$ l
 
 ## Informally uses
 
-- Scott's graph theorem, part (i): Scott's proof notes that β "is just a restatement of Theorem 1.2 (i)".
+- [Scott's graph theorem, part (i)](../../../Order/fixed-points-domain-theory/scott-s-graph-model/app-graph.md): Scott's proof notes that β "is just a restatement of Theorem 1.2 (i)".
 - [Scott's continuity theorem for the graph model](scott-continuous-denote.md): the body of the abstraction denotes a continuous function.
 
 ## Background
