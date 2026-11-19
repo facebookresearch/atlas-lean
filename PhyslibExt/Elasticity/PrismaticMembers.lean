@@ -98,7 +98,8 @@ shear stress is `τ = q / t = T / (2 a b t)`, and `T = G J θ'` with the torsion
 rigidity, the `GJ` of the circular-shaft reading above. Not claimed: a convergence theorem from
 three-dimensional elasticity, warping restraint, or the open-section formula. Cutting one wall
 leaves wall resultants that do not sum to zero, so they are not a couple and no closed-cell torque
-is carried; a zero thickness leaves the compatibility law without content.
+is carried; at zero thickness the torsion constant vanishes, so no twist rate carries a nonzero
+torque.
 
 ## ii. Key results
 
@@ -130,7 +131,8 @@ is carried; a zero thickness leaves the compatibility law without content.
 - `isClosedCellCompatible_iff`: under the compatibility law the twist rate is
   `T (a + b) / (2 G a² b² t)`.
 - `wallShearStress_eq`, `closedCellTorsionConstant_eq`, `torque_eq_rigidity_mul_twistRate`:
-  `τ = q / t = T / (2 a b t)`, Bredt's torsion constant `J = 4 A² / ∑ ℓ / t`, and `T = G J θ'`.
+  `τ = q / t = T / (2 a b t)` for `t > 0`, Bredt's torsion constant `J = 4 A² / ∑ ℓ / t`, and
+  `T = G J θ'`.
 
 ## iii. Table of contents
 
@@ -1319,9 +1321,9 @@ lemma isClosedCellCompatible_iff {a b t G q θ' T : ℝ} {O : Fin 3 → ℝ} (ha
     field_simp at h ⊢
     linear_combination -2 * h
 
-/-- **Shear stress.** For `a, b ≠ 0` the wall shear stress is `τ = q / t = T / (2 a b t)`, where
-`T` is the torque of the wall resultants. -/
-lemma wallShearStress_eq {a b t q T : ℝ} {O : Fin 3 → ℝ} (ha : a ≠ 0) (hb : b ≠ 0)
+/-- **Shear stress.** For `a, b ≠ 0` and a wall thickness `t > 0` the wall shear stress is
+`τ = q / t = T / (2 a b t)`, where `T` is the torque of the wall resultants. -/
+lemma wallShearStress_eq {a b t q T : ℝ} {O : Fin 3 → ℝ} (ha : a ≠ 0) (hb : b ≠ 0) (ht : 0 < t)
     (hT : T = momentAbout (cellWallMidpoint a b) (cellWallForce a b q) (fun _ => 0) O 2) :
     wallShearStress q t = T / (2 * a * b * t) := by
   have hT' : T = 2 * a * b * q := by
@@ -1329,9 +1331,8 @@ lemma wallShearStress_eq {a b t q T : ℝ} {O : Fin 3 → ℝ} (ha : a ≠ 0) (h
     simp
   unfold wallShearStress
   rw [hT']
-  by_cases ht : t = 0
-  · simp [ht]
-  · field_simp
+  have ht' : t ≠ 0 := ne_of_gt ht
+  field_simp
 
 /-- **The torsion constant is Bredt's.** For `a, b, t > 0`,
 `J = 4 A² / ∑ walls (ℓ / t)` with `A = a b`, and `J > 0`. -/

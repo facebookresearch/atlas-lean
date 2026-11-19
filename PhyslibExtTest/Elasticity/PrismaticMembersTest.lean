@@ -23,8 +23,8 @@ import Mathlib.Tactic.NormNum
   reaction there, which balances the loads, and the same data read as a shaft;
 * two free ends: an incompatible net load and a rigid translation;
 * the thin closed rectangular cell: a nonzero torque and its reversal at SI data, an open wall
-  whose resultants are not a couple, and a zero thickness, which leaves the compatibility law
-  without content.
+  whose resultants are not a couple, and a zero thickness, whose torsion constant vanishes, so that
+  no twist rate carries the cell torque.
 -/
 
 @[expose] public section
@@ -208,6 +208,16 @@ lemma fixture_cell_torque_reversal :
   rw [Fin.sum_univ_four]
   norm_num
 
+/-- The shear-stress lemma at the same cell: with the wall thickness `t = 0.005 m > 0` and the
+torque `T = 1000 N m` of the wall resultants, `τ = T / (2 a b t) = 1000 / 0.0002 = 5 MPa`, the value
+`q / t` above. -/
+example : wallShearStress 25000 (1 / 200) = 1000 / (2 * (1 / 5) * (1 / 10) * (1 / 200)) ∧
+    (1000 : ℝ) / (2 * (1 / 5) * (1 / 10) * (1 / 200)) = 5000000 := by
+  refine ⟨wallShearStress_eq (a := 1 / 5) (b := 1 / 10) (O := 0) (by norm_num) (by norm_num)
+    (by norm_num) ?_, by norm_num⟩
+  rw [momentAbout_cellWall]
+  norm_num
+
 /-- **An open wall breaks the closed cell.** With the left wall cut, the three remaining wall
 resultants of a nonzero shear flow have the nonzero sum `(0, q b, 0)`, so they are not a couple:
 their moment depends on the reference point, and no single torque `2 a b q` is carried. -/
@@ -230,15 +240,14 @@ lemma openCell_not_couple {a b q : ℝ} (hb : b ≠ 0) (hq : q ≠ 0) :
     simp only [add_zero, Pi.sub_apply, cross_apply, Pi.zero_apply] at h2
     simp [hq, hb, eq_sub_iff_add_eq] at h2
 
-/-- **A zero thickness is rejected.** For `t = 0` the compatibility law accepts the twist rate `0`
-under every shear flow, and for `a, b > 0` and `q ≠ 0` no twist rate reproduces the cell torque
-`2 a b q` through the rigidity `G J`, since `J = 0`. -/
+/-- **A zero thickness is rejected.** A wall of zero thickness gives the torsion constant `J = 0`,
+so for `a, b > 0` and `q ≠ 0` no twist rate reproduces the cell torque `2 a b q` through the
+rigidity `G J`. -/
 lemma zeroThickness_rejected {a b G q : ℝ} (ha : 0 < a) (hb : 0 < b) (hq : q ≠ 0) :
-    IsClosedCellCompatible a b 0 G q 0 ∧
+    closedCellTorsionConstant a b 0 = 0 ∧
       ∀ θ' : ℝ, 2 * a * b * q ≠ G * closedCellTorsionConstant a b 0 * θ' := by
   constructor
-  · unfold IsClosedCellCompatible cellWallLength
-    rw [Fin.sum_univ_four]
+  · unfold closedCellTorsionConstant
     simp
   · intro θ'
     unfold closedCellTorsionConstant
