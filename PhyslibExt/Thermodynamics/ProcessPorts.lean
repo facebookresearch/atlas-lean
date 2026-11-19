@@ -11,12 +11,12 @@ public import PhyslibExt.Chemistry.Thermodynamics.FirstLaw
 
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
-import PhyslibExt.Chemistry.Thermodynamics.Thermochemistry
 
 /-!
 # Process ports: the engineering work-out sign adapter
@@ -39,12 +39,13 @@ of `(n, R)`, and the adiabatic pressure ratio is `idealGasP_ratio_of_log_relatio
 coefficient `k = m * Rs`.
 
 Variable heat capacity: when the internal energy `U` has temperature derivative `Cv T`, the
-energy change is `ΔU = ∫ T in T₁..T₂, Cv T`, which is `kirchhoff_law` of
-`PhyslibExt.Chemistry.Thermodynamics.Thermochemistry` read with `U` in place of the enthalpy, and
-the engineering balance is `Q_in - W_out = ∫ Cv`. A continuous positive `Cv` makes `U` strictly
-increasing. For the linear model `Cv T = a + b * T` the exact change minus the endpoint estimate
-`Cv T₁ * (T₂ - T₁)` is the signed amount `b * (T₂ - T₁) ^ 2 / 2`, whose sign is that of `b`. No
-heat-capacity fit is claimed and `Cv` is never inferred from a substance.
+energy change is `ΔU = ∫ T in T₁..T₂, Cv T`, the identity of `kirchhoff_law` in
+`PhyslibExt.Chemistry.Thermodynamics.Thermochemistry` read with `U` in place of the enthalpy; it
+is proved here directly from the fundamental theorem of calculus, without importing the chemistry
+library. The engineering balance is `Q_in - W_out = ∫ Cv`. A continuous positive `Cv` makes `U`
+strictly increasing. For the linear model `Cv T = a + b * T` the exact change minus the endpoint
+estimate `Cv T₁ * (T₂ - T₁)` is the signed amount `b * (T₂ - T₁) ^ 2 / 2`, whose sign is that of
+`b`. No heat-capacity fit is claimed and `Cv` is never inferred from a substance.
 
 Model inputs: the ideal-gas equation of state and the first law as encoded by the existing
 declarations; temperatures are absolute (`T > 0`); volumes, amounts, masses and gas constants
@@ -239,16 +240,17 @@ lemma idealGasP_ratio_of_specific_log_relation {m Rs cv γ T₁ T₂ V₁ V₂ :
 
 /-! ## D. Variable heat capacity -/
 
-/-- Variable-heat-capacity energy change, `kirchhoff_law` for the internal energy: if `U` has
-temperature derivative `Cv T` at every temperature between `T₁` and `T₂` and `Cv` is
-interval-integrable, then `ΔU = U T₂ - U T₁ = ∫ T in T₁..T₂, Cv T`. The temperatures may be in
-either order (heating or cooling). -/
+/-- Variable-heat-capacity energy change, the identity of `kirchhoff_law`
+(`PhyslibExt.Chemistry.Thermodynamics.Thermochemistry`) for the internal energy, proved here
+directly from the fundamental theorem of calculus: if `U` has temperature derivative `Cv T` at
+every temperature between `T₁` and `T₂` and `Cv` is interval-integrable, then
+`ΔU = U T₂ - U T₁ = ∫ T in T₁..T₂, Cv T`. The temperatures may be in either order (heating or
+cooling). -/
 lemma internalEnergy_sub_eq_integral (U Cv : ℝ → ℝ) (T₁ T₂ : ℝ)
     (hU : ∀ T ∈ Set.uIcc T₁ T₂, HasDerivAt U (Cv T) T)
     (hCv : IntervalIntegrable Cv MeasureTheory.volume T₁ T₂) :
     U T₂ - U T₁ = ∫ T in T₁..T₂, Cv T := by
-  have h := kirchhoff_law U Cv T₁ T₂ hU hCv
-  linarith
+  exact (intervalIntegral.integral_eq_sub_of_hasDerivAt hU hCv).symm
 
 /-- Engineering energy balance with variable heat capacity: if the energy change obeys the
 IUPAC first law `U T₂ - U T₁ = q + w` and `U' = Cv` as in `internalEnergy_sub_eq_integral`, then
