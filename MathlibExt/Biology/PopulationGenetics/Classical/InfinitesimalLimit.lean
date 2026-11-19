@@ -10,7 +10,6 @@ module
 
 public import MathlibExt.Probability.BerryEsseen
 public import Mathlib.Probability.Moments.Variance
-import Mathlib.Probability.Independence.InfinitePi
 
 /-!
 # A Berry–Esseen bound for Mendelian segregation
@@ -297,40 +296,5 @@ theorem abs_mendelian_segregation_cdf_sub_le {P : Measure Ω} [IsProbabilityMeas
   have h := mendelLaw_compl_Icc (g₁ l) (g₂ l)
   rw [← hlaw l, Measure.map_apply (hXm l) measurableSet_Icc.compl] at h
   exact ae_iff.2 h
-
-/-! ### Non-vacuity and the degenerate case -/
-
-/-- `Φ(0) = 1/2` for the standard normal law (symmetry and no atom at `0`). -/
-private theorem gaussianReal_real_Iic_zero : (gaussianReal 0 1).real (Set.Iic 0) = 1 / 2 := by
-  have hv : (1 : NNReal) ≠ 0 := one_ne_zero
-  have := nullSingletonClass_gaussianReal (μ := (0 : ℝ)) hv
-  have hsymm : gaussianReal 0 1 (Set.Iic 0) = gaussianReal 0 1 (Set.Ici 0) := by
-    have h := gaussianReal_map_neg (μ := (0 : ℝ)) (v := 1)
-    rw [neg_zero] at h
-    conv_lhs => rw [← h]
-    rw [Measure.map_apply measurable_neg measurableSet_Iic]
-    congr 1
-    ext x
-    simp
-  have hIci : gaussianReal 0 1 (Set.Ici 0) = gaussianReal 0 1 (Set.Ioi 0) := by
-    refine le_antisymm ?_ (measure_mono Set.Ioi_subset_Ici_self)
-    calc gaussianReal 0 1 (Set.Ici 0) = gaussianReal 0 1 ({0} ∪ Set.Ioi 0) := by
-          rw [Set.singleton_union, Set.Ioi_insert]
-      _ ≤ gaussianReal 0 1 {0} + gaussianReal 0 1 (Set.Ioi 0) := measure_union_le _ _
-      _ = gaussianReal 0 1 (Set.Ioi 0) := by rw [measure_singleton, zero_add]
-  have htot : gaussianReal 0 1 (Set.Iic 0) + gaussianReal 0 1 (Set.Ioi 0) = 1 := by
-    rw [← measure_union (Set.disjoint_left.2 fun x hx hy => by
-      simp only [Set.mem_Iic, Set.mem_Ioi] at hx hy; linarith) measurableSet_Ioi,
-      Set.Iic_union_Ioi, measure_univ]
-  have h2 : 2 * gaussianReal 0 1 (Set.Iic 0) = 1 := by
-    rw [two_mul]
-    conv_lhs => arg 2; rw [hsymm, hIci]
-    exact htot
-  have hne : gaussianReal 0 1 (Set.Iic 0) ≠ ⊤ := measure_ne_top _ _
-  rw [Measure.real]
-  have h2' := congrArg ENNReal.toReal h2
-  rw [ENNReal.toReal_mul, ENNReal.toReal_one] at h2'
-  simp only [ENNReal.toReal_ofNat] at h2'
-  linarith
 
 end MathlibExt.Biology.PopulationGenetics.Classical.InfinitesimalLimit
