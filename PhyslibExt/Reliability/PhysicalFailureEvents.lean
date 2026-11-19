@@ -46,7 +46,8 @@ and allowable `K_IC`. For a positive demand the margin of safety
 `A / s - 1` has the sign of `A - s`; it takes a proof of `0 < s`, since
 at zero demand Lean's `A / 0 = 0` would report a false failure. One
 axial load path is instantiated: the fixed-fixed bar of
-`PhyslibExt.Elasticity.PrismaticMembers` under a uniform load `q` has
+`PhyslibExt.Elasticity.PrismaticMembers` (`0 < L`, axial rigidity
+`0 < EA`, cross-section area `0 < A_cs`) under a uniform load `q` has
 the axial stress `EA u'(x) / A_cs = q (L - 2 x) / (2 A_cs)`, and a
 supplied yield functional calibrated by the tensile test (it returns
 `|σ|` on the uniaxial state `diag(σ, 0, 0)`) turns it into the demand
@@ -515,14 +516,19 @@ tensile test when it returns `|σ|` on every uniaxial state `diag(σ, 0, 0)`. -/
 def UniaxialCalibrated (Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ) : Prop :=
   ∀ σ : ℝ, Φ (Matrix.diagonal ![σ, 0, 0]) = |σ|
 
-/-- The axial normal stress `EA u'(x) / A_cs` of the fixed-fixed bar with axial rigidity `EA`,
-length `L` and uniform load `q`, at the section `x` of cross-section area `A_cs`. -/
+/-- The axial normal stress `EA u'(x) / A_cs` at the section `x` of cross-section area `A_cs` for
+the closed-form uniform-load displacement `u = axialDisplacement EA L q`, which for `0 < L` and
+`0 < EA` solves the fixed-fixed bar problem (`isFixedFixedSolution_axialDisplacement`). -/
 noncomputable def axialStress (EA L q Acs x : ℝ) : ℝ :=
   EA * deriv (Elasticity.PrismaticMembers.axialDisplacement EA L q) x / Acs
 
-/-- The axial stress of the uniformly loaded fixed-fixed bar is `q (L - 2 x) / (2 A_cs)`. -/
-lemma axialStress_eq {EA : ℝ} (hEA : EA ≠ 0) (L q Acs x : ℝ) :
+/-- For positive axial rigidity and cross-section area, the axial stress of the closed-form
+uniform-load displacement is `q (L - 2 x) / (2 A_cs)`; for `0 < L` this is the stress of the
+fixed-fixed bar. -/
+lemma axialStress_eq {EA Acs : ℝ} (hEA : 0 < EA) (hAcs : 0 < Acs) (L q x : ℝ) :
     axialStress EA L q Acs x = q * (L - 2 * x) / (2 * Acs) := by
+  have hEA' : EA ≠ 0 := hEA.ne'
+  have hAcs' : Acs ≠ 0 := hAcs.ne'
   have hd : deriv (Elasticity.PrismaticMembers.axialDisplacement EA L q) x =
       q * (L - 2 * x) / (2 * EA) := by
     have h : HasDerivAt (Elasticity.PrismaticMembers.axialDisplacement EA L q)
@@ -543,17 +549,17 @@ lemma axialStress_eq {EA : ℝ} (hEA : EA ≠ 0) (L q Acs x : ℝ) :
   field_simp
 
 /-- Through a calibrated yield functional, the demand at the section `x` is
-`|q (L - 2 x)| / (2 A_cs)`. -/
+`|q (L - 2 x)| / (2 A_cs)`, for positive axial rigidity and cross-section area. -/
 lemma axialDemand_eq {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} (hΦ : UniaxialCalibrated Φ)
-    {EA Acs : ℝ} (hEA : EA ≠ 0) (hAcs : 0 < Acs) (L q x : ℝ) :
+    {EA Acs : ℝ} (hEA : 0 < EA) (hAcs : 0 < Acs) (L q x : ℝ) :
     Φ (Matrix.diagonal ![axialStress EA L q Acs x, 0, 0]) = |q * (L - 2 * x)| / (2 * Acs) := by
   unfold UniaxialCalibrated at hΦ
-  rw [hΦ, axialStress_eq hEA, abs_div, abs_of_pos (by positivity : (0 : ℝ) < 2 * Acs)]
+  rw [hΦ, axialStress_eq hEA hAcs, abs_div, abs_of_pos (by positivity : (0 : ℝ) < 2 * Acs)]
 
-/-- The bar fails at some section of `[0, L]` exactly when the end-section demand reaches the
-allowable: `2 A_cs A ≤ |q| L`. -/
+/-- The fixed-fixed bar (`0 < L`, `0 < EA`, `0 < A_cs`) fails at some section of `[0, L]` exactly
+when the end-section demand reaches the allowable: `2 A_cs A ≤ |q| L`. -/
 lemma axialBar_failure_iff {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} (hΦ : UniaxialCalibrated Φ)
-    {EA Acs L : ℝ} (hEA : EA ≠ 0) (hAcs : 0 < Acs) (hL : 0 ≤ L) (q A : ℝ) :
+    {EA Acs L : ℝ} (hEA : 0 < EA) (hAcs : 0 < Acs) (hL : 0 < L) (q A : ℝ) :
     (∃ x ∈ Set.Icc 0 L, demandFailure A (Φ (Matrix.diagonal ![axialStress EA L q Acs x, 0, 0]))) ↔
       2 * Acs * A ≤ |q| * L := by
   simp only [axialDemand_eq hΦ hEA hAcs, demandFailure]
@@ -568,8 +574,8 @@ lemma axialBar_failure_iff {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} (hΦ : Unia
       constructor <;> linarith
     linarith
   · intro h
-    refine ⟨0, ⟨le_refl 0, hL⟩, ?_⟩
-    rw [le_div_iff₀ h2, abs_mul, mul_zero, sub_zero, abs_of_nonneg hL]
+    refine ⟨0, ⟨le_refl 0, hL.le⟩, ?_⟩
+    rw [le_div_iff₀ h2, abs_mul, mul_zero, sub_zero, abs_of_pos hL]
     linarith
 
 end Reliability
