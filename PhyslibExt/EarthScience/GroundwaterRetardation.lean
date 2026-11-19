@@ -86,8 +86,9 @@ the sorbed part is mass on the solids in the same bulk cell. -/
 noncomputable def storedMass (V phi rho_b Kd c : ℝ) : ℝ :=
   V * totalStorage phi rho_b Kd c
 
-/-- Positive scalar converting aqueous concentration to stored
-mass in one fixed bulk cell: `V * (phi + rho_b * Kd)`. -/
+/-- Scalar coefficient converting aqueous concentration to stored
+mass in one fixed bulk cell: `V * (phi + rho_b * Kd)`. It is
+positive under the hypotheses of `storedMassCoefficient_pos`. -/
 noncomputable def storedMassCoefficient (V phi rho_b Kd : ℝ) : ℝ :=
   V * (phi + rho_b * Kd)
 
