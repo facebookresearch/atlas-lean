@@ -107,6 +107,18 @@ def archComponent (w : InfinitePlace L) :
   Algebra.TensorProduct.lift (InfinitePlace.scalarCompletionAlgHom w)
     (adeleCompletionAlgHom w) (fun _ _ => Commute.all _ _)
 
+/-- The component at `w` of the archimedean base-change map, as an
+`L`-algebra homomorphism for the left-factor `L`-algebra structure on
+`L ⊗[K] InfiniteAdeleRing K`. -/
+def archComponentL (w : InfinitePlace L) :
+    (L ⊗[K] InfiniteAdeleRing K) →ₐ[L] w.Completion where
+  toRingHom := (archComponent (K := K) (L := L) w).toRingHom
+  commutes' l := by
+    show archComponent (K := K) (L := L) w (l ⊗ₜ[K] (1 : InfiniteAdeleRing K)) =
+      algebraMap L w.Completion l
+    simp [archComponent, Algebra.TensorProduct.lift_tmul,
+      InfinitePlace.scalarCompletionAlgHom]
+
 /-- The canonical archimedean base-change ring homomorphism from
 `L ⊗[K] InfiniteAdeleRing K` to `InfiniteAdeleRing L` (the map underlying
 the usual identification; bijectivity is not proved here). Its component at
@@ -115,6 +127,21 @@ below `w` and multiplies by the image of the scalar from `L`. -/
 def archBaseChange (K L : Type*) [Field K] [NumberField K] [Field L] [NumberField L]
     [Algebra K L] : (L ⊗[K] InfiniteAdeleRing K) →+* InfiniteAdeleRing L :=
   RingHom.pi fun w => (archComponent (K := K) (L := L) w).toRingHom
+
+/-- The archimedean base-change map as an `L`-algebra homomorphism, for the
+left-factor `L`-algebra structure on `L ⊗[K] InfiniteAdeleRing K`. -/
+def archBaseChangeAlgHom (K L : Type*) [Field K] [NumberField K] [Field L]
+    [NumberField L] [Algebra K L] :
+    (L ⊗[K] InfiniteAdeleRing K) →ₐ[L] InfiniteAdeleRing L where
+  toRingHom := archBaseChange K L
+  commutes' l := by
+    funext w
+    show archComponent (K := K) (L := L) w (algebraMap L _ l) = _
+    exact (archComponentL (K := K) (L := L) w).commutes' l
+
+theorem archBaseChangeAlgHom_toRingHom :
+    (archBaseChangeAlgHom K L).toRingHom = archBaseChange K L :=
+  rfl
 
 theorem archBaseChange_apply (z : L ⊗[K] InfiniteAdeleRing K) (w : InfinitePlace L) :
     archBaseChange K L z w = archComponent (K := K) (L := L) w z :=
