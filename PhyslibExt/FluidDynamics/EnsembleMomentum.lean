@@ -33,11 +33,14 @@ import Mathlib.Probability.Moments.CovarianceBilin
 An ensemble of flow realizations is a probability space `(Ω, μ)`; realization `ω` has velocity
 `u ω τ y`, Cauchy stress `σ ω τ y` (`σ ω τ y j i` is the `j`-th traction component on a surface of
 unit normal `eᵢ`; for a fluid `σ = -p I + τ` with pressure `p`) and body force density `f ω τ y`,
-on `Fin (n + 1) → ℝ` at constant density `ρ` (incompressible flow). Each realization obeys, almost
-surely, the local Cauchy momentum law of `PhyslibExt.ContinuumMechanics.ControlVolumes`,
+on `Fin (n + 1) → ℝ` at constant density `ρ`. Each realization obeys, almost surely, the local
+Cauchy momentum law of `PhyslibExt.ContinuumMechanics.ControlVolumes`,
 `∂ₜ(ρ uⱼ) + div (momentumFlux ρ u σ j) = fⱼ`, whose flux has the components
 `ρ uⱼ uᵢ - σⱼᵢ`. Ensemble means are `𝔼[·] = ∫ · ∂μ`, the fluctuation is `u' = u - 𝔼[u]`, and the
 Reynolds stress per unit density is `𝔼[u'ⱼ u'ᵢ]`, the covariance of the velocity components.
+Constant density alone does not make the flow incompressible: no continuity equation or
+divergence-free condition is assumed by the mean momentum equation, and `div u = 0` enters only
+`divergence_ensembleMean_eq_zero`, as its hypothesis.
 
 Averaging the law needs three facts, all proved from stated hypotheses rather than assumed:
 differentiation under the ensemble integral in time and in space (Mathlib's
@@ -49,10 +52,10 @@ result is the exact mean momentum equation
 `∂ₜ(ρ 𝔼[uⱼ]) + div (momentumFlux ρ 𝔼[u] 𝔼[σ] j) = 𝔼[fⱼ] - ρ div 𝔼[u'ⱼ u']`: the mean flow obeys
 the same law with the extra divergence of the Reynolds stress. That stress is a positive
 semidefinite form, the covariance form of the velocity law (`isPosSemidef_covarianceBilin`), and
-it vanishes when the realizations do not fluctuate, which recovers the laminar law. The mean of
-an incompressible ensemble is incompressible. Without the domination hypothesis the interchange
-of derivative and ensemble mean fails: section C gives an ensemble on `(0, 1]` whose
-realizations all have derivative `0` at a point where the mean has derivative `1`.
+it vanishes when the realizations do not fluctuate, which recovers the laminar law. If almost
+every realization is divergence free at a point, so is the mean there. Without the domination
+hypothesis the interchange of derivative and ensemble mean fails: section C gives an ensemble on
+`(0, 1]` whose realizations all have derivative `0` at a point where the mean has derivative `1`.
 
 ## ii. Key results
 
@@ -64,7 +67,8 @@ realizations all have derivative `0` at a point where the mean has derivative `1
 - `FluidDynamics.EnsembleMomentum.reynoldsStress_eq_zero_of_ae_eq`: zero fluctuation gives zero
   Reynolds stress and the laminar mean.
 - `FluidDynamics.EnsembleMomentum.mean_momentum`: the exact mean momentum equation.
-- `FluidDynamics.EnsembleMomentum.divergence_ensembleMean_eq_zero`: mean incompressibility.
+- `FluidDynamics.EnsembleMomentum.divergence_ensembleMean_eq_zero`: divergence-free realizations
+  have a divergence-free mean.
 - `FluidDynamics.EnsembleMomentum.escapingProfile_interchange_fails`: without domination the
   interchange of derivative and ensemble mean fails.
 
