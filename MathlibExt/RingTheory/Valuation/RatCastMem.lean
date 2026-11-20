@@ -28,7 +28,7 @@ Released under the Apache License, Version 2.0.
 
 module
 
-public import Mathlib.Data.Int.GCD
+import Mathlib.Data.Int.GCD
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import Mathlib.RingTheory.Valuation.ValuationSubring
 
