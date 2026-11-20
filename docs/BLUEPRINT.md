@@ -122,7 +122,8 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
     held to the same standard as any article: it states its result precisely
     and cites the source it follows, and a reviewer checks the statement
     against that source. Once its Lean exists, its annotation links the
-    declaration and the page follows rules 7 and 9. *Reason:* nothing else
+    declaration and the page drops its own dependency sections, following
+    rules 7 and 9 from then on. *Reason:* nothing else
     records a planned node's prerequisites, and a planned page is the graph's
     record of mathematics not yet in Lean.
 11. **`## Informally uses` lists only results the cited proof uses** but the
