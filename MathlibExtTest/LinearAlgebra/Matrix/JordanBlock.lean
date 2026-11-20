@@ -88,8 +88,13 @@ run_cmd do
     unless (← liftTermElabM <| Meta.isDefEq actual.type wanted) do
       throwError "full Jordan-block TYPE changed {name}: actual {actual.type}; expected {wanted}"
     let body := ev.instantiateLevelParams expected.levelParams levels
-    unless (← liftTermElabM <| Meta.isDefEq av body) do
-      throwError "literal Jordan-block DATA changed {name}"
+    if ← liftTermElabM <| Meta.isProof av then
+      -- Proof irrelevance makes definitional equality unsuitable for proof DATA.
+      unless av.cleanupAnnotations == body.cleanupAnnotations do
+        throwError "literal Jordan-block proof DATA changed {name}"
+    else
+      unless (← liftTermElabM <| Meta.isDefEq av body) do
+        throwError "literal Jordan-block DATA changed {name}"
   let owned := pairs.map (·.1) ++ #[fix ++ `jordanBlock_diagonal,
     fix ++ `jordanBlock_zero, fix ++ `jordanBlock_finTwo_entries]
   let standard : Array Name := #[`propext, `Classical.choice, `Quot.sound]
