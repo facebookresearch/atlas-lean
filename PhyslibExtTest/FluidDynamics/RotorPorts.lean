@@ -23,8 +23,9 @@ throughflow and with it the torque, the power and the shaft power: read with the
 the same ports form a turbine. Blade forces `(0, ±90, 0)` at radius `1` meet these balances, so
 both fixtures and the compressor and turbine signs apply with every hypothesis discharged. The
 representative azimuth and station of a port do not enter its lumped axial angular-momentum flux.
-Ports with equal angular momentum per unit mass (`1/10 · 150 = 3/10 · 50`) take no torque, power
-or shaft power. The rotor-relative swirl of the compressor ports at `ω = 1000`, `-100` and
+Ports with equal specific axial angular momentum `r c_θ` (`1/10 · 150 = 3/10 · 50`) take no
+torque, power or shaft power, while equal swirl velocities at different radii do not suffice.
+The rotor-relative swirl of the compressor ports at `ω = 1000`, `-100` and
 `-150`, gives `-70` in the Euler expression instead of the torque `90`.
 
 For the actuator disk: the disk with `U∞ = 3`, `U_d = 2`, `U_w = 1` satisfies the port laws, has
@@ -47,8 +48,8 @@ These are elaboration and non-vacuity checks, not new results.
 
 No new results are introduced here. Section A defines the compressor ports and computes the torque,
 power and shaft power in both flow directions; section B realizes them by blade forces and applies
-the sign, zero-swirl and swirl lemmas; section C checks the actuator disk and section D the hovering
-rotor.
+the sign, equal-angular-momentum and swirl lemmas; section C checks the actuator disk and section D
+the hovering rotor.
 
 ## iii. Table of contents
 
@@ -239,18 +240,33 @@ example :
     norm_num [fixtureInlet, fixtureOutlet]
   exact ⟨hP, hW, ht1.2 hU, ht2.2 hU⟩
 
-/-- No swirl change: for rotor forces with the steady lumped balance between ports of equal angular
-momentum per unit mass, `1/10 · 150 = 3/10 · 50`, the torque on the fluid, the power of the forces
-and the shaft power out of a steadily turning rotor vanish, whatever the rotor speed. -/
+/-- Equal specific angular momentum: for rotor forces with the steady lumped balance between
+ports of equal specific axial angular momentum, `1/10 · 150 = 3/10 · 50`, with different swirl
+velocities, the torque on the fluid, the power of the forces and the shaft power out of a steadily
+turning rotor vanish, whatever the rotor speed. -/
 example {ι : Type*} [Fintype ι] {o : Fin 3 → ℝ} {x F : ι → Fin 3 → ℝ} {ω τShaft τReaction : ℝ}
     (hbal : axialTorque o x F = axialMomentFlux o { fixtureInlet with cθ := 150 } +
       axialMomentFlux o { fixtureOutlet with cθ := 50 })
     (hrotor : τShaft + τReaction = 0) (hreact : τReaction = -axialTorque o x F) :
     axialTorque o x F = 0 ∧ rotorPower ω o x F = 0 ∧ ProcessPorts.workOut (ω * τShaft) = 0 := by
-  refine torqueOnFluid_eq_zero_of_swirl (mdot := 2) ?_ ?_ hbal ?_ hrotor hreact
+  refine torqueOnFluid_eq_zero_of_specificAngularMomentum_eq (mdot := 2) ?_ ?_ hbal ?_ hrotor hreact
   · rw [lumpedMassFlow_eq]; norm_num [fixtureInlet]
   · rw [lumpedMassFlow_eq]; norm_num [fixtureOutlet]
   · norm_num [fixtureInlet, fixtureOutlet]
+
+/-- Equal swirl velocities do not suffice: between ports with the same swirl `150` at the radii
+`1/10` and `3/10` the specific axial angular momentum rises from `15` to `45`, and rotor forces with
+the steady lumped balance exert the torque `2 · (45 - 15) = 60` on the fluid. -/
+example {ι : Type*} [Fintype ι] {o : Fin 3 → ℝ} {x F : ι → Fin 3 → ℝ}
+    (hbal : axialTorque o x F = axialMomentFlux o { fixtureInlet with cθ := 150 } +
+      axialMomentFlux o { fixtureOutlet with cθ := 150 }) :
+    axialTorque o x F = 60 := by
+  have hin : ({ fixtureInlet with cθ := 150 } : RotorPort).lumpedMassFlow = -2 := by
+    rw [lumpedMassFlow_eq]; norm_num [fixtureInlet]
+  have hout : ({ fixtureOutlet with cθ := 150 } : RotorPort).lumpedMassFlow = 2 := by
+    rw [lumpedMassFlow_eq]; norm_num [fixtureOutlet]
+  rw [(powerOnFluid_eq (ω := 0) hin hout hbal).1]
+  norm_num [fixtureInlet, fixtureOutlet]
 
 /-- The swirl in the Euler formula is inertial: at `ω = 1000` the rotor-relative swirl of the
 compressor ports is `-100` and `-150`, and the Euler expression with it gives `-70`, not the
