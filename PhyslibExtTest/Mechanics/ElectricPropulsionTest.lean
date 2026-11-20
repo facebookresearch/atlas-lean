@@ -24,7 +24,7 @@ import Mathlib.Tactic.NormNum
   at rest follows the constant-force trajectory of `PowerPorts`, crosses the gap `[0, 1]` at
   `t = 2/3` and leaves at the speed `√(2 · 1 · 9 / 2)` given by the work-energy lemma.
 * Xenon ions with the exact SI elementary charge and Avogadro constant: the molar flow is
-  `I_b / F`, and the molar mass in place of the ion mass overstates the mass flow by `N_A`.
+  `I_b / F`, and the molar mass in place of the ion mass multiplies the mass flow by `N_A`.
 * Zero beam current gives zero mass flow and a zero efficiency denominator, while each ion would
   still leave at a positive speed.
 -/
@@ -115,7 +115,7 @@ example :
 
 -- Xenon ions (molar mass `0.13129` kg/mol, charge number `1`) with the exact SI elementary charge
 -- and Avogadro constant: the beam current `1` carries the molar flow `1 / F`, `F = e N_A`, and the
--- molar mass in place of the ion mass overstates the mass flow by the factor `N_A`.
+-- molar mass in place of the ion mass multiplies the mass flow by the factor `N_A`.
 example :
     beamMassFlow (0.13129 / 6.02214076e23) (1 * 1.602176634e-19) 1 =
         1 / (1 * (1.602176634e-19 * 6.02214076e23)) * 0.13129 ∧

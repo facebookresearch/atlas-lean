@@ -30,8 +30,9 @@ and the work of the conservative force with the potential energy `q_i φ`,
 energy `m_i v² / 2 = q_i V_b` at the exit, so the exhaust speed is `v_e = √(2 q_i V_b / m_i)`; this
 identity needs only `m_i > 0`. A beam current `I_b > 0` carries `I_b / q_i` ions per unit time,
 hence the mass flow `ṁ = I_b m_i / q_i`; a molar flow needs the Avogadro constant `N_A`,
-`ṁ = (I_b / (z F)) M` with the Faraday constant `F = e N_A`, not the molar mass in place of the ion
-mass. The beam carries the kinetic power `ṁ v_e² / 2 = I_b V_b`, the beam power `P_beam`.
+`ṁ = (I_b / (z F)) M` with the Faraday constant `F = e N_A`, and putting the molar mass in place of
+the ion mass multiplies the mass flow by `N_A`. The beam carries the kinetic power
+`ṁ v_e² / 2 = I_b V_b`, the beam power `P_beam`.
 
 With the divergence factor `γ_div ∈ [0, 1]` (the mean axial cosine of the ion velocities) the
 thrust is `T = ṁ v_e γ_div`: in the separate-flow thrust of `PropulsionPorts` the thruster is a
@@ -41,11 +42,12 @@ power `P_in > 0` with `P_beam ≤ P_in`, the thrust efficiency is
 `T² / (2 ṁ P_in) = (P_beam / P_in) γ_div² ≤ 1`. Zero beam current gives `ṁ = 0`, and the
 efficiency denominator vanishes.
 
-Model inputs: the monoenergetic single-charge-state beam with ions starting at rest, the beam mass
-flow as the only propellant flow, the divergence factor, and `P_in` as the electrical input power.
-Non-goals: no plasma, discharge or neutral-loss model (the losses `P_in - P_beam` are not
-modeled), no doubly charged ions, no space-charge limit, and no empirical adequacy or system
-safety claim.
+Model inputs: the monoenergetic beam of a single charge state, of any charge number (`q_i` is any
+positive charge, such as `z e`), with ions starting at rest, the beam mass flow as the only
+propellant flow, the divergence factor, and `P_in` as the electrical input power. Non-goals: no
+plasma, discharge or neutral-loss model (the losses `P_in - P_beam` are not modeled), no mixed
+charge-state populations (such as singly and doubly charged ions in one beam), no space-charge
+limit, and no empirical adequacy or system safety claim.
 
 ## ii. Key results
 
@@ -173,8 +175,8 @@ lemma beamMassFlow_of_current {mi qi Ib ndot : ℝ} (hqi : 0 < qi) (hI : Ib = nd
 /-- **Molar flow needs the Avogadro constant.** For ions of molar mass `M` and charge number
 `z > 0`, with the elementary charge `e > 0` and the Avogadro constant `N_A > 0`, the ion mass is
 `M / N_A` and the charge `z e`: the beam mass flow is the molar flow `I_b / (z F)`, `F = e N_A`,
-times `M`, and putting the molar mass in place of the ion mass overstates it by the factor
-`N_A`. -/
+times `M`, and putting the molar mass in place of the ion mass multiplies the mass flow by the
+factor `N_A`. -/
 lemma beamMassFlow_molar {M e NA z Ib : ℝ} (he : 0 < e) (hNA : 0 < NA) (hz : 0 < z) :
     beamMassFlow (M / NA) (z * e) Ib = Ib / (z * (e * NA)) * M ∧
       beamMassFlow M (z * e) Ib = NA * beamMassFlow (M / NA) (z * e) Ib := by
