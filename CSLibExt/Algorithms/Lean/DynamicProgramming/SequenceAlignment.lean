@@ -1212,7 +1212,7 @@ private theorem le_listMax_of_mem {xs : List ℤ} {a : ℤ} (ha : a ∈ xs) : a 
     | inr h => exact le_trans (ih h) (le_max_right _ _)
 
 /-- The list maximum is `0` or an element of the list. -/
-private theorem listMax_mem {xs : List ℤ} : listMax xs ∈ 0 :: xs := by
+theorem listMax_mem {xs : List ℤ} : listMax xs ∈ 0 :: xs := by
   induction xs with
   | nil => exact List.mem_cons_self
   | cons b bs ih =>

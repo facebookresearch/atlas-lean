@@ -49,11 +49,6 @@ structure IndexedMinQueue (W : Type u) [LinearOrder W] (n : Nat) where
 private def event (i : Fin 5) : Fin 5 → Nat :=
   fun j => if j = i then 1 else 0
 
-private lemma parent_lt (i : Nat) (hi : 0 < i) : heapParent i < i := by
-  unfold heapParent
-  have hdiv : (i - 1) / 2 ≤ i - 1 := Nat.div_le_self _ _
-  omega
-
 private def Inverse {W : Type u} [LinearOrder W] {n : Nat}
     (a : Array (WithTop W ×ₗ Fin n))
     (position : Vector (Option (Fin n)) n) : Prop :=
@@ -311,7 +306,7 @@ private def siftUpTracked {W : Type u} [LinearOrder W] {n : Nat}
     ⟨a, position, 0⟩
 termination_by i
 decreasing_by
-  exact parent_lt i hpos
+  exact heapParent_lt i hpos
 
 private def childSelectionTime {W : Type u} [LinearOrder W] {n : Nat}
     (a : Array (WithTop W ×ₗ Fin n)) (i : Nat) : Fin 5 → Nat :=
@@ -353,7 +348,7 @@ private lemma siftUpTracked_data {W : Type u} [LinearOrder W] {n : Nat}
       by_cases hpos : 0 < i
       · simp only [dite_eq_left hpos]
         split
-        · exact ih (heapParent i) (parent_lt i hpos) _ _ _
+        · exact ih (heapParent i) (heapParent_lt i hpos) _ _ _
         · rfl
       · simp only [dite_eq_right hpos]
     · simp only [dite_eq_right hi]
@@ -406,9 +401,9 @@ private lemma siftUpTracked_inverse {W : Type u} [LinearOrder W] {n : Nat}
         dsimp only
         by_cases hlt : a[i] < a[heapParent i]'(heapParent_lt_size a i hi hpos)
         · simp only [ite_eq_left hlt]
-          apply ih (heapParent i) (parent_lt i hpos)
+          apply ih (heapParent i) (heapParent_lt i hpos)
           exact inverse_swap a position hcap hinv i (heapParent i) hi
-            (heapParent_lt_size a i hi hpos) (Nat.ne_of_gt (parent_lt i hpos))
+            (heapParent_lt_size a i hi hpos) (Nat.ne_of_gt (heapParent_lt i hpos))
         · simpa only [ite_eq_right hlt] using hinv
       · exact hinv
     · exact hinv
@@ -508,11 +503,11 @@ private lemma set_decrease_ready {W : Type u} [LinearOrder W] {n : Nat}
     have hparentold : heapParent i.val < q.heap.data.size :=
       heapParent_lt_size _ _ hi hipos
     have hold := q.heap.ordered j hjold hjpos
-    have hparent_ne : heapParent i.val ≠ i.val := (parent_lt i.val hipos).ne
+    have hparent_ne : heapParent i.val ≠ i.val := (heapParent_lt i.val hipos).ne
     have hji : j ≠ i.val := by
       intro h
       subst h
-      exact (parent_lt i.val hipos).ne hp
+      exact (heapParent_lt i.val hipos).ne hp
     have hparent := q.heap.ordered i.val hi hipos
     have hchild : q.heap.data[i.val]'hi ≤ q.heap.data[j]'hjold := by
       simpa only [hp] using hold
