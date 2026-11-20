@@ -122,4 +122,29 @@ example : ∃ (ν : Measure ℝ) (_hν : IsProbabilityMeasure ν) (x : ℝ),
     rw [h1, h0]
   exact ne_of_lt (lt_of_le_of_lt hle (by norm_num))
 
+/-!
+Public API client probes carried from formal-math
+`MathlibExtTest/Probability/Quantile.lean`.
+-/
+
+/-- The generalized cdf inverse is available through the public
+`ProbabilityTheory` API. -/
+example (μ : Measure ℝ) : Measurable (cdfQuantile μ) :=
+  measurable_cdfQuantile μ
+
+/-- The public order characterization can be used by downstream clients. -/
+example (μ : Measure ℝ) {u x : ℝ} (hu : u ∈ Ioo (0 : ℝ) 1) :
+    cdfQuantile μ u ≤ x ↔ u ≤ cdf μ x :=
+  cdfQuantile_le_iff μ hu
+
+/-- Quantiles are monotone on the probability interval. -/
+example (μ : Measure ℝ) : MonotoneOn (cdfQuantile μ) (Ioo 0 1) :=
+  cdfQuantile_monoOn μ
+
+/-- The public pushforward theorem constructs any real probability law from
+the uniform law on `[0, 1]`. -/
+example (μ : Measure ℝ) [IsProbabilityMeasure μ] :
+    Measure.map (cdfQuantile μ) (volume.restrict (Icc (0 : ℝ) 1)) = μ :=
+  map_cdfQuantile_restrict_Icc μ
+
 end ProbabilityTheory
