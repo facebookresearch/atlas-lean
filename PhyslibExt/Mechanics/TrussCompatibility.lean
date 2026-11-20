@@ -39,8 +39,9 @@ positive semidefinite for nonnegative stiffnesses. Zero-length members contribut
 unit form (totalized inverse); a physical energy reading
 needs distinct endpoints. The rigidity certificate
 (section E) characterizes positive definiteness, for
-positive member weights, by the absence of supported
-mechanisms.
+positive member weights, by the absence of
+generalized-coordinate null modes of the supported
+compatibility map.
 
 ## ii. Key results
 
@@ -57,8 +58,8 @@ mechanisms.
   supported virtual displacement.
 - `supported_posDef_iff`: for positive member weights the
   supported stiffness is positive definite iff the supported
-  compatibility map has trivial kernel (no supported
-  mechanism).
+  compatibility map has trivial kernel (no
+  generalized-coordinate null mode).
 
 ## iii. Table of contents
 
@@ -395,8 +396,12 @@ private theorem supported_posDef_iff_of_axial_of {J M F : Type*}
 member stiffnesses `k`, the supported stiffness
 `(B S)ᵀ diag(k) (B S)` is positive definite iff the
 supported compatibility map `B S` has trivial kernel (no
-supported mechanism). Connectivity of the member graph is
-not assumed and does not suffice. -/
+generalized-coordinate null mode). For arbitrary `S` a
+kernel vector `u` need not give a nonzero joint
+displacement `S *ᵥ u`; the physical supported-mechanism
+reading needs `S.mulVec` injective, as for a coordinate
+selection. Connectivity of the member graph is not
+assumed and does not suffice. -/
 theorem supported_posDef_iff {J M F : Type*} [Fintype J]
     [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
     (r : J → (Fin 2 → ℝ)) (a b : M → J)
@@ -421,7 +426,9 @@ theorem supported_posDef_iff_ker_eq_bot {J M F : Type*} [Fintype J]
 /-- Physical instance: separation rows pair with
 `E A / L ^ 3`; positive `E`, `A` and noncoincident endpoint
 positions (`r (a e) ≠ r (b e)`, the model admission
-`L > 0`) make these weights positive. -/
+`L > 0`) make these weights positive. The kernel side is
+in generalized coordinates `u`; it reads as supported
+joint mechanisms when `S.mulVec` is injective. -/
 theorem supported_posDef_iff_of_axial {J M F : Type*} [Fintype J]
     [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
     (r : J → (Fin 2 → ℝ)) (a b : M → J) (S : Matrix (J × Fin 2) F ℝ)

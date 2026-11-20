@@ -21,7 +21,7 @@ table: horizontal-member elongation pairing, supported
 energy value, a zero-length member contributing a zero
 unit row, supported virtual work on the mechanism
 (one-member) truss, and the supported rigidity certificate
-on a triangle and its mechanism.
+on a triangle and its supported null mode.
 
 ## i. Overview
 
@@ -236,7 +236,9 @@ example : ((axialCompatibility rT ![0, 0, 1] ![1, 2, 2] * ST)ᵀ
 
 /-- P2: dropping member `1→2` leaves a mechanism
 `(0, 3, -4)` despite the member graph staying connected:
-not positive definite. -/
+not positive definite. (`ST` is a coordinate selection,
+so generalized coordinates are the supported joint
+coordinates and the null mode is a joint mechanism.) -/
 example : ¬ ((axialCompatibility rT ![0, 0] ![1, 2] * ST)ᵀ
       * Matrix.diagonal (fun _ => (2 : ℝ))
       * (axialCompatibility rT ![0, 0] ![1, 2] * ST)).PosDef := by
@@ -346,7 +348,9 @@ example : (∀ u : Fin 1 → ℝ,
     simp at hpos
 
 /-- E2: with `S = 0` both sides of the certificate fail
-(`![1, 0, 0]` is a supported mechanism). -/
+(`![1, 0, 0]` is a generalized-coordinate null mode; it
+gives zero joint displacement, so it is not a physical
+mechanism). -/
 example : ¬ ((axialCompatibility rT ![0, 0, 1] ![1, 2, 2]
         * (0 : Matrix (Fin 3 × Fin 2) (Fin 3) ℝ))ᵀ
       * Matrix.diagonal (fun _ => (2 : ℝ))
