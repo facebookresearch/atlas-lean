@@ -4,6 +4,8 @@
     python scripts/check_graph_rules.py                            report every finding
     python scripts/check_graph_rules.py --base BASE                also say which findings BASE doesn't have
     python scripts/check_graph_rules.py --base BASE --blocking     and fail on those
+    python scripts/check_graph_rules.py --built                    after lean-facts: informal links that close a
+                                                                   cycle through Lean edges (report-only)
 
 The rules themselves, and which of them this script checks, are in docs/BLUEPRINT.md under "Graph rules"
 and its "Checks" subsection; each finding names its rule. The script reads the committed tree, before
@@ -276,7 +278,9 @@ def load_annotations(root: Path, report: Report) -> dict[Path, dict]:
                 continue
             # Every row is checked in full, a second row for a page included: Autoform merges them all.
             objects = annotation.get("object", [])
-            if not isinstance(objects, list) or len(objects) > 1:
+            if not isinstance(objects, list):
+                report.add(5, subject, "its annotation's `object` is not a list of ends", at)
+            elif len(objects) > 1:
                 report.add(5, subject, "its annotation names more than one Lean declaration", at)
             article_id = annotation.get("id")
             if article_id is not None:  # a missing id is not a finding until the one-off fill (#5524)
@@ -300,6 +304,10 @@ def load_annotations(root: Path, report: Report) -> dict[Path, dict]:
             seen[page] = at
             annotation["_at"] = at
             annotations[page] = annotation
+    for page in sorted(roadmap.rglob("*.md")):
+        # lean-facts stops on such a page much later in the build (#5069).
+        if page not in seen and not any(part.startswith(".") for part in page.relative_to(roadmap).parts):
+            report.add(5, rel(page, root), "the page has no annotation row in blueprint/links/")
     for article_id, owners in sorted(ids.items()):
         if len({subject for subject, _ in owners}) > 1:
             # One finding per collision, the same whichever row comes first.
@@ -569,14 +577,55 @@ def summary(new: list[Finding], inherited: list[Finding], compared: bool, blocki
     return "\n".join(lines) + "\n"
 
 
+def built_informal_cycles(root: Path) -> list[Finding]:
+    """Rule 11 on the built graph: an informal link whose target depends on its page through counted edges, as
+    Autoform's `informal_cycle_warnings` finds it after `lean-facts` has added the Lean's edges. On the committed
+    tree a linked page has no dependency sections (rule 9), so only this pass sees a cycle through Lean edges."""
+    graph_module, _ = autoform()
+    try:
+        graph = graph_module.load_graph(root / "blueprint")
+    except graph_module.GraphValidationError:
+        return []  # autoform check reports it
+    paths = {node_id: rel(Path(node.path), root) for node_id, node in graph.nodes.items()}
+    findings = []
+    for warning in graph_module.informal_cycle_warnings(graph):
+        node_id = warning.split(":", 1)[0]
+        findings.append(Finding(11, paths.get(node_id, node_id), f"`## Informally uses`: {warning.split(': ', 1)[-1]}",
+                                part="built"))
+    return findings
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--base", help="the commit the PR merges into: say which findings it doesn't have")
     parser.add_argument("--blocking", action="store_true", help="exit 1 on a finding the base doesn't have")
     parser.add_argument("--summary", type=Path, help="append a Markdown summary here (GITHUB_STEP_SUMMARY)")
+    parser.add_argument("--built", action="store_true",
+                        help="after lean-facts: report only the informal links that close a cycle through Lean edges")
     parser.add_argument("--root", type=Path, default=ROOT, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
+    if args.built:
+        # Report-only, and on the checkout lean-facts has changed, so there is no base to compare with.
+        findings = built_informal_cycles(args.root.resolve())
+        actions = os.environ.get("GITHUB_ACTIONS") == "true"
+        for finding in findings:
+            print(annotate(finding, "warning") if actions else f"warning: {finding}", file=sys.stderr)
+        if args.summary:
+            with args.summary.open("a", encoding="utf-8") as handle:
+                lines = ["## Graph rules on the built graph (report-only)", ""]
+                lines += [f"- {finding}" for finding in findings[:50]] or ["No informal link closes a cycle through Lean edges."]
+                handle.write("\n".join(lines) + "\n")
+        print(f"graph rules (built): {len(findings)} finding(s), reported only" if findings else "graph rules (built): OK")
+        return 0
+    if args.blocking and not args.base:
+        # With nothing to compare with, every finding would count as new, those main already has included.
+        parser.error("--blocking needs --base: it fails only on findings the base doesn't have")
     root = args.root.resolve()
+    try:
+        if args.base:
+            git(root, "rev-parse", "--verify", "--quiet", f"{args.base}^{{commit}}")
+    except subprocess.CalledProcessError:
+        parser.error(f"--base {args.base!r} is not a commit in this repository; fetch it first")
     findings = check(root, args.base)
     if args.base and findings:
         parts = {finding.part for finding in findings if finding.part != "size"}

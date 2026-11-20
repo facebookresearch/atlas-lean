@@ -215,48 +215,54 @@ the daily build of `main`:
   - rule 1: subject folders and the field folders of a subject with fields
     (not module placements or subfields, which the generator lays out);
   - rule 2: every page and subfolder is listed on its folder page;
-  - rule 5: one annotation per page, in its subject's links file, naming at
-    most one declaration, with a well-formed, unique `id` where it has one,
-    and a subject URI with no percent-escape (`sync_wiki.py` reads it as
-    written and Autoform decodes it, so the two could bind different pages);
-    no other annotation file Autoform would read (a `.json`, a `.ndjson`, a
-    nested file or a second `_defaults.json`);
+  - rule 5: every page has an annotation row; one annotation per page, in its
+    subject's links file, naming at most one declaration, with a well-formed,
+    unique `id` where it has one, and a subject URI with no percent-escape
+    (`sync_wiki.py` reads it as written and Autoform decodes it, so the two
+    could bind different pages); no other annotation file Autoform would read
+    (a `.json`, a `.ndjson`, a nested file or a second `_defaults.json`);
   - rule 8: no build output is tracked, and neither a row nor a
     `_defaults.json` commits `kind` or `status`;
-  - rules 9 and 10: no linked page commits `## Depends on` or
-    `## Proof depends on`, while a planned page may;
-  - rule 11: `## Informally uses` links existing pages, never the page
-    itself, and closes no cycle, counted edges included;
+  - rules 9 and 10: no linked page commits `## Depends on` or `## Proof
+    depends on`, while a planned page may;
+  - rule 11: `## Informally uses` links existing pages, never the page itself,
+    and closes no cycle through informal links and planned pages' own edges.
+    On the committed tree a linked page has no dependency sections (rule 9),
+    so a cycle through Lean edges shows only after `lean-facts`:
+    `check_graph_rules.py --built` reports those from the built graph, in the
+    same job summary;
   - rule 12: `not_ready` is a boolean, on an article with no Lean link;
   - rule 15: a PR changes fewer than 3,000 files.
 
   It reads pages with the pinned Autoform's Markdown readers, so links,
   headings and code are read as `autoform check` and the site read them. It is
   report-only: its findings are annotations on the run and a table in the job
-  summary. On a PR it says which findings the base doesn't already have; once
-  a maintainer sets the Actions variable `GRAPH_RULES_BLOCKING` to `true`,
-  those fail the step, and findings `main` already has never do.
-- `sync_wiki.py lean-facts` stops on a page with no annotation row, and
-  `autoform check` validates the whole graph after it.
+  summary, which also work on fork PRs, whose workflow token cannot comment.
+  On a PR it says which findings the base doesn't already have; once a
+  maintainer sets the Actions variable `GRAPH_RULES_BLOCKING` to `true`, those
+  fail the step, and findings `main` already has never do.
+- `autoform check` validates the whole graph after `lean-facts`.
 - `autoform audit --json` runs report only, and the job summary counts its
   findings and warnings by code: two pages for one declaration
   (`duplicate-lean-target`, rule 6), overfull folders (rule 3), provenance and
   coverage gaps. The full report is kept as `build/audit.json`.
 
-Before opening a graph PR, run the checker and a first pass of the other two
-on the committed tree, with Autoform installed as below:
+Before opening a graph PR, run the checker and a first pass of the other two,
+with Autoform installed as below:
 
 ```sh
-python scripts/check_graph_rules.py --base origin/main
+python scripts/check_graph_rules.py --base "$(git merge-base origin/main HEAD)"
 autoform check blueprint
-autoform audit blueprint --lean-root . --json > audit.json
+mkdir -p build && autoform audit blueprint --lean-root . --json > build/audit.json
 ```
 
-The checker reads the committed tree, as CI does. `autoform check` and the
-audit run in CI after `lean-facts`, which adds the Lean's dependencies and
-status, so on the committed tree they are only a first pass; for CI's
-results, run the build steps in order as
-[Local environment and tests](#local-environment-and-tests) shows.
+Compare with the merge base, not `origin/main` itself, so changes `main` has
+made since you branched don't count. The checker reads the working tree: in CI
+that is the committed tree, locally it includes uncommitted files. `autoform
+check` and the audit run in CI after `lean-facts`, which adds the Lean's
+dependencies and status, so on the committed tree they are only a first pass;
+for CI's results, run the build steps in order as [Local environment and
+tests](#local-environment-and-tests) shows.
 
 ## Local environment and tests
 

@@ -137,8 +137,17 @@ class GraphRules(unittest.TestCase):
 
     def test_an_annotation_names_at_most_one_declaration(self) -> None:
         self.vault.annotations["CategoryTheory"][2]["object"].append({"location": {"declaration": "X.other"}})
+        self.vault.annotations["CategoryTheory"][3]["object"] = {"location": {"declaration": "X.fundamental"}}
         self.vault.save()
-        self.assertIn("names more than one Lean declaration", self.findings())
+        found = self.findings()
+        self.assertIn("CategoryTheory.jsonl:3: its annotation names more than one Lean declaration", found)
+        self.assertIn("CategoryTheory.jsonl:4: its annotation's `object` is not a list of ends", found)
+
+    def test_a_page_with_no_annotation_row_is_a_finding(self) -> None:
+        self.vault.annotations["Physics"].pop(1)
+        self.vault.save()
+        self.assertIn("blueprint/roadmap/Physics/mechanics.md: the page has no annotation row in blueprint/links/ (rule 5)",
+                      self.findings())
 
     # Rule 8
 
@@ -328,6 +337,19 @@ class GraphRules(unittest.TestCase):
                          "# Mechanics\n\nNewton.\n\n## Depends on\n\n- [Fundamental](../CategoryTheory/topos-theory/fundamental.md)\n")
         self.assertIn("reach each other through `## Informally uses`", self.findings())
 
+    def test_after_lean_facts_an_informal_link_closing_a_cycle_through_lean_edges_is_reported(self) -> None:
+        # As lean-facts leaves it: linked Fundamental depends on linked Topos in Lean, and Topos informally uses
+        # Fundamental. The committed tree has neither dependency section, so only the built graph shows the cycle.
+        self.vault.write("blueprint/roadmap/CategoryTheory/topos-theory/fundamental.md",
+                         "# Fundamental theorem\n\nSlices.\n\n## Depends on\n\n- [Elementary topos](is-topos.md)\n")
+        self.vault.write("blueprint/roadmap/CategoryTheory/topos-theory/is-topos.md",
+                         "# Elementary topos\n\nA topos.\n\n## Informally uses\n\n- [Fundamental](fundamental.md)\n")
+        found = [str(finding) for finding in rules.built_informal_cycles(self.vault.root)]
+        self.assertEqual(len(found), 1, found)
+        self.assertIn("topos-theory/is-topos.md: `## Informally uses`", found[0])
+        with patch.dict(os.environ, {"GITHUB_ACTIONS": ""}), patch("sys.stderr"):
+            self.assertEqual(rules.main(["--root", str(self.vault.root), "--built"]), 0)  # report-only
+
     def test_a_cycle_of_counted_edges_alone_is_left_to_autoform(self) -> None:
         groups = rules.strongly_connected({"a": {"b"}, "b": {"c"}, "c": {"a"}, "d": {"a"}})
         self.assertEqual(groups, [["a", "b", "c"]])
@@ -395,7 +417,12 @@ class GitRules(unittest.TestCase):
         self.vault.write("blueprint/roadmap/CategoryTheory/README.md", "# Category Theory\n")
         self.commit()
         self.assertEqual(self.run_main("--base", broken, "--blocking"), 1)
-        self.assertEqual(self.run_main("--blocking"), 1)  # with no base, every finding is new
+        with patch("sys.stderr"), self.assertRaises(SystemExit) as stopped:
+            self.run_main("--blocking")  # with no base every finding would be new, main's own included
+        self.assertEqual(stopped.exception.code, 2)
+        with patch("sys.stderr"), self.assertRaises(SystemExit) as stopped:
+            self.run_main("--base", "no-such-commit")
+        self.assertEqual(stopped.exception.code, 2)
 
     def test_a_row_inserted_above_an_old_finding_does_not_make_it_new(self) -> None:
         self.vault.annotations["Physics"].append(Vault.row("Physics/mechanics.md"))  # a duplicate, on line 3

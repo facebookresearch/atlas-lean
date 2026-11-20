@@ -15,6 +15,10 @@ ROOT = Path(__file__).resolve().parent.parent
 WORKFLOW = ROOT / ".github" / "workflows" / "blueprint-pages.yml"
 
 
+def positions_of(steps):
+    return {step.get("name"): index for index, step in enumerate(steps)}
+
+
 class BlueprintWorkflowTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -221,7 +225,12 @@ class BlueprintWorkflowTests(unittest.TestCase):
         self.assertIn('if [ "${BLOCKING:-}" = true ]; then', step["run"])
         self.assertLess(step["run"].index("--base"), step["run"].index("--blocking"))
         self.assertNotIn("continue-on-error", step)
+        self.assertEqual(step["timeout-minutes"], "10")
         self.assertNotIn("${{ github.event.pull_request.base.sha", self.text)
+        built = self.step("Check the graph's rules on the built graph (report only)")
+        self.assertIn("check_graph_rules.py --built", built["run"])
+        self.assertEqual(built["timeout-minutes"], "10")
+        self.assertLess(positions_of(self.steps)["Add the Lean-owned facts to the articles"], positions_of(self.steps)[built["name"]])
         positions = {s.get("name"): i for i, s in enumerate(self.steps)}
         self.assertLess(positions["Test the wiki scripts"], positions[step["name"]])
         self.assertLess(positions[step["name"]], positions["Build the current v2 libraries"])
@@ -239,6 +248,7 @@ class BlueprintWorkflowTests(unittest.TestCase):
         self.assertIn("GITHUB_STEP_SUMMARY", audit["run"])
         self.assertIn('for kind in ("findings", "warnings")', audit["run"])
         self.assertIn("build/audit.json", self.step("Keep dependency diagnostics")["with"]["path"])
+        self.assertEqual(audit["timeout-minutes"], "10")
         positions = {s.get("name"): i for i, s in enumerate(self.steps)}
         self.assertLess(positions["Validate the theorem DAG and its declarations"], positions[audit["name"]])
         self.assertLess(positions[audit["name"]], positions["Render the blueprint"])
