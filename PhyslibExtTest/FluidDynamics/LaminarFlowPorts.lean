@@ -40,7 +40,11 @@ Checked consumers:
   reversed-gradient failure at water-like parameters;
 - the pipe flow rate `π / 200000`, mean velocity `1 / 20`, centerline
   speed `1 / 10`, Reynolds number `1000` and laminar Darcy factor
-  `8 / 125 = 64 / 1000` of a water-like pipe.
+  `8 / 125 = 64 / 1000` of a water-like pipe; the reversed flow of the
+  same pipe with the same Reynolds number and the same positive Darcy
+  and Fanning factors, against the negative value of an unoriented
+  `V²` form; and the oriented Darcy factor recovered from the
+  Darcy-Weisbach loss of `PipeFrictionPorts` in both flow directions.
 -/
 
 @[expose] public section
@@ -287,6 +291,66 @@ lemma pipe_fixture (z : ℝ) :
     norm_num
   · rw [darcyFactorOfDrop, hV]
     norm_num
+
+-- Reverse flow: with `G = -4` (the pressure rises along `x 2`) the same pipe carries the flow
+-- rate `-π / 200000` at the mean velocity `-1 / 20`. The Reynolds number on the speed `|V|` is
+-- still `1000`, and by `pipe_darcyFactor_eq` and `pipe_fanningFactor_eq` at `G = -4` the Darcy
+-- factor of the oriented pressure drop `G L = -4` over the length `1` is the positive
+-- `8 / 125 = 64 / 1000` and the Fanning factor is `2 / 125 = 16 / 1000`.
+example :
+    pipeFlowRate (-4) (1 / 1000) (1 / 100) 0 = -(π / 200000) ∧
+      pipeMeanVelocity (-4) (1 / 1000) (1 / 100) 0 = -(1 / 20) ∧
+      reynoldsNumber ⟨1000⟩ ⟨pipeMeanVelocity (-4) (1 / 1000) (1 / 100) 0⟩ ⟨2 * (1 / 100)⟩
+        ⟨1 / 1000⟩ (by norm_num) = 1000 ∧
+      darcyFactorOfDrop (-4 * 1) 1 (2 * (1 / 100)) 1000
+        (pipeMeanVelocity (-4) (1 / 1000) (1 / 100) 0) = 8 / 125 ∧
+      darcyFactorOfDrop (-4 * 1) 1 (2 * (1 / 100)) 1000
+        (pipeMeanVelocity (-4) (1 / 1000) (1 / 100) 0) / 4 = 2 / 125 := by
+  have hV : pipeMeanVelocity (-4) (1 / 1000) (1 / 100) 0 = -(1 / 20) := by
+    rw [pipeMeanVelocity_eq (by norm_num) (by norm_num)]
+    norm_num
+  have hRe : reynoldsNumber ⟨1000⟩ ⟨pipeMeanVelocity (-4) (1 / 1000) (1 / 100) 0⟩
+      ⟨2 * (1 / 100)⟩ ⟨1 / 1000⟩ (by norm_num) = 1000 := by
+    rw [reynoldsNumber_val]
+    simp only [hV]
+    norm_num
+  have hf := pipe_darcyFactor_eq (ρ := 1000) (μ := 1 / 1000) (G := -4) (R := 1 / 100) (L := 1)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) 0
+  have hF := pipe_fanningFactor_eq (ρ := 1000) (μ := 1 / 1000) (G := -4) (R := 1 / 100) (L := 1)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) 0
+  rw [hRe] at hf hF
+  refine ⟨by rw [pipeFlowRate_eq (by norm_num) (by norm_num)]; ring, hV, hRe, ?_, ?_⟩
+  · rw [hf]
+    norm_num
+  · rw [hF]
+    norm_num
+
+-- An unoriented form `2 D Δp / (ρ V² L)` would give the reversed flow the negative value
+-- `-8 / 125`.
+example :
+    2 * (2 * (1 / 100)) * (-4 * 1) /
+        (1000 * pipeMeanVelocity (-4) (1 / 1000) (1 / 100) 0 ^ 2 * 1) = (-8 / 125 : ℝ) := by
+  rw [pipeMeanVelocity_eq (by norm_num) (by norm_num)]
+  norm_num
+
+-- Reversing both the flow and the pressure drop keeps the factor: `Δp = -1` at `V = -1` and
+-- `Δp = 1` at `V = 1` both give `2` for `L = D = ρ = 1`.
+example : darcyFactorOfDrop (-1) 1 1 1 (-1) = 2 ∧ darcyFactorOfDrop 1 1 1 1 1 = 2 := by
+  norm_num [darcyFactorOfDrop]
+
+-- `darcyFactorOfDrop` inverts the oriented Darcy-Weisbach loss of `PipeFrictionPorts` in both
+-- flow directions: the pressure drop `c Q |Q|` that the coefficient `c = f L ρ / (2 D A²)` gives
+-- at the flow rate `Q = A V` returns the factor `f`.
+example {f L D A ρ V : ℝ} (hD : D ≠ 0) (hA : 0 < A) (hρ : ρ ≠ 0) (hL : L ≠ 0) (hV : V ≠ 0) :
+    darcyFactorOfDrop
+      (_root_.FluidDynamics.PipeFrictionPorts.frictionPressureDrop
+        (_root_.FluidDynamics.PipeFrictionPorts.darcyCoefficient f L D A ρ) (A * V)) L D ρ V =
+      f := by
+  have hVa : |V| ≠ 0 := abs_ne_zero.mpr hV
+  unfold darcyFactorOfDrop _root_.FluidDynamics.PipeFrictionPorts.frictionPressureDrop
+    _root_.FluidDynamics.PipeFrictionPorts.darcyCoefficient
+  rw [abs_mul, abs_of_pos hA]
+  field_simp
 
 end PipeFlowRate
 

@@ -103,12 +103,14 @@ component of the velocity field; the integrand is integrable, and Mathlib's pola
 variables `integral_comp_polarCoord_symm` with the fundamental theorem of calculus
 `intervalIntegral.integral_eq_sub_of_hasDerivAt` gives `Q = π G R⁴ / (8 μ)` for `μ, R > 0`. The
 disk has area `π R²`, so the mean velocity is `V = Q / (π R²) = G R² / (8 μ)`, half the
-centerline speed. The Darcy friction factor of a pressure drop `Δp` over a length `L` of a duct of
-diameter `D` at the mean velocity `V` is `f = 2 D Δp / (ρ V² L)`, the Darcy-Weisbach relation
-`Δp = f (L / D) ρ V² / 2` solved for `f`. For the Poiseuille drop `Δp = G L` on the diameter
-`D = 2 R` with `ρ, μ, G, R, L > 0`, `f = 64 / Re` with the Reynolds number `Re = ρ |V| D / μ` of
-`EngineeringScaling.reynoldsNumber`, and the Fanning factor is `f / 4 = 16 / Re`; a Reynolds
-number on the radius, or swapping the two conventions, fails these identities. With the
+centerline speed. The Darcy friction factor of an oriented pressure drop `Δp` over a length `L` of
+a duct of diameter `D` at the signed mean velocity `V` is `f = 2 D Δp / (ρ V |V| L)`, the oriented
+Darcy-Weisbach relation `Δp = f (L / D) ρ V |V| / 2` of `FluidDynamics.PipeFrictionPorts` solved
+for `f`; a reversed flow has the same factor. For the Poiseuille drop `Δp = G L` on the diameter
+`D = 2 R` with `ρ, μ, R, L > 0` and `G ≠ 0`, in either flow direction, `f = 64 / Re` with the
+Reynolds number `Re = ρ |V| D / μ` of `EngineeringScaling.reynoldsNumber`, and the Fanning factor
+is `f / 4 = 16 / Re`; a Reynolds number on the radius, or swapping the two conventions, fails
+these identities. With the
 Darcy-Weisbach loss coefficient of `FluidDynamics.PipeFrictionPorts`, the factor `64 / Re`
 reproduces the pressure drop `G L` at the flow rate `Q` for every `G ≠ 0`, in both flow
 directions, while the Fanning value read as a Darcy factor gives `G L / 4`. At `G = 0` there is no
@@ -180,7 +182,7 @@ empirical correlation, and no turbulent law is derived.
 - `FlowCoordinateBernoulli.pipeCenterline_eq_two_mul_meanVelocity`: the centerline speed is
   twice the mean velocity.
 - `FlowCoordinateBernoulli.pipe_darcyFactor_eq`, `FlowCoordinateBernoulli.pipe_fanningFactor_eq`:
-  the laminar Darcy factor `64 / Re` and Fanning factor `16 / Re`.
+  the laminar Darcy factor `64 / Re` and Fanning factor `16 / Re`, in either flow direction.
 - `FlowCoordinateBernoulli.pipe_darcyFactor_checks`: a Reynolds number on the radius and the
   Darcy/Fanning swaps fail the factor check.
 - `FlowCoordinateBernoulli.pipe_frictionPressureDrop_eq`: the Darcy-Weisbach loss with the
@@ -1541,43 +1543,49 @@ lemma pipeCenterline_eq_two_mul_meanVelocity {μ R : ℝ} (hμ : 0 < μ) (hR : 0
 
 /-! ## Q. Reynolds number and the Darcy and Fanning factors -/
 
-/-- The Darcy friction factor `f = 2 D Δp / (ρ V² L)` of a pressure drop `Δp` over a length `L`
-of a duct of diameter `D` carrying a fluid of density `ρ` at the mean velocity `V`: the
-Darcy-Weisbach relation `Δp = f (L / D) ρ V² / 2` solved for `f`. -/
-noncomputable def darcyFactorOfDrop (Δp L D ρ V : ℝ) : ℝ := 2 * D * Δp / (ρ * V ^ 2 * L)
+/-- The Darcy friction factor `f = 2 D Δp / (ρ V |V| L)` of an oriented pressure drop `Δp` over a
+length `L` of a duct of diameter `D` carrying a fluid of density `ρ` at the signed mean velocity
+`V`: the oriented Darcy-Weisbach relation `Δp = f (L / D) ρ V |V| / 2` of
+`FluidDynamics.PipeFrictionPorts` solved for `f`. Reversing both `V` and `Δp` keeps the factor. -/
+noncomputable def darcyFactorOfDrop (Δp L D ρ V : ℝ) : ℝ := 2 * D * Δp / (ρ * V * |V| * L)
 
-/-- The Reynolds number of the pipe flow on the diameter: `ρ |V| (2 R) / μ = ρ G R³ / (4 μ²)`. -/
-private lemma pipe_reynolds_eq {ρ μ G R : ℝ} (hμ : 0 < μ) (hG : 0 < G) (hR : 0 < R) (z : ℝ) :
-    reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ = ρ * G * R ^ 3 / (4 * μ ^ 2) := by
-  rw [reynoldsNumber_val, pipeMeanVelocity_eq hμ hR, abs_of_pos (by positivity)]
+/-- The Reynolds number of the pipe flow on the diameter:
+`ρ |V| (2 R) / μ = ρ |G| R³ / (4 μ²)`. -/
+private lemma pipe_reynolds_eq {ρ μ R : ℝ} (hμ : 0 < μ) (hR : 0 < R) (G z : ℝ) :
+    reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ =
+      ρ * |G| * R ^ 3 / (4 * μ ^ 2) := by
+  rw [reynoldsNumber_val, pipeMeanVelocity_eq hμ hR, abs_div, abs_mul,
+    abs_of_pos (by positivity : (0 : ℝ) < R ^ 2), abs_of_pos (by positivity : (0 : ℝ) < 8 * μ)]
   field_simp
   ring
 
-/-- **Laminar Darcy factor.** For `ρ, μ, G, R, L > 0` (positive density and viscosity, positive
-length, radius and mean flow), the Darcy factor of the Poiseuille pressure drop `G L` over the
-length `L` on the diameter `D = 2 R` at the mean velocity `V` is `64 / Re`, with
-`Re = ρ |V| D / μ`. -/
-lemma pipe_darcyFactor_eq {ρ μ G R L : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hG : 0 < G) (hR : 0 < R)
+/-- **Laminar Darcy factor.** For `ρ, μ, R, L > 0` (positive density, viscosity, radius and
+length) and `G ≠ 0` (a nonzero flow, in either direction), the Darcy factor of the oriented
+Poiseuille pressure drop `G L` over the length `L` on the diameter `D = 2 R` at the signed mean
+velocity `V` is `64 / Re`, with `Re = ρ |V| D / μ`. -/
+lemma pipe_darcyFactor_eq {ρ μ G R L : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hG : G ≠ 0) (hR : 0 < R)
     (hL : 0 < L) (z : ℝ) :
     darcyFactorOfDrop (G * L) L (2 * R) ρ (pipeMeanVelocity G μ R z) =
       64 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ := by
-  rw [pipe_reynolds_eq hμ hG hR, darcyFactorOfDrop, pipeMeanVelocity_eq hμ hR]
+  have hGa : 0 < |G| := abs_pos.mpr hG
+  rw [pipe_reynolds_eq hμ hR, darcyFactorOfDrop, pipeMeanVelocity_eq hμ hR, abs_div, abs_mul,
+    abs_of_pos (by positivity : (0 : ℝ) < R ^ 2), abs_of_pos (by positivity : (0 : ℝ) < 8 * μ)]
   field_simp
   ring
 
 /-- **Fanning factor.** Under the hypotheses of `pipe_darcyFactor_eq`, the Fanning factor
 `f / 4` of `FrictionConvention.fanning` is `16 / Re`. -/
-lemma pipe_fanningFactor_eq {ρ μ G R L : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hG : 0 < G) (hR : 0 < R)
+lemma pipe_fanningFactor_eq {ρ μ G R L : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hG : G ≠ 0) (hR : 0 < R)
     (hL : 0 < L) (z : ℝ) :
     darcyFactorOfDrop (G * L) L (2 * R) ρ (pipeMeanVelocity G μ R z) / 4 =
       16 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ := by
   rw [pipe_darcyFactor_eq hρ hμ hG hR hL]
   ring
 
-/-- **Factor checks.** For `ρ, μ, G, R, L > 0` the laminar Darcy factor `f` is not `64` over the
-Reynolds number on the radius `R`, the Fanning factor `f / 4` is not `64 / Re`, and `f` is not
-`16 / Re`. -/
-lemma pipe_darcyFactor_checks {ρ μ G R L : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hG : 0 < G)
+/-- **Factor checks.** For `ρ, μ, R, L > 0` and `G ≠ 0` the laminar Darcy factor `f` is not `64`
+over the Reynolds number on the radius `R`, the Fanning factor `f / 4` is not `64 / Re`, and `f`
+is not `16 / Re`. -/
+lemma pipe_darcyFactor_checks {ρ μ G R L : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hG : G ≠ 0)
     (hR : 0 < R) (hL : 0 < L) (z : ℝ) :
     darcyFactorOfDrop (G * L) L (2 * R) ρ (pipeMeanVelocity G μ R z) ≠
         64 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨R⟩ ⟨μ⟩ hμ ∧
@@ -1585,15 +1593,13 @@ lemma pipe_darcyFactor_checks {ρ μ G R L : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) 
         64 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ ∧
       darcyFactorOfDrop (G * L) L (2 * R) ρ (pipeMeanVelocity G μ R z) ≠
         16 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ := by
-  have hV := pipeMeanVelocity_pos hG hμ hR z
+  have hGa : 0 < |G| := abs_pos.mpr hG
   have hRe : reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨R⟩ ⟨μ⟩ hμ =
       reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ / 2 := by
     simp only [reynoldsNumber_val]
     ring
   have hpos : 0 < reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ := by
-    rw [reynoldsNumber_val]
-    simp only
-    rw [abs_of_pos hV]
+    rw [pipe_reynolds_eq hμ hR]
     positivity
   rw [pipe_darcyFactor_eq hρ hμ hG hR hL, hRe]
   refine ⟨fun h => ?_, fun h => ?_, fun h => ?_⟩ <;> field_simp at h <;> linarith
