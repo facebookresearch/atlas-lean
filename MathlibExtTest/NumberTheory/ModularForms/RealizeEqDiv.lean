@@ -23,10 +23,10 @@ example (N : ℕ) {k : ℤ}
     ModularCurve.realize N x τ = (g : ℍ → ℂ) τ / (h : ℍ → ℂ) τ :=
   ModularCurve.realize_eq_div N g h x hx τ hτ
 
--- Boundary: without a representing pair the realization is `0` by definition;
--- with `h τ = 0` the quotient on the right is also `0` in a field only when
--- the numerator vanishes, so nonvanishing of the denominator cannot be dropped
--- in general. The definition itself gives `0` when no pair exists.
+-- Boundary: without a representing pair the realization is `0` by definition.
+-- The nonvanishing hypothesis cannot be dropped: division is totalized, so
+-- `g τ / h τ = 0` whenever `h τ = 0`, while `realize N x τ` need not be `0`,
+-- since another representation may have a nonvanishing denominator at `τ`.
 example (N : ℕ) (x : LaurentSeries ℂ) (τ : ℍ)
     (hnex : ¬ ∃ p : (k : ℤ) × (ModularForm (CongruenceSubgroup.Gamma0 N) k ×
           ModularForm (CongruenceSubgroup.Gamma0 N) k),
