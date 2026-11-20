@@ -17,9 +17,8 @@ import Mathlib.Tactic.NormNum
   elaborate, while a force plus a pressure force does;
 * pressure on a positive area: numeric conversion and the
   zero-area control;
-* temperature offsets: a difference is not an
-  absolute-temperature sum (a value-level fact — `WithDim`
-  itself adds two absolute temperatures);
+* the role limit in the not-claimed paragraph: `WithDim`
+  itself adds two absolute temperatures;
 * retagging round trips and a couple fixture (zero resultant,
   nonzero moment), stable under unit conversion.
 -/
@@ -84,15 +83,11 @@ example : normalStress (pressureForce (⟨3⟩ : WithDim stressDim ℝ)
 /-- Zero-area control: the round trip needs positive area. -/
 example : (3 : ℝ) * 0 / 0 ≠ 3 := by norm_num
 
-/-! ## C. Temperature offsets -/
+/-! ## C. Role limits -/
 
-example : celsiusToKelvin 20 + celsiusToKelvin 10
-    ≠ celsiusToKelvin (20 + 10) :=
-  celsiusToKelvin_add_ne 20 10
-
-/-- Control: `WithDim` itself adds two absolute
-temperatures; the offset check above is value-level by
-necessity. -/
+/-- Control for the not-claimed paragraph: `WithDim`
+itself adds two absolute temperatures; physical roles
+at one dimension are not kept apart by the type. -/
 example (T1 T2 : WithDim temperatureDim ℝ) :
     WithDim temperatureDim ℝ := T1 + T2
 
@@ -194,7 +189,4 @@ example : ¬ (∑ i, (⟨(siScale.dimScale mmScale forceDim : ℝ)
 #print axioms Units.EngineeringLoads.pressureForce_val
 #print axioms Units.EngineeringLoads.normalStress_pressureForce
 #print axioms Units.EngineeringLoads.pressureForce_normalStress
-#print axioms Units.EngineeringLoads.celsiusToKelvin_add
-#print axioms Units.EngineeringLoads.celsiusToKelvin_add_ne
-
 end PhyslibExtTest.Units.EngineeringLoads

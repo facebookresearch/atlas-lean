@@ -38,8 +38,7 @@ dimension `d` by `u1.dimScale u2 d`, with `UnitScale` over
 component `-p A` of a uniform pressure `p` on a face of positive
 area `A`, in the tension-positive convention of
 `PhyslibExt.Units.EngineeringFrames`: pressure is the negative
-of tension-positive normal stress. Temperature offsets are
-affine (`celsiusToKelvin`).
+of tension-positive normal stress.
 
 Not claimed: type safety of physical roles. Equal dimensions are
 not distinguished (a moment has the dimension of work, a line
@@ -63,8 +62,6 @@ a fact about the type interface, checked in tests, not a theorem.
   `normalStress_pressureForce`, `pressureForce_normalStress`:
   pressure on a positive area gives the outward-normal force
   `-p A`, whose tension-positive normal stress is `-p`.
-- `Units.EngineeringLoads.celsiusToKelvin_add_ne`: a temperature
-  difference is not an absolute-temperature sum.
 
 ## iii. Table of contents
 
@@ -73,7 +70,6 @@ a fact about the type interface, checked in tests, not a theorem.
 - C. Force-times-length moment balance
 - D. Unit conversion at the declared dimensions
 - E. Pressure on a positive area
-- F. Temperature offsets
 
 ## iv. References
 
@@ -479,22 +475,5 @@ lemma pressureForce_normalStress (F : WithDim forceDim ℝ)
   change -((normalStress F A hA).val * A.val) = (-F).val
   have h1 : (normalStress F A hA).val = F.val / A.val := rfl
   rw [h1, WithDim.val_neg, div_mul_cancel₀ F.val (ne_of_gt hA)]
-
-/-! ## F. Temperature offsets -/
-
-/-- A temperature difference `Δ` added to a Celsius reading adds `Δ` to the absolute
-temperature. -/
-lemma celsiusToKelvin_add (t Δ : ℝ) : celsiusToKelvin (t + Δ) = celsiusToKelvin t + Δ := by
-  unfold celsiusToKelvin
-  ring
-
-/-- Read as an absolute temperature, a difference `Δ` does not add: the sum of the absolute
-temperatures of `t` and `Δ` is not the absolute temperature of `t + Δ`. -/
-lemma celsiusToKelvin_add_ne (t Δ : ℝ) :
-    celsiusToKelvin t + celsiusToKelvin Δ ≠ celsiusToKelvin (t + Δ) := by
-  unfold celsiusToKelvin
-  intro h
-  have h2 : (273.15 : ℝ) = 0 := by linarith
-  norm_num at h2
 
 end Units.EngineeringLoads
