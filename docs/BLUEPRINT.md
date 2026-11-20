@@ -205,6 +205,59 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
     can produce graph changes faster than people can check them, and a poor
     expansion spreads into every task below it.
 
+### Checks
+
+`build the wiki` checks these rules on every PR that touches the wiki, and on
+the daily build of `main`:
+
+- `scripts/check_graph_rules.py`, on the committed tree and before the Lean
+  build, checks the mechanical part of rules 1, 2, 5, 8, 9, 10, 11, 12 and 15:
+  - rule 1: subject folders and the field folders of a subject with fields
+    (not module placements or subfields, which the generator lays out);
+  - rule 2: every page and subfolder is listed on its folder page;
+  - rule 5: one annotation per page, in its subject's links file, naming at
+    most one declaration, with a well-formed, unique `id` where it has one,
+    and a subject URI with no percent-escape (`sync_wiki.py` reads it as
+    written and Autoform decodes it, so the two could bind different pages);
+    no other annotation file Autoform would read (a `.json`, a `.ndjson`, a
+    nested file or a second `_defaults.json`);
+  - rule 8: no build output is tracked, and neither a row nor a
+    `_defaults.json` commits `kind` or `status`;
+  - rules 9 and 10: no linked page commits `## Depends on` or
+    `## Proof depends on`, while a planned page may;
+  - rule 11: `## Informally uses` links existing pages, never the page
+    itself, and closes no cycle, counted edges included;
+  - rule 12: `not_ready` is a boolean, on an article with no Lean link;
+  - rule 15: a PR changes fewer than 3,000 files.
+
+  It reads pages with the pinned Autoform's Markdown readers, so links,
+  headings and code are read as `autoform check` and the site read them. It is
+  report-only: its findings are annotations on the run and a table in the job
+  summary. On a PR it says which findings the base doesn't already have; once
+  a maintainer sets the Actions variable `GRAPH_RULES_BLOCKING` to `true`,
+  those fail the step, and findings `main` already has never do.
+- `sync_wiki.py lean-facts` stops on a page with no annotation row, and
+  `autoform check` validates the whole graph after it.
+- `autoform audit --json` runs report only, and the job summary counts its
+  findings and warnings by code: two pages for one declaration
+  (`duplicate-lean-target`, rule 6), overfull folders (rule 3), provenance and
+  coverage gaps. The full report is kept as `build/audit.json`.
+
+Before opening a graph PR, run the checker and a first pass of the other two
+on the committed tree, with Autoform installed as below:
+
+```sh
+python scripts/check_graph_rules.py --base origin/main
+autoform check blueprint
+autoform audit blueprint --lean-root . --json > audit.json
+```
+
+The checker reads the committed tree, as CI does. `autoform check` and the
+audit run in CI after `lean-facts`, which adds the Lean's dependencies and
+status, so on the committed tree they are only a first pass; for CI's
+results, run the build steps in order as
+[Local environment and tests](#local-environment-and-tests) shows.
+
 ## Local environment and tests
 
 Use Python 3.11–3.14 and the Lean toolchain in `lean-toolchain`.
@@ -223,7 +276,8 @@ python -m unittest \
   scripts.test_check_blueprint_site_navigation \
   scripts.test_site_chrome \
   scripts.test_blueprint_workflow \
-  scripts.test_blueprint_taxonomy
+  scripts.test_blueprint_taxonomy \
+  scripts.test_check_graph_rules
 ```
 
 Render from a dedicated checkout that excludes `v1/` and `Atlas/`, as the

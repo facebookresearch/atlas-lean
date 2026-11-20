@@ -17,6 +17,7 @@ on:
       - "scripts/extract_mathlib_graph.py"
       - "scripts/dump_mathlib_dependencies.lean"
       - "scripts/check_blueprint_site.py"
+      - "scripts/check_graph_rules.py"
       - "scripts/taxonomy.json"
       - "scripts/wiki-sync.json"
       - "scripts/requirements-blueprint.txt"
@@ -29,6 +30,7 @@ on:
       - "scripts/test_site_chrome.py"
       - "scripts/test_blueprint_workflow.py"
       - "scripts/test_blueprint_taxonomy.py"
+      - "scripts/test_check_graph_rules.py"
       - "mkdocs.yml"
       - "theme/**"
       - "hooks/**"
@@ -98,6 +100,33 @@ jobs:
           scripts.test_site_chrome
           scripts.test_blueprint_workflow
           scripts.test_blueprint_taxonomy
+          scripts.test_check_graph_rules
+
+      # The graph rules' mechanical checks (docs/BLUEPRINT.md, Graph rules), on
+      # the committed tree before lean-facts changes it, and before the Lean
+      # build so they report fast. Report-only, as new checks start (#4273):
+      # findings are annotations and a job-summary table. A PR or merge group
+      # is compared with its base, and once a maintainer sets the Actions
+      # variable GRAPH_RULES_BLOCKING to true, a finding the base doesn't have
+      # fails the step. The daily build of main reports every finding.
+      - name: Check the graph's rules
+        env:
+          EVENT: ${{ github.event_name }}
+          BLOCKING: ${{ vars.GRAPH_RULES_BLOCKING }}
+        run: |
+          set -euo pipefail
+          args=(--summary "$GITHUB_STEP_SUMMARY")
+          if [ "$EVENT" = pull_request ] || [ "$EVENT" = merge_group ]; then
+            # The checkout is the merge commit, whose first parent is the base it
+            # merges into; pull_request.base.sha can be older than that.
+            git fetch --no-tags --depth=2 origin "$GITHUB_SHA"
+            args+=(--base "$(git rev-parse HEAD^1)")
+            if [ "${BLOCKING:-}" = true ]; then
+              args+=(--blocking)
+            fi
+          fi
+          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}" \
+            python scripts/check_graph_rules.py "${args[@]}"
 
       - name: Free disk space for Lean caches
         run: |
@@ -192,6 +221,30 @@ jobs:
           uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
           autoform check blueprint --lean-root .
 
+      # Report only, so that its findings can be measured before any of them
+      # blocks a PR: two pages for one declaration, overfull folders,
+      # provenance and coverage gaps. The counts go in the job summary.
+      - name: Audit the graph (report only)
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          # Nonzero means findings; Actions runs steps with -e, so record it.
+          status=0
+          uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}" \
+            autoform audit blueprint --lean-root . --json > build/audit.json || status=$?
+          echo "autoform audit exited $status (nonzero means findings)"
+          python3 - build/audit.json >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import collections, json, sys
+          audit = json.load(open(sys.argv[1]))
+          print("## autoform audit (report only)\n")
+          print("| Kind | Code | Count |\n| --- | --- | ---: |")
+          for kind in ("findings", "warnings"):
+              counts = collections.Counter(entry.get("code", "?") for entry in audit.get(kind, []))
+              for code, count in counts.most_common():
+                  print(f"| {kind[:-1]} | `{code}` | {count} |")
+          print("\nThe full report is `build/audit.json` in the blueprint-dependencies artifact.")
+          PY
+
       - name: Render the blueprint
         run: >-
           uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
@@ -218,6 +271,7 @@ jobs:
           name: blueprint-dependencies
           path: |
             build/lean-dependencies.json
+            build/audit.json
             v2-dependencies.jsonl.gz
             v2-modules.txt
           if-no-files-found: warn

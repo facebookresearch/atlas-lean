@@ -10,6 +10,7 @@
 /scripts/dump_mathlib_dependencies.lean           @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua
 /scripts/test_extract_mathlib_graph.py            @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua
 /scripts/check_blueprint_site.py                  @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua
+/scripts/check_graph_rules.py                     @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua
 /scripts/taxonomy.json                            @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua
 /scripts/wiki-sync.json                           @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua
 /scripts/requirements-blueprint.txt               @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua
@@ -21,6 +22,7 @@
 /scripts/test_site_chrome.py                      @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua
 /scripts/test_blueprint_workflow.py               @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua
 /scripts/test_blueprint_taxonomy.py               @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua
+/scripts/test_check_graph_rules.py                @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua
 /mkdocs.yml                                       @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua
 /theme/                                           @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua
 /hooks/                                           @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua

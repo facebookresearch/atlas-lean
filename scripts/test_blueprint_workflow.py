@@ -38,7 +38,8 @@ class BlueprintWorkflowTests(unittest.TestCase):
         for path in (
             "blueprint/**", "scripts/generate_wiki.py", "scripts/sync_wiki.py",
             "scripts/extract_v2_lean_dependencies.py", "scripts/dump_v2_dependencies.lean",
-            "scripts/check_blueprint_site.py", "scripts/taxonomy.json", "scripts/wiki-sync.json",
+            "scripts/check_blueprint_site.py", "scripts/check_graph_rules.py", "scripts/taxonomy.json",
+            "scripts/wiki-sync.json",
             "scripts/requirements-blueprint.txt", "mkdocs.yml", "theme/**", "hooks/**",
             "docs/BLUEPRINT.md", ".github/workflows/blueprint-pages.yml", ".github/autoform-ref",
             "lean-toolchain", "lake-manifest.json", "lakefile.toml",
@@ -209,6 +210,38 @@ class BlueprintWorkflowTests(unittest.TestCase):
             self.assertIn(clause, condition)
         self.assertNotIn("BLUEPRINT_PAGES", condition)
         self.assertNotIn("push", condition)
+
+    def test_the_graph_rules_run_early_and_compare_with_the_merge_commits_first_parent(self):
+        step = self.step("Check the graph's rules")
+        self.assertIn('git fetch --no-tags --depth=2 origin "$GITHUB_SHA"', step["run"])
+        self.assertIn('args+=(--base "$(git rev-parse HEAD^1)")', step["run"])
+        self.assertIn('--summary "$GITHUB_STEP_SUMMARY"', step["run"])
+        # Report-only until a maintainer turns blocking on, and blocking only ever compares with a base.
+        self.assertEqual(step["env"]["BLOCKING"], "${{ vars.GRAPH_RULES_BLOCKING }}")
+        self.assertIn('if [ "${BLOCKING:-}" = true ]; then', step["run"])
+        self.assertLess(step["run"].index("--base"), step["run"].index("--blocking"))
+        self.assertNotIn("continue-on-error", step)
+        self.assertNotIn("${{ github.event.pull_request.base.sha", self.text)
+        positions = {s.get("name"): i for i, s in enumerate(self.steps)}
+        self.assertLess(positions["Test the wiki scripts"], positions[step["name"]])
+        self.assertLess(positions[step["name"]], positions["Build the current v2 libraries"])
+        self.assertLess(positions[step["name"]], positions["Add the Lean-owned facts to the articles"])
+
+    def test_the_audit_reports_without_blocking_and_fails_only_if_it_cannot_run(self):
+        audit = self.step("Audit the graph (report only)")
+        self.assertNotIn("if", audit)
+        self.assertNotIn("continue-on-error", audit)
+        # Actions runs a step with `bash -e`, so findings must not end it; a crash still does, through the
+        # JSON read below.
+        self.assertIn("|| status=$?", audit["run"])
+        self.assertIn("json.load", audit["run"])
+        self.assertIn("autoform audit blueprint --lean-root . --json", audit["run"])
+        self.assertIn("GITHUB_STEP_SUMMARY", audit["run"])
+        self.assertIn('for kind in ("findings", "warnings")', audit["run"])
+        self.assertIn("build/audit.json", self.step("Keep dependency diagnostics")["with"]["path"])
+        positions = {s.get("name"): i for i, s in enumerate(self.steps)}
+        self.assertLess(positions["Validate the theorem DAG and its declarations"], positions[audit["name"]])
+        self.assertLess(positions[audit["name"]], positions["Render the blueprint"])
 
 
 if __name__ == "__main__":
