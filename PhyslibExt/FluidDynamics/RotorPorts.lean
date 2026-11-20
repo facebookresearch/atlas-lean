@@ -89,16 +89,19 @@ disk, where the pressure jumps.
 
 Bernoulli on the two sides gives the pressure jump `p⁺ - p⁻ = ρ (U∞² - U_w²) / 2`; with the two
 momentum balances, `ρ A (U∞ - U_w) (U_d - (U∞ + U_w) / 2) = 0`, so `U_d = (U∞ + U_w) / 2`
-whenever the wake speed differs from the freestream speed. On the wind-extraction branch
-`0 ≤ U_w < U∞` the total pressure drops across the disk by `ρ (U∞² - U_w²) / 2 > 0`, which is why
-Bernoulli cannot be applied across it. The extracted power `T U_d` equals the loss of kinetic
+whenever the wake speed differs from the freestream speed. On the extraction side `0 ≤ U_w < U∞`,
+the wind-extraction branch below together with its wake-degenerate endpoint `U_w = 0`, the total
+pressure drops across the disk by `ρ (U∞² - U_w²) / 2 > 0`, which is why Bernoulli cannot be applied
+across it. The extracted power `T U_d` equals the loss of kinetic
 power `ṁ (U∞² - U_w²) / 2`. With the axial induction factor `a = 1 - U_d / U∞` (`U∞ > 0`),
 `U_d = (1 - a) U∞`, `U_w = (1 - 2 a) U∞` and, normalized by the freestream kinetic power through
 the disk area `ρ A U∞³ / 2`, the power coefficient is `C_P = 4 a (1 - a)²`. Since
 `16/27 - 4 a (1 - a)² = 4 (a - 1/3)² (4/3 - a)`, on `0 ≤ a < 1/2` `C_P ≤ 16/27`, with equality
 exactly at `a = 1/3`, the Betz limit. The wind-extraction branch `0 < U_w < U∞` is
-`0 < a < 1/2`; the wake-degenerate endpoint `a = 1/2` (`U_w = 0`) is only a limit, and `U∞ = 0`
-is not a valid normalization: the hovering rotor is a separate branch.
+`0 < a < 1/2`. Its endpoints are limits of the branch: the zero-extraction limit `a → 0`
+(`U_w → U∞`, where the force tends to zero) and the wake-degenerate limit `a → 1/2` (`U_w → 0`),
+which the extraction side includes. `U∞ = 0` is not a valid normalization: the hovering rotor is a
+separate branch.
 
 Model inputs of sections D-F: steady incompressible inviscid flow through an ideal disk of uniform
 loading, with no swirl and no tip loss; ambient pressure far upstream and in the far wake; no net
@@ -533,9 +536,10 @@ lemma extractedPower_eq {d : ActuatorDisk} (h : d.PortLaws) :
   rw [(pressureJump_eq h).2]
   ring
 
-/-- **No Bernoulli across the disk.** On the wind-extraction branch `0 ≤ U_w < U∞`, with `ρ > 0`,
-the total pressure drops across the disk by `ρ (U∞² - U_w²) / 2 > 0`, so Bernoulli applied
-across the pressure jump, which would equate the two total pressures, contradicts extraction. -/
+/-- **No Bernoulli across the disk.** On the extraction side `0 ≤ U_w < U∞`, the wind-extraction
+branch together with its wake-degenerate endpoint `U_w = 0`, with `ρ > 0`, the total pressure drops
+across the disk by `ρ (U∞² - U_w²) / 2 > 0`, so Bernoulli applied across the pressure jump, which
+would equate the two total pressures, contradicts extraction. -/
 lemma totalPressure_drop {d : ActuatorDisk} (h : d.PortLaws) (hρ : 0 < d.ρ) (hw : 0 ≤ d.uWake)
     (hext : d.uWake < d.uInf) :
     (d.pUp + d.ρ * d.uDisk ^ 2 / 2) - (d.pDown + d.ρ * d.uDisk ^ 2 / 2) =
@@ -626,7 +630,8 @@ noncomputable def ActuatorDisk.ofInduction (ρ A uInf pAmb a : ℝ) : ActuatorDi
 
 /-- **Every induction factor is realized.** For every `a` the state `ofInduction` satisfies the
 port laws; for `U∞ ≠ 0` its induction factor is `a`, and for `ρ, A, U∞ > 0` its power coefficient
-is `4 a (1 - a)²`, the zero-force state `a = 0` included. -/
+is `4 a (1 - a)²`. This includes both limits of the wind-extraction branch: the zero-extraction
+state `a = 0` (`U_d = U_w = U∞`, no force) and the wake-degenerate state `a = 1/2` (`U_w = 0`). -/
 lemma ofInduction_spec (ρ A uInf pAmb a : ℝ) :
     (ActuatorDisk.ofInduction ρ A uInf pAmb a).PortLaws ∧
       (uInf ≠ 0 → inductionFactor (ActuatorDisk.ofInduction ρ A uInf pAmb a) = a) ∧
