@@ -10,13 +10,15 @@ module
 public import PhyslibExt.Mechanics.FlightPlant
 import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
+public import MathlibExt.LinearAlgebra.Matrix.SylvesterCriterion
 
 /-!
 # Tests for `PhyslibExt.Mechanics.FlightPlant`
 
 Consumers of the translational correspondence, of the six-degree-of-freedom package and of the
 coefficient-map wrapper: straight flight, the admitted domain of a lift map, a unit point mass,
-a steady level turn, the controlled longitudinal fixture and its linearization about the trim.
+a steady level turn, the controlled longitudinal fixture, its linearization about the trim and the
+Lyapunov certificate of that linearization.
 
 ## i. Overview
 
@@ -58,12 +60,25 @@ the forward component vanishes. The all-ones state has Euclidean norm at most `2
 Euclidean norm at most `1/100` is admitted, and there the pitch remainder is at most `‖e‖² / 600`.
 The quarter-mass trim moves forward with rate at least `99/100`.
 
+The Lyapunov certificate: the pitch-block entry `1/2` of `P`, read off its block form; the
+derivative of the reduced field at the trim in the pitch-rate direction, `(0, 0, 1, -2)`; the
+positive determinant of `P` and the entry `-1` of `Aᵀ P + P A`; the bounds `1 ≤ V ≤ 8` at the
+all-ones state; `V` and its orbital derivative vanish at the trim, while at `(0, 0, 1, 0)` the
+derivative of `V` in the pitch-rate direction is `1` and the orbital derivative is `-1`. From the
+trim the actual solution is the zero solution; from `(1, 0, 1, 0)` it is
+`(e^{-t}, 0, (1 + t) e^{-t}, -t e^{-t})`, which obeys the decay bound. The determinants of the
+certificate and `Aᵀ P` are checked entry by entry, and the solution `exp` of `y' = y` violates the
+decay bound.
+
 ## ii. Key results
 
 - `straightFlight`, `liftMaps`, `straightFlight_fixture`, `straightFlight_balanceLaws`,
   `liftMaps_not_sixDofPlant` : the straight-flight fixture.
 - `trim_fixture` : the trim of the controlled longitudinal fixture.
 - `longitudinalRemainder_fixture` : the nonlinear remainder at a nonzero state.
+- `longitudinalLyapunov_fixture`, `linearReducedField_solution_fixture`,
+  `exp_violates_decay_bound` : the certificate's entries, a nonzero solution of the linear plant
+  and an unstable contrast.
 
 ## iii. Table of contents
 
@@ -72,11 +87,13 @@ The quarter-mass trim moves forward with rate at least `99/100`.
 - C. A steady level turn
 - D. The controlled longitudinal fixture
 - E. Linearization about the trim
+- F. The Lyapunov certificate for the reduced linear plant
 
 ## iv. References
 
-- `PhyslibExt.Mechanics.FlightPlant`, `PhyslibExt.Mechanics.RigidMotionPorts` and
-  `PhyslibExt.Statistics.UncertaintyPropagation`.
+- `PhyslibExt.Mechanics.FlightPlant`, `PhyslibExt.Mechanics.RigidMotionPorts`,
+  `PhyslibExt.Statistics.UncertaintyPropagation` and
+  `MathlibExt.LinearAlgebra.Matrix.SylvesterCriterion`.
 -/
 
 @[expose] public section
@@ -660,5 +677,195 @@ example (e : EuclideanSpace ℝ (Fin 4)) (he : ‖e‖ ≤ 1 / 100) :
 example (t : Time) : 99 / 100 ≤ ∂ₜ (fun s : Time => 3 + s.val) t :=
   planar_sixDofPlant_forward_rate (trim_relative_equilibrium quarterMassBody quarterMassBody_mass
     quarterMassBody_centerOfMass quarterMassBody_inertia 3 5 t).2.1
+
+
+/-! ## F. The Lyapunov certificate for the reduced linear plant -/
+
+/-- **Fixture: the certificate entries.** The pitch block `[[3/2, 1/2], [1/2, 1/2]]` has
+determinant `1/2`; the leading principal minors of `P` are `1/2`, `1/4`, `3/8` and `1/8`; and
+`Aᵀ P` is `-(1/2) • 1` plus a skew part with entries `∓1/2` at `(θ, q)` and `(q, θ)`, which
+cancels in `Aᵀ P + P A = Aᵀ P + (Aᵀ P)ᵀ`. -/
+lemma longitudinalLyapunov_fixture :
+    !![(3 / 2 : ℝ), 1 / 2; 1 / 2, 1 / 2].det = 1 / 2 ∧
+      (longitudinalLyapunovMatrix.leadingPrincipalSubmatrix 1 (by norm_num)).det = 1 / 2 ∧
+      (longitudinalLyapunovMatrix.leadingPrincipalSubmatrix 2 (by norm_num)).det = 1 / 4 ∧
+      (longitudinalLyapunovMatrix.leadingPrincipalSubmatrix 3 (by norm_num)).det = 3 / 8 ∧
+      longitudinalLyapunovMatrix.det = 1 / 8 ∧
+      longitudinalJacobianᵀ * longitudinalLyapunovMatrix =
+        !![-1 / 2, 0, 0, 0; 0, -1 / 2, 0, 0; 0, 0, -1 / 2, -1 / 2; 0, 0, 1 / 2, -1 / 2] := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  · rw [Matrix.det_fin_two_of]
+    norm_num
+  · simp [Matrix.leadingPrincipalSubmatrix, longitudinalLyapunovMatrix]
+  · rw [Matrix.det_fin_two]
+    simp [Matrix.leadingPrincipalSubmatrix, longitudinalLyapunovMatrix]
+    norm_num
+  · rw [Matrix.det_fin_three]
+    simp [Matrix.leadingPrincipalSubmatrix, longitudinalLyapunovMatrix]
+    norm_num
+  · rw [longitudinalLyapunovMatrix_eq_fromBlocks, Matrix.det_reindex_self,
+      Matrix.det_fromBlocks_zero₂₁, Matrix.det_fin_two]
+    simp
+    norm_num
+  · ext i j
+    fin_cases i <;> fin_cases j <;>
+      simp [longitudinalJacobian, longitudinalLyapunovMatrix, Matrix.mul_apply,
+        Fin.sum_univ_four] <;>
+      norm_num
+
+/-- **Fixture: a nonzero solution.** From `e₀ = (1, 0, 1, 0)` the actual solution of the reduced
+linear plant is `(e^{-t}, 0, (1 + t) e^{-t}, -t e^{-t})`: the pitch block `[[0, 1], [-1, -2]]`
+has the double eigenvalue `-1` (critical damping), hence the `t e^{-t}` terms. -/
+lemma linearReducedField_solution_fixture (e : ℝ → EuclideanSpace ℝ (Fin 4))
+    (he : ∀ s, e s = WithLp.toLp 2
+      ![Real.exp (-s), 0, (1 + s) * Real.exp (-s), -s * Real.exp (-s)]) :
+    e 0 = WithLp.toLp 2 ![1, 0, 1, 0] ∧ ∀ t, HasDerivAt e (linearReducedField (e t)) t := by
+  refine ⟨by simp [he], fun t => ?_⟩
+  let g : ℝ → Fin 4 → ℝ := fun s =>
+    ![Real.exp (-s), 0, (1 + s) * Real.exp (-s), -s * Real.exp (-s)]
+  have hexp : HasDerivAt (fun s : ℝ => Real.exp (-s)) (-Real.exp (-t)) t := by
+    simpa using (hasDerivAt_neg t).exp
+  have hAg : longitudinalJacobian *ᵥ g t =
+      ![-Real.exp (-t), 0, -t * Real.exp (-t), t * Real.exp (-t) - Real.exp (-t)] := by
+    ext i
+    fin_cases i
+    all_goals simp [g, longitudinalJacobian, Matrix.mulVec, dotProduct, Fin.sum_univ_four]
+    ring
+  have hg : HasDerivAt g (longitudinalJacobian *ᵥ g t) t := by
+    rw [hAg, hasDerivAt_pi]
+    intro i
+    fin_cases i
+    · simpa [g] using hexp
+    · simpa [g] using hasDerivAt_const t (0 : ℝ)
+    · change HasDerivAt (fun x => (1 + x) * Real.exp (-x)) (-t * Real.exp (-t)) t
+      exact (((hasDerivAt_id' t).const_add 1).fun_mul hexp).congr_deriv (by ring)
+    · change HasDerivAt (fun x => -x * Real.exp (-x)) (t * Real.exp (-t) - Real.exp (-t)) t
+      exact ((hasDerivAt_id' t).fun_neg.fun_mul hexp).congr_deriv (by ring)
+  have hfun : e = (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 4 => ℝ)).symm ∘ g := by
+    funext s
+    rw [he s]
+    rfl
+  rw [hfun]
+  exact (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 4 => ℝ)).symm.hasFDerivAt.comp_hasDerivAt
+    t hg
+
+/-- **Contrast: an unstable scalar plant.** The actual solution `exp` of `y' = y`, `y 0 = 1`,
+violates the decay bound of the reduced linear plant (at `t = 4`, `e⁴ > √8 e⁻¹`): the bound comes
+from the certificate, not from linearity. -/
+lemma exp_violates_decay_bound :
+    (∀ t, HasDerivAt Real.exp (Real.exp t) t) ∧ Real.exp 0 = 1 ∧
+      ¬ ∀ t, 0 ≤ t → |Real.exp t| ≤ Real.sqrt 8 * Real.exp (-t / 4) * |Real.exp 0| := by
+  refine ⟨Real.hasDerivAt_exp, Real.exp_zero, fun h => ?_⟩
+  have h4 := h 4 (by norm_num)
+  rw [Real.exp_zero, abs_one, mul_one, abs_of_pos (Real.exp_pos 4)] at h4
+  have hs : Real.sqrt 8 < 3 := by
+    rw [Real.sqrt_lt' (by norm_num)]
+    norm_num
+  have h5 : (6 : ℝ) ≤ Real.exp 5 := by linarith [Real.add_one_le_exp 5]
+  have hsplit : Real.exp 5 = Real.exp 4 * Real.exp 1 := by
+    rw [← Real.exp_add]
+    norm_num
+  have hinv : Real.exp (-4 / 4) * Real.exp 1 = 1 := by
+    rw [← Real.exp_add]
+    norm_num
+  have h1 : 0 < Real.exp 1 := Real.exp_pos 1
+  nlinarith [mul_le_mul_of_nonneg_right h4 h1.le]
+
+-- The pitch-block entry of the Lyapunov matrix, read off its block form: `P θq = 1/2`.
+example : longitudinalLyapunovMatrix 2 3 = 1 / 2 := by
+  rw [longitudinalLyapunovMatrix_eq_fromBlocks]
+  rfl
+
+-- A pitch-rate perturbation alone produces, to first order, the pitch rate `q` and the pitch
+-- acceleration `-2 q`: the linear plant, the derivative of the reduced field at the trim, maps
+-- `(0, 0, 0, 1)` to `(0, 0, 1, -2)`.
+example : fderiv ℝ reducedField 0 ![0, 0, 0, 1] = ![0, 0, 1, -2] := by
+  have h := linearReducedField_eq_fderiv (WithLp.toLp 2 ![0, 0, 0, 1])
+  simp only at h
+  rw [← h]
+  ext i
+  fin_cases i <;> simp [linearReducedField, longitudinalJacobian]
+
+-- The Lyapunov matrix has positive determinant, as every positive definite matrix does, and `1`
+-- is symmetric.
+example : 0 < longitudinalLyapunovMatrix.det ∧ (1 : Matrix (Fin 4) (Fin 4) ℝ).IsHermitian :=
+  ⟨longitudinalLyapunovMatrix_posDef.1.det_pos, longitudinalLyapunovMatrix_posDef.2.isHermitian⟩
+
+-- The pitch-rate entry of `Aᵀ P + P A` is `-1`.
+example : (longitudinalJacobianᵀ * longitudinalLyapunovMatrix +
+    longitudinalLyapunovMatrix * longitudinalJacobian) 3 3 = -1 := by
+  rw [longitudinalLyapunov_equation]
+  simp
+
+-- At the all-ones state, of squared Euclidean norm `4`, the comparison bounds give `1 ≤ V ≤ 8`.
+example : 1 ≤ longitudinalLyapunov (WithLp.toLp 2 fun _ => 1) ∧
+    longitudinalLyapunov (WithLp.toLp 2 fun _ => 1) ≤ 8 := by
+  have hn : ‖(WithLp.toLp 2 fun _ : Fin 4 => (1 : ℝ) : EuclideanSpace ℝ (Fin 4))‖ ^ 2 = 4 := by
+    rw [EuclideanSpace.norm_sq_eq, Fin.sum_univ_four]
+    norm_num
+  have h := longitudinalLyapunov_bounds (WithLp.toLp 2 fun _ => 1)
+  rw [hn] at h
+  constructor <;> linarith [h.1, h.2]
+
+-- `V` vanishes at the trim and nowhere else, for example not at `(1, 0, 0, 0)`.
+example : longitudinalLyapunov 0 = 0 ∧
+    longitudinalLyapunov (WithLp.toLp 2 ![1, 0, 0, 0]) ≠ 0 := by
+  refine ⟨(longitudinalLyapunov_eq_zero_iff 0).2 rfl, fun h => ?_⟩
+  have h0 := congrArg (fun v : EuclideanSpace ℝ (Fin 4) => v 0)
+    ((longitudinalLyapunov_eq_zero_iff _).1 h)
+  simp at h0
+
+-- `V` is differentiable at the trim.
+example : DifferentiableAt ℝ longitudinalLyapunov 0 :=
+  differentiable_longitudinalLyapunov 0
+
+-- At `(0, 0, 1, 0)` the derivative of `V` in the pitch-rate direction is `2 · (1/2) = 1`.
+example : fderiv ℝ longitudinalLyapunov (WithLp.toLp 2 ![0, 0, 1, 0])
+    (WithLp.toLp 2 ![0, 0, 0, 1]) = 1 := by
+  rw [fderiv_longitudinalLyapunov_apply]
+  norm_num [longitudinalLyapunovMatrix, dotProduct, Matrix.mulVec, Fin.sum_univ_four]
+
+-- The orbital derivative vanishes at the trim, where nothing decays, and is `-1` at
+-- `(0, 0, 1, 0)`.
+example : fderiv ℝ longitudinalLyapunov 0 (linearReducedField 0) = 0 ∧
+    fderiv ℝ longitudinalLyapunov (WithLp.toLp 2 ![0, 0, 1, 0])
+      (linearReducedField (WithLp.toLp 2 ![0, 0, 1, 0])) = -1 := by
+  refine ⟨by rw [fderiv_longitudinalLyapunov_linearReducedField]; simp, ?_⟩
+  rw [fderiv_longitudinalLyapunov_linearReducedField, EuclideanSpace.norm_sq_eq, Fin.sum_univ_four]
+  norm_num
+
+-- From the trim the actual solution is the zero solution.
+example (e : ℝ → EuclideanSpace ℝ (Fin 4)) (h0 : e 0 = 0)
+    (hd : ∀ t, HasDerivAt e (linearReducedField (e t)) t) : e = fun _ => 0 :=
+  (existsUnique_linearReducedField_solution 0).unique ⟨h0, hd⟩
+    ⟨rfl, fun t => by
+      simpa [linearReducedField] using hasDerivAt_const t (0 : EuclideanSpace ℝ (Fin 4))⟩
+
+-- From `(1, 0, 1, 0)` the actual solution is the fixture solution.
+example (e : ℝ → EuclideanSpace ℝ (Fin 4)) (h0 : e 0 = WithLp.toLp 2 ![1, 0, 1, 0])
+    (hd : ∀ t, HasDerivAt e (linearReducedField (e t)) t) (t : ℝ) :
+    e t = WithLp.toLp 2 ![Real.exp (-t), 0, (1 + t) * Real.exp (-t), -t * Real.exp (-t)] :=
+  congrFun ((existsUnique_linearReducedField_solution _).unique ⟨h0, hd⟩
+    (linearReducedField_solution_fixture _ fun _ => rfl)) t
+
+-- The nonzero fixture solution obeys the decay bound at `t = 1`, where its state is
+-- `(e⁻¹, 0, 2 e⁻¹, -e⁻¹)`.
+example : ‖(WithLp.toLp 2 ![Real.exp (-1), 0, (1 + 1) * Real.exp (-1), -1 * Real.exp (-1)] :
+      EuclideanSpace ℝ (Fin 4))‖ ≤
+    Real.sqrt 8 * Real.exp (-1 / 4) *
+      ‖(WithLp.toLp 2 ![1, 0, 1, 0] : EuclideanSpace ℝ (Fin 4))‖ := by
+  obtain ⟨h0, hd⟩ := linearReducedField_solution_fixture
+    (fun s => WithLp.toLp 2 ![Real.exp (-s), 0, (1 + s) * Real.exp (-s), -s * Real.exp (-s)])
+    fun _ => rfl
+  have h := norm_le_of_isIntegralCurveOn_linearReducedField
+    (fun s _ => (hd s).hasDerivWithinAt) zero_le_one
+  rw [h0] at h
+  exact h
+
+-- From the trim, the decay bound keeps the actual solution at `0`.
+example (t : ℝ) (ht : 0 ≤ t) : ∃ e : ℝ → EuclideanSpace ℝ (Fin 4), e 0 = 0 ∧ e t = 0 := by
+  obtain ⟨e, h0, -, hb⟩ := linearReducedField_solution_decay 0
+  refine ⟨e, h0, norm_le_zero_iff.1 ?_⟩
+  simpa using hb t ht
 
 end PhyslibExtTest.Mechanics.FlightPlant
