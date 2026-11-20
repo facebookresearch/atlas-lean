@@ -45,16 +45,19 @@ import Mathlib.NumberTheory.ModularForms.LevelOne.Basic
 import Mathlib.NumberTheory.ModularForms.QExpansion
 
 /-!
-# Vanishing of weight-two cusp forms on `Γ₀(1)` and `Γ₀(2)`
+# Vanishing of cusp forms of weights two and four on `Γ₀(1)` and `Γ₀(2)`
 
-The space of weight-two cusp forms on `Γ₀(2)` is zero. This is the final
-step of the classical proof of Fermat's Last Theorem via the Frey curve:
-a Frey curve is modular, Ribet's level lowering puts its mod-`p`
-representation in `S₂(Γ₀(2))`, and that space being zero gives the
-contradiction. Along the way we record the two reusable ingredients, the
-product norm of a cusp form over a finite-index subgroup and the index
-`[SL(2, ℤ) : Γ₀(2)] = 3`, which let the weight-two case be reduced to the
-weight-six level-one dimension formula.
+The spaces of cusp forms of weights two and four on `Γ₀(2)` are zero.
+The weight-two case is the final step of the classical proof of Fermat's
+Last Theorem via the Frey curve: a Frey curve is modular, Ribet's level
+lowering puts its mod-`p` representation in `S₂(Γ₀(2))`, and that space
+being zero gives the contradiction. Along the way we record the two
+reusable ingredients, the product norm of a cusp form over a finite-index
+subgroup and the index `[SL(2, ℤ) : Γ₀(2)] = 3`, which let the weight-two
+case be reduced to the weight-six level-one dimension formula. For weight
+four, the product of a form with its `S`- and `ST`-translates is a
+weight-twelve level-one cusp form whose first `q`-expansion coefficient
+vanishes, so the product, and hence the form itself, is zero.
 
 ## Mathematical references
 
