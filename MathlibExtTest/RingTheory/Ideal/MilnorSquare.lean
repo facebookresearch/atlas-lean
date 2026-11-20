@@ -14,7 +14,8 @@ public import MathlibExt.RingTheory.Ideal.MilnorSquare
 
 namespace IdealMilnorSquareTest
 
-/-- The exact source statement, with no added hypothesis. -/
+/-- The exact source statement (which fixed universe 0), with no added
+hypothesis. -/
 public theorem exactSource (A : Type) [CommRing A] (I₁ I₂ : Ideal A)
     (h : I₁ ⊓ I₂ = ⊥) :
     Function.Injective
@@ -24,7 +25,16 @@ public theorem exactSource (A : Type) [CommRing A] (I₁ I₂ : Ideal A)
         Ideal.Quotient.factor (le_sup_right : I₂ ≤ I₁ ⊔ I₂) x₂ →
       ∃ a : A, Ideal.Quotient.mk I₁ a = x₁ ∧ Ideal.Quotient.mk I₂ a = x₂ :=
   Ideal.injective_quotient_mk_prod_and_exists_of_factor_eq_of_inf_eq_bot
-    A I₁ I₂ h
+    I₁ I₂ h
+
+/-- Higher-universe consumer: the theorem is not restricted to universe
+0. -/
+public example (A : Type 1) [CommRing A] (I₁ I₂ : Ideal A)
+    (h : I₁ ⊓ I₂ = ⊥) :
+    Function.Injective
+        (fun a : A => (Ideal.Quotient.mk I₁ a, Ideal.Quotient.mk I₂ a)) :=
+  (Ideal.injective_quotient_mk_prod_and_exists_of_factor_eq_of_inf_eq_bot
+    I₁ I₂ h).1
 
 /-- Without `I₁ ⊓ I₂ = ⊥` injectivity fails: for `I₁ = I₂ = ⊥` in `ℤ`
 the map is injective, but for `I₁ = I₂ = ⊤`-like overlap the kernel is

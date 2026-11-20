@@ -39,7 +39,7 @@ namespace Ideal
 into `A ⧸ I₁ × A ⧸ I₂`, and its image is exactly the pairs that agree
 in `A ⧸ (I₁ ⊔ I₂)`. -/
 public theorem injective_quotient_mk_prod_and_exists_of_factor_eq_of_inf_eq_bot
-    (A : Type) [CommRing A] (I₁ I₂ : Ideal A) (h : I₁ ⊓ I₂ = ⊥) :
+    {A : Type*} [CommRing A] (I₁ I₂ : Ideal A) (h : I₁ ⊓ I₂ = ⊥) :
     Function.Injective
         (fun a : A => (Ideal.Quotient.mk I₁ a, Ideal.Quotient.mk I₂ a)) ∧
     ∀ (x₁ : A ⧸ I₁) (x₂ : A ⧸ I₂),
