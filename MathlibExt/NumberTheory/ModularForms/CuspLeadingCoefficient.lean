@@ -30,7 +30,7 @@ removed and the names restated in Mathlib style.
 module
 
 public import Mathlib.NumberTheory.ModularForms.Cusps
-public import Mathlib.NumberTheory.ModularForms.NormTrace
+import Mathlib.NumberTheory.ModularForms.NormTrace
 public import Mathlib.NumberTheory.ModularForms.QExpansion
 
 @[expose] public section
