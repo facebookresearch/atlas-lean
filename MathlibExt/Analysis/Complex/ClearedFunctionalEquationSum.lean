@@ -20,7 +20,7 @@ Compared with the source files at commit
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 The upstream NOTICE also credits:
-Mathlib \u2014 https://github.com/leanprover-community/mathlib4
+Mathlib — https://github.com/leanprover-community/mathlib4
 Copyright (c) the respective Mathlib authors, as recorded in the headers of the
 Mathlib source files.
 Released under the Apache License, Version 2.0.
