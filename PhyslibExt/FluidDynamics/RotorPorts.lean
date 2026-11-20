@@ -81,8 +81,8 @@ made.
   of rotor forces on the fluid is `ω τ = ṁ (U₂ c_θ₂ - U₁ c_θ₁)`.
 - `FluidDynamics.RotorPorts.shaftPowerOut_eq`: the shaft power out of a steadily turning rotor is
   its negative.
-- `FluidDynamics.RotorPorts.torqueOnFluid_eq_zero_of_swirl`: no swirl change, no torque, power or
-  shaft power.
+- `FluidDynamics.RotorPorts.torqueOnFluid_eq_zero_of_specificAngularMomentum_eq`: equal specific
+  axial angular momentum `r c_θ` at both ports, no torque, power or shaft power.
 - `FluidDynamics.RotorPorts.compressor_iff`, `FluidDynamics.RotorPorts.turbine_iff`: the
   compressor and turbine signs of the power and the shaft power.
 - `FluidDynamics.RotorPorts.relativeSwirl_eq`: the swirl relative to the rotor is `c_θ - ω r`.
@@ -318,21 +318,22 @@ lemma shaftPowerOut_eq {ι : Type*} [Fintype ι] {ω : ℝ} {o : Fin 3 → ℝ} 
   simp only [hS, htorq, ProcessPorts.workOut]
   ring
 
-/-- **Zero swirl change.** If the inlet and outlet carry the same angular momentum per unit mass,
-`r₁ cθ₁ = r₂ cθ₂`, the rotor torque on the fluid is exerted by forces at points moving with the
-rotor, no other external moment acts and the steady lumped balances hold, then the torque of those
-forces on the fluid and their power vanish, for every throughflow and every rotor speed, and a
-steadily turning rotor without bearing torque has no shaft power out. -/
-lemma torqueOnFluid_eq_zero_of_swirl {ι : Type*} [Fintype ι] {ω : ℝ} {o : Fin 3 → ℝ}
-    {x F : ι → Fin 3 → ℝ} {inlet outlet : RotorPort} {mdot τShaft τReaction : ℝ}
+/-- **Equal specific angular momentum.** If the inlet and outlet carry the same specific axial
+angular momentum (axial angular momentum per unit mass), `r₁ cθ₁ = r₂ cθ₂`, the rotor torque on the
+fluid is exerted by forces at points moving with the rotor, no other external moment acts and the
+steady lumped balances hold, then the torque of those forces on the fluid and their power vanish,
+for every throughflow and every rotor speed, and a steadily turning rotor without bearing torque
+has no shaft power out. The swirl velocities themselves may differ: only `r cθ` enters. -/
+lemma torqueOnFluid_eq_zero_of_specificAngularMomentum_eq {ι : Type*} [Fintype ι] {ω : ℝ}
+    {o : Fin 3 → ℝ} {x F : ι → Fin 3 → ℝ} {inlet outlet : RotorPort} {mdot τShaft τReaction : ℝ}
     (hin : inlet.lumpedMassFlow = -mdot) (hout : outlet.lumpedMassFlow = mdot)
     (hbal : axialTorque o x F = axialMomentFlux o inlet + axialMomentFlux o outlet)
-    (hswirl : inlet.r * inlet.cθ = outlet.r * outlet.cθ)
+    (hangMom : inlet.r * inlet.cθ = outlet.r * outlet.cθ)
     (hrotor : τShaft + τReaction = 0) (hreact : τReaction = -axialTorque o x F) :
     axialTorque o x F = 0 ∧ rotorPower ω o x F = 0 ∧ ProcessPorts.workOut (ω * τShaft) = 0 := by
   obtain ⟨htorq, hpow, -⟩ := powerOnFluid_eq (ω := ω) hin hout hbal
   obtain ⟨-, hshaft, -⟩ := shaftPowerOut_eq (ω := ω) hin hout hbal hrotor hreact
-  have h0 : axialTorque o x F = 0 := by rw [htorq, hswirl, sub_self, mul_zero]
+  have h0 : axialTorque o x F = 0 := by rw [htorq, hangMom, sub_self, mul_zero]
   exact ⟨h0, by rw [hpow, h0, mul_zero], by rw [hshaft, hpow, h0, mul_zero, neg_zero]⟩
 
 /-- **Compressor or pump sign.** With positive throughflow `ṁ > 0`, the rotor torque on the fluid
