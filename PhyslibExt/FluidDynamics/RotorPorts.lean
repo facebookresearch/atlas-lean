@@ -106,8 +106,8 @@ loading, with no swirl and no tip loss; ambient pressure far upstream and in the
 axial pressure force on the streamtube boundary. No blade-element, wake-rotation or turbulent-wake
 model is used, and no empirical adequacy or turbine safety claim is made.
 
-The hovering rotor of section G. The hovering rotor is the ideal actuator disk of the
-wind-extraction branch, with the same state and the same port laws, in still air. Axial speeds are
+The hovering rotor of section G is the same ideal actuator-disk model, on the separate hover
+branch: the same state and the same port laws, in still air. Axial speeds are
 positive along the flow through the disk: the far-upstream speed is `U∞ = 0`, the induced velocity
 is the speed `v_i = U_d` at the disk and `U_w` is the far-wake speed. The port laws are Bernoulli
 separately on the two sides of the disk, `p∞ + ρ U∞² / 2 = p⁺ + ρ v_i² / 2` and
@@ -121,9 +121,11 @@ With `U∞ = 0`, Bernoulli on the two sides gives `F = -ρ A U_w² / 2` and the 
 `F = -ρ A v_i U_w`; a nonzero force makes `U_w ≠ 0`, so `U_w = 2 v_i`. Then `T = 2 ρ A v_i²`,
 and the induced power, the kinetic power `ṁ (U_w² - U∞²) / 2` that the disk adds to the stream
 (`ṁ = ρ A v_i`), is `P = T v_i`, the power `-F v_i` of the disk on the stream. A powered disk
-delivers positive power, `T v_i > 0`; then `v_i > 0`, `v_i = √(T / (2 ρ A))` and
-`P = T √(T / (2 ρ A))`. The port laws do not change when every speed changes sign, and the
-reversed state extracts power instead, so the powered hypothesis cannot be dropped. The
+delivers positive power, `T v_i > 0`; then `v_i > 0`, so the far wake moves at
+`U_w = 2 v_i > U∞ = 0`, outside the wind-extraction branch, which has `U_w < U∞`, and
+`v_i = √(T / (2 ρ A))` and `P = T √(T / (2 ρ A))`. The port laws do not change when every speed
+changes sign, and the reversed state takes power from the stream instead, so the powered
+hypothesis cannot be dropped. The
 freestream normalization `ρ A U∞³ / 2` of the wind-extraction power coefficient vanishes at
 `U∞ = 0`, so no such coefficient describes hover.
 
