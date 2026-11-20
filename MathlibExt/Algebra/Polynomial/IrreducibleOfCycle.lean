@@ -31,8 +31,7 @@ irreducibility. The enumeration is an exact root multiset, with no repeats. -/
 theorem Polynomial.irreducible_of_cycle_on_other_roots
     {F L : Type*} [Field F] [Field L] [Algebra F L]
     (P : Polynomial F) (hP : P.Monic)
-    (hPs : (P.map (algebraMap F L)).Splits) (σ : L ≃+* L)
-    (hσ : ∀ a : F, σ (algebraMap F L a) = algebraMap F L a)
+    (hPs : (P.map (algebraMap F L)).Splits) (σ : L ≃ₐ[F] L)
     (y₀ : L) (r : ℕ → L) (n : ℕ)
     (hroots : (P.map (algebraMap F L)).roots =
       y₀ ::ₘ (Multiset.range n).map r)
@@ -41,7 +40,7 @@ theorem Polynomial.irreducible_of_cycle_on_other_roots
     (hy₀ : y₀ ∉ (algebraMap F L).range) : Irreducible P := by
   classical
   set i := algebraMap F L
-  have hσi : (σ : L →+* L).comp i = i := RingHom.ext fun a => hσ a
+  have hσi : (σ.toRingEquiv : L →+* L).comp i = i := RingHom.ext fun a => σ.commutes a
   have hPm0 : P.map i ≠ 0 :=
     (Polynomial.map_ne_zero_iff i.injective).mpr hP.ne_zero
   have hPdeg : P.natDegree = n + 1 := by
@@ -82,8 +81,8 @@ theorem Polynomial.irreducible_of_cycle_on_other_roots
     have hgs : (g.map i).Splits := Polynomial.Splits.of_dvd hPs hPm0 (by
       rw [← hfg, Polynomial.map_mul]
       exact dvd_mul_left _ _)
-    have hstable : ((g.map i).roots).map (σ : L →+* L) = (g.map i).roots := by
-      rw [← hgs.roots_map (σ : L →+* L), Polynomial.map_map, hσi]
+    have hstable : ((g.map i).roots).map (σ.toRingEquiv : L →+* L) = (g.map i).roots := by
+      rw [← hgs.roots_map (σ.toRingEquiv : L →+* L), Polynomial.map_map, hσi]
     have hmemσ : ∀ y ∈ (g.map i).roots, σ y ∈ (g.map i).roots := by
       intro y hy
       rw [← hstable]

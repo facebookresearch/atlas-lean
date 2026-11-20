@@ -55,12 +55,12 @@ theorem source_consumer {F L : Type*} [Field F] [Field L] [Algebra F L]
     (hcycle : ∀ i < n, σ (r i) = r ((i + 1) % n))
     (hy₀ : y₀ ∉ (algebraMap F L).range) : Irreducible P :=
   Polynomial.irreducible_of_cycle_on_other_roots
-    P hP hPs σ hσ y₀ r n hroots hnodup hcycle hy₀
+    P hP hPs (AlgEquiv.ofRingEquiv hσ) y₀ r n hroots hnodup hcycle hy₀
 
 /-- The full Galois group is pretransitive, not necessarily the chosen cycle. -/
 theorem full_galois_action {F L : Type*} [Field F] [Field L] [Algebra F L]
     (P : Polynomial F) (hP : P.Monic) (hPs : (P.map (algebraMap F L)).Splits)
-    (σ : L ≃+* L) (hσ : ∀ a : F, σ (algebraMap F L a) = algebraMap F L a)
+    (σ : L ≃ₐ[F] L)
     (y₀ : L) (r : ℕ → L) (n : ℕ)
     (hroots : (P.map (algebraMap F L)).roots = y₀ ::ₘ (Multiset.range n).map r)
     (hnodup : (P.map (algebraMap F L)).roots.Nodup)
@@ -71,13 +71,13 @@ theorem full_galois_action {F L : Type*} [Field F] [Field L] [Algebra F L]
   let : Fact ((P.map (algebraMap F L)).Splits) := ⟨hPs⟩
   exact Polynomial.Gal.galAction_isPretransitive P L
     (Polynomial.irreducible_of_cycle_on_other_roots
-      P hP hPs σ hσ y₀ r n hroots hnodup hcycle hy₀)
+      P hP hPs σ y₀ r n hroots hnodup hcycle hy₀)
 
 /-- The quotient is a field; no quotient-field assumption constructs the
 inputs. -/
 theorem adjoinRoot_isField {F L : Type*} [Field F] [Field L] [Algebra F L]
     (P : Polynomial F) (hP : P.Monic) (hPs : (P.map (algebraMap F L)).Splits)
-    (σ : L ≃+* L) (hσ : ∀ a : F, σ (algebraMap F L a) = algebraMap F L a)
+    (σ : L ≃ₐ[F] L)
     (y₀ : L) (r : ℕ → L) (n : ℕ)
     (hroots : (P.map (algebraMap F L)).roots = y₀ ::ₘ (Multiset.range n).map r)
     (hnodup : (P.map (algebraMap F L)).roots.Nodup)
@@ -85,7 +85,7 @@ theorem adjoinRoot_isField {F L : Type*} [Field F] [Field L] [Algebra F L]
     (hy₀ : y₀ ∉ (algebraMap F L).range) : IsField (AdjoinRoot P) :=
   AdjoinRoot.isField_iff_irreducible.mpr
     (Polynomial.irreducible_of_cycle_on_other_roots
-      P hP hPs σ hσ y₀ r n hroots hnodup hcycle hy₀)
+      P hP hPs σ y₀ r n hroots hnodup hcycle hy₀)
 
 local notation "realP" => (X ^ 2 + 1 : ℝ[X])
 
@@ -123,10 +123,7 @@ theorem real_nodup : ((realP).map (algebraMap ℝ ℂ)).roots.Nodup := by
     norm_num at this
   simp [Multiset.range_succ, h]
 
-theorem real_base_fixing (a : ℝ) :
-    (RingEquiv.refl ℂ) (algebraMap ℝ ℂ a) = algebraMap ℝ ℂ a := rfl
-
-theorem real_cycle : ∀ i < 1, (RingEquiv.refl ℂ) ((fun _ : ℕ => -Complex.I) i) =
+theorem real_cycle : ∀ i < 1, (AlgEquiv.refl : ℂ ≃ₐ[ℝ] ℂ) ((fun _ : ℕ => -Complex.I) i) =
     (fun _ : ℕ => -Complex.I) ((i + 1) % 1) := by
   intro i hi
   rfl
@@ -141,8 +138,8 @@ sigma=id. -/
 theorem real_full_galois_action :
     letI : Fact (((realP).map (algebraMap ℝ ℂ)).Splits) := ⟨real_splits⟩
     MulAction.IsPretransitive (realP).Gal ((realP).rootSet ℂ) :=
-  full_galois_action realP real_monic real_splits (RingEquiv.refl ℂ)
-    real_base_fixing Complex.I (fun _ => -Complex.I) 1 real_roots real_nodup
+  full_galois_action realP real_monic real_splits (AlgEquiv.refl : ℂ ≃ₐ[ℝ] ℂ)
+    Complex.I (fun _ => -Complex.I) 1 real_roots real_nodup
     real_cycle real_nonbase
 
 local notation "rho" => Real.rpow 2 ((3 : ℝ)⁻¹)
@@ -263,15 +260,17 @@ theorem cubic_nodup : ((cubicP).map (algebraMap ℚ ℂ)).roots.Nodup := by
     ⟨⟨cubic_distinct.2.1, cubic_distinct.1⟩, Ne.symm cubic_distinct.2.2⟩
   simpa [Multiset.range_succ] using h
 
-theorem cubic_base_fixing (a : ℚ) :
-    Complex.conjAe.toRingEquiv (algebraMap ℚ ℂ a) = algebraMap ℚ ℂ a := by
-  simp
+/-- Complex conjugation as a `ℚ`-algebra equivalence. -/
+def cubicConj : ℂ ≃ₐ[ℚ] ℂ :=
+  AlgEquiv.ofRingEquiv (f := Complex.conjAe.toRingEquiv) (by simp)
 
 theorem cubic_cycle : ∀ i < 2,
-    Complex.conjAe.toRingEquiv (cubicR i) = cubicR ((i + 1) % 2) := by
+    cubicConj (cubicR i) = cubicR ((i + 1) % 2) := by
   intro i hi
   have h : i = 0 ∨ i = 1 := by omega
-  rcases h with rfl | rfl <;> norm_num [sub_eq_add_neg, map_ofNat]
+  rcases h with rfl | rfl <;>
+    simp only [cubicConj, AlgEquiv.ofRingEquiv_apply] <;>
+    norm_num [sub_eq_add_neg, map_ofNat]
 
 theorem cubic_nonbase : (rho : ℂ) ∉ (algebraMap ℚ ℂ).range := by
   rintro ⟨a, ha⟩
@@ -282,8 +281,8 @@ theorem cubic_nonbase : (rho : ℂ) ∉ (algebraMap ℚ ℂ).range := by
 /-- A closed quotient-field application with an independently irrational
 rpow root. -/
 theorem cubic_adjoinRoot_isField : IsField (AdjoinRoot cubicP) :=
-  adjoinRoot_isField cubicP cubic_monic cubic_splits Complex.conjAe.toRingEquiv
-    cubic_base_fixing (rho : ℂ) cubicR 2 cubic_roots cubic_nodup
+  adjoinRoot_isField cubicP cubic_monic cubic_splits cubicConj
+    (rho : ℂ) cubicR 2 cubic_roots cubic_nodup
     cubic_cycle cubic_nonbase
 
 /-- Identity cannot replace conjugation on the two distinct nonreal
