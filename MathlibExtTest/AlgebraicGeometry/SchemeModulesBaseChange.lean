@@ -14,7 +14,9 @@ public import MathlibExt.AlgebraicGeometry.SchemeModulesBaseChange
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
 
--- Consumer with the original binders (`Scheme.{u}`).
+-- exactSource consumer: the original three-hypothesis form, deriving
+-- the composite-square equality from the two square equalities
+-- (`Scheme.{0}`).
 example {X T X' T' X'' T'' : Scheme.{0}} {π : X ⟶ T} {ψ : T' ⟶ T}
     {π' : X' ⟶ T'} {g' : X' ⟶ X} {ψ' : T'' ⟶ T'} {π'' : X'' ⟶ T''}
     {g'' : X'' ⟶ X'}
@@ -29,9 +31,10 @@ example {X T X' T' X'' T'' : Scheme.{0}} {π : X ⟶ T} {ψ : T' ⟶ T}
             ((Scheme.Modules.pullback g').obj F) ≫
             (Scheme.Modules.pushforward π'').map
               ((Scheme.Modules.pullbackComp g'' g').hom.app F) :=
-  Scheme.Modules.baseChangeHom_comp_horizontal h₁ h₂ h₁₂ F
+  Scheme.Modules.baseChangeHom_comp_horizontal h₁ h₂ F
 
--- Higher-universe consumer (`Scheme.{1}`).
+-- Higher-universe consumer (`Scheme.{1}`), in the same
+-- three-hypothesis form.
 example {X T X' T' X'' T'' : Scheme.{1}} {π : X ⟶ T} {ψ : T' ⟶ T}
     {π' : X' ⟶ T'} {g' : X' ⟶ X} {ψ' : T'' ⟶ T'} {π'' : X'' ⟶ T''}
     {g'' : X'' ⟶ X'}
@@ -46,13 +49,12 @@ example {X T X' T' X'' T'' : Scheme.{1}} {π : X ⟶ T} {ψ : T' ⟶ T}
             ((Scheme.Modules.pullback g').obj F) ≫
             (Scheme.Modules.pushforward π'').map
               ((Scheme.Modules.pullbackComp g'' g').hom.app F) :=
-  Scheme.Modules.baseChangeHom_comp_horizontal h₁ h₂ h₁₂ F
+  Scheme.Modules.baseChangeHom_comp_horizontal h₁ h₂ F
 
 -- Boundary case: all schemes are equal and every map is the identity.
 -- The pasting law then relates base-change morphisms for identity
--- squares; no commutativity hypothesis can be removed in general,
--- since without it the two sides are morphisms between pushforwards
--- along different maps.
+-- squares. The composite-square equality is redundant: it follows
+-- from the two square equalities by reassociation.
 example {X : Scheme.{0}} (F : X.Modules) :
     Scheme.Modules.baseChangeHom
         (show (𝟙 X ≫ 𝟙 X) ≫ 𝟙 X = 𝟙 X ≫ (𝟙 X ≫ 𝟙 X) by simp) F =
@@ -68,5 +70,4 @@ example {X : Scheme.{0}} (F : X.Modules) :
               ((Scheme.Modules.pullbackComp (𝟙 X) (𝟙 X)).hom.app F) :=
   Scheme.Modules.baseChangeHom_comp_horizontal
     (show 𝟙 X ≫ 𝟙 X = 𝟙 X ≫ 𝟙 X by simp)
-    (show 𝟙 X ≫ 𝟙 X = 𝟙 X ≫ 𝟙 X by simp)
-    (show (𝟙 X ≫ 𝟙 X) ≫ 𝟙 X = 𝟙 X ≫ (𝟙 X ≫ 𝟙 X) by simp) F
+    (show 𝟙 X ≫ 𝟙 X = 𝟙 X ≫ 𝟙 X by simp) F

@@ -270,6 +270,20 @@ private theorem inv_app_map_eqToHom_hom_app {Y : Scheme.{u}}
   subst e
   simp [← Hom.comp_app]
 
+/-- The composite of two horizontally adjacent commutative squares of
+schemes is commutative. -/
+public theorem comp_eq_of_horizontal
+    {X T X' T' X'' T'' : Scheme.{u}} {π : X ⟶ T} {ψ : T' ⟶ T}
+    {π' : X' ⟶ T'} {g' : X' ⟶ X} {ψ' : T'' ⟶ T'} {π'' : X'' ⟶ T''}
+    {g'' : X'' ⟶ X'}
+    (h₁ : g' ≫ π = π' ≫ ψ) (h₂ : g'' ≫ π' = π'' ≫ ψ') :
+    (g'' ≫ g') ≫ π = π'' ≫ (ψ' ≫ ψ) := by
+  calc (g'' ≫ g') ≫ π = g'' ≫ g' ≫ π := Category.assoc _ _ _
+    _ = g'' ≫ (π' ≫ ψ) := by rw [h₁]
+    _ = (g'' ≫ π') ≫ ψ := (Category.assoc _ _ _).symm
+    _ = (π'' ≫ ψ') ≫ ψ := by rw [h₂]
+    _ = π'' ≫ ψ' ≫ ψ := Category.assoc _ _ _
+
 set_option maxHeartbeats 1600000 in
 /-- Horizontal pasting of base-change morphisms: for two horizontally
 adjacent commutative squares of schemes, the base-change morphism for the
@@ -279,13 +293,14 @@ public theorem baseChangeHom_comp_horizontal
     {X T X' T' X'' T'' : Scheme.{u}} {π : X ⟶ T} {ψ : T' ⟶ T}
     {π' : X' ⟶ T'} {g' : X' ⟶ X} {ψ' : T'' ⟶ T'} {π'' : X'' ⟶ T''}
     {g'' : X'' ⟶ X'}
-    (h₁ : g' ≫ π = π' ≫ ψ) (h₂ : g'' ≫ π' = π'' ≫ ψ')
-    (h₁₂ : (g'' ≫ g') ≫ π = π'' ≫ (ψ' ≫ ψ)) (F : X.Modules) :
-    baseChangeHom h₁₂ F =
+    (h₁ : g' ≫ π = π' ≫ ψ) (h₂ : g'' ≫ π' = π'' ≫ ψ') (F : X.Modules) :
+    baseChangeHom (comp_eq_of_horizontal h₁ h₂) F =
       (pullbackComp ψ' ψ).inv.app ((pushforward π).obj F) ≫
         (pullback ψ').map (baseChangeHom h₁ F) ≫
           baseChangeHom h₂ ((pullback g').obj F) ≫
             (pushforward π'').map ((pullbackComp g'' g').hom.app F) := by
+  have h₁₂ : (g'' ≫ g') ≫ π = π'' ≫ (ψ' ≫ ψ) :=
+    comp_eq_of_horizontal h₁ h₂
   apply ext_of_unit_app_comp (ψ' ≫ ψ)
   intro U
   have e₁ : (π' ≫ ψ) ⁻¹ᵁ U = (g' ≫ π) ⁻¹ᵁ U := by rw [h₁]
