@@ -23,7 +23,8 @@ unit row, supported virtual work on the mechanism
 (one-member) truss, the supported rigidity certificate
 on a triangle and its supported null mode, and unique
 supported response on triangle and focused fixtures,
-and reciprocal work on the focused fixture.
+and reciprocal work on the focused fixture, and unit-load
+response checks.
 
 ## i. Overview
 
@@ -40,6 +41,7 @@ No new definitions or results are introduced here.
 - C. Supported rigidity certificate
 - D. Supported unique response
 - E. Reciprocal work
+- F. Unit-load response
 
 ## iv. References
 
@@ -768,6 +770,249 @@ one side. -/
 example : (![0, -6] : Fin 2 → ℝ) ⬝ᵥ ![1, 1] = -6 ∧ (-6 : ℝ) ≠ 6 := by
   norm_num [dotProduct, Fin.sum_univ_two]
 
+
+/-! ## F. Unit-load response -/
+
+/-- Positive definiteness of the focused supported
+stiffness, from the rigidity certificate. -/
+private lemma posDefUnitLoad :
+    ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+      * Matrix.diagonal ![1 / 2, 3]
+      * (axialCompatibility rF ![0, 1] ![1, 2] * SF)).PosDef :=
+  (supported_posDef_iff rF ![0, 1] ![1, 2] SF _
+    (by intro e; fin_cases e <;> norm_num)).mpr kernelF
+
+/-- Focused solve `K *ᵥ ![3, 5] = ![0, 6]`. -/
+private lemma huUnitLoad :
+    ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+      * Matrix.diagonal ![1 / 2, 3]
+      * (axialCompatibility rF ![0, 1] ![1, 2] * SF)) *ᵥ ![3, 5]
+        = ![0, 6] := by
+  rw [supportedStiffnessF]
+  funext i
+  fin_cases i <;>
+    norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+
+/-- The influence vector for output `![2, 0]` on the
+focused fixture is `![1, 1]`. -/
+private lemma etaUnitLoad :
+    influenceVector rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
+      = ![1, 1] := by
+  have h : ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+        * Matrix.diagonal ![1 / 2, 3]
+        * (axialCompatibility rF ![0, 1] ![1, 2] * SF)) *ᵥ ![1, 1]
+      = ![2, 0] := by
+    rw [supportedStiffnessF]
+    funext i
+    fin_cases i <;>
+      norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+  have h2 := (supported_mulVec_eq_iff_inv_mulVec rF ![0, 1] ![1, 2] SF _
+    posDefUnitLoad).mp h
+  exact h2.symm
+
+/-- Flexibility recovery at the focused data. -/
+example : Matrix.diagonal (fun e => (![1 / 2, 3] e)⁻¹)
+      *ᵥ (Matrix.diagonal ![1 / 2, 3]
+        *ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF) *ᵥ ![3, 5]))
+    = (axialCompatibility rF ![0, 1] ![1, 2] * SF) *ᵥ ![3, 5] :=
+  supported_invDiagonal_mulVec_memberForce rF ![0, 1] ![1, 2] SF _
+    (by intro e; fin_cases e <;> norm_num) _
+
+/-- The influence vector solves the unit-load system. -/
+example : ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+      * Matrix.diagonal ![1 / 2, 3]
+      * (axialCompatibility rF ![0, 1] ![1, 2] * SF))
+    *ᵥ influenceVector rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
+      = ![2, 0] :=
+  supported_influenceVector_mulVec rF ![0, 1] ![1, 2] SF _
+    posDefUnitLoad _
+
+/-- Response at the focused load: common value `6`. -/
+example : unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
+      ![0, 6] = ![2, 0] ⬝ᵥ ![3, 5]
+    ∧ unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
+      ![0, 6] = 6 := by
+  have h := supported_unitLoadResponse_eq rF ![0, 1] ![1, 2] SF _
+    posDefUnitLoad ![2, 0] huUnitLoad
+  refine ⟨h, ?_⟩
+  rw [h]
+  norm_num [dotProduct, Fin.sum_univ_two]
+
+/-- Elongation and flexibility forms of the unit-load
+identity at the focused data. -/
+example : ![2, 0] ⬝ᵥ ![3, 5]
+    = (Matrix.diagonal ![1 / 2, 3]
+        *ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF)
+          *ᵥ influenceVector rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]))
+      ⬝ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF) *ᵥ ![3, 5]) := by
+  have h := supported_unitLoad_identity_elongation rF ![0, 1] ![1, 2] SF _
+    posDefUnitLoad ![2, 0] huUnitLoad
+  unfold influenceVector at h ⊢
+  exact h
+
+example : ![2, 0] ⬝ᵥ ![3, 5]
+    = (Matrix.diagonal ![1 / 2, 3]
+        *ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF)
+          *ᵥ influenceVector rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]))
+      ⬝ᵥ (Matrix.diagonal (fun e => (![1 / 2, 3] e)⁻¹)
+        *ᵥ (Matrix.diagonal ![1 / 2, 3]
+          *ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF) *ᵥ ![3, 5]))) := by
+  have h := supported_unitLoad_identity rF ![0, 1] ![1, 2] SF _
+    (by intro e; fin_cases e <;> norm_num) posDefUnitLoad ![2, 0] huUnitLoad
+  unfold influenceVector at h ⊢
+  exact h
+
+/-- The certified (kernel) form at the same data. -/
+example : ![2, 0] ⬝ᵥ ![3, 5]
+    = (Matrix.diagonal ![1 / 2, 3]
+        *ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF)
+          *ᵥ influenceVector rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]))
+      ⬝ᵥ (Matrix.diagonal (fun e => (![1 / 2, 3] e)⁻¹)
+        *ᵥ (Matrix.diagonal ![1 / 2, 3]
+          *ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF) *ᵥ ![3, 5]))) := by
+  have h := supported_unitLoad_identity_of_kernel rF ![0, 1] ![1, 2] SF _
+    (by intro e; fin_cases e <;> norm_num) kernelF ![2, 0] huUnitLoad
+  unfold influenceVector at h ⊢
+  exact h
+
+/-- Superposition at the fixed output: responses
+`6`, `2`, summed response `8`. -/
+example : unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
+      (![0, 6] + ![2, 0]) = 8
+    ∧ unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
+      (![0, 6] + ![2, 0])
+    = unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0] ![0, 6]
+      + unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
+        ![2, 0] := by
+  refine ⟨?_, supported_unitLoadResponse_add _ _ _ _ _ _ _ _⟩
+  unfold unitLoadResponse
+  rw [etaUnitLoad]
+  norm_num [dotProduct, Fin.sum_univ_two]
+
+/-- Coordinate outputs extract displacement components
+`u 0 = 3`, `u 1 = 5`; the second is the wrong-output
+control against `6`. -/
+example : unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![1, 0]
+      ![0, 6] = 3
+    ∧ unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![0, 1]
+      ![0, 6] = 5
+    ∧ (5 : ℝ) ≠ 6 := by
+  refine ⟨?_, ?_, by norm_num⟩
+  · rw [supported_unitLoadResponse_eq rF ![0, 1] ![1, 2] SF _
+      posDefUnitLoad _ huUnitLoad]
+    norm_num [dotProduct, Fin.sum_univ_two]
+  · rw [supported_unitLoadResponse_eq rF ![0, 1] ![1, 2] SF _
+      posDefUnitLoad _ huUnitLoad]
+    norm_num [dotProduct, Fin.sum_univ_two]
+
+/-- Scaled output: response `12`. -/
+example : unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+      ((2 : ℝ) • ![2, 0]) ![0, 6] = 12 := by
+  have heta2 : influenceVector rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+        ((2 : ℝ) • ![2, 0]) = ![2, 2] := by
+    have h := supported_influenceVector_smul rF ![0, 1] ![1, 2] SF
+      ![1 / 2, 3] 2 ![2, 0]
+    rw [etaUnitLoad] at h
+    refine h.trans ?_
+    funext i
+    fin_cases i <;> simp
+  unfold unitLoadResponse
+  rw [heta2]
+  norm_num [dotProduct, Fin.sum_univ_two]
+
+/-- Zero load: response `0`, and the degenerate identity
+at `f = u = 0`. -/
+example : unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0] 0
+    = 0 :=
+  supported_unitLoadResponse_zero _ _ _ _ _ _
+
+example : (![2, 0] : Fin 2 → ℝ) ⬝ᵥ 0
+    = (Matrix.diagonal ![1 / 2, 3]
+        *ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF)
+          *ᵥ influenceVector rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]))
+      ⬝ᵥ (Matrix.diagonal (fun e => (![1 / 2, 3] e)⁻¹)
+        *ᵥ (Matrix.diagonal ![1 / 2, 3]
+          *ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF) *ᵥ 0))) := by
+  have h := supported_unitLoad_identity rF ![0, 1] ![1, 2] SF _
+    (by intro e; fin_cases e <;> norm_num) posDefUnitLoad ![2, 0]
+    (f := 0) (u := 0) (by simp)
+  unfold influenceVector at h ⊢
+  exact h
+
+/-- Zero-diagonal control: without positivity the
+pointwise inverse diagonal does not recover the vector
+(`![0, -2] ≠ ![6, -2]`). -/
+example : Matrix.diagonal (fun e => ((![0, 3] : Fin 2 → ℝ) e)⁻¹)
+      *ᵥ (Matrix.diagonal ![0, 3] *ᵥ ![6, -2]) = ![0, -2]
+    ∧ (![0, -2] : Fin 2 → ℝ) ≠ ![6, -2] := by
+  refine ⟨?_, by norm_num⟩
+  funext i
+  fin_cases i <;> norm_num [Matrix.mulVec_diagonal]
+
+/-- Mechanism premise guard: the two-member triangle
+stiffness is not positive definite. -/
+example : ¬ ((axialCompatibility rT ![0, 0] ![1, 2] * ST)ᵀ
+    * Matrix.diagonal (fun _ => (2 : ℝ))
+    * (axialCompatibility rT ![0, 0] ![1, 2] * ST)).PosDef := by
+  rw [supported_posDef_iff _ _ _ _ _ (fun _ => by norm_num)]
+  intro h
+  have hBz : (axialCompatibility rT ![0, 0] ![1, 2] * ST)
+      *ᵥ ![0, 3, -4] = 0 := by
+    funext e
+    rw [supportedActionTwo]
+    fin_cases e
+    · simp
+    · simp
+      norm_num
+  exact (by norm_num : ![0, 3, -4] ≠ (0 : Fin 3 → ℝ)) (h _ hBz)
+
+/-- Different stiffness behind the influence vector:
+unit weights give response `3 ≠ 6` at the same load. -/
+example : unitLoadResponse rF ![0, 1] ![1, 2] SF ![1, 1] ![2, 0]
+      ![0, 6] = 3 ∧ (3 : ℝ) ≠ 6 := by
+  have hPD1 : ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+        * Matrix.diagonal ![1, 1]
+        * (axialCompatibility rF ![0, 1] ![1, 2] * SF)).PosDef :=
+    (supported_posDef_iff rF ![0, 1] ![1, 2] SF _
+      (by intro e; fin_cases e <;> norm_num)).mpr kernelF
+  have hu1 : ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+        * Matrix.diagonal ![1, 1]
+        * (axialCompatibility rF ![0, 1] ![1, 2] * SF)) *ᵥ ![3 / 2, 15 / 2]
+      = ![0, 6] := by
+    have hK : (axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+          * Matrix.diagonal ![1, 1]
+          * (axialCompatibility rF ![0, 1] ![1, 2] * SF)
+        = !![5, -1; -1, 1] := by
+      ext i j
+      fin_cases i <;> fin_cases j <;>
+        simp [Matrix.mul_apply, Matrix.transpose_apply, Matrix.diagonal,
+          axialCompatibility, SF, Matrix.of_apply, Fin.sum_univ_two] <;>
+        norm_num
+    rw [hK]
+    funext i
+    fin_cases i <;>
+      norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+  refine ⟨?_, by norm_num⟩
+  rw [supported_unitLoadResponse_eq rF ![0, 1] ![1, 2] SF _ hPD1 _
+    hu1]
+  norm_num [dotProduct, Fin.sum_univ_two]
+
+/-- Sign flip: negating the load negates the response. -/
+example : unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
+      (-![0, 6]) = -6 ∧ (-6 : ℝ) ≠ 6 := by
+  refine ⟨?_, by norm_num⟩
+  unfold unitLoadResponse
+  rw [etaUnitLoad]
+  norm_num [dotProduct, Fin.sum_univ_two]
+
+/-- Empty-coordinate boundary: the response over no
+coordinates is `0`. -/
+example (aout f : Fin 0 → ℝ) :
+    unitLoadResponse rT ![0, 0, 1] ![1, 2, 2]
+      (0 : Matrix (Fin 3 × Fin 2) (Fin 0) ℝ) (fun _ => (2 : ℝ))
+      aout f = 0 := by
+  simp [unitLoadResponse, dotProduct]
+
 #print axioms Mechanics.TrussCompatibility.supported_posDef_iff
 #print axioms
   Mechanics.TrussCompatibility.supported_posDef_iff_ker_eq_bot
@@ -788,5 +1033,19 @@ example : (![0, -6] : Fin 2 → ℝ) ⬝ᵥ ![1, 1] = -6 ∧ (-6 : ℝ) ≠ 6 :=
 #print axioms
   Mechanics.TrussCompatibility.supported_dotProduct_mulVec_comm
 #print axioms Mechanics.TrussCompatibility.supported_reciprocalWork
+#print axioms
+  Mechanics.TrussCompatibility.supported_invDiagonal_mulVec_memberForce
+#print axioms
+  Mechanics.TrussCompatibility.supported_influenceVector_mulVec
+#print axioms Mechanics.TrussCompatibility.supported_influenceVector_smul
+#print axioms Mechanics.TrussCompatibility.supported_unitLoadResponse_eq
+#print axioms Mechanics.TrussCompatibility.supported_unitLoadResponse_add
+#print axioms Mechanics.TrussCompatibility.supported_unitLoadResponse_smul
+#print axioms Mechanics.TrussCompatibility.supported_unitLoadResponse_zero
+#print axioms
+  Mechanics.TrussCompatibility.supported_unitLoad_identity_elongation
+#print axioms Mechanics.TrussCompatibility.supported_unitLoad_identity
+#print axioms
+  Mechanics.TrussCompatibility.supported_unitLoad_identity_of_kernel
 
 end PhyslibExtTest.Mechanics.TrussCompatibility
