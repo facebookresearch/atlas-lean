@@ -170,18 +170,6 @@ private lemma mwabs_content_map [Algebra K L] {ι : Type*} (y : ι → 𝓞 K) :
   rw [Ideal.map_iSup]
   exact iSup_congr fun i => by rw [Ideal.map_span, Set.image_singleton]
 
-attribute [local instance] FractionRing.liftAlgebra in
-
-private lemma mwabs_finrank_frac [Algebra K L] :
-    Module.finrank (FractionRing (𝓞 K)) (FractionRing (𝓞 L)) = Module.finrank K L := by
-  haveI : FaithfulSMul (𝓞 K) (𝓞 L) :=
-    (faithfulSMul_iff_algebraMap_injective _ _).mpr
-      (NumberField.RingOfIntegers.algebraMap.injective K L)
-  haveI : Algebra.IsIntegral (𝓞 K) (𝓞 L) := IsIntegralClosure.isIntegral_algebra (𝓞 K) L
-  haveI : Algebra.IsAlgebraic (𝓞 K) (𝓞 L) := Algebra.IsIntegral.isAlgebraic
-  rw [IsFractionRing.finrank_eq (𝓞 K) (FractionRing (𝓞 K)) (𝓞 L) (FractionRing (𝓞 L)),
-    ← IsFractionRing.finrank_eq (𝓞 K) K (𝓞 L) L]
-
 omit [NumberField K] [NumberField L] in
 
 private lemma mwabs_coe_algebraMap [Algebra K L] (y : 𝓞 K) :
