@@ -21,7 +21,10 @@ example
     (p.map (Ideal.Quotient.mk (Ideal.span {x}))).height + 1 = p.height :=
   Ideal.height_map_quotientMk_span_singleton_add_one p hx hxmin
 
--- The minimal-prime avoidance hypothesis matters: in `k[X,Y]`, quotienting
--- the maximal ideal `(X,Y)` by `X`, which lies in the minimal prime `(0)`,
--- drops the height by more than the formula would allow in general position.
-example : True := trivial
+-- The minimal-prime avoidance hypothesis matters: for `x = 0` and
+-- `p = ⊥` over a field, `x` lies in the minimal prime `⊥`, and the
+-- conclusion fails since both heights are `0`, so `0 + 1 ≠ 0`.
+example {K : Type} [Field K] :
+    ¬ ((⊥ : Ideal K).map (Ideal.Quotient.mk (Ideal.span {(0 : K)}))).height + 1 =
+      (⊥ : Ideal K).height := by
+  simp
