@@ -11,7 +11,6 @@ public import MathlibExt.Analysis.ODE.FiniteElement1D
 public import MathlibExt.Analysis.ODE.RungeKutta
 public import PhyslibExt.Elasticity.PrismaticMembers
 import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Analysis.ODE.DiscreteGronwall
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
@@ -93,18 +92,17 @@ Section L propagates the actual residuals of a computed temperature sequence `Y`
 explicit Euler recurrence of section G at `dt = τ / 10`. The residual of step `j` is
 `η_j = Y (j + 1) - (Y j + (τ / 10) Q(Y j) / C)` (`bathEulerResidual`), computed from `Y`, not a
 named tolerance. The step maps temperature differences by `9 / 10`, so the defect
-`e_j = Y j - X j` against the exact Euler recurrence `X` obeys `e_{j+1} = (9 / 10) e_j + η_j`. Over
-ten steps `e_10 = (9 / 10) ^ 10 e_0 + ∑_{j < 10} (9 / 10) ^ (9 - j) η_j` exactly, and the
-product-form discrete Grönwall inequality `discrete_gronwall_prod_general`, applied to the sequences
-extended past the ten-step horizon, bounds `|e_10|` by
+`e_j = Y j - X j` against the exact Euler recurrence `X` obeys `e_{j+1} = (9 / 10) e_j + η_j`. The
+ten-step defect bound `MathlibExt.Analysis.ODE.TimeStepping.tenStep_defect_le`, from the
+product-form discrete Grönwall inequality, then bounds `|e_10|` by
 `(9 / 10) ^ 10 |e_0| + ∑_{j < 10} (9 / 10) ^ (9 - j) |η_j|`: a residual at an early step is damped
-by more steps than one at a late step, while the exponential form `discrete_gronwall` (with rate
-`0`) keeps only `|e_0| + ∑_{j < 10} |η_j|`. Applied to temperature differences, and only then added
-to the truncation term `|Δ| / 10` of section G, this puts the computed `Y 10` within the
-three-term budget `tenStepErrorBudget` of the exact trajectory at `τ`: the propagated initial
-error, the weighted actual residuals and the truncation, all in the temperature unit, so the budget
-scales by `k` under `T ↦ k T + c`. Replacing an observed residual by zero can undercut the actual
-error.
+by more steps than one at a late step. Applied to temperature differences, and only then added to
+the truncation term `|Δ| / 10` of section G, this puts the computed `Y 10` within the three-term
+budget `tenStepErrorBudget` of the exact trajectory at `τ`: the propagated initial error, the
+weighted actual residuals and the truncation, all in the temperature unit. A change of temperature
+unit `T ↦ k T + c` (`k > 0`) divides the heat capacity and the conductance by `k`, leaves `τ`
+unchanged and multiplies the budget by `k`. Replacing an observed residual by zero can undercut the
+actual error.
 
 Model inputs of sections F-L: constant `C`, `G` and `T_amb`, the linear bath law and the lumped
 body. Non-goals: no general Euler or Runge–Kutta convergence theorem, no arithmetic or
@@ -143,11 +141,9 @@ model-discrepancy term.
 - `bathRK4_threeTau`: the unstable RK4 step `dt = 3 τ` of the stable bath.
 - `bathEulerResidual`, `tenStepErrorBudget`, `bathEulerStep_sub_tenth`, `defect_recurrence`: the
   actual residual of a computed sequence and the defect recurrence `e_{j+1} = (9 / 10) e_j + η_j`.
-- `tenStep_defect_eq`, `tenStep_defect_le`, `tenStep_defect_le_unweighted`: the exact ten-step
-  accumulation, its weighted Grönwall bound and the unweighted exponential form.
-- `bathEuler_total_error`, `tenStepErrorBudget_tempUnit`: the three-term ten-step budget and its
-  temperature-unit scaling; the early-versus-late weight and dropped-residual fixtures are in the
-  test module.
+- `bathEuler_total_error`, `tenStepErrorBudget_tempUnit`: the three-term ten-step budget, and its
+  scaling by `k` under a change of temperature unit `T ↦ k T + c` with the heat capacity and the
+  conductance converted to `C / k` and `G / k`; the dropped-residual fixture is in the test module.
 
 ## iii. Table of contents
 
@@ -185,8 +181,8 @@ model-discrepancy term.
 - `MathlibExt.Analysis.ODE.TimeStepping.decay_euler_numeric_bound`,
   `MetaMathlibExt.scalar_exp_solution`, `ConductionPorts.hasDerivAt_thermalStorage`, and
   `MathlibExt.Analysis.ODE.RungeKutta.rk4_stability` and `euler_step`.
-- `discrete_gronwall_prod_general` and `discrete_gronwall`
-  (`Mathlib.Analysis.ODE.DiscreteGronwall`).
+- `MathlibExt.Analysis.ODE.TimeStepping.tenStep_defect_le` (the ten-step defect bound, through
+  Mathlib's `discrete_gronwall_prod_general`).
 -/
 
 @[expose] public section
@@ -958,87 +954,6 @@ lemma defect_recurrence {C G : ℝ} (hC : 0 < C) (hG : 0 < G) {Tamb : ℝ} {X : 
   unfold bathEulerResidual
   linarith
 
-/-- **Exact ten-step accumulation.** If `e_{j+1} = (9 / 10) e_j + η_j` for the ten steps
-`j < 10`, then `e_10 = (9 / 10) ^ 10 e_0 + ∑_{j < 10} (9 / 10) ^ (9 - j) η_j`. -/
-lemma tenStep_defect_eq {e η : ℕ → ℝ} (h : ∀ j < 10, e (j + 1) = 9 / 10 * e j + η j) :
-    e 10 = (9 / 10) ^ 10 * e 0 + ∑ j ∈ range 10, (9 / 10) ^ (9 - j) * η j := by
-  have h1 : e 1 = 9 / 10 * e 0 + η 0 := h 0 (by norm_num)
-  have h2 : e 2 = 9 / 10 * e 1 + η 1 := h 1 (by norm_num)
-  have h3 : e 3 = 9 / 10 * e 2 + η 2 := h 2 (by norm_num)
-  have h4 : e 4 = 9 / 10 * e 3 + η 3 := h 3 (by norm_num)
-  have h5 : e 5 = 9 / 10 * e 4 + η 4 := h 4 (by norm_num)
-  have h6 : e 6 = 9 / 10 * e 5 + η 5 := h 5 (by norm_num)
-  have h7 : e 7 = 9 / 10 * e 6 + η 6 := h 6 (by norm_num)
-  have h8 : e 8 = 9 / 10 * e 7 + η 7 := h 7 (by norm_num)
-  have h9 : e 9 = 9 / 10 * e 8 + η 8 := h 8 (by norm_num)
-  have h10 : e 10 = 9 / 10 * e 9 + η 9 := h 9 (by norm_num)
-  simp only [sum_range_succ, sum_range_zero, zero_add]
-  rw [h10, h9, h8, h7, h6, h5, h4, h3, h2, h1]
-  norm_num
-  ring
-
-/-- One step of the defect recurrence in absolute value, for the explicit extension beyond the
-ten-step horizon used with the discrete Gronwall inequalities: `u n = |e (min n 10)|`, residual
-weight `b n = |η n|` on the horizon and `|e 10|` after it. -/
-private lemma defect_extension_step {e η : ℕ → ℝ} (h : ∀ j < 10, e (j + 1) = 9 / 10 * e j + η j)
-    (n : ℕ) :
-    |e (min (n + 1) 10)| ≤ 9 / 10 * |e (min n 10)| + (if n < 10 then |η n| else |e 10|) := by
-  by_cases hn : n < 10
-  · rw [ite_eq_left hn, min_eq_left (by omega : n + 1 ≤ 10), min_eq_left (by omega : n ≤ 10),
-      h n hn]
-    calc |9 / 10 * e n + η n| ≤ |9 / 10 * e n| + |η n| := abs_add_le _ _
-      _ = 9 / 10 * |e n| + |η n| := by rw [abs_mul]; norm_num
-  · rw [ite_eq_right hn, min_eq_right (by omega : 10 ≤ n + 1), min_eq_right (by omega : 10 ≤ n)]
-    have := abs_nonneg (e 10)
-    linarith
-
-/-- **Weighted ten-step bound (discrete Gronwall, product form).** If
-`e_{j+1} = (9 / 10) e_j + η_j` for the ten steps `j < 10`, then
-`|e_10| ≤ (9 / 10) ^ 10 |e_0| + ∑_{j < 10} (9 / 10) ^ (9 - j) |η_j|`: the residual of step `j` is
-damped by the remaining `9 - j` steps. -/
-lemma tenStep_defect_le {e η : ℕ → ℝ} (h : ∀ j < 10, e (j + 1) = 9 / 10 * e j + η j) :
-    |e 10| ≤ (9 / 10) ^ 10 * |e 0| + ∑ j ∈ range 10, (9 / 10) ^ (9 - j) * |η j| := by
-  have hrec : ∀ n ≥ 0, |e (min (n + 1) 10)| ≤
-      9 / 10 * |e (min n 10)| + (if n < 10 then |η n| else |e 10|) :=
-    fun n _ => defect_extension_step h n
-  have hg := discrete_gronwall_prod_general (u := fun m => |e (min m 10)|)
-    (b := fun m => if m < 10 then |η m| else |e 10|) (c := fun _ => (9 / 10 : ℝ)) hrec
-    (fun _ _ => by norm_num) (n := 10) (by norm_num)
-  simp only [prod_const, Nat.card_Ico, min_self, Nat.zero_min] at hg
-  have hsum : ∑ k ∈ Ico 0 10, (if k < 10 then |η k| else |e 10|) * (9 / 10 : ℝ) ^ (10 - (k + 1)) =
-      ∑ j ∈ range 10, (9 / 10 : ℝ) ^ (9 - j) * |η j| := by
-    rw [← range_eq_Ico]
-    refine sum_congr rfl fun k hk => ?_
-    have hk' : k < 10 := mem_range.mp hk
-    rw [ite_eq_left hk', mul_comm, show 10 - (k + 1) = 9 - k by omega]
-  rw [hsum] at hg
-  linarith
-
-/-- **The exponential form forgets the weights.** Under the hypothesis of `tenStep_defect_le`,
-the exponential discrete Gronwall inequality with rate `0` gives only
-`|e_10| ≤ |e_0| + ∑_{j < 10} |η_j|`, every residual with weight `1`. -/
-lemma tenStep_defect_le_unweighted {e η : ℕ → ℝ}
-    (h : ∀ j < 10, e (j + 1) = 9 / 10 * e j + η j) :
-    |e 10| ≤ |e 0| + ∑ j ∈ range 10, |η j| := by
-  have hrec : ∀ n ≥ 0, |e (min (n + 1) 10)| ≤
-      (1 + 0) * |e (min n 10)| + (if n < 10 then |η n| else |e 10|) := by
-    intro n _
-    have h1 := defect_extension_step h n
-    have h2 := abs_nonneg (e (min n 10))
-    linarith
-  have hb : ∀ n ≥ 0, (0 : ℝ) ≤ if n < 10 then |η n| else |e 10| := by
-    intro n _
-    split_ifs <;> exact abs_nonneg _
-  have hg := discrete_gronwall (u := fun m => |e (min m 10)|)
-    (b := fun m => if m < 10 then |η m| else |e 10|) (c := fun _ => (0 : ℝ)) (abs_nonneg _) hrec
-    (fun _ _ => le_refl _) hb (n := 10) (by norm_num)
-  simp only [sum_const_zero, Real.exp_zero, mul_one, min_self, Nat.zero_min] at hg
-  have hsum : ∑ k ∈ Ico 0 10, (if k < 10 then |η k| else |e 10|) = ∑ j ∈ range 10, |η j| := by
-    rw [← range_eq_Ico]
-    exact sum_congr rfl fun k hk => ite_eq_left (mem_range.mp hk)
-  rw [hsum] at hg
-  exact hg
-
 /-- **Three-term ten-step error budget.** For `C, G > 0`, the exact Euler recurrence `X` at
 `dt = τ / 10` from `X 0 = T_amb + Δ` and any computed sequence `Y`, the computed temperature
 after ten steps is within the budget of the exact trajectory at `τ`: the propagated initial error,
@@ -1052,26 +967,40 @@ lemma bathEuler_total_error {C G : ℝ} (hC : 0 < C) (hG : 0 < G) {Tamb Δ : ℝ
   have hrec : ∀ j < 10, (fun i => Y i - X i) (j + 1) =
       9 / 10 * (fun i => Y i - X i) j + bathEulerResidual C G Tamb Y j :=
     fun j _ => defect_recurrence hC hG hstep Y j
-  have hdef := tenStep_defect_le (e := fun i => Y i - X i) (η := bathEulerResidual C G Tamb Y) hrec
+  have hdef := MathlibExt.Analysis.ODE.TimeStepping.tenStep_defect_le
+    (e := fun i => Y i - X i) (η := bathEulerResidual C G Tamb Y) hrec
   have htrunc := bathEuler_tenStep_error hC hG h0 hstep
   have htri := abs_sub_le (Y 10) (X 10) (bathTrajectory C G Tamb Δ (thermalTimeConstant C G))
   simp only [h0] at hdef
   unfold tenStepErrorBudget
   linarith
 
-/-- **Temperature units.** Expressing every temperature in another unit, `T ↦ k T + c` with
-`k > 0` (bath, initial excess `Δ ↦ k Δ` and computed sequence alike), multiplies each residual and
-the whole budget by `k`: all three terms are temperature differences in one unit. -/
+/-- **Temperature units.** A change of temperature unit `T ↦ k T + c` with `k > 0` maps every
+temperature, the bath `T_amb` and the computed sequence `Y`, by `T ↦ k T + c`, multiplies every
+temperature difference, the initial excess `Δ`, by `k`, and divides the per-degree coefficients,
+the heat capacity `C` and the conductance `G`, by `k`; the time constant `τ = C / G` is unchanged.
+Each residual and the whole budget are then multiplied by `k`: all three terms are temperature
+differences in one unit. -/
 lemma tenStepErrorBudget_tempUnit {k : ℝ} (hk : 0 < k) (c C G Tamb Δ : ℝ) (Y : ℕ → ℝ) :
-    (∀ j, bathEulerResidual C G (k * Tamb + c) (fun i => k * Y i + c) j =
+    (∀ j, bathEulerResidual (C / k) (G / k) (k * Tamb + c) (fun i => k * Y i + c) j =
         k * bathEulerResidual C G Tamb Y j) ∧
-      tenStepErrorBudget C G (k * Tamb + c) (k * Δ) (fun i => k * Y i + c) =
+      tenStepErrorBudget (C / k) (G / k) (k * Tamb + c) (k * Δ) (fun i => k * Y i + c) =
         k * tenStepErrorBudget C G Tamb Δ Y := by
-  have hres : ∀ j, bathEulerResidual C G (k * Tamb + c) (fun i => k * Y i + c) j =
+  have hk0 : k ≠ 0 := hk.ne'
+  have hτ : thermalTimeConstant (C / k) (G / k) = thermalTimeConstant C G := by
+    unfold thermalTimeConstant
+    rw [div_div_div_cancel_right₀ hk0]
+  have hres : ∀ j, bathEulerResidual (C / k) (G / k) (k * Tamb + c) (fun i => k * Y i + c) j =
       k * bathEulerResidual C G Tamb Y j := by
     intro j
-    unfold bathEulerResidual bathEulerStep bathPower
-    ring
+    unfold bathEulerResidual bathEulerStep
+    rw [hτ]
+    unfold bathPower
+    rcases eq_or_ne C 0 with rfl | hC
+    · simp
+      ring
+    · field_simp
+      ring
   refine ⟨hres, ?_⟩
   unfold tenStepErrorBudget
   simp only [hres]

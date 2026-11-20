@@ -29,11 +29,11 @@ import Mathlib.Tactic.NormNum
   the RK4 step from `350` does not depend on the start time and multiplies the excess `50` by
   `72387 / 80000`, ten steps of size `10` give `T_10 = 300 + 50 (72387 / 80000) ^ 10` with
   `0 < |T_10 - T(100)| < 50 / 10 ^ 6`, and the step `3 τ` multiplies the excess by `11 / 8`;
-* defects through the actual recurrence: unit residuals at the first and at the last step weigh
-  `(9 / 10) ^ 9` and `1`, the weighted bound is attained where the unweighted one is not, a constant
-  offset of `1 / 2` in the computed temperatures has the residual `1 / 20` at every step and the
-  budget `1 / 2 + 5`, the budget in degrees Fahrenheit is `9 / 5` times the budget in degrees
-  Celsius, and dropping an observed residual undercuts the actual error.
+* defects through the actual recurrence: a constant offset of `1 / 2` in the computed temperatures
+  has the residual `1 / 20` at every step and the budget `1 / 2 + 5`, the budget in degrees
+  Fahrenheit, with the heat capacity and the conductance converted per degree Fahrenheit, is
+  `9 / 5` times the budget in degrees Celsius, and dropping an observed residual undercuts the
+  actual error.
 -/
 
 @[expose] public section
@@ -278,21 +278,6 @@ example {X : ℕ → ℝ} (h0 : X 0 = 350)
 
 open Finset
 
-/-- **Early and late defects weigh differently.** From a zero initial defect, a unit residual at
-the first step leaves `e_10 = (9 / 10) ^ 9`, and a unit residual at the last step leaves
-`e_10 = 1`. -/
-lemma tenStep_defect_weights_differ {e e' : ℕ → ℝ} (h0 : e 0 = 0) (h0' : e' 0 = 0)
-    (h : ∀ j < 10, e (j + 1) = 9 / 10 * e j + if j = 0 then 1 else 0)
-    (h' : ∀ j < 10, e' (j + 1) = 9 / 10 * e' j + if j = 9 then 1 else 0) :
-    e 10 = (9 / 10) ^ 9 ∧ e' 10 = 1 ∧ e 10 < e' 10 := by
-  have ha := tenStep_defect_eq (η := fun j => if j = 0 then 1 else 0) h
-  have hb := tenStep_defect_eq (η := fun j => if j = 9 then 1 else 0) h'
-  rw [h0] at ha
-  rw [h0'] at hb
-  simp only [sum_range_succ, sum_range_zero] at ha hb
-  norm_num at ha hb
-  refine ⟨by rw [ha]; norm_num, hb, by rw [ha, hb]; norm_num⟩
-
 /-- **Observed residuals cannot be replaced by zero.** For `C = G = 1`, `T_amb = 0`, `Δ = 1`, a
 computed sequence equal to the exact Euler iterates except for a last step off by `1` has the
 residual `1` at step `9` and `0` before; dropping that residual from the budget leaves
@@ -330,23 +315,6 @@ example :
   rw [bathEulerStep_sub_tenth (by norm_num) (by norm_num)]
   norm_num
 
--- A unit residual at the first step from a zero initial defect: the weighted bound `(9 / 10) ^ 9`
--- is attained, while the unweighted bound only gives `1`.
-example {e : ℕ → ℝ} (h0 : e 0 = 0)
-    (h : ∀ j < 10, e (j + 1) = 9 / 10 * e j + if j = 0 then 1 else 0) :
-    |e 10| ≤ (9 / 10) ^ 9 ∧ |e 10| ≤ 1 ∧ |e 10| = (9 / 10) ^ 9 := by
-  have hw := tenStep_defect_le h
-  have hu := tenStep_defect_le_unweighted h
-  have he : e 10 = (9 / 10) ^ 9 := by
-    have := tenStep_defect_eq h
-    rw [h0] at this
-    norm_num [sum_range_succ] at this
-    rw [this]
-    norm_num
-  rw [h0] at hw hu
-  norm_num [sum_range_succ] at hw hu
-  refine ⟨by linarith, by linarith, by rw [he]; norm_num⟩
-
 -- A constant offset of `1 / 2` in the computed temperatures of the body in the bath: the residual
 -- is `1 / 20` at every step, the budget is `1 / 2 + 5`, and the computed temperature after ten
 -- steps is within it.
@@ -366,12 +334,16 @@ example {X : ℕ → ℝ} (h0 : X 0 = 300 + 50)
   have h := bathEuler_total_error (by norm_num) (by norm_num) h0 hstep (fun i => X i + 1 / 2)
   rwa [hb] at h
 
--- The budget in degrees Fahrenheit (`k = 9 / 5`, `c = 32`) is `9 / 5` times the budget in degrees
--- Celsius.
+-- The budget in degrees Fahrenheit (`k = 9 / 5`, `c = 32`), with the heat capacity `500` and the
+-- conductance `5` per degree Celsius converted to `500 / (9 / 5) = 2500 / 9` and
+-- `5 / (9 / 5) = 25 / 9` per degree Fahrenheit, is `9 / 5` times the budget in degrees Celsius.
 example (Y : ℕ → ℝ) :
-    tenStepErrorBudget 500 5 (9 / 5 * 27 + 32) (9 / 5 * 50) (fun i => 9 / 5 * Y i + 32) =
-      9 / 5 * tenStepErrorBudget 500 5 27 50 Y :=
-  (tenStepErrorBudget_tempUnit (by norm_num) 32 500 5 27 50 Y).2
+    tenStepErrorBudget (2500 / 9) (25 / 9) (9 / 5 * 27 + 32) (9 / 5 * 50)
+        (fun i => 9 / 5 * Y i + 32) =
+      9 / 5 * tenStepErrorBudget 500 5 27 50 Y := by
+  have h := (tenStepErrorBudget_tempUnit (k := 9 / 5) (by norm_num) 32 500 5 27 50 Y).2
+  rwa [show (500 : ℝ) / (9 / 5) = 2500 / 9 by norm_num,
+    show (5 : ℝ) / (9 / 5) = 25 / 9 by norm_num] at h
 
 end PhyslibExtTest.Numerical.PhysicalErrorBudgets
 
