@@ -20,4 +20,3 @@ example (k : Type u) [Field k] [PerfectField k] (B : Type v) [CommRing B]
     [Algebra.FiniteType k B] [IsIntegrallyClosed B] [Ring.KrullDimLE 1 B] :
     Algebra.Smooth k B :=
   Algebra.Smooth.of_isIntegrallyClosed_of_krullDimLE_one_of_perfectField k B
-
