@@ -44,6 +44,10 @@ evolution, or return map is included.
 - `EarthScience.convex_modifiedCamClayElasticDomain` and
   `modifiedCamClayElasticDomain_bounds`: convexity and the
   stress bounds `0 ≤ p ≤ pc`, `|q| ≤ M pc / 2`.
+- `EarthScience.modifiedCamClayYield_eq_zero_on_critical_line_iff`:
+  on the physical branch the critical-state line `q = M p`
+  meets the yield locus exactly at the origin and
+  `(pc / 2, M pc / 2)`.
 - `EarthScience.deviatoricInvariant`: `q` from the stress
   tensor, unchanged by pore pressure and by the stress
   sign convention.
@@ -164,6 +168,73 @@ theorem modifiedCamClayElasticDomain_bounds {M pc : ℝ} (hM : 0 < M)
     abs_le_of_sq_le_sq hpsq (by positivity)
   rw [abs_le] at habs1
   exact ⟨by linarith [habs1.1], by linarith [habs1.2], habs⟩
+
+/-- Restriction of the yield function to the critical-state line `q = M * p`:
+`F(p, M * p) = M ^ 2 * p * (2 * p - pc)`. -/
+lemma modifiedCamClayYield_on_critical_line (M pc p : ℝ) :
+    modifiedCamClayYield M pc p (M * p) = M ^ 2 * p * (2 * p - pc) := by
+  unfold modifiedCamClayYield
+  ring
+
+/-- Critical-line intersection with the yield locus on the physical branch
+(`M, pc > 0`, `q ≥ 0`): the points on `q = M * p` with `F = 0` are exactly the
+origin and the critical point `(pc / 2, M * pc / 2)`. Yield-locus geometry at
+fixed `pc`; no flow rule or hardening evolution. -/
+theorem modifiedCamClayYield_eq_zero_on_critical_line_iff {M pc p q : ℝ}
+    (hM : 0 < M) (hpc : 0 < pc) :
+    (0 ≤ q ∧ q = M * p ∧ modifiedCamClayYield M pc p q = 0) ↔
+      (p = 0 ∧ q = 0) ∨ (p = pc / 2 ∧ q = M * pc / 2) := by
+  constructor
+  · rintro ⟨hq, hline, hF⟩
+    rw [hline, modifiedCamClayYield_on_critical_line] at hF
+    have hM2 : M ^ 2 ≠ 0 := pow_ne_zero 2 (ne_of_gt hM)
+    rcases mul_eq_zero.mp hF with h | h2
+    · rcases mul_eq_zero.mp h with hM2' | hp0
+      · exact absurd hM2' hM2
+      · left
+        exact ⟨hp0, by rw [hline, hp0, mul_zero]⟩
+    · right
+      have hp2 : p = pc / 2 := by linarith
+      exact ⟨hp2, by rw [hline, hp2]; ring⟩
+  · rintro (⟨hp0, hq0⟩ | ⟨hp2, hq2⟩)
+    · subst hp0
+      subst hq0
+      refine ⟨le_rfl, (mul_zero M).symm, ?_⟩
+      unfold modifiedCamClayYield
+      ring
+    · subst hp2
+      subst hq2
+      refine ⟨?_, by ring, ?_⟩
+      · exact div_nonneg (mul_nonneg (le_of_lt hM) (le_of_lt hpc)) (by linarith)
+      · unfold modifiedCamClayYield
+        ring
+
+/-- Nonzero critical-line intersection: on the physical branch, a point on
+`q = M * p` with `F = 0` and `p ≠ 0` is the critical point
+`(pc / 2, M * pc / 2)`; the origin is the excluded second intersection. -/
+theorem modifiedCamClayYield_eq_zero_on_critical_line_of_ne_zero {M pc p q : ℝ}
+    (hM : 0 < M) (hpc : 0 < pc) (hq : 0 ≤ q) (hline : q = M * p)
+    (hF : modifiedCamClayYield M pc p q = 0) (hp : p ≠ 0) :
+    p = pc / 2 ∧ q = M * pc / 2 := by
+  have h := (modifiedCamClayYield_eq_zero_on_critical_line_iff hM hpc).mp ⟨hq, hline, hF⟩
+  rcases h with ⟨hp0, -⟩ | h
+  · exact absurd hp0 hp
+  · exact h
+
+/-- Off-yield points on the critical-state line: with `M > 0`, a point
+`(p, M * p)` with `p` different from both intersection abscissae is not on the
+yield locus. -/
+lemma modifiedCamClayYield_on_critical_line_ne_zero {M pc p : ℝ}
+    (hM : 0 < M) (hp0 : p ≠ 0) (hpc2 : p ≠ pc / 2) :
+    modifiedCamClayYield M pc p (M * p) ≠ 0 := by
+  rw [modifiedCamClayYield_on_critical_line]
+  apply mul_ne_zero
+  · apply mul_ne_zero
+    · exact pow_ne_zero 2 (ne_of_gt hM)
+    · exact hp0
+  · intro hcon
+    apply hpc2
+    linarith
 
 /-! ## B. Compression-positive invariant bridge -/
 
