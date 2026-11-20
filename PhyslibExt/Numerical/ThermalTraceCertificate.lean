@@ -14,16 +14,19 @@ import Mathlib.Tactic.Ring
 /-!
 # Rational thermal trace certificate: checker and soundness
 
-A lumped body cooling in a fixed bath (`PhysicalErrorBudgets`, sections F-H) has the normalized
-temperature excess `y = (T - T_amb) / Δ`. Ten explicit Euler steps of size `τ / 10` multiply it by
-`9 / 10` per step, so the exact rational trace is `y_j = (9 / 10) ^ j`, `j = 0, …, 10`. This file
-checks such a trace as data and binds an accepted trace to the proved analytic bound.
+A lumped body cooling in a fixed bath (`PhysicalErrorBudgets`, sections F-H) from the temperature
+`T_0 = T_amb + Δ` reaches, after `j` explicit Euler steps of size `τ / 10`, the temperature
+`T_j = T_amb + Δ y_j` with the coefficient `y_j = (9 / 10) ^ j`, `j = 0, …, 10`: each step
+multiplies the excess `T - T_amb` by `9 / 10`. For `Δ ≠ 0` the coefficient is the normalized excess
+`(T_j - T_amb) / Δ`. At `Δ = 0` every `T_j` is `T_amb`, the coefficient form holds for every trace,
+and the quotient, Lean's `0 / 0 = 0`, does not recover `y_j`. This file checks a trace of
+coefficients as data and binds an accepted trace to the proved analytic bound, for every `Δ`.
 
 ## i. Overview
 
 The checker `checkThermalTrace` reads a list of rationals and returns a `Bool`. It accepts exactly
-when the list has eleven entries `y_0, …, y_10`, the first is the normalized initial excess
-`y_0 = 1`, and all ten identities `y_(j+1) = (9 / 10) y_j` hold. The certificate is that
+when the list has eleven entries `y_0, …, y_10`, the first is the initial coefficient `y_0 = 1`,
+and all ten identities `y_(j+1) = (9 / 10) y_j` hold. The certificate is that
 eleven-element list, its last entry `y_10` included and checked by the last identity; there is no
 separately supplied expected terminal value or error bound, and floating-point behavior does not
 enter. Acceptance is decided by kernel reduction (`decide +kernel`), and how the list was produced
@@ -34,7 +37,8 @@ induction on the ten identities in `ℚ` and the cast homomorphism; in particula
 is `(9 / 10) ^ 10`. The physical endpoint `T_amb + Δ y_10` reconstructed from an accepted trace is
 the tenth Euler iterate from `T_amb + Δ` (`PhysicalErrorBudgets.bathEuler_closed_form`), so the
 proved ten-step bound `PhysicalErrorBudgets.bathEuler_tenStep_error` applies to it:
-`|T_amb + Δ y_10 - T(τ)| ≤ |Δ| / 10` for `C, G > 0`.
+`|T_amb + Δ y_10 - T(τ)| ≤ |Δ| / 10` for `C, G > 0` and every real `Δ`; at `Δ = 0` the endpoint
+and `T(τ)` are both `T_amb`.
 
 Model inputs: those of the bath model (constant `C > 0`, `G > 0`, `T_amb`, the linear bath law).
 Non-goals: no floating-point or compiled-code refinement, no parser, no general Euler convergence
@@ -50,8 +54,9 @@ theorem, and no empirical adequacy or system safety claim.
   `ThermalTraceCertificate.traceEndpoint_eq_iterate`,
   `ThermalTraceCertificate.traceEndpoint_error`: the reconstructed endpoint is the tenth Euler
   iterate and lies within `|Δ| / 10` of `T(τ)`.
-- The accepted exact trace, four rejected traces and the endpoint of a body at `350` in a bath at
-  `300` are in `PhyslibExtTest.Numerical.ThermalTraceCertificateTest`.
+- The accepted exact trace, four rejected traces, the endpoint of a body at `350` in a bath at
+  `300`, and the same body started at the bath temperature (`Δ = 0`) are in
+  `PhyslibExtTest.Numerical.ThermalTraceCertificateTest`.
 
 ## iii. Table of contents
 
@@ -79,10 +84,12 @@ open PhysicalErrorBudgets
 /-! ## A. The trace checker -/
 
 /-- **The trace checker.** Accept a list `y` of rationals exactly when it has eleven entries
-`y_0, …, y_10`, the first is the normalized initial excess `y_0 = 1`, and all ten identities
-`y_(j+1) = (9 / 10) y_j`, `j = 0, …, 9`, hold. Entries are read with the default `0`, which an
-accepted list never uses. The certificate is the eleven-element list itself, `y_10` included;
-there is no separately supplied expected terminal value or error bound. -/
+`y_0, …, y_10`, the first is the initial coefficient `y_0 = 1`, and all ten identities
+`y_(j+1) = (9 / 10) y_j`, `j = 0, …, 9`, hold. The entries are the coefficients of
+`T_j = T_amb + Δ y_j`, the normalized excesses `(T_j - T_amb) / Δ` only for `Δ ≠ 0`. Entries are
+read with the default `0`, which an accepted list never uses. The certificate is the
+eleven-element list itself, `y_10` included; there is no separately supplied expected terminal
+value or error bound. -/
 def checkThermalTrace (y : List ℚ) : Bool :=
   y.length == 11 && y.getD 0 0 == 1 &&
     (List.range 10).all fun j => y.getD (j + 1) 0 == 9 / 10 * y.getD j 0
@@ -118,8 +125,9 @@ lemma checkThermalTrace_terminal {y : List ℚ} (h : checkThermalTrace y = true)
 
 /-! ## C. The physical endpoint and its analytic bound -/
 
-/-- The physical endpoint `T_amb + Δ y_10` reconstructed from a trace `y` of the normalized excess,
-for the bath temperature `T_amb` and the initial excess `Δ = T_0 - T_amb`. -/
+/-- The physical endpoint `T_amb + Δ y_10` reconstructed from a trace `y` of coefficients,
+`T_j = T_amb + Δ y_j`, for the bath temperature `T_amb` and the initial excess `Δ = T_0 - T_amb`.
+`Δ` may be `0`; the endpoint is then `T_amb` for every trace. -/
 noncomputable def traceEndpoint (Tamb Δ : ℝ) (y : List ℚ) : ℝ :=
   Tamb + Δ * (y.getD 10 0 : ℝ)
 

@@ -20,7 +20,11 @@ import Mathlib.Tactic.NormNum
 * soundness on the accepted trace, at the intermediate entry `j = 5` and at the terminal entry;
 * a body of heat capacity `500` coupled through `G = 5` to a bath at `300` (`τ = 100`), started at
   `350`: the endpoint reconstructed from the accepted trace is the tenth Euler iterate from `350`,
-  equals `317.433922005` and lies within `5` of the exact `T(100)`.
+  equals `317.433922005` and lies within `5` of the exact `T(100)`;
+* the same body started at the bath temperature (`Δ = 0`): read as coefficients,
+  `T_j = T_amb + Δ y_j`, the accepted trace gives the endpoint `300`, the tenth Euler iterate from
+  `300` and the exact `T(100)`, while the quotient `(T_0 - T_amb) / Δ` is Lean's `0 / 0 = 0`, not
+  the trace entry `y_0 = 1`.
 -/
 
 @[expose] public section
@@ -89,5 +93,24 @@ lemma traceEndpoint_fixture :
   · calc |traceEndpoint 300 50 thermalTraceFixture - bathTrajectory 500 5 300 50 100|
         ≤ |(50 : ℝ)| / 10 := herr
       _ = 5 := by norm_num
+
+-- Zero initial excess (`Δ = 0`): the body starts at the bath temperature `300`. Read as
+-- coefficients, `T_j = T_amb + Δ y_j`, the accepted trace gives the endpoint `300`, which is the
+-- tenth Euler iterate from `300` and, by the error bound with `|Δ| / 10 = 0`, the exact `T(100)`.
+-- The quotient `(T_0 - T_amb) / Δ` is Lean's `0 / 0 = 0`, not the trace entry `y_0 = 1`.
+example : traceEndpoint 300 0 thermalTraceFixture = 300 ∧
+    traceEndpoint 300 0 thermalTraceFixture =
+      (bathEulerStep 500 5 300 (thermalTimeConstant 500 5 / 10))^[10] 300 ∧
+    traceEndpoint 300 0 thermalTraceFixture = bathTrajectory 500 5 300 0 100 ∧
+    ((300 : ℝ) - 300) / 0 ≠ ((thermalTraceFixture.getD 0 0 : ℚ) : ℝ) := by
+  have hτ : thermalTimeConstant 500 5 = 100 := by norm_num [thermalTimeConstant]
+  have hit := traceEndpoint_eq_iterate (C := 500) (G := 5) (by norm_num) (by norm_num) 300 0
+    checkThermalTrace_fixture
+  have herr := traceEndpoint_error (C := 500) (G := 5) (by norm_num) (by norm_num) 300 0
+    checkThermalTrace_fixture
+  rw [add_zero] at hit
+  rw [hτ, abs_zero, zero_div] at herr
+  refine ⟨by simp [traceEndpoint], hit, sub_eq_zero.mp (abs_nonpos_iff.mp herr), ?_⟩
+  norm_num [thermalTraceFixture]
 
 end PhyslibExtTest.Numerical.ThermalTraceCertificate
