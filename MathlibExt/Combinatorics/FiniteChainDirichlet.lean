@@ -29,7 +29,6 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import Mathlib.Data.Finite.Card
 public import Mathlib.Data.Nat.Init
 import Mathlib.Tactic.Push
 import Mathlib.Tactic.Ring
@@ -101,7 +100,7 @@ For each chain `i` of length `n i ≥ 1` and integers `r i d`, there are integer
 Laplacian `c (d-1) - 2 c d + c (d+1)` equals `-(r d - ν)` at `d = 1` and
 `-r d` at every other interior vertex. Chains of length one need no
 correction. -/
-public theorem exists_depthOne_correction_dirichlet {ι : Type*} [Finite ι] (n : ι → ℕ)
+public theorem exists_depthOne_correction_dirichlet {ι : Type*} (n : ι → ℕ)
     (hn : ∀ i, 1 ≤ n i) (r : ι → ℕ → ℤ) :
     ∃ (ν : ι → ℤ) (c : ι → ℕ → ℤ),
       (∀ i, n i = 1 → ν i = 0) ∧ (∀ i, c i 0 = 0) ∧ (∀ i d, n i ≤ d → c i d = 0) ∧
