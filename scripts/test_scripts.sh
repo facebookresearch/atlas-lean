@@ -62,6 +62,17 @@ PY
 reset_fixture
 expect_pass "empty scaffold"
 
+# An older PR may add a standalone model that imports nothing from the old tree.
+for roots in MathlibExt:Domains MathlibExtTest:DomainsTest; do
+  old="${roots%:*}/Transport/NewArea"
+  new="${roots#*:}/Transport/NewArea"
+  mkdir -p "$TMP_ROOT/repo/$old" "$TMP_ROOT/repo/$new"
+  touch "$TMP_ROOT/repo/$old/NewModel.lean"
+  expect_failure "addition to a migrated subject" "move $old/NewModel.lean to $new/NewModel.lean"
+  mv "$TMP_ROOT/repo/$old/NewModel.lean" "$TMP_ROOT/repo/$new/"
+  expect_pass "addition at the new path"
+done
+
 # The fixture runs preflight without recursively running this test suite.
 cp "$REPO_ROOT/scripts/"{check.sh,check_diagnostics.sh} "$TMP_ROOT/repo/scripts/"
 touch "$TMP_ROOT/repo/"{lean-toolchain,README.md,REVIEWING.md}

@@ -41,7 +41,27 @@ check_no_symlinks() {
   echo "ok [symlinks]: audited libraries contain no symlinked paths."
 }
 
+# A PR based on the old layout can reintroduce a migrated directory without an
+# invalid import: a standalone new module would otherwise still build there.
+check_migrated_subjects() {
+  local root dest subject old first
+  for root in MathlibExt MathlibExtTest; do
+    dest=Domains
+    [[ "$root" != MathlibExtTest ]] || dest=DomainsTest
+    for subject in Biology/Demography Economics/Accounting Transport Urban; do
+      old="$root/$subject"
+      [[ -d "$old" ]] || continue
+      first="$(find "$old" -type f -name '*.lean' -print -quit)" || return 1
+      if [[ -n "$first" ]]; then
+        echo "FAIL [placement]: move $first to $dest/${first#"$root/"}" >&2
+        return 1
+      fi
+    done
+  done
+}
+
 status=0
+check_migrated_subjects || status=1
 check_build_surface || status=1
 check_declared_libraries || status=1
 check_no_symlinks || status=1
