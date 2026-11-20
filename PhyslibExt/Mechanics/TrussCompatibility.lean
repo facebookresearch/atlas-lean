@@ -9,6 +9,7 @@ module
 
 public import PhyslibExt.Mechanics.HarmonicMechanics
 public import PhyslibExt.Statistics.UncertaintyPropagation
+public import Mathlib.Data.Finset.Max
 import MathlibExt.LinearAlgebra.Matrix.WeightedScatter
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.LinearAlgebra.Matrix.PosDef
@@ -59,7 +60,10 @@ on a declared affine space are identifiable from it.
 Section I builds the unit-load (dummy-unit-load) response
 functional for a fixed output and proves it from reciprocal
 work with a single inverse application.
-Section J treats the determinate case, where the supported
+Section J bounds every convex combination over a finite
+load table by the minimum and maximum vertex responses of
+the same fixed-output response.
+Section K treats the determinate case, where the supported
 compatibility matrix is square and invertible: elastic
 member forces then agree with reduced statics and do not
 depend on the axial weights ("reduced" here is the supported
@@ -99,6 +103,10 @@ system in free coordinates).
   separation-form coefficients with the compliance-applied
   coefficients; `supported_unitLoad_axialForce_identity`
   is the physical axial-force form.
+- `supported_unitLoadResponse_convexCombination_bounds`:
+  every convex combination over a nonempty finite load
+  table has fixed-output response between the minimum and
+  maximum vertex responses.
 - `reduced_memberForce_eq_inv_mulVec` and
   `reduced_memberForce_indep_of_diagonal`: for square
   invertible reduced compatibility, the diagonal-law force
@@ -121,7 +129,8 @@ system in free coordinates).
 - G. Reciprocal work
 - H. Load-parameter identifiability
 - I. Unit-load response
-- J. Reduced determinate statics
+- J. Finite load hull
+- K. Reduced determinate statics
 
 ## iv. References
 
@@ -1047,7 +1056,161 @@ theorem supported_unitLoad_axialForce_identity {J M F : Type*}
   simp only [mulVec_diagonal]
   field_simp
 
-/-! ## J. Reduced determinate statics -/
+/-! ## J. Finite load hull -/
+
+/-- Finite superposition for the retained response map: with the
+output `aout` (hence the influence vector) fixed, the response to
+a finite combination of vertex loads is the same combination of
+the vertex responses, for arbitrary coefficients and an arbitrary
+scenario finset. This is linearity of the pairing in the load
+argument over a finite sum; no solve reading, sign condition, or
+normalization is used. -/
+lemma supported_unitLoadResponse_sum_smul {J M F ι : Type*}
+    [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
+    [Fintype F] [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (aout : F → ℝ)
+    (s : Finset ι) (w : ι → ℝ) (f : ι → (F → ℝ)) :
+    unitLoadResponse r a b S k aout (∑ i ∈ s, w i • f i)
+      = ∑ i ∈ s, w i * unitLoadResponse r a b S k aout (f i) := by
+  rw [map_sum]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  rw [map_smul, smul_eq_mul]
+
+/-- Lower hull bound: for a nonempty scenario table with
+nonnegative coefficients summing to one, the minimum vertex
+response is at most the response of the combined load, all at the
+one fixed output and supported stiffness. The stiffness, supports
+and output do not change between scenarios; no solve reading is
+used. -/
+lemma supported_inf'_le_unitLoadResponse_sum_smul
+    {J M F ι : Type*} [Fintype J] [DecidableEq J] [Fintype M]
+    [DecidableEq M] [Fintype F] [DecidableEq F]
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (aout : F → ℝ)
+    (s : Finset ι) (hs : s.Nonempty) (w : ι → ℝ)
+    (f : ι → (F → ℝ)) (hw₀ : ∀ i ∈ s, 0 ≤ w i)
+    (hw₁ : ∑ i ∈ s, w i = 1) :
+    s.inf' hs (fun i => unitLoadResponse r a b S k aout (f i))
+      ≤ unitLoadResponse r a b S k aout (∑ i ∈ s, w i • f i) := by
+  rw [supported_unitLoadResponse_sum_smul]
+  calc s.inf' hs (fun i => unitLoadResponse r a b S k aout (f i))
+      = ∑ i ∈ s, w i * s.inf' hs (fun i => unitLoadResponse r a b S k aout (f i)) := by
+        rw [← Finset.sum_mul, hw₁, one_mul]
+    _ ≤ ∑ i ∈ s, w i * unitLoadResponse r a b S k aout (f i) := by
+        apply Finset.sum_le_sum
+        intro i hi
+        exact mul_le_mul_of_nonneg_left (Finset.inf'_le _ hi) (hw₀ i hi)
+
+/-- Upper hull bound: for a nonempty scenario table with
+nonnegative coefficients summing to one, the response of the
+combined load is at most the maximum vertex response, all at the
+one fixed output and supported stiffness. The stiffness, supports
+and output do not change between scenarios; no solve reading is
+used. -/
+lemma supported_unitLoadResponse_sum_smul_le_sup'
+    {J M F ι : Type*} [Fintype J] [DecidableEq J] [Fintype M]
+    [DecidableEq M] [Fintype F] [DecidableEq F]
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (aout : F → ℝ)
+    (s : Finset ι) (hs : s.Nonempty) (w : ι → ℝ)
+    (f : ι → (F → ℝ)) (hw₀ : ∀ i ∈ s, 0 ≤ w i)
+    (hw₁ : ∑ i ∈ s, w i = 1) :
+    unitLoadResponse r a b S k aout (∑ i ∈ s, w i • f i)
+      ≤ s.sup' hs (fun i => unitLoadResponse r a b S k aout (f i)) := by
+  rw [supported_unitLoadResponse_sum_smul]
+  calc ∑ i ∈ s, w i * unitLoadResponse r a b S k aout (f i)
+      ≤ ∑ i ∈ s, w i * s.sup' hs (fun i => unitLoadResponse r a b S k aout (f i)) := by
+        apply Finset.sum_le_sum
+        intro i hi
+        exact mul_le_mul_of_nonneg_left
+          (Finset.le_sup' (fun i => unitLoadResponse r a b S k aout (f i)) hi) (hw₀ i hi)
+    _ = s.sup' hs (fun i => unitLoadResponse r a b S k aout (f i)) := by
+        rw [← Finset.sum_mul, hw₁, one_mul]
+
+/-- Finite load hull for the retained response: every convex
+combination of the vertex loads of a nonempty finite table
+(nonnegative coefficients summing to one) has its fixed-output
+response between the minimum and maximum vertex responses, at one
+fixed supported stiffness and output. The coefficients are supplied
+finite data; no design factor is introduced. Stiffness, supports
+and output are the same for every scenario and for the combined
+load. -/
+theorem supported_unitLoadResponse_convexCombination_bounds
+    {J M F ι : Type*} [Fintype J] [DecidableEq J] [Fintype M]
+    [DecidableEq M] [Fintype F] [DecidableEq F]
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (aout : F → ℝ)
+    (s : Finset ι) (hs : s.Nonempty) (w : ι → ℝ)
+    (f : ι → (F → ℝ)) (hw₀ : ∀ i ∈ s, 0 ≤ w i)
+    (hw₁ : ∑ i ∈ s, w i = 1) :
+    s.inf' hs (fun i => unitLoadResponse r a b S k aout (f i))
+        ≤ unitLoadResponse r a b S k aout (∑ i ∈ s, w i • f i)
+      ∧ unitLoadResponse r a b S k aout (∑ i ∈ s, w i • f i)
+        ≤ s.sup' hs (fun i => unitLoadResponse r a b S k aout (f i)) := by
+  exact ⟨supported_inf'_le_unitLoadResponse_sum_smul r a b S k aout s hs w f hw₀ hw₁,
+    supported_unitLoadResponse_sum_smul_le_sup' r a b S k aout s hs w f hw₀ hw₁⟩
+
+/-- Singleton table: a convex combination over one scenario is
+that scenario. The normalization over the singleton forces its
+coefficient to be one, so the combined load has the vertex
+response; the hull collapses to that value. No solve reading is
+used. -/
+lemma supported_unitLoadResponse_singleton {J M F ι : Type*}
+    [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
+    [Fintype F] [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (aout : F → ℝ)
+    (i : ι) (w : ι → ℝ) (f : ι → (F → ℝ))
+    (hw₁ : ∑ j ∈ ({i} : Finset ι), w j = 1) :
+    unitLoadResponse r a b S k aout
+        (∑ j ∈ ({i} : Finset ι), w j • f j)
+      = unitLoadResponse r a b S k aout (f i) := by
+  rw [Finset.sum_singleton] at hw₁
+  rw [Finset.sum_singleton, hw₁, one_smul]
+
+/-- Hull bounds in fixed-output form: for positive-definite
+supported stiffness, vertex solutions `K *ᵥ (u i) = f i` on the
+table and a supported solution `K *ᵥ u₀` of the combined load,
+the fixed output `aout ⬝ᵥ u₀` of the combined solution lies
+between the minimum and maximum vertex outputs
+`aout ⬝ᵥ (u i)`. Every solution is against the one stiffness,
+supports and reference configuration; the solutions are
+presupposed, and existence stays with the supported unique
+response. This is the hull bound read through the producer
+identification of the retained response with the fixed output. -/
+theorem supported_unitLoadResponse_convexCombination_output_bounds
+    {J M F ι : Type*} [Fintype J] [DecidableEq J] [Fintype M]
+    [DecidableEq M] [Fintype F] [DecidableEq F]
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ)
+    (hPD : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+      * (axialCompatibility r a b * S)).PosDef)
+    (aout : F → ℝ) (s : Finset ι) (hs : s.Nonempty) (w : ι → ℝ)
+    (f u : ι → (F → ℝ)) (u₀ : F → ℝ)
+    (hw₀ : ∀ i ∈ s, 0 ≤ w i) (hw₁ : ∑ i ∈ s, w i = 1)
+    (hu : ∀ i ∈ s, ((axialCompatibility r a b * S)ᵀ
+        * Matrix.diagonal k
+        * (axialCompatibility r a b * S)) *ᵥ (u i) = f i)
+    (hu₀ : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S)) *ᵥ u₀
+      = ∑ i ∈ s, w i • f i) :
+    s.inf' hs (fun i => aout ⬝ᵥ (u i)) ≤ aout ⬝ᵥ u₀
+      ∧ aout ⬝ᵥ u₀ ≤ s.sup' hs (fun i => aout ⬝ᵥ (u i)) := by
+  have hveq : ∀ i ∈ s, unitLoadResponse r a b S k aout (f i) = aout ⬝ᵥ (u i) :=
+    fun i hi => supported_unitLoadResponse_eq r a b S k hPD aout (hu i hi)
+  have h0eq : unitLoadResponse r a b S k aout (∑ i ∈ s, w i • f i) = aout ⬝ᵥ u₀ :=
+    supported_unitLoadResponse_eq r a b S k hPD aout hu₀
+  have hmain :=
+    supported_unitLoadResponse_convexCombination_bounds r a b S k aout s hs w f hw₀ hw₁
+  have hinf : s.inf' hs (fun i => unitLoadResponse r a b S k aout (f i))
+      = s.inf' hs (fun i => aout ⬝ᵥ (u i)) :=
+    Finset.inf'_congr hs rfl hveq
+  have hsup : s.sup' hs (fun i => unitLoadResponse r a b S k aout (f i))
+      = s.sup' hs (fun i => aout ⬝ᵥ (u i)) :=
+    Finset.sup'_congr hs rfl hveq
+  rw [h0eq, hinf, hsup] at hmain
+  exact hmain
+
+/-! ## K. Reduced determinate statics -/
 
 /-- Elastic member forces satisfy reduced equilibrium: for a
 supported solution `u`, collecting the elastic forces
