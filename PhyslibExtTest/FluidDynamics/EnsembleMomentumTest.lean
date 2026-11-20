@@ -40,6 +40,17 @@ An ensemble whose realizations all equal one field `U` has mean `U` and zero Rey
 (`reynoldsStress_eq_zero_of_ae_eq`). The escaping profile on `(0, 1]` has realizations with
 derivative `0` at `s = 0`, a mean with derivative `1` there, and derivatives that no integrable
 function dominates near `0` (`escapingProfile_interchange_fails`).
+
+The eddy-viscosity closure. On the simple shear `U = (2 y, 0, 0)`, with `S₀₁ = S₁₀ = 1`, the model
+has the down-gradient shear entry `Rm₀₁ = -2` for `νt = 1` and extracts `P = 4` for every `k`, so
+`meanFlowExtraction_modeledReynoldsStress` gives `‖S‖² = 2`; every `νt ≥ 0` extracts a nonnegative
+amount from it. On the plane strain `diag(1, -1, 0)`, `νt = -1` returns energy to the mean flow
+(`meanFlowExtraction_modeledReynoldsStress_nonneg_iff`); at `k = νt = 1` the model has the first
+normal stress `-4/3` and trace `2 = 2 k` (`modeledReynoldsStress_planeStrain`), so through
+`reynoldsStress_posSemidef` it is not the Reynolds stress of any ensemble with `L²` velocity
+components, while `νt = 1/4` gives a positive semidefinite model. A negative eddy viscosity extracts
+nothing from the zero strain (`meanFlowExtraction_nonneg_converse_fails`), and the model domain
+contains a point with a negative quadratic form (`modeledReynoldsStress_realizability_fails`).
 -/
 
 @[expose] public section
@@ -385,5 +396,89 @@ example (t : ℝ) :
   · rw [hR1, divergence_quad]
     simp [shearPoint]
     norm_num
+
+/-! ### The eddy-viscosity closure -/
+
+section Closure
+
+open scoped Matrix.Norms.Frobenius
+
+-- Simple shear `U = (2 y, 0, 0)`: the shear entry of the model is `-νt γ = -2` (down-gradient),
+-- the direct extraction is `4` for every `k`, and `meanFlowExtraction_modeledReynoldsStress`
+-- turns it into `‖S‖² = 2`.
+example (k : ℝ) :
+    modeledReynoldsStress k 1 !![0, 1, 0; 1, 0, 0; 0, 0, 0] 0 1 = -2 ∧
+      meanFlowExtraction (modeledReynoldsStress k 1 !![0, 1, 0; 1, 0, 0; 0, 0, 0])
+        !![0, 1, 0; 1, 0, 0; 0, 0, 0] = 4 ∧
+      ‖(!![0, 1, 0; 1, 0, 0; 0, 0, 0] : Matrix (Fin 3) (Fin 3) ℝ)‖ ^ 2 = 2 := by
+  have htr : (!![0, 1, 0; 1, 0, 0; 0, 0, 0] : Matrix (Fin 3) (Fin 3) ℝ).trace = 0 := by
+    simp [Matrix.trace_fin_three]
+  have hP : meanFlowExtraction (modeledReynoldsStress k 1 !![0, 1, 0; 1, 0, 0; 0, 0, 0])
+      !![0, 1, 0; 1, 0, 0; 0, 0, 0] = 4 := by
+    norm_num [meanFlowExtraction, modeledReynoldsStress, Fin.sum_univ_three, Matrix.one_apply]
+  refine ⟨by norm_num [modeledReynoldsStress, Matrix.one_apply], hP, ?_⟩
+  have h := meanFlowExtraction_modeledReynoldsStress k 1 htr
+  linarith
+
+-- Every nonnegative eddy viscosity extracts a nonnegative amount from the simple shear.
+example (k νt : ℝ) (hνt : 0 ≤ νt) :
+    0 ≤ meanFlowExtraction (modeledReynoldsStress k νt !![0, 1, 0; 1, 0, 0; 0, 0, 0])
+      !![0, 1, 0; 1, 0, 0; 0, 0, 0] :=
+  meanFlowExtraction_modeledReynoldsStress_nonneg k (by simp [Matrix.trace_fin_three]) hνt
+
+-- On the nonzero plane strain the eddy viscosity `νt = -1` returns energy to the mean flow.
+example :
+    meanFlowExtraction (modeledReynoldsStress 1 (-1) (Matrix.diagonal ![1, -1, 0]))
+      (Matrix.diagonal ![1, -1, 0]) < 0 := by
+  have htr : (Matrix.diagonal ![(1 : ℝ), -1, 0]).trace = 0 := by
+    rw [Matrix.trace_fin_three]
+    norm_num [Matrix.diagonal_apply]
+  have hne : Matrix.diagonal ![(1 : ℝ), -1, 0] ≠ 0 := fun h => by
+    simpa using congrFun (congrFun h 0) 0
+  by_contra hP
+  have h := (meanFlowExtraction_modeledReynoldsStress_nonneg_iff 1 htr hne).1 (not_lt.1 hP)
+  norm_num at h
+
+-- A negative eddy viscosity extracts nothing from the zero strain.
+example : ∃ k νt : ℝ, 0 ≤ k ∧ 0 ≤ meanFlowExtraction (modeledReynoldsStress k νt 0) 0 ∧
+    νt < 0 := by
+  by_contra h
+  exact meanFlowExtraction_nonneg_converse_fails fun k νt hk hP =>
+    not_lt.1 fun hν => h ⟨k, νt, hk, hP, hν⟩
+
+-- The plane-strain fixture: first normal stress `-4/3`, trace `2 = 2 k`.
+example : modeledReynoldsStress 1 1 (Matrix.diagonal ![1, -1, 0]) 0 0 = -4 / 3 ∧
+    (modeledReynoldsStress 1 1 (Matrix.diagonal ![1, -1, 0])).trace = 2 := by
+  rw [modeledReynoldsStress_planeStrain.1]
+  refine ⟨by simp, ?_⟩
+  rw [Matrix.trace_fin_three]
+  norm_num
+
+-- The model domain contains a point with a negative quadratic form.
+example : ∃ (k νt : ℝ) (S : Matrix (Fin 3) (Fin 3) ℝ) (a : Fin 3 → ℝ), 0 ≤ k ∧ 0 < νt ∧
+    S.IsSymm ∧ S.trace = 0 ∧ ∑ j, ∑ i, a j * a i * modeledReynoldsStress k νt S j i < 0 := by
+  by_contra h
+  exact modeledReynoldsStress_realizability_fails fun k νt S hk hν hS htr a =>
+    not_lt.1 fun hq => h ⟨k, νt, S, a, hk, hν, hS, htr, hq⟩
+
+-- The plane-strain model is not the Reynolds stress of any ensemble with `L²` velocity
+-- components: `reynoldsStress_posSemidef` along `e₀` against the fixture's entry `-4/3`.
+example {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
+    (u : Ω → ℝ → (Fin 3 → ℝ) → Fin 3 → ℝ) (τ : ℝ) (y : Fin 3 → ℝ)
+    (hu : ∀ i, MemLp (fun ω => u ω τ y i) 2 μ) :
+    reynoldsStress μ u τ y ≠ modeledReynoldsStress 1 1 (Matrix.diagonal ![1, -1, 0]) := by
+  intro h
+  have hq := reynoldsStress_posSemidef hu ![1, 0, 0]
+  rw [h, modeledReynoldsStress_planeStrain.1] at hq
+  norm_num [Fin.sum_univ_succ, Matrix.diagonal_apply] at hq
+
+-- Control: the same plane strain with `νt = 1/4` gives a positive semidefinite model.
+example (a : Fin 3 → ℝ) :
+    0 ≤ ∑ j, ∑ i, a j * a i *
+      modeledReynoldsStress 1 (1 / 4) (Matrix.diagonal ![1, -1, 0]) j i := by
+  norm_num [modeledReynoldsStress, Fin.sum_univ_three, Matrix.one_apply, Matrix.diagonal_apply]
+  nlinarith [mul_self_nonneg (a 0), mul_self_nonneg (a 1), mul_self_nonneg (a 2)]
+
+end Closure
 
 end PhyslibExtTest.FluidDynamics.EnsembleMomentum
