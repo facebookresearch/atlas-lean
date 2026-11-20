@@ -210,6 +210,26 @@ jobs:
       - name: Check routes, anchors, and article cards
         run: python scripts/check_blueprint_site.py site-src site
 
+      # GitHub Pages refuses a site over 1 GB, and the deploy then fails without
+      # naming the size. Report the size on every build and warn from 900 MB;
+      # fail only a build that would be published.
+      - name: Check the site against GitHub Pages' size limit
+        env:
+          DEPLOYING: ${{ vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group' }}
+        run: |
+          bytes=$(du -sb site | cut -f1)
+          mb=$((bytes / 1000000))
+          echo "The built site is ${mb} MB. GitHub Pages publishes at most 1,000 MB." | tee -a "$GITHUB_STEP_SUMMARY"
+          if [ "$bytes" -gt 1000000000 ]; then
+            if [ "$DEPLOYING" = true ]; then
+              echo "::error title=Site over the Pages limit::The built site is ${mb} MB, over GitHub Pages' 1 GB limit, so Pages would refuse it."
+              exit 1
+            fi
+            echo "::warning title=Site over the Pages limit::The built site is ${mb} MB, over GitHub Pages' 1 GB limit. It could not be published."
+          elif [ "$bytes" -gt 900000000 ]; then
+            echo "::warning title=Site near the Pages limit::The built site is ${mb} MB, within 100 MB of GitHub Pages' 1 GB limit."
+          fi
+
       - name: Keep dependency diagnostics
         if: always()
         continue-on-error: true
