@@ -121,9 +121,10 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
     a page has no `kind`, so it is not a task (rule 14). A planned page is
     held to the same standard as any article: it states its result precisely
     and cites the source it follows, and a reviewer checks the statement
-    against that source. Once its Lean exists, its annotation links the
-    declaration and the page drops its own dependency sections, following
-    rules 7 and 9 from then on. *Reason:* nothing else
+    against that source. When its declaration is ready to link under rules 7
+    and 13, the annotation links it and the page drops its own dependency
+    sections (rule 9); until then the page stays unlinked and keeps its
+    prerequisites, even if a declaration for it already exists. *Reason:* nothing else
     records a planned node's prerequisites, and a planned page is the graph's
     record of mathematics not yet in Lean.
 11. **`## Informally uses` lists only results the cited proof uses** but the
