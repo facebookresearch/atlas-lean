@@ -367,7 +367,11 @@ def check_edges(root: Path, annotations: dict[Path, dict], report: Report) -> No
     graph_module, _ = autoform()
     vault = root / "blueprint"
     for page, annotation in sorted(annotations.items()):
-        if linked(annotation) and page.name != "README.md":
+        if linked(annotation) and page.name == "README.md":
+            # lean-facts skips folder pages, so a Lean link there is never checked or kept in step with the Lean.
+            report.add(5, rel(page, root), "a folder page names a Lean declaration; link it from an article instead",
+                       annotation.get("_at", ""))
+        if linked(annotation):
             text = read_text(page, root, report, 9)
             for heading in lean_sections(text) if text is not None else ():
                 canonical = "Proof depends on" if heading.casefold() == "proof depends on" else "Depends on"
@@ -388,10 +392,12 @@ def check_edges(root: Path, annotations: dict[Path, dict], report: Report) -> No
     informal = {node_id: set(node.informal_dependencies) for node_id, node in graph.nodes.items()}
     union = {node_id: counted[node_id] | informal[node_id] for node_id in graph.nodes}
     for group in strongly_connected(union):
+        # One finding per informal link that closes the cycle, keyed by its two ends, so a second such link
+        # between pages already in a cycle is still a new finding.
         members = set(group)
-        if any(target in members for source in group for target in informal[source]):
-            names = sorted(paths[node_id] for node_id in group)
-            report.add(11, names[0], "these pages reach each other through `## Informally uses`: " + ", ".join(names))
+        for source in sorted(group):
+            for target in sorted(informal[source] & members):
+                report.add(11, paths[source], f"`## Informally uses` links {paths[target]}, which reaches back to it")
 
 
 def strongly_connected(edges: dict) -> list[list]:

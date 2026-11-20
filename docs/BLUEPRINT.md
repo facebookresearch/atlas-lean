@@ -215,7 +215,8 @@ the daily build of `main`:
   - rule 1: subject folders and the field folders of a subject with fields
     (not module placements or subfields, which the generator lays out);
   - rule 2: every page and subfolder is listed on its folder page;
-  - rule 5: every page has an annotation row; one annotation per page, in its
+  - rule 5: every page has an annotation row, and a folder page names no Lean
+    declaration (`lean-facts` skips folder pages); one annotation per page, in its
     subject's links file, naming at most one declaration, with a well-formed,
     unique `id` where it has one, and a subject URI with no percent-escape
     (`sync_wiki.py` reads it as written and Autoform decodes it, so the two
@@ -240,7 +241,9 @@ the daily build of `main`:
   summary, which also work on fork PRs, whose workflow token cannot comment.
   On a PR it says which findings the base doesn't already have; once a
   maintainer sets the Actions variable `GRAPH_RULES_BLOCKING` to `true`, those
-  fail the step, and findings `main` already has never do.
+  fail the step, and findings `main` already has never do. While it is
+  report-only its findings are advice: confirm one against its rule before
+  acting on it.
 - `autoform check` validates the whole graph after `lean-facts`.
 - `autoform audit --json` runs report only, and the job summary counts its
   findings and warnings by code: two pages for one declaration

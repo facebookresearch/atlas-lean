@@ -93,10 +93,8 @@ A graph PR changes the ATLAS wiki: `blueprint/roadmap/`, `blueprint/links/`,
 `scripts/wiki-sync.json`. Review it against the
 [graph rules](docs/BLUEPRINT.md#graph-rules); each rule there gives its
 reason. `scripts/check_graph_rules.py` reports the mechanical ones in
-`build the wiki`'s summary ([Checks](docs/BLUEPRINT.md#checks)). Its
-findings are advice while it is report-only: confirm a finding it reports as
-new against the rule before raising it, and don't raise one already on
-`main`. Beyond them, check what only a reader can:
+`build the wiki`'s summary ([Checks](docs/BLUEPRINT.md#checks)). Beyond
+them, check what only a reader can:
 
 - **Faithful statements (rule 7).** Compare each changed page with its Lean
   declaration clause by clause. A page that adds, drops or strengthens a

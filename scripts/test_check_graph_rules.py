@@ -320,9 +320,10 @@ class GraphRules(unittest.TestCase):
             "- [Missing](missing.md)\n- [Itself](is-topos.md)\n",
         )
         found = self.findings()
-        self.assertIn("these pages reach each other through `## Informally uses`: "
-                      "blueprint/roadmap/CategoryTheory/topos-theory/fundamental.md, "
-                      "blueprint/roadmap/CategoryTheory/topos-theory/is-topos.md", found)
+        self.assertIn("topos-theory/fundamental.md: `## Informally uses` links "
+                      "blueprint/roadmap/CategoryTheory/topos-theory/is-topos.md, which reaches back to it", found)
+        self.assertIn("topos-theory/is-topos.md: `## Informally uses` links "
+                      "blueprint/roadmap/CategoryTheory/topos-theory/fundamental.md, which reaches back to it", found)
         self.assertIn("informal target does not exist: 'missing.md'", found)
         self.assertIn("informally uses itself", found)
 
@@ -335,7 +336,7 @@ class GraphRules(unittest.TestCase):
         )
         self.vault.write("blueprint/roadmap/Physics/mechanics.md",
                          "# Mechanics\n\nNewton.\n\n## Depends on\n\n- [Fundamental](../CategoryTheory/topos-theory/fundamental.md)\n")
-        self.assertIn("reach each other through `## Informally uses`", self.findings())
+        self.assertIn("which reaches back to it", self.findings())
 
     def test_after_lean_facts_an_informal_link_closing_a_cycle_through_lean_edges_is_reported(self) -> None:
         # As lean-facts leaves it: linked Fundamental depends on linked Topos in Lean, and Topos informally uses
@@ -349,6 +350,15 @@ class GraphRules(unittest.TestCase):
         self.assertIn("topos-theory/is-topos.md: `## Informally uses`", found[0])
         with patch.dict(os.environ, {"GITHUB_ACTIONS": ""}), patch("sys.stderr"):
             self.assertEqual(rules.main(["--root", str(self.vault.root), "--built"]), 0)  # report-only
+
+    def test_a_folder_page_with_a_lean_link_and_lean_sections_is_flagged(self) -> None:
+        self.vault.annotations["Physics"][0]["object"] = [{"location": {"declaration": "X.physics"}}]
+        self.vault.save()
+        self.vault.write("blueprint/roadmap/Physics/README.md",
+                         "# Physics\n\n- [Mechanics](mechanics.md)\n\n## Depends on\n\nThis node has no prerequisites.\n")
+        found = self.findings()
+        self.assertIn("Physics.jsonl:1: a folder page names a Lean declaration", found)
+        self.assertIn("Physics/README.md: commits `## Depends on`", found)
 
     def test_a_cycle_of_counted_edges_alone_is_left_to_autoform(self) -> None:
         groups = rules.strongly_connected({"a": {"b"}, "b": {"c"}, "c": {"a"}, "d": {"a"}})
@@ -488,6 +498,20 @@ class GitRules(unittest.TestCase):
         self.vault.save()
         self.commit()
         self.assertEqual(self.run_main("--base", duplicate, "--blocking"), 1)
+
+    def test_a_second_informal_link_closing_an_old_cycle_is_new(self) -> None:
+        # The base has Fundamental <-> Topos through informal links; the head adds Mechanics into the same cycle.
+        self.vault.write("blueprint/roadmap/CategoryTheory/topos-theory/is-topos.md",
+                         "# Elementary topos\n\nA topos.\n\n## Informally uses\n\n- [Fundamental](fundamental.md)\n")
+        self.commit()
+        cycle = self.head()
+        self.vault.write("blueprint/roadmap/Physics/mechanics.md",
+                         "# Mechanics\n\nNewton.\n\n## Informally uses\n\n- [Topos](../CategoryTheory/topos-theory/is-topos.md)\n")
+        self.vault.write("blueprint/roadmap/CategoryTheory/topos-theory/fundamental.md",
+                         "# Fundamental theorem\n\nSlices.\n\n## Informally uses\n\n- [Elementary topos](is-topos.md)\n"
+                         "- [Mechanics](../../Physics/mechanics.md)\n")
+        self.commit()
+        self.assertEqual(self.run_main("--base", cycle, "--blocking"), 1)
 
     def test_build_outputs_the_base_already_tracks_are_inherited(self) -> None:
         self.vault.write("site/index.html", "<html></html>")
