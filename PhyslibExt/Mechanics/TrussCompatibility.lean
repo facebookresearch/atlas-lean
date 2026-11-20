@@ -37,7 +37,10 @@ quadratic form (twice the linearized stored energy, in the
 convention of `BeamStiffness`) is the member sum and is
 positive semidefinite for nonnegative stiffnesses. Zero-length members contribute zero rows in the
 unit form (totalized inverse); a physical energy reading
-needs distinct endpoints. No rigidity condition is proved.
+needs distinct endpoints. The rigidity certificate
+(section E) characterizes positive definiteness, for
+positive member weights, by the absence of supported
+mechanisms.
 
 ## ii. Key results
 
