@@ -15,11 +15,12 @@ open Cslib.MachineLearning.Backpropagation
 
 /-! Iterated tent map as a feedforward ReLU network.
 
-Counting convention: widths alternate `1, 3, 1, 3, ...` (width `1` at
-even indices, `3` at odd indices). One tent block is two layers: `R^1`
-to `R^3` computing the three shifted ReLUs, then `R^3` to `R^1` forming
-their affine combination. So `forward (2 * k)` traverses `2 * k` layers
-with `k` width-`3` hidden layers, i.e. `3 * k` ReLU nodes. -/
+Counting convention: widths alternate `1, 2, 1, 2, ...` (width `1` at
+even indices, `2` at odd indices). One tent block is two layers: `R^1`
+to `R^2` computing the two shifted ReLUs, then `R^2` to `R^1` forming
+their outer ReLU combination. So `forward (2 * k)` traverses `2 * k`
+layers with `3 * k` ReLU nodes, counting the readout ReLU of each
+block. -/
 @[expose] public section
 namespace Cslib.MachineLearning.DepthSeparation
 
@@ -73,6 +74,34 @@ theorem tent_le_one (x : ℝ) (hx0 : 0 ≤ x) (hx1 : x ≤ 1) : tent x ≤ 1 := 
   · rw [tent_eq_two_mul x hx0 h]; linarith
   · rw [tent_eq_two_sub x h hx1]; linarith
 
+/-- The tent map as an outer ReLU of two inner ReLUs (Remark 5.3 of
+Telgarsky's deep learning theory lecture notes, Section 5). -/
+theorem tent_eq_relu (x : ℝ) :
+    tent x = relu (2 * relu x - 4 * relu (x - 1 / 2)) := by
+  rcases le_total x 1 with hx1 | hx1
+  · have h3 : relu (x - 1) = 0 := by
+      unfold relu
+      exact max_eq_right (by linarith)
+    have htent : tent x = 2 * relu x - 4 * relu (x - 1 / 2) := by
+      unfold tent
+      rw [h3]
+      ring
+    have hnn : 0 ≤ 2 * relu x - 4 * relu (x - 1 / 2) := by
+      rw [← htent]
+      exact tent_nonneg x
+    rw [htent]
+    exact (max_eq_left hnn).symm
+  · have h1 : relu x = x := by
+      unfold relu
+      exact max_eq_left (by linarith)
+    have h2 : relu (x - 1 / 2) = x - 1 / 2 := by
+      unfold relu
+      exact max_eq_left (by linarith)
+    rw [tent_eq_zero_of_ge_one x hx1, h1, h2]
+    have e : (2 : ℝ) * x - 4 * (x - 1 / 2) = 2 - 2 * x := by ring
+    rw [e]
+    exact (max_eq_right (by linarith : (2 : ℝ) - 2 * x ≤ 0)).symm
+
 theorem tentIter_zero (x : ℝ) : tentIter 0 x = x :=
   Function.iterate_zero_apply tent x
 
@@ -80,7 +109,7 @@ theorem tentIter_succ (k : ℕ) (x : ℝ) :
     tentIter (k + 1) x = tentIter k (tent x) :=
   Function.iterate_succ_apply tent k x
 
-theorem tentIter_succ_left (k : ℕ) (x : ℝ) :
+private theorem tentIter_succ_left (k : ℕ) (x : ℝ) :
     tentIter (k + 1) x = tent (tentIter k x) :=
   Function.iterate_succ_apply' tent k x
 
@@ -137,37 +166,32 @@ theorem tentIter_succ_eq_tent_fract (k : ℕ) (x : ℝ) (hx0 : 0 ≤ x)
       · rw [Int.fract_neg hf]
         exact tent_one_sub _ (Int.fract_nonneg _) (le_of_lt (Int.fract_lt_one _))
 
-/-- Layer widths: `1` at even indices, `3` at odd indices. -/
-def tentWidths : ℕ → ℕ := fun n => if n % 2 = 0 then 1 else 3
+/-- Layer widths: `1` at even indices, `2` at odd indices. -/
+def tentWidths : ℕ → ℕ := fun n => if n % 2 = 0 then 1 else 2
 
-theorem tentWidths_of_even (k : ℕ) (hk : k % 2 = 0) : tentWidths k = 1 := by
-  change (if k % 2 = 0 then (1 : ℕ) else 3) = 1
+private theorem tentWidths_of_even (k : ℕ) (hk : k % 2 = 0) : tentWidths k = 1 := by
+  change (if k % 2 = 0 then (1 : ℕ) else 2) = 1
   rw [ite_eq_left hk]
 
-theorem tentWidths_of_odd (k : ℕ) (hk : k % 2 ≠ 0) : tentWidths k = 3 := by
-  change (if k % 2 = 0 then (1 : ℕ) else 3) = 3
+theorem tentWidths_of_odd (k : ℕ) (hk : k % 2 ≠ 0) : tentWidths k = 2 := by
+  change (if k % 2 = 0 then (1 : ℕ) else 2) = 2
   rw [ite_eq_right hk]
 
 theorem tentWidths_succ_of_even (k : ℕ) (hk : k % 2 = 0) :
-    tentWidths (k + 1) = 3 := by
-  change (if (k + 1) % 2 = 0 then (1 : ℕ) else 3) = 3
+    tentWidths (k + 1) = 2 := by
+  change (if (k + 1) % 2 = 0 then (1 : ℕ) else 2) = 2
   rw [ite_eq_right (show (k + 1) % 2 ≠ 0 by omega)]
-
-theorem tentWidths_succ_of_odd (k : ℕ) (hk : k % 2 ≠ 0) :
-    tentWidths (k + 1) = 1 := by
-  change (if (k + 1) % 2 = 0 then (1 : ℕ) else 3) = 1
-  rw [ite_eq_left (show (k + 1) % 2 = 0 by omega)]
 
 theorem tentWidths_even (i : ℕ) : tentWidths (2 * i) = 1 :=
   tentWidths_of_even (2 * i) (by omega)
 
-theorem tentWidths_odd (i : ℕ) : tentWidths (2 * i + 1) = 3 :=
+theorem tentWidths_odd (i : ℕ) : tentWidths (2 * i + 1) = 2 :=
   tentWidths_of_odd (2 * i + 1) (by omega)
 
 instance tentWidths_neZero (n : ℕ) : NeZero (tentWidths n) := by
   constructor
   change tentWidths n ≠ 0
-  change (if n % 2 = 0 then (1 : ℕ) else 3) ≠ 0
+  change (if n % 2 = 0 then (1 : ℕ) else 2) ≠ 0
   by_cases h : n % 2 = 0
   · rw [ite_eq_left h]; norm_num
   · rw [ite_eq_right h]; norm_num
@@ -176,31 +200,30 @@ instance tentWidths_neZero (n : ℕ) : NeZero (tentWidths n) := by
 def single (x : ℝ) : EuclideanSpace ℝ (Fin 1) :=
   WithLp.toLp 2 fun _ : Fin 1 => x
 
-theorem single_zero (x : ℝ) : single x 0 = x := rfl
+private theorem single_zero (x : ℝ) : single x 0 = x := rfl
 
-/-- ReLU network for iterated tent maps. Even layers map `R^1` to `R^3`
-by the three shifted ReLUs; odd layers map `R^3` to `R^1` by the affine
-readout `2 * y0 - 4 * y1 + 2 * y2`. -/
+/-- ReLU network for iterated tent maps. Even layers map `R^1` to `R^2`
+by the two shifted ReLUs; odd layers map `R^2` to `R^1` by the outer
+ReLU readout `relu (2 * y0 - 4 * y1)`. -/
 noncomputable def tentNet : Net tentWidths where
   layer := fun k v =>
     dite (k % 2 = 0)
       (fun hk =>
-        have hk2 : tentWidths (k + 1) = 3 := tentWidths_succ_of_even k hk
+        have hk2 : tentWidths (k + 1) = 2 := tentWidths_succ_of_even k hk
         WithLp.toLp 2 fun j : Fin (tentWidths (k + 1)) =>
-          ![relu (v 0), relu (v 0 - 1 / 2), relu (v 0 - 1)]
+          ![relu (v 0), relu (v 0 - 1 / 2)]
             (Fin.cast hk2 j))
       (fun hk =>
-        have hk1 : tentWidths k = 3 := tentWidths_of_odd k hk
+        have hk1 : tentWidths k = 2 := tentWidths_of_odd k hk
         have h0 : 0 < tentWidths k := by omega
         have h1 : 1 < tentWidths k := by omega
-        have h2 : 2 < tentWidths k := by omega
         WithLp.toLp 2 fun _ : Fin (tentWidths (k + 1)) =>
-          2 * v ⟨0, h0⟩ - 4 * v ⟨1, h1⟩ + 2 * v ⟨2, h2⟩)
+          relu (2 * v ⟨0, h0⟩ - 4 * v ⟨1, h1⟩))
 
 /-- Construction half of Theorem 5.1: the network computes the `k`-fold
-tent iterate. The forward pass through `2 * k` layers uses `k` hidden
-layers of width `3`, i.e. `3 * k` ReLU nodes; at `k = L^2 + 2` this is
-`3 * L^2 + 6` nodes and `2 * L^2 + 4` layers. No approximation or
+tent iterate. The forward pass through `2 * k` layers uses `3 * k` ReLU
+nodes, three per block counting the readout ReLU; at `k = L^2 + 2` this
+is `3 * L^2 + 6` nodes and `2 * L^2 + 4` layers. No approximation or
 learnability claim is made. -/
 theorem tentNet_forward (k : ℕ) (x : ℝ) :
     (tentNet.forward (2 * k) (single x)) 0 = tentIter k x := by
@@ -217,18 +240,15 @@ theorem tentNet_forward (k : ℕ) (x : ℝ) :
       intro v
       simp only [tentNet, dite_eq_left (show (2 * k) % 2 = 0 by omega),
         dite_eq_right (show ¬ (2 * k + 1) % 2 = 0 by omega)]
-      change (2 * ((![relu (v 0), relu (v 0 - 1 / 2), relu (v 0 - 1)] : Fin 3 → ℝ) 0)
-          - 4 * ((![relu (v 0), relu (v 0 - 1 / 2), relu (v 0 - 1)] : Fin 3 → ℝ) 1)
-          + 2 * ((![relu (v 0), relu (v 0 - 1 / 2), relu (v 0 - 1)] : Fin 3 → ℝ) 2))
+      change relu (2 * ((![relu (v 0), relu (v 0 - 1 / 2)] : Fin 2 → ℝ) 0)
+          - 4 * ((![relu (v 0), relu (v 0 - 1 / 2)] : Fin 2 → ℝ) 1))
           = tent (v 0)
-      have c0 : ((![relu (v 0), relu (v 0 - 1 / 2), relu (v 0 - 1)] : Fin 3 → ℝ) 0)
+      have c0 : ((![relu (v 0), relu (v 0 - 1 / 2)] : Fin 2 → ℝ) 0)
           = relu (v 0) := by simp
-      have c1 : ((![relu (v 0), relu (v 0 - 1 / 2), relu (v 0 - 1)] : Fin 3 → ℝ) 1)
+      have c1 : ((![relu (v 0), relu (v 0 - 1 / 2)] : Fin 2 → ℝ) 1)
           = relu (v 0 - 1 / 2) := by simp
-      have c2 : ((![relu (v 0), relu (v 0 - 1 / 2), relu (v 0 - 1)] : Fin 3 → ℝ) 2)
-          = relu (v 0 - 1) := by simp
-      rw [c0, c1, c2]
-      rfl
+      rw [c0, c1]
+      exact (tent_eq_relu (v 0)).symm
     have h2k : 2 * (k + 1) = (2 * k + 1) + 1 := by ring
     rw [h2k]
     simp only [Net.forward]

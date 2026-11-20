@@ -7,9 +7,6 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 public import CSLibExt.MachineLearning.DepthSeparationConstruction
-import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.Algebra.Order.Floor.Ring
-import Mathlib.Logic.Function.Iterate
 
 open Cslib.MachineLearning.DepthSeparation
 
