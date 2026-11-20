@@ -65,17 +65,20 @@ example : stressDim ≠ forceDim * single ISQDimensionBase.length := by
 
 /-! ## B. Pressure on a positive area -/
 
+/-- Pressure `3` on area `2` gives outward-normal
+force `-6` (tension-positive convention). -/
 example : (pressureForce (⟨3⟩ : WithDim stressDim ℝ)
     (⟨2⟩ : WithDim (single ISQDimensionBase.length ^ (2 : ℕ)) ℝ)
-    (by norm_num)).val = 6 := by
+    (by norm_num)).val = -6 := by
   rw [pressureForce_val]
   norm_num
 
+/-- Its tension-positive normal stress is `-3`. -/
 example : normalStress (pressureForce (⟨3⟩ : WithDim stressDim ℝ)
       (⟨2⟩ : WithDim (single ISQDimensionBase.length ^ (2 : ℕ)) ℝ)
       (by norm_num))
     (⟨2⟩ : WithDim (single ISQDimensionBase.length ^ (2 : ℕ)) ℝ)
-    (by norm_num) = ⟨3⟩ :=
+    (by norm_num) = -⟨3⟩ :=
   normalStress_pressureForce _ _
 
 /-- Zero-area control: the round trip needs positive area. -/

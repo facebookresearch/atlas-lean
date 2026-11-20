@@ -25,16 +25,21 @@ moment point; the planar moment `forceMoment2D` is a sum of
 `WithDim` products, of dimension `forceDim * single .length`.
 Scalar projection is `.val`, and retagging is `⟨x⟩` at a declared
 dimension only (`forceDim`, `single .length`,
-`forceDim * single .length`). The canonical balance is
+`forceDim * single .length`). `WithDim` carriers are in `Type`,
+so the typed component lemmas take `ι : Type`; the
+coordinate-only round trip
+`force_components_dimScale_round_trip` is
+universe-polymorphic. The canonical balance is
 `IsEquilibrated` and `moment2D` of
 `PhyslibExt.Mechanics.HarmonicMechanics` on the projected
 coordinates. A change of units multiplies a coordinate of
 dimension `d` by `u1.dimScale u2 d`, with `UnitScale` over
-`ISQDimensionBase`. The pressure force is the normal component
-`p A` on a face of positive area `A`, where `p` is the normal
-traction along the chosen unit normal, positive in the direction
-the pressure acts (with the outward normal the force component
-is `-p A`). Temperature offsets are affine (`celsiusToKelvin`).
+`ISQDimensionBase`. The pressure force is the outward-normal
+component `-p A` of a uniform pressure `p` on a face of positive
+area `A`, in the tension-positive convention of
+`PhyslibExt.Units.EngineeringFrames`: pressure is the negative
+of tension-positive normal stress. Temperature offsets are
+affine (`celsiusToKelvin`).
 
 Not claimed: type safety of physical roles. Equal dimensions are
 not distinguished (a moment has the dimension of work, a line
@@ -56,7 +61,8 @@ a fact about the type interface, checked in tests, not a theorem.
   moment and invariance of the balance.
 - `Units.EngineeringLoads.pressureForce`,
   `normalStress_pressureForce`, `pressureForce_normalStress`:
-  pressure on a positive area converts to force and back.
+  pressure on a positive area gives the outward-normal force
+  `-p A`, whose tension-positive normal stress is `-p`.
 - `Units.EngineeringLoads.celsiusToKelvin_add_ne`: a temperature
   difference is not an absolute-temperature sum.
 
@@ -208,7 +214,7 @@ lemma planarLoad_balance_iff {ρ : Type*} [Fintype ρ]
 private lemma force_coord_dimScale_round_trip_of
     (hround : ∀ {B : Type} [DimensionBasis B] [Fintype B] (u1 u2 : UnitScale B)
       (d : Dimension B) (x : ℝ), (u2.dimScale u1 d : ℝ) * ((u1.dimScale u2 d : ℝ) * x) = x)
-    (u1 u2 : UnitScale ISQDimensionBase) {ι : Type} (f : ι → ℝ) :
+    (u1 u2 : UnitScale ISQDimensionBase) {ι : Type*} (f : ι → ℝ) :
     (u2.dimScale u1 forceDim : ℝ) • ((u1.dimScale u2 forceDim : ℝ) • f) = f := by
   funext i
   simp only [Pi.smul_apply]
@@ -221,7 +227,7 @@ returns them: the component form of
 (the scalar form is
 `Units.EngineeringQuantities.forceDim_dimScale_round_trip`). -/
 lemma force_components_dimScale_round_trip
-    (u1 u2 : UnitScale ISQDimensionBase) {ι : Type} (f : ι → ℝ) :
+    (u1 u2 : UnitScale ISQDimensionBase) {ι : Type*} (f : ι → ℝ) :
     (u2.dimScale u1 forceDim : ℝ) • ((u1.dimScale u2 forceDim : ℝ) • f) = f :=
   force_coord_dimScale_round_trip_of
     Units.QuantityDimensions.dimScale_round_trip u1 u2 f
@@ -430,40 +436,49 @@ lemma planarLoad_balance_dimScale_iff
 
 /-! ## E. Pressure on a positive area -/
 
-/-- The normal force `F = p A` of a uniform pressure `p` on a plane area `A > 0`: the
-`WithDim` product, cast to `forceDim` by `stressDim_mul_area`. Here `p` is the normal
-traction along the chosen unit normal, positive in the direction the pressure acts; with the
-outward normal the force component is `-p A` and the tension-positive normal stress is `-p`. -/
+/-- The outward-normal force component `F = -p A` of a
+uniform pressure `p` on a plane area `A > 0`: the negated
+`WithDim` product, cast to `forceDim` by
+`stressDim_mul_area`. The sign is the tension-positive
+convention of `PhyslibExt.Units.EngineeringFrames`:
+pressure is the negative of tension-positive normal
+stress, so a positive pressure pushes against the
+outward unit normal. -/
 def pressureForce (p : WithDim stressDim ℝ)
     (A : WithDim (single ISQDimensionBase.length ^ (2 : ℕ)) ℝ) (_hA : 0 < A.val) :
     WithDim forceDim ℝ :=
-  WithDim.cast (p * A) stressDim_mul_area
+  WithDim.cast (-(p * A)) stressDim_mul_area
 
-/-- The coordinate of the pressure force is `p A` on the input coordinates. -/
+/-- The coordinate of the pressure force is `-p A` on
+the input coordinates. -/
 lemma pressureForce_val (p : WithDim stressDim ℝ)
     {A : WithDim (single ISQDimensionBase.length ^ (2 : ℕ)) ℝ} (hA : 0 < A.val) :
-    (pressureForce p A hA).val = p.val * A.val := by
-  exact WithDim.withDim_hMul_val p A
+    (pressureForce p A hA).val = -(p.val * A.val) := by
+  change (-(p * A)).val = -(p.val * A.val)
+  rw [WithDim.val_neg, WithDim.withDim_hMul_val]
 
-/-- On a positive area, the normal stress of the pressure force is the pressure, in the
-sign convention of `pressureForce` (traction positive along the chosen unit normal). -/
+/-- On a positive area, the tension-positive normal
+stress of the pressure force is `-p`: pressure is the
+negative of normal stress. -/
 lemma normalStress_pressureForce (p : WithDim stressDim ℝ)
     {A : WithDim (single ISQDimensionBase.length ^ (2 : ℕ)) ℝ} (hA : 0 < A.val) :
-    normalStress (pressureForce p A hA) A hA = p := by
+    normalStress (pressureForce p A hA) A hA = -p := by
   apply WithDim.ext
-  change (pressureForce p A hA).val / A.val = p.val
-  rw [pressureForce_val]
-  exact mul_div_cancel_right₀ p.val (ne_of_gt hA)
+  change (pressureForce p A hA).val / A.val = (-p).val
+  rw [pressureForce_val, WithDim.val_neg, neg_div,
+    mul_div_cancel_right₀ p.val (ne_of_gt hA)]
 
-/-- On a positive area, the pressure force of the normal stress of a force is the force. -/
+/-- Feeding a tension-positive normal stress into the
+pressure slot negates the force: the conversion records
+pressure `= -(normal stress)`, so `pressureForce` is
+not an inverse of `normalStress`. -/
 lemma pressureForce_normalStress (F : WithDim forceDim ℝ)
     {A : WithDim (single ISQDimensionBase.length ^ (2 : ℕ)) ℝ} (hA : 0 < A.val) :
-    pressureForce (normalStress F A hA) A hA = F := by
+    pressureForce (normalStress F A hA) A hA = -F := by
   apply WithDim.ext
-  change (normalStress F A hA).val * A.val = F.val
+  change -((normalStress F A hA).val * A.val) = (-F).val
   have h1 : (normalStress F A hA).val = F.val / A.val := rfl
-  rw [h1]
-  exact div_mul_cancel₀ F.val (ne_of_gt hA)
+  rw [h1, WithDim.val_neg, div_mul_cancel₀ F.val (ne_of_gt hA)]
 
 /-! ## F. Temperature offsets -/
 
