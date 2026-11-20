@@ -543,7 +543,8 @@ lemma travelingWave_exists_nonpos {c₀ a L : ℝ} (hL : L ≠ 0) (h : c₀ ≤ 
 /-- The point sample `w_j^n = c(n * dt, j * dx)` of the traveling wave on `ncells` uniform
 periodic cells of `[0, L)`, `dx = L / ncells`: node `j : ZMod ncells` sits at
 `x_j = j.val * dx` and time level `n` at `t_n = n * dt`. -/
-noncomputable def sampledWave (c₀ a v L dt : ℝ) (ncells n : ℕ) (j : ZMod ncells) : ℝ :=
+noncomputable def sampledWave (c₀ a v L dt : ℝ) (ncells n : ℕ) [NeZero ncells]
+    (j : ZMod ncells) : ℝ :=
   travelingWave c₀ a v L (n * dt) (j.val * (L / ncells))
 
 /-- The wrapped upstream neighbour is an actual point sample one cell upstream: by spatial
