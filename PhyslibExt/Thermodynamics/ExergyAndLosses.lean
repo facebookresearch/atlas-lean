@@ -9,6 +9,7 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Basic.Real.Basic
+public import PhyslibExt.HeatTransfer.HeatExchangers
 public import PhyslibExt.Thermodynamics.GasCycles
 public import PhyslibExt.Thermodynamics.ProcessPorts
 
@@ -19,7 +20,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
 /-!
-# Exergy and losses: exergy destruction and nonideal Brayton losses
+# Exergy and losses: exergy destruction, nonideal Brayton losses and regeneration
 
 ## i. Overview
 
@@ -84,6 +85,36 @@ Model inputs and scope of section C: the efficiencies are given constants, not d
 physics; the gas is cold-air standard (constant `cp`); the heat exchangers have no pressure loss
 and there is no regeneration. No empirical adequacy or vehicle or system safety claim.
 
+Regeneration (section D). A regenerator preheats the compressed stream of the nonideal loop with
+the turbine exhaust before the combustor. It is the counterflow exchanger of
+`HeatTransfer.HeatExchangers` with the exhaust as the hot stream, entering at `T₄`, and the
+compressed stream as the cold stream, entering at `T₂`. Both carry the cycle's mass flow `ṁ` at
+the same `cp`, so both capacity rates are `ṁ cp`: per unit mass flow both are `cp`, the
+capacity-rate ratio is `Cr = 1`, `UA` is the conductance per unit mass flow and `NTU = UA / cp`.
+The effectiveness is the equal-capacity branch `ε = NTU / (1 + NTU) = UA / (cp + UA)` of
+`HeatTransfer.HeatExchangers.counterflowEffectiveness`, with `0 ≤ ε < 1`; the general formula's
+`0 / 0` never enters.
+
+Heat flows from the exhaust into the compressed stream only if the exhaust is hotter, so the
+regenerator ports are defined by cases. When `T₂ < T₄`, the compressed stream leaves the
+regenerator at `T₅ = T₂ + ε (T₄ - T₂)` and the exhaust at `T₆ = T₄ - ε (T₄ - T₂)`, and the
+recovered heat is the effectiveness contract `Q_reg = ε Cmin (T₄ - T₂)` with `Cmin = cp`; every
+counterflow solution between the ports has exactly these outlets. When `T₄ ≤ T₂`, equality
+included, the regenerator is bypassed: `T₅ = T₂`, `T₆ = T₄` and `Q_reg = 0`. Connected against
+the gradient, `T₄ < T₂`, an exchanger with `UA > 0` would reverse the heat flow, cooling the
+compressed stream and heating the exhaust.
+
+On both branches the heat lost by the exhaust equals the heat gained by the compressed stream,
+`cp (T₄ - T₆) = cp (T₅ - T₂) = Q_reg`; the external heat demand `Qin_reg = cp (T₃ - T₅)` is `Qin`
+less `Q_reg`; and the net work is unchanged, `Wnet = Qin_reg - cp (T₆ - T₁)`. For `cp > 0` and
+`UA ≥ 0` the recovered heat is never negative and is positive exactly when `T₂ < T₄` and
+`UA > 0`, so the external heat demand falls exactly then; on the physical ranges it stays
+positive when the loop without regenerator has positive heat input. No efficiency benefit is
+asserted for a backward temperature gradient: in the bypass the work-to-heat ratio is that of
+section C. Model inputs and scope of section D: the counterflow model of `HeatExchangers`
+(constant capacity rates and conductance, no phase change, axial conduction, pressure loss or
+heat leak) on the loop of section C.
+
 ## ii. Key results
 
 - `ExergyAndLosses.exergyDestroyed_eq_add`: the decomposition of `Ẋ_dest` for every dead state.
@@ -111,6 +142,22 @@ and there is no regeneration. No empirical adequacy or vehicle or system safety 
   efficiency rises with each component efficiency.
 - `ExergyAndLosses.braytonLossyEfficiency_le_braytonEfficiency`: on positive heat input
   `η ≤ 1 - 1 / a`, with equality exactly at `ηc = ηt = 1`.
+- `ExergyAndLosses.braytonRegen_effectiveness`: the regenerator has `Cr = 1`, `NTU = UA / cp` and
+  `ε = UA / (cp + UA) ∈ [0, 1)`.
+- `ExergyAndLosses.braytonRegen_of_lt`, `ExergyAndLosses.braytonRegen_bypass`: the ports when the
+  exhaust is hotter, and the bypass otherwise, with the work-to-heat ratio of section C.
+- `ExergyAndLosses.braytonRegen_heat_balance`: `cp (T₄ - T₆) = Q_reg`, `Qin_reg = Qin - Q_reg` and
+  `Wnet = Qin_reg - cp (T₆ - T₁)`.
+- `ExergyAndLosses.braytonRegenHeat_nonneg`, `ExergyAndLosses.braytonRegenHeat_pos_iff`: no
+  negative recovery; positive recovery exactly for `T₂ < T₄` and `UA > 0`.
+- `ExergyAndLosses.braytonRegenHeatIn_le_braytonLossyHeatIn`,
+  `ExergyAndLosses.braytonRegenHeatIn_pos`: the external heat demand falls exactly then and stays
+  positive.
+- `ExergyAndLosses.braytonRegen_temp_order`: `T₂ ≤ T₅ < T₄` and `T₂ < T₆ ≤ T₄` when `T₂ < T₄`.
+- `ExergyAndLosses.braytonRegen_of_isCounterflowSolution`,
+  `ExergyAndLosses.braytonRegen_reversal_of_isCounterflowSolution`: every counterflow solution
+  between the ports realizes `T₅` and `T₆`; connected against the gradient it would reverse the
+  heat flow.
 
 ## iii. Table of contents
 
@@ -121,6 +168,10 @@ and there is no regeneration. No empirical adequacy or vehicle or system safety 
   - C.2. Work and heat
   - C.3. The positive-work threshold
   - C.4. Monotonicity in the component efficiencies
+- D. Regeneration without heat-flow reversal
+  - D.1. Regenerator ports
+  - D.2. No heat-flow reversal
+  - D.3. The counterflow exchanger between the ports
 
 ## iv. References
 
@@ -136,6 +187,13 @@ and there is no regeneration. No empirical adequacy or vehicle or system safety 
 - Y. A. Çengel and M. A. Boles, *Thermodynamics: An Engineering Approach*, McGraw-Hill, ch. 9:
   the Brayton cycle, deviation of actual gas-turbine cycles from idealized ones, and the back
   work ratio `r_bw = w_comp,in / w_turb,out`.
+- Y. A. Çengel and M. A. Boles, *Thermodynamics: An Engineering Approach*, McGraw-Hill, ch. 9:
+  the Brayton cycle with regeneration, `q_regen = h₅ - h₂`, the regenerator effectiveness
+  `ε = (h₅ - h₂) / (h₄ - h₂)`, and regeneration only when the turbine exhaust is hotter than the
+  compressed air, since otherwise heat flows the other way.
+- F. P. Incropera, D. P. DeWitt, T. L. Bergman and A. S. Lavine, *Fundamentals of Heat and Mass
+  Transfer*, 6th ed., Wiley (2007), Section 11.4: `q = ε Cmin (Th,i - Tc,i)` and the counterflow
+  effectiveness `ε = NTU / (1 + NTU)` at `Cr = 1`.
 -/
 
 @[expose] public section
@@ -705,6 +763,272 @@ lemma braytonLossyEfficiency_le_braytonEfficiency {cp R rp T₁ T₃ ηc ηt : �
     have h0 : braytonEfficiency rp R cp - braytonLossyEfficiency T₁ T₃ rp R cp 1 1 = 0 := by
       rw [hdiff]
       simp
+    linarith
+
+/-! ## D. Regeneration without heat-flow reversal -/
+
+open HeatTransfer.HeatExchangers
+
+/-! ### D.1. Regenerator ports -/
+
+/-- Temperature `T₅` of the compressed stream leaving the regenerator, the combustor inlet. The
+regenerator is a counterflow exchanger with the turbine exhaust as the hot stream (inlet `T₄`)
+and the compressed stream as the cold stream (inlet `T₂`), both at the capacity rate `cp` per unit
+mass flow, and conductance `UA` per unit mass flow. When the exhaust is hotter, `T₂ < T₄`, the
+compressed stream leaves at `T₂ + ε (T₄ - T₂)` with the counterflow effectiveness
+`ε = counterflowEffectiveness (transferUnits UA cp cp) (capacityRatio cp cp)`; otherwise the
+regenerator is bypassed and `T₅ = T₂`. Physical domain `cp > 0` and `UA ≥ 0`. -/
+noncomputable def braytonRegenPreheatTemp (T₁ T₃ rp R cp ηc ηt UA : ℝ) : ℝ :=
+  if braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt then
+    braytonLossyCompressedTemp T₁ rp R cp ηc +
+      counterflowEffectiveness (transferUnits UA cp cp) (capacityRatio cp cp) *
+        (braytonLossyExpandedTemp T₃ rp R cp ηt - braytonLossyCompressedTemp T₁ rp R cp ηc)
+  else braytonLossyCompressedTemp T₁ rp R cp ηc
+
+/-- Temperature `T₆` of the exhaust leaving the regenerator: `T₄ - ε (T₄ - T₂)` when the exhaust
+is hotter than the compressed stream, `T₂ < T₄`, and `T₄` in the bypass otherwise. -/
+noncomputable def braytonRegenExhaustTemp (T₁ T₃ rp R cp ηc ηt UA : ℝ) : ℝ :=
+  if braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt then
+    braytonLossyExpandedTemp T₃ rp R cp ηt -
+      counterflowEffectiveness (transferUnits UA cp cp) (capacityRatio cp cp) *
+        (braytonLossyExpandedTemp T₃ rp R cp ηt - braytonLossyCompressedTemp T₁ rp R cp ηc)
+  else braytonLossyExpandedTemp T₃ rp R cp ηt
+
+/-- Heat recovered per unit mass by the regenerator, the heat gained by the compressed stream,
+`Q_reg = cp (T₅ - T₂)`. -/
+noncomputable def braytonRegenHeat (T₁ T₃ rp R cp ηc ηt UA : ℝ) : ℝ :=
+  cp * (braytonRegenPreheatTemp T₁ T₃ rp R cp ηc ηt UA -
+    braytonLossyCompressedTemp T₁ rp R cp ηc)
+
+/-- External heat demand per unit mass of the regenerated loop, the heat added on the isobaric leg
+from the regenerator outlet to the turbine inlet, `Qin_reg = cp (T₃ - T₅)`. -/
+noncomputable def braytonRegenHeatIn (T₁ T₃ rp R cp ηc ηt UA : ℝ) : ℝ :=
+  cp * (T₃ - braytonRegenPreheatTemp T₁ T₃ rp R cp ηc ηt UA)
+
+/-- **The regenerator runs at equal capacity rates.** For `cp > 0` and `UA ≥ 0` the regenerator
+streams have `Cr = 1` and `NTU = UA / cp`, so the counterflow effectiveness is its equal-capacity
+branch `ε = UA / (cp + UA)`, not the general formula's `0 / 0`, and `0 ≤ ε < 1`. -/
+lemma braytonRegen_effectiveness {cp UA : ℝ} (hcp : 0 < cp) (hUA : 0 ≤ UA) :
+    capacityRatio cp cp = 1 ∧ transferUnits UA cp cp = UA / cp ∧
+      counterflowEffectiveness (transferUnits UA cp cp) (capacityRatio cp cp) = UA / (cp + UA) ∧
+      0 ≤ counterflowEffectiveness (transferUnits UA cp cp) (capacityRatio cp cp) ∧
+      counterflowEffectiveness (transferUnits UA cp cp) (capacityRatio cp cp) < 1 := by
+  have hcp0 : cp ≠ 0 := hcp.ne'
+  have hsum : 0 < cp + UA := by linarith
+  have hsum0 : cp + UA ≠ 0 := hsum.ne'
+  have hdom := capacityRatio_domain hcp hcp hUA
+  have hCr : capacityRatio cp cp = 1 := hdom.2.2.1.mpr rfl
+  have hN : transferUnits UA cp cp = UA / cp := by
+    unfold transferUnits
+    rw [min_self]
+  have hE : counterflowEffectiveness (transferUnits UA cp cp) (capacityRatio cp cp) =
+      UA / (cp + UA) := by
+    rw [hCr, hN]
+    unfold counterflowEffectiveness
+    rw [ite_eq_left rfl]
+    field_simp
+  refine ⟨hCr, hN, hE, (counterflowEffectiveness_bounds hdom.2.2.2 hdom.2.1).1, ?_⟩
+  rw [hE, div_lt_one hsum]
+  linarith
+
+/-- **An exhaust hotter than the compressed stream feeds the exchanger.** For every real
+parameter with `T₂ < T₄`: `T₅ = T₂ + ε (T₄ - T₂)`, `T₆ = T₄ - ε (T₄ - T₂)`, and the recovered heat
+is the effectiveness contract `Q_reg = ε Cmin (T₄ - T₂)` with `Cmin = min cp cp`. -/
+lemma braytonRegen_of_lt {cp R rp T₁ T₃ ηc ηt UA : ℝ}
+    (hT : braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt) :
+    braytonRegenPreheatTemp T₁ T₃ rp R cp ηc ηt UA = braytonLossyCompressedTemp T₁ rp R cp ηc +
+        counterflowEffectiveness (transferUnits UA cp cp) (capacityRatio cp cp) *
+          (braytonLossyExpandedTemp T₃ rp R cp ηt - braytonLossyCompressedTemp T₁ rp R cp ηc) ∧
+      braytonRegenExhaustTemp T₁ T₃ rp R cp ηc ηt UA = braytonLossyExpandedTemp T₃ rp R cp ηt -
+        counterflowEffectiveness (transferUnits UA cp cp) (capacityRatio cp cp) *
+          (braytonLossyExpandedTemp T₃ rp R cp ηt - braytonLossyCompressedTemp T₁ rp R cp ηc) ∧
+      braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA =
+        counterflowEffectiveness (transferUnits UA cp cp) (capacityRatio cp cp) * min cp cp *
+          (braytonLossyExpandedTemp T₃ rp R cp ηt - braytonLossyCompressedTemp T₁ rp R cp ηc) := by
+  refine ⟨ite_eq_left hT, ite_eq_left hT, ?_⟩
+  rw [braytonRegenHeat, braytonRegenPreheatTemp, ite_eq_left hT, min_self]
+  ring
+
+/-- **Otherwise the regenerator is bypassed.** For every real parameter with `T₄ ≤ T₂`, equality
+included, both streams pass unchanged, `T₅ = T₂` and `T₆ = T₄`; no heat is recovered, the external
+heat demand is the heat input `Qin` of section C, and the work-to-heat ratio is that of section C:
+no efficiency benefit for a backward temperature gradient. -/
+lemma braytonRegen_bypass {cp R rp T₁ T₃ ηc ηt UA : ℝ}
+    (hT : braytonLossyExpandedTemp T₃ rp R cp ηt ≤ braytonLossyCompressedTemp T₁ rp R cp ηc) :
+    braytonRegenPreheatTemp T₁ T₃ rp R cp ηc ηt UA = braytonLossyCompressedTemp T₁ rp R cp ηc ∧
+      braytonRegenExhaustTemp T₁ T₃ rp R cp ηc ηt UA = braytonLossyExpandedTemp T₃ rp R cp ηt ∧
+      braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA = 0 ∧
+      braytonRegenHeatIn T₁ T₃ rp R cp ηc ηt UA = braytonLossyHeatIn T₁ T₃ rp R cp ηc ∧
+      braytonLossyNetWork T₁ T₃ rp R cp ηc ηt / braytonRegenHeatIn T₁ T₃ rp R cp ηc ηt UA =
+        braytonLossyEfficiency T₁ T₃ rp R cp ηc ηt := by
+  have hnot := not_lt.mpr hT
+  have h5 : braytonRegenPreheatTemp T₁ T₃ rp R cp ηc ηt UA =
+      braytonLossyCompressedTemp T₁ rp R cp ηc := ite_eq_right hnot
+  have hQin : braytonRegenHeatIn T₁ T₃ rp R cp ηc ηt UA =
+      braytonLossyHeatIn T₁ T₃ rp R cp ηc := by
+    rw [braytonRegenHeatIn, h5, braytonLossyHeatIn]
+  refine ⟨h5, ite_eq_right hnot, ?_, hQin, ?_⟩
+  · rw [braytonRegenHeat, h5, sub_self, mul_zero]
+  · rw [hQin, braytonLossyEfficiency]
+
+/-- **Heat balance of the regenerated loop.** For every real parameter, on both branches: the heat
+lost by the exhaust equals the heat gained by the compressed stream, `cp (T₄ - T₆) = Q_reg`; the
+external heat demand is the heat input of section C less that heat, `Qin_reg = Qin - Q_reg`; and
+the net work is unchanged, `Wnet = Qin_reg - cp (T₆ - T₁)`. -/
+lemma braytonRegen_heat_balance (T₁ T₃ rp R cp ηc ηt UA : ℝ) :
+    cp * (braytonLossyExpandedTemp T₃ rp R cp ηt -
+        braytonRegenExhaustTemp T₁ T₃ rp R cp ηc ηt UA) =
+        braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA ∧
+      braytonRegenHeatIn T₁ T₃ rp R cp ηc ηt UA =
+        braytonLossyHeatIn T₁ T₃ rp R cp ηc - braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA ∧
+      braytonLossyNetWork T₁ T₃ rp R cp ηc ηt = braytonRegenHeatIn T₁ T₃ rp R cp ηc ηt UA -
+        cp * (braytonRegenExhaustTemp T₁ T₃ rp R cp ηc ηt UA - T₁) := by
+  simp only [braytonRegenHeat, braytonRegenHeatIn, braytonRegenPreheatTemp,
+    braytonRegenExhaustTemp, braytonLossyHeatIn, braytonLossyNetWork]
+  split_ifs <;> exact ⟨by ring, by ring, by ring⟩
+
+/-! ### D.2. No heat-flow reversal -/
+
+/-- **No negative heat recovery.** For `cp > 0` and `UA ≥ 0`, whatever the order of `T₂` and
+`T₄`, the recovered heat is nonnegative: an exhaust that is not hotter is bypassed instead of
+taking heat from the compressed stream. -/
+lemma braytonRegenHeat_nonneg {cp R rp T₁ T₃ ηc ηt UA : ℝ} (hcp : 0 < cp) (hUA : 0 ≤ UA) :
+    0 ≤ braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA := by
+  by_cases hT : braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt
+  · rw [(braytonRegen_of_lt (UA := UA) hT).2.2, min_self]
+    exact mul_nonneg (mul_nonneg (braytonRegen_effectiveness hcp hUA).2.2.2.1 hcp.le)
+      (sub_nonneg.mpr hT.le)
+  · exact le_of_eq (braytonRegen_bypass (UA := UA) (not_lt.mp hT)).2.2.1.symm
+
+/-- **Heat is recovered exactly from a hotter exhaust.** For `cp > 0` and `UA ≥ 0`, `Q_reg > 0` if
+and only if `T₂ < T₄` and `UA > 0`; at equal temperatures nothing is recovered. -/
+lemma braytonRegenHeat_pos_iff {cp R rp T₁ T₃ ηc ηt UA : ℝ} (hcp : 0 < cp) (hUA : 0 ≤ UA) :
+    0 < braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA ↔
+      braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt ∧
+        0 < UA := by
+  obtain ⟨-, -, hE, -, -⟩ := braytonRegen_effectiveness hcp hUA
+  by_cases hT : braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt
+  · rw [(braytonRegen_of_lt (UA := UA) hT).2.2, min_self, hE]
+    have hd := sub_pos.mpr hT
+    have hsum : 0 < cp + UA := by linarith
+    refine ⟨fun h => ⟨hT, ?_⟩, fun h => mul_pos (mul_pos (div_pos h.2 hsum) hcp) hd⟩
+    rcases hUA.lt_or_eq with hpos | h0
+    · exact hpos
+    · rw [← h0, zero_div, zero_mul, zero_mul] at h
+      exact absurd h (lt_irrefl 0)
+  · rw [(braytonRegen_bypass (UA := UA) (not_lt.mp hT)).2.2.1]
+    exact ⟨fun h => absurd h (lt_irrefl 0), fun h => absurd h.1 hT⟩
+
+/-- **The external heat demand falls exactly when heat is recovered.** For `cp > 0` and `UA ≥ 0`,
+`Qin_reg ≤ Qin`, with `Qin_reg < Qin` if and only if `T₂ < T₄` and `UA > 0`. -/
+lemma braytonRegenHeatIn_le_braytonLossyHeatIn {cp R rp T₁ T₃ ηc ηt UA : ℝ} (hcp : 0 < cp)
+    (hUA : 0 ≤ UA) :
+    braytonRegenHeatIn T₁ T₃ rp R cp ηc ηt UA ≤ braytonLossyHeatIn T₁ T₃ rp R cp ηc ∧
+      (braytonRegenHeatIn T₁ T₃ rp R cp ηc ηt UA < braytonLossyHeatIn T₁ T₃ rp R cp ηc ↔
+        braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt ∧
+          0 < UA) := by
+  have hbal := (braytonRegen_heat_balance T₁ T₃ rp R cp ηc ηt UA).2.1
+  have hnn : 0 ≤ braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA := braytonRegenHeat_nonneg hcp hUA
+  have hpos : 0 < braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA ↔
+      braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt ∧
+        0 < UA := braytonRegenHeat_pos_iff hcp hUA
+  rw [hbal, ← hpos]
+  exact ⟨sub_le_self _ hnn, sub_lt_self_iff _⟩
+
+/-- **Heat flows only from the exhaust to the compressed stream.** For `cp > 0`, `UA ≥ 0` and
+`T₂ < T₄`, the compressed stream is never cooled and stays below the exhaust inlet,
+`T₂ ≤ T₅ < T₄`, and the exhaust is never heated and stays above the compressed-stream inlet,
+`T₂ < T₆ ≤ T₄`. No order
+between `T₅` and `T₆` is asserted: a counterflow temperature cross `T₆ < T₅` is allowed. -/
+lemma braytonRegen_temp_order {cp R rp T₁ T₃ ηc ηt UA : ℝ} (hcp : 0 < cp) (hUA : 0 ≤ UA)
+    (hT : braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt) :
+    braytonLossyCompressedTemp T₁ rp R cp ηc ≤ braytonRegenPreheatTemp T₁ T₃ rp R cp ηc ηt UA ∧
+      braytonRegenPreheatTemp T₁ T₃ rp R cp ηc ηt UA < braytonLossyExpandedTemp T₃ rp R cp ηt ∧
+      braytonLossyCompressedTemp T₁ rp R cp ηc < braytonRegenExhaustTemp T₁ T₃ rp R cp ηc ηt UA ∧
+      braytonRegenExhaustTemp T₁ T₃ rp R cp ηc ηt UA ≤ braytonLossyExpandedTemp T₃ rp R cp ηt := by
+  obtain ⟨h5, h6, -⟩ := braytonRegen_of_lt (UA := UA) hT
+  obtain ⟨-, -, -, hE0, hE1⟩ := braytonRegen_effectiveness hcp hUA
+  have hd := sub_pos.mpr hT
+  have h1 := mul_nonneg hE0 hd.le
+  have h2 := mul_lt_mul_of_pos_right hE1 hd
+  rw [h5, h6]
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> linarith
+
+/-- **The regenerated loop still takes heat from outside.** For `0 < R < cp`, `rp > 1`, `T₃ > 0`,
+`ηt > 0`, `UA ≥ 0` and positive heat input of section C, `T₂ < T₃`, the regenerator never brings
+the compressed stream up to the turbine inlet: `Qin_reg > 0`. -/
+lemma braytonRegenHeatIn_pos {cp R rp T₁ T₃ ηc ηt UA : ℝ} (hR : 0 < R) (hRcp : R < cp)
+    (hrp : 1 < rp) (hT₃ : 0 < T₃) (hηt : 0 < ηt) (hUA : 0 ≤ UA)
+    (hQ : braytonLossyCompressedTemp T₁ rp R cp ηc < T₃) :
+    0 < braytonRegenHeatIn T₁ T₃ rp R cp ηc ηt UA := by
+  have hcp : 0 < cp := lt_trans hR hRcp
+  rw [braytonRegenHeatIn]
+  refine mul_pos hcp (sub_pos.mpr ?_)
+  by_cases hT : braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt
+  · have ha1 := one_lt_braytonTempRatio hR hRcp hrp
+    have ha : 0 < braytonTempRatio rp R cp := lt_trans zero_lt_one ha1
+    have hc : 0 < 1 - 1 / braytonTempRatio rp R cp := sub_pos.mpr ((div_lt_one ha).mpr ha1)
+    have h4 : braytonLossyExpandedTemp T₃ rp R cp ηt < T₃ := by
+      have h := mul_pos (mul_pos hηt hT₃) hc
+      simp only [braytonLossyExpandedTemp]
+      linarith
+    exact lt_trans (braytonRegen_temp_order hcp hUA hT).2.1 h4
+  · rw [(braytonRegen_bypass (UA := UA) (not_lt.mp hT)).1]
+    exact hQ
+
+/-! ### D.3. The counterflow exchanger between the ports -/
+
+/-- **The ports are the outlets of every counterflow solution.** For `cp > 0`, `UA ≥ 0`, `L > 0`
+and `T₂ < T₄`, let `(Th, Tc)` solve the counterflow equations with the exhaust as the hot stream
+(inlet `T₄` at `x = 0`) and the compressed stream as the cold stream (inlet `T₂` at `x = L`), both
+at capacity rate `cp` per unit mass flow, with conductance `UA / L` per unit length. Its cold
+outlet is `T₅`, its hot outlet is `T₆`, and the heat gained by the compressed stream equals the
+heat lost by the exhaust: `cp (Tc 0 - T₂) = cp (T₄ - Th L) = Q_reg`. -/
+lemma braytonRegen_of_isCounterflowSolution {cp R rp T₁ T₃ ηc ηt UA L : ℝ} {Th Tc : ℝ → ℝ}
+    (hcp : 0 < cp) (hUA : 0 ≤ UA) (hL : 0 < L)
+    (hT : braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt)
+    (h : IsCounterflowSolution cp cp (UA / L) L (braytonLossyExpandedTemp T₃ rp R cp ηt)
+      (braytonLossyCompressedTemp T₁ rp R cp ηc) Th Tc) :
+    Tc 0 = braytonRegenPreheatTemp T₁ T₃ rp R cp ηc ηt UA ∧
+      Th L = braytonRegenExhaustTemp T₁ T₃ rp R cp ηc ηt UA ∧
+      cp * (Tc 0 - braytonLossyCompressedTemp T₁ rp R cp ηc) =
+        braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA ∧
+      cp * (braytonLossyExpandedTemp T₃ rp R cp ηt - Th L) =
+        braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA := by
+  obtain ⟨hhot, hcold⟩ := h.heat_eq_effectiveness hcp hcp hUA hL
+  obtain ⟨h5, h6, hQ⟩ := braytonRegen_of_lt (UA := UA) hT
+  rw [min_self] at hhot hcold hQ
+  have hcp0 : cp ≠ 0 := hcp.ne'
+  refine ⟨?_, ?_, hcold.trans hQ.symm, hhot.trans hQ.symm⟩
+  · rw [h5]
+    exact mul_left_cancel₀ hcp0 (by linear_combination hcold)
+  · rw [h6]
+    exact mul_left_cancel₀ hcp0 (by linear_combination -hhot)
+
+/-- **Against the gradient the exchanger would reverse the heat flow.** For `cp > 0`, `UA > 0`,
+`L > 0` and an exhaust colder than the compressed stream, `T₄ < T₂`, a counterflow solution
+connected as above would cool the compressed stream, `Tc 0 < T₂`, and heat the exhaust,
+`T₄ < Th L`: negative heat recovery. The regenerator ports bypass instead, with `Q_reg = 0`. -/
+lemma braytonRegen_reversal_of_isCounterflowSolution {cp R rp T₁ T₃ ηc ηt UA L : ℝ}
+    {Th Tc : ℝ → ℝ} (hcp : 0 < cp) (hUA : 0 < UA) (hL : 0 < L)
+    (hT : braytonLossyExpandedTemp T₃ rp R cp ηt < braytonLossyCompressedTemp T₁ rp R cp ηc)
+    (h : IsCounterflowSolution cp cp (UA / L) L (braytonLossyExpandedTemp T₃ rp R cp ηt)
+      (braytonLossyCompressedTemp T₁ rp R cp ηc) Th Tc) :
+    Tc 0 < braytonLossyCompressedTemp T₁ rp R cp ηc ∧
+      braytonLossyExpandedTemp T₃ rp R cp ηt < Th L ∧
+      braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA = 0 := by
+  obtain ⟨hhot, hcold⟩ := h.heat_eq_effectiveness hcp hcp hUA.le hL
+  obtain ⟨-, -, hE, -, -⟩ := braytonRegen_effectiveness hcp hUA.le
+  rw [min_self, hE] at hhot hcold
+  have hneg : UA / (cp + UA) * cp *
+      (braytonLossyExpandedTemp T₃ rp R cp ηt - braytonLossyCompressedTemp T₁ rp R cp ηc) < 0 :=
+    mul_neg_of_pos_of_neg (mul_pos (div_pos hUA (by linarith)) hcp) (sub_neg.mpr hT)
+  refine ⟨?_, ?_, (braytonRegen_bypass (UA := UA) hT.le).2.2.1⟩
+  · by_contra hge
+    have := mul_nonneg hcp.le (sub_nonneg.mpr (not_lt.mp hge))
+    linarith
+  · by_contra hge
+    have := mul_nonneg hcp.le (sub_nonneg.mpr (not_lt.mp hge))
     linarith
 
 end ExergyAndLosses
