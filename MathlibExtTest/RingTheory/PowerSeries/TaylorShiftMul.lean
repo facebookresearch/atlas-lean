@@ -33,10 +33,9 @@ public theorem exactSource {L : Type*} [NontriviallyNormedField L] [CompleteSpac
 only the `k = 0` term of each coefficient sum survives. -/
 public example {L : Type*} [NontriviallyNormedField L] [CompleteSpace L]
     [IsUltrametricDist L] (F : PowerSeries L) :
-    (PowerSeries.mk fun n => ∑' k : ℕ, PowerSeries.coeff (n + k) F
-        * ((n + k).choose n : L) * (0 : L) ^ k) = F := by
+    PowerSeries.taylorShift (0 : L) F = F := by
   ext n
-  rw [PowerSeries.coeff_mk]
+  rw [PowerSeries.coeff_taylorShift]
   rw [tsum_eq_single 0]
   · simp
   · intro k hk

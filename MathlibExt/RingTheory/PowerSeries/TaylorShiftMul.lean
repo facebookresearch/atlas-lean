@@ -321,18 +321,55 @@ private theorem eq_of_forall_tsum_coeff_mul_pow_eq (F G : PowerSeries L) {ρ M M
     rw [hs1.tsum_sub hs2, h z hz, sub_self])
   exact sub_eq_zero.mp h0
 
+/-- The Taylor shift of a power series by `a`: the coefficient of degree
+`n` is the (conditionally convergent, in general) sum
+`∑' k, coeff (n + k) F * (n + k).choose n * a ^ k`. Under a coefficient
+bound `‖coeff n F‖ * ρ ^ n ≤ M` with `‖a‖ < ρ` in a complete
+nonarchimedean field, each sum converges; see
+`summable_taylorShift_coeff`. -/
+public noncomputable def taylorShift (a : L) (F : PowerSeries L) :
+    PowerSeries L :=
+  PowerSeries.mk fun n => ∑' k : ℕ, PowerSeries.coeff (n + k) F
+    * ((n + k).choose n : L) * a ^ k
+
+/-- Coefficients of a Taylor shift, by definition. -/
+public theorem coeff_taylorShift (a : L) (F : PowerSeries L) (n : ℕ) :
+    PowerSeries.coeff n (taylorShift a F)
+      = ∑' k : ℕ, PowerSeries.coeff (n + k) F
+        * ((n + k).choose n : L) * a ^ k :=
+  PowerSeries.coeff_mk _ _
+
+/-- Under a coefficient bound inside radius `ρ`, the defining sum of
+each Taylor-shift coefficient converges. -/
+public theorem summable_taylorShift_coeff (F : PowerSeries L) {ρ M : ℝ}
+    (hρ : 0 < ρ) (hF : ∀ n, ‖PowerSeries.coeff n F‖ * ρ ^ n ≤ M)
+    (a : L) (ha : ‖a‖ < ρ) (n : ℕ) :
+    Summable (fun k : ℕ => PowerSeries.coeff (n + k) F
+      * ((n + k).choose n : L) * a ^ k) :=
+  (norm_coeff_taylorShift_mul_pow_le F hρ hF a ha n).1
+
+/-- The Taylor shift inherits the same coefficient bound at radius
+`ρ`. -/
+public theorem norm_coeff_taylorShift_mul_pow_le' (F : PowerSeries L)
+    {ρ M : ℝ} (hρ : 0 < ρ)
+    (hF : ∀ n, ‖PowerSeries.coeff n F‖ * ρ ^ n ≤ M) (a : L)
+    (ha : ‖a‖ < ρ) (n : ℕ) :
+    ‖PowerSeries.coeff n (taylorShift a F)‖ * ρ ^ n ≤ M :=
+  (norm_coeff_taylorShift_mul_pow_le F hρ hF a ha n).2
+
 /-- Multiplicativity of the convergent nonarchimedean Taylor shift: shifting
 a product of two power series by `a` inside a common coefficient-bound
 radius is the product of the shifts. -/
 public theorem taylorShift_mul (F G : PowerSeries L) {ρ M M' : ℝ} (hρ : 0 < ρ)
     (hF : ∀ n, ‖PowerSeries.coeff n F‖ * ρ ^ n ≤ M)
     (hG : ∀ n, ‖PowerSeries.coeff n G‖ * ρ ^ n ≤ M') (a : L) (ha : ‖a‖ < ρ) :
-    (PowerSeries.mk fun n => ∑' k : ℕ, PowerSeries.coeff (n + k) (F * G)
+    taylorShift a (F * G) = taylorShift a F * taylorShift a G := by
+  show (PowerSeries.mk fun n => ∑' k : ℕ, PowerSeries.coeff (n + k) (F * G)
         * ((n + k).choose n : L) * a ^ k)
       = (PowerSeries.mk fun n => ∑' k : ℕ, PowerSeries.coeff (n + k) F
           * ((n + k).choose n : L) * a ^ k)
         * (PowerSeries.mk fun n => ∑' k : ℕ, PowerSeries.coeff (n + k) G
-          * ((n + k).choose n : L) * a ^ k) := by
+          * ((n + k).choose n : L) * a ^ k)
   have hFG : ∀ n, ‖PowerSeries.coeff n (F * G)‖ * ρ ^ n ≤ M * M' :=
     norm_coeff_mul_mul_pow_le F G hρ.le hF hG
   have hSFG := fun n => (norm_coeff_taylorShift_mul_pow_le (F * G) hρ hFG a ha n).2
