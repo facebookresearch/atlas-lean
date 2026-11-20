@@ -39,10 +39,12 @@ public import Mathlib.RingTheory.TensorProduct.Maps
 
 open scoped TensorProduct
 
+universe uR uK uH uS
+
 namespace TensorProductIdempotentQuotientAux
 
-variable {R : Type} [CommRing R] [IsDomain R] {K : Type} [Field K] [Algebra R K]
-  [IsFractionRing R K] {H : Type} [CommRing H] [Algebra R H]
+variable {R : Type uR} [CommRing R] [IsDomain R] {K : Type uK} [Field K] [Algebra R K]
+  [IsFractionRing R K] {H : Type uH} [CommRing H] [Algebra R H]
 
 private theorem exists_mul_one_tmul_eq (e : H)
     (hdiv : ∀ d : R, d ≠ 0 → ∀ y : H, ∃ z : H, d • (z * (1 - e)) = y * (1 - e))
@@ -70,7 +72,7 @@ private theorem exists_mul_one_tmul_eq (e : H)
 /-- The linear projection onto the `e`-component, descended along `πf`.
 Its value on `πf h` is `h * e`; it is a linear map, not a ring section. -/
 private theorem exists_linear_projection (e : H) (he : IsIdempotentElem e)
-    {S : Type} [CommRing S] [Algebra R S]
+    {S : Type uS} [CommRing S] [Algebra R S]
     (πf : H →ₐ[R] S) (hπf : Function.Surjective πf)
     (hkerf : RingHom.ker πf = Ideal.span {1 - e}) :
     ∃ σ : S →ₗ[R] H, ∀ h : H, σ (πf h) = h * e := by
@@ -92,7 +94,8 @@ private theorem exists_linear_projection (e : H) (he : IsIdempotentElem e)
   rw [LinearMap.quotKerEquivOfSurjective_symm_apply]
   rfl
 
-private theorem baseChange_projection_map (e : H) {S : Type} [CommRing S] [Algebra R S]
+private theorem baseChange_projection_map (e : H) {S : Type uS} [CommRing S]
+    [Algebra R S]
     (πf : H →ₐ[R] S) (σ : S →ₗ[R] H) (hσ : ∀ h : H, σ (πf h) = h * e)
     (γ : K ⊗[R] H) :
     σ.baseChange K (Algebra.TensorProduct.map (AlgHom.id K K) πf γ) =
@@ -110,16 +113,16 @@ end TensorProductIdempotentQuotientAux
 surjective algebra map whose kernel is spanned by `1 - e`, for an
 idempotent `e`, is itself a pure tensor `1 ⊗ₜ h` with `πf h = a`,
 provided denominators can be cleared on the `1 - e` component. -/
-public theorem Algebra.TensorProduct.exists_eq_one_tmul_of_map_eq_one_tmul_of_mul_one_tmul_eq
-    (R : Type) [CommRing R] [IsDomain R] (K : Type) [Field K] [Algebra R K]
+public theorem Algebra.TensorProduct.exists_eq_one_tmul_of_map_eq_one_tmul
+    (R : Type uR) [CommRing R] [IsDomain R] (K : Type uK) [Field K] [Algebra R K]
     [IsFractionRing R K]
-    (H : Type) [CommRing H] [Algebra R H]
-    (e f : H) (he : IsIdempotentElem e) (hf : IsIdempotentElem f) (hfe : f * e = e)
+    (H : Type uH) [CommRing H] [Algebra R H]
+    (e : H) (he : IsIdempotentElem e)
     (hdiv : ∀ d : R, d ≠ 0 → ∀ y : H, ∃ z : H, d • (z * (1 - e)) = y * (1 - e))
-    (S : Type) [CommRing S] [Algebra R S]
+    (S : Type uS) [CommRing S] [Algebra R S]
     (πf : H →ₐ[R] S) (hπf : Function.Surjective πf)
     (hkerf : RingHom.ker πf = Ideal.span {1 - e})
-    (β : K ⊗[R] H) (hβf : β * ((1 : K) ⊗ₜ[R] f) = β)
+    (β : K ⊗[R] H)
     (a : S) (hβa : Algebra.TensorProduct.map (AlgHom.id K K) πf β = (1 : K) ⊗ₜ[R] a) :
     ∃ h : H, β = (1 : K) ⊗ₜ[R] h ∧ πf h = a := by
   obtain ⟨σ, hσ⟩ :=
