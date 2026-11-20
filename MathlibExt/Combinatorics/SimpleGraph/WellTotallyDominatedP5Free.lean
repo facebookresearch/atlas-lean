@@ -51,8 +51,9 @@ which transcribes
 [WOWII Conjecture 314](http://cms.uhd.edu/faculty/delavinae/research/wowII/all.html#conj314)
 of E. DeLaVina's *Written on the Wall II*. The statement carried the Formal
 Conjectures attribute `@[category research open, AMS 5]` at the revision this
-development was written against; upstream now records it as `research solved` with
-an independent Lean proof. The Formal Conjectures attributes are dropped here
+development was written against; at commit
+`d8d031d4998c78575159ccab9a7a9e95ce043883` upstream records it as
+`research solved` with an independent Lean proof. The Formal Conjectures attributes are dropped here
 because this repository does not depend on `FormalConjecturesUtil`; nothing else in
 the statement is changed. `SimpleGraph.IsWellTotallyDominated` is the Formal
 Conjectures definition, ported in

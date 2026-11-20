@@ -69,25 +69,42 @@ opens.
 ## Statement faithfulness
 
 Each migrated main statement was compared with its source in
-google-deepmind/formal-conjectures at `d8d031d`. Eight of the nine are verbatim
+google-deepmind/formal-conjectures at commit
+`d8d031d4998c78575159ccab9a7a9e95ce043883`. Eight of the nine are verbatim
 copies; `MathlibExtTest`/`PhyslibExtTest` carries, for each of them, an `example`
 that writes the upstream statement out and proves it by the migrated
 declaration.
 
 The exception is `Green25.green_25.upper`. Upstream states it as a value
 question with an opaque `green_25.upper.answer : ℕ → ℕ` left as `sorry`, so the
-upstream form cannot be proved without choosing the witness. The migrated
-statement quantifies the witness existentially and strengthens the last
-conjunct from `¬ ∀ᶠ N, Property25 ..` to `∀ᶠ N, ¬ Property25 ..`; the test file
-derives the upstream (weaker) conjunct from it. Upstream records the same
-mathematical content, for the explicit witness `k N = ⌈N ^ (23/40)⌉`, as the
-`research solved` theorem `green_25.variants.upper_pow_23_40`.
+upstream form cannot be proved without choosing the witness, and at
+`d8d031d4998c78575159ccab9a7a9e95ce043883` it is still
+`@[category research open, question value, AMS 5 11]`. **Nothing here proves
+that upstream statement**: the migrated statement is a different one, inherited
+from the Atlas development, which quantifies the witness existentially and
+strengthens the last conjunct from `¬ ∀ᶠ N, Property25 ..` to
+`∀ᶠ N, ¬ Property25 ..`; the test file derives the upstream (weaker) conjunct
+from it. The underlying mathematics — that the best-known upper bound can be
+lowered — is recorded upstream for the explicit witness `k N = ⌈N ^ (23/40)⌉` by
+the separate theorem `green_25.variants.upper_pow_23_40`, which *is*
+`research solved` there; that is a different declaration from the value question
+`green_25.upper`.
 
 All nine statements carried the Formal Conjectures category `research open` at
-the revision these developments were written against. At `d8d031d` upstream
-records all nine as `research solved`; four of them
-(`erdos_138.variants.dvd_two_pow`, `count_words_in_x_is_a_shifted`,
-`supercongruence`, `ame_9_10_open`) cite Lean proofs derived from these Atlas
-proofs, and the rest cite independent proofs. The migrated docstrings say so;
-nothing here relies on the upstream status, because each statement is proved in
-this repository from Lean's standard axioms only.
+the revision these developments were written against. At
+`d8d031d4998c78575159ccab9a7a9e95ce043883` the upstream categories are:
+
+- `research solved` for the eight verbatim statements
+  (`erdos_138.variants.dvd_two_pow`, `erdos_337.variants.ruzsa_turjanyi`,
+  `count_words_in_x_is_a_shifted`, `supercongruence`, `OeisA22030.conjecture`,
+  `conjecture100`, `conjecture314`, `ame_9_10_open`). Four of them
+  (`erdos_138.variants.dvd_two_pow`, `count_words_in_x_is_a_shifted`,
+  `supercongruence`, `ame_9_10_open`) cite Lean proofs derived from these Atlas
+  proofs; the rest cite independent proofs.
+- still `research open, question value` for `green_25.upper`, the value question
+  with the opaque answer, which is not the statement proved here. Its solved
+  counterpart upstream is the separate `green_25.variants.upper_pow_23_40`.
+
+Nothing here relies on the upstream status either way, because each statement is
+proved in this repository from Lean's standard axioms only; the categories are
+recorded so that a reviewer can see what each statement is and is not.

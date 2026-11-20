@@ -105,7 +105,8 @@ verbatim from `FormalConjectures/OpenQuantumProblems/35.lean` of
 `ame_9_10_open_statement` is a `Prop`-valued abbreviation for `ExistsAME 9 10`, added by
 this development. The statement carried the Formal Conjectures attribute
 `@[category research open, AMS 5 15 81 94]` at the revision this development was written
-against; upstream now records it as `research solved`, citing a Lean proof derived from
+against; at commit `d8d031d4998c78575159ccab9a7a9e95ce043883` upstream records it as
+`research solved`, citing a Lean proof derived from
 these Atlas proofs. The Formal Conjectures attributes are dropped here because this
 repository does not depend on `FormalConjecturesUtil`; nothing else in the statement is
 changed. Following this repository's `PhyslibExt` convention, `ame_9_10_open` is stated with

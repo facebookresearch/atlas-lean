@@ -51,7 +51,8 @@ which transcribes
 [WOWII Conjecture 100](http://cms.uhd.edu/faculty/delavinae/research/wowII/all.html#conj100)
 of E. DeLaVina's *Written on the Wall II*. It carried the Formal Conjectures
 attribute `@[category research open, AMS 5]` at the revision this development was
-written against; upstream now records it as `research solved` with an independent
+written against; at commit `d8d031d4998c78575159ccab9a7a9e95ce043883` upstream records it as
+`research solved` with an independent
 Lean proof. The Formal Conjectures attributes are dropped here because this
 repository does not depend on `FormalConjecturesUtil`; nothing else in the
 statement is changed. `SimpleGraph.indepNeighborsCard` and

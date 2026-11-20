@@ -72,7 +72,8 @@ theorem.
 [google-deepmind/formal-conjectures](https://github.com/google-deepmind/formal-conjectures).
 The statement carried the Formal Conjectures attribute
 `@[category research open, AMS 11]` at the revision this development was written
-against; upstream now records it as `research solved`, citing a Lean proof derived
+against; at commit `d8d031d4998c78575159ccab9a7a9e95ce043883` upstream records it as
+`research solved`, citing a Lean proof derived
 from these Atlas proofs. The Formal Conjectures attributes are dropped here
 because this repository does not depend on `FormalConjecturesUtil`; nothing else
 in the statement is changed.

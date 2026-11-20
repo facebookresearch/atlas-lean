@@ -74,11 +74,17 @@ and the last conjunct is strengthened from `¬ ∀ᶠ N, Property25 ..` ("not
 eventually") to `∀ᶠ N, ¬ Property25 ..` ("eventually not"); over `atTop` the
 latter implies the former, so the claim proved below is at least as strong as the
 upstream one in that conjunct, and weaker only in that it does not name the
-witness. Upstream records the same mathematical content, for the explicit witness
-`k N = ⌈N ^ (23 / 40)⌉`, as the `research solved` theorem
-`green_25.variants.upper_pow_23_40`. The statement carried the Formal Conjectures
-attribute `@[category research open, AMS 5 11]` at the revision this development
-was written against.
+witness. It is therefore a different statement from the upstream value question,
+and proving it here does not prove the upstream `green_25.upper`, which is still
+`@[category research open, question value, AMS 5 11]` at commit
+`d8d031d4998c78575159ccab9a7a9e95ce043883`. The same underlying mathematics —
+that the best-known upper bound can be lowered — is recorded upstream for the
+explicit witness `k N = ⌈N ^ (23 / 40)⌉` by the separate theorem
+`green_25.variants.upper_pow_23_40`, which is `research solved` there.
+
+The statement carried the Formal Conjectures attribute
+`@[category research open, AMS 5 11]` at the revision this development was
+written against.
 
 ## Main results
 
@@ -96,7 +102,8 @@ namespace Green25
 
 
 /--
-For which values of $k$ is the following true: whenever we partition $[N] = A_1 \cup \dots \cup A_k$,
+For which values of $k$ is the following true: whenever we partition
+$[N] = A_1 \cup \dots \cup A_k$,
 $\left|\bigcup^k_{i=1} (A_i \hat{+} A_i)\right| \geq \frac{1}{10} N$?
 -/
 def Property25 (k N : ℕ) : Prop :=
