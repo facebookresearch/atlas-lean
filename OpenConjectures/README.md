@@ -1,7 +1,7 @@
 # Open conjectures and standalone solution examples
 
 This directory groups conjecture benchmarks and associated solution
-developments that are not part of the seven root Lake libraries. It is not an
+developments that are not part of the root Lake libraries. It is not an
 additional root Lean library and does not change the role of `WantedExt`, which
 contains established results with deferred Lean work.
 
