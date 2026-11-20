@@ -205,11 +205,6 @@ theorem greenFunction_eq_selectionGreen (σ : ℝ) {p : ℝ} (hp : p ∈ Icc (0 
   simp only [greenFunction, selectionGreen, hS_eq _ hmin, hS_eq _ hmax, hS1, hψx]
   field_simp
 
-/-- `d/dx e^{c x} = c e^{c x}`. -/
-private theorem hasDerivAt_exp_mul' (c x : ℝ) :
-    HasDerivAt (fun y => exp (c * y)) (exp (c * x) * c) x := by
-  simpa only [mul_one] using ((hasDerivAt_id' x).const_mul c).exp
-
 /-- The difference quotients of Kimura's fixation probability at a point are continuous. -/
 private theorem continuous_dslope_kimuraFixation (σ a : ℝ) :
     Continuous (dslope (kimuraFixation σ) a) := by
@@ -372,7 +367,7 @@ theorem generator_integral_selectionGreen (σ : ℝ) {g : ℝ → ℝ} (hg : Con
     generator σ (fun q => ∫ x in (0 : ℝ)..1, selectionGreen σ q x * g x) p = -g p := by
   have hd : HasDerivAt (fun t => kimuraSlope σ * exp (-2 * σ * t))
       (-2 * σ * (kimuraSlope σ * exp (-2 * σ * p))) p := by
-    convert (hasDerivAt_exp_mul' (-2 * σ) p).const_mul (kimuraSlope σ) using 1
+    convert (hasDerivAt_exp_mul (-2 * σ) p).const_mul (kimuraSlope σ) using 1
     ring
   have ha := hasDerivAt_integral_greenLeft σ hg hp
   have hb := hasDerivAt_integral_greenRight σ hg hp

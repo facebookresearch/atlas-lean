@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Combinatorics.Graph.ArcNetwork
+public import PhyslibExt.Circuits.ArcPortSigns
+public import MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian
 public import PhyslibExt.Circuits.ACInjectionLossBalance
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
@@ -20,15 +21,21 @@ public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 
 A finite network has nodes `Fin nN` and labeled oriented branches
 `Fin nE` with tail and head maps, real branch susceptances `b e`, and
-real node phase angles `θ`. The electrical incidence `B` is
-tail-positive: `B v e = 1` at the tail, `-1` at the head, the negation
-of the head-positive arc incidence
+real node phase angles `θ`. The electrical incidence `B` is the
+tail-positive `PhyslibExt.Circuits.ArcPortSigns.electricalIncidence`:
+`B v e = 1` at the tail, `-1` at the head, the negation of the
+head-positive arc incidence
 `MathlibExt.Combinatorics.Graph.ArcNetwork.incidenceMatrix`. The
 lossless DC model is the branch flow `f = diag(b) * Bᵀ * θ`, so
 `f e = b e * (θ tail - θ head)`, and the nodal injection `p = B * f`,
 which equals `L_b * θ` for the full weighted Laplacian
-`L_b = B * diag(b) * Bᵀ`. The injections sum to zero, and a uniform
-angle shift changes no flow.
+`L_b = B * diag(b) * Bᵀ`. The two tail-positive signs cancel, so `L_b`
+is the arc-network weighted Laplacian of
+`MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian`, and its energy
+identity, its kernel for nonnegative susceptances, and the positive
+definiteness of its grounded block are restated here for `L_b`. The
+injections sum to zero, and a uniform angle shift changes no flow, for
+susceptances of any sign.
 
 The nonlinear comparison is the lossless unit-magnitude AC model built
 on the network of `PhyslibExt.Circuits.ACInjectionLossBalance`: node
@@ -58,6 +65,11 @@ resulting real-power formulas, which the DC flow does not represent.
 - `abs_acBranchRealPower_sub_dcBranchFlow_le`: the per-line angle
   error bound.
 - `abs_nodeRealPower_sub_dcInjection_le`: the nodal angle error bound.
+- `dotProduct_weightedLaplacian_mulVec`,
+  `weightedLaplacian_mulVec_eq_zero_iff`, and
+  `grounded_weightedLaplacian_isUnit`: the energy identity, the kernel for
+  nonnegative susceptances, and the invertibility of the grounded block,
+  transferred from the arc-network Laplacian.
 
 ## iii. Table of contents
 
@@ -88,32 +100,27 @@ namespace PhyslibExt.Circuits.LosslessDCFlowModel
 
 open PhyslibExt.Circuits.BalancedThreePhase
 open PhyslibExt.Circuits.ACInjectionLossBalance
-
-/-- Electrical tail-positive incidence: `1` at the tail of a branch, `-1`
-at its head, the negation of the canonical head-positive arc incidence.
-Loop columns vanish. -/
-noncomputable def electricalIncidence (nN nE : ℕ) (tail head : Fin nE → Fin nN) :
-    Matrix (Fin nN) (Fin nE) ℝ :=
-  -MathlibExt.Combinatorics.Graph.ArcNetwork.incidenceMatrix tail head
+open PhyslibExt.Circuits.ArcPortSigns
+open MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian (positiveArcGraph)
 
 /-- DC branch flow `f = diag(b) * Bᵀ * θ` for branch susceptances `b` and
 node phase angles `θ`. -/
 noncomputable def dcBranchFlow (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (θ : Fin nN → ℝ) : Fin nE → ℝ :=
   Matrix.mulVec
-    (Matrix.diagonal b * Matrix.transpose (electricalIncidence nN nE tail head)) θ
+    (Matrix.diagonal b * Matrix.transpose (electricalIncidence tail head)) θ
 
 /-- DC nodal injection `p = B * f`. -/
 noncomputable def dcInjection (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (θ : Fin nN → ℝ) : Fin nN → ℝ :=
-  Matrix.mulVec (electricalIncidence nN nE tail head) (dcBranchFlow nN nE tail head b θ)
+  Matrix.mulVec (electricalIncidence tail head) (dcBranchFlow nN nE tail head b θ)
 
 /-- Full susceptance-weighted Laplacian `L_b = B * diag(b) * Bᵀ`, with no
 reference row or column deleted. -/
 noncomputable def weightedLaplacian (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) : Matrix (Fin nN) (Fin nN) ℝ :=
-  electricalIncidence nN nE tail head * Matrix.diagonal b *
-    Matrix.transpose (electricalIncidence nN nE tail head)
+  electricalIncidence tail head * Matrix.diagonal b *
+    Matrix.transpose (electricalIncidence tail head)
 
 /-! ## B. The lossless unit-magnitude AC comparison model -/
 
@@ -137,7 +144,7 @@ lossless unit-magnitude AC model. -/
 noncomputable def acBranchRealPower (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (θ : Fin nN → ℝ) (e : Fin nE) : ℝ :=
   (complexPower (unitVoltage nN θ (tail e))
-    (branchCurrent nN nE (electricalIncidence nN nE tail head) (unitVoltage nN θ)
+    (branchCurrent nN nE (electricalIncidence tail head) (unitVoltage nN θ)
       (losslessAdmittance nE b) e)).re
 
 private lemma sum_incidence_indicator (nN : ℕ) (V : Fin nN → ℂ) (a : Fin nN) :
@@ -149,42 +156,16 @@ private lemma sum_incidence_indicator (nN : ℕ) (V : Fin nN → ℂ) (a : Fin n
   simp only [hconv]
   simp
 
-private lemma sum_incidence_indicator_real (nN : ℕ) (θ : Fin nN → ℝ) (a : Fin nN) :
-    (∑ v : Fin nN, (if a = v then (1 : ℝ) else 0) * θ v) = θ a := by
-  have hconv : ∀ v : Fin nN, ((if a = v then (1 : ℝ) else 0) * θ v) =
-      (if a = v then θ v else 0) := by
-    intro v
-    by_cases h : a = v <;> simp [h]
-  simp only [hconv]
-  simp
-
-private lemma sum_indicator_eq_one (nN : ℕ) (a : Fin nN) :
-    (∑ v : Fin nN, (if a = v then (1 : ℝ) else 0)) = 1 := by
-  simp
-
 private lemma ofReal_mul_re (r : ℝ) (z : ℂ) : ((r : ℂ) * z).re = r * z.re := by
   simp [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im]
 
 /-! ## C. Incidence, drop, and injection identities -/
 
-/-- Entry formula of the electrical incidence. -/
-lemma electricalIncidence_apply (nN nE : ℕ) (tail head : Fin nE → Fin nN)
-    (v : Fin nN) (e : Fin nE) :
-    electricalIncidence nN nE tail head v e =
-      (if tail e = v then (1 : ℝ) else 0) - (if head e = v then 1 else 0) := by
-  change -(((if head e = v then (1 : ℝ) else 0) - (if tail e = v then 1 else 0))) = _
-  ring
-
-private lemma sum_electricalIncidence_column (nN nE : ℕ) (tail head : Fin nE → Fin nN)
-    (e : Fin nE) : (∑ v : Fin nN, electricalIncidence nN nE tail head v e) = 0 := by
-  simp only [electricalIncidence_apply, Finset.sum_sub_distrib, sum_indicator_eq_one,
-    sub_self]
-
 /-- The canonical branch drop through the electrical incidence is the
 tail voltage minus the head voltage, loops included. -/
 lemma branchDrop_electricalIncidence (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (V : Fin nN → ℂ) (e : Fin nE) :
-    branchDrop nN nE (electricalIncidence nN nE tail head) V e = V (tail e) - V (head e) := by
+    branchDrop nN nE (electricalIncidence tail head) V e = V (tail e) - V (head e) := by
   simp only [branchDrop, electricalIncidence_apply, Complex.ofReal_sub, sub_mul,
     Finset.sum_sub_distrib, sum_incidence_indicator]
 
@@ -200,16 +181,8 @@ lemma nodeInjection_eq_sum_branchCurrent (nN nE : ℕ) (B : Matrix (Fin nN) (Fin
 lemma dcBranchFlow_apply (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (θ : Fin nN → ℝ) (e : Fin nE) :
     dcBranchFlow nN nE tail head b θ e = b e * (θ (tail e) - θ (head e)) := by
-  have hrow : ∀ v : Fin nN,
-      (Matrix.diagonal b * Matrix.transpose (electricalIncidence nN nE tail head)) e v =
-        b e * electricalIncidence nN nE tail head v e := by
-    intro v
-    rw [Matrix.diagonal_mul, Matrix.transpose_apply]
-  simp only [dcBranchFlow, Matrix.mulVec, dotProduct, hrow, mul_assoc,
-    ← Finset.mul_sum]
-  congr 1
-  simp only [electricalIncidence_apply, sub_mul, Finset.sum_sub_distrib,
-    sum_incidence_indicator_real]
+  rw [dcBranchFlow, ← Matrix.mulVec_mulVec, Matrix.mulVec_diagonal,
+    branchVoltage_eq_tail_sub_head tail head θ _ rfl e]
 
 /-- DC injection is the full weighted Laplacian applied to the angles,
 `p = B * f = L_b * θ`. -/
@@ -220,26 +193,92 @@ lemma dcInjection_eq_weightedLaplacian_mulVec (nN nE : ℕ) (tail head : Fin nE 
   simp only [dcInjection, dcBranchFlow, weightedLaplacian, ← Matrix.mulVec_mulVec,
     Matrix.mul_assoc]
 
+/-- The full weighted Laplacian is the arc-network weighted Laplacian
+`incidenceMatrix * diag(b) * incidenceMatrixᵀ` of
+`MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian`: the two
+tail-positive signs cancel. -/
+lemma weightedLaplacian_eq_incidenceMatrix (nN nE : ℕ) (tail head : Fin nE → Fin nN)
+    (b : Fin nE → ℝ) :
+    weightedLaplacian nN nE tail head b =
+      MathlibExt.Combinatorics.Graph.ArcNetwork.incidenceMatrix tail head *
+        Matrix.diagonal b *
+        Matrix.transpose (MathlibExt.Combinatorics.Graph.ArcNetwork.incidenceMatrix tail head) := by
+  rw [weightedLaplacian, electricalIncidence_eq_neg_incidence, Matrix.transpose_neg,
+    Matrix.neg_mul, Matrix.neg_mul, Matrix.mul_neg, neg_neg]
+
+/-- Energy identity: `θ ⬝ᵥ L_b θ` is the susceptance-weighted sum of
+squared angle differences across the branches. -/
+lemma dotProduct_weightedLaplacian_mulVec (nN nE : ℕ) (tail head : Fin nE → Fin nN)
+    (b : Fin nE → ℝ) (θ : Fin nN → ℝ) :
+    dotProduct θ (Matrix.mulVec (weightedLaplacian nN nE tail head b) θ) =
+      ∑ e : Fin nE, b e * (θ (tail e) - θ (head e)) ^ 2 := by
+  rw [weightedLaplacian_eq_incidenceMatrix,
+    MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian.dotProduct_weightedLaplacian_mulVec]
+  refine Finset.sum_congr rfl fun e _ => ?_
+  ring
+
+/-- Kernel for nonnegative susceptances: `L_b * θ = 0` iff `θ` is constant
+on every connected component of the graph of positive-susceptance
+branches. -/
+lemma weightedLaplacian_mulVec_eq_zero_iff (nN nE : ℕ) (tail head : Fin nE → Fin nN)
+    (b : Fin nE → ℝ) (hb : ∀ e, 0 ≤ b e) (θ : Fin nN → ℝ) :
+    Matrix.mulVec (weightedLaplacian nN nE tail head b) θ = 0 ↔
+      ∀ u v, (positiveArcGraph tail head b).Reachable u v → θ u = θ v := by
+  rw [weightedLaplacian_eq_incidenceMatrix]
+  exact MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian.weightedLaplacian_mulVec_eq_zero_iff
+    tail head b hb θ
+
+open MathlibExt.Combinatorics.Graph in
+/-- Kernel for nonnegative susceptances with every node reachable from `r`
+through positive-susceptance branches: `L_b * θ = 0` iff `θ` is constant. -/
+lemma weightedLaplacian_mulVec_eq_zero_iff_of_reachable (nN nE : ℕ)
+    (tail head : Fin nE → Fin nN) (b : Fin nE → ℝ) (hb : ∀ e, 0 ≤ b e) (r : Fin nN)
+    (hconn : ∀ v, (positiveArcGraph tail head b).Reachable r v) (θ : Fin nN → ℝ) :
+    Matrix.mulVec (weightedLaplacian nN nE tail head b) θ = 0 ↔ ∀ v, θ v = θ r := by
+  rw [weightedLaplacian_eq_incidenceMatrix]
+  exact ArcNetworkLaplacian.weightedLaplacian_mulVec_eq_zero_iff_of_reachable
+    tail head b hb r hconn θ
+
+/-- Grounded block: with nonnegative susceptances and every node reachable
+from the reference `r` through positive-susceptance branches, `L_b` with
+the row and column of `r` deleted is positive definite. -/
+theorem grounded_weightedLaplacian_posDef (nN nE : ℕ) (tail head : Fin nE → Fin nN)
+    (b : Fin nE → ℝ) (hb : ∀ e, 0 ≤ b e) (r : Fin nN)
+    (hconn : ∀ v, (positiveArcGraph tail head b).Reachable r v) :
+    ((weightedLaplacian nN nE tail head b).submatrix
+      (Subtype.val : {v // v ≠ r} → Fin nN) Subtype.val).PosDef := by
+  rw [weightedLaplacian_eq_incidenceMatrix]
+  exact MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian.grounded_weightedLaplacian_posDef
+    tail head b hb r hconn
+
+/-- The grounded block of `L_b` is invertible under the hypotheses of
+`grounded_weightedLaplacian_posDef`. -/
+theorem grounded_weightedLaplacian_isUnit (nN nE : ℕ) (tail head : Fin nE → Fin nN)
+    (b : Fin nE → ℝ) (hb : ∀ e, 0 ≤ b e) (r : Fin nN)
+    (hconn : ∀ v, (positiveArcGraph tail head b).Reachable r v) :
+    IsUnit ((weightedLaplacian nN nE tail head b).submatrix
+      (Subtype.val : {v // v ≠ r} → Fin nN) (Subtype.val : {v // v ≠ r} → Fin nN)) :=
+  (grounded_weightedLaplacian_posDef nN nE tail head b hb r hconn).isUnit
+
 /-- DC injections are balanced: they sum to zero over all nodes, which is
 the full reference equation a grounded solve must respect. -/
 lemma sum_dcInjection_eq_zero (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (θ : Fin nN → ℝ) :
     ∑ v : Fin nN, dcInjection nN nE tail head b θ v = 0 := by
-  simp only [dcInjection, Matrix.mulVec, dotProduct]
-  rw [Finset.sum_comm]
-  simp only [← Finset.sum_mul, sum_electricalIncidence_column, zero_mul,
-    Finset.sum_const_zero]
+  rw [dcInjection, electricalIncidence_eq_neg_incidence, Matrix.neg_mulVec]
+  simp only [Pi.neg_apply, Finset.sum_neg_distrib,
+    MathlibExt.Combinatorics.Graph.ArcNetwork.sum_incidenceMatrix_mulVec_eq_zero, neg_zero]
 
 /-- A uniform angle shift changes no DC flow: the full weighted Laplacian
-kills constant angle vectors. -/
+kills constant angle vectors. Unlike `weightedLaplacian_mulVec_eq_zero_iff`,
+this holds for susceptances of any sign. -/
 lemma weightedLaplacian_mulVec_const (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (c : ℝ) :
     Matrix.mulVec (weightedLaplacian nN nE tail head b) (fun _ => c) = 0 := by
-  have htrans : Matrix.mulVec (Matrix.transpose (electricalIncidence nN nE tail head))
-      (fun _ => c) = 0 := by
+  have htrans : Matrix.mulVec (Matrix.transpose (electricalIncidence tail head))
+      (fun _ : Fin nN => c) = 0 := by
     funext e
-    simp only [Matrix.mulVec, dotProduct, Matrix.transpose_apply, Pi.zero_apply]
-    rw [← Finset.sum_mul, sum_electricalIncidence_column, zero_mul]
+    rw [branchVoltage_eq_tail_sub_head tail head (fun _ => c) _ rfl e, sub_self, Pi.zero_apply]
   simp only [weightedLaplacian, ← Matrix.mulVec_mulVec, htrans, Matrix.mulVec_zero]
 
 /-! ## D. The AC comparison -/
@@ -275,7 +314,7 @@ power at the sending end. -/
 lemma receivingRealPower_eq_acBranchRealPower (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (θ : Fin nN → ℝ) (e : Fin nE) :
     (complexPower (unitVoltage nN θ (head e))
-      (branchCurrent nN nE (electricalIncidence nN nE tail head) (unitVoltage nN θ)
+      (branchCurrent nN nE (electricalIncidence tail head) (unitVoltage nN θ)
         (losslessAdmittance nE b) e)).re =
       acBranchRealPower nN nE tail head b θ e := by
   rw [acBranchRealPower_eq_mul_sin]
@@ -292,37 +331,37 @@ branches and no shunts is the signed sum of branch sine flows, the
 nonlinear counterpart of `p = B * f`. -/
 lemma nodeRealPower_eq_sum_mul_sin (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (θ : Fin nN → ℝ) (v : Fin nN) :
-    (nodeComplexPower nN nE (electricalIncidence nN nE tail head) (unitVoltage nN θ)
+    (nodeComplexPower nN nE (electricalIncidence tail head) (unitVoltage nN θ)
       (losslessAdmittance nE b) (fun _ => 0) v).re =
-      ∑ e : Fin nE, electricalIncidence nN nE tail head v e *
+      ∑ e : Fin nE, electricalIncidence tail head v e *
         (b e * Real.sin (θ (tail e) - θ (head e))) := by
-  have hbranch : ∀ e : Fin nE, electricalIncidence nN nE tail head v e *
+  have hbranch : ∀ e : Fin nE, electricalIncidence tail head v e *
         ((unitVoltage nN θ v) * conj (branchCurrent nN nE
-          (electricalIncidence nN nE tail head) (unitVoltage nN θ)
+          (electricalIncidence tail head) (unitVoltage nN θ)
           (losslessAdmittance nE b) e)).re =
-        electricalIncidence nN nE tail head v e *
+        electricalIncidence tail head v e *
           (b e * Real.sin (θ (tail e) - θ (head e))) := by
     intro e
     by_cases ht : tail e = v
     · by_cases hh : head e = v
-      · have hB : electricalIncidence nN nE tail head v e = 0 := by
+      · have hB : electricalIncidence tail head v e = 0 := by
           simp [electricalIncidence_apply, ht, hh]
         simp [hB]
       · have hP : ((unitVoltage nN θ v) * conj (branchCurrent nN nE
-            (electricalIncidence nN nE tail head) (unitVoltage nN θ)
+            (electricalIncidence tail head) (unitVoltage nN θ)
             (losslessAdmittance nE b) e)).re =
             acBranchRealPower nN nE tail head b θ e := by
           simp only [← ht, acBranchRealPower, complexPower]
         rw [hP, acBranchRealPower_eq_mul_sin]
     · by_cases hh : head e = v
       · have hP : ((unitVoltage nN θ v) * conj (branchCurrent nN nE
-            (electricalIncidence nN nE tail head) (unitVoltage nN θ)
+            (electricalIncidence tail head) (unitVoltage nN θ)
             (losslessAdmittance nE b) e)).re =
             acBranchRealPower nN nE tail head b θ e := by
           rw [← hh]
           exact receivingRealPower_eq_acBranchRealPower nN nE tail head b θ e
         rw [hP, acBranchRealPower_eq_mul_sin]
-      · have hB : electricalIncidence nN nE tail head v e = 0 := by
+      · have hB : electricalIncidence tail head v e = 0 := by
           simp [electricalIncidence_apply, ht, hh]
         simp [hB]
   simp only [nodeComplexPower, complexPower, nodeInjection_eq_sum_branchCurrent, zero_mul,
@@ -335,7 +374,7 @@ lemma nodeRealPower_eq_sum_mul_sin (nN nE : ℕ) (tail head : Fin nE → Fin nN)
 /-- Total AC real power of the lossless network is zero. -/
 lemma sum_nodeRealPower_eq_zero (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (θ : Fin nN → ℝ) :
-    ∑ v : Fin nN, (nodeComplexPower nN nE (electricalIncidence nN nE tail head)
+    ∑ v : Fin nN, (nodeComplexPower nN nE (electricalIncidence tail head)
       (unitVoltage nN θ) (losslessAdmittance nE b) (fun _ => 0) v).re = 0 :=
   total_realPower_eq_zero_of_purely_reactive nN nE _ _ _ _
     (fun _ => by simp [losslessAdmittance]) (fun _ => Complex.zero_re)
@@ -368,13 +407,13 @@ most the incidence-weighted sum of per-line bounds. -/
 theorem abs_nodeRealPower_sub_dcInjection_le (nN nE : ℕ)
     (tail head : Fin nE → Fin nN) (b : Fin nE → ℝ) (hb : ∀ e, 0 < b e)
     (θ : Fin nN → ℝ) (v : Fin nN) :
-    |(nodeComplexPower nN nE (electricalIncidence nN nE tail head) (unitVoltage nN θ)
+    |(nodeComplexPower nN nE (electricalIncidence tail head) (unitVoltage nN θ)
         (losslessAdmittance nE b) (fun _ => 0) v).re -
         dcInjection nN nE tail head b θ v| ≤
-      ∑ e : Fin nE, |electricalIncidence nN nE tail head v e| *
+      ∑ e : Fin nE, |electricalIncidence tail head v e| *
         (b e * |θ (tail e) - θ (head e)| ^ 3 / 6) := by
   have hdc : dcInjection nN nE tail head b θ v =
-      ∑ e : Fin nE, electricalIncidence nN nE tail head v e *
+      ∑ e : Fin nE, electricalIncidence tail head v e *
         dcBranchFlow nN nE tail head b θ e := by
     simp only [dcInjection, Matrix.mulVec, dotProduct]
   rw [nodeRealPower_eq_sum_mul_sin, hdc, ← Finset.sum_sub_distrib]
@@ -384,10 +423,10 @@ theorem abs_nodeRealPower_sub_dcInjection_le (nN nE : ℕ)
   have hf := dcBranchFlow_apply nN nE tail head b θ e
   have hbound := abs_acBranchRealPower_sub_dcBranchFlow_le nN nE tail head b hb θ e
   rw [hP, hf] at hbound
-  have hfactor : electricalIncidence nN nE tail head v e *
+  have hfactor : electricalIncidence tail head v e *
         (b e * Real.sin (θ (tail e) - θ (head e))) -
-        electricalIncidence nN nE tail head v e * dcBranchFlow nN nE tail head b θ e =
-        electricalIncidence nN nE tail head v e *
+        electricalIncidence tail head v e * dcBranchFlow nN nE tail head b θ e =
+        electricalIncidence tail head v e *
           (b e * Real.sin (θ (tail e) - θ (head e)) - b e * (θ (tail e) - θ (head e))) := by
     rw [hf]
     ring
@@ -419,7 +458,7 @@ lossless branch, the sending-end real power carries the factor
 lemma realPower_scaledVoltage (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (m θ : Fin nN → ℝ) (e : Fin nE) :
     (complexPower ((m (tail e) : ℂ) * unitVoltage nN θ (tail e))
-      (branchCurrent nN nE (electricalIncidence nN nE tail head)
+      (branchCurrent nN nE (electricalIncidence tail head)
         (fun v => (m v : ℂ) * unitVoltage nN θ v) (losslessAdmittance nE b) e)).re =
       b e * m (tail e) * m (head e) * Real.sin (θ (tail e) - θ (head e)) := by
   simp only [branchCurrent, branchDrop_electricalIncidence, losslessAdmittance, unitVoltage,
@@ -436,7 +475,7 @@ sending end, which no lossless DC flow represents. -/
 lemma realPower_conductance (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (g : Fin nE → ℝ) (θ : Fin nN → ℝ) (e : Fin nE) :
     (complexPower (unitVoltage nN θ (tail e))
-      (branchCurrent nN nE (electricalIncidence nN nE tail head) (unitVoltage nN θ)
+      (branchCurrent nN nE (electricalIncidence tail head) (unitVoltage nN θ)
         (fun e => (g e : ℂ)) e)).re =
       g e * (1 - Real.cos (θ (tail e) - θ (head e))) := by
   simp only [branchCurrent, branchDrop_electricalIncidence, unitVoltage, complexPower,

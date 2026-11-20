@@ -245,30 +245,6 @@ private lemma chap9_norm_term_le (t : ℝ) (ht : ‖t‖ ≤ 1) (k : ℕ) :
       _ ≤ 1 / (((k : ℝ) + 1) ^ 2) :=
           one_div_le_one_div_of_le hqpos hbase
 
-private lemma chap9_cosSeries_summable (x : ℝ) :
-    Summable (fun k : ℕ => (Nat.choose (2 * k) k : ℝ) * Real.cos x ^ (2 * k + 1) /
-      ((2 : ℝ) ^ (2 * k) * ((((2 * k + 1 : ℕ)) : ℝ) ^ 2))) := by
-  have hcos : ‖Real.cos x‖ ≤ 1 := by
-    rw [Real.norm_eq_abs]
-    exact Real.abs_cos_le_one x
-  have h : Summable (fun k : ℕ => ‖(Nat.choose (2 * k) k : ℝ) * Real.cos x ^ (2 * k + 1) /
-      ((2 : ℝ) ^ (2 * k) * ((((2 * k + 1 : ℕ)) : ℝ) ^ 2))‖) :=
-    Summable.of_nonneg_of_le (fun k => norm_nonneg _)
-      (fun k => chap9_norm_term_le _ hcos k) chap9_aux_summable
-  exact Summable.of_norm h
-
-private lemma chap9_sinSeries_summable (x : ℝ) :
-    Summable (fun k : ℕ => (Nat.choose (2 * k) k : ℝ) * Real.sin x ^ (2 * k + 1) /
-      ((2 : ℝ) ^ (2 * k) * ((((2 * k + 1 : ℕ)) : ℝ) ^ 2))) := by
-  have hsin : ‖Real.sin x‖ ≤ 1 := by
-    rw [Real.norm_eq_abs]
-    exact Real.abs_sin_le_one x
-  have h : Summable (fun k : ℕ => ‖(Nat.choose (2 * k) k : ℝ) * Real.sin x ^ (2 * k + 1) /
-      ((2 : ℝ) ^ (2 * k) * ((((2 * k + 1 : ℕ)) : ℝ) ^ 2))‖) :=
-    Summable.of_nonneg_of_le (fun k => norm_nonneg _)
-      (fun k => chap9_norm_term_le _ hsin k) chap9_aux_summable
-  exact Summable.of_norm h
-
 private def chap9Fcoeff (n : ℕ) : ℝ := (Nat.choose (2 * n) n : ℝ) / (2 : ℝ) ^ (2 * n)
 
 private lemma chap9Fcoeff_nonneg (n : ℕ) : 0 ≤ chap9Fcoeff n := by

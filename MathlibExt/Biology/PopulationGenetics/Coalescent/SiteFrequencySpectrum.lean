@@ -111,12 +111,17 @@ def sfsLength (n i : ℕ) (ps : List (List ℕ)) (T : ℕ → ℝ) : ℝ :=
 
 private lemma blockPairs_zero : blockPairs 0 = ∅ := by simp [blockPairs]
 
-private lemma joinStep_iterate_nil (j : ℕ) (g : List ℕ → ℝ) : (joinStep^[j] g) [] = g [] := by
+/-- Iterating `joinStep` does not change the value at the empty list: `(joinStep^[j] g) [] = g []`.
+-/
+lemma joinStep_iterate_nil (j : ℕ) (g : List ℕ → ℝ) : (joinStep^[j] g) [] = g [] := by
   induction j with
   | zero => rfl
   | succ j ih => rw [Function.iterate_succ_apply', joinStep]; simp [blockPairs_zero, ih]
 
-private lemma randomJoining_cons {m : ℕ} {b : List ℕ} (hb : (blockPairs b.length).card ≠ 0)
+/-- If `blockPairs b.length` is nonempty, `randomJoining (m + 1) b (b' :: rest)` is `0` unless
+`b' = b`, and for `b' = b` it is the average over `p ∈ blockPairs b.length` of
+`randomJoining m (mergeBlocks b p.1 p.2) rest`. -/
+lemma randomJoining_cons {m : ℕ} {b : List ℕ} (hb : (blockPairs b.length).card ≠ 0)
     (b' : List ℕ) (rest : List (List ℕ)) :
     randomJoining (m + 1) b (b' :: rest) = if b' = b then
       (∑ p ∈ blockPairs b.length, randomJoining m (mergeBlocks b p.1 p.2) rest) /
@@ -624,9 +629,11 @@ theorem sum_blockCount_mul_inv_choose_two {n i : ℕ} (hi : 1 ≤ i) (hin : i < 
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω}
 
-/-- A random block-size history `τ` with the random-joining law takes values a.s. in a finite
-set, so every statistic of it is integrable with the expectation given by the law. -/
-private lemma integral_comp_randomJoining {μ : Measure Ω} [IsProbabilityMeasure μ] {m : ℕ}
+/-- Under a probability measure `μ`, if `τ` is measurable for the discrete σ-algebra on
+`List (List ℕ)`, `μ.real (τ ⁻¹' {ps}) = randomJoining m b ps` for every `ps`, and
+`randomJoining m b` vanishes outside the finite set `F`, then `g ∘ τ` is integrable and
+`μ[g ∘ τ] = ∑ ps ∈ F, randomJoining m b ps * g ps`. -/
+lemma integral_comp_randomJoining {μ : Measure Ω} [IsProbabilityMeasure μ] {m : ℕ}
     {b : List ℕ} {τ : Ω → List (List ℕ)} (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining m b ps) {F : Finset (List (List ℕ))}
     (hF : ∀ ps ∉ F, randomJoining m b ps = 0) (g : List (List ℕ) → ℝ) :

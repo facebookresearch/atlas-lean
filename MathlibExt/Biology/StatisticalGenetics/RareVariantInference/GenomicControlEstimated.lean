@@ -143,7 +143,8 @@ variable {m : ℕ}
 /-! ### The estimator and the corrected statistics -/
 
 /-- The mean-based genomic-control estimate `λ̂ = (1 / m) ∑ₖ zₖ²` computed from the scores
-`z : Fin m → ℝ` of all `m` genes (the 1-df statistics are `zₖ²`). -/
+`z : Fin m → ℝ` of all `m` genes (the 1-df statistics are `zₖ²`). For `m = 0` genes the value is
+`0` (`0 / 0`), not a mean of any statistics. -/
 noncomputable def lambdaHat (z : Fin m → ℝ) : ℝ :=
   (∑ k, z k ^ 2) / m
 
@@ -584,7 +585,7 @@ theorem gcStat_two_add (z : Fin 2 → ℝ) (h : ∑ k, z k ^ 2 ≠ 0) : gcStat z
 containing gene `0`, as soon as both `{T₀ ≥ 1}` and `{T₀ < 1}` have positive probability and
 the scores do not vanish simultaneously (almost surely). No independence, Gaussianity or other
 assumption on the scores is involved: `T₁ = 2 - T₀` makes `p₁` a decreasing function of `p₀`. -/
-theorem not_isPRDSOn_tailPValue_gcStatRV_two [IsFiniteMeasure P] {Z : Fin 2 → Ω → ℝ}
+theorem not_isPRDSOn_tailPValue_gcStatRV_two [IsFiniteMeasure P] [NeZero P] {Z : Fin 2 → Ω → ℝ}
     (hZ : ∀ k, Measurable (Z k)) (hne : ∀ᵐ ω ∂P, ∑ k, Z k ω ^ 2 ≠ 0) {H0 : Finset (Fin 2)}
     (h0 : 0 ∈ H0) (hA : P {ω | 1 ≤ gcStatRV Z 0 ω} ≠ 0) (hB : P {ω | gcStatRV Z 0 ω < 1} ≠ 0) :
     ¬ IsPRDSOn P (MultipleTesting.tailPValue (gcStatRV Z) fun _ => chiSqOneTailReal) H0 := by

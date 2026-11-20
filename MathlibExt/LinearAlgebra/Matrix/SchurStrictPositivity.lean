@@ -24,9 +24,6 @@ hypotheses rather than assumed; and the Schur complement
 `K = A - B * D⁻¹ * Bᵀ` is Hermitian, positive semidefinite and in
 fact positive definite. With an empty interior index type the Schur
 complement is `A` itself, and the scalar `Fin 1` case is recorded.
-
-Discharges ECE roadmap leaf `ECE.NET.REDUCTION.L1` (Kron reduction
-and one-port equivalents).
 -/
 
 @[expose] public section

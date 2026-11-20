@@ -1,0 +1,3 @@
+# Column factor of the rank-two middle-edge term
+
+For $L \in \mathbb{N}$, a decorated weight $\eta$, $\omega \in \mathbb{C}$ and a site $p$, the column factor $U$ is the matrix indexed by darts and sides with entry at $(d, \sigma)$, $d = (p', \mu)$, equal to $f^{\mathrm{dest}}(\mu)\, w_\omega(\delta(\sigma), \mu)$ if $p' = p$ and $\sigma(\mu) = \sigma$, and $0$ otherwise; here $f^{\mathrm{dest}}$ is the [destination factor](ons-dec-middle-dest-factor.md) at $p$, $\sigma(\mu)$ is the [side](ons-dec-middle-side.md) of a direction ($0$ for $\mu \in \{0, 1\}$, $1$ for $\mu \in \{2, 3\}$), $\delta(\sigma) \in \{0, 2\}$ is the [representative direction](ons-dec-middle-dir.md) of a side, and $w_\omega$ is the [turn weight](../kac-ward-matrices/ons-turn-w.md).
