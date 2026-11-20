@@ -29,8 +29,10 @@ removed and the names restated in Mathlib style.
 
 module
 
+public import Mathlib.Data.Finite.Card
 public import Mathlib.Data.Nat.Init
-public import Mathlib.Tactic
+import Mathlib.Tactic.Push
+import Mathlib.Tactic.Ring
 
 @[expose] public section
 

@@ -20,6 +20,12 @@ example {ι : Type*} [Finite ι] (n : ι → ℕ) (hn : ∀ i, 1 ≤ n i) (r : �
         c i (d - 1) - 2 * c i d + c i (d + 1) = -(if d = 1 then r i d - ν i else r i d) :=
   ModularCurve.ChainDirichlet.exists_depthOne_correction_dirichlet n hn r
 
--- The length hypothesis matters: a chain of length zero has no interior
--- vertex at which the stated equation could hold.
-example : ¬ (1 ≤ (0 : ℕ)) := by omega
+-- Boundary consumer: a chain of length one needs no correction, and its
+-- only vertex is an endpoint, so the solution vanishes there.
+example (r : Unit → ℕ → ℤ) :
+    ∃ (ν : Unit → ℤ) (c : Unit → ℕ → ℤ), ν Unit.unit = 0 ∧ c Unit.unit 0 = 0 ∧
+      c Unit.unit 1 = 0 := by
+  obtain ⟨ν, c, hν, hc0, hcout, -⟩ :=
+    ModularCurve.ChainDirichlet.exists_depthOne_correction_dirichlet
+      (fun _ => 1) (fun _ => Nat.le.refl) r
+  exact ⟨ν, c, hν Unit.unit rfl, hc0 Unit.unit, hcout Unit.unit 1 Nat.le.refl⟩
