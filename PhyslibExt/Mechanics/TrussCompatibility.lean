@@ -56,7 +56,10 @@ cases.
 Section H builds the load-parameter observation matrix at
 fixed supported stiffness and records when load parameters
 on a declared affine space are identifiable from it.
-Section I treats the determinate case, where the supported
+Section I builds the unit-load (dummy-unit-load) response
+functional for a fixed output and proves it from reciprocal
+work with a single inverse application.
+Section J treats the determinate case, where the supported
 compatibility matrix is square and invertible: elastic
 member forces then agree with reduced statics and do not
 depend on the axial weights ("reduced" here is the supported
@@ -90,6 +93,12 @@ system in free coordinates).
   fixed positive-definite supported stiffness, load
   parameters on an affine space are identifiable when the
   sensor map and the load basis have trivial kernels there.
+- `influenceVector`, `unitLoadResponse`, and
+  `supported_unitLoad_identity`: the fixed output of a
+  supported solution is the pairing of the unit-load
+  separation-form coefficients with the compliance-applied
+  coefficients; `supported_unitLoad_axialForce_identity`
+  is the physical axial-force form.
 - `reduced_memberForce_eq_inv_mulVec` and
   `reduced_memberForce_indep_of_diagonal`: for square
   invertible reduced compatibility, the diagonal-law force
@@ -111,7 +120,8 @@ system in free coordinates).
 - F. Supported unique response
 - G. Reciprocal work
 - H. Load-parameter identifiability
-- I. Reduced determinate statics
+- I. Unit-load response
+- J. Reduced determinate statics
 
 ## iv. References
 
@@ -771,7 +781,273 @@ lemma inv_not_affine_on_pos :
   norm_num at h1 h2 h3
   linarith
 
-/-! ## I. Reduced determinate statics -/
+/-! ## I. Unit-load response -/
+
+/-- Influence vector for the fixed output functional `aout`: the
+supported response to the generalized unit load `aout` itself,
+`K⁻¹ *ᵥ aout` for the supported stiffness `K`. This definition is the
+one inverse application of the section; the theorems below that read
+it as the unit-load solution carry the positive-definiteness (or
+positive-weight and trivial-kernel) premise explicitly. -/
+noncomputable def influenceVector {J M F : Type*} [Fintype J]
+    [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
+    [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (aout : F → ℝ) :
+    F → ℝ :=
+  ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+    * (axialCompatibility r a b * S))⁻¹ *ᵥ aout
+
+/-- Unit-load response of the fixed output `aout` to the supported
+load `f`: the influence vector paired with the load,
+`eta ⬝ᵥ f`. As a function of `f` this is the retained linear response
+map; evaluating it needs no further inverse once the influence vector
+is formed. -/
+noncomputable def unitLoadResponse {J M F : Type*} [Fintype J]
+    [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
+    [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (aout : F → ℝ) :
+    (F → ℝ) →ₗ[ℝ] ℝ where
+  toFun f := influenceVector r a b S k aout ⬝ᵥ f
+  map_add' _ _ := dotProduct_add _ _ _
+  map_smul' _ _ := by simp [dotProduct_smul, smul_eq_mul]
+
+@[simp]
+lemma unitLoadResponse_apply {J M F : Type*} [Fintype J]
+    [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
+    [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (aout f : F → ℝ) :
+    unitLoadResponse r a b S k aout f
+      = influenceVector r a b S k aout ⬝ᵥ f :=
+  rfl
+
+/-- The pointwise inverse diagonal recovers the separation-form
+pairing vector from the elastic coefficient vector: for positive
+member weights `k`, applying `Matrix.diagonal (fun e => (k e)⁻¹)` to
+the coefficient vector `Matrix.diagonal k *ᵥ ((B S) *ᵥ u)` returns
+`(B S) *ᵥ u`, whose entries are member length times elongation (the
+coefficients are axial force divided by member length, as at
+`supported_virtualWork_iff`). The inverses are scalar inverses
+`(k e)⁻¹` (generalized compliances for the separation-form weights);
+positivity is used as nonvanishing member by member. No stiffness
+inverse occurs. -/
+lemma supported_invDiagonal_mulVec_memberCoefficient {J M F : Type*}
+    [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
+    [Fintype F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ)
+    (hk : ∀ e, 0 < k e) (u : F → ℝ) :
+    Matrix.diagonal (fun e => (k e)⁻¹)
+        *ᵥ (Matrix.diagonal k
+          *ᵥ ((axialCompatibility r a b * S) *ᵥ u))
+      = (axialCompatibility r a b * S) *ᵥ u := by
+  ext e
+  simp only [mulVec_diagonal]
+  exact inv_mul_cancel_left₀ (ne_of_gt (hk e)) _
+
+/-- The influence vector solves the unit-load system: for
+positive-definite supported stiffness, `K *ᵥ eta = aout`, where `eta`
+is `influenceVector` for the fixed output `aout`. Later use takes
+this solve equation for the one precomputed vector and forms no
+further inverse. -/
+lemma supported_influenceVector_mulVec {J M F : Type*} [Fintype J]
+    [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
+    [DecidableEq F]
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ)
+    (hPD : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+      * (axialCompatibility r a b * S)).PosDef)
+    (aout : F → ℝ) :
+    ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S))
+      *ᵥ influenceVector r a b S k aout = aout := by
+  exact (supported_mulVec_eq_iff_inv_mulVec r a b S k hPD).mpr rfl
+
+/-- Fixed-output normalization by scaling: rescaling the fixed output
+functional rescales its influence vector by the same factor. This is
+linearity of the single inverse application in its load argument; no
+solve reading and no definiteness premise is used. -/
+lemma supported_influenceVector_smul {J M F : Type*} [Fintype J]
+    [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
+    [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (c : ℝ)
+    (aout : F → ℝ) :
+    influenceVector r a b S k (c • aout)
+      = c • influenceVector r a b S k aout := by
+  unfold influenceVector
+  exact mulVec_smul _ _ _
+
+/-- The response map computes the fixed output: for
+positive-definite supported stiffness and a supported solution
+`K *ᵥ u = f`, the unit-load response `eta ⬝ᵥ f` equals the output
+`aout ⬝ᵥ u`, by reciprocal work for the two supported load cases `f`
+and `aout` against the one stiffness. The output functional `aout`
+is fixed while the load `f` varies. -/
+lemma supported_unitLoadResponse_eq {J M F : Type*} [Fintype J]
+    [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
+    [DecidableEq F]
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ)
+    (hPD : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+      * (axialCompatibility r a b * S)).PosDef)
+    (aout : F → ℝ) {f u : F → ℝ}
+    (hu : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S)) *ᵥ u = f) :
+    unitLoadResponse r a b S k aout f = aout ⬝ᵥ u := by
+  have heta := supported_influenceVector_mulVec r a b S k hPD aout
+  have hrec := supported_reciprocalWork r a b S k hu heta
+  rw [unitLoadResponse_apply, dotProduct_comm]
+  exact hrec
+
+private theorem dotProduct_diag_mulVec {M : Type*} [Fintype M]
+    [DecidableEq M] (k x y : M → ℝ) :
+    x ⬝ᵥ (Matrix.diagonal k *ᵥ y)
+      = (Matrix.diagonal k *ᵥ x) ⬝ᵥ y := by
+  unfold dotProduct
+  simp only [mulVec_diagonal]
+  apply Finset.sum_congr rfl
+  intro e _
+  ring
+
+/-- Unit-load identity in separation form: for positive-definite
+supported stiffness and a supported solution `K *ᵥ u = f`, the fixed
+output `aout ⬝ᵥ u` equals the unit-load separation-form coefficients
+paired with `(B S) *ᵥ u` (member length times elongation; the
+coefficients are axial force divided by member length).
+The vector `K⁻¹ *ᵥ aout` is the influence vector by definition. No
+inverse diagonal occurs, so no sign premise on the weights beyond
+the positive-definiteness certificate is used. -/
+lemma supported_unitLoad_identity_separationForm {J M F : Type*}
+    [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
+    [Fintype F] [DecidableEq F]
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ)
+    (hPD : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+      * (axialCompatibility r a b * S)).PosDef)
+    (aout : F → ℝ) {f u : F → ℝ}
+    (hu : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S)) *ᵥ u = f) :
+    aout ⬝ᵥ u
+      = (Matrix.diagonal k
+          *ᵥ ((axialCompatibility r a b * S)
+            *ᵥ influenceVector r a b S k aout))
+        ⬝ᵥ ((axialCompatibility r a b * S) *ᵥ u) := by
+  have heta := supported_influenceVector_mulVec r a b S k hPD aout
+  have hrec := supported_reciprocalWork r a b S k hu heta
+  have hK : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+      * (axialCompatibility r a b * S)) *ᵥ u
+      = (axialCompatibility r a b * S)ᵀ *ᵥ
+        (Matrix.diagonal k *ᵥ ((axialCompatibility r a b * S) *ᵥ u)) := by
+    rw [← mulVec_mulVec, ← mulVec_mulVec]
+  rw [← hrec, ← hu, hK, dotProduct_comm, ← supported_pairing r a b S _ _]
+  exact dotProduct_diag_mulVec k _ _
+
+/-- Unit-load identity: for one supported stiffness with positive
+member weights and positive-definite certificate, a supported
+solution `K *ᵥ u = f` with separation-form coefficient vectors
+`N = Matrix.diagonal k *ᵥ ((B S) *ᵥ u)` and
+`n = Matrix.diagonal k *ᵥ ((B S) *ᵥ (K⁻¹ *ᵥ aout))` (axial force
+divided by member length) satisfies
+`aout ⬝ᵥ u = n ⬝ᵥ (D⁻¹ *ᵥ N)`, where `D⁻¹` is the pointwise inverse
+diagonal `Matrix.diagonal (fun e => (k e)⁻¹)` (generalized
+compliances for the separation-form weights — for physical weights
+`EA / L ^ 3` this is `L ^ 3 / EA`, not member flexibility
+`L / EA`; the physical axial-force form is
+`supported_unitLoad_axialForce_identity` below). The separation form
+is the preceding identity; the two member pairings agree through
+recovery of `(B S) *ᵥ u` from `N`, which is where positivity of the
+weights enters. Both load cases share the one stiffness, supports
+and reference configuration. -/
+theorem supported_unitLoad_identity {J M F : Type*}
+    [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
+    [Fintype F] [DecidableEq F]
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ)
+    (hk : ∀ e, 0 < k e)
+    (hPD : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+      * (axialCompatibility r a b * S)).PosDef)
+    (aout : F → ℝ) {f u : F → ℝ}
+    (hu : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S)) *ᵥ u = f) :
+    aout ⬝ᵥ u
+      = (Matrix.diagonal k
+          *ᵥ ((axialCompatibility r a b * S)
+            *ᵥ influenceVector r a b S k aout))
+        ⬝ᵥ (Matrix.diagonal (fun e => (k e)⁻¹)
+          *ᵥ (Matrix.diagonal k
+            *ᵥ ((axialCompatibility r a b * S) *ᵥ u))) := by
+  have hrec := supported_invDiagonal_mulVec_memberCoefficient r a b S k hk u
+  rw [hrec]
+  exact supported_unitLoad_identity_separationForm r a b S k hPD aout hu
+
+/-- Unit-load identity from the physical member data: for positive
+member weights `k` and trivial supported kernel (no supported null
+mode), a supported solution `K *ᵥ u = f` satisfies the same identity
+`aout ⬝ᵥ u = n ⬝ᵥ (D⁻¹ *ᵥ N)` as above, with `N`, `n` and `D⁻¹`
+read there. Positive definiteness enters through the supported
+rigidity certificate. This is the entry point when the member data
+and kernel condition, rather than an abstract definiteness
+certificate, are in hand. -/
+theorem supported_unitLoad_identity_of_kernel {J M F : Type*}
+    [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
+    [Fintype F] [DecidableEq F]
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ)
+    (hk : ∀ e, 0 < k e)
+    (hker : ∀ u : F → ℝ,
+      (axialCompatibility r a b * S) *ᵥ u = 0 → u = 0)
+    (aout : F → ℝ) {f u : F → ℝ}
+    (hu : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S)) *ᵥ u = f) :
+    aout ⬝ᵥ u
+      = (Matrix.diagonal k
+          *ᵥ ((axialCompatibility r a b * S)
+            *ᵥ influenceVector r a b S k aout))
+        ⬝ᵥ (Matrix.diagonal (fun e => (k e)⁻¹)
+          *ᵥ (Matrix.diagonal k
+            *ᵥ ((axialCompatibility r a b * S) *ᵥ u))) := by
+  have hPD : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+      * (axialCompatibility r a b * S)).PosDef :=
+    (supported_posDef_iff r a b S k hk).mpr hker
+  exact supported_unitLoad_identity r a b S k hk hPD aout hu
+
+
+/-- Unit-load identity in physical axial forces: under the
+`supported_unitLoad_identity` data with noncoincident endpoints,
+rescaling the separation-form coefficients by member length
+(`N e * L e` is the physical axial force, tension positive) gives
+`aout ⬝ᵥ u = ∑ e, nphys e * (Nphys e / (k e * (L e) ^ 2))`; for
+physical separation-form weights `k e = EA / (L e) ^ 3` the
+denominator `k e * (L e) ^ 2` is `EA / L e`, the classical
+dummy-unit-load sum `∑ n N L / EA`. -/
+theorem supported_unitLoad_axialForce_identity {J M F : Type*}
+    [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
+    [Fintype F] [DecidableEq F]
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ)
+    (hk : ∀ e, 0 < k e)
+    (hPD : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+      * (axialCompatibility r a b * S)).PosDef)
+    (hne : ∀ e, r (a e) ≠ r (b e))
+    (aout : F → ℝ) {f u : F → ℝ}
+    (hu : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S)) *ᵥ u = f) :
+    aout ⬝ᵥ u
+      = (fun e => (Matrix.diagonal k
+            *ᵥ ((axialCompatibility r a b * S)
+              *ᵥ influenceVector r a b S k aout)) e * memberLength r a b e)
+        ⬝ᵥ (fun e => ((Matrix.diagonal k
+              *ᵥ ((axialCompatibility r a b * S) *ᵥ u)) e
+            * memberLength r a b e) / (k e * memberLength r a b e ^ 2)) := by
+  rw [supported_unitLoad_identity r a b S k hk hPD aout hu, dotProduct,
+    dotProduct]
+  apply Finset.sum_congr rfl
+  intro e _
+  have hL : memberLength r a b e ≠ 0 :=
+    ne_of_gt (memberLength_pos_of_ne r a b (hne e))
+  have hk' : k e ≠ 0 := ne_of_gt (hk e)
+  simp only [mulVec_diagonal]
+  field_simp
+
+/-! ## J. Reduced determinate statics -/
 
 /-- Elastic member forces satisfy reduced equilibrium: for a
 supported solution `u`, collecting the elastic forces
