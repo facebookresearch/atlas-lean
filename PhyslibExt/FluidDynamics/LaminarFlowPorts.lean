@@ -21,19 +21,21 @@ import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
-# Flow coordinates for Bernoulli's theorem and plane Couette and Poiseuille flow
+# Flow coordinates for Bernoulli's theorem and laminar Couette and Poiseuille flows
 
 Physlib's derivatives, Euler equations and Bernoulli function, read in affine coordinates about an
 arbitrary origin, discharge the hypotheses of the coordinate streamline Bernoulli theorem. Plane
 Couette flow, with its Newtonian stress, satisfies Physlib's incompressibility, continuity and
 Navier-Stokes predicates, and so does plane Poiseuille flow, which carries the flow rate
-`G H³ / (12 μ)` per unit width.
+`G H³ / (12 μ)` per unit width. Cylindrical Poiseuille flow satisfies them on all of `Space` and
+vanishes on the lateral wall of the pipe.
 
 ## i. Overview
 
@@ -75,6 +77,18 @@ all of `Space`. For `μ ≠ 0` its Newtonian stress has normal entries `-p` and 
 incompressibility predicates and both Navier-Stokes forms. Both walls are at rest, and the flow
 rate per unit width is `∫₀ᴴ u dy = G H³ / (12 μ)`, nonzero for `G ≠ 0`. With `G = 0` and
 stationary walls the flow vanishes, while plane Couette flow moves without a pressure gradient.
+
+Parts L-O treat cylindrical Poiseuille flow along the third axis. With `z = x 2` the axial and
+`x 0`, `x 1` the transverse coordinates, the pressure is `p = p₀ - G z` and the velocity is the
+global polynomial field `u = (0, 0, G (R² - x 0² - x 1²) / (4 μ))`; only its restriction to the
+pipe `x 0² + x 1² ≤ R²` is the physical flow. For `μ ≠ 0` its Newtonian stress has normal
+entries `-p` and axial shear entries `-G x 0 / 2`, `-G x 1 / 2`, and the flow satisfies
+Physlib's smooth continuity and smooth incompressibility predicates and both Navier-Stokes forms
+with no body force on all of `Space`. The velocity vanishes on the lateral wall
+`x 0² + x 1² = R²`; no slip is not claimed on artificial inlet or outlet faces. For `G, μ > 0`
+the axial velocity is positive inside the pipe, with centerline value `G R² / (4 μ)`. Keeping the
+velocity but reversing the pressure gradient to `p₀ + G z` leaves the axial momentum residual
+`-2 G`, so that flow is not a Navier-Stokes solution for `G ≠ 0`.
 
 ## ii. Key results
 
@@ -118,6 +132,18 @@ stationary walls the flow vanishes, while plane Couette flow moves without a pre
   hypotheses `H, μ, ρ > 0` and `G ≠ 0`.
 - `FlowCoordinateBernoulli.planePoiseuille_zero_gradient_vs_couette`: no pressure gradient and
   stationary walls give no flow, unlike a moving wall.
+- `FlowCoordinateBernoulli.pipePoiseuilleFlow_stress`: the Newtonian stress of cylindrical
+  Poiseuille flow.
+- `FlowCoordinateBernoulli.pipePoiseuilleFlow_navierStokes`: cylindrical Poiseuille flow
+  satisfies the conservative Navier-Stokes equations on all of `Space`; the convective form,
+  smooth continuity, smooth incompressibility and the differentiability premises are proved
+  alongside.
+- `FlowCoordinateBernoulli.pipePoiseuilleVelocity_lateral_wall`: no slip on the lateral wall.
+- `FlowCoordinateBernoulli.pipePoiseuilleVelocity_pos_inside`: positive axial flow in the pipe.
+- `FlowCoordinateBernoulli.pipePoiseuilleFlow_witness`: cylindrical Poiseuille flow with the
+  physical hypotheses `ρ, μ, G, R > 0`.
+- `FlowCoordinateBernoulli.pipeReversedFlow_not_navierStokes`: reversing the pressure gradient
+  alone breaks the momentum balance.
 
 ## iii. Table of contents
 
@@ -132,6 +158,10 @@ stationary walls the flow vanishes, while plane Couette flow moves without a pre
 - I. Newtonian stress, continuity and Navier-Stokes for plane Poiseuille flow
 - J. No-slip walls and flow rate
 - K. No pressure gradient versus a moving wall
+- L. Cylindrical Poiseuille flow
+- M. Newtonian stress, continuity and Navier-Stokes for cylindrical Poiseuille flow
+- N. The pipe restriction and its lateral wall
+- O. Reversed pressure gradient
 
 ## iv. References
 
@@ -139,7 +169,7 @@ stationary walls the flow vanishes, while plane Couette flow moves without a pre
 - Physlib's `FluidDynamics.Euler`, `FluidDynamics.CauchyFlow.HasBodyForcePotential` and
   `FluidDynamics.bernoulliFunction`.
 - F. M. White, *Viscous Fluid Flow*, 3rd ed., McGraw-Hill (2006), Chapter 3: Couette and
-  Poiseuille flow between parallel plates.
+  Poiseuille flow between parallel plates, and Hagen-Poiseuille flow in a circular pipe.
 - Physlib's `FluidDynamics.NavierStokes`, `FluidDynamics.ConvectiveNavierStokes`,
   `FluidDynamics.CauchyFlow.IsNewtonian`, `FluidDynamics.FluidFlow.SmoothIncompressible` and
   `FluidDynamics.navier_stokes_iff_convective_navier_stokes`.
@@ -1023,5 +1053,292 @@ lemma planePoiseuille_zero_gradient_vs_couette {Uwall H : ℝ} (hU : Uwall ≠ 0
     rw [he, intervalIntegral.integral_eq_sub_of_hasDerivAt hF hint]
     field_simp
     ring
+
+/-! ## L. Cylindrical Poiseuille flow -/
+
+/-- Cylindrical Poiseuille velocity `(0, 0, G (R² - x² - y²) / (4 μ))`, with `x = x 0`,
+`y = x 1` the transverse coordinates and `G = -∂p/∂z` the signed pressure-drop rate. -/
+noncomputable def pipePoiseuilleVelocity (G μ R : ℝ) : Space → EuclideanSpace ℝ (Fin 3) :=
+  fun x => WithLp.toLp 2 ![0, 0, G * (R ^ 2 - x 0 ^ 2 - x 1 ^ 2) / (4 * μ)]
+
+/-- The linear pressure `p₀ - G z` with `z = x 2` the axial coordinate. -/
+def pipePoiseuillePressure (p₀ G : ℝ) : Space → ℝ :=
+  fun x => p₀ - G * x 2
+
+/-- Density and velocity of cylindrical Poiseuille flow with constant density `ρ`. -/
+noncomputable def pipePoiseuilleFluid (ρ G μ R : ℝ) : FluidFlow 3 where
+  rho := fun _ _ => ρ
+  velocity := fun _ => pipePoiseuilleVelocity G μ R
+
+/-- Cylindrical Poiseuille flow on all of `Space`: constant density `ρ`, the steady Poiseuille
+velocity, Physlib's Newtonian stress for the pressure `p₀ - G z`, shear viscosity `μ` and
+second viscosity `lam`, and no body force. -/
+noncomputable def pipePoiseuilleFlow (ρ μ lam p₀ G R : ℝ) : CauchyFlow 3 where
+  toFluidFlow := pipePoiseuilleFluid ρ G μ R
+  stress := FluidFlow.newtonianStressTensor 3 (pipePoiseuilleFluid ρ G μ R)
+    (fun _ x => pipePoiseuillePressure p₀ G x) (fun _ _ => μ) (fun _ _ => lam)
+  specificBodyForce := fun _ _ => 0
+
+/-- The Poiseuille velocity driven by `G` with the pressure gradient reversed: the Newtonian
+stress uses the pressure `p₀ + G z` instead of `p₀ - G z`. -/
+noncomputable def pipeReversedFlow (ρ μ lam p₀ G R : ℝ) : CauchyFlow 3 where
+  toFluidFlow := pipePoiseuilleFluid ρ G μ R
+  stress := FluidFlow.newtonianStressTensor 3 (pipePoiseuilleFluid ρ G μ R)
+    (fun _ x => pipePoiseuillePressure p₀ (-G) x) (fun _ _ => μ) (fun _ _ => lam)
+  specificBodyForce := fun _ _ => 0
+
+private lemma pipePoiseuilleVelocity_differentiable (G μ R : ℝ) :
+    Differentiable ℝ (pipePoiseuilleVelocity G μ R) := by
+  refine differentiable_euclidean.mpr fun i => ?_
+  unfold pipePoiseuilleVelocity
+  fin_cases i
+  · simp
+  · simp
+  · simp only [Fin.reduceFinMk, Fin.isValue, Matrix.cons_val]
+    fun_prop
+
+private lemma deriv_pipePoiseuilleVelocity (G μ R : ℝ) (x : Space) (i j : Fin 3) :
+    ∂[j] (fun x' => pipePoiseuilleVelocity G μ R x' i) x =
+      if i = 2 ∧ j = 0 then -(G * x 0) / (2 * μ) else
+        if i = 2 ∧ j = 1 then -(G * x 1) / (2 * μ) else 0 := by
+  fin_cases i
+  · simp [pipePoiseuilleVelocity]
+  · simp [pipePoiseuilleVelocity]
+  · change ∂[j] (fun x' => pipePoiseuilleVelocity G μ R x' 2) x =
+      if (2 : Fin 3) = 2 ∧ j = 0 then -(G * x 0) / (2 * μ) else
+        if (2 : Fin 3) = 2 ∧ j = 1 then -(G * x 1) / (2 * μ) else 0
+    have hsplit : (fun x' : Space => pipePoiseuilleVelocity G μ R x' 2) = fun x' : Space =>
+        (fun r : ℝ => G * (R ^ 2 - r ^ 2) / (4 * μ)) (x' 0) +
+          (fun r : ℝ => -(G * r ^ 2 / (4 * μ))) (x' 1) := by
+      funext x'
+      simp [pipePoiseuilleVelocity]
+      ring
+    have g0 : HasDerivAt (fun r : ℝ => G * (R ^ 2 - r ^ 2) / (4 * μ)) (-(G * x 0) / (2 * μ))
+        (x 0) := ((((hasDerivAt_pow 2 (x 0)).const_sub (R ^ 2)).const_mul G).div_const
+          (4 * μ)).congr_deriv (by push_cast; field_simp; ring)
+    have g1 : HasDerivAt (fun r : ℝ => -(G * r ^ 2 / (4 * μ))) (-(G * x 1) / (2 * μ)) (x 1) :=
+      ((((hasDerivAt_pow 2 (x 1)).const_mul G).div_const (4 * μ)).neg).congr_deriv
+        (by push_cast; field_simp; ring)
+    rw [hsplit, show (fun x' : Space => (fun r : ℝ => G * (R ^ 2 - r ^ 2) / (4 * μ)) (x' 0) +
+        (fun r : ℝ => -(G * r ^ 2 / (4 * μ))) (x' 1)) =
+        (fun x' : Space => (fun r : ℝ => G * (R ^ 2 - r ^ 2) / (4 * μ)) (x' 0)) +
+          (fun x' : Space => (fun r : ℝ => -(G * r ^ 2 / (4 * μ))) (x' 1)) from rfl,
+      Space.deriv_add _ _ (by fun_prop) (by fun_prop), Pi.add_apply, deriv_comp_coord 0 j g0,
+      deriv_comp_coord 1 j g1]
+    fin_cases j <;> simp
+
+private lemma div_pipePoiseuilleVelocity (G μ R : ℝ) (x : Space) :
+    (∇ ⬝ pipePoiseuilleVelocity G μ R) x = 0 := by
+  unfold Space.div
+  simp [Fin.sum_univ_three, deriv_pipePoiseuilleVelocity]
+
+private lemma div_smul_pipePoiseuilleVelocity (ρ G μ R : ℝ) (x : Space) :
+    (∇ ⬝ fun x' => ρ • pipePoiseuilleVelocity G μ R x') x = 0 := by
+  have hd : Differentiable ℝ (fun x' => ρ • pipePoiseuilleVelocity G μ R x') :=
+    (pipePoiseuilleVelocity_differentiable G μ R).const_smul ρ
+  have h : ∀ i, ∂[i] (fun x' => ρ • pipePoiseuilleVelocity G μ R x') x =
+      ρ • ∂[i] (pipePoiseuilleVelocity G μ R) x := by
+    intro i
+    change fderiv ℝ (ρ • pipePoiseuilleVelocity G μ R) x (basis i) = _
+    rw [fderiv_const_smul ((pipePoiseuilleVelocity_differentiable G μ R) x), _root_.smul_apply,
+      ← Space.deriv_eq]
+  unfold Space.div
+  simp only [deriv_euclid hd, h, Fin.sum_univ_three]
+  simp [← deriv_euclid (pipePoiseuilleVelocity_differentiable G μ R),
+    deriv_pipePoiseuilleVelocity]
+
+/-- The Newtonian stress of the Poiseuille velocity for any pressure field `q`. -/
+private lemma pipe_newtonianStress {μ : ℝ} (hμ : μ ≠ 0) (ρ lam G R : ℝ) (q : Space → ℝ)
+    (t : Time) (x : Space) :
+    FluidFlow.newtonianStressTensor 3 (pipePoiseuilleFluid ρ G μ R) (fun _ x => q x)
+        (fun _ _ => μ) (fun _ _ => lam) t x =
+      !![-q x, 0, -(G * x 0) / 2; 0, -q x, -(G * x 1) / 2;
+        -(G * x 0) / 2, -(G * x 1) / 2, -q x] := by
+  ext i j
+  simp only [FluidFlow.newtonianStressTensor]
+  have hdiv : (∇ ⬝ (pipePoiseuilleFluid ρ G μ R).velocity t) x = 0 :=
+    div_pipePoiseuilleVelocity G μ R x
+  rw [hdiv]
+  fin_cases i <;> fin_cases j <;>
+    simp [FluidFlow.velocityGradient, pipePoiseuilleFluid, deriv_pipePoiseuilleVelocity,
+      Matrix.transpose_apply] <;>
+    field_simp
+
+/-- The material acceleration of the steady Poiseuille velocity vanishes. -/
+private lemma pipe_materialAcceleration (ρ G μ R : ℝ) (t : Time) (x : Space) :
+    FluidFlow.materialAcceleration 3 (pipePoiseuilleFluid ρ G μ R) t x = 0 := by
+  have hd := pipePoiseuilleVelocity_differentiable G μ R
+  have hD2 : Space.deriv 2 (pipePoiseuilleVelocity G μ R) x = 0 := by
+    ext k
+    rw [show (Space.deriv 2 (pipePoiseuilleVelocity G μ R) x).ofLp k =
+        Space.deriv 2 (fun x' => pipePoiseuilleVelocity G μ R x' k) x from
+          (deriv_euclid hd x).symm, deriv_pipePoiseuilleVelocity]
+    simp
+  simp only [FluidFlow.materialAcceleration, FluidFlow.convectiveTerm, pipePoiseuilleFluid,
+    Time.deriv_const, zero_add, Fin.sum_univ_three, hD2]
+  ext i
+  fin_cases i <;> simp [pipePoiseuilleVelocity]
+/-! ## M. Newtonian stress, continuity and Navier-Stokes for cylindrical Poiseuille flow -/
+
+/-- For `μ ≠ 0` the Newtonian stress of cylindrical Poiseuille flow has normal entries `-p` and
+axial shear entries `-G x 0 / 2` and `-G x 1 / 2`; the second viscosity drops out. -/
+lemma pipePoiseuilleFlow_stress {μ : ℝ} (hμ : μ ≠ 0) (ρ lam p₀ G R : ℝ) (t : Time)
+    (x : Space) :
+    (pipePoiseuilleFlow ρ μ lam p₀ G R).stress t x =
+      !![-(p₀ - G * x 2), 0, -(G * x 0) / 2;
+        0, -(p₀ - G * x 2), -(G * x 1) / 2;
+        -(G * x 0) / 2, -(G * x 1) / 2, -(p₀ - G * x 2)] := by
+  simp only [pipePoiseuilleFlow, pipePoiseuillePressure]
+  exact pipe_newtonianStress hμ ρ lam G R (fun x => p₀ - G * x 2) t x
+
+/-- Cylindrical Poiseuille flow satisfies Physlib's smooth continuity equation on all of
+`Space`. -/
+lemma pipePoiseuilleFlow_smoothContinuityEquation (ρ μ lam p₀ G R : ℝ) :
+    FluidFlow.SmoothContinuityEquation 3 (pipePoiseuilleFlow ρ μ lam p₀ G R).toFluidFlow := by
+  refine ⟨fun x => differentiable_const ρ,
+    fun t => (pipePoiseuilleVelocity_differentiable G μ R).const_smul ρ, fun t x => ?_⟩
+  simp only [FluidFlow.continuityResidual, pipePoiseuilleFlow, pipePoiseuilleFluid]
+  rw [Time.deriv_const, zero_add]
+  exact div_smul_pipePoiseuilleVelocity ρ G μ R x
+
+/-- Cylindrical Poiseuille flow is smoothly incompressible: the velocity is differentiable and
+divergence free. -/
+lemma pipePoiseuilleFlow_smoothIncompressible (ρ μ lam p₀ G R : ℝ) :
+    FluidFlow.SmoothIncompressible 3 (pipePoiseuilleFlow ρ μ lam p₀ G R).toFluidFlow := by
+  exact ⟨fun t => pipePoiseuilleVelocity_differentiable G μ R,
+    fun t x => div_pipePoiseuilleVelocity G μ R x⟩
+
+/-- The four differentiability premises of
+`FluidDynamics.navier_stokes_iff_convective_navier_stokes` hold for cylindrical Poiseuille
+flow. -/
+lemma pipePoiseuilleFlow_navierStokes_premises (ρ μ lam p₀ G R : ℝ) :
+    (∀ t x, DifferentiableAt ℝ ((pipePoiseuilleFlow ρ μ lam p₀ G R).rho · x) t) ∧
+      (∀ t x, DifferentiableAt ℝ ((pipePoiseuilleFlow ρ μ lam p₀ G R).velocity · x) t) ∧
+      (∀ t, Differentiable ℝ
+        (FluidFlow.momentumDensity 3 (pipePoiseuilleFlow ρ μ lam p₀ G R).toFluidFlow t)) ∧
+      ∀ t, Differentiable ℝ ((pipePoiseuilleFlow ρ μ lam p₀ G R).velocity t) := by
+  refine ⟨fun t x => differentiableAt_const ρ, fun t x => differentiableAt_const _, fun t => ?_,
+    fun t => pipePoiseuilleVelocity_differentiable G μ R⟩
+  unfold FluidFlow.momentumDensity
+  exact (pipePoiseuilleVelocity_differentiable G μ R).const_smul ρ
+
+/-- For `μ ≠ 0` cylindrical Poiseuille flow satisfies Physlib's convective Navier-Stokes
+equations with the pressure `p₀ - G z`, shear viscosity `μ`, second viscosity `lam` and no
+body force, on all of `Space`. -/
+lemma pipePoiseuilleFlow_convectiveNavierStokes {μ : ℝ} (hμ : μ ≠ 0) (ρ lam p₀ G R : ℝ) :
+    ConvectiveNavierStokes 3 (pipePoiseuilleFlow ρ μ lam p₀ G R)
+      (fun _ x => pipePoiseuillePressure p₀ G x) (fun _ _ => μ) (fun _ _ => lam) := by
+  refine ⟨FluidFlow.classicalContinuityEquation_of_smoothContinuityEquation 3 _
+    (pipePoiseuilleFlow_smoothContinuityEquation ρ μ lam p₀ G R), fun t x => ?_, fun t x => rfl⟩
+  have hσ : (pipePoiseuilleFlow ρ μ lam p₀ G R).stress t = fun y : Space =>
+      !![-(p₀ - G * y 2), 0, -(G * y 0) / 2; 0, -(p₀ - G * y 2), -(G * y 1) / 2;
+        -(G * y 0) / 2, -(G * y 1) / 2, -(p₀ - G * y 2)] := by
+    funext y
+    exact pipePoiseuilleFlow_stress hμ ρ lam p₀ G R t y
+  have dp : ∀ j, ∂[j] (fun y : Space => G * y 2 - p₀) x = if j = 2 then G else 0 := fun j =>
+    deriv_comp_coord (g := fun r => G * r - p₀) 2 j
+      ((((hasDerivAt_id (x 2)).const_mul G).sub_const p₀).congr_deriv (by simp))
+  have d0 : ∀ j, ∂[j] (fun y : Space => -(G * y 0) / 2) x = if j = 0 then -G / 2 else 0 :=
+    fun j => deriv_comp_coord (g := fun r => -(G * r) / 2) 0 j
+      ((((hasDerivAt_id (x 0)).const_mul G).neg.div_const 2).congr_deriv (by simp))
+  have d1 : ∀ j, ∂[j] (fun y : Space => -(G * y 1) / 2) x = if j = 1 then -G / 2 else 0 :=
+    fun j => deriv_comp_coord (g := fun r => -(G * r) / 2) 1 j
+      ((((hasDerivAt_id (x 1)).const_mul G).neg.div_const 2).congr_deriv (by simp))
+  have hacc := pipe_materialAcceleration ρ G μ R t x
+  rw [hσ]
+  simp only [pipePoiseuilleFlow]
+  rw [hacc]
+  ext i
+  fin_cases i <;> simp [matrixDiv_apply, Fin.sum_univ_three, dp, d0, d1]
+
+/-- For `μ ≠ 0` cylindrical Poiseuille flow satisfies Physlib's conservative Navier-Stokes
+equations with the pressure `p₀ - G z`, shear viscosity `μ`, second viscosity `lam` and no
+body force, on all of `Space`. -/
+lemma pipePoiseuilleFlow_navierStokes {μ : ℝ} (hμ : μ ≠ 0) (ρ lam p₀ G R : ℝ) :
+    NavierStokes 3 (pipePoiseuilleFlow ρ μ lam p₀ G R)
+      (fun _ x => pipePoiseuillePressure p₀ G x) (fun _ _ => μ) (fun _ _ => lam) := by
+  obtain ⟨h1, h2, h3, h4⟩ := pipePoiseuilleFlow_navierStokes_premises ρ μ lam p₀ G R
+  exact (navier_stokes_iff_convective_navier_stokes 3 _ _ _ _ h1 h2 h3 h4).mpr
+    (pipePoiseuilleFlow_convectiveNavierStokes hμ ρ lam p₀ G R)
+
+/-! ## N. The pipe restriction and its lateral wall -/
+
+/-- No slip on the lateral wall `x 0² + x 1² = R²` of the pipe. -/
+lemma pipePoiseuilleVelocity_lateral_wall (G μ R : ℝ) (x : Space)
+    (hx : x 0 ^ 2 + x 1 ^ 2 = R ^ 2) :
+    pipePoiseuilleVelocity G μ R x = 0 := by
+  have h : R ^ 2 - x 0 ^ 2 - x 1 ^ 2 = 0 := by linarith
+  ext i
+  fin_cases i <;> simp [pipePoiseuilleVelocity, h]
+
+/-- For `G, μ > 0` the axial velocity is positive strictly inside the pipe,
+`x 0² + x 1² < R²`. -/
+lemma pipePoiseuilleVelocity_pos_inside {G μ R : ℝ} (hG : 0 < G) (hμ : 0 < μ) (x : Space)
+    (hx : x 0 ^ 2 + x 1 ^ 2 < R ^ 2) :
+    0 < pipePoiseuilleVelocity G μ R x 2 := by
+  have h : 0 < R ^ 2 - x 0 ^ 2 - x 1 ^ 2 := by linarith
+  simp only [pipePoiseuilleVelocity]
+  change 0 < G * (R ^ 2 - x 0 ^ 2 - x 1 ^ 2) / (4 * μ)
+  positivity
+
+/-- Cylindrical Poiseuille flow with the physical hypotheses `ρ, μ, G, R > 0`: the density is
+positive, the flow satisfies smooth continuity, smooth incompressibility and the conservative
+Navier-Stokes equations on all of `Space`, the lateral wall is at rest, and the centerline
+velocity is `(0, 0, G R² / (4 μ))` with positive axial component. -/
+lemma pipePoiseuilleFlow_witness {ρ μ G R : ℝ} (lam p₀ : ℝ) (hρ : 0 < ρ) (hμ : 0 < μ)
+    (hG : 0 < G) (hR : 0 < R) :
+    (∀ t x, 0 < (pipePoiseuilleFlow ρ μ lam p₀ G R).rho t x) ∧
+      FluidFlow.SmoothContinuityEquation 3 (pipePoiseuilleFlow ρ μ lam p₀ G R).toFluidFlow ∧
+      FluidFlow.SmoothIncompressible 3 (pipePoiseuilleFlow ρ μ lam p₀ G R).toFluidFlow ∧
+      NavierStokes 3 (pipePoiseuilleFlow ρ μ lam p₀ G R)
+        (fun _ x => pipePoiseuillePressure p₀ G x) (fun _ _ => μ) (fun _ _ => lam) ∧
+      (∀ t (x : Space), x 0 ^ 2 + x 1 ^ 2 = R ^ 2 →
+        (pipePoiseuilleFlow ρ μ lam p₀ G R).velocity t x = 0) ∧
+      ∀ t (z : ℝ), (pipePoiseuilleFlow ρ μ lam p₀ G R).velocity t ⟨![0, 0, z]⟩ =
+          WithLp.toLp 2 ![0, 0, G * R ^ 2 / (4 * μ)] ∧ 0 < G * R ^ 2 / (4 * μ) := by
+  refine ⟨fun t x => hρ, pipePoiseuilleFlow_smoothContinuityEquation ρ μ lam p₀ G R,
+    pipePoiseuilleFlow_smoothIncompressible ρ μ lam p₀ G R,
+    pipePoiseuilleFlow_navierStokes hμ.ne' ρ lam p₀ G R,
+    fun t x hx => pipePoiseuilleVelocity_lateral_wall G μ R x hx, fun t z => ⟨?_, by positivity⟩⟩
+  ext i
+  fin_cases i <;> simp [pipePoiseuilleFlow, pipePoiseuilleFluid, pipePoiseuilleVelocity]
+
+/-! ## O. Reversed pressure gradient -/
+
+/-- Reversing the pressure gradient without reversing the flow fails the momentum balance: for
+`μ ≠ 0` and `G ≠ 0` the Poiseuille velocity with the pressure `p₀ + G z` does not satisfy
+Physlib's Navier-Stokes equations; its axial momentum residual is `-2 G`. -/
+lemma pipeReversedFlow_not_navierStokes {μ G : ℝ} (hμ : μ ≠ 0) (hG : G ≠ 0) (ρ lam p₀ R : ℝ) :
+    ¬ NavierStokes 3 (pipeReversedFlow ρ μ lam p₀ G R)
+      (fun _ x => pipePoiseuillePressure p₀ (-G) x) (fun _ _ => μ) (fun _ _ => lam) := by
+  intro hNS
+  obtain ⟨h1, h2, h3, h4⟩ := pipePoiseuilleFlow_navierStokes_premises ρ μ lam p₀ G R
+  have hmom := ((navier_stokes_iff_convective_navier_stokes 3 (pipeReversedFlow ρ μ lam p₀ G R)
+    _ _ _ h1 h2 h3 h4).mp hNS).2.1 ⟨0⟩ ⟨![0, 0, 0]⟩
+  have hσ : (pipeReversedFlow ρ μ lam p₀ G R).stress ⟨0⟩ = fun y : Space =>
+      !![-(p₀ - -G * y 2), 0, -(G * y 0) / 2; 0, -(p₀ - -G * y 2), -(G * y 1) / 2;
+        -(G * y 0) / 2, -(G * y 1) / 2, -(p₀ - -G * y 2)] := by
+    funext y
+    exact pipe_newtonianStress hμ ρ lam G R (fun x => p₀ - -G * x 2) ⟨0⟩ y
+  have dp : ∀ j, ∂[j] (fun y : Space => -(G * y 2) + -p₀) (⟨![0, 0, 0]⟩ : Space) =
+      if j = 2 then -G else 0 := fun j =>
+    deriv_comp_coord (g := fun r => -(G * r) + -p₀) 2 j
+      ((((hasDerivAt_id _).const_mul G).neg.add_const (-p₀)).congr_deriv (by simp))
+  have d0 : ∀ j, ∂[j] (fun y : Space => -(G * y 0) / 2) (⟨![0, 0, 0]⟩ : Space) =
+      if j = 0 then -G / 2 else 0 := fun j =>
+    deriv_comp_coord (g := fun r => -(G * r) / 2) 0 j
+      ((((hasDerivAt_id _).const_mul G).neg.div_const 2).congr_deriv (by simp))
+  have d1 : ∀ j, ∂[j] (fun y : Space => -(G * y 1) / 2) (⟨![0, 0, 0]⟩ : Space) =
+      if j = 1 then -G / 2 else 0 := fun j =>
+    deriv_comp_coord (g := fun r => -(G * r) / 2) 1 j
+      ((((hasDerivAt_id _).const_mul G).neg.div_const 2).congr_deriv (by simp))
+  have hacc := pipe_materialAcceleration ρ G μ R ⟨0⟩ ⟨![0, 0, 0]⟩
+  rw [hσ] at hmom
+  simp only [pipeReversedFlow] at hmom
+  rw [hacc] at hmom
+  have h2c := congrArg (fun v : EuclideanSpace ℝ (Fin 3) => v 2) hmom
+  simp [matrixDiv_apply, Fin.sum_univ_three, dp, d0, d1] at h2c
+  apply hG
+  linarith
 
 end FlowCoordinateBernoulli

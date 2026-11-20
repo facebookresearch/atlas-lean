@@ -12,10 +12,13 @@ standalone `Atlas/` developments are outside its scope.
 - `scripts/taxonomy.json` and `blueprint/atlas.json`: subject organization.
 - Lean sources: declaration kinds and statement/proof status.
 - Compiled Lean: dependencies of declarations' types and values. The values of
-  `def`, `abbrev`, `instance` and `inductive` declarations (bodies and
-  constructors) contribute statement dependencies. Theorem proofs and `opaque`
-  bodies (`partial def` included) contribute proof dependencies only: Lean cannot
-  unfold them, so no statement that uses the constant can depend on them.
+  `def`, `abbrev` and `inductive` declarations, and of `instance` declarations
+  of classes of data, which Lean compiles to definitions (bodies and
+  constructors), contribute statement dependencies. Theorem proofs, including
+  those of `instance` declarations of propositions, which Lean compiles to
+  theorems, and `opaque` bodies (`partial def` included) contribute proof
+  dependencies only: Lean cannot unfold them, so no statement that uses the
+  constant can depend on them.
 - AutoformBot: renderer and shared interactive graph viewer, installed at the
   reviewed full commit in `.github/autoform-ref`.
 
@@ -41,6 +44,7 @@ python -m unittest \
   scripts.test_generate_wiki_docstrings \
   scripts.test_sync_wiki \
   scripts.test_extract_v2_lean_dependencies \
+  scripts.test_extract_mathlib_graph \
   scripts.test_check_blueprint_site_navigation \
   scripts.test_blueprint_workflow \
   scripts.test_blueprint_taxonomy
@@ -91,6 +95,46 @@ each page's link to its Markdown source; restoring those links is tracked in
 compiled modules or import collisions fail the workflow rather than silently
 publishing a partial graph. The ordinary repository CI remains the authority
 for the libraries' build and trust-policy checks.
+
+## The Mathlib layer
+
+The graph's Mathlib layer has a node for each Mathlib declaration a
+mathematician could cite, statement and proof edges between them with the
+semantics above, bridge edges from the articles to the Mathlib nodes they use,
+and each node's topic from the `Mathlib/...` keys of `scripts/taxonomy.json`.
+[`mathlib-layer.md`](mathlib-layer.md) gives the node rules and the files. Like
+the dependency dump, it is a build output: the workflow's `build the Mathlib
+layer` job builds it once `build the wiki` has succeeded, from the v2
+extraction and the dump of the v2 declarations with their Mathlib uses that
+`build the wiki` makes last, after the site steps, and keeps as the
+`v2-mathlib-dump` artifact. It uploads the layer as the `mathlib-graph`
+artifact. A failure fails that job's check only; it never holds back the site
+or its deployment, which do not read the layer. After the build and the v2
+extraction above:
+
+```sh
+python scripts/extract_mathlib_graph.py dump mathlib-graph/mathlib-dump.jsonl.gz
+python scripts/extract_mathlib_graph.py dump --modules v2-modules.txt \
+  --keep Mathlib,MathlibExt,CSLibExt,PhyslibExt,WantedExt \
+  mathlib-graph/v2-mathlib-dump.jsonl.gz
+python scripts/extract_mathlib_graph.py graph \
+  mathlib-graph/mathlib-dump.jsonl.gz mathlib-graph
+python scripts/extract_mathlib_graph.py bridge \
+  mathlib-graph/v2-mathlib-dump.jsonl.gz mathlib-graph \
+  --mathlib-dump mathlib-graph/mathlib-dump.jsonl.gz \
+  --check-v2 build/lean-dependencies.json
+python scripts/extract_mathlib_graph.py join --strict mathlib-graph
+python scripts/extract_mathlib_graph.py stats mathlib-graph
+```
+
+`dump` runs `scripts/dump_mathlib_dependencies.lean` in shards that each
+import every listed module (about 9 GB each, mostly shared `.olean` pages);
+`--jobs` sets how many run at once. `bridge` fails unless its articles and their
+ATLAS-to-ATLAS edges are those of `build/lean-dependencies.json`. Given
+taxonomy-shaped files, such as
+classification proposals, `join` reads their placements instead of those of
+`scripts/taxonomy.json`; `--strict` fails on a placement target that is neither
+a field of `scripts/taxonomy.json` nor one the given proposals add.
 
 ## Maintaining articles
 
@@ -151,12 +195,13 @@ a literal dollar of that shape as `&#36;`, or inside inline code.
 
 Changing AutoformBot requires a reviewed `.github/autoform-ref` update and
 passing tests. The workflow has no automatic pin push, upstream-sync bot,
-model-driven audit, schedule, or required personal token.
+model-driven audit, or required personal token.
 
 ## GitHub Actions and publication
 
-`Blueprint Pages` runs on every merge group, on pushes and manual runs of
-`main`, and on PRs that touch the wiki: `blueprint/`, the wiki scripts and
+`Blueprint Pages` runs on `main` once a day at 03:17 UTC and on manual runs
+(**Actions → Blueprint Pages → Run workflow**), on every merge group, and on
+PRs that touch the wiki: `blueprint/`, the wiki scripts and
 their tests, `scripts/taxonomy.json`, `scripts/wiki-sync.json`, the site
 configuration (`mkdocs.yml`, `theme/`, `hooks/`), this document, the workflow,
 `.github/autoform-ref`, or the toolchain pins (`lean-toolchain`,
@@ -169,9 +214,10 @@ it requirable would need a first job that checks the changed paths and a
 job-level `if` on the wiki job. Its unique `build the wiki` check must succeed
 before deployment. Tests, Lean compilation, dependency extraction, rendering,
 and strict site checks run in one read-only job from one checkout. The job
-restores CI's `lake-build-*` cache and saves no cache of its own. The only
-write-capable job is the separate Pages deployment job; it runs no Lean or
-Python package code.
+restores CI's `lake-build-*` cache and saves no cache of its own. The Mathlib
+layer is built afterwards in a second read-only job, `build the Mathlib layer`,
+which deployment does not wait for. The only write-capable job is the separate
+Pages deployment job; it runs no Lean or Python package code.
 
 Publication is disabled until a repository maintainer:
 

@@ -94,9 +94,26 @@ instance (k : ℕ) (f : CNF t) : Decidable (IsKCNF k f) :=
 
 /-- **Clauses of at most `k` literals.** The set of all clauses of at most `k` literals over `t`
 variables, the initial hypothesis of the elimination algorithm (Valiant, *A theory of the
-learnable*, Comm. ACM 27 (1984), Section 5, proof of Theorem A). -/
+learnable*, Comm. ACM 27 (1984), Section 5, proof of Theorem A). There are `2t` literals, so no
+clause has more than `2t` of them. The set is built as the union, over `j ≤ min k (2t)`, of the
+sets of `j` literals, so neither clauses of width above `k` nor widths above `2t` are enumerated;
+`mem_allClauses` characterizes its members. -/
 def allClauses (t k : ℕ) : CNF t :=
-  (Finset.univ : Finset (Clause t)).filter fun c => c.card ≤ k
+  (Finset.range (min k (2 * t) + 1)).biUnion fun j => Finset.powersetCard j Finset.univ
+
+/-- **Membership in the initial clauses.** A clause over `t` variables is one of the initial
+clauses exactly when it has at most `k` literals. -/
+@[simp] theorem mem_allClauses {k : ℕ} {c : Clause t} : c ∈ allClauses t k ↔ c.card ≤ k := by
+  have hlit : Fintype.card (Literal t) = 2 * t := by
+    simp [Literal, Fintype.card_prod, mul_comm]
+  have hc : c.card ≤ 2 * t := hlit ▸ Finset.card_le_univ c
+  simp only [allClauses, Finset.mem_biUnion, Finset.mem_range, Finset.mem_powersetCard,
+    Finset.subset_univ, true_and]
+  constructor
+  · rintro ⟨j, hj, rfl⟩
+    exact (le_min_iff.1 (Nat.lt_succ_iff.1 hj)).1
+  · intro hk
+    exact ⟨c.card, Nat.lt_succ_iff.2 (le_min_iff.2 ⟨hk, hc⟩), rfl⟩
 
 /-- **Counting the initial clauses.** There are at most `∑_{j ≤ k} (2t)^j` clauses of at most `k`
 literals over `t` variables, since there are `2t` literals and at most `(2t)^j` sets of `j` of them
@@ -104,26 +121,19 @@ literals over `t` variables, since there are `2t` literals and at most `(2t)^j` 
 the clauses of one to `k` literals are counted as fewer than `(2t)^{k+1}`). -/
 theorem card_allClauses_le (t k : ℕ) :
     (allClauses t k).card ≤ ∑ j ∈ Finset.range (k + 1), (2 * t) ^ j := by
-  classical
-  have hsub : allClauses t k ⊆
-      (Finset.range (k + 1)).biUnion fun j => Finset.powersetCard j Finset.univ := by
-    intro c hc
-    simp only [allClauses, Finset.mem_filter, Finset.mem_univ, true_and] at hc
-    simp only [Finset.mem_biUnion, Finset.mem_range, Finset.mem_powersetCard, Finset.subset_univ,
-      true_and]
-    exact ⟨c.card, Nat.lt_succ_of_le hc, rfl⟩
   have hlit : Fintype.card (Literal t) = 2 * t := by
     simp [Literal, Fintype.card_prod, mul_comm]
   calc (allClauses t k).card
-      ≤ ((Finset.range (k + 1)).biUnion fun j => Finset.powersetCard j Finset.univ).card :=
-        Finset.card_le_card hsub
-    _ ≤ ∑ j ∈ Finset.range (k + 1),
+      ≤ ∑ j ∈ Finset.range (min k (2 * t) + 1),
           (Finset.powersetCard j (Finset.univ : Finset (Literal t))).card :=
         Finset.card_biUnion_le
-    _ ≤ ∑ j ∈ Finset.range (k + 1), (2 * t) ^ j := by
+    _ ≤ ∑ j ∈ Finset.range (min k (2 * t) + 1), (2 * t) ^ j := by
         refine Finset.sum_le_sum fun j _ => ?_
         rw [Finset.card_powersetCard, Finset.card_univ, hlit]
         exact (Nat.choose_le_pow _ _).trans (by simp)
+    _ ≤ ∑ j ∈ Finset.range (k + 1), (2 * t) ^ j :=
+        Finset.sum_le_sum_of_subset
+          (Finset.range_subset_range.2 (Nat.succ_le_succ (min_le_left _ _)))
 
 /-- **Valiant's elimination algorithm for k-CNF.** Given a list of positive examples (truth
 assignments at which the target is true), keep exactly the clauses of at most `k` literals that
@@ -137,8 +147,8 @@ algorithm has at most `k` literals. -/
 theorem isKCNF_eliminate (k : ℕ) (examples : List (Fin t → Bool)) :
     IsKCNF k (eliminate k examples) := by
   intro c hc
-  simp only [eliminate, allClauses, Finset.mem_filter] at hc
-  exact hc.1.2
+  simp only [eliminate, Finset.mem_filter] at hc
+  exact mem_allClauses.1 hc.1
 
 /-- **The elimination output keeps only initial clauses.** The output of elimination is a
 sub-collection of the clauses of at most `k` literals. -/
@@ -162,8 +172,8 @@ be deleted"). -/
 theorem subset_eliminate {k : ℕ} {f : CNF t} (hf : IsKCNF k f) (examples : List (Fin t → Bool))
     (hpos : ∀ x ∈ examples, f.Holds x) : f ⊆ eliminate k examples := by
   intro c hc
-  simp only [eliminate, allClauses, Finset.mem_filter, Finset.mem_univ, true_and]
-  exact ⟨hf c hc, fun x hx => hpos x hx c hc⟩
+  simp only [eliminate, Finset.mem_filter]
+  exact ⟨mem_allClauses.2 (hf c hc), fun x hx => hpos x hx c hc⟩
 
 /-- **One-sided error: the elimination hypothesis implies the target.** If `f` is a `k`-CNF
 expression satisfied by every example, then at every assignment where the elimination output is
@@ -226,9 +236,7 @@ theorem isConsistent_learner (k : ℕ) {m : ℕ} :
   obtain ⟨f, hf, rfl⟩ := Finset.mem_image.1 (Finset.mem_coe.1 hc)
   have hfk : IsKCNF k f := by
     intro cl hcl
-    have := Finset.mem_powerset.1 hf hcl
-    simp only [allClauses, Finset.mem_filter] at this
-    exact this.2
+    exact mem_allClauses.1 (Finset.mem_powerset.1 hf hcl)
   have hpos : ∀ x ∈ positives S, f.Holds x := by
     intro x hx
     obtain ⟨i, hi⟩ := mem_positives.1 hx

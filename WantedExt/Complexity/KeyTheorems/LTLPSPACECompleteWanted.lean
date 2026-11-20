@@ -31,7 +31,9 @@ finite Kripke structure:
   world and a start world, every infinite path from the start satisfies the formula
   (`Cslib.LTL.ModelChecking.Models`). The structure is required to be total (every world has
   a successor), as for finite-state programs in the source; without totality a deadlocked
-  start world would satisfy every formula vacuously.
+  start world would satisfy every formula vacuously. In the encoding, row `w` of the list of
+  atoms belongs to world `w`: a world without a row (the list is shorter than `n`) has no true
+  atom, and rows beyond the last world are ignored.
 
 Each is a decision problem over bitstrings, in the format of
 `WantedExt.Complexity.KeyTheorems.LinearMuCalculusPSPACECompleteWanted`, and the statement is
@@ -88,7 +90,10 @@ open Classical in
 /-- **LTL model checking as a decision problem.** The input decodes to
 `(n, edges, worldVals, start, tokens)`, where `worldVals` lists the atoms true at each world;
 the answer is whether the structure is well formed and total (every world below `n` has a
-successor below `n`) and every infinite path from `start` satisfies the decoded formula. -/
+successor below `n`) and every infinite path from `start` satisfies the decoded formula. The
+atoms true at world `w` are read as `worldVals.getD w []`, and this is part of the encoding: a
+world `w` with `worldVals.length ≤ w` has no true atom, and the rows of `worldVals` beyond world
+`n - 1` are ignored, so the length of `worldVals` is not required to be `n`. -/
 noncomputable def ltlModelCheckDec : DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
       (α := ℕ × List (ℕ × ℕ) × List (List ℕ) × ℕ × List ℕ) x with
