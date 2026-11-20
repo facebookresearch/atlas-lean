@@ -13,18 +13,22 @@ public import Mathlib.Analysis.Calculus.ContDiff.Operations
 public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
+import Mathlib.Analysis.Calculus.LocalExtr.Rolle
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
 /-!
-# Periodic face-flux advection: the upwind update and a smooth traveling wave
+# Periodic face-flux advection: the upwind update, a traveling wave and its nodal error
 
 The conservative finite-volume step for constant-speed scalar advection on a uniform periodic
 grid, written with physical face fluxes and cell masses, is the canonical periodic upwind
 update. A smooth traveling sine wave solves the continuous advection equation, with explicit
-positivity and second-derivative bounds.
+positivity and second-derivative bounds. Sampled at the grid nodes, the wave has an explicit
+upwind truncation error; the update is nonexpansive in the maximum norm under the CFL
+condition, so the nodal error of a numerical solution grows at most linearly in the number of
+steps.
 
 ## i. Overview
 
@@ -55,8 +59,26 @@ bounds `|∂ₓₓc| ≤ M` and `|∂ₜₜc| ≤ v² M` with `M = |a| (2π / L)
 `c₀ - |a|`, hence positive when `|a| < c₀`; when `c₀ ≤ |a|` and `L ≠ 0` it takes a nonpositive
 value at every time, so strict positivity needs the strict inequality.
 
+Parts H-L sample the wave on the grid: `ncells` uniform periodic cells of `[0, L)` with spacing
+`dx = L / ncells`, node `j : ZMod ncells` at `x_j = j.val * dx` and time level `n` at
+`t_n = n * dt`. The samples `w_j^n = c(t_n, x_j)` are actual point values, not cell averages,
+and by periodicity the wrapped upstream neighbour of node `0` is the wave one cell upstream.
+
+* Truncation. Second-order Taylor defects in time and in space, with the first-order terms
+  cancelled by the advection equation and `ν dx = v dt`, give
+  `|w_j^(n+1) - ((1 - ν) w_j^n + ν w_(j-1)^n)| ≤ dt * M * (v² dt + v dx) / 2` for `ν ≥ 0`.
+* Stability. For `0 ≤ ν ≤ 1` each updated value is a convex combination of two old values, so
+  the update does not increase the maximum nodal modulus.
+* Accumulation. For a numerical solution `u` of the same recurrence the nodal error
+  `E_n = maxⱼ |u_j^n - w_j^n|` satisfies `E_N ≤ E_0 + N * dt * M * (v² dt + v dx) / 2`, hence
+  `E_N ≤ E_0 + T * M * (v² dt + v dx) / 2` whenever `N * dt ≤ T`.
+
+These error bounds hold only for this smooth wave and under the CFL condition; nonsmooth data
+and shocks have no second-derivative bound.
+
 All quantities are exact real coordinates in one consistent unit system. Nonperiodic boundaries
-and wells, moving meshes, reconstruction, consistency and convergence are not treated.
+and wells, moving meshes, reconstruction, cell averages, between-node norms and floating-point
+roundoff are not treated.
 
 ## ii. Key results
 
@@ -73,6 +95,16 @@ and wells, moving meshes, reconstruction, consistency and convergence are not tr
   second-derivative bounds `M` and `v² M`.
 - `AdvectionError.travelingWave_exists_nonpos`: no strict positivity when `c₀ ≤ |a|` and
   `L ≠ 0`.
+- `AdvectionError.sampledWave_sub_one`: the wrapped upstream neighbour is the sample at
+  `x_j - dx`.
+- `AdvectionError.travelingWave_time_taylor`, `AdvectionError.travelingWave_space_taylor`:
+  second-order Taylor defects of the wave.
+- `AdvectionError.upwind_truncation_le`: the nodal truncation bound
+  `dt * M * (v² dt + v dx) / 2`.
+- `AdvectionError.abs_convex_combination_le`, `AdvectionError.upwind_norm_le`: max-norm
+  nonexpansiveness for `0 ≤ ν ≤ 1`.
+- `AdvectionError.upwind_error_le`, `AdvectionError.upwind_error_le_of_mul_le`: the accumulated
+  nodal error after `N` steps and at a final time `T ≥ N * dt`.
 
 ## iii. Table of contents
 
@@ -83,12 +115,20 @@ and wells, moving meshes, reconstruction, consistency and convergence are not tr
 - E. Advection, periodicity and positivity
 - F. Second-derivative bounds
 - G. Failure of strict positivity
+- H. Point samples on the periodic nodes
+- I. Second-order Taylor defects of the wave
+- J. Local truncation error at the nodes
+- K. Max-norm nonexpansiveness of the update
+- L. Error accumulation
 
 ## iv. References
 
 - R. J. LeVeque, *Finite Volume Methods for Hyperbolic Problems*, Cambridge University Press
   (2002), Chapter 2: the advection equation and its traveling-wave solutions; Chapter 4:
-  conservative finite-volume updates, the upwind flux for advection and the CFL condition.
+  conservative finite-volume updates, the upwind flux for advection and the CFL condition;
+  Chapter 8: local truncation error, stability in the maximum norm and the error recursion.
+- R. J. LeVeque, *Finite Difference Methods for Ordinary and Partial Differential Equations*,
+  SIAM (2007), Chapter 10: the upwind method for advection and its truncation error.
 - `EarthScience.upwind_nonneg` and `EarthScience.upwind_sum_eq`
   (`PhyslibExt.EarthScience.UpwindScheme`).
 - Mathlib's `Real.hasDerivAt_sin` and `Real.hasDerivAt_cos`.
@@ -494,5 +534,532 @@ lemma travelingWave_exists_nonpos {c₀ a L : ℝ} (hL : L ≠ 0) (h : c₀ ≤ 
     rw [harg, Real.sin_pi_div_two]
     have habs : |a| = -a := abs_of_neg ha'
     linarith
+
+/-! ## H. Point samples on the periodic nodes -/
+
+/-- The point sample `w_j^n = c(n * dt, j * dx)` of the traveling wave on `ncells` uniform
+periodic cells of `[0, L)`, `dx = L / ncells`: node `j : ZMod ncells` sits at
+`x_j = j.val * dx` and time level `n` at `t_n = n * dt`. -/
+noncomputable def sampledWave (c₀ a v L dt : ℝ) (ncells n : ℕ) (j : ZMod ncells) : ℝ :=
+  travelingWave c₀ a v L (n * dt) (j.val * (L / ncells))
+
+/-- The wrapped upstream neighbour is an actual point sample one cell upstream: by spatial
+periodicity `w_(j-1)^n = c(t_n, x_j - dx)`, also at `j = 0`, where `j - 1` is the last node. -/
+lemma sampledWave_sub_one {ncells : ℕ} [NeZero ncells] {L : ℝ} (hL : L ≠ 0)
+    (c₀ a v dt : ℝ) (n : ℕ) (j : ZMod ncells) :
+    sampledWave c₀ a v L dt ncells n (j - 1) =
+      travelingWave c₀ a v L (n * dt) (j.val * (L / ncells) - L / ncells) := by
+  have hnne : ncells ≠ 0 := NeZero.ne ncells
+  have hnpos : 0 < ncells := Nat.pos_of_ne_zero hnne
+  have hncast : (ncells : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hnne
+  have hneg1 : (-1 : ZMod ncells).val = ncells - 1 := by
+    obtain ⟨m, hm⟩ := Nat.exists_eq_succ_of_ne_zero hnne
+    rw [hm, ZMod.val_neg_one]
+    omega
+  have hsub : (j - 1 : ZMod ncells).val = if j = 0 then ncells - 1 else j.val - 1 := by
+    rw [sub_eq_add_neg, ZMod.val_add, hneg1]
+    split_ifs with hj
+    · subst hj
+      rw [ZMod.val_zero, zero_add, Nat.mod_eq_of_lt]
+      omega
+    · have hjv : 1 ≤ j.val := by
+        have hne : j.val ≠ 0 := fun h => hj ((ZMod.val_eq_zero j).mp h)
+        omega
+      have hlt : j.val - 1 < ncells := by
+        have := ZMod.val_lt j
+        omega
+      have heq : j.val + (ncells - 1) = (j.val - 1) + ncells * 1 := by omega
+      rw [heq, Nat.add_mul_mod_self_left, Nat.mod_eq_of_lt hlt]
+  change travelingWave c₀ a v L (n * dt) ((j - 1).val * (L / ncells)) =
+    travelingWave c₀ a v L (n * dt) (j.val * (L / ncells) - L / ncells)
+  rw [hsub]
+  split_ifs with hj
+  · subst hj
+    rw [ZMod.val_zero]
+    push_cast [Nat.cast_sub (Nat.one_le_iff_ne_zero.mpr hnne)]
+    unfold travelingWave
+    have hA : 2 * Real.pi * ((ncells - 1) * (L / ncells) - v * (n * dt)) / L =
+        2 * Real.pi * (0 * (L / ncells) - L / ncells - v * (n * dt)) / L + 2 * Real.pi := by
+      field_simp [hL, hncast]
+      ring
+    rw [hA, Real.sin_add_two_pi]
+  · have hjv : 1 ≤ j.val := by
+      have hne : j.val ≠ 0 := fun h => hj ((ZMod.val_eq_zero j).mp h)
+      omega
+    have hx : ((j.val - 1 : ℕ) : ℝ) * (L / ncells) =
+        (j.val : ℝ) * (L / ncells) - L / ncells := by
+      rw [Nat.cast_sub hjv]
+      ring
+    rw [hx]
+
+/-! ## I. Second-order Taylor defects of the wave -/
+
+/-- Derivative of an affine-phase sine profile: `τ ↦ c₀ + a sin (k τ + b)` has derivative
+`a cos (k t + b) k` at `t`. -/
+private lemma hasDerivAt_sin_affine_aux (c₀ a k b t : ℝ) :
+    HasDerivAt (fun τ => c₀ + a * Real.sin (k * τ + b))
+      (a * (Real.cos (k * t + b) * (k * 1))) t := by
+  have hinner : HasDerivAt (fun τ => k * τ + b) (k * 1) t :=
+    ((hasDerivAt_id' t).const_mul k).add_const b
+  have h := (((Real.hasDerivAt_sin (k * t + b)).comp t hinner).const_mul a).const_add c₀
+  simpa only [Function.comp_apply] using h
+
+/-- The derivative of the affine-phase sine profile at `t`. -/
+private lemma deriv_sin_affine_aux (c₀ a k b t : ℝ) :
+    deriv (fun τ => c₀ + a * Real.sin (k * τ + b)) t =
+      a * (Real.cos (k * t + b) * (k * 1)) :=
+  (hasDerivAt_sin_affine_aux c₀ a k b t).deriv
+
+/-- Second derivative of the affine-phase sine profile: `a cos (k t + b) k` has derivative
+`-a sin (k t + b) k²`. -/
+private lemma hasDerivAt_deriv_sin_affine_aux (a k b t : ℝ) :
+    HasDerivAt (fun t => a * (Real.cos (k * t + b) * (k * 1)))
+      (a * ((-Real.sin (k * t + b) * (k * 1)) * (k * 1))) t := by
+  have hinner : HasDerivAt (fun τ => k * τ + b) (k * 1) t :=
+    ((hasDerivAt_id' t).const_mul k).add_const b
+  have h := (((Real.hasDerivAt_cos (k * t + b)).comp t hinner).mul_const (k * 1)).const_mul a
+  simpa only [Function.comp_apply] using h
+
+/-- The second derivative of the affine-phase sine profile at `t`. -/
+private lemma deriv_deriv_sin_affine_aux (c₀ a k b t : ℝ) :
+    deriv (deriv (fun τ => c₀ + a * Real.sin (k * τ + b))) t =
+      a * ((-Real.sin (k * t + b) * (k * 1)) * (k * 1)) := by
+  have hfun : deriv (fun τ => c₀ + a * Real.sin (k * τ + b)) =
+      (fun t => a * (Real.cos (k * t + b) * (k * 1))) :=
+    funext fun t => deriv_sin_affine_aux c₀ a k b t
+  rw [hfun]
+  exact (hasDerivAt_deriv_sin_affine_aux a k b t).deriv
+
+/-- The second derivative of the affine-phase sine profile is bounded by `|a| k²`. -/
+private lemma abs_deriv2_sin_affine_aux (c₀ a k b t : ℝ) :
+    |deriv (deriv (fun τ => c₀ + a * Real.sin (k * τ + b))) t| ≤ |a| * k ^ 2 := by
+  rw [deriv_deriv_sin_affine_aux]
+  have hsin : |Real.sin (k * t + b)| ≤ 1 := Real.abs_sin_le_one _
+  have hk2 : k ^ 2 = |k| * |k| := by rw [← sq_abs, pow_two]
+  have habs : |a * ((-Real.sin (k * t + b) * (k * 1)) * (k * 1))| =
+      |a| * (|Real.sin (k * t + b)| * |k|) * |k| := by
+    rw [abs_mul, abs_mul, abs_mul, abs_neg, mul_one]
+    ring
+  rw [habs, hk2]
+  calc |a| * (|Real.sin (k * t + b)| * |k|) * |k|
+      ≤ |a| * (1 * |k|) * |k| := by
+        apply mul_le_mul_of_nonneg_right _ (abs_nonneg k)
+        apply mul_le_mul_of_nonneg_left _ (abs_nonneg a)
+        exact mul_le_mul_of_nonneg_right hsin (abs_nonneg k)
+    _ = |a| * (|k| * |k|) := by ring
+
+/-- Second-order Taylor remainder on `[a, b]` with `a < b`: if `f` and `f'` are differentiable
+everywhere and `|f''| ≤ M`, then `|f b - f a - (b - a) f' a| ≤ M (b - a)² / 2`, by Rolle's
+theorem applied twice. -/
+private lemma abs_taylor_remainder_aux {f : ℝ → ℝ} {a b : ℝ} {M : ℝ} (hab : a < b)
+    (hf : ∀ t, HasDerivAt f (deriv f t) t)
+    (hf' : ∀ t, HasDerivAt (deriv f) (deriv (deriv f) t) t)
+    (hM : ∀ t, |deriv (deriv f) t| ≤ M) :
+    |f b - f a - (b - a) * deriv f a| ≤ M * (b - a) ^ 2 / 2 := by
+  set D := deriv f a with hD
+  set R := f b - f a - (b - a) * D with hR
+  set S := (b - a) * (b - a) with hS
+  have hSpos : 0 < S := by
+    rw [hS]
+    exact mul_pos (sub_pos.mpr hab) (sub_pos.mpr hab)
+  have hSne : S ≠ 0 := ne_of_gt hSpos
+  have hφ : ∀ t, HasDerivAt (fun t => f t - f a - (t - a) * D - (R / S) * ((t - a) * (t - a)))
+      ((deriv f t - 1 * D) - (R / S) * (1 * (t - a) + (t - a) * 1)) t := by
+    intro t
+    have hlin : HasDerivAt (fun t => (t - a) * D) (1 * D) t :=
+      ((hasDerivAt_id' t).sub_const a).mul_const D
+    have hsq : HasDerivAt (fun t => (t - a) * (t - a)) (1 * (t - a) + (t - a) * 1) t :=
+      ((hasDerivAt_id' t).sub_const a).mul (((hasDerivAt_id' t).sub_const a))
+    have hquad : HasDerivAt (fun t => (R / S) * ((t - a) * (t - a)))
+        ((R / S) * (1 * (t - a) + (t - a) * 1)) t :=
+      hsq.const_mul (R / S)
+    exact (((hf t).sub_const (f a)).sub hlin).sub hquad
+  have hφa : (fun t => f t - f a - (t - a) * D - (R / S) * ((t - a) * (t - a))) a = 0 := by
+    change f a - f a - (a - a) * D - (R / S) * ((a - a) * (a - a)) = 0
+    simp
+  have hφb : (fun t => f t - f a - (t - a) * D - (R / S) * ((t - a) * (t - a))) b = 0 := by
+    change f b - f a - (b - a) * D - (R / S) * ((b - a) * (b - a)) = 0
+    rw [← hS, div_mul_cancel₀ _ hSne, ← hR, sub_self]
+  have hφcont : ContinuousOn (fun t => f t - f a - (t - a) * D - (R / S) * ((t - a) * (t - a)))
+      (Set.Icc a b) :=
+    fun x _ => (hφ x).continuousAt.continuousWithinAt
+  have hφeq : (fun t => f t - f a - (t - a) * D - (R / S) * ((t - a) * (t - a))) a =
+      (fun t => f t - f a - (t - a) * D - (R / S) * ((t - a) * (t - a))) b := by
+    rw [hφa, hφb]
+  obtain ⟨c₁, ⟨hac₁, hc₁b⟩, hc₁⟩ :=
+    exists_hasDerivAt_eq_zero hab hφcont hφeq (fun x _ => hφ x)
+  have hφ₁ : ∀ x, HasDerivAt
+      (fun x => (deriv f x - 1 * D) - (R / S) * (1 * (x - a) + (x - a) * 1))
+      ((deriv (deriv f) x) - (R / S) * (1 * 1 + 1 * 1)) x := by
+    intro x
+    have hlin1 : HasDerivAt (fun x => 1 * (x - a)) (1 * 1) x :=
+      (((hasDerivAt_id' x).sub_const a).const_mul 1)
+    have hlin2 : HasDerivAt (fun x => (x - a) * 1) (1 * 1) x :=
+      (((hasDerivAt_id' x).sub_const a).mul_const 1)
+    have hadd : HasDerivAt (fun x => 1 * (x - a) + (x - a) * 1) (1 * 1 + 1 * 1) x :=
+      hlin1.add hlin2
+    have hquad : HasDerivAt (fun x => (R / S) * (1 * (x - a) + (x - a) * 1))
+        ((R / S) * (1 * 1 + 1 * 1)) x :=
+      hadd.const_mul (R / S)
+    exact ((hf' x).sub_const (1 * D)).sub hquad
+  have hφa1 : (deriv f a - 1 * D) - (R / S) * (1 * (a - a) + (a - a) * 1) = 0 := by
+    rw [hD]; simp
+  have hc₁' : (deriv f c₁ - 1 * D) - (R / S) * (1 * (c₁ - a) + (c₁ - a) * 1) = 0 := hc₁
+  have hφ₁cont : ContinuousOn
+      (fun x => (deriv f x - 1 * D) - (R / S) * (1 * (x - a) + (x - a) * 1))
+      (Set.Icc a c₁) :=
+    fun x _ => (hφ₁ x).continuousAt.continuousWithinAt
+  have hφ₁eq : (fun x => (deriv f x - 1 * D) - (R / S) * (1 * (x - a) + (x - a) * 1)) a =
+      (fun x => (deriv f x - 1 * D) - (R / S) * (1 * (x - a) + (x - a) * 1)) c₁ := by
+    change (deriv f a - 1 * D) - (R / S) * (1 * (a - a) + (a - a) * 1) =
+      (deriv f c₁ - 1 * D) - (R / S) * (1 * (c₁ - a) + (c₁ - a) * 1)
+    rw [hφa1, hc₁']
+  obtain ⟨c₂, ⟨hac₂, hc₂c₁⟩, hc₂⟩ :=
+    exists_hasDerivAt_eq_zero hac₁ hφ₁cont hφ₁eq (fun x _ => hφ₁ x)
+  have hc₂' : deriv (deriv f) c₂ - (R / S) * (1 * 1 + 1 * 1) = 0 := hc₂
+  have hD2 : deriv (deriv f) c₂ = R / S * 2 := by
+    have h2 : ((1 * (1:ℝ) + 1 * 1)) = 2 := by norm_num
+    rw [h2] at hc₂'
+    linarith [hc₂']
+  have hR : R = deriv (deriv f) c₂ * S / 2 := by
+    rw [hD2]
+    have hSmul : R / S * S = R := div_mul_cancel₀ R hSne
+    calc R = R / S * S := hSmul.symm
+      _ = R / S * 2 * S / 2 := by ring
+  have hSpos2 : (0:ℝ) < S / 2 := half_pos hSpos
+  have h2abs : |(2:ℝ)| = 2 := by norm_num
+  calc |R| = |deriv (deriv f) c₂ * S / 2| := by rw [hR]
+    _ = |deriv (deriv f) c₂| * (S / 2) := by
+        rw [abs_div, abs_mul, abs_of_pos hSpos, h2abs]; ring
+    _ ≤ M * (S / 2) := mul_le_mul_of_nonneg_right (hM c₂) (le_of_lt hSpos2)
+    _ = M * (b - a) ^ 2 / 2 := by rw [hS]; ring
+
+/-- Taylor remainder of the affine-phase sine profile for a positive step `h`. -/
+private lemma taylor_sin_affine_pos_aux (c₀ a k b s h : ℝ) (hh : 0 < h) :
+    |(c₀ + a * Real.sin (k * (s + h) + b)) - (c₀ + a * Real.sin (k * s + b)) -
+        h * deriv (fun τ => c₀ + a * Real.sin (k * τ + b)) s| ≤
+      |a| * k ^ 2 * h ^ 2 / 2 := by
+  have hmain := abs_taylor_remainder_aux (f := fun τ => c₀ + a * Real.sin (k * τ + b))
+    (M := |a| * k ^ 2) (show s < s + h by linarith)
+    (fun t => by
+      rw [deriv_sin_affine_aux c₀ a k b t]
+      exact hasDerivAt_sin_affine_aux c₀ a k b t)
+    (fun t => by
+      have hfun : deriv (fun τ => c₀ + a * Real.sin (k * τ + b)) =
+          (fun t => a * (Real.cos (k * t + b) * (k * 1))) :=
+        funext fun t => deriv_sin_affine_aux c₀ a k b t
+      rw [hfun, (hasDerivAt_deriv_sin_affine_aux a k b t).deriv]
+      exact hasDerivAt_deriv_sin_affine_aux a k b t)
+    (fun t => abs_deriv2_sin_affine_aux c₀ a k b t)
+  simpa only [add_sub_cancel_left] using hmain
+
+/-- Taylor remainder of the affine-phase sine profile for every step `h`; a negative step is
+the positive step of the reflected phase. -/
+private lemma taylor_sin_affine_aux (c₀ a k b s h : ℝ) :
+    |(c₀ + a * Real.sin (k * (s + h) + b)) - (c₀ + a * Real.sin (k * s + b)) -
+        h * deriv (fun τ => c₀ + a * Real.sin (k * τ + b)) s| ≤
+      |a| * k ^ 2 * h ^ 2 / 2 := by
+  rcases lt_trichotomy h 0 with hneg | rfl | hpos
+  · have hpos' : 0 < -h := neg_pos.mpr hneg
+    have hmain := taylor_sin_affine_pos_aux c₀ a (-k) (2 * k * s + b) s (-h) hpos'
+    have harg1 : (-k) * (s + -h) + (2 * k * s + b) = k * (s + h) + b := by ring
+    have harg2 : (-k) * s + (2 * k * s + b) = k * s + b := by ring
+    have hderiv : (-h) * deriv (fun τ => c₀ + a * Real.sin ((-k) * τ + (2 * k * s + b))) s
+        = h * deriv (fun τ => c₀ + a * Real.sin (k * τ + b)) s := by
+      rw [deriv_sin_affine_aux, deriv_sin_affine_aux, harg2]
+      ring
+    have hbound : |a| * (-k) ^ 2 * (-h) ^ 2 / 2 = |a| * k ^ 2 * h ^ 2 / 2 := by ring
+    rw [harg1, harg2, hderiv, hbound] at hmain
+    exact hmain
+  · simp
+  · exact taylor_sin_affine_pos_aux c₀ a k b s h hpos
+
+/-- At fixed `x`, the traveling wave is an affine-phase sine profile in time, with rate
+`-2π v / L`. -/
+private lemma travelingWave_time_fun_aux (c₀ a v L x : ℝ) :
+    (fun τ => travelingWave c₀ a v L τ x) =
+      (fun τ => c₀ + a * Real.sin ((-(2 * Real.pi * v / L)) * τ + 2 * Real.pi * x / L)) := by
+  funext τ
+  unfold travelingWave
+  have harg : 2 * Real.pi * (x - v * τ) / L =
+      (-(2 * Real.pi * v / L)) * τ + 2 * Real.pi * x / L := by ring
+  rw [harg]
+
+/-- At fixed `t`, the traveling wave is an affine-phase sine profile in space, with rate
+`2π / L`. -/
+private lemma travelingWave_space_fun_aux (c₀ a v L t : ℝ) :
+    (fun y => travelingWave c₀ a v L t y) =
+      (fun y => c₀ + a * Real.sin ((2 * Real.pi / L) * y + -(2 * Real.pi * v * t / L))) := by
+  funext y
+  unfold travelingWave
+  have harg : 2 * Real.pi * (y - v * t) / L =
+      (2 * Real.pi / L) * y + -(2 * Real.pi * v * t / L) := by ring
+  rw [harg]
+
+/-- Temporal Taylor defect: for every step `h`,
+`|c(t + h, x) - c(t, x) - h ∂ₜc(t, x)| ≤ v² M h² / 2` with `M = |a| (2π / L)²`. -/
+lemma travelingWave_time_taylor (c₀ a v L t x h : ℝ) :
+    |travelingWave c₀ a v L (t + h) x - travelingWave c₀ a v L t x -
+        h * deriv (fun τ => travelingWave c₀ a v L τ x) t| ≤
+      v ^ 2 * (|a| * (2 * Real.pi / L) ^ 2) * h ^ 2 / 2 := by
+  have hfun := travelingWave_time_fun_aux c₀ a v L x
+  have happ : ∀ s, travelingWave c₀ a v L s x =
+      c₀ + a * Real.sin ((-(2 * Real.pi * v / L)) * s + 2 * Real.pi * x / L) :=
+    fun s => congrFun hfun s
+  rw [hfun, happ, happ]
+  have hmain := taylor_sin_affine_aux c₀ a (-(2 * Real.pi * v / L)) (2 * Real.pi * x / L) t h
+  have hbound : |a| * (-(2 * Real.pi * v / L)) ^ 2 * h ^ 2 / 2 =
+      v ^ 2 * (|a| * (2 * Real.pi / L) ^ 2) * h ^ 2 / 2 := by ring
+  rw [hbound] at hmain
+  exact hmain
+
+/-- Spatial Taylor defect one step upstream: for every step `h`,
+`|c(t, x - h) - c(t, x) + h ∂ₓc(t, x)| ≤ M h² / 2` with `M = |a| (2π / L)²`. -/
+lemma travelingWave_space_taylor (c₀ a v L t x h : ℝ) :
+    |travelingWave c₀ a v L t (x - h) - travelingWave c₀ a v L t x +
+        h * deriv (fun y => travelingWave c₀ a v L t y) x| ≤
+      |a| * (2 * Real.pi / L) ^ 2 * h ^ 2 / 2 := by
+  have hfun := travelingWave_space_fun_aux c₀ a v L t
+  have happ : ∀ y, travelingWave c₀ a v L t y =
+      c₀ + a * Real.sin ((2 * Real.pi / L) * y + -(2 * Real.pi * v * t / L)) :=
+    fun y => congrFun hfun y
+  rw [hfun, happ, happ]
+  have hmain := taylor_sin_affine_aux c₀ a (2 * Real.pi / L) (-(2 * Real.pi * v * t / L)) x (-h)
+  rw [show (2 * Real.pi / L) * (x - h) + -(2 * Real.pi * v * t / L)
+      = (2 * Real.pi / L) * (x + -h) + -(2 * Real.pi * v * t / L) by ring]
+  have h2 : ∀ (P Q D' : ℝ), P - Q + h * D' = P - Q - (-h) * D' := fun P Q D' => by ring
+  rw [h2]
+  have h3 : |a| * (2 * Real.pi / L) ^ 2 * h ^ 2 / 2
+      = |a| * (2 * Real.pi / L) ^ 2 * (-h) ^ 2 / 2 := by ring
+  rw [h3]
+  exact hmain
+
+/-! ## J. Local truncation error at the nodes -/
+
+/-- Nodal truncation error of the upwind update on the point samples: with `dx = L / ncells`,
+Courant number `ν = v * dt / dx ≥ 0` and `M = |a| (2π / L)²`, at every node, the wrapped one
+included, `|w_j^(n+1) - ((1 - ν) w_j^n + ν w_(j-1)^n)| ≤ dt * M * (v² dt + v dx) / 2`. -/
+lemma upwind_truncation_le {ncells : ℕ} [NeZero ncells] {c₀ a v L dt : ℝ} (hL : 0 < L)
+    (hdt : 0 < dt) (hν : 0 ≤ v * dt / (L / ncells)) (n : ℕ) (j : ZMod ncells) :
+    |sampledWave c₀ a v L dt ncells (n + 1) j -
+        ((1 - v * dt / (L / ncells)) * sampledWave c₀ a v L dt ncells n j +
+          v * dt / (L / ncells) * sampledWave c₀ a v L dt ncells n (j - 1))| ≤
+      dt * (|a| * (2 * Real.pi / L) ^ 2) * (v ^ 2 * dt + v * (L / ncells)) / 2 := by
+  have hnne : ncells ≠ 0 := NeZero.ne ncells
+  have hnpos : 0 < (ncells : ℝ) := Nat.cast_pos.mpr (Nat.pos_of_ne_zero hnne)
+  have hLne : L ≠ 0 := ne_of_gt hL
+  have hncast : (ncells : ℝ) ≠ 0 := ne_of_gt hnpos
+  have hdx : 0 < L / (ncells : ℝ) := div_pos hL hnpos
+  have hdxne : L / (ncells : ℝ) ≠ 0 := ne_of_gt hdx
+  have hcast : ((n + 1 : ℕ) : ℝ) * dt = (n : ℝ) * dt + dt := by push_cast; ring
+  have hw1 : sampledWave c₀ a v L dt ncells (n + 1) j =
+      travelingWave c₀ a v L ((n : ℝ) * dt + dt) ((j.val : ℝ) * (L / ncells)) := by
+    unfold sampledWave
+    rw [hcast]
+  have hw2 : sampledWave c₀ a v L dt ncells n j =
+      travelingWave c₀ a v L ((n : ℝ) * dt) ((j.val : ℝ) * (L / ncells)) := rfl
+  have hw3 : sampledWave c₀ a v L dt ncells n (j - 1) =
+      travelingWave c₀ a v L ((n : ℝ) * dt) ((j.val : ℝ) * (L / ncells) - L / ncells) :=
+    sampledWave_sub_one hLne c₀ a v dt n j
+  rw [hw1, hw2, hw3]
+  have hA := travelingWave_time_taylor c₀ a v L ((n : ℝ) * dt) ((j.val : ℝ) * (L / ncells)) dt
+  have hB := travelingWave_space_taylor c₀ a v L ((n : ℝ) * dt) ((j.val : ℝ) * (L / ncells))
+    (L / ncells)
+  have hDt := congrArg (fun g => deriv g ((n : ℝ) * dt))
+    (travelingWave_time_fun_aux c₀ a v L ((j.val : ℝ) * (L / ncells)))
+  rw [deriv_sin_affine_aux] at hDt
+  have hDx := congrArg (fun g => deriv g ((j.val : ℝ) * (L / ncells)))
+    (travelingWave_space_fun_aux c₀ a v L ((n : ℝ) * dt))
+  rw [deriv_sin_affine_aux] at hDx
+  have hνdx : v * dt / (L / (ncells : ℝ)) * (L / (ncells : ℝ)) = v * dt :=
+    div_mul_cancel₀ _ hdxne
+  have hpde : dt * deriv (fun τ => travelingWave c₀ a v L τ ((j.val : ℝ) * (L / ncells)))
+        ((n : ℝ) * dt)
+      + v * dt / (L / ncells) * (L / ncells)
+        * deriv (fun y => travelingWave c₀ a v L ((n : ℝ) * dt) y)
+        ((j.val : ℝ) * (L / ncells)) = 0 := by
+    rw [hνdx, hDt, hDx]
+    have hθ : (-(2 * Real.pi * v / L)) * ((n : ℝ) * dt)
+          + 2 * Real.pi * ((j.val : ℝ) * (L / ncells)) / L
+        = (2 * Real.pi / L) * ((j.val : ℝ) * (L / ncells))
+          + -(2 * Real.pi * v * ((n : ℝ) * dt) / L) := by ring
+    rw [hθ]
+    ring
+  have hT : travelingWave c₀ a v L ((n : ℝ) * dt + dt) ((j.val : ℝ) * (L / ncells))
+        - ((1 - v * dt / (L / ncells))
+          * travelingWave c₀ a v L ((n : ℝ) * dt) ((j.val : ℝ) * (L / ncells))
+          + v * dt / (L / ncells)
+          * travelingWave c₀ a v L ((n : ℝ) * dt) ((j.val : ℝ) * (L / ncells) - L / ncells))
+      = (travelingWave c₀ a v L ((n : ℝ) * dt + dt) ((j.val : ℝ) * (L / ncells))
+        - travelingWave c₀ a v L ((n : ℝ) * dt) ((j.val : ℝ) * (L / ncells))
+        - dt * deriv (fun τ => travelingWave c₀ a v L τ ((j.val : ℝ) * (L / ncells)))
+          ((n : ℝ) * dt))
+        - v * dt / (L / ncells)
+          * (travelingWave c₀ a v L ((n : ℝ) * dt) ((j.val : ℝ) * (L / ncells) - L / ncells)
+        - travelingWave c₀ a v L ((n : ℝ) * dt) ((j.val : ℝ) * (L / ncells))
+        + (L / ncells) * deriv (fun y => travelingWave c₀ a v L ((n : ℝ) * dt) y)
+          ((j.val : ℝ) * (L / ncells))) := by
+    linear_combination hpde
+  rw [hT]
+  set A := travelingWave c₀ a v L ((n : ℝ) * dt + dt) ((j.val : ℝ) * (L / ncells))
+    - travelingWave c₀ a v L ((n : ℝ) * dt) ((j.val : ℝ) * (L / ncells))
+    - dt * deriv (fun τ => travelingWave c₀ a v L τ ((j.val : ℝ) * (L / ncells)))
+      ((n : ℝ) * dt) with hAdef
+  set B := travelingWave c₀ a v L ((n : ℝ) * dt) ((j.val : ℝ) * (L / ncells) - L / ncells)
+    - travelingWave c₀ a v L ((n : ℝ) * dt) ((j.val : ℝ) * (L / ncells))
+    + (L / ncells) * deriv (fun y => travelingWave c₀ a v L ((n : ℝ) * dt) y)
+      ((j.val : ℝ) * (L / ncells)) with hBdef
+  have hsplit : |A - v * dt / (L / ncells) * B| ≤ |A| + v * dt / (L / ncells) * |B| := by
+    calc |A - v * dt / (L / ncells) * B| = |A + (-(v * dt / (L / ncells) * B))| := by
+            rw [sub_eq_add_neg]
+      _ ≤ |A| + |-(v * dt / (L / ncells) * B)| := abs_add_le _ _
+      _ = |A| + v * dt / (L / ncells) * |B| := by rw [abs_neg, abs_mul, abs_of_nonneg hν]
+  have hle : |A| + v * dt / (L / ncells) * |B|
+      ≤ v ^ 2 * (|a| * (2 * Real.pi / L) ^ 2) * dt ^ 2 / 2
+        + v * dt / (L / ncells) * ((|a| * (2 * Real.pi / L) ^ 2) * (L / ncells) ^ 2 / 2) :=
+    add_le_add hA (mul_le_mul_of_nonneg_left hB hν)
+  have hfin : v ^ 2 * (|a| * (2 * Real.pi / L) ^ 2) * dt ^ 2 / 2
+        + v * dt / (L / ncells) * ((|a| * (2 * Real.pi / L) ^ 2) * (L / ncells) ^ 2 / 2)
+      = dt * (|a| * (2 * Real.pi / L) ^ 2) * (v ^ 2 * dt + v * (L / ncells)) / 2 := by
+    field_simp [hLne, hncast, hdxne]
+  rw [← hfin]
+  exact le_trans hsplit hle
+
+/-! ## K. Max-norm nonexpansiveness of the update -/
+
+/-- A convex combination is bounded by the larger modulus: `|(1 - ν) p + ν q| ≤ max |p| |q|`
+for `0 ≤ ν ≤ 1`. -/
+lemma abs_convex_combination_le {ν : ℝ} (hν0 : 0 ≤ ν) (hν1 : ν ≤ 1) (p q : ℝ) :
+    |(1 - ν) * p + ν * q| ≤ max |p| |q| := by
+  have h1 : (0:ℝ) ≤ 1 - ν := sub_nonneg.mpr hν1
+  have htri : |(1 - ν) * p + ν * q| ≤ (1 - ν) * |p| + ν * |q| := by
+    calc |(1 - ν) * p + ν * q| ≤ |(1 - ν) * p| + |ν * q| := abs_add_le _ _
+      _ = (1 - ν) * |p| + ν * |q| := by
+          rw [abs_mul, abs_mul, abs_of_nonneg h1, abs_of_nonneg hν0]
+  have hp : |p| ≤ max |p| |q| := le_max_left _ _
+  have hq : |q| ≤ max |p| |q| := le_max_right _ _
+  have hle : (1 - ν) * |p| + ν * |q| ≤ (1 - ν) * max |p| |q| + ν * max |p| |q| :=
+    add_le_add (mul_le_mul_of_nonneg_left hp h1) (mul_le_mul_of_nonneg_left hq hν0)
+  have heq : (1 - ν) * max |p| |q| + ν * max |p| |q| = max |p| |q| := by ring
+  linarith [htri, hle, heq]
+
+/-- Max-norm nonexpansiveness: for `0 ≤ ν ≤ 1` the periodic upwind update does not increase the
+maximum nodal modulus. -/
+lemma upwind_norm_le {n : ℕ} [NeZero n] {ν : ℝ} (hν0 : 0 ≤ ν) (hν1 : ν ≤ 1)
+    (e : ZMod n → ℝ) :
+    ‖fun j => (1 - ν) * e j + ν * e (j - 1)‖ ≤ ‖e‖ := by
+  apply (pi_norm_le_iff_of_nonempty _).mpr
+  intro j
+  change ‖(1 - ν) * e j + ν * e (j - 1)‖ ≤ ‖e‖
+  rw [Real.norm_eq_abs]
+  calc |(1 - ν) * e j + ν * e (j - 1)| ≤ max |e j| |e (j - 1)| :=
+          abs_convex_combination_le hν0 hν1 _ _
+    _ ≤ max ‖e‖ ‖e‖ := by
+          apply max_le_max
+          · rw [← Real.norm_eq_abs]; exact norm_le_pi_norm _ _
+          · rw [← Real.norm_eq_abs]; exact norm_le_pi_norm _ _
+    _ = ‖e‖ := max_self _
+
+/-! ## L. Error accumulation -/
+
+/-- Finite error induction: if `u` solves the same upwind recurrence on the same periodic nodes
+with `0 ≤ ν ≤ 1`, the nodal error `E_k = maxⱼ |u_j^k - w_j^k|` satisfies
+`E_N ≤ E_0 + N * (dt * M * (v² dt + v dx) / 2)`. -/
+lemma upwind_error_le {ncells : ℕ} [NeZero ncells] {c₀ a v L dt : ℝ} (hL : 0 < L)
+    (hdt : 0 < dt) (hν0 : 0 ≤ v * dt / (L / ncells)) (hν1 : v * dt / (L / ncells) ≤ 1)
+    (u : ℕ → ZMod ncells → ℝ)
+    (hu : ∀ k j, u (k + 1) j =
+      (1 - v * dt / (L / ncells)) * u k j + v * dt / (L / ncells) * u k (j - 1))
+    (N : ℕ) :
+    ‖fun j => u N j - sampledWave c₀ a v L dt ncells N j‖ ≤
+      ‖fun j => u 0 j - sampledWave c₀ a v L dt ncells 0 j‖ +
+        N * (dt * (|a| * (2 * Real.pi / L) ^ 2) * (v ^ 2 * dt + v * (L / ncells)) / 2) := by
+  have hnne : ncells ≠ 0 := NeZero.ne ncells
+  have hnpos : 0 < (ncells : ℝ) := Nat.cast_pos.mpr (Nat.pos_of_ne_zero hnne)
+  have hdx : 0 < L / (ncells : ℝ) := div_pos hL hnpos
+  have hv : 0 ≤ v := by
+    have hpos : 0 < dt / (L / (ncells : ℝ)) := div_pos hdt hdx
+    have heq : v * dt / (L / (ncells : ℝ)) = v * (dt / (L / (ncells : ℝ))) := by ring
+    have hν0' : 0 ≤ v * (dt / (L / (ncells : ℝ))) := by rw [← heq]; exact hν0
+    by_contra hneg
+    push Not at hneg
+    have hlt := mul_neg_of_neg_of_pos hneg hpos
+    linarith [hν0', hlt]
+  set C := dt * (|a| * (2 * Real.pi / L) ^ 2) * (v ^ 2 * dt + v * (L / ncells)) / 2 with hCdef
+  have hC : 0 ≤ C := by rw [hCdef]; positivity
+  induction N with
+  | zero => simp
+  | succ k ih =>
+    have hTnorm : ‖fun j => sampledWave c₀ a v L dt ncells (k + 1) j -
+          ((1 - v * dt / (L / ncells)) * sampledWave c₀ a v L dt ncells k j +
+            v * dt / (L / ncells) * sampledWave c₀ a v L dt ncells k (j - 1))‖ ≤ C := by
+      apply (pi_norm_le_iff_of_nonneg hC).mpr
+      intro j
+      change ‖sampledWave c₀ a v L dt ncells (k + 1) j -
+          ((1 - v * dt / (L / ncells)) * sampledWave c₀ a v L dt ncells k j +
+            v * dt / (L / ncells) * sampledWave c₀ a v L dt ncells k (j - 1))‖ ≤ C
+      rw [Real.norm_eq_abs]
+      have h := upwind_truncation_le (c₀ := c₀) (a := a) hL hdt hν0 k j
+      rwa [← hCdef] at h
+    have heq : (fun j => u (k + 1) j - sampledWave c₀ a v L dt ncells (k + 1) j)
+        = (fun j => (1 - v * dt / (L / ncells))
+            * (u k j - sampledWave c₀ a v L dt ncells k j)
+            + v * dt / (L / ncells)
+            * (u k (j - 1) - sampledWave c₀ a v L dt ncells k (j - 1)))
+          - (fun j => sampledWave c₀ a v L dt ncells (k + 1) j -
+            ((1 - v * dt / (L / ncells)) * sampledWave c₀ a v L dt ncells k j +
+              v * dt / (L / ncells) * sampledWave c₀ a v L dt ncells k (j - 1))) := by
+      funext j
+      rw [hu k j]
+      simp only [Pi.sub_apply]
+      ring
+    rw [heq]
+    refine le_trans (norm_sub_le _ _)
+      (le_trans (add_le_add (upwind_norm_le hν0 hν1 _) hTnorm) ?_)
+    have h2 : ‖fun j => u k j - sampledWave c₀ a v L dt ncells k j‖ + C
+        ≤ (‖fun j => u 0 j - sampledWave c₀ a v L dt ncells 0 j‖ + (k : ℝ) * C) + C :=
+      add_le_add ih (le_refl C)
+    have h3 : (‖fun j => u 0 j - sampledWave c₀ a v L dt ncells 0 j‖ + (k : ℝ) * C) + C
+        = ‖fun j => u 0 j - sampledWave c₀ a v L dt ncells 0 j‖ + ((k + 1 : ℕ) : ℝ) * C := by
+      push_cast
+      ring
+    rw [h3] at h2
+    exact h2
+
+/-- The final-time bound: if `N * dt ≤ T`, then `E_N ≤ E_0 + T * M * (v² dt + v dx) / 2`. -/
+lemma upwind_error_le_of_mul_le {ncells : ℕ} [NeZero ncells] {c₀ a v L dt : ℝ} (hL : 0 < L)
+    (hdt : 0 < dt) (hν0 : 0 ≤ v * dt / (L / ncells)) (hν1 : v * dt / (L / ncells) ≤ 1)
+    (u : ℕ → ZMod ncells → ℝ)
+    (hu : ∀ k j, u (k + 1) j =
+      (1 - v * dt / (L / ncells)) * u k j + v * dt / (L / ncells) * u k (j - 1))
+    (N : ℕ) {T : ℝ} (hT : N * dt ≤ T) :
+    ‖fun j => u N j - sampledWave c₀ a v L dt ncells N j‖ ≤
+      ‖fun j => u 0 j - sampledWave c₀ a v L dt ncells 0 j‖ +
+        T * (|a| * (2 * Real.pi / L) ^ 2) * (v ^ 2 * dt + v * (L / ncells)) / 2 := by
+  have hnne : ncells ≠ 0 := NeZero.ne ncells
+  have hnpos : 0 < (ncells : ℝ) := Nat.cast_pos.mpr (Nat.pos_of_ne_zero hnne)
+  have hdx : 0 < L / (ncells : ℝ) := div_pos hL hnpos
+  have hv : 0 ≤ v := by
+    have hpos : 0 < dt / (L / (ncells : ℝ)) := div_pos hdt hdx
+    have heq : v * dt / (L / (ncells : ℝ)) = v * (dt / (L / (ncells : ℝ))) := by ring
+    have hν0' : 0 ≤ v * (dt / (L / (ncells : ℝ))) := by rw [← heq]; exact hν0
+    by_contra hneg
+    push Not at hneg
+    have hlt := mul_neg_of_neg_of_pos hneg hpos
+    linarith [hν0', hlt]
+  have hM : 0 ≤ (|a| * (2 * Real.pi / L) ^ 2) * (v ^ 2 * dt + v * (L / ncells)) / 2 := by
+    positivity
+  have herr := upwind_error_le (c₀ := c₀) (a := a) hL hdt hν0 hν1 u hu N
+  have hmul := mul_le_mul_of_nonneg_right hT hM
+  have e1 : (N : ℝ) * (dt * (|a| * (2 * Real.pi / L) ^ 2) * (v ^ 2 * dt + v * (L / ncells)) / 2)
+      = ((N : ℝ) * dt)
+        * (((|a| * (2 * Real.pi / L) ^ 2) * (v ^ 2 * dt + v * (L / ncells)) / 2)) := by
+    ring
+  have e2 : T * (|a| * (2 * Real.pi / L) ^ 2) * (v ^ 2 * dt + v * (L / ncells)) / 2
+      = T * (((|a| * (2 * Real.pi / L) ^ 2) * (v ^ 2 * dt + v * (L / ncells)) / 2)) := by
+    ring
+  rw [e2]
+  rw [e1] at herr
+  linarith [herr, hmul]
 
 end AdvectionError
