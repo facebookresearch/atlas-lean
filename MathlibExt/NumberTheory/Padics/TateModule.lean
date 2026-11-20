@@ -218,8 +218,8 @@ section Counting
 
 variable [Fact p.Prime]
 
-theorem finite_torsionBy (hcard : ∀ n : ℕ,
-    Nat.card (torsionBy ℤ M ((p ^ n : ℕ) : ℤ)) = (p ^ n) ^ 2) (n : ℕ) :
+theorem finite_torsionBy {r : ℕ} (hcard : ∀ n : ℕ,
+    Nat.card (torsionBy ℤ M ((p ^ n : ℕ) : ℤ)) = (p ^ n) ^ r) (n : ℕ) :
     Finite (torsionBy ℤ M ((p ^ n : ℕ) : ℤ)) :=
   Nat.finite_of_card_ne_zero (by
     rw [hcard n]; exact pow_ne_zero _ (pow_ne_zero _ (Fact.out : p.Prime).ne_zero))
@@ -248,25 +248,26 @@ def kerMulPEquiv (n : ℕ) : (mulP p M n).ker ≃ torsionBy ℤ M ((p ^ 1 : ℕ)
   left_inv m := rfl
   right_inv m := rfl
 
-theorem mulP_surjective (hcard : ∀ n : ℕ, Nat.card (torsionBy ℤ M ((p ^ n : ℕ) : ℤ)) = (p ^ n) ^
-    2) (n : ℕ) :
+theorem mulP_surjective {r : ℕ}
+    (hcard : ∀ n : ℕ, Nat.card (torsionBy ℤ M ((p ^ n : ℕ) : ℤ)) = (p ^ n) ^ r) (n : ℕ) :
     Function.Surjective (mulP p M n) := by
   haveI := finite_torsionBy hcard (n + 1)
   haveI := finite_torsionBy hcard n
-  have hker : Nat.card (mulP p M n).ker = p ^ 2 := by
+  have hker : Nat.card (mulP p M n).ker = p ^ r := by
     rw [Nat.card_congr (kerMulPEquiv p M n), hcard 1, pow_one]
   have h := AddSubgroup.card_eq_card_quotient_mul_card_addSubgroup (mulP p M n).ker
   rw [hcard (n + 1), Nat.card_congr (QuotientAddGroup.quotientKerEquivRange (mulP p M n)).toEquiv,
       hker] at h
   have hrange : Nat.card (mulP p M n).range = Nat.card (torsionBy ℤ M ((p ^ n : ℕ) : ℤ)) := by
     rw [hcard n]
-    refine Nat.eq_of_mul_eq_mul_right (pow_pos (Fact.out : p.Prime).pos 2) ?_
-    rw [← h]; ring
+    refine Nat.eq_of_mul_eq_mul_right (pow_pos (Fact.out : p.Prime).pos r) ?_
+    rw [← h, pow_succ, mul_pow]
   rw [← AddMonoidHom.range_eq_top]
   exact AddSubgroup.eq_top_of_card_eq _ hrange
 
 theorem exists_smul_eq_of_mem_torsionBy
-    (hcard : ∀ n : ℕ, Nat.card (torsionBy ℤ M ((p ^ n : ℕ) : ℤ)) = (p ^ n) ^ 2) {n : ℕ} {m : M}
+    {r : ℕ} (hcard : ∀ n : ℕ, Nat.card (torsionBy ℤ M ((p ^ n : ℕ) : ℤ)) = (p ^ n) ^ r)
+    {n : ℕ} {m : M}
     (hm : m ∈ torsionBy ℤ M ((p ^ n : ℕ) : ℤ)) :
     ∃ m' ∈ torsionBy ℤ M ((p ^ (n + 1) : ℕ) : ℤ), ((p : ℕ) : ℤ) • m' = m := by
   obtain ⟨m', hm'⟩ := mulP_surjective hcard n ⟨m, hm⟩
@@ -346,34 +347,11 @@ open Submodule
 
 variable {p : ℕ} {M : Type*} [AddCommGroup M] {r : ℕ}
 
-private theorem finite_torsionBy' [Fact p.Prime]
-    (hcard : ∀ n : ℕ, Nat.card (torsionBy ℤ M ((p ^ n : ℕ) : ℤ)) = (p ^ n) ^ r) (n : ℕ) :
-    Finite (torsionBy ℤ M ((p ^ n : ℕ) : ℤ)) :=
-  Nat.finite_of_card_ne_zero (by
-    rw [hcard n]; exact pow_ne_zero _ (pow_ne_zero _ (Fact.out : p.Prime).ne_zero))
-
-private theorem mulP_surjective' [Fact p.Prime]
-    (hcard : ∀ n : ℕ, Nat.card (torsionBy ℤ M ((p ^ n : ℕ) : ℤ)) = (p ^ n) ^ r) (n : ℕ) :
-    Function.Surjective (mulP p M n) := by
-  haveI := finite_torsionBy' hcard (n + 1)
-  haveI := finite_torsionBy' hcard n
-  have hker : Nat.card (mulP p M n).ker = p ^ r := by
-    rw [Nat.card_congr (kerMulPEquiv p M n), hcard 1, pow_one]
-  have h := AddSubgroup.card_eq_card_quotient_mul_card_addSubgroup (mulP p M n).ker
-  rw [hcard (n + 1), Nat.card_congr (QuotientAddGroup.quotientKerEquivRange (mulP p M n)).toEquiv,
-    hker] at h
-  have hrange : Nat.card (mulP p M n).range = Nat.card (torsionBy ℤ M ((p ^ n : ℕ) : ℤ)) := by
-    rw [hcard n]
-    refine Nat.eq_of_mul_eq_mul_right (pow_pos (Fact.out : p.Prime).pos r) ?_
-    rw [← h, pow_succ, mul_pow]
-  rw [← AddMonoidHom.range_eq_top]
-  exact AddSubgroup.eq_top_of_card_eq _ hrange
-
 private theorem proj_surjective' [Fact p.Prime]
     (hcard : ∀ n : ℕ, Nat.card (torsionBy ℤ M ((p ^ n : ℕ) : ℤ)) = (p ^ n) ^ r) (n : ℕ) :
     ∀ m ∈ torsionBy ℤ M ((p ^ n : ℕ) : ℤ), ∃ x : TateModule p M, proj p M n x = m := by
   intro m hm
-  choose next hnext using fun k (m : torsionBy ℤ M ((p ^ k : ℕ) : ℤ)) => mulP_surjective' hcard k m
+  choose next hnext using fun k (m : torsionBy ℤ M ((p ^ k : ℕ) : ℤ)) => mulP_surjective hcard k m
   refine ⟨⟨liftFun next n ⟨m, hm⟩,
     liftFun_mem (fun k m => congrArg Subtype.val (hnext k m)) n ⟨m, hm⟩⟩, ?_⟩
   rw [proj_apply]
@@ -400,7 +378,7 @@ private theorem exists_indep_tuple_torsionBy_one [Fact p.Prime]
     (hcard : ∀ n : ℕ, Nat.card (torsionBy ℤ M ((p ^ n : ℕ) : ℤ)) = (p ^ n) ^ r) :
     ∃ e : Fin r → M, (∀ i, e i ∈ torsionBy ℤ M ((p ^ 1 : ℕ) : ℤ)) ∧
       ∀ a : Fin r → ℤ, ∑ i, a i • e i = 0 → ∀ i, (p : ℤ) ∣ a i := by
-  haveI := finite_torsionBy' hcard 1
+  haveI := finite_torsionBy hcard 1
   have hmod : ∀ m : torsionBy ℤ M ((p ^ 1 : ℕ) : ℤ), p • m = 0 := fun m =>
     Subtype.ext (by
       rw [coe_smul_of_tower, ← Nat.cast_smul_eq_nsmul ℤ, Submodule.coe_zero]
