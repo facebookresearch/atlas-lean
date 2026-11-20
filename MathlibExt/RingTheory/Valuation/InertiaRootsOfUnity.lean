@@ -31,6 +31,7 @@ module
 
 public import Mathlib.RingTheory.Valuation.RamificationGroup
 public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
+public import MathlibExt.RingTheory.Valuation.LiesOverPrime
 import Mathlib.Algebra.Ring.GeomSum
 import Mathlib.Data.Int.GCD
 
@@ -49,11 +50,6 @@ open scoped Pointwise
 namespace ValuationSubring
 
 variable {L : Type*} [Field L]
-
-/-- A valuation subring of `L` lies over the rational prime `q` when `q`,
-viewed in `L`, is a nonunit of the subring. -/
-def LiesOverPrime (A : ValuationSubring L) (q : ℕ) : Prop :=
-  (q : L) ∈ A.nonunits
 
 variable (K : Type*) [Field K] [Algebra K L]
 
