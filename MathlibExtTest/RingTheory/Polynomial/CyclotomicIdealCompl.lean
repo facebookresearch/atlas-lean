@@ -22,7 +22,7 @@ example (A : Type) [CommRing A] [IsDomain A] (B : Type) [CommRing B] [Algebra A 
     (a : A) (ha : a ^ ℓ = 1) (ha1 : a ≠ 1) :
     IsCompl (Ideal.span {ξ - algebraMap A B a})
       (Ideal.span {∏ μ ∈ (primitiveRoots ℓ A).erase a, (ξ - algebraMap A B μ)}) :=
-  Ideal.isCompl_span_singleton_sub_algebraMap_of_aeval_cyclotomic_eq_zero A B ℓ hℓA hω ξ hξ a ha ha1
+  Ideal.isCompl_span_singleton_sub_algebraMap_of_aeval_cyclotomic_eq_zero A B ℓ hℓA ξ hξ a ha ha1
 
 -- Boundary: the hypothesis that `ξ` is a root of the cyclotomic polynomial matters.
 -- With `A = B = ℚ`, `ℓ = 2`, `a = -1` and `ξ = 1` (so `Φ₂(ξ) = 2 ≠ 0`), both principal
