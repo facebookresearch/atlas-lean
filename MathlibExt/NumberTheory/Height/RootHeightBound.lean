@@ -601,4 +601,37 @@ public theorem absLogHeight_root_le_coeff {p : Polynomial (AlgebraicClosure ℚ)
     rw [← hfactor, ← hprod]
   rw [hpoly]
 
+/-- The absolute logarithmic height of the pair `![z, 1]` used above is the
+canonical absolute logarithmic height `NumberField.absLogHeight₁ z`. -/
+public theorem absLogHeight_pair_eq_absLogHeight₁ (z : AlgebraicClosure ℚ) :
+    absLogHeight ![z, 1] = NumberField.absLogHeight₁ z := by
+  classical
+  have hz : IsIntegral ℚ z := ((AlgebraicClosure.isAlgebraic ℚ).isAlgebraic z).isIntegral
+  haveI : FiniteDimensional ℚ (IntermediateField.adjoin ℚ {z}) :=
+    IntermediateField.adjoin.finiteDimensional hz
+  haveI : NumberField (IntermediateField.adjoin ℚ {z}) := {}
+  have hmem : ∀ i, ![z, (1 : AlgebraicClosure ℚ)] i ∈
+      IntermediateField.adjoin ℚ {z} := by
+    intro i
+    fin_cases i
+    · exact IntermediateField.subset_adjoin ℚ {z} (Set.mem_singleton z)
+    · exact one_mem _
+  rw [absLogHeight_eq_of_mem ![z, 1] (IntermediateField.adjoin ℚ {z}) hmem,
+    NumberField.absLogHeight₁, NumberField.absMulHeight₁, dif_pos hz,
+    Real.log_rpow (Height.mulHeight₁_pos _),
+    ← Height.logHeight₁_eq_log_mulHeight₁, Height.logHeight₁_eq_logHeight]
+  congr 2
+  funext i
+  fin_cases i <;> rfl
+
+/-- The root height bound stated through the canonical absolute logarithmic
+height `NumberField.absLogHeight₁`. -/
+public theorem absLogHeight₁_root_le_coeff {p : Polynomial (AlgebraicClosure ℚ)}
+    (hmonic : p.Monic) {z : AlgebraicClosure ℚ} (hroot : p.eval z = 0) :
+    NumberField.absLogHeight₁ z
+      ≤ absLogHeight (fun k : Fin (p.natDegree + 1) => p.coeff k)
+        + Real.log (Real.sqrt (p.natDegree + 1)) := by
+  rw [← absLogHeight_pair_eq_absLogHeight₁]
+  exact absLogHeight_root_le_coeff hmonic hroot
+
 end AlgebraicCurve
