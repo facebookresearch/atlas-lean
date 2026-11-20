@@ -43,8 +43,12 @@ Checked consumers:
   `8 / 125 = 64 / 1000` of a water-like pipe; the reversed flow of the
   same pipe with the same Reynolds number and the same positive Darcy
   and Fanning factors, against the negative value of an unoriented
-  `V²` form; and the oriented Darcy factor recovered from the
-  Darcy-Weisbach loss of `PipeFrictionPorts` in both flow directions.
+  `V²` form; the oriented Darcy factor recovered from the
+  Darcy-Weisbach loss of `PipeFrictionPorts` in both flow directions;
+  the pressure drop `8` (forward) and `-8` (reverse) given back by that
+  loss with the laminar factor over a duct of length `2`; and the
+  integrability, disk area, positive mean velocity and factor check of
+  the water-like pipe.
 -/
 
 @[expose] public section
@@ -339,9 +343,10 @@ example : darcyFactorOfDrop (-1) 1 1 1 (-1) = 2 ∧ darcyFactorOfDrop 1 1 1 1 1 
   norm_num [darcyFactorOfDrop]
 
 -- `darcyFactorOfDrop` inverts the oriented Darcy-Weisbach loss of `PipeFrictionPorts` in both
--- flow directions: the pressure drop `c Q |Q|` that the coefficient `c = f L ρ / (2 D A²)` gives
--- at the flow rate `Q = A V` returns the factor `f`.
-example {f L D A ρ V : ℝ} (hD : D ≠ 0) (hA : 0 < A) (hρ : ρ ≠ 0) (hL : L ≠ 0) (hV : V ≠ 0) :
+-- flow directions: for a duct of positive length `L`, diameter `D` and area `A` carrying a fluid
+-- of positive density `ρ`, the pressure drop `c Q |Q|` that the coefficient
+-- `c = f L ρ / (2 D A²)` gives at the flow rate `Q = A V`, `V ≠ 0`, returns the factor `f`.
+example {f L D A ρ V : ℝ} (hD : 0 < D) (hA : 0 < A) (hρ : 0 < ρ) (hL : 0 < L) (hV : V ≠ 0) :
     darcyFactorOfDrop
       (_root_.FluidDynamics.PipeFrictionPorts.frictionPressureDrop
         (_root_.FluidDynamics.PipeFrictionPorts.darcyCoefficient f L D A ρ) (A * V)) L D ρ V =
@@ -351,6 +356,45 @@ example {f L D A ρ V : ℝ} (hD : D ≠ 0) (hA : 0 < A) (hρ : ρ ≠ 0) (hL : 
     _root_.FluidDynamics.PipeFrictionPorts.darcyCoefficient
   rw [abs_mul, abs_of_pos hA]
   field_simp
+
+-- With the laminar factor `64 / Re`, the Darcy-Weisbach loss of `PipeFrictionPorts` over a duct of
+-- length `2` gives back the pressure drop `G L`: `8` for the forward flow `G = 4` of the
+-- water-like pipe and `-8` for the reversed flow `G = -4`.
+example :
+    _root_.FluidDynamics.PipeFrictionPorts.frictionPressureDrop
+        (_root_.FluidDynamics.PipeFrictionPorts.darcyCoefficient
+          (64 / reynoldsNumber ⟨1000⟩ ⟨pipeMeanVelocity 4 (1 / 1000) (1 / 100) 0⟩
+            ⟨2 * (1 / 100)⟩ ⟨1 / 1000⟩ (by norm_num)) 2 (2 * (1 / 100)) (π * (1 / 100) ^ 2)
+          1000) (pipeFlowRate 4 (1 / 1000) (1 / 100) 0) = 8 ∧
+      _root_.FluidDynamics.PipeFrictionPorts.frictionPressureDrop
+        (_root_.FluidDynamics.PipeFrictionPorts.darcyCoefficient
+          (64 / reynoldsNumber ⟨1000⟩ ⟨pipeMeanVelocity (-4) (1 / 1000) (1 / 100) 0⟩
+            ⟨2 * (1 / 100)⟩ ⟨1 / 1000⟩ (by norm_num)) 2 (2 * (1 / 100)) (π * (1 / 100) ^ 2)
+          1000) (pipeFlowRate (-4) (1 / 1000) (1 / 100) 0) = -8 := by
+  obtain ⟨h1, -⟩ := pipe_frictionPressureDrop_eq (ρ := 1000) (μ := 1 / 1000) (R := 1 / 100)
+    (G := 4) (L := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) 0
+  obtain ⟨h2, -⟩ := pipe_frictionPressureDrop_eq (ρ := 1000) (μ := 1 / 1000) (R := 1 / 100)
+    (G := -4) (L := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) 0
+  exact ⟨h1.trans (by norm_num), h2.trans (by norm_num)⟩
+
+open MeasureTheory in
+-- The water-like pipe: the disk-restricted axial velocity is integrable, the pipe disk of radius
+-- `1 / 100` has area `π / 10000`, the mean velocity is positive, and a Reynolds number on the
+-- radius fails the factor check.
+example :
+    Integrable (pipeAxialFlux 4 (1 / 1000) (1 / 100) 0) ∧
+      volume.real (pipeDisk (1 / 100)) = π / 10000 ∧
+      0 < pipeMeanVelocity 4 (1 / 1000) (1 / 100) 0 ∧
+      darcyFactorOfDrop (4 * 1) 1 (2 * (1 / 100)) 1000
+          (pipeMeanVelocity 4 (1 / 1000) (1 / 100) 0) ≠
+        64 / reynoldsNumber ⟨1000⟩ ⟨pipeMeanVelocity 4 (1 / 1000) (1 / 100) 0⟩ ⟨1 / 100⟩
+          ⟨1 / 1000⟩ (by norm_num) := by
+  refine ⟨integrable_pipeAxialFlux 4 (1 / 1000) (1 / 100) 0, ?_,
+    pipeMeanVelocity_pos (by norm_num) (by norm_num) (by norm_num) 0,
+    (pipe_darcyFactor_checks (ρ := 1000) (μ := 1 / 1000) (G := 4) (R := 1 / 100) (L := 1)
+      (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) 0).1⟩
+  rw [pipeDisk_measureReal (by norm_num)]
+  ring
 
 end PipeFlowRate
 
