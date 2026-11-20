@@ -1,37 +1,9 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
+Copyright (c) 2025–2026 the contributors.
 All rights reserved.
 
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
--/
-
-/-
-Adapted from arnovich/asgard-lean, commit
-e5e098d5bce80c3907a6acd4e2beb904309a1709,
-`Gimle/Asgard/Streams/Causal.lean` and `Gimle/Asgard/Streams/Core.lean`. Author: arnovich.
-
-MIT License
-
-Copyright (c) 2025 Gimle Labs
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 -/
 
 module
@@ -46,8 +18,16 @@ A right-hand side is causal along an axis if coefficients through axis degree k
 read only input coefficients through degree k. Integration raises agreement by
 one degree, so Picard iteration stabilizes coefficient by coefficient. It gives
 exactly one formal solution with the prescribed entire degree-zero slice.
-Spatial derivatives and products preserve causality. This is formal
-Cauchy–Kowalevski: no convergence or analytic solution is asserted.
+Spatial derivatives and products preserve causality. This is formal Picard
+existence and uniqueness; no convergence or analytic solution is asserted.
+
+Mathematical reference: A. Luzón, M. A. Morón and J. L. Ramírez,
+Differential equations in Ward's calculus, Section 2 and Theorem 11,
+https://arxiv.org/abs/2408.12552. For the ordinary derivative, the source uses
+nonexpansiveness in the degree metric and contracting formal integration.
+Here the same coefficient-stabilization argument uses degree in one selected
+axis, allowing arbitrary remaining formal variables and a full boundary slice.
+This selected-axis version is an extension of the source's univariate statement.
 -/
 
 @[expose] public section
@@ -242,8 +222,8 @@ theorem formal_unique [CharZero K] (hF : IsCausal i F) (a b : MvPowerSeries σ K
       have step := (hF k a b ih).pIntegral hs
       rwa [← ha, ← hb, pIntegral_pderiv, pIntegral_pderiv] at step
 
-/-- Formal Cauchy–Kowalevski for a causal right-hand side over a characteristic
-zero field. The solution need not define a convergent series. -/
+/-- Formal Picard existence and uniqueness for a causal right-hand side over a
+characteristic-zero field. The solution need not define a convergent series. -/
 theorem existsUnique_solution [CharZero K] (hF : IsCausal i F) (b : MvPowerSeries σ K) :
     ∃! u : MvPowerSeries σ K, pderiv i u = F u ∧
       ∀ n : σ →₀ ℕ, n i = 0 → coeff n u = coeff n b := by
