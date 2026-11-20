@@ -1740,7 +1740,7 @@ example : Matrix.diagonal ![1 / 2, 3]
     fin_cases i <;>
       norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
   exact (truss_reduced_memberCoefficient_eq_inv_mulVec rF ![0, 1] ![1, 2] SF
-    hdet _ (by intro e; fin_cases e <;> norm_num) hu).1
+    hdet _ hu).1
 
 /-- W1 as a truss: virtual-work equilibrium at the two
 basis supported displacements. -/
@@ -1764,7 +1764,7 @@ example : (Matrix.diagonal ![1 / 2, 3]
     fin_cases i <;>
       norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
   have h := (truss_reduced_memberCoefficient_eq_inv_mulVec rF ![0, 1] ![1, 2] SF
-    hdet _ (by intro e; fin_cases e <;> norm_num) hu).2
+    hdet _ hu).2
   exact ⟨h _, h _⟩
 
 /-- W1 physical axial forces: member lengths `2` and

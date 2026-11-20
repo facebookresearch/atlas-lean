@@ -1380,7 +1380,7 @@ theorem reduced_stiffness_existsUnique_of_pos {n : Type*}
 
 /-- Truss instance: for the supported compatibility matrix
 `axialCompatibility r a b * S` with free coordinates indexed by
-the members, square and invertible, positive member weights
+the members, square and invertible, member weights
 `k` and a supported solution `u`, the separation-form elastic
 coefficient vector (axial force divided by member length, the
 convention of `supported_virtualWork_iff`) is the reduced
@@ -1398,7 +1398,7 @@ theorem truss_reduced_memberCoefficient_eq_inv_mulVec {J M : Type*}
     (r : J → (Fin 2 → ℝ)) (a b : M → J)
     (S : Matrix (J × Fin 2) M ℝ)
     (hdet : IsUnit (axialCompatibility r a b * S).det)
-    (k : M → ℝ) (hk : ∀ e, 0 < k e) {f u : M → ℝ}
+    (k : M → ℝ) {f u : M → ℝ}
     (hu : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
         * (axialCompatibility r a b * S)) *ᵥ u = f) :
     Matrix.diagonal k *ᵥ ((axialCompatibility r a b * S) *ᵥ u)
@@ -1421,7 +1421,7 @@ length times the separation-form coefficient
 `s = Matrix.diagonal k *ᵥ ((B S) *ᵥ u)`, tension positive)
 is the memberwise length rescaling of the reduced statics
 coefficient solution. In particular the physical forces,
-like the coefficients, do not depend on the positive axial
+like the coefficients, do not depend on the axial
 weights `k` through anything but the common statics
 solution. -/
 theorem truss_reduced_axialForce_eq {J M : Type*}
@@ -1429,7 +1429,7 @@ theorem truss_reduced_axialForce_eq {J M : Type*}
     (r : J → (Fin 2 → ℝ)) (a b : M → J)
     (S : Matrix (J × Fin 2) M ℝ)
     (hdet : IsUnit (axialCompatibility r a b * S).det)
-    (k : M → ℝ) (hk : ∀ e, 0 < k e) {f u : M → ℝ}
+    (k : M → ℝ) {f u : M → ℝ}
     (hu : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
         * (axialCompatibility r a b * S)) *ᵥ u = f) :
     (fun e => (Matrix.diagonal k
@@ -1438,6 +1438,6 @@ theorem truss_reduced_axialForce_eq {J M : Type*}
       = fun e => (((axialCompatibility r a b * S)ᵀ)⁻¹ *ᵥ f) e
           * memberLength r a b e := by
   funext e
-  rw [(truss_reduced_memberCoefficient_eq_inv_mulVec r a b S hdet k hk hu).1]
+  rw [(truss_reduced_memberCoefficient_eq_inv_mulVec r a b S hdet k hu).1]
 
 end Mechanics.TrussCompatibility
