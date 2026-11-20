@@ -11,7 +11,7 @@ public import PhyslibExt.Mechanics.HarmonicMechanics
 import MathlibExt.LinearAlgebra.Matrix.WeightedScatter
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.LinearAlgebra.Matrix.PosDef
-import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+import MathlibExt.LinearAlgebra.Matrix.FullRankLinearSystem
 
 /-!
 # Axial compatibility on the finite member table
@@ -377,32 +377,6 @@ theorem supported_posDef_iff_of_axial {J M F : Type*} [Fintype J]
 
 /-! ## F. Supported unique response -/
 
-/-- Injectivity of `M *ᵥ ·` for positive-definite `M`: such a matrix
-kills no nonzero vector. -/
-private theorem mulVec_injective_of_posDef {F : Type*} [Fintype F]
-    (M : Matrix F F ℝ) (hPD : M.PosDef) :
-    Function.Injective (fun u : F → ℝ => M *ᵥ u) := by
-  intro u v huv
-  have huv' : M *ᵥ u = M *ᵥ v := huv
-  by_contra hne
-  have hsub : u - v ≠ 0 := sub_ne_zero.mpr hne
-  have h0 : M *ᵥ (u - v) = 0 := by
-    rw [Matrix.mulVec_sub, huv', sub_self]
-  have hpos := hPD.dotProduct_mulVec_pos hsub
-  rw [h0, dotProduct_zero] at hpos
-  exact lt_irrefl 0 hpos
-
-/-- Surjectivity of `M *ᵥ ·` for positive-definite `M`: an injective
-endomorphism in finite dimension is surjective. -/
-private theorem mulVec_surjective_of_posDef {F : Type*} [Fintype F]
-    (M : Matrix F F ℝ) (hPD : M.PosDef) :
-    Function.Surjective (fun u : F → ℝ => M *ᵥ u) := by
-  have hlinj : Function.Injective ⇑(Matrix.mulVecLin M) :=
-    mulVec_injective_of_posDef M hPD
-  have hlsurj : Function.Surjective ⇑(Matrix.mulVecLin M) :=
-    LinearMap.injective_iff_surjective.mp hlinj
-  exact hlsurj
-
 /-- Reduced/full coordinate commute: the supported stiffness is the
 full stiffness restricted by the support map, `Sᵀ * K * S`. No
 positivity hypothesis is used. -/
@@ -429,20 +403,9 @@ theorem supported_existsUnique_of_posDef {J M F : Type*} [Fintype J]
     (f : F → ℝ) :
     ∃! u : F → ℝ, ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
         * (axialCompatibility r a b * S)) *ᵥ u = f := by
-  have hinj : Function.Injective (fun u : F → ℝ =>
-      ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
-        * (axialCompatibility r a b * S)) *ᵥ u) :=
-    mulVec_injective_of_posDef _ hPD
-  have hsurj : Function.Surjective (fun u : F → ℝ =>
-      ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
-        * (axialCompatibility r a b * S)) *ᵥ u) :=
-    mulVec_surjective_of_posDef _ hPD
-  obtain ⟨u, hu⟩ := hsurj f
-  have hu' : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
-      * (axialCompatibility r a b * S)) *ᵥ u = f := hu
-  refine ⟨u, hu', ?_⟩
-  intro v hv
-  exact hinj (hv.trans hu'.symm)
+  classical
+  exact Matrix.exists_unique_mulVec_eq
+    (Matrix.mulVec_injective_of_isUnit hPD.isUnit) f
 
 /-- Explicit supported response: for positive-definite supported
 stiffness, `u` solves the supported system exactly when it is the
@@ -461,21 +424,7 @@ theorem supported_mulVec_eq_iff_inv_mulVec {J M F : Type*} [Fintype J]
   have hU : IsUnit (((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
       * (axialCompatibility r a b * S))).det :=
     isUnit_iff_ne_zero.mpr (ne_of_gt hPD.det_pos)
-  constructor
-  · intro h
-    have h2 : (((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
-          * (axialCompatibility r a b * S))⁻¹) *ᵥ
-          (((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
-          * (axialCompatibility r a b * S)) *ᵥ u)
-        = (((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
-          * (axialCompatibility r a b * S))⁻¹) *ᵥ f :=
-      congrArg (fun v => (((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
-        * (axialCompatibility r a b * S))⁻¹) *ᵥ v) h
-    rwa [Matrix.mulVec_mulVec, Matrix.nonsing_inv_mul _ hU,
-      Matrix.one_mulVec] at h2
-  · intro h
-    rw [h, Matrix.mulVec_mulVec, Matrix.mul_nonsing_inv _ hU,
-      Matrix.one_mulVec]
+  exact Matrix.mulVec_eq_iff_inv_mulVec hU
 
 /-- Certified unique supported response: for positive member
 weights `k` and trivial supported kernel (no supported null mode),
