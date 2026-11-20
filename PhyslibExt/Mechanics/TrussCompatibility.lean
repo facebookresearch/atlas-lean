@@ -62,7 +62,8 @@ functional for a fixed output and proves it from reciprocal
 work with a single inverse application.
 Section J bounds every convex combination over a finite
 load table by the minimum and maximum vertex responses of
-the same fixed-output response.
+the same fixed-output response, and the absolute response
+by the maximum absolute vertex response.
 
 ## ii. Key results
 
@@ -102,6 +103,9 @@ the same fixed-output response.
   every convex combination over a nonempty finite load
   table has fixed-output response between the minimum and
   maximum vertex responses.
+- `supported_abs_convexCombination_output_le_sup'_abs`:
+  the absolute fixed output of a combined solution is at
+  most the maximum absolute vertex output.
 
 ## iii. Table of contents
 
@@ -1192,6 +1196,86 @@ theorem supported_unitLoadResponse_convexCombination_output_bounds
       = s.sup' hs (fun i => aout ⬝ᵥ (u i)) :=
     Finset.sup'_congr hs rfl hveq
   rw [h0eq, hinf, hsup] at hmain
+  exact hmain
+
+/-- Absolute load hull for the retained response: for a nonempty
+scenario table with nonnegative coefficients summing to one, the
+absolute response of the combined load is at most the maximum
+absolute vertex response, at one fixed supported stiffness and
+output. Vertex responses may have either sign or be zero; the
+bound is the absolute consequence of the two signed hull bounds. The coefficients are supplied finite data;
+no design factor is introduced. Stiffness, supports and output are
+the same for every scenario and for the combined load, the response
+is the one fixed linear pairing, and no solve reading is used. -/
+theorem supported_abs_unitLoadResponse_sum_smul_le_sup'_abs
+    {J M F ι : Type*} [Fintype J] [DecidableEq J] [Fintype M]
+    [DecidableEq M] [Fintype F] [DecidableEq F]
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (aout : F → ℝ)
+    (s : Finset ι) (hs : s.Nonempty) (w : ι → ℝ)
+    (f : ι → (F → ℝ)) (hw₀ : ∀ i ∈ s, 0 ≤ w i)
+    (hw₁ : ∑ i ∈ s, w i = 1) :
+    |unitLoadResponse r a b S k aout (∑ i ∈ s, w i • f i)|
+      ≤ s.sup' hs (fun i => |unitLoadResponse r a b S k aout (f i)|) := by
+  obtain ⟨hLo, hHi⟩ := supported_unitLoadResponse_convexCombination_bounds r a b S k aout s hs w f hw₀ hw₁
+  rw [abs_le]
+  constructor
+  · calc -s.sup' hs (fun i => |unitLoadResponse r a b S k aout (f i)|)
+        ≤ s.inf' hs (fun i => unitLoadResponse r a b S k aout (f i)) := by
+          refine Finset.le_inf' hs _ fun i hi => ?_
+          calc -s.sup' hs (fun i => |unitLoadResponse r a b S k aout (f i)|)
+              ≤ -|unitLoadResponse r a b S k aout (f i)| := by
+                apply neg_le_neg
+                exact Finset.le_sup' (fun i => |unitLoadResponse r a b S k aout (f i)|) hi
+            _ ≤ unitLoadResponse r a b S k aout (f i) := neg_abs_le _
+      _ ≤ unitLoadResponse r a b S k aout (∑ i ∈ s, w i • f i) := hLo
+  · calc unitLoadResponse r a b S k aout (∑ i ∈ s, w i • f i)
+        ≤ s.sup' hs (fun i => unitLoadResponse r a b S k aout (f i)) := hHi
+      _ ≤ s.sup' hs (fun i => |unitLoadResponse r a b S k aout (f i)|) := by
+          apply Finset.sup'_mono_fun
+          intro i _
+          exact le_abs_self _
+
+/-- Absolute hull bound in fixed-output form: for positive-definite
+supported stiffness, vertex solutions `K *ᵥ (u i) = f i` on the
+table and a supported solution `K *ᵥ u₀` of the combined load,
+the absolute fixed output `|aout ⬝ᵥ u₀|` of the combined solution
+is at most the maximum absolute vertex output
+`s.sup' hs (fun i => |aout ⬝ᵥ (u i)|)`. Every solution is against
+the one stiffness, supports and reference configuration; the
+solutions are presupposed, and existence stays with the supported
+unique response. This is the absolute hull bound read through the
+identification of the retained response with the fixed output,
+over the signed hull bounds. -/
+theorem supported_abs_convexCombination_output_le_sup'_abs
+    {J M F ι : Type*} [Fintype J] [DecidableEq J] [Fintype M]
+    [DecidableEq M] [Fintype F] [DecidableEq F]
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ)
+    (hPD : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+      * (axialCompatibility r a b * S)).PosDef)
+    (aout : F → ℝ) (s : Finset ι) (hs : s.Nonempty) (w : ι → ℝ)
+    (f u : ι → (F → ℝ)) (u₀ : F → ℝ)
+    (hw₀ : ∀ i ∈ s, 0 ≤ w i) (hw₁ : ∑ i ∈ s, w i = 1)
+    (hu : ∀ i ∈ s, ((axialCompatibility r a b * S)ᵀ
+        * Matrix.diagonal k
+        * (axialCompatibility r a b * S)) *ᵥ (u i) = f i)
+    (hu₀ : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S)) *ᵥ u₀
+      = ∑ i ∈ s, w i • f i) :
+    |aout ⬝ᵥ u₀| ≤ s.sup' hs (fun i => |aout ⬝ᵥ (u i)|) := by
+  have hmain :=
+    supported_abs_unitLoadResponse_sum_smul_le_sup'_abs r a b S k aout s hs w f
+      hw₀ hw₁
+  have hpt : ∀ i ∈ s, unitLoadResponse r a b S k aout (f i) = aout ⬝ᵥ (u i) :=
+    fun i hi => supported_unitLoadResponse_eq r a b S k hPD aout (hu i hi)
+  have hsup :
+      s.sup' hs (fun i => |unitLoadResponse r a b S k aout (f i)|) =
+        s.sup' hs (fun i => |aout ⬝ᵥ (u i)|) :=
+    Finset.sup'_congr hs rfl (fun i hi => by
+      show |unitLoadResponse r a b S k aout (f i)| = |aout ⬝ᵥ (u i)|
+      rw [hpt i hi])
+  rw [supported_unitLoadResponse_eq r a b S k hPD aout hu₀, hsup] at hmain
   exact hmain
 
 end Mechanics.TrussCompatibility
