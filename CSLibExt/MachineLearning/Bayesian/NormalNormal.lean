@@ -10,6 +10,7 @@ module
 
 public import CSLibExt.MachineLearning.Bayesian.Density
 public import Mathlib.Probability.Distributions.Gaussian.Real
+public import MathlibExt.Probability.Statistics.Tweedie
 
 /-!
 # Normal–Normal conjugacy with known variance
@@ -63,7 +64,9 @@ noise variance `v`. -/
 noncomputable def normalPostVar (v₀ v : ℝ≥0) : ℝ≥0 := v₀ * v / (v₀ + v)
 
 /-- The posterior mean `(v m₀ + v₀ x) / (v₀ + v)`: the precision-weighted average of the prior mean
-and the observation. -/
+and the observation, for variances that are not both `0`. When `v₀ = v = 0`, a case no result
+uses, the formula divides by `0` and its value is `0` (the posterior would be the point mass at
+`m₀`). -/
 noncomputable def normalPostMean (m₀ : ℝ) (v₀ v : ℝ≥0) (x : ℝ) : ℝ :=
   (v * m₀ + v₀ * x) / (v₀ + v)
 
@@ -171,14 +174,19 @@ theorem gaussianLikelihood_comp_gaussianReal (m₀ : ℝ) {v₀ v : ℝ≥0} (h�
 
 /-! ### The posterior -/
 
-/-- The candidate posterior: `x ↦ N(normalPostMean m₀ v₀ v x, normalPostVar v₀ v)`. -/
-noncomputable def normalPosteriorKernel (m₀ : ℝ) (v₀ v : ℝ≥0) : Kernel ℝ ℝ :=
+/-- The candidate posterior: `x ↦ N(normalPostMean m₀ v₀ v x, normalPostVar v₀ v)`, for positive
+prior and noise variances. For `v₀ = 0` or `v = 0`, which are excluded, the posterior variance is
+`0`, the Gaussian density vanishes identically and every `x` would get the zero measure. -/
+noncomputable def normalPosteriorKernel (m₀ : ℝ) (v₀ v : ℝ≥0) [NeZero v₀] [NeZero v] :
+    Kernel ℝ ℝ :=
   (Kernel.const ℝ volume).withDensity fun x θ ↦
     gaussianPDF (normalPostMean m₀ v₀ v x) (normalPostVar v₀ v) θ
 
-theorem normalPosteriorKernel_apply (m₀ : ℝ) {v₀ v : ℝ≥0} (h₀ : v₀ ≠ 0) (h : v ≠ 0) (x : ℝ) :
+theorem normalPosteriorKernel_apply (m₀ : ℝ) {v₀ v : ℝ≥0} [NeZero v₀] [NeZero v] (x : ℝ) :
     normalPosteriorKernel m₀ v₀ v x =
       gaussianReal (normalPostMean m₀ v₀ v x) (normalPostVar v₀ v) := by
+  have h₀ : v₀ ≠ 0 := NeZero.ne v₀
+  have h : v ≠ 0 := NeZero.ne v
   rw [normalPosteriorKernel,
     Kernel.withDensity_apply _ (measurable_normalPostMean_gaussianPDF m₀ v₀ v), Kernel.const_apply,
     gaussianReal_of_var_ne_zero _ (normalPostVar_ne_zero h₀ h)]
@@ -186,7 +194,7 @@ theorem normalPosteriorKernel_apply (m₀ : ℝ) {v₀ v : ℝ≥0} (h₀ : v₀
 instance (m₀ : ℝ) (v₀ v : ℝ≥0) [NeZero v₀] [NeZero v] :
     IsMarkovKernel (normalPosteriorKernel m₀ v₀ v) :=
   ⟨fun x ↦ by
-    rw [normalPosteriorKernel_apply m₀ (NeZero.ne v₀) (NeZero.ne v)]; infer_instance⟩
+    rw [normalPosteriorKernel_apply m₀]; infer_instance⟩
 
 /-- The joint law of `(x, θ)` factors through the marginal of `x` and the candidate posterior. -/
 theorem compProd_normalPosteriorKernel (m₀ : ℝ) {v₀ v : ℝ≥0} [NeZero v₀] [NeZero v] :
@@ -228,5 +236,14 @@ theorem gaussianLikelihood_comp_posterior (m₀ : ℝ) {v₀ v : ℝ≥0} [NeZer
   filter_upwards [posterior_gaussianLikelihood_gaussianReal m₀ (v₀ := v₀) (v := v)] with x hx
   rw [hx, gaussianLikelihood_comp_gaussianReal _
     (normalPostVar_ne_zero (NeZero.ne v₀) (NeZero.ne v)) (NeZero.ne v)]
+
+/-- **The Bayes-ratio posterior mean of the normal–normal model is the conjugate posterior mean.**
+For the prior `N(0, A)` and noise variance `v > 0`, the posterior mean of the Gaussian location
+model computed as a ratio of integrals against the prior (`gaussianPosteriorMean`, the quantity in
+Tweedie's formula) equals the conjugate posterior mean `normalPostMean 0 A v x = A x / (A + v)`. -/
+theorem gaussianPosteriorMean_gaussianReal_eq_normalPostMean (A : ℝ≥0) {v : ℝ≥0} [NeZero v]
+    (x : ℝ) : gaussianPosteriorMean (gaussianReal 0 A) v x = normalPostMean 0 A v x := by
+  rw [gaussianPosteriorMean_gaussianReal A x, normalPostMean]
+  ring
 
 end Cslib.MachineLearning.Bayesian

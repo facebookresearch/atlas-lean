@@ -2,6 +2,7 @@
 
 Point-set topology of topological and metric spaces: connectedness, separation and cardinal invariants, homogeneous spaces, direct and inverse limits of spaces, restricted products, and dimension theory.
 
+- [Bounded components of the complement](bounded-components-of-the-complement/README.md)
 - [Covering and inductive dimension](covering-and-inductive-dimension/README.md)
 - [Dimension-raising open maps](dimension-raising-open-maps/README.md)
 - [Direct limits of topological spaces](direct-limits-of-topological-spaces/README.md)

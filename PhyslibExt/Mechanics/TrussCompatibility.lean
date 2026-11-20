@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Mechanics.HarmonicMechanics
+import MathlibExt.LinearAlgebra.Matrix.WeightedScatter
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.LinearAlgebra.Matrix.PosDef
 
@@ -37,7 +38,11 @@ quadratic form (twice the linearized stored energy, in the
 convention of `BeamStiffness`) is the member sum and is
 positive semidefinite for nonnegative stiffnesses. Zero-length members contribute zero rows in the
 unit form (totalized inverse); a physical energy reading
-needs distinct endpoints. No rigidity condition is proved.
+needs distinct endpoints. The rigidity certificate
+(section E) characterizes positive definiteness, for
+positive member weights, by the absence of
+generalized-coordinate null modes of the supported
+compatibility map.
 
 ## ii. Key results
 
@@ -52,6 +57,10 @@ needs distinct endpoints. No rigidity condition is proved.
 - `supported_virtualWork_iff`: supported equilibrium iff
   internal and external virtual work agree on every
   supported virtual displacement.
+- `supported_posDef_iff`: for positive member weights the
+  supported stiffness is positive definite iff the supported
+  compatibility map has trivial kernel (no
+  generalized-coordinate null mode).
 
 ## iii. Table of contents
 
@@ -59,6 +68,7 @@ needs distinct endpoints. No rigidity condition is proved.
 - B. Transpose force collection
 - C. Supported quadratic form
 - D. Supported virtual work
+- E. Supported rigidity certificate
 
 ## iv. References
 
@@ -275,5 +285,85 @@ theorem supported_virtualWork_iff {J M F : Type*}
       ∀ v : F → ℝ, s ⬝ᵥ ((axialCompatibility r a b * S) *ᵥ v) = f ⬝ᵥ v :=
   supported_virtualWork_iff_of
     (fun r a b S u N => supported_pairing r a b S u N) r a b S s f
+
+/-! ## E. Supported rigidity certificate -/
+
+/-- Support-restriction rigidity certificate: for positive
+member stiffnesses `k`, the supported stiffness
+`(B S)ᵀ diag(k) (B S)` is positive definite iff the
+supported compatibility map `B S` has trivial kernel (no
+generalized-coordinate null mode). For arbitrary `S` a
+kernel vector `u` need not give a nonzero joint
+displacement `S *ᵥ u`; the physical supported-mechanism
+reading needs `S.mulVec` injective, as for a coordinate
+selection. Connectivity of the member graph is not
+assumed and does not suffice. This is the weighted-Gram
+characterization
+`MetaMathlibExt.posDef_mul_diagonal_mul_transpose_iff`
+at the supported compatibility map. -/
+theorem supported_posDef_iff {J M F : Type*} [Fintype J]
+    [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (hk : ∀ e, 0 < k e) :
+    ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S)).PosDef ↔
+      ∀ u : F → ℝ, (axialCompatibility r a b * S) *ᵥ u = 0 → u = 0 := by
+  have hgen := MetaMathlibExt.posDef_mul_diagonal_mul_transpose_iff
+    (B := (axialCompatibility r a b * S)ᵀ) (w := k) (fun e => (hk e).le)
+  rw [Matrix.transpose_transpose] at hgen
+  rw [hgen]
+  constructor
+  · intro h u hu
+    by_contra hne
+    obtain ⟨e, -, he⟩ := h u hne
+    rw [Matrix.vecMul_transpose] at he
+    have h0 : ((axialCompatibility r a b * S) *ᵥ u) e = 0 := by
+      simp only [hu, Pi.zero_apply]
+    exact he h0
+  · intro h v hv
+    have hne : (axialCompatibility r a b * S) *ᵥ v ≠ 0 :=
+      fun h0 => hv (h v h0)
+    obtain ⟨e, he⟩ := Function.ne_iff.mp hne
+    simp only [Pi.zero_apply] at he
+    exact ⟨e, hk e, by rwa [Matrix.vecMul_transpose]⟩
+
+/-- The same certificate with the kernel written as
+`ker (B S) = ⊥`. -/
+theorem supported_posDef_iff_ker_eq_bot {J M F : Type*} [Fintype J]
+    [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (hk : ∀ e, 0 < k e) :
+    ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S)).PosDef ↔
+      LinearMap.ker (axialCompatibility r a b * S).mulVecLin = ⊥ := by
+  rw [supported_posDef_iff r a b S k hk, Submodule.eq_bot_iff]
+  constructor
+  · intro h x hx
+    rw [LinearMap.mem_ker, Matrix.mulVecLin_apply] at hx
+    exact h x hx
+  · intro hker u hu
+    apply hker
+    rw [LinearMap.mem_ker, Matrix.mulVecLin_apply]
+    exact hu
+
+/-- Physical instance: separation rows pair with
+`E A / L ^ 3`; positive `E`, `A` and noncoincident endpoint
+positions (`r (a e) ≠ r (b e)`, the model admission
+`L > 0`) make these weights positive. The kernel side is
+in generalized coordinates `u`; it reads as supported
+joint mechanisms when `S.mulVec` is injective. -/
+theorem supported_posDef_iff_of_axial {J M F : Type*} [Fintype J]
+    [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
+    (r : J → (Fin 2 → ℝ)) (a b : M → J) (S : Matrix (J × Fin 2) F ℝ)
+    {E A : M → ℝ} (hE : ∀ e, 0 < E e) (hA : ∀ e, 0 < A e)
+    (hne : ∀ e, r (a e) ≠ r (b e)) :
+    ((axialCompatibility r a b * S)ᵀ
+        * Matrix.diagonal (fun e => E e * A e / memberLength r a b e ^ 3)
+        * (axialCompatibility r a b * S)).PosDef ↔
+      ∀ u : F → ℝ, (axialCompatibility r a b * S) *ᵥ u = 0 → u = 0 := by
+  have hk : ∀ e, 0 < E e * A e / memberLength r a b e ^ 3 := fun e =>
+    div_pos (mul_pos (hE e) (hA e))
+      (pow_pos (memberLength_pos_of_ne r a b (hne e)) 3)
+  exact supported_posDef_iff r a b S _ hk
 
 end Mechanics.TrussCompatibility
