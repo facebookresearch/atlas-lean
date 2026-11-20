@@ -59,7 +59,7 @@ variable {N : ℕ} {k : ℤ}
 
 /-- The integrand of the Petersson pairing: the sum over the cosets of
 `Γ₀(N)` in `SL(2, ℤ)` of the pointwise Petersson products of translates. -/
-noncomputable def peterssonIntegrand (f g : CuspForm (CongruenceSubgroup.Gamma0 N) k)
+noncomputable def peterssonIntegrand [NeZero N] (f g : CuspForm (CongruenceSubgroup.Gamma0 N) k)
     (τ : UpperHalfPlane) : ℂ :=
   ∑ᶠ q : SL(2, ℤ) ⧸ CongruenceSubgroup.Gamma0 N,
     UpperHalfPlane.petersson k (⇑f ∣[k] (q.out⁻¹ : SL(2, ℤ)))
@@ -67,11 +67,11 @@ noncomputable def peterssonIntegrand (f g : CuspForm (CongruenceSubgroup.Gamma0 
 
 /-- The Petersson pairing of two cusp forms for `Γ₀(N)`, as the integral
 of `peterssonIntegrand` over the standard fundamental domain. -/
-noncomputable def petersson (f g : CuspForm (CongruenceSubgroup.Gamma0 N) k) : ℂ :=
+noncomputable def petersson [NeZero N] (f g : CuspForm (CongruenceSubgroup.Gamma0 N) k) : ℂ :=
   MeasureTheory.integral (MeasureTheory.volume.restrict ModularGroup.fd)
     (peterssonIntegrand f g)
 
-theorem petersson_def (f g : CuspForm (CongruenceSubgroup.Gamma0 N) k) :
+theorem petersson_def [NeZero N] (f g : CuspForm (CongruenceSubgroup.Gamma0 N) k) :
     petersson f g =
       MeasureTheory.integral (MeasureTheory.volume.restrict ModularGroup.fd)
         (peterssonIntegrand f g) :=
@@ -238,7 +238,7 @@ private theorem peterssonSummand_mk (f g : CuspForm (CongruenceSubgroup.Gamma0 N
   rw [hγ, peterssonTranslate_mul_of_mem f σ γ γ.2,
     peterssonTranslate_mul_of_mem g σ γ γ.2]
 
-private theorem peterssonIntegrand_eq_sum
+private theorem peterssonIntegrand_eq_sum [NeZero N]
     [Fintype (SL(2, ℤ) ⧸ CongruenceSubgroup.Gamma0 N)]
     (f g : CuspForm (CongruenceSubgroup.Gamma0 N) k) (τ : ℍ) :
     peterssonIntegrand f g τ = ∑ q, peterssonSummand f g q τ := by
@@ -255,7 +255,7 @@ private theorem peterssonSummand_add (f₁ f₂ g : CuspForm (CongruenceSubgroup
     UpperHalfPlane.petersson, Pi.add_apply, map_add]
   ring
 
-private theorem peterssonIntegrand_add
+private theorem peterssonIntegrand_add [NeZero N]
     [Fintype (SL(2, ℤ) ⧸ CongruenceSubgroup.Gamma0 N)]
     (f₁ f₂ g : CuspForm (CongruenceSubgroup.Gamma0 N) k) (τ : ℍ) :
     peterssonIntegrand (f₁ + f₂) g τ =
