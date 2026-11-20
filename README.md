@@ -42,8 +42,14 @@ root validation with:
 scripts/check.sh
 ```
 
-The existing `Atlas/` developments and archived `v1/` release are not part of
-this root build. They retain their own build configuration.
+The standalone [software formalization case studies](FormalizedSoftware/README.md),
+[conjecture examples](OpenConjectures/README.md), remaining `Atlas/` developments,
+and archived `v1/` release are not part of this root build. In particular,
+[`CPythonListsort`](FormalizedSoftware/CPythonListsort/README.md) has its own
+Lean `v4.33.1` Lake package, and `v1/` retains its original build configuration.
+The remaining [`StatisticalMechanics`](Atlas/StatisticalMechanics/MIGRATED.md)
+sources stay under `Atlas/` while their migration into the extension libraries
+continues.
 
 ## Dependency explorer
 

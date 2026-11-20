@@ -56,3 +56,14 @@ lake env lean -DwarningAsError=true CSLibExtTest/Algorithms/Lean/DataStructures/
 lake env lean -DwarningAsError=true CSLibExtTest/Computability/Languages/ContextFreeCYKTests.lean
 lake env lean -DwarningAsError=true CSLibExtTest/Computability/CookLevinTests.lean
 ```
+
+## Standalone software case study
+
+The [CPython listsort example](../FormalizedSoftware/CPythonListsort/README.md)
+is a software-formalization case study, not a test of an existing `CSLibExt`
+API. It remains in a separate Lean `v4.33.1` Lake package under
+[`FormalizedSoftware`](../FormalizedSoftware/README.md), rather than being
+included in this library's Lean `v4.35.0` glob. Its verification instructions
+and isolated executable review witnesses retain their standalone trust
+boundary. Moving reusable components into `CSLibExt` and testing those APIs
+here is a separate migration, not part of the directory reorganization.
