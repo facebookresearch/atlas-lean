@@ -49,7 +49,8 @@ one-dimensional, realised over the dual numbers.
 At a point `(x₀, y₀)` on a curve with nonzero discriminant, there is a nonzero
 direction `v` such that a dual-number lift of the point lies on the base-changed
 curve exactly when its infinitesimal part is a scalar multiple of `v`.
-The direction is given by the gradient of the Weierstrass equation. -/
+The direction is the tangent direction `(F_y, -F_x)`, a quarter-turn of the
+gradient `(F_x, F_y)` of the Weierstrass equation. -/
 public theorem exists_ne_zero_forall_equation_dualNumber_iff
     {k : Type u} [Field k] (W : WeierstrassCurve.Affine k) (hΔ : W.Δ ≠ 0)
     (x₀ y₀ : k) (h₀ : W.Equation x₀ y₀) :

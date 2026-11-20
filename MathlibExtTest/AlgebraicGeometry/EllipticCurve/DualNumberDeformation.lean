@@ -24,9 +24,22 @@ example {k : Type} [Field k] (W : WeierstrassCurve.Affine k) (hΔ : W.Δ ≠ 0)
   W.exists_ne_zero_forall_equation_dualNumber_iff hΔ x₀ y₀ h₀
 
 -- The nonzero-discriminant hypothesis matters: over the singular curve
--- `y² = x³` (discriminant `0`), the cusp point `(0, 0)` satisfies the equation
--- but both gradient components vanish, so no such nonzero direction exists
--- with the stated one-dimensional description at that point via this theorem.
-example : WeierstrassCurve.Affine.Equation (⟨0, 0, 0, 0, 0⟩ : WeierstrassCurve.Affine ℚ) 0 0 := by
-  rw [WeierstrassCurve.Affine.equation_iff']
-  norm_num
+-- `y² = x³`, the cusp point `(0, 0)` satisfies the equation, but the
+-- discriminant and both partial derivatives of the Weierstrass equation
+-- vanish there, so the point is singular and the theorem does not apply.
+example : WeierstrassCurve.Affine.Equation (⟨0, 0, 0, 0, 0⟩ : WeierstrassCurve.Affine ℚ) 0 0 ∧
+    (⟨0, 0, 0, 0, 0⟩ : WeierstrassCurve.Affine ℚ).Δ = 0 ∧
+    (⟨0, 0, 0, 0, 0⟩ : WeierstrassCurve.Affine ℚ).a₁ * (0 : ℚ) -
+        (3 * (0 : ℚ) ^ 2 + 2 * (⟨0, 0, 0, 0, 0⟩ : WeierstrassCurve.Affine ℚ).a₂ * 0 +
+          (⟨0, 0, 0, 0, 0⟩ : WeierstrassCurve.Affine ℚ).a₄) = 0 ∧
+    2 * (0 : ℚ) + (⟨0, 0, 0, 0, 0⟩ : WeierstrassCurve.Affine ℚ).a₁ * 0 +
+      (⟨0, 0, 0, 0, 0⟩ : WeierstrassCurve.Affine ℚ).a₃ = 0 ∧
+    ¬ WeierstrassCurve.Affine.Nonsingular (⟨0, 0, 0, 0, 0⟩ : WeierstrassCurve.Affine ℚ) 0 0 := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · rw [WeierstrassCurve.Affine.equation_iff']; norm_num
+  · norm_num [WeierstrassCurve.Δ, WeierstrassCurve.b₂, WeierstrassCurve.b₄,
+      WeierstrassCurve.b₆, WeierstrassCurve.b₈]
+  · norm_num
+  · norm_num
+  · rw [WeierstrassCurve.Affine.nonsingular_iff']
+    rintro ⟨-, h | h⟩ <;> norm_num at h
