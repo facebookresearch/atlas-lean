@@ -106,9 +106,14 @@ disk has area `π R²`, so the mean velocity is `V = Q / (π R²) = G R² / (8 �
 centerline speed. The Darcy friction factor of an oriented pressure drop `Δp` over a length `L` of
 a duct of diameter `D` at the signed mean velocity `V` is `f = 2 D Δp / (ρ V |V| L)`, the oriented
 Darcy-Weisbach relation `Δp = f (L / D) ρ V |V| / 2` of `FluidDynamics.PipeFrictionPorts` solved
-for `f`; a reversed flow has the same factor. The relation determines `f` only for `L, D, ρ > 0`
-and `V ≠ 0`, and `darcyFactorOfDrop` takes these as arguments, so no factor is defined at zero
-flow or for a degenerate duct or fluid. For the Poiseuille drop `Δp = G L` on the diameter
+for `f`; a reversed flow with its reversed drop has the same factor. A friction factor of the
+positive-factor model of `PipeFrictionPorts` exists only for `L, D, ρ > 0` and a drop in the
+direction of the flow, `0 < Δp V`; `darcyFactorOfDrop` takes these as arguments and is then
+positive, so no factor is defined at zero flow, for a degenerate duct or fluid, or for a drop
+against the flow (energy generation, not friction). It is the one definition of parts P-Q that
+inverts a physical relation; `pipeAxialFlux`, `pipeFlowRate` and the quotient
+`pipeMeanVelocity = Q / (π R²)` are total signed forms, read as the pipe flow for `μ, R > 0`,
+which every lemma assumes. For the Poiseuille drop `Δp = G L` on the diameter
 `D = 2 R` with `ρ, μ, R, L > 0` and `G ≠ 0`, in either flow direction, `f = 64 / Re` with the
 Reynolds number `Re = ρ |V| D / μ` of `EngineeringScaling.reynoldsNumber`, and the Fanning factor
 is `f / 4 = 16 / Re`; a Reynolds number on the radius, or swapping the two conventions, fails
@@ -185,6 +190,8 @@ here, not an empirical correlation, and no turbulent law is derived.
   for `G, μ, R > 0` and nonzero for `G ≠ 0`.
 - `FlowCoordinateBernoulli.pipeCenterline_eq_two_mul_meanVelocity`: the centerline speed is
   twice the mean velocity.
+- `FlowCoordinateBernoulli.darcyFactorOfDrop_pos`: the friction factor of a drop in the direction
+  of the flow is positive.
 - `FlowCoordinateBernoulli.pipe_darcyFactor_eq`, `FlowCoordinateBernoulli.pipe_fanningFactor_eq`:
   the laminar Darcy factor `64 / Re` and Fanning factor `16 / Re`, in either flow direction.
 - `FlowCoordinateBernoulli.pipe_darcyFactor_checks`: a Reynolds number on the radius and the
@@ -1409,16 +1416,18 @@ def pipeDisk (R : ℝ) : Set (ℝ × ℝ) := {q | q.1 ^ 2 + q.2 ^ 2 ≤ R ^ 2}
 /-- The point of `Space` with transverse coordinates `q` on the cross-section `x 2 = z`. -/
 def crossSectionPoint (z : ℝ) (q : ℝ × ℝ) : Space := ⟨![q.1, q.2, z]⟩
 
-/-- The axial velocity of cylindrical Poiseuille flow on the cross-section `x 2 = z`, restricted
-to the pipe disk and extended by zero: the integrand of the volumetric flow rate. -/
+/-- The signed axial velocity of cylindrical Poiseuille flow on the cross-section `x 2 = z`,
+restricted to the pipe disk and extended by zero: the integrand of the volumetric flow rate. -/
 noncomputable def pipeAxialFlux (G μ R z : ℝ) : ℝ × ℝ → ℝ :=
   (pipeDisk R).indicator fun q => pipePoiseuilleVelocity G μ R (crossSectionPoint z q) 2
 
-/-- The volumetric flow rate through the cross-section `x 2 = z`: the Lebesgue integral of the
-axial velocity over the pipe disk. -/
+/-- The signed volumetric flow rate through the cross-section `x 2 = z`, positive along `x 2`: the
+Lebesgue integral of the axial velocity over the pipe disk. -/
 noncomputable def pipeFlowRate (G μ R z : ℝ) : ℝ := ∫ q, pipeAxialFlux G μ R z q
 
-/-- The mean velocity `V = Q / (π R²)` of the pipe flow. -/
+/-- The quotient `V = Q / (π R²)` of the signed flow rate by the disk area: the signed mean
+velocity of the pipe flow for `R > 0`, which every lemma assumes (at `R = 0` it is `0`, by the
+convention `x / 0 = 0`). -/
 noncomputable def pipeMeanVelocity (G μ R z : ℝ) : ℝ := pipeFlowRate G μ R z / (π * R ^ 2)
 
 /-- The axial velocity at a cross-section point. -/
@@ -1544,6 +1553,16 @@ lemma pipeMeanVelocity_ne_zero {G μ R : ℝ} (hG : G ≠ 0) (hμ : 0 < μ) (hR 
   rw [pipeMeanVelocity_eq hμ hR]
   exact div_ne_zero (mul_ne_zero hG (by positivity)) (by positivity)
 
+/-- For `G ≠ 0` and `μ, R, L > 0` the Poiseuille pressure drop `G L` has the direction of the mean
+velocity, `0 < G L V`: `V = G R² / (8 μ)` has the sign of `G`. -/
+lemma pipe_drop_mul_meanVelocity_pos {G μ R L : ℝ} (hG : G ≠ 0) (hμ : 0 < μ) (hR : 0 < R)
+    (hL : 0 < L) (z : ℝ) : 0 < G * L * pipeMeanVelocity G μ R z := by
+  rw [pipeMeanVelocity_eq hμ hR]
+  have hGG : 0 < G * G := mul_self_pos.mpr hG
+  have h : G * L * (G * R ^ 2 / (8 * μ)) = G * G * L * R ^ 2 / (8 * μ) := by ring
+  rw [h]
+  exact div_pos (mul_pos (mul_pos hGG hL) (pow_pos hR 2)) (by positivity)
+
 /-- **Centerline speed.** For `μ, R > 0` the axial velocity on the axis is twice the mean
 velocity: `G R² / (4 μ) = 2 V`. -/
 lemma pipeCenterline_eq_two_mul_meanVelocity {μ R : ℝ} (hμ : 0 < μ) (hR : 0 < R) (G z : ℝ) :
@@ -1555,14 +1574,33 @@ lemma pipeCenterline_eq_two_mul_meanVelocity {μ R : ℝ} (hμ : 0 < μ) (hR : 0
 /-! ## Q. Reynolds number and the Darcy and Fanning factors -/
 
 /-- The Darcy friction factor `f = 2 D Δp / (ρ V |V| L)` of an oriented pressure drop `Δp` over a
-length `L > 0` of a duct of diameter `D > 0` carrying a fluid of density `ρ > 0` at a nonzero
-signed mean velocity `V`: the oriented Darcy-Weisbach relation `Δp = f (L / D) ρ V |V| / 2` of
-`FluidDynamics.PipeFrictionPorts` solved for `f`. Reversing both `V` and `Δp` keeps the factor.
-The domain is part of the definition: at zero flow, or for a duct of zero length or diameter or a
-fluid of zero density, the relation does not determine `f`, and no factor is defined. -/
+length `L > 0` of a duct of diameter `D > 0` carrying a fluid of density `ρ > 0` at the signed
+mean velocity `V`, for a drop in the direction of the flow (`0 < Δp V`): the oriented
+Darcy-Weisbach relation `Δp = f (L / D) ρ V |V| / 2` of `FluidDynamics.PipeFrictionPorts` solved
+for `f`. Reversing both `V` and `Δp` keeps the factor, and the factor is positive
+(`darcyFactorOfDrop_pos`), as in the positive-factor model of `PipeFrictionPorts`. The domain is
+part of the definition: at zero flow, or for a duct of zero length or diameter or a fluid of zero
+density, the relation does not determine `f`, and a drop against the flow (`Δp V < 0`) would
+describe energy generation rather than friction; no factor is defined there. The argument
+`0 < Δp V` implies `V ≠ 0`. -/
 noncomputable def darcyFactorOfDrop (Δp L D ρ V : ℝ) (_hL : 0 < L) (_hD : 0 < D) (_hρ : 0 < ρ)
-    (_hV : V ≠ 0) : ℝ :=
+    (_hdir : 0 < Δp * V) : ℝ :=
   2 * D * Δp / (ρ * V * |V| * L)
+
+/-- The friction factor of a drop in the direction of the flow is positive. -/
+lemma darcyFactorOfDrop_pos {Δp L D ρ V : ℝ} (hL : 0 < L) (hD : 0 < D) (hρ : 0 < ρ)
+    (hdir : 0 < Δp * V) : 0 < darcyFactorOfDrop Δp L D ρ V hL hD hρ hdir := by
+  have hV : V ≠ 0 := by
+    rintro rfl
+    simp at hdir
+  have hVa : 0 < |V| := abs_pos.mpr hV
+  have hVV : 0 < V * V := mul_self_pos.mpr hV
+  have h : darcyFactorOfDrop Δp L D ρ V hL hD hρ hdir =
+      2 * D * (Δp * V) / (ρ * (V * V) * |V| * L) := by
+    unfold darcyFactorOfDrop
+    field_simp
+  rw [h]
+  exact div_pos (mul_pos (mul_pos two_pos hD) hdir) (mul_pos (mul_pos (mul_pos hρ hVV) hVa) hL)
 
 /-- The Reynolds number of the pipe flow on the diameter:
 `ρ |V| (2 R) / μ = ρ |G| R³ / (4 μ²)`. -/
@@ -1581,7 +1619,7 @@ velocity `V` is `64 / Re`, with `Re = ρ |V| D / μ`. -/
 lemma pipe_darcyFactor_eq {ρ μ G R L : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hG : G ≠ 0) (hR : 0 < R)
     (hL : 0 < L) (z : ℝ) :
     darcyFactorOfDrop (G * L) L (2 * R) ρ (pipeMeanVelocity G μ R z) hL (mul_pos two_pos hR) hρ
-        (pipeMeanVelocity_ne_zero hG hμ hR z) =
+        (pipe_drop_mul_meanVelocity_pos hG hμ hR hL z) =
       64 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ := by
   have hGa : 0 < |G| := abs_pos.mpr hG
   rw [pipe_reynolds_eq hμ hR, darcyFactorOfDrop, pipeMeanVelocity_eq hμ hR, abs_div, abs_mul,
@@ -1594,7 +1632,7 @@ lemma pipe_darcyFactor_eq {ρ μ G R L : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hG 
 lemma pipe_fanningFactor_eq {ρ μ G R L : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hG : G ≠ 0) (hR : 0 < R)
     (hL : 0 < L) (z : ℝ) :
     darcyFactorOfDrop (G * L) L (2 * R) ρ (pipeMeanVelocity G μ R z) hL (mul_pos two_pos hR) hρ
-        (pipeMeanVelocity_ne_zero hG hμ hR z) / 4 =
+        (pipe_drop_mul_meanVelocity_pos hG hμ hR hL z) / 4 =
       16 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ := by
   rw [pipe_darcyFactor_eq hρ hμ hG hR hL]
   ring
@@ -1605,13 +1643,13 @@ is not `16 / Re`. -/
 lemma pipe_darcyFactor_checks {ρ μ G R L : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (hG : G ≠ 0)
     (hR : 0 < R) (hL : 0 < L) (z : ℝ) :
     darcyFactorOfDrop (G * L) L (2 * R) ρ (pipeMeanVelocity G μ R z) hL (mul_pos two_pos hR) hρ
-          (pipeMeanVelocity_ne_zero hG hμ hR z) ≠
+          (pipe_drop_mul_meanVelocity_pos hG hμ hR hL z) ≠
         64 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨R⟩ ⟨μ⟩ hμ ∧
       darcyFactorOfDrop (G * L) L (2 * R) ρ (pipeMeanVelocity G μ R z) hL (mul_pos two_pos hR) hρ
-          (pipeMeanVelocity_ne_zero hG hμ hR z) / 4 ≠
+          (pipe_drop_mul_meanVelocity_pos hG hμ hR hL z) / 4 ≠
         64 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ ∧
       darcyFactorOfDrop (G * L) L (2 * R) ρ (pipeMeanVelocity G μ R z) hL (mul_pos two_pos hR) hρ
-          (pipeMeanVelocity_ne_zero hG hμ hR z) ≠
+          (pipe_drop_mul_meanVelocity_pos hG hμ hR hL z) ≠
         16 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ := by
   have hGa : 0 < |G| := abs_pos.mpr hG
   have hRe : reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨R⟩ ⟨μ⟩ hμ =
@@ -1648,7 +1686,7 @@ lemma pipe_frictionPressureDrop_eq {ρ μ R G L : ℝ} (hρ : 0 < ρ) (hμ : 0 <
   have hf := pipe_darcyFactor_eq hρ hμ hG hR hL z
   have hf4 : 16 / reynoldsNumber ⟨ρ⟩ ⟨pipeMeanVelocity G μ R z⟩ ⟨2 * R⟩ ⟨μ⟩ hμ =
       darcyFactorOfDrop (G * L) L (2 * R) ρ (pipeMeanVelocity G μ R z) hL (mul_pos two_pos hR) hρ
-        (pipeMeanVelocity_ne_zero hG hμ hR z) / 4 := by
+        (pipe_drop_mul_meanVelocity_pos hG hμ hR hL z) / 4 := by
     rw [hf]
     ring
   rw [← hf, hf4, hQ]
