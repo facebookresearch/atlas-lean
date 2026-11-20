@@ -33,7 +33,7 @@ module
 
 public import Mathlib.AlgebraicGeometry.Geometrically.Irreducible
 public import Mathlib.AlgebraicGeometry.Geometrically.Connected
-public import Mathlib.AlgebraicGeometry.PullbackCarrier
+import Mathlib.AlgebraicGeometry.PullbackCarrier
 
 /-!
 # Geometrically irreducible implies geometrically connected
