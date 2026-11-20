@@ -28,9 +28,8 @@ removed and the name restated in Mathlib style.
 
 module
 
-public import MathlibExt.RingTheory.Valuation.InertiaRootsOfUnity
-public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
-public import Mathlib.Algebra.CharP.Basic
+public import MathlibExt.RingTheory.Valuation.LiesOverPrime
+public import MathlibExt.RingTheory.LocalRing.CharP
 
 /-!
 # Characteristic of the residue field at a place above a prime
@@ -52,7 +51,4 @@ public theorem ValuationSubring.charP_residueField_of_liesOverPrime
       have hcast : ((ℓ : A) : L) = (ℓ : L) := by simp
       rwa [hcast]
     exact ValuationSubring.coe_mem_nonunits_iff.mp h2
-  have h0 : ((ℓ : ℕ) : IsLocalRing.ResidueField A) = 0 := by
-    rw [← map_natCast (IsLocalRing.residue A), IsLocalRing.residue_eq_zero_iff]
-    exact hmem
-  exact (CharP.charP_iff_prime_eq_zero (Fact.out : ℓ.Prime)).2 h0
+  exact IsLocalRing.charP_residueField_of_natCast_mem_maximalIdeal A ℓ hmem
