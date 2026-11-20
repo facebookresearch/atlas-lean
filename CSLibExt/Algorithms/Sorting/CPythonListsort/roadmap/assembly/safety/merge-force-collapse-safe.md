@@ -38,17 +38,17 @@ The public post now also exports event validity, directional-only
 classification, all-call physical boundedness from the incoming initializer
 bound, final-bound preservation, and a continuous merge-memory segment. Those
 fields are stated at
-`Code/Assembly/MergeForceCollapseSafety.lean:703`,
-`Code/Assembly/MergeForceCollapseSafety.lean:705`,
-`Code/Assembly/MergeForceCollapseSafety.lean:707`,
-`Code/Assembly/MergeForceCollapseSafety.lean:710`, and
-`Code/Assembly/MergeForceCollapseSafety.lean:713`; the existing
+`Assembly/MergeForceCollapseSafety.lean:714`,
+`Assembly/MergeForceCollapseSafety.lean:716`,
+`Assembly/MergeForceCollapseSafety.lean:718`,
+`Assembly/MergeForceCollapseSafety.lean:721`, and
+`Assembly/MergeForceCollapseSafety.lean:724`; the existing
 `mergeForceCollapse_safe` theorem at
-`Code/Assembly/MergeForceCollapseSafety.lean:729` produces them
+`Assembly/MergeForceCollapseSafety.lean:740` produces them
 without a new public premise. The reusable theorem that concatenates two
 continuous segments exactly at their shared state is
 `AccessTrace.mergeMemorySegment_compose` at
-`Code/Assembly/MergeMemoryLifecycle.lean:994`.
+`Assembly/MergeMemoryLifecycle.lean:1005`.
 
 ## Depends on
 

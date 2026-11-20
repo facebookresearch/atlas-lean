@@ -78,4 +78,5 @@ Build and execute the clients with:
 lake build CSLibExtTest.Algorithms.Sorting.CPythonListsort
 python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/verify_trust_boundary.py
 python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/test_verify_trust_boundary.py
+python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/verify_citations.py
 ```

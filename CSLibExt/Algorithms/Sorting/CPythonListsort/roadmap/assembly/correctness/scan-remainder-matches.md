@@ -21,9 +21,9 @@ must preserve each optional payload.  Initialization runs through
 `initialMergeState` with the exact `hasKeyfunc` mode of an arbitrary validated
 `ListSortInput`, so the claim covers both keyed and unkeyed construction.
 `ScanRemainderEntriesMatch` is defined at
-`Code/Correctness/ScanRemainder.lean:98`; the retained key-only
+`Correctness/ScanRemainder.lean:109`; the retained key-only
 `ScanRemainderMatches` interface is defined at
-`Code/Correctness/ScanRemainder.lean:118`.
+`Correctness/ScanRemainder.lean:129`.
 
 Keep both propositions separate from `PendingRunsCorrect`, which intentionally
 owns only the consumed prefix.  A mutation confined to the consumed range
@@ -39,24 +39,24 @@ still be rejected because its unscanned suffix is wrong.
 
 - Whole-slice occurrence tagging preserves the complete payload projection by
   `tagSortSliceOccurrences_payloads`
-  (`Code/Correctness/ScanRemainder.lean:50`).  The concrete keyed
+  (`Correctness/ScanRemainder.lean:61`).  The concrete keyed
   constructor regression keeps `some 42` paired with key `7@0`
-  (`Code/Correctness/ScanRemainder.lean:396`).
+  (`Correctness/ScanRemainder.lean:407`).
 - Initialization for an arbitrary validated `ListSortInput`, with its exact
   `hasKeyfunc` mode, is proved by
   `scanRemainderEntriesMatch_initial_listSortInput`
-  (`Code/Correctness/ScanRemainder.lean:383`).
+  (`Correctness/ScanRemainder.lean:394`).
 - A consumed-range update preserves the whole-entry suffix by
   `ScanRemainderEntriesMatch.preserve_consumed_update`
-  (`Code/Correctness/ScanRemainder.lean:262`), and consuming a new
+  (`Correctness/ScanRemainder.lean:273`), and consuming a new
   framed interval advances it by `ScanRemainderEntriesMatch.advance`
-  (`Code/Correctness/ScanRemainder.lean:288`).
+  (`Correctness/ScanRemainder.lean:299`).
 - The wrong-suffix anti-vacuity regression exhibits a state accepted by
   `PendingRunsCorrect` and rejected by `ScanRemainderMatches`
-  (`Code/Correctness/ScanRemainder.lean:460`).
+  (`Correctness/ScanRemainder.lean:471`).
 - The nonzero-base regression has matching visible values and a deliberately
   matching zero-based prefix, but is rejected for the wrong absolute origin
-  (`Code/Correctness/ScanRemainder.lean:512`).
+  (`Correctness/ScanRemainder.lean:520`).
 
 Each item above cites its theorem or executable regression; the two predicate
 locations in the opening section are definitions, not pinning theorems.

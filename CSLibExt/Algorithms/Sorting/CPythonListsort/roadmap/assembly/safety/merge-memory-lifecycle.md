@@ -16,14 +16,14 @@ returns a result whose own `trace.memoryEvents` satisfies the exact
 
 The unique projection theorem is
 `listSortImpl_mergeMemory_lifecycle` at
-`Code/Assembly/MergeMemorySafety.lean:22`. Its conclusion includes
+`Assembly/MergeMemorySafety.lean:30`. Its conclusion includes
 both the actual result equation and the lifecycle over the concrete
 `initialMergeState` and returned-state snapshots. It is projected from
 `listSortImplTraced_safe`; this node therefore does not duplicate or replace
 the termination evaluator.
 
 The upstream support predicate `AccessTrace.MergeMemoryLifecycle`, defined at
-`Code/Assembly/MergeMemoryLifecycle.lean:1023`, has the exact
+`Assembly/MergeMemoryLifecycle.lean:1034`, has the exact
 source-order equation:
 
 1. one `MergeMemoryEvent.initial` snapshot taken from the concrete
@@ -45,22 +45,22 @@ state gap.
 The chronology is theorem-pinned at each actual instrumentation boundary. An
 admitted top-level execution has the concrete initializer as its head by
 `listSortImplTraced_initial_event_head`
-(`Code/Assembly/ListSortTrace.lean:409`). Each admitted `merge_at`
+(`Assembly/ListSortTrace.lean:418`). Each admitted `merge_at`
 emits either no lifecycle event or exactly one directional-call event, and its
 observed boundaries form one continuous segment; those are the public fields
-at `Code/Assembly/MergeAtSafety.lean:1417` and `:1422`. Final cleanup
+at `Assembly/MergeAtSafety.lean:1428` and `:1433`. Final cleanup
 is appended from the actual pre-`mergeFreemem` state; the inactive and active
 exact-event equations are at
-`Code/Assembly/ListSortTrace.lean:176` and `:190`.
+`Assembly/ListSortTrace.lean:184` and `:198`.
 
 The helper-segment and terminal-tail composition theorems are at
-`Code/Assembly/MergeMemoryLifecycle.lean:994` and `:1007`; the
+`Assembly/MergeMemoryLifecycle.lean:1005` and `:1018`; the
 initializer assembly theorem is at
-`Code/Assembly/MergeMemoryLifecycle.lean:1040`. Adding the memory
+`Assembly/MergeMemoryLifecycle.lean:1051`. Adding the memory
 channel does not alter existing results. For prepending, result, erasure,
 ordinary accesses, push depths, fuel, and stack depth are pinned at
-`Code/Assembly/AccessTrace.lean:413`, `:425`, `:450`, `:463`, `:499`,
-and `:552`; the corresponding append pins are at lines 419, 431, 456, 470,
+`Assembly/AccessTrace.lean:424`, `:436`, `:461`, `:474`, `:510`,
+and `:563`; the corresponding append pins are at lines 419, 431, 456, 470,
 506, and 560. The success-conditional insertion used by directional calls has
 the same six pins at lines 437, 444, 514, 522, 530, and 568.
 

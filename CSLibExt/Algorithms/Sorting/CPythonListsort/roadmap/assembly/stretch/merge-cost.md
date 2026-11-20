@@ -9,28 +9,28 @@ lean: CPythonListsort.ListSortMergeCostPost
 # Logical merge-cost and formed-run accounting
 
 The formal accounting interface is `ListSortMergeCostPost` at
-`Code/Assembly/ListSortCostBound.lean:95`.  On the genuine
+`Assembly/ListSortCostBound.lean:103`.  On the genuine
 `listSortTraced?` execution it exports the normalized replay, exact formed-run
 profile, exact logical merge cost, weighted-path identity, and the adaptive
-formed-length relation (`Code/Assembly/ListSortCostBound.lean:100-125`).
+formed-length relation (`Assembly/ListSortCostBound.lean:108-125`).
 Its profile is a `RunProfile`, so positivity and exact sum-to-input are part of
 the type rather than caller assumptions.
 
 The raw observation types are `PendingPushEvent`, `LogicalMergeEvent`, and
-`PolicyEvent` at `Code/Assembly/AccessTrace.lean:194-219`.
+`PolicyEvent` at `Assembly/AccessTrace.lean:205-219`.
 `pushFormedRunTraced` records the real post-extension push and has exact
 erasure and legacy-trace projection theorems at
-`Code/Assembly/AccessTrace.lean:1275-1339`.  A successful
+`Assembly/AccessTrace.lean:1286-1339`.  A successful
 `merge_at` exports exactly one event for the selected pre-trim adjacent runs in
 the `MergeAtSafetyPost.logicalMerge` field at
-`Code/Assembly/MergeAtSafety.lean:1672-1686`; `mergeAt_safe` proves
-that postcondition at `Code/Assembly/MergeAtSafety.lean:2145`.  The kernel-checked
-early-trim regression at `Code/Assembly/MergeAtSafety.lean:2213`
+`Assembly/MergeAtSafety.lean:1683-1686`; `mergeAt_safe` proves
+that postcondition at `Assembly/MergeAtSafety.lean:2156`.  The kernel-checked
+early-trim regression at `Assembly/MergeAtSafety.lean:2224`
 records that logical event while recording no directional memory event.
 
 Empty and singleton executions are pinned against the actual evaluator by
 `listSortTraced_policy_empty` and `listSortTraced_policy_singleton` at
-`Code/Assembly/ListSortPolicyEndpoints.lean:58` and `:105`; both
+`Assembly/ListSortPolicyEndpoints.lean:66` and `:113`; both
 raw traces are empty, while top-level normalization supplies the singleton
 leaf `[1]` and both costs are zero.
 
@@ -41,10 +41,10 @@ after the optional `binarysort`.  Its logical-merge channel records every
 successful pending-stack combination with the two adjacent **pre-trim** run
 lengths, base, and selected stack index.  The top-level theorem
 `listSortTraced_policyBridge_active` at
-`Code/Assembly/ListSortPolicyBridge.lean:129` proves the split at the
+`Assembly/ListSortPolicyBridge.lean:137` proves the split at the
 exact `merge_force_collapse` call boundary; the exported `traceSplit` and
 `reachedCollapse` fields are visible at
-`Code/Assembly/ListSortCostBound.lean:48-53`.  Thus each merge is
+`Assembly/ListSortCostBound.lean:56-53`.  Thus each merge is
 classified by its position as a scan (`found_new_run`) event or a
 final-collapse event; the raw event does not carry an independently supplied
 origin tag that could disagree with the composed evaluator.

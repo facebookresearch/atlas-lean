@@ -20,48 +20,60 @@ required to be kernel-checked. Review packets must report their
 (`propext`, `Classical.choice`, and `Quot.sound`) admitted. Small executable
 regressions use kernel `decide` wherever it can normalize the model directly.
 
-The following twelve review witnesses instead use `native_decide` and are
-therefore **compiler-checked regressions**, not kernel-checked proof premises:
+Paths below are relative to this development's root,
+`CSLibExt/Algorithms/Sorting/CPythonListsort/`, except where they begin with
+`CSLibExtTest/`, which is relative to the repository root.
+
+The following twelve review witnesses used `native_decide` in the standalone
+development. The root library forbids that tactic, so each one is now an
+asserting `IO Unit` **runtime regression** in the test library, executed by
+`#eval` when `CSLibExtTest` is built. Each retains its original fixtures and
+its original Boolean proposition; none is a theorem, a proof premise, or a
+proposition the kernel has checked:
 
 - `mergeAt_slide_regression` —
-  `Code/Transcription/MergeAt.lean:484`;
+  `CSLibExtTest/Algorithms/Sorting/CPythonListsort/Transcription/MergeAt.lean:37`;
 - `mergeAt_thirdLast_slide_regression` —
-  `Code/Correctness/MergeAtCorrectness.lean:1929`;
+  `CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/MergeAtCorrectness.lean:158`;
 - `foundNewRunLoop_taken_merge_regression` —
-  `Code/Correctness/FoundNewRunCorrectness.lean:497`;
+  `CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/FoundNewRunCorrectness.lean:44`;
 - `mergeForceCollapse_threeRun_equalKey_payload_regression` —
-  `Code/Correctness/MergeForceCollapseCorrectness.lean:298`;
+  `CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/MergeForceCollapseCorrectness.lean:72`;
 - `listSortScan_long_run_no_extension_regression` and
   `listSortScan_policy_merge_then_push_regression` —
-  `Code/Correctness/ScanStepCorrectness.lean:855` and `:899`.
+  `CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/ScanStepCorrectness.lean:92` and `:137`.
 - `listSort_forward_keyed_duplicate_exact_regression` and
   `listSort_reverse_keyed_duplicate_exact_regression` — exact observable
   key/origin/payload outputs for one duplicate-key input in both public
   directions, at
-  `Code/Correctness/ListSortCorrectness.lean:543` and `:561`.
+  `CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/ListSortCorrectness.lean:158` and `:177`.
 - `listSort_mergeMemory_lo_event_regression` and
   `listSort_mergeMemory_hi_event_regression` — exact singleton directional-call
   lists for actual nontrivial top-level executions, at
-  `Code/Assembly/MergeMemorySafety.lean:380` and
-  `Code/Assembly/MergeMemorySafety.lean:397`;
+  `CSLibExtTest/Algorithms/Sorting/CPythonListsort/Assembly/MergeMemorySafety.lean:149` and
+  `CSLibExtTest/Algorithms/Sorting/CPythonListsort/Assembly/MergeMemorySafety.lean:168`;
 - `listSort_mergeMemory_released_growth_regression` — exact reuse/growth
   summaries for an actual keyed execution, including the released intermediate
   state before its second heap growth, at
-  `Code/Assembly/MergeMemorySafety.lean:404`.
+  `CSLibExtTest/Algorithms/Sorting/CPythonListsort/Assembly/MergeMemorySafety.lean:177`.
 - `listSort_powerSort_cost_rotation_regression` — the exact policy-event
   stream for a real 256-element execution, pinning its seven formed runs,
   boundary powers, scan cost, CPython final-collapse cost 685, and canonical
   PowerSort cost 689, in
-  `Code/Assembly/PowerSortCostRegression.lean:116`.
+  `CSLibExtTest/Algorithms/Sorting/CPythonListsort/Assembly/PowerSortCostRegression.lean:125`.
 
 These execute through opaque evaluator boundaries that kernel `decide` does
 not normalize; direct replacement was tested and fails with “Decidable did not
-reduce,” rather than merely timing out.  In the pinned Lean toolchain their
-`#print axioms` output names a declaration-local generated
-`_native.native_decide.ax_1_1` axiom.  They establish concrete branch
-reachability for human review only.  No theorem, definition, or roadmap proof
-edge may consume them.  `verify/verify_trust_boundary.py` enforces the exact
-allowlist and verifies that every listed regression has no Lean consumer.
+reduce,” rather than merely timing out.  That is why they were never
+kernel-checked premises.  As `IO Unit` definitions they carry no proof term
+and no axioms at all: the Boolean is evaluated by the Lean interpreter and a
+false result raises an `IO` error that fails the `CSLibExtTest` build.  They
+establish concrete branch reachability for human review only.  No theorem,
+definition, or roadmap proof edge may consume them.
+`verify/verify_trust_boundary.py` enforces the exact allowlist, checks each
+witness against the original proposition recorded in
+`verify/migration-map.json`, and verifies that every listed regression has no
+production consumer.
 
 <!-- AUTHORING NOTES — these comments are not published.
 

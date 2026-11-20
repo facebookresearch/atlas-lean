@@ -12,9 +12,9 @@ For a nonnegative representable list length, prove that the finite-width
 initialization takes the same branches as the arbitrary-precision exponent
 recurrence. The unconditional bridge exports the stored exponent, zero
 residual, and bounded-loop status as `minrunInit_exponent_eq_spec`
-(`Code/Equivalence/Minrun.lean:105`). The exact-mask theorem
+(`Equivalence/Minrun.lean:113`). The exact-mask theorem
 `minrunInit_eq_spec` additionally assumes that the selected exponent is below
-32 (`Code/Equivalence/Minrun.lean:123`); under that premise the
+32 (`Equivalence/Minrun.lean:131`); under that premise the
 selected 32-bit transcription mask equals the mathematical low-bit mask.
 
 No exact-mask conclusion is claimed over the full admitted input domain. The

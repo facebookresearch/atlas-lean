@@ -14,57 +14,57 @@ total involution: an origin below the input extent `size` is sent to
 `size - 1 - origin`, while an out-of-range origin is left fixed.  The fixed
 outside branch matters for fabricated or stale temporary cells; plain
 truncated subtraction would not be an involution there
-(`Code/Correctness/OriginRelabelEquivariance.lean:23`, definition;
-`Code/Correctness/OriginRelabelEquivariance.lean:31`, theorem).
+(`Correctness/OriginRelabelEquivariance.lean:31`, definition;
+`Correctness/OriginRelabelEquivariance.lean:39`, theorem).
 
 The relabeling is lifted through occurrences, synchronized entries, slices,
 temporary storage, and complete merge states.  By definition it changes
 neither values nor payloads, pending-run geometry, nor allocation metadata
-(`Code/Correctness/OriginRelabelEquivariance.lean:44` and
-`Code/Correctness/OriginRelabelEquivariance.lean:64`; definitional
+(`Correctness/OriginRelabelEquivariance.lean:52` and
+`Correctness/OriginRelabelEquivariance.lean:72`; definitional
 evidence).  Comparator preservation is theorem-pinned by
 `occurrenceComparator_mirror`
-(`Code/Correctness/OriginRelabelEquivariance.lean:151`).  The module
+(`Correctness/OriginRelabelEquivariance.lean:159`).  The module
 also exports exact commutation lemmas for the data-moving primitives used
 before the merge layer: reads and writes
-(`Code/Correctness/OriginRelabelEquivariance.lean:166` and
-`Code/Correctness/OriginRelabelEquivariance.lean:174`),
+(`Correctness/OriginRelabelEquivariance.lean:174` and
+`Correctness/OriginRelabelEquivariance.lean:182`),
 single-entry copies
-(`Code/Correctness/OriginRelabelEquivariance.lean:226` and
-`Code/Correctness/OriginRelabelEquivariance.lean:240`),
+(`Correctness/OriginRelabelEquivariance.lean:234` and
+`Correctness/OriginRelabelEquivariance.lean:248`),
 `memcpyCore?` and complete `memmove?`
-(`Code/Correctness/OriginRelabelEquivariance.lean:284` and
-`Code/Correctness/OriginRelabelEquivariance.lean:328`), and slice
-reversal (`Code/Correctness/OriginRelabelEquivariance.lean:382`).
+(`Correctness/OriginRelabelEquivariance.lean:292` and
+`Correctness/OriginRelabelEquivariance.lean:336`), and slice
+reversal (`Correctness/OriginRelabelEquivariance.lean:390`).
 The two largest public pins in this layer are `mirrorCountRun`
-(`Code/Correctness/OriginRelabelEquivariance.lean:583`) and
+(`Correctness/OriginRelabelEquivariance.lean:591`) and
 `mirrorBinarysort`
-(`Code/Correctness/OriginRelabelEquivariance.lean:722`).
+(`Correctness/OriginRelabelEquivariance.lean:730`).
 
 Ordinary `PendingRunsCorrect` is deliberately **not** claimed for a mirrored
 state: mirroring reverses the origin order used by its stability clause.
 `CanonicalMirroredPendingRunsCorrect` instead requires ordinary layout and
 sortedness on the real mirrored state while checking stability after applying
 the involution back to its pending keys
-(`Code/Correctness/OriginRelabelEquivariance.lean:803`, definition).
+(`Correctness/OriginRelabelEquivariance.lean:811`, definition).
 The analogous whole-entry and suffix relations are
 `CanonicalMirroredEntrySnapshotPermutation` and
 `CanonicalMirroredScanRemainderEntriesMatch`
-(`Code/Correctness/OriginRelabelEquivariance.lean:815` and
-`Code/Correctness/OriginRelabelEquivariance.lean:823`, definitions).
+(`Correctness/OriginRelabelEquivariance.lean:823` and
+`Correctness/OriginRelabelEquivariance.lean:831`, definitions).
 Forward certificates transport into those reverse-oriented relations, and
 unmirroring recovers the exact signed forward predicates
-(`Code/Correctness/OriginRelabelEquivariance.lean:842`,
-`Code/Correctness/OriginRelabelEquivariance.lean:859`,
-`Code/Correctness/OriginRelabelEquivariance.lean:874`,
-`Code/Correctness/OriginRelabelEquivariance.lean:885`,
-`Code/Correctness/OriginRelabelEquivariance.lean:895`, and
-`Code/Correctness/OriginRelabelEquivariance.lean:912`).
+(`Correctness/OriginRelabelEquivariance.lean:850`,
+`Correctness/OriginRelabelEquivariance.lean:867`,
+`Correctness/OriginRelabelEquivariance.lean:882`,
+`Correctness/OriginRelabelEquivariance.lean:893`,
+`Correctness/OriginRelabelEquivariance.lean:903`, and
+`Correctness/OriginRelabelEquivariance.lean:920`).
 
 The nonidentity regression uses kernel reduction via `decide`: origin zero at
 extent four becomes origin three, and the second application restores the
 original occurrence
-(`Code/Correctness/OriginRelabelEquivariance.lean:934`).
+(`Correctness/OriginRelabelEquivariance.lean:942`).
 
 This primitive support node does not assert merge or whole-scan commutation.
 Those peer-scale obligations are explicit downstream nodes:

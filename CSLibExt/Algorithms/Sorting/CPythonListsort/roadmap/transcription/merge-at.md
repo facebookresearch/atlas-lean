@@ -21,7 +21,7 @@ reach both directional continuations.
 The third-last stack-slide witness `mergeAt_slide_regression` is one of the
 compiler-checked leaves listed in the project-wide
 [proof trust boundary](../README.md#proof-trust-boundary)
-(`Code/Transcription/MergeAt.lean:484`). It is review evidence only
+(`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Transcription/MergeAt.lean:37`). It is review evidence only
 and has no Lean consumer; the smaller directional-preparation witnesses use
 kernel `decide`.
 

@@ -18,12 +18,12 @@ targets `target` satisfying
 ```
 
 The main result is `minrunNextN_output_bounds` at
-`Code/Equivalence/MinrunResults.lean:295`. Its companion
+`Equivalence/MinrunResults.lean:303`. Its companion
 `minrunNext_after_init_bounds` at
-`Code/Equivalence/MinrunResults.lean:309` packages the exact
+`Equivalence/MinrunResults.lean:317` packages the exact
 one-step form consumed by the top-level scan after any reachable call prefix.
 That consumption is explicit in `adaptiveMinrun_step_facts` at
-`Code/Assembly/ListSortSupport.lean:270`.
+`Assembly/ListSortSupport.lean:278`.
 
 The proof must not route through `minrunInit_eq_spec`, `minrunPrefixSum`, or
 `minrunSequence`. Instead, use the exponent characterization to show that the
@@ -35,11 +35,11 @@ quotient/remainder equivalence once the mask truncates.
 
 The kernel-checked executable regression
 `minrun_cIntMask_truncation_regression` at
-`Code/Equivalence/MinrunResults.lean:342` makes the distinction
+`Equivalence/MinrunResults.lean:350` makes the distinction
 observable: at exponent 33 its first two actual targets are `[63, 63]`, while
-the ideal full-width trace emits `[63, 64]`. It uses kernel `decide`, not
-`native_decide`, and is review evidence rather than a premise of the range
-proof.
+the ideal full-width trace emits `[63, 64]`. It is kernel-checked by `decide`
+rather than left to an interpreted runtime check, and is review evidence
+rather than a premise of the range proof.
 
 ## Depends on
 

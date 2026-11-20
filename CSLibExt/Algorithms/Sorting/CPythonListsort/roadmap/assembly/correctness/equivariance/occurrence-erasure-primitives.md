@@ -11,19 +11,19 @@ lean: CPythonListsort.eraseOccurrenceBinarysort
 Occurrence tags are proof ghosts: execution may move them with entries, but
 must not inspect them.  Structural erasure is defined for entries, slices,
 temporary storage, merge states, and complete top-level results
-(`Code/Correctness/OccurrenceErasure.lean:20`, `:26`, `:37`, `:44`,
-and `:59`; definitions).  The projected occurrence comparator is literally
+(`Correctness/OccurrenceErasure.lean:28`, `:34`, `:45`, `:52`,
+and `:67`; definitions).  The projected occurrence comparator is literally
 the original value comparator
-(`Code/Correctness/OccurrenceErasure.lean:67`).
+(`Correctness/OccurrenceErasure.lean:75`).
 
 The primitive simulation proves exact evaluator equations rather than only an
 output permutation.  It covers allocation and storage replacement through
 `eraseOccurrenceMergeGetmem`
-(`Code/Correctness/OccurrenceErasure.lean:440`), both hinted gallops
-(`Code/Correctness/OccurrenceErasure.lean:641` and `:675`), slice
-reversal (`Code/Correctness/OccurrenceErasure.lean:761`), natural-run
-detection (`Code/Correctness/OccurrenceErasure.lean:1002`), and
-binary insertion (`Code/Correctness/OccurrenceErasure.lean:1161`).
+(`Correctness/OccurrenceErasure.lean:448`), both hinted gallops
+(`Correctness/OccurrenceErasure.lean:649` and `:683`), slice
+reversal (`Correctness/OccurrenceErasure.lean:769`), natural-run
+detection (`Correctness/OccurrenceErasure.lean:1010`), and
+binary insertion (`Correctness/OccurrenceErasure.lean:1169`).
 Each equation erases the tagged result structurally, preserving payloads and
 all non-key control fields.
 

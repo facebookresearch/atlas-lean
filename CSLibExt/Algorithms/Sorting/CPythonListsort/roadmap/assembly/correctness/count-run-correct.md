@@ -25,71 +25,71 @@ and `StableOccurrencePermutation` conclusions on the returned range, a
 permutation of the whole key/payload entries in that range, and the shared
 `EqualOutsideRange` frame.  The exported post, including that lower-bound
 field, is defined at
-`Code/Correctness/CountRunCorrectness.lean:87`; the public theorem
+`Correctness/CountRunCorrectness.lean:95`; the public theorem
 that pins these conclusions and its exact-erasure join to `countRun_safe` is
 machine-checked at
-`Code/Correctness/CountRunCorrectness.lean:1729`.
+`Correctness/CountRunCorrectness.lean:1737`.
 
 The canonical-origin premise is not a free top-level assumption.  The
 unscanned-suffix invariant exports the exact bridge
 `ScanRemainderMatches.countRunCanonicalRange` at
-`Code/Correctness/CountRunCorrectness.lean:61`; the underlying fact
+`Correctness/CountRunCorrectness.lean:69`; the underlying fact
 that an absolute-origin canonical segment is stable relative to itself is
 machine-checked at
-`Code/Correctness/CountRunCorrectness.lean:46`.  The scan-step node
+`Correctness/CountRunCorrectness.lean:54`.  The scan-step node
 must consume this bridge at the `count_run` call site.  Its whole-entry
 companion has a direct bridge through the same key projection at
-`Code/Correctness/CountRunCorrectness.lean:74`.
+`Correctness/CountRunCorrectness.lean:82`.
 
 The proof follows the transcribed evaluator rather than a replacement run
 detector.  Its evaluator-facing stages are the ascending scan
-(`Code/Correctness/CountRunCorrectness.lean:245`), equal-block
-reversal (`Code/Correctness/CountRunCorrectness.lean:516`),
-descending scan (`Code/Correctness/CountRunCorrectness.lean:754`),
+(`Correctness/CountRunCorrectness.lean:253`), equal-block
+reversal (`Correctness/CountRunCorrectness.lean:524`),
+descending scan (`Correctness/CountRunCorrectness.lean:762`),
 and final tail/whole reversal plus ascending extension
-(`Code/Correctness/CountRunCorrectness.lean:1057`).
+(`Correctness/CountRunCorrectness.lean:1065`).
 
 ## Source-to-declaration map
 
 - The initial ascending probe in
   `sources/listobject-excerpts.md:652`–`657` is transcribed by
-  `ascendingScan?` at `Code/Transcription/CountRun.lean:50`; its
+  `ascendingScan?` at `Transcription/CountRun.lean:58`; its
   functional theorem is `ascendingScan_correct` at
-  `Code/Correctness/CountRunCorrectness.lean:245`.
+  `Correctness/CountRunCorrectness.lean:253`.
 - The first/last direction gate in
   `sources/listobject-excerpts.md:658`–`674` is transcribed by
-  `countRun?` at `Code/Transcription/CountRun.lean:177` and is owned
+  `countRun?` at `Transcription/CountRun.lean:185` and is owned
   by the complete raw-evaluator theorem `countRun_raw_correct` at
-  `Code/Correctness/CountRunCorrectness.lean:1513`, not by
+  `Correctness/CountRunCorrectness.lean:1521`, not by
   `ascendingScan_correct`.
 - `REVERSE_LAST_NEQ` in
   `sources/listobject-excerpts.md:632`–`642`, including its two call
-  sites at `:687` and `:696`, is transcribed by `reverseLastEqual?` at
-  `Code/Transcription/CountRun.lean:74` and proved exact at
-  `Code/Correctness/CountRunCorrectness.lean:516`.
+  sites at `:695` and `:704`, is transcribed by `reverseLastEqual?` at
+  `Transcription/CountRun.lean:82` and proved exact at
+  `Correctness/CountRunCorrectness.lean:524`.
 - The descending comparison loop in
   `sources/listobject-excerpts.md:681`–`695` is transcribed by
-  `descendingScan?` at `Code/Transcription/CountRun.lean:94` and its
+  `descendingScan?` at `Transcription/CountRun.lean:102` and its
   actual-evaluator induction starts at
-  `Code/Correctness/CountRunCorrectness.lean:754`.
+  `Correctness/CountRunCorrectness.lean:762`.
 - Final equal-tail reversal, whole-run reversal, and ascending extension in
   `sources/listobject-excerpts.md:696`–`708` are transcribed by
-  `finishDescending?` at `Code/Transcription/CountRun.lean:134` and
-  composed at `Code/Correctness/CountRunCorrectness.lean:1057`.
+  `finishDescending?` at `Transcription/CountRun.lean:142` and
+  composed at `Correctness/CountRunCorrectness.lean:1065`.
 
 ## Review pins
 
 - The adversarial tagged run `[3, 2a, 2b, 1]` returns
   `[1, 2a, 2b, 3]`, pinning equal-block origin order through both reversal
-  phases (`Code/Correctness/CountRunCorrectness.lean:1814`).
+  phases (`Correctness/CountRunCorrectness.lean:1822`).
 - An all-equal run remains in canonical origin order
-  (`Code/Correctness/CountRunCorrectness.lean:1837`).
+  (`Correctness/CountRunCorrectness.lean:1845`).
 - A normalized descending prefix is extended by the actual final ascending
   scan, including stable placement of an equivalent boundary value
-  (`Code/Correctness/CountRunCorrectness.lean:1859`).
+  (`Correctness/CountRunCorrectness.lean:1867`).
 - A nonzero-base execution reverses only its selected run and leaves both
   outside sentinels untouched
-  (`Code/Correctness/CountRunCorrectness.lean:1853`).
+  (`Correctness/CountRunCorrectness.lean:1861`).
 
 These four items are executable theorem regressions, not proof-body
 observations.

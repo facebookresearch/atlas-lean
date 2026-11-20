@@ -29,31 +29,31 @@ the forward predicates directly on the pre-reversed original tags.
 The formal bridge names both executions.  `canonicalReverseScanState` starts
 from the canonically tagged reversed source, while `actualReverseScanState`
 mirrors those origins back to the labels carried by the real initial reversal
-(`Code/Correctness/ReverseScanTransport.lean:26` and
-`Code/Correctness/ReverseScanTransport.lean:33`).  The bridge is not
+(`Correctness/ReverseScanTransport.lean:34` and
+`Correctness/ReverseScanTransport.lean:41`).  The bridge is not
 merely extensional on the key array: `actualReverseScanState_data` proves the
 exact paired-entry reversal, and
 `actualReverseScanState_eq_initial_with_reversed_data` identifies the complete
-initialized state (`Code/Correctness/ReverseScanTransport.lean:40`
-and `Code/Correctness/ReverseScanTransport.lean:54`).
+initialized state (`Correctness/ReverseScanTransport.lean:48`
+and `Correctness/ReverseScanTransport.lean:62`).
 
 `ReverseScanTransportPost` retains the canonical proof packet, exact terminal,
 collapse, and result mirrors, raw scan commutation, exact collapse and finish
 equations, successful return and fuel facts, pre-finish sortedness,
 reverse-stability, and the whole-entry snapshot
-(`Code/Correctness/ReverseScanTransport.lean:89`).  The public
+(`Correctness/ReverseScanTransport.lean:97`).  The public
 theorem assumes only the strict-weak-order law, a validated input, and the
 nontrivial top-level size bounds
-(`Code/Correctness/ReverseScanTransport.lean:140`).  Its proof calls
+(`Correctness/ReverseScanTransport.lean:148`).  Its proof calls
 the complete forward scan theorem on the canonical reversed input, transports
 the actual evaluator result through `mirrorListSortScan`, and derives the
 three semantic pre-finish fields rather than assuming them
-(`Code/Correctness/ReverseScanTransport.lean:161`,
-`Code/Correctness/OriginRelabelScan.lean:1253`, invoked at
-`Code/Correctness/ReverseScanTransport.lean:172`; and
-`Code/Correctness/ReverseScanTransport.lean:221`,
-`Code/Correctness/ReverseScanTransport.lean:225`, and
-`Code/Correctness/ReverseScanTransport.lean:233`).
+(`Correctness/ReverseScanTransport.lean:169`,
+`Correctness/OriginRelabelScan.lean:1261`, invoked at
+`Correctness/ReverseScanTransport.lean:180`; and
+`Correctness/ReverseScanTransport.lean:229`,
+`Correctness/ReverseScanTransport.lean:233`, and
+`Correctness/ReverseScanTransport.lean:241`).
 
 ## Depends on
 

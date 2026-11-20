@@ -61,24 +61,24 @@ Keep the invalid uninitialized-power arm nonvacuous in the model:
 that violates `PoweredPrefix`, reaches the uninitialized preceding-power arm,
 returns `none` after the top and second-last pending reads, and records no
 fuel-exhaustion marker or push. The two theorem pins are at
-`Code/Assembly/FoundNewRunSafety.lean:1359` and
-`Code/Assembly/FoundNewRunSafety.lean:1378`.
+`Assembly/FoundNewRunSafety.lean:1370` and
+`Assembly/FoundNewRunSafety.lean:1389`.
 
 For lifecycle composition, the public `FoundNewRunSafetyPost` additionally
 exports semantic validity and directional-only classification for every memory
 event, physical boundedness from the incoming initialized bound, preservation
 of that bound to the result state, and a continuous memory segment. The exact
-fields are at `Code/Assembly/FoundNewRunSafety.lean:710`,
-`Code/Assembly/FoundNewRunSafety.lean:713`,
-`Code/Assembly/FoundNewRunSafety.lean:715`,
-`Code/Assembly/FoundNewRunSafety.lean:718`, and
-`Code/Assembly/FoundNewRunSafety.lean:721`; they are produced without
+fields are at `Assembly/FoundNewRunSafety.lean:721`,
+`Assembly/FoundNewRunSafety.lean:724`,
+`Assembly/FoundNewRunSafety.lean:726`,
+`Assembly/FoundNewRunSafety.lean:729`, and
+`Assembly/FoundNewRunSafety.lean:732`; they are produced without
 additional premises by
 the existing `foundNewRun_safe` theorem at
-`Code/Assembly/FoundNewRunSafety.lean:979`. In the proof body, the
+`Assembly/FoundNewRunSafety.lean:990`. In the proof body, the
 recursive equation explicitly concatenates the literal `merge_at` event list
 with the recursive event list at
-`Code/Assembly/FoundNewRunSafety.lean:467`; this line explains the
+`Assembly/FoundNewRunSafety.lean:478`; this line explains the
 construction but is not a separate pinning theorem. The exported
 `memorySegment` field above is the theorem-level consumer boundary.
 

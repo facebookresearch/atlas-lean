@@ -14,12 +14,12 @@ pending stack, `PendingRunsCorrect`, an input `EntrySnapshotPermutation`,
 `TempStorageInv`, live temporary backing, synchronized values mode, and
 comparator binding, it returns a result satisfying
 `MergeForceCollapseCorrectnessPost`
-(`Code/Correctness/MergeForceCollapseCorrectness.lean:158`).
+(`Correctness/MergeForceCollapseCorrectness.lean:169`).
 
 The post embeds the traced `MergeForceCollapseSafetyPost` and preserves
 `PendingRunsCorrect`, the whole-entry snapshot, comparator binding, and the
 outside-consumed-prefix frame.  Those fields are the definition at
-`Code/Correctness/MergeForceCollapseCorrectness.lean:21`, not an
+`Correctness/MergeForceCollapseCorrectness.lean:32`, not an
 independent proof pin.  The recursive proof body delegates every taken merge
 to `mergeAt_correct`; that is a proof-body fact rather than a separate public
 pin.
@@ -29,23 +29,23 @@ that compositional post into the final consumer-facing result: there is one
 pending run, it begins at the original `basekeys`, ends at
 `basekeys + scanned`, is sorted under `occurrenceComparator lt`, and is a
 `StableOccurrencePermutation` of the canonical consumed input segment
-(`Code/Correctness/MergeForceCollapseCorrectness.lean:196`).
+(`Correctness/MergeForceCollapseCorrectness.lean:207`).
 
 ## Review pins
 
 - The complete final-collapse evaluator returns the traced semantic post under
   the premises above: `mergeForceCollapse_correct`
-  (`Code/Correctness/MergeForceCollapseCorrectness.lean:158`).
+  (`Correctness/MergeForceCollapseCorrectness.lean:169`).
 - A singleton pending stack is observably a successful no-op with the input
   state returned unchanged:
   `mergeForceCollapseTraced_singleton_noop`
-  (`Code/Correctness/MergeForceCollapseCorrectness.lean:227`).
+  (`Correctness/MergeForceCollapseCorrectness.lean:238`).
 - A concrete three-run execution of the real evaluator returns a single
   three-element run while retaining equal-key absolute-origin order and all
-  paired payloads. This is a compiler-checked `native_decide` witness and is
-  not consumed by the kernel-checked correctness theorem:
+  paired payloads. This is an asserting `IO Unit` runtime regression in the
+  test library and is not consumed by the kernel-checked correctness theorem:
   `mergeForceCollapse_threeRun_equalKey_payload_regression`
-  (`Code/Correctness/MergeForceCollapseCorrectness.lean:298`).
+  (`CSLibExtTest/Algorithms/Sorting/CPythonListsort/Correctness/MergeForceCollapseCorrectness.lean:72`).
 
 ## Depends on
 

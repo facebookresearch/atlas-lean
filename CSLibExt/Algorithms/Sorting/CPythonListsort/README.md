@@ -167,7 +167,7 @@ not a claim about ISO C behavior for undefined large signed shifts.  Exact
 balanced-cycle equivalence is therefore limited to `mr_e < 32`; the public
 results instead consume the unconditional bound `1 ≤ minrun ≤ 64`, proved by
 `minrunNextN_output_bounds`
-(`Equivalence/MinrunResults.lean:295`).
+(`Equivalence/MinrunResults.lean:303`).
 
 For very large lists, this bound depends on the convention above.
 `merge_init` computes `(1 << ms->mr_e) - 1`. For lists of 2^37 (~137
@@ -224,9 +224,26 @@ proofs or theorem axioms:
 
 The trust-boundary verifier rejects proof shortcuts, old generic module
 imports, production imports of tests, and production consumers of those
-executable witnesses. Other kernel-checked example proofs move to the matching
-test modules without changing their statements. This does not make execution
-checks into a machine-checked C-refinement proof.
+executable witnesses, and checks each witness against the original
+proposition recorded in [`verify/migration-map.json`](verify/migration-map.json).
+Other kernel-checked example proofs move to the matching test modules without
+changing their statements. This does not make execution checks into a
+machine-checked C-refinement proof.
+
+## Compatibility with root policy
+
+The root package sets `autoImplicit := false`, while the standalone package
+this development came from left it at Lean's default. 46 production modules
+therefore carry a local `set_option autoImplicit true` so that the imported
+statements keep their original implicit type binders and their independent
+universe parameters; every other module was checked to compile without it.
+The option affects binder elaboration only. It is not a proof escape, and the
+trust policy — no `sorry`, `admit`, custom axiom, `native_decide`, `unsafe`,
+or `implemented_by` — holds unconditionally.
+
+These modules have not yet been converted to the Lean module system
+(`module` / `public import`) that the rest of `CSLibExt` uses, so they emit
+non-module import warnings on `Mathlib` imports.
 
 ## Transcription-review provenance
 
@@ -251,5 +268,11 @@ record and the integration-specific checks.
 lake build CSLibExt.Algorithms.Sorting.CPythonListsort
 lake build CSLibExtTest.Algorithms.Sorting.CPythonListsort
 python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/verify_trust_boundary.py
+python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/test_verify_trust_boundary.py
+python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/verify_citations.py
 python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/verify_excerpts.py
 ```
+
+The second command executes the twelve asserting witnesses; a false assertion
+fails that build. `verify_excerpts.py` needs network access to the pinned
+CPython commit. The repository-wide gate is `scripts/check.sh`.

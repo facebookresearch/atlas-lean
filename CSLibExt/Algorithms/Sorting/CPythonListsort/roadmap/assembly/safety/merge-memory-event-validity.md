@@ -14,13 +14,13 @@ separate propositions which make those observations meaningful.
 
 `MergeMemorySnapshot.StorageInv`, `Live`, `ValuesMode`, `ActiveCore`, and
 `PhysicalBound` are defined at
-`Code/Assembly/MergeMemoryLifecycle.lean:33`, `:44`, `:50`, `:58`,
-and `:64`.  `ActiveCore` contains the snapshot form of `TempStorageInv`, live
+`Assembly/MergeMemoryLifecycle.lean:44`, `:55`, `:61`, `:69`,
+and `:75`.  `ActiveCore` contains the snapshot form of `TempStorageInv`, live
 backing, exact logical capacity, and the concrete keyed/unkeyed values mode;
 the selected-platform physical ceiling remains a separate reachability fact.
 
 The headline `MergeMemoryCallEvent.Valid` structure is stated at
-`Code/Assembly/MergeMemoryLifecycle.lean:421`.  It requires:
+`Assembly/MergeMemoryLifecycle.lean:432`.  It requires:
 
 - active storage before allocation, after `merge_getmem`, and after the merge;
 - the exact request `min na nb`, with `merge_lo` selecting `na ≤ nb` and
@@ -34,9 +34,9 @@ The headline `MergeMemoryCallEvent.Valid` structure is stated at
 
 The literal lo and hi call records satisfy this complete structure by
 `mergeLoMemoryCallEvent_valid` and `mergeHiMemoryCallEvent_valid` at
-`Code/Assembly/MergeMemoryLifecycle.lean:523` and `:617`.
+`Assembly/MergeMemoryLifecycle.lean:534` and `:628`.
 `MergeMemoryCallEvent.Bounded` at
-`Code/Assembly/MergeMemoryLifecycle.lean:706` separately covers the
+`Assembly/MergeMemoryLifecycle.lean:717` separately covers the
 incoming, post-allocation, post-merge, and optional intermediate-free physical
 snapshots; the reviewed directional posts establish it at lines 777 and 794.
 
@@ -51,7 +51,7 @@ two-call history with a mismatched boundary.
 
 This upstream support node also owns the shape predicate
 `AccessTrace.MergeMemoryLifecycle`, defined at
-`Code/Assembly/MergeMemoryLifecycle.lean:1023`: one initializer, a
+`Assembly/MergeMemoryLifecycle.lean:1034`: one initializer, a
 gap-free call chain, and one cleanup, with the same call list required to be
 `Valid` and `Bounded`. The downstream lifecycle-witness node owns only the
 theorem that the real top-level execution inhabits this predicate.

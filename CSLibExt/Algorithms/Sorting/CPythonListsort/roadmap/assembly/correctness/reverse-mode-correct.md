@@ -27,35 +27,35 @@ order.
 `ReverseModeCorrectnessPost` exposes the raw scan-result equation, successful
 return, fuel non-exhaustion, sortedness for the swapped comparator,
 occurrence-level stability, and the whole-entry snapshot
-(`Code/Correctness/ReverseModeCorrectness.lean:26`).  The theorem has
+(`Correctness/ReverseModeCorrectness.lean:34`).  The theorem has
 only the strict-weak-order law, validated input, and nontrivial size bounds as
-premises (`Code/Correctness/ReverseModeCorrectness.lean:44`).  Inside
+premises (`Correctness/ReverseModeCorrectness.lean:52`).  Inside
 the proof, local facts establish that the transcribed final whole-range
 reversal makes the resulting occurrence array exactly the reverse of the
 pre-finish one, then derive all three exported semantic conclusions from that
 equation
-(`Code/Correctness/ReverseModeCorrectness.lean:62`,
-`Code/Correctness/ReverseModeCorrectness.lean:86`, and
-`Code/Correctness/ReverseModeCorrectness.lean:96`).  Those equality
+(`Correctness/ReverseModeCorrectness.lean:70`,
+`Correctness/ReverseModeCorrectness.lean:94`, and
+`Correctness/ReverseModeCorrectness.lean:104`).  Those equality
 facts are proof-body evidence, not additional fields of the public post.
 
 There are two deliberately different views of the keyed final reversal.  The
 physical C-facing trace selects only the `.values` phase in keyed mode
-(`Code/Assembly/ListSortTrace.lean:118`), matching the
+(`Assembly/ListSortTrace.lean:126`), matching the
 `reverse_slice(saved_ob_item, ...)` call.  Separately, the functional theorem
 reasons directly about the paired-snapshot `finishListSort?` model.  The
 phase selection is defined by `finalReversePhase`
-(`Code/Assembly/ListSortSupport.lean:386`; definitional fidelity
+(`Assembly/ListSortSupport.lean:394`; definitional fidelity
 evidence).  The structural erasure theorems are separate fidelity certificates
 connecting that model to the phase-specific trace; they are not logical
 premises of `reverseMode_correct`
-(`Code/Assembly/ListSortSupport.lean:396` and
-`Code/Assembly/ListSortTrace.lean:345`).  Thus the semantic proof
+(`Assembly/ListSortSupport.lean:404` and
+`Assembly/ListSortTrace.lean:353`).  Thus the semantic proof
 does not pretend that the C performs a second keyed two-phase reversal.  The
 phase trace still returns a paired-snapshot semantic update rather than a
 literal intermediate separate-array C store; that declared abstraction
 boundary is documented at
-`Code/Assembly/ReverseSliceSafety.lean:80` and remains part of the
+`Assembly/ReverseSliceSafety.lean:91` and remains part of the
 human-reviewed C-to-model transcription, not a machine-checked C refinement.
 
 ## Depends on

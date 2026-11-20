@@ -24,25 +24,25 @@ the prefix and suffix.  These are exactly the entry-permutation and frame
 fields exported by the local `binarysort` and `count_run` correctness posts.
 
 `EntrySnapshotPermutation` is defined at
-`Code/Correctness/EntrySnapshotPermutation.lean:21`.
+`Correctness/EntrySnapshotPermutation.lean:32`.
 
 ## Review pins
 
 - Validated initialization is proved by
   `EntrySnapshotPermutation.initial_merge_state`
-  (`Code/Correctness/EntrySnapshotPermutation.lean:47`), with
+  (`Correctness/EntrySnapshotPermutation.lean:58`), with
   explicit keyed and unkeyed specializations at
-  `Code/Correctness/EntrySnapshotPermutation.lean:56` and
-  `Code/Correctness/EntrySnapshotPermutation.lean:64`.
+  `Correctness/EntrySnapshotPermutation.lean:67` and
+  `Correctness/EntrySnapshotPermutation.lean:75`.
 - A framed, in-bounds local whole-entry permutation is promoted to a
   whole-array permutation by
   `wholeEntries_perm_of_range_perm_and_frame`
-  (`Code/Correctness/EntrySnapshotPermutation.lean:101`), and
+  (`Correctness/EntrySnapshotPermutation.lean:112`), and
   preserves the invariant through `EntrySnapshotPermutation.preserve_local`
-  (`Code/Correctness/EntrySnapshotPermutation.lean:152`).
+  (`Correctness/EntrySnapshotPermutation.lean:163`).
 - The concrete keyed anti-vacuity regression keeps both tagged keys fixed but
   changes one payload and proves that the invariant rejects the result
-  (`Code/Correctness/EntrySnapshotPermutation.lean:179`).
+  (`Correctness/EntrySnapshotPermutation.lean:190`).
 
 These are theorem/regression citations; the declaration at line 21 is only
 the invariant definition.

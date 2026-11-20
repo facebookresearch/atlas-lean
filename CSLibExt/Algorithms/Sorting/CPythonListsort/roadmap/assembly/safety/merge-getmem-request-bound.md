@@ -53,7 +53,7 @@ Conclude
 `(mergeGetmem call need).outcome ≠ .guardRejected`. The keyed fencepost is
 machine-pinned by `mergeGetmem_keyed_boundary_regression`: with the growth path
 forced, `need = 2^59 - 1` grows and `need = 2^59` is rejected
-(`Code/Transcription/MergeMemory.lean:202`).
+(`Transcription/MergeMemory.lean:213`).
 
 The Lean transcription exposes the actual post-trimming continuation through
 `prepareMergeAt?`, retaining the selected runs and both concrete gallop

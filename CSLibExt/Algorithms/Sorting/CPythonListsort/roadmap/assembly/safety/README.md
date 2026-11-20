@@ -15,12 +15,12 @@ aggregate theorem independently projects the broader storage-safety post from
 the same kernel-checked top-level certificate.
 
 The completed public boundary is `listSort_mergeMemory_safe`
-(`Code/Assembly/MergeMemorySafety.lean:200`). Its raw counterpart is
+(`Assembly/MergeMemorySafety.lean:208`). Its raw counterpart is
 `listSortImpl_mergeMemory_safe`
-(`Code/Assembly/MergeMemorySafety.lean:159`). The unique exact
+(`Assembly/MergeMemorySafety.lean:167`). The unique exact
 initial-to-calls-to-cleanup projection is
 `listSortImpl_mergeMemory_lifecycle` at
-`Code/Assembly/MergeMemorySafety.lean:22`.
+`Assembly/MergeMemorySafety.lean:30`.
 
 Pending-stack storage is intentionally unbounded in the Lean model and every
 push succeeds. The trace records each resulting post-push depth, and the final
@@ -28,9 +28,9 @@ theorem proves its maximum is at most 61 and that
 `61 < MAX_MERGE_PENDING = 64`; no capacity guard or modeled debug assertion
 makes that result true by construction. The forced depth-64 push is
 theorem-pinned to record 65 at
-`Code/Assembly/AccessTrace.lean:979`; the admitted top-level bound is
+`Assembly/AccessTrace.lean:990`; the admitted top-level bound is
 theorem-pinned by `listsort_safe` at
-`Code/Assembly/ListSortSafety.lean:14`.
+`Assembly/ListSortSafety.lean:25`.
 
 As a standing review rule, a source fact that is only implicit in C pointer
 identity, control flow, or helper construction does not count as discharged.

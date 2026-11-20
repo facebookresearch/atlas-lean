@@ -22,8 +22,8 @@ Then the actual traced `binarysort` execution returns a result with its
 on `[base, base + n)`, a whole-entry permutation of that range, and both the
 shared `EqualOutsideRange` frame and pointwise before/after frame facts.  This
 statement and proof are machine-checked at
-`Code/Correctness/BinarysortCorrectness.lean:1231`; its exported post
-is defined at `Code/Correctness/BinarysortCorrectness.lean:1209`.
+`Correctness/BinarysortCorrectness.lean:1239`; its exported post
+is defined at `Correctness/BinarysortCorrectness.lean:1217`.
 
 The whole-range stability premise is intentional. Binary insertion preserves
 the relative order already present among comparator-equivalent occurrences,
@@ -35,10 +35,10 @@ that suffix is inserted.
 - Equality takes the upper-bound/right branch: the actual traced search
   returns position `2` past two older equal occurrences, and the actual traced
   sort inserts the pivot after them
-  (`Code/Correctness/BinarysortCorrectness.lean:1301`).
+  (`Correctness/BinarysortCorrectness.lean:1310`).
 - A nonzero-base execution sorts only `[1,4)`, leaves both outside sentinels
   unchanged, and retains equal-key origin order
-  (`Code/Correctness/BinarysortCorrectness.lean:1305`).
+  (`Correctness/BinarysortCorrectness.lean:1313`).
 
 These are executable theorem regressions, not observations from the proof
 body.

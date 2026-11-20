@@ -51,16 +51,16 @@ top-level lifecycle: every emitted event is `Valid`, only directional-call
 events occur, the initialized physical bound makes every call event `Bounded`,
 and the trace is a continuous `MergeMemorySegment` from the caller snapshot to
 the result snapshot. These fields are stated at
-`Code/Assembly/MergeAtSafety.lean:1406`,
-`Code/Assembly/MergeAtSafety.lean:1409`,
-`Code/Assembly/MergeAtSafety.lean:1412`, and
-`Code/Assembly/MergeAtSafety.lean:1422`; the final physical-bound
-transport is at `Code/Assembly/MergeAtSafety.lean:1433`. Exact
+`Assembly/MergeAtSafety.lean:1417`,
+`Assembly/MergeAtSafety.lean:1420`,
+`Assembly/MergeAtSafety.lean:1423`, and
+`Assembly/MergeAtSafety.lean:1433`; the final physical-bound
+transport is at `Assembly/MergeAtSafety.lean:1444`. Exact
 cardinality is also public: each admitted call emits either `[]` or one
 singleton directional-call event
-(`Code/Assembly/MergeAtSafety.lean:1417`). All fields are produced
+(`Assembly/MergeAtSafety.lean:1428`). All fields are produced
 by the existing `mergeAt_safe` theorem at
-`Code/Assembly/MergeAtSafety.lean:1838`; no new caller premise was
+`Assembly/MergeAtSafety.lean:1849`; no new caller premise was
 added.
 
 ## Depends on

@@ -9,19 +9,19 @@ lean: CPythonListsort.eraseOccurrenceListSort
 # The complete tagged sort erases to the untagged sort
 
 Structural occurrence erasure commutes through the remaining assembly layers:
-`merge_at` (`Code/Correctness/OccurrenceErasureScan.lean:330`),
-`found_new_run` (`Code/Correctness/OccurrenceErasureScan.lean:969`),
-final collapse (`Code/Correctness/OccurrenceErasureScan.lean:979`),
+`merge_at` (`Correctness/OccurrenceErasureScan.lean:338`),
+`found_new_run` (`Correctness/OccurrenceErasureScan.lean:977`),
+final collapse (`Correctness/OccurrenceErasureScan.lean:987`),
 and the recursive scan
-(`Code/Correctness/OccurrenceErasureScan.lean:990`).  The raw
+(`Correctness/OccurrenceErasureScan.lean:998`).  The raw
 `listSortImpl?` bridge then covers initialization, both reverse phases, small
 inputs, failure/fuel branches, cleanup, and the input-size guard
-(`Code/Correctness/OccurrenceErasureScan.lean:1003`).
+(`Correctness/OccurrenceErasureScan.lean:1011`).
 
 The public theorem is premise-free: for every Boolean comparator, reverse
 flag, and validated `ListSortInput`, ordinary execution equals the tagged
 execution mapped through `eraseOccurrenceListSortImplResult`
-(`Code/Correctness/OccurrenceErasureScan.lean:1061`).  This is the
+(`Correctness/OccurrenceErasureScan.lean:1069`).  This is the
 machine-checked tag-erasure boundary consumed by `listsort_correct`; it makes
 the safety and correctness headlines refer to the same untagged evaluator.
 

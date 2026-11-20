@@ -21,28 +21,28 @@ order, they are `hcomparator`, which binds the call-state comparator to
 `occurrenceComparator lt`; `hstable`, which states the shared
 `StableOccurrencePermutation` of the concatenated retained key ranges directly
 against `canonical`; and `hsemantic : MergeLoSemanticPre lt call`
-(`Code/Correctness/MergeLoCorrectness.lean:1153`,
-`Code/Correctness/MergeLoCorrectness.lean:1154`, and
-`Code/Correctness/MergeLoCorrectness.lean:1157`, respectively).
+(`Correctness/MergeLoCorrectness.lean:1161`,
+`Correctness/MergeLoCorrectness.lean:1162`, and
+`Correctness/MergeLoCorrectness.lean:1165`, respectively).
 These are premises of the machine-checked public theorem declared at
-`Code/Correctness/MergeLoCorrectness.lean:1141`.
+`Correctness/MergeLoCorrectness.lean:1149`.
 
 `MergeLoSemanticPre` is definitionally an abbreviation of the public shared
-`MergeSemanticPre` (`Code/Correctness/MergeLoInvariant.lean:58`).
+`MergeSemanticPre` (`Correctness/MergeLoInvariant.lean:66`).
 That shared structure contains exactly explicit `leftNonempty` and
 `rightNonempty`; both retained ranges under the shared `Sorted` predicate; and
 common signed-`read?` `firstStrict` and `lastStrict` endpoint witnesses saying
 the retained right endpoint is strictly before the corresponding retained left
-endpoint (`Code/Correctness/MergeSemanticPre.lean:26`; this is a
+endpoint (`Correctness/MergeSemanticPre.lean:34`; this is a
 definition, not a proof pin). Comparator binding and canonical stability are
 not fields of that run-local semantic predicate.
 
 `Pairwise` remains proof-local rather than becoming a surrogate public
 contract: named proved bridges derive the mapped-key forms at
-`Code/Correctness/MergeLoInvariant.lean:65` and
-`Code/Correctness/MergeLoInvariant.lean:76`, and the whole-entry
-forms at `Code/Correctness/MergeLoInvariant.lean:88` and
-`Code/Correctness/MergeLoInvariant.lean:100`. The loop and
+`Correctness/MergeLoInvariant.lean:73` and
+`Correctness/MergeLoInvariant.lean:84`, and the whole-entry
+forms at `Correctness/MergeLoInvariant.lean:96` and
+`Correctness/MergeLoInvariant.lean:108`. The loop and
 pure-correctness proofs consume those bridges instead of silently rebuilding a
 second sortedness premise.
 
@@ -51,22 +51,22 @@ contains the reviewed traced `MergeLoSafetyPost`; exact equality of the whole
 affected key/payload-entry range with `mergeLoTargetEntries`; shared sortedness
 and occurrence stability; `List.Perm` of the complete entries in exactly that
 range; and `SortSlice.EqualOutsideRange` for every surrounding cell. The post
-is defined at `Code/Correctness/MergeLoCorrectness.lean:22`, and the
+is defined at `Correctness/MergeLoCorrectness.lean:30`, and the
 theorem inhabiting that exact post is machine-checked at
-`Code/Correctness/MergeLoCorrectness.lean:1141`.
+`Correctness/MergeLoCorrectness.lean:1149`.
 Definitionally, `mergeLoTargetEntries` is the left-biased whole-entry
 `stableEntryMerge` of the two retained runs
-(`Code/Correctness/MergeLoInvariant.lean:36`). Snapshot preservation
+(`Correctness/MergeLoInvariant.lean:44`). Snapshot preservation
 is exported as a separate proved corollary at
-`Code/Correctness/MergeLoCorrectness.lean:152`.
+`Correctness/MergeLoCorrectness.lean:160`.
 
 The direction-independence claim is also exported rather than left as a review
 observation: `mergeLoTargetEntries_eq_mergeHiTargetEntries` proves that the two
 target wrappers are equal for the same `lt` and `call`
-(`Code/Correctness/MergeTargetConsistency.lean:20`). The wrappers
+(`Correctness/MergeTargetConsistency.lean:28`). The wrappers
 both expand to the same `stableEntryMerge` definition
-(`Code/Correctness/StableMerge.lean:44`); the named theorem's proof is
-`rfl` at `Code/Correctness/MergeTargetConsistency.lean:24`, a
+(`Correctness/StableMerge.lean:52`); the named theorem's proof is
+`rfl` at `Correctness/MergeTargetConsistency.lean:32`, a
 definitional fact now exposed through a citable theorem.
 
 ## Discharged `merge_at` composition
@@ -75,7 +75,7 @@ The downstream public `mergeAt_correct` theorem now consumes
 `PendingRunsCorrect`, the input snapshot, comparator binding, the list-size
 and admitted-position guards, and the storage premises; it has no additional
 top-level `MergeSemanticPre`, trimming, or canonical-stability hypothesis
-(`Code/Correctness/MergeAtCorrectness.lean:1752`).  Consequently the
+(`Correctness/MergeAtCorrectness.lean:1760`).  Consequently the
 local `.mergeLo` selector equation, explicit nonemptiness, shared `Sorted`
 facts, direct-range stability, and both strict trimming endpoints are
 discharged by the `merge_at` composition rather than left to its caller.  The
@@ -88,43 +88,43 @@ including the galloped prefix and suffix, and exports exact stable-merge
 equality, sortedness, occurrence stability, whole-entry permutation, and the
 external frame.  Those are definition fields of
 `MergeAtSelectedPairCorrectness` at
-`Code/Correctness/MergeAtCorrectness.lean:51`; the end-to-end theorem
+`Correctness/MergeAtCorrectness.lean:59`; the end-to-end theorem
 inhabiting the enclosing post is `mergeAt_correct` at
-`Code/Correctness/MergeAtCorrectness.lean:1752`.
+`Correctness/MergeAtCorrectness.lean:1760`.
 
 ## Source-to-declaration map
 
 - Setup, allocation, copying A to temporary storage, and the forced first B
   copy in the pinned C excerpt
   (`sources/listobject-excerpts.md:1016`–`1029`) are transcribed by
-  `mergeLo?` at `Code/Transcription/MergeLo.lean:823`. Their
+  `mergeLo?` at `Transcription/MergeLo.lean:831`. Their
   composition with the semantic invariant is covered by the raw theorem
   `mergeLo_raw_correct` at
-  `Code/Correctness/MergeLoCorrectness.lean:1115`.
+  `Correctness/MergeLoCorrectness.lean:1123`.
 - The ordinary loop and its winner counters
   (`sources/listobject-excerpts.md:1039`–`1063`) are transcribed by
-  `mergeLoLoop?` at `Code/Transcription/MergeLo.lean:573`. The B,
+  `mergeLoLoop?` at `Transcription/MergeLo.lean:581`. The B,
   A, and equal-key control equations are theorem-pinned at
-  `Code/Transcription/MergeLo.lean:742`,
-  `Code/Transcription/MergeLo.lean:766`, and
-  `Code/Transcription/MergeLo.lean:790`; the
+  `Transcription/MergeLo.lean:750`,
+  `Transcription/MergeLo.lean:774`, and
+  `Transcription/MergeLo.lean:798`; the
   semantic preservation theorem for a complete ordinary step is at
-  `Code/Correctness/MergeLoCorrectness.lean:421`.
+  `Correctness/MergeLoCorrectness.lean:429`.
 - The `gallop_right(..., hint = 0)` / `gallop_left(..., hint = 0)` round and its
   bulk movements (`sources/listobject-excerpts.md:1071`–`1117`) are
   transcribed by `mergeLoGallopRound?` at
-  `Code/Transcription/MergeLo.lean:501` and exposed by its public
-  equation theorem at `Code/Transcription/MergeLo.lean:667`. The
+  `Transcription/MergeLo.lean:509` and exposed by its public
+  equation theorem at `Transcription/MergeLo.lean:675`. The
   complete galloping semantic step is machine-checked at
-  `Code/Correctness/MergeLoCorrectness.lean:577`.
+  `Correctness/MergeLoCorrectness.lean:585`.
 - `Succeed` and `CopyB`
   (`sources/listobject-excerpts.md:1119`–`1130`) are transcribed by
   `mergeLoSucceed?` and `mergeLoCopyB?` at
-  `Code/Transcription/MergeLo.lean:475` and
-  `Code/Transcription/MergeLo.lean:483`. Their total
+  `Transcription/MergeLo.lean:483` and
+  `Transcription/MergeLo.lean:491`. Their total
   semantic theorems are at
-  `Code/Correctness/MergeLoCorrectness.lean:166` and
-  `Code/Correctness/MergeLoCorrectness.lean:187`.
+  `Correctness/MergeLoCorrectness.lean:174` and
+  `Correctness/MergeLoCorrectness.lean:195`.
   Comparator-error `Fail` is absent from the total-Boolean-comparator model;
   the shared remainder copy remains in `mergeLoSucceed?`.
 
@@ -133,36 +133,36 @@ inhabiting the enclosing post is `mergeAt_correct` at
 - The unconditional raw evaluator result—successful exact whole-entry target
   plus external frame, without a raw-correctness premise—is proved by
   `mergeLo_raw_correct`
-  (`Code/Correctness/MergeLoCorrectness.lean:1115`).
+  (`Correctness/MergeLoCorrectness.lean:1123`).
 - The public theorem exports the actual traced safety result together with
   sortedness, shared stability, whole-entry permutation, and frame
-  (`Code/Correctness/MergeLoCorrectness.lean:1141`).
+  (`Correctness/MergeLoCorrectness.lean:1149`).
 - The forward and backward target wrappers compute the identical mathematical
   result for the same call; the public consistency theorem is
   `mergeLoTargetEntries_eq_mergeHiTargetEntries`
-  (`Code/Correctness/MergeTargetConsistency.lean:20`).
+  (`Correctness/MergeTargetConsistency.lean:28`).
 - The pure target simultaneously has sorted keys, the shared occurrence
   stability predicate, and whole-entry permutation by
   `stableEntryMerge_correct`
-  (`Code/Correctness/StableMerge.lean:270`).
+  (`Correctness/StableMerge.lean:278`).
 - The ordinary equal-key branch selects A, and the executable nonzero-base
   fixture retains the left equal occurrence before the right while preserving
   payloads and both outside sentinels
-  (`Code/Transcription/MergeLo.lean:790` and
-  `Code/Correctness/MergeLoCorrectness.lean:1179`).
+  (`Transcription/MergeLo.lean:798` and
+  `Correctness/MergeLoCorrectness.lean:1187`).
 - The min-gallop-one fixture pins the final stable equal-key/payload result
-  (`Code/Correctness/MergeLoCorrectness.lean:1197`). It does not by
+  (`Correctness/MergeLoCorrectness.lean:1205`). It does not by
   itself observably pin entry into galloping mode; gallop semantics are instead
   covered parametrically by the theorem at
-  `Code/Correctness/MergeLoCorrectness.lean:577`.
+  `Correctness/MergeLoCorrectness.lean:585`.
 - The raw inconsistent-comparator `na = 0` hedge is observably exercised with
   a continuation that always fails, while the strict-order correctness proof
   excludes that outcome through the strict gallop bound
-  (`Code/Transcription/MergeLo.lean:1290` and
-  `Code/Correctness/MergeLoInvariant.lean:1911`).
+  (`Transcription/MergeLo.lean:1298` and
+  `Correctness/MergeLoInvariant.lean:1919`).
 - The concrete fixture's declared temporary allocation satisfies
   `TempStorageInv`
-  (`Code/Correctness/MergeLoCorrectness.lean:1171`).
+  (`Correctness/MergeLoCorrectness.lean:1179`).
 
 ## Depends on
 

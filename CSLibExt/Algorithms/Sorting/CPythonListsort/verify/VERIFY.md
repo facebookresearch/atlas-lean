@@ -2,29 +2,87 @@
 
 ## Root integration checks
 
-Use the root `lean-toolchain` and Lake environment. From the repository root:
+Use the root `lean-toolchain` (`leanprover/lean4:v4.35.0`) and Lake
+environment. From the repository root:
 
 ```sh
 lake build CSLibExt.Algorithms.Sorting.CPythonListsort
 lake build CSLibExtTest.Algorithms.Sorting.CPythonListsort
 python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/verify_trust_boundary.py
+python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/test_verify_trust_boundary.py
+python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/verify_citations.py
 python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/verify_excerpts.py
+scripts/check.sh
 ```
 
-The test root executes the twelve asserting IO witnesses. These are not theorem
-axioms or dependencies of the production proofs. The production API retains
-namespace `CPythonListsort`; replace the historical `import Code` below with
-`import CSLibExt.Algorithms.Sorting.CPythonListsort` for a root-context axiom audit.
-The file and regression disposition table is in `verify/migration-map.json`.
+Building `CSLibExtTest.Algorithms.Sorting.CPythonListsort` executes the twelve
+asserting `IO Unit` witnesses through their `#eval` calls; a false assertion
+raises an `IO` error and fails that build. They are not theorem axioms and no
+production declaration depends on them. The last command is the repository's
+own gate: `scripts/check_axioms.sh` reruns `scripts/check_axioms.lean` over
+every compiled module of every root library, and `scripts/check_diagnostics.sh`
+rejects `sorry` and `native_decide` diagnostics.
+
+The production API keeps namespace `CPythonListsort`; the module prefix is
+`CSLibExt.Algorithms.Sorting.CPythonListsort`. The per-file disposition table
+and the twelve original propositions are in
+[`migration-map.json`](migration-map.json).
+
+### What the integration was checked against
+
+- 117 production and 10 test modules compile on 4.35.0 with no errors.
+- `scripts/check_axioms.lean`, run over exactly those 127 modules, reports no
+  policy violation: no forbidden axiom, no `unsafe` declaration, no
+  `implemented_by`, no wanted declaration outside `WantedExt`, and no
+  cross-library import the policy forbids.
+- Across the 6392 declarations those modules contribute, the only axioms that
+  occur are `propext`, `Quot.sound`, and `Classical.choice`. No
+  `native_decide` axiom and no `sorryAx` occurs anywhere.
+- The five principal theorems remain polymorphic in two independent universe
+  parameters; the key and payload universes were not collapsed.
+- `verify_excerpts.py` re-downloads the pinned CPython commit and confirms
+  both generated Markdown sources byte-for-byte.
+- `verify_citations.py` confirms that every `path:line` citation in this
+  development's Markdown resolves to an existing, non-blank line, and that
+  the roadmap trust ledger cites each of the twelve regressions at its
+  `def … : IO Unit :=` line. The roadmap's pins were short by eight lines
+  because the development repository it was exported from carries no license
+  header; they were recomputed against this tree.
+
+### Compatibility notes for reviewers
+
+- 46 production modules carry a local `set_option autoImplicit true`. The
+  standalone package left `autoImplicit` at Lean's default, so the imported
+  statements bind their type variables implicitly; the root package sets
+  `autoImplicit := false`. Each of the 46 was checked to fail without the
+  option and the other 79 modules that had it were checked to compile with it
+  removed, so the option now appears only where a statement needs it. It is a
+  binder-elaboration setting, not a proof or trust escape.
+- The CPython modules are the only part of `CSLibExt` that has not been
+  converted to the Lean module system (`module` / `public import`), which is
+  why they emit non-module import warnings. Converting them changes what each
+  module exports and needs its own validation pass.
+
+### What these checks do not establish
+
+They do not establish that the Lean model refines the pinned C. The claim
+boundary in [`../README.md`](../README.md) stands unchanged: the comparator
+model, the excluded exception/allocator/reentrancy paths, the huge-list shift
+convention, and the inline key-storage limitation are all still outside what
+is proved.
 
 ## Historical standalone record
 
-The following record describes the original standalone Lean/Mathlib 4.33.1
-verification before integration. It is retained as provenance, not as a claim
-that its old module paths or compiler-evaluated theorem witnesses remain in the
-root libraries. The old build configuration is saved under
-`sources/standalone-build-4.33.1/`; the original development commit provides the
-complete historical package.
+Everything below is the original standalone Lean/Mathlib 4.33.1 verification
+record, kept as provenance. Its module paths (`Code`, `Code/...`), its build
+output, its `native_decide` trust ledger, and its line numbers describe the
+standalone package, **not** this repository: `Code` no longer exists here, the
+twelve compiler-evaluated witnesses are no longer theorems, and the line
+numbers are those of the development repository, whose sources carry no
+license header. Use the root integration section above for anything about the
+current tree. The old build configuration is saved under
+`sources/standalone-build-4.33.1/`; the original development commit provides
+the complete historical package.
 
 The exported development snapshot is
 `7a5f47de2501d41980fafa0a363c61c2a2fa688c`, as recorded in
@@ -110,29 +168,29 @@ The following declarations all report exactly
 `[propext, Classical.choice, Quot.sound]`:
 
 - `CPythonListsort.minrunInit_exponent_eq_spec` —
-  `Code/Equivalence/Minrun.lean:105`
+  `Equivalence/Minrun.lean:116`
 - `CPythonListsort.minrunInit_eq_spec` —
-  `Code/Equivalence/Minrun.lean:123`
+  `Equivalence/Minrun.lean:134`
 - `CPythonListsort.cIntMinrunMask_toNat_lt_pow` —
-  `Code/Equivalence/Minrun.lean:166`
+  `Equivalence/Minrun.lean:177`
 - `CPythonListsort.minrunNext_eq_spec` —
-  `Code/Equivalence/Minrun.lean:183`
+  `Equivalence/Minrun.lean:194`
 - `CPythonListsort.minrunInit_stops_and_exponent_lt_64` —
-  `Code/Equivalence/MinrunResults.lean:94`
+  `Equivalence/MinrunResults.lean:105`
 - `CPythonListsort.minrunInit_modulus_le_listSize` —
-  `Code/Equivalence/MinrunResults.lean:124`
+  `Equivalence/MinrunResults.lean:135`
 - `CPythonListsort.minrunInit_mask_lt_modulus` —
-  `Code/Equivalence/MinrunResults.lean:152`
+  `Equivalence/MinrunResults.lean:163`
 - `CPythonListsort.minrunNextN_output_bounds` —
-  `Code/Equivalence/MinrunResults.lean:295`
+  `Equivalence/MinrunResults.lean:306`
 - `CPythonListsort.minrunNext_after_init_bounds` —
-  `Code/Equivalence/MinrunResults.lean:309`
+  `Equivalence/MinrunResults.lean:320`
 - `CPythonListsort.minrunNextN_eq_spec` —
-  `Code/Equivalence/MinrunResults.lean:405`
+  `Equivalence/MinrunResults.lean:416`
 - `CPythonListsort.minrunPrefixSum` —
-  `Code/Equivalence/MinrunResults.lean:470`
+  `Equivalence/MinrunResults.lean:481`
 - `CPythonListsort.minrunSequence` —
-  `Code/Equivalence/MinrunResults.lean:643`
+  `Equivalence/MinrunResults.lean:654`
 
 The truncation regression is separately kernel-checked with ordinary
 `decide`:
@@ -142,7 +200,7 @@ The truncation regression is separately kernel-checked with ordinary
 depends on axioms: [propext, Quot.sound]
 ```
 
-Its declaration is at `Code/Equivalence/MinrunResults.lean:342`. It proves
+Its declaration is at `Equivalence/MinrunResults.lean:353`. It proves
 that the `e = 33` witness has actual outputs `[63, 63]`, while the ideal
 full-width trace has `[63, 64]`.
 
@@ -186,14 +244,14 @@ $ rg -n --glob '*.lean' \
 # no matches; rg exit 1
 ```
 
-## Native trust ledger
+## Native trust ledger (historical)
 
 ```console
 $ python3 verify/verify_trust_boundary.py
 verified native_decide trust boundary: 12 named compiler-checked regressions, no Lean consumers
 ```
 
-The exact allowlisted proof leaves are:
+The twelve allowlisted proof leaves were:
 
 1. `mergeAt_slide_regression`
 2. `mergeAt_thirdLast_slide_regression`
@@ -209,7 +267,10 @@ The exact allowlisted proof leaves are:
 12. `listSort_powerSort_cost_rotation_regression`
 
 The new `minrun_cIntMask_truncation_regression` is absent from this list
-because it uses kernel `decide`, not `native_decide`.
+because it uses kernel `decide`, not `native_decide`. In the integrated tree
+the twelve entries above are asserting `IO Unit` regressions under
+`CSLibExtTest.Algorithms.Sorting.CPythonListsort`, and the verifier's current
+message differs accordingly.
 
 ## Pinned-source verification
 
@@ -222,14 +283,16 @@ verified sources/listsort.md
 ```
 
 The reviewed transcription uses the 32-bit mask operation at
-`Code/Transcription/Minrun.lean:47-49`. Exact quotient/remainder results carry
+`Transcription/Minrun.lean:58-49`. Exact quotient/remainder results carry
 the explicit `mr_e < 32` premise, while the top-level scan consumes the
 unconditional arbitrary-call band through
-`Code/Assembly/ListSortSupport.lean:250`.
+`Assembly/ListSortSupport.lean:261`.
 
 ## Verdict
 
-**PASS.** The export of development commit `7a5f47d` builds completely, has no
-proof gaps, preserves the two-tier trust boundary, restricts exact minrun
-equivalence honestly, and includes a kernel-checked proof of
-`1 ≤ minrun ≤ 64` for every reachable call count.
+**PASS (standalone, 4.33.1).** The export of development commit `7a5f47d`
+builds completely, has no proof gaps, preserves the two-tier trust boundary,
+restricts exact minrun equivalence honestly, and includes a kernel-checked
+proof of `1 ≤ minrun ≤ 64` for every reachable call count. This verdict is
+about the standalone package; the root-toolchain verdict is in the root
+integration section above.

@@ -10,27 +10,27 @@ lean: CPythonListsort.listsort_mergeTree_cost_le_powerSort
 
 The public implementation bridge is
 `listsort_mergeTree_cost_le_powerSort` in
-`Code/Assembly/ListSortCostBound.lean:614`.  It has only the arbitrary
+`Assembly/ListSortCostBound.lean:622`.  It has only the arbitrary
 Boolean comparator, reverse flag, validated input, and platform size bound as
 premises.  It returns the successful real execution's checked merge plan and
 a `PowerMergePlanValid` canonical plan on the same exact formed-run profile,
 with `implementationPlan.mergeCost ≤ powerSortPlan.mergeCost`.
 
 For active inputs the stronger evidence is `ListSortActiveMergeCostPost` at
-`Code/Assembly/ListSortCostBound.lean:41-86`.  It contains the exact
+`Assembly/ListSortCostBound.lean:49-86`.  It contains the exact
 scan/collapse trace split, an execution-indexed proof that the displayed open
 state is the state actually passed to `merge_force_collapse`, the historical
 `ScanPowerForestInv`, the exact CPython collapse-cost relation, the literal
 canonical-top-pair plan identity, and the final cost dominance.  The public
 top-level construction that discharges initialization, reverse mode, scan
 fuel, storage, and loop invariants is `listSortTraced_policyBridge_active` at
-`Code/Assembly/ListSortPolicyBridge.lean:129`.
+`Assembly/ListSortPolicyBridge.lean:137`.
 
 The final-collapse comparison is intentionally an inequality, not tree
 equality.  `CPythonForceCollapseCost.le_topPairCompletionCost` is proved at
-`Code/Assembly/MergeTreeCost.lean:273`; the strict third-last
-rotation is isolated at `:213`.  The compiler-checked real 256-element
-regression at `Code/Assembly/PowerSortCostRegression.lean:116`
+`Assembly/MergeTreeCost.lean:281`; the strict third-last
+rotation is isolated at `:221`.  The compiler-checked real 256-element
+regression at `CSLibExtTest/Algorithms/Sorting/CPythonListsort/Assembly/PowerSortCostRegression.lean:125`
 pins formed lengths `[32,33,83,36,32,32,8]`, scan cost 213, CPython's
 completion sequence `[40,68,108,256]` and total 685, and the canonical
 sequence `[40,72,108,256]` and total 689.
@@ -83,9 +83,9 @@ Paper top-pair completion then costs `40 + 72 + 108 + 256 = 476`, for total
 689.  CPython first pays 40, observes `36 < 40`, takes the third-last branch,
 and pays `68 + 108 + 256`, for total 685.  The regression must expose both
 merge sequences and totals; it prevents either tree equality or the
-cost-dominance direction from being changed silently.  If it requires
-`native_decide`, list it as a compiler-checked proof leaf in the trust ledger
-before review.
+cost-dominance direction from being changed silently.  If kernel `decide`
+cannot normalize it, carry it as an asserting `IO Unit` runtime regression in
+the test library and list it in the trust ledger before review.
 
 ## Depends on
 

@@ -11,15 +11,15 @@ lean: CPythonListsort.eraseOccurrenceMergeHi
 The forward and backward merge machines commute exactly with structural
 occurrence erasure.  Their public result maps retain return codes and fuel
 flags while erasing every occurrence-bearing state component
-(`Code/Correctness/OccurrenceErasureMerges.lean:238` and `:1186`;
+(`Correctness/OccurrenceErasureMerges.lean:249` and `:1197`;
 definitions).
 
 For a state whose stored comparator is `occurrenceComparator lt`, the public
 `merge_lo` equation runs the erased state under `lt` and obtains exactly the
 erasure of the tagged result
-(`Code/Correctness/OccurrenceErasureMerges.lean:864`).  The symmetric
+(`Correctness/OccurrenceErasureMerges.lean:875`).  The symmetric
 `merge_hi` equation states the identical relation for the backward-filling
-machine (`Code/Correctness/OccurrenceErasureMerges.lean:2008`).
+machine (`Correctness/OccurrenceErasureMerges.lean:2019`).
 Neither theorem assumes an order law: the result follows from value-only
 comparator observations and whole-entry movement.
 

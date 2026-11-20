@@ -14,15 +14,15 @@ entries.  The raw `merge_lo` and `merge_hi` evaluators therefore commute with
 the total origin mirror under only the explicit comparator-binding premise:
 executing after mirroring is exactly `Option.map` of the corresponding mirrored
 result.  These are theorem-pinned by `mirrorMergeLo` and `mirrorMergeHi`
-(`Code/Correctness/OriginRelabelMerges.lean:1226` and
-`Code/Correctness/OriginRelabelMerges.lean:2369`).
+(`Correctness/OriginRelabelMerges.lean:1237` and
+`Correctness/OriginRelabelMerges.lean:2380`).
 
 The selected-continuation theorem composes both directions, including the
 already-finished branch
-(`Code/Correctness/OriginRelabelScan.lean:518`).  The public node
+(`Correctness/OriginRelabelScan.lean:526`).  The public node
 closes at `mirrorMergeAt`: the complete raw `mergeAt?` call commutes with
 mirroring, with no order-law or semantic sortedness premise
-(`Code/Correctness/OriginRelabelScan.lean:580`).  Thus reverse-scan
+(`Correctness/OriginRelabelScan.lean:588`).  Thus reverse-scan
 transport consumes one explicit merge-level result rather than silently
 depending on thousands of lines of unrepresented support.
 

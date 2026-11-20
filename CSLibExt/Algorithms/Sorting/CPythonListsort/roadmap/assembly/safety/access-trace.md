@@ -19,11 +19,11 @@ extent. Define `stackDepthMax` as the maximum of all recorded post-push depths,
 with default zero when there were no pushes.
 
 These carrier facts are definitional: the raw snapshot, call, and event types
-are at `Code/Assembly/AccessTrace.lean:90`,
-`Code/Assembly/AccessTrace.lean:142`, and
-`Code/Assembly/AccessTrace.lean:163`; the four-channel `AccessTrace`
-is at `Code/Assembly/AccessTrace.lean:174`, and chronological
-composition is at `Code/Assembly/AccessTrace.lean:191`.
+are at `Assembly/AccessTrace.lean:101`,
+`Assembly/AccessTrace.lean:153`, and
+`Assembly/AccessTrace.lean:174`; the four-channel `AccessTrace`
+is at `Assembly/AccessTrace.lean:185`, and chronological
+composition is at `Assembly/AccessTrace.lean:202`.
 
 The merge-memory channel is deliberately non-validating. A
 `MergeMemorySnapshot` type-erases the actual backing tag, mode bit, logical cell
@@ -57,9 +57,9 @@ assertion-failure event. A forced push at depth 64 therefore records 65. The
 separate theorem `stackDepthMax ≤ 61 < MAX_MERGE_PENDING` establishes that no
 admitted execution attempts the write that would exceed CPython's fixed array.
 The first claim is pinned by `forcedPushAtCapacity_records65` at
-`Code/Assembly/AccessTrace.lean:979`; the admitted-execution bound is
+`Assembly/AccessTrace.lean:990`; the admitted-execution bound is
 pinned by `listsort_safe` at
-`Code/Assembly/ListSortSafety.lean:14`.
+`Assembly/ListSortSafety.lean:25`.
 
 Trace composition preserves chronological order, disjoins fuel exhaustion,
 takes the exact maximum of component push depths, appends merge-memory events,
@@ -72,13 +72,13 @@ operation.
 The event-insertion noninterference facts are theorem-pinned rather than
 assumed. For prepending, result, erasure, ordinary accesses, push depths, fuel,
 and `stackDepthMax` are at
-`Code/Assembly/AccessTrace.lean:413`, `:425`, `:450`, `:463`, `:499`,
-and `:552`. The corresponding append theorems are at lines 419, 431, 456, 470,
+`Assembly/AccessTrace.lean:424`, `:436`, `:461`, `:474`, `:510`,
+and `:563`. The corresponding append theorems are at lines 419, 431, 456, 470,
 506, and 560. For success-conditional call insertion, the same six channels
 are pinned at lines 437, 444, 514, 522, 530, and 568.
 The common theorem that event-free helpers remain event-free through `bind` is
 `memoryEvents_bind_eq_nil` at
-`Code/Assembly/AccessTrace.lean:599`.
+`Assembly/AccessTrace.lean:610`.
 
 This node provides the carrier and honest primitive interface, not a decorative
 empty wrapper around `list_sort_impl`. Each function-specific safety node owns

@@ -12,7 +12,7 @@ call count. The top-level safety and correctness chains consume the latter,
 so they do not assume that C's 32-bit mask is the arbitrary-precision mask in
 the design-note generator; the direct assembly application is
 `adaptiveMinrun_step_facts` at
-`Code/Assembly/ListSortSupport.lean:270`.
+`Assembly/ListSortSupport.lean:278`.
 
 ## Power computation
 

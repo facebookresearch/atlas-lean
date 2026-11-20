@@ -67,24 +67,24 @@ precisely the validated public transcription.
 The completed raw safety post now exposes the exact
 `MergeMemoryLifecycle` on the actual `listSortImplTraced?` trace and the final
 physical bound as public fields at
-`Code/Assembly/ListSortTermination.lean:491` and
-`Code/Assembly/ListSortTermination.lean:504`. The validated-input
+`Assembly/ListSortTermination.lean:502` and
+`Assembly/ListSortTermination.lean:515`. The validated-input
 post exposes the same two facts for `listSortTraced?` at
-`Code/Assembly/ListSortTermination.lean:514` and
-`Code/Assembly/ListSortTermination.lean:526`. They are
+`Assembly/ListSortTermination.lean:525` and
+`Assembly/ListSortTermination.lean:537`. They are
 produced by `listSortImplTraced_safe` and `listSortTraced_safe`, whose exact
-premises are stated at `Code/Assembly/ListSortTermination.lean:2092`
-and `Code/Assembly/ListSortTermination.lean:2101`.
+premises are stated at `Assembly/ListSortTermination.lean:2105`
+and `Assembly/ListSortTermination.lean:2113`.
 
 Within the induction, the private execution post carries three separate facts:
 every recorded call is semantically valid, every recorded call is physically
 bounded, and the literal event list is a continuous calls-plus-cleanup tail
-(`Code/Assembly/ListSortTermination.lean:537`,
-`Code/Assembly/ListSortTermination.lean:538`, and
-`Code/Assembly/ListSortTermination.lean:539`).
+(`Assembly/ListSortTermination.lean:548`,
+`Assembly/ListSortTermination.lean:549`, and
+`Assembly/ListSortTermination.lean:550`).
 The final top-level proof prefixes that real tail by the concrete initialized
 snapshot using `mergeMemoryLifecycle_prepend_initial`; the invocation is at
-`Code/Assembly/ListSortTermination.lean:1955`. This is proof-body
+`Assembly/ListSortTermination.lean:1967`. This is proof-body
 evidence for how the public lifecycle field is assembled; the exported field
 and public theorem above are the theorem-level consumer boundary.
 

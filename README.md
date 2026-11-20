@@ -47,8 +47,10 @@ is integrated into `CSLibExt`, with kernel-checked proof layers and asserting
 regression clients in `CSLibExtTest`. It uses the root toolchain rather than an
 independent package; its original source and verification provenance are retained.
 
-Remaining `Atlas/` development material and the archived `v1/` release are not
-part of this root build. `v1/` retains its original build configuration. The
+Remaining `Atlas/` development material, the standalone
+[conjecture examples](OpenConjectures/README.md), and the archived `v1/`
+release are not part of this root build. `v1/` retains its original build
+configuration. The
 [`StatisticalMechanics`](Atlas/StatisticalMechanics/MIGRATED.md) archive and
 migration ledger keep their existing paths while the library migration continues.
 

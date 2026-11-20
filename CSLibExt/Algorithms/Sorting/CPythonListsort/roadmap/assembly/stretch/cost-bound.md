@@ -9,7 +9,7 @@ lean: CPythonListsort.listsort_mergeCost_bound
 # Nearly-optimal merge-cost bound
 
 The headline theorem is `listsort_mergeCost_bound` at
-`Code/Assembly/ListSortCostBound.lean:596`.  Its complete public
+`Assembly/ListSortCostBound.lean:604`.  Its complete public
 premise list is an arbitrary total Boolean comparator, `reverse`, a validated
 `ListSortInput`, and `input.slice.entries.size ≤ PY_LIST_MAX`; no order law,
 fuel, storage, liveness, run-partition, trace, or tree premise is exposed.  It
@@ -17,7 +17,7 @@ returns an actual successful result together with `ListSortMergeCostPost`.
 
 The postcondition states the exact trace cost and profile and then exports
 both quantitative conclusions at
-`Code/Assembly/ListSortCostBound.lean:126-135`:
+`Assembly/ListSortCostBound.lean:134-135`:
 
 ```text
 (M_impl : Real) ≤ N * profile.entropy + 2 * N
@@ -25,13 +25,13 @@ both quantitative conclusions at
 ```
 
 `PowerMergePlanValid.mergeCost_le_entropy_add_two_of_profile` supplies the
-paper bound at `Code/Assembly/PowerTreeEntropy.lean:289`; the
+paper bound at `Assembly/PowerTreeEntropy.lean:297`; the
 alphabetic entropy lower bound and optimum corollary are
 `RunProfile.entropy_mul_le_optimalAlphabeticMergeCost` and
 `mergeCost_le_optimalAlphabetic_add_two` at
-`Code/Assembly/AlphabeticCostBound.lean:336` and `:362`.
+`Assembly/AlphabeticCostBound.lean:344` and `:370`.
 The exact empty and singleton conclusions are fields of the same public
-postcondition at `Code/Assembly/ListSortCostBound.lean:136-157`, so
+postcondition at `Assembly/ListSortCostBound.lean:144-157`, so
 the zero case does not rely on totalized logarithm or division.
 
 For an arbitrary total Boolean comparator, either value mode, either reverse
@@ -65,7 +65,7 @@ vector and not a claim that those leaves equal the balanced minrun target
 cycle.  It also does not transfer Theorem 6's comparison-count conclusion:
 CPython adds binary insertion extension and uses different run discovery,
 galloping, and directional merges.  The concrete `listsort_safe` theorem at
-`Code/Assembly/ListSortSafety.lean:14-27` already proves the recorded
+`Assembly/ListSortSafety.lean:25-27` already proves the recorded
 stack-depth bound and owns implementation stack capacity; this node need not
 restate the paper's asymptotic space result.
 
