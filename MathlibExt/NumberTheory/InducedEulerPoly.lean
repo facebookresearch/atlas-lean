@@ -39,6 +39,7 @@ public import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 public import Mathlib.RingTheory.Ideal.Norm.AbsNorm
 public import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 public import Mathlib.Topology.Algebra.InfiniteSum.Basic
+public import MathlibExt.NumberTheory.NumberField.AbsNormSummable
 
 @[expose] public section
 
@@ -77,20 +78,6 @@ namespace NumberField
 
 variable (F K : Type*) [Field F] [NumberField F] [Field K] [NumberField K]
   [Algebra (𝓞 F) (𝓞 K)]
-
-instance : Infinite (𝓞 F) := by
-  refine Infinite.of_injective (fun n : ℕ => (n : 𝓞 F)) ?_
-  intro a b h
-  have hF : ((a : 𝓞 F) : F) = ((b : 𝓞 F) : F) := congrArg Subtype.val h
-  push_cast at hF
-  exact Nat.cast_injective hF
-
-instance : Infinite (𝓞 K) := by
-  refine Infinite.of_injective (fun n : ℕ => (n : 𝓞 K)) ?_
-  intro a b h
-  have hK : ((a : 𝓞 K) : K) = ((b : 𝓞 K) : K) := congrArg Subtype.val h
-  push_cast at hK
-  exact Nat.cast_injective hK
 
 private theorem algebraMap_injective : Function.Injective (algebraMap (𝓞 F) (𝓞 K)) := by
   rw [RingHom.injective_iff_ker_eq_bot]
