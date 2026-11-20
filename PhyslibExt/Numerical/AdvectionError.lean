@@ -577,12 +577,11 @@ lemma sampledWave_sub_one {ncells : ℕ} [NeZero ncells] {L : ℝ} (hL : L ≠ 0
   · subst hj
     rw [ZMod.val_zero]
     push_cast [Nat.cast_sub (Nat.one_le_iff_ne_zero.mpr hnne)]
-    unfold travelingWave
-    have hA : 2 * Real.pi * ((ncells - 1) * (L / ncells) - v * (n * dt)) / L =
-        2 * Real.pi * (0 * (L / ncells) - L / ncells - v * (n * dt)) / L + 2 * Real.pi := by
-      field_simp [hL, hncast]
+    have hx : ((ncells : ℝ) - 1) * (L / ncells) = 0 * (L / ncells) - L / ncells + L := by
+      field_simp
       ring
-    rw [hA, Real.sin_add_two_pi]
+    rw [hx]
+    exact travelingWave_periodic hL c₀ a v (n * dt) _
   · have hjv : 1 ≤ j.val := by
       have hne : j.val ≠ 0 := fun h => hj ((ZMod.val_eq_zero j).mp h)
       omega
@@ -594,207 +593,64 @@ lemma sampledWave_sub_one {ncells : ℕ} [NeZero ncells] {L : ℝ} (hL : L ≠ 0
 
 /-! ## I. Second-order Taylor defects of the wave -/
 
-/-- Derivative of an affine-phase sine profile: `τ ↦ c₀ + a sin (k τ + b)` has derivative
-`a cos (k t + b) k` at `t`. -/
-private lemma hasDerivAt_sin_affine_aux (c₀ a k b t : ℝ) :
-    HasDerivAt (fun τ => c₀ + a * Real.sin (k * τ + b))
-      (a * (Real.cos (k * t + b) * (k * 1))) t := by
-  have hinner : HasDerivAt (fun τ => k * τ + b) (k * 1) t :=
-    ((hasDerivAt_id' t).const_mul k).add_const b
-  have h := (((Real.hasDerivAt_sin (k * t + b)).comp t hinner).const_mul a).const_add c₀
-  simpa only [Function.comp_apply] using h
+/-- Rolle's theorem with the endpoints in either order: if `g` has derivative `g' t` at every `t`
+and `g a = g b` with `a ≠ b`, then `g'` vanishes at some point other than `a`. -/
+private lemma exists_ne_deriv_eq_zero_aux {g g' : ℝ → ℝ} {a b : ℝ} (hab : a ≠ b)
+    (hg : ∀ t, HasDerivAt g (g' t) t) (heq : g a = g b) : ∃ c, c ≠ a ∧ g' c = 0 := by
+  have hcont : Continuous g := continuous_iff_continuousAt.mpr fun t => (hg t).continuousAt
+  rcases lt_or_gt_of_ne hab with h | h
+  · obtain ⟨c, hc, hc0⟩ := exists_hasDerivAt_eq_zero h hcont.continuousOn heq fun t _ => hg t
+    exact ⟨c, hc.1.ne', hc0⟩
+  · obtain ⟨c, hc, hc0⟩ :=
+      exists_hasDerivAt_eq_zero h hcont.continuousOn heq.symm fun t _ => hg t
+    exact ⟨c, hc.2.ne, hc0⟩
 
-/-- The derivative of the affine-phase sine profile at `t`. -/
-private lemma deriv_sin_affine_aux (c₀ a k b t : ℝ) :
-    deriv (fun τ => c₀ + a * Real.sin (k * τ + b)) t =
-      a * (Real.cos (k * t + b) * (k * 1)) :=
-  (hasDerivAt_sin_affine_aux c₀ a k b t).deriv
-
-/-- Second derivative of the affine-phase sine profile: `a cos (k t + b) k` has derivative
-`-a sin (k t + b) k²`. -/
-private lemma hasDerivAt_deriv_sin_affine_aux (a k b t : ℝ) :
-    HasDerivAt (fun t => a * (Real.cos (k * t + b) * (k * 1)))
-      (a * ((-Real.sin (k * t + b) * (k * 1)) * (k * 1))) t := by
-  have hinner : HasDerivAt (fun τ => k * τ + b) (k * 1) t :=
-    ((hasDerivAt_id' t).const_mul k).add_const b
-  have h := (((Real.hasDerivAt_cos (k * t + b)).comp t hinner).mul_const (k * 1)).const_mul a
-  simpa only [Function.comp_apply] using h
-
-/-- The second derivative of the affine-phase sine profile at `t`. -/
-private lemma deriv_deriv_sin_affine_aux (c₀ a k b t : ℝ) :
-    deriv (deriv (fun τ => c₀ + a * Real.sin (k * τ + b))) t =
-      a * ((-Real.sin (k * t + b) * (k * 1)) * (k * 1)) := by
-  have hfun : deriv (fun τ => c₀ + a * Real.sin (k * τ + b)) =
-      (fun t => a * (Real.cos (k * t + b) * (k * 1))) :=
-    funext fun t => deriv_sin_affine_aux c₀ a k b t
-  rw [hfun]
-  exact (hasDerivAt_deriv_sin_affine_aux a k b t).deriv
-
-/-- The second derivative of the affine-phase sine profile is bounded by `|a| k²`. -/
-private lemma abs_deriv2_sin_affine_aux (c₀ a k b t : ℝ) :
-    |deriv (deriv (fun τ => c₀ + a * Real.sin (k * τ + b))) t| ≤ |a| * k ^ 2 := by
-  rw [deriv_deriv_sin_affine_aux]
-  have hsin : |Real.sin (k * t + b)| ≤ 1 := Real.abs_sin_le_one _
-  have hk2 : k ^ 2 = |k| * |k| := by rw [← sq_abs, pow_two]
-  have habs : |a * ((-Real.sin (k * t + b) * (k * 1)) * (k * 1))| =
-      |a| * (|Real.sin (k * t + b)| * |k|) * |k| := by
-    rw [abs_mul, abs_mul, abs_mul, abs_neg, mul_one]
-    ring
-  rw [habs, hk2]
-  calc |a| * (|Real.sin (k * t + b)| * |k|) * |k|
-      ≤ |a| * (1 * |k|) * |k| := by
-        apply mul_le_mul_of_nonneg_right _ (abs_nonneg k)
-        apply mul_le_mul_of_nonneg_left _ (abs_nonneg a)
-        exact mul_le_mul_of_nonneg_right hsin (abs_nonneg k)
-    _ = |a| * (|k| * |k|) := by ring
-
-/-- Second-order Taylor remainder on `[a, b]` with `a < b`: if `f` and `f'` are differentiable
-everywhere and `|f''| ≤ M`, then `|f b - f a - (b - a) f' a| ≤ M (b - a)² / 2`, by Rolle's
-theorem applied twice. -/
-private lemma abs_taylor_remainder_aux {f : ℝ → ℝ} {a b : ℝ} {M : ℝ} (hab : a < b)
+/-- Second-order Taylor remainder around `a`, with `b` on either side: if `f` and `f'` are
+differentiable everywhere and `|f''| ≤ M`, then `|f b - f a - (b - a) f' a| ≤ M (b - a)² / 2`, by
+Rolle's theorem applied twice. -/
+private lemma abs_taylor_remainder_aux {f : ℝ → ℝ} {M : ℝ}
     (hf : ∀ t, HasDerivAt f (deriv f t) t)
     (hf' : ∀ t, HasDerivAt (deriv f) (deriv (deriv f) t) t)
-    (hM : ∀ t, |deriv (deriv f) t| ≤ M) :
+    (hM : ∀ t, |deriv (deriv f) t| ≤ M) (a b : ℝ) :
     |f b - f a - (b - a) * deriv f a| ≤ M * (b - a) ^ 2 / 2 := by
+  rcases eq_or_ne a b with rfl | hab
+  · simp
   set D := deriv f a with hD
   set R := f b - f a - (b - a) * D with hR
-  set S := (b - a) * (b - a) with hS
-  have hSpos : 0 < S := by
-    rw [hS]
-    exact mul_pos (sub_pos.mpr hab) (sub_pos.mpr hab)
-  have hSne : S ≠ 0 := ne_of_gt hSpos
-  have hφ : ∀ t, HasDerivAt (fun t => f t - f a - (t - a) * D - (R / S) * ((t - a) * (t - a)))
-      ((deriv f t - 1 * D) - (R / S) * (1 * (t - a) + (t - a) * 1)) t := by
+  set S := (b - a) ^ 2 with hS
+  have hS0 : S ≠ 0 := pow_ne_zero 2 (sub_ne_zero.mpr hab.symm)
+  have hφ : ∀ t, HasDerivAt (fun t => f t - f a - (t - a) * D - R / S * ((t - a) * (t - a)))
+      (deriv f t - D - R / S * ((t - a) + (t - a))) t := by
     intro t
-    have hlin : HasDerivAt (fun t => (t - a) * D) (1 * D) t :=
-      ((hasDerivAt_id' t).sub_const a).mul_const D
-    have hsq : HasDerivAt (fun t => (t - a) * (t - a)) (1 * (t - a) + (t - a) * 1) t :=
-      ((hasDerivAt_id' t).sub_const a).mul (((hasDerivAt_id' t).sub_const a))
-    have hquad : HasDerivAt (fun t => (R / S) * ((t - a) * (t - a)))
-        ((R / S) * (1 * (t - a) + (t - a) * 1)) t :=
-      hsq.const_mul (R / S)
-    exact (((hf t).sub_const (f a)).sub hlin).sub hquad
-  have hφa : (fun t => f t - f a - (t - a) * D - (R / S) * ((t - a) * (t - a))) a = 0 := by
-    change f a - f a - (a - a) * D - (R / S) * ((a - a) * (a - a)) = 0
-    simp
-  have hφb : (fun t => f t - f a - (t - a) * D - (R / S) * ((t - a) * (t - a))) b = 0 := by
-    change f b - f a - (b - a) * D - (R / S) * ((b - a) * (b - a)) = 0
-    rw [← hS, div_mul_cancel₀ _ hSne, ← hR, sub_self]
-  have hφcont : ContinuousOn (fun t => f t - f a - (t - a) * D - (R / S) * ((t - a) * (t - a)))
-      (Set.Icc a b) :=
-    fun x _ => (hφ x).continuousAt.continuousWithinAt
-  have hφeq : (fun t => f t - f a - (t - a) * D - (R / S) * ((t - a) * (t - a))) a =
-      (fun t => f t - f a - (t - a) * D - (R / S) * ((t - a) * (t - a))) b := by
-    rw [hφa, hφb]
-  obtain ⟨c₁, ⟨hac₁, hc₁b⟩, hc₁⟩ :=
-    exists_hasDerivAt_eq_zero hab hφcont hφeq (fun x _ => hφ x)
-  have hφ₁ : ∀ x, HasDerivAt
-      (fun x => (deriv f x - 1 * D) - (R / S) * (1 * (x - a) + (x - a) * 1))
-      ((deriv (deriv f) x) - (R / S) * (1 * 1 + 1 * 1)) x := by
-    intro x
-    have hlin1 : HasDerivAt (fun x => 1 * (x - a)) (1 * 1) x :=
-      (((hasDerivAt_id' x).sub_const a).const_mul 1)
-    have hlin2 : HasDerivAt (fun x => (x - a) * 1) (1 * 1) x :=
-      (((hasDerivAt_id' x).sub_const a).mul_const 1)
-    have hadd : HasDerivAt (fun x => 1 * (x - a) + (x - a) * 1) (1 * 1 + 1 * 1) x :=
-      hlin1.add hlin2
-    have hquad : HasDerivAt (fun x => (R / S) * (1 * (x - a) + (x - a) * 1))
-        ((R / S) * (1 * 1 + 1 * 1)) x :=
-      hadd.const_mul (R / S)
-    exact ((hf' x).sub_const (1 * D)).sub hquad
-  have hφa1 : (deriv f a - 1 * D) - (R / S) * (1 * (a - a) + (a - a) * 1) = 0 := by
-    rw [hD]; simp
-  have hc₁' : (deriv f c₁ - 1 * D) - (R / S) * (1 * (c₁ - a) + (c₁ - a) * 1) = 0 := hc₁
-  have hφ₁cont : ContinuousOn
-      (fun x => (deriv f x - 1 * D) - (R / S) * (1 * (x - a) + (x - a) * 1))
-      (Set.Icc a c₁) :=
-    fun x _ => (hφ₁ x).continuousAt.continuousWithinAt
-  have hφ₁eq : (fun x => (deriv f x - 1 * D) - (R / S) * (1 * (x - a) + (x - a) * 1)) a =
-      (fun x => (deriv f x - 1 * D) - (R / S) * (1 * (x - a) + (x - a) * 1)) c₁ := by
-    change (deriv f a - 1 * D) - (R / S) * (1 * (a - a) + (a - a) * 1) =
-      (deriv f c₁ - 1 * D) - (R / S) * (1 * (c₁ - a) + (c₁ - a) * 1)
-    rw [hφa1, hc₁']
-  obtain ⟨c₂, ⟨hac₂, hc₂c₁⟩, hc₂⟩ :=
-    exists_hasDerivAt_eq_zero hac₁ hφ₁cont hφ₁eq (fun x _ => hφ₁ x)
-  have hc₂' : deriv (deriv f) c₂ - (R / S) * (1 * 1 + 1 * 1) = 0 := hc₂
-  have hD2 : deriv (deriv f) c₂ = R / S * 2 := by
-    have h2 : ((1 * (1:ℝ) + 1 * 1)) = 2 := by norm_num
-    rw [h2] at hc₂'
-    linarith [hc₂']
-  have hR : R = deriv (deriv f) c₂ * S / 2 := by
-    rw [hD2]
-    have hSmul : R / S * S = R := div_mul_cancel₀ R hSne
-    calc R = R / S * S := hSmul.symm
-      _ = R / S * 2 * S / 2 := by ring
-  have hSpos2 : (0:ℝ) < S / 2 := half_pos hSpos
-  have h2abs : |(2:ℝ)| = 2 := by norm_num
-  calc |R| = |deriv (deriv f) c₂ * S / 2| := by rw [hR]
-    _ = |deriv (deriv f) c₂| * (S / 2) := by
-        rw [abs_div, abs_mul, abs_of_pos hSpos, h2abs]; ring
-    _ ≤ M * (S / 2) := mul_le_mul_of_nonneg_right (hM c₂) (le_of_lt hSpos2)
-    _ = M * (b - a) ^ 2 / 2 := by rw [hS]; ring
-
-/-- Taylor remainder of the affine-phase sine profile for a positive step `h`. -/
-private lemma taylor_sin_affine_pos_aux (c₀ a k b s h : ℝ) (hh : 0 < h) :
-    |(c₀ + a * Real.sin (k * (s + h) + b)) - (c₀ + a * Real.sin (k * s + b)) -
-        h * deriv (fun τ => c₀ + a * Real.sin (k * τ + b)) s| ≤
-      |a| * k ^ 2 * h ^ 2 / 2 := by
-  have hmain := abs_taylor_remainder_aux (f := fun τ => c₀ + a * Real.sin (k * τ + b))
-    (M := |a| * k ^ 2) (show s < s + h by linarith)
-    (fun t => by
-      rw [deriv_sin_affine_aux c₀ a k b t]
-      exact hasDerivAt_sin_affine_aux c₀ a k b t)
-    (fun t => by
-      have hfun : deriv (fun τ => c₀ + a * Real.sin (k * τ + b)) =
-          (fun t => a * (Real.cos (k * t + b) * (k * 1))) :=
-        funext fun t => deriv_sin_affine_aux c₀ a k b t
-      rw [hfun, (hasDerivAt_deriv_sin_affine_aux a k b t).deriv]
-      exact hasDerivAt_deriv_sin_affine_aux a k b t)
-    (fun t => abs_deriv2_sin_affine_aux c₀ a k b t)
-  simpa only [add_sub_cancel_left] using hmain
-
-/-- Taylor remainder of the affine-phase sine profile for every step `h`; a negative step is
-the positive step of the reflected phase. -/
-private lemma taylor_sin_affine_aux (c₀ a k b s h : ℝ) :
-    |(c₀ + a * Real.sin (k * (s + h) + b)) - (c₀ + a * Real.sin (k * s + b)) -
-        h * deriv (fun τ => c₀ + a * Real.sin (k * τ + b)) s| ≤
-      |a| * k ^ 2 * h ^ 2 / 2 := by
-  rcases lt_trichotomy h 0 with hneg | rfl | hpos
-  · have hpos' : 0 < -h := neg_pos.mpr hneg
-    have hmain := taylor_sin_affine_pos_aux c₀ a (-k) (2 * k * s + b) s (-h) hpos'
-    have harg1 : (-k) * (s + -h) + (2 * k * s + b) = k * (s + h) + b := by ring
-    have harg2 : (-k) * s + (2 * k * s + b) = k * s + b := by ring
-    have hderiv : (-h) * deriv (fun τ => c₀ + a * Real.sin ((-k) * τ + (2 * k * s + b))) s
-        = h * deriv (fun τ => c₀ + a * Real.sin (k * τ + b)) s := by
-      rw [deriv_sin_affine_aux, deriv_sin_affine_aux, harg2]
-      ring
-    have hbound : |a| * (-k) ^ 2 * (-h) ^ 2 / 2 = |a| * k ^ 2 * h ^ 2 / 2 := by ring
-    rw [harg1, harg2, hderiv, hbound] at hmain
-    exact hmain
-  · simp
-  · exact taylor_sin_affine_pos_aux c₀ a k b s h hpos
-
-/-- At fixed `x`, the traveling wave is an affine-phase sine profile in time, with rate
-`-2π v / L`. -/
-private lemma travelingWave_time_fun_aux (c₀ a v L x : ℝ) :
-    (fun τ => travelingWave c₀ a v L τ x) =
-      (fun τ => c₀ + a * Real.sin ((-(2 * Real.pi * v / L)) * τ + 2 * Real.pi * x / L)) := by
-  funext τ
-  unfold travelingWave
-  have harg : 2 * Real.pi * (x - v * τ) / L =
-      (-(2 * Real.pi * v / L)) * τ + 2 * Real.pi * x / L := by ring
-  rw [harg]
-
-/-- At fixed `t`, the traveling wave is an affine-phase sine profile in space, with rate
-`2π / L`. -/
-private lemma travelingWave_space_fun_aux (c₀ a v L t : ℝ) :
-    (fun y => travelingWave c₀ a v L t y) =
-      (fun y => c₀ + a * Real.sin ((2 * Real.pi / L) * y + -(2 * Real.pi * v * t / L))) := by
-  funext y
-  unfold travelingWave
-  have harg : 2 * Real.pi * (y - v * t) / L =
-      (2 * Real.pi / L) * y + -(2 * Real.pi * v * t / L) := by ring
-  rw [harg]
+    have hlin : HasDerivAt (fun t : ℝ => t - a) 1 t := (hasDerivAt_id t).sub_const a
+    have hsq := (hlin.mul hlin).const_mul (R / S)
+    have hD' := hlin.mul_const D
+    convert (((hf t).sub_const (f a)).sub hD').sub hsq using 1
+    ring
+  have hφa : f a - f a - (a - a) * D - R / S * ((a - a) * (a - a)) = 0 := by ring
+  have hφb : f b - f a - (b - a) * D - R / S * ((b - a) * (b - a)) = 0 := by
+    rw [← sq, ← hS, ← hR, div_mul_cancel₀ R hS0, sub_self]
+  obtain ⟨c₁, hc₁a, hc₁⟩ := exists_ne_deriv_eq_zero_aux hab hφ (hφa.trans hφb.symm)
+  have hψ : ∀ t, HasDerivAt (fun t => deriv f t - D - R / S * ((t - a) + (t - a)))
+      (deriv (deriv f) t - R / S * 2) t := by
+    intro t
+    have hlin : HasDerivAt (fun t : ℝ => t - a) 1 t := (hasDerivAt_id t).sub_const a
+    convert ((hf' t).sub_const D).sub ((hlin.add hlin).const_mul (R / S)) using 1
+    ring
+  have hψa : deriv f a - D - R / S * ((a - a) + (a - a)) = 0 := by rw [hD]; ring
+  have hψc : deriv f c₁ - D - R / S * ((c₁ - a) + (c₁ - a)) = 0 := hc₁
+  obtain ⟨c₂, -, hc₂⟩ := exists_ne_deriv_eq_zero_aux hc₁a.symm hψ (hψa.trans hψc.symm)
+  have hc₂' : deriv (deriv f) c₂ = R / S * 2 := by
+    have h : deriv (deriv f) c₂ - R / S * 2 = 0 := hc₂
+    linarith
+  have hRS : R = deriv (deriv f) c₂ * S / 2 := by
+    rw [hc₂']
+    field_simp
+  calc |R| = |deriv (deriv f) c₂| * S / 2 := by
+        rw [hRS, abs_div, abs_mul, abs_of_nonneg (sq_nonneg (b - a)), abs_two]
+    _ ≤ M * S / 2 := by
+        gcongr
+        exact hM c₂
 
 /-- Temporal Taylor defect: for every step `h`,
 `|c(t + h, x) - c(t, x) - h ∂ₜc(t, x)| ≤ v² M h² / 2` with `M = |a| (2π / L)²`. -/
@@ -802,16 +658,14 @@ lemma travelingWave_time_taylor (c₀ a v L t x h : ℝ) :
     |travelingWave c₀ a v L (t + h) x - travelingWave c₀ a v L t x -
         h * deriv (fun τ => travelingWave c₀ a v L τ x) t| ≤
       v ^ 2 * (|a| * (2 * Real.pi / L) ^ 2) * h ^ 2 / 2 := by
-  have hfun := travelingWave_time_fun_aux c₀ a v L x
-  have happ : ∀ s, travelingWave c₀ a v L s x =
-      c₀ + a * Real.sin ((-(2 * Real.pi * v / L)) * s + 2 * Real.pi * x / L) :=
-    fun s => congrFun hfun s
-  rw [hfun, happ, happ]
-  have hmain := taylor_sin_affine_aux c₀ a (-(2 * Real.pi * v / L)) (2 * Real.pi * x / L) t h
-  have hbound : |a| * (-(2 * Real.pi * v / L)) ^ 2 * h ^ 2 / 2 =
-      v ^ 2 * (|a| * (2 * Real.pi / L) ^ 2) * h ^ 2 / 2 := by ring
-  rw [hbound] at hmain
-  exact hmain
+  have h2 : iteratedDeriv 2 (fun τ => travelingWave c₀ a v L τ x) =
+      deriv (deriv fun τ => travelingWave c₀ a v L τ x) := by
+    rw [iteratedDeriv_succ, iteratedDeriv_one]
+  have hT := abs_taylor_remainder_aux (f := fun τ => travelingWave c₀ a v L τ x)
+    (fun τ => (travelingWave_hasDerivAt_time c₀ a v L τ x).differentiableAt.hasDerivAt)
+    (fun τ => (travelingWave_hasDerivAt_time_two c₀ a v L τ x).differentiableAt.hasDerivAt)
+    (fun τ => by rw [← h2]; exact travelingWave_time_bound c₀ a v L τ x) t (t + h)
+  simpa only [add_sub_cancel_left] using hT
 
 /-- Spatial Taylor defect one step upstream: for every step `h`,
 `|c(t, x - h) - c(t, x) + h ∂ₓc(t, x)| ≤ M h² / 2` with `M = |a| (2π / L)²`. -/
@@ -819,20 +673,15 @@ lemma travelingWave_space_taylor (c₀ a v L t x h : ℝ) :
     |travelingWave c₀ a v L t (x - h) - travelingWave c₀ a v L t x +
         h * deriv (fun y => travelingWave c₀ a v L t y) x| ≤
       |a| * (2 * Real.pi / L) ^ 2 * h ^ 2 / 2 := by
-  have hfun := travelingWave_space_fun_aux c₀ a v L t
-  have happ : ∀ y, travelingWave c₀ a v L t y =
-      c₀ + a * Real.sin ((2 * Real.pi / L) * y + -(2 * Real.pi * v * t / L)) :=
-    fun y => congrFun hfun y
-  rw [hfun, happ, happ]
-  have hmain := taylor_sin_affine_aux c₀ a (2 * Real.pi / L) (-(2 * Real.pi * v * t / L)) x (-h)
-  rw [show (2 * Real.pi / L) * (x - h) + -(2 * Real.pi * v * t / L)
-      = (2 * Real.pi / L) * (x + -h) + -(2 * Real.pi * v * t / L) by ring]
-  have h2 : ∀ (P Q D' : ℝ), P - Q + h * D' = P - Q - (-h) * D' := fun P Q D' => by ring
-  rw [h2]
-  have h3 : |a| * (2 * Real.pi / L) ^ 2 * h ^ 2 / 2
-      = |a| * (2 * Real.pi / L) ^ 2 * (-h) ^ 2 / 2 := by ring
-  rw [h3]
-  exact hmain
+  have h2 : iteratedDeriv 2 (fun y => travelingWave c₀ a v L t y) =
+      deriv (deriv fun y => travelingWave c₀ a v L t y) := by
+    rw [iteratedDeriv_succ, iteratedDeriv_one]
+  have hT := abs_taylor_remainder_aux (f := fun y => travelingWave c₀ a v L t y)
+    (fun y => (travelingWave_hasDerivAt_space c₀ a v L t y).differentiableAt.hasDerivAt)
+    (fun y => (travelingWave_hasDerivAt_space_two c₀ a v L t y).differentiableAt.hasDerivAt)
+    (fun y => by rw [← h2]; exact travelingWave_space_bound c₀ a v L t y) x (x - h)
+  rw [show x - h - x = -h by ring, neg_sq, neg_mul, sub_neg_eq_add] at hT
+  exact hT
 
 /-! ## J. Local truncation error at the nodes -/
 
@@ -865,12 +714,7 @@ lemma upwind_truncation_le {ncells : ℕ} [NeZero ncells] {c₀ a v L dt : ℝ} 
   have hA := travelingWave_time_taylor c₀ a v L ((n : ℝ) * dt) ((j.val : ℝ) * (L / ncells)) dt
   have hB := travelingWave_space_taylor c₀ a v L ((n : ℝ) * dt) ((j.val : ℝ) * (L / ncells))
     (L / ncells)
-  have hDt := congrArg (fun g => deriv g ((n : ℝ) * dt))
-    (travelingWave_time_fun_aux c₀ a v L ((j.val : ℝ) * (L / ncells)))
-  rw [deriv_sin_affine_aux] at hDt
-  have hDx := congrArg (fun g => deriv g ((j.val : ℝ) * (L / ncells)))
-    (travelingWave_space_fun_aux c₀ a v L ((n : ℝ) * dt))
-  rw [deriv_sin_affine_aux] at hDx
+  have hadv := travelingWave_advection c₀ a v L ((n : ℝ) * dt) ((j.val : ℝ) * (L / ncells))
   have hνdx : v * dt / (L / (ncells : ℝ)) * (L / (ncells : ℝ)) = v * dt :=
     div_mul_cancel₀ _ hdxne
   have hpde : dt * deriv (fun τ => travelingWave c₀ a v L τ ((j.val : ℝ) * (L / ncells)))
@@ -878,13 +722,8 @@ lemma upwind_truncation_le {ncells : ℕ} [NeZero ncells] {c₀ a v L dt : ℝ} 
       + v * dt / (L / ncells) * (L / ncells)
         * deriv (fun y => travelingWave c₀ a v L ((n : ℝ) * dt) y)
         ((j.val : ℝ) * (L / ncells)) = 0 := by
-    rw [hνdx, hDt, hDx]
-    have hθ : (-(2 * Real.pi * v / L)) * ((n : ℝ) * dt)
-          + 2 * Real.pi * ((j.val : ℝ) * (L / ncells)) / L
-        = (2 * Real.pi / L) * ((j.val : ℝ) * (L / ncells))
-          + -(2 * Real.pi * v * ((n : ℝ) * dt) / L) := by ring
-    rw [hθ]
-    ring
+    rw [hνdx]
+    linear_combination dt * hadv
   have hT : travelingWave c₀ a v L ((n : ℝ) * dt + dt) ((j.val : ℝ) * (L / ncells))
         - ((1 - v * dt / (L / ncells))
           * travelingWave c₀ a v L ((n : ℝ) * dt) ((j.val : ℝ) * (L / ncells))
