@@ -104,7 +104,7 @@ private theorem gamma1_le_gammaH (M : ℕ) (H : Subgroup (ZMod M)ˣ) :
   rw [h1]
   exact one_mem H
 
-private theorem gamma_le_gammaH (M : ℕ) (H : Subgroup (ZMod M)ˣ) :
+public theorem gamma_le_gammaH (M : ℕ) (H : Subgroup (ZMod M)ˣ) :
     Gamma M ≤ GammaH M H := by
   intro A hA
   rw [mem_GammaH_iff]
@@ -119,6 +119,12 @@ private theorem gamma_le_gammaH (M : ℕ) (H : Subgroup (ZMod M)ˣ) :
   rw [h1]
   exact one_mem H
 
+/-- `GammaH M H` has finite index in `SL(2, ℤ)` for nonzero `M`, since it
+contains the principal congruence subgroup `Gamma M`. -/
+public instance gammaH_finiteIndex (M : ℕ) [NeZero M] (H : Subgroup (ZMod M)ˣ) :
+    (GammaH M H).FiniteIndex :=
+  Subgroup.finiteIndex_of_le (gamma_le_gammaH M H)
+
 end CongruenceSubgroup
 
 namespace CuspForm
@@ -131,8 +137,6 @@ public theorem exists_gamma1_coe_eq_of_gammaH (M : ℕ) [NeZero M]
     (f : CuspForm (CongruenceSubgroup.GammaH M H) k) :
     ∃ g : CuspForm (CongruenceSubgroup.Gamma1 M) k,
       (⇑g : UpperHalfPlane → ℂ) = ⇑f := by
-  haveI : (CongruenceSubgroup.GammaH M H).FiniteIndex :=
-    Subgroup.finiteIndex_of_le (CongruenceSubgroup.gamma_le_gammaH M H)
   have hle : ((CongruenceSubgroup.Gamma1 M : Subgroup SL(2, ℤ)) :
         Subgroup (GL (Fin 2) ℝ)) ≤
       ((CongruenceSubgroup.GammaH M H : Subgroup SL(2, ℤ)) :

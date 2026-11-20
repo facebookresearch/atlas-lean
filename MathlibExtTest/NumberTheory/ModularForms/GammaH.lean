@@ -27,6 +27,11 @@ example (M : ℕ) (A : SL(2, ℤ)) (hA : A ∈ CongruenceSubgroup.GammaH M ⊤) 
     A ∈ CongruenceSubgroup.Gamma0 M :=
   CongruenceSubgroup.GammaH_le_Gamma0 M ⊤ hA
 
+/-- Downstream consumers can synthesize finite index for `GammaH`. -/
+example (M : ℕ) [NeZero M] (H : Subgroup (ZMod M)ˣ) :
+    (CongruenceSubgroup.GammaH M H).FiniteIndex :=
+  inferInstance
+
 /-- The zero cusp form restricts to the zero cusp form. -/
 example (M : ℕ) [NeZero M] (H : Subgroup (ZMod M)ˣ) (k : ℤ) :
     ∃ g : CuspForm (CongruenceSubgroup.Gamma1 M) k,
