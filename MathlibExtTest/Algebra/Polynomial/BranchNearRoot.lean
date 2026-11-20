@@ -28,17 +28,17 @@ theorem exactSource {n w : ℕ} (F : Polynomial (Polynomial ℂ)) (hF : F.natDeg
   Polynomial.exists_branch_near_root F hF hwt c hc hlead P hP hPinj hR
 
 -- Boundary: with no branches (`n = 0`), there is no index to witness the
--- conclusion, so no root can occur for large `t`.
+-- conclusion, so for all sufficiently large `t` the specialization has no root.
 example (F : Polynomial (Polynomial ℂ)) (hF : F.natDegree ≤ 0)
     (hwt : ∀ k j : ℕ, 0 * (0 - k) < j → (F.coeff k).coeff j = 0)
     (c : ℂ) (hc : c ≠ 0) (hlead : F.coeff 0 = C c)
     (P : Fin 0 → Polynomial ℂ) (hP : ∀ i, (P i).natDegree ≤ 0)
     (hPinj : Function.Injective fun i => (P i).coeff 0)
     (hR : ∀ k j : ℕ, 0 * (0 - k) ≤ j + 0 →
-      ((F - C (C c) * ∏ i, (X - C (P i))).coeff k).coeff j = 0) : True := by
-  obtain ⟨C₀, T, hC₀, h⟩ := exactSource F hF hwt c hc hlead P hP hPinj hR
-  have ht : T ≤ ‖(((T ⊔ 0) + 1 : ℝ) : ℂ)‖ := by
-    rw [Complex.norm_real, Real.norm_eq_abs, abs_of_pos (by positivity)]
-    exact le_trans (le_max_left T 0) (by linarith)
-  have := h _ ht
-  trivial
+      ((F - C (C c) * ∏ i, (X - C (P i))).coeff k).coeff j = 0) :
+    ∃ T : ℝ, ∀ t : ℂ, T ≤ ‖t‖ → ∀ x : ℂ,
+      ¬ (F.map (Polynomial.evalRingHom t)).IsRoot x := by
+  obtain ⟨C₀, T, _hC₀, h⟩ := exactSource F hF hwt c hc hlead P hP hPinj hR
+  refine ⟨T, fun t ht x hx => ?_⟩
+  obtain ⟨i, _hi⟩ := h t ht x hx
+  exact i.elim0
