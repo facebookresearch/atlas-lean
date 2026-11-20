@@ -44,15 +44,70 @@ example : IsReluNet widths12 ⟨fun _ _ => 0⟩ := by
 example (Nnet : Net widths12) (hN : IsReluNet widths12 Nnet)
     (j : Fin (widths12 1)) :
     PiecesLE 2 (fun x => (Nnet.forward 1 (inputVec widths12 x)) j) := by
-  have hpos : ∀ k, 0 < widths12 k := by
-    intro k
-    cases k with
-    | zero => decide
-    | succ n => show (0:ℕ) < 2; decide
-  have h := node_piecesLE widths12 Nnet hN rfl hpos 1 j
+  have hN1 : IsReluNetUpTo widths12 Nnet 1 :=
+    IsReluNet.isReluNetUpTo (d := widths12) (Nnet := Nnet) 1 hN
+  have hpos : ∀ j < 1, 0 < widths12 j := by
+    intro j hj
+    have hj0 : j = 0 := by omega
+    subst hj0
+    decide
+  have h := node_piecesLE widths12 Nnet 1 hN1 rfl hpos j
   have hbound : (2 ^ 1) * ∏ k ∈ Finset.Icc 1 (1 - 1), widths12 k = 2 := by simp
   rw [hbound] at h
   exact h
+
+/-- widths positive through layer 1, zero tail after. -/
+def widths120 : ℕ → ℕ
+  | 0 => 1
+  | 1 => 2
+  | _ => 0
+
+/-- Node bound with zero tail: the zero network needs only bounded hypotheses. -/
+example (j : Fin (widths120 1)) :
+    PiecesLE 2
+      (fun x => ((⟨fun _ _ => 0⟩ : Net widths120).forward 1
+        (inputVec widths120 x)) j) := by
+  have hN : IsReluNet widths120 ⟨fun _ _ => 0⟩ := by
+    intro k
+    refine ⟨0, 0, ?_⟩
+    intro x j
+    simp
+  have hN1 : IsReluNetUpTo widths120 ⟨fun _ _ => 0⟩ 1 :=
+    IsReluNet.isReluNetUpTo (d := widths120) (Nnet := _) 1 hN
+  have hpos : ∀ j < 1, 0 < widths120 j := by
+    intro j hj
+    have hj0 : j = 0 := by omega
+    subst hj0
+    decide
+  have h := node_piecesLE widths120 _ 1 hN1 rfl hpos j
+  have hbound : (2 ^ 1) * ∏ k ∈ Finset.Icc 1 (1 - 1), widths120 k = 2 := by simp
+  rw [hbound] at h
+  exact h
+
+/-- widths for the one-layer network bound, zero tail after. -/
+def widths10 : ℕ → ℕ
+  | 0 => 1
+  | 1 => 1
+  | _ => 0
+
+/-- Network bound with zero tail: the one-layer zero network instance. -/
+example : ∃ n, PiecesLE n
+    (fun x => ((⟨fun _ _ => 0⟩ : Net widths10).forward 1
+      (inputVec widths10 x)) ⟨0, by decide⟩) ∧
+    (n : ℝ) ≤ (2 * ((∑ i ∈ Finset.Icc 1 1, widths10 i) : ℝ) / ((1 : ℕ) : ℝ)) ^ 1 := by
+  have hN : IsReluNet widths10 ⟨fun _ _ => 0⟩ := by
+    intro k
+    refine ⟨0, 0, ?_⟩
+    intro x j
+    simp
+  have hN1 : IsReluNetUpTo widths10 ⟨fun _ _ => 0⟩ 1 :=
+    IsReluNet.isReluNetUpTo (d := widths10) (Nnet := _) 1 hN
+  have hpos : ∀ j < 1, 0 < widths10 j := by
+    intro j hj
+    have hj0 : j = 0 := by omega
+    subst hj0
+    decide
+  exact net_piecesLE widths10 _ 1 hN1 rfl rfl (by decide) hpos
 
 /-- Sum-rule instance: two shifted ReLUs have at most four pieces in total. -/
 example : PiecesLE 4 ((fun x : ℝ => x⁺) + (fun x : ℝ => (x - 1)⁺)) := by

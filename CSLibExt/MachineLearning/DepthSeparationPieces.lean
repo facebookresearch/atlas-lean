@@ -75,6 +75,20 @@ def IsReluNet (d : ℕ → ℕ) (Nnet : Net d) : Prop :=
     ∀ (x : EuclideanSpace ℝ (Fin (d k))) (j : Fin (d (k + 1))),
       Nnet.layer k x j = ((∑ i, W j i * x i) + b j)⁺
 
+/-- A ReLU network up to layer `n`: layers `0, ..., n - 1` apply `posPart`
+coordinatewise after an affine map. These are exactly the layers that
+`forward n` traverses. -/
+def IsReluNetUpTo (d : ℕ → ℕ) (Nnet : Net d) (n : ℕ) : Prop :=
+  ∀ k < n, ∃ (W : Fin (d (k + 1)) → Fin (d k) → ℝ)
+    (b : Fin (d (k + 1)) → ℝ),
+    ∀ (x : EuclideanSpace ℝ (Fin (d k))) (j : Fin (d (k + 1))),
+      Nnet.layer k x j = ((∑ i, W j i * x i) + b j)⁺
+
+/-- A full ReLU network is a ReLU network up to any bound. -/
+theorem IsReluNet.isReluNetUpTo (d : ℕ → ℕ) (Nnet : Net d) (n : ℕ)
+    (h : IsReluNet d Nnet) : IsReluNetUpTo d Nnet n :=
+  fun k _ => h k
+
 /-- No function has zero pieces: any breakpoint set gives at least one. -/
 theorem piecesLE_zero_none (f : ℝ → ℝ) : ¬ PiecesLE 0 f := by
   rintro ⟨s, hsn, _⟩
@@ -518,15 +532,18 @@ theorem piecesLE_relu_comp (n : ℕ) (h : ℝ → ℝ) :
 
 /-- Per-node bound for positive widths: the output of node `j` after `i`
 layers has at most `2 ^ i` times the product of widths over layers `1` to
-`i - 1` pieces. Positive widths are part of the source model (layer widths
-of a network); the bound is false without some positivity. -/
-theorem node_piecesLE (d : ℕ → ℕ) (Nnet : Net d)
-    (hN : IsReluNet d Nnet) (hd0 : d 0 = 1) (hpos : ∀ j, 0 < d j)
-    (i : ℕ) (j : Fin (d i)) :
+`i - 1` pieces. Only the traversed layers are constrained, so widths after
+layer `i` may be zero (finite-network encodings); positivity of the traversed
+widths is still necessary (a zero traversed width collapses the product bound). -/
+theorem node_piecesLE (d : ℕ → ℕ) (Nnet : Net d) (i : ℕ)
+    (hN : IsReluNetUpTo d Nnet i) (hd0 : d 0 = 1) (hpos : ∀ j < i, 0 < d j)
+    (j : Fin (d i)) :
     PiecesLE ((2 ^ i) * ∏ k ∈ Finset.Icc 1 (i - 1), d k)
       (fun x => (Nnet.forward i (inputVec d x)) j) := by
+  revert j hpos hN
   induction i with
   | zero =>
+    intro _ _ j
     have hIcc : Finset.Icc (1:ℕ) (0 - 1) = ∅ := Finset.Icc_eq_empty (by omega)
     have hfun : (fun x => (Nnet.forward 0 (inputVec d x)) j) = id := by
       funext x
@@ -535,7 +552,8 @@ theorem node_piecesLE (d : ℕ → ℕ) (Nnet : Net d)
     rw [hIcc, Finset.prod_empty, pow_zero, mul_one, hfun]
     exact piecesLE_id
   | succ i ih =>
-    obtain ⟨W, b, hWb⟩ := hN i
+    intro hN hpos j
+    obtain ⟨W, b, hWb⟩ := hN i (by omega)
     have h1 : ∀ x : ℝ, Nnet.forward (i + 1) (inputVec d x)
         = Nnet.layer i (Nnet.forward i (inputVec d x)) := by
       intro x
@@ -551,18 +569,22 @@ theorem node_piecesLE (d : ℕ → ℕ) (Nnet : Net d)
       exact hfw x
     have hB1 : (1:ℕ) ≤ (2 ^ i) * ∏ k ∈ Finset.Icc 1 (i - 1), d k :=
       one_le_mul (Nat.one_le_pow i 2 (by norm_num))
-        (Finset.one_le_prod (fun k _ => hpos k))
+        (Finset.one_le_prod (fun k hk => hpos k (by
+          have h2 := Finset.mem_Icc.mp hk
+          omega)))
     have hS1 : (1:ℕ) ≤ (d i) * ((2 ^ i) * ∏ k ∈ Finset.Icc 1 (i - 1), d k) :=
-      one_le_mul (hpos i) hB1
+      one_le_mul (hpos i (by omega)) hB1
     have hsumconst :
         (∑ _k : Fin (d i), (2 ^ i) * ∏ k ∈ Finset.Icc 1 (i - 1), d k)
           = (d i) * ((2 ^ i) * ∏ k ∈ Finset.Icc 1 (i - 1), d k) := by
       rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
         Nat.cast_id]
+    have hN' : IsReluNetUpTo d Nnet i := fun k hk => hN k (by omega)
+    have hpos' : ∀ j < i, 0 < d j := fun j hj => hpos j (by omega)
     have hsum : PiecesLE
         (max (∑ _k : Fin (d i), (2 ^ i) * ∏ k ∈ Finset.Icc 1 (i - 1), d k) 1)
         (fun x => (∑ k, W j k * (Nnet.forward i (inputVec d x)) k) + b j) :=
-      piecesLE_sum _ _ _ _ _ (fun k => ih k)
+      piecesLE_sum _ _ _ _ _ (fun k => ih hN' hpos' k)
     rw [hsumconst] at hsum
     have hmax : max ((d i) * ((2 ^ i) * ∏ k ∈ Finset.Icc 1 (i - 1), d k)) 1
         = (d i) * ((2 ^ i) * ∏ k ∈ Finset.Icc 1 (i - 1), d k) :=
@@ -616,12 +638,13 @@ theorem prod_le_mean_pow (ι : Type*) (s : Finset ι) (w : ι → ℝ) (L : ℕ)
   exact pow_le_pow_left₀ hnonneg hAM L
 
 /-- Whole-network bound for positive widths, via the per-node bound and
-the arithmetic-geometric mean inequality on the width product. Positive
-widths are part of the source model (layer widths of a network); the bound
-is false without some positivity. -/
+the arithmetic-geometric mean inequality on the width product. Only the
+traversed layers are constrained, so widths after layer `L` may be zero
+(finite-network encodings); positivity of the traversed widths is still
+necessary. -/
 theorem net_piecesLE (d : ℕ → ℕ) (Nnet : Net d) (L : ℕ)
-    (hN : IsReluNet d Nnet) (hd0 : d 0 = 1) (hdL : d L = 1) (hL : 0 < L)
-    (hpos : ∀ j, 0 < d j) :
+    (hN : IsReluNetUpTo d Nnet L) (hd0 : d 0 = 1) (hdL : d L = 1) (hL : 0 < L)
+    (hpos : ∀ j < L, 0 < d j) :
     ∃ n : ℕ, PiecesLE n (fun x => (Nnet.forward L (inputVec d x)) ⟨0, by omega⟩) ∧
       (n : ℝ) ≤ (2 * ((∑ i ∈ Finset.Icc 1 L, d i) : ℝ) / (L : ℝ)) ^ L := by
   have hprod : ∏ k ∈ Finset.Icc 1 (L - 1), d k = ∏ k ∈ Finset.Icc 1 L, d k := by
@@ -636,7 +659,7 @@ theorem net_piecesLE (d : ℕ → ℕ) (Nnet : Net d) (L : ℕ)
       ≤ ((∑ k ∈ Finset.Icc 1 L, ((d k : ℕ) : ℝ)) / (L : ℝ)) ^ L :=
     prod_le_mean_pow _ _ _ _ hcard hL (fun k _ => Nat.cast_nonneg _)
   refine ⟨(2 ^ L) * ∏ k ∈ Finset.Icc 1 (L - 1), d k,
-    node_piecesLE d Nnet hN hd0 hpos L ⟨0, by omega⟩, ?_⟩
+    node_piecesLE d Nnet L hN hd0 hpos ⟨0, by omega⟩, ?_⟩
   rw [hprod]
   simp only [Nat.cast_mul, Nat.cast_pow, Nat.cast_prod, Nat.cast_ofNat]
   have hfact : ((2 * ∑ i ∈ Finset.Icc 1 L, ((d i : ℕ) : ℝ)) / (L : ℝ)) ^ L
