@@ -35,19 +35,22 @@ public import Mathlib.RingTheory.Spectrum.Prime.RingHom
 @[expose] public section
 
 /-- A ring homomorphism induces a map between localizations away from
-an element and its image, compatibly with the localization maps; and an
-element avoids a prime of the target exactly when it avoids the
-comap prime of the source. -/
-theorem exists_ringHom_away_comp_eq_and_not_mem_iff
+an element and its image, compatibly with the localization maps. -/
+theorem exists_ringHom_away_comp_eq
     {B B' : Type*} [CommRing B] [CommRing B'] (f : B →+* B') (g : B) :
-    (∃ fg : Localization.Away g →+* Localization.Away (f g),
-        fg.comp (algebraMap B (Localization.Away g)) =
-          (algebraMap B' (Localization.Away (f g))).comp f) ∧
-      ∀ x' : PrimeSpectrum B', f g ∉ x'.asIdeal ↔
-        g ∉ (PrimeSpectrum.comap f x').asIdeal := by
+    ∃ fg : Localization.Away g →+* Localization.Away (f g),
+      fg.comp (algebraMap B (Localization.Away g)) =
+        (algebraMap B' (Localization.Away (f g))).comp f := by
   have hle : Submonoid.powers g ≤ (Submonoid.powers (f g)).comap f := by
     rintro x ⟨n, rfl⟩
     exact ⟨n, by simp [map_pow]⟩
-  refine ⟨⟨IsLocalization.map (Localization.Away (f g)) f hle,
-    IsLocalization.map_comp hle⟩, fun x' => ?_⟩
+  exact ⟨IsLocalization.map (Localization.Away (f g)) f hle,
+    IsLocalization.map_comp hle⟩
+
+/-- An element avoids a prime of the target exactly when it avoids the
+comap prime of the source. -/
+theorem primeSpectrum_not_mem_comap_asIdeal_iff
+    {B B' : Type*} [CommRing B] [CommRing B'] (f : B →+* B') (g : B)
+    (x' : PrimeSpectrum B') :
+    f g ∉ x'.asIdeal ↔ g ∉ (PrimeSpectrum.comap f x').asIdeal := by
   simp [PrimeSpectrum.comap_asIdeal, Ideal.mem_comap]
