@@ -32,7 +32,7 @@ theorem exactSource
     Function.Surjective (snd.residueFieldMap t).hom :=
   AlgebraicGeometry.IsPullback.surjective_residueFieldMap_of_isIso_residueFieldMap H t
 
-/-- Boundary: in the horizontal identity pullback square, the theorem
+/-- Boundary: in the vertical identity pullback square, the theorem
 recovers surjectivity of an identity residue field map. -/
 example {T S : Scheme.{u}} {g : T ⟶ S} (t : ↥T) :
     Function.Surjective (Scheme.Hom.residueFieldMap (𝟙 T) t).hom :=
