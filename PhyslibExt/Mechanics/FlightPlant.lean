@@ -8,15 +8,17 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Mechanics.RigidMotionPorts
+public import PhyslibExt.Statistics.UncertaintyPropagation
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 
 /-!
-# Six-degree-of-freedom flight plant: the translational port and a controlled longitudinal trim
+# Six-degree-of-freedom flight plant: translational port, longitudinal trim and linearization
 
 The body-axis translational equation of a rigid motion's centre of mass, derived from the
 rotating-frame transport law, paired with the existing Euler equations of the same motion, the
 plant defined by aerodynamic and propulsive force and moment maps on an admitted domain, and a
-synthetic controlled longitudinal fixture of that plant with its trim and actuator domain.
+synthetic controlled longitudinal fixture of that plant with its trim, its actuator domain and its
+linearization about the trim.
 
 ## i. Overview
 
@@ -72,6 +74,23 @@ the position moves as `p(t) = p₀ + (t, 0)`, not a stationary world position. O
 `V ≥ 99/100`, `1/10 < A_x < 1/5`, `|A_z| < 1/20` and `|M| ≤ 3/100`, and a state of zero speed lies
 outside it.
 
+Section E linearizes the reduced field `f(x, z, θ, q) = (-x - x³, -z, q, -2 q - sin θ)` of the
+fixture about its trim, the zero state. Its Jacobian there is
+`A = diag(-1, -1) ⊕ [[0, 1], [-1, -2]]`, and `f e = A e + (-x³, 0, 0, θ - sin θ)`; this remainder is
+also the first-order remainder `f (0 + δ) - f 0 - Df(0) δ` of
+`Statistics.UncertaintyPropagation.jacobianRemainder`. For `0 < r ≤ 1/100` and a deviation `δ`
+with every coordinate at most `r` in absolute value, `δ` lies in the actuator box and the
+remainder components are at most `r ‖δ‖²`, `0`, `0` and `(r / 6) ‖δ‖²` in absolute value, with
+`‖δ‖` the sup norm on `Fin 4 → ℝ`; the last bound is the cubic sine bound
+`|θ - sin θ| ≤ |θ|³ / 6`. For every `0 < r`, the componentwise remainder theorem of
+`Statistics.UncertaintyPropagation`, given the actual second derivatives and the constant
+`H = (6 r, 0, 0, r)` that bounds their operator norms on the radius-`r` box, gives the looser
+bounds `H i / 2 * ‖δ‖²` there. For a state `e : EuclideanSpace ℝ (Fin 4)`, with coordinates
+`WithLp.ofLp e`, `‖ofLp e‖ ≤ ‖e‖ ≤ 2 ‖ofLp e‖` (sup norm outside, Euclidean norm in the middle),
+the Euclidean ball of radius `r` lies in the box of radius `r`, and the bounds above hold with the
+Euclidean norm. `A` linearizes the reduced state only: the world position is not part of it, and
+every planar plant solution moves forward with position rate at least `99/100`.
+
 Model inputs (hypotheses of the module):
 
 * the translational law `m X'' = R F_B + m g` and the rotational law `dL_COM/dt = R M_B`, with the
@@ -87,9 +106,9 @@ Model inputs (hypotheses of the module):
   box are model inputs.
 
 Non-goals: aerodynamic coefficient models other than the synthetic polar of section D, trim of
-anything but the planar ideal-actuator fixture of section D, linearization, stability, existence
-of trajectories for given maps (section D exhibits only the trim trajectory), and any empirical
-adequacy or system safety claim.
+anything but the planar ideal-actuator fixture of section D, linearization of anything but its
+reduced field about the trim (section E), stability, existence of trajectories for given maps
+(section D exhibits only the trim trajectory), and any empirical adequacy or system safety claim.
 
 ## ii. Key results
 
@@ -110,6 +129,18 @@ adequacy or system safety claim.
   longitudinal system on the actuator box.
 - `trim_relative_equilibrium`, `actuatorBox_bounds`, `longitudinalMaps_rejects` : the trim as a
   relative equilibrium, the actuator bounds on the box, and no evaluation outside it.
+- `longitudinalJacobian`, `longitudinalJacobian_eq_fromBlocks`, `hasFDerivAt_reducedField_zero` :
+  the Jacobian `diag(-1, -1) ⊕ [[0, 1], [-1, -2]]` of the reduced field at the trim.
+- `longitudinalRemainder`, `reducedField_eq_mulVec_add_remainder`,
+  `jacobianRemainder_reducedField` : the remainder `(-x³, 0, 0, θ - sin θ)`.
+- `longitudinalRemainder_bounds`, `longitudinalRemainder_bounds_euclidean` : its bounds on the box
+  in the sup norm and on the ball in the Euclidean norm.
+- `contDiff_reducedField`, `fderiv_fderiv_reducedField_apply`,
+  `norm_fderiv_fderiv_reducedField_le`, `jacobianRemainder_reducedField_le_of_hessian` : the
+  componentwise remainder bound from the actual second derivatives.
+- `norm_ofLp_le_norm_le_two_mul`, `abs_ofLp_le_of_norm_le` : the sup and Euclidean norms of a
+  state.
+- `planar_sixDofPlant_forward_rate` : every plant solution moves forward.
 
 ## iii. Table of contents
 
@@ -117,6 +148,7 @@ adequacy or system safety claim.
 - B. The six-degree-of-freedom body equations
 - C. Coefficient maps with admitted domains
 - D. A controlled longitudinal fixture
+- E. Linearization about the trim
 
 ## iv. References
 
@@ -128,11 +160,15 @@ adequacy or system safety claim.
   parabolic drag polar `C_D = C_D0 + K C_L²`).
 - L. D. Landau and E. M. Lifshitz, *Mechanics*, Sections 34 and 39 (the equations of motion of a
   rigid body; motion in a non-inertial frame of reference).
+- H. K. Khalil, *Nonlinear Systems*, 3rd edition, 2002, Section 4.3 (linearization at an
+  equilibrium).
 - `Mechanics.RigidMotionPorts` (the transport law `deriv_bodyToInertialVec` and the Euler
   equivalence `deriv_comAngularMomentum_eq_iff_euler`), Physlib's
   `RigidBodyMotion.bodyAngularVelocity` and
   `RigidBodyMotion.deriv_orientation_mulVec_eq_orientation_bodyAngularVelocity_cross`, and the
   frame dictionary `Units.EngineeringFrames`.
+- `Statistics.UncertaintyPropagation.jacobianRemainder_component_le_of_hessian` (the componentwise
+  remainder bound from a Hessian bound) and Mathlib's `Real.abs_sub_sin_le` (the cubic sine bound).
 -/
 
 @[expose] public section
@@ -789,5 +825,331 @@ lemma longitudinalMaps_rejects {x : Time → Fin 4 → ℝ} (M : RigidBodyMotion
     norm_num at this
   · obtain ⟨-, -, hx', -⟩ := hplant
     exact hx hx'
+
+/-! ## E. Linearization about the trim -/
+
+/-- The Jacobian of the reduced longitudinal field at the trim, in the state order
+`(x, z, θ, q)`: `diag(-1, -1) ⊕ [[0, 1], [-1, -2]]`. -/
+def longitudinalJacobian : Matrix (Fin 4) (Fin 4) ℝ :=
+  !![-1, 0, 0, 0; 0, -1, 0, 0; 0, 0, 0, 1; 0, 0, -1, -2]
+
+/-- The nonlinear remainder of the reduced longitudinal field about the trim, in the state order
+`(x, z, θ, q)`: `(-x³, 0, 0, θ - sin θ)`. -/
+noncomputable def longitudinalRemainder (e : Fin 4 → ℝ) : Fin 4 → ℝ :=
+  ![-e 0 ^ 3, 0, 0, e 2 - Real.sin (e 2)]
+
+/-- The Jacobian is the direct sum of the translational block `diag(-1, -1)` on `(x, z)` and the
+pitch block `[[0, 1], [-1, -2]]` on `(θ, q)`. -/
+lemma longitudinalJacobian_eq_fromBlocks :
+    longitudinalJacobian = Matrix.reindex finSumFinEquiv finSumFinEquiv
+      (Matrix.fromBlocks (Matrix.diagonal ![-1, -1]) 0 0 !![0, 1; -1, -2]) := by
+  ext i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The derivative of the component `-x - x³` of the reduced field at `y`: `(-1 - 3 x²) dx`. -/
+private lemma hasFDerivAt_reducedField_comp0 (y : Fin 4 → ℝ) :
+    HasFDerivAt (fun e : Fin 4 → ℝ => reducedField e 0)
+      ((-1 - 3 * y 0 ^ 2) • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ) 0) y := by
+  have h := ((hasFDerivAt_apply (𝕜 := ℝ) (0 : Fin 4) y).fun_neg).fun_sub
+    ((hasFDerivAt_apply (𝕜 := ℝ) (0 : Fin 4) y).pow 3)
+  have hf : (fun e : Fin 4 → ℝ => reducedField e 0) = fun e => -e 0 - e 0 ^ 3 := by
+    funext e
+    simp [reducedField]
+  rw [hf]
+  refine h.congr_fderiv (ContinuousLinearMap.ext fun v => ?_)
+  simp
+  ring
+
+/-- The derivative of the component `-z` of the reduced field: `-dz`. -/
+private lemma hasFDerivAt_reducedField_comp1 (y : Fin 4 → ℝ) :
+    HasFDerivAt (fun e : Fin 4 → ℝ => reducedField e 1)
+      (-ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ) 1) y := by
+  have hf : (fun e : Fin 4 → ℝ => reducedField e 1) = fun e => -e 1 := by
+    funext e
+    simp [reducedField]
+  rw [hf]
+  exact (hasFDerivAt_apply (𝕜 := ℝ) (1 : Fin 4) y).neg
+
+/-- The derivative of the component `q` of the reduced field: `dq`. -/
+private lemma hasFDerivAt_reducedField_comp2 (y : Fin 4 → ℝ) :
+    HasFDerivAt (fun e : Fin 4 → ℝ => reducedField e 2)
+      (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ) 3) y := by
+  have hf : (fun e : Fin 4 → ℝ => reducedField e 2) = fun e => e 3 := by
+    funext e
+    simp [reducedField]
+  rw [hf]
+  exact hasFDerivAt_apply (𝕜 := ℝ) (3 : Fin 4) y
+
+/-- The derivative of the component `-2 q - sin θ` of the reduced field at `y`:
+`-2 dq - cos θ dθ`. -/
+private lemma hasFDerivAt_reducedField_comp3 (y : Fin 4 → ℝ) :
+    HasFDerivAt (fun e : Fin 4 → ℝ => reducedField e 3)
+      ((-2 : ℝ) • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ) 3 -
+        Real.cos (y 2) • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ) 2) y := by
+  have hs' := (Real.hasDerivAt_sin (y 2)).comp_hasFDerivAt y
+    (hasFDerivAt_apply (𝕜 := ℝ) (2 : Fin 4) y)
+  have hs : HasFDerivAt (fun e : Fin 4 → ℝ => Real.sin (e 2))
+      (Real.cos (y 2) • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ) 2) y := hs'
+  have h := ((hasFDerivAt_apply (𝕜 := ℝ) (3 : Fin 4) y).const_mul (-2 : ℝ)).fun_sub hs
+  have hf : (fun e : Fin 4 → ℝ => reducedField e 3) = fun e => -2 * e 3 - Real.sin (e 2) := by
+    funext e
+    simp [reducedField]
+  rw [hf]
+  exact h
+
+/-- **The Jacobian at the trim.** The reduced field is differentiable at the zero state, with
+derivative `δ ↦ longitudinalJacobian *ᵥ δ`. -/
+lemma hasFDerivAt_reducedField_zero :
+    HasFDerivAt reducedField
+      (LinearMap.toContinuousLinearMap (Matrix.toLin' longitudinalJacobian)) 0 := by
+  rw [hasFDerivAt_pi']
+  intro i
+  fin_cases i
+  · refine (hasFDerivAt_reducedField_comp0 0).congr_fderiv (ContinuousLinearMap.ext fun v => ?_)
+    simp [longitudinalJacobian, dotProduct, Fin.sum_univ_four]
+  · refine (hasFDerivAt_reducedField_comp1 0).congr_fderiv (ContinuousLinearMap.ext fun v => ?_)
+    simp [longitudinalJacobian, dotProduct, Fin.sum_univ_four]
+  · refine (hasFDerivAt_reducedField_comp2 0).congr_fderiv (ContinuousLinearMap.ext fun v => ?_)
+    simp [longitudinalJacobian, dotProduct, Fin.sum_univ_four]
+  · refine (hasFDerivAt_reducedField_comp3 0).congr_fderiv (ContinuousLinearMap.ext fun v => ?_)
+    simp [longitudinalJacobian, dotProduct, Fin.sum_univ_four]
+    ring
+
+/-- **Linear part and remainder.** At every state the reduced field is the Jacobian part plus the
+nonlinear remainder: `f e = A *ᵥ e + (-x³, 0, 0, θ - sin θ)`. -/
+lemma reducedField_eq_mulVec_add_remainder (e : Fin 4 → ℝ) :
+    reducedField e = longitudinalJacobian *ᵥ e + longitudinalRemainder e := by
+  ext i
+  fin_cases i <;>
+    simp [reducedField, longitudinalRemainder, longitudinalJacobian, dotProduct,
+      Fin.sum_univ_four] <;>
+    ring
+
+/-- **The first-order remainder at the trim.** For every deviation `δ`, the remainder
+`f (0 + δ) - f 0 - Df(0) δ` of the reused uncertainty-propagation API, for the reduced field at the
+trim, is `longitudinalRemainder δ`. -/
+lemma jacobianRemainder_reducedField (δ : Fin 4 → ℝ) :
+    Statistics.UncertaintyPropagation.jacobianRemainder reducedField 0 δ =
+      longitudinalRemainder δ := by
+  have hD : fderiv ℝ reducedField 0 δ = longitudinalJacobian *ᵥ δ := by
+    rw [hasFDerivAt_reducedField_zero.fderiv]
+    simp [Matrix.toLin'_apply]
+  have h0 : reducedField 0 = 0 := by
+    ext i
+    fin_cases i <;> simp [reducedField]
+  rw [Statistics.UncertaintyPropagation.jacobianRemainder, zero_add, hD, h0, sub_zero,
+    reducedField_eq_mulVec_add_remainder δ, add_sub_cancel_left]
+
+/-- **Remainder bounds, sup norm.** For `0 < r ≤ 1/100` and a deviation `δ` with every coordinate
+at most `r` in absolute value, `δ` lies in the actuator box, and with `‖δ‖` the sup norm:
+`|-x³| ≤ r ‖δ‖²`, the middle components vanish, and `|θ - sin θ| ≤ (r / 6) ‖δ‖²` by the cubic
+sine bound. -/
+lemma longitudinalRemainder_bounds {r : ℝ} (hr0 : 0 < r) (hr : r ≤ 1 / 100) {δ : Fin 4 → ℝ}
+    (hδ : ∀ i, |δ i| ≤ r) :
+    δ ∈ actuatorBox ∧ |longitudinalRemainder δ 0| ≤ r * ‖δ‖ ^ 2 ∧
+      longitudinalRemainder δ 1 = 0 ∧ longitudinalRemainder δ 2 = 0 ∧
+      |longitudinalRemainder δ 3| ≤ r / 6 * ‖δ‖ ^ 2 := by
+  have hn : ∀ j, |δ j| ≤ ‖δ‖ := fun j => by
+    simpa [Real.norm_eq_abs] using norm_le_pi_norm δ j
+  refine ⟨fun i => (hδ i).trans hr, ?_, by simp [longitudinalRemainder],
+    by simp [longitudinalRemainder], ?_⟩
+  · simp only [longitudinalRemainder, Matrix.cons_val_zero]
+    rw [abs_neg, abs_pow]
+    calc |δ 0| ^ 3 = |δ 0| * |δ 0| ^ 2 := by ring
+      _ ≤ r * ‖δ‖ ^ 2 :=
+        mul_le_mul (hδ 0) (pow_le_pow_left₀ (abs_nonneg _) (hn 0) 2) (by positivity) hr0.le
+  · simp only [longitudinalRemainder]
+    simp only [Matrix.cons_val]
+    calc |δ 2 - Real.sin (δ 2)| ≤ |δ 2| ^ 3 / 6 := Real.abs_sub_sin_le _
+      _ = |δ 2| * |δ 2| ^ 2 / 6 := by ring
+      _ ≤ r * ‖δ‖ ^ 2 / 6 := by
+        gcongr
+        · exact hδ 2
+        · exact hn 2
+      _ = r / 6 * ‖δ‖ ^ 2 := by ring
+
+/-- The reduced field is `C²`: polynomial in `x`, `z`, `q` and trigonometric in `θ`. -/
+lemma contDiff_reducedField : ContDiff ℝ 2 reducedField := by
+  have hc : ∀ j : Fin 4, ContDiff ℝ 2 fun e : Fin 4 → ℝ => e j := fun j =>
+    contDiff_apply ℝ (fun _ : Fin 4 => ℝ) j
+  rw [contDiff_pi]
+  intro i
+  fin_cases i
+  · have h : ContDiff ℝ 2 fun e : Fin 4 → ℝ => -e 0 - e 0 ^ 3 := (hc 0).neg.sub ((hc 0).pow 3)
+    simpa [reducedField] using h
+  · have h : ContDiff ℝ 2 fun e : Fin 4 → ℝ => -e 1 := (hc 1).neg
+    simpa [reducedField] using h
+  · simpa [reducedField] using hc 3
+  · have h : ContDiff ℝ 2 fun e : Fin 4 → ℝ => -2 * e 3 - Real.sin (e 2) :=
+      (contDiff_const.mul (hc 3)).sub (Real.contDiff_sin.comp (hc 2))
+    simpa [reducedField] using h
+
+/-- **The actual second derivatives** of the components of the reduced field, as bilinear forms
+in the directions `h` and `k`: `-6 x h₀ k₀` for `-x - x³`, `0` for `-z` and `q`, and
+`sin θ h₂ k₂` for `-2 q - sin θ`. -/
+lemma fderiv_fderiv_reducedField_apply (y h k : Fin 4 → ℝ) :
+    fderiv ℝ (fderiv ℝ fun e => reducedField e 0) y h k = -6 * y 0 * h 0 * k 0 ∧
+      fderiv ℝ (fderiv ℝ fun e => reducedField e 1) y h k = 0 ∧
+      fderiv ℝ (fderiv ℝ fun e => reducedField e 2) y h k = 0 ∧
+      fderiv ℝ (fderiv ℝ fun e => reducedField e 3) y h k = Real.sin (y 2) * h 2 * k 2 := by
+  have d0 : fderiv ℝ (fun e : Fin 4 → ℝ => reducedField e 0) = fun y =>
+      (-1 - 3 * y 0 ^ 2) • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ) 0 :=
+    funext fun y => (hasFDerivAt_reducedField_comp0 y).fderiv
+  have d1 : fderiv ℝ (fun e : Fin 4 → ℝ => reducedField e 1) = fun _ =>
+      -ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ) 1 :=
+    funext fun y => (hasFDerivAt_reducedField_comp1 y).fderiv
+  have d2 : fderiv ℝ (fun e : Fin 4 → ℝ => reducedField e 2) = fun _ =>
+      ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ) 3 :=
+    funext fun y => (hasFDerivAt_reducedField_comp2 y).fderiv
+  have d3 : fderiv ℝ (fun e : Fin 4 → ℝ => reducedField e 3) = fun y =>
+      (-2 : ℝ) • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ) 3 -
+        Real.cos (y 2) • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ) 2 :=
+    funext fun y => (hasFDerivAt_reducedField_comp3 y).fderiv
+  have hc0 : HasFDerivAt (fun y : Fin 4 → ℝ => -1 - 3 * y 0 ^ 2)
+      (0 - (3 : ℝ) • ((2 • y 0 ^ (2 - 1)) •
+        ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ) 0)) y :=
+    (hasFDerivAt_const (-1 : ℝ) y).fun_sub
+      (((hasFDerivAt_apply (𝕜 := ℝ) (0 : Fin 4) y).pow 2).const_mul (3 : ℝ))
+  have H0 : HasFDerivAt (fun y : Fin 4 → ℝ => (-1 - 3 * y 0 ^ 2) •
+      ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ) 0)
+      ((0 - (3 : ℝ) • ((2 • y 0 ^ (2 - 1)) •
+        ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ) 0)).smulRight
+        (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ) 0)) y :=
+    hc0.smul_const (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ) 0)
+  have hcos' := (Real.hasDerivAt_cos (y 2)).comp_hasFDerivAt y
+    (hasFDerivAt_apply (𝕜 := ℝ) (2 : Fin 4) y)
+  have hcos : HasFDerivAt (fun y : Fin 4 → ℝ => Real.cos (y 2))
+      ((-Real.sin (y 2)) • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ) 2) y :=
+    hcos'
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · rw [d0, H0.fderiv]
+    simp only [ContinuousLinearMap.smulRight_apply, sub_apply, zero_apply, smul_apply,
+      ContinuousLinearMap.proj_apply, smul_eq_mul, nsmul_eq_mul, Nat.reduceSub, pow_one]
+    ring
+  · rw [d1, (hasFDerivAt_const _ y).fderiv]
+    rfl
+  · rw [d2, (hasFDerivAt_const _ y).fderiv]
+    rfl
+  · have H3 : HasFDerivAt (fun y : Fin 4 → ℝ =>
+        (-2 : ℝ) • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ) 3 -
+          Real.cos (y 2) • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ) 2)
+        (0 - ((-Real.sin (y 2)) • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ)
+          2).smulRight (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ) 2)) y :=
+      (hasFDerivAt_const _ y).fun_sub
+        (hcos.smul_const (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 4 => ℝ) 2))
+    rw [d3, H3.fderiv]
+    simp only [ContinuousLinearMap.smulRight_apply, sub_apply, zero_apply, smul_apply,
+      ContinuousLinearMap.proj_apply, smul_eq_mul]
+    ring
+
+/-- **Hessian bounds on the box**, in the operator norm for the sup norm on `Fin 4 → ℝ`: at a
+state `y` with every coordinate at most `r` in absolute value, the second derivative of component
+`i` has norm at most `H i`, with `H = (6 r, 0, 0, r)`. -/
+lemma norm_fderiv_fderiv_reducedField_le {r : ℝ} {y : Fin 4 → ℝ} (hy : ∀ j, |y j| ≤ r)
+    (i : Fin 4) :
+    ‖fderiv ℝ (fderiv ℝ fun e => reducedField e i) y‖ ≤ ![6 * r, 0, 0, r] i := by
+  have hr : 0 ≤ r := (abs_nonneg _).trans (hy 0)
+  have hn : ∀ (v : Fin 4 → ℝ) (j : Fin 4), |v j| ≤ ‖v‖ := fun v j => by
+    simpa [Real.norm_eq_abs] using norm_le_pi_norm v j
+  fin_cases i <;>
+    simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue, Matrix.cons_val_zero,
+      Matrix.cons_val_one, Matrix.cons_val]
+  · refine ContinuousLinearMap.opNorm_le_bound₂ _ (by positivity) fun h k => ?_
+    rw [(fderiv_fderiv_reducedField_apply y h k).1, Real.norm_eq_abs]
+    calc |-6 * y 0 * h 0 * k 0| = 6 * |y 0| * |h 0| * |k 0| := by
+          rw [abs_mul, abs_mul, abs_mul]
+          norm_num
+      _ ≤ 6 * r * ‖h‖ * ‖k‖ := by
+          gcongr
+          · exact hy 0
+          · exact hn h 0
+          · exact hn k 0
+  · refine ContinuousLinearMap.opNorm_le_bound₂ _ le_rfl fun h k => ?_
+    rw [(fderiv_fderiv_reducedField_apply y h k).2.1]
+    simp
+  · refine ContinuousLinearMap.opNorm_le_bound₂ _ le_rfl fun h k => ?_
+    rw [(fderiv_fderiv_reducedField_apply y h k).2.2.1]
+    simp
+  · refine ContinuousLinearMap.opNorm_le_bound₂ _ hr fun h k => ?_
+    rw [(fderiv_fderiv_reducedField_apply y h k).2.2.2, Real.norm_eq_abs]
+    calc |Real.sin (y 2) * h 2 * k 2| = |Real.sin (y 2)| * |h 2| * |k 2| := by
+          rw [abs_mul, abs_mul]
+      _ ≤ r * ‖h‖ * ‖k‖ := by
+          gcongr
+          · exact Real.abs_sin_le_abs.trans (hy 2)
+          · exact hn h 2
+          · exact hn k 2
+
+/-- **The component-Hessian remainder theorem, instantiated.** For `0 < r` and a deviation `δ`
+with every coordinate at most `r` in absolute value, the reused componentwise bound
+`Statistics.UncertaintyPropagation.jacobianRemainder_component_le_of_hessian`, applied on that box
+with the Hessian bounds above, gives `|jacobianRemainder reducedField 0 δ i| ≤ H i / 2 * ‖δ‖²` in
+the sup norm, `H = (6 r, 0, 0, r)`: the constants `3 r` and `r / 2` of components `0` and `3` are
+three times those of `longitudinalRemainder_bounds`. -/
+lemma jacobianRemainder_reducedField_le_of_hessian {r : ℝ} (hr0 : 0 < r) {δ : Fin 4 → ℝ}
+    (hδ : ∀ j, |δ j| ≤ r) (i : Fin 4) :
+    |Statistics.UncertaintyPropagation.jacobianRemainder reducedField 0 δ i| ≤
+      ![6 * r, 0, 0, r] i / 2 * ‖δ‖ ^ 2 := by
+  have hIcc : ∀ y ∈ Set.Icc (fun _ : Fin 4 => -r) (fun _ => r), ∀ j, |y j| ≤ r :=
+    fun y hy j => abs_le.2 ⟨hy.1 j, hy.2 j⟩
+  refine Statistics.UncertaintyPropagation.jacobianRemainder_component_le_of_hessian reducedField
+    0 δ i ![6 * r, 0, 0, r] isOpen_univ (Set.subset_univ _)
+    hasFDerivAt_reducedField_zero.differentiableAt
+    (contDiff_pi.1 contDiff_reducedField i).contDiffOn
+    (fun y hy => norm_fderiv_fderiv_reducedField_le (hIcc y hy) i) ?_ ?_
+  · exact ⟨fun j => by simp only [Pi.zero_apply]; linarith, fun j => by
+      simp only [Pi.zero_apply]; linarith⟩
+  · rw [zero_add]
+    exact ⟨fun j => (abs_le.1 (hδ j)).1, fun j => (abs_le.1 (hδ j)).2⟩
+
+/-- **Sup and Euclidean norms of a state.** For `e : EuclideanSpace ℝ (Fin 4)` with coordinates
+`WithLp.ofLp e`, the sup norm and the Euclidean norm compare as `‖ofLp e‖ ≤ ‖e‖ ≤ 2 ‖ofLp e‖`,
+the factor `2` being `√4`. -/
+lemma norm_ofLp_le_norm_le_two_mul (e : EuclideanSpace ℝ (Fin 4)) :
+    ‖(WithLp.ofLp e : Fin 4 → ℝ)‖ ≤ ‖e‖ ∧ ‖e‖ ≤ 2 * ‖(WithLp.ofLp e : Fin 4 → ℝ)‖ := by
+  refine ⟨(pi_norm_le_iff_of_nonneg (norm_nonneg e)).2 fun i => PiLp.norm_apply_le e i, ?_⟩
+  have hi : ∀ i, ‖e i‖ ^ 2 ≤ ‖(WithLp.ofLp e : Fin 4 → ℝ)‖ ^ 2 := fun i =>
+    pow_le_pow_left₀ (norm_nonneg _) (norm_le_pi_norm (WithLp.ofLp e) i) 2
+  have hsq : ‖e‖ ^ 2 ≤ (2 * ‖(WithLp.ofLp e : Fin 4 → ℝ)‖) ^ 2 := by
+    rw [EuclideanSpace.norm_sq_eq, Fin.sum_univ_four]
+    nlinarith [hi 0, hi 1, hi 2, hi 3]
+  exact le_of_pow_le_pow_left₀ two_ne_zero (by positivity) hsq
+
+/-- **The Euclidean ball lies in the box**: every coordinate of a state of Euclidean norm at most
+`r` is at most `r` in absolute value. -/
+lemma abs_ofLp_le_of_norm_le {r : ℝ} {e : EuclideanSpace ℝ (Fin 4)} (he : ‖e‖ ≤ r)
+    (i : Fin 4) : |WithLp.ofLp e i| ≤ r := by
+  have h := PiLp.norm_apply_le e i
+  rw [Real.norm_eq_abs] at h
+  exact h.trans he
+
+/-- **Remainder bounds, Euclidean norm.** For `0 < r ≤ 1/100` and a state `e` of Euclidean norm at
+most `r`, its coordinates lie in the actuator box and the remainder satisfies
+`|-x³| ≤ r ‖e‖²`, `0`, `0` and `|θ - sin θ| ≤ (r / 6) ‖e‖²`: the sup-norm bounds through
+`‖ofLp e‖ ≤ ‖e‖`. -/
+lemma longitudinalRemainder_bounds_euclidean {r : ℝ} (hr0 : 0 < r) (hr : r ≤ 1 / 100)
+    {e : EuclideanSpace ℝ (Fin 4)} (he : ‖e‖ ≤ r) :
+    WithLp.ofLp e ∈ actuatorBox ∧ |longitudinalRemainder (WithLp.ofLp e) 0| ≤ r * ‖e‖ ^ 2 ∧
+      longitudinalRemainder (WithLp.ofLp e) 1 = 0 ∧
+      longitudinalRemainder (WithLp.ofLp e) 2 = 0 ∧
+      |longitudinalRemainder (WithLp.ofLp e) 3| ≤ r / 6 * ‖e‖ ^ 2 := by
+  obtain ⟨hA, h0, h1, h2, h3⟩ := longitudinalRemainder_bounds hr0 hr (abs_ofLp_le_of_norm_le he)
+  have hsq : ‖(WithLp.ofLp e : Fin 4 → ℝ)‖ ^ 2 ≤ ‖e‖ ^ 2 :=
+    pow_le_pow_left₀ (norm_nonneg _) (norm_ofLp_le_norm_le_two_mul e).1 2
+  exact ⟨hA, h0.trans (mul_le_mul_of_nonneg_left hsq hr0.le), h1, h2,
+    h3.trans (mul_le_mul_of_nonneg_left hsq (by positivity))⟩
+
+/-- **No stationary world position.** For any mass distribution `B`, gravity `g` and coordinates
+`X₁`, `X₂`, `θ`, if the planar motion is a plant solution at `t`, its state lies in the actuator
+box, so its forward position rate `X₁' = 1 + x` is at least `99/100`. The world position is not
+part of the reduced state; `longitudinalJacobian` linearizes the reduced field only. -/
+lemma planar_sixDofPlant_forward_rate {B : RigidBody 3} {X₁ X₂ θ : Time → ℝ}
+    {g : Fin 3 → ℝ} {t : Time}
+    (h : SixDofPlant longitudinalMaps (planarState X₁ X₂ θ) (planarMotion B X₁ X₂ θ) g t) :
+    99 / 100 ≤ ∂ₜ X₁ t := by
+  obtain ⟨-, -, hx, -⟩ := h
+  have h0 : |planarState X₁ X₂ θ t 0| ≤ 1 / 100 := hx 0
+  simp only [planarState, Matrix.cons_val_zero] at h0
+  linarith [(abs_le.1 h0).1]
 
 end Mechanics.FlightPlant
