@@ -43,8 +43,8 @@ open NumberField IsDedekindDomain
 namespace IsDedekindDomain.HeightOneSpectrum
 
 /-- A compactly supported locally constant function on the square of a
-`v`-adic completion, vanishing on both coordinate axes, is invariant in its
-first coordinate under a common open subgroup of units.
+`v`-adic completion is invariant in its first coordinate under a common
+open subgroup of units.
 
 Local constancy makes the function constant near each point of its compact
 support, and compactness turns those pointwise neighbourhoods into one
@@ -55,8 +55,7 @@ from the support to all points. -/
 public theorem exists_isOpen_subgroup_forall_apply_mul_eq_of_isLocallyConstant_of_hasCompactSupport
     (K : Type) [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K))
     (Φ : (v.adicCompletion K) × (v.adicCompletion K) → ℂ)
-    (hΦ : IsLocallyConstant Φ) (hΦc : HasCompactSupport Φ)
-    (hΦ0 : ∀ p, Φ p ≠ 0 → p.1 ≠ 0 ∧ p.2 ≠ 0) :
+    (hΦ : IsLocallyConstant Φ) (hΦc : HasCompactSupport Φ) :
     ∃ U : Subgroup (v.adicCompletion K)ˣ, IsOpen (U : Set (v.adicCompletion K)ˣ) ∧
       ∀ t ∈ U, ∀ b z : v.adicCompletion K, Φ (b * (t : v.adicCompletion K), z) = Φ (b, z) := by
   classical
