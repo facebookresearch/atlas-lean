@@ -24,3 +24,4 @@
 
 - [Poisson conditioning](cond-measure-real-eq-multinomial-real.md)
 - [Poisson conditioning, two cells](cond-measure-real-eq-binomial.md)
+- [Binomial law of a Poisson count given the total](has-law-cond-binomial.md)

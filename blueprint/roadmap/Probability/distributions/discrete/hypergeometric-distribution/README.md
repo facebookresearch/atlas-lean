@@ -6,5 +6,7 @@
 - [Hypergeometric mass vanishes above the number of marked items](hypergeometric-real-of-lt-2.md)
 - [Normalization of the hypergeometric distribution](sum-hypergeometric-real.md)
 - [Mean of the hypergeometric distribution](sum-mul-hypergeometric-real.md)
+- [Second factorial moment of the hypergeometric distribution](sum-mul-sub-one-mul-hypergeometric-real.md)
+- [Variance of the hypergeometric distribution](sum-sq-sub-mean-mul-hypergeometric-real.md)
 - [Hypergeometric distribution](hypergeometric.md)
 - [Point masses of the hypergeometric distribution](hypergeometric-apply.md)
