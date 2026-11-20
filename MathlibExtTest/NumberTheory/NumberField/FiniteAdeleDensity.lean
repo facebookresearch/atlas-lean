@@ -31,11 +31,16 @@ example (K : Type*) [Field K] [NumberField K] (R : Type*) [Ring R]
       Ψ' (algebraMap K (FiniteAdeleRing (𝓞 K) K) a)) : Ψ = Ψ' :=
   (NumberField.denseRange_algebraMap_finiteAdeleRing_and_ringHom_ext K).2 R Ψ Ψ' hΨ hΨ' h
 
-/-- Boundary example: density fails without the number-field hypothesis in
-the sense that the diagonal map need not even be defined by this statement;
-concretely, agreement on `K` forces equality already for maps into `ℂ`. -/
+/-- Concrete-target consumer of the standalone extensionality theorem:
+agreement on `K` forces equality already for maps into `ℂ`, via the
+standalone density theorem. -/
 example (K : Type*) [Field K] [NumberField K]
     (Ψ Ψ' : FiniteAdeleRing (𝓞 K) K →+* ℂ) (hΨ : Continuous Ψ) (hΨ' : Continuous Ψ')
     (h : ∀ a : K, Ψ (algebraMap K (FiniteAdeleRing (𝓞 K) K) a) =
       Ψ' (algebraMap K (FiniteAdeleRing (𝓞 K) K) a)) : Ψ = Ψ' :=
-  (NumberField.denseRange_algebraMap_finiteAdeleRing_and_ringHom_ext K).2 ℂ Ψ Ψ' hΨ hΨ' h
+  NumberField.ringHom_ext_of_agreeOn_algebraMap_finiteAdeleRing K ℂ Ψ Ψ' hΨ hΨ' h
+
+/-- The standalone density theorem, consumed directly. -/
+example (K : Type*) [Field K] [NumberField K] :
+    DenseRange (algebraMap K (FiniteAdeleRing (𝓞 K) K)) :=
+  NumberField.denseRange_algebraMap_finiteAdeleRing K

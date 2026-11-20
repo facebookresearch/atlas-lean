@@ -133,7 +133,9 @@ private theorem exists_forall_valuation_sub_lt (T : Finset (HeightOneSpectrum (�
       rw [h3, div_one]
       exact v.intValuation_le_one c
 
-private theorem denseRange_algebraMap_finiteAdeleRing (K : Type*) [Field K] [NumberField K] :
+/-- A number field is dense in its finite adele ring (strong approximation
+for the finite adeles). -/
+theorem denseRange_algebraMap_finiteAdeleRing (K : Type*) [Field K] [NumberField K] :
     DenseRange (algebraMap K (FiniteAdeleRing (𝓞 K) K)) := by
   classical
   rw [DenseRange, dense_iff_inter_open]
@@ -218,6 +220,22 @@ private theorem denseRange_algebraMap_finiteAdeleRing (K : Type*) [Field K] [Num
 
 end P2MDensity
 
+/-- A number field is dense in its finite adele ring (strong approximation
+for the finite adeles). -/
+theorem denseRange_algebraMap_finiteAdeleRing (K : Type*) [Field K] [NumberField K] :
+    DenseRange (algebraMap K (FiniteAdeleRing (𝓞 K) K)) :=
+  P2MDensity.denseRange_algebraMap_finiteAdeleRing K
+
+/-- Continuous ring homomorphisms out of the finite adele ring of a number
+field are determined by their values on the diagonally embedded field. -/
+theorem ringHom_ext_of_agreeOn_algebraMap_finiteAdeleRing
+    (K : Type*) [Field K] [NumberField K] (R : Type*) [Ring R] [TopologicalSpace R] [T2Space R]
+    (Ψ Ψ' : FiniteAdeleRing (𝓞 K) K →+* R) (hΨ : Continuous Ψ) (hΨ' : Continuous Ψ')
+    (h : ∀ a : K, Ψ (algebraMap K (FiniteAdeleRing (𝓞 K) K) a) =
+      Ψ' (algebraMap K (FiniteAdeleRing (𝓞 K) K) a)) : Ψ = Ψ' :=
+  DFunLike.coe_injective
+    ((denseRange_algebraMap_finiteAdeleRing K).equalizer hΨ hΨ' (funext h))
+
 end
 
 /-- A number field is dense in its finite adele ring, and continuous ring
@@ -230,9 +248,8 @@ theorem denseRange_algebraMap_finiteAdeleRing_and_ringHom_ext
         (Ψ Ψ' : FiniteAdeleRing (𝓞 K) K →+* R), Continuous Ψ → Continuous Ψ' →
         (∀ a : K, Ψ (algebraMap K (FiniteAdeleRing (𝓞 K) K) a) =
           Ψ' (algebraMap K (FiniteAdeleRing (𝓞 K) K) a)) → Ψ = Ψ') := by
-  have hd := P2MDensity.denseRange_algebraMap_finiteAdeleRing K
-  refine ⟨hd, ?_⟩
+  refine ⟨denseRange_algebraMap_finiteAdeleRing K, ?_⟩
   intro R _ _ _ Ψ Ψ' hΨ hΨ' h
-  exact DFunLike.coe_injective (hd.equalizer hΨ hΨ' (funext h))
+  exact ringHom_ext_of_agreeOn_algebraMap_finiteAdeleRing K R Ψ Ψ' hΨ hΨ' h
 
 end NumberField
