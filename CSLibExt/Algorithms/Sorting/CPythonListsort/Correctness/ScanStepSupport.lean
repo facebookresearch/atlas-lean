@@ -12,9 +12,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.EntrySnapshotPerm
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ScanCorrectnessSupport
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Policy.PushRunPreservation
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Semantic bridges for one forward scan step
 

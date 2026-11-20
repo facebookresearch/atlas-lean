@@ -9,9 +9,6 @@ LICENSE file in the root directory of this source tree.
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ScanStepCorrectness
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.MergeForceCollapseCorrectness
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Equivariance under mirrored occurrence origins
 
@@ -355,7 +352,7 @@ theorem mirrorReverseSliceLoop (size fuel : Nat)
   | succ fuel ih =>
       simp only [reverseSliceLoop?]
       by_cases hactive : lo < hi
-      · rw [if_pos hactive, if_pos hactive]
+      · rw [ite_eq_left hactive, ite_eq_left hactive]
         rw [mirrorSortSlice_read]
         cases hleft : slice.read? lo with
         | none => simp
@@ -382,9 +379,9 @@ theorem mirrorReverseSlice (size : Nat)
       (reverseSlice? slice lo hi).map (mirrorReverseSliceResult size) := by
   unfold reverseSlice?
   by_cases horder : lo ≤ hi
-  · rw [if_pos horder, if_pos horder]
+  · rw [ite_eq_left horder, ite_eq_left horder]
     by_cases hactive : lo < hi
-    · rw [if_pos hactive, if_pos hactive]
+    · rw [ite_eq_left hactive, ite_eq_left hactive]
       exact mirrorReverseSliceLoop size (hi - lo).toNat slice lo (hi - 1)
     · simp [hactive, mirrorReverseSliceResult]
   · simp [horder]
@@ -462,7 +459,7 @@ theorem mirrorAscendingScan (lt : BoolComparator alpha) (size fuel : Nat)
   | succ fuel ih =>
       simp only [ascendingScan?]
       by_cases hscan : n < nremaining
-      · rw [if_pos hscan, if_pos hscan]
+      · rw [ite_eq_left hscan, ite_eq_left hscan]
         rw [mirrorSortSlice_read]
         cases hprevious : slice.read? (base + Int.ofNat (n - 1)) with
         | none => rfl
@@ -485,7 +482,7 @@ theorem mirrorReverseLastEqual (size : Nat)
   unfold reverseLastEqual?
   by_cases heq : neq = 0
   · simp [heq, mirrorReverseEqualResult]
-  · rw [if_neg heq, if_neg heq]
+  · rw [ite_eq_right heq, ite_eq_right heq]
     dsimp only
     rw [mirrorSortsliceReverse]
     cases hreversed : sortsliceReverse? slice
@@ -506,7 +503,7 @@ theorem mirrorDescendingScan (lt : BoolComparator alpha) (size fuel : Nat)
   | succ fuel ih =>
       simp only [descendingScan?]
       by_cases hscan : n < nremaining
-      · rw [if_pos hscan, if_pos hscan]
+      · rw [ite_eq_left hscan, ite_eq_left hscan]
         rw [mirrorSortSlice_read]
         cases hprevious : slice.read? (base + Int.ofNat (n - 1)) with
         | none => simp
@@ -571,7 +568,7 @@ theorem mirrorFinishDescending (lt : BoolComparator alpha) (size : Nat)
                   · simp [hfuel, hequal, hequalFuel, hwhole, hwholeFuel,
                       mirrorDescendingScanResult, mirrorReverseEqualResult,
                       mirrorReverseSliceResult, mirrorCountRunResult]
-                  · simp only [hfuel, Bool.false_eq_true, if_false,
+                  · simp only [hfuel, Bool.false_eq_true, ite_false,
                       Option.map_some, Option.bind_eq_bind, Option.bind_some,
                       mirrorDescendingScanResult_fuel,
                       mirrorDescendingScanResult_slice,
@@ -581,11 +578,11 @@ theorem mirrorFinishDescending (lt : BoolComparator alpha) (size : Nat)
                     simp only [hequal, Option.map_some, Option.bind_some,
                       mirrorReverseEqualResult_fuel,
                       mirrorReverseEqualResult_slice, hequalFuel,
-                      Bool.false_eq_true, if_false]
+                      Bool.false_eq_true, ite_false]
                     rw [mirrorSortsliceReverse]
                     simp only [hwhole, Option.map_some, Option.bind_some,
                       mirrorReverseSliceResult, hwholeFuel,
-                      Bool.false_eq_true, if_false]
+                      Bool.false_eq_true, ite_false]
                     rw [mirrorAscendingScan]
                     cases hascending : ascendingScan? nremaining
                         (occurrenceComparator lt) wholeReversed.slice base
@@ -601,7 +598,7 @@ theorem mirrorCountRun (lt : BoolComparator alpha) (size : Nat)
   unfold countRun?
   simp only [mirrorMergeState_key_compare, hcompare]
   by_cases hvalid : 0 < nremaining ∧ nremaining ≤ PY_SSIZE_T_MAX
-  · rw [if_pos hvalid, if_pos hvalid, mirrorAscendingScan]
+  · rw [ite_eq_left hvalid, ite_eq_left hvalid, mirrorAscendingScan]
     cases hascending : ascendingScan? nremaining (occurrenceComparator lt) slice
         base nremaining 1 with
     | none => simp [countRunBindOptionAcross]
@@ -614,7 +611,7 @@ theorem mirrorCountRun (lt : BoolComparator alpha) (size : Nat)
                 mirrorCountRunResult]
             · by_cases hlong : 1 < ascending.length
               · simp only [countRunBindOptionAcross, hfuel,
-                    Bool.false_eq_true, if_false, hcomplete, hlong, if_true]
+                    Bool.false_eq_true, ite_false, hcomplete, hlong, ite_true]
                 rw [mirrorSortSlice_read]
                 cases hfirst : slice.read? base with
                 | none => simp
@@ -643,7 +640,7 @@ theorem mirrorCountRun (lt : BoolComparator alpha) (size : Nat)
                                       reversed.slice base nremaining
                                       (ascending.length + 1) hcompare]
               · simp only [countRunBindOptionAcross, hfuel,
-                    Bool.false_eq_true, if_false, hcomplete, hlong]
+                    Bool.false_eq_true, ite_false, hcomplete, hlong]
                 exact mirrorFinishDescending lt size state slice base nremaining
                   (ascending.length + 1) hcompare
   · simp [hvalid]
@@ -674,7 +671,7 @@ theorem mirrorBinarysortSearch (lt : BoolComparator alpha) (size fuel : Nat)
   | succ fuel ih =>
       simp only [binarysortSearch?]
       by_cases hsearch : left < right
-      · rw [if_pos hsearch, if_pos hsearch, mirrorSortSlice_read]
+      · rw [ite_eq_left hsearch, ite_eq_left hsearch, mirrorSortSlice_read]
         cases hread : slice.read? (base + Int.ofNat ((left + right) / 2)) with
         | none => rfl
         | some entry =>
@@ -696,7 +693,7 @@ theorem mirrorBinarysortLoop (lt : BoolComparator alpha) (size fuel : Nat)
   | succ fuel ih =>
       simp only [binarysortLoop?]
       by_cases hloop : ok < n
-      · rw [if_pos hloop, if_pos hloop, mirrorSortSlice_read]
+      · rw [ite_eq_left hloop, ite_eq_left hloop, mirrorSortSlice_read]
         cases hpivot : slice.read? (base + Int.ofNat ok) with
         | none => simp [binarysortBindOptionAcross]
         | some pivot =>
@@ -711,7 +708,7 @@ theorem mirrorBinarysortLoop (lt : BoolComparator alpha) (size fuel : Nat)
                 | true => simp [hfuel, mirrorBinarysortResult]
                 | false =>
                     simp only [hfuel,
-                      Bool.false_eq_true, if_false]
+                      Bool.false_eq_true, ite_false]
                     rw [mirrorSortSlice_memmove]
                     cases hmove : slice.memmove?
                         (base + Int.ofNat (search.position + 1))
@@ -726,7 +723,7 @@ theorem mirrorBinarysortLoop (lt : BoolComparator alpha) (size fuel : Nat)
                         apply Option.bind_congr
                         intro inserted _
                         exact ih inserted (ok + 1)
-      · rw [if_neg hloop, if_neg hloop]
+      · rw [ite_eq_right hloop, ite_eq_right hloop]
         rfl
 
 @[simp]
@@ -739,7 +736,7 @@ theorem mirrorBinarysort (lt : BoolComparator alpha) (size : Nat)
       (binarysort? state slice base n ok).map (mirrorBinarysortResult size) := by
   unfold binarysort?
   by_cases hvalid : 1 ≤ n ∧ ok ≤ n ∧ n ≤ MAX_MINRUN.toNat
-  · rw [if_pos hvalid, if_pos hvalid]
+  · rw [ite_eq_left hvalid, ite_eq_left hvalid]
     split <;> apply mirrorBinarysortLoop lt size n state slice base n <;>
       exact hcompare
   · simp [hvalid]

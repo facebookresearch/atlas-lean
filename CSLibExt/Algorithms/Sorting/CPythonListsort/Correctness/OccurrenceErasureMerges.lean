@@ -442,7 +442,7 @@ theorem eraseOccurrenceMergeLoGallopRound (lt : BoolComparator alpha)
     eraseOccurrenceMergeLoMachine_aPos, eraseOccurrenceMergeLoMachine_bPos,
     eraseOccurrenceMergeLoMachine_minGallop]
   by_cases hactive : machine.na ≤ 1 ∨ machine.nb = 0 <;>
-    simp only [hactive, if_pos, if_false, Option.map_none]
+    simp only [hactive, ite_eq_left, ite_false, Option.map_none]
   rw [eraseOccurrenceMergeState_data, eraseOccurrenceSlice_read]
   cases hfirstB : machine.state.data.read? machine.bPos with
   | none => rfl
@@ -499,12 +499,12 @@ theorem eraseOccurrenceMergeLoGallopRound (lt : BoolComparator alpha)
                         mergeLoGallopFuelFailure adjustedMachine
                       else _)
               by_cases hfuel : gallopA.fuelExhausted = true
-              · simp only [hfuel, if_true]
+              · simp only [hfuel, ite_true]
                 exact eraseOccurrenceMergeLoGallopFuelFailure adjustedMachine
-              · simp only [hfuel, Bool.false_eq_true, if_false]
+              · simp only [hfuel, Bool.false_eq_true, ite_false]
                 by_cases hindex : gallopA.index > machine.na
-                · simp only [hindex, if_true, Option.map_none]
-                · simp only [hindex, if_false]
+                · simp only [hindex, ite_true, Option.map_none]
+                · simp only [hindex, ite_false]
                   change
                     Option.bind
                         (mergeLoMemcpyTempToData? .gallopTempToData rfl
@@ -571,9 +571,9 @@ theorem eraseOccurrenceMergeLoGallopRound (lt : BoolComparator alpha)
                                         mergeLoSucceed? afterB
                                       else _)
                               by_cases hnb : afterB.nb = 0
-                              · simp only [hnb, if_true]
+                              · simp only [hnb, ite_true]
                                 exact eraseOccurrenceMergeLoSucceed afterB
-                              · simp only [hnb, if_false]
+                              · simp only [hnb, ite_false]
                                 change
                                   Option.bind
                                       (mergeLoTempRead?
@@ -640,14 +640,14 @@ theorem eraseOccurrenceMergeLoGallopRound (lt : BoolComparator alpha)
                                                 else _)
                                         by_cases hfuelB :
                                             gallopB.fuelExhausted = true
-                                        all_goals simp only [hfuelB, if_true,
-                                          Bool.false_eq_true, if_false]
+                                        all_goals simp only [hfuelB, ite_true,
+                                          Bool.false_eq_true, ite_false]
                                         all_goals first
                                           | exact
                                               eraseOccurrenceMergeLoGallopFuelFailure afterB
                                           | skip
                                         by_cases hindexB : gallopB.index > afterB.nb <;>
-                                          simp only [hindexB, if_true, if_false,
+                                          simp only [hindexB, ite_true, ite_false,
                                             Option.map_none]
                                         change
                                           Option.bind
@@ -756,7 +756,7 @@ theorem eraseOccurrenceMergeLoLoop (lt : BoolComparator alpha) (fuel : Nat)
             eraseOccurrenceMergeLoMachine_state, eraseOccurrenceMergeLoMachine_aPos,
             eraseOccurrenceMergeLoMachine_bPos]
           by_cases hactive : machine.na ≤ 1 ∨ machine.nb = 0 <;>
-            simp only [hactive, if_pos, if_false, Option.map_none]
+            simp only [hactive, ite_eq_left, ite_false, Option.map_none]
           rw [eraseOccurrenceMergeState_tempStorage, eraseOccurrenceMergeLoTempRead]
           cases hfirstA : mergeLoTempRead? machine.state.a machine.aPos with
           | none => rfl
@@ -886,7 +886,7 @@ theorem eraseOccurrenceMergeLo (lt : BoolComparator alpha)
       | guardRejected => simp
       | reused =>
           simp only [eraseOccurrenceMergeGetmemResult]
-          simp only [reduceCtorEq, if_false]
+          simp only [reduceCtorEq, ite_false]
           rw [eraseOccurrenceMergeLoInitialDataToTemp]
           cases hcopy : mergeLoMemcpyDataToTemp? .initialDataToTemp rfl na
               allocatedState 0 ssa with
@@ -946,7 +946,7 @@ theorem eraseOccurrenceMergeLo (lt : BoolComparator alpha)
                         (.ordinary 0 0) hmachineCompare
       | grown =>
           simp only [eraseOccurrenceMergeGetmemResult]
-          simp only [reduceCtorEq, if_false]
+          simp only [reduceCtorEq, ite_false]
           rw [eraseOccurrenceMergeLoInitialDataToTemp]
           cases hcopy : mergeLoMemcpyDataToTemp? .initialDataToTemp rfl na
               allocatedState 0 ssa with
@@ -1013,7 +1013,7 @@ theorem eraseOccurrenceMergeHiTempRead (storage : TempStorage (Occurrence alpha)
       (mergeHiTempRead? storage index).map (eraseOccurrenceEntry) := by
   unfold mergeHiTempRead?
   by_cases hnonnegative : 0 ≤ index
-  · simp only [hnonnegative, if_true]
+  · simp only [hnonnegative, ite_true]
     cases hcell : storage.cells[index.toNat]? with
     | none => simp [eraseOccurrenceTempStorage, hcell]
     | some cell => cases cell <;> simp [eraseOccurrenceTempStorage, hcell]
@@ -1385,7 +1385,7 @@ theorem eraseOccurrenceMergeHiSucceed (cursor : MergeHiCursor (Occurrence alpha)
     eraseOccurrenceMergeHiCursor_dest]
   by_cases hnb : cursor.nb = 0
   · simp [hnb, eraseOccurrenceMergeHiResult]
-  · simp only [hnb, if_false]
+  · simp only [hnb, ite_false]
     change
       Option.bind
           (mergeHiMemcpyTempToData? .finalTempToData rfl cursor.nb
@@ -1419,7 +1419,7 @@ theorem eraseOccurrenceMergeHiCopyA (cursor : MergeHiCursor (Occurrence alpha) n
       Option.map (eraseOccurrenceMergeHiResult)
         (if cursor.nb = 1 ∧ 0 < cursor.na then _ else none)
   by_cases hactive : cursor.nb = 1 ∧ 0 < cursor.na <;>
-    simp only [hactive, if_false, Option.map_none]
+    simp only [hactive, ite_false, Option.map_none]
   rw [eraseOccurrenceMergeDataMemmove]
   cases hmove : mergeDataMemmove? .hiCopyATail cursor.state.data
       (cursor.dest + (1 - Int.ofNat cursor.na))
@@ -1500,7 +1500,7 @@ theorem eraseOccurrenceMergeHiGallopB (lt : BoolComparator alpha)
                       else _)
               by_cases hfuel : gallopB.fuelExhausted = true
               · simp [hfuel]
-              · simp only [hfuel, Bool.false_eq_true, if_false]
+              · simp only [hfuel, Bool.false_eq_true, ite_false]
                 simp only [eraseOccurrenceMergeHiCursor_state,
                   eraseOccurrenceMergeHiCursor_dest, eraseOccurrenceMergeHiCursor_ssa,
                   eraseOccurrenceMergeHiCursor_ssb, eraseOccurrenceMergeHiCursor_basea,
@@ -1572,9 +1572,9 @@ theorem eraseOccurrenceMergeHiGallopB (lt : BoolComparator alpha)
                                     minGallop := minGallop
                                     phase := .straight 0 0 }) := by
                   by_cases hsmall : movedB.nb = 0 ∨ movedB.nb = 1
-                  · simp only [hsmall, if_true]
+                  · simp only [hsmall, ite_true]
                     exact hnext movedB hmovedCompare
-                  · simp only [hsmall, if_false]
+                  · simp only [hsmall, ite_false]
                     rw [eraseOccurrenceMergeHiCopyDataDecr]
                     cases hcopy : mergeHiCopyDataDecr? movedB.state
                         movedB.dest movedB.ssa with
@@ -1638,7 +1638,7 @@ theorem eraseOccurrenceMergeHiGallopB (lt : BoolComparator alpha)
                             apply hnext adjusted
                             simpa [adjusted, adjustedState] using hafterCompare
                 by_cases hzero : afterB.nb - gallopB.index = 0
-                · simp only [hzero, if_true]
+                · simp only [hzero, ite_true]
                   change
                     (if afterB.nb = 0 ∨ afterB.nb = 1 then
                         next' (eraseOccurrenceMergeHiCursor afterB)
@@ -1655,7 +1655,7 @@ theorem eraseOccurrenceMergeHiGallopB (lt : BoolComparator alpha)
                               (mergeHiCopyDataDecr? afterB.state
                                 afterB.dest afterB.ssa) _)
                   simpa [hzero] using hfinish afterB hcompare
-                · simp only [hzero, if_false]
+                · simp only [hzero, ite_false]
                   rw [eraseOccurrenceMergeHiGallopTempToData]
                   cases hcopy : mergeHiMemcpyTempToData?
                       .gallopTempToData rfl
@@ -1764,7 +1764,7 @@ theorem eraseOccurrenceMergeHiGallopRound (lt : BoolComparator alpha)
                   else _)
           by_cases hfuel : gallopA.fuelExhausted = true
           · simp [hfuel]
-          · simp only [hfuel, Bool.false_eq_true, if_false]
+          · simp only [hfuel, Bool.false_eq_true, ite_false]
             have hfinish (movedA : MergeHiCursor (Occurrence alpha) nu)
                 (hmovedCompare : movedA.state.key_compare =
                   occurrenceComparator lt) :
@@ -1803,9 +1803,9 @@ theorem eraseOccurrenceMergeHiGallopRound (lt : BoolComparator alpha)
                             mergeHiGallopB? afterB
                               (cursor.na - gallopA.index) next) := by
               by_cases hdone : movedA.na = 0
-              · simp only [hdone, if_true]
+              · simp only [hdone, ite_true]
                 exact hnext movedA hmovedCompare
-              · simp only [hdone, if_false]
+              · simp only [hdone, ite_false]
                 rw [eraseOccurrenceMergeHiCopyTempDecr]
                 cases hcopy : mergeHiCopyTempDecr? movedA.state movedA.dest
                     movedA.ssb with
@@ -1843,7 +1843,7 @@ theorem eraseOccurrenceMergeHiGallopRound (lt : BoolComparator alpha)
                         (cursor.na - gallopA.index) next next' hafterCompare
                         hnext
             by_cases hzero : cursor.na - gallopA.index = 0
-            · simp only [hzero, if_true]
+            · simp only [hzero, ite_true]
               let movedA : MergeHiCursor (Occurrence alpha) nu :=
                 { cursor with state := adjustedState, minGallop := minGallop }
               change
@@ -1854,7 +1854,7 @@ theorem eraseOccurrenceMergeHiGallopRound (lt : BoolComparator alpha)
                     (if movedA.na = 0 then next movedA else _)
               simpa [movedA, adjustedState, minGallop, hzero] using
                 hfinish movedA hcompare'
-            · simp only [hzero, if_false]
+            · simp only [hzero, ite_false]
               rw [eraseOccurrenceMergeDataMemmove]
               cases hmove : mergeDataMemmove? .hiGallopA adjustedState.data
                   (cursor.dest - Int.ofNat (cursor.na - gallopA.index) + 1)
@@ -1893,13 +1893,13 @@ theorem eraseOccurrenceMergeHiLoop (lt : BoolComparator alpha) (fuel : Nat)
       simp only [mergeHiLoop?, eraseOccurrenceMergeHiCursor_na,
         eraseOccurrenceMergeHiCursor_nb]
       by_cases hdone : cursor.na = 0 ∨ cursor.nb = 0
-      · simp only [hdone, if_true]
+      · simp only [hdone, ite_true]
         exact eraseOccurrenceMergeHiSucceed cursor
-      · simp only [hdone, if_false]
+      · simp only [hdone, ite_false]
         by_cases hone : cursor.nb = 1
-        · simp only [hone, if_true]
+        · simp only [hone, ite_true]
           exact eraseOccurrenceMergeHiCopyA cursor
-        · simp only [hone, if_false]
+        · simp only [hone, ite_false]
           exact congrArg some (eraseOccurrenceMergeHiFuelExhausted cursor)
   | succ fuel ih =>
       simp only [mergeHiLoop?, eraseOccurrenceMergeHiCursor_na,
@@ -1908,13 +1908,13 @@ theorem eraseOccurrenceMergeHiLoop (lt : BoolComparator alpha) (fuel : Nat)
         eraseOccurrenceMergeHiCursor_ssa, eraseOccurrenceMergeHiCursor_ssb,
         eraseOccurrenceMergeHiCursor_basea, eraseOccurrenceMergeHiCursor_minGallop]
       by_cases hdone : cursor.na = 0 ∨ cursor.nb = 0
-      · simp only [hdone, if_true]
+      · simp only [hdone, ite_true]
         exact eraseOccurrenceMergeHiSucceed cursor
-      · simp only [hdone, if_false]
+      · simp only [hdone, ite_false]
         by_cases hone : cursor.nb = 1
-        · simp only [hone, if_true]
+        · simp only [hone, ite_true]
           exact eraseOccurrenceMergeHiCopyA cursor
-        · simp only [hone, if_false]
+        · simp only [hone, ite_false]
           cases hphase : cursor.phase with
           | straight aCount bCount =>
               rw [eraseOccurrenceMergeState_tempStorage, eraseOccurrenceMergeHiTempRead]

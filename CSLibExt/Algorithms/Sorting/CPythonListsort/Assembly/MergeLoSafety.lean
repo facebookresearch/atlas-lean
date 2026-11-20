@@ -2225,7 +2225,7 @@ theorem mergeLoCopyBTraced_safe
         (MergeLoStableFrame.of_movement (hmove.frame.trans hcellFrame))
       storageFrame := hinvariant.storageFrame.trans
         (MergeLoStorageFrame.of_movement (hmove.frame.trans hcellFrame)) }
-  · rw [mergeLoCopyBTraced?, if_pos ⟨hna, hnb⟩]
+  · rw [mergeLoCopyBTraced?, ite_eq_left ⟨hna, hnb⟩]
     simp only [TraceResult.bind, TraceResult.map]
     rw [hmove.success]
     change Option.map mergeLoSuccess
@@ -2234,7 +2234,7 @@ theorem mergeLoCopyBTraced_safe
         (Int.ofNat machine.aPos)).result = some result
     rw [hstate]
     rfl
-  · rw [mergeLoCopyBTraced?, if_pos ⟨hna, hnb⟩]
+  · rw [mergeLoCopyBTraced?, ite_eq_left ⟨hna, hnb⟩]
     exact MovementTraceSafe.bind _ _ moved hmove.success hmove.traceSafe
       (MovementTraceSafe.map _ _ hcellSafe)
 
@@ -3412,7 +3412,7 @@ private theorem mergeLoCopyBTraced_hasTempRead
   rcases mainDataMemmoveTraced_safe machine.state machine.dest machine.bPos
       machine.nb hinvariant.tempInvariant hinvariant.tempLive
       hinvariant.valuesMode hdst hsrc with ⟨moved, hmove⟩
-  rw [mergeLoCopyBTraced?, if_pos ⟨hna, hnb⟩]
+  rw [mergeLoCopyBTraced?, ite_eq_left ⟨hna, hnb⟩]
   exact hasTempAccess_bind_right _ _ moved .read hmove.success
     (by
       change (tempToMainCellTraced? moved
@@ -3427,7 +3427,7 @@ private theorem mergeLoOrdinaryLoopTraced_hasTempRead
     (mergeLoLoopTraced? (fuel + 1) machine (.ordinary 0 0)).trace.HasTempAccess
       .read := by
   have hguard : ¬ (machine.na ≤ 1 ∨ machine.nb = 0) := by omega
-  rw [mergeLoLoopTraced?, if_neg hguard]
+  rw [mergeLoLoopTraced?, ite_eq_right hguard]
   exact hasTempAccess_bind_left _ _ .read
     (tempPayloadRead_hasTempAccess machine.state.a (Int.ofNat machine.aPos))
 
@@ -3790,10 +3790,10 @@ private theorem mergeLo_finish
   have hcore : MergeLoCorePost (mergeLoAllocated call).state call.na
       (mergeLoTraced? call.state call.ssa call.ssb call.na call.nb)
       (mergeLo? call.state call.ssa call.ssb call.na call.nb) result := by
-    rw [mergeLoTraced?, if_pos hentryGuard,
-      if_neg stage.requestFacts.guardNotRejected]
-    rw [mergeLo?, if_pos hentryGuard,
-      if_neg stage.requestFacts.guardNotRejected]
+    rw [mergeLoTraced?, ite_eq_left hentryGuard,
+      ite_eq_right stage.requestFacts.guardNotRejected]
+    rw [mergeLo?, ite_eq_left hentryGuard,
+      ite_eq_right stage.requestFacts.guardNotRejected]
     change MergeLoCorePost (mergeLoAllocated call).state call.na
       ((mainToTempMemcpyTraced? (.lo .initialDataToTemp)
         mergeLoInitialDataToTempPermit call.na (mergeLoAllocated call).state 0
@@ -3811,8 +3811,8 @@ private theorem mergeLo_finish
         call.ssa)
       (mergeLoTracedAfterCopy call) .read .inputKeys
       (stage.copyPost.inputKeyEvent stage.geometry.leftPositive)
-    rw [mergeLoTraced?, if_pos hentryGuard,
-      if_neg stage.requestFacts.guardNotRejected]
+    rw [mergeLoTraced?, ite_eq_left hentryGuard,
+      ite_eq_right stage.requestFacts.guardNotRejected]
     change ((mainToTempMemcpyTraced? (.lo .initialDataToTemp)
       mergeLoInitialDataToTempPermit call.na (mergeLoAllocated call).state 0
       call.ssa).bind (mergeLoTracedAfterCopy call)).trace.HasAccess
@@ -3827,8 +3827,8 @@ private theorem mergeLo_finish
         call.ssa)
       (mergeLoTracedAfterCopy call) .write
       (stage.copyPost.tempWriteEvent stage.geometry.leftPositive)
-    rw [mergeLoTraced?, if_pos hentryGuard,
-      if_neg stage.requestFacts.guardNotRejected]
+    rw [mergeLoTraced?, ite_eq_left hentryGuard,
+      ite_eq_right stage.requestFacts.guardNotRejected]
     change ((mainToTempMemcpyTraced? (.lo .initialDataToTemp)
       mergeLoInitialDataToTempPermit call.na (mergeLoAllocated call).state 0
       call.ssa).bind (mergeLoTracedAfterCopy call)).trace.HasTempAccess .write
@@ -3842,8 +3842,8 @@ private theorem mergeLo_finish
         call.ssa)
       (mergeLoTracedAfterCopy call) copied .read
       stage.copyPost.success core.tempRead
-    rw [mergeLoTraced?, if_pos hentryGuard,
-      if_neg stage.requestFacts.guardNotRejected]
+    rw [mergeLoTraced?, ite_eq_left hentryGuard,
+      ite_eq_right stage.requestFacts.guardNotRejected]
     change ((mainToTempMemcpyTraced? (.lo .initialDataToTemp)
       mergeLoInitialDataToTempPermit call.na (mergeLoAllocated call).state 0
       call.ssa).bind (mergeLoTracedAfterCopy call)).trace.HasTempAccess .read
@@ -3900,8 +3900,8 @@ private theorem mergeLo_finish
     (mergeLoTracedAfterCopy call) .read .synchronizedValues
     (stage.copyPost.synchronizedValuesEvent stage.geometry.leftPositive
       hallocatedValues)
-  rw [mergeLoTraced?, if_pos hentryGuard,
-    if_neg stage.requestFacts.guardNotRejected]
+  rw [mergeLoTraced?, ite_eq_left hentryGuard,
+    ite_eq_right stage.requestFacts.guardNotRejected]
   change ((mainToTempMemcpyTraced? (.lo .initialDataToTemp)
     mergeLoInitialDataToTempPermit call.na (mergeLoAllocated call).state 0
     call.ssa).bind (mergeLoTracedAfterCopy call)).trace.HasAccess
@@ -3985,7 +3985,7 @@ theorem erase_mergeLoTemporaryGallopRightRaw
   · unfold gallopRightFromSource? gallopRight?
     have hguard : ¬(0 < count ∧ 0 < count ∧ count ≤ PY_SSIZE_T_MAX) := by
       aesop
-    simp only [hguard, if_false]
+    simp only [hguard, ite_false]
 
 private theorem traceErase_bind_reachable
     {α β : Type*}
@@ -4079,13 +4079,13 @@ theorem erase_mergeLoGallopRoundTraced
         machine.aPos machine.na activeA firstB.key hactive)
     intro gallopA _
     by_cases hfuel : gallopA.fuelExhausted = true
-    · simp only [hfuel, if_true]
+    · simp only [hfuel, ite_true]
       exact erase_mergeLoFuelFailureTraced _
     · simp only [hfuel]
       by_cases hover : gallopA.index > machine.na
-      · simp only [hover, if_true]
+      · simp only [hover, ite_true]
         rfl
-      · simp only [hover, if_false]
+      · simp only [hover, ite_false]
         apply traceErase_bind_reachable
           (tempToMainMemcpyTraced? (.lo .gallopTempToData)
             mergeLoGallopTempToDataPermit gallopA.index
@@ -4105,22 +4105,22 @@ theorem erase_mergeLoGallopRoundTraced
             machine.dest machine.aPos)
         intro state _
         by_cases hna0 : machine.na - gallopA.index = 0
-        · simp only [hna0, if_true]
+        · simp only [hna0, ite_true]
           exact erase_mergeLoSucceedTraced _
-        · simp only [hna0, if_false]
+        · simp only [hna0, ite_false]
           by_cases hna1 : machine.na - gallopA.index = 1
-          · simp only [hna1, if_true]
+          · simp only [hna1, ite_true]
             exact erase_mergeLoCopyBTraced _
-          · simp only [hna1, if_false]
+          · simp only [hna1, ite_false]
             apply traceErase_bind_reachable
               (mergeLoCopyBIncrTraced? _)
               (mergeLoCopyBIncr? _)
               _ _ (erase_mergeLoCopyBIncrTraced _)
             intro afterB _
             by_cases hnb0 : afterB.nb = 0
-            · simp only [hnb0, if_true]
+            · simp only [hnb0, ite_true]
               exact erase_mergeLoSucceedTraced _
-            · simp only [hnb0, if_false]
+            · simp only [hnb0, ite_false]
               apply traceErase_bind_reachable
                 (TraceResult.tempPayloadRead? afterB.state.a
                   (Int.ofNat afterB.aPos))
@@ -4137,14 +4137,14 @@ theorem erase_mergeLoGallopRoundTraced
                   _ _ (erase_gallopLeftTraced_main _ _ _ _ _ _)
               intro gallopB _
               by_cases hbfuel : gallopB.fuelExhausted = true
-              · simp only [hbfuel, if_true]
+              · simp only [hbfuel, ite_true]
                 exact erase_mergeLoFuelFailureTraced _
               · simp only [hbfuel]
                 by_cases hbindex : gallopB.index > afterB.nb
-                · simp only [hbindex, if_true]
+                · simp only [hbindex, ite_true]
                   rfl
-                · simp only [hbindex, if_false]
-                  simp only [Bool.false_eq_true, if_false]
+                · simp only [hbindex, ite_false]
+                  simp only [Bool.false_eq_true, ite_false]
                   let rawAfterMove (movedB : MergeState κ ν) :
                       Option (MergeLoResult κ ν) :=
                     let nextMachine : MergeLoMachine κ ν :=
@@ -4177,18 +4177,18 @@ theorem erase_mergeLoGallopRoundTraced
                   intro movedB _
                   dsimp [rawAfterMove]
                   by_cases hnbDone : afterB.nb - gallopB.index = 0
-                  · simp only [hnbDone, if_true]
+                  · simp only [hnbDone, ite_true]
                     exact erase_mergeLoSucceedTraced _
-                  · simp only [hnbDone, if_false]
+                  · simp only [hnbDone, ite_false]
                     apply traceErase_bind_reachable
                       (mergeLoCopyAIncrTraced? _)
                       (mergeLoCopyAIncr? _)
                       _ _ (erase_mergeLoCopyAIncrTraced _)
                     intro afterA _
                     by_cases hnaDone : afterA.na = 1
-                    · simp only [hnaDone, if_true]
+                    · simp only [hnaDone, ite_true]
                       exact erase_mergeLoCopyBTraced _
-                    · simp only [hnaDone, if_false]
+                    · simp only [hnaDone, ite_false]
                       exact hnext _ _ _
 
 end CPythonListsort

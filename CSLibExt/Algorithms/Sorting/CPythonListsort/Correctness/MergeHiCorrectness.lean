@@ -436,7 +436,7 @@ theorem MergeHiSemanticCursorInvariant.temporarySourceEntry
     simpa [GallopKeySource.read?, GallopKeySource.base] using hsource
   have hsnapshot := h.activeRight.2 index hindex
   rw [htempRead] at hsnapshot
-  rw [List.getElem?_take, if_pos hindex]
+  rw [List.getElem?_take, ite_eq_left hindex]
   exact hsnapshot.symm
 
 /-- The right-biased A gallop's prefix consists exactly of entries not
@@ -464,7 +464,7 @@ theorem MergeHiSemanticCursorInvariant.gallopRightPrefixBoundary
     omega
   have hjActive :
       ((mergeHiLeftEntries call).take cursor.na)[j]? = some entry := by
-    rw [List.getElem?_take, if_pos hjIndex] at hj
+    rw [List.getElem?_take, ite_eq_left hjIndex] at hj
     exact hj
   have hjNa : j < cursor.na := by
     have := (List.getElem?_eq_some_iff.mp hjActive).choose
@@ -539,7 +539,7 @@ theorem MergeHiSemanticCursorInvariant.gallopLeftPrefixBoundary
     omega
   have hjActive :
       ((mergeHiRightEntries call).take cursor.nb)[j]? = some entry := by
-    rw [List.getElem?_take, if_pos hjIndex] at hj
+    rw [List.getElem?_take, ite_eq_left hjIndex] at hj
     exact hj
   have hjNb : j < cursor.nb := by
     have := (List.getElem?_eq_some_iff.mp hjActive).choose
@@ -615,7 +615,7 @@ theorem mergeHiMoveABlock_semantic
       rw [← erase_mergeHiMoveABlockTraced]
       exact htraced
     have hrawCopy := hraw
-    rw [mergeHiMoveABlock?, if_neg hzero] at hrawCopy
+    rw [mergeHiMoveABlock?, ite_eq_right hzero] at hrawCopy
     rcases Option.bind_eq_some_iff.mp hrawCopy with
       ⟨state, hmain, hmoved⟩
     unfold mainDataMemmove? at hmain
@@ -664,7 +664,7 @@ theorem mergeHiMoveBBlock_semantic
       rw [← erase_mergeHiMoveBBlockTraced]
       exact htraced
     have hrawCopy := hraw
-    rw [mergeHiMoveBBlock?, if_neg hzero] at hrawCopy
+    rw [mergeHiMoveBBlock?, ite_eq_right hzero] at hrawCopy
     rcases Option.bind_eq_some_iff.mp hrawCopy with
       ⟨state, hmove, hmoved⟩
     injection hmoved with hmoved
@@ -888,21 +888,21 @@ theorem mergeHiGallopB_semantic
     by_cases hbzero : bCount = 0
     · have hmovedEq : movedB = afterB := by
         have hm := hmove
-        rw [mergeHiMoveBBlock?, if_pos hbzero] at hm
+        rw [mergeHiMoveBBlock?, ite_eq_left hbzero] at hm
         exact Option.some.inj hm.symm
       subst movedB
       simpa [mergeHiGallopB_equation, hleft, htemp,
         mergeHiBindOptionAcross, hgallop, hgallopFuel, bCount, hbzero]
         using heval
     · have hm := hmove
-      rw [mergeHiMoveBBlock?, if_neg hbzero] at hm
+      rw [mergeHiMoveBBlock?, ite_eq_right hbzero] at hm
       rcases Option.bind_eq_some_iff.mp hm with ⟨state, hstate, hmovedEq⟩
       injection hmovedEq with hmovedEq
       subst movedB
       have hevalMove := heval
       simp only [mergeHiGallopB_equation, hleft, bind, Option.bind, htemp,
         mergeHiBindOptionAcross, hgallop, hgallopFuel, Bool.false_eq_true,
-        if_false, bCount, hbzero] at hevalMove
+        ite_false, bCount, hbzero] at hevalMove
       rcases Option.bind_eq_some_iff.mp hevalMove with
         ⟨state', hstate', hfinish⟩
       have hstateEq : state' = state := by
@@ -913,9 +913,9 @@ theorem mergeHiGallopB_semantic
       simpa [bCount, bind, Option.bind] using hfinish
   simp only [hmovedNbPositive.ne', false_or] at hevalFinish
   by_cases hmovedOne : movedB.nb = 1
-  · rw [if_pos hmovedOne] at hevalFinish
+  · rw [ite_eq_left hmovedOne] at hevalFinish
     exact hnext movedB result hmoved hevalFinish hresultFuel
-  · rw [if_neg hmovedOne] at hevalFinish
+  · rw [ite_eq_right hmovedOne] at hevalFinish
     have hmovedMore : 1 < movedB.nb := by omega
     rcases hmoved.activeLeft_snoc hgeometry (by omega) with
       ⟨left', hleft', hleftSnoc'⟩
@@ -959,16 +959,16 @@ theorem mergeHiGallopB_semantic
             minGallop := minGallop
             phase := .straight 0 0 }) = some result at hevalFinish
     by_cases hafterZero : afterA.na = 0
-    · rw [if_pos hafterZero] at hevalFinish
+    · rw [ite_eq_left hafterZero] at hevalFinish
       exact hnext afterA result hafterA hevalFinish hresultFuel
-    · rw [if_neg hafterZero] at hevalFinish
+    · rw [ite_eq_right hafterZero] at hevalFinish
       by_cases hstay : mergeHiCountAtLeast aCount MIN_GALLOP ||
           mergeHiCountAtLeast bCount MIN_GALLOP
-      · rw [if_pos hstay] at hevalFinish
+      · rw [ite_eq_left hstay] at hevalFinish
         exact hnext _ result
           (hafterA.setControl afterA.minGallop
             (.galloping aCount bCount)) hevalFinish hresultFuel
-      · rw [if_neg hstay] at hevalFinish
+      · rw [ite_eq_right hstay] at hevalFinish
         let minGallop := afterB.minGallop + 1
         exact hnext _ result
           ((hafterA.setMinGallop minGallop).setControl minGallop
@@ -1066,14 +1066,14 @@ theorem mergeHiGallopRound_semantic
     by_cases hazero : aCount = 0
     · have hmovedEq : movedA = adjusted := by
         have hm := hmove
-        rw [mergeHiMoveABlock?, if_pos hazero] at hm
+        rw [mergeHiMoveABlock?, ite_eq_left hazero] at hm
         exact Option.some.inj hm.symm
       subst movedA
       simpa [mergeHiGallopRound_equation, minGallop, state, adjusted,
         hright, mergeHiBindOptionAcross, hgallop, hgallopFuel, aCount,
         hazero] using heval
     · have hm := hmove
-      rw [mergeHiMoveABlock?, if_neg hazero] at hm
+      rw [mergeHiMoveABlock?, ite_eq_right hazero] at hm
       rcases Option.bind_eq_some_iff.mp hm with
         ⟨movedState, hmain, hmovedEq⟩
       unfold mainDataMemmove? at hmain
@@ -1086,7 +1086,7 @@ theorem mergeHiGallopRound_semantic
       have hevalMove := heval
       simp only [mergeHiGallopRound_equation, minGallop, state, adjusted,
         hright, bind, Option.bind, mergeHiBindOptionAcross, hgallop,
-        hgallopFuel, Bool.false_eq_true, if_false, aCount, hazero,
+        hgallopFuel, Bool.false_eq_true, ite_false, aCount, hazero,
         mergeDataMemmove_eq] at hevalMove
       rcases Option.bind_eq_some_iff.mp hevalMove with
         ⟨data', hdata', hfinish⟩
@@ -1101,9 +1101,9 @@ theorem mergeHiGallopRound_semantic
       simpa [minGallop, state, adjusted, aCount, bind, Option.bind]
         using hfinish
   by_cases hmovedZero : movedA.na = 0
-  · rw [if_pos hmovedZero] at hevalFinish
+  · rw [ite_eq_left hmovedZero] at hevalFinish
     exact hnext movedA result hmoved hevalFinish hresultFuel
-  · rw [if_neg hmovedZero] at hevalFinish
+  · rw [ite_eq_right hmovedZero] at hevalFinish
     have hmovedPositive : 0 < movedA.na := Nat.pos_of_ne_zero hmovedZero
     rcases hmoved.activeLeft_snoc hgeometry hmovedPositive with
       ⟨left, hleft, hleftSnoc⟩
@@ -1139,9 +1139,9 @@ theorem mergeHiGallopRound_semantic
     change (if afterB.nb = 1 then next afterB
       else mergeHiGallopB? afterB aCount next) = some result at hevalFinish
     by_cases hafterOne : afterB.nb = 1
-    · rw [if_pos hafterOne] at hevalFinish
+    · rw [ite_eq_left hafterOne] at hevalFinish
       exact hnext afterB result hafterB hevalFinish hresultFuel
-    · rw [if_neg hafterOne] at hevalFinish
+    · rw [ite_eq_right hafterOne] at hevalFinish
       have hafterMore : 1 < afterB.nb := by
         change 1 < movedA.nb - 1
         have hne : movedA.nb - 1 ≠ 1 := by
@@ -1362,7 +1362,7 @@ theorem mergeHi_raw_correct
   have hloop : mergeHiLoop? (call.na + call.nb)
       (mergeHiInitialCursor call forced) = some result := by
     unfold mergeHi? at hraw
-    rw [if_pos hguard] at hraw
+    rw [ite_eq_left hguard] at hraw
     change (match (mergeHiAllocated call).outcome with
       | .guardRejected => some
           { state := (mergeHiAllocated call).state
@@ -1495,7 +1495,7 @@ theorem mergeHi_correctness_regression_tempStorageInv :
     TempStorageInv mergeHiCorrectnessRegressionState.a
       mergeHiCorrectnessRegressionState.alloced := by
   simp only [mergeHiCorrectnessRegressionState, TempStorageInv,
-    Array.size_replicate, TempStorage.multiplier, if_pos]
+    Array.size_replicate, TempStorage.multiplier, ite_eq_left]
   change 2 = (BitVec.ofNat 64 2).toNat ∧
     2 * (BitVec.ofNat 64 2).toNat ≤ MERGESTATE_TEMP_SIZE
   norm_num [BitVec.toNat_ofNat, MERGESTATE_TEMP_SIZE]

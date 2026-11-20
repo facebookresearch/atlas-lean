@@ -61,10 +61,10 @@ theorem getElem?_reverseRange_before (xs : Array α) (start stop k : Nat)
     simp [hprefixSize, hmiddleSize]
     omega
   rw [reverseRangeEntries, Array.getElem?_append, hleftSize,
-    if_pos (hk.trans_le hstart), Array.getElem?_append, hprefixSize,
-    if_pos hk,
+    ite_eq_left (hk.trans_le hstart), Array.getElem?_append, hprefixSize,
+    ite_eq_left hk,
     Array.getElem?_extract]
-  rw [if_pos (by simpa [hstartSize] using hk)]
+  rw [ite_eq_left (by simpa [hstartSize] using hk)]
   simp
 
 theorem getElem?_reverseRange_inside (xs : Array α) (start stop k : Nat)
@@ -85,13 +85,13 @@ theorem getElem?_reverseRange_inside (xs : Array α) (start stop k : Nat)
   have hoff : k - start < (xs.extract start stop).size := by
     simp [hmiddleSize]
     omega
-  rw [reverseRangeEntries, Array.getElem?_append, hleftSize, if_pos hkhi,
-    Array.getElem?_append, hprefixSize, if_neg (not_lt_of_ge hklo),
+  rw [reverseRangeEntries, Array.getElem?_append, hleftSize, ite_eq_left hkhi,
+    Array.getElem?_append, hprefixSize, ite_eq_right (not_lt_of_ge hklo),
     Array.getElem?_reverse hoff, Array.getElem?_extract]
   rw [min_eq_left hstop, hmiddleSize]
   have hreverseIndex : stop - start - 1 - (k - start) < stop - start := by
     omega
-  rw [if_pos hreverseIndex]
+  rw [ite_eq_left hreverseIndex]
   congr 1
   omega
 
@@ -110,14 +110,14 @@ theorem getElem?_reverseRange_after (xs : Array α) (start stop k : Nat)
     simp [hprefixSize, hmiddleSize]
     omega
   rw [reverseRangeEntries, Array.getElem?_append, hleftSize,
-    if_neg (not_lt_of_ge hk), Array.getElem?_extract]
+    ite_eq_right (not_lt_of_ge hk), Array.getElem?_extract]
   simp only [min_self]
   have hkIndex : stop + (k - stop) = k := Nat.add_sub_of_le hk
   by_cases hkSize : k < xs.size
   · have hoff : k - stop < xs.size - stop := by omega
-    rw [if_pos hoff, hkIndex]
+    rw [ite_eq_left hoff, hkIndex]
   · have hoff : ¬k - stop < xs.size - stop := by omega
-    rw [if_neg hoff, Array.getElem?_eq_none (Nat.le_of_not_gt hkSize)]
+    rw [ite_eq_right hoff, Array.getElem?_eq_none (Nat.le_of_not_gt hkSize)]
 
 /-- Reversing a valid range twice is the identity. -/
 theorem reverseRange_involutive (xs : Array α) (start stop : Nat)
@@ -187,7 +187,7 @@ private theorem reverseSliceLoop_succ_nat
         (Int.ofNat (i + 1)) (Int.ofNat (j - 1)) := by
   simp only [reverseSliceLoop?]
   have hijInt : Int.ofNat i < Int.ofNat j := Int.ofNat_lt.mpr hij
-  rw [if_pos hijInt]
+  rw [ite_eq_left hijInt]
   simp [SortSlice.read?, SortSlice.write?, hi, hj, Array.swap]
   congr
   all_goals omega
@@ -241,11 +241,11 @@ private theorem ReverseRangeLoopInvariant.swap_shrink
   rw [Array.getElem?_swap hi hj]
   by_cases hkj : k = j
   · subst k
-    rw [if_pos rfl, ← Array.getElem?_eq_getElem hi, hpoint]
+    rw [ite_eq_left rfl, ← Array.getElem?_eq_getElem hi, hpoint]
     have hold : i ≤ i ∧ i ≤ j := ⟨le_rfl, hactive.le⟩
-    rw [if_pos hold]
+    rw [ite_eq_left hold]
     have hnew : ¬(i + 1 ≤ j ∧ j ≤ j - 1) := by omega
-    rw [if_neg hnew]
+    rw [ite_eq_right hnew]
     symm
     rw [ReverseRangeSpec.getElem?_reverseRange_inside original start stop j
       hstart.le hstop (by omega) hjstop]
@@ -253,23 +253,23 @@ private theorem ReverseRangeLoopInvariant.swap_shrink
     omega
   · by_cases hki : k = i
     · subst k
-      rw [if_neg (by exact Ne.symm (ne_of_lt hactive)), if_pos rfl,
+      rw [ite_eq_right (by exact Ne.symm (ne_of_lt hactive)), ite_eq_left rfl,
         ← Array.getElem?_eq_getElem hj, hpoint]
       have hold : i ≤ j ∧ j ≤ j := ⟨hactive.le, le_rfl⟩
-      rw [if_pos hold]
+      rw [ite_eq_left hold]
       have hnew : ¬(i + 1 ≤ i ∧ i ≤ j - 1) := by omega
-      rw [if_neg hnew]
+      rw [ite_eq_right hnew]
       symm
       rw [ReverseRangeSpec.getElem?_reverseRange_inside original start stop i
         hstart.le hstop histart (by omega)]
       congr 1
       omega
-    · rw [if_neg (Ne.symm hkj), if_neg (Ne.symm hki), hpoint]
+    · rw [ite_eq_right (Ne.symm hkj), ite_eq_right (Ne.symm hki), hpoint]
       by_cases hold : i ≤ k ∧ k ≤ j
       · have hnew : i + 1 ≤ k ∧ k ≤ j - 1 := by omega
-        rw [if_pos hold, if_pos hnew]
+        rw [ite_eq_left hold, ite_eq_left hnew]
       · have hnew : ¬(i + 1 ≤ k ∧ k ≤ j - 1) := by omega
-        rw [if_neg hold, if_neg hnew]
+        rw [ite_eq_right hold, ite_eq_right hnew]
 
 private theorem reverseSliceLoop_correct_of_invariant
     (fuel : Nat) (original current : Array (SortSliceEntry κ ν))
@@ -359,7 +359,7 @@ theorem reverseSlice_nat_correct
       rcases reverseSliceLoop_nat_correct slice start (start + (count + 1))
           hactive hrange with ⟨result, hresult, hfuel, hexact⟩
       refine ⟨result, ?_, hfuel, hexact⟩
-      simp only [reverseSlice?, hordered, if_true, hactiveInt]
+      simp only [reverseSlice?, hordered, ite_true, hactiveInt]
       have hfuelArg :
           (Int.ofNat (start + (count + 1)) - Int.ofNat start).toNat =
             start + (count + 1) - start := by simp

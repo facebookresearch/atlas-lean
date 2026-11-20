@@ -12,9 +12,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Equivalence.PowerloopResults
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.FoundNewRun
 import Mathlib
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Policy preservation across `found_new_run`
 
@@ -48,7 +45,7 @@ private theorem setTopPower_pending_frame
     have hlen := congrArg List.length hsplit
     rw [hempty] at hlen
     simp at hlen
-  simp only [hnonempty, Bool.false_eq_true, if_false] at hset
+  simp only [hnonempty, Bool.false_eq_true, ite_false] at hset
   have hsize : state.pending.size = before.length + 1 := by
     have hlen := congrArg List.length hsplit
     simpa using hlen
@@ -320,16 +317,16 @@ private theorem foundNewRunLoop_preserves_ready
           by_cases hguard : power < precedingPower
           · have hloop' := hloop
             dsimp only [precedingPower] at hguard
-            simp only [foundNewRunLoop?, hmany, if_pos, hlookup,
+            simp only [foundNewRunLoop?, hmany, ite_eq_left, hlookup,
               hprecedingPower] at hloop'
-            rw [if_pos hguard] at hloop'
+            rw [ite_eq_left hguard] at hloop'
             cases hmergeOpt : mergeAt? state (state.pending.size - 2) with
             | none => simp [hmergeOpt] at hloop'
             | some merged =>
               simp only [hmergeOpt] at hloop'
               by_cases hmergeSuccess :
                   merged.returnCode = 0 ∧ !merged.fuelExhausted
-              · rw [if_pos hmergeSuccess] at hloop'
+              · rw [ite_eq_left hmergeSuccess] at hloop'
                 have hmergedFuel : merged.fuelExhausted = false := by
                   simpa using hmergeSuccess.2
                 have houtside : newRun ∉ state.pending.toList :=
@@ -369,7 +366,7 @@ private theorem foundNewRunLoop_preserves_ready
                 exact ih merged.state older mergedTop result hmergedMax
                   hmergedLayout hmergedPowered hmergedSplit hmergedNewBase
                   hmergedNewWithin hmergedPower hloop' hcode hfuel
-              · rw [if_neg hmergeSuccess] at hloop'
+              · rw [ite_eq_right hmergeSuccess] at hloop'
                 injection hloop' with hresult
                 subst result
                 change merged.returnCode = 0 at hcode
@@ -381,9 +378,9 @@ private theorem foundNewRunLoop_preserves_ready
                 · simp [hfuel]
           · have hloop' := hloop
             dsimp only [precedingPower] at hguard
-            simp only [foundNewRunLoop?, hmany, if_pos, hlookup,
+            simp only [foundNewRunLoop?, hmany, ite_eq_left, hlookup,
               hprecedingPower] at hloop'
-            rw [if_neg hguard] at hloop'
+            rw [ite_eq_right hguard] at hloop'
             cases hsetOpt : setTopPower? state power with
             | none => simp [hsetOpt] at hloop'
             | some state' =>
@@ -402,7 +399,7 @@ private theorem foundNewRunLoop_preserves_ready
           have hlength : before.length = 0 := by omega
           exact List.eq_nil_of_length_eq_zero hlength
         have hloop' := hloop
-        simp only [foundNewRunLoop?, hmany, if_false] at hloop'
+        simp only [foundNewRunLoop?, hmany, ite_false] at hloop'
         cases hsetOpt : setTopPower? state power with
         | none => simp [hsetOpt] at hloop'
         | some state' =>
@@ -437,7 +434,7 @@ theorem foundNewRun_preserves_readyToPush
     ReadyToPush result.state scanned newRun := by
   by_cases hempty : state.pending.isEmpty = true
   · unfold foundNewRun? at hfound
-    simp only [hempty, if_pos] at hfound
+    simp only [hempty, ite_eq_left] at hfound
     injection hfound with hresult
     subst result
     change ReadyToPush state scanned newRun
@@ -510,12 +507,12 @@ theorem foundNewRun_preserves_readyToPush
       unfold foundNewRun? at hfound
       have hnotEmptyBool : state.pending.isEmpty = false :=
         Bool.eq_false_of_not_eq_true hempty
-      simp only [hnotEmptyBool, Bool.false_eq_true, if_false, htopLookup]
+      simp only [hnotEmptyBool, Bool.false_eq_true, ite_false, htopLookup]
         at hfound
       split at hfound
       next hguard =>
         simp only [hnewLen, hstopped, Bool.not_true, Bool.false_eq_true,
-          if_false] at hfound
+          ite_false] at hfound
         apply foundNewRunLoop_preserves_ready state.pending.size state scanned
           before top newRun prospectivePower result hmax hlayout hpowered hsplit
           hnewBase hnewNonnegative hnewPositive hnewWithin hprospectivePower

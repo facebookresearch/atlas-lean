@@ -154,7 +154,7 @@ private theorem reverseSlicePhaseLoopTraced_memoryEvents_eq_nil
   | succ fuel ih =>
       rw [reverseSlicePhaseLoopTraced?]
       by_cases hactive : lo < hi
-      · rw [if_pos hactive]
+      · rw [ite_eq_left hactive]
         apply TraceResult.memoryEvents_bind_eq_nil
         · exact reverseSlicePhaseRead_memoryEvents_eq_nil _ _ _
         · intro left
@@ -168,7 +168,7 @@ private theorem reverseSlicePhaseLoopTraced_memoryEvents_eq_nil
               · exact reverseSlicePhaseWrite_memoryEvents_eq_nil _ _ _ _
               · intro afterRight
                 exact ih afterRight (lo + 1) (hi - 1)
-      · rw [if_neg hactive]
+      · rw [ite_eq_right hactive]
         rfl
 
 /-- A physical `reverse_slice` phase cannot emit a merge-memory boundary,
@@ -178,13 +178,13 @@ theorem reverseSlicePhaseTraced_memoryEvents_eq_nil
     (reverseSlicePhaseTraced? phase slice lo hi).trace.memoryEvents = [] := by
   unfold reverseSlicePhaseTraced?
   by_cases hordered : lo ≤ hi
-  · rw [if_pos hordered]
+  · rw [ite_eq_left hordered]
     by_cases hactive : lo < hi
-    · rw [if_pos hactive]
+    · rw [ite_eq_left hactive]
       exact reverseSlicePhaseLoopTraced_memoryEvents_eq_nil _ _ _ _ _
-    · rw [if_neg hactive]
+    · rw [ite_eq_right hactive]
       rfl
-  · rw [if_neg hordered]
+  · rw [ite_eq_right hordered]
     rfl
 
 /-- The complete key-and-optional-values `sortslice_reverse` wrapper cannot
@@ -219,7 +219,7 @@ private theorem reverseSlicePhaseLoopTraced_policyEvents_eq_nil
   | succ fuel ih =>
       rw [reverseSlicePhaseLoopTraced?]
       by_cases hactive : lo < hi
-      · rw [if_pos hactive]
+      · rw [ite_eq_left hactive]
         apply TraceResult.policyEvents_bind_eq_nil
         · cases phase <;> rfl
         · intro left
@@ -233,7 +233,7 @@ private theorem reverseSlicePhaseLoopTraced_policyEvents_eq_nil
               · cases phase <;> rfl
               · intro afterRight
                 exact ih afterRight (lo + 1) (hi - 1)
-      · rw [if_neg hactive]
+      · rw [ite_eq_right hactive]
         rfl
 
 /-- A physical reverse phase emits no formed-run or logical-merge event on
@@ -243,13 +243,13 @@ theorem reverseSlicePhaseTraced_policyEvents_eq_nil
     (reverseSlicePhaseTraced? phase slice lo hi).trace.policyEvents = [] := by
   unfold reverseSlicePhaseTraced?
   by_cases hordered : lo ≤ hi
-  · rw [if_pos hordered]
+  · rw [ite_eq_left hordered]
     by_cases hactive : lo < hi
-    · rw [if_pos hactive]
+    · rw [ite_eq_left hactive]
       exact reverseSlicePhaseLoopTraced_policyEvents_eq_nil _ _ _ _ _
-    · rw [if_neg hactive]
+    · rw [ite_eq_right hactive]
       rfl
-  · rw [if_neg hordered]
+  · rw [ite_eq_right hordered]
     rfl
 
 /-- The complete key-and-optional-values reverse emits no logical policy
@@ -292,13 +292,13 @@ theorem erase_reverseSlicePhaseTraced (phase : ReverseSlicePhase)
       reverseSlice? slice lo hi := by
   unfold reverseSlicePhaseTraced? reverseSlice?
   by_cases hordered : lo ≤ hi
-  · rw [if_pos hordered, if_pos hordered]
+  · rw [ite_eq_left hordered, ite_eq_left hordered]
     by_cases hactive : lo < hi
-    · rw [if_pos hactive, if_pos hactive]
+    · rw [ite_eq_left hactive, ite_eq_left hactive]
       exact erase_reverseSlicePhaseLoopTraced _ _ _ _ _
-    · rw [if_neg hactive, if_neg hactive]
+    · rw [ite_eq_right hactive, ite_eq_right hactive]
       rfl
-  · rw [if_neg hordered, if_neg hordered]
+  · rw [ite_eq_right hordered, ite_eq_right hordered]
     rfl
 
 @[simp]
@@ -318,7 +318,7 @@ theorem erase_sortsliceReverseTraced (valuesPresent : Bool)
     cases hresult : reverseSlice? slice base (base + Int.ofNat n) with
     | none => rfl
     | some result =>
-        simp only [Option.bind_some, if_true, erase_reverseSlicePhaseTraced]
+        simp only [Option.bind_some, ite_true, erase_reverseSlicePhaseTraced]
         exact hresult
 
 private structure ReverseTraceSafe (execution : TraceResult α) : Prop where
@@ -411,7 +411,7 @@ private theorem reverseSlicePhaseLoopTraced_safe
       refine ⟨result, ?_⟩
       exact
           { resultEq := by
-              simp only [reverseSlicePhaseLoopTraced?, hstop, if_false]
+              simp only [reverseSlicePhaseLoopTraced?, hstop, ite_false]
               rfl
             resultFuel := rfl
             traceSafe := by
@@ -490,12 +490,12 @@ private theorem reverseSlicePhaseLoopTraced_safe
         refine ⟨result, ?_⟩
         exact
           { resultEq := by
-              simp only [reverseSlicePhaseLoopTraced?, hactive, if_true]
+              simp only [reverseSlicePhaseLoopTraced?, hactive, ite_true]
               simp [TraceResult.bind, hleft, hright, hafterLeft, hafterRight,
                 hrest.resultEq]
             resultFuel := hrest.resultFuel
             traceSafe := by
-              simp only [reverseSlicePhaseLoopTraced?, hactive, if_true]
+              simp only [reverseSlicePhaseLoopTraced?, hactive, ite_true]
               exact ReverseTraceSafe.bind _ _ left hleft hreadLeftSafe htailSafe
             exactErasure := erase_reverseSlicePhaseLoopTraced _ _ _ _ _
             valuesMode := hrest.valuesMode
@@ -505,7 +505,7 @@ private theorem reverseSlicePhaseLoopTraced_safe
         refine ⟨result, ?_⟩
         exact
           { resultEq := by
-              simp only [reverseSlicePhaseLoopTraced?, hactive, if_false]
+              simp only [reverseSlicePhaseLoopTraced?, hactive, ite_false]
               rfl
             resultFuel := rfl
             traceSafe := by
@@ -586,7 +586,7 @@ theorem reverseSlicePhaseTraced_safe (phase : ReverseSlicePhase)
     exact
         { resultEq := by
             simp only [reverseSlicePhaseTraced?, hordered, hnonempty,
-              if_true, if_false]
+              ite_true, ite_false]
             rfl
           resultFuel := rfl
           traceFuel := by

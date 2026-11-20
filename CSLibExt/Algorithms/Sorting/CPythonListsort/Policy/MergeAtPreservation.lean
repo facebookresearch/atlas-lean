@@ -10,9 +10,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Policy.PendingLayout
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeAt
 import Mathlib
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Pending-layout preservation across `merge_at`
 

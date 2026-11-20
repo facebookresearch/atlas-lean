@@ -103,7 +103,7 @@ private theorem pendingRunRead_result_of_bounds (state : MergeState κ ν)
   change (TraceResult.pendingRunRead? state (Int.ofNat index)).erase = _
   rw [TraceResult.erase_pendingRunRead]
   have hnonnegative : 0 ≤ Int.ofNat index := Int.natCast_nonneg _
-  rw [if_pos hnonnegative]
+  rw [ite_eq_left hnonnegative]
   have htoi : (Int.ofNat index).toNat = index := rfl
   rw [htoi]
   exact Array.getElem?_eq_getElem hindex
@@ -130,7 +130,7 @@ theorem erase_forceCollapseIndexTraced (state : MergeState κ ν) :
     (forceCollapseIndexTraced? state).erase = forceCollapseIndex? state := by
   unfold forceCollapseIndexTraced? forceCollapseIndex?
   by_cases hmany : 1 < state.pending.size
-  · simp only [hmany, if_true]
+  · simp only [hmany, ite_true]
     let i := state.pending.size - 2
     by_cases hpositive : 0 < i
     · have hlower : i - 1 < state.pending.size := by omega
@@ -145,18 +145,18 @@ theorem erase_forceCollapseIndexTraced (state : MergeState κ ν) :
         Array.getElem?_eq_getElem hupper
       have hpositive' : 0 < state.pending.size - 2 := by
         simpa [i] using hpositive
-      rw [if_pos hpositive']
+      rw [ite_eq_left hpositive']
       simp only [TraceResult.erase_bind, TraceResult.erase_pendingRunRead]
       have hlowerNonnegative : 0 ≤ Int.ofNat (i - 1) := Int.natCast_nonneg _
-      rw [if_pos hlowerNonnegative]
+      rw [ite_eq_left hlowerNonnegative]
       have hlowerToNat : (Int.ofNat (i - 1)).toNat = i - 1 := rfl
       rw [hlowerToNat, hprevious]
-      rw [if_pos hpositive']
+      rw [ite_eq_left hpositive']
       simp only [Option.bind_some, TraceResult.erase_map,
         TraceResult.erase_pendingRunRead]
       have hupperNonnegative :
           0 ≤ Int.ofNat (state.pending.size - 2 + 1) := Int.natCast_nonneg _
-      rw [if_pos hupperNonnegative]
+      rw [ite_eq_left hupperNonnegative]
       have hupperToNat :
           (Int.ofNat (state.pending.size - 2 + 1)).toNat =
             state.pending.size - 2 + 1 := rfl
@@ -181,19 +181,19 @@ theorem forceCollapseIndexTraced_memoryEvents_eq_nil
     (forceCollapseIndexTraced? state).trace.memoryEvents = [] := by
   unfold forceCollapseIndexTraced?
   by_cases hmany : 1 < state.pending.size
-  · rw [if_pos hmany]
+  · rw [ite_eq_left hmany]
     dsimp only
     by_cases hpositive : 0 < state.pending.size - 2
-    · rw [if_pos hpositive]
+    · rw [ite_eq_left hpositive]
       apply TraceResult.memoryEvents_bind_eq_nil
       · simp [TraceResult.trace_pendingRunRead,
           AccessTrace.singletonAccess]
       · intro previous
         simp [TraceResult.memoryEvents_map,
           TraceResult.trace_pendingRunRead, AccessTrace.singletonAccess]
-    · rw [if_neg hpositive]
+    · rw [ite_eq_right hpositive]
       rfl
-  · rw [if_neg hmany]
+  · rw [ite_eq_right hmany]
     rfl
 
 /-- The event-free selector is the identity merge-memory segment on its
@@ -246,7 +246,7 @@ theorem forceCollapseIndexTraced_safe (state : MergeState κ ν)
     by_cases hlowerChosen : previous.len.slt following.len
     · refine ⟨topPair - 1, ?_, ?_, erase_forceCollapseIndexTraced state, ?_⟩
       · unfold forceCollapseIndexTraced?
-        simp only [hmany, hpositive, if_true, topPair]
+        simp only [hmany, hpositive, ite_true, topPair]
         rw [TraceResult.bind_result_of_eq_some _ _ previous hprevious]
         change Option.map _ _ = _
         rw [hfollowing]
@@ -258,7 +258,7 @@ theorem forceCollapseIndexTraced_safe (state : MergeState κ ν)
         omega
     · refine ⟨topPair, ?_, ?_, erase_forceCollapseIndexTraced state, ?_⟩
       · unfold forceCollapseIndexTraced?
-        simp only [hmany, hpositive, if_true, topPair]
+        simp only [hmany, hpositive, ite_true, topPair]
         rw [TraceResult.bind_result_of_eq_some _ _ previous hprevious]
         change Option.map _ _ = _
         rw [hfollowing]
@@ -301,10 +301,10 @@ theorem forceCollapseIndexTraced_neighbor_access_order
         (Int.ofNat (state.pending.size - 3))).result =
         some previous := pendingRunRead_result_of_bounds state _ hlower
   unfold forceCollapseIndexTraced?
-  rw [if_pos hmany]
+  rw [ite_eq_left hmany]
   dsimp only
   have hpositive : 0 < state.pending.size - 2 := by omega
-  rw [if_pos hpositive]
+  rw [ite_eq_left hpositive]
   have hlowerEq : state.pending.size - 2 - 1 =
       state.pending.size - 3 := by omega
   have hupperEq : state.pending.size - 2 + 1 =
@@ -338,9 +338,9 @@ theorem mergeForceCollapseLoopTraced_merge_trace_order
       (forceCollapseIndexTraced? state).trace.compose
         ((mergeAtTraced? state i).trace.compose
           (mergeForceCollapseLoopTraced? fuel merged.state).trace) := by
-  simp only [mergeForceCollapseLoopTraced?, hmany, if_true,
+  simp only [mergeForceCollapseLoopTraced?, hmany, ite_true,
     TraceResult.trace_bind, hindex, hmerge]
-  rw [if_pos hsuccess]
+  rw [ite_eq_left hsuccess]
 
 /-- Replacing one selected adjacent pair by one merged run decrements the
 pending depth by exactly one, so predecessor fuel is exactly the next depth. -/
@@ -399,9 +399,9 @@ theorem erase_mergeForceCollapseLoopTraced_zero
       mergeForceCollapseLoop? 0 state := by
   simp only [mergeForceCollapseLoopTraced?, mergeForceCollapseLoop?]
   by_cases hsmall : state.pending.size ≤ 1
-  · rw [if_pos hsmall, if_pos hsmall, TraceResult.erase_pure]
+  · rw [ite_eq_left hsmall, ite_eq_left hsmall, TraceResult.erase_pure]
     rfl
-  · rw [if_neg hsmall, if_neg hsmall,
+  · rw [ite_eq_right hsmall, ite_eq_right hsmall,
       TraceResult.erase_markFuelExhausted, TraceResult.erase_pure]
     rfl
 
@@ -547,25 +547,25 @@ private theorem mergeForceCollapseLoopTraced_safe
                 TraceResult.pure
                   (mergeForceCollapseFromMergeAt merged)) := by
           apply MovementTraceSafe.bind _ _ merged hmerge.resultEq hmergeSafe
-          rw [if_pos hsuccess]
+          rw [ite_eq_left hsuccess]
           exact hrest.traceSafe
         have hfullSafe : MovementTraceSafe
             (mergeForceCollapseLoopTraced? (remaining + 1) state) := by
-          simp only [mergeForceCollapseLoopTraced?, hmany, if_true]
+          simp only [mergeForceCollapseLoopTraced?, hmany, ite_true]
           exact MovementTraceSafe.bind _ _ i hindexResult hindexSafe htailSafe
         have hresult :
             (mergeForceCollapseLoopTraced? (remaining + 1) state).result =
               some result := by
-          simp only [mergeForceCollapseLoopTraced?, hmany, if_true]
+          simp only [mergeForceCollapseLoopTraced?, hmany, ite_true]
           rw [TraceResult.bind_result_of_eq_some _ _ i hindexResult]
           rw [TraceResult.bind_result_of_eq_some _ _ merged hmerge.resultEq]
-          rw [if_pos hsuccess]
+          rw [ite_eq_left hsuccess]
           exact hrest.resultEq
         have hexact :
             (mergeForceCollapseLoopTraced? (remaining + 1) state).erase =
               mergeForceCollapseLoop? (remaining + 1) state := by
           simp only [mergeForceCollapseLoopTraced?, mergeForceCollapseLoop?,
-            hmany, if_true, TraceResult.erase_bind]
+            hmany, ite_true, TraceResult.erase_bind]
           rw [hindexErasure]
           have hindexRaw : forceCollapseIndex? state = some i := by
             rw [← hindexErasure]
@@ -573,7 +573,7 @@ private theorem mergeForceCollapseLoopTraced_safe
           rw [hindexRaw]
           simp only [Option.bind_some]
           rw [hmerge.exactErasure, hmergeRaw]
-          simp only [Option.bind_some, if_pos hsuccess]
+          simp only [Option.bind_some, ite_eq_left hsuccess]
           exact hrest.exactErasure
         have htraceOrder :
             (mergeForceCollapseLoopTraced? (remaining + 1) state).trace =
@@ -651,7 +651,7 @@ private theorem mergeForceCollapseLoopTraced_safe
         refine ⟨result, ?_⟩
         exact
           { resultEq := by
-              simp only [mergeForceCollapseLoopTraced?, hmany, if_false]
+              simp only [mergeForceCollapseLoopTraced?, hmany, ite_false]
               change (TraceResult.pure result).result = some result
               rfl
             returnCode := rfl
@@ -660,7 +660,7 @@ private theorem mergeForceCollapseLoopTraced_safe
               simpa [mergeForceCollapseLoopTraced?, hmany, result] using hpure
             exactErasure := by
               simp only [mergeForceCollapseLoopTraced?,
-                mergeForceCollapseLoop?, hmany, if_false,
+                mergeForceCollapseLoop?, hmany, ite_false,
                 TraceResult.erase_pure]
               rfl
             tempInvariant := hInv

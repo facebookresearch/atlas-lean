@@ -13,9 +13,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.FoundNewRunCorrec
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ScanCorrectnessSupport
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ScanStepSupport
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Correctness of one forward scan iteration
 
@@ -185,7 +182,7 @@ private theorem listSort_form_run_correct
             listSortScan? fuel nextState nextLo nextRemaining reverse inputSize)
           state lo remaining reverse inputSize counted := by
     rw [listSortScan?]
-    simp only [hremainingNe, if_false, hcountRaw]
+    simp only [hremainingNe, ite_false, hcountRaw]
     rfl
   have hcountedValid :
       ¬(counted.length = 0 ∨ remaining < counted.length) := by
@@ -418,10 +415,10 @@ private theorem listSort_form_run_correct
             lo remaining reverse inputSize (extended, force, false) := by
       rw [hscanCount]
       unfold listSortAfterCount?
-      simp only [hcounted.safety.resultFuel, Bool.false_eq_true, if_false,
+      simp only [hcounted.safety.resultFuel, Bool.false_eq_true, ite_false,
         hcountedValid]
       dsimp only [countedState, nextMinrun, installed, target, force]
-      rw [if_pos hExtend, hbinaryRaw]
+      rw [ite_eq_left hExtend, hbinaryRaw]
       simp only [hsorted.safety.resultFuel]
       rfl
     refine ⟨extended, force, ?_⟩
@@ -497,10 +494,10 @@ private theorem listSort_form_run_correct
             (installed, counted.length, false) := by
       rw [hscanCount]
       unfold listSortAfterCount?
-      simp only [hcounted.safety.resultFuel, Bool.false_eq_true, if_false,
+      simp only [hcounted.safety.resultFuel, Bool.false_eq_true, ite_false,
         hcountedValid]
       dsimp only [countedState, nextMinrun, installed, target, force]
-      rw [if_neg hExtend]
+      rw [ite_eq_right hExtend]
     refine ⟨installed, counted.length, ?_⟩
     exact
       { positive := hcounted.lengthBounds.1
@@ -749,9 +746,9 @@ private theorem listSortScan_step_correct_of_provider
           reverse inputSize := by
     rw [hformed.scanEquationBeforeFound]
     unfold listSortAfterExtension?
-    simp only [Bool.false_eq_true, if_false, hvalid, hfoundRaw,
+    simp only [Bool.false_eq_true, ite_false, hvalid, hfoundRaw,
       hfound.safety.returnCode, hfound.safety.resultFuel, Bool.not_false,
-      and_self, if_true]
+      and_self, ite_true]
     rfl
   exact
     ⟨consumed, nextState,

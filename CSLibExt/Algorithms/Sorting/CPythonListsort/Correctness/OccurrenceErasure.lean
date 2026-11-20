@@ -8,9 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.OriginRelabelScan
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Erasure of occurrence tags
 
@@ -462,10 +459,10 @@ theorem eraseOccurrenceMergeGetmem
   · have hreuseFalse : need.sle state.alloced = false := by
       cases h : need.sle state.alloced <;> simp_all
     by_cases hguard : mergeGetmemAllocationLimit state.a < need.toNat
-    · simp only [hreuseFalse, Bool.false_eq_true, if_false, hguard, if_true,
+    · simp only [hreuseFalse, Bool.false_eq_true, ite_false, hguard, ite_true,
         eraseOccurrenceMergeGetmemResult]
       rw [eraseOccurrenceMergeFreemem]
-    · simp only [hreuseFalse, Bool.false_eq_true, if_false, hguard]
+    · simp only [hreuseFalse, Bool.false_eq_true, ite_false, hguard]
       rw [eraseOccurrenceMergeFreemem]
       simp [eraseOccurrenceMergeGetmemResult, eraseOccurrenceMergeState,
         eraseOccurrenceTempStorage]
@@ -483,7 +480,7 @@ theorem eraseOccurrenceGallopLeftRightExponential
   | succ fuel ih =>
       simp only [gallopLeftRightExponential?]
       by_cases hactive : offset < maxOffset
-      · rw [if_pos hactive, if_pos hactive, eraseOccurrenceSlice_read]
+      · rw [ite_eq_left hactive, ite_eq_left hactive, eraseOccurrenceSlice_read]
         cases hread : slice.read? (base + Int.ofNat hint + Int.ofNat offset) with
         | none => rfl
         | some entry =>
@@ -505,7 +502,7 @@ theorem eraseOccurrenceGallopLeftLeftExponential
   | succ fuel ih =>
       simp only [gallopLeftLeftExponential?]
       by_cases hactive : offset < maxOffset
-      · rw [if_pos hactive, if_pos hactive, eraseOccurrenceSlice_read]
+      · rw [ite_eq_left hactive, ite_eq_left hactive, eraseOccurrenceSlice_read]
         cases hread : slice.read? (base + Int.ofNat hint - Int.ofNat offset) with
         | none => rfl
         | some entry =>
@@ -527,7 +524,7 @@ theorem eraseOccurrenceGallopLeftBinary
   | succ fuel ih =>
       simp only [gallopLeftBinary?]
       by_cases hactive : lower < upper
-      · rw [if_pos hactive, if_pos hactive, eraseOccurrenceSlice_read]
+      · rw [ite_eq_left hactive, ite_eq_left hactive, eraseOccurrenceSlice_read]
         cases hread : slice.read?
             (base + Int.ofNat (lower + (upper - lower) / 2)) with
         | none => rfl
@@ -550,14 +547,14 @@ theorem eraseOccurrenceFinishGallopLeft
   unfold finishGallopLeft?
   by_cases hbounds :
       -1 ≤ lastOffset ∧ lastOffset < upperOffset ∧ upperOffset ≤ Int.ofNat n
-  · rw [if_pos hbounds, if_pos hbounds]
+  · rw [ite_eq_left hbounds, ite_eq_left hbounds]
     by_cases hnonnegative : 0 ≤ lastOffset + 1 ∧ 0 ≤ upperOffset
-    · rw [if_pos hnonnegative, if_pos hnonnegative]
+    · rw [ite_eq_left hnonnegative, ite_eq_left hnonnegative]
       by_cases hexhausted : exponentialFuelExhausted = true
       · simp [hexhausted]
       · simp [hexhausted, eraseOccurrenceGallopLeftBinary]
-    · rw [if_neg hnonnegative, if_neg hnonnegative]
-  · rw [if_neg hbounds, if_neg hbounds]
+    · rw [ite_eq_right hnonnegative, ite_eq_right hnonnegative]
+  · rw [ite_eq_right hbounds, ite_eq_right hbounds]
 
 theorem eraseOccurrenceGallopRightLeftExponential
     (lt : BoolComparator alpha) (fuel : Nat)
@@ -572,7 +569,7 @@ theorem eraseOccurrenceGallopRightLeftExponential
   | succ fuel ih =>
       simp only [gallopRightLeftExponential?]
       by_cases hactive : offset < maxOffset
-      · rw [if_pos hactive, if_pos hactive, eraseOccurrenceSlice_read]
+      · rw [ite_eq_left hactive, ite_eq_left hactive, eraseOccurrenceSlice_read]
         cases hread : slice.read? (base + Int.ofNat hint - Int.ofNat offset) with
         | none => rfl
         | some entry =>
@@ -594,7 +591,7 @@ theorem eraseOccurrenceGallopRightRightExponential
   | succ fuel ih =>
       simp only [gallopRightRightExponential?]
       by_cases hactive : offset < maxOffset
-      · rw [if_pos hactive, if_pos hactive, eraseOccurrenceSlice_read]
+      · rw [ite_eq_left hactive, ite_eq_left hactive, eraseOccurrenceSlice_read]
         cases hread : slice.read? (base + Int.ofNat hint + Int.ofNat offset) with
         | none => rfl
         | some entry =>
@@ -616,7 +613,7 @@ theorem eraseOccurrenceGallopRightBinary
   | succ fuel ih =>
       simp only [gallopRightBinary?]
       by_cases hactive : lower < upper
-      · rw [if_pos hactive, if_pos hactive, eraseOccurrenceSlice_read]
+      · rw [ite_eq_left hactive, ite_eq_left hactive, eraseOccurrenceSlice_read]
         cases hread : slice.read?
             (base + Int.ofNat (lower + (upper - lower) / 2)) with
         | none => rfl
@@ -639,14 +636,14 @@ theorem eraseOccurrenceFinishGallopRight
   unfold finishGallopRight?
   by_cases hbounds :
       -1 ≤ lastOffset ∧ lastOffset < upperOffset ∧ upperOffset ≤ Int.ofNat n
-  · rw [if_pos hbounds, if_pos hbounds]
+  · rw [ite_eq_left hbounds, ite_eq_left hbounds]
     by_cases hnonnegative : 0 ≤ lastOffset + 1 ∧ 0 ≤ upperOffset
-    · rw [if_pos hnonnegative, if_pos hnonnegative]
+    · rw [ite_eq_left hnonnegative, ite_eq_left hnonnegative]
       by_cases hexhausted : exponentialFuelExhausted = true
       · simp [hexhausted]
       · simp [hexhausted, eraseOccurrenceGallopRightBinary]
-    · rw [if_neg hnonnegative, if_neg hnonnegative]
-  · rw [if_neg hbounds, if_neg hbounds]
+    · rw [ite_eq_right hnonnegative, ite_eq_right hnonnegative]
+  · rw [ite_eq_right hbounds, ite_eq_right hbounds]
 
 @[simp]
 theorem eraseOccurrenceGallopLeft
@@ -732,7 +729,7 @@ theorem eraseOccurrenceReverseSliceLoop (fuel : Nat)
   | succ fuel ih =>
       simp only [reverseSliceLoop?]
       by_cases hactive : lo < hi
-      · rw [if_pos hactive, if_pos hactive]
+      · rw [ite_eq_left hactive, ite_eq_left hactive]
         rw [eraseOccurrenceSlice_read]
         cases hleft : slice.read? lo with
         | none => simp
@@ -761,9 +758,9 @@ theorem eraseOccurrenceReverseSlice
       (reverseSlice? slice lo hi).map eraseOccurrenceReverseSliceResult := by
   unfold reverseSlice?
   by_cases horder : lo ≤ hi
-  · rw [if_pos horder, if_pos horder]
+  · rw [ite_eq_left horder, ite_eq_left horder]
     by_cases hactive : lo < hi
-    · rw [if_pos hactive, if_pos hactive]
+    · rw [ite_eq_left hactive, ite_eq_left hactive]
       exact eraseOccurrenceReverseSliceLoop (hi - lo).toNat slice lo (hi - 1)
     · simp [hactive, eraseOccurrenceReverseSliceResult]
   · simp [horder]
@@ -866,7 +863,7 @@ theorem eraseOccurrenceAscendingScan (lt : BoolComparator alpha)
   | succ fuel ih =>
       simp only [ascendingScan?]
       by_cases hscan : n < nremaining
-      · rw [if_pos hscan, if_pos hscan]
+      · rw [ite_eq_left hscan, ite_eq_left hscan]
         rw [eraseOccurrenceSlice_read]
         cases hprevious : slice.read? (base + Int.ofNat (n - 1)) with
         | none => rfl
@@ -890,7 +887,7 @@ theorem eraseOccurrenceReverseLastEqual
   unfold reverseLastEqual?
   by_cases heq : neq = 0
   · simp [heq, eraseOccurrenceReverseEqualResult]
-  · rw [if_neg heq, if_neg heq]
+  · rw [ite_eq_right heq, ite_eq_right heq]
     dsimp only
     rw [eraseOccurrenceSortsliceReverse]
     cases hreversed : sortsliceReverse? slice
@@ -912,7 +909,7 @@ theorem eraseOccurrenceDescendingScan (lt : BoolComparator alpha)
   | succ fuel ih =>
       simp only [descendingScan?]
       by_cases hscan : n < nremaining
-      · rw [if_pos hscan, if_pos hscan]
+      · rw [ite_eq_left hscan, ite_eq_left hscan]
         rw [eraseOccurrenceSlice_read]
         cases hprevious : slice.read? (base + Int.ofNat (n - 1)) with
         | none => simp
@@ -990,7 +987,7 @@ theorem eraseOccurrenceFinishDescending (lt : BoolComparator alpha)
                       eraseOccurrenceReverseEqualResult,
                       eraseOccurrenceReverseSliceResult,
                       eraseOccurrenceCountRunResult]
-                  · simp only [hfuel, Bool.false_eq_true, if_false,
+                  · simp only [hfuel, Bool.false_eq_true, ite_false,
                       Option.map_some, Option.bind_eq_bind, Option.bind_some,
                       eraseOccurrenceDescendingScanResult_fuel,
                       eraseOccurrenceDescendingScanResult_slice,
@@ -1000,11 +997,11 @@ theorem eraseOccurrenceFinishDescending (lt : BoolComparator alpha)
                     simp only [hequal, Option.map_some, Option.bind_some,
                       eraseOccurrenceReverseEqualResult_fuel,
                       eraseOccurrenceReverseEqualResult_slice, hequalFuel,
-                      Bool.false_eq_true, if_false]
+                      Bool.false_eq_true, ite_false]
                     rw [eraseOccurrenceSortsliceReverse]
                     simp only [hwhole, Option.map_some, Option.bind_some,
                       eraseOccurrenceReverseSliceResult, hwholeFuel,
-                      Bool.false_eq_true, if_false]
+                      Bool.false_eq_true, ite_false]
                     rw [eraseOccurrenceAscendingScan]
                     cases hascending : ascendingScan? nremaining
                         (occurrenceComparator lt) wholeReversed.slice base
@@ -1023,7 +1020,7 @@ theorem eraseOccurrenceCountRun (lt : BoolComparator alpha)
   simp only [eraseOccurrenceMergeState_key_compare, hcompare,
     eraseOccurrenceComparator_occurrenceComparator]
   by_cases hvalid : 0 < nremaining ∧ nremaining ≤ PY_SSIZE_T_MAX
-  · rw [if_pos hvalid, if_pos hvalid, eraseOccurrenceAscendingScan]
+  · rw [ite_eq_left hvalid, ite_eq_left hvalid, eraseOccurrenceAscendingScan]
     cases hascending : ascendingScan? nremaining
         (occurrenceComparator lt) slice base nremaining 1 with
     | none => simp [countRunBindOptionAcross]
@@ -1038,7 +1035,7 @@ theorem eraseOccurrenceCountRun (lt : BoolComparator alpha)
                 eraseOccurrenceCountRunResult]
             · by_cases hlong : 1 < ascending.length
               · simp only [countRunBindOptionAcross, hfuel,
-                    Bool.false_eq_true, if_false, hcomplete, hlong, if_true]
+                    Bool.false_eq_true, ite_false, hcomplete, hlong, ite_true]
                 rw [eraseOccurrenceSlice_read]
                 cases hfirst : slice.read? base with
                 | none => simp
@@ -1074,7 +1071,7 @@ theorem eraseOccurrenceCountRun (lt : BoolComparator alpha)
                                       reversed.slice base nremaining
                                       (ascending.length + 1) hcompare]
               · simp only [countRunBindOptionAcross, hfuel,
-                    Bool.false_eq_true, if_false, hcomplete, hlong]
+                    Bool.false_eq_true, ite_false, hcomplete, hlong]
                 exact eraseOccurrenceFinishDescending lt state slice base
                   nremaining (ascending.length + 1) hcompare
   · simp [hvalid]
@@ -1110,7 +1107,7 @@ theorem eraseOccurrenceBinarysortSearch (lt : BoolComparator alpha)
   | succ fuel ih =>
       simp only [binarysortSearch?]
       by_cases hsearch : left < right
-      · rw [if_pos hsearch, if_pos hsearch, eraseOccurrenceSlice_read]
+      · rw [ite_eq_left hsearch, ite_eq_left hsearch, eraseOccurrenceSlice_read]
         cases hread : slice.read?
             (base + Int.ofNat ((left + right) / 2)) with
         | none => rfl
@@ -1133,7 +1130,7 @@ theorem eraseOccurrenceBinarysortLoop (lt : BoolComparator alpha)
   | succ fuel ih =>
       simp only [binarysortLoop?]
       by_cases hloop : ok < n
-      · rw [if_pos hloop, if_pos hloop, eraseOccurrenceSlice_read]
+      · rw [ite_eq_left hloop, ite_eq_left hloop, eraseOccurrenceSlice_read]
         cases hpivot : slice.read? (base + Int.ofNat ok) with
         | none => simp [binarysortBindOptionAcross]
         | some pivot =>
@@ -1149,7 +1146,7 @@ theorem eraseOccurrenceBinarysortLoop (lt : BoolComparator alpha)
                 | true =>
                     simp [hfuel, eraseOccurrenceBinarysortResult]
                 | false =>
-                    simp only [hfuel, Bool.false_eq_true, if_false]
+                    simp only [hfuel, Bool.false_eq_true, ite_false]
                     rw [eraseOccurrenceSlice_memmove]
                     cases hmove : slice.memmove?
                         (base + Int.ofNat (search.position + 1))
@@ -1165,7 +1162,7 @@ theorem eraseOccurrenceBinarysortLoop (lt : BoolComparator alpha)
                         apply Option.bind_congr
                         intro inserted _
                         exact ih inserted (ok + 1)
-      · rw [if_neg hloop, if_neg hloop]
+      · rw [ite_eq_right hloop, ite_eq_right hloop]
         rfl
 
 @[simp]
@@ -1179,7 +1176,7 @@ theorem eraseOccurrenceBinarysort (lt : BoolComparator alpha)
         eraseOccurrenceBinarysortResult := by
   unfold binarysort?
   by_cases hvalid : 1 ≤ n ∧ ok ≤ n ∧ n ≤ MAX_MINRUN.toNat
-  · rw [if_pos hvalid, if_pos hvalid]
+  · rw [ite_eq_left hvalid, ite_eq_left hvalid]
     split <;>
       apply eraseOccurrenceBinarysortLoop lt n state slice base n <;>
       exact hcompare

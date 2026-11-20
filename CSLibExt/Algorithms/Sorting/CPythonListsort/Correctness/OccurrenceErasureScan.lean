@@ -8,9 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.OccurrenceErasureMerges
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Occurrence erasure through merge policy and the top-level scan
 
@@ -141,7 +138,7 @@ theorem eraseOccurrenceSetTopPower (power : Nat)
   unfold setTopPower?
   by_cases hempty : state.pending.isEmpty
   · simp [hempty]
-  · rw [if_neg hempty, if_neg hempty]
+  · rw [ite_eq_right hempty, ite_eq_right hempty]
     cases htop : state.pending[state.pending.size - 1]? with
     | none => simp [htop]
     | some top => simp [htop, eraseOccurrenceMergeState]
@@ -164,7 +161,7 @@ theorem eraseOccurrencePrepareMergeAt
   by_cases hposition :
       2 ≤ state.pending.size ∧
         (i + 2 = state.pending.size ∨ i + 3 = state.pending.size)
-  · rw [if_pos hposition, if_pos hposition]
+  · rw [ite_eq_left hposition, ite_eq_left hposition]
     cases hleft : state.pending[i]? with
     | none => simp
     | some left =>
@@ -177,7 +174,7 @@ theorem eraseOccurrencePrepareMergeAt
                 (0 : PySSize).slt left.len ∧
                   (0 : PySSize).slt right.len ∧
                   left.base + left.len.toNat = right.base
-            · rw [if_pos hgeometry, if_pos hgeometry]
+            · rw [ite_eq_left hgeometry, ite_eq_left hgeometry]
               simp only [combinePendingAt_eq]
               let call : MergeState (Occurrence alpha) nu :=
                 { state with
@@ -226,16 +223,16 @@ theorem eraseOccurrencePrepareMergeAt
                       · simp [htrimAFuel, eraseOccurrenceMergeAtPreparation,
                           eraseOccurrenceMergeAtResult,
                           eraseOccurrenceMergeState, call]
-                      · rw [if_neg htrimAFuel, if_neg htrimAFuel]
+                      · rw [ite_eq_right htrimAFuel, ite_eq_right htrimAFuel]
                         by_cases htrimABounds : left.len.toNat < trimA.index
                         · simp [htrimABounds]
-                        · rw [if_neg htrimABounds, if_neg htrimABounds]
+                        · rw [ite_eq_right htrimABounds, ite_eq_right htrimABounds]
                           by_cases hemptyA : left.len.toNat - trimA.index = 0
                           · simp [hemptyA,
                               eraseOccurrenceMergeAtPreparation,
                               eraseOccurrenceMergeAtResult,
                               eraseOccurrenceMergeState, call]
-                          · rw [if_neg hemptyA, if_neg hemptyA]
+                          · rw [ite_eq_right hemptyA, ite_eq_right hemptyA]
                             rw [eraseOccurrenceSlice_read]
                             cases hlast : call.data.read?
                                 (Int.ofNat
@@ -274,19 +271,19 @@ theorem eraseOccurrencePrepareMergeAt
                                         eraseOccurrenceMergeAtPreparation,
                                         eraseOccurrenceMergeAtResult,
                                         eraseOccurrenceMergeState, call]
-                                    · rw [if_neg htrimBFuel,
-                                        if_neg htrimBFuel]
+                                    · rw [ite_eq_right htrimBFuel,
+                                        ite_eq_right htrimBFuel]
                                       by_cases htrimBBounds :
                                           right.len.toNat < trimB.index
                                       · simp [htrimBBounds]
-                                      · rw [if_neg htrimBBounds,
-                                          if_neg htrimBBounds]
+                                      · rw [ite_eq_right htrimBBounds,
+                                          ite_eq_right htrimBBounds]
                                         by_cases hemptyB : trimB.index = 0
                                         · simp [hemptyB,
                                             eraseOccurrenceMergeAtPreparation,
                                             eraseOccurrenceMergeAtResult,
                                             eraseOccurrenceMergeState, call]
-                                        · rw [if_neg hemptyB, if_neg hemptyB]
+                                        · rw [ite_eq_right hemptyB, ite_eq_right hemptyB]
                                           by_cases hlo :
                                               left.len.toNat - trimA.index ≤
                                                 trimB.index
@@ -298,7 +295,7 @@ theorem eraseOccurrencePrepareMergeAt
                                               eraseOccurrenceMergeAtPreparation,
                                               eraseOccurrenceMergeAtCall,
                                               eraseOccurrenceMergeState, call]
-            · rw [if_neg hgeometry, if_neg hgeometry]
+            · rw [ite_eq_right hgeometry, ite_eq_right hgeometry]
               rfl
   · simp [hposition]
 
@@ -384,7 +381,7 @@ theorem eraseOccurrenceFinishListSort
         eraseOccurrenceListSortImplResult := by
   unfold finishListSort?
   by_cases hreverse : reverse && decide (1 < inputSize)
-  · rw [if_pos hreverse, if_pos hreverse]
+  · rw [ite_eq_left hreverse, ite_eq_left hreverse]
     simp only [eraseOccurrenceMergeState_data]
     rw [eraseOccurrenceSortsliceReverse]
     cases hreversed : sortsliceReverse? state.data 0 inputSize with
@@ -394,7 +391,7 @@ theorem eraseOccurrenceFinishListSort
           eraseOccurrenceReverseSliceResult]
         rw [eraseOccurrenceMergeState_setData, eraseOccurrenceMergeFreemem]
         rfl
-  · rw [if_neg hreverse, if_neg hreverse]
+  · rw [ite_eq_right hreverse, ite_eq_right hreverse]
     simp only [bind, Option.bind]
     rw [eraseOccurrenceMergeFreemem]
     rfl
@@ -480,7 +477,7 @@ private theorem listSortScan_succ_of_remaining_ne_zero {kappa : Type u}
       listSortScanAfterCount? fuel state lo remaining reverse inputSize
         counted) := by
   unfold listSortScan?
-  rw [if_neg hremaining]
+  rw [ite_eq_right hremaining]
   unfold listSortScanAfterCount? listSortScanAfterExtension?
   apply Option.bind_congr
   intro counted _
@@ -489,7 +486,7 @@ private theorem listSortScan_succ_of_remaining_ne_zero {kappa : Type u}
   · simp only [hcountFuel]
     by_cases hcountBad : counted.length = 0 ∨ remaining < counted.length
     · simp [hcountBad]
-    · simp only [hcountBad, if_false]
+    · simp only [hcountBad, ite_false]
       let countedState : MergeState kappa nu :=
         { state with data := counted.slice }
       let nextMinrun := minrunNext countedState.minrunState
@@ -504,7 +501,7 @@ private theorem listSortScan_succ_of_remaining_ne_zero {kappa : Type u}
                 ({ state with data := counted.slice } :
                   MergeState kappa nu).minrunState).result := by
             simpa only [runLength, nextMinrun, countedState] using hextend
-        simp only [hextendBase, if_true]
+        simp only [hextendBase, ite_true]
         by_cases hforce : remaining ≤ target
         · have hforceBase :
               remaining ≤
@@ -512,7 +509,7 @@ private theorem listSortScan_succ_of_remaining_ne_zero {kappa : Type u}
                   ({ state with data := counted.slice } :
                     MergeState kappa nu).minrunState).result.toNat := by
               simpa only [target, nextMinrun, countedState] using hforce
-          simp only [hforceBase, if_true]
+          simp only [hforceBase, ite_true]
           cases hsorted : binarysort? nextState nextState.data (Int.ofNat lo)
               remaining runLength with
           | none => simp
@@ -526,7 +523,7 @@ private theorem listSortScan_succ_of_remaining_ne_zero {kappa : Type u}
                   ({ state with data := counted.slice } :
                     MergeState kappa nu).minrunState).result.toNat := by
               simpa only [target, nextMinrun, countedState] using hforce
-          simp only [hforceBase, if_false]
+          simp only [hforceBase, ite_false]
           cases hsorted : binarysort? nextState nextState.data (Int.ofNat lo)
               target runLength with
           | none => simp
@@ -563,7 +560,7 @@ private theorem eraseOccurrenceFoundNewRunLoop_of_mergeAt
       simp only [eraseOccurrenceMergeState]
       simp only [foundNewRunLoop?]
       by_cases hdepth : 1 < state.pending.size
-      · rw [if_pos hdepth, if_pos hdepth]
+      · rw [ite_eq_left hdepth, ite_eq_left hdepth]
         cases hpreceding : state.pending[state.pending.size - 2]? with
         | none => simp
         | some preceding =>
@@ -573,7 +570,7 @@ private theorem eraseOccurrenceFoundNewRunLoop_of_mergeAt
             | some precedingPower =>
                 simp only
                 by_cases hcollapse : power < precedingPower
-                · rw [if_pos hcollapse, if_pos hcollapse]
+                · rw [ite_eq_left hcollapse, ite_eq_left hcollapse]
                   have heraseMerge := hmergeAt state
                     (state.pending.size - 2) hcompare
                   simp only [eraseOccurrenceMergeState] at heraseMerge
@@ -595,10 +592,10 @@ private theorem eraseOccurrenceFoundNewRunLoop_of_mergeAt
                             (state.pending.size - 2) merged hmerge).trans
                             hcompare
                       · rename_i hok
-                        simp only [hok, if_false]
+                        simp only [hok, ite_false]
                         simp [foundNewRunFromMergeAt_eq,
                           eraseOccurrenceFoundNewRunResult]
-                · rw [if_neg hcollapse, if_neg hcollapse]
+                · rw [ite_eq_right hcollapse, ite_eq_right hcollapse]
                   have heraseSet := eraseOccurrenceSetTopPower power state
                   simp only [eraseOccurrenceMergeState] at heraseSet
                   rw [heraseSet]
@@ -607,7 +604,7 @@ private theorem eraseOccurrenceFoundNewRunLoop_of_mergeAt
                   | some updated =>
                       simp [foundNewRunSuccess_eq,
                         eraseOccurrenceFoundNewRunResult]
-      · rw [if_neg hdepth, if_neg hdepth]
+      · rw [ite_eq_right hdepth, ite_eq_right hdepth]
         have heraseSet := eraseOccurrenceSetTopPower power state
         simp only [eraseOccurrenceMergeState] at heraseSet
         rw [heraseSet]
@@ -631,7 +628,7 @@ private theorem eraseOccurrenceFoundNewRun_of_mergeAt
   by_cases hempty : state.pending.isEmpty
   · simp [hempty, foundNewRunSuccess_eq,
       eraseOccurrenceFoundNewRunResult, eraseOccurrenceMergeState]
-  · rw [if_neg hempty, if_neg hempty]
+  · rw [ite_eq_right hempty, ite_eq_right hempty]
     cases htop : state.pending[state.pending.size - 1]? with
     | none => simp
     | some top =>
@@ -644,7 +641,7 @@ private theorem eraseOccurrenceFoundNewRun_of_mergeAt
           by_cases hstopped : !traced.stopped
           · simp [traced, hstopped, foundNewRunOutOfFuel_eq,
               eraseOccurrenceFoundNewRunResult, eraseOccurrenceMergeState]
-          · rw [if_neg hstopped, if_neg hstopped]
+          · rw [ite_eq_right hstopped, ite_eq_right hstopped]
             have hloop := eraseOccurrenceFoundNewRunLoop_of_mergeAt lt
               state.pending.size state traced.result hcompare hmergeAt
             simpa [traced, eraseOccurrenceMergeState] using hloop
@@ -671,7 +668,7 @@ private theorem eraseOccurrenceMergeForceCollapseLoop_of_mergeAt
       simp only [eraseOccurrenceMergeState]
       simp only [mergeForceCollapseLoop?]
       by_cases hdepth : 1 < state.pending.size
-      · rw [if_pos hdepth, if_pos hdepth]
+      · rw [ite_eq_left hdepth, ite_eq_left hdepth]
         have heraseIndex := eraseOccurrenceForceCollapseIndex state
         simp only [eraseOccurrenceMergeState] at heraseIndex
         rw [heraseIndex]
@@ -697,9 +694,9 @@ private theorem eraseOccurrenceMergeForceCollapseLoop_of_mergeAt
                     (mergeAt?_key_compare_of_eq_some state i merged
                       hmerge).trans hcompare
                 · rename_i hok
-                  simp only [hok, if_false]
+                  simp only [hok, ite_false]
                   rfl
-      · rw [if_neg hdepth, if_neg hdepth]
+      · rw [ite_eq_right hdepth, ite_eq_right hdepth]
         rfl
 
 private theorem eraseOccurrenceMergeForceCollapse_of_mergeAt
@@ -740,12 +737,12 @@ private theorem eraseOccurrenceListSortScanAfterExtension_of_mergeAt
         runLength extensionFuel).map eraseOccurrenceListSortImplResult := by
   unfold listSortScanAfterExtension?
   by_cases hextFuel : extensionFuel
-  · rw [if_pos hextFuel, if_pos hextFuel]
+  · rw [ite_eq_left hextFuel, ite_eq_left hextFuel]
     exact eraseOccurrenceFinishListSort state reverse inputSize (-1) true
-  · rw [if_neg hextFuel, if_neg hextFuel]
+  · rw [ite_eq_right hextFuel, ite_eq_right hextFuel]
     by_cases hbad : runLength = 0 ∨ remaining < runLength
     · simp [hbad]
-    · rw [if_neg hbad, if_neg hbad]
+    · rw [ite_eq_right hbad, ite_eq_right hbad]
       rw [eraseOccurrenceFoundNewRun_of_mergeAt lt state runLength hcompare
         hmergeAt]
       cases hfound : foundNewRun? state runLength with
@@ -763,7 +760,7 @@ private theorem eraseOccurrenceListSortScanAfterExtension_of_mergeAt
               (foundNewRun?_key_compare_of_eq_some state runLength found
                 hfound).trans hcompare
           · rename_i hok
-            simp only [hok, if_false]
+            simp only [hok, ite_false]
             exact eraseOccurrenceFailFromFoundNewRun found reverse inputSize
 
 private theorem eraseOccurrenceListSortScanAfterCount_of_mergeAt
@@ -796,12 +793,12 @@ private theorem eraseOccurrenceListSortScanAfterCount_of_mergeAt
   have hcountedCompare :
       countedState.key_compare = occurrenceComparator lt := hcompare
   by_cases hcountFuel : counted.fuelExhausted
-  · rw [if_pos hcountFuel, if_pos hcountFuel]
+  · rw [ite_eq_left hcountFuel, ite_eq_left hcountFuel]
     exact eraseOccurrenceFinishListSort countedState reverse inputSize (-1) true
-  · rw [if_neg hcountFuel, if_neg hcountFuel]
+  · rw [ite_eq_right hcountFuel, ite_eq_right hcountFuel]
     by_cases hcountBad : counted.length = 0 ∨ remaining < counted.length
     · simp [hcountBad]
-    · rw [if_neg hcountBad, if_neg hcountBad]
+    · rw [ite_eq_right hcountBad, ite_eq_right hcountBad]
       let nextMinrun := minrunNext countedState.minrunState
       let nextState := installMinrunState countedState nextMinrun.state
       have hnextCompare :
@@ -820,7 +817,7 @@ private theorem eraseOccurrenceListSortScanAfterCount_of_mergeAt
               (minrunNext
                 (eraseOccurrenceMergeState countedState).minrunState).result := by
             simpa only [eraseOccurrenceMergeState_minrunState] using hextendBase
-        rw [if_pos hextendErased, if_pos hextendBase]
+        rw [ite_eq_left hextendErased, ite_eq_left hextendBase]
         by_cases hforce : remaining ≤ target
         · have hforceBase :
               remaining ≤
@@ -830,7 +827,7 @@ private theorem eraseOccurrenceListSortScanAfterCount_of_mergeAt
               remaining ≤ (minrunNext
                 (eraseOccurrenceMergeState countedState).minrunState).result.toNat := by
               simpa only [eraseOccurrenceMergeState_minrunState] using hforceBase
-          simp only [if_pos hforceErased, if_pos hforceBase]
+          simp only [ite_eq_left hforceErased, ite_eq_left hforceBase]
           simp only [eraseOccurrenceMergeState_minrunState,
             eraseOccurrenceInstallMinrunState,
             eraseOccurrenceMergeState_data]
@@ -856,7 +853,7 @@ private theorem eraseOccurrenceListSortScanAfterCount_of_mergeAt
               ¬ remaining ≤ (minrunNext
                 (eraseOccurrenceMergeState countedState).minrunState).result.toNat := by
               simpa only [eraseOccurrenceMergeState_minrunState] using hforceBase
-          simp only [if_neg hforceErased, if_neg hforceBase]
+          simp only [ite_eq_right hforceErased, ite_eq_right hforceBase]
           simp only [eraseOccurrenceMergeState_minrunState,
             eraseOccurrenceInstallMinrunState,
             eraseOccurrenceMergeState_data]
@@ -883,7 +880,7 @@ private theorem eraseOccurrenceListSortScanAfterCount_of_mergeAt
               (minrunNext
                 (eraseOccurrenceMergeState countedState).minrunState).result := by
             simpa only [eraseOccurrenceMergeState_minrunState] using hextendBase
-        rw [if_neg hextendErased, if_neg hextendBase]
+        rw [ite_eq_right hextendErased, ite_eq_right hextendBase]
         simp only [eraseOccurrenceMergeState_minrunState,
           eraseOccurrenceInstallMinrunState, eraseOccurrenceMergeState_data,
           bind, Option.bind, eraseOccurrenceMergeState_setData]
@@ -908,7 +905,7 @@ private theorem eraseOccurrenceListSortScan_of_mergeAt
   | zero =>
       simp only [listSortScan?]
       by_cases hremaining : remaining = 0
-      · rw [if_pos hremaining, if_pos hremaining]
+      · rw [ite_eq_left hremaining, ite_eq_left hremaining]
         have heraseCollapse :=
           eraseOccurrenceMergeForceCollapse_of_mergeAt lt state hcompare
             hmergeAt
@@ -926,14 +923,14 @@ private theorem eraseOccurrenceListSortScan_of_mergeAt
               exact eraseOccurrenceFinishListSort collapsed.state reverse
                 inputSize 0 false
             · rename_i hok
-              simp only [hok, if_false]
+              simp only [hok, ite_false]
               exact eraseOccurrenceFailFromCollapse collapsed reverse inputSize
-      · rw [if_neg hremaining, if_neg hremaining]
+      · rw [ite_eq_right hremaining, ite_eq_right hremaining]
         exact eraseOccurrenceFinishListSort state reverse inputSize (-1) true
   | succ fuel ih =>
       by_cases hremaining : remaining = 0
       · simp only [listSortScan?]
-        rw [if_pos hremaining, if_pos hremaining]
+        rw [ite_eq_left hremaining, ite_eq_left hremaining]
         have heraseCollapse :=
           eraseOccurrenceMergeForceCollapse_of_mergeAt lt state hcompare
             hmergeAt
@@ -951,7 +948,7 @@ private theorem eraseOccurrenceListSortScan_of_mergeAt
               exact eraseOccurrenceFinishListSort collapsed.state reverse
                 inputSize 0 false
             · rename_i hok
-              simp only [hok, if_false]
+              simp only [hok, ite_false]
               exact eraseOccurrenceFailFromCollapse collapsed reverse inputSize
       · have herasedStep :=
           listSortScan_succ_of_remaining_ne_zero fuel
@@ -1021,7 +1018,7 @@ theorem eraseOccurrenceListSortImpl
   unfold listSortImpl?
   simp only [tagSortSliceOccurrences_size]
   by_cases hmax : input.entries.size ≤ PY_LIST_MAX
-  · rw [if_pos hmax, if_pos hmax]
+  · rw [ite_eq_left hmax, ite_eq_left hmax]
     rw [← eraseOccurrenceInitialMergeState lt hasKeyfunc input]
     rw [← initialMergeState_occurrence_stopped lt hasKeyfunc input]
     set taggedState :=
@@ -1033,17 +1030,17 @@ theorem eraseOccurrenceListSortImpl
     have hcompare : taggedState.key_compare = occurrenceComparator lt := by
       simp [taggedState, initialMergeState]
     by_cases hstop : (!stopped) = true
-    · rw [if_pos hstop, if_pos hstop]
+    · rw [ite_eq_left hstop, ite_eq_left hstop]
       exact eraseOccurrenceFinishListSort taggedState reverse
         input.entries.size (-1) true
-    · rw [if_neg hstop, if_neg hstop]
+    · rw [ite_eq_right hstop, ite_eq_right hstop]
       by_cases hsmall : input.entries.size < 2
-      · rw [if_pos hsmall, if_pos hsmall]
+      · rw [ite_eq_left hsmall, ite_eq_left hsmall]
         exact eraseOccurrenceFinishListSort taggedState reverse
           input.entries.size 0 false
-      · rw [if_neg hsmall, if_neg hsmall]
+      · rw [ite_eq_right hsmall, ite_eq_right hsmall]
         by_cases hreverse : reverse = true
-        · rw [if_pos hreverse, if_pos hreverse]
+        · rw [ite_eq_left hreverse, ite_eq_left hreverse]
           rw [eraseOccurrenceMergeState_data,
             eraseOccurrenceSortsliceReverse]
           cases hreversed : sortsliceReverse? taggedState.data 0
@@ -1054,16 +1051,16 @@ theorem eraseOccurrenceListSortImpl
                 eraseOccurrenceReverseSliceResult]
               rw [eraseOccurrenceMergeState_setData]
               by_cases hexhausted : reversed.fuelExhausted = true
-              · rw [if_pos hexhausted, if_pos hexhausted]
+              · rw [ite_eq_left hexhausted, ite_eq_left hexhausted]
                 exact eraseOccurrenceFinishListSort
                   { taggedState with data := reversed.slice } reverse
                   input.entries.size (-1) true
-              · rw [if_neg hexhausted, if_neg hexhausted]
+              · rw [ite_eq_right hexhausted, ite_eq_right hexhausted]
                 apply eraseOccurrenceListSortScan lt input.entries.size
                   { taggedState with data := reversed.slice } 0
                   input.entries.size reverse input.entries.size
                 exact hcompare
-        · rw [if_neg hreverse, if_neg hreverse]
+        · rw [ite_eq_right hreverse, ite_eq_right hreverse]
           exact eraseOccurrenceListSortScan lt input.entries.size taggedState
             0 input.entries.size reverse input.entries.size hcompare
   · simp [hmax]

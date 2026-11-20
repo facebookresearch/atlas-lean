@@ -46,7 +46,7 @@ private theorem pendingRunRead_result_of_get?
   change (TraceResult.pendingRunRead? state (Int.ofNat i)).erase = some run
   rw [TraceResult.erase_pendingRunRead]
   have hnonnegative : 0 ≤ Int.ofNat i := Int.natCast_nonneg _
-  rw [if_pos hnonnegative]
+  rw [ite_eq_left hnonnegative]
   simpa using hget
 
 private theorem traceResult_bind_result_of_eq_some
@@ -120,9 +120,9 @@ theorem forceCollapseIndexTraced_exact_selector
     haNonnegative hcNonnegative
   refine ⟨before, a, b, c, hruns, ?_⟩
   unfold forceCollapseIndexTraced?
-  rw [if_pos (by omega : 1 < state.pending.size)]
+  rw [ite_eq_left (by omega : 1 < state.pending.size)]
   dsimp only
-  rw [if_pos (by omega : 0 < state.pending.size - 2)]
+  rw [ite_eq_left (by omega : 0 < state.pending.size - 2)]
   have hpreviousIndex : state.pending.size - 2 - 1 = before.length := by omega
   have hfollowingIndex : state.pending.size - 2 + 1 =
       before.length + 2 := by omega
@@ -198,7 +198,7 @@ private theorem mergeForceCollapseLoop_cost
       · rw [mergeForceCollapseLoop_logicalCost_small 0 state hsmall]
         exact pendingRunLengths_collapse_small state hsmall
       · have hresult' := hresult
-        rw [mergeForceCollapseLoopTraced?, if_neg hsmall] at hresult'
+        rw [mergeForceCollapseLoopTraced?, ite_eq_right hsmall] at hresult'
         injection hresult' with hresultEq
         subst result
         change true = false at hresultFuel
@@ -212,10 +212,10 @@ private theorem mergeForceCollapseLoop_cost
         have hsuccess : merged.returnCode = 0 ∧ !merged.fuelExhausted :=
           ⟨hmerged.returnCode, by simp [hmerged.resultFuel]⟩
         have hresult' := hresult
-        rw [mergeForceCollapseLoopTraced?, if_pos hmany,
+        rw [mergeForceCollapseLoopTraced?, ite_eq_left hmany,
           traceResult_bind_result_of_eq_some _ _ i hindex,
           traceResult_bind_result_of_eq_some _ _ merged hmerged.resultEq,
-          if_pos hsuccess] at hresult'
+          ite_eq_left hsuccess] at hresult'
         have hmergedMax : merged.state.listlen.toNat ≤ PY_LIST_MAX := by
           rw [hmerged.stableFrame.listlen]
           exact hmax
@@ -228,13 +228,13 @@ private theorem mergeForceCollapseLoop_cost
               (mergeAtTraced? state i).trace.policyEvents ++
                 (mergeForceCollapseLoopTraced? remaining
                   merged.state).trace.policyEvents := by
-          rw [mergeForceCollapseLoopTraced?, if_pos hmany,
+          rw [mergeForceCollapseLoopTraced?, ite_eq_left hmany,
             TraceResult.policyEvents_bind, hindex]
           simp only [forceCollapseIndexTraced_policyEvents_eq_nil,
             List.nil_append]
           rw [TraceResult.policyEvents_bind, hmerged.resultEq]
           simp only
-          rw [if_pos hsuccess]
+          rw [ite_eq_left hsuccess]
         rcases hmerged.logicalMerge with
           ⟨left, right, hleft, hright, hpending, hmergeEvents⟩
         have hcost :
@@ -255,7 +255,7 @@ private theorem mergeForceCollapseLoop_cost
                 before.length else before.length + 1) :=
             Option.some.inj (hindex.symm.trans hselector)
           by_cases hselect : a.len.toNat < c.len.toNat
-          · simp only [if_pos hselect] at hi
+          · simp only [ite_eq_left hselect] at hi
             have haGet : state.pending[i]? = some a := by
               rw [hi, ← Array.getElem?_toList, hruns]
               simp
@@ -301,7 +301,7 @@ private theorem mergeForceCollapseLoop_cost
             exact CPythonForceCollapseCost.mergeThirdLast
               (before.map fun run => run.len.toNat) a.len.toNat b.len.toNat
               c.len.toNat _ hselect htail
-          · simp only [if_neg hselect] at hi
+          · simp only [ite_eq_right hselect] at hi
             have hbGet : state.pending[i]? = some b := by
               rw [hi, ← Array.getElem?_toList, hruns]
               simp

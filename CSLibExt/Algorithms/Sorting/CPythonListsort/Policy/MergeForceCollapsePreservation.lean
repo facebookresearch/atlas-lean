@@ -10,9 +10,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Policy.MergeAtPreservation
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeForceCollapse
 import Mathlib
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Pending-layout preservation across `merge_force_collapse`
 
@@ -60,7 +57,7 @@ private theorem mergeForceCollapseLoop_preserves_pendingLayout
   | zero =>
       simp only [mergeForceCollapseLoop?] at hloop
       by_cases hsmall : state.pending.size ≤ 1
-      · rw [if_pos hsmall] at hloop
+      · rw [ite_eq_left hsmall] at hloop
         injection hloop with hresult
         subst result
         have hlengthLe : state.pending.toList.length ≤ 1 := by
@@ -70,7 +67,7 @@ private theorem mergeForceCollapseLoop_preserves_pendingLayout
         have hlength : state.pending.toList.length = 1 := by omega
         rcases List.length_eq_one_iff.mp hlength with ⟨run, hruns⟩
         exact ⟨rfl, rfl, rfl, hlayout, run, hruns⟩
-      · rw [if_neg hsmall] at hloop
+      · rw [ite_eq_right hsmall] at hloop
         injection hloop with hresult
         subst result
         change true = false at hfuel
@@ -78,7 +75,7 @@ private theorem mergeForceCollapseLoop_preserves_pendingLayout
   | succ remaining ih =>
       simp only [mergeForceCollapseLoop?] at hloop
       by_cases hmany : 1 < state.pending.size
-      · rw [if_pos hmany] at hloop
+      · rw [ite_eq_left hmany] at hloop
         cases hindex : forceCollapseIndex? state with
         | none => simp [hindex] at hloop
         | some i =>
@@ -89,7 +86,7 @@ private theorem mergeForceCollapseLoop_preserves_pendingLayout
                 simp only [hmerge] at hloop
                 by_cases hmergeSuccess :
                     merged.returnCode = 0 ∧ !merged.fuelExhausted
-                · rw [if_pos hmergeSuccess] at hloop
+                · rw [ite_eq_left hmergeSuccess] at hloop
                   rcases mergeAt_preserves_pendingLayout state scanned i
                       merged hlayout hmerge with
                     ⟨before, left, right, after, _, _, hmergedPending,
@@ -111,7 +108,7 @@ private theorem mergeForceCollapseLoop_preserves_pendingLayout
                       hresultBasekeys.trans hmergedBasekeys,
                       hresultDataSize.trans hmergedDataSize,
                       hresultLayout, run, hresultPending⟩
-                · rw [if_neg hmergeSuccess] at hloop
+                · rw [ite_eq_right hmergeSuccess] at hloop
                   injection hloop with hresult
                   subst result
                   change merged.returnCode = 0 at hcode
@@ -119,7 +116,7 @@ private theorem mergeForceCollapseLoop_preserves_pendingLayout
                   exfalso
                   apply hmergeSuccess
                   exact ⟨hcode, by simp [hfuel]⟩
-      · rw [if_neg hmany] at hloop
+      · rw [ite_eq_right hmany] at hloop
         injection hloop with hresult
         subst result
         have hsmall : state.pending.size ≤ 1 := by omega

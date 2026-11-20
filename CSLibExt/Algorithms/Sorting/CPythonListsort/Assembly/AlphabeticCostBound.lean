@@ -9,9 +9,6 @@ LICENSE file in the root directory of this source tree.
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.MergeCost
 import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Entropy lower bound for alphabetic merge trees
 

@@ -11,9 +11,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeLo
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeHi
 import Lean.Elab.Command
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Merge memcpy call-site provenance
 

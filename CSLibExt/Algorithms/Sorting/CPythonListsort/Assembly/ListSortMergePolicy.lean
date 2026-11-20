@@ -103,27 +103,27 @@ theorem replayTopLevelMergePlan_exact
     plan.runLengths = topLevelFormedLengths input events ∧
       plan.mergeCost = PolicyEvent.logicalMergeCost events := by
   by_cases hzero : input.len = 0
-  · rw [replayTopLevelMergePlan?, if_pos hzero] at hreplay
-    rw [topLevelFormedLengths, if_pos hzero]
+  · rw [replayTopLevelMergePlan?, ite_eq_left hzero] at hreplay
+    rw [topLevelFormedLengths, ite_eq_left hzero]
     by_cases hevents : events = []
     · subst events
-      simp only [if_true, Option.some.injEq] at hreplay
+      simp only [ite_true, Option.some.injEq] at hreplay
       subst plan
       exact ⟨rfl, rfl⟩
-    · rw [if_neg hevents] at hreplay
+    · rw [ite_eq_right hevents] at hreplay
       contradiction
-  · rw [replayTopLevelMergePlan?, if_neg hzero] at hreplay
-    rw [topLevelFormedLengths, if_neg hzero]
+  · rw [replayTopLevelMergePlan?, ite_eq_right hzero] at hreplay
+    rw [topLevelFormedLengths, ite_eq_right hzero]
     by_cases hone : input.len = 1
-    · rw [if_pos hone] at hreplay ⊢
+    · rw [ite_eq_left hone] at hreplay ⊢
       by_cases hevents : events = []
       · subst events
-        simp only [if_true, Option.some.injEq] at hreplay
+        simp only [ite_true, Option.some.injEq] at hreplay
         subst plan
         exact ⟨rfl, rfl⟩
-      · rw [if_neg hevents] at hreplay
+      · rw [ite_eq_right hevents] at hreplay
         contradiction
-    · rw [if_neg hone] at hreplay ⊢
+    · rw [ite_eq_right hone] at hreplay ⊢
       exact replayMergePlan_exact hreplay
 
 /-- A replay forest represents exactly the pending stack of a machine state,
@@ -427,7 +427,7 @@ theorem setTopPowerTraced_pendingSpans
     rw [TraceResult.erase_pendingRunPowerWrite] at hresult
     have hnonnegative : 0 ≤ Int.ofNat (state.pending.size - 1) :=
       Int.natCast_nonneg _
-    rw [if_pos hnonnegative] at hresult
+    rw [ite_eq_left hnonnegative] at hresult
     change
       (state.pending[state.pending.size - 1]?.map fun top =>
         { state with
@@ -599,7 +599,7 @@ private theorem setTopPowerTraced_pending_frame
     rw [Array.isEmpty_iff] at hempty
     rw [hempty] at hsplit
     simp at hsplit
-  rw [if_neg hnonempty] at hresult
+  rw [ite_eq_right hnonempty] at hresult
   change
     (TraceResult.pendingRunPowerWrite? state
       (Int.ofNat (state.pending.size - 1)) power).erase = some after at hresult
@@ -607,7 +607,7 @@ private theorem setTopPowerTraced_pending_frame
   have hnonnegative : (0 : Int) ≤ Int.ofNat (state.pending.size - 1) := by
     simpa only [Int.ofNat_eq_natCast] using
       (Int.natCast_nonneg (state.pending.size - 1))
-  rw [if_pos hnonnegative] at hresult
+  rw [ite_eq_left hnonnegative] at hresult
   change
     (state.pending[state.pending.size - 1]?.map fun top =>
       { state with
@@ -753,7 +753,7 @@ private theorem pendingRunRead_result_of_get?
   change (TraceResult.pendingRunRead? state (Int.ofNat i)).erase = some run
   rw [TraceResult.erase_pendingRunRead]
   have hnonnegative : 0 ≤ Int.ofNat i := Int.natCast_nonneg _
-  rw [if_pos hnonnegative]
+  rw [ite_eq_left hnonnegative]
   simpa using hget
 
 private theorem traceResult_bind_result_of_eq_some
@@ -828,7 +828,7 @@ private theorem foundNewRunLoop_policyReplay
               some preceding :=
           pendingRunRead_result_of_get? state i preceding hget
         have hresult' := hresult
-        simp only [foundNewRunLoopTraced?, hmany, if_true] at hresult'
+        simp only [foundNewRunLoopTraced?, hmany, ite_true] at hresult'
         rw [traceResult_bind_result_of_eq_some _ _ preceding hread] at hresult'
         cases hstored : preceding.power with
         | none =>
@@ -838,7 +838,7 @@ private theorem foundNewRunLoop_policyReplay
         | some precedingPower =>
             simp only [hstored] at hresult'
             by_cases hguard : power < precedingPower
-            · rw [if_pos hguard] at hresult'
+            · rw [ite_eq_left hguard] at hresult'
               have hposition : i + 2 = state.pending.size ∨
                   i + 3 = state.pending.size := by
                 left
@@ -851,7 +851,7 @@ private theorem foundNewRunLoop_policyReplay
               have hsuccess :
                   merged.returnCode = 0 ∧ !merged.fuelExhausted :=
                 ⟨hmerged.returnCode, by simp [hmerged.resultFuel]⟩
-              rw [if_pos hsuccess] at hresult'
+              rw [ite_eq_left hsuccess] at hresult'
               rcases mergeAt_policyReplay input forest state scanned i merged
                   hmatch hlayout hmerged with
                 ⟨middle, hmergeReplay, hmiddleMatch⟩
@@ -1105,10 +1105,10 @@ private theorem foundNewRunLoop_policyReplay
                       (Int.ofNat (state.pending.size - 2))).result =
                         some preceding := by
                   simpa [i] using hread
-                rw [foundNewRunLoopTraced?, if_pos hmany,
+                rw [foundNewRunLoopTraced?, ite_eq_left hmany,
                   TraceResult.policyEvents_bind, hread']
                 simp only [TraceResult.trace_pendingRunRead,
-                  AccessTrace.singletonAccess, hstored, hguard, if_true,
+                  AccessTrace.singletonAccess, hstored, hguard, ite_true,
                   List.nil_append]
                 have hmergeResult :
                     (mergeAtTraced? state
@@ -1116,10 +1116,10 @@ private theorem foundNewRunLoop_policyReplay
                   simpa [i] using hmerged.resultEq
                 rw [TraceResult.policyEvents_bind, hmergeResult]
                 simp only
-                rw [if_pos hsuccess]
+                rw [ite_eq_left hsuccess]
               rw [hevents, replayPolicyEventsFrom_append, hmergeReplay]
               exact hrest
-            · rw [if_neg hguard] at hresult'
+            · rw [ite_eq_right hguard] at hresult'
               cases hset : (setTopPowerTraced? state power).result with
               | none =>
                   change
@@ -1143,11 +1143,11 @@ private theorem foundNewRunLoop_policyReplay
                             (Int.ofNat (state.pending.size - 2))).result =
                               some preceding := by
                         simpa [i] using hread
-                      rw [foundNewRunLoopTraced?, if_pos hmany,
+                      rw [foundNewRunLoopTraced?, ite_eq_left hmany,
                         TraceResult.policyEvents_bind, hread']
                       simp only [TraceResult.trace_pendingRunRead,
                         AccessTrace.singletonAccess, List.nil_append,
-                        hstored, hguard, if_false,
+                        hstored, hguard, ite_false,
                         TraceResult.policyEvents_map]
                       exact setTopPowerTraced_policyEvents_eq_nil state power
                     rw [hevents]
@@ -1165,7 +1165,7 @@ private theorem foundNewRunLoop_policyReplay
                       omega
                     · exact hnewPositive
       · have hresult' := hresult
-        simp only [foundNewRunLoopTraced?, hmany, if_false] at hresult'
+        simp only [foundNewRunLoopTraced?, hmany, ite_false] at hresult'
         cases hset : (setTopPowerTraced? state power).result with
         | none =>
             change
@@ -1184,7 +1184,7 @@ private theorem foundNewRunLoop_policyReplay
             · have hevents :
                   (foundNewRunLoopTraced? (remaining + 1) state
                     power).trace.policyEvents = [] := by
-                simp only [foundNewRunLoopTraced?, hmany, if_false,
+                simp only [foundNewRunLoopTraced?, hmany, ite_false,
                   TraceResult.policyEvents_map,
                   setTopPowerTraced_policyEvents_eq_nil]
               rw [hevents]
@@ -1227,7 +1227,7 @@ theorem foundNewRun_policyReplay
         (pushPendingRun result.state newRun) := by
   by_cases hempty : state.pending.isEmpty = true
   · have hresult := hsafety.resultEq
-    rw [foundNewRunTraced?, if_pos hempty] at hresult
+    rw [foundNewRunTraced?, ite_eq_left hempty] at hresult
     injection hresult with hresultEq
     have hresultState : result.state = state :=
       (congrArg FoundNewRunResult.state hresultEq).symm
@@ -1293,7 +1293,7 @@ theorem foundNewRun_policyReplay
           (Int.ofNat (state.pending.size - 1))).result = some top :=
       pendingRunRead_result_of_get? state _ top htopGet
     have hresult := hsafety.resultEq
-    rw [foundNewRunTraced?, if_neg hempty] at hresult
+    rw [foundNewRunTraced?, ite_eq_right hempty] at hresult
     rw [traceResult_bind_result_of_eq_some _ _ top htopRead] at hresult
     by_cases hguard :
         ((!state.listlen.msb) && decide (state.basekeys ≤ top.base) &&
@@ -1301,7 +1301,7 @@ theorem foundNewRun_policyReplay
           decide (newRun.len.toNat ≤ PY_SSIZE_T_MAX) &&
           decide (top.base - state.basekeys + top.len.toNat +
             newRun.len.toNat ≤ state.listlen.toNat)) = true
-    · rw [if_pos hguard] at hresult
+    · rw [ite_eq_left hguard] at hresult
       let powered := powerloopTraced
         (BitVec.ofNat 64 (top.base - state.basekeys)) top.len
         (BitVec.ofNat 64 newRun.len.toNat) state.listlen
@@ -1310,13 +1310,13 @@ theorem foundNewRun_policyReplay
           foundNewRunLoopTraced? state.pending.size state
             powered.result).result = some result at hresult
       by_cases hnotStopped : (!powered.stopped) = true
-      · rw [if_pos hnotStopped] at hresult
+      · rw [ite_eq_left hnotStopped] at hresult
         injection hresult with hresultEq
         subst result
         have hfuel := hsafety.resultFuel
         change true = false at hfuel
         contradiction
-      · rw [if_neg hnotStopped] at hresult
+      · rw [ite_eq_right hnotStopped] at hresult
         rcases List.eq_nil_or_concat' state.pending.toList with hnil |
             ⟨before, last, hstateSplit⟩
         · have hzero : state.pending.size = 0 := by
@@ -1368,21 +1368,21 @@ theorem foundNewRun_policyReplay
             (foundNewRunTraced? state newRun.len.toNat).trace.policyEvents =
               (foundNewRunLoopTraced? state.pending.size state
                 powered.result).trace.policyEvents := by
-          rw [foundNewRunTraced?, if_neg hempty,
+          rw [foundNewRunTraced?, ite_eq_right hempty,
             TraceResult.policyEvents_bind, htopRead]
           simp only [TraceResult.trace_pendingRunRead,
             AccessTrace.singletonAccess, List.nil_append]
-          rw [if_pos hguard]
+          rw [ite_eq_left hguard]
           change
             (if !powered.stopped then _ else
               foundNewRunLoopTraced? state.pending.size state
                 powered.result).trace.policyEvents =
               (foundNewRunLoopTraced? state.pending.size state
                 powered.result).trace.policyEvents
-          rw [if_neg hnotStopped]
+          rw [ite_eq_right hnotStopped]
         rw [hevents]
         exact hreplay
-    · rw [if_neg hguard] at hresult
+    · rw [ite_eq_right hguard] at hresult
       contradiction
 
 /-! ## The genuine formed-run push -/
@@ -1478,19 +1478,19 @@ theorem forceCollapseIndexTraced_policyEvents_eq_nil
     (forceCollapseIndexTraced? state).trace.policyEvents = [] := by
   unfold forceCollapseIndexTraced?
   by_cases hmany : 1 < state.pending.size
-  · rw [if_pos hmany]
+  · rw [ite_eq_left hmany]
     dsimp only
     by_cases hpositive : 0 < state.pending.size - 2
-    · rw [if_pos hpositive]
+    · rw [ite_eq_left hpositive]
       apply TraceResult.policyEvents_bind_eq_nil
       · simp [TraceResult.trace_pendingRunRead,
           AccessTrace.singletonAccess]
       · intro previous
         simp [TraceResult.policyEvents_map,
           TraceResult.trace_pendingRunRead, AccessTrace.singletonAccess]
-    · rw [if_neg hpositive]
+    · rw [ite_eq_right hpositive]
       rfl
-  · rw [if_neg hmany]
+  · rw [ite_eq_right hmany]
     rfl
 
 /-- A successful actual final-collapse loop is an accepted merge-only replay
@@ -1518,15 +1518,15 @@ private theorem mergeForceCollapseLoop_policyReplay
   | zero =>
       by_cases hdone : state.pending.size ≤ 1
       · have hresult' := hresult
-        rw [mergeForceCollapseLoopTraced?, if_pos hdone] at hresult'
+        rw [mergeForceCollapseLoopTraced?, ite_eq_left hdone] at hresult'
         injection hresult' with hresultEq
         subst result
         refine ⟨forest, ?_, hmatch⟩
-        rw [mergeForceCollapseLoopTraced?, if_pos hdone]
+        rw [mergeForceCollapseLoopTraced?, ite_eq_left hdone]
         change replayPolicyEventsFrom? input forest [] = some forest
         rfl
       · have hresult' := hresult
-        rw [mergeForceCollapseLoopTraced?, if_neg hdone] at hresult'
+        rw [mergeForceCollapseLoopTraced?, ite_eq_right hdone] at hresult'
         injection hresult' with hresultEq
         subst result
         have hfuel := hresultFuel
@@ -1541,10 +1541,10 @@ private theorem mergeForceCollapseLoop_policyReplay
         have hsuccess : merged.returnCode = 0 ∧ !merged.fuelExhausted :=
           ⟨hmerged.returnCode, by simp [hmerged.resultFuel]⟩
         have hresult' := hresult
-        rw [mergeForceCollapseLoopTraced?, if_pos hmany,
+        rw [mergeForceCollapseLoopTraced?, ite_eq_left hmany,
           traceResult_bind_result_of_eq_some _ _ i hindex,
           traceResult_bind_result_of_eq_some _ _ merged hmerged.resultEq,
-          if_pos hsuccess] at hresult'
+          ite_eq_left hsuccess] at hresult'
         rcases mergeAt_policyReplay input forest state scanned i merged
             hmatch hlayout hmerged with
           ⟨middle, hmergeReplay, hmiddleMatch⟩
@@ -1562,21 +1562,21 @@ private theorem mergeForceCollapseLoop_policyReplay
               (mergeAtTraced? state i).trace.policyEvents ++
                 (mergeForceCollapseLoopTraced? remaining
                   merged.state).trace.policyEvents := by
-          rw [mergeForceCollapseLoopTraced?, if_pos hmany,
+          rw [mergeForceCollapseLoopTraced?, ite_eq_left hmany,
             TraceResult.policyEvents_bind, hindex]
           simp only [forceCollapseIndexTraced_policyEvents_eq_nil,
             List.nil_append]
           rw [TraceResult.policyEvents_bind, hmerged.resultEq]
           simp only
-          rw [if_pos hsuccess]
+          rw [ite_eq_left hsuccess]
         rw [hevents, replayPolicyEventsFrom_append, hmergeReplay]
         exact hrest
       · have hresult' := hresult
-        rw [mergeForceCollapseLoopTraced?, if_neg hmany] at hresult'
+        rw [mergeForceCollapseLoopTraced?, ite_eq_right hmany] at hresult'
         injection hresult' with hresultEq
         subst result
         refine ⟨forest, ?_, hmatch⟩
-        rw [mergeForceCollapseLoopTraced?, if_neg hmany]
+        rw [mergeForceCollapseLoopTraced?, ite_eq_right hmany]
         change replayPolicyEventsFrom? input forest [] = some forest
         rfl
 
@@ -1623,10 +1623,10 @@ private theorem mergeForceCollapseLoop_formedLengths_eq_nil
   induction fuel generalizing state result with
   | zero =>
       by_cases hdone : state.pending.size ≤ 1
-      · rw [mergeForceCollapseLoopTraced?, if_pos hdone]
+      · rw [mergeForceCollapseLoopTraced?, ite_eq_left hdone]
         rfl
       · have hresult' := hresult
-        rw [mergeForceCollapseLoopTraced?, if_neg hdone] at hresult'
+        rw [mergeForceCollapseLoopTraced?, ite_eq_right hdone] at hresult'
         injection hresult' with hresultEq
         subst result
         change true = false at hresultFuel
@@ -1640,10 +1640,10 @@ private theorem mergeForceCollapseLoop_formedLengths_eq_nil
         have hsuccess : merged.returnCode = 0 ∧ !merged.fuelExhausted :=
           ⟨hmerged.returnCode, by simp [hmerged.resultFuel]⟩
         have hresult' := hresult
-        rw [mergeForceCollapseLoopTraced?, if_pos hmany,
+        rw [mergeForceCollapseLoopTraced?, ite_eq_left hmany,
           traceResult_bind_result_of_eq_some _ _ i hindex,
           traceResult_bind_result_of_eq_some _ _ merged hmerged.resultEq,
-          if_pos hsuccess] at hresult'
+          ite_eq_left hsuccess] at hresult'
         have hmergedMax : merged.state.listlen.toNat ≤ PY_LIST_MAX := by
           rw [hmerged.stableFrame.listlen]
           exact hmax
@@ -1656,19 +1656,19 @@ private theorem mergeForceCollapseLoop_formedLengths_eq_nil
               (mergeAtTraced? state i).trace.policyEvents ++
                 (mergeForceCollapseLoopTraced? remaining
                   merged.state).trace.policyEvents := by
-          rw [mergeForceCollapseLoopTraced?, if_pos hmany,
+          rw [mergeForceCollapseLoopTraced?, ite_eq_left hmany,
             TraceResult.policyEvents_bind, hindex]
           simp only [forceCollapseIndexTraced_policyEvents_eq_nil,
             List.nil_append]
           rw [TraceResult.policyEvents_bind, hmerged.resultEq]
           simp only
-          rw [if_pos hsuccess]
+          rw [ite_eq_left hsuccess]
         rcases hmerged.logicalMerge with
           ⟨left, right, _hleft, _hright, _hpending, hmergeEvents⟩
         rw [hevents, PolicyEvent.formedLengths_append, hmergeEvents,
           htail]
         rfl
-      · rw [mergeForceCollapseLoopTraced?, if_neg hmany]
+      · rw [mergeForceCollapseLoopTraced?, ite_eq_right hmany]
         rfl
 
 /-- The complete successful `merge_force_collapse` call contains no formed
@@ -1957,7 +1957,7 @@ theorem listSortScan_policyReplay_terminal
       simp only [listSortScanTraced?,
         TraceResult.policyEvents_bind, hcollapsed.resultEq,
         hcollapsed.returnCode, hcollapsed.resultFuel, Bool.not_false,
-        and_self, if_true, finishListSortTraced_policyEvents_eq_nil,
+        and_self, ite_true, finishListSortTraced_policyEvents_eq_nil,
         List.append_nil]
   refine ⟨state, forest, closedForest, [],
     (mergeForceCollapseTraced? state).trace.policyEvents, collapsed, ?_⟩

@@ -899,14 +899,14 @@ theorem copyFromTraced_allAccessesInBounds
   rcases hdst with ⟨hdst0, hdstN⟩
   rcases hsrc with ⟨hsrc0, hsrcN⟩
   cases valuesPresent
-  · simp only [Bool.false_eq_true, if_false, List.append_nil]
+  · simp only [Bool.false_eq_true, ite_false, List.append_nil]
     intro event hevent
     simp only [keyCopyAccesses, List.mem_cons, List.not_mem_nil, or_false]
       at hevent
     rcases hevent with rfl | rfl
     · exact ⟨hsrc0, hsrcN⟩
     · exact ⟨hdst0, hdstN⟩
-  · simp only [if_true]
+  · simp only [ite_true]
     intro event hevent
     simp only [keyCopyAccesses, valuesCopyAccesses, List.mem_append,
       List.mem_cons, List.not_mem_nil, or_false] at hevent

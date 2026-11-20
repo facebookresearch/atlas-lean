@@ -11,9 +11,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Policy.MergeAtPreservation
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Policy.StackPowers
 import Mathlib
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Power preservation across a top-stack merge
 

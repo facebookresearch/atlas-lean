@@ -132,10 +132,10 @@ theorem mirrorMergeGetmem (size : Nat)
   · have hreuseFalse : need.sle state.alloced = false := by
       cases h : need.sle state.alloced <;> simp_all
     by_cases hguard : mergeGetmemAllocationLimit state.a < need.toNat
-    · simp only [hreuseFalse, Bool.false_eq_true, if_false, hguard, if_true,
+    · simp only [hreuseFalse, Bool.false_eq_true, ite_false, hguard, ite_true,
         mirrorMergeGetmemResult]
       rw [mirrorMergeFreemem]
-    · simp only [hreuseFalse, Bool.false_eq_true, if_false, hguard]
+    · simp only [hreuseFalse, Bool.false_eq_true, ite_false, hguard]
       rw [mirrorMergeFreemem]
       simp [mirrorMergeGetmemResult, mirrorMergeState, mirrorTempStorage]
 
@@ -167,7 +167,7 @@ theorem mirrorGallopLeftRightExponential (lt : BoolComparator alpha)
   | succ fuel ih =>
       simp only [gallopLeftRightExponential?]
       by_cases hactive : offset < maxOffset
-      · rw [if_pos hactive, if_pos hactive, mirrorSortSlice_read]
+      · rw [ite_eq_left hactive, ite_eq_left hactive, mirrorSortSlice_read]
         cases hread : slice.read? (base + Int.ofNat hint + Int.ofNat offset) with
         | none => rfl
         | some entry =>
@@ -189,7 +189,7 @@ theorem mirrorGallopLeftLeftExponential (lt : BoolComparator alpha)
   | succ fuel ih =>
       simp only [gallopLeftLeftExponential?]
       by_cases hactive : offset < maxOffset
-      · rw [if_pos hactive, if_pos hactive, mirrorSortSlice_read]
+      · rw [ite_eq_left hactive, ite_eq_left hactive, mirrorSortSlice_read]
         cases hread : slice.read? (base + Int.ofNat hint - Int.ofNat offset) with
         | none => rfl
         | some entry =>
@@ -210,7 +210,7 @@ theorem mirrorGallopLeftBinary (lt : BoolComparator alpha)
   | succ fuel ih =>
       simp only [gallopLeftBinary?]
       by_cases hactive : lower < upper
-      · rw [if_pos hactive, if_pos hactive, mirrorSortSlice_read]
+      · rw [ite_eq_left hactive, ite_eq_left hactive, mirrorSortSlice_read]
         cases hread : slice.read?
             (base + Int.ofNat (lower + (upper - lower) / 2)) with
         | none => rfl
@@ -233,14 +233,14 @@ theorem mirrorFinishGallopLeft (lt : BoolComparator alpha)
   unfold finishGallopLeft?
   by_cases hbounds :
       -1 ≤ lastOffset ∧ lastOffset < upperOffset ∧ upperOffset ≤ Int.ofNat n
-  · rw [if_pos hbounds, if_pos hbounds]
+  · rw [ite_eq_left hbounds, ite_eq_left hbounds]
     by_cases hnonnegative : 0 ≤ lastOffset + 1 ∧ 0 ≤ upperOffset
-    · rw [if_pos hnonnegative, if_pos hnonnegative]
+    · rw [ite_eq_left hnonnegative, ite_eq_left hnonnegative]
       by_cases hexhausted : exponentialFuelExhausted = true
       · simp [hexhausted]
       · simp [hexhausted, mirrorGallopLeftBinary]
-    · rw [if_neg hnonnegative, if_neg hnonnegative]
-  · rw [if_neg hbounds, if_neg hbounds]
+    · rw [ite_eq_right hnonnegative, ite_eq_right hnonnegative]
+  · rw [ite_eq_right hbounds, ite_eq_right hbounds]
 
 theorem mirrorGallopRightLeftExponential (lt : BoolComparator alpha)
     (size fuel : Nat) (slice : SortSlice (Occurrence alpha) nu) (base : Int)
@@ -255,7 +255,7 @@ theorem mirrorGallopRightLeftExponential (lt : BoolComparator alpha)
   | succ fuel ih =>
       simp only [gallopRightLeftExponential?]
       by_cases hactive : offset < maxOffset
-      · rw [if_pos hactive, if_pos hactive, mirrorSortSlice_read]
+      · rw [ite_eq_left hactive, ite_eq_left hactive, mirrorSortSlice_read]
         cases hread : slice.read? (base + Int.ofNat hint - Int.ofNat offset) with
         | none => rfl
         | some entry =>
@@ -277,7 +277,7 @@ theorem mirrorGallopRightRightExponential (lt : BoolComparator alpha)
   | succ fuel ih =>
       simp only [gallopRightRightExponential?]
       by_cases hactive : offset < maxOffset
-      · rw [if_pos hactive, if_pos hactive, mirrorSortSlice_read]
+      · rw [ite_eq_left hactive, ite_eq_left hactive, mirrorSortSlice_read]
         cases hread : slice.read? (base + Int.ofNat hint + Int.ofNat offset) with
         | none => rfl
         | some entry =>
@@ -298,7 +298,7 @@ theorem mirrorGallopRightBinary (lt : BoolComparator alpha)
   | succ fuel ih =>
       simp only [gallopRightBinary?]
       by_cases hactive : lower < upper
-      · rw [if_pos hactive, if_pos hactive, mirrorSortSlice_read]
+      · rw [ite_eq_left hactive, ite_eq_left hactive, mirrorSortSlice_read]
         cases hread : slice.read?
             (base + Int.ofNat (lower + (upper - lower) / 2)) with
         | none => rfl
@@ -321,14 +321,14 @@ theorem mirrorFinishGallopRight (lt : BoolComparator alpha)
   unfold finishGallopRight?
   by_cases hbounds :
       -1 ≤ lastOffset ∧ lastOffset < upperOffset ∧ upperOffset ≤ Int.ofNat n
-  · rw [if_pos hbounds, if_pos hbounds]
+  · rw [ite_eq_left hbounds, ite_eq_left hbounds]
     by_cases hnonnegative : 0 ≤ lastOffset + 1 ∧ 0 ≤ upperOffset
-    · rw [if_pos hnonnegative, if_pos hnonnegative]
+    · rw [ite_eq_left hnonnegative, ite_eq_left hnonnegative]
       by_cases hexhausted : exponentialFuelExhausted = true
       · simp [hexhausted]
       · simp [hexhausted, mirrorGallopRightBinary]
-    · rw [if_neg hnonnegative, if_neg hnonnegative]
-  · rw [if_neg hbounds, if_neg hbounds]
+    · rw [ite_eq_right hnonnegative, ite_eq_right hnonnegative]
+  · rw [ite_eq_right hbounds, ite_eq_right hbounds]
 
 @[simp]
 theorem mirrorGallopLeft (lt : BoolComparator alpha) (size : Nat)
@@ -808,7 +808,7 @@ theorem mirrorMergeLoGallopRound (lt : BoolComparator alpha) (size : Nat)
     mirrorMergeLoMachine_aPos, mirrorMergeLoMachine_bPos,
     mirrorMergeLoMachine_minGallop]
   by_cases hactive : machine.na ≤ 1 ∨ machine.nb = 0 <;>
-    simp only [hactive, if_pos, if_false, Option.map_none]
+    simp only [hactive, ite_eq_left, ite_false, Option.map_none]
   rw [mirrorMergeState_data, mirrorSortSlice_read]
   cases hfirstB : machine.state.data.read? machine.bPos with
   | none => rfl
@@ -865,12 +865,12 @@ theorem mirrorMergeLoGallopRound (lt : BoolComparator alpha) (size : Nat)
                         mergeLoGallopFuelFailure adjustedMachine
                       else _)
               by_cases hfuel : gallopA.fuelExhausted = true
-              · simp only [hfuel, if_true]
+              · simp only [hfuel, ite_true]
                 exact mirrorMergeLoGallopFuelFailure size adjustedMachine
-              · simp only [hfuel, Bool.false_eq_true, if_false]
+              · simp only [hfuel, Bool.false_eq_true, ite_false]
                 by_cases hindex : gallopA.index > machine.na
-                · simp only [hindex, if_true, Option.map_none]
-                · simp only [hindex, if_false]
+                · simp only [hindex, ite_true, Option.map_none]
+                · simp only [hindex, ite_false]
                   change
                     Option.bind
                         (mergeLoMemcpyTempToData? .gallopTempToData rfl
@@ -937,9 +937,9 @@ theorem mirrorMergeLoGallopRound (lt : BoolComparator alpha) (size : Nat)
                                         mergeLoSucceed? afterB
                                       else _)
                               by_cases hnb : afterB.nb = 0
-                              · simp only [hnb, if_true]
+                              · simp only [hnb, ite_true]
                                 exact mirrorMergeLoSucceed size afterB
-                              · simp only [hnb, if_false]
+                              · simp only [hnb, ite_false]
                                 change
                                   Option.bind
                                       (mergeLoTempRead?
@@ -1006,15 +1006,15 @@ theorem mirrorMergeLoGallopRound (lt : BoolComparator alpha) (size : Nat)
                                                 else _)
                                         by_cases hfuelB :
                                             gallopB.fuelExhausted = true
-                                        all_goals simp only [hfuelB, if_true,
-                                          Bool.false_eq_true, if_false]
+                                        all_goals simp only [hfuelB, ite_true,
+                                          Bool.false_eq_true, ite_false]
                                         all_goals first
                                           | exact
                                               mirrorMergeLoGallopFuelFailure
                                                 size afterB
                                           | skip
                                         by_cases hindexB : gallopB.index > afterB.nb <;>
-                                          simp only [hindexB, if_true, if_false,
+                                          simp only [hindexB, ite_true, ite_false,
                                             Option.map_none]
                                         change
                                           Option.bind
@@ -1125,7 +1125,7 @@ theorem mirrorMergeLoLoop (lt : BoolComparator alpha) (size fuel : Nat)
             mirrorMergeLoMachine_state, mirrorMergeLoMachine_aPos,
             mirrorMergeLoMachine_bPos]
           by_cases hactive : machine.na ≤ 1 ∨ machine.nb = 0 <;>
-            simp only [hactive, if_pos, if_false, Option.map_none]
+            simp only [hactive, ite_eq_left, ite_false, Option.map_none]
           rw [mirrorMergeState_tempStorage, mirrorMergeLoTempRead]
           cases hfirstA : mergeLoTempRead? machine.state.a machine.aPos with
           | none => rfl
@@ -1248,7 +1248,7 @@ theorem mirrorMergeLo (lt : BoolComparator alpha) (size : Nat)
       | guardRejected => simp
       | reused =>
           simp only [mirrorMergeGetmemResult]
-          simp only [reduceCtorEq, if_false]
+          simp only [reduceCtorEq, ite_false]
           rw [mirrorMergeLoInitialDataToTemp]
           cases hcopy : mergeLoMemcpyDataToTemp? .initialDataToTemp rfl na
               allocatedState 0 ssa with
@@ -1308,7 +1308,7 @@ theorem mirrorMergeLo (lt : BoolComparator alpha) (size : Nat)
                         (.ordinary 0 0) hmachineCompare
       | grown =>
           simp only [mirrorMergeGetmemResult]
-          simp only [reduceCtorEq, if_false]
+          simp only [reduceCtorEq, ite_false]
           rw [mirrorMergeLoInitialDataToTemp]
           cases hcopy : mergeLoMemcpyDataToTemp? .initialDataToTemp rfl na
               allocatedState 0 ssa with
@@ -1376,7 +1376,7 @@ theorem mirrorMergeHiTempRead (size : Nat)
       (mergeHiTempRead? storage index).map (mirrorSortSliceEntry size) := by
   unfold mergeHiTempRead?
   by_cases hnonnegative : 0 ≤ index
-  · simp only [hnonnegative, if_true]
+  · simp only [hnonnegative, ite_true]
     cases hcell : storage.cells[index.toNat]? with
     | none => simp [mirrorTempStorage, hcell]
     | some cell => cases cell <;> simp [mirrorTempStorage, hcell]
@@ -1748,7 +1748,7 @@ theorem mirrorMergeHiSucceed (size : Nat)
     mirrorMergeHiCursor_dest]
   by_cases hnb : cursor.nb = 0
   · simp [hnb, mirrorMergeHiResult]
-  · simp only [hnb, if_false]
+  · simp only [hnb, ite_false]
     change
       Option.bind
           (mergeHiMemcpyTempToData? .finalTempToData rfl cursor.nb
@@ -1783,7 +1783,7 @@ theorem mirrorMergeHiCopyA (size : Nat)
       Option.map (mirrorMergeHiResult size)
         (if cursor.nb = 1 ∧ 0 < cursor.na then _ else none)
   by_cases hactive : cursor.nb = 1 ∧ 0 < cursor.na <;>
-    simp only [hactive, if_false, Option.map_none]
+    simp only [hactive, ite_false, Option.map_none]
   rw [mirrorMergeDataMemmove]
   cases hmove : mergeDataMemmove? .hiCopyATail cursor.state.data
       (cursor.dest + (1 - Int.ofNat cursor.na))
@@ -1863,7 +1863,7 @@ theorem mirrorMergeHiGallopB (lt : BoolComparator alpha) (size : Nat)
                       else _)
               by_cases hfuel : gallopB.fuelExhausted = true
               · simp [hfuel]
-              · simp only [hfuel, Bool.false_eq_true, if_false]
+              · simp only [hfuel, Bool.false_eq_true, ite_false]
                 simp only [mirrorMergeHiCursor_state,
                   mirrorMergeHiCursor_dest, mirrorMergeHiCursor_ssa,
                   mirrorMergeHiCursor_ssb, mirrorMergeHiCursor_basea,
@@ -1935,9 +1935,9 @@ theorem mirrorMergeHiGallopB (lt : BoolComparator alpha) (size : Nat)
                                     minGallop := minGallop
                                     phase := .straight 0 0 }) := by
                   by_cases hsmall : movedB.nb = 0 ∨ movedB.nb = 1
-                  · simp only [hsmall, if_true]
+                  · simp only [hsmall, ite_true]
                     exact hnext movedB hmovedCompare
-                  · simp only [hsmall, if_false]
+                  · simp only [hsmall, ite_false]
                     rw [mirrorMergeHiCopyDataDecr]
                     cases hcopy : mergeHiCopyDataDecr? movedB.state
                         movedB.dest movedB.ssa with
@@ -2001,7 +2001,7 @@ theorem mirrorMergeHiGallopB (lt : BoolComparator alpha) (size : Nat)
                             apply hnext adjusted
                             simpa [adjusted, adjustedState] using hafterCompare
                 by_cases hzero : afterB.nb - gallopB.index = 0
-                · simp only [hzero, if_true]
+                · simp only [hzero, ite_true]
                   change
                     (if afterB.nb = 0 ∨ afterB.nb = 1 then
                         next' (mirrorMergeHiCursor size afterB)
@@ -2018,7 +2018,7 @@ theorem mirrorMergeHiGallopB (lt : BoolComparator alpha) (size : Nat)
                               (mergeHiCopyDataDecr? afterB.state
                                 afterB.dest afterB.ssa) _)
                   simpa [hzero] using hfinish afterB hcompare
-                · simp only [hzero, if_false]
+                · simp only [hzero, ite_false]
                   rw [mirrorMergeHiGallopTempToData]
                   cases hcopy : mergeHiMemcpyTempToData?
                       .gallopTempToData rfl
@@ -2126,7 +2126,7 @@ theorem mirrorMergeHiGallopRound (lt : BoolComparator alpha) (size : Nat)
                   else _)
           by_cases hfuel : gallopA.fuelExhausted = true
           · simp [hfuel]
-          · simp only [hfuel, Bool.false_eq_true, if_false]
+          · simp only [hfuel, Bool.false_eq_true, ite_false]
             have hfinish (movedA : MergeHiCursor (Occurrence alpha) nu)
                 (hmovedCompare : movedA.state.key_compare =
                   occurrenceComparator lt) :
@@ -2165,9 +2165,9 @@ theorem mirrorMergeHiGallopRound (lt : BoolComparator alpha) (size : Nat)
                             mergeHiGallopB? afterB
                               (cursor.na - gallopA.index) next) := by
               by_cases hdone : movedA.na = 0
-              · simp only [hdone, if_true]
+              · simp only [hdone, ite_true]
                 exact hnext movedA hmovedCompare
-              · simp only [hdone, if_false]
+              · simp only [hdone, ite_false]
                 rw [mirrorMergeHiCopyTempDecr]
                 cases hcopy : mergeHiCopyTempDecr? movedA.state movedA.dest
                     movedA.ssb with
@@ -2205,7 +2205,7 @@ theorem mirrorMergeHiGallopRound (lt : BoolComparator alpha) (size : Nat)
                         (cursor.na - gallopA.index) next next' hafterCompare
                         hnext
             by_cases hzero : cursor.na - gallopA.index = 0
-            · simp only [hzero, if_true]
+            · simp only [hzero, ite_true]
               let movedA : MergeHiCursor (Occurrence alpha) nu :=
                 { cursor with state := adjustedState, minGallop := minGallop }
               change
@@ -2216,7 +2216,7 @@ theorem mirrorMergeHiGallopRound (lt : BoolComparator alpha) (size : Nat)
                     (if movedA.na = 0 then next movedA else _)
               simpa [movedA, adjustedState, minGallop, hzero] using
                 hfinish movedA hcompare'
-            · simp only [hzero, if_false]
+            · simp only [hzero, ite_false]
               rw [mirrorMergeDataMemmove]
               cases hmove : mergeDataMemmove? .hiGallopA adjustedState.data
                   (cursor.dest - Int.ofNat (cursor.na - gallopA.index) + 1)
@@ -2255,13 +2255,13 @@ theorem mirrorMergeHiLoop (lt : BoolComparator alpha) (size fuel : Nat)
       simp only [mergeHiLoop?, mirrorMergeHiCursor_na,
         mirrorMergeHiCursor_nb]
       by_cases hdone : cursor.na = 0 ∨ cursor.nb = 0
-      · simp only [hdone, if_true]
+      · simp only [hdone, ite_true]
         exact mirrorMergeHiSucceed size cursor
-      · simp only [hdone, if_false]
+      · simp only [hdone, ite_false]
         by_cases hone : cursor.nb = 1
-        · simp only [hone, if_true]
+        · simp only [hone, ite_true]
           exact mirrorMergeHiCopyA size cursor
-        · simp only [hone, if_false]
+        · simp only [hone, ite_false]
           exact congrArg some (mirrorMergeHiFuelExhausted size cursor)
   | succ fuel ih =>
       simp only [mergeHiLoop?, mirrorMergeHiCursor_na,
@@ -2270,13 +2270,13 @@ theorem mirrorMergeHiLoop (lt : BoolComparator alpha) (size fuel : Nat)
         mirrorMergeHiCursor_ssa, mirrorMergeHiCursor_ssb,
         mirrorMergeHiCursor_basea, mirrorMergeHiCursor_minGallop]
       by_cases hdone : cursor.na = 0 ∨ cursor.nb = 0
-      · simp only [hdone, if_true]
+      · simp only [hdone, ite_true]
         exact mirrorMergeHiSucceed size cursor
-      · simp only [hdone, if_false]
+      · simp only [hdone, ite_false]
         by_cases hone : cursor.nb = 1
-        · simp only [hone, if_true]
+        · simp only [hone, ite_true]
           exact mirrorMergeHiCopyA size cursor
-        · simp only [hone, if_false]
+        · simp only [hone, ite_false]
           cases hphase : cursor.phase with
           | straight aCount bCount =>
               rw [mirrorMergeState_tempStorage, mirrorMergeHiTempRead]
@@ -2624,7 +2624,7 @@ private theorem mergeLoGallopRound_key_compare_of_eq_some
   unfold mergeLoGallopRound? at h
   by_cases hactive : machine.na ≤ 1 ∨ machine.nb = 0
   · simp [hactive] at h
-  · simp only [hactive, if_false] at h
+  · simp only [hactive, ite_false] at h
     let minGallop :=
       if (1 : PySSize).slt machine.minGallop then
         machine.minGallop - 1
@@ -2649,13 +2649,13 @@ private theorem mergeLoGallopRound_key_compare_of_eq_some
     | some gallopA =>
         simp only [mergeLoBindOptionAcross, hgallopA] at h
         by_cases hfuelA : gallopA.fuelExhausted = true
-        · simp only [hfuelA, if_true] at h
+        · simp only [hfuelA, ite_true] at h
           exact hadjust.trans
             (mergeLoGallopFuelFailure_comparatorFrame adjusted result h)
-        · simp only [hfuelA, Bool.false_eq_true, if_false] at h
+        · simp only [hfuelA, Bool.false_eq_true, ite_false] at h
           by_cases hindexA : gallopA.index > machine.na
           · simp [hindexA] at h
-          · simp only [hindexA, if_false] at h
+          · simp only [hindexA, ite_false] at h
             rcases Option.bind_eq_some_iff.mp h with
               ⟨stateA, hcopyA, h⟩
             let afterA : MergeLoMachine κ ν :=
@@ -2676,15 +2676,15 @@ private theorem mergeLoGallopRound_key_compare_of_eq_some
                 else Option.bind (mergeLoCopyBIncr? afterA) _) =
                 some result at h
             by_cases hzeroA : afterA.na = 0
-            · rw [if_pos hzeroA] at h
+            · rw [ite_eq_left hzeroA] at h
               exact (hadjust.trans hframeA).trans
                 (mergeLoSucceed_comparatorFrame afterA result h)
-            · rw [if_neg hzeroA] at h
+            · rw [ite_eq_right hzeroA] at h
               by_cases honeA : afterA.na = 1
-              · rw [if_pos honeA] at h
+              · rw [ite_eq_left honeA] at h
                 exact (hadjust.trans hframeA).trans
                   (mergeLoCopyB_comparatorFrame afterA result h)
-              · rw [if_neg honeA] at h
+              · rw [ite_eq_right honeA] at h
                 rcases Option.bind_eq_some_iff.mp h with
                   ⟨afterB, hcopyB, h⟩
                 have hframeB :
@@ -2696,10 +2696,10 @@ private theorem mergeLoGallopRound_key_compare_of_eq_some
                       (mergeLoTempRead? afterB.state.a afterB.aPos) _) =
                     some result at h
                 by_cases hzeroB : afterB.nb = 0
-                · rw [if_pos hzeroB] at h
+                · rw [ite_eq_left hzeroB] at h
                   exact ((hadjust.trans hframeA).trans hframeB).trans
                     (mergeLoSucceed_comparatorFrame afterB result h)
-                · rw [if_neg hzeroB] at h
+                · rw [ite_eq_right hzeroB] at h
                   rcases Option.bind_eq_some_iff.mp h with
                     ⟨firstA, hfirstA, h⟩
                   change mergeLoBindOptionAcross
@@ -2711,14 +2711,14 @@ private theorem mergeLoGallopRound_key_compare_of_eq_some
                   | some gallopB =>
                       simp only [mergeLoBindOptionAcross, hgallopB] at h
                       by_cases hfuelB : gallopB.fuelExhausted = true
-                      · simp only [hfuelB, if_true] at h
+                      · simp only [hfuelB, ite_true] at h
                         exact ((hadjust.trans hframeA).trans hframeB).trans
                           (mergeLoGallopFuelFailure_comparatorFrame afterB
                             result h)
-                      · simp only [hfuelB, Bool.false_eq_true, if_false] at h
+                      · simp only [hfuelB, Bool.false_eq_true, ite_false] at h
                         by_cases hindexB : gallopB.index > afterB.nb
                         · simp [hindexB] at h
-                        · simp only [hindexB, if_false] at h
+                        · simp only [hindexB, ite_false] at h
                           rcases Option.bind_eq_some_iff.mp h with
                             ⟨data, hmove, h⟩
                           let movedB : MergeLoMachine κ ν :=
@@ -2734,11 +2734,11 @@ private theorem mergeLoGallopRound_key_compare_of_eq_some
                               else Option.bind
                                 (mergeLoCopyAIncr? movedB) _) = some result at h
                           by_cases hdoneB : movedB.nb = 0
-                          · rw [if_pos hdoneB] at h
+                          · rw [ite_eq_left hdoneB] at h
                             exact (((hadjust.trans hframeA).trans hframeB).trans
                               hframeMoved).trans
                                 (mergeLoSucceed_comparatorFrame movedB result h)
-                          · rw [if_neg hdoneB] at h
+                          · rw [ite_eq_right hdoneB] at h
                             rcases Option.bind_eq_some_iff.mp h with
                               ⟨afterAOne, hcopyAOne, h⟩
                             have hframeAOne : MergeComparatorFrame movedB.state
@@ -2751,13 +2751,13 @@ private theorem mergeLoGallopRound_key_compare_of_eq_some
                                 else next afterAOne gallopA.index gallopB.index) =
                                 some result at h
                             by_cases honeFinal : afterAOne.na = 1
-                            · rw [if_pos honeFinal] at h
+                            · rw [ite_eq_left honeFinal] at h
                               exact ((((hadjust.trans hframeA).trans
                                 hframeB).trans hframeMoved).trans
                                   hframeAOne).trans
                                     (mergeLoCopyB_comparatorFrame afterAOne
                                       result h)
-                            · rw [if_neg honeFinal] at h
+                            · rw [ite_eq_right honeFinal] at h
                               exact ((((hadjust.trans hframeA).trans
                                 hframeB).trans hframeMoved).trans
                                   hframeAOne).trans
@@ -2784,56 +2784,56 @@ private theorem mergeLoLoop_comparatorFrame_of_eq_some
       | ordinary aCount bCount =>
           simp only [mergeLoLoop?, bind, Option.bind] at h
           by_cases hactive : machine.na ≤ 1 ∨ machine.nb = 0
-          · simp only [hactive, if_true, reduceCtorEq] at h
-          · simp only [hactive, if_false] at h
+          · simp only [hactive, ite_true, reduceCtorEq] at h
+          · simp only [hactive, ite_false] at h
             rcases Option.bind_eq_some_iff.mp h with
               ⟨firstA, hfirstA, h⟩
             rcases Option.bind_eq_some_iff.mp h with
               ⟨firstB, hfirstB, h⟩
             by_cases hcompare :
                 iflt machine.state.key_compare firstB.key firstA.key = true
-            · simp only [hcompare, if_true] at h
+            · simp only [hcompare, ite_true] at h
               rcases Option.bind_eq_some_iff.mp h with
                 ⟨next, hcopy, h⟩
               have hframe : MergeComparatorFrame machine.state next.state :=
                 mergeLoCopyBIncr_comparatorFrame machine next hcopy
               by_cases hdone : next.nb = 0
-              · rw [if_pos hdone] at h
+              · rw [ite_eq_left hdone] at h
                 exact hframe.trans
                   (mergeLoSucceed_comparatorFrame next result h)
-              · rw [if_neg hdone] at h
+              · rw [ite_eq_right hdone] at h
                 by_cases hgallop :
                     mergeLoCountAtLeastWord (bCount + 1) next.minGallop = true
-                · rw [if_pos hgallop] at h
+                · rw [ite_eq_left hgallop] at h
                   let raised : MergeLoMachine κ ν :=
                     { next with minGallop := next.minGallop + 1 }
                   have hraised :
                       MergeComparatorFrame next.state raised.state := ⟨rfl⟩
                   exact hframe.trans
                     (hraised.trans (ih raised .galloping result h))
-                · rw [if_neg hgallop] at h
+                · rw [ite_eq_right hgallop] at h
                   exact hframe.trans
                     (ih next (.ordinary 0 (bCount + 1)) result h)
-            · simp only [hcompare, Bool.false_eq_true, if_false] at h
+            · simp only [hcompare, Bool.false_eq_true, ite_false] at h
               rcases Option.bind_eq_some_iff.mp h with
                 ⟨next, hcopy, h⟩
               have hframe : MergeComparatorFrame machine.state next.state :=
                 mergeLoCopyAIncr_comparatorFrame machine next hcopy
               by_cases hdone : next.na = 1
-              · rw [if_pos hdone] at h
+              · rw [ite_eq_left hdone] at h
                 exact hframe.trans
                   (mergeLoCopyB_comparatorFrame next result h)
-              · rw [if_neg hdone] at h
+              · rw [ite_eq_right hdone] at h
                 by_cases hgallop :
                     mergeLoCountAtLeastWord (aCount + 1) next.minGallop = true
-                · rw [if_pos hgallop] at h
+                · rw [ite_eq_left hgallop] at h
                   let raised : MergeLoMachine κ ν :=
                     { next with minGallop := next.minGallop + 1 }
                   have hraised :
                       MergeComparatorFrame next.state raised.state := ⟨rfl⟩
                   exact hframe.trans
                     (hraised.trans (ih raised .galloping result h))
-                · rw [if_neg hgallop] at h
+                · rw [ite_eq_right hgallop] at h
                   exact hframe.trans
                     (ih next (.ordinary (aCount + 1) 0) result h)
       | galloping =>
@@ -2879,16 +2879,16 @@ private theorem mergeLo_comparatorFrame_of_eq_some
   unfold mergeLo? at h
   by_cases hguard : 0 < na ∧ 0 < nb ∧ na ≤ PY_SSIZE_T_MAX ∧
       nb ≤ PY_SSIZE_T_MAX ∧ ssa + Int.ofNat na = ssb
-  · rw [if_pos hguard] at h
+  · rw [ite_eq_left hguard] at h
     let allocated := mergeGetmem state (BitVec.ofNat 64 na)
     have hallocated : MergeComparatorFrame state allocated.state := by
       exact mergeGetmem_comparatorFrame state (BitVec.ofNat 64 na)
     by_cases hrejected : allocated.outcome = .guardRejected
-    · rw [if_pos hrejected] at h
+    · rw [ite_eq_left hrejected] at h
       injection h with hresult
       subst result
       exact hallocated
-    · rw [if_neg hrejected] at h
+    · rw [ite_eq_right hrejected] at h
       rcases Option.bind_eq_some_iff.mp h with
         ⟨copiedState, hcopy, h⟩
       let initial : MergeLoMachine κ ν :=
@@ -2909,19 +2909,19 @@ private theorem mergeLo_comparatorFrame_of_eq_some
           some result at h
       have hprefix := (hallocated.trans hcopyFrame).trans hfirstFrame
       by_cases hnb : machine.nb = 0
-      · rw [if_pos hnb] at h
+      · rw [ite_eq_left hnb] at h
         exact hprefix.trans
           (mergeLoSucceed_comparatorFrame machine result h)
-      · rw [if_neg hnb] at h
+      · rw [ite_eq_right hnb] at h
         by_cases hna : machine.na = 1
-        · rw [if_pos hna] at h
+        · rw [ite_eq_left hna] at h
           exact hprefix.trans
             (mergeLoCopyB_comparatorFrame machine result h)
-        · rw [if_neg hna] at h
+        · rw [ite_eq_right hna] at h
           exact hprefix.trans
             (mergeLoLoop_comparatorFrame_of_eq_some (na + nb + 1) machine
               (.ordinary 0 0) result h)
-  · rw [if_neg hguard] at h
+  · rw [ite_eq_right hguard] at h
     contradiction
 
 /-- A successful `merge_lo` evaluation preserves the comparator stored in the
@@ -2950,11 +2950,11 @@ private theorem mergeHiSucceed_key_compare_of_eq_some
     result.state.key_compare = cursor.state.key_compare := by
   unfold mergeHiSucceed? at h
   by_cases hzero : cursor.nb = 0
-  · simp only [hzero, if_true, bind, Option.bind] at h
+  · simp only [hzero, ite_true, bind, Option.bind] at h
     injection h with h
     subst result
     rfl
-  · simp only [hzero, if_false] at h
+  · simp only [hzero, ite_false] at h
     rcases Option.bind_eq_some_iff.mp h with ⟨state, hcopy, hresult⟩
     injection hresult with hresult
     subst result
@@ -3066,10 +3066,10 @@ private theorem mergeHiGallopB_comparatorFrame_of_eq_some
   | some gallopB =>
       simp only [mergeHiBindOptionAcross, hgallop] at h
       by_cases hfuel : gallopB.fuelExhausted = true
-      · simp only [hfuel, if_true, Option.some.injEq] at h
+      · simp only [hfuel, ite_true, Option.some.injEq] at h
         subst result
         exact mergeHiFuelExhausted_comparatorFrame afterB
-      · simp only [hfuel, Bool.false_eq_true, if_false] at h
+      · simp only [hfuel, Bool.false_eq_true, ite_false] at h
         have hfinish (movedB : MergeHiCursor κ ν)
             (hmoved : MergeComparatorFrame afterB.state movedB.state)
             (heval :
@@ -3102,9 +3102,9 @@ private theorem mergeHiGallopB_comparatorFrame_of_eq_some
                 some result) :
             MergeComparatorFrame afterB.state result.state := by
           by_cases hsmall : movedB.nb = 0 ∨ movedB.nb = 1
-          · rw [if_pos hsmall] at heval
+          · rw [ite_eq_left hsmall] at heval
             exact hmoved.trans (hnext movedB result heval)
-          · rw [if_neg hsmall] at heval
+          · rw [ite_eq_right hsmall] at heval
             rcases Option.bind_eq_some_iff.mp heval with
               ⟨copiedA, hcopyA, heval⟩
             let afterA : MergeHiCursor κ ν :=
@@ -3135,15 +3135,15 @@ private theorem mergeHiGallopB_comparatorFrame_of_eq_some
                       phase := .straight 0 0 }) =
                 some result at heval
             by_cases hzeroA : afterA.na = 0
-            · rw [if_pos hzeroA] at heval
+            · rw [ite_eq_left hzeroA] at heval
               exact (hmoved.trans hframeA).trans
                 (hnext afterA result heval)
-            · rw [if_neg hzeroA] at heval
+            · rw [ite_eq_right hzeroA] at heval
               by_cases hcontinue :
                   mergeHiCountAtLeast aCount MIN_GALLOP ||
                     mergeHiCountAtLeast
                       (afterB.nb - gallopB.index) MIN_GALLOP
-              · rw [if_pos hcontinue] at heval
+              · rw [ite_eq_left hcontinue] at heval
                 let continued : MergeHiCursor κ ν :=
                   { afterA with
                     phase := .galloping aCount
@@ -3151,7 +3151,7 @@ private theorem mergeHiGallopB_comparatorFrame_of_eq_some
                 change next continued = some result at heval
                 exact (hmoved.trans hframeA).trans
                   (hnext continued result heval)
-              · rw [if_neg hcontinue] at heval
+              · rw [ite_eq_right hcontinue] at heval
                 let minGallop := afterB.minGallop + 1
                 let adjustedState :=
                   { afterA.state with min_gallop := minGallop }
@@ -3166,7 +3166,7 @@ private theorem mergeHiGallopB_comparatorFrame_of_eq_some
                 exact ((hmoved.trans hframeA).trans hadjust).trans
                   (hnext adjusted result heval)
         by_cases hzero : afterB.nb - gallopB.index = 0
-        · simp only [hzero, if_true, bind, Option.bind] at h
+        · simp only [hzero, ite_true, bind, Option.bind] at h
           apply hfinish afterB (MergeComparatorFrame.refl afterB.state)
           change
             (if afterB.nb = 0 ∨ afterB.nb = 1 then next afterB
@@ -3174,7 +3174,7 @@ private theorem mergeHiGallopB_comparatorFrame_of_eq_some
                 (mergeHiCopyDataDecr? afterB.state afterB.dest afterB.ssa)
                 _) = some result at h
           simpa [hzero] using h
-        · simp only [hzero, if_false] at h
+        · simp only [hzero, ite_false] at h
           rcases Option.bind_eq_some_iff.mp h with ⟨state, hcopy, h⟩
           let movedB : MergeHiCursor κ ν :=
             { afterB with
@@ -3221,12 +3221,12 @@ private theorem mergeHiGallopRound_comparatorFrame_of_eq_some
   | some gallopA =>
       simp only [mergeHiBindOptionAcross, hgallop] at h
       by_cases hfuel : gallopA.fuelExhausted = true
-      · simp only [hfuel, if_true, Option.some.injEq] at h
+      · simp only [hfuel, ite_true, Option.some.injEq] at h
         subst result
         exact hadjust.trans
           (mergeHiFuelExhausted_comparatorFrame
             { cursor with state := adjustedState })
-      · simp only [hfuel, Bool.false_eq_true, if_false] at h
+      · simp only [hfuel, Bool.false_eq_true, ite_false] at h
         have hfinish (movedA : MergeHiCursor κ ν)
             (hmoved : MergeComparatorFrame cursor.state movedA.state)
             (heval :
@@ -3245,9 +3245,9 @@ private theorem mergeHiGallopRound_comparatorFrame_of_eq_some
                       (cursor.na - gallopA.index) next) = some result) :
             MergeComparatorFrame cursor.state result.state := by
           by_cases hdone : movedA.na = 0
-          · rw [if_pos hdone] at heval
+          · rw [ite_eq_left hdone] at heval
             exact hmoved.trans (hnext movedA result heval)
-          · rw [if_neg hdone] at heval
+          · rw [ite_eq_right hdone] at heval
             rcases Option.bind_eq_some_iff.mp heval with
               ⟨copiedB, hcopyB, heval⟩
             let afterB : MergeHiCursor κ ν :=
@@ -3265,22 +3265,22 @@ private theorem mergeHiGallopRound_comparatorFrame_of_eq_some
                 else mergeHiGallopB? afterB
                   (cursor.na - gallopA.index) next) = some result at heval
             by_cases hone : afterB.nb = 1
-            · rw [if_pos hone] at heval
+            · rw [ite_eq_left hone] at heval
               exact (hmoved.trans hframeB).trans
                 (hnext afterB result heval)
-            · rw [if_neg hone] at heval
+            · rw [ite_eq_right hone] at heval
               exact (hmoved.trans hframeB).trans
                 (mergeHiGallopB_comparatorFrame_of_eq_some afterB
                   (cursor.na - gallopA.index) next hnext result heval)
         by_cases hzero : cursor.na - gallopA.index = 0
-        · simp only [hzero, if_true, bind, Option.bind] at h
+        · simp only [hzero, ite_true, bind, Option.bind] at h
           let movedA : MergeHiCursor κ ν :=
             { cursor with state := adjustedState, minGallop := minGallop }
           apply hfinish movedA
           · exact hadjust
           · simpa [movedA, adjustedState, minGallop, hzero,
               mergeHiBindOptionAcross, bind, Option.bind] using h
-        · simp only [hzero, if_false] at h
+        · simp only [hzero, ite_false] at h
           rcases Option.bind_eq_some_iff.mp h with ⟨data, hmove, h⟩
           let movedA : MergeHiCursor κ ν :=
             { cursor with
@@ -3306,26 +3306,26 @@ private theorem mergeHiLoop_comparatorFrame_of_eq_some
   | zero =>
       simp only [mergeHiLoop?] at h
       by_cases hdone : cursor.na = 0 ∨ cursor.nb = 0
-      · rw [if_pos hdone] at h
+      · rw [ite_eq_left hdone] at h
         exact mergeHiSucceed_comparatorFrame cursor result h
-      · rw [if_neg hdone] at h
+      · rw [ite_eq_right hdone] at h
         by_cases hone : cursor.nb = 1
-        · rw [if_pos hone] at h
+        · rw [ite_eq_left hone] at h
           exact mergeHiCopyA_comparatorFrame cursor result h
-        · rw [if_neg hone] at h
+        · rw [ite_eq_right hone] at h
           injection h with hresult
           subst result
           exact mergeHiFuelExhausted_comparatorFrame cursor
   | succ fuel ih =>
       simp only [mergeHiLoop?] at h
       by_cases hdone : cursor.na = 0 ∨ cursor.nb = 0
-      · rw [if_pos hdone] at h
+      · rw [ite_eq_left hdone] at h
         exact mergeHiSucceed_comparatorFrame cursor result h
-      · rw [if_neg hdone] at h
+      · rw [ite_eq_right hdone] at h
         by_cases hone : cursor.nb = 1
-        · rw [if_pos hone] at h
+        · rw [ite_eq_left hone] at h
           exact mergeHiCopyA_comparatorFrame cursor result h
-        · rw [if_neg hone] at h
+        · rw [ite_eq_right hone] at h
           cases hphase : cursor.phase with
           | straight aCount bCount =>
               simp only [hphase] at h
@@ -3335,7 +3335,7 @@ private theorem mergeHiLoop_comparatorFrame_of_eq_some
                 ⟨left, hleft, h⟩
               by_cases hlt :
                   iflt cursor.state.key_compare right.key left.key = true
-              · rw [if_pos hlt] at h
+              · rw [ite_eq_left hlt] at h
                 rcases Option.bind_eq_some_iff.mp h with
                   ⟨copied, hcopy, h⟩
                 let nextCursor : MergeHiCursor κ ν :=
@@ -3361,7 +3361,7 @@ private theorem mergeHiLoop_comparatorFrame_of_eq_some
                       cursor.dest cursor.ssa copied hcopy)
                 change mergeHiLoop? fuel nextCursor = some result at h
                 exact hframe.trans (ih nextCursor result h)
-              · rw [if_neg hlt] at h
+              · rw [ite_eq_right hlt] at h
                 rcases Option.bind_eq_some_iff.mp h with
                   ⟨copied, hcopy, h⟩
                 let nextCursor : MergeHiCursor κ ν :=
@@ -3401,7 +3401,7 @@ private theorem mergeHi_comparatorFrame_of_eq_some
   unfold mergeHi? at h
   by_cases hguard : 0 < na ∧ 0 < nb ∧ na ≤ PY_SSIZE_T_MAX ∧
       nb ≤ PY_SSIZE_T_MAX ∧ ssa + Int.ofNat na = ssb
-  · rw [if_pos hguard] at h
+  · rw [ite_eq_left hguard] at h
     cases hallocated : mergeGetmem state (BitVec.ofNat 64 nb) with
     | mk allocatedState outcome =>
         have hallocatedFrame : MergeComparatorFrame state allocatedState := by
@@ -3466,7 +3466,7 @@ private theorem mergeHi_comparatorFrame_of_eq_some
         | grown =>
             simp only [hallocated] at h
             exact hallocatedFrame.trans (hbody h)
-  · rw [if_neg hguard] at h
+  · rw [ite_eq_right hguard] at h
     contradiction
 
 /-- A successful `merge_hi` evaluation preserves the comparator stored in the

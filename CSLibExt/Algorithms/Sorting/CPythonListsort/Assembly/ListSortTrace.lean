@@ -14,9 +14,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ListSortSupport
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.MergeForceCollapseSafety
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ReverseSliceSafety
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Traced top-level `list_sort_impl`
 
@@ -156,8 +153,8 @@ theorem finishListSortTraced_trace_keyed (state : MergeState κ ν)
         (listSortCleanupMemoryEvent
           { state with data := reversed.slice })) := by
   unfold finishListSortTraced?
-  rw [if_pos (by simp [hSize])]
-  simp only [hMode, finalReversePhase, if_true]
+  rw [ite_eq_left (by simp [hSize])]
+  simp only [hMode, finalReversePhase, ite_true]
   rw [TraceResult.trace_bind, hReversed]
   rfl
 
@@ -177,8 +174,8 @@ theorem finishListSortTraced_trace_unkeyed (state : MergeState κ ν)
         (listSortCleanupMemoryEvent
           { state with data := reversed.slice })) := by
   unfold finishListSortTraced?
-  rw [if_pos (by simp [hSize])]
-  simp only [hMode, finalReversePhase, Bool.false_eq_true, if_false]
+  rw [ite_eq_left (by simp [hSize])]
+  simp only [hMode, finalReversePhase, Bool.false_eq_true, ite_false]
   rw [TraceResult.trace_bind, hReversed]
   rfl
 
@@ -192,7 +189,7 @@ theorem finishListSortTraced_cleanup_event_inactive_exact
       fuelExhausted).trace.memoryEvents =
       [listSortCleanupMemoryEvent state] := by
   unfold finishListSortTraced?
-  rw [if_neg (by simpa using hInactive)]
+  rw [ite_eq_right (by simpa using hInactive)]
   rfl
 
 /-- On an active final-reverse path that returns `reversed`, the exact cleanup
@@ -212,7 +209,7 @@ theorem finishListSortTraced_cleanup_event_active_exact
         state.data 0 (Int.ofNat inputSize)).trace.memoryEvents ++
       [listSortCleanupMemoryEvent { state with data := reversed.slice }] := by
   unfold finishListSortTraced?
-  rw [if_pos (by simpa using hActive), TraceResult.trace_bind, hReversed]
+  rw [ite_eq_left (by simpa using hActive), TraceResult.trace_bind, hReversed]
   rfl
 
 /-! ## Top-level helper policy-event freedom -/
@@ -233,12 +230,12 @@ theorem finishListSortTraced_policyEvents_eq_nil
       fuelExhausted).trace.policyEvents = [] := by
   unfold finishListSortTraced?
   by_cases hactive : (reverse && decide (1 < inputSize)) = true
-  · rw [if_pos hactive]
+  · rw [ite_eq_left hactive]
     apply TraceResult.policyEvents_bind_eq_nil
     · exact reverseSlicePhaseTraced_policyEvents_eq_nil _ _ _ _
     · intro reversed
       rfl
-  · rw [if_neg hactive]
+  · rw [ite_eq_right hactive]
     rfl
 
 /-- The `found_new_run` failure adapter contributes no logical policy event. -/
@@ -346,9 +343,9 @@ theorem listSortAfterExtensionTraced_policyEvents_of_success
         (next (pushPendingRun found.state newRun) (lo + runLength)
           (remaining - runLength)).trace.policyEvents := by
   dsimp only
-  simp only [listSortAfterExtensionTraced?, Bool.false_eq_true, if_false]
-  rw [if_neg hValid, TraceResult.policyEvents_bind, hFound]
-  simp only [hSuccess, true_and, if_true]
+  simp only [listSortAfterExtensionTraced?, Bool.false_eq_true, ite_false]
+  rw [ite_eq_right hValid, TraceResult.policyEvents_bind, hFound]
+  simp only [hSuccess, true_and, ite_true]
   rw [TraceResult.policyEvents_bind]
   have hPushResult :
       (pushFormedRunTraced found.state
@@ -593,12 +590,12 @@ theorem erase_finishListSortTraced (state : MergeState κ ν) (reverse : Bool)
       finishListSort? state reverse inputSize returnCode fuelExhausted := by
   unfold finishListSortTraced? finishListSort?
   by_cases hreverse : (reverse && decide (1 < inputSize)) = true
-  · rw [if_pos hreverse, if_pos hreverse]
+  · rw [ite_eq_left hreverse, ite_eq_left hreverse]
     simp only [TraceResult.erase_bind, erase_finalReversePhaseTraced,
       sortsliceReverse?, Int.zero_add]
     cases hresult : reverseSlice? state.data 0 (Int.ofNat inputSize) <;>
       simp
-  · rw [if_neg hreverse, if_neg hreverse]
+  · rw [ite_eq_right hreverse, ite_eq_right hreverse]
     simp [TraceResult.pure, TraceResult.erase]
 
 /-- The initial two-phase physical reverse forgets to the paired-snapshot
@@ -644,12 +641,12 @@ theorem erase_listSortAfterExtensionTraced
       listSortAfterExtension? next lo remaining reverse inputSize extension := by
   unfold listSortAfterExtensionTraced? listSortAfterExtension?
   by_cases hfuel : extension.2.2 = true
-  · rw [if_pos hfuel, if_pos hfuel, erase_finishListSortTraced]
-  · rw [if_neg hfuel, if_neg hfuel]
+  · rw [ite_eq_left hfuel, ite_eq_left hfuel, erase_finishListSortTraced]
+  · rw [ite_eq_right hfuel, ite_eq_right hfuel]
     by_cases hinvalid : extension.2.1 = 0 ∨ remaining < extension.2.1
-    · rw [if_pos hinvalid, if_pos hinvalid]
+    · rw [ite_eq_left hinvalid, ite_eq_left hinvalid]
       rfl
-    · rw [if_neg hinvalid, if_neg hinvalid, TraceResult.erase_bind,
+    · rw [ite_eq_right hinvalid, ite_eq_right hinvalid, TraceResult.erase_bind,
         hFound]
       cases hfound : foundNewRun? extension.1 extension.2.1 with
       | none => simp
@@ -657,7 +654,7 @@ theorem erase_listSortAfterExtensionTraced
           simp only [Option.bind_some]
           by_cases hsuccess :
               found.returnCode = 0 ∧ !found.fuelExhausted
-          · rw [if_pos hsuccess, if_pos hsuccess,
+          · rw [ite_eq_left hsuccess, ite_eq_left hsuccess,
               TraceResult.erase_bind, erase_pushFormedRunTraced]
             simpa [pushPendingRun] using
               hNext (pushPendingRun found.state
@@ -665,7 +662,7 @@ theorem erase_listSortAfterExtensionTraced
                   len := BitVec.ofNat 64 extension.2.1
                   power := none })
                 (lo + extension.2.1) (remaining - extension.2.1)
-          · rw [if_neg hsuccess, if_neg hsuccess,
+          · rw [ite_eq_right hsuccess, ite_eq_right hsuccess,
               erase_failFromFoundNewRunTraced]
 
 /-- Erasing the post-count continuation's helper traces recovers its untraced
@@ -687,12 +684,12 @@ theorem erase_listSortAfterCountTraced
       listSortAfterCount? next state lo remaining reverse inputSize counted := by
   unfold listSortAfterCountTraced? listSortAfterCount?
   by_cases hfuel : counted.fuelExhausted = true
-  · rw [if_pos hfuel, if_pos hfuel, erase_finishListSortTraced]
-  · rw [if_neg hfuel, if_neg hfuel]
+  · rw [ite_eq_left hfuel, ite_eq_left hfuel, erase_finishListSortTraced]
+  · rw [ite_eq_right hfuel, ite_eq_right hfuel]
     by_cases hinvalid : counted.length = 0 ∨ remaining < counted.length
-    · rw [if_pos hinvalid, if_pos hinvalid]
+    · rw [ite_eq_left hinvalid, ite_eq_left hinvalid]
       rfl
-    · rw [if_neg hinvalid, if_neg hinvalid]
+    · rw [ite_eq_right hinvalid, ite_eq_right hinvalid]
       let countedState : MergeState κ ν := { state with data := counted.slice }
       let nextMinrun := minrunNext countedState.minrunState
       let installed := installMinrunState countedState nextMinrun.state
@@ -701,7 +698,7 @@ theorem erase_listSortAfterCountTraced
       by_cases hextend :
           ((BitVec.ofNat 64 counted.length : PySSize).slt
             nextMinrun.result) = true
-      · rw [if_pos hextend, if_pos hextend, TraceResult.erase_bind,
+      · rw [ite_eq_left hextend, ite_eq_left hextend, TraceResult.erase_bind,
           erase_binarysortTraced]
         cases hsorted : binarysort? installed installed.data (Int.ofNat lo)
             force counted.length with
@@ -713,7 +710,7 @@ theorem erase_listSortAfterCountTraced
                 nextMinrun.result.toNat
                 ({ installed with data := sorted.slice }, force,
                   sorted.fuelExhausted)
-      · rw [if_neg hextend, if_neg hextend]
+      · rw [ite_eq_right hextend, ite_eq_right hextend]
         exact erase_listSortAfterExtensionTraced nextTraced next hNext hFound
           lo remaining reverse inputSize counted.length
             nextMinrun.result.toNat (installed, counted.length, false)
@@ -730,7 +727,7 @@ private theorem listSortAfterCount_eq_scan_succ_of_count
         state lo remaining reverse inputSize counted =
       listSortScan? (fuel + 1) state lo remaining reverse inputSize := by
   rw [listSortScan?]
-  simp only [hRemaining, if_false, hCounted]
+  simp only [hRemaining, ite_false, hCounted]
   rfl
 
 /-- Structural top-level erasure, parameterized only by the two recursive merge
@@ -753,42 +750,42 @@ theorem erase_listSortScanTraced_of_helper_erasure
   | zero =>
       intro state lo remaining reverse inputSize
       by_cases hremaining : remaining = 0
-      · rw [listSortScanTraced?, listSortScan?, if_pos hremaining,
-          if_pos hremaining, TraceResult.erase_bind, hCollapse]
+      · rw [listSortScanTraced?, listSortScan?, ite_eq_left hremaining,
+          ite_eq_left hremaining, TraceResult.erase_bind, hCollapse]
         cases hcollapsed : mergeForceCollapse? state with
         | none => simp
         | some collapsed =>
             simp only [Option.bind_some]
             by_cases hsuccess :
                 collapsed.returnCode = 0 ∧ !collapsed.fuelExhausted
-            · rw [if_pos hsuccess, if_pos hsuccess,
+            · rw [ite_eq_left hsuccess, ite_eq_left hsuccess,
                 erase_finishListSortTraced]
-            · rw [if_neg hsuccess, if_neg hsuccess,
+            · rw [ite_eq_right hsuccess, ite_eq_right hsuccess,
                 erase_failFromCollapseTraced]
-      · rw [listSortScanTraced?, listSortScan?, if_neg hremaining,
-          if_neg hremaining, TraceResult.erase_markFuelExhausted,
+      · rw [listSortScanTraced?, listSortScan?, ite_eq_right hremaining,
+          ite_eq_right hremaining, TraceResult.erase_markFuelExhausted,
           erase_finishListSortTraced]
   | succ fuel ih =>
       intro state lo remaining reverse inputSize
       by_cases hremaining : remaining = 0
-      · rw [listSortScanTraced?, listSortScan?, if_pos hremaining,
-          if_pos hremaining, TraceResult.erase_bind, hCollapse]
+      · rw [listSortScanTraced?, listSortScan?, ite_eq_left hremaining,
+          ite_eq_left hremaining, TraceResult.erase_bind, hCollapse]
         cases hcollapsed : mergeForceCollapse? state with
         | none => simp
         | some collapsed =>
             simp only [Option.bind_some]
             by_cases hsuccess :
                 collapsed.returnCode = 0 ∧ !collapsed.fuelExhausted
-            · rw [if_pos hsuccess, if_pos hsuccess,
+            · rw [ite_eq_left hsuccess, ite_eq_left hsuccess,
                 erase_finishListSortTraced]
-            · rw [if_neg hsuccess, if_neg hsuccess,
+            · rw [ite_eq_right hsuccess, ite_eq_right hsuccess,
                 erase_failFromCollapseTraced]
-      · rw [listSortScanTraced?, if_neg hremaining, TraceResult.erase_bind,
+      · rw [listSortScanTraced?, ite_eq_right hremaining, TraceResult.erase_bind,
           erase_countRunTraced]
         cases hcounted : countRun? state state.data (Int.ofNat lo) remaining with
         | none =>
             rw [listSortScan?]
-            rw [if_neg hremaining, hcounted]
+            rw [ite_eq_right hremaining, hcounted]
             rfl
         | some counted =>
             simp only [Option.bind_some]
@@ -832,37 +829,37 @@ theorem erase_listSortImplTraced_of_helper_erasure
       listSortImpl? lt reverse hasKeyfunc input := by
   unfold listSortImplTraced? listSortImpl?
   by_cases hsize : input.entries.size ≤ PY_LIST_MAX
-  · rw [if_pos hsize, if_pos hsize,
+  · rw [ite_eq_left hsize, ite_eq_left hsize,
       TraceResult.erase_prependMemoryEvent]
     let initialized := initialMergeState lt hasKeyfunc input
     let state := initialized.1
     by_cases hinit : (!initialized.2) = true
-    · rw [if_pos hinit, if_pos hinit,
+    · rw [ite_eq_left hinit, ite_eq_left hinit,
         TraceResult.erase_markFuelExhausted, erase_finishListSortTraced]
-    · rw [if_neg hinit, if_neg hinit]
+    · rw [ite_eq_right hinit, ite_eq_right hinit]
       by_cases hsmall : input.entries.size < 2
-      · rw [if_pos hsmall, if_pos hsmall, erase_finishListSortTraced]
-      · rw [if_neg hsmall, if_neg hsmall]
+      · rw [ite_eq_left hsmall, ite_eq_left hsmall, erase_finishListSortTraced]
+      · rw [ite_eq_right hsmall, ite_eq_right hsmall]
         by_cases hreverse : reverse = true
-        · rw [if_pos hreverse, if_pos hreverse, TraceResult.erase_bind,
+        · rw [ite_eq_left hreverse, ite_eq_left hreverse, TraceResult.erase_bind,
             erase_listSortInitialReverseTraced]
           cases hreversed : sortsliceReverse? state.data 0 input.entries.size with
           | none => simp
           | some reversed =>
               simp only [Option.bind_some]
               by_cases hfuel : reversed.fuelExhausted = true
-              · rw [if_pos hfuel, if_pos hfuel,
+              · rw [ite_eq_left hfuel, ite_eq_left hfuel,
                   erase_finishListSortTraced]
-              · rw [if_neg hfuel, if_neg hfuel]
+              · rw [ite_eq_right hfuel, ite_eq_right hfuel]
                 exact erase_listSortScanTraced_of_helper_erasure hFound
                   hCollapse input.entries.size
                   { state with data := reversed.slice } 0 input.entries.size
                   reverse input.entries.size
-        · rw [if_neg hreverse, if_neg hreverse]
+        · rw [ite_eq_right hreverse, ite_eq_right hreverse]
           exact erase_listSortScanTraced_of_helper_erasure hFound hCollapse
             input.entries.size state 0 input.entries.size reverse
             input.entries.size
-  · rw [if_neg hsize, if_neg hsize]
+  · rw [ite_eq_right hsize, ite_eq_right hsize]
     rfl
 
 /-- Full-domain erasure for the proof-carrying public wrapper, still stated

@@ -8,9 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.TopLevelErasure
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Raw-domain erasure for `found_new_run`
 
@@ -44,11 +41,11 @@ theorem erase_foundNewRunLoopTraced_of_mergeAt
       intro state power
       simp only [foundNewRunLoopTraced?, foundNewRunLoop?]
       by_cases hmany : 1 < state.pending.size
-      · rw [if_pos hmany, if_pos hmany, TraceResult.erase_bind,
+      · rw [ite_eq_left hmany, ite_eq_left hmany, TraceResult.erase_bind,
           TraceResult.erase_pendingRunRead]
         have hnonnegative :
             0 ≤ Int.ofNat (state.pending.size - 2) := Int.natCast_nonneg _
-        rw [if_pos hnonnegative]
+        rw [ite_eq_left hnonnegative]
         have htoi :
             (Int.ofNat (state.pending.size - 2)).toNat =
               state.pending.size - 2 := rfl
@@ -62,7 +59,7 @@ theorem erase_foundNewRunLoopTraced_of_mergeAt
             | some precedingPower =>
                 simp only
                 by_cases hcollapse : power < precedingPower
-                · rw [if_pos hcollapse, if_pos hcollapse,
+                · rw [ite_eq_left hcollapse, ite_eq_left hcollapse,
                     TraceResult.erase_bind, hMergeAt]
                   cases hmerged : mergeAt? state (state.pending.size - 2) with
                   | none => simp
@@ -70,18 +67,18 @@ theorem erase_foundNewRunLoopTraced_of_mergeAt
                       simp only [Option.bind_some]
                       by_cases hsuccess :
                           merged.returnCode = 0 ∧ !merged.fuelExhausted
-                      · rw [if_pos hsuccess, if_pos hsuccess]
+                      · rw [ite_eq_left hsuccess, ite_eq_left hsuccess]
                         exact ih merged.state power
-                      · rw [if_neg hsuccess, if_neg hsuccess]
+                      · rw [ite_eq_right hsuccess, ite_eq_right hsuccess]
                         rfl
-                · rw [if_neg hcollapse, if_neg hcollapse,
+                · rw [ite_eq_right hcollapse, ite_eq_right hcollapse,
                     TraceResult.erase_map, erase_setTopPowerTraced]
                   cases hset : setTopPower? state power with
                   | none => simp
                   | some after =>
                       simp only [Option.map_some]
                       rfl
-      · rw [if_neg hmany, if_neg hmany, TraceResult.erase_map,
+      · rw [ite_eq_right hmany, ite_eq_right hmany, TraceResult.erase_map,
           erase_setTopPowerTraced]
         cases hset : setTopPower? state power with
         | none => simp
@@ -96,13 +93,13 @@ theorem erase_foundNewRunTraced
     (foundNewRunTraced? state n2).erase = foundNewRun? state n2 := by
   unfold foundNewRunTraced? foundNewRun?
   by_cases hempty : state.pending.isEmpty = true
-  · rw [if_pos hempty, if_pos hempty]
+  · rw [ite_eq_left hempty, ite_eq_left hempty]
     rfl
-  · rw [if_neg hempty, if_neg hempty, TraceResult.erase_bind,
+  · rw [ite_eq_right hempty, ite_eq_right hempty, TraceResult.erase_bind,
       TraceResult.erase_pendingRunRead]
     have hnonnegative :
         0 ≤ Int.ofNat (state.pending.size - 1) := Int.natCast_nonneg _
-    rw [if_pos hnonnegative]
+    rw [ite_eq_left hnonnegative]
     have htoi :
         (Int.ofNat (state.pending.size - 1)).toNat =
           state.pending.size - 1 := rfl
@@ -124,7 +121,7 @@ theorem erase_foundNewRunTraced
                 decide (n2 ≤ PY_SSIZE_T_MAX) &&
                 decide (top.base - state.basekeys + top.len.toNat + n2 ≤
                   state.listlen.toNat)) = true := hguard
-          simp only [hguard', if_true]
+          simp only [hguard', ite_true]
           let powered := powerloopTraced
             (BitVec.ofNat 64 (top.base - state.basekeys)) top.len
             (BitVec.ofNat 64 n2) state.listlen
@@ -134,7 +131,7 @@ theorem erase_foundNewRunTraced
                   (BitVec.ofNat 64 (top.base - state.basekeys)) top.len
                   (BitVec.ofNat 64 n2) state.listlen).stopped) = true :=
                 hstopped
-            simp only [hstopped', if_true]
+            simp only [hstopped', ite_true]
             simp [TraceResult.erase_markFuelExhausted]
             rfl
           · have hstopped' : ¬

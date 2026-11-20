@@ -10,9 +10,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ListSortMergePolicy
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.PowerSortPolicyCost
 import CSLibExtTest.Algorithms.Sorting.CPythonListsort.RuntimeAssert
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Executable regression for the PowerSort cost bridge
 

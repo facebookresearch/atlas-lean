@@ -13,9 +13,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.MergeSemanticPre
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.SortSliceRange
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.StableMerge
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Semantic invariant for `merge_hi`
 
@@ -1532,7 +1529,7 @@ theorem MergeHiSemanticCursorInvariant.temporaryGallopSorted
       simpa [GallopKeySource.read?, GallopKeySource.base] using hread
     have hsnapshot := h.activeRight.2 index hindex
     rw [htempRead] at hsnapshot
-    rw [List.getElem?_take, if_pos hindex]
+    rw [List.getElem?_take, ite_eq_left hindex]
     exact hsnapshot.symm
   have hfirstOpt := sourceEntry firstIndex hfirstBound earlier hfirstRead
   have hlaterOpt := sourceEntry laterIndex hlaterBound later hlaterRead
@@ -1960,7 +1957,7 @@ theorem MergeHiSemanticCursorInvariant.copyBBlock
           (mergeHiRightEntries call)[cursor.nb - count + offset]? := by
         dsimp only [block]
         rw [List.getElem?_drop, List.getElem?_take]
-        rw [if_pos (by omega)]
+        rw [ite_eq_left (by omega)]
       simpa only [Int.ofNat_eq_natCast, Nat.cast_add] using
         hread.trans (htempRead.trans hblockGet.symm)
   have hactiveLeft :
@@ -2030,7 +2027,7 @@ theorem stableEntryMerge_singleton_right_of_all_lt
       have hnot : ¬stableEntryLE lt leftHead right = true := by
         simp [stableEntryLE, stableOccurrenceLE,
           hstrict leftHead (by simp)]
-      rw [if_neg hnot]
+      rw [ite_eq_right hnot]
       simp
 
 /-- The Succeed tail reached with no A entries copies the entire remaining
@@ -2098,7 +2095,7 @@ theorem MergeHiSemanticCursorInvariant.succeed_of_na_zero
       have htakeGet :
           ((mergeHiRightEntries call).take cursor.nb)[offset]? =
             (mergeHiRightEntries call)[offset]? := by
-        rw [List.getElem?_take, if_pos hoffset]
+        rw [List.getElem?_take, ite_eq_left hoffset]
       exact hread'.trans (htempRead.trans htakeGet.symm)
   have hremaining : (mergeHiRightEntries call).take cursor.nb =
       (mergeHiTargetEntries lt call).take cursor.nb := by

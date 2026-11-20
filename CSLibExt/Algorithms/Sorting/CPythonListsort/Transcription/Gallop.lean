@@ -8,9 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeState
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Hinted galloping searches
 

@@ -9,9 +9,6 @@ LICENSE file in the root directory of this source tree.
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.MergeForceCollapseCorrectness
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ScanStepCorrectness
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Correctness of the complete scan and final collapse
 

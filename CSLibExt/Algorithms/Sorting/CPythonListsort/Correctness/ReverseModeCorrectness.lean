@@ -8,9 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ReverseScanTransport
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Correctness of CPython's reverse-mode pattern
 

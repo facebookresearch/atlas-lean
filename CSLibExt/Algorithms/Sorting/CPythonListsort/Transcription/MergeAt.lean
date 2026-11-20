@@ -9,9 +9,6 @@ LICENSE file in the root directory of this source tree.
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeHi
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeLo
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Pending-stack merge dispatch
 

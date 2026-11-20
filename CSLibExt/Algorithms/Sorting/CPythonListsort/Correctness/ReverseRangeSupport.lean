@@ -78,13 +78,13 @@ theorem equalOutsideRange_reverseRange
   simp only [sortSliceRangeEntries, Array.getElem?_extract, hsize]
   by_cases hoff :
       offset < min (otherStart + otherCount) slice.entries.size - otherStart
-  · rw [if_pos hoff, if_pos hoff]
+  · rw [ite_eq_left hoff, ite_eq_left hoff]
     rcases hdisjoint with hbefore | hafter
     · rw [getElem?_reverseRange_before slice.entries start (start + count)
           (otherStart + offset) (by omega) hstop (by omega)]
     · rw [getElem?_reverseRange_after slice.entries start (start + count)
           (otherStart + offset) (by omega) hstop (by omega)]
-  · rw [if_neg hoff, if_neg hoff]
+  · rw [ite_eq_right hoff, ite_eq_right hoff]
 
 end ReverseRangeSpec
 

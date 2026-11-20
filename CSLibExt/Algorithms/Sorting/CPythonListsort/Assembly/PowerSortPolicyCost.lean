@@ -10,9 +10,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.MergePolicyReplay
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.PowerTreeEntropy
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Policy.BoundaryPowerGeometry
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # PowerSort policy and cost bridge
 

@@ -8,9 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeAt
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Final pending-stack collapse
 
@@ -115,7 +112,6 @@ private def forceCollapseTieExampleState : MergeState Nat Nat :=
     mr_e := 0
     mr_mask := 0 }
 
-set_option linter.style.nativeDecide false in
 /-- The neighboring-length test is strict: a tie keeps `n = size - 2` and
 therefore chooses the top pair rather than the lower pair. -/
 example : forceCollapseIndex? forceCollapseTieExampleState = some 1 := by

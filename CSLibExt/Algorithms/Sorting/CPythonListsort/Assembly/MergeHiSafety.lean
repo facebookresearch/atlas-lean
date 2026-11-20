@@ -1421,10 +1421,10 @@ private theorem mergeHiGallopB_eq_helpers
         cases hfuel : gallop.fuelExhausted with
         | true =>
           have htrue : (true : Bool) = true := rfl
-          rw [if_pos htrue, if_pos htrue]
+          rw [ite_eq_left htrue, ite_eq_left htrue]
         | false =>
           have hfalse : ¬ (false : Bool) = true := by decide
-          rw [if_neg hfalse, if_neg hfalse]
+          rw [ite_eq_right hfalse, ite_eq_right hfalse]
           by_cases hcount : afterB.nb - gallop.index = 0
           · simp [Option.bind, hcount, mergeHiMoveBBlock?,
               mergeHiGallopBFinish?]
@@ -1513,7 +1513,7 @@ theorem erase_mergeHiCopyATraced (cursor : MergeHiCursor κ ν) :
   unfold mergeHiCopyATraced? mergeHiCopyA?
   simp only [mergeDataMemmove_eq]
   by_cases htail : cursor.nb = 1 ∧ 0 < cursor.na
-  · rw [if_pos htail, if_pos htail, TraceResult.erase_bind,
+  · rw [ite_eq_left htail, ite_eq_left htail, TraceResult.erase_bind,
       erase_mainDataMemmoveTraced]
     simp only [mainDataMemmove?, TraceResult.erase_map,
       erase_tempToMainCellTraced,
@@ -1524,7 +1524,7 @@ theorem erase_mergeHiCopyATraced (cursor : MergeHiCursor κ ν) :
     | none => simp
     | some data =>
         exact optionMap_eq_bindSome _ _
-  · rw [if_neg htail, if_neg htail]
+  · rw [ite_eq_right htail, ite_eq_right htail]
     rfl
 
 /-! ## Proof-only raw-domain erasure API -/
@@ -1546,7 +1546,7 @@ private theorem erase_mergeHiTemporaryGallopLeft_of_eq_some
         hSlice)
       hInput.1 hInput.2.1 hInput.2.2
   · unfold gallopLeftFromSource? gallopLeft?
-    simp only [hInput, if_false]
+    simp only [hInput, ite_false]
 
 /-- Erasure commutes with the second half of one `merge_hi` galloping round
 whenever it commutes with the supplied continuation. -/
@@ -1590,7 +1590,7 @@ private theorem erase_mergeHiGallopRoundFinishTraced
   unfold mergeHiGallopRoundFinishTraced? mergeHiGallopRoundFinish?
   by_cases hFinished : movedA.na = 0
   · simp [hFinished, hNext]
-  · rw [if_neg hFinished, if_neg hFinished, TraceResult.erase_bind,
+  · rw [ite_eq_right hFinished, ite_eq_right hFinished, TraceResult.erase_bind,
       erase_mergeHiCopyTempDecrTraced]
     apply Option.bind_congr
     intro copiedB _hCopied
@@ -1606,9 +1606,9 @@ private theorem erase_mergeHiGallopRoundFinishTraced
       if afterB.nb = 1 then next afterB
         else mergeHiGallopB? afterB aCount next
     by_cases hOne : afterB.nb = 1
-    · rw [if_pos hOne, if_pos hOne]
+    · rw [ite_eq_left hOne, ite_eq_left hOne]
       exact hNext _
-    · rw [if_neg hOne, if_neg hOne]
+    · rw [ite_eq_right hOne, ite_eq_right hOne]
       exact erase_mergeHiGallopBTraced _ _ nextTraced next hNext
 
 private theorem erase_mergeHiGallopRoundAfterTraced
@@ -1624,7 +1624,7 @@ private theorem erase_mergeHiGallopRoundAfterTraced
   cases hFuel : gallopA.fuelExhausted with
   | true => simp [erase_mergeHiFuelExhaustedTraced]
   | false =>
-      simp only [Bool.false_eq_true, if_false, TraceResult.erase_bind,
+      simp only [Bool.false_eq_true, ite_false, TraceResult.erase_bind,
         erase_mergeHiMoveABlockTraced]
       apply Option.bind_congr
       intro movedA _hMoved
@@ -2569,7 +2569,7 @@ private theorem mergeHiSucceedTraced_safe
         storageFrame := hinvariant.storageFrame }
     · simp [mergeHiSucceedTraced?, hnb, TraceResult.map,
         TraceResult.pure, result]
-    · rw [mergeHiSucceedTraced?, if_pos hnb]
+    · rw [mergeHiSucceedTraced?, ite_eq_left hnb]
       exact MovementTraceSafe.map _ _
         (MovementTraceSafe.pure cursor.state)
   · have hnbPositive : 0 < cursor.nb := Nat.pos_of_ne_zero hnb
@@ -2613,11 +2613,11 @@ private theorem mergeHiSucceedTraced_safe
           (MergeHiStableFrame.of_movement hpost.frame)
         storageFrame := hinvariant.storageFrame.trans
           (MergeHiStorageFrame.of_movement hpost.frame) }
-    · rw [mergeHiSucceedTraced?, if_neg hnb]
+    · rw [mergeHiSucceedTraced?, ite_eq_right hnb]
       change Option.map _ _ = some result
       rw [hpost.success]
       rfl
-    · rw [mergeHiSucceedTraced?, if_neg hnb]
+    · rw [mergeHiSucceedTraced?, ite_eq_right hnb]
       exact MovementTraceSafe.map _ _ hpost.traceSafe
     · change request ≤ state.alloced.toNat
       rw [hpost.frame.alloced]
@@ -2701,11 +2701,11 @@ theorem mergeHiMoveABlockTraced_safe
       exact hinvariant.copyABlock count hcount state hpost.frame htemp
         hpost.valuesMode
     refine ⟨moved, ?_, ?_, hmovedInv, rfl, rfl⟩
-    · rw [mergeHiMoveABlockTraced?, if_neg hzero]
+    · rw [mergeHiMoveABlockTraced?, ite_eq_right hzero]
       simp only [TraceResult.map]
       rw [hpost.success]
       rfl
-    · rw [mergeHiMoveABlockTraced?, if_neg hzero]
+    · rw [mergeHiMoveABlockTraced?, ite_eq_right hzero]
       exact MovementTraceSafe.map _ _ hpost.traceSafe
 
 theorem mergeHiMoveBBlockTraced_safe
@@ -2792,11 +2792,11 @@ theorem mergeHiMoveBBlockTraced_safe
       exact hinvariant.copyBBlock count hcount state hpost.frame htempEq
         hpost.valuesMode
     refine ⟨moved, ?_, ?_, hmovedInv, rfl, rfl⟩
-    · rw [mergeHiMoveBBlockTraced?, if_neg hzero]
+    · rw [mergeHiMoveBBlockTraced?, ite_eq_right hzero]
       simp only [TraceResult.map]
       rw [hpost.success]
       rfl
-    · rw [mergeHiMoveBBlockTraced?, if_neg hzero]
+    · rw [mergeHiMoveBBlockTraced?, ite_eq_right hzero]
       exact MovementTraceSafe.map _ _ hpost.traceSafe
 
 private theorem mergeHiGallopBFinishTraced_safe
@@ -2878,7 +2878,7 @@ private theorem mergeHiGallopBFinishTraced_safe
         have hzero' : movedB.na - 1 = 0 := by simpa [afterA] using hzero
         exact ⟨result, by
           simp only [tracedTail, tail]
-          rw [if_pos hzero', if_pos hzero']
+          rw [ite_eq_left hzero', ite_eq_left hzero']
           exact hresult⟩
       · have hzero' : ¬ movedB.na - 1 = 0 := by simpa [afterA] using hzero
         let gallopAgain := mergeHiCountAtLeast aCount MIN_GALLOP ||
@@ -2895,12 +2895,12 @@ private theorem mergeHiGallopBFinishTraced_safe
           rcases hnext nextCursor hnextInv hnextFuel with ⟨result, hresult⟩
           exact ⟨result, by
             simp only [tracedTail, tail]
-            rw [if_neg hzero', if_neg hzero']
+            rw [ite_eq_right hzero', ite_eq_right hzero']
             have hgallop' :
                 (mergeHiCountAtLeast aCount MIN_GALLOP ||
                   mergeHiCountAtLeast bCount MIN_GALLOP) = true := by
               exact hgallop
-            rw [if_pos hgallop', if_pos hgallop']
+            rw [ite_eq_left hgallop', ite_eq_left hgallop']
             exact hresult⟩
         · let minGallop := afterB.minGallop + 1
           let nextCursor : MergeHiCursor κ ν :=
@@ -2917,12 +2917,12 @@ private theorem mergeHiGallopBFinishTraced_safe
           rcases hnext nextCursor hnextInv hnextFuel with ⟨result, hresult⟩
           exact ⟨result, by
             simp only [tracedTail, tail]
-            rw [if_neg hzero', if_neg hzero']
+            rw [ite_eq_right hzero', ite_eq_right hzero']
             have hgallop' : ¬
                 (mergeHiCountAtLeast aCount MIN_GALLOP ||
                   mergeHiCountAtLeast bCount MIN_GALLOP) = true := by
               exact hgallop
-            rw [if_neg hgallop', if_neg hgallop']
+            rw [ite_eq_right hgallop', ite_eq_right hgallop']
             exact hresult⟩
     rcases htail with ⟨result, htail⟩
     have hpost := MergeHiCorePost.prepend origin request
@@ -3154,7 +3154,7 @@ private theorem mergeHiGallopRoundFinishTraced_safe
         have hone' : movedA.nb - 1 = 1 := by simpa [afterB] using hone
         exact ⟨result, by
           simp only [tracedTail, tail]
-          rw [if_pos hone', if_pos hone']
+          rw [ite_eq_left hone', ite_eq_left hone']
           exact hresult⟩
       · have hafterNa : 0 < afterB.na := by simpa [afterB] using hna
         have hafterNb : 1 < afterB.nb := by
@@ -3168,7 +3168,7 @@ private theorem mergeHiGallopRoundFinishTraced_safe
         have hone' : ¬ movedA.nb - 1 = 1 := by simpa [afterB] using hone
         exact ⟨result, by
           simp only [tracedTail, tail]
-          rw [if_neg hone', if_neg hone']
+          rw [ite_eq_right hone', ite_eq_right hone']
           exact hresult⟩
     rcases htail with ⟨result, htail⟩
     have hpost := MergeHiCorePost.prepend origin request
@@ -3467,7 +3467,7 @@ private theorem mergeHiCopyATraced_safe
       storageFrame := (hinvariant.storageFrame.trans
         (MergeHiStorageFrame.of_movement hshift.frame)).trans
           (MergeHiStorageFrame.of_movement hcellFrame) }
-  · rw [mergeHiCopyATraced?, if_pos htail]
+  · rw [mergeHiCopyATraced?, ite_eq_left htail]
     dsimp only
     unfold TraceResult.bind
     rw [hshift.success]
@@ -3476,7 +3476,7 @@ private theorem mergeHiCopyATraced_safe
         (cursor.dest - Int.ofNat cursor.na) cursor.ssb).result = some result
     rw [hcell]
     rfl
-  · rw [mergeHiCopyATraced?, if_pos htail]
+  · rw [mergeHiCopyATraced?, ite_eq_left htail]
     apply MovementTraceSafe.bind _ _ shifted hshift.success hshift.traceSafe
     exact MovementTraceSafe.map _ _ hcellSafe
   · change request ≤ state.alloced.toNat
@@ -3899,7 +3899,7 @@ private theorem mergeHiSucceedTraced_hasTempRead
       (cursor.dest - Int.ofNat (cursor.nb - 1)) 0 hmain htemp
       hinvariant.tempValuesMode hinvariant.tempInvariant hinvariant.tempLive
       hinvariant.valuesMode with ⟨_, hpost⟩
-  rw [mergeHiSucceedTraced?, if_neg (Nat.ne_of_gt hnb)]
+  rw [mergeHiSucceedTraced?, ite_eq_right (Nat.ne_of_gt hnb)]
   exact hpost.tempReadEvent hnb
 
 private theorem mergeHiCopyATraced_hasTempRead
@@ -3941,7 +3941,7 @@ private theorem mergeHiCopyATraced_hasTempRead
       (cursor.ssa + (1 - Int.ofNat cursor.na)) cursor.na
       hinvariant.tempInvariant hinvariant.tempLive hinvariant.valuesMode
       hdst hsrc with ⟨shifted, hshift⟩
-  rw [mergeHiCopyATraced?, if_pos htail]
+  rw [mergeHiCopyATraced?, ite_eq_left htail]
   exact mergeHiHasTempAccess_bind_right _ _ shifted .read hshift.success
     (mergeHiTempToMainCell_hasTempRead shifted
       (cursor.dest - Int.ofNat cursor.na) cursor.ssb)
@@ -3953,7 +3953,7 @@ private theorem mergeHiInitialLoop_hasTempRead
     (mergeHiLoopTraced? (fuel + 1) cursor).trace.HasTempAccess .read := by
   have hterminal : ¬ (cursor.na = 0 ∨ cursor.nb = 0) := by omega
   have hone : ¬ cursor.nb = 1 := by omega
-  rw [mergeHiLoopTraced?, if_neg hterminal, if_neg hone, hphase]
+  rw [mergeHiLoopTraced?, ite_eq_right hterminal, ite_eq_right hone, hphase]
   exact mergeHiHasTempAccess_bind_left _ _ .read
     (mergeHiTempPayloadRead_hasTempAccess cursor.state.a cursor.ssb)
 
@@ -4283,8 +4283,8 @@ private theorem mergeHi_lockstep
       · have hterminal : ¬ ((mergeHiInitialCursor call forced).na = 0 ∨
             (mergeHiInitialCursor call forced).nb = 0) := by
           omega
-        rw [hloopFuelEq, mergeHiLoopTraced?, if_neg hterminal,
-          if_pos hnbOne]
+        rw [hloopFuelEq, mergeHiLoopTraced?, ite_eq_right hterminal,
+          ite_eq_left hnbOne]
         exact mergeHiCopyATraced_hasTempRead (mergeHiAllocated call).state call.nb
           (mergeHiInitialCursor call forced) hinitial ⟨hnbOne, hnaPositive⟩
       · have hnbLarge : 1 < (mergeHiInitialCursor call forced).nb := by
@@ -4354,7 +4354,7 @@ private theorem mergeHi_lockstep
           mergeHiInitialDataToTempPermit call.nb
           (mergeHiAllocated call).state 0 call.ssb).bind
             (mergeHiTracedAfterCopy call) := by
-    rw [mergeHiTraced?, if_pos hentryGuard]
+    rw [mergeHiTraced?, ite_eq_left hentryGuard]
     change (match (mergeHiAllocated call).outcome with
       | .guardRejected => _
       | .reused => _
@@ -4369,7 +4369,7 @@ private theorem mergeHi_lockstep
         (mergeHiMemcpyDataToTemp? .initialDataToTemp rfl call.nb
           (mergeHiAllocated call).state 0 call.ssb).bind
             (mergeHiReferenceAfterCopy call) := by
-    rw [mergeHi?, if_pos hentryGuard]
+    rw [mergeHi?, ite_eq_left hentryGuard]
     change (match (mergeHiAllocated call).outcome with
       | .guardRejected => _
       | .reused => _

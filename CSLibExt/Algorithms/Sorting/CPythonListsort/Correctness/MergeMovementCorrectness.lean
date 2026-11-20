@@ -10,9 +10,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeLo
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeHi
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.SortSliceRange
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Exact semantics of merge movement primitives
 
@@ -155,7 +152,7 @@ theorem ReadFrame.equalOutsideRange_ofNat
   rw [← hframe.1]
   by_cases hoffset :
       offset < min (otherStart + otherCount) before.entries.size - otherStart
-  · rw [if_pos hoffset, if_pos hoffset]
+  · rw [ite_eq_left hoffset, ite_eq_left hoffset]
     have hindexOutside :
         Int.ofNat (otherStart + offset) < Int.ofNat start ∨
           Int.ofNat start + Int.ofNat count ≤
@@ -168,7 +165,7 @@ theorem ReadFrame.equalOutsideRange_ofNat
         omega
     have hread := hframe.2 (Int.ofNat (otherStart + offset)) hindexOutside
     simpa only [read?_ofNat] using hread.symm
-  · rw [if_neg hoffset, if_neg hoffset]
+  · rw [ite_eq_right hoffset, ite_eq_right hoffset]
 
 /-- Natural-indexed external frame for a successful whole-entry write. -/
 theorem write_equalOutsideRange_of_eq_some
@@ -341,9 +338,9 @@ theorem memmove_copiesRange_of_eq_some
     (hresult : slice.memmove? dst src count = some updated) :
     CopiesRange slice updated dst src count := by
   by_cases hdirection : dst ≤ src
-  · rw [memmove?, memmoveDirection, if_pos hdirection] at hresult
+  · rw [memmove?, memmoveDirection, ite_eq_left hdirection] at hresult
     exact (memmoveForward_correct count slice updated dst src hdirection hresult).1
-  · rw [memmove?, memmoveDirection, if_neg hdirection] at hresult
+  · rw [memmove?, memmoveDirection, ite_eq_right hdirection] at hresult
     exact (memmoveBackward_correct count slice updated dst src
       (lt_of_not_ge hdirection) hresult).1
 
@@ -354,9 +351,9 @@ theorem memmove_readFrame_of_eq_some
     (hresult : slice.memmove? dst src count = some updated) :
     ReadFrame slice updated dst count := by
   by_cases hdirection : dst ≤ src
-  · rw [memmove?, memmoveDirection, if_pos hdirection] at hresult
+  · rw [memmove?, memmoveDirection, ite_eq_left hdirection] at hresult
     exact (memmoveForward_correct count slice updated dst src hdirection hresult).2
-  · rw [memmove?, memmoveDirection, if_neg hdirection] at hresult
+  · rw [memmove?, memmoveDirection, ite_eq_right hdirection] at hresult
     exact (memmoveBackward_correct count slice updated dst src
       (lt_of_not_ge hdirection) hresult).2
 
@@ -397,10 +394,10 @@ private theorem memmove_dst_nonnegative_of_success
     (hresult : slice.memmove? dst src count = some updated) :
     0 ≤ dst := by
   by_cases hdirection : dst ≤ src
-  · rw [memmove?, memmoveDirection, if_pos hdirection] at hresult
+  · rw [memmove?, memmoveDirection, ite_eq_left hdirection] at hresult
     exact memmoveForward_dst_nonnegative_of_success count slice updated dst src
       hcount hresult
-  · rw [memmove?, memmoveDirection, if_neg hdirection] at hresult
+  · rw [memmove?, memmoveDirection, ite_eq_right hdirection] at hresult
     exact memmoveBackward_dst_nonnegative_of_success count slice updated dst src
       hcount hresult
 
@@ -414,9 +411,9 @@ theorem memmove_equalOutsideRange_of_eq_some
   · subst count
     have hsame : updated = slice := by
       by_cases hdirection : dst ≤ src
-      · rw [memmove?, memmoveDirection, if_pos hdirection] at hresult
+      · rw [memmove?, memmoveDirection, ite_eq_left hdirection] at hresult
         simpa [memmoveForward?] using hresult.symm
-      · rw [memmove?, memmoveDirection, if_neg hdirection] at hresult
+      · rw [memmove?, memmoveDirection, ite_eq_right hdirection] at hresult
         simpa [memmoveBackward?] using hresult.symm
     subst updated
     exact EqualOutsideRange.refl slice dst.toNat 0

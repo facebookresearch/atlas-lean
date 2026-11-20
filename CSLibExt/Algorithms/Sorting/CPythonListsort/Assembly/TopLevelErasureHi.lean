@@ -8,9 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.MergeHiSafety
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Raw-domain erasure for `merge_hi`
 
@@ -45,20 +42,20 @@ theorem erase_mergeHiLoopTraced (fuel : Nat) (cursor : MergeHiCursor κ ν) :
   | zero =>
       simp only [mergeHiLoopTraced?, mergeHiLoop?]
       by_cases hTerminal : cursor.na = 0 ∨ cursor.nb = 0
-      · rw [if_pos hTerminal, if_pos hTerminal, erase_mergeHiSucceedTraced]
-      · rw [if_neg hTerminal, if_neg hTerminal]
+      · rw [ite_eq_left hTerminal, ite_eq_left hTerminal, erase_mergeHiSucceedTraced]
+      · rw [ite_eq_right hTerminal, ite_eq_right hTerminal]
         by_cases hCopyA : cursor.nb = 1
-        · rw [if_pos hCopyA, if_pos hCopyA, erase_mergeHiCopyATraced]
-        · rw [if_neg hCopyA, if_neg hCopyA,
+        · rw [ite_eq_left hCopyA, ite_eq_left hCopyA, erase_mergeHiCopyATraced]
+        · rw [ite_eq_right hCopyA, ite_eq_right hCopyA,
             erase_mergeHiFuelExhaustedTraced]
   | succ fuel ih =>
       simp only [mergeHiLoopTraced?, mergeHiLoop?]
       by_cases hTerminal : cursor.na = 0 ∨ cursor.nb = 0
-      · rw [if_pos hTerminal, if_pos hTerminal, erase_mergeHiSucceedTraced]
-      · rw [if_neg hTerminal, if_neg hTerminal]
+      · rw [ite_eq_left hTerminal, ite_eq_left hTerminal, erase_mergeHiSucceedTraced]
+      · rw [ite_eq_right hTerminal, ite_eq_right hTerminal]
         by_cases hCopyA : cursor.nb = 1
-        · rw [if_pos hCopyA, if_pos hCopyA, erase_mergeHiCopyATraced]
-        · rw [if_neg hCopyA, if_neg hCopyA]
+        · rw [ite_eq_left hCopyA, ite_eq_left hCopyA, erase_mergeHiCopyATraced]
+        · rw [ite_eq_right hCopyA, ite_eq_right hCopyA]
           cases hPhase : cursor.phase with
           | straight aCount bCount =>
               apply mergeHiErase_bind_reachable
@@ -74,7 +71,7 @@ theorem erase_mergeHiLoopTraced (fuel : Nat) (cursor : MergeHiCursor κ ν) :
               intro left _
               by_cases hCompare :
                   iflt cursor.state.key_compare right.key left.key = true
-              · simp only [hCompare, if_true]
+              · simp only [hCompare, ite_true]
                 apply mergeHiErase_bind_reachable
                   (mergeHiCopyDataDecrTraced? cursor.state cursor.dest
                     cursor.ssa)
@@ -172,7 +169,7 @@ theorem erase_mergeHiTraced (state : MergeState κ ν) (ssa ssb : Int)
                   fuelExhausted := false }
           | .reused | .grown =>
               mergeHiTracedAllocatedTail? allocated.state ssa ssb na nb := by
-      rw [mergeHiTraced?, if_pos hInput]
+      rw [mergeHiTraced?, ite_eq_left hInput]
       rfl
     have hraw :
         mergeHi? state ssa ssb na nb =
@@ -184,14 +181,14 @@ theorem erase_mergeHiTraced (state : MergeState κ ν) (ssa ssb : Int)
                   fuelExhausted := false }
           | .reused | .grown =>
               mergeHiAllocatedTail? allocated.state ssa ssb na nb := by
-      rw [mergeHi?, if_pos hInput]
+      rw [mergeHi?, ite_eq_left hInput]
       rfl
     rw [htraced, hraw]
     cases allocated.outcome with
     | guardRejected => rfl
     | reused => exact erase_mergeHiTracedAllocatedTail _ _ _ _ _
     | grown => exact erase_mergeHiTracedAllocatedTail _ _ _ _ _
-  · rw [mergeHiTraced?, mergeHi?, if_neg hInput, if_neg hInput]
+  · rw [mergeHiTraced?, mergeHi?, ite_eq_right hInput, ite_eq_right hInput]
     rfl
 
 end CPythonListsort

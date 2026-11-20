@@ -10,9 +10,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.Order
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.SortSliceRange
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeAt
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Shared semantic precondition for both merge directions
 

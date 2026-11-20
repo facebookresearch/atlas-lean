@@ -10,9 +10,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.GallopLeftSafety
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.GallopRightSafety
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.Order
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Correctness of the two biased gallops
 
@@ -190,10 +187,10 @@ private theorem gallopLeftBinaryFromSource_partition
           rcases ih (middle + 1) upper (by omega) hupper hbefore' hafter
               hbudget' with ⟨result, hresult, hfuel, hpartition⟩
           refine ⟨result, ?_, hfuel, hpartition⟩
-          rw [gallopLeftBinaryFromSource?, if_pos hsearch]
+          rw [gallopLeftBinaryFromSource?, ite_eq_left hsearch]
           simp only [gallopBindOptionAcross]
           rw [hread']
-          simp only [if_pos hcompare]
+          simp only [ite_eq_left hcompare]
           simpa only [middle] using hresult
         · have hcompareRaw : ¬lt entry.key key = true := by
             simpa only [iflt] using hcompare
@@ -211,10 +208,10 @@ private theorem gallopLeftBinaryFromSource_partition
           rcases ih lower middle hlowerMiddle (by omega) hbefore hafter'
               hbudget' with ⟨result, hresult, hfuel, hpartition⟩
           refine ⟨result, ?_, hfuel, hpartition⟩
-          rw [gallopLeftBinaryFromSource?, if_pos hsearch]
+          rw [gallopLeftBinaryFromSource?, ite_eq_left hsearch]
           simp only [gallopBindOptionAcross]
           rw [hread']
-          simp only [if_neg hcompare]
+          simp only [ite_eq_right hcompare]
           simpa only [middle] using hresult
       · have heq : lower = upper := by omega
         subst upper
@@ -282,10 +279,10 @@ private theorem gallopLeftRightExponential_partition
               hafterResult⟩
           refine ⟨result, ?_, hfuel, horder, hlast, hbeforeResult,
             hafterResult⟩
-          rw [gallopLeftRightExponentialFromSource?, if_pos hprobe]
+          rw [gallopLeftRightExponentialFromSource?, ite_eq_left hprobe]
           simp only [gallopBindOptionAcross]
           rw [hread]
-          simp only [if_pos hcompare, if_pos hguard]
+          simp only [ite_eq_left hcompare, ite_eq_left hguard]
           exact hresult
         · have hcompareRaw : ¬lt entry.key key = true := by
             simpa only [iflt] using hcompare
@@ -293,10 +290,10 @@ private theorem gallopLeftRightExponential_partition
             read_false_of_not_before lt source key hread hcompareRaw
           refine ⟨⟨lastOffset, offset, false⟩, ?_, rfl, hlastOffset,
             hlastMax, hbefore, ?_⟩
-          · rw [gallopLeftRightExponentialFromSource?, if_pos hprobe]
+          · rw [gallopLeftRightExponentialFromSource?, ite_eq_left hprobe]
             simp only [gallopBindOptionAcross]
             rw [hread]
-            simp only [if_neg hcompare]
+            simp only [ite_eq_right hcompare]
           · intro i hi hin hpred
             have hcap : min offset maxOffset = offset := Nat.min_eq_left (Nat.le_of_lt hprobe)
             rw [hcap] at hi
@@ -361,10 +358,10 @@ private theorem gallopLeftLeftExponential_partition
           have hcap : min offset maxOffset = offset := Nat.min_eq_left (by omega)
           refine ⟨⟨lastOffset, offset, false⟩, ?_, rfl, hlastOffset,
             hlastMax, ?_, hafter⟩
-          · rw [gallopLeftLeftExponentialFromSource?, if_pos hprobe]
+          · rw [gallopLeftLeftExponentialFromSource?, ite_eq_left hprobe]
             simp only [gallopBindOptionAcross]
             rw [hread]
-            simp only [if_pos hcompare]
+            simp only [ite_eq_left hcompare]
           · intro i hi
             rw [hcap] at hi
             by_cases hieq : i = hint - offset
@@ -388,10 +385,10 @@ private theorem gallopLeftLeftExponential_partition
               hafterResult⟩
           refine ⟨result, ?_, hfuel, horder, hlast, hbeforeResult,
             hafterResult⟩
-          rw [gallopLeftLeftExponentialFromSource?, if_pos hprobe]
+          rw [gallopLeftLeftExponentialFromSource?, ite_eq_left hprobe]
           simp only [gallopBindOptionAcross]
           rw [hread]
-          simp only [if_neg hcompare, if_pos hguard]
+          simp only [ite_eq_right hcompare, ite_eq_left hguard]
           exact hresult
       · refine ⟨⟨lastOffset, offset, false⟩, ?_, rfl, hlastOffset,
           hlastMax, ?_, hafter⟩
@@ -466,12 +463,12 @@ private theorem gallopLeftFromSource_partition
         simp only [Int.ofNat_eq_natCast]
         dsimp [capped]
         omega
-      rw [if_pos houter]
+      rw [ite_eq_left houter]
       have hinner :
           0 ≤ Int.ofNat exponential.lastOffset + Int.ofNat hint + 1 ∧
           0 ≤ Int.ofNat capped + Int.ofNat hint := by
         constructor <;> omega
-      rw [if_pos hinner]
+      rw [ite_eq_left hinner]
       have hlowerInt :
           (Int.ofNat exponential.lastOffset + Int.ofNat hint + 1).toNat =
             lower := by
@@ -492,8 +489,8 @@ private theorem gallopLeftFromSource_partition
         simpa only [Int.ofNat_eq_natCast] using hupperInt
       congr 2
     refine ⟨result, ?_, hresultFuel, hpartition⟩
-    rw [gallopLeftFromSource?, if_pos hinput]
-    simp only [gallopBindOptionAcross, hhinted, if_pos hcompare,
+    rw [gallopLeftFromSource?, ite_eq_left hinput]
+    simp only [gallopBindOptionAcross, hhinted, ite_eq_left hcompare,
       hexponential]
     rw [Option.bind_eq_bind, Option.bind_some]
     rw [hexponentialFuel]
@@ -560,13 +557,13 @@ private theorem gallopLeftFromSource_partition
           Int.ofNat hint - Int.ofNat exponential.lastOffset ≤ Int.ofNat n := by
         simp only [Int.ofNat_eq_natCast]
         omega
-      rw [if_pos houter]
+      rw [ite_eq_left houter]
       have hinner :
           0 ≤ Int.ofNat hint - Int.ofNat capped + 1 ∧
           0 ≤ Int.ofNat hint - Int.ofNat exponential.lastOffset := by
         simp only [Int.ofNat_eq_natCast]
         omega
-      rw [if_pos hinner]
+      rw [ite_eq_left hinner]
       simp
       have hlowerInt' :
           (((hint : Int) - (capped : Int) + 1).toNat) = lower := by
@@ -576,8 +573,8 @@ private theorem gallopLeftFromSource_partition
         simpa only [Int.ofNat_eq_natCast] using hupperInt
       congr 2
     refine ⟨result, ?_, hresultFuel, hpartition⟩
-    rw [gallopLeftFromSource?, if_pos hinput]
-    simp only [gallopBindOptionAcross, hhinted, if_neg hcompare,
+    rw [gallopLeftFromSource?, ite_eq_left hinput]
+    simp only [gallopBindOptionAcross, hhinted, ite_eq_right hcompare,
       hexponential]
     rw [Option.bind_eq_bind, Option.bind_some]
     rw [hexponentialFuel]

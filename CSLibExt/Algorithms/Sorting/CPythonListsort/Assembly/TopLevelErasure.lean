@@ -10,9 +10,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.FoundNewRunSafety
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.MergeForceCollapseSafety
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.TopLevelErasureHi
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Raw-domain erasure for the traced merge chain
 
@@ -67,20 +64,20 @@ theorem erase_mergeLoLoopTraced (fuel : Nat)
             intro firstB _
             by_cases hcompare :
                 iflt machine.state.key_compare firstB.key firstA.key = true
-            · simp only [hcompare, if_true]
+            · simp only [hcompare, ite_true]
               apply topLevelErase_bind_reachable
                 (mergeLoCopyBIncrTraced? machine)
                 (mergeLoCopyBIncr? machine)
                 _ _ (erase_mergeLoCopyBIncrTraced machine)
               intro nextMachine _
               by_cases hfinished : nextMachine.nb = 0
-              · simp only [hfinished, if_true]
+              · simp only [hfinished, ite_true]
                 exact erase_mergeLoSucceedTraced _
-              · simp only [hfinished, if_false]
+              · simp only [hfinished, ite_false]
                 by_cases hthreshold :
                     mergeLoCountAtLeastWord (bCount + 1)
                       nextMachine.minGallop = true
-                · simp only [hthreshold, if_true]
+                · simp only [hthreshold, ite_true]
                   exact ih _ _
                 · simp only [hthreshold]
                   exact ih _ _
@@ -91,13 +88,13 @@ theorem erase_mergeLoLoopTraced (fuel : Nat)
                 _ _ (erase_mergeLoCopyAIncrTraced machine)
               intro nextMachine _
               by_cases hfinished : nextMachine.na = 1
-              · simp only [hfinished, if_true]
+              · simp only [hfinished, ite_true]
                 exact erase_mergeLoCopyBTraced _
-              · simp only [hfinished, if_false]
+              · simp only [hfinished, ite_false]
                 by_cases hthreshold :
                     mergeLoCountAtLeastWord (aCount + 1)
                       nextMachine.minGallop = true
-                · simp only [hthreshold, if_true]
+                · simp only [hthreshold, ite_true]
                   exact ih _ _
                 · simp only [hthreshold]
                   exact ih _ _
@@ -117,9 +114,9 @@ theorem erase_mergeLoTraced
   split
   · by_cases hguard :
         (mergeGetmem state (BitVec.ofNat 64 na)).outcome = .guardRejected
-    · simp only [hguard, if_true]
+    · simp only [hguard, ite_true]
       rfl
-    · simp only [hguard, if_false]
+    · simp only [hguard, ite_false]
       apply topLevelErase_bind_reachable
         (mainToTempMemcpyTraced? (.lo .initialDataToTemp)
           mergeLoInitialDataToTempPermit na
@@ -143,13 +140,13 @@ theorem erase_mergeLoTraced
         _ _ (erase_mergeLoCopyBIncrTraced machine)
       intro nextMachine _
       by_cases hfinishedB : nextMachine.nb = 0
-      · simp only [hfinishedB, if_true]
+      · simp only [hfinishedB, ite_true]
         exact erase_mergeLoSucceedTraced _
-      · simp only [hfinishedB, if_false]
+      · simp only [hfinishedB, ite_false]
         by_cases hfinishedA : nextMachine.na = 1
-        · simp only [hfinishedA, if_true]
+        · simp only [hfinishedA, ite_true]
           exact erase_mergeLoCopyBTraced _
-        · simp only [hfinishedA, if_false]
+        · simp only [hfinishedA, ite_false]
           exact erase_mergeLoLoopTraced _ _ _
   · rfl
 

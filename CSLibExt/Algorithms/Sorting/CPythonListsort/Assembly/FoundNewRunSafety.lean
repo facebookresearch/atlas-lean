@@ -116,7 +116,7 @@ private theorem pendingRunRead_result_of_bounds (state : MergeState κ ν)
   change (TraceResult.pendingRunRead? state (Int.ofNat index)).erase = _
   rw [TraceResult.erase_pendingRunRead]
   have hnonnegative : 0 ≤ Int.ofNat index := Int.natCast_nonneg _
-  rw [if_pos hnonnegative]
+  rw [ite_eq_left hnonnegative]
   have htoi : (Int.ofNat index).toNat = index := rfl
   rw [htoi]
   exact Array.getElem?_eq_getElem hindex
@@ -167,7 +167,7 @@ private theorem pendingRunPowerWrite_result_of_lookup
     (TraceResult.pendingRunPowerWrite? state (Int.ofNat index) power).erase = _
   rw [TraceResult.erase_pendingRunPowerWrite]
   have hnonnegative : 0 ≤ Int.ofNat index := Int.natCast_nonneg _
-  rw [if_pos hnonnegative]
+  rw [ite_eq_left hnonnegative]
   have htoi : (Int.ofNat index).toNat = index := rfl
   rw [htoi]
   simp [hlookup]
@@ -234,7 +234,7 @@ theorem erase_setTopPowerTraced (state : MergeState κ ν) (power : Nat) :
   · rw [TraceResult.erase_pendingRunPowerWrite]
     have hnonnegative :
         0 ≤ Int.ofNat (state.pending.size - 1) := Int.natCast_nonneg _
-    rw [if_pos hnonnegative]
+    rw [ite_eq_left hnonnegative]
     have htoi :
         (Int.ofNat (state.pending.size - 1)).toNat =
           state.pending.size - 1 := rfl
@@ -296,11 +296,11 @@ private theorem setTopPowerTraced_safe (state : MergeState κ ν)
   refine ⟨after, ?_⟩
   constructor
   · unfold setTopPowerTraced?
-    rw [if_neg]
+    rw [ite_eq_right]
     · exact hwriteResult
     · simpa [Array.isEmpty_iff_size_eq_zero] using ne_of_gt hsizePositive
   · unfold setTopPowerTraced?
-    rw [if_neg]
+    rw [ite_eq_right]
     · exact hwriteSafe
     · simpa [Array.isEmpty_iff_size_eq_zero] using ne_of_gt hsizePositive
   · exact erase_setTopPowerTraced state power
@@ -479,41 +479,41 @@ private theorem foundNewRunLoopTraced_safe
                 (foundNewRunLoopTraced? (remaining + 1) state power).trace.memoryEvents =
                   (mergeAtTraced? state (state.pending.size - 2)).trace.memoryEvents ++
                     (foundNewRunLoopTraced? remaining merged.state power).trace.memoryEvents := by
-              simp only [foundNewRunLoopTraced?, hmany, if_pos,
+              simp only [foundNewRunLoopTraced?, hmany, ite_eq_left,
                 TraceResult.trace_bind, hreadResult]
               simp only [hprecedingPower]
-              rw [if_pos (by simpa [precedingPower] using hguard)]
+              rw [ite_eq_left (by simpa [precedingPower] using hguard)]
               simp only [TraceResult.trace_bind, hmerge.resultEq]
-              rw [if_pos hmergeSuccess]
+              rw [ite_eq_left hmergeSuccess]
               simp [AccessTrace.memoryEvents_compose,
                 TraceResult.trace_pendingRunRead, AccessTrace.singletonAccess]
             refine ⟨result, ?_⟩
             constructor
-            · simp only [foundNewRunLoopTraced?, hmany, if_pos]
+            · simp only [foundNewRunLoopTraced?, hmany, ite_eq_left]
               rw [TraceResult.bind_result_of_eq_some _ _ preceding hreadResult]
               simp only [hprecedingPower]
-              rw [if_pos (by simpa [precedingPower] using hguard)]
+              rw [ite_eq_left (by simpa [precedingPower] using hguard)]
               rw [TraceResult.bind_result_of_eq_some _ _ merged
                 hmerge.resultEq]
-              rw [if_pos hmergeSuccess]
+              rw [ite_eq_left hmergeSuccess]
               exact hresult.resultEq
             · exact hresult.returnCode
             · exact hresult.resultFuel
-            · simp only [foundNewRunLoopTraced?, hmany, if_pos]
+            · simp only [foundNewRunLoopTraced?, hmany, ite_eq_left]
               apply MovementTraceSafe.bind _ _ preceding hreadResult hreadSafe
               simp only [hprecedingPower]
-              rw [if_pos (by simpa [precedingPower] using hguard)]
+              rw [ite_eq_left (by simpa [precedingPower] using hguard)]
               apply MovementTraceSafe.bind _ _ merged hmerge.resultEq
                 hmergeSafe
-              rw [if_pos hmergeSuccess]
+              rw [ite_eq_left hmergeSuccess]
               exact hresult.traceSafe
             · simp only [foundNewRunLoopTraced?, foundNewRunLoop?, hmany,
-                if_pos, TraceResult.erase_bind,
+                ite_eq_left, TraceResult.erase_bind,
                 TraceResult.erase_pendingRunRead]
               have hnonnegative :
                   0 ≤ Int.ofNat (state.pending.size - 2) :=
                 Int.natCast_nonneg _
-              rw [if_pos hnonnegative]
+              rw [ite_eq_left hnonnegative]
               have htoi :
                   (Int.ofNat (state.pending.size - 2)).toNat =
                     state.pending.size - 2 := rfl
@@ -524,9 +524,9 @@ private theorem foundNewRunLoopTraced_safe
               have hguard' : power < pendingBoundaryPower state.basekeys
                   state.listlen preceding top := by
                 exact hguard
-              simp only [if_pos hguard', TraceResult.erase_bind]
+              simp only [ite_eq_left hguard', TraceResult.erase_bind]
               rw [hmerge.exactErasure, hmergeRaw]
-              simp only [Option.bind_some, if_pos hmergeSuccess]
+              simp only [Option.bind_some, ite_eq_left hmergeSuccess]
               exact hresult.exactErasure
             · exact hresult.tempInvariant
             · exact hresult.tempLive
@@ -571,38 +571,38 @@ private theorem foundNewRunLoopTraced_safe
               exact hset.resultEq
             have hmemoryEvents :
                 (foundNewRunLoopTraced? (remaining + 1) state power).trace.memoryEvents = [] := by
-              simp only [foundNewRunLoopTraced?, hmany, if_pos,
+              simp only [foundNewRunLoopTraced?, hmany, ite_eq_left,
                 TraceResult.trace_bind, hreadResult]
               simp only [hprecedingPower]
-              rw [if_neg (by simpa [precedingPower] using hguard)]
+              rw [ite_eq_right (by simpa [precedingPower] using hguard)]
               simp [TraceResult.memoryEvents_map,
                 AccessTrace.memoryEvents_compose,
                 TraceResult.trace_pendingRunRead, AccessTrace.singletonAccess,
                 setTopPowerTraced_memoryEvents_eq_nil]
             refine ⟨result, ?_⟩
             constructor
-            · simp only [foundNewRunLoopTraced?, hmany, if_pos]
+            · simp only [foundNewRunLoopTraced?, hmany, ite_eq_left]
               rw [TraceResult.bind_result_of_eq_some _ _ preceding hreadResult]
               simp only [hprecedingPower]
-              rw [if_neg (by simpa [precedingPower] using hguard)]
+              rw [ite_eq_right (by simpa [precedingPower] using hguard)]
               change Option.map foundNewRunSuccessResult
                 (setTopPowerTraced? state power).result = some result
               rw [hset.resultEq]
               rfl
             · rfl
             · rfl
-            · simp only [foundNewRunLoopTraced?, hmany, if_pos]
+            · simp only [foundNewRunLoopTraced?, hmany, ite_eq_left]
               apply MovementTraceSafe.bind _ _ preceding hreadResult hreadSafe
               simp only [hprecedingPower]
-              rw [if_neg (by simpa [precedingPower] using hguard)]
+              rw [ite_eq_right (by simpa [precedingPower] using hguard)]
               exact MovementTraceSafe.map _ _ hset.traceSafe
             · simp only [foundNewRunLoopTraced?, foundNewRunLoop?, hmany,
-                if_pos, TraceResult.erase_bind,
+                ite_eq_left, TraceResult.erase_bind,
                 TraceResult.erase_pendingRunRead]
               have hnonnegative :
                   0 ≤ Int.ofNat (state.pending.size - 2) :=
                 Int.natCast_nonneg _
-              rw [if_pos hnonnegative]
+              rw [ite_eq_left hnonnegative]
               have htoi :
                   (Int.ofNat (state.pending.size - 2)).toNat =
                     state.pending.size - 2 := rfl
@@ -613,7 +613,7 @@ private theorem foundNewRunLoopTraced_safe
               have hguard' : ¬power < pendingBoundaryPower state.basekeys
                   state.listlen preceding top := by
                 exact hguard
-              simp only [if_neg hguard', TraceResult.erase_map]
+              simp only [ite_eq_right hguard', TraceResult.erase_map]
               rw [hset.exactErasure, hsetRaw]
               simp [foundNewRunSuccessResult]
             · change TempStorageInv after.a after.alloced
@@ -650,22 +650,22 @@ private theorem foundNewRunLoopTraced_safe
           exact hset.resultEq
         have hmemoryEvents :
             (foundNewRunLoopTraced? (remaining + 1) state power).trace.memoryEvents = [] := by
-          simp only [foundNewRunLoopTraced?, hmany, if_false,
+          simp only [foundNewRunLoopTraced?, hmany, ite_false,
             TraceResult.memoryEvents_map]
           exact setTopPowerTraced_memoryEvents_eq_nil state power
         refine ⟨result, ?_⟩
         constructor
-        · simp only [foundNewRunLoopTraced?, hmany, if_false]
+        · simp only [foundNewRunLoopTraced?, hmany, ite_false]
           change Option.map foundNewRunSuccessResult
             (setTopPowerTraced? state power).result = some result
           rw [hset.resultEq]
           rfl
         · rfl
         · rfl
-        · simp only [foundNewRunLoopTraced?, hmany, if_false]
+        · simp only [foundNewRunLoopTraced?, hmany, ite_false]
           exact MovementTraceSafe.map _ _ hset.traceSafe
         · simp only [foundNewRunLoopTraced?, foundNewRunLoop?, hmany,
-            if_false, TraceResult.erase_map]
+            ite_false, TraceResult.erase_map]
           simp [hset.exactErasure, hsetRaw, foundNewRunSuccessResult]
         · change TempStorageInv after.a after.alloced
           rw [hset.storageEq, hset.allocedEq]
@@ -753,7 +753,7 @@ private theorem foundNewRun_safe_core
     have hresult :
         (foundNewRunTraced? state newRun.len.toNat).result = some result := by
       unfold foundNewRunTraced?
-      rw [if_pos hempty]
+      rw [ite_eq_left hempty]
       rfl
     have hexact :
         (foundNewRunTraced? state newRun.len.toNat).erase =
@@ -781,13 +781,13 @@ private theorem foundNewRun_safe_core
         returnCode := rfl
         resultFuel := rfl
         traceFuel := by
-          simpa only [foundNewRunTraced?, if_pos hempty] using hpure.fuel
+          simpa only [foundNewRunTraced?, ite_eq_left hempty] using hpure.fuel
         accessesInBounds := by
-          simpa only [foundNewRunTraced?, if_pos hempty] using hpure.bounds
+          simpa only [foundNewRunTraced?, ite_eq_left hempty] using hpure.bounds
         tempAccessesLive := by
-          simpa only [foundNewRunTraced?, if_pos hempty] using hpure.tempLive
+          simpa only [foundNewRunTraced?, ite_eq_left hempty] using hpure.tempLive
         noPushes := by
-          simpa only [foundNewRunTraced?, if_pos hempty] using hpure.noPushes
+          simpa only [foundNewRunTraced?, ite_eq_left hempty] using hpure.noPushes
         exactErasure := hexact
         tempInvariant := hInv
         tempLive := hLive
@@ -897,47 +897,47 @@ private theorem foundNewRun_safe_core
       have hresult :
           (foundNewRunTraced? state newRun.len.toNat).result = some result := by
         unfold foundNewRunTraced?
-        rw [if_neg hempty]
+        rw [ite_eq_right hempty]
         rw [TraceResult.bind_result_of_eq_some _ _ top htopRead]
-        rw [if_pos hguard]
+        rw [ite_eq_left hguard]
         simp only [powered, hstopped, Bool.not_true, Bool.false_eq_true,
-          if_false]
+          ite_false]
         exact hloop.resultEq
       have htraceSafe :
           MovementTraceSafe (foundNewRunTraced? state newRun.len.toNat) := by
         unfold foundNewRunTraced?
-        rw [if_neg hempty]
+        rw [ite_eq_right hempty]
         apply MovementTraceSafe.bind _ _ top htopRead htopReadSafe
-        rw [if_pos hguard]
+        rw [ite_eq_left hguard]
         simp only [powered, hstopped, Bool.not_true, Bool.false_eq_true,
-          if_false]
+          ite_false]
         exact hloop.traceSafe
       have hmemoryEvents :
           (foundNewRunTraced? state newRun.len.toNat).trace.memoryEvents =
             (foundNewRunLoopTraced? state.pending.size state
               powered.result).trace.memoryEvents := by
         unfold foundNewRunTraced?
-        rw [if_neg hempty]
+        rw [ite_eq_right hempty]
         simp only [TraceResult.trace_bind, htopRead]
-        rw [if_pos hguard]
+        rw [ite_eq_left hguard]
         simp only [powered, hstopped, Bool.not_true, Bool.false_eq_true,
-          if_false, AccessTrace.memoryEvents_compose,
+          ite_false, AccessTrace.memoryEvents_compose,
           TraceResult.trace_pendingRunRead, AccessTrace.singletonAccess,
           List.nil_append]
       have hexact :
           (foundNewRunTraced? state newRun.len.toNat).erase =
             foundNewRun? state newRun.len.toNat := by
         unfold foundNewRunTraced? foundNewRun?
-        simp only [if_neg hempty, TraceResult.erase_bind,
+        simp only [ite_eq_right hempty, TraceResult.erase_bind,
           TraceResult.erase_pendingRunRead]
         have hnonnegative :
             0 ≤ Int.ofNat (state.pending.size - 1) := Int.natCast_nonneg _
-        rw [if_pos hnonnegative]
+        rw [ite_eq_left hnonnegative]
         have htoi : (Int.ofNat (state.pending.size - 1)).toNat =
             state.pending.size - 1 := rfl
         rw [htoi, htopLookup]
-        simp only [Option.bind_some, if_pos hguard, powered, hstopped,
-          Bool.not_true, Bool.false_eq_true, if_false]
+        simp only [Option.bind_some, ite_eq_left hguard, powered, hstopped,
+          Bool.not_true, Bool.false_eq_true, ite_false]
         exact hloop.exactErasure
       have hraw : foundNewRun? state newRun.len.toNat = some result := by
         rw [← hexact]
@@ -1035,7 +1035,7 @@ theorem foundNewRunTraced_empty_accesses
     (hempty : state.pending.isEmpty = true) :
     (foundNewRunTraced? state n2).trace.accesses = [] := by
   unfold foundNewRunTraced?
-  rw [if_pos hempty]
+  rw [ite_eq_left hempty]
   rfl
 
 /-- A successful entry to the nonempty path begins with exactly the source's
@@ -1060,7 +1060,7 @@ theorem foundNewRunTraced_top_read_prefix
         (Int.ofNat (state.pending.size - 1))).result = some top := by
     exact pendingRunRead_result_of_bounds state _ hindex
   unfold foundNewRunTraced?
-  rw [if_neg hnotEmpty, TraceResult.trace_bind, hread]
+  rw [ite_eq_right hnotEmpty, TraceResult.trace_bind, hread]
   simp only [TraceResult.trace_pendingRunRead, AccessTrace.compose,
     AccessTrace.singletonAccess, List.singleton_append, List.cons.injEq,
     true_and]
@@ -1098,15 +1098,15 @@ theorem foundNewRunTraced_loop_entry_trace
     rw [TraceResult.erase_pendingRunRead]
     have hnonnegative :
         0 ≤ Int.ofNat (state.pending.size - 1) := Int.natCast_nonneg _
-    rw [if_pos hnonnegative]
+    rw [ite_eq_left hnonnegative]
     have htoi : (Int.ofNat (state.pending.size - 1)).toNat =
         state.pending.size - 1 := rfl
     rw [htoi, htop]
   unfold foundNewRunTraced?
-  rw [if_neg hnonempty, TraceResult.trace_bind, hread]
+  rw [ite_eq_right hnonempty, TraceResult.trace_bind, hread]
   simp only
-  rw [if_pos hguard]
-  simp only [hstopped, Bool.not_true, Bool.false_eq_true, if_false]
+  rw [ite_eq_left hguard]
+  simp only [hstopped, Bool.not_true, Bool.false_eq_true, ite_false]
 
 /-- Whenever the collapse loop has at least two records, its next observation
 is the source's read of the second-last record. -/
@@ -1125,7 +1125,7 @@ theorem foundNewRunLoopTraced_secondLast_read_prefix
       (TraceResult.pendingRunRead? state
         (Int.ofNat (state.pending.size - 2))).result = some preceding := by
     exact pendingRunRead_result_of_bounds state _ hindex
-  simp only [foundNewRunLoopTraced?, hmany, if_pos,
+  simp only [foundNewRunLoopTraced?, hmany, ite_eq_left,
     TraceResult.trace_bind, hread, TraceResult.trace_pendingRunRead,
     AccessTrace.compose, AccessTrace.singletonAccess, List.singleton_append]
   exact ⟨_, rfl⟩
@@ -1158,13 +1158,13 @@ theorem foundNewRunLoopTraced_merge_trace_order
       exact Option.some.inj hlookup
     rw [pendingRunRead_result_of_bounds state
       (state.pending.size - 2) hindex, hget]
-  simp only [foundNewRunLoopTraced?, hmany, if_pos,
+  simp only [foundNewRunLoopTraced?, hmany, ite_eq_left,
     TraceResult.trace_bind, hread]
   rw [hprecedingPower]
   simp only
-  rw [if_pos hguard, TraceResult.trace_bind, hmerge]
+  rw [ite_eq_left hguard, TraceResult.trace_bind, hmerge]
   simp only
-  rw [if_pos hsuccess, TraceResult.trace_pendingRunRead]
+  rw [ite_eq_left hsuccess, TraceResult.trace_pendingRunRead]
 
 /-- The arithmetic fact used by every recursive merge step: replacing a top
 pair by one merged run turns predecessor fuel into the new pending depth. -/
@@ -1195,7 +1195,7 @@ theorem setTopPowerTraced_singleton_write
     rw [Array.isEmpty_iff_size_eq_zero] at hempty
     omega
   unfold setTopPowerTraced?
-  rw [if_neg hnotEmpty]
+  rw [ite_eq_right hnotEmpty]
   simp [TraceResult.trace_pendingRunPowerWrite,
     AccessTrace.singletonAccess]
 
@@ -1210,7 +1210,7 @@ theorem foundNewRunLoopTraced_singleton_write
          index := 0
          extent := 1 }] := by
   have hnotMany : ¬1 < state.pending.size := by omega
-  simp only [foundNewRunLoopTraced?, hnotMany, if_false]
+  simp only [foundNewRunLoopTraced?, hnotMany, ite_false]
   change (setTopPowerTraced? state power).trace.accesses = _
   rw [setTopPowerTraced_singleton_write state power (by omega)]
   simp [hsize]
@@ -1240,28 +1240,28 @@ theorem foundNewRunTraced_powerloop_exhaustion
     rw [TraceResult.erase_pendingRunRead]
     have hnonnegative :
         0 ≤ Int.ofNat (state.pending.size - 1) := Int.natCast_nonneg _
-    rw [if_pos hnonnegative]
+    rw [ite_eq_left hnonnegative]
     have htoi : (Int.ofNat (state.pending.size - 1)).toNat =
         state.pending.size - 1 := rfl
     rw [htoi, htop]
   constructor
   · unfold foundNewRunTraced?
-    rw [if_neg hnonempty, TraceResult.trace_bind, hread]
+    rw [ite_eq_right hnonempty, TraceResult.trace_bind, hread]
     simp only
-    rw [if_pos hguard]
+    rw [ite_eq_left hguard]
     simp [hstopped, TraceResult.markFuelExhausted, AccessTrace.compose,
       AccessTrace.exhausted]
   · unfold foundNewRunTraced? foundNewRun?
-    simp only [if_neg hnonempty, TraceResult.erase_bind,
+    simp only [ite_eq_right hnonempty, TraceResult.erase_bind,
       TraceResult.erase_pendingRunRead]
     have hnonnegative :
         0 ≤ Int.ofNat (state.pending.size - 1) := Int.natCast_nonneg _
-    rw [if_pos hnonnegative]
+    rw [ite_eq_left hnonnegative]
     have htoi : (Int.ofNat (state.pending.size - 1)).toNat =
         state.pending.size - 1 := rfl
     rw [htoi, htop]
-    simp only [Option.bind_some, if_pos hguard, hstopped, Bool.not_false,
-      if_pos, TraceResult.erase_markFuelExhausted, TraceResult.erase_pure]
+    simp only [Option.bind_some, ite_eq_left hguard, hstopped, Bool.not_false,
+      ite_eq_left, TraceResult.erase_markFuelExhausted, TraceResult.erase_pure]
     simp [foundNewRunOutOfFuelResult]
 
 /-- For a singleton pending stack on the admitted power path, the complete
@@ -1296,7 +1296,7 @@ theorem foundNewRunTraced_singleton_access_order
     rw [TraceResult.erase_pendingRunRead]
     have hnonnegative :
         0 ≤ Int.ofNat (state.pending.size - 1) := Int.natCast_nonneg _
-    rw [if_pos hnonnegative]
+    rw [ite_eq_left hnonnegative]
     have htoi : (Int.ofNat (state.pending.size - 1)).toNat =
         state.pending.size - 1 := rfl
     rw [htoi, htop']
@@ -1304,10 +1304,10 @@ theorem foundNewRunTraced_singleton_access_order
     (powerloopTraced (BitVec.ofNat 64 (top.base - state.basekeys)) top.len
       (BitVec.ofNat 64 n2) state.listlen).result hsize
   unfold foundNewRunTraced?
-  rw [if_neg hnotEmpty, TraceResult.trace_bind, hread]
+  rw [ite_eq_right hnotEmpty, TraceResult.trace_bind, hread]
   simp only
-  rw [if_pos hguard]
-  simp only [hstopped, Bool.not_true, Bool.false_eq_true, if_false]
+  rw [ite_eq_left hguard]
+  simp only [hstopped, Bool.not_true, Bool.false_eq_true, ite_false]
   rw [show state.pending.size = 0 + 1 by omega]
   change
     (TraceResult.pendingRunRead? state (Int.ofNat 0)).trace.accesses ++

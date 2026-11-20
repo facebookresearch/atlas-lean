@@ -9,9 +9,6 @@ LICENSE file in the root directory of this source tree.
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.OriginRelabelMerges
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ScanLoopCorrectness
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Origin relabeling through policy and scan evaluators
 
@@ -247,7 +244,7 @@ theorem mirrorSetTopPower (size power : Nat)
   unfold setTopPower?
   by_cases hempty : state.pending.isEmpty
   · simp [hempty]
-  · rw [if_neg hempty, if_neg hempty]
+  · rw [ite_eq_right hempty, ite_eq_right hempty]
     cases htop : state.pending[state.pending.size - 1]? with
     | none => simp [htop]
     | some top => simp [htop, mirrorMergeState]
@@ -275,7 +272,7 @@ theorem mirrorPrepareMergeAt (lt : BoolComparator alpha) (size : Nat)
   by_cases hposition :
       2 ≤ state.pending.size ∧
         (i + 2 = state.pending.size ∨ i + 3 = state.pending.size)
-  · rw [if_pos hposition, if_pos hposition]
+  · rw [ite_eq_left hposition, ite_eq_left hposition]
     cases hleft : state.pending[i]? with
     | none => simp
     | some left =>
@@ -288,7 +285,7 @@ theorem mirrorPrepareMergeAt (lt : BoolComparator alpha) (size : Nat)
                 (0 : PySSize).slt left.len ∧
                   (0 : PySSize).slt right.len ∧
                   left.base + left.len.toNat = right.base
-            · rw [if_pos hgeometry, if_pos hgeometry]
+            · rw [ite_eq_left hgeometry, ite_eq_left hgeometry]
               simp only [combinePendingAt_eq]
               let call : MergeState (Occurrence alpha) nu :=
                 { state with
@@ -336,14 +333,14 @@ theorem mirrorPrepareMergeAt (lt : BoolComparator alpha) (size : Nat)
                       by_cases htrimAFuel : trimA.fuelExhausted
                       · simp [htrimAFuel, mirrorMergeAtPreparation,
                           mirrorMergeAtResult, mirrorMergeState, call]
-                      · rw [if_neg htrimAFuel, if_neg htrimAFuel]
+                      · rw [ite_eq_right htrimAFuel, ite_eq_right htrimAFuel]
                         by_cases htrimABounds : left.len.toNat < trimA.index
                         · simp [htrimABounds]
-                        · rw [if_neg htrimABounds, if_neg htrimABounds]
+                        · rw [ite_eq_right htrimABounds, ite_eq_right htrimABounds]
                           by_cases hemptyA : left.len.toNat - trimA.index = 0
                           · simp [hemptyA, mirrorMergeAtPreparation,
                               mirrorMergeAtResult, mirrorMergeState, call]
-                          · rw [if_neg hemptyA, if_neg hemptyA]
+                          · rw [ite_eq_right hemptyA, ite_eq_right hemptyA]
                             rw [mirrorSortSlice_read]
                             cases hlast : call.data.read?
                                 (Int.ofNat
@@ -382,18 +379,18 @@ theorem mirrorPrepareMergeAt (lt : BoolComparator alpha) (size : Nat)
                                         mirrorMergeAtPreparation,
                                         mirrorMergeAtResult, mirrorMergeState,
                                         call]
-                                    · rw [if_neg htrimBFuel, if_neg htrimBFuel]
+                                    · rw [ite_eq_right htrimBFuel, ite_eq_right htrimBFuel]
                                       by_cases htrimBBounds :
                                           right.len.toNat < trimB.index
                                       · simp [htrimBBounds]
-                                      · rw [if_neg htrimBBounds,
-                                          if_neg htrimBBounds]
+                                      · rw [ite_eq_right htrimBBounds,
+                                          ite_eq_right htrimBBounds]
                                         by_cases hemptyB : trimB.index = 0
                                         · simp [hemptyB,
                                             mirrorMergeAtPreparation,
                                             mirrorMergeAtResult,
                                             mirrorMergeState, call]
-                                        · rw [if_neg hemptyB, if_neg hemptyB]
+                                        · rw [ite_eq_right hemptyB, ite_eq_right hemptyB]
                                           by_cases hlo :
                                               left.len.toNat - trimA.index ≤
                                                 trimB.index
@@ -405,7 +402,7 @@ theorem mirrorPrepareMergeAt (lt : BoolComparator alpha) (size : Nat)
                                               mirrorMergeAtPreparation,
                                               mirrorMergeAtCall,
                                               mirrorMergeState, call]
-            · rw [if_neg hgeometry, if_neg hgeometry]
+            · rw [ite_eq_right hgeometry, ite_eq_right hgeometry]
               rfl
   · simp [hposition]
 
@@ -421,7 +418,7 @@ theorem prepareMergeAt?_key_compare_of_eq_some
   by_cases hposition :
       2 ≤ state.pending.size ∧
         (i + 2 = state.pending.size ∨ i + 3 = state.pending.size)
-  · rw [if_pos hposition] at hresult
+  · rw [ite_eq_left hposition] at hresult
     cases hleft : state.pending[i]? with
     | none => simp [hleft] at hresult
     | some left =>
@@ -434,7 +431,7 @@ theorem prepareMergeAt?_key_compare_of_eq_some
                 (0 : PySSize).slt left.len ∧
                   (0 : PySSize).slt right.len ∧
                   left.base + left.len.toNat = right.base
-            · rw [if_pos hgeometry] at hresult
+            · rw [ite_eq_left hgeometry] at hresult
               simp only [combinePendingAt_eq] at hresult
               let call : MergeState (Occurrence alpha) nu :=
                 { state with
@@ -466,20 +463,20 @@ theorem prepareMergeAt?_key_compare_of_eq_some
                       rw [htrimA] at hresult
                       simp only [mergeAt_bindOptionAcross_some] at hresult
                       by_cases htrimAFuel : trimA.fuelExhausted
-                      · rw [if_pos htrimAFuel] at hresult
+                      · rw [ite_eq_left htrimAFuel] at hresult
                         simp at hresult
                         subst preparation
                         rfl
-                      · rw [if_neg htrimAFuel] at hresult
+                      · rw [ite_eq_right htrimAFuel] at hresult
                         by_cases htrimABounds : left.len.toNat < trimA.index
                         · simp [htrimABounds] at hresult
-                        · rw [if_neg htrimABounds] at hresult
+                        · rw [ite_eq_right htrimABounds] at hresult
                           by_cases hemptyA : left.len.toNat - trimA.index = 0
-                          · rw [if_pos hemptyA] at hresult
+                          · rw [ite_eq_left hemptyA] at hresult
                             simp at hresult
                             subst preparation
                             rfl
-                          · rw [if_neg hemptyA] at hresult
+                          · rw [ite_eq_right hemptyA] at hresult
                             cases hlast : state.data.read?
                                 (Int.ofNat
                                   (left.base + trimA.index +
@@ -501,25 +498,25 @@ theorem prepareMergeAt?_key_compare_of_eq_some
                                     simp only [mergeAt_bindOptionAcross_some]
                                       at hresult
                                     by_cases htrimBFuel : trimB.fuelExhausted
-                                    · rw [if_pos htrimBFuel] at hresult
+                                    · rw [ite_eq_left htrimBFuel] at hresult
                                       simp at hresult
                                       subst preparation
                                       rfl
-                                    · rw [if_neg htrimBFuel] at hresult
+                                    · rw [ite_eq_right htrimBFuel] at hresult
                                       by_cases htrimBBounds :
                                           right.len.toNat < trimB.index
                                       · simp [htrimBBounds] at hresult
-                                      · rw [if_neg htrimBBounds] at hresult
+                                      · rw [ite_eq_right htrimBBounds] at hresult
                                         by_cases hemptyB : trimB.index = 0
-                                        · rw [if_pos hemptyB] at hresult
+                                        · rw [ite_eq_left hemptyB] at hresult
                                           simp at hresult
                                           subst preparation
                                           rfl
-                                        · rw [if_neg hemptyB] at hresult
+                                        · rw [ite_eq_right hemptyB] at hresult
                                           split at hresult <;>
                                             simp at hresult <;>
                                             subst preparation <;> rfl
-            · rw [if_neg hgeometry] at hresult
+            · rw [ite_eq_right hgeometry] at hresult
               simp at hresult
   · simp [hposition] at hresult
 
@@ -646,7 +643,7 @@ theorem foundNewRunLoop?_key_compare_of_eq_some
   | succ fuel ih =>
       simp only [foundNewRunLoop?] at hresult
       by_cases hdepth : 1 < state.pending.size
-      · rw [if_pos hdepth] at hresult
+      · rw [ite_eq_left hdepth] at hresult
         cases hpreceding : state.pending[state.pending.size - 2]? with
         | none => simp [hpreceding] at hresult
         | some preceding =>
@@ -656,24 +653,24 @@ theorem foundNewRunLoop?_key_compare_of_eq_some
             | some precedingPower =>
                 simp only [hpower] at hresult
                 by_cases hcollapse : power < precedingPower
-                · rw [if_pos hcollapse] at hresult
+                · rw [ite_eq_left hcollapse] at hresult
                   cases hmerge : mergeAt? state (state.pending.size - 2) with
                   | none => simp [hmerge] at hresult
                   | some merged =>
                       simp only [hmerge] at hresult
                       by_cases hok :
                           merged.returnCode = 0 ∧ !merged.fuelExhausted
-                      · rw [if_pos hok] at hresult
+                      · rw [ite_eq_left hok] at hresult
                         exact (ih merged.state hresult).trans
                           (mergeAt?_key_compare_of_eq_some state
                             (state.pending.size - 2) merged hmerge)
-                      · rw [if_neg hok] at hresult
+                      · rw [ite_eq_right hok] at hresult
                         simp only [foundNewRunFromMergeAt_eq,
                           Option.some.injEq] at hresult
                         subst result
                         exact mergeAt?_key_compare_of_eq_some state
                           (state.pending.size - 2) merged hmerge
-                · rw [if_neg hcollapse] at hresult
+                · rw [ite_eq_right hcollapse] at hresult
                   cases hset : setTopPower? state power with
                   | none => simp [hset] at hresult
                   | some updated =>
@@ -682,7 +679,7 @@ theorem foundNewRunLoop?_key_compare_of_eq_some
                       subst result
                       exact setTopPower?_key_compare_of_eq_some state updated
                         power hset
-      · rw [if_neg hdepth] at hresult
+      · rw [ite_eq_right hdepth] at hresult
         cases hset : setTopPower? state power with
         | none => simp [hset] at hresult
         | some updated =>
@@ -706,7 +703,7 @@ theorem mirrorFoundNewRunLoop (lt : BoolComparator alpha) (size fuel : Nat)
       simp only [mirrorMergeState]
       simp only [foundNewRunLoop?]
       by_cases hdepth : 1 < state.pending.size
-      · rw [if_pos hdepth, if_pos hdepth]
+      · rw [ite_eq_left hdepth, ite_eq_left hdepth]
         cases hpreceding : state.pending[state.pending.size - 2]? with
         | none => simp
         | some preceding =>
@@ -716,7 +713,7 @@ theorem mirrorFoundNewRunLoop (lt : BoolComparator alpha) (size fuel : Nat)
             | some precedingPower =>
                 simp only
                 by_cases hcollapse : power < precedingPower
-                · rw [if_pos hcollapse, if_pos hcollapse]
+                · rw [ite_eq_left hcollapse, ite_eq_left hcollapse]
                   have hmirrorMerge := mirrorMergeAt lt size state
                     (state.pending.size - 2) hcompare
                   simp only [mirrorMergeState] at hmirrorMerge
@@ -737,10 +734,10 @@ theorem mirrorFoundNewRunLoop (lt : BoolComparator alpha) (size fuel : Nat)
                             (state.pending.size - 2) merged hmerge).trans
                             hcompare
                       · rename_i hok
-                        simp only [hok, if_false]
+                        simp only [hok, ite_false]
                         simp [foundNewRunFromMergeAt_eq,
                           mirrorFoundNewRunResult]
-                · rw [if_neg hcollapse, if_neg hcollapse]
+                · rw [ite_eq_right hcollapse, ite_eq_right hcollapse]
                   have hmirrorSet := mirrorSetTopPower size power state
                   simp only [mirrorMergeState] at hmirrorSet
                   rw [hmirrorSet]
@@ -749,7 +746,7 @@ theorem mirrorFoundNewRunLoop (lt : BoolComparator alpha) (size fuel : Nat)
                   | some updated =>
                       simp [foundNewRunSuccess_eq,
                         mirrorFoundNewRunResult]
-      · rw [if_neg hdepth, if_neg hdepth]
+      · rw [ite_eq_right hdepth, ite_eq_right hdepth]
         have hmirrorSet := mirrorSetTopPower size power state
         simp only [mirrorMergeState] at hmirrorSet
         rw [hmirrorSet]
@@ -766,11 +763,11 @@ theorem foundNewRun?_key_compare_of_eq_some
     result.state.key_compare = state.key_compare := by
   unfold foundNewRun? at hresult
   by_cases hempty : state.pending.isEmpty
-  · rw [if_pos hempty] at hresult
+  · rw [ite_eq_left hempty] at hresult
     simp [foundNewRunSuccess_eq] at hresult
     subst result
     rfl
-  · rw [if_neg hempty] at hresult
+  · rw [ite_eq_right hempty] at hresult
     cases htop : state.pending[state.pending.size - 1]? with
     | none => simp [htop] at hresult
     | some top =>
@@ -796,7 +793,7 @@ theorem mirrorFoundNewRun (lt : BoolComparator alpha) (size : Nat)
   by_cases hempty : state.pending.isEmpty
   · simp [hempty, foundNewRunSuccess_eq, mirrorFoundNewRunResult,
       mirrorMergeState]
-  · rw [if_neg hempty, if_neg hempty]
+  · rw [ite_eq_right hempty, ite_eq_right hempty]
     cases htop : state.pending[state.pending.size - 1]? with
     | none => simp
     | some top =>
@@ -809,7 +806,7 @@ theorem mirrorFoundNewRun (lt : BoolComparator alpha) (size : Nat)
           by_cases hstopped : !traced.stopped
           · simp [traced, hstopped, foundNewRunOutOfFuel_eq,
               mirrorFoundNewRunResult, mirrorMergeState]
-          · rw [if_neg hstopped, if_neg hstopped]
+          · rw [ite_eq_right hstopped, ite_eq_right hstopped]
             have hloop := mirrorFoundNewRunLoop lt size state.pending.size state
               traced.result hcompare
             simpa [traced, mirrorMergeState] using hloop
@@ -833,7 +830,7 @@ theorem mergeForceCollapseLoop?_key_compare_of_eq_some
   | succ fuel ih =>
       simp only [mergeForceCollapseLoop?] at hresult
       by_cases hdepth : 1 < state.pending.size
-      · rw [if_pos hdepth] at hresult
+      · rw [ite_eq_left hdepth] at hresult
         cases hindex : forceCollapseIndex? state with
         | none => simp [hindex] at hresult
         | some i =>
@@ -844,14 +841,14 @@ theorem mergeForceCollapseLoop?_key_compare_of_eq_some
                 simp only [hmerge] at hresult
                 by_cases hok :
                     merged.returnCode = 0 ∧ !merged.fuelExhausted
-                · rw [if_pos hok] at hresult
+                · rw [ite_eq_left hok] at hresult
                   exact (ih merged.state hresult).trans
                     (mergeAt?_key_compare_of_eq_some state i merged hmerge)
-                · rw [if_neg hok] at hresult
+                · rw [ite_eq_right hok] at hresult
                   simp only [Option.some.injEq] at hresult
                   subst result
                   exact mergeAt?_key_compare_of_eq_some state i merged hmerge
-      · rw [if_neg hdepth] at hresult
+      · rw [ite_eq_right hdepth] at hresult
         simp at hresult
         subst result
         rfl
@@ -872,7 +869,7 @@ theorem mirrorMergeForceCollapseLoop (lt : BoolComparator alpha)
       simp only [mirrorMergeState]
       simp only [mergeForceCollapseLoop?]
       by_cases hdepth : 1 < state.pending.size
-      · rw [if_pos hdepth, if_pos hdepth]
+      · rw [ite_eq_left hdepth, ite_eq_left hdepth]
         have hmirrorIndex := mirrorForceCollapseIndex size state
         simp only [mirrorMergeState] at hmirrorIndex
         rw [hmirrorIndex]
@@ -898,9 +895,9 @@ theorem mirrorMergeForceCollapseLoop (lt : BoolComparator alpha)
                     (mergeAt?_key_compare_of_eq_some state i merged hmerge).trans
                       hcompare
                 · rename_i hok
-                  simp only [hok, if_false]
+                  simp only [hok, ite_false]
                   rfl
-      · rw [if_neg hdepth, if_neg hdepth]
+      · rw [ite_eq_right hdepth, ite_eq_right hdepth]
         rfl
 
 /-- The complete raw final-collapse evaluator commutes with origin
@@ -930,7 +927,7 @@ theorem mirrorFinishListSort (size : Nat)
         (mirrorListSortImplResult size) := by
   unfold finishListSort?
   by_cases hreverse : reverse && decide (1 < inputSize)
-  · rw [if_pos hreverse, if_pos hreverse]
+  · rw [ite_eq_left hreverse, ite_eq_left hreverse]
     simp only [mirrorMergeState_data]
     rw [mirrorSortsliceReverse]
     cases hreversed : sortsliceReverse? state.data 0 inputSize with
@@ -940,7 +937,7 @@ theorem mirrorFinishListSort (size : Nat)
           mirrorReverseSliceResult]
         rw [mirrorMergeState_setData, mirrorMergeFreemem]
         rfl
-  · rw [if_neg hreverse, if_neg hreverse]
+  · rw [ite_eq_right hreverse, ite_eq_right hreverse]
     simp only [bind, Option.bind]
     rw [mirrorMergeFreemem]
     rfl
@@ -1046,12 +1043,12 @@ private theorem mirrorListSortScanAfterExtension
         runLength extensionFuel).map (mirrorListSortImplResult size) := by
   unfold listSortScanAfterExtension?
   by_cases hextFuel : extensionFuel
-  · rw [if_pos hextFuel, if_pos hextFuel]
+  · rw [ite_eq_left hextFuel, ite_eq_left hextFuel]
     exact mirrorFinishListSort size state reverse inputSize (-1) true
-  · rw [if_neg hextFuel, if_neg hextFuel]
+  · rw [ite_eq_right hextFuel, ite_eq_right hextFuel]
     by_cases hbad : runLength = 0 ∨ remaining < runLength
     · simp [hbad]
-    · rw [if_neg hbad, if_neg hbad]
+    · rw [ite_eq_right hbad, ite_eq_right hbad]
       rw [mirrorFoundNewRun lt size state runLength hcompare]
       cases hfound : foundNewRun? state runLength with
       | none => simp
@@ -1068,7 +1065,7 @@ private theorem mirrorListSortScanAfterExtension
               (foundNewRun?_key_compare_of_eq_some state runLength found
                 hfound).trans hcompare
           · rename_i hok
-            simp only [hok, if_false]
+            simp only [hok, ite_false]
             exact mirrorFailFromFoundNewRun size found reverse inputSize
 
 /-- Origin relabeling commutes with the remainder of a scan iteration after
@@ -1098,12 +1095,12 @@ private theorem mirrorListSortScanAfterCount
   have hcountedCompare :
       countedState.key_compare = occurrenceComparator lt := hcompare
   by_cases hcountFuel : counted.fuelExhausted
-  · rw [if_pos hcountFuel, if_pos hcountFuel]
+  · rw [ite_eq_left hcountFuel, ite_eq_left hcountFuel]
     exact mirrorFinishListSort size countedState reverse inputSize (-1) true
-  · rw [if_neg hcountFuel, if_neg hcountFuel]
+  · rw [ite_eq_right hcountFuel, ite_eq_right hcountFuel]
     by_cases hcountBad : counted.length = 0 ∨ remaining < counted.length
     · simp [hcountBad]
-    · rw [if_neg hcountBad, if_neg hcountBad]
+    · rw [ite_eq_right hcountBad, ite_eq_right hcountBad]
       let nextMinrun := minrunNext countedState.minrunState
       let nextState := installMinrunState countedState nextMinrun.state
       have hnextCompare :
@@ -1121,7 +1118,7 @@ private theorem mirrorListSortScanAfterCount
             (BitVec.ofNat 64 counted.length : PySSize).slt
               (minrunNext (mirrorMergeState size countedState).minrunState).result := by
             simpa only [mirrorMergeState_minrunState] using hextendBase
-        rw [if_pos hextendMirror, if_pos hextendBase]
+        rw [ite_eq_left hextendMirror, ite_eq_left hextendBase]
         by_cases hforce : remaining ≤ target
         · have hforceBase :
               remaining ≤ (minrunNext countedState.minrunState).result.toNat := by
@@ -1130,7 +1127,7 @@ private theorem mirrorListSortScanAfterCount
               remaining ≤ (minrunNext
                 (mirrorMergeState size countedState).minrunState).result.toNat := by
               simpa only [mirrorMergeState_minrunState] using hforceBase
-          simp only [if_pos hforceMirror, if_pos hforceBase]
+          simp only [ite_eq_left hforceMirror, ite_eq_left hforceBase]
           simp only [mirrorMergeState_minrunState, mirrorInstallMinrunState,
             mirrorMergeState_data]
           rw [mirrorBinarysort lt size nextState nextState.data (Int.ofNat lo)
@@ -1152,7 +1149,7 @@ private theorem mirrorListSortScanAfterCount
               ¬ remaining ≤ (minrunNext
                 (mirrorMergeState size countedState).minrunState).result.toNat := by
               simpa only [mirrorMergeState_minrunState] using hforceBase
-          simp only [if_neg hforceMirror, if_neg hforceBase]
+          simp only [ite_eq_right hforceMirror, ite_eq_right hforceBase]
           simp only [mirrorMergeState_minrunState, mirrorInstallMinrunState,
             mirrorMergeState_data]
           rw [mirrorBinarysort lt size nextState nextState.data (Int.ofNat lo)
@@ -1175,7 +1172,7 @@ private theorem mirrorListSortScanAfterCount
             ¬ (BitVec.ofNat 64 counted.length : PySSize).slt
               (minrunNext (mirrorMergeState size countedState).minrunState).result := by
             simpa only [mirrorMergeState_minrunState] using hextendBase
-        rw [if_neg hextendMirror, if_neg hextendBase]
+        rw [ite_eq_right hextendMirror, ite_eq_right hextendBase]
         simp only [mirrorMergeState_minrunState, mirrorInstallMinrunState,
           mirrorMergeState_data, bind, Option.bind, mirrorMergeState_setData]
         exact mirrorListSortScanAfterExtension lt size fuel
@@ -1193,7 +1190,7 @@ private theorem listSortScan_succ_of_remaining_ne_zero
       listSortScanAfterCount? fuel state lo remaining reverse inputSize
         counted) := by
   unfold listSortScan?
-  rw [if_neg hremaining]
+  rw [ite_eq_right hremaining]
   unfold listSortScanAfterCount? listSortScanAfterExtension?
   apply Option.bind_congr
   intro counted _
@@ -1202,7 +1199,7 @@ private theorem listSortScan_succ_of_remaining_ne_zero
   · simp only [hcountFuel]
     by_cases hcountBad : counted.length = 0 ∨ remaining < counted.length
     · simp [hcountBad]
-    · simp only [hcountBad, if_false]
+    · simp only [hcountBad, ite_false]
       let countedState : MergeState (Occurrence alpha) nu :=
         { state with data := counted.slice }
       let nextMinrun := minrunNext countedState.minrunState
@@ -1217,7 +1214,7 @@ private theorem listSortScan_succ_of_remaining_ne_zero
                 ({ state with data := counted.slice } :
                   MergeState (Occurrence alpha) nu).minrunState).result := by
             simpa only [runLength, nextMinrun, countedState] using hextend
-        simp only [hextendBase, if_true]
+        simp only [hextendBase, ite_true]
         by_cases hforce : remaining ≤ target
         · have hforceBase :
               remaining ≤
@@ -1225,7 +1222,7 @@ private theorem listSortScan_succ_of_remaining_ne_zero
                   ({ state with data := counted.slice } :
                     MergeState (Occurrence alpha) nu).minrunState).result.toNat := by
               simpa only [target, nextMinrun, countedState] using hforce
-          simp only [hforceBase, if_true]
+          simp only [hforceBase, ite_true]
           cases hsorted : binarysort? nextState nextState.data (Int.ofNat lo)
               remaining runLength with
           | none => simp
@@ -1239,7 +1236,7 @@ private theorem listSortScan_succ_of_remaining_ne_zero
                   ({ state with data := counted.slice } :
                     MergeState (Occurrence alpha) nu).minrunState).result.toNat := by
               simpa only [target, nextMinrun, countedState] using hforce
-          simp only [hforceBase, if_false]
+          simp only [hforceBase, ite_false]
           cases hsorted : binarysort? nextState nextState.data (Int.ofNat lo)
               target runLength with
           | none => simp
@@ -1273,7 +1270,7 @@ theorem mirrorListSortScan (lt : BoolComparator alpha) (size fuel : Nat)
   | zero =>
       simp only [listSortScan?]
       by_cases hremaining : remaining = 0
-      · rw [if_pos hremaining, if_pos hremaining]
+      · rw [ite_eq_left hremaining, ite_eq_left hremaining]
         have hmirrorCollapse :=
           mirrorMergeForceCollapse lt size state hcompare
         rw [hmirrorCollapse]
@@ -1290,14 +1287,14 @@ theorem mirrorListSortScan (lt : BoolComparator alpha) (size fuel : Nat)
               exact mirrorFinishListSort size collapsed.state reverse
                 inputSize 0 false
             · rename_i hok
-              simp only [hok, if_false]
+              simp only [hok, ite_false]
               exact mirrorFailFromCollapse size collapsed reverse inputSize
-      · rw [if_neg hremaining, if_neg hremaining]
+      · rw [ite_eq_right hremaining, ite_eq_right hremaining]
         exact mirrorFinishListSort size state reverse inputSize (-1) true
   | succ fuel ih =>
       by_cases hremaining : remaining = 0
       · simp only [listSortScan?]
-        rw [if_pos hremaining, if_pos hremaining]
+        rw [ite_eq_left hremaining, ite_eq_left hremaining]
         have hmirrorCollapse :=
           mirrorMergeForceCollapse lt size state hcompare
         rw [hmirrorCollapse]
@@ -1314,7 +1311,7 @@ theorem mirrorListSortScan (lt : BoolComparator alpha) (size fuel : Nat)
               exact mirrorFinishListSort size collapsed.state reverse
                 inputSize 0 false
             · rename_i hok
-              simp only [hok, if_false]
+              simp only [hok, ite_false]
               exact mirrorFailFromCollapse size collapsed reverse inputSize
       · have hmirrorStep :=
           listSortScan_succ_of_remaining_ne_zero fuel

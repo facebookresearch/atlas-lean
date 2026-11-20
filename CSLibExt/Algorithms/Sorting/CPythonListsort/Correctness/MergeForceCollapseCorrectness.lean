@@ -123,11 +123,11 @@ private theorem mergeForceCollapseLoop_correct
         have hresult :
             (mergeForceCollapseLoopTraced? (remaining + 1) state).result =
               some result := by
-          simp only [mergeForceCollapseLoopTraced?, hmany, if_true]
+          simp only [mergeForceCollapseLoopTraced?, hmany, ite_true]
           rw [traceResult_bind_result_of_eq_some _ _ i hindexResult]
           rw [traceResult_bind_result_of_eq_some _ _ merged
             hmerged.safety.resultEq]
-          rw [if_pos hmergeSuccess]
+          rw [ite_eq_left hmergeSuccess]
           exact hrest.resultEq
         have hrestFrame : SortSlice.EqualOutsideRange merged.state.data
             result.state.data state.basekeys scanned := by
@@ -150,7 +150,7 @@ private theorem mergeForceCollapseLoop_correct
         refine ⟨result, ?_⟩
         exact
           { resultEq := by
-              simp only [mergeForceCollapseLoopTraced?, hmany, if_false]
+              simp only [mergeForceCollapseLoopTraced?, hmany, ite_false]
               rfl
             pendingRunsCorrect := by simpa [result] using hcorrect
             entrySnapshot := by simpa [result] using hsnapshot

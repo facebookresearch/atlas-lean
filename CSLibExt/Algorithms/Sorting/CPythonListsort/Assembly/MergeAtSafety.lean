@@ -106,7 +106,7 @@ private theorem Array.setNextFromSuccessor_eraseSuccessor
     (xs.setIfInBounds (i + 1) xs[i + 2]).eraseIdxIfInBounds (i + 2) =
       xs.eraseIdxIfInBounds (i + 1) := by
   have hiOne : i + 1 < xs.size := by omega
-  rw [Array.setIfInBounds_def, dif_pos hiOne]
+  rw [Array.setIfInBounds_def, dite_eq_left hiOne]
   have hiTwoSet : i + 2 < (xs.set (i + 1) xs[i + 2]).size := by
     simpa using h
   rw [← Array.eraseIdx_eq_eraseIdxIfInBounds hiTwoSet]
@@ -181,7 +181,7 @@ private theorem pendingRunRead_result_of_bounds (state : MergeState κ ν)
   change (TraceResult.pendingRunRead? state (Int.ofNat index)).erase = _
   rw [TraceResult.erase_pendingRunRead]
   have hnonnegative : 0 ≤ Int.ofNat index := Int.natCast_nonneg _
-  rw [if_pos hnonnegative]
+  rw [ite_eq_left hnonnegative]
   have htoi : (Int.ofNat index).toNat = index := rfl
   rw [htoi]
   exact Array.getElem?_eq_getElem hindex
@@ -196,7 +196,7 @@ private theorem pendingRunWrite_result_of_bounds (state : MergeState κ ν)
       0 ≤ Int.ofNat index ∧
         (Int.ofNat index).toNat < state.pending.size := by
     exact ⟨Int.natCast_nonneg _, by simpa using hindex⟩
-  rw [if_pos hbounds]
+  rw [ite_eq_left hbounds]
   rfl
 
 private theorem sortSliceKeysRead_result_of_eq_some (slice : SortSlice κ ν)
@@ -211,7 +211,7 @@ private theorem sortSlice_read_ofNat_eq_some (slice : SortSlice κ ν)
     slice.read? (Int.ofNat index) = some slice.entries[index] := by
   rw [SortSlice.read?]
   have hnonnegative : 0 ≤ Int.ofNat index := Int.natCast_nonneg _
-  rw [if_pos hnonnegative]
+  rw [ite_eq_left hnonnegative]
   have htoi : (Int.ofNat index).toNat = index := rfl
   rw [htoi]
   exact Array.getElem?_eq_getElem hindex
@@ -249,14 +249,14 @@ private theorem erase_mergeAtPendingUpdateTraced (state : MergeState κ ν)
   rw [TraceResult.erase_pendingRunWrite]
   have hwrite : 0 ≤ Int.ofNat i ∧ (Int.ofNat i).toNat < state.pending.size := by
     simpa using hi
-  rw [if_pos hwrite]
+  rw [ite_eq_left hwrite]
   simp only [Option.bind_some]
   split
   · rename_i hthird
     rw [TraceResult.erase_bind, TraceResult.erase_pendingRunRead]
     have hiTwo : i + 2 < state.pending.size := by omega
     have hread : 0 ≤ Int.ofNat (i + 2) := Int.natCast_nonneg _
-    rw [if_pos hread]
+    rw [ite_eq_left hread]
     have htoi : (Int.ofNat i).toNat = i := rfl
     have htoiTwo : (Int.ofNat (i + 2)).toNat = i + 2 := rfl
     rw [htoi, htoiTwo]
@@ -280,7 +280,7 @@ private theorem erase_mergeAtPendingUpdateTraced (state : MergeState κ ν)
       constructor
       · exact Int.natCast_nonneg _
       · simpa using hiOne'
-    rw [if_pos hwriteSecond]
+    rw [ite_eq_left hwriteSecond]
     simp only [Option.map_some]
     have htoiOne : (Int.ofNat (i + 1)).toNat = i + 1 := rfl
     rw [htoiOne]
@@ -429,7 +429,7 @@ theorem mergeAtPendingUpdateTraced_thirdLast_access_order
       pendingRunWrite_result_of_bounds state i combined hi
   rw [TraceResult.trace_bind, hwriteResult]
   dsimp only
-  rw [if_pos hthird]
+  rw [ite_eq_left hthird]
   have hiTwo : i + 2 < written.pending.size := by
     simp [written]
     omega
@@ -466,7 +466,7 @@ theorem mergeAtPendingUpdateTraced_topPair_access_order
       pendingRunWrite_result_of_bounds state i combined hi
   rw [TraceResult.trace_bind, hwriteResult]
   dsimp only
-  rw [if_neg hnotThird]
+  rw [ite_eq_right hnotThird]
   simp [TraceResult.trace_pendingRunWrite, TraceResult.pure,
     AccessTrace.empty, AccessTrace.compose, AccessTrace.singletonAccess,
     written]
@@ -912,7 +912,7 @@ theorem prepareMergeAtTraced_policyEvent
     change (TraceResult.pendingRunRead? state (Int.ofNat i)).erase = some left
     rw [TraceResult.erase_pendingRunRead]
     have hnonnegative : 0 ≤ Int.ofNat i := Int.natCast_nonneg _
-    rw [if_pos hnonnegative]
+    rw [ite_eq_left hnonnegative]
     have htoi : (Int.ofNat i).toNat = i := rfl
     rw [htoi]
     exact hleft
@@ -924,7 +924,7 @@ theorem prepareMergeAtTraced_policyEvent
         (Int.ofNat (i + 1))).erase = some right
     rw [TraceResult.erase_pendingRunRead]
     have hnonnegative : 0 ≤ Int.ofNat (i + 1) := Int.natCast_nonneg _
-    rw [if_pos hnonnegative]
+    rw [ite_eq_left hnonnegative]
     have htoi : (Int.ofNat (i + 1)).toNat = i + 1 := rfl
     rw [htoi]
     exact hright
@@ -969,14 +969,14 @@ theorem prepareMergeAtTraced_policyEvent
         AccessTrace.singletonAccess]
     · exact htailFree
   unfold prepareMergeAtTraced?
-  rw [if_pos houter]
+  rw [ite_eq_left houter]
   rw [TraceResult.policyEvents_bind, hleftResult]
   simp only [TraceResult.trace_pendingRunRead, AccessTrace.singletonAccess,
     List.nil_append]
   rw [TraceResult.policyEvents_bind, hrightResult]
   simp only [TraceResult.trace_pendingRunRead, AccessTrace.singletonAccess,
     List.nil_append]
-  rw [if_pos hguard]
+  rw [ite_eq_left hguard]
   rw [TraceResult.policyEvents_bind, hupdateResult]
   rw [mergeAtPendingUpdateTraced_policyEvent state i left right hposition]
   simpa [call] using hafterUpdateFree
@@ -1071,7 +1071,7 @@ theorem prepareMergeAtTraced_pending_access_prefix
     change (TraceResult.pendingRunRead? state (Int.ofNat i)).erase = some left
     rw [TraceResult.erase_pendingRunRead]
     have hnonnegative : 0 ≤ Int.ofNat i := Int.natCast_nonneg _
-    rw [if_pos hnonnegative]
+    rw [ite_eq_left hnonnegative]
     simpa using hleft
   have hrightResult :
       (TraceResult.pendingRunRead? state
@@ -1081,7 +1081,7 @@ theorem prepareMergeAtTraced_pending_access_prefix
         (Int.ofNat (i + 1))).erase = some right
     rw [TraceResult.erase_pendingRunRead]
     have hnonnegative : 0 ≤ Int.ofNat (i + 1) := Int.natCast_nonneg _
-    rw [if_pos hnonnegative]
+    rw [ite_eq_left hnonnegative]
     simpa using hright
   have hgeometry := hlayout.adjacentPair_geometry hleft hright
   have hadjacent : left.base + left.len.toNat = right.base := by
@@ -1102,12 +1102,12 @@ theorem prepareMergeAtTraced_pending_access_prefix
     simpa [call] using
       erase_mergeAtPendingUpdateTraced state i left right hposition
   unfold prepareMergeAtTraced?
-  rw [if_pos houter]
+  rw [ite_eq_left houter]
   rw [TraceResult.trace_bind, hleftResult]
   dsimp only
   rw [TraceResult.trace_bind, hrightResult]
   dsimp only
-  rw [if_pos hguard]
+  rw [ite_eq_left hguard]
   rw [TraceResult.trace_bind, hupdateResult]
   dsimp only
   simp only [TraceResult.trace_pendingRunRead, AccessTrace.compose,
@@ -1133,7 +1133,7 @@ theorem erase_prepareMergeAtTraced (state : MergeState κ ν) (i : Nat) :
       Array.getElem?_eq_getElem hi
     rw [TraceResult.erase_bind, TraceResult.erase_pendingRunRead]
     have hiNonnegative : 0 ≤ Int.ofNat i := Int.natCast_nonneg _
-    rw [if_pos hiNonnegative]
+    rw [ite_eq_left hiNonnegative]
     have htoi : (Int.ofNat i).toNat = i := rfl
     rw [htoi, hleft]
     simp only [Option.bind_some, mergeAt_bindOptionAcross_some]
@@ -1142,7 +1142,7 @@ theorem erase_prepareMergeAtTraced (state : MergeState κ ν) (i : Nat) :
       Array.getElem?_eq_getElem hiOne
     rw [TraceResult.erase_bind, TraceResult.erase_pendingRunRead]
     have hiOneNonnegative : 0 ≤ Int.ofNat (i + 1) := Int.natCast_nonneg _
-    rw [if_pos hiOneNonnegative]
+    rw [ite_eq_left hiOneNonnegative]
     have htoiOne : (Int.ofNat (i + 1)).toNat = i + 1 := rfl
     rw [htoiOne, hright]
     simp only [Option.bind_some, mergeAt_bindOptionAcross_some]
@@ -1505,7 +1505,7 @@ theorem prepareMergeAtTraced_safe
                     mergeAtAfterTrimATraced call left right firstB trimA
     else TraceResult.failure) := by
     apply MovementTraceSafe.bind _ _ right hrightReadResult hrightReadSafe
-    rw [if_pos hguard]
+    rw [ite_eq_left hguard]
     exact hupdateChainSafe
   have hrightChainResult :
       ((TraceResult.pendingRunRead? pre (Int.ofNat (i + 1))).bind fun right =>
@@ -1521,17 +1521,17 @@ theorem prepareMergeAtTraced_safe
         else TraceResult.failure).result = some prepared := by
     refine (TraceResult.bind_result_of_eq_some _ _ right
       hrightReadResult).trans ?_
-    rw [if_pos hguard]
+    rw [ite_eq_left hguard]
     exact hupdateChainResult
   have hfullSafe : MovementTraceSafe (prepareMergeAtTraced? pre i) := by
     unfold prepareMergeAtTraced?
-    rw [if_pos houter]
+    rw [ite_eq_left houter]
     apply MovementTraceSafe.bind _ _ left hleftReadResult hleftReadSafe
     simpa [left, right] using hrightChainSafe
   have hfullResult :
       (prepareMergeAtTraced? pre i).result = some prepared := by
     unfold prepareMergeAtTraced?
-    rw [if_pos houter]
+    rw [ite_eq_left houter]
     exact (TraceResult.bind_result_of_eq_some _ _ left
       hleftReadResult).trans (by simpa [left, right] using hrightChainResult)
   refine ⟨prepared, ?_⟩

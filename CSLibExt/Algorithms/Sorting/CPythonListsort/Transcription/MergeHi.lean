@@ -9,9 +9,6 @@ LICENSE file in the root directory of this source tree.
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.Gallop
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeMemory
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Right-to-left stable merge transcription
 
@@ -1253,13 +1250,13 @@ private theorem mergeHiLoop_layoutFrame
   | succ fuel ih =>
       simp only [mergeHiLoop?, bind, Option.bind] at h
       by_cases hstop : cursor.na = 0 ∨ cursor.nb = 0
-      · rw [if_pos hstop] at h
+      · rw [ite_eq_left hstop] at h
         exact mergeHiSucceed_layoutFrame _ _ h
-      · rw [if_neg hstop] at h
+      · rw [ite_eq_right hstop] at h
         by_cases hone : cursor.nb = 1
-        · rw [if_pos hone] at h
+        · rw [ite_eq_left hone] at h
           exact mergeHiCopyA_layoutFrame _ _ h
-        · rw [if_neg hone] at h
+        · rw [ite_eq_right hone] at h
           cases hphase : cursor.phase with
           | straight aCount bCount =>
               simp only [hphase] at h

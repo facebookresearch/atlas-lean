@@ -15,9 +15,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.DescendingRunInva
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ReverseRangeSupport
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ScanRemainder
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Functional correctness of `count_run`
 
@@ -266,7 +263,7 @@ private theorem ascendingScan_correct
         · let result : AscendingScanResult :=
             { length := n, fuelExhausted := false }
           refine ⟨result, ?_, ?_⟩
-          · simp only [ascendingScan?, hactive, if_pos]
+          · simp only [ascendingScan?, hactive, ite_eq_left]
             rw [hpreviousRead, hnextRead]
             simp [countRunBindOptionAcross, iflt, hdecrease, result]
           · refine
@@ -331,7 +328,7 @@ private theorem ascendingScan_correct
           rcases ih (n + 1) (by omega) (by omega) hfuel' hsortedSucc with
             ⟨result, hresult, hpost⟩
           refine ⟨result, ?_, ?_⟩
-          · simp only [ascendingScan?, hactive, if_pos]
+          · simp only [ascendingScan?, hactive, ite_eq_left]
             rw [hpreviousRead, hnextRead]
             simp only [countRunBindOptionAcross, iflt, hdecrease]
             exact hresult
@@ -597,7 +594,7 @@ private theorem reverseLastEqual_correct
       exact hmathematical.trans hequal
     refine ⟨result, ?_, ?_, ?_, ?_, ?_⟩
     · unfold reverseLastEqual?
-      rw [if_neg hzero]
+      rw [ite_eq_right hzero]
       simp only [hreverseStart]
       rw [hreversed]
       rfl
@@ -864,14 +861,14 @@ private theorem descendingScan_correct
           rcases ih reversed.slice (n + 1) 0 (by omega) (by omega) hfuel'
               hnextInv with ⟨result, hresult, hpost⟩
           refine ⟨result, ?_, ?_⟩
-          · simp only [descendingScan?, hactive, if_pos]
+          · simp only [descendingScan?, hactive, ite_eq_left]
             rw [hpreviousRead]
             rw [hnextRead]
             simp only [bind, Option.bind]
-            rw [if_pos hstrict, hreversed.resultEq]
+            rw [ite_eq_left hstrict, hreversed.resultEq]
             simp only
             rw [hreversed.fuel]
-            simp only [Bool.false_eq_true, if_false]
+            simp only [Bool.false_eq_true, ite_false]
             exact hresult
           · exact
               { fuel := hpost.fuel
@@ -889,7 +886,7 @@ private theorem descendingScan_correct
                 equalTail := neq
                 fuelExhausted := false }
             refine ⟨result, ?_, ?_⟩
-            · simp only [descendingScan?, hactive, if_pos]
+            · simp only [descendingScan?, hactive, ite_eq_left]
               rw [hpreviousRead, hnextRead]
               have hpreviousNext :
                   occurrenceComparator lt previous.key next.key = true := by
@@ -948,12 +945,12 @@ private theorem descendingScan_correct
             rcases ih current (n + 1) (neq + 1) (by omega) (by omega)
                 hfuel' hnextInv with ⟨result, hresult, hpost⟩
             refine ⟨result, ?_, ?_⟩
-            · simp only [descendingScan?, hactive, if_pos]
+            · simp only [descendingScan?, hactive, ite_eq_left]
               rw [hpreviousRead]
               rw [hnextRead]
               simp only [bind, Option.bind]
-              rw [if_neg (by exact Bool.eq_false_iff.mp hnextNotPrevious)]
-              rw [if_neg (by exact Bool.eq_false_iff.mp hpreviousNotNext)]
+              rw [ite_eq_right (by exact Bool.eq_false_iff.mp hnextNotPrevious)]
+              rw [ite_eq_right (by exact Bool.eq_false_iff.mp hpreviousNotNext)]
               exact hresult
             · exact
                 { fuel := hpost.fuel
@@ -1131,15 +1128,15 @@ private theorem finishDescending_correct
     rw [hdescendingState]
     simp only [bind, Option.bind]
     rw [hdescendingPost.fuel]
-    simp only [Bool.false_eq_true, if_false]
+    simp only [Bool.false_eq_true, ite_false]
     rw [htail.resultEq]
     simp only
     rw [htail.fuel]
-    simp only [Bool.false_eq_true, if_false]
+    simp only [Bool.false_eq_true, ite_false]
     rw [hwhole.resultEq]
     simp only
     rw [hwhole.fuel]
-    simp only [Bool.false_eq_true, if_false]
+    simp only [Bool.false_eq_true, ite_false]
     rw [hextendedState]
     rfl
   have hprefixStable :
@@ -1529,7 +1526,7 @@ private theorem countRun_raw_correct
     have hresult :
         countRun? state source (Int.ofNat start) nremaining = some result := by
       unfold countRun?
-      rw [if_pos hguard]
+      rw [ite_eq_left hguard]
       simp only [countRunBindOptionAcross, hascendingState]
       rw [hascendingPost.fuel]
       simp [hcomplete, result]
@@ -1567,14 +1564,14 @@ private theorem countRun_raw_correct
             countRun? state source (Int.ofNat start) nremaining =
               some result := by
           unfold countRun?
-          rw [if_pos hguard]
+          rw [ite_eq_left hguard]
           simp only [countRunBindOptionAcross, hascendingState]
           rw [hascendingPost.fuel]
-          simp only [Bool.false_eq_true, if_false]
-          rw [if_neg hcomplete, if_pos hlong]
+          simp only [Bool.false_eq_true, ite_false]
+          rw [ite_eq_right hcomplete, ite_eq_left hlong]
           rw [hfirstRead, hlastRead]
           simp only [bind, Option.bind]
-          rw [if_pos hincreasing]
+          rw [ite_eq_left hincreasing]
         refine ⟨result, hresult, ?_⟩
         simpa [result] using sourceResult_semantic lt source start nremaining
           ascending.length hascendingPost.lengthBounds.1
@@ -1627,17 +1624,17 @@ private theorem countRun_raw_correct
           ⟨result, hfinish, hpost⟩
         refine ⟨result, ?_, hpost⟩
         unfold countRun?
-        rw [if_pos hguard]
+        rw [ite_eq_left hguard]
         simp only [countRunBindOptionAcross, hascendingState]
         rw [hascendingPost.fuel]
-        simp only [Bool.false_eq_true, if_false]
-        rw [if_neg hcomplete, if_pos hlong]
+        simp only [Bool.false_eq_true, ite_false]
+        rw [ite_eq_right hcomplete, ite_eq_left hlong]
         rw [hfirstRead, hlastRead]
         simp only [bind, Option.bind]
-        rw [if_neg hincreasing, hreverse.resultEq]
+        rw [ite_eq_right hincreasing, hreverse.resultEq]
         simp only
         rw [hreverse.fuel]
-        simp only [Bool.false_eq_true, if_false]
+        simp only [Bool.false_eq_true, ite_false]
         exact hfinish
     · have hascendingOne : ascending.length = 1 := by
         have hlower := hascendingPost.lengthBounds.1
@@ -1688,11 +1685,11 @@ private theorem countRun_raw_correct
           hinvariant with ⟨result, hfinish, hpost⟩
       refine ⟨result, ?_, hpost⟩
       unfold countRun?
-      rw [if_pos hguard]
+      rw [ite_eq_left hguard]
       simp only [countRunBindOptionAcross, hascendingState]
       rw [hascendingPost.fuel]
-      simp only [Bool.false_eq_true, if_false]
-      rw [if_neg hcomplete, if_neg hlong]
+      simp only [Bool.false_eq_true, ite_false]
+      rw [ite_eq_right hcomplete, ite_eq_right hlong]
       simpa [hascendingOne] using hfinish
 
 /-- The actual traced `count_run` evaluator returns a nonempty sorted natural

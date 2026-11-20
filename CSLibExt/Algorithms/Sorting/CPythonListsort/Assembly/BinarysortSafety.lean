@@ -137,16 +137,16 @@ private theorem binarysortSearchTraced_memoryEvents_eq_nil
   | succ fuel ih =>
       rw [binarysortSearchTraced?]
       by_cases hactive : left < right
-      · rw [if_pos hactive]
+      · rw [ite_eq_left hactive]
         apply TraceResult.memoryEvents_bind_eq_nil
         · rfl
         · intro entry
           by_cases hcomparison : iflt lt pivot.key entry.key = true
-          · rw [if_pos hcomparison]
+          · rw [ite_eq_left hcomparison]
             exact ih left ((left + right) / 2)
-          · rw [if_neg hcomparison]
+          · rw [ite_eq_right hcomparison]
             exact ih (((left + right) / 2) + 1) right
-      · rw [if_neg hactive]
+      · rw [ite_eq_right hactive]
         rfl
 
 private theorem copyKeysFromTraced_memoryEvents_eq_nil
@@ -233,7 +233,7 @@ private theorem binarysortLoopTraced_memoryEvents_eq_nil
   | succ fuel ih =>
       rw [binarysortLoopTraced?]
       by_cases hactive : ok < n
-      · rw [if_pos hactive]
+      · rw [ite_eq_left hactive]
         apply TraceResult.memoryEvents_bind_eq_nil
         · rfl
         · intro pivot
@@ -241,14 +241,14 @@ private theorem binarysortLoopTraced_memoryEvents_eq_nil
           · exact binarysortSearchTraced_memoryEvents_eq_nil _ _ _ _ _ _ _
           · intro search
             by_cases hexhausted : search.fuelExhausted = true
-            · rw [if_pos hexhausted]
+            · rw [ite_eq_left hexhausted]
               rfl
-            · rw [if_neg hexhausted]
+            · rw [ite_eq_right hexhausted]
               apply TraceResult.memoryEvents_bind_eq_nil
               · exact binarysortShiftInsertTraced_memoryEvents_eq_nil _ _ _ _ _ _
               · intro updated
                 exact ih updated (ok + 1)
-      · rw [if_neg hactive]
+      · rw [ite_eq_right hactive]
         rfl
 
 /-- The complete `binarysort` wrapper cannot emit a merge-memory boundary on
@@ -259,9 +259,9 @@ theorem binarysortTraced_memoryEvents_eq_nil
     (binarysortTraced? state slice base n ok).trace.memoryEvents = [] := by
   unfold binarysortTraced?
   by_cases hadmitted : 1 ≤ n ∧ ok ≤ n ∧ n ≤ MAX_MINRUN.toNat
-  · rw [if_pos hadmitted]
+  · rw [ite_eq_left hadmitted]
     exact binarysortLoopTraced_memoryEvents_eq_nil _ _ _ _ _ _
-  · rw [if_neg hadmitted]
+  · rw [ite_eq_right hadmitted]
     rfl
 
 /-! ## Logical-policy event freedom -/
@@ -282,16 +282,16 @@ private theorem binarysortSearchTraced_policyEvents_eq_nil
   | succ fuel ih =>
       rw [binarysortSearchTraced?]
       by_cases hactive : left < right
-      · rw [if_pos hactive]
+      · rw [ite_eq_left hactive]
         apply TraceResult.policyEvents_bind_eq_nil
         · rfl
         · intro entry
           by_cases hcomparison : iflt lt pivot.key entry.key = true
-          · rw [if_pos hcomparison]
+          · rw [ite_eq_left hcomparison]
             exact ih left ((left + right) / 2)
-          · rw [if_neg hcomparison]
+          · rw [ite_eq_right hcomparison]
             exact ih (((left + right) / 2) + 1) right
-      · rw [if_neg hactive]
+      · rw [ite_eq_right hactive]
         rfl
 
 private theorem memmoveBackwardKeysTraced_policyEvents_eq_nil
@@ -360,7 +360,7 @@ private theorem binarysortLoopTraced_policyEvents_eq_nil
   | succ fuel ih =>
       rw [binarysortLoopTraced?]
       by_cases hactive : ok < n
-      · rw [if_pos hactive]
+      · rw [ite_eq_left hactive]
         apply TraceResult.policyEvents_bind_eq_nil
         · rfl
         · intro pivot
@@ -368,14 +368,14 @@ private theorem binarysortLoopTraced_policyEvents_eq_nil
           · exact binarysortSearchTraced_policyEvents_eq_nil _ _ _ _ _ _ _
           · intro search
             by_cases hexhausted : search.fuelExhausted = true
-            · rw [if_pos hexhausted]
+            · rw [ite_eq_left hexhausted]
               rfl
-            · rw [if_neg hexhausted]
+            · rw [ite_eq_right hexhausted]
               apply TraceResult.policyEvents_bind_eq_nil
               · exact binarysortShiftInsertTraced_policyEvents_eq_nil _ _ _ _ _ _
               · intro updated
                 exact ih updated (ok + 1)
-      · rw [if_neg hactive]
+      · rw [ite_eq_right hactive]
         rfl
 
 /-- The complete binary-insertion helper cannot emit a formed-run or
@@ -386,9 +386,9 @@ theorem binarysortTraced_policyEvents_eq_nil
     (binarysortTraced? state slice base n ok).trace.policyEvents = [] := by
   unfold binarysortTraced?
   by_cases hadmitted : 1 ≤ n ∧ ok ≤ n ∧ n ≤ MAX_MINRUN.toNat
-  · rw [if_pos hadmitted]
+  · rw [ite_eq_left hadmitted]
     exact binarysortLoopTraced_policyEvents_eq_nil _ _ _ _ _ _
-  · rw [if_neg hadmitted]
+  · rw [ite_eq_right hadmitted]
     rfl
 
 /-! ## Exact erasure -/
@@ -406,7 +406,7 @@ theorem erase_binarysortSearchTraced (fuel : Nat) (lt : BoolComparator κ)
   | succ fuel ih =>
       by_cases hactive : left < right
       · let middle := (left + right) / 2
-        simp only [binarysortSearchTraced?, binarysortSearch?, hactive, if_true,
+        simp only [binarysortSearchTraced?, binarysortSearch?, hactive, ite_true,
           TraceResult.erase_bind, TraceResult.erase_sortSliceKeysRead]
         cases hread : slice.read? (base + Int.ofNat middle) with
         | none => simp [binarysortBindOptionAcross]
@@ -483,8 +483,8 @@ theorem erase_binarysortLoopTraced (fuel : Nat) (state : MergeState κ ν)
         simp [binarysortLoopTraced?, binarysortLoop?, hactive]
   | succ fuel ih =>
       by_cases hactive : ok < n
-      · rw [binarysortLoopTraced?, binarysortLoop?, if_pos hactive,
-          if_pos hactive]
+      · rw [binarysortLoopTraced?, binarysortLoop?, ite_eq_left hactive,
+          ite_eq_left hactive]
         simp only [TraceResult.erase_bind,
           TraceResult.erase_sortSliceKeysRead]
         cases hpivot : slice.read? (base + Int.ofNat ok) with
@@ -498,7 +498,7 @@ theorem erase_binarysortLoopTraced (fuel : Nat) (state : MergeState κ ν)
             | some search =>
                 simp only [Option.bind_some]
                 cases hexhausted : search.fuelExhausted
-                · simp only [Bool.false_eq_true, if_false,
+                · simp only [Bool.false_eq_true, ite_false,
                     TraceResult.erase_bind]
                   rw [erase_binarysortShiftInsertTraced_of_pivot _ _ _ _ _ _
                     hpivot]
@@ -867,7 +867,7 @@ theorem binarysortSearchTraced_safe
           exact
             { resultEq := by
                 unfold binarysortSearchTraced?
-                rw [if_pos hactive]
+                rw [ite_eq_left hactive]
                 dsimp only
                 rw [BinarysortTraceSafe.bind_result_of_eq_some _ _ entry
                   hreadResult]
@@ -897,7 +897,7 @@ theorem binarysortSearchTraced_safe
           exact
             { resultEq := by
                 unfold binarysortSearchTraced?
-                rw [if_pos hactive]
+                rw [ite_eq_left hactive]
                 dsimp only
                 rw [BinarysortTraceSafe.bind_result_of_eq_some _ _ entry
                   hreadResult]
@@ -1503,11 +1503,11 @@ theorem binarysortSearchTraced_step_trace_order
               ((left + right) / 2 + 1) right
     else
       TraceResult.pure { position := left, fuelExhausted := false }).trace = _
-  rw [if_pos hactive]
+  rw [ite_eq_left hactive]
   simp only [TraceResult.trace_bind, hread]
   by_cases hcomparison : iflt lt pivot.key entry.key = true
-  · simp only [hcomparison, if_true]
-  · simp only [hcomparison, Bool.false_eq_true, if_false]
+  · simp only [hcomparison, ite_true]
+  · simp only [hcomparison, Bool.false_eq_true, ite_false]
 
 /-- Geometry for the source's overlapping one-slot right shift: both ranges,
 the insertion cell, and the saved-pivot cell are valid. -/
@@ -1634,7 +1634,7 @@ theorem binarysortShiftInsertTraced_values_phase_order
                       TraceResult.sortSliceValuesWrite? currentValueShifted
                         (base + Int.ofNat position) currentValuePivot
             else TraceResult.pure keyResult).trace = _
-  simp only [TraceResult.trace_bind, hkeyShift, hkeyWrite, if_true,
+  simp only [TraceResult.trace_bind, hkeyShift, hkeyWrite, ite_true,
     hvalueRead, hvalueShift]
 
 /-- One successful outer iteration observes the pivot, the complete search,
@@ -1682,9 +1682,9 @@ theorem binarysortLoopTraced_iteration_trace_order
       TraceResult.pure
         ({ slice := slice, fuelExhausted := false } :
           BinarysortResult κ ν)).trace = _
-  rw [if_pos hactive]
+  rw [ite_eq_left hactive]
   simp only [TraceResult.trace_bind, hpivot, hsearch, hsearchFuel,
-    Bool.false_eq_true, if_false, hshift]
+    Bool.false_eq_true, ite_false, hshift]
 
 /-! ## Anti-vacuity regressions -/
 

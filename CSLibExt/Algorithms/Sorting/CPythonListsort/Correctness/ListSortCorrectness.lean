@@ -10,9 +10,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ScanLoopCorrectne
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ReverseModeCorrectness
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.OccurrenceErasureScan
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Public functional correctness of listsort
 
@@ -315,14 +312,14 @@ theorem listSort_reverse_correct
             input.withOccurrenceKeys.hasKeyfunc input.withOccurrenceKeys.slice =
               some result
           unfold listSortImpl?
-          rw [if_pos hpublicTaggedMax]
+          rw [ite_eq_left hpublicTaggedMax]
           simp only [hpublicStopped, Bool.not_true, Bool.false_eq_true,
-            if_false]
-          rw [if_neg hpublicNotSmall]
-          simp only [if_true]
+            ite_false]
+          rw [ite_eq_right hpublicNotSmall]
+          simp only [ite_true]
           rw [initialMergeState_data]
           rw [hpublicReverse]
-          simp only [hpublicReverseFuel, Bool.false_eq_true, if_false]
+          simp only [hpublicReverseFuel, Bool.false_eq_true, ite_false]
           rw [hpublicScanState]
           simpa [ListSortInput.withOccurrenceKeys] using hreverse.scanResultEq
         returnCode := hreverse.returnCode

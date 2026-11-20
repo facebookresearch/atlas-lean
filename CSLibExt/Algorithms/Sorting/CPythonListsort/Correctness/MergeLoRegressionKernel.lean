@@ -9,9 +9,6 @@ LICENSE file in the root directory of this source tree.
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeLo
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.TempStorageInvariant
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Kernel-checked executable fixture for `merge_lo`
 

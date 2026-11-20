@@ -9,9 +9,6 @@ LICENSE file in the root directory of this source tree.
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeAt
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.Powerloop
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # PowerSort policy step for a newly found run
 
@@ -170,7 +167,6 @@ private def foundNewRunExampleState : MergeState Nat Nat :=
     mr_e := 0
     mr_mask := 0 }
 
-set_option linter.style.nativeDecide false in
 /-- The source explicitly makes an empty pending stack a no-op; in particular
 it does not inspect the otherwise-invalid prospective length zero. -/
 example :
@@ -184,7 +180,6 @@ example :
         (0, false, [], foundNewRunExampleState.data.entries.toList) := by
   decide
 
-set_option linter.style.nativeDecide false in
 /-- Collapse uses strict `>` rather than `≥`: equality leaves both runs in
 place and initializes the current top run with the computed power. -/
 example :

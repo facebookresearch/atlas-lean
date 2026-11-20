@@ -11,9 +11,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.DescendingRunInva
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.SortSlice
 import Mathlib.Data.List.Sort
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Pure stable-merge specification
 
@@ -158,7 +155,7 @@ private theorem pairwise_stable_merge
   | a :: left, b :: right, hleftSorted, hrightSorted, hstable => by
       rw [stableOccurrenceMerge, List.cons_merge_cons]
       by_cases hchoose : stableOccurrenceLE lt a b = true
-      · rw [if_pos hchoose]
+      · rw [ite_eq_left hchoose]
         apply List.Pairwise.cons
         · intro x hx
           rw [List.mem_merge] at hx
@@ -173,7 +170,7 @@ private theorem pairwise_stable_merge
           · apply List.pairwise_append.mpr
             exact ⟨hparts.1.tail, hparts.2.1,
               fun x hx y hy => hparts.2.2 x (by simp [hx]) y hy⟩
-      · rw [if_neg hchoose]
+      · rw [ite_eq_right hchoose]
         apply List.Pairwise.cons
         · intro x hx
           rw [List.mem_merge] at hx
@@ -231,7 +228,7 @@ theorem stableEntryMerge_append_right_block
           rw [List.cons_merge_cons]
           have hchoose : stableEntryLE lt leftHead suffixHead = true := by
             simp [stableEntryLE, stableOccurrenceLE, hnotStrict]
-          rw [if_pos hchoose]
+          rw [ite_eq_left hchoose]
           have ih := stableEntryMerge_append_right_block lt
             (suffixHead :: suffixTail) left [] htail
           simpa [stableEntryMerge] using congrArg (List.cons leftHead) ih
@@ -333,7 +330,7 @@ theorem stableEntryMerge_append_left_block
           have hnot :
               ¬stableEntryLE lt suffixHead rightHead = true := by
             simp [stableEntryLE, stableOccurrenceLE, hstrict]
-          rw [if_neg hnot]
+          rw [ite_eq_right hnot]
           have ih := stableEntryMerge_append_left_block lt
             (suffixHead :: suffixTail) [] right htail
           simpa [stableEntryMerge] using congrArg (List.cons rightHead) ih

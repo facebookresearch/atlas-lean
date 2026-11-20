@@ -111,7 +111,4 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.OccurrenceErasure
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.OccurrenceErasureScan
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ListSortCorrectness
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-! Root module for the CPython listsort formalization. -/

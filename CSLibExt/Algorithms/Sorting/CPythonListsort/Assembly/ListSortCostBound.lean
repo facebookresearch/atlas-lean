@@ -13,9 +13,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ListSortPolicyBridge
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ListSortScanPolicy
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ListSortScanReached
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Public PowerSort merge-cost bound for the real top-level evaluator
 
@@ -178,21 +175,21 @@ private theorem replayTopLevelMergePlan_formedLengthRelation
     (hreplay : replayTopLevelMergePlan? input events = some plan) :
     ∀ push, .formed push ∈ events → FormedLengthRelation push := by
   by_cases hzero : input.len = 0
-  · rw [replayTopLevelMergePlan?, if_pos hzero] at hreplay
+  · rw [replayTopLevelMergePlan?, ite_eq_left hzero] at hreplay
     by_cases hevents : events = []
     · subst events
       simp
-    · rw [if_neg hevents] at hreplay
+    · rw [ite_eq_right hevents] at hreplay
       contradiction
-  · rw [replayTopLevelMergePlan?, if_neg hzero] at hreplay
+  · rw [replayTopLevelMergePlan?, ite_eq_right hzero] at hreplay
     by_cases hone : input.len = 1
-    · rw [if_pos hone] at hreplay
+    · rw [ite_eq_left hone] at hreplay
       by_cases hevents : events = []
       · subst events
         simp
-      · rw [if_neg hevents] at hreplay
+      · rw [ite_eq_right hevents] at hreplay
         contradiction
-    · rw [if_neg hone] at hreplay
+    · rw [ite_eq_right hone] at hreplay
       unfold replayMergePlan? at hreplay
       cases hforest : replayPolicyEvents? input events with
       | none => simp [hforest] at hreplay
@@ -477,7 +474,7 @@ private theorem listsort_mergeCost_bound_active
   have htopLevelFormed :
       topLevelFormedLengths input.runSpan events =
         PolicyEvent.formedLengths scanEvents := by
-    rw [topLevelFormedLengths, if_neg hzero, if_neg hone, hformedEvents]
+    rw [topLevelFormedLengths, ite_eq_right hzero, ite_eq_right hone, hformedEvents]
   let powerSortPlan := canonicalTopPairCompletion input.runSpan openForest
   have hpowerValid : PowerMergePlanValid input.runSpan.base
       (BitVec.ofNat 64 input.runSpan.len) powerSortPlan := by

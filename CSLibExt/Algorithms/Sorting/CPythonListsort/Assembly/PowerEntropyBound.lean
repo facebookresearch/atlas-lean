@@ -10,9 +10,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Equivalence.PowerloopResults
 import Mathlib.Analysis.SpecialFunctions.Log.Base
 import Mathlib.Tactic
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Analytic bound for one transcribed node power
 

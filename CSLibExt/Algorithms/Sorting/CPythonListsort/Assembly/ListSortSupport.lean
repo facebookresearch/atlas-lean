@@ -11,9 +11,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ReverseSliceSafety
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Equivalence.MinrunResults
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Policy.PushRunPreservation
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Support lemmas for top-level listsort assembly
 

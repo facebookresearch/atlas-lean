@@ -11,9 +11,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.Order
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.SortSliceRange
 import Mathlib.Data.List.InsertIdx
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Functional correctness of `binarysort`
 
@@ -116,7 +113,7 @@ private theorem insertEarlierEntries_set_high
   split_ifs <;> try omega
   all_goals simp only [Array.size_set, min_eq_left hinsert,
     min_eq_left hcount, min_eq_left hcount1, Nat.zero_add, Nat.sub_zero,
-    Nat.add_sub_cancel_left, min_self, if_pos le_rfl] at *
+    Nat.add_sub_cancel_left, min_self, ite_eq_left le_rfl] at *
   all_goals try omega
   all_goals try rfl
   all_goals
@@ -217,7 +214,7 @@ private theorem memmove_write_exact
     have := Int.ofNat_le.mp h
     omega
   unfold SortSlice.memmove? SortSlice.memmoveDirection
-  rw [if_neg hnot]
+  rw [ite_eq_right hnot]
   exact memmoveBackward_write_exact slice insert count pivot hfit
 
 private theorem insertEarlierEntries_size (xs : Array beta)
@@ -401,7 +398,7 @@ private theorem insertEarlierEntries_frame
   simp only [sortSliceRangeEntries, Array.getElem?_extract]
   rw [hsize]
   by_cases hi : i < min (otherStart + otherCount) xs.size - otherStart
-  · simp only [if_pos hi]
+  · simp only [ite_eq_left hi]
     have hiCount : i < otherCount := by omega
     have hglobal : otherStart + i < xs.size := by omega
     have houtside : otherStart + i < base ∨ base + n ≤ otherStart + i := by
@@ -411,9 +408,9 @@ private theorem insertEarlierEntries_frame
     rw [insertEarlierEntries_getElem? xs (base + position) (base + ok)
       (otherStart + i) pivot (by omega) (by omega)]
     rcases houtside with hbefore | hafter
-    · rw [if_pos (by omega)]
-    · rw [if_neg (by omega), if_neg (by omega), if_neg (by omega)]
-  · simp only [if_neg hi]
+    · rw [ite_eq_left (by omega)]
+    · rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega)]
+  · simp only [ite_eq_right hi]
 
 private theorem insertEarlierEntries_get_before
     (xs : Array beta) (insert stop i : Nat) (pivot : beta)
@@ -423,7 +420,7 @@ private theorem insertEarlierEntries_get_before
       omega) = xs[i]'(by omega) := by
   have hget := insertEarlierEntries_getElem? xs insert stop i pivot hinsert hstop
   have hsize := insertEarlierEntries_size xs insert stop pivot hinsert hstop
-  rw [if_pos hi, Array.getElem?_eq_getElem (by rw [hsize]; omega),
+  rw [ite_eq_left hi, Array.getElem?_eq_getElem (by rw [hsize]; omega),
     Array.getElem?_eq_getElem (by omega)] at hget
   exact Option.some.inj hget
 
@@ -434,7 +431,7 @@ private theorem insertEarlierEntries_get_at
       rw [insertEarlierEntries_size xs insert stop pivot hinsert hstop]
       omega) = pivot := by
   have hget := insertEarlierEntries_getElem? xs insert stop insert pivot hinsert hstop
-  rw [if_neg (Nat.lt_irrefl _), if_pos rfl,
+  rw [ite_eq_right (Nat.lt_irrefl _), ite_eq_left rfl,
     Array.getElem?_eq_getElem (by
       rw [insertEarlierEntries_size xs insert stop pivot hinsert hstop]
       omega)] at hget
@@ -449,7 +446,7 @@ private theorem insertEarlierEntries_get_shifted
       omega) = xs[i - 1]'(by omega) := by
   have hget := insertEarlierEntries_getElem? xs insert stop i pivot hinsert hstop
   have hsize := insertEarlierEntries_size xs insert stop pivot hinsert hstop
-  rw [if_neg (by omega), if_neg (by omega), if_pos hihigh,
+  rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left hihigh,
     Array.getElem?_eq_getElem (by rw [hsize]; omega),
     Array.getElem?_eq_getElem (by omega)] at hget
   exact Option.some.inj hget
@@ -520,7 +517,7 @@ private theorem binarysortSearch_semantics
   | succ fuel ih =>
       rw [binarysortSearch?]
       by_cases hactive : left < right
-      · simp only [if_pos hactive]
+      · simp only [ite_eq_left hactive]
         let middle := (left + right) / 2
         have hmiddleLower : left ≤ middle := by
           dsimp [middle]
@@ -539,7 +536,7 @@ private theorem binarysortSearch_semantics
         simp only [binarysortBindOptionAcross, iflt_eq]
         by_cases hcmp : occurrenceComparator lt pivot.key
             slice.entries[base + middle].key = true
-        · simp only [hcmp, if_true]
+        · simp only [hcmp, ite_true]
           have hwidth' : middle - left < fuel := by omega
           have hafter' : ∀ i (_ : middle ≤ i) (hi : i < ok),
               occurrenceComparator lt pivot.key
@@ -585,7 +582,7 @@ private theorem binarysortSearch_semantics
           exact ⟨result, heval, hpost⟩
       · have heq : left = right := by omega
         subst right
-        rw [if_neg (Nat.lt_irrefl left)]
+        rw [ite_eq_right (Nat.lt_irrefl left)]
         let result : BinarySearchResult :=
           { position := left, fuelExhausted := false }
         refine ⟨result, by rfl, ?_⟩
@@ -1075,12 +1072,12 @@ private theorem binarysortLoop_correct
         refine ⟨result, ?_⟩
         exact
           { resultEq := by
-              rw [binarysortLoop?, if_pos hactive, hread]
+              rw [binarysortLoop?, ite_eq_left hactive, hread]
               simp only [binarysortBindOptionAcross]
               rw [hsearchEval']
               simp only
               rw [hsearch.fuel]
-              simp only [Bool.false_eq_true, if_false]
+              simp only [Bool.false_eq_true, ite_false]
               change Option.bind
                 (slice.memmove?
                   (Int.ofNat base + Int.ofNat (search.position + 1))
@@ -1159,7 +1156,7 @@ private theorem binarysort_raw_correct
     ⟨hnPositive, hok, hnMax⟩
   refine ⟨result, ?_, hloop.resultFuel, hloop.sorted, hloop.stable,
     hloop.rangeEntriesPerm, hloop.frame⟩
-  simpa only [binarysort?, if_pos hadmitted, normalizedOk] using hloop.resultEq
+  simpa only [binarysort?, ite_eq_left hadmitted, normalizedOk] using hloop.resultEq
 
 private theorem SortSlice.EqualOutsideRange.getElem?_eq_of_outside
     {before after : SortSlice kappa rho} {start count k : Nat}

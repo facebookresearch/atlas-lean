@@ -287,7 +287,7 @@ private theorem finishListSortTraced_success_safe
         exact
           { resultEq := by
               unfold finishListSortTraced?
-              rw [if_pos (by simp [hActive])]
+              rw [ite_eq_left (by simp [hActive])]
               change
                 ((reverseSlicePhaseTraced?
                   (finalReversePhase state.a.hasValues) state.data 0
@@ -1500,7 +1500,7 @@ private theorem listSortScanTraced_safe_core :
           refine ⟨result, ?_⟩
           exact
             { resultEq := by
-                rw [listSortScanTraced?, if_neg hRemaining]
+                rw [listSortScanTraced?, ite_eq_right hRemaining]
                 exact (traceResult_bind_result_of_eq_some _ _ counted
                   hCounted.resultEq).trans hPostCountEq
               returnCode := hAfter.returnCode
@@ -1677,7 +1677,7 @@ private theorem listSortScanTraced_safe_core :
           refine ⟨result, ?_⟩
           exact
             { resultEq := by
-                rw [listSortScanTraced?, if_neg hRemaining]
+                rw [listSortScanTraced?, ite_eq_right hRemaining]
                 exact (traceResult_bind_result_of_eq_some _ _ counted
                   hCounted.resultEq).trans hPostCountEq
               returnCode := hAfter.returnCode
@@ -1810,7 +1810,8 @@ private theorem listSortImplTraced_success
               hFinished.traceSafety)
         memoryLifecycle := by
           have hTailValid :
-              (finishListSortTraced? state reverse input.entries.size 0 false).trace.memoryEventsValid
+              (finishListSortTraced? state reverse input.entries.size 0
+                  false).trace.memoryEventsValid
                 hasKeyfunc := by
             simpa [state, hPackage.hasValues] using hFinished.memoryEventsValid
           have hLifecycle := AccessTrace.mergeMemoryLifecycle_prepend_initial

@@ -13,9 +13,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.MergeMovementCorr
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.SortSliceRange
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.StableMerge
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Semantic invariant for `merge_lo`
 
@@ -1015,7 +1012,7 @@ theorem MergeLoSemanticMachineInvariant.copyBTail
     (hna : machine.na = 1) (hnb : 0 < machine.nb)
     (hresult : mergeLoCopyB? machine = some result) :
     MergeLoSemanticOutput lt call result.state := by
-  rw [mergeLoCopyB?, if_pos ⟨hna, hnb⟩] at hresult
+  rw [mergeLoCopyB?, ite_eq_left ⟨hna, hnb⟩] at hresult
   rcases Option.bind_eq_some_iff.mp hresult with ⟨movedData, hmove, hresult⟩
   rcases Option.bind_eq_some_iff.mp hresult with ⟨lastLeft, hleftRead, hresult⟩
   rcases Option.bind_eq_some_iff.mp hresult with ⟨finalData, hwrite, hfinal⟩
@@ -1478,7 +1475,7 @@ theorem MergeLoSemanticMachineInvariant.copyABlock
         (mergeLoLeftEntries call)[machine.aPos + offset]? := by
       dsimp only [block]
       rw [List.getElem?_take, List.getElem?_drop]
-      simp only [if_pos hoffset]
+      simp only [ite_eq_left hoffset]
     have hindex : Int.ofNat (machine.dest.toNat + offset) =
         machine.dest + Int.ofNat offset := by
       simp only [Int.ofNat_eq_natCast, Nat.cast_add]
@@ -1655,7 +1652,7 @@ theorem MergeLoSemanticMachineInvariant.copyBBlock
         (mergeLoRightEntries call)[consumed + offset]? := by
       dsimp only [block]
       rw [List.getElem?_take, List.getElem?_drop]
-      simp only [if_pos hoffset]
+      simp only [ite_eq_left hoffset]
     have hindex : Int.ofNat (machine.dest.toNat + offset) =
         machine.dest + Int.ofNat offset := by
       simp only [Int.ofNat_eq_natCast, Nat.cast_add]
@@ -2036,7 +2033,7 @@ theorem MergeLoSemanticMachineInvariant.gallopRight_beforeBlock
       (((mergeLoLeftEntries call).drop machine.aPos).take index)[offset]? =
         some entry :=
     List.getElem?_eq_some_iff.mpr ⟨hoffset, hentryEq⟩
-  rw [List.getElem?_take, if_pos hoffsetIndex, List.getElem?_drop] at hgetTake
+  rw [List.getElem?_take, ite_eq_left hoffsetIndex, List.getElem?_drop] at hgetTake
   have htemp : mergeLoTempRead? machine.state.a
       (machine.aPos + offset) = some entry :=
     (h.tempActive.2 offset hoffsetNa).trans hgetTake
@@ -2089,7 +2086,7 @@ theorem MergeLoSemanticMachineInvariant.gallopLeft_beforeBlock
       (((mergeLoRightEntries call).drop
         (call.nb - machine.nb)).take index)[offset]? = some entry :=
     List.getElem?_eq_some_iff.mpr ⟨hoffset, hentryEq⟩
-  rw [List.getElem?_take, if_pos hoffsetIndex, List.getElem?_drop] at hgetTake
+  rw [List.getElem?_take, ite_eq_left hoffsetIndex, List.getElem?_drop] at hgetTake
   have hmain : machine.state.data.read?
       (machine.bPos + Int.ofNat offset) = some entry :=
     (h.mainActive.2 offset hoffsetNb).trans hgetTake

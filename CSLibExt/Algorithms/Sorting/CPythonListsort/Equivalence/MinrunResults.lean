@@ -10,9 +10,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Equivalence.Minrun
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Equivalence.PowerloopResults
 import Mathlib
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Adaptive-minrun sequence results
 
@@ -38,7 +35,7 @@ theorem minrunExponentSpecLoop_characterization (fuel listSize exponent : Nat)
   | succ fuel ih =>
       simp only [minrunExponentSpecLoop]
       by_cases hcurrent : listSize >>> exponent < 64
-      · rw [if_pos hcurrent]
+      · rw [ite_eq_left hcurrent]
         constructor
         · rfl
         constructor
@@ -47,7 +44,7 @@ theorem minrunExponentSpecLoop_characterization (fuel listSize exponent : Nat)
         · simpa [Nat.shiftRight_eq_div_pow] using hcurrent
         · intro j _ hj
           omega
-      · rw [if_neg hcurrent]
+      · rw [ite_eq_right hcurrent]
         have hcurrentDiv : 64 ≤ listSize / 2 ^ exponent := by
           rw [Nat.shiftRight_eq_div_pow] at hcurrent
           omega

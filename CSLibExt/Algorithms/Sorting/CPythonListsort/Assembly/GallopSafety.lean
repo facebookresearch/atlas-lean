@@ -127,9 +127,9 @@ theorem temporary_agreesWithSlice_of_entries (storage : TempStorage κ ν)
   change (if 0 ≤ Int.ofNat start + Int.ofNat i then
       storage.cells[(Int.ofNat start + Int.ofNat i).toNat]?.bind id else none) =
     slice.read? (0 + Int.ofNat i)
-  rw [if_pos hphysical]
+  rw [ite_eq_left hphysical]
   have hiNonnegative : 0 ≤ Int.ofNat i := Int.natCast_nonneg i
-  simp only [zero_add, SortSlice.read?, if_pos hiNonnegative]
+  simp only [zero_add, SortSlice.read?, ite_eq_left hiNonnegative]
   have hsum : (Int.ofNat start + Int.ofNat i).toNat = start + i := by rfl
   have hitoNat : (Int.ofNat i).toNat = i := rfl
   rw [hsum, hitoNat, hentries i hi]
@@ -1104,16 +1104,16 @@ theorem erase_finishGallopLeftTraced (fuel : Nat) (lt : BoolComparator κ)
         upperOffset ≤ Int.ofNat n
   · by_cases hinner : 0 ≤ lastOffset + 1 ∧ 0 ≤ upperOffset
     · unfold finishGallopLeftTraced? finishGallopLeftFromSource?
-      rw [if_pos houter, if_pos houter]
-      rw [if_pos hinner, if_pos hinner]
+      rw [ite_eq_left houter, ite_eq_left houter]
+      rw [ite_eq_left hinner, ite_eq_left hinner]
       cases exhausted <;> simp
     · unfold finishGallopLeftTraced? finishGallopLeftFromSource?
-      rw [if_pos houter, if_pos houter]
+      rw [ite_eq_left houter, ite_eq_left houter]
       dsimp only
-      rw [if_neg hinner, if_neg hinner]
+      rw [ite_eq_right hinner, ite_eq_right hinner]
       rfl
   · unfold finishGallopLeftTraced? finishGallopLeftFromSource?
-    rw [if_neg houter, if_neg houter]
+    rw [ite_eq_right houter, ite_eq_right houter]
     rfl
 
 @[simp]
@@ -1129,16 +1129,16 @@ theorem erase_finishGallopRightTraced (fuel : Nat) (lt : BoolComparator κ)
         upperOffset ≤ Int.ofNat n
   · by_cases hinner : 0 ≤ lastOffset + 1 ∧ 0 ≤ upperOffset
     · unfold finishGallopRightTraced? finishGallopRightFromSource?
-      rw [if_pos houter, if_pos houter]
-      rw [if_pos hinner, if_pos hinner]
+      rw [ite_eq_left houter, ite_eq_left houter]
+      rw [ite_eq_left hinner, ite_eq_left hinner]
       cases exhausted <;> simp
     · unfold finishGallopRightTraced? finishGallopRightFromSource?
-      rw [if_pos houter, if_pos houter]
+      rw [ite_eq_left houter, ite_eq_left houter]
       dsimp only
-      rw [if_neg hinner, if_neg hinner]
+      rw [ite_eq_right hinner, ite_eq_right hinner]
       rfl
   · unfold finishGallopRightTraced? finishGallopRightFromSource?
-    rw [if_neg houter, if_neg houter]
+    rw [ite_eq_right houter, ite_eq_right houter]
     rfl
 
 /-- Erasing the generic traced left gallop gives the direct-source evaluator. -/
@@ -1149,19 +1149,19 @@ theorem erase_gallopLeftTraced (state : MergeState κ ν)
       gallopLeftFromSource? state source key n hint := by
   by_cases hinput : 0 < n ∧ hint < n ∧ n ≤ PY_SSIZE_T_MAX
   · unfold gallopLeftTraced? gallopLeftFromSource?
-    rw [if_pos hinput, if_pos hinput]
+    rw [ite_eq_left hinput, ite_eq_left hinput]
     rw [TraceResult.erase_bind_gallop, GallopKeySource.erase_readTraced]
     apply congrArg
       (gallopBindOptionAcross (source.read? (Int.ofNat hint)))
     funext hinted
     by_cases hcompare : iflt state.key_compare hinted.key key = true
-    · rw [if_pos hcompare, if_pos hcompare]
+    · rw [ite_eq_left hcompare, ite_eq_left hcompare]
       rw [TraceResult.erase_bind_gallop,
         erase_gallopLeftRightExponentialTraced]
       cases hphase : gallopLeftRightExponentialFromSource? (n + 1)
           state.key_compare source key hint (n - hint) 0 1 <;>
         simp [gallopBindOptionAcross, hphase]
-    · rw [if_neg hcompare, if_neg hcompare]
+    · rw [ite_eq_right hcompare, ite_eq_right hcompare]
       rw [TraceResult.erase_bind_gallop,
         erase_gallopLeftLeftExponentialTraced]
       cases hphase : gallopLeftLeftExponentialFromSource? (n + 1)
@@ -1177,19 +1177,19 @@ theorem erase_gallopRightTraced (state : MergeState κ ν)
       gallopRightFromSource? state source key n hint := by
   by_cases hinput : 0 < n ∧ hint < n ∧ n ≤ PY_SSIZE_T_MAX
   · unfold gallopRightTraced? gallopRightFromSource?
-    rw [if_pos hinput, if_pos hinput]
+    rw [ite_eq_left hinput, ite_eq_left hinput]
     rw [TraceResult.erase_bind_gallop, GallopKeySource.erase_readTraced]
     apply congrArg
       (gallopBindOptionAcross (source.read? (Int.ofNat hint)))
     funext hinted
     by_cases hcompare : iflt state.key_compare key hinted.key = true
-    · rw [if_pos hcompare, if_pos hcompare]
+    · rw [ite_eq_left hcompare, ite_eq_left hcompare]
       rw [TraceResult.erase_bind_gallop,
         erase_gallopRightLeftExponentialTraced]
       cases hphase : gallopRightLeftExponentialFromSource? (n + 1)
           state.key_compare source key hint (hint + 1) 0 1 <;>
         simp [gallopBindOptionAcross, hphase]
-    · rw [if_neg hcompare, if_neg hcompare]
+    · rw [ite_eq_right hcompare, ite_eq_right hcompare]
       rw [TraceResult.erase_bind_gallop,
         erase_gallopRightRightExponentialTraced]
       cases hphase : gallopRightRightExponentialFromSource? (n + 1)
@@ -1351,7 +1351,7 @@ theorem gallopLeftRightExponentialFromSource_eq_slice (fuel : Nat)
       simp only [gallopLeftRightExponentialFromSource?,
         gallopLeftRightExponential?]
       by_cases hprobe : offset < maxOffset
-      · rw [if_pos hprobe, if_pos hprobe]
+      · rw [ite_eq_left hprobe, ite_eq_left hprobe]
         have hindexNonnegative : 0 ≤ Int.ofNat (hint + offset) :=
           Int.natCast_nonneg _
         have hindexUpper : Int.ofNat (hint + offset) < Int.ofNat n := by
@@ -1364,7 +1364,7 @@ theorem gallopLeftRightExponentialFromSource_eq_slice (fuel : Nat)
         · by_cases hguard : offset ≤ (PY_SSIZE_T_MAX - 1) / 2 <;>
             simp [hcompare, hguard, ih]
         · simp [hcompare]
-      · rw [if_neg hprobe, if_neg hprobe]
+      · rw [ite_eq_right hprobe, ite_eq_right hprobe]
 
 /-- The leftward exponential phase of `gallop_left` is unchanged under
 reviewed-slice agreement. -/
@@ -1384,7 +1384,7 @@ theorem gallopLeftLeftExponentialFromSource_eq_slice (fuel : Nat)
       simp only [gallopLeftLeftExponentialFromSource?,
         gallopLeftLeftExponential?]
       by_cases hprobe : offset < maxOffset
-      · rw [if_pos hprobe, if_pos hprobe]
+      · rw [ite_eq_left hprobe, ite_eq_left hprobe]
         have hoffsetHint : offset ≤ hint := by omega
         have hindexNonnegative :
             0 ≤ Int.ofNat hint - Int.ofNat offset := by
@@ -1402,7 +1402,7 @@ theorem gallopLeftLeftExponentialFromSource_eq_slice (fuel : Nat)
         · simp [hcompare]
         · by_cases hguard : offset ≤ (PY_SSIZE_T_MAX - 1) / 2 <;>
             simp [hcompare, hguard, ih]
-      · rw [if_neg hprobe, if_neg hprobe]
+      · rw [ite_eq_right hprobe, ite_eq_right hprobe]
 
 /-- The left-biased binary phase is unchanged under reviewed-slice
 agreement. -/
@@ -1419,7 +1419,7 @@ theorem gallopLeftBinaryFromSource_eq_slice (fuel : Nat)
   | succ fuel ih =>
       simp only [gallopLeftBinaryFromSource?, gallopLeftBinary?]
       by_cases hsearch : lower < upper
-      · rw [if_pos hsearch, if_pos hsearch]
+      · rw [ite_eq_left hsearch, ite_eq_left hsearch]
         let middle := lower + (upper - lower) / 2
         have hmiddleUpper : middle < upper := by
           dsimp [middle]
@@ -1438,7 +1438,7 @@ theorem gallopLeftBinaryFromSource_eq_slice (fuel : Nat)
         · have hmiddleBound : middle ≤ n := by omega
           simp only [iflt_eq, hcompare]
           exact ih lower middle hmiddleBound
-      · rw [if_neg hsearch, if_neg hsearch]
+      · rw [ite_eq_right hsearch, ite_eq_right hsearch]
 
 /-- The leftward exponential phase of `gallop_right` is unchanged under
 reviewed-slice agreement. -/
@@ -1458,7 +1458,7 @@ theorem gallopRightLeftExponentialFromSource_eq_slice (fuel : Nat)
       simp only [gallopRightLeftExponentialFromSource?,
         gallopRightLeftExponential?]
       by_cases hprobe : offset < maxOffset
-      · rw [if_pos hprobe, if_pos hprobe]
+      · rw [ite_eq_left hprobe, ite_eq_left hprobe]
         have hoffsetHint : offset ≤ hint := by omega
         have hindexNonnegative :
             0 ≤ Int.ofNat hint - Int.ofNat offset := by
@@ -1476,7 +1476,7 @@ theorem gallopRightLeftExponentialFromSource_eq_slice (fuel : Nat)
         · by_cases hguard : offset ≤ (PY_SSIZE_T_MAX - 1) / 2 <;>
             simp [hcompare, hguard, ih]
         · simp [hcompare]
-      · rw [if_neg hprobe, if_neg hprobe]
+      · rw [ite_eq_right hprobe, ite_eq_right hprobe]
 
 /-- The rightward exponential phase of `gallop_right` is unchanged under
 reviewed-slice agreement. -/
@@ -1496,7 +1496,7 @@ theorem gallopRightRightExponentialFromSource_eq_slice (fuel : Nat)
       simp only [gallopRightRightExponentialFromSource?,
         gallopRightRightExponential?]
       by_cases hprobe : offset < maxOffset
-      · rw [if_pos hprobe, if_pos hprobe]
+      · rw [ite_eq_left hprobe, ite_eq_left hprobe]
         have hindexNonnegative : 0 ≤ Int.ofNat (hint + offset) :=
           Int.natCast_nonneg _
         have hindexUpper : Int.ofNat (hint + offset) < Int.ofNat n := by
@@ -1509,7 +1509,7 @@ theorem gallopRightRightExponentialFromSource_eq_slice (fuel : Nat)
         · simp [hcompare]
         · by_cases hguard : offset ≤ (PY_SSIZE_T_MAX - 1) / 2 <;>
             simp [hcompare, hguard, ih]
-      · rw [if_neg hprobe, if_neg hprobe]
+      · rw [ite_eq_right hprobe, ite_eq_right hprobe]
 
 /-- The right-biased binary phase is unchanged under reviewed-slice
 agreement. -/
@@ -1526,7 +1526,7 @@ theorem gallopRightBinaryFromSource_eq_slice (fuel : Nat)
   | succ fuel ih =>
       simp only [gallopRightBinaryFromSource?, gallopRightBinary?]
       by_cases hsearch : lower < upper
-      · rw [if_pos hsearch, if_pos hsearch]
+      · rw [ite_eq_left hsearch, ite_eq_left hsearch]
         let middle := lower + (upper - lower) / 2
         have hmiddleUpper : middle < upper := by
           dsimp [middle]
@@ -1542,10 +1542,10 @@ theorem gallopRightBinaryFromSource_eq_slice (fuel : Nat)
         funext entry
         by_cases hcompare : lt key entry.key = true
         · have hmiddleBound : middle ≤ n := by omega
-          simp only [iflt_eq, hcompare, if_true]
+          simp only [iflt_eq, hcompare, ite_true]
           exact ih lower middle hmiddleBound
         · simp [hcompare, ih _ _ hupper]
-      · rw [if_neg hsearch, if_neg hsearch]
+      · rw [ite_eq_right hsearch, ite_eq_right hsearch]
 
 /-- The left-biased finishing phase is unchanged under reviewed-slice
 agreement.  Its own signed guard supplies the binary phase's upper bound. -/
@@ -1563,9 +1563,9 @@ theorem finishGallopLeftFromSource_eq_slice (fuel : Nat)
         upperOffset ≤ Int.ofNat n
   · by_cases hinner : 0 ≤ lastOffset + 1 ∧ 0 ≤ upperOffset
     · unfold finishGallopLeftFromSource? finishGallopLeft?
-      rw [if_pos houter, if_pos houter]
+      rw [ite_eq_left houter, ite_eq_left houter]
       dsimp only
-      rw [if_pos hinner, if_pos hinner]
+      rw [ite_eq_left hinner, ite_eq_left hinner]
       cases exhausted with
       | false =>
           exact gallopLeftBinaryFromSource_eq_slice fuel lt source slice
@@ -1573,11 +1573,11 @@ theorem finishGallopLeftFromSource_eq_slice (fuel : Nat)
             (Int.toNat_le.mpr houter.2.2)
       | true => rfl
     · unfold finishGallopLeftFromSource? finishGallopLeft?
-      rw [if_pos houter, if_pos houter]
+      rw [ite_eq_left houter, ite_eq_left houter]
       dsimp only
-      rw [if_neg hinner, if_neg hinner]
+      rw [ite_eq_right hinner, ite_eq_right hinner]
   · unfold finishGallopLeftFromSource? finishGallopLeft?
-    rw [if_neg houter, if_neg houter]
+    rw [ite_eq_right houter, ite_eq_right houter]
 
 /-- The right-biased finishing phase is unchanged under reviewed-slice
 agreement. -/
@@ -1595,9 +1595,9 @@ theorem finishGallopRightFromSource_eq_slice (fuel : Nat)
         upperOffset ≤ Int.ofNat n
   · by_cases hinner : 0 ≤ lastOffset + 1 ∧ 0 ≤ upperOffset
     · unfold finishGallopRightFromSource? finishGallopRight?
-      rw [if_pos houter, if_pos houter]
+      rw [ite_eq_left houter, ite_eq_left houter]
       dsimp only
-      rw [if_pos hinner, if_pos hinner]
+      rw [ite_eq_left hinner, ite_eq_left hinner]
       cases exhausted with
       | false =>
           exact gallopRightBinaryFromSource_eq_slice fuel lt source slice
@@ -1605,11 +1605,11 @@ theorem finishGallopRightFromSource_eq_slice (fuel : Nat)
             (Int.toNat_le.mpr houter.2.2)
       | true => rfl
     · unfold finishGallopRightFromSource? finishGallopRight?
-      rw [if_pos houter, if_pos houter]
+      rw [ite_eq_left houter, ite_eq_left houter]
       dsimp only
-      rw [if_neg hinner, if_neg hinner]
+      rw [ite_eq_right hinner, ite_eq_right hinner]
   · unfold finishGallopRightFromSource? finishGallopRight?
-    rw [if_neg houter, if_neg houter]
+    rw [ite_eq_right houter, ite_eq_right houter]
 
 /-- Under pointwise agreement with a reviewed materialized slice, the complete
 direct-source `gallop_left` evaluator is exactly the original transcription.
@@ -1625,7 +1625,7 @@ theorem gallopLeftFromSource_eq_slice_of_ssize (state : MergeState κ ν)
   have hinput : 0 < n ∧ hint < n ∧ n ≤ PY_SSIZE_T_MAX :=
     ⟨hn, hhint, hnSsize⟩
   unfold gallopLeftFromSource? gallopLeft?
-  rw [if_pos hinput, if_pos hinput]
+  rw [ite_eq_left hinput, ite_eq_left hinput]
   have hindexNonnegative : 0 ≤ Int.ofNat hint := Int.natCast_nonneg _
   have hindexUpper : Int.ofNat hint < Int.ofNat n := Int.ofNat_lt.mpr hhint
   rw [hagrees _ hindexNonnegative hindexUpper]
@@ -1634,7 +1634,7 @@ theorem gallopLeftFromSource_eq_slice_of_ssize (state : MergeState κ ν)
       (slice.read? (sliceBase + Int.ofNat hint)))
   funext hinted
   by_cases hcompare : iflt state.key_compare hinted.key key = true
-  · rw [if_pos hcompare, if_pos hcompare]
+  · rw [ite_eq_left hcompare, ite_eq_left hcompare]
     dsimp only
     have hphaseEq := gallopLeftRightExponentialFromSource_eq_slice
       (n + 1) state.key_compare source slice sliceBase key hint (n - hint)
@@ -1658,7 +1658,7 @@ theorem gallopLeftFromSource_eq_slice_of_ssize (state : MergeState κ ν)
           (Int.ofNat exponential.lastOffset + Int.ofNat hint)
           (Int.ofNat (min exponential.offset (n - hint)) + Int.ofNat hint)
           exponential.fuelExhausted hagrees
-  · rw [if_neg hcompare, if_neg hcompare]
+  · rw [ite_eq_right hcompare, ite_eq_right hcompare]
     dsimp only
     have hphaseEq := gallopLeftLeftExponentialFromSource_eq_slice
       (n + 1) state.key_compare source slice sliceBase key hint (hint + 1)
@@ -1695,7 +1695,7 @@ theorem gallopRightFromSource_eq_slice_of_ssize (state : MergeState κ ν)
   have hinput : 0 < n ∧ hint < n ∧ n ≤ PY_SSIZE_T_MAX :=
     ⟨hn, hhint, hnSsize⟩
   unfold gallopRightFromSource? gallopRight?
-  rw [if_pos hinput, if_pos hinput]
+  rw [ite_eq_left hinput, ite_eq_left hinput]
   have hindexNonnegative : 0 ≤ Int.ofNat hint := Int.natCast_nonneg _
   have hindexUpper : Int.ofNat hint < Int.ofNat n := Int.ofNat_lt.mpr hhint
   rw [hagrees _ hindexNonnegative hindexUpper]
@@ -1704,7 +1704,7 @@ theorem gallopRightFromSource_eq_slice_of_ssize (state : MergeState κ ν)
       (slice.read? (sliceBase + Int.ofNat hint)))
   funext hinted
   by_cases hcompare : iflt state.key_compare key hinted.key = true
-  · rw [if_pos hcompare, if_pos hcompare]
+  · rw [ite_eq_left hcompare, ite_eq_left hcompare]
     dsimp only
     have hphaseEq := gallopRightLeftExponentialFromSource_eq_slice
       (n + 1) state.key_compare source slice sliceBase key hint (hint + 1)
@@ -1728,7 +1728,7 @@ theorem gallopRightFromSource_eq_slice_of_ssize (state : MergeState κ ν)
           (Int.ofNat hint - Int.ofNat (min exponential.offset (hint + 1)))
           (Int.ofNat hint - Int.ofNat exponential.lastOffset)
           exponential.fuelExhausted hagrees
-  · rw [if_neg hcompare, if_neg hcompare]
+  · rw [ite_eq_right hcompare, ite_eq_right hcompare]
     dsimp only
     have hphaseEq := gallopRightRightExponentialFromSource_eq_slice
       (n + 1) state.key_compare source slice sliceBase key hint (n - hint)
@@ -1933,9 +1933,9 @@ theorem gallopLeftRightExponential_safe (fuel : Nat)
             ⟨result, hresult, hnotExhausted, hresultOrder, hresultMax,
               htrace⟩
           refine ⟨result, ?_, hnotExhausted, hresultOrder, hresultMax, ?_⟩
-          · simp only [gallopLeftRightExponentialTraced?, if_pos hprobe,
-              TraceResult.bind, hreadResult, if_pos hcompare,
-              if_pos hguard, hresult]
+          · simp only [gallopLeftRightExponentialTraced?, ite_eq_left hprobe,
+              TraceResult.bind, hreadResult, ite_eq_left hcompare,
+              ite_eq_left hguard, hresult]
           · have hbound := gallopTraceSafe_bind
               (source.readTraced? (Int.ofNat (hint + offset)))
               (fun readEntry =>
@@ -1949,14 +1949,14 @@ theorem gallopLeftRightExponential_safe (fuel : Nat)
                   offset := offset
                   fuelExhausted := false })
               entry hreadResult hreadSafe
-              (by simpa only [if_pos hcompare, if_pos hguard]
+              (by simpa only [ite_eq_left hcompare, ite_eq_left hguard]
                 using htrace)
-            rw [gallopLeftRightExponentialTraced?, if_pos hprobe]
+            rw [gallopLeftRightExponentialTraced?, ite_eq_left hprobe]
             exact hbound
         · let outcome : ExponentialResult := ⟨lastOffset, offset, false⟩
           refine ⟨outcome, ?_, rfl, hlastOffset, hlastMax, ?_⟩
-          · simp only [gallopLeftRightExponentialTraced?, if_pos hprobe,
-              TraceResult.bind, hreadResult, if_neg hcompare,
+          · simp only [gallopLeftRightExponentialTraced?, ite_eq_left hprobe,
+              TraceResult.bind, hreadResult, ite_eq_right hcompare,
               TraceResult.pure, outcome]
           · have hbound := gallopTraceSafe_bind
               (source.readTraced? (Int.ofNat (hint + offset)))
@@ -1971,9 +1971,9 @@ theorem gallopLeftRightExponential_safe (fuel : Nat)
                   offset := offset
                   fuelExhausted := false })
               entry hreadResult hreadSafe
-              (by simpa only [if_neg hcompare] using
+              (by simpa only [ite_eq_right hcompare] using
                 (gallopTraceSafe_pure outcome))
-            rw [gallopLeftRightExponentialTraced?, if_pos hprobe]
+            rw [gallopLeftRightExponentialTraced?, ite_eq_left hprobe]
             exact hbound
       · let outcome : ExponentialResult := ⟨lastOffset, offset, false⟩
         refine ⟨outcome, ?_, rfl, hlastOffset, hlastMax, ?_⟩
@@ -2030,8 +2030,8 @@ theorem gallopLeftLeftExponential_safe (fuel : Nat)
         by_cases hcompare : iflt lt entry.key key = true
         · let outcome : ExponentialResult := ⟨lastOffset, offset, false⟩
           refine ⟨outcome, ?_, rfl, hlastOffset, hlastMax, ?_⟩
-          · simp only [gallopLeftLeftExponentialTraced?, if_pos hprobe,
-              TraceResult.bind, hreadResult, if_pos hcompare,
+          · simp only [gallopLeftLeftExponentialTraced?, ite_eq_left hprobe,
+              TraceResult.bind, hreadResult, ite_eq_left hcompare,
               TraceResult.pure, outcome]
           · have hbound := gallopTraceSafe_bind
               (source.readTraced? (Int.ofNat hint - Int.ofNat offset))
@@ -2046,9 +2046,9 @@ theorem gallopLeftLeftExponential_safe (fuel : Nat)
                     maxOffset offset (2 * offset + 1)
                 else TraceResult.failure)
               entry hreadResult hreadSafe
-              (by simpa only [if_pos hcompare] using
+              (by simpa only [ite_eq_left hcompare] using
                 (gallopTraceSafe_pure outcome))
-            rw [gallopLeftLeftExponentialTraced?, if_pos hprobe]
+            rw [gallopLeftLeftExponentialTraced?, ite_eq_left hprobe]
             exact hbound
         · have hmax : maxOffset ≤ n := by omega
           have hguard := gallop_doubling_guard hprobe hmax hnmax
@@ -2060,9 +2060,9 @@ theorem gallopLeftLeftExponential_safe (fuel : Nat)
             ⟨result, hresult, hnotExhausted, hresultOrder, hresultMax,
               htrace⟩
           refine ⟨result, ?_, hnotExhausted, hresultOrder, hresultMax, ?_⟩
-          · simp only [gallopLeftLeftExponentialTraced?, if_pos hprobe,
-              TraceResult.bind, hreadResult, if_neg hcompare,
-              if_pos hguard, hresult]
+          · simp only [gallopLeftLeftExponentialTraced?, ite_eq_left hprobe,
+              TraceResult.bind, hreadResult, ite_eq_right hcompare,
+              ite_eq_left hguard, hresult]
           · have hbound := gallopTraceSafe_bind
               (source.readTraced? (Int.ofNat hint - Int.ofNat offset))
               (fun readEntry =>
@@ -2076,8 +2076,8 @@ theorem gallopLeftLeftExponential_safe (fuel : Nat)
                     maxOffset offset (2 * offset + 1)
                 else TraceResult.failure)
               entry hreadResult hreadSafe
-              (by simpa only [if_neg hcompare, if_pos hguard] using htrace)
-            rw [gallopLeftLeftExponentialTraced?, if_pos hprobe]
+              (by simpa only [ite_eq_right hcompare, ite_eq_left hguard] using htrace)
+            rw [gallopLeftLeftExponentialTraced?, ite_eq_left hprobe]
             exact hbound
       · let outcome : ExponentialResult := ⟨lastOffset, offset, false⟩
         refine ⟨outcome, ?_, rfl, hlastOffset, hlastMax, ?_⟩
@@ -2141,8 +2141,8 @@ theorem gallopLeftBinary_safe (fuel : Nat) (lt : BoolComparator κ)
                 some result := by
             simpa only [middle] using hresult
           refine ⟨result, ?_, hnotExhausted, ?_, hresultUpper, ?_⟩
-          · simp only [gallopLeftBinaryTraced?, if_pos hsearch,
-              TraceResult.bind, hreadResult', if_pos hcompare, hresult']
+          · simp only [gallopLeftBinaryTraced?, ite_eq_left hsearch,
+              TraceResult.bind, hreadResult', ite_eq_left hcompare, hresult']
           · omega
           · have hbound := gallopTraceSafe_bind
               (source.readTraced? (Int.ofNat middle))
@@ -2151,8 +2151,8 @@ theorem gallopLeftBinary_safe (fuel : Nat) (lt : BoolComparator κ)
                   gallopLeftBinaryTraced? fuel lt source key (middle + 1) upper
                 else gallopLeftBinaryTraced? fuel lt source key lower middle)
               entry hreadResult hreadSafe
-              (by simpa only [if_pos hcompare] using htrace)
-            rw [gallopLeftBinaryTraced?, if_pos hsearch]
+              (by simpa only [ite_eq_left hcompare] using htrace)
+            rw [gallopLeftBinaryTraced?, ite_eq_left hsearch]
             exact hbound
         · have hnextUpper : middle ≤ n := by omega
           have hnextBudget : middle - lower ≤ fuel := by
@@ -2171,8 +2171,8 @@ theorem gallopLeftBinary_safe (fuel : Nat) (lt : BoolComparator κ)
                 (lower + (upper - lower) / 2)).result = some result := by
             simpa only [middle] using hresult
           refine ⟨result, ?_, hnotExhausted, hresultLower, ?_, ?_⟩
-          · simp only [gallopLeftBinaryTraced?, if_pos hsearch,
-              TraceResult.bind, hreadResult', if_neg hcompare, hresult']
+          · simp only [gallopLeftBinaryTraced?, ite_eq_left hsearch,
+              TraceResult.bind, hreadResult', ite_eq_right hcompare, hresult']
           · omega
           · have hbound := gallopTraceSafe_bind
               (source.readTraced? (Int.ofNat middle))
@@ -2181,8 +2181,8 @@ theorem gallopLeftBinary_safe (fuel : Nat) (lt : BoolComparator κ)
                   gallopLeftBinaryTraced? fuel lt source key (middle + 1) upper
                 else gallopLeftBinaryTraced? fuel lt source key lower middle)
               entry hreadResult hreadSafe
-              (by simpa only [if_neg hcompare] using htrace)
-            rw [gallopLeftBinaryTraced?, if_pos hsearch]
+              (by simpa only [ite_eq_right hcompare] using htrace)
+            rw [gallopLeftBinaryTraced?, ite_eq_left hsearch]
             exact hbound
       · have hequal : lower = upper := by omega
         let outcome : GallopResult := ⟨upper, false⟩
@@ -2218,7 +2218,7 @@ theorem gallopRightRight_eq_leftRight_dual (fuel : Nat)
       simp only [gallopRightRightExponentialTraced?,
         gallopLeftRightExponentialTraced?]
       by_cases hprobe : offset < maxOffset
-      · rw [if_pos hprobe, if_pos hprobe]
+      · rw [ite_eq_left hprobe, ite_eq_left hprobe]
         apply congrArg
           (TraceResult.bind
             (source.readTraced? (Int.ofNat (hint + offset))))
@@ -2245,7 +2245,7 @@ theorem gallopRightLeft_eq_leftLeft_dual (fuel : Nat)
       simp only [gallopRightLeftExponentialTraced?,
         gallopLeftLeftExponentialTraced?]
       by_cases hprobe : offset < maxOffset
-      · rw [if_pos hprobe, if_pos hprobe]
+      · rw [ite_eq_left hprobe, ite_eq_left hprobe]
         apply congrArg
           (TraceResult.bind
             (source.readTraced? (Int.ofNat hint - Int.ofNat offset)))
@@ -2270,7 +2270,7 @@ theorem gallopRightBinary_eq_leftBinary_dual (fuel : Nat)
   | succ fuel ih =>
       simp only [gallopRightBinaryTraced?, gallopLeftBinaryTraced?]
       by_cases hsearch : lower < upper
-      · rw [if_pos hsearch, if_pos hsearch]
+      · rw [ite_eq_left hsearch, ite_eq_left hsearch]
         let middle := lower + (upper - lower) / 2
         apply congrArg
           (TraceResult.bind (source.readTraced? (Int.ofNat middle)))
@@ -2390,8 +2390,8 @@ theorem finishGallopLeft_safe (fuel : Nat) (lt : BoolComparator κ)
       finishGallopLeftTraced? fuel lt source key n lastOffset upperOffset false =
         gallopLeftBinaryTraced? fuel lt source key lower upper := by
     unfold finishGallopLeftTraced?
-    rw [if_pos houter]
-    rw [if_pos hinner]
+    rw [ite_eq_left houter]
+    rw [ite_eq_left hinner]
     rfl
   rw [hfinish]
   exact ⟨result, hresult, hnotExhausted, by omega, htrace⟩
@@ -2433,8 +2433,8 @@ theorem finishGallopRight_safe (fuel : Nat) (lt : BoolComparator κ)
       finishGallopRightTraced? fuel lt source key n lastOffset upperOffset false =
         gallopRightBinaryTraced? fuel lt source key lower upper := by
     unfold finishGallopRightTraced?
-    rw [if_pos houter]
-    rw [if_pos hinner]
+    rw [ite_eq_left houter]
+    rw [ite_eq_left hinner]
     rfl
   rw [hfinish]
   exact ⟨result, hresult, hnotExhausted, by omega, htrace⟩
@@ -2533,8 +2533,8 @@ theorem gallopLeftFromSource_safe (state : MergeState κ ν)
         hexponentialTrace
       simpa only [maxOffset, capped, hexponentialFuel] using hfinishTrace
     refine ⟨result, ?_, hresultFuel, hresultBound, ?_⟩
-    · simp only [gallopLeftTraced?, if_pos hinput, TraceResult.bind,
-        hhintedResult, if_pos hcompare]
+    · simp only [gallopLeftTraced?, ite_eq_left hinput, TraceResult.bind,
+        hhintedResult, ite_eq_left hcompare]
       exact hbranchResult
     · have hwhole := gallopTraceSafe_bind
         (source.readTraced? (Int.ofNat hint))
@@ -2556,8 +2556,8 @@ theorem gallopLeftFromSource_safe (state : MergeState κ ν)
                   (Int.ofNat hint - Int.ofNat exponentialCurrent.lastOffset)
                   exponentialCurrent.fuelExhausted)
         hinted hhintedResult hhintedSafe
-        (by simpa only [if_pos hcompare] using hbranchTrace)
-      rw [gallopLeftTraced?, if_pos hinput]
+        (by simpa only [ite_eq_left hcompare] using hbranchTrace)
+      rw [gallopLeftTraced?, ite_eq_left hinput]
       exact hwhole
   · let maxOffset := hint + 1
     have hmaxPositive : 0 < maxOffset := by
@@ -2633,8 +2633,8 @@ theorem gallopLeftFromSource_safe (state : MergeState κ ν)
         hexponentialTrace
       simpa only [maxOffset, capped, hexponentialFuel] using hfinishTrace
     refine ⟨result, ?_, hresultFuel, hresultBound, ?_⟩
-    · simp only [gallopLeftTraced?, if_pos hinput, TraceResult.bind,
-        hhintedResult, if_neg hcompare]
+    · simp only [gallopLeftTraced?, ite_eq_left hinput, TraceResult.bind,
+        hhintedResult, ite_eq_right hcompare]
       exact hbranchResult
     · have hwhole := gallopTraceSafe_bind
         (source.readTraced? (Int.ofNat hint))
@@ -2656,8 +2656,8 @@ theorem gallopLeftFromSource_safe (state : MergeState κ ν)
                   (Int.ofNat hint - Int.ofNat exponentialCurrent.lastOffset)
                   exponentialCurrent.fuelExhausted)
         hinted hhintedResult hhintedSafe
-        (by simpa only [if_neg hcompare] using hbranchTrace)
-      rw [gallopLeftTraced?, if_pos hinput]
+        (by simpa only [ite_eq_right hcompare] using hbranchTrace)
+      rw [gallopLeftTraced?, ite_eq_left hinput]
       exact hwhole
 
 /-- State obtained by replacing only the comparator with the auditable dual.
@@ -2679,7 +2679,7 @@ theorem gallopRight_eq_left_dual (state : MergeState κ ν)
       gallopLeftTraced? (gallopDualState state) source key n hint := by
   simp only [gallopRightTraced?, gallopLeftTraced?]
   by_cases hinput : 0 < n ∧ hint < n ∧ n ≤ PY_SSIZE_T_MAX
-  · rw [if_pos hinput, if_pos hinput]
+  · rw [ite_eq_left hinput, ite_eq_left hinput]
     apply congrArg (TraceResult.bind (source.readTraced? (Int.ofNat hint)))
     funext hinted
     by_cases hcompare : state.key_compare key hinted.key = true
@@ -2693,7 +2693,7 @@ theorem gallopRight_eq_left_dual (state : MergeState κ ν)
         gallopRightRight_eq_leftRight_dual,
         finishGallopRightTraced?, finishGallopLeftTraced?,
         gallopRightBinary_eq_leftBinary_dual]
-  · rw [if_neg hinput, if_neg hinput]
+  · rw [ite_eq_right hinput, ite_eq_right hinput]
 
 /-- Complete right-biased source safety, transported through exact traced
 comparator duality. -/

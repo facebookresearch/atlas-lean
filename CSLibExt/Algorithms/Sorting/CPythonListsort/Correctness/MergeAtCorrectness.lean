@@ -15,9 +15,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.PendingRunCorrect
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Policy.MergeAtPreservation
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Policy.MergeTopPowerPreservation
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Functional correctness of `merge_at`
 
@@ -1553,18 +1550,18 @@ private theorem prepareMergeAt_finished_target
                 some trimA := by
               simpa [call] using hgallopRight
             by_cases hfuelA : trimA.fuelExhausted = true
-            · rw [if_pos hfuelA] at hprepare
+            · rw [ite_eq_left hfuelA] at hprepare
               simp only [Option.some.injEq,
                 MergeAtPreparation.finished.injEq] at hprepare
               subst early
               norm_num at hreturn
-            · rw [if_neg hfuelA] at hprepare
+            · rw [ite_eq_right hfuelA] at hprepare
               by_cases hpastA : left.len.toNat < trimA.index
-              · rw [if_pos hpastA] at hprepare
+              · rw [ite_eq_left hpastA] at hprepare
                 simp at hprepare
-              · rw [if_neg hpastA] at hprepare
+              · rw [ite_eq_right hpastA] at hprepare
                 by_cases hnaZero : left.len.toNat - trimA.index = 0
-                · rw [if_pos hnaZero] at hprepare
+                · rw [ite_eq_left hnaZero] at hprepare
                   simp only [Option.some.injEq,
                     MergeAtPreparation.finished.injEq] at hprepare
                   subst early
@@ -1578,7 +1575,7 @@ private theorem prepareMergeAt_finished_target
                       hrightStop hleftSorted hgeometry.leftPositive
                       hgeometry.rightPositive hleftMax hfirstB
                       hgallopRightCall hend)
-                · rw [if_neg hnaZero] at hprepare
+                · rw [ite_eq_right hnaZero] at hprepare
                   generalize hlastA : pre.data.read?
                     (Int.ofNat (left.base + trimA.index +
                       (left.len.toNat - trimA.index) - 1)) = lastAResult at hprepare
@@ -1600,16 +1597,16 @@ private theorem prepareMergeAt_finished_target
                               some trimB := by
                             simpa [call] using hgallopLeft
                           by_cases hfuelB : trimB.fuelExhausted = true
-                          · rw [if_pos hfuelB] at hprepare
+                          · rw [ite_eq_left hfuelB] at hprepare
                             simp only [Option.some.injEq,
                               MergeAtPreparation.finished.injEq] at hprepare
                             subst early
                             norm_num at hreturn
-                          · rw [if_neg hfuelB] at hprepare
+                          · rw [ite_eq_right hfuelB] at hprepare
                             by_cases hpastB : right.len.toNat < trimB.index
-                            · rw [if_pos hpastB] at hprepare
+                            · rw [ite_eq_left hpastB] at hprepare
                               simp at hprepare
-                            · rw [if_neg hpastB] at hprepare
+                            · rw [ite_eq_right hpastB] at hprepare
                               by_cases hnbZero : trimB.index = 0
                               · exfalso
                                 exact mergeAt_secondTrimZero_impossible horder
@@ -1620,12 +1617,12 @@ private theorem prepareMergeAt_finished_target
                                   hgeometry.rightPositive hleftMax hrightMax
                                   hfirstB hgallopRightCall (by omega) hlastA
                                   hgallopLeftCall hnbZero
-                              · rw [if_neg hnbZero] at hprepare
+                              · rw [ite_eq_right hnbZero] at hprepare
                                 by_cases hlo :
                                     left.len.toNat - trimA.index ≤ trimB.index
-                                · rw [if_pos hlo] at hprepare
+                                · rw [ite_eq_left hlo] at hprepare
                                   simp at hprepare
-                                · rw [if_neg hlo] at hprepare
+                                · rw [ite_eq_right hlo] at hprepare
                                   simp at hprepare
     · simp at hprepare
   · simp at hprepare

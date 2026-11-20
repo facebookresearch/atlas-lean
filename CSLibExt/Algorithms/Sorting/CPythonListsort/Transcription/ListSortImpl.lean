@@ -14,9 +14,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeInitStorag
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeMemory
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.ReverseSlice
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Snapshot-model `list_sort_impl`
 
@@ -245,7 +242,6 @@ private def listSortExample : SortSlice Nat Nat :=
         { key := 2, value := some 20 },
         { key := 2, value := some 21 }] }
 
-set_option linter.style.nativeDecide false in
 /-- Small executable regression for run extension, stable forward order, and
 the final temporary-storage cleanup. -/
 example :
@@ -262,7 +258,6 @@ example :
            { key := 3, value := some 30 }]) := by
   decide
 
-set_option linter.style.nativeDecide false in
 /-- CPython's reverse-before/stable-sort/reverse-after pattern keeps equal-key
 payloads in their original order while reversing the requested key order. -/
 example :

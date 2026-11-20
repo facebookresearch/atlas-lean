@@ -8,9 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ListSortMergePolicy
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 namespace CPythonListsort
 
 universe u v
@@ -345,7 +342,7 @@ theorem listSortScan_policyReplay_core :
             have hBinaryNil := binarysortTraced_policyEvents_eq_nil installed
               installed.data (Int.ofNat lo) force counted.length
             symm
-            rw [listSortScanTraced?, if_neg hRemaining,
+            rw [listSortScanTraced?, ite_eq_right hRemaining,
               TraceResult.policyEvents_bind, hCounted.resultEq]
             change
               (countRunTraced? state state.data (Int.ofNat lo)
@@ -370,10 +367,10 @@ theorem listSortScan_policyReplay_core :
                 lo remaining reverse inputSize counted.length target
                 (extended, force, false)).trace.policyEvents
             simp only [listSortAfterCountTraced?, hCounted.resultFuel,
-              Bool.false_eq_true, if_false]
-            rw [if_neg hCountedValid]
+              Bool.false_eq_true, ite_false]
+            rw [ite_eq_right hCountedValid]
             simp only [countedState, nextMinrun, installed, target, force,
-              hExtend, if_true, TraceResult.policyEvents_bind,
+              hExtend, ite_true, TraceResult.policyEvents_bind,
               hSorted.resultEq, hBinaryNil, List.nil_append, extended,
               hSorted.resultFuel]
           · intro openState collapsed hReached
@@ -399,9 +396,9 @@ theorem listSortScan_policyReplay_core :
                         reverse inputSize)
                     state lo remaining reverse inputSize counted) := by
               simpa only [listSortAfterCountTraced?, hCounted.resultFuel,
-                Bool.false_eq_true, if_false, if_neg hCountedValid,
+                Bool.false_eq_true, ite_false, ite_eq_right hCountedValid,
                 countedState, nextMinrun, installed, target, force, hExtend,
-                if_true] using hBinaryReached
+                ite_true] using hBinaryReached
             have hCountReached := ListSortScanReachedCollapse.through_bind
               (countRunTraced? state state.data (Int.ofNat lo) remaining)
               (fun nextCounted =>
@@ -527,7 +524,7 @@ theorem listSortScan_policyReplay_core :
           · have hCountNil := countRunTraced_policyEvents_eq_nil state
               state.data (Int.ofNat lo) remaining
             symm
-            rw [listSortScanTraced?, if_neg hRemaining,
+            rw [listSortScanTraced?, ite_eq_right hRemaining,
               TraceResult.policyEvents_bind, hCounted.resultEq]
             change
               (countRunTraced? state state.data (Int.ofNat lo)
@@ -552,10 +549,10 @@ theorem listSortScan_policyReplay_core :
                 lo remaining reverse inputSize counted.length target
                 (installed, counted.length, false)).trace.policyEvents
             simp only [listSortAfterCountTraced?, hCounted.resultFuel,
-              Bool.false_eq_true, if_false]
-            rw [if_neg hCountedValid]
+              Bool.false_eq_true, ite_false]
+            rw [ite_eq_right hCountedValid]
             simp only [countedState, nextMinrun, installed, target,
-              hExtend, Bool.false_eq_true, if_false]
+              hExtend, Bool.false_eq_true, ite_false]
           · intro openState collapsed hReached
             have hAfterCountReached :
                 ListSortScanReachedCollapse reverse inputSize openState
@@ -566,7 +563,7 @@ theorem listSortScan_policyReplay_core :
                         reverse inputSize)
                     state lo remaining reverse inputSize counted) := by
               simpa only [listSortAfterCountTraced?, hCounted.resultFuel,
-                Bool.false_eq_true, if_false, if_neg hCountedValid,
+                Bool.false_eq_true, ite_false, ite_eq_right hCountedValid,
                 countedState, nextMinrun, installed, target, hExtend] using
                 hReached
             have hCountReached := ListSortScanReachedCollapse.through_bind

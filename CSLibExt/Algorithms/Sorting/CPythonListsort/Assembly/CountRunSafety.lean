@@ -215,7 +215,7 @@ private theorem ascendingScanTraced_memoryEvents_eq_nil
   | succ fuel ih =>
       rw [ascendingScanTraced?]
       by_cases hactive : n < nremaining
-      · rw [if_pos hactive]
+      · rw [ite_eq_left hactive]
         apply TraceResult.memoryEvents_bind_eq_nil
         · rfl
         · intro previous
@@ -223,11 +223,11 @@ private theorem ascendingScanTraced_memoryEvents_eq_nil
           · rfl
           · intro next
             by_cases hcomparison : iflt lt next.key previous.key = true
-            · rw [if_pos hcomparison]
+            · rw [ite_eq_left hcomparison]
               rfl
-            · rw [if_neg hcomparison]
+            · rw [ite_eq_right hcomparison]
               exact ih (n + 1)
-      · rw [if_neg hactive]
+      · rw [ite_eq_right hactive]
         rfl
 
 private theorem reverseLastEqualTraced_memoryEvents_eq_nil
@@ -237,9 +237,9 @@ private theorem reverseLastEqualTraced_memoryEvents_eq_nil
       [] := by
   unfold reverseLastEqualTraced?
   by_cases hzero : neq = 0
-  · rw [if_pos hzero]
+  · rw [ite_eq_left hzero]
     rfl
-  · rw [if_neg hzero]
+  · rw [ite_eq_right hzero]
     simpa only [TraceResult.memoryEvents_map] using
       (sortsliceReverseTraced_memoryEvents_eq_nil valuesPresent slice
         (base + Int.ofNat n - Int.ofNat (neq + 1)) (neq + 1))
@@ -260,7 +260,7 @@ private theorem descendingScanTraced_memoryEvents_eq_nil
   | succ fuel ih =>
       rw [descendingScanTraced?]
       by_cases hactive : n < nremaining
-      · rw [if_pos hactive]
+      · rw [ite_eq_left hactive]
         apply TraceResult.memoryEvents_bind_eq_nil
         · rfl
         · intro previous
@@ -269,23 +269,23 @@ private theorem descendingScanTraced_memoryEvents_eq_nil
           · intro next
             by_cases hnextSmaller :
                 iflt lt next.key previous.key = true
-            · rw [if_pos hnextSmaller]
+            · rw [ite_eq_left hnextSmaller]
               apply TraceResult.memoryEvents_bind_eq_nil
               · exact reverseLastEqualTraced_memoryEvents_eq_nil _ _ _ _ _
               · intro reversed
                 by_cases hexhausted : reversed.fuelExhausted = true
-                · rw [if_pos hexhausted]
+                · rw [ite_eq_left hexhausted]
                   rfl
-                · rw [if_neg hexhausted]
+                · rw [ite_eq_right hexhausted]
                   exact ih reversed.slice (n + 1) 0
-            · rw [if_neg hnextSmaller]
+            · rw [ite_eq_right hnextSmaller]
               by_cases hpreviousSmaller :
                   iflt lt previous.key next.key = true
-              · rw [if_pos hpreviousSmaller]
+              · rw [ite_eq_left hpreviousSmaller]
                 rfl
-              · rw [if_neg hpreviousSmaller]
+              · rw [ite_eq_right hpreviousSmaller]
                 exact ih slice (n + 1) (neq + 1)
-      · rw [if_neg hactive]
+      · rw [ite_eq_right hactive]
         rfl
 
 private theorem finishDescendingTraced_memoryEvents_eq_nil
@@ -298,23 +298,23 @@ private theorem finishDescendingTraced_memoryEvents_eq_nil
   · exact descendingScanTraced_memoryEvents_eq_nil _ _ _ _ _ _ _ _
   · intro descending
     by_cases hdescendingFuel : descending.fuelExhausted = true
-    · rw [if_pos hdescendingFuel]
+    · rw [ite_eq_left hdescendingFuel]
       rfl
-    · rw [if_neg hdescendingFuel]
+    · rw [ite_eq_right hdescendingFuel]
       apply TraceResult.memoryEvents_bind_eq_nil
       · exact reverseLastEqualTraced_memoryEvents_eq_nil _ _ _ _ _
       · intro equalTailReversed
         by_cases hequalFuel : equalTailReversed.fuelExhausted = true
-        · rw [if_pos hequalFuel]
+        · rw [ite_eq_left hequalFuel]
           rfl
-        · rw [if_neg hequalFuel]
+        · rw [ite_eq_right hequalFuel]
           apply TraceResult.memoryEvents_bind_eq_nil
           · exact sortsliceReverseTraced_memoryEvents_eq_nil _ _ _ _
           · intro wholeReversed
             by_cases hwholeFuel : wholeReversed.fuelExhausted = true
-            · rw [if_pos hwholeFuel]
+            · rw [ite_eq_left hwholeFuel]
               rfl
-            · rw [if_neg hwholeFuel]
+            · rw [ite_eq_right hwholeFuel]
               simpa only [TraceResult.memoryEvents_map] using
                 (ascendingScanTraced_memoryEvents_eq_nil nremaining
                   state.key_compare wholeReversed.slice base nremaining
@@ -328,20 +328,20 @@ theorem countRunTraced_memoryEvents_eq_nil
     (countRunTraced? state slice base nremaining).trace.memoryEvents = [] := by
   unfold countRunTraced?
   by_cases hguard : 0 < nremaining ∧ nremaining ≤ PY_SSIZE_T_MAX
-  · rw [if_pos hguard]
+  · rw [ite_eq_left hguard]
     apply TraceResult.memoryEvents_bind_eq_nil
     · exact ascendingScanTraced_memoryEvents_eq_nil _ _ _ _ _ _
     · intro ascending
       by_cases hascendingFuel : ascending.fuelExhausted = true
-      · rw [if_pos hascendingFuel]
+      · rw [ite_eq_left hascendingFuel]
         rfl
-      · rw [if_neg hascendingFuel]
+      · rw [ite_eq_right hascendingFuel]
         by_cases hcomplete : ascending.length = nremaining
-        · rw [if_pos hcomplete]
+        · rw [ite_eq_left hcomplete]
           rfl
-        · rw [if_neg hcomplete]
+        · rw [ite_eq_right hcomplete]
           by_cases hlong : 1 < ascending.length
-          · rw [if_pos hlong]
+          · rw [ite_eq_left hlong]
             apply TraceResult.memoryEvents_bind_eq_nil
             · rfl
             · intro first
@@ -350,20 +350,20 @@ theorem countRunTraced_memoryEvents_eq_nil
               · intro last
                 by_cases hcomparison :
                     iflt state.key_compare first.key last.key = true
-                · rw [if_pos hcomparison]
+                · rw [ite_eq_left hcomparison]
                   rfl
-                · rw [if_neg hcomparison]
+                · rw [ite_eq_right hcomparison]
                   apply TraceResult.memoryEvents_bind_eq_nil
                   · exact sortsliceReverseTraced_memoryEvents_eq_nil _ _ _ _
                   · intro reversed
                     by_cases hreverseFuel : reversed.fuelExhausted = true
-                    · rw [if_pos hreverseFuel]
+                    · rw [ite_eq_left hreverseFuel]
                       rfl
-                    · rw [if_neg hreverseFuel]
+                    · rw [ite_eq_right hreverseFuel]
                       exact finishDescendingTraced_memoryEvents_eq_nil _ _ _ _ _
-          · rw [if_neg hlong]
+          · rw [ite_eq_right hlong]
             exact finishDescendingTraced_memoryEvents_eq_nil _ _ _ _ _
-  · rw [if_neg hguard]
+  · rw [ite_eq_right hguard]
     rfl
 
 /-! ## Logical-policy event freedom -/
@@ -384,7 +384,7 @@ private theorem ascendingScanTraced_policyEvents_eq_nil
   | succ fuel ih =>
       rw [ascendingScanTraced?]
       by_cases hactive : n < nremaining
-      · rw [if_pos hactive]
+      · rw [ite_eq_left hactive]
         apply TraceResult.policyEvents_bind_eq_nil
         · rfl
         · intro previous
@@ -392,11 +392,11 @@ private theorem ascendingScanTraced_policyEvents_eq_nil
           · rfl
           · intro next
             by_cases hcomparison : iflt lt next.key previous.key = true
-            · rw [if_pos hcomparison]
+            · rw [ite_eq_left hcomparison]
               rfl
-            · rw [if_neg hcomparison]
+            · rw [ite_eq_right hcomparison]
               exact ih (n + 1)
-      · rw [if_neg hactive]
+      · rw [ite_eq_right hactive]
         rfl
 
 private theorem reverseLastEqualTraced_policyEvents_eq_nil
@@ -406,9 +406,9 @@ private theorem reverseLastEqualTraced_policyEvents_eq_nil
       [] := by
   unfold reverseLastEqualTraced?
   by_cases hzero : neq = 0
-  · rw [if_pos hzero]
+  · rw [ite_eq_left hzero]
     rfl
-  · rw [if_neg hzero]
+  · rw [ite_eq_right hzero]
     simpa only [TraceResult.policyEvents_map] using
       (sortsliceReverseTraced_policyEvents_eq_nil valuesPresent slice
         (base + Int.ofNat n - Int.ofNat (neq + 1)) (neq + 1))
@@ -429,7 +429,7 @@ private theorem descendingScanTraced_policyEvents_eq_nil
   | succ fuel ih =>
       rw [descendingScanTraced?]
       by_cases hactive : n < nremaining
-      · rw [if_pos hactive]
+      · rw [ite_eq_left hactive]
         apply TraceResult.policyEvents_bind_eq_nil
         · rfl
         · intro previous
@@ -437,23 +437,23 @@ private theorem descendingScanTraced_policyEvents_eq_nil
           · rfl
           · intro next
             by_cases hnextSmaller : iflt lt next.key previous.key = true
-            · rw [if_pos hnextSmaller]
+            · rw [ite_eq_left hnextSmaller]
               apply TraceResult.policyEvents_bind_eq_nil
               · exact reverseLastEqualTraced_policyEvents_eq_nil _ _ _ _ _
               · intro reversed
                 by_cases hexhausted : reversed.fuelExhausted = true
-                · rw [if_pos hexhausted]
+                · rw [ite_eq_left hexhausted]
                   rfl
-                · rw [if_neg hexhausted]
+                · rw [ite_eq_right hexhausted]
                   exact ih reversed.slice (n + 1) 0
-            · rw [if_neg hnextSmaller]
+            · rw [ite_eq_right hnextSmaller]
               by_cases hpreviousSmaller :
                   iflt lt previous.key next.key = true
-              · rw [if_pos hpreviousSmaller]
+              · rw [ite_eq_left hpreviousSmaller]
                 rfl
-              · rw [if_neg hpreviousSmaller]
+              · rw [ite_eq_right hpreviousSmaller]
                 exact ih slice (n + 1) (neq + 1)
-      · rw [if_neg hactive]
+      · rw [ite_eq_right hactive]
         rfl
 
 private theorem finishDescendingTraced_policyEvents_eq_nil
@@ -466,23 +466,23 @@ private theorem finishDescendingTraced_policyEvents_eq_nil
   · exact descendingScanTraced_policyEvents_eq_nil _ _ _ _ _ _ _ _
   · intro descending
     by_cases hdescendingFuel : descending.fuelExhausted = true
-    · rw [if_pos hdescendingFuel]
+    · rw [ite_eq_left hdescendingFuel]
       rfl
-    · rw [if_neg hdescendingFuel]
+    · rw [ite_eq_right hdescendingFuel]
       apply TraceResult.policyEvents_bind_eq_nil
       · exact reverseLastEqualTraced_policyEvents_eq_nil _ _ _ _ _
       · intro equalTailReversed
         by_cases hequalFuel : equalTailReversed.fuelExhausted = true
-        · rw [if_pos hequalFuel]
+        · rw [ite_eq_left hequalFuel]
           rfl
-        · rw [if_neg hequalFuel]
+        · rw [ite_eq_right hequalFuel]
           apply TraceResult.policyEvents_bind_eq_nil
           · exact sortsliceReverseTraced_policyEvents_eq_nil _ _ _ _
           · intro wholeReversed
             by_cases hwholeFuel : wholeReversed.fuelExhausted = true
-            · rw [if_pos hwholeFuel]
+            · rw [ite_eq_left hwholeFuel]
               rfl
-            · rw [if_neg hwholeFuel]
+            · rw [ite_eq_right hwholeFuel]
               simpa only [TraceResult.policyEvents_map] using
                 (ascendingScanTraced_policyEvents_eq_nil nremaining
                   state.key_compare wholeReversed.slice base nremaining
@@ -496,20 +496,20 @@ theorem countRunTraced_policyEvents_eq_nil
     (countRunTraced? state slice base nremaining).trace.policyEvents = [] := by
   unfold countRunTraced?
   by_cases hguard : 0 < nremaining ∧ nremaining ≤ PY_SSIZE_T_MAX
-  · rw [if_pos hguard]
+  · rw [ite_eq_left hguard]
     apply TraceResult.policyEvents_bind_eq_nil
     · exact ascendingScanTraced_policyEvents_eq_nil _ _ _ _ _ _
     · intro ascending
       by_cases hascendingFuel : ascending.fuelExhausted = true
-      · rw [if_pos hascendingFuel]
+      · rw [ite_eq_left hascendingFuel]
         rfl
-      · rw [if_neg hascendingFuel]
+      · rw [ite_eq_right hascendingFuel]
         by_cases hcomplete : ascending.length = nremaining
-        · rw [if_pos hcomplete]
+        · rw [ite_eq_left hcomplete]
           rfl
-        · rw [if_neg hcomplete]
+        · rw [ite_eq_right hcomplete]
           by_cases hlong : 1 < ascending.length
-          · rw [if_pos hlong]
+          · rw [ite_eq_left hlong]
             apply TraceResult.policyEvents_bind_eq_nil
             · rfl
             · intro first
@@ -518,20 +518,20 @@ theorem countRunTraced_policyEvents_eq_nil
               · intro last
                 by_cases hcomparison :
                     iflt state.key_compare first.key last.key = true
-                · rw [if_pos hcomparison]
+                · rw [ite_eq_left hcomparison]
                   rfl
-                · rw [if_neg hcomparison]
+                · rw [ite_eq_right hcomparison]
                   apply TraceResult.policyEvents_bind_eq_nil
                   · exact sortsliceReverseTraced_policyEvents_eq_nil _ _ _ _
                   · intro reversed
                     by_cases hreverseFuel : reversed.fuelExhausted = true
-                    · rw [if_pos hreverseFuel]
+                    · rw [ite_eq_left hreverseFuel]
                       rfl
-                    · rw [if_neg hreverseFuel]
+                    · rw [ite_eq_right hreverseFuel]
                       exact finishDescendingTraced_policyEvents_eq_nil _ _ _ _ _
-          · rw [if_neg hlong]
+          · rw [ite_eq_right hlong]
             exact finishDescendingTraced_policyEvents_eq_nil _ _ _ _ _
-  · rw [if_neg hguard]
+  · rw [ite_eq_right hguard]
     rfl
 
 @[simp]
@@ -545,7 +545,7 @@ theorem erase_ascendingScanTraced (fuel : Nat) (lt : BoolComparator κ)
         simp [ascendingScanTraced?, ascendingScan?, ascendingScanResult, h]
   | succ fuel ih =>
       by_cases h : n < nremaining
-      · simp only [ascendingScanTraced?, ascendingScan?, h, if_true,
+      · simp only [ascendingScanTraced?, ascendingScan?, h, ite_true,
           TraceResult.erase_bind, TraceResult.erase_sortSliceKeysRead]
         unfold countRunBindOptionAcross
         cases hprevious : slice.read? (base + Int.ofNat (n - 1)) with
@@ -571,7 +571,7 @@ theorem erase_reverseLastEqualTraced (valuesPresent : Bool)
       reverseLastEqual? slice base n neq := by
   by_cases hzero : neq = 0
   · simp [reverseLastEqualTraced?, reverseLastEqual?, hzero]
-  · simp only [reverseLastEqualTraced?, reverseLastEqual?, hzero, if_false,
+  · simp only [reverseLastEqualTraced?, reverseLastEqual?, hzero, ite_false,
       TraceResult.erase_map, erase_sortsliceReverseTraced]
     cases hreverse : sortsliceReverse? slice
         (base + Int.ofNat n - Int.ofNat (neq + 1)) (neq + 1) <;>
@@ -589,7 +589,7 @@ theorem erase_descendingScanTraced (fuel : Nat) (valuesPresent : Bool)
         simp [descendingScanTraced?, descendingScan?, descendingScanResult, h]
   | succ fuel ih =>
       by_cases hactive : n < nremaining
-      · simp only [descendingScanTraced?, descendingScan?, hactive, if_true,
+      · simp only [descendingScanTraced?, descendingScan?, hactive, ite_true,
           TraceResult.erase_bind, TraceResult.erase_sortSliceKeysRead,
           bind, Option.bind]
         cases hprevious : slice.read? (base + Int.ofNat (n - 1)) with
@@ -601,8 +601,8 @@ theorem erase_descendingScanTraced (fuel : Nat) (valuesPresent : Bool)
             | some next =>
                 simp only
                 by_cases hsmaller : iflt lt next.key previous.key = true
-                · rw [if_pos hsmaller]
-                  simp only [hsmaller, if_true]
+                · rw [ite_eq_left hsmaller]
+                  simp only [hsmaller, ite_true]
                   simp only [TraceResult.erase_bind,
                     erase_reverseLastEqualTraced]
                   cases hreverse : reverseLastEqual? slice base n neq with
@@ -611,13 +611,13 @@ theorem erase_descendingScanTraced (fuel : Nat) (valuesPresent : Bool)
                       by_cases hfuel : reversed.fuelExhausted = true
                       · simp [hfuel, descendingScanResult]
                       · simp [hfuel, ih]
-                · rw [if_neg hsmaller]
+                · rw [ite_eq_right hsmaller]
                   simp only [hsmaller]
                   by_cases hlarger : iflt lt previous.key next.key = true
-                  · rw [if_pos hlarger]
-                    simp only [hlarger, if_true]
+                  · rw [ite_eq_left hlarger]
+                    simp only [hlarger, ite_true]
                     rfl
-                  · rw [if_neg hlarger]
+                  · rw [ite_eq_right hlarger]
                     simp only [hlarger]
                     exact ih _ _ _
       · simp [descendingScanTraced?, descendingScan?, hactive,
@@ -636,9 +636,9 @@ theorem erase_finishDescendingTraced (state : MergeState κ ν)
   | some descending =>
       simp only [Option.bind_eq_bind, Option.bind_some]
       cases hdescendingFuel : descending.fuelExhausted with
-      | true => simp only [if_true, TraceResult.erase_pure]
+      | true => simp only [ite_true, TraceResult.erase_pure]
       | false =>
-        simp only [Bool.false_eq_true, if_false, TraceResult.erase_bind,
+        simp only [Bool.false_eq_true, ite_false, TraceResult.erase_bind,
           erase_reverseLastEqualTraced]
         cases hequal : reverseLastEqual? descending.slice base descending.length
             descending.equalTail with
@@ -647,9 +647,9 @@ theorem erase_finishDescendingTraced (state : MergeState κ ν)
             simp only [Option.bind_some]
             cases hequalFuel : equalTailReversed.fuelExhausted with
             | true =>
-                simp only [if_true, TraceResult.erase_pure]
+                simp only [ite_true, TraceResult.erase_pure]
             | false =>
-              simp only [Bool.false_eq_true, if_false,
+              simp only [Bool.false_eq_true, ite_false,
                 TraceResult.erase_bind, erase_sortsliceReverseTraced]
               cases hwhole : sortsliceReverse? equalTailReversed.slice base
                   descending.length with
@@ -658,9 +658,9 @@ theorem erase_finishDescendingTraced (state : MergeState κ ν)
                   simp only [Option.bind_some]
                   cases hwholeFuel : wholeReversed.fuelExhausted with
                   | true =>
-                      simp only [if_true, TraceResult.erase_pure]
+                      simp only [ite_true, TraceResult.erase_pure]
                   | false =>
-                    simp only [Bool.false_eq_true, if_false,
+                    simp only [Bool.false_eq_true, ite_false,
                       TraceResult.erase_map, erase_ascendingScanTraced]
                     unfold countRunBindOptionAcross
                     cases ascendingScan? nremaining state.key_compare
@@ -674,7 +674,7 @@ theorem erase_countRunTraced (state : MergeState κ ν)
       countRun? state slice base nremaining := by
   unfold countRunTraced? countRun?
   by_cases hguard : 0 < nremaining ∧ nremaining ≤ PY_SSIZE_T_MAX
-  · rw [if_pos hguard, if_pos hguard, TraceResult.erase_bind,
+  · rw [ite_eq_left hguard, ite_eq_left hguard, TraceResult.erase_bind,
       erase_ascendingScanTraced]
     unfold countRunBindOptionAcross
     cases hascending : ascendingScan? nremaining state.key_compare slice base
@@ -685,12 +685,12 @@ theorem erase_countRunTraced (state : MergeState κ ν)
         cases hascendingFuel : ascending.fuelExhausted with
         | true => simp
         | false =>
-          simp only [Bool.false_eq_true, if_false]
+          simp only [Bool.false_eq_true, ite_false]
           by_cases hcomplete : ascending.length = nremaining
           · simp [hcomplete]
-          · simp only [hcomplete, if_false]
+          · simp only [hcomplete, ite_false]
             by_cases hlong : 1 < ascending.length
-            · rw [if_pos hlong, if_pos hlong]
+            · rw [ite_eq_left hlong, ite_eq_left hlong]
               simp only [TraceResult.erase_bind,
                 TraceResult.erase_sortSliceKeysRead]
               cases hfirst : slice.read? base with
@@ -705,7 +705,7 @@ theorem erase_countRunTraced (state : MergeState κ ν)
                           iflt state.key_compare first.key last.key with
                       | true => simp
                       | false =>
-                        simp only [Bool.false_eq_true, if_false,
+                        simp only [Bool.false_eq_true, ite_false,
                           TraceResult.erase_bind,
                           erase_sortsliceReverseTraced]
                         cases hreverse : sortsliceReverse? slice base
@@ -717,7 +717,7 @@ theorem erase_countRunTraced (state : MergeState κ ν)
                             | false =>
                               simp [hreverseFuel,
                                 erase_finishDescendingTraced]
-            · rw [if_neg hlong, if_neg hlong]
+            · rw [ite_eq_right hlong, ite_eq_right hlong]
               exact erase_finishDescendingTraced _ _ _ _ _
   · simp [hguard]
 
@@ -804,7 +804,7 @@ private theorem ascendingScanTraced_safe
       refine ⟨result, ?_⟩
       exact
         { resultEq := by
-            simp only [ascendingScanTraced?, hstop, if_false]
+            simp only [ascendingScanTraced?, hstop, ite_false]
             rfl
           resultFuel := rfl
           traceSafe := by
@@ -854,17 +854,17 @@ private theorem ascendingScanTraced_safe
                     ascendingScanTraced? fuel lt slice base nremaining
                       (n + 1)) := by
             apply CountTraceSafe.bind _ _ next hnext hnextSafe
-            simpa only [hsmaller, if_true] using
+            simpa only [hsmaller, ite_true] using
               (CountTraceSafe.pure (ascendingScanResult n false))
           refine ⟨result, ?_⟩
           exact
             { resultEq := by
-                simp only [ascendingScanTraced?, hactive, if_true,
+                simp only [ascendingScanTraced?, hactive, ite_true,
                   TraceResult.bind, hprevious, hnext, hsmaller]
                 rfl
               resultFuel := rfl
               traceSafe := by
-                simp only [ascendingScanTraced?, hactive, if_true]
+                simp only [ascendingScanTraced?, hactive, ite_true]
                 exact CountTraceSafe.bind _ _ previous hprevious
                   hpreviousSafe htailSafe
               exactErasure := erase_ascendingScanTraced _ _ _ _ _ _
@@ -882,18 +882,18 @@ private theorem ascendingScanTraced_safe
                     ascendingScanTraced? fuel lt slice base nremaining
                       (n + 1)) := by
             apply CountTraceSafe.bind _ _ next hnext hnextSafe
-            simpa only [iflt, hsmaller, Bool.false_eq_true, if_false] using
+            simpa only [iflt, hsmaller, Bool.false_eq_true, ite_false] using
               hresult.traceSafe
           refine ⟨result, ?_⟩
           exact
             { resultEq := by
-                simpa only [ascendingScanTraced?, hactive, if_true,
+                simpa only [ascendingScanTraced?, hactive, ite_true,
                   TraceResult.bind, hprevious, hnext, iflt, hsmaller,
-                  Bool.false_eq_true, if_false]
+                  Bool.false_eq_true, ite_false]
                   using hresult.resultEq
               resultFuel := hresult.resultFuel
               traceSafe := by
-                simp only [ascendingScanTraced?, hactive, if_true]
+                simp only [ascendingScanTraced?, hactive, ite_true]
                 exact CountTraceSafe.bind _ _ previous hprevious
                   hpreviousSafe htailSafe
               exactErasure := erase_ascendingScanTraced _ _ _ _ _ _
@@ -904,7 +904,7 @@ private theorem ascendingScanTraced_safe
         refine ⟨result, ?_⟩
         exact
           { resultEq := by
-              simp only [ascendingScanTraced?, hactive, if_false]
+              simp only [ascendingScanTraced?, hactive, ite_false]
               rfl
             resultFuel := rfl
             traceSafe := by
@@ -950,7 +950,7 @@ private theorem reverseLastEqualTraced_safe
     refine ⟨result, ?_⟩
     exact
       { resultEq := by
-          simp only [reverseLastEqualTraced?, hzero, if_true]
+          simp only [reverseLastEqualTraced?, hzero, ite_true]
           rfl
         resultFuel := rfl
         traceSafe := by
@@ -979,7 +979,7 @@ private theorem reverseLastEqualTraced_safe
     refine ⟨result, ?_⟩
     exact
       { resultEq := by
-          simp only [reverseLastEqualTraced?, hzero, if_false]
+          simp only [reverseLastEqualTraced?, hzero, ite_false]
           change
             ((sortsliceReverseTraced? valuesPresent slice start count).map
               (fun reversed =>
@@ -990,7 +990,7 @@ private theorem reverseLastEqualTraced_safe
         resultFuel := by
           exact hreverse.resultFuel
         traceSafe := by
-          simp only [reverseLastEqualTraced?, hzero, if_false]
+          simp only [reverseLastEqualTraced?, hzero, ite_false]
           exact CountTraceSafe.map _ _
             (countTraceSafe_of_reverse _ _ _ _ _ hreverse)
         exactErasure := erase_reverseLastEqualTraced _ _ _ _ _
@@ -1032,7 +1032,7 @@ private theorem descendingScanTraced_safe
       refine ⟨result, ?_⟩
       exact
         { resultEq := by
-            simp only [descendingScanTraced?, hstop, if_false]
+            simp only [descendingScanTraced?, hstop, ite_false]
             rfl
           resultFuel := rfl
           traceSafe := by
@@ -1114,17 +1114,17 @@ private theorem descendingScanTraced_safe
                     descendingScanTraced? fuel valuesPresent lt slice base
                       nremaining (n + 1) (neq + 1)) := by
             apply CountTraceSafe.bind _ _ next hnext hnextSafe
-            simpa only [hsmaller, if_true] using hbranchSafe
+            simpa only [hsmaller, ite_true] using hbranchSafe
           refine ⟨result, ?_⟩
           exact
             { resultEq := by
-                simpa only [descendingScanTraced?, hactive, if_true,
+                simpa only [descendingScanTraced?, hactive, ite_true,
                   TraceResult.bind, hprevious, hnext, hsmaller,
                   hreverse.resultEq, hreverse.resultFuel,
-                  Bool.false_eq_true, if_false] using hresult.resultEq
+                  Bool.false_eq_true, ite_false] using hresult.resultEq
               resultFuel := hresult.resultFuel
               traceSafe := by
-                simp only [descendingScanTraced?, hactive, if_true]
+                simp only [descendingScanTraced?, hactive, ite_true]
                 exact CountTraceSafe.bind _ _ previous hprevious
                   hpreviousSafe hafterNextSafe
               exactErasure := erase_descendingScanTraced _ _ _ _ _ _ _ _
@@ -1153,8 +1153,8 @@ private theorem descendingScanTraced_safe
                 else
                   descendingScanTraced? fuel valuesPresent lt slice base
                     nremaining (n + 1) (neq + 1)) := by
-              simpa only [iflt, hsmaller, Bool.false_eq_true, if_false,
-                hlarger, if_true] using
+              simpa only [iflt, hsmaller, Bool.false_eq_true, ite_false,
+                hlarger, ite_true] using
                 (CountTraceSafe.pure (descendingScanResult slice n neq false))
             have hafterNextSafe : CountTraceSafe
                 ((TraceResult.sortSliceKeysRead? slice
@@ -1177,13 +1177,13 @@ private theorem descendingScanTraced_safe
             refine ⟨result, ?_⟩
             exact
               { resultEq := by
-                  simp only [descendingScanTraced?, hactive, if_true,
+                  simp only [descendingScanTraced?, hactive, ite_true,
                     TraceResult.bind, hprevious, hnext, iflt, hsmaller,
-                    Bool.false_eq_true, if_false, hlarger, result]
+                    Bool.false_eq_true, ite_false, hlarger, result]
                   rfl
                 resultFuel := rfl
                 traceSafe := by
-                  simp only [descendingScanTraced?, hactive, if_true]
+                  simp only [descendingScanTraced?, hactive, ite_true]
                   exact CountTraceSafe.bind _ _ previous hprevious
                     hpreviousSafe hafterNextSafe
                 exactErasure := erase_descendingScanTraced _ _ _ _ _ _ _ _
@@ -1211,7 +1211,7 @@ private theorem descendingScanTraced_safe
                   descendingScanTraced? fuel valuesPresent lt slice base
                     nremaining (n + 1) (neq + 1)) := by
               simpa only [iflt, hsmaller, hlarger, Bool.false_eq_true,
-                if_false] using hresult.traceSafe
+                ite_false] using hresult.traceSafe
             have hafterNextSafe : CountTraceSafe
                 ((TraceResult.sortSliceKeysRead? slice
                   (base + Int.ofNat n)).bind fun next =>
@@ -1233,13 +1233,13 @@ private theorem descendingScanTraced_safe
             refine ⟨result, ?_⟩
             exact
               { resultEq := by
-                  simpa only [descendingScanTraced?, hactive, if_true,
+                  simpa only [descendingScanTraced?, hactive, ite_true,
                     TraceResult.bind, hprevious, hnext, iflt, hsmaller,
-                    hlarger, Bool.false_eq_true, if_false] using
+                    hlarger, Bool.false_eq_true, ite_false] using
                     hresult.resultEq
                 resultFuel := hresult.resultFuel
                 traceSafe := by
-                  simp only [descendingScanTraced?, hactive, if_true]
+                  simp only [descendingScanTraced?, hactive, ite_true]
                   exact CountTraceSafe.bind _ _ previous hprevious
                     hpreviousSafe hafterNextSafe
                 exactErasure := erase_descendingScanTraced _ _ _ _ _ _ _ _
@@ -1253,7 +1253,7 @@ private theorem descendingScanTraced_safe
         refine ⟨result, ?_⟩
         exact
           { resultEq := by
-              simp only [descendingScanTraced?, hactive, if_false]
+              simp only [descendingScanTraced?, hactive, ite_false]
               rfl
             resultFuel := rfl
             traceSafe := by
@@ -1391,7 +1391,7 @@ private theorem finishDescendingTraced_safe
     { resultEq := by
         simp only [finishDescendingTraced?, TraceResult.bind,
           hdescending.resultEq, hdescending.resultFuel, Bool.false_eq_true,
-          if_false, hequalTail.resultEq, hequalTail.resultFuel,
+          ite_false, hequalTail.resultEq, hequalTail.resultFuel,
           hwhole.resultEq, hwhole.resultFuel, TraceResult.map,
           hextended.resultEq]
         rfl
@@ -1513,10 +1513,10 @@ private theorem countRun_safe_core (state : MergeState κ ν)
     refine ⟨result, ?_⟩
     apply countRunSafetyPost_of state slice base nremaining result
     · simp only [countRunTraced?]
-      rw [if_pos hguard]
+      rw [ite_eq_left hguard]
       simp only [TraceResult.bind, hascending.resultEq,
-        hascending.resultFuel, Bool.false_eq_true, if_false, hcomplete,
-        if_true]
+        hascending.resultFuel, Bool.false_eq_true, ite_false, hcomplete,
+        ite_true]
       simp [TraceResult.pure, result, hcomplete]
     · rfl
     · exact htrace
@@ -1566,19 +1566,19 @@ private theorem countRun_safe_core (state : MergeState κ ν)
           simp only [countRunTraced?, hguard]
           apply CountTraceSafe.bind _ _ ascending hascending.resultEq
             hascending.traceSafe
-          simp only [hascending.resultFuel, Bool.false_eq_true, if_false,
-            hcomplete, hlong, if_true]
+          simp only [hascending.resultFuel, Bool.false_eq_true, ite_false,
+            hcomplete, hlong, ite_true]
           apply CountTraceSafe.bind _ _ first hfirst hfirstSafe
           apply CountTraceSafe.bind _ _ last hlast hlastSafe
-          simpa only [hincreasing, if_true] using
+          simpa only [hincreasing, ite_true] using
             (CountTraceSafe.pure result)
         refine ⟨result, ?_⟩
         apply countRunSafetyPost_of state slice base nremaining result
         · simp only [countRunTraced?]
-          rw [if_pos hguard]
+          rw [ite_eq_left hguard]
           simp only [TraceResult.bind, hascending.resultEq,
-            hascending.resultFuel, Bool.false_eq_true, if_false, hcomplete,
-            hlong, if_true, hfirst, hlast, hincreasing]
+            hascending.resultFuel, Bool.false_eq_true, ite_false, hcomplete,
+            hlong, ite_true, hfirst, hlast, hincreasing]
           rfl
         · rfl
         · exact htrace
@@ -1613,20 +1613,20 @@ private theorem countRun_safe_core (state : MergeState κ ν)
           simp only [countRunTraced?, hguard]
           apply CountTraceSafe.bind _ _ ascending hascending.resultEq
             hascending.traceSafe
-          simp only [hascending.resultFuel, Bool.false_eq_true, if_false,
-            hcomplete, hlong, if_true]
+          simp only [hascending.resultFuel, Bool.false_eq_true, ite_false,
+            hcomplete, hlong, ite_true]
           apply CountTraceSafe.bind _ _ first hfirst hfirstSafe
           apply CountTraceSafe.bind _ _ last hlast hlastSafe
-          simp only [iflt, hincreasing', Bool.false_eq_true, if_false]
+          simp only [iflt, hincreasing', Bool.false_eq_true, ite_false]
           apply CountTraceSafe.bind _ _ reversed hreverse.resultEq hreverseSafe
           simpa [hreverse.resultFuel] using hfinish.traceSafe
         refine ⟨result, ?_⟩
         apply countRunSafetyPost_of state slice base nremaining result
         · simp only [countRunTraced?]
-          rw [if_pos hguard]
+          rw [ite_eq_left hguard]
           simp only [TraceResult.bind, hascending.resultEq,
-            hascending.resultFuel, Bool.false_eq_true, if_false, hcomplete,
-            hlong, if_true, hfirst, hlast, iflt, hincreasing',
+            hascending.resultFuel, Bool.false_eq_true, ite_false, hcomplete,
+            hlong, ite_true, hfirst, hlast, iflt, hincreasing',
             hreverse.resultEq, hreverse.resultFuel, hfinish.resultEq]
         · exact hfinish.resultFuel
         · exact htrace
@@ -1653,7 +1653,7 @@ private theorem countRun_safe_core (state : MergeState κ ν)
       refine ⟨result, ?_⟩
       apply countRunSafetyPost_of state slice base nremaining result
       · simp only [countRunTraced?]
-        rw [if_pos hguard]
+        rw [ite_eq_left hguard]
         simpa [TraceResult.bind, hascending.resultEq,
           hascending.resultFuel, hascendingOne, honeNotComplete, hlong]
           using hfinish.resultEq
@@ -1722,7 +1722,7 @@ theorem ascendingScanTraced_step_trace_order
           TraceResult.pure (ascendingScanResult n false)
         else
           ascendingScanTraced? fuel lt slice base nremaining (n + 1)).trace) := by
-  simp only [ascendingScanTraced?, hactive, if_true]
+  simp only [ascendingScanTraced?, hactive, ite_true]
   rw [TraceResult.trace_bind, hprevious]
   simp only
   rw [TraceResult.trace_bind, hnext]
@@ -1761,7 +1761,7 @@ theorem descendingScanTraced_step_trace_order
         else
           descendingScanTraced? fuel valuesPresent lt slice base nremaining
             (n + 1) (neq + 1)).trace) := by
-  simp only [descendingScanTraced?, hactive, if_true]
+  simp only [descendingScanTraced?, hactive, ite_true]
   rw [TraceResult.trace_bind, hprevious]
   simp only
   rw [TraceResult.trace_bind, hnext]
@@ -1791,7 +1791,7 @@ theorem descendingScanTraced_next_smaller_priority
           else
             descendingScanTraced? fuel valuesPresent lt reversed.slice base
               nremaining (n + 1) 0).result := by
-  simp only [descendingScanTraced?, hactive, if_true, TraceResult.bind,
+  simp only [descendingScanTraced?, hactive, ite_true, TraceResult.bind,
     hprevious, hnext, hsmaller]
 
 /-- Successful descending completion appends traces in source-phase order:

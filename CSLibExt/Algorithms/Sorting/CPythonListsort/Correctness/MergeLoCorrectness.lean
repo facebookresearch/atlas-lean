@@ -10,9 +10,6 @@ import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.EntrySnapshotPerm
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.MergeLoInvariant
 import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.MergeLoRegressionKernel
 
--- Preserve the imported development's original implicit type binders.
-set_option autoImplicit true
-
 /-!
 # Functional correctness of `merge_lo`
 
@@ -505,8 +502,8 @@ private theorem mergeLoOrdinary_correct_step
               semantic := hresult.semantic }
           rw [mergeLoLoop_ordinary_copyA_equation fuel machine aCount bCount
             firstA firstB hactive hfirstA hfirstB hcompareMachine]
-          simp only [hcopy, bind, Option.bind, hterminal, if_false]
-          rw [if_pos hgallop]
+          simp only [hcopy, bind, Option.bind, hterminal, ite_false]
+          rw [ite_eq_left hgallop]
           change mergeLoLoop? fuel adjusted .galloping = some result
           exact hresult.resultEq
         · rcases ih next (.ordinary nextACount 0) hnext hnextFuel
@@ -569,8 +566,8 @@ private theorem mergeLoOrdinary_correct_step
               semantic := hresult.semantic }
           rw [mergeLoLoop_ordinary_copyB_equation fuel machine aCount bCount
             firstA firstB hactive hfirstA hfirstB hcompareMachine]
-          simp only [hcopy, bind, Option.bind, hterminal, if_false]
-          rw [if_pos hgallop]
+          simp only [hcopy, bind, Option.bind, hterminal, ite_false]
+          rw [ite_eq_left hgallop]
           change mergeLoLoop? fuel adjusted .galloping = some result
           exact hresult.resultEq
         · rcases ih next (.ordinary 0 nextBCount) hnext hnextFuel
@@ -717,11 +714,11 @@ private theorem mergeLoGalloping_correct_step
         afterACall aCount afterA := by
     rw [mergeLoLoop?]
     rw [mergeLoGallopRound_equation]
-    simp only [hguard, if_false, hfirstBExecution, hactiveAExecution,
+    simp only [hguard, ite_false, hfirstBExecution, hactiveAExecution,
       bind, Option.bind]
     rw [hgallopAExpanded]
     simp only [mergeLoBindOptionAcross, hgallopAFuel, Bool.false_eq_true,
-      if_false, haNotGreaterExecution]
+      ite_false, haNotGreaterExecution]
     rw [hcopyAExecution]
     change afterACall aCount afterA = afterACall aCount afterA
     rfl
@@ -963,11 +960,11 @@ private theorem mergeLoGalloping_correct_step
       Bool.false_eq_true, hbNotGreater, hcopyBlockBCore, hafterCZero,
       afterACall, afterC, bCount]
     rw [hcopyDExpanded]
-    simp only [Option.bind_some, hafterDOne, if_false]
+    simp only [Option.bind_some, hafterDOne, ite_false]
     have hstayExpanded : MIN_GALLOP.toNat ≤ aCount ∨
         MIN_GALLOP.toNat ≤ gallopB.index := by
       simpa only [bCount] using hstay
-    rw [if_pos hstayExpanded]
+    rw [ite_eq_left hstayExpanded]
     exact hresult.resultEq
   · let threshold := afterD.minGallop + 1
     let adjustedD : MergeLoMachine (Occurrence alpha) nu :=
@@ -996,11 +993,11 @@ private theorem mergeLoGalloping_correct_step
       Bool.false_eq_true, hbNotGreater, hcopyBlockBCore, hafterCZero,
       afterACall, afterC, bCount]
     rw [hcopyDExpanded]
-    simp only [Option.bind_some, hafterDOne, if_false]
+    simp only [Option.bind_some, hafterDOne, ite_false]
     have hstayExpanded : ¬(MIN_GALLOP.toNat ≤ aCount ∨
         MIN_GALLOP.toNat ≤ gallopB.index) := by
       simpa only [bCount] using hstay
-    rw [if_neg hstayExpanded]
+    rw [ite_eq_right hstayExpanded]
     change mergeLoLoop? fuel adjustedD (.ordinary 0 0) = some result
     exact hresult.resultEq
 
@@ -1073,8 +1070,8 @@ private theorem mergeLo_semanticOutput_of_safety
     exact (mainToTempMemcpy_eq_mergeLo .initialDataToTemp rfl call.na
       (mergeLoAllocated call).state 0 call.ssa).symm ▸ hmainCopy
   have hraw := hsafety.rawResultEq
-  rw [mergeLo?, if_pos hentryGuard,
-    if_neg stage.requestFacts.guardNotRejected] at hraw
+  rw [mergeLo?, ite_eq_left hentryGuard,
+    ite_eq_right stage.requestFacts.guardNotRejected] at hraw
   change (do
     let copiedState ← mergeLoMemcpyDataToTemp? .initialDataToTemp rfl call.na
       (mergeLoAllocated call).state 0 call.ssa
@@ -1092,12 +1089,12 @@ private theorem mergeLo_semanticOutput_of_safety
   rw [hforcedB] at hraw
   by_cases hnbZero : afterB.nb = 0
   · have hterminal : mergeLoSucceed? afterB = some result := by
-      simpa only [hnbZero, if_pos] using hraw
+      simpa only [hnbZero, ite_eq_left] using hraw
     exact hafterB.succeed stage.geometry hnbZero hterminal
   have hnbPositive : 0 < afterB.nb := Nat.pos_of_ne_zero hnbZero
   by_cases hnaOne : afterB.na = 1
   · have hterminal : mergeLoCopyB? afterB = some result := by
-      simp only [hnbZero, if_false, hnaOne, if_pos] at hraw
+      simp only [hnbZero, ite_false, hnaOne, ite_eq_left] at hraw
       exact hraw
     exact hafterB.copyBTail stage.geometry horder hsemantic hnaOne hnbPositive
       hterminal
@@ -1112,7 +1109,7 @@ private theorem mergeLo_semanticOutput_of_safety
   have hloopActual :
       mergeLoLoop? (call.na + call.nb + 1) afterB (.ordinary 0 0) =
         some result := by
-    simp only [hnbZero, if_false, hnaOne, if_false] at hraw
+    simp only [hnbZero, ite_false, hnaOne, ite_false] at hraw
     exact hraw
   rcases mergeLoLoop_correct stage.geometry horder hsemantic
       (call.na + call.nb + 1) afterB (.ordinary 0 0) hafterB hfuel hnaLarge

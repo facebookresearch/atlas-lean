@@ -219,7 +219,7 @@ private theorem foundNewRunLoop_preserves_semantics
   | succ remaining ih =>
       by_cases hmany : 1 < state.pending.size
       · have hloop' := hloop
-        simp only [foundNewRunLoop?, hmany, if_pos] at hloop'
+        simp only [foundNewRunLoop?, hmany, ite_eq_left] at hloop'
         cases hpreceding : state.pending[state.pending.size - 2]? with
         | none => simp [hpreceding] at hloop'
         | some preceding =>
@@ -229,14 +229,14 @@ private theorem foundNewRunLoop_preserves_semantics
             | some precedingPower =>
                 simp only [hstored] at hloop'
                 by_cases hguard : power < precedingPower
-                · rw [if_pos hguard] at hloop'
+                · rw [ite_eq_left hguard] at hloop'
                   cases hmerge : mergeAt? state (state.pending.size - 2) with
                   | none => simp [hmerge] at hloop'
                   | some merged =>
                       simp only [hmerge] at hloop'
                       by_cases hsuccess :
                           merged.returnCode = 0 ∧ !merged.fuelExhausted
-                      · rw [if_pos hsuccess] at hloop'
+                      · rw [ite_eq_left hsuccess] at hloop'
                         have hposition :
                             state.pending.size - 2 + 2 = state.pending.size ∨
                               state.pending.size - 2 + 3 =
@@ -272,7 +272,7 @@ private theorem foundNewRunLoop_preserves_semantics
                         have hrecursiveFrame := hrecursive.consumedFrame
                         rw [hsafety.stableFrame.basekeys] at hrecursiveFrame
                         exact hmergedFrame.trans hrecursiveFrame
-                      · rw [if_neg hsuccess] at hloop'
+                      · rw [ite_eq_right hsuccess] at hloop'
                         injection hloop' with hresult
                         subst result
                         change merged.returnCode = 0 at hcode
@@ -280,7 +280,7 @@ private theorem foundNewRunLoop_preserves_semantics
                         exfalso
                         apply hsuccess
                         exact ⟨hcode, by simp [hresultFuel]⟩
-                · rw [if_neg hguard] at hloop'
+                · rw [ite_eq_right hguard] at hloop'
                   cases hset : setTopPower? state power with
                   | none => simp [hset] at hloop'
                   | some after =>
@@ -297,7 +297,7 @@ private theorem foundNewRunLoop_preserves_semantics
                           comparator := hafterCompare
                           consumedFrame := hafterFrame }
       · have hloop' := hloop
-        simp only [foundNewRunLoop?, hmany, if_false] at hloop'
+        simp only [foundNewRunLoop?, hmany, ite_false] at hloop'
         cases hset : setTopPower? state power with
         | none => simp [hset] at hloop'
         | some after =>
@@ -335,7 +335,7 @@ private theorem foundNewRun_preserves_semantics
     FoundNewRunSemanticPost lt input source state scanned result := by
   unfold foundNewRun? at hraw
   by_cases hempty : state.pending.isEmpty = true
-  · rw [if_pos hempty] at hraw
+  · rw [ite_eq_left hempty] at hraw
     simp only [foundNewRunSuccess_eq] at hraw
     injection hraw with hresult
     subst result
@@ -345,7 +345,7 @@ private theorem foundNewRun_preserves_semantics
         comparator := hcompare
         consumedFrame :=
           SortSlice.EqualOutsideRange.refl state.data state.basekeys scanned }
-  · rw [if_neg hempty] at hraw
+  · rw [ite_eq_right hempty] at hraw
     cases htop : state.pending[state.pending.size - 1]? with
     | none => simp [htop] at hraw
     | some top =>
@@ -363,7 +363,7 @@ private theorem foundNewRun_preserves_semantics
                 decide (n2 ≤ PY_SSIZE_T_MAX) &&
                 decide (top.base - state.basekeys + top.len.toNat + n2 ≤
                   state.listlen.toNat)) = true := hguard
-          rw [if_pos hguard'] at hraw
+          rw [ite_eq_left hguard'] at hraw
           let powered := powerloopTraced
             (BitVec.ofNat 64 (top.base - state.basekeys)) top.len
             (BitVec.ofNat 64 n2) state.listlen
@@ -373,7 +373,7 @@ private theorem foundNewRun_preserves_semantics
                   (BitVec.ofNat 64 (top.base - state.basekeys)) top.len
                   (BitVec.ofNat 64 n2) state.listlen).stopped) = true :=
               hstopped
-            rw [if_pos hstopped'] at hraw
+            rw [ite_eq_left hstopped'] at hraw
             simp only [foundNewRunOutOfFuel_eq] at hraw
             injection hraw with hresult
             subst result
@@ -384,7 +384,7 @@ private theorem foundNewRun_preserves_semantics
                   (BitVec.ofNat 64 (top.base - state.basekeys)) top.len
                   (BitVec.ofNat 64 n2) state.listlen).stopped) = true :=
               hstopped
-            rw [if_neg hstopped'] at hraw
+            rw [ite_eq_right hstopped'] at hraw
             exact foundNewRunLoop_preserves_semantics mergeCorrect
               state.pending.size state
               (powerloopTraced
@@ -398,7 +398,7 @@ private theorem foundNewRun_preserves_semantics
                 decide (n2 ≤ PY_SSIZE_T_MAX) &&
                 decide (top.base - state.basekeys + top.len.toNat + n2 ≤
                   state.listlen.toNat)) = true := hguard
-          rw [if_neg hguard'] at hraw
+          rw [ite_eq_right hguard'] at hraw
           contradiction
 
 /-- Assembly of the existing safety theorem with the semantic preservation
