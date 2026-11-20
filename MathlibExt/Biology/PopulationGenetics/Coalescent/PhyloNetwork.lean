@@ -183,10 +183,13 @@ theorem sum_routeProb {v : V} (hv : v ≠ N.root) (k : ℕ) :
 def activeGraph : Digraph V where
   Adj u v := N.G.Adj u v ∧ 0 < N.inherit v u
 
-/-- A **rooted tree** (arborescence) with root `r`: acyclic, `r` has no parent, and every other
-vertex has exactly one parent. -/
+/-- A **rooted tree** (arborescence) with root `r`: acyclic, `r` has no parent, every other
+vertex has exactly one parent, and every vertex is reachable from `r`. (Reachability is
+needed only for infinite `V`; on a finite vertex type it follows from the first three
+conditions by chasing parents, cf. `isRootedTree_activeGraph`.) -/
 def IsRootedTree (H : Digraph V) (r : V) : Prop :=
-  H.IsAcyclic ∧ (∀ u, ¬ H.Adj u r) ∧ ∀ v, v ≠ r → ∃! u, H.Adj u v
+  H.IsAcyclic ∧ (∀ u, ¬ H.Adj u r) ∧ (∀ v, v ≠ r → ∃! u, H.Adj u v) ∧
+    ∀ v, Relation.ReflTransGen H.Adj r v
 
 omit [Fintype V] in
 /-- A subgraph of an acyclic digraph is acyclic. -/
@@ -198,11 +201,9 @@ theorem isAcyclic_of_le {G H : Digraph V} (hGH : ∀ u v, H.Adj u v → G.Adj u 
 used with positive probability form a rooted tree on the nodes of the network. -/
 theorem isRootedTree_activeGraph [DecidableEq V] (h01 : ∀ v u, N.inherit v u = 0 ∨ N.inherit v u = 1) :
     IsRootedTree N.activeGraph N.root := by
-  refine ⟨isAcyclic_of_le (fun u v h => h.1) N.isAcyclic, fun u hu => ?_, fun v hv => ?_⟩
-  · have : u ∈ N.parents N.root := N.mem_parents.2 hu.1
-    have h0 : N.parents N.root = ∅ := N.parentsOf_root
-    simp [h0] at this
-  · have hs := N.sum_inherit v hv
+  have huniq : ∀ v, v ≠ N.root → ∃! u, N.activeGraph.Adj u v := by
+    intro v hv
+    have hs := N.sum_inherit v hv
     have hs' : ∑ u ∈ N.parents v, N.inherit v u = 1 := hs
     obtain ⟨u, hu, hpos⟩ : ∃ u ∈ N.parents v, 0 < N.inherit v u := by
       by_contra hcon
@@ -223,6 +224,21 @@ theorem isRootedTree_activeGraph [DecidableEq V] (h01 : ∀ v u, N.inherit v u =
     have hle := sum_le_sum_of_subset_of_nonneg hsub fun x _ _ => N.inherit_nonneg v x
     rw [sum_pair hwu, hw1, hu1] at hle
     linarith
+  have hacyc : N.activeGraph.IsAcyclic := isAcyclic_of_le (fun u v h => h.1) N.isAcyclic
+  have hreach : ∀ v, Relation.ReflTransGen N.activeGraph.Adj N.root v := by
+    have hwf : WellFounded N.activeGraph.Adj := Digraph.isAcyclic_iff_wellFounded.1 hacyc
+    intro v
+    refine hwf.induction (C := fun v => Relation.ReflTransGen N.activeGraph.Adj N.root v) v
+      fun v ih => ?_
+    by_cases hv : v = N.root
+    · subst hv
+      exact Relation.ReflTransGen.refl
+    · obtain ⟨u, hu, -⟩ := huniq v hv
+      exact (ih u hu).tail hu
+  refine ⟨hacyc, fun u hu => ?_, huniq, hreach⟩
+  have : u ∈ N.parents N.root := N.mem_parents.2 hu.1
+  have h0 : N.parents N.root = ∅ := N.parentsOf_root
+  simp [h0] at this
 
 /-- **`γ ∈ {0, 1}` makes the routing deterministic**: at a non-root node every lineage moves to
 the one parent with inheritance probability `1`. -/
@@ -230,7 +246,7 @@ theorem routeProb_of_zero_one [DecidableEq V] (h01 : ∀ v u, N.inherit v u = 0 
     (hv : v ≠ N.root) :
     ∃ u ∈ N.parents v, ∀ k (a : Fin k → V),
       N.routeProb v a = if ∀ i, a i = u then 1 else 0 := by
-  obtain ⟨u, hu, huniq⟩ := (isRootedTree_activeGraph N h01).2.2 v hv
+  obtain ⟨u, hu, huniq⟩ := (isRootedTree_activeGraph N h01).2.2.1 v hv
   have hu1 : N.inherit v u = 1 := (h01 v u).resolve_left hu.2.ne'
   have hzero : ∀ w, w ≠ u → N.inherit v w = 0 := fun w hw =>
     (h01 v w).resolve_right fun h1 => by
@@ -249,7 +265,7 @@ is not a rooted tree. -/
 theorem not_isRootedTree_activeGraph [DecidableEq V] {v u₁ u₂ : V} (h : N.parents v = {u₁, u₂}) (hne : u₁ ≠ u₂)
     (hγ : 0 < N.inherit v u₁ ∧ N.inherit v u₁ < 1) :
     ¬ IsRootedTree N.activeGraph N.root := by
-  rintro ⟨-, -, hT⟩
+  rintro ⟨-, -, hT, -⟩
   have hv : v ≠ N.root := by
     rintro rfl
     have : N.parents N.root = ∅ := N.parentsOf_root
