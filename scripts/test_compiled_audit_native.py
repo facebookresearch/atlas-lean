@@ -63,6 +63,7 @@ class CompiledAuditTests(unittest.TestCase):
         sources = {
             'Domains.AuditFixture.Model': 'module\npublic def domainFixture : Nat := 1\n',
             'DomainsTest.AuditFixture.Model': 'module\npublic import Domains.AuditFixture.Model\n',
+            'WantedExt.AuditFixture.Model': 'module\npublic import Domains.AuditFixture.Model\n',
             'MathlibExt.AuditFixture.Reverse': 'module\npublic import Domains.AuditFixture.Model\n',
         }
         for module, source in sources.items():
@@ -70,7 +71,7 @@ class CompiledAuditTests(unittest.TestCase):
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(source)
         subprocess.run(['lake', 'build', *('+' + name for name in sources)], cwd=self.fixture, check=True)
-        allowed = ['Domains.AuditFixture.Model', 'DomainsTest.AuditFixture.Model']
+        allowed = ['Domains.AuditFixture.Model', 'DomainsTest.AuditFixture.Model', 'WantedExt.AuditFixture.Model']
         self.assertEqual(audit.audit(self.fixture, allowed, self.checker)['checkedModules'], allowed)
         with self.assertRaisesRegex(audit.AuditFailure,
                                     r'MathlibExt\.AuditFixture\.Reverse must not import Domains\.AuditFixture\.Model'):

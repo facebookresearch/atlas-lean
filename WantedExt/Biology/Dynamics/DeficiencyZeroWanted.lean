@@ -33,12 +33,12 @@ Let the network have deficiency zero.
   mass-action system have a positive equilibrium.
 
 The weakly reversible case, together with complex balancing of the equilibrium, is proved in
-`MathlibExt.Biology.Dynamics.DeficiencyZero.Integration` (`exists_pos_isComplexBalanced`,
+`Domains.Biology.Dynamics.DeficiencyZero.Integration` (`exists_pos_isComplexBalanced`,
 `existsUnique_equilibrium`); only the second case is stated here. Feinberg's theorem also
 asserts local asymptotic stability in the weakly reversible case, and the second part holds for
 arbitrary kinetics; stability and general kinetics are not stated here. The reaction networks,
 the stoichiometric subspace, the mass-action vector field and complex balancing are defined in
-`MathlibExt.Biology.Dynamics.ComplexBalanced`, which also proves the Horn–Jackson theorem: given
+`Domains.Biology.Dynamics.ComplexBalanced`, which also proves the Horn–Jackson theorem: given
 one positive complex-balanced equilibrium, each positive stoichiometric compatibility class
 contains exactly one positive equilibrium.
 
@@ -54,7 +54,7 @@ Mech. Anal. 49 (1972) 187–194; M. Feinberg, *Foundations of Chemical Reaction 
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Biology.Dynamics.DeficiencyZero.API
+public import Domains.Biology.Dynamics.DeficiencyZero.API
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import Mathlib.LinearAlgebra.Dimension.Finrank
 public import Mathlib.Logic.Relation

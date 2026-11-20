@@ -21,7 +21,7 @@ so delete the repeated entries (`List.destutter (· ≠ ·)`); the resulting lis
 partitions of `Fin n` is distributed as the path of the `n`-chain.
 
 The time-`t` form of consistency is proved in
-`MathlibExt/Biology/PopulationGenetics/Coalescent/PartitionCoalescent.lean`
+`Domains/Biology/PopulationGenetics/Coalescent/PartitionCoalescent.lean`
 (`sum_timeLaw_restrict`); the path-level statement for the jump chains is deferred here.
 
 Sources: J. F. C. Kingman, "The coalescent", Stochastic Process. Appl. 13 (1982) 235–248;
@@ -30,7 +30,7 @@ R. Durrett, *Probability Models for DNA Sequence Evolution*, 2nd ed. (2008), ch.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Biology.PopulationGenetics.Coalescent.PartitionCoalescent
+public import Domains.Biology.PopulationGenetics.Coalescent.PartitionCoalescent
 
 @[expose] public section
 

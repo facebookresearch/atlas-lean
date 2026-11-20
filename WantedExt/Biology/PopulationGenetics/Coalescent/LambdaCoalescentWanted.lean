@@ -17,7 +17,7 @@ Theorem 1) showed that the consistent families of nonnegative rates are exactly 
 `Λ` is unique.
 
 Consistency and uniqueness are proved in
-`MathlibExt.Biology.PopulationGenetics.Coalescent.LambdaCoalescent`
+`Domains.Biology.PopulationGenetics.Coalescent.LambdaCoalescent`
 (`mergerRate_consistent`, `mergerRate_nonneg`, `eq_of_mergerRate_eq`). The existence half
 recorded here is a Hausdorff moment problem: consistency gives
 `r (i + 2 + c) (i + 2) = ((I - E) ^ c m) i` for the sequence `m i = r (i + 2) (i + 2)` and the
@@ -34,7 +34,7 @@ vol. II, 2nd ed. (1971), §VII.3.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Biology.PopulationGenetics.Coalescent.LambdaCoalescent
+public import Domains.Biology.PopulationGenetics.Coalescent.LambdaCoalescent
 
 @[expose] public section
 

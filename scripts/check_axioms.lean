@@ -34,7 +34,7 @@ private def mayImport (source target : Lean.Name) : Bool :=
     (source == `DomainsTest &&
       (target == `Domains || target == `PhyslibExt || target == `CSLibExt || target == `MathlibExt)) ||
     (source == `WantedExt &&
-      (target == `CSLibExt || target == `MathlibExt))
+      (target == `Domains || target == `CSLibExt || target == `MathlibExt))
 
 private def containsWantedWrapper (type : Lean.Expr) : Bool :=
   (type.find? fun

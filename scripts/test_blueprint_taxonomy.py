@@ -17,7 +17,7 @@ class BlueprintTaxonomyTests(unittest.TestCase):
         taxonomy = wiki.load_taxonomy()
         cases = {
             "MathlibExt": ("Economics", "Quantum"),
-            "Domains": ("Biology", "Economics", "Transport", "Urban"),
+            "Domains": ("Biology", "Chemistry", "Economics", "MaterialsScience", "OperationsResearch", "Transport", "Urban"),
             "CSLibExt": ("Privacy", "Tactic"),
             "PhyslibExt": (
                 "Chemistry", "ClassicalMechanics", "EarthScience",
