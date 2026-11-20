@@ -70,12 +70,13 @@ hypotheses. The swirl in these formulas is the inertial one: the fluid velocity 
 rotor has the tangential component `c_θ - ω r`.
 
 Model inputs of sections A-C: steady flow; one inlet and one outlet port, each lumped at one
-representative point with a port area, a unit normal and an effective moment radius; the steady mass
-and angular-momentum balances about the shaft applied to the lumped port values, with every external
-axial moment other than the rotor torque collected in `M_ext`; for the power, the rotor torque
-exerted by forces at points moving with the rigid rotor, and `M_ext = 0`; for the shaft power, a
-steadily turning rotor with no bearing torque. No port-surface integral, blade-element, loss, slip
-or performance-map model is used, and no empirical adequacy or machine safety claim is made.
+representative point with a nonnegative density, port area and effective moment radius and a unit
+normal; the steady mass and angular-momentum balances about the shaft applied to the lumped port
+values, with every external axial moment other than the rotor torque collected in `M_ext`; for the
+power, the rotor torque exerted by forces at points moving with the rigid rotor, and `M_ext = 0`;
+for the shaft power, a steadily turning rotor with no bearing torque. No port-surface integral,
+blade-element, loss, slip or performance-map model is used, and no empirical adequacy or machine
+safety claim is made.
 
 The actuator disk of sections D-F. An ideal actuator disk of area `A` stands normal to a steady
 incompressible stream of density `ρ`. Axial speeds are positive along the flow: `U∞` far upstream,
@@ -230,7 +231,8 @@ point of azimuth `φ`, radius `r` and axial station `z`, with the port area `A`.
 modelled, and `r` is the port's effective moment radius (see `axialMomentFlux`). In the local
 cylindrical frame at the representative point the inertial fluid velocity has the components
 `(cr, cθ, cz)`, so `cθ` is the inertial swirl velocity, positive along `e_θ`, and the outward
-unit normal has the meridional components `(nr, 0, nz)`, `nr ^ 2 + nz ^ 2 = 1`. -/
+unit normal has the meridional components `(nr, 0, nz)`, `nr ^ 2 + nz ^ 2 = 1`. The density `ρ`,
+the area `A` and the radius `r` are nonnegative. -/
 structure RotorPort where
   /-- The density `ρ`. -/
   ρ : ℝ
@@ -256,6 +258,13 @@ structure RotorPort where
   nz : ℝ
   /-- The outward normal is a unit vector. -/
   normal_unit : nr ^ 2 + nz ^ 2 = 1
+  /-- The density is nonnegative. -/
+  ρ_nonneg : 0 ≤ ρ
+  /-- The port area is nonnegative. -/
+  A_nonneg : 0 ≤ A
+  /-- The radius is nonnegative: the representative point lies on the radial ray `e_r` of its
+  azimuth, the direction of the radial components of the velocity and the normal. -/
+  r_nonneg : 0 ≤ r
 
 namespace RotorPort
 
@@ -273,8 +282,9 @@ noncomputable def normal (P : RotorPort) : Fin 3 → ℝ :=
   bodyToInertialVec (cylFrame P.φ) ![P.nr, 0, P.nz]
 
 /-- The lumped mass flow `ρ A (c ⬝ n)`: the local mass flux through the outward normal at the
-representative point times the port area; positive out of the control volume, negative into it.
--/
+representative point times the port area. As `ρ` and `A` are nonnegative, it is nonnegative for
+flow out of the control volume (`c ⬝ n ≥ 0`) and nonpositive for flow into it, strictly when
+`ρ A > 0`. -/
 noncomputable def lumpedMassFlow (P : RotorPort) : ℝ :=
   P.ρ * P.A * (P.velocity ⬝ᵥ P.normal)
 
