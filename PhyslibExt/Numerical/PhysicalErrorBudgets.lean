@@ -21,7 +21,7 @@ import MathlibExt.Analysis.ODE.TimeStepping
 import PhyslibExt.HeatTransfer.ConductionPorts
 
 /-!
-# Physical error budgets: bar pullback of the P1 estimates and ten-step thermal Euler and RK4 errors
+# Physical error budgets: P1 bar pullback, thermal Euler and RK4 errors, and an Euler defect budget
 
 ## i. Overview
 
@@ -88,9 +88,26 @@ below `|Δ| × 10⁻⁶` for `Δ ≠ 0`. This is one evaluated instance, not a c
 order conditions of `rk4_orderFour` alone do not give global convergence, and order four does not
 give stability, since the step `dt = 3 τ` multiplies the excess by `R(-3) = 11 / 8 > 1`.
 
-Model inputs of sections F-K: constant `C`, `G` and `T_amb`, the linear bath law and the lumped
-body. Non-goals: no general Euler or Runge–Kutta convergence theorem and no arithmetic or
-floating-point refinement.
+Section L propagates the actual residuals of a computed temperature sequence `Y` through the
+explicit Euler recurrence of section G at `dt = τ / 10`. The residual of step `j` is
+`η_j = Y (j + 1) - (Y j + (τ / 10) Q(Y j) / C)` (`bathEulerResidual`), computed from `Y`, not a
+named tolerance. The step maps temperature differences by `9 / 10`, so the defect
+`e_j = Y j - X j` against the exact Euler recurrence `X` obeys `e_{j+1} = (9 / 10) e_j + η_j`. The
+ten-step defect bound `MathlibExt.Analysis.ODE.TimeStepping.tenStep_defect_le`, from the
+product-form discrete Grönwall inequality, then bounds `|e_10|` by
+`(9 / 10) ^ 10 |e_0| + ∑_{j < 10} (9 / 10) ^ (9 - j) |η_j|`: a residual at an early step is damped
+by more steps than one at a late step. Applied to temperature differences, and only then added to
+the truncation term `|Δ| / 10` of section G, this puts the computed `Y 10` within the three-term
+budget `tenStepErrorBudget` of the exact trajectory at `τ`: the propagated initial error, the
+weighted actual residuals and the truncation, all in the temperature unit. A change of temperature
+unit `T ↦ k T + c` (`k > 0`) divides the heat capacity and the conductance by `k`, leaves `τ`
+unchanged and multiplies the budget by `k`. Replacing an observed residual by zero can undercut the
+actual error.
+
+Model inputs of sections F-L: constant `C`, `G` and `T_amb`, the linear bath law and the lumped
+body. Non-goals: no general Euler or Runge–Kutta convergence theorem, no arithmetic or
+floating-point refinement (section L takes whatever residuals the computed sequence has) and no
+model-discrepancy term.
 
 ## ii. Key results
 
@@ -122,6 +139,11 @@ floating-point refinement.
   `bathRK4_tenStep_error_pos`: ten RK4 steps at `dt = τ / 10` and the error at `τ`, below
   `|Δ| × 10⁻⁶` and positive for `Δ ≠ 0`; the numeric fixture is in the test module.
 - `bathRK4_threeTau`: the unstable RK4 step `dt = 3 τ` of the stable bath.
+- `bathEulerResidual`, `tenStepErrorBudget`, `bathEulerStep_sub_tenth`, `defect_recurrence`: the
+  actual residual of a computed sequence and the defect recurrence `e_{j+1} = (9 / 10) e_j + η_j`.
+- `bathEuler_total_error`, `tenStepErrorBudget_tempUnit`: the three-term ten-step budget, and its
+  scaling by `k` under a change of temperature unit `T ↦ k T + c` with the heat capacity and the
+  conductance converted to `C / k` and `G / k`; the dropped-residual fixture is in the test module.
 
 ## iii. Table of contents
 
@@ -136,6 +158,7 @@ floating-point refinement.
 - I. Classical Runge–Kutta steps on the bath-cooling model
 - J. Ten Runge–Kutta steps of size `τ / 10`
 - K. The unstable Runge–Kutta step
+- L. Defects through the actual Euler recurrence
 
 ## iv. References
 
@@ -153,9 +176,13 @@ floating-point refinement.
   method).
 - E. Hairer and G. Wanner, *Solving Ordinary Differential Equations II*, 2nd ed., Springer (1996),
   Section IV.2 (stability functions of explicit Runge–Kutta methods).
+- E. Süli and D. F. Mayers, *An Introduction to Numerical Analysis*, Cambridge University Press,
+  2003, chapter 12 (the global error of one-step methods from their truncation errors).
 - `MathlibExt.Analysis.ODE.TimeStepping.decay_euler_numeric_bound`,
   `MetaMathlibExt.scalar_exp_solution`, `ConductionPorts.hasDerivAt_thermalStorage`, and
   `MathlibExt.Analysis.ODE.RungeKutta.rk4_stability` and `euler_step`.
+- `MathlibExt.Analysis.ODE.TimeStepping.tenStep_defect_le` (the ten-step defect bound, through
+  Mathlib's `discrete_gronwall_prod_general`).
 -/
 
 @[expose] public section
@@ -886,6 +913,106 @@ lemma bathRK4_threeTau {C G : ℝ} (hC : 0 < C) (hG : 0 < G) {Tamb Δ : ℝ} {X 
     norm_num
 
 end RungeKuttaComparison
+
+/-! ## L. Defects through the actual Euler recurrence -/
+
+open Finset
+
+/-- The actual residual of a computed temperature sequence `Y` in the Euler recurrence at
+`dt = τ / 10`: `η_j = Y (j + 1) - (Y j + (τ / 10) Q(Y j) / C)`, the amount by which the computed
+step `j` misses one exact Euler step. It is computed from `Y`, in the temperature unit of `Y`. -/
+noncomputable def bathEulerResidual (C G Tamb : ℝ) (Y : ℕ → ℝ) (j : ℕ) : ℝ :=
+  Y (j + 1) - bathEulerStep C G Tamb (thermalTimeConstant C G / 10) (Y j)
+
+/-- The ten-step error budget of a computed temperature sequence `Y` against the exact trajectory
+from `T_amb + Δ`: the propagated initial error, the weighted actual residuals and the truncation
+term `|Δ| / 10` of the exact Euler recurrence, three separate terms in the temperature unit. -/
+noncomputable def tenStepErrorBudget (C G Tamb Δ : ℝ) (Y : ℕ → ℝ) : ℝ :=
+  (9 / 10) ^ 10 * |Y 0 - (Tamb + Δ)| +
+    ∑ j ∈ range 10, (9 / 10) ^ (9 - j) * |bathEulerResidual C G Tamb Y j| + |Δ| / 10
+
+/-- **The actual step has slope `9 / 10`.** For `C, G > 0`, one Euler step of size `τ / 10` maps
+the difference of two temperatures to `9 / 10` of it. -/
+lemma bathEulerStep_sub_tenth {C G : ℝ} (hC : 0 < C) (hG : 0 < G) (Tamb T X : ℝ) :
+    bathEulerStep C G Tamb (thermalTimeConstant C G / 10) T -
+        bathEulerStep C G Tamb (thermalTimeConstant C G / 10) X = 9 / 10 * (T - X) := by
+  have hC' := hC.ne'
+  have hG' := hG.ne'
+  unfold bathEulerStep bathPower thermalTimeConstant
+  field_simp
+  ring
+
+/-- **The defect recurrence.** For `C, G > 0`, the exact Euler recurrence `X` at `dt = τ / 10`
+and any computed sequence `Y`, the defect `Y - X` obeys `e_{j+1} = (9 / 10) e_j + η_j` with the
+actual residual `η_j` of `Y`. -/
+lemma defect_recurrence {C G : ℝ} (hC : 0 < C) (hG : 0 < G) {Tamb : ℝ} {X : ℕ → ℝ}
+    (hstep : ∀ j, X (j + 1) = bathEulerStep C G Tamb (thermalTimeConstant C G / 10) (X j))
+    (Y : ℕ → ℝ) (j : ℕ) :
+    Y (j + 1) - X (j + 1) = 9 / 10 * (Y j - X j) + bathEulerResidual C G Tamb Y j := by
+  have h := bathEulerStep_sub_tenth hC hG Tamb (Y j) (X j)
+  rw [hstep j]
+  unfold bathEulerResidual
+  linarith
+
+/-- **Three-term ten-step error budget.** For `C, G > 0`, the exact Euler recurrence `X` at
+`dt = τ / 10` from `X 0 = T_amb + Δ` and any computed sequence `Y`, the computed temperature
+after ten steps is within the budget of the exact trajectory at `τ`: the propagated initial error,
+the weighted actual residuals and the truncation term `|Δ| / 10`. -/
+lemma bathEuler_total_error {C G : ℝ} (hC : 0 < C) (hG : 0 < G) {Tamb Δ : ℝ} {X : ℕ → ℝ}
+    (h0 : X 0 = Tamb + Δ)
+    (hstep : ∀ j, X (j + 1) = bathEulerStep C G Tamb (thermalTimeConstant C G / 10) (X j))
+    (Y : ℕ → ℝ) :
+    |Y 10 - bathTrajectory C G Tamb Δ (thermalTimeConstant C G)| ≤
+      tenStepErrorBudget C G Tamb Δ Y := by
+  have hrec : ∀ j < 10, (fun i => Y i - X i) (j + 1) =
+      9 / 10 * (fun i => Y i - X i) j + bathEulerResidual C G Tamb Y j :=
+    fun j _ => defect_recurrence hC hG hstep Y j
+  have hdef := MathlibExt.Analysis.ODE.TimeStepping.tenStep_defect_le
+    (e := fun i => Y i - X i) (η := bathEulerResidual C G Tamb Y) hrec
+  have htrunc := bathEuler_tenStep_error hC hG h0 hstep
+  have htri := abs_sub_le (Y 10) (X 10) (bathTrajectory C G Tamb Δ (thermalTimeConstant C G))
+  simp only [h0] at hdef
+  unfold tenStepErrorBudget
+  linarith
+
+/-- **Temperature units.** A change of temperature unit `T ↦ k T + c` with `k > 0` maps every
+temperature, the bath `T_amb` and the computed sequence `Y`, by `T ↦ k T + c`, multiplies every
+temperature difference, the initial excess `Δ`, by `k`, and divides the per-degree coefficients,
+the heat capacity `C` and the conductance `G`, by `k`; the time constant `τ = C / G` is unchanged.
+Each residual and the whole budget are then multiplied by `k`: all three terms are temperature
+differences in one unit. -/
+lemma tenStepErrorBudget_tempUnit {k : ℝ} (hk : 0 < k) (c C G Tamb Δ : ℝ) (Y : ℕ → ℝ) :
+    (∀ j, bathEulerResidual (C / k) (G / k) (k * Tamb + c) (fun i => k * Y i + c) j =
+        k * bathEulerResidual C G Tamb Y j) ∧
+      tenStepErrorBudget (C / k) (G / k) (k * Tamb + c) (k * Δ) (fun i => k * Y i + c) =
+        k * tenStepErrorBudget C G Tamb Δ Y := by
+  have hk0 : k ≠ 0 := hk.ne'
+  have hτ : thermalTimeConstant (C / k) (G / k) = thermalTimeConstant C G := by
+    unfold thermalTimeConstant
+    rw [div_div_div_cancel_right₀ hk0]
+  have hres : ∀ j, bathEulerResidual (C / k) (G / k) (k * Tamb + c) (fun i => k * Y i + c) j =
+      k * bathEulerResidual C G Tamb Y j := by
+    intro j
+    unfold bathEulerResidual bathEulerStep
+    rw [hτ]
+    unfold bathPower
+    rcases eq_or_ne C 0 with rfl | hC
+    · simp
+      ring
+    · field_simp
+      ring
+  refine ⟨hres, ?_⟩
+  unfold tenStepErrorBudget
+  simp only [hres]
+  have h1 : k * Y 0 + c - (k * Tamb + c + k * Δ) = k * (Y 0 - (Tamb + Δ)) := by ring
+  have hsum : ∑ j ∈ range 10, (9 / 10 : ℝ) ^ (9 - j) * |k * bathEulerResidual C G Tamb Y j| =
+      k * ∑ j ∈ range 10, (9 / 10 : ℝ) ^ (9 - j) * |bathEulerResidual C G Tamb Y j| := by
+    rw [mul_sum]
+    refine sum_congr rfl fun j _ => ?_
+    rw [abs_mul, abs_of_pos hk]
+    ring
+  rw [h1, hsum, abs_mul, abs_mul, abs_of_pos hk]
+  ring
 
 end PhysicalErrorBudgets
 
