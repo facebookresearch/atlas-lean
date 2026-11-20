@@ -149,7 +149,8 @@ theorem kimuraSlope_ne_zero (σ : ℝ) : kimuraSlope σ ≠ 0 := by
   · exact one_ne_zero
   · exact div_ne_zero (mul_ne_zero two_ne_zero h) (one_sub_exp_ne_zero h)
 
-private theorem hasDerivAt_exp_mul (c x : ℝ) :
+/-- `fun y => exp (c * y)` has derivative `exp (c * x) * c` at `x`. -/
+theorem hasDerivAt_exp_mul (c x : ℝ) :
     HasDerivAt (fun y => exp (c * y)) (exp (c * x) * c) x := by
   simpa only [mul_one] using ((hasDerivAt_id' x).const_mul c).exp
 
@@ -184,7 +185,7 @@ theorem generator_kimuraFixation (σ x : ℝ) : generator σ (kimuraFixation σ)
   ring
 
 /-- A function continuous on `[a, b]` with zero derivative on `(a, b)` is constant on `[a, b]`. -/
-private theorem eq_left_of_hasDerivAt_zero {f : ℝ → ℝ} {a b : ℝ} (hf : ContinuousOn f (Icc a b))
+theorem eq_left_of_hasDerivAt_zero {f : ℝ → ℝ} {a b : ℝ} (hf : ContinuousOn f (Icc a b))
     (hd : ∀ x ∈ Ioo a b, HasDerivAt f 0 x) : ∀ x ∈ Icc a b, f x = f a := by
   intro x hx
   rcases eq_or_lt_of_le hx.1 with rfl | hax

@@ -310,16 +310,6 @@ theorem nonneg_of_hasDerivAt (hβ : 0 ≤ β) (hσ : 0 ≤ σ) (hγ : 0 ≤ γ) 
 
 end Forward
 
-/-- A function with derivative `f' t ≥ 0` at every `t > a` (and a derivative at every `t ≥ a`)
-is monotone on `[a, ∞)`. -/
-private theorem monotoneOn_Ici_of_hasDerivAt {f f' : ℝ → ℝ} {a : ℝ}
-    (hf : ∀ t, a ≤ t → HasDerivAt f (f' t) t) (hf' : ∀ t, a < t → 0 ≤ f' t) :
-    MonotoneOn f (Ici a) :=
-  monotoneOn_of_hasDerivWithinAt_nonneg (convex_Ici a)
-    (fun t ht => (hf t ht).continuousAt.continuousWithinAt)
-    (fun t ht => (hf t (interior_subset ht)).hasDerivWithinAt)
-    fun t ht => hf' t (by rwa [interior_Ici] at ht)
-
 /-- A function with derivative `f' t > 0` at every `t > 0` (and a derivative at every `t ≥ 0`)
 is strictly monotone on `[0, ∞)`. -/
 private theorem strictMonoOn_Ici_of_hasDerivAt {f f' : ℝ → ℝ}
@@ -371,7 +361,7 @@ theorem nonneg (h : IsSolution β σ γ N S E I R) (hβ : 0 ≤ β) (hσ : 0 ≤
 theorem exposed_ge (h : IsSolution β σ γ N S E I R) (hβ : 0 ≤ β) (hσ : 0 ≤ σ) (hγ : 0 ≤ γ)
     (hN : 0 ≤ N) (hS : 0 ≤ S 0) (hE : 0 ≤ E 0) (hI : 0 ≤ I 0) (hR : 0 ≤ R 0) {t : ℝ}
     (ht : 0 ≤ t) : E 0 * exp (-(σ * t)) ≤ E t := by
-  have hm := monotoneOn_Ici_of_hasDerivAt (f := fun s => E s * exp (σ * s))
+  have hm := SIR.monotoneOn_Ici_of_hasDerivAt (f := fun s => E s * exp (σ * s))
     (fun s hs => (h.hasDerivAt_exposed s hs).mul ((hasDerivAt_id' s).const_mul σ).exp)
     fun s hs => by
       obtain ⟨hSs, -, hIs, -⟩ := h.nonneg hβ hσ hγ hN hS hE hI hR hs.le
@@ -388,7 +378,7 @@ theorem exposed_ge (h : IsSolution β σ γ N S E I R) (hβ : 0 ≤ β) (hσ : 0
 theorem infected_ge (h : IsSolution β σ γ N S E I R) (hβ : 0 ≤ β) (hσ : 0 ≤ σ) (hγ : 0 ≤ γ)
     (hN : 0 ≤ N) (hS : 0 ≤ S 0) (hE : 0 ≤ E 0) (hI : 0 ≤ I 0) (hR : 0 ≤ R 0) {t : ℝ}
     (ht : 0 ≤ t) : I 0 * exp (-(γ * t)) ≤ I t := by
-  have hm := monotoneOn_Ici_of_hasDerivAt (f := fun s => I s * exp (γ * s))
+  have hm := SIR.monotoneOn_Ici_of_hasDerivAt (f := fun s => I s * exp (γ * s))
     (fun s hs => (h.hasDerivAt_infected s hs).mul ((hasDerivAt_id' s).const_mul γ).exp)
     fun s hs => by
       obtain ⟨-, hEs, -, -⟩ := h.nonneg hβ hσ hγ hN hS hE hI hR hs.le
@@ -629,7 +619,7 @@ private theorem limit_eq_zero_of_hasDerivAt {g f : ℝ → ℝ} {L B : ℝ}
   have hLpos : 0 < L := lt_of_le_of_ne hL (Ne.symm hne)
   obtain ⟨t₁, ht₁⟩ := eventually_atTop.1 (hf.eventually_const_lt (half_lt_self hLpos))
   set a := max t₁ 0
-  have hF := monotoneOn_Ici_of_hasDerivAt (f := fun t => g t - L / 2 * t)
+  have hF := SIR.monotoneOn_Ici_of_hasDerivAt (f := fun t => g t - L / 2 * t)
     (f' := fun t => f t - L / 2) (a := a)
     (fun t ht => (hg t ((le_max_right t₁ 0).trans ht)).sub
       ((hasDerivAt_id t).const_mul (L / 2) |>.congr_deriv (mul_one _)))
@@ -689,21 +679,21 @@ theorem tendsto_final_size (h : IsSolution β σ γ N S E I R) (hβ : 0 ≤ β) 
     convert (h.hasDerivAt_susceptible t ht).add (h.hasDerivAt_exposed t ht) using 1
     ring
   have hSanti : AntitoneOn S (Ici 0) := by
-    have := monotoneOn_Ici_of_hasDerivAt (f := fun t => -S t)
+    have := SIR.monotoneOn_Ici_of_hasDerivAt (f := fun t => -S t)
       (fun t ht => (h.hasDerivAt_susceptible t ht).neg) (fun t ht => by
         obtain ⟨hSt, -, hIt, -⟩ := hnn t ht.le
         simp only [neg_neg]
         positivity)
     exact fun x hx y hy hxy => neg_le_neg_iff.1 (this hx hy hxy)
   have hQanti : AntitoneOn (fun t => S t + E t) (Ici 0) := by
-    have := monotoneOn_Ici_of_hasDerivAt (f := fun t => -(S t + E t))
+    have := SIR.monotoneOn_Ici_of_hasDerivAt (f := fun t => -(S t + E t))
       (fun t ht => (hQd t ht).neg) (fun t ht => by
         have := (hnn t ht.le).2.1
         simp only [neg_neg]
         positivity)
     exact fun x hx y hy hxy => neg_le_neg_iff.1 (this hx hy hxy)
   have hRmono : MonotoneOn R (Ici 0) :=
-    monotoneOn_Ici_of_hasDerivAt h.hasDerivAt_removed fun t ht =>
+    SIR.monotoneOn_Ici_of_hasDerivAt h.hasDerivAt_removed fun t ht =>
       mul_nonneg hγ.le (hnn t ht.le).2.2.1
   have hRle : ∀ t, 0 ≤ t → R t ≤ P := fun t ht => by
     have := h.total_eq ht

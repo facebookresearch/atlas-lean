@@ -126,37 +126,6 @@ section Integral
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω}
 
-/-- A random block-size history with the random-joining law takes values a.s. in a finite set,
-so every statistic of it is integrable with the expectation given by the law. -/
-private lemma integral_comp_randomJoining {μ : Measure Ω} [IsProbabilityMeasure μ] {m : ℕ}
-    {b : List ℕ} {τ : Ω → List (List ℕ)} (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
-    (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining m b ps) {F : Finset (List (List ℕ))}
-    (hF : ∀ ps ∉ F, randomJoining m b ps = 0) (g : List (List ℕ) → ℝ) :
-    Integrable (fun ω => g (τ ω)) μ ∧
-      μ[fun ω => g (τ ω)] = ∑ ps ∈ F, randomJoining m b ps * g ps := by
-  have hmeas : ∀ ps, MeasurableSet (τ ⁻¹' {ps}) := fun ps =>
-    hτ _ (MeasurableSpace.measurableSet_comap.2 ⟨{ps}, trivial, rfl⟩)
-  have hae : ∀ᵐ ω ∂μ, τ ω ∈ F := by
-    rw [ae_iff]
-    have : {ω | ¬ τ ω ∈ F} = ⋃ ps : {ps // ps ∉ F}, τ ⁻¹' {ps.1} := by
-      ext ω; simp
-    rw [this]
-    refine measure_iUnion_null fun ps => ?_
-    rw [← measureReal_eq_zero_iff, hτ_law, hF _ ps.2]
-  have heq : (fun ω => g (τ ω)) =ᵐ[μ]
-      fun ω => ∑ ps ∈ F, (τ ⁻¹' {ps}).indicator (fun _ => g ps) ω := by
-    filter_upwards [hae] with ω hω
-    rw [Finset.sum_eq_single_of_mem (τ ω) hω]
-    · simp
-    · intro ps _ hne
-      simp [Set.indicator, Ne.symm hne]
-  have hint : ∀ ps ∈ F, Integrable ((τ ⁻¹' {ps}).indicator (fun _ => g ps)) μ :=
-    fun ps _ => (integrable_const _).indicator (hmeas ps)
-  refine ⟨(integrable_finsetSum _ hint).congr heq.symm, ?_⟩
-  rw [integral_congr_ae heq, integral_finsetSum _ hint]
-  refine Finset.sum_congr rfl fun ps _ => ?_
-  rw [integral_indicator_const _ (hmeas ps), hτ_law, smul_eq_mul]
-
 /-- **Expected SFS under a variable population size** (Griffiths & Tavaré 1998; Polanski &
 Kimmel 2003). Let the genealogy of a sample of `n` copies consist of holding times `T k`
 (integrable for `2 ≤ k ≤ n`, otherwise arbitrary) and an independent block-size history `τ`
