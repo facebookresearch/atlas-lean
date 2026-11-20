@@ -85,23 +85,10 @@ from `x`: by the Markov property, `joinStep^[a] (g · joinStep^[b - a] h) x`
 noncomputable def joinPair (a b : ℕ) (g h : List ℕ → ℝ) (x : List ℕ) : ℝ :=
   joinStep^[a] (fun y => g y * joinStep^[b - a] h y) x
 
-private lemma joinStep_iterate_nil (j : ℕ) (g : List ℕ → ℝ) : (joinStep^[j] g) [] = g [] := by
-  induction j with
-  | zero => rfl
-  | succ j ih => rw [Function.iterate_succ_apply', joinStep]; simp [blockPairs, ih]
-
 private lemma joinStep_iterate_succ_of_card {x : List ℕ} (hx : (blockPairs x.length).card = 0)
     (j : ℕ) (g : List ℕ → ℝ) : (joinStep^[j + 1] g) x = g [] := by
   rw [Function.iterate_succ_apply', joinStep]
   simp [hx, joinStep_iterate_nil]
-
-private lemma randomJoining_cons {m : ℕ} {b : List ℕ} (hb : (blockPairs b.length).card ≠ 0)
-    (b' : List ℕ) (rest : List (List ℕ)) :
-    randomJoining (m + 1) b (b' :: rest) = if b' = b then
-      (∑ p ∈ blockPairs b.length, randomJoining m (mergeBlocks b p.1 p.2) rest) /
-        (blockPairs b.length).card else 0 := by
-  rw [randomJoining]
-  simp only [hb, ↓reduceIte]
 
 /-- **Two-level Markov property of random joining.** The random-joining law has finite support,
 and the expectation of `g` at step `a` times `h` at step `b` (`a ≤ b ≤ m`) is `joinPair`. -/
@@ -227,35 +214,6 @@ noncomputable def fuTopologyCov (n i j : ℕ) : ℝ :=
 section Kingman
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} {n : ℕ}
-
-private lemma integral_comp_randomJoining [IsProbabilityMeasure μ] {m : ℕ}
-    {b : List ℕ} {τ : Ω → List (List ℕ)} (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
-    (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining m b ps) {F : Finset (List (List ℕ))}
-    (hF : ∀ ps ∉ F, randomJoining m b ps = 0) (g : List (List ℕ) → ℝ) :
-    Integrable (fun ω => g (τ ω)) μ ∧
-      μ[fun ω => g (τ ω)] = ∑ ps ∈ F, randomJoining m b ps * g ps := by
-  have hmeas : ∀ ps, MeasurableSet (τ ⁻¹' {ps}) := fun ps =>
-    hτ _ (MeasurableSpace.measurableSet_comap.2 ⟨{ps}, trivial, rfl⟩)
-  have hae : ∀ᵐ ω ∂μ, τ ω ∈ F := by
-    rw [ae_iff]
-    have : {ω | ¬ τ ω ∈ F} = ⋃ ps : {ps // ps ∉ F}, τ ⁻¹' {ps.1} := by
-      ext ω; simp
-    rw [this]
-    refine measure_iUnion_null fun ps => ?_
-    rw [← measureReal_eq_zero_iff, hτ_law, hF _ ps.2]
-  have heq : (fun ω => g (τ ω)) =ᵐ[μ]
-      fun ω => ∑ ps ∈ F, (τ ⁻¹' {ps}).indicator (fun _ => g ps) ω := by
-    filter_upwards [hae] with ω hω
-    rw [Finset.sum_eq_single_of_mem (τ ω) hω]
-    · simp
-    · intro ps _ hne
-      simp [Set.indicator, Ne.symm hne]
-  have hint : ∀ ps ∈ F, Integrable ((τ ⁻¹' {ps}).indicator (fun _ => g ps)) μ :=
-    fun ps _ => (integrable_const _).indicator (hmeas ps)
-  refine ⟨(integrable_finsetSum _ hint).congr heq.symm, ?_⟩
-  rw [integral_congr_ae heq, integral_finsetSum _ hint]
-  refine Finset.sum_congr rfl fun ps _ => ?_
-  rw [integral_indicator_const _ (hmeas ps), hτ_law, smul_eq_mul]
 
 /-- `KingmanTimes.integral_T_mul_T` in the form used by `fuTopologyCov`:
 `E[T_k T_l] = kingmanTimeMoment k l` for `2 ≤ k, l ≤ n`. -/

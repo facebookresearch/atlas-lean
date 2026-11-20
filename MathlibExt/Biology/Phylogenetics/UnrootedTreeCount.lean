@@ -134,25 +134,6 @@ private theorem equiv_clusterFinset {α : Type u} [DecidableEq α] {s t : PlaneT
   | symm s t h ih => exact ih.symm
   | trans s t v h h' ih ih' => exact ih.trans ih'
 
-/-- Swap-equivalent children give swap-equivalent trees. -/
-private theorem equiv_node {α : Type u} {l l' r r' : PlaneTree α}
-    (hl : Relation.EqvGen PlaneTree.Swap l l') (hr : Relation.EqvGen PlaneTree.Swap r r') :
-    Relation.EqvGen PlaneTree.Swap (.node l r) (.node l' r') := by
-  have left : Relation.EqvGen PlaneTree.Swap (.node l r) (.node l' r) := by
-    induction hl with
-    | rel s t h => exact .rel _ _ (.left r h)
-    | refl => exact .refl _
-    | symm s t h ih => exact .symm _ _ ih
-    | trans s t v h h' ih ih' => exact .trans _ _ _ ih ih'
-  have right : Relation.EqvGen PlaneTree.Swap (.node l' r) (.node l' r') := by
-    clear left
-    induction hr with
-    | rel s t h => exact .rel _ _ (.right l' h)
-    | refl => exact .refl _
-    | symm s t h ih => exact .symm _ _ ih
-    | trans s t v h h' ih ih' => exact .trans _ _ _ ih ih'
-  exact .trans _ _ _ left right
-
 private theorem mem_clusterFinset_sub {α : Type u} [DecidableEq α] (t : PlaneTree α) :
     ∀ C ∈ clusterFinset t, C.Nonempty ∧ C ⊆ leafSet t := by
   induction t with
@@ -364,7 +345,7 @@ private theorem equiv_of_clusterFinset_eq {α : Type u} [DecidableEq α] (s : Pl
         have hcr : clusterFinset r = clusterFinset r' := by
           rw [← filter_clusterFinset_right l r hns, ← filter_clusterFinset_right l' r' hnt, h,
             he']
-        exact equiv_node (ihl l' hnl hnl' hcl) (ihr r' hnr hnr' hcr)
+        exact PlaneTree.eqvGen_swap_node (ihl l' hnl hnl' hcl) (ihr r' hnr hnr' hcr)
       · have he' : leafSet r = leafSet l' :=
           hcompl hd hd'.symm (hroot.trans (Finset.union_comm _ _)) he
         have hcl : clusterFinset l = clusterFinset r' := by
@@ -373,7 +354,7 @@ private theorem equiv_of_clusterFinset_eq {α : Type u} [DecidableEq α] (s : Pl
         have hcr : clusterFinset r = clusterFinset l' := by
           rw [← filter_clusterFinset_right l r hns, ← filter_clusterFinset_left l' r' hnt, h,
             he']
-        exact .trans _ _ _ (equiv_node (ihl r' hnl hnr' hcl) (ihr l' hnr hnl' hcr))
+        exact .trans _ _ _ (PlaneTree.eqvGen_swap_node (ihl r' hnl hnr' hcl) (ihr l' hnr hnl' hcr))
           (.rel _ _ (.root _ _))
 
 /-- The members of a binary hierarchy below a member form a binary hierarchy. -/

@@ -26,6 +26,14 @@ open Finset
 
 namespace MathlibExt.Biology.Biophysics.CompartmentKinetics.Dosing
 
+/-- The amount just after dose `n` in the fixed-spacing trajectory:
+the sum of the first `n + 1` doses, each decayed from its event
+time to `n * tau`. This is the event-time value of the trajectory
+in `periodic_amount_decay`. -/
+noncomputable def postDoseAmount (D k tau : ℝ) (n : ℕ) : ℝ :=
+  ∑ i ∈ Finset.range (n + 1),
+    D * Real.exp (-k * ((n : ℝ) * tau - (i : ℝ) * tau))
+
 set_option linter.unusedVariables false in
 /-- **Decay between events.** For `t` in the window
 `[n * tau, (n + 1) * tau)` of the fixed-spacing schedule (so
@@ -38,10 +46,8 @@ lemma periodic_amount_decay {D k tau t : ℝ} (htau : 0 < tau) (ht : 0 ≤ t) (n
     (hfloor : ⌊t / tau⌋₊ = n) :
     (∑ i ∈ Finset.range (⌊t / tau⌋₊ + 1),
       D * Real.exp (-k * (t - i * tau))) =
-      Real.exp (-k * (t - n * tau)) *
-        (∑ i ∈ Finset.range (n + 1),
-          D * Real.exp (-k * (n * tau - i * tau))) := by
-  rw [hfloor, Finset.mul_sum]
+      Real.exp (-k * (t - n * tau)) * postDoseAmount D k tau n := by
+  rw [hfloor, postDoseAmount, Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro i _
   have h : -k * (t - (i : ℝ) * tau) =

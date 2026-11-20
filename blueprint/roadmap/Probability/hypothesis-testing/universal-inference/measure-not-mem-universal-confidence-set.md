@@ -23,6 +23,10 @@ convention $0/0 = 0$, which matters only on samples of probability zero under th
 
 - [Markov's inequality for a likelihood ratio](with-density-inv-mul-lt-le.md): applied conditionally on $D_1$, for the fixed alternative $\psi = \hat\theta_1(D_1)$, and then integrated over $D_1$.
 
+## Related topics
+
+- [Coverage of the universal confidence set with real densities](measure-not-mem-universal-confidence-set-3.md): the form with real-valued densities, where only the true density and the split likelihood ratio are assumed measurable.
+
 ## Sources
 
 - L. Wasserman, A. Ramdas and S. Balakrishnan, *Universal inference*, arXiv:1912.11436v4 (21 October 2022); published in Proc. Natl. Acad. Sci. USA 117 (2020) 16880–16890. Theorem, remark and equation numbers refer to the arXiv version, which is the one read. Theorem 1 and Remark 2.

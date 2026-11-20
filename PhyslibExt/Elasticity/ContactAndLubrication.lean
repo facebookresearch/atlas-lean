@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import Mathlib.Analysis.Convex.Basic
+public import Mathlib.Analysis.InnerProductSpace.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 
@@ -22,13 +24,16 @@ import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
+import MathlibExt.Analysis.InnerProductSpace.Stampacchia
 
 /-!
 # Contact and lubrication
 
 Reduced models of contact and lubrication. Section A solves the one-dimensional Reynolds equation
 for a plane slider with a linear converging film in closed form; the pressure and the load per
-unit width are positive for the converging orientation.
+unit width are positive for the converging orientation. Section B treats frictionless scalar
+unilateral contact as an instance of Stampacchia's variational inequality, with the obstacle
+reaction as its complementarity multiplier.
 
 ## i. Overview
 
@@ -55,6 +60,37 @@ A film that closes at the outlet, `hL = 0`, admits no solution at all.
 Cavitation models, side leakage, thermal and elastic effects and the derivation of the Reynolds
 equation are not treated.
 
+Section B treats scalar unilateral contact.
+
+A frictionless scalar body of stiffness `k > 0` under a load `f` moves towards a rigid obstacle
+at position `g`. Its displacement `u` is the solution of the variational inequality of
+Stampacchia's theorem on the nonpenetration set `u ≤ g`, and the obstacle reaction is the
+complementarity multiplier of that inequality.
+
+The real line is a Hilbert space, the admissible set `admissibleSet g = Set.Iic g` is nonempty,
+closed and convex, and the spring `stiffnessMap k = k • id` satisfies the coercivity hypothesis
+`α ‖u‖ ^ 2 ≤ ⟪A u, u⟫` with `α = k` when `k > 0`. These are exactly the hypotheses of
+Stampacchia's theorem (operator form), so the variational inequality
+
+  `u ≤ g` and `0 ≤ ⟪k u - f, v - u⟫` for every `v ≤ g`
+
+has exactly one solution. It is the contact displacement `u = min g (f / k)`. With the contact
+force `λ = f - k u` and the gap `g - u`, the solution satisfies the complementarity conditions
+`λ ≥ 0`, `g - u ≥ 0` and `λ (g - u) = 0`.
+
+Sign convention: `u` and `f` are positive in the same direction, towards the obstacle. The
+obstacle pushes on the body with the force `-λ` along increasing `u`, so it opposes further
+penetration, and equilibrium reads `f - k u - λ = 0`. For `k = 2`, `g = 1`, `f = 4` the spring
+force is `-2`, the load `+4` and the contact force `-2`; they sum to zero.
+
+Model inputs (hypotheses):
+
+* frictionless scalar displacement, linear spring of stiffness `k > 0`, rigid obstacle at `g`;
+* the contact force opposes increasing `u` (the multiplier `λ` is its magnitude).
+
+Non-goals: no multidimensional contact, no constraint qualification or general KKT theory, no
+friction, adhesion, impact or wear, and no empirical adequacy or system safety claim.
+
 ## ii. Key results
 
 - `Elasticity.ContactAndLubrication.sliderPressure_isReynoldsSolution`: the closed-form
@@ -69,6 +105,16 @@ equation are not treated.
   negative pressure.
 - `Elasticity.ContactAndLubrication.not_isReynoldsSolution_of_hL_eq_zero`: an outlet thickness
   `hL = 0` is rejected.
+- `Elasticity.ContactAndLubrication.inner_stiffnessMap_sub`: the inner product of the variational
+  inequality on `ℝ`.
+- `Elasticity.ContactAndLubrication.admissibleSet_nonempty`, `isClosed_admissibleSet`,
+  `convex_admissibleSet`, `stiffnessMap_coercive`: the hypotheses of Stampacchia's theorem.
+- `Elasticity.ContactAndLubrication.existsUnique_contact`: exactly one solution of the contact
+  variational inequality.
+- `Elasticity.ContactAndLubrication.contact_vi_iff`: that solution is
+  `contactDisplacement k g f = min g (f / k)`.
+- `Elasticity.ContactAndLubrication.complementarity_of_vi`, `contactDisplacement_complementarity`:
+  `λ ≥ 0`, `g - u ≥ 0` and `λ (g - u) = 0`.
 
 ## iii. Table of contents
 
@@ -77,6 +123,11 @@ equation are not treated.
   - A.2. Solution of the Reynolds model
   - A.3. Positivity and load for the converging film
   - A.4. Diverging and closed films
+- B. Scalar unilateral contact
+  - B.1. The contact model
+  - B.2. The hypotheses of Stampacchia's theorem
+  - B.3. Existence, uniqueness and the contact displacement
+  - B.4. Complementarity
 
 ## iv. References
 
@@ -84,6 +135,14 @@ equation are not treated.
   experiments, *Philosophical Transactions of the Royal Society of London* 177 (1886).
 - B. J. Hamrock, S. R. Schmid and B. O. Jacobson, *Fundamentals of Fluid Film Lubrication*,
   2nd ed., Marcel Dekker (2004): the Reynolds equation and the fixed-incline slider bearing.
+- G. Stampacchia, *Formes bilinéaires coercitives sur les ensembles convexes*, C. R. Acad. Sci.
+  Paris 258 (1964), 4413–4416.
+- D. Kinderlehrer and G. Stampacchia, *An Introduction to Variational Inequalities and Their
+  Applications*, Academic Press (1980), Chapter II (the obstacle problem).
+- N. Kikuchi and J. T. Oden, *Contact Problems in Elasticity*, SIAM (1988), Chapter 2
+  (unilateral constraints and the Signorini conditions).
+- `MathlibExt.Analysis.InnerProductSpace.Stampacchia.exists_unique_stampacchia`
+  (`MathlibExt.Analysis.InnerProductSpace.Stampacchia`): Stampacchia's theorem, operator form.
 -/
 
 @[expose] public section
@@ -705,5 +764,198 @@ lemma not_isReynoldsSolution_of_hL_eq_zero {μ U h0 L : ℝ} {p p' : ℝ → ℝ
   rw [hp3, hp4] at hceq
   simp at hceq
   linarith
+
+/-! ## B. Scalar unilateral contact -/
+
+open scoped InnerProductSpace
+
+/-! ### B.1. The contact model -/
+
+/-- The admissible displacements below a rigid obstacle at position `g`: the nonpenetration
+constraint `u ≤ g`. -/
+def admissibleSet (g : ℝ) : Set ℝ := Set.Iic g
+
+/-- The linear spring `u ↦ k u` of stiffness `k`, as a continuous linear operator on `ℝ`. -/
+noncomputable def stiffnessMap (k : ℝ) : ℝ →L[ℝ] ℝ := k • ContinuousLinearMap.id ℝ ℝ
+
+/-- The contact displacement `min g (f / k)` of a spring of stiffness `k` under the load `f`
+below an obstacle at `g`. -/
+noncomputable def contactDisplacement (k g f : ℝ) : ℝ := min g (f / k)
+
+/-- The magnitude `λ = f - k u` of the contact force; the obstacle pushes on the body with `-λ`
+along increasing `u`. -/
+def contactForce (k f u : ℝ) : ℝ := f - k * u
+
+/-- The gap `g - u` between the obstacle and the body. -/
+def contactGap (g u : ℝ) : ℝ := g - u
+
+private lemma stiffnessMap_apply (k u : ℝ) : stiffnessMap k u = k * u := by
+  simp [stiffnessMap, smul_eq_mul]
+
+private lemma real_inner (x y : ℝ) : ⟪x, y⟫_ℝ = x * y := by
+  have h : ⟪x, y⟫_ℝ = y * x := by simp [RCLike.inner_apply]
+  exact h.trans (mul_comm y x)
+
+/-- On `ℝ`, the inner product of the variational inequality is the product
+`(k u - f) w`. -/
+lemma inner_stiffnessMap_sub (k u f w : ℝ) :
+    ⟪stiffnessMap k u - f, w⟫_ℝ = (k * u - f) * w := by
+  rw [stiffnessMap_apply, real_inner]
+
+/-! ### B.2. The hypotheses of Stampacchia's theorem -/
+
+/-- The admissible set is nonempty: it contains the obstacle position. -/
+lemma admissibleSet_nonempty (g : ℝ) : (admissibleSet g).Nonempty := by
+  exact ⟨g, le_refl g⟩
+
+/-- The admissible set is closed. -/
+lemma isClosed_admissibleSet (g : ℝ) : IsClosed (admissibleSet g) := by
+  unfold admissibleSet
+  exact isClosed_Iic
+
+/-- The admissible set is convex. -/
+lemma convex_admissibleSet (g : ℝ) : Convex ℝ (admissibleSet g) := by
+  unfold admissibleSet
+  exact convex_Iic g
+
+/-- A spring of positive stiffness is coercive, in the form of the hypothesis of Stampacchia's
+theorem: `α ‖u‖ ^ 2 ≤ ⟪k u, u⟫` for some `α > 0` (namely `α = k`). -/
+lemma stiffnessMap_coercive {k : ℝ} (hk : 0 < k) :
+    ∃ α : ℝ, 0 < α ∧ ∀ u : ℝ, α * ‖u‖ ^ 2 ≤ ⟪stiffnessMap k u, u⟫_ℝ := by
+  refine ⟨k, hk, fun u => le_of_eq ?_⟩
+  rw [stiffnessMap_apply, real_inner, Real.norm_eq_abs, sq_abs]
+  ring
+
+private lemma vi_iff_contactDisplacement {k : ℝ} (hk : 0 < k) (g f u : ℝ) :
+    (u ∈ admissibleSet g ∧ ∀ v ∈ admissibleSet g, 0 ≤ ⟪stiffnessMap k u - f, v - u⟫_ℝ) ↔
+      u = contactDisplacement k g f := by
+  have hkne : k ≠ 0 := ne_of_gt hk
+  have hka : k * (f / k) = f := mul_div_cancel₀ f hkne
+  constructor
+  · rintro ⟨hug, hvi⟩
+    have hug' : u ≤ g := hug
+    by_cases hcase : f / k ≤ g
+    · have hva : f / k ∈ admissibleSet g := hcase
+      have h1 := hvi (f / k) hva
+      rw [inner_stiffnessMap_sub] at h1
+      have heq : k * u - f = k * (u - f / k) := by
+        have h : k * (u - f / k) = k * u - f := by rw [mul_sub, hka]
+        exact h.symm
+      rw [heq] at h1
+      have hsq : k * (u - f / k) * (f / k - u) = -(k * (u - f / k) ^ 2) := by ring
+      rw [hsq] at h1
+      have hle : k * (u - f / k) ^ 2 ≤ 0 := by linarith
+      have hnn : 0 ≤ k * (u - f / k) ^ 2 := mul_nonneg (le_of_lt hk) (sq_nonneg _)
+      have hsq0 : (u - f / k) ^ 2 = 0 :=
+        (mul_eq_zero.mp (le_antisymm hle hnn)).resolve_left hkne
+      have hdiff : u - f / k = 0 := sq_eq_zero_iff.mp hsq0
+      have hueq : u = f / k := sub_eq_zero.mp hdiff
+      have hmin : contactDisplacement k g f = f / k := min_eq_right hcase
+      rw [hmin]
+      exact hueq
+    · push Not at hcase
+      have hgu : g ≤ u := by
+        by_contra hcon
+        push Not at hcon
+        have hvg : g ∈ admissibleSet g := le_refl g
+        have h1 := hvi g hvg
+        rw [inner_stiffnessMap_sub] at h1
+        have hua : u < f / k := lt_of_lt_of_le hcon (le_of_lt hcase)
+        have hmul : k * u < k * (f / k) := mul_lt_mul_of_pos_left hua hk
+        rw [hka] at hmul
+        have hneg : k * u - f < 0 := by linarith
+        have hpos : (0 : ℝ) < g - u := by linarith
+        have hneg2 : (k * u - f) * (g - u) < 0 := mul_neg_of_neg_of_pos hneg hpos
+        linarith
+      have hmin : contactDisplacement k g f = g := min_eq_left (le_of_lt hcase)
+      have hueq : u = g := le_antisymm hug' hgu
+      rw [hmin]
+      exact hueq
+  · intro hueq
+    have hmin : u = min g (f / k) := hueq
+    refine ⟨?_, ?_⟩
+    · change u ≤ g
+      rw [hmin]
+      exact min_le_left g (f / k)
+    · intro v hv
+      have hv' : v ≤ g := hv
+      rw [inner_stiffnessMap_sub]
+      by_cases hcase : f / k ≤ g
+      · have hueq2 : u = f / k := by rw [hmin, min_eq_right hcase]
+        have hzero : k * u - f = 0 := by rw [hueq2, sub_eq_zero.mpr hka]
+        simp [hzero]
+      · push Not at hcase
+        have hueq2 : u = g := by rw [hmin, min_eq_left (le_of_lt hcase)]
+        have h1 : k * u - f ≤ 0 := by
+          rw [hueq2]
+          have hmul : k * g < k * (f / k) := mul_lt_mul_of_pos_left hcase hk
+          rw [hka] at hmul
+          linarith
+        have h2 : v - u ≤ 0 := by
+          rw [hueq2]
+          linarith
+        exact mul_nonneg_of_nonpos_of_nonpos h1 h2
+
+/-! ### B.3. Existence, uniqueness and the contact displacement -/
+
+/-- **Scalar unilateral contact as a Stampacchia variational inequality.** For `k > 0`, the
+instance of Stampacchia's theorem with `K = admissibleSet g`, `A = stiffnessMap k` and right-hand
+side `f`: exactly one admissible `u` satisfies `0 ≤ ⟪k u - f, v - u⟫` for every admissible
+`v`. -/
+lemma existsUnique_contact {k : ℝ} (hk : 0 < k) (g f : ℝ) :
+    ∃! u, u ∈ admissibleSet g ∧
+      ∀ v ∈ admissibleSet g, 0 ≤ ⟪stiffnessMap k u - f, v - u⟫_ℝ := by
+  obtain ⟨α, hα, hcoer⟩ := stiffnessMap_coercive hk
+  exact MathlibExt.Analysis.InnerProductSpace.Stampacchia.exists_unique_stampacchia
+    (admissibleSet_nonempty g) (isClosed_admissibleSet g) (convex_admissibleSet g)
+    (stiffnessMap k) hα hcoer f
+
+/-- The solution of the contact variational inequality is the contact displacement
+`min g (f / k)`. -/
+lemma contact_vi_iff {k : ℝ} (hk : 0 < k) (g f u : ℝ) :
+    (u ∈ admissibleSet g ∧ ∀ v ∈ admissibleSet g, 0 ≤ ⟪stiffnessMap k u - f, v - u⟫_ℝ) ↔
+      u = contactDisplacement k g f := by
+  exact vi_iff_contactDisplacement hk g f u
+
+/-! ### B.4. Complementarity -/
+
+/-- **Complementarity from the variational inequality.** A solution of the contact
+variational inequality has a nonnegative contact force `λ = f - k u`, a nonnegative gap `g - u`,
+and `λ (g - u) = 0`: the force vanishes off contact and the gap vanishes under load. -/
+lemma complementarity_of_vi {k g f u : ℝ}
+    (hu : u ∈ admissibleSet g ∧ ∀ v ∈ admissibleSet g, 0 ≤ ⟪stiffnessMap k u - f, v - u⟫_ℝ) :
+    0 ≤ contactForce k f u ∧ 0 ≤ contactGap g u ∧ contactForce k f u * contactGap g u = 0 := by
+  have hug : u ≤ g := hu.1
+  have hgap : (0 : ℝ) ≤ g - u := by linarith
+  have hv : u - 1 ∈ admissibleSet g := by
+    change u - 1 ≤ g
+    linarith
+  have h1 := hu.2 (u - 1) hv
+  rw [inner_stiffnessMap_sub] at h1
+  have hring : (k * u - f) * ((u - 1) - u) = -((k * u - f)) := by ring
+  rw [hring] at h1
+  have hle : k * u - f ≤ 0 := by linarith
+  have hlam : (0 : ℝ) ≤ f - k * u := by linarith
+  have hvg : g ∈ admissibleSet g := le_refl g
+  have h2 := hu.2 g hvg
+  rw [inner_stiffnessMap_sub] at h2
+  have h3 : (k * u - f) * (g - u) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg hle hgap
+  have heq : (k * u - f) * (g - u) = 0 := le_antisymm h3 h2
+  have hforce : contactForce k f u = f - k * u := rfl
+  have hgapdef : contactGap g u = g - u := rfl
+  rw [hforce, hgapdef]
+  refine ⟨hlam, hgap, ?_⟩
+  have hfactor : (f - k * u) * (g - u) = -((k * u - f) * (g - u)) := by ring
+  rw [hfactor, heq, neg_zero]
+
+/-- The contact displacement `u = min g (f / k)` satisfies the complementarity conditions
+`λ ≥ 0`, `g - u ≥ 0` and `λ (g - u) = 0` with `λ = f - k u`. -/
+lemma contactDisplacement_complementarity {k : ℝ} (hk : 0 < k) (g f : ℝ) :
+    0 ≤ contactForce k f (contactDisplacement k g f) ∧
+      0 ≤ contactGap g (contactDisplacement k g f) ∧
+      contactForce k f (contactDisplacement k g f) * contactGap g (contactDisplacement k g f) =
+        0 := by
+  have hvi := (contact_vi_iff hk g f (contactDisplacement k g f)).mpr rfl
+  exact complementarity_of_vi hvi
 
 end Elasticity.ContactAndLubrication

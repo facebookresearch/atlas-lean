@@ -85,11 +85,14 @@ public def Mem {α : Type u} (x : α) (tree : Tree α) : Prop :=
 public instance {α : Type u} : Membership α (Tree α) :=
   ⟨fun tree x => Mem x tree⟩
 
-@[simp] private theorem mem_empty {α : Type u} {x : α} :
+/-- Nothing is a member of the empty tree. -/
+@[simp] theorem mem_empty {α : Type u} {x : α} :
     x ∈ (Tree.empty : Tree α) ↔ False :=
   Iff.rfl
 
-@[simp] private theorem mem_node {α : Type u} {x key : α} {color : Color}
+/-- A member of a node is a member of its left subtree, its key, or a member of its right
+subtree. -/
+@[simp] theorem mem_node {α : Type u} {x key : α} {color : Color}
     {left right : Tree α} :
     x ∈ Tree.node color left key right ↔ x ∈ left ∨ x = key ∨ x ∈ right :=
   Iff.rfl
@@ -249,7 +252,8 @@ public theorem ordered_inorder {α : Type u} [LinearOrder α] {tree : Tree α}
     (h : Ordered tree) : List.Pairwise (· < ·) (inorder tree) :=
   BinarySearchTree.ordered_inorder h
 
-private theorem ordered_of_pairwise_inorder {α : Type u} [LinearOrder α]
+/-- A tree whose in-order traversal is strictly increasing is ordered. -/
+theorem ordered_of_pairwise_inorder {α : Type u} [LinearOrder α]
     {tree : Tree α} (h : List.Pairwise (· < ·) (inorder tree)) : Ordered tree := by
   induction tree with
   | empty => trivial
