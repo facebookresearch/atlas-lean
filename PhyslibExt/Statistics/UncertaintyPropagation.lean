@@ -100,6 +100,9 @@ uncertainties; they enter only as separate hypotheses and inputs, never conflate
 - `lipschitz_error_propagation`, `lipschitz_error_budget` : Lipschitz error bounds.
 - `affine_exact` : the affine map is exact, not merely Lipschitz.
 - `Identifiable`, `identifiable_iff_trivial_ker` : calibration identifiability.
+- `IdentifiableOnAffine`, `identifiableOnAffine_iff_trivial_ker`,
+  `identifiableOnAffine_iff_identifiable_mul_basis` : identifiability on a
+  declared affine parameter space.
 - `exists_distinct_of_nontrivial_ker` : nonzero kernel vector kills uniqueness.
 - `not_identifiable_of_lt` : wide matrices are not identifiable.
 - `identifiable_normal_injective`, `normalEquations_unique` : normal-matrix injectivity.
@@ -484,5 +487,129 @@ lemma normalEquations_unique {m n : ℕ} (A : Matrix (Fin m) (Fin n) ℝ) (hA : 
     (h₁ : (Aᵀ * A) *ᵥ θ₁ = Aᵀ *ᵥ y) (h₂ : (Aᵀ * A) *ᵥ θ₂ = Aᵀ *ᵥ y) :
     θ₁ = θ₂ :=
   identifiable_normal_injective A hA (h₁.trans h₂.symm)
+
+/-- Identifiability on the declared affine parameter space
+`theta0 + V`, written `{θ | θ - theta0 ∈ V}`: parameters in the space
+with the same observation under `A` are equal. -/
+def IdentifiableOnAffine {nm np : ℕ} (A : Matrix (Fin nm) (Fin np) ℝ)
+    (theta0 : Fin np → ℝ) (V : Submodule ℝ (Fin np → ℝ)) : Prop :=
+  ∀ θ₁ θ₂ : Fin np → ℝ, θ₁ - theta0 ∈ V → θ₂ - theta0 ∈ V →
+    A *ᵥ θ₁ = A *ᵥ θ₂ → θ₁ = θ₂
+/-- Affine identifiability holds iff the kernel inside the direction
+space `V` is trivial: `A *ᵥ v = 0` with `v ∈ V` forces `v = 0`. The
+base point `theta0` cancels; only differences matter. -/
+lemma identifiableOnAffine_iff_trivial_ker {nm np : ℕ}
+    (A : Matrix (Fin nm) (Fin np) ℝ) (theta0 : Fin np → ℝ)
+    (V : Submodule ℝ (Fin np → ℝ)) :
+    IdentifiableOnAffine A theta0 V ↔
+      ∀ v : Fin np → ℝ, v ∈ V → A *ᵥ v = 0 → v = 0 := by
+  constructor
+  · intro h v hv hAv
+    have h1 : theta0 + v - theta0 ∈ V := by
+      have e : theta0 + v - theta0 = v := by abel
+      rwa [e]
+    have h2 : theta0 - theta0 ∈ V := by
+      rw [sub_self]
+      exact V.zero_mem
+    have hA : A *ᵥ (theta0 + v) = A *ᵥ theta0 := by
+      rw [Matrix.mulVec_add, hAv, add_zero]
+    have heq := h (theta0 + v) theta0 h1 h2 hA
+    calc v = theta0 + v - theta0 := by abel
+      _ = theta0 - theta0 := by rw [heq]
+      _ = 0 := sub_self _
+  · intro h θ₁ θ₂ h1 h2 hA
+    have hmem : θ₁ - θ₂ ∈ V := by
+      have e : θ₁ - θ₂ = (θ₁ - theta0) - (θ₂ - theta0) := by abel
+      rw [e]
+      exact V.sub_mem h1 h2
+    have hker : A *ᵥ (θ₁ - θ₂) = 0 := by
+      rw [Matrix.mulVec_sub, hA, sub_self]
+    have h0 := h _ hmem hker
+    exact sub_eq_zero.mp h0
+
+/-- Full identifiability restricts to every declared affine
+parameter space. -/
+lemma identifiableOnAffine_of_identifiable {nm np : ℕ}
+    (A : Matrix (Fin nm) (Fin np) ℝ) (hA : Identifiable A)
+    (theta0 : Fin np → ℝ) (V : Submodule ℝ (Fin np → ℝ)) :
+    IdentifiableOnAffine A theta0 V := by
+  intro θ₁ θ₂ _ _ h
+  exact hA h
+
+/-- On the full parameter space (`V = ⊤`), affine identifiability is
+calibration identifiability. Uses the canonical trivial-kernel
+characterization `identifiable_iff_trivial_ker`. -/
+lemma identifiableOnAffine_top_iff_identifiable {nm np : ℕ}
+    (A : Matrix (Fin nm) (Fin np) ℝ) (theta0 : Fin np → ℝ) :
+    IdentifiableOnAffine A theta0 ⊤ ↔ Identifiable A := by
+  rw [identifiableOnAffine_iff_trivial_ker, identifiable_iff_trivial_ker]
+  constructor
+  · intro h θ hθ
+    exact h θ Submodule.mem_top hθ
+  · intro h v _ hv
+    exact h v hv
+
+/-- Basis coordinates: with directions `P *ᵥ ξ`, identifiability of
+the restricted matrix `A * P` is triviality of the kernel in the form
+`A *ᵥ (P *ᵥ ξ) = 0 → ξ = 0`. Uses the canonical trivial-kernel
+characterization `identifiable_iff_trivial_ker`. -/
+lemma identifiable_mul_basis_iff_trivial_ker {nm np nd : ℕ}
+    (A : Matrix (Fin nm) (Fin np) ℝ)
+    (P : Matrix (Fin np) (Fin nd) ℝ) :
+    Identifiable (A * P) ↔
+      ∀ ξ : Fin nd → ℝ, A *ᵥ (P *ᵥ ξ) = 0 → ξ = 0 := by
+  rw [identifiable_iff_trivial_ker]
+  constructor
+  · intro h ξ hξ
+    exact h ξ (by rwa [← Matrix.mulVec_mulVec])
+  · intro h ξ hξ
+    exact h ξ (by rwa [Matrix.mulVec_mulVec])
+
+/-- Basis bridge: when the columns of `P` span exactly the direction
+space `V` (`hrange`, `hspan`) and `P` has trivial kernel (`hPinj`),
+affine identifiability on `theta0 + V` is identifiability of the
+restricted matrix `A * P` in basis coordinates. Uses the canonical
+trivial-kernel characterization `identifiable_iff_trivial_ker`. -/
+lemma identifiableOnAffine_iff_identifiable_mul_basis
+    {nm np nd : ℕ}
+    (A : Matrix (Fin nm) (Fin np) ℝ)
+    (P : Matrix (Fin np) (Fin nd) ℝ) (theta0 : Fin np → ℝ)
+    (V : Submodule ℝ (Fin np → ℝ))
+    (hrange : ∀ ξ : Fin nd → ℝ, P *ᵥ ξ ∈ V)
+    (hspan : ∀ v : Fin np → ℝ, v ∈ V →
+      ∃ ξ : Fin nd → ℝ, P *ᵥ ξ = v)
+    (hPinj : ∀ ξ : Fin nd → ℝ, P *ᵥ ξ = 0 → ξ = 0) :
+    IdentifiableOnAffine A theta0 V ↔ Identifiable (A * P) := by
+  rw [identifiableOnAffine_iff_trivial_ker,
+    identifiable_mul_basis_iff_trivial_ker]
+  constructor
+  · intro h ξ hξ
+    exact hPinj ξ (h _ (hrange ξ) hξ)
+  · intro h v hv hAv
+    obtain ⟨ξ, rfl⟩ := hspan v hv
+    have hξ : ξ = 0 := h ξ hAv
+    rw [hξ, Matrix.mulVec_zero]
+
+/-- A nonzero kernel direction in `V` kills uniqueness on the affine
+space: every parameter in `theta0 + V` with observation `y` shares
+that observation with a distinct parameter in the same space. Hence
+unique-estimate claims on the affine space require affine
+identifiability. -/
+lemma exists_distinct_onAffine_of_nontrivial_ker {nm np : ℕ}
+    (A : Matrix (Fin nm) (Fin np) ℝ) (theta0 : Fin np → ℝ)
+    (V : Submodule ℝ (Fin np → ℝ))
+    (hex : ∃ v₀ : Fin np → ℝ, v₀ ≠ 0 ∧ v₀ ∈ V ∧ A *ᵥ v₀ = 0)
+    (θ : Fin np → ℝ) (y : Fin nm → ℝ) (hθ : θ - theta0 ∈ V)
+    (hy : A *ᵥ θ = y) :
+    ∃ θ' : Fin np → ℝ, θ' ≠ θ ∧ θ' - theta0 ∈ V ∧ A *ᵥ θ' = y := by
+  obtain ⟨v₀, hne, hmem, hker⟩ := hex
+  refine ⟨θ + v₀, ?_, ?_, ?_⟩
+  · intro hcon
+    exact hne (add_left_cancel_iff.mp (hcon.trans (add_zero θ).symm))
+  · have h := V.add_mem hθ hmem
+    have heq : θ + v₀ - theta0 = (θ - theta0) + v₀ := by abel
+    rwa [heq]
+  · have hadd : A *ᵥ (θ + v₀) = A *ᵥ θ + A *ᵥ v₀ := Matrix.mulVec_add _ _ _
+    rw [hadd, hker, hy, add_zero]
 
 end Statistics.UncertaintyPropagation

@@ -384,4 +384,95 @@ example (y : Fin 3 → ℝ) (θ₁ θ₂ : Fin 2 → ℝ)
     θ₁ = θ₂ :=
   normalEquations_unique exampleDesign identifiable_example y θ₁ θ₂ h₁ h₂
 
+
+/-- On the full parameter space, affine identifiability
+of the identity is calibration identifiability. -/
+example (theta0 : Fin 2 → ℝ) :
+    IdentifiableOnAffine (1 : Matrix (Fin 2) (Fin 2) ℝ) theta0 ⊤ := by
+  rw [identifiableOnAffine_top_iff_identifiable]
+  intro θ₁ θ₂ h
+  simpa using h
+
+/-- Proper subspace with an explicit basis: directions
+`P *ᵥ ξ = ![ξ, 0]`, observed through the first coordinate;
+identifiable on `![5, 7] + range P` at a nonzero base
+point. -/
+example : IdentifiableOnAffine (!![1, 0] : Matrix (Fin 1) (Fin 2) ℝ)
+    ![5, 7]
+    (LinearMap.range (!![1; 0] : Matrix (Fin 2) (Fin 1) ℝ).mulVecLin) := by
+  refine (identifiableOnAffine_iff_identifiable_mul_basis
+      (!![1, 0] : Matrix (Fin 1) (Fin 2) ℝ)
+      (!![1; 0] : Matrix (Fin 2) (Fin 1) ℝ) ![5, 7] _ ?_ ?_ ?_).mpr ?_
+  · intro ξ
+    exact ⟨ξ, by simp [Matrix.mulVecLin_apply]⟩
+  · intro v hv
+    obtain ⟨ξ, hξ⟩ := hv
+    exact ⟨ξ, by simpa [Matrix.mulVecLin_apply] using hξ⟩
+  · intro ξ hξ
+    have h0 := congrFun hξ 0
+    funext i
+    fin_cases i
+    simpa [Matrix.mulVec, dotProduct] using h0
+  · rw [identifiable_iff_trivial_ker]
+    intro ξ hξ
+    have h0 := congrFun hξ 0
+    funext i
+    fin_cases i
+    simpa [Matrix.mulVec, dotProduct, Fin.sum_univ_two] using h0
+
+/-- Singleton affine space (`V = ⊥`) is identifiable even
+under the zero matrix, which is not identifiable. -/
+example (theta0 : Fin 2 → ℝ) :
+    IdentifiableOnAffine (0 : Matrix (Fin 1) (Fin 2) ℝ) theta0 ⊥ ∧
+      ¬ Identifiable (0 : Matrix (Fin 1) (Fin 2) ℝ) := by
+  refine ⟨(identifiableOnAffine_iff_trivial_ker _ _ _).mpr ?_,
+    not_identifiable_of_lt (by norm_num) _⟩
+  intro v hv _
+  simpa using hv
+
+/-- A nonzero kernel direction `![0, 1]` of the
+first-coordinate observation produces a distinct
+parameter with the same observation. -/
+example : ∃ θ' : Fin 2 → ℝ, θ' ≠ ![3, 4] ∧ θ' - ![5, 7] ∈
+      (⊤ : Submodule ℝ (Fin 2 → ℝ)) ∧
+    (!![1, 0] : Matrix (Fin 1) (Fin 2) ℝ) *ᵥ θ'
+      = (!![1, 0] : Matrix (Fin 1) (Fin 2) ℝ) *ᵥ ![3, 4] := by
+  have hker : (!![1, 0] : Matrix (Fin 1) (Fin 2) ℝ) *ᵥ ![0, 1] = 0 := by
+    funext i
+    fin_cases i
+    simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+  obtain ⟨θ', hne, hmem, hobs⟩ :=
+    exists_distinct_onAffine_of_nontrivial_ker _ _ ⊤
+      ⟨![0, 1], by norm_num, Submodule.mem_top, hker⟩ ![3, 4] _
+      Submodule.mem_top rfl
+  exact ⟨θ', hne, hmem, hobs⟩
+
+/-- Degenerate dimension: no parameters at all. -/
+example (A : Matrix (Fin 1) (Fin 0) ℝ) (theta0 : Fin 0 → ℝ) :
+    IdentifiableOnAffine A theta0 ⊤ := by
+  intro θ₁ θ₂ _ _ _
+  funext i
+  exact (Nat.not_lt_zero _ i.2).elim
+
+/-- Zero-column basis control: `P = 0` fails the
+injectivity hypothesis of the basis bridge. -/
+example : ¬ ∀ ξ : Fin 1 → ℝ,
+    (0 : Matrix (Fin 2) (Fin 1) ℝ) *ᵥ ξ = 0 → ξ = 0 := by
+  intro h
+  have h1 := h ![1] (by simp)
+  norm_num at h1
+
+#print axioms
+  Statistics.UncertaintyPropagation.identifiableOnAffine_iff_trivial_ker
+#print axioms
+  Statistics.UncertaintyPropagation.identifiableOnAffine_of_identifiable
+#print axioms
+  Statistics.UncertaintyPropagation.identifiableOnAffine_top_iff_identifiable
+#print axioms
+  Statistics.UncertaintyPropagation.identifiable_mul_basis_iff_trivial_ker
+#print axioms
+  Statistics.UncertaintyPropagation.identifiableOnAffine_iff_identifiable_mul_basis
+#print axioms
+  Statistics.UncertaintyPropagation.exists_distinct_onAffine_of_nontrivial_ker
+
 end PhyslibExtTest.Statistics.UncertaintyPropagation
