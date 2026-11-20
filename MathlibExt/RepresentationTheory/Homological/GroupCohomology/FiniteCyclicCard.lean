@@ -34,13 +34,13 @@ public import Mathlib.RepresentationTheory.Homological.GroupCohomology.LowDegree
 
 @[expose] public section
 
-universe u
+universe u v
 
 open CategoryTheory groupCohomology
 
 namespace GroupCohomologyFiniteCyclicCardAux
 
-variable {R : Type} [Ring R]
+variable {R : Type u} [Ring R]
 
 private theorem natCard_ker_eq_natCard_homology_mul (S : ShortComplex (ModuleCat R))
     [Finite S.X₂] :
@@ -66,10 +66,10 @@ private theorem natCard_ker_eq_natCard_homology_mul (S : ShortComplex (ModuleCat
   rw [h1, h2]
   rfl
 
-variable {k G : Type} [CommRing k] [CommGroup G] [Fintype G] (A : Rep k G) (g : G)
+variable {k G : Type u} [CommRing k] [CommGroup G] [Fintype G] (A : Rep k G) (g : G)
 
-private theorem natCard_eq_natCard_ker_mul_natCard_range {R : Type} [Ring R]
-    {M N : Type*} [AddCommGroup M] [AddCommGroup N] [Module R M] [Module R N]
+private theorem natCard_eq_natCard_ker_mul_natCard_range {R : Type u} [Ring R]
+    {M N : Type v} [AddCommGroup M] [AddCommGroup N] [Module R M] [Module R N]
     (f : M →ₗ[R] N) :
     Nat.card M = Nat.card (LinearMap.ker f) * Nat.card (LinearMap.range f) := by
   rw [← Nat.card_congr f.quotKerEquivRange.toEquiv, mul_comm]
@@ -123,10 +123,12 @@ private theorem natCard_homology_normHomCompSub_eq [Finite A] :
 
 end GroupCohomologyFiniteCyclicCardAux
 
-/-- For a finite cyclic group `G` and a finite `G`-module `A`, the first
-and second group cohomology groups are finite of equal cardinality. -/
+/-- For a finite cyclic group `G` and a finite `G`-module `A` over a
+commutative ring in the same universe, the first and second group
+cohomology groups are finite of equal cardinality. -/
 public theorem groupCohomology.natCard_H1_eq_natCard_H2_of_finite
-    {G : Type} [Group G] [Finite G] [IsCyclic G] (A : Rep ℤ G) [Finite A] :
+    {k : Type u} [CommRing k] {G : Type u} [Group G] [Finite G] [IsCyclic G]
+    (A : Rep k G) [Finite A] :
     Finite (H1 A) ∧ Finite (H2 A) ∧ Nat.card (H1 A) = Nat.card (H2 A) := by
   classical
   letI : CommGroup G := IsCyclic.commGroup
