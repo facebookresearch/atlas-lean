@@ -24,7 +24,7 @@ unit row, supported virtual work on the mechanism
 on a triangle and its supported null mode, and unique
 supported response on triangle and focused fixtures,
 and reciprocal work on the focused fixture, and
-load-parameter identifiability checks, unit-load response checks, finite load hull checks, and reduced determinate statics checks.
+load-parameter identifiability checks, unit-load response checks, finite load hull checks, absolute envelope checks, and reduced determinate statics checks.
 
 ## i. Overview
 
@@ -1406,6 +1406,233 @@ the empty sum. -/
 example (eta f : Fin 0 → ℝ) : eta ⬝ᵥ f = 0 := by
   simp [dotProduct]
 
+/-- Opposite-sign scenario loads on the focused fixture,
+with responses `6`, `-4`, `0`. -/
+private abbrev absLoads : Fin 3 → (Fin 2 → ℝ) :=
+  ![![0, 6], ![-10, 6], ![0, 0]]
+
+/-- The corresponding supported solutions. -/
+private abbrev absSols : Fin 3 → (Fin 2 → ℝ) :=
+  ![![3, 5], ![-2, 0], ![0, 0]]
+
+private lemma absResp : ∀ i : Fin 3,
+    unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
+        (absLoads i)
+      = ![6, -4, 0] i := by
+  intro i
+  fin_cases i <;> rw [unitLoadResponse_apply, etaUnitLoad] <;>
+    norm_num [dotProduct, Fin.sum_univ_two, absLoads]
+
+private lemma absSolve :
+    ∀ i ∈ (Finset.univ : Finset (Fin 3)),
+      ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+        * Matrix.diagonal ![1 / 2, 3]
+        * (axialCompatibility rF ![0, 1] ![1, 2] * SF))
+        *ᵥ absSols i
+      = absLoads i := by
+  intro i _
+  fin_cases i
+  · simpa [absSols, absLoads] using huUnitLoad
+  · rw [supportedStiffnessF]
+    funext j
+    fin_cases j <;>
+      norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two,
+        absSols, absLoads]
+  · funext j
+    fin_cases j <;>
+      simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two,
+        absSols, absLoads]
+
+private lemma absCombinedSolve :
+    ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+      * Matrix.diagonal ![1 / 2, 3]
+      * (axialCompatibility rF ![0, 1] ![1, 2] * SF))
+      *ᵥ ![5 / 6, 5 / 2]
+    = ∑ i ∈ (Finset.univ : Finset (Fin 3)),
+        hullWeights i • absLoads i := by
+  rw [supportedStiffnessF]
+  funext j
+  fin_cases j <;>
+    norm_num [Fin.sum_univ_three, Matrix.mulVec, dotProduct,
+      Fin.sum_univ_two, hullWeights, absLoads, Pi.add_apply,
+      Pi.smul_apply, smul_eq_mul]
+
+private lemma absSup :
+    (Finset.univ : Finset (Fin 3)).sup' hullNonempty
+        (fun i => |unitLoadResponse rF ![0, 1] ![1, 2] SF
+          ![1 / 2, 3] ![2, 0] (absLoads i)|)
+      = 6 := by
+  apply le_antisymm
+  · apply Finset.sup'_le
+    intro i _
+    rw [absResp i]
+    fin_cases i <;> norm_num
+  · have h := Finset.le_sup'
+      (fun i => |unitLoadResponse rF ![0, 1] ![1, 2] SF
+        ![1 / 2, 3] ![2, 0] (absLoads i)|) (Finset.mem_univ 0)
+    rw [absResp 0] at h
+    have h6 : (6 : ℝ) = |![6, -4, 0] 0| := by norm_num
+    rw [h6]
+    exact h
+
+private lemma absCombined :
+    unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
+        (∑ i ∈ (Finset.univ : Finset (Fin 3)),
+          hullWeights i • absLoads i)
+      = 5 / 3 := by
+  rw [supported_unitLoadResponse_sum_smul, Fin.sum_univ_three]
+  simp only [absResp]
+  norm_num [hullWeights]
+
+/-- W1: opposite signs with a zero response; the combined
+response `5 / 3` is inside the absolute envelope `6`. -/
+example :
+    |unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+        ![2, 0]
+        (∑ i ∈ (Finset.univ : Finset (Fin 3)),
+          hullWeights i • absLoads i)|
+      ≤ 6 := by
+  have h := supported_abs_unitLoadResponse_sum_smul_le_sup'_abs
+    rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0] Finset.univ
+    hullNonempty hullWeights absLoads hullWeights_nonneg
+    hullWeights_sum
+  rwa [absSup] at h
+
+/-- W1 in fixed-output form, through the bridge theorem;
+the combined output is `5 / 3`. -/
+example :
+    |![2, 0] ⬝ᵥ ![5 / 6, 5 / 2]|
+      ≤ (Finset.univ : Finset (Fin 3)).sup' hullNonempty
+          (fun i => |![2, 0] ⬝ᵥ absSols i|)
+    ∧ (![2, 0] : Fin 2 → ℝ) ⬝ᵥ (![5 / 6, 5 / 2] : Fin 2 → ℝ)
+      = 5 / 3 := by
+  refine ⟨supported_abs_convexCombination_output_le_sup'_abs
+    rF ![0, 1] ![1, 2] SF ![1 / 2, 3] posDefUnitLoad ![2, 0]
+    Finset.univ hullNonempty hullWeights absLoads absSols _
+    hullWeights_nonneg hullWeights_sum absSolve
+    absCombinedSolve, by
+    norm_num [dotProduct, Fin.sum_univ_two]⟩
+
+/-- W1b: responses `(2, -6)` with weights `(1/4, 3/4)`
+give combined response `-4`; its absolute value `4`
+exceeds the signed maximum `2` and is bounded by the
+absolute envelope `6`. -/
+example :
+    unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
+        (∑ i ∈ (Finset.univ : Finset (Fin 2)),
+          (![1 / 4, 3 / 4] : Fin 2 → ℝ) i
+            • (![![2, 0], ![-15, 9]] : Fin 2 → (Fin 2 → ℝ)) i)
+      = -4
+    ∧ ¬ |unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+          ![2, 0]
+          (∑ i ∈ (Finset.univ : Finset (Fin 2)),
+            (![1 / 4, 3 / 4] : Fin 2 → ℝ) i
+              • (![![2, 0], ![-15, 9]] : Fin 2 → (Fin 2 → ℝ)) i)|
+      ≤ 2 := by
+  have hresp : ∀ i : Fin 2,
+      unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+          ![2, 0]
+          ((![![2, 0], ![-15, 9]] : Fin 2 → (Fin 2 → ℝ)) i)
+        = ![2, -6] i := by
+    intro i
+    fin_cases i <;> rw [unitLoadResponse_apply, etaUnitLoad] <;>
+      norm_num [dotProduct, Fin.sum_univ_two]
+  have hv :
+      unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+          ![2, 0]
+          (∑ i ∈ (Finset.univ : Finset (Fin 2)),
+            (![1 / 4, 3 / 4] : Fin 2 → ℝ) i
+              • (![![2, 0], ![-15, 9]] : Fin 2 → (Fin 2 → ℝ)) i)
+        = -4 := by
+    rw [supported_unitLoadResponse_sum_smul, Fin.sum_univ_two]
+    simp only [hresp]
+    norm_num
+  rw [hv]
+  norm_num
+
+/-- Boundary attainment on the positive side: weights
+`(1, 0, 0)` attain the absolute envelope. -/
+example :
+    |unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+        ![2, 0]
+        (∑ i ∈ (Finset.univ : Finset (Fin 3)),
+          (![1, 0, 0] : Fin 3 → ℝ) i • absLoads i)|
+      = 6 := by
+  have hv :
+      unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+          ![2, 0]
+          (∑ i ∈ (Finset.univ : Finset (Fin 3)),
+            (![1, 0, 0] : Fin 3 → ℝ) i • absLoads i)
+        = 6 := by
+    rw [supported_unitLoadResponse_sum_smul, Fin.sum_univ_three]
+    simp only [absResp]
+    norm_num
+  rw [hv]
+  norm_num
+
+/-- Zero responses from a nonzero load: both vertex
+responses are `0`, the absolute envelope is `0`, and the
+combined response is forced to `0`. -/
+example :
+    unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
+        (∑ i ∈ (Finset.univ : Finset (Fin 2)),
+          (![2 / 5, 3 / 5] : Fin 2 → ℝ) i
+            • (![![-3, 3], ![0, 0]] : Fin 2 → (Fin 2 → ℝ)) i)
+      = 0 := by
+  have hresp : ∀ i : Fin 2,
+      unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+          ![2, 0]
+          ((![![-3, 3], ![0, 0]] : Fin 2 → (Fin 2 → ℝ)) i)
+        = 0 := by
+    intro i
+    fin_cases i <;> rw [unitLoadResponse_apply, etaUnitLoad] <;>
+      norm_num [dotProduct, Fin.sum_univ_two]
+  rw [supported_unitLoadResponse_sum_smul, Fin.sum_univ_two]
+  simp only [hresp]
+  norm_num
+
+/-- Negative control against nonnegativity for the
+absolute bound: weights `(2, -1, 0)` on responses
+`(6, 2, 0)` give absolute response `10 > 6`. -/
+example :
+    |unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+        ![2, 0]
+        (∑ i ∈ (Finset.univ : Finset (Fin 3)),
+          (![2, -1, 0] : Fin 3 → ℝ) i • hullLoads i)|
+      = 10 := by
+  have hv :
+      unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+          ![2, 0]
+          (∑ i ∈ (Finset.univ : Finset (Fin 3)),
+            (![2, -1, 0] : Fin 3 → ℝ) i • hullLoads i)
+        = 10 := by
+    rw [supported_unitLoadResponse_sum_smul, Fin.sum_univ_three]
+    simp only [hullResp]
+    norm_num
+  rw [hv]
+  norm_num
+
+/-- Negative control against normalization for the
+absolute bound: weights `(1, 1, 0)` on responses
+`(6, 2, 0)` give absolute response `8 > 6`. -/
+example :
+    |unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+        ![2, 0]
+        (∑ i ∈ (Finset.univ : Finset (Fin 3)),
+          (![1, 1, 0] : Fin 3 → ℝ) i • hullLoads i)|
+      = 8 := by
+  have hv :
+      unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+          ![2, 0]
+          (∑ i ∈ (Finset.univ : Finset (Fin 3)),
+            (![1, 1, 0] : Fin 3 → ℝ) i • hullLoads i)
+        = 8 := by
+    rw [supported_unitLoadResponse_sum_smul, Fin.sum_univ_three]
+    simp only [hullResp]
+    norm_num
+  rw [hv]
+  norm_num
+
 /-! ## I. Reduced determinate statics -/
 
 /-- W1 data: `Bs = !![2, 0; 1, -1]` is invertible. -/
@@ -1667,6 +1894,11 @@ example : Matrix.diagonal ![1, 1]
   Mechanics.TrussCompatibility.supported_unitLoadResponse_singleton
 #print axioms
   Mechanics.TrussCompatibility.supported_unitLoadResponse_convexCombination_output_bounds
+
+#print axioms
+  Mechanics.TrussCompatibility.supported_abs_unitLoadResponse_sum_smul_le_sup'_abs
+#print axioms
+  Mechanics.TrussCompatibility.supported_abs_convexCombination_output_le_sup'_abs
 
 #print axioms Mechanics.TrussCompatibility.reduced_equilibrium_of_elastic
 #print axioms Mechanics.TrussCompatibility.reduced_equilibrium_iff_eq_inv
