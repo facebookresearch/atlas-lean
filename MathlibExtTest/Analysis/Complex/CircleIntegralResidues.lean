@@ -43,14 +43,24 @@ example : (∮ z in C((0 : ℂ), 1), (3 : ℂ) / z) = 2 * Real.pi * Complex.I * 
   simpa using h
 
 -- The hypothesis that the pole set lies inside the disc cannot be dropped:
--- `z ↦ z⁻¹` has its pole at the centre, and its unit circle integral is
--- `2πi ≠ 0`, not the empty sum.
-example : (∮ z in C((0 : ℂ), 1), z⁻¹) ≠ 0 := by
-  have h : (∮ z in C((0 : ℂ), 1), z⁻¹) = 2 * Real.pi * Complex.I := by
-    rw [circleIntegral.integral_congr (R := 1) (c := (0 : ℂ))
-      (f := fun z : ℂ => z⁻¹) (g := fun z : ℂ => (z - 0)⁻¹) zero_le_one
-      (fun z _ => by simp)]
-    exact circleIntegral.integral_sub_inv_of_mem_ball (by simp)
-  rw [h]
-  exact mul_ne_zero (mul_ne_zero two_ne_zero
-    (by exact_mod_cast Real.pi_ne_zero : (Real.pi : ℂ) ≠ 0)) Complex.I_ne_zero
+-- `z ↦ (z - 2)⁻¹` has its pole at `2`, outside the unit disc, so its unit
+-- circle integral is `0`, not `2πi` times the residue at `2`.
+example : (∮ z in C((0 : ℂ), 1), (z - 2)⁻¹) ≠
+    2 * Real.pi * Complex.I * ∑ a ∈ ({2} : Finset ℂ), (1 : ℂ) := by
+  have h0 : (∮ z in C((0 : ℂ), 1), (z - 2)⁻¹) = 0 := by
+    have h := Complex.circleIntegral_eq_sum_residue_of_simplePole (R := 1) (z₀ := 0)
+      one_pos (fun z => (z - 2)⁻¹) (fun _ => 1) ∅ (by simp)
+      (by
+        intro z hz _
+        refine (analyticAt_id.sub analyticAt_const).inv ?_
+        intro hzero
+        have hz2 : z = 2 := sub_eq_zero.mp hzero
+        rw [hz2] at hz
+        norm_num [Metric.mem_closedBall] at hz)
+      (by simp)
+    simpa using h
+  rw [h0, Finset.sum_singleton, mul_one]
+  have hne : (2 * Real.pi * Complex.I : ℂ) ≠ 0 :=
+    mul_ne_zero (mul_ne_zero two_ne_zero
+      (by exact_mod_cast Real.pi_ne_zero : (Real.pi : ℂ) ≠ 0)) Complex.I_ne_zero
+  exact Ne.symm hne
