@@ -24,7 +24,7 @@ unit row, supported virtual work on the mechanism
 on a triangle and its supported null mode, and unique
 supported response on triangle and focused fixtures,
 and reciprocal work on the focused fixture, and
-load-parameter identifiability checks, and unit-load response checks.
+load-parameter identifiability checks, unit-load response checks, and finite load hull checks.
 
 ## i. Overview
 
@@ -43,6 +43,7 @@ No new definitions or results are introduced here.
 - E. Reciprocal work
 - F. Load-parameter identifiability
 - G. Unit-load response
+- H. Finite load hull
 
 ## iv. References
 
@@ -1139,6 +1140,271 @@ example (aout f : Fin 0 → ℝ) :
       aout f = 0 := by
   simp [unitLoadResponse, dotProduct]
 
+/-! ## H. Finite load hull -/
+
+/-- Three scenario loads on the focused fixture, with
+responses `6`, `2`, `0` at output `![2, 0]`. -/
+private abbrev hullLoads : Fin 3 → (Fin 2 → ℝ) :=
+  ![![0, 6], ![2, 0], ![0, 0]]
+
+/-- The corresponding supported solutions. -/
+private abbrev hullSols : Fin 3 → (Fin 2 → ℝ) :=
+  ![![3, 5], ![1, 1], ![0, 0]]
+
+/-- Convex weights `(1/2, 1/3, 1/6)` on the three
+scenarios. -/
+private noncomputable abbrev hullWeights : Fin 3 → ℝ := ![1 / 2, 1 / 3, 1 / 6]
+
+private lemma hullNonempty :
+    (Finset.univ : Finset (Fin 3)).Nonempty :=
+  ⟨0, Finset.mem_univ 0⟩
+
+private lemma hullResp : ∀ i : Fin 3,
+    unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
+        (hullLoads i)
+      = ![6, 2, 0] i := by
+  intro i
+  fin_cases i <;> rw [unitLoadResponse_apply, etaUnitLoad] <;>
+    norm_num [dotProduct, Fin.sum_univ_two, hullLoads]
+
+private lemma hullOut : ∀ i : Fin 3,
+    ![2, 0] ⬝ᵥ hullSols i = ![6, 2, 0] i := by
+  intro i
+  fin_cases i <;>
+    norm_num [dotProduct, Fin.sum_univ_two, hullSols]
+
+private lemma hullWeights_nonneg :
+    ∀ i ∈ (Finset.univ : Finset (Fin 3)), 0 ≤ hullWeights i := by
+  intro i _
+  fin_cases i <;> norm_num [hullWeights]
+
+private lemma hullWeights_sum :
+    ∑ i ∈ (Finset.univ : Finset (Fin 3)), hullWeights i = 1 := by
+  norm_num [Fin.sum_univ_three, hullWeights]
+
+private lemma hullSolve :
+    ∀ i ∈ (Finset.univ : Finset (Fin 3)),
+      ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+        * Matrix.diagonal ![1 / 2, 3]
+        * (axialCompatibility rF ![0, 1] ![1, 2] * SF))
+        *ᵥ hullSols i
+      = hullLoads i := by
+  intro i _
+  fin_cases i
+  · simpa [hullSols, hullLoads] using huUnitLoad
+  · rw [supportedStiffnessF]
+    funext j
+    fin_cases j <;>
+      norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two,
+        hullSols, hullLoads]
+  · funext j
+    fin_cases j <;>
+      simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two,
+        hullSols, hullLoads]
+
+private lemma hullCombinedSolve :
+    ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+      * Matrix.diagonal ![1 / 2, 3]
+      * (axialCompatibility rF ![0, 1] ![1, 2] * SF))
+      *ᵥ ![11 / 6, 17 / 6]
+    = ∑ i ∈ (Finset.univ : Finset (Fin 3)),
+        hullWeights i • hullLoads i := by
+  rw [supportedStiffnessF]
+  funext j
+  fin_cases j <;>
+    norm_num [Fin.sum_univ_three, Matrix.mulVec, dotProduct,
+      Fin.sum_univ_two, hullWeights, hullLoads, Pi.add_apply,
+      Pi.smul_apply, smul_eq_mul]
+
+private lemma hullCombined :
+    unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
+        (∑ i ∈ (Finset.univ : Finset (Fin 3)),
+          hullWeights i • hullLoads i)
+      = 11 / 3 := by
+  rw [supported_unitLoadResponse_sum_smul, Fin.sum_univ_three]
+  simp only [hullResp]
+  norm_num [hullWeights]
+
+private lemma hullInf :
+    (Finset.univ : Finset (Fin 3)).inf' hullNonempty
+        (fun i => unitLoadResponse rF ![0, 1] ![1, 2] SF
+          ![1 / 2, 3] ![2, 0] (hullLoads i))
+      = 0 := by
+  apply le_antisymm
+  · have h := Finset.inf'_le
+      (fun i => unitLoadResponse rF ![0, 1] ![1, 2] SF
+        ![1 / 2, 3] ![2, 0] (hullLoads i)) (Finset.mem_univ 2)
+    rwa [hullResp 2] at h
+  · apply Finset.le_inf'
+    intro i _
+    rw [hullResp i]
+    fin_cases i <;> norm_num
+
+private lemma hullSup :
+    (Finset.univ : Finset (Fin 3)).sup' hullNonempty
+        (fun i => unitLoadResponse rF ![0, 1] ![1, 2] SF
+          ![1 / 2, 3] ![2, 0] (hullLoads i))
+      = 6 := by
+  apply le_antisymm
+  · apply Finset.sup'_le
+    intro i _
+    rw [hullResp i]
+    fin_cases i <;> norm_num
+  · have h := Finset.le_sup'
+      (fun i => unitLoadResponse rF ![0, 1] ![1, 2] SF
+        ![1 / 2, 3] ![2, 0] (hullLoads i)) (Finset.mem_univ 0)
+    rwa [hullResp 0] at h
+
+/-- W1: the three-way agreement at response `11 / 3`,
+strictly inside the hull `[0, 6]`, in response form and
+in fixed-output form. -/
+example :
+    unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
+        (∑ i ∈ (Finset.univ : Finset (Fin 3)),
+          hullWeights i • hullLoads i)
+      = 11 / 3
+    ∧ (0 : ℝ)
+      ≤ unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+          ![2, 0]
+          (∑ i ∈ (Finset.univ : Finset (Fin 3)),
+            hullWeights i • hullLoads i)
+    ∧ unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+          ![2, 0]
+          (∑ i ∈ (Finset.univ : Finset (Fin 3)),
+            hullWeights i • hullLoads i)
+      ≤ 6
+    ∧ (![2, 0] : Fin 2 → ℝ) ⬝ᵥ (![11 / 6, 17 / 6] : Fin 2 → ℝ) = 11 / 3 := by
+  have h := supported_unitLoadResponse_convexCombination_bounds
+    rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0] Finset.univ hullNonempty
+    hullWeights hullLoads hullWeights_nonneg hullWeights_sum
+  rw [hullInf, hullSup] at h
+  exact ⟨hullCombined, h.1, h.2, by
+    norm_num [dotProduct, Fin.sum_univ_two]⟩
+
+/-- W1 in fixed-output form, through the bridge theorem. -/
+example :
+    (Finset.univ : Finset (Fin 3)).inf' hullNonempty
+        (fun i => ![2, 0] ⬝ᵥ hullSols i)
+        ≤ ![2, 0] ⬝ᵥ ![11 / 6, 17 / 6]
+      ∧ ![2, 0] ⬝ᵥ ![11 / 6, 17 / 6]
+        ≤ (Finset.univ : Finset (Fin 3)).sup' hullNonempty
+          (fun i => ![2, 0] ⬝ᵥ hullSols i) :=
+  supported_unitLoadResponse_convexCombination_output_bounds
+    rF ![0, 1] ![1, 2] SF ![1 / 2, 3] posDefUnitLoad ![2, 0]
+    Finset.univ
+    hullNonempty hullWeights hullLoads hullSols _
+    hullWeights_nonneg hullWeights_sum hullSolve
+    hullCombinedSolve
+
+/-- Boundary attainment: weights `(1, 0, 0)` attain the
+upper hull endpoint, so the bound is non-strict. -/
+example :
+    unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
+        (∑ i ∈ (Finset.univ : Finset (Fin 3)),
+          (![1, 0, 0] : Fin 3 → ℝ) i • hullLoads i)
+      = 6 := by
+  rw [supported_unitLoadResponse_sum_smul, Fin.sum_univ_three]
+  simp only [hullResp]
+  norm_num
+
+/-- Singleton table: the response equality and the hull
+collapse to the single vertex response. -/
+example :
+    unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
+        (∑ j ∈ ({0} : Finset (Fin 3)),
+          (![1, 0, 0] : Fin 3 → ℝ) j • hullLoads j)
+      = unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+          ![2, 0] (hullLoads 0)
+    ∧ ({0} : Finset (Fin 3)).inf' (Finset.singleton_nonempty 0)
+        (fun i => unitLoadResponse rF ![0, 1] ![1, 2] SF
+          ![1 / 2, 3] ![2, 0] (hullLoads i))
+      = unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+          ![2, 0] (hullLoads 0)
+    ∧ ({0} : Finset (Fin 3)).sup' (Finset.singleton_nonempty 0)
+        (fun i => unitLoadResponse rF ![0, 1] ![1, 2] SF
+          ![1 / 2, 3] ![2, 0] (hullLoads i))
+      = unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+          ![2, 0] (hullLoads 0) := by
+  refine ⟨?_, ?_, ?_⟩
+  · exact supported_unitLoadResponse_singleton rF
+      ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0] 0
+      (![1, 0, 0] : Fin 3 → ℝ) hullLoads
+      (by norm_num [Finset.sum_singleton])
+  · rw [Finset.inf'_singleton]
+  · rw [Finset.sup'_singleton]
+
+/-- Empty table rejected: no nonempty proof and no
+coefficients summing to one. -/
+example : ¬ (∅ : Finset (Fin 3)).Nonempty
+    ∧ ∀ w : Fin 3 → ℝ,
+      ¬ (∑ i ∈ (∅ : Finset (Fin 3)), w i = 1) := by
+  simp
+
+/-- Negative control against nonnegativity: weights
+`(2, -1, 0)` still sum to one and superposition still
+holds, but the response `10` escapes the hull top `6`. -/
+example :
+    unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
+        (∑ i ∈ (Finset.univ : Finset (Fin 3)),
+          (![2, -1, 0] : Fin 3 → ℝ) i • hullLoads i)
+      = 10
+    ∧ ¬ unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+          ![2, 0]
+          (∑ i ∈ (Finset.univ : Finset (Fin 3)),
+            (![2, -1, 0] : Fin 3 → ℝ) i • hullLoads i)
+      ≤ (Finset.univ : Finset (Fin 3)).sup' hullNonempty
+          (fun i => unitLoadResponse rF ![0, 1] ![1, 2] SF
+            ![1 / 2, 3] ![2, 0] (hullLoads i)) := by
+  have hv :
+      unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+          ![2, 0]
+          (∑ i ∈ (Finset.univ : Finset (Fin 3)),
+            (![2, -1, 0] : Fin 3 → ℝ) i • hullLoads i)
+        = 10 := by
+    rw [supported_unitLoadResponse_sum_smul, Fin.sum_univ_three]
+    simp only [hullResp]
+    norm_num
+  rw [hv, hullSup]
+  norm_num
+
+/-- Negative control against normalization: weights
+`(1, 1, 0)` are nonnegative and superposition still
+holds, but the response `8` escapes the hull top `6`. -/
+example :
+    unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
+        (∑ i ∈ (Finset.univ : Finset (Fin 3)),
+          (![1, 1, 0] : Fin 3 → ℝ) i • hullLoads i)
+      = 8 := by
+  rw [supported_unitLoadResponse_sum_smul, Fin.sum_univ_three]
+  simp only [hullResp]
+  norm_num
+
+/-- Duplicate scenarios keep distinct coefficients: loads
+`(f₀, f₀, f₁)` with weights `(1/4, 1/4, 1/2)` respond
+`4`, inside the same hull. -/
+example :
+    unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
+        (∑ i ∈ (Finset.univ : Finset (Fin 3)),
+          (![1 / 4, 1 / 4, 1 / 2] : Fin 3 → ℝ) i
+            • hullLoads ((![0, 0, 1] : Fin 3 → Fin 3) i))
+      = 4 := by
+  have hresp : ∀ i : Fin 3,
+      unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+          ![2, 0] (hullLoads ((![0, 0, 1] : Fin 3 → Fin 3) i))
+        = ![6, 6, 2] i := by
+    intro i
+    fin_cases i <;>
+      simp only [Matrix.cons_val_zero, Matrix.cons_val_one,
+        Matrix.head_cons, hullResp] <;> norm_num
+  rw [supported_unitLoadResponse_sum_smul, Fin.sum_univ_three]
+  simp only [hresp]
+  norm_num
+
+/-- Degenerate output space `F = Fin 0`: every pairing is
+the empty sum. -/
+example (eta f : Fin 0 → ℝ) : eta ⬝ᵥ f = 0 := by
+  simp [dotProduct]
+
 #print axioms Mechanics.TrussCompatibility.supported_posDef_iff
 #print axioms
   Mechanics.TrussCompatibility.supported_posDef_iff_ker_eq_bot
@@ -1180,5 +1446,18 @@ example (aout f : Fin 0 → ℝ) :
   Mechanics.TrussCompatibility.supported_unitLoad_axialForce_identity
 #print axioms
   Mechanics.TrussCompatibility.supported_unitLoad_identity_of_kernel
+
+#print axioms
+  Mechanics.TrussCompatibility.supported_unitLoadResponse_sum_smul
+#print axioms
+  Mechanics.TrussCompatibility.supported_inf'_le_unitLoadResponse_sum_smul
+#print axioms
+  Mechanics.TrussCompatibility.supported_unitLoadResponse_sum_smul_le_sup'
+#print axioms
+  Mechanics.TrussCompatibility.supported_unitLoadResponse_convexCombination_bounds
+#print axioms
+  Mechanics.TrussCompatibility.supported_unitLoadResponse_singleton
+#print axioms
+  Mechanics.TrussCompatibility.supported_unitLoadResponse_convexCombination_output_bounds
 
 end PhyslibExtTest.Mechanics.TrussCompatibility
