@@ -224,7 +224,7 @@ theorem modifiedCamClayYield_eq_zero_on_critical_line_of_ne_zero {M pc p q : ℝ
 /-- Off-yield points on the critical-state line: with `M > 0`, a point
 `(p, M * p)` with `p` different from both intersection abscissae is not on the
 yield locus. -/
-theorem modifiedCamClayYield_on_critical_line_ne_zero {M pc p : ℝ}
+lemma modifiedCamClayYield_on_critical_line_ne_zero {M pc p : ℝ}
     (hM : 0 < M) (hp0 : p ≠ 0) (hpc2 : p ≠ pc / 2) :
     modifiedCamClayYield M pc p (M * p) ≠ 0 := by
   rw [modifiedCamClayYield_on_critical_line]
