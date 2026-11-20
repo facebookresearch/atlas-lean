@@ -282,16 +282,6 @@ theorem prodIntegral_sub_prodIntegral_eq_gridDuhamel (x y : Fin k → ℝ) :
   rw [Pi.sub_apply, prodIntegral_sub_prodIntegral, gridDuhamel_apply]
   rfl
 
-private theorem abs_prod_one_add_le' (x : Fin k → ℝ) (t : Finset (Fin k)) :
-    |∏ l ∈ t, (1 + x l)| ≤ Real.exp (∑ l, |x l|) := by
-  rw [abs_prod]
-  calc ∏ l ∈ t, |1 + x l| ≤ ∏ l ∈ t, Real.exp |x l| :=
-        prod_le_prod₀ (fun _ _ ↦ abs_nonneg _) fun l _ ↦ (abs_add_le _ _).trans <| by
-          rw [abs_one, add_comm]; exact Real.add_one_le_exp _
-    _ = Real.exp (∑ l ∈ t, |x l|) := (Real.exp_sum _ _).symm
-    _ ≤ Real.exp (∑ l, |x l|) := Real.exp_le_exp.2 <|
-        sum_le_sum_of_subset_of_nonneg (subset_univ t) fun _ _ _ ↦ abs_nonneg _
-
 /-- Operator-norm bound for the grid Duhamel operator on a total-variation ball:
 `‖gridDuhamel x y‖ ≤ k · e^M · e^M` when `∑ |x l| ≤ M` and `∑ |y l| ≤ M`. (Unlike the
 continuous-time integration-by-parts bound, this one grows with `k`; on a fixed grid that is
@@ -306,8 +296,8 @@ theorem norm_gridDuhamel_le {M : ℝ} {x y : Fin k → ℝ} (hx : ∑ l, |x l| �
       Real.exp M * Real.exp M * ‖h‖ := by
     intro i _
     rw [abs_mul, abs_mul]
-    have h1 := (abs_prod_one_add_le' x (Iio i)).trans (Real.exp_le_exp.2 hx)
-    have h2 := (abs_prod_one_add_le' y (Ioc i j)).trans (Real.exp_le_exp.2 hy)
+    have h1 := (abs_prod_one_add_le x (Iio i)).trans (Real.exp_le_exp.2 hx)
+    have h2 := (abs_prod_one_add_le y (Ioc i j)).trans (Real.exp_le_exp.2 hy)
     have h3 : |h i| ≤ ‖h‖ := by rw [← Real.norm_eq_abs]; exact norm_le_pi_norm h i
     calc |∏ l ∈ Iio i, (1 + x l)| * |h i| * |∏ l ∈ Ioc i j, (1 + y l)|
         ≤ Real.exp M * ‖h‖ * Real.exp M := by gcongr

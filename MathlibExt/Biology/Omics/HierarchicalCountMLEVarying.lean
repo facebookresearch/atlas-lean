@@ -113,8 +113,8 @@ imported, not edited. `MathlibExt.Probability.Statistics.GLM.NegativeBinomialDis
 `GLM.CountData.Model` treat negative binomial regression with offsets in the (shape, mean)
 parametrization with consistency hypotheses assumed abstractly, and prove no existence theorem.
 The third-order bound on `digammaIncrement` is `HierarchicalCountMLE`'s public
-`digammaIncrement_le_cubic`; `log (1 + x) ≥ x - x² / 2`, a private lemma there, is derived here
-from Mathlib's `Real.le_log_one_add_of_nonneg`. The strong law is Mathlib's
+`digammaIncrement_le_cubic`, and `log (1 + x) ≥ x - x² / 2` is its public
+`sub_sq_div_two_le_log_one_add`. The strong law is Mathlib's
 `ProbabilityTheory.strong_law_ae`. Continuity of `b̂` is a short implicit-root argument (private)
 from strict monotonicity of `b ↦ b · ∂ℓ/∂b`; no Mathlib lemma packages it.
 
@@ -353,12 +353,6 @@ private lemma shapeScore_eq_sub {a b : ℝ} (hb : 0 < b) {s : ι → ℝ} (hs : 
     field_simp
   rw [this]
   ring
-
-/-- `log (1 + x) ≥ x - x² / 2` for `x ≥ 0`, from Mathlib's `log (1 + x) ≥ 2 x / (x + 2)`. -/
-private lemma sub_sq_div_two_le_log_one_add {x : ℝ} (hx : 0 ≤ x) : x - x ^ 2 / 2 ≤ log (1 + x) := by
-  refine le_trans ?_ (le_log_one_add_of_nonneg hx)
-  rw [le_div_iff₀ (by linarith)]
-  nlinarith [pow_nonneg hx 3]
 
 private lemma shapeScore_term_le {a m : ℝ} (ha : 0 < a) (hm : 0 ≤ m) (k : ℕ) :
     a ^ 2 * (digammaIncrement a k - log (1 + m / a)) ≤

@@ -59,7 +59,8 @@ namespace MathlibExt.Biology.PopulationGenetics.Linkage
 
 /-! ### Two-locus random mating -/
 
-private theorem sum_four (x : Bool × Bool → ℝ) :
+/-- A sum over `Bool × Bool` is the sum of its four terms. -/
+theorem sum_four (x : Bool × Bool → ℝ) :
     ∑ g, x g = x (true, true) + x (true, false) + x (false, true) + x (false, false) := by
   simp only [Fintype.sum_prod_type, Fintype.sum_bool]
   ring

@@ -138,7 +138,9 @@ private theorem equiv_leaves {α : Type u} {s t : PlaneTree α}
   | symm s t h ih => exact ih.symm
   | trans s t v h h' ih ih' => exact ih.trans ih'
 
-private theorem equiv_node {α : Type u} {l l' r r' : PlaneTree α}
+/-- If `l` is swap-equivalent to `l'` and `r` to `r'`, then `.node l r` is swap-equivalent to
+`.node l' r'`. -/
+theorem PlaneTree.eqvGen_swap_node {α : Type u} {l l' r r' : PlaneTree α}
     (hl : Relation.EqvGen PlaneTree.Swap l l')
     (hr : Relation.EqvGen PlaneTree.Swap r r') :
     Relation.EqvGen PlaneTree.Swap (.node l r) (.node l' r') := by
@@ -328,21 +330,21 @@ private theorem swap_graft {α : Type u} (a : α) (C : Multiset α)
   | root l r =>
     by_cases he : l.leaves + r.leaves = C
     · simp only [graft, PlaneTree.leaves, he, add_comm r.leaves l.leaves, ite_true]
-      exact equiv_node (.rel _ _ (.root l r)) (.refl _)
+      exact PlaneTree.eqvGen_swap_node (.rel _ _ (.root l r)) (.refl _)
     · simp only [graft, PlaneTree.leaves, he, add_comm r.leaves l.leaves, ite_false]
       exact .rel _ _ (.root _ _)
   | @left l l' r h ih =>
     by_cases he : l.leaves + r.leaves = C
     · simp only [graft, PlaneTree.leaves, ← swap_leaves h, he, ite_true]
-      exact equiv_node (.rel _ _ (.left r h)) (.refl _)
+      exact PlaneTree.eqvGen_swap_node (.rel _ _ (.left r h)) (.refl _)
     · simp only [graft, PlaneTree.leaves, ← swap_leaves h, he, ite_false]
-      exact equiv_node ih (.refl _)
+      exact PlaneTree.eqvGen_swap_node ih (.refl _)
   | @right l r r' h ih =>
     by_cases he : l.leaves + r.leaves = C
     · simp only [graft, PlaneTree.leaves, ← swap_leaves h, he, ite_true]
-      exact equiv_node (.rel _ _ (.right l h)) (.refl _)
+      exact PlaneTree.eqvGen_swap_node (.rel _ _ (.right l h)) (.refl _)
     · simp only [graft, PlaneTree.leaves, ← swap_leaves h, he, ite_false]
-      exact equiv_node (.refl _) ih
+      exact PlaneTree.eqvGen_swap_node (.refl _) ih
 
 private theorem equiv_graft {α : Type u} (a : α) (C : Multiset α)
     {s t : PlaneTree α} (h : Relation.EqvGen PlaneTree.Swap s t) :
@@ -418,7 +420,7 @@ private theorem swap_prune {α : Type u} (a : α) {s t : PlaneTree α}
       · simp only [prune, ← swap_leaves h, hl, hr, ite_true, ite_false]
         exact .rel _ _ h
       · simp only [prune, ← swap_leaves h, hl, hr, ite_false]
-        exact equiv_node (ih hnl) (.refl _)
+        exact PlaneTree.eqvGen_swap_node (ih hnl) (.refl _)
   | @right l r r' h ih =>
     have hnr := (Multiset.nodup_add.mp hn).2.1
     by_cases hl : l.leaves = {a}
@@ -428,7 +430,7 @@ private theorem swap_prune {α : Type u} (a : α) {s t : PlaneTree α}
       · simp only [prune, ← swap_leaves h, hl, hr, ite_true, ite_false]
         exact .refl _
       · simp only [prune, ← swap_leaves h, hl, hr, ite_false]
-        exact equiv_node (.refl _) (ih hnr)
+        exact PlaneTree.eqvGen_swap_node (.refl _) (ih hnr)
 
 private theorem swap_site {α : Type u} (a : α) {s t : PlaneTree α}
     (h : PlaneTree.Swap s t) (hn : s.leaves.Nodup) : site a s = site a t := by
@@ -542,7 +544,7 @@ private theorem prune_info {α : Type u} (a : α) (t : PlaneTree α)
             rw [add_right_comm, hle]
           · exact Multiset.mem_cons.mpr (.inr (Multiset.mem_add.mpr (.inl hsc)))
           · rw [graft_node_left a _ _ _ hsc hdp]
-            exact equiv_node hrec (.refl _)
+            exact PlaneTree.eqvGen_swap_node hrec (.refl _)
         · have hmr : a ∈ r.leaves := (Multiset.mem_add.mp ha).resolve_left hml
           obtain ⟨hre, hsc, hrec⟩ := ihr hnr hmr hr
           have hsub : (prune a r).leaves ≤ r.leaves := by
@@ -556,7 +558,7 @@ private theorem prune_info {α : Type u} (a : α) (t : PlaneTree α)
             rw [add_assoc, hre]
           · exact Multiset.mem_cons.mpr (.inr (Multiset.mem_add.mpr (.inr hsc)))
           · rw [graft_node_right a _ _ _ hsc hdp]
-            exact equiv_node (.refl _) hrec
+            exact PlaneTree.eqvGen_swap_node (.refl _) hrec
 
 private theorem graft_info {α : Type u} (a : α) (C : Multiset α) (t : PlaneTree α)
     (hn : t.leaves.Nodup) (ha : a ∉ t.leaves) (hc : C ∈ clusters t) :
