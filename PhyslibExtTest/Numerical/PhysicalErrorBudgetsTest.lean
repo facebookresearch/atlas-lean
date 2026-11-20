@@ -24,7 +24,11 @@ import Mathlib.Tactic.NormNum
 * the same body: its trajectory solves `C T' = Q(T)` and the one-node storage law, while a node
   without a source keeps its temperature;
 * the same body in minutes and in seconds, the step `τ / 10` entered in seconds against `τ` in
-  minutes, and the unstable step `3 τ`.
+  minutes, and the unstable step `3 τ`;
+* the same body under the classical Runge–Kutta method: the one-stage method is the Euler step,
+  the RK4 step from `350` does not depend on the start time and multiplies the excess `50` by
+  `72387 / 80000`, ten steps of size `10` give `T_10 = 300 + 50 (72387 / 80000) ^ 10` with
+  `0 < |T_10 - T(100)| < 50 / 10 ^ 6`, and the step `3 τ` multiplies the excess by `11 / 8`.
 -/
 
 @[expose] public section
@@ -180,6 +184,87 @@ example {X : ℕ → ℝ} (h0 : X 0 = 350)
   · rw [(hX 1).1]
     norm_num
   · rw [(hX 2).1]
+    norm_num
+  · rw [(hX 10).2]
+    norm_num
+
+
+/-! ## F. Ten classical Runge–Kutta steps on the same body -/
+
+open MathlibExt.Analysis.ODE.RungeKutta
+
+/-- **Nonzero temperature excess and exact rational amplification.** A body of heat capacity
+`500` coupled through `G = 5` to a bath at `300` has `τ = 100`. Started at `350` (`Δ = 50`), ten
+RK4 steps of `10` (that is `τ / 10`, in the same time unit as `τ`) at the times `10 j` give
+`T_10 = 300 + 50 (72387 / 80000) ^ 10`, and `0 < |T_10 - T(100)| < 50 / 10 ^ 6`. -/
+lemma bathRK4_fixture {X : ℕ → ℝ} (h0 : X 0 = 350)
+    (hstep : ∀ j : ℕ, X (j + 1) = rkStep rk4 (bathField 500 5 300) (j * 10) (X j) 10) :
+    X 10 = 300 + 50 * (72387 / 80000) ^ 10 ∧
+      0 < |X 10 - bathTrajectory 500 5 300 50 100| ∧
+      |X 10 - bathTrajectory 500 5 300 50 100| < 50 / 10 ^ 6 := by
+  have hτ : thermalTimeConstant 500 5 = 100 := by norm_num [thermalTimeConstant]
+  have h0' : X 0 = 300 + 50 := by rw [h0]; norm_num
+  have hstep' : ∀ j : ℕ, X (j + 1) = rkStep rk4 (bathField 500 5 300)
+      (j * (thermalTimeConstant 500 5 / 10)) (X j) (thermalTimeConstant 500 5 / 10) := by
+    intro j
+    rw [hτ, show (100 : ℝ) / 10 = 10 by norm_num]
+    exact hstep j
+  have herr := bathRK4_tenStep_error (by norm_num) (by norm_num) (by norm_num) h0' hstep'
+  have hpos := bathRK4_tenStep_error_pos (by norm_num) (by norm_num) (by norm_num) h0' hstep'
+  rw [hτ] at herr hpos
+  refine ⟨bathRK4_closed_form (by norm_num) (by norm_num) h0' hstep' 10, hpos, ?_⟩
+  simpa using herr
+
+-- The one-stage method on the bath field is the Euler step of section C: from `350` the step `10`
+-- gives `345`.
+example : rkStep eulerRK (bathField 500 5 300) 0 350 10 = 345 := by
+  rw [bathField_eulerStep]
+  norm_num [bathEulerStep, bathPower]
+
+-- The RK4 step from `350` does not depend on the start time; it is `300` plus the step of the
+-- linear decay `θ' = -θ / 100` from the excess `50`, which multiplies the excess by
+-- `R(-1 / 10) = 72387 / 80000`.
+example :
+    rkStep rk4 (bathField 500 5 300) 70 350 10 = rkStep rk4 (bathField 500 5 300) 0 350 10 ∧
+      rkStep rk4 (bathField 500 5 300) 70 350 10 =
+        300 + rkStep rk4 (fun _ y => -1 / thermalTimeConstant 500 5 * y) 0 50 10 ∧
+      rkStep rk4 (bathField 500 5 300) 70 350 10 = 300 + 50 * (72387 / 80000) := by
+  refine ⟨bathField_rk4_time_indep 500 5 300 70 350 10, ?_, ?_⟩
+  · rw [bathField_rk4_shift]
+    norm_num
+  · rw [bathField_rk4_step]
+    norm_num [thermalTimeConstant]
+
+-- After ten steps of size `10` the excess over the bath is `50 (72387 / 80000) ^ 10`.
+example {X : ℕ → ℝ} (h0 : X 0 = 350)
+    (hstep : ∀ j : ℕ, X (j + 1) = rkStep rk4 (bathField 500 5 300) (j * 10) (X j) 10) :
+    X 10 - 300 = 50 * (72387 / 80000) ^ 10 := by
+  have hτ : thermalTimeConstant 500 5 = 100 := by norm_num [thermalTimeConstant]
+  have h0' : X 0 = 300 + 50 := by rw [h0]; norm_num
+  have hstep' : ∀ j : ℕ, X (j + 1) = rkStep rk4 (bathField 500 5 300)
+      (j * (thermalTimeConstant 500 5 / 10)) (X j) (thermalTimeConstant 500 5 / 10) := by
+    intro j
+    rw [hτ, show (100 : ℝ) / 10 = 10 by norm_num]
+    exact hstep j
+  exact bathRK4_tenStep_excess (by norm_num) (by norm_num) h0' hstep'
+
+-- The unstable RK4 step of the stable bath: with `τ = 100`, the step `3 τ = 300` multiplies the
+-- excess by `R(-3) = 11 / 8`, giving `350`, `2950 / 8`, ..., so after ten steps the excess is
+-- `(11 / 8) ^ 10 · 50`, while the exact excess never exceeds `50`.
+example {X : ℕ → ℝ} (h0 : X 0 = 350)
+    (hstep : ∀ j : ℕ, X (j + 1) = rkStep rk4 (bathField 500 5 300) (j * 300) (X j) 300) :
+    X 1 = 2950 / 8 ∧ |X 10 - 300| = (11 / 8) ^ 10 * 50 ∧
+      |bathTrajectory 500 5 300 50 1000 - 300| ≤ 50 := by
+  have hτ : thermalTimeConstant 500 5 = 100 := by norm_num [thermalTimeConstant]
+  have h0' : X 0 = 300 + 50 := by rw [h0]; norm_num
+  have hstep' : ∀ j : ℕ, X (j + 1) = rkStep rk4 (bathField 500 5 300)
+      (j * (3 * thermalTimeConstant 500 5)) (X j) (3 * thermalTimeConstant 500 5) := by
+    intro j
+    rw [hτ, show (3 : ℝ) * 100 = 300 by norm_num]
+    exact hstep j
+  obtain ⟨hexact, hX⟩ := bathRK4_threeTau (by norm_num) (by norm_num) h0' hstep'
+  refine ⟨?_, ?_, (hexact 1000 (by norm_num)).trans_eq (by norm_num)⟩
+  · rw [(hX 1).1]
     norm_num
   · rw [(hX 10).2]
     norm_num
