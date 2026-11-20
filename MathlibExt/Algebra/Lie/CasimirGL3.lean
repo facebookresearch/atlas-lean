@@ -280,6 +280,37 @@ private theorem casimir2_mul_casimir3 (hE : IsBracketFamily E) :
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [mul_assoc, mul_casimir3 hE j i, ← mul_assoc, mul_casimir3 hE i j, mul_assoc]
 
+
+/-- The first Casimir commutes with every generator of a bracket family. -/
+public theorem casimir1_commute_generator (hE : IsBracketFamily E) (i j : Fin 3) :
+    Commute (casimir1 E) (E i j) :=
+  (mul_casimir1 hE i j).symm
+
+/-- The second Casimir commutes with every generator of a bracket family. -/
+public theorem casimir2_commute_generator (hE : IsBracketFamily E) (i j : Fin 3) :
+    Commute (casimir2 E) (E i j) :=
+  (mul_casimir2 hE i j).symm
+
+/-- The third Casimir commutes with every generator of a bracket family. -/
+public theorem casimir3_commute_generator (hE : IsBracketFamily E) (i j : Fin 3) :
+    Commute (casimir3 E) (E i j) :=
+  (mul_casimir3 hE i j).symm
+
+/-- The first and second Casimirs of a bracket family commute. -/
+public theorem commute_casimir1_casimir2 (hE : IsBracketFamily E) :
+    Commute (casimir1 E) (casimir2 E) :=
+  casimir1_mul_casimir2 hE
+
+/-- The first and third Casimirs of a bracket family commute. -/
+public theorem commute_casimir1_casimir3 (hE : IsBracketFamily E) :
+    Commute (casimir1 E) (casimir3 E) :=
+  casimir1_mul_casimir3 hE
+
+/-- The second and third Casimirs of a bracket family commute. -/
+public theorem commute_casimir2_casimir3 (hE : IsBracketFamily E) :
+    Commute (casimir2 E) (casimir3 E) :=
+  casimir2_mul_casimir3 hE
+
 /-- The Casimir elements of a `𝔤𝔩₃` bracket family commute with every
 generator of the family, and they commute with each other. In the motivating
 example the generators are the archimedean derivative operators on smooth
@@ -293,9 +324,10 @@ public theorem casimir_comm_and_generator_comm (hE : IsBracketFamily E) :
       casimir1 E * casimir2 E = casimir2 E * casimir1 E ∧
         casimir1 E * casimir3 E = casimir3 E * casimir1 E ∧
           casimir2 E * casimir3 E = casimir3 E * casimir2 E :=
-  ⟨fun i j => ⟨(mul_casimir1 hE i j).symm, (mul_casimir2 hE i j).symm,
-      (mul_casimir3 hE i j).symm⟩,
-    casimir1_mul_casimir2 hE, casimir1_mul_casimir3 hE,
-    casimir2_mul_casimir3 hE⟩
+  ⟨fun i j => ⟨(casimir1_commute_generator hE i j).eq,
+      (casimir2_commute_generator hE i j).eq,
+      (casimir3_commute_generator hE i j).eq⟩,
+    (commute_casimir1_casimir2 hE).eq, (commute_casimir1_casimir3 hE).eq,
+    (commute_casimir2_casimir3 hE).eq⟩
 
 end CasimirGL3
