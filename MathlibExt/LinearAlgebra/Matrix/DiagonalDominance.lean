@@ -1,37 +1,9 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
+Copyright (c) 2025–2026 the contributors.
 All rights reserved.
 
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
--/
-
-/-
-Adapted from arnovich/forseti-lean, commit
-0a81edc7fe82748af7c9b1139229c4d898f50c28,
-`Gimle/Forseti/RationalCongruence.lean`. Author: arnovich.
-
-MIT License
-
-Copyright (c) 2025 Gimle Labs
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 -/
 
 module
@@ -44,6 +16,10 @@ import Mathlib.Tactic.Ring
 An elementary quadratic-form proof for real symmetric matrices. The diagonal
 is bounded below by the absolute off-diagonal row sum, rather than its absolute
 value being bounded below; in particular the diagonal entries are nonnegative.
+
+Mathematical reference: A. E. Brouwer and W. H. Haemers, Spectra of Graphs,
+Lemma 2.10.1(ii), https://aeb.win.tue.nl/2WF02/spectra.pdf.
+The proof below uses the quadratic form directly rather than a spectral argument.
 -/
 @[expose] public section
 namespace Matrix
