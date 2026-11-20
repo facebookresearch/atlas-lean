@@ -43,6 +43,7 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Deligne
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Basic
+public import Mathlib.LinearAlgebra.UnitaryGroup
 
 import Mathlib.Analysis.Analytic.IsolatedZeros
 import Mathlib.Tactic.FieldSimp
@@ -157,264 +158,79 @@ theorem epsilonFactor_dual (P : RealArchParam) : P.dual.epsilonFactor = P.epsilo
 end RealArchParam
 end LanglandsTunnell
 
-namespace AutomorphicForm.WindowedSiegel
-
-variable {K : Type*} [NormedField K]
-
-variable {K : Type*} [NormedField K]
-
-def IsRowIsometry (k : GL (Fin 2) K) : Prop :=
-  ‖(k : Matrix (Fin 2) (Fin 2) K).det‖ = 1 ∧
-    ∀ x y : K,
-      ‖x * (k : Matrix (Fin 2) (Fin 2) K) 0 0 + y * (k : Matrix (Fin 2) (Fin 2) K) 1 0‖ ^ 2
-        + ‖x * (k : Matrix (Fin 2) (Fin 2) K) 0 1
-            + y * (k : Matrix (Fin 2) (Fin 2) K) 1 1‖ ^ 2
-      = ‖x‖ ^ 2 + ‖y‖ ^ 2
-
-theorem isRowIsometry_one : IsRowIsometry (1 : GL (Fin 2) K) := by
-  constructor
-  · simp
-  · intro x y
-    have h00 : (1 : Matrix (Fin 2) (Fin 2) K) 0 0 = 1 := Matrix.one_apply_eq 0
-    have h11 : (1 : Matrix (Fin 2) (Fin 2) K) 1 1 = 1 := Matrix.one_apply_eq 1
-    have h10 : (1 : Matrix (Fin 2) (Fin 2) K) 1 0 = 0 := Matrix.one_apply_ne (by decide)
-    have h01 : (1 : Matrix (Fin 2) (Fin 2) K) 0 1 = 0 := Matrix.one_apply_ne (by decide)
-    show ‖x * (1 : Matrix (Fin 2) (Fin 2) K) 0 0 + y * (1 : Matrix (Fin 2) (Fin 2) K) 1 0‖ ^ 2
-        + ‖x * (1 : Matrix (Fin 2) (Fin 2) K) 0 1 + y * (1 : Matrix (Fin 2) (Fin 2) K) 1 1‖ ^ 2
-      = ‖x‖ ^ 2 + ‖y‖ ^ 2
-    rw [h00, h11, h10, h01, mul_one, mul_one, mul_zero, mul_zero, add_zero, zero_add]
-
-theorem IsRowIsometry.mul {k k' : GL (Fin 2) K} (hk : IsRowIsometry k)
-    (hk' : IsRowIsometry k') : IsRowIsometry (k * k') := by
-  obtain ⟨hdet, hrow⟩ := hk
-  obtain ⟨hdet', hrow'⟩ := hk'
-  have hcoe : ((k * k' : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K)
-      = (k : Matrix (Fin 2) (Fin 2) K) * (k' : Matrix (Fin 2) (Fin 2) K) := rfl
-  constructor
-  · rw [hcoe, Matrix.det_mul, norm_mul, hdet, hdet', one_mul]
-  · intro x y
-    have hentry : ∀ i : Fin 2,
-        x * ((k : Matrix (Fin 2) (Fin 2) K) * (k' : Matrix (Fin 2) (Fin 2) K)) 0 i
-          + y * ((k : Matrix (Fin 2) (Fin 2) K) * (k' : Matrix (Fin 2) (Fin 2) K)) 1 i
-        = (x * (k : Matrix (Fin 2) (Fin 2) K) 0 0 + y * (k : Matrix (Fin 2) (Fin 2) K) 1 0)
-              * (k' : Matrix (Fin 2) (Fin 2) K) 0 i
-          + (x * (k : Matrix (Fin 2) (Fin 2) K) 0 1 + y * (k : Matrix (Fin 2) (Fin 2) K) 1 1)
-              * (k' : Matrix (Fin 2) (Fin 2) K) 1 i := by
-      intro i
-      simp only [Matrix.mul_apply, Fin.sum_univ_two]
-      ring
-    show ‖x * ((k * k' : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) 0 0
-          + y * ((k * k' : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) 1 0‖ ^ 2
-        + ‖x * ((k * k' : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) 0 1
-            + y * ((k * k' : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) 1 1‖ ^ 2
-      = ‖x‖ ^ 2 + ‖y‖ ^ 2
-    rw [hcoe, hentry 0, hentry 1,
-      hrow' (x * (k : Matrix (Fin 2) (Fin 2) K) 0 0 + y * (k : Matrix (Fin 2) (Fin 2) K) 1 0)
-        (x * (k : Matrix (Fin 2) (Fin 2) K) 0 1 + y * (k : Matrix (Fin 2) (Fin 2) K) 1 1),
-      hrow x y]
-
-theorem IsRowIsometry.inv {k : GL (Fin 2) K} (hk : IsRowIsometry k) :
-    IsRowIsometry k⁻¹ := by
-  obtain ⟨hdet, hrow⟩ := hk
-  have hcoe : ((k⁻¹ : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K)
-      * ((k : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) = 1 := Units.inv_mul k
-  constructor
-  · have hd : ((k⁻¹ : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K).det
-        * ((k : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K).det = 1 := by
-      rw [← Matrix.det_mul, hcoe, Matrix.det_one]
-    have hnorm := congrArg norm hd
-    rwa [norm_mul, hdet, mul_one, norm_one] at hnorm
-  · intro x y
-    set A := ((k⁻¹ : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) with hA
-    set B := ((k : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) with hB
-    have entry : ∀ i j : Fin 2,
-        A i 0 * B 0 j + A i 1 * B 1 j = (1 : Matrix (Fin 2) (Fin 2) K) i j := by
-      intro i j
-      calc A i 0 * B 0 j + A i 1 * B 1 j
-          = (A * B) i j := by rw [Matrix.mul_apply, Fin.sum_univ_two]
-        _ = (1 : Matrix (Fin 2) (Fin 2) K) i j := by rw [hcoe]
-    have e00 := entry 0 0
-    have e01 := entry 0 1
-    have e10 := entry 1 0
-    have e11 := entry 1 1
-    rw [Matrix.one_apply_eq] at e00 e11
-    rw [Matrix.one_apply_ne (show (0 : Fin 2) ≠ 1 by decide)] at e01
-    rw [Matrix.one_apply_ne (show (1 : Fin 2) ≠ 0 by decide)] at e10
-    have hwx : (x * A 0 0 + y * A 1 0) * B 0 0 + (x * A 0 1 + y * A 1 1) * B 1 0 = x := by
-      calc (x * A 0 0 + y * A 1 0) * B 0 0 + (x * A 0 1 + y * A 1 1) * B 1 0
-          = x * (A 0 0 * B 0 0 + A 0 1 * B 1 0) + y * (A 1 0 * B 0 0 + A 1 1 * B 1 0) := by
-            ring
-        _ = x * 1 + y * 0 := by rw [e00, e10]
-        _ = x := by ring
-    have hwy : (x * A 0 0 + y * A 1 0) * B 0 1 + (x * A 0 1 + y * A 1 1) * B 1 1 = y := by
-      calc (x * A 0 0 + y * A 1 0) * B 0 1 + (x * A 0 1 + y * A 1 1) * B 1 1
-          = x * (A 0 0 * B 0 1 + A 0 1 * B 1 1) + y * (A 1 0 * B 0 1 + A 1 1 * B 1 1) := by
-            ring
-        _ = x * 0 + y * 1 := by rw [e01, e11]
-        _ = y := by ring
-    have key := hrow (x * A 0 0 + y * A 1 0) (x * A 0 1 + y * A 1 1)
-    rw [hwx, hwy] at key
-    exact key.symm
-
-variable (K)
-
-def rowIsometrySubgroup : Subgroup (GL (Fin 2) K) where
-  carrier := {k : GL (Fin 2) K | IsRowIsometry k}
-  one_mem' := isRowIsometry_one
-  mul_mem' := fun hk hk' => IsRowIsometry.mul hk hk'
-  inv_mem' := fun hk => IsRowIsometry.inv hk
-
-variable {K}
-
-theorem mem_rowIsometrySubgroup_iff {k : GL (Fin 2) K} :
-    k ∈ rowIsometrySubgroup K ↔ IsRowIsometry k := Iff.rfl
-theorem weyl_mem_rowIsometrySubgroup :
-    (Matrix.GeneralLinearGroup.mk'' (!![0, 1; -1, 0] : Matrix (Fin 2) (Fin 2) K)
-      (by
-        rw [Matrix.det_fin_two_of]
-        norm_num) : GL (Fin 2) K) ∈ rowIsometrySubgroup K := by
-  constructor
-  · show ‖(!![0, 1; -1, 0] : Matrix (Fin 2) (Fin 2) K).det‖ = 1
-    rw [Matrix.det_fin_two_of]
-    norm_num
-  · intro x y
-    have h00 : (!![0, 1; -1, 0] : Matrix (Fin 2) (Fin 2) K) 0 0 = 0 := rfl
-    have h01 : (!![0, 1; -1, 0] : Matrix (Fin 2) (Fin 2) K) 0 1 = 1 := rfl
-    have h10 : (!![0, 1; -1, 0] : Matrix (Fin 2) (Fin 2) K) 1 0 = -1 := rfl
-    have h11 : (!![0, 1; -1, 0] : Matrix (Fin 2) (Fin 2) K) 1 1 = 0 := rfl
-    show ‖x * (!![0, 1; -1, 0] : Matrix (Fin 2) (Fin 2) K) 0 0
-          + y * (!![0, 1; -1, 0] : Matrix (Fin 2) (Fin 2) K) 1 0‖ ^ 2
-        + ‖x * (!![0, 1; -1, 0] : Matrix (Fin 2) (Fin 2) K) 0 1
-            + y * (!![0, 1; -1, 0] : Matrix (Fin 2) (Fin 2) K) 1 1‖ ^ 2
-      = ‖x‖ ^ 2 + ‖y‖ ^ 2
-    rw [h00, h01, h10, h11, mul_zero, mul_neg_one, zero_add, mul_one, mul_zero, add_zero,
-      norm_neg]
-    ring
-
-end AutomorphicForm.WindowedSiegel
-
 namespace AutomorphicForm
 
-open WindowedSiegel
+/-- The first row of a special orthogonal `2 × 2` real matrix, as a
+complex number. -/
+def firstRowℂ (k : Matrix.specialOrthogonalGroup (Fin 2) ℝ) : ℂ :=
+  ⟨k.1 0 0, k.1 0 1⟩
 
+theorem specialOrthogonal_entries
+    (k : Matrix.specialOrthogonalGroup (Fin 2) ℝ) :
+    k.1 1 0 = -k.1 0 1 ∧ k.1 1 1 = k.1 0 0 ∧
+      k.1 0 0 ^ 2 + k.1 0 1 ^ 2 = 1 := by
+  have hk := Matrix.mem_specialOrthogonalGroup_fin_two_iff.mp k.2
+  exact ⟨by linarith [hk.2.1], hk.1.symm, hk.2.2⟩
 
-variable (K : Type*) [NormedField K]
-
-def rowIsometrySubgroup₀ : Subgroup (GL (Fin 2) K) :=
-  (Matrix.GeneralLinearGroup.det).ker ⊓ rowIsometrySubgroup K
-
-theorem mem_rowIsometrySubgroup₀_iff {k : GL (Fin 2) K} :
-    k ∈ rowIsometrySubgroup₀ K ↔
-      (k : Matrix (Fin 2) (Fin 2) K).det = 1 ∧ IsRowIsometry k := by
-  unfold rowIsometrySubgroup₀
-  constructor
-  · rintro ⟨hd, hi⟩
-    exact ⟨Units.val_eq_one.mpr hd, hi⟩
-  · rintro ⟨hd, hi⟩
-    refine ⟨?_, hi⟩
-    ext; exact hd
-
-theorem rowIsometrySubgroup₀_le :
-    rowIsometrySubgroup₀ K ≤ rowIsometrySubgroup K := inf_le_right
-
-theorem weyl_mem_rowIsometrySubgroup₀ :
-    (Matrix.GeneralLinearGroup.mk'' (!![0, 1; -1, 0] : Matrix (Fin 2) (Fin 2) K)
-      (by rw [Matrix.det_fin_two_of]; norm_num) : GL (Fin 2) K)
-      ∈ rowIsometrySubgroup₀ K := by
-  rw [mem_rowIsometrySubgroup₀_iff]
-  refine ⟨?_, weyl_mem_rowIsometrySubgroup⟩
-  show (!![0, 1; -1, 0] : Matrix (Fin 2) (Fin 2) K).det = 1
-  rw [Matrix.det_fin_two_of]; ring
-
-
-
-theorem entries_of_mem_rowIsometrySubgroup₀ {k : GL (Fin 2) ℝ}
-    (hk : k ∈ rowIsometrySubgroup₀ ℝ) :
-    let a := (k : Matrix (Fin 2) (Fin 2) ℝ) 0 0
-    let b := (k : Matrix (Fin 2) (Fin 2) ℝ) 0 1
-    (k : Matrix (Fin 2) (Fin 2) ℝ) 1 0 = -b ∧
-      (k : Matrix (Fin 2) (Fin 2) ℝ) 1 1 = a ∧ a ^ 2 + b ^ 2 = 1 := by
-  obtain ⟨hd, hdn, hiso⟩ := (mem_rowIsometrySubgroup₀_iff ℝ).mp hk
-  set a := (k : Matrix (Fin 2) (Fin 2) ℝ) 0 0
-  set b := (k : Matrix (Fin 2) (Fin 2) ℝ) 0 1
-  set c := (k : Matrix (Fin 2) (Fin 2) ℝ) 1 0
-  set d := (k : Matrix (Fin 2) (Fin 2) ℝ) 1 1
-  have h10 : a ^ 2 + b ^ 2 = 1 := by
-    have := hiso 1 0
-    simp only [one_mul, zero_mul, add_zero, Real.norm_eq_abs, sq_abs, norm_one,
-      one_pow, norm_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
-      zero_pow] at this
-    linarith
-  have h01 : c ^ 2 + d ^ 2 = 1 := by
-    have := hiso 0 1
-    simp only [zero_mul, one_mul, zero_add, Real.norm_eq_abs, sq_abs, norm_one,
-      one_pow, norm_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
-      zero_pow] at this
-    linarith
-  have h11 : a * c + b * d = 0 := by
-    have h1 := hiso 1 1
-    simp only [one_mul, Real.norm_eq_abs, sq_abs, norm_one, one_pow] at h1
-    nlinarith [h10, h01]
-  have hdet : a * d - b * c = 1 := by
-    have := hd; rw [Matrix.det_fin_two] at this; linarith
-
-  refine ⟨?_, ?_, h10⟩
-  · nlinarith [sq_nonneg (a - d), sq_nonneg (b + c), h10, h01, h11, hdet]
-  · nlinarith [sq_nonneg (a - d), sq_nonneg (b + c), h10, h01, h11, hdet]
-
-def firstRowℂ (k : GL (Fin 2) ℝ) : ℂ :=
-  ⟨(k : Matrix (Fin 2) (Fin 2) ℝ) 0 0, (k : Matrix (Fin 2) (Fin 2) ℝ) 0 1⟩
-
-theorem normSq_firstRowℂ_of_mem {k : GL (Fin 2) ℝ}
-    (hk : k ∈ rowIsometrySubgroup₀ ℝ) :
+theorem firstRowℂ_normSq
+    (k : Matrix.specialOrthogonalGroup (Fin 2) ℝ) :
     Complex.normSq (firstRowℂ k) = 1 := by
-  obtain ⟨_, _, hab⟩ := entries_of_mem_rowIsometrySubgroup₀ hk
+  have hk := (specialOrthogonal_entries k).2.2
   simp only [firstRowℂ, Complex.normSq_mk]
   nlinarith
 
-theorem firstRowℂ_ne_zero_of_mem {k : GL (Fin 2) ℝ}
-    (hk : k ∈ rowIsometrySubgroup₀ ℝ) :
-    firstRowℂ k ≠ 0 := fun h0 => by
-  have h := normSq_firstRowℂ_of_mem hk
-  rw [h0, map_zero] at h
-  exact one_ne_zero h.symm
+theorem firstRowℂ_ne_zero
+    (k : Matrix.specialOrthogonalGroup (Fin 2) ℝ) : firstRowℂ k ≠ 0 :=
+  fun h0 => by
+    have h := firstRowℂ_normSq k
+    rw [h0, map_zero] at h
+    exact one_ne_zero h.symm
 
-theorem firstRowℂ_mul_of_mem {k k' : GL (Fin 2) ℝ}
-    (hk' : k' ∈ rowIsometrySubgroup₀ ℝ) :
+theorem firstRowℂ_mul
+    (k k' : Matrix.specialOrthogonalGroup (Fin 2) ℝ) :
     firstRowℂ (k * k') = firstRowℂ k * firstRowℂ k' := by
-  obtain ⟨hc', hd', _⟩ := entries_of_mem_rowIsometrySubgroup₀ hk'
+  obtain ⟨h10', h11', -⟩ := specialOrthogonal_entries k'
   apply Complex.ext
-  · show ((k * k' : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) 0 0 = _
-    rw [Units.val_mul, Matrix.mul_apply, Fin.sum_univ_two, hc',
-      Complex.mul_re, firstRowℂ, firstRowℂ]
+  · show (k * k').1 0 0 = (firstRowℂ k * firstRowℂ k').re
+    have hmul : (k * k').1 = k.1 * k'.1 := rfl
+    rw [hmul, Matrix.mul_apply, Fin.sum_univ_two, h10', Complex.mul_re]
+    simp only [firstRowℂ]
     ring
-  · show ((k * k' : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) 0 1 = _
-    rw [Units.val_mul, Matrix.mul_apply, Fin.sum_univ_two, hd',
-      Complex.mul_im, firstRowℂ, firstRowℂ]
+  · show (k * k').1 0 1 = (firstRowℂ k * firstRowℂ k').im
+    have hmul : (k * k').1 = k.1 * k'.1 := rfl
+    rw [hmul, Matrix.mul_apply, Fin.sum_univ_two, h11', Complex.mul_im]
+    simp only [firstRowℂ]
 
-noncomputable def archWeightOneℝ : rowIsometrySubgroup₀ ℝ →* ℂˣ where
-  toFun k := Units.mk0 (firstRowℂ (k : GL (Fin 2) ℝ))
-    (firstRowℂ_ne_zero_of_mem k.2)
-  map_one' := Units.ext <| Complex.ext (by simp [firstRowℂ]) (by simp [firstRowℂ])
+/-- The weight-one character of the special orthogonal group, given by
+its first row. -/
+noncomputable def archWeightOneℝ :
+    Matrix.specialOrthogonalGroup (Fin 2) ℝ →* ℂˣ where
+  toFun k := Units.mk0 (firstRowℂ k) (firstRowℂ_ne_zero k)
+  map_one' := Units.ext <| Complex.ext (by simp [firstRowℂ]) (by
+    simp [firstRowℂ])
   map_mul' k k' := by
     ext
-    exact firstRowℂ_mul_of_mem k'.2
+    exact firstRowℂ_mul k k'
 
-noncomputable def archWeightCharℝ (n : ℤ) : rowIsometrySubgroup₀ ℝ →* ℂˣ :=
+/-- The weight-`n` character of the special orthogonal group. -/
+noncomputable def archWeightCharℝ (n : ℤ) :
+    Matrix.specialOrthogonalGroup (Fin 2) ℝ →* ℂˣ :=
   (zpowGroupHom n).comp archWeightOneℝ
 
-theorem archWeightOneℝ_weyl :
-    (archWeightOneℝ
-      ⟨_, weyl_mem_rowIsometrySubgroup₀ ℝ⟩ : ℂ) = ⟨0, 1⟩ := by
-  show firstRowℂ _ = (⟨0, 1⟩ : ℂ)
-  apply Complex.ext <;> simp [firstRowℂ]
+/-- A special orthogonal matrix, viewed as an element of the general
+linear group through its underlying matrix. -/
+def specialOrthogonalToGL
+    (k : Matrix.specialOrthogonalGroup (Fin 2) ℝ) : GL (Fin 2) ℝ :=
+  Matrix.GeneralLinearGroup.mkOfDetNeZero k.1 (by
+    rw [(Matrix.mem_specialOrthogonalGroup_iff.mp k.2).2]
+    exact one_ne_zero)
 
-theorem archWeightOneℝ_ne_one :
-    archWeightOneℝ ⟨_, weyl_mem_rowIsometrySubgroup₀ ℝ⟩ ≠ 1 := by
-  intro h
-  have : (⟨0, 1⟩ : ℂ) = 1 := archWeightOneℝ_weyl ▸ (Units.val_eq_one.mpr h)
-  simp [Complex.ext_iff] at this
-
+@[simp]
+theorem specialOrthogonalToGL_coe
+    (k : Matrix.specialOrthogonalGroup (Fin 2) ℝ) :
+    ((specialOrthogonalToGL k : GL (Fin 2) ℝ) :
+      Matrix (Fin 2) (Fin 2) ℝ) = k.1 :=
+  rfl
 
 end AutomorphicForm
 
@@ -523,26 +339,19 @@ private theorem det_rotM {c d : ℝ} (h : c ≠ 0 ∨ d ≠ 0) : (rotM c d).det 
   field_simp
   linarith [hr2]
 
-private noncomputable def rotGL {c d : ℝ} (h : c ≠ 0 ∨ d ≠ 0) : GL (Fin 2) ℝ :=
-  Matrix.GeneralLinearGroup.mkOfDetNeZero (rotM c d) (by rw [det_rotM h]; exact one_ne_zero)
-
-private theorem rotGL_coe {c d : ℝ} (h : c ≠ 0 ∨ d ≠ 0) : ((rotGL h : GL (Fin 2) ℝ) : Matrix (Fin
-  2) (Fin 2) ℝ) = rotM c d := rfl
-
-private theorem rotGL_mem {c d : ℝ} (h : c ≠ 0 ∨ d ≠ 0) : rotGL h ∈ rowIsometrySubgroup₀ ℝ := by
-  have hr := sqrt_pos_of h
-  have hr2 : Real.sqrt (c ^ 2 + d ^ 2) ^ 2 = c ^ 2 + d ^ 2 := Real.sq_sqrt (by positivity)
-  rw [mem_rowIsometrySubgroup₀_iff]
-  refine ⟨by rw [rotGL_coe, det_rotM h], ?_, ?_⟩
-  · rw [rotGL_coe, det_rotM h, norm_one]
-  · intro x y
-    simp only [rotGL_coe, rotM, Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero,
-      Matrix.cons_val_one,
-      Matrix.empty_val', Matrix.cons_val_fin_one, Real.norm_eq_abs, sq_abs]
+private def rotSO {c d : ℝ} (h : c ≠ 0 ∨ d ≠ 0) :
+    Matrix.specialOrthogonalGroup (Fin 2) ℝ :=
+  ⟨rotM c d, by
+    have hs : 0 < Real.sqrt (c ^ 2 + d ^ 2) := sqrt_pos_of h
+    have hr2 : Real.sqrt (c ^ 2 + d ^ 2) ^ 2 = c ^ 2 + d ^ 2 :=
+      Real.sq_sqrt (by positivity)
+    rw [rotM, Matrix.of_mem_specialOrthogonalGroup_fin_two_iff]
+    refine ⟨rfl, by rw [neg_div], ?_⟩
     field_simp
-    linear_combination (-(x ^ 2 + y ^ 2)) * hr2
+    linarith [hr2]⟩
 
-private theorem archWeightCharℝ_zero (r : rowIsometrySubgroup₀ ℝ) : ((archWeightCharℝ 0 r : ℂˣ) :
+private theorem archWeightCharℝ_zero (r : Matrix.specialOrthogonalGroup (Fin 2) ℝ) :
+    ((archWeightCharℝ 0 r : ℂˣ) :
   ℂ) = 1 := by
   show ((((archWeightOneℝ r) ^ (0 : ℤ)) : ℂˣ) : ℂ) = 1
   rw [zpow_zero, Units.val_one]
@@ -566,8 +375,8 @@ private theorem continuousOn_torus {P : RealArchParam} (D : ArchDatumR P) :
   rfl
 
 private theorem exists_torus_ne_zero {P : RealArchParam} (D : ArchDatumR P)
-    (hDW : ∀ (r : rowIsometrySubgroup₀ ℝ) (x : GL (Fin 2) ℝ),
-        D.W ((x * (r : GL (Fin 2) ℝ) : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) =
+    (hDW : ∀ (r : Matrix.specialOrthogonalGroup (Fin 2) ℝ) (x : GL (Fin 2) ℝ),
+        D.W ((x * specialOrthogonalToGL r : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) =
           (archWeightCharℝ 0 r : ℂ) * D.W (x : Matrix (Fin 2) (Fin 2) ℝ))
     (hDnz : ∃ g : GL (Fin 2) ℝ, D.W (g : Matrix (Fin 2) (Fin 2) ℝ) ≠ 0) :
     ∃ τ : ℝ, τ ≠ 0 ∧ D.W (diagOne τ) ≠ 0 := by
@@ -613,7 +422,7 @@ private theorem exists_torus_ne_zero {P : RealArchParam} (D : ArchDatumR P)
   have hXg_coe : ((Xg : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) = Xm := rfl
 
   have h1 : D.W G = D.W Xm := by
-    have h := hDW ⟨rotGL hcd, rotGL_mem hcd⟩ Xg
+    have h := hDW (rotSO hcd) Xg
     rw [archWeightCharℝ_zero, one_mul, hXg_coe] at h
     rw [← h]
     congr 1
@@ -681,16 +490,16 @@ theorem ArchDatumR.exists_lt_mellin_W_diagOne_ne_zero_of_weightZero_of_parity
     {P₂ : RealArchParam} (D : ArchDatumR P₂)
     (u₁ u₂ : ℂ) (c : ZMod 2) (hP : P₂ = RealArchParam.principal u₁ c u₂ c)
     (hpar : ∀ τ : ℝ, τ ≠ 0 → D.W (ArchR.diagOne (-τ)) = (-1 : ℂ) ^ c.val * D.W (ArchR.diagOne τ))
-    (hDW0 : ∀ (r : rowIsometrySubgroup₀ ℝ) (x : GL (Fin 2) ℝ),
-        D.W ((x * (r : GL (Fin 2) ℝ) : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) = D.W (x : Matrix
-          (Fin 2) (Fin 2) ℝ))
+    (hDW0 : ∀ (r : Matrix.specialOrthogonalGroup (Fin 2) ℝ) (x : GL (Fin 2) ℝ),
+        D.W ((x * specialOrthogonalToGL r : GL (Fin 2) ℝ) :
+          Matrix (Fin 2) (Fin 2) ℝ) = D.W (x : Matrix (Fin 2) (Fin 2) ℝ))
     (hDnz : ∃ g : GL (Fin 2) ℝ, D.W (g : Matrix (Fin 2) (Fin 2) ℝ) ≠ 0) (x₀ : ℝ) :
     ∃ x : ℝ, x₀ < x ∧ MellinConvergent (fun τ : ℝ => D.W (ArchR.diagOne τ)) (x : ℂ) ∧
       mellin (fun τ : ℝ => D.W (ArchR.diagOne τ)) (x : ℂ) ≠ 0 := by
   set f : ℝ → ℂ := fun τ => D.W (diagOne τ) with hf
 
-  have hDW' : ∀ (r : rowIsometrySubgroup₀ ℝ) (x : GL (Fin 2) ℝ),
-      D.W ((x * (r : GL (Fin 2) ℝ) : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) =
+  have hDW' : ∀ (r : Matrix.specialOrthogonalGroup (Fin 2) ℝ) (x : GL (Fin 2) ℝ),
+      D.W ((x * specialOrthogonalToGL r : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) =
         (archWeightCharℝ 0 r : ℂ) * D.W (x : Matrix (Fin 2) (Fin 2) ℝ) := fun r x => by
     rw [hDW0, archWeightCharℝ_zero, one_mul]
   obtain ⟨τ₀, hτ₀, hne⟩ := exists_torus_ne_zero D hDW' hDnz

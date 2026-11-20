@@ -19,8 +19,8 @@ example {P₂ : RealArchParam} (D : ArchDatumR P₂)
     (u₁ u₂ : ℂ) (c : ZMod 2) (hP : P₂ = RealArchParam.principal u₁ c u₂ c)
     (hpar : ∀ τ : ℝ, τ ≠ 0 →
       D.W (ArchR.diagOne (-τ)) = (-1 : ℂ) ^ c.val * D.W (ArchR.diagOne τ))
-    (hDW0 : ∀ (r : rowIsometrySubgroup₀ ℝ) (x : GL (Fin 2) ℝ),
-        D.W ((x * (r : GL (Fin 2) ℝ) : GL (Fin 2) ℝ) :
+    (hDW0 : ∀ (r : Matrix.specialOrthogonalGroup (Fin 2) ℝ) (x : GL (Fin 2) ℝ),
+        D.W ((x * specialOrthogonalToGL r : GL (Fin 2) ℝ) :
           Matrix (Fin 2) (Fin 2) ℝ) = D.W (x : Matrix (Fin 2) (Fin 2) ℝ))
     (hDnz : ∃ g : GL (Fin 2) ℝ, D.W (g : Matrix (Fin 2) (Fin 2) ℝ) ≠ 0)
     (x₀ : ℝ) :
