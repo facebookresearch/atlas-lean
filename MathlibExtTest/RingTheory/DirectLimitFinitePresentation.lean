@@ -30,14 +30,15 @@ example {ι : Type u} [Preorder ι] [Nonempty ι] [IsDirectedOrder ι]
   Algebra.exists_finitePresentation_tensorProduct_algEquiv_of_isDirectLimit
     G f R hR A
 
--- The direct-limit hypothesis is what supplies a stage: with no cocone
--- compatibility there is no reason for the coefficients of a presentation
--- to lie in the range of a single stage map.  This records that the class
--- unfolds to exactly surjectivity, the stated injectivity up to a later
--- stage, and compatibility.
+-- This records that the direct-limit class unfolds to exactly
+-- surjectivity, the stated injectivity up to a later stage, and
+-- compatibility: all three clauses are exercised here.
 example {ι : Type*} [Preorder ι] {M : ι → Type*} {P : Type*}
     (f : (i j : ι) → (h : i ≤ j) → M i → M j) (g : ∀ i, M i → P)
     [DirectedSystem M f] (h : IsDirectLimit f g) :
     (∀ m : P, ∃ i, ∃ mi : M i, g i mi = m) ∧
+      (∀ i j, ∀ mi : M i, ∀ mj : M j, g i mi = g j mj →
+        ∃ (k : ι) (hik : i ≤ k) (hjk : j ≤ k),
+          f i k hik mi = f j k hjk mj) ∧
       (∀ i j hij x, g j (f i j hij x) = g i x) :=
-  ⟨h.surj, h.compatibility⟩
+  ⟨h.surj, h.inj, h.compatibility⟩
