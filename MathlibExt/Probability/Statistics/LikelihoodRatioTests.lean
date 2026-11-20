@@ -260,9 +260,10 @@ private theorem aemeasurable_logLikelihood_sub {p : ℝ → 𝓧 → ℝ} {θ₀
     ((Real.measurable_log.comp hp0).comp_aemeasurable (hX i))
 
 open Set in
-/-- Second-order Taylor bound at the fixed point `θ₀` with a third-derivative bound `m` on a
-ball: `|f θ₀ - f θ - (θ₀ - θ) f'(θ) - (θ₀ - θ)² / 2 · f''(θ₀)| ≤ m |θ - θ₀|³`. -/
-private theorem abs_taylor_two_le {f f₁ f₂ f₃ : ℝ → ℝ} {θ₀ δ θ m : ℝ}
+/-- If `f`, `f₁`, `f₂` have derivatives `f₁`, `f₂`, `f₃` on `ball θ₀ δ` and `|f₃| ≤ m` there, then
+for `θ` in the ball, `|f θ₀ - f θ - (θ₀ - θ) * f₁ θ - (θ₀ - θ) ^ 2 / 2 * f₂ θ₀| ≤ m * |θ - θ₀| ^ 3`.
+-/
+theorem abs_taylor_two_le {f f₁ f₂ f₃ : ℝ → ℝ} {θ₀ δ θ m : ℝ}
     (hf : ∀ t ∈ Metric.ball θ₀ δ, HasDerivAt f (f₁ t) t)
     (hf₁ : ∀ t ∈ Metric.ball θ₀ δ, HasDerivAt f₁ (f₂ t) t)
     (hf₂ : ∀ t ∈ Metric.ball θ₀ δ, HasDerivAt f₂ (f₃ t) t)

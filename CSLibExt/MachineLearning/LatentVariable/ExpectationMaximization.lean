@@ -180,4 +180,139 @@ theorem logLik_iterate_monotone [Nonempty Z] (hp : ∀ θ x z, 0 < p θ x z) (xs
   simp only [Function.iterate_succ_apply']
   exact logLik_le_of_emQ_le hp xs (hM _)
 
+/-! ## Positive-weight EM step for weight-times-likelihood joints -/
+
+/-- Strictly positive weights summing to one. -/
+def PosWeights (Z : Type*) [Fintype Z] : Type _ :=
+  {w : Z → ℝ // (∀ z, 0 < w z) ∧ ∑ z, w z = 1}
+
+/-- The posterior-average weight update `z ↦ (1 / N) ∑ n, p_θ(z | xₙ)` of a joint model `p`,
+as a raw (unconstrained) weight function. -/
+noncomputable def weightUpdate {Θ X Z : Type*} [Fintype Z] {N : ℕ} (p : Θ → X → Z → ℝ)
+    (xs : Fin N → X) (θ : Θ) (z : Z) : ℝ :=
+  (∑ n, posterior p θ (xs n) z) / N
+
+/-- For a strictly positive joint and at least one data point, the posterior-average update is
+strictly positive and sums to one. -/
+theorem weightUpdate_valid {Θ X Z : Type*} [Fintype Z] [Nonempty Z] {N : ℕ}
+    {p : Θ → X → Z → ℝ} (hp : ∀ θ x z, 0 < p θ x z) (xs : Fin N → X) (hN : 0 < N) (θ : Θ) :
+    (∀ z, 0 < weightUpdate p xs θ z) ∧ ∑ z, weightUpdate p xs θ z = 1 := by
+  have hm : ∀ x, 0 < marginal p θ x := fun x =>
+    Finset.sum_pos (fun z _ => hp θ x z) Finset.univ_nonempty
+  have hNr : (0 : ℝ) < N := Nat.cast_pos.mpr hN
+  have hsum : ∀ x, ∑ z, posterior p θ x z = 1 := fun x => by
+    simp only [posterior]
+    rw [← Finset.sum_div]
+    exact div_self (hm x).ne'
+  refine ⟨fun z => div_pos (Finset.sum_pos (fun n _ => div_pos (hp θ _ z) (hm _))
+    ⟨⟨0, hN⟩, Finset.mem_univ _⟩) hNr, ?_⟩
+  simp only [weightUpdate]
+  rw [← Finset.sum_div, Finset.sum_comm]
+  simp only [hsum, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, mul_one]
+  exact div_self hNr.ne'
+
+/-- The joint `w z * lik x z` for a fixed likelihood `lik`. -/
+noncomputable def weightJoint {X Z : Type*} [Fintype Z] (lik : X → Z → ℝ)
+    (w : PosWeights Z) (x : X) (z : Z) : ℝ :=
+  w.1 z * lik x z
+
+/-- The weight-times-likelihood joint is positive for positive likelihoods. -/
+theorem weightJoint_pos {X Z : Type*} [Fintype Z] {lik : X → Z → ℝ}
+    (hlik : ∀ x z, 0 < lik x z) (w : PosWeights Z) (x : X) (z : Z) :
+    0 < weightJoint lik w x z :=
+  mul_pos (w.2.1 z) (hlik x z)
+
+/-- The expected mass of latent state `z` under the posteriors: `∑ n, p_w(z | xₙ)`. -/
+noncomputable def weightMass {X Z : Type*} [Fintype Z] {N : ℕ}
+    (lik : X → Z → ℝ) (xs : Fin N → X) (w : PosWeights Z) (z : Z) : ℝ :=
+  ∑ n, posterior (weightJoint lik) w (xs n) z
+
+private theorem weightPosterior_pos {X Z : Type*} [Fintype Z] [Nonempty Z] {lik : X → Z → ℝ}
+    (hlik : ∀ x z, 0 < lik x z) (w : PosWeights Z) (x : X) (z : Z) :
+    0 < posterior (weightJoint lik) w x z :=
+  div_pos (weightJoint_pos hlik w x z)
+    (Finset.sum_pos (fun z _ => weightJoint_pos hlik w x z) Finset.univ_nonempty)
+
+/-- The masses are positive when there is at least one datum. -/
+theorem weightMass_pos {X Z : Type*} [Fintype Z] [Nonempty Z] {N : ℕ} {lik : X → Z → ℝ}
+    (hlik : ∀ x z, 0 < lik x z) (xs : Fin N → X) (hN : 0 < N) (w : PosWeights Z) (z : Z) :
+    0 < weightMass lik xs w z := by
+  have : Nonempty (Fin N) := ⟨⟨0, hN⟩⟩
+  exact Finset.sum_pos (fun n _ => weightPosterior_pos hlik w (xs n) z) Finset.univ_nonempty
+
+/-- The masses add up to the number of data. -/
+theorem sum_weightMass {X Z : Type*} [Fintype Z] [Nonempty Z] {N : ℕ} {lik : X → Z → ℝ}
+    (hlik : ∀ x z, 0 < lik x z) (xs : Fin N → X) (w : PosWeights Z) :
+    ∑ z, weightMass lik xs w z = N := by
+  unfold weightMass
+  rw [Finset.sum_comm]
+  simp [(isDist_posterior (fun w x z => weightJoint_pos hlik w x z) w _).2]
+
+/-- The posterior-average weight update `w'_z = (1/N) ∑ n, p_w(z | xₙ)`, valued in
+`PosWeights Z`: the raw update `weightUpdate` of the weight-times-likelihood joint. -/
+noncomputable def weightStep {X Z : Type*} [Fintype Z] [Nonempty Z] {N : ℕ} {lik : X → Z → ℝ}
+    (hlik : ∀ x z, 0 < lik x z) (xs : Fin N → X) (hN : 0 < N) (w : PosWeights Z) :
+    PosWeights Z :=
+  ⟨weightUpdate (weightJoint lik) xs w,
+    weightUpdate_valid (fun w x z => weightJoint_pos hlik w x z) xs hN w⟩
+
+/-- The underlying weight function of `weightStep` at `z` is `weightMass / N`. -/
+theorem weightStep_apply {X Z : Type*} [Fintype Z] [Nonempty Z] {N : ℕ} {lik : X → Z → ℝ}
+    (hlik : ∀ x z, 0 < lik x z) (xs : Fin N → X) (hN : 0 < N) (w : PosWeights Z) (z : Z) :
+    (weightStep hlik xs hN w).1 z = weightMass lik xs w z / N :=
+  rfl
+
+private theorem weightEmQ_eq {X Z : Type*} [Fintype Z] [Nonempty Z] {N : ℕ} {lik : X → Z → ℝ}
+    (hlik : ∀ x z, 0 < lik x z) (xs : Fin N → X) (w' w : PosWeights Z) :
+    emQ (weightJoint lik) xs w' w = ∑ z, weightMass lik xs w z * log (w'.1 z) +
+      ∑ n, ∑ z, posterior (weightJoint lik) w (xs n) z * log (lik (xs n) z) := by
+  unfold emQ weightMass
+  simp_rw [weightJoint, log_mul (w'.2.1 _).ne' (hlik _ _).ne', mul_add,
+    Finset.sum_add_distrib, Finset.sum_mul]
+  rw [Finset.sum_comm (s := Finset.univ) (t := Finset.univ)
+    (f := fun n z => posterior (weightJoint lik) w (xs n) z * log (w'.1 z))]
+
+/-- **The posterior-average step maximizes `Q(· | w)`** over admissible weights. -/
+theorem emQ_le_weightStep {X Z : Type*} [Fintype Z] [Nonempty Z] {N : ℕ} {lik : X → Z → ℝ}
+    (hlik : ∀ x z, 0 < lik x z) (xs : Fin N → X) (hN : 0 < N) (w' w : PosWeights Z) :
+    emQ (weightJoint lik) xs w' w ≤ emQ (weightJoint lik) xs (weightStep hlik xs hN w) w := by
+  rw [weightEmQ_eq hlik, weightEmQ_eq hlik]
+  have hNr : (0 : ℝ) < N := by exact_mod_cast hN
+  have hGibbs := sum_mul_log_sub_le (p := w'.1) (q := (weightStep hlik xs hN w).1)
+    w'.2.1 ⟨fun z => ((weightStep hlik xs hN w).2.1 z).le, (weightStep hlik xs hN w).2.2⟩
+  rw [w'.2.2, log_one] at hGibbs
+  have hexpand : ∑ z, (weightStep hlik xs hN w).1 z * (log (w'.1 z) - log ((weightStep hlik xs hN w).1 z))
+      = (∑ z, (weightStep hlik xs hN w).1 z * log (w'.1 z)) - (∑ z, (weightStep hlik xs hN w).1 z * log ((weightStep hlik xs hN w).1 z)) := by
+    rw [← Finset.sum_sub_distrib]
+    apply Finset.sum_congr rfl
+    intro z _
+    ring
+  rw [hexpand] at hGibbs
+  have hle : ∑ z, (weightStep hlik xs hN w).1 z * log (w'.1 z)
+      ≤ ∑ z, (weightStep hlik xs hN w).1 z * log ((weightStep hlik xs hN w).1 z) := by linarith
+  have hc : ∀ z, weightMass lik xs w z = (weightStep hlik xs hN w).1 z * N := by
+    intro z
+    have hNne : (N : ℝ) ≠ 0 := hNr.ne'
+    show weightMass lik xs w z = weightMass lik xs w z / N * N
+    exact (div_mul_cancel₀ _ hNne).symm
+  have hL : ∑ z, weightMass lik xs w z * log (w'.1 z)
+      = N * ∑ z, (weightStep hlik xs hN w).1 z * log (w'.1 z) := by
+    rw [Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro z _
+    rw [hc z]
+    ring
+  have hR : ∑ z, weightMass lik xs w z * log ((weightStep hlik xs hN w).1 z)
+      = N * ∑ z, (weightStep hlik xs hN w).1 z * log ((weightStep hlik xs hN w).1 z) := by
+    rw [Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro z _
+    rw [hc z]
+    ring
+  have hmain : ∑ z, weightMass lik xs w z * log (w'.1 z)
+      ≤ ∑ z, weightMass lik xs w z * log ((weightStep hlik xs hN w).1 z) := by
+    rw [hL, hR]
+    exact mul_le_mul_of_nonneg_left hle hNr.le
+  linarith
+
 end Cslib.MachineLearning.LatentVariable.ExpectationMaximization

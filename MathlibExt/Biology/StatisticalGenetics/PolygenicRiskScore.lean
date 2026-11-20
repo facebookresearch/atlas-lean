@@ -111,29 +111,13 @@ section Moments
 
 variable {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω}
 
-private theorem integral_sum_mul_sum {ι κ : Type*} [Fintype ι] [Fintype κ]
-    (f : ι → Ω → ℝ) (g : κ → Ω → ℝ) (a : ι → ℝ) (b : κ → ℝ)
-    (hf : ∀ k, MemLp (f k) 2 μ) (hg : ∀ l, MemLp (g l) 2 μ) :
-    ∫ ω, (∑ k, a k * f k ω) * (∑ l, b l * g l ω) ∂μ =
-      ∑ k, ∑ l, a k * b l * ∫ ω, f k ω * g l ω ∂μ := by
-  have hp (k : ι) (l : κ) : Integrable (fun ω => a k * b l * (f k ω * g l ω)) μ :=
-    ((hf k).integrable_mul (hg l)).const_mul _
-  have he (ω : Ω) : (∑ k, a k * f k ω) * (∑ l, b l * g l ω) =
-      ∑ k, ∑ l, a k * b l * (f k ω * g l ω) := by
-    rw [Finset.sum_mul_sum]
-    exact Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => by ring
-  simp_rw [he]
-  rw [integral_finsetSum Finset.univ (fun k _ =>
-    integrable_finsetSum Finset.univ (fun l _ => hp k l))]
-  simp_rw [integral_finsetSum Finset.univ (fun l _ => hp _ l), integral_const_mul]
-
 /-- For an orthogonal family `f` with `∫ f k f l = b k [k = l]`, the cross moment of two linear
 combinations is `∑ k, a k c k b k`. -/
 private theorem integral_lin_mul_lin {ι : Type*} [Fintype ι] [DecidableEq ι] (f : ι → Ω → ℝ)
     (a c b : ι → ℝ) (hf : ∀ k, MemLp (f k) 2 μ)
     (hm : ∀ k l, ∫ ω, f k ω * f l ω ∂μ = if k = l then b k else 0) :
     ∫ ω, (∑ k, a k * f k ω) * (∑ l, c l * f l ω) ∂μ = ∑ k, a k * c k * b k := by
-  rw [integral_sum_mul_sum f f a c hf hf]
+  rw [GenomicPrediction.integral_sum_mul_sum f f a c hf hf]
   simp_rw [hm, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 end Moments
@@ -168,7 +152,7 @@ theorem integral_pheno_mul_score {Ξ : Type*} {mΞ : MeasurableSpace Ξ} {ν : M
     exact Finset.sum_congr rfl fun k _ => by ring
   simp_rw [hsplit]
   rw [integral_add h1 (integrable_finsetSum _ fun k _ => h2i k),
-    integral_sum_mul_sum x x a b hx hx, integral_finsetSum _ fun k _ => h2i k]
+    GenomicPrediction.integral_sum_mul_sum x x a b hx hx, integral_finsetSum _ fun k _ => h2i k]
   simp only [integral_const_mul, hxx, hex, mul_zero, Finset.sum_const_zero, add_zero]
   exact Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun k _ => by ring
 

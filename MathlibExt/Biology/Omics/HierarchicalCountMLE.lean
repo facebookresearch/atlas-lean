@@ -696,7 +696,8 @@ private lemma continuousOn_profileShapeScore (k : ι → ℕ) (hM : 0 ≤ countM
 noncomputable def countVar (k : ι → ℕ) : ℝ :=
   (∑ i, (k i : ℝ) ^ 2) / Fintype.card ι - countMean k ^ 2
 
-private lemma log_one_add_ge {x : ℝ} (hx : 0 ≤ x) : x - x ^ 2 / 2 ≤ log (1 + x) := by
+/-- For `0 ≤ x`, `x - x ^ 2 / 2 ≤ log (1 + x)`. -/
+lemma sub_sq_div_two_le_log_one_add {x : ℝ} (hx : 0 ≤ x) : x - x ^ 2 / 2 ≤ log (1 + x) := by
   have hmono : MonotoneOn (fun y => log (1 + y) - y + y ^ 2 / 2) (Set.Ici 0) := by
     have hd : ∀ y, 0 ≤ y → HasDerivAt (fun y => log (1 + y) - y + y ^ 2 / 2)
         ((1 + y)⁻¹ - 1 + y) y := fun y hy => by
@@ -757,7 +758,7 @@ private lemma profileShapeScore_neg {a : ℝ} [Nonempty ι] (ha : 0 < a) {k : ι
   have hn : (0 : ℝ) < Fintype.card ι := by exact_mod_cast Fintype.card_pos
   have hlog : log (a + countMean k) - log a = log (1 + countMean k / a) := by
     rw [← log_div (by positivity) ha.ne']; congr 1; field_simp
-  have hl := log_one_add_ge (x := countMean k / a) (by positivity)
+  have hl := sub_sq_div_two_le_log_one_add (x := countMean k / a) (by positivity)
   have hh : ∑ i, digammaIncrement a (k i) ≤
       ∑ i, ((k i : ℝ) / a - ((k i : ℝ) * (k i - 1) / 2) / a ^ 2 + (k i : ℝ) ^ 3 / a ^ 3) :=
     sum_le_sum fun i _ => digammaIncrement_le_cubic ha (k i)
