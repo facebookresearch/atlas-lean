@@ -1,5 +1,5 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
+Copyright (c) 2025–2026 the contributors.
 All rights reserved.
 
 This source code is licensed under the license found in the
@@ -48,7 +48,7 @@ example (ν : ℚ) :
         coeff n u = coeff n (coleHopf ν 1 (1 + X 1 ^ 2)) := by
   exact existsUnique_burgers_of_heat_boundary (by decide) (by simp)
 
--- The construction allows zero viscosity and retains the entire spatial slice.
+-- At zero viscosity, the Cole–Hopf transform degenerates to zero.
 example (b : MvPowerSeries (Fin 2) ℚ) :
     coleHopf 0 1 (heatSolution 0 0 1 b) = 0 := by
   simp [coleHopf]
@@ -60,6 +60,45 @@ example {σ K : Type*} [Field K] [CharZero K] {t x : σ}
     coleHopf ν x (heatSolution ν t x b) =
       Causal.solution t (burgersRhs ν x) (coleHopf ν x b) :=
   coleHopf_heatSolution_eq_solution hxt hb
+
+-- Arbitrary Burgers data can be lifted, including extra formal parameters.
+example {σ K : Type*} [Field K] [CharZero K] (ν : K) (hν : ν ≠ 0)
+    (x : σ) (v : MvPowerSeries σ K) :
+    coleHopf ν x (initialHeatProfile ν x v) = v :=
+  coleHopf_initialHeatProfile hν x v
+
+-- Nonconstant prescribed Burgers data, with an additional parameter axis.
+example : ∃! u : MvPowerSeries (Fin 3) ℚ,
+    pderiv 0 u = burgersRhs 1 1 u ∧
+      ∀ n : Fin 3 →₀ ℕ, n 0 = 0 → coeff n u = coeff n (X 1 + X 2 + X 0) :=
+  existsUnique_burgers (by decide) 1 (X 1 + X 2 + X 0)
+
+-- The constructed heat transform realizes that arbitrary initial-value solution.
+example (v : MvPowerSeries (Fin 3) ℚ) :
+    coleHopf 1 1 (heatSolution 1 0 1 (initialHeatProfile 1 1 v)) =
+      Causal.solution 0 (burgersRhs 1 1) v :=
+  coleHopf_heatSolution_initialHeatProfile (by decide) (by norm_num) v
+
+-- Normalization fixes the entire spatial zero slice, including parameter axes.
+example (v : MvPowerSeries (Fin 3) ℚ) :
+    coeff (Finsupp.single 2 1) (initialHeatProfile 1 1 v) = 0 := by
+  rw [initialHeatProfile_slice 1 1 v _ (by simp)]
+  simp [coeff_one]
+
+-- The first spatial coefficient of the inverse profile detects sign and scale.
+example : coeff (Finsupp.single (1 : Fin 2) 1)
+    (initialHeatProfile (1 : ℚ) 1 (C 2 + X 1)) = -1 := by
+  have h := congrArg (coeff 0)
+    (initialHeatProfile_pderiv (1 : ℚ) (1 : Fin 2) (C 2 + X 1))
+  rw [coeff_pderiv] at h
+  norm_num at h
+  exact h
+
+-- Zero viscosity still has a unique formal Burgers solution, without inversion.
+example (v : MvPowerSeries (Fin 2) ℚ) :
+    ∃! u : MvPowerSeries (Fin 2) ℚ, pderiv 0 u = burgersRhs 0 1 u ∧
+      ∀ n : Fin 2 →₀ ℕ, n 0 = 0 → coeff n u = coeff n v :=
+  existsUnique_burgers (by decide) 0 v
 
 #print axioms MvPowerSeries.ColeHopf.heatSolution_pde
 #print axioms MvPowerSeries.ColeHopf.coleHopf_heatSolution_eq_solution

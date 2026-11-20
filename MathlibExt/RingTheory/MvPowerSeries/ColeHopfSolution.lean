@@ -1,5 +1,5 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
+Copyright (c) 2025–2026 the contributors.
 All rights reserved.
 
 This source code is licensed under the license found in the
@@ -12,12 +12,21 @@ public import MathlibExt.RingTheory.MvPowerSeries.CausalEquation
 public import MathlibExt.RingTheory.MvPowerSeries.ColeHopf
 
 /-!
-# Formal heat solutions and Cole-Hopf boundary data
+# Formal Cole–Hopf initial-value theory
 
 Construct a formal heat solution from its entire time-zero slice, then identify
 its Cole-Hopf transform as the unique formal Burgers solution with the transformed
-boundary. Time and space axes must be distinct; coefficients have characteristic
-zero. These are formal identities, without an analytic convergence claim.
+boundary. For nonzero viscosity, the normalized inverse spatial ODE constructs
+heat initial data for arbitrary Burgers initial data. Time and space axes must
+be distinct; coefficients have characteristic zero. These are formal identities,
+without an analytic convergence claim.
+
+Mathematical reference: F. Gesztesy and H. Holden, The Cole-Hopf and Miura
+Transformations Revisited, Theorem 3.3 and Remark 3.5,
+https://arxiv.org/abs/solv-int/9812025. The inverse exponential-integral profile is
+implemented by its normalized spatial linear ODE. Formal Picard existence and
+uniqueness supply both the profile and heat evolution. This formal construction
+does not assert the source's analytic regularity, positivity or convergence.
 -/
 
 @[expose] public section
@@ -139,5 +148,69 @@ theorem existsUnique_burgers_of_heat_boundary [CharZero K] {t x : σ} (hxt : x �
   intro n hn
   exact (hu.2 n (Nat.eq_zero_of_le_zero hn)).trans
     (coleHopf_heatSolution_slice hxt hb n (Nat.eq_zero_of_le_zero hn)).symm
+
+/-- The formal Burgers initial-value problem has a unique solution for every
+viscosity, including zero. Only the entire time-zero slice of `v` is used. -/
+theorem existsUnique_burgers [CharZero K] {t x : σ} (hxt : x ≠ t)
+    (ν : K) (v : MvPowerSeries σ K) :
+    ∃! u : MvPowerSeries σ K, pderiv t u = burgersRhs ν x u ∧
+      ∀ n : σ →₀ ℕ, n t = 0 → coeff n u = coeff n v :=
+  Causal.existsUnique_solution (burgers_isCausal hxt ν) v
+
+/-- The normalized inverse Cole–Hopf profile. It solves the spatial linear
+ODE `∂ₓb = -v b / (2ν)` in characteristic zero, with the entire spatial zero
+slice equal to `1`.
+For nonzero viscosity, this is the formal counterpart of `exp(-∫v/(2ν))`.
+Time, if present, is a parameter here; this profile need not solve heat. -/
+noncomputable def initialHeatProfile (ν : K) (x : σ) (v : MvPowerSeries σ K) :
+    MvPowerSeries σ K :=
+  Causal.solution x (fun b => C (-(2 * ν)⁻¹) * v * b) 1
+
+/-- The entire spatial zero slice of the inverse profile is normalized to `1`;
+all other axes are parameters in this spatial initial-value problem. -/
+theorem initialHeatProfile_slice (ν : K) (x : σ) (v : MvPowerSeries σ K)
+    (n : σ →₀ ℕ) (hn : n x = 0) :
+    coeff n (initialHeatProfile ν x v) = coeff n (1 : MvPowerSeries σ K) :=
+  Causal.solution_slice n hn
+
+/-- The normalized profile has invertible constant coefficient. -/
+@[simp] theorem constantCoeff_initialHeatProfile (ν : K) (x : σ)
+    (v : MvPowerSeries σ K) : constantCoeff (initialHeatProfile ν x v) = 1 := by
+  change coeff 0 (initialHeatProfile ν x v) = 1
+  rw [initialHeatProfile_slice ν x v 0 (by simp)]
+  simp
+
+/-- The normalized inverse profile satisfies its defining spatial ODE. -/
+theorem initialHeatProfile_pderiv [CharZero K] (ν : K) (x : σ)
+    (v : MvPowerSeries σ K) :
+    pderiv x (initialHeatProfile ν x v) =
+      C (-(2 * ν)⁻¹) * v * initialHeatProfile ν x v := by
+  apply Causal.solution_pde
+  intro k a b h
+  exact (Agree.refl x k (C (-(2 * ν)⁻¹) * v)).mul h
+
+/-- Nonzero viscosity makes the normalized spatial construction a right inverse
+of the Cole–Hopf transform, for arbitrary formal data. -/
+theorem coleHopf_initialHeatProfile [CharZero K] {ν : K} (hν : ν ≠ 0)
+    (x : σ) (v : MvPowerSeries σ K) :
+    coleHopf ν x (initialHeatProfile ν x v) = v := by
+  have hc : constantCoeff (initialHeatProfile ν x v) ≠ 0 := by simp
+  have hscale : (C (-2 * ν) : MvPowerSeries σ K) * C (-(2 * ν)⁻¹) = 1 := by
+    rw [← map_mul]
+    have hν2 : 2 * ν ≠ 0 := mul_ne_zero two_ne_zero hν
+    rw [show -2 * ν * -(2 * ν)⁻¹ = 1 by
+      rw [neg_mul, neg_mul_neg, mul_inv_cancel₀ hν2]]
+    exact map_one C
+  rw [coleHopf, initialHeatProfile_pderiv, mul_assoc (C (-(2 * ν)⁻¹) * v),
+    MvPowerSeries.mul_inv_cancel _ hc, mul_one, ← mul_assoc, hscale, one_mul]
+
+/-- For arbitrary Burgers initial data and nonzero viscosity, normalize the
+inverse profile, solve heat, and transform back. The result is the canonical
+formal Burgers solution with the supplied entire time-zero slice. -/
+theorem coleHopf_heatSolution_initialHeatProfile [CharZero K] {t x : σ}
+    (hxt : x ≠ t) {ν : K} (hν : ν ≠ 0) (v : MvPowerSeries σ K) :
+    coleHopf ν x (heatSolution ν t x (initialHeatProfile ν x v)) =
+      Causal.solution t (burgersRhs ν x) v := by
+  rw [coleHopf_heatSolution_eq_solution hxt (by simp), coleHopf_initialHeatProfile hν]
 
 end MvPowerSeries.ColeHopf
