@@ -197,9 +197,10 @@ private theorem dvd_coeff_drinP (q : ℕ) [Fact q.Prime] [NeZero q] (m : Fin 2 �
   exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ q).mp (by simpa using h)
 
 /-- For a prime `q` whose cast lies in an ideal `𝔪`, elements `x₀, x₁ ∈ 𝔪`,
-and approximations `P c` to `x₁ + c • x₀` modulo `𝔪 ^ 2`, the product of the
-approximations, multiplied by `x₀`, agrees with `x₀ * x₁ ^ q - x₀ ^ q * x₁`
-modulo `𝔪 ^ (q + 2)`. -/
+and approximations `P c` to `x₁ + ((c.val : ℕ) : R) * x₀` modulo `𝔪 ^ 2`,
+where `c.val` is the canonical natural representative of `c : ZMod q`, the
+product of the approximations, multiplied by `x₀`, agrees with
+`x₀ * x₁ ^ q - x₀ ^ q * x₁` modulo `𝔪 ^ (q + 2)`. -/
 public theorem Ideal.mul_prod_sub_mem_pow_of_sub_mem_sq_of_natCast_mem
     (q : ℕ) [Fact q.Prime] {R : Type*} [CommRing R] (𝔪 : Ideal R)
     (hq : ((q : ℕ) : R) ∈ 𝔪) (x₀ x₁ : R) (hx₀ : x₀ ∈ 𝔪) (hx₁ : x₁ ∈ 𝔪)
