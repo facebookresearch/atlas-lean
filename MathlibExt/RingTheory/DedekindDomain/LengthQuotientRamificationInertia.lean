@@ -1105,7 +1105,7 @@ public theorem IsLocalRing.length_quotient_map_maximalIdeal_eq_finsum_ramificati
     [Algebra C D]
     (hDmax : ∀ c : C, algebraMap C D c ∈ maximalIdeal D ↔ c ∈ maximalIdeal C)
     (hDres : ∀ d : D, ∃ c : C, d - algebraMap C D c ∈ maximalIdeal D)
-    (hDdim : Ring.DimensionLEOne D) (hDnf : maximalIdeal D ≠ ⊥)
+    (hDdim : Ring.DimensionLEOne D)
     (κ : Type*) [Field κ] [Algebra D κ] [IsFractionRing D κ] [Algebra C κ]
     [IsScalarTower C D κ] [Algebra K κ] [IsScalarTower C K κ]
     [FiniteDimensional K κ] [Algebra.IsSeparable K κ] :
@@ -1119,6 +1119,21 @@ public theorem IsLocalRing.length_quotient_map_maximalIdeal_eq_finsum_ramificati
             (maximalIdeal C).inertiaDeg' (maximalIdeal ↥B.1) : ℕ) : ℕ∞) := by
   obtain ⟨D₁, hfin, -, hloc⟩ :=
     exists_finite_locallyPrincipalOverring_aux (C := C) K (κ := κ) (A := D)
+  have hDnf : maximalIdeal D ≠ ⊥ := by
+    have hCκ : Function.Injective (algebraMap C κ) := by
+      rw [IsScalarTower.algebraMap_eq C K κ]
+      exact (algebraMap K κ).injective.comp (IsFractionRing.injective C K)
+    have hCD : Function.Injective (algebraMap C D) := fun a b h => hCκ (by
+      rw [IsScalarTower.algebraMap_apply C D κ, IsScalarTower.algebraMap_apply C D κ b, h])
+    obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible C
+    have hmC : maximalIdeal C = Ideal.span {ϖ} := hϖ.maximalIdeal_eq
+    have hϖm : ϖ ∈ maximalIdeal C := hmC ▸ Ideal.mem_span_singleton_self ϖ
+    have hϖD0 : algebraMap C D ϖ ≠ 0 := (map_ne_zero_iff _ hCD).mpr hϖ.ne_zero
+    intro hbot
+    exact hϖD0 (by
+      have hmem : algebraMap C D ϖ ∈ maximalIdeal D := (hDmax ϖ).mpr hϖm
+      rw [hbot] at hmem
+      exact hmem)
   haveI := hfin
   haveI : IsDedekindDomain ↥D₁ :=
     LengthQuotientAux.isDedekindDomain_of_locallyPrincipal hDdim D₁ hfin hloc

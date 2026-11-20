@@ -37,7 +37,7 @@ theorem exactSource
           (maximalIdeal C).ramificationIdx' (maximalIdeal ↥B.1) *
             (maximalIdeal C).inertiaDeg' (maximalIdeal ↥B.1) : ℕ) : ℕ∞) :=
   IsLocalRing.length_quotient_map_maximalIdeal_eq_finsum_ramificationIdx_mul_inertiaDeg
-    K hDmax hDres hDdim hDnf κ
+    K hDmax hDres hDdim κ
 
 /-- Higher-universe consumer: the rings may live in a higher universe. -/
 theorem exactSource_universe.{u, v, w}
@@ -60,13 +60,11 @@ theorem exactSource_universe.{u, v, w}
           (maximalIdeal C).ramificationIdx' (maximalIdeal ↥B.1) *
             (maximalIdeal C).inertiaDeg' (maximalIdeal ↥B.1) : ℕ) : ℕ∞) :=
   IsLocalRing.length_quotient_map_maximalIdeal_eq_finsum_ramificationIdx_mul_inertiaDeg
-    K hDmax hDres hDdim hDnf κ
+    K hDmax hDres hDdim κ
 
-/-- Boundary example: the non-field hypothesis matters. If the maximal ideal
-of `D` were bottom, `D` would be a field and the quotient on the left would
-not have the stated finite-length form in general; here we record that
-`hDnf` is exactly the hypothesis excluding that case by checking that a
-field satisfies the negation. -/
+/-- Boundary check: a field has bottom maximal ideal. In the theorem this
+case cannot arise from the remaining hypotheses, since the image of a
+uniformizer of `C` is a nonzero element of the maximal ideal of `D`. -/
 example {D : Type*} [Field D] [IsLocalRing D] : maximalIdeal D = ⊥ :=
   IsLocalRing.maximalIdeal_eq_bot
 
