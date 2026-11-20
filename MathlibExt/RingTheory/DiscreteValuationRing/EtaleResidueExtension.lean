@@ -585,7 +585,8 @@ end EtaleDvrAux
 
 @[expose] public section
 
-open EtaleDvrAux Polynomial IsLocalRing
+open Polynomial IsLocalRing
+open scoped EtaleDvrAux
 
 /-- Existence of a finite étale faithfully flat local DVR extension
 realizing a finite separable residue extension.
