@@ -23,6 +23,8 @@ throughflow and with it the torque, the power and the shaft power: read with the
 the same ports form a turbine. Blade forces `(0, ±90, 0)` at radius `1` meet these balances, so
 both fixtures and the compressor and turbine signs apply with every hypothesis discharged. The
 representative azimuth and station of a port do not enter its lumped axial angular-momentum flux.
+For every port the nonnegative density and area give the lumped mass flow the sign of the outward
+normal velocity.
 Ports with equal specific axial angular momentum `r c_θ` (`1/10 · 150 = 3/10 · 50`) take no
 torque, power or shaft power, while equal swirl velocities at different radii do not suffice.
 The rotor-relative swirl of the compressor ports at `ω = 1000`, `-100` and
@@ -72,6 +74,9 @@ noncomputable def fixtureInlet : RotorPort where
   nr := 0
   nz := -1
   normal_unit := by norm_num
+  ρ_nonneg := by norm_num
+  A_nonneg := by norm_num
+  r_nonneg := by norm_num
 
 /-- Lumped outlet of the compressor fixture: radial outflow `100` with swirl `150` at radius
 `3/10` (a band of constant radius, whose effective radius is that radius), port area `1/50`,
@@ -89,6 +94,9 @@ noncomputable def fixtureOutlet : RotorPort where
   nr := 1
   nz := 0
   normal_unit := by norm_num
+  ρ_nonneg := by norm_num
+  A_nonneg := by norm_num
+  r_nonneg := by norm_num
 
 /-- **Nonzero swirl change: a compressor.** The fixture ports carry the lumped mass flow `2`. For
 forces at points moving with the rotor that meet the steady lumped balance with no other external
@@ -153,6 +161,16 @@ example (o o' : Fin 3 → ℝ) :
       axialMomentFlux o' { fixtureOutlet with φ := 2, z := 7 } = 90 := by
   rw [axialMomentFlux_eq, axialMomentFlux_eq, lumpedMassFlow_eq, lumpedMassFlow_eq]
   norm_num [fixtureOutlet]
+
+/-- The sign convention of the lumped mass flow holds for every port: with the nonnegative density
+and area of a `RotorPort`, outward normal velocity (`cr nr + cz nz ≥ 0`) gives a nonnegative
+lumped mass flow, and inward normal velocity a nonpositive one. -/
+example (P : RotorPort) :
+    (0 ≤ P.cr * P.nr + P.cz * P.nz → 0 ≤ P.lumpedMassFlow) ∧
+      (P.cr * P.nr + P.cz * P.nz ≤ 0 → P.lumpedMassFlow ≤ 0) := by
+  rw [lumpedMassFlow_eq]
+  have hρA : 0 ≤ P.ρ * P.A := mul_nonneg P.ρ_nonneg P.A_nonneg
+  exact ⟨fun hv => mul_nonneg hρA hv, fun hv => mul_nonpos_of_nonneg_of_nonpos hρA hv⟩
 
 /-- A blade force `(0, 90, 0)` exerted on the fluid at the point `(1, 0, 0)`, about the origin of
 the shaft axis, meets the steady lumped balance with the compressor ports. With the shaft torque
