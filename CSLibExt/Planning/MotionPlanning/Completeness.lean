@@ -10,7 +10,7 @@ module
 
 public import CSLibExt.Planning.MotionPlanning.ConfigurationSpace
 public import Mathlib.Topology.MetricSpace.Thickening
-public import Mathlib.MeasureTheory.Measure.Dirac.Basic
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 
 /-!
 # Planner completeness notions

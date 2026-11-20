@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import CSLibExt.Planning.MotionPlanning.Completeness
+import Mathlib.MeasureTheory.Measure.Dirac.Basic
 
 namespace CSLibExtTest.Planning.MotionPlanning
 
