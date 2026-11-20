@@ -124,9 +124,9 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
     against that source. When its declaration is ready to link under rules 7
     and 13, the annotation links it and the page drops its own dependency
     sections (rule 9); until then the page stays unlinked and keeps its
-    prerequisites, even if a declaration for it already exists. *Reason:* nothing else
-    records a planned node's prerequisites, and a planned page is the graph's
-    record of mathematics not yet in Lean.
+    prerequisites, even if a declaration for it already exists. *Reason:*
+    nothing else records a planned node's prerequisites, and a planned page is
+    the graph's record of mathematics not yet in Lean.
 11. **`## Informally uses` lists only results the cited proof uses** but the
     Lean need not. What the statement needs (its definitions and ingredients)
     is described in the page's prose, not listed here. A result the Lean also
