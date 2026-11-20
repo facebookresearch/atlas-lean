@@ -41,28 +41,6 @@ import Mathlib.RingTheory.Polynomial.ScaleRoots
 open scoped TensorProduct
 open Polynomial
 
-private theorem isReduced_of_injective_map_aux {A B : Type*} [Semiring A] [Ring B]
-    (g : A → B) (hg : Function.Injective g)
-    (hadd : ∀ x y : A, g (x + y) = g x + g y) (hmul : ∀ x y : A, g (x * y) = g x * g y)
-    (hB : IsReduced B) : IsReduced A := by
-  have h0 : g 0 = 0 := by
-    have := hadd 0 0
-    rw [add_zero] at this
-    exact add_right_cancel (this.symm.trans (zero_add _).symm)
-  refine ⟨fun x hx => ?_⟩
-  obtain ⟨n, hn⟩ := hx
-  rcases Nat.eq_zero_or_pos n with rfl | hpos
-  · rw [pow_zero] at hn
-    exact eq_zero_of_zero_eq_one hn.symm x
-  · have hpow : ∀ m, 0 < m → g (x ^ m) = g x ^ m := by
-      intro m hm
-      induction m, hm using Nat.le_induction with
-      | base => rw [pow_one, pow_one]
-      | succ m hm ih => rw [pow_succ, hmul, ih, pow_succ]
-    apply hg
-    rw [h0]
-    exact IsReduced.eq_zero _ ⟨n, by rw [← hpow n hpos, hn, h0]⟩
-
 private theorem pow_natDegree_mem_of_aeval_scaleRoots_eq_zero_aux {B : Type*} [CommRing B]
     {p : B[X]} (hp : p.Monic) {s b : B} (I : Ideal B) (hs : s ∈ I)
     (h : aeval b (p.scaleRoots s) = 0) : b ^ p.natDegree ∈ I := by
@@ -264,8 +242,9 @@ public theorem Algebra.TensorProduct.isDomain_and_isIntegrallyClosed_of_isReduce
   have e4 := Algebra.TensorProduct.congr eI (AlgEquiv.refl (R := R) (A₁ := B))
   have e1 := Ideal.quotEquivOfEq hI.symm
   have etot := e1.trans (e2.symm.toRingEquiv.trans (e3.toRingEquiv.trans e4.toRingEquiv))
+  haveI : IsReduced (k' ⊗[R] B) := hred
   haveI : IsReduced ((R' ⊗[R] B) ⧸ Ideal.span {ϖC}) :=
-    isReduced_of_injective_map_aux (fun x => etot x) etot.injective etot.map_add etot.map_mul hred
+    isReduced_of_injective etot etot.injective
   haveI : IsIntegrallyClosedIn (R' ⊗[R] B) (K' ⊗[R] B) :=
     isIntegrallyClosedIn_of_isReduced_quotient_span_singleton_aux ϖC hϖC (K' ⊗[R] B)
   have hle : Submonoid.powers ϖC ≤ nonZeroDivisors (R' ⊗[R] B) := Submonoid.powers_le.mpr hϖC
