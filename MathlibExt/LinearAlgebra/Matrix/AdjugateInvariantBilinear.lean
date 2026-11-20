@@ -35,18 +35,17 @@ public import Mathlib.Data.Matrix.Mul
 public import Mathlib.LinearAlgebra.Matrix.Adjugate
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
-public import Mathlib.LinearAlgebra.Matrix.Trace
 
 @[expose] public section
 
 open Matrix
 
 /-- A bilinear form on `Fin 2 → k` that is invariant under
-adjugate-conjugation by an invertible trace-zero matrix `μ` is a scalar
+adjugate-conjugation by an invertible matrix `μ` is a scalar
 multiple of the form `(v, w) ↦ dotProduct v ((J * μ).mulVec w)`, where
 `J = !![0, 1; -1, 0]`. -/
 theorem exists_forall_apply_eq_mul_dotProduct_mulVec_of_forall_apply_mulVec_eq
-    {k : Type*} [Field k] (μ : Matrix (Fin 2) (Fin 2) k) (htr : μ.trace = 0)
+    {k : Type*} [Field k] (μ : Matrix (Fin 2) (Fin 2) k)
     (hdet : μ.det ≠ 0)
     (b : (Fin 2 → k) →ₗ[k] (Fin 2 → k) →ₗ[k] k)
     (hb : ∀ (x : Matrix (Fin 2) (Fin 2) k) (v w : Fin 2 → k),
