@@ -111,6 +111,9 @@ jobs:
       # the full build then finds them up to date and replays their logs. When
       # one fails, the full build is skipped: it would retry that module
       # alongside the others.
+      - name: Test initialized compiled-audit isolation
+        run: python3 -m unittest discover -s scripts -p test_compiled_audit_native.py -v
+
       - name: Build memory-heavy modules one at a time
         run: |
           set -euo pipefail
@@ -125,6 +128,15 @@ jobs:
 
       - name: Build extension libraries
         run: scripts/check.sh build
+
+      - name: Check the bounded codec lesson
+        run: lake env lean -DwarningAsError=true docs/teaching/examples/BoundedCodec.lean
+
+      - name: Check the testing-limits lesson
+        run: lake env lean -DwarningAsError=true docs/teaching/examples/TestingLimits.lean
+
+      - name: Check the IMP invariant and variant lesson
+        run: lake env lean -DwarningAsError=true docs/teaching/examples/IMPInvariants.lean
 
       - name: Save local build from main
         if: success() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' && steps.local-build-cache.outputs.cache-hit != 'true'

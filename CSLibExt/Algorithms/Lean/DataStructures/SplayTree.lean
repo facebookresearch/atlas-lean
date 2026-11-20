@@ -19,19 +19,23 @@ MIT 6.851 Lecture 5. The carrier is Mathlib's `BinaryTree`, reusing
 `BinarySearchTree.Ordered` and structural membership from
 `BinarySearchTree`.
 
-`splay x t` is the bottom-up splay: search for `x` as in a binary search
-tree, then rotate the found node (or the last node visited) to the root
-with the three double-rotation cases: zig (single rotation at the root),
-zig-zig (rotate the grandparent-parent edge first), and zig-zag (rotate
-the parent-node edge first). The definition pattern-matches two levels
-of the tree at once, recursing into the relevant grandchild. `insert`
+`splay x t` searches for `x` as in a binary search tree and rotates the
+found node (or the last node visited) to the root with the three splaying
+cases: zig (single rotation), zig-zig (rotate the grandparent-parent edge
+first), and zig-zag (rotate the parent-node edge first). The definition
+pattern-matches two levels of the tree at once, recursing into the relevant
+grandchild, so rotations are paired starting from the root: when the search
+path has an odd number of edges, the single rotation is done on its last
+edge rather than at the root as in Sleator and Tarjan's bottom-up splaying,
+and the resulting tree can differ from theirs. `insert`
 splays the key and then splits, `access` splays and reports whether the
 key reached the root, and `contains` is its Boolean projection.
 
 The module proves functional correctness only: splaying preserves the
 inorder traversal (hence membership and `Ordered`), and a present key
 ends at the root. The amortized `O(log n)` access lemma (the
-Sleator-Tarjan potential argument) is out of scope.
+Sleator-Tarjan potential argument) for this definition is proved in
+`CSLibExt.Algorithms.Lean.DataStructures.SplayTree.Amortized`.
 -/
 
 set_option autoImplicit false

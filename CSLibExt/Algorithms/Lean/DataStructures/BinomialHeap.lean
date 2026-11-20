@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Multiset.AddSub
+import Mathlib.Algebra.Order.Group.Multiset
 
 /-!
 # Binomial min-heaps
@@ -653,30 +654,12 @@ public theorem valid_reverse_children [LinearOrder α] {tree : BinomialTree α}
   · rw [List.map_reverse, valid.children_ranks, List.reverse_reverse]
     exact List.pairwise_lt_range
 
-private theorem sum_append (left right : List (Multiset α)) :
-    (left ++ right).sum = left.sum + right.sum := by
-  induction left with
-  | nil => simp
-  | cons value values ih =>
-      simp only [List.cons_append, List.sum_cons]
-      rw [ih, Multiset.add_assoc]
-
-private theorem sum_reverse (values : List (Multiset α)) :
-    values.reverse.sum = values.sum := by
-  induction values with
-  | nil => rfl
-  | cons value values ih =>
-      rw [List.reverse_cons, sum_append, ih]
-      rw [Multiset.add_comm]
-      change (value + 0) + values.sum = value + values.sum
-      rw [Multiset.add_zero]
-
 theorem root_cons_elements_reverse_children (tree : BinomialTree α) :
     tree.root ::ₘ elements tree.children.reverse = tree.elements := by
   cases tree
   simp only [BinomialTree.root, BinomialTree.children, BinomialTree.elements, elements,
     List.map_reverse]
-  rw [sum_reverse]
+  rw [List.sum_reverse]
 
 end BinomialForest
 

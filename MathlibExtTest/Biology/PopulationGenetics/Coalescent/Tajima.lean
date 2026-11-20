@@ -46,6 +46,17 @@ example : tajimaB1 1 = 0 := by
 example : tajimaA1 3 = 3 / 2 ∧ tajimaA2 3 = 5 / 4 := by
   norm_num [tajimaA1, tajimaA2, sum_Ico_succ_top]
 
+/-- `tajimaA1_pos` at the boundary `n = 2`, where `a₁ = 1`. -/
+example : 0 < tajimaA1 2 := tajimaA1_pos le_rfl
+
+/-- The bound `n ≥ 2` in `tajimaA1_pos` is sharp: `a₁ = ∑_{i ∈ ∅} 1/i = 0` at `n = 1`. -/
+example : tajimaA1 1 = 0 := by
+  simp [tajimaA1]
+
+/-- `tajimaA1_pos` for a general sample size: `S / a₁` does not divide by zero. -/
+example {n : ℕ} (hn : 2 ≤ n) (S : ℝ) : S / tajimaA1 n * tajimaA1 n = S :=
+  div_mul_cancel₀ S (tajimaA1_pos hn).ne'
+
 /-- `n = 3`: `a₁ = H₂`. -/
 example : tajimaA1 3 = (harmonic 2 : ℝ) := tajimaA1_eq_harmonic 3
 

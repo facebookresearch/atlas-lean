@@ -184,15 +184,6 @@ private lemma mem_invariant {n : ℕ} (A : Matrix (Fin n) (Fin n) ℝ) (b x₀ :
     · rw [hres, mulVec_add, mulVec_smul]
       abel
 
-private lemma transpose_eq_of_posDef {n : ℕ} {A : Matrix (Fin n) (Fin n) ℝ} (hA : A.PosDef) :
-    Aᵀ = A := by
-  have h := hA.isHermitian
-  rwa [IsHermitian, conjTranspose_eq_transpose_of_trivial] at h
-
-private lemma dotProduct_mulVec_symm {n : ℕ} {A : Matrix (Fin n) (Fin n) ℝ} (hAt : Aᵀ = A)
-    (v w : Fin n → ℝ) : v ⬝ᵥ (A *ᵥ w) = w ⬝ᵥ (A *ᵥ v) := by
-  rw [dotProduct_mulVec, ← mulVec_transpose, hAt, dotProduct_comm]
-
 /-- The orthogonality invariant of CG: `r_k ⊥ 𝒦_k`, `A d_k ⊥ 𝒦_k` and `r_kᵀ d_k = r_kᵀ r_k`. -/
 private lemma orth_invariant {n : ℕ} {A : Matrix (Fin n) (Fin n) ℝ} (hA : A.PosDef)
     (b x₀ : Fin n → ℝ) (k : ℕ) :
@@ -200,7 +191,7 @@ private lemma orth_invariant {n : ℕ} {A : Matrix (Fin n) (Fin n) ℝ} (hA : A.
       (∀ v ∈ krylov A (b - A *ᵥ x₀) k, v ⬝ᵥ (A *ᵥ (iterate A b x₀ k).d) = 0) ∧
       (iterate A b x₀ k).r ⬝ᵥ (iterate A b x₀ k).d =
         (iterate A b x₀ k).r ⬝ᵥ (iterate A b x₀ k).r := by
-  have hAt := transpose_eq_of_posDef hA
+  have hAt : A.IsSymm := hA.isHermitian.isSymm
   induction k with
   | zero =>
     exact ⟨fun v hv => by rw [eq_zero_of_mem_krylov_zero hv, zero_dotProduct],
@@ -263,11 +254,11 @@ private lemma orth_invariant {n : ℕ} {A : Matrix (Fin n) (Fin n) ℝ} (hA : A.
     · obtain ⟨u, hu, c, rfl⟩ := hsplit v hv
       have hu' : u ⬝ᵥ (A *ᵥ (r' + β • d)) = 0 := by
         rw [mulVec_add, mulVec_smul, dotProduct_add, dotProduct_smul, hb u hu, smul_zero,
-          add_zero, dotProduct_mulVec_symm hAt u r', dotProduct_comm]
+          add_zero, IsSymm.dotProduct_mulVec_comm hAt (x := u) (y := r'), dotProduct_comm]
         exact ha' _ (mulVec_mem_krylov A _ hu)
       have hdd : d ⬝ᵥ (A *ᵥ (r' + β • d)) = 0 := by
         rw [mulVec_add, mulVec_smul, dotProduct_add, dotProduct_smul, smul_eq_mul,
-          dotProduct_mulVec_symm hAt d r', hβ, h1]
+          IsSymm.dotProduct_mulVec_comm hAt (x := d) (y := r'), hβ, h1]
         calc r' ⬝ᵥ (A *ᵥ d) + -(α * (r' ⬝ᵥ (A *ᵥ d))) / (r ⬝ᵥ r) * (d ⬝ᵥ (A *ᵥ d))
             = r' ⬝ᵥ (A *ᵥ d) - r' ⬝ᵥ (A *ᵥ d) * (α * (d ⬝ᵥ (A *ᵥ d))) / (r ⬝ᵥ r) := by ring
           _ = 0 := by rw [hαd, mul_div_assoc, div_self hrr.ne', mul_one, sub_self]
@@ -286,7 +277,7 @@ theorem energyNorm_iterate_le {n : ℕ} {A : Matrix (Fin n) (Fin n) ℝ}
     (hA : A.PosDef) {b xs : Fin n → ℝ} (hxs : A *ᵥ xs = b)
     (x₀ : Fin n → ℝ) (k : ℕ) {z : Fin n → ℝ} (hz : z ∈ krylov A (b - A *ᵥ x₀) k) :
     energyNorm A ((iterate A b x₀ k).x - xs) ≤ energyNorm A (x₀ + z - xs) := by
-  have hAt := transpose_eq_of_posDef hA
+  have hAt : A.IsSymm := hA.isHermitian.isSymm
   obtain ⟨hx, -, -, hres⟩ := mem_invariant A b x₀ k
   have horth := (orth_invariant hA b x₀ k).1
   generalize iterate A b x₀ k = s at hx hres horth
@@ -301,7 +292,7 @@ theorem energyNorm_iterate_le {n : ℕ} {A : Matrix (Fin n) (Fin n) ℝ}
   unfold energyNorm
   refine Real.sqrt_le_sqrt ?_
   rw [hew, mulVec_add, dotProduct_add, add_dotProduct, add_dotProduct,
-    dotProduct_mulVec_symm hAt e w, hcross]
+    IsSymm.dotProduct_mulVec_comm hAt (x := e) (y := w), hcross]
   linarith
 
 /-! ### The Chebyshev bound -/

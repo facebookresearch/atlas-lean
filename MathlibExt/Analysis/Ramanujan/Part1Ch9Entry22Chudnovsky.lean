@@ -16,10 +16,11 @@ public import MathlibExt.Analysis.Ramanujan.Part1Ch9Entry20Piseries1
 public import MathlibExt.Analysis.Ramanujan.Part1Ch9Entry21Piseries2
 
 import Mathlib.Analysis.Analytic.Binomial
+import Mathlib.Analysis.Calculus.SmoothSeries
 import Mathlib.Analysis.Normed.Group.Tannery
 import Mathlib.Analysis.SpecialFunctions.Integrals.Log
-import Mathlib.Analysis.Calculus.SmoothSeries
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
+import Mathlib.Analysis.PSeries
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.InverseDeriv
 import MathlibExt.Analysis.SpecialFunctions.ArcsinCentralBinomialReciprocal
 import MathlibExt.Analysis.SpecialFunctions.ArcsinTaylorSeries
@@ -91,50 +92,6 @@ private lemma base3 : Summable (fun k : ℕ => 1 / ((k : ℝ) + 1) ^ 3) := by
   have h := (summable_nat_add_iff (f := fun n : ℕ => 1 / (n : ℝ) ^ 3) 1).mpr hp
   simpa using h
 
-private lemma factbound (k : ℕ) : 4 ^ k * (k.factorial ^ 2) ≤ (2 * k + 1).factorial := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    have key : 4 * (k + 1) ^ 2 ≤ (2 * (k + 1) + 1) * (2 * (k + 1)) := by
-      have h : (2 * (k + 1) + 1) * (2 * (k + 1))
-          = 4 * (k + 1) ^ 2 + 2 * (k + 1) := by ring
-      rw [h]
-      exact Nat.le_add_right _ _
-    calc 4 ^ (k + 1) * ((k + 1).factorial ^ 2)
-        = (4 * (k + 1) ^ 2) * (4 ^ k * (k.factorial ^ 2)) := by
-          rw [pow_succ, Nat.factorial_succ k]
-          ring
-      _ ≤ ((2 * (k + 1) + 1) * (2 * (k + 1))) * (2 * k + 1).factorial :=
-          mul_le_mul key ih (Nat.zero_le _) (Nat.zero_le _)
-      _ = (2 * (k + 1) + 1).factorial := by
-          have f1 := Nat.factorial_succ (2 * (k + 1))
-          have e : 2 * (k + 1) = (2 * k + 1) + 1 := by ring
-          have f2 : (2 * (k + 1)).factorial
-              = (2 * (k + 1)) * (2 * k + 1).factorial := by
-            have f := Nat.factorial_succ (2 * k + 1)
-            rwa [← e] at f
-          rw [f1, f2, mul_assoc]
-
-private lemma hFratio (k : ℕ) :
-    (2 : ℝ) ^ (2 * k) * ((k.factorial : ℝ) ^ 2)
-      / (((2 * k + 1).factorial : ℝ)) ≤ 1 := by
-  have hF : (0 : ℝ) < ((((2 * k + 1).factorial) : ℕ) : ℝ) := by
-    have h : 0 < (2 * k + 1).factorial := Nat.factorial_pos _
-    exact_mod_cast h
-  rw [div_le_one hF]
-  have hfb := factbound k
-  have h' : ((4 ^ k * (k.factorial ^ 2) : ℕ) : ℝ)
-      ≤ (((((2 * k + 1).factorial) : ℕ)) : ℝ) :=
-    Nat.cast_le.mpr hfb
-  have h4 : (4 : ℝ) ^ k * (((k.factorial : ℕ)) : ℝ) ^ 2
-      = (2 : ℝ) ^ (2 * k) * ((k.factorial : ℝ) ^ 2) := by
-    congr 1
-    have h42 : (4 : ℝ) = 2 ^ 2 := by norm_num
-    rw [h42, ← pow_mul]
-  rw [← h4]
-  push_cast at h'
-  exact h'
-
 private lemma chi3_summable : Summable chapter9Chi3Term := by
   rw [chapter9Chi3Term_eq_entry21]
   exact (Entry21Piseries2.ramanujan_part1_ch9_entry21_piseries2 0 (by
@@ -167,7 +124,7 @@ private lemma aCoeff_nonneg (k : ℕ) : 0 ≤ aCoeff k := by
 
 private lemma aCoeff_le_one (k : ℕ) : aCoeff k ≤ 1 := by
   unfold aCoeff
-  exact hFratio k
+  exact Entry20Piseries1.two_pow_mul_factorial_sq_div_factorial_le_one k
 
 private lemma e22_recip_term_eq (x : ℝ) (m : ℕ) :
     (2 * x) ^ (2 * (m + 1)) / ((((m + 1 : ℕ)) : ℝ) * (Nat.choose (2 * (m + 1)) (m + 1) : ℝ))
@@ -755,9 +712,13 @@ private def e22H (x : ℝ) : ℝ :=
       + (1 / 4 : ℝ) * e22S (Real.sin (2 * x))
       - (1 / 2 : ℝ) * chapter9Chi3AtOne)
 
+private lemma e22_two_mul_hasDerivAt (x : ℝ) :
+    HasDerivAt (fun x : ℝ => 2 * x) 2 x := by
+  simpa using (hasDerivAt_id' x).const_mul (2 : ℝ)
+
 private lemma e22_sin_two_mul_hasDerivAt (x : ℝ) :
     HasDerivAt (fun x : ℝ => Real.sin (2 * x)) (Real.cos (2 * x) * 2) x :=
-  (Real.hasDerivAt_sin (2 * x)).comp x (hasDerivAt_const_mul 2)
+  (Real.hasDerivAt_sin (2 * x)).comp x (e22_two_mul_hasDerivAt x)
 
 private lemma e22_Ssin_hasDerivAt {x : ℝ} (hx : x ∈ Set.Ioo 0 (Real.pi / 4)) :
     HasDerivAt (fun x : ℝ => e22S (Real.sin x))
@@ -1123,6 +1084,12 @@ private lemma e22_exp_I_mul_ofReal (t : ℝ) :
   have h : (Complex.I * (t : ℂ)) = ((t : ℂ)) * Complex.I := mul_comm _ _
   rw [h, Complex.exp_mul_I, ← Complex.ofReal_cos, ← Complex.ofReal_sin]
 
+private lemma e22_norm_exp_I_mul (t : ℝ) :
+    ‖Complex.exp (Complex.I * (t : ℂ))‖ = 1 := by
+  rw [Complex.norm_exp]
+  have hre : (Complex.I * (t : ℂ)).re = 0 := by simp
+  rw [hre, Real.exp_zero]
+
 private lemma e22_cpow (r x : ℝ) (n : ℕ) :
     (((r : ℝ) : ℂ) * Complex.exp (Complex.I * (((2 * x : ℝ)) : ℂ))) ^ (n + 1)
       = (((r ^ (n + 1) * Real.cos ((((n + 1 : ℕ)) : ℝ) * (2 * x)) : ℝ)) : ℂ)
@@ -1165,7 +1132,7 @@ private lemma e22_poisson {r x : ℝ} (hr0 : 0 ≤ r) (hr1 : r < 1) :
         / ((n : ℝ) + 1) := by
   set z : ℂ := (r : ℂ) * Complex.exp (Complex.I * (((2 * x : ℝ)) : ℂ)) with hz
   have hnorm : ‖z‖ < 1 := by
-    rw [hz, norm_mul, Complex.norm_exp_I_mul_ofReal, mul_one, Complex.norm_real,
+    rw [hz, norm_mul, e22_norm_exp_I_mul, mul_one, Complex.norm_real,
       Real.norm_eq_abs, abs_of_nonneg hr0]
     exact hr1
   have H := Complex.hasSum_taylorSeries_neg_log' hnorm
@@ -1592,7 +1559,7 @@ private lemma e22_abel_integrand_bound {r x : ℝ} (hr0 : (1 / 2 : ℝ) ≤ r)
             ‖(r : ℂ) * Complex.exp (Complex.I * (((2 * x : ℝ)) : ℂ))‖ :=
         norm_sub_le _ _
       _ = 1 + |r| := by
-        rw [norm_one, norm_mul, Complex.norm_exp_I_mul_ofReal, mul_one, Complex.norm_real,
+        rw [norm_one, norm_mul, e22_norm_exp_I_mul, mul_one, Complex.norm_real,
           Real.norm_eq_abs]
       _ ≤ 2 := by rw [abs_of_nonneg hr_nonneg]; linarith
   have hnorm_pos : 0 <
@@ -1718,7 +1685,7 @@ private lemma e22_LHS_tendsto :
             (1 : ℂ) - (r : ℂ) * Complex.exp (Complex.I * (((2 * x : ℝ)) : ℂ)) ≠ 0 := by
           intro x
           have hnorm : ‖(r : ℂ) * Complex.exp (Complex.I * (((2 * x : ℝ)) : ℂ))‖ < 1 := by
-            rw [norm_mul, Complex.norm_exp_I_mul_ofReal, mul_one, Complex.norm_real,
+            rw [norm_mul, e22_norm_exp_I_mul, mul_one, Complex.norm_real,
               Real.norm_eq_abs, abs_of_nonneg hr0]
             exact hr1
           intro hcon

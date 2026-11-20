@@ -46,7 +46,8 @@ public theorem_wanted exists_mvPolynomial_eval_eq_zero_of_norm_lt_norm_pderiv_sq
     (h : ‖MvPolynomial.eval a f‖ < ‖MvPolynomial.eval a (MvPolynomial.pderiv i f)‖ ^ 2) :
     ∃ x : Fin n → ℤ_[p], MvPolynomial.eval x f = 0
 
-/-- Theorem 1 (i): let `p ≠ q` be primes (odd by the congruences) and `E : y² = x³ - 2pqx` over `ℚ`. Suppose
+/-- Theorem 1 (i): let `p ≠ q` be primes (odd by the congruences) and `E : y² = x³ - 2pqx` over
+`ℚ`. Suppose
 `(p, q) ≡ (3, 3), (3, 5), (3, 7), (5, 5)` or `(5, 7) (mod 8)`, or `p ≡ 1 (mod 8)`,
 `q ≡ 3, 5, 7 (mod 8)` and `(p/q) = -1`. If the rank of `E(ℚ)` is odd (the parity conjecture for
 `E`), then the rank is `1`. The case with `p` and `q` interchanged is the same curve.
@@ -61,7 +62,8 @@ public theorem_wanted finrank_point_two_mul_mul_eq_one {p q : ℕ} (hp : p.Prime
     (hparity : Odd (Module.finrank ℤ E.toProjective.Point)) :
     Module.finrank ℤ E.toProjective.Point = 1
 
-/-- Theorem 1 (ii): let `p ≠ q` be primes (odd by the congruences) and `E : y² = x³ - 2pqx` over `ℚ`. Suppose
+/-- Theorem 1 (ii): let `p ≠ q` be primes (odd by the congruences) and `E : y² = x³ - 2pqx` over
+`ℚ`. Suppose
 `(p, q) ≡ (1, 1) (mod 8)` and `(p/q) = -1`, or `(p, q) ≡ (7, 7) (mod 8)`, or `p ≡ 1 (mod 8)`,
 `q ≡ 3, 5, 7 (mod 8)` and `(p/q) = 1`. If the rank of `E(ℚ)` is odd (the parity conjecture for
 `E`), then the rank is `1` or `3`.

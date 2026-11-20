@@ -49,8 +49,8 @@ and a *front* is a profile with `0 < U < 1`, `U → 1` at `-∞` and `U → 0` a
   the minimal speed `2 √(r D)`. With `D = r = 1` this is the wave `(1 + C e^{z/√6})⁻²` of speed
   `5/√6` of Ablowitz and Zeppetella (1979); the general case follows by rescaling `z`.
 
-Existence of a front for every `c ≥ 2 √(r D)` (Kolmogorov–Petrovsky–Piskunov 1937) is recorded as
-a wanted theorem in `WantedExt/Biology/Dynamics/FisherKPPWanted.lean`.
+Existence of a strictly decreasing front for every `c ≥ 2 √(r D)` (Kolmogorov–Petrovsky–Piskunov
+1937) is `FisherKPP.exists_isFront_of_le` in `MathlibExt/Biology/Dynamics/FisherKPPExistence.lean`.
 
 ## References
 

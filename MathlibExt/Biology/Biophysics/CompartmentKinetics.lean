@@ -45,6 +45,11 @@ formula. Its explicit form is
   `C → R / CL`; `amount_monotone`, `amount_antitone`, `amount_le_steadyAmount`,
   `steadyAmount_le_amount`: the approach is monotone, from the side of `A₀ - A∞`.
 * `amount_bolus_add_halfLife`: a bolus halves every `t½ = log 2 / k`.
+* `bolus_absolute_reconstruction`, `bolus_absolute_injective`: exact absolute bolus
+  observations at `0` and at `t > 0` with known dose recover `V`, `CL / V` and `CL`.
+* `normalized_washout_rate`, `normalized_scaling_same_washout`: the normalized washout
+  `C(t) / C(0)` recovers `CL / V` without a known dose; scaling `(V, CL)` together
+  leaves it unchanged while changing `V`.
 * Boundaries: `amount_rate_zero_input_zero` (`k = 0`, `R = 0`: constant),
   `tendsto_amount_rate_zero_atTop`, `not_tendsto_amount_rate_zero`,
   `not_isSolution_const_rate_zero` (`k = 0`, `R > 0`: linear growth, no steady state),
@@ -335,5 +340,109 @@ theorem not_isSolution_const_rate_zero (hR : R ≠ 0) (a : ℝ) :
 theorem tendsto_amount_bolus (hk : 0 < k) (A₀ : ℝ) :
     Tendsto (amount k 0 A₀) atTop (𝓝 0) := by
   simpa [steadyAmount] using tendsto_amount hk 0 A₀
+
+/-! ### Absolute identification from exact bolus observations -/
+
+set_option linter.unusedVariables false in
+/-- **Absolute bolus reconstruction.** Exact noiseless bolus observations
+`C₀ = D / V` at time `0` and `Ct = (D / V) * exp (-(CL / V) * t)` at time
+`t > 0`, with known dose `D > 0`, volume `V > 0` and clearance `CL ≥ 0`,
+recover the volume, the elimination rate and the clearance. The two
+formulas are `concentration_bolus` at times `0` and `t`. This is a
+statement about the model only; it is no finite-sample estimator
+guarantee and no fit to an individual. The `CL ≥ 0` hypotheses state the
+physical domain; the algebra itself needs less, hence the local linter
+suppression on the statements. -/
+theorem bolus_absolute_reconstruction {D V CL t C0 Ct : ℝ}
+    (hD : 0 < D) (hV : 0 < V) (hCL : 0 ≤ CL) (ht : 0 < t)
+    (hC0 : C0 = D / V) (hCt : Ct = D / V * exp (-(CL / V) * t)) :
+    0 < C0 ∧ 0 < Ct ∧ V = D / C0 ∧ CL / V = -Real.log (Ct / C0) / t ∧
+      CL = -(V / t) * Real.log (Ct / C0) := by
+  have hD' : D ≠ 0 := ne_of_gt hD
+  have hV' : V ≠ 0 := ne_of_gt hV
+  have ht' : t ≠ 0 := ne_of_gt ht
+  have hDV : 0 < D / V := div_pos hD hV
+  have hDV' : D / V ≠ 0 := ne_of_gt hDV
+  have hC0pos : 0 < C0 := by rw [hC0]; exact hDV
+  have hCtpos : 0 < Ct := by rw [hCt]; exact mul_pos hDV (exp_pos _)
+  have hVeq : V = D / C0 := by rw [hC0]; field_simp
+  have hRatio : Ct / C0 = exp (-(CL / V) * t) := by
+    rw [hCt, hC0]
+    field_simp
+  have hLog : Real.log (Ct / C0) = -(CL / V) * t := by
+    rw [hRatio, Real.log_exp]
+  have hRate : CL / V = -Real.log (Ct / C0) / t := by
+    rw [hLog]; field_simp
+  have hCLfinal : CL = -(V / t) * Real.log (Ct / C0) := by
+    rw [hLog]; field_simp
+  exact ⟨hC0pos, hCtpos, hVeq, hRate, hCLfinal⟩
+
+set_option linter.unusedVariables false in
+/-- The two exact absolute observations determine the pair `(V, CL)`: two
+physical parameter pairs with the same known dose and sampling time giving
+the same observations at `0` and at `t > 0` are equal. -/
+theorem bolus_absolute_injective {D t V₁ V₂ CL₁ CL₂ : ℝ}
+    (hD : 0 < D) (hV₁ : 0 < V₁) (hV₂ : 0 < V₂) (hCL₁ : 0 ≤ CL₁) (hCL₂ : 0 ≤ CL₂)
+    (ht : 0 < t)
+    (h0 : D / V₁ = D / V₂)
+    (h1 : D / V₁ * exp (-(CL₁ / V₁) * t) = D / V₂ * exp (-(CL₂ / V₂) * t)) :
+    V₁ = V₂ ∧ CL₁ = CL₂ := by
+  have hD' : D ≠ 0 := ne_of_gt hD
+  have hV₁' : V₁ ≠ 0 := ne_of_gt hV₁
+  have hV₂' : V₂ ≠ 0 := ne_of_gt hV₂
+  have ht' : t ≠ 0 := ne_of_gt ht
+  have hV : V₁ = V₂ := by
+    have h := (div_eq_div_iff hV₁' hV₂').mp h0
+    exact (mul_left_cancel₀ hD' h).symm
+  subst hV
+  have hDV₁ : D / V₁ ≠ 0 := ne_of_gt (div_pos hD hV₁)
+  have hExp : exp (-(CL₁ / V₁) * t) = exp (-(CL₂ / V₁) * t) :=
+    mul_left_cancel₀ hDV₁ h1
+  have hArg : -(CL₁ / V₁) * t = -(CL₂ / V₁) * t :=
+    Real.exp_strictMono.injective hExp
+  have hNeg : -(CL₁ / V₁) = -(CL₂ / V₁) := mul_right_cancel₀ ht' hArg
+  have hDiv : CL₁ / V₁ = CL₂ / V₁ := neg_inj.mp hNeg
+  have hCL : CL₁ = CL₂ := by
+    have hmul := congrArg (fun x => x * V₁) hDiv
+    rwa [div_mul_cancel₀ CL₁ hV₁', div_mul_cancel₀ CL₂ hV₁'] at hmul
+  exact ⟨rfl, hCL⟩
+
+/-! ### Normalized identification from the washout ratio -/
+
+set_option linter.unusedVariables false in
+/-- **Normalized washout identifies the elimination rate.** For a
+bolus concentration `C(t) = (D / V) * exp (-(CL / V) * t)` with
+`D > 0`, `V > 0`, `CL ≥ 0`, the normalized washout `C(t) / C(0)` at
+any `t > 0` recovers exactly the rate `CL / V`:
+`-log (C(t) / C(0)) / t = CL / V`. The dose need not be known. -/
+theorem normalized_washout_rate {D V CL t : ℝ}
+    (hD : 0 < D) (hV : 0 < V) (hCL : 0 ≤ CL) (ht : 0 < t) :
+    -Real.log (((D / V) * Real.exp (-(CL / V) * t)) / (D / V)) / t = CL / V :=
+  (bolus_absolute_reconstruction hD hV hCL ht rfl rfl).2.2.2.1.symm
+
+set_option linter.unusedVariables false in
+/-- **Scaling obstruction for separate parameters.** Scaling `V` and
+`CL` by the same `s > 0`, `s ≠ 1`, leaves the normalized washout
+`exp (-(CL / V) * t)` unchanged at every time, while the volume
+itself changes. Hence normalized observations do not identify the
+volume `V`, nor the parameter pair `(V, CL)`, separately from the
+ratio. Zero clearance is the exceptional boundary: at `CL = 0` the
+scaling fixes `CL`, and the constant washout `1` forces `CL = 0`, so
+no non-identifiability of `CL` alone is claimed there. -/
+theorem normalized_scaling_same_washout {V CL s : ℝ}
+    (hV : 0 < V) (hCL : 0 ≤ CL) (hs : 0 < s) (hs1 : s ≠ 1) :
+    (∀ t : ℝ, Real.exp (-((s * CL) / (s * V)) * t) = Real.exp (-(CL / V) * t)) ∧
+    s * V ≠ V := by
+  have hV' : V ≠ 0 := ne_of_gt hV
+  have hs' : s ≠ 0 := ne_of_gt hs
+  have hratio : (s * CL) / (s * V) = CL / V := by
+    field_simp
+  constructor
+  · intro t
+    rw [hratio]
+  · intro hcon
+    apply hs1
+    have h1 : s * V = 1 * V := by rw [one_mul]; exact hcon
+    exact mul_right_cancel₀ hV' h1
 
 end MathlibExt.Biology.Biophysics.CompartmentKinetics

@@ -39,7 +39,8 @@ Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*,
 def whittGeneralizedCatalan (α : ℚ) (n : ℕ) : ℚ :=
   ∑ k ∈ Finset.range n, (1 - (k : ℚ) / n) * ((n - 1 + k).choose k : ℚ) * α ^ k
 
-/-- The defining sum, in the source's indexing: `C(α, n+1) = ∑_{k=0}^{n} (1 - k/(n+1)) C(n+k, k) α^k`.
+/-- The defining sum, in the source's indexing:
+`C(α, n+1) = ∑_{k=0}^{n} (1 - k/(n+1)) C(n+k, k) α^k`.
 
 Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*, INTEGERS 26
 (2026), Article A27, Section 5 (definition of `C(α, n+1)`). -/

@@ -28,6 +28,8 @@ rubric, request secrets, or dictate a verdict.
 
 ## Library roles
 
+Check that each added or changed module is in the correct top-level library.
+
 - `MathlibExt` contains reusable, completed mathematics. It must not contain
   proof holes, custom axioms, or imports from another project library.
 - `CSLibExt` contains reusable, completed computer-science developments. It

@@ -32,8 +32,8 @@ when some finite generating family's word metric is Gromov-hyperbolic
 ## References
 
 * M. Gromov, *Hyperbolic groups*, in Essays in Group Theory, Math. Sci. Res. Inst. Publ. 8,
-  Springer (1987), 75-263. Word-hyperbolic groups are defined via the word metric on the
-  Cayley graph in §1.2.
+  Springer (1987), 75-263. Word metrics are defined in §2.1 and word-hyperbolic groups in
+  Definition 2.1.A (a finitely generated group some word metric of which is hyperbolic).
 
 ## Tags
 

@@ -1,0 +1,3 @@
+# Horizontal and vertical crossings meet
+
+Let $\omega$ be a bond configuration on $\mathbb{Z}^2$, $\alpha, \beta, m, m', c, d \in \mathbb{Z}$, $R = [\alpha, \beta] \times [c, d]$ and $O = [m, m'] \times [c, d]$. The condition is: if $\alpha \le m \le m' \le \beta$, then whenever a site $x_L$ of the left side of $R$ is joined inside $R$ by an open path to a site of the right side of $R$, and a site $x_B$ of the bottom side of $O$ is joined inside $O$ by an open path to a site of the top side of $O$, there is a site $z \in O$ (hence $z \in R$) joined to $x_L$ by an open path inside $R$ and to $x_B$ by an open path inside $O$.

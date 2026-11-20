@@ -44,7 +44,8 @@ check_structure() {
   done
   for path in \
     lakefile.toml lake-manifest.json lean-toolchain README.md REVIEWING.md \
-    scripts/check_axioms.sh scripts/check_diagnostics.sh scripts/check_health.sh \
+    scripts/check_axioms.sh scripts/check_axioms.lean scripts/audit_compiled_modules.py \
+    scripts/check_diagnostics.sh scripts/check_health.sh \
     scripts/check_lake_surface.py scripts/check_copyright.py scripts/test_scripts.sh; do
     if [[ ! -f "$path" ]]; then
       echo "missing required file: $path" >&2
@@ -53,15 +54,25 @@ check_structure() {
   done
 }
 
+# `bash -n` parses only its first operand (the others become its arguments),
+# so parse each script separately.
+check_shell_syntax() {
+  local path failed=0
+  for path in "$@"; do
+    bash -n "$path" || failed=1
+  done
+  return "$failed"
+}
+
 if [[ "$scope" == all || "$scope" == preflight ]]; then
   run_check "repository structure" check_structure
-  run_check "shell syntax" \
-    bash -n \
-      scripts/check.sh scripts/check_axioms.sh scripts/check_diagnostics.sh \
-      scripts/check_health.sh scripts/test_scripts.sh
+  run_check "shell syntax" check_shell_syntax scripts/*.sh
   run_check "maintenance script regressions" scripts/test_scripts.sh
   run_check "library policy" scripts/check_health.sh
   run_check "copyright headers" python3 scripts/check_copyright.py --all
+  # Scoped to files synced from formal-math (see provenance/README.md): files without a manifest
+  # row are ignored, so only a PR that changes or deletes a synced file must record it.
+  run_check "formal-math sync manifest" python3 scripts/check_formal_math_sync.py
 fi
 
 if [[ "$scope" == all || "$scope" == build ]]; then

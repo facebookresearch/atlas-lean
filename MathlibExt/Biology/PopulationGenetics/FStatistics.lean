@@ -10,6 +10,9 @@ module
 
 public import Mathlib.MeasureTheory.Function.L2Space
 public import Mathlib.Data.Finset.SymmDiff
+public import Mathlib.LinearAlgebra.Matrix.PosDef
+
+import Mathlib.Algebra.Order.Star.Real
 
 /-!
 # F-statistics and admixture graphs
@@ -57,6 +60,8 @@ root-to-`X` lineage.
 * `f3_admixture_drift`: drift on `C`'s private edge after admixture adds its length to `f3`.
 * `f4_eq_zero_of_disjoint`: `f4` vanishes when the paths `A–B` and `C–D` share no edge.
 * `f4_ratio`: f4-ratio estimation of an admixture proportion.
+* `rootSecondMoment_eq_mul_diagonal_mul_transpose`: the root-relative second moment matrix is
+  `W * diagonal len * Wᵀ`, hence positive semidefinite; on trees it is the shared lineage length.
 * `wahlund`: the Wahlund identity `H_T - H_S = 2 ∑ c i (q i - q̄) ^ 2`, so `F_ST ≥ 0`.
 
 ## References
@@ -381,6 +386,43 @@ theorem f4_ratio {A O X Y B C : P} {α : ℝ}
     (hYB : f4 μ M.freq A O Y C = f4 μ M.freq A O B C) (hB : f4 μ M.freq A O B C ≠ 0) :
     f4 μ M.freq A O X C / f4 μ M.freq A O B C = α := by
   rw [M.f4_admixture_right h, hYB, mul_div_assoc, div_self hB, mul_one]
+
+/-- The root-relative second moment `Σ X Y = 𝔼[(p X - root) * (p Y - root)]`. -/
+noncomputable def rootSecondMoment (X Y : P) : ℝ :=
+  ∫ ω, (M.freq X ω - M.root ω) * (M.freq Y ω - M.root ω) ∂μ
+
+theorem rootSecondMoment_eq_sum (X Y : P) :
+    M.rootSecondMoment X Y = ∑ e, M.weight X e * M.weight Y e * M.len e := by
+  have h : ∀ Z : P, ∀ ω, M.freq Z ω - M.root ω = ∑ e, M.weight Z e * M.incr e ω :=
+    fun Z ω => by simp [freq]
+  unfold rootSecondMoment
+  simp_rw [h]
+  exact M.integral_sum_mul_sum _ _
+
+theorem rootSecondMoment_eq_mul_diagonal_mul_transpose [DecidableEq E] :
+    Matrix.of M.rootSecondMoment =
+      Matrix.of M.weight * Matrix.diagonal M.len * Matrix.transpose (Matrix.of M.weight) := by
+  ext X Y
+  rw [Matrix.mul_apply]
+  simp only [Matrix.mul_diagonal, Matrix.transpose_apply, Matrix.of_apply, rootSecondMoment_eq_sum]
+  refine Finset.sum_congr rfl fun e _ => ?_
+  ring
+
+theorem posSemidef_rootSecondMoment [Finite P] : (Matrix.of M.rootSecondMoment).PosSemidef := by
+  classical
+  rw [rootSecondMoment_eq_mul_diagonal_mul_transpose]
+  have hd : (Matrix.diagonal M.len).PosSemidef :=
+    Matrix.PosSemidef.diagonal fun e => M.len_nonneg e
+  simpa [Matrix.conjTranspose_eq_transpose_of_trivial] using
+    hd.mul_mul_conjTranspose_same (Matrix.of M.weight)
+
+theorem rootSecondMoment_eq_sum_inter [DecidableEq E] (hM : M.HasBinaryLoadings) (X Y : P) :
+    M.rootSecondMoment X Y = ∑ e ∈ M.lineage X ∩ M.lineage Y, M.len e := by
+  rw [rootSecondMoment_eq_sum, ← Finset.univ_inter (M.lineage X ∩ M.lineage Y),
+    ← Finset.sum_ite_mem]
+  refine Finset.sum_congr rfl fun e _ => ?_
+  rcases hM X e with hX | hX <;> rcases hM Y e with hY | hY <;>
+    simp [lineage, hX, hY]
 
 end DriftModel
 

@@ -20,6 +20,8 @@ reset_fixture() {
   cp "$REPO_ROOT/lake-manifest.json" "$TMP_ROOT/repo/"
   cp \
     "$REPO_ROOT/scripts/check_axioms.sh" \
+    "$REPO_ROOT/scripts/check_axioms.lean" \
+    "$REPO_ROOT/scripts/audit_compiled_modules.py" \
     "$REPO_ROOT/scripts/check_health.sh" \
     "$REPO_ROOT/scripts/check_lake_surface.py" \
     "$TMP_ROOT/repo/scripts/"
@@ -61,6 +63,40 @@ PY
 
 reset_fixture
 expect_pass "empty scaffold"
+
+# The fixture runs preflight without recursively running this test suite.
+cp "$REPO_ROOT/scripts/"{check.sh,check_diagnostics.sh} "$TMP_ROOT/repo/scripts/"
+touch "$TMP_ROOT/repo/"{lean-toolchain,README.md,REVIEWING.md}
+touch "$TMP_ROOT/repo/scripts/"{check_copyright.py,check_formal_math_sync.py}
+printf '#!/usr/bin/env bash\nexit 0\n' >"$TMP_ROOT/repo/scripts/test_scripts.sh"
+chmod +x "$TMP_ROOT/repo/scripts/test_scripts.sh"
+# LC_ALL=C keeps bash's syntax-error messages untranslated for the greps below.
+run_preflight() {
+  LC_ALL=C "$TMP_ROOT/repo/scripts/check.sh" preflight \
+    >"$TMP_ROOT/output.log" 2>&1
+}
+if ! run_preflight; then
+  cat "$TMP_ROOT/output.log" >&2
+  fail "preflight failed with valid shell scripts"
+fi
+printf '\nif then\n' >>"$TMP_ROOT/repo/scripts/check_diagnostics.sh"
+if run_preflight; then
+  fail "preflight did not detect a syntax error in check_diagnostics.sh"
+fi
+grep -q 'check_diagnostics.sh:.*syntax error' "$TMP_ROOT/output.log" || {
+  cat "$TMP_ROOT/output.log" >&2
+  fail "preflight reported the wrong shell syntax diagnostic"
+}
+# A script added to scripts/ is checked without being listed anywhere.
+cp "$REPO_ROOT/scripts/check_diagnostics.sh" "$TMP_ROOT/repo/scripts/"
+printf 'if then\n' >"$TMP_ROOT/repo/scripts/new_check.sh"
+if run_preflight; then
+  fail "preflight did not detect a syntax error in a new script"
+fi
+grep -q 'new_check.sh:.*syntax error' "$TMP_ROOT/output.log" || {
+  cat "$TMP_ROOT/output.log" >&2
+  fail "preflight reported the wrong diagnostic for a new script"
+}
 
 PHYSLIB_SOURCE='git = "https://github.com/leanprover-community/physlib"'
 PHYSLIB_REV="$(python3 - "$REPO_ROOT/lakefile.toml" <<'PY'
@@ -353,6 +389,7 @@ grep -q 'check_copyright.py --all' "$REPO_ROOT/scripts/check.sh" ||
   fail "preflight does not check every file's copyright header"
 
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_quality_eval.py -v
+python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_formal_math_sync.py -v
 python3 "$REPO_ROOT/scripts/bump/test_pinned_bump.py"
 
 echo "ok [scripts]: repository policy regression tests passed."

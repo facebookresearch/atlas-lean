@@ -154,3 +154,72 @@ theorem measure_exists_abs_empirical_sub_integral_ge_le
         ring
 
 end ProbabilityTheory
+
+
+
+
+namespace ProbabilityTheory
+
+open MeasureTheory
+
+/-- Deterministic tie-broken empirical-risk minimizer over the finite candidate class
+(registry-required public selector API), directly the `Finite.exists_min` witness. -/
+noncomputable def ermIdx {Z : Type*} [MeasurableSpace Z] {M n : ℕ} [NeZero M]
+    (f : Fin M → Z → ℝ) (S : Fin n → Z) : Fin M := by
+  have hne : Nonempty (Fin M) := Fin.pos_iff_nonempty.mp (NeZero.pos M)
+  exact Classical.choose (Finite.exists_min (fun j => (n : ℝ)⁻¹ * ∑ i, f j (S i)))
+
+/-- The empirical minimizer attains the least empirical risk (public selector spec). -/
+theorem ermIdx_spec {Z : Type*} [MeasurableSpace Z] {M n : ℕ} [NeZero M]
+    (f : Fin M → Z → ℝ) (S : Fin n → Z) (j : Fin M) :
+    (n : ℝ)⁻¹ * ∑ i, f (ermIdx f S) (S i) ≤ (n : ℝ)⁻¹ * ∑ i, f j (S i) := by
+  have hne : Nonempty (Fin M) := Fin.pos_iff_nonempty.mp (NeZero.pos M)
+  have h := Classical.choose_spec
+    (Finite.exists_min (fun k => (n : ℝ)⁻¹ * ∑ i, f k (S i)))
+  exact h j
+
+/-- **Finite validation-ERM corollary.** Outside the bad set of
+`measure_exists_abs_empirical_sub_integral_ge_le`, the empirical minimizer's population risk is
+at most the best candidate's population risk plus `2ε`. -/
+theorem erm_populationRisk_le_best_plus_two
+    {Z : Type*} [MeasurableSpace Z] (μ : Measure Z) [IsProbabilityMeasure μ]
+    {M n : ℕ} [NeZero M] (f : Fin M → Z → ℝ)
+    (S : Fin n → Z)
+    {ε : ℝ}
+    (hS : S ∉ {S | ∃ j : Fin M,
+      ε ≤ |(n : ℝ)⁻¹ * ∑ i : Fin n, f j (S i) - ∫ z, f j z ∂μ|}) :
+    ∫ z, f (ermIdx f S) z ∂μ ≤ (⨅ j, ∫ z, f j z ∂μ) + 2 * ε := by
+  have hposM : 0 < M := NeZero.pos M
+  have hneM : Nonempty (Fin M) := Fin.pos_iff_nonempty.mp hposM
+  simp only [Set.mem_ofPred_eq, not_exists, not_le] at hS
+  have h_pop_le : ∀ j : Fin M,
+      ∫ z, f j z ∂μ ≤ (n : ℝ)⁻¹ * ∑ i : Fin n, f j (S i) + ε := by
+    intro j
+    have hj := hS j
+    rw [abs_lt] at hj
+    obtain ⟨h1, _⟩ := hj
+    linarith
+  have h_emp_le : ∀ j : Fin M,
+      (n : ℝ)⁻¹ * ∑ i : Fin n, f j (S i) ≤ ∫ z, f j z ∂μ + ε := by
+    intro j
+    have hj := hS j
+    rw [abs_lt] at hj
+    obtain ⟨_, h2⟩ := hj
+    linarith
+  have hchain : ∀ j : Fin M,
+      ∫ z, f (ermIdx f S) z ∂μ ≤ ∫ z, f j z ∂μ + 2 * ε := by
+    intro j
+    have h1 := h_pop_le (ermIdx f S)
+    have h2 := ermIdx_spec f S j
+    have h3 := h_emp_le j
+    linarith
+  have hle : ∀ j : Fin M,
+      ∫ z, f (ermIdx f S) z ∂μ - 2 * ε ≤ ∫ z, f j z ∂μ := by
+    intro j
+    have hj := hchain j
+    linarith
+  have hinf : ∫ z, f (ermIdx f S) z ∂μ - 2 * ε ≤ ⨅ j, ∫ z, f j z ∂μ :=
+    @le_ciInf _ _ inferInstance hneM _ _ hle
+  linarith
+
+end ProbabilityTheory
