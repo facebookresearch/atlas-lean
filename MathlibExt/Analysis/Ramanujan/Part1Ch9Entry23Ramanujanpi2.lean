@@ -80,12 +80,6 @@ def chapter9Entry23FactorialTerm (u : ℝ) (k : ℕ) : ℝ :=
       Real.sin u ^ (2 * k + 2) /
     (((2 * k + 1).factorial : ℝ) * (((2 * k + 2 : ℕ) : ℝ) ^ 2))
 
-private lemma oddHarmonic_nonneg (n : ℕ) : 0 ≤ chapter9OddHarmonic n := by
-  unfold chapter9OddHarmonic
-  apply Finset.sum_nonneg
-  intro i _
-  positivity
-
 private lemma oddHarmonic_le_card (n : ℕ) : chapter9OddHarmonic n ≤ (n : ℝ) := by
   unfold chapter9OddHarmonic
   calc ∑ i ∈ Finset.range n, (1 : ℝ) / (((2 * i + 1 : ℕ)) : ℝ)
@@ -298,7 +292,7 @@ private lemma summable_leftTerm (x : ℝ) (h : |Real.tan x| ≤ 1) :
         ring
       have habs : |Real.tan x ^ (2 * (j + 1))| = 1 := by
         rw [abs_pow, ht, one_pow]
-      have hHnn := oddHarmonic_nonneg (j + 1)
+      have hHnn := Entry8Arcsin.oddHarmonic_nonneg (j + 1)
       have hden : (0 : ℝ) < ((((2 * (j + 1) : ℕ))) : ℝ) ^ 2 :=
         pow_pos (Nat.cast_pos.mpr (by omega : 0 < 2 * (j + 1))) 2
       have hneg1 : (|(-1 : ℝ) ^ j| : ℝ) = 1 := by
@@ -342,7 +336,7 @@ private lemma summable_leftTerm (x : ℝ) (h : |Real.tan x| ≤ 1) :
         rw [Nat.cast_add, Nat.cast_one]
         have h0 := Nat.cast_nonneg (α := ℝ) j
         linarith
-      have hHnn := oddHarmonic_nonneg (j + 1)
+      have hHnn := Entry8Arcsin.oddHarmonic_nonneg (j + 1)
       have hden : (0 : ℝ) < ((((2 * (j + 1) : ℕ))) : ℝ) ^ 2 :=
         pow_pos (Nat.cast_pos.mpr (by omega : 0 < 2 * (j + 1))) 2
       have hneg1 : (|(-1 : ℝ) ^ j| : ℝ) = 1 := by
@@ -1328,7 +1322,7 @@ private lemma norm_aTerm'_le {r y : ℝ} (hr0 : 0 < r) (hr1 : r < Real.pi / 4)
   have hq_nn : 0 ≤ Real.tan r := tan_nonneg_of_mem (le_of_lt hr0) hr1'
   have hH : chapter9OddHarmonic (j + 1) ≤ ((((j + 1 : ℕ))) : ℝ) :=
     oddHarmonic_le_card (j + 1)
-  have hHnn : 0 ≤ chapter9OddHarmonic (j + 1) := oddHarmonic_nonneg _
+  have hHnn : 0 ≤ chapter9OddHarmonic (j + 1) := Entry8Arcsin.oddHarmonic_nonneg _
   have hcast : ((((j + 1 : ℕ))) : ℝ) = (j : ℝ) + 1 := by push_cast; ring
   have hinv_le := inv_cos_sq_le_of_mem hr0 hr1' hy
   have hinv_nn : 0 ≤ 1 / Real.cos y ^ 2 := by positivity
@@ -1446,7 +1440,7 @@ private lemma norm_lTerm'_le {r y : ℝ} (hr0 : 0 < r) (hr1 : r < Real.pi / 4)
   have hq_nn : 0 ≤ Real.tan r := tan_nonneg_of_mem (le_of_lt hr0) hr1'
   have hH : chapter9OddHarmonic (j + 1) ≤ ((((j + 1 : ℕ))) : ℝ) :=
     oddHarmonic_le_card (j + 1)
-  have hHnn : 0 ≤ chapter9OddHarmonic (j + 1) := oddHarmonic_nonneg _
+  have hHnn : 0 ≤ chapter9OddHarmonic (j + 1) := Entry8Arcsin.oddHarmonic_nonneg _
   have hHD : chapter9OddHarmonic (j + 1) / ((((2 * (j + 1) : ℕ))) : ℝ)
       ≤ 1 / 2 := by
     have hcast2 : ((((2 * (j + 1) : ℕ))) : ℝ) = 2 * ((((j + 1 : ℕ))) : ℝ) := by
@@ -1574,7 +1568,7 @@ private lemma summable_pTerm {t : ℝ} (ht : |t| < 1) :
     intro n
     have hH : chapter9OddHarmonic (n + 1) ≤ ((((n + 1 : ℕ))) : ℝ) :=
       oddHarmonic_le_card (n + 1)
-    have hHnn : 0 ≤ chapter9OddHarmonic (n + 1) := oddHarmonic_nonneg _
+    have hHnn : 0 ≤ chapter9OddHarmonic (n + 1) := Entry8Arcsin.oddHarmonic_nonneg _
     have hcast : ((((n + 1 : ℕ))) : ℝ) = (n : ℝ) + 1 := by push_cast; ring
     have hpow : |t| ^ (2 * n + 1) = |t| * (|t| ^ 2) ^ n := by
       rw [pow_add, pow_one, ← pow_mul]
@@ -2270,7 +2264,7 @@ private lemma norm_leftTerm_le_uniform {x : ℝ} (h : |Real.tan x| ≤ 1) (j : �
   have habs : |Real.tan x ^ (2 * (j + 1))| ≤ 1 := by
     rw [abs_pow]
     exact htan_pow
-  have hHnn := oddHarmonic_nonneg (j + 1)
+  have hHnn := Entry8Arcsin.oddHarmonic_nonneg (j + 1)
   have hden : (0 : ℝ) < ((((2 * (j + 1) : ℕ))) : ℝ) ^ 2 :=
     pow_pos (Nat.cast_pos.mpr (by omega : 0 < 2 * (j + 1))) 2
   have hneg1 : (|(-1 : ℝ) ^ j| : ℝ) = 1 := by

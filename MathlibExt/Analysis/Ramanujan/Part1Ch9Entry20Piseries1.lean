@@ -133,7 +133,8 @@ private theorem aux_cosineThree_summable (x : ℝ) :
   rw [abs_of_pos hpos]
   gcongr
 
-private theorem aux_coeff_le_one (k : ℕ) :
+/-- `2 ^ (2 * k) * (k !) ^ 2 / (2 * k + 1)! ≤ 1` for every natural number `k`. -/
+theorem two_pow_mul_factorial_sq_div_factorial_le_one (k : ℕ) :
     (2 : ℝ) ^ (2 * k) * ((k.factorial : ℝ) ^ 2) / (((2 * k + 1).factorial : ℝ)) ≤ 1 := by
   have hnat : 4 ^ k * (k.factorial ^ 2) ≤ (2 * k + 1).factorial := by
     have h4 : 4 ^ k ≤ (2 * k + 1) * k.centralBinom :=
@@ -207,7 +208,7 @@ private theorem aux_factorial_summable (u : ℝ) : Summable (chapter9Entry23Fact
     gcongr
   have hnn_sin_div : (0 : ℝ) ≤ |Real.sin u ^ (2 * k + 2)| / (((2 * k + 2 : ℕ)) : ℝ) ^ 2 :=
     div_nonneg (abs_nonneg _) (le_of_lt hden_pos)
-  have hcoeff := aux_coeff_le_one k
+  have hcoeff := two_pow_mul_factorial_sq_div_factorial_le_one k
   have hmid : ((2 : ℝ) ^ (2 * k) * ((k.factorial : ℝ) ^ 2) / (((2 * k + 1).factorial : ℝ)))
         * (|Real.sin u ^ (2 * k + 2)| / (((2 * k + 2 : ℕ)) : ℝ) ^ 2)
       ≤ 1 * (|Real.sin u ^ (2 * k + 2)| / (((2 * k + 2 : ℕ)) : ℝ) ^ 2) := by
@@ -459,7 +460,7 @@ private theorem aux_factorial_continuous :
       have hnn_sin_div : (0 : ℝ) ≤
           |Real.sin u ^ (2 * k + 2)| / (((2 * k + 2 : ℕ)) : ℝ) ^ 2 :=
         div_nonneg (abs_nonneg _) (le_of_lt hden_pos)
-      have hcoeff := aux_coeff_le_one k
+      have hcoeff := two_pow_mul_factorial_sq_div_factorial_le_one k
       have hmid : ((2 : ℝ) ^ (2 * k) * ((k.factorial : ℝ) ^ 2) /
           (((2 * k + 1).factorial : ℝ))) *
             (|Real.sin u ^ (2 * k + 2)| / (((2 * k + 2 : ℕ)) : ℝ) ^ 2)
@@ -533,7 +534,7 @@ private theorem auxA_nonneg (k : ℕ) : 0 ≤ auxA k := by
 
 private theorem auxA_le_one (k : ℕ) : auxA k ≤ 1 := by
   unfold auxA
-  exact aux_coeff_le_one k
+  exact two_pow_mul_factorial_sq_div_factorial_le_one k
 
 private theorem auxA_zero : auxA 0 = 1 := by
   unfold auxA

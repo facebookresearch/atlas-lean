@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
@@ -15,6 +16,7 @@ public import Mathlib.MeasureTheory.Integral.Prod
 import PhyslibExt.ContinuumMechanics.ControlVolumes
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.Calculus.BumpFunction.Normed
 
 /-!
 # Scalar shocks: jump relations for one-dimensional conservation laws
@@ -48,7 +50,17 @@ to pass between the plane integral and iterated integrals. No divergence theorem
 nonsmooth interface and no distribution space is used, and only a straight single shock is
 treated.
 
-Part C specializes to the Burgers flux `f u = u ^ 2 / 2` with two unequal constant states. The
+Part C turns the residual formula into the weak jump equivalence. A time bump
+`β : ContDiffBump t₀` and a transverse bump `θ : ContDiffBump 0` give the interface test
+`interfaceTest β θ c t x = β t * θ (x - c * t)`, the plane bump `(t, y) ↦ β t * θ y` composed with
+the shear `(t, x) ↦ (t, x - c * t)`. It is a smooth test vanishing outside an explicit bounded
+rectangle and equal to `β t` along the front, so its integral along the front is `∫ β > 0`
+(`ContDiffBump.integral_pos`). With the residual formula, the residual of the moving step vanishes
+against every admissible test exactly when the Rankine-Hugoniot identity
+`c * (uR - uL) = f uR - f uL` holds. One test alone establishes nothing: the zero test has zero
+residual against every step.
+
+Part D specializes to the Burgers flux `f u = u ^ 2 / 2` with two unequal constant states. The
 Rankine-Hugoniot identity forces the speed `c = (uL + uR) / 2`; equivalently, by Part A, mass on a
 fixed interval crossing the front is conserved exactly at that speed. For the convex entropy
 `η u = u ^ 2 / 2` with entropy flux `q u = u ^ 3 / 3`, the entropy production of the jump at that
@@ -72,6 +84,17 @@ entropy solutions.
   interface cannot detect the jump.
 - `ScalarShock.burgers_step_two_zero_weakResidual`: for Burgers states `2 | 0` the residual
   vanishes at speed `1` and is `2 * ∫ φ (t, 0) dt` at the incorrect speed `0`.
+- `ScalarShock.interfaceTest`: a time bump times a transverse bump of `x - c * t`, with explicit
+  partials `interfaceTestDt` and `interfaceTestDx`; it is an admissible test whose integral along
+  the front is positive (`ScalarShock.integral_interfaceTest_trace_pos`).
+- `ScalarShock.weakResidual_movingStep_eq_zero_iff_of_trace_ne_zero`: a test with nonzero integral
+  along the front detects a nonzero jump coefficient.
+- `ScalarShock.weakResidual_movingStep_eq_zero_iff`: zero weak residual against every admissible
+  test is equivalent to the Rankine-Hugoniot identity.
+- `ScalarShock.burgers_step_two_zero_interfaceTest`: an interface test gives the Burgers step
+  `2 | 0` a positive residual at the incorrect speed `0`;
+  `ScalarShock.exists_test_weakResidual_eq_zero_not_rankineHugoniot`: one zero test cannot
+  establish the weak equation.
 - `ScalarShock.burgersFlux`, `burgersEntropy`, `burgersEntropyFlux` and
   `burgersEntropyProduction`: the Burgers model and the entropy production `[q] - c * [η]`.
 - `ScalarShock.burgers_entropyPair`: `q' = η' * f'` and `η` is strictly convex.
@@ -91,7 +114,8 @@ entropy solutions.
 
 - A. Rankine-Hugoniot from two classical sides
 - B. Weak residual of a straight moving step
-- C. Burgers shock entropy and expansion rejection
+- C. Nonzero interface test and weak jump equivalence
+- D. Burgers shock entropy and expansion rejection
 
 ## iv. References
 
@@ -103,6 +127,7 @@ entropy solutions.
 - `ControlVolumes.movingJumpTransport` (`PhyslibExt.ContinuumMechanics.ControlVolumes`).
 - Mathlib's `MeasureTheory.integral_prod` (Fubini) and
   `intervalIntegral.integral_eq_sub_of_hasDerivAt` (fundamental theorem of calculus).
+- Mathlib's `ContDiffBump` (smooth bump functions) and `ContDiffBump.integral_pos`.
 -/
 
 @[expose] public section
@@ -826,8 +851,219 @@ lemma burgers_step_two_zero_weakResidual {T0 T1 X0 X1 : ℝ}
   · rw [weakResidual_movingStep hφ hφt hφx hsupp]
     norm_num
 
+/-! ## C. Nonzero interface test and weak jump equivalence -/
 
-/-! ## C. Burgers shock entropy and expansion rejection -/
+/-! ### The interface test -/
+
+/-- Interface test for the straight front `x = c * t`: the plane bump `(t, y) ↦ β t * θ y`, with
+a time bump `β` around `t₀` and a transverse bump `θ` around `0`, composed with the shear
+`(t, x) ↦ (t, x - c * t)`, so that `interfaceTest β θ c t x = β t * θ (x - c * t)`. -/
+noncomputable def interfaceTest {t₀ : ℝ} (β : ContDiffBump t₀) (θ : ContDiffBump (0 : ℝ))
+    (c t x : ℝ) : ℝ :=
+  β t * θ (x - c * t)
+
+/-- Time partial of the interface test (product and chain rules):
+`β' t * θ (x - c * t) - c * (β t * θ' (x - c * t))`. -/
+noncomputable def interfaceTestDt {t₀ : ℝ} (β : ContDiffBump t₀) (θ : ContDiffBump (0 : ℝ))
+    (c t x : ℝ) : ℝ :=
+  deriv β t * θ (x - c * t) - c * (β t * deriv θ (x - c * t))
+
+/-- Space partial of the interface test: `β t * θ' (x - c * t)`. -/
+noncomputable def interfaceTestDx {t₀ : ℝ} (β : ContDiffBump t₀) (θ : ContDiffBump (0 : ℝ))
+    (c t x : ℝ) : ℝ :=
+  β t * deriv θ (x - c * t)
+
+/-- The interface test is smooth on the `(t, x)` plane. -/
+lemma contDiff_interfaceTest {t₀ : ℝ} (β : ContDiffBump t₀) (θ : ContDiffBump (0 : ℝ))
+    (c : ℝ) : ContDiff ℝ ∞ (fun p : ℝ × ℝ => interfaceTest β θ c p.1 p.2) := by
+  unfold interfaceTest
+  exact (β.contDiff.comp contDiff_fst).mul
+    (θ.contDiff.comp (contDiff_snd.sub (contDiff_const.mul contDiff_fst)))
+
+/-- `interfaceTestDt` is the time partial of the interface test. -/
+lemma hasDerivAt_interfaceTest_time {t₀ : ℝ} (β : ContDiffBump t₀)
+    (θ : ContDiffBump (0 : ℝ)) (c t x : ℝ) :
+    HasDerivAt (fun τ : ℝ => interfaceTest β θ c τ x) (interfaceTestDt β θ c t x) t := by
+  have hβd : Differentiable ℝ β := (β.contDiff (n := 1)).differentiable one_ne_zero
+  have hθd : Differentiable ℝ θ := (θ.contDiff (n := 1)).differentiable one_ne_zero
+  have hlin : HasDerivAt (fun τ : ℝ => x - c * τ) (-c) t := by
+    simpa using ((hasDerivAt_id t).const_mul c).const_sub x
+  have h := (hβd t).hasDerivAt.mul ((hθd (x - c * t)).hasDerivAt.comp t hlin)
+  unfold interfaceTest interfaceTestDt
+  rw [show deriv β t * θ (x - c * t) - c * (β t * deriv θ (x - c * t)) =
+      deriv β t * θ (x - c * t) + β t * (deriv θ (x - c * t) * -c) by ring]
+  exact h
+
+/-- `interfaceTestDx` is the space partial of the interface test. -/
+lemma hasDerivAt_interfaceTest_space {t₀ : ℝ} (β : ContDiffBump t₀)
+    (θ : ContDiffBump (0 : ℝ)) (c t x : ℝ) :
+    HasDerivAt (fun y : ℝ => interfaceTest β θ c t y) (interfaceTestDx β θ c t x) x := by
+  have hθd : Differentiable ℝ θ := (θ.contDiff (n := 1)).differentiable one_ne_zero
+  have hlin : HasDerivAt (fun y : ℝ => y - c * t) 1 x := by
+    simpa using (hasDerivAt_id x).sub_const (c * t)
+  have h := ((hθd (x - c * t)).hasDerivAt.comp x hlin).const_mul (β t)
+  unfold interfaceTest interfaceTestDx
+  rw [show β t * deriv θ (x - c * t) = β t * (deriv θ (x - c * t) * 1) by ring]
+  exact h
+
+/-- The interface test vanishes outside the bounded rectangle
+`[t₀ - β.rOut, t₀ + β.rOut] × [-X, X]` with `X = |c| * (|t₀| + β.rOut) + θ.rOut`: a nonzero
+value needs `|t - t₀| < β.rOut` and `|x - c * t| < θ.rOut`. -/
+lemma support_interfaceTest_subset {t₀ : ℝ} (β : ContDiffBump t₀)
+    (θ : ContDiffBump (0 : ℝ)) (c : ℝ) :
+    Function.support (fun p : ℝ × ℝ => interfaceTest β θ c p.1 p.2) ⊆
+      Set.Icc (t₀ - β.rOut) (t₀ + β.rOut) ×ˢ
+        Set.Icc (-(|c| * (|t₀| + β.rOut) + θ.rOut)) (|c| * (|t₀| + β.rOut) + θ.rOut) := by
+  intro p hp
+  have hp' : β p.1 * θ (p.2 - c * p.1) ≠ 0 := hp
+  have h1 : p.1 ∈ Metric.ball t₀ β.rOut := by
+    rw [← β.support_eq]
+    exact left_ne_zero_of_mul hp'
+  have h2 : p.2 - c * p.1 ∈ Metric.ball (0 : ℝ) θ.rOut := by
+    rw [← θ.support_eq]
+    exact right_ne_zero_of_mul hp'
+  rw [Metric.mem_ball, Real.dist_eq] at h1 h2
+  rw [sub_zero] at h2
+  obtain ⟨h1a, h1b⟩ := abs_lt.mp h1
+  have ht : |p.1| ≤ |t₀| + β.rOut := by
+    calc |p.1| = |(p.1 - t₀) + t₀| := by rw [sub_add_cancel]
+      _ ≤ |p.1 - t₀| + |t₀| := abs_add_le _ _
+      _ ≤ |t₀| + β.rOut := by linarith [h1.le]
+  have hct : |c * p.1| ≤ |c| * (|t₀| + β.rOut) := by
+    rw [abs_mul]
+    exact mul_le_mul_of_nonneg_left ht (abs_nonneg c)
+  have hx : |p.2| ≤ |c| * (|t₀| + β.rOut) + θ.rOut := by
+    calc |p.2| = |(p.2 - c * p.1) + c * p.1| := by rw [sub_add_cancel]
+      _ ≤ |p.2 - c * p.1| + |c * p.1| := abs_add_le _ _
+      _ ≤ |c| * (|t₀| + β.rOut) + θ.rOut := by linarith [h2.le]
+  obtain ⟨hxa, hxb⟩ := abs_le.mp hx
+  exact ⟨⟨by linarith, by linarith⟩, ⟨hxa, hxb⟩⟩
+
+/-- Along the interface the test is the time bump, `interfaceTest β θ c t (c * t) = β t`
+(because `θ 0 = 1`), so it is positive on the nonempty time interval
+`(t₀ - β.rOut, t₀ + β.rOut)`. -/
+lemma interfaceTest_trace {t₀ : ℝ} (β : ContDiffBump t₀) (θ : ContDiffBump (0 : ℝ))
+    (c : ℝ) :
+    (∀ t : ℝ, interfaceTest β θ c t (c * t) = β t) ∧
+      (Set.Ioo (t₀ - β.rOut) (t₀ + β.rOut)).Nonempty ∧
+      ∀ t ∈ Set.Ioo (t₀ - β.rOut) (t₀ + β.rOut), 0 < interfaceTest β θ c t (c * t) := by
+  have h0 : θ 0 = 1 := θ.one_of_mem_closedBall (Metric.mem_closedBall_self θ.rIn_pos.le)
+  have htr : ∀ t : ℝ, interfaceTest β θ c t (c * t) = β t := by
+    intro t
+    simp [interfaceTest, h0]
+  refine ⟨htr, ⟨t₀, by linarith [β.rOut_pos], by linarith [β.rOut_pos]⟩, fun t ht => ?_⟩
+  rw [htr]
+  apply β.pos_of_mem_ball
+  rw [Metric.mem_ball, Real.dist_eq, abs_lt]
+  constructor <;> linarith [ht.1, ht.2]
+
+/-- The interface integral of the test is positive: `0 < ∫ φ (t, c * t) dt`, the integral of
+the time bump (`ContDiffBump.integral_pos`). -/
+lemma integral_interfaceTest_trace_pos {t₀ : ℝ} (β : ContDiffBump t₀)
+    (θ : ContDiffBump (0 : ℝ)) (c : ℝ) :
+    0 < ∫ t : ℝ, interfaceTest β θ c t (c * t) := by
+  have h : (fun t : ℝ => interfaceTest β θ c t (c * t)) = fun t => β t :=
+    funext (interfaceTest_trace β θ c).1
+  rw [h]
+  exact β.integral_pos
+
+/-! ### Weak jump equivalence -/
+
+/-- A test with nonzero interface integral detects the jump: for a smooth test `φ` vanishing
+outside a bounded rectangle, with time and space partials `φt`, `φx`, and
+`∫ φ (t, c * t) dt ≠ 0` (a positive one such as `interfaceTest`), the weak residual of the
+moving step vanishes exactly when `c * (uR - uL) = f uR - f uL`. -/
+lemma weakResidual_movingStep_eq_zero_iff_of_trace_ne_zero {f : ℝ → ℝ}
+    {uL uR c T0 T1 X0 X1 : ℝ} {φ φt φx : ℝ → ℝ → ℝ}
+    (hφ : ContDiff ℝ ∞ (fun p : ℝ × ℝ => φ p.1 p.2))
+    (hφt : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => φ τ x) (φt t x) t)
+    (hφx : ∀ t x : ℝ, HasDerivAt (fun y : ℝ => φ t y) (φx t x) x)
+    (hsupp : Function.support (fun p : ℝ × ℝ => φ p.1 p.2) ⊆
+      Set.Icc T0 T1 ×ˢ Set.Icc X0 X1)
+    (htrace : ∫ t : ℝ, φ t (c * t) ≠ 0) :
+    weakResidual f (movingStep uL uR c) φt φx = 0 ↔ c * (uR - uL) = f uR - f uL := by
+  rw [weakResidual_movingStep hφ hφt hφx hsupp]
+  constructor
+  · intro h
+    rcases mul_eq_zero.mp h with h1 | h1
+    · have h2 : (f uR - f uL) - c * (uR - uL) = 0 := neg_eq_zero.mp h1
+      linarith
+    · exact absurd h1 htrace
+  · intro h
+    have h2 : (f uR - f uL) - c * (uR - uL) = 0 := by linarith
+    rw [h2, neg_zero, zero_mul]
+
+/-- Weak jump equivalence for the straight step: the weak residual of the moving step vanishes
+against every admissible test (smooth, vanishing outside some bounded rectangle, with its time
+and space partials) if and only if the Rankine-Hugoniot identity `c * (uR - uL) = f uR - f uL`
+holds. The forward direction tests against an interface test. -/
+lemma weakResidual_movingStep_eq_zero_iff {f : ℝ → ℝ} {uL uR c : ℝ} :
+    (∀ (φ φt φx : ℝ → ℝ → ℝ) (T0 T1 X0 X1 : ℝ),
+        ContDiff ℝ ∞ (fun p : ℝ × ℝ => φ p.1 p.2) →
+        (∀ t x : ℝ, HasDerivAt (fun τ : ℝ => φ τ x) (φt t x) t) →
+        (∀ t x : ℝ, HasDerivAt (fun y : ℝ => φ t y) (φx t x) x) →
+        Function.support (fun p : ℝ × ℝ => φ p.1 p.2) ⊆ Set.Icc T0 T1 ×ˢ Set.Icc X0 X1 →
+        weakResidual f (movingStep uL uR c) φt φx = 0) ↔
+      c * (uR - uL) = f uR - f uL := by
+  constructor
+  · intro h
+    let β : ContDiffBump (0 : ℝ) := ⟨1 / 2, 1, by norm_num, by norm_num⟩
+    have hres := h (interfaceTest β β c) (interfaceTestDt β β c) (interfaceTestDx β β c) _ _ _ _
+      (contDiff_interfaceTest β β c) (hasDerivAt_interfaceTest_time β β c)
+      (hasDerivAt_interfaceTest_space β β c) (support_interfaceTest_subset β β c)
+    exact (weakResidual_movingStep_eq_zero_iff_of_trace_ne_zero (contDiff_interfaceTest β β c)
+      (hasDerivAt_interfaceTest_time β β c) (hasDerivAt_interfaceTest_space β β c)
+      (support_interfaceTest_subset β β c) (integral_interfaceTest_trace_pos β β c).ne').mp hres
+  · intro hRH φ φt φx T0 T1 X0 X1 hφ hφt hφx hsupp
+    rw [weakResidual_movingStep hφ hφt hφx hsupp]
+    have h2 : (f uR - f uL) - c * (uR - uL) = 0 := by linarith
+    rw [h2, neg_zero, zero_mul]
+
+/-! ### Fixtures -/
+
+/-- Fixture, a positive line-trace test detects a nonzero jump coefficient: for the Burgers flux
+`u ^ 2 / 2` and the states `2 | 0`, an interface test on the stationary front `x = 0` gives
+residual `0` at the Rankine-Hugoniot speed `1` and the positive residual `2 * ∫ β` at the
+incorrect speed `0`. -/
+lemma burgers_step_two_zero_interfaceTest {t₀ : ℝ} (β : ContDiffBump t₀)
+    (θ : ContDiffBump (0 : ℝ)) :
+    weakResidual (fun u : ℝ => u ^ 2 / 2) (movingStep 2 0 1) (interfaceTestDt β θ 0)
+        (interfaceTestDx β θ 0) = 0 ∧
+      weakResidual (fun u : ℝ => u ^ 2 / 2) (movingStep 2 0 0) (interfaceTestDt β θ 0)
+        (interfaceTestDx β θ 0) = 2 * ∫ t : ℝ, β t ∧
+      0 < weakResidual (fun u : ℝ => u ^ 2 / 2) (movingStep 2 0 0) (interfaceTestDt β θ 0)
+        (interfaceTestDx β θ 0) := by
+  obtain ⟨h1, h0⟩ := burgers_step_two_zero_weakResidual (contDiff_interfaceTest β θ 0)
+    (hasDerivAt_interfaceTest_time β θ 0) (hasDerivAt_interfaceTest_space β θ 0)
+    (support_interfaceTest_subset β θ 0)
+  have htr : (fun t : ℝ => interfaceTest β θ 0 t 0) = fun t => β t := by
+    funext t
+    simpa using (interfaceTest_trace β θ 0).1 t
+  have h0' : weakResidual (fun u : ℝ => u ^ 2 / 2) (movingStep 2 0 0) (interfaceTestDt β θ 0)
+      (interfaceTestDx β θ 0) = 2 * ∫ t : ℝ, β t := by
+    rw [h0, htr]
+  refine ⟨h1, h0', ?_⟩
+  rw [h0']
+  exact mul_pos two_pos β.integral_pos
+
+/-- Boundary example, one zero test cannot establish a weak equation: there is an admissible
+test, the zero test, whose residual against the Burgers step `2 | 0` at the incorrect speed `0`
+vanishes, although the Rankine-Hugoniot identity `0 * (0 - 2) = 0 ^ 2 / 2 - 2 ^ 2 / 2` fails. -/
+lemma exists_test_weakResidual_eq_zero_not_rankineHugoniot :
+    ∃ (φ φt φx : ℝ → ℝ → ℝ) (T0 T1 X0 X1 : ℝ),
+      ContDiff ℝ ∞ (fun p : ℝ × ℝ => φ p.1 p.2) ∧
+      (∀ t x : ℝ, HasDerivAt (fun τ : ℝ => φ τ x) (φt t x) t) ∧
+      (∀ t x : ℝ, HasDerivAt (fun y : ℝ => φ t y) (φx t x) x) ∧
+      Function.support (fun p : ℝ × ℝ => φ p.1 p.2) ⊆ Set.Icc T0 T1 ×ˢ Set.Icc X0 X1 ∧
+      weakResidual (fun u : ℝ => u ^ 2 / 2) (movingStep 2 0 0) φt φx = 0 ∧
+      ¬ ((0 : ℝ) * (0 - 2) = (0 : ℝ) ^ 2 / 2 - (2 : ℝ) ^ 2 / 2) := by
+  refine ⟨fun _ _ => 0, fun _ _ => 0, fun _ _ => 0, 0, 0, 0, 0, contDiff_const,
+    fun _ _ => hasDerivAt_const _ _, fun _ _ => hasDerivAt_const _ _, ?_, ?_, by norm_num⟩
+  · intro p hp
+    exact absurd rfl hp
+  · simp [weakResidual]
+
+/-! ## D. Burgers shock entropy and expansion rejection -/
 
 /-! ### Burgers model -/
 
