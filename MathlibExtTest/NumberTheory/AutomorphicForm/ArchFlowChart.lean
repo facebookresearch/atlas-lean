@@ -77,7 +77,10 @@ theorem exactSource_univ (K : Type 1) [Field K] [NumberField K]
 increment is unconjugated. -/
 example (K : Type) [Field K] [NumberField K] (w : InfinitePlace K) (hw : w.IsReal)
     (d : ArchDir) (t s : ℝ) :
-    archFlowAt K hw d (t + s) = archFlowAt K hw d t * archFlowAt K hw d s :=
-  archFlowAt_add K hw d t s
+    archFlowAt K hw d (t + s) = archFlowAt K hw d t * archFlowAt K hw d s := by
+  have h := flowChart_add_single_eq_mul_conj K
+    [Sum.inl ⟨w, hw, d⟩] ⟨0, by simp⟩ (fun _ => t) s
+  rw [show archFlowAt K hw d s = archRealGLAt K hw (archFlowMatrix d s) from rfl]
+  simpa using h
 
 end AutomorphicForm
