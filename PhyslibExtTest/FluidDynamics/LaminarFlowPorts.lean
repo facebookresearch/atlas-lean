@@ -283,7 +283,8 @@ lemma pipe_fixture (z : ℝ) :
       reynoldsNumber ⟨1000⟩ ⟨pipeMeanVelocity 4 (1 / 1000) (1 / 100) z⟩ ⟨2 * (1 / 100)⟩
         ⟨1 / 1000⟩ (by norm_num) = 1000 ∧
       darcyFactorOfDrop (4 * 1) 1 (2 * (1 / 100)) 1000
-        (pipeMeanVelocity 4 (1 / 1000) (1 / 100) z) = 8 / 125 := by
+        (pipeMeanVelocity 4 (1 / 1000) (1 / 100) z) (by norm_num) (by norm_num) (by norm_num)
+        (pipeMeanVelocity_pos (by norm_num) (by norm_num) (by norm_num) z).ne' = 8 / 125 := by
   have hV : pipeMeanVelocity 4 (1 / 1000) (1 / 100) z = 1 / 20 := by
     rw [pipeMeanVelocity_eq (by norm_num) (by norm_num)]
     norm_num
@@ -307,9 +308,12 @@ example :
       reynoldsNumber ⟨1000⟩ ⟨pipeMeanVelocity (-4) (1 / 1000) (1 / 100) 0⟩ ⟨2 * (1 / 100)⟩
         ⟨1 / 1000⟩ (by norm_num) = 1000 ∧
       darcyFactorOfDrop (-4 * 1) 1 (2 * (1 / 100)) 1000
-        (pipeMeanVelocity (-4) (1 / 1000) (1 / 100) 0) = 8 / 125 ∧
+          (pipeMeanVelocity (-4) (1 / 1000) (1 / 100) 0) (by norm_num) (by norm_num) (by norm_num)
+          (pipeMeanVelocity_ne_zero (by norm_num) (by norm_num) (by norm_num) 0) = 8 / 125 ∧
       darcyFactorOfDrop (-4 * 1) 1 (2 * (1 / 100)) 1000
-        (pipeMeanVelocity (-4) (1 / 1000) (1 / 100) 0) / 4 = 2 / 125 := by
+          (pipeMeanVelocity (-4) (1 / 1000) (1 / 100) 0) (by norm_num) (by norm_num) (by norm_num)
+          (pipeMeanVelocity_ne_zero (by norm_num) (by norm_num) (by norm_num) 0) / 4 =
+        2 / 125 := by
   have hV : pipeMeanVelocity (-4) (1 / 1000) (1 / 100) 0 = -(1 / 20) := by
     rw [pipeMeanVelocity_eq (by norm_num) (by norm_num)]
     norm_num
@@ -338,8 +342,12 @@ example :
   norm_num
 
 -- Reversing both the flow and the pressure drop keeps the factor: `Δp = -1` at `V = -1` and
--- `Δp = 1` at `V = 1` both give `2` for `L = D = ρ = 1`.
-example : darcyFactorOfDrop (-1) 1 1 1 (-1) = 2 ∧ darcyFactorOfDrop 1 1 1 1 1 = 2 := by
+-- `Δp = 1` at `V = 1` both give `2` for `L = D = ρ = 1`. The domain arguments `0 < L`, `0 < D`,
+-- `0 < ρ` and `V ≠ 0` are discharged by `norm_num`; at `V = 0` no factor is defined.
+example :
+    darcyFactorOfDrop (-1) 1 1 1 (-1) (by norm_num) (by norm_num) (by norm_num) (by norm_num) =
+        2 ∧
+      darcyFactorOfDrop 1 1 1 1 1 (by norm_num) (by norm_num) (by norm_num) (by norm_num) = 2 := by
   norm_num [darcyFactorOfDrop]
 
 -- `darcyFactorOfDrop` inverts the oriented Darcy-Weisbach loss of `PipeFrictionPorts` in both
@@ -349,7 +357,8 @@ example : darcyFactorOfDrop (-1) 1 1 1 (-1) = 2 ∧ darcyFactorOfDrop 1 1 1 1 1 
 example {f L D A ρ V : ℝ} (hD : 0 < D) (hA : 0 < A) (hρ : 0 < ρ) (hL : 0 < L) (hV : V ≠ 0) :
     darcyFactorOfDrop
       (_root_.FluidDynamics.PipeFrictionPorts.frictionPressureDrop
-        (_root_.FluidDynamics.PipeFrictionPorts.darcyCoefficient f L D A ρ) (A * V)) L D ρ V =
+        (_root_.FluidDynamics.PipeFrictionPorts.darcyCoefficient f L D A ρ) (A * V)) L D ρ V
+        hL hD hρ hV =
       f := by
   have hVa : |V| ≠ 0 := abs_ne_zero.mpr hV
   unfold darcyFactorOfDrop _root_.FluidDynamics.PipeFrictionPorts.frictionPressureDrop
@@ -386,7 +395,8 @@ example :
       volume.real (pipeDisk (1 / 100)) = π / 10000 ∧
       0 < pipeMeanVelocity 4 (1 / 1000) (1 / 100) 0 ∧
       darcyFactorOfDrop (4 * 1) 1 (2 * (1 / 100)) 1000
-          (pipeMeanVelocity 4 (1 / 1000) (1 / 100) 0) ≠
+          (pipeMeanVelocity 4 (1 / 1000) (1 / 100) 0) (by norm_num) (by norm_num) (by norm_num)
+          (pipeMeanVelocity_pos (by norm_num) (by norm_num) (by norm_num) 0).ne' ≠
         64 / reynoldsNumber ⟨1000⟩ ⟨pipeMeanVelocity 4 (1 / 1000) (1 / 100) 0⟩ ⟨1 / 100⟩
           ⟨1 / 1000⟩ (by norm_num) := by
   refine ⟨integrable_pipeAxialFlux 4 (1 / 1000) (1 / 100) 0, ?_,
