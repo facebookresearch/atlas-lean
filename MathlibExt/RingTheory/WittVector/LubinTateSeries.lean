@@ -73,44 +73,6 @@ private theorem coeff_pow_congr {c c' : MvPowerSeries τ R} {n : ℕ}
       exact Nat.le_add_left _ _
     rw [IH h1, h p.2 h2]
 
-private theorem coeff_finsuppProd_pow_congr {σ' : Type*} {c c' : σ' → MvPowerSeries τ R} {n : ℕ}
-    (h : ∀ j, ∀ e : τ →₀ ℕ, e.degree ≤ n → coeff e (c j) = coeff e (c' j))
-    (m : σ' →₀ ℕ) {d : τ →₀ ℕ} (hd : d.degree ≤ n) :
-    coeff d (m.prod fun j l => c j ^ l) = coeff d (m.prod fun j l => c' j ^ l) := by
-  classical
-  induction m using Finsupp.induction generalizing d with
-  | zero => simp
-  | single_add j l m hjm hl IH =>
-    rw [Finsupp.prod_add_index (fun _ _ => pow_zero _) (fun _ _ _ _ => pow_add _ _ _),
-      Finsupp.prod_add_index (fun _ _ => pow_zero _) (fun _ _ _ _ => pow_add _ _ _),
-      Finsupp.prod_single_index (h := fun j' l' => c j' ^ l') (pow_zero _),
-      Finsupp.prod_single_index (h := fun j' l' => c' j' ^ l') (pow_zero _),
-      coeff_mul, coeff_mul]
-    refine Finset.sum_congr rfl fun p hp => ?_
-    rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
-    have h1 : p.1.degree ≤ n := by
-      refine le_trans ?_ hd
-      rw [← hp, map_add]
-      exact Nat.le_add_right _ _
-    have h2 : p.2.degree ≤ n := by
-      refine le_trans ?_ hd
-      rw [← hp, map_add]
-      exact Nat.le_add_left _ _
-    rw [coeff_pow_congr (h j) h1, IH h2]
-
-private theorem coeff_subst_congr {σ' : Type*} [Finite σ'] {c c' : σ' → MvPowerSeries τ R}
-    (hc : ∀ j, (c j).constantCoeff = 0) (hc' : ∀ j, (c' j).constantCoeff = 0) {n : ℕ}
-    (h : ∀ j, ∀ e : τ →₀ ℕ, e.degree ≤ n → coeff e (c j) = coeff e (c' j))
-    (f : MvPowerSeries σ' R) {d : τ →₀ ℕ} (hd : d.degree ≤ n) :
-    coeff d (subst c f) = coeff d (subst c' f) := by
-  rw [coeff_subst (hasSubst_of_constantCoeff_zero hc),
-    coeff_subst (hasSubst_of_constantCoeff_zero hc')]
-  exact finsum_congr fun m => by
-    rw [coeff_finsuppProd_pow_congr h m hd]
-
-
-
-
 private theorem coeff_pow_eq_zero_of_degree_lt {c : MvPowerSeries τ R}
     (hc : c.constantCoeff = 0) {l : ℕ} {d : τ →₀ ℕ} (hd : d.degree < l) :
     coeff d (c ^ l) = 0 := by
@@ -304,53 +266,9 @@ private theorem constantCoeff_fvec (s : τ) : constantCoeff (fvec p k τ s) = 0 
 private theorem hasSubst_fvec [Finite τ] : HasSubst (fvec p k τ) :=
   hasSubst_of_constantCoeff_zero constantCoeff_fvec
 
-private theorem coeff_single_X_pow_card [DecidableEq τ] (s t : τ) :
-    coeff (Finsupp.single t 1) ((X s : MvPowerSeries τ (WittVector p k)) ^ Fintype.card k) = 0 := by
-  rw [coeff_X_pow, if_neg]
-  intro h
-  have := congrArg (fun d => d t) h
-  simp only [Finsupp.single_eq_same] at this
-  by_cases hts : t = s
-  · subst hts
-    rw [Finsupp.single_eq_same] at this
-    have := two_le_card (k := k)
-    omega
-  · rw [Finsupp.single_eq_of_ne hts] at this
-    exact one_ne_zero this
-
-private theorem coeff_single_fvec [DecidableEq τ] (s t : τ) :
-    coeff (Finsupp.single t 1) (fvec p k τ s) = if t = s then (p : WittVector p k) else 0 := by
-  rw [fvec, map_add, coeff_C_mul, coeff_index_single_X, coeff_single_X_pow_card, add_zero]
-  split_ifs <;> simp
-
-private theorem comm_X [Finite τ] (s : τ) : Comm p k (X s : MvPowerSeries τ (WittVector p k)) := by
-  unfold Comm
-  rw [subst_X hasSubst_fvec]
-  rfl
-
 private theorem constantCoeff_C_mul_X (s : τ) :
     constantCoeff (C (p : WittVector p k) * (X s : MvPowerSeries τ (WittVector p k))) = 0 := by
   rw [map_mul, constantCoeff_X, mul_zero]
-
-private theorem comm_subst {σ : Type*} [Finite σ] [Finite τ] {φ : MvPowerSeries σ (WittVector p k)}
-    (hφ : Comm p k φ) {a : σ → MvPowerSeries τ (WittVector p k)}
-    (ha0 : ∀ s, constantCoeff (a s) = 0) (ha : ∀ s, Comm p k (a s)) :
-    Comm p k (subst a φ) := by
-  have hsa : HasSubst a := hasSubst_of_constantCoeff_zero ha0
-  unfold Comm at *
-  calc C (p : WittVector p k) * subst a φ + subst a φ ^ Fintype.card k
-      = subst a (C (p : WittVector p k) * φ + φ ^ Fintype.card k) := by
-        rw [subst_add hsa, subst_mul hsa, subst_pow hsa, subst_C]
-    _ = subst a (subst (fvec p k σ) φ) := by rw [hφ]
-    _ = subst (fun s => subst a (fvec p k σ s)) φ :=
-        subst_comp_subst_apply hasSubst_fvec hsa φ
-    _ = subst (fun s => subst (fvec p k τ) (a s)) φ := by
-        congr 1
-        funext s
-        show subst a (C (p : WittVector p k) * X s + X s ^ Fintype.card k) = _
-        rw [subst_add hsa, subst_mul hsa, subst_C, subst_pow hsa, subst_X hsa]
-        exact ha s
-    _ = subst (fvec p k τ) (subst a φ) := (subst_comp_subst_apply hsa hasSubst_fvec φ).symm
 
 end Family
 
