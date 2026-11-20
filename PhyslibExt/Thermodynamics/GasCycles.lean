@@ -701,11 +701,14 @@ lemma dieselNetWork_div_heatIn {T₁ r γ Cv nR rc : ℝ} (hr : 0 < r) (hrc : 0 
     exact hsecond
   exact ⟨hfirst, hsecond⟩
 
-/-- At equal compression ratio the Diesel cycle is less efficient than the Otto cycle: for
-`0 < r`, `1 < γ` and `1 < rc`, `dieselEfficiency r γ rc < ottoEfficiency r γ`, because the
-factor `(rc ^ γ - 1) / (γ * (rc - 1))` exceeds one (strict Bernoulli inequality). -/
-lemma dieselEfficiency_lt_ottoEfficiency {r γ rc : ℝ} (hr : 0 < r) (hγ : 1 < γ) (hrc : 1 < rc) :
+/-- At equal compression ratio the Diesel cycle is less efficient than the Otto cycle: on the
+cycle domain `1 < rc < r` (so `1 < r`) and `1 < γ`, `dieselEfficiency r γ rc < ottoEfficiency r γ`,
+because the factor `(rc ^ γ - 1) / (γ * (rc - 1))` exceeds one (strict Bernoulli inequality).
+Outside that domain neither formula is the efficiency of the declared cycle. -/
+lemma dieselEfficiency_lt_ottoEfficiency {r γ rc : ℝ} (hγ : 1 < γ) (hrc : 1 < rc)
+    (hrcr : rc < r) :
     dieselEfficiency r γ rc < ottoEfficiency r γ := by
+  have hr : 0 < r := by linarith
   have hγ0 : 0 < γ := by linarith
   have hrc1 : 0 < rc - 1 := by linarith
   have hdenom_pos : 0 < γ * (rc - 1) := mul_pos hγ0 hrc1
@@ -792,7 +795,7 @@ lemma diesel_cycle {T₁ V₁ r γ Cv nR rc : ℝ} (hT₁ : 0 < T₁) (hV₁ : 0
   have h10 : dieselNetWork T₁ r γ Cv nR rc / dieselHeatIn T₁ r γ Cv rc
       < ottoEfficiency r γ := by
     rw [hdiv.1]
-    exact dieselEfficiency_lt_ottoEfficiency hr hγ₁ hrc
+    exact dieselEfficiency_lt_ottoEfficiency hγ₁ hrc hrcr
   exact ⟨hcomp, hiso, hfirstlaw, hexp, hW, hQin_pos, hQout_pos, hW_pos, h9, h10⟩
 
 /-- The cutoff ratio one is a limit, not a value: as `rc` decreases to `1`, the Diesel
@@ -832,10 +835,13 @@ lemma dieselEfficiency_tendsto_ottoEfficiency {r γ : ℝ} (hγ : γ ≠ 0) :
 
 /-- Unit cutoff ratio: at `rc = 1` there is no heat addition and, for `0 < r`, the loop does no
 net work, so the efficiency is the undefined `0 / 0`. Lean's value `dieselEfficiency r γ 1 = 1`
-is not the Otto efficiency, which is the limit at `rc → 1`. -/
-lemma diesel_unit_cutoff {T₁ r γ Cv nR : ℝ} (hr : 0 < r) :
+is not the Otto efficiency, which for `γ ≠ 0` is the limit as `rc` decreases to `1`
+(`dieselEfficiency_tendsto_ottoEfficiency`). -/
+lemma diesel_unit_cutoff {T₁ r γ Cv nR : ℝ} (hr : 0 < r) (hγ : γ ≠ 0) :
     dieselHeatIn T₁ r γ Cv 1 = 0 ∧ dieselNetWork T₁ r γ Cv nR 1 = 0 ∧
-      dieselEfficiency r γ 1 = 1 ∧ dieselEfficiency r γ 1 ≠ ottoEfficiency r γ := by
+      dieselEfficiency r γ 1 = 1 ∧ dieselEfficiency r γ 1 ≠ ottoEfficiency r γ ∧
+      Filter.Tendsto (fun rc => dieselEfficiency r γ rc) (nhdsWithin 1 (Set.Ioi 1))
+        (nhds (ottoEfficiency r γ)) := by
   have hr' : r ≠ 0 := ne_of_gt hr
   have hT₃ : dieselCutoffTemp T₁ r γ 1 = ottoCompressedTemp T₁ r γ := by
     simp [dieselCutoffTemp]
@@ -862,7 +868,7 @@ lemma diesel_unit_cutoff {T₁ r γ Cv nR : ℝ} (hr : 0 < r) :
     have hpos : 0 < r ^ (1 - γ) := Real.rpow_pos_of_pos hr _
     have hzero : r ^ (1 - γ) = 0 := by linarith
     exact ne_of_gt hpos hzero
-  exact ⟨hQin, hW, hEff, hNe⟩
+  exact ⟨hQin, hW, hEff, hNe, dieselEfficiency_tendsto_ottoEfficiency hγ⟩
 
 /-- A cutoff above the compression ratio is not the declared cycle: for `0 < r < rc`,
 `0 < V₁`, `0 < T₁`, `1 < γ` and `0 < Cv`, the cutoff volume `rc * (V₁ / r)` exceeds `V₁`, so the

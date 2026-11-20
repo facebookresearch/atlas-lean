@@ -280,11 +280,26 @@ example {p T₃ : ℝ} (h₂ : p * (1 / 8) = 2 * ottoCompressedTemp 300 8 (5 / 3
   dieselIsobaric_eos (V₁ := 1) (by norm_num) (by norm_num) (by norm_num) h₂ h₃
 
 -- Unit cutoff ratio on the same gas: no heat is added, the loop does no net work, and Lean's
--- value `1` of the formula at `rc = 1` is not the Otto efficiency.
+-- value `1` of the formula at `rc = 1` is not the Otto efficiency, which is the limit as the
+-- cutoff ratio decreases to one.
 example :
     dieselHeatIn 300 8 (5 / 3) 3 1 = 0 ∧ dieselNetWork 300 8 (5 / 3) 3 2 1 = 0 ∧
-      dieselEfficiency 8 (5 / 3) 1 = 1 ∧ dieselEfficiency 8 (5 / 3) 1 ≠ ottoEfficiency 8 (5 / 3) :=
-  diesel_unit_cutoff (by norm_num)
+      dieselEfficiency 8 (5 / 3) 1 = 1 ∧ dieselEfficiency 8 (5 / 3) 1 ≠ ottoEfficiency 8 (5 / 3) ∧
+      Filter.Tendsto (fun rc => dieselEfficiency 8 (5 / 3) rc) (nhdsWithin 1 (Set.Ioi 1))
+        (nhds (ottoEfficiency 8 (5 / 3))) :=
+  diesel_unit_cutoff (by norm_num) (by norm_num)
+
+-- Outside the cycle domain the formulas are not efficiencies of the declared cycle, which is why
+-- `dieselEfficiency_lt_ottoEfficiency` assumes `1 < rc < r`: at `r = 1/2`, `rc = 2 > r` and
+-- `γ = 2` both formulas are negative.
+example : dieselEfficiency (1 / 2) 2 2 = -2 ∧ ottoEfficiency (1 / 2) 2 = -1 := by
+  have h : ((1 : ℝ) / 2) ^ ((1 : ℝ) - 2) = 2 := by
+    rw [show (1 : ℝ) - 2 = -1 by norm_num, Real.rpow_neg_one]
+    norm_num
+  have h2 : (2 : ℝ) ^ (2 : ℝ) = 4 := by
+    rw [Real.rpow_two]
+    norm_num
+  refine ⟨?_, ?_⟩ <;> simp only [dieselEfficiency, ottoEfficiency, h, h2] <;> norm_num
 
 -- The Otto efficiency at `r = 8` is the limit of the Diesel efficiency as the cutoff ratio
 -- decreases to one.
