@@ -858,9 +858,7 @@ example : ¬ Statistics.UncertaintyPropagation.Identifiable
     (loadObservationMatrix rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
       (!![1, 0] : Matrix (Fin 1) (Fin 2) ℝ) (1 : Matrix (Fin 2) (Fin 2) ℝ)
       * (1 : Matrix (Fin 2) (Fin 2) ℝ)) :=
-  not_identifiable_loadObservation_mul_basis_of_lt rF ![0, 1] ![1, 2] SF _
-    (!![1, 0] : Matrix (Fin 1) (Fin 2) ℝ) (1 : Matrix (Fin 2) (Fin 2) ℝ)
-    (1 : Matrix (Fin 2) (Fin 2) ℝ) (by norm_num)
+  Statistics.UncertaintyPropagation.not_identifiable_of_lt (by norm_num) _
 
 /-- Stiffness scope guard values: the scalar response
 `1, 1/2, 1/3` at stiffnesses `1, 2, 3` is not an affine
@@ -894,8 +892,6 @@ example : (1 : ℝ)⁻¹ = 1 ∧ (2 : ℝ)⁻¹ = 1 / 2 ∧ (3 : ℝ)⁻¹ = 1 /
   Mechanics.TrussCompatibility.loadObservation_supported_response
 #print axioms
   Mechanics.TrussCompatibility.loadObservation_identifiableOnAffine_of_kernels
-#print axioms
-  Mechanics.TrussCompatibility.not_identifiable_loadObservation_mul_basis_of_lt
 #print axioms Mechanics.TrussCompatibility.inv_not_affine_on_pos
 
 end PhyslibExtTest.Mechanics.TrussCompatibility

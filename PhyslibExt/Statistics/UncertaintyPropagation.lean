@@ -101,8 +101,8 @@ uncertainties; they enter only as separate hypotheses and inputs, never conflate
 - `lipschitz_error_propagation`, `lipschitz_error_budget` : Lipschitz error bounds.
 - `affine_exact` : the affine map is exact, not merely Lipschitz.
 - `Identifiable`, `identifiable_iff_trivial_ker` : calibration identifiability.
-- `IdentifiableOnAffine`, `identifiableOnAffine_iff_trivial_ker`,
-  `identifiableOnAffine_iff_identifiable_mul_basis` : identifiability on a
+- `IdentifiableOnAffine`, `identifiableOnAffine_mk'_iff_trivial_ker`,
+  `identifiableOnAffine_mk'_iff_identifiable_mul_basis` : identifiability on a
   declared affine parameter space.
 - `exists_distinct_of_nontrivial_ker` : nonzero kernel vector kills uniqueness.
 - `not_identifiable_of_lt` : wide matrices are not identifiable.

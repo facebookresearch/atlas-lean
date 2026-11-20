@@ -650,7 +650,7 @@ displacement `u` solving the supported system at load `Bload *ᵥ θ`
 is observed as the linear observation matrix applied to `θ`.
 Uses the supported inverse characterization
 `supported_mulVec_eq_iff_inv_mulVec`. -/
-theorem loadObservation_eq_of_supported_eq {J M : Type*} [Fintype J]
+lemma loadObservation_eq_of_supported_eq {J M : Type*} [Fintype J]
     [DecidableEq J] [Fintype M] [DecidableEq M] {nf np nm : ℕ}
     (r : J → (Fin 2 → ℝ)) (a b : M → J)
     (S : Matrix (J × Fin 2) (Fin nf) ℝ) (k : M → ℝ)
@@ -672,7 +672,7 @@ supported stiffness, `K⁻¹ *ᵥ (Bload *ᵥ θ)` solves the supported
 system at load `Bload *ᵥ θ` and is observed as the linear observation
 matrix applied to `θ`. Uses the supported inverse
 characterization `supported_mulVec_eq_iff_inv_mulVec`. -/
-theorem loadObservation_supported_response {J M : Type*} [Fintype J]
+lemma loadObservation_supported_response {J M : Type*} [Fintype J]
     [DecidableEq J] [Fintype M] [DecidableEq M] {nf np nm : ℕ}
     (r : J → (Fin 2 → ℝ)) (a b : M → J)
     (S : Matrix (J × Fin 2) (Fin nf) ℝ) (k : M → ℝ)
@@ -706,7 +706,7 @@ obstruction is a nonzero kernel direction of the composite
 observation map inside `V`, and a sensor kernel that misses the
 realized response subspace does not by itself obstruct
 identifiability. -/
-theorem loadObservation_identifiableOnAffine_of_kernels
+lemma loadObservation_identifiableOnAffine_of_kernels
     {J M : Type*} [Fintype J] [DecidableEq J] [Fintype M]
     [DecidableEq M] {nf np nm : ℕ}
     (r : J → (Fin 2 → ℝ)) (a b : M → J)
@@ -739,23 +739,6 @@ theorem loadObservation_identifiableOnAffine_of_kernels
     exact e.symm
   exact hB v hv hBv
 
-/-- Under-sensed parameters are not identifiable: with fewer sensors
-(`nm`) than affine degrees of freedom in basis coordinates (`nd`),
-the restricted observation matrix is not identifiable, for every
-fixed supported stiffness, load basis, sensor map and basis. Uses the canonical wide-matrix
-non-identifiability statement. -/
-theorem not_identifiable_loadObservation_mul_basis_of_lt
-    {J M : Type*} [Fintype J] [DecidableEq J] [Fintype M]
-    [DecidableEq M] {nf np nm nd : ℕ}
-    (r : J → (Fin 2 → ℝ)) (a b : M → J)
-    (S : Matrix (J × Fin 2) (Fin nf) ℝ) (k : M → ℝ)
-    (Cmat : Matrix (Fin nm) (Fin nf) ℝ)
-    (Bload : Matrix (Fin nf) (Fin np) ℝ)
-    (P : Matrix (Fin np) (Fin nd) ℝ) (hmn : nm < nd) :
-    ¬ Statistics.UncertaintyPropagation.Identifiable
-        (loadObservationMatrix r a b S k Cmat Bload * P) := by
-  exact Statistics.UncertaintyPropagation.not_identifiable_of_lt hmn _
-
 /-- Scope guard for unknown stiffness: the one-degree-of-freedom
 displacement at unit load as a function of a positive scalar
 stiffness `s`, namely `s⁻¹`, is not affine (in particular not linear)
@@ -763,7 +746,7 @@ in `s`. A stiffness-parameter inverse problem therefore cannot reuse
 the fixed-stiffness linear observation matrix; it needs a separate
 nonlinear or local model. No varying-stiffness identifiability
 statement is made here. -/
-theorem inv_not_affine_on_pos :
+lemma inv_not_affine_on_pos :
     ¬ ∃ a b : ℝ, ∀ s : ℝ, 0 < s → s⁻¹ = a * s + b := by
   rintro ⟨a, b, h⟩
   have h1 := h 1 one_pos
