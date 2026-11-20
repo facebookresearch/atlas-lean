@@ -676,8 +676,7 @@ example : (![0, 6] : Fin 2 → ℝ) ⬝ᵥ ![1, 1]
     funext i
     fin_cases i <;>
       norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
-  exact supported_reciprocalWork rF ![0, 1] ![1, 2] SF _
-    (supported_stiffness_isSymm rF ![0, 1] ![1, 2] SF _) hu
+  exact supported_reciprocalWork rF ![0, 1] ![1, 2] SF _ hu
     focusedActionOne
 
 /-- The common cross-work value is `6 ≠ 0`, and the two
@@ -685,21 +684,6 @@ loads are independent. -/
 example : (![0, 6] : Fin 2 → ℝ) ⬝ᵥ ![1, 1] = 6 ∧
     Matrix.det !![0, 2; 6, 0] = -12 := by
   norm_num [dotProduct, Fin.sum_univ_two, Matrix.det_fin_two]
-
-/-- Reciprocal work on the same data through the
-nonnegative-weights form. -/
-example : (![0, 6] : Fin 2 → ℝ) ⬝ᵥ ![1, 1]
-    = (![2, 0] : Fin 2 → ℝ) ⬝ᵥ ![3, 5] := by
-  have hu : ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
-        * Matrix.diagonal ![1 / 2, 3]
-        * (axialCompatibility rF ![0, 1] ![1, 2] * SF)) *ᵥ ![3, 5]
-      = ![0, 6] := by
-    rw [supportedStiffnessF]
-    funext i
-    fin_cases i <;>
-      norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
-  exact supported_reciprocalWork_of_nonneg rF ![0, 1] ![1, 2] SF _
-    (by intro e; fin_cases e <;> norm_num) hu focusedActionOne
 
 /-- The bilinear pairing form on the same data, without
 naming loads. -/
@@ -709,8 +693,7 @@ example : ![3, 5] ⬝ᵥ (((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
     = ![1, 1] ⬝ᵥ (((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
         * Matrix.diagonal ![1 / 2, 3]
         * (axialCompatibility rF ![0, 1] ![1, 2] * SF)) *ᵥ ![3, 5]) :=
-  supported_dotProduct_mulVec_comm rF ![0, 1] ![1, 2] SF _
-    (supported_stiffness_isSymm rF ![0, 1] ![1, 2] SF _) _ _
+  supported_dotProduct_mulVec_comm rF ![0, 1] ![1, 2] SF _ _ _
 
 /-- Physical axial weights `E A / L ^ 3` on the focused
 fixture: reciprocal work for arbitrary supported
@@ -726,13 +709,7 @@ example (u v : Fin 2 → ℝ) :
           (fun e => (200 : ℝ) * (1 / 100)
             / memberLength rF ![0, 1] ![1, 2] e ^ 3)
         * (axialCompatibility rF ![0, 1] ![1, 2] * SF)) *ᵥ v) ⬝ᵥ u := by
-  have hne : ∀ e, rF (![0, 1] e) ≠ rF (![1, 2] e) := by
-    intro e
-    fin_cases e <;> norm_num [rF]
-  refine supported_reciprocalWork_of_nonneg rF ![0, 1] ![1, 2] SF _ ?_ rfl rfl
-  intro e
-  exact le_of_lt (div_pos (by norm_num)
-    (pow_pos (memberLength_pos_of_ne rF ![0, 1] ![1, 2] (hne e)) 3))
+  exact supported_reciprocalWork rF ![0, 1] ![1, 2] SF _ rfl rfl
 
 /-- Different stiffness control: cross work against a
 load vector produced by a different operator need not
@@ -760,7 +737,6 @@ second focused solution. -/
 example : (0 : Fin 2 → ℝ) ⬝ᵥ ![1, 1]
     = (![2, 0] : Fin 2 → ℝ) ⬝ᵥ 0 :=
   supported_reciprocalWork rF ![0, 1] ![1, 2] SF _
-    (supported_stiffness_isSymm rF ![0, 1] ![1, 2] SF _)
     (by simp) focusedActionOne
 
 /-- Singular-stiffness control: with `S = 0` the
@@ -770,8 +746,6 @@ reciprocal work still holds for the solutions in range
 example (u v : Fin 3 → ℝ) :
     (0 : Fin 3 → ℝ) ⬝ᵥ v = (0 : Fin 3 → ℝ) ⬝ᵥ u :=
   supported_reciprocalWork rT ![0, 0, 1] ![1, 2, 2] 0 (fun _ => (2 : ℝ))
-    (supported_stiffness_isSymm rT ![0, 0, 1] ![1, 2, 2] 0
-      (fun _ => (2 : ℝ)))
     (by simp) (by simp)
 
 /-- Empty-coordinate boundary. -/
@@ -787,8 +761,7 @@ example (u v f g : Fin 0 → ℝ)
       * (axialCompatibility rT ![0, 0, 1] ![1, 2, 2]
         * (0 : Matrix (Fin 3 × Fin 2) (Fin 0) ℝ))) *ᵥ v = g) :
     f ⬝ᵥ v = g ⬝ᵥ u :=
-  supported_reciprocalWork rT ![0, 0, 1] ![1, 2, 2] 0 _
-    (supported_stiffness_isSymm rT ![0, 0, 1] ![1, 2, 2] 0 _) hu hv
+  supported_reciprocalWork rT ![0, 0, 1] ![1, 2, 2] 0 _ hu hv
 
 /-- Sign-flip control: negating one load negates exactly
 one side. -/
@@ -815,7 +788,5 @@ example : (![0, -6] : Fin 2 → ℝ) ⬝ᵥ ![1, 1] = -6 ∧ (-6 : ℝ) ≠ 6 :=
 #print axioms
   Mechanics.TrussCompatibility.supported_dotProduct_mulVec_comm
 #print axioms Mechanics.TrussCompatibility.supported_reciprocalWork
-#print axioms
-  Mechanics.TrussCompatibility.supported_reciprocalWork_of_nonneg
 
 end PhyslibExtTest.Mechanics.TrussCompatibility

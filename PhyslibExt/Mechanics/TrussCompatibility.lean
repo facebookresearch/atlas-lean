@@ -73,10 +73,9 @@ cases.
 - `supported_existsUnique` and
   `supported_residual_existsUnique_of_posDef`: the unique
   supported displacement and residual reaction vector.
-- `supported_reciprocalWork` and
-  `supported_reciprocalWork_of_nonneg`: for one symmetric
-  supported stiffness, the work of either supported load
-  through the other solution is the same.
+- `supported_reciprocalWork`: for one supported
+  stiffness, the work of either supported load through the
+  other solution is the same.
 
 ## iii. Table of contents
 
@@ -588,14 +587,12 @@ lemma supported_dotProduct_mulVec_comm {J M F : Type*} [Fintype J]
     [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
     (r : J → (Fin 2 → ℝ)) (a b : M → J)
     (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ)
-    (hK : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
-      * (axialCompatibility r a b * S)).IsSymm)
     (u v : F → ℝ) :
     u ⬝ᵥ (((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
         * (axialCompatibility r a b * S)) *ᵥ v)
       = v ⬝ᵥ (((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
         * (axialCompatibility r a b * S)) *ᵥ u) := by
-  exact hK.dotProduct_mulVec_comm
+  exact (supported_stiffness_isSymm r a b S k).dotProduct_mulVec_comm
 
 /-- Reciprocal work for two supported loads: for one symmetric
 supported stiffness (same reference geometry, supports and weights in
@@ -607,38 +604,15 @@ theorem supported_reciprocalWork {J M F : Type*} [Fintype J]
     [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
     (r : J → (Fin 2 → ℝ)) (a b : M → J)
     (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ)
-    (hK : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
-      * (axialCompatibility r a b * S)).IsSymm)
     {u v f g : F → ℝ}
     (hu : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
         * (axialCompatibility r a b * S)) *ᵥ u = f)
     (hv : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
         * (axialCompatibility r a b * S)) *ᵥ v = g) :
     f ⬝ᵥ v = g ⬝ᵥ u := by
-  have h := supported_dotProduct_mulVec_comm r a b S k hK u v
+  have h := supported_dotProduct_mulVec_comm r a b S k u v
   rw [hv, hu] at h
   rw [dotProduct_comm f v, dotProduct_comm g u]
   exact h.symm
-
-/-- Reciprocal work from the physical member weights: for nonnegative
-member weights `k` and solutions `K *ᵥ u = f`, `K *ᵥ v = g` of the one
-supported stiffness they define, `f ⬝ᵥ v = g ⬝ᵥ u`. Symmetry enters
-through positive semidefiniteness of the supported stiffness. This is
-the entry point when the member data, rather than an abstract symmetry
-certificate, is in hand. -/
-theorem supported_reciprocalWork_of_nonneg {J M F : Type*} [Fintype J]
-    [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
-    (r : J → (Fin 2 → ℝ)) (a b : M → J)
-    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (hk : 0 ≤ k)
-    {u v f g : F → ℝ}
-    (hu : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
-        * (axialCompatibility r a b * S)) *ᵥ u = f)
-    (hv : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
-        * (axialCompatibility r a b * S)) *ᵥ v = g) :
-    f ⬝ᵥ v = g ⬝ᵥ u := by
-  have hK : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
-      * (axialCompatibility r a b * S)).IsSymm :=
-    (supported_posSemidef r a b S k hk).isHermitian.isSymm
-  exact supported_reciprocalWork r a b S k hK hu hv
 
 end Mechanics.TrussCompatibility
