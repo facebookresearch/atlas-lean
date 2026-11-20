@@ -1,0 +1,3 @@
+# Box exterior embeds in the region graph
+
+Let $P$ be a finite graph $G = (V, E)$ with an injective map $\iota : V \to \mathbb{Z}^2$ sending edges to edges of the square lattice, with image graph $H$, and let $R$ be a natural number with $\iota(V) \subseteq \{-R, \dots, R\}^2$. Then the inclusion of the exterior $\{x \in \mathbb{Z}^2 : |x_0| > R \text{ or } |x_1| > R\}$ into $\mathbb{Z}^2$ is a graph homomorphism from the subgraph of the square lattice induced on the exterior to the region graph of $H$ (the square lattice with every edge $\{f, g\}$ removed for which $\{\rho^{-1}(f), \rho^{-1}(g)\}$ is an edge of $H$, $\rho(a, b) = (-b, a)$).

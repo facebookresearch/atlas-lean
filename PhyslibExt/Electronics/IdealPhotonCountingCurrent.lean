@@ -54,9 +54,6 @@ Systems*, fifth edition, Oxford University Press, 2019: photodetection, Poisson 
   responsivity.
 
 ## A. Moments of the ideal detector current
-
-Discharges ECE roadmap leaf `ECE.EM.PHOTODETECTOR.L2`
-(photodetector moments).
 -/
 
 @[expose] public section
@@ -75,11 +72,15 @@ noncomputable def photonArrivalRate (η P h ν : ℝ) : ℝ :=
 noncomputable def responsivity (η q h ν : ℝ) : ℝ :=
   η * |q| / (h * ν)
 
-/-- Poisson mean `λ T` of the count in a window of length `T`, as a nonnegative real. -/
+/-- Poisson mean `λ T` of the count in a window of length `T`, as a nonnegative real. It is that
+mean for physical inputs (nonnegative efficiency and power, positive `h`, `ν` and window length;
+`coe_photonCountMean`); a negative raw product `λ T` from unphysical inputs is clamped to `0` by
+`toNNReal`. -/
 noncomputable def photonCountMean (η P h ν T : ℝ) : ℝ≥0 :=
   (photonArrivalRate η P h ν * T).toNNReal
 
-/-- Window-averaged current estimator `|q| n / T` for `n` counted electrons. -/
+/-- Window-averaged current estimator `|q| n / T` for `n` counted electrons, a window average for
+a window of positive length `T > 0`. For `T = 0` the value is `0` (`x / 0 = 0`), not a current. -/
 noncomputable def countCurrent (q T : ℝ) (n : ℕ) : ℝ :=
   |q| * (n : ℝ) / T
 

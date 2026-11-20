@@ -28,8 +28,6 @@ density input is the canonical
 `MetaMathlibExt.multivariateGaussian_eq_withDensity`; private
 `_of_density` variants take it as a hypothesis and the public
 theorems discharge it.
-
-Discharges ECE roadmap leaf `ECE.DET.MATCHED.L2` (matched likelihood).
 -/
 
 @[expose] public section
