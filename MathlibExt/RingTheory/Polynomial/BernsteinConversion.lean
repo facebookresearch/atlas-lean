@@ -38,14 +38,18 @@ module
 public import Mathlib.RingTheory.Polynomial.Bernstein
 public import Mathlib.Basic.Real.Basic
 import Mathlib.Algebra.BigOperators.Field
+import Mathlib.Algebra.CharZero.Infinite
+import Mathlib.Algebra.Polynomial.Roots
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.NormNum
 /-!
-# Monomials in the Bernstein basis
+# Exact polynomial conversion to the Bernstein basis
 
 Exact binomial weights express any monomial of degree at most `n` in the
-Bernstein basis of degree `n`, at every real argument.
+Bernstein basis of degree `n`, at every real argument. Summing these weights
+against a polynomial's coefficients gives an explicit conversion for every
+polynomial of degree at most `n`, including degree elevation.
 -/
 @[expose] public section
 open Finset
@@ -89,4 +93,45 @@ theorem monomial_bernstein (n k : ℕ) (hk : k ≤ n) (s : ℝ) :
     exact_mod_cast (Nat.choose_pos hk).ne'
   simp_rw [div_mul_eq_mul_div, ← sum_div, choose_bernstein_sum n k hk s]
   exact mul_div_cancel_left₀ _ hc
+
+/-- The coefficient at index `j` in the degree-`n` Bernstein expansion of `p`.
+Reconstruction requires `p.natDegree ≤ n`. -/
+noncomputable def bernsteinCoeff (n : ℕ) (p : Polynomial ℝ) (j : ℕ) : ℝ :=
+  ∑ k ∈ range (n + 1), p.coeff k * ((j.choose k : ℝ) / n.choose k)
+
+/-- Exact conversion evaluated at any real argument, without an interval restriction. -/
+theorem eval_eq_sum_bernstein {n : ℕ} {p : Polynomial ℝ}
+    (hp : p.natDegree ≤ n) (s : ℝ) :
+    p.eval s = ∑ j ∈ range (n + 1),
+      bernsteinCoeff n p j * (bernsteinPolynomial ℝ n j).eval s := by
+  calc
+    p.eval s = ∑ k ∈ range (n + 1), p.coeff k * s ^ k := by
+      have h := congrArg (Polynomial.eval s)
+        (p.as_sum_range_C_mul_X_pow' (Nat.lt_succ_of_le hp))
+      simpa only [Polynomial.eval_finsetSum, Polynomial.eval_mul,
+        Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X] using h
+    _ = ∑ k ∈ range (n + 1), p.coeff k *
+        ∑ j ∈ range (n + 1), ((j.choose k : ℝ) / n.choose k) *
+          (bernsteinPolynomial ℝ n j).eval s := by
+      apply sum_congr rfl
+      intro k hk
+      rw [monomial_bernstein n k (Nat.le_of_lt_succ (mem_range.mp hk)) s]
+    _ = _ := by
+      simp_rw [mul_sum]
+      rw [sum_comm]
+      apply sum_congr rfl
+      intro j _
+      simp only [bernsteinCoeff, sum_mul]
+      apply sum_congr rfl
+      intro k _
+      ring
+
+/-- Every polynomial of degree at most `n` has this explicit Bernstein expansion. -/
+theorem eq_sum_bernstein {n : ℕ} {p : Polynomial ℝ} (hp : p.natDegree ≤ n) :
+    p = ∑ j ∈ range (n + 1),
+      Polynomial.C (bernsteinCoeff n p j) * bernsteinPolynomial ℝ n j := by
+  apply Polynomial.funext
+  intro s
+  simpa only [Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_C]
+    using eval_eq_sum_bernstein hp s
 end bernsteinPolynomial
