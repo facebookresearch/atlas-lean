@@ -81,8 +81,10 @@ work with a single inverse application.
   other solution is the same.
 - `influenceVector`, `unitLoadResponse`, and
   `supported_unitLoad_identity`: the fixed output of a
-  supported solution is the pairing of the unit-load member
-  forces with the flexibility-applied member forces.
+  supported solution is the pairing of the unit-load
+  separation-form coefficients with the compliance-applied
+  coefficients; `supported_unitLoad_axialForce_identity`
+  is the physical axial-force form.
 
 ## iii. Table of contents
 
@@ -647,9 +649,20 @@ is formed. -/
 noncomputable def unitLoadResponse {J M F : Type*} [Fintype J]
     [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
     [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (aout : F → ℝ) :
+    (F → ℝ) →ₗ[ℝ] ℝ where
+  toFun f := influenceVector r a b S k aout ⬝ᵥ f
+  map_add' _ _ := dotProduct_add _ _ _
+  map_smul' _ _ := by simp [dotProduct_smul, smul_eq_mul]
+
+@[simp]
+lemma unitLoadResponse_apply {J M F : Type*} [Fintype J]
+    [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
+    [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
     (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (aout f : F → ℝ) :
-    ℝ :=
-  influenceVector r a b S k aout ⬝ᵥ f
+    unitLoadResponse r a b S k aout f
+      = influenceVector r a b S k aout ⬝ᵥ f :=
+  rfl
 
 /-- The pointwise inverse diagonal recovers the separation-form
 pairing vector from the elastic coefficient vector: for positive
@@ -725,47 +738,8 @@ lemma supported_unitLoadResponse_eq {J M F : Type*} [Fintype J]
     unitLoadResponse r a b S k aout f = aout ⬝ᵥ u := by
   have heta := supported_influenceVector_mulVec r a b S k hPD aout
   have hrec := supported_reciprocalWork r a b S k hu heta
-  unfold unitLoadResponse
-  rw [dotProduct_comm]
+  rw [unitLoadResponse_apply, dotProduct_comm]
   exact hrec
-
-/-- Superposition of two loads for the retained response map: with
-the output `aout` (hence the influence vector) fixed, the response
-to a sum of supported loads is the sum of the responses. This is
-additivity of the pairing in the load argument; no solve reading is
-used. -/
-lemma supported_unitLoadResponse_add {J M F : Type*} [Fintype J]
-    [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
-    [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
-    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (aout : F → ℝ)
-    (f₁ f₂ : F → ℝ) :
-    unitLoadResponse r a b S k aout (f₁ + f₂)
-      = unitLoadResponse r a b S k aout f₁
-        + unitLoadResponse r a b S k aout f₂ := by
-  unfold unitLoadResponse
-  exact dotProduct_add _ _ _
-
-/-- Homogeneity of the retained response map in the load: with the
-output fixed, rescaling the supported load rescales the response by
-the same factor. -/
-lemma supported_unitLoadResponse_smul {J M F : Type*} [Fintype J]
-    [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
-    [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
-    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (aout : F → ℝ)
-    (c : ℝ) (f : F → ℝ) :
-    unitLoadResponse r a b S k aout (c • f)
-      = c * unitLoadResponse r a b S k aout f := by
-  unfold unitLoadResponse
-  rw [dotProduct_smul, smul_eq_mul]
-
-/-- Zero load has zero response for every fixed output. -/
-lemma supported_unitLoadResponse_zero {J M F : Type*} [Fintype J]
-    [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
-    [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
-    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (aout : F → ℝ) :
-    unitLoadResponse r a b S k aout 0 = 0 := by
-  unfold unitLoadResponse
-  exact dotProduct_zero _
 
 private theorem dotProduct_diag_mulVec {M : Type*} [Fintype M]
     [DecidableEq M] (k x y : M → ℝ) :
@@ -798,13 +772,9 @@ lemma supported_unitLoad_identity_separationForm {J M F : Type*}
     aout ⬝ᵥ u
       = (Matrix.diagonal k
           *ᵥ ((axialCompatibility r a b * S)
-            *ᵥ (((axialCompatibility r a b * S)ᵀ
-                  * Matrix.diagonal k
-                  * (axialCompatibility r a b * S))⁻¹
-                *ᵥ aout)))
+            *ᵥ influenceVector r a b S k aout))
         ⬝ᵥ ((axialCompatibility r a b * S) *ᵥ u) := by
   have heta := supported_influenceVector_mulVec r a b S k hPD aout
-  unfold influenceVector at heta
   have hrec := supported_reciprocalWork r a b S k hu heta
   have hK : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
       * (axialCompatibility r a b * S)) *ᵥ u
@@ -844,10 +814,7 @@ theorem supported_unitLoad_identity {J M F : Type*}
     aout ⬝ᵥ u
       = (Matrix.diagonal k
           *ᵥ ((axialCompatibility r a b * S)
-            *ᵥ (((axialCompatibility r a b * S)ᵀ
-                  * Matrix.diagonal k
-                  * (axialCompatibility r a b * S))⁻¹
-                *ᵥ aout)))
+            *ᵥ influenceVector r a b S k aout))
         ⬝ᵥ (Matrix.diagonal (fun e => (k e)⁻¹)
           *ᵥ (Matrix.diagonal k
             *ᵥ ((axialCompatibility r a b * S) *ᵥ u))) := by
@@ -877,10 +844,7 @@ theorem supported_unitLoad_identity_of_kernel {J M F : Type*}
     aout ⬝ᵥ u
       = (Matrix.diagonal k
           *ᵥ ((axialCompatibility r a b * S)
-            *ᵥ (((axialCompatibility r a b * S)ᵀ
-                  * Matrix.diagonal k
-                  * (axialCompatibility r a b * S))⁻¹
-                *ᵥ aout)))
+            *ᵥ influenceVector r a b S k aout))
         ⬝ᵥ (Matrix.diagonal (fun e => (k e)⁻¹)
           *ᵥ (Matrix.diagonal k
             *ᵥ ((axialCompatibility r a b * S) *ᵥ u))) := by
@@ -913,10 +877,7 @@ theorem supported_unitLoad_axialForce_identity {J M F : Type*}
     aout ⬝ᵥ u
       = (fun e => (Matrix.diagonal k
             *ᵥ ((axialCompatibility r a b * S)
-              *ᵥ (((axialCompatibility r a b * S)ᵀ
-                    * Matrix.diagonal k
-                    * (axialCompatibility r a b * S))⁻¹
-                  *ᵥ aout))) e * memberLength r a b e)
+              *ᵥ influenceVector r a b S k aout)) e * memberLength r a b e)
         ⬝ᵥ (fun e => ((Matrix.diagonal k
               *ᵥ ((axialCompatibility r a b * S) *ᵥ u)) e
             * memberLength r a b e) / (k e * memberLength r a b e ^ 2)) := by

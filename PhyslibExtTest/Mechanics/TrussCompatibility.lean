@@ -847,7 +847,6 @@ example : ![2, 0] ⬝ᵥ ![3, 5]
       ⬝ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF) *ᵥ ![3, 5]) := by
   have h := supported_unitLoad_identity_separationForm rF ![0, 1] ![1, 2] SF _
     posDefUnitLoad ![2, 0] huUnitLoad
-  unfold influenceVector at h ⊢
   exact h
 
 example : ![2, 0] ⬝ᵥ ![3, 5]
@@ -859,7 +858,6 @@ example : ![2, 0] ⬝ᵥ ![3, 5]
           *ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF) *ᵥ ![3, 5]))) := by
   have h := supported_unitLoad_identity rF ![0, 1] ![1, 2] SF _
     (by intro e; fin_cases e <;> norm_num) posDefUnitLoad ![2, 0] huUnitLoad
-  unfold influenceVector at h ⊢
   exact h
 
 /-- The certified (kernel) form at the same data. -/
@@ -872,7 +870,6 @@ example : ![2, 0] ⬝ᵥ ![3, 5]
           *ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF) *ᵥ ![3, 5]))) := by
   have h := supported_unitLoad_identity_of_kernel rF ![0, 1] ![1, 2] SF _
     (by intro e; fin_cases e <;> norm_num) kernelF ![2, 0] huUnitLoad
-  unfold influenceVector at h ⊢
   exact h
 
 /-- Superposition at the fixed output: responses
@@ -884,8 +881,8 @@ example : unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
     = unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0] ![0, 6]
       + unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
         ![2, 0] := by
-  refine ⟨?_, supported_unitLoadResponse_add _ _ _ _ _ _ _ _⟩
-  unfold unitLoadResponse
+  refine ⟨?_, map_add _ _ _⟩
+  rw [unitLoadResponse_apply]
   rw [etaUnitLoad]
   norm_num [dotProduct, Fin.sum_univ_two]
 
@@ -916,7 +913,7 @@ example : unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
     refine h.trans ?_
     funext i
     fin_cases i <;> simp
-  unfold unitLoadResponse
+  rw [unitLoadResponse_apply]
   rw [heta2]
   norm_num [dotProduct, Fin.sum_univ_two]
 
@@ -937,7 +934,6 @@ example : (![2, 0] : Fin 2 → ℝ) ⬝ᵥ ![3, 5]
   have h := supported_unitLoad_axialForce_identity rF ![0, 1] ![1, 2] SF _
     (by intro e; fin_cases e <;> norm_num) posDefUnitLoad
     (by intro e; fin_cases e <;> norm_num [rF]) ![2, 0] huUnitLoad
-  unfold influenceVector at h ⊢
   exact h
 
 example : (fun e => (Matrix.diagonal ![1 / 2, 3]
@@ -959,7 +955,7 @@ example : (fun e => (Matrix.diagonal ![1 / 2, 3]
 at `f = u = 0`. -/
 example : unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0] 0
     = 0 :=
-  supported_unitLoadResponse_zero _ _ _ _ _ _
+  map_zero _
 
 example : (![2, 0] : Fin 2 → ℝ) ⬝ᵥ 0
     = (Matrix.diagonal ![1 / 2, 3]
@@ -971,7 +967,6 @@ example : (![2, 0] : Fin 2 → ℝ) ⬝ᵥ 0
   have h := supported_unitLoad_identity rF ![0, 1] ![1, 2] SF _
     (by intro e; fin_cases e <;> norm_num) posDefUnitLoad ![2, 0]
     (f := 0) (u := 0) (by simp)
-  unfold influenceVector at h ⊢
   exact h
 
 /-- Zero-diagonal control: without positivity the
@@ -1036,7 +1031,7 @@ example : unitLoadResponse rF ![0, 1] ![1, 2] SF ![1, 1] ![2, 0]
 example : unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]
       (-![0, 6]) = -6 ∧ (-6 : ℝ) ≠ 6 := by
   refine ⟨?_, by norm_num⟩
-  unfold unitLoadResponse
+  rw [unitLoadResponse_apply]
   rw [etaUnitLoad]
   norm_num [dotProduct, Fin.sum_univ_two]
 
@@ -1074,9 +1069,6 @@ example (aout f : Fin 0 → ℝ) :
   Mechanics.TrussCompatibility.supported_influenceVector_mulVec
 #print axioms Mechanics.TrussCompatibility.supported_influenceVector_smul
 #print axioms Mechanics.TrussCompatibility.supported_unitLoadResponse_eq
-#print axioms Mechanics.TrussCompatibility.supported_unitLoadResponse_add
-#print axioms Mechanics.TrussCompatibility.supported_unitLoadResponse_smul
-#print axioms Mechanics.TrussCompatibility.supported_unitLoadResponse_zero
 #print axioms
   Mechanics.TrussCompatibility.supported_unitLoad_identity_separationForm
 #print axioms Mechanics.TrussCompatibility.supported_unitLoad_identity
