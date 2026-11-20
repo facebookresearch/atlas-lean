@@ -106,42 +106,12 @@ public theorem cubicSameTwo_eq (M : Matrix (Fin 3) (Fin 3) CubicPoly) :
         pderiv 2 (pderiv 2 (cubicQSum M))) := by
   simp only [cubicSameTwo, cubicQSum, Fin.sum_univ_three]
 
-private theorem coeff_pderiv' {σ : Type*} [DecidableEq σ] (i : σ) (m : σ →₀ ℕ)
-    (f : MvPolynomial σ ℂ) :
-    (pderiv i f).coeff m = (m i + 1) * f.coeff (m + Finsupp.single i 1) := by
-  induction f using MvPolynomial.induction_on' with
-  | monomial s a =>
-    rw [pderiv_monomial, coeff_monomial, coeff_monomial]
-    by_cases h : s = m + Finsupp.single i 1
-    · subst h
-      simp [mul_comm]
-    · rw [if_neg h]
-      split_ifs with h'
-      · have hs : s i = 0 := by
-          by_contra hne
-          apply h
-          rw [← h']
-          ext j
-          simp only [Finsupp.coe_tsub, Pi.sub_apply, Finsupp.coe_add, Pi.add_apply,
-            Finsupp.single_apply]
-          split_ifs with hj
-          · subst hj; omega
-          · omega
-        simp [hs]
-      · simp
-  | add f g hf hg => simp [hf, hg, mul_add]
-
-private theorem pderiv_comm' {σ : Type*} [DecidableEq σ] (i j : σ)
-    (f : MvPolynomial σ ℂ) :
-    pderiv i (pderiv j f) = pderiv j (pderiv i f) := by
-  ext m
-  simp only [coeff_pderiv']
-  by_cases hij : i = j
-  · subst hij; rfl
-  · rw [add_right_comm]
-    simp only [Finsupp.coe_add, Pi.add_apply, Finsupp.single_apply, if_neg hij,
-      if_neg (Ne.symm hij), add_zero]
-    ring
+private lemma c10 (f : CubicPoly) : pderiv 1 (pderiv 0 f) = pderiv 0 (pderiv 1 f) :=
+  MvPolynomial.pderiv_comm 1 0 f
+private lemma c20 (f : CubicPoly) : pderiv 2 (pderiv 0 f) = pderiv 0 (pderiv 2 f) :=
+  MvPolynomial.pderiv_comm 2 0 f
+private lemma c21 (f : CubicPoly) : pderiv 2 (pderiv 1 f) = pderiv 1 (pderiv 2 f) :=
+  MvPolynomial.pderiv_comm 2 1 f
 
 private lemma max01 : max (0 : Fin 3) 1 = 1 := by decide
 private lemma max02 : max (0 : Fin 3) 2 = 2 := by decide
@@ -170,13 +140,6 @@ private lemma pdXsq (i j : Fin 3) :
 private lemma pd_ofNat (i : Fin 3) (n : ℕ) [n.AtLeastTwo] :
     pderiv i (no_index (OfNat.ofNat n) : CubicPoly) = 0 := by
   rw [← map_ofNat (C : ℂ →+* CubicPoly) n]; exact pderiv_C
-
-private lemma c10 (f : CubicPoly) : pderiv 1 (pderiv 0 f) = pderiv 0 (pderiv 1 f) :=
-  pderiv_comm' _ _ _
-private lemma c20 (f : CubicPoly) : pderiv 2 (pderiv 0 f) = pderiv 0 (pderiv 2 f) :=
-  pderiv_comm' _ _ _
-private lemma c21 (f : CubicPoly) : pderiv 2 (pderiv 1 f) = pderiv 1 (pderiv 2 f) :=
-  pderiv_comm' _ _ _
 
 /-- Explicit formula for `cubicLowerTwo (cubicXi ν p)`. -/
 public theorem cubicLowerTwo_cubicXi (ν : Fin 3 → ℂ) (p : CubicPoly) :

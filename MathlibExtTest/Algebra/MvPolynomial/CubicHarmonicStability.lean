@@ -66,13 +66,27 @@ theorem exactSource (τ τ₃ : ℝ) :
       (S₁ ≠ ⊥ ∨ S₂ ≠ ⊥) → (MvPolynomial.X 1 : MvPolynomial (Fin 3) ℂ) ∈ S₁) :=
   cubicBottom_mem_of_transitionStable_degree_le_two τ τ₃
 
-/-- Boundary example: with both subspaces zero the stability hypotheses hold
-vacuously, and the nontriviality hypothesis is exactly what excludes this
-case; here the conclusion is supplied instead by the full top subspace. -/
+/-- Boundary example: for `S₀ = S₂ = ⊥` the stability hypotheses of the first
+component hold (every operator sends `0` into `⊥`), the conclusion
+`1 ∈ S₀` is false, and the theorem therefore forces precisely the
+nontriviality antecedent `S₀ ≠ ⊥ ∨ S₂ ≠ ⊥` to fail. -/
 example (τ τ₃ : ℝ) :
-    (1 : MvPolynomial (Fin 3) ℂ) ∈
-      (⊤ : Submodule ℂ (MvPolynomial (Fin 3) ℂ)) :=
-  Submodule.mem_top
+    ¬ ((⊥ : Submodule ℂ (MvPolynomial (Fin 3) ℂ)) ≠ ⊥ ∨
+      (⊥ : Submodule ℂ (MvPolynomial (Fin 3) ℂ)) ≠ ⊥) := by
+  have hstab : ∀ p ∈ (⊥ : Submodule ℂ (MvPolynomial (Fin 3) ℂ)),
+      cubicLowerTwo (cubicXi (cubicNu12 τ τ₃) p) ∈
+        (⊥ : Submodule ℂ (MvPolynomial (Fin 3) ℂ)) ∧
+      cubicSameTwo (cubicXi (cubicNu12 τ τ₃) p) ∈
+        (⊥ : Submodule ℂ (MvPolynomial (Fin 3) ℂ)) := by
+    intro p hp
+    rw [Submodule.mem_bot] at hp
+    subst hp
+    simp [cubicXi, cubicLowerTwo, cubicSameTwo]
+  have h := (cubicBottom_mem_of_transitionStable_degree_le_two τ τ₃).1
+    ⊥ ⊥ bot_le bot_le hstab
+  intro hn
+  have h1 := h hn
+  simp at h1
 
 /-- The scalar factor in the `X_0 X_1` lowering is nonzero at `cubicNu12`,
 so the `X_2` conclusion is not vacuous. -/
