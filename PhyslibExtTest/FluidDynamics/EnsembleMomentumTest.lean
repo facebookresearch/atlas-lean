@@ -9,6 +9,7 @@ module
 
 public import PhyslibExt.FluidDynamics.EnsembleMomentum
 
+import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
@@ -49,8 +50,9 @@ amount from it. On the plane strain `diag(1, -1, 0)`, `νt = -1` returns energy 
 normal stress `-4/3` and trace `2 = 2 k` (`modeledReynoldsStress_planeStrain`), so through
 `reynoldsStress_posSemidef` it is not the Reynolds stress of any ensemble with `L²` velocity
 components, while `νt = 1/4` gives a positive semidefinite model. A negative eddy viscosity extracts
-nothing from the zero strain (`meanFlowExtraction_nonneg_converse_fails`), and the model domain
-contains a point with a negative quadratic form (`modeledReynoldsStress_realizability_fails`).
+nothing from the zero strain (`meanFlowExtraction_nonneg_converse_fails`). On the model domain the
+closure is Hermitian, and the domain contains a point where it is not positive semidefinite
+(`modeledReynoldsStress_realizability_fails`).
 -/
 
 @[expose] public section
@@ -454,12 +456,20 @@ example : modeledReynoldsStress 1 1 (Matrix.diagonal ![1, -1, 0]) 0 0 = -4 / 3 �
   rw [Matrix.trace_fin_three]
   norm_num
 
--- The model domain contains a point with a negative quadratic form.
-example : ∃ (k νt : ℝ) (S : Matrix (Fin 3) (Fin 3) ℝ) (a : Fin 3 → ℝ), 0 ≤ k ∧ 0 < νt ∧
-    S.IsSymm ∧ S.trace = 0 ∧ ∑ j, ∑ i, a j * a i * modeledReynoldsStress k νt S j i < 0 := by
+-- On the model domain the closure is Hermitian, so the Hermitian part of `Matrix.PosSemidef`
+-- holds there and a failure of positive semidefiniteness is a failure of the quadratic form.
+example (k νt : ℝ) {S : Matrix (Fin 3) (Fin 3) ℝ} (hS : S.IsSymm) :
+    (modeledReynoldsStress k νt S).IsHermitian := by
+  have h : (modeledReynoldsStress k νt S).IsSymm :=
+    (Matrix.isSymm_one.smul _).sub (hS.smul _)
+  simpa [Matrix.IsHermitian, Matrix.IsSymm, Matrix.conjTranspose_eq_transpose_of_trivial] using h
+
+-- The model domain contains a point where the closure is not positive semidefinite.
+example : ∃ (k νt : ℝ) (S : Matrix (Fin 3) (Fin 3) ℝ), 0 ≤ k ∧ 0 < νt ∧ S.IsSymm ∧
+    S.trace = 0 ∧ ¬ (modeledReynoldsStress k νt S).PosSemidef := by
   by_contra h
-  exact modeledReynoldsStress_realizability_fails fun k νt S hk hν hS htr a =>
-    not_lt.1 fun hq => h ⟨k, νt, S, a, hk, hν, hS, htr, hq⟩
+  exact modeledReynoldsStress_realizability_fails fun k νt S hk hν hS htr =>
+    not_not.1 fun hn => h ⟨k, νt, S, hk, hν, hS, htr, hn⟩
 
 -- The plane-strain model is not the Reynolds stress of any ensemble with `L²` velocity
 -- components: `reynoldsStress_posSemidef` along `e₀` against the fixture's entry `-4/3`.
@@ -472,12 +482,17 @@ example {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasur
   rw [h, modeledReynoldsStress_planeStrain.1] at hq
   norm_num [Fin.sum_univ_succ, Matrix.diagonal_apply] at hq
 
--- Control: the same plane strain with `νt = 1/4` gives a positive semidefinite model.
-example (a : Fin 3 → ℝ) :
-    0 ≤ ∑ j, ∑ i, a j * a i *
-      modeledReynoldsStress 1 (1 / 4) (Matrix.diagonal ![1, -1, 0]) j i := by
-  norm_num [modeledReynoldsStress, Fin.sum_univ_three, Matrix.one_apply, Matrix.diagonal_apply]
-  nlinarith [mul_self_nonneg (a 0), mul_self_nonneg (a 1), mul_self_nonneg (a 2)]
+-- Control: the same plane strain with `νt = 1/4` gives `diag(1/6, 7/6, 2/3)`, a positive
+-- semidefinite model.
+example : (modeledReynoldsStress 1 (1 / 4) (Matrix.diagonal ![1, -1, 0])).PosSemidef := by
+  have h : modeledReynoldsStress 1 (1 / 4) (Matrix.diagonal ![1, -1, 0]) =
+      Matrix.diagonal ![1 / 6, 7 / 6, 2 / 3] := by
+    ext i j
+    fin_cases i <;> fin_cases j <;>
+      norm_num [modeledReynoldsStress, Matrix.one_apply, Matrix.diagonal_apply]
+  rw [h, Matrix.posSemidef_diagonal_iff]
+  intro i
+  fin_cases i <;> norm_num
 
 end Closure
 

@@ -11,6 +11,7 @@ public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Calculus.FDeriv.Basic
 public import Mathlib.Analysis.Matrix.Normed
 public import Mathlib.Analysis.SpecialFunctions.Exp
+public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.LinearAlgebra.Matrix.Symmetric
 public import Mathlib.LinearAlgebra.Matrix.Trace
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
@@ -76,9 +77,10 @@ norm, `‖S‖² = ∑ᵢ ∑ⱼ Sᵢⱼ²`. So `νt ≥ 0` gives `P ≥ 0`; for
 `S = 0` it fails, since there `P = 0` whatever `νt`. Dissipation does not give realizability: for
 `k = 1`, `νt = 1` and the plane strain `S = diag(1, -1, 0)` of the mean flow `U = (x, -y, 0)`,
 the model is `Rm = diag(-4/3, 8/3, 2/3)` and extracts `P = 4 > 0`, yet its entry `Rm₀₀ = -4/3` is
-negative: its quadratic form is negative along `e₀`, which `reynoldsStress_posSemidef` rules out
-for every Reynolds stress of `L²` velocities. Section D has no transport equations for `k` or
-`νt`, no realizability criterion or limiter, and no empirical adequacy or system safety claim.
+negative: its quadratic form is negative along `e₀`, so it is not positive semidefinite
+(`Matrix.PosSemidef`), while `reynoldsStress_posSemidef` makes that form nonnegative for every
+Reynolds stress of `L²` velocities. Section D has no transport equations for `k` or `νt`, no
+realizability criterion or limiter, and no empirical adequacy or system safety claim.
 
 ## ii. Key results
 
@@ -108,7 +110,8 @@ for every Reynolds stress of `L²` velocities. Section D has no transport equati
 - `FluidDynamics.EnsembleMomentum.modeledReynoldsStress_planeStrain`: at `k = νt = 1` and
   `S = diag(1, -1, 0)`, `Rm = diag(-4/3, 8/3, 2/3)` and `P = 4`.
 - `FluidDynamics.EnsembleMomentum.modeledReynoldsStress_realizability_fails`: for `k ≥ 0`,
-  `νt > 0` and a symmetric trace-free `S`, the model need not be positive semidefinite.
+  `νt > 0` and a symmetric trace-free `S`, the model need not be positive semidefinite
+  (`Matrix.PosSemidef`).
 
 ## iii. Table of contents
 
@@ -743,20 +746,21 @@ lemma modeledReynoldsStress_planeStrain :
       Matrix.diagonal_apply]
 
 /-- **A positive eddy viscosity does not give realizability.** For `k ≥ 0`, `νt > 0` and a
-symmetric trace-free `S` the closure need not be positive semidefinite in the sense of
-`reynoldsStress_posSemidef`, which every Reynolds stress of `L²` velocities satisfies: for the
-plane-strain fixture its quadratic form along `e₀` is `Rm₀₀ = -4/3 < 0`. -/
+symmetric trace-free `S` the closure need not be positive semidefinite (`Matrix.PosSemidef`),
+although the quadratic form of every Reynolds stress of `L²` velocities is nonnegative
+(`reynoldsStress_posSemidef`): for the plane-strain fixture the quadratic form of the closure
+along `e₀` is `Rm₀₀ = -4/3 < 0`. -/
 lemma modeledReynoldsStress_realizability_fails :
     ¬ ∀ (k νt : ℝ) (S : Matrix (Fin 3) (Fin 3) ℝ), 0 ≤ k → 0 < νt → S.IsSymm → S.trace = 0 →
-      ∀ a : Fin 3 → ℝ, 0 ≤ ∑ j, ∑ i, a j * a i * modeledReynoldsStress k νt S j i := by
+      (modeledReynoldsStress k νt S).PosSemidef := by
   intro h
   have htr : (Matrix.diagonal ![(1 : ℝ), -1, 0]).trace = 0 := by
     rw [Matrix.trace_fin_three]
     norm_num [Matrix.diagonal_apply]
-  have hq := h 1 1 (Matrix.diagonal ![1, -1, 0]) zero_le_one one_pos
-    (Matrix.isSymm_diagonal _) htr ![1, 0, 0]
+  have hq := (h 1 1 (Matrix.diagonal ![1, -1, 0]) zero_le_one one_pos
+    (Matrix.isSymm_diagonal _) htr).dotProduct_mulVec_nonneg ![1, 0, 0]
   rw [modeledReynoldsStress_planeStrain.1] at hq
-  norm_num [Fin.sum_univ_three, Matrix.diagonal_apply] at hq
+  norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_three, Matrix.diagonal_apply] at hq
 
 end Closure
 
