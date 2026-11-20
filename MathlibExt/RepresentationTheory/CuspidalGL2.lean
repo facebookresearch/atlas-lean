@@ -36,6 +36,7 @@ public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import Mathlib.LinearAlgebra.Projectivization.Action
 public import Mathlib.RepresentationTheory.Basic
 
+import Mathlib.Data.Nat.Choose.Dvd
 import Mathlib.LinearAlgebra.Dimension.Free
 import Mathlib.LinearAlgebra.Dual.Lemmas
 import Mathlib.LinearAlgebra.Finsupp.VectorSpace
@@ -163,6 +164,120 @@ private theorem unipotent_inv (t : ZMod q) : (unipotent q t)⁻¹ = unipotent q 
 
 variable {θ : (GaloisField q 2)ˣ →* Kˣ} {ρ : Representation K (GL2 q) V}
 
+private theorem unipotent_one_pow (n : ℕ) :
+    (unipotent q 1) ^ n = unipotent q (n • (1 : ZMod q)) := by
+  induction n with
+  | zero =>
+    apply Units.ext
+    ext i j
+    fin_cases i <;> fin_cases j <;> simp [unipotent_val]
+  | succ m ih =>
+    rw [pow_succ, ih, unipotent_mul, succ_nsmul]
+
+private theorem unipotent_zero : unipotent q 0 = 1 := by
+  have h := unipotent_one_pow (q := q) 0
+  simp only [pow_zero, zero_nsmul] at h
+  exact h.symm
+
+/-- Any cuspidal type forces `(q : K) ≠ 0`: in characteristic `q` the
+unipotent generator would act as a nontrivial unipotent operator, whose
+fixed vectors contradict the cuspidal hypothesis. -/
+private theorem cast_ne_zero_of_isCuspidalOfType (h : IsCuspidalOfType θ ρ) :
+    (q : K) ≠ 0 := by
+  intro h0
+  have hp := (Fact.out : q.Prime)
+  set a : Module.End K V := ρ (unipotent q 1) with ha
+  have ha_pow : a ^ q = 1 := by
+    have h1 : (unipotent q 1) ^ q = 1 := by
+      rw [unipotent_one_pow, nsmul_one, ZMod.natCast_self, unipotent_zero]
+    rw [ha, ← map_pow, h1, map_one]
+  have hqE : ((q : ℕ) : Module.End K V) = 0 := by
+    ext v
+    rw [Module.End.natCast_apply, ← Nat.cast_smul_eq_nsmul K, h0, zero_smul,
+      LinearMap.zero_apply]
+  set b : Module.End K V := a - 1 with hb
+  have hb_pow : b ^ q = 0 := by
+    have hcomm : Commute a (-1 : Module.End K V) := (Commute.one_right a).neg_right
+    have hbin : b ^ q = ∑ i ∈ Finset.range (q + 1),
+        a ^ i * (-1) ^ (q - i) * ((q.choose i : ℕ) : Module.End K V) := by
+      rw [hb, sub_eq_add_neg]
+      exact hcomm.add_pow q
+    rw [hbin]
+    have hterm : ∀ i ∈ Finset.range (q + 1), i ≠ 0 → i ≠ q →
+        a ^ i * (-1) ^ (q - i) * ((q.choose i : ℕ) : Module.End K V) = 0 := by
+      intro i hi hi0 hiq
+      have hiq' : i < q := by
+        have hlt := Finset.mem_range.mp hi
+        omega
+      obtain ⟨m, hm⟩ := Nat.Prime.dvd_choose_self hp hi0 hiq'
+      rw [hm, Nat.cast_mul, hqE, zero_mul, mul_zero]
+    have hsum : (∑ i ∈ Finset.range (q + 1),
+        a ^ i * (-1) ^ (q - i) * ((q.choose i : ℕ) : Module.End K V)) =
+        a ^ 0 * (-1) ^ (q - 0) * ((q.choose 0 : ℕ) : Module.End K V) +
+          a ^ q * (-1) ^ (q - q) * ((q.choose q : ℕ) : Module.End K V) := by
+      rw [show (a ^ 0 * (-1) ^ (q - 0) * ((q.choose 0 : ℕ) : Module.End K V) +
+          a ^ q * (-1) ^ (q - q) * ((q.choose q : ℕ) : Module.End K V)) =
+        ∑ i ∈ ({0, q} : Finset ℕ),
+          a ^ i * (-1) ^ (q - i) * ((q.choose i : ℕ) : Module.End K V) from
+        (Finset.sum_pair (f := fun i => a ^ i * (-1) ^ (q - i) *
+          ((q.choose i : ℕ) : Module.End K V)) hp.pos.ne).symm]
+      refine (Finset.sum_subset ?_ ?_).symm
+      · intro i hi
+        simp only [Finset.mem_insert, Finset.mem_singleton] at hi
+        rcases hi with rfl | rfl <;> exact Finset.mem_range.mpr (by omega)
+      · intro i hi hi0
+        simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hi0
+        exact hterm i hi hi0.1 hi0.2
+    rw [hsum]
+    simp only [pow_zero, Nat.choose_self, Nat.choose_zero_right, Nat.cast_one, mul_one,
+      one_mul, tsub_self, tsub_zero]
+    rw [ha_pow]
+    rcases hp.eq_two_or_odd' with h2 | hodd
+    · subst h2
+      have h11 : (1 : Module.End K V) + 1 = ((2 : ℕ) : Module.End K V) := by
+        rw [Nat.cast_ofNat, one_add_one_eq_two]
+      rw [show (-1 : Module.End K V) ^ (2 : ℕ) = 1 by simp [pow_two], h11]
+      exact hqE
+    · rw [hodd.neg_one_pow, neg_add_cancel]
+  have hfin : 0 < Module.finrank K V := by
+    rw [h.finrank_eq]
+    have h2 := hp.two_le
+    omega
+  obtain ⟨v₀, hv₀⟩ := Module.finrank_pos_iff_exists_ne_zero.mp hfin
+  have hker : LinearMap.ker b ≠ ⊥ := by
+    intro hker
+    have hinj : Function.Injective (⇑b) := LinearMap.ker_eq_bot.mp hker
+    have hinjq : Function.Injective (⇑(b ^ q)) := by
+      intro x y hxy
+      apply hinj.iterate q
+      have h1 := Module.End.pow_apply b q x
+      have h2 := Module.End.pow_apply b q y
+      rw [← h1, ← h2]
+      exact hxy
+    rw [hb_pow] at hinjq
+    exact hv₀ (hinjq (by simp))
+  obtain ⟨v, hvker, hv⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hker
+  have hav : a v = v := by
+    have hsub : b v = a v - v := by
+      rw [hb]
+      simp only [LinearMap.sub_apply, Module.End.one_apply]
+    have hmem : b v = 0 := hvker
+    rw [hsub] at hmem
+    exact sub_eq_zero.mp hmem
+  have hfix : ∀ t : ZMod q, ρ (unipotent q t) v = v := by
+    intro t
+    obtain ⟨n, hn⟩ : ∃ n : ℕ, t = n • (1 : ZMod q) :=
+      ⟨t.val, by rw [nsmul_one, ZMod.natCast_zmod_val]⟩
+    have hpow : ∀ m : ℕ, (a ^ m) v = v := by
+      intro m
+      induction m with
+      | zero => simp
+      | succ m ih =>
+        rw [pow_succ, Module.End.mul_apply, hav, ih]
+    rw [hn, ← unipotent_one_pow, map_pow]
+    exact hpow n
+  exact hv (h.cuspidal v hfix)
+
 private theorem sum_unipotent_apply_eq_zero (h : IsCuspidalOfType θ ρ) (v : V) :
     (∑ t : ZMod q, ρ (unipotent q t) v) = 0 := by
   apply h.cuspidal
@@ -189,13 +304,15 @@ private theorem dual_eq_zero_of_forall_comp_unipotent (hq : (q : K) ≠ 0)
 
 /-- The dual of a cuspidal-type representation is again of the same cuspidal
 type: duality preserves the dimension, kills unipotent-fixed functionals by
-averaging over the unipotent group (the only step needing `(q : K) ≠ 0`),
-preserves the trivial central character, and preserves the torus
-characteristic polynomial since inversion permutes the two roots `θ` and
-`θ⁻¹`. -/
-public theorem IsCuspidalOfType.dual (hq : (q : K) ≠ 0) (h : IsCuspidalOfType θ ρ) :
+averaging over the unipotent group, preserves the trivial central character,
+and preserves the torus characteristic polynomial since inversion permutes
+the two roots `θ` and `θ⁻¹`. The averaging step needs `(q : K) ≠ 0`, which
+already follows from `h`: in characteristic `q` the unipotent generator
+would have a nonzero fixed vector. -/
+public theorem IsCuspidalOfType.dual (h : IsCuspidalOfType θ ρ) :
     IsCuspidalOfType θ ρ.dual := by
   classical
+  have hq : (q : K) ≠ 0 := cast_ne_zero_of_isCuspidalOfType h
   refine ⟨?_, ?_, ?_, ?_⟩
   · exact Subspace.dual_finrank_eq.trans h.finrank_eq
   · intro f hf
