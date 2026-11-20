@@ -70,3 +70,4 @@ example (ℓ : Nat.Primes) :
 example :
     MvPolynomial.aeval (fun _ => (0 : ZMod 2)) ((2 : ℕ) : ModularCurve.HeckeAlg) = 0 := by
   simp
+  decide
