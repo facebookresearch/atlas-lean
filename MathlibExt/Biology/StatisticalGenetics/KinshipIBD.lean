@@ -64,9 +64,6 @@ noncomputable def alleleWeight (p : ℝ) (a : Fin 2) : ℝ := if a = 1 then p el
 noncomputable def geneDropWeight (p : ℝ) (x : GeneDropSpace n) : ℝ :=
   ((4 : ℝ) ^ n)⁻¹ * ∏ c, alleleWeight p (x.2 c)
 
-private theorem card_coins' : Fintype.card (Coins n) = 4 ^ n := by
-  simp [Coins]
-
 private theorem sum_alleleWeight (p : ℝ) : ∑ a : Fin 2, alleleWeight p a = 1 := by
   simp [alleleWeight, Fin.sum_univ_two]
 
@@ -86,7 +83,7 @@ private theorem sum_prod_alleleWeight (p : ℝ) :
 
 private theorem sum_geneDropWeight (p : ℝ) : ∑ x : GeneDropSpace n, geneDropWeight p x = 1 := by
   simp only [geneDropWeight, Fintype.sum_prod_type, ← Finset.mul_sum, sum_prod_alleleWeight,
-    mul_one, Finset.sum_const, Finset.card_univ, card_coins', nsmul_eq_mul]
+    mul_one, Finset.sum_const, Finset.card_univ, card_coins, nsmul_eq_mul]
   push_cast
   exact inv_mul_cancel₀ (pow_ne_zero n (by norm_num : (4 : ℝ) ≠ 0))
 
@@ -176,7 +173,7 @@ theorem integral_geneDropAllele (P : Pedigree n) {p : ℝ} (hp0 : 0 ≤ p) (hp1 
         = p := by
     intro ω
     simpa using sum_prod_alleleWeight_mul_prod p {P.origin ω c}
-  simp only [hA, Finset.sum_const, Finset.card_univ, card_coins', nsmul_eq_mul]
+  simp only [hA, Finset.sum_const, Finset.card_univ, card_coins, nsmul_eq_mul]
   push_cast
   rw [← mul_assoc, inv_mul_cancel₀ (pow_ne_zero n (by norm_num : (4 : ℝ) ≠ 0)), one_mul]
 
@@ -189,7 +186,7 @@ theorem integral_geneDropAllele_mul (P : Pedigree n) {p : ℝ} (hp0 : 0 ≤ p) (
   refine (integral_geneDropMeasure hp0 hp1 fun ω A =>
     ((A (P.origin ω c) : ℕ) : ℝ) * ((A (P.origin ω d) : ℕ) : ℝ)).trans ?_
   simp only [sum_prod_alleleWeight_mul_mul, Finset.sum_add_distrib, ← Finset.mul_sum,
-    Finset.sum_const, Finset.sum_boole, Finset.card_univ, card_coins', nsmul_eq_mul, ibd]
+    Finset.sum_const, Finset.sum_boole, Finset.card_univ, card_coins, nsmul_eq_mul, ibd]
   push_cast
   field_simp
 

@@ -10,11 +10,14 @@ tree under blueprint/roadmap/. Each article's annotation in blueprint/links/
 (literature-links, read by Autoform) ties it to its Lean declaration and holds its
 article id and origin. The Lean owns what lean-facts adds on the build's checkout:
 an article's `## Depends on` and `## Proof depends on`, from the dependency dump,
-and its annotation's kind and status, from the Lean sources.
+and its annotation's kind and status, from the Lean sources. A planned page, one
+whose annotation has no Lean link, keeps the prerequisites it records by hand,
+and gets no kind or status.
 
 declarations gives each declaration with a docstring and no page a page from its
 docstring, beside its module's other pages and listed on their page in source
-order, and marks it as taken from the docstring. A module with no pages yet gets
+order, and marks it as taken from the docstring. Each annotation it adds, for a
+page or a folder page, gets a fresh article id. A module with no pages yet gets
 the folders and folder pages generate_wiki lays out where scripts/taxonomy.json
 places it, and its topmost new folder joins its parent's list. A deprecated
 declaration gets no page: upstream is retiring it, and the wiki may have dropped
@@ -57,6 +60,7 @@ import hashlib
 import importlib
 import json
 import re
+import secrets
 import sys
 import unicodedata
 from collections import Counter, defaultdict
@@ -272,11 +276,16 @@ def lean_facts_for(name: str | None, own: dict | None, index, sorry) -> tuple[st
     return None, None
 
 
+def has_legacy_name(own: dict | None) -> bool:
+    """Whether an earlier sync wrote this page with only a module and a name (see legacy_lean_name)."""
+    return bool(own and "module" in own and "name" in own)
+
+
 def legacy_lean_name(own: dict | None, index) -> str | None:
     """The Lean name of a page an earlier sync wrote with only a module and a name (no Lean link), read through
     the Lean index: the one declaration of that module whose last name component is that name; None when the
     index has none, or more than one, so no page is ever bound to a declaration by a guess."""
-    if not (own and "module" in own and "name" in own):
+    if not has_legacy_name(own):
         return None
     source = Path(*own["module"].split(".")).with_suffix(".lean")
     names = [name for name, declaration in index.declarations.items()
@@ -308,6 +317,11 @@ def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[st
             if path.name == "README.md":
                 continue
             name, own = lean_name(annotation), annotation.get("extensions", {}).get(OWN)
+            if not name and not has_legacy_name(own):
+                # A planned page: its prerequisites are its own, and with no declaration it has no kind or status.
+                annotation.pop("kind", None)
+                annotation.pop("status", None)
+                continue
             kind, status = lean_facts_for(name, own, index, sorry)
             if kind is None:
                 counts["unresolved"] += 1
@@ -1098,6 +1112,15 @@ def kept_layout(folder: Path, created: dict[Path, str]) -> tuple[Path, dict[Path
     return (parts(at)[-1] if (at / "README.md").is_file() else at), pages
 
 
+def new_article_id(taken: set[str]) -> str:
+    """A fresh article id, `af_` and 24 hex digits, none of `taken`, which it joins. Random, so a page that replaces a
+    deleted one never takes its id."""
+    while (article_id := "af_" + secrets.token_hex(12)) in taken:
+        pass
+    taken.add(article_id)
+    return article_id
+
+
 def apply_declarations(targets: list, index, generated: dict[Path, str] | None = None,
                        unindexed: list[str] | None = None) -> dict[str, list[str]]:
     """Pages for new declarations, and the report; see the module docstring. ``generated`` holds generate_wiki's
@@ -1111,6 +1134,7 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     rendered.cache_clear()
     rendered(published("") or "")
     files = read_annotations()
+    taken = {a["id"] for rows in files.values() for a in rows if "id" in a}
     keyed = [(annotation_key(a, index), a) for rows in files.values() for a in rows]
     pages = {key: subject_path(a) for key, a in keyed if key}
     problems = {id(a): problem for key, a in keyed if (problem := held_problem(a, key, index))}
@@ -1204,7 +1228,8 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
                                       [entry[0] for entry in earlier], [entry[0] for entry in later],
                                       section_titles(target)):
                 report[kind].append(target.path.relative_to(wiki.ROADMAP).as_posix())
-        annotation: dict = {"subject": [{"type": "generic", "uri": "../" + target.path.relative_to(wiki.VAULT).as_posix()}]}
+        annotation: dict = {"subject": [{"type": "generic", "uri": "../" + target.path.relative_to(wiki.VAULT).as_posix()}],
+                            "id": new_article_id(taken)}
         if target.lean:
             annotation["object"] = [{"location": {"declaration": target.lean}}]
         extensions: dict = {OWN: {"from": "docstring"}}
@@ -1227,7 +1252,8 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
         for page in sorted(path for path in pages.values() if path.parent == readme.parent and path.name not in listed):
             if kind := add_to_listing(readme, f"- [{wiki.link_text(title(page))}]({page.name})"):
                 report[kind].append(page.relative_to(wiki.ROADMAP).as_posix())
-        annotation = {"subject": [{"type": "generic", "uri": "../" + readme.relative_to(wiki.VAULT).as_posix()}]}
+        annotation = {"subject": [{"type": "generic", "uri": "../" + readme.relative_to(wiki.VAULT).as_posix()}],
+                      "id": new_article_id(taken)}
         ours = {key: fields[key] for key in ("navigation", "area") if key in fields}
         if ours:
             annotation["extensions"] = {NAMESPACE: ours}

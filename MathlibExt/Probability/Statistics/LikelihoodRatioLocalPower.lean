@@ -119,83 +119,6 @@ theorem map_withDensity_infinitePi_prod {μ : Measure 𝓧} [IsProbabilityMeasur
     _ = _ := by rw [Measure.infinitePi_map_eval]
 
 open Set in
-/-- First-order Taylor bound from a bound `m` on the second derivative on a ball. -/
-private theorem abs_sub_sub_mul_deriv_le' {f : ℝ → ℝ} {θ₀ δ θ m : ℝ}
-    (hf : ∀ t ∈ Metric.ball θ₀ δ, DifferentiableAt ℝ f t)
-    (hf' : ∀ t ∈ Metric.ball θ₀ δ, DifferentiableAt ℝ (deriv f) t)
-    (hm : ∀ t ∈ Metric.ball θ₀ δ, |deriv (deriv f) t| ≤ m) (hθ : θ ∈ Metric.ball θ₀ δ) :
-    |f θ - f θ₀ - (θ - θ₀) * deriv f θ₀| ≤ m * (θ - θ₀) ^ 2 := by
-  have h0 : θ₀ ∈ Metric.ball θ₀ δ := Metric.mem_ball_self (lt_of_le_of_lt dist_nonneg hθ)
-  have hsub : uIcc θ₀ θ ⊆ Metric.ball θ₀ δ := by
-    rw [Real.ball_eq_Ioo] at h0 hθ ⊢
-    exact ordConnected_Ioo.uIcc_subset h0 hθ
-  have h1 : ∀ t ∈ uIcc θ₀ θ, |deriv f t - deriv f θ₀| ≤ m * |θ - θ₀| := fun t ht => by
-    have := (convex_ball θ₀ δ).norm_image_sub_le_of_norm_deriv_le hf' (fun s hs => by
-      rw [Real.norm_eq_abs]; exact hm s hs) h0 (hsub ht)
-    simp only [Real.norm_eq_abs] at this
-    exact this.trans (mul_le_mul_of_nonneg_left (abs_sub_left_of_mem_uIcc ht)
-      ((abs_nonneg _).trans (hm θ₀ h0)))
-  set g : ℝ → ℝ := fun t => f t - (t - θ₀) * deriv f θ₀
-  have hg : ∀ t ∈ uIcc θ₀ θ, HasDerivAt g (deriv f t - deriv f θ₀) t := fun t ht => by
-    have := ((hf t (hsub ht)).hasDerivAt.fun_sub
-      (((hasDerivAt_id t).sub_const θ₀).mul_const (deriv f θ₀)))
-    simpa only [id, one_mul] using this
-  have key := (convex_uIcc θ₀ θ).norm_image_sub_le_of_norm_hasDerivWithin_le
-    (fun t ht => (hg t ht).hasDerivWithinAt) (fun t ht => by
-      rw [Real.norm_eq_abs]; exact h1 t ht) left_mem_uIcc right_mem_uIcc
-  simp only [Real.norm_eq_abs, g, sub_self, zero_mul, sub_zero] at key
-  calc |f θ - f θ₀ - (θ - θ₀) * deriv f θ₀| = |f θ - (θ - θ₀) * deriv f θ₀ - f θ₀| := by
-        ring_nf
-    _ ≤ m * |θ - θ₀| * |θ - θ₀| := key
-    _ = m * (θ - θ₀) ^ 2 := by rw [mul_assoc, ← sq, sq_abs]
-
-open Set in
-/-- Second-order Taylor bound at the fixed point `θ₀` with a third-derivative bound `m`:
-`|f θ₀ - f θ - (θ₀ - θ) f'(θ) - (θ₀ - θ)² / 2 · f''(θ₀)| ≤ m |θ - θ₀|³`. -/
-private theorem abs_taylor_two_le' {f f₁ f₂ f₃ : ℝ → ℝ} {θ₀ δ θ m : ℝ}
-    (hf : ∀ t ∈ Metric.ball θ₀ δ, HasDerivAt f (f₁ t) t)
-    (hf₁ : ∀ t ∈ Metric.ball θ₀ δ, HasDerivAt f₁ (f₂ t) t)
-    (hf₂ : ∀ t ∈ Metric.ball θ₀ δ, HasDerivAt f₂ (f₃ t) t)
-    (hm : ∀ t ∈ Metric.ball θ₀ δ, |f₃ t| ≤ m) (hθ : θ ∈ Metric.ball θ₀ δ) :
-    |f θ₀ - f θ - (θ₀ - θ) * f₁ θ - (θ₀ - θ) ^ 2 / 2 * f₂ θ₀| ≤ m * |θ - θ₀| ^ 3 := by
-  have h0 : θ₀ ∈ Metric.ball θ₀ δ := Metric.mem_ball_self (lt_of_le_of_lt dist_nonneg hθ)
-  have hsub : uIcc θ₀ θ ⊆ Metric.ball θ₀ δ := by
-    rw [Real.ball_eq_Ioo] at h0 hθ ⊢
-    exact ordConnected_Ioo.uIcc_subset h0 hθ
-  have hm0 : 0 ≤ m := (abs_nonneg _).trans (hm θ₀ h0)
-  have h2 : ∀ t ∈ uIcc θ₀ θ, |f₂ θ₀ - f₂ t| ≤ m * |θ - θ₀| := fun t ht => by
-    have := (convex_ball θ₀ δ).norm_image_sub_le_of_norm_hasDerivWithin_le
-      (fun s hs => (hf₂ s hs).hasDerivWithinAt) (fun s hs => by
-        rw [Real.norm_eq_abs]; exact hm s hs) (hsub ht) h0
-    simp only [Real.norm_eq_abs] at this
-    exact this.trans (mul_le_mul_of_nonneg_left (by
-      rw [abs_sub_comm]; exact abs_sub_left_of_mem_uIcc ht) hm0)
-  set φ : ℝ → ℝ := fun t => f θ₀ - f t - (θ₀ - t) * f₁ t - (θ₀ - t) * (θ₀ - t) / 2 * f₂ θ₀
-    with hφ_def
-  have hφ : ∀ t ∈ uIcc θ₀ θ, HasDerivAt φ ((θ₀ - t) * (f₂ θ₀ - f₂ t)) t := fun t ht => by
-    have hl : HasDerivAt (fun t : ℝ => θ₀ - t) (-1) t := by
-      simpa using (hasDerivAt_id t).const_sub θ₀
-    have := (((hasDerivAt_const t (f θ₀)).sub (hf t (hsub ht))).sub
-      (hl.mul (hf₁ t (hsub ht)))).sub (((hl.mul hl).div_const 2).mul_const (f₂ θ₀))
-    convert this using 1
-    ring
-  have hφ' : ∀ t ∈ uIcc θ₀ θ, ‖(θ₀ - t) * (f₂ θ₀ - f₂ t)‖ ≤ m * |θ - θ₀| ^ 2 := fun t ht => by
-    rw [Real.norm_eq_abs, abs_mul]
-    have h1 : |θ₀ - t| ≤ |θ - θ₀| := by rw [abs_sub_comm]; exact abs_sub_left_of_mem_uIcc ht
-    calc |θ₀ - t| * |f₂ θ₀ - f₂ t| ≤ |θ - θ₀| * (m * |θ - θ₀|) :=
-          mul_le_mul h1 (h2 t ht) (abs_nonneg _) (abs_nonneg _)
-      _ = m * |θ - θ₀| ^ 2 := by ring
-  have key := (convex_uIcc θ₀ θ).norm_image_sub_le_of_norm_hasDerivWithin_le
-    (fun t ht => (hφ t ht).hasDerivWithinAt) hφ' left_mem_uIcc right_mem_uIcc
-  have hφ0 : φ θ₀ = 0 := by simp [hφ_def]
-  rw [hφ0, sub_zero, Real.norm_eq_abs, Real.norm_eq_abs] at key
-  have e : f θ₀ - f θ - (θ₀ - θ) * f₁ θ - (θ₀ - θ) ^ 2 / 2 * f₂ θ₀ = φ θ := by
-    simp only [hφ_def]; ring
-  rw [e]
-  calc |φ θ| ≤ m * |θ - θ₀| ^ 2 * |θ - θ₀| := key
-    _ = m * |θ - θ₀| ^ 3 := by ring
-
-open Set in
 /-- Second-order Taylor bound at the center `θ₀` with a third-derivative bound `m` on a ball:
 `|f θ - f θ₀ - (θ - θ₀) f'(θ₀) - (θ - θ₀)² / 2 · f''(θ₀)| ≤ m |θ - θ₀|³`. -/
 private theorem abs_taylor_center_le {f : ℝ → ℝ} {θ₀ δ θ m : ℝ}
@@ -223,7 +146,7 @@ private theorem abs_taylor_center_le {f : ℝ → ℝ} {θ₀ δ θ m : ℝ}
   have hφ' : ∀ t ∈ uIcc θ₀ θ, ‖deriv f t - deriv f θ₀ - (t - θ₀) * deriv (deriv f) θ₀‖ ≤
       m * |θ - θ₀| ^ 2 := fun t ht => by
     rw [Real.norm_eq_abs]
-    have h1 := abs_sub_sub_mul_deriv_le' (f := deriv f) hf' hf'' hm (hsub ht)
+    have h1 := abs_sub_sub_mul_deriv_le (f := deriv f) hf' hf'' hm (hsub ht)
     have h2 : (t - θ₀) ^ 2 ≤ |θ - θ₀| ^ 2 := by
       rw [← sq_abs]; exact pow_le_pow_left₀ (abs_nonneg _) (abs_sub_left_of_mem_uIcc ht) 2
     exact h1.trans (mul_le_mul_of_nonneg_left h2 hm0)
@@ -499,7 +422,7 @@ theorem tendstoInDistribution_two_mul_logLikelihood_sub_of_triangular
         simp only [Finset.sum_sub_distrib, hroot', Finset.mul_sum]; ring
       rw [e, abs_neg, Finset.sum_mul]
       refine (Finset.abs_sum_le_sum_abs _ _).trans (Finset.sum_le_sum fun i _ => ?_)
-      exact abs_sub_sub_mul_deriv_le' (f := fun t => score p t (X n i ω)) (hs_diff (X n i ω))
+      exact abs_sub_sub_mul_deriv_le (f := fun t => score p t (X n i ω)) (hs_diff (X n i ω))
         (hs'_diff (X n i ω)) (hM (X n i ω)) hball
     rcases Nat.eq_zero_or_pos n with rfl | hn
     · simp [hT_def, hA_def]
@@ -608,7 +531,7 @@ theorem tendstoInDistribution_two_mul_logLikelihood_sub_of_triangular
         ring
       rw [e, Finset.sum_mul]
       refine (Finset.abs_sum_le_sum_abs _ _).trans (Finset.sum_le_sum fun i _ => ?_)
-      exact abs_taylor_two_le' (f := fun t => Real.log (p t (X n i ω)))
+      exact LikelihoodRatioTests.abs_taylor_two_le (f := fun t => Real.log (p t (X n i ω)))
         (f₁ := fun t => score p t (X n i ω))
         (f₂ := fun t => deriv (fun s => score p s (X n i ω)) t)
         (f₃ := fun t => deriv (fun t => deriv (fun s => score p s (X n i ω)) t) t)

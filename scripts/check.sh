@@ -44,7 +44,8 @@ check_structure() {
   done
   for path in \
     lakefile.toml lake-manifest.json lean-toolchain README.md REVIEWING.md \
-    scripts/check_axioms.sh scripts/check_diagnostics.sh scripts/check_health.sh \
+    scripts/check_axioms.sh scripts/check_axioms.lean scripts/audit_compiled_modules.py \
+    scripts/check_diagnostics.sh scripts/check_health.sh \
     scripts/check_lake_surface.py scripts/check_copyright.py scripts/test_scripts.sh; do
     if [[ ! -f "$path" ]]; then
       echo "missing required file: $path" >&2

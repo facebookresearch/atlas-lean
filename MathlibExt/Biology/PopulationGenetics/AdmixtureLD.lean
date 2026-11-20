@@ -84,11 +84,6 @@ namespace MathlibExt.Biology.PopulationGenetics.AdmixtureLD
 
 /-! ### Haplotype and genotype covariances -/
 
-private theorem sum_four (x : Bool × Bool → ℝ) :
-    ∑ g, x g = x (true, true) + x (true, false) + x (false, true) + x (false, false) := by
-  simp only [Fintype.sum_prod_type, Fintype.sum_bool]
-  ring
-
 /-- The `0/1` count of the `'1'` allele carried by a gamete at one locus. -/
 def alleleCount (b : Bool) : ℝ := if b then 1 else 0
 

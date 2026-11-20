@@ -367,17 +367,6 @@ theorem scaleDensity_pos (b a : ℝ → ℝ) (y : ℝ) : 0 < scaleDensity b a y 
 theorem scaleFunction_zero (b a : ℝ → ℝ) : scaleFunction b a 0 = 0 := by
   simp [scaleFunction]
 
-/-- A function continuous on `[a, b]` with zero derivative on `(a, b)` is constant on `[a, b]`. -/
-private theorem eq_left_of_hasDerivAt_zero' {f : ℝ → ℝ} {a b : ℝ} (hf : ContinuousOn f (Icc a b))
-    (hd : ∀ x ∈ Ioo a b, HasDerivAt f 0 x) : ∀ x ∈ Icc a b, f x = f a := by
-  intro x hx
-  rcases eq_or_lt_of_le hx.1 with rfl | hax
-  · rfl
-  obtain ⟨c, hc, hcd⟩ := exists_deriv_eq_slope f hax (hf.mono (Icc_subset_Icc_right hx.2))
-    fun y hy => (hd y ⟨hy.1, hy.2.trans_le hx.2⟩).differentiableAt.differentiableWithinAt
-  rw [(hd c ⟨hc.1, hc.2.trans_le hx.2⟩).deriv, eq_comm, div_eq_zero_iff] at hcd
-  rcases hcd with h | h <;> linarith
-
 /-- A function with zero derivative on `(0, 1)` is constant there. -/
 private theorem eq_half_of_hasDerivAt_zero {f : ℝ → ℝ}
     (hd : ∀ x ∈ Ioo (0 : ℝ) 1, HasDerivAt f 0 x) : ∀ x ∈ Ioo (0 : ℝ) 1, f x = f (1 / 2) := by
@@ -389,8 +378,8 @@ private theorem eq_half_of_hasDerivAt_zero {f : ℝ → ℝ}
     (hd y (hsub hy)).continuousAt.continuousWithinAt
   have hd' : ∀ y ∈ Ioo (min x (1 / 2)) (max x (1 / 2)), HasDerivAt f 0 y := fun y hy =>
     hd y (hsub (Ioo_subset_Icc_self hy))
-  rw [eq_left_of_hasDerivAt_zero' hc hd' x ⟨min_le_left _ _, le_max_left _ _⟩,
-    eq_left_of_hasDerivAt_zero' hc hd' (1 / 2) ⟨min_le_right _ _, le_max_right _ _⟩]
+  rw [eq_left_of_hasDerivAt_zero hc hd' x ⟨min_le_left _ _, le_max_left _ _⟩,
+    eq_left_of_hasDerivAt_zero hc hd' (1 / 2) ⟨min_le_right _ _, le_max_right _ _⟩]
 
 /-- Interval integrability on `[0, 1]` only depends on the values on `(0, 1)`. -/
 private theorem intervalIntegrable_of_eqOn_Ioo {f g : ℝ → ℝ}
@@ -589,7 +578,7 @@ theorem eq_of_diffusionGenerator_eq_zero {b a u : ℝ → ℝ} (h : IsRegularDif
       convert hu.sub ((h.hasDerivAt_scaleFunction hy).const_mul m) using 1
       rw [hu' y hy, sub_self]
     intro x hx
-    rw [eq_left_of_hasDerivAt_zero' hc hd x hx, scaleFunction_zero, mul_zero, sub_zero]
+    rw [eq_left_of_hasDerivAt_zero hc hd x hx, scaleFunction_zero, mul_zero, sub_zero]
   have hm1 : m * scaleFunction b a 1 = u 1 - u 0 := by
     have := hh 1 ⟨zero_le_one, le_rfl⟩
     linarith

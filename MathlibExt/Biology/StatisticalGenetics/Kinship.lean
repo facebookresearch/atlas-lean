@@ -237,7 +237,7 @@ theorem head?_of_mem_ancPaths {i : Fin n} {p : List (Fin n)} (hp : p ∈ P.ancPa
 /-! ### Gene dropping: basic facts -/
 
 /-- There are `4 ^ n` gene-dropping outcomes. -/
-private theorem card_coins : Fintype.card (Coins n) = 4 ^ n := by
+theorem card_coins : Fintype.card (Coins n) = 4 ^ n := by
   simp [Coins]
 
 /-- A founder copy is its own origin. -/

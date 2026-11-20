@@ -20,6 +20,8 @@ reset_fixture() {
   cp "$REPO_ROOT/lake-manifest.json" "$TMP_ROOT/repo/"
   cp \
     "$REPO_ROOT/scripts/check_axioms.sh" \
+    "$REPO_ROOT/scripts/check_axioms.lean" \
+    "$REPO_ROOT/scripts/audit_compiled_modules.py" \
     "$REPO_ROOT/scripts/check_health.sh" \
     "$REPO_ROOT/scripts/check_lake_surface.py" \
     "$TMP_ROOT/repo/scripts/"
