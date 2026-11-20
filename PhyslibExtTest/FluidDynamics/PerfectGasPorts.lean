@@ -39,7 +39,11 @@ Checks for `PhyslibExt.FluidDynamics.PerfectGasPorts`, mostly for air with `γ =
 * stationary area at a sonic station, for `γ = 2`, `R = 1`, `T0 = 3`, `ρ0 = 3` and the mass flow
   `4`: a smooth flow through `M = 1`, which meets every hypothesis of the stationary-area lemma at
   its sonic station, and a subsonic throat, a strict area minimum with `A' = 0`, `u' = 0` and
-  `M < 1`.
+  `M < 1`;
+* normal shocks of air (`γ = 7/5`): at `M1 = 2` the distinct branch has `ρ2 / ρ1 = 8/3`,
+  `p2 / p1 = 9/2` and `T2 / T1 = 27/16`, and an explicit downstream state solves the jump
+  conditions; at `M1 = 1/4`, below the threshold `1/7`, the distinct pressure ratio is `-3/32`
+  and every positive solution is the upstream state itself.
 
 These are elaboration and non-vacuity checks, not new results.
 -/
@@ -389,5 +393,49 @@ example : ∃ A : ℝ → ℝ, HasDerivAt A (deriv A 0) 0 ∧ deriv A 0 = 0 := b
     hu0 hA0 (Real.sq_sqrt hsq) rfl hdA.hasDerivAt hdρ.hasDerivAt hdu.hasDerivAt hM0
 
 end AreaVelocity
+
+/-! ## Normal-shock branches -/
+
+/-- **`M1 = 2`, `γ = 7/5` gives compression.** The distinct branch has `ρ2 / ρ1 = 8/3`,
+`p2 / p1 = 9/2` and `T2 / T1 = 27/16`, all above `1`. With `R = 1`, `ρ1 = 7/5`, `T1 = 5/7` (so
+`p1 = 1` and `a1 = 1`) and `u1 = 2`, the downstream state `ρ2 = 56/15`, `u2 = 3/4`, `p2 = 9/2`,
+`T2 = 135/112` solves the jump conditions. -/
+lemma normalShock_fixture_mach_two :
+    shockDensityRatio (7 / 5) (2 ^ 2) = 8 / 3 ∧ shockPressureRatio (7 / 5) (2 ^ 2) = 9 / 2 ∧
+      shockTemperatureRatio (7 / 5) (2 ^ 2) = 27 / 16 ∧
+      IsNormalShockJump (7 / 5) 1 (7 / 5) 2 1 (5 / 7) (56 / 15) (3 / 4) (9 / 2) (135 / 112) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · unfold shockDensityRatio; norm_num
+  · unfold shockPressureRatio; norm_num
+  · unfold shockTemperatureRatio shockDensityRatio shockPressureRatio; norm_num
+  · unfold IsNormalShockJump; norm_num
+
+/-- **Below the pressure-positivity threshold the second root is not a physical state.** At
+`γ = 7/5` the threshold `(γ - 1) / (2 γ)` is `1/7`; at `M1 = 1/4` (`m = 1/16`) the distinct
+pressure ratio is `-3/32`. With the upstream state of `normalShock_fixture_mach_two` moving at
+`u1 = 1/4`, every downstream state with positive density and temperature that satisfies the jump
+conditions is the upstream state itself. -/
+example :
+    ((7 / 5 : ℝ) - 1) / (2 * (7 / 5)) = 1 / 7 ∧ shockPressureRatio (7 / 5) ((1 / 4) ^ 2) = -3 / 32 ∧
+      ∀ ρ2 u2 p2 T2 : ℝ, 0 < ρ2 → 0 < T2 →
+        IsNormalShockJump (7 / 5) 1 (7 / 5) (1 / 4) 1 (5 / 7) ρ2 u2 p2 T2 →
+          ρ2 = 7 / 5 ∧ u2 = 1 / 4 ∧ p2 = 1 ∧ T2 = 5 / 7 := by
+  refine ⟨?_, ?_, ?_⟩
+  · norm_num
+  · unfold shockPressureRatio; norm_num
+  · intro ρ2 u2 p2 T2 hρ2 hT2 hjump
+    have hγ : (1 : ℝ) < 7 / 5 := by norm_num
+    have hR : (0 : ℝ) < 1 := by norm_num
+    have hρ1 : (0 : ℝ) < 7 / 5 := by norm_num
+    have hT1 : (0 : ℝ) < 5 / 7 := by norm_num
+    have ha1 : (1 : ℝ) ^ 2 = (7 / 5) * 1 * (5 / 7) := by norm_num
+    have hM1 : (1 / 4 : ℝ) = |(1 / 4 : ℝ)| / (1 : ℝ) := by norm_num
+    have hclass := normalShock_classification hγ hR hρ1 hT1 hρ2 hT2 ha1 hM1 hjump
+    rcases hclass with htrivial | hdistinct
+    · exact htrivial
+    · exfalso
+      obtain ⟨_, _, _, hthresh⟩ := hdistinct
+      revert hthresh
+      norm_num
 
 end PhyslibExtTest.FluidDynamics.PerfectGasPorts
