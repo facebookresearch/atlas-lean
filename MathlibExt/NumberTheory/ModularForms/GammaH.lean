@@ -89,7 +89,7 @@ public theorem GammaH_le_Gamma0 (M : ℕ) (H : Subgroup (ZMod M)ˣ) :
   obtain ⟨hA0, _⟩ := (mem_GammaH_iff M).mp hA
   exact hA0
 
-private theorem gamma1_le_gammaH (M : ℕ) (H : Subgroup (ZMod M)ˣ) :
+public theorem gamma1_le_gammaH (M : ℕ) (H : Subgroup (ZMod M)ˣ) :
     Gamma1 M ≤ GammaH M H := by
   intro A hA
   rw [Gamma1_mem] at hA

@@ -27,6 +27,11 @@ example (M : ℕ) (A : SL(2, ℤ)) (hA : A ∈ CongruenceSubgroup.GammaH M ⊤) 
     A ∈ CongruenceSubgroup.Gamma0 M :=
   CongruenceSubgroup.GammaH_le_Gamma0 M ⊤ hA
 
+/-- The lower inclusion defining `GammaH` as an intermediate subgroup. -/
+example (M : ℕ) (H : Subgroup (ZMod M)ˣ) :
+    CongruenceSubgroup.Gamma1 M ≤ CongruenceSubgroup.GammaH M H :=
+  CongruenceSubgroup.gamma1_le_gammaH M H
+
 /-- Downstream consumers can synthesize finite index for `GammaH`. -/
 example (M : ℕ) [NeZero M] (H : Subgroup (ZMod M)ˣ) :
     (CongruenceSubgroup.GammaH M H).FiniteIndex :=
