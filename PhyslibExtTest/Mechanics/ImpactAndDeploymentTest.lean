@@ -174,8 +174,8 @@ and the second take-off speed is `5 / 2`. -/
 example :
     0 < constForcePosition 2 0 (5 : ℝ) (-(2 * 10)) (1 / 2) ∧
       constForcePosition 2 0 (5 : ℝ) (-(2 * 10)) 1 = 0 ∧ bounceSpeed (1 / 2) 5 1 = 5 / 2 := by
-  obtain ⟨hland, habove, -⟩ := bounce_arc (m := 2) (g := 10) (e := 1 / 2) (u₀ := 5)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) 0
+  obtain ⟨-, hland, habove, -, -⟩ := bounce_arc (m := 2) (g := 10) (by norm_num) (by norm_num)
+    (isActiveArc_of_pos (e := 1 / 2) (u₀ := 5) (by norm_num) (by norm_num) 0)
   have hT : flightDuration 10 (1 / 2) 5 0 = 1 := by norm_num [flightDuration, bounceSpeed]
   have hu : bounceSpeed (1 / 2) 5 0 = 5 := by simp [bounceSpeed]
   rw [hT, hu] at hland habove
@@ -231,6 +231,29 @@ example :
 /-- In contrast, with `e = 1 / 2` every arc of the fixture is active: the bounces never stop. -/
 example (n : ℕ) : IsActiveArc (1 / 2) 5 n :=
   isActiveArc_of_pos (by norm_num) (by norm_num) n
+
+/-- The first inelastic arc is a ballistic flight: with `e = 0` the fixture's ball has one active
+arc, the first; it lasts `1`, is above the floor at `t = 1 / 2`, lands at `t = 1` with velocity
+`-5`, and the wall event with `e = 0` leaves the take-off speed `0`. -/
+example :
+    0 < flightDuration 10 0 5 0 ∧ 0 < constForcePosition 2 0 (5 : ℝ) (-(2 * 10)) (1 / 2) ∧
+      constForcePosition 2 0 (5 : ℝ) (-(2 * 10)) 1 = 0 ∧
+      constForceVelocity 2 (5 : ℝ) (-(2 * 10)) 1 = -5 ∧ bounceSpeed 0 5 1 = 0 := by
+  have hact : IsActiveArc 0 5 0 := by
+    have hone := (inelastic_stops (g := 10) (u₀ := 5) (by norm_num) (by norm_num)).1
+    have h0 : (0 : ℕ) ∈ {n : ℕ | IsActiveArc 0 5 n} := by
+      rw [hone]
+      exact Set.mem_singleton 0
+    exact h0
+  obtain ⟨hpos, hland, habove, hvel, hreb⟩ :=
+    bounce_arc (m := 2) (g := 10) (by norm_num) (by norm_num) hact
+  have hT : flightDuration 10 0 5 0 = 1 := by norm_num [flightDuration, bounceSpeed]
+  have hu : bounceSpeed 0 5 0 = 5 := by simp [bounceSpeed]
+  rw [hT, hu] at hland habove hvel hreb
+  rw [hvel] at hreb
+  refine ⟨hpos, habove (1 / 2) ⟨by norm_num, by norm_num⟩, hland, hvel, ?_⟩
+  rw [← hreb]
+  norm_num [wallReboundVelocity]
 
 -- The pre-move name still elaborates, as a deprecated alias with the same statement.
 set_option linter.deprecated false in

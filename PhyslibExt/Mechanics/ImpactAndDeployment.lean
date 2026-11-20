@@ -59,18 +59,19 @@ upward speed `u > 0` and flies under its weight `-(m g)`, `g > 0`, on the consta
 `t u - g t ^ 2 / 2`. It stays above the floor until `T = 2 u / g` and arrives with normal velocity
 `-u`; the fixed-wall event gives the next take-off speed `e u`. Chaining arcs and events gives the
 take-off speeds `u_n = e ^ n u₀` and the flight durations `T_n = (2 u₀ / g) e ^ n`. Arc `n` is
-active (`IsActiveArc`) when its take-off speed is positive, and the contacts are the ends of the
-active arcs: the contact after arc `n` is at the elapsed time
-`dwellElapsed T (n + 1) = ∑_{k ≤ n} T_k` of `MathlibExt.Robotics.Hybrid.DwellDivergence`. For
-`e > 0` every arc is active, so every elapsed time `dwellElapsed T N` with `N ≥ 1` is a contact
-time. For `0 < e < 1` the durations sum to `t_∞ = 2 u₀ / (g (1 - e))`, and the contact times
-increase strictly, stay below `t_∞` and tend to it: infinitely many impacts occur before a finite
-time (Zeno accumulation), while the take-off speeds tend to `0`. For `e ≥ 0` the durations are
-summable exactly when `e < 1`. Any sequence of step durations with a positive lower bound `δ` has
-only finitely many events up to a finite horizon (`Robotics.Hybrid.events_finite_of_dwell` of
-`MathlibExt.Robotics.Hybrid.DwellDivergence`), so the Zeno family has no such bound. For `e = 1`
-every flight lasts `2 u₀ / g` and finitely many impacts occur on every finite horizon. For `e = 0`
-the motion terminates: the first arc is the only active one and ends at `2 u₀ / g`, and the ball
+active (`IsActiveArc`) when its take-off speed is positive; every active arc is such a flight
+(`bounce_arc`), and the contacts are the ends of the active arcs: the contact after arc `n` is at
+the elapsed time `dwellElapsed T (n + 1) = ∑_{k ≤ n} T_k` of
+`MathlibExt.Robotics.Hybrid.DwellDivergence`. For `e > 0` every arc is active, so every elapsed time
+`dwellElapsed T N` with `N ≥ 1` is a contact time. For `0 < e < 1` the durations sum to
+`t_∞ = 2 u₀ / (g (1 - e))`, and the contact times increase strictly, stay below `t_∞` and tend to
+it: infinitely many impacts occur before a finite time (Zeno accumulation), while the take-off
+speeds tend to `0`. For `e ≥ 0` the durations are summable exactly when `e < 1`. Any sequence of
+step durations with a positive lower bound `δ` has only finitely many events up to a finite horizon
+(`Robotics.Hybrid.events_finite_of_dwell` of `MathlibExt.Robotics.Hybrid.DwellDivergence`), so the
+Zeno family has no such bound. For `e = 1` every flight lasts `2 u₀ / g` and finitely many impacts
+occur on every finite horizon. For `e = 0` the motion terminates: the first arc is the only active
+one, a ballistic flight that lands at `2 u₀ / g` with velocity `-u₀` (`bounce_arc`), and the ball
 then rests on the floor, with every later take-off speed and flight duration `0` and the elapsed
 time constant.
 
@@ -106,8 +107,8 @@ external-impulse model with one normal direction, not a limit of the finite-mass
 - `rebound_then_flight_momentum`: for every real `e`, the wall impulse and the impulse of the
   following constant-force phase in one momentum balance.
 - `bounceSpeed_eq`, `flightDuration_eq`, `bounce_arc`: the take-off speeds `e ^ n u₀` and the
-  flight durations `(2 u₀ / g) e ^ n`; each arc lands at its flight duration, stays above the
-  floor before, and the wall event gives the next take-off speed.
+  flight durations `(2 u₀ / g) e ^ n`; each active arc has a positive duration, lands at it with
+  velocity `-u_n`, stays above the floor before, and the wall event gives the next take-off speed.
 - `IsActiveArc`, `isActiveArc_of_pos`: an arc is active when its take-off speed is positive; for
   `e > 0` and `u₀ > 0` every arc is active.
 - `hasSum_flightDuration`, `zeno_accumulation`, `summable_flightDuration_iff`: for `0 < e < 1` the
@@ -497,23 +498,26 @@ lemma isActiveArc_of_pos {e u₀ : ℝ} (he : 0 < e) (hu : 0 < u₀) (n : ℕ) :
   rw [IsActiveArc, bounceSpeed_eq]
   positivity
 
-/-- **Arc and event.** For `m > 0`, `g > 0`, `e > 0` and `u₀ > 0`, arc `n` (the constant-force
-trajectory from the floor with take-off speed `u_n` under the weight `-(m g)`) is back on the
-floor at `T_n`, stays above it on `(0, T_n)`, and the fixed-wall event applied to its arrival
-velocity gives the take-off speed `u_(n+1)` of the next arc. -/
-lemma bounce_arc {m g e u₀ : ℝ} (hm : 0 < m) (hg : 0 < g) (he : 0 < e) (hu : 0 < u₀) (n : ℕ) :
-    constForcePosition m 0 (bounceSpeed e u₀ n) (-(m * g)) (flightDuration g e u₀ n) = 0 ∧
+/-- **Arc and event.** For `m > 0` and `g > 0`, an active arc `n` (`IsActiveArc`: take-off speed
+`u_n > 0`), the constant-force trajectory from the floor with take-off speed `u_n` under the weight
+`-(m g)`, has the positive duration `T_n`, is back on the floor at `T_n`, stays above it on
+`(0, T_n)` and arrives with velocity `-u_n`; the fixed-wall event applied to that arrival velocity
+gives the take-off speed `u_(n+1)` of the next arc. For `e > 0` and `u₀ > 0` every arc is active
+(`isActiveArc_of_pos`); for `e = 0` only the first one is (`inelastic_stops`). -/
+lemma bounce_arc {m g e u₀ : ℝ} {n : ℕ} (hm : 0 < m) (hg : 0 < g) (hact : IsActiveArc e u₀ n) :
+    0 < flightDuration g e u₀ n ∧
+      constForcePosition m 0 (bounceSpeed e u₀ n) (-(m * g)) (flightDuration g e u₀ n) = 0 ∧
       (∀ t ∈ Set.Ioo 0 (flightDuration g e u₀ n),
         0 < constForcePosition m 0 (bounceSpeed e u₀ n) (-(m * g)) t) ∧
+      constForceVelocity m (bounceSpeed e u₀ n) (-(m * g)) (flightDuration g e u₀ n) =
+        -bounceSpeed e u₀ n ∧
       wallReboundVelocity e
           (constForceVelocity m (bounceSpeed e u₀ n) (-(m * g)) (flightDuration g e u₀ n)) =
         bounceSpeed e u₀ (n + 1) := by
   have hm' : m ≠ 0 := ne_of_gt hm
   have hg' : g ≠ 0 := ne_of_gt hg
   set u : ℝ := bounceSpeed e u₀ n with hu_def
-  have hu_pos : 0 < u := by
-    rw [hu_def, bounceSpeed_eq]
-    exact mul_pos (pow_pos he n) hu
+  have hu_pos : 0 < u := hact
   have hT : flightDuration g e u₀ n = 2 * u / g := rfl
   have htraj : ∀ t : ℝ, constForcePosition m 0 u (-(m * g)) t = t * (u - g * t / 2) := by
     intro t
@@ -524,7 +528,9 @@ lemma bounce_arc {m g e u₀ : ℝ} (hm : 0 < m) (hg : 0 < g) (he : 0 < e) (hu :
     simp only [constForceVelocity, smul_eq_mul, hT]
     field_simp
     ring
-  refine ⟨?_, ?_, ?_⟩
+  refine ⟨?_, ?_, ?_, hvel, ?_⟩
+  · rw [hT]
+    exact div_pos (by linarith) hg
   · rw [htraj, hT]
     field_simp
     ring
@@ -666,8 +672,10 @@ lemma elastic_events_finite {g u₀ : ℝ} (hg : 0 < g) (hu : 0 < u₀) :
 
 /-- **Termination for `e = 0`.** For `g > 0` and `u₀ > 0` the first arc, with take-off speed
 `u₀`, is the only active arc, and it ends at the positive time `2 u₀ / g`, the first and only
-impact. The ball then rests on the floor: every later take-off speed and flight duration is `0`,
-so the elapsed time stays at `2 u₀ / g`; the later indices are rest, not further impacts. -/
+impact; as an active arc it is a ballistic flight that lands there with velocity `-u₀`
+(`bounce_arc`). The ball then rests on the floor: every later take-off speed and flight duration
+is `0`, so the elapsed time stays at `2 u₀ / g`; the later indices are rest, not further
+impacts. -/
 lemma inelastic_stops {g u₀ : ℝ} (hg : 0 < g) (hu : 0 < u₀) :
     {n : ℕ | IsActiveArc 0 u₀ n} = {0} ∧ 0 < dwellElapsed (flightDuration g 0 u₀) 1 ∧
       ∀ n, bounceSpeed 0 u₀ (n + 1) = 0 ∧ flightDuration g 0 u₀ (n + 1) = 0 ∧
