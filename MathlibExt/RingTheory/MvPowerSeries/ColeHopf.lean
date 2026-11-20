@@ -21,8 +21,8 @@ analytic realization is asserted, and viscosity need not be positive.
 
 Mathematical reference: F. Gesztesy and H. Holden, The Cole-Hopf and Miura
 Transformations Revisited, Lemma 3.1, equations (3.1)-(3.2),
-https://arxiv.org/abs/solv-int/9812025. The residual identity is algebraic;
-here it is proved for formal series over any field. This does not assert
+https://arxiv.org/abs/solv-int/9812025. Its heat-to-Burgers consequence is
+proved here for formal series over any field. This does not assert
 an analytic extension of the source's smooth, positive-function theorem.
 -/
 
