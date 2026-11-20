@@ -11,6 +11,7 @@ module
 public import MathlibExt.Analysis.Normed.Algebra.MatrixExponentialIntertwining
 public import Domains.Biology.PopulationGenetics.Coalescent.BlockCounting
 public import MathlibExt.Combinatorics.Finpartition.Comap
+public import MathlibExt.Combinatorics.Finpartition.PairMerge
 public import MathlibExt.Probability.Process.ContinuousTimeMarkovChain.Semigroup
 public import Mathlib.Order.Partition.Finpartition
 public import Mathlib.Data.Fintype.Powerset
@@ -98,17 +99,15 @@ variable {n : ℕ}
 /-- `π'` arises from `π` by merging two blocks: `π` refines `π'` and has exactly one more
 block (so exactly two blocks of `π` lie in one block of `π'`, and the others are blocks of
 `π'`). -/
-def IsMerge (π π' : SamplePartition n) : Prop :=
-  π ≤ π' ∧ #π'.parts + 1 = #π.parts
+abbrev IsMerge (π π' : SamplePartition n) : Prop :=
+  Finpartition.IsPairMerge π π'
 
 open scoped Classical in
 /-- The transition matrix of the jump chain of Kingman's coalescent: from a partition with
 `k ≥ 2` blocks, move to each of the `k.choose 2` partitions obtained by merging two blocks with
 probability `1 / k.choose 2`; a partition with at most one block is absorbing. -/
 noncomputable def jumpMatrix (n : ℕ) : Matrix (SamplePartition n) (SamplePartition n) ℝ :=
-  Matrix.of fun π π' =>
-    if 2 ≤ #π.parts then (if IsMerge π π' then (((#π.parts).choose 2 : ℕ) : ℝ)⁻¹ else 0)
-    else if π = π' then 1 else 0
+  Finpartition.pairMergeMatrix univ
 
 /-- The law of the jump chain after `m` jumps, started from the partition into singletons:
 `jumpLaw n m π` is the probability that the partition after `m` coalescences is `π`. -/
@@ -1051,9 +1050,9 @@ theorem sum_kingmanProb_isMerge (π' : SamplePartition n) (h1 : 1 ≤ #π'.parts
 theorem jumpMatrix_mem_rowStochastic : jumpMatrix n ∈ rowStochastic ℝ (SamplePartition n) := by
   classical
   refine mem_rowStochastic_iff_sum.2 ⟨fun π π' => ?_, fun π => ?_⟩
-  · simp only [jumpMatrix, Matrix.of_apply]
+  · simp only [jumpMatrix, Finpartition.pairMergeMatrix, Matrix.of_apply]
     split_ifs <;> positivity
-  · simp only [jumpMatrix, Matrix.of_apply]
+  · simp only [jumpMatrix, Finpartition.pairMergeMatrix, Matrix.of_apply]
     split_ifs with h
     · rw [← sum_filter, sum_const, card_isMerge, nsmul_eq_mul]
       have : ((#π.parts).choose 2 : ℝ) ≠ 0 := by
@@ -1090,7 +1089,8 @@ theorem jumpLaw_eq {m : ℕ} (hm : m < n) (π : SamplePartition n) :
       rw [ih hm' π₀]
       by_cases h0 : #π₀.parts + m = n
       · have h2 : 2 ≤ #π₀.parts := by omega
-        simp only [jumpMatrix, Matrix.of_apply, ite_eq_left h0, ite_eq_left h2]
+        simp only [jumpMatrix, Finpartition.pairMergeMatrix, Matrix.of_apply, ite_eq_left h0,
+          ite_eq_left h2]
         by_cases hM : IsMerge π₀ π
         · have hc : #π₀.parts = #π.parts + 1 := hM.2.symm
           rw [ite_eq_left hM, ite_eq_left hM, ite_eq_left (by omega), hc, div_eq_mul_inv]

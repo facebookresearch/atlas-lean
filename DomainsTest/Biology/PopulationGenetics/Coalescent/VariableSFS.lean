@@ -201,10 +201,17 @@ example : twoPiece.sizeFn (-1) = 0 := by
   simp [PiecewiseHistory.sizeFn, twoPiece, sum_range_succ]
   norm_num
 
+/-- Two histories agree on all first-coalescence means precisely when the waiting-time
+integrals agree at all the pair counts, with reciprocal history as baseline hazard. -/
+example (η₁ η₂ : ℝ → ℝ) :
+    (∀ m : ℕ, 2 ≤ m → firstCoalMean η₁ m = firstCoalMean η₂ m) ↔
+      (∀ m : ℕ, 2 ≤ m → meanWaitingTime (fun t => (η₁ t)⁻¹) (m.choose 2) =
+        meanWaitingTime (fun t => (η₂ t)⁻¹) (m.choose 2)) := Iff.rfl
+
 /-- Junk value: for the zero size function the integrand of `c_m` is `1`, which is not
 integrable on `(0, ∞)`, so `firstCoalMean` returns Lean's default `0`. -/
 example : firstCoalMean (fun _ => 0) 2 = 0 := by
-  simp [firstCoalMean, cumRate, Measure.real]
+  simp [firstCoalMean]
 
 /-- Constant size (`K = 1`): `C(m,2) c_m = η₀`, so `c_2 = η₀`. -/
 example (h : PiecewiseHistory 1) : firstCoalMean h.sizeFn 2 = h.size 0 := by

@@ -71,11 +71,14 @@ class CompiledAuditTests(unittest.TestCase):
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(source)
         subprocess.run(['lake', 'build', *('+' + name for name in sources)], cwd=self.fixture, check=True)
-        allowed = ['Domains.AuditFixture.Model', 'DomainsTest.AuditFixture.Model', 'WantedExt.AuditFixture.Model']
+        allowed = ['Domains.AuditFixture.Model', 'DomainsTest.AuditFixture.Model']
         self.assertEqual(audit.audit(self.fixture, allowed, self.checker)['checkedModules'], allowed)
         with self.assertRaisesRegex(audit.AuditFailure,
                                     r'MathlibExt\.AuditFixture\.Reverse must not import Domains\.AuditFixture\.Model'):
             audit.audit(self.fixture, ['MathlibExt.AuditFixture.Reverse'], self.checker)
+        with self.assertRaisesRegex(audit.AuditFailure,
+                                    r'WantedExt\.AuditFixture\.Model must not import Domains\.AuditFixture\.Model'):
+            audit.audit(self.fixture, ['WantedExt.AuditFixture.Model'], self.checker)
 
     def test_forbidden_axiom_still_fails(self):
         with self.assertRaisesRegex(audit.AuditFailure, 'depends on forbidden axioms'):

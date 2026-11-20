@@ -22,4 +22,13 @@ example (θ : Params I J K) (i : I) (j : J) :
     ancestryFreq θ (Sum.inl i) j = ∑ k, θ.Q i k * ancestryFreq θ (Sum.inr k) j :=
   ancestryFreq_inl_eq_sum θ i j
 
+/-- Raw proportions include pure-source rows. The first row mixes its sources in a 1:3 ratio;
+    the second selects the first source without mixing. -/
+example :
+    let Q := ![![(1 : ℝ) / 4, 3 / 4], ![1, 0]]
+    let F := fun k : Fin 2 => fun _ : Unit => ![(1 : ℝ) / 5, 3 / 5] k
+    ancestryFreqOf Q F (.inl 0) () = 1 / 2 ∧
+      ancestryFreqOf Q F (.inl 1) () = ancestryFreqOf Q F (.inr 0) () := by
+  norm_num [ancestryFreqOf, Fin.sum_univ_two]
+
 end Cslib.Bioinformatics.PopulationStructure.AdmixtureEM

@@ -28,6 +28,14 @@ namespace MathlibExtTest.Biology.PopulationGenetics.Coalescent.LambdaCoalescent
 
 open MathlibExt.Biology.PopulationGenetics.Coalescent.LambdaCoalescent
 
+/-- On admissible indices, representation of a rate array by a given measure is equivalent
+in the merger-rate and mixed-moment formulations. -/
+example (r : ℕ → ℕ → ℝ) (Λ : Measure I) [IsFiniteMeasure Λ] :
+    (∀ b k, 2 ≤ k → k ≤ b → r b k = mergerRate Λ b k) ↔
+    (∀ b k, 2 ≤ k → k ≤ b → r b k = unitIntervalMoment Λ (k - 2) (b - k)) := by
+  constructor <;> intro h b k hk hkb <;> simpa only [mergerRate_eq_unitIntervalMoment Λ hk hkb]
+    using h b k hk hkb
+
 /-! ### Kingman: `Λ = δ₀` -/
 
 /-- Kingman: a pair among three blocks merges at rate `1`. -/

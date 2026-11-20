@@ -692,7 +692,7 @@ theorem integral_bottleneckTimes_top (ha : 0 ≤ a) (hd : 0 ≤ d) (hf : 0 < f)
   have hnn : 0 ≤ᵐ[μ] bottleneckTimes K a d f n := by
     filter_upwards [ae_bottleneckTimes_bounds (K := K) (a := a) hd hf] with ω hω using (hω n hk).1
   rw [Integrable.integral_eq_integral_meas_lt (integrable_bottleneckTimes hd hf hT hk) hnn,
-    firstCoalMean]
+    firstCoalMean_eq_integral]
   refine setIntegral_congr_fun measurableSet_Ioi fun t ht => ?_
   have ht0 : 0 ≤ t := le_of_lt ht
   have hset : {ω | t < bottleneckTimes K a d f n ω} = {ω | bottleneckRate a d f t < K.T n ω} := by

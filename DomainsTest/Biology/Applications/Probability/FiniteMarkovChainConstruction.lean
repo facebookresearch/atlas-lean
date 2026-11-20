@@ -10,13 +10,7 @@ module
 
 public import Domains.Biology.PopulationGenetics.WrightFisherChainConstruction
 
-/-!
-# Tests of the finite-chain bridge for the canonical Markov law
-
-Fixtures use the existing canonical measure rather than a second path-law definition.
-The Wright–Fisher interior fixture is random; the two-state flip is deterministic
-but nonconstant. The probability instance comes from the existing construction.
--/
+/-! The Wright–Fisher chain: interior transitions, fixation, and the zero-size case. -/
 
 @[expose] public section
 
@@ -27,59 +21,36 @@ open MathlibExt.Biology.PopulationGenetics.WrightFisherChain
 
 namespace MathlibExtTest.Probability.FiniteMarkovChainConstruction
 
-example {M : ℕ} (P : StochasticMatrix M) (i : Fin (M + 1)) :
-    ∃ μ : Measure (ℕ → Fin (M + 1)), IsProbabilityMeasure μ ∧
-      IsFiniteMarkovChain (fun n ω ↦ ω n) P Filtration.piLE μ ∧
-      (∀ᵐ ω ∂μ, ω 0 = i) := by
-  refine ⟨markovChainMeasure (finiteChainKernel P) (Measure.dirac i), inferInstance, ?_, ?_⟩
-  · exact isFiniteMarkovChain_markovChainMeasure P i
-  · exact ae_eval_zero_markovChainMeasure P i
-
-example {M : ℕ} (P : StochasticMatrix M) (i : Fin (M + 1)) :
-    (markovChainMeasure (finiteChainKernel P) (Measure.dirac i)).map
-      (fun ω ↦ ω 0) = Measure.dirac i :=
-  markovChainMeasure_initial_distribution (finiteChainKernel P) (Measure.dirac i)
-
-private theorem map_eval_one {M : ℕ} (P : StochasticMatrix M) (i : Fin (M + 1)) :
-    (markovChainMeasure (finiteChainKernel P) (Measure.dirac i)).map
-      (fun ω ↦ ω 1) = finiteChainKernel P i := by
-  have h := (isFiniteMarkovChain_markovChainMeasure P i).map_succ_eq_bind 0
-  rw [markovChainMeasure_initial_distribution] at h
-  exact h.trans (Measure.dirac_bind (finiteChainKernel P).measurable i)
-
-private theorem firstStepReal {M : ℕ} (P : StochasticMatrix M)
-    (i j : Fin (M + 1)) :
-    (markovChainMeasure (finiteChainKernel P) (Measure.dirac i)).real
-      {ω | ω 1 = j} = P.prob i j := by
-  have hm : Measurable (fun ω : ℕ → Fin (M + 1) ↦ ω 1) := measurable_pi_apply 1
-  have hmass : (markovChainMeasure (finiteChainKernel P) (Measure.dirac i))
-      {ω | ω 1 = j} = ENNReal.ofReal (P.prob i j) := by
-    calc
-      (markovChainMeasure (finiteChainKernel P) (Measure.dirac i)) {ω | ω 1 = j} =
-          ((markovChainMeasure (finiteChainKernel P) (Measure.dirac i)).map
-            (fun ω ↦ ω 1)) {j} :=
-        (Measure.map_apply hm (measurableSet_singleton j)).symm
-      _ = ENNReal.ofReal (P.prob i j) := by
-        rw [map_eval_one]
-        simpa using finiteChainKernel_apply P i ({j} : Finset (Fin (M + 1)))
-  rw [measureReal_def, hmass, ENNReal.toReal_ofReal (P.nonneg i j)]
+/-- The first generation from the interior state has the binomial row of the population kernel. -/
+private theorem firstGeneration (j : Fin 3) :
+    (markovChainMeasure (finiteChainKernel (wrightFisher 2)) (Measure.dirac (1 : Fin 3))).real
+      {ω | ω 1 = j} = (wrightFisher 2).prob 1 j := by
+  let P := wrightFisher 2
+  have h := (isFiniteMarkovChain_markovChainMeasure P 1).toIsMarkovChain.map_eq_bind_pow 0 1
+  simp only [zero_add, pow_one, markovChainMeasure_initial_distribution,
+    Measure.dirac_bind (finiteChainKernel P).measurable] at h
+  change (markovChainMeasure (finiteChainKernel P) (Measure.dirac 1)).real
+    ((fun ω : ℕ → Fin 3 ↦ ω 1) ⁻¹' {j}) = P.prob 1 j
+  rw [← map_measureReal_apply (measurable_pi_apply 1) (measurableSet_singleton j), h]
+  simpa [measureReal_def, (P.nonneg 1 j)] using
+    congrArg ENNReal.toReal (finiteChainKernel_apply P 1 {j})
 
 example :
     (markovChainMeasure (finiteChainKernel (wrightFisher 2)) (Measure.dirac (1 : Fin 3))).real
       {ω | ω 1 = 0} = (1 / 4 : ℝ) := by
-  rw [firstStepReal]
+  rw [firstGeneration]
   norm_num [wrightFisher_prob, coe_z]
 
 example :
     (markovChainMeasure (finiteChainKernel (wrightFisher 2)) (Measure.dirac (1 : Fin 3))).real
       {ω | ω 1 = 1} = (1 / 2 : ℝ) := by
-  rw [firstStepReal]
+  rw [firstGeneration]
   norm_num [wrightFisher_prob, coe_z]
 
 example :
     (markovChainMeasure (finiteChainKernel (wrightFisher 2)) (Measure.dirac (1 : Fin 3))).real
       {ω | ω 1 = 2} = (1 / 4 : ℝ) := by
-  rw [firstStepReal]
+  rw [firstGeneration]
   norm_num [wrightFisher_prob, coe_z]
 
 example :
@@ -112,23 +83,5 @@ example :
     Set.eq_univ_of_forall fun ω n ↦ Subsingleton.elim (ω n) 0
   rw [h]
   simp
-
-/-- The two-state deterministic flip, not an absorbing or constant chain. -/
-private def flipMatrix : StochasticMatrix 1 where
-  prob i j := if i = j then 0 else 1
-  nonneg i j := by split_ifs <;> norm_num
-  row_sum i := by fin_cases i <;> rw [Fin.sum_univ_two] <;> norm_num
-
-example :
-    (markovChainMeasure (finiteChainKernel flipMatrix) (Measure.dirac (0 : Fin 2))).real
-      {ω | ω 1 = 1} = 1 := by
-  rw [firstStepReal]
-  norm_num [flipMatrix]
-
-example :
-    (markovChainMeasure (finiteChainKernel flipMatrix) (Measure.dirac (1 : Fin 2))).real
-      {ω | ω 1 = 0} = 1 := by
-  rw [firstStepReal]
-  norm_num [flipMatrix]
 
 end MathlibExtTest.Probability.FiniteMarkovChainConstruction

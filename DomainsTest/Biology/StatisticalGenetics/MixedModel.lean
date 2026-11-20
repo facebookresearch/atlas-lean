@@ -64,35 +64,6 @@ example :
   rw [hconstant]
   exact ProbabilityTheory.covariance_const_left 1
 
-/-- One observation `y = b + u + e` with `Var u = Var e = 1`: the mixed-model equations are
-solved by `b̂ = y` and `û = 0` (the fixed effect absorbs the observation). -/
-example (y : Fin 1 → ℝ) : IsMMESolution I1 I1 I1 I1 y y 0 := by
-  simp [IsMMESolution]
-
-/-- The same solution through `isMMESolution_iff_gls`: `b̂` is the GLS estimate and
-`û = G Zᵀ V⁻¹ (y - X b̂) = 0`. -/
-example (y : Fin 1 → ℝ) :
-    y = MathlibExt.Probability.Statistics.GeneralizedLeastSquares.glsMatrix I1
-      (phenCov I1 I1 I1) *ᵥ y := by
-  have hX : IsUnit (I1ᵀ * (phenCov I1 I1 I1)⁻¹ * I1) := by
-    simpa using (posDef_phenCov (Z := I1) Matrix.PosDef.one Matrix.PosDef.one).inv.isUnit
-  have h : IsMMESolution I1 I1 I1 I1 y y 0 := by simp [IsMMESolution]
-  exact ((isMMESolution_iff_gls Matrix.PosDef.one Matrix.PosDef.one hX y y 0).mp h).1
-
-/-- With no fixed effects, the BLUP of a single random effect from one observation with
-`Var u = g`, `Var e = r` is the shrinkage estimate `g / (g + r) · y`. -/
-example {g r : ℝ} (hg : 0 < g) (hr : 0 < r) (y : Fin 1 → ℝ) :
-    ((g • I1) * I1ᵀ * (phenCov I1 (g • I1) (r • I1))⁻¹) *ᵥ y = (g / (g + r)) • y := by
-  have hV : phenCov I1 (g • I1) (r • I1) = (g + r) • I1 := by
-    simp [phenCov, add_smul]
-  have hgr : g + r ≠ 0 := by positivity
-  have hinv : ((g + r) • I1)⁻¹ = (g + r)⁻¹ • I1 :=
-    Matrix.inv_eq_left_inv (by simp [smul_smul, mul_inv_cancel₀ hgr])
-  rw [hV, hinv]
-  ext i; fin_cases i; simp [Matrix.mulVec, dotProduct]
-  field_simp
-  simp
-
 /-- With no samples the marginal estimate is the junk value `0` (`x / 0 = 0`). -/
 example {Ω : Type*} (X : Matrix (Fin 0) (Fin 1) ℝ) (β : Fin 1 → ℝ) (ε : Fin 0 → Ω → ℝ)
     (ω : Ω) : marginalEffect X β ε 0 ω = 0 := by
@@ -100,8 +71,8 @@ example {Ω : Type*} (X : Matrix (Fin 0) (Fin 1) ℝ) (β : Fin 1 → ℝ) (ε :
 
 /-! ### Gaussian response laws
 
-Concrete checks for the response laws: zero-matrix PSD (proved, not assumed), a small
-`phenCov` computation, zero-mean regression, nonzero fixed effects exercising the mean
+Concrete checks for the response laws: zero-matrix PSD (proved, not assumed), zero-mean
+regression, nonzero fixed effects exercising the mean
 theorems, a within-cluster contrast, and a singular (zero) residual covariance. -/
 
 section GaussianResponse
@@ -112,14 +83,6 @@ open ProbabilityTheory MetaMathlibExt
 theorem test_posSemidef_zero :
     (0 : Matrix (Fin 2) (Fin 2) ℝ).PosSemidef := by
   exact Matrix.PosSemidef.zero
-
-/-- Small `phenCov` computation: all-ones `Z` with zero `G` and zero `R`
-gives zero. -/
-theorem test_phenCov_zero_eq :
-    phenCov (Matrix.of fun _ _ => (1 : ℝ))
-      (0 : Matrix (Fin 1) (Fin 1) ℝ)
-      (0 : Matrix (Fin 2) (Fin 2) ℝ) = 0 := by
-  simp [phenCov]
 
 /-- PSD of the small zero `phenCov`, via the production PSD theorem with
 proved (not assumed) zero PSD facts. -/

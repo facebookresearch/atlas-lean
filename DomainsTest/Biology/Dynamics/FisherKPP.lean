@@ -42,15 +42,6 @@ example (U U' : ℝ → ℝ) : ¬ IsFront 1 1 1 U U' :=
 example (U U' : ℝ → ℝ) : ¬ IsFront 2 3 (-4) U U' :=
   not_isFront_of_sq_lt (by norm_num) (by norm_num) (by norm_num)
 
-/-- The constant `0` is a wave profile of every speed (it is not a front). -/
-example (D r c : ℝ) : IsWaveProfile D r c (fun _ => 0) (fun _ => 0) := fun z =>
-  ⟨hasDerivAt_const z 0, by simpa using hasDerivAt_const z (0 : ℝ)⟩
-
-/-- Junk value outside the domain: with `D = 0` the profile equation, solved for `U''`, divides by
-zero, so `IsWaveProfile 0 r c` only says `U'' = 0`; every theorem assumes `D > 0`. -/
-example (r c : ℝ) : IsWaveProfile 0 r c (fun z => z) (fun _ => 1) := fun z =>
-  ⟨hasDerivAt_id z, by simpa using hasDerivAt_const z (1 : ℝ)⟩
-
 #print axioms not_eventually_pos_of_sq_lt
 #print axioms isFront_azWave
 

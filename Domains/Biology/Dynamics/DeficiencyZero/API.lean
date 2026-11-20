@@ -18,8 +18,8 @@ import Mathlib.LinearAlgebra.Dimension.Finite
 # Reaction-network structure for the deficiency-zero theorem
 
 This file is the production API for the graph-theoretic structure of a chemical reaction
-network `N : ReactionNetwork S ρ` (defined, with its stoichiometric subspace, in
-`Domains.Biology.Dynamics.ComplexBalanced`):
+network `N : ReactionNetwork S ρ` (whose shared definitions live in
+`MathlibExt.Dynamics.PolynomialNetworks.Deficiency`):
 
 * `complexes`: the complexes, i.e. the sources and products of the reactions;
 * `Reacts`: the directed reaction relation `y ⟶ y'` on complexes;
@@ -30,8 +30,8 @@ network `N : ReactionNetwork S ρ` (defined, with its stoichiometric subspace, i
 * `deficiency`: `δ = n - ℓ - s`, also for finitely many complexes;
 * `IsWeaklyReversible`: every reaction `y → y'` can be undone by a directed path `y' ⟶* y`.
 
-These definitions previously lived in `WantedExt/Biology/Dynamics/DeficiencyZeroWanted.lean`;
-that file now imports this one and states the deficiency-zero theorems against them.
+`WantedExt/Biology/Dynamics/DeficiencyZeroWanted.lean` imports the shared definitions
+without depending on this domain library.
 
 ## Main results
 
@@ -67,48 +67,6 @@ namespace ReactionNetwork
 
 variable (N : ReactionNetwork S ρ)
 
-/-- The complexes of the network: the sources and products of its reactions.
-
-Source: Feinberg (1987), §2; Feinberg (2019), Def. 3.1.1. -/
-def complexes : Set (S → ℕ) :=
-  Set.range N.src ∪ Set.range N.prod
-
-/-- The directed reaction relation on complexes: `y ⟶ y'` if some reaction has source `y` and
-product `y'`.
-
-Source: Feinberg (2019), §3.1. -/
-def Reacts (y y' : S → ℕ) : Prop :=
-  ∃ r, N.src r = y ∧ N.prod r = y'
-
-/-- The undirected reaction graph on the complexes: distinct complexes are adjacent when one
-reacts to the other.
-
-Source: Feinberg (1987), §2.2 (the standard reaction diagram, undirected). -/
-def linkageGraph : SimpleGraph N.complexes :=
-  SimpleGraph.fromRel fun c c' => N.Reacts c c'
-
-/-- The number of linkage classes of a network with finitely many complexes: connected
-components of the undirected reaction graph.
-
-Source: Feinberg (1987), §2.2; Feinberg (2019), Def. 3.1.4. -/
-noncomputable def numLinkageClasses [Finite N.complexes] : ℕ :=
-  Nat.card N.linkageGraph.ConnectedComponent
-
-/-- The deficiency `δ = n - ℓ - s` (number of complexes, linkage classes, dimension of the
-stoichiometric subspace) of a network with finitely many complexes.
-
-Source: Feinberg (1987), §3; Feinberg (2019), Def. 6.1.1. -/
-noncomputable def deficiency [Finite N.complexes] : ℤ :=
-  (Nat.card N.complexes : ℤ) - N.numLinkageClasses -
-    Module.finrank ℝ N.stoichiometricSubspace
-
-/-- The network is weakly reversible: for every reaction `y → y'` there is a directed path of
-reactions from `y'` back to `y`.
-
-Source: Feinberg (1987), §2.4; Feinberg (2019), Def. 3.4.1. -/
-def IsWeaklyReversible : Prop :=
-  ∀ r, Relation.ReflTransGen N.Reacts (N.prod r) (N.src r)
-
 /-! ### Complexes and the reaction relation -/
 
 variable {N}
@@ -137,12 +95,6 @@ theorem Reacts.right_mem {y y' : S → ℕ} (h : N.Reacts y y') : y' ∈ N.compl
 
 theorem complexes_eq_empty [IsEmpty ρ] : N.complexes = ∅ := by
   simp [complexes, Set.range_eq_empty]
-
-theorem finite_complexes [Finite ρ] : N.complexes.Finite :=
-  (Set.finite_range _).union (Set.finite_range _)
-
-instance [Finite ρ] : Finite N.complexes :=
-  N.finite_complexes.to_subtype
 
 /-! ### The linkage graph -/
 

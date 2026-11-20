@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
-public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import MathlibExt.MeasureTheory.Measure.UnitIntervalMoments
 public import Mathlib.Data.Matrix.Mul
 public import MathlibExt.Probability.Process.ContinuousTimeMarkovChain.RateMatrix
 import MathlibExt.MeasureTheory.Measure.MomentDeterminacy
@@ -91,7 +91,7 @@ below would take Lean's junk value `0` (for example, `Λ = ⊤` would get pair r
 `2 ≤ k ≤ b` (Pitman 1999, Theorem 1; Sagitov 1999). Powers are natural-number powers, so
 `0 ^ 0 = 1`. Outside `2 ≤ k ≤ b` no such merger exists, and the rate is defined to be `0`. -/
 def mergerRate [IsFiniteMeasure Λ] (b k : ℕ) : ℝ :=
-  if 2 ≤ k ∧ k ≤ b then ∫ x, (x : ℝ) ^ (k - 2) * (1 - (x : ℝ)) ^ (b - k) ∂Λ else 0
+  if 2 ≤ k ∧ k ≤ b then unitIntervalMoment Λ (k - 2) (b - k) else 0
 
 /-- The **total merger rate** `λ_b = ∑_{k=2}^b (b.choose k) λ_{b,k}` while there are `b`
 blocks (Pitman 1999; Berestycki 2009, §3.1). -/
@@ -110,23 +110,26 @@ def blockCountingGenerator [IsFiniteMeasure Λ] (n : ℕ) :
 
 variable [IsFiniteMeasure Λ]
 
+/-- On valid indices Pitman's rate is the mixed moment of orders `k - 2` and `b - k`. -/
+theorem mergerRate_eq_unitIntervalMoment {b k : ℕ} (hk : 2 ≤ k) (hkb : k ≤ b) :
+    mergerRate Λ b k = unitIntervalMoment Λ (k - 2) (b - k) := ite_eq_left ⟨hk, hkb⟩
+
 /-- The merger rate inside its domain. -/
 theorem mergerRate_of_le {b k : ℕ} (hk : 2 ≤ k) (hkb : k ≤ b) :
-    mergerRate Λ b k = ∫ x, (x : ℝ) ^ (k - 2) * (1 - (x : ℝ)) ^ (b - k) ∂Λ := by
-  simp [mergerRate, hk, hkb]
+    mergerRate Λ b k = ∫ x, (x : ℝ) ^ (k - 2) * (1 - (x : ℝ)) ^ (b - k) ∂Λ :=
+  mergerRate_eq_unitIntervalMoment Λ hk hkb
 
 /-- Merger rates are nonnegative. -/
 theorem mergerRate_nonneg (b k : ℕ) : 0 ≤ mergerRate Λ b k := by
   unfold mergerRate
   split_ifs
-  · exact integral_nonneg fun x => mul_nonneg (pow_nonneg (nonneg x) _)
-      (pow_nonneg (one_sub_nonneg x) _)
+  · exact unitIntervalMoment_nonneg Λ _ _
   · exact le_rfl
 
 /-- Two blocks merge at rate `Λ [0, 1]`; `Λ` is often normalized to a probability measure,
 so that this pair rate is `1` as in Kingman's coalescent. -/
 theorem mergerRate_two_two : mergerRate Λ 2 2 = Λ.real Set.univ := by
-  simp [mergerRate]
+  simp [mergerRate, unitIntervalMoment]
 
 /-- The total merger rate is nonnegative. -/
 theorem totalMergerRate_nonneg (b : ℕ) : 0 ≤ totalMergerRate Λ b := by
@@ -167,29 +170,11 @@ theorem isRateMatrix_blockCountingGenerator (n : ℕ) :
     · intro m _; rfl
 
 
-/-- The integrand `x ^ a (1 - x) ^ c` lies in `[0, 1]` on `[0, 1]`. -/
-private lemma pow_mul_one_sub_pow_mem (a c : ℕ) (x : I) :
-    0 ≤ (x : ℝ) ^ a * (1 - (x : ℝ)) ^ c ∧ (x : ℝ) ^ a * (1 - (x : ℝ)) ^ c ≤ 1 :=
-  ⟨mul_nonneg (pow_nonneg (nonneg x) _) (pow_nonneg (one_sub_nonneg x) _),
-    (mul_le_of_le_one_left (pow_nonneg (one_sub_nonneg x) _)
-      (pow_le_one₀ (nonneg x) (le_one x))).trans
-      (pow_le_one₀ (one_sub_nonneg x) (one_sub_le_one x))⟩
-
-/-- The integrand `x ^ a (1 - x) ^ c` is integrable against a finite measure on `[0, 1]`. -/
-private lemma integrable_pow_mul_one_sub_pow (a c : ℕ) :
-    Integrable (fun x : I => (x : ℝ) ^ a * (1 - (x : ℝ)) ^ c) Λ := by
-  refine Integrable.mono' (integrable_const (1 : ℝ)) (by fun_prop) (ae_of_all _ fun x => ?_)
-  obtain ⟨h0, h1⟩ := pow_mul_one_sub_pow_mem a c x
-  rwa [Real.norm_eq_abs, abs_of_nonneg h0]
-
 /-- A merger rate is at most the total mass of `Λ`. -/
 theorem mergerRate_le_measure_univ (b k : ℕ) : mergerRate Λ b k ≤ Λ.real Set.univ := by
   unfold mergerRate
   split_ifs
-  · calc ∫ x, (x : ℝ) ^ (k - 2) * (1 - (x : ℝ)) ^ (b - k) ∂Λ ≤ ∫ _x, (1 : ℝ) ∂Λ :=
-          integral_mono (integrable_pow_mul_one_sub_pow Λ _ _) (integrable_const _)
-            fun x => (pow_mul_one_sub_pow_mem _ _ x).2
-      _ = Λ.real Set.univ := by simp
+  · exact unitIntervalMoment_le_mass Λ _ _
   · exact measureReal_nonneg
 
 /-- **Pitman's consistency relation** `λ_{b,k} = λ_{b+1,k} + λ_{b+1,k+1}` for `2 ≤ k ≤ b`
@@ -197,16 +182,11 @@ theorem mergerRate_le_measure_univ (b k : ℕ) : mergerRate Λ b k ≤ Λ.real S
 block present, either without it or together with it. -/
 theorem mergerRate_consistent {b k : ℕ} (hk : 2 ≤ k) (hkb : k ≤ b) :
     mergerRate Λ b k = mergerRate Λ (b + 1) k + mergerRate Λ (b + 1) (k + 1) := by
-  rw [mergerRate_of_le Λ hk hkb, mergerRate_of_le Λ hk (by omega),
-    mergerRate_of_le Λ (by omega) (by omega),
-    ← integral_add (integrable_pow_mul_one_sub_pow Λ _ _) (integrable_pow_mul_one_sub_pow Λ _ _)]
-  refine integral_congr_ae (ae_of_all _ fun x => ?_)
-  obtain ⟨i, rfl⟩ : ∃ i, k = i + 2 := ⟨k - 2, by omega⟩
-  obtain ⟨j, rfl⟩ : ∃ j, b = i + 2 + j := ⟨b - (i + 2), by omega⟩
-  simp only [show i + 2 - 2 = i by omega, show i + 2 + 1 - 2 = i + 1 by omega,
-    show i + 2 + j - (i + 2) = j by omega, show i + 2 + j + 1 - (i + 2) = j + 1 by omega,
-    show i + 2 + j + 1 - (i + 2 + 1) = j by omega]
-  ring
+  rw [mergerRate_eq_unitIntervalMoment Λ hk hkb, mergerRate_eq_unitIntervalMoment Λ hk (by omega),
+    mergerRate_eq_unitIntervalMoment Λ (by omega) (by omega),
+    show b + 1 - k = b - k + 1 by omega, show k + 1 - 2 = k - 2 + 1 by omega,
+    Nat.add_sub_add_right]
+  exact unitIntervalMoment_rec Λ _ _
 
 /-- The polynomial identity behind the closed form of the total merger rate:
 `x ^ 2 ∑_{k=2}^b (b.choose k) x ^ (k - 2) (1 - x) ^ (b - k) = 1 - (1 - x) ^ b -
@@ -250,14 +230,14 @@ private lemma totalMergerRate_eq_integral (b : ℕ) :
     totalMergerRate Λ b = ∫ x, rateKernel b (x : ℝ) ∂Λ := by
   unfold rateKernel
   rw [totalMergerRate, integral_finsetSum _ fun k _ =>
-    (integrable_pow_mul_one_sub_pow Λ _ _).const_mul _]
+    (integrable_unitInterval_mixedPow Λ _ _).const_mul _]
   refine sum_congr rfl fun k hk => ?_
   rw [integral_const_mul, mergerRate_of_le Λ (mem_Icc.1 hk).1 (mem_Icc.1 hk).2]
 
 /-- The kernel is integrable. -/
 private lemma integrable_rateKernel (b : ℕ) :
     Integrable (fun x : I => rateKernel b (x : ℝ)) Λ :=
-  integrable_finsetSum _ fun _ _ => (integrable_pow_mul_one_sub_pow Λ _ _).const_mul _
+  integrable_finsetSum _ fun _ _ => (integrable_unitInterval_mixedPow Λ _ _).const_mul _
 
 /-- **The total merger rate in closed form** (Berestycki 2009, §3.1):
 `λ_b = (b.choose 2) Λ {0} + ∫_{(0,1]} (1 - (1 - x) ^ b - b x (1 - x) ^ (b - 1)) / x ^ 2 Λ(dx)`.
@@ -302,7 +282,7 @@ theorem totalMergerRate_succ (b : ℕ) :
   rw [totalMergerRate_eq_integral, totalMergerRate_eq_integral,
     mergerRate_of_le Λ le_rfl (by omega), ← integral_const_mul,
     ← integral_add (integrable_rateKernel Λ b)
-      ((integrable_pow_mul_one_sub_pow Λ _ _).const_mul _)]
+      ((integrable_unitInterval_mixedPow Λ _ _).const_mul _)]
   refine integral_congr_ae (ae_of_all _ fun x => ?_)
   simp only [rateKernel_succ, show b + 1 - 2 = b - 1 by omega, Nat.sub_self, pow_zero, one_mul]
 
@@ -330,7 +310,7 @@ theorem eq_of_mergerRate_eq (Λ' : Measure I) [IsFiniteMeasure Λ']
 each pair merging at rate `1` (Pitman 1999; Berestycki 2009, §3.1). -/
 theorem mergerRate_dirac_zero (b k : ℕ) :
     mergerRate (Measure.dirac 0) b k = if k = 2 ∧ 2 ≤ b then 1 else 0 := by
-  unfold mergerRate
+  unfold mergerRate unitIntervalMoment
   rw [integral_dirac]
   by_cases hk : k = 2
   · subst hk; simp

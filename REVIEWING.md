@@ -48,8 +48,8 @@ Check that each added or changed module is in the correct top-level library.
 - `DomainsTest` mirrors `Domains` and may import it and its three foundations.
 - `WantedExt` contains established results with deferred Lean work, expressed
   with direct `theorem_wanted` or `def_wanted` declarations. Each such module
-  directly imports `Batteries.Util.ProofWanted`. It may import `MathlibExt`,
-  `CSLibExt`, and proved models from `Domains`.
+  directly imports `Batteries.Util.ProofWanted`. It may import `MathlibExt` and
+  `CSLibExt`.
 - `MathlibExtTest` contains tests, benchmarks, and diagnostics for public
   `MathlibExt` APIs. Production libraries must not import it.
 - `CSLibExtTest` contains tests and diagnostics for public `CSLibExt` APIs. It

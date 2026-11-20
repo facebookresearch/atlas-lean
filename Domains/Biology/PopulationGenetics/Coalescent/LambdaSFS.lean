@@ -484,7 +484,7 @@ theorem expectedSFS_dirac_zero (θ : ℝ) {n i : ℕ} (hi : 1 ≤ i) (hin : i < 
 /-- With `Λ = δ₁` only total mergers happen: `λ_{b,k} = 0` for `k < b`. -/
 theorem mergerRate_dirac_one {b k : ℕ} (hkb : k < b) :
     mergerRate (Measure.dirac 1) b k = 0 := by
-  unfold mergerRate
+  unfold mergerRate unitIntervalMoment
   split_ifs
   · rw [integral_dirac]; simp [show b - k ≠ 0 by omega]
   · rfl

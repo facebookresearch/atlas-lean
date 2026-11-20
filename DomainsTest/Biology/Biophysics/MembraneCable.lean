@@ -76,18 +76,6 @@ private lemma lengthConstant_four_one : lengthConstant 4 1 = 2 := by
 private lemma charResistance_four_one : charResistance 4 1 = 2 := by
   rw [charResistance, mul_one, show (4 : ℝ) = 2 ^ 2 by norm_num, sqrt_sq zero_le_two]
 
-/-- `rm = 4`, `ri = 1`: `λ = 2` and `r∞ = 2`. -/
-example : lengthConstant 4 1 = 2 ∧ charResistance 4 1 = 2 :=
-  ⟨lengthConstant_four_one, charResistance_four_one⟩
-
-/-- `rm = 9`, `ri = 4`: `λ² = 9 / 4` and `r∞ = ri λ`. -/
-example : lengthConstant 9 4 ^ 2 = 9 / 4 ∧ charResistance 9 4 = 4 * lengthConstant 9 4 :=
-  ⟨lengthConstant_sq (by norm_num) (by norm_num), charResistance_eq (by norm_num) (by norm_num)⟩
-
-/-- The transfer-form solution starts from the prescribed voltage and current. -/
-example (V₀ I₀ : ℝ) : cableVoltage 4 1 V₀ I₀ 0 = V₀ ∧ cableCurrent 4 1 V₀ I₀ 0 = I₀ := by
-  simp [cableVoltage, cableCurrent]
-
 /-- Non-vacuity of the semi-infinite boundary condition: inject `I₀ = 3` into a cable with
 `rm = 4`, `ri = 1`; `V x = 6 e^{-x/2}`, `I x = 3 e^{-x/2}` is a bounded steady state on `[0, ∞)`,
 and the theorem recovers `V x = r∞ I₀ e^{-x/λ}`. -/

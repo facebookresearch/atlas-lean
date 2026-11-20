@@ -650,7 +650,7 @@ theorem integral_growthTimes_top (hρ : 0 ≤ ρ) (hT : ∀ k, Measurable (K.T k
   have hnn : 0 ≤ᵐ[μ] growthTimes K ρ n := by
     filter_upwards [ae_growthTimes_bounds (K := K) hρ] with ω hω using (hω n hk).1
   rw [Integrable.integral_eq_integral_meas_lt (integrable_growthTimes hρ hT hk) hnn,
-    firstCoalMean]
+    firstCoalMean_eq_integral]
   refine setIntegral_congr_fun measurableSet_Ioi fun t ht => ?_
   have ht0 : 0 ≤ t := le_of_lt ht
   have hset : {ω | t < growthTimes K ρ n ω} =ᵐ[μ]

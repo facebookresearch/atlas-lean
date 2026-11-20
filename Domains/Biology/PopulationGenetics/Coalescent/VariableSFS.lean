@@ -10,8 +10,7 @@ module
 
 public import Domains.Biology.PopulationGenetics.Coalescent.SiteFrequencySpectrum
 public import Domains.Biology.PopulationGenetics.Coalescent.Tajima
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
-public import Mathlib.Analysis.SpecialFunctions.Exp
+public import MathlibExt.Probability.Survival.MeanWaitingTime
 public import MathlibExt.Analysis.SpecialFunctions.ExpSumZeros
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
@@ -383,7 +382,11 @@ def cumRate (η : ℝ → ℝ) (s : ℝ) : ℝ := ∫ r in (0 : ℝ)..s, (η r)�
 this is Lean's junk value `0`; for piecewise-constant histories it is integrable
 (`choose_two_mul_firstCoalMean`). -/
 def firstCoalMean (η : ℝ → ℝ) (m : ℕ) : ℝ :=
-  ∫ s in Set.Ioi 0, Real.exp (-((m.choose 2 : ℕ) : ℝ) * cumRate η s)
+  meanWaitingTime (fun t => (η t)⁻¹) (m.choose 2)
+
+/-- The survival integral for the sample's pair count and cumulative coalescence intensity. -/
+theorem firstCoalMean_eq_integral (η : ℝ → ℝ) (m : ℕ) :
+    firstCoalMean η m = ∫ s in Set.Ioi 0, Real.exp (-((m.choose 2 : ℕ) : ℝ) * cumRate η s) := rfl
 
 /-- A **piecewise-constant population-size history with `K` pieces**: piece `j < K` starts at
 time `start j` (backward from the present, `start 0 = 0`, strictly increasing) and has
@@ -1044,7 +1047,7 @@ theorem firstCoalMean_comp_max (η : ℝ → ℝ) (m : ℕ) :
     refine intervalIntegral.integral_congr fun r hr => ?_
     rw [Set.uIcc_of_le (le_of_lt hs)] at hr
     simp [max_eq_left hr.1]
-  simp only [e]
+  exact congrArg (fun t : ℝ => Real.exp (-((m.choose 2 : ℕ) : ℝ) * t)) e
 
 /-- **Non-identifiability from a bounded sample size**: for every `n` there are two measurable
 population-size functions, bounded between positive constants and different on a set of

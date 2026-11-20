@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Dynamics.PolynomialNetworks.Deficiency
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Data.Matrix.Mul
@@ -85,28 +86,9 @@ namespace MathlibExt.Biology.Dynamics.ComplexBalanced
 
 variable {S ρ : Type*}
 
-/-- A chemical reaction network on the species `S` with reactions indexed by `ρ`: reaction `r`
-turns the source complex `src r` into the product complex `prod r` (stoichiometric
-coefficients). -/
-structure ReactionNetwork (S ρ : Type*) where
-  /-- The source (reactant) complex of each reaction. -/
-  src : ρ → S → ℕ
-  /-- The product complex of each reaction. -/
-  prod : ρ → S → ℕ
-
 namespace ReactionNetwork
 
 variable (N : ReactionNetwork S ρ)
-
-/-- The stoichiometric subspace: the span of the reaction vectors `prod r - src r`. -/
-def stoichiometricSubspace : Submodule ℝ (S → ℝ) :=
-  Submodule.span ℝ (Set.range fun r s => (N.prod r s : ℝ) - N.src r s)
-
-/-- The mass-action vector field with rate constants `k`:
-`x ↦ ∑_r k r (∏_s x_s ^ (src r s)) (prod r - src r)`. -/
-noncomputable def massActionField [Fintype S] [Fintype ρ] (k : ρ → ℝ) (x : S → ℝ) :
-    S → ℝ :=
-  fun s => ∑ r, k r * (∏ s', x s' ^ N.src r s') * ((N.prod r s : ℝ) - N.src r s)
 
 /-- The mass-action rate `k r * ∏_s c_s ^ (src r s)` of reaction `r` at concentrations `c`. -/
 noncomputable def rate [Fintype S] (k : ρ → ℝ) (c : S → ℝ) (r : ρ) : ℝ :=

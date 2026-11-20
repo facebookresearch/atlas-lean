@@ -29,6 +29,12 @@ namespace MathlibExtTest.Biology.PopulationGenetics.Coalescent.PartitionCoalesce
 open MathlibExt.Biology.PopulationGenetics.Coalescent.PartitionCoalescent
 open MathlibExt.Biology.PopulationGenetics.Coalescent.KingmanBlockCounting
 
+/-- The path weight in the pair-merger walk uses exactly the transitions of Kingman's jump
+chain, including the self-transition in absorbing states. -/
+example (n : ℕ) (p : List (SamplePartition n)) :
+    (List.zipWith (Finpartition.pairMergeMatrix univ) p p.tail).prod =
+      (List.zipWith (jumpMatrix n) p p.tail).prod := rfl
+
 /-- The partition `{{0, 1}, {2}}` of three genes. -/
 def π₁ : SamplePartition 3 :=
   @Finpartition.ofSetoid _ _ _ (Setoid.ker ![(0 : Fin 2), 0, 1])
