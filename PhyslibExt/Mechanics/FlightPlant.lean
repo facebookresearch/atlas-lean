@@ -7,9 +7,13 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Analysis.ODE.Basic
 public import PhyslibExt.Mechanics.RigidMotionPorts
 public import PhyslibExt.Statistics.UncertaintyPropagation
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
+import MathlibExt.Analysis.ODE.LyapunovStability
+import MathlibExt.Analysis.ODE.MaximalSolution
+import MathlibExt.LinearAlgebra.Matrix.SylvesterCriterion
 
 /-!
 # Six-degree-of-freedom flight plant: translational port, longitudinal trim and linearization
@@ -17,8 +21,8 @@ import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 The body-axis translational equation of a rigid motion's centre of mass, derived from the
 rotating-frame transport law, paired with the existing Euler equations of the same motion, the
 plant defined by aerodynamic and propulsive force and moment maps on an admitted domain, and a
-synthetic controlled longitudinal fixture of that plant with its trim, its actuator domain and its
-linearization about the trim.
+synthetic controlled longitudinal fixture of that plant with its trim, its actuator domain, its
+linearization about the trim and a Lyapunov certificate for that linearization.
 
 ## i. Overview
 
@@ -91,6 +95,19 @@ the Euclidean ball of radius `r` lies in the box of radius `r`, and the bounds a
 Euclidean norm. `A` linearizes the reduced state only: the world position is not part of it, and
 every planar plant solution moves forward with position rate at least `99/100`.
 
+Section F certifies the linearization. On the state `e : EuclideanSpace ℝ (Fin 4)`, with
+coordinates `WithLp.ofLp e`, the Euclidean norm and nondimensional time `t : ℝ`, the reduced linear
+plant is `e' = A e`. The Lyapunov matrix `P = diag(1/2, 1/2) ⊕ [[3/2, 1/2], [1/2, 1/2]]` and
+`Q = 1` are symmetric positive definite, `P` by Sylvester's criterion (leading principal minors
+`1/2`, `1/4`, `3/8`, `1/8`), and `Aᵀ P + P A = -Q`. The quadratic function `V(e) = eᵀ P e`
+satisfies `(1/4) ‖e‖² ≤ V(e) ≤ 2 ‖e‖²` and vanishes only at the trim; its derivative is
+`DV(e) h = 2 hᵀ P e`, so along the plant `DV(e) (A e) = -‖e‖²`, zero at the trim and negative
+elsewhere. The linear plant is globally Lipschitz, so from every initial state it has exactly one
+global solution, and Lyapunov's direct method gives `‖e t‖ ≤ √8 exp(-t / 4) ‖e 0‖` for `t ≥ 0`
+along every forward solution, with `√8 = √(2 / (1/4))`; no converse (Hurwitz) theorem is used.
+This is decay of the linear plant's own solutions, not of the nonlinear plant or of the world
+position.
+
 Model inputs (hypotheses of the module):
 
 * the translational law `m X'' = R F_B + m g` and the rotational law `dL_COM/dt = R M_B`, with the
@@ -107,8 +124,11 @@ Model inputs (hypotheses of the module):
 
 Non-goals: aerodynamic coefficient models other than the synthetic polar of section D, trim of
 anything but the planar ideal-actuator fixture of section D, linearization of anything but its
-reduced field about the trim (section E), stability, existence of trajectories for given maps
-(section D exhibits only the trim trajectory), and any empirical adequacy or system safety claim.
+reduced field about the trim (section E), stability of anything but the reduced linear plant
+(section F proves decay of the linear plant's own solutions, not of the nonlinear plant or the
+world position), existence of trajectories for given maps (section D exhibits only the trim
+trajectory; section F solves only the linear plant), and any empirical adequacy or system safety
+claim.
 
 ## ii. Key results
 
@@ -141,6 +161,19 @@ reduced field about the trim (section E), stability, existence of trajectories f
 - `norm_ofLp_le_norm_le_two_mul`, `abs_ofLp_le_of_norm_le` : the sup and Euclidean norms of a
   state.
 - `planar_sixDofPlant_forward_rate` : every plant solution moves forward.
+- `longitudinalLyapunovMatrix`, `longitudinalLyapunovMatrix_eq_fromBlocks`,
+  `longitudinalLyapunovMatrix_posDef`, `longitudinalLyapunov_equation` : the Lyapunov matrix
+  `P = diag(1/2, 1/2) ⊕ [[3/2, 1/2], [1/2, 1/2]]`, positive definite like `1`, and
+  `Aᵀ P + P A = -1`.
+- `linearReducedField`, `linearReducedField_eq_fderiv` : the reduced linear plant `e' = A e` on the
+  Euclidean state space, the derivative of the reduced field at the trim.
+- `longitudinalLyapunov`, `longitudinalLyapunov_bounds`, `longitudinalLyapunov_eq_zero_iff`,
+  `differentiable_longitudinalLyapunov`, `fderiv_longitudinalLyapunov_apply`,
+  `fderiv_longitudinalLyapunov_linearReducedField` : `V(e) = eᵀ P e`, its comparison bounds, its
+  only zero at the trim, its derivative `2 hᵀ P e` and its orbital derivative `-‖e‖²`.
+- `existsUnique_linearReducedField_solution`, `norm_le_of_isIntegralCurveOn_linearReducedField`,
+  `linearReducedField_solution_decay` : the global solution of the linear plant and the decay
+  `‖e t‖ ≤ √8 exp(-t / 4) ‖e 0‖`.
 
 ## iii. Table of contents
 
@@ -149,6 +182,7 @@ reduced field about the trim (section E), stability, existence of trajectories f
 - C. Coefficient maps with admitted domains
 - D. A controlled longitudinal fixture
 - E. Linearization about the trim
+- F. A Lyapunov certificate for the reduced linear plant
 
 ## iv. References
 
@@ -161,7 +195,12 @@ reduced field about the trim (section E), stability, existence of trajectories f
 - L. D. Landau and E. M. Lifshitz, *Mechanics*, Sections 34 and 39 (the equations of motion of a
   rigid body; motion in a non-inertial frame of reference).
 - H. K. Khalil, *Nonlinear Systems*, 3rd edition, 2002, Section 4.3 (linearization at an
-  equilibrium).
+  equilibrium; the Lyapunov equation) and Sections 4.1 and 4.5 (Lyapunov's direct method,
+  Theorem 4.10).
+- R. A. Horn and C. R. Johnson, *Matrix Analysis*, 2nd edition, 2013, Theorem 7.2.5 (Sylvester's
+  criterion).
+- G. Teschl, *Ordinary Differential Equations and Dynamical Systems*, 2012, Section 2.2 (global
+  existence for globally Lipschitz fields).
 - `Mechanics.RigidMotionPorts` (the transport law `deriv_bodyToInertialVec` and the Euler
   equivalence `deriv_comAngularMomentum_eq_iff_euler`), Physlib's
   `RigidBodyMotion.bodyAngularVelocity` and
@@ -169,6 +208,9 @@ reduced field about the trim (section E), stability, existence of trajectories f
   frame dictionary `Units.EngineeringFrames`.
 - `Statistics.UncertaintyPropagation.jacobianRemainder_component_le_of_hessian` (the componentwise
   remainder bound from a Hessian bound) and Mathlib's `Real.abs_sub_sin_le` (the cubic sine bound).
+- `IsIntegralCurveOn.norm_sub_le_of_lyapunov` (Lyapunov's direct method),
+  `MathlibExt.Analysis.ODE.MaximalSolutionWanted.ode_global_exists_of_global_lipschitz` (global
+  existence) and `Matrix.posDef_iff_leadingPrincipalMinors_pos` (Sylvester's criterion).
 -/
 
 @[expose] public section
@@ -1151,5 +1193,219 @@ lemma planar_sixDofPlant_forward_rate {B : RigidBody 3} {X₁ X₂ θ : Time →
   have h0 : |planarState X₁ X₂ θ t 0| ≤ 1 / 100 := hx 0
   simp only [planarState, Matrix.cons_val_zero] at h0
   linarith [(abs_le.1 h0).1]
+
+
+/-! ## F. A Lyapunov certificate for the reduced linear plant -/
+
+/-- The Lyapunov matrix of the reduced linear plant, in the state order `(x, z, θ, q)`:
+`P = diag(1/2, 1/2) ⊕ [[3/2, 1/2], [1/2, 1/2]]`. -/
+noncomputable def longitudinalLyapunovMatrix : Matrix (Fin 4) (Fin 4) ℝ :=
+  !![1 / 2, 0, 0, 0; 0, 1 / 2, 0, 0; 0, 0, 3 / 2, 1 / 2; 0, 0, 1 / 2, 1 / 2]
+
+/-- The reduced linear plant `e' = A e` on the Euclidean state space: the Jacobian
+`longitudinalJacobian` acting on the coordinates `WithLp.ofLp e`, that is
+`(x, z, θ, q) ↦ (-x, -z, q, -θ - 2 q)`. -/
+def linearReducedField (e : EuclideanSpace ℝ (Fin 4)) : EuclideanSpace ℝ (Fin 4) :=
+  WithLp.toLp 2 (longitudinalJacobian *ᵥ WithLp.ofLp e)
+
+/-- The quadratic Lyapunov function `V(e) = eᵀ P e` of a state `e` with coordinates
+`WithLp.ofLp e`: `x² / 2 + z² / 2 + 3 θ² / 2 + θ q + q² / 2`. -/
+noncomputable def longitudinalLyapunov (e : EuclideanSpace ℝ (Fin 4)) : ℝ :=
+  WithLp.ofLp e ⬝ᵥ (longitudinalLyapunovMatrix *ᵥ WithLp.ofLp e)
+
+/-- The Lyapunov matrix is the direct sum of the translational block `diag(1/2, 1/2)` on `(x, z)`
+and the pitch block `[[3/2, 1/2], [1/2, 1/2]]` on `(θ, q)`, the block form of
+`longitudinalJacobian_eq_fromBlocks`. -/
+lemma longitudinalLyapunovMatrix_eq_fromBlocks :
+    longitudinalLyapunovMatrix = Matrix.reindex finSumFinEquiv finSumFinEquiv
+      (Matrix.fromBlocks (Matrix.diagonal ![1 / 2, 1 / 2]) 0 0
+        !![3 / 2, 1 / 2; 1 / 2, 1 / 2]) := by
+  ext i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- **The linearization.** In coordinates the reduced linear plant is the derivative of the
+reduced field at the trim: `A e = Df(0) e`, by `hasFDerivAt_reducedField_zero`. -/
+lemma linearReducedField_eq_fderiv (e : EuclideanSpace ℝ (Fin 4)) :
+    WithLp.ofLp (linearReducedField e) = fderiv ℝ reducedField 0 (WithLp.ofLp e) := by
+  rw [hasFDerivAt_reducedField_zero.fderiv]
+  simp [linearReducedField, Matrix.toLin'_apply]
+
+/-- `P` is symmetric. -/
+private lemma longitudinalLyapunovMatrix_isHermitian :
+    longitudinalLyapunovMatrix.IsHermitian := by
+  ext i j
+  fin_cases i <;> fin_cases j <;> simp [longitudinalLyapunovMatrix]
+
+/-- `V` in coordinates. -/
+private lemma longitudinalLyapunov_eq_coords (e : EuclideanSpace ℝ (Fin 4)) :
+    longitudinalLyapunov e =
+      1 / 2 * e 0 ^ 2 + 1 / 2 * e 1 ^ 2 + 3 / 2 * e 2 ^ 2 + e 2 * e 3 + 1 / 2 * e 3 ^ 2 := by
+  simp [longitudinalLyapunov, longitudinalLyapunovMatrix, dotProduct, Matrix.mulVec,
+    Fin.sum_univ_four]
+  ring
+
+/-- The squared Euclidean norm in coordinates. -/
+private lemma norm_sq_eq_coords (e : EuclideanSpace ℝ (Fin 4)) :
+    ‖e‖ ^ 2 = e 0 ^ 2 + e 1 ^ 2 + e 2 ^ 2 + e 3 ^ 2 := by
+  rw [EuclideanSpace.norm_sq_eq, Fin.sum_univ_four]
+  simp [Real.norm_eq_abs, sq_abs]
+
+/-- The coordinate functions of the Euclidean state space are differentiable. -/
+private lemma hasFDerivAt_coord (i : Fin 4) (e : EuclideanSpace ℝ (Fin 4)) :
+    HasFDerivAt (fun e : EuclideanSpace ℝ (Fin 4) => e i)
+      (EuclideanSpace.proj i : EuclideanSpace ℝ (Fin 4) →L[ℝ] ℝ) e :=
+  (EuclideanSpace.proj i : EuclideanSpace ℝ (Fin 4) →L[ℝ] ℝ).hasFDerivAt
+
+/-- The derivative of `V`: `h ↦ x h₀ + z h₁ + (3 θ + q) h₂ + (θ + q) h₃`. -/
+private lemma hasFDerivAt_longitudinalLyapunov (e : EuclideanSpace ℝ (Fin 4)) :
+    HasFDerivAt longitudinalLyapunov
+      (e 0 • (EuclideanSpace.proj 0 : EuclideanSpace ℝ (Fin 4) →L[ℝ] ℝ) +
+        e 1 • (EuclideanSpace.proj 1 : EuclideanSpace ℝ (Fin 4) →L[ℝ] ℝ) +
+        (3 * e 2 + e 3) • (EuclideanSpace.proj 2 : EuclideanSpace ℝ (Fin 4) →L[ℝ] ℝ) +
+        (e 2 + e 3) • (EuclideanSpace.proj 3 : EuclideanSpace ℝ (Fin 4) →L[ℝ] ℝ)) e := by
+  have hV : longitudinalLyapunov = fun e : EuclideanSpace ℝ (Fin 4) =>
+      1 / 2 * e 0 ^ 2 + 1 / 2 * e 1 ^ 2 + 3 / 2 * e 2 ^ 2 + e 2 * e 3 + 1 / 2 * e 3 ^ 2 :=
+    funext longitudinalLyapunov_eq_coords
+  rw [hV]
+  have h0 := ((hasFDerivAt_coord 0 e).pow 2).const_mul (1 / 2 : ℝ)
+  have h1 := ((hasFDerivAt_coord 1 e).pow 2).const_mul (1 / 2 : ℝ)
+  have h2 := ((hasFDerivAt_coord 2 e).pow 2).const_mul (3 / 2 : ℝ)
+  have h23 := (hasFDerivAt_coord 2 e).fun_mul (hasFDerivAt_coord 3 e)
+  have h3 := ((hasFDerivAt_coord 3 e).pow 2).const_mul (1 / 2 : ℝ)
+  refine ((((h0.fun_add h1).fun_add h2).fun_add h23).fun_add h3).congr_fderiv
+    (ContinuousLinearMap.ext fun v => ?_)
+  simp only [add_apply, smul_apply, smul_eq_mul, nsmul_eq_mul, PiLp.proj_apply, Nat.cast_ofNat,
+    Nat.reduceSub, pow_one]
+  ring
+
+/-- **Definiteness of the certificate.** The Lyapunov matrix `P` and `Q = 1` are symmetric
+positive definite. For `P` this is Sylvester's criterion: its leading principal minors are
+`1/2`, `1/4`, `3/8` and `1/8`, the last being `1/4` times the pitch-block determinant `1/2`. -/
+lemma longitudinalLyapunovMatrix_posDef :
+    longitudinalLyapunovMatrix.PosDef ∧ (1 : Matrix (Fin 4) (Fin 4) ℝ).PosDef := by
+  refine ⟨(Matrix.posDef_iff_leadingPrincipalMinors_pos 4 _
+    longitudinalLyapunovMatrix_isHermitian).2 fun k hk => ?_, Matrix.PosDef.one⟩
+  interval_cases k
+  · simp [Matrix.leadingPrincipalSubmatrix]
+  · simp [Matrix.leadingPrincipalSubmatrix, longitudinalLyapunovMatrix]
+  · rw [Matrix.det_fin_two]
+    norm_num [Matrix.leadingPrincipalSubmatrix, longitudinalLyapunovMatrix]
+  · rw [Matrix.det_fin_three]
+    norm_num [Matrix.leadingPrincipalSubmatrix, longitudinalLyapunovMatrix]
+  · rw [Matrix.leadingPrincipalSubmatrix_self, longitudinalLyapunovMatrix_eq_fromBlocks,
+      Matrix.det_reindex_self, Matrix.det_fromBlocks_zero₂₁, Matrix.det_fin_two]
+    simp
+    norm_num
+
+/-- **The Lyapunov equation.** `Aᵀ P + P A = -Q` with `Q = 1`: every entry of the sum is that of
+`-1`. -/
+lemma longitudinalLyapunov_equation :
+    longitudinalJacobianᵀ * longitudinalLyapunovMatrix +
+      longitudinalLyapunovMatrix * longitudinalJacobian = -1 := by
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [longitudinalJacobian, longitudinalLyapunovMatrix, Matrix.mul_apply,
+      Fin.sum_univ_four] <;>
+    norm_num
+
+/-- **Comparison bounds.** In the Euclidean norm, `(1/4) ‖e‖² ≤ V(e) ≤ 2 ‖e‖²`: the eigenvalues
+of `P` are `1/2` (twice) and `1 ± 1/√2`, all in `[1/4, 2]`. -/
+lemma longitudinalLyapunov_bounds (e : EuclideanSpace ℝ (Fin 4)) :
+    1 / 4 * ‖e‖ ^ 2 ≤ longitudinalLyapunov e ∧ longitudinalLyapunov e ≤ 2 * ‖e‖ ^ 2 := by
+  rw [longitudinalLyapunov_eq_coords, norm_sq_eq_coords]
+  constructor
+  · nlinarith [sq_nonneg (e 0), sq_nonneg (e 1), sq_nonneg (e 3 + 2 * e 2), sq_nonneg (e 2)]
+  · nlinarith [sq_nonneg (e 0), sq_nonneg (e 1), sq_nonneg (e 2 - e 3), sq_nonneg (e 3)]
+
+/-- **The trim is the only zero of `V`.** `V(e) = 0` exactly when `e = 0`. -/
+lemma longitudinalLyapunov_eq_zero_iff (e : EuclideanSpace ℝ (Fin 4)) :
+    longitudinalLyapunov e = 0 ↔ e = 0 := by
+  refine ⟨fun h => ?_, fun h => by simp [h, longitudinalLyapunov]⟩
+  have h1 := (longitudinalLyapunov_bounds e).1
+  rw [h] at h1
+  have h2 : ‖e‖ ^ 2 = 0 := le_antisymm (by linarith) (sq_nonneg _)
+  exact norm_eq_zero.1 (pow_eq_zero_iff two_ne_zero |>.1 h2)
+
+/-- `V` is differentiable: a quadratic polynomial in the coordinates. -/
+lemma differentiable_longitudinalLyapunov : Differentiable ℝ longitudinalLyapunov := by
+  exact fun e => (hasFDerivAt_longitudinalLyapunov e).differentiableAt
+
+/-- **The derivative of `V`.** `DV(e) h = 2 hᵀ P e`, `P` being symmetric. -/
+lemma fderiv_longitudinalLyapunov_apply (e h : EuclideanSpace ℝ (Fin 4)) :
+    fderiv ℝ longitudinalLyapunov e h =
+      2 * (WithLp.ofLp h ⬝ᵥ (longitudinalLyapunovMatrix *ᵥ WithLp.ofLp e)) := by
+  rw [(hasFDerivAt_longitudinalLyapunov e).fderiv]
+  simp [longitudinalLyapunovMatrix, dotProduct, Matrix.mulVec, Fin.sum_univ_four]
+  ring
+
+/-- **The orbital derivative along the plant.** `DV(e) (A e) = eᵀ (Aᵀ P + P A) e = -‖e‖²`: zero
+at the trim `e = 0`, negative at every other state. -/
+lemma fderiv_longitudinalLyapunov_linearReducedField (e : EuclideanSpace ℝ (Fin 4)) :
+    fderiv ℝ longitudinalLyapunov e (linearReducedField e) = -‖e‖ ^ 2 := by
+  rw [fderiv_longitudinalLyapunov_apply, norm_sq_eq_coords]
+  simp [linearReducedField, longitudinalJacobian, longitudinalLyapunovMatrix, dotProduct,
+    Matrix.mulVec, Fin.sum_univ_four]
+  ring
+
+/-- **The actual global solution.** From every initial state `e₀` the reduced linear plant has
+exactly one solution `e` defined at all times, with `e 0 = e₀` and `e' = A e`: the field is
+linear, hence globally Lipschitz, and the global existence theorem for globally Lipschitz fields
+applies. -/
+lemma existsUnique_linearReducedField_solution (e₀ : EuclideanSpace ℝ (Fin 4)) :
+    ∃! e : ℝ → EuclideanSpace ℝ (Fin 4),
+      e 0 = e₀ ∧ ∀ t, HasDerivAt e (linearReducedField (e t)) t := by
+  let F : EuclideanSpace ℝ (Fin 4) →L[ℝ] EuclideanSpace ℝ (Fin 4) :=
+    (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 4 => ℝ)).symm.toContinuousLinearMap ∘L
+      (LinearMap.toContinuousLinearMap (Matrix.toLin' longitudinalJacobian)) ∘L
+        (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 4 => ℝ)).toContinuousLinearMap
+  have hF : (fun e => linearReducedField e) = ⇑F := by
+    funext e
+    simp [F, linearReducedField, Matrix.toLin'_apply]
+    rfl
+  refine MathlibExt.Analysis.ODE.MaximalSolutionWanted.ode_global_exists_of_global_lipschitz
+    (fun _ e => linearReducedField e) 0 e₀ ‖F‖₊ ?_ fun _ => ?_
+  · have hu : Function.uncurry (fun (_ : ℝ) (e : EuclideanSpace ℝ (Fin 4)) =>
+        linearReducedField e) = fun p => F p.2 := by
+      funext p
+      exact congrFun hF p.2
+    rw [hu]
+    exact F.continuous.comp continuous_snd
+  · rw [hF]
+    exact F.lipschitzWith
+
+/-- **Exponential decay, by the direct method.** Every forward solution of the reduced linear
+plant on `[0, ∞)` satisfies `‖e t‖ ≤ √8 * exp (-t / 4) * ‖e 0‖` for `t ≥ 0`: along it `V` has
+derivative `-‖e‖² ≤ -V / 2`, so `V` decays at least as `exp (-t / 2)`, and the comparison bounds
+give the factor `√(2 / (1/4)) = √8`. From the trim, `e 0 = 0`, the bound forces `e t = 0`: no
+decay is claimed there. -/
+lemma norm_le_of_isIntegralCurveOn_linearReducedField {e : ℝ → EuclideanSpace ℝ (Fin 4)}
+    (he : IsIntegralCurveOn e (fun _ x => linearReducedField x) (Set.Ici 0)) {t : ℝ}
+    (ht : 0 ≤ t) : ‖e t‖ ≤ Real.sqrt 8 * Real.exp (-t / 4) * ‖e 0‖ := by
+  have h := he.norm_sub_le_of_lyapunov (s := Set.univ) (V := longitudinalLyapunov)
+    (V' := fderiv ℝ longitudinalLyapunov) (a := 1 / 2) (x₀ := 0) (c₁ := 1 / 4) (c₂ := 2)
+    (fun _ _ => Set.mem_univ _)
+    (fun x _ => (differentiable_longitudinalLyapunov x).hasFDerivAt)
+    (fun _ _ x _ => by
+      rw [fderiv_longitudinalLyapunov_linearReducedField]
+      linarith [(longitudinalLyapunov_bounds x).2])
+    (by norm_num)
+    (fun x _ => by simpa using (longitudinalLyapunov_bounds x).1)
+    (fun x _ => by simpa using (longitudinalLyapunov_bounds x).2) ht
+  have h8 : (2 : ℝ) / (1 / 4) = 8 := by norm_num
+  have hexp : -(1 / 2 / 2) * t = -t / 4 := by ring
+  rw [sub_zero, sub_zero, h8, hexp] at h
+  exact h
+
+/-- **Decay of the actual initial-value problem.** For every initial state `e₀`, the actual
+global solution of `e' = A e`, `e 0 = e₀`, satisfies `‖e t‖ ≤ √8 * exp (-t / 4) * ‖e₀‖` for
+every `t ≥ 0`. -/
+lemma linearReducedField_solution_decay (e₀ : EuclideanSpace ℝ (Fin 4)) :
+    ∃ e : ℝ → EuclideanSpace ℝ (Fin 4), e 0 = e₀ ∧
+      (∀ t, HasDerivAt e (linearReducedField (e t)) t) ∧
+      ∀ t, 0 ≤ t → ‖e t‖ ≤ Real.sqrt 8 * Real.exp (-t / 4) * ‖e₀‖ := by
+  obtain ⟨e, ⟨h0, hd⟩, -⟩ := existsUnique_linearReducedField_solution e₀
+  refine ⟨e, h0, hd, fun t ht => ?_⟩
+  rw [← h0]
+  exact norm_le_of_isIntegralCurveOn_linearReducedField (fun s _ => (hd s).hasDerivWithinAt) ht
 
 end Mechanics.FlightPlant
