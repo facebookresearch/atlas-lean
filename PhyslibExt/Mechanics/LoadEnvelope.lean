@@ -102,7 +102,7 @@ contributes at most its envelope term, whatever the sign of its
 influence coefficient. No separate capacity sign premise is
 stated: the box hypotheses at each coordinate already force
 `0 ≤ cap i` there. -/
-theorem dotProduct_le_boxUpper {ι : Type*} [Fintype ι]
+lemma dotProduct_le_boxUpper {ι : Type*} [Fintype ι]
     (eta cap f : ι → ℝ) (hf0 : ∀ i, 0 ≤ f i)
     (hfc : ∀ i, f i ≤ cap i) :
     eta ⬝ᵥ f ≤ ∑ i, cap i * max (eta i) 0 := by
@@ -124,7 +124,7 @@ response is the upper envelope value
 `∑ i, cap i * max (eta i) 0`, so the upper box bound is attained.
 Nonnegativity of the capacities is the feasibility premise for
 the endpoint load. -/
-theorem upperBoxLoad_attains_boxUpper {ι : Type*} [Fintype ι]
+lemma upperBoxLoad_attains_boxUpper {ι : Type*} [Fintype ι]
     (eta cap : ι → ℝ) (hcap : ∀ i, 0 ≤ cap i) :
     (∀ i, 0 ≤ upperBoxLoad eta cap i)
       ∧ (∀ i, upperBoxLoad eta cap i ≤ cap i)
@@ -161,7 +161,7 @@ coordinate contributes at least its envelope term, whatever the
 sign of its influence coefficient. No separate capacity sign
 premise is stated: the box hypotheses at each coordinate already
 force `0 ≤ cap i` there. -/
-theorem boxLower_le_dotProduct {ι : Type*} [Fintype ι]
+lemma boxLower_le_dotProduct {ι : Type*} [Fintype ι]
     (eta cap f : ι → ℝ) (hf0 : ∀ i, 0 ≤ f i)
     (hfc : ∀ i, f i ≤ cap i) :
     ∑ i, cap i * min (eta i) 0 ≤ eta ⬝ᵥ f := by
@@ -183,7 +183,7 @@ response is the lower envelope value
 `∑ i, cap i * min (eta i) 0`, so the lower box bound is attained.
 Nonnegativity of the capacities is the feasibility premise for
 the endpoint load. -/
-theorem lowerBoxLoad_attains_boxLower {ι : Type*} [Fintype ι]
+lemma lowerBoxLoad_attains_boxLower {ι : Type*} [Fintype ι]
     (eta cap : ι → ℝ) (hcap : ∀ i, 0 ≤ cap i) :
     (∀ i, 0 ≤ lowerBoxLoad eta cap i)
       ∧ (∀ i, lowerBoxLoad eta cap i ≤ cap i)
@@ -222,7 +222,7 @@ value at the exported influence vector. The influence coordinates
 are those of the one vector `Mechanics.TrussCompatibility.influenceVector r a b S k aout`; no
 further inverse is formed and no solve reading of the response is
 used. -/
-theorem supported_unitLoadResponse_le_boxUpper {J M F : Type*}
+lemma supported_unitLoadResponse_le_boxUpper {J M F : Type*}
     [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
     [Fintype F] [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
     (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (aout : F → ℝ)
@@ -238,7 +238,7 @@ capacities over the free coordinates, the upper endpoint load at
 the exported influence vector lies in the box and its unit-load
 response is the supported upper envelope value, so the supported
 upper box bound is attained without forming another inverse. -/
-theorem supported_boxUpper_attained {J M F : Type*}
+lemma supported_boxUpper_attained {J M F : Type*}
     [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
     [Fintype F] [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
     (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (aout : F → ℝ)
@@ -259,7 +259,7 @@ value at the exported influence vector. The influence coordinates
 are those of the one vector `Mechanics.TrussCompatibility.influenceVector r a b S k aout`; no
 further inverse is formed and no solve reading of the response is
 used. -/
-theorem supported_boxLower_le_unitLoadResponse {J M F : Type*}
+lemma supported_boxLower_le_unitLoadResponse {J M F : Type*}
     [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
     [Fintype F] [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
     (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (aout : F → ℝ)
@@ -275,7 +275,7 @@ capacities over the free coordinates, the lower endpoint load at
 the exported influence vector lies in the box and its unit-load
 response is the supported lower envelope value, so the supported
 lower box bound is attained without forming another inverse. -/
-theorem supported_boxLower_attained {J M F : Type*}
+lemma supported_boxLower_attained {J M F : Type*}
     [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
     [Fintype F] [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
     (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (aout : F → ℝ)
