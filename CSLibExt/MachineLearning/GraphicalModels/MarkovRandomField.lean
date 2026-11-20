@@ -323,11 +323,30 @@ theorem pairwiseMarkov_of_localMarkov {V α : Type*} [Fintype V] [DecidableEq V]
   rw [hcond] at hfin
   exact hfin
 
-/-- A nonnegative Gibbs weight satisfies the pairwise Markov property. -/
+/-- A Gibbs weight is nonnegative: it is a product of nonnegative potentials. -/
+theorem GibbsFactorization.nonneg {V α : Type*} [Fintype V] [DecidableEq V]
+    [Fintype α] {G : SimpleGraph V} {p : (V → α) → ℝ}
+    (h : GibbsFactorization G p) : ∀ x, 0 ≤ p x := by
+  obtain ⟨𝒞, ψ, _, hnn, _, hp⟩ := h
+  intro x
+  rw [hp]
+  have aux : ∀ s : Finset (Set V), s ⊆ 𝒞 → 0 ≤ ∏ C ∈ s, ψ C x := by
+    intro s
+    refine Finset.induction_on s ?_ ?_
+    · intro _
+      simp
+    · intro a t ha ih hsub
+      rw [Finset.prod_insert ha]
+      have haC : a ∈ 𝒞 := hsub (Finset.mem_insert_self a t)
+      have htC : t ⊆ 𝒞 := fun c hc => hsub (Finset.mem_insert_of_mem hc)
+      exact mul_nonneg (hnn a haC x) (ih htC)
+  exact aux 𝒞 fun c hc => hc
+
+/-- A Gibbs weight satisfies the pairwise Markov property. -/
 theorem pairwiseMarkov_of_gibbsFactorization {V α : Type*} [Fintype V] [DecidableEq V]
-    [Fintype α] {G : SimpleGraph V} {p : (V → α) → ℝ} (hp : ∀ x, 0 ≤ p x)
+    [Fintype α] {G : SimpleGraph V} {p : (V → α) → ℝ}
     (h : GibbsFactorization G p) : PairwiseMarkov G p := by
-  exact pairwiseMarkov_of_localMarkov hp
+  exact pairwiseMarkov_of_localMarkov h.nonneg
     (localMarkov_of_globalMarkov (globalMarkov_of_gibbsFactorization h))
 
 
