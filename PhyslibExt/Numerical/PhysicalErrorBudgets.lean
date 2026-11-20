@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Analysis.ODE.FiniteElement1D
+public import MathlibExt.Analysis.ODE.RungeKutta
 public import PhyslibExt.Elasticity.PrismaticMembers
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.Tactic.FieldSimp
@@ -20,7 +21,7 @@ import MathlibExt.Analysis.ODE.TimeStepping
 import PhyslibExt.HeatTransfer.ConductionPorts
 
 /-!
-# Physical error budgets: bar pullback of the P1 estimates and a ten-step thermal Euler error
+# Physical error budgets: bar pullback of the P1 estimates and ten-step thermal Euler and RK4 errors
 
 ## i. Overview
 
@@ -74,9 +75,22 @@ step entered in seconds against a time constant in minutes is `60` times too lar
 stable for every step size, but the Euler step `dt = 3 τ` has the amplification `-2`; that
 unstable step is outside the selected `dt = τ / 10`.
 
-Model inputs of sections F-H: constant `C`, `G` and `T_amb`, the linear bath law and the lumped
-body. Non-goals: no general Euler convergence theorem and no arithmetic or floating-point
-refinement.
+Sections I-K run the classical fourth-order Runge–Kutta method `rk4` of
+`MathlibExt.Analysis.ODE.RungeKutta` on the same model. The right side `Q(T) / C` is the field
+`bathField`, on which the one-stage method is `bathEulerStep`. The field does not depend on time,
+so an RK4 step from any time equals the step from time `0`, and it is affine in `T`: the step from
+`T` is `T_amb` plus the step of the linear decay `θ' = -θ / τ` from the excess `θ = T - T_amb`,
+which `rk4_stability` evaluates as `θ R(z)` with `R(z) = 1 + z + z² / 2 + z³ / 6 + z⁴ / 24` and
+`z = -dt / τ`. At `dt = τ / 10`, `R = 72387 / 80000`, so ten actual RK4 steps from `T_amb + Δ`
+reach `T_amb + Δ (72387 / 80000) ^ 10` at the time `τ`. Mathlib's bounds
+`2.7182818283 < exp 1 < 2.7182818286` show that the error, about `3.33 × 10⁻⁷ |Δ|`, is positive and
+below `|Δ| × 10⁻⁶` for `Δ ≠ 0`. This is one evaluated instance, not a convergence theorem: the
+order conditions of `rk4_orderFour` alone do not give global convergence, and order four does not
+give stability, since the step `dt = 3 τ` multiplies the excess by `R(-3) = 11 / 8 > 1`.
+
+Model inputs of sections F-K: constant `C`, `G` and `T_amb`, the linear bath law and the lumped
+body. Non-goals: no general Euler or Runge–Kutta convergence theorem and no arithmetic or
+floating-point refinement.
 
 ## ii. Key results
 
@@ -101,6 +115,13 @@ refinement.
   `Δ ≠ 0`; the numeric fixture is in the test module.
 - `bathEulerStep_timeUnit`, `bathEulerStep_minutes_seconds`, `bathEuler_threeTau`: time units
   and the unstable step `dt = 3 τ`.
+- `bathField`, `bathField_eulerStep`, `bathField_rk4_time_indep`, `bathField_rk4_shift`,
+  `bathField_rk4_step`: the bath field, its one-stage (Euler) step, and the time independence,
+  ambient-temperature shift and stability-polynomial form of its RK4 step.
+- `bathRK4_closed_form`, `bathRK4_tenStep_excess`, `bathRK4_tenStep_error`,
+  `bathRK4_tenStep_error_pos`: ten RK4 steps at `dt = τ / 10` and the error at `τ`, below
+  `|Δ| × 10⁻⁶` and positive for `Δ ≠ 0`; the numeric fixture is in the test module.
+- `bathRK4_threeTau`: the unstable RK4 step `dt = 3 τ` of the stable bath.
 
 ## iii. Table of contents
 
@@ -112,6 +133,9 @@ refinement.
 - F. The bath-cooling trajectory and the one-node storage law
 - G. Ten Euler steps of size `τ / 10`
 - H. Time units and the unstable step
+- I. Classical Runge–Kutta steps on the bath-cooling model
+- J. Ten Runge–Kutta steps of size `τ / 10`
+- K. The unstable Runge–Kutta step
 
 ## iv. References
 
@@ -125,9 +149,13 @@ refinement.
   Transfer*, 7th ed., Wiley (2011), Section 5.1 (the lumped capacitance method and the thermal
   time constant).
 - E. Hairer, S. P. Nørsett and G. Wanner, *Solving Ordinary Differential Equations I*, 2nd ed.,
-  Springer (1993), Section I.7 (the explicit Euler method).
+  Springer (1993), Sections I.7 and II.1 (the explicit Euler method and the classical Runge–Kutta
+  method).
+- E. Hairer and G. Wanner, *Solving Ordinary Differential Equations II*, 2nd ed., Springer (1996),
+  Section IV.2 (stability functions of explicit Runge–Kutta methods).
 - `MathlibExt.Analysis.ODE.TimeStepping.decay_euler_numeric_bound`,
-  `MetaMathlibExt.scalar_exp_solution` and `ConductionPorts.hasDerivAt_thermalStorage`.
+  `MetaMathlibExt.scalar_exp_solution`, `ConductionPorts.hasDerivAt_thermalStorage`, and
+  `MathlibExt.Analysis.ODE.RungeKutta.rk4_stability` and `euler_step`.
 -/
 
 @[expose] public section
@@ -665,6 +693,199 @@ lemma bathEuler_threeTau {C G : ℝ} (hC : 0 < C) (hG : 0 < G) {Tamb Δ : ℝ} {
       Real.exp_le_one_iff.mpr (div_nonpos_of_nonpos_of_nonneg (by linarith) hτ.le)
     nlinarith [abs_nonneg Δ]
   · rw [hX j, add_sub_cancel_left, abs_mul, abs_pow, abs_neg, abs_two, mul_comm]
+
+
+/-! ## I. Classical Runge–Kutta steps on the bath-cooling model -/
+
+section RungeKuttaComparison
+
+open MathlibExt.Analysis.ODE.RungeKutta
+
+/-- The right side `(t, T) ↦ Q(T) / C` of the bath-cooling equation `C T' = Q(T)` of
+`PhysicalErrorBudgets`, as a field that does not depend on the time `t`. -/
+noncomputable def bathField (C G Tamb : ℝ) (_t T : ℝ) : ℝ := bathPower G Tamb T / C
+
+/-- The stages of an explicit Runge–Kutta method for a field that ignores time do not depend on
+the start time. -/
+private lemma stageRow_autonomous {s : ℕ} (rk : ExplicitRK s) (g : ℝ → ℝ) (t t' y h : ℝ) :
+    ∀ n, stageRow rk (fun _ x => g x) t y h n = stageRow rk (fun _ x => g x) t' y h n
+  | 0 => rfl
+  | n + 1 => by
+      funext i
+      simp only [stageRow]
+      rw [stageRow_autonomous rk g t t' y h n]
+
+/-- The stages for the affine field `x ↦ λ (x - c)` from `y` are those for the linear field
+`x ↦ λ x` from `y - c`. -/
+private lemma stageRow_shift {s : ℕ} (rk : ExplicitRK s) (lam c t y h : ℝ) :
+    ∀ n, stageRow rk (fun _ x => lam * (x - c)) t y h n =
+      stageRow rk (fun _ x => lam * x) 0 (y - c) h n
+  | 0 => rfl
+  | n + 1 => by
+      funext i
+      simp only [stageRow]
+      rw [stageRow_shift rk lam c t y h n]
+      split_ifs
+      · simp only [smul_eq_mul]
+        ring
+      · rfl
+
+/-- The bath field is the affine field `T ↦ (-1 / τ) (T - T_amb)`. -/
+private lemma bathField_eq (C G Tamb : ℝ) :
+    bathField C G Tamb = fun _ x => -1 / thermalTimeConstant C G * (x - Tamb) := by
+  funext t x
+  rw [bathField, bathPower, thermalTimeConstant, neg_div, one_div_div]
+  ring
+
+/-- **The same model as the Euler budget.** The one-stage Runge–Kutta method on the bath field is
+the explicit Euler step `bathEulerStep` of `PhysicalErrorBudgets`, from every time `t`; an
+identity for all real parameters. -/
+lemma bathField_eulerStep (C G Tamb t T dt : ℝ) :
+    rkStep eulerRK (bathField C G Tamb) t T dt = bathEulerStep C G Tamb dt T := by
+  rw [euler_step, bathField, bathEulerStep, smul_eq_mul]
+  ring
+
+/-- **Time independence.** The bath field does not depend on time, so one RK4 step from any time
+`t` equals the step from time `0`; an identity for all real parameters. -/
+lemma bathField_rk4_time_indep (C G Tamb t T dt : ℝ) :
+    rkStep rk4 (bathField C G Tamb) t T dt = rkStep rk4 (bathField C G Tamb) 0 T dt := by
+  change rkStep rk4 (fun _ x => (fun y => bathPower G Tamb y / C) x) t T dt =
+    rkStep rk4 (fun _ x => (fun y => bathPower G Tamb y / C) x) 0 T dt
+  simp only [rkStep, stage, stageRow_autonomous rk4 (fun y => bathPower G Tamb y / C) t 0 T dt]
+
+/-- **Ambient-temperature shift.** One RK4 step of the bath field from `T` is `T_amb` plus the RK4
+step of the linear decay `θ' = (-1 / τ) θ` from the excess `T - T_amb`; an identity for all real
+parameters. -/
+lemma bathField_rk4_shift (C G Tamb t T dt : ℝ) :
+    rkStep rk4 (bathField C G Tamb) t T dt =
+      Tamb + rkStep rk4 (fun _ y => -1 / thermalTimeConstant C G * y) 0 (T - Tamb) dt := by
+  rw [bathField_rk4_time_indep, bathField_eq]
+  simp only [rkStep, stage, stageRow_shift rk4 (-1 / thermalTimeConstant C G) Tamb 0 T dt,
+    smul_eq_mul]
+  ring
+
+/-- **The step through the stability polynomial.** One RK4 step of size `dt` of the bath field
+multiplies the excess `T - T_amb` by `R(z) = 1 + z + z² / 2 + z³ / 6 + z⁴ / 24` with
+`z = (-1 / τ) dt`: `rk4_stability` after the shift. -/
+lemma bathField_rk4_step (C G Tamb t T dt : ℝ) :
+    rkStep rk4 (bathField C G Tamb) t T dt =
+      Tamb + (T - Tamb) * (1 + -1 / thermalTimeConstant C G * dt +
+        (-1 / thermalTimeConstant C G * dt) ^ 2 / 2 +
+        (-1 / thermalTimeConstant C G * dt) ^ 3 / 6 +
+        (-1 / thermalTimeConstant C G * dt) ^ 4 / 24) := by
+  rw [bathField_rk4_shift, rk4_stability]
+
+/-! ## J. Ten Runge–Kutta steps of size `τ / 10` -/
+
+/-- **The actual RK4 recurrence at `dt = τ / 10`.** For `C, G > 0`, every real sequence with
+`X 0 = T_amb + Δ` and `X (j + 1)` the RK4 step of size `τ / 10` from `X j` at the time `j τ / 10`
+is `X j = T_amb + Δ (72387 / 80000) ^ j`. -/
+lemma bathRK4_closed_form {C G : ℝ} (hC : 0 < C) (hG : 0 < G) {Tamb Δ : ℝ} {X : ℕ → ℝ}
+    (h0 : X 0 = Tamb + Δ)
+    (hstep : ∀ j : ℕ, X (j + 1) = rkStep rk4 (bathField C G Tamb)
+      (j * (thermalTimeConstant C G / 10)) (X j) (thermalTimeConstant C G / 10))
+    (j : ℕ) : X j = Tamb + Δ * (72387 / 80000) ^ j := by
+  have hτ : thermalTimeConstant C G ≠ 0 := (div_pos hC hG).ne'
+  have hz : -1 / thermalTimeConstant C G * (thermalTimeConstant C G / 10) = -1 / 10 := by
+    field_simp
+  induction j with
+  | zero => simpa using h0
+  | succ j ih =>
+    rw [hstep, bathField_rk4_step, hz, ih, pow_succ]
+    ring
+
+/-- **Ten steps.** Under the hypotheses of `bathRK4_closed_form`, after ten RK4 steps of size
+`τ / 10` the excess over the bath is `T_10 - T_amb = Δ (72387 / 80000) ^ 10`. -/
+lemma bathRK4_tenStep_excess {C G : ℝ} (hC : 0 < C) (hG : 0 < G) {Tamb Δ : ℝ} {X : ℕ → ℝ}
+    (h0 : X 0 = Tamb + Δ)
+    (hstep : ∀ j : ℕ, X (j + 1) = rkStep rk4 (bathField C G Tamb)
+      (j * (thermalTimeConstant C G / 10)) (X j) (thermalTimeConstant C G / 10)) :
+    X 10 - Tamb = Δ * (72387 / 80000) ^ 10 := by
+  rw [bathRK4_closed_form hC hG h0 hstep 10]
+  ring
+
+/-- The evaluated RK4 decay at `τ`: `(72387 / 80000) ^ 10 - exp (-1)` lies in `(0, 10⁻⁶)`. -/
+private lemma rk4_decay_error_mem :
+    0 < (72387 / 80000 : ℝ) ^ 10 - Real.exp (-1) ∧
+      (72387 / 80000 : ℝ) ^ 10 - Real.exp (-1) < 1 / 10 ^ 6 := by
+  have he1 := Real.exp_one_gt_d9
+  have he2 := Real.exp_one_lt_d9
+  have hpos := Real.exp_pos 1
+  rw [Real.exp_neg, ← one_div]
+  constructor
+  · rw [sub_pos, div_lt_iff₀ hpos]
+    norm_num at he1 ⊢
+    linarith
+  · rw [sub_lt_comm, lt_div_iff₀ hpos]
+    norm_num at he2 ⊢
+    linarith
+
+/-- The ten-step error as the excess amplitude times the evaluated decay error. -/
+private lemma bathRK4_tenStep_error_eq {C G : ℝ} (hC : 0 < C) (hG : 0 < G) {Tamb Δ : ℝ}
+    {X : ℕ → ℝ} (h0 : X 0 = Tamb + Δ)
+    (hstep : ∀ j : ℕ, X (j + 1) = rkStep rk4 (bathField C G Tamb)
+      (j * (thermalTimeConstant C G / 10)) (X j) (thermalTimeConstant C G / 10)) :
+    |X 10 - bathTrajectory C G Tamb Δ (thermalTimeConstant C G)| =
+      |Δ| * ((72387 / 80000 : ℝ) ^ 10 - Real.exp (-1)) := by
+  have hτ : thermalTimeConstant C G ≠ 0 := (div_pos hC hG).ne'
+  rw [bathRK4_closed_form hC hG h0 hstep 10, bathTrajectory, neg_div, div_self hτ,
+    show Tamb + Δ * (72387 / 80000) ^ 10 - (Tamb + Δ * Real.exp (-1)) =
+      Δ * ((72387 / 80000) ^ 10 - Real.exp (-1)) by ring, abs_mul,
+    abs_of_pos rk4_decay_error_mem.1]
+
+/-- **Ten-step error bound.** For `C, G > 0` and `Δ ≠ 0`, the ten-step RK4 iterate at
+`dt = τ / 10` differs from the exact temperature at `τ` by less than `|Δ| × 10⁻⁶`:
+`|T_10 - T(τ)| < |Δ| / 10 ^ 6`. -/
+lemma bathRK4_tenStep_error {C G : ℝ} (hC : 0 < C) (hG : 0 < G) {Tamb Δ : ℝ} (hΔ : Δ ≠ 0)
+    {X : ℕ → ℝ} (h0 : X 0 = Tamb + Δ)
+    (hstep : ∀ j : ℕ, X (j + 1) = rkStep rk4 (bathField C G Tamb)
+      (j * (thermalTimeConstant C G / 10)) (X j) (thermalTimeConstant C G / 10)) :
+    |X 10 - bathTrajectory C G Tamb Δ (thermalTimeConstant C G)| < |Δ| / 10 ^ 6 := by
+  rw [bathRK4_tenStep_error_eq hC hG h0 hstep]
+  calc |Δ| * ((72387 / 80000 : ℝ) ^ 10 - Real.exp (-1)) < |Δ| * (1 / 10 ^ 6) :=
+        mul_lt_mul_of_pos_left rk4_decay_error_mem.2 (abs_pos.mpr hΔ)
+    _ = |Δ| / 10 ^ 6 := by ring
+
+/-- **The error is not zero.** Under the hypotheses of `bathRK4_tenStep_error`,
+`|T_10 - T(τ)| > 0`: the RK4 factor `(72387 / 80000) ^ 10` exceeds the exact decay `exp (-1)`. -/
+lemma bathRK4_tenStep_error_pos {C G : ℝ} (hC : 0 < C) (hG : 0 < G) {Tamb Δ : ℝ} (hΔ : Δ ≠ 0)
+    {X : ℕ → ℝ} (h0 : X 0 = Tamb + Δ)
+    (hstep : ∀ j : ℕ, X (j + 1) = rkStep rk4 (bathField C G Tamb)
+      (j * (thermalTimeConstant C G / 10)) (X j) (thermalTimeConstant C G / 10)) :
+    0 < |X 10 - bathTrajectory C G Tamb Δ (thermalTimeConstant C G)| := by
+  rw [bathRK4_tenStep_error_eq hC hG h0 hstep]
+  exact mul_pos (abs_pos.mpr hΔ) rk4_decay_error_mem.1
+
+/-! ## K. The unstable Runge–Kutta step -/
+
+/-- **The unstable step of a stable bath.** For `C, G > 0` the exact excess never exceeds its
+initial size, `|T(t) - T_amb| ≤ |Δ|` for `t ≥ 0`, but RK4 with `dt = 3 τ` multiplies the excess by
+`R(-3) = 11 / 8`: `X j = T_amb + Δ (11 / 8) ^ j` and `|X j - T_amb| = (11 / 8) ^ j |Δ|`. -/
+lemma bathRK4_threeTau {C G : ℝ} (hC : 0 < C) (hG : 0 < G) {Tamb Δ : ℝ} {X : ℕ → ℝ}
+    (h0 : X 0 = Tamb + Δ)
+    (hstep : ∀ j : ℕ, X (j + 1) = rkStep rk4 (bathField C G Tamb)
+      (j * (3 * thermalTimeConstant C G)) (X j) (3 * thermalTimeConstant C G)) :
+    (∀ t, 0 ≤ t → |bathTrajectory C G Tamb Δ t - Tamb| ≤ |Δ|) ∧
+      ∀ j, X j = Tamb + Δ * (11 / 8) ^ j ∧ |X j - Tamb| = (11 / 8) ^ j * |Δ| := by
+  have hτ : 0 < thermalTimeConstant C G := div_pos hC hG
+  have hz : -1 / thermalTimeConstant C G * (3 * thermalTimeConstant C G) = -3 := by
+    field_simp
+  have hX : ∀ j, X j = Tamb + Δ * (11 / 8) ^ j := by
+    intro j
+    induction j with
+    | zero => simpa using h0
+    | succ j ih =>
+      rw [hstep, bathField_rk4_step, hz, ih, pow_succ]
+      ring
+  refine ⟨fun t ht => ?_, fun j => ⟨hX j, ?_⟩⟩
+  · rw [bathTrajectory, add_sub_cancel_left, abs_mul, Real.abs_exp]
+    have h1 : Real.exp (-t / thermalTimeConstant C G) ≤ 1 :=
+      Real.exp_le_one_iff.mpr (div_nonpos_of_nonpos_of_nonneg (by linarith) hτ.le)
+    nlinarith [abs_nonneg Δ]
+  · rw [hX j, add_sub_cancel_left, abs_mul, abs_pow, mul_comm]
+    norm_num
+
+end RungeKuttaComparison
 
 end PhysicalErrorBudgets
 
