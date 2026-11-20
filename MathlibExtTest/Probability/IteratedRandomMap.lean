@@ -1,5 +1,5 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
+Copyright (c) 2025–2026 the contributors.
 All rights reserved.
 
 This source code is licensed under the license found in the
@@ -34,6 +34,23 @@ example (x₀ : ℝ≥0∞) (n : ℕ) :
     (f := fun x (_ : Unit) => x / 2) (V := id) (ρ := 1 / 2) (β := 0)
     (measurable_fst.div_const 2) measurable_id
     (fun x => by simp [div_eq_mul_inv, mul_comm]) x₀ n
+
+-- Apply the probability bound at a positive horizon, starting below the threshold.
+example :
+    pathMeasure (MeasureTheory.Measure.dirac ())
+      (breachSet (fun x (_ : Unit) => x + 1) id 2 0 1) ≤ (1 / 2 : ℝ≥0∞) := by
+  simpa using meas_breachSet_le_div (MeasureTheory.Measure.dirac ())
+    (f := fun x (_ : Unit) => x + 1) (V := id) (c := 2) (β := 1)
+    (measurable_fst.add_const 1) measurable_id (by norm_num) (by norm_num)
+    (fun x _ => by simp) 0 1
+
+-- A first hit exactly at the horizon is included; the preceding horizon misses it.
+example (ω : ℕ → Unit) :
+    ω ∉ breachSet (fun x (_ : Unit) => x + 1) id 2 0 1 ∧
+      ω ∈ breachSet (fun x (_ : Unit) => x + 1) id 2 0 2 := by
+  constructor
+  · simp [breachSet, Nat.le_one_iff_eq_zero_or_eq_one, run]
+  · exact ⟨2, le_rfl, by norm_num [run]⟩
 
 #print axioms lintegral_run_succ
 #print axioms lintegral_run_le_geom

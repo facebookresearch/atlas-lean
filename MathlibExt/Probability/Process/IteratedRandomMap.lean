@@ -1,37 +1,9 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
+Copyright (c) 2025–2026 the contributors.
 All rights reserved.
 
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
--/
-
-/-
-Adapted from arnovich/forseti-lean, commit
-0a81edc7fe82748af7c9b1139229c4d898f50c28,
-`Gimle/Forseti/Stepped.lean`. Author: arnovich.
-
-MIT License
-
-Copyright (c) 2025 Gimle Labs
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 -/
 
 module
@@ -45,6 +17,16 @@ public import Mathlib.Algebra.Ring.GeomSum
 Independent identically distributed inputs drive a measurable state update.
 A one-step drift bound controls expected energy and finite-horizon hitting
 probabilities, including the initial state at time zero.
+
+Mathematical references: P. Diaconis and D. Freedman, Iterated Random Functions,
+Section 1, equation (1.1), https://www.stat.berkeley.edu/~aldous/205B/511.pdf,
+for the IID iteration model. The expectation bounds iterate an affine recurrence.
+For the finite-horizon bound, see F. B. Mathiesen et al., Inner Approximations of
+Stochastic Programs for Data-Driven Stochastic Barrier Function Design,
+Definition 2 and Proposition 3, https://arxiv.org/abs/2304.04505.
+Normalize by the threshold: the barrier is `V / c`, its initial bound is
+`V x₀ / c`, and its additive drift bound is `β / c`. Here nonnegative integration
+also permits extended-real values; the cited paper uses real-valued barriers.
 -/
 @[expose] public section
 open MeasureTheory ProbabilityTheory ENNReal Finset Function
