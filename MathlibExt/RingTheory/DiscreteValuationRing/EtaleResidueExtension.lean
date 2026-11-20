@@ -594,7 +594,7 @@ Let `W` be a discrete valuation ring complete for its maximal-ideal adic
 topology, and let `k` be a finite separable extension of its residue
 field. Then there is a discrete valuation ring `W'` in the same universe,
 complete for its maximal-ideal adic topology, with a finite free (hence
-finite étale, flat and faithfully flat) `W`-algebra structure, whose
+flat) and finite étale `W`-algebra structure, faithfully flat, whose
 maximal ideal is the extension of the maximal ideal of `W` and whose
 residue field is isomorphic to `k` compatibly with the residue maps.
 The ranks agree, there are only finitely many `W`-algebra
@@ -610,12 +610,11 @@ public theorem
     [Algebra.IsSeparable (IsLocalRing.ResidueField W) k] :
     ∃ (W' : Type u) (_ : CommRing W') (_ : IsDomain W') (_ : IsDiscreteValuationRing W')
       (_ : IsAdicComplete (IsLocalRing.maximalIdeal W') W') (_ : Algebra W W')
+      (_ : IsLocalHom (algebraMap W W'))
       (_ : Module.Finite W W') (_ : Module.Free W W') (_ : Module.Flat W W') (_ : FaithfulSMul W W')
       (_ : Algebra.Etale W W')
-      (ι : IsLocalRing.ResidueField W' ≃+* k),
+      (ι : IsLocalRing.ResidueField W' ≃ₐ[IsLocalRing.ResidueField W] k),
       Ideal.map (algebraMap W W') (IsLocalRing.maximalIdeal W) = IsLocalRing.maximalIdeal W' ∧
-      (∀ w : W, ι (IsLocalRing.residue W' (algebraMap W W' w)) =
-        algebraMap (IsLocalRing.ResidueField W) k (IsLocalRing.residue W w)) ∧
       Module.finrank W W' = Module.finrank (IsLocalRing.ResidueField W) k ∧
       Finite (W' ≃ₐ[W] W') ∧
       (IsGalois (IsLocalRing.ResidueField W) k →
@@ -631,16 +630,12 @@ public theorem
   haveI : IsDiscreteValuationRing (EtaleDvrAux.W' W k) :=
     EtaleDvrAux.isDiscreteValuationRing_W' W k hmap
   haveI : IsDomain (EtaleDvrAux.W' W k) := EtaleDvrAux.isDomain_W' W k
-  let ι : ResidueField (EtaleDvrAux.W' W k) ≃+* k :=
-    eres.toRingEquiv.trans (EtaleDvrAux.adjoinRootMapEquiv W k).toRingEquiv
+  let ι : ResidueField (EtaleDvrAux.W' W k) ≃ₐ[ResidueField W] k :=
+    eres.trans (EtaleDvrAux.adjoinRootMapEquiv W k)
   refine ⟨EtaleDvrAux.W' W k, inferInstance, inferInstance, inferInstance, hcompl,
-    inferInstance, inferInstance, hfree,
-    inferInstance, inferInstance, het, ι, hmap, ?_, EtaleDvrAux.finrank_W' W k,
+    inferInstance, hlh, inferInstance, hfree,
+    inferInstance, inferInstance, het, ι, hmap, EtaleDvrAux.finrank_W' W k,
     EtaleDvrAux.finite_algEquiv W k, ?_⟩
-  · intro w
-    show EtaleDvrAux.adjoinRootMapEquiv W k
-      (eres (residue (EtaleDvrAux.W' W k) (algebraMap W (EtaleDvrAux.W' W k) w))) = _
-    rw [← ResidueField.algebraMap_residue, AlgEquiv.commutes, AlgEquiv.commutes]
   · intro hgal
     haveI := hgal
     haveI := hcompl

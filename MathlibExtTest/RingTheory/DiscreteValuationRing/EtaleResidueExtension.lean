@@ -37,8 +37,15 @@ theorem exactSource
         Nat.card (W' ≃ₐ[W] W') = Module.finrank W W' ∧
         ∀ w' : W', (∀ γ : W' ≃ₐ[W] W', γ • w' = w') ↔
           w' ∈ Set.range (algebraMap W W')) :=
-  IsDiscreteValuationRing.exists_etale_dvr_residueField_equiv_card_algEquiv_eq_of_isAdicComplete
-    W k
+by
+  obtain ⟨W', _, _, _, _, _, _, _, _, _, _, _, ι, hmap, hrank, hfin, hgal⟩ :=
+    IsDiscreteValuationRing.exists_etale_dvr_residueField_equiv_card_algEquiv_eq_of_isAdicComplete
+      W k
+  exact ⟨W', inferInstance, inferInstance, inferInstance, inferInstance, inferInstance,
+    inferInstance, inferInstance, inferInstance, inferInstance, inferInstance,
+    ι.toRingEquiv, hmap, fun w => by
+      have h := AlgEquiv.commutes ι (IsLocalRing.residue W w)
+      rwa [IsLocalRing.ResidueField.algebraMap_residue] at h, hrank, hfin, hgal⟩
 
 -- The rank conclusion extracted from the package: the realizing
 -- extension has rank equal to the residue-field extension degree.
