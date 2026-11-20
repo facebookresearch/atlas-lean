@@ -25,8 +25,11 @@ theorem exactSource {Γ : Subgroup SL(2, ℤ)} [Γ.FiniteIndex]
 
 /-- For the full group, the fundamental set is a single translate of `𝒟`,
 and the unfolding collapses to one term: the `-1` hypothesis matters
-because distinct coset tiles can otherwise overlap in positive measure
-along the boundary identification. -/
+because `-1` acts trivially on `ℍ`, so if `-1 ∉ Γ` then `a` and `-a`
+represent distinct cosets whose tiles coincide, overlapping on the
+whole positive-measure tile rather than only on the null boundary.
+Requiring `-1 ∈ Γ` identifies those two cosets, so the tiles are
+almost-everywhere disjoint. -/
 example {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (f : ℍ → E) (hf : IntegrableOn f (gammaFundamentalSet ⊤)) :
     ∫ τ in gammaFundamentalSet ⊤, f τ =
