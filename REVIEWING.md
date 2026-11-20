@@ -104,6 +104,9 @@ reason. Beyond the mechanical rules, check what only a reader can:
   becomes a wanted statement only once each prerequisite still blocking it is
   in its Lean statement or, for a proof prerequisite, already proved; otherwise
   it should stay a planned page.
+- **Planned pages (rule 10).** A page with no Lean link states its result
+  precisely and cites its source; check the statement against that source as
+  you would check a page against its declaration.
 - **Duplicates (rule 6).** Search the vault and pinned Mathlib for an existing
   page or declaration before accepting a new one.
 - **Findings the wiki batches raised most often.** Prose about the library's

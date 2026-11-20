@@ -60,8 +60,8 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
    `scripts/generate_wiki.py` splits a topic listing into parts above 20
    entries, a `navigation: module` page may hold 120 articles, the root page
    (the subject index) 64, and `autoform audit` reports any other article
-   with more than 24 direct children (`overfull-container`). *Reason:* past those sizes a folder page and its
-   local graph stop being readable.
+   with more than 24 direct children (`overfull-container`). *Reason:* past
+   those sizes a folder page and its local graph stop being readable.
 4. **Moving a module or folder is a taxonomy change, made in the same PR,**
    with `autoform move` to rewrite the links; then list the page on its new
    folder page and, across subjects, move its annotation to the new subject's
@@ -76,13 +76,14 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
    (`roadmap.jsonl` for the root page), and an annotation names at most one
    Lean declaration. An `id` (`af_` and 24 hex digits) is unique and never
    changes. `sync_wiki.py declarations` gives one to every annotation it adds;
-   the annotations that have none yet get theirs in a one-off fill, still to
-   come. `autoform links set` cannot do this, because it does not write these
+   the annotations that have none yet get theirs in a one-off fill (#5524).
+   `autoform links set` cannot do this, because it does not write these
    per-subject files. *Reason:* Autoform reads an article's facts from its
    annotation, and two annotations for one page, or one page for two
-   declarations, make its status ambiguous;
-   `autoform work` refuses an unfinished formalizable leaf without an `id`, so
-   rule 14's tasks cannot be listed until every one has one.
+   declarations, make its status ambiguous; `autoform work` refuses an
+   unfinished formalizable leaf without an `id`, so rule 14's tasks cannot be
+   listed until every one has one. Until #5524 lands, a row without an `id`
+   is not a review finding.
 6. **Pages for documented declarations come from `sync_wiki.py
    declarations`,** then may be edited. Don't hand-write a second page for a
    declaration. *Reason:* the sync tracks docstring changes per declaration;
@@ -117,8 +118,13 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
     as Autoform's format says, and `lean-facts` leaves them alone on a page
     whose annotation has no Lean link (`object`), a held page included (a row
     an earlier sync wrote with only a module and a name counts as linked). Such
-    a page has no `kind`, so it is not a task (rule 14). *Reason:* nothing else
-    records a planned node's prerequisites.
+    a page has no `kind`, so it is not a task (rule 14). A planned page is
+    held to the same standard as any article: it states its result precisely
+    and cites the source it follows, and a reviewer checks the statement
+    against that source. Once its Lean exists, its annotation links the
+    declaration and the page follows rules 7 and 9. *Reason:* nothing else
+    records a planned node's prerequisites, and a planned page is the graph's
+    record of mathematics not yet in Lean.
 11. **`## Informally uses` lists only results the cited proof uses** but the
     Lean need not. What the statement needs (its definitions and ingredients)
     is described in the page's prose, not listed here. A result the Lean also
@@ -181,11 +187,15 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
     task, with or without ids. *Reason:* one readiness rule, Autoform's, for
     the site, `autoform work list` and the task list.
 15. **A graph PR keeps under 3,000 changed files, names the issue it
-    closes, and an expansion changes no Lean outside `WantedExt`.** *Reason:*
+    works on (`Closes #…`, or `Part of #…` when it does part of it), and an
+    expansion changes no Lean outside `WantedExt`.** *Reason:*
     GitHub shows at most 3,000 files in one diff, and a reviewer judging an
     expansion should not also have to review proofs.
 16. **Every graph PR needs an approval from a code owner**
-    (`.github/CODEOWNERS`) as well as Codex's review. An expansion is judged
+    (`.github/CODEOWNERS`) as well as Codex's review. Codex reviews a PR
+    automatically when its author is an owner, member or collaborator of the
+    repository or its fork's owner is on `codex.yml`'s trusted list; on any
+    other fork PR, a maintainer comments `@codex` for an advisory review. An expansion is judged
     for mathematical coverage and granularity, not only form. *Reason:* agents
     can produce graph changes faster than people can check them, and a poor
     expansion spreads into every task below it.
