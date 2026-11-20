@@ -39,6 +39,8 @@ public import Mathlib.Topology.LocallyConstant.Basic
 
 @[expose] public section
 
+namespace IsLocallyConstant
+
 /-- A compactly supported locally constant function on the product of a
 nonarchimedean normed field with an arbitrary topological space, valued in
 any type with a zero, is invariant in its first coordinate under a common
@@ -50,7 +52,7 @@ neighbourhood of `1` in the units; the ultrametric then promotes that
 neighbourhood to the open subgroup of units within distance `min r 1` of `1`.
 The support hypothesis, via invariance under inverses, extends the identity
 from the support to all points. No vanishing on the axes is needed. -/
-public theorem exists_isOpen_subgroup_forall_apply_mul_eq_of_isLocallyConstant_of_hasCompactSupport
+public theorem exists_isOpen_subgroup_forall_apply_mul_eq_of_hasCompactSupport
     {F Y β : Type*} [NormedField F] [IsUltrametricDist F] [ContinuousMul F] [ContinuousInv₀ F] [TopologicalSpace Y] [Zero β]
     (Φ : F × Y → β) (hΦ : IsLocallyConstant Φ) (hΦc : HasCompactSupport Φ) :
     ∃ U : Subgroup Fˣ, IsOpen (U : Set Fˣ) ∧
@@ -138,3 +140,5 @@ public theorem exists_isOpen_subgroup_forall_apply_mul_eq_of_isLocallyConstant_o
     simp only at hinv
     rw [mul_assoc, ← Units.val_mul, mul_inv_cancel, Units.val_one, mul_one, h0] at hinv
     exact hne hinv.symm
+
+end IsLocallyConstant

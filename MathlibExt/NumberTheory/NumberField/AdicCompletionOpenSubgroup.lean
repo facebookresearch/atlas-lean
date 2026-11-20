@@ -50,7 +50,7 @@ public theorem exists_isOpen_subgroup_forall_apply_mul_eq_of_isLocallyConstant_o
     (hΦ : IsLocallyConstant Φ) (hΦc : HasCompactSupport Φ) :
     ∃ U : Subgroup (v.adicCompletion K)ˣ, IsOpen (U : Set (v.adicCompletion K)ˣ) ∧
       ∀ t ∈ U, ∀ b z : v.adicCompletion K, Φ (b * (t : v.adicCompletion K), z) = Φ (b, z) :=
-  @_root_.exists_isOpen_subgroup_forall_apply_mul_eq_of_isLocallyConstant_of_hasCompactSupport
+  @IsLocallyConstant.exists_isOpen_subgroup_forall_apply_mul_eq_of_hasCompactSupport
     (v.adicCompletion K) (v.adicCompletion K) ℂ _ _ _ _ _ _ Φ hΦ hΦc
 
 end IsDedekindDomain.HeightOneSpectrum
