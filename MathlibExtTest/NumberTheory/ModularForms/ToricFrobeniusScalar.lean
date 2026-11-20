@@ -31,7 +31,37 @@ example {G : Type*} [Group G]
   ModularCurve.mazurPrinciple_toric_exclusion_of_scalar hfrob ι hinj hequiv hsub
     lam hscalar hrank hdet
 
--- The dimension-two hypothesis matters: in dimension one the same toric,
--- scalar and determinant data hold for `q = 2` over `ℝ`, while the
--- conclusion `(2 : ℝ) = 0 ∨ (2 : ℝ) = 1` is false.
-example : ¬ ((2 : ℝ) = 0 ∨ (2 : ℝ) = 1) := by norm_num
+-- The dimension-two hypothesis matters: in dimension one, with
+-- `G = ℝˣ`, `φ = 2`, `V = J = ℝ`, `𝒯 = ⊤`, `ι = id` and scalar `2`, the
+-- toric-square, equivariance, scalar and determinant hypotheses all hold
+-- for `q = 2`, the rank is `1` (not `2`), and the conclusion is false.
+example :
+    ModularCurve.ToricFrobeniusSq (R := ℝ) (J := ℝ) 2
+        (Units.mk0 (2 : ℝ) (by norm_num))
+        (⊤ : Submodule ℝ ℝ) ∧
+      Function.Injective (AddMonoidHom.id ℝ : ℝ →+ ℝ) ∧
+      (∀ g : ℝˣ, ∀ v : ℝ, (AddMonoidHom.id ℝ : ℝ →+ ℝ) (g • v) =
+        g • (AddMonoidHom.id ℝ : ℝ →+ ℝ) v) ∧
+      (∀ v : ℝ, (AddMonoidHom.id ℝ : ℝ →+ ℝ) v ∈ (⊤ : Submodule ℝ ℝ)) ∧
+      (∀ v : ℝ, (Units.mk0 (2 : ℝ) (by norm_num)) • v = (2 : ℝ) • v) ∧
+      LinearMap.det (DistribSMul.toLinearMap ℝ ℝ
+        (Units.mk0 (2 : ℝ) (by norm_num))) = (2 : ℝ) ∧
+      Module.finrank ℝ ℝ = 1 ∧ ¬ ((2 : ℝ) = 0 ∨ (2 : ℝ) = 1) := by
+  have hdet : LinearMap.det (DistribSMul.toLinearMap ℝ ℝ
+      (Units.mk0 (2 : ℝ) (by norm_num))) = (2 : ℝ) := by
+    have hmap : DistribSMul.toLinearMap ℝ ℝ
+        (Units.mk0 (2 : ℝ) (by norm_num)) =
+        (2 : ℝ) • (LinearMap.id : ℝ →ₗ[ℝ] ℝ) := by
+      ext v
+      simp [DistribSMul.toLinearMap_apply, smul_eq_mul]
+    rw [hmap]
+    simp
+  refine ⟨?_, Function.injective_id, ?_, fun _ => Submodule.mem_top, ?_, hdet,
+    Module.finrank_self ℝ, by norm_num⟩
+  · intro x _
+    simp [smul_eq_mul, zsmul_eq_mul]
+    ring
+  · intro g v
+    rfl
+  · intro v
+    simp [smul_eq_mul]
