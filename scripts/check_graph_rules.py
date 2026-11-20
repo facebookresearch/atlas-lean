@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check the mechanical graph rules of docs/BLUEPRINT.md ("Graph rules") on the committed tree.
+"""Check the mechanical graph rules of docs/BLUEPRINT.md ("Graph rules") on the working tree.
 
     python scripts/check_graph_rules.py                            report every finding
     python scripts/check_graph_rules.py --base BASE                also say which findings BASE doesn't have
@@ -8,9 +8,10 @@
                                                                    cycle through Lean edges (report-only)
 
 The rules themselves, and which of them this script checks, are in docs/BLUEPRINT.md under "Graph rules"
-and its "Checks" subsection; each finding names its rule. The script reads the committed tree, before
-`sync_wiki.py lean-facts` adds the Lean's facts, and reads pages with the pinned Autoform's own Markdown
-readers, so it sees links, headings and code as `autoform check` and the site do.
+and its "Checks" subsection; each finding names its rule. The script reads the working tree (in CI, the
+committed tree, before `sync_wiki.py lean-facts` adds the Lean's facts), and reads pages with the pinned
+Autoform's own Markdown readers, so it sees links, headings and code as `autoform check` and the site do.
+--built is never compared with a base and never blocks.
 
 With --base, each finding is compared with the base commit's by its rule, the page it is about and what is
 wrong, counting repeats and ignoring line numbers, so a row inserted above an old finding doesn't make it new
@@ -367,11 +368,7 @@ def check_edges(root: Path, annotations: dict[Path, dict], report: Report) -> No
     graph_module, _ = autoform()
     vault = root / "blueprint"
     for page, annotation in sorted(annotations.items()):
-        if linked(annotation) and page.name == "README.md":
-            # lean-facts skips folder pages, so a Lean link there is never checked or kept in step with the Lean.
-            report.add(5, rel(page, root), "a folder page names a Lean declaration; link it from an article instead",
-                       annotation.get("_at", ""))
-        if linked(annotation):
+        if linked(annotation):  # folder pages included: lean-facts skips them, so nothing would rewrite the sections
             text = read_text(page, root, report, 9)
             for heading in lean_sections(text) if text is not None else ():
                 canonical = "Proof depends on" if heading.casefold() == "proof depends on" else "Depends on"
@@ -583,21 +580,53 @@ def summary(new: list[Finding], inherited: list[Finding], compared: bool, blocki
     return "\n".join(lines) + "\n"
 
 
+def reaches(edges: dict, start, goal) -> bool:
+    """Whether `goal` can be reached from `start` along `edges`."""
+    seen, pending = {start}, [start]
+    while pending:
+        node = pending.pop()
+        if node == goal:
+            return True
+        for other in edges.get(node, ()):
+            if other not in seen:
+                seen.add(other)
+                pending.append(other)
+    return False
+
+
 def built_informal_cycles(root: Path) -> list[Finding]:
     """Rule 11 on the built graph: an informal link whose target depends on its page through counted edges, as
     Autoform's `informal_cycle_warnings` finds it after `lean-facts` has added the Lean's edges. On the committed
-    tree a linked page has no dependency sections (rule 9), so only this pass sees a cycle through Lean edges."""
+    tree a linked page has no dependency sections (rule 9), so only this pass sees a cycle through Lean edges.
+    A cycle the committed tree already closes (through informal links and planned pages' own edges) is left to
+    the first pass, so no cycle is reported twice."""
     graph_module, _ = autoform()
     try:
         graph = graph_module.load_graph(root / "blueprint")
     except graph_module.GraphValidationError:
         return []  # autoform check reports it
+    annotations = load_annotations(root, Report())
+    linked_pages = {page for page, annotation in annotations.items() if linked(annotation)}
     paths = {node_id: rel(Path(node.path), root) for node_id, node in graph.nodes.items()}
+    counted = {node_id: set(node.dependencies) for node_id, node in graph.nodes.items()}
+    # The committed tree's edges: a planned page's own sections, which lean-facts leaves alone, and every
+    # informal link; a linked page commits no dependency section (rule 9).
+    committed = {
+        node_id: (set() if Path(node.path).resolve() in linked_pages else set(node.dependencies))
+        | set(node.informal_dependencies)
+        for node_id, node in graph.nodes.items()
+    }
     findings = []
     for warning in graph_module.informal_cycle_warnings(graph):
-        node_id = warning.split(":", 1)[0]
-        findings.append(Finding(11, paths.get(node_id, node_id), f"`## Informally uses`: {warning.split(': ', 1)[-1]}",
-                                part="built"))
+        source, _, rest = warning.partition(": informally uses ")
+        target = rest.split(", which depends on it", 1)[0]
+        if source not in graph.nodes or target not in graph.nodes or not reaches(counted, target, source):
+            findings.append(Finding(11, paths.get(source, source), f"`## Informally uses`: {warning}", part="built"))
+            continue
+        if reaches(committed, target, source):
+            continue  # the first pass reports this link
+        findings.append(Finding(11, paths[source], f"`## Informally uses` links {paths[target]}, which depends on "
+                                "it through Lean edges", part="built"))
     return findings
 
 
@@ -620,6 +649,8 @@ def main(argv: list[str] | None = None) -> int:
             with args.summary.open("a", encoding="utf-8") as handle:
                 lines = ["## Graph rules on the built graph (report-only)", ""]
                 lines += [f"- {finding}" for finding in findings[:50]] or ["No informal link closes a cycle through Lean edges."]
+                if len(findings) > 50:
+                    lines.append(f"- … and {len(findings) - 50} more in the step's log")
                 handle.write("\n".join(lines) + "\n")
         print(f"graph rules (built): {len(findings)} finding(s), reported only" if findings else "graph rules (built): OK")
         return 0

@@ -346,19 +346,28 @@ class GraphRules(unittest.TestCase):
         self.vault.write("blueprint/roadmap/CategoryTheory/topos-theory/is-topos.md",
                          "# Elementary topos\n\nA topos.\n\n## Informally uses\n\n- [Fundamental](fundamental.md)\n")
         found = [str(finding) for finding in rules.built_informal_cycles(self.vault.root)]
-        self.assertEqual(len(found), 1, found)
-        self.assertIn("topos-theory/is-topos.md: `## Informally uses`", found[0])
+        self.assertEqual(found, ["blueprint/roadmap/CategoryTheory/topos-theory/is-topos.md: `## Informally uses` links "
+                                 "blueprint/roadmap/CategoryTheory/topos-theory/fundamental.md, which depends on it "
+                                 "through Lean edges (rule 11)"])
         with patch.dict(os.environ, {"GITHUB_ACTIONS": ""}), patch("sys.stderr"):
             self.assertEqual(rules.main(["--root", str(self.vault.root), "--built"]), 0)  # report-only
 
-    def test_a_folder_page_with_a_lean_link_and_lean_sections_is_flagged(self) -> None:
+    def test_a_linked_folder_page_commits_no_lean_sections(self) -> None:
         self.vault.annotations["Physics"][0]["object"] = [{"location": {"declaration": "X.physics"}}]
         self.vault.save()
         self.vault.write("blueprint/roadmap/Physics/README.md",
                          "# Physics\n\n- [Mechanics](mechanics.md)\n\n## Depends on\n\nThis node has no prerequisites.\n")
-        found = self.findings()
-        self.assertIn("Physics.jsonl:1: a folder page names a Lean declaration", found)
-        self.assertIn("Physics/README.md: commits `## Depends on`", found)
+        self.assertEqual(self.vault.check(), ["blueprint/roadmap/Physics/README.md: commits `## Depends on`, "
+                                              "which lean-facts writes at build time (rule 9)"])
+
+    def test_after_lean_facts_a_cycle_the_committed_tree_closes_is_left_to_the_first_pass(self) -> None:
+        # Planned Mechanics depends on Fundamental, and Fundamental informally uses Mechanics: both passes see it.
+        self.vault.write("blueprint/roadmap/Physics/mechanics.md",
+                         "# Mechanics\n\nNewton.\n\n## Depends on\n\n- [Fundamental](../CategoryTheory/topos-theory/fundamental.md)\n")
+        self.vault.write("blueprint/roadmap/CategoryTheory/topos-theory/fundamental.md",
+                         "# Fundamental theorem\n\nSlices.\n\n## Informally uses\n\n- [Mechanics](../../Physics/mechanics.md)\n")
+        self.assertIn("which reaches back to it", self.findings())
+        self.assertEqual(rules.built_informal_cycles(self.vault.root), [])
 
     def test_a_cycle_of_counted_edges_alone_is_left_to_autoform(self) -> None:
         groups = rules.strongly_connected({"a": {"b"}, "b": {"c"}, "c": {"a"}, "d": {"a"}})
@@ -499,18 +508,29 @@ class GitRules(unittest.TestCase):
         self.commit()
         self.assertEqual(self.run_main("--base", duplicate, "--blocking"), 1)
 
-    def test_a_second_informal_link_closing_an_old_cycle_is_new(self) -> None:
-        # The base has Fundamental <-> Topos through informal links; the head adds Mechanics into the same cycle.
+    def test_a_second_informal_link_among_the_same_pages_is_new(self) -> None:
+        # The base: Fundamental informally uses Topos, planned Topos depends on Mechanics, and planned Mechanics on
+        # Fundamental, so the three are one cycle with one informal link in it.
+        self.vault.annotations["CategoryTheory"][2].pop("object")
+        self.vault.save()
         self.vault.write("blueprint/roadmap/CategoryTheory/topos-theory/is-topos.md",
-                         "# Elementary topos\n\nA topos.\n\n## Informally uses\n\n- [Fundamental](fundamental.md)\n")
+                         "# Elementary topos\n\nA topos.\n\n## Depends on\n\n- [Mechanics](../../Physics/mechanics.md)\n")
+        self.vault.write("blueprint/roadmap/Physics/mechanics.md",
+                         "# Mechanics\n\nNewton.\n\n## Depends on\n\n- [Fundamental](../CategoryTheory/topos-theory/fundamental.md)\n")
         self.commit()
         cycle = self.head()
+        self.assertEqual(len(rules.check(self.root)), 1)
+        # The head adds a second informal link among the same three pages.
         self.vault.write("blueprint/roadmap/Physics/mechanics.md",
-                         "# Mechanics\n\nNewton.\n\n## Informally uses\n\n- [Topos](../CategoryTheory/topos-theory/is-topos.md)\n")
-        self.vault.write("blueprint/roadmap/CategoryTheory/topos-theory/fundamental.md",
-                         "# Fundamental theorem\n\nSlices.\n\n## Informally uses\n\n- [Elementary topos](is-topos.md)\n"
-                         "- [Mechanics](../../Physics/mechanics.md)\n")
+                         "# Mechanics\n\nNewton.\n\n## Depends on\n\n- [Fundamental](../CategoryTheory/topos-theory/fundamental.md)\n"
+                         "\n## Informally uses\n\n- [Topos](../CategoryTheory/topos-theory/is-topos.md)\n")
         self.commit()
+        findings = rules.check(self.root, cycle)
+        new, inherited = rules.split_new(findings, rules.base_findings(self.root, cycle, {"edges"}))
+        self.assertEqual([str(finding) for finding in new], [
+            "blueprint/roadmap/Physics/mechanics.md: `## Informally uses` links "
+            "blueprint/roadmap/CategoryTheory/topos-theory/is-topos.md, which reaches back to it (rule 11)"])
+        self.assertEqual(len(inherited), 1)
         self.assertEqual(self.run_main("--base", cycle, "--blocking"), 1)
 
     def test_build_outputs_the_base_already_tracks_are_inherited(self) -> None:

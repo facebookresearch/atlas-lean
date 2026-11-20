@@ -215,8 +215,7 @@ the daily build of `main`:
   - rule 1: subject folders and the field folders of a subject with fields
     (not module placements or subfields, which the generator lays out);
   - rule 2: every page and subfolder is listed on its folder page;
-  - rule 5: every page has an annotation row, and a folder page names no Lean
-    declaration (`lean-facts` skips folder pages); one annotation per page, in its
+  - rule 5: every page has an annotation row; one annotation per page, in its
     subject's links file, naming at most one declaration, with a well-formed,
     unique `id` where it has one, and a subject URI with no percent-escape
     (`sync_wiki.py` reads it as written and Autoform decodes it, so the two
@@ -224,14 +223,15 @@ the daily build of `main`:
     (a `.json`, a `.ndjson`, a nested file or a second `_defaults.json`);
   - rule 8: no build output is tracked, and neither a row nor a
     `_defaults.json` commits `kind` or `status`;
-  - rules 9 and 10: no linked page commits `## Depends on` or `## Proof
-    depends on`, while a planned page may;
+  - rules 9 and 10: no linked page, folder pages included, commits `## Depends
+    on` or `## Proof depends on`, while a planned page may;
   - rule 11: `## Informally uses` links existing pages, never the page itself,
     and closes no cycle through informal links and planned pages' own edges.
     On the committed tree a linked page has no dependency sections (rule 9),
     so a cycle through Lean edges shows only after `lean-facts`:
     `check_graph_rules.py --built` reports those from the built graph, in the
-    same job summary;
+    same job summary, leaving to the first pass the cycles it already sees.
+    `--built` is never compared with the base and never blocks;
   - rule 12: `not_ready` is a boolean, on an article with no Lean link;
   - rule 15: a PR changes fewer than 3,000 files.
 
