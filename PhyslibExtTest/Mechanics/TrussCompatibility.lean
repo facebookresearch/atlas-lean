@@ -807,7 +807,7 @@ matrix. -/
 example : Statistics.UncertaintyPropagation.IdentifiableOnAffine
     (loadObservationMatrix rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
       (1 : Matrix (Fin 2) (Fin 2) ℝ) (1 : Matrix (Fin 2) (Fin 2) ℝ))
-    (0 : Fin 2 → ℝ) ⊤ :=
+    (AffineSubspace.mk' (0 : Fin 2 → ℝ) ⊤) :=
   loadObservation_identifiableOnAffine_of_kernels rF ![0, 1] ![1, 2] SF _
     posDefF _ _ _ _
     (by intro w hw; simpa using hw) (by intro v _ hw; simpa using hw)

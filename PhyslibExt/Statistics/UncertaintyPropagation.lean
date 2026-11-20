@@ -15,6 +15,7 @@ public import Mathlib.Analysis.Normed.Group.Basic
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.LinearAlgebra.Matrix.Defs
 public import Mathlib.LinearAlgebra.Matrix.Notation
+public import Mathlib.LinearAlgebra.AffineSpace.AffineSubspace.Defs
 public import Mathlib.Topology.EMetricSpace.Lipschitz
 public import Mathlib.Topology.MetricSpace.Lipschitz
 public import MathlibExt.Probability.FiniteProbability
@@ -488,21 +489,39 @@ lemma normalEquations_unique {m n : ℕ} (A : Matrix (Fin m) (Fin n) ℝ) (hA : 
     θ₁ = θ₂ :=
   identifiable_normal_injective A hA (h₁.trans h₂.symm)
 
-/-- Identifiability on the declared affine parameter space
-`theta0 + V`, written `{θ | θ - theta0 ∈ V}`: parameters in the space
-with the same observation under `A` are equal. -/
+/-- Identifiability on a declared affine parameter space:
+parameters in the affine subspace `S` with the same
+observation under `A` are equal. -/
 def IdentifiableOnAffine {nm np : ℕ} (A : Matrix (Fin nm) (Fin np) ℝ)
-    (theta0 : Fin np → ℝ) (V : Submodule ℝ (Fin np → ℝ)) : Prop :=
-  ∀ θ₁ θ₂ : Fin np → ℝ, θ₁ - theta0 ∈ V → θ₂ - theta0 ∈ V →
-    A *ᵥ θ₁ = A *ᵥ θ₂ → θ₁ = θ₂
-/-- Affine identifiability holds iff the kernel inside the direction
-space `V` is trivial: `A *ᵥ v = 0` with `v ∈ V` forces `v = 0`. The
-base point `theta0` cancels; only differences matter. -/
-lemma identifiableOnAffine_iff_trivial_ker {nm np : ℕ}
+    (S : AffineSubspace ℝ (Fin np → ℝ)) : Prop :=
+  Set.InjOn (fun θ => A *ᵥ θ) S
+
+/-- On the affine subspace through `theta0` with direction
+space `V`, affine identifiability is the pointwise
+statement in base-point form. -/
+lemma identifiableOnAffine_mk' {nm np : ℕ}
     (A : Matrix (Fin nm) (Fin np) ℝ) (theta0 : Fin np → ℝ)
     (V : Submodule ℝ (Fin np → ℝ)) :
-    IdentifiableOnAffine A theta0 V ↔
+    IdentifiableOnAffine A (AffineSubspace.mk' theta0 V) ↔
+      ∀ θ₁ θ₂ : Fin np → ℝ, θ₁ - theta0 ∈ V → θ₂ - theta0 ∈ V →
+        A *ᵥ θ₁ = A *ᵥ θ₂ → θ₁ = θ₂ := by
+  constructor
+  · intro h θ₁ θ₂ h1 h2 hA
+    exact h (by simpa [vsub_eq_sub] using h1) (by simpa [vsub_eq_sub] using h2) hA
+  · intro h θ₁ h1 θ₂ h2 hA
+    exact h θ₁ θ₂ (by simpa [vsub_eq_sub] using h1)
+      (by simpa [vsub_eq_sub] using h2) hA
+
+/-- Affine identifiability on `theta0 + V` holds iff the kernel
+inside the direction space `V` is trivial: `A *ᵥ v = 0` with
+`v ∈ V` forces `v = 0`. The base point `theta0` cancels; only
+differences matter. -/
+lemma identifiableOnAffine_mk'_iff_trivial_ker {nm np : ℕ}
+    (A : Matrix (Fin nm) (Fin np) ℝ) (theta0 : Fin np → ℝ)
+    (V : Submodule ℝ (Fin np → ℝ)) :
+    IdentifiableOnAffine A (AffineSubspace.mk' theta0 V) ↔
       ∀ v : Fin np → ℝ, v ∈ V → A *ᵥ v = 0 → v = 0 := by
+  rw [identifiableOnAffine_mk']
   constructor
   · intro h v hv hAv
     have h1 : theta0 + v - theta0 ∈ V := by
@@ -531,23 +550,18 @@ lemma identifiableOnAffine_iff_trivial_ker {nm np : ℕ}
 parameter space. -/
 lemma identifiableOnAffine_of_identifiable {nm np : ℕ}
     (A : Matrix (Fin nm) (Fin np) ℝ) (hA : Identifiable A)
-    (theta0 : Fin np → ℝ) (V : Submodule ℝ (Fin np → ℝ)) :
-    IdentifiableOnAffine A theta0 V := by
-  intro θ₁ θ₂ _ _ h
-  exact hA h
+    (S : AffineSubspace ℝ (Fin np → ℝ)) :
+    IdentifiableOnAffine A S :=
+  fun θ₁ _ θ₂ _ h => hA h
 
-/-- On the full parameter space (`V = ⊤`), affine identifiability is
-calibration identifiability. Uses the canonical trivial-kernel
-characterization `identifiable_iff_trivial_ker`. -/
+/-- On the full parameter space, affine identifiability is
+calibration identifiability. -/
 lemma identifiableOnAffine_top_iff_identifiable {nm np : ℕ}
-    (A : Matrix (Fin nm) (Fin np) ℝ) (theta0 : Fin np → ℝ) :
-    IdentifiableOnAffine A theta0 ⊤ ↔ Identifiable A := by
-  rw [identifiableOnAffine_iff_trivial_ker, identifiable_iff_trivial_ker]
-  constructor
-  · intro h θ hθ
-    exact h θ Submodule.mem_top hθ
-  · intro h v _ hv
-    exact h v hv
+    (A : Matrix (Fin nm) (Fin np) ℝ) :
+    IdentifiableOnAffine A (⊤ : AffineSubspace ℝ (Fin np → ℝ))
+      ↔ Identifiable A := by
+  rw [IdentifiableOnAffine, AffineSubspace.top_coe, Set.injOn_univ]
+  exact Iff.rfl
 
 /-- Basis coordinates: with directions `P *ᵥ ξ`, identifiability of
 the restricted matrix `A * P` is triviality of the kernel in the form
@@ -570,7 +584,7 @@ space `V` (`hrange`, `hspan`) and `P` has trivial kernel (`hPinj`),
 affine identifiability on `theta0 + V` is identifiability of the
 restricted matrix `A * P` in basis coordinates. Uses the canonical
 trivial-kernel characterization `identifiable_iff_trivial_ker`. -/
-lemma identifiableOnAffine_iff_identifiable_mul_basis
+lemma identifiableOnAffine_mk'_iff_identifiable_mul_basis
     {nm np nd : ℕ}
     (A : Matrix (Fin nm) (Fin np) ℝ)
     (P : Matrix (Fin np) (Fin nd) ℝ) (theta0 : Fin np → ℝ)
@@ -579,8 +593,9 @@ lemma identifiableOnAffine_iff_identifiable_mul_basis
     (hspan : ∀ v : Fin np → ℝ, v ∈ V →
       ∃ ξ : Fin nd → ℝ, P *ᵥ ξ = v)
     (hPinj : ∀ ξ : Fin nd → ℝ, P *ᵥ ξ = 0 → ξ = 0) :
-    IdentifiableOnAffine A theta0 V ↔ Identifiable (A * P) := by
-  rw [identifiableOnAffine_iff_trivial_ker,
+    IdentifiableOnAffine A (AffineSubspace.mk' theta0 V)
+      ↔ Identifiable (A * P) := by
+  rw [identifiableOnAffine_mk'_iff_trivial_ker,
     identifiable_mul_basis_iff_trivial_ker]
   constructor
   · intro h ξ hξ
@@ -599,16 +614,21 @@ lemma exists_distinct_onAffine_of_nontrivial_ker {nm np : ℕ}
     (A : Matrix (Fin nm) (Fin np) ℝ) (theta0 : Fin np → ℝ)
     (V : Submodule ℝ (Fin np → ℝ))
     (hex : ∃ v₀ : Fin np → ℝ, v₀ ≠ 0 ∧ v₀ ∈ V ∧ A *ᵥ v₀ = 0)
-    (θ : Fin np → ℝ) (y : Fin nm → ℝ) (hθ : θ - theta0 ∈ V)
+    (θ : Fin np → ℝ) (y : Fin nm → ℝ)
+    (hθ : θ ∈ AffineSubspace.mk' theta0 V)
     (hy : A *ᵥ θ = y) :
-    ∃ θ' : Fin np → ℝ, θ' ≠ θ ∧ θ' - theta0 ∈ V ∧ A *ᵥ θ' = y := by
+    ∃ θ' : Fin np → ℝ, θ' ≠ θ ∧ θ' ∈ AffineSubspace.mk' theta0 V
+      ∧ A *ᵥ θ' = y := by
   obtain ⟨v₀, hne, hmem, hker⟩ := hex
+  have hθ' : θ - theta0 ∈ V := by
+    simpa [vsub_eq_sub] using hθ
   refine ⟨θ + v₀, ?_, ?_, ?_⟩
   · intro hcon
     exact hne (add_left_cancel_iff.mp (hcon.trans (add_zero θ).symm))
-  · have h := V.add_mem hθ hmem
+  · have h := V.add_mem hθ' hmem
     have heq : θ + v₀ - theta0 = (θ - theta0) + v₀ := by abel
-    rwa [heq]
+    rw [AffineSubspace.mem_mk', vsub_eq_sub, heq]
+    exact h
   · have hadd : A *ᵥ (θ + v₀) = A *ᵥ θ + A *ᵥ v₀ := Matrix.mulVec_add _ _ _
     rw [hadd, hker, hy, add_zero]
 

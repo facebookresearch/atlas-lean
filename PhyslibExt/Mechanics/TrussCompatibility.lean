@@ -701,8 +701,11 @@ theorem loadObservation_supported_response {J M : Type*} [Fintype J]
 supported stiffness, if the sensor map has trivial kernel and the
 load basis has trivial kernel on the direction space `V`, then load
 parameters on `theta0 + V` are identifiable from the observation.
-Failure of either kernel condition is the rank-deficient case covered
-by the kernel-direction result above. -/
+The two kernel conditions are sufficient, not necessary: the exact
+obstruction is a nonzero kernel direction of the composite
+observation map inside `V`, and a sensor kernel that misses the
+realized response subspace does not by itself obstruct
+identifiability. -/
 theorem loadObservation_identifiableOnAffine_of_kernels
     {J M : Type*} [Fintype J] [DecidableEq J] [Fintype M]
     [DecidableEq M] {nf np nm : ℕ}
@@ -716,8 +719,9 @@ theorem loadObservation_identifiableOnAffine_of_kernels
     (hC : ∀ w : Fin nf → ℝ, Cmat *ᵥ w = 0 → w = 0)
     (hB : ∀ v : Fin np → ℝ, v ∈ V → Bload *ᵥ v = 0 → v = 0) :
     Statistics.UncertaintyPropagation.IdentifiableOnAffine
-      (loadObservationMatrix r a b S k Cmat Bload) theta0 V := by
-  rw [Statistics.UncertaintyPropagation.identifiableOnAffine_iff_trivial_ker]
+      (loadObservationMatrix r a b S k Cmat Bload)
+      (AffineSubspace.mk' theta0 V) := by
+  rw [Statistics.UncertaintyPropagation.identifiableOnAffine_mk'_iff_trivial_ker]
   intro v hv hHv
   have h := hHv
   simp only [loadObservationMatrix, ← Matrix.mulVec_mulVec] at h

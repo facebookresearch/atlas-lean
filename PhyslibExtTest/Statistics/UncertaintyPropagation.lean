@@ -387,8 +387,9 @@ example (y : Fin 3 → ℝ) (θ₁ θ₂ : Fin 2 → ℝ)
 
 /-- On the full parameter space, affine identifiability
 of the identity is calibration identifiability. -/
-example (theta0 : Fin 2 → ℝ) :
-    IdentifiableOnAffine (1 : Matrix (Fin 2) (Fin 2) ℝ) theta0 ⊤ := by
+example :
+    IdentifiableOnAffine (1 : Matrix (Fin 2) (Fin 2) ℝ)
+      (⊤ : AffineSubspace ℝ (Fin 2 → ℝ)) := by
   rw [identifiableOnAffine_top_iff_identifiable]
   intro θ₁ θ₂ h
   simpa using h
@@ -398,9 +399,9 @@ example (theta0 : Fin 2 → ℝ) :
 identifiable on `![5, 7] + range P` at a nonzero base
 point. -/
 example : IdentifiableOnAffine (!![1, 0] : Matrix (Fin 1) (Fin 2) ℝ)
-    ![5, 7]
-    (LinearMap.range (!![1; 0] : Matrix (Fin 2) (Fin 1) ℝ).mulVecLin) := by
-  refine (identifiableOnAffine_iff_identifiable_mul_basis
+    (AffineSubspace.mk' ![5, 7]
+      (LinearMap.range (!![1; 0] : Matrix (Fin 2) (Fin 1) ℝ).mulVecLin)) := by
+  refine (identifiableOnAffine_mk'_iff_identifiable_mul_basis
       (!![1, 0] : Matrix (Fin 1) (Fin 2) ℝ)
       (!![1; 0] : Matrix (Fin 2) (Fin 1) ℝ) ![5, 7] _ ?_ ?_ ?_).mpr ?_
   · intro ξ
@@ -423,9 +424,10 @@ example : IdentifiableOnAffine (!![1, 0] : Matrix (Fin 1) (Fin 2) ℝ)
 /-- Singleton affine space (`V = ⊥`) is identifiable even
 under the zero matrix, which is not identifiable. -/
 example (theta0 : Fin 2 → ℝ) :
-    IdentifiableOnAffine (0 : Matrix (Fin 1) (Fin 2) ℝ) theta0 ⊥ ∧
+    IdentifiableOnAffine (0 : Matrix (Fin 1) (Fin 2) ℝ)
+        (AffineSubspace.mk' theta0 ⊥) ∧
       ¬ Identifiable (0 : Matrix (Fin 1) (Fin 2) ℝ) := by
-  refine ⟨(identifiableOnAffine_iff_trivial_ker _ _ _).mpr ?_,
+  refine ⟨(identifiableOnAffine_mk'_iff_trivial_ker _ _ _).mpr ?_,
     not_identifiable_of_lt (by norm_num) _⟩
   intro v hv _
   simpa using hv
@@ -433,8 +435,8 @@ example (theta0 : Fin 2 → ℝ) :
 /-- A nonzero kernel direction `![0, 1]` of the
 first-coordinate observation produces a distinct
 parameter with the same observation. -/
-example : ∃ θ' : Fin 2 → ℝ, θ' ≠ ![3, 4] ∧ θ' - ![5, 7] ∈
-      (⊤ : Submodule ℝ (Fin 2 → ℝ)) ∧
+example : ∃ θ' : Fin 2 → ℝ, θ' ≠ ![3, 4] ∧
+    θ' ∈ AffineSubspace.mk' ![5, 7] (⊤ : Submodule ℝ (Fin 2 → ℝ)) ∧
     (!![1, 0] : Matrix (Fin 1) (Fin 2) ℝ) *ᵥ θ'
       = (!![1, 0] : Matrix (Fin 1) (Fin 2) ℝ) *ᵥ ![3, 4] := by
   have hker : (!![1, 0] : Matrix (Fin 1) (Fin 2) ℝ) *ᵥ ![0, 1] = 0 := by
@@ -444,13 +446,13 @@ example : ∃ θ' : Fin 2 → ℝ, θ' ≠ ![3, 4] ∧ θ' - ![5, 7] ∈
   obtain ⟨θ', hne, hmem, hobs⟩ :=
     exists_distinct_onAffine_of_nontrivial_ker _ _ ⊤
       ⟨![0, 1], by norm_num, Submodule.mem_top, hker⟩ ![3, 4] _
-      Submodule.mem_top rfl
+      (by simp) rfl
   exact ⟨θ', hne, hmem, hobs⟩
 
 /-- Degenerate dimension: no parameters at all. -/
-example (A : Matrix (Fin 1) (Fin 0) ℝ) (theta0 : Fin 0 → ℝ) :
-    IdentifiableOnAffine A theta0 ⊤ := by
-  intro θ₁ θ₂ _ _ _
+example (A : Matrix (Fin 1) (Fin 0) ℝ) :
+    IdentifiableOnAffine A (⊤ : AffineSubspace ℝ (Fin 0 → ℝ)) := by
+  intro θ₁ _ θ₂ _ _
   funext i
   exact (Nat.not_lt_zero _ i.2).elim
 
@@ -462,8 +464,9 @@ example : ¬ ∀ ξ : Fin 1 → ℝ,
   have h1 := h ![1] (by simp)
   norm_num at h1
 
+#print axioms Statistics.UncertaintyPropagation.identifiableOnAffine_mk'
 #print axioms
-  Statistics.UncertaintyPropagation.identifiableOnAffine_iff_trivial_ker
+  Statistics.UncertaintyPropagation.identifiableOnAffine_mk'_iff_trivial_ker
 #print axioms
   Statistics.UncertaintyPropagation.identifiableOnAffine_of_identifiable
 #print axioms
@@ -471,7 +474,7 @@ example : ¬ ∀ ξ : Fin 1 → ℝ,
 #print axioms
   Statistics.UncertaintyPropagation.identifiable_mul_basis_iff_trivial_ker
 #print axioms
-  Statistics.UncertaintyPropagation.identifiableOnAffine_iff_identifiable_mul_basis
+  Statistics.UncertaintyPropagation.identifiableOnAffine_mk'_iff_identifiable_mul_basis
 #print axioms
   Statistics.UncertaintyPropagation.exists_distinct_onAffine_of_nontrivial_ker
 
