@@ -651,13 +651,17 @@ noncomputable def unitLoadResponse {J M F : Type*} [Fintype J]
     ℝ :=
   influenceVector r a b S k aout ⬝ᵥ f
 
-/-- The pointwise inverse diagonal recovers member elongations from
-elastic member forces: for positive member weights `k`, applying
-`Matrix.diagonal (fun e => (k e)⁻¹)` to the member-force vector
-`Matrix.diagonal k *ᵥ ((B S) *ᵥ u)` returns `(B S) *ᵥ u`. The
-inverses are scalar inverses `(k e)⁻¹`; positivity is used as
-nonvanishing member by member. No stiffness inverse occurs. -/
-lemma supported_invDiagonal_mulVec_memberForce {J M F : Type*}
+/-- The pointwise inverse diagonal recovers the separation-form
+pairing vector from the elastic coefficient vector: for positive
+member weights `k`, applying `Matrix.diagonal (fun e => (k e)⁻¹)` to
+the coefficient vector `Matrix.diagonal k *ᵥ ((B S) *ᵥ u)` returns
+`(B S) *ᵥ u`, whose entries are member length times elongation (the
+coefficients are axial force divided by member length, as at
+`supported_virtualWork_iff`). The inverses are scalar inverses
+`(k e)⁻¹` (generalized compliances for the separation-form weights);
+positivity is used as nonvanishing member by member. No stiffness
+inverse occurs. -/
+lemma supported_invDiagonal_mulVec_memberCoefficient {J M F : Type*}
     [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
     [Fintype F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
     (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ)
@@ -773,14 +777,15 @@ private theorem dotProduct_diag_mulVec {M : Type*} [Fintype M]
   intro e _
   ring
 
-/-- Unit-load identity in elongation form: for positive-definite
+/-- Unit-load identity in separation form: for positive-definite
 supported stiffness and a supported solution `K *ᵥ u = f`, the fixed
-output `aout ⬝ᵥ u` equals the unit-load member forces paired with
-the real member elongations `(B S) *ᵥ u`. The vector
-`K⁻¹ *ᵥ aout` is the influence vector by definition. No inverse
-diagonal occurs, so no sign premise on the weights beyond the
-positive-definiteness certificate is used. -/
-lemma supported_unitLoad_identity_elongation {J M F : Type*}
+output `aout ⬝ᵥ u` equals the unit-load separation-form coefficients
+paired with `(B S) *ᵥ u` (member length times elongation; the
+coefficients are axial force divided by member length).
+The vector `K⁻¹ *ᵥ aout` is the influence vector by definition. No
+inverse diagonal occurs, so no sign premise on the weights beyond
+the positive-definiteness certificate is used. -/
+lemma supported_unitLoad_identity_separationForm {J M F : Type*}
     [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
     [Fintype F] [DecidableEq F]
     (r : J → (Fin 2 → ℝ)) (a b : M → J)
@@ -811,13 +816,17 @@ lemma supported_unitLoad_identity_elongation {J M F : Type*}
 
 /-- Unit-load identity: for one supported stiffness with positive
 member weights and positive-definite certificate, a supported
-solution `K *ᵥ u = f` with member forces
-`N = Matrix.diagonal k *ᵥ ((B S) *ᵥ u)` and unit-load member forces
-`n = Matrix.diagonal k *ᵥ ((B S) *ᵥ (K⁻¹ *ᵥ aout))` satisfies
+solution `K *ᵥ u = f` with separation-form coefficient vectors
+`N = Matrix.diagonal k *ᵥ ((B S) *ᵥ u)` and
+`n = Matrix.diagonal k *ᵥ ((B S) *ᵥ (K⁻¹ *ᵥ aout))` (axial force
+divided by member length) satisfies
 `aout ⬝ᵥ u = n ⬝ᵥ (D⁻¹ *ᵥ N)`, where `D⁻¹` is the pointwise inverse
-diagonal `Matrix.diagonal (fun e => (k e)⁻¹)` (member flexibilities,
-not a matrix inverse and no second solve). The elongation form is
-the preceding identity; the two member pairings agree through
+diagonal `Matrix.diagonal (fun e => (k e)⁻¹)` (generalized
+compliances for the separation-form weights — for physical weights
+`EA / L ^ 3` this is `L ^ 3 / EA`, not member flexibility
+`L / EA`; the physical axial-force form is
+`supported_unitLoad_axialForce_identity` below). The separation form
+is the preceding identity; the two member pairings agree through
 recovery of `(B S) *ᵥ u` from `N`, which is where positivity of the
 weights enters. Both load cases share the one stiffness, supports
 and reference configuration. -/
@@ -842,9 +851,9 @@ theorem supported_unitLoad_identity {J M F : Type*}
         ⬝ᵥ (Matrix.diagonal (fun e => (k e)⁻¹)
           *ᵥ (Matrix.diagonal k
             *ᵥ ((axialCompatibility r a b * S) *ᵥ u))) := by
-  have hrec := supported_invDiagonal_mulVec_memberForce r a b S k hk u
+  have hrec := supported_invDiagonal_mulVec_memberCoefficient r a b S k hk u
   rw [hrec]
-  exact supported_unitLoad_identity_elongation r a b S k hPD aout hu
+  exact supported_unitLoad_identity_separationForm r a b S k hPD aout hu
 
 /-- Unit-load identity from the physical member data: for positive
 member weights `k` and trivial supported kernel (no supported null
@@ -879,5 +888,46 @@ theorem supported_unitLoad_identity_of_kernel {J M F : Type*}
       * (axialCompatibility r a b * S)).PosDef :=
     (supported_posDef_iff r a b S k hk).mpr hker
   exact supported_unitLoad_identity r a b S k hk hPD aout hu
+
+
+/-- Unit-load identity in physical axial forces: under the
+`supported_unitLoad_identity` data with noncoincident endpoints,
+rescaling the separation-form coefficients by member length
+(`N e * L e` is the physical axial force, tension positive) gives
+`aout ⬝ᵥ u = ∑ e, nphys e * (Nphys e / (k e * (L e) ^ 2))`; for
+physical separation-form weights `k e = EA / (L e) ^ 3` the
+denominator `k e * (L e) ^ 2` is `EA / L e`, the classical
+dummy-unit-load sum `∑ n N L / EA`. -/
+theorem supported_unitLoad_axialForce_identity {J M F : Type*}
+    [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
+    [Fintype F] [DecidableEq F]
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ)
+    (hk : ∀ e, 0 < k e)
+    (hPD : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+      * (axialCompatibility r a b * S)).PosDef)
+    (hne : ∀ e, r (a e) ≠ r (b e))
+    (aout : F → ℝ) {f u : F → ℝ}
+    (hu : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S)) *ᵥ u = f) :
+    aout ⬝ᵥ u
+      = (fun e => (Matrix.diagonal k
+            *ᵥ ((axialCompatibility r a b * S)
+              *ᵥ (((axialCompatibility r a b * S)ᵀ
+                    * Matrix.diagonal k
+                    * (axialCompatibility r a b * S))⁻¹
+                  *ᵥ aout))) e * memberLength r a b e)
+        ⬝ᵥ (fun e => ((Matrix.diagonal k
+              *ᵥ ((axialCompatibility r a b * S) *ᵥ u)) e
+            * memberLength r a b e) / (k e * memberLength r a b e ^ 2)) := by
+  rw [supported_unitLoad_identity r a b S k hk hPD aout hu, dotProduct,
+    dotProduct]
+  apply Finset.sum_congr rfl
+  intro e _
+  have hL : memberLength r a b e ≠ 0 :=
+    ne_of_gt (memberLength_pos_of_ne r a b (hne e))
+  have hk' : k e ≠ 0 := ne_of_gt (hk e)
+  simp only [mulVec_diagonal]
+  field_simp
 
 end Mechanics.TrussCompatibility

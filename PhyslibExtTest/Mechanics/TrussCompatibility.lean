@@ -815,7 +815,7 @@ example : Matrix.diagonal (fun e => (![1 / 2, 3] e)⁻¹)
       *ᵥ (Matrix.diagonal ![1 / 2, 3]
         *ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF) *ᵥ ![3, 5]))
     = (axialCompatibility rF ![0, 1] ![1, 2] * SF) *ᵥ ![3, 5] :=
-  supported_invDiagonal_mulVec_memberForce rF ![0, 1] ![1, 2] SF _
+  supported_invDiagonal_mulVec_memberCoefficient rF ![0, 1] ![1, 2] SF _
     (by intro e; fin_cases e <;> norm_num) _
 
 /-- The influence vector solves the unit-load system. -/
@@ -845,7 +845,7 @@ example : ![2, 0] ⬝ᵥ ![3, 5]
         *ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF)
           *ᵥ influenceVector rF ![0, 1] ![1, 2] SF ![1 / 2, 3] ![2, 0]))
       ⬝ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF) *ᵥ ![3, 5]) := by
-  have h := supported_unitLoad_identity_elongation rF ![0, 1] ![1, 2] SF _
+  have h := supported_unitLoad_identity_separationForm rF ![0, 1] ![1, 2] SF _
     posDefUnitLoad ![2, 0] huUnitLoad
   unfold influenceVector at h ⊢
   exact h
@@ -919,6 +919,41 @@ example : unitLoadResponse rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
   unfold unitLoadResponse
   rw [heta2]
   norm_num [dotProduct, Fin.sum_univ_two]
+
+/-- Physical axial-force conversion at the focused data:
+coefficients `![3, -6]` and unit-load coefficients
+`![1, 0]` rescale by member lengths `2`, `√2` to physical
+forces `![6, -6 √2]` and `![2, 0]`, and the physical
+identity holds through the conversion theorem. -/
+example : (![2, 0] : Fin 2 → ℝ) ⬝ᵥ ![3, 5]
+    = (fun e => (Matrix.diagonal ![1 / 2, 3]
+          *ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF)
+            *ᵥ influenceVector rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+              ![2, 0])) e * memberLength rF ![0, 1] ![1, 2] e)
+      ⬝ᵥ (fun e => ((Matrix.diagonal ![1 / 2, 3]
+            *ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF)
+              *ᵥ ![3, 5])) e * memberLength rF ![0, 1] ![1, 2] e)
+          / (![1 / 2, 3] e * memberLength rF ![0, 1] ![1, 2] e ^ 2)) := by
+  have h := supported_unitLoad_axialForce_identity rF ![0, 1] ![1, 2] SF _
+    (by intro e; fin_cases e <;> norm_num) posDefUnitLoad
+    (by intro e; fin_cases e <;> norm_num [rF]) ![2, 0] huUnitLoad
+  unfold influenceVector at h ⊢
+  exact h
+
+example : (fun e => (Matrix.diagonal ![1 / 2, 3]
+        *ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF) *ᵥ ![3, 5])) e
+      * memberLength rF ![0, 1] ![1, 2] e)
+    = ![6, -6 * Real.sqrt 2] := by
+  funext e
+  fin_cases e
+  · simp only [Matrix.mulVec_diagonal]
+    rw [supportedActionF]
+    have h4 : Real.sqrt (4 : ℝ) = 2 := by
+      rw [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+    norm_num [memberLength, h4]
+  · simp only [Matrix.mulVec_diagonal]
+    rw [supportedActionF]
+    norm_num [memberLength]
 
 /-- Zero load: response `0`, and the degenerate identity
 at `f = u = 0`. -/
@@ -1034,7 +1069,7 @@ example (aout f : Fin 0 → ℝ) :
   Mechanics.TrussCompatibility.supported_dotProduct_mulVec_comm
 #print axioms Mechanics.TrussCompatibility.supported_reciprocalWork
 #print axioms
-  Mechanics.TrussCompatibility.supported_invDiagonal_mulVec_memberForce
+  Mechanics.TrussCompatibility.supported_invDiagonal_mulVec_memberCoefficient
 #print axioms
   Mechanics.TrussCompatibility.supported_influenceVector_mulVec
 #print axioms Mechanics.TrussCompatibility.supported_influenceVector_smul
@@ -1043,8 +1078,10 @@ example (aout f : Fin 0 → ℝ) :
 #print axioms Mechanics.TrussCompatibility.supported_unitLoadResponse_smul
 #print axioms Mechanics.TrussCompatibility.supported_unitLoadResponse_zero
 #print axioms
-  Mechanics.TrussCompatibility.supported_unitLoad_identity_elongation
+  Mechanics.TrussCompatibility.supported_unitLoad_identity_separationForm
 #print axioms Mechanics.TrussCompatibility.supported_unitLoad_identity
+#print axioms
+  Mechanics.TrussCompatibility.supported_unitLoad_axialForce_identity
 #print axioms
   Mechanics.TrussCompatibility.supported_unitLoad_identity_of_kernel
 
