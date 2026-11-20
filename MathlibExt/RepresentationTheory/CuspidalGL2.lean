@@ -175,7 +175,7 @@ private theorem sum_unipotent_apply_eq_zero (h : IsCuspidalOfType θ ρ) (v : V)
   simp_rw [hmul]
   exact Fintype.sum_equiv (Equiv.addLeft s) _ _ (fun t => rfl)
 
-private theorem dual_eq_zero_of_forall_comp_unipotent [CharZero K]
+private theorem dual_eq_zero_of_forall_comp_unipotent (hq : (q : K) ≠ 0)
     (h : IsCuspidalOfType θ ρ) (f : Module.Dual K V)
     (hf : ∀ t : ZMod q, f ∘ₗ ρ (unipotent q t) = f) : f = 0 := by
   ext v
@@ -185,21 +185,21 @@ private theorem dual_eq_zero_of_forall_comp_unipotent [CharZero K]
     simp only [hc, Finset.sum_const, Finset.card_univ, ZMod.card, nsmul_eq_mul, smul_eq_mul]
   have hzero : (q : K) • f v = 0 := by
     rw [← hsum, ← map_sum, sum_unipotent_apply_eq_zero h v, map_zero]
-  have hq : (q : K) ≠ 0 := Nat.cast_ne_zero.mpr (Fact.out : q.Prime).ne_zero
   simpa [hq] using hzero
 
 /-- The dual of a cuspidal-type representation is again of the same cuspidal
 type: duality preserves the dimension, kills unipotent-fixed functionals by
-averaging over the unipotent group, preserves the trivial central character,
-and preserves the torus characteristic polynomial since inversion permutes
-the two roots `θ` and `θ⁻¹`. -/
-public theorem IsCuspidalOfType.dual [CharZero K] (h : IsCuspidalOfType θ ρ) :
+averaging over the unipotent group (the only step needing `(q : K) ≠ 0`),
+preserves the trivial central character, and preserves the torus
+characteristic polynomial since inversion permutes the two roots `θ` and
+`θ⁻¹`. -/
+public theorem IsCuspidalOfType.dual (hq : (q : K) ≠ 0) (h : IsCuspidalOfType θ ρ) :
     IsCuspidalOfType θ ρ.dual := by
   classical
   refine ⟨?_, ?_, ?_, ?_⟩
   · exact Subspace.dual_finrank_eq.trans h.finrank_eq
   · intro f hf
-    apply dual_eq_zero_of_forall_comp_unipotent h f
+    apply dual_eq_zero_of_forall_comp_unipotent hq h f
     intro t
     have hft := hf (-t)
     rw [Representation.dual_apply, unipotent_inv, neg_neg, Module.Dual.transpose_apply] at hft
