@@ -33,8 +33,9 @@ example
     Nonempty (L ≃+ ((i : Fin g) → ZMod (δ i))) :=
   exactSource δ hδd L e
 
-/-- Boundary case with a single factor: the hypothesis is then a
-self-isomorphism of the product, and the conclusion recovers `L`. -/
+/-- Single-factor specialization (`g = 1`, `δ = fun _ => m`): the
+hypothesis identifies `L × (L →+ ZMod m)` with the square of
+`Fin 1 → ZMod m`, and the conclusion recovers `L` as that product. -/
 example
     (m : ℕ) [NeZero m]
     (L : Type) [AddCommGroup L] [Finite L]
