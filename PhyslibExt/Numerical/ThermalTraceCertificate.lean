@@ -23,10 +23,11 @@ checks such a trace as data and binds an accepted trace to the proved analytic b
 
 The checker `checkThermalTrace` reads a list of rationals and returns a `Bool`. It accepts exactly
 when the list has eleven entries `y_0, …, y_10`, the first is the normalized initial excess
-`y_0 = 1`, and all ten identities `y_(j+1) = (9 / 10) y_j` hold. It is evaluated by kernel
-reduction (`decide +kernel`); no terminal value, error bound or floating-point behavior is
-certificate data, and how the list was produced (a file, a parser, a floating-point program) is
-outside the claim.
+`y_0 = 1`, and all ten identities `y_(j+1) = (9 / 10) y_j` hold. The certificate is that
+eleven-element list, its last entry `y_10` included and checked by the last identity; there is no
+separately supplied expected terminal value or error bound, and floating-point behavior does not
+enter. Acceptance is decided by kernel reduction (`decide +kernel`), and how the list was produced
+(a file, a parser, a floating-point program) is outside the claim.
 
 Soundness: an accepted list satisfies `y_j = (9 / 10) ^ j` after the cast to the reals, by
 induction on the ten identities in `ℚ` and the cast homomorphism; in particular the terminal value
@@ -80,8 +81,8 @@ open PhysicalErrorBudgets
 /-- **The trace checker.** Accept a list `y` of rationals exactly when it has eleven entries
 `y_0, …, y_10`, the first is the normalized initial excess `y_0 = 1`, and all ten identities
 `y_(j+1) = (9 / 10) y_j`, `j = 0, …, 9`, hold. Entries are read with the default `0`, which an
-accepted list never uses. The checker reads only the list: no terminal value or error bound is
-part of the certificate. -/
+accepted list never uses. The certificate is the eleven-element list itself, `y_10` included;
+there is no separately supplied expected terminal value or error bound. -/
 def checkThermalTrace (y : List ℚ) : Bool :=
   y.length == 11 && y.getD 0 0 == 1 &&
     (List.range 10).all fun j => y.getD (j + 1) 0 == 9 / 10 * y.getD j 0
