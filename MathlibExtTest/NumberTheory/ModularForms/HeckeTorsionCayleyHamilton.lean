@@ -60,13 +60,13 @@ theorem exactSourceType1 {J : Type 1} [AddCommGroup J] [Module HeckeAlg J]
         σ • σ • x - t • (σ • x) + d • x = 0 :=
   cayleyHamilton_forall_of_frobeniusQuadratic_of_dense N p 𝔪 hp ρ hES hS hatt hdense
 
-/-- Boundary example: the density hypothesis matters. With `J = HeckeAlg`
-acting on itself, `𝔪 = ⊥` and `p = 1`, the conclusion for `σ = 1`, `x = 1`
-would force a polynomial identity that does not hold; hence no proof can
-drop `hdense` (here the remaining hypotheses cannot all be met). -/
-example : ¬ ∀ (t d : HeckeAlg), Ideal.Quotient.mk (⊥ : Ideal HeckeAlg) t = 0 →
-    Ideal.Quotient.mk (⊥ : Ideal HeckeAlg) d = 0 →
-    (1 : HeckeAlg) - t • (1 : HeckeAlg) + d • (1 : HeckeAlg) = 0 := by
-  intro h
-  have h0 := h 0 0 rfl rfl
-  simp at h0
+/-- Concrete-model edge tests: evaluation at `0` in `ZMod 2` kills each
+Hecke generator and the prime `2`, witnessing the torsion action in the
+smallest quotient model. -/
+example (ℓ : Nat.Primes) :
+    MvPolynomial.aeval (fun _ => (0 : ZMod 2)) (ModularCurve.heckeGen ℓ) = 0 := by
+  simp [ModularCurve.heckeGen]
+
+example :
+    MvPolynomial.aeval (fun _ => (0 : ZMod 2)) ((2 : ℕ) : ModularCurve.HeckeAlg) = 0 := by
+  simp

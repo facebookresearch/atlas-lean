@@ -38,17 +38,13 @@ public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.LinearAlgebra.Matrix.Trace
 public import Mathlib.RepresentationTheory.Basic
 public import Mathlib.RingTheory.Valuation.RamificationGroup
+public import MathlibExt.RingTheory.Valuation.LiesOverPrime
 
 @[expose] public section
 
 namespace ValuationSubring
 
 variable {L : Type*} [Field L]
-
-/-- A valuation subring lies over the prime `q` when `q` is a nonunit of it. -/
-def LiesOverPrime (A : ValuationSubring L) (q : ℕ) : Prop :=
-  (q : L) ∈ A.nonunits
-
 variable {K : Type*} [Field K] [Algebra K L]
 
 /-- `σ` is Frobenius at `q` for `A` when `σ` lies in the decomposition
@@ -453,4 +449,3 @@ public theorem cayleyHamilton_forall_of_frobeniusQuadratic_of_dense {J : Type*}
   exact (heckeTorsionRep_quadRel_iff (⇑ρ) σ).mp hEnd
 
 end ModularCurve
-
