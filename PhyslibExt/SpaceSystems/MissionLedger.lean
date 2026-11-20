@@ -38,13 +38,13 @@ model inputs. The delta-v cost of `n` burns `Δv_k` is the scalar sum of their m
 `∑ ‖Δv_k‖` (`burnCost`), not the norm of their vector sum `∑ Δv_k` (`netVelocityChange`): the net
 change is never larger, and two opposite equal burns cost twice the magnitude with zero net change.
 Burn magnitudes come from actual stage masses: a burn of the reduced variable-mass law of
-`PhyslibExt.Mechanics.PropulsionPorts` from the start mass `m₀ k` to the end mass `m₁ k` along a
-unit direction has the magnitude `ve_k log (m₀ k / m₁ k) ≥ 0` (`stageIncrement`), and dry mass
-jettisoned between burns enters no logarithm. Admissible stage masses are positive and only
-decrease (`AdmissibleStageMasses`), which rejects a depleted or negative intermediate mass and with
-it the totalized `log (m₀ / 0) = 0` that would price a burn to empty mass as free. For collinear
-forward burns with momentum-conserving jettisons the net change equals the staged velocity gain,
-and its norm equals the cost.
+`PhyslibExt.Mechanics.PropulsionPorts` at a positive exhaust speed `ve_k`, from the start mass
+`m₀ k` to the end mass `m₁ k` along a unit direction, has the magnitude
+`ve_k log (m₀ k / m₁ k) ≥ 0` (`stageIncrement`), and dry mass jettisoned between burns enters no
+logarithm. Admissible stage masses are positive and only decrease (`AdmissibleStageMasses`), which
+rejects a depleted or negative intermediate mass and with it the totalized `log (m₀ / 0) = 0` that
+would price a burn to empty mass as free. For collinear forward burns with momentum-conserving
+jettisons the net change equals the staged velocity gain, and its norm equals the cost.
 
 Fuel enters as a supplied consumed-fraction functional `fuel ve Δv` at one exhaust speed `ve`: the
 fraction of a burn's initial mass consumed by a burn of delta-v `Δv`. Its properties are hypotheses
@@ -52,10 +52,11 @@ of the lemmas, not derived here: a zero burn consumes nothing, consumption is mo
 two burns compose through their remaining fractions,
 `(1 - fuel ve d₁) (1 - fuel ve d₂) = 1 - fuel ve (d₁ + d₂)`, and a burn from mass `a` to mass
 `b ≤ a` consumes `1 - b / a`. Under them the burns consume `fuel ve (cost)`, which the net change
-would understate, a cost within a budget consumes at most the budget's fuel, and the remaining mass
-fraction over the burns of admissible stage masses is `1 - fuel ve (cost)`. Equal exhaust speed is
-required for the composition. These are fuel and resource statements only: no trajectory and no
-transfer optimality.
+would understate, and a cost within a budget consumes at most the budget's fuel, for every `ve`
+since that cost is a sum of norms; at a positive exhaust speed the remaining mass fraction over the
+burns of admissible stage masses is `1 - fuel ve (cost)`, with the nonnegative cost of the stage
+increments. Equal exhaust speed is required for the composition. These are fuel and resource
+statements only: no trajectory and no transfer optimality.
 
 ## ii. Key results
 
@@ -309,7 +310,8 @@ lemma stageIncrement_nonneg {ve : ℝ} (hve : 0 < ve) {m₀ m₁ : ℕ → ℝ} 
 
 /-- **A depleted or negative intermediate mass is rejected.** If burn `k < n` ends at a
 nonpositive mass or starts at one, the stage masses are not admissible; at end mass `0` the
-totalized logarithm would price the burn as free. -/
+totalized logarithm gives the increment `0` at every exhaust speed `ve`, which would price the
+burn as free. -/
 lemma stageMasses_rejects_depleted (ve : ℝ) {m₀ m₁ : ℕ → ℝ} {n k : ℕ} (hk : k < n)
     (h : m₁ k ≤ 0 ∨ m₀ k ≤ 0) :
     ¬ AdmissibleStageMasses m₀ m₁ n ∧ (m₁ k = 0 → stageIncrement ve m₀ m₁ k = 0) := by
@@ -400,7 +402,9 @@ lemma netVelocityChange_staged_collinear {E : Type*} [NormedAddCommGroup E] [Nor
 
 /-- **Equal exhaust speed composes burns.** For a consumed-fraction functional with
 `fuel ve 0 = 0` and the two-burn remaining-fraction identity at the exhaust speed `ve`, the
-remaining fractions of `n` burns multiply to the remaining fraction of their summed delta-v. -/
+remaining fractions of `n` burns multiply to the remaining fraction of their summed delta-v. This
+is an unconditional identity of the premises: it holds for every `ve` and every signed delta-v
+`d k`. -/
 lemma remaining_fraction_burns {fuel : ℝ → ℝ → ℝ} {ve : ℝ} (hzero : fuel ve 0 = 0)
     (hcomp : ∀ d₁ d₂, (1 - fuel ve d₁) * (1 - fuel ve d₂) = 1 - fuel ve (d₁ + d₂))
     (d : ℕ → ℝ) (n : ℕ) :
@@ -412,7 +416,9 @@ lemma remaining_fraction_burns {fuel : ℝ → ℝ → ℝ} {ve : ℝ} (hzero : 
 /-- **Fuel follows the cost, not the net change.** For a consumed-fraction functional that
 consumes nothing on a zero burn, composes burns at the exhaust speed `ve` and is monotone in
 delta-v: the burns consume `fuel ve (cost)`, the net change would give the smaller
-`fuel ve ‖net‖`, and a cost within the budget `B` consumes at most `fuel ve B`. -/
+`fuel ve ‖net‖`, and a cost within the budget `B` consumes at most `fuel ve B`. No sign condition
+on `ve` is needed: the cost is a sum of norms, nonnegative for every `ve`, which only indexes the
+supplied functional. -/
 lemma fuel_burnCost {E : Type*} [SeminormedAddCommGroup E] {fuel : ℝ → ℝ → ℝ} {ve B : ℝ}
     (hzero : fuel ve 0 = 0)
     (hcomp : ∀ d₁ d₂, (1 - fuel ve d₁) * (1 - fuel ve d₂) = 1 - fuel ve (d₁ + d₂))
@@ -429,13 +435,16 @@ lemma fuel_burnCost {E : Type*} [SeminormedAddCommGroup E] {fuel : ℝ → ℝ �
   rw [hc]
   exact hmono hB
 
-/-- **Fuel consumption of actual stage masses.** For a consumed-fraction functional that consumes
-nothing on a zero burn, composes burns at the exhaust speed `ve`, and consumes `1 - b / a` on the
-ideal increment `ve log (a / b)` of a burn from mass `a` to mass `b ≤ a`, the remaining mass
-fraction over the burns of admissible stage masses is `1 - fuel ve (cost)`, the cost being the
-sum of the stage increments; jettisoned masses enter no factor. -/
+/-- **Fuel consumption of actual stage masses.** At a positive exhaust speed `ve`, for a
+consumed-fraction functional that consumes nothing on a zero burn, composes burns at `ve`, and
+consumes `1 - b / a` on the ideal increment `ve log (a / b)` of a burn from mass `a` to mass
+`b ≤ a`, the remaining mass fraction over the burns of admissible stage masses is
+`1 - fuel ve (cost)`, the cost being the sum of the stage increments, each nonnegative
+(`stageIncrement_nonneg`); jettisoned masses enter no factor. The identity does not use the sign
+of `ve`, which restricts the statement to burn costs: at a negative `ve` the premises can hold
+while every increment is negative. -/
 lemma stage_remaining_fraction {fuel : ℝ → ℝ → ℝ} {ve : ℝ} {m₀ m₁ : ℕ → ℝ} {n : ℕ}
-    (hzero : fuel ve 0 = 0)
+    (_hve : 0 < ve) (hzero : fuel ve 0 = 0)
     (hcomp : ∀ d₁ d₂, (1 - fuel ve d₁) * (1 - fuel ve d₂) = 1 - fuel ve (d₁ + d₂))
     (hburn : ∀ a b, 0 < b → b ≤ a → 1 - fuel ve (ve * Real.log (a / b)) = b / a)
     (hst : AdmissibleStageMasses m₀ m₁ n) :

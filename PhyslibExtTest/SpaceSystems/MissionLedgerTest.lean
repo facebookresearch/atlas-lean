@@ -18,7 +18,8 @@ resources whose pooled total hides an infeasible one, and applications of the ac
 terminal, floor and reserve lemmas. Burns `3` and `-1` (net `2`, cost `4`), two opposite burns of
 size `5`, the stage masses `4 → 2`, jettison to `4/3`, `4/3 → 1` (burn mass ratios `8 / 3`, not `4`)
 and a burn to the empty mass, one burn from mass `2` to `1` at unit exhaust speed (cost `log 2`),
-and the fuel lemmas for a supplied fuel functional.
+the fuel lemmas for a supplied fuel functional, and a functional that meets the fuel premises at
+the negative exhaust speed `-1` while the burn increment is negative.
 
 ## i. Overview
 
@@ -316,10 +317,36 @@ example {fuel : ℝ → ℝ → ℝ} {ve : ℝ} (hve : 0 < ve) (hzero : fuel ve 
   obtain ⟨hst, -, -, hsum, -⟩ := stageMasses_jettison_fixture hve
     (m₀ := fun k => if k = 0 then 4 else 4 / 3) (m₁ := fun k => if k = 0 then 2 else 1)
     rfl rfl rfl rfl
-  have h := stage_remaining_fraction hzero hcomp hburn hst
+  have h := stage_remaining_fraction hve hzero hcomp hburn hst
   rw [hsum] at h
   rw [← h]
   norm_num [prod_range_succ]
+
+/-- The functional `fuel _ d = 1 - exp d`, which satisfies the fuel premises at `ve = -1`. -/
+private noncomputable def negativeSpeedFuel : ℝ → ℝ → ℝ := fun _ d => 1 - Real.exp d
+
+-- Why the staged fuel lemma requires a positive exhaust speed: at `ve = -1` the functional
+-- `fuel _ d = 1 - exp d` consumes nothing on a zero burn, composes burns, and consumes `1 - b / a`
+-- on the increment `-log (a / b)` of a burn from mass `a` to mass `b`, yet the burn from mass `2`
+-- to `1` has the negative increment `-log 2`, which is no burn cost.
+example :
+    negativeSpeedFuel (-1) 0 = 0 ∧
+      (∀ d₁ d₂, (1 - negativeSpeedFuel (-1) d₁) * (1 - negativeSpeedFuel (-1) d₂) =
+        1 - negativeSpeedFuel (-1) (d₁ + d₂)) ∧
+      (∀ a b : ℝ, 0 < b → b ≤ a →
+        1 - negativeSpeedFuel (-1) (-1 * Real.log (a / b)) = b / a) ∧
+      stageIncrement (-1) (fun _ => 2) (fun _ => 1) 0 = -Real.log 2 ∧
+      stageIncrement (-1) (fun _ => 2) (fun _ => 1) 0 < 0 := by
+  have hinc : stageIncrement (-1) (fun _ => 2) (fun _ => 1) 0 = -Real.log 2 := by
+    simp [stageIncrement]
+  refine ⟨by simp [negativeSpeedFuel], fun d₁ d₂ => ?_, fun a b hb hba => ?_, hinc, ?_⟩
+  · simp only [negativeSpeedFuel, sub_sub_cancel, Real.exp_add]
+  · have ha : 0 < a := lt_of_lt_of_le hb hba
+    simp only [negativeSpeedFuel, sub_sub_cancel]
+    rw [neg_one_mul, Real.exp_neg, Real.exp_log (div_pos ha hb), inv_div]
+  · rw [hinc]
+    have h2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
+    linarith
 
 end MissionLedgerTest
 
