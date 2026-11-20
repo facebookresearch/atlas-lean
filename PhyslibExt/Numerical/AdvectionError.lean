@@ -13,7 +13,7 @@ public import Mathlib.Analysis.Calculus.ContDiff.Operations
 public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
-import Mathlib.Analysis.Calculus.LocalExtr.Rolle
+import MathlibExt.Analysis.Calculus.FirstOrderPropagationRemainder
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
@@ -132,6 +132,9 @@ roundoff are not treated.
 - `EarthScience.upwind_nonneg` and `EarthScience.upwind_sum_eq`
   (`PhyslibExt.EarthScience.UpwindScheme`).
 - Mathlib's `Real.hasDerivAt_sin` and `Real.hasDerivAt_cos`.
+- `MathlibExt.Analysis.first_order_propagation_remainder_bound`
+  (`MathlibExt.Analysis.Calculus.FirstOrderPropagationRemainder`): the first-order Taylor
+  remainder bound behind the nodal truncation error.
 -/
 
 @[expose] public section
@@ -593,79 +596,24 @@ lemma sampledWave_sub_one {ncells : ℕ} [NeZero ncells] {L : ℝ} (hL : L ≠ 0
 
 /-! ## I. Second-order Taylor defects of the wave -/
 
-/-- Rolle's theorem with the endpoints in either order: if `g` has derivative `g' t` at every `t`
-and `g a = g b` with `a ≠ b`, then `g'` vanishes at some point other than `a`. -/
-private lemma exists_ne_deriv_eq_zero_aux {g g' : ℝ → ℝ} {a b : ℝ} (hab : a ≠ b)
-    (hg : ∀ t, HasDerivAt g (g' t) t) (heq : g a = g b) : ∃ c, c ≠ a ∧ g' c = 0 := by
-  have hcont : Continuous g := continuous_iff_continuousAt.mpr fun t => (hg t).continuousAt
-  rcases lt_or_gt_of_ne hab with h | h
-  · obtain ⟨c, hc, hc0⟩ := exists_hasDerivAt_eq_zero h hcont.continuousOn heq fun t _ => hg t
-    exact ⟨c, hc.1.ne', hc0⟩
-  · obtain ⟨c, hc, hc0⟩ :=
-      exists_hasDerivAt_eq_zero h hcont.continuousOn heq.symm fun t _ => hg t
-    exact ⟨c, hc.2.ne, hc0⟩
-
-/-- Second-order Taylor remainder around `a`, with `b` on either side: if `f` and `f'` are
-differentiable everywhere and `|f''| ≤ M`, then `|f b - f a - (b - a) f' a| ≤ M (b - a)² / 2`, by
-Rolle's theorem applied twice. -/
-private lemma abs_taylor_remainder_aux {f : ℝ → ℝ} {M : ℝ}
-    (hf : ∀ t, HasDerivAt f (deriv f t) t)
-    (hf' : ∀ t, HasDerivAt (deriv f) (deriv (deriv f) t) t)
-    (hM : ∀ t, |deriv (deriv f) t| ≤ M) (a b : ℝ) :
-    |f b - f a - (b - a) * deriv f a| ≤ M * (b - a) ^ 2 / 2 := by
-  rcases eq_or_ne a b with rfl | hab
-  · simp
-  set D := deriv f a with hD
-  set R := f b - f a - (b - a) * D with hR
-  set S := (b - a) ^ 2 with hS
-  have hS0 : S ≠ 0 := pow_ne_zero 2 (sub_ne_zero.mpr hab.symm)
-  have hφ : ∀ t, HasDerivAt (fun t => f t - f a - (t - a) * D - R / S * ((t - a) * (t - a)))
-      (deriv f t - D - R / S * ((t - a) + (t - a))) t := by
-    intro t
-    have hlin : HasDerivAt (fun t : ℝ => t - a) 1 t := (hasDerivAt_id t).sub_const a
-    have hsq := (hlin.mul hlin).const_mul (R / S)
-    have hD' := hlin.mul_const D
-    convert (((hf t).sub_const (f a)).sub hD').sub hsq using 1
-    ring
-  have hφa : f a - f a - (a - a) * D - R / S * ((a - a) * (a - a)) = 0 := by ring
-  have hφb : f b - f a - (b - a) * D - R / S * ((b - a) * (b - a)) = 0 := by
-    rw [← sq, ← hS, ← hR, div_mul_cancel₀ R hS0, sub_self]
-  obtain ⟨c₁, hc₁a, hc₁⟩ := exists_ne_deriv_eq_zero_aux hab hφ (hφa.trans hφb.symm)
-  have hψ : ∀ t, HasDerivAt (fun t => deriv f t - D - R / S * ((t - a) + (t - a)))
-      (deriv (deriv f) t - R / S * 2) t := by
-    intro t
-    have hlin : HasDerivAt (fun t : ℝ => t - a) 1 t := (hasDerivAt_id t).sub_const a
-    convert ((hf' t).sub_const D).sub ((hlin.add hlin).const_mul (R / S)) using 1
-    ring
-  have hψa : deriv f a - D - R / S * ((a - a) + (a - a)) = 0 := by rw [hD]; ring
-  have hψc : deriv f c₁ - D - R / S * ((c₁ - a) + (c₁ - a)) = 0 := hc₁
-  obtain ⟨c₂, -, hc₂⟩ := exists_ne_deriv_eq_zero_aux hc₁a.symm hψ (hψa.trans hψc.symm)
-  have hc₂' : deriv (deriv f) c₂ = R / S * 2 := by
-    have h : deriv (deriv f) c₂ - R / S * 2 = 0 := hc₂
-    linarith
-  have hRS : R = deriv (deriv f) c₂ * S / 2 := by
-    rw [hc₂']
-    field_simp
-  calc |R| = |deriv (deriv f) c₂| * S / 2 := by
-        rw [hRS, abs_div, abs_mul, abs_of_nonneg (sq_nonneg (b - a)), abs_two]
-    _ ≤ M * S / 2 := by
-        gcongr
-        exact hM c₂
-
 /-- Temporal Taylor defect: for every step `h`,
 `|c(t + h, x) - c(t, x) - h ∂ₜc(t, x)| ≤ v² M h² / 2` with `M = |a| (2π / L)²`. -/
 lemma travelingWave_time_taylor (c₀ a v L t x h : ℝ) :
     |travelingWave c₀ a v L (t + h) x - travelingWave c₀ a v L t x -
         h * deriv (fun τ => travelingWave c₀ a v L τ x) t| ≤
       v ^ 2 * (|a| * (2 * Real.pi / L) ^ 2) * h ^ 2 / 2 := by
+  have hp : ContDiff ℝ 2 fun τ : ℝ => (τ, x) := contDiff_id.prodMk contDiff_const
+  have hf : ContDiff ℝ 2 (fun τ => travelingWave c₀ a v L τ x) := by
+    simpa [Function.comp_def] using (travelingWave_contDiff c₀ a v L).comp hp
   have h2 : iteratedDeriv 2 (fun τ => travelingWave c₀ a v L τ x) =
       deriv (deriv fun τ => travelingWave c₀ a v L τ x) := by
     rw [iteratedDeriv_succ, iteratedDeriv_one]
-  have hT := abs_taylor_remainder_aux (f := fun τ => travelingWave c₀ a v L τ x)
-    (fun τ => (travelingWave_hasDerivAt_time c₀ a v L τ x).differentiableAt.hasDerivAt)
-    (fun τ => (travelingWave_hasDerivAt_time_two c₀ a v L τ x).differentiableAt.hasDerivAt)
-    (fun τ => by rw [← h2]; exact travelingWave_time_bound c₀ a v L τ x) t (t + h)
-  simpa only [add_sub_cancel_left] using hT
+  have hT := MathlibExt.Analysis.first_order_propagation_remainder_bound hf
+    (fun τ => by rw [← h2]; exact travelingWave_time_bound c₀ a v L τ x) t h
+  calc _ = |travelingWave c₀ a v L (t + h) x - travelingWave c₀ a v L t x -
+        deriv (fun τ => travelingWave c₀ a v L τ x) t * h| := by rw [mul_comm h]
+    _ ≤ _ := hT
+    _ = _ := by ring
 
 /-- Spatial Taylor defect one step upstream: for every step `h`,
 `|c(t, x - h) - c(t, x) + h ∂ₓc(t, x)| ≤ M h² / 2` with `M = |a| (2π / L)²`. -/
@@ -673,15 +621,19 @@ lemma travelingWave_space_taylor (c₀ a v L t x h : ℝ) :
     |travelingWave c₀ a v L t (x - h) - travelingWave c₀ a v L t x +
         h * deriv (fun y => travelingWave c₀ a v L t y) x| ≤
       |a| * (2 * Real.pi / L) ^ 2 * h ^ 2 / 2 := by
+  have hp : ContDiff ℝ 2 fun y : ℝ => (t, y) := contDiff_const.prodMk contDiff_id
+  have hf : ContDiff ℝ 2 (fun y => travelingWave c₀ a v L t y) := by
+    simpa [Function.comp_def] using (travelingWave_contDiff c₀ a v L).comp hp
   have h2 : iteratedDeriv 2 (fun y => travelingWave c₀ a v L t y) =
       deriv (deriv fun y => travelingWave c₀ a v L t y) := by
     rw [iteratedDeriv_succ, iteratedDeriv_one]
-  have hT := abs_taylor_remainder_aux (f := fun y => travelingWave c₀ a v L t y)
-    (fun y => (travelingWave_hasDerivAt_space c₀ a v L t y).differentiableAt.hasDerivAt)
-    (fun y => (travelingWave_hasDerivAt_space_two c₀ a v L t y).differentiableAt.hasDerivAt)
-    (fun y => by rw [← h2]; exact travelingWave_space_bound c₀ a v L t y) x (x - h)
-  rw [show x - h - x = -h by ring, neg_sq, neg_mul, sub_neg_eq_add] at hT
-  exact hT
+  have hT := MathlibExt.Analysis.first_order_propagation_remainder_bound hf
+    (fun y => by rw [← h2]; exact travelingWave_space_bound c₀ a v L t y) x (-h)
+  rw [← sub_eq_add_neg] at hT
+  calc _ = |travelingWave c₀ a v L t (x - h) - travelingWave c₀ a v L t x -
+        deriv (fun y => travelingWave c₀ a v L t y) x * -h| := by ring_nf
+    _ ≤ _ := hT
+    _ = _ := by ring
 
 /-! ## J. Local truncation error at the nodes -/
 
