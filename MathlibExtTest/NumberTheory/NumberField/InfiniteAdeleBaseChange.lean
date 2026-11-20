@@ -34,22 +34,22 @@ theorem exactSource
     (K L : Type) [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
     (x : L) (a : NumberField.InfiniteAdeleRing K) (w : NumberField.InfinitePlace L) :
     letI : w.LiesOver (w.comap (algebraMap K L)) := ⟨rfl⟩
-    NumberField.InfiniteAdeleRing.archIdent K L (x ⊗ₜ a) w =
+    NumberField.InfiniteAdeleRing.archBaseChange K L (x ⊗ₜ a) w =
       algebraMap (w.comap (algebraMap K L)).Completion w.Completion
           (a (w.comap (algebraMap K L))) *
         algebraMap L w.Completion x :=
-  NumberField.InfiniteAdeleRing.archIdent_tmul_apply x a w
+  NumberField.InfiniteAdeleRing.archBaseChange_tmul_apply x a w
 
 /-- The same statement at an arbitrary universe. -/
 theorem exactSource_universe
     (K L : Type u) [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
     (x : L) (a : NumberField.InfiniteAdeleRing K) (w : NumberField.InfinitePlace L) :
     letI : w.LiesOver (w.comap (algebraMap K L)) := ⟨rfl⟩
-    NumberField.InfiniteAdeleRing.archIdent K L (x ⊗ₜ a) w =
+    NumberField.InfiniteAdeleRing.archBaseChange K L (x ⊗ₜ a) w =
       algebraMap (w.comap (algebraMap K L)).Completion w.Completion
           (a (w.comap (algebraMap K L))) *
         algebraMap L w.Completion x :=
-  NumberField.InfiniteAdeleRing.archIdent_tmul_apply x a w
+  NumberField.InfiniteAdeleRing.archBaseChange_tmul_apply x a w
 
 /-- The local completion factor on a pure tensor. -/
 example {K L : Type*} [Field K] [Field L] [Algebra K L]
@@ -62,18 +62,18 @@ example {K L : Type*} [Field K] [Field L] [Algebra K L]
 /-- The adele coordinate factor cannot be dropped: with the zero adele, the
 pure tensor maps to zero even when the scalar factor is `1`. -/
 theorem zero_adele_factor_matters (w : NumberField.InfinitePlace ℚ) :
-    NumberField.InfiniteAdeleRing.archIdent ℚ ℚ
+    NumberField.InfiniteAdeleRing.archBaseChange ℚ ℚ
         ((1 : ℚ) ⊗ₜ (0 : NumberField.InfiniteAdeleRing ℚ)) w = 0 :=
-  NumberField.InfiniteAdeleRing.archIdent_tmul_zero_apply (K := ℚ) (L := ℚ) 1 w
+  NumberField.InfiniteAdeleRing.archBaseChange_tmul_zero_apply (K := ℚ) (L := ℚ) 1 w
 
 /-- With scalar `1`, only the transported adele coordinate remains. -/
 theorem one_scalar (a : NumberField.InfiniteAdeleRing ℚ)
     (w : NumberField.InfinitePlace ℚ) :
     letI : w.LiesOver (w.comap (algebraMap ℚ ℚ)) := ⟨rfl⟩
-    NumberField.InfiniteAdeleRing.archIdent ℚ ℚ ((1 : ℚ) ⊗ₜ a) w =
+    NumberField.InfiniteAdeleRing.archBaseChange ℚ ℚ ((1 : ℚ) ⊗ₜ a) w =
       algebraMap (w.comap (algebraMap ℚ ℚ)).Completion w.Completion
         (a (w.comap (algebraMap ℚ ℚ))) :=
-  NumberField.InfiniteAdeleRing.archIdent_one_tmul_apply a w
+  NumberField.InfiniteAdeleRing.archBaseChange_one_tmul_apply a w
 
 end NumberField.InfiniteAdeleRingTest
 
