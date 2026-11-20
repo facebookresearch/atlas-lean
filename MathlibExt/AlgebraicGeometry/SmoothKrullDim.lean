@@ -47,10 +47,12 @@ public import Mathlib.RingTheory.KrullDimension.Field
 # Krull dimension bounds for smooth morphisms
 
 A scheme smooth of relative dimension `n` over a field has topological
-Krull dimension at most `n`. The proof bounds the Krull dimension of a
-standard smooth algebra by the rank of its Kähler differentials, transfers
-along faithfully flat maps by going-down, and globalizes over an affine
-open cover.
+Krull dimension at most `n`; if it is nonempty, its dimension equals `n`.
+The upper bound bounds the Krull dimension of a standard smooth algebra by
+the rank of its Kähler differentials, transfers along faithfully flat maps
+by going-down, and globalizes over an affine open cover. The lower bound
+exhibits a maximal ideal of height `n` in a polynomial ring in `n`
+variables and transports it through standard smooth presentations.
 -/
 
 @[expose] public section
