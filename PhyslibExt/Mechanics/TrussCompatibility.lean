@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Mechanics.HarmonicMechanics
+import MathlibExt.LinearAlgebra.Matrix.WeightedScatter
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.LinearAlgebra.Matrix.PosDef
 
@@ -287,111 +288,6 @@ theorem supported_virtualWork_iff {J M F : Type*}
 
 /-! ## E. Supported rigidity certificate -/
 
-/-- Conditional form of the rigidity certificate, given the
-supported quadratic-form identity. -/
-private theorem supported_posDef_iff_of {J M F : Type*} [Fintype J]
-    [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
-    (hquad : ∀ (r : J → (Fin 2 → ℝ)) (a b : M → J)
-        (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (u : F → ℝ),
-      u ⬝ᵥ (((axialCompatibility r a b * S)ᵀ
-            * Matrix.diagonal k
-            * (axialCompatibility r a b * S)) *ᵥ u)
-        = ∑ e, k e
-            * (((axialCompatibility r a b * S) *ᵥ u) e) ^ 2)
-    (r : J → (Fin 2 → ℝ)) (a b : M → J)
-    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (hk : ∀ e, 0 < k e) :
-    ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
-        * (axialCompatibility r a b * S)).PosDef ↔
-      ∀ u : F → ℝ, (axialCompatibility r a b * S) *ᵥ u = 0 → u = 0 := by
-  constructor
-  · intro hPD u hu
-    by_contra hne
-    have hpos := Matrix.PosDef.dotProduct_mulVec_pos hPD hne
-    have hKu : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
-        * (axialCompatibility r a b * S)).mulVec u = 0 := by
-      simp only [← Matrix.mulVec_mulVec, hu, Matrix.mulVec_zero]
-    rw [hKu, dotProduct_zero] at hpos
-    exact lt_irrefl 0 hpos
-  · intro hker
-    rw [Matrix.posDef_iff_dotProduct_mulVec]
-    refine ⟨?_, ?_⟩
-    · have hD : (Matrix.diagonal k).conjTranspose = Matrix.diagonal k :=
-        Matrix.isHermitian_diagonal k
-      have key : ∀ B : Matrix M F ℝ,
-          (Bᵀ * Matrix.diagonal k * B).IsHermitian := by
-        intro B
-        show (B.transpose * Matrix.diagonal k * B).conjTranspose
-          = B.transpose * Matrix.diagonal k * B
-        have hB : B.conjTranspose = B.transpose :=
-          Matrix.conjTranspose_eq_transpose_of_trivial B
-        have hBT : B.transpose.conjTranspose = B := by
-          rw [Matrix.conjTranspose_eq_transpose_of_trivial,
-            Matrix.transpose_transpose]
-        rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, hB, hD, hBT,
-          ← Matrix.mul_assoc]
-      exact key (axialCompatibility r a b * S)
-    · intro x hx
-      have hstar : star x = x := by simp
-      rw [hstar, hquad r a b S k x]
-      have hne : (axialCompatibility r a b * S) *ᵥ x ≠ 0 :=
-        fun h => hx (hker x h)
-      obtain ⟨e0, he0⟩ := Function.ne_iff.mp hne
-      simp only [Pi.zero_apply] at he0
-      refine Finset.sum_pos' (fun e _ => ?_) ⟨e0, Finset.mem_univ e0, ?_⟩
-      · exact mul_nonneg (le_of_lt (hk e)) (sq_nonneg _)
-      · exact mul_pos (hk e0) (pow_two_pos_of_ne_zero he0)
-
-/-- Conditional form of the kernel-side certificate, given
-the supported quadratic-form identity. -/
-private theorem supported_posDef_iff_ker_eq_bot_of {J M F : Type*}
-    [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
-    (hquad : ∀ (r : J → (Fin 2 → ℝ)) (a b : M → J)
-        (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (u : F → ℝ),
-      u ⬝ᵥ (((axialCompatibility r a b * S)ᵀ
-            * Matrix.diagonal k
-            * (axialCompatibility r a b * S)) *ᵥ u)
-        = ∑ e, k e
-            * (((axialCompatibility r a b * S) *ᵥ u) e) ^ 2)
-    (r : J → (Fin 2 → ℝ)) (a b : M → J)
-    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (hk : ∀ e, 0 < k e) :
-    ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
-        * (axialCompatibility r a b * S)).PosDef ↔
-      LinearMap.ker (axialCompatibility r a b * S).mulVecLin = ⊥ := by
-  rw [supported_posDef_iff_of hquad r a b S k hk, Submodule.eq_bot_iff]
-  constructor
-  · intro h x hx
-    rw [LinearMap.mem_ker, Matrix.mulVecLin_apply] at hx
-    exact h x hx
-  · intro hker u hu
-    apply hker
-    rw [LinearMap.mem_ker, Matrix.mulVecLin_apply]
-    exact hu
-
-/-- Conditional form of the physical certificate, given the
-supported quadratic-form identity and positive member
-lengths at noncoincident endpoints. -/
-private theorem supported_posDef_iff_of_axial_of {J M F : Type*}
-    [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
-    (hquad : ∀ (r : J → (Fin 2 → ℝ)) (a b : M → J)
-        (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (u : F → ℝ),
-      u ⬝ᵥ (((axialCompatibility r a b * S)ᵀ
-            * Matrix.diagonal k
-            * (axialCompatibility r a b * S)) *ᵥ u)
-        = ∑ e, k e
-            * (((axialCompatibility r a b * S) *ᵥ u) e) ^ 2)
-    (hlen : ∀ (r : J → (Fin 2 → ℝ)) (a b : M → J) {e : M},
-      r (a e) ≠ r (b e) → 0 < memberLength r a b e)
-    (r : J → (Fin 2 → ℝ)) (a b : M → J) (S : Matrix (J × Fin 2) F ℝ)
-    {E A : M → ℝ} (hE : ∀ e, 0 < E e) (hA : ∀ e, 0 < A e)
-    (hne : ∀ e, r (a e) ≠ r (b e)) :
-    ((axialCompatibility r a b * S)ᵀ
-        * Matrix.diagonal (fun e => E e * A e / memberLength r a b e ^ 3)
-        * (axialCompatibility r a b * S)).PosDef ↔
-      ∀ u : F → ℝ, (axialCompatibility r a b * S) *ᵥ u = 0 → u = 0 := by
-  have hk : ∀ e, 0 < E e * A e / memberLength r a b e ^ 3 := fun e =>
-    div_pos (mul_pos (hE e) (hA e)) (pow_pos (hlen r a b (hne e)) 3)
-  exact supported_posDef_iff_of hquad r a b S _ hk
-
 /-- Support-restriction rigidity certificate: for positive
 member stiffnesses `k`, the supported stiffness
 `(B S)ᵀ diag(k) (B S)` is positive definite iff the
@@ -401,15 +297,35 @@ kernel vector `u` need not give a nonzero joint
 displacement `S *ᵥ u`; the physical supported-mechanism
 reading needs `S.mulVec` injective, as for a coordinate
 selection. Connectivity of the member graph is not
-assumed and does not suffice. -/
+assumed and does not suffice. This is the weighted-Gram
+characterization
+`MetaMathlibExt.posDef_mul_diagonal_mul_transpose_iff`
+at the supported compatibility map. -/
 theorem supported_posDef_iff {J M F : Type*} [Fintype J]
     [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
     (r : J → (Fin 2 → ℝ)) (a b : M → J)
     (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (hk : ∀ e, 0 < k e) :
     ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
         * (axialCompatibility r a b * S)).PosDef ↔
-      ∀ u : F → ℝ, (axialCompatibility r a b * S) *ᵥ u = 0 → u = 0 :=
-  supported_posDef_iff_of supported_quad_form_eq_sum r a b S k hk
+      ∀ u : F → ℝ, (axialCompatibility r a b * S) *ᵥ u = 0 → u = 0 := by
+  have hgen := MetaMathlibExt.posDef_mul_diagonal_mul_transpose_iff
+    (B := (axialCompatibility r a b * S)ᵀ) (w := k) (fun e => (hk e).le)
+  rw [Matrix.transpose_transpose] at hgen
+  rw [hgen]
+  constructor
+  · intro h u hu
+    by_contra hne
+    obtain ⟨e, -, he⟩ := h u hne
+    rw [Matrix.vecMul_transpose] at he
+    have h0 : ((axialCompatibility r a b * S) *ᵥ u) e = 0 := by
+      simp only [hu, Pi.zero_apply]
+    exact he h0
+  · intro h v hv
+    have hne : (axialCompatibility r a b * S) *ᵥ v ≠ 0 :=
+      fun h0 => hv (h v h0)
+    obtain ⟨e, he⟩ := Function.ne_iff.mp hne
+    simp only [Pi.zero_apply] at he
+    exact ⟨e, hk e, by rwa [Matrix.vecMul_transpose]⟩
 
 /-- The same certificate with the kernel written as
 `ker (B S) = ⊥`. -/
@@ -419,9 +335,16 @@ theorem supported_posDef_iff_ker_eq_bot {J M F : Type*} [Fintype J]
     (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) (hk : ∀ e, 0 < k e) :
     ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
         * (axialCompatibility r a b * S)).PosDef ↔
-      LinearMap.ker (axialCompatibility r a b * S).mulVecLin = ⊥ :=
-  supported_posDef_iff_ker_eq_bot_of supported_quad_form_eq_sum
-    r a b S k hk
+      LinearMap.ker (axialCompatibility r a b * S).mulVecLin = ⊥ := by
+  rw [supported_posDef_iff r a b S k hk, Submodule.eq_bot_iff]
+  constructor
+  · intro h x hx
+    rw [LinearMap.mem_ker, Matrix.mulVecLin_apply] at hx
+    exact h x hx
+  · intro hker u hu
+    apply hker
+    rw [LinearMap.mem_ker, Matrix.mulVecLin_apply]
+    exact hu
 
 /-- Physical instance: separation rows pair with
 `E A / L ^ 3`; positive `E`, `A` and noncoincident endpoint
@@ -437,8 +360,10 @@ theorem supported_posDef_iff_of_axial {J M F : Type*} [Fintype J]
     ((axialCompatibility r a b * S)ᵀ
         * Matrix.diagonal (fun e => E e * A e / memberLength r a b e ^ 3)
         * (axialCompatibility r a b * S)).PosDef ↔
-      ∀ u : F → ℝ, (axialCompatibility r a b * S) *ᵥ u = 0 → u = 0 :=
-  supported_posDef_iff_of_axial_of supported_quad_form_eq_sum
-    memberLength_pos_of_ne r a b S hE hA hne
+      ∀ u : F → ℝ, (axialCompatibility r a b * S) *ᵥ u = 0 → u = 0 := by
+  have hk : ∀ e, 0 < E e * A e / memberLength r a b e ^ 3 := fun e =>
+    div_pos (mul_pos (hE e) (hA e))
+      (pow_pos (memberLength_pos_of_ne r a b (hne e)) 3)
+  exact supported_posDef_iff r a b S _ hk
 
 end Mechanics.TrussCompatibility
