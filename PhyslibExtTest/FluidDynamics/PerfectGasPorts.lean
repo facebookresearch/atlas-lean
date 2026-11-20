@@ -44,6 +44,8 @@ Checks for `PhyslibExt.FluidDynamics.PerfectGasPorts`, mostly for air with `γ =
   `p2 / p1 = 9/2` and `T2 / T1 = 27/16`, and an explicit downstream state solves the jump
   conditions; at `M1 = 1/4`, below the threshold `1/7`, the distinct pressure ratio is `-3/32`
   and every positive solution is the upstream state itself.
+* the specific entropy change of an isothermal doubling of the specific volume (`R log 2`) and of
+  heating at constant specific volume (`cv log 2`);
 * entropy selection for air (`γ = 7/5`, `R = 1`): the entropy jump vanishes at `m = 1`, is
   positive at `M1 = 2`, negative at `M1 = 1/2` and has the derivative `35/216` at `m = 4`; the
   compression shock at `M1 = 2` raises the entropy, in the `(T, p)` form and as `R` times the
@@ -447,14 +449,20 @@ example :
 
 /-! ## Entropy selection of the normal-shock branch -/
 
-open Chemistry.Thermodynamics
+/-- The specific entropy change of an isothermal doubling of the specific volume, here with
+`cv = 5 / 2`, `R = 1` and `T = 300`, is `R log 2`; heating at constant specific volume from `300` to
+`600` gives `cv log 2`. -/
+example : specificEntropyChange (5 / 2) 1 300 1 300 2 = Real.log 2 ∧
+    specificEntropyChange (5 / 2) 1 300 1 600 1 = 5 / 2 * Real.log 2 := by
+  unfold specificEntropyChange
+  norm_num
 
 /-- **Compression shock.** `γ = 7 / 5`, `R = 1`, upstream `ρ1 = 7 / 5`, `u1 = 2`, `p1 = 1`,
 `T1 = 5 / 7` (`a1 = 1`, `M1 = 2`), downstream `ρ2 = 56 / 15`, `u2 = 3 / 4`, `p2 = 9 / 2`,
 `T2 = 135 / 112`: the jump conditions hold and the entropy rises. -/
 lemma normalShock_fixture_compression :
     IsNormalShockJump (7 / 5) 1 (7 / 5) 2 1 (5 / 7) (56 / 15) (3 / 4) (9 / 2) (135 / 112) ∧
-      0 < idealGasEntropyChange 1 (1 / (7 / 5 - 1)) 1 (5 / 7) (1 / (7 / 5)) (135 / 112)
+      0 < specificEntropyChange (1 / (7 / 5 - 1)) 1 (5 / 7) (1 / (7 / 5)) (135 / 112)
         (1 / (56 / 15)) := by
   have hjump :
       IsNormalShockJump (7 / 5) 1 (7 / 5) 2 1 (5 / 7) (56 / 15) (3 / 4) (9 / 2) (135 / 112) := by
@@ -472,7 +480,7 @@ a positive state that solves the jump conditions, but the entropy falls, so the 
 entropy-admissible. -/
 lemma normalShock_fixture_expansion :
     IsNormalShockJump (7 / 5) 1 (7 / 5) (1 / 2) 1 (5 / 7) (2 / 5) (7 / 4) (1 / 8) (5 / 16) ∧
-      idealGasEntropyChange 1 (1 / (7 / 5 - 1)) 1 (5 / 7) (1 / (7 / 5)) (5 / 16)
+      specificEntropyChange (1 / (7 / 5 - 1)) 1 (5 / 7) (1 / (7 / 5)) (5 / 16)
         (1 / (2 / 5)) < 0 := by
   have hjump :
       IsNormalShockJump (7 / 5) 1 (7 / 5) (1 / 2) 1 (5 / 7) (2 / 5) (7 / 4) (1 / 8) (5 / 16) := by
@@ -500,12 +508,12 @@ example : shockEntropyJump (7 / 5) 1 = 0 ∧ 0 < shockEntropyJump (7 / 5) (2 ^ 2
 /-- At the compression fixture the entropy change has the `(T, p)` form
 `cp log (T2 / T1) - R log (p2 / p1)` and is `R` times the branch jump at `M1 ^ 2 = 4`. -/
 example :
-    idealGasEntropyChange 1 (1 / (7 / 5 - 1)) 1 (5 / 7) (1 / (7 / 5)) (135 / 112)
+    specificEntropyChange (1 / (7 / 5 - 1)) 1 (5 / 7) (1 / (7 / 5)) (135 / 112)
         (1 / (56 / 15)) =
         7 / 5 * 1 / (7 / 5 - 1) * Real.log ((135 / 112) / (5 / 7)) - 1 * Real.log ((9 / 2) / 1) ∧
-      idealGasEntropyChange 1 (1 / (7 / 5 - 1)) 1 (5 / 7) (1 / (7 / 5)) (135 / 112)
+      specificEntropyChange (1 / (7 / 5 - 1)) 1 (5 / 7) (1 / (7 / 5)) (135 / 112)
         (1 / (56 / 15)) = 1 * shockEntropyJump (7 / 5) (2 ^ 2) := by
-  refine ⟨idealGasEntropyChange_perUnitMass (by norm_num) (by norm_num) (by norm_num)
+  refine ⟨specificEntropyChange_perfectGas (by norm_num) (by norm_num) (by norm_num)
     (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num), ?_⟩
   exact (normalShock_entropyChange (a1 := 1) (M1 := 2) (by norm_num) (by norm_num) (by norm_num)
     (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -571,7 +579,7 @@ example : ∃ ρ01 p01 T01 ρ02 p02 T02 : ℝ,
       0 < ρ02 ∧ p02 = ρ02 * 1 * T02 ∧
       1 / 8 / (2 / 5 : ℝ) ^ (7 / 5 : ℝ) = p02 / ρ02 ^ (7 / 5 : ℝ)) ∧
     p01 < p02 ∧
-      idealGasEntropyChange 1 (1 / (7 / 5 - 1)) 1 (5 / 7) (1 / (7 / 5)) (5 / 16)
+      specificEntropyChange (1 / (7 / 5 - 1)) 1 (5 / 7) (1 / (7 / 5)) (5 / 16)
         (1 / (2 / 5)) < 0 := by
   obtain ⟨ρ01, p01, T01, hen1, hρ01, hp01, hs1⟩ := exists_isentropic_stagnation (γ := 7 / 5)
     (R := 1) (ρ := 7 / 5) (u := 1 / 2) (p := 1) (T := 5 / 7) (by norm_num) (by norm_num)
