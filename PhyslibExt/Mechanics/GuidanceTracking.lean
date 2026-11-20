@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Analysis.ODE.Gronwall
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import PhyslibExt.Mechanics.AttitudePorts
 import MathlibExt.Analysis.ODE.InvariantRegions
@@ -18,7 +19,7 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
 /-!
-# Guidance tracking: a feasible saturated scalar attitude-rate trajectory
+# Guidance tracking: a feasible saturated scalar attitude-rate trajectory and residual tracking
 
 ## i. Overview
 
@@ -47,9 +48,29 @@ exponential is not a closed-loop solution there; a saturated arc needs another a
 reserve is sufficient, not necessary, and the bound `|u_w| ≤ U_max` is on the commanded momentum
 rate, not on the motor torque, which differs from it by the wheel inertia times `ω'`.
 
-Model inputs: the reduced scalar fixed-axis wheel model, constant `I`, `k`, `U_max`, and the
-saturated rate feedback. Non-goals: no terminal maneuver, optimizer or generic controller theorem,
-no tracking of an approximate trajectory, and no empirical adequacy or system safety claim.
+Residual tracking. Saturation never increases a difference, so the closed-loop field
+`f(ω) = τ_b(ω) / I` satisfies `|f(x) - f(y)| ≤ (k / I) |x - y|` for all rates, whatever `U_max`:
+with `I` in kg m² and `k` in N m s/rad it is globally Lipschitz with constant `k / I` (1/s). A
+reconstructed rate `φ`, such as an interpolant of a numerical solution, is continuous on `[0, T]`,
+has a right derivative `φ'` on `[0, T)`, starts within `δ` of `ω₀`, and satisfies the closed loop
+up to a continuous-time residual, `|φ'(t) - f(φ(t))| ≤ ε` on `[0, T)`. For `|ω₀| ≤ U_max / k`,
+Grönwall's inequality for approximate solutions against the exponential `ω` bounds the rate error
+by `gronwallBound δ (k / I) ε t`. On the horizon `[0, T]` this reads
+`|φ(t) - ω(t)| ≤ δ exp(k T / I) + ε (I / k) (exp(k T / I) - 1)`, with `δ` in rad/s, `ε` in rad/s²
+and the closed-loop time constant `I / k` in s; a torque residual `ρ = I ε` (N m) turns the second
+term into `(ρ / k) (exp(k T / I) - 1)`. The bound grows with the horizon: it is a finite-horizon
+estimate, not a uniform one. The error is `φ - ω` and the residual is `φ' - f(φ)`. Sign example:
+the straight line `φ(t) = 3/5 - 3 t / 10` starts `1/10` rad/s above `ω₀ = 1/2` (for `I = 2`,
+`k = U_max = 1`), and its residual `-3 t / 20` is negative: the line falls faster than the loop
+would from the same rate. The field is defined at every rate, so no tube or domain-membership
+argument enters, but the residual must be bounded at every time of `[0, T)`: a reconstruction with
+zero residual at a list of nodes can still leave the trajectory between them.
+
+Model inputs: the reduced scalar fixed-axis wheel model, constant `I`, `k`, `U_max`, the saturated
+rate feedback, and for tracking a reconstruction with its derivative. Non-goals: no terminal
+maneuver, optimizer or generic controller theorem; no numerical scheme, error estimator or
+step-size rule; tracking concerns the rate only, and no wheel momentum or torque bound is claimed
+for a reconstruction; no empirical adequacy or system safety claim.
 
 ## ii. Key results
 
@@ -62,9 +83,16 @@ no tracking of an approximate trajectory, and no empirical adequacy or system sa
 - `Mechanics.GuidanceTracking.trajectory_wheelAdmissible`: admissibility on every horizon.
 - `Mechanics.GuidanceTracking.rateTrajectory_not_closedLoop`: outside the unsaturated interval
   the exponential fails the closed loop at `t = 0`.
+- `Mechanics.GuidanceTracking.lipschitzWith_bodyTorque_div`: the clipped field `τ_b(ω) / I` is
+  Lipschitz with constant `k / I`.
+- `Mechanics.GuidanceTracking.abs_sub_rateTrajectory_le_gronwallBound`: the rate error of a
+  reconstruction is at most `gronwallBound δ (k / I) ε t`.
+- `Mechanics.GuidanceTracking.abs_sub_rateTrajectory_le`: the finite-horizon bound in physical
+  units.
 
 A nonzero admissible trajectory and a torque-feasible one that exceeds the momentum limit are in
-`PhyslibExtTest.Mechanics.GuidanceTrackingTest`.
+`PhyslibExtTest.Mechanics.GuidanceTrackingTest`, with a reconstruction that has nonzero initial
+error and residual, and one whose node residuals vanish but whose rate error does not.
 
 ## iii. Table of contents
 
@@ -72,6 +100,7 @@ A nonzero admissible trajectory and a torque-feasible one that exceeds the momen
 - B. The unsaturated interval and the reduced plant
 - C. Command and momentum bounds
 - D. Outside the unsaturated interval
+- E. The Lipschitz field and residual tracking
 
 ## iv. References
 
@@ -79,8 +108,13 @@ A nonzero admissible trajectory and a torque-feasible one that exceeds the momen
   momentum exchange and wheel momentum saturation).
 - F. L. Markley and J. L. Crassidis, *Fundamentals of Spacecraft Attitude Determination and
   Control*, Springer, 2014 (attitude control with reaction wheels).
-- `MetaMathlibExt.scalar_exp_solution` and `Mechanics.AttitudePorts`: the scalar exponential
-  solution and the reduced wheel model reused here.
+- J. H. Hubbard and B. H. West, *Differential Equations: A Dynamical Systems Approach*, Part I,
+  Springer, 1991, Section 4.5 (the fundamental inequality for approximate solutions).
+- H. K. Khalil, *Nonlinear Systems*, 3rd edition, Prentice Hall, 2002, Chapter 3 (Lipschitz
+  fields, the Gronwall-Bellman inequality and continuous dependence of solutions).
+- `MetaMathlibExt.scalar_exp_solution`, `Mechanics.AttitudePorts`, and Mathlib's `gronwallBound`
+  and `dist_le_of_approx_trajectories_ODE_of_mem`: the scalar exponential solution, the reduced
+  wheel model and the Grönwall bound reused here.
 -/
 
 @[expose] public section
@@ -249,5 +283,75 @@ lemma rateTrajectory_not_closedLoop {I k Umax ω₀ : ℝ} (hI : 0 < I) (hk : 0 
     rw [le_div_iff₀ hk]
     linarith
   linarith
+
+/-! ## E. The Lipschitz field and residual tracking -/
+
+/-- Saturation is `1`-Lipschitz for every limit: `|clip(x) - clip(y)| ≤ |x - y|`. -/
+private lemma abs_clip_sub_clip_le (Umax x y : ℝ) : |clip Umax x - clip Umax y| ≤ |x - y| := by
+  have h1 := abs_max_sub_max_le_max (-Umax) (min x Umax) (-Umax) (min y Umax)
+  have h2 := abs_min_sub_min_le_max x Umax y Umax
+  rw [sub_self, abs_zero] at h1 h2
+  exact h1.trans (max_le (abs_nonneg _) (h2.trans (max_le le_rfl (abs_nonneg _))))
+
+/-- **The clipped feedback field is globally Lipschitz.** For `I, k > 0` and every limit `U_max`,
+the closed-loop field `ω ↦ τ_b(ω) / I = clip(-k ω) / I` satisfies
+`|τ_b(x) / I - τ_b(y) / I| ≤ (k / I) |x - y|` for all rates `x, y`: it is Lipschitz on all of `ℝ`
+with constant `k / I`, a rate in 1/s. -/
+lemma lipschitzWith_bodyTorque_div {I k : ℝ} (hI : 0 < I) (hk : 0 < k) (Umax : ℝ) :
+    LipschitzWith (Real.toNNReal (k / I)) fun ω => bodyTorque k Umax ω / I := by
+  refine LipschitzWith.of_dist_le_mul fun x y => ?_
+  rw [Real.dist_eq, Real.dist_eq, Real.coe_toNNReal _ (div_pos hk hI).le, ← sub_div, abs_div,
+    abs_of_pos hI, div_mul_eq_mul_div, div_le_div_iff_of_pos_right hI]
+  calc |bodyTorque k Umax x - bodyTorque k Umax y| ≤ |-k * x - -k * y| :=
+        abs_clip_sub_clip_le Umax _ _
+    _ = k * |x - y| := by
+        rw [show -k * x - -k * y = -k * (x - y) by ring, abs_mul, abs_neg, abs_of_pos hk]
+
+/-- **Residual tracking against the feasible trajectory.** Let `I, k > 0` and `|ω₀| ≤ U_max / k`,
+so that `ω(t) = ω₀ exp(-k t / I)` solves the closed loop `ω' = τ_b(ω) / I` for `t ≥ 0`. Let the
+reconstruction `φ` be continuous on `[0, T]`, with right derivative `φ'` on `[0, T)`, initial
+error `|φ(0) - ω₀| ≤ δ` and continuous-time residual `|φ'(t) - τ_b(φ(t)) / I| ≤ ε` on `[0, T)`.
+Then `|φ(t) - ω(t)| ≤ gronwallBound δ (k / I) ε t` for every `t ∈ [0, T]`. -/
+lemma abs_sub_rateTrajectory_le_gronwallBound {I k Umax ω₀ : ℝ} (hI : 0 < I) (hk : 0 < k)
+    (hω₀ : |ω₀| ≤ Umax / k) {φ φ' : ℝ → ℝ} {T δ ε : ℝ} (hφ : ContinuousOn φ (Icc 0 T))
+    (hφ' : ∀ t ∈ Ico 0 T, HasDerivWithinAt φ (φ' t) (Ici t) t)
+    (hres : ∀ t ∈ Ico 0 T, |φ' t - bodyTorque k Umax (φ t) / I| ≤ ε) (h0 : |φ 0 - ω₀| ≤ δ) :
+    ∀ t ∈ Icc 0 T, |φ t - rateTrajectory I k ω₀ t| ≤ gronwallBound δ (k / I) ε t := by
+  obtain ⟨hω0, -, hd⟩ := trajectory_reducedPlant hI hk hω₀ 0
+  intro t ht
+  have h := dist_le_of_approx_trajectories_ODE_of_mem (v := fun _ ω => bodyTorque k Umax ω / I)
+    (s := fun _ => univ) (K := Real.toNNReal (k / I)) (εf := ε) (εg := 0) (δ := δ)
+    (g := rateTrajectory I k ω₀) (g' := fun t => bodyTorque k Umax (rateTrajectory I k ω₀ t) / I)
+    (fun _ _ => (lipschitzWith_bodyTorque_div hI hk Umax).lipschitzOnWith) hφ hφ'
+    (fun t ht => by rw [Real.dist_eq]; exact hres t ht) (fun _ _ => mem_univ _)
+    (fun t ht => (hd t ht.1).1.continuousAt.continuousWithinAt)
+    (fun t ht => (hd t ht.1).1.hasDerivWithinAt) (fun t _ => by rw [dist_self])
+    (fun _ _ => mem_univ _) (by rw [Real.dist_eq, hω0]; exact h0) t ht
+  rwa [Real.dist_eq, Real.coe_toNNReal _ (div_pos hk hI).le, add_zero, sub_zero] at h
+
+/-- **The finite-horizon rate error in physical units.** Let `I, k > 0`, `|ω₀| ≤ U_max / k`, and
+let the reconstruction `φ` be continuous on `[0, T]`, with right derivative `φ'` on `[0, T)`,
+`|φ(0) - ω₀| ≤ δ` and `|φ'(t) - τ_b(φ(t)) / I| ≤ ε` on `[0, T)`. Then for every `t ∈ [0, T]`
+`|φ(t) - ω(t)| ≤ δ exp(k T / I) + ε (I / k) (exp(k T / I) - 1)`. With `ω` and `δ` in rad/s, `ε` in
+rad/s², `I` in kg m² and `k` in N m s/rad, the time constant `I / k` is in s and both terms are
+rates in rad/s. -/
+lemma abs_sub_rateTrajectory_le {I k Umax ω₀ : ℝ} (hI : 0 < I) (hk : 0 < k)
+    (hω₀ : |ω₀| ≤ Umax / k) {φ φ' : ℝ → ℝ} {T δ ε : ℝ} (hφ : ContinuousOn φ (Icc 0 T))
+    (hφ' : ∀ t ∈ Ico 0 T, HasDerivWithinAt φ (φ' t) (Ici t) t)
+    (hres : ∀ t ∈ Ico 0 T, |φ' t - bodyTorque k Umax (φ t) / I| ≤ ε) (h0 : |φ 0 - ω₀| ≤ δ) :
+    ∀ t ∈ Icc 0 T, |φ t - rateTrajectory I k ω₀ t| ≤
+      δ * Real.exp (k * T / I) + ε * (I / k) * (Real.exp (k * T / I) - 1) := by
+  intro t ht
+  have hb := abs_sub_rateTrajectory_le_gronwallBound hI hk hω₀ hφ hφ' hres h0 t ht
+  have hδ : 0 ≤ δ := (abs_nonneg _).trans h0
+  have hmono : gronwallBound δ (k / I) ε t ≤ gronwallBound δ (k / I) ε T := by
+    rcases eq_or_lt_of_le ht.2 with h | h
+    · rw [h]
+    · have hε : 0 ≤ ε := (abs_nonneg _).trans (hres 0 ⟨le_rfl, ht.1.trans_lt h⟩)
+      exact gronwallBound_mono hδ hε (div_pos hk hI).le h.le
+  refine hb.trans (hmono.trans (le_of_eq ?_))
+  rw [gronwallBound_of_K_ne_0 (div_pos hk hI).ne']
+  beta_reduce
+  rw [show k / I * T = k * T / I by ring, div_div_eq_mul_div ε k I, mul_div_assoc ε I k]
 
 end Mechanics.GuidanceTracking

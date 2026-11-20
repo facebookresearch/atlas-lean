@@ -120,9 +120,46 @@ example : ((100 : ℝ), (0 : ℝ)) ∈ modifiedCamClayElasticDomain 0 2 := by
 /-- Critical-state line shape: on `q = M p`,
 `F = M² p (2p - pc)`. -/
 example (M pc p : ℝ) :
-    modifiedCamClayYield M pc p (M * p) = M ^ 2 * p * (2 * p - pc) := by
-  unfold modifiedCamClayYield
-  ring
+    modifiedCamClayYield M pc p (M * p) = M ^ 2 * p * (2 * p - pc) :=
+  modifiedCamClayYield_on_critical_line M pc p
+
+
+/-- Nonzero critical point: at `M = pc = 2`, the point
+`(1, 2)` is the nonzero intersection. -/
+example : (1 : ℝ) = 2 / 2 ∧ (2 : ℝ) = 2 * 2 / 2 :=
+  modifiedCamClayYield_eq_zero_on_critical_line_of_ne_zero
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num [modifiedCamClayYield]) (by norm_num)
+
+/-- Origin control: the origin is the excluded second
+intersection, not the critical point. -/
+example : ¬ ((0 : ℝ) = 2 / 2 ∧ (0 : ℝ) = 2 * 2 / 2) := by norm_num
+
+/-- Physical off-yield points on the line at
+`M = 1`, `pc = 2` (interior value and the named
+off-yield control). -/
+example : modifiedCamClayYield 1 2 (1 / 2) (1 / 2) = -1 / 2 := by
+  norm_num [modifiedCamClayYield]
+
+example : modifiedCamClayYield 1 2 (1 / 2) (1 * (1 / 2)) ≠ 0 :=
+  modifiedCamClayYield_on_critical_line_ne_zero
+    (by norm_num) (by norm_num) (by norm_num)
+
+/-- `M = 0` counterexamples: without `0 < M` the whole
+line `q = 0` lies on the locus. -/
+example : modifiedCamClayYield 0 2 3 (0 * 3) = 0 := by
+  norm_num [modifiedCamClayYield]
+
+example : (0 : ℝ) ≤ 0 ∧ (0 : ℝ) = 0 * 3 ∧
+    modifiedCamClayYield 0 2 3 0 = 0 ∧
+    ¬ ((3 : ℝ) = 0 ∨ (3 : ℝ) = 2 / 2) := by
+  norm_num [modifiedCamClayYield]
+
+/-- Lower-apex branch control: `(1, -1)` is on the locus
+but on `q = -M p`, not the signed physical branch. -/
+example : modifiedCamClayYield 1 2 1 (-1) = 0 ∧
+    ¬ ((0 : ℝ) ≤ -1 ∧ (-1 : ℝ) = 1 * 1) := by
+  norm_num [modifiedCamClayYield]
 
 /-! ## B. Invariant normalizations -/
 
@@ -187,6 +224,11 @@ example : deviatoricInvariant !![0, 1, 0; 0, 0, 0; 0, 0, 0]
 #print axioms EarthScience.modifiedCamClayYield_eq_translated_ellipse
 #print axioms EarthScience.convex_modifiedCamClayElasticDomain
 #print axioms EarthScience.modifiedCamClayElasticDomain_bounds
+#print axioms EarthScience.modifiedCamClayYield_on_critical_line
+#print axioms EarthScience.modifiedCamClayYield_eq_zero_on_critical_line_iff
+#print axioms
+  EarthScience.modifiedCamClayYield_eq_zero_on_critical_line_of_ne_zero
+#print axioms EarthScience.modifiedCamClayYield_on_critical_line_ne_zero
 #print axioms EarthScience.meanStress_effectiveStressCompressionPositive
 #print axioms EarthScience.deviatoricInvariant_effectiveStressCompressionPositive
 #print axioms EarthScience.deviatoricInvariant_compressionPositiveStress

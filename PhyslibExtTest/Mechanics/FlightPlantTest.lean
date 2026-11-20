@@ -9,13 +9,14 @@ module
 
 public import PhyslibExt.Mechanics.FlightPlant
 import Mathlib.Analysis.Calculus.Deriv.Prod
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 
 /-!
 # Tests for `PhyslibExt.Mechanics.FlightPlant`
 
 Consumers of the translational correspondence, of the six-degree-of-freedom package and of the
 coefficient-map wrapper: straight flight, the admitted domain of a lift map, a unit point mass,
-a steady level turn and the controlled longitudinal fixture.
+a steady level turn, the controlled longitudinal fixture and its linearization about the trim.
 
 ## i. Overview
 
@@ -45,11 +46,24 @@ vanishes. Four point masses `1/4` at `(±1, 0, 0)` and `(0, ±1, 0)` have mass `
 The actuators stay within their bounds at a corner of the box, and a state of zero speed is
 rejected.
 
+The linearization about the trim: the pitch-restoring entry `-1` of the Jacobian, read off its
+block form; the derivative at the trim in the pitch direction, `(0, 0, 0, -1)`; the field at
+`x = 1/100` as its linear part plus the cubic term `-1/1000000`. At `δ = (1/100, -1/100, 1/100,
+1/100)` the remainder has the cubic term `-1/1000000`, attaining the bound `r ‖δ‖²` with
+`r = 1/100`, and a positive `θ - sin θ` within `(r / 6) ‖δ‖²`; the first-order remainder of the
+uncertainty-propagation API is the same cubic term, and the componentwise Hessian theorem bounds it
+by `3/1000000`. The reduced field is differentiable; its second derivatives are `-6/100` for the
+forward component at `x = 1/100` and `0` for the pitch component at the trim, where the Hessian of
+the forward component vanishes. The all-ones state has Euclidean norm at most `2`, a state of
+Euclidean norm at most `1/100` is admitted, and there the pitch remainder is at most `‖e‖² / 600`.
+The quarter-mass trim moves forward with rate at least `99/100`.
+
 ## ii. Key results
 
 - `straightFlight`, `liftMaps`, `straightFlight_fixture`, `straightFlight_balanceLaws`,
   `liftMaps_not_sixDofPlant` : the straight-flight fixture.
 - `trim_fixture` : the trim of the controlled longitudinal fixture.
+- `longitudinalRemainder_fixture` : the nonlinear remainder at a nonzero state.
 
 ## iii. Table of contents
 
@@ -57,10 +71,12 @@ rejected.
 - B. Consumers of the public lemmas
 - C. A steady level turn
 - D. The controlled longitudinal fixture
+- E. Linearization about the trim
 
 ## iv. References
 
-- `PhyslibExt.Mechanics.FlightPlant` and `PhyslibExt.Mechanics.RigidMotionPorts`.
+- `PhyslibExt.Mechanics.FlightPlant`, `PhyslibExt.Mechanics.RigidMotionPorts` and
+  `PhyslibExt.Statistics.UncertaintyPropagation`.
 -/
 
 @[expose] public section
@@ -525,5 +541,124 @@ example (M : RigidBodyMotion 3) (g : Fin 3 → ℝ) (t : Time) :
   have hV : flightSpeed (-1) 0 = 0 := by simp [flightSpeed]
   obtain ⟨h1, h2⟩ := longitudinalMaps_rejects (x := fun _ => ![-1, 0, 0, 0]) M g t
   exact ⟨hV, h2 (h1 hV)⟩
+
+/-! ## E. Linearization about the trim -/
+
+/-- **A nonzero fixture.** At `δ = (1/100, -1/100, 1/100, 1/100)`, with nonzero `x` and `θ`, the
+cubic term is `-x³ = -1/1000000`, `θ - sin θ` is positive, the sup norm is `1/100`, and the cubic
+bound with `r = 1/100` is attained: `|-x³| = r ‖δ‖²`. -/
+lemma longitudinalRemainder_fixture :
+    longitudinalRemainder ![1 / 100, -1 / 100, 1 / 100, 1 / 100] 0 = -1 / 1000000 ∧
+      0 < longitudinalRemainder ![1 / 100, -1 / 100, 1 / 100, 1 / 100] 3 ∧
+      ‖(![1 / 100, -1 / 100, 1 / 100, 1 / 100] : Fin 4 → ℝ)‖ = 1 / 100 ∧
+      |longitudinalRemainder ![1 / 100, -1 / 100, 1 / 100, 1 / 100] 0| =
+        1 / 100 * ‖(![1 / 100, -1 / 100, 1 / 100, 1 / 100] : Fin 4 → ℝ)‖ ^ 2 := by
+  have hn : ‖(![1 / 100, -1 / 100, 1 / 100, 1 / 100] : Fin 4 → ℝ)‖ = 1 / 100 := by
+    refine le_antisymm ((pi_norm_le_iff_of_nonneg (by norm_num)).2 fun i => ?_) ?_
+    · fin_cases i <;> norm_num [abs_of_pos]
+    · calc (1 : ℝ) / 100 = ‖(![1 / 100, -1 / 100, 1 / 100, 1 / 100] : Fin 4 → ℝ) 0‖ := by
+            norm_num
+        _ ≤ _ := norm_le_pi_norm _ 0
+  refine ⟨by norm_num [longitudinalRemainder], ?_, hn, ?_⟩
+  · simp only [longitudinalRemainder, Matrix.cons_val]
+    exact sub_pos.2 (Real.sin_lt (by norm_num))
+  · rw [hn]
+    norm_num [longitudinalRemainder]
+
+/-- Every coordinate of the fixture `(1/100, -1/100, 1/100, 1/100)` is at most `1/100` in absolute
+value. -/
+private lemma fixture_mem_box :
+    ∀ i, |(![1 / 100, -1 / 100, 1 / 100, 1 / 100] : Fin 4 → ℝ) i| ≤ 1 / 100 := by
+  intro i
+  fin_cases i <;> norm_num [abs_div]
+
+-- The pitch-restoring entry of the Jacobian, read off its block form: `∂q'/∂θ = -1`.
+example : longitudinalJacobian 3 2 = -1 := by
+  rw [longitudinalJacobian_eq_fromBlocks]
+  rfl
+
+-- A pitch perturbation alone produces, to first order, the pitch acceleration `-θ`: the derivative
+-- at the trim in the direction `(0, 0, 1, 0)` is `(0, 0, 0, -1)`.
+example : fderiv ℝ reducedField 0 ![0, 0, 1, 0] = ![0, 0, 0, -1] := by
+  rw [hasFDerivAt_reducedField_zero.fderiv]
+  ext i
+  fin_cases i <;> simp [Matrix.toLin'_apply, longitudinalJacobian]
+
+-- At the fast state `x = 1/100` the field is its linear part plus the cubic term
+-- `(-1/1000000, 0, 0, 0)`.
+example : reducedField ![1 / 100, 0, 0, 0] =
+    longitudinalJacobian *ᵥ ![1 / 100, 0, 0, 0] + ![-(1 / 1000000), 0, 0, 0] := by
+  rw [reducedField_eq_mulVec_add_remainder]
+  congr 1
+  ext i
+  fin_cases i <;> norm_num [longitudinalRemainder]
+
+-- The first-order remainder of the uncertainty-propagation API at the fixture is the cubic term.
+example : Statistics.UncertaintyPropagation.jacobianRemainder reducedField 0
+    ![1 / 100, -1 / 100, 1 / 100, 1 / 100] 0 = -1 / 1000000 := by
+  rw [jacobianRemainder_reducedField]
+  exact longitudinalRemainder_fixture.1
+
+-- With `r = 1/100` the fixture is admitted and its pitch remainder is within `(r / 6) ‖δ‖²`.
+example : (![1 / 100, -1 / 100, 1 / 100, 1 / 100] : Fin 4 → ℝ) ∈ actuatorBox ∧
+    |longitudinalRemainder ![1 / 100, -1 / 100, 1 / 100, 1 / 100] 3| ≤
+      1 / 100 / 6 * ‖(![1 / 100, -1 / 100, 1 / 100, 1 / 100] : Fin 4 → ℝ)‖ ^ 2 := by
+  obtain ⟨hA, -, -, -, h3⟩ := longitudinalRemainder_bounds (by norm_num) le_rfl fixture_mem_box
+  exact ⟨hA, h3⟩
+
+-- The reduced field is differentiable everywhere.
+example : Differentiable ℝ reducedField :=
+  contDiff_reducedField.differentiable (by norm_num)
+
+-- The second derivative of the forward component at `x = 1/100` along `(1, 0, 0, 0)` is `-6/100`;
+-- that of the pitch component at the trim along `(0, 0, 1, 0)` is `0`.
+example : fderiv ℝ (fderiv ℝ fun e => reducedField e 0) ![1 / 100, 0, 0, 0] ![1, 0, 0, 0]
+      ![1, 0, 0, 0] = -6 / 100 ∧
+    fderiv ℝ (fderiv ℝ fun e => reducedField e 3) 0 ![0, 0, 1, 0] ![0, 0, 1, 0] = 0 := by
+  obtain ⟨h0, -, -, -⟩ :=
+    fderiv_fderiv_reducedField_apply ![1 / 100, 0, 0, 0] ![1, 0, 0, 0] ![1, 0, 0, 0]
+  obtain ⟨-, -, -, h3⟩ := fderiv_fderiv_reducedField_apply 0 ![0, 0, 1, 0] ![0, 0, 1, 0]
+  rw [h0, h3]
+  norm_num
+
+-- At the trim, the box of radius `0`, the Hessian of the forward component vanishes.
+example : ‖fderiv ℝ (fderiv ℝ fun e => reducedField e 0) (0 : Fin 4 → ℝ)‖ = 0 := by
+  have h := norm_fderiv_fderiv_reducedField_le (r := 0) (y := 0) (fun j => by simp) 0
+  simp only [Matrix.cons_val_zero, mul_zero] at h
+  exact le_antisymm h (by positivity)
+
+-- The componentwise Hessian theorem at the fixture, `r = 1/100`: the forward remainder is at most
+-- `3 r ‖δ‖² = 3/1000000`.
+example : |Statistics.UncertaintyPropagation.jacobianRemainder reducedField 0
+    ![1 / 100, -1 / 100, 1 / 100, 1 / 100] 0| ≤ 3 / 1000000 := by
+  have h := jacobianRemainder_reducedField_le_of_hessian (by norm_num : (0 : ℝ) < 1 / 100)
+    fixture_mem_box 0
+  rw [longitudinalRemainder_fixture.2.2.1] at h
+  calc _ ≤ _ := h
+    _ = 3 / 1000000 := by norm_num
+
+-- The all-ones state has sup norm `1`, so its Euclidean norm is at most `2`.
+example : ‖(WithLp.toLp 2 fun _ : Fin 4 => (1 : ℝ) : EuclideanSpace ℝ (Fin 4))‖ ≤ 2 := by
+  have h := (norm_ofLp_le_norm_le_two_mul (WithLp.toLp 2 fun _ : Fin 4 => (1 : ℝ))).2
+  have h1 : ‖(WithLp.ofLp (WithLp.toLp 2 fun _ : Fin 4 => (1 : ℝ)) : Fin 4 → ℝ)‖ = 1 := by
+    simp
+  rw [h1, mul_one] at h
+  exact h
+
+-- A state of Euclidean norm at most `1/100` is admitted, coordinate by coordinate.
+example (e : EuclideanSpace ℝ (Fin 4)) (he : ‖e‖ ≤ 1 / 100) : WithLp.ofLp e ∈ actuatorBox :=
+  fun i => abs_ofLp_le_of_norm_le he i
+
+-- On the Euclidean ball of radius `1/100` the pitch remainder is at most `‖e‖² / 600`.
+example (e : EuclideanSpace ℝ (Fin 4)) (he : ‖e‖ ≤ 1 / 100) :
+    |WithLp.ofLp e 2 - Real.sin (WithLp.ofLp e 2)| ≤ ‖e‖ ^ 2 / 600 := by
+  have h := (longitudinalRemainder_bounds_euclidean (by norm_num) le_rfl he).2.2.2.2
+  simp only [longitudinalRemainder, Matrix.cons_val] at h
+  linarith
+
+-- The trim of the quarter-mass body from `(3, 5)` moves forward with rate at least `99/100`.
+example (t : Time) : 99 / 100 ≤ ∂ₜ (fun s : Time => 3 + s.val) t :=
+  planar_sixDofPlant_forward_rate (trim_relative_equilibrium quarterMassBody quarterMassBody_mass
+    quarterMassBody_centerOfMass quarterMassBody_inertia 3 5 t).2.1
 
 end PhyslibExtTest.Mechanics.FlightPlant
