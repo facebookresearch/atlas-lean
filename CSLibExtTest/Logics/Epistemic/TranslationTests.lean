@@ -35,8 +35,8 @@ example : Sat muddy (translateTop headsThenKnows) false :=
 
 /-- The translated formula is free of announcements and common
 knowledge, checked by computation. -/
-example : (translateTop headsThenKnows).AnnFree := by
-  simp [translateTop, translate, headsThenKnows, Formula.and, Formula.AnnFree]
+example : (translateTop headsThenKnows).AnnCommonFree := by
+  simp [translateTop, translate, headsThenKnows, Formula.and, Formula.AnnCommonFree]
 
 /-- Order matters for nested announcements: after heads is announced,
 agent `1` knows heads, so "`1` does not know heads" cannot be announced

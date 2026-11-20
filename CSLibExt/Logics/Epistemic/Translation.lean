@@ -83,7 +83,7 @@ def AnnFormula.toFormula : AnnFormula Atom Agent → Formula Atom Agent
 "after announcing `φ`, `ψ`", defined by recursion on `ψ`. Successive
 announcements compose their conditions with the encoded conjunction.
 When the ambient formula `φ` is announcement-free, so is the result
-(`translate_annFree`); at the top level the ambient formula is a
+(`translate_annCommonFree`); at the top level the ambient formula is a
 tautology, so `translateTop` is always announcement-free. -/
 def translate (φ : Formula Atom Agent) : AnnFormula Atom Agent → Formula Atom Agent
   | .atom a => .imp φ (.atom a)
@@ -173,7 +173,7 @@ theorem sat_translate (φ : Formula Atom Agent) (ψ : AnnFormula Atom Agent) :
   exact sat_translate_at M φ ψ w
 
 /-- Every announcement-language formula is equivalent to its
-translation; `translateTop_annFree` shows the translation is
+translation; `translateTop_annCommonFree` shows the translation is
 announcement-free. -/
 theorem sat_translateTop (ψ : AnnFormula Atom Agent) :
     Sat M (translateTop ψ) w ↔ Sat M ψ.toFormula w := by
@@ -181,17 +181,17 @@ theorem sat_translateTop (ψ : AnnFormula Atom Agent) :
     (sat_announce_true M ψ.toFormula w)
 
 /-- Announcement- and common-knowledge-freedom of formulas. -/
-def Formula.AnnFree : Formula Atom Agent → Prop
+def Formula.AnnCommonFree : Formula Atom Agent → Prop
   | .atom _ => True
   | .bot => True
-  | .imp φ ψ => AnnFree φ ∧ AnnFree ψ
-  | .know _ φ => AnnFree φ
+  | .imp φ ψ => AnnCommonFree φ ∧ AnnCommonFree ψ
+  | .know _ φ => AnnCommonFree φ
   | .common _ _ => False
   | .announce _ _ => False
 
-theorem translate_annFree {Atom Agent : Type*} (φ : Formula Atom Agent)
-    (hφ : φ.AnnFree) (ψ : AnnFormula Atom Agent) :
-    (translate φ ψ).AnnFree := by
+theorem translate_annCommonFree {Atom Agent : Type*} (φ : Formula Atom Agent)
+    (hφ : φ.AnnCommonFree) (ψ : AnnFormula Atom Agent) :
+    (translate φ ψ).AnnCommonFree := by
   revert φ hφ
   induction ψ with
   | atom a => intro φ hφ; exact ⟨hφ, True.intro⟩
@@ -208,9 +208,9 @@ theorem translate_annFree {Atom Agent : Type*} (φ : Formula Atom Agent)
 
 /-- The translated formula is itself free of announcements and common
 knowledge. -/
-theorem translateTop_annFree (ψ : AnnFormula Atom Agent) :
-    (translateTop ψ).AnnFree := by
-  exact translate_annFree (.imp .bot .bot) ⟨True.intro, True.intro⟩ ψ
+theorem translateTop_annCommonFree (ψ : AnnFormula Atom Agent) :
+    (translateTop ψ).AnnCommonFree := by
+  exact translate_annCommonFree (.imp .bot .bot) ⟨True.intro, True.intro⟩ ψ
 
 
 end Epistemic
