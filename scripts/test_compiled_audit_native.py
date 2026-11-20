@@ -59,6 +59,23 @@ class CompiledAuditTests(unittest.TestCase):
         self.assertEqual(repaired['successfulGroups'], 2)
         self.assertEqual(repaired['importCollisionSplits'], 1)
 
+    def test_domain_import_boundary(self):
+        sources = {
+            'Domains.AuditFixture.Model': 'module\npublic def domainFixture : Nat := 1\n',
+            'DomainsTest.AuditFixture.Model': 'module\npublic import Domains.AuditFixture.Model\n',
+            'MathlibExt.AuditFixture.Reverse': 'module\npublic import Domains.AuditFixture.Model\n',
+        }
+        for module, source in sources.items():
+            path = self.fixture.joinpath(*module.split('.')).with_suffix('.lean')
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(source)
+        subprocess.run(['lake', 'build', *('+' + name for name in sources)], cwd=self.fixture, check=True)
+        allowed = ['Domains.AuditFixture.Model', 'DomainsTest.AuditFixture.Model']
+        self.assertEqual(audit.audit(self.fixture, allowed, self.checker)['checkedModules'], allowed)
+        with self.assertRaisesRegex(audit.AuditFailure,
+                                    r'MathlibExt\.AuditFixture\.Reverse must not import Domains\.AuditFixture\.Model'):
+            audit.audit(self.fixture, ['MathlibExt.AuditFixture.Reverse'], self.checker)
+
     def test_forbidden_axiom_still_fails(self):
         with self.assertRaisesRegex(audit.AuditFailure, 'depends on forbidden axioms'):
             audit.audit(self.fixture, ['MathlibExtTest.AuditFixture.Forbidden'], self.checker)

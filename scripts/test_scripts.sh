@@ -15,7 +15,7 @@ fail() {
 
 reset_fixture() {
   rm -rf "$TMP_ROOT/repo"
-  mkdir -p "$TMP_ROOT/repo"/{CSLibExt,CSLibExtTest,MathlibExt,MathlibExtTest,PhyslibExt,PhyslibExtTest,WantedExt,scripts,v1}
+  mkdir -p "$TMP_ROOT/repo"/{CSLibExt,CSLibExtTest,MathlibExt,MathlibExtTest,PhyslibExt,PhyslibExtTest,Domains,DomainsTest,WantedExt,scripts,v1}
   cp "$REPO_ROOT/lakefile.toml" "$TMP_ROOT/repo/"
   cp "$REPO_ROOT/lake-manifest.json" "$TMP_ROOT/repo/"
   cp \
@@ -63,6 +63,17 @@ PY
 
 reset_fixture
 expect_pass "empty scaffold"
+
+# An older PR may add a standalone model that imports nothing from the old tree.
+for roots in MathlibExt:Domains MathlibExtTest:DomainsTest; do
+  old="${roots%:*}/Transport/NewArea"
+  new="${roots#*:}/Transport/NewArea"
+  mkdir -p "$TMP_ROOT/repo/$old" "$TMP_ROOT/repo/$new"
+  touch "$TMP_ROOT/repo/$old/NewModel.lean"
+  expect_failure "addition to a migrated subject" "move $old/NewModel.lean to $new/NewModel.lean"
+  mv "$TMP_ROOT/repo/$old/NewModel.lean" "$TMP_ROOT/repo/$new/"
+  expect_pass "addition at the new path"
+done
 
 # The fixture runs preflight without recursively running this test suite.
 cp "$REPO_ROOT/scripts/"{check.sh,check_diagnostics.sh} "$TMP_ROOT/repo/scripts/"
@@ -186,7 +197,7 @@ expect_failure "archived manifest dependency" 'build surface'
 
 reset_fixture
 replace_once \
-  'defaultTargets = ["MathlibExt", "CSLibExt", "PhyslibExt", "WantedExt"]' \
+  'defaultTargets = ["MathlibExt", "CSLibExt", "PhyslibExt", "Domains", "WantedExt"]' \
   'defaultTargets = ["v1"]'
 expect_failure "archived default target" 'build surface'
 
@@ -293,7 +304,7 @@ if ! PATH="$FAKE_BIN:$PATH" "$REPO_ROOT/scripts/check_diagnostics.sh" \
   cat "$TMP_ROOT/output.log" >&2
   fail "clean compiler diagnostics failed"
 fi
-grep -qx 'build MathlibExt CSLibExt PhyslibExt WantedExt MathlibExtTest CSLibExtTest PhyslibExtTest' "$FAKE_LAKE_LOG" ||
+grep -qx 'build MathlibExt CSLibExt PhyslibExt Domains WantedExt MathlibExtTest CSLibExtTest PhyslibExtTest DomainsTest' "$FAKE_LAKE_LOG" ||
   fail "compiler diagnostics built the wrong targets"
 [[ "$(wc -l <"$FAKE_LAKE_LOG")" -eq 1 ]] ||
   fail "compiler diagnostics invoked Lake more than once"
@@ -324,7 +335,7 @@ grep -q 'forbidden compiler diagnostic' "$TMP_ROOT/output.log" ||
   fail "native_decide diagnostic produced the wrong failure"
 
 reset_fixture
-for library in CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest WantedExt; do
+for library in CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest Domains DomainsTest WantedExt; do
   printf '%s\n' 'def sentinel : Nat := 1' \
     >"$TMP_ROOT/repo/$library/Sentinel.lean"
 done
@@ -337,7 +348,7 @@ fi
 for module in \
   CSLibExt.Sentinel CSLibExtTest.Sentinel \
   MathlibExt.Sentinel MathlibExtTest.Sentinel \
-  PhyslibExt.Sentinel PhyslibExtTest.Sentinel WantedExt.Sentinel; do
+  PhyslibExt.Sentinel PhyslibExtTest.Sentinel Domains.Sentinel DomainsTest.Sentinel WantedExt.Sentinel; do
   grep -qx "import $module" "$FAKE_LEAN_INPUT" ||
     fail "axiom input omitted $module"
 done

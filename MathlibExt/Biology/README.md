@@ -8,11 +8,11 @@ this file records the modeling conventions that make results in different files 
 
 | Content | Location |
 |---|---|
-| Biological models and their theorems | `MathlibExt/Biology/<Area>/…` (areas below) |
+| Biological models and their theorems | `Domains/Biology/<Area>/…`; existing areas below move in dependency order |
 | Generic mathematics they need | Mathlib's taxonomy: `MathlibExt/Probability/…`, … |
 | Algorithms with correctness proofs | `CSLibExt/Bioinformatics/…` |
 | Established results whose proof is deferred | `WantedExt/Biology/…`, `WantedExt/Probability/…` |
-| Tests | the mirror path under `MathlibExtTest/` or `CSLibExtTest/` |
+| Tests | the mirror path under `DomainsTest/` for migrated models; otherwise `MathlibExtTest/` or `CSLibExtTest/` |
 
 Areas: `PopulationGenetics` (with `Admixture/`, `Coalescent/` and `Diffusion/`), `Phylogenetics`,
 `StatisticalGenetics`, `Epidemiology`, `Dynamics`, `CancerGenomics`, `Ecology` (structured
@@ -22,7 +22,7 @@ standardized rates over population categories, and Leslie-matrix demography). Di
 Markov chains, statistics and combinatorics that are not specific to biology go under
 `MathlibExt/Probability/…` or `MathlibExt/Combinatorics/…`.
 
-Namespaces follow the path: `MathlibExt.Biology.<Area>.<Topic>` for models,
+Existing public names are preserved when modules move. For new modules use `Domains.Biology.<Area>.<Topic>` for models in `Domains`. Legacy namespaces follow the original path: `MathlibExt.Biology.<Area>.<Topic>` for models,
 `Cslib.Bioinformatics.<Area>.<Topic>` for algorithms, and Mathlib's own namespaces
 (`ProbabilityTheory`, `Nat`, `Matrix`, …) for generic lemmas that could move upstream.
 

@@ -41,6 +41,11 @@ Check that each added or changed module is in the correct top-level library.
   organized by physics, every definition has a docstring, module documentation
   uses Physlib's numbered headings, and `theorem` is reserved for results that
   are well known in the physics literature (`lemma` otherwise).
+- `Domains` contains proved models specific to an application domain. It may import
+  `MathlibExt`, `CSLibExt`, and `PhyslibExt`, never `WantedExt` or tests. None of
+  those three foundation libraries may import `Domains`. Classify by the public
+  model or theorem, not the application that motivated a generic result.
+- `DomainsTest` mirrors `Domains` and may import it and its three foundations.
 - `WantedExt` contains established results with deferred Lean work, expressed
   with direct `theorem_wanted` or `def_wanted` declarations. Each such module
   directly imports `Batteries.Util.ProofWanted`. It may import `MathlibExt` and
@@ -82,7 +87,7 @@ Check that each added or changed module is in the correct top-level library.
   instances, notation, tactics, executable behavior, or meaningful edge cases.
 - Reject `sorry`, `sorryAx`, `admit`, project-declared axioms, `native_decide`,
   unsafe escapes, forbidden imports, unrelated changes, and irreproducible
-  provenance in all seven libraries.
+  provenance in all root libraries.
 - Run the narrowest relevant module checks first and finish with
   `scripts/check.sh` when feasible.
 

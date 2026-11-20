@@ -1,7 +1,7 @@
 # Building and maintaining the dependency explorer
 
 The explorer is a view of the maintained v2 libraries: `MathlibExt`,
-`CSLibExt`, `PhyslibExt`, and `WantedExt`. The archived `v1/` package and the
+`CSLibExt`, `PhyslibExt`, `Domains`, and `WantedExt`. The archived `v1/` package and the
 standalone `Atlas/` developments are outside its scope.
 
 What a PR may change in the graph, and how to expand a node, is in
@@ -243,10 +243,10 @@ Install the Python environment above in that checkout, then:
 lake exe cache get
 lake build MathlibExt.Combinatorics.Enumerative.Nontrivial1234_3412Classes
 lake build MathlibExt.Combinatorics.Words.TernaryAbelianCubeFreeLowerBound
-lake build MathlibExt CSLibExt PhyslibExt WantedExt
+lake build MathlibExt CSLibExt PhyslibExt Domains WantedExt
 
 git ls-files 'MathlibExt/*.lean' 'CSLibExt/*.lean' \
-  'PhyslibExt/*.lean' 'WantedExt/*.lean' |
+  'PhyslibExt/*.lean' 'Domains/*.lean' 'WantedExt/*.lean' |
 while IFS= read -r source; do
   module="${source%.lean}"
   printf '%s\n' "${module//\//.}"
@@ -291,7 +291,7 @@ extraction above:
 ```sh
 python scripts/extract_mathlib_graph.py dump mathlib-graph/mathlib-dump.jsonl.gz
 python scripts/extract_mathlib_graph.py dump --modules v2-modules.txt \
-  --keep Mathlib,MathlibExt,CSLibExt,PhyslibExt,WantedExt \
+  --keep Mathlib,MathlibExt,CSLibExt,PhyslibExt,Domains,WantedExt \
   mathlib-graph/v2-mathlib-dump.jsonl.gz
 python scripts/extract_mathlib_graph.py graph \
   mathlib-graph/mathlib-dump.jsonl.gz mathlib-graph
