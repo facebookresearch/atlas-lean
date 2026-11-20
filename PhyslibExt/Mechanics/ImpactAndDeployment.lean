@@ -115,8 +115,7 @@ external-impulse model with one normal direction, not a limit of the finite-mass
   durations sum to `2 u₀ / (g (1 - e))` and the contact times accumulate there; for `e ≥ 0` the
   durations are summable exactly when `e < 1`.
 - `zeno_no_dwell`: the Zeno family has no positive dwell-time lower bound, the hypothesis of the
-  finite-event criterion `Robotics.Hybrid.events_finite_of_dwell`; the old name
-  `events_finite_of_dwell` of this module is a deprecated alias of that criterion.
+  finite-event criterion `Robotics.Hybrid.events_finite_of_dwell`.
 - `elastic_events_finite`, `inelastic_stops`: for `e = 1` finitely many impacts on every horizon;
   for `e = 0` the first arc is the only active one, and the motion terminates after the first
   impact at `2 u₀ / g`.
@@ -631,9 +630,6 @@ lemma summable_flightDuration_iff {g e u₀ : ℝ} (hg : 0 < g) (hu : 0 < u₀) 
     exact (summable_congr (flightDuration_eq g e u₀)).mpr hmul
 
 /-! ## I. No dwell-time lower bound for the Zeno family -/
-
-@[deprecated (since := "2026-11-19")]
-alias events_finite_of_dwell := Robotics.Hybrid.events_finite_of_dwell
 
 /-- The Zeno family has no positive dwell-time lower bound: for `g > 0`, `u₀ > 0` and
 `0 < e < 1`, no `δ > 0` bounds every flight duration from below. -/

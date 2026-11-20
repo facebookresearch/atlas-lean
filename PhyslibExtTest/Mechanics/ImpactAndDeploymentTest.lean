@@ -255,9 +255,4 @@ example :
   rw [← hreb]
   norm_num [wallReboundVelocity]
 
--- The pre-move name still elaborates, as a deprecated alias with the same statement.
-set_option linter.deprecated false in
-example : @PhyslibExt.Mechanics.ImpactAndDeployment.events_finite_of_dwell =
-    @Robotics.Hybrid.events_finite_of_dwell := rfl
-
 end PhyslibExtTest.Mechanics.ImpactAndDeployment
