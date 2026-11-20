@@ -1,5 +1,5 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
+Copyright (c) 2025–2026 the contributors.
 All rights reserved.
 
 This source code is licensed under the license found in the
@@ -28,5 +28,19 @@ example (ν : ℚ) :
   apply pderiv_coleHopf_of_heat
   · simp
   · simp
+
+-- A quadratic heat profile evolves in time when viscosity is nonzero.
+example (ν : ℚ) :
+    let φ : MvPowerSeries (Fin 2) ℚ := 1 + X 1 ^ 2 + C (2 * ν) * X 0
+    pderiv 0 (coleHopf ν 1 φ) =
+      C ν * pderiv 1 (pderiv 1 (coleHopf ν 1 φ)) -
+        coleHopf ν 1 φ * pderiv 1 (coleHopf ν 1 φ) := by
+  dsimp
+  apply pderiv_coleHopf_of_heat
+  · simp
+  · have htwo (i : Fin 2) : pderiv i (2 : MvPowerSeries (Fin 2) ℚ) = 0 := by
+      simpa only [map_ofNat] using (pderiv_C (i := i) (r := (2 : ℚ)))
+    simp [map_mul, map_ofNat, smul_eq_mul, htwo]
+    ring
 
 #print axioms MvPowerSeries.pderiv_coleHopf_of_heat

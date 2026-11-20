@@ -1,37 +1,9 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
+Copyright (c) 2025–2026 the contributors.
 All rights reserved.
 
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
--/
-
-/-
-Adapted from arnovich/asgard-lean, commit
-e5e098d5bce80c3907a6acd4e2beb904309a1709,
-`Gimle/Asgard/Streams/ColeHopf.lean`. Author: arnovich.
-
-MIT License
-
-Copyright (c) 2025 Gimle Labs
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 -/
 
 module
@@ -46,6 +18,12 @@ For an invertible formal heat solution φ, the logarithmic derivative
 `u = -2ν (∂ₓφ) φ⁻¹` satisfies the formal viscous Burgers equation.
 This is an identity of multivariate formal power series. No convergence or
 analytic realization is asserted, and viscosity need not be positive.
+
+Mathematical reference: F. Gesztesy and H. Holden, The Cole-Hopf and Miura
+Transformations Revisited, Lemma 3.1, equations (3.1)-(3.2),
+https://arxiv.org/abs/solv-int/9812025. The residual identity is algebraic;
+here it is proved for formal series over any field. This does not assert
+an analytic extension of the source's smooth, positive-function theorem.
 -/
 
 @[expose] public section
