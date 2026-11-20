@@ -86,6 +86,44 @@ Check that each added or changed module is in the correct top-level library.
 - Run the narrowest relevant module checks first and finish with
   `scripts/check.sh` when feasible.
 
+## Wiki and graph PRs
+
+A graph PR changes the ATLAS wiki: `blueprint/roadmap/`, `blueprint/links/`,
+`blueprint/atlas.json`, `blueprint/coverage/`, `scripts/taxonomy.json`, or
+`scripts/wiki-sync.json`. Review it against the
+[graph rules](docs/BLUEPRINT.md#graph-rules); each rule there gives its
+reason. Beyond the mechanical rules, check what only a reader can:
+
+- **Faithful statements (rule 7).** Compare each changed page with its Lean
+  declaration clause by clause. A page that adds, drops or strengthens a
+  hypothesis is a mathematical finding.
+- **Expansions (rules 12–13).** Judge whether the new pages cover the node's
+  mathematics at a sensible granularity, whether each wanted statement is
+  faithful to its source, and whether the order among new planned pages is
+  right. Check that the node's page and annotation are gone, that no link
+  still points at it (a link left under `## Informally uses` only warns), and
+  that each new page carries the node's prerequisites it needs. A new page
+  becomes a wanted statement only once each prerequisite still blocking it is
+  in its Lean statement or, for a proof prerequisite, already proved; otherwise
+  it should stay a planned page.
+- **Planned pages (rule 10).** A page with no Lean link states its result
+  precisely and cites its source; check the statement against that source as
+  you would check a page against its declaration.
+- **Duplicates (rule 6).** Search the vault and pinned Mathlib for an existing
+  page or declaration before accepting a new one.
+- **Findings the wiki batches raised most often.** Prose about the library's
+  state ("the Lean proof", "not formalized"), which goes stale as the Lean
+  changes; a formula read as a probability or an expectation without the
+  nonnegativity or normalisation it needs; and a citation not checked against
+  the cited edition, including theorem numbers nobody verified.
+- **Held pages (rule 7).** Don't ask to relink a page whose annotation records
+  a `held` declaration; check that the reason holds and, unless the
+  declaration is private by design, that its issue is linked.
+
+Every graph PR also needs a code owner's approval (`.github/CODEOWNERS`).
+That approval is a person's, not a finding: don't request changes because it
+is missing.
+
 ## Findings and verdict
 
 List findings first, ordered by severity. Each finding must identify a file and

@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Mechanics.HarmonicMechanics
+public import PhyslibExt.Statistics.UncertaintyPropagation
 import MathlibExt.LinearAlgebra.Matrix.WeightedScatter
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.LinearAlgebra.Matrix.PosDef
@@ -52,7 +53,10 @@ joint load.
 Section G records reciprocal work: one symmetric supported
 stiffness gives equal cross work for any two supported load
 cases.
-Section H builds the unit-load (dummy-unit-load) response
+Section H builds the load-parameter observation matrix at
+fixed supported stiffness and records when load parameters
+on a declared affine space are identifiable from it.
+Section I builds the unit-load (dummy-unit-load) response
 functional for a fixed output and proves it from reciprocal
 work with a single inverse application.
 
@@ -79,6 +83,11 @@ work with a single inverse application.
 - `supported_reciprocalWork`: for one supported
   stiffness, the work of either supported load through the
   other solution is the same.
+- `loadObservationMatrix` and
+  `loadObservation_identifiableOnAffine_of_kernels`: at
+  fixed positive-definite supported stiffness, load
+  parameters on an affine space are identifiable when the
+  sensor map and the load basis have trivial kernels there.
 - `influenceVector`, `unitLoadResponse`, and
   `supported_unitLoad_identity`: the fixed output of a
   supported solution is the pairing of the unit-load
@@ -95,7 +104,8 @@ work with a single inverse application.
 - E. Supported rigidity certificate
 - F. Supported unique response
 - G. Reciprocal work
-- H. Unit-load response
+- H. Load-parameter identifiability
+- I. Unit-load response
 
 ## iv. References
 
@@ -625,7 +635,137 @@ theorem supported_reciprocalWork {J M F : Type*} [Fintype J]
   rw [dotProduct_comm f v, dotProduct_comm g u]
   exact h.symm
 
-/-! ## H. Unit-load response -/
+/-! ## H. Load-parameter identifiability -/
+
+/-- Load-parameter observation matrix at fixed supported stiffness:
+`Cmat * K⁻¹ * Bload`, where `K` is the supported stiffness
+`(axialCompatibility r a b * S)ᵀ * Matrix.diagonal k *
+(axialCompatibility r a b * S)`. The truss data and weights `k` are
+fixed knowns; only the load parameters multiplied by `Bload` are
+unknown, so the parameter-to-observation map is linear. At a
+non-invertible `K` the inverse is the totalized matrix inverse and the
+physical reading needs positive definiteness, as in the theorems
+below. -/
+noncomputable def loadObservationMatrix {J M : Type*} [Fintype J]
+    [DecidableEq J] [Fintype M] [DecidableEq M] {nf np nm : ℕ}
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) (Fin nf) ℝ) (k : M → ℝ)
+    (Cmat : Matrix (Fin nm) (Fin nf) ℝ)
+    (Bload : Matrix (Fin nf) (Fin np) ℝ) :
+    Matrix (Fin nm) (Fin np) ℝ :=
+  Cmat * ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+      * (axialCompatibility r a b * S))⁻¹ * Bload
+/-- Forward observation at fixed supported stiffness: a supported
+displacement `u` solving the supported system at load `Bload *ᵥ θ`
+is observed as the linear observation matrix applied to `θ`.
+Uses the supported inverse characterization
+`supported_mulVec_eq_iff_inv_mulVec`. -/
+lemma loadObservation_eq_of_supported_eq {J M : Type*} [Fintype J]
+    [DecidableEq J] [Fintype M] [DecidableEq M] {nf np nm : ℕ}
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) (Fin nf) ℝ) (k : M → ℝ)
+    (hPD : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S)).PosDef)
+    (Cmat : Matrix (Fin nm) (Fin nf) ℝ)
+    (Bload : Matrix (Fin nf) (Fin np) ℝ)
+    {u : Fin nf → ℝ} {θ : Fin np → ℝ}
+    (hu : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S)) *ᵥ u = Bload *ᵥ θ) :
+    Cmat *ᵥ u
+      = loadObservationMatrix r a b S k Cmat Bload *ᵥ θ := by
+  have hu' := (supported_mulVec_eq_iff_inv_mulVec r a b S k hPD).mp hu
+  rw [hu']
+  simp only [loadObservationMatrix, ← Matrix.mulVec_mulVec]
+
+/-- Realized supported response: at positive-definite fixed
+supported stiffness, `K⁻¹ *ᵥ (Bload *ᵥ θ)` solves the supported
+system at load `Bload *ᵥ θ` and is observed as the linear observation
+matrix applied to `θ`. Uses the supported inverse
+characterization `supported_mulVec_eq_iff_inv_mulVec`. -/
+lemma loadObservation_supported_response {J M : Type*} [Fintype J]
+    [DecidableEq J] [Fintype M] [DecidableEq M] {nf np nm : ℕ}
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) (Fin nf) ℝ) (k : M → ℝ)
+    (hPD : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S)).PosDef)
+    (Cmat : Matrix (Fin nm) (Fin nf) ℝ)
+    (Bload : Matrix (Fin nf) (Fin np) ℝ)
+    (θ : Fin np → ℝ) :
+    ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S)) *ᵥ
+      (((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S))⁻¹ *ᵥ (Bload *ᵥ θ))
+      = Bload *ᵥ θ
+    ∧ Cmat *ᵥ (((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S))⁻¹ *ᵥ (Bload *ᵥ θ))
+      = loadObservationMatrix r a b S k Cmat Bload *ᵥ θ := by
+  have h1 : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S)) *ᵥ
+      (((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S))⁻¹ *ᵥ (Bload *ᵥ θ))
+      = Bload *ᵥ θ :=
+    (supported_mulVec_eq_iff_inv_mulVec r a b S k hPD).mpr rfl
+  exact ⟨h1,
+    loadObservation_eq_of_supported_eq r a b S k hPD Cmat Bload h1⟩
+/-- Known stiffness with unknown loads: at positive-definite fixed
+supported stiffness, if the sensor map has trivial kernel and the
+load basis has trivial kernel on the direction space `V`, then load
+parameters on `theta0 + V` are identifiable from the observation.
+The two kernel conditions are sufficient, not necessary: the exact
+obstruction is a nonzero kernel direction of the composite
+observation map inside `V`, and a sensor kernel that misses the
+realized response subspace does not by itself obstruct
+identifiability. -/
+lemma loadObservation_identifiableOnAffine_of_kernels
+    {J M : Type*} [Fintype J] [DecidableEq J] [Fintype M]
+    [DecidableEq M] {nf np nm : ℕ}
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) (Fin nf) ℝ) (k : M → ℝ)
+    (hPD : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S)).PosDef)
+    (Cmat : Matrix (Fin nm) (Fin nf) ℝ)
+    (Bload : Matrix (Fin nf) (Fin np) ℝ) (theta0 : Fin np → ℝ)
+    (V : Submodule ℝ (Fin np → ℝ))
+    (hC : ∀ w : Fin nf → ℝ, Cmat *ᵥ w = 0 → w = 0)
+    (hB : ∀ v : Fin np → ℝ, v ∈ V → Bload *ᵥ v = 0 → v = 0) :
+    Statistics.UncertaintyPropagation.IdentifiableOnAffine
+      (loadObservationMatrix r a b S k Cmat Bload)
+      (AffineSubspace.mk' theta0 V) := by
+  rw [Statistics.UncertaintyPropagation.identifiableOnAffine_mk'_iff_trivial_ker]
+  intro v hv hHv
+  have h := hHv
+  simp only [loadObservationMatrix, ← Matrix.mulVec_mulVec] at h
+  have hK := hC _ h
+  have hdet := isUnit_iff_ne_zero.mpr (ne_of_gt hPD.det_pos)
+  have hKK := Matrix.mul_nonsing_inv _ hdet
+  have hBv : Bload *ᵥ v = 0 := by
+    have e : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+          * (axialCompatibility r a b * S)) *ᵥ
+        ((((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+          * (axialCompatibility r a b * S))⁻¹) *ᵥ (Bload *ᵥ v))
+        = Bload *ᵥ v := by
+      rw [Matrix.mulVec_mulVec, hKK, Matrix.one_mulVec]
+    rw [hK, Matrix.mulVec_zero] at e
+    exact e.symm
+  exact hB v hv hBv
+
+/-- Scope guard for unknown stiffness: the one-degree-of-freedom
+displacement at unit load as a function of a positive scalar
+stiffness `s`, namely `s⁻¹`, is not affine (in particular not linear)
+in `s`. A stiffness-parameter inverse problem therefore cannot reuse
+the fixed-stiffness linear observation matrix; it needs a separate
+nonlinear or local model. No varying-stiffness identifiability
+statement is made here. -/
+lemma inv_not_affine_on_pos :
+    ¬ ∃ a b : ℝ, ∀ s : ℝ, 0 < s → s⁻¹ = a * s + b := by
+  rintro ⟨a, b, h⟩
+  have h1 := h 1 one_pos
+  have h2 := h 2 two_pos
+  have h3 := h 3 three_pos
+  norm_num at h1 h2 h3
+  linarith
+
+/-! ## I. Unit-load response -/
 
 /-- Influence vector for the fixed output functional `aout`: the
 supported response to the generalized unit load `aout` itself,

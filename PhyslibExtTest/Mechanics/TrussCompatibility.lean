@@ -23,8 +23,8 @@ unit row, supported virtual work on the mechanism
 (one-member) truss, the supported rigidity certificate
 on a triangle and its supported null mode, and unique
 supported response on triangle and focused fixtures,
-and reciprocal work on the focused fixture, and unit-load
-response checks.
+and reciprocal work on the focused fixture, and
+load-parameter identifiability checks, and unit-load response checks.
 
 ## i. Overview
 
@@ -41,7 +41,8 @@ No new definitions or results are introduced here.
 - C. Supported rigidity certificate
 - D. Supported unique response
 - E. Reciprocal work
-- F. Unit-load response
+- F. Load-parameter identifiability
+- G. Unit-load response
 
 ## iv. References
 
@@ -771,7 +772,102 @@ example : (![0, -6] : Fin 2 → ℝ) ⬝ᵥ ![1, 1] = -6 ∧ (-6 : ℝ) ≠ 6 :=
   norm_num [dotProduct, Fin.sum_univ_two]
 
 
-/-! ## F. Unit-load response -/
+/-! ## F. Load-parameter identifiability -/
+
+/-- Positive definiteness of the focused supported
+stiffness, from the rigidity certificate. -/
+private lemma posDefF :
+    ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+      * Matrix.diagonal ![1 / 2, 3]
+      * (axialCompatibility rF ![0, 1] ![1, 2] * SF)).PosDef :=
+  (supported_posDef_iff rF ![0, 1] ![1, 2] SF _
+    (by intro e; fin_cases e <;> norm_num)).mpr kernelF
+
+/-- Forward observation on the focused fixture: the
+supported displacement `![3, 5]` at load `![0, 6]` is
+observed through the identity sensor as the observation
+matrix applied to the load parameter. -/
+example : (1 : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ ![3, 5]
+    = loadObservationMatrix rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+        1 1 *ᵥ ![0, 6] := by
+  have hu : ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+        * Matrix.diagonal ![1 / 2, 3]
+        * (axialCompatibility rF ![0, 1] ![1, 2] * SF)) *ᵥ ![3, 5]
+      = (1 : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ ![0, 6] := by
+    rw [Matrix.one_mulVec, supportedStiffnessF]
+    funext i
+    fin_cases i <;>
+      norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+  exact loadObservation_eq_of_supported_eq rF ![0, 1] ![1, 2] SF _
+    posDefF _ _ hu
+
+/-- Known stiffness, unknown loads: with identity sensor
+and load basis, load parameters are identifiable on the
+full affine space through the focused observation
+matrix. -/
+example : Statistics.UncertaintyPropagation.IdentifiableOnAffine
+    (loadObservationMatrix rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+      (1 : Matrix (Fin 2) (Fin 2) ℝ) (1 : Matrix (Fin 2) (Fin 2) ℝ))
+    (AffineSubspace.mk' (0 : Fin 2 → ℝ) ⊤) :=
+  loadObservation_identifiableOnAffine_of_kernels rF ![0, 1] ![1, 2] SF _
+    posDefF _ _ _ _
+    (by intro w hw; simpa using hw) (by intro v _ hw; simpa using hw)
+
+/-- Rank-deficient sensor, zero map: every parameter
+direction is killed, so a distinct parameter shares the
+observation. -/
+example : ∃ θ' : Fin 2 → ℝ, θ' ≠ ![0, 6] ∧
+    loadObservationMatrix rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+        (0 : Matrix (Fin 2) (Fin 2) ℝ) 1 *ᵥ θ' = 0 := by
+  refine ⟨![1, 0], by norm_num, ?_⟩
+  simp [loadObservationMatrix]
+
+/-- Rank-deficient sensor, duplicated rows: the realized
+displacement direction `![0, 1]` is invisible, and the
+load `![-3, 3]` producing it is a kernel direction of
+the observation matrix. -/
+example : loadObservationMatrix rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+      !![1, 0; 1, 0] 1 *ᵥ ![-3, 3] = 0 := by
+  have hu : ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+        * Matrix.diagonal ![1 / 2, 3]
+        * (axialCompatibility rF ![0, 1] ![1, 2] * SF)) *ᵥ ![0, 1]
+      = (1 : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ ![-3, 3] := by
+    rw [Matrix.one_mulVec, supportedStiffnessF]
+    funext i
+    fin_cases i <;>
+      norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+  have h := loadObservation_eq_of_supported_eq rF ![0, 1] ![1, 2] SF _
+    posDefF !![1, 0; 1, 0] 1 hu
+  rw [← h]
+  funext i
+  fin_cases i <;> simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+
+/-- Zero load-basis column: the second load parameter
+never reaches the structure. -/
+example : loadObservationMatrix rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+      (1 : Matrix (Fin 2) (Fin 2) ℝ) !![1, 0; 0, 0] *ᵥ ![0, 1] = 0 := by
+  have h0 : (!![1, 0; 0, 0] : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ ![0, 1] = 0 := by
+    funext i
+    fin_cases i <;> simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+  unfold loadObservationMatrix
+  rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, h0,
+    Matrix.mulVec_zero, Matrix.mulVec_zero]
+
+/-- Under-sensed: one sensor against two basis degrees
+of freedom is not identifiable. -/
+example : ¬ Statistics.UncertaintyPropagation.Identifiable
+    (loadObservationMatrix rF ![0, 1] ![1, 2] SF ![1 / 2, 3]
+      (!![1, 0] : Matrix (Fin 1) (Fin 2) ℝ) (1 : Matrix (Fin 2) (Fin 2) ℝ)
+      * (1 : Matrix (Fin 2) (Fin 2) ℝ)) :=
+  Statistics.UncertaintyPropagation.not_identifiable_of_lt (by norm_num) _
+
+/-- Stiffness scope guard values: the scalar response
+`1, 1/2, 1/3` at stiffnesses `1, 2, 3` is not an affine
+function of stiffness (the guard theorem). -/
+example : (1 : ℝ)⁻¹ = 1 ∧ (2 : ℝ)⁻¹ = 1 / 2 ∧ (3 : ℝ)⁻¹ = 1 / 3 := by
+  norm_num
+
+/-! ## G. Unit-load response -/
 
 /-- Positive definiteness of the focused supported
 stiffness, from the rigidity certificate. -/
@@ -1063,6 +1159,14 @@ example (aout f : Fin 0 → ℝ) :
 #print axioms
   Mechanics.TrussCompatibility.supported_dotProduct_mulVec_comm
 #print axioms Mechanics.TrussCompatibility.supported_reciprocalWork
+#print axioms
+  Mechanics.TrussCompatibility.loadObservation_eq_of_supported_eq
+#print axioms
+  Mechanics.TrussCompatibility.loadObservation_supported_response
+#print axioms
+  Mechanics.TrussCompatibility.loadObservation_identifiableOnAffine_of_kernels
+#print axioms Mechanics.TrussCompatibility.inv_not_affine_on_pos
+
 #print axioms
   Mechanics.TrussCompatibility.supported_invDiagonal_mulVec_memberCoefficient
 #print axioms
