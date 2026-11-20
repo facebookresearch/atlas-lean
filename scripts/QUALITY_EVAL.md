@@ -22,7 +22,7 @@ Whole-file reviews see every definition, statement and proof, including private 
 The control is the **exact Mathlib version Atlas pins**, excluding Tactic, Util, Lean, Testing and Deprecated directories from its population.
 Both arms receive all three indicators, including the inclusive Mathlib duplication control.
 Results are reported **per root**, never as one composite Atlas quality score.
-CSLibExt and PhyslibExt duplication rates mean duplicates of Mathlib/Batteries/core only: **CSLib and Physlib redundancy are not measured**. This preserves the official indicator's reference set; pinned Physlib sources (including PhyslibAlpha and QuantumInfo) are available as context but are not eligible duplicate citations. Neither CSLibExt nor PhyslibExt has a domain-matched control.
+CSLibExt, PhyslibExt and Domains have no domain-matched control. Their duplication rates count matches in Mathlib, Batteries or Lean core only, not in CSLib, Physlib or other domain libraries. Pinned Physlib sources (including PhyslibAlpha and QuantumInfo) are available as context but are not eligible duplicate citations.
 
 `--private-theorems N` optionally adds a separate duplicate-only sample of N private MathlibExt helpers and N private Mathlib helpers.
 Do not mix this supplementary stratum into the public theorem numerator.
