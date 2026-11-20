@@ -44,7 +44,7 @@ from typing import Any, Callable
 # Dynamic dictionaries are necessary at the boundary to the upstream JSON schemas.
 Row = dict[str, Any]
 UPSTREAM_COMMIT = "0f3f1778e65c3118ffb9bf4644e55b2b406abede"
-ATLAS_ROOTS = ("MathlibExt", "CSLibExt", "PhyslibExt")
+ATLAS_ROOTS = ("MathlibExt", "CSLibExt", "PhyslibExt", "Domains")
 MATHLIB_EXCLUDED = {"Tactic", "Util", "Lean", "Testing", "Deprecated"}
 INDICATORS = ("unnecessary-hypotheses", "duplicates-mathlib-inclusive", "repeated-proof-machinery")
 RUNNER_BYTES = Path(__file__).read_bytes()

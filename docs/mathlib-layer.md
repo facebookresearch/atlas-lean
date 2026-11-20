@@ -152,7 +152,7 @@ hidden constants on its way (`private`, `lean:internal`, `excluded_module`,
 `data_field`, ...).
 
 `bridge-edges.jsonl.gz`: the same fields for edges from ATLAS articles to
-Mathlib nodes, with `library` (`MathlibExt`, `CSLibExt`, `PhyslibExt` or
+Mathlib nodes, with `library` (`MathlibExt`, `CSLibExt`, `PhyslibExt`, `Domains` or
 `WantedExt`); `through` may name `atlas_non_article`, an ATLAS constant no article
 links.
 

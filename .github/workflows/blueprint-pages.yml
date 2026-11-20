@@ -151,7 +151,7 @@ jobs:
           lake build MathlibExt.Combinatorics.Words.TernaryAbelianCubeFreeLowerBound
 
       - name: Build the current v2 libraries
-        run: lake build MathlibExt CSLibExt PhyslibExt WantedExt
+        run: lake build MathlibExt CSLibExt PhyslibExt Domains WantedExt
 
       # No failed modules or import collisions are silently dropped. Restoring
       # a cache does not waive a successful Lake build of this exact checkout.
@@ -169,7 +169,7 @@ jobs:
               exit 1
             }
             echo "$module" >> v2-modules.txt
-          done < <(git ls-files 'MathlibExt/*.lean' 'CSLibExt/*.lean' 'PhyslibExt/*.lean' 'WantedExt/*.lean')
+          done < <(git ls-files 'MathlibExt/*.lean' 'CSLibExt/*.lean' 'PhyslibExt/*.lean' 'Domains/*.lean' 'WantedExt/*.lean')
           test -s v2-modules.txt
           lake env lean --run scripts/dump_v2_dependencies.lean v2-modules.txt \
             > v2-dependencies.jsonl
@@ -252,7 +252,7 @@ jobs:
         run: >-
           python scripts/extract_mathlib_graph.py dump --jobs 1 --shards 1
           --modules v2-modules.txt
-          --keep Mathlib,MathlibExt,CSLibExt,PhyslibExt,WantedExt
+          --keep Mathlib,MathlibExt,CSLibExt,PhyslibExt,Domains,WantedExt
           mathlib-graph/v2-mathlib-dump.jsonl.gz
 
       - name: Keep the v2 declarations with their Mathlib uses

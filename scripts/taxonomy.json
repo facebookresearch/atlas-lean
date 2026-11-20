@@ -12085,7 +12085,7 @@
   "MathlibExt/Topology/TDA/SingleLinkageCharacterization": {"to": "ComputerScience/machine-learning/unsupervised-learning", "title": "Single-linkage hierarchical clustering"},
   "MathlibExt/Topology/TDA/ZeroDimensionalPersistence": {"to": "Topology/algebraic-topology", "title": "Persistence modules and barcodes"},
   "MathlibExt/Topology/ThreeManifold": {"to": "Topology/manifolds-geometric-topology", "title": "Topological 3-manifolds"},
-  "MathlibExt/Urban/StockNonneg": {"to": "Economics/inventory-transport-and-spatial-models", "title": "Stock balances on transfer networks"},
+  "Domains/Urban/StockNonneg": {"to": "Economics/inventory-transport-and-spatial-models", "title": "Stock balances on transfer networks"},
   "PhyslibExt/CondensedMatter/IsingModel": {"to": "StatisticalMechanics/spin-models", "title": "Ising model on a finite graph"},
   "PhyslibExt/CondensedMatter/IsingModel/AizenmanBarsky": {"to": "StatisticalMechanics/random-currents-and-sharpness", "title": "Sharpness of the phase transition for the Ising model"},
   "PhyslibExt/CondensedMatter/IsingModel/AizenmanHdom": {"to": "StatisticalMechanics/correlation-inequalities", "title": "Griffiths–Hurst–Sherman inequality"},

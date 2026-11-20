@@ -15,7 +15,7 @@
 ## About ATLAS
 
 ATLAS provides reusable formal building blocks for human- and machine-assisted
-theorem proving across mathematics, theoretical computer science, and physics.
+theorem proving across mathematics, theoretical computer science, physics, and applied domains.
 
 The project was generated with
 [AutoformBot](https://github.com/facebookresearch/autoform-bot), an
@@ -23,7 +23,7 @@ autoformalization pipeline for developing Lean libraries at scale.
 
 ## Formalized libraries
 
-The root Lake package is limited to seven libraries:
+The root Lake package is organized into the following libraries:
 
 | Directory | Purpose |
 | --- | --- |
@@ -33,6 +33,8 @@ The root Lake package is limited to seven libraries:
 | [`CSLibExtTest/`](CSLibExtTest/README.md) | Tests and diagnostics for `CSLibExt` |
 | [`PhyslibExt/`](PhyslibExt/README.md) | Reusable, fully proved physics developments built on Physlib |
 | [`PhyslibExtTest/`](PhyslibExtTest/README.md) | Tests and diagnostics for `PhyslibExt` |
+| [`Domains/`](Domains/README.md) | Proved domain models: [biology](Domains/Biology/), [economics](Domains/Economics/), [transport](Domains/Transport/), and [urban planning](Domains/Urban/) |
+| [`DomainsTest/`](DomainsTest/README.md) | Tests and diagnostics for domain models |
 | [`WantedExt/`](WantedExt/README.md) | Established results whose Lean implementation or proof is deferred |
 
 Repository checks live in [`scripts/`](scripts/README.md). Run the complete

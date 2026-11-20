@@ -25,6 +25,8 @@ LIBRARIES = (
     "MathlibExtTest",
     "PhyslibExt",
     "PhyslibExtTest",
+    "Domains",
+    "DomainsTest",
     "WantedExt",
 )
 SCANNERS = ("check_duplicate_defs.py", "check_hypothesis_debt.py")

@@ -14,7 +14,7 @@ Its Python modules are compiled from that commit's Git objects, never imported f
 
 ## Scope and interpretation
 
-The primary Atlas population is **MathlibExt, CSLibExt and PhyslibExt**. WantedExt, all three test libraries, legacy Atlas, archived v1 and certificate directories are excluded.
+The primary Atlas population is **MathlibExt, CSLibExt, PhyslibExt and Domains**. WantedExt, all test libraries, legacy Atlas, archived v1 and certificate directories are excluded.
 Public, nondeprecated source `theorem` and `lemma` declarations are sampled uniformly without replacement, respecting the Lean module system's public-section visibility. Import-only bootstrap files have no eligible theorem or mathematical-file content and therefore contribute zero population entries; later physics modules are included normally.
 Generated declarations are not in the source population. Private helpers are excluded from the primary theorem rates, as in the article.
 Whole-file reviews see every definition, statement and proof, including private helpers.
