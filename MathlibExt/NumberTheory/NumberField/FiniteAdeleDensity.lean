@@ -135,7 +135,7 @@ private theorem exists_forall_valuation_sub_lt (T : Finset (HeightOneSpectrum (ğ
 
 /-- A number field is dense in its finite adele ring (strong approximation
 for the finite adeles). -/
-theorem denseRange_algebraMap_finiteAdeleRing (K : Type*) [Field K] [NumberField K] :
+private theorem denseRange_algebraMap_finiteAdeleRing (K : Type*) [Field K] [NumberField K] :
     DenseRange (algebraMap K (FiniteAdeleRing (ğ“ K) K)) := by
   classical
   rw [DenseRange, dense_iff_inter_open]
