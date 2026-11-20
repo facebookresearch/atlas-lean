@@ -742,8 +742,8 @@ private lemma supportedBsF :
     simp [Matrix.mul_apply, axialCompatibility, SF, Matrix.of_apply] <;>
     norm_num
 
-/-- W1 as a truss: the elastic member-force vector is
-the reduced statics solution. -/
+/-- W1 as a truss: the separation-form elastic
+coefficient vector is the reduced statics solution. -/
 example : Matrix.diagonal ![1 / 2, 3]
       *ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF) *ᵥ ![3, 5])
     = ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ)⁻¹ *ᵥ ![0, 6] := by
@@ -758,7 +758,7 @@ example : Matrix.diagonal ![1 / 2, 3]
     funext i
     fin_cases i <;>
       norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
-  exact (truss_reduced_memberForce_eq_inv_mulVec rF ![0, 1] ![1, 2] SF
+  exact (truss_reduced_memberCoefficient_eq_inv_mulVec rF ![0, 1] ![1, 2] SF
     hdet _ (by intro e; fin_cases e <;> norm_num) hu).1
 
 /-- W1 as a truss: virtual-work equilibrium at the two
@@ -782,9 +782,25 @@ example : (Matrix.diagonal ![1 / 2, 3]
     funext i
     fin_cases i <;>
       norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
-  have h := (truss_reduced_memberForce_eq_inv_mulVec rF ![0, 1] ![1, 2] SF
+  have h := (truss_reduced_memberCoefficient_eq_inv_mulVec rF ![0, 1] ![1, 2] SF
     hdet _ (by intro e; fin_cases e <;> norm_num) hu).2
   exact ⟨h _, h _⟩
+
+/-- W1 physical axial forces: member lengths `2` and
+`√2` rescale the coefficient vector `![3, -6]` to
+`![6, -6 √2]`. -/
+example : (fun e => (Matrix.diagonal ![1 / 2, 3]
+        *ᵥ ((axialCompatibility rF ![0, 1] ![1, 2] * SF) *ᵥ ![3, 5])) e
+      * memberLength rF ![0, 1] ![1, 2] e)
+    = ![6, -6 * Real.sqrt 2] := by
+  funext e
+  fin_cases e
+  · simp [memberLength, Matrix.mulVec, dotProduct, Fin.sum_univ_two,
+      supportedBsF]
+    norm_num
+  · simp [memberLength, Matrix.mulVec, dotProduct, Fin.sum_univ_two,
+      supportedBsF]
+    norm_num
 
 /-- Singular control: `Bs = !![1, 1; 1, 1]` is not
 invertible, and two positive weight choices give two
@@ -864,6 +880,7 @@ example : Matrix.diagonal ![1, 1]
   Mechanics.TrussCompatibility.reduced_memberForce_indep_of_diagonal
 #print axioms Mechanics.TrussCompatibility.reduced_stiffness_existsUnique
 #print axioms
-  Mechanics.TrussCompatibility.truss_reduced_memberForce_eq_inv_mulVec
+  Mechanics.TrussCompatibility.truss_reduced_memberCoefficient_eq_inv_mulVec
+#print axioms Mechanics.TrussCompatibility.truss_reduced_axialForce_eq
 
 end PhyslibExtTest.Mechanics.TrussCompatibility

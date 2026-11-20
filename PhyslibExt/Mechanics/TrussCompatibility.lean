@@ -76,11 +76,14 @@ system in free coordinates).
   supported displacement and residual reaction vector.
 - `reduced_memberForce_eq_inv_mulVec` and
   `reduced_memberForce_indep_of_diagonal`: for square
-  invertible supported compatibility, elastic member forces
-  are the reduced statics solution, independent of the
-  positive axial weights.
-- `truss_reduced_memberForce_eq_inv_mulVec`: the truss
-  instance, with the virtual-work equilibrium form.
+  invertible reduced compatibility, the diagonal-law force
+  vector is the reduced statics solution, independent of
+  the positive axial weights.
+- `truss_reduced_memberCoefficient_eq_inv_mulVec` and
+  `truss_reduced_axialForce_eq`: the truss instance. Its
+  force vector is separation-form (axial force divided by
+  member length); the second result converts it to
+  physical axial forces `N e = s e * L e`.
 
 ## iii. Table of contents
 
@@ -642,7 +645,9 @@ theorem reduced_stiffness_existsUnique {n : Type*} [Fintype n]
 `axialCompatibility r a b * S` with free coordinates indexed by
 the members, square and invertible, positive member weights
 `k` and a supported solution `u`, the separation-form elastic
-member-force vector is the reduced statics solution
+coefficient vector (axial force divided by member length, the
+convention of `supported_virtualWork_iff`) is the reduced
+statics solution
 `((axialCompatibility r a b * S)ᵀ)⁻¹ *ᵥ f`, and it equilibrates
 the supported load in virtual work: internal work
 `s ⬝ᵥ ((axialCompatibility r a b * S) *ᵥ v)` equals external
@@ -651,7 +656,7 @@ The virtual-work conjunct is the canonical
 supported virtual-work correspondence.
 Reactions at constrained joint coordinates are not addressed:
 `f` is the supported load in free coordinates. -/
-theorem truss_reduced_memberForce_eq_inv_mulVec {J M : Type*}
+theorem truss_reduced_memberCoefficient_eq_inv_mulVec {J M : Type*}
     [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
     (r : J → (Fin 2 → ℝ)) (a b : M → J)
     (S : Matrix (J × Fin 2) M ℝ)
@@ -669,5 +674,33 @@ theorem truss_reduced_memberForce_eq_inv_mulVec {J M : Type*}
   refine ⟨hmain, ?_⟩
   have heq := reduced_equilibrium_of_elastic _ _ hu
   exact (supported_virtualWork_iff r a b S _ f).mp heq
+
+
+/-- Physical axial forces from the separation-form
+coefficients: with the same data as
+`truss_reduced_memberCoefficient_eq_inv_mulVec`, the
+physical axial force vector `fun e => s e * L e` (member
+length times the separation-form coefficient
+`s = Matrix.diagonal k *ᵥ ((B S) *ᵥ u)`, tension positive)
+is the memberwise length rescaling of the reduced statics
+coefficient solution. In particular the physical forces,
+like the coefficients, do not depend on the positive axial
+weights `k` through anything but the common statics
+solution. -/
+theorem truss_reduced_axialForce_eq {J M : Type*}
+    [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) M ℝ)
+    (hdet : IsUnit (axialCompatibility r a b * S).det)
+    (k : M → ℝ) (hk : ∀ e, 0 < k e) {f u : M → ℝ}
+    (hu : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S)) *ᵥ u = f) :
+    (fun e => (Matrix.diagonal k
+        *ᵥ ((axialCompatibility r a b * S) *ᵥ u)) e
+          * memberLength r a b e)
+      = fun e => (((axialCompatibility r a b * S)ᵀ)⁻¹ *ᵥ f) e
+          * memberLength r a b e := by
+  funext e
+  rw [(truss_reduced_memberCoefficient_eq_inv_mulVec r a b S hdet k hk hu).1]
 
 end Mechanics.TrussCompatibility
