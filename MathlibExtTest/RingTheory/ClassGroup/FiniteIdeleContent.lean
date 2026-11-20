@@ -31,9 +31,11 @@ example (R : Type*) [CommRing R] [IsDedekindDomain R]
     FiniteAdeleRing.contentHom R K x = 1 :=
   FiniteAdeleRing.contentHom_eq_one_of_mem_unitIdeles R K hx
 
-/-- The identity idele is a unit idele, showing the kernel is nontrivial
-at least at `1`. -/
+/-- The identity idele is a unit idele, proved through the carrier
+definition: both `1` and `1⁻¹ = 1` are integral at every finite place. -/
 example (R : Type*) [CommRing R] [IsDedekindDomain R]
     (K : Type*) [Field K] [Algebra R K] [IsFractionRing R K] :
-    (1 : (FiniteAdeleRing R K)ˣ) ∈ FiniteAdeleRing.unitIdeles R K :=
-  one_mem _
+    (1 : (FiniteAdeleRing R K)ˣ) ∈ FiniteAdeleRing.unitIdeles R K := by
+  rw [FiniteAdeleRing.mem_unitIdeles_iff]
+  exact ⟨fun v => by rw [Units.val_one]; exact one_mem _,
+    fun v => by rw [inv_one, Units.val_one]; exact one_mem _⟩
