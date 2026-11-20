@@ -41,7 +41,8 @@ public import Mathlib.Tactic.Ring
 /-!
 # Twisted telescoping for an iterated ring endomorphism
 
-If `s x = lam * x + u` and `s` has finite order `ℓ`, the iterates of `x`
+If `s x = lam * x + u` and `s` has period `ℓ` (that is, `s^[ℓ] = id`
+pointwise; `ℓ` need not be the exact order), the iterates of `x`
 telescope into a product-and-sum formula over the orbit of `lam` and `u`.
 -/
 
