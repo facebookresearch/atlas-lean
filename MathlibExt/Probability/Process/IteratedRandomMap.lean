@@ -176,6 +176,33 @@ theorem lintegral_run_le_geom {f : S → D → S} (hf : Measurable (fun p : S ×
           rw [geom_sum_succ]
           ring
 
+/-- The drift recursion with equality: if one step satisfies
+`E V(f x d) = ρ V(x) + β`, then the expectation of `V` at mark `n` is exactly
+`ρⁿ V(x₀) + β ∑_{k<n} ρᵏ`. -/
+theorem lintegral_run_eq_geom {f : S → D → S} (hf : Measurable (fun p : S × D => f p.1 p.2))
+    {V : S → ℝ≥0∞} (hV : Measurable V) {ρ β : ℝ≥0∞}
+    (hdrift : ∀ x, ∫⁻ d, V (f x d) ∂law = ρ * V x + β) (x₀ : S) :
+    ∀ n : ℕ, ∫⁻ ω, V (run f x₀ ω n) ∂pathMeasure law
+      = ρ ^ n * V x₀ + β * ∑ k ∈ range n, ρ ^ k
+  | 0 => by
+    simp only [run_zero, lintegral_const, measure_univ, mul_one, pow_zero, one_mul,
+      range_zero, sum_empty, mul_zero, add_zero]
+  | n + 1 => by
+    have ih := lintegral_run_eq_geom hf hV hdrift x₀ n
+    have hVn : Measurable (fun ω : ℕ → D => V (run f x₀ ω n)) :=
+      hV.comp (measurable_run hf x₀ n)
+    rw [lintegral_run_succ law hf x₀ hV n]
+    calc ∫⁻ ω, (∫⁻ d, V (f (run f x₀ ω n) d) ∂law) ∂pathMeasure law
+        = ∫⁻ ω, (ρ * V (run f x₀ ω n) + β) ∂pathMeasure law :=
+          lintegral_congr fun ω => hdrift _
+      _ = ρ * ∫⁻ ω, V (run f x₀ ω n) ∂pathMeasure law + β := by
+          rw [lintegral_add_right _ measurable_const, lintegral_const_mul _ hVn,
+            lintegral_const, measure_univ, mul_one]
+      _ = ρ * (ρ ^ n * V x₀ + β * ∑ k ∈ range n, ρ ^ k) + β := by rw [ih]
+      _ = ρ ^ (n + 1) * V x₀ + β * ∑ k ∈ range (n + 1), ρ ^ k := by
+          rw [geom_sum_succ]
+          ring
+
 end Drift
 section Stopped
 
