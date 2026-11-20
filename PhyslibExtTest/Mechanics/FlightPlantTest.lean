@@ -14,8 +14,8 @@ import Mathlib.Analysis.Calculus.Deriv.Prod
 # Tests for `PhyslibExt.Mechanics.FlightPlant`
 
 Consumers of the translational correspondence, of the six-degree-of-freedom package and of the
-coefficient-map wrapper: straight flight, the admitted domain of a lift map, a unit point mass and
-a steady level turn.
+coefficient-map wrapper: straight flight, the admitted domain of a lift map, a unit point mass,
+a steady level turn and the controlled longitudinal fixture.
 
 ## i. Overview
 
@@ -37,16 +37,26 @@ trajectory directly gives `m X'' = m (-sin t, cos t, 0) = R (m (0, 1, 1)) + m (0
 inertial law with the body force `m (0, 1, 1)`, and the translational correspondence turns it into
 the body equation; with the body force `m (0, -1, 1)`, away from the centre, the law fails.
 
+The controlled longitudinal fixture: at the trim the lift `(0, 1, 0)` balances the unit weight,
+the drag `(-3/20, 0, 0)` is balanced by the actuator thrust `(3/20, 0, 0)` and the reduced field
+vanishes. Four point masses `1/4` at `(±1, 0, 0)` and `(0, ±1, 0)` have mass `1`, centre of mass
+`0` and unit pitch inertia, so the restriction lemma applies: a planar plant solution obeys
+`q' = -2 q - sin θ`, and the trim from `(3, 5)` is a plant solution whose centre of mass moves.
+The actuators stay within their bounds at a corner of the box, and a state of zero speed is
+rejected.
+
 ## ii. Key results
 
 - `straightFlight`, `liftMaps`, `straightFlight_fixture`, `straightFlight_balanceLaws`,
   `liftMaps_not_sixDofPlant` : the straight-flight fixture.
+- `trim_fixture` : the trim of the controlled longitudinal fixture.
 
 ## iii. Table of contents
 
 - A. Straight flight
 - B. Consumers of the public lemmas
 - C. A steady level turn
+- D. The controlled longitudinal fixture
 
 ## iv. References
 
@@ -398,5 +408,122 @@ example (B : RigidBody 3) (hm : 0 < B.mass) (t : Time) :
     steadyTurn_gravity, smul_smul, inv_mul_cancel₀ hm.ne', one_smul] at h
   have h1 := congrFun h 1
   norm_num [cross_apply] at h1
+
+/-! ## D. The controlled longitudinal fixture -/
+
+/-- Four point masses `1/4` at `(±1, 0, 0)` and `(0, ±1, 0)`: mass `1`, centre of mass `0` and the
+inertia `diag(1/2, 1/2, 1)`, unit pitch inertia about the principal third axis. -/
+private noncomputable def quarterMassBody : RigidBody 3 where
+  ρ :=
+    { toFun := fun f => (f ⟨![1, 0, 0]⟩ + f ⟨![-1, 0, 0]⟩ + f ⟨![0, 1, 0]⟩ + f ⟨![0, -1, 0]⟩) / 4
+      map_add' := fun f g => by
+        simp only [ContMDiffMap.coe_add, Pi.add_apply]
+        ring
+      map_smul' := fun r f => by
+        simp only [ContMDiffMap.coe_smul, Pi.smul_apply, smul_eq_mul, RingHom.id_apply]
+        ring }
+
+/-- The quarter-mass body has mass `1`. -/
+private lemma quarterMassBody_mass : quarterMassBody.mass = 1 := by
+  norm_num [RigidBody.mass, quarterMassBody]
+
+/-- The quarter-mass body has its centre of mass at the origin. -/
+private lemma quarterMassBody_centerOfMass : quarterMassBody.centerOfMass = 0 := by
+  ext i
+  fin_cases i <;> simp [RigidBody.centerOfMass, quarterMassBody]
+
+/-- The inertia of the quarter-mass body about its centre of mass is `diag(1/2, 1/2, 1)`. -/
+private lemma quarterMassBody_inertia :
+    quarterMassBody.inertiaTensorAbout quarterMassBody.centerOfMass =
+      Matrix.diagonal ![1 / 2, 1 / 2, 1] := by
+  rw [quarterMassBody_centerOfMass, RigidBody.inertiaTensorAbout_zero]
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [RigidBody.inertiaTensor, quarterMassBody, Fin.sum_univ_three] <;> norm_num
+
+/-- **Trim.** At the zero state `V = 1`, the lift `(0, 1, 0)` balances the unit weight, the drag
+is `(-3/20, 0, 0)`, the actuator is the horizontal thrust `(3/20, 0, 0)`, the pitch moment is
+`0`, the reduced field vanishes, and the state is admitted. -/
+lemma trim_fixture :
+    flightSpeed 0 0 = 1 ∧ liftForce 0 0 = ![0, 1, 0] ∧ dragForce 0 0 = ![-(3 / 20), 0, 0] ∧
+      actuatorForce 0 0 = ![3 / 20, 0, 0] ∧ pitchMoment 0 0 = 0 ∧ reducedField 0 = 0 ∧
+      (0 : Fin 4 → ℝ) ∈ actuatorBox := by
+  have hV : flightSpeed 0 0 = 1 := by simp [flightSpeed]
+  have hD : dragCoeff = 3 / 10 := dragCoeff_eq
+  refine ⟨hV, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · ext i
+    fin_cases i <;> simp [liftForce, hV, liftCoeff]
+  · ext i
+    fin_cases i <;> simp [dragForce, hV, hD]
+    norm_num
+  · ext i
+    fin_cases i <;> simp [actuatorForce, aeroForce, liftForce, dragForce, hV, hD, liftCoeff]
+    norm_num
+  · simp [pitchMoment]
+  · ext i
+    fin_cases i <;> simp [reducedField]
+  · intro i
+    simp
+
+-- At the nonzero state `(x, z) = (1/100, -1/100)` the lift is perpendicular to the velocity and the
+-- drag is `-(3 V / 20)` times it.
+example : liftForce (1 / 100) (-1 / 100) ⬝ᵥ ![1 + 1 / 100, -1 / 100, 0] = 0 ∧
+    dragForce (1 / 100) (-1 / 100) =
+      -(3 / 20 * flightSpeed (1 / 100) (-1 / 100)) • ![1 + 1 / 100, -1 / 100, 0] :=
+  ⟨(liftForce_dragForce_spec (1 / 100) (-1 / 100)).1,
+    (liftForce_dragForce_spec (1 / 100) (-1 / 100)).2.2.2.1⟩
+
+-- At the fast state `x = 1/100`, `z = 0` the aerodynamic force, the actuator and the weight add up
+-- to the decelerating force `(-1/100 - 1/1000000, 0, 0)`.
+example : aeroForce (1 / 100) 0 + actuatorForce (1 / 100) 0 + ![0, -1, 0] =
+    ![-(1 / 100) - 1 / 1000000, 0, 0] := by
+  rw [aeroForce_add_actuatorForce_add_weight]
+  ext i
+  fin_cases i <;> norm_num
+
+-- Along a planar plant solution of the quarter-mass body the pitch rate obeys the closed-loop law
+-- `q' = -2 q - sin θ`.
+example {X₁ X₂ θ : Time → ℝ} (hX₁ : ContDiff ℝ 2 X₁) (hX₂ : ContDiff ℝ 2 X₂)
+    (hθ : ContDiff ℝ 2 θ) (t : Time)
+    (h : SixDofPlant longitudinalMaps (planarState X₁ X₂ θ) (planarMotion quarterMassBody X₁ X₂ θ)
+      ![0, -1, 0] t) :
+    ∂ₜ (fun s => planarState X₁ X₂ θ s 3) t =
+      -2 * planarState X₁ X₂ θ t 3 - Real.sin (planarState X₁ X₂ θ t 2) := by
+  have h' := ((planar_sixDofPlant_iff quarterMassBody quarterMassBody_mass
+    quarterMassBody_centerOfMass quarterMassBody_inertia hX₁ hX₂ hθ t).mp h).2
+  simpa [reducedField] using congrFun h' 3
+
+-- The trim of the quarter-mass body from `p₀ = (3, 5)` is a plant solution at every time, and its
+-- centre of mass moves with the nonzero rate `(1, 0, 0)`.
+example (t : Time) :
+    SixDofPlant longitudinalMaps (planarState (fun s => 3 + s.val) (fun _ => 5) (fun _ => 0))
+        (planarMotion quarterMassBody (fun s => 3 + s.val) (fun _ => 5) (fun _ => 0))
+        ![0, -1, 0] t ∧
+      ∂ₜ (fun s j => (planarMotion quarterMassBody (fun s => 3 + s.val) (fun _ => 5)
+        (fun _ => 0)).comTrajectory s j) t ≠ 0 := by
+  obtain ⟨-, hplant, hrate⟩ := trim_relative_equilibrium quarterMassBody quarterMassBody_mass
+    quarterMassBody_centerOfMass quarterMassBody_inertia 3 5 t
+  refine ⟨hplant, ?_⟩
+  rw [hrate]
+  intro h0
+  simpa using congrFun h0 0
+
+-- At the corner `(1/100, -1/100, 1/100, -1/100)` of the box the actuators are within their bounds.
+example : 1 / 10 < actuatorForce (1 / 100) (-1 / 100) 0 ∧
+    actuatorForce (1 / 100) (-1 / 100) 0 < 1 / 5 ∧ |actuatorForce (1 / 100) (-1 / 100) 1| < 1 / 20 ∧
+    |pitchMoment (1 / 100) (-1 / 100)| ≤ 3 / 100 := by
+  have he : (![1 / 100, -1 / 100, 1 / 100, -1 / 100] : Fin 4 → ℝ) ∈ actuatorBox := by
+    intro i
+    fin_cases i <;> norm_num [abs_div]
+  obtain ⟨-, h1, h2, h3, h4⟩ := actuatorBox_bounds he
+  exact ⟨h1, h2, h3, h4⟩
+
+-- A state with no forward speed, `x = -1`, has `V = 0`: it is outside the box, and no motion is a
+-- plant solution there.
+example (M : RigidBodyMotion 3) (g : Fin 3 → ℝ) (t : Time) :
+    flightSpeed (-1) 0 = 0 ∧ ¬ SixDofPlant longitudinalMaps (fun _ => ![-1, 0, 0, 0]) M g t := by
+  have hV : flightSpeed (-1) 0 = 0 := by simp [flightSpeed]
+  obtain ⟨h1, h2⟩ := longitudinalMaps_rejects (x := fun _ => ![-1, 0, 0, 0]) M g t
+  exact ⟨hV, h2 (h1 hV)⟩
 
 end PhyslibExtTest.Mechanics.FlightPlant
