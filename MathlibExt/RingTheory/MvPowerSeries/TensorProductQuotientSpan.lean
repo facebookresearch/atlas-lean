@@ -33,6 +33,7 @@ public import Mathlib.RingTheory.MvPowerSeries.Equiv
 public import Mathlib.RingTheory.MvPolynomial.Ideal
 public import Mathlib.RingTheory.TensorProduct.Basic
 import Mathlib.RingTheory.TensorProduct.Maps
+import MathlibExt.RingTheory.MvPowerSeries.VariableIdealPower
 
 @[expose] public section
 
@@ -149,12 +150,6 @@ private theorem mem_of_forall_coeff_eq_zero_of_forall_monomial_mem (N : ℕ) (I 
   refine Ideal.sum_mem _ fun y hy => ?_
   exact Ideal.mul_mem_right _ _ (hI y ((hmemD y).mp hy))
 
-private theorem mem_pow_span_X_of_forall_coeff_eq_zero (N : ℕ) (q : MvPowerSeries σ R)
-    (hq : ∀ x : σ →₀ ℕ, x.degree < N → coeff x q = 0) :
-    q ∈ Ideal.span (Set.range (X : σ → MvPowerSeries σ R)) ^ N :=
-  mem_of_forall_coeff_eq_zero_of_forall_monomial_mem N _
-    (fun y hy => hy ▸ monomial_one_mem_pow_span_X (R := R) y) q hq
-
 end L0
 
 section Coe
@@ -201,7 +196,7 @@ private theorem truncTotal_map {S : Type v} [CommRing S] (f : R →+* S) (N : �
 private theorem sub_coe_truncTotal_mem_pow_span_X (N : ℕ) (q : MvPowerSeries σ R) :
     q - ((truncTotal N q : MvPolynomial σ R) : MvPowerSeries σ R) ∈
       Ideal.span (Set.range (X : σ → MvPowerSeries σ R)) ^ N := by
-  refine mem_pow_span_X_of_forall_coeff_eq_zero N _ fun x hx => ?_
+  refine MvPowerSeries.mem_pow_span_X_of_coeff_eq_zero N _ fun x hx => ?_
   rw [map_sub, MvPolynomial.coeff_coe, coeff_truncTotal _ hx, sub_self]
 
 private theorem mk_coe_truncTotal (N : ℕ) (I : Ideal (MvPowerSeries σ R))
@@ -537,7 +532,7 @@ private theorem pow_span_X_le_of_forall_coeff_eq_zero_imp_mem (N : ℕ) (I : Ide
 private theorem mem_of_pow_span_X_le [Finite σ] (N : ℕ) (I : Ideal (MvPowerSeries σ R))
     (hN : Ideal.span (Set.range (X : σ → MvPowerSeries σ R)) ^ N ≤ I)
     (q : MvPowerSeries σ R) (hq : ∀ x : σ →₀ ℕ, x.degree < N → coeff x q = 0) : q ∈ I :=
-  hN (mem_pow_span_X_of_forall_coeff_eq_zero N q hq)
+  hN (MvPowerSeries.mem_pow_span_X_of_coeff_eq_zero N q hq)
 
 private theorem pow_span_X_le_of_forall_X_pow_mem [Fintype σ] (N : ℕ) (I : Ideal (MvPowerSeries σ
   R))
