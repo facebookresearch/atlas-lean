@@ -39,7 +39,7 @@ example
       (∀ v, Function.Surjective (π v)) ∧
       (∀ v, (t₀ v).comp (π (v + 1)) = π v) ∧
       (∀ v i, π v (X i) ∈ (Ideal.span {(p : R₀ v)}).radical) ∧
-      (∀ v G, π v G = MvFormalGroup.adicEval (Ideal.span {(p : R₀ v)}) (fun i => π v (X i)) G) ∧
+      (∀ v G, π v G = MvPowerSeries.adicEval (Ideal.span {(p : R₀ v)}) (fun i => π v (X i)) G) ∧
       (∀ G, (∀ v, π v G = 0) → G = 0) ∧
       (∀ z : ∀ v, R₀ v, (∀ v, t₀ v (z (v + 1)) = z v) → ∃ G, ∀ v, π v G = z v) :=
   MvPowerSeries.exists_algHom_adicEval_forall_comp_eq_of_specialFibre_coordinates
@@ -67,7 +67,7 @@ example
       (∀ v, Function.Surjective (π v)) ∧
       (∀ v, (t₀ v).comp (π (v + 1)) = π v) ∧
       (∀ v i, π v (X i) ∈ (Ideal.span {(p : R₀ v)}).radical) ∧
-      (∀ v G, π v G = MvFormalGroup.adicEval (Ideal.span {(p : R₀ v)}) (fun i => π v (X i)) G) ∧
+      (∀ v G, π v G = MvPowerSeries.adicEval (Ideal.span {(p : R₀ v)}) (fun i => π v (X i)) G) ∧
       (∀ G, (∀ v, π v G = 0) → G = 0) ∧
       (∀ z : ∀ v, R₀ v, (∀ v, t₀ v (z (v + 1)) = z v) → ∃ G, ∀ v, π v G = z v) :=
   MvPowerSeries.exists_algHom_adicEval_forall_comp_eq_of_specialFibre_coordinates
@@ -75,18 +75,24 @@ example
 
 /-- `adicEval` sends the variable `X s` to the coordinate `x s`. -/
 example {R S σ : Type*} [CommRing R] [CommRing S] [Algebra R S] (J : Ideal S) (x : σ → S)
-    (s : σ) : MvFormalGroup.adicEval J x (X s : MvPowerSeries σ R) = x s :=
-  MvFormalGroup.adicEval_X J x s
+    (s : σ) : MvPowerSeries.adicEval J x (X s : MvPowerSeries σ R) = x s :=
+  MvPowerSeries.adicEval_X J x s
 
 /-- On polynomials, `adicEval` is polynomial evaluation, for any ideal. -/
 example {R S σ : Type*} [CommRing R] [CommRing S] [Algebra R S] (J : Ideal S) (x : σ → S)
     (q : MvPolynomial σ R) :
-    MvFormalGroup.adicEval J x (q : MvPowerSeries σ R) = MvPolynomial.aeval x q :=
-  MvFormalGroup.adicEval_coe J x q
+    MvPowerSeries.adicEval J x (q : MvPowerSeries σ R) = MvPolynomial.aeval x q :=
+  MvPowerSeries.adicEval_coe J x q
+
+/-- An element of the radical of `J` is topologically nilpotent for the `J`-adic topology. -/
+example {S : Type*} [CommRing S] (J : Ideal S) {a : S} (ha : a ∈ J.radical) :
+    letI : TopologicalSpace S := J.adicTopology
+    IsTopologicallyNilpotent a :=
+  Ideal.isTopologicallyNilpotent_of_mem_radical J ha
 
 /-- For a complete `S` and coordinates in the radical, `adicEval` is multiplicative. -/
 example {R S σ : Type*} [CommRing R] [CommRing S] [Algebra R S] [Finite σ] (J : Ideal S)
     [IsAdicComplete J S] (x : σ → S) (hx : ∀ s, x s ∈ J.radical) (f g : MvPowerSeries σ R) :
-    MvFormalGroup.adicEval J x (f * g) =
-      MvFormalGroup.adicEval J x f * MvFormalGroup.adicEval J x g := by
-  rw [← MvFormalGroup.coe_adicEvalAlgHom J hx, map_mul]
+    MvPowerSeries.adicEval J x (f * g) =
+      MvPowerSeries.adicEval J x f * MvPowerSeries.adicEval J x g := by
+  rw [← MvPowerSeries.coe_adicEvalAlgHom J hx, map_mul]

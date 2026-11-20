@@ -50,10 +50,10 @@ import MathlibExt.RingTheory.MvPowerSeries.VariableIdealPower
 /-!
 # Power series coordinates on a tower with prescribed special fibres
 
-`MvFormalGroup.adicEval J x f` evaluates a multivariate power series `f` over `R` at a point
+`MvPowerSeries.adicEval J x f` evaluates a multivariate power series `f` over `R` at a point
 `x` of an `R`-algebra `S`, using the `J`-adic topology on `S`. If `S` is `J`-adically complete
 and every coordinate of `x` lies in the radical of `J`, this is an `R`-algebra homomorphism
-(`MvFormalGroup.adicEvalAlgHom`) sending `X s` to `x s`.
+(`MvPowerSeries.adicEvalAlgHom`) sending `X s` to `x s`.
 
 The main theorem `MvPowerSeries.exists_algHom_adicEval_forall_comp_eq_of_specialFibre_coordinates`
 takes a tower `⋯ → R₀ 2 → R₀ 1 → R₀ 0` of finite free algebras over a `p`-adically complete
@@ -71,20 +71,24 @@ open scoped TensorProduct
 
 @[expose] public section
 
-namespace MvFormalGroup
-
 section AdicEval
 
 variable {R : Type*} [CommRing R] {S : Type*} [CommRing S] [Algebra R S]
   {S' : Type*} [CommRing S'] [Algebra R S'] {σ : Type*}
 
+namespace MvPowerSeries
+
 /-- Evaluation of a multivariate power series `f` over `R` at `x : σ → S`, computed in the
 `J`-adic topology of `S` (with the discrete topology on `R`). It agrees with polynomial
-evaluation on polynomials (`MvFormalGroup.adicEval_coe`). -/
+evaluation on polynomials (`MvPowerSeries.adicEval_coe`). -/
 noncomputable def adicEval (J : Ideal S) (x : σ → S) (f : MvPowerSeries σ R) : S :=
   letI : UniformSpace R := ⊥
   letI : WithIdeal S := ⟨J⟩
   MvPowerSeries.eval₂ (algebraMap R S) x f
+
+end MvPowerSeries
+
+namespace Ideal
 
 /-- An element of the radical of `J` is topologically nilpotent for the `J`-adic topology. -/
 theorem isTopologicallyNilpotent_of_mem_radical (J : Ideal S) {a : S}
@@ -101,6 +105,10 @@ theorem isTopologicallyNilpotent_of_mem_radical (J : Ideal S) {a : S}
   rw [pow_add, pow_mul]
   exact SetLike.mem_coe.mpr (Ideal.mul_mem_right _ _ (Ideal.pow_mem_pow hk n))
 
+end Ideal
+
+namespace MvPowerSeries
+
 /-- Coordinates in the radical of `J` can be substituted into power series over finitely many
 variables, for the `J`-adic topology. -/
 theorem hasEval_of_mem_radical [Finite σ] (J : Ideal S) {x : σ → S}
@@ -108,7 +116,7 @@ theorem hasEval_of_mem_radical [Finite σ] (J : Ideal S) {x : σ → S}
     letI : TopologicalSpace S := J.adicTopology
     MvPowerSeries.HasEval x := by
   let : TopologicalSpace S := J.adicTopology
-  refine ⟨fun s => isTopologicallyNilpotent_of_mem_radical J (hx s), ?_⟩
+  refine ⟨fun s => Ideal.isTopologicallyNilpotent_of_mem_radical J (hx s), ?_⟩
   rw [Filter.cofinite_eq_bot]
   exact Filter.tendsto_bot
 
@@ -126,7 +134,7 @@ theorem adicEval_X (J : Ideal S) (x : σ → S) (s : σ) :
   exact MvPowerSeries.eval₂_X (algebraMap R S) x s
 
 /-- For a `J`-adically complete `S` and coordinates in the radical of `J`, `adicEval J x` is
-an `R`-algebra homomorphism (`MvFormalGroup.coe_adicEvalAlgHom`). -/
+an `R`-algebra homomorphism (`MvPowerSeries.coe_adicEvalAlgHom`). -/
 noncomputable def adicEvalAlgHom [Finite σ] (J : Ideal S) [IsAdicComplete J S] {x : σ → S}
     (hx : ∀ s, x s ∈ J.radical) : MvPowerSeries σ R →ₐ[R] S :=
   letI : UniformSpace R := ⊥
@@ -187,9 +195,9 @@ theorem map_adicEval [Finite σ] (J : Ideal S) [IsAdicComplete J S] (J' : Ideal 
   rw [AlgHom.comp_algebraMap] at key
   exact key
 
-end AdicEval
+end MvPowerSeries
 
-end MvFormalGroup
+end AdicEval
 
 end
 
@@ -260,21 +268,21 @@ variable (𝓞) in
 private noncomputable def evalAt (v : ℕ) : MvPowerSeries σ 𝓞 →ₐ[𝓞] R₀ v :=
   haveI : IsAdicComplete (Ideal.span {(p : R₀ v)}) (R₀ v) :=
     IsAdicComplete.of_module_finite_free_span_natCast (𝓞 := 𝓞) p (R₀ v)
-  MvFormalGroup.adicEvalAlgHom (R := 𝓞) (Ideal.span {(p : R₀ v)}) (hxr v)
+  MvPowerSeries.adicEvalAlgHom (R := 𝓞) (Ideal.span {(p : R₀ v)}) (hxr v)
 
 private theorem evalAt_apply (v : ℕ) (G : MvPowerSeries σ 𝓞) :
-    evalAt 𝓞 p R₀ x hxr v G = MvFormalGroup.adicEval (Ideal.span {(p : R₀ v)}) (x v) G := by
+    evalAt 𝓞 p R₀ x hxr v G = MvPowerSeries.adicEval (Ideal.span {(p : R₀ v)}) (x v) G := by
   have : IsAdicComplete (Ideal.span {(p : R₀ v)}) (R₀ v) :=
     IsAdicComplete.of_module_finite_free_span_natCast (𝓞 := 𝓞) p (R₀ v)
-  exact congrFun (MvFormalGroup.coe_adicEvalAlgHom (R := 𝓞) (Ideal.span {(p : R₀ v)}) (hxr v)) G
+  exact congrFun (MvPowerSeries.coe_adicEvalAlgHom (R := 𝓞) (Ideal.span {(p : R₀ v)}) (hxr v)) G
 
 private theorem evalAt_X (v : ℕ) (i : σ) :
     evalAt 𝓞 p R₀ x hxr v (X i : MvPowerSeries σ 𝓞) = x v i := by
-  rw [evalAt_apply, MvFormalGroup.adicEval_X]
+  rw [evalAt_apply, MvPowerSeries.adicEval_X]
 
 private theorem evalAt_coe (v : ℕ) (P : MvPolynomial σ 𝓞) :
     evalAt 𝓞 p R₀ x hxr v (P : MvPowerSeries σ 𝓞) = MvPolynomial.aeval (x v) P := by
-  rw [evalAt_apply, MvFormalGroup.adicEval_coe]
+  rw [evalAt_apply, MvPowerSeries.adicEval_coe]
 
 private theorem comp_evalAt (t : ∀ v, R₀ (v + 1) →ₐ[𝓞] R₀ v)
     (hxt : ∀ v i, t v (x (v + 1) i) = x v i)
@@ -286,7 +294,7 @@ private theorem comp_evalAt (t : ∀ v, R₀ (v + 1) →ₐ[𝓞] R₀ v)
   apply AlgHom.ext
   intro G
   rw [AlgHom.comp_apply, evalAt_apply, evalAt_apply,
-    MvFormalGroup.map_adicEval (R := 𝓞) (Ideal.span {(p : R₀ (v + 1))}) (Ideal.span {(p : R₀ v)})
+    MvPowerSeries.map_adicEval (R := 𝓞) (Ideal.span {(p : R₀ (v + 1))}) (Ideal.span {(p : R₀ v)})
       (t v) (Submodule.fg_span_singleton _) ?_ (hxr (v + 1)) G]
   · congr 1
     funext i
@@ -875,7 +883,7 @@ theorem MvPowerSeries.exists_algHom_adicEval_forall_comp_eq_of_specialFibre_coor
       (∀ v, Function.Surjective (π v)) ∧
       (∀ v, (t₀ v).comp (π (v + 1)) = π v) ∧
       (∀ v i, π v (X i) ∈ (Ideal.span {(p : R₀ v)}).radical) ∧
-      (∀ v G, π v G = MvFormalGroup.adicEval (Ideal.span {(p : R₀ v)}) (fun i => π v (X i)) G) ∧
+      (∀ v G, π v G = MvPowerSeries.adicEval (Ideal.span {(p : R₀ v)}) (fun i => π v (X i)) G) ∧
       (∀ G, (∀ v, π v G = 0) → G = 0) ∧
       (∀ z : ∀ v, R₀ v, (∀ v, t₀ v (z (v + 1)) = z v) → ∃ G, ∀ v, π v G = z v) := by
   classical
