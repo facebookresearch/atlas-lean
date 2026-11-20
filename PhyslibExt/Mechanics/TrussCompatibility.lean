@@ -115,7 +115,7 @@ system in free coordinates).
   `reduced_memberForce_indep_of_diagonal`: for square
   invertible reduced compatibility, the diagonal-law force
   vector is the reduced statics solution, independent of
-  the positive axial weights.
+  the axial weights.
 - `truss_reduced_memberCoefficient_eq_inv_mulVec` and
   `truss_reduced_axialForce_eq`: the truss instance. Its
   force vector is separation-form (axial force divided by
@@ -1323,13 +1323,13 @@ theorem reduced_equilibrium_iff_eq_inv {n : Type*} [Fintype n]
   exact Matrix.mulVec_eq_iff_inv_mulVec hT
 
 /-- Elastic forces agree with determinate statics: for square
-invertible `Bs`, positive axial weights `d` and a supported
+invertible `Bs`, axial weights `d` and a supported
 solution `u`, the elastic member-force vector
 `Matrix.diagonal d *ᵥ (Bs *ᵥ u)` is the statics solution
 `(Bsᵀ)⁻¹ *ᵥ f`. -/
 theorem reduced_memberForce_eq_inv_mulVec {n : Type*}
     [Fintype n] [DecidableEq n] (Bs : Matrix n n ℝ)
-    (hBs : IsUnit Bs.det) (d : n → ℝ) (_hd : ∀ e, 0 < d e)
+    (hBs : IsUnit Bs.det) (d : n → ℝ)
     {f u : n → ℝ}
     (hu : (Bsᵀ * Matrix.diagonal d * Bs) *ᵥ u = f) :
     Matrix.diagonal d *ᵥ (Bs *ᵥ u) = (Bsᵀ)⁻¹ *ᵥ f := by
@@ -1337,36 +1337,46 @@ theorem reduced_memberForce_eq_inv_mulVec {n : Type*}
     (reduced_equilibrium_of_elastic Bs d hu)
 
 /-- Member forces are independent of the axial weights: two
-positive axial diagonals and supported solutions for the same
+axial diagonals and supported solutions for the same
 geometry, supports and load give the same elastic member-force
 vector. The displacements may differ; the forces do not. -/
 theorem reduced_memberForce_indep_of_diagonal {n : Type*}
     [Fintype n] [DecidableEq n] (Bs : Matrix n n ℝ)
     (hBs : IsUnit Bs.det) (d₁ d₂ : n → ℝ)
-    (hd₁ : ∀ e, 0 < d₁ e) (hd₂ : ∀ e, 0 < d₂ e)
     {f u₁ u₂ : n → ℝ}
     (hu₁ : (Bsᵀ * Matrix.diagonal d₁ * Bs) *ᵥ u₁ = f)
     (hu₂ : (Bsᵀ * Matrix.diagonal d₂ * Bs) *ᵥ u₂ = f) :
     Matrix.diagonal d₁ *ᵥ (Bs *ᵥ u₁)
       = Matrix.diagonal d₂ *ᵥ (Bs *ᵥ u₂) := by
-  rw [reduced_memberForce_eq_inv_mulVec Bs hBs d₁ hd₁ hu₁,
-    reduced_memberForce_eq_inv_mulVec Bs hBs d₂ hd₂ hu₂]
+  rw [reduced_memberForce_eq_inv_mulVec Bs hBs d₁ hu₁,
+    reduced_memberForce_eq_inv_mulVec Bs hBs d₂ hu₂]
 
 /-- The supported solution exists and is unique: for square
-invertible `Bs` and positive axial weights `d`, every supported
-load `f` has exactly one supported displacement `u`. -/
+invertible `Bs` and nonvanishing axial weights `d`, every
+supported load `f` has exactly one supported displacement
+`u`. -/
 theorem reduced_stiffness_existsUnique {n : Type*} [Fintype n]
     [DecidableEq n] (Bs : Matrix n n ℝ) (hBs : IsUnit Bs.det)
-    (d : n → ℝ) (hd : ∀ e, 0 < d e) (f : n → ℝ) :
+    (d : n → ℝ) (hd : ∀ e, d e ≠ 0) (f : n → ℝ) :
     ∃! u : n → ℝ, (Bsᵀ * Matrix.diagonal d * Bs) *ᵥ u = f := by
   have hD : IsUnit (Matrix.diagonal d).det := by
     rw [Matrix.det_diagonal, isUnit_iff_ne_zero]
-    exact Finset.prod_ne_zero_iff.mpr fun e _ => ne_of_gt (hd e)
+    exact Finset.prod_ne_zero_iff.mpr fun e _ => hd e
   have hK : IsUnit (Bsᵀ * Matrix.diagonal d * Bs).det := by
     rw [Matrix.det_mul, Matrix.det_mul, Matrix.det_transpose]
     exact (hBs.mul hD).mul hBs
   exact Matrix.exists_unique_mulVec_eq
     (Matrix.mulVec_injective_of_det_ne_zero (isUnit_iff_ne_zero.mp hK)) f
+
+/-- Positive-weight form of `reduced_stiffness_existsUnique`:
+positive axial weights are nonvanishing. -/
+theorem reduced_stiffness_existsUnique_of_pos {n : Type*}
+    [Fintype n] [DecidableEq n] (Bs : Matrix n n ℝ)
+    (hBs : IsUnit Bs.det) (d : n → ℝ) (hd : ∀ e, 0 < d e)
+    (f : n → ℝ) :
+    ∃! u : n → ℝ, (Bsᵀ * Matrix.diagonal d * Bs) *ᵥ u = f :=
+  reduced_stiffness_existsUnique Bs hBs d
+    (fun e => ne_of_gt (hd e)) f
 
 /-- Truss instance: for the supported compatibility matrix
 `axialCompatibility r a b * S` with free coordinates indexed by
@@ -1397,7 +1407,7 @@ theorem truss_reduced_memberCoefficient_eq_inv_mulVec {J M : Type*}
           (Matrix.diagonal k
               *ᵥ ((axialCompatibility r a b * S) *ᵥ u))
             ⬝ᵥ ((axialCompatibility r a b * S) *ᵥ v) = f ⬝ᵥ v := by
-  have hmain := reduced_memberForce_eq_inv_mulVec _ hdet k hk hu
+  have hmain := reduced_memberForce_eq_inv_mulVec _ hdet k hu
   refine ⟨hmain, ?_⟩
   have heq := reduced_equilibrium_of_elastic _ _ hu
   exact (supported_virtualWork_iff r a b S _ f).mp heq

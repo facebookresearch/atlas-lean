@@ -1685,8 +1685,7 @@ force is `(Bsᵀ)⁻¹ *ᵥ f`. -/
 example : Matrix.diagonal ![1 / 2, 3]
       *ᵥ ((!![2, 0; 1, -1] : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ ![3, 5])
     = ((!![2, 0; 1, -1] : Matrix (Fin 2) (Fin 2) ℝ)ᵀ)⁻¹ *ᵥ ![0, 6] :=
-  reduced_memberForce_eq_inv_mulVec _ detBsW1 _
-    (by intro e; fin_cases e <;> norm_num) w1SolutionOne
+  reduced_memberForce_eq_inv_mulVec _ detBsW1 _ w1SolutionOne
 
 /-- W1 force independence of the axial weights. -/
 example : Matrix.diagonal ![1 / 2, 3]
@@ -1694,8 +1693,7 @@ example : Matrix.diagonal ![1 / 2, 3]
     = Matrix.diagonal ![1, 1]
       *ᵥ ((!![2, 0; 1, -1] : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ ![3 / 2, 15 / 2]) :=
   reduced_memberForce_indep_of_diagonal _ detBsW1 _ _
-    (by intro e; fin_cases e <;> norm_num)
-    (by intro e; fin_cases e <;> norm_num) w1SolutionOne w1SolutionTwo
+    w1SolutionOne w1SolutionTwo
 
 /-- W1 unique supported solution. -/
 example : ∃! u : Fin 2 → ℝ,
@@ -1815,8 +1813,8 @@ example : ((!![1, 1; 1, 1] : Matrix (Fin 2) (Fin 2) ℝ)ᵀ
 
 /-- Zero-weight control: with `Bs = 1` and weights
 `![1, 0]`, the load `![0, 1]` has no supported solution,
-so the positivity hypothesis of the existence result is
-essential. -/
+so the nonvanishing hypothesis of the existence result
+is essential. -/
 example : ¬ ∃ u : Fin 2 → ℝ,
     (((1 : Matrix (Fin 2) (Fin 2) ℝ))ᵀ * Matrix.diagonal ![1, 0]
       * (1 : Matrix (Fin 2) (Fin 2) ℝ)) *ᵥ u = ![0, 1] := by
@@ -1906,6 +1904,8 @@ example : Matrix.diagonal ![1, 1]
 #print axioms
   Mechanics.TrussCompatibility.reduced_memberForce_indep_of_diagonal
 #print axioms Mechanics.TrussCompatibility.reduced_stiffness_existsUnique
+#print axioms
+  Mechanics.TrussCompatibility.reduced_stiffness_existsUnique_of_pos
 #print axioms
   Mechanics.TrussCompatibility.truss_reduced_memberCoefficient_eq_inv_mulVec
 #print axioms Mechanics.TrussCompatibility.truss_reduced_axialForce_eq
