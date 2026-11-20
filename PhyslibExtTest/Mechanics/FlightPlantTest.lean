@@ -17,8 +17,8 @@ public import MathlibExt.LinearAlgebra.Matrix.SylvesterCriterion
 
 Consumers of the translational correspondence, of the six-degree-of-freedom package and of the
 coefficient-map wrapper: straight flight, the admitted domain of a lift map, a unit point mass,
-a steady level turn, the controlled longitudinal fixture, its linearization about the trim and the
-Lyapunov certificate of that linearization.
+a steady level turn, the controlled longitudinal fixture, its linearization about the trim, the
+Lyapunov certificate of that linearization and the local decay of the nonlinear reduced flight.
 
 ## i. Overview
 
@@ -70,6 +70,18 @@ trim the actual solution is the zero solution; from `(1, 0, 1, 0)` it is
 certificate and `Aᵀ P` are checked entry by entry, and the solution `exp` of `y' = y` violates the
 decay bound.
 
+The nonlinear reduced flight: the field at the pitch-rate state `(0, 0, 0, 1)` is `(0, 0, 1, -2)`,
+and at `x = 1` its forward component is the linear part plus the cubic remainder; the orbital
+derivative is `-2` at `(1, 0, 0, 0)` and at most `-1/20000` at `(0, 0, 1/100, 0)`, negative there
+and not negative at the trim. The state `(1/400, 0, 0, 0)` lies in the invariant sublevel set and
+the actuator box; from it a forward solution exists, and it has decayed to at most `√8 e⁻⁵ / 400`
+at `t = 40`. Every forward solution from the trim stays there, by sublevel invariance at level `0`
+and by the decay bound. From `(1, 1, 1, 1) / 1000`, strictly inside the sublevel set, the solution
+stays in the ball `‖e‖ ≤ 1/100` and obeys the conditional decay at `t = 8`. The inverted trim
+`(0, 0, π, 0)` is an equilibrium outside the ball whose constant solution does not decay, and from
+a state on the sphere `‖e‖ = 1/100`, where the Lyapunov inequality holds, no forward solution stays
+in the ball.
+
 ## ii. Key results
 
 - `straightFlight`, `liftMaps`, `straightFlight_fixture`, `straightFlight_balanceLaws`,
@@ -79,6 +91,10 @@ decay bound.
 - `longitudinalLyapunov_fixture`, `linearReducedField_solution_fixture`,
   `exp_violates_decay_bound` : the certificate's entries, a nonzero solution of the linear plant
   and an unstable contrast.
+- `nonlinearReducedField_trim`, `nonlinearReducedField_fixture`,
+  `nonlinearReducedField_inverted_trim`, `nonlinearReducedField_exits_closedBall` : the trim, a
+  nonzero state inside the invariant sublevel set, the inverted trim and the sphere exit of the
+  nonlinear reduced flight.
 
 ## iii. Table of contents
 
@@ -88,6 +104,7 @@ decay bound.
 - D. The controlled longitudinal fixture
 - E. Linearization about the trim
 - F. The Lyapunov certificate for the reduced linear plant
+- G. Local existence and decay of the nonlinear reduced flight
 
 ## iv. References
 
@@ -867,5 +884,296 @@ example (t : ℝ) (ht : 0 ≤ t) : ∃ e : ℝ → EuclideanSpace ℝ (Fin 4), e
   obtain ⟨e, h0, -, hb⟩ := linearReducedField_solution_decay 0
   refine ⟨e, h0, norm_le_zero_iff.1 ?_⟩
   simpa using hb t ht
+
+/-! ## G. Local existence and decay of the nonlinear reduced flight -/
+
+/-- The squared Euclidean norm in coordinates. -/
+private lemma norm_sq_eq_coords (e : EuclideanSpace ℝ (Fin 4)) :
+    ‖e‖ ^ 2 = e 0 ^ 2 + e 1 ^ 2 + e 2 ^ 2 + e 3 ^ 2 := by
+  rw [EuclideanSpace.norm_sq_eq, Fin.sum_univ_four]
+  simp [Real.norm_eq_abs, sq_abs]
+
+/-- **Fixture: the trim.** The trim is an equilibrium of the nonlinear reduced field, the orbital
+derivative vanishes there, and the constant trim state is a forward solution in the actuator box:
+the existence statement's solution from `e₀ = 0`, with equality `0 ≤ 0` in the decay bound. -/
+lemma nonlinearReducedField_trim :
+    nonlinearReducedField 0 = 0 ∧
+      fderiv ℝ longitudinalLyapunov 0 (nonlinearReducedField 0) = 0 ∧
+      IsIntegralCurveOn (fun _ => (0 : EuclideanSpace ℝ (Fin 4)))
+        (fun _ x => nonlinearReducedField x) (Set.Ici 0) ∧
+      WithLp.ofLp (0 : EuclideanSpace ℝ (Fin 4)) ∈ actuatorBox := by
+  have h0 : nonlinearReducedField 0 = 0 := by
+    ext i
+    fin_cases i <;> simp [nonlinearReducedField, reducedField]
+  refine ⟨h0, by rw [h0, map_zero], fun t _ => ?_, fun i => by simp⟩
+  change HasDerivWithinAt _ (nonlinearReducedField 0) _ _
+  rw [h0]
+  exact hasDerivWithinAt_const _ _ _
+
+/-- **Fixture: a nonzero state strictly inside the invariant sublevel set.** The state
+`e₀ = (1, 1, 1, 1) / 1000` has `‖e₀‖ = 1/500 < 1/400` and `V(e₀) = 1/250000 < 1/80000`; the
+existence theorem gives a forward solution from it in the actuator box with
+`‖e t‖ ≤ √8 * exp (-t / 8) / 500`. -/
+lemma nonlinearReducedField_fixture (e₀ : EuclideanSpace ℝ (Fin 4))
+    (he₀ : e₀ = WithLp.toLp 2 ![1 / 1000, 1 / 1000, 1 / 1000, 1 / 1000]) :
+    e₀ ≠ 0 ∧ ‖e₀‖ = 1 / 500 ∧ longitudinalLyapunov e₀ = 1 / 250000 ∧
+      longitudinalLyapunov e₀ < 1 / 80000 ∧
+      ∃ e : ℝ → EuclideanSpace ℝ (Fin 4), e 0 = e₀ ∧
+        IsIntegralCurveOn e (fun _ x => nonlinearReducedField x) (Set.Ici 0) ∧
+        ∀ t, 0 ≤ t → WithLp.ofLp (e t) ∈ actuatorBox ∧
+          ‖e t‖ ≤ Real.sqrt 8 * Real.exp (-t / 8) / 500 := by
+  have hn2 : ‖e₀‖ ^ 2 = 1 / 250000 := by
+    rw [norm_sq_eq_coords, he₀]
+    norm_num
+  have hn : ‖e₀‖ = 1 / 500 := by
+    rw [← Real.sqrt_sq (norm_nonneg e₀), hn2, show (1 : ℝ) / 250000 = (1 / 500) ^ 2 by norm_num,
+      Real.sqrt_sq (by norm_num)]
+  have hV : longitudinalLyapunov e₀ = 1 / 250000 := by
+    rw [he₀]
+    simp [longitudinalLyapunov, longitudinalLyapunovMatrix, dotProduct, Matrix.mulVec,
+      Fin.sum_univ_four]
+    norm_num
+  obtain ⟨e, h0, he, hb⟩ := nonlinearReducedField_solution_decay e₀ (by rw [hn]; norm_num)
+  refine ⟨fun h => by rw [h, norm_zero] at hn; norm_num at hn, hn, hV, by rw [hV]; norm_num,
+    e, h0, he, fun t ht => ⟨(hb t ht).1, ?_⟩⟩
+  have h := (hb t ht).2
+  rw [hn] at h
+  linarith
+
+/-- **Invalid example: the inverted trim.** The state `(0, 0, π, 0)` (pitch angle `π`, far outside
+the actuator box) is another equilibrium of the nonlinear reduced field, where the orbital
+derivative is `0`, not `≤ -(1/2) ‖e‖²`; its constant solution keeps `‖e t‖ = π` and violates the
+decay bound (at `t = 16`). The decay is local. -/
+lemma nonlinearReducedField_inverted_trim (e₁ : EuclideanSpace ℝ (Fin 4))
+    (he₁ : e₁ = WithLp.toLp 2 ![0, 0, Real.pi, 0]) :
+    nonlinearReducedField e₁ = 0 ∧ ‖e₁‖ = Real.pi ∧
+      fderiv ℝ longitudinalLyapunov e₁ (nonlinearReducedField e₁) = 0 ∧
+      IsIntegralCurveOn (fun _ => e₁) (fun _ x => nonlinearReducedField x) (Set.Ici 0) ∧
+      ¬ ∀ t, 0 ≤ t → ‖e₁‖ ≤ Real.sqrt 8 * Real.exp (-t / 8) * ‖e₁‖ := by
+  have h0 : nonlinearReducedField e₁ = 0 := by
+    rw [he₁]
+    ext i
+    fin_cases i <;> simp [nonlinearReducedField, reducedField]
+  have hn : ‖e₁‖ = Real.pi := by
+    rw [← Real.sqrt_sq (norm_nonneg e₁), norm_sq_eq_coords, he₁]
+    simp [Real.sqrt_sq Real.pi_pos.le]
+  refine ⟨h0, hn, by rw [h0, map_zero], fun t _ => ?_, fun h => ?_⟩
+  · change HasDerivWithinAt _ (nonlinearReducedField e₁) _ _
+    rw [h0]
+    exact hasDerivWithinAt_const _ _ _
+  · have h16 := h 16 (by norm_num)
+    rw [hn] at h16
+    have hs8 : Real.sqrt 8 < 3 := by
+      rw [show (3 : ℝ) = Real.sqrt 9 by
+        rw [show (9 : ℝ) = 3 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]]
+      exact Real.sqrt_lt_sqrt (by norm_num) (by norm_num)
+    have he2 : 3 ≤ Real.exp 2 := by linarith [Real.add_one_le_exp 2]
+    have key : Real.sqrt 8 * Real.exp (-16 / 8) < 1 := by
+      calc Real.sqrt 8 * Real.exp (-16 / 8) < 3 * Real.exp (-16 / 8) := by
+            gcongr
+        _ ≤ Real.exp 2 * Real.exp (-16 / 8) := by gcongr
+        _ = 1 := by rw [← Real.exp_add]; norm_num
+    nlinarith [mul_lt_mul_of_pos_right key Real.pi_pos]
+
+/-- **Boundary example: the ball is not invariant.** At `e₂ = (0, 0, θ₂, 10⁻⁸)` with
+`θ₂ = √(10⁻⁴ - 10⁻¹⁶)`, on the sphere `‖e₂‖ = 1/100` where the Lyapunov inequality holds, but
+outside the invariant sublevel set, `d‖e‖²/dt = 2 q (θ - sin θ - 2 q) > 0`: no forward solution
+from `e₂` stays in the ball `‖e‖ ≤ 1/100`, so the conditional decay statement says nothing about
+`e₂`. Without the sublevel invariance and continuation steps, the Lyapunov inequality gives only
+conditional decay. -/
+lemma nonlinearReducedField_exits_closedBall (e₂ : EuclideanSpace ℝ (Fin 4))
+    (he₂ : e₂ = WithLp.toLp 2 ![0, 0, Real.sqrt (1 / 10000 - 1 / 10 ^ 16), 1 / 10 ^ 8]) :
+    ‖e₂‖ = 1 / 100 ∧ 1 / 80000 < longitudinalLyapunov e₂ ∧
+      ∀ e : ℝ → EuclideanSpace ℝ (Fin 4),
+        IsIntegralCurveOn e (fun _ x => nonlinearReducedField x) (Set.Ici 0) → e 0 = e₂ →
+          ¬ ∀ t, 0 ≤ t → ‖e t‖ ≤ 1 / 100 := by
+  set θ := Real.sqrt (1 / 10000 - 1 / 10 ^ 16) with hθdef
+  have hθ2 : θ ^ 2 = 1 / 10000 - 1 / 10 ^ 16 := Real.sq_sqrt (by norm_num)
+  have hθ0 : 0 ≤ θ := Real.sqrt_nonneg _
+  have hθlo : 99 / 10000 ≤ θ := by nlinarith
+  have hθhi : θ ≤ 1 / 100 := by nlinarith
+  have hn2 : ‖e₂‖ ^ 2 = 1 / 10000 := by
+    rw [norm_sq_eq_coords, he₂]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]
+    rw [hθ2]
+    norm_num
+  have hn : ‖e₂‖ = 1 / 100 := by
+    rw [← Real.sqrt_sq (norm_nonneg e₂), hn2, show (1 : ℝ) / 10000 = (1 / 100) ^ 2 by norm_num,
+      Real.sqrt_sq (by norm_num)]
+  have hsin : 2 / 10 ^ 8 < θ - Real.sin θ := by
+    have hb := Real.sin_bound (x := θ) (by rw [abs_of_nonneg hθ0]; linarith)
+    rw [abs_of_nonneg hθ0] at hb
+    have h1 := (abs_le.1 hb).2
+    have h3 : (99 / 10000 : ℝ) ^ 3 ≤ θ ^ 3 := pow_le_pow_left₀ (by norm_num) hθlo 3
+    have h5 : θ ^ 5 ≤ (1 / 100 : ℝ) ^ 5 := pow_le_pow_left₀ hθ0 hθhi 5
+    nlinarith
+  refine ⟨hn, ?_, fun e he h0 hball => ?_⟩
+  · rw [he₂]
+    simp [longitudinalLyapunov, longitudinalLyapunovMatrix, dotProduct, Matrix.mulVec,
+      Fin.sum_univ_four]
+    nlinarith
+  · have hmax : IsLocalMaxOn (fun t => ‖e t‖ ^ 2) (Set.Ici 0) 0 := by
+      refine IsMaxOn.isLocalMaxOn fun t ht => ?_
+      have h1 := hball t ht
+      have h2 : ‖e t‖ ^ 2 ≤ (1 / 100) ^ 2 := pow_le_pow_left₀ (norm_nonneg _) h1 2
+      change ‖e t‖ ^ 2 ≤ ‖e 0‖ ^ 2
+      rw [h0, hn2]
+      linarith
+    have hd := (he 0 (Set.mem_Ici.2 le_rfl)).norm_sq
+    have hseg : segment ℝ (0 : ℝ) (0 + 1) ⊆ Set.Ici 0 := by
+      rw [zero_add, segment_eq_Icc zero_le_one]
+      exact Set.Icc_subset_Ici_self
+    have hneg := hmax.hasFDerivWithinAt_nonpos hd.hasFDerivWithinAt
+      (mem_posTangentConeAt_of_segment_subset hseg)
+    rw [h0, PiLp.inner_apply, Fin.sum_univ_four] at hneg
+    simp [he₂, nonlinearReducedField, reducedField] at hneg
+    nlinarith
+
+
+-- The field at the pitch-rate state `(0, 0, 0, 1)` is `(0, 0, 1, -2)`.
+example : nonlinearReducedField (WithLp.toLp 2 ![0, 0, 0, 1]) = WithLp.toLp 2 ![0, 0, 1, -2] := by
+  ext i
+  fin_cases i <;> simp [nonlinearReducedField, reducedField]
+
+-- At `x = 1` the forward component `-2` is the linear part `-1` plus the cubic remainder `-1`.
+example : WithLp.ofLp (nonlinearReducedField (WithLp.toLp 2 ![1, 0, 0, 0])) 0 = -1 + -1 := by
+  rw [ofLp_nonlinearReducedField]
+  simp [linearReducedField, longitudinalJacobian, longitudinalRemainder]
+
+-- The orbital derivative identity holds at every state: at `(1, 0, 0, 0)`, far outside the ball,
+-- `V' = -‖e‖² - x⁴ = -2`.
+example : fderiv ℝ longitudinalLyapunov (WithLp.toLp 2 ![1, 0, 0, 0])
+    (nonlinearReducedField (WithLp.toLp 2 ![1, 0, 0, 0])) = -2 := by
+  rw [fderiv_longitudinalLyapunov_nonlinearReducedField, norm_sq_eq_coords]
+  norm_num
+
+-- At `(0, 0, 1/100, 0)`, on the sphere `‖e‖ = 1/100`, the Lyapunov inequality gives
+-- `V' ≤ -1/20000`.
+example : fderiv ℝ longitudinalLyapunov (WithLp.toLp 2 ![0, 0, 1 / 100, 0])
+    (nonlinearReducedField (WithLp.toLp 2 ![0, 0, 1 / 100, 0])) ≤ -1 / 20000 := by
+  have hn2 : ‖(WithLp.toLp 2 ![0, 0, 1 / 100, 0] : EuclideanSpace ℝ (Fin 4))‖ ^ 2 =
+      1 / 10000 := by
+    rw [norm_sq_eq_coords]
+    norm_num
+  have hn : ‖(WithLp.toLp 2 ![0, 0, 1 / 100, 0] : EuclideanSpace ℝ (Fin 4))‖ ≤ 1 / 100 := by
+    nlinarith [norm_nonneg (WithLp.toLp 2 ![0, 0, 1 / 100, 0] : EuclideanSpace ℝ (Fin 4))]
+  have h := (fderiv_longitudinalLyapunov_nonlinearReducedField_le hn).1
+  rw [hn2] at h
+  linarith
+
+-- The orbital derivative is negative at the nonzero state `(0, 0, 1/100, 0)` of the ball and not
+-- negative at the trim.
+example : fderiv ℝ longitudinalLyapunov (WithLp.toLp 2 ![0, 0, 1 / 100, 0])
+      (nonlinearReducedField (WithLp.toLp 2 ![0, 0, 1 / 100, 0])) < 0 ∧
+    ¬ fderiv ℝ longitudinalLyapunov 0 (nonlinearReducedField 0) < 0 := by
+  have hn2 : ‖(WithLp.toLp 2 ![0, 0, 1 / 100, 0] : EuclideanSpace ℝ (Fin 4))‖ ^ 2 =
+      1 / 10000 := by
+    rw [norm_sq_eq_coords]
+    norm_num
+  have hn : ‖(WithLp.toLp 2 ![0, 0, 1 / 100, 0] : EuclideanSpace ℝ (Fin 4))‖ ≤ 1 / 100 := by
+    nlinarith [norm_nonneg (WithLp.toLp 2 ![0, 0, 1 / 100, 0] : EuclideanSpace ℝ (Fin 4))]
+  refine ⟨(fderiv_longitudinalLyapunov_nonlinearReducedField_neg_iff hn).2 fun h => ?_,
+    fun h => (fderiv_longitudinalLyapunov_nonlinearReducedField_neg_iff (by simp)).1 h rfl⟩
+  rw [h, norm_zero] at hn2
+  norm_num at hn2
+
+-- The state `(1/400, 0, 0, 0)` on the start sphere has `V ≤ 1/80000` and lies in the actuator box.
+example : longitudinalLyapunov (WithLp.toLp 2 ![1 / 400, 0, 0, 0]) ≤ 1 / 80000 ∧
+    WithLp.ofLp (WithLp.toLp 2 ![(1 / 400 : ℝ), 0, 0, 0]) ∈ actuatorBox := by
+  have hn2 : ‖(WithLp.toLp 2 ![1 / 400, 0, 0, 0] : EuclideanSpace ℝ (Fin 4))‖ ^ 2 =
+      1 / 160000 := by
+    rw [norm_sq_eq_coords]
+    norm_num
+  have hV := longitudinalLyapunov_sublevel_spec.2.1 (WithLp.toLp 2 ![1 / 400, 0, 0, 0])
+    (by nlinarith [norm_nonneg (WithLp.toLp 2 ![1 / 400, 0, 0, 0] : EuclideanSpace ℝ (Fin 4))])
+  exact ⟨hV, (longitudinalLyapunov_sublevel_spec.2.2 _ hV).2⟩
+
+-- Sublevel invariance at level `0`: every forward solution from the trim stays at the trim.
+example (e : ℝ → EuclideanSpace ℝ (Fin 4))
+    (he : IsIntegralCurveOn e (fun _ x => nonlinearReducedField x) (Set.Ici 0)) (h0 : e 0 = 0)
+    (t : ℝ) (ht : 0 ≤ t) : e t = 0 := by
+  have h := mapsTo_sublevel_of_isIntegralCurveOn_nonlinearReducedField he (c := 0)
+    (by norm_num) (by rw [h0, (longitudinalLyapunov_eq_zero_iff 0).2 rfl]) (Set.mem_Ici.2 ht)
+  exact (longitudinalLyapunov_eq_zero_iff _).1 (le_antisymm h
+    (by nlinarith [(longitudinalLyapunov_bounds (e t)).1, sq_nonneg ‖e t‖]))
+
+-- The forward solution from the fixture state stays in the ball `‖e‖ ≤ 1/100`, so the
+-- conditional decay applies to it: at `t = 8`, `‖e 8‖ ≤ √8 e⁻¹ / 500`.
+example : ∃ e : ℝ → EuclideanSpace ℝ (Fin 4),
+    e 0 = WithLp.toLp 2 ![1 / 1000, 1 / 1000, 1 / 1000, 1 / 1000] ∧
+      ‖e 8‖ ≤ Real.sqrt 8 * Real.exp (-1) / 500 := by
+  obtain ⟨-, hn, -, -, e, h0, he, hb⟩ := nonlinearReducedField_fixture _ rfl
+  have hs8 : Real.sqrt 8 < 3 := by
+    rw [show (3 : ℝ) = Real.sqrt 9 by
+      rw [show (9 : ℝ) = 3 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]]
+    exact Real.sqrt_lt_sqrt (by norm_num) (by norm_num)
+  have hball : ∀ t, 0 ≤ t → ‖e t‖ ≤ 1 / 100 := fun t ht => by
+    have h := (hb t ht).2
+    have hexp : Real.exp (-t / 8) ≤ 1 := Real.exp_le_one_iff.2 (by linarith)
+    nlinarith [Real.exp_pos (-t / 8), Real.sqrt_nonneg 8]
+  refine ⟨e, h0, ?_⟩
+  have h := norm_le_of_isIntegralCurveOn_nonlinearReducedField_of_norm_le he hball
+    (t := 8) (by norm_num)
+  rw [h0, hn, show (-8 : ℝ) / 8 = -1 by norm_num] at h
+  linarith
+
+-- From the trim the decay bound forces every forward solution to stay at `0`.
+example (e : ℝ → EuclideanSpace ℝ (Fin 4))
+    (he : IsIntegralCurveOn e (fun _ x => nonlinearReducedField x) (Set.Ici 0)) (h0 : e 0 = 0)
+    (t : ℝ) (ht : 0 ≤ t) : e t = 0 := by
+  have h := norm_le_of_isIntegralCurveOn_nonlinearReducedField he (by rw [h0, norm_zero]; norm_num)
+    ht
+  rw [h0, norm_zero, mul_zero] at h
+  exact norm_le_zero_iff.1 h
+
+-- From `(1/400, 0, 0, 0)`, on the boundary of the start ball, a forward solution exists in the
+-- actuator box.
+example : ∃ e : ℝ → EuclideanSpace ℝ (Fin 4), e 0 = WithLp.toLp 2 ![1 / 400, 0, 0, 0] ∧
+    IsIntegralCurveOn e (fun _ x => nonlinearReducedField x) (Set.Ici 0) ∧
+    ∀ t, 0 ≤ t → WithLp.ofLp (e t) ∈ actuatorBox := by
+  have hn2 : ‖(WithLp.toLp 2 ![1 / 400, 0, 0, 0] : EuclideanSpace ℝ (Fin 4))‖ ^ 2 =
+      1 / 160000 := by
+    rw [norm_sq_eq_coords]
+    norm_num
+  exact exists_nonlinearReducedField_solution _
+    (by nlinarith [norm_nonneg (WithLp.toLp 2 ![1 / 400, 0, 0, 0] : EuclideanSpace ℝ (Fin 4))])
+
+-- From `(1/400, 0, 0, 0)` the solution of the headline has decayed to at most `√8 e⁻⁵ / 400` at
+-- `t = 40`.
+example : ∃ e : ℝ → EuclideanSpace ℝ (Fin 4), e 0 = WithLp.toLp 2 ![1 / 400, 0, 0, 0] ∧
+    ‖e 40‖ ≤ Real.sqrt 8 * Real.exp (-5) / 400 := by
+  have hn2 : ‖(WithLp.toLp 2 ![1 / 400, 0, 0, 0] : EuclideanSpace ℝ (Fin 4))‖ ^ 2 =
+      1 / 160000 := by
+    rw [norm_sq_eq_coords]
+    norm_num
+  have hn : ‖(WithLp.toLp 2 ![1 / 400, 0, 0, 0] : EuclideanSpace ℝ (Fin 4))‖ = 1 / 400 := by
+    rw [← Real.sqrt_sq (norm_nonneg _), hn2,
+      show (1 : ℝ) / 160000 = (1 / 400) ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+  obtain ⟨e, h0, -, hb⟩ := nonlinearReducedField_solution_decay _ (le_of_eq hn)
+  refine ⟨e, h0, ?_⟩
+  have h := (hb 40 (by norm_num)).2
+  rw [hn, show (-40 : ℝ) / 8 = -5 by norm_num] at h
+  linarith
+
+-- The inverted trim's constant solution never enters the ball `‖e‖ ≤ 1/100`, so the conditional
+-- decay says nothing about it, and it does not decay.
+example : ¬ ∀ t, 0 ≤ t →
+    ‖(WithLp.toLp 2 ![0, 0, Real.pi, 0] : EuclideanSpace ℝ (Fin 4))‖ ≤ 1 / 100 := by
+  obtain ⟨-, hn, -⟩ := nonlinearReducedField_inverted_trim _ rfl
+  intro h
+  have h0 := h 0 le_rfl
+  rw [hn] at h0
+  linarith [Real.two_le_pi]
+
+-- At the sphere state of the boundary fixture the Lyapunov inequality holds, yet no forward
+-- solution from it stays in the ball: the inequality alone gives only conditional decay.
+example (e₂ : EuclideanSpace ℝ (Fin 4))
+    (he₂ : e₂ = WithLp.toLp 2 ![0, 0, Real.sqrt (1 / 10000 - 1 / 10 ^ 16), 1 / 10 ^ 8]) :
+    fderiv ℝ longitudinalLyapunov e₂ (nonlinearReducedField e₂) ≤ -(1 / 2) * ‖e₂‖ ^ 2 ∧
+      ∀ e : ℝ → EuclideanSpace ℝ (Fin 4),
+        IsIntegralCurveOn e (fun _ x => nonlinearReducedField x) (Set.Ici 0) → e 0 = e₂ →
+          ¬ ∀ t, 0 ≤ t → ‖e t‖ ≤ 1 / 100 := by
+  obtain ⟨hn, -, hexit⟩ := nonlinearReducedField_exits_closedBall e₂ he₂
+  exact ⟨(fderiv_longitudinalLyapunov_nonlinearReducedField_le hn.le).1, hexit⟩
 
 end PhyslibExtTest.Mechanics.FlightPlant
