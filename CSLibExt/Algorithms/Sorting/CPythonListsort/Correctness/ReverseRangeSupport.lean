@@ -6,8 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Correctness.ReverseSliceCorrectness
-import Code.Correctness.SortSliceRange
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ReverseSliceCorrectness
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.SortSliceRange
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Range-facing consequences of exact slice reversal

@@ -6,13 +6,16 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Assembly.BinarysortSafety
-import Code.Assembly.CountRunSafety
-import Code.Assembly.FoundNewRunSafety
-import Code.Assembly.ListSortInputMode
-import Code.Assembly.ListSortSupport
-import Code.Assembly.MergeForceCollapseSafety
-import Code.Assembly.ReverseSliceSafety
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.BinarysortSafety
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.CountRunSafety
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.FoundNewRunSafety
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ListSortInputMode
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ListSortSupport
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.MergeForceCollapseSafety
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ReverseSliceSafety
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Traced top-level `list_sort_impl`

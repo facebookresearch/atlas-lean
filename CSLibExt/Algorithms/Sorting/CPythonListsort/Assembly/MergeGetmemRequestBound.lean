@@ -6,11 +6,14 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Assembly.GallopLeftSafety
-import Code.Assembly.GallopRightSafety
-import Code.Policy.PendingLayout
-import Code.Transcription.MergeAt
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.GallopLeftSafety
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.GallopRightSafety
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Policy.PendingLayout
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeAt
 import Mathlib
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # `merge_getmem` call-site request bound

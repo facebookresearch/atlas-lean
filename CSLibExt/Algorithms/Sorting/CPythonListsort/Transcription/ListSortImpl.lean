@@ -6,13 +6,16 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Transcription.Binarysort
-import Code.Transcription.CountRun
-import Code.Transcription.FoundNewRun
-import Code.Transcription.MergeForceCollapse
-import Code.Transcription.MergeInitStorage
-import Code.Transcription.MergeMemory
-import Code.Transcription.ReverseSlice
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.Binarysort
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.CountRun
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.FoundNewRun
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeForceCollapse
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeInitStorage
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeMemory
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.ReverseSlice
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Snapshot-model `list_sort_impl`

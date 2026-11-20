@@ -6,9 +6,12 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Assembly.FoundNewRunSafety
-import Code.Assembly.MergeForceCollapseSafety
-import Code.Assembly.TopLevelErasureHi
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.FoundNewRunSafety
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.MergeForceCollapseSafety
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.TopLevelErasureHi
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Raw-domain erasure for the traced merge chain

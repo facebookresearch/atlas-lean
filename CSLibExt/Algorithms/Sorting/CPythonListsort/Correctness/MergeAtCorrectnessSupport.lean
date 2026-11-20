@@ -6,9 +6,12 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Correctness.EntrySnapshotPermutation
-import Code.Correctness.StableMerge
-import Code.Policy.MergeAtPreservation
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.EntrySnapshotPermutation
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.StableMerge
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Policy.MergeAtPreservation
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Correctness support for `merge_at`

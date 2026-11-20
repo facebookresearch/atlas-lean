@@ -6,8 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Assembly.MergeCost
-import Code.Assembly.PowerEntropyBound
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.MergeCost
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.PowerEntropyBound
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Entropy bound for a source-faithful PowerSort merge tree

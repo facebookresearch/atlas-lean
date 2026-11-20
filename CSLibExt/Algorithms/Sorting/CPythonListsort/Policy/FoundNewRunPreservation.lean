@@ -6,11 +6,14 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Policy.BoundaryPowerGeometry
-import Code.Policy.MergeTopPowerPreservation
-import Code.Equivalence.PowerloopResults
-import Code.Transcription.FoundNewRun
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Policy.BoundaryPowerGeometry
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Policy.MergeTopPowerPreservation
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Equivalence.PowerloopResults
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.FoundNewRun
 import Mathlib
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Policy preservation across `found_new_run`

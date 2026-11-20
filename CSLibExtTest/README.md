@@ -57,13 +57,25 @@ lake env lean -DwarningAsError=true CSLibExtTest/Computability/Languages/Context
 lake env lean -DwarningAsError=true CSLibExtTest/Computability/CookLevinTests.lean
 ```
 
-## Standalone software case study
+## CPython listsort model regressions
 
-The [CPython listsort example](../FormalizedSoftware/CPythonListsort/README.md)
-is a software-formalization case study, not a test of an existing `CSLibExt`
-API. It remains in a separate Lean `v4.33.1` Lake package under
-[`FormalizedSoftware`](../FormalizedSoftware/README.md), rather than being
-included in this library's Lean `v4.35.0` glob. Its verification instructions
-and isolated executable review witnesses retain their standalone trust
-boundary. Moving reusable components into `CSLibExt` and testing those APIs
-here is a separate migration, not part of the directory reorganization.
+The [CPython listsort production API](../CSLibExt/Algorithms/Sorting/CPythonListsort/README.md)
+is integrated into `CSLibExt.Algorithms.Sorting.CPythonListsort` on the root
+toolchain. Its matching tests are under
+`CSLibExtTest.Algorithms.Sorting.CPythonListsort`.
+
+The twelve formerly compiler-evaluated theorem leaves are asserting `IO Unit`
+checks of the same concrete predicates and expected results. They introduce no
+theorem axioms and are not production proof dependencies. Other kernel-checked
+boundary examples retain their propositions in the matching test modules.
+These execution witnesses do not themselves prove correspondence to the pinned
+C implementation; source excerpts and the original transcription-review record
+remain separate evidence with the documented claim boundary.
+
+Build and execute the clients with:
+
+```sh
+lake build CSLibExtTest.Algorithms.Sorting.CPythonListsort
+python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/verify_trust_boundary.py
+python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/test_verify_trust_boundary.py
+```

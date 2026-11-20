@@ -6,9 +6,12 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Correctness.EntrySnapshotPermutation
-import Code.Correctness.MergeLoInvariant
-import Code.Correctness.MergeLoRegressionKernel
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.EntrySnapshotPermutation
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.MergeLoInvariant
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.MergeLoRegressionKernel
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Functional correctness of `merge_lo`

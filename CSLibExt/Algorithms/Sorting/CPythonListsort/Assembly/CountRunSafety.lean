@@ -6,8 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Assembly.ReverseSliceSafety
-import Code.Transcription.CountRun
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ReverseSliceSafety
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.CountRun
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # `count_run` safety

@@ -6,11 +6,14 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Assembly.MergeTracePrimitives
-import Code.Assembly.MergeGetmemRequestBound
-import Code.Assembly.MergeGetmemStorageValid
-import Code.Assembly.GallopLeftSafety
-import Code.Assembly.GallopRightSafety
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.MergeTracePrimitives
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.MergeGetmemRequestBound
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.MergeGetmemStorageValid
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.GallopLeftSafety
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.GallopRightSafety
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # `merge_lo` lockstep safety

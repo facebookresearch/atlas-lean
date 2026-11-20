@@ -6,8 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Correctness.ScanStepCorrectness
-import Code.Correctness.MergeForceCollapseCorrectness
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ScanStepCorrectness
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.MergeForceCollapseCorrectness
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Equivariance under mirrored occurrence origins

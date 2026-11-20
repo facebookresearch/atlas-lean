@@ -6,14 +6,17 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Assembly.CountRunSafety
-import Code.Assembly.Order
-import Code.Correctness.ReverseSliceCorrectness
-import Code.Correctness.SortSliceRange
-import Code.Correctness.DescendingRunNormalization
-import Code.Correctness.DescendingRunInvariant
-import Code.Correctness.ReverseRangeSupport
-import Code.Correctness.ScanRemainder
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.CountRunSafety
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.Order
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ReverseSliceCorrectness
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.SortSliceRange
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.DescendingRunNormalization
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.DescendingRunInvariant
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ReverseRangeSupport
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ScanRemainder
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Functional correctness of `count_run`

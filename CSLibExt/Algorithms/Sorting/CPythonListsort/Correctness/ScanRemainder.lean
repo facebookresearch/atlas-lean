@@ -6,11 +6,14 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Correctness.PendingRunCorrectness
-import Code.Correctness.SortSliceRange
-import Code.Assembly.ListSortInputMode
-import Code.Transcription.ListSortImpl
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.PendingRunCorrectness
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.SortSliceRange
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ListSortInputMode
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.ListSortImpl
 import Mathlib
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Unscanned-snapshot correctness
@@ -483,9 +486,6 @@ theorem pendingRunsCorrect_allows_wrong_suffix_but_scanRemainder_rejects :
       canonicalOccurrenceSegment, tagOccurrences,
       scanRemainderRegressionInput, scanRemainderWrongSuffixState,
       scanRemainderRegressionEntry] at hkeys
-    have htwo : (2 : PySSize).toNat = 2 := by decide
-    rw [htwo] at hkeys
-    norm_num at hkeys
 
 private def scanRemainderNonzeroBaseInput : Array Nat :=
   #[99, 7, 7, 88]
@@ -543,8 +543,5 @@ theorem scanRemainder_nonzero_base_wrong_origin_rejected :
       scanRemainderNonzeroBaseInput,
       scanRemainderNonzeroBaseWrongOriginState,
       scanRemainderRegressionEntry] at hkeys
-    have htwo : (2 : PySSize).toNat = 2 := by decide
-    rw [htwo] at hkeys
-    norm_num at hkeys
 
 end CPythonListsort

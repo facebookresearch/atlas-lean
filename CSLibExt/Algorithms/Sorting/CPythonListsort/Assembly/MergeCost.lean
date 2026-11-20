@@ -10,6 +10,9 @@ import Mathlib.Analysis.SpecialFunctions.Log.Base
 import Mathlib.Algebra.BigOperators.Ring.List
 import Mathlib.Tactic
 
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
+
 /-!
 # Merge-cost accounting
 

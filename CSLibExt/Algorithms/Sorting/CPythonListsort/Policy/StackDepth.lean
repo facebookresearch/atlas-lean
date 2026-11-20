@@ -6,10 +6,13 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Equivalence.PowerloopResults
-import Code.Policy.StackPowers
-import Code.Transcription.ListSortImpl
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Equivalence.PowerloopResults
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Policy.StackPowers
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.ListSortImpl
 import Mathlib
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Pending-stack depth bound

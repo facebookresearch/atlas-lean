@@ -6,10 +6,13 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Policy.BoundaryPowerGeometry
-import Code.Policy.MergeAtPreservation
-import Code.Policy.StackPowers
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Policy.BoundaryPowerGeometry
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Policy.MergeAtPreservation
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Policy.StackPowers
 import Mathlib
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Power preservation across a top-stack merge

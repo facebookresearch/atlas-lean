@@ -6,8 +6,12 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Assembly.ListSortMergePolicy
-import Code.Assembly.PowerSortPolicyCost
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ListSortMergePolicy
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.PowerSortPolicyCost
+import CSLibExtTest.Algorithms.Sorting.CPythonListsort.RuntimeAssert
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Executable regression for the PowerSort cost bridge
@@ -121,7 +125,8 @@ execution.  It pins the adaptive formed leaves, exact scan/collapse event
 split, boundary powers, and both competing completion totals.  In particular,
 the real CPython collapse costs 685 while canonical top-pair completion costs
 689, so the two final trees cannot be silently identified. -/
-theorem listSort_powerSort_cost_rotation_regression :
+def listSort_powerSort_cost_rotation_regression : IO Unit :=
+  CPythonListsortTest.assertTrue "listSort_powerSort_cost_rotation_regression" (decide (
     powerSortCostRegressionInput.entries.size = 256 ∧
       (initialMergeState
         (fun left right : Nat => decide (left < right)) false
@@ -156,7 +161,8 @@ theorem listSort_powerSort_cost_rotation_regression :
         [40, 72, 108, 256] ∧
       topPairCompletionCost [148, 36, 32, 32, 8] = 476 ∧
       213 + 476 = 689 ∧
-      213 + 472 = 685 := by
-  native_decide
+      213 + 472 = 685))
+
+#eval listSort_powerSort_cost_rotation_regression
 
 end CPythonListsort

@@ -6,11 +6,14 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Correctness.BinarysortCorrectness
-import Code.Correctness.CountRunCorrectness
-import Code.Correctness.EntrySnapshotPermutation
-import Code.Correctness.ScanCorrectnessSupport
-import Code.Policy.PushRunPreservation
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.BinarysortCorrectness
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.CountRunCorrectness
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.EntrySnapshotPermutation
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ScanCorrectnessSupport
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Policy.PushRunPreservation
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Semantic bridges for one forward scan step

@@ -6,8 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Assembly.MergeAtSafety
-import Code.Policy.MergeForceCollapsePreservation
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.MergeAtSafety
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Policy.MergeForceCollapsePreservation
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # `merge_force_collapse` safety

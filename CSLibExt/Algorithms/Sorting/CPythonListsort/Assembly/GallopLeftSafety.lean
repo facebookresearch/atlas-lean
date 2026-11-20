@@ -6,8 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Assembly.GallopSafety
-import Code.Transcription.MergeHi
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.GallopSafety
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeHi
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # `gallop_left` safety

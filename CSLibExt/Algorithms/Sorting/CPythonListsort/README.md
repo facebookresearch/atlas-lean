@@ -1,10 +1,22 @@
 # CPython listsort in Lean
 
-This ATLAS v2 entry formalizes the list-sorting algorithm in a pinned snapshot
-of CPython.  Its Lean modules are organized in five layers under `Code/`:
-`Transcription`, `Equivalence`, `Policy`, `Assembly`, and `Correctness`.
-The module prefix is `Code`, while the namespace and all declaration names
-remain `CPythonListsort` exactly as in the development repository.
+This development formalizes the list-sorting algorithm in a pinned snapshot
+of CPython. Its five proof layers—`Transcription`, `Equivalence`, `Policy`,
+`Assembly`, and `Correctness`—are integrated under the module prefix
+`CSLibExt.Algorithms.Sorting.CPythonListsort`. The declaration namespace and
+principal theorem names remain `CPythonListsort`.
+
+Import the production API with:
+
+```lean
+import CSLibExt.Algorithms.Sorting.CPythonListsort
+```
+
+The root Lake package supplies the Lean/Mathlib toolchain. The old standalone
+4.33.1 build configuration is retained as historical snapshots under
+[`sources/standalone-build-4.33.1`](sources/standalone-build-4.33.1/), not as an
+independent package or a new top-level library. The file disposition and
+regression conversion record is in [`verify/migration-map.json`](verify/migration-map.json).
 
 ## Pinned implementation source
 
@@ -28,7 +40,7 @@ below.  They live in namespace `CPythonListsort`.
 
 ### Comparator-independent safety
 
-From [`Code/Assembly/ListSortSafety.lean`](Code/Assembly/ListSortSafety.lean):
+From [`Assembly/ListSortSafety.lean`](Assembly/ListSortSafety.lean):
 
 ```lean
 theorem listsort_safe
@@ -48,7 +60,7 @@ this theorem to the two validated public constructors.
 ### Keyed functional correctness
 
 From
-[`Code/Correctness/ListSortCorrectness.lean`](Code/Correctness/ListSortCorrectness.lean):
+[`Correctness/ListSortCorrectness.lean`](Correctness/ListSortCorrectness.lean):
 
 ```lean
 theorem listsort_correct_keyed
@@ -70,7 +82,7 @@ that certificate to the ordinary untagged evaluator.
 ### Unkeyed functional correctness
 
 Also from
-[`Code/Correctness/ListSortCorrectness.lean`](Code/Correctness/ListSortCorrectness.lean):
+[`Correctness/ListSortCorrectness.lean`](Correctness/ListSortCorrectness.lean):
 
 ```lean
 theorem listsort_correct
@@ -91,7 +103,7 @@ theorem listsort_correct
 ### Temporary-memory lifecycle safety
 
 From
-[`Code/Assembly/MergeMemorySafety.lean`](Code/Assembly/MergeMemorySafety.lean):
+[`Assembly/MergeMemorySafety.lean`](Assembly/MergeMemorySafety.lean):
 
 ```lean
 theorem listSort_mergeMemory_safe
@@ -108,7 +120,7 @@ the proved `memcpy` call-site provenance.
 ### PowerSort merge-cost bound
 
 From
-[`Code/Assembly/ListSortCostBound.lean`](Code/Assembly/ListSortCostBound.lean):
+[`Assembly/ListSortCostBound.lean`](Assembly/ListSortCostBound.lean):
 
 ```lean
 theorem listsort_mergeCost_bound
@@ -155,7 +167,7 @@ not a claim about ISO C behavior for undefined large signed shifts.  Exact
 balanced-cycle equivalence is therefore limited to `mr_e < 32`; the public
 results instead consume the unconditional bound `1 ≤ minrun ≤ 64`, proved by
 `minrunNextN_output_bounds`
-(`Code/Equivalence/MinrunResults.lean:295`).
+(`Equivalence/MinrunResults.lean:295`).
 
 For very large lists, this bound depends on the convention above.
 `merge_init` computes `(1 << ms->mr_e) - 1`. For lists of 2^37 (~137
@@ -183,7 +195,7 @@ comparison-count result.
 
 Occurrence tags are proof-only ghost data, and their connection to the
 ordinary evaluator is a theorem rather than an assumed model boundary.
-[`eraseOccurrenceListSort`](Code/Correctness/OccurrenceErasureScan.lean)
+[`eraseOccurrenceListSort`](Correctness/OccurrenceErasureScan.lean)
 proves that sorting occurrence-tagged keys with a value-only comparator and
 then erasing the tags is exactly the ordinary untagged execution.
 `ListSortCorrectnessPost.untaggedResultEq` exports that equality to the public
@@ -191,9 +203,11 @@ correctness API.
 
 ## Proof trust boundary
 
-The principal theorem chains above are kernel-checked.  Twelve named,
-compiler-checked `native_decide` regressions are retained solely as executable
-review witnesses:
+The principal theorem chains above are kernel-checked. The twelve former
+compiler-evaluated theorem leaves have been replaced by asserting `IO Unit`
+checks under `CSLibExtTest.Algorithms.Sorting.CPythonListsort`. They retain the
+original concrete fixtures and expected Boolean propositions, but are not
+proofs or theorem axioms:
 
 - `mergeAt_slide_regression`
 - `mergeAt_thirdLast_slide_regression`
@@ -208,8 +222,11 @@ review witnesses:
 - `listSort_mergeMemory_released_growth_regression`
 - `listSort_powerSort_cost_rotation_regression`
 
-The trust-boundary verifier enforces this exact allowlist and rejects any Lean
-consumer of those declarations.
+The trust-boundary verifier rejects proof shortcuts, old generic module
+imports, production imports of tests, and production consumers of those
+executable witnesses. Other kernel-checked example proofs move to the matching
+test modules without changing their statements. This does not make execution
+checks into a machine-checked C-refinement proof.
 
 ## Transcription-review provenance
 
@@ -226,12 +243,13 @@ signature.
 
 ## Verification
 
-Use Lean `v4.33.1` and run the commands in
-[`verify/VERIFY.md`](verify/VERIFY.md).  In short:
+Run the root-toolchain checks from the repository root. See
+[`verify/VERIFY.md`](verify/VERIFY.md) for the historical 4.33.1 verification
+record and the integration-specific checks.
 
 ```sh
-cd FormalizedSoftware/CPythonListsort
-python3 verify/verify_excerpts.py
-python3 verify/verify_trust_boundary.py
-lake build
+lake build CSLibExt.Algorithms.Sorting.CPythonListsort
+lake build CSLibExtTest.Algorithms.Sorting.CPythonListsort
+python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/verify_trust_boundary.py
+python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/verify_excerpts.py
 ```

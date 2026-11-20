@@ -6,8 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Assembly.AccessTrace
-import Code.Assembly.MergeCost
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.AccessTrace
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.MergeCost
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Logical merge replay and final-collapse cost dominance

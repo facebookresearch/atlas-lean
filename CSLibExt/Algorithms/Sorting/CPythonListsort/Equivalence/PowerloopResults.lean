@@ -6,8 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Equivalence.Powerloop
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Equivalence.Powerloop
 import Mathlib
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Total correctness of `powerloop`
@@ -70,7 +73,7 @@ theorem powerloopNatStep_bounds (n : Nat) (state : PowerloopNatState)
 theorem powerloopNatStep_result (n : Nat) (state : PowerloopNatState)
     (hstopped : state.stopped = false) :
     (powerloopNatStep n state).result = state.result + 1 := by
-  simp only [powerloopNatStep, hstopped, Bool.false_eq_true, if_false]
+  simp only [powerloopNatStep, hstopped, Bool.false_eq_true, ite_false]
   split <;> split <;> simp_all
 
 @[simp] theorem powerloopNatLoop_of_stopped (fuel n : Nat) (state : PowerloopNatState)
@@ -91,7 +94,7 @@ theorem powerloopNatLoop_unstopped_gap (fuel n : Nat) (state : PowerloopNatState
   | zero =>
       simp [powerloopNatLoop, hbounds, hstopped]
   | succ fuel ih =>
-      simp only [powerloopNatLoop, hstopped, Bool.false_eq_true, if_false]
+      simp only [powerloopNatLoop, hstopped, Bool.false_eq_true, ite_false]
       let next := powerloopNatStep n state
       have hstep := powerloopNatStep_bounds n state hstopped hbounds
       change next.stopped = true ∨
@@ -120,7 +123,7 @@ theorem powerloopNatLoop_result_le (fuel n : Nat) (state : PowerloopNatState) :
       cases hstopped : state.stopped with
       | true => simp [powerloopNatLoop, hstopped]
       | false =>
-          simp only [powerloopNatLoop, hstopped, Bool.false_eq_true, if_false]
+          simp only [powerloopNatLoop, hstopped, Bool.false_eq_true, ite_false]
           have htail := ih (powerloopNatStep n state)
           have hstep := powerloopNatStep_result n state hstopped
           omega
@@ -173,7 +176,7 @@ theorem powerloopTraceSafe_of_bounds (fuel : Nat) (n : PySSize) (state : Powerlo
       have hbNonnegative := pySSize_nonnegative_of_double_lt state.b hbFit
       have hsafe : PowerloopStepSafe n state :=
         ⟨hn, haNonnegative, hbNonnegative, hab.le, haFit, hbFit⟩
-      simp only [PowerloopTraceSafe, hstopped, Bool.false_eq_true, if_false]
+      simp only [PowerloopTraceSafe, hstopped, Bool.false_eq_true, ite_false]
       refine ⟨hsafe, ?_⟩
       have heq := powerloopStep_eq_spec n state hsafe
       have hstateStopped : state.toNatState.stopped = false := by
@@ -340,7 +343,7 @@ theorem powerloopNatQuotientInvariant_step (a b n : Nat) (state : PowerloopNatSt
     (hinvariant : PowerloopNatQuotientInvariant a b n state) :
     PowerloopNatQuotientInvariant a b n (powerloopNatStep n state) := by
   rcases hbounds with ⟨hn, hab, hbn⟩
-  simp only [PowerloopNatQuotientInvariant, hstopped, Bool.false_eq_true, if_false] at hinvariant
+  simp only [PowerloopNatQuotientInvariant, hstopped, Bool.false_eq_true, ite_false] at hinvariant
   rcases hinvariant with ⟨k, hresult, haState, hbState, hprior⟩
   by_cases hna : n ≤ state.a
   · have hnb : n ≤ state.b := le_trans hna hab.le
@@ -352,8 +355,8 @@ theorem powerloopNatQuotientInvariant_step (a b n : Nat) (state : PowerloopNatSt
       rwa [← hbState]
     have haNext := powerloopResidue_succ_of_ge a n k hn (by rwa [← haState])
     have hbNext := powerloopResidue_succ_of_ge b n k hn (by rwa [← hbState])
-    simp only [powerloopNatStep, hstopped, Bool.false_eq_true, if_false, hna, if_true]
-    simp only [PowerloopNatQuotientInvariant, Bool.false_eq_true, if_false]
+    simp only [powerloopNatStep, hstopped, Bool.false_eq_true, ite_false, hna, ite_true]
+    simp only [PowerloopNatQuotientInvariant, Bool.false_eq_true, ite_false]
     refine ⟨k + 1, by omega, ?_, ?_, ?_⟩
     · simpa [haState] using haNext.symm
     · simpa [hbState] using hbNext.symm
@@ -371,8 +374,8 @@ theorem powerloopNatQuotientInvariant_step (a b n : Nat) (state : PowerloopNatSt
       have hbBit : powerloopQuotientBit b n k = 1 := by
         rw [powerloopQuotientBit_eq_one_iff b n k hn]
         rwa [← hbState]
-      simp only [powerloopNatStep, hstopped, Bool.false_eq_true, if_false, hna, hnb,
-        if_true, PowerloopNatQuotientInvariant]
+      simp only [powerloopNatStep, hstopped, Bool.false_eq_true, ite_false, hna, hnb,
+        ite_true, PowerloopNatQuotientInvariant]
       exact ⟨k, by omega, haBit, hbBit, hprior⟩
     · have haBit : powerloopQuotientBit a n k = 0 := by
         rw [powerloopQuotientBit_eq_zero_iff a n k hn]
@@ -384,8 +387,8 @@ theorem powerloopNatQuotientInvariant_step (a b n : Nat) (state : PowerloopNatSt
         omega
       have haNext := powerloopResidue_succ_of_lt a n k (by rw [← haState]; omega)
       have hbNext := powerloopResidue_succ_of_lt b n k (by rw [← hbState]; omega)
-      simp only [powerloopNatStep, hstopped, Bool.false_eq_true, if_false, hna, hnb]
-      simp only [PowerloopNatQuotientInvariant, Bool.false_eq_true, if_false]
+      simp only [powerloopNatStep, hstopped, Bool.false_eq_true, ite_false, hna, hnb]
+      simp only [PowerloopNatQuotientInvariant, Bool.false_eq_true, ite_false]
       refine ⟨k + 1, by omega, ?_, ?_, ?_⟩
       · simpa [haState] using haNext.symm
       · simpa [hbState] using hbNext.symm
@@ -406,7 +409,7 @@ theorem powerloopNatQuotientInvariant_loop (fuel a b n : Nat)
   induction fuel generalizing state with
   | zero => simpa [powerloopNatLoop] using hinvariant
   | succ fuel ih =>
-      simp only [powerloopNatLoop, hstopped, Bool.false_eq_true, if_false]
+      simp only [powerloopNatLoop, hstopped, Bool.false_eq_true, ite_false]
       let next := powerloopNatStep n state
       have hnextInvariant :=
         powerloopNatQuotientInvariant_step a b n state hstopped hbounds hinvariant
@@ -429,7 +432,7 @@ theorem powerloopNatLoop_add (first second n : Nat) (state : PowerloopNatState) 
       cases hstopped : state.stopped with
       | true => simp [powerloopNatLoop, hstopped]
       | false =>
-          simp only [Nat.succ_add, powerloopNatLoop, hstopped, Bool.false_eq_true, if_false]
+          simp only [Nat.succ_add, powerloopNatLoop, hstopped, Bool.false_eq_true, ite_false]
           exact ih (powerloopNatStep n state)
 
 /-- The arbitrary-precision recurrence for exact run midpoints stops within 60 steps and returns

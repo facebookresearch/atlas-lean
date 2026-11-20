@@ -6,8 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Correctness.ScanRemainder
-import Code.Policy.MergeTopPowerPreservation
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ScanRemainder
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Policy.MergeTopPowerPreservation
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Support lemmas for forward scan correctness

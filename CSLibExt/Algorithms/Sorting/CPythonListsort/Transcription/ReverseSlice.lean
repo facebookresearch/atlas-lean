@@ -6,7 +6,10 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Transcription.SortSlice
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.SortSlice
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Slice reversal transcription

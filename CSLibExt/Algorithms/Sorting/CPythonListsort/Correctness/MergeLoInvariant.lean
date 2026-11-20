@@ -6,12 +6,15 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Assembly.GallopCorrectness
-import Code.Assembly.MergeLoSafety
-import Code.Correctness.MergeSemanticPre
-import Code.Correctness.MergeMovementCorrectness
-import Code.Correctness.SortSliceRange
-import Code.Correctness.StableMerge
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.GallopCorrectness
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.MergeLoSafety
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.MergeSemanticPre
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.MergeMovementCorrectness
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.SortSliceRange
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.StableMerge
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Semantic invariant for `merge_lo`

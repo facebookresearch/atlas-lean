@@ -6,8 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Transcription.Powerloop
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.Powerloop
 import Mathlib
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # `powerloop` recurrence equivalence
@@ -161,7 +164,7 @@ theorem powerloopLoop_eq_spec (fuel : Nat) (n : PySSize) (state : PowerloopState
           have hsafeTail : PowerloopTraceSafe fuel n (powerloopStep n state) := by
             exact hsafePair.2
           simp only [powerloopLoop, powerloopNatLoop, hstopped, Bool.false_eq_true,
-            if_false]
+            ite_false]
           rw [ih (powerloopStep n state) hsafeTail]
           rw [powerloopStep_eq_spec n state hsafeStep]
           simp [PowerloopState.toNatState, hstopped]

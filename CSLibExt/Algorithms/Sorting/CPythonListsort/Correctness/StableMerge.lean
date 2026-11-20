@@ -6,10 +6,13 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Assembly.Order
-import Code.Correctness.DescendingRunInvariant
-import Code.Transcription.SortSlice
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.Order
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.DescendingRunInvariant
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.SortSlice
 import Mathlib.Data.List.Sort
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Pure stable-merge specification

@@ -6,8 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Correctness.OriginRelabelMerges
-import Code.Correctness.ScanLoopCorrectness
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.OriginRelabelMerges
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ScanLoopCorrectness
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Origin relabeling through policy and scan evaluators

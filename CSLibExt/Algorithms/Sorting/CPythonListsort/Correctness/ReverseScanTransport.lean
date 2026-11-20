@@ -6,8 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Correctness.OriginRelabelScan
-import Code.Correctness.ReverseModeAlgebra
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.OriginRelabelScan
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ReverseModeAlgebra
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Reverse-oriented complete-scan transport

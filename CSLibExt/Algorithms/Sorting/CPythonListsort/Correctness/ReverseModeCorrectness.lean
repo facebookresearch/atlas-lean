@@ -6,7 +6,10 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Correctness.ReverseScanTransport
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ReverseScanTransport
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Correctness of CPython's reverse-mode pattern

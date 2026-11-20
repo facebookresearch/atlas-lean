@@ -6,7 +6,10 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Assembly.ReverseSliceSafety
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ReverseSliceSafety
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Exact correctness of slice reversal

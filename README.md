@@ -42,14 +42,15 @@ root validation with:
 scripts/check.sh
 ```
 
-The standalone [software formalization case studies](FormalizedSoftware/README.md),
-[conjecture examples](OpenConjectures/README.md), remaining `Atlas/` developments,
-and archived `v1/` release are not part of this root build. In particular,
-[`CPythonListsort`](FormalizedSoftware/CPythonListsort/README.md) has its own
-Lean `v4.33.1` Lake package, and `v1/` retains its original build configuration.
-The remaining [`StatisticalMechanics`](Atlas/StatisticalMechanics/MIGRATED.md)
-sources stay under `Atlas/` while their migration into the extension libraries
-continues.
+The [CPython listsort model](CSLibExt/Algorithms/Sorting/CPythonListsort/README.md)
+is integrated into `CSLibExt`, with kernel-checked proof layers and asserting
+regression clients in `CSLibExtTest`. It uses the root toolchain rather than an
+independent package; its original source and verification provenance are retained.
+
+Remaining `Atlas/` development material and the archived `v1/` release are not
+part of this root build. `v1/` retains its original build configuration. The
+[`StatisticalMechanics`](Atlas/StatisticalMechanics/MIGRATED.md) archive and
+migration ledger keep their existing paths while the library migration continues.
 
 ## Dependency explorer
 

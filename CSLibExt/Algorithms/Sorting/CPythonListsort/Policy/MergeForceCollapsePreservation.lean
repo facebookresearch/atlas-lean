@@ -6,9 +6,12 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Policy.MergeAtPreservation
-import Code.Transcription.MergeForceCollapse
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Policy.MergeAtPreservation
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeForceCollapse
 import Mathlib
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Pending-layout preservation across `merge_force_collapse`

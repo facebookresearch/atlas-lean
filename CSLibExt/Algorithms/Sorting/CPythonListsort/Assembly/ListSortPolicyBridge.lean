@@ -6,8 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Assembly.ListSortPolicyEndpoints
-import Code.Assembly.ListSortScanPolicy
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ListSortPolicyEndpoints
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ListSortScanPolicy
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Top-level evaluator to PowerSort policy bridge

@@ -6,8 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Transcription.Gallop
-import Code.Transcription.MergeMemory
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.Gallop
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Transcription.MergeMemory
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Left-to-right merge transcription

@@ -1,6 +1,31 @@
-# Verification — development source `7a5f47d`
+# Verification and historical export record
 
-Run all commands below from `FormalizedSoftware/CPythonListsort` in the ATLAS repository.
+## Root integration checks
+
+Use the root `lean-toolchain` and Lake environment. From the repository root:
+
+```sh
+lake build CSLibExt.Algorithms.Sorting.CPythonListsort
+lake build CSLibExtTest.Algorithms.Sorting.CPythonListsort
+python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/verify_trust_boundary.py
+python3 CSLibExt/Algorithms/Sorting/CPythonListsort/verify/verify_excerpts.py
+```
+
+The test root executes the twelve asserting IO witnesses. These are not theorem
+axioms or dependencies of the production proofs. The production API retains
+namespace `CPythonListsort`; replace the historical `import Code` below with
+`import CSLibExt.Algorithms.Sorting.CPythonListsort` for a root-context axiom audit.
+The file and regression disposition table is in `verify/migration-map.json`.
+
+## Historical standalone record
+
+The following record describes the original standalone Lean/Mathlib 4.33.1
+verification before integration. It is retained as provenance, not as a claim
+that its old module paths or compiler-evaluated theorem witnesses remain in the
+root libraries. The old build configuration is saved under
+`sources/standalone-build-4.33.1/`; the original development commit provides the
+complete historical package.
+
 The exported development snapshot is
 `7a5f47de2501d41980fafa0a363c61c2a2fa688c`, as recorded in
 [`sources/upstream-pins.md`](../sources/upstream-pins.md). This is the source

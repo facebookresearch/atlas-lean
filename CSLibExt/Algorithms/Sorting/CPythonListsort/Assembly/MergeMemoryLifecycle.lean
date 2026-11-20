@@ -6,11 +6,14 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Assembly.MergeGetmemRequestBound
-import Code.Assembly.MergeGetmemStorageValid
-import Code.Assembly.MergeMemcpyProvenance
-import Code.Assembly.MergeLoSafety
-import Code.Assembly.MergeHiSafety
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.MergeGetmemRequestBound
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.MergeGetmemStorageValid
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.MergeMemcpyProvenance
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.MergeLoSafety
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.MergeHiSafety
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Semantic validation for the real merge-memory trace

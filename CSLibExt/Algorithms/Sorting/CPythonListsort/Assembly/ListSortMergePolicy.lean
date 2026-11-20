@@ -6,10 +6,13 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Assembly.ListSortTermination
-import Code.Assembly.MergePolicyReplay
-import Code.Assembly.ScanPowerForestInvariant
-import Code.Assembly.ListSortScanReached
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ListSortTermination
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.MergePolicyReplay
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ScanPowerForestInvariant
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ListSortScanReached
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # The real `list_sort_impl` policy trace replays

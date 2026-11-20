@@ -6,12 +6,15 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Assembly.AlphabeticCostBound
-import Code.Assembly.ListSortCollapseCost
-import Code.Assembly.ListSortPolicyEndpoints
-import Code.Assembly.ListSortPolicyBridge
-import Code.Assembly.ListSortScanPolicy
-import Code.Assembly.ListSortScanReached
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.AlphabeticCostBound
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ListSortCollapseCost
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ListSortPolicyEndpoints
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ListSortPolicyBridge
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ListSortScanPolicy
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ListSortScanReached
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Public PowerSort merge-cost bound for the real top-level evaluator

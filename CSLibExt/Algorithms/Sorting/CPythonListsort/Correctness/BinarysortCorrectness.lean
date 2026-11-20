@@ -6,10 +6,13 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Assembly.BinarysortSafety
-import Code.Assembly.Order
-import Code.Correctness.SortSliceRange
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.BinarysortSafety
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.Order
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.SortSliceRange
 import Mathlib.Data.List.InsertIdx
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Functional correctness of `binarysort`

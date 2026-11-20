@@ -6,8 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Correctness.MergeForceCollapseCorrectness
-import Code.Correctness.ScanStepCorrectness
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.MergeForceCollapseCorrectness
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Correctness.ScanStepCorrectness
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Correctness of the complete scan and final collapse

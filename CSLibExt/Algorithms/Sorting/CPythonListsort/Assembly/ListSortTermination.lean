@@ -6,9 +6,12 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Code.Assembly.ListSortTrace
-import Code.Assembly.TopLevelErasureForceCollapse
-import Code.Assembly.TopLevelErasureFound
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.ListSortTrace
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.TopLevelErasureForceCollapse
+import CSLibExt.Algorithms.Sorting.CPythonListsort.Assembly.TopLevelErasureFound
+
+-- Preserve the imported development's original implicit type binders.
+set_option autoImplicit true
 
 /-!
 # Top-level listsort termination and safety
