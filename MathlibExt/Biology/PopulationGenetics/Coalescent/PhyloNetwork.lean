@@ -13,11 +13,7 @@ public import Mathlib.Algebra.BigOperators.Pi
 public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 public import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic.Linarith
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.FinCases
 import Mathlib.Algebra.BigOperators.Fin
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Ring
 
 /-!
 # Phylogenetic networks and their routing kernel
