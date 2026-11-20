@@ -105,15 +105,22 @@ example :
     simp [gridProd, List.range_succ, List.map_append, List.prod_append, Matrix.mul_apply,
       Fin.sum_univ_two] at h00
 
-/-- A non-grid-aligned horizon: constant `A = !![2, 0; 0, 0]`, `t = 3 / 2`, `M = 2` gives
-`⌈3⌉₊ = 3` factors of `1 + A / 2`, i.e. `!![8, 0; 0, 1]`. -/
+/-- A non-grid-aligned horizon: constant `A = !![2, 0; 0, 0]`, `t = 5 / 4`, `M = 2` gives
+`⌈5 / 2⌉₊ = 3` factors of `1 + A / 2` (the last factor overshoots `t`), i.e.
+`!![8, 0; 0, 1]`. -/
 example :
-    gridProd (fun _ => (!![2, 0; 0, 0] : Matrix (Fin 2) (Fin 2) ℝ)) (3 / 2) 2 =
+    gridProd (fun _ => (!![2, 0; 0, 0] : Matrix (Fin 2) (Fin 2) ℝ)) (5 / 4) 2 =
       !![8, 0; 0, 1] := by
+  have hc : ⌈(5 / 4 : ℝ) * ((2 : ℕ) : ℝ)⌉₊ = 3 := by
+    have h1 : ⌈(5 / 4 : ℝ) * ((2 : ℕ) : ℝ)⌉₊ ≤ 3 := Nat.ceil_le.2 (by norm_num)
+    have h2 : 2 < ⌈(5 / 4 : ℝ) * ((2 : ℕ) : ℝ)⌉₊ := Nat.lt_ceil.2 (by norm_num)
+    omega
+  unfold gridProd
+  rw [hc]
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp [gridProd, List.prod_cons, List.prod_nil, Matrix.mul_apply, Fin.sum_univ_two] <;>
-    norm_num
+    simp [List.prod_cons, List.prod_nil, Matrix.mul_apply, Fin.sum_univ_two] <;>
+    norm_num [pow_succ, Matrix.mul_apply, Fin.sum_univ_two]
 
 end Matrix
 
