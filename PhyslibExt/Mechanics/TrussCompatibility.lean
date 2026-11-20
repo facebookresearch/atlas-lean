@@ -11,6 +11,7 @@ public import PhyslibExt.Mechanics.HarmonicMechanics
 import MathlibExt.LinearAlgebra.Matrix.WeightedScatter
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.LinearAlgebra.Matrix.PosDef
+import Mathlib.LinearAlgebra.Matrix.Symmetric
 import MathlibExt.LinearAlgebra.Matrix.FullRankLinearSystem
 
 /-!
@@ -48,6 +49,9 @@ Section F turns positive definiteness into the unique
 supported response to a load, with the explicit inverse
 form and the unique residual reaction vector for a full
 joint load.
+Section G records reciprocal work: one symmetric supported
+stiffness gives equal cross work for any two supported load
+cases.
 
 ## ii. Key results
 
@@ -69,6 +73,9 @@ joint load.
 - `supported_existsUnique` and
   `supported_residual_existsUnique_of_posDef`: the unique
   supported displacement and residual reaction vector.
+- `supported_reciprocalWork`: for one supported
+  stiffness, the work of either supported load through the
+  other solution is the same.
 
 ## iii. Table of contents
 
@@ -78,6 +85,7 @@ joint load.
 - D. Supported virtual work
 - E. Supported rigidity certificate
 - F. Supported unique response
+- G. Reciprocal work
 
 ## iv. References
 
@@ -550,5 +558,61 @@ theorem supported_response_of_axial {J M F : Type*} [Fintype J]
     (supported_posDef_iff_of_axial r a b S hE hA hne).mpr hker
   exact ⟨fun f => supported_existsUnique_of_posDef r a b S _ hPD f,
     fun g => supported_residual_existsUnique_of_posDef r a b S _ hPD g⟩
+
+/-! ## G. Reciprocal work -/
+
+/-- Symmetry of the supported stiffness: the supported stiffness is
+the Gram matrix of the supported compatibility map against the
+diagonal member law, so it is symmetric. Symmetry is structural and
+needs no sign hypothesis on the weights; for nonnegative weights it
+also follows from positive semidefiniteness of the supported
+stiffness (nonnegative stored energy). -/
+lemma supported_stiffness_isSymm {J M F : Type*} [Fintype J]
+    [DecidableEq J] [Fintype M] [DecidableEq M]
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ) :
+    ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+      * (axialCompatibility r a b * S)).IsSymm := by
+  generalize (axialCompatibility r a b * S) = B
+  unfold Matrix.IsSymm
+  rw [Matrix.transpose_mul, Matrix.transpose_mul, Matrix.diagonal_transpose,
+    Matrix.transpose_transpose, Matrix.mul_assoc]
+
+/-- Symmetry of the supported stiffness bilinear form: for a symmetric
+supported stiffness, pairing one supported displacement against the
+stiffness applied to another is unchanged when the two displacements
+are exchanged. This is the existing symmetric-matrix bilinear identity
+at the supported stiffness; no load or solve hypothesis is used. -/
+lemma supported_dotProduct_mulVec_comm {J M F : Type*} [Fintype J]
+    [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ)
+    (u v : F → ℝ) :
+    u ⬝ᵥ (((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S)) *ᵥ v)
+      = v ⬝ᵥ (((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S)) *ᵥ u) := by
+  exact (supported_stiffness_isSymm r a b S k).dotProduct_mulVec_comm
+
+/-- Reciprocal work for two supported loads: for one symmetric
+supported stiffness (same reference geometry, supports and weights in
+both load cases) and solutions `K *ᵥ u = f`, `K *ᵥ v = g`, the work of
+`f` through `v` equals the work of `g` through `u`. The loads `f` and
+`g` are independent. No reciprocity is claimed between solutions of two
+different stiffnesses, or for follower loads or contact switching. -/
+theorem supported_reciprocalWork {J M F : Type*} [Fintype J]
+    [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
+    (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (S : Matrix (J × Fin 2) F ℝ) (k : M → ℝ)
+    {u v f g : F → ℝ}
+    (hu : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S)) *ᵥ u = f)
+    (hv : ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
+        * (axialCompatibility r a b * S)) *ᵥ v = g) :
+    f ⬝ᵥ v = g ⬝ᵥ u := by
+  have h := supported_dotProduct_mulVec_comm r a b S k u v
+  rw [hv, hu] at h
+  rw [dotProduct_comm f v, dotProduct_comm g u]
+  exact h.symm
 
 end Mechanics.TrussCompatibility
