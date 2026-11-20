@@ -38,7 +38,9 @@ import Mathlib.RingTheory.PowerSeries.Order
 # Sturm bound for `Γ₀(N)`
 
 A modular form on `Γ₀(N)` of integer weight `k` whose `q`-expansion
-coefficients vanish through `⌊k * [SL(2, ℤ) : Γ₀(N)] / 12⌋` is zero.
+coefficients vanish through `(k * [SL(2, ℤ) : Γ₀(N)]).toNat / 12` is zero.
+The bound uses `Int.toNat`, so for negative `k` it is `0`: the constant
+coefficient must vanish, with no floor-of-a-negative-number convention.
 -/
 
 @[expose] public section
@@ -269,7 +271,8 @@ private theorem relIndex_mapGL_aux (Γ : Subgroup SL(2, ℤ)) :
 
 /-- **Sturm bound for `Γ₀(N)`.** A modular form on `Γ₀(N)` of weight `k`
 whose `q`-expansion coefficients vanish for every
-`n ≤ (k * (Γ₀ N).index).toNat / 12` is zero. -/
+`n ≤ (k * (Γ₀ N).index).toNat / 12` is zero. For negative `k` the bound is
+`0`, so this requires the constant coefficient to vanish. -/
 public theorem ModularForm.sturm_bound_Gamma0 (N : ℕ) [NeZero N] {k : ℤ}
     (f : ModularForm (CongruenceSubgroup.Gamma0 N) k)
     (h : ∀ n : ℕ, n ≤ (k * (CongruenceSubgroup.Gamma0 N).index).toNat / 12 →
