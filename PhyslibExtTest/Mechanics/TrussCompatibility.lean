@@ -22,7 +22,8 @@ energy value, a zero-length member contributing a zero
 unit row, supported virtual work on the mechanism
 (one-member) truss, the supported rigidity certificate
 on a triangle and its supported null mode, and unique
-supported response on triangle and focused fixtures.
+supported response on triangle and focused fixtures,
+and reciprocal work on the focused fixture.
 
 ## i. Overview
 
@@ -38,6 +39,7 @@ No new definitions or results are introduced here.
 - B. Supported virtual work
 - C. Supported rigidity certificate
 - D. Supported unique response
+- E. Reciprocal work
 
 ## iv. References
 
@@ -647,6 +649,152 @@ example : (!![1, 1; 0, 0] : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ ![1, 0]
       fin_cases i <;>
         norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
 
+
+/-! ## E. Reciprocal work -/
+
+/-- Second focused solution: `K *ᵥ ![1, 1] = ![2, 0]`. -/
+private lemma focusedActionOne :
+    ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+      * Matrix.diagonal ![1 / 2, 3]
+      * (axialCompatibility rF ![0, 1] ![1, 2] * SF)) *ᵥ ![1, 1]
+        = ![2, 0] := by
+  rw [supportedStiffnessF]
+  funext i
+  fin_cases i <;>
+    norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+
+/-- Reciprocal work on the focused fixture through the
+symmetry-certificate form: the two independent loads
+`![0, 6]` and `![2, 0]` have equal cross work. -/
+example : (![0, 6] : Fin 2 → ℝ) ⬝ᵥ ![1, 1]
+    = (![2, 0] : Fin 2 → ℝ) ⬝ᵥ ![3, 5] := by
+  have hu : ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+        * Matrix.diagonal ![1 / 2, 3]
+        * (axialCompatibility rF ![0, 1] ![1, 2] * SF)) *ᵥ ![3, 5]
+      = ![0, 6] := by
+    rw [supportedStiffnessF]
+    funext i
+    fin_cases i <;>
+      norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+  exact supported_reciprocalWork rF ![0, 1] ![1, 2] SF _
+    (supported_stiffness_isSymm rF ![0, 1] ![1, 2] SF _) hu
+    focusedActionOne
+
+/-- The common cross-work value is `6 ≠ 0`, and the two
+loads are independent. -/
+example : (![0, 6] : Fin 2 → ℝ) ⬝ᵥ ![1, 1] = 6 ∧
+    Matrix.det !![0, 2; 6, 0] = -12 := by
+  norm_num [dotProduct, Fin.sum_univ_two, Matrix.det_fin_two]
+
+/-- Reciprocal work on the same data through the
+nonnegative-weights form. -/
+example : (![0, 6] : Fin 2 → ℝ) ⬝ᵥ ![1, 1]
+    = (![2, 0] : Fin 2 → ℝ) ⬝ᵥ ![3, 5] := by
+  have hu : ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+        * Matrix.diagonal ![1 / 2, 3]
+        * (axialCompatibility rF ![0, 1] ![1, 2] * SF)) *ᵥ ![3, 5]
+      = ![0, 6] := by
+    rw [supportedStiffnessF]
+    funext i
+    fin_cases i <;>
+      norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+  exact supported_reciprocalWork_of_nonneg rF ![0, 1] ![1, 2] SF _
+    (by intro e; fin_cases e <;> norm_num) hu focusedActionOne
+
+/-- The bilinear pairing form on the same data, without
+naming loads. -/
+example : ![3, 5] ⬝ᵥ (((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+        * Matrix.diagonal ![1 / 2, 3]
+        * (axialCompatibility rF ![0, 1] ![1, 2] * SF)) *ᵥ ![1, 1])
+    = ![1, 1] ⬝ᵥ (((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+        * Matrix.diagonal ![1 / 2, 3]
+        * (axialCompatibility rF ![0, 1] ![1, 2] * SF)) *ᵥ ![3, 5]) :=
+  supported_dotProduct_mulVec_comm rF ![0, 1] ![1, 2] SF _
+    (supported_stiffness_isSymm rF ![0, 1] ![1, 2] SF _) _ _
+
+/-- Physical axial weights `E A / L ^ 3` on the focused
+fixture: reciprocal work for arbitrary supported
+displacements, loads taken as the stiffness images. -/
+example (u v : Fin 2 → ℝ) :
+    (((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+        * Matrix.diagonal
+          (fun e => (200 : ℝ) * (1 / 100)
+            / memberLength rF ![0, 1] ![1, 2] e ^ 3)
+        * (axialCompatibility rF ![0, 1] ![1, 2] * SF)) *ᵥ u) ⬝ᵥ v
+      = (((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ
+        * Matrix.diagonal
+          (fun e => (200 : ℝ) * (1 / 100)
+            / memberLength rF ![0, 1] ![1, 2] e ^ 3)
+        * (axialCompatibility rF ![0, 1] ![1, 2] * SF)) *ᵥ v) ⬝ᵥ u := by
+  have hne : ∀ e, rF (![0, 1] e) ≠ rF (![1, 2] e) := by
+    intro e
+    fin_cases e <;> norm_num [rF]
+  refine supported_reciprocalWork_of_nonneg rF ![0, 1] ![1, 2] SF _ ?_ rfl rfl
+  intro e
+  exact le_of_lt (div_pos (by norm_num)
+    (pow_pos (memberLength_pos_of_ne rF ![0, 1] ![1, 2] (hne e)) 3))
+
+/-- Different stiffness control: cross work against a
+load vector produced by a different operator need not
+agree (`6 ≠ 11`). -/
+example : (![0, 6] : Fin 2 → ℝ) ⬝ᵥ ![1, 1] = 6 ∧
+    (![2, 1] : Fin 2 → ℝ) ⬝ᵥ ![3, 5] = 11 ∧ (6 : ℝ) ≠ 11 := by
+  norm_num [dotProduct, Fin.sum_univ_two]
+
+/-- Nonsymmetric control: `!![5, -3; 0, 3]` is not
+symmetric and its two pairings differ (`15 ≠ 21`). -/
+example : ¬ (!![5, -3; 0, 3] : Matrix (Fin 2) (Fin 2) ℝ).IsSymm := by
+  intro h
+  have h01 := Matrix.IsSymm.apply h 0 1
+  norm_num at h01
+
+example : (![1, 1] : Fin 2 → ℝ) ⬝ᵥ
+      ((!![5, -3; 0, 3] : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ ![3, 5]) = 15 ∧
+    (![3, 5] : Fin 2 → ℝ) ⬝ᵥ
+      ((!![5, -3; 0, 3] : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ ![1, 1]) = 21 ∧
+    (15 : ℝ) ≠ 21 := by
+  norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+
+/-- Zero-load boundary: the zero solution against the
+second focused solution. -/
+example : (0 : Fin 2 → ℝ) ⬝ᵥ ![1, 1]
+    = (![2, 0] : Fin 2 → ℝ) ⬝ᵥ 0 :=
+  supported_reciprocalWork rF ![0, 1] ![1, 2] SF _
+    (supported_stiffness_isSymm rF ![0, 1] ![1, 2] SF _)
+    (by simp) focusedActionOne
+
+/-- Singular-stiffness control: with `S = 0` the
+supported stiffness is zero (not positive definite), and
+reciprocal work still holds for the solutions in range
+(zero loads). -/
+example (u v : Fin 3 → ℝ) :
+    (0 : Fin 3 → ℝ) ⬝ᵥ v = (0 : Fin 3 → ℝ) ⬝ᵥ u :=
+  supported_reciprocalWork rT ![0, 0, 1] ![1, 2, 2] 0 (fun _ => (2 : ℝ))
+    (supported_stiffness_isSymm rT ![0, 0, 1] ![1, 2, 2] 0
+      (fun _ => (2 : ℝ)))
+    (by simp) (by simp)
+
+/-- Empty-coordinate boundary. -/
+example (u v f g : Fin 0 → ℝ)
+    (hu : ((axialCompatibility rT ![0, 0, 1] ![1, 2, 2]
+        * (0 : Matrix (Fin 3 × Fin 2) (Fin 0) ℝ))ᵀ
+      * Matrix.diagonal (fun _ => (2 : ℝ))
+      * (axialCompatibility rT ![0, 0, 1] ![1, 2, 2]
+        * (0 : Matrix (Fin 3 × Fin 2) (Fin 0) ℝ))) *ᵥ u = f)
+    (hv : ((axialCompatibility rT ![0, 0, 1] ![1, 2, 2]
+        * (0 : Matrix (Fin 3 × Fin 2) (Fin 0) ℝ))ᵀ
+      * Matrix.diagonal (fun _ => (2 : ℝ))
+      * (axialCompatibility rT ![0, 0, 1] ![1, 2, 2]
+        * (0 : Matrix (Fin 3 × Fin 2) (Fin 0) ℝ))) *ᵥ v = g) :
+    f ⬝ᵥ v = g ⬝ᵥ u :=
+  supported_reciprocalWork rT ![0, 0, 1] ![1, 2, 2] 0 _
+    (supported_stiffness_isSymm rT ![0, 0, 1] ![1, 2, 2] 0 _) hu hv
+
+/-- Sign-flip control: negating one load negates exactly
+one side. -/
+example : (![0, -6] : Fin 2 → ℝ) ⬝ᵥ ![1, 1] = -6 ∧ (-6 : ℝ) ≠ 6 := by
+  norm_num [dotProduct, Fin.sum_univ_two]
+
 #print axioms Mechanics.TrussCompatibility.supported_posDef_iff
 #print axioms
   Mechanics.TrussCompatibility.supported_posDef_iff_ker_eq_bot
@@ -663,5 +811,11 @@ example : (!![1, 1; 0, 0] : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ ![1, 0]
 #print axioms
   Mechanics.TrussCompatibility.supported_not_existsUnique_of_kernel
 #print axioms Mechanics.TrussCompatibility.supported_response_of_axial
+#print axioms Mechanics.TrussCompatibility.supported_stiffness_isSymm
+#print axioms
+  Mechanics.TrussCompatibility.supported_dotProduct_mulVec_comm
+#print axioms Mechanics.TrussCompatibility.supported_reciprocalWork
+#print axioms
+  Mechanics.TrussCompatibility.supported_reciprocalWork_of_nonneg
 
 end PhyslibExtTest.Mechanics.TrussCompatibility
