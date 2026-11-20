@@ -44,6 +44,11 @@ edges, the allele frequency of `X` is `root + ∑ e, weight X e * incr e`.
 * `AdmixtureGraph.driftModel`: the drift model induced by a graph and edge increments;
   `AdmixtureGraph.hasBinaryLoadings_of_isTree`: a tree-shaped graph induces binary loadings,
   so `AdmixtureGraph.f3_nonneg_of_isTree`: on a tree `f3 ≥ 0` (the three-population test).
+* `AdmixtureGraph.rootSecondMoment_eq_sum_inter_of_isTree`: on a tree, the root-relative
+  second moment is the drift length of the shared root lineage.
+* `AdmixtureGraph.prop_eq_one_sub_of_parents_eq_pair`, `AdmixtureGraph.f3_admixture_one_sub`:
+  the same formula with complementary proportions `α` and `1 - α`, its endpoints, and private
+  drift after admixture (`AdmixtureGraph.f3_of_parents_eq_singleton`).
 * `AdmixtureGraph.f3_admixture`: for an admixture node `X` with parents `A`, `B`,
   `f3 X A B = α² ℓ_{XA} + β² ℓ_{XB} - α β f2 A B` (`α + β = 1`, `ℓ` the drift lengths of the
   admixture edges); with no drift on the admixture edges this is the seed's
@@ -188,7 +193,10 @@ theorem prop_le_one (X Y : V) : G.prop X Y ≤ 1 := by
   · rw [G.prop_eq_zero X Y hY]
     exact zero_le_one
 
-private theorem visit_eq_zero_of_transGen {V : Type*} [DecidableEq V]
+/-- Acyclicity, transitive form: if `Y` is an ancestor of `X`, meaning `Y` is reached from
+`X` by repeatedly passing from a node to one of its parents, then a lineage starting from
+`Y` never passes through the descendant `X`, so `visit Y X = 0`. -/
+theorem visit_eq_zero_of_transGen {V : Type*} [DecidableEq V]
     (G : AdmixtureGraph V) {X Y : V}
     (h : Relation.TransGen (fun a b => a ∈ G.parents b) Y X) : G.visit Y X = 0 := by
   induction Y using G.wf.induction generalizing X with
@@ -464,6 +472,19 @@ theorem weight_eq_zero_or_one (hG : G.IsTree) (X : V) (e : G.Edge) :
 
 /-! ### The induced drift model -/
 
+
+
+/-- At an admixture node `X` with parents `A ≠ B` the two admixture proportions are
+complementary: `prop X B = 1 - prop X A`. -/
+theorem prop_eq_one_sub_of_parents_eq_pair {X A B : V} (hX : G.parents X = {A, B})
+    (hAB : A ≠ B) : G.prop X B = 1 - G.prop X A := by
+  have hXr : X ≠ G.root := by
+    rintro rfl
+    exact Finset.insert_ne_empty A {B} (hX.symm.trans G.parents_root)
+  have hsum := G.sum_prop X hXr
+  rw [hX, Finset.sum_pair hAB] at hsum
+  linarith
+
 variable [Fintype V] {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω}
 
 /-- The drift model of an admixture graph: the populations are the nodes, the root frequency is
@@ -559,6 +580,90 @@ theorem f3_admixture_of_len_eq_zero {M : DriftModel μ G.Edge V} (hM : M.weight 
   rw [hX, Finset.sum_pair hAB] at hsum
   rw [G.f3_admixture hM hX hAB, hA, hB, show G.prop X B = 1 - G.prop X A by linarith]
   ring
+
+/-- Tree check on a tree-shaped admixture graph: `Σ X Y` is the drift length of the edges shared
+by the root-to-`X` and root-to-`Y` lineages. -/
+theorem rootSecondMoment_eq_sum_inter_of_isTree (hG : G.IsTree) {M : DriftModel μ G.Edge V}
+    (hM : M.weight = G.weight) (X Y : V) :
+    M.rootSecondMoment X Y = ∑ e ∈ M.lineage X ∩ M.lineage Y, M.len e :=
+  M.rootSecondMoment_eq_sum_inter (G.hasBinaryLoadings_of_isTree hG hM) X Y
+
+/-- The admixture `f3` formula with `α = prop X A` and `β = 1 - α`:
+`f3 X A B = α² ℓ_{XA} + (1 - α)² ℓ_{XB} - α (1 - α) f2 A B`. -/
+theorem f3_admixture_one_sub {M : DriftModel μ G.Edge V} (hM : M.weight = G.weight)
+    {X A B : V} (hX : G.parents X = {A, B}) (hAB : A ≠ B) :
+    f3 μ M.freq X A B =
+      G.prop X A ^ 2 * M.len ⟨(X, A), by simp [hX]⟩ +
+        (1 - G.prop X A) ^ 2 * M.len ⟨(X, B), by simp [hX]⟩ -
+        G.prop X A * (1 - G.prop X A) * f2 μ M.freq A B := by
+  rw [G.f3_admixture hM hX hAB, G.prop_eq_one_sub_of_parents_eq_pair hX hAB]
+
+/-- Endpoint `α = 1`: `X` descends from `A` only, and `f3 X A B` is the drift length of the edge
+`(X, A)`; no admixture signal. -/
+theorem f3_admixture_of_prop_eq_one {M : DriftModel μ G.Edge V} (hM : M.weight = G.weight)
+    {X A B : V} (hX : G.parents X = {A, B}) (hAB : A ≠ B) (h1 : G.prop X A = 1) :
+    f3 μ M.freq X A B = M.len ⟨(X, A), by simp [hX]⟩ := by
+  rw [G.f3_admixture_one_sub hM hX hAB, h1]
+  ring
+
+/-- Endpoint `α = 0`: `X` descends from `B` only, and `f3 X A B` is the drift length of the edge
+`(X, B)`; no admixture signal. -/
+theorem f3_admixture_of_prop_eq_zero {M : DriftModel μ G.Edge V} (hM : M.weight = G.weight)
+    {X A B : V} (hX : G.parents X = {A, B}) (hAB : A ≠ B) (h0 : G.prop X A = 0) :
+    f3 μ M.freq X A B = M.len ⟨(X, B), by simp [hX]⟩ := by
+  rw [G.f3_admixture_one_sub hM hX hAB, h0]
+  ring
+
+/-- Private drift after admixture, graph level: if `Y` has the single parent `X` and `A`, `B` are
+parents of `X`, the drift on the edge `(Y, X)` adds its length to `f3`:
+`f3 Y A B = f3 X A B + ℓ_{YX}`. -/
+theorem f3_of_parents_eq_singleton {M : DriftModel μ G.Edge V} (hM : M.weight = G.weight)
+    {Y X A B : V} (hY : G.parents Y = {X}) (hA : A ∈ G.parents X) (hB : B ∈ G.parents X) :
+    f3 μ M.freq Y A B = f3 μ M.freq X A B + M.len ⟨(Y, X), by simp [hY]⟩ := by
+  set c : G.Edge := ⟨(Y, X), by simp [hY]⟩
+  have hXY : X ∈ G.parents Y := by simp [hY]
+  have hw := G.weight_tree hY
+  -- every edge starting at `Y` is `c`
+  have hc : ∀ e : G.Edge, e.1.1 = Y → e = c := fun e he => by
+    have hq := e.2
+    rw [he, hY, Finset.mem_singleton] at hq
+    exact Subtype.ext (Prod.ext he hq)
+  -- the ancestors `X`, `A`, `B` of `Y` never traverse an edge starting at `Y`
+  have h0 : ∀ Z : V, Relation.TransGen (fun a b => a ∈ G.parents b) Z Y →
+      ∀ e : G.Edge, e.1.1 = Y → G.weight Z e = 0 := fun Z hZ e he => by
+    rw [weight, he, visit_eq_zero_of_transGen G hZ, zero_mul]
+  have hX0 := h0 X (Relation.TransGen.single hXY)
+  have hA0 := h0 A (Relation.TransGen.head hA (Relation.TransGen.single hXY))
+  have hB0 := h0 B (Relation.TransGen.head hB (Relation.TransGen.single hXY))
+  have key : ∀ e : G.Edge,
+      (G.weight Y e - G.weight A e) * (G.weight Y e - G.weight B e) * M.len e =
+        (G.weight X e - G.weight A e) * (G.weight X e - G.weight B e) * M.len e +
+          if e = c then M.len c else 0 := fun e => by
+    by_cases he : e.1.1 = Y
+    · have hec := hc e he
+      subst hec
+      rw [hw]
+      simp only [Pi.add_apply, he, hX0 _ he, hA0 _ he, hB0 _ he]
+      simp
+    · have hne : e ≠ c := fun h => he (by rw [h])
+      rw [hw]
+      simp [he, hne]
+  rw [M.f3_freq, M.f3_freq, hM]
+  simp_rw [key, Finset.sum_add_distrib]
+  simp
+
+/-- The record's combined statement: admixture at `X` (parents `A ≠ B`, `α = prop X A`),
+followed by private drift on the edge `(Y, X)`. -/
+theorem f3_admixture_of_parents_eq_singleton {M : DriftModel μ G.Edge V}
+    (hM : M.weight = G.weight) {Y X A B : V} (hY : G.parents Y = {X})
+    (hX : G.parents X = {A, B}) (hAB : A ≠ B) :
+    f3 μ M.freq Y A B =
+      G.prop X A ^ 2 * M.len ⟨(X, A), by simp [hX]⟩ +
+        (1 - G.prop X A) ^ 2 * M.len ⟨(X, B), by simp [hX]⟩ -
+        G.prop X A * (1 - G.prop X A) * f2 μ M.freq A B +
+        M.len ⟨(Y, X), by simp [hY]⟩ := by
+  rw [G.f3_of_parents_eq_singleton hM hY (by simp [hX]) (by simp [hX]),
+    G.f3_admixture_one_sub hM hX hAB]
 
 end AdmixtureGraph
 

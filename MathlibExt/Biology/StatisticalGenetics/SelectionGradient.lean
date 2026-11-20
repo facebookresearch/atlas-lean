@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 
 import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 import Mathlib.Analysis.Calculus.ParametricIntegral
+import MathlibExt.Probability.Statistics.SteinLemma
 
 /-!
 # Lande's selection gradient for a normally distributed trait
@@ -40,6 +41,9 @@ mean and variance are those before selection; no inheritance model is involved.
 * `hasDerivAt_meanFitness`: `d/dμ w̄(μ) = 𝔼[(z - μ) W z] / v`.
 * `selectionDifferential_eq_mul_deriv_log`: **Lande's equation** `S = v · d/dμ log w̄(μ)`.
 * `selectionDifferential_div_eq`: the Lande–Arnold gradient `S / v = 𝔼[W' z] / w̄`.
+* `integral_mul_indicator_Ioi_div_eq_sqrt`: for truncation fitness `W = 1_{z > 0}` on `N(0, 1)`,
+  the selection differential is `√(2/π)`; `hasDerivAt_indicator_Ioi_of_ne` and
+  `not_forall_hasDerivAt_indicator_Ioi` show why the Lande–Arnold form does not apply.
 
 The multivariate statement `S = P ∇ log w̄` is in `SelectionGradientMultivariate.lean`.
 
@@ -68,17 +72,6 @@ private lemma integrable_pdf_mul_iff {μ : ℝ} {v : ℝ≥0} (hv : v ≠ 0)
     integrable_withDensity_iff_integrable_smul' (measurable_gaussianPDF μ v)
       (ae_of_all _ fun _ => gaussianPDF_lt_top)]
   simp only [toReal_gaussianPDF, smul_eq_mul]
-
-private lemma hasDerivAt_pdf {μ : ℝ} {v : ℝ≥0} (hv : v ≠ 0) (x : ℝ) :
-    HasDerivAt (gaussianPDFReal μ v)
-      (-(x - μ) / v * gaussianPDFReal μ v x) x := by
-  have hvR : (v : ℝ) ≠ 0 := NNReal.coe_ne_zero.mpr hv
-  convert ((((hasDerivAt_id x).sub_const μ).pow 2).neg.div_const
-    (2 * (v : ℝ))).exp.const_mul (Real.sqrt (2 * Real.pi * v))⁻¹ using 1
-  · rfl
-  · dsimp
-    unfold gaussianPDFReal
-    field_simp
 
 private lemma hasDerivAt_pdf_mean {v : ℝ≥0} (hv : v ≠ 0) (m x : ℝ) :
     HasDerivAt (fun a => gaussianPDFReal a v x)
@@ -163,38 +156,12 @@ private lemma integrable_abs_sub_pdf {v : ℝ≥0} (hv : v ≠ 0) (μ a : ℝ) :
 /-- **Stein's lemma** for the normal law `N(μ, v)`, `v > 0`: if `g` is differentiable with
 derivative `g'` and `g`, `(z - μ) g z` and `g'` are integrable, then
 `𝔼[(z - μ) g z] = v 𝔼[g' z]` (Stein 1981, Lemma 1). -/
-theorem integral_sub_mul_gaussianReal {μ : ℝ} {v : ℝ≥0} (hv : v ≠ 0) {g g' : ℝ → ℝ}
-    (hg : ∀ x, HasDerivAt g (g' x) x) (hgi : Integrable g (gaussianReal μ v))
-    (hxg : Integrable (fun x => (x - μ) * g x) (gaussianReal μ v))
+theorem integral_sub_mul_gaussianReal {μ : ℝ} {v : ℝ≥0} (_hv : v ≠ 0) {g g' : ℝ → ℝ}
+    (hg : ∀ x, HasDerivAt g (g' x) x) (_hgi : Integrable g (gaussianReal μ v))
+    (_hxg : Integrable (fun x => (x - μ) * g x) (gaussianReal μ v))
     (hg' : Integrable g' (gaussianReal μ v)) :
     ∫ x, (x - μ) * g x ∂gaussianReal μ v = v * ∫ x, g' x ∂gaussianReal μ v := by
-  have hvR : (v : ℝ) ≠ 0 := NNReal.coe_ne_zero.mpr hv
-  have hi := (integrable_pdf_mul_iff hv).mpr hxg
-  have hi' := (integrable_pdf_mul_iff hv).mpr hg'
-  have hig := (integrable_pdf_mul_iff hv).mpr hgi
-  have hip : Integrable (g * fun x => -(x - μ) / v * gaussianPDFReal μ v x) := by
-    convert hi.const_mul (-(v : ℝ)⁻¹) using 1
-    ext x
-    dsimp
-    ring
-  have h := integral_mul_deriv_eq_deriv_mul_of_integrable
-    (u := g) (u' := g') (v := gaussianPDFReal μ v)
-    (v' := fun x => -(x - μ) / v * gaussianPDFReal μ v x)
-    (fun x _ => hg x) (fun x _ => hasDerivAt_pdf hv x) hip
-    (by simpa only [Pi.mul_def, mul_comm] using hi')
-    (by simpa only [Pi.mul_def, mul_comm] using hig)
-  have he : (fun x => g x * (-(x - μ) / v * gaussianPDFReal μ v x)) =
-      fun x => -(v : ℝ)⁻¹ * (gaussianPDFReal μ v x * ((x - μ) * g x)) := by
-    ext x
-    ring
-  rw [he, integral_const_mul] at h
-  simp only [mul_comm (g' _) (gaussianPDFReal μ v _)] at h
-  rw [integral_gaussianReal_eq_integral_smul hv,
-    integral_gaussianReal_eq_integral_smul hv]
-  simp only [smul_eq_mul]
-  rw [neg_mul, neg_inj] at h
-  have h2 := congrArg (fun a : ℝ => (v : ℝ) * a) h
-  simpa only [← mul_assoc, mul_inv_cancel₀ hvR, one_mul] using h2
+  exact (ProbabilityTheory.integrable_and_integral_sub_mul_gaussianReal μ v hg hg').2
 
 /-- The mean fitness `w̄(μ) = 𝔼[W z]` of a population whose trait is distributed as
 `N(μ, v)`. -/
@@ -305,5 +272,222 @@ theorem selectionDifferential_div_eq {W W' : ℝ → ℝ} (hW : ∀ z, HasDerivA
     _ = ((v : ℝ) / v) * ((∫ z, W' z ∂gaussianReal μ v) / meanFitness W μ v) := by
       ring
     _ = _ := by rw [div_self hvR, one_mul]
+
+
+/-! ### Truncation fitness
+
+The acceptance example `W = 1_{z > 0}` on `N(0, 1)` satisfies the bounded measurable hypotheses
+of `selectionDifferential_eq_mul_deriv_log` with `S = √(2/π)`, but not the
+everywhere-differentiability hypothesis of `selectionDifferential_div_eq`. -/
+
+/-- Mean fitness of the truncation fitness: `𝔼[1_{z>0}] = 1/2` for `z ~ N(0,1)`,
+by negation symmetry of the standard Gaussian. -/
+private theorem gaussianReal_Ioi_toReal :
+    ((gaussianReal (0 : ℝ) (1 : NNReal)) (Set.Ioi (0 : ℝ))).toReal = 1 / 2 := by
+  have hv : (1 : NNReal) ≠ 0 := one_ne_zero
+  have hsym : (gaussianReal (0 : ℝ) (1 : NNReal)).map (fun x : ℝ => -x) =
+      gaussianReal (0 : ℝ) (1 : NNReal) := by
+    rw [gaussianReal_map_neg, neg_zero]
+  have hmap : ((gaussianReal (0 : ℝ) (1 : NNReal)).map (fun x : ℝ => -x)) (Set.Ioi (0 : ℝ)) =
+      gaussianReal (0 : ℝ) (1 : NNReal) ((fun x : ℝ => -x) ⁻¹' (Set.Ioi (0 : ℝ))) :=
+    Measure.map_apply (by fun_prop) measurableSet_Ioi
+  have hpre : (fun x : ℝ => -x) ⁻¹' (Set.Ioi (0 : ℝ)) = Set.Iio (0 : ℝ) := by
+    ext x
+    simp only [Set.mem_preimage, Set.mem_Ioi, Set.mem_Iio]
+    constructor <;> intro h <;> linarith
+  rw [hsym, hpre] at hmap
+  have hU : Set.Iio (0 : ℝ) ∪ {0} ∪ Set.Ioi (0 : ℝ) = Set.univ := by
+    ext x
+    simp only [Set.mem_union, Set.mem_singleton_iff, Set.mem_Ioi, Set.mem_Iio,
+      Set.mem_univ, iff_true]
+    obtain h | h | h := lt_trichotomy x (0 : ℝ)
+    · exact Or.inl (Or.inl h)
+    · exact Or.inl (Or.inr h)
+    · exact Or.inr h
+  have hd1 : Disjoint (Set.Iio (0 : ℝ) ∪ {0}) (Set.Ioi (0 : ℝ)) := by
+    rw [Set.disjoint_left]
+    rintro x (hx | hx) hxIoi
+    · rw [Set.mem_Iio] at hx; rw [Set.mem_Ioi] at hxIoi; linarith
+    · rw [Set.mem_singleton_iff] at hx; rw [Set.mem_Ioi] at hxIoi; linarith
+  have hd2 : Disjoint (Set.Iio (0 : ℝ)) ({0} : Set ℝ) := by
+    rw [Set.disjoint_left]
+    rintro x hx hx0
+    rw [Set.mem_Iio] at hx; rw [Set.mem_singleton_iff] at hx0; linarith
+  have hns : NullSingletonClass (gaussianReal (0 : ℝ) (1 : NNReal)) :=
+    nullSingletonClass_gaussianReal hv
+  have h0 : gaussianReal (0 : ℝ) (1 : NNReal) ({0} : Set ℝ) = 0 := by simp
+  have hsum : gaussianReal (0 : ℝ) (1 : NNReal) (Set.Ioi (0 : ℝ)) +
+      gaussianReal (0 : ℝ) (1 : NNReal) (Set.Ioi (0 : ℝ)) = 1 := by
+    have h1 : gaussianReal (0 : ℝ) (1 : NNReal) (Set.Iio (0 : ℝ) ∪ {0} ∪ Set.Ioi (0 : ℝ)) = 1 := by
+      rw [hU]
+      simp
+    rwa [measure_union hd1 measurableSet_Ioi,
+      measure_union hd2 (measurableSet_singleton 0), h0, ← hmap, add_zero] at h1
+  have hfin : gaussianReal (0 : ℝ) (1 : NNReal) (Set.Ioi (0 : ℝ)) ≠ ⊤ := measure_ne_top _ _
+  have h2 : ((gaussianReal (0 : ℝ) (1 : NNReal)) (Set.Ioi (0 : ℝ))).toReal +
+      ((gaussianReal (0 : ℝ) (1 : NNReal)) (Set.Ioi (0 : ℝ))).toReal = 1 := by
+    rw [← ENNReal.toReal_add hfin hfin, hsum, ENNReal.toReal_one]
+  linarith
+
+/-- Numerator: `𝔼[z 1_{z>0}] = 1 / √(2π)` for `z ~ N(0,1)`, by FTC-2 on `(0, ∞)`
+with antiderivative `-(2π)^{-1/2} exp(-x^2 / 2)`. -/
+private theorem integral_mul_indicator_Ioi_eq :
+    (∫ z, z * (Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ)) z ∂gaussianReal 0 1) =
+      (Real.sqrt (2 * Real.pi))⁻¹ := by
+  have hrewrite : ∀ z : ℝ, z * (Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ)) z =
+      (Set.Ioi (0 : ℝ)).indicator (fun z => z) z := fun z => by
+    by_cases h : z ∈ Set.Ioi (0 : ℝ)
+    · rw [Set.indicator_of_mem h _, Set.indicator_of_mem h _]; simp
+    · rw [Set.indicator_of_notMem h _, Set.indicator_of_notMem h _]; simp
+  simp only [hrewrite]
+  rw [integral_indicator measurableSet_Ioi]
+  have hv : (1 : NNReal) ≠ 0 := one_ne_zero
+  rw [gaussianReal_of_var_ne_zero _ hv]
+  have hconv : (∫ x in Set.Ioi (0 : ℝ), x
+        ∂(volume.withDensity (gaussianPDF (0 : ℝ) (1 : NNReal)))) =
+      ∫ x in Set.Ioi (0 : ℝ), (gaussianPDF (0 : ℝ) (1 : NNReal) x).toReal • x ∂volume :=
+    setIntegral_withDensity_eq_setIntegral_toReal_smul (measurable_gaussianPDF _ _)
+      (ae_of_all _ fun _ => gaussianPDF_lt_top) _ measurableSet_Ioi
+  rw [hconv]
+  have hderiv : ∀ x ∈ Set.Ici (0 : ℝ), HasDerivAt
+      (fun x : ℝ => (-(Real.sqrt (2 * Real.pi))⁻¹) * Real.exp (-(1 / 2 : ℝ) * x ^ 2))
+      (x * ((Real.sqrt (2 * Real.pi))⁻¹ * Real.exp (-(1 / 2 : ℝ) * x ^ 2))) x := by
+    intro x _
+    have hg : HasDerivAt (fun x : ℝ => -(1 / 2 : ℝ) * x ^ 2)
+        (-(1 / 2 : ℝ) * (((2 : ℕ) : ℝ) * x ^ (2 - 1))) x :=
+      HasDerivAt.const_mul (-(1 / 2 : ℝ)) (hasDerivAt_pow 2 x)
+    have hexp : HasDerivAt (fun x : ℝ => Real.exp (-(1 / 2 : ℝ) * x ^ 2))
+        (Real.exp (-(1 / 2 : ℝ) * x ^ 2) * (-(1 / 2 : ℝ) * (((2 : ℕ) : ℝ) * x ^ (2 - 1)))) x :=
+      hg.exp
+    have h := hexp.const_mul (-(Real.sqrt (2 * Real.pi))⁻¹)
+    have hval : (-(Real.sqrt (2 * Real.pi))⁻¹) *
+        (Real.exp (-(1 / 2 : ℝ) * x ^ 2) * (-(1 / 2 : ℝ) * (((2 : ℕ) : ℝ) * x ^ (2 - 1)))) =
+        x * ((Real.sqrt (2 * Real.pi))⁻¹ * Real.exp (-(1 / 2 : ℝ) * x ^ 2)) := by
+      rw [show ((2 : ℕ) : ℝ) = 2 by norm_num, show (2 - 1 : ℕ) = 1 by norm_num, pow_one]
+      ring
+    rw [hval] at h
+    exact h
+  have hint : IntegrableOn
+      (fun x : ℝ => x * ((Real.sqrt (2 * Real.pi))⁻¹ * Real.exp (-(1 / 2 : ℝ) * x ^ 2)))
+      (Set.Ioi 0) := by
+    have hbase := (integrable_mul_exp_neg_mul_sq (show (0 : ℝ) < 1 / 2 by norm_num)).const_mul
+      ((Real.sqrt (2 * Real.pi))⁻¹)
+    have heq : (fun x : ℝ => x * ((Real.sqrt (2 * Real.pi))⁻¹ * Real.exp (-(1 / 2 : ℝ) * x ^ 2))) =
+        (fun x : ℝ => (Real.sqrt (2 * Real.pi))⁻¹ * (x * Real.exp (-(1 / 2 : ℝ) * x ^ 2))) := by
+      funext x; ring
+    rw [heq]
+    exact hbase.integrableOn
+  have hlim : Filter.Tendsto
+      (fun x : ℝ => (-(Real.sqrt (2 * Real.pi))⁻¹) * Real.exp (-(1 / 2 : ℝ) * x ^ 2))
+      Filter.atTop (nhds 0) := by
+    have hsq : Filter.Tendsto (fun x : ℝ => x ^ 2) Filter.atTop Filter.atTop := by
+      have h : Filter.Tendsto (fun x : ℝ => x * x) Filter.atTop Filter.atTop :=
+        Filter.tendsto_mul_self_atTop
+      simpa [pow_two] using h
+    have hmul : Filter.Tendsto (fun x : ℝ => (1 / 2 : ℝ) * x ^ 2) Filter.atTop Filter.atTop :=
+      Filter.Tendsto.const_mul_atTop (by norm_num) hsq
+    have hexp0 : Filter.Tendsto (fun x : ℝ => Real.exp (-(1 / 2 : ℝ) * x ^ 2)) Filter.atTop
+        (nhds 0) := by
+      have h := Real.tendsto_exp_atBot.comp (Filter.tendsto_neg_atTop_atBot.comp hmul)
+      refine Filter.Tendsto.congr (fun x => ?_) h
+      simp only [Function.comp_apply]
+      congr 1
+      ring
+    simpa only [smul_eq_mul, mul_zero] using hexp0.const_smul (-(Real.sqrt (2 * Real.pi))⁻¹)
+  have hf0 : (fun x : ℝ => (-(Real.sqrt (2 * Real.pi))⁻¹) * Real.exp (-(1 / 2 : ℝ) * x ^ 2)) 0 =
+      -((Real.sqrt (2 * Real.pi))⁻¹) := by
+    change (-(Real.sqrt (2 * Real.pi))⁻¹) * Real.exp (-(1 / 2 : ℝ) * (0 : ℝ) ^ 2) =
+      -((Real.sqrt (2 * Real.pi))⁻¹)
+    rw [show (-(1 / 2 : ℝ)) * (0 : ℝ) ^ 2 = 0 by norm_num, Real.exp_zero, mul_one]
+  have hFTC := integral_Ioi_of_hasDerivAt_of_tendsto' hderiv hint hlim
+  have hFTC2 : (∫ x in Set.Ioi (0 : ℝ),
+      x * ((Real.sqrt (2 * Real.pi))⁻¹ * Real.exp (-(1 / 2 : ℝ) * x ^ 2))) =
+      (Real.sqrt (2 * Real.pi))⁻¹ := by
+    have h := hFTC
+    simpa [hf0] using h
+  have hpdf : (fun x : ℝ => (gaussianPDF (0 : ℝ) (1 : NNReal) x).toReal • x) =
+      (fun x : ℝ => x * ((Real.sqrt (2 * Real.pi))⁻¹ * Real.exp (-(1 / 2 : ℝ) * x ^ 2))) := by
+    funext x
+    rw [toReal_gaussianPDF, smul_eq_mul]
+    have h1 : (2 * Real.pi * ((1 : NNReal) : ℝ)) = 2 * Real.pi := by simp
+    have h2 : (-(x - 0) ^ 2 / (2 * ((1 : NNReal) : ℝ))) = -(1 / 2 : ℝ) * x ^ 2 := by
+      simp only [sub_zero, NNReal.coe_one, mul_one]
+      ring
+    unfold gaussianPDFReal
+    rw [h1, h2]
+    ring
+  rw [hpdf]
+  exact hFTC2
+
+/-- **Truncation selection on a standard normal trait.** For fitness `W = 1_{z > 0}` and
+`z ~ N(0, 1)`, the selection differential `𝔼[z W] / 𝔼[W]` is `√(2/π)`. -/
+theorem integral_mul_indicator_Ioi_div_eq_sqrt :
+    (∫ z, z * (Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ)) z ∂gaussianReal 0 1) /
+        (∫ z, (Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ)) z ∂gaussianReal 0 1) =
+      Real.sqrt (2 / Real.pi) := by
+  have hnum := integral_mul_indicator_Ioi_eq
+  have hden : (∫ z, (Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ)) z ∂gaussianReal 0 1) =
+      1 / 2 := by
+    rw [integral_indicator measurableSet_Ioi]
+    simp only [setIntegral_const, smul_eq_mul, mul_one]
+    change ((gaussianReal (0 : ℝ) (1 : NNReal)) (Set.Ioi (0 : ℝ))).toReal = 1 / 2
+    exact gaussianReal_Ioi_toReal
+  rw [hnum, hden]
+  have hpi : (0 : ℝ) < Real.pi := Real.pi_pos
+  have h2pi : (0 : ℝ) < 2 * Real.pi := mul_pos (by norm_num) hpi
+  have hnn : (0 : ℝ) ≤ 2 / Real.sqrt (2 * Real.pi) := div_nonneg zero_le_two (Real.sqrt_nonneg _)
+  have hsq : (2 / Real.sqrt (2 * Real.pi)) ^ 2 = 2 / Real.pi := by
+    have hpi0 : Real.pi ≠ 0 := ne_of_gt hpi
+    have h2pi0 : (2 : ℝ) * Real.pi ≠ 0 := mul_ne_zero (by norm_num) hpi0
+    rw [div_pow, Real.sq_sqrt h2pi.le]
+    field
+  have hne : Real.sqrt (2 * Real.pi) ≠ 0 := ne_of_gt (Real.sqrt_pos.mpr h2pi)
+  have hstep : (Real.sqrt (2 * Real.pi))⁻¹ / (1 / 2 : ℝ) = 2 / Real.sqrt (2 * Real.pi) := by
+    field
+  rw [hstep, ← Real.sqrt_sq hnn, hsq]
+
+/-- The truncation fitness `1_{z > 0}` has derivative `0` at every `z ≠ 0`. -/
+theorem hasDerivAt_indicator_Ioi_of_ne {z : ℝ} (hz : z ≠ 0) :
+    HasDerivAt ((Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ))) 0 z := by
+  rcases lt_or_gt_of_ne hz with h | h
+  · have hmem : Set.Iic (0 : ℝ) ∈ nhds z := Iic_mem_nhds h
+    have heq : (Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ)) =ᶠ[nhds z] fun _ => (0 : ℝ) := by
+      filter_upwards [hmem] with x hx
+      have hxle : x ≤ 0 := hx
+      have hx' : x ∉ Set.Ioi (0 : ℝ) := fun h => not_lt_of_ge hxle h
+      rw [Set.indicator_of_notMem hx' _]
+    exact (hasDerivAt_const z (0 : ℝ)).congr_of_eventuallyEq heq
+  · have hmem : Set.Ioi (0 : ℝ) ∈ nhds z := Ioi_mem_nhds h
+    have heq : (Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ)) =ᶠ[nhds z] fun _ => (1 : ℝ) := by
+      filter_upwards [hmem] with x hx
+      rw [Set.indicator_of_mem hx _]
+    exact (hasDerivAt_const z (1 : ℝ)).congr_of_eventuallyEq heq
+
+/-- The truncation fitness `1_{z > 0}` is not differentiable everywhere, so the Lande–Arnold
+(Stein) form of the selection gradient does not apply to it. -/
+theorem not_forall_hasDerivAt_indicator_Ioi :
+    ¬ ∃ W' : ℝ → ℝ, ∀ z, HasDerivAt ((Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ))) (W' z) z := by
+  rintro ⟨W', hW'⟩
+  have hcont : ContinuousAt ((Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ))) 0 :=
+    (hW' 0).continuousAt
+  have h0 : (Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ)) (0 : ℝ) = 0 :=
+    Set.indicator_of_notMem (by rw [Set.mem_Ioi]; exact lt_irrefl 0) _
+  have hev : ∀ᶠ x in nhds (0 : ℝ),
+      (Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ)) x < 1 / 2 :=
+    Filter.Tendsto.eventually hcont (eventually_lt_nhds (by rw [h0]; norm_num))
+  have hs : {x : ℝ | (Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ)) x < 1 / 2} ∈ nhds (0 : ℝ) := hev
+  have hmem : (0 : ℝ) ∈ closure (Set.Ioi (0 : ℝ)) := by
+    rw [closure_Ioi]
+    exact le_rfl
+  have h0mem : (0 : ℝ) ∈
+      interior {x : ℝ | (Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ)) x < 1 / 2} :=
+    mem_interior_iff_mem_nhds.mpr hs
+  obtain ⟨x, hxopen, hxs⟩ := mem_closure_iff.mp hmem _ isOpen_interior h0mem
+  have hxmem : x ∈ {x : ℝ | (Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ)) x < 1 / 2} :=
+    interior_subset hxopen
+  have hxlt : (Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ)) x < 1 / 2 := hxmem
+  have hfx : (Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ)) x = 1 := Set.indicator_of_mem hxs _
+  rw [hfx] at hxlt
+  norm_num at hxlt
 
 end MathlibExt.Biology.StatisticalGenetics.SelectionGradient

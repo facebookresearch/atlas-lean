@@ -50,9 +50,6 @@ the exact gain deficit below the ideal gain `1 / beta` is
   the comparison with the ideal gain `1 / beta`.
 
 ## A. The finite-gain feedback law
-
-Discharges ECE roadmap leaf `ECE.EL.AMPLIFIER.L1` (finite-gain
-amplifier model).
 -/
 
 @[expose] public section

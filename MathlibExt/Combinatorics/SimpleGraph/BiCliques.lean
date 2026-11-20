@@ -31,21 +31,21 @@ public import Mathlib.Order.Lattice.Nat
 namespace MetaMathlibExt
 
 -- Combinatorics 480: Contains a (c,d)-Biclique
-
 /-- Let G = (V,E) be a finite simple graph and let c,d be positive integers. G contains a
 (c,d)-biclique if there exist nonempty and disjoint subsets X,Y ⊂ V such that |X| = c, |Y| =d, and ∀
 x ∈ X, y ∈ Y, we have (x,y) ∈ E.
 -/
+
 def _root_.SimpleGraph.ContainsBiclique {V : Type*} [Fintype V] (G : SimpleGraph V)
     (c d : ℕ) : Prop :=
   ∃ (S T : Finset V), S.card = c ∧ T.card = d ∧ Disjoint S T ∧
     ∀ a ∈ S, ∀ b ∈ T, G.Adj a b
 
 -- Combinatorics 493: Biclique Number
-
 /-- Let G be a finite simple graph. The biclique number ω_b(G) is the maximum positive integer t
 such that G contains a K_{c,d} as a (not necessarily induced) subgraph, with 0<c,d and c +d = t.
 -/
+
 noncomputable def _root_.SimpleGraph.bicliqueNumber {V : Type*} [Fintype V] (G : SimpleGraph V) : ℕ :=
   sSup { t : ℕ |  ∃ c d, c + d = t ∧ 0 < c ∧ 0 < d ∧ G.ContainsBiclique c d}
 

@@ -43,8 +43,9 @@ open scoped Topology
 
 namespace MathlibExt.Biology.Epidemiology.SIR
 
-/-- A function with derivative `f' t ≥ 0` at every `t ≥ a` is monotone on `[a, ∞)`. -/
-private theorem monotoneOn_Ici_of_hasDerivAt {f f' : ℝ → ℝ} {a : ℝ}
+/-- A function with derivative `f' t` at every `t ≥ a` and `0 ≤ f' t` for every `t > a` is monotone
+on `[a, ∞)`. -/
+theorem monotoneOn_Ici_of_hasDerivAt {f f' : ℝ → ℝ} {a : ℝ}
     (hf : ∀ t, a ≤ t → HasDerivAt f (f' t) t) (hf' : ∀ t, a < t → 0 ≤ f' t) :
     MonotoneOn f (Ici a) :=
   monotoneOn_of_deriv_nonneg (convex_Ici a)
