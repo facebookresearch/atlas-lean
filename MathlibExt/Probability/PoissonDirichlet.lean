@@ -24,7 +24,7 @@ have mean `(θ / (1 + θ))^k / (1 + θ)`, and almost every sequence under it sum
 `rankDesc p k` is the supremal `k`-th largest value of a real sequence `p` (its decreasing
 rearrangement when the supremum is attained, e.g. for nonnegative summable `p`), defined
 through the counting characterization
-`t < rankDesc p k ↔ (k + 1 : ℝ≥0∞) ≤ {i | t < p i}.encard`. It is antitone, nonnegative on
+`t < rankDesc p k ↔ ((k + 1 : ℕ) : ℕ∞) ≤ {i | t < p i}.encard`. It is antitone, nonnegative on
 nonnegative sequences, preserves `HasSum` (by the layer-cake formula: ranking preserves
 every superlevel count), is invariant under permutations of the indices, and is measurable.
 
