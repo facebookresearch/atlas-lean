@@ -48,7 +48,7 @@ ideal is split, inert, or totally ramified.
 This follows from `g * (e * f) = [L : K]` together with primality of the
 degree: one of `g`, `e`, `f` equals the degree and the other two equal `1`. -/
 public theorem ncard_primesOver_ramificationIdx_inertiaDeg_trichotomy_of_isGalois_of_finrank_prime
-    (K L : Type) [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
+    (K L : Type*) [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
     [IsGalois K L] (hℓ : (Module.finrank K L).Prime)
     (p : Ideal (𝓞 K)) [p.IsMaximal] (hp : p ≠ ⊥)
     (P : Ideal (𝓞 L)) [P.IsPrime] [P.LiesOver p] :
