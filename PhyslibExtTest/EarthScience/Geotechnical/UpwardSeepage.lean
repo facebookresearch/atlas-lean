@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.EarthScience.Geotechnical.UpwardSeepage
+import PhyslibExt.EarthScience.HydrostaticColumn
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
@@ -56,6 +57,49 @@ example (z : ℝ) :
   have h := upwardSeepage_effectiveStress (Gs := 2.65) (e := 0.6)
     (γw := 10) (i := 0) (z := z) (by norm_num)
   simpa using h
+
+/-- The hydrostatic bridge at concrete values: with
+`γw = ρ * g = 2 * 3`, the no-flow pore pressure at depth
+`4` is `24`, through
+`porePressureOfHead_upwardHead_zero_eq_hydrostatic`. -/
+example : porePressureOfHead (2 * 3) (upwardHead 0 4) 4 = 24 := by
+  have h := porePressureOfHead_upwardHead_zero_eq_hydrostatic (2 : ℝ) 3 4
+  rw [h]
+  norm_num
+
+/-- The same value through the named hydrostatics API:
+`hydrostatic_pressure_depth` at zero surface gauge
+pressure, consumed here as an external client (the
+seepage module does not re-export it). -/
+example : porePressureOfHead (2 * 3) (upwardHead 0 4) 4
+    = (0 : ℝ) - 2 * 3 * (-4) := by
+  rw [porePressureOfHead_upwardHead_zero_eq_hydrostatic]
+  exact (hydrostatic_pressure_depth 0 2 3 4).2
+
+/-- The no-flow profile has the hydrostatic depth slope
+`ρ * g`, from `hydrostatic_pressure_depth`. -/
+example (z : ℝ) :
+    HasDerivAt (fun d => (0 : ℝ) + 2 * 3 * d) (2 * 3) z :=
+  (hydrostatic_pressure_depth 0 2 3 z).1
+
+/-- Total-minus-pore threshold, subcritical direction:
+at `i = 1 / 2` (below the critical `1.03125`) the total
+stress minus pore pressure is nonnegative at every
+positive depth, through `upwardSeepage_nonneg_total_iff`. -/
+example : ∀ z > 0, 0 ≤ bulkUnitWeight 2.65 1 0.6 10 * z
+    - porePressureOfHead 10 (upwardHead (1 / 2) z) z :=
+  (upwardSeepage_nonneg_total_iff (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num)).mpr (by norm_num)
+
+/-- Total-minus-pore threshold, supercritical direction:
+at `i = 2` the profile cannot stay nonnegative at every
+positive depth. -/
+example : ¬ ∀ z > 0, 0 ≤ bulkUnitWeight 2.65 1 0.6 10 * z
+    - porePressureOfHead 10 (upwardHead 2 z) z := by
+  intro h
+  have hle := (upwardSeepage_nonneg_total_iff (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num)).mp h
+  norm_num at hle
 
 /-- A supercritical gradient (`i = 2` above the critical
 `1.03125`) gives negative effective stress at depth `1`. -/

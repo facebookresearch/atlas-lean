@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.EarthScience.Geotechnical.UnitWeights
-public import PhyslibExt.EarthScience.HydrostaticColumn
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
@@ -48,7 +47,8 @@ gradient `(Gs - 1) / (1 + e)`.
 - `PhyslibExt.EarthScience.Geotechnical.UnitWeights` for
   `bulkUnitWeight` and `submergedUnitWeight`.
 - `PhyslibExt.EarthScience.HydrostaticColumn` for the
-  depth-coordinate hydrostatic profile.
+  depth-coordinate hydrostatic profile checked against
+  the no-flow case in tests (not imported here).
 - J. A. Knappett and R. F. Craig, *Craig's Soil Mechanics*,
   9th edition, CRC Press, 2019: upward seepage and the
   critical hydraulic gradient.
