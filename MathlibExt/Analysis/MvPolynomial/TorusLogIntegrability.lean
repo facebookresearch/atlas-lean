@@ -82,10 +82,10 @@ private theorem norm_eval_circleMap_le_sum_norm_coeff (P : MvPolynomial (Fin n) 
   refine (norm_sum_le _ _).trans (le_of_eq (Finset.sum_congr rfl fun m _ ↦ ?_))
   simp [norm_prod, norm_pow]
 
-noncomputable abbrev circleParamMeasure : Measure ℝ :=
+private noncomputable abbrev circleParamMeasure : Measure ℝ :=
   (volume : Measure ℝ).restrict (Set.Ioc 0 (2 * π))
 
-noncomputable abbrev torusMeasure (n : ℕ) : Measure (Fin n → ℝ) :=
+private noncomputable abbrev torusMeasure (n : ℕ) : Measure (Fin n → ℝ) :=
   Measure.pi fun _ : Fin n ↦ circleParamMeasure
 
 private instance : IsFiniteMeasure (circleParamMeasure) := by
