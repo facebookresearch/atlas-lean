@@ -42,6 +42,11 @@ A counterflow exchanger with equal capacity rates `Ch = Cc = 1 kW/K`, `UA = 2 kW
 With `UA = 0` both duties vanish; with unequal capacity rates `Ch = 2`, `Cc = 1` the boundary
 constant takes its textbook form and the hot stream stays above the cold one; and the parallel-flow
 closed form above, which has the parallel-flow sign, violates the counterflow balance.
+
+Effectiveness: the counterflow fixture has `Cr = 1`, `NTU = 2` and `ε_c = 2 / 3`, the
+equal-capacity branch where the general formula is `0 / 0`, with duty `200 kW`, above the
+parallel-flow `(1 - e^{-4}) / 2`; the first parallel-flow fixture has `Cr = 1 / 2`, `ε_p = 1 / 3`
+and duty `30 kW`, and a counterflow exchanger with the same data carries between `30` and `90 kW`.
 -/
 
 @[expose] public section
@@ -244,5 +249,83 @@ example : 3 * (parallelHotTemp 3 (3 / 2) (Real.log 2 / 2) 360 300 0 -
   refine parallelSign_violates_counterflow_balance (by norm_num) (by norm_num) hpar ?_
   rw [fixture_parallel_unequal.1, h0]
   norm_num
+
+/-! ## Effectiveness -/
+
+/-- **Equal capacity rates.** `Ch = Cc = 1`, `UA = 2`, `L = 1`, `Thi = 600`, `Tci = 300`
+(`Cr = 1`, `NTU = 2`): the `Cr = 1` branch gives `ε_c = 2 / 3` and the duty `200`, while
+`ε_p = (1 - e^{-4}) / 2 < 2 / 3`. -/
+lemma effectiveness_fixture_equal {Th Tc : ℝ → ℝ}
+    (h : IsCounterflowSolution 1 1 (2 / 1) 1 600 300 Th Tc) :
+    capacityRatio 1 1 = 1 ∧ counterflowEffectiveness (transferUnits 2 1 1) 1 = 2 / 3 ∧
+      1 * (600 - Th 1) = 200 ∧ parallelEffectiveness 2 1 < 2 / 3 := by
+  have hQ := (h.heat_eq_effectiveness (by norm_num) (by norm_num) (by norm_num) (by norm_num)).1
+  have hCr : capacityRatio 1 1 = 1 := by norm_num [capacityRatio]
+  have hε : counterflowEffectiveness (transferUnits 2 1 1) 1 = 2 / 3 := by
+    norm_num [counterflowEffectiveness, transferUnits]
+  rw [hCr, hε] at hQ
+  refine ⟨hCr, hε, by rw [hQ]; norm_num, ?_⟩
+  unfold parallelEffectiveness
+  have hx : (-(2 * (1 + 1)) : ℝ) = -4 := by norm_num
+  rw [hx, div_lt_iff₀ (by norm_num)]
+  linarith [Real.exp_pos (-4)]
+
+/-- **Unequal capacity rates.** `Ch = 3`, `Cc = 3 / 2` (`Cr = 1 / 2`), `UA = log 2`, `L = 2`,
+`Thi = 360`, `Tci = 300`: `ε_p = 1 / 3` and the parallel-flow duty is `30`; a counterflow
+exchanger with the same data carries at least `30` and at most `Cmin (Thi - Tci) = 90`. -/
+lemma effectiveness_fixture_unequal {Thp Tcp Thc Tcc : ℝ → ℝ}
+    (hp : IsParallelFlowSolution 3 (3 / 2) (Real.log 2 / 2) 2 360 300 Thp Tcp)
+    (hc : IsCounterflowSolution 3 (3 / 2) (Real.log 2 / 2) 2 360 300 Thc Tcc) :
+    capacityRatio 3 (3 / 2) = 1 / 2 ∧
+      parallelEffectiveness (transferUnits (Real.log 2) 3 (3 / 2)) (1 / 2) = 1 / 3 ∧
+      3 * (360 - Thp 2) = 30 ∧ 30 ≤ 3 * (360 - Thc 2) ∧ 3 * (360 - Thc 2) ≤ 90 := by
+  have hlog : 0 < Real.log 2 := Real.log_pos (by norm_num)
+  have hCr : capacityRatio 3 (3 / 2) = 1 / 2 := by norm_num [capacityRatio]
+  have hmin : min (3 : ℝ) (3 / 2) = 3 / 2 := by norm_num
+  have hεp : parallelEffectiveness (transferUnits (Real.log 2) 3 (3 / 2)) (1 / 2) = 1 / 3 := by
+    unfold parallelEffectiveness transferUnits
+    rw [hmin]
+    have hx : Real.log 2 / (3 / 2) * (1 + 1 / 2) = Real.log 2 := by ring
+    rw [hx, Real.exp_neg, Real.exp_log (by norm_num)]
+    norm_num
+  have hQp := (hp.heat_eq_effectiveness (by norm_num) (by norm_num) (by norm_num)).1
+  rw [hCr, hεp, hmin] at hQp
+  have hQc := (hc.heat_eq_effectiveness (by norm_num) (by norm_num) hlog.le (by norm_num)).1
+  rw [hCr, hmin] at hQc
+  have hN : 0 ≤ transferUnits (Real.log 2) 3 (3 / 2) := by
+    unfold transferUnits
+    rw [hmin]
+    exact div_nonneg hlog.le (by norm_num)
+  have hcmp := parallelEffectiveness_le_counterflowEffectiveness hN
+    (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num)
+  rw [hεp] at hcmp
+  have hbd := (counterflowEffectiveness_bounds hN (by norm_num : (1 / 2 : ℝ) ≤ 1)).2
+  refine ⟨hCr, hεp, by rw [hQp]; norm_num, ?_, ?_⟩
+  · rw [hQc]
+    nlinarith
+  · rw [hQc]
+    nlinarith
+
+/-- The stream data of both fixtures give the effectiveness domain: `Cr = 1` for `Ch = Cc = 1`,
+and `0 < Cr ≠ 1` for `Ch = 3`, `Cc = 3 / 2`, whose `NTU` is nonnegative for `UA = log 2`. -/
+example : capacityRatio 1 1 = 1 ∧ 0 < capacityRatio 3 (3 / 2) ∧ capacityRatio 3 (3 / 2) ≠ 1 ∧
+    0 ≤ transferUnits (Real.log 2) 3 (3 / 2) := by
+  obtain ⟨-, -, h1, -⟩ := capacityRatio_domain (Ch := 1) (Cc := 1) (UA := 2) one_pos one_pos
+    (by norm_num)
+  obtain ⟨hpos, -, hne, hN⟩ := capacityRatio_domain (Ch := 3) (Cc := 3 / 2) (UA := Real.log 2)
+    (by norm_num) (by norm_num) (Real.log_nonneg (by norm_num))
+  exact ⟨h1.mpr rfl, hpos, fun h => absurd (hne.mp h) (by norm_num), hN⟩
+
+/-- The parallel-flow effectiveness of the equal-capacity data, `(1 - e^{-4}) / 2`, lies in
+`[0, 1]`. -/
+example : 0 ≤ parallelEffectiveness 2 1 ∧ parallelEffectiveness 2 1 ≤ 1 :=
+  parallelEffectiveness_bounds (by norm_num) (by norm_num)
+
+/-- At `Cr = 1` and `NTU = 2` the general counterflow formula is `0 / 0`, which Lean evaluates to
+`0`, while the effectiveness takes its equal-capacity value `2 / 3`. -/
+example : (1 - Real.exp (-(2 * (1 - 1)))) / (1 - 1 * Real.exp (-(2 * (1 - 1)))) = (0 : ℝ) ∧
+    counterflowEffectiveness 2 1 = 2 / 3 := by
+  obtain ⟨h0, h1, -⟩ := counterflowEffectiveness_one_substitution (NTU := 2) (by norm_num)
+  exact ⟨h0, h1.trans (by norm_num)⟩
 
 end PhyslibExtTest.HeatTransfer.HeatExchangers
