@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Analysis.Normed.Algebra.OrderedExponential
+import Mathlib.Analysis.Matrix.Normed
 
 /-! Tests for time-ordered products: every public statement restated. -/
 
@@ -23,24 +24,6 @@ open Filter Topology Set MeasureTheory
 section BanachAlgebra
 
 variable {𝔸 : Type*} [NormedRing 𝔸] [NormedAlgebra ℝ 𝔸] [NormOneClass 𝔸] [CompleteSpace 𝔸]
-
-/-- `Y` is **piecewise continuous on `[0, t]`**: continuous within `[0, t]` at every point of
-`[0, t]` outside a finite set (no one-sided limits are required; boundedness is a separate
-hypothesis wherever it is used). -/
-def PiecewiseContinuousOn {E : Type*} [TopologicalSpace E] (Y : ℝ → E) (t : ℝ) : Prop :=
-  ∃ S : Finset ℝ, ∀ s ∈ Icc 0 t, s ∉ S → ContinuousWithinAt Y (Icc 0 t) s
-
-/-- `U` is a **time-ordered exponential** of `Y` on `[0, t]`: `U` is continuous on `[0, t]`,
-`r ↦ U r * Y r` is integrable on `[0, t]`, and `U s = 1 + ∫₀ˢ U r * Y r dr` for `s ∈ [0, t]`
-(the Volterra form of `U' = U Y`, `U 0 = 1`; later times multiply on the right). -/
-def IsOrderedExp (Y U : ℝ → 𝔸) (t : ℝ) : Prop :=
-  ContinuousOn U (Icc 0 t) ∧ IntervalIntegrable (fun r => U r * Y r) volume 0 t ∧
-    ∀ s ∈ Icc 0 t, U s = 1 + ∫ r in (0 : ℝ)..s, U r * Y r
-
-/-- The grid product `∏_{g < t M} (1 + M⁻¹ Y(g / M))` over the natural numbers `g < t M`
-(that is, `g < ⌈t M⌉₊`), factors ordered by increasing `g` from left to right. -/
-noncomputable def gridProd (Y : ℝ → 𝔸) (t : ℝ) (M : ℕ) : 𝔸 :=
-  ((List.range ⌈t * M⌉₊).map fun g : ℕ => 1 + (M : ℝ)⁻¹ • Y (g / M)).prod
 
 /-- **Well-posedness.** A bounded piecewise continuous `Y` has a time-ordered exponential on
 `[0, t]`, unique on `[0, t]`. -/
@@ -88,14 +71,49 @@ section Matrix
 
 open scoped Matrix.Norms.Operator
 
-/-- **Finite matrices with the operator norm.** The time-ordered product limit for square
-real matrices. -/
+/-- **Finite matrices with the operator norm**: the generic `tendsto_gridProd` specialized
+at `Matrix n n ℝ`. -/
 example {n : Type*} [Fintype n] [DecidableEq n] [Nonempty n]
     {Y : ℕ → ℝ → Matrix n n ℝ} {Y₀ U : ℝ → Matrix n n ℝ} {t : ℝ} (ht : 0 ≤ t)
     (hconv : TendstoUniformlyOn Y Y₀ atTop (Icc 0 t)) (hY₀ : PiecewiseContinuousOn Y₀ t)
     (hb : ∃ C, ∀ s ∈ Icc 0 t, ‖Y₀ s‖ ≤ C) (hU : IsOrderedExp Y₀ U t) :
-    Tendsto (fun M : ℕ => gridProd (Y M) t M) atTop (𝓝 (U t)) := by
-  apply _root_.NormedSpace.tendsto_gridProd_matrix <;> assumption
+    Tendsto (fun M : ℕ => gridProd (Y M) t M) atTop (𝓝 (U t)) :=
+  tendsto_gridProd ht hconv hY₀ hb hU
+
+/-- At time `0` the grid product is empty, hence `1`, for every `M`. -/
+example (Y : ℝ → Matrix (Fin 2) (Fin 2) ℝ) (M : ℕ) : gridProd Y 0 M = 1 := by
+  simp [gridProd]
+
+/-- Factor order matters: for the two-piece coefficient with noncommuting pieces
+`A = !![0, 1; 0, 0]`, `B = !![0, 0; 1, 0]`, breakpoint `t₁ = 1`, horizon `t = 2`, and
+`M = 1`, the grid product is `(1 + A) * (1 + B)`, not `(1 + B) * (1 + A)`. -/
+example :
+    gridProd (fun s => if s < 1 then (!![0, 1; 0, 0] : Matrix (Fin 2) (Fin 2) ℝ)
+        else !![0, 0; 1, 0]) 2 1 =
+      (1 + !![0, 1; 0, 0]) * (1 + !![0, 0; 1, 0]) ∧
+    gridProd (fun s => if s < 1 then (!![0, 1; 0, 0] : Matrix (Fin 2) (Fin 2) ℝ)
+        else !![0, 0; 1, 0]) 2 1 ≠
+      (1 + !![0, 0; 1, 0]) * (1 + !![0, 1; 0, 0]) := by
+  constructor
+  · ext i j
+    fin_cases i <;> fin_cases j <;>
+      simp [gridProd, List.range_succ, List.map_append, List.prod_append, Matrix.mul_apply,
+        Fin.sum_univ_two] <;>
+      norm_num
+  · intro h
+    have h00 := congrFun (congrFun h 0) 0
+    simp [gridProd, List.range_succ, List.map_append, List.prod_append, Matrix.mul_apply,
+      Fin.sum_univ_two] at h00
+
+/-- A non-grid-aligned horizon: constant `A = !![2, 0; 0, 0]`, `t = 3 / 2`, `M = 2` gives
+`⌈3⌉₊ = 3` factors of `1 + A / 2`, i.e. `!![8, 0; 0, 1]`. -/
+example :
+    gridProd (fun _ => (!![2, 0; 0, 0] : Matrix (Fin 2) (Fin 2) ℝ)) (3 / 2) 2 =
+      !![8, 0; 0, 1] := by
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [gridProd, List.prod_cons, List.prod_nil, Matrix.mul_apply, Fin.sum_univ_two] <;>
+    norm_num
 
 end Matrix
 

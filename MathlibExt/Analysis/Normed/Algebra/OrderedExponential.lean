@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Exponential
-public import Mathlib.Analysis.Matrix.Normed
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Topology.UniformSpace.UniformConvergence
 import MathlibExt.Analysis.Normed.Algebra.ExponentialLimit
@@ -24,8 +23,7 @@ piecewise continuous `Y` (continuous within `[0, t]` off a finite set) has a uni
 time-ordered exponential: the continuous solution of the Volterra equation
 `U s = 1 + ∫₀ˢ U r * Y r dr` (`existsUnique_isOrderedExp`). If `Y_M → Y₀` uniformly on
 `[0, t]`, the grid products converge to it (`tendsto_gridProd`). For constant `Y ≡ A` the
-limit is `exp (t • A)`; for a two-piece `Y` it is `exp (t₁ • A) * exp ((t - t₁) • B)`. The
-finite-matrix case with the operator norm is `tendsto_gridProd_matrix`.
+limit is `exp (t • A)`; for a two-piece `Y` it is `exp (t₁ • A) * exp ((t - t₁) • B)`.
 
 This is the limit that passes from discrete-time chains with transition matrices
 `1 + Q / M + o(1 / M)` and time-dependent rates to their continuous-time counterparts.
@@ -909,20 +907,5 @@ theorem tendsto_gridProd_piecewise (A B : 𝔸) {t₁ t : ℝ} (h₁ : 0 ≤ t�
 
 
 end BanachAlgebra
-
-section Matrix
-
-open scoped Matrix.Norms.Operator
-
-/-- **Finite matrices with the operator norm.** The time-ordered product limit for square
-real matrices. -/
-theorem tendsto_gridProd_matrix {n : Type*} [Fintype n] [DecidableEq n] [Nonempty n]
-    {Y : ℕ → ℝ → Matrix n n ℝ} {Y₀ U : ℝ → Matrix n n ℝ} {t : ℝ} (ht : 0 ≤ t)
-    (hconv : TendstoUniformlyOn Y Y₀ atTop (Icc 0 t)) (hY₀ : PiecewiseContinuousOn Y₀ t)
-    (hb : ∃ C, ∀ s ∈ Icc 0 t, ‖Y₀ s‖ ≤ C) (hU : IsOrderedExp Y₀ U t) :
-    Tendsto (fun M : ℕ => gridProd (Y M) t M) atTop (𝓝 (U t)) := by
-  exact tendsto_gridProd ht hconv hY₀ hb hU
-
-end Matrix
 
 end NormedSpace
