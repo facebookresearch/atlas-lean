@@ -14,36 +14,59 @@ Copyright 2026 The Formal Conjectures Authors.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 -/
 
-import Mathlib
+module
 
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
+public import Mathlib.Combinatorics.SimpleGraph.Maps
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Fintype.Defs
+public import Mathlib.Data.Sym.Sym2
+public import Mathlib.Order.ConditionallyCompleteLattice.Basic
+public import Mathlib.SetTheory.Cardinal.Finite
+public import Mathlib.Tactic.FinCases
+public import MathlibExt.Combinatorics.SimpleGraph.TotalDomination
 
+@[expose] public section
 
+/-!
+# Written on the Wall II, Conjecture 314
 
+A finite simple connected graph on at least two vertices that is triangle free and
+has no induced path on more than four vertices is well totally dominated: all its
+minimal total dominating sets have the same cardinality.
 
+The proof shows that under these hypotheses every minimal total dominating set has
+between two and three elements, and that sets of sizes two and three cannot both
+occur.
 
+## Source and provenance
 
+`largestInducedPathSize` and the statement of `conjecture314` are copied verbatim
+from `FormalConjectures/WrittenOnTheWallII/GraphConjecture314.lean` of
+[google-deepmind/formal-conjectures](https://github.com/google-deepmind/formal-conjectures),
+which transcribes
+[WOWII Conjecture 314](http://cms.uhd.edu/faculty/delavinae/research/wowII/all.html#conj314)
+of E. DeLaVina's *Written on the Wall II*. The statement carried the Formal
+Conjectures attribute `@[category research open, AMS 5]` at the revision this
+development was written against; upstream now records it as `research solved` with
+an independent Lean proof. The Formal Conjectures attributes are dropped here
+because this repository does not depend on `FormalConjecturesUtil`; nothing else in
+the statement is changed. `SimpleGraph.IsWellTotallyDominated` is the Formal
+Conjectures definition, ported in
+`MathlibExt.Combinatorics.SimpleGraph.TotalDomination`.
 
+## Main results
 
-
-
-
-
-
-
-
-import FormalConjecturesUtil
-
-
-
-
-
-
-
-
+- `WrittenOnTheWallII.GraphConjecture314.largestInducedPathSize`: the size of a
+  largest induced path.
+- `WrittenOnTheWallII.GraphConjecture314.conjecture314`: such graphs are well
+  totally dominated.
+-/
 
 namespace WrittenOnTheWallII.GraphConjecture314
-
-set_option linter.all false
 
 open SimpleGraph
 
@@ -62,6 +85,15 @@ variable {α : Type*} [Fintype α] [DecidableEq α]
 
 
 
+/-- The size of a largest induced path of $G$, as a natural number.
+
+A subset $s \subseteq V(G)$ is an *induced path* when the induced subgraph
+`G.induce s` is a tree in which every vertex has degree at most $2$
+(equivalently: a tree that is itself a path graph). We define
+`largestInducedPathSize G` as the supremum of `s.card` over all such subsets.
+
+This is *not* the `SimpleGraph.path` invariant of Mathlib, which is the floor of
+the average distance. -/
 noncomputable def largestInducedPathSize (G : SimpleGraph α) [DecidableRel G.Adj] : ℕ :=
   sSup { n | ∃ s : Finset α,
               s.card = n ∧
@@ -856,7 +888,15 @@ private lemma no_minimal_total_dominating_sets_of_card_two_and_three
 
 
 
-@[category research open, AMS 5]
+/--
+**Written on the Wall II, Conjecture 314.** A connected, triangle-free graph on a
+nontrivial finite vertex type whose largest induced path has at most four vertices
+is well totally dominated.
+
+Statement copied verbatim from
+`FormalConjectures/WrittenOnTheWallII/GraphConjecture314.lean`
+(`WrittenOnTheWallII.GraphConjecture314.conjecture314`).
+-/
 theorem conjecture314 [Nontrivial α] (G : SimpleGraph α) [DecidableRel G.Adj]
     (hG : G.Connected)
     (hTriFree : ∀ a b c : α, G.Adj a b → G.Adj b c → G.Adj c a → False)

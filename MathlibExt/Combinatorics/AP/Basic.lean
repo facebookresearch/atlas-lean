@@ -48,6 +48,25 @@ theorem eq (h : s.IsAPOfLength l) :
     ∃ a d : α, s = {a + n • d | (n : ℕ) (_ : n < l)} :=
   ⟨h.choose, h.choose_spec.choose, h.choose_spec.choose_spec.2⟩
 
+/-- The only arithmetic progression of length `0` is the empty set.
+
+Ported from `FormalConjecturesForMathlib/Combinatorics/AP/Basic.lean` of
+google-deepmind/formal-conjectures, unchanged. -/
+@[simp] theorem zero : s.IsAPOfLength 0 ↔ s = ∅ := by
+  simp [Set.IsAPOfLength, Set.IsAPOfLengthWith]
+
+/-- The arithmetic progressions of length `1` are the singletons.
+
+Ported from `FormalConjecturesForMathlib/Combinatorics/AP/Basic.lean` of
+google-deepmind/formal-conjectures, unchanged. -/
+@[simp] theorem one : s.IsAPOfLength 1 ↔ ∃ a, s = {a} := by
+  simp only [Set.IsAPOfLength, Set.IsAPOfLengthWith]
+  constructor
+  · rintro ⟨a, d, -, hs⟩
+    exact ⟨a, by simpa using hs⟩
+  · rintro ⟨a, rfl⟩
+    exact ⟨a, 0, by simp, by simp⟩
+
 end Set.IsAPOfLength
 
 /-- A list is an arithmetic progression of length `l` with first term `a` and difference `d`. -/
@@ -151,3 +170,14 @@ theorem card_le_maxCard {S : Finset ℕ} {k N : ℕ}
   · exact ⟨S, hS, rfl, hfree⟩
 
 end Set.IsAPOfLengthFree
+
+/-- A colouring of a set `M` contains a monochromatic arithmetic progression of
+length `k`: some colour class contains a set of `M`-elements whose underlying
+values form an arithmetic progression of length `k`.
+
+Ported from `FormalConjecturesForMathlib/Combinatorics/AP/Basic.lean` of
+google-deepmind/formal-conjectures, unchanged. -/
+def ContainsMonoAPofLength {κ : Type} [Finite κ] {M : Set α}
+    (coloring : M → κ) (k : ℕ) : Prop :=
+  ∃ c : κ, ∃ ap : Set M, ((·.1) '' ap).IsAPOfLength k ∧
+    ∀ m ∈ ap, coloring m = c

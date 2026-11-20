@@ -14,113 +14,152 @@ Copyright 2026 The Formal Conjectures Authors.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 -/
 
-import Mathlib
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import FormalConjecturesUtil
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+module
+
+public import Mathlib.Algebra.Field.ZMod
+public import Mathlib.Algebra.Group.Fin.Basic
+public import Mathlib.Algebra.Group.Units.Equiv
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Data.Finset.Defs
+public import Mathlib.Data.Finset.Insert
+public import Mathlib.Data.Finset.Sort
+public import Mathlib.Data.Fintype.Card
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Matrix.Diagonal
+public import Mathlib.Data.Nat.Dist
+public import Mathlib.Data.Nat.Notation
+public import Mathlib.Data.ZMod.Defs
+public import Mathlib.LinearAlgebra.Matrix.Defs
+public import Mathlib.Logic.Equiv.Defs
+public import Mathlib.Tactic.Lemma
+public import Mathlib.Tactic.NormNum.Prime
+public import MathlibExt.Algebra.BigOperators.SeparableSum
+public import MathlibExt.Analysis.Fourier.ZModAddCharSum
+public import MathlibExt.Data.Finset.PasteSplit
+public import MathlibExt.LinearAlgebra.Matrix.DetFinSmall
+
+@[expose] public section
+
+/-!
+# An absolutely maximally entangled state of nine ten-level systems
+
+A graph-state construction of an `AME(9, 10)` state, answering Open Quantum Problem 35 for
+`(n, d) = (9, 10)`
+
+## i. Overview
+
+A pure state of `n` parties with local dimension `d` is *absolutely maximally entangled*
+(`AME(n, d)`) when the reduced density matrix of every set of `⌊n / 2⌋` parties is maximally
+mixed. Open Quantum Problem 35 asks for which `(n, d)` such a state exists;
+`AME(9, 10)` was one of the open entries.
+
+This file builds one. Writing the local dimension as `10 = 2 × 5`, a computational basis
+state of one party splits into a qubit part and a qudit part (`bitPart`, `quintPart`). The
+amplitude `ameAmplitude` is the uniform superposition, over the two logical qubits
+`a : Fin 2 → ZMod 2`, of the product of two graph-state phases: a `ZMod 2` phase for the
+nine-cycle graph `q2Cycle` with the logical labels `q2Label`, and a `ZMod 5` phase for the
+ten-vertex circulant graph `q5Graph` with the logical letter `q5Logical` inserted in
+position `0`. The reductions are computed with additive-character orthogonality
+(`MetaMathlibExt.sum_stdAddChar_dot`); the two conditions that make every four-party
+reduction maximally mixed are a minimum-weight bound for the `ZMod 2` code
+(`q2Cycle_subgroup_minWeight`) and the invertibility of every `5 × 5` cut matrix of
+`q5Graph` (`q5CutMatrix_det`), both checked by the kernel.
+
+## ii. Key results
+
+- `OpenQuantumProblem35.IsAME`, `OpenQuantumProblem35.ExistsAME`: absolute maximal
+  entanglement of a pure state, and its existence for given `(n, d)`.
+- `OpenQuantumProblem35.ameState`: the graph state constructed here.
+- `OpenQuantumProblem35.ame_9_10_open`: an `AME(9, 10)` state exists.
+
+## iii. Table of contents
+
+- A. States, reductions, and absolute maximal entanglement
+- B. The `ZMod 5` circulant graph on ten vertices and its cuts
+- C. The `ZMod 2` nine-cycle graph and its code
+- D. Characters, local splitting, and graph phases
+- E. The state and its normalisation
+- F. Four-party reductions and the main result
+
+## iv. References
+
+- Open Quantum Problems, Problem 35,
+  <https://oqp.iqoqi.oeaw.ac.at/existence-of-absolutely-maximally-entangled-pure-states>
+- W. Helwig, W. Cui, A. Riera, J. I. Latorre, H.-K. Lo, *Absolute Maximal Entanglement and
+  Quantum Secret Sharing*, Phys. Rev. A 86, 052335 (2012), arXiv:1204.2289.
+- D. Goyeneche, D. Alsina, J. I. Latorre, A. Riera, K. Życzkowski, *Absolutely Maximally
+  Entangled states, combinatorial designs and multi-unitary matrices*, Phys. Rev. A 92,
+  032316 (2015), arXiv:1506.08857.
+- G. Rajchel-Mieldzioć, R. Bistroń, A. Rico, A. Lakshminarayan, K. Życzkowski, *Absolutely
+  maximally entangled pure states of multipartite quantum systems*, arXiv:2508.04777 (2025).
+
+## Source and provenance
+
+`Config`, `StateVector`, `mkStateVector`, `IsNormalized`, `permuteConfig`, `permuteState`,
+`combineFirst`, `reducedDensityFirst`, `maximallyMixed`, `HasMaximallyMixedFirstReduction`,
+`IsAME`, `ExistsAME`, `IsConstantConfig` and the statement of `ame_9_10_open` are copied
+verbatim from `FormalConjectures/OpenQuantumProblems/35.lean` of
+[google-deepmind/formal-conjectures](https://github.com/google-deepmind/formal-conjectures);
+`ame_9_10_open_statement` is a `Prop`-valued abbreviation for `ExistsAME 9 10`, added by
+this development. The statement carried the Formal Conjectures attribute
+`@[category research open, AMS 5 15 81 94]` at the revision this development was written
+against; upstream now records it as `research solved`, citing a Lean proof derived from
+these Atlas proofs. The Formal Conjectures attributes are dropped here because this
+repository does not depend on `FormalConjecturesUtil`; nothing else in the statement is
+changed. Following this repository's `PhyslibExt` convention, `ame_9_10_open` is stated with
+`lemma` rather than `theorem`, which does not change its name or statement.
+
+General-purpose helpers of the original development were moved to `MathlibExt`:
+small-matrix determinants (`MathlibExt.LinearAlgebra.Matrix.DetFinSmall`), gluing and
+splitting functions along a finset (`MathlibExt.Data.Finset.PasteSplit`), additive-character
+sums over `ZMod N` (`MathlibExt.Analysis.Fourier.ZModAddCharSum`) and separable multiple
+sums (`MathlibExt.Algebra.BigOperators.SeparableSum`); they now live in the
+`MetaMathlibExt` namespace, which this module opens.
+-/
 
 open scoped BigOperators
 
 namespace OpenQuantumProblem35
 
+open MetaMathlibExt
+
+/-! ## A. States, reductions, and absolute maximal entanglement -/
 
 
 
+
+/-- A computational-basis configuration of $n$ parties with local dimension $d$. -/
 abbrev Config (n d : ℕ) := Fin n → Fin d
 
 
+/-- A state vector in the computational basis, viewed as a finite-dimensional Hilbert space. -/
 abbrev StateVector (n d : ℕ) := EuclideanSpace ℂ (Config n d)
 
 
+/-- Build a state vector from its computational-basis amplitudes. -/
 abbrev mkStateVector {n d : ℕ} (ψ : Config n d → ℂ) : StateVector n d :=
   WithLp.toLp 2 ψ
 
 
+/-- A state vector can be evaluated on a computational-basis configuration to read its
+amplitude. -/
 instance {n d : ℕ} : CoeFun (StateVector n d) (fun _ => Config n d → ℂ) where
   coe ψ := ψ.ofLp
 
 
+/-- A state vector is normalized if it has $L^2$ norm $1$. -/
 def IsNormalized {n d : ℕ} (ψ : StateVector n d) : Prop :=
   ‖ψ‖ = 1
 
 
+/-- Permute the parties of a configuration. -/
 def permuteConfig {n d : ℕ} (π : Equiv.Perm (Fin n)) (x : Config n d) : Config n d :=
   fun i => x (π i)
 
 
+/-- Permute the parties of a state. -/
 def permuteState {n d : ℕ} (π : Equiv.Perm (Fin n)) (ψ : StateVector n d) : StateVector n d :=
   mkStateVector fun x => ψ (permuteConfig π x)
 
@@ -128,6 +167,8 @@ def permuteState {n d : ℕ} (π : Equiv.Perm (Fin n)) (ψ : StateVector n d) : 
 
 
 
+/-- Assemble a configuration of all $n$ parties from a configuration of the first $m$ and a
+configuration of the remaining $n - m$. -/
 def combineFirst {n d : ℕ} (m : ℕ) (hm : m ≤ n)
     (x : Config m d) (y : Config (n - m) d) : Config n d :=
   fun i =>
@@ -146,6 +187,7 @@ def combineFirst {n d : ℕ} (m : ℕ) (hm : m ≤ n)
 
 
 
+/-- The reduced density matrix of the first $m$ parties: trace out the remaining $n - m$. -/
 noncomputable def reducedDensityFirst {n d : ℕ} (m : ℕ) (hm : m ≤ n) (ψ : StateVector n d) :
     Matrix (Config m d) (Config m d) ℂ :=
   fun x y =>
@@ -154,12 +196,14 @@ noncomputable def reducedDensityFirst {n d : ℕ} (m : ℕ) (hm : m ≤ n) (ψ :
         star (ψ (combineFirst (n := n) (d := d) m hm y z))
 
 
+/-- The maximally mixed state of $m$ parties of local dimension $d$. -/
 noncomputable def maximallyMixed (m d : ℕ) :
     Matrix (Config m d) (Config m d) ℂ :=
   ((Fintype.card (Config m d) : ℂ)⁻¹) •
     (1 : Matrix (Config m d) (Config m d) ℂ)
 
 
+/-- The reduced state of the first $m$ parties is maximally mixed. -/
 def HasMaximallyMixedFirstReduction {n d : ℕ} (m : ℕ) (hm : m ≤ n)
     (ψ : StateVector n d) : Prop :=
   reducedDensityFirst (n := n) (d := d) m hm ψ = maximallyMixed m d
@@ -177,6 +221,9 @@ def HasMaximallyMixedFirstReduction {n d : ℕ} (m : ℕ) (hm : m ≤ n)
 
 
 
+/-- A state is *absolutely maximally entangled* when it is normalized and, after any
+permutation of the parties, the reduction to the first $\lfloor n/2 \rfloor$ parties is
+maximally mixed. -/
 def IsAME {n d : ℕ} (ψ : StateVector n d) : Prop :=
   IsNormalized ψ ∧
     ∀ π : Equiv.Perm (Fin n),
@@ -184,15 +231,18 @@ def IsAME {n d : ℕ} (ψ : StateVector n d) : Prop :=
         (n / 2) (Nat.div_le_self n 2) (permuteState π ψ)
 
 
+/-- An $\mathrm{AME}(n, d)$ state exists. -/
 def ExistsAME (n d : ℕ) : Prop :=
   ∃ ψ : StateVector n d, IsAME (n := n) (d := d) ψ
 
 
 
 
+/-- A configuration in which every party carries the same letter. -/
 def IsConstantConfig {n d : ℕ} (x : Config n d) : Prop :=
   ∀ i j, x i = x j
 
+/-- Being a constant configuration is decidable. -/
 instance {n d : ℕ} : DecidablePred (@IsConstantConfig n d) := by
   intro x
   unfold IsConstantConfig
@@ -212,6 +262,11 @@ instance {n d : ℕ} : DecidablePred (@IsConstantConfig n d) := by
 
 
 
+/-! ## B. The `ZMod 5` circulant graph on ten vertices and its cuts -/
+
+/-- The weighted circulant graph on `Fin 10` over `ZMod 5`: vertices at cyclic distance
+$1$ get weight $3$, vertices at cyclic distance $2$ or $3$ get weight $1$, and all other
+pairs get weight $0$. -/
 def q5Graph (i j : Fin 10) : ZMod 5 :=
   let e := Nat.dist i.1 j.1
   let e := min e (10 - e)
@@ -219,63 +274,35 @@ def q5Graph (i j : Fin 10) : ZMod 5 :=
 
 
 
+/-- The `5 × 5` cut matrix of `q5Graph` for a five-element set `A` of vertices: rows indexed
+by the complement of `A`, columns by `A`, both in increasing order. -/
 def q5CutMatrix (A : Finset (Fin 10)) (hA : A.card = 5) :
     Matrix (Fin 5) (Fin 5) (ZMod 5) :=
   let hAc : Aᶜ.card = 5 := by simp [Finset.card_compl, hA]
   fun i j => q5Graph ((Aᶜ.orderIsoOfFin hAc) i).1 ((A.orderIsoOfFin hA) j).1
 
 
+/-- The vertices whose mask value is `b`, in increasing order. -/
 def q5Indices (mask : Fin 10 → Bool) (b : Bool) : List (Fin 10) :=
   (List.finRange 10).filter (fun i => mask i == b)
 
+/-- The `k`-th vertex (as a natural number) whose mask value is `b`. -/
 def q5Select (mask : Fin 10 → Bool) (b : Bool) (k : Fin 5) : ℕ :=
   ((q5Indices mask b)[k.1]?.getD 0).1
 
+/-- The weights of `q5Graph` as natural numbers, indexed by natural numbers; used to lift a
+cut matrix to `ℤ` so that its determinant can be evaluated by the kernel. -/
 def q5GraphNat (i j : ℕ) : ℕ :=
   let e := Nat.dist i j
   let e := min e (10 - e)
   if e = 1 then 3 else if e = 2 ∨ e = 3 then 1 else 0
 
+/-- The integer cut matrix attached to a Boolean mask on the ten vertices. -/
 def q5MaskMatrix (mask : Fin 10 → Bool) : Matrix (Fin 5) (Fin 5) ℤ :=
   fun i j => q5GraphNat (q5Select mask false i) (q5Select mask true j)
 
 set_option maxHeartbeats 0
 set_option maxRecDepth 100000
-
-def detFinThreeInt (M : Matrix (Fin 3) (Fin 3) ℤ) : ℤ :=
-  M 0 0 * M 1 1 * M 2 2 + M 0 1 * M 1 2 * M 2 0 +
-  M 0 2 * M 1 0 * M 2 1 - M 0 2 * M 1 1 * M 2 0 -
-  M 0 1 * M 1 0 * M 2 2 - M 0 0 * M 1 2 * M 2 1
-
-def detFinFourInt (M : Matrix (Fin 4) (Fin 4) ℤ) : ℤ :=
-  ∑ j : Fin 4, (-1) ^ (j : ℕ) * M 0 j *
-    detFinThreeInt (M.submatrix (Fin.succAbove 0) (Fin.succAbove j))
-
-def detFinFiveInt (M : Matrix (Fin 5) (Fin 5) ℤ) : ℤ :=
-  ∑ j : Fin 5, (-1) ^ (j : ℕ) * M 0 j *
-    detFinFourInt (M.submatrix (Fin.succAbove 0) (Fin.succAbove j))
-
-lemma detFinThreeInt_eq (M : Matrix (Fin 3) (Fin 3) ℤ) :
-    M.det = detFinThreeInt M := by
-  rw [Matrix.det_fin_three]
-  simp [detFinThreeInt]
-  ring
-
-lemma detFinFourInt_eq (M : Matrix (Fin 4) (Fin 4) ℤ) :
-    M.det = detFinFourInt M := by
-  rw [Matrix.det_succ_row M 0]
-  apply Finset.sum_congr rfl
-  intro j hj
-  rw [detFinThreeInt_eq]
-  simp [detFinFourInt]
-
-lemma detFinFiveInt_eq (M : Matrix (Fin 5) (Fin 5) ℤ) :
-    M.det = detFinFiveInt M := by
-  rw [Matrix.det_succ_row M 0]
-  apply Finset.sum_congr rfl
-  intro j hj
-  rw [detFinFourInt_eq]
-  simp [detFinFiveInt]
 
 lemma q5Indices_mem_sort (A : Finset (Fin 10)) :
     q5Indices (fun i => decide (i ∈ A)) true = A.sort (· ≤ ·) := by
@@ -308,6 +335,8 @@ lemma q5Select_not_mem (A : Finset (Fin 10)) (hA : A.card = 5) (k : Fin 5) :
   rw [List.getElem?_eq_getElem (by simpa [hc] using k.2)]
   rfl
 
+/-- The affine symmetries of the cycle `Fin 10`: a rotation by `s`, optionally preceded by
+the reflection `i ↦ -i`. They preserve `q5Graph`. -/
 def q5Affine (s : Fin 10) (flip : Bool) : Equiv.Perm (Fin 10) :=
   if flip then (Equiv.neg (Fin 10)).trans (Equiv.addLeft s) else Equiv.addLeft s
 
@@ -316,6 +345,8 @@ lemma q5Graph_affine (s : Fin 10) (flip : Bool) (i j : Fin 10) :
   decide +revert
 
 
+/-- Representatives of the orbits of the five-element subsets of `Fin 10` under the affine
+symmetries `q5Affine`. -/
 def q5Representatives : List (Finset (Fin 10)) :=
   [ {0, 1, 2, 3, 4}, {0, 1, 2, 3, 5}, {0, 1, 2, 4, 5},
     {0, 1, 2, 3, 6}, {0, 1, 2, 4, 6}, {0, 1, 3, 4, 6},
@@ -359,7 +390,8 @@ lemma q5CutMatrix_det_of_certificate (A : Finset (Fin 10)) (hA : A.card = 5)
     change ((q5GraphNat (q5Select (fun i => decide (i ∈ A)) false i)
       (q5Select (fun i => decide (i ∈ A)) true j) : ℤ) : ZMod 5) = _
     rw [q5Select_not_mem A hA i, q5Select_mem A hA j]
-    simp [q5CutMatrix, q5GraphNat, q5Graph]
+    simp only [q5CutMatrix, q5GraphNat, q5Graph]
+    split_ifs <;> norm_num
   intro hz
   have hz' : ((M.det : ℤ) : ZMod 5) = 0 := by
     calc
@@ -373,27 +405,6 @@ lemma q5CutMatrix_det_of_certificate (A : Finset (Fin 10)) (hA : A.card = 5)
   change detFinFiveInt M % 5 = 0
   rw [← detFinFiveInt_eq M]
   exact Int.emod_eq_zero_of_dvd hdvd
-
-def finsetMapEquiv {α β : Type*} [DecidableEq α] [DecidableEq β]
-    (e : α ≃ β) (S : Finset α) : S ≃ S.map e.toEmbedding where
-  toFun x := ⟨e x, by simp⟩
-  invFun y := ⟨e.symm y.1, by
-    simpa only [Finset.mem_map_equiv] using y.2⟩
-  left_inv x := by ext; simp
-  right_inv y := by ext; simp
-
-def finsetMapComplEquiv {α : Type*} [Fintype α] [DecidableEq α]
-    (e : Equiv.Perm α) (S : Finset α) :
-    ↥(Sᶜ) ≃ ↥((S.map e.toEmbedding)ᶜ) where
-  toFun x := ⟨e x.1, by
-    simp only [Finset.mem_compl, Finset.mem_map_equiv, Equiv.symm_apply_apply]
-    simpa only [Finset.mem_compl] using x.2⟩
-  invFun y := ⟨e.symm y.1, by
-    simp only [Finset.mem_compl]
-    have hy := y.2
-    simpa only [Finset.mem_compl, Finset.mem_map_equiv] using hy⟩
-  left_inv x := by ext; simp
-  right_inv y := by ext; simp
 
 lemma q5CutMatrix_det_map (A : Finset (Fin 10)) (hA : A.card = 5)
     (g : Equiv.Perm (Fin 10))
@@ -415,8 +426,7 @@ lemma q5CutMatrix_det_map (A : Finset (Fin 10)) (hA : A.card = 5)
   have hmat : q5CutMatrix A hA =
       (q5CutMatrix B hB).submatrix pC pA := by
     ext i j
-    unfold q5CutMatrix
-    dsimp only [Matrix.submatrix_apply]
+    show q5Graph (eC i).1 (eA j).1 = q5Graph (eD (pC i)).1 (eB (pA j)).1
     have hpA : (eB (pA j)).1 = g (eA j).1 := by
       change (eB (eB.symm ((finsetMapEquiv g A) (eA j)))).1 =
         ((finsetMapEquiv g A) (eA j)).1
@@ -478,6 +488,9 @@ lemma q5Graph_cut_injective (A : Finset (Fin 10)) (hA : A.card = 5) :
   exact congrFun hv r
 
 
+/-! ## C. The `ZMod 2` nine-cycle graph and its code -/
+
+/-- The adjacency function over `ZMod 2` of the nine-cycle on `Fin 9`. -/
 def q2Cycle (i j : Fin 9) : ZMod 2 :=
   if Nat.dist i.1 j.1 = 1 ∨ Nat.dist i.1 j.1 = 8 then 1 else 0
 
@@ -543,9 +556,13 @@ lemma q5Graph_cross (x d : Fin 10 → ZMod 5) :
   graph_cross_generic q5Graph q5Graph_symm q5Graph_diag x d
 
 
+/-- The first parity check of the `ZMod 2` code: the sum of the coordinates
+$0, 1, 3, 4, 6, 7$. -/
 def q2Check₁ (x : Fin 9 → ZMod 2) : ZMod 2 :=
   x 0 + x 1 + x 3 + x 4 + x 6 + x 7
 
+/-- The second parity check of the `ZMod 2` code: the sum of the coordinates
+$0, 2, 3, 5, 6, 8$. -/
 def q2Check₂ (x : Fin 9 → ZMod 2) : ZMod 2 :=
   x 0 + x 2 + x 3 + x 5 + x 6 + x 8
 
@@ -560,60 +577,20 @@ lemma q2Cycle_subgroup_minWeight (x : Fin 9 → ZMod 2)
 
 
 
-lemma sum_stdAddChar_dot {N : ℕ} [NeZero N] {ι : Type*}
-    [Fintype ι] [DecidableEq ι] (c : ι → ZMod N) :
-    (∑ z : ι → ZMod N, ZMod.stdAddChar (∑ i, c i * z i)) =
-      if c = 0 then (N ^ Fintype.card ι : ℂ) else 0 := by
-  have h1 (t : ZMod N) : (∑ a : ZMod N, ZMod.stdAddChar (t * a)) =
-      if t = 0 then (N : ℂ) else 0 := by
-    split_ifs with h
-    · simp [h, ZMod.card]
-    · exact AddChar.sum_eq_zero_of_ne_one (ZMod.isPrimitive_stdAddChar N h)
-  have hmap' (s : Finset ι) (z : ι → ZMod N) :
-      ZMod.stdAddChar (∑ i ∈ s, c i * z i) =
-        ∏ i ∈ s, ZMod.stdAddChar (c i * z i) := by
-    induction s using Finset.induction_on with
-    | empty => simp
-    | @insert a s ha ih => simp [ha, AddChar.map_add_eq_mul, ih]
-  have hmap (z : ι → ZMod N) :
-      ZMod.stdAddChar (∑ i, c i * z i) =
-        ∏ i, ZMod.stdAddChar (c i * z i) := by
-    simpa using hmap' Finset.univ z
-  calc
-    _ = ∑ z : ι → ZMod N, ∏ i, ZMod.stdAddChar (c i * z i) := by
-      simp_rw [hmap]
-    _ = ∏ i, ∑ a : ZMod N, ZMod.stdAddChar (c i * a) :=
-      (@Fintype.prod_sum ι ℂ _ _ _ (fun _ => ZMod N) _
-        (fun i a => ZMod.stdAddChar (c i * a))).symm
-    _ = _ := by
-      simp_rw [h1]
-      split_ifs with h
-      · subst c
-        simp [ZMod.card]
-      · have hi : ∃ i, c i ≠ 0 := by
-          simpa [funext_iff] using h
-        obtain ⟨i, hi⟩ := hi
-        apply Finset.prod_eq_zero (Finset.mem_univ i)
-        simp [hi]
+/-! ## D. Characters, local splitting, and graph phases -/
 
-lemma stdAddChar_mul_star {N : ℕ} [NeZero N] (a b : ZMod N) :
-    ZMod.stdAddChar a * star (ZMod.stdAddChar b) = ZMod.stdAddChar (a - b) := by
-  change ZMod.stdAddChar a * (starRingEnd ℂ) (ZMod.stdAddChar b) = _
-  rw [← AddChar.map_neg_eq_conj, ← AddChar.map_add_eq_mul, sub_eq_add_neg]
-
-lemma norm_stdAddChar {N : ℕ} [NeZero N] (a : ZMod N) :
-    ‖ZMod.stdAddChar a‖ = 1 := by
-  rw [ZMod.stdAddChar_apply]
-  exact Circle.norm_coe _
-
-
+/-- The factorisation `Fin 2 × Fin 5 ≃ Fin 10` of a single party's local dimension. -/
 def localTenEquiv : Fin 2 × Fin 5 ≃ Fin 10 := finProdFinEquiv
 
+/-- The qubit part of a local letter. -/
 def bitPart (x : Fin 10) : ZMod 2 := (localTenEquiv.symm x).1
 
+/-- The qudit (`ZMod 5`) part of a local letter. -/
 def quintPart (x : Fin 10) : ZMod 5 := (localTenEquiv.symm x).2
 
 
+/-- A local letter is the same thing as a pair consisting of a `ZMod 2` letter and a
+`ZMod 5` letter. -/
 def localPartsEquiv : Fin 10 ≃ ZMod 2 × ZMod 5 :=
   localTenEquiv.symm.trans
     (Equiv.prodCongr (ZMod.finEquiv 2).toEquiv (ZMod.finEquiv 5).toEquiv)
@@ -623,6 +600,8 @@ def localPartsEquiv : Fin 10 ≃ ZMod 2 × ZMod 5 :=
 
 
 
+/-- The quadratic phase $\sum_{i < j} G_{ij} x_i x_j$ of a graph state with weight matrix
+`G` over `ZMod p`. -/
 def graphPhase {n p : ℕ} (G : Fin n → Fin n → ZMod p)
     (x : Fin n → ZMod p) : ZMod p :=
   ∑ i : Fin n, ∑ j ∈ Finset.univ.filter (fun j : Fin n => i.1 < j.1),
@@ -635,6 +614,7 @@ lemma graphPhase_add {n p : ℕ} (G : Fin n → Fin n → ZMod p)
         G i j * (x i * d j + d i * x j) := by
   simp only [graphPhase, Pi.add_apply]
   simp_rw [mul_add, add_mul, Finset.sum_add_distrib]
+  simp only [mul_comm, mul_assoc, mul_left_comm]
   ring
 
 lemma q2Phase_sub (x y : Fin 9 → ZMod 2) :
@@ -657,13 +637,8 @@ lemma q5Phase_sub (x y : Fin 10 → ZMod 5) :
   simp only [Pi.sub_apply, mul_sub, Finset.sum_sub_distrib]
   ring
 
-lemma sum_stdAddChar_affine {N : ℕ} [NeZero N] {ι : Type*}
-    [Fintype ι] [DecidableEq ι] (b : ZMod N) (c : ι → ZMod N) :
-    (∑ z : ι → ZMod N, ZMod.stdAddChar (b + ∑ i, c i * z i)) =
-      ZMod.stdAddChar b * (if c = 0 then (N ^ Fintype.card ι : ℂ) else 0) := by
-  simp_rw [AddChar.map_add_eq_mul, ← Finset.mul_sum]
-  rw [sum_stdAddChar_dot]
-
+/-- The `ZMod 2` logical label attached to the logical qubits `a`: the coefficient vector of
+the two parity checks `q2Check₁` and `q2Check₂`. -/
 def q2Label (a : Fin 2 → ZMod 2) (i : Fin 9) : ZMod 2 :=
   a 0 * (if i.1 ∈ ([0, 1, 3, 4, 6, 7] : List ℕ) then 1 else 0) +
   a 1 * (if i.1 ∈ ([0, 2, 3, 5, 6, 8] : List ℕ) then 1 else 0)
@@ -674,12 +649,17 @@ lemma q2Label_dot (a : Fin 2 → ZMod 2) (x : Fin 9 → ZMod 2) :
       a 0 * q2Check₁ x + a 1 * q2Check₂ x := by
   decide +revert
 
+/-- The `ZMod 5` letter carried by the logical qubits `a`, namely $a_0 + 2 a_1$. -/
 def q5Logical (a : Fin 2 → ZMod 2) : ZMod 5 :=
   ((a 0).val + 2 * (a 1).val : ℕ)
 
+/-- The `ZMod 2` phase of the state: the nine-cycle graph phase of the qubit word `u`, plus
+its pairing with the logical label. -/
 def binaryPhase (a : Fin 2 → ZMod 2) (u : Fin 9 → ZMod 2) : ZMod 2 :=
   graphPhase q2Cycle u + ∑ i, q2Label a i * u i
 
+/-- The ten-letter `ZMod 5` word obtained from the nine physical letters `v` by inserting the
+logical letter `q5Logical a` in position `0`. -/
 def quinaryWord (a : Fin 2 → ZMod 2) (v : Fin 9 → ZMod 5) : Fin 10 → ZMod 5
   | ⟨0, _⟩ => q5Logical a
   | ⟨i + 1, h⟩ => v ⟨i, by omega⟩
@@ -691,9 +671,15 @@ def quinaryWord (a : Fin 2 → ZMod 2) (v : Fin 9 → ZMod 5) : Fin 10 → ZMod 
     (i : Fin 9) : quinaryWord a v (Fin.succ i) = v i := by
   rfl
 
+/-- The `ZMod 5` phase of the state: the circulant graph phase of the ten-letter word. -/
 def quinaryPhase (a : Fin 2 → ZMod 2) (v : Fin 9 → ZMod 5) : ZMod 5 :=
   graphPhase q5Graph (quinaryWord a v)
 
+/-! ## E. The state and its normalisation -/
+
+/-- The amplitude of the constructed state on a computational-basis configuration: the
+uniform superposition over the two logical qubits of the product of the two graph-state
+phases, normalised by $(2^{11} 5^9)^{-1/2}$. -/
 noncomputable def ameAmplitude (x : Config 9 10) : ℂ :=
   let u : Fin 9 → ZMod 2 := fun i => bitPart (x i)
   let v : Fin 9 → ZMod 5 := fun i => quintPart (x i)
@@ -701,8 +687,11 @@ noncomputable def ameAmplitude (x : Config 9 10) : ℂ :=
     ∑ a : Fin 2 → ZMod 2,
       ZMod.stdAddChar (binaryPhase a u) * ZMod.stdAddChar (quinaryPhase a v)
 
+/-- The candidate $\mathrm{AME}(9, 10)$ state. -/
 noncomputable def ameState : StateVector 9 10 := mkStateVector ameAmplitude
 
+/-- The assertion that an $\mathrm{AME}(9, 10)$ state exists, named so that the proof can be
+stated against it. -/
 def ame_9_10_open_statement : Prop := ExistsAME 9 10
 
 lemma q5Graph_zero_of_supported (A : Finset (Fin 10)) (hA : A.card = 5)
@@ -748,18 +737,6 @@ lemma q2Cycle_zero_of_small_supported (A : Finset (Fin 9)) (hA : A.card ≤ 4)
   omega
 
 set_option maxHeartbeats 0
-
-def pasteOn {ι R : Type*} [DecidableEq ι] (A : Finset ι)
-    (x : A → R) (z : {i : ι // i ∉ A} → R) : ι → R :=
-  fun i => if hi : i ∈ A then x ⟨i, hi⟩ else z ⟨i, hi⟩
-
-@[simp] lemma pasteOn_mem {ι R : Type*} [DecidableEq ι] (A : Finset ι)
-    (x : A → R) (z : {i : ι // i ∉ A} → R) (i : A) :
-    pasteOn A x z i.1 = x i := by simp [pasteOn, i.2]
-
-@[simp] lemma pasteOn_not_mem {ι R : Type*} [DecidableEq ι] (A : Finset ι)
-    (x : A → R) (z : {i : ι // i ∉ A} → R) (i : {i : ι // i ∉ A}) :
-    pasteOn A x z i.1 = z i := by simp [pasteOn, i.2]
 
 lemma q2_phase_paste_affine (A : Finset (Fin 9)) (a : Fin 2 → ZMod 2)
     (x y : A → ZMod 2) (z : {i : Fin 9 // i ∉ A} → ZMod 2) :
@@ -893,6 +870,7 @@ lemma q2_phase_paste_sum (A : Finset (Fin 9)) (hA : A.card = 4)
       simp [c, d]
     simp [hc, hxy]
 
+/-- Add the logical vertex `0` to a set of physical vertices, shifted into `Fin 10`. -/
 def liftPhysicalSet (A : Finset (Fin 9)) : Finset (Fin 10) :=
   {0} ∪ A.map ⟨Fin.succ, Fin.succ_injective 9⟩
 
@@ -1106,6 +1084,8 @@ lemma q5_phase_paste_sum (A : Finset (Fin 10)) (hA : A.card = 5)
   · have hc0 : c ≠ 0 := fun hc0 => hxy (hc.mp hc0)
     simp [hc0, hxy]
 
+/-- A word of local letters is the same thing as a pair consisting of a `ZMod 2` word and a
+`ZMod 5` word. -/
 def splitFunctionsEquiv (ι : Type*) :
     (ι → Fin 10) ≃ (ι → ZMod 2) × (ι → ZMod 5) where
   toFun z := (fun i => bitPart (z i), fun i => quintPart (z i))
@@ -1151,61 +1131,6 @@ lemma ameAmplitude_paste_split (A : Finset (Fin 9)) (x : A → Fin 10)
   · congr 1
     funext i
     by_cases hi : i ∈ A <;> simp [pasteOn, splitFunctionsEquiv, hi]
-
-lemma sum_four_comm {R U V A B : Type*} [AddCommMonoid R]
-    [Fintype U] [Fintype V] [Fintype A] [Fintype B]
-    (f : U → V → A → B → R) :
-    (∑ u, ∑ v, ∑ a, ∑ b, f u v a b) =
-      ∑ a, ∑ b, ∑ u, ∑ v, f u v a b := by
-  calc
-    _ = ∑ u, ∑ a, ∑ v, ∑ b, f u v a b := by
-      apply Finset.sum_congr rfl; intro u hu; rw [Finset.sum_comm]
-    _ = ∑ a, ∑ u, ∑ v, ∑ b, f u v a b := by rw [Finset.sum_comm]
-    _ = ∑ a, ∑ u, ∑ b, ∑ v, f u v a b := by
-      apply Finset.sum_congr rfl; intro a ha
-      apply Finset.sum_congr rfl; intro u hu
-      rw [Finset.sum_comm]
-    _ = _ := by
-      apply Finset.sum_congr rfl; intro a ha; rw [Finset.sum_comm]
-
-lemma sum_separable {R U V : Type*} [CommRing R] [Fintype U] [Fintype V]
-    (K : R) (B : U → R) (Q : V → R) :
-    (∑ u, ∑ v, K * B u * Q v) = K * (∑ u, B u) * (∑ v, Q v) := by
-  rw [Finset.mul_sum, Finset.sum_comm]
-  apply Finset.sum_congr rfl; intro v hv
-  rw [Finset.mul_sum, Finset.sum_mul]
-
-lemma sum_product_separable {R U V A B : Type*} [CommRing R]
-    [Fintype U] [Fintype V] [Fintype A] [Fintype B]
-    (C D : R) (bx : A → U → R) (byy : B → U → R)
-    (qx : A → V → R) (qy : B → V → R) :
-    (∑ u, ∑ v, (C * ∑ a, bx a u * qx a v) *
-      (D * ∑ b, byy b u * qy b v)) =
-      C * D * ∑ a, ∑ b,
-        (∑ u, bx a u * byy b u) * (∑ v, qx a v * qy b v) := by
-  calc
-    _ = ∑ u, ∑ v, ∑ a, ∑ b,
-        C * D * (bx a u * byy b u) * (qx a v * qy b v) := by
-      apply Finset.sum_congr rfl; intro u hu
-      apply Finset.sum_congr rfl; intro v hv
-      simp_rw [Finset.mul_sum, Finset.sum_mul]
-      rw [Finset.sum_comm]
-      apply Finset.sum_congr rfl; intro a ha
-      apply Finset.sum_congr rfl; intro b hb
-      ring
-    _ = ∑ a, ∑ b, ∑ u, ∑ v,
-        C * D * (bx a u * byy b u) * (qx a v * qy b v) :=
-      sum_four_comm _
-    _ = _ := by
-      rw [Finset.mul_sum]
-      apply Finset.sum_congr rfl; intro a ha
-      rw [Finset.mul_sum]
-      apply Finset.sum_congr rfl; intro b hb
-      rw [show C * D * ((∑ u, bx a u * byy b u) *
-          (∑ v, qx a v * qy b v)) =
-          C * D * (∑ u, bx a u * byy b u) *
-          (∑ v, qx a v * qy b v) by ring]
-      exact sum_separable (C * D) _ _
 
 lemma ameAmplitude_paste_sum (A : Finset (Fin 9)) (hA : A.card = 4)
     (x y : A → Fin 10) :
@@ -1285,18 +1210,6 @@ lemma ameAmplitude_paste_sum (A : Finset (Fin 9)) (hA : A.card = 4)
   · have hxy : x ≠ y := fun h => hq (hparts.mp h).2
     simp [hq, hxy]
 
-def splitOnEquiv {ι R : Type*} [DecidableEq ι] (A : Finset ι) :
-    ((A → R) × ({i : ι // i ∉ A} → R)) ≃ (ι → R) where
-  toFun p := pasteOn A p.1 p.2
-  invFun f := (fun i => f i.1, fun i => f i.1)
-  left_inv p := by
-    apply Prod.ext <;> funext i
-    · exact pasteOn_mem A p.1 p.2 i
-    · exact pasteOn_not_mem A p.1 p.2 i
-  right_inv f := by
-    funext i
-    by_cases hi : i ∈ A <;> simp [pasteOn, hi]
-
 lemma ameState_norm_sq_sum :
     (∑ w : Config 9 10, ‖ameAmplitude w‖ ^ 2) = 1 := by
   let A : Finset (Fin 9) := Finset.univ.filter (fun i => i.1 < 4)
@@ -1325,18 +1238,23 @@ lemma ameState_normalized : IsNormalized ameState := by
   rw [ameState_norm_sq_sum]
   norm_num
 
+/-! ## F. Four-party reductions and the main result -/
+
+/-- The four parties that the permutation `π` moves into the first four positions. -/
 def permFirstSet (π : Equiv.Perm (Fin 9)) : Finset (Fin 9) :=
   Finset.univ.filter (fun i => (π i).1 < 4)
 
 @[simp] lemma permFirstSet_mem (π : Equiv.Perm (Fin 9)) (i : Fin 9) :
     i ∈ permFirstSet π ↔ (π i).1 < 4 := by simp [permFirstSet]
 
+/-- `permFirstSet π` is indexed by `Fin 4` through `π`. -/
 def permFrontEquiv (π : Equiv.Perm (Fin 9)) : permFirstSet π ≃ Fin 4 where
   toFun i := ⟨(π i.1).1, (permFirstSet_mem π i.1).mp i.2⟩
   invFun k := ⟨π.symm ⟨k.1, by omega⟩, by simp⟩
   left_inv i := by ext; simp
   right_inv k := by ext; simp
 
+/-- The complement of `permFirstSet π` is indexed by `Fin 5` through `π`. -/
 def permRestEquiv (π : Equiv.Perm (Fin 9)) :
     {i : Fin 9 // i ∉ permFirstSet π} ≃ Fin 5 where
   toFun i := ⟨(π i.1).1 - 4, by
@@ -1418,8 +1336,15 @@ lemma ameState_reduction_permuted (π : Equiv.Perm (Fin 9)) :
       · simp [maximallyMixed, Fintype.card_fun, h]
 
 
-@[category research open, AMS 5 15 81 94]
-theorem ame_9_10_open :
+/--
+**An $\mathrm{AME}(9, 10)$ state exists**, that is, a pure state of nine ten-level systems
+whose every four-party reduced density matrix is maximally mixed. This is the case
+$(n, d) = (9, 10)$ of Open Quantum Problem 35; `ameState` is the witness.
+
+Statement copied verbatim from `FormalConjectures/OpenQuantumProblems/35.lean`
+(`OpenQuantumProblem35.ame_9_10_open`), via the abbreviation `ame_9_10_open_statement`.
+-/
+lemma ame_9_10_open :
     ame_9_10_open_statement := by
   unfold ame_9_10_open_statement ExistsAME IsAME
   exact ⟨ameState, ameState_normalized, ameState_reduction_permuted⟩

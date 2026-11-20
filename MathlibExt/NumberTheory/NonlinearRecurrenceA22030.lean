@@ -14,43 +14,63 @@ Copyright 2026 The Formal Conjectures Authors.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 -/
 
-import Mathlib
+module
 
+public import Mathlib.Algebra.Group.Int.Defs
+public import Mathlib.Algebra.Group.Nat.Even
+public import Mathlib.Algebra.Order.Ring.Abs
+public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Algebra.Order.Star.Int
+public import Mathlib.Data.Int.Notation
+public import Mathlib.Data.Nat.Init
+public import Mathlib.Data.Nat.Notation
+public import Mathlib.Order.Defs.Unbundled
+public import Mathlib.Tactic.Lemma
+public import Mathlib.Tactic.Linarith.Frontend
+public import Mathlib.Tactic.Linarith.Lemmas
+public import Mathlib.Tactic.NormNum.Core
+public import Mathlib.Tactic.NormNum.Ineq
+public import Mathlib.Tactic.Positivity.Basic
+public import Mathlib.Tactic.Positivity.Core
+public import Mathlib.Tactic.Ring.Basic
+public import Mathlib.Tactic.Ring.RingNF
 
+@[expose] public section
 
+/-!
+# A022030: a greedy nonlinear recurrence satisfies a linear recurrence
 
+The OEIS sequence [A022030](https://oeis.org/A022030) is defined greedily:
+`a 0 = 4`, `a 1 = 16`, and for `n` even (resp. odd) `a (n + 2)` is the greatest
+(resp. least) integer with `a (n + 2) / a (n + 1) < a (n + 1) / a n` (resp. `>`).
+Colin Barker conjectured (Feb 16 2012) that the sequence also satisfies the
+linear recurrence `a n = 4 * a (n - 1) - a (n - 3) + a (n - 4)` for `n ≥ 4`.
+This file proves that conjecture.
 
+## Source and provenance
 
+The sequence `a` and the statement `conjecture` are copied verbatim from
+`FormalConjectures/OEIS/22030.lean` of
+[google-deepmind/formal-conjectures](https://github.com/google-deepmind/formal-conjectures),
+where the statement carried the Formal Conjectures attribute
+`@[category research open, AMS 11]` at the revision this development was written
+against; upstream now records it as `research solved`. The Formal Conjectures
+attributes are dropped here because this repository does not depend on
+`FormalConjecturesUtil`; nothing else in the statement is changed.
 
+## Main results
 
-
-
-
-
-
-
-
-
-import FormalConjecturesUtil
-
-
-
-
-
-
-
-
-
-
-
+- `OeisA22030.a`: the greedy sequence.
+- `OeisA22030.conjecture`: `a n = 4 * a (n - 1) - a (n - 3) + a (n - 4)` for `4 ≤ n`.
+-/
 
 namespace OeisA22030
 
-
-
-
-
-
+/--
+For even $n$, $a(n+2)$ is the greatest integer such that $a(n+2)/a(n+1) < a(n+1)/a(n)$;
+for odd $n$, the least integer such that $a(n+2)/a(n+1) > a(n+1)/a(n)$;
+$a(0) = 4, a(1) = 16$.
+-/
 def a (n : ℕ) : ℕ :=
   match n with
   | 0 => 4
@@ -361,7 +381,14 @@ lemma a_eq_b (n : ℕ) : a n = b n := by
 
 
 
-@[category research open, AMS 11]
+/--
+**A022030 satisfies Colin Barker's linear recurrence** (conjectured by Colin Barker,
+Feb 16 2012, in [A022030](https://oeis.org/A022030)):
+$a(n) = 4a(n-1) - a(n-3) + a(n-4)$ for $n \ge 4$.
+
+Statement copied verbatim from `FormalConjectures/OEIS/22030.lean`
+(`OeisA22030.conjecture`).
+-/
 theorem conjecture (n : ℕ) (hn : 4 ≤ n) :
     a n = 4 * a (n - 1) - a (n - 3) + a (n - 4) := by
   obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le hn

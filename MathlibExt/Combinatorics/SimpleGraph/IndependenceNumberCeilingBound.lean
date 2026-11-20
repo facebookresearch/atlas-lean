@@ -14,24 +14,55 @@ Copyright 2026 The Formal Conjectures Authors.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 -/
 
-import Mathlib
+module
 
+public import Mathlib.Algebra.Order.Chebyshev
+public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Algebra.Order.Star.Int
+public import Mathlib.Algebra.Order.Star.Real
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import Mathlib.Data.Fintype.Defs
+public import Mathlib.Tactic.IntervalCases
+public import MathlibExt.Combinatorics.SimpleGraph.DegreeL2Norm
+public import MathlibExt.Combinatorics.SimpleGraph.NeighborhoodIndependence
 
+@[expose] public section
 
+/-!
+# Written on the Wall II, Conjecture 100
 
+For a finite simple connected graph `G` on at least two vertices,
+`α(G) ≤ ⌈(max_v l(v) + ½ · length(Gᶜ)) / 2⌉`, where `α(G)` is the independence
+number, `l(v)` is the independence number of the neighbourhood of `v`, and
+`length(H)` is the Euclidean norm of the degree sequence of `H`.
 
+The proof takes a maximum independent set `S`, writes `T` for its complement,
+double counts the edges between `S` and `T` to get `|S| ≤ |T| · max_v l(v)`,
+bounds the complement degrees of the vertices of `S` and of `T` from below, and
+feeds the resulting sum-of-squares bound into Cauchy–Schwarz.
 
+## Source and provenance
 
+The statement of `conjecture100` is copied verbatim from
+`FormalConjectures/WrittenOnTheWallII/GraphConjecture100.lean` of
+[google-deepmind/formal-conjectures](https://github.com/google-deepmind/formal-conjectures),
+which transcribes
+[WOWII Conjecture 100](http://cms.uhd.edu/faculty/delavinae/research/wowII/all.html#conj100)
+of E. DeLaVina's *Written on the Wall II*. It carried the Formal Conjectures
+attribute `@[category research open, AMS 5]` at the revision this development was
+written against; upstream now records it as `research solved` with an independent
+Lean proof. The Formal Conjectures attributes are dropped here because this
+repository does not depend on `FormalConjecturesUtil`; nothing else in the
+statement is changed. `SimpleGraph.indepNeighborsCard` and
+`SimpleGraph.degreeL2Norm` are the Formal Conjectures definitions, ported in
+`MathlibExt.Combinatorics.SimpleGraph.NeighborhoodIndependence` and
+`MathlibExt.Combinatorics.SimpleGraph.DegreeL2Norm`.
 
+## Main results
 
-
-
-
-
-
-
-
-import FormalConjecturesUtil
+- `WrittenOnTheWallII.GraphConjecture100.conjecture100`: the ceiling bound.
+-/
 
 set_option maxHeartbeats 1000000
 
@@ -76,7 +107,18 @@ variable {α : Type*} [Fintype α] [DecidableEq α] [Nontrivial α]
 
 
 
-@[category research open, AMS 5]
+/--
+**Written on the Wall II, Conjecture 100.** For a simple connected graph `G` on a
+nontrivial finite vertex type,
+`α(G) ≤ ⌈(max_v l(v) + ½ · length(Gᶜ)) / 2⌉`, where `α(G) = G.indepNum`,
+`l(v) = indepNeighborsCard G v` is the independence number of the neighbourhood of
+`v`, and `length(Gᶜ) = degreeL2Norm Gᶜ` is the Euclidean norm of the degree
+sequence of the complement.
+
+Statement copied verbatim from
+`FormalConjectures/WrittenOnTheWallII/GraphConjecture100.lean`
+(`WrittenOnTheWallII.GraphConjecture100.conjecture100`).
+-/
 theorem conjecture100 (G : SimpleGraph α) [DecidableRel G.Adj] (h : G.Connected) :
     let maxL := (Finset.univ.image (indepNeighborsCard G)).max' (by simp)
     (G.indepNum : ℝ) ≤ ⌈((maxL : ℝ) + (1 / 2) * (degreeL2Norm Gᶜ : ℝ)) / 2⌉ := by
@@ -157,7 +199,8 @@ theorem conjecture100 (G : SimpleGraph α) [DecidableRel G.Adj] (h : G.Connected
     let x : α := Classical.choice (inferInstance : Nonempty α)
     have hsingle : G.IsIndepSet (({x} : Finset α) : Set α) := by simp
     have hone : ({x} : Finset α).card ≤ G.indepNum := hsingle.card_le_indepNum
-    simpa [hScard] using hone
+    have h1 : 1 ≤ G.indepNum := by simpa using hone
+    omega
   have hmpos : 0 < m := by
     nlinarith
   have hdis : Disjoint S T := Finset.disjoint_sdiff
@@ -191,7 +234,7 @@ theorem conjecture100 (G : SimpleGraph α) [DecidableRel G.Adj] (h : G.Connected
     have hnon : ∀ v ∈ T,
         S.card - m ≤ (S.filter (fun s => ¬ G.Adj v s)).card := by
       intro v hv
-      have hp := Finset.filter_card_add_filter_neg_card_eq_card
+      have hp := Finset.card_filter_add_card_filter_not
         (s := S) (p := G.Adj v)
       have ha := hinter v
       omega
@@ -218,7 +261,7 @@ theorem conjecture100 (G : SimpleGraph α) [DecidableRel G.Adj] (h : G.Connected
         Finset.sum_le_sum fun s hs => hpoint s hs
   have houtside (v : α) (hv : v ∈ T) : S.card - m ≤ Gᶜ.degree v := by
     have hnon : S.card - m ≤ (S.filter (fun s => ¬ G.Adj v s)).card := by
-      have hp := Finset.filter_card_add_filter_neg_card_eq_card
+      have hp := Finset.card_filter_add_card_filter_not
         (s := S) (p := G.Adj v)
       have ha := hinter v
       omega

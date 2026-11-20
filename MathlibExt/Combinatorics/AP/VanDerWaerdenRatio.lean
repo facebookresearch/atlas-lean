@@ -14,36 +14,94 @@ Copyright 2025 The Formal Conjectures Authors.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 -/
 
-import Mathlib
+module
 
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
+public import Mathlib.Algebra.LinearRecurrence
+public import Mathlib.Algebra.Order.Archimedean.Defs
+public import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
+public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Algebra.Order.Star.Rat
+public import Mathlib.Algebra.Order.Star.Real
+public import Mathlib.Algebra.Polynomial.Basic
+public import Mathlib.Analysis.SpecificLimits.Basic
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Combinatorics.HalesJewett
+public import Mathlib.Data.Finset.Defs
+public import Mathlib.Data.Nat.GCD.Basic
+public import Mathlib.Data.Nat.GCD.BigOperators
+public import Mathlib.Data.Nat.Notation
+public import Mathlib.Data.Nat.Prime.Basic
+public import Mathlib.Data.Nat.Prime.Defs
+public import Mathlib.Data.Set.Card
+public import Mathlib.Data.ZMod.Basic
+public import Mathlib.FieldTheory.Finite.GaloisField
+public import Mathlib.FieldTheory.Minpoly.Basic
+public import Mathlib.GroupTheory.Nilpotent
+public import Mathlib.GroupTheory.OrderOfElement
+public import Mathlib.GroupTheory.SpecificGroups.Cyclic.Subgroup
+public import Mathlib.NumberTheory.Bertrand
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Order.ConditionallyCompleteLattice.Basic
+public import Mathlib.Order.Filter.AtTopBot.Tendsto
+public import Mathlib.Order.Filter.Defs
+public import Mathlib.Order.Interval.Finset.Defs
+public import Mathlib.Order.Lattice.Nat
+public import Mathlib.RingTheory.Flat.TorsionFree
+public import Mathlib.RingTheory.Henselian
+public import Mathlib.RingTheory.IntegralClosure.Algebra.Basic
+public import Mathlib.RingTheory.RegularLocalRing.Defs
+public import Mathlib.RingTheory.SimpleRing.Principal
+public import Mathlib.RingTheory.Trace.Basic
+public import Mathlib.RingTheory.Trace.Defs
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.Lemma
+public import Mathlib.Tactic.Linarith.Frontend
+public import Mathlib.Tactic.NormNum.Core
+public import Mathlib.Tactic.Positivity.Core
+public import MathlibExt.Combinatorics.AP.Basic
 
+@[expose] public section
 
+/-!
+# van der Waerden numbers grow faster than `2 ^ k`
 
+For `r` colours and length `k`, `Erdos138.monoAPNumber r k` is the van der Waerden
+number: the least `N` such that every `r`-colouring of `{1, ..., N}` has a
+monochromatic arithmetic progression of length `k`. Writing `W k` for the
+two-colour number, this file proves `W k / 2 ^ k → ∞`, which Erdős asked about in
+*A survey of problems in combinatorial number theory* (1980) and which is
+[Erdős problem 138](https://www.erdosproblems.com/138), variant
+`erdos_138.variants.dvd_two_pow`.
 
+The proof is Berlekamp's construction: for a set `S` of distinct primes one builds
+a two-colouring of `{1, ..., M * Q}`, where `M = ∑ p ∈ S, p` and
+`Q = ∏ p ∈ S, (2 ^ p - 1)`, out of the m-sequences of primitive elements of the
+fields `GF(2 ^ p)`, and shows it has no monochromatic arithmetic progression of
+length `k`.
 
+## Source and provenance
 
+`monoAP_guarantee_set`, `monoAPNumber`, `W` and the statement of
+`erdos_138.variants.dvd_two_pow` are copied verbatim from
+`FormalConjectures/ErdosProblems/138.lean` of
+[google-deepmind/formal-conjectures](https://github.com/google-deepmind/formal-conjectures);
+`erdos_138_variants_dvd_two_pow_statement` is a `Prop`-valued abbreviation for that
+statement, added by this development. The statement carried the Formal Conjectures
+attribute `@[category research open, AMS 11]` at the revision this development was
+written against; upstream now records it as `research solved`, citing a Lean proof
+derived from these Atlas proofs. The Formal Conjectures attributes are dropped here
+because this repository does not depend on `FormalConjecturesUtil`; nothing else in
+the statement is changed. `ContainsMonoAPofLength` is the Formal Conjectures
+definition, ported in `MathlibExt.Combinatorics.AP.Basic`.
 
+## Main results
 
-
-
-
-
-
-
-
-import FormalConjecturesUtil
-
-
-
-
-
-
-
-
-
-
-
-
+- `Erdos138.monoAPNumber`, `Erdos138.W`: van der Waerden numbers.
+- `Erdos138.erdos_138.variants.dvd_two_pow`: `W k / 2 ^ k → ∞`.
+-/
 
 open Nat Filter
 
@@ -56,6 +114,13 @@ namespace Erdos138
 
 
 
+/--
+The set of natural numbers that guarantee a monochromatic arithmetic progression.
+
+A number `N` belongs to this set if, for a given number of colors `r` and an arithmetic
+progression length `k`, any `r`-coloring of the integers `{1, ..., N}` must contain a
+monochromatic arithmetic progression of length `k`.
+-/
 def monoAP_guarantee_set (r k : ℕ) : Set ℕ :=
   { N | ∀ coloring : Finset.Icc 1 N → Fin r, ContainsMonoAPofLength coloring k}
 
@@ -169,6 +234,11 @@ lemma monoAP_guarantee_set_two_nonempty (k : ℕ) :
 
 
 
+/--
+The **van der Waerden number**, is the smallest integer `N` such that any `r`-coloring of
+`{1, ..., N}` is guaranteed to contain a monochromatic arithmetic progression of
+length `k`. It is defined as the infimum of the (non-empty) set of all such numbers `N`.
+-/
 noncomputable def monoAPNumber (r k : ℕ) : ℕ := sInf (monoAP_guarantee_set r k)
 
 lemma le_monoAPNumber_of_not_guarantee_before {r k L : ℕ}
@@ -268,6 +338,11 @@ lemma exists_bad_coloring_of_lt_two_mul_sub_one {k N : ℕ} (hk : 1 ≤ k)
 
 
 
+/--
+An abbreviation for the van der Waerden number for 2 colors, commonly written as `W(k)`.
+This represents the smallest integer `N` such that any 2-coloring of `{1, ..., N}`
+must contain a monochromatic arithmetic progression of length `k`.
+-/
 noncomputable abbrev W : ℕ → ℕ := monoAPNumber 2
 
 lemma W_mem_monoAP_guarantee_set (k : ℕ) :
@@ -321,6 +396,8 @@ lemma W_one : W 1 = 1 := by
   · exact Nat.sInf_le one_mem_monoAP_guarantee_set_one
   · exact W_ge_length 1
 
+/-- The assertion `W k / 2 ^ k → ∞`, named so that the proof can be stated against it;
+it is definitionally the statement of `erdos_138.variants.dvd_two_pow` upstream. -/
 def erdos_138_variants_dvd_two_pow_statement : Prop := atTop.Tendsto (fun k => ((W k : ℚ)/ (2 ^ k))) atTop
 
 lemma tendsto_ratio_of_nat_lower
@@ -424,7 +501,7 @@ lemma one_sub_sum_le_prod_one_sub {α : Type*} [DecidableEq α]
       Finset.prod_nonneg fun i hi =>
         sub_nonneg.mpr (hf1 i (Finset.mem_insert_of_mem hi))
     have hprod1 : ∏ i ∈ S, (1 - f i) ≤ 1 := by
-      apply Finset.prod_le_one
+      apply Finset.prod_le_one₀
       · intro i hi
         exact sub_nonneg.mpr (hf1 i (Finset.mem_insert_of_mem hi))
       · intro i hi
@@ -548,14 +625,15 @@ lemma minpoly_primitiveBinaryUnit_pow_natDegree {p d : ℕ} (hp : Nat.Prime p)
   · exfalso
     have hrange := minpoly.natDegree_eq_one_iff.mp hdeg
     rcases hrange with ⟨z, hz⟩
-    fin_cases z
-    · have hzero : β = 0 := by simpa using hz.symm
+    have hz01 : ∀ w : ZMod 2, w = 0 ∨ w = 1 := by decide
+    rcases hz01 z with rfl | rfl
+    · have hzero : β = 0 := by simpa [map_zero] using hz.symm
       have hne : β ≠ 0 := by
         dsimp [β]
         exact pow_ne_zero _ (Units.ne_zero _)
       exact hne hzero
     · apply hβ1
-      simpa using hz.symm
+      simpa [map_one] using hz.symm
   · exact hdeg
 
 lemma polynomial_coeff_finset_sum {R ι : Type*} [CommRing R] [DecidableEq ι]
@@ -580,37 +658,28 @@ lemma recurrenceOfMonic_charPoly {R : Type*} [CommRing R] {P : Polynomial R}
     Polynomial.coeff_X_pow]
   rw [polynomial_coeff_finset_sum]
   simp only [Polynomial.coeff_monomial]
+  -- Replace the `Fintype (Fin (recurrenceOfMonic P).order)` instance coming from
+  -- `LinearRecurrence.charPoly` by the canonical `Fintype (Fin P.natDegree)` one, which the
+  -- rewrites below match against. The two are definitionally equal.
+  show ((if P.natDegree = n then (1 : R) else 0) -
+      ∑ x : Fin P.natDegree, if (x : ℕ) = n then -P.coeff (x : ℕ) else 0) = P.coeff n
   by_cases hn : n = P.natDegree
   · subst n
-    have hz : (∑ i : Fin P.natDegree,
-        if (i : ℕ) = P.natDegree then -P.coeff i else 0) = 0 := by
-      apply Finset.sum_eq_zero
-      intro i hi
-      simp [Nat.ne_of_lt i.isLt]
-    rw [hz]
+    rw [Finset.sum_eq_zero (fun i _ => by simp [Nat.ne_of_lt i.isLt])]
     simp [hP.coeff_natDegree]
   · by_cases hlt : n < P.natDegree
-    · have hs : (∑ i : Fin P.natDegree,
-          if (i : ℕ) = n then -P.coeff i else 0) = -P.coeff n := by
-        rw [Finset.sum_eq_single ⟨n, hlt⟩]
-        · simp
-        · intro b hb hne
-          have hv : (b : ℕ) ≠ n := by
-            intro he
-            exact hne (Fin.ext he)
-          simp [hv]
-        · simp
-      rw [hs]
+    · rw [Finset.sum_eq_single (⟨n, hlt⟩ : Fin P.natDegree)
+        (fun b _ hne => by
+          have hv : (b : ℕ) ≠ n := fun he => hne (Fin.ext he)
+          simp [hv])
+        (fun hnot => absurd (Finset.mem_univ _) hnot)]
       simp [hn, Ne.symm hn]
     · have hgt : P.natDegree < n := by omega
       have hc : P.coeff n = 0 := Polynomial.coeff_eq_zero_of_natDegree_lt hgt
-      have hz : (∑ i : Fin P.natDegree,
-          if (i : ℕ) = n then -P.coeff i else 0) = 0 := by
-        apply Finset.sum_eq_zero
-        intro i hi
+      rw [Finset.sum_eq_zero (fun i _ => by
+        have hi := i.isLt
         have hv : (i : ℕ) ≠ n := by omega
-        simp [hv]
-      rw [hz, hc]
+        simp [hv]), hc]
       simp [hn, Ne.symm hn]
 
 noncomputable def recurrenceMap {R S : Type*} [CommRing R] [CommRing S]
@@ -622,7 +691,7 @@ lemma recurrenceMap_charPoly {R S : Type*} [CommRing R] [CommRing S]
     (f : R →+* S) (E : LinearRecurrence R) :
     (recurrenceMap f E).charPoly = E.charPoly.map f := by
   rw [LinearRecurrence.charPoly, LinearRecurrence.charPoly]
-  simp [recurrenceMap, Polynomial.map_sub, Polynomial.map_sum]
+  simp [recurrenceMap, Polynomial.map_sub, Polynomial.map_sum] <;> rfl
 
 lemma linearMap_solution {R S : Type*} [CommRing R] [CommRing S]
     [Algebra R S] (E : LinearRecurrence R) (u : ℕ → S)
@@ -631,7 +700,8 @@ lemma linearMap_solution {R S : Type*} [CommRing R] [CommRing S]
   intro n
   have hh := congrArg L (h n)
   rw [map_sum] at hh
-  simpa [recurrenceMap, ← Algebra.smul_def] using hh
+  simp only [recurrenceMap, ← Algebra.smul_def, map_smul, smul_eq_mul] at hh
+  exact hh
 
 lemma trace_mul_geom_solution {K F : Type*} [Field K] [Field F] [Algebra K F]
     [FiniteDimensional K F] (P : Polynomial K) (hP : P.Monic)
@@ -674,7 +744,7 @@ lemma combinedMinpoly_natDegree_le (S : Finset ℕ)
   · apply Finset.sum_le_sum
     intro p hp
     simpa [GaloisField.finrank 2 (hS p hp).ne_zero] using
-      (minpoly.natDegree_le (K := ZMod 2)
+      (minpoly.natDegree_le (A := ZMod 2)
         ((primitiveBinaryUnit p : BinaryGaloisField p) ^ d))
   · intro p hp
     exact minpoly.ne_zero (IsIntegral.of_finite (ZMod 2)
@@ -833,7 +903,7 @@ lemma componentDifference_nonzero_somewhere {p a d T : ℕ} (hp : Nat.Prime p)
     by_contra hn
     push_neg at hn
     apply hc
-    apply (traceForm_nondegenerate (ZMod 2) (BinaryGaloisField p) c)
+    apply (traceForm_nondegenerate (ZMod 2) (BinaryGaloisField p)).1 c
     intro b
     simpa only [Algebra.traceForm_apply] using hn b
   have hlin : LinearIndependent (ZMod 2)
@@ -999,7 +1069,7 @@ lemma bad_coloring_from_prime_set {S : Finset ℕ} {k N : ℕ}
       simpa using x0.property
     have hx0lo := hp.1
     rw [hx0] at hx0lo
-    simpa using hx0lo
+    omega
   have hxMle : a + M * d ≤ N := by
     rw [← hxM]
     exact (Finset.mem_Icc.mp xM.property).2
@@ -1021,7 +1091,15 @@ lemma bad_coloring_from_prime_set {S : Finset ℕ} {k N : ℕ}
 
 
 
-@[category research open, AMS 11]
+/--
+**`W k / 2 ^ k → ∞`** (Erdős, *A survey of problems in combinatorial number theory*,
+1980; [Erdős problem 138](https://www.erdosproblems.com/138)). Erdős asked whether
+$W(k)/2^k \to \infty$ for the two-colour van der Waerden numbers; it does.
+
+Statement copied verbatim from `FormalConjectures/ErdosProblems/138.lean`
+(`Erdos138.erdos_138.variants.dvd_two_pow`), via the abbreviation
+`erdos_138_variants_dvd_two_pow_statement`.
+-/
 theorem erdos_138.variants.dvd_two_pow :
     erdos_138_variants_dvd_two_pow_statement := by
   rw [tendsto_ratio_iff_eventually_bad_coloring]
@@ -1061,8 +1139,7 @@ theorem erdos_138.variants.dvd_two_pow :
         Nat.mul_le_mul_right (2 ^ (k - 3)) hcoef
       _ ≤ M * Q := Nat.mul_le_mul hMlow hQlow
   apply bad_coloring_from_prime_set hS (by simpa [M] using hMpos)
-  · dsimp [M]
-    rcases hsum with hsum | hsum <;> omega
+  · rcases hsum with hsum | hsum <;> omega
   · have hsub : (n + 1) * 2 ^ k - 1 ≤ M * Q :=
       (Nat.sub_le ((n + 1) * 2 ^ k) 1).trans hlarge
     simpa [M, Q] using hsub

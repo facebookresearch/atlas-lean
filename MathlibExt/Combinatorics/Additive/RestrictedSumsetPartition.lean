@@ -14,36 +14,78 @@ Copyright 2026 The Formal Conjectures Authors.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 -/
 
-import Mathlib
+module
 
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Algebra.Group.Nat.Defs
+public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Algebra.Order.Star.Int
+public import Mathlib.Algebra.Order.Star.Real
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Data.Finset.Defs
+public import Mathlib.Data.Finset.Image
+public import Mathlib.Data.Nat.Log
+public import Mathlib.Data.Nat.Notation
+public import Mathlib.Order.Defs.LinearOrder
+public import Mathlib.Order.Filter.Defs
+public import Mathlib.Order.Interval.Finset.Defs
+public import Mathlib.Order.Interval.Finset.Nat
+public import Mathlib.Order.Partition.Finpartition
+public import Mathlib.Order.SuccPred.Nat
+public import Mathlib.Tactic.Linarith.Frontend
+public import Mathlib.Tactic.Linarith.Lemmas
+public import Mathlib.Tactic.NormNum.Core
+public import Mathlib.Tactic.NormNum.Ineq
+public import Mathlib.Tactic.Positivity.Core
+public import Mathlib.Tactic.Ring.RingNF
+public import Mathlib.Tactic.Zify
+public import MathlibExt.Combinatorics.Additive.RestrictedSumset
 
+@[expose] public section
 
+/-!
+# Partitions of `[N]` with small union of restricted sumsets
 
+`Green25.Property25 k N` says that every partition of `{1, ..., N}` into `k` parts
+has `10 * |⋃ᵢ (Aᵢ +̂ Aᵢ)| ≥ N`, where `S +̂ S` is the restricted sumset. Green's
+open problem 25 asks for which `k` this holds; the best known upper bound for the
+range where it fails is `k ≍ N / log N`. This file lowers that bound: it builds,
+for all large `N`, a partition into `k(N) = o(N / log N)` parts whose restricted
+sumsets cover less than `N / 10` points.
 
+## Source and provenance
 
+`Property25` and `bestUpper` are copied verbatim from
+`FormalConjectures/GreensOpenProblems/25.lean` of
+[google-deepmind/formal-conjectures](https://github.com/google-deepmind/formal-conjectures).
 
+The statement `green_25.upper` is **not** a verbatim copy. Upstream states it as a
+value question, with an opaque `green_25.upper.answer : ℕ → ℕ` left as `sorry`:
 
+```
+theorem green_25.upper :
+    (∀ᶠ N in atTop, 1 ≤ green_25.upper.answer N ∧ green_25.upper.answer N ≤ N) ∧
+    (fun N => (green_25.upper.answer N : ℝ)) =o[atTop] bestUpper ∧
+    ¬ ∀ᶠ N in atTop, Property25 (green_25.upper.answer N) N
+```
 
+Here the opaque answer is replaced by an existential quantifier over the witness,
+and the last conjunct is strengthened from `¬ ∀ᶠ N, Property25 ..` ("not
+eventually") to `∀ᶠ N, ¬ Property25 ..` ("eventually not"); over `atTop` the
+latter implies the former, so the claim proved below is at least as strong as the
+upstream one in that conjunct, and weaker only in that it does not name the
+witness. Upstream records the same mathematical content, for the explicit witness
+`k N = ⌈N ^ (23 / 40)⌉`, as the `research solved` theorem
+`green_25.variants.upper_pow_23_40`. The statement carried the Formal Conjectures
+attribute `@[category research open, AMS 5 11]` at the revision this development
+was written against.
 
+## Main results
 
-
-
-
-
-
-import FormalConjecturesUtil
-
-
-
-
-
-
-
-
-
-
-
-
+- `Green25.Property25`: the covering property of a `k`-part partition.
+- `Green25.green_25.upper`: a witness `k = o(N / log N)` for which the property
+  eventually fails.
+-/
 
 open Asymptotics Filter Finset
 
@@ -53,12 +95,17 @@ namespace Green25
 
 
 
+/--
+For which values of $k$ is the following true: whenever we partition $[N] = A_1 \cup \dots \cup A_k$,
+$\left|\bigcup^k_{i=1} (A_i \hat{+} A_i)\right| \geq \frac{1}{10} N$?
+-/
 def Property25 (k N : ℕ) : Prop :=
   1 ≤ k ∧ k ≤ N ∧
   ∀ P : Finpartition (Icc 1 N), #P.parts = k →
   10 * #(P.parts.biUnion Finset.restrictedSumset) ≥ N
 
 
+/-- The best-known upper bound [ESS89]. -/
 noncomputable def bestUpper (N : ℕ) : ℝ := (N : ℝ) / Real.log N
 
 
@@ -202,7 +249,9 @@ lemma complemented_digit_partition (Q m r : ℕ) (hQ : 2 ≤ Q) (heven : 2 ∣ Q
       have hv : flipVector Q r v b = flipVector Q r v c := by
         apply finFunctionFinEquiv.injective
         apply Fin.ext
-        simpa [f, encodeVector] using congrArg (fun n => n - 1) hbc
+        have h' := hbc
+        simp only [f, encodeVector] at h'
+        omega
       funext j
       let i : Fin m := ⟨j, lt_of_lt_of_le j.isLt hr⟩
       have hij : i.1 < r := j.isLt
@@ -859,7 +908,17 @@ private lemma linear_le_pow25 (u : ℕ) (hu : 5 ≤ u) : 4 + 4 * u ≤ 2 ^ u := 
 
 set_option maxHeartbeats 800000 in
 
-@[category research open, AMS 5 11]
+/--
+**The known upper bound for Green's problem 25 can be lowered.** There is a
+`k : ℕ → ℕ` with `1 ≤ k N ≤ N` eventually, `k = o(N / log N)`, and
+`¬ Property25 (k N) N` for all large `N`.
+
+This is a restatement of `Green25.green_25.upper` of
+`FormalConjectures/GreensOpenProblems/25.lean`: there the witness is an opaque
+`green_25.upper.answer` left as `sorry`, here it is existentially quantified, and
+the last conjunct is the (stronger over `atTop`) "eventually not" form. See the
+module docstring for the exact comparison.
+-/
 theorem green_25.upper :
     ∃ (candidateAnswer : ℕ → ℕ),
       let ans := (candidateAnswer : ℕ → ℕ)

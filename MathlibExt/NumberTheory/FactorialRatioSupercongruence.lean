@@ -14,35 +14,74 @@ Copyright 2026 The Formal Conjectures Authors.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 -/
 
-import Mathlib
+module
 
+public import Mathlib.Algebra.BigOperators.Associated
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import Mathlib.Algebra.BigOperators.ModEq
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Algebra.Group.Nat.Defs
+public import Mathlib.Algebra.GroupWithZero.Divisibility
+public import Mathlib.Algebra.Order.GroupWithZero.Basic
+public import Mathlib.Algebra.Order.Ring.Nat
+public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Algebra.Order.Star.Basic
+public import Mathlib.Algebra.Order.Star.Int
+public import Mathlib.Basic.Logic.Basic
+public import Mathlib.Data.Finset.Defs
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.Int.ModEq
+public import Mathlib.Data.Nat.Choose.Basic
+public import Mathlib.Data.Nat.Choose.Factorization
+public import Mathlib.Data.Nat.Choose.Lucas
+public import Mathlib.Data.Nat.Factorial.Basic
+public import Mathlib.Data.Nat.Factorial.BigOperators
+public import Mathlib.Data.Nat.Notation
+public import Mathlib.Data.ZMod.Basic
+public import Mathlib.RingTheory.Coprime.Basic
+public import Mathlib.RingTheory.Int.Basic
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.FieldSimp.Lemmas
+public import Mathlib.Tactic.IntervalCases
+public import Mathlib.Tactic.Linarith.Frontend
+public import Mathlib.Tactic.NormNum.Prime
+public import Mathlib.Tactic.Positivity.Core
+public import Mathlib.Tactic.Ring.RingNF
+public import Mathlib.Topology.GDelta.Basic
 
+@[expose] public section
 
+/-!
+# A supercongruence for the factorial ratio `(30n)! n! / ((15n)! (10n)! (6n)!)`
 
+[A211417](https://oeis.org/A211417) is the integral factorial ratio
+`a n = (30n)! n! / ((15n)! (10n)! (6n)!)`. Peter Bala conjectured (Jan 24 2020)
+the supercongruence `a (p ^ k) ≡ a (p ^ (k - 1)) [MOD p ^ (3 k)]` for every prime
+`p ≥ 5` and every `k ≥ 1`. This file proves it.
 
+The proof follows Bala's sketch: write `a n * C(6n, n) = C(30n, 15n) * C(15n, 10n)`,
+apply the Jacobsthal–Wolstenholme prime-power supercongruence to each binomial
+coefficient, and cancel `C(6 p ^ k, p ^ k)`, which is coprime to `p` by Lucas'
+theorem.
 
+## Source and provenance
 
+`a` and the statement of `supercongruence` are copied verbatim from
+`FormalConjectures/OEIS/211417.lean` of
+[google-deepmind/formal-conjectures](https://github.com/google-deepmind/formal-conjectures).
+The statement carried the Formal Conjectures attribute
+`@[category research open, AMS 11]` at the revision this development was written
+against; upstream now records it as `research solved`, citing a Lean proof derived
+from these Atlas proofs. The Formal Conjectures attributes are dropped here
+because this repository does not depend on `FormalConjecturesUtil`; nothing else
+in the statement is changed.
 
+## Main results
 
-
-
-
-
-
-
-
-import FormalConjecturesUtil
-
-
-
-
-
-
-
-
-
-
-
+- `OeisA211417.a`: the factorial ratio sequence.
+- `OeisA211417.supercongruence`: `p ^ (3 k) ∣ a (p ^ k) - a (p ^ (k - 1))`.
+-/
 
 namespace OeisA211417
 
@@ -51,6 +90,10 @@ namespace OeisA211417
 
 
 
+/--
+Integral factorial ratio sequence:
+$$a(n) = \frac{(30n)! n!}{(15n)! (10n)! (6n)!}$$
+-/
 def a (n : ℕ) : ℕ :=
   (Nat.factorial (30 * n) * Nat.factorial n) /
   (Nat.factorial (15 * n) * Nat.factorial (10 * n) * Nat.factorial (6 * n))
@@ -880,7 +923,14 @@ private lemma prime_not_dvd_choose_six (p k : ℕ) (hp : p.Prime) (hp5 : 5 ≤ p
 
 
 
-@[category research open, AMS 11]
+/--
+**Bala's supercongruence for A211417.** For every prime `p ≥ 5` and every `k ≥ 1`,
+`a (p ^ k) ≡ a (p ^ (k - 1))` modulo `p ^ (3 k)`. Conjectured by Peter Bala
+(Jan 24 2020) in [A211417](https://oeis.org/A211417).
+
+Statement copied verbatim from `FormalConjectures/OEIS/211417.lean`
+(`OeisA211417.supercongruence`).
+-/
 theorem supercongruence (p k : ℕ) (hp : p.Prime) (hp5 : 5 ≤ p) (hk : 0 < k) :
     (p : ℤ) ^ (3 * k) ∣ ((a (p ^ k) : ℤ) - (a (p ^ (k - 1)) : ℤ)) := by
   let M : ℤ := (p : ℤ) ^ (3 * k)

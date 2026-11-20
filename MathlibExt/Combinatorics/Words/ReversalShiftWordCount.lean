@@ -14,36 +14,89 @@ Copyright 2026 The Formal Conjectures Authors.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 -/
 
-import Mathlib
+module
 
+public import Mathlib.Algebra.AffineMonoid.Basic
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import Mathlib.Algebra.BigOperators.NatAntidiagonal
+public import Mathlib.Algebra.EuclideanDomain.Int
+public import Mathlib.Algebra.Group.Even
+public import Mathlib.Algebra.Group.Int.Even
+public import Mathlib.Algebra.Order.Star.Basic
+public import Mathlib.Algebra.Polynomial.Div
+public import Mathlib.Algebra.Ring.Int.Parity
+public import Mathlib.Algebra.Ring.Parity
+public import Mathlib.Analysis.Normed.Ring.Lemmas
+public import Mathlib.Basic.Finite.Defs
+public import Mathlib.Data.Bool.Count
+public import Mathlib.Data.Finset.Defs
+public import Mathlib.Data.Finset.Powerset
+public import Mathlib.Data.Fintype.Fin
+public import Mathlib.Data.Int.Notation
+public import Mathlib.Data.List.Basic
+public import Mathlib.Data.List.Induction
+public import Mathlib.Data.List.OfFn
+public import Mathlib.Data.Nat.Cast.Defs
+public import Mathlib.Data.Nat.Choose.Sum
+public import Mathlib.Data.Nat.Fib.Basic
+public import Mathlib.Data.Nat.Find
+public import Mathlib.Data.Nat.Notation
+public import Mathlib.Data.Set.Card
+public import Mathlib.Data.Set.Card.Arithmetic
+public import Mathlib.Data.Set.Defs
+public import Mathlib.Data.Set.Disjoint
+public import Mathlib.Data.Set.Finite.Basic
+public import Mathlib.Data.Set.Finite.List
+public import Mathlib.Data.Set.Insert
+public import Mathlib.Data.Set.Operations
+public import Mathlib.Data.Vector.Defs
+public import Mathlib.Logic.Equiv.Defs
+public import Mathlib.Logic.Relation
+public import Mathlib.Order.BooleanAlgebra.Set
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Order.Defs.Unbundled
+public import Mathlib.Order.Interval.Finset.Defs
+public import Mathlib.Order.SetNotation
+public import Mathlib.RingTheory.PowerSeries.Basic
+public import Mathlib.RingTheory.PowerSeries.Catalan
+public import Mathlib.RingTheory.PowerSeries.Inverse
+public import Mathlib.Tactic.Convert
+public import Mathlib.Tactic.Lemma
+public import Mathlib.Tactic.NormNum.Core
+public import Mathlib.Tactic.Ring.RingNF
+public import Mathlib.Tactic.SetNotationForOrder
 
+@[expose] public section
 
+/-!
+# Counting the words of [A108081](https://oeis.org/A108081)
 
+`OeisA108081.XWord` is the smallest set of integer words containing `[0]` and
+closed under `w ↦ l u ++ v` and `w ↦ u ++ r v`, where `l` reverses a word and
+subtracts `1` from each letter and `r` reverses it and adds `1`. A108081 observes
+that the number of such words of length `n` equals `a (n - 1)` for `n ≤ 12`,
+where `a n = ∑_{k ≤ n} C(n + k - 1, k) F(n - k + 1)`, and asks whether this always
+holds. This file proves that it does.
 
+## Source and provenance
 
+`a`, `Word`, `l`, `r`, `XWord`, `xN` and the statement of
+`count_words_in_x_is_a_shifted` are copied verbatim from
+`FormalConjectures/OEIS/108081.lean` of
+[google-deepmind/formal-conjectures](https://github.com/google-deepmind/formal-conjectures).
+The statement carried the Formal Conjectures attribute
+`@[category research open, AMS 5]` at the revision this development was written
+against; upstream now records it as `research solved`, citing a Lean proof derived
+from these Atlas proofs. The Formal Conjectures attributes are dropped here
+because this repository does not depend on `FormalConjecturesUtil`; nothing else
+in the statement is changed.
 
+## Main results
 
-
-
-
-
-
-
-
-
-import FormalConjecturesUtil
-
-
-
-
-
-
-
-
-
-
-
-
+- `OeisA108081.count_words_in_x_is_a_shifted`: `|X_n| = a (n - 1)` for `n ≥ 1`.
+-/
 
 namespace OeisA108081
 
@@ -51,17 +104,22 @@ open Nat
 
 
 
+/-- The primary defining sequence `a`.
+$a(n) = \sum_{k=0}^n \binom{n+k-1}{k} F(n-k+1)$, where $F(m)$ is the $m$-th Fibonacci number. -/
 def a (n : ℕ) : ℕ :=
   ∑ k ∈ Finset.range (n + 1), (n + k - 1).choose k * fib (n - k + 1)
 
 
+/-- Words are finite sequences of integers. -/
 abbrev Word := List ℤ
 
 
+/-- `l w` is the word obtained by reversing `w` and subtracting 1 from every term. -/
 def l (w : Word) : Word :=
   w.reverse.map (fun x => x - 1)
 
 
+/-- `r w` is the word obtained by reversing `w` and adding 1 to every term. -/
 def r (w : Word) : Word :=
   w.reverse.map (fun x => x + 1)
 
@@ -94,6 +152,9 @@ lemma mem_r_iff {z : ℤ} {w : Word} : z ∈ r w ↔ z - 1 ∈ w := by
 
 
 
+/--
+`XWord` is the smallest set of words satisfying the inductive properties described in A108081.
+-/
 inductive XWord : Word → Prop
   | base : XWord [0]
   | step_left {u v : Word} (hu : XWord u) (hv : XWord v) : XWord (l u ++ v)
@@ -472,13 +533,13 @@ def CoordForestForm (root : EdgeCoord) (w : List EdgeCoord) : Prop :=
       (w.getLast?.map rightIndex = some (rightIndex root))
 
 lemma XInsert.toCoord {w : Word} (hw : XInsert w) : CoordInsert (coordWord w) := by
-  simpa [XInsert, CoordInsert, coordWord, edgeCoord] using
-    Relation.ReflTransGen.lift coordWord (fun _ _ h => h.toCoord) hw
+  simpa [XInsert, CoordInsert, coordWord, edgeCoord, Function.onFun] using
+    Relation.ReflTransGen.lift coordWord (fun _ _ h => h.toCoord) _ _ hw
 
 lemma CoordInsert.toXInsert {w : List EdgeCoord} (hw : CoordInsert w) :
     XInsert (w.map edgeValue) := by
-  simpa [XInsert, CoordInsert, edgeValue] using
-    Relation.ReflTransGen.lift (List.map edgeValue) (fun _ _ h => h.toExpand) hw
+  simpa [XInsert, CoordInsert, edgeValue, Function.onFun] using
+    Relation.ReflTransGen.lift (List.map edgeValue) (fun _ _ h => h.toExpand) _ _ hw
 
 lemma coordInsert_iff {w : Word} : CoordInsert (coordWord w) ↔ XInsert w := by
   constructor
@@ -497,15 +558,15 @@ lemma XInsert.expand {u v : Word} (hu : XInsert u) (h : Expand u v) : XInsert v 
 lemma expandStar_with_context {u v : Word} (h : Relation.ReflTransGen Expand u v)
     (p s : Word) : Relation.ReflTransGen Expand (p ++ u ++ s) (p ++ v ++ s) :=
   Relation.ReflTransGen.lift (fun w => p ++ w ++ s)
-    (fun _ _ h' => h'.with_context p s) h
+    (fun _ _ h' => h'.with_context p s) _ _ h
 
 lemma expandStar_map_l {u v : Word} (h : Relation.ReflTransGen Expand u v) :
     Relation.ReflTransGen Expand (l u) (l v) :=
-  Relation.ReflTransGen.lift l (fun _ _ h' => h'.map_l) h
+  Relation.ReflTransGen.lift l (fun _ _ h' => h'.map_l) _ _ h
 
 lemma expandStar_map_r {u v : Word} (h : Relation.ReflTransGen Expand u v) :
     Relation.ReflTransGen Expand (r u) (r v) :=
-  Relation.ReflTransGen.lift r (fun _ _ h' => h'.map_r) h
+  Relation.ReflTransGen.lift r (fun _ _ h' => h'.map_r) _ _ h
 
 lemma XWord.toXInsert {w : Word} (hw : XWord w) : XInsert w := by
   induction hw with
@@ -759,6 +820,7 @@ lemma CoordInsert.forestForm {w : List EdgeCoord} (hw : CoordInsert w) :
   · rcases he.2 with hl | hl <;> simp_all [rightIndex]
 
 
+/-- `xN n` is the set of words in `XWord` of length `n`. -/
 def xN (n : ℕ) : Set Word :=
   {w : Word | XWord w ∧ w.length = n}
 
@@ -1195,7 +1257,7 @@ lemma injOn_bitsToCoords_forestBits (m : ℕ) :
 lemma ncard_coordForestXN (m : ℕ) :
     (coordForestXN m).ncard = (2 * m + 1).choose m := by
   rw [← image_bitsToCoords_forestBits]
-  rw [Set.ncard_image_of_injOn (injOn_bitsToCoords_forestBits m)]
+  rw [Set.InjOn.ncard_image (injOn_bitsToCoords_forestBits m)]
   exact ncard_forestBits m
 
 lemma coordXN_subset_coordForestXN (m : ℕ) :
@@ -1249,7 +1311,7 @@ lemma injOn_coordsToBits_coordXN (m : ℕ) :
 lemma ncard_TreeBits (m : ℕ) :
     (TreeBits m).ncard = (coordXN (m + 1)).ncard := by
   rw [TreeBits]
-  exact Set.ncard_image_of_injOn (injOn_coordsToBits_coordXN m)
+  exact Set.InjOn.ncard_image (injOn_coordsToBits_coordXN m)
 
 
 def CoordTree (root : EdgeCoord) (w : List EdgeCoord) : Prop :=
@@ -1543,7 +1605,7 @@ lemma coordExpandStar_with_context {u v : List EdgeCoord}
     (h : Relation.ReflTransGen CoordExpand u v) (p s : List EdgeCoord) :
     Relation.ReflTransGen CoordExpand (p ++ u ++ s) (p ++ v ++ s) :=
   Relation.ReflTransGen.lift (fun w => p ++ w ++ s)
-    (fun _ _ h' => h'.with_context p s) h
+    (fun _ _ h' => h'.with_context p s) _ _ h
 
 lemma CoordForest.before_root {root : EdgeCoord} {L : List EdgeCoord}
     (hL : CoordForest (coordLeft root) L) (p : List EdgeCoord) :
@@ -1986,7 +2048,7 @@ lemma image_canonicalGlue (m : ℕ) :
 lemma ncard_centeredTreeBits (m : ℕ) :
     (CenteredTreeBits m).ncard = (CanonicalPairs m).ncard := by
   rw [← image_canonicalGlue]
-  exact Set.ncard_image_of_injOn (canonicalGlue_injOn m)
+  exact Set.InjOn.ncard_image (canonicalGlue_injOn m)
 
 lemma firstCrossingPrefix_iff_crossingFree {p s : List Bool} :
     FirstCrossingPrefix (p ++ [false, false, false] ++ s) p ↔
@@ -2323,7 +2385,7 @@ lemma badPairs_finite (j : ℕ) : (BadPairs j).Finite := by
 lemma ncard_badPart (j : ℕ) :
     (AllPrefixBits j \ PrefixBits j).ncard = (BadPairs j).ncard := by
   rw [← image_badGlue_badPairs]
-  exact Set.ncard_image_of_injOn (badGlue_injOn j)
+  exact Set.InjOn.ncard_image (badGlue_injOn j)
 
 lemma prefix_bad_partition (j : ℕ) :
     AllPrefixBits j = PrefixBits j ∪ (AllPrefixBits j \ PrefixBits j) := by
@@ -3166,7 +3228,7 @@ lemma coeff_suffix_mul_step_geometric (m : ℕ) :
   apply Finset.sum_congr rfl
   rintro ⟨i, j⟩ hij
   simp only [Prod.fst, Prod.snd]
-  have hij' := Finset.mem_antidiagonal.mp hij
+  have hij' : i + j = m := by simpa using hij
   rw [coeff_step_geometric_eq_fibTreePartial_le m j (by omega)]
 
 lemma coeff_suffix_mul_fibTree_term (m r : ℕ) :
@@ -3799,7 +3861,14 @@ lemma coord_enumeration (m : ℕ) : (coordXN (m + 1)).ncard = a m := by
 
 
 
-@[category research open, AMS 5]
+/--
+**A108081 counts the words of `X`.** For `n ≥ 1` the number of words of `XWord`
+of length `n` is `a (n - 1)`. The [A108081](https://oeis.org/A108081) entry
+records the equality for `n ≤ 12` and asks whether it always holds.
+
+Statement copied verbatim from `FormalConjectures/OEIS/108081.lean`
+(`OeisA108081.count_words_in_x_is_a_shifted`).
+-/
 theorem count_words_in_x_is_a_shifted (n : ℕ) :
     n ≥ 1 → Set.ncard (xN n) = a (n - 1) := by
   intro hn

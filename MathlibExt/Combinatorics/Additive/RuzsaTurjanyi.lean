@@ -14,39 +14,59 @@ Copyright 2026 The Formal Conjectures Authors.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 -/
 
-import Mathlib
+module
 
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Tactic.Common
+public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Analysis.Asymptotics.Defs
+public import Mathlib.Analysis.RCLike.Basic
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Combinatorics.Additive.PluenneckeRuzsa
+public import Mathlib.Data.Int.Notation
+public import Mathlib.Data.Nat.Notation
+public import Mathlib.Data.Rat.Cast.Order
+public import Mathlib.Data.Set.Card
+public import Mathlib.Data.Set.Defs
+public import Mathlib.Order.Filter.Defs
+public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.Combinatorics.Additive.Basis
 
+@[expose] public section
 
+/-!
+# The Ruzsa–Turjányi sumset ratio tends to infinity
 
+Let `A ⊆ ℕ` be an asymptotic additive basis of some finite order with
+`|A ∩ [1, N]| = o(N)`. Ruzsa and Turjányi conjectured, and this file proves, that
+$$\frac{|(A + A) \cap [1, 2N]|}{|A \cap [1, N]|} \to \infty .$$
+This is the variant `erdos_337.variants.ruzsa_turjanyi` of
+[Erdős problem 337](https://www.erdosproblems.com/337).
 
+The proof is the one sketched by Ruzsa and Turjányi: apply the Plünnecke–Ruzsa
+inequality to the truncation `B = A ∩ [0, N]`, embedded in `ℤ`. If `A` is a basis
+of order `h` then `h • B` covers all but boundedly many elements below `N`, so
+`(|B + B| / |B|) ^ h ≥ |h • B| / |B| ≫ N / |B|`, which tends to infinity because
+`|B| = o(N)`.
 
+## Source and provenance
 
+The statement of `erdos_337.variants.ruzsa_turjanyi` is copied verbatim from
+`FormalConjectures/ErdosProblems/337.lean` of
+[google-deepmind/formal-conjectures](https://github.com/google-deepmind/formal-conjectures).
+It carried the Formal Conjectures attribute `@[category research open, AMS 5 11]`
+at the revision this development was written against; upstream now records it as
+`research solved`. The Formal Conjectures attributes are dropped here because this
+repository does not depend on `FormalConjecturesUtil`; nothing else in the
+statement is changed. `Set.IsAsymptoticAddBasis` is the Formal Conjectures
+definition, ported in `MathlibExt.Combinatorics.Additive.Basis`.
 
+## Main results
 
-
-
-
-
-
-
-
-import FormalConjecturesUtil
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+- `Erdos337.erdos_337.variants.ruzsa_turjanyi`: the sumset ratio tends to infinity.
+-/
 
 namespace Erdos337
 
@@ -187,7 +207,15 @@ lemma pluennecke_real {h : ℕ} (C : Finset ℤ) (hC : C.Nonempty) :
 
 
 
-@[category research open, AMS 5 11]
+/--
+**The Ruzsa–Turjányi ratio tends to infinity.** If `A ⊆ ℕ` is an asymptotic
+additive basis of some finite order and `|A ∩ [1, N]| = o(N)`, then
+`|(A + A) ∩ [1, 2N]| / |A ∩ [1, N]| → ∞`. Conjectured by Ruzsa and Turjányi
+(1985); see [Erdős problem 337](https://www.erdosproblems.com/337).
+
+Statement copied verbatim from `FormalConjectures/ErdosProblems/337.lean`
+(`Erdos337.erdos_337.variants.ruzsa_turjanyi`).
+-/
 theorem erdos_337.variants.ruzsa_turjanyi :
     ∀ A : Set ℕ, A.IsAsymptoticAddBasis →
       (fun N : ℕ ↦ ((A ∩ Icc 1 N).ncard : ℝ)) =o[atTop] (fun N : ℕ ↦ (N : ℝ)) →
