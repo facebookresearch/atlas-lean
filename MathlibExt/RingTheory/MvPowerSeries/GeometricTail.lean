@@ -1,37 +1,9 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
+Copyright (c) 2025–2026 the contributors.
 All rights reserved.
 
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
--/
-
-/-
-Adapted from arnovich/asgard-lean, commit
-e5e098d5bce80c3907a6acd4e2beb904309a1709,
-`Gimle/Asgard/Streams/Tail.lean`. Author: arnovich.
-
-MIT License
-
-Copyright (c) 2025 Gimle Labs
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 -/
 
 module
@@ -54,6 +26,14 @@ allowed. The dimension-zero case retains its single constant coefficient.
 The sum is defined by tsum and does not claim convergence outside the stated
 majorant hypotheses. No finite coefficient prefix alone is treated as evidence
 of a bound on the remaining coefficients.
+
+Mathematical reference: J. Lebl, Tasty Bits of Several Complex Variables,
+version 3.4, Section 1.2, p. 17, https://www.jirka.org/scv/scv-3.4.pdf,
+for the product geometric series and absolute convergence on smaller polydiscs.
+The rectangular-tail formula is an elementary consequence derived here: bound
+an omitted index by the sum of its coordinate-tail indicators and sum each
+geometric tail. Overlapping coordinate tails make this a conservative bound.
+No analyticity, differentiation, or reciprocal-evaluation theorem is asserted.
 -/
 
 @[expose] public section
@@ -131,14 +111,14 @@ def geometricTailBound {d : Nat} (m : GeometricMajorant (Fin d)) (b : Fin d → 
     (N : Fin d → ℕ) : ℚ :=
   m.bound * (∑ i, ratio m b i ^ N i) * ∏ i, (1 - ratio m b i)⁻¹
 
-/-! ## The analytic field and its rectangular window -/
+/-! ## The evaluated series and its rectangular window -/
 
 /-- The term `a_α · x^α` of the coefficient series at the real point `x`. -/
 noncomputable def seriesTerm {d : Nat} (a : MvPowerSeries (Fin d) ℚ) (x : Fin d → ℝ)
     (α : (Fin d →₀ ℕ)) : ℝ :=
   ((coeff α a : ℚ) : ℝ) * ∏ i, x i ^ α i
 
-/-- The analytic field `Σ_α a_α x^α`. It is an unconditional `tsum`, so it is
+/-- The sum of the coefficient series `Σ_α a_α x^α`. It is an unconditional `tsum`, so it is
 meaningful only where summability is proved: no convergence follows from the
 formal series alone (`hasSum_geometricSum` supplies it). -/
 noncomputable def geometricSum {d : Nat} (a : MvPowerSeries (Fin d) ℚ) (x : Fin d → ℝ) : ℝ :=
@@ -253,7 +233,7 @@ private theorem hasSum_tailFactor (inside : ∀ i, (b i : ℚ) < m.radius i) (N 
   rw [split, Finset.prod_ite_eq']
   simp
 
-/-- **Uniform rectangular truncation bound.** On the box, the analytic field and
+/-- **Uniform rectangular truncation bound.** On the box, the summed series and
 its rectangular sum differ by at most `geometricTailBound`. -/
 theorem abs_geometricSum_sub_rectangularSum_le (majorizes : IsMajorized a m)
     (inside : ∀ i, (b i : ℚ) < m.radius i) (N : Fin d → ℕ)

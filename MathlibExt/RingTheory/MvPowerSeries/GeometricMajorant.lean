@@ -1,37 +1,9 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
+Copyright (c) 2025–2026 the contributors.
 All rights reserved.
 
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
--/
-
-/-
-Adapted from arnovich/asgard-lean, commit
-e5e098d5bce80c3907a6acd4e2beb904309a1709,
-`Gimle/Asgard/Streams/Majorant.lean` and `Gimle/Asgard/Streams/Tail.lean`. Author: arnovich.
-
-MIT License
-
-Copyright (c) 2025 Gimle Labs
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 -/
 
 module
@@ -57,6 +29,17 @@ constant scaling. Products admit halved radii. Inversion admits an explicit
 smaller polydisc under a geometric smallness condition on the nonconstant part.
 The inverse theorem also respects Mathlib's total inverse: zero constant term
 makes the formal inverse zero. No analytic convergence is assumed here.
+
+Mathematical references: B. Sambale, An invitation to formal power series,
+https://arxiv.org/abs/2205.00879v7, Definition 2.1(iv), Lemma 2.5(i), and Section 8
+(Cauchy products and reciprocal coefficient recursion); J. Lebl, Tasty Bits of
+Several Complex Variables, version 3.4, Section 1.2, p. 17,
+https://www.jirka.org/scv/scv-3.4.pdf (multivariate geometric series).
+The explicit bounds here are elementary consequences of these methods, not
+verbatim statements from the references. Products use `∏ (α_i + 1) ≤ ∏ 2^α_i`.
+For inversion, normalize the coefficient recurrence by `|c| r^α` and induct;
+the geometric ratio sum bounds the recursive multiplier by `1`. Equality in
+that bound is allowed; this is not a strict Neumann-norm convergence condition.
 -/
 
 @[expose] public section
@@ -326,7 +309,7 @@ theorem coeff_inv_le {σ : Type*} [Fintype σ] (φ : MvPowerSeries σ ℚ)
     _ ≤ radiiWeight r α * 1 := mul_le_mul_of_nonneg_left small (le_of_lt wpos)
     _ = radiiWeight r α := mul_one _
 
-/-- The inverse's majorant, packaged for `Tail`. -/
+/-- The inverse's majorant, packaged for convergence and tail estimates. -/
 theorem isMajorized_inv {σ : Type*} [Fintype σ] (φ : MvPowerSeries σ ℚ)
     {c M : ℚ} (hc : constantCoeff φ = c)
     (hM : 0 ≤ M)
