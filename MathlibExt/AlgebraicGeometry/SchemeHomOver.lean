@@ -31,6 +31,7 @@ Released under the Apache License, Version 2.0.
 module
 
 public import Mathlib.AlgebraicGeometry.ValuativeCriterion
+public import Mathlib.CategoryTheory.Comma.Over.Basic
 public import Mathlib.RingTheory.Localization.FractionRing
 public import Mathlib.RingTheory.Valuation.ValuationRing
 
@@ -51,10 +52,11 @@ universe u
 
 namespace AlgebraicGeometry
 
-/-- A morphism of schemes over a common base: a morphism `φ : Y ⟶ X` with
-`φ ≫ f = g`. -/
+/-- A morphism of schemes over a common base, as a morphism in the over
+category: its underlying morphism `φ : Y ⟶ X` satisfies `φ ≫ f = g` by
+`Over.w`. -/
 abbrev SchemeHomOver {B Y X : Scheme.{u}} (g : Y ⟶ B) (f : X ⟶ B) :=
-  { φ : Y ⟶ X // φ ≫ f = g }
+  Over.mk g ⟶ Over.mk f
 
 /-- Two points of a separated scheme over a valuation ring agree if their
 generic fibres agree. -/
@@ -62,26 +64,27 @@ theorem SchemeHomOver.eq_of_isSeparated_of_valuationRing_of_fst_eq
     {R : Type u} [CommRing R] {J : Scheme.{u}} {f : J ⟶ Spec (CommRingCat.of R)}
     [IsSeparated f]
     (A : Type u) [CommRing A] [IsDomain A] [ValuationRing A] [Algebra R A]
-    (K : Type u) [Field K] [Algebra A K] [IsFractionRing A K] [Algebra R K]
-    [IsScalarTower R A K]
+    (K : Type u) [Field K] [Algebra A K] [IsFractionRing A K]
     (x y : SchemeHomOver (Spec.map (CommRingCat.ofHom (algebraMap R A))) f)
-    (h : Spec.map (CommRingCat.ofHom (algebraMap A K)) ≫ x.1 =
-      Spec.map (CommRingCat.ofHom (algebraMap A K)) ≫ y.1) :
+    (h : Spec.map (CommRingCat.ofHom (algebraMap A K)) ≫ x.left =
+      Spec.map (CommRingCat.ofHom (algebraMap A K)) ≫ y.left) :
     x = y := by
-  have hw : (Spec.map (CommRingCat.ofHom (algebraMap A K)) ≫ x.1) ≫ f =
+  have hx : x.left ≫ f = Spec.map (CommRingCat.ofHom (algebraMap R A)) := Over.w x
+  have hy : y.left ≫ f = Spec.map (CommRingCat.ofHom (algebraMap R A)) := Over.w y
+  have hw : (Spec.map (CommRingCat.ofHom (algebraMap A K)) ≫ x.left) ≫ f =
       Spec.map (CommRingCat.ofHom (algebraMap A K)) ≫
         Spec.map (CommRingCat.ofHom (algebraMap R A)) := by
-    rw [Category.assoc, x.2]
+    rw [Category.assoc, hx]
   let sq : ValuativeCommSq f :=
     { R := A, K := K,
-      i₁ := Spec.map (CommRingCat.ofHom (algebraMap A K)) ≫ x.1,
+      i₁ := Spec.map (CommRingCat.ofHom (algebraMap A K)) ≫ x.left,
       i₂ := Spec.map (CommRingCat.ofHom (algebraMap R A)),
       commSq := ⟨hw⟩ }
   have hsub : Subsingleton sq.commSq.LiftStruct := IsSeparated.valuativeCriterion f sq
-  let lx : sq.commSq.LiftStruct := ⟨x.1, rfl, x.2⟩
-  let ly : sq.commSq.LiftStruct := ⟨y.1, h.symm, y.2⟩
+  let lx : sq.commSq.LiftStruct := ⟨x.left, rfl, hx⟩
+  let ly : sq.commSq.LiftStruct := ⟨y.left, h.symm, hy⟩
   have hlxy : lx = ly := hsub.elim lx ly
-  have hxy1 : x.1 = y.1 := congrArg CommSq.LiftStruct.l hlxy
-  exact Subtype.ext hxy1
+  have hxyleft : x.left = y.left := congrArg CommSq.LiftStruct.l hlxy
+  exact Over.OverMorphism.ext hxyleft
 
 end AlgebraicGeometry
