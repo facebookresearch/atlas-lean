@@ -99,6 +99,24 @@ example : ((-1 : ℝ), (0 : ℝ)) ∈ modifiedCamClayElasticDomain 1 (-2) ∧
 example : Convex ℝ (modifiedCamClayElasticDomain 0 (-3)) :=
   convex_modifiedCamClayElasticDomain 0 (-3)
 
+/-- Degenerate joint-zero case: at `M = pc = 0` the
+domain is the line `q = 0`, not a point: `(5, 0)` is in
+it and `(0, 1)` is not. -/
+example : ((5 : ℝ), (0 : ℝ)) ∈ modifiedCamClayElasticDomain 0 0 ∧
+    ((0 : ℝ), (1 : ℝ)) ∉ modifiedCamClayElasticDomain 0 0 := by
+  constructor
+  · change modifiedCamClayYield 0 0 5 0 ≤ 0
+    norm_num [modifiedCamClayYield]
+  · change ¬ modifiedCamClayYield 0 0 0 1 ≤ 0
+    norm_num [modifiedCamClayYield]
+
+/-- At `M = 0` with `pc ≠ 0` the domain is still the
+whole line `q = 0`: `p` is unbounded, with no finite
+`p` semi-axis `|pc| / 2`. -/
+example : ((100 : ℝ), (0 : ℝ)) ∈ modifiedCamClayElasticDomain 0 2 := by
+  change modifiedCamClayYield 0 2 100 0 ≤ 0
+  norm_num [modifiedCamClayYield]
+
 /-- Critical-state line shape: on `q = M p`,
 `F = M² p (2p - pc)`. -/
 example (M pc p : ℝ) :

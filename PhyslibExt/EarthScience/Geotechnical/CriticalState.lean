@@ -31,7 +31,8 @@ stress; the physical branch is
 `q ≥ 0`, while section A allows signed `q` with the same
 `M` in extension. The elastic domain is the translated
 ellipse `F(p, q) ≤ 0`, convex for every real `M` and `pc`
-(a line at `M = 0`, a point at `pc = 0`). The
+(the whole line `q = 0` at `M = 0`, for every `pc`; a
+single point at `pc = 0` when `M ≠ 0`). The
 preconsolidation pressure is fixed: no flow rule, hardening
 evolution, or return map is included.
 
@@ -87,9 +88,11 @@ def modifiedCamClayElasticDomain (M pc : ℝ) : Set (ℝ × ℝ) :=
 
 /-- Translated-ellipse form: center `(pc / 2, 0)`; for
 `M, pc > 0` the semi-axes are `pc / 2` and `M * pc / 2`
-(in signed generality the geometric lengths are
-`|pc| / 2` and `|M * pc| / 2`, degenerating at zero
-parameters). -/
+(in signed generality with `M ≠ 0` the geometric lengths
+are `|pc| / 2` and `|M * pc| / 2`). At `M = 0` the
+identity reduces to `q ^ 2 ≤ 0`: the domain is the line
+`q = 0` with `p` unbounded, and there is no finite `p`
+semi-axis. -/
 lemma modifiedCamClayYield_eq_translated_ellipse (M pc p q : ℝ) :
     modifiedCamClayYield M pc p q
       = M ^ 2 * (p - pc / 2) ^ 2 + q ^ 2 - (M * pc / 2) ^ 2 := by
