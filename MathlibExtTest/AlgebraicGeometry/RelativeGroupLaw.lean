@@ -24,13 +24,12 @@ theorem exactSource {R : Type u} [CommRing R] {A : Scheme.{u}}
     ∃ g : GrpObj (Over.mk f),
       (∀ {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of R))
         (a b : Over.mk t ⟶ Over.mk f),
-        overHomToSchemeHomOver (lift a b ≫ g.mul) =
-          G.mul t (overHomToSchemeHomOver a) (overHomToSchemeHomOver b)) ∧
+        lift a b ≫ g.mul = G.mul t a b) ∧
       (∀ {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of R)),
-        overHomToSchemeHomOver (toUnit (Over.mk t) ≫ g.one) = G.one t) ∧
+        toUnit (Over.mk t) ≫ g.one = G.one t) ∧
       (∀ {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of R))
         (a : Over.mk t ⟶ Over.mk f),
-        overHomToSchemeHomOver (a ≫ g.inv) = G.inv t (overHomToSchemeHomOver a)) :=
+        a ≫ g.inv = G.inv t a) :=
   G.exists_grpObj_eq
 
 /-- The same consumer in a higher universe. -/
@@ -39,23 +38,39 @@ theorem exactSource_univ1 {R : Type 1} [CommRing R] {A : Scheme.{1}}
     ∃ g : GrpObj (Over.mk f),
       (∀ {T : Scheme.{1}} (t : T ⟶ Spec (CommRingCat.of R))
         (a b : Over.mk t ⟶ Over.mk f),
-        overHomToSchemeHomOver (lift a b ≫ g.mul) =
-          G.mul t (overHomToSchemeHomOver a) (overHomToSchemeHomOver b)) ∧
+        lift a b ≫ g.mul = G.mul t a b) ∧
       (∀ {T : Scheme.{1}} (t : T ⟶ Spec (CommRingCat.of R)),
-        overHomToSchemeHomOver (toUnit (Over.mk t) ≫ g.one) = G.one t) ∧
+        toUnit (Over.mk t) ≫ g.one = G.one t) ∧
       (∀ {T : Scheme.{1}} (t : T ⟶ Spec (CommRingCat.of R))
         (a : Over.mk t ⟶ Over.mk f),
-        overHomToSchemeHomOver (a ≫ g.inv) = G.inv t (overHomToSchemeHomOver a)) :=
+        a ≫ g.inv = G.inv t a) :=
   G.exists_grpObj_eq
 
-/-- The group law on points over a test scheme is a group: the identity and
-inverses supplied by the relative group law satisfy the group laws there.
-This uses only the law on one test scheme, showing the point-group
-hypotheses in the structure are what feed the group object. -/
+/-- The point-group instance is usable through generic group notation:
+with `G.pointGroup t` installed, the usual group laws hold for points over
+a test scheme. -/
 example {R : Type u} [CommRing R] {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
     (G : RelativeGroupLaw R f) {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of R))
-    (x : SchemeHomOver t f) :
-    G.mul t (G.one t) x = x ∧ G.mul t (G.inv t x) x = G.one t :=
-  ⟨G.one_mul t x, G.inv_mul_cancel t x⟩
+    (x : Over.mk t ⟶ Over.mk f) :
+    G.mul t x (G.inv t x) = G.one t ∧ G.mul t x (G.one t) = x := by
+  letI := G.pointGroup t
+  have h₁ : x * x⁻¹ = 1 := mul_inv_cancel x
+  have h₂ : x * 1 = x := mul_one x
+  exact ⟨h₁, h₂⟩
+
+/-- Reindexing along a morphism of test schemes preserves the group
+operations of the point groups. -/
+example {R : Type u} [CommRing R] {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
+    (G : RelativeGroupLaw R f) {T T' : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of R))
+    (t' : T' ⟶ Spec (CommRingCat.of R)) (ψ : T' ⟶ T) (hψ : ψ ≫ t = t')
+    (x y : Over.mk t ⟶ Over.mk f) :
+    Over.homMk (U := Over.mk t') (V := Over.mk t) ψ hψ ≫ G.mul t x y =
+      G.mul t' (Over.homMk (U := Over.mk t') (V := Over.mk t) ψ hψ ≫ x) (Over.homMk (U := Over.mk t') (V := Over.mk t) ψ hψ ≫ y) := by
+  letI := G.pointGroup t
+  letI := G.pointGroup t'
+  have h : Over.homMk (U := Over.mk t') (V := Over.mk t) ψ hψ ≫ (x * y) =
+      (Over.homMk (U := Over.mk t') (V := Over.mk t) ψ hψ ≫ x) * (Over.homMk (U := Over.mk t') (V := Over.mk t) ψ hψ ≫ y) :=
+    G.mul_natural t t' ψ hψ x y
+  exact h
 
 end RelativeGroupLawTest
