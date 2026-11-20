@@ -70,4 +70,27 @@ example (ℓ : ℕ) [Fact ℓ.Prime] (hℓ : 1 < ℓ) :
     exact lt_mul_of_one_lt_right (by omega) hℓ
   exact ne_of_lt hlt
 
+/-- Consumer with the original binders for the basis statement: a prime
+`p`, a genus `g`, and torsion counts `p ^ (2 * g * n)`, restated over an
+arbitrary additive commutative group `M` in place of the Jacobian. -/
+theorem exactSourceBasis (p g : ℕ) [Fact p.Prime] (M : Type) [AddCommGroup M]
+    (hcard : ∀ n : ℕ, Nat.card (Submodule.torsionBy ℤ M ((p ^ n : ℕ) : ℤ)) = p ^ (2 * g * n)) :
+    Nonempty (Module.Basis (Fin (2 * g)) ℤ_[p] (TateModule p M)) :=
+  TateModule.nonempty_basis_of_natCard_torsionBy_pow_eq p M (2 * g)
+    (fun n => (hcard n).trans (pow_mul' p (2 * g) n))
+
+/-- Higher-universe consumer for the basis statement. -/
+example (p : ℕ) [Fact p.Prime] (M : Type (u + 1)) [AddCommGroup M] (d : ℕ)
+    (hcard : ∀ n : ℕ, Nat.card (Submodule.torsionBy ℤ M ((p ^ n : ℕ) : ℤ)) = (p ^ n) ^ d) :
+    Nonempty (Module.Basis (Fin d) ℤ_[p] (TateModule p M)) :=
+  TateModule.nonempty_basis_of_natCard_torsionBy_pow_eq p M d hcard
+
+/-- Boundary case `g = 0`: the trivial group has a `Fin 0` basis. -/
+example (p : ℕ) [Fact p.Prime] :
+    Nonempty (Module.Basis (Fin (2 * 0)) ℤ_[p] (TateModule p PUnit.{1})) := by
+  refine exactSourceBasis p 0 PUnit.{1} (fun n => ?_)
+  simp only [mul_zero, zero_mul, pow_zero]
+  rw [Nat.card_eq_one_iff_unique]
+  exact ⟨inferInstance, ⟨0⟩⟩
+
 end MathlibExtTest.NumberTheory.Padics.TateModule

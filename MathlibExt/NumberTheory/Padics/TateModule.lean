@@ -11,9 +11,11 @@ Portions of this file are adapted from:
 
 `Theorems/Thm_TateModule_finite_free_finrank_eq_of_natCard_torsionBy_pow_eq.lean`,
 `Definitions/Def_EllipticCurve_TateModule.lean`,
-`Definitions/Def_ModularCurve_JZeroTateModule.lean`
+`Definitions/Def_ModularCurve_JZeroTateModule.lean`,
+`Theorems/Thm_ModularCurve_JZero_nonempty_tateModule_basis_of_abelJacobiCard.lean`
 and
-`P2M/Sol/S_TateModule_finite_free_finrank_eq_of_natCard_torsionBy_pow_eq.lean`
+`P2M/Sol/S_TateModule_finite_free_finrank_eq_of_natCard_torsionBy_pow_eq.lean`,
+`P2M/Sol/S_ModularCurve_JZero_nonempty_tateModule_basis_of_abelJacobiCard.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
@@ -559,5 +561,13 @@ public theorem finite_free_finrank_eq_of_natCard_torsionBy_pow_eq
   refine ⟨Module.Finite.of_basis b, Module.Free.of_basis b, ?_, ?_⟩
   · rw [Module.finrank_eq_card_basis b, Fintype.card_fin]
   · rw [Module.finrank_eq_card_basis b', Fintype.card_fin]
+
+/-- From the exact torsion counts `Nat.card (M[p ^ n]) = (p ^ n) ^ d` for
+all `n`, the Tate module has a basis indexed by `Fin d` over `ℤ_[p]`. -/
+public theorem nonempty_basis_of_natCard_torsionBy_pow_eq
+    (ℓ : ℕ) [Fact ℓ.Prime] (M : Type*) [AddCommGroup M] (d : ℕ)
+    (hcard : ∀ n : ℕ, Nat.card (Submodule.torsionBy ℤ M ((ℓ ^ n : ℕ) : ℤ)) = (ℓ ^ n) ^ d) :
+    Nonempty (Module.Basis (Fin d) ℤ_[ℓ] (TateModule ℓ M)) :=
+  ⟨basisOfCardPow (p := ℓ) (M := M) (r := d) hcard⟩
 
 end TateModule
