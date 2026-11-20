@@ -42,9 +42,9 @@ common subfield `K`.
 Both fields are splitting fields over `K` of `X ^ card - X`, since every
 element of a finite field satisfies that equation. This generalizes
 `FiniteField.algEquivOfCardEq`, which fixes the base to `ZMod p`. -/
-public theorem nonempty_algEquiv_of_card_eq (K : Type) [Field K]
-    (L₁ : Type) [Field L₁] [Algebra K L₁] [Finite L₁]
-    (L₂ : Type) [Field L₂] [Algebra K L₂] [Finite L₂]
+public theorem nonempty_algEquiv_of_card_eq (K : Type*) [Field K]
+    (L₁ : Type*) [Field L₁] [Algebra K L₁] [Finite L₁]
+    (L₂ : Type*) [Field L₂] [Algebra K L₂] [Finite L₂]
     (h : Nat.card L₁ = Nat.card L₂) : Nonempty (L₁ ≃ₐ[K] L₂) := by
   classical
   haveI := Fintype.ofFinite L₁

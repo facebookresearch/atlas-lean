@@ -14,11 +14,19 @@ public import MathlibExt.FieldTheory.Finite.AlgEquivOfCardEq
 
 namespace FiniteFieldAlgEquivOfCardEqTest
 
-/-- The exact source statement, with no added hypothesis. -/
+/-- The exact source statement (which fixed universe 0), with no added
+hypothesis. -/
 public theorem exactSource (K : Type) [Field K] (L₁ : Type) [Field L₁]
     [Algebra K L₁] [Finite L₁] (L₂ : Type) [Field L₂] [Algebra K L₂]
     [Finite L₂] (h : Nat.card L₁ = Nat.card L₂) :
     Nonempty (L₁ ≃ₐ[K] L₂) :=
+  FiniteField.nonempty_algEquiv_of_card_eq K L₁ L₂ h
+
+/-- Higher-universe consumer: the theorem is not restricted to universe
+0. -/
+public example (K : Type 1) [Field K] (L₁ L₂ : Type 2) [Field L₁]
+    [Field L₂] [Algebra K L₁] [Algebra K L₂] [Finite L₁] [Finite L₂]
+    (h : Nat.card L₁ = Nat.card L₂) : Nonempty (L₁ ≃ₐ[K] L₂) :=
   FiniteField.nonempty_algEquiv_of_card_eq K L₁ L₂ h
 
 /-- A finite field is isomorphic to itself over any subfield. -/
