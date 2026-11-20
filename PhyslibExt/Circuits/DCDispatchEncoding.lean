@@ -93,6 +93,7 @@ both problems infeasible.
 namespace PhyslibExt.Circuits.DCDispatchEncoding
 
 open Matrix
+open PhyslibExt.Circuits.ArcPortSigns
 open PhyslibExt.Circuits.LosslessDCFlowModel
 
 /-- Generator-to-bus incidence `Cgen v g = 1` when generator `g` sits at
@@ -105,7 +106,7 @@ def generatorIncidence (nN nG : ℕ) (gbus : Fin nG → Fin nN) :
 which the canonical DC branch flow is defined. -/
 noncomputable def branchFlowMatrix (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) : Matrix (Fin nE) (Fin nN) ℝ :=
-  Matrix.diagonal b * Matrix.transpose (electricalIncidence nN nE tail head)
+  Matrix.diagonal b * Matrix.transpose (electricalIncidence tail head)
 
 /-- DC dispatch feasibility: the nodal balance `L_b * θ = Cgen * pg - d`,
 the reference angle `θ ref = 0`, the generator limits and the branch
