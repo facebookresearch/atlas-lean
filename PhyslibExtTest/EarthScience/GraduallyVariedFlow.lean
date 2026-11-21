@@ -61,9 +61,9 @@ private lemma witness_discharge_lt_one :
 
 /-- Mild ordering at the witness data: critical depth below `1`. -/
 private lemma witness_critical_mild :
-    EarthScience.criticalDepth
+    EarthScience.rectangularCriticalDepth
         (EarthScience.rectangularDischarge (Real.sqrt 1 / 1) 1 1 / 1) 1 < 1 := by
-  unfold EarthScience.criticalDepth
+  unfold EarthScience.rectangularCriticalDepth
   have h0 := witness_discharge_pos
   have h1 := witness_discharge_lt_one
   apply Real.rpow_lt_one (div_nonneg (sq_nonneg _) zero_le_one) _ (by norm_num)
@@ -75,9 +75,9 @@ private lemma witness_critical_mild :
 
 /-- Critical-depth positivity at the witness data. -/
 private lemma witness_critical_pos :
-    0 < EarthScience.criticalDepth
+    0 < EarthScience.rectangularCriticalDepth
       (EarthScience.rectangularDischarge (Real.sqrt 1 / 1) 1 1 / 1) 1 := by
-  unfold EarthScience.criticalDepth
+  unfold EarthScience.rectangularCriticalDepth
   exact Real.rpow_pos_of_pos
     (div_pos (pow_pos (div_pos witness_discharge_pos one_pos) 2) one_pos) _
 
@@ -87,11 +87,11 @@ example :
         (EarthScience.rectangularDischarge (Real.sqrt 1 / 1) 1 1) 1 2 ∧
       EarthScience.gvfSlope 1 1 1
         (EarthScience.rectangularDischarge (Real.sqrt 1 / 1) 1 1) 1
-        ((EarthScience.criticalDepth
+        ((EarthScience.rectangularCriticalDepth
           (EarthScience.rectangularDischarge (Real.sqrt 1 / 1) 1 1 / 1) 1 + 1) / 2) < 0 ∧
       0 < EarthScience.gvfSlope 1 1 1
         (EarthScience.rectangularDischarge (Real.sqrt 1 / 1) 1 1) 1
-        (EarthScience.criticalDepth
+        (EarthScience.rectangularCriticalDepth
           (EarthScience.rectangularDischarge (Real.sqrt 1 / 1) 1 1 / 1) 1 / 2) := by
   have hm := EarthScience.gvfSlope_mild one_pos one_pos one_pos one_pos one_pos
     rfl witness_critical_mild
@@ -102,10 +102,10 @@ example :
 
 /-- Steep ordering at the witness data: critical depth is `2`. -/
 private lemma witness_critical_steep :
-    EarthScience.criticalDepth
+    EarthScience.rectangularCriticalDepth
         (EarthScience.rectangularDischarge (Real.sqrt 1 / 1) 1 1 / 1)
         (EarthScience.rectangularDischarge (Real.sqrt 1 / 1) 1 1 ^ 2 / 8) = 2 := by
-  unfold EarthScience.criticalDepth
+  unfold EarthScience.rectangularCriticalDepth
   have h0 : EarthScience.rectangularDischarge (Real.sqrt 1 / 1) 1 1 ≠ 0 :=
     witness_discharge_pos.ne'
   have hs : Real.sqrt 1 / 1 = 1 := by norm_num [Real.sqrt_one]
@@ -144,7 +144,7 @@ declared slope has derivative sign `1`. -/
 example : SignType.sign
     (deriv (fun t : ℝ => 2 + EarthScience.gvfSlope 1 1 1
       (EarthScience.rectangularDischarge (Real.sqrt 1 / 1) 1 1) 1 2 * t) 0) = 1 := by
-  have hmild : EarthScience.criticalDepth
+  have hmild : EarthScience.rectangularCriticalDepth
       (EarthScience.rectangularDischarge 1 1 1) 1 < 1 := by
     have hs : Real.sqrt 1 / 1 = 1 := by norm_num [Real.sqrt_one]
     simpa [hs] using witness_critical_mild
@@ -163,7 +163,7 @@ example : SignType.sign
   rw [h]
   simp
   rw [sign_pos (by linarith [hmild] :
-    (0 : ℝ) < 2 - EarthScience.criticalDepth
+    (0 : ℝ) < 2 - EarthScience.rectangularCriticalDepth
       (EarthScience.rectangularDischarge 1 1 1) 1)]
 
 /-- At the normal depth, the slope sign is `0`. -/

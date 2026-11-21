@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import PhyslibExt.EarthScience.OpenChannelSpecificEnergy
 public import PhyslibExt.EarthScience.RectangularNormalDepth
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Basic.Sign.Basic
@@ -30,7 +31,7 @@ The model is declared, not derived: the equation is
 
 Flow area is `b * y` and hydraulic radius is `(b * y) / (b + 2 * y)`. The
 friction slope `frictionSlope n b Q y` is Manning's law solved for slope at
-depth `y`. The critical depth is `criticalDepth q g = (q ^ 2 / g) ^ (1 / 3)`,
+depth `y`. The critical depth is `rectangularCriticalDepth q g = (q ^ 2 / g) ^ (1 / 3)`,
 the minimizer exhibited by `specific_energy_unique_minimum`. A normal
 depth `yn` is supplied as a positive depth whose rectangular Manning
 discharge at bed slope `S0` equals `Q`; its existence is not claimed. The
@@ -46,9 +47,9 @@ no horizontal or adverse bed, no nonrectangular section, and no `α ≠ 1`.
 
 ## ii. Key results
 
-- `EarthScience.frictionSlope`, `EarthScience.criticalDepth`, and
-  `EarthScience.gvfSlope`: the friction slope, critical depth, and declared
-  slope.
+- `EarthScience.frictionSlope` and `EarthScience.gvfSlope`: the friction
+  slope and declared slope, using the critical depth
+  `EarthScience.rectangularCriticalDepth`.
 - `EarthScience.manningDischarge_frictionSlope` and
   `EarthScience.frictionSlope_eq_rectangularDischarge`: the Manning
   inversion and rectangular-discharge bridge.
@@ -88,13 +89,6 @@ Manning's law solved for slope,
 noncomputable def frictionSlope (n b Q y : ℝ) : ℝ :=
   (n * Q / ((b * y) * ((b * y) / (b + 2 * y)) ^ ((2 : ℝ) / 3))) ^ 2
 
-/-- Critical depth for discharge per unit width `q` and gravity `g`:
-`(q ^ 2 / g) ^ (1 / 3)`, the specific-energy minimizer of
-`EarthScience.specific_energy_unique_minimum`. Physical for `0 < q`,
-`0 < g`. -/
-noncomputable def criticalDepth (q g : ℝ) : ℝ :=
-  (q ^ 2 / g) ^ (1 / 3 : ℝ)
-
 /-- Right-hand side of the declared steady gradually-varied-flow
 equation in a rectangular channel (Chow 1959, `α = 1`):
 `(S0 - Sf y) / (1 - (Q / b) ^ 2 / (g * y ^ 3))`. Physical for
@@ -129,19 +123,6 @@ private lemma sign_inv {a : ℝ} (ha : a ≠ 0) :
 private lemma sign_div {a b : ℝ} (hb : b ≠ 0) :
     SignType.sign (a / b) = SignType.sign a * SignType.sign b := by
   rw [div_eq_mul_inv, sign_mul, sign_inv hb]
-
-private lemma critDepth_cubed {q g : ℝ} (hg : 0 < g) :
-    (criticalDepth q g) ^ 3 = q ^ 2 / g := by
-  unfold criticalDepth
-  have hx : 0 ≤ q ^ 2 / g := div_nonneg (sq_nonneg q) (le_of_lt hg)
-  rw [← Real.rpow_natCast, ← Real.rpow_mul hx,
-    show (1 / 3 : ℝ) * ((3 : ℕ) : ℝ) = 1 by norm_num, Real.rpow_one]
-
-private lemma critDepth_nonneg {q g : ℝ} (hg : 0 < g) :
-    0 ≤ criticalDepth q g := by
-  unfold criticalDepth
-  apply Real.rpow_nonneg
-  exact div_nonneg (sq_nonneg q) (le_of_lt hg)
 
 /-- Manning inversion: on the physical domain, Manning's discharge at
 area `b * y`, hydraulic radius `(b * y) / (b + 2 * y)` and slope
@@ -214,17 +195,17 @@ lemma frictionSlope_eq_rectangularDischarge {n S0 b Q y : ℝ}
 /-- Sign certificate for the gradually-varied-flow slope: for a
 positive normal depth `yn` (rectangular Manning discharge `Q` at bed
 slope `S0`) and a depth `y > 0` away from the critical depth
-`yc = criticalDepth (Q / b) g`, the declared slope has sign
+`yc = rectangularCriticalDepth (Q / b) g`, the declared slope has sign
 `sign (y - yn) * sign (y - yc)`. Positive flow `0 < Q` follows from
 `hyn` and is not a separate premise. The premise `y ≠ yc` keeps the
 totalized value at the singular point out of the claim. -/
 theorem sign_gvfSlope {n S0 b Q g yn y : ℝ} (hb : 0 < b) (hn : 0 < n)
     (hS0 : 0 < S0) (hg : 0 < g) (hyn0 : 0 < yn)
     (hyn : rectangularDischarge (Real.sqrt S0 / n) b yn = Q)
-    (hy : 0 < y) (hyc : y ≠ criticalDepth (Q / b) g) :
+    (hy : 0 < y) (hyc : y ≠ rectangularCriticalDepth (Q / b) g) :
     SignType.sign (gvfSlope n S0 b Q g y)
       = SignType.sign (y - yn)
-        * SignType.sign (y - criticalDepth (Q / b) g) := by
+        * SignType.sign (y - rectangularCriticalDepth (Q / b) g) := by
   have hmono : StrictMonoOn (rectangularDischarge (Real.sqrt S0 / n) b)
       (Set.Ioi 0) :=
     rectangularDischarge_strictMonoOn (div_pos (Real.sqrt_pos.mpr hS0) hn) hb
@@ -241,22 +222,22 @@ theorem sign_gvfSlope {n S0 b Q g yn y : ℝ} (hb : 0 < b) (hn : 0 < n)
   have hg' : g ≠ 0 := ne_of_gt hg
   have hy3 : y ^ 3 ≠ 0 := pow_ne_zero 3 (ne_of_gt hy)
   have hgy3 : g * y ^ 3 ≠ 0 := mul_ne_zero hg' hy3
-  have hyc3 : (criticalDepth (Q / b) g) ^ 3 = (Q / b) ^ 2 / g :=
-    critDepth_cubed hg
-  have hfac : y ^ 3 - (criticalDepth (Q / b) g) ^ 3
-      = (y - criticalDepth (Q / b) g)
-        * (y ^ 2 + y * criticalDepth (Q / b) g
-          + (criticalDepth (Q / b) g) ^ 2) := by
+  have hyc3 : (rectangularCriticalDepth (Q / b) g) ^ 3 = (Q / b) ^ 2 / g :=
+    rectangularCriticalDepth_cube hg
+  have hfac : y ^ 3 - (rectangularCriticalDepth (Q / b) g) ^ 3
+      = (y - rectangularCriticalDepth (Q / b) g)
+        * (y ^ 2 + y * rectangularCriticalDepth (Q / b) g
+          + (rectangularCriticalDepth (Q / b) g) ^ 2) := by
     ring
-  have hpos2 : 0 < y ^ 2 + y * criticalDepth (Q / b) g
-      + (criticalDepth (Q / b) g) ^ 2 := by
+  have hpos2 : 0 < y ^ 2 + y * rectangularCriticalDepth (Q / b) g
+      + (rectangularCriticalDepth (Q / b) g) ^ 2 := by
     have h1 : 0 < y ^ 2 := by positivity
-    have h2 : 0 ≤ y * criticalDepth (Q / b) g :=
-      mul_nonneg (le_of_lt hy) (critDepth_nonneg hg)
-    have h3 : 0 ≤ (criticalDepth (Q / b) g) ^ 2 := sq_nonneg _
+    have h2 : 0 ≤ y * rectangularCriticalDepth (Q / b) g :=
+      mul_nonneg (le_of_lt hy) (rectangularCriticalDepth_nonneg hg)
+    have h3 : 0 ≤ (rectangularCriticalDepth (Q / b) g) ^ 2 := sq_nonneg _
     linarith
   have hden_eq : (1 - (Q / b) ^ 2 / (g * y ^ 3))
-      = (y ^ 3 - (criticalDepth (Q / b) g) ^ 3) / y ^ 3 := by
+      = (y ^ 3 - (rectangularCriticalDepth (Q / b) g) ^ 3) / y ^ 3 := by
     rw [hyc3]
     field_simp
   have hden_ne : (1 - (Q / b) ^ 2 / (g * y ^ 3)) ≠ 0 := by
@@ -298,7 +279,7 @@ theorem sign_gvfSlope {n S0 b Q g yn y : ℝ} (hb : 0 < b) (hn : 0 < n)
         (hmono.lt_iff_lt (Set.mem_Ioi.mpr hyn0) (Set.mem_Ioi.mpr hy)).mpr h
       rw [sign_pos (sub_pos.mpr hgt), sign_pos (sub_pos.mpr h)]
   have hsign_den : SignType.sign (1 - (Q / b) ^ 2 / (g * y ^ 3))
-      = SignType.sign (y - criticalDepth (Q / b) g) := by
+      = SignType.sign (y - rectangularCriticalDepth (Q / b) g) := by
     rw [hden_eq, sign_div hy3, sign_pos (pow_pos hy 3), mul_one, hfac,
       sign_mul, sign_pos hpos2, mul_one]
   unfold gvfSlope
@@ -310,7 +291,7 @@ a constant-depth solution of the equation, read only when
 theorem gvfSlope_normalDepth {n S0 b Q g yn : ℝ} (hb : 0 < b)
     (hn : 0 < n) (hS0 : 0 < S0) (_hg : 0 < g) (hyn0 : 0 < yn)
     (hyn : rectangularDischarge (Real.sqrt S0 / n) b yn = Q)
-    (_hne : yn ≠ criticalDepth (Q / b) g) :
+    (_hne : yn ≠ rectangularCriticalDepth (Q / b) g) :
     gvfSlope n S0 b Q g yn = 0 := by
   have hQ : 0 < Q := discharge_pos_of_normal hb hn hS0 hyn0 hyn
   have hSf : frictionSlope n b Q yn = S0 := by
@@ -328,38 +309,38 @@ normal depth (zone 1), falls between critical and normal depth
 theorem gvfSlope_mild {n S0 b Q g yn : ℝ} (hb : 0 < b) (hn : 0 < n)
     (hS0 : 0 < S0) (hg : 0 < g) (hyn0 : 0 < yn)
     (hyn : rectangularDischarge (Real.sqrt S0 / n) b yn = Q)
-    (hmild : criticalDepth (Q / b) g < yn) :
+    (hmild : rectangularCriticalDepth (Q / b) g < yn) :
     (∀ y, yn < y → 0 < gvfSlope n S0 b Q g y) ∧
-    (∀ y, criticalDepth (Q / b) g < y → y < yn →
+    (∀ y, rectangularCriticalDepth (Q / b) g < y → y < yn →
       gvfSlope n S0 b Q g y < 0) ∧
-    (∀ y, 0 < y → y < criticalDepth (Q / b) g →
+    (∀ y, 0 < y → y < rectangularCriticalDepth (Q / b) g →
       0 < gvfSlope n S0 b Q g y) := by
   refine ⟨?_, ?_, ?_⟩
   · intro y hy_gt
     have hy0 : 0 < y := lt_trans hyn0 hy_gt
-    have hne : y ≠ criticalDepth (Q / b) g :=
+    have hne : y ≠ rectangularCriticalDepth (Q / b) g :=
       ne_of_gt (lt_trans hmild hy_gt)
     have h := sign_gvfSlope hb hn hS0 hg hyn0 hyn hy0 hne
     have e1 : SignType.sign (y - yn) = 1 := sign_pos (sub_pos.mpr hy_gt)
-    have e2 : SignType.sign (y - criticalDepth (Q / b) g) = 1 :=
+    have e2 : SignType.sign (y - rectangularCriticalDepth (Q / b) g) = 1 :=
       sign_pos (sub_pos.mpr (lt_trans hmild hy_gt))
     rw [e1, e2, mul_one] at h
     exact sign_eq_one_iff.mp h
   · intro y h1 h2
-    have hy0 : 0 < y := lt_of_le_of_lt (critDepth_nonneg hg) h1
-    have hne : y ≠ criticalDepth (Q / b) g := ne_of_gt h1
+    have hy0 : 0 < y := lt_of_le_of_lt (rectangularCriticalDepth_nonneg hg) h1
+    have hne : y ≠ rectangularCriticalDepth (Q / b) g := ne_of_gt h1
     have h := sign_gvfSlope hb hn hS0 hg hyn0 hyn hy0 hne
     have e1 : SignType.sign (y - yn) = -1 := sign_neg (sub_neg.mpr h2)
-    have e2 : SignType.sign (y - criticalDepth (Q / b) g) = 1 :=
+    have e2 : SignType.sign (y - rectangularCriticalDepth (Q / b) g) = 1 :=
       sign_pos (sub_pos.mpr h1)
     rw [e1, e2, mul_one] at h
     exact sign_eq_neg_one_iff.mp h
   · intro y hy0 hlt
-    have hne : y ≠ criticalDepth (Q / b) g := ne_of_lt hlt
+    have hne : y ≠ rectangularCriticalDepth (Q / b) g := ne_of_lt hlt
     have h := sign_gvfSlope hb hn hS0 hg hyn0 hyn hy0 hne
     have e1 : SignType.sign (y - yn) = -1 :=
       sign_neg (sub_neg.mpr (lt_trans hlt hmild))
-    have e2 : SignType.sign (y - criticalDepth (Q / b) g) = -1 :=
+    have e2 : SignType.sign (y - rectangularCriticalDepth (Q / b) g) = -1 :=
       sign_neg (sub_neg.mpr hlt)
     rw [e1, e2] at h
     have h9 : (-1 : SignType) * (-1) = 1 := by simp
@@ -372,37 +353,37 @@ critical depth (zone 1), falls between normal and critical depth
 theorem gvfSlope_steep {n S0 b Q g yn : ℝ} (hb : 0 < b) (hn : 0 < n)
     (hS0 : 0 < S0) (hg : 0 < g) (hyn0 : 0 < yn)
     (hyn : rectangularDischarge (Real.sqrt S0 / n) b yn = Q)
-    (hsteep : yn < criticalDepth (Q / b) g) :
-    (∀ y, criticalDepth (Q / b) g < y → 0 < gvfSlope n S0 b Q g y) ∧
-    (∀ y, yn < y → y < criticalDepth (Q / b) g →
+    (hsteep : yn < rectangularCriticalDepth (Q / b) g) :
+    (∀ y, rectangularCriticalDepth (Q / b) g < y → 0 < gvfSlope n S0 b Q g y) ∧
+    (∀ y, yn < y → y < rectangularCriticalDepth (Q / b) g →
       gvfSlope n S0 b Q g y < 0) ∧
     (∀ y, 0 < y → y < yn → 0 < gvfSlope n S0 b Q g y) := by
   refine ⟨?_, ?_, ?_⟩
   · intro y hy_gt
-    have hy0 : 0 < y := lt_of_le_of_lt (critDepth_nonneg hg) hy_gt
-    have hne : y ≠ criticalDepth (Q / b) g := ne_of_gt hy_gt
+    have hy0 : 0 < y := lt_of_le_of_lt (rectangularCriticalDepth_nonneg hg) hy_gt
+    have hne : y ≠ rectangularCriticalDepth (Q / b) g := ne_of_gt hy_gt
     have h := sign_gvfSlope hb hn hS0 hg hyn0 hyn hy0 hne
     have e1 : SignType.sign (y - yn) = 1 :=
       sign_pos (sub_pos.mpr (lt_trans hsteep hy_gt))
-    have e2 : SignType.sign (y - criticalDepth (Q / b) g) = 1 :=
+    have e2 : SignType.sign (y - rectangularCriticalDepth (Q / b) g) = 1 :=
       sign_pos (sub_pos.mpr hy_gt)
     rw [e1, e2, mul_one] at h
     exact sign_eq_one_iff.mp h
   · intro y h1 h2
     have hy0 : 0 < y := lt_trans hyn0 h1
-    have hne : y ≠ criticalDepth (Q / b) g := ne_of_lt h2
+    have hne : y ≠ rectangularCriticalDepth (Q / b) g := ne_of_lt h2
     have h := sign_gvfSlope hb hn hS0 hg hyn0 hyn hy0 hne
     have e1 : SignType.sign (y - yn) = 1 := sign_pos (sub_pos.mpr h1)
-    have e2 : SignType.sign (y - criticalDepth (Q / b) g) = -1 :=
+    have e2 : SignType.sign (y - rectangularCriticalDepth (Q / b) g) = -1 :=
       sign_neg (sub_neg.mpr h2)
     rw [e1, e2, one_mul] at h
     exact sign_eq_neg_one_iff.mp h
   · intro y hy0 hlt
-    have hne : y ≠ criticalDepth (Q / b) g :=
+    have hne : y ≠ rectangularCriticalDepth (Q / b) g :=
       ne_of_lt (lt_trans hlt hsteep)
     have h := sign_gvfSlope hb hn hS0 hg hyn0 hyn hy0 hne
     have e1 : SignType.sign (y - yn) = -1 := sign_neg (sub_neg.mpr hlt)
-    have e2 : SignType.sign (y - criticalDepth (Q / b) g) = -1 :=
+    have e2 : SignType.sign (y - rectangularCriticalDepth (Q / b) g) = -1 :=
       sign_neg (sub_neg.mpr (lt_trans hlt hsteep))
     rw [e1, e2] at h
     have h9 : (-1 : SignType) * (-1) = 1 := by simp
@@ -419,10 +400,10 @@ theorem sign_deriv_of_gvf {n S0 b Q g yn : ℝ} {Y : ℝ → ℝ} {x : ℝ}
     (hyn0 : 0 < yn)
     (hyn : rectangularDischarge (Real.sqrt S0 / n) b yn = Q)
     (hY : HasDerivAt Y (gvfSlope n S0 b Q g (Y x)) x) (hy : 0 < Y x)
-    (hyc : Y x ≠ criticalDepth (Q / b) g) :
+    (hyc : Y x ≠ rectangularCriticalDepth (Q / b) g) :
     SignType.sign (deriv Y x)
       = SignType.sign (Y x - yn)
-        * SignType.sign (Y x - criticalDepth (Q / b) g) := by
+        * SignType.sign (Y x - rectangularCriticalDepth (Q / b) g) := by
   have hder : deriv Y x = gvfSlope n S0 b Q g (Y x) := hY.deriv
   rw [hder]
   exact sign_gvfSlope hb hn hS0 hg hyn0 hyn hy hyc
