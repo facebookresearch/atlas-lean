@@ -167,27 +167,165 @@ noncomputable abbrev sw0 : Bool × Bool → ℝ := fun ω => if ω.1 then 1 else
 /-- See `sw0`. -/
 noncomputable abbrev sw1 : Bool × Bool → ℝ := fun ω => if ω.1 then 0 else 1
 
-/-- Individual effects are not identified from the outcome laws: under randomization, the
-switching model and a model with the same observed law (which carries both arm outcome laws)
-have the same ATE, yet their unit effects differ at some point. -/
+theorem coin2_fairCoin_true : fairCoin.real {true} = 1 / 2 := by
+  simp [fairCoin, Measure.real_def, Measure.smul_apply, Measure.add_apply]
+
+theorem coin2_fairCoin_univ : fairCoin.real Set.univ = 1 := probReal_univ
+
+theorem coin2_real_prod (s : Set Bool) (t : Set Bool) :
+    coin2.real (s ×ˢ t) = fairCoin.real s * fairCoin.real t := by
+  simp [coin2, Measure.prod_prod, Measure.real_def, ENNReal.toReal_mul]
+
+theorem coin2_treated2_eq : treated2 = Set.univ ×ˢ ({true} : Set Bool) := by
+  ext ω
+  simp [treated2]
+
+theorem coin2_const_preimage (w : Unit) : (fun _ : Bool × Bool => ()) ⁻¹' {w} = Set.univ := by
+  have hw : w = () := Subsingleton.elim _ _
+  subst hw
+  simp
+
+theorem coin2_vpreimage (B : Set (ℝ × ℝ)) :
+    (fun ω : Bool × Bool => (sw0 ω, sw1 ω)) ⁻¹' B =
+      {b : Bool | ((if b then (1 : ℝ) else 0, if b then (0 : ℝ) else 1)) ∈ B} ×ˢ Set.univ := by
+  ext ω
+  simp [sw0, sw1]
+
+theorem coin2_vpreimage_swap (B : Set (ℝ × ℝ)) :
+    (fun ω : Bool × Bool => (sw1 ω, sw0 ω)) ⁻¹' B =
+      {b : Bool | ((if b then (0 : ℝ) else 1, if b then (1 : ℝ) else 0)) ∈ B} ×ˢ Set.univ := by
+  ext ω
+  simp [sw0, sw1]
+
+theorem coin2_univ_prob : coin2.real Set.univ = 1 := probReal_univ
+
+theorem coin2_condIndep_sw : CondIndepDiscrete coin2 treated2 (fun ω : Bool × Bool => (sw0 ω, sw1 ω)) (fun _ => ()) := by
+  intro B _ w
+  rw [coin2_const_preimage w, coin2_treated2_eq, coin2_vpreimage B]
+  have h1 : ((Set.univ : Set Bool) ×ˢ ({true} : Set Bool)) ∩ ({b : Bool | ((if b then (1 : ℝ) else 0, if b then (0 : ℝ) else 1)) ∈ B} ×ˢ (Set.univ : Set Bool)) ∩ (Set.univ : Set (Bool × Bool)) =
+      {b : Bool | ((if b then (1 : ℝ) else 0, if b then (0 : ℝ) else 1)) ∈ B} ×ˢ ({true} : Set Bool) := by
+    ext ω
+    simp only [Set.mem_inter_iff, Set.mem_prod, Set.mem_univ, true_and, and_true]
+    tauto
+  have h2 : ({b : Bool | ((if b then (1 : ℝ) else 0, if b then (0 : ℝ) else 1)) ∈ B} ×ˢ (Set.univ : Set Bool)) ∩ (Set.univ : Set (Bool × Bool)) =
+      {b : Bool | ((if b then (1 : ℝ) else 0, if b then (0 : ℝ) else 1)) ∈ B} ×ˢ (Set.univ : Set Bool) := by
+    simp
+  have h3 : ((Set.univ : Set Bool) ×ˢ ({true} : Set Bool)) ∩ (Set.univ : Set (Bool × Bool)) = (Set.univ : Set Bool) ×ˢ ({true} : Set Bool) := by
+    simp
+  rw [h1, h2, h3, coin2_univ_prob]
+  rw [coin2_real_prod, coin2_real_prod, coin2_real_prod]
+  rw [coin2_fairCoin_univ, coin2_fairCoin_true]
+  ring
+
+theorem coin2_condIndep_swap : CondIndepDiscrete coin2 treated2 (fun ω : Bool × Bool => (sw1 ω, sw0 ω)) (fun _ => ()) := by
+  intro B _ w
+  rw [coin2_const_preimage w, coin2_treated2_eq, coin2_vpreimage_swap B]
+  have h1 : ((Set.univ : Set Bool) ×ˢ ({true} : Set Bool)) ∩ ({b : Bool | ((if b then (0 : ℝ) else 1, if b then (1 : ℝ) else 0)) ∈ B} ×ˢ (Set.univ : Set Bool)) ∩ (Set.univ : Set (Bool × Bool)) =
+      {b : Bool | ((if b then (0 : ℝ) else 1, if b then (1 : ℝ) else 0)) ∈ B} ×ˢ ({true} : Set Bool) := by
+    ext ω
+    simp only [Set.mem_inter_iff, Set.mem_prod, Set.mem_univ, true_and, and_true]
+    tauto
+  have h2 : ({b : Bool | ((if b then (0 : ℝ) else 1, if b then (1 : ℝ) else 0)) ∈ B} ×ˢ (Set.univ : Set Bool)) ∩ (Set.univ : Set (Bool × Bool)) =
+      {b : Bool | ((if b then (0 : ℝ) else 1, if b then (1 : ℝ) else 0)) ∈ B} ×ˢ (Set.univ : Set Bool) := by
+    simp
+  have h3 : ((Set.univ : Set Bool) ×ˢ ({true} : Set Bool)) ∩ (Set.univ : Set (Bool × Bool)) = (Set.univ : Set Bool) ×ˢ ({true} : Set Bool) := by
+    simp
+  rw [h1, h2, h3, coin2_univ_prob]
+  rw [coin2_real_prod, coin2_real_prod, coin2_real_prod]
+  rw [coin2_fairCoin_univ, coin2_fairCoin_true]
+  ring
+
+theorem coin2_overlap (w : Unit) (_ : coin2 ((fun _ : Bool × Bool => ()) ⁻¹' {w}) ≠ 0) :
+    0 < propensity coin2 treated2 (fun _ : Bool × Bool => ()) w ∧
+    propensity coin2 treated2 (fun _ : Bool × Bool => ()) w < 1 := by
+  have hpre := coin2_const_preimage w
+  have hT : treated2 ∩ (Set.univ : Set (Bool × Bool)) = (Set.univ : Set Bool) ×ˢ ({true} : Set Bool) := by
+    rw [coin2_treated2_eq, Set.inter_univ]
+  have hprop : propensity coin2 treated2 (fun _ : Bool × Bool => ()) w = 1 / 2 := by
+    simp only [propensity, hpre, hT]
+    rw [coin2_real_prod, coin2_univ_prob, coin2_fairCoin_univ, coin2_fairCoin_true, one_mul, div_one]
+  rw [hprop]
+  norm_num
+
+theorem coin2_eq_dirac : coin2 = (2 : ENNReal)⁻¹ • ((2 : ENNReal)⁻¹ •
+    (Measure.dirac (true, true) + Measure.dirac (true, false) +
+     Measure.dirac (false, true) + Measure.dirac (false, false))) := by
+  simp only [coin2, fairCoin, Measure.prod_smul_left, Measure.prod_smul_right,
+    Measure.add_prod, Measure.prod_add, Measure.dirac_prod_dirac, smul_add]
+  ac_rfl
+
+theorem coin2_integral_sw : ∫ ω, (sw1 ω - sw0 ω) ∂coin2 = 0 := by
+  rw [coin2_eq_dirac, integral_smul_measure, integral_smul_measure]
+  rw [integral_add_measure Integrable.of_finite Integrable.of_finite,
+      integral_add_measure Integrable.of_finite Integrable.of_finite,
+      integral_add_measure Integrable.of_finite Integrable.of_finite]
+  rw [integral_dirac, integral_dirac, integral_dirac, integral_dirac]
+  simp [sw0, sw1]
+
+theorem coin2_integral_swap : ∫ ω, (sw0 ω - sw1 ω) ∂coin2 = 0 := by
+  rw [coin2_eq_dirac, integral_smul_measure, integral_smul_measure]
+  rw [integral_add_measure Integrable.of_finite Integrable.of_finite,
+      integral_add_measure Integrable.of_finite Integrable.of_finite,
+      integral_add_measure Integrable.of_finite Integrable.of_finite]
+  rw [integral_dirac, integral_dirac, integral_dirac, integral_dirac]
+  simp [sw0, sw1]
+
+theorem coin2_obsDatum_f_TT : obsDatum treated2 (fun _ : Bool × Bool => ()) sw0 sw1 (true, true) = ((), 1, 0) := by
+  simp [obsDatum, treated2, observed, sw1]
+
+theorem coin2_obsDatum_f_TF : obsDatum treated2 (fun _ : Bool × Bool => ()) sw0 sw1 (true, false) = ((), 0, 1) := by
+  simp [obsDatum, treated2, observed, sw0]
+
+theorem coin2_obsDatum_f_FT : obsDatum treated2 (fun _ : Bool × Bool => ()) sw0 sw1 (false, true) = ((), 1, 1) := by
+  simp [obsDatum, treated2, observed, sw1]
+
+theorem coin2_obsDatum_f_FF : obsDatum treated2 (fun _ : Bool × Bool => ()) sw0 sw1 (false, false) = ((), 0, 0) := by
+  simp [obsDatum, treated2, observed, sw0]
+
+theorem coin2_obsDatum_g_TT : obsDatum treated2 (fun _ : Bool × Bool => ()) sw1 sw0 (true, true) = ((), 1, 1) := by
+  simp [obsDatum, treated2, observed, sw0]
+
+theorem coin2_obsDatum_g_TF : obsDatum treated2 (fun _ : Bool × Bool => ()) sw1 sw0 (true, false) = ((), 0, 0) := by
+  simp [obsDatum, treated2, observed, sw1]
+
+theorem coin2_obsDatum_g_FT : obsDatum treated2 (fun _ : Bool × Bool => ()) sw1 sw0 (false, true) = ((), 1, 0) := by
+  simp [obsDatum, treated2, observed, sw0]
+
+theorem coin2_obsDatum_g_FF : obsDatum treated2 (fun _ : Bool × Bool => ()) sw1 sw0 (false, false) = ((), 0, 1) := by
+  simp [obsDatum, treated2, observed, sw1]
+
+theorem coin2_obsLaw_eq :
+    obsLaw coin2 treated2 (fun _ : Bool × Bool => ()) sw1 sw0 =
+    obsLaw coin2 treated2 (fun _ : Bool × Bool => ()) sw0 sw1 := by
+  have hfm : Measurable (obsDatum treated2 (fun _ : Bool × Bool => ()) sw0 sw1) :=
+    Measurable.of_discrete
+  have hgm : Measurable (obsDatum treated2 (fun _ : Bool × Bool => ()) sw1 sw0) :=
+    Measurable.of_discrete
+  simp only [obsLaw, coin2_eq_dirac]
+  rw [Measure.map_smul _ hgm.aemeasurable, Measure.map_smul _ hgm.aemeasurable,
+      Measure.map_smul _ hfm.aemeasurable, Measure.map_smul _ hfm.aemeasurable]
+  rw [Measure.map_add _ _ hgm, Measure.map_add _ _ hgm, Measure.map_add _ _ hgm,
+      Measure.map_add _ _ hfm, Measure.map_add _ _ hfm, Measure.map_add _ _ hfm]
+  rw [Measure.map_dirac, Measure.map_dirac, Measure.map_dirac, Measure.map_dirac,
+      Measure.map_dirac, Measure.map_dirac, Measure.map_dirac, Measure.map_dirac]
+  rw [coin2_obsDatum_g_TT, coin2_obsDatum_g_TF, coin2_obsDatum_g_FT, coin2_obsDatum_g_FF,
+      coin2_obsDatum_f_TT, coin2_obsDatum_f_TF, coin2_obsDatum_f_FT, coin2_obsDatum_f_FF]
+  ac_rfl
+
+/-- Individual effects are not identified even under randomization: in the two-coin
+randomized design, the switching-response model and the label-swapped model are both
+strongly ignorable, have the same observed law and the same ATE, yet their unit effects
+differ at some point. -/
 theorem individual_effects_not_identified :
     ∃ Y₀' Y₁' : Bool × Bool → ℝ,
       obsLaw coin2 treated2 (fun _ => ()) Y₀' Y₁' = obsLaw coin2 treated2 (fun _ => ()) sw0 sw1 ∧
       ∫ ω, (Y₁' ω - Y₀' ω) ∂coin2 = ∫ ω, (sw1 ω - sw0 ω) ∂coin2 ∧
-      ∃ ω, Y₁' ω - Y₀' ω ≠ sw1 ω - sw0 ω := by
-  obtain ⟨Y₀', Y₁', -, -, -, -, -, -, heff, hobs, hint⟩ :=
-    exists_obsLaw_eq_integral_sub_eq (μ := coin2) (T := treated2)
-      (measurable_snd (measurableSet_singleton true)) (fun _ => ()) (Y₀ := sw0) (Y₁ := sw1)
-      Measurable.of_discrete Measurable.of_discrete Integrable.of_finite Integrable.of_finite
-      (∫ ω, (sw1 ω - sw0 ω) ∂coin2)
-  refine ⟨Y₀', Y₁', hobs, hint, ?_⟩
-  by_cases ht : ∫ ω, (sw1 ω - sw0 ω) ∂coin2 = -1
-  · refine ⟨(false, true), ?_⟩
-    rw [heff, ht]
-    norm_num [sw0, sw1]
-  · refine ⟨(true, true), ?_⟩
-    rw [heff]
-    simpa [sw0, sw1] using ht
+      (∃ ω, Y₁' ω - Y₀' ω ≠ sw1 ω - sw0 ω) ∧
+      StronglyIgnorable coin2 treated2 (fun ω => (sw0 ω, sw1 ω)) (fun _ => ()) ∧
+      StronglyIgnorable coin2 treated2 (fun ω => (Y₀' ω, Y₁' ω)) (fun _ => ()) := by
+  refine ⟨sw1, sw0, coin2_obsLaw_eq, ?hate, ?hdiff, ⟨coin2_condIndep_sw, coin2_overlap⟩, ⟨coin2_condIndep_swap, coin2_overlap⟩⟩
+  · rw [coin2_integral_swap, coin2_integral_sw]
+  · exact ⟨(true, true), by norm_num [sw0, sw1]⟩
 
 /-- Zero-mass boundary: under the zero measure every ATE is `0`, so the ATE is identified;
 the probability hypothesis of `not_isIdentifiedBy_obsLaw_integral_sub` is needed. -/
@@ -206,4 +344,3 @@ theorem emptyPopulation_isIdentifiedBy (μ : Measure (Fin 0)) (T : Set (Fin 0)) 
   fun _ _ _ => by simp [ate, popMean]
 
 end MathlibExtTest.Probability.Statistics.TreatmentEffectNonidentification
-
