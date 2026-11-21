@@ -9,9 +9,11 @@ fails if a required workflow:
   or filters some of them out;
 - can skip the job that reports the check (a skipped job counts as passing):
   a job-level `if`, a matrix, or a prerequisite that is not required itself;
-- renames the check, or lets another job report the same name;
-- uses a concurrency group that two PRs or two merge groups share, so that
-  one run can cancel or replace another's.
+- renames the check, lets another job report the same name, or moves the job
+  into a reusable workflow (which reports `caller / callee` instead);
+- uses a concurrency group other than the forms below, which are known to
+  differ between any two PRs and any two merge groups, so that no run can
+  cancel or replace another's.
 
 The required checks are the ones listed under "How PRs merge" in
 CONTRIBUTING.md. CI runs this test in the `repository integrity` job. Locally:
@@ -34,26 +36,26 @@ WORKFLOWS = ROOT / ".github" / "workflows"
 
 # Required check -> (workflow file, the event that reports it on PRs). GitHub
 # matches a required check by name: the job's `name`, or its id without one.
+# The bump guard's `guard` is not required: its PR event, pull_request_target,
+# is blocked by default in public repositories unless an Actions event policy
+# allows it, and a required check that never runs blocks every PR.
 REQUIRED = {
     "repository integrity": ("ci.yml", "pull_request"),
     "build": ("ci.yml", "pull_request"),
     "source-diagnostics": ("source-diagnostics.yml", "pull_request"),
-    "guard": ("bump-guard.yml", "pull_request_target"),
 }
 PR_TYPES = {"opened", "synchronize", "reopened"}
 FILTERS = {"branches", "branches-ignore", "paths", "paths-ignore"}
-# Context values that differ between any two runs of the event. Under
-# pull_request_target, github.ref and github.sha are the base branch's, so two
-# PRs share them.
-DISTINCT = {
-    "merge_group": {"github.ref", "github.ref_name", "github.sha", "github.run_id",
-                    "github.event.merge_group.head_ref", "github.event.merge_group.head_sha"},
-    "pull_request": {"github.ref", "github.ref_name", "github.sha", "github.run_id",
-                     "github.event.number", "github.event.pull_request.number",
-                     "github.event.pull_request.head.sha"},
-    "pull_request_target": {"github.run_id", "github.event.number",
-                            "github.event.pull_request.number",
-                            "github.event.pull_request.head.sha"},
+# Concurrency groups known to differ between any two runs of the PR event and
+# between any two merge groups. Both start with the workflow's name, which is
+# unique. Under pull_request_target, github.ref is the base branch, so the
+# second form is needed there; GitHub treats group names case-insensitively.
+SAFE_GROUPS = {
+    "pull_request": {"${{ github.workflow }}-${{ github.ref }}"},
+    "pull_request_target": {
+        "${{ github.workflow }}-${{ github.event.merge_group.head_ref || "
+        "github.event.pull_request.number }}",
+    },
 }
 
 
@@ -81,10 +83,9 @@ def events(workflow: dict) -> dict:
     return {event: settings or {} for event, settings in triggers.items()}
 
 
-def context_values(group: str) -> set[str]:
-    """The context names an expression-valued concurrency group reads."""
-    return {name for expression in re.findall(r"\$\{\{(.*?)\}\}", group)
-            for name in re.findall(r"[A-Za-z_][\w.-]*", expression)}
+def normalised(group: str) -> str:
+    return re.sub(r"\$\{\{\s*(.*?)\s*\}\}",
+                  lambda m: "${{ " + " ".join(m.group(1).split()) + " }}", group.strip())
 
 
 def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
@@ -92,6 +93,13 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
     found = []
     if documented != list(REQUIRED):
         found.append(f"CONTRIBUTING lists {documented}, not {list(REQUIRED)}")
+    names: dict[str, list[str]] = {}
+    for name, workflow in workflows.items():
+        names.setdefault(str(workflow.get("name", name)).casefold(), []).append(name)
+    for title, files in names.items():
+        if len(files) > 1:
+            found.append(f"workflows {files} share the name {title!r}, so their "
+                         "concurrency groups can collide")
     reporters: dict[str, list[tuple[str, str]]] = {}
     for name, workflow in workflows.items():
         for job_id, job in (workflow.get("jobs") or {}).items():
@@ -125,7 +133,7 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
                 found.append(f"{name} does not run on {pr_event} {sorted(missing)}")
         (_, job_id), = reporters[check]
         job = workflow["jobs"][job_id]
-        for key in ("if", "strategy"):
+        for key in ("if", "strategy", "uses"):
             if key in job:
                 found.append(f"{check!r} has a job-level {key!r}")
         for prerequisite in as_list(job.get("needs")):
@@ -133,15 +141,14 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
                 found.append(f"{check!r} needs {prerequisite!r}, which is not required")
         # A new run in a concurrency group cancels the group's pending run even
         # without cancel-in-progress.
-        for scope, setting in (("workflow", workflow.get("concurrency")),
-                               ("job", job.get("concurrency"))):
-            if not setting:
-                continue
+        setting = workflow.get("concurrency")
+        if setting:
             group = setting.get("group", "") if isinstance(setting, dict) else setting
-            for event in ("merge_group", pr_event):
-                if not context_values(group) & DISTINCT[event]:
-                    found.append(f"{check!r}: {scope} concurrency group {group!r} is shared "
-                                 f"by two {event} runs")
+            if normalised(group) not in SAFE_GROUPS[pr_event]:
+                found.append(f"{name} concurrency group {group!r} is not one of the forms "
+                             f"known to differ per {pr_event} and per merge group")
+        if job.get("concurrency"):
+            found.append(f"{check!r} has a job-level concurrency group, which is unverified")
     return found
 
 
@@ -149,6 +156,7 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
 # live workflows are checked separately.
 FIXTURE = {
     "ci.yml": {
+        "name": "CI",
         "on": {"pull_request": {"types": ["opened", "synchronize", "reopened"]},
                "merge_group": {"types": ["checks_requested"]}},
         "concurrency": {"group": "${{ github.workflow }}-${{ github.ref }}"},
@@ -156,14 +164,13 @@ FIXTURE = {
                  "build": {"needs": "preflight"}},
     },
     "source-diagnostics.yml": {
+        "name": "Source diagnostics",
         "on": {"pull_request": "", "merge_group": ""},
         "jobs": {"source-diagnostics": {}},
     },
     "bump-guard.yml": {
-        "on": {"pull_request_target": {"types": ["opened", "synchronize", "reopened", "edited"]},
-               "merge_group": ""},
-        "concurrency": {"group": "${{ github.workflow }}-${{ github.event.merge_group.head_ref"
-                                 " || github.event.pull_request.number }}"},
+        "name": "Bump guard",
+        "on": {"pull_request_target": "", "merge_group": ""},
         "jobs": {"guard": {}},
     },
     "lint.yml": {"on": {"pull_request": {"paths": ["docs/**"]}}, "jobs": {"lint": {}}},
@@ -216,13 +223,12 @@ class MergeQueueChecks(unittest.TestCase):
                        put("ci.yml", "on", "merge_group", {"types": "checks_requested"}),
                        put("ci.yml", "on", "pull_request", ""),
                        put("ci.yml", "jobs", "build", "name", "build"),
-                       put("ci.yml", "jobs", "build", "concurrency",
-                           "lean-${{ github.run_id }}")):
+                       put("ci.yml", "concurrency", "group",
+                           "${{github.workflow}}-${{  github.ref }}")):
             with self.subTest(change):
                 self.assertEqual(self.check(change), [])
 
     def test_changes_that_stop_a_check_from_reporting_fail(self):
-        guard_group = ("bump-guard.yml", "concurrency", "group")
         cases = {
             "lost merge_group": (drop("ci.yml", "on", "merge_group"), "no merge_group"),
             "list of events": (put("source-diagnostics.yml", "on", ["pull_request"]),
@@ -231,14 +237,17 @@ class MergeQueueChecks(unittest.TestCase):
                 put("source-diagnostics.yml", "on", "merge_group", "branches", ["main"]),
                 "filters merge groups"),
             "other merge_group type": (
-                put("bump-guard.yml", "on", "merge_group", {"types": ["destroyed"]}),
+                put("ci.yml", "on", "merge_group", {"types": ["destroyed"]}),
                 "filters merge groups"),
             "closed PRs only": (put("ci.yml", "on", "pull_request", {"types": ["closed"]}),
                                 "does not run on pull_request"),
             "PR paths": (put("source-diagnostics.yml", "on", "pull_request", "paths",
                              ["docs/**"]), "filters PRs"),
-            "lost PR trigger": (drop("bump-guard.yml", "on", "pull_request_target"),
-                                "no pull_request_target"),
+            "lost PR trigger": (drop("source-diagnostics.yml", "on", "pull_request"),
+                                "no pull_request"),
+            "PR trigger swapped": (
+                put("source-diagnostics.yml", "on", {"pull_request_target": "",
+                                                     "merge_group": ""}), "no pull_request"),
             "job-level if": (put("ci.yml", "jobs", "build", "if", "github.event_name == 'push'"),
                              "job-level 'if'"),
             "matrix": (put("source-diagnostics.yml", "jobs", "source-diagnostics", "strategy",
@@ -249,20 +258,33 @@ class MergeQueueChecks(unittest.TestCase):
                                "'build' is reported by []"),
             "duplicate name": (put("lint.yml", "jobs", "lint", "name", "build"),
                                "'build' is reported by"),
-            "duplicate job id": (rename_job("lint.yml", "lint", "guard"), "'guard' is reported by"),
+            "duplicate job id": (rename_job("lint.yml", "lint", "source-diagnostics"),
+                                 "'source-diagnostics' is reported by"),
+            "reusable workflow": (put("ci.yml", "jobs", "build", "uses",
+                                      "./.github/workflows/lean-build.yml"), "job-level 'uses'"),
             "prerequisite not required": (
                 put("ci.yml", "jobs", "build", "needs", ["preflight", "lint"]), "needs 'lint'"),
             "plain workflow group": (put("ci.yml", "concurrency", "group", "ci"),
-                                     "workflow concurrency group"),
+                                     "is not one of the forms"),
             "ref type, not ref": (
                 put("ci.yml", "concurrency", "group",
-                    "${{ github.workflow }}-${{ github.ref_type }}"),
-                "shared by two merge_group runs"),
-            "base ref under pull_request_target": (
-                put(*guard_group, "${{ github.workflow }}-${{ github.ref }}"),
-                "shared by two pull_request_target runs"),
-            "plain job group": (put("ci.yml", "jobs", "build", "concurrency", "lean-build"),
-                                "job concurrency group"),
+                    "${{ github.workflow }}-${{ github.ref_type }}"), "is not one of the forms"),
+            "short-circuit on a value that is never empty": (
+                put("ci.yml", "concurrency", "group",
+                    "${{ github.workflow }}-${{ github.ref || github.event.pull_request.number }}"),
+                "is not one of the forms"),
+            "group shared with another workflow": (
+                put("source-diagnostics.yml", "concurrency", "CI-${{ github.ref }}"),
+                "is not one of the forms"),
+            "pull_request_target form under pull_request": (
+                put("source-diagnostics.yml", "concurrency",
+                    "${{ github.workflow }}-${{ github.event.merge_group.head_ref || "
+                    "github.event.pull_request.number }}"), "is not one of the forms"),
+            "workflow names differing only in case": (put("lint.yml", "name", "ci"),
+                                                      "share the name 'ci'"),
+            "job-level group": (put("ci.yml", "jobs", "build", "concurrency",
+                                    "${{ github.workflow }}-${{ github.ref }}"),
+                                "job-level concurrency group"),
         }
         for label, (change, message) in cases.items():
             with self.subTest(label):

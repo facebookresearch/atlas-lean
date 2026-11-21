@@ -231,21 +231,24 @@ group before it merges:
 - `repository integrity` (CI): the deterministic repository checks.
 - `build` (CI): the Lean build and its policy checks.
 - `source-diagnostics` (Source diagnostics).
-- `guard` (Bump guard): the Lean and Mathlib pin check. On a merge group it
-  checks a pin change again against the queue's base.
 
-Their workflows run when a PR is opened, updated or reopened, and on every
-merge group; on some fork PRs, CI and Source diagnostics wait until a
+Their workflows are triggered when a PR is opened, updated or reopened, and on
+every merge group; on some fork PRs, CI and Source diagnostics wait until a
 maintainer approves the run. CI's `repository integrity` job runs
 `scripts/test_merge_queue_checks.py`. It fails if one of these workflows loses
 or filters those triggers, can skip the job that reports the check, renames the
-check or lets another job report the same name, or keys a concurrency group on
-something that two PRs or two merge groups share. The other checks are
-advisory. Codex does not run on merge groups. `public-references` runs on PRs
-and merge groups, but stays advisory until the workflow governance described
-under [Public references](#public-references) is in place. Blueprint Pages,
-Check workflows and Binary64 conformance are path-filtered on PRs, and
-Blueprint Pages also builds `main` once a day.
+check, lets another job report the same name, or uses a concurrency group that
+the test does not know to differ between PRs and between merge groups.
+
+The other checks are advisory. The bump guard's `guard` checks Lean and Mathlib
+pin changes on PRs and merge groups; on PRs it runs through
+`pull_request_target`, which GitHub blocks by default in public repositories
+unless an Actions event policy allows it, so it is not required. Codex does not
+run on merge groups. `public-references` runs on PRs and merge groups, but
+stays advisory until the workflow governance described under
+[Public references](#public-references) is in place. Blueprint Pages, Check
+workflows and Binary64 conformance are path-filtered on PRs, and Blueprint
+Pages also builds `main` once a day.
 
 ## Contributor License Agreement ("CLA")
 In order to accept your pull request, we need you to submit a CLA. You only need
