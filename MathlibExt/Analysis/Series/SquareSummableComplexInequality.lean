@@ -50,9 +50,10 @@ For `α = (α₁, α₂, …) ∈ ℓ²(ℂ)` the result asserts
 `∑ₙ |αₙ|² ≥ (6/π²) ∑ₖ |∑ₗ α_{2ᵏ(2l+1)} / (l+1)|²`,
 where every `n ≥ 1` is uniquely written `n = 2ᵏ(2l+1)`.
 
-The sequence is represented by a function on `ℕ`; `α (n + 1)` is its
-one-based `n`th term. The two summability conclusions are included explicitly
-so totalized `tsum` cannot make the inequality vacuous. -/
+The sequence is represented by a function on `ℕ`. The sum `∑' n, ‖α (n + 1)‖ ^ 2` is indexed
+by `n : ℕ`; its summand at `n` uses the one-based sequence entry `α (n + 1)`. The value `α 0`
+is unused. The two summability conclusions are included explicitly so totalized `tsum` cannot
+make the inequality vacuous. -/
 
 /-- If `∑_{n ≥ 1} ‖α n‖²` converges, then for every `k` the series
 `βₖ = ∑_{l ≥ 0} α (2 ^ k * (2 * l + 1)) / (l + 1)` converges (absolutely, as `ℂ` is finite
@@ -67,25 +68,15 @@ def conjecture : Prop :=
 /-- The exponent of `2` and the odd part of a positive integer are unique. -/
 private lemma two_pow_mul_odd_injective :
     Function.Injective fun p : ℕ × ℕ => 2 ^ p.1 * (2 * p.2 + 1) := by
-  have key : ∀ {a b c d : ℕ}, a ≤ c → 2 ^ a * (2 * b + 1) = 2 ^ c * (2 * d + 1) →
-      a = c ∧ b = d := by
-    intro a b c d hac h
-    obtain ⟨e, rfl⟩ := Nat.exists_eq_add_of_le hac
-    rw [pow_add, mul_assoc] at h
-    have h' := Nat.eq_of_mul_eq_mul_left (by positivity) h
-    rcases e with _ | e
-    · rw [pow_zero, one_mul] at h'
-      omega
-    · -- `2 * b + 1` would be even.
-      have : 2 * b + 1 = 2 * (2 ^ e * (2 * d + 1)) := by rw [h']; ring
-      omega
   rintro ⟨a, b⟩ ⟨c, d⟩ h
   dsimp only at h
-  rcases le_total a c with hac | hca
-  · obtain ⟨rfl, rfl⟩ := key hac h
-    rfl
-  · obtain ⟨rfl, rfl⟩ := key hca h.symm
-    rfl
+  -- `ordCompl[2]` recovers the odd part `2 * l + 1` of `2 ^ k * (2 * l + 1)`.
+  have hodd (k l : ℕ) : ordCompl[2] (2 ^ k * (2 * l + 1)) = 2 * l + 1 :=
+    Nat.ordCompl_pow_mul_of_not_dvd k Nat.prime_two (by omega)
+  have hbd : 2 * b + 1 = 2 * d + 1 := by rw [← hodd a b, ← hodd c d, h]
+  rw [hbd] at h
+  exact Prod.ext (Nat.pow_right_injective le_rfl (Nat.eq_of_mul_eq_mul_right (by omega) h))
+    (by omega)
 
 /-- Every positive integer `n + 1` is `2 ^ k * (2 * l + 1)` for some `k l : ℕ`. -/
 private lemma two_pow_mul_odd_sub_one_surjective :
