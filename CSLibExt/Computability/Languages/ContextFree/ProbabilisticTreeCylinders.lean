@@ -60,36 +60,33 @@ active set `false` is exactly the leaf addresses
 def CGTree.branchAssignment (t : CGTree) (u : List Bool) : List Bool → Bool :=
   fun a => decide (a ∈ t.branchAddresses u)
 
-/-- branch addresses of a derivation tree rooted at prefix `u`,
-by the same recursion, ignoring nonterminal/terminal labels. -/
-def PDerivTree.branchAddresses {NT T : Type*} : PDerivTree NT T → List Bool → Finset (List Bool)
-  | .leaf _ _, _ => ∅
-  | .node _ _ _ l r, u =>
-      insert u (l.branchAddresses (u ++ [false]) ∪ r.branchAddresses (u ++ [true]))
-
-/-- leaf addresses of a derivation tree rooted at prefix `u`. -/
-def PDerivTree.leafAddresses {NT T : Type*} : PDerivTree NT T → List Bool → Finset (List Bool)
-  | .leaf _ _, u => {u}
-  | .node _ _ _ l r, u =>
-      l.leafAddresses (u ++ [false]) ∪ r.leafAddresses (u ++ [true])
-
-/-- active addresses of a derivation tree rooted at prefix `u`. -/
-def PDerivTree.activeAddresses {NT T : Type*} : PDerivTree NT T → List Bool → Finset (List Bool)
-  | .leaf _ _, u => {u}
-  | .node _ _ _ l r, u =>
-      insert u (l.activeAddresses (u ++ [false]) ∪ r.activeAddresses (u ++ [true]))
-
-/-- the Bool assignment a derivation tree imposes at prefix `u`. -/
-def PDerivTree.branchAssignment {NT T : Type*} (t : PDerivTree NT T) (u : List Bool) :
-    List Bool → Bool :=
-  fun a => decide (a ∈ t.branchAddresses u)
-
 /-- the shape of a derivation tree as an existing `CGTree`
 (projection, not a new tree type). Address sets of `t` are those of
 `t.shape`; see `PDerivTree.addresses_shape`. -/
 def PDerivTree.shape {NT T : Type*} : PDerivTree NT T → CGTree
   | .leaf _ _ => .leaf
   | .node _ _ _ l r => .node l.shape r.shape
+
+/-- branch addresses of a derivation tree rooted at prefix `u`:
+those of its `CGTree` shape. -/
+def PDerivTree.branchAddresses {NT T : Type*} (t : PDerivTree NT T) (u : List Bool) :
+    Finset (List Bool) :=
+  t.shape.branchAddresses u
+
+/-- leaf addresses of a derivation tree rooted at prefix `u`. -/
+def PDerivTree.leafAddresses {NT T : Type*} (t : PDerivTree NT T) (u : List Bool) :
+    Finset (List Bool) :=
+  t.shape.leafAddresses u
+
+/-- active addresses of a derivation tree rooted at prefix `u`. -/
+def PDerivTree.activeAddresses {NT T : Type*} (t : PDerivTree NT T) (u : List Bool) :
+    Finset (List Bool) :=
+  t.shape.activeAddresses u
+
+/-- the Bool assignment a derivation tree imposes at prefix `u`. -/
+def PDerivTree.branchAssignment {NT T : Type*} (t : PDerivTree NT T) (u : List Bool) :
+    List Bool → Bool :=
+  t.shape.branchAssignment u
 
 /-! ## the cylinder of a finite tree -/
 
@@ -101,13 +98,13 @@ descendant of a leaf, is unrestricted. -/
 def treeCylinder (t : CGTree) : Set BinaryTreeAddressLaw.Ω :=
   BinaryTreeAddressLaw.cylinder (t.activeAddresses []) (t.branchAssignment [])
 
-/-- the cylinder of a finite derivation tree, by the same rule
-on its own exact addresses. Same-shape derivation trees (different
-labels or terminals) have the same cylinder; disjointness below is
-therefore stated for distinct shapes, not distinct labelled trees. -/
+/-- the cylinder of a finite derivation tree: the cylinder of its
+shape. Same-shape derivation trees (different labels or terminals)
+have the same cylinder; disjointness below is therefore stated for
+distinct shapes, not distinct labelled trees. -/
 def PDerivTree.treeCylinder {NT T : Type*} (t : PDerivTree NT T) :
     Set BinaryTreeAddressLaw.Ω :=
-  BinaryTreeAddressLaw.cylinder (t.activeAddresses []) (t.branchAssignment [])
+  Cslib.Language.treeCylinder t.shape
 
 theorem CGTree.branchAddresses_leaf (u : List Bool) :
     CGTree.leaf.branchAddresses u = ∅ := by
@@ -905,42 +902,20 @@ theorem treeCylinder_weight_disjoint {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
       Disjoint (treeCylinder t₁) (treeCylinder t₂) :=
   ⟨treeCylinder_weight hp0 hp1 t₁, treeCylinder_weight hp0 hp1 t₂,
     treeCylinder_disjoint_of_ne h⟩
-/-! ## derivation trees (`PDerivTree`) via their exact addresses -/
+/-! ## derivation trees (`PDerivTree`) via their shapes -/
 
 /-- the address sets of a derivation tree are those of its
-`CGTree` shape, at every prefix. Proof route: induction on `t`. -/
+`CGTree` shape, at every prefix. -/
 theorem PDerivTree.addresses_shape {NT T : Type*} (t : PDerivTree NT T) (u : List Bool) :
     t.branchAddresses u = t.shape.branchAddresses u ∧
       t.leafAddresses u = t.shape.leafAddresses u ∧
       t.activeAddresses u = t.shape.activeAddresses u := by
-  revert u
-  induction t with
-  | leaf A a =>
-      intro u
-      exact ⟨rfl, rfl, rfl⟩
-  | node A B C l r ihl ihr =>
-      intro u
-      refine ⟨?_, ?_, ?_⟩
-      · have e1 := (ihl (u ++ [false])).1
-        have e2 := (ihr (u ++ [true])).1
-        simp only [PDerivTree.branchAddresses, PDerivTree.shape, CGTree.branchAddresses, e1, e2]
-      · have e1 := (ihl (u ++ [false])).2.1
-        have e2 := (ihr (u ++ [true])).2.1
-        simp only [PDerivTree.leafAddresses, PDerivTree.shape, CGTree.leafAddresses, e1, e2]
-      · have e1 := (ihl (u ++ [false])).2.2
-        have e2 := (ihr (u ++ [true])).2.2
-        simp only [PDerivTree.activeAddresses, PDerivTree.shape, CGTree.activeAddresses, e1, e2]
+  exact ⟨rfl, rfl, rfl⟩
 
 /-- a derivation tree's cylinder is the cylinder of its shape. -/
 theorem PDerivTree.treeCylinder_eq {NT T : Type*} (t : PDerivTree NT T) :
     t.treeCylinder = Cslib.Language.treeCylinder t.shape := by
-  have hb := (PDerivTree.addresses_shape t []).1
-  have ha := (PDerivTree.addresses_shape t []).2.2
-  have hassign : t.branchAssignment [] = t.shape.branchAssignment [] := by
-    unfold PDerivTree.branchAssignment CGTree.branchAssignment
-    rw [hb]
-  unfold PDerivTree.treeCylinder Cslib.Language.treeCylinder
-  rw [ha, hassign]
+  rfl
 
 /-- the shape maps of the copied bijection agree with the
 existing `toCGTree` on `ambG` trees. -/
