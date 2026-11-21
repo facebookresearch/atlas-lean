@@ -38,7 +38,8 @@ class BlueprintWorkflowTests(unittest.TestCase):
         for path in (
             "blueprint/**", "scripts/generate_wiki.py", "scripts/sync_wiki.py",
             "scripts/extract_v2_lean_dependencies.py", "scripts/dump_v2_dependencies.lean",
-            "scripts/check_blueprint_site.py", "scripts/taxonomy.json", "scripts/wiki-sync.json",
+            "scripts/check_blueprint_site.py", "scripts/check_graph_rules.py", "scripts/taxonomy.json",
+            "scripts/wiki-sync.json",
             "scripts/requirements-blueprint.txt", "mkdocs.yml", "theme/**", "hooks/**",
             "docs/BLUEPRINT.md", ".github/workflows/blueprint-pages.yml", ".github/autoform-ref",
             "lean-toolchain", "lake-manifest.json", "lakefile.toml",
@@ -209,6 +210,54 @@ class BlueprintWorkflowTests(unittest.TestCase):
             self.assertIn(clause, condition)
         self.assertNotIn("BLUEPRINT_PAGES", condition)
         self.assertNotIn("push", condition)
+
+    def test_the_graph_rules_run_early_and_block_prs_on_any_finding_once_switched_on(self):
+        step = self.step("Check the graph's rules")
+        run = step["run"]
+        # The base, the merge commit's first parent, serves only the size check; pull_request.base.sha can be
+        # older than it.
+        self.assertIn('git fetch --no-tags --depth=2 origin "$GITHUB_SHA"', run)
+        self.assertIn('args+=(--base "$(git rev-parse HEAD^1)")', run)
+        self.assertIn('--summary "$GITHUB_STEP_SUMMARY"', run)
+        self.assertNotIn("${{ github.event.pull_request.base.sha", self.text)
+        # Report-only until a maintainer turns blocking on; then any finding fails a PR or merge group, but
+        # only reports on main's daily or manual build, which also deploys the site.
+        self.assertEqual(step["env"]["BLOCKING"], "${{ vars.GRAPH_RULES_BLOCKING }}")
+        events = run[run.index('if [ "$EVENT" = pull_request ] || [ "$EVENT" = merge_group ]; then'):run.index("\nfi\n") + 1]
+        self.assertIn('\n  if [ "${BLOCKING:-}" = true ]; then\n    args+=(--blocking)\n  fi\n', events)
+        self.assertEqual(run.count("--blocking"), 1)
+        # A merge group has no paths filter: one that changes none of the checker's inputs skips it.
+        self.assertIn("git diff --name-only HEAD^1 HEAD", run)
+        skip = run[run.index('if [ "$EVENT" = merge_group ]'):run.index("args+=(--base")]
+        for path in ("blueprint/", r"scripts/taxonomy\.json", r"scripts/check_graph_rules\.py",
+                     r"\.github/autoform-ref"):
+            self.assertIn(path, skip)
+        self.assertIn("exit 0", skip)
+        self.assertNotIn("continue-on-error", step)
+        self.assertEqual(step["timeout-minutes"], "10")
+        # Autoform's check reports informal links that close a cycle through Lean edges; no second pass.
+        self.assertNotIn("--built", self.text)
+        positions = {s.get("name"): i for i, s in enumerate(self.steps)}
+        self.assertLess(positions["Test the wiki scripts"], positions[step["name"]])
+        self.assertLess(positions[step["name"]], positions["Build the current v2 libraries"])
+        self.assertLess(positions[step["name"]], positions["Add the Lean-owned facts to the articles"])
+
+    def test_the_audit_reports_without_blocking_and_fails_only_if_it_cannot_run(self):
+        audit = self.step("Audit the graph (report only)")
+        self.assertNotIn("if", audit)
+        self.assertNotIn("continue-on-error", audit)
+        # Actions runs a step with `bash -e`, so findings must not end it; a crash still does, through the
+        # JSON read below.
+        self.assertIn("|| status=$?", audit["run"])
+        self.assertIn("json.load", audit["run"])
+        self.assertIn("autoform audit blueprint --lean-root . --json", audit["run"])
+        self.assertIn("GITHUB_STEP_SUMMARY", audit["run"])
+        self.assertIn('for kind in ("findings", "warnings")', audit["run"])
+        self.assertIn("build/audit.json", self.step("Keep dependency diagnostics")["with"]["path"])
+        self.assertEqual(audit["timeout-minutes"], "10")
+        positions = {s.get("name"): i for i, s in enumerate(self.steps)}
+        self.assertLess(positions["Validate the theorem DAG and its declarations"], positions[audit["name"]])
+        self.assertLess(positions[audit["name"]], positions["Render the blueprint"])
 
 
 if __name__ == "__main__":
