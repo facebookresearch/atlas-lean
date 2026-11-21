@@ -305,6 +305,10 @@ def load_annotations(root: Path, report: Report) -> dict[Path, dict]:
             if source.name != f"{expected}.jsonl":
                 report.add(5, subject, f"its annotation belongs in blueprint/links/{expected}.jsonl", at)
             if page in seen:
+                # lean-facts reads every row, so one that names a declaration links the page however many do not.
+                if linked(annotation) and not linked(annotations[page]):
+                    annotation["_at"] = at
+                    annotations[page] = annotation
                 continue
             seen[page] = at
             annotation["_at"] = at
@@ -351,7 +355,10 @@ def check_taxonomy(root: Path, report: Report) -> None:
 
 def check_listings(root: Path, report: Report) -> None:
     roadmap = (root / "blueprint" / "roadmap").resolve()
-    for folder in sorted({page.parent for page in roadmap.rglob("*.md")}):
+    # Every folder that holds a page at any depth, so one with only subfolders still needs its folder page.
+    folders = {folder for page in roadmap.rglob("*.md") for folder in page.parents
+               if folder == roadmap or roadmap in folder.parents}
+    for folder in sorted(folders):
         readme = folder / "README.md"
         if not readme.is_file():
             report.add(2, rel(folder, root), "the folder has no README.md folder page")

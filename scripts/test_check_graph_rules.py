@@ -298,6 +298,12 @@ class GraphRules(unittest.TestCase):
         self.vault.save()
         self.assertIn("blueprint/roadmap/Physics: the folder has no README.md folder page", self.findings())
 
+    def test_a_folder_with_only_subfolders_needs_its_folder_page(self) -> None:
+        self.vault.write("blueprint/roadmap/Physics/classical/rigid/README.md", "# Rigid bodies\n")
+        self.vault.annotations["Physics"].append(Vault.row("Physics/classical/rigid/README.md"))
+        self.vault.save()
+        self.assertIn("blueprint/roadmap/Physics/classical: the folder has no README.md folder page", self.findings())
+
     # Rules 9 and 10
 
     def test_lean_sections_are_never_committed_on_linked_pages(self) -> None:
@@ -509,6 +515,21 @@ class GitRules(unittest.TestCase):
                          "# Elementary topos\n\nA topos.\n\n## DEPENDS ON\n\nThis node has no prerequisites.\n")
         self.commit()
         self.assertEqual(self.run_main("--base", broken, "--blocking"), 0)
+
+    def test_linking_a_second_row_makes_dependency_sections_new(self) -> None:
+        self.vault.annotations["Physics"].append(Vault.row("Physics/mechanics.md"))  # a planned page, twice
+        self.vault.write("blueprint/roadmap/Physics/mechanics.md",
+                         "# Mechanics\n\nNewton.\n\n## Depends on\n\n- [Physics](README.md)\n")
+        self.vault.save()
+        self.commit()
+        duplicate = self.head()
+        # lean-facts links the page through its second row and rewrites the section it committed.
+        self.vault.annotations["Physics"][-1]["object"] = [{"location": {"declaration": "X.mechanics"}}]
+        self.vault.save()
+        self.commit()
+        self.assertIn("Physics/mechanics.md: commits `## Depends on`",
+                      "\n".join(str(finding) for finding in rules.check(self.root)))
+        self.assertEqual(self.run_main("--base", duplicate, "--blocking"), 1)
 
     def test_an_inherited_duplicate_does_not_hide_new_facts_on_it(self) -> None:
         self.vault.annotations["CategoryTheory"].append(Vault.row("CategoryTheory/topos-theory/is-topos.md"))
