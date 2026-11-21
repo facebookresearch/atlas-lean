@@ -98,14 +98,84 @@ def IsKemenyRanking {Alt Voter : Type*} [Fintype Alt] [Fintype Voter]
 def IsCondorcetWinner {Alt Voter : Type*} [Fintype Alt] [Fintype Voter]
     [DecidableEq Alt] (P : Profile Alt Voter) (a : Alt) : Prop :=
   ∀ b, b ≠ a → majorityPrefers P a b
+/-- Rank key placing `a` first: `a` gets rank `0`, every other alternative
+keeps its `Fintype.equivFin` index shifted by one. -/
+private noncomputable def topRank {Alt : Type*} [Fintype Alt]
+    [DecidableEq Alt] (a : Alt) (x : Alt) : ℕ :=
+  if x = a then 0 else (Fintype.equivFin Alt x).val + 1
+/-- The rank key placing `a` first is injective. -/
+private theorem topRank_injective {Alt : Type*} [Fintype Alt]
+    [DecidableEq Alt] (a : Alt) : Function.Injective (topRank a) := by
+  intro x y h
+  unfold topRank at h
+  by_cases hx : x = a <;> by_cases hy : y = a
+  · rw [hx, hy]
+  · rw [ite_eq_left hx, ite_eq_right hy] at h
+    exact (Nat.succ_ne_zero _ h.symm).elim
+  · rw [ite_eq_right hx, ite_eq_left hy] at h
+    exact (Nat.succ_ne_zero _ h).elim
+  · rw [ite_eq_right hx, ite_eq_right hy] at h
+    have hval : (Fintype.equivFin Alt x).val =
+        (Fintype.equivFin Alt y).val :=
+      Nat.add_right_cancel h
+    have hfin : Fintype.equivFin Alt x = Fintype.equivFin Alt y :=
+      Fin.ext hval
+    exact (Fintype.equivFin Alt).injective hfin
+/-- The ranking with `a` on top, other alternatives ordered by
+`Fintype.equivFin`. -/
+private noncomputable def topOrder {Alt : Type*} [Fintype Alt]
+    [DecidableEq Alt] (a : Alt) :
+    MathlibExt.Order.StrictTotalOrder Alt where
+  lt := fun x y => topRank a x < topRank a y
+  irrefl := fun x => lt_irrefl (topRank a x)
+  trans := fun {x y z} h1 h2 => lt_trans h1 h2
+  total := fun {x y} h => by
+    have hne : topRank a x ≠ topRank a y := (topRank_injective a).ne h
+    have htri := lt_or_gt_of_ne hne
+    cases htri with
+    | inl hlt => exact Or.inl hlt
+    | inr hgt => exact Or.inr hgt
+/-- In the ranking with `a` on top, `a` is ranked above every other
+alternative. -/
+private theorem topOrder_lt_top {Alt : Type*} [Fintype Alt]
+    [DecidableEq Alt] (a b : Alt) (hb : b ≠ a) :
+    (topOrder a).lt a b := by
+  show topRank a a < topRank a b
+  unfold topRank
+  rw [ite_eq_left rfl, ite_eq_right hb]
+  exact Nat.zero_lt_succ _
+/-- Every alternative is a Condorcet winner of some profile: with a
+nonempty electorate, the unanimous profile ranking `a` first works. -/
+theorem exists_isCondorcetWinner {Alt Voter : Type*} [Fintype Alt]
+    [Fintype Voter] [DecidableEq Alt] [Nonempty Voter] (a : Alt) :
+    ∃ Q : Profile Alt Voter, IsCondorcetWinner Q a := by
+  refine ⟨fun _ => topOrder a, fun b hb => ?_⟩
+  show 0 < ((Finset.univ.filter fun _ : Voter => (topOrder a).lt a b).card : ℤ) -
+    ((Finset.univ.filter fun _ : Voter => (topOrder a).lt b a).card : ℤ)
+  have htop : ∀ _ : Voter, (topOrder a).lt a b :=
+    fun _ => topOrder_lt_top a b hb
+  have hbot : ∀ _ : Voter, ¬ (topOrder a).lt b a := by
+    intro _ hcon
+    exact (topOrder a).irrefl a
+      ((topOrder a).trans (topOrder_lt_top a b hb) hcon)
+  have hf1 : (Finset.univ.filter fun _ : Voter => (topOrder a).lt a b) =
+      Finset.univ :=
+    Finset.filter_true_of_mem fun i _ => htop i
+  have hf2 : (Finset.univ.filter fun _ : Voter => (topOrder a).lt b a) = ∅ :=
+    Finset.filter_false_of_mem fun i _ => hbot i
+  rw [hf1, hf2, Finset.card_empty, Finset.card_univ, Nat.cast_zero, sub_zero]
+  obtain ⟨i⟩ := ‹Nonempty Voter›
+  exact Int.natCast_pos.mpr (Fintype.card_pos_iff.mpr ⟨i⟩)
 /-- Distance between profiles: summed per-voter Kendall tau distance. -/
 noncomputable def profileDist {Alt Voter : Type*} [Fintype Alt]
     [Fintype Voter] [DecidableEq Alt] (P Q : Profile Alt Voter) : ℕ :=
   ∑ i, kendallTau (P i) (Q i)
 /-- Dodgson score of `a`: the least profile distance to a profile in which
-`a` is a Condorcet winner. -/
+`a` is a Condorcet winner. The nonempty-electorate assumption makes the
+infimum range over a nonempty index, since a unanimous profile ranking `a`
+first is always feasible (see `exists_isCondorcetWinner`). -/
 noncomputable def dodgsonScore {Alt Voter : Type*} [Fintype Alt]
-    [Fintype Voter] [DecidableEq Alt] (P : Profile Alt Voter) (a : Alt) :
+    [Fintype Voter] [DecidableEq Alt] [Nonempty Voter] (P : Profile Alt Voter) (a : Alt) :
     ℕ :=
   ⨅ Q : {Q // IsCondorcetWinner Q a}, profileDist P Q.1
 /-- Net preference of an alternative against itself is zero. -/
