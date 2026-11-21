@@ -9,13 +9,15 @@ fails if a required workflow:
   or filters some of them out;
 - can skip the job that reports the check (a skipped job counts as passing):
   a job-level `if`, a matrix, or a prerequisite that is not required itself;
-- renames the check, lets another job report (or possibly report, through an
-  expression in its name) the same name, or moves the job into a reusable
-  workflow (which reports `caller / callee` instead);
+- renames the check, puts an expression in the job's name, lets another job
+  report (or possibly report, through an expression in its name) the same
+  name, or moves the job into a reusable workflow (which reports
+  `caller / callee` instead);
 - uses a concurrency group other than the forms below, which are known to
   differ between any two PRs and any two merge groups, or one that another
   workflow's group could match: GitHub concurrency groups are repository-wide
-  and case-insensitive, so one run could cancel or replace another's.
+  and case-insensitive, so one run could cancel or replace another's. In a
+  reusable workflow, `github.workflow` is the caller's name.
 
 The required checks are the ones listed under "How PRs merge" in
 CONTRIBUTING.md. CI runs this test in the `repository integrity` job. Locally:
@@ -94,12 +96,13 @@ def concurrency_group(setting) -> str:
     return (setting.get("group", "") if isinstance(setting, dict) else setting) or ""
 
 
-def literal_start(workflow_name: str, group: str) -> str:
+def literal_start(workflow_name: str | None, group: str) -> str:
     """The text a group always starts with, case-folded, after expanding a
-    leading `${{ github.workflow }}`; empty if an expression comes first."""
+    leading `${{ github.workflow }}`; empty if an expression comes first. In a
+    reusable workflow, github.workflow is the caller's name, so pass None."""
     group = normalised(group)
     lead = "${{ github.workflow }}"
-    if group.startswith(lead):
+    if group.startswith(lead) and workflow_name is not None:
         group = workflow_name + group[len(lead):]
     return group.split("${{", 1)[0].casefold()
 
@@ -125,13 +128,16 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
         if len(files) > 1:
             found.append(f"workflows {files} share the name {title!r}, so their "
                          "concurrency groups can collide")
+    # A required check needs one job whose name is exactly the check; a job
+    # whose name holds an expression that could render as it is a second one.
     reporters: dict[str, list[tuple[str, str]]] = {}
     for name, workflow in workflows.items():
         for job_id, job in (workflow.get("jobs") or {}).items():
             for check in REQUIRED:
                 if may_be_named(job.get("name", job_id), check):
                     reporters.setdefault(check, []).append((name, job_id))
-    groups = [(name, str(workflow.get("name", name)), scope, concurrency_group(setting))
+    groups = [(name, None if "workflow_call" in events(workflow)
+               else str(workflow.get("name", name)), scope, concurrency_group(setting))
               for name, workflow in workflows.items()
               for scope, setting in [("workflow", workflow.get("concurrency"))] + [
                   (f"job {job_id}", job.get("concurrency"))
@@ -166,6 +172,9 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
                 found.append(f"{name} does not run on {pr_event} {sorted(missing)}")
         (_, job_id), = reporters[check]
         job = workflow["jobs"][job_id]
+        if "${{" in job.get("name", ""):
+            found.append(f"{check!r} has an expression in its job name, so it may report "
+                         "another name on some events")
         for key in ("if", "strategy", "uses"):
             if key in job:
                 found.append(f"{check!r} has a job-level {key!r}")
@@ -331,6 +340,15 @@ class MergeQueueChecks(unittest.TestCase):
             "expression job name that can render as a required one": (
                 put("lint.yml", "jobs", "lint", "name", "${{ matrix.part }}"),
                 "'build' is reported by"),
+            "expression in the required job's own name": (
+                put("ci.yml", "jobs", "build", "name",
+                    "build${{ github.event_name == 'merge_group' && ' (queue)' || '' }}"),
+                "expression in its job name"),
+            "reusable workflow keyed on the caller's name": (
+                put("report.yml", {"name": "Report summary", "on": {"workflow_call": ""},
+                                   "concurrency": {"group": "${{ github.workflow }}-"
+                                                            "${{ github.ref }}"},
+                                   "jobs": {"summary": {}}}), "could match"),
             "job-level group": (put("ci.yml", "jobs", "build", "concurrency",
                                     "${{ github.workflow }}-${{ github.ref }}"),
                                 "job-level concurrency group"),

@@ -237,9 +237,10 @@ and on every merge group; on some fork PRs, CI and Source diagnostics wait until
 a maintainer approves the run. CI's `repository integrity` job runs
 `scripts/test_merge_queue_checks.py`. It fails if one of these workflows loses
 or filters those triggers, can skip the job that reports the check, renames the
-check, lets another job report (or possibly report) the same name, or uses a
-concurrency group that the test does not know to differ between PRs and between
-merge groups, or that another workflow's group could match.
+check or puts an expression in its job name, lets another job report (or
+possibly report) the same name, or uses a concurrency group that the test does
+not know to differ between PRs and between merge groups, or that another
+workflow's group could match.
 
 The other checks are advisory. The bump guard's `guard` checks Lean and Mathlib
 pin changes on PRs and merge groups; on PRs it runs through
