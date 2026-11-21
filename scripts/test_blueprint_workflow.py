@@ -13,6 +13,8 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
+# The card files: their tests run in the card job (scripts/test_cards.py), not in the wiki job.
+CARD_INPUTS = ("scripts/cards.py", "scripts/card-moves.jsonl", "scripts/test_cards.py", "docs/cards.md")
 WORKFLOW = ROOT / ".github" / "workflows" / "blueprint-pages.yml"
 
 
@@ -50,9 +52,10 @@ class BlueprintWorkflowTests(unittest.TestCase):
         for module in re.findall(r"scripts\.(test_\w+)", tests):
             self.assertIn(f"scripts/{module}.py", paths)
         # A path that no longer exists would silently stop triggering the check. The sync baseline
-        # scripts/wiki-sync.json arrives with the wiki's last page batch, so it may not exist yet.
+        # scripts/wiki-sync.json arrives with the wiki's last page batch, so it may not exist yet. The card
+        # inputs are checked by the card tests, in their own job, so that no card file can fail this one.
         for path in paths:
-            if path == "scripts/wiki-sync.json":
+            if path == "scripts/wiki-sync.json" or path in CARD_INPUTS:
                 continue
             target = ROOT / path.removesuffix("/**")
             self.assertTrue(target.is_dir() if path.endswith("/**") else target.is_file(), path)
@@ -222,6 +225,56 @@ class BlueprintWorkflowTests(unittest.TestCase):
                          ["Keep the Mathlib layer"])
         self.assertEqual(steps["Keep the Mathlib layer"]["with"]["name"], "mathlib-graph")
         self.assertEqual(steps["Keep the Mathlib layer"]["if"], "always()")
+
+    def test_the_cards_cannot_hold_back_the_site(self):
+        # The card check has its own job after the wiki job; the wiki job and deployment never run or wait for it.
+        jobs = self.workflow["jobs"]
+        cards = jobs["cards"]
+        self.assertEqual(cards["name"], "check the cards")
+        self.assertEqual(cards["needs"], "wiki")
+        self.assertEqual(jobs["deploy"]["needs"], "wiki")
+        self.assertNotIn("permissions", cards)
+        self.assertNotIn("continue-on-error", cards)
+        # Neither the card check nor the card tests run in the wiki job.
+        self.assertFalse(any("cards.py" in step.get("run", "") or "test_cards" in step.get("run", "")
+                             for step in self.steps))
+        checkout = next(step for step in cards["steps"] if step.get("name") == "Check out project")
+        self.assertEqual(checkout["with"]["persist-credentials"], "false")
+        self.assertIn("!/v1/", checkout["with"]["sparse-checkout"])
+        steps = {step.get("name"): step for step in cards["steps"]}
+        self.assertEqual(steps["Fetch the v2 extraction"]["with"]["name"], "blueprint-dependencies")
+        names = list(steps)
+        self.assertLess(names.index("Add the Lean-owned facts to the articles"),
+                        names.index("Check the cards and derive their edges"))
+        self.assertIn("python -m unittest scripts.test_cards", steps["Test the card scripts"]["run"])
+        self.assertLess(names.index("Test the card scripts"), names.index("Check the cards and derive their edges"))
+        check = steps["Check the cards and derive their edges"]["run"]
+        self.assertIn("scripts/cards.py rollup build/cards.json", check)
+        self.assertIn("--dependencies build/lean-dependencies.json", check)
+        # The check renders card pages as the site does: with the site build's exact Markdown pins.
+        site = next(step["run"] for job in jobs.values() for step in job.get("steps", [])
+                    if step.get("name") == "Build the Markdown site")
+        for package in ("markdown", "pymdown-extensions"):
+            pin = re.search(rf"--with ({re.escape(package)}==[^\s]+)", site).group(1)
+            for run in (steps["Test the card scripts"]["run"], check):
+                self.assertIn(f"--with {pin}", run)
+        # The ledger the base commit published must stay a prefix on a PR (the workflow runs in no merge group).
+        ledger = steps["Read the move ledger and annotations the base commit published"]
+        self.assertIn("github.event.pull_request.base.sha", ledger["env"]["BASE"])
+        self.assertNotIn("merge_group", ledger["env"]["BASE"])
+        self.assertIn('git show "$BASE:scripts/card-moves.jsonl"', ledger["run"])
+        self.assertIn('git archive "$BASE" blueprint/links', ledger["run"])
+        self.assertIn('echo "BASE_LINKS=build/base/blueprint/links"', ledger["run"])
+        self.assertIn('diff --name-status -M "$BASE" HEAD -- blueprint/roadmap', ledger["run"])
+        self.assertIn('echo "BASE_RENAMES=build/base-renames.tsv"', ledger["run"])
+        self.assertIn('base=(--base-ledger "$BASE_LEDGER" --base-links "$BASE_LINKS" --renames "$BASE_RENAMES")', check)
+        self.assertIn('"${base[@]}"', check)
+        self.assertLess(names.index("Read the move ledger and annotations the base commit published"),
+                        names.index("Check the cards and derive their edges"))
+        # Only the upload may fail without failing the check.
+        self.assertEqual([name for name, step in steps.items() if "continue-on-error" in step], ["Keep the card data"])
+        self.assertEqual(steps["Keep the card data"]["with"]["name"], "cards")
+        self.assertEqual(steps["Keep the card data"]["if"], "always()")
 
     def test_every_build_keeps_its_site_and_only_main_keeps_the_full_site(self):
         # The built site is a one-day artifact of every successful build, which the Mathlib pages job reads; only

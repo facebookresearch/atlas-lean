@@ -22,6 +22,8 @@ on:
       - "scripts/build_mathlib_pages.py"
       - "scripts/mathlib_link.py"
       - "scripts/mathlib_pages.css"
+      - "scripts/cards.py"
+      - "scripts/card-moves.jsonl"
       - "scripts/taxonomy.json"
       - "scripts/wiki-sync.json"
       - "scripts/requirements-blueprint.txt"
@@ -35,10 +37,12 @@ on:
       - "scripts/test_blueprint_workflow.py"
       - "scripts/test_blueprint_taxonomy.py"
       - "scripts/test_build_mathlib_pages.py"
+      - "scripts/test_cards.py"
       - "mkdocs.yml"
       - "theme/**"
       - "hooks/**"
       - "docs/BLUEPRINT.md"
+      - "docs/cards.md"
       - ".github/workflows/blueprint-pages.yml"
       - ".github/autoform-ref"
       - "lean-toolchain"
@@ -459,6 +463,116 @@ jobs:
           path: site-full
           if-no-files-found: error
           retention-days: 3
+
+  # The cards (docs/cards.md) are tested and checked in their own read-only
+  # job, after the wiki job and from its dependency artifact: lean-facts needs
+  # the Lean sources and that extraction, not a Lean build. A card error, in
+  # its tests or its check, fails this check only; the site and its deployment
+  # never wait for it or read it.
+  cards:
+    name: check the cards
+    needs: wiki
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out project
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /*
+            !/v1/
+            !/Atlas/
+          sparse-checkout-cone-mode: false
+
+      - name: Read the reviewed Autoform pin
+        run: |
+          set -euo pipefail
+          ref="$(cat .github/autoform-ref)"
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]] || { echo "Invalid Autoform pin" >&2; exit 1; }
+          echo "AUTOFORM_REF=$ref" >> "$GITHUB_ENV"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.12.1"
+
+      # The check reads a card's page as the site renders it, with the site's
+      # Markdown extensions.
+      - name: Test the card scripts
+        run: >-
+          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
+          --with PyYAML==6.0.3
+          --with mkdocs==1.6.1
+          --with mkdocs-material==9.8.0
+          --with mkdocs-literate-nav==0.6.2
+          --with pymdown-extensions==11.0.1
+          --with markdown==3.10.3
+          python -m unittest scripts.test_cards
+
+      # The move ledger only grows, and every address that changed since the
+      # base commit needs its row: the check reads the base commit's ledger and
+      # annotations. A scheduled or manual build of main has no base; its
+      # ledger was checked when it merged.
+      - name: Read the move ledger and annotations the base commit published
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || '' }}
+        run: |
+          set -euo pipefail
+          [[ -n "$BASE" ]] || exit 0
+          mkdir -p build/base
+          git fetch --no-tags --depth=1 origin "$BASE"
+          if git cat-file -e "$BASE:scripts/card-moves.jsonl" 2>/dev/null; then
+            git show "$BASE:scripts/card-moves.jsonl" > build/base-card-moves.jsonl
+          else
+            : > build/base-card-moves.jsonl
+          fi
+          git archive "$BASE" blueprint/links | tar -x -C build/base
+          # Git's renames are the evidence of a move whose page had no id.
+          git -c diff.renameLimit=0 diff --name-status -M "$BASE" HEAD -- blueprint/roadmap \
+            > build/base-renames.tsv
+          {
+            echo "BASE_LEDGER=build/base-card-moves.jsonl"
+            echo "BASE_LINKS=build/base/blueprint/links"
+            echo "BASE_RENAMES=build/base-renames.tsv"
+          } >> "$GITHUB_ENV"
+
+      - name: Fetch the v2 extraction
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: blueprint-dependencies
+
+      - name: Add the Lean-owned facts to the articles
+        run: >-
+          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
+          python scripts/sync_wiki.py lean-facts build/lean-dependencies.json
+
+      - name: Check the cards and derive their edges
+        run: |
+          set -euo pipefail
+          base=()
+          if [[ -n "${BASE_LEDGER:-}" ]]; then
+            base=(--base-ledger "$BASE_LEDGER" --base-links "$BASE_LINKS" --renames "$BASE_RENAMES")
+          fi
+          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}" \
+            --with PyYAML==6.0.3 \
+            --with mkdocs==1.6.1 \
+            --with mkdocs-material==9.8.0 \
+            --with mkdocs-literate-nav==0.6.2 \
+            --with pymdown-extensions==11.0.1 \
+            --with markdown==3.10.3 \
+            python scripts/cards.py rollup build/cards.json \
+            --dependencies build/lean-dependencies.json "${base[@]}"
+
+      - name: Keep the card data
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: cards
+          path: build/cards.json
+          if-no-files-found: warn
+          retention-days: 14
 
   # No package or Lean code executes in the job with deployment permissions.
   # Repository settings, not a PR, opt the official site into publication.
