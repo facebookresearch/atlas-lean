@@ -23,8 +23,8 @@ fails if a required workflow:
   same commit, and could share the merge group's concurrency group.
 
 It also fails unless both `repository integrity` and `source-diagnostics` run
-this test, so a change that makes one workflow skip its jobs is still caught
-by the other. The required checks are the ones listed under "How PRs merge" in
+this whole test, unconditionally, so a change that makes one workflow skip its
+jobs is still caught by the other. The required checks are the ones listed under "How PRs merge" in
 CONTRIBUTING.md. Locally:
 
     python3 -m pip install -r scripts/requirements-inventory.txt
@@ -55,11 +55,16 @@ REQUIRED = {
 }
 PR_TYPES = {"opened", "synchronize", "reopened"}
 FILTERS = {"branches", "branches-ignore", "paths", "paths-ignore"}
-# The checks whose jobs run this test.
+# The checks whose jobs run this test, and the command line they must use:
+# the whole test file, with no selection of tests and nothing after it.
 RUN_THIS_TEST = ("repository integrity", "source-diagnostics")
-THIS_TEST = "test_merge_queue_checks.py"
-# A branch the queue creates for a merge group.
-QUEUE_BRANCH = "gh-readonly-queue/main/pr-1-0123456789abcdef0123456789abcdef01234567"
+INVOCATION = re.compile(
+    r"-m unittest discover -s scripts -p test_merge_queue_checks\.py(?: -v)?$", re.M)
+# The queue creates a branch under this prefix for each merge group; a branch
+# filter excludes them all only through one of these patterns.
+QUEUE_PREFIX = "gh-readonly-queue/"
+WHOLE_QUEUE = {"**", "gh-readonly-queue/**", "gh-readonly-queue/main/**",
+               "gh-readonly-queue/main/*"}
 # Concurrency groups known to differ between any two runs of the PR event and
 # between any two merge groups. Both start with the workflow's name. Under
 # pull_request_target, github.ref is the default branch for every PR, so the
@@ -121,41 +126,34 @@ def literal_start(workflow_name: str | None, group: str) -> str:
     return head.casefold()
 
 
-def matches(pattern: str, branch: str) -> bool:
-    """Whether a branch filter pattern matches, as GitHub's filter syntax reads
-    `*`, `**`, `?`, `+` and `[...]`."""
-    regex, i = "", 0
-    while i < len(pattern):
-        if pattern.startswith("**", i):
-            regex, i = regex + ".*", i + 2
-        elif pattern[i] == "*":
-            regex, i = regex + "[^/]*", i + 1
-        elif pattern[i] in "?+":
-            regex, i = regex + pattern[i], i + 1
-        elif pattern[i] == "[" and "]" in pattern[i:]:
-            end = pattern.index("]", i)
-            regex, i = regex + pattern[i:end + 1], end + 1
-        else:
-            regex, i = regex + re.escape(pattern[i]), i + 1
-    return re.fullmatch(regex, branch) is not None
+def literal_prefix(pattern: str) -> str:
+    """The text every branch a filter pattern matches starts with. `?` and `+`
+    act on the character before them, so that character is not part of it."""
+    special = [i for i, char in enumerate(pattern) if char in "*?+["]
+    if not special:
+        return pattern
+    prefix = pattern[:special[0]]
+    return prefix[:-1] if pattern[special[0]] in "?+" else prefix
 
 
-def filtered_in(patterns: list[str], branch: str) -> bool:
-    """Whether a `branches` list selects the branch; later `!` patterns win."""
-    selected = False
-    for pattern in patterns:
-        if pattern.startswith("!"):
-            selected = selected and not matches(pattern[1:], branch)
-        elif matches(pattern, branch):
-            selected = True
-    return selected
+def can_match_queue(pattern: str) -> bool:
+    prefix = literal_prefix(pattern)
+    if prefix == pattern:  # no wildcard: matches at most one branch
+        return prefix.startswith(QUEUE_PREFIX)
+    return prefix.startswith(QUEUE_PREFIX) or QUEUE_PREFIX.startswith(prefix)
 
 
 def pushes_to_queue_branches(push: dict) -> bool:
     if "branches" in push:
-        return filtered_in(as_list(push["branches"]), QUEUE_BRANCH)
+        selected = False  # later patterns override earlier ones
+        for pattern in as_list(push["branches"]):
+            if pattern.startswith("!"):
+                selected = selected and pattern[1:] not in WHOLE_QUEUE
+            elif can_match_queue(pattern):
+                selected = True
+        return selected
     if "branches-ignore" in push:
-        return not filtered_in(as_list(push["branches-ignore"]), QUEUE_BRANCH)
+        return not WHOLE_QUEUE & set(as_list(push["branches-ignore"]))
     # A push filter on tags alone does not run for branches.
     return not ({"tags", "tags-ignore"} & set(push))
 
@@ -167,6 +165,14 @@ def may_be_named(name: str, check: str) -> bool:
     prefix, suffix = name.split("${{", 1)[0], name.rsplit("}}", 1)[-1]
     return (check.startswith(prefix) and check.endswith(suffix)
             and len(check) >= len(prefix) + len(suffix))
+
+
+def runs_this_test(step) -> bool:
+    if not isinstance(step, dict) or {"if", "continue-on-error"} & set(step):
+        return False
+    script = re.sub(r"\\\n\s*", " ", str(step.get("run", "")))
+    script = "\n".join(" ".join(line.split()) for line in script.splitlines())
+    return INVOCATION.search(script) is not None
 
 
 def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
@@ -254,11 +260,9 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
                                  f"{name}'s {group!r}")
         if job.get("concurrency"):
             found.append(f"{check!r} has a job-level concurrency group, which is unverified")
-        if check in RUN_THIS_TEST and not any(
-                isinstance(step, dict) and THIS_TEST in str(step.get("run", ""))
-                and not {"if", "continue-on-error"} & set(step)
-                for step in as_list(job.get("steps"))):
-            found.append(f"{check!r} does not run {THIS_TEST} unconditionally")
+        if check in RUN_THIS_TEST and not any(map(runs_this_test, as_list(job.get("steps")))):
+            found.append(f"{check!r} does not run all of test_merge_queue_checks.py "
+                         "unconditionally")
     return found
 
 
@@ -272,14 +276,17 @@ FIXTURE = {
                "merge_group": {"types": ["checks_requested"]}},
         "concurrency": {"group": "${{ github.workflow }}-${{ github.ref }}"},
         "jobs": {"preflight": {"name": "repository integrity",
-                               "steps": [{"run": "python -m unittest " + THIS_TEST}]},
+                               "steps": [{"run": "python -m unittest discover -s scripts "
+                                                 "-p test_merge_queue_checks.py -v"}]},
                  "build": {"needs": "preflight"}},
     },
     "source-diagnostics.yml": {
         "name": "Source diagnostics",
         "on": {"push": {"branches": "main"}, "pull_request": "", "merge_group": ""},
-        "jobs": {"source-diagnostics": {"steps": [{"uses": "actions/checkout"},
-                                                  {"run": "unittest " + THIS_TEST}]}},
+        "jobs": {"source-diagnostics": {"steps": [
+            {"uses": "actions/checkout"},
+            {"run": "set -eu\n\"$venv/python\" -m unittest discover \\\n"
+                    "  -s scripts -p test_merge_queue_checks.py\n"}]}},
     },
     "bump-guard.yml": {
         "name": "Bump guard",
@@ -341,6 +348,8 @@ class MergeQueueChecks(unittest.TestCase):
                            "${{github.workflow}}-${{  github.ref }}"),
                        put("ci.yml", "on", "push", {"branches": ["**", "!gh-readonly-queue/**"]}),
                        put("ci.yml", "on", "push", {"tags": ["v*"]}),
+                       put("ci.yml", "on", "push", {"branches": ["main", "release/*"]}),
+                       put("ci.yml", "on", "push", {"branches-ignore": ["gh-readonly-queue/**"]}),
                        put("nightly.yml", {"name": "CI-nightly", "on": {"schedule": ""},
                                            "concurrency": {"group": "${{ github.workflow }}-"
                                                                     "${{ github.ref }}"},
@@ -428,13 +437,29 @@ class MergeQueueChecks(unittest.TestCase):
                     ["main", "gh-readonly-queue/main/**"]), "pushes to the queue's branches"),
             "push ignoring only main": (put("ci.yml", "on", "push", {"branches-ignore": "main"}),
                                         "pushes to the queue's branches"),
+            "push ignoring one-digit queue branches only": (
+                put("ci.yml", "on", "push",
+                    {"branches-ignore": ["gh-readonly-queue/main/pr-[0-9]-*"]}),
+                "pushes to the queue's branches"),
+            "push on gh-*": (put("ci.yml", "on", "push", {"branches": ["gh-*"]}),
+                             "pushes to the queue's branches"),
             "this test dropped from Source diagnostics": (
                 put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
-                    [{"uses": "actions/checkout"}]), "does not run test_merge_queue_checks.py"),
+                    [{"uses": "actions/checkout"}]), "does not run all of"),
             "this test made conditional": (
                 put("ci.yml", "jobs", "preflight", "steps",
-                    [{"if": "github.event_name == 'push'", "run": "unittest " + THIS_TEST}]),
-                "does not run test_merge_queue_checks.py"),
+                    [{"if": "github.event_name == 'push'",
+                      "run": "python -m unittest discover -s scripts "
+                             "-p test_merge_queue_checks.py"}]),
+                "does not run all of"),
+            "only some of this test": (
+                put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
+                    [{"run": "python -m unittest discover -s scripts -p test_merge_queue_checks.py"
+                             " -k equivalent_spellings"}]), "does not run all of"),
+            "failure of this test ignored": (
+                put("ci.yml", "jobs", "preflight", "steps",
+                    [{"run": "python -m unittest discover -s scripts -p test_merge_queue_checks.py"
+                             " || true"}]), "does not run all of"),
         }
         for label, (change, message) in cases.items():
             with self.subTest(label):

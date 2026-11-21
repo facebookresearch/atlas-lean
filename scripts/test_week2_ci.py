@@ -421,8 +421,13 @@ class WorkflowTests(DiagnosticFixture):
         self.assertIn(checkout.group(), current_ci)
         self.assertNotIn("continue-on-error", workflow)
         self.assertIn('PYTHONDONTWRITEBYTECODE: "1"', workflow)
-        blocks = workflow.split("        run: |\n")
-        self.assertEqual(len(blocks), 2, "expected one executable workflow block")
+        # The job also runs the merge-queue check (CONTRIBUTING.md, How PRs
+        # merge) in a step of its own; select the diagnostics step by its id.
+        steps = [step for step in workflow.split("\n      - ")
+                 if "\n        id: diagnostics\n" in step]
+        self.assertEqual(len(steps), 1, "expected one step with id diagnostics")
+        blocks = steps[0].split("        run: |\n")
+        self.assertEqual(len(blocks), 2, "expected one executable block in that step")
         return textwrap.dedent(blocks[1])
 
     def prepare_workflow(self) -> None:

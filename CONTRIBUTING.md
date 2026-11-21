@@ -199,30 +199,38 @@ each commit it adds to `main` has passed them on its own tree.
 To queue a PR, use one of:
 
 - **Merge when ready** in the PR's merge box.
-- `gh pr merge <number>`. It queues the PR at once if its required checks have
-  passed; otherwise it turns on auto-merge, which queues the PR when they pass.
-  `--match-head-commit <sha>` checks the head only when you run the command.
-  The queue sets the merge method and the commit message, so `--squash`,
-  `--subject` and `--body` have no effect, and `gh` refuses `--delete-branch`.
-  Before the queue is required, `gh pr merge` merges directly instead.
+- `gh pr merge <number>`, which needs the repository's **Allow auto-merge**
+  setting: on a queue branch, `gh` (2.105.0 and earlier) always asks GitHub to
+  turn on auto-merge, which GitHub refuses while that setting is off
+  ([cli/cli#13398](https://github.com/cli/cli/issues/13398)). With it on, the
+  PR is queued at once if its required checks have passed, and otherwise when
+  they pass. `--match-head-commit <sha>` checks the head only when you run the
+  command. The queue sets the merge method and the commit message, so
+  `--squash`, `--subject` and `--body` have no effect, and `gh` refuses
+  `--delete-branch`. Before the queue is required, `gh pr merge` merges
+  directly instead.
 - The GraphQL mutation `enqueuePullRequest` (`pullRequestId`, and
   `expectedHeadOid` to pin the head). It queues the PR only if it can be queued
   now, and otherwise returns an error that says why; it never merges directly.
 
-The REST endpoint `PUT /repos/{owner}/{repo}/pulls/{number}/merge` does not
-support merge queues, so it stops working for `main` once the queue is
-required. Scripts and bots that merge with it should switch to
-`enqueuePullRequest`, or to `PUT /repos/{owner}/{repo}/pulls/{number}/merge-async`
-with `"merge_action": "merge_queue"`; both only ever queue. A queue request is
-not a merge: read the PR's state afterwards to learn whether it was queued,
-merged, or removed from the queue.
+Once the queue is required, `main` refuses direct merges, including those of
+the REST endpoint `PUT /repos/{owner}/{repo}/pulls/{number}/merge`, which does
+not support merge queues, and of the GraphQL mutation `mergePullRequest`.
+Scripts and bots that merge directly should switch to `enqueuePullRequest`, or
+to `PUT /repos/{owner}/{repo}/pulls/{number}/merge-async` with
+`"merge_action": "merge_queue"`; both only ever queue. `merge-async` answers
+`202` when it accepts the request; `GET .../merge-async/{uuid}` gives the
+result. A queue request is not a merge: read the PR's state afterwards to learn
+whether it was queued, merged, or removed from the queue.
 
-The queue removes a PR whose required checks fail on its merge group, or do not
-conclude before the queue's timeout; the PR's timeline says why, and the PRs
-behind it rebuild without it. In a stack of pull requests, the PRs above it in
-the stack leave the queue too. Fix the PR and queue it again. To take a PR out
-of the queue, use **Remove from queue** on the PR or on the queue's page, or the
-GraphQL mutation `dequeuePullRequest`; `gh` cannot do it.
+Consecutive PRs that pass land together, up to the queue's merge limit, which
+GitHub may exceed by up to half to keep a stack together. The queue removes a PR
+whose required checks fail on its merge group, or do not conclude before the
+queue's timeout; the PR's timeline says why, and the PRs behind it rebuild
+without it. In a stack of pull requests, the PRs above it in the stack leave the
+queue too. Fix the PR and queue it again. To take a PR out of the queue, use
+**Remove from queue** on the PR or on the queue's page, or the GraphQL mutation
+`dequeuePullRequest`; `gh` cannot do it.
 
 ### Required checks
 
