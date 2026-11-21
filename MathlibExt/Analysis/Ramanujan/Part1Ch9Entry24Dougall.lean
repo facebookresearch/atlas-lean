@@ -198,16 +198,11 @@ private lemma im_exp_I_mul (t : ℝ) :
   simp only [Complex.add_im, Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im,
     Complex.I_re, Complex.I_im, mul_one, mul_zero, add_zero, zero_add]
 
-private lemma norm_exp_I_mul (t : ℝ) : ‖Complex.exp (Complex.I * (t : ℂ))‖ = 1 := by
-  rw [Complex.norm_exp]
-  have hre : (Complex.I * (t : ℂ)).re = 0 := by simp
-  rw [hre, Real.exp_zero]
-
 private lemma edge_of_rho_zero {y phi : ℝ} (hy : 0 ≤ y ∧ y ≤ 1)
     (hphi : -Real.pi < phi ∧ phi ≤ Real.pi)
     (hxy : (y : ℂ) * Complex.exp (Complex.I * (phi : ℂ)) = 1) :
     y = 1 ∧ phi = 0 := by
-  have hE : ‖Complex.exp (Complex.I * (phi : ℂ))‖ = 1 := norm_exp_I_mul phi
+  have hE : ‖Complex.exp (Complex.I * (phi : ℂ))‖ = 1 := Complex.norm_exp_I_mul_ofReal phi
   have h1 : ‖((y : ℝ) : ℂ)‖ = 1 := by
     have h := congrArg (fun z : ℂ => ‖z‖) hxy
     rw [norm_mul, norm_one] at h
@@ -1346,11 +1341,11 @@ theorem ramanujan_part1_ch9_entry24_dougall (x y theta phi : ℝ)
       · have hxpos : 0 < x := lt_of_le_of_ne hx.1 (Ne.symm hx0)
         have hypos : 0 < y := lt_of_le_of_ne hy.1 (Ne.symm hy0)
         have hznorm : ‖((x : ℝ) : ℂ) * Complex.exp (Complex.I * (theta : ℂ))‖ ≤ 1 := by
-          rw [norm_mul, norm_exp_I_mul, mul_one, Complex.norm_real,
+          rw [norm_mul, Complex.norm_exp_I_mul_ofReal, mul_one, Complex.norm_real,
             Real.norm_eq_abs, abs_of_nonneg hx.1]
           exact hx.2
         have hwnorm : ‖((y : ℝ) : ℂ) * Complex.exp (Complex.I * (phi : ℂ))‖ ≤ 1 := by
-          rw [norm_mul, norm_exp_I_mul, mul_one, Complex.norm_real,
+          rw [norm_mul, Complex.norm_exp_I_mul_ofReal, mul_one, Complex.norm_real,
             Real.norm_eq_abs, abs_of_nonneg hy.1]
           exact hy.2
         have hXsumm := summable_cLi2
@@ -1394,7 +1389,7 @@ theorem ramanujan_part1_ch9_entry24_dougall (x y theta phi : ℝ)
         have hz0 : (((x : ℝ) : ℂ) * Complex.exp (Complex.I * (theta : ℂ))) ≠ 0 := by
           have hnorm_eq : ‖(((x : ℝ) : ℂ)
               * Complex.exp (Complex.I * (theta : ℂ)))‖ = x := by
-            rw [norm_mul, norm_exp_I_mul, mul_one, Complex.norm_real,
+            rw [norm_mul, Complex.norm_exp_I_mul_ofReal, mul_one, Complex.norm_real,
               Real.norm_eq_abs, abs_of_nonneg hx.1]
           have hpos : (0 : ℝ) < ‖(((x : ℝ) : ℂ)
               * Complex.exp (Complex.I * (theta : ℂ)))‖ := by
@@ -1404,7 +1399,7 @@ theorem ramanujan_part1_ch9_entry24_dougall (x y theta phi : ℝ)
         have hw0 : (((y : ℝ) : ℂ) * Complex.exp (Complex.I * (phi : ℂ))) ≠ 0 := by
           have hnorm_eq : ‖(((y : ℝ) : ℂ)
               * Complex.exp (Complex.I * (phi : ℂ)))‖ = y := by
-            rw [norm_mul, norm_exp_I_mul, mul_one, Complex.norm_real,
+            rw [norm_mul, Complex.norm_exp_I_mul_ofReal, mul_one, Complex.norm_real,
               Real.norm_eq_abs, abs_of_nonneg hy.1]
           have hpos : (0 : ℝ) < ‖(((y : ℝ) : ℂ)
               * Complex.exp (Complex.I * (phi : ℂ)))‖ := by

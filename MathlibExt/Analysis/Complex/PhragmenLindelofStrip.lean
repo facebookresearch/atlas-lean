@@ -11,6 +11,7 @@ module
 public import Mathlib.Analysis.Complex.PhragmenLindelof
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+import MathlibExt.Analysis.Complex.PhragmenLindelofPolynomial
 
 /-!
 # Phragmén–Lindelöf on a vertical strip with polynomial bounds
@@ -26,7 +27,9 @@ and is `O(|Im s| ^ A)` in the strip if it is `O(|Im s| ^ A)` on the two edges.
 * `PhragmenLindelof.vertical_strip_of_le_exp_rpow`: boundedness on the edges gives boundedness
   in the strip.
 * `PhragmenLindelof.vertical_strip_le_mul_rpow`: polynomial growth `C |Im s| ^ A` on the edges
-  gives polynomial growth `C' |Im s| ^ A` in the strip (for `|Im s| ≥ 1`).
+  gives polynomial growth `C' |Im s| ^ A` in the strip (for `|Im s| ≥ 1`). This repackages
+  `PhragmenLindelof.exists_norm_le_mul_one_add_abs_im_rpow_of_vertical_strip` for hypotheses that
+  only hold for large `|Im s|`.
 -/
 
 open Complex Filter Asymptotics Set
@@ -89,13 +92,14 @@ theorem vertical_strip_of_le_exp_rpow {f : ℂ → ℂ} {a b α : ℝ}
 /-- **Polynomial growth on the edges gives polynomial growth in the strip.** Let `f` be
 holomorphic on the open strip `a < Re s < b`, continuous on its closure, with
 `‖f s‖ ≤ C exp (|Im s| ^ α)` for large `|Im s|`. If `‖f s‖ ≤ C' |Im s| ^ A` on the two edges
-for `|Im s| ≥ 1`, then `‖f s‖ ≤ C'' |Im s| ^ A` on the closed strip for `|Im s| ≥ 1`.
+for `|Im s| ≥ 1`, with `A ≥ 0`, then `‖f s‖ ≤ C'' |Im s| ^ A` on the closed strip for
+`|Im s| ≥ 1`.
 
 Source: E. Phragmén and E. Lindelöf, "Sur une extension d'un principe classique de l'analyse et sur
 quelques propriétés des fonctions monogènes dans le voisinage d'un point singulier," Acta Math. 31
 (1908), 381–406, DOI 10.1007/BF02415450. Special case: the growth `exp (|Im s| ^ α)` is far inside
 the admissible one. -/
-theorem vertical_strip_le_mul_rpow {f : ℂ → ℂ} {a b α A : ℝ}
+theorem vertical_strip_le_mul_rpow {f : ℂ → ℂ} {a b α A : ℝ} (hA : 0 ≤ A)
     (hf : DiffContOnCl ℂ f (re ⁻¹' Ioo a b))
     (hgrowth : ∃ C T₀, ∀ s : ℂ, a ≤ s.re → s.re ≤ b → T₀ ≤ |s.im| →
       ‖f s‖ ≤ C * Real.exp (|s.im| ^ α))
@@ -104,144 +108,70 @@ theorem vertical_strip_le_mul_rpow {f : ℂ → ℂ} {a b α A : ℝ}
   obtain ⟨CL, hCL⟩ := hlines
   rcases le_or_gt b a with hab | hab
   · exact ⟨CL, fun s h1 h2 ht => hCL s (Or.inl (by linarith)) ht⟩
-  -- replace `α` by `max α 1 ≥ 1`
-  set α' : ℝ := max α 1 with hα'
-  have hα : 1 ≤ α' := le_max_right _ _
-  replace hgrowth : ∃ C T₀, ∀ s : ℂ, a ≤ s.re → s.re ≤ b → T₀ ≤ |s.im| →
-      ‖f s‖ ≤ C * Real.exp (|s.im| ^ α') := by
-    obtain ⟨C, T₀, hC⟩ := hgrowth
-    refine ⟨C, max T₀ 1, fun s h1 h2 ht => (hC s h1 h2 (le_of_max_le_left ht)).trans ?_⟩
-    have hC0 : 0 ≤ C := nonneg_of_mul_nonneg_left
-      ((norm_nonneg _).trans (hC s h1 h2 (le_of_max_le_left ht))) (Real.exp_pos _)
-    gcongr
-    · exact le_of_max_le_right ht
-    · exact le_max_left _ _
-  set u : ℝ := b + 1 with hu
-  set K : ℝ := u - a + 1 with hK
-  have hKpos : 0 < K := by rw [hK]; linarith
-  have hne : ∀ s : ℂ, s.re ≤ b → (u : ℂ) - s ≠ 0 := by
-    intro s hs h
-    have := congrArg re h
-    simp at this; linarith
-  have hlow : ∀ s : ℂ, s.re ≤ b → |s.im| ≤ ‖(u : ℂ) - s‖ := by
-    intro s hs
-    have := abs_im_le_norm ((u : ℂ) - s)
-    simpa using this
-  have hup : ∀ s : ℂ, a ≤ s.re → s.re ≤ b → 1 ≤ |s.im| → ‖(u : ℂ) - s‖ ≤ K * |s.im| := by
-    intro s h1 h2 ht
-    have := norm_le_abs_re_add_abs_im ((u : ℂ) - s)
-    simp only [sub_re, ofReal_re, sub_im, ofReal_im, zero_sub, abs_neg] at this
-    rw [abs_of_pos (by linarith)] at this
-    nlinarith
-  have hpow : ∀ q : ℝ, ∀ s : ℂ, a ≤ s.re → s.re ≤ b → 1 ≤ |s.im| →
-      ‖(u : ℂ) - s‖ ^ q ≤ max (K ^ q) 1 * |s.im| ^ q := by
-    intro q s h1 h2 ht
-    have hx0 : 0 < |s.im| := by linarith
-    rcases le_or_gt 0 q with hq | hq
-    · calc ‖(u : ℂ) - s‖ ^ q ≤ (K * |s.im|) ^ q :=
-            Real.rpow_le_rpow (norm_nonneg _) (hup s h1 h2 ht) hq
-        _ = K ^ q * |s.im| ^ q := Real.mul_rpow hKpos.le hx0.le
-        _ ≤ _ := mul_le_mul_of_nonneg_right (le_max_left _ _) (by positivity)
-    · calc ‖(u : ℂ) - s‖ ^ q ≤ |s.im| ^ q := Real.rpow_le_rpow_of_nonpos hx0 (hlow s h2) hq.le
-        _ = 1 * |s.im| ^ q := (one_mul _).symm
-        _ ≤ _ := mul_le_mul_of_nonneg_right (le_max_right _ _) (by positivity)
-  set g : ℂ → ℂ := fun s => f s * ((u : ℂ) - s) ^ (((-A : ℝ)) : ℂ) with hg
-  have hgnorm : ∀ s : ℂ, s.re ≤ b → ‖g s‖ = ‖f s‖ * ‖(u : ℂ) - s‖ ^ (-A) := by
-    intro s hs
-    simp only [hg, norm_mul]
-    rw [norm_cpow_of_ne_zero (hne s hs)]
-    simp
-  have hclos : closure (re ⁻¹' Ioo a b) ⊆ re ⁻¹' Icc a b :=
-    closure_minimal (preimage_mono Ioo_subset_Icc_self) (isClosed_Icc.preimage continuous_re)
-  have hgd : DiffContOnCl ℂ g (re ⁻¹' Ioo a b) := by
-    have hc : DiffContOnCl ℂ (fun s : ℂ => ((u : ℂ) - s) ^ (((-A : ℝ)) : ℂ))
-        (re ⁻¹' Ioo a b) := by
-      apply DifferentiableOn.diffContOnCl
-      intro s hs
-      have hs' := (hclos hs).2
-      apply DifferentiableAt.differentiableWithinAt
-      apply DifferentiableAt.cpow_const (differentiableAt_const _ |>.sub differentiableAt_id)
-      rw [mem_slitPlane_iff]; left
-      simp; linarith
-    have := hc.smul hf
-    simpa [hg, smul_eq_mul, mul_comm] using this
-  have hgg : ∃ C T₀ : ℝ, ∀ s : ℂ, a ≤ s.re → s.re ≤ b → T₀ ≤ |s.im| →
-      ‖g s‖ ≤ C * Real.exp (|s.im| ^ (α' + 1)) := by
-    obtain ⟨C, T₀, hC⟩ := hgrowth
-    have hlo := (isLittleO_rpow_exp_pos_mul_atTop (-A) one_pos).bound one_pos
-    obtain ⟨N, hN⟩ := eventually_atTop.1 hlo
-    refine ⟨C * max (K ^ (-A)) 1, max (max T₀ 2) N, ?_⟩
-    intro s h1 h2 ht
-    have hT : T₀ ≤ |s.im| := le_trans (le_trans (le_max_left _ _) (le_max_left _ _)) ht
-    have h2t : 2 ≤ |s.im| := le_trans (le_trans (le_max_right _ _) (le_max_left _ _)) ht
-    have hNt : N ≤ |s.im| := le_trans (le_max_right _ _) ht
-    set x := |s.im| with hx
-    have hf1 := hC s h1 h2 hT
-    have hC0 : 0 ≤ C := nonneg_of_mul_nonneg_left ((norm_nonneg _).trans hf1) (Real.exp_pos _)
-    have hp := hpow (-A) s h1 h2 (by linarith)
-    have hxe : x ^ (-A) ≤ Real.exp x := by
-      have := hN x hNt
-      rw [Real.norm_eq_abs, Real.norm_eq_abs, Real.abs_exp, one_mul, one_mul] at this
-      exact (le_abs_self _).trans this
-    have hxa : x ≤ x ^ α' := by
-      calc x = x ^ (1:ℝ) := (Real.rpow_one x).symm
-        _ ≤ x ^ α' := Real.rpow_le_rpow_of_exponent_le (by linarith) hα
-    have hxa1 : x ^ (α' + 1) = x ^ α' * x := by
-      rw [Real.rpow_add (by linarith), Real.rpow_one]
-    have hxa0 : 0 ≤ x ^ α' := by positivity
-    have hexp : Real.exp (x ^ α') * Real.exp x ≤ Real.exp (x ^ (α' + 1)) := by
-      rw [← Real.exp_add, hxa1]
-      apply Real.exp_le_exp.2
-      nlinarith
-    rw [hgnorm s h2]
-    have hM : 0 ≤ max (K ^ (-A)) 1 := le_trans zero_le_one (le_max_right _ _)
-    calc ‖f s‖ * ‖(u : ℂ) - s‖ ^ (-A)
-        ≤ (C * Real.exp (x ^ α')) * (max (K ^ (-A)) 1 * Real.exp x) := by
-          apply mul_le_mul hf1 (hp.trans (mul_le_mul_of_nonneg_left hxe hM)) (by positivity)
-          positivity
-      _ = C * max (K ^ (-A)) 1 * (Real.exp (x ^ α') * Real.exp x) := by ring
-      _ ≤ C * max (K ^ (-A)) 1 * Real.exp (x ^ (α' + 1)) :=
-          mul_le_mul_of_nonneg_left hexp (mul_nonneg hC0 hM)
-  have hcont : ContinuousOn g (re ⁻¹' Icc a b) := by
-    have : closure (re ⁻¹' Ioo a b) = re ⁻¹' Icc a b := by
-      rw [closure_preimage_re, closure_Ioo hab.ne]
-    rw [← this]; exact hgd.continuousOn
-  obtain ⟨Bc, hBc⟩ := IsCompact.exists_bound_of_continuousOn
-    (isCompact_Icc.reProdIm (isCompact_Icc (a := (-1:ℝ)) (b := 1)))
-    (hcont.mono (fun z hz => hz.1))
-  have hge : ∃ B : ℝ, ∀ s : ℂ, (s.re = a ∨ s.re = b) → ‖g s‖ ≤ B := by
-    refine ⟨max Bc (CL * max (K ^ (-A)) 1), ?_⟩
-    intro s hs
-    have h1 : a ≤ s.re := by rcases hs with h | h <;> linarith
-    have h2 : s.re ≤ b := by rcases hs with h | h <;> linarith
-    rcases le_or_gt 1 |s.im| with ht | ht
-    · have hx0 : 0 < |s.im| := by linarith
-      have hf1 := hCL s hs ht
-      have hp := hpow (-A) s h1 h2 ht
-      rw [hgnorm s h2]
-      apply le_max_of_le_right
-      have hCL0 : 0 ≤ CL * |s.im| ^ A := (norm_nonneg _).trans hf1
-      calc ‖f s‖ * ‖(u : ℂ) - s‖ ^ (-A)
-          ≤ (CL * |s.im| ^ A) * (max (K ^ (-A)) 1 * |s.im| ^ (-A)) :=
-            mul_le_mul hf1 hp (by positivity) hCL0
-        _ = CL * max (K ^ (-A)) 1 * (|s.im| ^ A * |s.im| ^ (-A)) := by ring
-        _ = CL * max (K ^ (-A)) 1 := by
-            rw [← Real.rpow_add hx0, add_neg_cancel, Real.rpow_zero, mul_one]
-    · apply le_max_of_le_left
-      apply hBc
-      refine ⟨⟨h1, h2⟩, ?_⟩
-      have := abs_lt.1 ht
-      exact ⟨this.1.le, this.2.le⟩
-  obtain ⟨B', hB'⟩ := vertical_strip_of_le_exp_rpow hgd hgg hge
-  refine ⟨max B' 0 * max (K ^ A) 1, ?_⟩
-  intro s h1 h2 ht
-  have hn0 : 0 < ‖(u : ℂ) - s‖ := norm_pos_iff.2 (hne s h2)
-  have hfs : ‖f s‖ = ‖g s‖ * ‖(u : ℂ) - s‖ ^ A := by
-    rw [hgnorm s h2, mul_assoc, ← Real.rpow_add hn0, neg_add_cancel, Real.rpow_zero, mul_one]
-  rw [hfs]
-  have hp := hpow A s h1 h2 ht
-  calc ‖g s‖ * ‖(u : ℂ) - s‖ ^ A ≤ max B' 0 * (max (K ^ A) 1 * |s.im| ^ A) :=
-        mul_le_mul ((hB' s h1 h2).trans (le_max_left _ _)) hp (by positivity) (le_max_right _ _)
-    _ = _ := by ring
+  obtain ⟨C, T₀, hC⟩ := hgrowth
+  have hcont : ContinuousOn f (re ⁻¹' Icc a b) := by
+    rw [← closure_Ioo hab.ne, ← closure_preimage_re]
+    exact hf.continuousOn
+  -- `f` is bounded on the bounded parts of the closed strip
+  have hrect : ∀ T : ℝ, ∃ K, ∀ s : ℂ, a ≤ s.re → s.re ≤ b → |s.im| ≤ T → ‖f s‖ ≤ K := by
+    intro T
+    obtain ⟨K, hK⟩ := IsCompact.exists_bound_of_continuousOn
+      (isCompact_Icc.reProdIm (isCompact_Icc (a := -T) (b := T))) (hcont.mono fun z hz => hz.1)
+    exact ⟨K, fun s h1 h2 ht => hK s ⟨⟨h1, h2⟩, abs_le.1 ht⟩⟩
+  -- the growth hypothesis gives the double-exponential bound on the whole open strip
+  have hc : 0 < Real.pi / (b - a) / 2 := by
+    have : 0 < b - a := by linarith
+    positivity
+  obtain ⟨N, hN⟩ := eventually_atTop.1 ((isLittleO_rpow_exp_pos_mul_atTop α hc).bound one_pos)
+  obtain ⟨K, hK⟩ := hrect (max T₀ N)
+  have hgr : ∃ c : ℝ, c < Real.pi / (b - a) ∧ ∃ B : ℝ, ∀ z : ℂ, a < z.re → z.re < b →
+      ‖f z‖ ≤ Real.exp (B * Real.exp (c * |z.im|)) := by
+    refine ⟨Real.pi / (b - a) / 2, by linarith, |C| + 1 + |K|, fun z h1 h2 => ?_⟩
+    have hE : 1 ≤ Real.exp (Real.pi / (b - a) / 2 * |z.im|) := Real.one_le_exp (by positivity)
+    have hE0 := mul_nonneg (abs_nonneg K) (sub_nonneg.2 hE)
+    rcases le_or_gt |z.im| (max T₀ N) with ht | ht
+    · calc ‖f z‖ ≤ K := hK z h1.le h2.le ht
+        _ ≤ Real.exp |K| := (le_abs_self K).trans (by linarith [Real.add_one_le_exp |K|])
+        _ ≤ _ := Real.exp_le_exp.2 (by
+            nlinarith [mul_nonneg (add_nonneg (abs_nonneg C) zero_le_one) (zero_le_one.trans hE)])
+    · have hle := hN _ ((le_max_right _ _).trans ht.le)
+      rw [Real.norm_eq_abs, Real.norm_eq_abs, Real.abs_exp] at hle
+      have hpow : |z.im| ^ α ≤ Real.exp (Real.pi / (b - a) / 2 * |z.im|) :=
+        (le_abs_self _).trans (by simpa using hle)
+      calc ‖f z‖ ≤ C * Real.exp (|z.im| ^ α) := hC z h1.le h2.le ((le_max_left _ _).trans ht.le)
+        _ ≤ Real.exp |C| * Real.exp (Real.exp (Real.pi / (b - a) / 2 * |z.im|)) :=
+            mul_le_mul ((le_abs_self C).trans (by linarith [Real.add_one_le_exp |C|]))
+              (Real.exp_le_exp.2 hpow) (Real.exp_pos _).le (Real.exp_pos _).le
+        _ = Real.exp (|C| + Real.exp (Real.pi / (b - a) / 2 * |z.im|)) := (Real.exp_add _ _).symm
+        _ ≤ _ := Real.exp_le_exp.2 (by
+            nlinarith [mul_nonneg (abs_nonneg C) (sub_nonneg.2 hE), abs_nonneg K, hE0])
+  -- the edge bounds, extended to all heights with the weight `(1 + |Im s|) ^ A`
+  obtain ⟨K₁, hK₁⟩ := hrect 1
+  have hM : ∀ z : ℂ, (z.re = a ∨ z.re = b) → ‖f z‖ ≤ (|CL| + |K₁|) * (1 + |z.im|) ^ A := by
+    intro z hz
+    have h1 : a ≤ z.re := by rcases hz with h | h <;> linarith
+    have h2 : z.re ≤ b := by rcases hz with h | h <;> linarith
+    have hone : 1 ≤ (1 + |z.im|) ^ A := Real.one_le_rpow (by linarith [abs_nonneg z.im]) hA
+    rcases le_or_gt 1 |z.im| with ht | ht
+    · calc ‖f z‖ ≤ CL * |z.im| ^ A := hCL z hz ht
+        _ ≤ |CL| * (1 + |z.im|) ^ A :=
+            mul_le_mul (le_abs_self _) (Real.rpow_le_rpow (abs_nonneg _) (by linarith) hA)
+              (by positivity) (abs_nonneg _)
+        _ ≤ _ := mul_le_mul_of_nonneg_right (by linarith [abs_nonneg K₁]) (by positivity)
+    · calc ‖f z‖ ≤ K₁ := hK₁ z h1 h2 ht.le
+        _ ≤ |K₁| * (1 + |z.im|) ^ A := (le_abs_self _).trans (le_mul_of_one_le_right
+            (abs_nonneg _) hone)
+        _ ≤ _ := mul_le_mul_of_nonneg_right (by linarith [abs_nonneg CL]) (by positivity)
+  obtain ⟨C₀, hC₀, hPL⟩ := exists_norm_le_mul_one_add_abs_im_rpow_of_vertical_strip a b A hab hA
+  have hstrip := hPL f (|CL| + |K₁|) (by positivity) hf hgr (fun z hz => hM z (Or.inl hz))
+    (fun z hz => hM z (Or.inr hz))
+  have hCM : 0 ≤ C₀ * (|CL| + |K₁|) := mul_nonneg hC₀.le (by positivity)
+  refine ⟨C₀ * (|CL| + |K₁|) * 2 ^ A, fun s h1 h2 ht => ?_⟩
+  calc ‖f s‖ ≤ C₀ * (|CL| + |K₁|) * (1 + |s.im|) ^ A := hstrip s h1 h2
+    _ ≤ C₀ * (|CL| + |K₁|) * (2 * |s.im|) ^ A :=
+        mul_le_mul_of_nonneg_left (Real.rpow_le_rpow (by positivity) (by linarith) hA) hCM
+    _ = C₀ * (|CL| + |K₁|) * 2 ^ A * |s.im| ^ A := by
+        rw [Real.mul_rpow (by norm_num) (abs_nonneg _)]
+        ring
 
 end PhragmenLindelof

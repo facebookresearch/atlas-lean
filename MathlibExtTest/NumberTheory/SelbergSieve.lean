@@ -67,11 +67,6 @@ example (s : BoundingSieve) : levelSum s 1 = 1 := by
   simp
 
 example (s : BoundingSieve) (R : ℕ) (hR : 1 ≤ R) :
-    s.siftedSum ≤ s.totalMass / levelSum s R +
-      ∑ d₁ ∈ levelSet s R, ∑ d₂ ∈ levelSet s R, |s.rem (d₁.lcm d₂)| :=
-  siftedSum_le_totalMass_div_levelSum_add s R hR
-
-example (s : BoundingSieve) (R : ℕ) (hR : 1 ≤ R) :
     s.errSum (BoundingSieve.lambdaSquared (levelWeights s R)) ≤
       ∑ d₁ ∈ levelSet s R, ∑ d₂ ∈ levelSet s R, |s.rem (d₁.lcm d₂)| :=
   errSum_lambdaSquared_levelWeights_le s R hR

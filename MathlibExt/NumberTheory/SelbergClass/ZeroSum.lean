@@ -313,7 +313,8 @@ private lemma exists_norm_le_mul_rpow_strip (F G : ℂ → ℂ) (m : ℕ) (β : 
         _ ≤ CL * |s.im| ^ A := by
           gcongr
           exact le_max_right _ _
-  obtain ⟨C, hC⟩ := PhragmenLindelof.vertical_strip_le_mul_rpow hGd.diffContOnCl
+  obtain ⟨C, hC⟩ := PhragmenLindelof.vertical_strip_le_mul_rpow (by rw [hA]; positivity)
+    hGd.diffContOnCl
     (Complex.HasGrowthOrderLE.exists_norm_le_exp_strip hGo (-3) σM (by linarith))
     hlines
   exact ⟨A, C, by rw [hA]; positivity, hC⟩

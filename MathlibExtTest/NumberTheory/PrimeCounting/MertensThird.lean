@@ -35,3 +35,14 @@ example : Tendsto (fun x : ℝ => ∏ p ∈ Nat.primesLE ⌊x⌋₊, (1 - (p : �
 example : Tendsto (fun x : ℝ => (∏ p ∈ Nat.primesLE ⌊x⌋₊, (1 - (p : ℝ)⁻¹)⁻¹) / Real.log x)
     atTop (nhds (Real.exp Real.eulerMascheroniConstant)) :=
   Nat.tendsto_prod_primesLE_inv_one_sub_inv_div_log
+
+-- The Euler factor at `2` is `(1 - 1/2)⁻¹ = 2 ≥ 1`.
+example : (1 : ℝ) ≤ (1 - ((2 : ℕ) : ℝ)⁻¹)⁻¹ := Nat.prime_two.one_le_inv_one_sub_inv
+
+-- The Mertens product below `2` is empty.
+example : MertensThird.mertensP 1 = 1 := by
+  simp [MertensThird.mertensP]
+
+example (x : ℝ) : 1 ≤ MertensThird.mertensP x := MertensThird.one_le_mertensP x
+
+example (x : ℝ) : 0 < MertensThird.mertensP x := MertensThird.mertensP_pos x

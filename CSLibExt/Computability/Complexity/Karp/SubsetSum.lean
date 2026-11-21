@@ -39,44 +39,76 @@ namespace Cslib.Complexity.Karp
 
 open Cslib.CookLevin Computability MetaMathlibExt.BitstringEncoding
 
-/-- A SUBSET-SUM instance: the target, then the numbers, each in binary and delimited. -/
+/-- **Bit-string encoding of SUBSET-SUM instances.** The instance with numbers $a_1, \dots, a_r$
+and target $t$ is encoded as the block of $t$ followed by the blocks of $a_1, \dots, a_r$ in
+order. The block of a number is its binary expansion, least significant bit first and empty for
+the number $0$, made self-delimiting by writing each bit $c$ as $1c$ and appending a final $0$. -/
 def encodeSS (as : List ℕ) (t : ℕ) : List Bool :=
   delimit (encodeNat t) ++ as.flatMap fun a => delimit (encodeNat a)
 
 open Classical in
-/-- SUBSET-SUM: some sublist of the numbers sums to the target. -/
+/-- **The SUBSET-SUM problem.** The decision problem that accepts a bit string $x$ exactly when
+$x$ encodes a SUBSET-SUM instance with a list of numbers $a_1, \dots, a_r$ and a target $t$ such
+that some sublist of $a_1, \dots, a_r$ sums to $t$. A sublist keeps some of the entries in their
+order, so a number may be used as often as it occurs in the list. -/
 noncomputable def subsetSumDec : MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   decide (∃ as t, encodeSS as t = x ∧ ∃ l : List ℕ, l.Sublist as ∧ l.sum = t)
 
-/-- The base-4 digit of pair number `q` in a number of the reduction. -/
+/-- **Place value of a vertex pair in the SUBSET-SUM reduction.** The place value of pair number
+$q$ is $4^q$. The numbers of the reduction from VERTEX-COVER to SUBSET-SUM are written in base
+$4$, with the digit at position $q$ belonging to pair $q$. -/
 def pairDigit (q : ℕ) : ℕ := 4 ^ q
 
-/-- Whether pair number `q` of `pairs n` is an edge containing vertex `v`. -/
+/-- **Pairs touching a vertex.** Let $p_0, \dots, p_{m-1}$ be the vertex pairs $(i, j)$ with
+$i < j < n$ in encoding order (rows $i$ ascending, within a row $j$ descending). For a list $b$
+of pair bits, a vertex $v$ and an index $q$, the test is true when bit $b_q$ is set and $v$ is one
+of the two entries of $p_q$. An index past the end of $b$ counts as an unset bit, and for
+$q \ge m$ the pair $p_q$ is taken to be $(0, 0)$. -/
 def touches (n : ℕ) (bits : List Bool) (v q : ℕ) : Bool :=
   bits.getD q false && (((pairs n).getD q (0, 0)).1 == v || ((pairs n).getD q (0, 0)).2 == v)
 
-/-- The number of vertex `v`: a top digit `1`, and digit `q` set for the edges at `v`. -/
+/-- **Vertex numbers of the SUBSET-SUM reduction.** Let $p_0, \dots, p_{m-1}$ be the vertex pairs
+$(i, j)$ with $i < j < n$ in encoding order (rows $i$ ascending, within a row $j$ descending),
+and let $b$ be a list of pair bits. The number of a vertex $v$ is $4^m + \sum 4^q$, the sum over
+the indices $q < m$ such that bit $b_q$ is set and $v$ is an entry of $p_q$, where an index past
+the end of $b$ counts as unset. In base $4$ it has digit $1$ at position $m$ and at each such
+$q$, and $0$ elsewhere. -/
 def vtxNum (n : ℕ) (bits : List Bool) (v : ℕ) : ℕ :=
   4 ^ (pairs n).length +
     (((List.range (pairs n).length).filter fun q => touches n bits v q).map pairDigit).sum
 
-/-- The number of pair `q`: its digit if it is an edge, else `0`. -/
+/-- **Edge numbers of the SUBSET-SUM reduction.** Given a list $b$ of pair bits and a pair index
+$q$, the number of pair $q$ is $4^q$ if bit $b_q$ is set and $0$ otherwise; an index past the end
+of $b$ counts as an unset bit. -/
 def edgeNum (bits : List Bool) (q : ℕ) : ℕ := if bits.getD q false then pairDigit q else 0
 
-/-- The target: `k` on top, digit `2` on every edge. -/
+/-- **Target of the SUBSET-SUM reduction.** Let $m = n(n-1)/2$ be the number of vertex pairs
+$(i, j)$ with $i < j < n$, and let $b$ be a list of pair bits. For $k \in \mathbb{N}$ the target
+is $k \cdot 4^m + \sum 2 \cdot 4^q$, the sum over the indices $q < m$ such that bit $b_q$ is set
+(an index past the end of $b$ counts as unset). So the quotient of the target by $4^m$ is $k$, and
+its base-$4$ digit at position $q < m$ is $2$ when $b_q$ is set and $0$ otherwise. -/
 def ssTarget (k n : ℕ) (bits : List Bool) : ℕ :=
   k * 4 ^ (pairs n).length +
     (((List.range (pairs n).length).filter fun q => bits.getD q false).map
       fun q => 2 * pairDigit q).sum
 
-/-- The numbers of the instance: vertices first, then pairs. -/
+/-- **Numbers of the SUBSET-SUM reduction.** For $n$ vertices and a list $b$ of pair bits, with
+$m = n(n-1)/2$ vertex pairs, the numbers of the instance are the vertex numbers of
+$v = 0, \dots, n - 1$, in this order, followed by the edge numbers of the pairs
+$q = 0, \dots, m - 1$, in this order. -/
 def ssNums (n : ℕ) (bits : List Bool) : List ℕ :=
   (List.range n).map (vtxNum n bits) ++ (List.range (pairs n).length).map (edgeNum bits)
 
-/-- A fixed no-instance: no numbers, target `1`. -/
+/-- **Fixed no-instance of SUBSET-SUM.** The encoding of the SUBSET-SUM instance with no numbers
+and target $1$. It is a no-instance, because the only sublist of the empty list sums to $0$. -/
 def noSS : List Bool := encodeSS [] 1
 
-/-- VERTEX-COVER ≤ SUBSET-SUM on bit strings. -/
+/-- **Reduction from VERTEX-COVER to SUBSET-SUM.** The map on bit strings reads $x$ as $k$ ones, a
+zero, $n$ ones, a zero and a remaining list $b$ of pair bits. If this parse succeeds and $b$ has
+exactly $n(n-1)/2$ bits, one per vertex pair, then $x$ is sent to the encoding of the SUBSET-SUM
+instance whose numbers are the numbers of the reduction for $n$ and $b$ and whose target is the
+target for $k$, $n$ and $b$. Otherwise $x$ is sent to the fixed no-instance with no numbers and
+target $1$. -/
 def reduceSS (x : List Bool) : List Bool :=
   match decodeKG x with
   | some (k, n, bits) =>

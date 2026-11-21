@@ -1,0 +1,7 @@
+# Conversion-ranked input subjects are active
+
+Let $n$ be a natural number, $\Delta$ an ownership context, $a$ a name and $p$ a process. If $\Delta
+\vdash^{\mathrm{rk}\simeq}_n a(\cdot).p$, then there are an endpoint $e$ with name $a$ and a
+capability $c$ of rank $k$ such that $\Delta(e) = c$, the protocol of $c$ does not have head
+$\mathrm{end}$, and $\mathrm{Min}_\Delta(e,k)$ (every other active endpoint of $\Delta$ has rank $>
+k$).

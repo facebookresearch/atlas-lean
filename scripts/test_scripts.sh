@@ -15,11 +15,13 @@ fail() {
 
 reset_fixture() {
   rm -rf "$TMP_ROOT/repo"
-  mkdir -p "$TMP_ROOT/repo"/{CSLibExt,CSLibExtTest,MathlibExt,MathlibExtTest,WantedExt,scripts,v1}
+  mkdir -p "$TMP_ROOT/repo"/{CSLibExt,CSLibExtTest,MathlibExt,MathlibExtTest,PhyslibExt,PhyslibExtTest,Domains,DomainsTest,WantedExt,scripts,v1}
   cp "$REPO_ROOT/lakefile.toml" "$TMP_ROOT/repo/"
   cp "$REPO_ROOT/lake-manifest.json" "$TMP_ROOT/repo/"
   cp \
     "$REPO_ROOT/scripts/check_axioms.sh" \
+    "$REPO_ROOT/scripts/check_axioms.lean" \
+    "$REPO_ROOT/scripts/audit_compiled_modules.py" \
     "$REPO_ROOT/scripts/check_health.sh" \
     "$REPO_ROOT/scripts/check_lake_surface.py" \
     "$TMP_ROOT/repo/scripts/"
@@ -62,6 +64,106 @@ PY
 reset_fixture
 expect_pass "empty scaffold"
 
+# An older PR may add a standalone model that imports nothing from the old tree.
+for roots in MathlibExt:Domains MathlibExtTest:DomainsTest; do
+  old="${roots%:*}/Transport/NewArea"
+  new="${roots#*:}/Transport/NewArea"
+  mkdir -p "$TMP_ROOT/repo/$old" "$TMP_ROOT/repo/$new"
+  touch "$TMP_ROOT/repo/$old/NewModel.lean"
+  expect_failure "addition to a migrated subject" "move $old/NewModel.lean to $new/NewModel.lean"
+  mv "$TMP_ROOT/repo/$old/NewModel.lean" "$TMP_ROOT/repo/$new/"
+  expect_pass "addition at the new path"
+done
+
+# The fixture runs preflight without recursively running this test suite.
+cp "$REPO_ROOT/scripts/"{check.sh,check_diagnostics.sh} "$TMP_ROOT/repo/scripts/"
+touch "$TMP_ROOT/repo/"{lean-toolchain,README.md,REVIEWING.md}
+touch "$TMP_ROOT/repo/scripts/"{check_copyright.py,check_formal_math_sync.py}
+printf '#!/usr/bin/env bash\nexit 0\n' >"$TMP_ROOT/repo/scripts/test_scripts.sh"
+chmod +x "$TMP_ROOT/repo/scripts/test_scripts.sh"
+# LC_ALL=C keeps bash's syntax-error messages untranslated for the greps below.
+run_preflight() {
+  LC_ALL=C "$TMP_ROOT/repo/scripts/check.sh" preflight \
+    >"$TMP_ROOT/output.log" 2>&1
+}
+if ! run_preflight; then
+  cat "$TMP_ROOT/output.log" >&2
+  fail "preflight failed with valid shell scripts"
+fi
+printf '\nif then\n' >>"$TMP_ROOT/repo/scripts/check_diagnostics.sh"
+if run_preflight; then
+  fail "preflight did not detect a syntax error in check_diagnostics.sh"
+fi
+grep -q 'check_diagnostics.sh:.*syntax error' "$TMP_ROOT/output.log" || {
+  cat "$TMP_ROOT/output.log" >&2
+  fail "preflight reported the wrong shell syntax diagnostic"
+}
+# A script added to scripts/ is checked without being listed anywhere.
+cp "$REPO_ROOT/scripts/check_diagnostics.sh" "$TMP_ROOT/repo/scripts/"
+printf 'if then\n' >"$TMP_ROOT/repo/scripts/new_check.sh"
+if run_preflight; then
+  fail "preflight did not detect a syntax error in a new script"
+fi
+grep -q 'new_check.sh:.*syntax error' "$TMP_ROOT/output.log" || {
+  cat "$TMP_ROOT/output.log" >&2
+  fail "preflight reported the wrong diagnostic for a new script"
+}
+
+PHYSLIB_SOURCE='git = "https://github.com/leanprover-community/physlib"'
+PHYSLIB_REV="$(python3 - "$REPO_ROOT/lakefile.toml" <<'PY'
+import sys
+import tomllib
+
+with open(sys.argv[1], "rb") as source:
+    config = tomllib.load(source)
+print(next(dep["rev"] for dep in config["require"] if dep["name"] == "Physlib"))
+PY
+)"
+
+reset_fixture
+replace_once "$PHYSLIB_SOURCE" 'git = "https://github.com/example/physlib"'
+expect_failure "Physlib requirement with wrong repository" 'build surface'
+
+reset_fixture
+replace_once "$PHYSLIB_SOURCE" 'scope = "leanprover-community"'
+expect_failure "scoped Physlib requirement" 'build surface'
+
+reset_fixture
+replace_once "$PHYSLIB_SOURCE" "$PHYSLIB_SOURCE"$'\nscope = "leanprover-community"'
+expect_failure "Physlib requirement with both git and scope" 'build surface'
+
+reset_fixture
+replace_once "$PHYSLIB_SOURCE"$'\n'"rev = \"$PHYSLIB_REV\"" "$PHYSLIB_SOURCE"$'\nrev = "main"'
+expect_failure "unpinned Physlib requirement" 'build surface'
+
+reset_fixture
+replace_once "$PHYSLIB_SOURCE" 'path = "v1"'
+expect_failure "redirected Physlib requirement" 'build surface'
+
+for field in url scope rev subDir; do
+  reset_fixture
+  python3 - "$TMP_ROOT/repo/lake-manifest.json" "$field" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+field = sys.argv[2]
+manifest = json.loads(path.read_text())
+physlib = next(package for package in manifest["packages"] if package["name"] == "Physlib")
+value = {
+    "url": "https://github.com/example/physlib",
+    "scope": "leanprover-community",
+    "rev": "main",
+    "subDir": "v1",
+}[field]
+assert physlib[field] != value
+physlib[field] = value
+path.write_text(json.dumps(manifest))
+PY
+  expect_failure "Physlib manifest with altered $field" 'build surface'
+done
+
 reset_fixture
 printf '%s\n' '@[default_target] lean_exe Archive where' '  root := `v1.Archived' \
   >"$TMP_ROOT/repo/lakefile.lean"
@@ -95,7 +197,7 @@ expect_failure "archived manifest dependency" 'build surface'
 
 reset_fixture
 replace_once \
-  'defaultTargets = ["MathlibExt", "CSLibExt", "WantedExt"]' \
+  'defaultTargets = ["MathlibExt", "CSLibExt", "PhyslibExt", "Domains", "WantedExt"]' \
   'defaultTargets = ["v1"]'
 expect_failure "archived default target" 'build surface'
 
@@ -177,6 +279,10 @@ reset_fixture
 ln -s "$TMP_ROOT/linked.lean" "$TMP_ROOT/repo/CSLibExtTest/Linked.lean"
 expect_failure "symlinked CSLibExtTest source" 'symlinked paths'
 
+reset_fixture
+ln -s "$TMP_ROOT/linked.lean" "$TMP_ROOT/repo/PhyslibExt/Linked.lean"
+expect_failure "symlinked PhyslibExt source" 'symlinked paths'
+
 FAKE_BIN="$TMP_ROOT/bin"
 FAKE_LAKE_LOG="$TMP_ROOT/lake.log"
 mkdir -p "$FAKE_BIN"
@@ -198,7 +304,7 @@ if ! PATH="$FAKE_BIN:$PATH" "$REPO_ROOT/scripts/check_diagnostics.sh" \
   cat "$TMP_ROOT/output.log" >&2
   fail "clean compiler diagnostics failed"
 fi
-grep -qx 'build MathlibExt CSLibExt WantedExt MathlibExtTest CSLibExtTest' "$FAKE_LAKE_LOG" ||
+grep -qx 'build MathlibExt CSLibExt PhyslibExt Domains WantedExt MathlibExtTest CSLibExtTest PhyslibExtTest DomainsTest' "$FAKE_LAKE_LOG" ||
   fail "compiler diagnostics built the wrong targets"
 [[ "$(wc -l <"$FAKE_LAKE_LOG")" -eq 1 ]] ||
   fail "compiler diagnostics invoked Lake more than once"
@@ -229,7 +335,7 @@ grep -q 'forbidden compiler diagnostic' "$TMP_ROOT/output.log" ||
   fail "native_decide diagnostic produced the wrong failure"
 
 reset_fixture
-for library in CSLibExt CSLibExtTest MathlibExt MathlibExtTest WantedExt; do
+for library in CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest Domains DomainsTest WantedExt; do
   printf '%s\n' 'def sentinel : Nat := 1' \
     >"$TMP_ROOT/repo/$library/Sentinel.lean"
 done
@@ -241,7 +347,8 @@ if ! PATH="$FAKE_BIN:$PATH" "$TMP_ROOT/repo/scripts/check_axioms.sh" \
 fi
 for module in \
   CSLibExt.Sentinel CSLibExtTest.Sentinel \
-  MathlibExt.Sentinel MathlibExtTest.Sentinel WantedExt.Sentinel; do
+  MathlibExt.Sentinel MathlibExtTest.Sentinel \
+  PhyslibExt.Sentinel PhyslibExtTest.Sentinel Domains.Sentinel DomainsTest.Sentinel WantedExt.Sentinel; do
   grep -qx "import $module" "$FAKE_LEAN_INPUT" ||
     fail "axiom input omitted $module"
 done
@@ -291,5 +398,11 @@ grep -q 'New.lean' "$TMP_ROOT/output.log" || fail "--all did not report the file
 check_copyright --all || { cat "$TMP_ROOT/output.log" >&2; fail "--all rejected a repository whose files all have headers"; }
 grep -q 'check_copyright.py --all' "$REPO_ROOT/scripts/check.sh" ||
   fail "preflight does not check every file's copyright header"
+
+python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_quality_eval.py -v
+python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_formal_math_sync.py -v
+python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_public_references.py -v
+python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_public_reference_workflow.py -v
+python3 "$REPO_ROOT/scripts/bump/test_pinned_bump.py"
 
 echo "ok [scripts]: repository policy regression tests passed."

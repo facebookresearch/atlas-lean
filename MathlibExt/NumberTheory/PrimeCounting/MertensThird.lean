@@ -52,6 +52,20 @@ of `A` with `log ζ(σ) = ∑ Λ(n) / (n^σ log n)` as `σ → 1⁺`, using `ζ(
 
 @[expose] public section
 
+/-- Each Euler factor `(1 - 1/p)⁻¹` of `ζ(1)` at a prime `p` is at least `1`. -/
+theorem Nat.Prime.one_le_inv_one_sub_inv {p : ℕ} (hp : p.Prime) :
+    (1 : ℝ) ≤ (1 - (p : ℝ)⁻¹)⁻¹ := by
+  have hp2 : 2 ≤ p := hp.two_le
+  have hpr : (2 : ℝ) ≤ (p : ℝ) := by exact_mod_cast hp2
+  have hq1 : (p : ℝ)⁻¹ < 1 := by
+    apply inv_lt_one_of_one_lt₀
+    linarith
+  have hq0 : (0 : ℝ) ≤ (p : ℝ)⁻¹ := inv_nonneg.mpr (Nat.cast_nonneg p)
+  have h0 : (0 : ℝ) < 1 - (p : ℝ)⁻¹ := by linarith
+  have hle : 1 - (p : ℝ)⁻¹ ≤ 1 := by linarith
+  calc (1 : ℝ) = (1 : ℝ)⁻¹ := by norm_num
+    _ ≤ (1 - (p : ℝ)⁻¹)⁻¹ := (inv_le_inv₀ zero_lt_one h0).mpr hle
+
 namespace MertensThird
 
 /-- Prime-power weight a(n) = Λ(n) / (n * log n). a(0) = a(1) = 0 since Λ vanishes there. -/
@@ -66,9 +80,14 @@ private noncomputable def mertensS (x : ℝ) : ℝ :=
 private noncomputable def mertensA (x : ℝ) : ℝ :=
   ∑ n ∈ Finset.Icc 0 ⌊x⌋₊, mertensAcoeff n
 
-/-- P(x) = ∏ (1 - 1/p)⁻¹ over p ∈ primesLE ⌊x⌋₊. P(x) ≥ 1 > 0. -/
-private noncomputable def mertensP (x : ℝ) : ℝ :=
+/-- The Mertens product `P(x) = ∏_{p ≤ x} (1 - 1/p)⁻¹`; see
+`Nat.tendsto_prod_primesLE_inv_one_sub_inv_div_log` for `P(x) / log x → e^γ`. -/
+noncomputable def mertensP (x : ℝ) : ℝ :=
   ∏ p ∈ Nat.primesLE ⌊x⌋₊, (1 - (p : ℝ)⁻¹)⁻¹
+
+/-- The Mertens product is at least `1`, since each of its factors is. -/
+theorem one_le_mertensP (x : ℝ) : 1 ≤ mertensP x :=
+  Finset.one_le_prod₀ fun _ hp => (Nat.prime_of_mem_primesLE hp).one_le_inv_one_sub_inv
 
 /-- T(p,N) = ∑ 1/(k * p^k) over k ∈ [1, Nat.log p N]. -/
 private noncomputable def primeTail (p N : ℕ) : ℝ :=
@@ -86,23 +105,9 @@ private theorem mertensAcoeff_nonneg (n : ℕ) : 0 ≤ mertensAcoeff n := by
       exact_mod_cast Nat.one_le_iff_ne_zero.mpr hn
     exact mul_nonneg (Nat.cast_nonneg n) (Real.log_nonneg h1)
 
-/-- P(x) is positive: each factor (1 - 1/p)⁻¹ > 0 for prime p ≥ 2. -/
-private theorem mertensP_pos (x : ℝ) : 0 < mertensP x := by
-  unfold mertensP
-  apply Finset.prod_pos
-  intro p hp
-  rw [Nat.mem_primesLE] at hp
-  have hp2 : 2 ≤ p := hp.2.two_le
-  have hpr : (2 : ℝ) ≤ (p : ℝ) := by exact_mod_cast hp2
-  have h1 : (p : ℝ)⁻¹ < 1 := by
-    apply inv_lt_one_of_one_lt₀
-    linarith
-  have h0 : (0:ℝ) < 1 - (p:ℝ)⁻¹ := by
-    have : (p:ℝ)⁻¹ ≤ 1/2 := by
-      calc (p:ℝ)⁻¹ ≤ (2:ℝ)⁻¹ := by gcongr
-        _ = 1/2 := by norm_num
-    linarith
-  exact inv_pos.mpr h0
+/-- The Mertens product is positive. -/
+theorem mertensP_pos (x : ℝ) : 0 < mertensP x :=
+  one_pos.trans_le (one_le_mertensP x)
 
 /-- A(x) is monotone: terms are nonnegative and the index set grows with x. -/
 private theorem mertensA_mono : Monotone mertensA := by
@@ -116,21 +121,6 @@ private theorem mertensA_mono : Monotone mertensA := by
 /-- A(x) is measurable, for free from monotonicity. -/
 private theorem mertensA_measurable : Measurable mertensA :=
   mertensA_mono.measurable
-
--- Shared helpers.
-/-- Each Mertens factor is at least 1 for prime `p`. -/
-private theorem one_le_inv_one_sub_inv_prime (p : ℕ) (hp : p.Prime) :
-    (1 : ℝ) ≤ (1 - (p : ℝ)⁻¹)⁻¹ := by
-  have hp2 : 2 ≤ p := hp.two_le
-  have hpr : (2 : ℝ) ≤ (p : ℝ) := by exact_mod_cast hp2
-  have hq1 : (p : ℝ)⁻¹ < 1 := by
-    apply inv_lt_one_of_one_lt₀
-    linarith
-  have hq0 : (0 : ℝ) ≤ (p : ℝ)⁻¹ := inv_nonneg.mpr (Nat.cast_nonneg p)
-  have h0 : (0 : ℝ) < 1 - (p : ℝ)⁻¹ := by linarith
-  have hle : 1 - (p : ℝ)⁻¹ ≤ 1 := by linarith
-  calc (1 : ℝ) = (1 : ℝ)⁻¹ := by norm_num
-    _ ≤ (1 - (p : ℝ)⁻¹)⁻¹ := (inv_le_inv₀ zero_lt_one h0).mpr hle
 
 -- Mertens' first theorem, from the public `Chebyshev.abs_sum_vonMangoldt_div_sub_log_le`.
 private theorem mertens_first_bound :
@@ -1696,7 +1686,7 @@ private theorem neg_log_one_sub_inv_sub_primeTail {p N : ℕ} (hp : p.Prime) (h 
     rw [inv_pow, inv_eq_one_div]
     exact one_div_le_one_div_of_le hNpos hNp1
   have hnonneg_c : (0 : ℝ) ≤ (1 - (p : ℝ)⁻¹)⁻¹ := by
-    have h1 := one_le_inv_one_sub_inv_prime p hp
+    have h1 := hp.one_le_inv_one_sub_inv
     linarith
   have hnonneg_b : (0 : ℝ) ≤ 1 / ((N : ℝ) + 1) :=
     div_nonneg zero_le_one (le_of_lt hNpos)

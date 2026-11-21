@@ -31,7 +31,7 @@ example : ∃ B' : ℝ, ∀ s : ℂ, 0 ≤ s.re → s.re ≤ 1 → ‖Complex.ex
 
 /-- Polynomial growth: `‖s‖ ≤ C |Im s|` on the edges of `0 ≤ Re s ≤ 1` propagates inside. -/
 example : ∃ C, ∀ s : ℂ, 0 ≤ s.re → s.re ≤ 1 → 1 ≤ |s.im| → ‖s‖ ≤ C * |s.im| ^ (1 : ℝ) :=
-  PhragmenLindelof.vertical_strip_le_mul_rpow (f := id) (α := 1)
+  PhragmenLindelof.vertical_strip_le_mul_rpow (f := id) (α := 1) zero_le_one
     (Differentiable.diffContOnCl differentiable_id)
     ⟨1, 0, fun s h1 h2 _ => by
       have := norm_le_abs_re_add_abs_im s

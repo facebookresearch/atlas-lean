@@ -24,8 +24,10 @@ This module defines the optimal level-`R` Selberg weights for an arbitrary
 
 ## Main statements
 
-* `MathlibExt.SelbergSieve.siftedSum_le_totalMass_div_levelSum_add`: Selberg's upper bound
-  sieve, `S(𝒜, P) ≤ X / G(R) + ∑_{d₁, d₂ ≤ R} |R_{[d₁, d₂]}|`.
+* `MathlibExt.SelbergSieve.errSum_lambdaSquared_levelWeights_le`: the error term of the Λ² sieve
+  with the level weights is at most `∑_{d₁, d₂ ≤ R} |R_{[d₁, d₂]}|`; combined with
+  `MathlibExt.SelbergSieve.siftedSum_le_totalMass_div_levelSum_add_errSum` this gives Selberg's
+  upper bound `S(𝒜, P) ≤ X / G(R) + ∑_{d₁, d₂ ≤ R} |R_{[d₁, d₂]}|`.
 * `MathlibExt.SelbergSieve.sum_prod_nu_pow_le_levelSum`: a lower bound for the level sum
   `G(R)` by the completely multiplicative extension of `ν`.
 -/
@@ -959,23 +961,6 @@ theorem errSum_lambdaSquared_levelWeights_le (s : BoundingSieve) (R : ℕ) (hR :
         exact absurd (Nat.mem_divisors.mpr ⟨Nat.lcm_dvd (Nat.dvd_of_mem_divisors (hLP _ hx.1))
           (Nat.dvd_of_mem_divisors (hLP _ hx.2)), hP0⟩) h
     _ = ∑ d₁ ∈ L, ∑ d₂ ∈ L, |s.rem (d₁.lcm d₂)| := Finset.sum_product _ _ _
-
-/-- **Selberg's upper bound sieve.** For every level `R ≥ 1`,
-`S(𝒜, P) ≤ X / G(R) + ∑_{d₁, d₂ ∣ P, d₁, d₂ ≤ R} |R_{[d₁, d₂]}|`, where
-`G(R) = ∑_{l ∣ P, l ≤ R} g(l)` is the Selberg level sum.
-
-Source: A. Selberg, "On an elementary method in the theory of primes", Norske Vid. Selsk. Forh.
-(Trondheim) 19 (1947), no. 18, 64–67, Zbl 0041.01903; H. L. Montgomery and R. C. Vaughan,
-*Multiplicative Number Theory I: Classical Theory*, Cambridge Studies in Advanced Mathematics 97,
-Cambridge University Press, 2007, Chapter 3 (*Principles and first examples of sieve methods*),
-DOI 10.1017/CBO9780511618314.005. Stated for a general `BoundingSieve`. -/
-theorem siftedSum_le_totalMass_div_levelSum_add (s : BoundingSieve) (R : ℕ) (hR : 1 ≤ R) :
-    s.siftedSum ≤ s.totalMass / levelSum s R +
-      ∑ d₁ ∈ levelSet s R, ∑ d₂ ∈ levelSet s R, |s.rem (d₁.lcm d₂)| := by
-  have h := s.siftedSum_le_mainSum_errSum_of_upperMoebius _
-    (BoundingSieve.upperMoebius_lambdaSquared _ (levelWeights_one s R hR))
-  rw [levelWeights_mainSum s R hR, mul_one_div] at h
-  linarith [errSum_lambdaSquared_levelWeights_le s R hR]
 
 /-- The Selberg level sum dominates the sum of the completely multiplicative extension of `ν`
 over the integers `δ ≤ R` whose prime factors all divide `P`:

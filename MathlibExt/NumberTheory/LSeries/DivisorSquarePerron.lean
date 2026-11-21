@@ -372,7 +372,13 @@ theorem exists_polynomial_degree_eq_three_sum_sigma_zero_sq_mul_log_pow_isBigO :
     · have hz : riemannZeta w ≠ 0 := riemannZeta_ne_zero_of_one_le_re hw
       rw [riemannZeta_eq_inv_sub_mul hw1] at hz
       exact fun h => hz (by rw [h, mul_zero])
-  have hGd : ∀ s ∈ U, DifferentiableAt ℂ G s := by
+  -- `G` is analytic on the open set where its denominator does not vanish, which contains `U`
+  obtain ⟨Ω, hΩdef⟩ : ∃ Ω : Set ℂ, Ω = {s : ℂ | riemannZeta₁ (2 * s) * s ^ 4 ≠ 0} := ⟨_, rfl⟩
+  have hΩ : IsOpen Ω := by
+    rw [hΩdef]
+    exact isOpen_ne_fun ((differentiable_riemannZeta₁.comp
+      (differentiable_id.const_mul (2 : ℂ))).continuous.mul (continuous_pow 4)) continuous_const
+  have hUΩ : U ⊆ Ω := by
     intro s hs
     rw [hUdef] at hs
     have hs' : 1 / 2 ≤ s.re := hs
@@ -380,20 +386,28 @@ theorem exists_polynomial_degree_eq_three_sum_sigma_zero_sq_mul_log_pow_isBigO :
       rintro rfl
       norm_num at hs'
     have h2 : riemannZeta₁ (2 * s) ≠ 0 := hz1ne _ (by simp; linarith)
+    rw [hΩdef]
+    exact mul_ne_zero h2 (pow_ne_zero 4 hs0)
+  have hGdΩ : ∀ s ∈ Ω, DifferentiableAt ℂ G s := by
+    intro s hs
+    rw [hΩdef] at hs
     rw [hGdef]
     have hA : DifferentiableAt ℂ (fun s : ℂ => riemannZeta₁ s ^ 4 * (2 * s - 1)) s :=
       ((differentiable_riemannZeta₁ s).pow 4).mul (by fun_prop)
     have hB : DifferentiableAt ℂ (fun s : ℂ => riemannZeta₁ (2 * s) * s ^ 4) s :=
       ((differentiable_riemannZeta₁.comp (differentiable_id.const_mul (2 : ℂ))) s).mul
         (by fun_prop)
-    exact hA.div hB (mul_ne_zero h2 (pow_ne_zero 4 hs0))
-  have hU1 : U ∈ nhds (1 : ℂ) := by
-    refine Filter.mem_of_superset ((isOpen_lt continuous_const Complex.continuous_re).mem_nhds
-      (by norm_num : (1 / 2 : ℝ) < (1 : ℂ).re)) fun s hs => ?_
-    rw [hUdef]
-    exact le_of_lt (show (1 / 2 : ℝ) < s.re from hs)
-  obtain ⟨b, g, hg, hGg⟩ := DifferentiableOn.exists_eq_sum_add_pow_mul
-    (fun s hs => (hGd s hs).differentiableWithinAt) hU1 4
+    exact hA.div hB hs
+  have hGd : ∀ s ∈ U, DifferentiableAt ℂ G s := fun s hs => hGdΩ s (hUΩ hs)
+  have hGa : AnalyticOnNhd ℂ G Ω :=
+    DifferentiableOn.analyticOnNhd (fun s hs => (hGdΩ s hs).differentiableWithinAt) hΩ
+  have h1U : (1 : ℂ) ∈ U := by rw [hUdef]; norm_num
+  obtain ⟨g, hga, hGg', -⟩ := Complex.exists_taylor_remainder_circleIntegral hΩ (hUΩ h1U) hGa 4
+  have hg : DifferentiableOn ℂ g U := hga.differentiableOn.mono hUΩ
+  obtain ⟨b, hbdef⟩ : ∃ b : ℕ → ℂ, b = fun j => iteratedDeriv j G 1 / (j.factorial : ℂ) :=
+    ⟨_, rfl⟩
+  have hGg : ∀ s ∈ U, G s = (∑ j ∈ Finset.range 4, b j * (s - 1) ^ j) + (s - 1) ^ 4 * g s :=
+    fun s hs => by rw [hbdef, hGg' s (hUΩ hs), mul_comm (g s)]
   -- ## The leading coefficient `b 0 = G 1 = 1 / ζ (2) = 6 / π ^ 2`
   have hb0 : b 0 = ((6 / Real.pi ^ 2 : ℝ) : ℂ) := by
     have h1 := hGg 1 (by rw [hUdef]; norm_num)

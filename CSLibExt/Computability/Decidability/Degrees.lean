@@ -99,20 +99,16 @@ theorem encodeOracleCode_injective : Function.Injective encodeOracleCode := by
 /-- **Pairing is at least its first argument.**
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.3 (pairing functions). -/
-theorem pair_ge_fst (a b : ℕ) : a ≤ Nat.pair a b := by
-  unfold Nat.pair
-  split_ifs <;> omega
+@[deprecated Nat.left_le_pair (since := "2026-11-12")]
+theorem pair_ge_fst (a b : ℕ) : a ≤ Nat.pair a b :=
+  Nat.left_le_pair a b
 
 /-- **Pairing is at least its second argument.**
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.3 (pairing functions). -/
-theorem pair_ge_snd (a b : ℕ) : b ≤ Nat.pair a b := by
-  unfold Nat.pair
-  split_ifs with h
-  · have hb : b ≤ b * b := Nat.le_mul_self b
-    omega
-  · have hb : b ≤ a := Nat.le_of_not_lt h
-    omega
+@[deprecated Nat.right_le_pair (since := "2026-11-12")]
+theorem pair_ge_snd (a b : ℕ) : b ≤ Nat.pair a b :=
+  Nat.right_le_pair a b
 
 /-- **Pairing with `4` strictly increases.**
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
@@ -141,16 +137,16 @@ theorem pair_gt_snd_of_pos {t x : ℕ} (ht : 1 ≤ t) : x < Nat.pair t x := by
 /-- **The first unpairing component is at most the number.**
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.3 (pairing functions). -/
-theorem unpair_fst_le (n : ℕ) : n.unpair.1 ≤ n := by
-  conv_rhs => rw [← Nat.pair_unpair n]
-  exact pair_ge_fst _ _
+@[deprecated Nat.unpair_left_le (since := "2026-11-12")]
+theorem unpair_fst_le (n : ℕ) : n.unpair.1 ≤ n :=
+  Nat.unpair_left_le n
 
 /-- **The second unpairing component is at most the number.**
 Source: Rogers, *Theory of Recursive Functions and Effective Computability*,
 §1.3 (pairing functions). -/
-theorem unpair_snd_le (n : ℕ) : n.unpair.2 ≤ n := by
-  conv_rhs => rw [← Nat.pair_unpair n]
-  exact pair_ge_snd _ _
+@[deprecated Nat.unpair_right_le (since := "2026-11-12")]
+theorem unpair_snd_le (n : ℕ) : n.unpair.2 ≤ n :=
+  Nat.unpair_right_le n
 
 /-- **Depth of an oracle code**: leaves have depth `0`; each constructor adds
 one to the maximum depth of its children.
@@ -439,8 +435,8 @@ theorem oracleCodeDepth_le_encode : ∀ c : OracleCode,
       Nat.pair 4 (Nat.pair (encodeOracleCode a) (encodeOracleCode b))
     have h1 : max (oracleCodeDepth a) (oracleCodeDepth b) ≤
         Nat.pair (encodeOracleCode a) (encodeOracleCode b) := by
-      have hge1 := pair_ge_fst (encodeOracleCode a) (encodeOracleCode b)
-      have hge2 := pair_ge_snd (encodeOracleCode a) (encodeOracleCode b)
+      have hge1 := Nat.left_le_pair (encodeOracleCode a) (encodeOracleCode b)
+      have hge2 := Nat.right_le_pair (encodeOracleCode a) (encodeOracleCode b)
       omega
     have h2 := pair_gt_snd_of_pos (t := 4)
       (x := Nat.pair (encodeOracleCode a) (encodeOracleCode b)) (by decide)
@@ -450,8 +446,8 @@ theorem oracleCodeDepth_le_encode : ∀ c : OracleCode,
       Nat.pair 5 (Nat.pair (encodeOracleCode a) (encodeOracleCode b))
     have h1 : max (oracleCodeDepth a) (oracleCodeDepth b) ≤
         Nat.pair (encodeOracleCode a) (encodeOracleCode b) := by
-      have hge1 := pair_ge_fst (encodeOracleCode a) (encodeOracleCode b)
-      have hge2 := pair_ge_snd (encodeOracleCode a) (encodeOracleCode b)
+      have hge1 := Nat.left_le_pair (encodeOracleCode a) (encodeOracleCode b)
+      have hge2 := Nat.right_le_pair (encodeOracleCode a) (encodeOracleCode b)
       omega
     have h2 := pair_gt_snd_of_pos (t := 5)
       (x := Nat.pair (encodeOracleCode a) (encodeOracleCode b)) (by decide)
@@ -461,8 +457,8 @@ theorem oracleCodeDepth_le_encode : ∀ c : OracleCode,
       Nat.pair 6 (Nat.pair (encodeOracleCode a) (encodeOracleCode b))
     have h1 : max (oracleCodeDepth a) (oracleCodeDepth b) ≤
         Nat.pair (encodeOracleCode a) (encodeOracleCode b) := by
-      have hge1 := pair_ge_fst (encodeOracleCode a) (encodeOracleCode b)
-      have hge2 := pair_ge_snd (encodeOracleCode a) (encodeOracleCode b)
+      have hge1 := Nat.left_le_pair (encodeOracleCode a) (encodeOracleCode b)
+      have hge2 := Nat.right_le_pair (encodeOracleCode a) (encodeOracleCode b)
       omega
     have h2 := pair_gt_snd_of_pos (t := 6)
       (x := Nat.pair (encodeOracleCode a) (encodeOracleCode b)) (by decide)
@@ -581,14 +577,14 @@ theorem decodeOracleCode_pair (tag payload : ℕ) :
     · simp [decodeOracleCode, decodeOracleCodeFuel, Nat.unpair_pair, hp]
   · have hsub1 : Nat.pair payload.unpair.1.unpair.1 payload.unpair.1.unpair.2 <
         Nat.pair 4 payload := by
-      have h1 : payload.unpair.1 ≤ payload := unpair_fst_le _
+      have h1 : payload.unpair.1 ≤ payload := Nat.unpair_left_le _
       have h2 : payload < Nat.pair 4 payload :=
         pair_gt_snd_of_pos (by decide : 1 ≤ 4)
       rw [Nat.pair_unpair]
       omega
     have hsub2 : Nat.pair payload.unpair.2.unpair.1 payload.unpair.2.unpair.2 <
         Nat.pair 4 payload := by
-      have h1 : payload.unpair.2 ≤ payload := unpair_snd_le _
+      have h1 : payload.unpair.2 ≤ payload := Nat.unpair_right_le _
       have h2 : payload < Nat.pair 4 payload :=
         pair_gt_snd_of_pos (by decide : 1 ≤ 4)
       rw [Nat.pair_unpair]
@@ -604,14 +600,14 @@ theorem decodeOracleCode_pair (tag payload : ℕ) :
     simp
   · have hsub1 : Nat.pair payload.unpair.1.unpair.1 payload.unpair.1.unpair.2 <
         Nat.pair 5 payload := by
-      have h1 : payload.unpair.1 ≤ payload := unpair_fst_le _
+      have h1 : payload.unpair.1 ≤ payload := Nat.unpair_left_le _
       have h2 : payload < Nat.pair 5 payload :=
         pair_gt_snd_of_pos (by decide : 1 ≤ 5)
       rw [Nat.pair_unpair]
       omega
     have hsub2 : Nat.pair payload.unpair.2.unpair.1 payload.unpair.2.unpair.2 <
         Nat.pair 5 payload := by
-      have h1 : payload.unpair.2 ≤ payload := unpair_snd_le _
+      have h1 : payload.unpair.2 ≤ payload := Nat.unpair_right_le _
       have h2 : payload < Nat.pair 5 payload :=
         pair_gt_snd_of_pos (by decide : 1 ≤ 5)
       rw [Nat.pair_unpair]
@@ -627,14 +623,14 @@ theorem decodeOracleCode_pair (tag payload : ℕ) :
     simp
   · have hsub1 : Nat.pair payload.unpair.1.unpair.1 payload.unpair.1.unpair.2 <
         Nat.pair 6 payload := by
-      have h1 : payload.unpair.1 ≤ payload := unpair_fst_le _
+      have h1 : payload.unpair.1 ≤ payload := Nat.unpair_left_le _
       have h2 : payload < Nat.pair 6 payload :=
         pair_gt_snd_of_pos (by decide : 1 ≤ 6)
       rw [Nat.pair_unpair]
       omega
     have hsub2 : Nat.pair payload.unpair.2.unpair.1 payload.unpair.2.unpair.2 <
         Nat.pair 6 payload := by
-      have h1 : payload.unpair.2 ≤ payload := unpair_snd_le _
+      have h1 : payload.unpair.2 ≤ payload := Nat.unpair_right_le _
       have h2 : payload < Nat.pair 6 payload :=
         pair_gt_snd_of_pos (by decide : 1 ≤ 6)
       rw [Nat.pair_unpair]
@@ -917,12 +913,12 @@ theorem decodeIsSomeStep_correct (m : ℕ) :
     rw [hstep]
     by_cases hp : payload = 0 <;> simp [decodeIsSome_pair, hp]
   · have hsub1 : payload.unpair.1 < Nat.pair 4 payload := by
-      have h1 : payload.unpair.1 ≤ payload := unpair_fst_le _
+      have h1 : payload.unpair.1 ≤ payload := Nat.unpair_left_le _
       have h2 : payload < Nat.pair 4 payload :=
         pair_gt_snd_of_pos (by decide : 1 ≤ 4)
       omega
     have hsub2 : payload.unpair.2 < Nat.pair 4 payload := by
-      have h1 : payload.unpair.2 ≤ payload := unpair_snd_le _
+      have h1 : payload.unpair.2 ≤ payload := Nat.unpair_right_le _
       have h2 : payload < Nat.pair 4 payload :=
         pair_gt_snd_of_pos (by decide : 1 ≤ 4)
       omega
@@ -936,12 +932,12 @@ theorem decodeIsSomeStep_correct (m : ℕ) :
     cases ha : decodeIsSome payload.unpair.1 <;> cases hb : decodeIsSome payload.unpair.2 <;>
       simp [decodeIsSome_pair, ha, hb]
   · have hsub1 : payload.unpair.1 < Nat.pair 5 payload := by
-      have h1 : payload.unpair.1 ≤ payload := unpair_fst_le _
+      have h1 : payload.unpair.1 ≤ payload := Nat.unpair_left_le _
       have h2 : payload < Nat.pair 5 payload :=
         pair_gt_snd_of_pos (by decide : 1 ≤ 5)
       omega
     have hsub2 : payload.unpair.2 < Nat.pair 5 payload := by
-      have h1 : payload.unpair.2 ≤ payload := unpair_snd_le _
+      have h1 : payload.unpair.2 ≤ payload := Nat.unpair_right_le _
       have h2 : payload < Nat.pair 5 payload :=
         pair_gt_snd_of_pos (by decide : 1 ≤ 5)
       omega
@@ -955,12 +951,12 @@ theorem decodeIsSomeStep_correct (m : ℕ) :
     cases ha : decodeIsSome payload.unpair.1 <;> cases hb : decodeIsSome payload.unpair.2 <;>
       simp [decodeIsSome_pair, ha, hb]
   · have hsub1 : payload.unpair.1 < Nat.pair 6 payload := by
-      have h1 : payload.unpair.1 ≤ payload := unpair_fst_le _
+      have h1 : payload.unpair.1 ≤ payload := Nat.unpair_left_le _
       have h2 : payload < Nat.pair 6 payload :=
         pair_gt_snd_of_pos (by decide : 1 ≤ 6)
       omega
     have hsub2 : payload.unpair.2 < Nat.pair 6 payload := by
-      have h1 : payload.unpair.2 ≤ payload := unpair_snd_le _
+      have h1 : payload.unpair.2 ≤ payload := Nat.unpair_right_le _
       have h2 : payload < Nat.pair 6 payload :=
         pair_gt_snd_of_pos (by decide : 1 ≤ 6)
       omega

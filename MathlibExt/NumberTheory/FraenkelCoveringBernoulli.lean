@@ -12,7 +12,7 @@ public import Mathlib.NumberTheory.Bernoulli
 public import MathlibExt.NumberTheory.CoveringSystem.ExactCover
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
@@ -495,6 +495,7 @@ weighted variant.
 
 Proves `Wanted` entry `fraenkel_exact_M_cover_bernoulli_recurrence`.
 -/
+@[nolint unusedArguments]
 theorem fraenkel_exact_M_cover_bernoulli_recurrence
     (q M m : ℕ) (a n : Fin q → ℕ)
     (hq : 2 ≤ q) (hm : 1 ≤ m)

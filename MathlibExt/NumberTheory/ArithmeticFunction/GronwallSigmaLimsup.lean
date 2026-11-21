@@ -30,39 +30,7 @@ function, `limsup σ(n) / (n log log n) = e^γ`. The main input is Mertens' thir
 `Nat.tendsto_prod_primesLE_inv_one_sub_inv_div_log`.
 -/
 
-/-- P(x) = ∏ (1 - 1/p)⁻¹ over p ∈ primesLE ⌊x⌋₊. P(x) ≥ 1 > 0. -/
-private noncomputable def mertensP (x : ℝ) : ℝ :=
-  ∏ p ∈ Nat.primesLE ⌊x⌋₊, (1 - (p : ℝ)⁻¹)⁻¹
-
--- Shared helpers.
-/-- Each Mertens factor is at least 1 for prime `p`. -/
-private theorem one_le_inv_one_sub_inv_prime (p : ℕ) (hp : p.Prime) :
-    (1 : ℝ) ≤ (1 - (p : ℝ)⁻¹)⁻¹ := by
-  have hp2 : 2 ≤ p := hp.two_le
-  have hpr : (2 : ℝ) ≤ (p : ℝ) := by exact_mod_cast hp2
-  have hq1 : (p : ℝ)⁻¹ < 1 := by
-    apply inv_lt_one_of_one_lt₀
-    linarith
-  have hq0 : (0 : ℝ) ≤ (p : ℝ)⁻¹ := inv_nonneg.mpr (Nat.cast_nonneg p)
-  have h0 : (0 : ℝ) < 1 - (p : ℝ)⁻¹ := by linarith
-  have hle : 1 - (p : ℝ)⁻¹ ≤ 1 := by linarith
-  calc (1 : ℝ) = (1 : ℝ)⁻¹ := by norm_num
-    _ ≤ (1 - (p : ℝ)⁻¹)⁻¹ := (inv_le_inv₀ zero_lt_one h0).mpr hle
-
-/-- P(x) ≥ 1: each factor (1 - 1/p)⁻¹ ≥ 1 for prime p ≥ 2. -/
-private theorem mertensP_ge_one (x : ℝ) : 1 ≤ mertensP x :=
-  Finset.one_le_prod₀ fun p hp =>
-    one_le_inv_one_sub_inv_prime p (Nat.prime_of_mem_primesLE hp)
-
-/-- P(x) is positive. -/
-private theorem mertensP_pos (x : ℝ) : 0 < mertensP x :=
-  one_pos.trans_le (mertensP_ge_one x)
-
--- Mertens' third theorem.
-private theorem tendsto_mertensP_div_log :
-    Filter.Tendsto (fun x => mertensP x / Real.log x)
-      Filter.atTop (nhds (Real.exp Real.eulerMascheroniConstant)) :=
-  Nat.tendsto_prod_primesLE_inv_one_sub_inv_div_log
+open MertensThird
 
 -- σ(n)/n upper bound by Mertens product.
 /-- The Mertens factor as `1 + 1/(p-1)`. -/
@@ -73,42 +41,6 @@ private theorem inv_one_sub_inv_eq (p : ℕ) (hp : 2 ≤ p) :
   have hp1 : ((p : ℝ) - 1) ≠ 0 := ne_of_gt (by linarith : (0 : ℝ) < (p : ℝ) - 1)
   field_simp
   ring
-
-/-- Product inequality over `ℝ` by induction. -/
-private theorem prod_le_prod_of_nonneg {ι : Type*} {s : Finset ι} {f g : ι → ℝ}
-    (h0 : ∀ i ∈ s, 0 ≤ f i) (h1 : ∀ i ∈ s, f i ≤ g i) :
-    ∏ i ∈ s, f i ≤ ∏ i ∈ s, g i := by
-  classical
-  revert h0 h1
-  refine Finset.induction_on s ?_ ?_
-  · intro h0 h1
-    simp
-  · intro a t hat ih h0 h1
-    rw [Finset.prod_insert hat, Finset.prod_insert hat]
-    have h0t : ∀ i ∈ t, 0 ≤ f i :=
-      fun i hi => h0 i (Finset.mem_insert_of_mem hi)
-    have h1t : ∀ i ∈ t, f i ≤ g i :=
-      fun i hi => h1 i (Finset.mem_insert_of_mem hi)
-    have hag : f a ≤ g a := h1 a (Finset.mem_insert_self a t)
-    have ha0 : 0 ≤ f a := h0 a (Finset.mem_insert_self a t)
-    exact mul_le_mul hag (ih h0t h1t) (Finset.prod_nonneg h0t) (le_trans ha0 hag)
-
-/-- A product of terms `≥ 1` is `≥ 1`, over `ℝ`. -/
-private theorem one_le_prod_of_one_le {ι : Type*} {s : Finset ι} {f : ι → ℝ}
-    (h : ∀ i ∈ s, 1 ≤ f i) : 1 ≤ ∏ i ∈ s, f i := by
-  classical
-  revert h
-  refine Finset.induction_on s ?_ ?_
-  · intro h
-    simp
-  · intro a t hat ih h
-    rw [Finset.prod_insert hat]
-    have ha : 1 ≤ f a := h a (Finset.mem_insert_self a t)
-    have ht : ∀ i ∈ t, 1 ≤ f i := fun i hi => h i (Finset.mem_insert_of_mem hi)
-    have h1t : 1 ≤ ∏ i ∈ t, f i := ih ht
-    calc (1 : ℝ) ≤ ∏ i ∈ t, f i := h1t
-      _ ≤ f a * ∏ i ∈ t, f i :=
-        le_mul_of_one_le_left (zero_le_one.trans h1t) ha
 
 /-- Lower bound `r^#s ≤ ∏ f` over `ℝ` by induction. -/
 private theorem pow_card_le_prod_of_le {ι : Type*} {s : Finset ι} {f : ι → ℝ}
@@ -213,7 +145,7 @@ private theorem sigma_div_self_le_mertensP_mul_exp (n : ℕ) (hn : 1 ≤ n) (y :
         (((∑ i ∈ Finset.range (n.factorization p + 1), p ^ (i * 1) : ℕ) : ℝ) /
           ((p ^ n.factorization p : ℕ) : ℝ)) ≤
       ∏ p ∈ n.primeFactors, (1 - (p : ℝ)⁻¹)⁻¹ :=
-    prod_le_prod_of_nonneg
+    Finset.prod_le_prod₀
       (fun p _ => div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)) hfac
   refine le_trans hstep1 ?_
   have hsplit := Finset.prod_filter_mul_prod_filter_not n.primeFactors
@@ -231,7 +163,7 @@ private theorem sigma_div_self_le_mertensP_mul_exp (n : ℕ) (hn : 1 ≤ n) (y :
         p ∉ n.primeFactors.filter (fun p => p ≤ ⌊y⌋₊) →
         1 ≤ (1 - (p : ℝ)⁻¹)⁻¹ := by
       intro p hp _
-      exact one_le_inv_one_sub_inv_prime p (Nat.prime_of_mem_primesLE hp)
+      exact Nat.Prime.one_le_inv_one_sub_inv (p := p) (Nat.prime_of_mem_primesLE hp)
     have hdecomp : (∏ p ∈ Nat.primesLE ⌊y⌋₊ \
         n.primeFactors.filter (fun p => p ≤ ⌊y⌋₊), (1 - (p : ℝ)⁻¹)⁻¹) *
         (∏ p ∈ n.primeFactors.filter (fun p => p ≤ ⌊y⌋₊),
@@ -240,7 +172,7 @@ private theorem sigma_div_self_le_mertensP_mul_exp (n : ℕ) (hn : 1 ≤ n) (y :
       Finset.prod_sdiff hsub
     have hdiff1 : 1 ≤ ∏ p ∈ Nat.primesLE ⌊y⌋₊ \
         n.primeFactors.filter (fun p => p ≤ ⌊y⌋₊), (1 - (p : ℝ)⁻¹)⁻¹ := by
-      apply one_le_prod_of_one_le
+      apply Finset.one_le_prod₀
       intro p hp
       rw [Finset.mem_sdiff] at hp
       exact h1 p hp.1 hp.2
@@ -248,7 +180,7 @@ private theorem sigma_div_self_le_mertensP_mul_exp (n : ℕ) (hn : 1 ≤ n) (y :
         (1 : ℝ) ≤ (1 - (p : ℝ)⁻¹)⁻¹ := by
       intro p hp
       rw [Finset.mem_filter] at hp
-      exact one_le_inv_one_sub_inv_prime p
+      exact Nat.Prime.one_le_inv_one_sub_inv (p := p)
         (Nat.prime_of_mem_primeFactors hp.1)
     have hnonneg : 0 ≤ ∏ p ∈ n.primeFactors.filter (fun p => p ≤ ⌊y⌋₊),
         (1 - (p : ℝ)⁻¹)⁻¹ :=
@@ -296,7 +228,7 @@ private theorem sigma_div_self_le_mertensP_mul_exp (n : ℕ) (hn : 1 ≤ n) (y :
         0 ≤ (1 - (p : ℝ)⁻¹)⁻¹ := by
       intro p hp
       rw [Finset.mem_filter] at hp
-      have h1 := one_le_inv_one_sub_inv_prime p
+      have h1 := Nat.Prime.one_le_inv_one_sub_inv (p := p)
         (Nat.prime_of_mem_primeFactors hp.1)
       linarith
     have hexp0 : (0 : ℝ) ≤ Real.exp (1 / (y - 1)) := (Real.exp_pos _).le
@@ -328,7 +260,7 @@ private theorem sigma_div_self_le_mertensP_mul_exp (n : ℕ) (hn : 1 ≤ n) (y :
         Finset.prod_sdiff hsubf
       have hdiff1 : 1 ≤ ∏ p ∈ n.primeFactors \
           n.primeFactors.filter (fun p => ¬ p ≤ ⌊y⌋₊), (p : ℝ) := by
-        apply one_le_prod_of_one_le
+        apply Finset.one_le_prod₀
         intro p hp
         rw [Finset.mem_sdiff] at hp
         exact h1 p hp.1 hp.2
@@ -402,10 +334,10 @@ private theorem sigma_div_self_le_mertensP_mul_exp (n : ℕ) (hn : 1 ≤ n) (y :
     apply Finset.prod_nonneg
     intro p hp
     rw [Finset.mem_filter] at hp
-    have h1 := one_le_inv_one_sub_inv_prime p
+    have h1 := Nat.Prime.one_le_inv_one_sub_inv (p := p)
       (Nat.prime_of_mem_primeFactors hp.1)
     linarith
-  have hP0 : 0 ≤ mertensP y := le_trans zero_le_one (mertensP_ge_one y)
+  have hP0 : 0 ≤ mertensP y := le_trans zero_le_one (one_le_mertensP y)
   exact mul_le_mul hsmall hlarge hlarge0 hP0
 
 -- Witness family lower bound.
@@ -538,7 +470,7 @@ private theorem sigma_div_prod_primesLE_pow_ge (m a : ℕ) :
         pow_le_pow_left₀ h0p hle_r (a + 1)
       rwa [inv_pow_eq_rpow_neg] at h1
     have hnonneg : (0 : ℝ) ≤ (1 - (p : ℝ)⁻¹)⁻¹ := by
-      have h1 := one_le_inv_one_sub_inv_prime p hpp
+      have h1 := Nat.Prime.one_le_inv_one_sub_inv (p := p) hpp
       linarith
     have hle : 1 - (2 : ℝ) ^ (-((a : ℝ) + 1)) ≤ 1 - ((p : ℝ)⁻¹) ^ (a + 1) := by
       linarith [hδ]
@@ -548,9 +480,9 @@ private theorem sigma_div_prod_primesLE_pow_ge (m a : ℕ) :
       ∏ p ∈ Nat.primesLE m,
         (((ArithmeticFunction.sigma 1 (p ^ a) : ℕ) : ℝ) /
           ((p ^ a : ℕ) : ℝ)) :=
-    prod_le_prod_of_nonneg (fun p hp => by
+    Finset.prod_le_prod₀ (fun p hp => by
       have hpp := Nat.prime_of_mem_primesLE hp
-      have h1 := one_le_inv_one_sub_inv_prime p hpp
+      have h1 := Nat.Prime.one_le_inv_one_sub_inv (p := p) hpp
       have h10 : (0 : ℝ) ≤ 1 - (2 : ℝ) ^ (-((a : ℝ) + 1)) := by
         linarith [hδ10]
       exact mul_nonneg h10 (by linarith)) hfac_ge
@@ -671,7 +603,7 @@ private theorem gronwall_eventually_le (ε : ℝ) (hε : 0 < ε) :
   have hP : Filter.Tendsto
       (fun n : ℕ => mertensP (Real.log n) / Real.log (Real.log n))
       Filter.atTop (nhds (Real.exp Real.eulerMascheroniConstant)) :=
-    tendsto_mertensP_div_log.comp tendsto_log_natCast_atTop
+    Nat.tendsto_prod_primesLE_inv_one_sub_inv_div_log.comp tendsto_log_natCast_atTop
   have hexp : Filter.Tendsto
       (fun n : ℕ => Real.exp (Real.log (n : ℝ) /
         ((Real.log (n : ℝ) - 1) * Real.log (Real.log (n : ℝ)))))
@@ -1034,7 +966,7 @@ private theorem gronwall_logwit_ratio_tendsto : Filter.Tendsto
 private theorem gronwall_mertens_two_pow_tendsto : Filter.Tendsto
     (fun k : ℕ => mertensP (((2 ^ k : ℕ)) : ℝ) / Real.log (((2 ^ k : ℕ)) : ℝ))
     Filter.atTop (nhds (Real.exp Real.eulerMascheroniConstant)) :=
-  tendsto_mertensP_div_log.comp tendsto_two_pow_natCast_atTop
+  Nat.tendsto_prod_primesLE_inv_one_sub_inv_div_log.comp tendsto_two_pow_natCast_atTop
 
 /-- The correction `1 - 2 ^ (-(k+1)) → 1`. -/
 private theorem gronwall_corr_tendsto : Filter.Tendsto

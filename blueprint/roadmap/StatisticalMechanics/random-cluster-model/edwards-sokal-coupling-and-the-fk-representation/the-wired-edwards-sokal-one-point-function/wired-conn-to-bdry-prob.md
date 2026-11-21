@@ -1,0 +1,7 @@
+# Wired random-cluster probability of connecting to the boundary
+
+Let $G = (V, E)$ be a finite simple graph and $\partial \subseteq V$ a set of boundary vertices, $p \in \mathbb{R}$ and $x \in V$. The wired probability that $x$ is connected to the boundary is
+
+$$\phi^w_{G,\partial,p}(x \leftrightarrow \partial) = \sum_{\omega :\ x \leftrightarrow \partial} \phi^w_{G,\partial,p}(\omega),$$
+
+where $x \leftrightarrow \partial$ means that some vertex of $\partial$ is [joined to $x$](conn-to-bdry.md) by a path of open edges of $G$, and $\phi^w_{G,\partial,p}$ is the wired random-cluster probability at $q = 2$, $\phi^w_{G,\partial,p}(\omega) = p^{o(\omega)}(1 - p)^{c(\omega)} 2^{k^w(\omega)} / Z$, where $o(\omega)$ and $c(\omega)$ count the open and closed edges of $G$, $k^w(\omega)$ is the number of connected components of the graph formed by the open edges of $G$ and all pairs of distinct vertices of $\partial$, and $Z$ is the sum of the numerators over all assignments $\omega$ of open/closed states to the unordered pairs of vertices (loops and non-edges included) (the [random-cluster probability with boundary wiring](../../fkg-inequality-and-monotonicity-of-random-cluste/bc-prob.md) given by the clique on $\partial$) (a quotient with zero denominator is read as $0$). For $0 \le p \le 1$ the weights are nonnegative and $Z > 0$, and this is the probability under the wired measure that $x$ is joined to $\partial$; for other $p$ it is only a normalized signed sum.

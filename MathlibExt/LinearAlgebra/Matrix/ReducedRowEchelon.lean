@@ -626,6 +626,7 @@ theorem isReducedRowEchelon_unique_of_rowEquivalent
   change R₁ i (e (e.symm j)) = R₂ i (e (e.symm j)) at hij
   simpa only [e.apply_symm_apply] using hij
 
+omit [LinearOrder m] [LinearOrder n] in
 /--
 Row operations by an invertible matrix preserve the solution set of the homogeneous system.
 

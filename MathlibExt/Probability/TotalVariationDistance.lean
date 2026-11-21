@@ -46,12 +46,15 @@ probability-measure source definition.
 Mathlib's `SignedMeasure.totalVariation` is a measure-valued operation
 on a signed measure. The function here uses the source's set-supremum
 convention; no identification with a signed-measure norm or a density
-integral is used. Existing probability-measure topology/metric instances
-are unaffected by this namespace of functions and propositions.
+integral is used here. For probability measures, the identification with
+Mathlib's total variation norm `MeasureTheory.tvDist` (twice this distance) is
+`MeasurePinsker.tvDist_eq_two_mul_totalVariationDist` in
+`MathlibExt.InformationTheory.MeasurePinsker`. Existing probability-measure
+topology/metric instances are unaffected by this namespace of functions and propositions.
 
 ## Main results
 
-* `totalVariationDist`: `‖μ - ν‖ = sup_B |μ(B) - ν(B)|`.
+* `totalVariationDist`: `TV(μ, ν) = sup_B |μ(B) - ν(B)|`.
 * `totalVariationDist_nonneg`, `totalVariationDist_self`,
   `totalVariationDist_comm`, `totalVariationDist_triangle`,
   `totalVariationDist_le_one`: the finite-measure metric axioms, with

@@ -20,6 +20,7 @@ import Mathlib.NumberTheory.EulerProduct.Basic
 import Mathlib.NumberTheory.Harmonic.Bounds
 import Mathlib.NumberTheory.Primorial
 import Mathlib.NumberTheory.SmoothNumbers
+import MathlibExt.NumberTheory.SelbergLambdaSquaredBound
 import MathlibExt.NumberTheory.SelbergSieve
 import MathlibExt.NumberTheory.Sieve.Basic
 
@@ -637,7 +638,11 @@ theorem card_filter_prime_mul_add_one_prime_le :
         have : p ≤ k * p := Nat.le_mul_of_pos_left p (by omega)
         omega
   -- Selberg's bound
-  have hsieve := MathlibExt.SelbergSieve.siftedSum_le_totalMass_div_levelSum_add s R hR1
+  have hsieve : s.siftedSum ≤ s.totalMass / MathlibExt.SelbergSieve.levelSum s R +
+      ∑ d₁ ∈ MathlibExt.SelbergSieve.levelSet s R, ∑ d₂ ∈ MathlibExt.SelbergSieve.levelSet s R,
+        |s.rem (d₁.lcm d₂)| := by
+    linarith [MathlibExt.SelbergSieve.siftedSum_le_totalMass_div_levelSum_add_errSum s R hR1,
+      MathlibExt.SelbergSieve.errSum_lambdaSquared_levelWeights_le s R hR1]
   have hLSP : ∀ d ∈ MathlibExt.SelbergSieve.levelSet s R, d ∣ primorial R ∧ d ≤ R :=
     fun d hd => by
       simp only [MathlibExt.SelbergSieve.levelSet, Finset.mem_filter, Nat.mem_divisors] at hd

@@ -202,17 +202,24 @@ theorem sum_piltz_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis
       norm_num at hs'
     rw [hGdef]
     exact ((differentiable_riemannZeta₁ s).pow k).div differentiableAt_id hs0
-  have hU1 : U ∈ nhds (1 : ℂ) := by
-    refine Filter.mem_of_superset ((isOpen_lt continuous_const Complex.continuous_re).mem_nhds
-      (by norm_num : (1 / 2 : ℝ) < (1 : ℂ).re)) fun s hs => ?_
-    rw [hUdef]
-    exact le_of_lt (show (1 / 2 : ℝ) < s.re from hs)
-  obtain ⟨g, hg, hGg'⟩ := DifferentiableOn.eq_sum_iteratedDeriv_add_pow_mul
-    (fun s hs => (hGd s hs).differentiableWithinAt) hU1 k
+  -- `G` is analytic on the open set `s ≠ 0`, which contains `U`
+  have hUΩ : U ⊆ {s : ℂ | s ≠ 0} := fun s hs => by
+    rw [hUdef] at hs
+    rintro rfl
+    norm_num at hs
+  have hGa : AnalyticOnNhd ℂ G {s : ℂ | s ≠ 0} :=
+    DifferentiableOn.analyticOnNhd (fun s (hs : s ≠ 0) => by
+      rw [hGdef]
+      exact (((differentiable_riemannZeta₁ s).pow k).div differentiableAt_id
+        hs).differentiableWithinAt) isOpen_ne
+  have h1U : (1 : ℂ) ∈ U := by rw [hUdef]; norm_num
+  obtain ⟨g, hga, hGg', -⟩ := Complex.exists_taylor_remainder_circleIntegral isOpen_ne
+    (hUΩ h1U) hGa k
+  have hg : DifferentiableOn ℂ g U := hga.differentiableOn.mono hUΩ
   obtain ⟨b, hbdef⟩ : ∃ b : ℕ → ℂ, b = fun j => iteratedDeriv j G 1 / (j.factorial : ℂ) :=
     ⟨_, rfl⟩
   have hGg : ∀ s ∈ U, G s = (∑ j ∈ Finset.range k, b j * (s - 1) ^ j) + (s - 1) ^ k * g s :=
-    fun s _ => by rw [hbdef]; exact hGg' s
+    fun s hs => by rw [hbdef, hGg' s (hUΩ hs), mul_comm (g s)]
   -- ## The analytic core, at non-integral `x`
   have hcore : ∃ K : ℝ, ∀ x : ℝ, 1 < x → (∀ n : ℕ, (n : ℝ) ≠ x) →
       ‖(((∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (piltz k n : ℝ)) : ℝ) : ℂ)
@@ -255,7 +262,7 @@ theorem sum_piltz_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis
       (5 / 4) (by norm_num)
     obtain ⟨M, hMdef⟩ : ∃ M : ℝ, M = 4 * B ^ k + 2 * A ^ k := ⟨_, rfl⟩
     have hM0 : 0 ≤ M := by rw [hMdef]; positivity
-    clear hgrowth hLindelof hA hGd hU1
+    clear hgrowth hLindelof hA hGd hUΩ hGa h1U
     refine ⟨2 * C + 4 * M / a + 2 * A ^ k, fun x hx hxi => ?_⟩
     have hx0 : (0 : ℝ) < x := by linarith
     have hxC : (x : ℂ) ≠ 0 := by exact_mod_cast hx0.ne'

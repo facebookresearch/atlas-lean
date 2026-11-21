@@ -270,7 +270,7 @@ theorem exists_norm_le_mul_rpow_of_differentiable (a : ArithmeticFunction ℂ)
         _ ≤ CL := le_max_right _ _
         _ ≤ _ := hle
   obtain ⟨C, hC⟩ := PhragmenLindelof.vertical_strip_le_mul_rpow
-    (a := -1) (b := 2) hent.diffContOnCl hgrowth hlines
+    (a := -1) (b := 2) hA.le hent.diffContOnCl hgrowth hlines
   exact ⟨A, hA, C, fun s h0 h1 ht => hC s (by linarith) (by linarith) ht⟩
 
 end SelbergClass
