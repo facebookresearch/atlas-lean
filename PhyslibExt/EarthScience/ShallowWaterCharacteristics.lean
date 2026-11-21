@@ -15,9 +15,11 @@ public import Mathlib.LinearAlgebra.Matrix.Notation
 /-!
 # Shallow-water characteristic speeds
 
-The primitive shallow-water coefficient matrix `!![u, h; g, u]` has
-characteristic speeds `u - √(g h)` and `u + √(g h)`, counted with
-multiplicity, distinct exactly at positive depth.
+For `0 ≤ g * h`, the primitive shallow-water coefficient matrix
+`!![u, h; g, u]` has characteristic speeds `u - √(g h)` and
+`u + √(g h)`, counted with multiplicity. The speeds are distinct
+exactly when `0 < g * h`, and for `0 < g` and `h < 0` there is no real
+characteristic speed.
 
 ## i. Overview
 
