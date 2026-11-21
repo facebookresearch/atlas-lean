@@ -218,5 +218,34 @@ theorem t2_borda_not_consistent : bordaScore bordaP 0 = 6 ∧
 theorem t3_borda_copeland_consistent :
     winners (copelandScore bordaP) = {0} :=
   winners_copelandScore_of_isCondorcetWinner bordaP t1_borda_condorcet_winner
+private theorem not_isCondorcetWinner_one :
+    ¬ IsCondorcetWinner bordaP 1 := by
+  intro hw
+  have h10 := (isCondorcetWinner_iff bordaP 1).mp hw 0 (by decide)
+  have h01pos := (majorityPrefers_iff_netPreference_pos bordaP 0 1).mp h01
+  have hanti := netPreference_antisymm bordaP 1 0
+  omega
+theorem t4_borda_condorcet_margins :
+    (∀ b ≠ (0 : Fin 3), 0 < netPreference bordaP 0 b) ∧
+      ¬ IsCondorcetWinner bordaP 1 :=
+  ⟨(isCondorcetWinner_iff bordaP 0).mp t1_borda_condorcet_winner,
+    not_isCondorcetWinner_one⟩
+theorem t5_borda_maximin_consistent :
+    winners (maximinScore bordaP) = {0} :=
+  winners_maximinScore_of_isCondorcetWinner bordaP
+    t1_borda_condorcet_winner
+theorem t6_borda_kemeny_top :
+    ∃ r, IsKemenyRanking bordaP r ∧ r.lt 0 1 ∧ r.lt 0 2 := by
+  obtain ⟨r, hr⟩ := exists_isKemenyRanking bordaP
+  refine ⟨r, hr, ?_, ?_⟩
+  · exact isKemenyRanking_top_of_isCondorcetWinner bordaP
+      t1_borda_condorcet_winner hr 1 (by decide)
+  · exact isKemenyRanking_top_of_isCondorcetWinner bordaP
+      t1_borda_condorcet_winner hr 2 (by decide)
+theorem t7_borda_dodgson_consistent :
+    dodgsonScore bordaP 0 = 0 ∧ dodgsonScore bordaP 1 ≠ 0 :=
+  ⟨(dodgsonScore_eq_zero_iff bordaP 0).mpr t1_borda_condorcet_winner,
+    fun h => not_isCondorcetWinner_one
+      ((dodgsonScore_eq_zero_iff bordaP 1).mp h)⟩
 end
 end MathlibExtTest.GameTheory.SocialChoice.CondorcetConsistency
