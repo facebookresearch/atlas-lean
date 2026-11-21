@@ -48,6 +48,7 @@ from `Chemistry.Amounts`, not reproved here.
 - B. Mole composition of a stream
 - C. Integrated amounts
 - D. Mass-flow view and mass composition
+- E. Rescaling and signed balances
 
 ## iv. References
 
@@ -283,6 +284,8 @@ lemma mole_mass_round_trip {ι : Type*} [Fintype ι] (s : StreamFlow ι)
     (Chemistry.Amounts.massFraction_nonneg s.nonneg hM)
     (Chemistry.Amounts.sum_massFraction s.nonneg hs' hM) hM
 
+/-! ## E. Rescaling and signed balances -/
+
 /-- Rescale every species flow of a stream by a nonnegative factor `α`
 (amount-unit or inverse-time-unit change). -/
 def rescale {ι : Type*} [Fintype ι] (s : StreamFlow ι) {α : ℝ} (hα : 0 ≤ α) :
@@ -294,25 +297,28 @@ lemma total_rescale {ι : Type*} [Fintype ι] (s : StreamFlow ι) {α : ℝ}
     (hα : 0 ≤ α) : (s.rescale hα).total = α * s.total := by
   simp only [rescale, total, Finset.mul_sum]
 
-/-- A species flow balance: inflow minus outflow plus generation equals
-accumulation, componentwise. -/
-def IsBalance {ι : Type*} [Fintype ι] (sIn sOut gen acc : StreamFlow ι) :
-    Prop :=
-  ∀ i, sIn.flow i - sOut.flow i + gen.flow i = acc.flow i
+/-- A species flow balance: inflow minus outflow plus net generation
+equals accumulation, componentwise. The material streams `sIn` and `sOut`
+are nonnegative `StreamFlow` rates, while net generation `gen` and
+accumulation `acc` are signed rates: net consumption is negative
+generation and draining is negative accumulation. -/
+def IsBalance {ι : Type*} [Fintype ι] (sIn sOut : StreamFlow ι)
+    (gen acc : ι → ℝ) : Prop :=
+  ∀ i, sIn.flow i - sOut.flow i + gen i = acc i
 
 /-- **Balance rescaling.** For a positive scale, the rescaled streams form
 a balance exactly when the original streams do. -/
 lemma balance_rescale_iff {ι : Type*} [Fintype ι] {α : ℝ} (hα : 0 < α)
-    (sIn sOut gen acc : StreamFlow ι) :
-    IsBalance (sIn.rescale hα.le) (sOut.rescale hα.le) (gen.rescale hα.le)
-        (acc.rescale hα.le) ↔
+    (sIn sOut : StreamFlow ι) (gen acc : ι → ℝ) :
+    IsBalance (sIn.rescale hα.le) (sOut.rescale hα.le)
+        (fun i => α * gen i) (fun i => α * acc i) ↔
       IsBalance sIn sOut gen acc := by
-  have hα0 : α ≠ 0 := hα.ne'
+  have hα0 : α ≠ 0 := ne_of_gt hα
   simp only [IsBalance, rescale]
   constructor
   · intro h i
     have hi := h i
-    have hfac : α * (sIn.flow i - sOut.flow i + gen.flow i) = α * acc.flow i := by
+    have hfac : α * (sIn.flow i - sOut.flow i + gen i) = α * acc i := by
       linear_combination hi
     exact mul_left_cancel₀ hα0 hfac
   · intro h i

@@ -212,21 +212,11 @@ example :
         intro i
         fin_cases i <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one,
           Matrix.head_cons]))
-      (StreamFlow.mk ![0, 1] (by
-        intro i
-        fin_cases i <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one,
-          Matrix.head_cons]))
-      (StreamFlow.mk ![3, 1] (by
-        intro i
-        fin_cases i <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one,
-          Matrix.head_cons])) := by
+      (![0, 1] : Fin 2 → ℝ)
+      (![3, 1] : Fin 2 → ℝ) := by
   intro i
   fin_cases i <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one,
     Matrix.head_cons]
-
--- Affine Celsius-to-Kelvin offset does not preserve ratios of an
--- absolute-temperature law: (273 + 100) / (273 + 0) is not 100 / 1.
-example : ((273 + 100 : ℝ) / (273 + 0)) ≠ 100 / 1 := by norm_num
 
 -- A negative unit scale is outside the rescaling API: it cannot produce a
 -- stream from `rescale`, shown here by the failure of nonnegativity of the
@@ -237,5 +227,37 @@ example : ¬ (0:ℝ) ≤ -1 * stream12.flow 0 := by
     norm_num [Matrix.cons_val_zero]
   rw [h]
   norm_num
+
+-- The same balance after rescaling by 60, through `balance_rescale_iff`:
+-- streams rescaled as streams, signed rates scaled pointwise.
+example :
+    IsBalance ((StreamFlow.mk ![5, 0] (by
+        intro i
+        fin_cases i <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one,
+          Matrix.head_cons])).rescale (by norm_num : (0 : ℝ) ≤ 60))
+      ((StreamFlow.mk ![2, 0] (by
+        intro i
+        fin_cases i <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one,
+          Matrix.head_cons])).rescale (by norm_num : (0 : ℝ) ≤ 60))
+      (fun i => 60 * (![0, 1] : Fin 2 → ℝ) i)
+      (fun i => 60 * (![3, 1] : Fin 2 → ℝ) i) := by
+  apply (balance_rescale_iff (α := 60) (by norm_num) _ _ _ _).mpr
+  intro i
+  fin_cases i <;> norm_num [Matrix.cons_val_zero, Matrix.cons_val_one,
+    Matrix.head_cons]
+
+-- Signed accumulation is representable: one species draining with no
+-- inflow and no generation accumulates at rate -1.
+set_option linter.unusedTactic false in
+set_option linter.unnecessarySeqFocus false in
+example :
+    IsBalance (StreamFlow.zero (Fin 1))
+      (StreamFlow.mk ![1] (by
+        intro i
+        fin_cases i <;> norm_num [Matrix.cons_val_zero, Matrix.head_cons]))
+      (fun _ => 0) (fun _ => -1) := by
+  intro i
+  fin_cases i
+  simp [StreamFlow.zero]
 
 end Engineering.Process.Streams.RescaleTests
