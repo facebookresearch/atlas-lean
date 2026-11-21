@@ -46,7 +46,7 @@ error sum is `O(A (x ^ (c + ε) / ((c - 1 - ε) T) + x ^ ε log x / T))`.
 * `LSeries.tsum_perron_error_le`: the bound for the Perron error sum.
 * `LSeries.norm_sum_sub_truncated_perron_le`: the truncated Perron formula
   `∑_{n ≤ x} a n = (1 / 2πi) ∫_{c - iT}^{c + iT} L(a, s) x ^ s / s ds
-    + O(x ^ (c + ε) / T + x ^ ε log x / T)` for coefficients `a n = O(n ^ δ)` for all `δ > 0`.
+    + O(x ^ (c + ε) / T)` for coefficients `a n = O(n ^ δ)` for all `δ > 0`.
 -/
 
 @[expose] public section
@@ -837,7 +837,7 @@ theorem tsum_perron_error_le :
 and let `ε > 0` and `c > 1`. There is `C > 0` such that for every `x` that is not an integer
 and every `R` with `1 ≤ R ≤ x`,
 `‖∑_{n ≤ x} a n - (1 / 2π) ∫_{-R}^{R} L(a, c + it) x ^ (c + it) / (c + it) dt‖
-  ≤ C (x ^ (c + ε) / R + x ^ ε log x / R)`.
+  ≤ C x ^ (c + ε) / R`.
 
 Source: O. Perron, *Zur Theorie der Dirichletschen Reihen*, J. Reine Angew. Math. 134 (1908),
 95–143, DOI 10.1515/crll.1908.134.95. Here in truncated form, with an explicit error term and our
@@ -853,7 +853,7 @@ theorem norm_sum_sub_truncated_perron_le
               LSeries a ((c : ℂ) + (t : ℂ) * I) *
                   (x : ℂ) ^ ((c : ℂ) + (t : ℂ) * I) /
                 ((c : ℂ) + (t : ℂ) * I))‖ ≤
-          C * (x ^ (c + ε) / R + x ^ ε * Real.log x / R) := by
+          C * (x ^ (c + ε) / R) := by
   classical
   intro c hc
   obtain ⟨C0, hC0, hsplit⟩ := tsum_perron_error_le
@@ -1137,7 +1137,5 @@ theorem norm_sum_sub_truncated_perron_le
           (x ^ (c - c') * (x ^ e * Real.log x)) / R) := by ring
     _ ≤ C0 * A * (x ^ (c + ε) / (D * R) + x ^ (c + ε) / R) := by gcongr
     _ = C0 * A * (1 / D + 1) * (x ^ (c + ε) / R) := by field_simp
-    _ ≤ C0 * A * (1 / D + 1) * (x ^ (c + ε) / R + x ^ ε * Real.log x / R) := by
-        gcongr; linarith
 
 end LSeries

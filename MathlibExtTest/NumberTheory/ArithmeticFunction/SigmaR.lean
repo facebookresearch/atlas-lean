@@ -56,3 +56,11 @@ example (s : ℂ) : (1 : DirichletCharacter ℂ 4).sigmaR s 3 = sigmaR s 3 := by
   rw [DirichletCharacter.sigmaR_apply, sigmaR_apply, Nat.Prime.sum_divisors Nat.prime_three,
     Nat.Prime.sum_divisors Nat.prime_three, h3]
   simp
+
+-- `sigmaR_apply` holds for exponents in any semiring with a power operation, e.g. `ℕ`, where
+-- `sigmaR k` is Mathlib's `σ k`.
+example (k n : ℕ) : ArithmeticFunction.sigmaR k n = ∑ d ∈ n.divisors, d ^ k :=
+  ArithmeticFunction.sigmaR_apply
+
+example (k n : ℕ) : ArithmeticFunction.sigmaR k n = ArithmeticFunction.sigma k n := by
+  simp [ArithmeticFunction.sigmaR_apply, ArithmeticFunction.sigma_apply]

@@ -24,7 +24,7 @@ Sums over `n ≤ x` for real `x` are written `∑ n ∈ Finset.Icc 1 ⌊x⌋₊,
 
 ## Main definitions
 
-* `M`: the Mertens function (as in PrimeNumberTheoremAnd).
+* `ArithmeticFunction.M`: the Mertens function (as `M` in PrimeNumberTheoremAnd).
 
 ## Main statements
 
@@ -77,14 +77,10 @@ namespace ArithmeticFunction
 
 open scoped Moebius
 
-end ArithmeticFunction
-
-open ArithmeticFunction
-open scoped ArithmeticFunction.Moebius
-
 /-- **The Mertens function** `M(x) = ∑_{n ≤ x} μ(n)`, the summatory function of the Möbius
-function, as a real-valued function of a real variable. It vanishes for `x < 1`. This is `M` in
-PrimeNumberTheoremAnd; the `n = 0` term vanishes since `μ 0 = 0`.
+function, as a real-valued function of a real variable. It vanishes for `x < 1`. This is the
+definition of `M` in PrimeNumberTheoremAnd (where it lives in the root namespace); the `n = 0`
+term vanishes since `μ 0 = 0`.
 
 Source: F. Mertens, "Über eine zahlentheoretische Function", Sitzungsber. Akad. Wiss. Wien,
 Math.-Naturwiss. Kl. 106 (1897), 761–830, JFM 28.0177.01. -/
@@ -120,10 +116,6 @@ theorem abs_M_le (x : ℝ) : |M x| ≤ ⌊x⌋₊ := by
     _ ≤ ∑ _n ∈ Icc 1 ⌊x⌋₊, (1 : ℝ) :=
         sum_le_sum fun n _ => by exact_mod_cast abs_moebius_le_one
     _ = ⌊x⌋₊ := by simp
-
-namespace ArithmeticFunction
-
-open scoped Moebius
 
 /-- **Möbius inversion for summatory functions.** For functions `F G` of a real variable,
 `G(x) = ∑_{n ≤ x} F(x / n)` for all `x ≥ 1` if and only if

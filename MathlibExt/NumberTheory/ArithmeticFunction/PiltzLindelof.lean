@@ -639,21 +639,15 @@ theorem sum_d_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis
     have hlogx : Real.log x ≤ x := by
       have := Real.log_le_sub_one_of_pos hx0; linarith
     have hlog0 : 0 ≤ Real.log x := Real.log_nonneg hx.le
-    have hP1 : C * (x ^ (5 / 4 + 1 / 4 : ℝ) / x + x ^ (1 / 4 : ℝ) * Real.log x / x)
-        ≤ 2 * C * x ^ (1 / 2 + ε) := by
+    have hP1 : C * (x ^ (5 / 4 + 1 / 4 : ℝ) / x) ≤ 2 * C * x ^ (1 / 2 + ε) := by
       have e1 : x ^ (5 / 4 + 1 / 4 : ℝ) / x = x ^ (1 / 2 : ℝ) := by
         rw [show (5 / 4 + 1 / 4 : ℝ) = 1 / 2 + 1 by norm_num, Real.rpow_add hx0, Real.rpow_one]
         field_simp
-      have e2 : x ^ (1 / 4 : ℝ) * Real.log x / x ≤ x ^ (1 / 4 : ℝ) := by
-        rw [div_le_iff₀ hx0]
-        exact mul_le_mul_of_nonneg_left hlogx (by positivity)
       have e3 := hxe (1 / 2) (by linarith)
-      have e4 := hxe (1 / 4) (by linarith)
+      have h0 : 0 ≤ x ^ (1 / 2 + ε) := Real.rpow_nonneg hx0.le _
       rw [e1]
-      have h5 : x ^ (1 / 2 : ℝ) + x ^ (1 / 4 : ℝ) * Real.log x / x ≤ 2 * x ^ (1 / 2 + ε) := by
-        linarith
-      calc C * (x ^ (1 / 2 : ℝ) + x ^ (1 / 4 : ℝ) * Real.log x / x)
-          ≤ C * (2 * x ^ (1 / 2 + ε)) := mul_le_mul_of_nonneg_left h5 hC0.le
+      calc C * x ^ (1 / 2 : ℝ) ≤ C * (2 * x ^ (1 / 2 + ε)) :=
+            mul_le_mul_of_nonneg_left (by linarith) hC0.le
         _ = 2 * C * x ^ (1 / 2 + ε) := by ring
     -- ## The horizontal sides
     have hHbound : ∀ τ : ℝ, |τ| = x →

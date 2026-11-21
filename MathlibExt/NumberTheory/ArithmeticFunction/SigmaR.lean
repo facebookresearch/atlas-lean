@@ -49,9 +49,9 @@ noncomputable def sigmaR {R : Type*} [Semiring R] [HPow R R R] (s : R) : Arithme
 @[inherit_doc]
 scoped[ArithmeticFunction] notation "σᴿ" => ArithmeticFunction.sigmaR
 
-/-- The defining finite divisor-sum formula for `sigmaR`. -/
-theorem sigmaR_apply {n : ℕ} {s : ℂ} :
-    sigmaR s n = ∑ d ∈ n.divisors, (d : ℂ) ^ s := by
+/-- The defining finite divisor-sum formula for `sigmaR`, for exponents in any semiring. -/
+theorem sigmaR_apply {R : Type*} [Semiring R] [HPow R R R] {n : ℕ} {s : R} :
+    sigmaR s n = ∑ d ∈ n.divisors, (d : R) ^ s := by
   rfl
 
 /-- Every complex-exponent divisor sum takes the value one at one. -/

@@ -15,10 +15,15 @@ import Mathlib.NumberTheory.Harmonic.ZetaAsymp
 import Mathlib.NumberTheory.LSeries.Dirichlet
 
 /-!
-# Zero-free regions for `ζ` and for real Dirichlet `L`-functions
+# Zero-free regions for real Dirichlet `L`-functions, and `ζ'/ζ` near `Re s = 1`
 
-We bound `-Re ζ'/ζ` near the line `Re s = 1` through the zero-sum expansion coming from the
-Hadamard product of `ξ`, and prove the de la Vallée Poussin type statements for real characters:
+For `ζ` we prove the ingredients of the de la Vallée Poussin argument, not a zero-free region
+itself: bounds for `-Re ζ'/ζ` near the line `Re s = 1` through the zero-sum expansion coming from
+the Hadamard product of `ξ`, and the optimisation step `lt_one_sub_div_of_forall_div_sub_lt`. A
+zero-free region for `ζ` (in a weaker form) is
+`exists_pos_div_log_pow_seven_lt_norm_riemannZeta` in
+`MathlibExt.NumberTheory.LSeries.RiemannZetaBounds`. For real characters we prove the de la
+Vallée Poussin type statements:
 for an absolute constant `c > 0` and every real nonprincipal Dirichlet character `χ` modulo `q`,
 `L(s, χ)` has at most one zero, counted with multiplicity, in the region
 `Re s > 1 - c / log (q (|Im s| + 2))`; such a zero is real and simple.
