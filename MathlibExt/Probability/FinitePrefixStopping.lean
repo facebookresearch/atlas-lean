@@ -34,87 +34,6 @@ open scoped ENNReal
 
 namespace MathlibExt.Probability.FinitePrefix
 
-/-- Helper: `law` at horizon zero is a point mass on `[]`. -/
-private theorem law_zero_apply (α : Type*) [Fintype α]
-    (q' : List α → PMF α) (u : List α) :
-    (law 0 q') u = (if u = [] then 1 else 0) := by
-  classical
-  simp [law]
-
-/-- Helper: `law` at positive horizon puts no mass on `[]`. -/
-private theorem law_succ_nil (α : Type*) [Fintype α]
-    (n : ℕ) (q' : List α → PMF α) :
-    (law (n + 1) q') [] = 0 := by
-  classical
-  show ((q' []).bind
-      (fun a => PMF.map (fun w => a :: w) (law n (fun p => q' (a :: p)))))
-      [] = 0
-  rw [PMF.bind_apply]
-  have h0 : ∀ a : α, (q' [] a) *
-      ((PMF.map (fun w : List α => a :: w)
-        (law n (fun p => q' (a :: p)))) []) = 0 := by
-    intro a
-    have hmap : (PMF.map (fun w : List α => a :: w)
-        (law n (fun p => q' (a :: p)))) [] = 0 := by
-      rw [PMF.map_apply]
-      simp
-    rw [hmap, mul_zero]
-  calc (∑' a : α, (q' [] a) *
-        ((PMF.map (fun w : List α => a :: w)
-          (law n (fun p => q' (a :: p)))) []))
-      = ∑' _ : α, 0 := tsum_congr h0
-    _ = 0 := tsum_zero
-
-/-- Helper: one-step unfolding of `law` applied to a cons. -/
-private theorem law_succ_cons (α : Type*) [Fintype α]
-    (n : ℕ) (q' : List α → PMF α) (b : α) (u : List α) :
-    (law (n + 1) q') (b :: u)
-      = q' [] b * (law n (fun p => q' (b :: p))) u := by
-  classical
-  show ((q' []).bind
-      (fun a => PMF.map (fun w => a :: w) (law n (fun p => q' (a :: p)))))
-      (b :: u) = _
-  rw [PMF.bind_apply]
-  have hmap : ∀ a : α, (PMF.map (fun w : List α => a :: w)
-        (law n (fun p => q' (a :: p)))) (b :: u)
-      = (if a = b then (law n (fun p => q' (a :: p))) u else 0) := by
-    intro a
-    rw [PMF.map_apply]
-    by_cases hab : a = b
-    · subst hab
-      rw [tsum_eq_single u]
-      · simp
-      · intro w' hNe
-        have hNe2 : u ≠ w' := Ne.symm hNe
-        simp [hNe2]
-    · rw [ite_eq_right hab]
-      trans ∑' _ : List α, 0
-      · apply tsum_congr
-        intro w
-        have hNe : (b :: u) ≠ (a :: w) := by
-          intro hEq
-          apply hab
-          simp [List.cons.injEq] at hEq
-          exact hEq.1.symm
-        simp [hNe]
-      · exact tsum_zero
-  have houter : ∀ a : α, (q' [] a) *
-        ((PMF.map (fun w : List α => a :: w)
-          (law n (fun p => q' (a :: p)))) (b :: u))
-      = (if a = b then (q' [] a) * (law n (fun p => q' (a :: p))) u else 0) := by
-    intro a
-    rw [hmap, mul_ite, mul_zero]
-  calc (∑' a : α, (q' [] a) *
-        ((PMF.map (fun w : List α => a :: w)
-          (law n (fun p => q' (a :: p)))) (b :: u)))
-      = ∑' a : α, (if a = b then (q' [] a)
-          * (law n (fun p => q' (a :: p))) u else 0) := tsum_congr houter
-    _ = (q' [] b) * (law n (fun p => q' (b :: p))) u := by
-        rw [tsum_eq_single b]
-        · simp
-        · intro a' hNe
-          simp [hNe]
-
 
 section EOS
 
@@ -268,7 +187,7 @@ private theorem tsum_length_zero_aux (F : List Token → ℝ≥0∞) :
   rw [tsum_eq_single [] h]
   simp
 
-theorem tsum_option_aux {β : Type*} (G : Option β → ℝ≥0∞) :
+private theorem tsum_option_aux {β : Type*} (G : Option β → ℝ≥0∞) :
     (∑' o, G o) = G none + ∑' b, G (some b) := by
   have hre := Equiv.tsum_eq (Equiv.optionEquivSumPUnit.{0} β).symm G
   have hsplit := Summable.tsum_sum
@@ -325,14 +244,14 @@ theorem survivalProd_eq_law_eosLift_map (q : List Token → PMF (Option Token))
       rw [survivalProd_nil]
       have hmap : (([] : List Token).map Option.some) = [] := rfl
       have hlen : (([] : List Token).length) = 0 := rfl
-      rw [hmap, hlen, law_zero_apply]
+      rw [hmap, hlen, law_zero]
       simp
   | cons a w ih =>
       rw [survivalProd_cons]
       have hmap : ((a :: w).map Option.some)
           = Option.some a :: w.map Option.some := rfl
       have hlen : (a :: w).length = w.length + 1 := rfl
-      rw [hmap, hlen, law_succ_cons]
+      rw [hmap, hlen, mass_cons]
       have hshift : (fun p : List (Option Token) => eosLift q (Option.some a :: p))
           = eosLift (fun p : List Token => q (a :: p)) := by
         funext p
@@ -403,7 +322,7 @@ theorem terminatedMass_eq_law_eosLift
       have hmap : (([] : List Token).map Option.some ++ [Option.none])
           = [Option.none] := rfl
       have hlen : (([] : List Token).length + 1) = 0 + 1 := rfl
-      rw [hmap, hlen, law_succ_cons, law_zero_apply]
+      rw [hmap, hlen, mass_cons, law_zero]
       have he0 : eosLift q [] = q [] := rfl
       rw [he0]
       simp [eosProb]
@@ -412,7 +331,7 @@ theorem terminatedMass_eq_law_eosLift
       have hmap : ((a :: w).map Option.some ++ [Option.none])
           = Option.some a :: (w.map Option.some ++ [Option.none]) := rfl
       have hlen : (a :: w).length + 1 = (w.length + 1) + 1 := rfl
-      rw [hmap, hlen, law_succ_cons]
+      rw [hmap, hlen, mass_cons]
       have hshift : (fun p : List (Option Token) => eosLift q (Option.some a :: p))
           = eosLift (fun p : List Token => q (a :: p)) := by
         funext p
