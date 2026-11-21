@@ -388,14 +388,17 @@ per page in the search index.
 ## GitHub Actions and publication
 
 `Blueprint Pages` runs on `main` once a day at 03:17 UTC and on manual runs
-(**Actions → Blueprint Pages → Run workflow**), on every merge group, and on
+(**Actions → Blueprint Pages → Run workflow**), and on
 PRs that touch the wiki: `blueprint/`, the wiki scripts and
 their tests, `scripts/taxonomy.json`, `scripts/wiki-sync.json`, the site
 configuration (`mkdocs.yml`, `theme/`, `hooks/`), this document, the workflow,
 `.github/autoform-ref`, or the toolchain pins (`lean-toolchain`,
 `lake-manifest.json`, `lakefile.toml`). A Lean-only PR skips it, because
 `lean-facts` turns a renamed or deleted declaration into an unlinked page rather
-than a failure; merge groups and `main` still build the whole wiki. Do not make
+than a failure; `main` still builds the whole wiki once a day. Merge groups skip
+it too: it is not a required check, so a merge-group run could not stop a merge,
+and CI's required build already imports every v2 module together
+(`scripts/check_declaration_collisions.sh`). Do not make
 `build the wiki` a required status check: a workflow that `paths` skips never
 reports on that PR, so a required check would block every PR it skips. Making
 it requirable would need a first job that checks the changed paths and a

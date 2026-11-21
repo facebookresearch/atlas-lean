@@ -1,8 +1,10 @@
 name: Blueprint Pages
 
 # PRs that touch the wiki, its tooling, the site or the toolchain pins check
-# the graph; every merge group checks it too. main is built once a day and on
-# manual runs, not on every push: merges land faster than a build finishes.
+# the graph. main is built once a day and on manual runs, not on every push:
+# merges land faster than a build finishes. Merge groups do not run it: it is
+# not a required check, so it could not stop a merge, and CI's required build
+# already imports every v2 module together (docs/BLUEPRINT.md).
 # Only the default branch can publish, and publishing is opt-in.
 on:
   schedule:
@@ -38,7 +40,6 @@ on:
       - "lean-toolchain"
       - "lake-manifest.json"
       - "lakefile.toml"
-  merge_group:
   workflow_dispatch:
 
 permissions:

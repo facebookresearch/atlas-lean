@@ -27,11 +27,11 @@ class BlueprintWorkflowTests(unittest.TestCase):
     def step(self, name):
         return next(step for step in self.steps if step.get("name") == name)
 
-    def test_pull_requests_run_the_check_on_wiki_paths_and_merge_groups_always(self):
+    def test_pull_requests_run_the_check_on_wiki_paths_and_merge_groups_never(self):
         events = self.workflow["on"]
-        self.assertEqual(set(events), {
-            "schedule", "pull_request", "merge_group", "workflow_dispatch",
-        })
+        # Not a required check, so a merge-group run could not stop a merge; CI's
+        # required build imports every v2 module together on each merge group.
+        self.assertEqual(set(events), {"schedule", "pull_request", "workflow_dispatch"})
         # main is built once a day at 03:17 UTC (GitHub reads cron in UTC), not on every push.
         self.assertEqual(events["schedule"], [{"cron": "17 3 * * *"}])
         paths = events["pull_request"]["paths"]
