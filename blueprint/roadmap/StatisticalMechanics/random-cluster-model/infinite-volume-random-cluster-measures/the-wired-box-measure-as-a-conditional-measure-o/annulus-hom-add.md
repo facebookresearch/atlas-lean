@@ -1,0 +1,3 @@
+# Inclusion of the annulus wiring into the extra-wired graph
+
+Let $d, n \in \mathbb{N}$, $\Lambda_m = \{-m, \dots, m\}^d$, $\omega$ a configuration of $\Lambda_n$, and $D$ a graph on $\Lambda_{n+1}$. The inclusion of the annulus $A_n = \Lambda_{n+1} \setminus \Lambda_n$ into $\Lambda_{n+1}$ is a graph homomorphism from the [restriction of $D$ to the annulus](annulus-subgraph.md) into the graph whose edges are those of the wired graph $\tilde H_\omega$ of $\Lambda_{n+1}$ for $\tilde\omega$ with boundary $\partial\Lambda_n$ (the edges of $\Lambda_{n+1}$ open in the [closed-annulus extension](cross-ext.md) $\tilde\omega$ together with all pairs of distinct vertices of $\partial\Lambda_n$) together with the edges of $D$.

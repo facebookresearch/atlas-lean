@@ -47,8 +47,6 @@ Systems*, fifth edition, Oxford University Press, 2019: binary signaling over th
   Q-function error form.
 
 ## A. The sign-detector error probability
-
-Discharges ECE roadmap leaf `ECE.COM.BPSK.L1` (BPSK sign error).
 -/
 
 @[expose] public section
@@ -86,7 +84,12 @@ noncomputable def gaussianQ (x : ℝ) : ℝ :=
 def bitEnergy (a : ℝ) : ℝ :=
   a ^ 2
 
-/-- Closed-form error of the threshold-`τ` detector with prior `p = P(S = +1)`. -/
+/-- Closed-form error of the threshold-`τ` detector with prior `p = P(S = +1)`:
+`p Φ((τ - a)/σ) + (1 - p)(1 - Φ((τ + a)/σ))`. It is that error probability for a prior
+`0 ≤ p ≤ 1` and a noise standard deviation `σ > 0`, the hypotheses of `prob_thresholdError_eq`;
+the formula is defined for all reals, and outside that range it is not a probability (for
+`σ = 0` it is `1/2` for every `p`, `a` and `τ`, because `x / 0 = 0`, and for `p > 1` it can
+exceed `1`). -/
 noncomputable def thresholdErrorFormula (p a σ τ : ℝ) : ℝ :=
   p * cdf (gaussianReal 0 1) ((τ - a) / σ) +
     (1 - p) * (1 - cdf (gaussianReal 0 1) ((τ + a) / σ))

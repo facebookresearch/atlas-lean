@@ -20,9 +20,6 @@ exactly inverts it (both directions). Pointwise product in the
 transform domain is circular convolution. Impulse validations
 and the wrong-exponent and unnormalized-inverse refutations are
 included.
-
-Discharges ECE roadmap leaf `ECE.SIG.IMAGEAUDIO.L2` (rectangular
-DFT).
 -/
 
 @[expose] public section

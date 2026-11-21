@@ -19,6 +19,8 @@ import MathlibExt.Analysis.ODE.GronwallIntegral
 import Mathlib.Analysis.SpecialFunctions.Integrability.Basic
 import Mathlib.MeasureTheory.Function.L2Space
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import Mathlib.Analysis.Normed.Operator.BanachSteinhaus
+import Mathlib.Analysis.SpecialFunctions.Exponential
 
 /-!
 # Semilinear reaction–diffusion flows: the C₀-semigroup interface
@@ -47,7 +49,7 @@ for nonlinearities defined on fractional power spaces `X^α`; it is not needed f
 Mathlib (v4.35.0) has no C₀, analytic, or sectorial semigroups and no Laplacian on a bounded
 domain. Atlas only has the bounded-operator variation-of-constants formula
 (`MathlibExt.Analysis.ODE.Duhamel`) and the Fourier-mode linear analysis in
-`MathlibExt.Biology.Dynamics.TuringPatterns`. A bounded generator is the finite-dimensional/ODE
+`Domains.Biology.Dynamics.TuringPatterns`. A bounded generator is the finite-dimensional/ODE
 case (`isC0Semigroup_exp`). It does not cover the Neumann Laplacian, which is unbounded, so
 the interface below asks only for strong continuity.
 
@@ -67,6 +69,8 @@ the interface below asks only for strong continuity.
 * `nemytskii`, `lipschitzOnWith_nemytskii`: the reaction term `u ↦ f ∘ u` on `C(K, E)` is
   Lipschitz on bounded sets when `f` is.
 * `isC0Semigroup_exp`: bounded generators give C₀ semigroups.
+* `generator`, `generatorDomain`: the infinitesimal generator of a C₀ semigroup as a linear map
+  on its domain; `generator_exp`: the generator of `exp (t A)` is `A`.
 * `exists_memLp_two_not_memLp_two_sq`, the incompatible-spaces boundary case: `u ↦ u²` does
   not map `L²(0, 1)` to itself, so `(L², u ↦ u²)` fails the typing `F : X → X` of the interface.
   The Dirichlet Laplacian on `C(Ω̄)` is a second incompatible pair (non-dense domain, so no
@@ -87,7 +91,7 @@ or spectral radius of `S t₀` greater than `1`, or eventual norm continuity sho
 explicitly.
 -/
 
-open MeasureTheory Set
+open MeasureTheory Set Filter Topology
 open scoped NNReal
 
 @[expose] public section
@@ -113,6 +117,61 @@ structure IsC0Semigroup (S : ℝ≥0 → X →L[ℝ] X) : Prop where
   /-- Local boundedness: `‖S t‖ ≤ M` for `t ∈ [0, T]`. -/
   locally_bounded : ∀ T : ℝ≥0, ∃ M : ℝ, ∀ t ≤ T, ‖S t‖ ≤ M
 
+/-! ### The generator of a C₀ semigroup -/
+
+/-- `y` is the right derivative at `0` of the orbit `t ↦ S t x`:
+`(S t x - x) / t → y` as `t ↓ 0`. -/
+def HasGeneratorAt (S : ℝ≥0 → X →L[ℝ] X) (x y : X) : Prop :=
+  Tendsto (fun t : ℝ≥0 => (t : ℝ)⁻¹ • (S t x - x)) (𝓝[>] 0) (𝓝 y)
+
+theorem HasGeneratorAt.unique {S : ℝ≥0 → X →L[ℝ] X} {x y z : X}
+    (hy : HasGeneratorAt S x y) (hz : HasGeneratorAt S x z) : y = z :=
+  tendsto_nhds_unique hy hz
+
+theorem hasGeneratorAt_zero (S : ℝ≥0 → X →L[ℝ] X) : HasGeneratorAt S 0 0 := by
+  simp [HasGeneratorAt]
+
+theorem HasGeneratorAt.add {S : ℝ≥0 → X →L[ℝ] X} {x x' y y' : X}
+    (h : HasGeneratorAt S x y) (h' : HasGeneratorAt S x' y') :
+    HasGeneratorAt S (x + x') (y + y') := by
+  unfold HasGeneratorAt at *
+  refine (h.add h').congr fun t => ?_
+  simp only [map_add, ← smul_add]
+  congr 1
+  abel
+
+theorem HasGeneratorAt.const_smul {S : ℝ≥0 → X →L[ℝ] X} {x y : X}
+    (h : HasGeneratorAt S x y) (c : ℝ) : HasGeneratorAt S (c • x) (c • y) := by
+  unfold HasGeneratorAt at *
+  refine (h.const_smul c).congr fun t => ?_
+  simp only [map_smul, smul_comm c, ← smul_sub]
+
+/-- The **domain of the generator**: the `x` whose orbit is right differentiable at `0`. -/
+def generatorDomain (S : ℝ≥0 → X →L[ℝ] X) : Submodule ℝ X where
+  carrier := {x | ∃ y, HasGeneratorAt S x y}
+  zero_mem' := ⟨0, hasGeneratorAt_zero S⟩
+  add_mem' := fun ⟨y, hy⟩ ⟨y', hy'⟩ => ⟨y + y', hy.add hy'⟩
+  smul_mem' := fun c _ ⟨y, hy⟩ => ⟨c • y, hy.const_smul c⟩
+
+/-- The **generator** `A x = lim_{t↓0} (S t x - x) / t`, a linear map on `generatorDomain S`. -/
+noncomputable def generator (S : ℝ≥0 → X →L[ℝ] X) : generatorDomain S →ₗ[ℝ] X where
+  toFun x := Classical.choose x.2
+  map_add' x x' :=
+    (Classical.choose_spec (x + x').2).unique
+      ((Classical.choose_spec x.2).add (Classical.choose_spec x'.2))
+  map_smul' c x :=
+    (Classical.choose_spec (c • x).2).unique ((Classical.choose_spec x.2).const_smul c)
+
+theorem hasGeneratorAt_generator (S : ℝ≥0 → X →L[ℝ] X) (x : generatorDomain S) :
+    HasGeneratorAt S x (generator S x) :=
+  Classical.choose_spec x.2
+
+theorem generator_eq_of_hasGeneratorAt {S : ℝ≥0 → X →L[ℝ] X} {x : generatorDomain S} {y : X}
+    (h : HasGeneratorAt S x y) : generator S x = y :=
+  (hasGeneratorAt_generator S x).unique h
+
+variable [CompleteSpace X]
+
 /-- The **Duhamel term** `t ↦ ∫₀ᵗ S (t - s) g(s) ds` of a forcing `g : ℝ → X` in a Banach
 space. Negative time differences are truncated to `0`; on `s ∈ [0, t]` they never occur. -/
 noncomputable def duhamel [CompleteSpace X]
@@ -120,6 +179,42 @@ noncomputable def duhamel [CompleteSpace X]
   ∫ s in (0 : ℝ)..t, S (t - s).toNNReal (g s)
 
 variable [CompleteSpace X]
+
+/-- The generator of `t ↦ exp (t A)` at `x` is `A x`. -/
+theorem hasGeneratorAt_exp (A : X →L[ℝ] X) (x : X) :
+    HasGeneratorAt (fun t : ℝ≥0 => NormedSpace.exp ((t : ℝ) • A)) x (A x) := by
+  have hd := (hasDerivAt_exp_smul_const' A (0 : ℝ)).clm_apply (hasDerivAt_const (0 : ℝ) x)
+  simp only [zero_smul, NormedSpace.exp_zero, mul_one, map_zero, add_zero] at hd
+  have hs := hd.tendsto_slope_zero_right
+  simp only [zero_add, zero_smul, NormedSpace.exp_zero] at hs
+  have hc : Tendsto (fun t : ℝ≥0 => (t : ℝ)) (𝓝[>] 0) (𝓝[>] 0) := by
+    refine tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within _ ?_ ?_
+    · exact (NNReal.continuous_coe.tendsto' 0 0 rfl).mono_left nhdsWithin_le_nhds
+    · filter_upwards [self_mem_nhdsWithin] with t ht
+      exact ht
+  exact hs.comp hc
+
+theorem generatorDomain_exp (A : X →L[ℝ] X) :
+    generatorDomain (fun t : ℝ≥0 => NormedSpace.exp ((t : ℝ) • A)) = ⊤ :=
+  eq_top_iff.2 fun x _ => ⟨A x, hasGeneratorAt_exp A x⟩
+
+/-- **The generator of `exp (t A)` is `A`.** -/
+theorem generator_exp (A : X →L[ℝ] X)
+    (x : generatorDomain (fun t : ℝ≥0 => NormedSpace.exp ((t : ℝ) • A))) :
+    generator (fun t : ℝ≥0 => NormedSpace.exp ((t : ℝ) • A)) x = A x :=
+  generator_eq_of_hasGeneratorAt (hasGeneratorAt_exp A x)
+
+/-- On a Banach space, the local bound in `IsC0Semigroup` is automatic (Banach–Steinhaus). -/
+theorem IsC0Semigroup.of_continuous {S : ℝ≥0 → X →L[ℝ] X} (h0 : S 0 = 1)
+    (hadd : ∀ s t, S (s + t) = (S s).comp (S t)) (hcont : ∀ x, Continuous fun t => S t x) :
+    IsC0Semigroup S := by
+  refine ⟨h0, hadd, hcont, fun T => ?_⟩
+  have hpt : ∀ x, ∃ C, ∀ i : {t : ℝ≥0 // t ≤ T}, ‖S i x‖ ≤ C := fun x => by
+    obtain ⟨C, hC⟩ := (isCompact_Icc (a := (0 : ℝ≥0)) (b := T)).exists_bound_of_continuousOn
+      (hcont x).continuousOn
+    exact ⟨C, fun i => hC i ⟨bot_le, i.2⟩⟩
+  obtain ⟨M, hM⟩ := banach_steinhaus (g := fun i : {t : ℝ≥0 // t ≤ T} => S i) hpt
+  exact ⟨M, fun t ht => hM ⟨t, ht⟩⟩
 
 /-- `u` is a **mild solution** on `[0, T]` of the semilinear equation `u' = A u + F u`,
 `u 0 = x₀`, where `A` generates the semigroup `S`: `u` is continuous on `[0, T]`, each

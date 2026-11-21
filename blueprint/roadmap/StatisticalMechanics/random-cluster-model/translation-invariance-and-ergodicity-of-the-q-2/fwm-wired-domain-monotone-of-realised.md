@@ -1,0 +1,3 @@
+# Domain monotonicity for edge sets realized in a box
+
+Let $d, N, m \in \mathbb{N}$ with $N \le m$, $0 < p < 1$, and $s$ a finite set of unordered pairs of sites realised in $\Lambda_N$. Then $\phi^1_m(O_s) \le \phi^1_N(O_s)$, where a set of pairs of sites is realised in $\Lambda_N = \{-N, \dots, N\}^d$ when each of its pairs has both elements in $\Lambda_N$, $O_s$ is the event that every pair of the finite set $s$ is open, and $\phi^1_k$ is the [wired box measure](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-finite-measure.md) on $\Lambda_k = \{-k, \dots, k\}^d$ at $(p, 2)$.
