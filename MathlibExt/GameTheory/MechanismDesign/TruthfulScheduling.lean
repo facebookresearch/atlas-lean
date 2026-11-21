@@ -84,12 +84,13 @@ noncomputable def minWorkPayment {Machine Task : Type*} [Fintype Machine]
         (by obtain ⟨k, hk⟩ := exists_ne i; exact
           ⟨k, Finset.mem_erase.mpr ⟨hk, Finset.mem_univ k⟩⟩))
 
-/-- `c`-approximation: the allocation rule's makespan is at most `c` times
-optimal on every profile. -/
+/-- `c`-approximation: on every nonnegative processing-time profile (the
+type space of the model), the allocation rule's makespan is at most `c`
+times optimal. -/
 def IsApproximate {Machine Task : Type*} [Fintype Machine] [Fintype Task]
     [DecidableEq Machine] [DecidableEq Task] [Nonempty Machine] (c : ℝ)
     (A : (Machine → Task → ℝ) → Task → Machine) : Prop :=
-  ∀ t, makespanOf t (A t) ≤ c * optMakespan t
+  ∀ t, (∀ i j, 0 ≤ t i j) → makespanOf t (A t) ≤ c * optMakespan t
 
 /-- Loads are nonnegative when all processing times are nonnegative. -/
 theorem load_nonneg {Machine Task : Type*} [Fintype Task]
@@ -175,8 +176,7 @@ private theorem min'_of_eq {α : Type*} [LinearOrder α] {s t : Finset α}
 /-- MinWork with per-task second-price payments is truthful. -/
 theorem isTruthful_minWork {Machine Task : Type*} [Fintype Machine]
     [Fintype Task] [DecidableEq Machine]
-    [Nonempty Machine] [Nontrivial Machine]
-    (ht : ∀ (t : Machine → Task → ℝ), ∀ i j, 0 ≤ t i j) :
+    [Nonempty Machine] [Nontrivial Machine] :
     IsTruthful (Machine := Machine) (Task := Task) minWork minWorkPayment := by
   classical
   intro t i b
@@ -272,10 +272,10 @@ theorem isTruthful_minWork {Machine Task : Type*} [Fintype Machine]
 /-- MinWork is an `n`-approximation where `n` is the number of machines. -/
 theorem isApproximate_minWork {Machine Task : Type*} [Fintype Machine]
     [Fintype Task] [DecidableEq Machine] [DecidableEq Task]
-    [Nonempty Machine] (ht : ∀ (t : Machine → Task → ℝ), ∀ i j, 0 ≤ t i j) :
+    [Nonempty Machine] :
     IsApproximate (Machine := Machine) (Task := Task) (Fintype.card Machine : ℝ)
       minWork := by
-  intro t
+  intro t ht
   have hmem := Finset.min'_mem
     ((Finset.univ : Finset (Task → Machine)).image (makespanOf t))
     (Finset.image_nonempty.mpr Finset.univ_nonempty)
@@ -297,7 +297,7 @@ theorem isApproximate_minWork {Machine Task : Type*} [Fintype Machine]
     intro i
     apply Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
     intro j _ _
-    exact ht t (Astar j) j
+    exact ht (Astar j) j
   have hfib : ∀ A : Task → Machine,
       (∑ j ∈ Finset.univ, t (A j) j) = ∑ k ∈ Finset.univ, load t A k := by
     intro A
