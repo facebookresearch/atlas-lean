@@ -488,4 +488,20 @@ theorem t3_example_agentForm_nash :
   obtain ⟨i, θi⟩ := a
   exact t3_all i θi t
 
+/-- The ex-interim characterization, applied to the example equilibrium. -/
+theorem t4_example_exInterim_optimal :
+    ∀ (i θi a : Fin 2),
+      exGame.condInterim (Function.update sStar i (fun _ => a)) i θi ≤
+        exGame.condInterim sStar i θi :=
+  (isBayesNash_iff exGame sStar).mp t1_example_isBayesNash
+
+/-- The agent-form equivalence, forward direction on the example. -/
+theorem t5_example_agentForm_of_bayesNash :
+    StrategicGame.IsNash exGame.agentForm (toAgentProfile sStar) :=
+  (isBayesNash_iff_isNash_agentForm exGame sStar).mp t1_example_isBayesNash
+
+/-- The agent-form equivalence, reverse direction on the example. -/
+theorem t6_example_bayesNash_of_agentForm : exGame.IsBayesNash sStar :=
+  (isBayesNash_iff_isNash_agentForm exGame sStar).mpr t3_example_agentForm_nash
+
 end MathlibExtTest.GameTheory.BayesianGame

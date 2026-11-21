@@ -48,7 +48,8 @@ sets `Θ i`, action sets `X i`, a common prior on type profiles under which
 every type has positive marginal probability, and utilities depending on
 the action profile and the type profile. -/
 structure BayesianGame (ι : Type*) (Θ X : ι → Type*) [DecidableEq ι] [Fintype ι]
-    [∀ i, Fintype (Θ i)] [∀ i, DecidableEq (Θ i)] where
+    [∀ i, Fintype (Θ i)] [∀ i, DecidableEq (Θ i)]
+    [∀ i, Fintype (X i)] where
   /-- The common prior on type profiles. -/
   prior : (∀ i, Θ i) → ℝ
   /-- The prior is nonnegative. -/
@@ -68,7 +69,7 @@ namespace BayesianGame
 
 /-- The marginal probability of type `θi` of player `i`. -/
 noncomputable def marginal {ι : Type*} {Θ X : ι → Type*} [DecidableEq ι] [Fintype ι]
-    [∀ i, Fintype (Θ i)] [∀ i, DecidableEq (Θ i)] (G : BayesianGame ι Θ X)
+    [∀ i, Fintype (Θ i)] [∀ i, DecidableEq (Θ i)] [∀ i, Fintype (X i)] (G : BayesianGame ι Θ X)
     (i : ι) (θi : Θ i) : ℝ :=
   ∑ θ ∈ Finset.univ.filter (fun θ : ∀ j, Θ j => θ i = θi), G.prior θ
 
@@ -76,7 +77,7 @@ noncomputable def marginal {ι : Type*} {Θ X : ι → Type*} [DecidableEq ι] [
 of player `i` under the pure strategy profile `s`: the other players'
 types are weighted by the conditional distribution given `θi`. -/
 noncomputable def condInterim {ι : Type*} {Θ X : ι → Type*} [DecidableEq ι] [Fintype ι]
-    [∀ i, Fintype (Θ i)] [∀ i, DecidableEq (Θ i)] (G : BayesianGame ι Θ X)
+    [∀ i, Fintype (Θ i)] [∀ i, DecidableEq (Θ i)] [∀ i, Fintype (X i)] (G : BayesianGame ι Θ X)
     (s : ∀ i, Θ i → X i) (i : ι) (θi : Θ i) : ℝ :=
   (∑ θ ∈ Finset.univ.filter (fun θ : ∀ j, Θ j => θ i = θi),
       G.prior θ * G.utility i θ (fun j => s j (θ j))) / G.marginal i θi
@@ -86,7 +87,7 @@ Bayesian Nash equilibrium: no type of any player gains in ex-interim
 expectation by a unilateral deviation. This is the mechanism-design
 predicate at the identity outcome rule. -/
 def IsBayesNash {ι : Type*} {Θ X : ι → Type*} [DecidableEq ι] [Fintype ι]
-    [∀ i, Fintype (Θ i)] [∀ i, DecidableEq (Θ i)] (G : BayesianGame ι Θ X)
+    [∀ i, Fintype (Θ i)] [∀ i, DecidableEq (Θ i)] [∀ i, Fintype (X i)] (G : BayesianGame ι Θ X)
     (s : ∀ i, Θ i → X i) : Prop :=
   MathlibExt.GameTheory.MechanismDesign.IsBayesNash G.prior G.prior_nonneg
     G.prior_sum G.utility id s
@@ -112,7 +113,7 @@ theorem toAgentProfile_apply {ι : Type*} {Θ X : ι → Type*}
 player with action set `X i`; its payoff at an agent profile is the
 ex-interim utility of type `θi` under the induced plan profile. -/
 noncomputable def agentForm {ι : Type*} {Θ X : ι → Type*} [DecidableEq ι] [Fintype ι]
-    [∀ i, Fintype (Θ i)] [∀ i, DecidableEq (Θ i)] (G : BayesianGame ι Θ X) :
+    [∀ i, Fintype (Θ i)] [∀ i, DecidableEq (Θ i)] [∀ i, Fintype (X i)] (G : BayesianGame ι Θ X) :
     MathlibExt.GameTheory.StrategicGame (Σ i, Θ i) (fun a => X a.fst) where
   payoff a σ := G.condInterim (ofAgentProfile σ) a.fst a.snd
   strategy_nonempty a := G.action_nonempty a.fst
@@ -120,7 +121,7 @@ noncomputable def agentForm {ι : Type*} {Θ X : ι → Type*} [DecidableEq ι] 
 /-- The marginal probability of every type is positive. -/
 theorem marginal_pos {ι : Type*} {Θ X : ι → Type*} [DecidableEq ι] [Fintype ι]
     [∀ i, Fintype (Θ i)] [∀ i, DecidableEq (Θ i)]
-    (G : BayesianGame ι Θ X) (i : ι) (θi : Θ i) :
+    [∀ i, Fintype (X i)] (G : BayesianGame ι Θ X) (i : ι) (θi : Θ i) :
     0 < G.marginal i θi :=
   G.prior_pos i θi
 
@@ -142,7 +143,7 @@ theorem update_action_eq {ι : Type*} {Θ X : ι → Type*} [DecidableEq ι]
 /-- The ex-interim utility is the unnormalised interim utility per unit mass. -/
 theorem condInterim_eq {ι : Type*} {Θ X : ι → Type*} [DecidableEq ι] [Fintype ι]
     [∀ i, Fintype (Θ i)] [∀ i, DecidableEq (Θ i)]
-    (G : BayesianGame ι Θ X) (s' : ∀ i, Θ i → X i) (i : ι) (θi : Θ i) :
+    [∀ i, Fintype (X i)] (G : BayesianGame ι Θ X) (s' : ∀ i, Θ i → X i) (i : ι) (θi : Θ i) :
     G.condInterim s' i θi =
       MathlibExt.GameTheory.MechanismDesign.interimUtility G.prior G.utility i θi
         (fun θ => fun j => s' j (θ j)) / G.marginal i θi :=
@@ -169,7 +170,7 @@ theorem agent_dev_agree {ι : Type*} {Θ X : ι → Type*} [DecidableEq ι]
 /-- The ex-interim utility only depends on the plan over filtered profiles. -/
 theorem condInterim_congr {ι : Type*} {Θ X : ι → Type*} [DecidableEq ι] [Fintype ι]
     [∀ i, Fintype (Θ i)] [∀ i, DecidableEq (Θ i)]
-    (G : BayesianGame ι Θ X) {s₁ s₂ : ∀ i, Θ i → X i} (i : ι) (θi : Θ i)
+    [∀ i, Fintype (X i)] (G : BayesianGame ι Θ X) {s₁ s₂ : ∀ i, Θ i → X i} (i : ι) (θi : Θ i)
     (h : ∀ θ ∈ Finset.univ.filter (fun θ : ∀ j, Θ j => θ i = θi),
       (fun j => s₁ j (θ j)) = (fun j => s₂ j (θ j))) :
     G.condInterim s₁ i θi = G.condInterim s₂ i θi := by
@@ -196,7 +197,7 @@ Bayesian Nash equilibrium iff no type of any player gains ex-interim by
 deviating to a single action. -/
 theorem isBayesNash_iff {ι : Type*} {Θ X : ι → Type*} [DecidableEq ι]
     [Fintype ι] [∀ i, Fintype (Θ i)] [∀ i, DecidableEq (Θ i)]
-    (G : BayesianGame ι Θ X) (s : ∀ i, Θ i → X i) :
+    [∀ i, Fintype (X i)] (G : BayesianGame ι Θ X) (s : ∀ i, Θ i → X i) :
     G.IsBayesNash s ↔ ∀ (i : ι) (θi : Θ i) (a : X i),
       G.condInterim (Function.update s i (fun _ => a)) i θi ≤
         G.condInterim s i θi := by
