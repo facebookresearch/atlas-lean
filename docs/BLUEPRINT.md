@@ -240,17 +240,14 @@ git sparse-checkout set --no-cone '/*' '!/v1/' '!/Atlas/'
 Install the Python environment above in that checkout, then:
 
 ```sh
+(
+set -euo pipefail
 lake exe cache get
 lake build MathlibExt.Combinatorics.Enumerative.Nontrivial1234_3412Classes
 lake build MathlibExt.Combinatorics.Words.TernaryAbelianCubeFreeLowerBound
 lake build MathlibExt CSLibExt PhyslibExt Domains WantedExt
 
-git ls-files 'MathlibExt/*.lean' 'CSLibExt/*.lean' \
-  'PhyslibExt/*.lean' 'Domains/*.lean' 'WantedExt/*.lean' |
-while IFS= read -r source; do
-  module="${source%.lean}"
-  printf '%s\n' "${module//\//.}"
-done > v2-modules.txt
+scripts/list_v2_modules.sh v2-modules.txt
 lake env lean --run scripts/dump_v2_dependencies.lean v2-modules.txt \
   > v2-dependencies.jsonl
 python scripts/extract_v2_lean_dependencies.py \
@@ -261,9 +258,11 @@ autoform render blueprint --output site-src --lean-root . \
   --require-declarations --ileans .lake/build/lib/lean
 mkdocs build --strict
 python scripts/check_blueprint_site.py site-src site
+)
 ```
 
-These shell snippets use Bash. `lean-facts` updates the local articles and
+These shell snippets use Bash; the second runs in a subshell that stops at the
+first failing command without changing your shell's options. `lean-facts` updates the local articles and
 annotations for rendering; do not commit those derived changes. Because the
 rendered blueprint then differs from the commit, `autoform render` leaves out
 each page's link to its Markdown source; restoring those links is tracked in

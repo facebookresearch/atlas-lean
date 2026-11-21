@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import os
 import re
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -39,6 +40,7 @@ class BlueprintWorkflowTests(unittest.TestCase):
         for path in (
             "blueprint/**", "scripts/generate_wiki.py", "scripts/sync_wiki.py",
             "scripts/extract_v2_lean_dependencies.py", "scripts/dump_v2_dependencies.lean",
+            "scripts/list_v2_modules.sh",
             "scripts/check_blueprint_site.py", "scripts/taxonomy.json", "scripts/wiki-sync.json",
             "scripts/requirements-blueprint.txt", "mkdocs.yml", "theme/**", "hooks/**",
             "docs/BLUEPRINT.md", ".github/workflows/blueprint-pages.yml", ".github/autoform-ref",
@@ -111,9 +113,16 @@ class BlueprintWorkflowTests(unittest.TestCase):
             "lake build MathlibExt.Combinatorics.Words.TernaryAbelianCubeFreeLowerBound",
         ])
 
+    @staticmethod
+    def dump_fixture(root):
+        """A repository with the dump step's module-listing script."""
+        (root / "scripts").mkdir()
+        shutil.copy2(ROOT / "scripts/list_v2_modules.sh", root / "scripts")
+
     def test_dump_refuses_missing_compiled_modules(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
+            self.dump_fixture(root)
             (root / ".lake/build/lib/lean").mkdir(parents=True)
             subprocess.run(["git", "init", "-q", str(root)], check=True)
             (root / "MathlibExt").mkdir()
@@ -131,6 +140,7 @@ class BlueprintWorkflowTests(unittest.TestCase):
     def test_dump_reads_non_ascii_paths_literally(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
+            self.dump_fixture(root)
             (root / ".lake/build/lib/lean/MathlibExt").mkdir(parents=True)
             (root / ".lake/build/lib/lean/MathlibExt/Étale.olean").write_text("")
             (root / "bin").mkdir()
@@ -148,6 +158,28 @@ class BlueprintWorkflowTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual((root / "v2-modules.txt").read_text(encoding="utf-8"),
                              "MathlibExt.Étale\n")
+
+    def test_dump_refuses_a_partial_module_list(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.dump_fixture(root)
+            (root / ".lake/build/lib/lean/MathlibExt").mkdir(parents=True)
+            (root / ".lake/build/lib/lean/MathlibExt/Example.olean").write_text("")
+            (root / "bin").mkdir()
+            # `git ls-files` lists one module, then fails.
+            (root / "bin/git").write_text(
+                "#!/usr/bin/env bash\nprintf 'MathlibExt/Example.lean\\0'\nexit 74\n")
+            (root / "bin/lake").write_text("#!/usr/bin/env bash\necho '{}'\n")
+            for name in ("git", "lake"):
+                (root / "bin" / name).chmod(0o755)
+            result = subprocess.run(
+                ["bash", "-c", self.step("Dump declaration dependencies")["run"]],
+                cwd=root, text=True, capture_output=True, check=False,
+                env={**os.environ, "PATH": f"{root / 'bin'}:{os.environ['PATH']}"},
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse((root / "v2-dependencies.jsonl").exists())
+            self.assertFalse((root / "v2-dependencies.jsonl.gz").exists())
 
     def test_the_build_cache_is_restored_from_ci_and_never_saved(self):
         restore = self.step("Restore local build")

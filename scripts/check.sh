@@ -47,6 +47,7 @@ check_structure() {
     scripts/check_axioms.sh scripts/check_axioms.lean scripts/audit_compiled_modules.py \
     scripts/check_diagnostics.sh scripts/check_health.sh \
     scripts/check_declaration_collisions.sh scripts/check_declaration_collisions.lean \
+    scripts/list_v2_modules.sh \
     scripts/check_lake_surface.py scripts/check_copyright.py scripts/test_scripts.sh; do
     if [[ ! -f "$path" ]]; then
       echo "missing required file: $path" >&2
