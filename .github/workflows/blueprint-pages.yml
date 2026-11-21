@@ -226,7 +226,7 @@ jobs:
               exit 1
             fi
             echo "::warning title=Site over the Pages limit::The built site is ${mb} MB, over GitHub Pages' 1 GB limit. It could not be published."
-          elif [ "$bytes" -gt 900000000 ]; then
+          elif [ "$bytes" -ge 900000000 ]; then
             echo "::warning title=Site near the Pages limit::The built site is ${mb} MB, within 100 MB of GitHub Pages' 1 GB limit."
           fi
 
