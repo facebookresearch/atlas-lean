@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+import json
+import os
 import re
 import subprocess
 import tempfile
@@ -137,12 +139,15 @@ class BlueprintWorkflowTests(unittest.TestCase):
                 self.assertFalse(uses.startswith(("actions/cache@", "actions/cache/save@")), uses)
 
     def test_deployment_is_opt_in_and_never_runs_on_pr_or_merge_group(self):
-        deploy = self.workflow["jobs"]["deploy"]
+        jobs = self.workflow["jobs"]
+        deploy, promote = jobs["deploy"], jobs["promote"]
         self.assertEqual(deploy["needs"], "wiki")
-        self.assertEqual(deploy["permissions"], {
-            "pages": "write", "id-token": "write",
-        })
-        conditions = [deploy["if"], self.step("Upload Pages artifact")["if"]]
+        for job in (deploy, promote):
+            self.assertEqual(job["permissions"], {
+                "pages": "write", "id-token": "write", "deployments": "read", "contents": "read",
+            })
+            self.assertEqual(job["environment"]["name"], "github-pages")
+        conditions = [deploy["if"], promote["if"], self.step("Upload Pages artifact")["if"]]
         for condition in conditions:
             for clause in ("vars.BLUEPRINT_PAGES == 'true'",
                            "github.ref == 'refs/heads/main'",
@@ -151,14 +156,96 @@ class BlueprintWorkflowTests(unittest.TestCase):
                 self.assertIn(clause, condition)
             # Scheduled and manual runs of main publish, so no clause may require a push.
             self.assertNotIn("push", condition)
-        self.assertTrue(all("uses" in step for step in deploy["steps"]))
+        # Each job first reads the commit of the published site and fails, publishing nothing, unless the site is of
+        # this run's commit or of an ancestor: a re-run never takes the site back, and a deployment job that succeeds
+        # is one that published. It runs no repository code.
+        for job in (deploy, promote):
+            check, *publish = job["steps"]
+            self.assertEqual(check["name"], "Check the commit of the published site")
+            self.assertEqual(check["run"], deploy["steps"][0]["run"])
+            self.assertEqual(check["env"], {"GH_TOKEN": "${{ github.token }}"})
+            self.assertEqual([step["name"] for step in publish], ["Configure GitHub Pages", "Deploy"])
+            for step in publish:
+                self.assertIn("uses", step)
+                self.assertNotIn("if", step)
+                self.assertNotIn("continue-on-error", step)
+            self.assertNotIn("continue-on-error", check)
+            self.assertNotIn("run_attempt", job["if"])
+        # GitHub Pages publishes at most 1 GB: the artifact is measured as its upload packs it, before the upload.
+        names = [step.get("name") for step in self.steps]
+        size = self.step("Check the size of the Pages artifact")
+        self.assertEqual(size["run"], "bash scripts/pages_size.sh site 950000000")
+        self.assertEqual(size["if"], self.step("Upload Pages artifact")["if"])
+        self.assertEqual(names.index("Check the size of the Pages artifact") + 1, names.index("Upload Pages artifact"))
+
+    def test_a_site_is_published_only_over_one_of_the_same_or_an_earlier_commit(self):
+        script = self.workflow["jobs"]["deploy"]["steps"][0]["run"]
+        fake_gh = """#!/usr/bin/env python3
+import json, os, sys
+path = next(arg for arg in sys.argv[1:] if arg.startswith("repos/"))
+state = json.loads(os.environ["FAKE"])
+if state.get("fail"):
+    sys.exit(1)
+if "/statuses" in path:
+    print(state["states"].get(path.split("/deployments/")[1].split("/")[0], ""))
+elif "/deployments?" in path:
+    print("\\n".join(state["deployments"]))
+elif "/deployments/" in path:
+    print(state["shas"][path.rsplit("/", 1)[1]])
+elif "/compare/" in path:
+    print(state["compare"])
+"""
+        live = {"shas": {"2": "b" * 40}}
+        cases = [
+            # Nothing was ever published, or only this job's own deployment is under way.
+            ({"deployments": []}, 0),
+            ({"deployments": ["4", "3"], "states": {"4": "in_progress", "3": "failure"}}, 0),
+            ({"deployments": ["4", "3", "2"], "states": {"4": "in_progress", "3": "failure", "2": "success"},
+              "compare": "ahead", **live}, 0),
+            ({"deployments": ["2"], "states": {"2": "success"}, "compare": "identical", **live}, 0),
+            ({"deployments": ["2"], "states": {"2": "success"}, "compare": "behind", **live}, 1),
+            ({"deployments": ["2"], "states": {"2": "success"}, "compare": "diverged", **live}, 1),
+            # Some deployment was live once and none is now: the published commit is unknown.
+            ({"deployments": ["3", "2"], "states": {"3": "failure", "2": "inactive"}}, 1),
+            ({"fail": True}, 1),
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            bin_dir = Path(directory) / "bin"
+            bin_dir.mkdir()
+            (bin_dir / "gh").write_text(fake_gh)
+            (bin_dir / "gh").chmod(0o755)
+            for fake, expected in cases:
+                env = {**os.environ, "PATH": f"{bin_dir}:{os.environ['PATH']}", "FAKE": json.dumps(fake),
+                       "GITHUB_REPOSITORY": "owner/repo", "GITHUB_SHA": "a" * 40}
+                run = subprocess.run(["bash", "-c", script], env=env, capture_output=True, text=True)
+                self.assertEqual(run.returncode, expected, (fake, run.stdout, run.stderr))
+                if expected:
+                    self.assertTrue("::error::" in run.stdout or fake.get("fail"), run.stdout)
+
+    def test_the_pages_size_check_measures_the_archive_and_refuses_one_over_its_limit(self):
+        with tempfile.TemporaryDirectory() as directory:
+            site = Path(directory) / "site"
+            site.mkdir()
+            (site / "index.html").write_text("x" * 1000)
+            (site / ".hidden").write_text("not uploaded")
+            summary = Path(directory) / "summary.md"
+            env = {**os.environ, "GITHUB_STEP_SUMMARY": str(summary)}
+            script = ROOT / "scripts" / "pages_size.sh"
+            fits = subprocess.run(["bash", str(script), str(site), "10240"], env=env, capture_output=True, text=True)
+            over = subprocess.run(["bash", str(script), str(site), "1000"], env=env, capture_output=True, text=True)
+            receipts = summary.read_text()
+        self.assertEqual(fits.returncode, 0, fits.stderr)
+        self.assertIn("2 files, 1012 bytes; Pages archive 10240 bytes; limit 10240 bytes", fits.stdout)
+        self.assertEqual(over.returncode, 1)
+        self.assertIn("::error::", over.stdout)
+        self.assertEqual(len(receipts.splitlines()), 2)
 
     def test_the_mathlib_layer_cannot_hold_back_the_site(self):
         # The layer has its own job and check after the wiki job, and deployment waits for the wiki job alone.
         jobs = self.workflow["jobs"]
         mathlib = jobs["mathlib"]
         self.assertEqual(mathlib["needs"], "wiki")
-        self.assertEqual(jobs["deploy"]["needs"], "wiki")
+        self.assertDeploysWhateverTheMathlibJobsDo()
         self.assertNotIn("permissions", mathlib)
         self.assertNotIn("continue-on-error", mathlib)
         checkout = next(step for step in mathlib["steps"] if step.get("name") == "Check out project")
@@ -224,7 +311,7 @@ class BlueprintWorkflowTests(unittest.TestCase):
         jobs = self.workflow["jobs"]
         pages = jobs["mathlib-pages"]
         self.assertEqual(pages["needs"], ["wiki", "mathlib"])
-        self.assertEqual(jobs["deploy"]["needs"], "wiki")
+        self.assertDeploysWhateverTheMathlibJobsDo()
         for key in ("permissions", "continue-on-error", "if"):
             self.assertNotIn(key, pages)
         self.assertFalse(any("build_mathlib_pages" in step.get("run", "") for step in self.steps))
@@ -243,7 +330,38 @@ class BlueprintWorkflowTests(unittest.TestCase):
         self.assertIn("build_mathlib_pages.py check site mathlib-graph site-full", steps["Check the site with its Mathlib pages"]["run"])
         for step in pages["steps"]:
             self.assertNotIn("continue-on-error", step)
-            self.assertFalse(step.get("uses", "").startswith(("actions/upload-pages-artifact@", "actions/deploy-pages@")))
+            self.assertFalse(step.get("uses", "").startswith("actions/deploy-pages@"))
+        # Its share of the Mathlib pages goes up as a second Pages artifact, under the same conditions as the wiki
+        # job's, after the check of its size and links.
+        selection = steps["Build the Pages site with the Mathlib pages that fit"]["run"]
+        self.assertIn("build_mathlib_pages.py build --budget 900000000", selection)
+        checked = steps["Check the Pages site"]["run"]
+        self.assertIn("build_mathlib_pages.py check site mathlib-graph site-pages", checked)
+        self.assertIn("bash scripts/pages_size.sh site-pages 950000000", checked)
+        upload = steps["Upload the Pages site with Mathlib pages"]
+        self.assertIn("actions/upload-pages-artifact@", upload["uses"])
+        self.assertEqual((upload["with"]["name"], upload["with"]["path"]), ("github-pages-mathlib", "site-pages"))
+        self.assertEqual(upload["if"], self.step("Upload Pages artifact")["if"])
+        names = [step["name"] for step in pages["steps"]]
+        self.assertLess(names.index("Check the Pages site"), names.index("Upload the Pages site with Mathlib pages"))
+
+    def assertDeploysWhateverTheMathlibJobsDo(self):
+        # Deployment waits for the wiki job alone and publishes its site. Only after it, and only if the Mathlib pages
+        # job succeeded, a second job publishes that job's site in its place.
+        jobs = self.workflow["jobs"]
+        deploy, promote = jobs["deploy"], jobs["promote"]
+        self.assertEqual(deploy["needs"], "wiki")
+        self.assertNotIn("mathlib", deploy["if"])
+        self.assertNotIn("with", next(step for step in deploy["steps"] if step["name"] == "Deploy"))
+        self.assertNotIn("name", self.step("Upload Pages artifact").get("with", {}))
+        self.assertEqual(promote["needs"], ["deploy", "mathlib-pages"])
+        for function in ("always()", "!cancelled()", "failure()"):
+            self.assertNotIn(function, promote["if"])
+        self.assertEqual(promote["if"], deploy["if"])
+        steps = {step["name"]: step for step in promote["steps"]}
+        self.assertEqual(steps["Deploy"]["with"], {"artifact_name": "github-pages-mathlib"})
+        self.assertNotIn("cancel-in-progress", str(self.workflow["concurrency"]["group"]))
+        self.assertEqual(self.workflow["concurrency"]["cancel-in-progress"], "${{ github.ref != 'refs/heads/main' }}")
 
 
 if __name__ == "__main__":

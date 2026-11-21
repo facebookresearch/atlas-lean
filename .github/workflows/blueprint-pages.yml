@@ -20,6 +20,7 @@ on:
       - "scripts/build_mathlib_pages.py"
       - "scripts/mathlib_link.py"
       - "scripts/mathlib_pages.css"
+      - "scripts/pages_size.sh"
       - "scripts/taxonomy.json"
       - "scripts/wiki-sync.json"
       - "scripts/requirements-blueprint.txt"
@@ -237,6 +238,14 @@ jobs:
           path: site
           if-no-files-found: error
           retention-days: 1
+
+      # GitHub Pages publishes sites of up to 1 GB. The check measures the
+      # Pages artifact as its upload packs it, which is larger than the site's
+      # files, and refuses one over 950 MB, 5% below 10^9 bytes, before it is
+      # uploaded.
+      - name: Check the size of the Pages artifact
+        if: vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
+        run: bash scripts/pages_size.sh site 950000000
 
       - name: Upload Pages artifact
         if: vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
@@ -459,6 +468,31 @@ jobs:
           if-no-files-found: error
           retention-days: 3
 
+      # The site GitHub Pages publishes: the built site with the pages of the
+      # ranked Mathlib declarations that fit in 900 MB, below the 1 GB limit.
+      - name: Build the Pages site with the Mathlib pages that fit
+        run: >-
+          uv run --no-project
+          --with mkdocs==1.6.1
+          --with mkdocs-material==9.8.0
+          --with mkdocs-literate-nav==0.6.2
+          --with pymdown-extensions==11.0.1
+          --with markdown==3.10.3
+          python scripts/build_mathlib_pages.py build --budget 900000000
+          --report mathlib-pages-selection.json site mathlib-graph site-pages
+
+      - name: Check the Pages site
+        run: |
+          python scripts/build_mathlib_pages.py check site mathlib-graph site-pages
+          bash scripts/pages_size.sh site-pages 950000000
+
+      - name: Upload the Pages site with Mathlib pages
+        if: vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          name: github-pages-mathlib
+          path: site-pages
+
   # No package or Lean code executes in the job with deployment permissions.
   # Repository settings, not a PR, opt the official site into publication.
   deploy:
@@ -469,13 +503,121 @@ jobs:
     permissions:
       pages: write
       id-token: write
+      deployments: read
+      contents: read
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # Publish only over a site of this run's commit or of one of its
+      # ancestors, so that a re-run never takes the site back to an earlier
+      # commit. The site served is that of the newest successful deployment:
+      # a deployment job succeeds only when it publishes, and fails here
+      # otherwise. Deployments that were live once and none live now, or a
+      # failed read, leave the live commit unknown: nothing is published.
+      - name: Check the commit of the published site
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          ids="$(gh api --paginate "repos/$GITHUB_REPOSITORY/deployments?environment=github-pages&per_page=100" --jq '.[].id')"
+          live=""
+          once=false
+          for id in $ids; do
+            state="$(gh api "repos/$GITHUB_REPOSITORY/deployments/$id/statuses?per_page=1" --jq '.[0].state // ""')"
+            if [[ "$state" == success ]]; then
+              live="$(gh api "repos/$GITHUB_REPOSITORY/deployments/$id" --jq .sha)"
+              break
+            fi
+            [[ "$state" != inactive ]] || once=true
+          done
+          if [[ -z "$live" ]]; then
+            if [[ "$once" == true ]]; then
+              echo "::error::No deployment is live, though some were: the published commit is unknown."
+              exit 1
+            fi
+            echo "No site has been published yet."
+            exit 0
+          fi
+          status="$(gh api "repos/$GITHUB_REPOSITORY/compare/$live...$GITHUB_SHA" --jq .status)"
+          echo "The published site is of $live; this run's commit $GITHUB_SHA is $status."
+          case "$status" in
+            ahead|identical) ;;
+            *)
+              echo "::error::The published site is of a later commit than this run's: it stays."
+              exit 1
+              ;;
+          esac
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
 
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+
+  # Once this run's site is published, the same site with the Mathlib pages
+  # that fit replaces it, if their job succeeded: the site never waits for it.
+  promote:
+    name: publish the Mathlib pages
+    needs: [deploy, mathlib-pages]
+    if: vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+      deployments: read
+      contents: read
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # Publish only over a site of this run's commit or of one of its
+      # ancestors, so that a re-run never takes the site back to an earlier
+      # commit. The site served is that of the newest successful deployment:
+      # a deployment job succeeds only when it publishes, and fails here
+      # otherwise. Deployments that were live once and none live now, or a
+      # failed read, leave the live commit unknown: nothing is published.
+      - name: Check the commit of the published site
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          ids="$(gh api --paginate "repos/$GITHUB_REPOSITORY/deployments?environment=github-pages&per_page=100" --jq '.[].id')"
+          live=""
+          once=false
+          for id in $ids; do
+            state="$(gh api "repos/$GITHUB_REPOSITORY/deployments/$id/statuses?per_page=1" --jq '.[0].state // ""')"
+            if [[ "$state" == success ]]; then
+              live="$(gh api "repos/$GITHUB_REPOSITORY/deployments/$id" --jq .sha)"
+              break
+            fi
+            [[ "$state" != inactive ]] || once=true
+          done
+          if [[ -z "$live" ]]; then
+            if [[ "$once" == true ]]; then
+              echo "::error::No deployment is live, though some were: the published commit is unknown."
+              exit 1
+            fi
+            echo "No site has been published yet."
+            exit 0
+          fi
+          status="$(gh api "repos/$GITHUB_REPOSITORY/compare/$live...$GITHUB_SHA" --jq .status)"
+          echo "The published site is of $live; this run's commit $GITHUB_SHA is $status."
+          case "$status" in
+            ahead|identical) ;;
+            *)
+              echo "::error::The published site is of a later commit than this run's: it stays."
+              exit 1
+              ;;
+          esac
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+        with:
+          artifact_name: github-pages-mathlib
