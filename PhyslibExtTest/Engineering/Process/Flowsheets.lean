@@ -111,4 +111,38 @@ example :
   simp [f01, f10]
   norm_num
 
+/-- The reversed-edge flowsheet: internal flow `3` now runs from unit `1`
+to unit `0`, external input `5` enters unit `1`, and external output `2`
+leaves unit `0`. Unit holdups grow at rates `1` and `2`, so the total
+again grows at `3 = 5 - 2`. -/
+def flowsheet2rev : Flowsheet (Fin 2) (Fin 1) where
+  holdup := fun _ u t => if u = 1 then 2 * t else t
+  transfer := fun _ i j _ => if i = 1 ∧ j = 0 then 3 else 0
+  externalIn := fun _ u _ => if u = 1 then 5 else 0
+  externalOut := fun _ u _ => if u = 0 then 2 else 0
+  generation := fun _ _ _ => 0
+  balance := by
+    intro s u t
+    fin_cases u
+    · simp only [Fin.sum_univ_two]
+      simp [f01, f10]
+      norm_num
+      exact hasDerivAt_id (x := t)
+    · simp only [Fin.sum_univ_two]
+      simp [f01, f10]
+      norm_num
+      have h := (hasDerivAt_id (x := t)).const_mul (c := (2 : ℝ))
+      simpa using h
+
+example : HasDerivAt (fun t => ∑ u : Fin 2, flowsheet2rev.holdup 0 u t) 3 0 := by
+  have hb := Flowsheet.species_balance flowsheet2rev 0 0
+  have hval : (∑ u : Fin 2,
+      (flowsheet2rev.externalIn 0 u 0 - flowsheet2rev.externalOut 0 u 0 +
+        flowsheet2rev.generation 0 u 0)) = 3 := by
+    show (∑ u : Fin 2, ((if u = 1 then (5:ℝ) else 0) - (if u = 0 then (2:ℝ) else 0) + 0)) = 3
+    simp only [Fin.sum_univ_two]
+    simp [f01, f10]
+    norm_num
+  rwa [hval] at hb
+
 end Engineering.Process.Flowsheets.Tests
