@@ -141,91 +141,91 @@ theorem t1_cycle_net_copeland :
   have hcop0 : copelandScore cycP 0 = 0 := by
     unfold copelandScore
     have hwins : (Finset.univ.filter fun b : Fin 3 =>
-        majorityPrefers cycP 0 b) = {1} := by
+        CondorcetCycle.MajorityPrefers cycP 0 b) = {1} := by
       apply Finset.ext
       intro b
       simp only [Finset.mem_filter, Finset.mem_univ, true_and,
         Finset.mem_singleton]
       fin_cases b
-      · show majorityPrefers cycP 0 0 ↔ (0 = 1)
-        simp [majorityPrefers, netPreference_self]
-      · show majorityPrefers cycP 0 1 ↔ (1 = 1)
-        simp [majorityPrefers, hnet01]
-      · show majorityPrefers cycP 0 2 ↔ (2 = 1)
-        simp [majorityPrefers, hnet02]
+      · show CondorcetCycle.MajorityPrefers cycP 0 0 ↔ (0 = 1)
+        simp [majorityPrefers_iff_netPreference_pos, netPreference_self]
+      · show CondorcetCycle.MajorityPrefers cycP 0 1 ↔ (1 = 1)
+        simp [majorityPrefers_iff_netPreference_pos, hnet01]
+      · show CondorcetCycle.MajorityPrefers cycP 0 2 ↔ (2 = 1)
+        simp [majorityPrefers_iff_netPreference_pos, hnet02]
     have hloss : (Finset.univ.filter fun b : Fin 3 =>
-        majorityPrefers cycP b 0) = {2} := by
+        CondorcetCycle.MajorityPrefers cycP b 0) = {2} := by
       apply Finset.ext
       intro b
       simp only [Finset.mem_filter, Finset.mem_univ, true_and,
         Finset.mem_singleton]
       fin_cases b
-      · show majorityPrefers cycP 0 0 ↔ (0 = 2)
-        simp [majorityPrefers, netPreference_self]
-      · show majorityPrefers cycP 1 0 ↔ (1 = 2)
-        simp [majorityPrefers, hnet10]
-      · show majorityPrefers cycP 2 0 ↔ (2 = 2)
-        simp [majorityPrefers, hnet20]
+      · show CondorcetCycle.MajorityPrefers cycP 0 0 ↔ (0 = 2)
+        simp [majorityPrefers_iff_netPreference_pos, netPreference_self]
+      · show CondorcetCycle.MajorityPrefers cycP 1 0 ↔ (1 = 2)
+        simp [majorityPrefers_iff_netPreference_pos, hnet10]
+      · show CondorcetCycle.MajorityPrefers cycP 2 0 ↔ (2 = 2)
+        simp [majorityPrefers_iff_netPreference_pos, hnet20]
     rw [hwins, hloss]
     decide
   have hcop1 : copelandScore cycP 1 = 0 := by
     unfold copelandScore
     have hwins : (Finset.univ.filter fun b : Fin 3 =>
-        majorityPrefers cycP 1 b) = {2} := by
+        CondorcetCycle.MajorityPrefers cycP 1 b) = {2} := by
       apply Finset.ext
       intro b
       simp only [Finset.mem_filter, Finset.mem_univ, true_and,
         Finset.mem_singleton]
       fin_cases b
-      · show majorityPrefers cycP 1 0 ↔ (0 = 2)
-        simp [majorityPrefers, hnet10]
-      · show majorityPrefers cycP 1 1 ↔ (1 = 2)
-        simp [majorityPrefers, netPreference_self]
-      · show majorityPrefers cycP 1 2 ↔ (2 = 2)
-        simp [majorityPrefers, hnet12]
+      · show CondorcetCycle.MajorityPrefers cycP 1 0 ↔ (0 = 2)
+        simp [majorityPrefers_iff_netPreference_pos, hnet10]
+      · show CondorcetCycle.MajorityPrefers cycP 1 1 ↔ (1 = 2)
+        simp [majorityPrefers_iff_netPreference_pos, netPreference_self]
+      · show CondorcetCycle.MajorityPrefers cycP 1 2 ↔ (2 = 2)
+        simp [majorityPrefers_iff_netPreference_pos, hnet12]
     have hloss : (Finset.univ.filter fun b : Fin 3 =>
-        majorityPrefers cycP b 1) = {0} := by
+        CondorcetCycle.MajorityPrefers cycP b 1) = {0} := by
       apply Finset.ext
       intro b
       simp only [Finset.mem_filter, Finset.mem_univ, true_and,
         Finset.mem_singleton]
       fin_cases b
-      · show majorityPrefers cycP 0 1 ↔ (0 = 0)
-        simp [majorityPrefers, hnet01]
-      · show majorityPrefers cycP 1 1 ↔ (1 = 0)
-        simp [majorityPrefers, netPreference_self]
-      · show majorityPrefers cycP 2 1 ↔ (2 = 0)
-        simp [majorityPrefers, hnet21]
+      · show CondorcetCycle.MajorityPrefers cycP 0 1 ↔ (0 = 0)
+        simp [majorityPrefers_iff_netPreference_pos, hnet01]
+      · show CondorcetCycle.MajorityPrefers cycP 1 1 ↔ (1 = 0)
+        simp [majorityPrefers_iff_netPreference_pos, netPreference_self]
+      · show CondorcetCycle.MajorityPrefers cycP 2 1 ↔ (2 = 0)
+        simp [majorityPrefers_iff_netPreference_pos, hnet21]
     rw [hwins, hloss]
     decide
   have hcop2 : copelandScore cycP 2 = 0 := by
     unfold copelandScore
     have hwins : (Finset.univ.filter fun b : Fin 3 =>
-        majorityPrefers cycP 2 b) = {0} := by
+        CondorcetCycle.MajorityPrefers cycP 2 b) = {0} := by
       apply Finset.ext
       intro b
       simp only [Finset.mem_filter, Finset.mem_univ, true_and,
         Finset.mem_singleton]
       fin_cases b
-      · show majorityPrefers cycP 2 0 ↔ (0 = 0)
-        simp [majorityPrefers, hnet20]
-      · show majorityPrefers cycP 2 1 ↔ (1 = 0)
-        simp [majorityPrefers, hnet21]
-      · show majorityPrefers cycP 2 2 ↔ (2 = 0)
-        simp [majorityPrefers, netPreference_self]
+      · show CondorcetCycle.MajorityPrefers cycP 2 0 ↔ (0 = 0)
+        simp [majorityPrefers_iff_netPreference_pos, hnet20]
+      · show CondorcetCycle.MajorityPrefers cycP 2 1 ↔ (1 = 0)
+        simp [majorityPrefers_iff_netPreference_pos, hnet21]
+      · show CondorcetCycle.MajorityPrefers cycP 2 2 ↔ (2 = 0)
+        simp [majorityPrefers_iff_netPreference_pos, netPreference_self]
     have hloss : (Finset.univ.filter fun b : Fin 3 =>
-        majorityPrefers cycP b 2) = {1} := by
+        CondorcetCycle.MajorityPrefers cycP b 2) = {1} := by
       apply Finset.ext
       intro b
       simp only [Finset.mem_filter, Finset.mem_univ, true_and,
         Finset.mem_singleton]
       fin_cases b
-      · show majorityPrefers cycP 0 2 ↔ (0 = 1)
-        simp [majorityPrefers, hnet02]
-      · show majorityPrefers cycP 1 2 ↔ (1 = 1)
-        simp [majorityPrefers, hnet12]
-      · show majorityPrefers cycP 2 2 ↔ (2 = 1)
-        simp [majorityPrefers, netPreference_self]
+      · show CondorcetCycle.MajorityPrefers cycP 0 2 ↔ (0 = 1)
+        simp [majorityPrefers_iff_netPreference_pos, hnet02]
+      · show CondorcetCycle.MajorityPrefers cycP 1 2 ↔ (1 = 1)
+        simp [majorityPrefers_iff_netPreference_pos, hnet12]
+      · show CondorcetCycle.MajorityPrefers cycP 2 2 ↔ (2 = 1)
+        simp [majorityPrefers_iff_netPreference_pos, netPreference_self]
     rw [hwins, hloss]
     decide
   have hwinners : (winners (copelandScore cycP)).card = 3 := by
@@ -340,4 +340,248 @@ theorem t3_kemenyScore : kemenyScore cycP b0 = 4 := by
     rw [h]
     decide
   rw [hk00, hk10, hk20]
+/-- Unanimous profile on `Fin 3`: every voter ranks `0 ≻ 1 ≻ 2`. -/
+def unanimousP : Profile (Fin 3) (Fin 3) :=
+  fun _ => b0
+/-- Copeland scores and second-order boundary values on the unanimous
+profile: `0` is the unique lexicographic second-order Copeland winner. -/
+theorem t10_second_order_boundary :
+    copelandScore unanimousP 0 = 2 ∧ copelandScore unanimousP 1 = 0 ∧
+      copelandScore unanimousP 2 = -2 ∧
+      secondOrderCopelandScore unanimousP 0 = -2 ∧
+      secondOrderCopelandScore unanimousP 2 = 0 ∧
+      secondOrderCopelandWinners unanimousP = {0} := by
+  have hnet01 : netPreference unanimousP 0 1 = 3 := by
+    unfold netPreference
+    have hf1 : (Finset.univ.filter fun i : Fin 3 =>
+        (unanimousP i).lt 0 1) = Finset.univ := by
+      apply Finset.ext
+      intro i
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+      fin_cases i
+      · show ![0, 1, 2] 0 < ![0, 1, 2] 1 ↔ True
+        decide
+      · show ![0, 1, 2] 0 < ![0, 1, 2] 1 ↔ True
+        decide
+      · show ![0, 1, 2] 0 < ![0, 1, 2] 1 ↔ True
+        decide
+    have hf2 : (Finset.univ.filter fun i : Fin 3 =>
+        (unanimousP i).lt 1 0) = ∅ := by
+      apply Finset.ext
+      intro i
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and,
+        Finset.notMem_empty]
+      fin_cases i
+      · show ![0, 1, 2] 1 < ![0, 1, 2] 0 ↔ False
+        decide
+      · show ![0, 1, 2] 1 < ![0, 1, 2] 0 ↔ False
+        decide
+      · show ![0, 1, 2] 1 < ![0, 1, 2] 0 ↔ False
+        decide
+    rw [hf1, hf2, Finset.card_univ, Fintype.card_fin, Finset.card_empty]
+    decide
+  have hnet02 : netPreference unanimousP 0 2 = 3 := by
+    unfold netPreference
+    have hf1 : (Finset.univ.filter fun i : Fin 3 =>
+        (unanimousP i).lt 0 2) = Finset.univ := by
+      apply Finset.ext
+      intro i
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+      fin_cases i
+      · show ![0, 1, 2] 0 < ![0, 1, 2] 2 ↔ True
+        decide
+      · show ![0, 1, 2] 0 < ![0, 1, 2] 2 ↔ True
+        decide
+      · show ![0, 1, 2] 0 < ![0, 1, 2] 2 ↔ True
+        decide
+    have hf2 : (Finset.univ.filter fun i : Fin 3 =>
+        (unanimousP i).lt 2 0) = ∅ := by
+      apply Finset.ext
+      intro i
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and,
+        Finset.notMem_empty]
+      fin_cases i
+      · show ![0, 1, 2] 2 < ![0, 1, 2] 0 ↔ False
+        decide
+      · show ![0, 1, 2] 2 < ![0, 1, 2] 0 ↔ False
+        decide
+      · show ![0, 1, 2] 2 < ![0, 1, 2] 0 ↔ False
+        decide
+    rw [hf1, hf2, Finset.card_univ, Fintype.card_fin, Finset.card_empty]
+    decide
+  have hnet12 : netPreference unanimousP 1 2 = 3 := by
+    unfold netPreference
+    have hf1 : (Finset.univ.filter fun i : Fin 3 =>
+        (unanimousP i).lt 1 2) = Finset.univ := by
+      apply Finset.ext
+      intro i
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+      fin_cases i
+      · show ![0, 1, 2] 1 < ![0, 1, 2] 2 ↔ True
+        decide
+      · show ![0, 1, 2] 1 < ![0, 1, 2] 2 ↔ True
+        decide
+      · show ![0, 1, 2] 1 < ![0, 1, 2] 2 ↔ True
+        decide
+    have hf2 : (Finset.univ.filter fun i : Fin 3 =>
+        (unanimousP i).lt 2 1) = ∅ := by
+      apply Finset.ext
+      intro i
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and,
+        Finset.notMem_empty]
+      fin_cases i
+      · show ![0, 1, 2] 2 < ![0, 1, 2] 1 ↔ False
+        decide
+      · show ![0, 1, 2] 2 < ![0, 1, 2] 1 ↔ False
+        decide
+      · show ![0, 1, 2] 2 < ![0, 1, 2] 1 ↔ False
+        decide
+    rw [hf1, hf2, Finset.card_univ, Fintype.card_fin, Finset.card_empty]
+    decide
+  have hnet10 : netPreference unanimousP 1 0 = -3 := by
+    rw [netPreference_antisymm, hnet01]
+  have hnet20 : netPreference unanimousP 2 0 = -3 := by
+    rw [netPreference_antisymm, hnet02]
+  have hnet21 : netPreference unanimousP 2 1 = -3 := by
+    rw [netPreference_antisymm, hnet12]
+  have hwins0 : (Finset.univ.filter fun b : Fin 3 =>
+      CondorcetCycle.MajorityPrefers unanimousP 0 b) = {1, 2} := by
+    apply Finset.ext
+    intro b
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and,
+      Finset.mem_insert, Finset.mem_singleton]
+    fin_cases b
+    · show CondorcetCycle.MajorityPrefers unanimousP 0 0 ↔ (0 = 1 ∨ 0 = 2)
+      simp [majorityPrefers_iff_netPreference_pos, netPreference_self]
+    · show CondorcetCycle.MajorityPrefers unanimousP 0 1 ↔ (1 = 1 ∨ 1 = 2)
+      simp [majorityPrefers_iff_netPreference_pos, hnet01]
+    · show CondorcetCycle.MajorityPrefers unanimousP 0 2 ↔ (2 = 1 ∨ 2 = 2)
+      simp [majorityPrefers_iff_netPreference_pos, hnet02]
+  have hloss0 : (Finset.univ.filter fun b : Fin 3 =>
+      CondorcetCycle.MajorityPrefers unanimousP b 0) = ∅ := by
+    apply Finset.ext
+    intro b
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and,
+      Finset.notMem_empty]
+    fin_cases b
+    · show CondorcetCycle.MajorityPrefers unanimousP 0 0 ↔ False
+      simp [majorityPrefers_iff_netPreference_pos, netPreference_self]
+    · show CondorcetCycle.MajorityPrefers unanimousP 1 0 ↔ False
+      simp [majorityPrefers_iff_netPreference_pos, hnet10]
+    · show CondorcetCycle.MajorityPrefers unanimousP 2 0 ↔ False
+      simp [majorityPrefers_iff_netPreference_pos, hnet20]
+  have hcop0 : copelandScore unanimousP 0 = 2 := by
+    unfold copelandScore
+    rw [hwins0, hloss0, Finset.card_empty]
+    decide
+  have hwins1 : (Finset.univ.filter fun b : Fin 3 =>
+      CondorcetCycle.MajorityPrefers unanimousP 1 b) = {2} := by
+    apply Finset.ext
+    intro b
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and,
+      Finset.mem_singleton]
+    fin_cases b
+    · show CondorcetCycle.MajorityPrefers unanimousP 1 0 ↔ (0 = 2)
+      simp [majorityPrefers_iff_netPreference_pos, hnet10]
+    · show CondorcetCycle.MajorityPrefers unanimousP 1 1 ↔ (1 = 2)
+      simp [majorityPrefers_iff_netPreference_pos, netPreference_self]
+    · show CondorcetCycle.MajorityPrefers unanimousP 1 2 ↔ (2 = 2)
+      simp [majorityPrefers_iff_netPreference_pos, hnet12]
+  have hloss1 : (Finset.univ.filter fun b : Fin 3 =>
+      CondorcetCycle.MajorityPrefers unanimousP b 1) = {0} := by
+    apply Finset.ext
+    intro b
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and,
+      Finset.mem_singleton]
+    fin_cases b
+    · show CondorcetCycle.MajorityPrefers unanimousP 0 1 ↔ (0 = 0)
+      simp [majorityPrefers_iff_netPreference_pos, hnet01]
+    · show CondorcetCycle.MajorityPrefers unanimousP 1 1 ↔ (1 = 0)
+      simp [majorityPrefers_iff_netPreference_pos, netPreference_self]
+    · show CondorcetCycle.MajorityPrefers unanimousP 2 1 ↔ (2 = 0)
+      simp [majorityPrefers_iff_netPreference_pos, hnet21]
+  have hcop1 : copelandScore unanimousP 1 = 0 := by
+    unfold copelandScore
+    rw [hwins1, hloss1]
+    decide
+  have hwins2 : (Finset.univ.filter fun b : Fin 3 =>
+      CondorcetCycle.MajorityPrefers unanimousP 2 b) = ∅ := by
+    apply Finset.ext
+    intro b
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and,
+      Finset.notMem_empty]
+    fin_cases b
+    · show CondorcetCycle.MajorityPrefers unanimousP 2 0 ↔ False
+      simp [majorityPrefers_iff_netPreference_pos, hnet20]
+    · show CondorcetCycle.MajorityPrefers unanimousP 2 1 ↔ False
+      simp [majorityPrefers_iff_netPreference_pos, hnet21]
+    · show CondorcetCycle.MajorityPrefers unanimousP 2 2 ↔ False
+      simp [majorityPrefers_iff_netPreference_pos, netPreference_self]
+  have hloss2 : (Finset.univ.filter fun b : Fin 3 =>
+      CondorcetCycle.MajorityPrefers unanimousP b 2) = {0, 1} := by
+    apply Finset.ext
+    intro b
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and,
+      Finset.mem_insert, Finset.mem_singleton]
+    fin_cases b
+    · show CondorcetCycle.MajorityPrefers unanimousP 0 2 ↔ (0 = 0 ∨ 0 = 1)
+      simp [majorityPrefers_iff_netPreference_pos, hnet02]
+    · show CondorcetCycle.MajorityPrefers unanimousP 1 2 ↔ (1 = 0 ∨ 1 = 1)
+      simp [majorityPrefers_iff_netPreference_pos, hnet12]
+    · show CondorcetCycle.MajorityPrefers unanimousP 2 2 ↔ (2 = 0 ∨ 2 = 1)
+      simp [majorityPrefers_iff_netPreference_pos, netPreference_self]
+  have hcop2 : copelandScore unanimousP 2 = -2 := by
+    unfold copelandScore
+    rw [hwins2, hloss2, Finset.card_empty]
+    decide
+  have hso0 : secondOrderCopelandScore unanimousP 0 = -2 := by
+    unfold secondOrderCopelandScore
+    rw [hwins0, Finset.sum_insert (by decide), Finset.sum_singleton, hcop1, hcop2]
+    decide
+  have hso2 : secondOrderCopelandScore unanimousP 2 = 0 := by
+    unfold secondOrderCopelandScore
+    rw [hwins2, Finset.sum_empty]
+  have hwinners : secondOrderCopelandWinners unanimousP = {0} := by
+    apply Finset.ext
+    intro b
+    simp only [secondOrderCopelandWinners, Finset.mem_filter, Finset.mem_univ,
+      true_and, Finset.mem_singleton]
+    fin_cases b
+    · show IsSecondOrderCopelandWinner unanimousP 0 ↔ (0 = 0)
+      constructor
+      · intro _; rfl
+      · intro _
+        unfold IsSecondOrderCopelandWinner
+        intro c
+        fin_cases c
+        · exact Or.inr ⟨rfl, le_refl _⟩
+        · refine Or.inl ?_
+          show copelandScore unanimousP 1 < copelandScore unanimousP 0
+          rw [hcop1, hcop0]
+          decide
+        · refine Or.inl ?_
+          show copelandScore unanimousP 2 < copelandScore unanimousP 0
+          rw [hcop2, hcop0]
+          decide
+    · show IsSecondOrderCopelandWinner unanimousP 1 ↔ (1 = 0)
+      constructor
+      · intro h
+        rcases h 0 with hlt | ⟨heq, _⟩
+        · rw [hcop0, hcop1] at hlt
+          exact absurd hlt (by decide)
+        · rw [hcop0, hcop1] at heq
+          exact absurd heq (by decide)
+      · intro h
+        exact absurd h (by decide)
+    · show IsSecondOrderCopelandWinner unanimousP 2 ↔ (2 = 0)
+      constructor
+      · intro h
+        rcases h 0 with hlt | ⟨heq, _⟩
+        · rw [hcop0, hcop2] at hlt
+          exact absurd hlt (by decide)
+        · rw [hcop0, hcop2] at heq
+          exact absurd heq (by decide)
+      · intro h
+        exact absurd h (by decide)
+  exact ⟨hcop0, hcop1, hcop2, hso0, hso2, hwinners⟩
 end

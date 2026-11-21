@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 public import MathlibExt.GameTheory.SocialChoice.Black
+public import MathlibExt.GameTheory.SocialChoice.CondorcetCycle
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Image
@@ -32,29 +33,90 @@ noncomputable def netPreference {Alt Voter : Type*} [Fintype Alt]
     ℤ :=
   (Finset.univ.filter fun i => (P i).lt a b).card -
     (Finset.univ.filter fun i => (P i).lt b a).card
-/-- Pairwise majority preference: `a` beats `b` when its net preference is
-positive. -/
-def majorityPrefers {Alt Voter : Type*} [Fintype Alt] [Fintype Voter]
-    [DecidableEq Alt] (P : Profile Alt Voter) (a b : Alt) : Prop :=
-  0 < netPreference P a b
+/-- Canonical pairwise majority is positive net preference. -/
+theorem majorityPrefers_iff_netPreference_pos {Alt Voter : Type*}
+    [Fintype Alt] [Fintype Voter] [DecidableEq Alt]
+    (P : Profile Alt Voter) (a b : Alt) :
+    CondorcetCycle.MajorityPrefers P a b ↔ 0 < netPreference P a b := by
+  have hsupp : CondorcetCycle.supporters P a b =
+      Finset.univ.filter (fun i => (P i).lt a b) := by
+    ext i
+    simp only [CondorcetCycle.supporters, Finset.mem_filter, Finset.mem_univ,
+      true_and]
+  by_cases hab : a = b
+  · subst hab
+    have hempty : (Finset.univ.filter fun i : Voter => (P i).lt a a) = ∅ :=
+      Finset.filter_false_of_mem fun i _ => (P i).irrefl a
+    unfold CondorcetCycle.MajorityPrefers netPreference
+    rw [hsupp, hempty, Finset.card_empty]
+    simp
+  · unfold CondorcetCycle.MajorityPrefers netPreference
+    rw [hsupp]
+    have hiff : ∀ i ∈ (Finset.univ : Finset Voter),
+        ¬ (P i).lt a b ↔ (P i).lt b a := by
+      intro i _
+      constructor
+      · intro h
+        rcases (P i).total hab with h' | h'
+        · exact absurd h' h
+        · exact h'
+      · intro h1 h2
+        exact (P i).irrefl a ((P i).trans h2 h1)
+    have hneg : {x ∈ (Finset.univ : Finset Voter) | ¬ (fun i => (P i).lt a b) x} =
+        Finset.univ.filter fun i => (P i).lt b a :=
+      Finset.filter_congr hiff
+    have hsum := Finset.card_filter_add_card_filter_not
+      (s := (Finset.univ : Finset Voter)) (fun i => (P i).lt a b)
+    rw [hneg, Finset.card_univ] at hsum
+    have hcast : ((Finset.univ.filter fun i => (P i).lt a b).card : ℤ) +
+        ((Finset.univ.filter fun i => (P i).lt b a).card : ℤ) =
+        (Fintype.card Voter : ℤ) := by
+      exact_mod_cast hsum
+    omega
 /-- Copeland score: pairwise majority wins minus losses. -/
 noncomputable def copelandScore {Alt Voter : Type*} [Fintype Alt]
-    [Fintype Voter] [DecidableEq Alt] (P : Profile Alt Voter) (a : Alt) :
+    [Fintype Voter] (P : Profile Alt Voter) (a : Alt) :
     ℤ :=
-  (Finset.univ.filter fun b => majorityPrefers P a b).card -
-    (Finset.univ.filter fun b => majorityPrefers P b a).card
+  (Finset.univ.filter fun b => CondorcetCycle.MajorityPrefers P a b).card -
+    (Finset.univ.filter fun b => CondorcetCycle.MajorityPrefers P b a).card
 /-- Second-order Copeland score: the summed Copeland scores of the
-alternatives that `a` beats pairwise. -/
+alternatives that `a` beats pairwise. The rule compares lexicographically
+(highest Copeland score, ties broken by the highest second-order score, see
+`IsSecondOrderCopelandWinner` below); the bare score is not a standalone
+rule. -/
 noncomputable def secondOrderCopelandScore {Alt Voter : Type*} [Fintype Alt]
-    [Fintype Voter] [DecidableEq Alt] (P : Profile Alt Voter) (a : Alt) :
+    [Fintype Voter] (P : Profile Alt Voter) (a : Alt) :
     ℤ :=
-  ∑ b ∈ Finset.univ.filter (fun b => majorityPrefers P a b),
+  ∑ b ∈ Finset.univ.filter (fun b => CondorcetCycle.MajorityPrefers P a b),
     copelandScore P b
 /-- The winner set of an integer score function: every alternative attaining
 the maximal score. -/
 noncomputable def winners {Alt : Type*} [Fintype Alt] [DecidableEq Alt]
     (s : Alt → ℤ) : Finset Alt :=
   Finset.univ.filter fun a => ∀ b, s b ≤ s a
+/-- `a` is a second-order Copeland winner (lexicographic convention,
+Bartholdi–Tovey–Trick 1989, §4). -/
+def IsSecondOrderCopelandWinner {Alt Voter : Type*} [Fintype Alt]
+    [Fintype Voter] (P : Profile Alt Voter) (a : Alt) : Prop :=
+  ∀ b, copelandScore P b < copelandScore P a ∨
+    (copelandScore P b = copelandScore P a ∧
+      secondOrderCopelandScore P b ≤ secondOrderCopelandScore P a)
+/-- The second-order Copeland winner set. -/
+noncomputable def secondOrderCopelandWinners {Alt Voter : Type*}
+    [Fintype Alt] [Fintype Voter] [DecidableEq Alt]
+    (P : Profile Alt Voter) : Finset Alt :=
+  Finset.univ.filter (IsSecondOrderCopelandWinner P)
+/-- A second-order Copeland winner is a Copeland winner. -/
+theorem isSecondOrderCopelandWinner_mem_winners {Alt Voter : Type*}
+    [Fintype Alt] [Fintype Voter] [DecidableEq Alt]
+    (P : Profile Alt Voter) {a : Alt}
+    (ha : IsSecondOrderCopelandWinner P a) :
+    a ∈ winners (copelandScore P) := by
+  simp only [winners, Finset.mem_filter, Finset.mem_univ, true_and]
+  intro b
+  rcases ha b with hlt | ⟨heq, _⟩
+  · exact le_of_lt hlt
+  · exact le_of_eq heq
 /-- The number of alternatives ranked strictly above `a` in the order `r`
 (the 0-based rank position of `a`). -/
 noncomputable def rankAbove {Alt : Type*} [Fintype Alt] [DecidableEq Alt]
@@ -95,9 +157,9 @@ def IsKemenyRanking {Alt Voter : Type*} [Fintype Alt] [Fintype Voter]
     Prop :=
   ∀ s, kemenyScore P r ≤ kemenyScore P s
 /-- A Condorcet winner beats every other alternative pairwise. -/
-def IsCondorcetWinner {Alt Voter : Type*} [Fintype Alt] [Fintype Voter]
-    [DecidableEq Alt] (P : Profile Alt Voter) (a : Alt) : Prop :=
-  ∀ b, b ≠ a → majorityPrefers P a b
+def IsCondorcetWinner {Alt Voter : Type*} [Fintype Voter]
+    (P : Profile Alt Voter) (a : Alt) : Prop :=
+  ∀ b, b ≠ a → CondorcetCycle.MajorityPrefers P a b
 /-- Rank key placing `a` first: `a` gets rank `0`, every other alternative
 keeps its `Fintype.equivFin` index shifted by one. -/
 private noncomputable def topRank {Alt : Type*} [Fintype Alt]
@@ -150,6 +212,7 @@ theorem exists_isCondorcetWinner {Alt Voter : Type*} [Fintype Alt]
     [Fintype Voter] [DecidableEq Alt] [Nonempty Voter] (a : Alt) :
     ∃ Q : Profile Alt Voter, IsCondorcetWinner Q a := by
   refine ⟨fun _ => topOrder a, fun b hb => ?_⟩
+  rw [majorityPrefers_iff_netPreference_pos]
   show 0 < ((Finset.univ.filter fun _ : Voter => (topOrder a).lt a b).card : ℤ) -
     ((Finset.univ.filter fun _ : Voter => (topOrder a).lt b a).card : ℤ)
   have htop : ∀ _ : Voter, (topOrder a).lt a b :=
