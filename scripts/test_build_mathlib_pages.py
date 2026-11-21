@@ -13,6 +13,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_mathlib_pages as pages  # noqa: E402
@@ -36,15 +37,19 @@ def docs_link(name: str) -> str:
 
 
 DIAGRAM = "```lean\n∐ i, X i ⟶ Y\n  ↓     ↓\n```\nA diagram, and `<raw>`."
+# A name whose anchor, percent-encoded, is much longer than its source line's address.
+LONG = "Foo." + "αβγδεζηθικλμνξοπρστυφχψω" * 10
 NODES = [
     # name, module, kind, name_line, doc, signature
     ("Foo", "Mathlib.Foo.Basic", "structure", 5,
      "A *foo*, see `Foo.bar`, <b>not bold</b>, [no script](javascript:alert(1)), $x^2$ and "
-     "[Foo.bar](https://github.com/leanprover-community/mathlib4/blob/master/README.md).", "Foo : Type"),
+     "[Foo.bar](https://github.com/leanprover-community/mathlib4/blob/master/README.md) and "
+     "[`Foo.bar`](https://example.org/bar).", "Foo : Type"),
     ("Foo.bar", "Mathlib.Foo.Basic", "theorem", 12, DIAGRAM, "Foo.bar (x : Foo) : x = x"),
     ("Foo.inst", "Mathlib.Foo.Basic", "instance", 20, "", "Foo.inst : Inhabited Foo"),
     ("Baz.qux?", "Mathlib.Baz", "definition", 3, "", "Baz.qux? : Option Foo"),
-    ("Baz.qux'", "Mathlib.Baz", "theorem", 4, "", "Baz.qux' : Baz.qux? = none"),
+    ("Baz.qux'", "Mathlib.Baz", "theorem", 4, "Unlike `Old.thing`. " * 100, "Baz.qux' : Baz.qux? = none"),
+    (LONG, "Mathlib.Foo.Basic", "theorem", 30, "", f"{LONG} : True"),
     ("Old.thing", "Mathlib.Old", "theorem", 7, "", "Old.thing : True"),
 ]
 EDGES = [
@@ -53,6 +58,8 @@ EDGES = [
     ("Baz.qux'", "Baz.qux?", "statement"),
     ("Baz.qux?", "Foo", "statement"),
     ("Old.thing", "Foo.bar", "proof"),
+    ("Baz.qux?", LONG, "proof"),
+    ("Baz.qux'", LONG, "proof"),
 ]
 BRIDGE = [
     ("Atlas.one", "Foo.bar", "statement"),
@@ -346,6 +353,10 @@ class MathlibPagesTests(unittest.TestCase):
         self.assertTrue(any("#Foo.nothing names no anchor" in e for e in errors), errors)
         self.assertTrue(any("mathlib/nowhere-else.html names no file" in e for e in errors), errors)
 
+    def test_a_name_in_code_inside_a_link_keeps_that_link(self):
+        page = self.read("mathlib/Foo.Basic.html")
+        self.assertIn('<a href="https://example.org/bar"><code>Foo.bar</code></a>', page)
+
     def test_check_requires_each_link_to_lead_to_its_declaration(self):
         def edit(copy: Path) -> None:
             topic = copy / FOLDER / "index.html"
@@ -382,6 +393,99 @@ class MathlibPagesTests(unittest.TestCase):
                       f'bp-ref-mathlib" href="{source("Mathlib.Foo.Basic", 12)}">Foo.bar</a></span>', topic)
         self.assertIn(f'href="{pages.DOCS_FIND}Foo.bar#doc" title="Foo.bar">', topic)
         self.assertIn(f'<a href="{source("Mathlib.Baz", 4)}">Baz.qux&#x27;</a>', baz)
+
+    def test_a_budget_keeps_the_ranked_declarations_that_fit(self):
+        size = self.report["bytes"]
+        with tempfile.TemporaryDirectory() as directory:
+            ranking = Path(directory) / "ranking.jsonl"
+            ranking.write_text("\n".join(json.dumps(row) for row in [
+                {"mathlib": "Old.thing", "mathlib_rev": REV, "tier": "landmark"},
+                {"mathlib": "Old.thing", "mathlib_rev": "c" * 40, "tier": "key"},
+                {"mathlib": "Nat.succ", "mathlib_rev": REV, "tier": "key"},
+                {"mathlib": "Foo", "mathlib_rev": REV, "tier": "favourite"},
+            ]) + "\n")
+            everything = quiet_build(self.site, self.graph, Path(directory) / "all", MKDOCS, budget=10 * size,
+                                     ranking=[ranking])
+            # One byte short of the estimate for every declaration, the last one does not fit.
+            budget = everything["selection"]["estimate"] - 1
+            out = Path(directory) / "some"
+            some = quiet_build(self.site, self.graph, out, MKDOCS, budget=budget, ranking=[ranking])
+            errors = pages.check(self.site, self.graph, out)
+            home = self.read("mathlib/index.html", out)
+            full_home = self.read("mathlib/index.html", Path(directory) / "all")
+        self.assertEqual(everything["declarations"], len(NODES))
+        self.assertEqual(everything["selection"]["kept"]["ranked landmark"], 1)
+        self.assertEqual(everything["selection"]["ranking_rows_left_out"],
+                         {"another Mathlib revision": 1, "not a Mathlib node": 1, "unknown tier": 1})
+        selection = some["selection"]
+        self.assertLessEqual(some["bytes"], selection["estimate"])
+        self.assertLessEqual(selection["estimate"], budget)
+        self.assertLess(some["declarations"], len(NODES))
+        # What an ATLAS page names comes first: the credited Foo.bar and the linked Baz.qux?.
+        self.assertGreaterEqual(selection["kept"]["named by an ATLAS page"], 2)
+        self.assertIsNotNone(selection["first_left_out"])
+        self.assertEqual(errors, [])
+        # The pages say which share of Mathlib they show.
+        self.assertIn("<p>The Mathlib declarations that ATLAS names or uses most", home)
+        self.assertIn(f"{some['declarations']:,} of {len(NODES)} declarations", home)
+        self.assertNotIn("Every Mathlib declaration", home)
+        self.assertIn("<p>Every Mathlib declaration a mathematician could cite", full_home)
+        self.assertIn(f"· {len(NODES)} declarations ·", full_home)
+
+    def test_a_budget_without_room_for_named_declarations_fails(self):
+        site = sum(path.stat().st_size for path in self.site.rglob("*") if path.is_file())
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(SystemExit, "declarations that ATLAS pages name"):
+                quiet_build(self.site, self.graph, Path(directory) / "out", MKDOCS, budget=site + 1000)
+
+    @mock.patch.object(pages, "PAGE_MARGIN", 0)
+    def test_the_estimate_bounds_the_site_at_every_budget(self):
+        # Docstrings that link to declarations taken later, and anchors longer than source addresses, included. The
+        # margin, which covers pages that take a topic's title, is not needed here: the fixture's titles are short.
+        site = sum(path.stat().st_size for path in self.site.rglob("*") if path.is_file())
+        with tempfile.TemporaryDirectory() as directory:
+            total = quiet_build(self.site, self.graph, Path(directory) / "all", MKDOCS,
+                                budget=10 * self.report["bytes"])["selection"]["estimate"]
+            built = []
+            for step in range(1, 9):
+                budget = site + (total - site) * step // 8
+                out = Path(directory) / f"b{step}"
+                try:
+                    report = quiet_build(self.site, self.graph, out, MKDOCS, budget=budget)
+                except SystemExit:
+                    continue
+                self.assertLessEqual(report["bytes"], report["selection"]["estimate"], budget)
+                self.assertLessEqual(report["selection"]["estimate"], budget)
+                self.assertEqual(report["selection"]["attempts"], 1)
+                self.assertEqual(pages.check(self.site, self.graph, out), [])
+                built.append(report["declarations"])
+        self.assertGreaterEqual(len(built), 3)
+        self.assertEqual(built, sorted(built))
+        self.assertEqual(built[-1], len(NODES))
+
+    def test_a_site_over_its_budget_is_selected_again(self):
+        # With estimates made too low on purpose, the first site overshoots and a smaller selection replaces it.
+        with tempfile.TemporaryDirectory() as directory:
+            total = quiet_build(self.site, self.graph, Path(directory) / "all", MKDOCS,
+                                budget=10 * self.report["bytes"])["bytes"]
+            with mock.patch.object(pages, "PAGE_MARGIN", -2000):
+                report = quiet_build(self.site, self.graph, Path(directory) / "out", MKDOCS, budget=total - 1)
+        self.assertGreater(report["selection"]["attempts"], 1)
+        self.assertLessEqual(report["bytes"], total - 1)
+
+    def test_counts_cover_every_module_of_a_scope(self):
+        with tempfile.TemporaryDirectory() as directory:
+            out = Path(directory) / "out"
+            quiet_build(self.site, self.graph, out, MKDOCS, keep={"Foo"})
+            home = self.read("mathlib/index.html", out)
+            subject = self.read("mathlib/NumberTheory/index.html", out)
+            field = self.read(f"mathlib/{TOPIC}/index.html", out)
+        in_topic = sum(1 for _, module, *_ in NODES if module != "Mathlib.Old")
+        # Mathlib.Baz has no page here, and still counts in its topic, field, subject and home.
+        self.assertIn(f"1 of {len(NODES)} declarations · 1 of 3 modules", home)
+        self.assertIn(f"1 of 2 modules, 1 of {in_topic} declarations", home)
+        self.assertIn(f"1 of 2 modules, 1 of {in_topic} declarations", subject)
+        self.assertIn(f'Fixture topic</a> <span class="ml-count">1 of {in_topic} declarations</span>', field)
 
     def test_the_build_is_deterministic(self):
         with tempfile.TemporaryDirectory() as directory:

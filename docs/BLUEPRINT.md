@@ -317,7 +317,7 @@ a field of `scripts/taxonomy.json` nor one the given proposals add.
 The full site, kept as the `blueprint-site-full` artifact, adds one page per
 Mathlib module of the layer, grouped by topic, and its statement boxes list the
 Mathlib declarations their Lean statement and proof use; the site GitHub Pages
-publishes is unchanged. [`mathlib-pages.md`](mathlib-pages.md) describes the
+publishes adds the pages of the declarations that fit in 900 MB. [`mathlib-pages.md`](mathlib-pages.md) describes the
 pages and how an article links to a Mathlib declaration: to its source line at
 the pinned revision, with its exact name as the link's title, which
 `python scripts/mathlib_link.py` prints. They are build outputs too, written
@@ -421,9 +421,18 @@ before deployment. Tests, Lean compilation, dependency extraction, rendering,
 and strict site checks run in one read-only job from one checkout. The job
 restores CI's `lake-build-*` cache and saves no cache of its own. The Mathlib
 layer is built afterwards in a second read-only job, `build the Mathlib layer`,
-and the Mathlib pages in a third, `build the Mathlib pages`; deployment waits
-for neither. The only write-capable job is the separate Pages deployment job;
-it runs no Lean or Python package code.
+and the Mathlib pages in a third, `build the Mathlib pages`. Deployment waits
+for neither: it publishes the wiki job's site. Once it has, and if the Mathlib
+pages job succeeded, `publish the Mathlib pages` publishes that job's site,
+which adds the Mathlib pages that fit in 900 MB. Before either site is
+uploaded, `scripts/pages_size.sh` measures it as the upload packs it and
+refuses an archive over 950 MB, 5% below 10^9 bytes, since GitHub Pages
+publishes sites of up to 1 GB. The only write-capable jobs are these two Pages deployment jobs; they run
+no Lean or Python package code. Each first reads the commit of the site GitHub
+Pages serves, from its newest successful deployment, and publishes only if it is
+the run's commit or one of its ancestors; otherwise, or if that commit cannot
+be read, the job fails and publishes nothing. A re-run, after "Re-run failed
+jobs" say, therefore never takes the site back to an earlier commit.
 
 Publication is disabled until a repository maintainer:
 

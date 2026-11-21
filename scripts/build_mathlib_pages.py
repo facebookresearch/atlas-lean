@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Pages for Mathlib's declarations, built from the Mathlib layer of the dependency graph.
 
-    python scripts/build_mathlib_pages.py build [--strict-links] [--report REPORT.json] SITE GRAPH OUT
+    python scripts/build_mathlib_pages.py build [--strict-links] [--report REPORT.json]
+        [--budget BYTES [--rank RANKING.jsonl]...] SITE GRAPH OUT
     python scripts/build_mathlib_pages.py check SITE GRAPH OUT
 
 `build` reads a built site (the `site` directory the wiki job builds) and the `mathlib-graph` artifact of the same
@@ -21,6 +22,7 @@ from __future__ import annotations
 
 import argparse
 import collections
+import dataclasses
 import gzip
 import html
 import json
@@ -134,6 +136,29 @@ class Graph:
     users: list[list[tuple[int, str]]]
     bridge: dict[str, tuple[list[int], list[int]]]
     bridge_users: list[list[tuple[str, str]]]
+    totals: collections.Counter = field(default_factory=collections.Counter)  # declarations per module
+    module_topic: dict[str, tuple[str, str] | None] = field(default_factory=dict)
+    topic_modules: dict[tuple[str, str] | None, list[str]] = field(default_factory=dict)
+
+    def __post_init__(self):
+        self.totals = collections.Counter(self.module)
+        for i, module in enumerate(self.module):
+            self.module_topic.setdefault(module, self.topic[i])
+        by_topic = collections.defaultdict(list)
+        for module in sorted(self.module_topic):
+            by_topic[self.module_topic[module]].append(module)
+        self.topic_modules = dict(by_topic)
+
+    def scope(self, parent: "Page", child: "Page") -> list[str]:
+        """All the modules of the layer that an entry of a Mathlib index page stands for, shown or not."""
+        if child.kind == "group":
+            return [m for topic, modules in self.topic_modules.items() if topic is not None
+                    and (topic[0] == child.taxonomy or topic[0].startswith(child.taxonomy + "/")) for m in modules]
+        if child.kind == "topic" or (child.kind == "module" and parent.kind == "group"):
+            return self.topic_modules[child.topic]
+        if child.kind == "outside":
+            return self.topic_modules.get(None, [])
+        return child.modules
 
     def source(self, i: int) -> str:
         """The address of the line of the declaration's name at the pinned revision."""
@@ -441,6 +466,15 @@ class Docstrings:
 
         class Clean(Treeprocessor):
             def run(self, root):
+                parents = {child: parent for parent in root.iter() for child in parent}
+
+                def in_link(element) -> bool:
+                    while element in parents:
+                        element = parents[element]
+                        if element.tag == "a":
+                            return True
+                    return False
+
                 for element in list(root.iter()):
                     if element.tag == "a" and urlsplit(element.get("href", "")).scheme.lower() not in {
                         "http", "https", "mailto"
@@ -452,7 +486,7 @@ class Docstrings:
                         element.tag = "span"
                         element.attrib.clear()
                         element.text = alt
-                    elif element.tag == "code" and element.text and len(element) == 0:
+                    elif element.tag == "code" and element.text and len(element) == 0 and not in_link(element):
                         href = resolve(element.text.strip())
                         if href:
                             link = etree.SubElement(element, "a", {"href": href})
@@ -496,9 +530,18 @@ class Context:
         anchor = "#" + fragment(self.graph.names[i])
         return anchor if page == here else relative(page, here) + anchor
 
+    # For size bounds: a declaration without a page yet may get one, so count the longer of its two addresses.
+    bound: bool = False
+
     def link(self, i: int, here: str | None = None) -> str:
         """The address of a declaration: its page, or its pinned source line when this build has no page for it."""
-        return self.href(i, here) or self.graph.source(i)
+        href = self.href(i, here)
+        if href is None and self.bound:
+            here = self.here if here is None else here
+            page, anchor = self.plan.page_of_module[self.graph.module[i]].path, "#" + fragment(self.graph.names[i])
+            return max(anchor if page == here else relative(page, here) + anchor, self.graph.source(i),
+                       key=lambda h: len(esc(h)))
+        return href or self.graph.source(i)
 
     def ref(self, i: int) -> str:
         return f'<a href="{esc(self.link(i))}">{esc(self.graph.names[i])}</a>'
@@ -568,13 +611,18 @@ def atlas_line(ctx: Context, found: tuple[str, str] | None) -> str:
     return f'<p class="ml-meta">In the ATLAS roadmap: <a href="{esc(href)}">{esc(found[1])}</a></p>'
 
 
+def shown(kept: int, total: int, noun: str, longest: bool = False) -> str:
+    """How many of something a page shows: all of them, or that many of all (always, for a size bound)."""
+    return count(kept, noun) if kept == total and not longest else f"{kept:,} of {count(total, noun)}"
+
+
 def render_module(ctx: Context, page: Page, docs: Docstrings) -> str:
     graph = ctx.graph
     module = page.modules[0]
     indices = ctx.plan.members[module]
     source = f"{MATHLIB_GIT}/blob/{graph.rev}/{module.replace('.', '/')}.lean"
     meta = [f"Module <code>{esc(module)}</code>", f'<a href="{esc(source)}">source</a>',
-            count(len(indices), "declaration")]
+            shown(len(indices), graph.totals[module], "declaration", ctx.bound)]
     if module in graph.outside:
         meta.append(f"outside the taxonomy: {esc(graph.outside[module])}")
     parts = [f'<p class="ml-meta">{" · ".join(meta)}</p>', atlas_line(ctx, ctx.atlas_topics.get(page.topic))]
@@ -585,16 +633,22 @@ def render_module(ctx: Context, page: Page, docs: Docstrings) -> str:
 def render_index(ctx: Context, page: Page, descriptions: dict[str, str], below: dict[str, list[str]]) -> str:
     parts = []
     if page.kind == "home":
-        parts.append(
-            "<p>Every Mathlib declaration a mathematician could cite, at the revision of Mathlib this project builds "
-            "against: its statement, its documentation, the declarations its statement and its proof use, the "
-            "declarations that use it, and the ATLAS statements that use it. Pages follow the topics of the ATLAS "
-            "roadmap, one page per Mathlib module.</p>"
-        )
+        what = ("its statement, its documentation, the declarations its statement and its proof use, the declarations "
+                "that use it, and the ATLAS statements that use it. Pages follow the topics of the ATLAS roadmap, one "
+                "page per Mathlib module.")
+        every = len(ctx.hosted) == len(ctx.graph.names)
+        if every:
+            parts.append("<p>Every Mathlib declaration a mathematician could cite, at the revision of Mathlib this "
+                         f"project builds against: {what}</p>")
+        else:
+            parts.append("<p>The Mathlib declarations that ATLAS names or uses most, at the revision of Mathlib this "
+                         f"project builds against, as many as this site has room for: {what} Every other "
+                         "declaration is named where it is used, with a link to its source.</p>")
         parts.append(
             f'<p class="ml-meta">Mathlib <a href="{esc(MATHLIB_GIT)}/tree/{esc(ctx.graph.rev)}">'
-            f"<code>{esc(ctx.graph.rev[:12])}</code></a> · {count(len(ctx.hosted), 'declaration')} · "
-            f"{count(len(ctx.plan.members), 'module')}</p>"
+            f"<code>{esc(ctx.graph.rev[:12])}</code></a> · "
+            f"{shown(len(ctx.hosted), len(ctx.graph.names), 'declaration', ctx.bound)} · "
+            f"{shown(len(ctx.plan.members), len(ctx.graph.totals), 'module', ctx.bound)}</p>"
         )
     elif page.kind == "group":
         if descriptions.get(page.taxonomy):
@@ -605,10 +659,11 @@ def render_index(ctx: Context, page: Page, descriptions: dict[str, str], below: 
     items = []
     for child in page.children:
         modules = below[child.path]
-        size = sum(len(ctx.plan.members[m]) for m in modules)
-        counts = count(size, "declaration")
+        everything = ctx.graph.scope(page, child)
+        counts = shown(sum(len(ctx.plan.members[m]) for m in modules), sum(ctx.graph.totals[m] for m in everything),
+                       "declaration", ctx.bound)
         if child.kind != "module":
-            counts = f"{count(len(modules), 'module')}, {counts}"
+            counts = f"{shown(len(modules), len(everything), 'module', ctx.bound)}, {counts}"
         reason = f" ({esc(ctx.graph.outside.get(child.modules[0], ''))})" if page.kind == "outside" else ""
         items.append(f'<li><a href="{esc(relative(child.path, ctx.here))}">{esc(child.nav)}</a> '
                      f'<span class="ml-count">{counts}</span>{reason}</li>')
@@ -881,10 +936,211 @@ def atlas_topic_pages(info: Site, plan: Plan) -> dict[tuple[str, str], tuple[str
 
 
 # ---------------------------------------------------------------------------------------------------------------
+# The share of the Mathlib pages that a size budget allows (GitHub Pages publishes at most 1 GB)
+
+
+# Upper bounds of the bytes that the home page's link to the Mathlib pages adds, and that a page can gain over its
+# measure when it stands for a topic in a smaller selection (its title three times).
+HOME_ENTRY = 400
+PAGE_MARGIN = 512
+TIERS = ("landmark", "key", "supporting")
+
+
+def read_ranking(paths: list[Path], graph: Graph) -> tuple[dict[str, list[int]], collections.Counter]:
+    """Declarations by tier from ranking files (docs/mathlib-pages.md); rows of another Mathlib revision, unknown
+    names and unknown tiers are counted and left out."""
+    tiers: dict[str, set[int]] = {tier: set() for tier in TIERS}
+    skipped: collections.Counter = collections.Counter()
+    for path in paths:
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            row = json.loads(line)
+            if row.get("mathlib_rev") != graph.rev:
+                skipped["another Mathlib revision"] += 1
+            elif row.get("mathlib") not in graph.index:
+                skipped["not a Mathlib node"] += 1
+            elif row.get("tier") not in tiers:
+                skipped["unknown tier"] += 1
+            else:
+                tiers[row["tier"]].add(graph.index[row["mathlib"]])
+    return {tier: sorted(found, key=lambda i: graph.names[i]) for tier, found in tiers.items()}, skipped
+
+
+def parents(plan: Plan) -> dict[str, Page]:
+    found: dict[str, Page] = {}
+
+    def walk(page: Page) -> None:
+        for child in page.children:
+            found[child.path] = page
+            walk(child)
+
+    walk(plan.home)
+    return found
+
+
+def select(site: Path, info: Site, graph: Graph, credits: dict[int, list[Article]], taxonomy: dict, budget: int,
+           ranking: list[Path], mkdocs: list[str]) -> tuple[set[int], dict]:
+    """The declarations of a site within `budget` bytes: the declarations ATLAS pages name, then the longest prefix of
+    the other ranked declarations whose pages fit, by upper bounds (docs/mathlib-pages.md). A declaration's block is
+    measured when it is taken: its docstring as if every declaration had a page, its links to the declarations taken
+    before it as they will be, and its other links at the longer of a page's and a source line's address."""
+    everything = set(range(len(graph.names)))
+    plan = plan_pages(graph, everything, taxonomy)
+    atlas_topics = atlas_topic_pages(info, plan)
+    keep: set[int] = set()
+    ctx = Context(graph, info, plan, keep, credits, atlas_topics, bound=True)
+    full = Context(graph, info, plan, everything, credits, atlas_topics, bound=True)
+    with tempfile.TemporaryDirectory() as work:
+        chrome, search = render_chrome(plan, Path(work), mkdocs)
+    _, descriptions, _, _ = taxonomy_tree(taxonomy)
+    full_docs = Docstrings(lambda name: full.href(graph.index[name]) if name in graph.index else None)
+    below = modules_below(plan)
+    entry = {doc["location"]: len(json.dumps(doc, ensure_ascii=False, sort_keys=True, separators=(",", ":"))) + 1
+             for doc in search}
+    page_bytes: dict[str, int] = {}
+    for page in plan.pages:
+        full.here = page.path
+        if page.kind == "module":
+            # The header alone: a module page's declarations are counted one by one.
+            header = dataclasses.replace(full, plan=dataclasses.replace(plan, members={page.modules[0]: []}))
+            body = len(render_module(header, page, full_docs).encode())
+        else:
+            body = len(render_index(full, page, descriptions, below).encode())
+        page_bytes[page.path] = (len(chrome[page.path].encode()) - len(SLOT) + body + PAGE_MARGIN
+                                 + entry.get(page.path, 0))
+    # The ATLAS pages. Their statement boxes list the same Mathlib uses whatever has a page, each linked to its page or
+    # its source line: measured with no page at all, they shrink by `shorter[i]` when declaration i gets one. A link
+    # to Mathlib's documentation or source changes only for a declaration with a page, by at most `longer[i]`.
+    fixed = 0
+    longer: collections.Counter = collections.Counter()
+    shorter: collections.Counter = collections.Counter()
+    named: set[int] = set(credits)
+    enricher = Enricher(Context(graph, info, plan, set(), credits, atlas_topics))
+    for path in info.pages:
+        page = (site / path).read_text(encoding="utf-8")
+        if "bp-thmwrapper" in page:
+            fixed += len(enricher.cards(page, path).encode()) - len(page.encode())
+            for start, end, node_id, anchor in boxes(page):
+                article = canonical(info, path, node_id, anchor)
+                if article is None:
+                    continue
+                for targets in article_uses(graph, article):
+                    for t in [t for t in targets if not graph.instance[t]][:CARD_SHOWN]:
+                        shorter[t] += len(esc(graph.source(t))) - len(esc(full.href(t, path)))
+                if article.status == "mathlib":
+                    meta = META_MATHLIB.search(page, start, end)
+                    i = graph.index.get(html.unescape(meta.group(2))) if meta else None
+                    if i is not None:
+                        shorter[i] += len(esc(graph.source(i))) - len(esc(full.href(i, path)))
+        if "mathlib4" not in page:
+            continue
+        for match in A_TAG.finditer(page):
+            tag = match.group()
+            if "mathlib4" not in tag:
+                continue
+            attrs = attributes(tag)
+            href = raw_href(tag)
+            docs_link = DOCS_HREF.fullmatch(href)
+            if docs_link and attrs.get("class") == "bp-lean-doc":
+                name = decoded(docs_link.group(1))
+                i = graph.index.get(name) if name is not None else None
+            elif href.startswith(MATHLIB_GIT + "/blob/") and "title" in attrs:
+                i = graph.index.get(attrs["title"])
+                if i is not None and href == esc(graph.source(i)):
+                    named.add(i)
+                else:
+                    i = None
+            else:
+                i = None
+            if i is not None:
+                longer[i] += max(0, len(with_href(tag, full.href(i, path), "d").encode()) - len(tag.encode()))
+    users: list[set[str]] = [set() for _ in graph.names]
+    in_statements: list[set[str]] = [set() for _ in graph.names]
+    for i, uses in enumerate(graph.bridge_users):
+        for name, kind in uses:
+            for article in info.by_lean.get(name, ()):
+                users[i].add(article.id)
+                if kind == "statement":
+                    in_statements[i].add(article.id)
+    tiers, skipped = read_ranking(ranking, graph)
+    order: list[tuple[int, str]] = []
+    seen: set[int] = set()
+
+    def push(indices, reason: str) -> None:
+        for i in indices:
+            if i not in seen:
+                seen.add(i)
+                order.append((i, reason))
+
+    def by_use(i: int):
+        return (graph.instance[i], -len(in_statements[i]), -len(users[i]), -len(graph.users[i]), graph.names[i])
+
+    linked = sorted(named, key=lambda i: graph.names[i])
+    push(linked, "named by an ATLAS page")
+    push(sorted({t for i in linked for t in graph.statement[i] if not graph.instance[t]}, key=by_use),
+         "in the statement of a declaration an ATLAS page names")
+    for tier in TIERS:
+        push(tiers[tier], f"ranked {tier}")
+    push(sorted((i for i in everything if users[i]), key=by_use), "used by ATLAS")
+    push(sorted(everything, key=by_use), "used only in Mathlib")
+    parent = parents(plan)
+    site_bytes = sum(path.stat().st_size for path in site.rglob("*") if path.is_file())
+    estimate = site_bytes + len(STYLESHEET.read_bytes()) + HOME_ENTRY + fixed + page_bytes[plan.home.path]
+    opened = {plan.home.path}
+    reasons: collections.Counter = collections.Counter()
+    stopped = None
+
+    def cost(i: int) -> tuple[int, list[str]]:
+        """What taking declaration i adds, at most, and the pages it opens."""
+        new_pages = []
+        page: Page | None = plan.page_of_module[graph.module[i]]
+        while page is not None and page.path not in opened:
+            new_pages.append(page.path)
+            page = parent.get(page.path)
+        ctx.here = full.here = plan.page_of_module[graph.module[i]].path
+        block = len(render_declaration(ctx, i, full_docs).encode())
+        return block + longer[i] - shorter[i] + sum(page_bytes[path] for path in new_pages), new_pages
+
+    # The declarations that ATLAS pages name are taken together, or the build fails.
+    for i, reason in order:
+        if reason != "named by an ATLAS page":
+            break
+        keep.add(i)
+        added, new_pages = cost(i)
+        estimate += added
+        opened.update(new_pages)
+        reasons[reason] += 1
+    if estimate > budget:
+        raise SystemExit(f"a budget of {budget:,} bytes leaves no room for the {reasons['named by an ATLAS page']:,} "
+                         f"declarations that ATLAS pages name: they need up to {estimate:,}")
+    for i, reason in order[sum(reasons.values()):]:
+        keep.add(i)
+        added, new_pages = cost(i)
+        if estimate + added > budget:
+            keep.discard(i)
+            stopped = {"name": graph.names[i], "reason": reason, "bytes": added}
+            break
+        estimate += added
+        opened.update(new_pages)
+        reasons[reason] += 1
+    return set(keep), {
+        "budget": budget,
+        "estimate": estimate,
+        "kept": dict(reasons),
+        "first_left_out": stopped,
+        "ranking_rows_left_out": dict(skipped),
+    }
+
+
+# ---------------------------------------------------------------------------------------------------------------
 # build
 
 
-def build(site: Path, graph_dir: Path, out: Path, mkdocs: list[str], keep: set[str] | None = None) -> dict:
+def build(site: Path, graph_dir: Path, out: Path, mkdocs: list[str], keep: set[str] | None = None,
+          budget: int | None = None, ranking: list[Path] | None = None) -> dict:
+    """Write OUT: the site with a page for every Mathlib declaration, for the declarations named in `keep`, or for
+    the ranked declarations that fit in `budget` bytes of site."""
     if out.exists():
         raise SystemExit(f"{out} exists")
     graph = load_graph(graph_dir)
@@ -894,17 +1150,41 @@ def build(site: Path, graph_dir: Path, out: Path, mkdocs: list[str], keep: set[s
                          f"{graph.atlas_commit}")
     if any(path.startswith(f"{SECTION}/") for path in info.pages):
         raise SystemExit(f"the site already has a {SECTION}/ folder")
-    if keep is None:
-        hosted = set(range(len(graph.names)))
-    else:
-        unknown = sorted(keep - graph.index.keys())
-        if unknown:
-            raise SystemExit(f"{len(unknown)} declarations to keep are not Mathlib nodes, such as {unknown[:3]}")
-        hosted = {graph.index[name] for name in keep}
     taxonomy = json.loads(TAXONOMY.read_text(encoding="utf-8"))
+    credits = scan_credits(site, info, graph)
+    if budget is None:
+        if keep is None:
+            hosted = set(range(len(graph.names)))
+        else:
+            unknown = sorted(keep - graph.index.keys())
+            if unknown:
+                raise SystemExit(f"{len(unknown)} declarations to keep are not Mathlib nodes, such as {unknown[:3]}")
+            hosted = {graph.index[name] for name in keep}
+        return write(site, graph, info, taxonomy, credits, hosted, out, mkdocs)
+    # The bounds should hold; if a site still comes out over the budget, select again for less.
+    target = budget
+    for attempt in range(1, ATTEMPTS + 1):
+        hosted, selection = select(site, info, graph, credits, taxonomy, target, ranking or [], mkdocs)
+        report = write(site, graph, info, taxonomy, credits, hosted, out, mkdocs)
+        selection["attempts"] = attempt
+        report["selection"] = selection
+        if report["bytes"] <= budget:
+            return report
+        # Select again with room for what the estimate missed, and a thousandth of the budget more.
+        shutil.rmtree(out)
+        target = budget - (report["bytes"] - selection["estimate"]) - budget // 1000
+    raise SystemExit(f"no selection fits in {budget:,} bytes after {ATTEMPTS} attempts")
+
+
+ATTEMPTS = 3
+
+
+def write(site: Path, graph: Graph, info: Site, taxonomy: dict, credits: dict[int, list[Article]], hosted: set[int],
+          out: Path, mkdocs: list[str]) -> dict:
+    """Write OUT: the site with the pages of the `hosted` declarations, and report on it."""
     _, descriptions, _, _ = taxonomy_tree(taxonomy)
     plan = plan_pages(graph, hosted, taxonomy)
-    ctx = Context(graph, info, plan, hosted, scan_credits(site, info, graph), {})
+    ctx = Context(graph, info, plan, hosted, credits, {})
     ctx.atlas_topics = atlas_topic_pages(info, plan)
     with tempfile.TemporaryDirectory() as work:
         chrome, search = render_chrome(plan, Path(work), mkdocs)
@@ -932,6 +1212,8 @@ def build(site: Path, graph_dir: Path, out: Path, mkdocs: list[str], keep: set[s
     return {
         "atlas_commit": graph.atlas_commit,
         "mathlib_rev": graph.rev,
+        "bytes": sum(path.stat().st_size for path in out.rglob("*") if path.is_file()),
+        "selection": None,
         "declarations": len(hosted),
         "modules": len(plan.members),
         "mathlib_pages": len(plan.pages),
@@ -1140,6 +1422,10 @@ def main(argv: list[str] | None = None) -> int:
     b.add_argument("--strict-links", action="store_true",
                    help="fail when a Mathlib source link does not match its title")
     b.add_argument("--mkdocs", default=f"{sys.executable} -m mkdocs", help="the MkDocs command")
+    b.add_argument("--budget", type=int,
+                   help="keep only the ranked declarations whose pages fit in this many bytes of site")
+    b.add_argument("--rank", type=Path, action="append", default=[],
+                   help="with --budget, a ranking file of Mathlib declarations by tier (JSON lines)")
     c = commands.add_parser("check", help="check a site that build wrote")
     for command in (b, c):
         command.add_argument("site", type=Path, help="the built site")
@@ -1147,7 +1433,9 @@ def main(argv: list[str] | None = None) -> int:
         command.add_argument("out", type=Path, help="the site with its Mathlib pages")
     args = parser.parse_args(argv)
     if args.command == "build":
-        report = build(args.site, args.graph, args.out, args.mkdocs.split())
+        if args.rank and args.budget is None:
+            parser.error("--rank needs --budget")
+        report = build(args.site, args.graph, args.out, args.mkdocs.split(), budget=args.budget, ranking=args.rank)
         text = json.dumps(report, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
         if args.report:
             args.report.write_text(text, encoding="utf-8")

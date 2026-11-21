@@ -7,8 +7,9 @@ topics of `scripts/taxonomy.json`, and links the ATLAS statements to the
 Mathlib declarations they use. `scripts/build_mathlib_pages.py` writes it from
 the built site and the layer's `mathlib-graph` artifact of the same revision.
 Like the layer, these pages are build outputs and are never committed: they
-are about 1 GB of generated HTML. The site that GitHub Pages publishes is
-unchanged.
+are about 1 GB of generated HTML. The site that GitHub Pages publishes, which
+must stay under 1 GB, gets the pages of a ranked share of the declarations
+(below).
 
 ## What a page shows
 
@@ -107,6 +108,52 @@ or changed must lead to an existing file and anchor, and a link named after a
 declaration to that declaration's anchor; every new search entry must name a
 page.
 
+## The GitHub Pages site
+
+The site GitHub Pages publishes keeps every page of the built site and adds the
+Mathlib pages of the declarations that fit in 900 MB:
+
+```sh
+python scripts/build_mathlib_pages.py build --budget 900000000 site mathlib-graph site-pages
+```
+
+Declarations are taken in this order, as long as they fit:
+
+1. those an ATLAS page names: a credited declaration, or the title of a source
+   link;
+2. the declarations their statements use;
+3. with `--rank`, those of ranking files, landmarks first, then key and
+   supporting results: JSON lines `{"mathlib": "<name>", "mathlib_rev":
+   "<revision>", "tier": "landmark" | "key" | "supporting"}`, whose rows of
+   another revision, unknown names and unknown tiers are counted and left out;
+4. the declarations that ATLAS articles use, by the number of articles that use
+   them in their statements, then in their proofs;
+5. the rest, by the number of Mathlib declarations that use them.
+
+The first group is taken whole, or the build fails; after it, the first
+declaration that does not fit ends the selection. Sizes are upper bounds,
+measured before the build. A declaration's block is measured when it is taken:
+its docstring as if every declaration had a page, its links to the declarations
+taken before it as they will be, and its other links at the longer of a page's
+and a source line's address. Page chrome and headers are measured on the pages
+of every declaration, with every count in its longest form, plus 512 bytes a
+page for a title or neighbours that change when fewer pages exist. The statement boxes' Mathlib rows are
+measured as they are with no Mathlib page at all, less what each page changes,
+since they list the same declarations either way. Should a site still come out
+over the budget, the build selects again with that much less room, up to three
+times, then fails.
+
+A declaration without a page links to its pinned source line from the Mathlib
+pages and the statement boxes; Autoform's links to Mathlib's documentation stay
+as written for it. The Mathlib pages say which share they show: their home page
+describes the declarations as those ATLAS names or uses most, and each count
+reads "shown of all" over everything its entry stands for, as in "12 of 85
+declarations" for a topic some of whose modules have no page.
+
+On the layer of 21 November 2026 this keeps 26,683 declarations of 3,316
+modules on 4,382 pages: a site of 879,502,739 bytes in 17,904 files, whose
+Pages archive has 903,290,880 bytes.
+
 ## Building
 
 After the site and the layer are built:
@@ -119,7 +166,15 @@ python scripts/build_mathlib_pages.py check site mathlib-graph site-full
 
 `build` needs the site's MkDocs environment, since MkDocs renders each page's
 chrome with the site's theme, and refuses a layer of another ATLAS revision
-than the site's. The workflow's `build the Mathlib pages` job runs the tests and
-both commands once the wiki and the Mathlib layer are built, and keeps the
-result of `main` builds for three days as the `blueprint-site-full` artifact.
-A failure fails that job only: the site and its deployment never wait for it.
+than the site's. The workflow's `build the Mathlib pages` job runs the tests,
+builds and checks the full site, keeping `main`'s for three days as the
+`blueprint-site-full` artifact, then builds and checks the GitHub Pages site and
+uploads it as a second Pages artifact, `github-pages-mathlib`, once
+`scripts/pages_size.sh` has measured it as the upload packs it: at most
+950 MB. Deployment publishes the wiki job's site as soon as it is built, as
+before; then, if the Mathlib pages job succeeded, the `publish the Mathlib
+pages` job publishes its site in its place. The two come from the same run,
+and each publishes only over a site of the run's commit or of one of its
+ancestors, failing otherwise, so a later run's site is never replaced by an
+earlier one's. A failed, cancelled or timed-out Mathlib job leaves the wiki
+job's site published.
