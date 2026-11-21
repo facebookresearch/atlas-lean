@@ -531,6 +531,40 @@ class GitRules(unittest.TestCase):
                       "\n".join(str(finding) for finding in rules.check(self.root)))
         self.assertEqual(self.run_main("--base", duplicate, "--blocking"), 1)
 
+    def test_link_in_extra_file_is_checked_against_page_marker_and_dependencies(self) -> None:
+        name = "Physics/mechanics.md"
+        path = "blueprint/links/extra.ndjson"
+        self.vault.write(path, json.dumps(Vault.row(name)) + "\n")
+        self.vault.write(f"blueprint/roadmap/{name}", "# Mechanics\n\n## Depends on\n")
+        self.commit()
+        base = self.head()
+
+        self.vault.write(path, json.dumps(Vault.row(name, declaration="X.mechanics")) + "\n")
+        self.commit()
+        findings = rules.check(self.root, base)
+        new, _ = rules.split_new(findings, rules.base_findings(self.root, base, {"annotations", "edges"}))
+        self.assertCountEqual([(finding.rule, finding.subject) for finding in new], [
+            (9, f"blueprint/roadmap/{name}"), (12, f"blueprint/roadmap/{name}"),
+        ])
+        self.assertEqual(self.run_main("--base", base, "--blocking"), 1)
+
+    def test_bad_subjects_do_not_hide_new_derived_facts(self) -> None:
+        path = "blueprint/links/Physics.jsonl"
+        rows = [{"subject": []}, Vault.row("Physics/nonexistent.md")]
+        self.vault.annotations["Physics"].extend(rows)
+        self.vault.save()
+        self.commit()
+        base = self.head()
+
+        rows[0]["kind"] = "theorem"
+        rows[1]["status"] = "formalized"
+        self.vault.save()
+        self.commit()
+        findings = rules.check(self.root, base)
+        new, _ = rules.split_new(findings, rules.base_findings(self.root, base, {"annotations"}))
+        self.assertEqual([(finding.rule, finding.subject) for finding in new], [(8, path), (8, path)])
+        self.assertEqual(self.run_main("--base", base, "--blocking"), 1)
+
     def test_an_inherited_duplicate_does_not_hide_new_facts_on_it(self) -> None:
         self.vault.annotations["CategoryTheory"].append(Vault.row("CategoryTheory/topos-theory/is-topos.md"))
         self.vault.save()

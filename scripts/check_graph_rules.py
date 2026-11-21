@@ -190,21 +190,42 @@ def links_files(links: Path, symlinks: list[Path] | None = None) -> list[Path]:
     return sorted(found)
 
 
-def check_row_extensions(subject: str, annotation: dict, page: Path, at: str, report: Report) -> None:
-    """Rule 12, on one row: `not_ready` is a boolean, on an article with no Lean link."""
+def check_row_extensions(subject: str, annotation: dict, at: str, report: Report) -> bool:
+    """Validate the flag's type now; check the resulting page's placement and linkage after reading all rows."""
     extensions = annotation.get("extensions", {})
     ours = extensions.get(AUTOFORM, {}) if isinstance(extensions, dict) else {}
     if not isinstance(ours, dict) or NOT_READY not in ours:
-        return
+        return False
     if not isinstance(ours[NOT_READY], bool):
         report.add(12, subject, f"{NOT_READY} takes true or false; Autoform drops any other value", at)
-    elif ours[NOT_READY] and linked(annotation):
-        report.add(12, subject, f"a node still to be broken down ({NOT_READY}) names no Lean declaration", at)
-    elif ours[NOT_READY] and page.name == "README.md":
-        report.add(12, subject, f"a folder page is not a node to break down; mark an article {NOT_READY}", at)
+        return False
+    return ours[NOT_READY]
 
 
-def load_annotations(root: Path, report: Report) -> dict[Path, dict]:
+def annotation_page(roadmap: Path, source: Path, name: str, annotation: dict, at: str, report: Report) -> Path | None:
+    subjects = annotation.get("subject")
+    if not isinstance(subjects, list) or len(subjects) != 1 or not isinstance(subjects[0], dict):
+        report.add(5, name, "a row names exactly one subject page", at)
+        return None
+    uri = subjects[0].get("uri")
+    # sync_wiki resolves a subject as written; Autoform decodes it first.
+    if isinstance(uri, str) and uri and unquote(uri) != uri:
+        report.add(5, name, f"subject {uri!r} has a percent-escape; write the page's path as it is", at)
+        return None
+    try:
+        page = (source.parent / uri).resolve() if isinstance(uri, str) and uri else None
+    except (OSError, ValueError):
+        page = None
+    if page is None or page.suffix != ".md" or roadmap not in page.parents:
+        report.add(5, name, f"subject {uri!r} is not a page under blueprint/roadmap/", at)
+        return None
+    if not page.is_file():
+        report.add(5, page.relative_to(roadmap.parent.parent).as_posix(), "its annotation names a page that does not exist", at)
+        return None
+    return page
+
+
+def load_annotations(root: Path, report: Report, *, linked_pages: set[Path] | None = None) -> dict[Path, dict]:
     vault = root / "blueprint"
     roadmap = (vault / "roadmap").resolve()
     links = vault / "links"
@@ -212,6 +233,8 @@ def load_annotations(root: Path, report: Report) -> dict[Path, dict]:
     rows: set[Path] = set()  # pages with a row in any file Autoform reads
     ids: dict[str, list[tuple[str, str]]] = {}
     annotations: dict[Path, dict] = {}
+    linked_pages = set() if linked_pages is None else linked_pages
+    pending: dict[Path, str] = {}
     symlinks: list[Path] = []
     if links.is_symlink() or not links.is_dir():
         # Autoform accepts only a real folder here ("blueprint/links is not a folder, so no annotation is read").
@@ -257,26 +280,15 @@ def load_annotations(root: Path, report: Report) -> dict[Path, dict]:
             except json.JSONDecodeError as error:
                 report.add(5, name, f"a row is not JSON ({error.msg})", at)
                 continue
-            subjects = annotation.get("subject") if isinstance(annotation, dict) else None
-            if not isinstance(subjects, list) or len(subjects) != 1 or not isinstance(subjects[0], dict):
+            if not isinstance(annotation, dict):
                 report.add(5, name, "a row names exactly one subject page", at)
                 continue
-            uri = subjects[0].get("uri")
-            # `sync_wiki.py` resolves a subject as written and Autoform decodes it first, so a URI that a
-            # percent-escape changes would bind different pages for the two; it is a finding, not a binding.
-            if isinstance(uri, str) and uri and unquote(uri) != uri:
-                report.add(5, name, f"subject {uri!r} has a percent-escape; write the page's path as it is", at)
-                continue
-            try:
-                page = (source.parent / uri).resolve() if isinstance(uri, str) and uri else None
-            except (OSError, ValueError):
-                page = None
-            if page is None or page.suffix != ".md" or roadmap not in page.parents:
-                report.add(5, name, f"subject {uri!r} is not a page under blueprint/roadmap/", at)
-                continue
-            subject = rel(page, root)
-            if not page.is_file():
-                report.add(5, subject, "its annotation names a page that does not exist", at)
+            page = annotation_page(roadmap, source, name, annotation, at, report)
+            subject = rel(page, root) if page is not None else name
+            for fact in DERIVED_FACTS:
+                if fact in annotation:
+                    report.add(8, subject, f"its annotation commits {fact!r}, which lean-facts adds at build time", at)
+            if page is None:
                 continue
             # Every row is checked in full, a second row for a page included: Autoform merges them all.
             objects = annotation.get("object", [])
@@ -290,10 +302,10 @@ def load_annotations(root: Path, report: Report) -> dict[Path, dict]:
                     report.add(5, subject, f"malformed id {article_id!r}", at)
                 else:
                     ids.setdefault(article_id, []).append((subject, at))
-            for fact in DERIVED_FACTS:
-                if fact in annotation:
-                    report.add(8, subject, f"its annotation commits {fact!r}, which lean-facts adds at build time", at)
-            check_row_extensions(subject, annotation, page, at, report)
+            if check_row_extensions(subject, annotation, at, report):
+                pending.setdefault(page, at)
+            if linked(annotation):
+                linked_pages.add(page)
             # Autoform merges a row from any file it reads, so a second one anywhere is a second annotation.
             if page in rows:
                 report.add(5, subject, "the page has more than one annotation", at)
@@ -305,14 +317,15 @@ def load_annotations(root: Path, report: Report) -> dict[Path, dict]:
             if source.name != f"{expected}.jsonl":
                 report.add(5, subject, f"its annotation belongs in blueprint/links/{expected}.jsonl", at)
             if page in seen:
-                # lean-facts reads every row, so one that names a declaration links the page however many do not.
-                if linked(annotation) and not linked(annotations[page]):
-                    annotation["_at"] = at
-                    annotations[page] = annotation
                 continue
             seen[page] = at
             annotation["_at"] = at
             annotations[page] = annotation
+    for page, at in sorted(pending.items()):
+        if page in linked_pages:
+            report.add(12, rel(page, root), f"a node still to be broken down ({NOT_READY}) names no Lean declaration", at)
+        elif page.name == "README.md":
+            report.add(12, rel(page, root), f"a folder page is not a node to break down; mark an article {NOT_READY}", at)
     for page in sorted(roadmap.rglob("*.md")):
         # lean-facts stops on such a page much later in the build (#5069).
         if page not in seen and not any(part.startswith(".") for part in page.relative_to(roadmap).parts):
@@ -375,15 +388,15 @@ def check_listings(root: Path, report: Report) -> None:
 # --------------------------------------------------------------------------- edges: rules 9, 11
 
 
-def check_edges(root: Path, annotations: dict[Path, dict], report: Report) -> None:
+def check_edges(root: Path, linked_pages: set[Path], report: Report) -> None:
     graph_module, _ = autoform()
     vault = root / "blueprint"
-    for page, annotation in sorted(annotations.items()):
-        if linked(annotation):  # folder pages included: lean-facts skips them, so nothing would rewrite the sections
-            text = read_text(page, root, report, 9)
-            for heading in lean_sections(text) if text is not None else ():
-                canonical = "Proof depends on" if heading.casefold() == "proof depends on" else "Depends on"
-                report.add(9, rel(page, root), f"commits `## {canonical}`, which lean-facts writes at build time")
+    for page in sorted(linked_pages):
+        # Folder pages are included: lean-facts skips them, so nothing would rewrite their sections.
+        text = read_text(page, root, report, 9)
+        for heading in lean_sections(text) if text is not None else ():
+            canonical = "Proof depends on" if heading.casefold() == "proof depends on" else "Depends on"
+            report.add(9, rel(page, root), f"commits `## {canonical}`, which lean-facts writes at build time")
     try:
         graph = graph_module.load_graph(vault)
     except graph_module.GraphValidationError as error:
@@ -497,9 +510,9 @@ def check(root: Path = ROOT, base: str | None = None, parts: tuple[str, ...] = P
         report.findings[done:] = [replace(finding, part=part) for finding in report.findings[done:]]
         done = len(report.findings)
 
-    annotations: dict[Path, dict] = {}
+    linked_pages: set[Path] = set()
     if {"annotations", "edges"} & set(parts):
-        annotations = load_annotations(root, report)
+        load_annotations(root, report, linked_pages=linked_pages)
         if "annotations" not in parts:
             del report.findings[done:]
         tag("annotations")
@@ -510,7 +523,7 @@ def check(root: Path = ROOT, base: str | None = None, parts: tuple[str, ...] = P
         check_listings(root, report)
         tag("listings")
     if "edges" in parts:
-        check_edges(root, annotations, report)
+        check_edges(root, linked_pages, report)
         tag("edges")
     if "outputs" in parts:
         check_outputs(root, report)
@@ -616,8 +629,8 @@ def built_informal_cycles(root: Path) -> list[Finding]:
         graph = graph_module.load_graph(root / "blueprint")
     except graph_module.GraphValidationError:
         return []  # autoform check reports it
-    annotations = load_annotations(root, Report())
-    linked_pages = {page for page, annotation in annotations.items() if linked(annotation)}
+    linked_pages: set[Path] = set()
+    load_annotations(root, Report(), linked_pages=linked_pages)
     paths = {node_id: rel(Path(node.path), root) for node_id, node in graph.nodes.items()}
     counted = {node_id: set(node.dependencies) for node_id, node in graph.nodes.items()}
     # The committed tree's edges: a planned page's own sections, which lean-facts leaves alone, and every
