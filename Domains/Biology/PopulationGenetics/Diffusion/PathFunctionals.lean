@@ -125,19 +125,13 @@ private theorem ae_stay_zero_neutral {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {ℱ : Filtration ℝ≥0 mΩ} {μ : Measure Ω} [IsProbabilityMeasure μ]
     {X : ℝ≥0 → Ω → ℝ} (hX : IsWrightFisherSolution 0 ℱ μ X) :
     ∀ᵐ ω ∂μ, ∀ s t, s ≤ t → X s ω = 0 → X t ω = 0 :=
-  MathlibExt.Biology.PopulationGenetics.Diffusion.KimuraFixationProcess.ae_stay_zero_of_martingale
-    (MathlibExt.Biology.PopulationGenetics.Diffusion.NeutralMartingaleProblem.martingale_of_neutral
-      hX)
-    (fun t ω => (hX.1 t ω).1) hX.2.1
+  hX.ae_stay_zero
 
 private theorem ae_stay_one_neutral {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {ℱ : Filtration ℝ≥0 mΩ} {μ : Measure Ω} [IsProbabilityMeasure μ]
     {X : ℝ≥0 → Ω → ℝ} (hX : IsWrightFisherSolution 0 ℱ μ X) :
-    ∀ᵐ ω ∂μ, ∀ s t, s ≤ t → X s ω = 1 → X t ω = 1 := by
-  filter_upwards [ae_stay_zero_neutral (isWrightFisherSolution_one_sub hX)] with ω h s t hst hs
-  have hs0 : (1 : ℝ) - X s ω = 0 := by linarith [hs]
-  have ht0 : (1 : ℝ) - X t ω = 0 := h s t hst hs0
-  linarith [ht0]
+    ∀ᵐ ω ∂μ, ∀ s t, s ≤ t → X s ω = 1 → X t ω = 1 :=
+  hX.ae_stay_one
 
 private theorem integral_split_at_absorption {Y : ℝ≥0 → ℝ} (hY : Continuous Y)
     (_hmem : ∀ s, Y s ∈ Icc (0 : ℝ) 1) {τ : ℝ≥0}

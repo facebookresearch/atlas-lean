@@ -553,7 +553,7 @@ private theorem fixed_time_zero {Ω : Type*} {mΩ : MeasurableSpace Ω}
   exact hr.1.le
 
 /-- A nonnegative martingale with continuous paths stays at `0` once it hits `0`. -/
-theorem ae_stay_zero_of_martingale {Ω : Type*} {mΩ : MeasurableSpace Ω}
+private theorem ae_stay_zero_of_martingale {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {ℱ : Filtration ℝ≥0 mΩ} {μ : Measure Ω}
     [IsProbabilityMeasure μ] {Y : ℝ≥0 → Ω → ℝ} (hY : Martingale Y ℱ μ)
     (hnn : ∀ t ω, 0 ≤ Y t ω) (hc : ∀ ω, Continuous fun t => Y t ω) :
@@ -771,7 +771,7 @@ private theorem martingale_kimuraFixation [IsFiniteMeasure μ]
   · exact fun t => (continuous_kimuraFixation σ).comp_stronglyMeasurable (hX.2.2.1 t)
   · simp
 
-private theorem ae_stay_zero [IsProbabilityMeasure μ] (hX : IsWrightFisherSolution σ ℱ μ X) :
+theorem ae_stay_zero [IsProbabilityMeasure μ] (hX : IsWrightFisherSolution σ ℱ μ X) :
     ∀ᵐ ω ∂μ, ∀ s t, s ≤ t → X s ω = 0 → X t ω = 0 := by
   filter_upwards [ae_stay_zero_of_martingale hX.martingale_kimuraFixation
     (fun t ω => (Diffusion.kimuraFixation_mem_Icc σ (hX.1 t ω)).1)
@@ -779,7 +779,7 @@ private theorem ae_stay_zero [IsProbabilityMeasure μ] (hX : IsWrightFisherSolut
   have := h s t hst (by simp [hs])
   exact (strictMono_kimuraFixation σ).injective (by simpa using this)
 
-private theorem ae_stay_one [IsProbabilityMeasure μ] (hX : IsWrightFisherSolution σ ℱ μ X) :
+theorem ae_stay_one [IsProbabilityMeasure μ] (hX : IsWrightFisherSolution σ ℱ μ X) :
     ∀ᵐ ω ∂μ, ∀ s t, s ≤ t → X s ω = 1 → X t ω = 1 := by
   filter_upwards [ae_stay_zero_of_martingale
     ((martingale_const ℱ μ (1 : ℝ)).sub hX.martingale_kimuraFixation)
