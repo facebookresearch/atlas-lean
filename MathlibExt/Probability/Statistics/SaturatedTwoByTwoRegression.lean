@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.FiniteProbability
-public import MathlibExt.Probability.Statistics.WithinEstimator
+public import MathlibExt.Probability.Distributions.CochranIndependence
 
 import Mathlib.Tactic
 
@@ -287,46 +287,25 @@ theorem isUnit_gram_twoByTwoDesign_iff {ι : Type*} [Fintype ι] (d t : ι → B
       · exact z3
     exact hv0 hv00
 
-/-- **Unique least-squares solution**: with all four cells populated, a coefficient vector
-solves the normal equations `(Xᵀ X) β = Xᵀ y` if and only if it is the cell-mean coefficient
-vector. -/
-theorem twoByTwoDesign_normal_eq_iff {ι : Type*} [Fintype ι] {d t : ι → Bool}
-    (hcell : ∀ a b, ∃ i, d i = a ∧ t i = b) (y : ι → ℝ) (β : Fin 4 → ℝ) :
-    ((twoByTwoDesign d t)ᵀ * twoByTwoDesign d t) *ᵥ β = (twoByTwoDesign d t)ᵀ *ᵥ y ↔
-      β = cellMeanCoefficients d t y := by
-  have hU : IsUnit ((twoByTwoDesign d t)ᵀ * twoByTwoDesign d t).det :=
-    (Matrix.isUnit_iff_isUnit_det _).mp ((isUnit_gram_twoByTwoDesign_iff _ _).mpr hcell)
-  have h1 : ((twoByTwoDesign d t)ᵀ * twoByTwoDesign d t)⁻¹ *
-      ((twoByTwoDesign d t)ᵀ * twoByTwoDesign d t) = 1 :=
-    Matrix.nonsing_inv_mul _ hU
-  constructor
-  · intro h
-    calc β = (1 : Matrix (Fin 4) (Fin 4) ℝ) *ᵥ β := by rw [Matrix.one_mulVec]
-      _ = (((twoByTwoDesign d t)ᵀ * twoByTwoDesign d t)⁻¹ *
-          ((twoByTwoDesign d t)ᵀ * twoByTwoDesign d t)) *ᵥ β := by rw [h1]
-      _ = ((twoByTwoDesign d t)ᵀ * twoByTwoDesign d t)⁻¹ *ᵥ
-          (((twoByTwoDesign d t)ᵀ * twoByTwoDesign d t) *ᵥ β) := by
-          rw [← Matrix.mulVec_mulVec]
-      _ = ((twoByTwoDesign d t)ᵀ * twoByTwoDesign d t)⁻¹ *ᵥ
-          (((twoByTwoDesign d t)ᵀ * twoByTwoDesign d t) *ᵥ cellMeanCoefficients d t y) := by
-          rw [h, ← gram_mulVec_cellMeanCoefficients]
-      _ = cellMeanCoefficients d t y := by
-          rw [Matrix.mulVec_mulVec, h1, Matrix.one_mulVec]
-  · intro h
-    rw [h]
-    exact gram_mulVec_cellMeanCoefficients _ _ _
-
 /-- **OLS on the saturated two-by-two design**: with all four cells populated, the
 least-squares estimate is the cell-mean coefficient vector. -/
 theorem olsEstimator_twoByTwoDesign {ι : Type*} [Fintype ι] [DecidableEq ι] {d t : ι → Bool}
     (hcell : ∀ a b, ∃ i, d i = a ∧ t i = b) (y : ι → ℝ) :
     olsEstimator (twoByTwoDesign d t) y = cellMeanCoefficients d t y := by
-  have hU : IsUnit ((twoByTwoDesign d t)ᵀ * twoByTwoDesign d t).det :=
-    (Matrix.isUnit_iff_isUnit_det _).mp ((isUnit_gram_twoByTwoDesign_iff _ _).mpr hcell)
-  simp only [olsEstimator, olsMatrix,
-    MathlibExt.Probability.Statistics.GeneralizedLeastSquares.glsMatrix, inv_one, Matrix.mul_one]
-  rw [← Matrix.mulVec_mulVec, ← gram_mulVec_cellMeanCoefficients, Matrix.mulVec_mulVec,
-    Matrix.nonsing_inv_mul _ hU, Matrix.one_mulVec]
+  have hU : IsUnit ((twoByTwoDesign d t)ᵀ * twoByTwoDesign d t) :=
+    (isUnit_gram_twoByTwoDesign_iff d t).mpr hcell
+  exact ((MathlibExt.Probability.FiniteProbability.eq_olsEstimator_iff hU y _).mp
+    (gram_mulVec_cellMeanCoefficients d t y)).symm
+
+/-- **Unique least-squares solution**: with all four cells populated, a coefficient vector
+solves the normal equations `(Xᵀ X) β = Xᵀ y` if and only if it is the cell-mean coefficient
+vector. -/
+theorem twoByTwoDesign_normal_eq_iff {ι : Type*} [Fintype ι] [DecidableEq ι] {d t : ι → Bool}
+    (hcell : ∀ a b, ∃ i, d i = a ∧ t i = b) (y : ι → ℝ) (β : Fin 4 → ℝ) :
+    ((twoByTwoDesign d t)ᵀ * twoByTwoDesign d t) *ᵥ β = (twoByTwoDesign d t)ᵀ *ᵥ y ↔
+      β = cellMeanCoefficients d t y := by
+  rw [MathlibExt.Probability.FiniteProbability.eq_olsEstimator_iff
+    ((isUnit_gram_twoByTwoDesign_iff d t).mpr hcell), olsEstimator_twoByTwoDesign hcell]
 
 /-- **The saturated two-by-two regression interaction is the four-cell mean contrast**: with
 all four cells populated, the OLS coefficient on `D * T` is

@@ -282,4 +282,3 @@ theorem level_log_interaction :
     ring
 
 end MathlibExtTest.Probability.Statistics.SaturatedTwoByTwoRegression
-
