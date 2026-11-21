@@ -10,6 +10,10 @@ module
 public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Basic.Real.Basic
 
+public import Mathlib.Order.Filter.Defs
+public import Mathlib.Topology.Instances.Real.Lemmas
+public import Mathlib.Topology.Order.Basic
+
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
@@ -37,6 +41,8 @@ mass units; dimensions are not tracked.
   are inverse on their domains.
 - `Drying.dryOfWet_unbounded`: the dry basis is unbounded as the wet basis
   approaches `1`.
+- `Drying.tendsto_dryOfWet_at_one`: that endpoint divergence as a limit
+  from below.
 - `Drying.wetBasis_eq_one_of_zero_solids`: with no dry solids the wet basis
   is `1`, outside the conversion.
 
@@ -159,6 +165,46 @@ lemma dryOfWet_unbounded (M : ℝ) :
       field_simp
     rw [hcomp]
     exact hM
+
+/-- **Endpoint divergence.** The dry basis tends to infinity as the wet
+basis approaches `1` from below: inputs sufficiently close to `1` exceed
+every bound, not merely some input somewhere in `[0, 1)`. -/
+lemma tendsto_dryOfWet_at_one :
+    Filter.Tendsto dryOfWet (nhdsWithin 1 (Set.Iio 1)) Filter.atTop := by
+  rw [Filter.tendsto_atTop]
+  intro M
+  by_cases hM : M ≤ 0
+  · have h0 : ∀ᶠ w : ℝ in nhdsWithin 1 (Set.Iio 1), (0:ℝ) < w :=
+      eventually_nhdsWithin_of_eventually_nhds (eventually_gt_nhds (by linarith : (0:ℝ) < 1))
+    have hmem : ∀ᶠ w : ℝ in nhdsWithin 1 (Set.Iio 1), w ∈ Set.Iio (1:ℝ) :=
+      self_mem_nhdsWithin
+    filter_upwards [h0, hmem] with w hw0 hw1
+    rw [Set.mem_Iio] at hw1
+    unfold dryOfWet
+    have hden : (0:ℝ) < 1 - w := by linarith
+    have hnn : (0:ℝ) ≤ w / (1 - w) := div_nonneg (le_of_lt hw0) (le_of_lt hden)
+    linarith
+  · have hMpos : 0 < M := not_le.mp hM
+    set T : ℝ := M / (M + 1) with hT
+    have hpos1 : (0:ℝ) < M + 1 := by linarith
+    have hTlt1 : T < 1 := by
+      rw [hT, div_lt_one hpos1]
+      linarith
+    have hev : ∀ᶠ w : ℝ in nhdsWithin 1 (Set.Iio 1), T < w :=
+      eventually_nhdsWithin_of_eventually_nhds (eventually_gt_nhds hTlt1)
+    have hmem : ∀ᶠ w : ℝ in nhdsWithin 1 (Set.Iio 1), w ∈ Set.Iio (1:ℝ) :=
+      self_mem_nhdsWithin
+    filter_upwards [hev, hmem] with w hwT hw1
+    rw [Set.mem_Iio] at hw1
+    unfold dryOfWet
+    have hden : (0:ℝ) < 1 - w := by linarith
+    rw [le_div_iff₀ hden]
+    rw [hT, div_lt_iff₀ hpos1] at hwT
+    have h2 : w * (M + 1) = M * w + w := by ring
+    have h3 : M * (1 - w) = M - M * w := by ring
+    rw [h2] at hwT
+    rw [h3]
+    linarith
 
 /-- Assumption necessity: with no dry solids and positive water mass, the
 wet basis equals `1`, so the `ms > 0` hypothesis in `wetBasis_lt_one`
