@@ -376,10 +376,6 @@ private lemma inner_smul_one (c : ℝ) (B : 𝕄) : ⟪c • 1, B⟫_ℝ = c * B
   rw [← Finset.mul_sum]
   congr 1
 
-private lemma deviatoricStress_trace (σ : 𝕄) : (deviatoricStress σ).trace = 0 := by
-  simp [deviatoricStress, meanStress, Matrix.trace_sub, Matrix.trace_smul, Matrix.trace_one,
-    smul_eq_mul]
-
 /-- Maximum plastic work for the deviatoric return. For a trial stress `σTrial`, a shear modulus
 `μ > 0` and a fixed nonempty complete convex yield section `K` of symmetric trace-free stresses,
 let `σ := meanStress σTrial • 1 + convexProjection K (deviatoricStress σTrial)` be the returned
@@ -403,7 +399,7 @@ theorem deviatoric_return_maximum_plastic_work
   have hmemP : convexProjection K (deviatoricStress σTrial) ∈ K :=
     convexProjection_mem hKne hKc hKv _
   have hp0 : (convexProjection K (deviatoricStress σTrial)).trace = 0 := (hKdev hmemP).2
-  have hs0 : (deviatoricStress σTrial).trace = 0 := deviatoricStress_trace σTrial
+  have hs0 : (deviatoricStress σTrial).trace = 0 := trace_deviatoric σTrial
   have htr : (deviatoricStress σTrial -
         convexProjection K (deviatoricStress σTrial)).trace = 0 := by
     rw [Matrix.trace_sub, hs0, hp0, sub_zero]
