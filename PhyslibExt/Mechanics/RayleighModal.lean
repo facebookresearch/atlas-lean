@@ -33,10 +33,12 @@ A finite linear structure has mass matrix `M`, stiffness matrix `K`, and
 Rayleigh (mass- and stiffness-proportional) damping
 `Cd = α • M + β • K`, with equation `M x'' + Cd x' + K x = f t` for a
 time-dependent load `f`. Coordinates are in one coherent unit system;
-`α` has units of 1/time and `β` of time, and for `α, β ≥ 0` the modal
-damping coefficient `α + β * μ j` is the usual `2 ζ_j ω_j`. The damping
-transformation and the decoupling equivalence themselves hold for every
-real `α` and `β`.
+`α` has units of 1/time and `β` of time. For an oscillatory mode
+(`μ j = ω_j ^ 2 > 0`), the modal damping coefficient `α + β * μ j` is
+the usual `2 ζ_j ω_j` with `ζ_j = (α + β * μ j) / (2 * ω_j)`; a rigid
+mode (`μ j = 0`) has no damping ratio and is described only by its modal
+damping coefficient `α`. The damping transformation and the decoupling
+equivalence themselves hold for every real `α` and `β`.
 
 The modal basis `Φ` is complete and mass-orthonormal:
 `Φᵀ * M * Φ = 1` and `Φᵀ * K * Φ = diagonal μ`, with `μ j = ω_j ^ 2`.
@@ -116,8 +118,9 @@ def rayleighDamping (α β : ℝ) (M K : Matrix n n ℝ) : Matrix n n ℝ :=
 
 /-- Damping transformation: in a mass-orthonormal basis that diagonalizes the stiffness,
 the Rayleigh damping matrix becomes diagonal with modal damping coefficients
-`α + β * μ j` (twice the modal damping ratio times the modal frequency). Holds for every
-real `α`, `β`; repeated `μ` values are allowed. -/
+`α + β * μ j` (for an oscillatory mode `μ j > 0`, twice the modal damping ratio times
+the modal frequency; a rigid mode has coefficient `α` and no damping ratio). Holds for
+every real `α`, `β`; repeated `μ` values are allowed. -/
 lemma transpose_mul_rayleighDamping_mul {M K Φ : Matrix n n ℝ} {μ : n → ℝ}
     (hMΦ : Φᵀ * M * Φ = 1) (hKΦ : Φᵀ * K * Φ = diagonal μ) (α β : ℝ) :
     Φᵀ * rayleighDamping α β M K * Φ = diagonal fun j => α + β * μ j := by
