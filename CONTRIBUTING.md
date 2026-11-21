@@ -187,6 +187,24 @@ the same name. Verify ordinary PR, fork, and merge-queue delivery after an
 authorized deployment before enabling required enforcement. Until then this
 is advisory CI, not a standalone merge barrier.
 
+### Graph PRs
+
+A graph PR changes the ATLAS wiki; its content follows the
+[graph rules](docs/BLUEPRINT.md#graph-rules).
+
+- **Keep it under 3,000 changed files and name its issue** (`Closes #…` or
+  `Part of #…`). GitHub shows at most 3,000 files in one diff.
+- **An expansion changes no Lean outside `WantedExt`,** so its reviewer need
+  not also review proofs.
+- **Leave what the tools own alone** ([What the tools
+  own](docs/BLUEPRINT.md#what-the-tools-own)).
+- **A code owner approves it** (`.github/CODEOWNERS`) **and Codex reviews it:**
+  automatically for the repository's owners, members and collaborators and for
+  forks on `codex.yml`'s trusted list; on any other fork PR a maintainer
+  comments `@codex` for an advisory review. Agents produce graph changes faster
+  than people can check them, and a poor expansion spreads into every task
+  below it.
+
 ## How PRs merge
 
 `main` takes changes through GitHub's merge queue; do not push to it directly.
