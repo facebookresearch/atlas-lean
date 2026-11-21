@@ -16,13 +16,15 @@ which matters for $\alpha$ within $O(1/\log(qT))$ of $1$.
 The proof cited below may assume $T \ge q^{10}$ and $\alpha = 1 - A/\log T$ with
 $A = O(\log \log T)$, the other range following from a density estimate with logarithmic losses.
 It handles the principal character, whose L-function has the zeros of $\zeta$ in
-$\operatorname{Re} s > 0$, with the Vinogradov–Korobov zero-free region, and the other characters
-with zero-detecting Dirichlet polynomials weighted by Selberg sieve weights, which concentrate
-them on almost primes.
+$\operatorname{Re} s > 0$, with zero-free regions for $\zeta$: the Vinogradov–Korobov region for
+large ordinates and the classical region for bounded ones. The other characters are handled with
+zero-detecting Dirichlet polynomials weighted by Selberg sieve weights, which concentrate them on
+almost primes.
 
 ## Proof depends on
 
-- [Vinogradov–Korobov zero-free region](../../../arithmetic-functions/special-integer-classes/mean-value-of-2-n-over-squareful-numbers/zeta-ne-zero-vinogradov-korobov.md)
+- [Vinogradov–Korobov zero-free region](../../arithmetic-functions/special-integer-classes/mean-value-of-2-n-over-squareful-numbers/zeta-ne-zero-vinogradov-korobov.md)
+- [Classical zero-free region for the Riemann zeta function](../riemann-zeta/zero-free-regions-for-the-riemann-zeta-function/riemann-zeta-ne-zero-of-classical-zero-f.md)
 
 ## Sources
 

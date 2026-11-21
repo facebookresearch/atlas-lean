@@ -14062,8 +14062,6 @@
   "WantedExt/NumberTheory/DiophantineApproximation/ScottishBook152Wanted": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Lattice points in translated discs"},
   "WantedExt/NumberTheory/DiophantineApproximation/SqrtCubicEquidistributionWanted": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Square roots of cubic polynomials modulo one"},
   "WantedExt/NumberTheory/DiophantineQuintupleConjectureQuestion1Wanted": {"to": "NumberTheory/diophantine-equations/diophantine-tuples-egyptian", "title": "Diophantine tuples"},
-  "WantedExt/NumberTheory/DirichletExplicitFormulaWanted": {"to": "NumberTheory/zeta-l-functions/dirichlet-l-functions", "title": "Explicit formulas"},
-  "WantedExt/NumberTheory/DirichletLZerosWanted": {"to": "NumberTheory/zeta-l-functions/dirichlet-l-functions", "title": "Zeros of Dirichlet L-functions"},
   "WantedExt/NumberTheory/DirichletSubconvexityWanted": {"to": "NumberTheory/zeta-l-functions/dirichlet-l-functions", "title": "Subconvexity bounds for Dirichlet L-functions"},
   "WantedExt/NumberTheory/DirichletWeylBoundWanted": {"to": "NumberTheory/zeta-l-functions/dirichlet-l-functions", "title": "Subconvexity bounds for Dirichlet L-functions"},
   "WantedExt/NumberTheory/DistinctEisensteinPrimesWanted": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Primes of the form 6k − 1"},

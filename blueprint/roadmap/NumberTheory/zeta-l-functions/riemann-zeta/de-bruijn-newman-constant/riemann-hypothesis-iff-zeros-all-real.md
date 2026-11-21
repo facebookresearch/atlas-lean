@@ -13,8 +13,9 @@ equivalent to the real-rootedness of $H_\lambda$ at $\lambda = 0$.
 By the Fourier integral for the Riemann $\xi$ function, $8 H_0(z) = \xi(1/2 + iz/2)$ for every
 complex $z$. So $z$ is a zero of $H_0$ exactly when $\rho = 1/2 + iz/2$ is a zero of $\xi$, and
 $z = -2i(\rho - 1/2)$ is real exactly when $\operatorname{Re} \rho = 1/2$. The zeros of $\xi$ are
-the nontrivial zeros of $\zeta$: the factor $\tfrac12 s(s-1)$ removes the pole at $s = 1$ and the
-value at $s = 0$, and the poles of $\Gamma(s/2)$ cancel the trivial zeros.
+the nontrivial zeros of $\zeta$: the factor $\tfrac12 s(s-1)$ cancels the poles of the completed zeta
+function $\pi^{-s/2} \Gamma(s/2) \zeta(s)$ at $s = 0$ and $s = 1$, and the poles of $\Gamma(s/2)$ at
+$-2, -4, \dots$ cancel the trivial zeros.
 
 ## Depends on
 

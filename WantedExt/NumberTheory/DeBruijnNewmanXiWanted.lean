@@ -27,9 +27,10 @@ rescaled: `8 H 0 z = ξ(1/2 + i z / 2)`. A real `z` corresponds to a point of th
 
 /-- **Fourier integral for the Riemann ξ function.** For every complex number `z`,
 `8 H₀(z) = ξ(1/2 + i z / 2)`, where `H₀(z) = ∫₀^∞ Φ(u) cos(z u) du` is the de Bruijn–Newman
-deformation at time `0`, `Φ` is Newman's kernel, and
-`ξ(s) = s (s - 1) / 2 · π^(-s/2) Γ(s/2) ζ(s)` is the Riemann ξ function (extended to `s = 0, 1`
-by its limits `1/2`).
+deformation at time `0`, `Φ` is Newman's kernel, and `ξ` is the Riemann ξ function:
+`ξ(s) = s (s - 1) / 2 · Λ(s)` for `s ≠ 0, 1` and `ξ(0) = ξ(1) = 1/2`, where `Λ` is the completed
+zeta function, the meromorphic function `π^(-s/2) Γ(s/2) ζ(s)` continued across its removable
+singularities at `-2, -4, …`, whose only poles are simple poles at `0` and `1`.
 
 Source: B. Rodgers and T. Tao, *The de Bruijn–Newman constant is non-negative*, Forum Math. Pi 8
 (2020), e6, arXiv:1801.05914v3, §1: equation (1) defines `H₀(z) = ξ(1/2 + i z / 2) / 8` with `ξ`

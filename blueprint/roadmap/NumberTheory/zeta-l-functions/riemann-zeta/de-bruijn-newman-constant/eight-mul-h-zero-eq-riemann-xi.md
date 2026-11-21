@@ -7,8 +7,11 @@ $$
 $$
 
 where $H_0(z) = \int_0^\infty \Phi(u) \cos(zu)\,du$ is the de Bruijn–Newman deformation at time
-$0$, $\Phi$ is Newman's kernel, and $\xi(s) = \tfrac12 s (s - 1) \pi^{-s/2} \Gamma(s/2) \zeta(s)$ is
-the Riemann $\xi$ function, extended to $s = 0$ and $s = 1$ by its value $1/2$ there.
+$0$, $\Phi$ is Newman's kernel, and $\xi$ is the Riemann $\xi$ function:
+$\xi(s) = \tfrac12 s (s - 1) \Lambda(s)$ for $s \ne 0, 1$ and $\xi(0) = \xi(1) = 1/2$, where
+$\Lambda$ is the completed zeta function, the meromorphic function
+$\pi^{-s/2} \Gamma(s/2) \zeta(s)$ continued across its removable singularities at
+$-2, -4, \dots$, whose only poles are simple poles at $0$ and $1$.
 
 ## Sources
 

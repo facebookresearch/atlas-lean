@@ -14,5 +14,5 @@ The bound removes the factor $(\log T)^{\varepsilon}$ from Chandee's bound for t
 
 ## Sources
 
-- A. Hamieh, H. Kadiri, G. Martin and N. Ng (eds.), *Moments of L-functions Problem List*, arXiv:2405.17800 (2024), Moments of the Riemann zeta function, Problem 7 (N. Ng), which records that Curran solved the problem.
+- A. Hamieh, H. Kadiri, G. Martin and N. Ng (eds.), *Moments of L-functions Problem List*, arXiv:2405.17800 (2024), Moments of the Riemann zeta function, Problem (5) on p. 6 (N. Ng: improve Chandee's Theorem 1.2), which records that Curran solved the problem.
 - M. J. Curran, *Correlations of the Riemann zeta function*, Mathematika 70 (2024), no. 4, e12268, arXiv:2303.10123, Theorem 1.1, <https://doi.org/10.1112/mtk.12268>.
