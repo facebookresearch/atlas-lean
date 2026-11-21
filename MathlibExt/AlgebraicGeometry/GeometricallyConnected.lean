@@ -10,7 +10,10 @@ LICENSE file in the root directory of this source tree.
 Portions of this file are adapted from:
 
 `Theorems/Thm_AlgebraicGeometry_GeometricallyIrreducible_geometricallyConnected.lean` and
-`P2M/Sol/S_AlgebraicGeometry_GeometricallyIrreducible_geometricallyConnected.lean`
+`P2M/Sol/S_AlgebraicGeometry_GeometricallyIrreducible_geometricallyConnected.lean`,
+and
+`Theorems/Thm_AlgebraicGeometry_GeometricallyConnected_of_comp_of_surjective.lean` and
+`P2M/Sol/S_AlgebraicGeometry_GeometricallyConnected_of_comp_of_surjective.lean`
 in https://github.com/anthropics/fermats-last-theorem
 at commit 6e837e75355538c7f80bab5b956861e86c4eacc2:
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
@@ -30,6 +33,7 @@ module
 
 public import Mathlib.AlgebraicGeometry.Geometrically.Irreducible
 public import Mathlib.AlgebraicGeometry.Geometrically.Connected
+import Mathlib.AlgebraicGeometry.PullbackCarrier
 
 /-!
 # Geometrically irreducible implies geometrically connected
@@ -55,3 +59,25 @@ theorem AlgebraicGeometry.GeometricallyIrreducible.geometricallyConnected
   intro X' Y' g hg hI hS
   have : IrreducibleSpace X' := hg hI hS
   infer_instance
+
+/-- Geometric connectedness of a composite `f ≫ g` descends to `g` when
+`f` is surjective: every geometric fiber of `g` is a continuous surjective
+image of the corresponding fiber of the composite. -/
+theorem AlgebraicGeometry.GeometricallyConnected.of_comp_of_surjective
+    {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z)
+    [GeometricallyConnected (f ≫ g)] [Surjective f] :
+    GeometricallyConnected g := by
+  refine ⟨geometrically_iff_of_isClosedUnderIsomorphisms.mpr fun K _ k ↦ ?_⟩
+  have hX : ConnectedSpace ↥(Limits.pullback (f ≫ g) k) :=
+    pullback_of_geometrically
+      (GeometricallyConnected.geometrically_connectedSpace (f := f ≫ g)) K k
+  let φ : Limits.pullback (f ≫ g) k ⟶ Limits.pullback g k :=
+    Limits.pullback.map (f ≫ g) k g k f (𝟙 _) (𝟙 Z)
+      (Category.comp_id _) (by simp)
+  haveI : MorphismProperty.IsStableUnderComposition (@Surjective.{u}) :=
+    ⟨fun {X Y Z} f g hf hg => letI := hf; letI := hg; inferInstance⟩
+  have hφ : Surjective φ :=
+    MorphismProperty.pullbackMap (P := @Surjective.{u}) ‹Surjective f›
+      inferInstance rfl (Category.id_comp _).symm
+  rw [connectedSpace_iff_univ, ← hφ.surj.range_eq]
+  exact isConnected_range φ.continuous
