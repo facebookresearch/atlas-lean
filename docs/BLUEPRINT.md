@@ -154,12 +154,13 @@ The tools also decide these:
   never are. Committed annotations carry no `kind`, so on the committed tree
   it lists none.
 
-The wiki build runs `autoform check blueprint`, which fails on cycles,
-dangling dependency targets and missing declarations, so a reviewer doesn't
-re-report those. Nothing runs `autoform audit` in CI; authors may run
-`autoform audit blueprint --lean-root .`, and reviewers still check what it
-reports, such as overfull folders and two pages for one declaration
-(`duplicate-lean-target`).
+Blueprint Pages' `build the wiki` job runs `autoform check blueprint`, which
+fails on cycles, dangling dependency targets and missing declarations. The job
+is advisory, so a reviewer skips those only once it has passed on the PR's
+head commit, and otherwise reports them. Nothing runs `autoform audit` in CI;
+authors may run `autoform audit blueprint --lean-root .`, and reviewers still
+check what it reports, such as overfull folders and two pages for one
+declaration (`duplicate-lean-target`).
 
 ### Procedures
 
