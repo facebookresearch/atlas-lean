@@ -57,8 +57,8 @@ introduced; `θ` is written inline as above.
   bound `S_e ≤ 1` itself fails.
 - `EarthScience.vanGenuchtenSe_eq_div_iff_waterContent`: the Eq. [2]
   bridge between effective saturation and water content.
-- `EarthScience.vanGenuchten_waterContent_mem_Icc`: the water content
-  lies in `[θ_r, θ_s]` and strictly exceeds `θ_r`.
+- `EarthScience.vanGenuchten_waterContent_mem_Ioc`: the water content
+  lies in `(θ_r, θ_s]`.
 - `EarthScience.vanGenuchten_waterContent_le_residual_of_le`: for
   `θ_s ≤ θ_r` the water content is at most `θ_r`.
 
@@ -192,18 +192,17 @@ theorem vanGenuchtenSe_eq_div_iff_waterContent {θr θs θ α n h : ℝ}
 
 /-- Water-content bounds: for `θr < θs`, on the unsaturated branch `h ≤ 0`
 with `α > 0` and `n > 1`, the volumetric water content
-`θr + (θs - θr) * S_e(h)` lies in `[θr, θs]` and strictly exceeds `θr`. -/
-theorem vanGenuchten_waterContent_mem_Icc
+`θr + (θs - θr) * S_e(h)` lies in `(θr, θs]`. -/
+theorem vanGenuchten_waterContent_mem_Ioc
     {θr θs α n h : ℝ} (hθ : θr < θs) (hα : 0 < α) (hn : 1 < n) (hh : h ≤ 0) :
-    θr + (θs - θr) * vanGenuchtenSe α n h ∈ Set.Icc θr θs ∧
-      0 < θr + (θs - θr) * vanGenuchtenSe α n h - θr := by
+    θr + (θs - θr) * vanGenuchtenSe α n h ∈ Set.Ioc θr θs := by
   obtain ⟨hSe_pos, hSe_le⟩ := vanGenuchtenSe_pos_and_le_one hα hn hh
   have hd : 0 < θs - θr := sub_pos.mpr hθ
   have hmul_pos : 0 < (θs - θr) * vanGenuchtenSe α n h := mul_pos hd hSe_pos
   have hmul_le : (θs - θr) * vanGenuchtenSe α n h ≤ (θs - θr) * 1 :=
     mul_le_mul_of_nonneg_left hSe_le hd.le
   rw [mul_one] at hmul_le
-  refine ⟨⟨?_, ?_⟩, ?_⟩ <;> linarith
+  refine ⟨?_, ?_⟩ <;> linarith
 
 /-- Control, `θs ≤ θr`: on the unsaturated branch with `α > 0` and `n > 1`,
 the water content is at most `θr`, so the positive excess needs `θr < θs`. -/

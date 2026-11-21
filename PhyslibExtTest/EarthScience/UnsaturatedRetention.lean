@@ -124,9 +124,8 @@ example {θr θs θ α n h : ℝ} (hθ : θr < θs) :
 /-- The public statement shape of the water-content bounds. -/
 example {θr θs α n h : ℝ} (hθ : θr < θs) (hα : 0 < α) (hn : 1 < n)
     (hh : h ≤ 0) :
-    θr + (θs - θr) * EarthScience.vanGenuchtenSe α n h ∈ Set.Icc θr θs ∧
-      0 < θr + (θs - θr) * EarthScience.vanGenuchtenSe α n h - θr :=
-  EarthScience.vanGenuchten_waterContent_mem_Icc hθ hα hn hh
+    θr + (θs - θr) * EarthScience.vanGenuchtenSe α n h ∈ Set.Ioc θr θs :=
+  EarthScience.vanGenuchten_waterContent_mem_Ioc hθ hα hn hh
 
 /-- The public statement shape of the `θs ≤ θr` control. -/
 example {θr θs α n h : ℝ} (hθ : θs ≤ θr) (hα : 0 < α) (hn : 1 < n)
@@ -144,10 +143,10 @@ example {θr θs α n : ℝ} (hn : 1 < n) :
 at any finite unsaturated head. -/
 example {θr θs α n : ℝ} (hθ : θr < θs) (hα : 0 < α) (hn : 1 < n)
     (h : ℝ) (hh : h ≤ 0) :
-    θr + (θs - θr) * EarthScience.vanGenuchtenSe α n h ≠ θr :=
-  fun he =>
-    (EarthScience.vanGenuchten_waterContent_mem_Icc hθ hα hn hh).2.ne'
-      (sub_eq_zero.mpr he)
+    θr + (θs - θr) * EarthScience.vanGenuchtenSe α n h ≠ θr := by
+  intro he
+  have hlt := (EarthScience.vanGenuchten_waterContent_mem_Ioc hθ hα hn hh).1
+  linarith
 
 /-- Excluded exponent `n = 1 / 2`: the water content overshoots `θs`. -/
 example {θr θs : ℝ} (hθ : θr < θs) :
@@ -162,7 +161,7 @@ example {θr θs : ℝ} (hθ : θr < θs) :
 example :
     (1 / 20 : ℝ) < 1 / 20 + (9 / 20 - 1 / 20) * EarthScience.vanGenuchtenSe 1 2 (-1) ∧
       1 / 20 + (9 / 20 - 1 / 20) * EarthScience.vanGenuchtenSe 1 2 (-1) < 9 / 20 := by
-  have h := EarthScience.vanGenuchten_waterContent_mem_Icc (θr := 1 / 20)
+  have h := EarthScience.vanGenuchten_waterContent_mem_Ioc (θr := 1 / 20)
     (θs := 9 / 20) (α := 1) (n := 2) (h := -1) (by norm_num) (by norm_num)
     (by norm_num) (by norm_num)
   have hlt := EarthScience.vanGenuchtenSe_lt_one (α := 1) (n := 2) (h := -1)
@@ -170,7 +169,7 @@ example :
   have hmul : (9 / 20 - 1 / 20 : ℝ) * EarthScience.vanGenuchtenSe 1 2 (-1) <
       (9 / 20 - 1 / 20 : ℝ) * 1 :=
     mul_lt_mul_of_pos_left hlt (by norm_num)
-  constructor <;> linarith [h.2, hmul]
+  constructor <;> linarith [h.1, hmul]
 
 /-- The upper end is sharp: `θs` is attained at the finite head `h = 0`. -/
 example {θr θs α n : ℝ} (hn : 1 < n) :
@@ -191,8 +190,10 @@ example {θr θs : ℝ} :
 example {θr α n h : ℝ} :
     θr + (θr - θr) * EarthScience.vanGenuchtenSe α n h - θr = 0 := by ring
 
-/-- The Eq. [2] bridge needs `θr < θs`: at `θr = θs = θ = 0` its right
-side holds while the left side is the false `0 = S_e > 0`. -/
+/-- Equal endpoints break the Eq. [2] bridge: at `θr = θs = θ = 0` its
+right side holds while the left side is the false `0 = S_e > 0`. (The
+bridge theorem is stated under the physical order `θr < θs`; algebraically
+its proof uses only `θs - θr ≠ 0`.) -/
 example : ¬ (((0 : ℝ) - 0) / (0 - 0) = EarthScience.vanGenuchtenSe 1 2 (-1) ↔
     (0 : ℝ) = 0 + (0 - 0) * EarthScience.vanGenuchtenSe 1 2 (-1)) := by
   intro hiff
