@@ -10,6 +10,7 @@ module
 
 public import CSLibExt.MachineLearning.Sequence.HiddenMarkovLaw
 public import Mathlib.Probability.ProbabilityMassFunction.Constructions
+import MathlibExt.Probability.ProbabilityMassFunction.Marginal
 
 /-!
 # Joint law of a normalized hidden Markov model as an actual PMF
@@ -381,32 +382,12 @@ both sides zero through the corresponding factor. -/
 theorem jointProb_factor (h : HMM S O ℝ) (t : ℕ)
     (z : Fin (t + 1) → S) (x : Fin (t + 1) → O) :
     jointProb S O h t (z, x) = pathWeight h t z * obsWeight h t z x := by
-  induction t with
-  | zero =>
-      have he : (extend 0 x) 0 = x 0 :=
-        extend_apply_le 0 x 0 (by omega)
-      have hpw : pathWeight h 0 z = h.init (z 0) := by simp [pathWeight]
-      have how : obsWeight h 0 z x = h.emit (z 0) (x 0) := by
-        simp only [obsWeight]
-        rw [Fin.prod_univ_succ]
-        simp
-      simp only [jointProb, pathProb]
-      rw [he, hpw, how]
-  | succ t IH =>
-      have hzz : z = Fin.snoc (Fin.init z) (z (Fin.last (t + 1))) := by
-        simp
-      have hxx : x = Fin.snoc (Fin.init x) (x (Fin.last (t + 1))) := by
-        simp
-      have step : ∀ (z' : Fin (t + 1) → S) (x' : Fin (t + 1) → O)
-          (s : S) (o : O),
-          jointProb S O h (t + 1) (Fin.snoc z' s, Fin.snoc x' o) =
-            pathWeight h (t + 1) (Fin.snoc z' s) *
-              obsWeight h (t + 1) (Fin.snoc z' s) (Fin.snoc x' o) := by
-        intro z' x' s o
-        rw [jointProb_snoc, pathWeight_snoc, obsWeight_snoc, IH]
-        ring
-      rw [hzz, hxx]
-      exact step _ _ _ _
+  have hemit : (∏ i : Fin (t + 1), h.emit (z i) (extend t x i)) =
+      ∏ i : Fin (t + 1), h.emit (z i) (x i) :=
+    Finset.prod_congr rfl fun i _ => by
+      rw [extend_apply_le t x (i : ℕ) (Nat.le_of_lt_succ i.isLt)]
+  rw [show jointProb S O h t (z, x) = pathProb h (extend t x) t z from rfl,
+    HiddenMarkov.pathProb_eq_prod, hemit, pathWeight, obsWeight, mul_assoc]
 
 theorem jointPMF_apply (h : HMM S O ℝ) (hN : Normalized h) (t : ℕ)
     (z : Fin (t + 1) → S) (x : Fin (t + 1) → O) :
@@ -431,6 +412,7 @@ theorem jointProb_nonneg (h : HMM S O ℝ) (hN : Normalized h) (t : ℕ)
   exact mul_nonneg (pathWeight_nonneg h hN t z)
     (obsWeight_nonneg h hN t z x)
 
+
 /-- The observation marginal (`Prod.snd`) of the joint PMF has mass
 `likelihood` at each observation string, in `ENNReal`. The
 `Normalized` hypothesis is needed here (unlike in
@@ -440,20 +422,7 @@ theorem obsMarginal_apply (h : HMM S O ℝ) (hN : Normalized h)
     (t : ℕ) (x : Fin (t + 1) → O) :
     (PMF.map Prod.snd (jointPMF h hN t)) x =
       ENNReal.ofReal (likelihood h (extend t x) t) := by
-  classical
-  have hcollapse : ∀ z : Fin (t + 1) → S,
-      (∑ x' : Fin (t + 1) → O, (jointPMF h hN t) (z, x') * PMF.pure x' x) =
-        (jointPMF h hN t) (z, x) := by
-    intro z
-    have hvan : ∀ x' ∈ (Finset.univ : Finset (Fin (t + 1) → O)), x' ≠ x →
-        (jointPMF h hN t) (z, x') * PMF.pure x' x = 0 := by
-      intro x' _ hx'
-      rw [PMF.pure_apply_of_ne _ _ (Ne.symm hx'), mul_zero]
-    rw [Finset.sum_eq_single x hvan
-      (fun h => absurd (Finset.mem_univ x) h), PMF.pure_apply_self, mul_one]
-  simp only [PMF.map, PMF.bind_apply, Function.comp_apply,
-    tsum_fintype, Fintype.sum_prod_type]
-  simp_rw [hcollapse]
+  rw [PMF.map_snd_apply]
   have hcell : ∀ z : Fin (t + 1) → S,
       (jointPMF h hN t) (z, x) =
         ENNReal.ofReal (jointProb S O h t (z, x)) :=
@@ -479,7 +448,6 @@ the path prior PMF exactly (observations sum out by construction). -/
 theorem pathMarginal_apply (h : HMM S O ℝ) (hN : Normalized h)
     (t : ℕ) (z : Fin (t + 1) → S) :
     (PMF.map Prod.fst (jointPMF h hN t)) z = (pathPMF h hN t) z := by
-  classical
   have hobs : ∀ z' : Fin (t + 1) → S,
       (∑ x' : Fin (t + 1) → O, (obsPMF h hN t z') x') = 1 := by
     intro z'
@@ -489,20 +457,9 @@ theorem pathMarginal_apply (h : HMM S O ℝ) (hN : Normalized h)
       (jointPMF h hN t) (z', x') =
         (pathPMF h hN t) z' * (obsPMF h hN t z') x' :=
     fun z' x' => jointPMF_bind_apply h hN t z' x'
-  have hinner : ∀ z' : Fin (t + 1) → S,
-      (∑ x' : Fin (t + 1) → O, (jointPMF h hN t) (z', x') * PMF.pure z' z) =
-        (pathPMF h hN t) z' * PMF.pure z' z := by
-    intro z'
-    simp_rw [hcell, mul_assoc, ← Finset.mul_sum, ← Finset.sum_mul, hobs, one_mul]
-  simp only [PMF.map, PMF.bind_apply, Function.comp_apply,
-    tsum_fintype, Fintype.sum_prod_type]
-  simp_rw [hinner]
-  have hvan : ∀ z' ∈ (Finset.univ : Finset (Fin (t + 1) → S)), z' ≠ z →
-      (pathPMF h hN t) z' * PMF.pure z' z = 0 := by
-    intro z' _ hz'
-    rw [PMF.pure_apply_of_ne _ _ (Ne.symm hz'), mul_zero]
-  rw [Finset.sum_eq_single z hvan
-    (fun h => absurd (Finset.mem_univ z) h), PMF.pure_apply_self, mul_one]
+  rw [PMF.map_fst_apply]
+  simp_rw [hcell]
+  rw [← Finset.mul_sum, hobs, mul_one]
 
 /-- The hidden-path marginal mass equals `pathWeight`, in `ENNReal`. -/
 theorem pathMarginal_apply_ofReal (h : HMM S O ℝ) (hN : Normalized h)
