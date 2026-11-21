@@ -236,6 +236,38 @@ class GraphRules(unittest.TestCase):
         self.assertIn("a folder page is not a node to break down", found)
         self.assertIn("takes true or false; Autoform drops any other value", found)
 
+    def test_defaults_not_ready_checks_linked_articles_and_folder_pages(self) -> None:
+        self.vault.write("blueprint/links/_defaults.json", json.dumps({
+            "object": {"type": "lean", "uri": "../.."}, "extensions": PLANNED,
+        }))
+        # An explicit false overrides the default, including on a linked page.
+        self.vault.annotations["CategoryTheory"][2]["extensions"] = {
+            rules.AUTOFORM: {rules.NOT_READY: False},
+        }
+        self.vault.save()
+        findings = [finding for finding in rules.check(self.vault.root) if finding.rule == 12]
+        self.assertIn("blueprint/roadmap/CategoryTheory/topos-theory/fundamental.md",
+                      {finding.subject for finding in findings})
+        self.assertIn("blueprint/roadmap/Physics/README.md", {finding.subject for finding in findings})
+        self.assertNotIn("blueprint/roadmap/CategoryTheory/topos-theory/is-topos.md",
+                         {finding.subject for finding in findings})
+        self.assertNotIn("blueprint/roadmap/Physics/mechanics.md", {finding.subject for finding in findings})
+
+    def test_nested_defaults_override_inherited_not_ready(self) -> None:
+        self.vault.write("blueprint/links/_defaults.json", json.dumps({"extensions": PLANNED}))
+        row = Vault.row("Physics/mechanics.md", declaration="X.mechanics")
+        row["subject"][0]["uri"] = "../../roadmap/Physics/mechanics.md"
+        self.vault.write("blueprint/links/nested/Physics.ndjson", json.dumps(row) + "\n")
+        defaults = "blueprint/links/nested/_defaults.json"
+        self.vault.write(defaults, "{}")
+        page = "blueprint/roadmap/Physics/mechanics.md"
+        self.assertTrue(any(f.rule == 12 and f.subject == page for f in rules.check(self.vault.root)))
+        self.vault.write(defaults, json.dumps({"extensions": {rules.AUTOFORM: {rules.NOT_READY: False}}}))
+        # Remove the explicit flag from the canonical row so only the nested row supplies it.
+        self.vault.annotations["Physics"][1]["extensions"] = {rules.AUTOFORM: {rules.NOT_READY: False}}
+        self.vault.save()
+        self.assertFalse(any(f.rule == 12 and f.subject == page for f in rules.check(self.vault.root)))
+
     def test_not_ready_false_and_legacy_rows(self) -> None:
         self.vault.annotations["Physics"][1]["extensions"] = {rules.AUTOFORM: {rules.NOT_READY: False}}
         # A row an earlier sync wrote with only a module and a name counts as linked, as lean-facts reads it.
@@ -439,6 +471,22 @@ class GitRules(unittest.TestCase):
             self.commit()
             errors = [str(finding) for finding in rules.check(self.root, self.base)]
         self.assertEqual(errors, ["the PR: changes 3 files; split it below 3, the most GitHub shows in one diff (rule 15)"])
+
+    def test_malformed_taxonomy_is_reported_without_blocking(self) -> None:
+        path = "scripts/taxonomy.json"
+        for taxonomy, message in (
+            ({"subjects": []}, "taxonomy subjects must be a JSON object"),
+            ({"subjects": {"Physics": None}}, "must be an object with a list of fields"),
+            ({"subjects": {"Physics": {"fields": None}}}, "must be an object with a list of fields"),
+            ({"subjects": {"Physics": {"fields": [None]}}}, "must be an object with a nonempty string slug"),
+            ({"subjects": {"Physics": {"fields": [{}]}}}, "must be an object with a nonempty string slug"),
+        ):
+            with self.subTest(taxonomy=taxonomy):
+                self.vault.write(path, json.dumps(taxonomy))
+                self.assertTrue(any(f.rule == 1 and f.subject == path and message in f.detail
+                                    for f in rules.check(self.root)))
+                with patch("sys.stderr"):
+                    self.assertEqual(self.run_main(), 0)
 
     def test_report_only_by_default_and_blocking_on_new_findings(self) -> None:
         self.assertEqual(self.run_main("--base", self.base, "--blocking"), 0)

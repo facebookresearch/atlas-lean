@@ -241,31 +241,54 @@ def load_annotations(root: Path, report: Report, *, linked_pages: set[Path] | No
         report.add(5, "blueprint/links", "not a folder (a symbolic link or missing), so Autoform reads no annotation")
         return annotations
     files = links_files(links, symlinks)
+    from literature_links import companion
+
+    defaults: dict[Path, dict] = {}
+    for source in files:
+        if source.name != DEFAULTS:
+            continue
+        name = rel(source, root)
+        if source.parent != links:
+            report.add(5, name, "Autoform merges this defaults file too; keep the one in blueprint/links/")
+        text = read_text(source, root, report, 5)
+        if text is None:
+            continue
+        try:
+            shared = json.loads(text)
+        except json.JSONDecodeError as error:
+            report.add(5, name, f"not JSON ({error.msg})")
+            continue
+        if not isinstance(shared, dict):
+            report.add(5, name, "annotation defaults must be a JSON object")
+            continue
+        for fact in DERIVED_FACTS:
+            if fact in shared:
+                report.add(8, name, f"the defaults commit {fact!r}, which lean-facts adds at build time")
+        # Only extensions and Lean reference data affect the page-level checks below.
+        defaults[source.parent] = {key: shared[key] for key in ("extensions", "object") if key in shared}
+
+    templates: dict[Path, dict] = {}
+
+    def template_for(folder: Path) -> dict:
+        if folder not in templates:
+            ancestors = [parent for parent in reversed(folder.parents) if parent == links or links in parent.parents]
+            template: dict = {}
+            for parent in [*ancestors, folder]:
+                if parent in defaults:
+                    template = companion.merge(template, defaults[parent], defaults=True)
+            templates[folder] = template
+        return templates[folder]
+
     for link in symlinks:
         # Not followed, and named by its own path: Autoform leaves it out and render refuses it.
         name = link.relative_to(root).as_posix()
         report.add(5, name, "a symbolic link in blueprint/links/; Autoform does not follow it and render refuses it")
     for source in files:
         name, lowered = rel(source, root), source.name.lower()
-        if not lowered.endswith(ANNOTATION_SUFFIXES):
+        if not lowered.endswith(ANNOTATION_SUFFIXES) or source.name == DEFAULTS:
             continue
         top_level = source.parent == links
-        if source.name == DEFAULTS:
-            # Autoform merges every defaults file into the rows below it, so none may add derived facts.
-            text = read_text(source, root, report, 5)
-            if text is None:
-                continue
-            try:
-                shared = json.loads(text)
-            except json.JSONDecodeError as error:
-                report.add(5, name, f"not JSON ({error.msg})")
-                continue
-            for fact in DERIVED_FACTS:
-                if isinstance(shared, dict) and fact in shared:
-                    report.add(8, name, f"the defaults commit {fact!r}, which lean-facts adds at build time")
-            if not top_level:
-                report.add(5, name, f"Autoform merges this defaults file too; keep the one in blueprint/links/")
-            continue
+        template = template_for(source.parent)
         if not (top_level and source.suffix == ".jsonl"):
             # Autoform reads every .json, .jsonl and .ndjson file here, at any depth; sync_wiki.py reads only
             # blueprint/links/<Subject>.jsonl, so annotations anywhere else are a second, unsynced source.
@@ -302,9 +325,14 @@ def load_annotations(root: Path, report: Report, *, linked_pages: set[Path] | No
                     report.add(5, subject, f"malformed id {article_id!r}", at)
                 else:
                     ids.setdefault(article_id, []).append((subject, at))
-            if check_row_extensions(subject, annotation, at, report):
+            try:
+                effective = companion.merge(template, annotation) if template else annotation
+            except RecursionError:
+                report.add(5, subject, "annotation and defaults are nested too deeply to merge", at)
+                effective = annotation
+            if check_row_extensions(subject, effective, at, report):
                 pending.setdefault(page, at)
-            if linked(annotation):
+            if linked(annotation) or linked(effective):
                 linked_pages.add(page)
             # Autoform merges a row from any file it reads, so a second one anywhere is a second annotation.
             if page in rows:
@@ -344,19 +372,34 @@ def load_annotations(root: Path, report: Report, *, linked_pages: set[Path] | No
 
 def check_taxonomy(root: Path, report: Report) -> None:
     roadmap = root / "blueprint" / "roadmap"
+    path = "scripts/taxonomy.json"
     try:
-        subjects = json.loads((root / "scripts" / "taxonomy.json").read_text(encoding="utf-8"))["subjects"]
-    except (OSError, UnicodeError, json.JSONDecodeError, KeyError, TypeError) as error:
-        report.add(1, "scripts/taxonomy.json", f"unreadable taxonomy ({error})")
+        taxonomy = json.loads((root / path).read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        report.add(1, path, f"unreadable taxonomy ({error})")
         return
+    subjects = taxonomy.get("subjects") if isinstance(taxonomy, dict) else None
+    if not isinstance(subjects, dict):
+        report.add(1, path, "taxonomy subjects must be a JSON object")
+        return
+    field_slugs: dict[str, set[str]] = {}
+    for name, subject in sorted(subjects.items()):
+        if not isinstance(subject, dict) or not isinstance(subject.get("fields", []), list):
+            report.add(1, path, f"subject {name!r} must be an object with a list of fields")
+            continue
+        fields = subject.get("fields", [])
+        if any(not isinstance(entry, dict) or not isinstance(entry.get("slug"), str) or not entry["slug"]
+               for entry in fields):
+            report.add(1, path, f"each field of subject {name!r} must be an object with a nonempty string slug")
+            continue
+        field_slugs[name] = {entry["slug"] for entry in fields}
     for folder in sorted(path for path in roadmap.iterdir() if path.is_dir()):
         if folder.name == UNCLASSIFIED:
             continue
-        subject = subjects.get(folder.name)
-        if subject is None:
+        if folder.name not in subjects:
             report.add(1, rel(folder, root), "not a subject of scripts/taxonomy.json")
             continue
-        fields = {entry["slug"] for entry in subject.get("fields", [])}
+        fields = field_slugs.get(folder.name)
         if not fields:
             continue
         for child in sorted(folder.iterdir()):
