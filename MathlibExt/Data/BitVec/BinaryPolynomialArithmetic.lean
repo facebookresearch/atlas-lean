@@ -11,6 +11,7 @@ execute multiplication and powering of fixed-width binary polynomial residues.
 module
 
 public import MathlibExt.RingTheory.AdjoinRoot.BitVec
+import Mathlib.Data.List.GetD
 
 /-! # Executable binary polynomial modular arithmetic
 
