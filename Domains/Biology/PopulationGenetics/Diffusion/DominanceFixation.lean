@@ -51,7 +51,7 @@ open Real Set
 open MathlibExt.Biology.PopulationGenetics.Diffusion (dominanceDrift fixationProb
   kimuraFixation)
 
-namespace Domains.Biology.PopulationGenetics.Diffusion.DominanceFixation
+namespace MathlibExt.Biology.PopulationGenetics.Diffusion
 
 /-- Genic case (`h = 1 / 2`): the dominance scale-function ratio is Kimura's genic fixation
 formula. At `h = 1 / 2` dominance selection is genic selection with scaled coefficient
@@ -110,4 +110,4 @@ theorem fixationProb_dominance_zero_c (h : ℝ) {p : ℝ} (hp : p ∈ Icc (0 : �
   simp only [hpt]
   simp [intervalIntegral.integral_const, smul_eq_mul]
 
-end Domains.Biology.PopulationGenetics.Diffusion.DominanceFixation
+end MathlibExt.Biology.PopulationGenetics.Diffusion
