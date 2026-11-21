@@ -172,10 +172,12 @@ private lemma coeff_transfer (n k : ℕ) :
   simp only [Polynomial.coeff_map] at hcoeff
   simpa using hcoeff.symm
 
-private lemma tri_zero : trinomialCoefficient 0 0 = 1 := by
+/-- The trinomial coefficient `T(0, 0)` is `1`. -/
+lemma trinomialCoefficient_zero_zero : trinomialCoefficient 0 0 = 1 := by
   simp [trinomialCoefficient]
 
-private lemma tri_one_one : trinomialCoefficient 1 1 = 1 := by
+/-- The trinomial coefficient `T(1, 1)` is `1`. -/
+lemma trinomialCoefficient_one_one : trinomialCoefficient 1 1 = 1 := by
   unfold trinomialCoefficient
   simp [pow_one, Polynomial.coeff_add, Polynomial.coeff_one, Polynomial.coeff_X, Polynomial.coeff_X_pow]
 
@@ -206,8 +208,8 @@ theorem centralTrinomialCoeff_three_term_recurrence (n : ℕ) :
         3 * n * trinomialCoefficient (n - 1) (n - 1) := by
   by_cases h : n < 2
   · interval_cases n
-    · simp [tri_zero, tri_one_one]
-    · simp [tri_one_one, tri_two_two, tri_zero]
+    · simp [trinomialCoefficient_zero_zero, trinomialCoefficient_one_one]
+    · simp [trinomialCoefficient_one_one, tri_two_two, trinomialCoefficient_zero_zero]
   · have hle : 2 ≤ n := by omega
     obtain ⟨t, rfl⟩ : ∃ t, n = t + 2 := ⟨n - 2, by omega⟩
     have hsub : (t + 2) - 1 = t + 1 := by omega
