@@ -121,6 +121,36 @@ theorem t3_bi_isBackwardInduction : Profile.IsBackwardInduction biProfile := by
 theorem t2_bi_isNash_tree : biProfile.IsNash :=
   Profile.IsBackwardInduction.isNash t3_bi_isBackwardInduction
 
+/-- Restricting the reassembly of the example strategies recovers each
+player's strategy. -/
+theorem t4_restrict_assemble_bi (i : Fin 2) :
+    restrict.{0, 0} (assemble.{0, 0} (fun j => restrict.{0, 0} biProfile j)) i =
+      restrict.{0, 0} biProfile i :=
+  restrict_assemble.{0, 0} _ i
+
+/-- The example profile is a Nash equilibrium of the induced normal form,
+by the Nash correspondence applied to its tree equilibrium. -/
+theorem t5_induced_nash_of_tree :
+    StrategicGame.IsNash.{0, 0} (inducedGame.{0, 0} testTree)
+      (fun i => restrict.{0, 0} biProfile i) :=
+  (isNash_inducedGame_iff.{0, 0} biProfile).mpr t2_bi_isNash_tree
+
+/-- The Nash correspondence also recovers tree equilibrium from the
+induced normal form. -/
+theorem t6_tree_nash_of_induced : biProfile.IsNash :=
+  (isNash_inducedGame_iff.{0, 0} biProfile).mp t5_induced_nash_of_tree
+
+/-- The induced normal form of the example tree has a pure Nash equilibrium. -/
+theorem t7_exists_induced_nash :
+    ∃ σ, StrategicGame.IsNash.{0, 0} (inducedGame.{0, 0} testTree) σ :=
+  exists_isNash_inducedGame.{0, 0} testTree
+
+/-- The induced-game payoff of the example restrictions is the tree outcome. -/
+theorem t8_induced_payoff_bi :
+    (inducedGame.{0, 0} testTree).payoff 0
+      (fun i => restrict.{0, 0} biProfile i) = 2 :=
+  t1_outcomes.{0}.2.2
+
 end
 
 end MathlibExtTest.GameTheory.BackwardInductionNormalForm
