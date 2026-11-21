@@ -46,4 +46,12 @@ example : producedMass 3 2 1 5 5 = 0 := by
 example : producedMass 1 1 1 0 1 < 0 := by
   exact produced_mass_neg_of_pressure_increase (by norm_num) (by norm_num) (by norm_num) (by norm_num)
 
+-- Distinct parameter pairs with the same product give identical
+-- linearized histories at every pressure: individual parameters are not
+-- identified.
+example (p : ℝ) :
+    linearProducedMass 2 1 3 0 p = linearProducedMass 1 1 6 0 p ∧
+      ((2 : ℝ), (3 : ℝ)) ≠ (1, 6) := by
+  refine ⟨linear_identifies_only_product (by norm_num), by norm_num⟩
+
 end Engineering.Resource.ReservoirBalance.Tests

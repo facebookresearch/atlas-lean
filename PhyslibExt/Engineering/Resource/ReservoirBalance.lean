@@ -164,4 +164,32 @@ lemma linear_identifies_only_product {Vp1 Vp2 c1 c2 rho0 p0 p : ℝ}
     _ = (Vp2 * c2) * (rho0 * (p0 - p)) := by rw [h]
     _ = Vp2 * rho0 * c2 * (p0 - p) := by ring
 
+/-- **Product identification, both directions.** Under a nondegenerate
+observation (nonzero reference density and a nonzero pressure excursion),
+equal linearized produced mass is equivalent to equal products
+`Vp * cfl`: the linearized history determines exactly the product, no
+more and no less. -/
+lemma linearProducedMass_eq_iff {Vp1 Vp2 c1 c2 rho0 p0 p : ℝ}
+    (hrho : rho0 ≠ 0) (hp : p ≠ p0) :
+    linearProducedMass Vp1 rho0 c1 p0 p =
+        linearProducedMass Vp2 rho0 c2 p0 p ↔
+      Vp1 * c1 = Vp2 * c2 := by
+  unfold linearProducedMass
+  have hd : p0 - p ≠ 0 := sub_ne_zero.mpr (Ne.symm hp)
+  have hfac : rho0 * (p0 - p) ≠ 0 := mul_ne_zero hrho hd
+  constructor
+  · intro h
+    have h' : (Vp1 * c1) * (rho0 * (p0 - p)) =
+        (Vp2 * c2) * (rho0 * (p0 - p)) := by
+      calc (Vp1 * c1) * (rho0 * (p0 - p))
+          = Vp1 * rho0 * c1 * (p0 - p) := by ring
+        _ = Vp2 * rho0 * c2 * (p0 - p) := h
+        _ = (Vp2 * c2) * (rho0 * (p0 - p)) := by ring
+    exact mul_right_cancel₀ hfac h'
+  · intro h
+    calc Vp1 * rho0 * c1 * (p0 - p)
+        = (Vp1 * c1) * (rho0 * (p0 - p)) := by ring
+      _ = (Vp2 * c2) * (rho0 * (p0 - p)) := by rw [h]
+      _ = Vp2 * rho0 * c2 * (p0 - p) := by ring
+
 end Engineering.Resource.ReservoirBalance
