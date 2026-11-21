@@ -210,6 +210,43 @@ class BlueprintWorkflowTests(unittest.TestCase):
         self.assertNotIn("BLUEPRINT_PAGES", condition)
         self.assertNotIn("push", condition)
 
+    def run_size_check(self, size, deploying):
+        step = self.step("Check the site against GitHub Pages' size limit")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "bin").mkdir()
+            du = root / "bin" / "du"
+            du.write_text(f"#!/bin/sh\nprintf '{size}\\tsite\\n'\n")
+            du.chmod(0o755)
+            summary = root / "summary.md"
+            env = {"PATH": f"{root / 'bin'}:/usr/bin:/bin", "GITHUB_STEP_SUMMARY": str(summary),
+                   "DEPLOYING": "true" if deploying else "false"}
+            result = subprocess.run(["bash", "-e", "-c", step["run"]], cwd=root, env=env,
+                                    text=True, capture_output=True, check=False)
+            self.assertIn(f"The built site is {size // 1000000} MB.", summary.read_text())
+            return result
+
+    def test_site_size_warns_from_900_mb_and_fails_only_a_publishing_build_over_1_gb(self):
+        for size, deploying, code, annotation in (
+            (899_999_999, True, 0, None),
+            (900_000_000, True, 0, "::warning title=Site near the Pages limit::"),
+            (1_000_000_000, True, 0, "::warning title=Site near the Pages limit::"),
+            (1_000_000_001, False, 0, "::warning title=Site over the Pages limit::"),
+            (1_000_000_001, True, 1, "::error title=Site over the Pages limit::"),
+        ):
+            with self.subTest(size=size, deploying=deploying):
+                result = self.run_size_check(size, deploying)
+                self.assertEqual(result.returncode, code, result.stderr)
+                if annotation is None:
+                    self.assertNotIn("::", result.stdout)
+                else:
+                    self.assertIn(annotation, result.stdout)
+
+    def test_site_size_check_deploys_exactly_when_the_upload_does(self):
+        step = self.step("Check the site against GitHub Pages' size limit")
+        upload = self.step("Upload Pages artifact")["if"]
+        self.assertEqual(step["env"]["DEPLOYING"], "${{ " + upload + " }}")
+
 
 if __name__ == "__main__":
     unittest.main()
