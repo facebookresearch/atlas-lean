@@ -26,8 +26,8 @@ together with criteria for the growth order of an entire function.
 
 ## Main statements
 
-* `Complex.hasGrowthOrderLE_one_of_eventually_norm_le_exp_mul_log`: a bound
-  `‖f s‖ ≤ exp (c ‖s‖ log ‖s‖)` at infinity gives order at most `1`.
+* `Complex.entireOfOrderAtMost_one_of_eventually_norm_le_exp_mul_log`: for an entire `f`, a
+  bound `‖f s‖ ≤ exp (c ‖s‖ log ‖s‖)` at infinity gives order at most `1`.
 * `Complex.not_isBigO_exp_mul_norm_of_factorial_le`: factorial growth along a sequence going to
   infinity at linear speed rules out exponential type.
 * `Complex.hasGrowthOrder_one_of_not_isBigO_exp_norm`: order at most `1`, but not of exponential
@@ -37,7 +37,7 @@ together with criteria for the growth order of an entire function.
 * `Complex.logDeriv_eq_add_tsum_of_eq_exp_mul_tprod`: the logarithmic derivative of a Hadamard
   product is `B + ∑ (1 / (s - zₙ) + 1 / zₙ)`.
 * `Complex.exp_eq_apply_zero_of_eq_exp_mul_tprod`: the constant term satisfies `exp A = f 0`.
-* `Complex.setOf_eq_zero_infinite_of_hasGrowthOrderLE_one`: an entire function of order at most
+* `Complex.setOf_eq_zero_infinite_of_entireOfOrderAtMost_one`: an entire function of order at most
   `1` that is not of exponential type has infinitely many zeros.
 * `Complex.hasSum_re_one_div_of_eq_exp_mul_tprod`: if `f s = ε conj (f (1 - conj s))` and the
   zeros lie in the strip `0 ≤ Re s ≤ 1`, then `∑ Re (1 / zₙ) = -Re B`.
@@ -49,17 +49,21 @@ open Filter Topology Asymptotics Bornology
 
 namespace Complex
 
+open Hadamard
+
 /-! ### Growth criteria -/
 
 section Growth
 
-variable {E : Type*} [Norm E] {f : ℂ → E}
+variable {f : ℂ → ℂ}
 
-/-- A bound `‖f s‖ ≤ exp (c ‖s‖ log ‖s‖)` at infinity gives order of growth at most `1`. -/
-theorem hasGrowthOrderLE_one_of_eventually_norm_le_exp_mul_log {c : ℝ}
+/-- For an entire `f`, a bound `‖f s‖ ≤ exp (c ‖s‖ log ‖s‖)` at infinity gives order at most
+`1`. -/
+theorem entireOfOrderAtMost_one_of_eventually_norm_le_exp_mul_log {c : ℝ}
+    (hd : Differentiable ℂ f)
     (hf : ∀ᶠ s in cobounded ℂ, ‖f s‖ ≤ Real.exp (c * ‖s‖ * Real.log ‖s‖)) :
-    HasGrowthOrderLE f 1 := by
-  intro ε hε
+    EntireOfOrderAtMost 1 f := by
+  refine EntireOfOrderAtMost.of_isBigO hd zero_le_one fun ε hε => ?_
   have hlo := (isLittleO_log_rpow_atTop hε).bound (c := 1 / (|c| + 1)) (by positivity)
   have hev : ∀ᶠ x : ℝ in atTop, c * x * Real.log x ≤ x ^ ((1 : ℝ) + ε) := by
     filter_upwards [hlo, eventually_gt_atTop 0] with x hx hx0
@@ -77,11 +81,10 @@ theorem hasGrowthOrderLE_one_of_eventually_norm_le_exp_mul_log {c : ℝ}
   rw [one_mul, Real.norm_of_nonneg (Real.exp_pos _).le]
   exact hs.trans (Real.exp_le_exp.mpr hs')
 
-/-- Order of growth less than `1` gives exponential type with constant `1`. -/
-theorem HasGrowthOrderLE.isBigO_exp_norm_of_lt_one {ρ : ℝ} (h : HasGrowthOrderLE f ρ)
-    (hρ : ρ < 1) : f =O[cobounded ℂ] fun s => Real.exp ‖s‖ := by
-  have := h (1 - ρ) (by linarith)
-  simpa using this
+/-- Order less than `1` gives exponential type with constant `1`. -/
+theorem Hadamard.EntireOfOrderAtMost.isBigO_exp_norm_of_lt_one {ρ : ℝ}
+    (h : EntireOfOrderAtMost ρ f) (hρ : ρ < 1) : f =O[cobounded ℂ] fun s => Real.exp ‖s‖ := by
+  simpa using h.isBigO_exp_rpow hρ one_pos
 
 /-- **Factorial growth rules out exponential type.** If `‖s n‖ ≤ a (n + 1)`, `s n → ∞` and
 `n! ≤ C Kⁿ ‖f (s n)‖` for all large `n`, then `f` is not `O(exp (b ‖s‖))` for any `b`. -/
@@ -126,7 +129,7 @@ theorem not_isBigO_exp_mul_norm_of_factorial_le {F : Type*} [SeminormedAddGroup 
   nlinarith
 
 /-- An entire function of order at most `1` that is not `O(exp ‖s‖)` has order exactly `1`. -/
-theorem hasGrowthOrder_one_of_not_isBigO_exp_norm (h1 : HasGrowthOrderLE f 1)
+theorem hasGrowthOrder_one_of_not_isBigO_exp_norm (h1 : EntireOfOrderAtMost 1 f)
     (h : ¬ f =O[cobounded ℂ] fun s => Real.exp ‖s‖) : HasGrowthOrder f 1 :=
   ⟨zero_le_one, h1, fun _ hρ hρ' => h (hρ'.isBigO_exp_norm_of_lt_one hρ.2)⟩
 
@@ -311,11 +314,10 @@ theorem apply_eq_zero_of_card_eq_analyticOrderAt
 
 /-- For an entire `f` of order at most `1` with `f 0 ≠ 0`, a family listing its zeros with
 multiplicity satisfies `∑ ‖zₙ‖⁻² < ∞`. -/
-theorem summable_norm_rpow_neg_two_of_hasGrowthOrderLE_one (hd : Differentiable ℂ f)
-    (h1 : HasGrowthOrderLE f 1) (hf0 : f 0 ≠ 0)
-    (hz : ∀ w, ENat.card {n // z n = w} = analyticOrderAt f w) :
+theorem summable_norm_rpow_neg_two_of_entireOfOrderAtMost_one (h1 : EntireOfOrderAtMost 1 f)
+    (hf0 : f 0 ≠ 0) (hz : ∀ w, ENat.card {n // z n = w} = analyticOrderAt f w) :
     Summable fun n => ‖z n‖ ^ (-2 : ℝ) := by
-  have := h1.summable_norm_rpow_neg hd zero_le_one hf0 hz one_pos
+  have := h1.summable_norm_rpow_neg zero_le_one hf0 hz one_pos
   convert this using 3
   norm_num
 
@@ -354,11 +356,11 @@ theorem exists_norm_le_exp_of_eq_exp_mul_tprod [Finite ι]
 
 /-- **An entire function of order at most `1` that is not of exponential type has infinitely
 many zeros.** -/
-theorem setOf_eq_zero_infinite_of_hasGrowthOrderLE_one (hd : Differentiable ℂ f)
-    (h1 : HasGrowthOrderLE f 1) (hf0 : f 0 ≠ 0)
-    (h : ∀ b : ℝ, ¬ f =O[cobounded ℂ] fun s => Real.exp (b * ‖s‖)) :
+theorem setOf_eq_zero_infinite_of_entireOfOrderAtMost_one (h1 : EntireOfOrderAtMost 1 f)
+    (hf0 : f 0 ≠ 0) (h : ∀ b : ℝ, ¬ f =O[cobounded ℂ] fun s => Real.exp (b * ‖s‖)) :
     {w | f w = 0}.Infinite := by
   intro hZ
+  have hd := h1.differentiable
   set N : ℂ → ℕ := fun w => (analyticOrderAt f w).toNat with hN
   have hz := card_sigma_fin_analyticOrderAt hd hf0
   -- the index type is finite
@@ -375,7 +377,7 @@ theorem setOf_eq_zero_infinite_of_hasGrowthOrderLE_one (hd : Differentiable ℂ 
     obtain ⟨rfl, h2⟩ := hij
     rw [Fin.ext h2]
   have : Finite (Σ w : ℂ, Fin (N w)) := Finite.of_injective g hg
-  obtain ⟨A, B, hAB⟩ := exists_eq_exp_mul_tprod_of_hasGrowthOrderLE_one hd h1 hf0 hz
+  obtain ⟨A, B, hAB⟩ := exists_eq_exp_mul_tprod_of_entireOfOrderAtMost_one h1 hf0 hz
   obtain ⟨b, hb⟩ := exists_norm_le_exp_of_eq_exp_mul_tprod hAB
   refine h b (IsBigO.of_bound (Real.exp ‖A‖) (Eventually.of_forall fun s => ?_))
   rw [Real.norm_of_nonneg (Real.exp_pos _).le, ← Real.exp_add]
@@ -391,14 +393,14 @@ Source: H. Davenport, *Multiplicative Number Theory*, 3rd ed., Graduate Texts in
 Springer, 2000, Chapter 12 (*The infinite products for ξ(s) and ξ(s, χ)*),
 DOI 10.1007/978-1-4757-5927-3_12. Generalised from `ξ` to any entire function of order at
 most `1` with this reflection symmetry and zeros in the strip. -/
-theorem hasSum_re_one_div_of_eq_exp_mul_tprod (hd : Differentiable ℂ f)
-    (h1 : HasGrowthOrderLE f 1) (hf0 : f 0 ≠ 0)
+theorem hasSum_re_one_div_of_eq_exp_mul_tprod (h1 : EntireOfOrderAtMost 1 f) (hf0 : f 0 ≠ 0)
     (hz : ∀ w, ENat.card {n // z n = w} = analyticOrderAt f w) {ε : ℂ}
     (hsym : ∀ s, f s = ε * conj (f (1 - conj s)))
     (hstrip : ∀ w, f w = 0 → 0 ≤ w.re ∧ w.re ≤ 1)
     (hAB : ∀ s, f s = exp (A + B * s) * ∏' n, (1 - s / z n) * exp (s / z n)) :
     HasSum (fun n => (1 / z n).re) (-B.re) := by
   classical
+  have hd := h1.differentiable
   have hF0 : f 0 = ε * conj (f 1) := by rw [hsym 0]; simp
   have hε0 : ε ≠ 0 := by rintro h; apply hf0; rw [hF0, h, zero_mul]
   have hf1 : f 1 ≠ 0 := by
@@ -422,7 +424,7 @@ theorem hasSum_re_one_div_of_eq_exp_mul_tprod (hd : Differentiable ℂ f)
   -- the log-derivative of the product
   have hzero := apply_eq_zero_of_card_eq_analyticOrderAt hz
   have hz0 : ∀ n, z n ≠ 0 := fun n h => hf0 (h ▸ hzero n)
-  have hsum := summable_norm_rpow_neg_two_of_hasGrowthOrderLE_one hd h1 hf0 hz
+  have hsum := summable_norm_rpow_neg_two_of_entireOfOrderAtMost_one h1 hf0 hz
   have hLD : ∀ s, f s ≠ 0 → logDeriv f s = B + ∑' n, (1 / (s - z n) + 1 / z n) :=
     fun s hs => logDeriv_eq_add_tsum_of_eq_exp_mul_tprod hz0 hsum hAB hzero (hd s) hs
   have hB0 : deriv f 0 / f 0 = B := by

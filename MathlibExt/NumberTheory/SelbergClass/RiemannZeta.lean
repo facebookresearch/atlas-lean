@@ -49,11 +49,13 @@ open scoped ArithmeticFunction.zeta
 
 namespace Complex
 
-/-- Composing a function of order at most `ρ` with the affine map `z ↦ z / 2 + 1` keeps the
-order at most `ρ`. -/
-theorem HasGrowthOrderLE.comp_div_two_add_one {f : ℂ → ℂ} {ρ : ℝ} (hρ : 0 ≤ ρ)
-    (hf : HasGrowthOrderLE f ρ) : HasGrowthOrderLE (fun z => f (z / 2 + 1)) ρ := by
-  intro ε hε
+/-- Composing an entire function of order at most `ρ ≥ 0` with the affine map `z ↦ z / 2 + 1`
+keeps the order at most `ρ`. -/
+theorem Hadamard.EntireOfOrderAtMost.comp_div_two_add_one {f : ℂ → ℂ} {ρ : ℝ} (hρ : 0 ≤ ρ)
+    (hf : Hadamard.EntireOfOrderAtMost ρ f) :
+    Hadamard.EntireOfOrderAtMost ρ (fun z => f (z / 2 + 1)) := by
+  refine Hadamard.EntireOfOrderAtMost.of_isBigO
+    (hf.differentiable.comp ((differentiable_id.div_const 2).add_const 1)) hρ fun ε hε => ?_
   have hlow : ∀ z : ℂ, ‖z‖ / 2 - 1 ≤ ‖z / 2 + 1‖ := by
     intro z
     have h := norm_sub_le (z / 2 + 1) 1
@@ -64,7 +66,7 @@ theorem HasGrowthOrderLE.comp_div_two_add_one {f : ℂ → ℂ} {ρ : ℝ} (hρ 
     refine tendsto_atTop_mono hlow ?_
     exact tendsto_atTop_add_const_right _ _
       (tendsto_norm_cobounded_atTop.atTop_div_const two_pos)
-  refine ((hf ε hε).comp_tendsto ht).trans (IsBigO.of_bound 1 ?_)
+  refine ((hf.isBigO hρ hε).comp_tendsto ht).trans (IsBigO.of_bound 1 ?_)
   filter_upwards [tendsto_norm_cobounded_atTop.eventually_ge_atTop 2] with z hz
   simp only [Function.comp_apply, one_mul, Real.norm_of_nonneg (Real.exp_pos _).le]
   gcongr
@@ -193,9 +195,11 @@ theorem FunctionalEquation.degree_riemannZeta : FunctionalEquation.riemannZeta.d
 
 /-! ### Finite order of `(s - 1) ζ(s)` -/
 
-private theorem hasGrowthOrderLE_pi_cpow :
-    HasGrowthOrderLE (fun s : ℂ => (Real.pi : ℂ) ^ (s / 2)) 1 := by
-  refine hasGrowthOrderLE_one_of_isBigO_exp_mul_norm (A := 2) (IsBigO.of_bound 1 ?_)
+private theorem entireOfOrderAtMost_pi_cpow :
+    Hadamard.EntireOfOrderAtMost 1 (fun s : ℂ => (Real.pi : ℂ) ^ (s / 2)) := by
+  refine Hadamard.entireOfOrderAtMost_one_of_isBigO_exp_mul_norm (A := 2)
+    ((differentiable_id.div_const 2).const_cpow (Or.inl (by exact_mod_cast Real.pi_ne_zero)))
+    (IsBigO.of_bound 1 ?_)
   refine Eventually.of_forall fun s => ?_
   rw [one_mul, Real.norm_of_nonneg (Real.exp_pos _).le,
     norm_cpow_eq_rpow_re_of_pos Real.pi_pos, Real.rpow_def_of_pos Real.pi_pos, Real.exp_le_exp]
@@ -209,22 +213,13 @@ private theorem hasGrowthOrderLE_pi_cpow :
 
 /-- The entire function `ξ(s) π^{s/2} / Γ(s/2 + 1)`, equal to `(s - 1) ζ(s)` off `s = 1`. -/
 private noncomputable def zetaG (s : ℂ) : ℂ :=
-  RiemannXi.riemannXi s * (Real.pi : ℂ) ^ (s / 2) * (1 / Gamma (s / 2 + 1))
+  Complex.riemannXi s * (Real.pi : ℂ) ^ (s / 2) * (1 / Gamma (s / 2 + 1))
 
-private theorem differentiable_zetaG : Differentiable ℂ zetaG := by
-  have h1 := RiemannXi.differentiable_riemannXi
-  have h2 : Differentiable ℂ fun s : ℂ => (Real.pi : ℂ) ^ (s / 2) :=
-    (differentiable_id.div_const 2).const_cpow (Or.inl (by exact_mod_cast Real.pi_ne_zero))
-  have h3 : Differentiable ℂ fun s : ℂ => 1 / Gamma (s / 2 + 1) := by
-    simpa [Function.comp_def] using
-      differentiable_one_div_Gamma.comp ((differentiable_id.div_const 2).add_const 1)
-  exact (h1.mul h2).mul h3
-
-private theorem hasGrowthOrderLE_zetaG : HasGrowthOrderLE zetaG 1 := by
-  have h3 : HasGrowthOrderLE (fun s : ℂ => 1 / Gamma (s / 2 + 1)) 1 := by
-    have := hasGrowthOrder_inv_Gamma.hasGrowthOrderLE.comp_div_two_add_one zero_le_one
+private theorem entireOfOrderAtMost_zetaG : Hadamard.EntireOfOrderAtMost 1 zetaG := by
+  have h3 : Hadamard.EntireOfOrderAtMost 1 (fun s : ℂ => 1 / Gamma (s / 2 + 1)) := by
+    have := hasGrowthOrder_inv_Gamma.entireOfOrderAtMost.comp_div_two_add_one zero_le_one
     simpa only [one_div] using this
-  exact (RiemannXi.hasGrowthOrderLE_riemannXi.mul hasGrowthOrderLE_pi_cpow).mul h3
+  exact (RiemannXi.entireOfOrderAtMost_riemannXi.mul entireOfOrderAtMost_pi_cpow).mul h3
 
 private theorem zetaG_eq (s : ℂ) (hs1 : s ≠ 1) : zetaG s = (s - 1) ^ 1 * _root_.riemannZeta s := by
   rcases eq_or_ne s 0 with rfl | hs0
@@ -255,7 +250,7 @@ theorem isEulerLog_zeta : IsEulerLog (ζ : ArithmeticFunction ℂ) zetaLog := by
 /-- **The Riemann zeta function is in the Selberg class.** -/
 theorem zeta_mem_selbergClass : (ζ : ArithmeticFunction ℂ) ∈ selbergClass := by
   refine ⟨by simp, ⟨riemannZeta, isLSeriesContinuation_zeta,
-    ⟨1, zetaG, 1, differentiable_zetaG, hasGrowthOrderLE_zetaG, zetaG_eq⟩,
+    ⟨1, zetaG, 1, entireOfOrderAtMost_zetaG, zetaG_eq⟩,
       ⟨FunctionalEquation.riemannZeta⟩⟩,
     ⟨zetaLog, 0, by norm_num, isEulerLog_zeta, 1, fun n => by
       simpa using norm_zetaLog_le_one n⟩, fun ε hε => ⟨1, fun n => ?_⟩⟩

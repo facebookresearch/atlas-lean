@@ -2338,7 +2338,8 @@ theorem one_le_degree_of_pos (a : ArithmeticFunction ℂ) (ha : a ∈ selbergCla
   by_contra hlt
   push Not at hlt
   have ha' := ha
-  obtain ⟨ha1, ⟨F₀, hF₀, ⟨m, G, β, hGd, hGo, hGF₀⟩, _⟩, _, hram⟩ := ha'
+  obtain ⟨ha1, ⟨F₀, hF₀, ⟨m, G, β, hGo, hGF₀⟩, _⟩, _, hram⟩ := ha'
+  have hGd := hGo.differentiable
   -- `F` agrees with the function witnessed in `selbergClass`
   have hFF₀ : ∀ s, s ≠ 1 → F s = F₀ s := by
     have hU : IsOpen ({1}ᶜ : Set ℂ) := isOpen_compl_singleton
@@ -2356,13 +2357,14 @@ theorem one_le_degree_of_pos (a : ArithmeticFunction ℂ) (ha : a ∈ selbergCla
   -- the growth of `G`
   set k : ℝ := |β| + 1 with hk
   have hk0 : 0 ≤ k := by positivity
-  obtain ⟨CG, hCG⟩ := (hGo (k - β) (by rw [hk]; have := le_abs_self β; linarith)).bound
+  obtain ⟨CG, hCG⟩ := (hGo.isBigO_exp_rpow (τ := k) (by rw [hk]; linarith [le_abs_self β])
+    (by positivity)).bound
   rw [← comap_norm_atTop, Filter.eventually_comap, Filter.eventually_atTop] at hCG
   obtain ⟨RG, hRG⟩ := hCG
   have hGg : ∀ s : ℂ, RG ≤ ‖s‖ → ‖G s‖ ≤ CG * Real.exp (‖s‖ ^ k) := by
     intro s hs
     have := hRG ‖s‖ hs s rfl
-    rw [show β + (k - β) = k by ring, Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)] at this
+    rw [Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)] at this
     exact this
   -- convergence of the Dirichlet series
   obtain ⟨C4, hC4⟩ := hram (1 / 4) (by norm_num)

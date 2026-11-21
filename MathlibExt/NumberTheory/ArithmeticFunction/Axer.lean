@@ -220,9 +220,9 @@ Prace Mat.-Fiz. 21 (1910), 65–95, JFM 41.0240.02. -/
 theorem isLittleO_sum_moebius_mul_comp_div {G : ℝ → ℝ} {β : ℝ} (hβ₀ : 0 ≤ β) (hβ₁ : β < 1)
     (hG : G =O[atTop] fun x : ℝ => x ^ β)
     (hG_bv : ∀ T : ℝ, BoundedVariationOn G (Set.Icc 1 T))
-    (hM : (fun x : ℝ => (mertens x : ℝ)) =o[atTop] fun x : ℝ => x) :
+    (hM : (fun x : ℝ => M x) =o[atTop] fun x : ℝ => x) :
     (fun x : ℝ => ∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) * G (x / n)) =o[atTop] fun x : ℝ => x := by
-  simp only [mertens, Int.cast_sum] at hM
+  simp only [M_eq_sum_Icc] at hM
   have h1β : (0 : ℝ) < 1 - β := by linarith
   have hIcc : ∀ m : ℕ, Icc 1 m = Ioc 0 m := fun m => rfl
   have hmu : ∀ n : ℕ, |(μ n : ℝ)| ≤ 1 := fun n => by
@@ -452,7 +452,7 @@ theorem isLittleO_sub_id_of_isBigO_sum_comp_div_sub {f : ℝ → ℝ} {C β : �
     (hβ₁ : β < 1) (hbv : ∀ T : ℝ, BoundedVariationOn f (Set.Icc 1 T))
     (hF : (fun x : ℝ => ∑ n ∈ Icc 1 ⌊x⌋₊, f (x / n) - (x * Real.log x + C * x))
       =O[atTop] fun x : ℝ => x ^ β)
-    (hM : (fun x : ℝ => (mertens x : ℝ)) =o[atTop] fun x : ℝ => x) :
+    (hM : (fun x : ℝ => M x) =o[atTop] fun x : ℝ => x) :
     (fun x : ℝ => f x - x) =o[atTop] fun x : ℝ => x := by
   set γ := Real.eulerMascheroniConstant
   -- The normalised function `f₀ y = f y - y - (C - γ)` inherits bounded variation from `f`.

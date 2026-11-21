@@ -16,7 +16,8 @@ public import Mathlib.Analysis.SpecialFunctions.NonIntegrable
 # Tests for principal-value integrals along a vertical line
 
 Non-vacuity of `Complex.HasVerticalIntegral`: it holds with the expected value for the
-absolutely integrable `(1 + (im s)²)⁻¹`, fails for the constant `1`, and (boundary probe) fails
+absolutely integrable `(1 + (im s)²)⁻¹`, where it agrees with the PNT+ line integral
+`VerticalIntegral'`, fails for the constant `1`, and (boundary probe) fails
 for the positive, non-locally-integrable `|im s|⁻¹`, whose truncations are all the junk value `0`.
 -/
 
@@ -51,16 +52,38 @@ private lemma hasVerticalIntegral_cauchyLine (c : ℝ) :
 example : HasVerticalIntegral 3 cauchyLine (1 / 2) :=
   hasVerticalIntegral_cauchyLine 3
 
-/-- `verticalIntegral` computes the value. -/
-example : verticalIntegral (-1) cauchyLine = 1 / 2 :=
-  (hasVerticalIntegral_cauchyLine _).verticalIntegral_eq
+/-- The PNT+ line integral `VerticalIntegral'` of an integrable integrand is its principal
+value. -/
+example : VerticalIntegral' cauchyLine (-1) = 1 / 2 :=
+  (hasVerticalIntegral_cauchyLine _).verticalIntegral'_eq (by
+    simpa [cauchyLine_apply] using integrable_cauchy)
+
+/-- Without the factor `1 / (2πi)`, the PNT+ line integral is `∫_(c) ds / (1 + (im s)²) = πi`. -/
+example : VerticalIntegral cauchyLine 0 = π * I := by
+  rw [VerticalIntegral, show (fun t : ℝ => cauchyLine (((0 : ℝ) : ℂ) + t * I)) =
+    fun t : ℝ => (((1 + t ^ 2)⁻¹ : ℝ) : ℂ) from funext (cauchyLine_apply 0),
+    integral_complex_ofReal, integral_univ_inv_one_add_sq, smul_eq_mul, mul_comm]
+
+/-- The truncations in `HasVerticalIntegral` are PNT+'s `VIntegral'`. -/
+example : Tendsto (fun R : ℝ => VIntegral' cauchyLine 0 (-R) R) atTop (𝓝 (1 / 2)) :=
+  (hasVerticalIntegral_cauchyLine 0).tendsto_vIntegral'
+
+/-- `VIntegral'` over `[0, 1]`: `(1 / 2π) ∫₀¹ (1 + t²)⁻¹ dt = (1 / 2π) arctan 1 = 1 / 8`. -/
+example : VIntegral' cauchyLine 0 0 1 = 1 / 8 := by
+  rw [VIntegral'_eq_smul_intervalIntegral]
+  simp only [cauchyLine_apply]
+  rw [intervalIntegral.integral_ofReal, integral_inv_one_add_sq, Real.arctan_one,
+    Real.arctan_zero, Complex.real_smul]
+  push_cast
+  field_simp
+  ring
 
 /-- Uniqueness rules out any other value. -/
 example : ¬ HasVerticalIntegral 0 cauchyLine 1 := fun h =>
   absurd ((hasVerticalIntegral_cauchyLine 0).unique h) (by norm_num)
 
-/-- `VerticalIntegrable.hasVerticalIntegral` agrees with the closed form. -/
-example : HasVerticalIntegral 0 cauchyLine ((1 / (2 * π)) • ∫ t : ℝ, cauchyLine (0 + t * I)) :=
+/-- `VerticalIntegrable.hasVerticalIntegral` gives the value `VerticalIntegral'`. -/
+example : HasVerticalIntegral 0 cauchyLine (VerticalIntegral' cauchyLine 0) :=
   VerticalIntegrable.hasVerticalIntegral (by
     simpa [VerticalIntegrable, cauchyLine_apply] using integrable_cauchy)
 

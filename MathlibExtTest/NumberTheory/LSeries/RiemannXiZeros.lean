@@ -19,6 +19,8 @@ and the existence of an enumeration of the zeros with multiplicity.
 
 @[expose] public section
 
+open Complex (riemannXi)
+
 open RiemannXi ComplexConjugate
 
 namespace RiemannXiZerosTest

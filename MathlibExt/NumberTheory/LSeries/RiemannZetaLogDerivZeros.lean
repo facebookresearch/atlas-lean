@@ -42,6 +42,8 @@ In the strip `-1 ≤ σ ≤ 2` the logarithmic derivative of `ζ` is, up to `O(l
 
 @[expose] public section
 
+open Complex (riemannXi)
+
 universe u
 
 open ArithmeticFunction LSeries RiemannXi ComplexConjugate
@@ -206,7 +208,7 @@ theorem exists_norm_logDeriv_riemannZeta_sub_tsum_le_log :
     linarith
   have hSb : ∑' n, (1 / (s₁ - z n) + 1 / z n).re ≤ A * Real.log |t| + K := by linarith
   have hterm : ∀ n, 1 / (1 + (t - (z n).im) ^ 2) ≤ 4 * (1 / (s₁ - z n) + 1 / z n).re :=
-    fun n => one_div_one_add_sq_sub_im_le_re (hzmem n).2.1 (hzmem n).2.2 t
+    fun n => one_div_one_add_sq_sub_im_le_re (hzmem n).2.1.le (hzmem n).2.2.le t
   set g : ι → ℝ := fun n => 6 * (1 / (1 + (t - (z n).im) ^ 2)) with hg
   have hg_le : ∀ n, g n ≤ 24 * (1 / (s₁ - z n) + 1 / z n).re := by
     intro n; simp only [hg]; linarith [hterm n]
@@ -223,7 +225,7 @@ theorem exists_norm_logDeriv_riemannZeta_sub_tsum_le_log :
     with hr
   have hr_le : ∀ n, ‖r n‖ ≤ g n := by
     intro n
-    have h := norm_zero_term_le (ρ := z n) hσ1 hσ2 (hzmem n).2.2 (hord n)
+    have h := norm_zero_term_le (ρ := z n) hσ1 hσ2 (hzmem n).2.2.le (hord n)
     have : r n = 1 / (s - z n) - 1 / ((2 : ℂ) + (s.im : ℂ) * Complex.I - z n)
         - (if |s.im - (z n).im| < 1 then 1 / (s - z n) else 0) := by
       simp only [hr, hnear, hs₁, ht_def]; ring

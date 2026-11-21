@@ -30,7 +30,7 @@ An entire function `f` of order of growth at most `1` with `f 0 ≠ 0` and zeros
 listed with multiplicity, factors as
 `f s = exp (A + B s) ∏ₙ (1 - s / zₙ) exp (s / zₙ)`.
 The product converges absolutely because `∑ ‖zₙ‖⁻² < ∞`
-(`Complex.HasGrowthOrderLE.summable_norm_rpow_neg`).
+(`Complex.Hadamard.EntireOfOrderAtMost.summable_norm_rpow_neg`).
 
 The proof divides `f` by the canonical product `P`, takes an entire logarithm `H` of the
 zero-free quotient, bounds `Re H` from above by `O(‖s‖ ^ (1 + ε))` using a lower bound for `P` on
@@ -49,9 +49,9 @@ is affine.
   `Re h z ≤ C_ε ‖z‖ ^ (1 + ε)` at infinity, for every `ε > 0`, is linear.
 * `Complex.card_sigma_fin_analyticOrderAt`: the zeros of an entire function that is not
   identically zero, listed with multiplicity, are indexed by `Σ w, Fin (analyticOrderAt f w).toNat`.
-* `Complex.exists_eq_exp_mul_tprod_of_hasGrowthOrderLE_one`: **Hadamard's factorization
+* `Complex.exists_eq_exp_mul_tprod_of_entireOfOrderAtMost_one`: **Hadamard's factorization
   theorem** for entire functions of order at most `1`.
-* `Complex.exists_eq_exp_mul_tprod_sigma_of_hasGrowthOrderLE_one`: the same, with the zeros
+* `Complex.exists_eq_exp_mul_tprod_sigma_of_entireOfOrderAtMost_one`: the same, with the zeros
   indexed by `Σ w, Fin (analyticOrderAt f w).toNat`.
 -/
 
@@ -60,6 +60,8 @@ is affine.
 open Filter Asymptotics Bornology Metric Topology
 
 namespace Complex
+
+open Hadamard
 
 /-! ### Entire functions with constrained real part -/
 
@@ -278,12 +280,13 @@ every finite order.
 Source: H. Davenport, *Multiplicative Number Theory*, 3rd ed., Graduate Texts in Mathematics 74,
 Springer, 2000, Chapter 11 (*Integral functions of order 1*),
 DOI 10.1007/978-1-4757-5927-3_11. -/
-theorem exists_eq_exp_mul_tprod_of_hasGrowthOrderLE_one {ι : Type*} {f : ℂ → ℂ} {z : ι → ℂ}
-    (hf : Differentiable ℂ f) (h1 : HasGrowthOrderLE f 1) (hf0 : f 0 ≠ 0)
+theorem exists_eq_exp_mul_tprod_of_entireOfOrderAtMost_one {ι : Type*} {f : ℂ → ℂ}
+    {z : ι → ℂ} (h1 : EntireOfOrderAtMost 1 f) (hf0 : f 0 ≠ 0)
     (hz : ∀ w, ENat.card {n // z n = w} = analyticOrderAt f w) :
     ∃ A B : ℂ, ∀ s, f s =
       Complex.exp (A + B * s) * ∏' n, (1 - s / z n) * Complex.exp (s / z n) := by
   classical
+  have hf := h1.differentiable
   -- generic facts about `log (1 - w) + w`
   have hℓ : ∀ w : ℂ, ‖w‖ ≤ 1 / 2 → ‖Complex.log (1 - w) + w‖ ≤ ‖w‖ ^ 2 := by
     intro w hw
@@ -363,7 +366,7 @@ theorem exists_eq_exp_mul_tprod_of_hasGrowthOrderLE_one {ι : Type*} {f : ℂ �
     exact this.false ⟨n, h⟩
   have hzpos : ∀ n, 0 < ‖z n‖ := fun n => norm_pos_iff.mpr (hz0 n)
   have hsum2 : Summable fun n => (‖z n‖ ^ 2)⁻¹ := by
-    refine (h1.summable_norm_rpow_neg hf zero_le_one hf0 hz one_pos).congr fun n => ?_
+    refine (h1.summable_norm_rpow_neg zero_le_one hf0 hz one_pos).congr fun n => ?_
     rw [show (-(1 : ℝ) - 1) = -((2 : ℕ) : ℝ) by norm_num, Real.rpow_neg (norm_nonneg _),
       Real.rpow_natCast]
   have hfinite : ∀ T : ℝ, {n | ‖z n‖ ≤ T}.Finite := by
@@ -542,7 +545,7 @@ theorem exists_eq_exp_mul_tprod_of_hasGrowthOrderLE_one {ι : Type*} {f : ℂ �
     have ha1 : 1 ≤ a := by rw [ha]; linarith
     have ha2 : a ≤ 2 := by rw [ha]; linarith
     have hsuma : Summable fun n => ‖z n‖ ^ (-a) := by
-      have := h1.summable_norm_rpow_neg hf zero_le_one hf0 hz (ε := e / 3) (by positivity)
+      have := h1.summable_norm_rpow_neg zero_le_one hf0 hz (ε := e / 3) (by positivity)
       refine this.congr fun n => ?_
       rw [ha]; ring_nf
     obtain ⟨K, hK⟩ : ∃ K : ℝ, K = ∑' n, ‖z n‖ ^ (-a) := ⟨_, rfl⟩
@@ -655,7 +658,7 @@ theorem exists_eq_exp_mul_tprod_of_hasGrowthOrderLE_one {ι : Type*} {f : ℂ �
       have := Finset.card_le_card_of_injOn g (fun j hj => hg1 j hj) hinj
       rw [Finset.card_range, ← hN] at this
       omega
-    obtain ⟨c, hc⟩ := (h1 (e / 3) (by positivity)).bound
+    obtain ⟨c, hc⟩ := (h1.isBigO zero_le_one (ε := e / 3) (by positivity)).bound
     obtain ⟨R0, -, hR0⟩ :=
       (Metric.hasBasis_cobounded_compl_closedBall (0 : ℂ)).eventually_iff.mp hc
     obtain ⟨θ, hθ⟩ : ∃ θ : ℝ, θ = e / 3 := ⟨_, rfl⟩
@@ -802,12 +805,12 @@ theorem exists_eq_exp_mul_tprod_of_hasGrowthOrderLE_one {ι : Type*} {f : ℂ �
 /-- **Hadamard's factorization theorem for entire functions of order at most `1`**, with the
 zeros indexed canonically: each zero `w` of `f` appears `analyticOrderAt f w` times, as the points
 of `Σ w, Fin (analyticOrderAt f w).toNat`. -/
-theorem exists_eq_exp_mul_tprod_sigma_of_hasGrowthOrderLE_one {f : ℂ → ℂ}
-    (hf : Differentiable ℂ f) (h1 : HasGrowthOrderLE f 1) (hf0 : f 0 ≠ 0) :
+theorem exists_eq_exp_mul_tprod_sigma_of_entireOfOrderAtMost_one {f : ℂ → ℂ}
+    (h1 : EntireOfOrderAtMost 1 f) (hf0 : f 0 ≠ 0) :
     ∃ A B : ℂ, ∀ s, f s = Complex.exp (A + B * s) *
       ∏' n : (Σ w : ℂ, Fin (analyticOrderAt f w).toNat),
         (1 - s / n.1) * Complex.exp (s / n.1) :=
-  exists_eq_exp_mul_tprod_of_hasGrowthOrderLE_one hf h1 hf0
-    (card_sigma_fin_analyticOrderAt hf hf0)
+  exists_eq_exp_mul_tprod_of_entireOfOrderAtMost_one h1 hf0
+    (card_sigma_fin_analyticOrderAt h1.differentiable hf0)
 
 end Complex

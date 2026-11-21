@@ -68,7 +68,7 @@ theorem isEulerLog_one : IsEulerLog (1 : ArithmeticFunction ℂ) 0 := by
 /-- **The constant function `1` is in the Selberg class.** -/
 theorem one_mem_selbergClass : (1 : ArithmeticFunction ℂ) ∈ selbergClass := by
   refine ⟨one_one, ⟨fun _ => 1, isLSeriesContinuation_one,
-    ⟨0, fun _ => 1, 0, differentiable_const _, hasGrowthOrderLE_const _ _, fun s _ => by simp⟩,
+    ⟨0, fun _ => 1, 0, Hadamard.entireOfOrderAtMost_const _ le_rfl, fun s _ => by simp⟩,
     ⟨oneFE⟩⟩, ⟨0, 0, by norm_num, isEulerLog_one, 0, fun n => by simp⟩, ?_⟩
   intro ε hε
   refine ⟨1, fun n => ?_⟩
@@ -136,9 +136,9 @@ example : zetaFE.d = 1 ∧ zetaFE.Q = Real.pi ^ (-(1 / 2 : ℝ)) ∧ zetaFE.w = 
 /-- **The Riemann zeta function is in the Selberg class.** -/
 example : zetaC ∈ selbergClass := zeta_mem_selbergClass
 
-/-- `Complex.HasGrowthOrderLE.comp_div_two_add_one` at `1 / Γ`. -/
-example : Complex.HasGrowthOrderLE (fun z => (Gamma (z / 2 + 1))⁻¹) 1 :=
-  Complex.hasGrowthOrder_inv_Gamma.hasGrowthOrderLE.comp_div_two_add_one zero_le_one
+/-- `Complex.Hadamard.EntireOfOrderAtMost.comp_div_two_add_one` at `1 / Γ`. -/
+example : Complex.Hadamard.EntireOfOrderAtMost 1 (fun z => (Gamma (z / 2 + 1))⁻¹) :=
+  Complex.hasGrowthOrder_inv_Gamma.entireOfOrderAtMost.comp_div_two_add_one zero_le_one
 
 /-! ### Non-members -/
 

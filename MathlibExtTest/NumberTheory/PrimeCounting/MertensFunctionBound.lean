@@ -18,9 +18,9 @@ import MathlibExt.NumberTheory.PrimeCounting.MertensFunctionBound
 
 open Asymptotics Filter ArithmeticFunction
 
-example : ∃ c : ℝ, 0 < c ∧ (fun x : ℝ => (mertens x : ℝ))
+example : ∃ c : ℝ, 0 < c ∧ (fun x : ℝ => M x)
     =O[atTop] fun x : ℝ => x * Real.exp (-c * Real.log x ^ (1 / 10 : ℝ)) :=
-  mertens_isBigO_mul_exp_neg_mul_log_rpow
+  M_isBigO_mul_exp_neg_mul_log_rpow
 
 -- The squarefree numbers up to `10` are `1, 2, 3, 5, 6, 7, 10`.
 example : ((Finset.Icc 1 10).filter Squarefree).card = 7 := by decide +kernel

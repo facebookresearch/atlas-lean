@@ -21,10 +21,10 @@ open scoped ArithmeticFunction.zeta ArithmeticFunction.sigma
 
 /-! ### Concrete values -/
 
-example : piltz 2 6 = 4 := by decide
-example : piltz 3 4 = 6 := by decide
-example : piltz 3 12 = 18 := by decide
-example : piltz 1 7 = 1 := by decide
+example : ArithmeticFunction.d 2 6 = 4 := by decide
+example : ArithmeticFunction.d 3 4 = 6 := by decide
+example : ArithmeticFunction.d 3 12 = 18 := by decide
+example : ArithmeticFunction.d 1 7 = 1 := by decide
 example : piltzNontrivial 2 6 = 2 := by decide
 example : piltzNontrivial 2 4 = 1 := by decide
 example : piltzNontrivial 3 8 = 1 := by decide
@@ -33,10 +33,10 @@ example : piltzNontrivial 3 12 = 3 := by decide
 /-! ### Boundary values -/
 
 -- `d_k(0) = 0` for every `k`, and `d_0` is the Dirichlet unit.
-example (k : ℕ) : piltz k 0 = 0 := by simp
-example : piltz 0 1 = 1 := by simp
-example (n : ℕ) (hn : n ≠ 1) : piltz 0 n = 0 := by simp [hn]
-example (n : ℕ) (hn : n ≠ 0) : piltz 1 n = 1 := by simp [hn]
+example (k : ℕ) : ArithmeticFunction.d k 0 = 0 := by simp
+example : ArithmeticFunction.d 0 1 = 1 := by simp
+example (n : ℕ) (hn : n ≠ 1) : ArithmeticFunction.d 0 n = 0 := by simp [hn]
+example (n : ℕ) (hn : n ≠ 0) : ArithmeticFunction.d 1 n = 1 := by simp [hn]
 -- `d_k^*(1) = 0` for `k ≥ 1` (there is no factor `≥ 2`), but `d_0^*(1) = 1`.
 example : piltzNontrivial 0 1 = 1 := by decide
 example : piltzNontrivial 1 1 = 0 := by decide
@@ -49,21 +49,21 @@ example (n : ℕ) :
 
 /-! ### Agreement with Mathlib's objects -/
 
-example (n : ℕ) : piltz 2 n = (n.divisors.card) := by
+example (n : ℕ) : ArithmeticFunction.d 2 n = (n.divisors.card) := by
   simp [sigma_zero_apply]
 
-example (k : ℕ) : piltz k = (ζ : ArithmeticFunction ℕ) ^ k := piltz_eq_zeta_pow k
+example (k : ℕ) : ArithmeticFunction.d k = (ζ : ArithmeticFunction ℕ) ^ k := d_eq_zeta_pow k
 
-example (n : ℕ) : piltz 3 n = ∑ d ∈ n.divisors, (σ 0 d) := by
-  simp [piltz_succ_apply]
+example (n : ℕ) : ArithmeticFunction.d 3 n = ∑ d ∈ n.divisors, (σ 0 d) := by
+  simp [d_succ_apply]
 
 -- The general Dirichlet-power formula, for `f = id` and `k = 2`: `(id * id)(n) = n σ₀(n)`.
 example : ((ArithmeticFunction.id : ArithmeticFunction ℕ) ^ 2) 6 = 24 := by
   rw [pow_apply_eq_sum_finMulAntidiag]
   decide
 
-example {k n : ℕ} (hk : k ≠ 0) (hn : n ≠ 0) : 0 < piltz k n := piltz_pos hk hn
-example : piltz 2 12 ≤ piltz 3 12 := piltz_le_piltz_succ 2 12
+example {k n : ℕ} (hk : k ≠ 0) (hn : n ≠ 0) : 0 < ArithmeticFunction.d k n := d_pos hk hn
+example : ArithmeticFunction.d 2 12 ≤ ArithmeticFunction.d 3 12 := d_le_d_succ 2 12
 
--- `piltz_le_piltz_succ` holds at `n = 0`, where both sides vanish.
-example (k : ℕ) : piltz k 0 ≤ piltz (k + 1) 0 := piltz_le_piltz_succ k 0
+-- `d_le_d_succ` holds at `n = 0`, where both sides vanish.
+example (k : ℕ) : ArithmeticFunction.d k 0 ≤ ArithmeticFunction.d (k + 1) 0 := d_le_d_succ k 0

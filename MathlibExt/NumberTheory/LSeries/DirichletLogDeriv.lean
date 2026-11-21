@@ -343,8 +343,8 @@ theorem exists_neg_re_logDeriv_LFunction_le :
   have hzero : ∀ n, f (z n) = 0 := Complex.apply_eq_zero_of_card_eq_analyticOrderAt hz
   have hz0 : ∀ n, z n ≠ 0 := fun n h => hX0 (h ▸ hzero n)
   have hzre : ∀ n, (z n).re ≤ 1 := fun n => ((xi_eq_zero_iff hψ hψ1 (z n)).mp (hzero n)).2.2.le
-  have hsum := Complex.summable_norm_rpow_neg_two_of_hasGrowthOrderLE_one hd
-    (hasGrowthOrderLE_xi hψ1) hX0 hz
+  have hsum := Complex.summable_norm_rpow_neg_two_of_entireOfOrderAtMost_one
+    (entireOfOrderAtMost_xi hψ1) hX0 hz
   have hm := Complex.summable_one_div_sub_add_one_div hz0 hsum s
   have hfs : f s ≠ 0 := by
     rw [hf, Ne, xi_eq_zero_iff hψ hψ1]

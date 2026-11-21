@@ -22,7 +22,7 @@ Piltz divisor functions `d_3` and `d = σ 0`. Only the values of `f` and `g` on 
 
 ## Main statements
 
-* `ArithmeticFunction.summable_sigma_zero_mul_abs_of_summable_piltz_three_mul_abs`
+* `ArithmeticFunction.summable_sigma_zero_mul_abs_of_summable_d_three_mul_abs`
 * `ArithmeticFunction.tsum_moebius_inversion`
 * `ArithmeticFunction.eq_tsum_moebius_mul_of_eq_tsum`
 -/
@@ -46,20 +46,20 @@ private theorem summable_shift_iff (w : ℕ → ℝ) (h : ℝ → ℝ) (x : ℝ)
 /-- If `∑_k d_3(k) |f(k x)| < ∞` for every `x > 0` and `g(x) = ∑_{m ≥ 1} f(m x)` for every
 `x > 0`, then `∑_k d(k) |g(k x)| < ∞` for every `x > 0`, where `d = σ 0` is the
 number-of-divisors function. -/
-theorem summable_sigma_zero_mul_abs_of_summable_piltz_three_mul_abs (f g : ℝ → ℝ)
-    (hf : ∀ x, 0 < x → Summable fun k : ℕ => (piltz 3 k : ℝ) * |f (k * x)|)
+theorem summable_sigma_zero_mul_abs_of_summable_d_three_mul_abs (f g : ℝ → ℝ)
+    (hf : ∀ x, 0 < x → Summable fun k : ℕ => (ArithmeticFunction.d 3 k : ℝ) * |f (k * x)|)
     (hgf : ∀ x, 0 < x → g x = ∑' m : ℕ, f ((m + 1) * x)) {x : ℝ} (hx : 0 < x) :
     Summable fun k : ℕ => (σ 0 k : ℝ) * |g (k * x)| := by
   classical
-  have hd3sum : ∀ A : ℕ, piltz 3 A = ∑ B ∈ A.divisors, σ 0 B := by
-    intro A; rw [piltz_succ_apply, piltz_two]
+  have hd3sum : ∀ A : ℕ, ArithmeticFunction.d 3 A = ∑ B ∈ A.divisors, σ 0 B := by
+    intro A; rw [d_succ_apply, d_two]
   -- Along any ray, `∑_m |f (m y)| < ∞`, since `1 ≤ d₃`.
   have hfabs : ∀ y : ℝ, 0 < y → Summable fun m : ℕ => |f (((m : ℝ) + 1) * y)| := by
     intro y hy
     refine Summable.of_nonneg_of_le (fun m => abs_nonneg _) (fun m => ?_)
       ((summable_shift_iff _ f y).mp (hf y hy))
-    have h1 : (1 : ℝ) ≤ (piltz 3 (m + 1) : ℝ) := by
-      exact_mod_cast piltz_pos (by norm_num) (Nat.succ_ne_zero m)
+    have h1 : (1 : ℝ) ≤ (ArithmeticFunction.d 3 (m + 1) : ℝ) := by
+      exact_mod_cast d_pos (by norm_num) (Nat.succ_ne_zero m)
     exact le_mul_of_one_le_left (abs_nonneg _) h1
   -- The array `U (A, B) = d B * |f (A x)|`, supported on the pairs with `B ∣ A`. Its rows sum
   -- to `d₃ A * |f (A x)|`, so it is summable by hypothesis.
@@ -73,7 +73,7 @@ theorem summable_sigma_zero_mul_abs_of_summable_piltz_three_mul_abs (f g : ℝ �
     refine summable_of_ne_finset_zero (s := A.divisors) fun B hB => ?_
     rw [hUdef]; simp [hB]
   have hUrowsum : ∀ A : ℕ,
-      (∑' B : ℕ, U (A, B)) = (piltz 3 A : ℝ) * |f ((A : ℝ) * x)| := by
+      (∑' B : ℕ, U (A, B)) = (ArithmeticFunction.d 3 A : ℝ) * |f ((A : ℝ) * x)| := by
     intro A
     rw [tsum_eq_sum (s := A.divisors) fun B hB => by rw [hUdef]; simp [hB],
       Finset.sum_congr rfl fun B hB => (by rw [hUdef]; simp [hB] :
@@ -131,10 +131,10 @@ converge for every `x > 0`, where `d_3` is the Piltz divisor function and `d = �
 `x > 0`. The values of `f` and `g` on `(-∞, 0]` play no role.
 
 The hypothesis on `g` follows from the one on `f` in the forward direction
-(`ArithmeticFunction.summable_sigma_zero_mul_abs_of_summable_piltz_three_mul_abs`); see
+(`ArithmeticFunction.summable_sigma_zero_mul_abs_of_summable_d_three_mul_abs`); see
 `ArithmeticFunction.eq_tsum_moebius_mul_of_eq_tsum`. -/
 theorem tsum_moebius_inversion (f g : ℝ → ℝ)
-    (hf : ∀ x, 0 < x → Summable fun k : ℕ => (piltz 3 k : ℝ) * |f (k * x)|)
+    (hf : ∀ x, 0 < x → Summable fun k : ℕ => (ArithmeticFunction.d 3 k : ℝ) * |f (k * x)|)
     (hg : ∀ x, 0 < x → Summable fun k : ℕ => (σ 0 k : ℝ) * |g (k * x)|) :
     (∀ x, 0 < x → g x = ∑' m : ℕ, f ((m + 1) * x)) ↔
       ∀ x, 0 < x → f x = ∑' n : ℕ, (μ n : ℝ) * g (n * x) := by
@@ -150,8 +150,8 @@ theorem tsum_moebius_inversion (f g : ℝ → ℝ)
       · simp at hn
       · exact ⟨n, rfl⟩
   simp_rw [hshift]
-  have hd23 : ∀ n : ℕ, σ 0 n ≤ piltz 3 n := fun n => by
-    simpa using piltz_le_piltz_succ 2 n
+  have hd23 : ∀ n : ℕ, σ 0 n ≤ ArithmeticFunction.d 3 n := fun n => by
+    simpa using d_le_d_succ 2 n
   -- The Dirichlet rearrangement `∑_{n,m} μ n h (n m x) = ∑_N (∑_{δ ∣ N} μ δ) h (N x) = h x`,
   -- valid whenever `∑_N d N |h (N x)| < ∞`.
   have core : ∀ (h : ℝ → ℝ) (x : ℝ),
@@ -283,11 +283,11 @@ theorem tsum_moebius_inversion (f g : ℝ → ℝ)
 `x > 0` and `g(x) = ∑_{m ≥ 1} f(m x)` for every `x > 0`, then `f(x) = ∑_{n ≥ 1} μ(n) g(n x)` for
 every `x > 0`. -/
 theorem eq_tsum_moebius_mul_of_eq_tsum (f g : ℝ → ℝ)
-    (hf : ∀ x, 0 < x → Summable fun k : ℕ => (piltz 3 k : ℝ) * |f (k * x)|)
+    (hf : ∀ x, 0 < x → Summable fun k : ℕ => (ArithmeticFunction.d 3 k : ℝ) * |f (k * x)|)
     (hgf : ∀ x, 0 < x → g x = ∑' m : ℕ, f ((m + 1) * x)) {x : ℝ} (hx : 0 < x) :
     f x = ∑' n : ℕ, (μ n : ℝ) * g (n * x) :=
   (tsum_moebius_inversion f g hf
-    (fun _ hy => summable_sigma_zero_mul_abs_of_summable_piltz_three_mul_abs f g hf hgf hy)).mp
+    (fun _ hy => summable_sigma_zero_mul_abs_of_summable_d_three_mul_abs f g hf hgf hy)).mp
     hgf x hx
 
 end ArithmeticFunction

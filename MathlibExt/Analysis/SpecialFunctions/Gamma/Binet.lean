@@ -43,7 +43,7 @@ Since `log Γ` on the slit plane (the branch that is real on the positive reals)
   `Γ(z) = exp ((z - 1/2) log z - z + ½ log 2π + I)`.
 * `Complex.Gamma_eq_exp_stirling_sector`: Stirling's formula with an `O(1 / ‖z‖)` error, uniform in
   the sector `-π + δ ≤ arg z ≤ π - δ`.
-* `Complex.hasGrowthOrder_inv_Gamma`: `1 / Γ` has order of growth `1`.
+* `Complex.hasGrowthOrder_inv_Gamma`: `1 / Γ` is entire of order `1`.
 -/
 
 @[expose] public section
@@ -676,10 +676,10 @@ theorem Gamma_eq_exp_stirling_sector (δ : ℝ) (hδ : 0 < δ) :
 
 /-! ### The order of `1 / Γ` -/
 
-/-- **`1 / Γ` has order of growth `1`.** It is `O(exp (‖z‖ ^ (1 + ε)))` for every `ε > 0`
-(Stirling's formula on the right half-plane and the reflection formula on the left), and it has
-order at most no `ρ < 1`, since along `z = 1/2 - n` it grows like `n! / 2ⁿ`. That `1 / Γ` is
-entire is `Complex.differentiable_one_div_Gamma`. -/
+/-- **`1 / Γ` is entire of order `1`.** It is entire (`Complex.differentiable_one_div_Gamma`) and
+`O(exp (‖z‖ ^ (1 + ε)))` for every `ε > 0` (Stirling's formula on the right half-plane and the
+reflection formula on the left), and it has order at most no `ρ < 1`, since along `z = 1/2 - n`
+it grows like `n! / 2ⁿ`. -/
 theorem hasGrowthOrder_inv_Gamma : HasGrowthOrder (fun z => (Complex.Gamma z)⁻¹) 1 := by
   -- Stirling on the right half-plane: both `Γ` and `1/Γ` are `≤ exp (G ‖w‖)`
   obtain ⟨C, hC⟩ := Gamma_eq_exp_stirling_sector (Real.pi / 2) (by positivity)
@@ -826,7 +826,10 @@ theorem hasGrowthOrder_inv_Gamma : HasGrowthOrder (fun z => (Complex.Gamma z)⁻
     have h3 : Real.pi * r ≤ 4 * r := by nlinarith
     simp only [hG]
     nlinarith
-  refine ⟨zero_le_one, fun ε hε => ?_, fun b' ⟨_, hb'⟩ hb => ?_⟩
+  have hd : Differentiable ℂ fun z => (Complex.Gamma z)⁻¹ := by
+    simpa [one_div] using Complex.differentiable_one_div_Gamma
+  refine ⟨zero_le_one, Hadamard.EntireOfOrderAtMost.of_isBigO hd zero_le_one fun ε hε => ?_,
+    fun b' ⟨hb'0, hb'⟩ hb => ?_⟩
   · -- order at most `1`
     have hlo := (isLittleO_log_rpow_atTop hε).bound (show (0 : ℝ) < 1 / 6 by norm_num)
     have htend := (tendsto_rpow_atTop hε).eventually_ge_atTop (2 * (21 + K))
@@ -848,7 +851,7 @@ theorem hasGrowthOrder_inv_Gamma : HasGrowthOrder (fun z => (Complex.Gamma z)⁻
   · -- order at least `1`: along `1/2 - n`, `1/Γ` grows like `n!/2ⁿ`
     set c : ℝ := b' + (1 - b') / 2 with hc
     have hc1 : c ≤ 1 := by rw [hc]; linarith
-    obtain ⟨M, hM⟩ := (hb ((1 - b') / 2) (by linarith)).bound
+    obtain ⟨M, hM⟩ := (hb.isBigO hb'0 (ε := (1 - b') / 2) (by linarith)).bound
     set z : ℕ → ℂ := fun n => 1 / 2 - (n : ℂ) with hz
     set a : ℕ → ℝ := fun n => ‖(Complex.Gamma (z n))⁻¹‖ with ha
     have hzn : ∀ n : ℕ, 1 ≤ n → ‖z n‖ = n - 1 / 2 := by

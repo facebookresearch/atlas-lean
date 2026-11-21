@@ -19,22 +19,22 @@ import Mathlib.NumberTheory.LSeries.HurwitzZetaValues
 
 open ArithmeticFunction
 
-example : piltz 3 12 ≤ sigma 0 12 ^ 3 := piltz_le_sigma_zero_pow 3 12
+example : ArithmeticFunction.d 3 12 ≤ sigma 0 12 ^ 3 := d_le_sigma_zero_pow 3 12
 
-example : ∃ A : ℝ, 0 < A ∧ ∀ n : ℕ, (piltz 3 n : ℝ) ≤ A * (n : ℝ) ^ (1 / 4 : ℝ) :=
-  exists_piltz_le_mul_rpow 3 (by norm_num)
+example : ∃ A : ℝ, 0 < A ∧ ∀ n : ℕ, (ArithmeticFunction.d 3 n : ℝ) ≤ A * (n : ℝ) ^ (1 / 4 : ℝ) :=
+  exists_d_le_mul_rpow 3 (by norm_num)
 
 -- `k = 0`: `d_0 = δ`, whose L-series is `1 = ζ^0`.
-example (s : ℂ) (hs : 1 < s.re) : LSeries (fun n : ℕ => (piltz 0 n : ℂ)) s = 1 := by
-  simpa using LSeries_piltz 0 hs
+example (s : ℂ) (hs : 1 < s.re) : LSeries (fun n : ℕ => (ArithmeticFunction.d 0 n : ℂ)) s = 1 := by
+  simpa using LSeries_d 0 hs
 
 -- `∑ d(n) / n² = ζ(2)² = π⁴ / 36`.
-example : LSeries (fun n : ℕ => (piltz 2 n : ℂ)) 2 = (Real.pi : ℂ) ^ 4 / 36 := by
-  rw [LSeries_piltz 2 (by norm_num), riemannZeta_two]
+example : LSeries (fun n : ℕ => (ArithmeticFunction.d 2 n : ℂ)) 2 = (Real.pi : ℂ) ^ 4 / 36 := by
+  rw [LSeries_d 2 (by norm_num), riemannZeta_two]
   ring
 
-example : LSeriesSummable (fun n : ℕ => (piltz 5 n : ℂ)) 2 :=
-  LSeriesSummable_piltz 5 (by norm_num)
+example : LSeriesSummable (fun n : ℕ => (ArithmeticFunction.d 5 n : ℂ)) 2 :=
+  LSeriesSummable_d 5 (by norm_num)
 
 /-! ### The main-term polynomial -/
 
@@ -71,16 +71,16 @@ example : (piltzMainPoly 3).leadingCoeff = 1 / 2 := by
 The Lindelöf hypothesis is an open problem, so the theorem can only be used conditionally. -/
 
 example (hLH : LindelofHypothesis) :
-    (fun x : ℝ => (∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (piltz 2 n : ℝ))
+    (fun x : ℝ => (∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (ArithmeticFunction.d 2 n : ℝ))
         - x * (piltzMainPoly 2).eval (Real.log x)) =O[Filter.atTop]
       fun x : ℝ => x ^ (1 / 2 + 1 / 100 : ℝ) :=
-  sum_piltz_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis hLH (k := 2) (by norm_num)
+  sum_d_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis hLH (k := 2) (by norm_num)
     (by norm_num)
 
 -- `P` does not depend on `ε`.
 example (hLH : LindelofHypothesis) (k : ℕ) (hk : 1 ≤ k) :
     ∃ P : Polynomial ℝ, P.leadingCoeff = 1 / ((k - 1).factorial : ℝ) ∧ ∀ ε : ℝ, 0 < ε →
-      (fun x : ℝ => (∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (piltz k n : ℝ))
+      (fun x : ℝ => (∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (ArithmeticFunction.d k n : ℝ))
         - x * P.eval (Real.log x)) =O[Filter.atTop] fun x : ℝ => x ^ (1 / 2 + ε) := by
-  obtain ⟨P, -, hP, h⟩ := exists_polynomial_sum_piltz_isBigO_of_lindelofHypothesis hLH hk
+  obtain ⟨P, -, hP, h⟩ := exists_polynomial_sum_d_isBigO_of_lindelofHypothesis hLH hk
   exact ⟨P, hP, h⟩

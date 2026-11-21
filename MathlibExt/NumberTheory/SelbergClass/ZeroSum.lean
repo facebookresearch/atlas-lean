@@ -233,8 +233,8 @@ private lemma exists_norm_le_mul_rpow_line_neg_three (F : ℂ → ℂ) (hFd : Di
 open Complex in
 /-- **Polynomial growth of `G = (s - 1)^m F` in the strip `-3 ≤ Re s ≤ σM`** (for `|Im s| ≥ 1`),
 from the two edge bounds and Phragmén–Lindelöf. -/
-private lemma exists_norm_le_mul_rpow_strip (F G : ℂ → ℂ) (m : ℕ) (β : ℝ) (hGd : Differentiable ℂ G)
-    (hGo : HasGrowthOrderLE G β) (hGF : ∀ s, s ≠ 1 → G s = (s - 1) ^ m * F s)
+private lemma exists_norm_le_mul_rpow_strip (F G : ℂ → ℂ) (m : ℕ) (β : ℝ)
+    (hGo : Hadamard.EntireOfOrderAtMost β G) (hGF : ∀ s, s ≠ 1 → G s = (s - 1) ^ m * F s)
     (hFd : DifferentiableOn ℂ F {1}ᶜ) (D : FunctionalEquation F) (B : ℝ) (hB0 : 0 ≤ B)
     (hB : ∀ s : ℂ, 2 ≤ s.re → ‖F s‖ ≤ B) (σM : ℝ) (hσM : 4 ≤ σM) :
     ∃ A C : ℝ, 0 ≤ A ∧
@@ -247,7 +247,7 @@ private lemma exists_norm_le_mul_rpow_strip (F G : ℂ → ℂ) (m : ℕ) (β : 
   have hA0p : 1 ≤ A0 := by linarith
   set A : ℝ := m + A0 with hA
   obtain ⟨Bc, hBc⟩ := (isCompact_closedBall (0 : ℂ) (|T₀| + 4)).exists_bound_of_continuousOn
-    hGd.continuous.continuousOn
+    hGo.differentiable.continuous.continuousOn
   set CL : ℝ := max (max (5 ^ m * C0) |Bc|) ((σM + 1) ^ m * B) with hCL
   have hCL0 : 0 ≤ CL := le_trans (abs_nonneg _) (le_trans (le_max_right _ _) (le_max_left _ _))
   have hpowA : ∀ t : ℝ, 1 ≤ |t| → (|t| ^ m * |t| ^ A0 = |t| ^ A) := by
@@ -314,8 +314,8 @@ private lemma exists_norm_le_mul_rpow_strip (F G : ℂ → ℂ) (m : ℕ) (β : 
           gcongr
           exact le_max_right _ _
   obtain ⟨C, hC⟩ := PhragmenLindelof.vertical_strip_le_mul_rpow (by rw [hA]; positivity)
-    hGd.diffContOnCl
-    (Complex.HasGrowthOrderLE.exists_norm_le_exp_strip hGo (-3) σM (by linarith))
+    hGo.differentiable.diffContOnCl
+    (hGo.exists_norm_le_exp_strip (-3) σM (by linarith))
     hlines
   exact ⟨A, C, by rw [hA]; positivity, hC⟩
 
@@ -2881,7 +2881,8 @@ theorem exists_norm_finsum_zeros_cpow_add_le (a : ArithmeticFunction ℂ) (ha : 
           (analyticOrderNatAt F ρ : ℂ) * (n : ℂ) ^ ρ) + T / Real.pi * Λ n‖ ≤
         C * (n : ℝ) ^ (3 / 2 : ℝ) * Real.log T ^ 2 := by
   classical
-  obtain ⟨-, ⟨F₀, hF₀, ⟨m, G, β, hGd, hGo, hGF₀⟩, ⟨D₀⟩⟩, ⟨b, θ, hθ, hlog, Cb, hbC⟩, hram⟩ := ha
+  obtain ⟨-, ⟨F₀, hF₀, ⟨m, G, β, hGo, hGF₀⟩, ⟨D₀⟩⟩, ⟨b, θ, hθ, hlog, Cb, hbC⟩, hram⟩ := ha
+  have hGd := hGo.differentiable
   have hFF₀ : ∀ s, s ≠ 1 → F s = F₀ s := by
     have hU : IsOpen ({1}ᶜ : Set ℂ) := isOpen_compl_singleton
     have hpc : IsPreconnected ({1}ᶜ : Set ℂ) :=
@@ -2899,7 +2900,7 @@ theorem exists_norm_finsum_zeros_cpow_add_le (a : ArithmeticFunction ℂ) (ha : 
   obtain ⟨Ca, hCa⟩ := hram (1 / 2) (by norm_num)
   obtain ⟨B2, hB20, hB2⟩ := norm_le_of_two_le_re a F hF Ca hCa
   obtain ⟨κ, hκ, hκF⟩ := exists_le_norm_of_re_eq_two a F hF b hlog
-  obtain ⟨Ag, Cg, hAg, hgrow⟩ := exists_norm_le_mul_rpow_strip F G m β hGd hGo hGF hF.2 D B2 hB20
+  obtain ⟨Ag, Cg, hAg, hgrow⟩ := exists_norm_le_mul_rpow_strip F G m β hGo hGF hF.2 D B2 hB20
       hB2 7 (by norm_num)
   have hlowG : ∀ s : ℂ, s.re = 2 → 1 ≤ |s.im| → κ ≤ ‖G s‖ := by
     intro s hs _

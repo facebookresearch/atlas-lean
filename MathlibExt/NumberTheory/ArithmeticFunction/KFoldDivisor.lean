@@ -18,15 +18,15 @@ through Mathlib's `Nat.finMulAntidiag`.
 
 ## Main definitions
 
-* `ArithmeticFunction.piltz`: `d_k`
+* `ArithmeticFunction.d`: `d_k`
 * `ArithmeticFunction.piltzNontrivial`: `d_k^*`
 
 ## Main statements
 
 * `ArithmeticFunction.pow_apply_eq_sum_finMulAntidiag`:
   `(f ^ k) n = ∑_{a₁ ⋯ a_k = n} f a₁ ⋯ f a_k`
-* `ArithmeticFunction.piltz_eq_zeta_pow`: `d_k = ζ ^ k`
-* `ArithmeticFunction.piltz_two`: `d_2 = σ 0`
+* `ArithmeticFunction.d_eq_zeta_pow`: `d_k = ζ ^ k`
+* `ArithmeticFunction.d_two`: `d_2 = σ 0`
 * `ArithmeticFunction.piltzNontrivial_eq_zeta_sub_one_pow`: `d_k^* = (ζ - 1) ^ k`
 -/
 
@@ -74,59 +74,58 @@ theorem pow_apply_eq_sum_finMulAntidiag {R : Type*} [CommSemiring R] (f : Arithm
       rw [Fin.prod_univ_succ]
       simp
 
-/-- The **Piltz divisor function** `d_k`: `piltz k n` is the number of ways of writing `n` as an
-ordered product of `k` natural numbers. It is `0` at `n = 0`, `d_1 = ζ`, `d_2 = σ 0` and
-`d_k = ζ ^ k` (`ArithmeticFunction.piltz_eq_zeta_pow`). -/
-def piltz (k : ℕ) : ArithmeticFunction ℕ where
-  toFun n := (Nat.finMulAntidiag k n).card
-  map_zero' := by simp
+/-- The **`k`-fold (Piltz) divisor function** `d_k = ζ ^ k`, the `k`-th Dirichlet power of `ζ`,
+as `ArithmeticFunction.d` in PrimeNumberTheoremAnd. `d k n` is the number of ways of writing `n`
+as an ordered product of `k` natural numbers
+(`ArithmeticFunction.d_apply_eq_card_finMulAntidiag`); `d_1 = ζ` and `d_2 = σ 0`. -/
+def d (k : ℕ) : ArithmeticFunction ℕ := ζ ^ k
 
-/-- `piltz k n` counts the `k`-tuples in `Nat.finMulAntidiag k n`. -/
-theorem piltz_apply (k n : ℕ) : piltz k n = (Nat.finMulAntidiag k n).card := rfl
+/-- `d_k` is the `k`-th Dirichlet power of `ζ` (true by definition). -/
+theorem d_eq_zeta_pow (k : ℕ) : d k = (ζ : ArithmeticFunction ℕ) ^ k := rfl
 
-/-- The Piltz divisor function `d_k` is the `k`-th Dirichlet power of `ζ`. -/
-theorem piltz_eq_zeta_pow (k : ℕ) : piltz k = (ζ : ArithmeticFunction ℕ) ^ k := by
-  ext n
-  rw [piltz_apply, pow_apply_eq_sum_finMulAntidiag, card_eq_sum_ones]
+/-- `d k n` counts the `k`-tuples in `Nat.finMulAntidiag k n`. -/
+theorem d_apply_eq_card_finMulAntidiag (k n : ℕ) : d k n = (Nat.finMulAntidiag k n).card := by
+  rw [d_eq_zeta_pow, pow_apply_eq_sum_finMulAntidiag, card_eq_sum_ones]
   refine sum_congr rfl fun a ha => ?_
   rw [prod_eq_one]
   intro i _
   rw [zeta_apply_ne (Nat.ne_zero_of_mem_finMulAntidiag ha i)]
 
 /-- `d_0` is the identity `1` for Dirichlet convolution. -/
-@[simp] theorem piltz_zero : piltz 0 = 1 := by simp [piltz_eq_zeta_pow]
+@[simp] theorem d_zero : ArithmeticFunction.d 0 = 1 := by simp [d_eq_zeta_pow]
 
 /-- `d_1 = ζ`. -/
-@[simp] theorem piltz_one : piltz 1 = ζ := by simp [piltz_eq_zeta_pow]
+@[simp] theorem d_one : ArithmeticFunction.d 1 = ζ := by simp [d_eq_zeta_pow]
 
 /-- `d_{k+1} = d_k * ζ`. -/
-theorem piltz_succ (k : ℕ) : piltz (k + 1) = piltz k * ζ := by
-  simp [piltz_eq_zeta_pow, pow_succ]
+theorem d_succ (k : ℕ) : ArithmeticFunction.d (k + 1) = ArithmeticFunction.d k * ζ := by
+  simp [d_eq_zeta_pow, pow_succ]
 
 /-- `d_{k+1}(n) = ∑_{d ∣ n} d_k(d)`. -/
-theorem piltz_succ_apply (k n : ℕ) : piltz (k + 1) n = ∑ d ∈ n.divisors, piltz k d := by
-  rw [piltz_succ, mul_zeta_apply]
+theorem d_succ_apply (k n : ℕ) :
+    ArithmeticFunction.d (k + 1) n = ∑ d ∈ n.divisors, ArithmeticFunction.d k d := by
+  rw [d_succ, mul_zeta_apply]
 
 /-- `d_2` is the number-of-divisors function `σ 0`. -/
-@[simp] theorem piltz_two : piltz 2 = σ 0 := by
+@[simp] theorem d_two : ArithmeticFunction.d 2 = σ 0 := by
   ext n
-  rw [piltz_succ_apply, sigma_zero_apply, card_eq_sum_ones]
+  rw [d_succ_apply, sigma_zero_apply, card_eq_sum_ones]
   refine sum_congr rfl fun d hd => ?_
   simp [Nat.ne_of_gt (Nat.pos_of_mem_divisors hd)]
 
 /-- `d_k(n) ≤ d_{k+1}(n)`. -/
-theorem piltz_le_piltz_succ (k n : ℕ) : piltz k n ≤ piltz (k + 1) n := by
+theorem d_le_d_succ (k n : ℕ) : ArithmeticFunction.d k n ≤ ArithmeticFunction.d (k + 1) n := by
   rcases eq_or_ne n 0 with rfl | hn
   · simp
-  rw [piltz_succ_apply]
+  rw [d_succ_apply]
   exact single_le_sum (fun _ _ => Nat.zero_le _) (Nat.mem_divisors_self n hn)
 
 /-- `d_k(n)` is positive for `k ≠ 0` and `n ≠ 0`. -/
-theorem piltz_pos {k n : ℕ} (hk : k ≠ 0) (hn : n ≠ 0) : 0 < piltz k n := by
+theorem d_pos {k n : ℕ} (hk : k ≠ 0) (hn : n ≠ 0) : 0 < ArithmeticFunction.d k n := by
   obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hk
   induction k with
   | zero => simp [hn]
-  | succ k ih => exact (ih k.succ_ne_zero).trans_le (piltz_le_piltz_succ _ _)
+  | succ k ih => exact (ih k.succ_ne_zero).trans_le (d_le_d_succ _ _)
 
 /-- The **nontrivial Piltz divisor function** `d_k^*`: `piltzNontrivial k n` is the number of
 ways of writing `n` as an ordered product of `k` natural numbers that are all at least `2`.

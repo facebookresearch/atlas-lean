@@ -33,6 +33,8 @@ listing the zeros of `ξ` with multiplicity.
 
 @[expose] public section
 
+open Complex (riemannXi)
+
 universe u
 
 open ArithmeticFunction LSeries RiemannXi
@@ -116,7 +118,7 @@ theorem exists_tsum_one_div_one_add_sq_sub_im_le_log :
     (summable_norm_rpow_neg_two hz) s
   have hmre : Summable fun n => (1 / (s - z n) + 1 / z n).re := Complex.reCLM.summable hm
   have hterm : ∀ n, 1 / (1 + (T - (z n).im) ^ 2) ≤ 4 * (1 / (s - z n) + 1 / z n).re :=
-    fun n => one_div_one_add_sq_sub_im_le_re (hzmem n).2.1 (hzmem n).2.2 T
+    fun n => one_div_one_add_sq_sub_im_le_re (hzmem n).2.1.le (hzmem n).2.2.le T
   have hsum : Summable fun n => 1 / (1 + (T - (z n).im) ^ 2) :=
     Summable.of_nonneg_of_le (fun n => by positivity) hterm (hmre.mul_left 4)
   refine ⟨hsum, ?_⟩

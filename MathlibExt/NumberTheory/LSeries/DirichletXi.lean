@@ -309,9 +309,10 @@ theorem eventually_norm_xi_le_exp (hχ1 : χ ≠ 1) :
   rwa [Real.rpow_def_of_pos hs0, show Real.log ‖s‖ * (4 * ‖s‖) = 4 * ‖s‖ * Real.log ‖s‖ by
     ring] at hs
 
-/-- `ξ(s, χ)` has order of growth at most `1` for `χ ≠ 1`. -/
-theorem hasGrowthOrderLE_xi (hχ1 : χ ≠ 1) : Complex.HasGrowthOrderLE (xi χ) 1 :=
-  Complex.hasGrowthOrderLE_one_of_eventually_norm_le_exp_mul_log (eventually_norm_xi_le_exp hχ1)
+/-- `ξ(s, χ)` is entire of order at most `1` for `χ ≠ 1`. -/
+theorem entireOfOrderAtMost_xi (hχ1 : χ ≠ 1) : Complex.Hadamard.EntireOfOrderAtMost 1 (xi χ) :=
+  Complex.entireOfOrderAtMost_one_of_eventually_norm_le_exp_mul_log (differentiable_xi hχ1)
+    (eventually_norm_xi_le_exp hχ1)
 
 /-- `‖L(k, χ)‖ ≥ 1 / 2` for every natural number `k ≥ 5`. -/
 theorem one_half_le_norm_LSeries_natCast (χ : DirichletCharacter ℂ q) {k : ℕ} (hk : 5 ≤ k) :
@@ -430,14 +431,14 @@ theorem not_isBigO_xi_exp_mul_norm (hχ1 : χ ≠ 1) (b : ℝ) :
 
 /-- **`ξ(s, χ)` has order `1`** for `χ ≠ 1`. -/
 theorem hasGrowthOrder_xi (hχ1 : χ ≠ 1) : Complex.HasGrowthOrder (xi χ) 1 := by
-  refine Complex.hasGrowthOrder_one_of_not_isBigO_exp_norm (hasGrowthOrderLE_xi hχ1) ?_
+  refine Complex.hasGrowthOrder_one_of_not_isBigO_exp_norm (entireOfOrderAtMost_xi hχ1) ?_
   simpa using not_isBigO_xi_exp_mul_norm hχ1 1
 
 /-- **`L(s, χ)` has infinitely many nontrivial zeros** for primitive `χ ≠ 1`. -/
 theorem nontrivialZeros_infinite (hχ : χ.IsPrimitive) (hχ1 : χ ≠ 1) :
     χ.nontrivialZeros.Infinite := by
-  have h := Complex.setOf_eq_zero_infinite_of_hasGrowthOrderLE_one (differentiable_xi hχ1)
-    (hasGrowthOrderLE_xi hχ1) (xi_zero_ne_zero hχ hχ1) (not_isBigO_xi_exp_mul_norm hχ1)
+  have h := Complex.setOf_eq_zero_infinite_of_entireOfOrderAtMost_one (entireOfOrderAtMost_xi hχ1)
+    (xi_zero_ne_zero hχ hχ1) (not_isBigO_xi_exp_mul_norm hχ1)
   convert h using 1
   ext s
   exact (xi_eq_zero_iff hχ hχ1 s).symm
@@ -457,8 +458,8 @@ theorem exists_xi_eq_exp_mul_tprod (hχ : χ.IsPrimitive) (hχ1 : χ ≠ 1) {ι 
     (hz : ∀ w, ENat.card {n // z n = w} = analyticOrderAt (xi χ) w) :
     ∃ A B : ℂ, ∀ s, xi χ s =
       Complex.exp (A + B * s) * ∏' n, (1 - s / z n) * Complex.exp (s / z n) :=
-  Complex.exists_eq_exp_mul_tprod_of_hasGrowthOrderLE_one (differentiable_xi hχ1)
-    (hasGrowthOrderLE_xi hχ1) (xi_zero_ne_zero hχ hχ1) hz
+  Complex.exists_eq_exp_mul_tprod_of_entireOfOrderAtMost_one (entireOfOrderAtMost_xi hχ1)
+    (xi_zero_ne_zero hχ hχ1) hz
 
 /-- The constant term of the Hadamard product of `ξ(s, χ)` satisfies `exp A = ξ(0, χ)`. -/
 theorem exp_eq_xi_zero_of_xi_eq_exp_mul_tprod {ι : Type*} {z : ι → ℂ} {A B : ℂ}
@@ -474,7 +475,7 @@ theorem hasSum_re_one_div_of_xi_eq_exp_mul_tprod (hχ : χ.IsPrimitive) (hχ1 : 
     {A B : ℂ} (hAB : ∀ s, xi χ s =
       Complex.exp (A + B * s) * ∏' n, (1 - s / z n) * Complex.exp (s / z n)) :
     HasSum (fun n => (1 / z n).re) (-B.re) :=
-  Complex.hasSum_re_one_div_of_eq_exp_mul_tprod (differentiable_xi hχ1) (hasGrowthOrderLE_xi hχ1)
+  Complex.hasSum_re_one_div_of_eq_exp_mul_tprod (entireOfOrderAtMost_xi hχ1)
     (xi_zero_ne_zero hχ hχ1) hz (xi_eq_rootNumber_mul_conj hχ hχ1)
     (fun w hw => by
       obtain ⟨-, h0, h1⟩ := (xi_eq_zero_iff hχ hχ1 w).mp hw

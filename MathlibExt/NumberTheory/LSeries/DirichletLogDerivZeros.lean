@@ -47,6 +47,8 @@ nontrivial zeros of `L(s, χ)`. The character modulo `1`, whose `L`-function is 
 
 @[expose] public section
 
+open Complex (riemannXi)
+
 universe u
 
 open Filter Topology Set ArithmeticFunction LSeries RiemannXi
@@ -118,7 +120,7 @@ theorem re_mem_Icc_of_analyticOrderAt_xi_ne_zero {q : ℕ} [NeZero q] {χ : Diri
       by_contra h
       exact hne (analyticOrderAt_eq_zero.mpr (Or.inr h))
     have hm := (riemannXi_eq_zero_iff _).mp h0
-    exact ⟨hm.2.1, hm.2.2⟩
+    exact ⟨hm.2.1.le, hm.2.2.le⟩
   · have h0 : xi χ w = 0 := by
       by_contra h
       exact hne (analyticOrderAt_eq_zero.mpr (Or.inr h))
@@ -327,7 +329,8 @@ theorem zeroCount_eq_ncard (hχ : χ.IsPrimitive) (hχ1 : χ ≠ 1)
   have hmaps : ∀ n ∈ hN.toFinset, z n ∈ hS.toFinset := fun n hn => by
     rw [Set.Finite.mem_toFinset] at hn ⊢
     exact ⟨mem_nontrivialZeros_of_card_eq_analyticOrderAt hχ hχ1 hz n, hn⟩
-  rw [zeroCount, finsum_mem_eq_finite_toFinset_sum _ hS, Set.ncard_eq_toFinset_card _ hN,
+  rw [zeroCount_eq_natCast_finsum hS, Nat.cast_inj, finsum_mem_eq_finite_toFinset_sum _ hS,
+    Set.ncard_eq_toFinset_card _ hN,
     Finset.card_eq_sum_card_fiberwise hmaps]
   refine Finset.sum_congr rfl fun ρ hρ => ?_
   rw [Set.Finite.mem_toFinset] at hρ
@@ -365,8 +368,8 @@ private lemma exists_neg_re_logDeriv_add_sum_le :
   have hz0 : ∀ n, z n ≠ 0 := fun n h => hX0 (h ▸ hzero n)
   have hzre : ∀ n, (z n).re ≤ 1 := fun n =>
     (mem_nontrivialZeros_of_card_eq_analyticOrderAt hχ hχ1 hz n).2.2.le
-  have hsum := Complex.summable_norm_rpow_neg_two_of_hasGrowthOrderLE_one hd
-    (hasGrowthOrderLE_xi hχ1) hX0 hz
+  have hsum := Complex.summable_norm_rpow_neg_two_of_entireOfOrderAtMost_one
+    (entireOfOrderAtMost_xi hχ1) hX0 hz
   have hm := Complex.summable_one_div_sub_add_one_div hz0 hsum s
   have hLs : LFunction χ s ≠ 0 := LFunction_ne_zero_of_one_le_re χ (Or.inl hχ1) hs1
   have hfs : f s ≠ 0 := by
@@ -465,12 +468,12 @@ theorem exists_neg_re_logDeriv_LFunction_add_sum_lt_log :
       (summable_norm_rpow_neg_two hz') s
     have hmre : Summable fun n => (1 / (s - z n) + 1 / z n).re := Complex.reCLM.summable hm
     have hnn : ∀ n, 0 ≤ (1 / (s - z n) + 1 / z n).re := fun n =>
-      Complex.re_one_div_sub_add_one_div_nonneg (hzmem n).2.1 (hzmem n).2.2 hs1
+      Complex.re_one_div_sub_add_one_div_nonneg (hzmem n).2.1.le (hzmem n).2.2.le hs1
     have hle : ∀ n ∈ F, (1 / (s - z n)).re ≤ (1 / (s - z n) + 1 / z n).re := by
       intro n _
       rw [Complex.add_re, one_div (z n), Complex.inv_re]
       have : 0 ≤ (z n).re / Complex.normSq (z n) :=
-        div_nonneg (hzmem n).2.1 (Complex.normSq_nonneg _)
+        div_nonneg (hzmem n).2.1.le (Complex.normSq_nonneg _)
       linarith
     have hF : ∑ n ∈ F, (1 / (s - z n)).re ≤ ∑' n, (1 / (s - z n) + 1 / z n).re :=
       (Finset.sum_le_sum hle).trans (hmre.sum_le_tsum F (fun n _ => hnn n))
@@ -606,15 +609,16 @@ theorem exists_card_le_log_of_abs_sub_im_lt :
 
 /-- The logarithmic derivative of the Hadamard product of an entire function of order at most `1`
 with `f 0 ≠ 0`, at any point that is not a zero. -/
-private lemma exists_logDeriv_eq_add_tsum {f : ℂ → ℂ} (hd : Differentiable ℂ f)
-    (ho : Complex.HasGrowthOrderLE f 1) (h0 : f 0 ≠ 0) {ι : Type*} {z : ι → ℂ}
+private lemma exists_logDeriv_eq_add_tsum {f : ℂ → ℂ}
+    (ho : Complex.Hadamard.EntireOfOrderAtMost 1 f) (h0 : f 0 ≠ 0) {ι : Type*} {z : ι → ℂ}
     (hz : ∀ w, ENat.card {n // z n = w} = analyticOrderAt f w) :
     ∃ B : ℂ, (∀ n, z n ≠ 0) ∧ Summable (fun n => ‖z n‖ ^ (-2 : ℝ)) ∧
       ∀ w, (∀ n, z n ≠ w) → f w ≠ 0 ∧ logDeriv f w = B + ∑' n, (1 / (w - z n) + 1 / z n) := by
-  obtain ⟨A, B, hAB⟩ := Complex.exists_eq_exp_mul_tprod_of_hasGrowthOrderLE_one hd ho h0 hz
+  have hd := ho.differentiable
+  obtain ⟨A, B, hAB⟩ := Complex.exists_eq_exp_mul_tprod_of_entireOfOrderAtMost_one ho h0 hz
   have hzero : ∀ n, f (z n) = 0 := Complex.apply_eq_zero_of_card_eq_analyticOrderAt hz
   have hz0 : ∀ n, z n ≠ 0 := fun n h => h0 (h ▸ hzero n)
-  have hsum := Complex.summable_norm_rpow_neg_two_of_hasGrowthOrderLE_one hd ho h0 hz
+  have hsum := Complex.summable_norm_rpow_neg_two_of_entireOfOrderAtMost_one ho h0 hz
   refine ⟨B, hz0, hsum, fun w hw => ?_⟩
   have hfw : f w ≠ 0 := by
     intro h
@@ -636,8 +640,8 @@ private lemma exists_norm_logDeriv_sub_add_tsum_le_of_ne_one :
               Real.log (|w.im| + 2) + C := by
   obtain ⟨Cd, hCd⟩ := Complex.exists_norm_digamma_le_log_add
   refine ⟨|Cd| + 1, fun N _ χ hχ hχ1 ι z hz => ?_⟩
-  obtain ⟨BH, hz0, hsum, hH⟩ := exists_logDeriv_eq_add_tsum (differentiable_xi hχ1)
-    (hasGrowthOrderLE_xi hχ1) (xi_zero_ne_zero hχ hχ1) hz
+  obtain ⟨BH, hz0, hsum, hH⟩ := exists_logDeriv_eq_add_tsum (entireOfOrderAtMost_xi hχ1)
+    (xi_zero_ne_zero hχ hχ1) hz
   obtain ⟨a, ha, hLeq⟩ := exists_logDeriv_LFunction_eq_logDeriv_xi_sub hχ1
   have ha0 : 0 ≤ a := by rcases ha with h | h <;> simp [h]
   have ha1 : a ≤ 1 := by rcases ha with h | h <;> simp [h]
@@ -692,8 +696,8 @@ private lemma exists_norm_logDeriv_riemannZeta_sub_add_tsum_le :
               Real.log (|w.im| + 2) + C := by
   obtain ⟨Cd, hCd⟩ := Complex.exists_norm_digamma_le_log_add
   refine ⟨|Cd| + 1, fun {ι} z hz => ?_⟩
-  obtain ⟨BH, hz0, hsum, hH⟩ := exists_logDeriv_eq_add_tsum differentiable_riemannXi
-    hasGrowthOrderLE_riemannXi riemannXi_zero_ne_zero hz
+  obtain ⟨BH, hz0, hsum, hH⟩ := exists_logDeriv_eq_add_tsum entireOfOrderAtMost_riemannXi
+    riemannXi_zero_ne_zero hz
   obtain ⟨A₀, B, hAB⟩ := exists_riemannXi_eq_exp_mul_tprod hz
   refine ⟨B + (Real.log Real.pi : ℂ) / 2, hz0, hsum, fun s hs1 hs2 ht hzs => ?_⟩
   have himne : s.im ≠ 0 := by intro h; rw [h] at ht; simp at ht; linarith

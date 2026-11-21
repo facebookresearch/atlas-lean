@@ -57,8 +57,8 @@ namespace SelbergClass
 
 open ArithmeticFunction
 
-private lemma norm_le_exp_rpow_strip_of_hasGrowthOrderLE (F G : ℂ → ℂ) (m : ℕ) (β : ℝ)
-    (hGo : HasGrowthOrderLE G β)
+private lemma norm_le_exp_rpow_strip_of_entireOfOrderAtMost (F G : ℂ → ℂ) (m : ℕ) (β : ℝ)
+    (hGo : Hadamard.EntireOfOrderAtMost β G)
     (hGF : ∀ s, s ≠ 1 → G s = (s - 1) ^ m * F s) :
     ∃ C T₀ : ℝ, ∀ s : ℂ, -1 ≤ s.re → s.re ≤ 2 → T₀ ≤ |s.im| →
       ‖F s‖ ≤ C * Real.exp (|s.im| ^ (β + (|β| + 1) + 1)) := by
@@ -228,12 +228,12 @@ theorem exists_norm_le_mul_rpow_of_differentiable (a : ArithmeticFunction ℂ)
     (hF : IsLSeriesContinuation a F) (hent : Differentiable ℂ F) :
     ∃ A > (0 : ℝ), ∃ C, ∀ s : ℂ, 0 ≤ s.re → s.re ≤ 1 → 1 ≤ |s.im| →
       ‖F s‖ ≤ C * |s.im| ^ A := by
-  obtain ⟨-, ⟨F0, hF0, ⟨m, G, β, -, hGo, hGF⟩, ⟨E⟩⟩, -, hacoef⟩ := ha
+  obtain ⟨-, ⟨F0, hF0, ⟨m, G, β, hGo, hGF⟩, ⟨E⟩⟩, -, hacoef⟩ := ha
   have hFF0 := hF.eqOn_compl_one hF0
   obtain ⟨Ca, hCa⟩ := hacoef (1/2) (by norm_num)
   obtain ⟨B, hB0, hB⟩ := hF.exists_norm_le_of_re_eq_two hCa
   have hGF' : ∀ s, s ≠ 1 → G s = (s - 1) ^ m * F s := fun s hs => by rw [hGF s hs, hFF0 s hs]
-  have hgrowth := norm_le_exp_rpow_strip_of_hasGrowthOrderLE F G m β hGo hGF'
+  have hgrowth := norm_le_exp_rpow_strip_of_entireOfOrderAtMost F G m β hGo hGF'
   obtain ⟨CQ, T₀, hCQ, hleft⟩ := exists_norm_le_mul_rpow_line_neg_one F0 F E hFF0 hent B hB0 hB
   set A : ℝ := 1 + ∑ i, 3 * E.α i with hAdef
   have hsumα : 0 ≤ ∑ i, 3 * E.α i := Finset.sum_nonneg fun i _ => by have := E.α_pos i; positivity

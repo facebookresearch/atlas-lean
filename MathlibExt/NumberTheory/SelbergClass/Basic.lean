@@ -159,7 +159,7 @@ its continuation as a separate function. -/
 def selbergClass : Set (ArithmeticFunction ℂ) :=
   {a | a 1 = 1 ∧
     (∃ F : ℂ → ℂ, IsLSeriesContinuation a F ∧
-      (∃ (m : ℕ) (G : ℂ → ℂ) (β : ℝ), Differentiable ℂ G ∧ HasGrowthOrderLE G β ∧
+      (∃ (m : ℕ) (G : ℂ → ℂ) (β : ℝ), Hadamard.EntireOfOrderAtMost β G ∧
         ∀ s, s ≠ 1 → G s = (s - 1) ^ m * F s) ∧
       Nonempty (FunctionalEquation F)) ∧
     (∃ (b : ℕ → ℂ) (θ : ℝ), θ < 1 / 2 ∧ IsEulerLog a b ∧ ∃ C, ∀ n, ‖b n‖ ≤ C * (n : ℝ) ^ θ) ∧
@@ -459,14 +459,14 @@ theorem FunctionalEquation.eq_of_re_lt_one {F : ℂ → ℂ} (hFd : Differentiab
 /-- **Meromorphy at `s = 1`.** The continuation of a member of `𝒮` is meromorphic at `1`. -/
 theorem meromorphicAt_one {a : ArithmeticFunction ℂ} (ha : a ∈ selbergClass) {F : ℂ → ℂ}
     (hF : IsLSeriesContinuation a F) : MeromorphicAt F 1 := by
-  obtain ⟨-, ⟨F', hF', ⟨m, G, -, hG, -, hGF⟩, -⟩, -⟩ := ha
+  obtain ⟨-, ⟨F', hF', ⟨m, G, _, hG, hGF⟩, -⟩, -⟩ := ha
   have hev : (fun s => G s / (s - 1) ^ m) =ᶠ[𝓝[≠] 1] F := by
     filter_upwards [self_mem_nhdsWithin] with s hs
     have hs1 : (s - 1) ^ m ≠ 0 := pow_ne_zero _ (sub_ne_zero.mpr hs)
     rw [hGF s hs, hF.eqOn_compl_one hF' s hs]
     field_simp
   refine MeromorphicAt.congr ?_ hev
-  exact (hG.analyticAt 1).meromorphicAt.div
+  exact (hG.differentiable.analyticAt 1).meromorphicAt.div
     (((MeromorphicAt.id 1).sub (MeromorphicAt.const 1 1)).pow m)
 
 end SelbergClass

@@ -71,6 +71,10 @@ example {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hχ : χ.IsPrimiti
   ⟨xi_zero_ne_zero hχ hχ1, xi_eq_zero_iff hχ hχ1⟩
 
 example {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hχ1 : χ ≠ 1) :
+    Complex.Hadamard.EntireOfOrderAtMost 1 (xi χ) :=
+  entireOfOrderAtMost_xi hχ1
+
+example {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hχ1 : χ ≠ 1) :
     Complex.HasGrowthOrder (xi χ) 1 :=
   hasGrowthOrder_xi hχ1
 

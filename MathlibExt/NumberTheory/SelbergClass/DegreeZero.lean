@@ -626,11 +626,12 @@ private theorem tendsto_average_tsum_exp_mul_I (u : ℕ → ℂ) (ω : ℕ → �
 
 /-- Phragmén–Lindelöf: if `(s - 1) ^ m F(s)` is entire of finite order and `F` is bounded on
 the lines `Re s = -1` and `Re s = 2`, then `F` is bounded on `-1 ≤ Re s ≤ 2`, `Im s ≥ 1`. -/
-private theorem exists_bound_strip_of_bound_lines (F G : ℂ → ℂ) (m : ℕ) (β : ℝ) (hGd :
-    Differentiable ℂ G)
-    (hGo : Complex.HasGrowthOrderLE G β) (hGF : ∀ s, s ≠ 1 → G s = (s - 1) ^ m * F s) (K : ℝ)
+private theorem exists_bound_strip_of_bound_lines (F G : ℂ → ℂ) (m : ℕ) (β : ℝ)
+    (hGo : Complex.Hadamard.EntireOfOrderAtMost β G)
+    (hGF : ∀ s, s ≠ 1 → G s = (s - 1) ^ m * F s) (K : ℝ)
     (hb : ∀ s : ℂ, (s.re = -1 ∨ s.re = 2) → ‖F s‖ ≤ K) :
     ∃ M, ∀ s : ℂ, -1 ≤ s.re → s.re ≤ 2 → 1 ≤ s.im → ‖F s‖ ≤ M := by
+  have hGd := hGo.differentiable
   set f : ℂ → ℂ := fun z => G z / (z + 2) ^ m with hf
   have hz2 : ∀ z : ℂ, -1 ≤ z.re → 1 ≤ ‖z + 2‖ := by
     intro z hz
@@ -659,7 +660,8 @@ private theorem exists_bound_strip_of_bound_lines (F G : ℂ → ℂ) (m : ℕ) 
   set ε : ℝ := |β| + 1 with hε
   set k : ℝ := β + ε with hk
   have hk1 : 1 ≤ k := by rw [hk, hε]; have := neg_abs_le β; linarith
-  obtain ⟨c0, hc0⟩ := (hGo ε (by positivity)).bound
+  obtain ⟨c0, hc0⟩ := (hGo.isBigO_exp_rpow (τ := k) (by rw [hk, hε]; linarith [abs_nonneg β])
+    (by linarith)).bound
   rw [← comap_norm_atTop, Filter.eventually_comap, Filter.eventually_atTop] at hc0
   obtain ⟨R, hR⟩ := hc0
   have hlim : ∀ᶠ x : ℝ in Filter.atTop, (x + 2) ^ k ≤ Real.exp x := by
@@ -891,7 +893,7 @@ private theorem apply_eq_tsum_of_gammaFree_functionalEquation (a : ArithmeticFun
     (F G : ℂ → ℂ) (m : ℕ) (β : ℝ)
     (hF : IsLSeriesContinuation a F)
     (hsum : ∀ s : ℂ, 3 / 2 < s.re → LSeriesSummable (fun n => a n) s)
-    (hGd : Differentiable ℂ G) (hGo : Complex.HasGrowthOrderLE G β)
+    (hGo : Complex.Hadamard.EntireOfOrderAtMost β G)
     (hGF : ∀ s, s ≠ 1 → G s = (s - 1) ^ m * F s) (Q : ℝ) (hQ : 0 < Q) (w : ℂ) (hw : ‖w‖ = 1)
     (heqn : ∀ s : ℂ, 0 < s.re → s.re < 1 → (Q : ℂ) ^ s * F s =
       w * starRingEnd ℂ ((Q : ℂ) ^ (1 - starRingEnd ℂ s) * F (1 - starRingEnd ℂ s)))
@@ -975,7 +977,7 @@ private theorem apply_eq_tsum_of_gammaFree_functionalEquation (a : ArithmeticFun
       linear_combination e
     rw [e']
     gcongr
-  obtain ⟨M, hM⟩ := exists_bound_strip_of_bound_lines F G m β hGd hGo hGF (max K (Q ^ 3 * K)) (fun s
+  obtain ⟨M, hM⟩ := exists_bound_strip_of_bound_lines F G m β hGo hGF (max K (Q ^ 3 * K)) (fun s
       hs => by
     rcases hs with h | h
     · exact (hKm1 s h).trans (le_max_right _ _)
@@ -1095,7 +1097,7 @@ theorem eq_one_of_degree_eq_zero {a : ArithmeticFunction ℂ} {F : ℂ → ℂ}
         D.degree = 0) :
     a = 1 := by
   classical
-  obtain ⟨ha1, ⟨F₀, hF₀, ⟨m, G, β, hGd, hGo, hGF₀⟩, _⟩, ⟨b, θ, hθ, hlog, Cb, hbC⟩, hram⟩ := ha
+  obtain ⟨ha1, ⟨F₀, hF₀, ⟨m, G, β, hGo, hGF₀⟩, _⟩, ⟨b, θ, hθ, hlog, Cb, hbC⟩, hram⟩ := ha
   obtain ⟨Ca, hCa⟩ := hram (1 / 2) (by norm_num)
   have hsum : ∀ s : ℂ, 3 / 2 < s.re → LSeriesSummable (fun n => a n) s := fun s hs =>
     LSeriesSummable_of_le_const_mul_rpow hs ⟨Ca, fun n _ => by
@@ -1115,7 +1117,7 @@ theorem eq_one_of_degree_eq_zero {a : ArithmeticFunction ℂ} {F : ℂ → ℂ}
     linarith
   subst hd
   simp only [Finset.univ_eq_empty, Finset.prod_empty, mul_one] at heqn
-  have key := apply_eq_tsum_of_gammaFree_functionalEquation a F G m β hF hsum hGd hGo hGF Q hQ w hw
+  have key := apply_eq_tsum_of_gammaFree_functionalEquation a F G m β hF hsum hGo hGF Q hQ w hw
       heqn
   -- the frequency `Q ^ 2` is an integer `q`
   have h1 := key 1 one_ne_zero

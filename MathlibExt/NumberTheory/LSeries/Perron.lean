@@ -26,14 +26,23 @@ integrating term by term gives
 With the kernels of `MathlibExt.Analysis.Complex.VerticalIntegral.PerronKernel` this gives the
 smoothed Perron formulas with logarithmic weights and the Riesz means.
 
+All integrands here are integrable on the line, so each formula is stated both as a value of the
+line integral `VerticalIntegral'` of the PrimeNumberTheoremAnd project and as a
+`Complex.HasVerticalIntegral` (convergence of the truncations), which is the form used
+downstream.
+
 ## Main statements
 
-* `LSeriesSummable.hasVerticalIntegral_LSeries_mul_cpow_mul`: the general formula.
-* `LSeriesSummable.hasVerticalIntegral_LSeries_mul_cpow_div_pow_succ`: for `k ≥ 1`,
+* `LSeriesSummable.verticalIntegral'_LSeries_mul_cpow_mul`: the general formula.
+* `LSeriesSummable.verticalIntegral'_LSeries_mul_cpow_div_pow_succ`: for `k ≥ 1`,
   `(1 / 2πi) ∫_(c) f(s) x ^ s / s ^ (k + 1) ds = (1 / k!) ∑_{n ≤ x} aₙ (log (x / n)) ^ k`.
-* `LSeriesSummable.hasVerticalIntegral_LSeries_mul_cpow_div_prod`: the Riesz mean, for `k ≥ 1`,
+* `LSeriesSummable.verticalIntegral'_LSeries_mul_cpow_div_prod`: the Riesz mean, for `k ≥ 1`,
   `(1 / 2πi) ∫_(c) f(s) x ^ s / (s (s + 1) ⋯ (s + k)) ds =
   (1 / (k! x ^ k)) ∑_{n ≤ x} aₙ (x - n) ^ k`.
+* `LSeriesSummable.hasVerticalIntegral_LSeries_mul_cpow_mul`,
+  `LSeriesSummable.hasVerticalIntegral_LSeries_mul_cpow_div_pow_succ`,
+  `LSeriesSummable.hasVerticalIntegral_LSeries_mul_cpow_div_prod`: the same formulas as
+  principal values.
 -/
 
 @[expose] public section
@@ -44,6 +53,16 @@ open scoped Real
 namespace LSeriesSummable
 
 variable {a : ℕ → ℂ} {c : ℝ}
+
+/-- For `y > 0` and `K` integrable on the line `re s = c`, so is `y ^ s K(s)`. -/
+private theorem integrable_cpow_mul_line {y : ℝ} (hy : 0 < y) {K : ℂ → ℂ}
+    (hK : VerticalIntegrable K c) :
+    Integrable fun t : ℝ => (y : ℂ) ^ ((c : ℂ) + t * I) * K (c + t * I) := by
+  refine Integrable.bdd_mul (c := y ^ c) hK ?_ (ae_of_all _ fun t => ?_)
+  · exact (Continuous.const_cpow (by fun_prop)
+      (Or.inl (ofReal_ne_zero.mpr hy.ne'))).aestronglyMeasurable
+  · rw [norm_cpow_eq_rpow_re_of_pos hy]
+    simp
 
 /-- **Perron's formula for an integrable kernel.** Let `∑ aₙ n^{-s}` converge absolutely at
 `c`, let `K` be integrable on the line `re s = c`, and suppose that for every `y > 0` the
@@ -62,13 +81,7 @@ theorem hasVerticalIntegral_LSeries_mul_cpow_mul (hsum : LSeriesSummable a c) {x
       (∑ n ∈ Finset.Icc 1 ⌊x⌋₊, a n * φ (x / n)) := by
   -- the kernel `t ↦ y ^ (c + it) K (c + it)` is integrable, and its integral is `φ y`
   set G : ℝ → ℝ → ℂ := fun y t => (y : ℂ) ^ ((c : ℂ) + t * I) * K (c + t * I) with hGdef
-  have hGint : ∀ y : ℝ, 0 < y → Integrable (G y) := by
-    intro y hy
-    refine Integrable.bdd_mul (c := y ^ c) hK ?_ (ae_of_all _ fun t => ?_)
-    · exact (Continuous.const_cpow (by fun_prop)
-        (Or.inl (ofReal_ne_zero.mpr hy.ne'))).aestronglyMeasurable
-    · rw [norm_cpow_eq_rpow_re_of_pos hy]
-      simp
+  have hGint : ∀ y : ℝ, 0 < y → Integrable (G y) := fun y hy => integrable_cpow_mul_line hy hK
   have hGφ : ∀ y : ℝ, 0 < y → (1 / (2 * π)) • ∫ t, G y t = φ y := fun y hy =>
     (hasVerticalIntegral_of_integrable (hGint y hy) fun _ => rfl).unique (hφ y hy)
   -- the whole integrand
@@ -111,6 +124,18 @@ theorem hasVerticalIntegral_LSeries_mul_cpow_mul (hsum : LSeriesSummable a c) {x
     (by simp only [hn, ↓reduceIte] : (if n ∈ Finset.Icc 1 ⌊x⌋₊ then a n * φ (x / n) else 0) =
       a n * φ (x / n))] at hvert
 
+/-- **Perron's formula for an integrable kernel, as a line integral.** Under the hypotheses of
+`LSeriesSummable.hasVerticalIntegral_LSeries_mul_cpow_mul`, the integrand is integrable on the
+line and `(1 / 2πi) ∫_(c) LSeries a s * x ^ s * K s ds = ∑_{1 ≤ n ≤ x} aₙ φ (x / n)`. -/
+theorem verticalIntegral'_LSeries_mul_cpow_mul (hsum : LSeriesSummable a c) {x : ℝ}
+    (hx : 0 < x) {K : ℂ → ℂ} {φ : ℝ → ℂ} (hK : VerticalIntegrable K c)
+    (hφ : ∀ y : ℝ, 0 < y → HasVerticalIntegral c (fun s => (y : ℂ) ^ s * K s) (φ y))
+    (hφ0 : ∀ y : ℝ, 0 < y → y < 1 → φ y = 0) :
+    VerticalIntegral' (fun s => LSeries a s * ((x : ℂ) ^ s * K s)) c =
+      ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, a n * φ (x / n) :=
+  (hsum.hasVerticalIntegral_LSeries_mul_cpow_mul hx hK hφ hφ0).verticalIntegral'_eq
+    (hsum.integrable_vertical_mul (integrable_cpow_mul_line hx hK))
+
 /-- **Perron's formula with logarithmic weights.** Let `∑ aₙ n^{-s}` converge absolutely at
 `c > 0`, and let `k ≥ 1` and `x > 0`. Then
 `(1 / 2πi) ∫_(c) LSeries a s * x ^ s / s ^ (k + 1) ds = (∑_{n ≤ x} aₙ (log (x / n)) ^ k) / k!`.
@@ -144,6 +169,18 @@ theorem hasVerticalIntegral_LSeries_mul_cpow_div_pow_succ (hsum : LSeriesSummabl
   have h1 : 1 ≤ x / n :=
     (one_le_div hn0).mpr ((Nat.cast_le.mpr hnx).trans (Nat.floor_le hx.le))
   simp only [h1, ↓reduceIte, mul_div_assoc]
+
+/-- **Perron's formula with logarithmic weights, as a line integral.** Let `∑ aₙ n^{-s}` converge
+absolutely at `c > 0`, and let `k ≥ 1` and `x > 0`. Then the integrand is integrable on the line
+and `(1 / 2πi) ∫_(c) LSeries a s * x ^ s / s ^ (k + 1) ds = (∑_{n ≤ x} aₙ (log (x / n)) ^ k) / k!`.
+-/
+theorem verticalIntegral'_LSeries_mul_cpow_div_pow_succ (hsum : LSeriesSummable a c)
+    {k : ℕ} (hk : 1 ≤ k) (hc : 0 < c) {x : ℝ} (hx : 0 < x) :
+    VerticalIntegral' (fun s => LSeries a s * (x : ℂ) ^ s / s ^ (k + 1)) c =
+      (∑ n ∈ Finset.Icc 1 ⌊x⌋₊, a n * (Real.log (x / n) : ℂ) ^ k) / (k.factorial : ℂ) :=
+  (hsum.hasVerticalIntegral_LSeries_mul_cpow_div_pow_succ hk hc hx).verticalIntegral'_eq (by
+    simpa only [mul_div_assoc] using
+      hsum.integrable_vertical_mul (integrable_cpow_div_pow_succ_line hk hc hx.le))
 
 /-- **Perron's formula for Riesz means.** Let `∑ aₙ n^{-s}` converge absolutely at `c > 0`, and
 let `k ≥ 1` and `x > 0`. Then
@@ -208,5 +245,19 @@ theorem hasVerticalIntegral_LSeries_mul_cpow_div_prod (hsum : LSeriesSummable a 
   field_simp
   rw [div_pow]
   field_simp
+
+/-- **Perron's formula for Riesz means, as a line integral.** Let `∑ aₙ n^{-s}` converge
+absolutely at `c > 0`, and let `k ≥ 1` and `x > 0`. Then the integrand is integrable on the line
+and `(1 / 2πi) ∫_(c) LSeries a s * x ^ s / (s (s + 1) ⋯ (s + k)) ds =
+(∑_{n ≤ x} aₙ (x - n) ^ k) / (k! x ^ k)`. -/
+theorem verticalIntegral'_LSeries_mul_cpow_div_prod (hsum : LSeriesSummable a c) {k : ℕ}
+    (hk : 1 ≤ k) (hc : 0 < c) {x : ℝ} (hx : 0 < x) :
+    VerticalIntegral'
+        (fun s => LSeries a s * (x : ℂ) ^ s / ∏ j ∈ Finset.range (k + 1), (s + j)) c =
+      (∑ n ∈ Finset.Icc 1 ⌊x⌋₊, a n * ((x : ℂ) - n) ^ k) /
+        ((k.factorial : ℂ) * (x : ℂ) ^ k) :=
+  (hsum.hasVerticalIntegral_LSeries_mul_cpow_div_prod hk hc hx).verticalIntegral'_eq (by
+    simpa only [mul_div_assoc] using
+      hsum.integrable_vertical_mul (integrable_cpow_div_prod_line hk hc hx.le))
 
 end LSeriesSummable

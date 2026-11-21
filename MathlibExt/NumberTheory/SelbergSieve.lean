@@ -24,6 +24,9 @@ This module defines the optimal level-`R` Selberg weights for an arbitrary
 
 ## Main statements
 
+* `MathlibExt.SelbergSieve.levelWeights_eq_ite`, `MathlibExt.SelbergSieve.levelSum_eq_sum_sq_le`:
+  the level weights and level sum agree with PrimeNumberTheoremAnd's `selbergWeights` and
+  `selbergBoundingSum` at level `y = R²`.
 * `MathlibExt.SelbergSieve.errSum_lambdaSquared_levelWeights_le`: the error term of the Λ² sieve
   with the level weights is at most `∑_{d₁, d₂ ≤ R} |R_{[d₁, d₂]}|`; combined with
   `MathlibExt.SelbergSieve.siftedSum_le_totalMass_div_levelSum_add_errSum` this gives Selberg's
@@ -961,6 +964,95 @@ theorem errSum_lambdaSquared_levelWeights_le (s : BoundingSieve) (R : ℕ) (hR :
         exact absurd (Nat.mem_divisors.mpr ⟨Nat.lcm_dvd (Nat.dvd_of_mem_divisors (hLP _ hx.1))
           (Nat.dvd_of_mem_divisors (hLP _ hx.2)), hP0⟩) h
     _ = ∑ d₁ ∈ L, ∑ d₂ ∈ L, |s.rem (d₁.lcm d₂)| := Finset.sum_product _ _ _
+
+/-- **The level sum in PrimeNumberTheoremAnd's form.** `G(R)` is PrimeNumberTheoremAnd's
+`selbergBoundingSum` `∑_{l ∣ P, l² ≤ y} g(l)` at level `y = R²`. -/
+theorem levelSum_eq_sum_sq_le (s : BoundingSieve) (R : ℕ) :
+    levelSum s R = ∑ l ∈ s.prodPrimes.divisors,
+      if ((l : ℕ) : ℝ) ^ 2 ≤ (R : ℝ) ^ 2 then s.selbergTerms l else 0 := by
+  rw [levelSum, levelSet, Finset.sum_filter]
+  refine Finset.sum_congr rfl fun l _ => ?_
+  congr 1
+  rw [propext (pow_le_pow_iff_left₀ (Nat.cast_nonneg _) (Nat.cast_nonneg _) two_ne_zero),
+    Nat.cast_le]
+
+/-- **The level weights in closed form.** `levelWeights s R` agrees with PrimeNumberTheoremAnd's
+`selbergWeights` at level `y = R²`:
+`λ_d = ν(d)⁻¹ g(d) μ(d) G(R)⁻¹ ∑_{m ∣ P, (d m)² ≤ R², (m, d) = 1} g(m)` for `d ∣ P`, and
+`λ_d = 0` otherwise. Here the weights are built by Möbius inversion of the `y`-coefficients
+`levelY`; the closed form follows by writing `m = d n` with `n` coprime to `d`. -/
+theorem levelWeights_eq_ite (s : BoundingSieve) (R d : ℕ) :
+    levelWeights s R d = if d ∣ s.prodPrimes then
+      (s.nu d)⁻¹ * s.selbergTerms d * ((ArithmeticFunction.moebius d : ℤ) : ℝ) *
+        (levelSum s R)⁻¹ * ∑ m ∈ s.prodPrimes.divisors,
+          if ((d * m : ℕ) : ℝ) ^ 2 ≤ (R : ℝ) ^ 2 ∧ m.Coprime d then s.selbergTerms m else 0
+    else 0 := by
+  have hP0 := BoundingSieve.prodPrimes_ne_zero (s := s)
+  split_ifs with hd
+  swap
+  · -- no multiple of `d` divides `P`
+    unfold levelWeights
+    refine mul_eq_zero_of_right _ (Finset.sum_eq_zero fun m hm => ?_)
+    rw [ite_eq_right fun hdm => hd (hdm.trans (Nat.mem_divisors.mp hm).1)]
+  have hd0 : d ≠ 0 := ne_zero_of_dvd_ne_zero hP0 hd
+  have hsq : ∀ n : ℕ, (n : ℝ) ^ 2 ≤ (R : ℝ) ^ 2 ↔ n ≤ R := fun n => by
+    rw [pow_le_pow_iff_left₀ (Nat.cast_nonneg _) (Nat.cast_nonneg _) two_ne_zero, Nat.cast_le]
+  -- reindex the multiples `m = d n` of `d` dividing `P` by the `n ∣ P` coprime to `d`
+  have key : (∑ m ∈ s.prodPrimes.divisors, if d ∣ m then
+      ((ArithmeticFunction.moebius (m / d) : ℤ) : ℝ) * levelY s R m else 0) =
+      ∑ n ∈ s.prodPrimes.divisors, if n.Coprime d then
+        (if d * n ≤ R then ((ArithmeticFunction.moebius d : ℤ) : ℝ) * s.selbergTerms d *
+          s.selbergTerms n / levelSum s R else 0) else 0 := by
+    rw [← Finset.sum_filter, ← Finset.sum_filter]
+    symm
+    refine Finset.sum_nbij' (fun n => d * n) (fun m => m / d) ?_ ?_ ?_ ?_ ?_
+    · intro n hn
+      simp only [Finset.mem_filter, Nat.mem_divisors] at hn ⊢
+      exact ⟨⟨hn.2.symm.mul_dvd_of_dvd_of_dvd hd hn.1.1, hP0⟩, dvd_mul_right d n⟩
+    · intro m hm
+      simp only [Finset.mem_filter, Nat.mem_divisors] at hm ⊢
+      have hsqm := BoundingSieve.squarefree_of_dvd_prodPrimes (s := s) hm.1.1
+      refine ⟨⟨(Nat.div_dvd_of_dvd hm.2).trans hm.1.1, hP0⟩, ?_⟩
+      exact Nat.coprime_of_squarefree_mul ((Nat.div_mul_cancel hm.2).symm ▸ hsqm)
+    · intro n _
+      exact Nat.mul_div_cancel_left n (Nat.pos_of_ne_zero hd0)
+    · intro m hm
+      simp only [Finset.mem_filter] at hm
+      exact Nat.mul_div_cancel' hm.2
+    · intro n hn
+      simp only [Finset.mem_filter, Nat.mem_divisors] at hn
+      have hcop : d.Coprime n := hn.2.symm
+      have hdnP : d * n ∣ s.prodPrimes := hcop.mul_dvd_of_dvd_of_dvd hd hn.1.1
+      have hsqn := BoundingSieve.squarefree_of_dvd_prodPrimes (s := s) hn.1.1
+      have hmu2 : ((ArithmeticFunction.moebius n : ℤ) : ℝ) ^ 2 = 1 := by
+        exact_mod_cast ArithmeticFunction.moebius_sq_eq_one_of_squarefree hsqn
+      rw [Nat.mul_div_cancel_left n (Nat.pos_of_ne_zero hd0), levelY]
+      have hmem : d * n ∈ levelSet s R ↔ d * n ≤ R := by
+        simp [levelSet, Nat.mem_divisors, hdnP, hP0]
+      by_cases hle : d * n ≤ R
+      · rw [ite_eq_left hle, ite_eq_left (hmem.2 hle),
+          ArithmeticFunction.isMultiplicative_moebius.map_mul_of_coprime hcop,
+          BoundingSieve.selbergTerms_isMultiplicative.map_mul_of_coprime hcop]
+        push_cast
+        rw [show ((ArithmeticFunction.moebius n : ℤ) : ℝ) *
+            (((ArithmeticFunction.moebius d : ℤ) : ℝ) * ((ArithmeticFunction.moebius n : ℤ) : ℝ) *
+              (s.selbergTerms d * s.selbergTerms n) / levelSum s R) =
+            ((ArithmeticFunction.moebius n : ℤ) : ℝ) ^ 2 *
+              (((ArithmeticFunction.moebius d : ℤ) : ℝ) * s.selbergTerms d *
+                s.selbergTerms n / levelSum s R) by ring, hmu2, one_mul]
+      · rw [ite_eq_right hle, ite_eq_right (mt hmem.1 hle), mul_zero]
+  unfold levelWeights
+  rw [key, Finset.mul_sum, Finset.mul_sum]
+  refine Finset.sum_congr rfl fun n _ => ?_
+  simp only [hsq]
+  by_cases hc : n.Coprime d
+  · by_cases hl : d * n ≤ R
+    · rw [ite_eq_left hc, ite_eq_left hl, ite_eq_left ⟨hl, hc⟩]
+      ring
+    · rw [ite_eq_left hc, ite_eq_right hl, ite_eq_right fun h => hl h.1]
+      ring
+  · rw [ite_eq_right hc, ite_eq_right fun h => hc h.2]
+    ring
 
 /-- The Selberg level sum dominates the sum of the completely multiplicative extension of `ν`
 over the integers `δ ≤ R` whose prime factors all divide `P`:

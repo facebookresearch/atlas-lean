@@ -19,10 +19,10 @@ small concrete functions.
 
 @[expose] public section
 
-open Filter Asymptotics Bornology Complex
+open Filter Asymptotics Bornology Complex Complex.Hadamard
 
-private lemma exp_hasGrowthOrderLE_one : HasGrowthOrderLE Complex.exp 1 := by
-  refine hasGrowthOrderLE_one_of_isBigO_exp_mul_norm (A := 1)
+private lemma exp_entireOfOrderAtMost_one : EntireOfOrderAtMost 1 Complex.exp := by
+  refine entireOfOrderAtMost_one_of_isBigO_exp_mul_norm (A := 1) Complex.differentiable_exp
     (IsBigO.of_bound 1 (Eventually.of_forall fun z => ?_))
   rw [Complex.norm_exp, one_mul, one_mul, Real.norm_of_nonneg (Real.exp_pos _).le]
   exact Real.exp_le_exp.mpr (Complex.re_le_norm z)
@@ -33,8 +33,8 @@ private lemma analyticOrderAt_exp (w : ℂ) : analyticOrderAt Complex.exp w = 0 
 /-- **Hadamard at `exp`.** The hypotheses are met with the empty family of zeros. -/
 example : ∃ A B : ℂ, ∀ s, Complex.exp s =
     Complex.exp (A + B * s) * ∏' n : Empty, (1 - s / Empty.elim n) * Complex.exp (s / Empty.elim n) :=
-  exists_eq_exp_mul_tprod_of_hasGrowthOrderLE_one Complex.differentiable_exp
-    exp_hasGrowthOrderLE_one (Complex.exp_ne_zero 0) fun w => by simp [analyticOrderAt_exp]
+  exists_eq_exp_mul_tprod_of_entireOfOrderAtMost_one exp_entireOfOrderAtMost_one
+    (Complex.exp_ne_zero 0) fun w => by simp [analyticOrderAt_exp]
 
 /-- The canonical indexing of the zeros of `exp` is empty. -/
 example : IsEmpty (Σ w : ℂ, Fin (analyticOrderAt Complex.exp w).toNat) :=
@@ -43,8 +43,8 @@ example : IsEmpty (Σ w : ℂ, Fin (analyticOrderAt Complex.exp w).toNat) :=
 example : ∃ A B : ℂ, ∀ s, Complex.exp s = Complex.exp (A + B * s) *
     ∏' n : (Σ w : ℂ, Fin (analyticOrderAt Complex.exp w).toNat),
       (1 - s / n.1) * Complex.exp (s / n.1) :=
-  exists_eq_exp_mul_tprod_sigma_of_hasGrowthOrderLE_one Complex.differentiable_exp
-    exp_hasGrowthOrderLE_one (Complex.exp_ne_zero 0)
+  exists_eq_exp_mul_tprod_sigma_of_entireOfOrderAtMost_one exp_entireOfOrderAtMost_one
+    (Complex.exp_ne_zero 0)
 
 /-- An entire logarithm of `exp` itself. -/
 example : ∃ h : ℂ → ℂ, Differentiable ℂ h ∧ h 0 = Complex.log (Complex.exp 0) ∧

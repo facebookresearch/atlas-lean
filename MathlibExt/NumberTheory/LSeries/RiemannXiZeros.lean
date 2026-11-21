@@ -19,7 +19,7 @@ import Mathlib.NumberTheory.LSeries.ZetaZeros
 /-!
 # The zeros of `ξ` and the nontrivial zeros of `ζ`
 
-API relating the zeros of the Riemann xi function `RiemannXi.riemannXi` to those of `ζ`, and for
+API relating the zeros of the Riemann xi function `Complex.riemannXi` to those of `ζ`, and for
 families listing the zeros of `ξ` with multiplicity, that is, `z : ι → ℂ` with
 `∀ w, ENat.card {n // z n = w} = analyticOrderAt riemannXi w`. Such families are the index sets
 of sums "over the nontrivial zeros `ρ` of `ζ`, counted with multiplicity".
@@ -46,6 +46,8 @@ of sums "over the nontrivial zeros `ρ` of `ζ`, counted with multiplicity".
 -/
 
 @[expose] public section
+
+open Complex (riemannXi)
 
 open Filter Topology Set ComplexConjugate
 

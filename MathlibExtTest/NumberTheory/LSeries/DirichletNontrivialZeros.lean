@@ -46,19 +46,13 @@ example {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) : (-2 : ℂ) ∉ χ
 example : (1 : ℂ) ∉ (1 : DirichletCharacter ℂ 1).nontrivialZeros := fun h =>
   riemannZeta_one_ne_zero (by simpa using h.1)
 
-/-- For the character mod `1`, the nontrivial zeros are exactly those of `ζ` (the open and the
-closed strip agree, as `ζ` has no zeros on `Re s = 0` or `Re s = 1`). -/
+/-- For the character mod `1`, the nontrivial zeros are exactly those of `ζ` (both are taken in
+the open strip). -/
 private theorem nontrivialZeros_modOne (χ : DirichletCharacter ℂ 1) :
     χ.nontrivialZeros = riemannZetaNontrivialZeros := by
   ext s
-  simp only [DirichletCharacter.mem_nontrivialZeros, DirichletCharacter.LFunction_modOne_eq]
-  constructor
-  · rintro ⟨h, h0, h1⟩
-    exact ⟨h, h0.le, h1.le⟩
-  · intro hs
-    have hξ := (RiemannXi.riemannXi_eq_zero_iff s).mpr hs
-    exact ⟨hs.1, RiemannXi.re_pos_of_riemannXi_eq_zero hξ,
-      RiemannXi.re_lt_one_of_riemannXi_eq_zero hξ⟩
+  simp only [DirichletCharacter.mem_nontrivialZeros, DirichletCharacter.LFunction_modOne_eq,
+    mem_riemannZetaNontrivialZeros]
 
 /-- Nontrivial zeros lie in `Re s < 1`, for every character. -/
 example {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} {s : ℂ} (hs : s ∈ χ.nontrivialZeros) :

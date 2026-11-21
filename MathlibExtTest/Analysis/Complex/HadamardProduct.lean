@@ -18,11 +18,11 @@ public import Mathlib.Analysis.PSeries
 
 @[expose] public section
 
-open Filter Asymptotics Bornology Complex
+open Filter Asymptotics Bornology Complex Complex.Hadamard
 
-private lemma exp_two_mul_hasGrowthOrderLE_one :
-    HasGrowthOrderLE (fun z => Complex.exp (2 * z)) 1 := by
-  refine hasGrowthOrderLE_one_of_isBigO_exp_mul_norm (A := 2)
+private lemma exp_two_mul_entireOfOrderAtMost_one :
+    EntireOfOrderAtMost 1 (fun z => Complex.exp (2 * z)) := by
+  refine entireOfOrderAtMost_one_of_isBigO_exp_mul_norm (A := 2) (by fun_prop)
     (IsBigO.of_bound 1 (Eventually.of_forall fun z => ?_))
   rw [Complex.norm_exp, one_mul, Real.norm_of_nonneg (Real.exp_pos _).le]
   refine Real.exp_le_exp.mpr ?_
@@ -32,7 +32,8 @@ private lemma exp_two_mul_hasGrowthOrderLE_one :
 
 /-- **`exp (2z)` has order exactly `1`**, via the exponential-type criterion. -/
 example : HasGrowthOrder (fun z => Complex.exp (2 * z)) 1 := by
-  refine hasGrowthOrder_one_of_not_isBigO_exp_norm exp_two_mul_hasGrowthOrderLE_one fun h => ?_
+  refine hasGrowthOrder_one_of_not_isBigO_exp_norm exp_two_mul_entireOfOrderAtMost_one
+    fun h => ?_
   have h' := (h.comp_tendsto (RCLike.tendsto_ofReal_atTop_cobounded ℂ)).norm_left
   have hO : (fun x : ℝ => Real.exp (2 * x)) =O[atTop] fun x : ℝ => Real.exp x := by
     refine (h'.congr_left fun x => ?_).congr' (Eventually.of_forall fun _ => rfl) ?_
@@ -47,8 +48,9 @@ example : HasGrowthOrder (fun z => Complex.exp (2 * z)) 1 := by
     (hO.trans_isLittleO hlo)
 
 /-- The `‖s‖ log ‖s‖` criterion, at `exp`. -/
-example : HasGrowthOrderLE Complex.exp 1 := by
-  refine hasGrowthOrderLE_one_of_eventually_norm_le_exp_mul_log (c := 1) ?_
+example : EntireOfOrderAtMost 1 Complex.exp := by
+  refine entireOfOrderAtMost_one_of_eventually_norm_le_exp_mul_log (c := 1)
+    Complex.differentiable_exp ?_
   filter_upwards [(tendsto_norm_cobounded_atTop (E := ℂ)).eventually
     (eventually_ge_atTop (Real.exp 1))] with s hs
   rw [Complex.norm_exp, one_mul]
@@ -60,7 +62,18 @@ example : HasGrowthOrderLE Complex.exp 1 := by
 
 /-- Order `< 1` gives exponential type with constant `1`, here for a constant. -/
 example : (fun _ : ℂ => (5 : ℂ)) =O[cobounded ℂ] fun s => Real.exp ‖s‖ :=
-  (hasGrowthOrderLE_const (5 : ℂ) (1 / 2)).isBigO_exp_norm_of_lt_one (by norm_num)
+  (entireOfOrderAtMost_const (5 : ℂ) (by norm_num : (0 : ℝ) ≤ 1 / 2)).isBigO_exp_norm_of_lt_one
+    (by norm_num)
+
+/-- Order `< 1` gives exponential type also from a negative exponent: `1 / 2` has order at most
+`-1`. -/
+example : (fun _ : ℂ => (1 / 2 : ℂ)) =O[cobounded ℂ] fun s => Real.exp ‖s‖ := by
+  refine EntireOfOrderAtMost.isBigO_exp_norm_of_lt_one (ρ := -1) ⟨differentiable_const _,
+    fun ε _ => ⟨1, one_pos, fun z => ?_⟩⟩ (by norm_num)
+  have h0 : (0 : ℝ) ≤ 1 * (1 + ‖z‖) ^ (-1 + ε) := by positivity
+  calc ‖(1 / 2 : ℂ)‖ = 1 / 2 := by norm_num
+    _ ≤ 1 := by norm_num
+    _ ≤ Real.exp (1 * (1 + ‖z‖) ^ (-1 + ε)) := Real.one_le_exp h0
 
 /-- The zeros `n + 1` of a would-be `1 / Γ(1 - s)` satisfy `∑ ‖zₙ‖⁻² < ∞`. -/
 private lemma summable_nat_succ : Summable fun n : ℕ => ‖((n : ℂ) + 1)‖ ^ (-2 : ℝ) := by
@@ -102,7 +115,7 @@ example : ∃ b : ℝ, ∀ s, ‖Complex.exp s‖ ≤ Real.exp (‖(0 : ℂ)‖ 
 /-- The symmetric-product identity is satisfiable (trivially) by the constant `1`. -/
 example : HasSum (fun n : Empty => (1 / (Empty.elim n : ℂ)).re) (-(0 : ℂ).re) :=
   hasSum_re_one_div_of_eq_exp_mul_tprod (f := fun _ => 1) (ε := 1) (A := 0) (B := 0)
-    (differentiable_const _) (hasGrowthOrderLE_const _ _) one_ne_zero
+    (entireOfOrderAtMost_const _ zero_le_one) one_ne_zero
     (fun w => by
       rw [(analyticAt_const).analyticOrderAt_eq_zero.mpr one_ne_zero]
       simp)

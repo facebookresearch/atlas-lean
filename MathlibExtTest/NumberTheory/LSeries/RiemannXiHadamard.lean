@@ -22,6 +22,8 @@ instantiated at it.
 
 @[expose] public section
 
+open Complex (riemannXi)
+
 open RiemannXi ComplexConjugate
 
 namespace RiemannXiHadamardTest
@@ -31,6 +33,9 @@ example : riemannXi 0 = 1 / 2 := riemannXi_zero
 example : riemannXi 1 = 1 / 2 := riemannXi_one
 
 example (s : ℂ) : riemannXi (conj s) = conj (riemannXi s) := riemannXi_conj s
+
+/-- `ξ` is entire of order at most `1`, in PrimeNumberTheoremAnd's sense. -/
+example : Complex.Hadamard.EntireOfOrderAtMost 1 riemannXi := entireOfOrderAtMost_riemannXi
 
 /-- `ξ` has order exactly `1`. -/
 example : Complex.HasGrowthOrder riemannXi 1 := hasGrowthOrder_riemannXi

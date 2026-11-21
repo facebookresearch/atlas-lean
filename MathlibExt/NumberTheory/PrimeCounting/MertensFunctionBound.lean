@@ -31,7 +31,7 @@ logarithmically weighted Perron formula and a contour shift, we prove that the M
 
 ## Main statements
 
-* `ArithmeticFunction.mertens_isBigO_mul_exp_neg_mul_log_rpow`: the bound for `M(x)`.
+* `ArithmeticFunction.M_isBigO_mul_exp_neg_mul_log_rpow`: the bound for `M(x)`.
 * `ArithmeticFunction.sum_moebius_isBigO_mul_exp_neg_mul_log_rpow`: the same bound, written as a
   sum of real numbers.
 * `Nat.card_squarefree_sub_isBigO_sqrt`: the number of squarefree `n ≤ x` is
@@ -665,12 +665,12 @@ Source: H. L. Montgomery and R. C. Vaughan, *Multiplicative Number Theory I: Cla
 Cambridge Studies in Advanced Mathematics 97, Cambridge University Press, 2007, Chapter 6 (*The
 Prime Number Theorem*), DOI 10.1017/CBO9780511618314.008. This is a weaker form: the classical bound
 is `M(x) = O(x exp(-c √(log x)))`. -/
-theorem mertens_isBigO_mul_exp_neg_mul_log_rpow :
-    ∃ c : ℝ, 0 < c ∧ (fun x : ℝ => (mertens x : ℝ))
+theorem M_isBigO_mul_exp_neg_mul_log_rpow :
+    ∃ c : ℝ, 0 < c ∧ (fun x : ℝ => M x)
       =O[atTop] fun x : ℝ => x * Real.exp (-c * Real.log x ^ (1 / 10 : ℝ)) := by
   obtain ⟨c, hc, h⟩ := sum_moebius_isBigO_mul_exp_neg_mul_log_rpow
   refine ⟨c, hc, h.congr_left fun x => ?_⟩
-  simp [mertens_apply]
+  simp [M_eq_sum_Icc]
 
 end ArithmeticFunction
 

@@ -19,6 +19,8 @@ on both horizontal lines `Im s = ±T'`.
 
 @[expose] public section
 
+open Complex (riemannXi)
+
 open Complex RiemannXi
 
 namespace RiemannXiLogDerivTest

@@ -34,6 +34,8 @@ contributions of the trivial zeros.
 
 @[expose] public section
 
+open Complex (riemannXi)
+
 open Complex Filter Topology Set
 
 section Residues
@@ -52,7 +54,7 @@ private lemma exists_local_pole_one {x : ℝ} (hx : 0 < x) :
       -(deriv riemannZeta s / riemannZeta s) * ((x : ℂ) ^ s / s) =
         (-(((-1 : ℤ) : ℤ) : ℂ) * ((x : ℂ) ^ (1 : ℂ) / 1)) / (s - 1) + φ s := by
   let E : ℂ → ℂ := fun s =>
-    2 * RiemannXi.riemannXi s * (Real.pi : ℂ) ^ (s / 2) * (Complex.Gamma (s / 2))⁻¹ / s
+    2 * Complex.riemannXi s * (Real.pi : ℂ) ^ (s / 2) * (Complex.Gamma (s / 2))⁻¹ / s
   have hEd : ∀ s : ℂ, s ≠ 0 → DifferentiableAt ℂ E s := fun s hs =>
     ((((RiemannXi.differentiable_riemannXi s).const_mul 2).mul
       (differentiableAt_pi_cpow_half s)).mul
@@ -81,7 +83,7 @@ private lemma exists_local_pole_one {x : ℝ} (hx : 0 < x) :
 /-- The pole at a nontrivial zero `p` of multiplicity `m`, with residue `-m x^p / p`. -/
 private lemma exists_local_pole_zero {x : ℝ} (hx : 0 < x) {p : ℂ}
     (hp : p ∈ riemannZetaNontrivialZeros) {m : ℕ}
-    (hm : analyticOrderAt RiemannXi.riemannXi p = m) :
+    (hm : analyticOrderAt Complex.riemannXi p = m) :
     ∃ φ : ℂ → ℂ, DifferentiableAt ℂ φ p ∧ ∀ᶠ s in 𝓝[≠] p,
       -(deriv riemannZeta s / riemannZeta s) * ((x : ℂ) ^ s / s) =
         (-(((m : ℤ)) : ℂ) * ((x : ℂ) ^ p / p)) / (s - p) + φ s := by
@@ -111,7 +113,7 @@ private lemma exists_local_pole_trivial {x : ℝ} (hx : 0 < x) {n : ℕ} (hn : 0
   have hGe' := ht.eventually hGe
   have hGa' := ht.eventually hGa.eventually_analyticAt
   let E : ℂ → ℂ := fun s =>
-    2 * RiemannXi.riemannXi s * (Real.pi : ℂ) ^ (s / 2) * (G (s / 2) / 2) / (s * (s - 1))
+    2 * Complex.riemannXi s * (Real.pi : ℂ) ^ (s / 2) * (G (s / 2) / 2) / (s * (s - 1))
   have hE : AnalyticAt ℂ E p := by
     rw [Complex.analyticAt_iff_eventually_differentiableAt]
     filter_upwards [isOpen_compl_singleton.mem_nhds (show p ∈ ({0}ᶜ : Set ℂ) from hp0),
@@ -123,7 +125,7 @@ private lemma exists_local_pole_trivial {x : ℝ} (hx : 0 < x) {n : ℕ} (hn : 0
     exact ((((RiemannXi.differentiable_riemannXi s).const_mul 2).mul
       (differentiableAt_pi_cpow_half s)).mul (h2'.div_const 2)).div (by fun_prop) hden
   have hE0 : E p ≠ 0 := by
-    have hxi : RiemannXi.riemannXi p ≠ 0 := by
+    have hxi : Complex.riemannXi p ≠ 0 := by
       rw [Ne, RiemannXi.riemannXi_eq_zero_iff]
       intro h; linarith [h.2.1]
     have hGp : G (p / 2) ≠ 0 := by
@@ -202,7 +204,7 @@ theorem boundaryIntegral_neg_logDeriv_riemannZeta_mul_cpow_div {ι : Type*} (z :
     intro p hp
     obtain ⟨hnt, hpR⟩ := (hZmem p).mp hp
     exact ⟨ne_zero_of_mem_riemannZetaNontrivialZeros hnt,
-      ne_one_of_mem_riemannZetaNontrivialZeros hnt, hnt.2.1, hnt.2.2, hpR⟩
+      ne_one_of_mem_riemannZetaNontrivialZeros hnt, hnt.2.1.le, hnt.2.2.le, hpR⟩
   have hTprop : ∀ p ∈ T, p.re < 0 ∧ -(U : ℝ) < p.re ∧ p.im = 0 := by
     intro p hp
     obtain ⟨m, h1, h2, rfl⟩ := (hTmem p).mp hp
@@ -272,7 +274,8 @@ theorem boundaryIntegral_neg_logDeriv_riemannZeta_mul_cpow_div {ι : Type*} (z :
       rcases le_or_gt 0 s.re with hre | hre
       · rcases le_or_gt 1 s.re with hre1 | hre1
         · exact riemannZeta_ne_zero_of_one_le_re hre1 h0
-        · have hnt : s ∈ riemannZetaNontrivialZeros := ⟨h0, hre, hre1.le⟩
+        · have hnt : s ∈ riemannZetaNontrivialZeros :=
+            mem_riemannZetaNontrivialZeros_iff_le.2 ⟨h0, hre, hre1.le⟩
           have hIm : |s.im| < R := lt_of_le_of_ne (abs_le.mpr ⟨k3, k4⟩) (hRz s hnt)
           exact hsS (by simp [S, (hZmem s).mpr ⟨hnt, hIm⟩])
       · obtain ⟨n, hn, rfl⟩ := exists_eq_neg_two_mul_of_riemannZeta_eq_zero_of_re_neg hre h0

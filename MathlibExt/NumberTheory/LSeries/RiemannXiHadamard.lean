@@ -27,6 +27,7 @@ critical strip.
 ## Main statements
 
 * `RiemannXi.exists_norm_riemannXi_lt_exp`: `‖ξ(s)‖ < exp (c ‖s‖ log ‖s‖)` for large `‖s‖`.
+* `RiemannXi.entireOfOrderAtMost_riemannXi`: `ξ` is entire of order at most `1`.
 * `RiemannXi.hasGrowthOrder_riemannXi`: `ξ` has order of growth exactly `1`.
 * `riemannZetaNontrivialZeros_infinite`: `ζ` has infinitely many zeros in `0 ≤ Re s ≤ 1`.
 * `RiemannXi.exists_riemannXi_eq_exp_mul_tprod`: the Hadamard product of `ξ`.
@@ -38,6 +39,8 @@ critical strip.
 -/
 
 @[expose] public section
+
+open Complex (riemannXi)
 
 open Filter Asymptotics Bornology ComplexConjugate
 
@@ -84,7 +87,8 @@ theorem exists_norm_riemannXi_le_mul_pow_mul_factorial :
   have hfac : (1 : ℝ) ≤ N.factorial := by exact_mod_cast Nat.factorial_pos N
   have h4N : (1 : ℝ) ≤ 4 ^ N := one_le_pow₀ (by norm_num)
   calc ‖riemannXi s‖ ≤ ‖s‖ * ‖s - 1‖ / 2 * ‖completedRiemannZeta₀ s‖ + 1 / 2 := by
-        unfold riemannXi
+        rw [show riemannXi s = s * (s - 1) / 2 * completedRiemannZeta₀ s + 1 / 2 by
+          unfold riemannXi; ring]
         refine (norm_add_le _ _).trans ?_
         rw [norm_mul, norm_div, norm_mul]
         simp
@@ -126,9 +130,10 @@ theorem exists_norm_riemannXi_lt_exp :
   have : 0 < ‖s‖ * Real.log ‖s‖ := by positivity
   linarith
 
-/-- `ξ` has order of growth at most `1`. -/
-theorem hasGrowthOrderLE_riemannXi : Complex.HasGrowthOrderLE riemannXi 1 :=
-  Complex.hasGrowthOrderLE_one_of_eventually_norm_le_exp_mul_log eventually_norm_riemannXi_le_exp
+/-- `ξ` is entire of order at most `1`. -/
+theorem entireOfOrderAtMost_riemannXi : Complex.Hadamard.EntireOfOrderAtMost 1 riemannXi :=
+  Complex.entireOfOrderAtMost_one_of_eventually_norm_le_exp_mul_log differentiable_riemannXi
+    eventually_norm_riemannXi_le_exp
 
 /-- `ξ` grows factorially along the even integers: `‖ξ(2(n+1))‖ ≥ n! / π^(n+1)`. -/
 theorem factorial_div_pi_pow_le_norm_riemannXi (n : ℕ) :
@@ -193,7 +198,7 @@ theorem not_isBigO_riemannXi_exp_mul_norm (b : ℝ) :
 
 /-- **`ξ` has order `1`.** -/
 theorem hasGrowthOrder_riemannXi : Complex.HasGrowthOrder riemannXi 1 := by
-  refine Complex.hasGrowthOrder_one_of_not_isBigO_exp_norm hasGrowthOrderLE_riemannXi ?_
+  refine Complex.hasGrowthOrder_one_of_not_isBigO_exp_norm entireOfOrderAtMost_riemannXi ?_
   simpa using not_isBigO_riemannXi_exp_mul_norm 1
 
 /-- **The Hadamard product of `ξ`.** For any family `z` listing the zeros of `ξ` with
@@ -207,8 +212,8 @@ theorem exists_riemannXi_eq_exp_mul_tprod {ι : Type*} {z : ι → ℂ}
     (hz : ∀ w, ENat.card {n // z n = w} = analyticOrderAt riemannXi w) :
     ∃ A B : ℂ, ∀ s, riemannXi s =
       Complex.exp (A + B * s) * ∏' n, (1 - s / z n) * Complex.exp (s / z n) :=
-  Complex.exists_eq_exp_mul_tprod_of_hasGrowthOrderLE_one differentiable_riemannXi
-    hasGrowthOrderLE_riemannXi (by simp) hz
+  Complex.exists_eq_exp_mul_tprod_of_entireOfOrderAtMost_one entireOfOrderAtMost_riemannXi
+    (by simp) hz
 
 /-- The constant term of the Hadamard product of `ξ` is `A ≡ -log 2 (mod 2πi)`, since
 `exp A = ξ(0) = 1 / 2`. -/
@@ -231,8 +236,8 @@ theorem hasSum_re_one_div_of_riemannXi_eq_exp_mul_tprod {ι : Type*} {z : ι →
     (hAB : ∀ s, riemannXi s =
       Complex.exp (A + B * s) * ∏' n, (1 - s / z n) * Complex.exp (s / z n)) :
     HasSum (fun n => (1 / z n).re) (-B.re) :=
-  Complex.hasSum_re_one_div_of_eq_exp_mul_tprod differentiable_riemannXi
-    hasGrowthOrderLE_riemannXi (by simp) hz (ε := 1)
+  Complex.hasSum_re_one_div_of_eq_exp_mul_tprod entireOfOrderAtMost_riemannXi (by simp) hz
+    (ε := 1)
     (fun s => by rw [one_mul, riemannXi_eq_conj_one_sub_conj])
     (fun w hw => by
       have := riemannXi_mem_strip hw
@@ -247,8 +252,8 @@ theorem ne_zero_of_card_eq_analyticOrderAt {ι : Type*} {z : ι → ℂ}
 theorem summable_norm_rpow_neg_two {ι : Type*} {z : ι → ℂ}
     (hz : ∀ w, ENat.card {n // z n = w} = analyticOrderAt riemannXi w) :
     Summable fun n => ‖z n‖ ^ (-2 : ℝ) :=
-  Complex.summable_norm_rpow_neg_two_of_hasGrowthOrderLE_one differentiable_riemannXi
-    hasGrowthOrderLE_riemannXi (by simp) hz
+  Complex.summable_norm_rpow_neg_two_of_entireOfOrderAtMost_one entireOfOrderAtMost_riemannXi
+    (by simp) hz
 
 /-- **The zero-sum expansion of `-ζ'/ζ`.** With `B` the linear coefficient of the Hadamard
 product of `ξ`, for `s ≠ 1` with `ζ(s) ≠ 0`,
@@ -343,8 +348,8 @@ end RiemannXi
 open RiemannXi in
 /-- **`ζ` has infinitely many zeros in the critical strip.** -/
 theorem riemannZetaNontrivialZeros_infinite : riemannZetaNontrivialZeros.Infinite := by
-  have h := Complex.setOf_eq_zero_infinite_of_hasGrowthOrderLE_one differentiable_riemannXi
-    hasGrowthOrderLE_riemannXi (by simp) not_isBigO_riemannXi_exp_mul_norm
+  have h := Complex.setOf_eq_zero_infinite_of_entireOfOrderAtMost_one
+    entireOfOrderAtMost_riemannXi (by simp) not_isBigO_riemannXi_exp_mul_norm
   convert h using 1
   ext s
   exact (riemannXi_eq_zero_iff s).symm

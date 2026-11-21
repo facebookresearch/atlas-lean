@@ -20,8 +20,8 @@ open Complex
 
 /-- `exp` is `exp` of the polynomial `X`. -/
 example : ∃ g : Polynomial ℂ, ∀ z, Complex.exp z = Complex.exp (g.eval z) :=
-  Complex.exists_polynomial_eq_exp_of_hasGrowthOrderLE differentiable_exp
-    (Complex.hasGrowthOrderLE_one_of_isBigO_exp_mul_norm (A := 1)
+  Complex.exists_polynomial_eq_exp_of_entireOfOrderAtMost
+    (Complex.Hadamard.entireOfOrderAtMost_one_of_isBigO_exp_mul_norm (A := 1) differentiable_exp
       (Asymptotics.IsBigO.of_bound 1 (Filter.Eventually.of_forall fun z => by
         rw [norm_exp, one_mul, one_mul, Real.norm_of_nonneg (Real.exp_pos _).le]
         exact Real.exp_le_exp.2 (re_le_norm z))))
@@ -34,5 +34,5 @@ example : ∃ C : ℂ, ∀ s : ℂ, 1 / 2 ≤ s.re → (fun _ : ℂ => (1 : ℂ)
     (fun i => i.elim0) (fun i => i.elim0) (fun i => i.elim0) (fun i => i.elim0)
     (fun i => i.elim0) (fun i => i.elim0) (fun i => i.elim0) (fun i => i.elim0) 1 (by simp)
     (Filter.Eventually.of_forall fun s => by simp)
-    ⟨fun _ => 1, 0, differentiable_const _, Complex.hasGrowthOrderLE_const _ _,
+    ⟨fun _ => 1, 0, Complex.Hadamard.entireOfOrderAtMost_const _ le_rfl,
       Filter.Eventually.of_forall fun s => by simp⟩

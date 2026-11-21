@@ -26,7 +26,7 @@ import MathlibExt.NumberTheory.LSeries.PerronError
 /-!
 # Summatory function of the Piltz divisor function, conditional on the Lindelöf hypothesis
 
-Let `d_k = ArithmeticFunction.piltz k` be the `k`-fold divisor function. Its Dirichlet series
+Let `d_k = ArithmeticFunction.d k` be the `k`-fold divisor function. Its Dirichlet series
 is `ζ(s) ^ k`. **Assuming the Lindelöf hypothesis** (`LindelofHypothesis`, an open conjecture),
 a truncated Perron formula and a contour shift to the line `re s = 1 / 2` give
 `∑_{n ≤ x} d_k(n) = x P_{k-1}(log x) + O(x ^ (1 / 2 + ε))` for every `ε > 0`. Here
@@ -37,14 +37,14 @@ argument `LindelofHypothesis`, and their names end in `_of_lindelofHypothesis`.
 
 ## Main statements
 
-* `ArithmeticFunction.LSeriesSummable_piltz`, `ArithmeticFunction.LSeries_piltz`:
+* `ArithmeticFunction.LSeriesSummable_d`, `ArithmeticFunction.LSeries_d`:
   `∑ d_k(n) n ^ (-s) = ζ(s) ^ k` for `re s > 1`.
-* `ArithmeticFunction.piltz_le_sigma_zero_pow`: `d_k(n) ≤ d(n) ^ k`.
-* `ArithmeticFunction.exists_piltz_le_mul_rpow`: `d_k(n) = O(n ^ δ)` for every `δ > 0`.
+* `ArithmeticFunction.d_le_sigma_zero_pow`: `d_k(n) ≤ d(n) ^ k`.
+* `ArithmeticFunction.exists_d_le_mul_rpow`: `d_k(n) = O(n ^ δ)` for every `δ > 0`.
 * `ArithmeticFunction.piltzMainPoly`: the main-term polynomial, with
   `ArithmeticFunction.piltzMainPoly_degree` and `ArithmeticFunction.piltzMainPoly_leadingCoeff`.
-* `ArithmeticFunction.sum_piltz_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis`,
-  `ArithmeticFunction.exists_polynomial_sum_piltz_isBigO_of_lindelofHypothesis`: the asymptotic
+* `ArithmeticFunction.sum_d_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis`,
+  `ArithmeticFunction.exists_polynomial_sum_d_isBigO_of_lindelofHypothesis`: the asymptotic
   formula for `∑_{n ≤ x} d_k(n)`, **conditional on the Lindelöf hypothesis**.
 -/
 
@@ -55,16 +55,16 @@ open Filter Asymptotics MeasureTheory
 namespace ArithmeticFunction
 
 /-- `d_k(n) ≤ d(n) ^ k`. -/
-theorem piltz_le_sigma_zero_pow (k n : ℕ) : piltz k n ≤ sigma 0 n ^ k := by
+theorem d_le_sigma_zero_pow (k n : ℕ) : ArithmeticFunction.d k n ≤ sigma 0 n ^ k := by
   induction k generalizing n with
   | zero =>
-    rw [piltz_zero, one_apply, pow_zero]
+    rw [d_zero, one_apply, pow_zero]
     split_ifs <;> omega
   | succ k ih =>
     rcases eq_or_ne n 0 with rfl | hn
     · simp
-    rw [piltz_succ_apply, pow_succ']
-    calc ∑ d ∈ n.divisors, piltz k d ≤ ∑ _d ∈ n.divisors, sigma 0 n ^ k := by
+    rw [d_succ_apply, pow_succ']
+    calc ∑ d ∈ n.divisors, ArithmeticFunction.d k d ≤ ∑ _d ∈ n.divisors, sigma 0 n ^ k := by
           refine Finset.sum_le_sum fun d hd => (ih d).trans (Nat.pow_le_pow_left ?_ k)
           rw [sigma_zero_apply, sigma_zero_apply]
           exact Finset.card_le_card (Nat.divisors_subset_of_dvd hn (Nat.dvd_of_mem_divisors hd))
@@ -73,18 +73,19 @@ theorem piltz_le_sigma_zero_pow (k n : ℕ) : piltz k n ≤ sigma 0 n ^ k := by
 
 /-- **The divisor bound for `d_k`.** For every `δ > 0` there is `A > 0` with
 `d_k(n) ≤ A * n ^ δ` for all `n`. -/
-theorem exists_piltz_le_mul_rpow (k : ℕ) {δ : ℝ} (hδ : 0 < δ) :
-    ∃ A : ℝ, 0 < A ∧ ∀ n : ℕ, (piltz k n : ℝ) ≤ A * (n : ℝ) ^ δ := by
+theorem exists_d_le_mul_rpow (k : ℕ) {δ : ℝ} (hδ : 0 < δ) :
+    ∃ A : ℝ, 0 < A ∧ ∀ n : ℕ, (ArithmeticFunction.d k n : ℝ) ≤ A * (n : ℝ) ^ δ := by
   rcases Nat.eq_zero_or_pos k with rfl | hk
   · refine ⟨1, one_pos, fun n => ?_⟩
-    rw [piltz_zero, one_apply, one_mul]
+    rw [d_zero, one_apply, one_mul]
     split_ifs with h
     · simp [h]
     · simp only [Nat.cast_zero]; positivity
   have hk0 : (0 : ℝ) < k := by exact_mod_cast hk
   obtain ⟨C, hC0, hC⟩ := exists_sigma_zero_le_mul_rpow (ε := δ / k) (by positivity)
   refine ⟨C ^ k, by positivity, fun n => ?_⟩
-  have h1 : (piltz k n : ℝ) ≤ (sigma 0 n : ℝ) ^ k := by exact_mod_cast piltz_le_sigma_zero_pow k n
+  have h1 : (ArithmeticFunction.d k n : ℝ) ≤ (sigma 0 n : ℝ) ^ k := by
+    exact_mod_cast d_le_sigma_zero_pow k n
   have h2 : (sigma 0 n : ℝ) ^ k ≤ (C * (n : ℝ) ^ (δ / k)) ^ k :=
     pow_le_pow_left₀ (Nat.cast_nonneg _) (hC n) k
   have h3 : (C * (n : ℝ) ^ (δ / k)) ^ k = C ^ k * (n : ℝ) ^ δ := by
@@ -92,20 +93,21 @@ theorem exists_piltz_le_mul_rpow (k : ℕ) {δ : ℝ} (hδ : 0 < δ) :
       ← Real.rpow_mul (Nat.cast_nonneg n), div_mul_cancel₀ δ hk0.ne']
   linarith
 
-private theorem LSeriesSummable_piltz_and_LSeries_piltz (k : ℕ) {s : ℂ} (hs : 1 < s.re) :
-    LSeriesSummable (fun n : ℕ => (piltz k n : ℂ)) s ∧
-      LSeries (fun n : ℕ => (piltz k n : ℂ)) s = riemannZeta s ^ k := by
-  have hdelta : (fun n : ℕ => (piltz 0 n : ℂ)) = LSeries.delta := by
+private theorem LSeriesSummable_d_and_LSeries_d (k : ℕ) {s : ℂ} (hs : 1 < s.re) :
+    LSeriesSummable (fun n : ℕ => (ArithmeticFunction.d k n : ℂ)) s ∧
+      LSeries (fun n : ℕ => (ArithmeticFunction.d k n : ℂ)) s = riemannZeta s ^ k := by
+  have hdelta : (fun n : ℕ => (ArithmeticFunction.d 0 n : ℂ)) = LSeries.delta := by
     funext n
-    rw [piltz_zero, one_apply]
+    rw [d_zero, one_apply]
     by_cases h : n = 1 <;> simp [h, LSeries.delta]
-  have hconv : ∀ m : ℕ, (fun n : ℕ => (piltz (m + 1) n : ℂ))
-      = LSeries.convolution (1 : ℕ → ℂ) (fun n : ℕ => (piltz m n : ℂ)) := by
+  have hconv : ∀ m : ℕ, (fun n : ℕ => (ArithmeticFunction.d (m + 1) n : ℂ))
+      = LSeries.convolution (1 : ℕ → ℂ) (fun n : ℕ => (ArithmeticFunction.d m n : ℂ)) := by
     intro m
     funext n
-    rw [LSeries.convolution_def, piltz_succ_apply, Nat.cast_sum]
+    rw [LSeries.convolution_def, d_succ_apply, Nat.cast_sum]
     dsimp only
-    rw [Nat.sum_divisorsAntidiagonal' (f := fun a b => (1 : ℕ → ℂ) a * (piltz m b : ℂ))]
+    rw [Nat.sum_divisorsAntidiagonal'
+      (f := fun a b => (1 : ℕ → ℂ) a * (ArithmeticFunction.d m b : ℂ))]
     simp
   have h1 : LSeriesSummable (1 : ℕ → ℂ) s := LSeriesSummable_one_iff.mpr hs
   induction k with
@@ -123,14 +125,14 @@ private theorem LSeriesSummable_piltz_and_LSeries_piltz (k : ℕ) {s : ℂ} (hs 
         by rw [LSeries_convolution' h1 ih.1, LSeries_one_eq_riemannZeta hs, ih.2, pow_succ']⟩
 
 /-- The Dirichlet series of `d_k` converges absolutely for `re s > 1`. -/
-theorem LSeriesSummable_piltz (k : ℕ) {s : ℂ} (hs : 1 < s.re) :
-    LSeriesSummable (fun n : ℕ => (piltz k n : ℂ)) s :=
-  (LSeriesSummable_piltz_and_LSeries_piltz k hs).1
+theorem LSeriesSummable_d (k : ℕ) {s : ℂ} (hs : 1 < s.re) :
+    LSeriesSummable (fun n : ℕ => (ArithmeticFunction.d k n : ℂ)) s :=
+  (LSeriesSummable_d_and_LSeries_d k hs).1
 
 /-- `∑ d_k(n) n ^ (-s) = ζ(s) ^ k` for `re s > 1`. -/
-theorem LSeries_piltz (k : ℕ) {s : ℂ} (hs : 1 < s.re) :
-    LSeries (fun n : ℕ => (piltz k n : ℂ)) s = riemannZeta s ^ k :=
-  (LSeriesSummable_piltz_and_LSeries_piltz k hs).2
+theorem LSeries_d (k : ℕ) {s : ℂ} (hs : 1 < s.re) :
+    LSeries (fun n : ℕ => (ArithmeticFunction.d k n : ℂ)) s = riemannZeta s ^ k :=
+  (LSeriesSummable_d_and_LSeries_d k hs).2
 
 open Nat in
 /-- The main-term polynomial of the Piltz divisor problem:
@@ -180,15 +182,15 @@ Lindelöf hypothesis (`LindelofHypothesis`, an open conjecture). Let `k ≥ 1` a
 
 Source: E. C. Titchmarsh, *The Theory of the Riemann Zeta-Function*, 2nd ed., revised by D. R.
 Heath-Brown, Oxford University Press, 1986, Zbl 0601.10026. -/
-theorem sum_piltz_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis
+theorem sum_d_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis
     (hLindelof : LindelofHypothesis) {k : ℕ} (hk : 1 ≤ k) {ε : ℝ} (hε : 0 < ε) :
-    (fun x : ℝ => (∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (piltz k n : ℝ))
+    (fun x : ℝ => (∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (ArithmeticFunction.d k n : ℝ))
         - x * (piltzMainPoly k).eval (Real.log x)) =O[atTop] fun x : ℝ => x ^ (1 / 2 + ε) := by
   classical
   have hgrowth : ∀ δ : ℝ, 0 < δ → ∃ A : ℝ, 0 < A ∧ ∀ n : ℕ, 1 ≤ n →
-      ‖(piltz k n : ℂ)‖ ≤ A * (n : ℝ) ^ δ := by
+      ‖(ArithmeticFunction.d k n : ℂ)‖ ≤ A * (n : ℝ) ^ δ := by
     intro δ hδ
-    obtain ⟨A, hA0, hA⟩ := exists_piltz_le_mul_rpow k hδ
+    obtain ⟨A, hA0, hA⟩ := exists_d_le_mul_rpow k hδ
     exact ⟨A, hA0, fun n _ => by rw [Complex.norm_natCast]; exact hA n⟩
   -- ## The pole-free numerator `G (s) = (s - 1) ^ k ζ (s) ^ k / s` and its Taylor expansion
   obtain ⟨G, hGdef⟩ : ∃ G : ℂ → ℂ, G = fun s => riemannZeta₁ s ^ k / s := ⟨_, rfl⟩
@@ -222,7 +224,7 @@ theorem sum_piltz_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis
     fun s hs => by rw [hbdef, hGg' s (hUΩ hs), mul_comm (g s)]
   -- ## The analytic core, at non-integral `x`
   have hcore : ∃ K : ℝ, ∀ x : ℝ, 1 < x → (∀ n : ℕ, (n : ℝ) ≠ x) →
-      ‖(((∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (piltz k n : ℝ)) : ℝ) : ℂ)
+      ‖(((∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (ArithmeticFunction.d k n : ℝ)) : ℝ) : ℂ)
         - ∑ j ∈ Finset.range k,
             b j * ((x * Real.log x ^ (k - 1 - j) / ((k - 1 - j).factorial : ℝ) : ℝ) : ℂ)‖
         ≤ K * x ^ (1 / 2 + ε) := by
@@ -258,7 +260,7 @@ theorem sum_piltz_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis
       refine ⟨max B 0, le_max_right _ _, fun t ht => ?_⟩
       exact (hB t (Set.mem_Icc.mpr (abs_le.mp ht))).trans (le_max_left _ _)
     obtain ⟨C, hC0, hC⟩ := LSeries.norm_sum_sub_truncated_perron_le
-      (a := fun n => (piltz k n : ℂ)) (ε := 1 / 4) (by norm_num) hgrowth
+      (a := fun n => (ArithmeticFunction.d k n : ℂ)) (ε := 1 / 4) (by norm_num) hgrowth
       (5 / 4) (by norm_num)
     obtain ⟨M, hMdef⟩ : ∃ M : ℝ, M = 4 * B ^ k + 2 * A ^ k := ⟨_, rfl⟩
     have hM0 : 0 ≤ M := by rw [hMdef]; positivity
@@ -616,15 +618,16 @@ theorem sum_piltz_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis
     -- ## The truncated Perron formula at `c = 5 / 4`, `R = x`
     have hperron := hC x x hx.le le_rfl hxi
     have hint : (∫ t in (-x)..x,
-        LSeries (fun n => (piltz k n : ℂ)) (((5 / 4 : ℝ) : ℂ) + (t : ℂ) * Complex.I) *
+        LSeries (fun n => (ArithmeticFunction.d k n : ℂ))
+            (((5 / 4 : ℝ) : ℂ) + (t : ℂ) * Complex.I) *
           (x : ℂ) ^ (((5 / 4 : ℝ) : ℂ) + (t : ℂ) * Complex.I) /
             (((5 / 4 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) = Vr := by
       rw [hVr]
       refine intervalIntegral.integral_congr fun t _ => ?_
-      rw [LSeries_piltz k (by simp; norm_num), hFp]
+      rw [LSeries_d k (by simp; norm_num), hFp]
     rw [hint] at hperron
-    have hS : (((∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (piltz k n : ℝ)) : ℝ) : ℂ)
-        = ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (piltz k n : ℂ) := by
+    have hS : (((∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (ArithmeticFunction.d k n : ℝ)) : ℝ) : ℂ)
+        = ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (ArithmeticFunction.d k n : ℂ) := by
       push_cast; rfl
     rw [hS]
     clear hS hint hRFx hVr' hVr hRQ hRQconst hlimQ hHq hKb hQh hKhalf hrefl harg hq hQc hM4
@@ -830,8 +833,8 @@ theorem sum_piltz_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis
       calc 1 / (2 * Real.pi) * ‖Vl + Complex.I * (Hm - Hp)‖
           ≤ 1 * ‖Vl + Complex.I * (Hm - Hp)‖ := mul_le_mul_of_nonneg_right hr h0
         _ ≤ ‖Vl‖ + ‖Hm‖ + ‖Hp‖ := by rw [one_mul]; exact h1
-    calc ‖(∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (piltz k n : ℂ)) - Mn‖
-        ≤ ‖(∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (piltz k n : ℂ))
+    calc ‖(∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (ArithmeticFunction.d k n : ℂ)) - Mn‖
+        ≤ ‖(∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (ArithmeticFunction.d k n : ℂ))
             - (1 / (2 * Real.pi)) • Vr‖ + ‖(1 / (2 * Real.pi)) • Vr - Mn‖ :=
           norm_sub_le_norm_sub_add_norm_sub _ _ _
       _ ≤ 2 * C * x ^ (1 / 2 + ε) + (4 * M / a * x ^ (1 / 2 + ε)
@@ -850,14 +853,14 @@ theorem sum_piltz_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis
     simp only [Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X]
     ring
   have hreal : ∀ x : ℝ, 1 < x → (∀ n : ℕ, (n : ℝ) ≠ x) →
-      |(∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (piltz k n : ℝ)) - x * P.eval (Real.log x)|
+      |(∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (ArithmeticFunction.d k n : ℝ)) - x * P.eval (Real.log x)|
         ≤ K * x ^ (1 / 2 + ε) := by
     intro x hx hxi
     have h := hK x hx hxi
-    set w : ℂ := (((∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (piltz k n : ℝ)) : ℝ) : ℂ)
+    set w : ℂ := (((∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (ArithmeticFunction.d k n : ℝ)) : ℝ) : ℂ)
         - ∑ j ∈ Finset.range k,
             b j * ((x * Real.log x ^ (k - 1 - j) / ((k - 1 - j).factorial : ℝ) : ℝ) : ℂ) with hw
-    have hre : w.re = (∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (piltz k n : ℝ))
+    have hre : w.re = (∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (ArithmeticFunction.d k n : ℝ))
         - x * P.eval (Real.log x) := by
       simp only [hw, Complex.sub_re, Complex.ofReal_re, Complex.re_sum, Complex.re_mul_ofReal]
       rw [hPev, Finset.mul_sum]
@@ -868,11 +871,11 @@ theorem sum_piltz_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis
     exact (Complex.abs_re_le_norm w).trans h
   -- ## All `x > 1`, by approaching from the right
   have hall : ∀ x : ℝ, 1 < x →
-      |(∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (piltz k n : ℝ)) - x * P.eval (Real.log x)|
+      |(∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (ArithmeticFunction.d k n : ℝ)) - x * P.eval (Real.log x)|
         ≤ K * x ^ (1 / 2 + ε) := by
     intro x hx
     have hx0 : 0 < x := by linarith
-    set S : ℝ := ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (piltz k n : ℝ) with hS
+    set S : ℝ := ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (ArithmeticFunction.d k n : ℝ) with hS
     have hfl : x < (⌊x⌋₊ : ℝ) + 1 := Nat.lt_floor_add_one x
     have hev : ∀ᶠ y in nhdsWithin x (Set.Ioi x),
         |S - y * P.eval (Real.log y)| ≤ K * y ^ (1 / 2 + ε) := by
@@ -914,14 +917,14 @@ form. Assume the Lindelöf hypothesis (`LindelofHypothesis`, an open conjecture)
 Then there is a real polynomial `P` of degree `k - 1` and leading coefficient `1 / (k - 1)!`
 such that `∑_{n ≤ x} d_k(n) = x * P (log x) + O(x ^ (1 / 2 + ε))` for every `ε > 0`. The
 polynomial is `piltzMainPoly k`; see
-`ArithmeticFunction.sum_piltz_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis`. -/
-theorem exists_polynomial_sum_piltz_isBigO_of_lindelofHypothesis
+`ArithmeticFunction.sum_d_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis`. -/
+theorem exists_polynomial_sum_d_isBigO_of_lindelofHypothesis
     (hLindelof : LindelofHypothesis) {k : ℕ} (hk : 1 ≤ k) :
     ∃ P : Polynomial ℝ, P.degree = ((k - 1 : ℕ) : WithBot ℕ) ∧
       P.leadingCoeff = 1 / ((k - 1).factorial : ℝ) ∧ ∀ ε : ℝ, 0 < ε →
-        (fun x : ℝ => (∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (piltz k n : ℝ))
+        (fun x : ℝ => (∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (ArithmeticFunction.d k n : ℝ))
           - x * P.eval (Real.log x)) =O[atTop] fun x : ℝ => x ^ (1 / 2 + ε) :=
   ⟨piltzMainPoly k, piltzMainPoly_degree hk, piltzMainPoly_leadingCoeff hk, fun _ hε =>
-    sum_piltz_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis hLindelof hk hε⟩
+    sum_d_sub_mul_piltzMainPoly_isBigO_of_lindelofHypothesis hLindelof hk hε⟩
 
 end ArithmeticFunction

@@ -15,8 +15,8 @@ import Mathlib.NumberTheory.LSeries.Dirichlet
 /-!
 # Tests for Perron's formula
 
-Instantiations at `∑ n⁻ˢ` (absolutely convergent at `c = 2`) and at `x < 1`, where the sums are
-empty.
+Instantiations at `∑ n⁻ˢ` (absolutely convergent at `c = 2`), both as principal values and as
+PNT+ line integrals `VerticalIntegral'`, including `x < 1`, where the sums are empty.
 -/
 
 @[expose] public section
@@ -42,5 +42,23 @@ example : HasVerticalIntegral 2 (fun s => LSeries 1 s * ((1 : ℝ) : ℂ) ^ s / 
   LSeriesSummable.hasVerticalIntegral_LSeries_mul_cpow_div_pow_succ
     (LSeriesSummable_one_iff.mpr (by norm_num : (1 : ℝ) < ((2 : ℝ) : ℂ).re)) le_rfl two_pos
     one_pos
+
+/-- The Riesz-mean formula as a PNT+ line integral, for `∑ n⁻ˢ` at `x = 2`, `k = 1`:
+only `n = 1, 2` contribute, giving `((2 - 1) + (2 - 2)) / (1! · 2) = 1 / 2`. -/
+example : VerticalIntegral'
+    (fun s => LSeries 1 s * ((2 : ℝ) : ℂ) ^ s / ∏ j ∈ Finset.range (1 + 1), (s + j)) 2 =
+      1 / 2 := by
+  have hs : LSeriesSummable 1 ((2 : ℝ) : ℂ) := LSeriesSummable_one_iff.mpr (by norm_num)
+  rw [LSeriesSummable.verticalIntegral'_LSeries_mul_cpow_div_prod hs (k := 1) le_rfl two_pos
+    (x := 2) two_pos]
+  norm_num [Finset.sum_Icc_succ_top]
+
+/-- The logarithmic-weight formula as a PNT+ line integral at `x = 1/2`: the sum is empty. -/
+example : VerticalIntegral' (fun s => LSeries 1 s * ((1 / 2 : ℝ) : ℂ) ^ s / s ^ (2 + 1)) 2 =
+    0 := by
+  have hs : LSeriesSummable 1 ((2 : ℝ) : ℂ) := LSeriesSummable_one_iff.mpr (by norm_num)
+  rw [LSeriesSummable.verticalIntegral'_LSeries_mul_cpow_div_pow_succ hs (k := 2) (by norm_num)
+    two_pos (x := 1 / 2) (by norm_num)]
+  norm_num
 
 end PerronTest

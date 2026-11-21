@@ -87,7 +87,8 @@ private lemma exists_zero_data (a : ArithmeticFunction ℂ) (ha : a ∈ selbergC
       (∀ ρ : ℂ, ρ.re = 0 → ρ ∉ X →
         analyticOrderNatAt F ρ = analyticOrderNatAt F (1 - starRingEnd ℂ ρ)) := by
   classical
-  obtain ⟨-, ⟨F₀, hF₀, ⟨m, G, β, hGd, hGo, hGF₀⟩, ⟨D₀⟩⟩, ⟨b, θ, hθ, hlog, Cb, hbC⟩, hram⟩ := ha
+  obtain ⟨-, ⟨F₀, hF₀, ⟨m, G, β, hGo, hGF₀⟩, ⟨D₀⟩⟩, ⟨b, θ, hθ, hlog, Cb, hbC⟩, hram⟩ := ha
+  have hGd := hGo.differentiable
   have hFF₀ : ∀ s, s ≠ 1 → F s = F₀ s := IsLSeriesContinuation.eqOn_compl_one hF hF₀
   have hGF : ∀ s, s ≠ 1 → G s = (s - 1) ^ m * F s := fun s hs => by
     rw [hFF₀ s hs]; exact hGF₀ s hs

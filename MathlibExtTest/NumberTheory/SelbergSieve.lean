@@ -78,3 +78,20 @@ example (s : BoundingSieve) :
   sum_prod_nu_pow_le_levelSum s 0
 
 end MathlibExtTest.NumberTheory.SelbergSieve
+
+-- The level weights agree with PrimeNumberTheoremAnd's closed-form Selberg weights at `y = R²`.
+example (s : BoundingSieve) (R d : ℕ) (hd : d ∣ s.prodPrimes) :
+    levelWeights s R d = (s.nu d)⁻¹ * s.selbergTerms d *
+      ((ArithmeticFunction.moebius d : ℤ) : ℝ) * (levelSum s R)⁻¹ *
+        ∑ m ∈ s.prodPrimes.divisors,
+          if ((d * m : ℕ) : ℝ) ^ 2 ≤ (R : ℝ) ^ 2 ∧ m.Coprime d then s.selbergTerms m else 0 := by
+  rw [levelWeights_eq_ite, ite_eq_left hd]
+
+-- Off the divisors of `P` the weights vanish.
+example (s : BoundingSieve) (R d : ℕ) (hd : ¬ d ∣ s.prodPrimes) : levelWeights s R d = 0 := by
+  rw [levelWeights_eq_ite, ite_eq_right hd]
+
+example (s : BoundingSieve) (R : ℕ) :
+    levelSum s R = ∑ l ∈ s.prodPrimes.divisors,
+      if ((l : ℕ) : ℝ) ^ 2 ≤ (R : ℝ) ^ 2 then s.selbergTerms l else 0 :=
+  levelSum_eq_sum_sq_le s R

@@ -26,17 +26,17 @@ public import Mathlib.NumberTheory.LSeries.Nonvanishing
 
 This module defines the Riemann xi function in the normalization
 
-  `ξ(s) = s * (s - 1) / 2 * Λ₀(s) + 1 / 2`,
+  `ξ(s) = (s * (s - 1) * Λ₀(s) + 1) / 2`,
 
 where `Λ₀ = completedRiemannZeta₀` is Mathlib's entire completed Riemann zeta
 function (the completed zeta function with its polar parts removed). The
-additive constant `1 / 2` is forced algebraically by `completedRiemannZeta_eq`
+additive term `1` is forced algebraically by `completedRiemannZeta_eq`
 together with the requirement that `ξ` agree with `s * (s - 1) / 2 * Λ(s)`
 away from the poles of `Λ` at `s = 0` and `s = 1`.
 
 ## Main results
 
-* `RiemannXi.riemannXi`: the Riemann xi function.
+* `Complex.riemannXi`: the Riemann xi function (as in PrimeNumberTheoremAnd).
 * `RiemannXi.differentiable_riemannXi`: `ξ` is entire.
 * `RiemannXi.riemannXi_one_sub`: the functional equation `ξ(1 - s) = ξ(s)`.
 * `RiemannXi.riemannXi_eq_mul_completedRiemannZeta`: away from `s = 0, 1`,
@@ -51,30 +51,36 @@ away from the poles of `Λ` at `s = 0` and `s = 1`.
 * `RiemannXi.riemannXi_entire_functional_equation_and_critical_strip`: packaged
   corollary conjoining the entireness, functional equation, and critical-strip
   claims.
-* `riemannZetaNontrivialZeros`: the zeros of `ζ` in the closed critical strip
-  `0 ≤ Re s ≤ 1`.
+* `riemannZetaNontrivialZeros`: the zeros of `ζ` in the open critical strip
+  `0 < Re s < 1`, with `mem_riemannZetaNontrivialZeros_iff_le` for the closed strip.
 * `RiemannXi.riemannXi_eq_zero_iff`: the zeros of `ξ` are exactly the nontrivial
   zeros of `ζ`.
 -/
 
+namespace Complex
+
+/-- The Riemann xi function `ξ(s) = (s * (s - 1) * Λ₀(s) + 1) / 2`, defined using the
+pole-removed completed zeta function `Λ₀`. This is the definition of PrimeNumberTheoremAnd. -/
+noncomputable def riemannXi (s : ℂ) : ℂ :=
+  (s * (s - 1) * completedRiemannZeta₀ s + 1) / 2
+
+end Complex
+
 namespace RiemannXi
 
-/-- The Riemann xi function `ξ(s) = s * (s - 1) / 2 * Λ₀(s) + 1 / 2`. -/
-noncomputable def riemannXi (s : ℂ) : ℂ :=
-  s * (s - 1) / 2 * completedRiemannZeta₀ s + 1 / 2
+open Complex (riemannXi)
 
 /-- The Riemann xi function is entire. -/
 theorem differentiable_riemannXi : Differentiable ℂ riemannXi := by
-  have h1 : Differentiable ℂ (fun s : ℂ => s * (s - 1) / 2) := by fun_prop
-  have h2 := h1.mul differentiable_completedZeta₀
-  have h3 := h2.add_const (1 / 2 : ℂ)
+  have h1 : Differentiable ℂ (fun s : ℂ => s * (s - 1)) := by fun_prop
+  have h2 := ((h1.mul differentiable_completedZeta₀).add_const (1 : ℂ)).div_const (2 : ℂ)
   unfold riemannXi
-  exact h3
+  exact h2
 
 /-- Functional equation for the Riemann xi function: `ξ(1 - s) = ξ(s)`. -/
 theorem riemannXi_one_sub (s : ℂ) : riemannXi (1 - s) = riemannXi s := by
   unfold riemannXi
-  have hfactor : (1 - s) * ((1 - s) - 1) / 2 = s * (s - 1) / 2 := by ring
+  have hfactor : (1 - s) * ((1 - s) - 1) = s * (s - 1) := by ring
   rw [hfactor, completedRiemannZeta₀_one_sub]
 
 /-- Away from `s = 0` and `s = 1`, `ξ` agrees with
@@ -146,27 +152,25 @@ theorem riemannXi_entire_functional_equation_and_critical_strip :
 end RiemannXi
 
 /-- The **nontrivial zeros** of the Riemann zeta function: the zeros of `riemannZeta` in the
-closed critical strip `0 ≤ Re s ≤ 1`. Unlike `riemannZetaZeros`, this excludes the trivial zeros
-at the negative even integers. Zeros are counted without multiplicity. -/
+open critical strip `0 < Re s < 1`, as `NontrivialZeros` in PrimeNumberTheoremAnd. Unlike
+`riemannZetaZeros`, this excludes the trivial zeros at the negative even integers; since `ζ` has no
+zeros on `Re s = 0` or `Re s = 1`, it is also the set of zeros in the closed strip
+(`mem_riemannZetaNontrivialZeros_iff_le`). Zeros are counted without multiplicity. -/
 def riemannZetaNontrivialZeros : Set ℂ :=
-  {s | riemannZeta s = 0 ∧ 0 ≤ s.re ∧ s.re ≤ 1}
+  {s | riemannZeta s = 0 ∧ 0 < s.re ∧ s.re < 1}
 
 /-- Membership in the nontrivial zeros of `ζ`, unfolded. -/
 theorem mem_riemannZetaNontrivialZeros {s : ℂ} :
-    s ∈ riemannZetaNontrivialZeros ↔ riemannZeta s = 0 ∧ 0 ≤ s.re ∧ s.re ≤ 1 :=
+    s ∈ riemannZetaNontrivialZeros ↔ riemannZeta s = 0 ∧ 0 < s.re ∧ s.re < 1 :=
   Iff.rfl
 
 namespace RiemannXi
 
-/-- **The zeros of `ξ` are the nontrivial zeros of `ζ`.** The factor `s (s - 1) / 2` cancels the
-pole of `ζ` at `1`, the poles of `Γ(s/2)` cancel the trivial zeros at `-2n`, and `ζ` does not
-vanish on `Re s ≥ 1`.
+open Complex (riemannXi)
 
-Source: B. Riemann, *Ueber die Anzahl der Primzahlen unter einer gegebenen Grösse* (1859), in
-*Gesammelte mathematische Werke*, Cambridge University Press, 2013, 136–144,
-DOI 10.1017/CBO9781139568050.008.
--/
-theorem riemannXi_eq_zero_iff (s : ℂ) : riemannXi s = 0 ↔ s ∈ riemannZetaNontrivialZeros := by
+/-- The zeros of `ξ` are the zeros of `ζ` in the closed critical strip. -/
+private theorem riemannXi_eq_zero_iff_le (s : ℂ) :
+    riemannXi s = 0 ↔ riemannZeta s = 0 ∧ 0 ≤ s.re ∧ s.re ≤ 1 := by
   -- `Γℝ` vanishes only at `-2n`, so not for `Re s ≥ 0`, `s ≠ 0`
   have hG : ∀ z : ℂ, z ≠ 0 → 0 ≤ z.re → z.Gammaℝ ≠ 0 := by
     intro z hz hre h
@@ -191,14 +195,13 @@ theorem riemannXi_eq_zero_iff (s : ℂ) : riemannXi s = 0 ↔ s ∈ riemannZetaN
     exact riemannZeta_ne_zero_of_one_le_re hre
   by_cases h0 : s = 0
   · subst h0
-    simp [riemannXi, riemannZetaNontrivialZeros, riemannZeta_zero]
+    simp [riemannXi, riemannZeta_zero]
   by_cases h1 : s = 1
   · subst h1
     have := riemannZeta_ne_zero_of_one_le_re (s := 1) (by simp)
-    simp [riemannXi, riemannZetaNontrivialZeros, this]
+    simp [riemannXi, this]
   rw [riemannXi_eq_mul_completedRiemannZeta h0 h1, mul_eq_zero,
-    or_iff_right (div_ne_zero (mul_ne_zero h0 (sub_ne_zero.mpr h1)) two_ne_zero),
-    mem_riemannZetaNontrivialZeros]
+    or_iff_right (div_ne_zero (mul_ne_zero h0 (sub_ne_zero.mpr h1)) two_ne_zero)]
   rcases lt_or_ge s.re 0 with hneg | hnn
   · constructor
     · intro h
@@ -214,4 +217,23 @@ theorem riemannXi_eq_zero_iff (s : ℂ) : riemannXi s = 0 ↔ s ∈ riemannZetaN
     · intro h; exact absurd h (hR s hgt.le)
     · rintro ⟨-, -, h⟩; linarith
 
+/-- **The zeros of `ξ` are the nontrivial zeros of `ζ`.** The factor `s (s - 1) / 2` cancels the
+pole of `ζ` at `1`, the poles of `Γ(s/2)` cancel the trivial zeros at `-2n`, and `ζ` does not
+vanish on `Re s ≥ 1`.
+
+Source: B. Riemann, *Ueber die Anzahl der Primzahlen unter einer gegebenen Grösse* (1859), in
+*Gesammelte mathematische Werke*, Cambridge University Press, 2013, 136–144,
+DOI 10.1017/CBO9781139568050.008.
+-/
+theorem riemannXi_eq_zero_iff (s : ℂ) : riemannXi s = 0 ↔ s ∈ riemannZetaNontrivialZeros := by
+  refine ⟨fun h => ⟨((riemannXi_eq_zero_iff_le s).1 h).1, re_pos_of_riemannXi_eq_zero h,
+    re_lt_one_of_riemannXi_eq_zero h⟩, fun h => (riemannXi_eq_zero_iff_le s).2
+      ⟨h.1, h.2.1.le, h.2.2.le⟩⟩
+
 end RiemannXi
+
+/-- The nontrivial zeros of `ζ` are its zeros in the closed critical strip `0 ≤ Re s ≤ 1`: `ζ`
+does not vanish on the boundary lines. -/
+theorem mem_riemannZetaNontrivialZeros_iff_le {s : ℂ} :
+    s ∈ riemannZetaNontrivialZeros ↔ riemannZeta s = 0 ∧ 0 ≤ s.re ∧ s.re ≤ 1 := by
+  rw [← RiemannXi.riemannXi_eq_zero_iff, RiemannXi.riemannXi_eq_zero_iff_le]

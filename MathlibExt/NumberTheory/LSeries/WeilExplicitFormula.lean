@@ -47,6 +47,8 @@ All sums over zeros run over a family `z` listing the zeros of `ξ` with multipl
 
 @[expose] public section
 
+open Complex (riemannXi)
+
 open Filter Topology Set MeasureTheory Complex FourierTransform
 
 namespace RiemannXi
@@ -104,11 +106,7 @@ private lemma im_ne_zero_of_mem_riemannZetaNontrivialZeros {ρ : ℂ}
     apply Complex.ext <;> simp [h]
   have hz := hρ.1
   rw [hρ'] at hz
-  rcases eq_or_lt_of_le hρ.2.1 with h0 | h0
-  · rw [← h0] at hz; simp [riemannZeta_zero] at hz
-  rcases eq_or_lt_of_le hρ.2.2 with h1 | h1
-  · rw [h1] at hz; exact riemannZeta_ne_zero_of_one_le_re (by simp) hz
-  exact riemannZeta_ofReal_ne_zero_of_pos_of_lt_one h0 h1 hz
+  exact riemannZeta_ofReal_ne_zero_of_pos_of_lt_one hρ.2.1 hρ.2.2 hz
 
 private lemma differentiableAt_logDeriv_riemannXi {w : ℂ} (hw : riemannXi w ≠ 0) :
     DifferentiableAt ℂ (logDeriv riemannXi) w := by
@@ -381,8 +379,7 @@ private lemma summable_ite_apply_sub_half {ε : ℝ} (hε : 0 < ε) {h : ℂ →
     {ι : Type*} (z : ι → ℂ) (hz : ∀ w, ENat.card {n // z n = w} = analyticOrderAt riemannXi w) :
     Summable fun n => if 0 < (z n).im then h (z n - 1 / 2) else 0 := by
   have hsum : Summable fun n => ‖z n‖ ^ (-1 - ε) :=
-    hasGrowthOrderLE_riemannXi.summable_norm_rpow_neg differentiable_riemannXi zero_le_one
-      riemannXi_zero_ne_zero hz hε
+    entireOfOrderAtMost_riemannXi.summable_norm_rpow_neg zero_le_one riemannXi_zero_ne_zero hz hε
   refine (hsum.mul_left M).of_norm_bounded fun n => ?_
   have hm := mem_riemannZetaNontrivialZeros_of_card_eq_analyticOrderAt hz n
   have hz0 : z n ≠ 0 := ne_zero_of_card_eq_analyticOrderAt hz n

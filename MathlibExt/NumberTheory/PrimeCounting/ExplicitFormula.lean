@@ -51,6 +51,8 @@ at good heights, and the left side tends to `0`.
 
 @[expose] public section
 
+open Complex (riemannXi)
+
 universe u
 
 open Complex Filter Topology Asymptotics ArithmeticFunction RiemannXi ComplexConjugate
@@ -1095,7 +1097,7 @@ private lemma norm_sum_zeros_sub_sum_zeros_le {ι : Type u} (z : ι → ℂ)
   have hmin : R - 1 ≤ min R T := le_min (by linarith) (by linarith)
   set c0 : ℝ := (R + T) / 2 with hc0
   have h := norm_tsum_ite_cpow_div_sub_tsum_ite_cpow_div_le z
-    (fun n => (mem_riemannZetaNontrivialZeros_of_card_eq_analyticOrderAt hz n).2.2) hx
+    (fun n => (mem_riemannZetaNontrivialZeros_of_card_eq_analyticOrderAt hz n).2.2.le) hx
     (R := R) (T := T) (by linarith) (finite_setOf_abs_im_lt_of_card_eq_analyticOrderAt hz _)
     (B := 2 * Cc * Real.log (R + 1)) (fun W hW => by
       have hnear : ∀ n ∈ W, |(|(z n).im| - c0)| ≤ 1 := by
@@ -1457,7 +1459,8 @@ theorem riemannHypothesis_iff_chebyshevPsi_sub_self_isBigO :
         (not_le.mp h0) hs
       exact htriv ⟨n - 1, by
         rw [Nat.cast_sub (by omega)]; push_cast; ring⟩
-    have hmem : s ∈ riemannZetaNontrivialZeros := ⟨hs, hre0, by linarith⟩
+    have hmem : s ∈ riemannZetaNontrivialZeros :=
+      mem_riemannZetaNontrivialZeros_iff_le.2 ⟨hs, hre0, by linarith⟩
     have h1 := (one_sub_mem_riemannZetaNontrivialZeros hmem).1
     exact hfree (1 - s) (by simp; linarith) h1
   · exact hfree s hgt hs

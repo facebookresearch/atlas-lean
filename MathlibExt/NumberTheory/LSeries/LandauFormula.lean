@@ -43,6 +43,8 @@ Gamma-factor terms contribute `O(log T')`, and the horizontal sides `O(log² T')
 
 @[expose] public section
 
+open Complex (riemannXi)
+
 universe u
 
 open Complex Filter Topology Set ArithmeticFunction RiemannXi
@@ -565,7 +567,7 @@ private lemma boundaryIntegral_logDeriv_riemannXi_mul_cpow {ι : Type*} (z : ι 
   have hZprop : ∀ p ∈ Z, 0 ≤ p.re ∧ p.re ≤ 1 ∧ |p.im| < R := by
     intro p hp
     obtain ⟨hnt, hpR⟩ := (hZmem p).mp hp
-    exact ⟨hnt.2.1, hnt.2.2, hpR⟩
+    exact ⟨hnt.2.1.le, hnt.2.2.le, hpR⟩
   let mo : ℂ → ℕ := fun p => (analyticOrderAt riemannXi p).toNat
   let r : ℂ → ℂ := fun p => (mo p : ℂ) * (x : ℂ) ^ p
   have hcpowd : ∀ s : ℂ, DifferentiableAt ℂ (fun s : ℂ => (x : ℂ) ^ s) s :=
@@ -872,7 +874,7 @@ private lemma exists_norm_tsum_le_sub_tsum_lt_le {ι : Type u} (z : ι → ℂ)
     have hρ := mem_riemannZetaNontrivialZeros_of_card_eq_analyticOrderAt hz k
     have hnorm : ‖(n : ℂ) ^ z k‖ ≤ n := by
       rw [Complex.norm_natCast_cpow_of_pos (by omega)]
-      calc (n : ℝ) ^ (z k).re ≤ (n : ℝ) ^ (1 : ℝ) := Real.rpow_le_rpow_of_exponent_le hn1 hρ.2.2
+      calc (n : ℝ) ^ (z k).re ≤ (n : ℝ) ^ (1 : ℝ) := Real.rpow_le_rpow_of_exponent_le hn1 hρ.2.2.le
         _ = n := Real.rpow_one _
     have key : ∀ x : ℝ, |T - x| ≤ 1 → 1 ≤ 2 * (1 / (1 + (T - x) ^ 2)) := by
       intro x hx

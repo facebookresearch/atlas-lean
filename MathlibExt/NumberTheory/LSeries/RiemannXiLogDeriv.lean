@@ -28,6 +28,8 @@ sides of contours in the explicit formulas of Weil and Landau.
 
 @[expose] public section
 
+open Complex (riemannXi)
+
 open Complex
 
 namespace RiemannXi

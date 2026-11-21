@@ -33,9 +33,9 @@ example : ∃ (m : ℕ) (G H : ℂ → ℂ), Differentiable ℂ H ∧
     (∀ s, H (1 - starRingEnd ℂ s) = zetaFE.w * starRingEnd ℂ (H s)) ∧
     (∀ s : ℂ, 0 < s.re → H s = s ^ m * (zetaFE.Q : ℂ) ^ s *
       (∏ i, Gamma (zetaFE.α i * s + zetaFE.r i)) * G s) := by
-  obtain ⟨-, ⟨F, hF, ⟨m, G, -, hGd, -, hGF⟩, -⟩, -⟩ := zeta_mem_selbergClass
+  obtain ⟨-, ⟨F, hF, ⟨m, G, _, hGo, hGF⟩, -⟩, -⟩ := zeta_mem_selbergClass
   have hGF' : ∀ s, s ≠ 1 → G s = (s - 1) ^ m * riemannZeta s := fun s hs => by
     rw [hGF s hs, hF.eqOn_compl_one isLSeriesContinuation_zeta s hs]
-  exact ⟨m, G, exists_completed riemannZeta G m hGd hGF' zetaFE⟩
+  exact ⟨m, G, exists_completed riemannZeta G m hGo.differentiable hGF' zetaFE⟩
 
 end SelbergClassTest

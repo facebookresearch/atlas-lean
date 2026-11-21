@@ -24,7 +24,7 @@ Sums over `n ≤ x` for real `x` are written `∑ n ∈ Finset.Icc 1 ⌊x⌋₊,
 
 ## Main definitions
 
-* `ArithmeticFunction.mertens`: the Mertens function.
+* `M`: the Mertens function (as in PrimeNumberTheoremAnd).
 
 ## Main statements
 
@@ -77,30 +77,53 @@ namespace ArithmeticFunction
 
 open scoped Moebius
 
+end ArithmeticFunction
+
+open ArithmeticFunction
+open scoped ArithmeticFunction.Moebius
+
 /-- **The Mertens function** `M(x) = ∑_{n ≤ x} μ(n)`, the summatory function of the Möbius
-function, as a function of a real variable. It vanishes for `x < 1`.
+function, as a real-valued function of a real variable. It vanishes for `x < 1`. This is `M` in
+PrimeNumberTheoremAnd; the `n = 0` term vanishes since `μ 0 = 0`.
 
 Source: F. Mertens, "Über eine zahlentheoretische Function", Sitzungsber. Akad. Wiss. Wien,
 Math.-Naturwiss. Kl. 106 (1897), 761–830, JFM 28.0177.01. -/
-noncomputable def mertens (x : ℝ) : ℤ :=
-  ∑ n ∈ Icc 1 ⌊x⌋₊, μ n
+noncomputable def M (x : ℝ) : ℝ :=
+  ∑ n ∈ Iic ⌊x⌋₊, (μ n : ℝ)
 
-theorem mertens_apply (x : ℝ) : mertens x = ∑ n ∈ Icc 1 ⌊x⌋₊, μ n := rfl
+theorem M_apply (x : ℝ) : M x = ∑ n ∈ Iic ⌊x⌋₊, (μ n : ℝ) := rfl
+
+/-- The Mertens function as a sum over `1 ≤ n ≤ x`. -/
+theorem M_eq_sum_Icc (x : ℝ) : M x = ∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) := by
+  rw [M_apply]
+  refine (Finset.sum_subset (fun n hn => Finset.mem_Iic.2 (Finset.mem_Icc.1 hn).2)
+    fun n hn hn' => ?_).symm
+  have : n = 0 := by
+    simp only [Finset.mem_Iic, Finset.mem_Icc, not_and, not_le] at hn hn'
+    omega
+  simp [this]
 
 /-- The Mertens function vanishes to the left of `1`. -/
-theorem mertens_of_lt_one {x : ℝ} (hx : x < 1) : mertens x = 0 := by
-  simp [mertens, Nat.floor_eq_zero.2 hx]
+theorem M_of_lt_one {x : ℝ} (hx : x < 1) : M x = 0 := by
+  simp [M_eq_sum_Icc, Nat.floor_eq_zero.2 hx]
 
 /-- At a natural number, the Mertens function is the partial sum of `μ`. -/
 @[simp]
-theorem mertens_natCast (N : ℕ) : mertens N = ∑ n ∈ Icc 1 N, μ n := by
-  simp [mertens]
+theorem M_natCast (N : ℕ) : M N = ∑ n ∈ Icc 1 N, (μ n : ℝ) := by
+  simp [M_eq_sum_Icc]
 
 /-- The trivial bound `|M(x)| ≤ ⌊x⌋`. -/
-theorem abs_mertens_le (x : ℝ) : |mertens x| ≤ ⌊x⌋₊ := by
-  calc |mertens x| ≤ ∑ n ∈ Icc 1 ⌊x⌋₊, |μ n| := abs_sum_le_sum_abs _ _
-    _ ≤ ∑ _n ∈ Icc 1 ⌊x⌋₊, (1 : ℤ) := sum_le_sum fun n _ => abs_moebius_le_one
+theorem abs_M_le (x : ℝ) : |M x| ≤ ⌊x⌋₊ := by
+  rw [M_eq_sum_Icc]
+  calc |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ)| ≤ ∑ n ∈ Icc 1 ⌊x⌋₊, |(μ n : ℝ)| :=
+        abs_sum_le_sum_abs _ _
+    _ ≤ ∑ _n ∈ Icc 1 ⌊x⌋₊, (1 : ℝ) :=
+        sum_le_sum fun n _ => by exact_mod_cast abs_moebius_le_one
     _ = ⌊x⌋₊ := by simp
+
+namespace ArithmeticFunction
+
+open scoped Moebius
 
 /-- **Möbius inversion for summatory functions.** For functions `F G` of a real variable,
 `G(x) = ∑_{n ≤ x} F(x / n)` for all `x ≥ 1` if and only if

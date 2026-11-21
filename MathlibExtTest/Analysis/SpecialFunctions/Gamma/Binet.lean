@@ -29,9 +29,13 @@ example : ¬ HasGrowthOrder (fun z => (Complex.Gamma z)⁻¹) 2 := fun h => by
   have := h.unique hasGrowthOrder_inv_Gamma
   norm_num at this
 
+/-- `1 / Γ` is entire of order at most `1`, in PrimeNumberTheoremAnd's sense. -/
+example : Hadamard.EntireOfOrderAtMost 1 (fun z => (Complex.Gamma z)⁻¹) :=
+  hasGrowthOrder_inv_Gamma.entireOfOrderAtMost
+
 /-- `1 / Γ` is not of order at most `1 / 2`. -/
-example : ¬ HasGrowthOrderLE (fun z => (Complex.Gamma z)⁻¹) (1 / 2) :=
-  hasGrowthOrder_inv_Gamma.not_hasGrowthOrderLE (by norm_num) (by norm_num)
+example : ¬ Hadamard.EntireOfOrderAtMost (1 / 2) (fun z => (Complex.Gamma z)⁻¹) :=
+  hasGrowthOrder_inv_Gamma.not_entireOfOrderAtMost (by norm_num) (by norm_num)
 
 /-- The Weierstrass product at the pole `z = 0`: both sides are `0` (Mathlib's `Γ 0 = 0`). -/
 example : (Complex.Gamma 0)⁻¹ = 0 := by

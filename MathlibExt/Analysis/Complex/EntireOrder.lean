@@ -6,6 +6,16 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`PrimeNumberTheoremAnd/Mathlib/Analysis/Complex/HadamardFactorization/Order.lean`
+(PrimeNumberTheoremAnd):
+Copyright (c) 2026 Matteo Cipollina. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Matteo Cipollina
+-/
+
 module
 
 public import Mathlib.Analysis.Complex.JensenFormula
@@ -16,12 +26,19 @@ import Mathlib.Tactic.Bound
 /-!
 # The order of growth of an entire function
 
-A function `f : ℂ → E` has *order of growth at most `ρ`* if for every `ε > 0` it is
-`O(exp (‖z‖ ^ (ρ + ε)))` as `z → ∞`. It has *order `ρ`* if moreover `ρ ≥ 0` and it has order
-at most no smaller nonnegative exponent. For a nonzero entire function this is the classical order
-`limsup_{r → ∞} log log M(r) / log r`, where `M(r)` is the maximum of `‖f‖` on the circle of
-radius `r`; in particular constants and polynomials have order `0`. Negative exponents are
-excluded because a bounded function has order at most every real number.
+An entire function `f : ℂ → ℂ` has *order at most `ρ`*
+(`Complex.Hadamard.EntireOfOrderAtMost ρ f`, the definition of PrimeNumberTheoremAnd) if for
+every `ε > 0` there is `C > 0` with `‖f z‖ ≤ exp (C * (1 + ‖z‖) ^ (ρ + ε))` for all `z`.
+Differentiability is part of the definition. It has *order `ρ`* (`Complex.HasGrowthOrder f ρ`) if
+moreover `ρ ≥ 0` and it has order at most no smaller nonnegative exponent. For a nonzero entire
+function this is the classical order `limsup_{r → ∞} log log M(r) / log r`, where `M(r)` is the
+maximum of `‖f‖` on the circle of radius `r`; in particular constants and polynomials have order
+`0`.
+
+For `ρ ≥ 0` the bound is equivalent to `f = O(exp (‖z‖ ^ (ρ + ε)))` at infinity for every
+`ε > 0` (`Complex.Hadamard.entireOfOrderAtMost_iff`). For `ρ < 0` it is much stronger: it forces
+`f` to be a constant of norm at most `1`, so for instance the constant `5` has order at most no
+negative exponent. Several closure properties therefore assume `0 ≤ ρ`.
 
 This is not Mathlib's `analyticOrderAt` or `meromorphicOrderAt`, which measure the order of
 vanishing at a point.
@@ -33,24 +50,28 @@ multiplicity) satisfy `∑ ‖z_n‖ ^ (-ρ - ε) < ∞`. Both follow from Jense
 
 ## Main definitions
 
-* `Complex.HasGrowthOrderLE f ρ`: `f` has order of growth at most `ρ`.
-* `Complex.HasGrowthOrder f ρ`: `f` has order of growth exactly `ρ`.
+* `Complex.Hadamard.EntireOfOrderAtMost ρ f`: `f` is entire of order at most `ρ`.
+* `Complex.HasGrowthOrder f ρ`: `f` is entire of order exactly `ρ`.
 
 ## Main statements
 
-* `Complex.HasGrowthOrderLE.mono`, `Complex.HasGrowthOrderLE.trans_isBigO`,
-  `Complex.HasGrowthOrderLE.add`, `Complex.HasGrowthOrderLE.mul`,
-  `Complex.hasGrowthOrderLE_of_isBigO_one`,
-  `Complex.hasGrowthOrderLE_one_of_isBigO_exp_mul_norm`: basic closure properties; in
-  particular functions of exponential type have order at most `1`.
+* `Complex.Hadamard.entireOfOrderAtMost_iff`: for `ρ ≥ 0`, order at most `ρ` is
+  differentiability together with `f = O(exp (‖z‖ ^ (ρ + ε)))` at infinity for every `ε > 0`.
+* `Complex.Hadamard.EntireOfOrderAtMost.isBigO_exp_rpow`: order at most `ρ` gives
+  `f = O(exp (‖z‖ ^ τ))` at infinity for every `τ > max ρ 0`.
+* `Complex.Hadamard.EntireOfOrderAtMost.mono`, `Complex.Hadamard.EntireOfOrderAtMost.trans_isBigO`,
+  `Complex.Hadamard.EntireOfOrderAtMost.add`, `Complex.Hadamard.EntireOfOrderAtMost.mul`,
+  `Complex.Hadamard.entireOfOrderAtMost_of_isBigO_one`,
+  `Complex.Hadamard.entireOfOrderAtMost_one_of_isBigO_exp_mul_norm`: basic closure properties;
+  in particular entire functions of exponential type have order at most `1`.
 * `Complex.HasGrowthOrder.nonneg`, `Complex.HasGrowthOrder.unique`: the order is a well-defined
   nonnegative real number.
 * `Complex.hasGrowthOrder_zero_iff`, `Complex.hasGrowthOrder_zero_of_isBigO_one`: order `0` is
-  order at most `0`; in particular bounded functions and constants have order `0`.
-* `Complex.HasGrowthOrderLE.isBigO_sum_divisor_closedBall`: the zero-counting function of an
-  entire function of order at most `ρ` is `O(r ^ (ρ + ε))`.
-* `Complex.HasGrowthOrderLE.summable_norm_rpow_neg`: the zeros `z_n` of an entire function of
-  order at most `ρ` with `f 0 ≠ 0` satisfy `∑ ‖z_n‖ ^ (-ρ - ε) < ∞` (the exponent of
+  order at most `0`; in particular bounded entire functions and constants have order `0`.
+* `Complex.Hadamard.EntireOfOrderAtMost.isBigO_sum_divisor_closedBall`: the zero-counting function
+  of an entire function of order at most `ρ` is `O(r ^ (ρ + ε))`.
+* `Complex.Hadamard.EntireOfOrderAtMost.summable_norm_rpow_neg`: the zeros `z_n` of an entire
+  function of order at most `ρ` with `f 0 ≠ 0` satisfy `∑ ‖z_n‖ ^ (-ρ - ε) < ∞` (the exponent of
   convergence is at most the order).
 -/
 
@@ -58,95 +79,167 @@ multiplicity) satisfy `∑ ‖z_n‖ ^ (-ρ - ε) < ∞`. Both follow from Jense
 
 open Filter Asymptotics Bornology Metric Topology
 
-namespace Complex
+namespace Complex.Hadamard
 
-variable {E : Type*}
+/-- An entire function has order at most `ρ` if it satisfies the `ε`-family growth bound used in
+this formalization.
 
-/-- `f` has *order of growth at most `ρ`*: for every `ε > 0`, `f = O(exp (‖z‖ ^ (ρ + ε)))` as
-`z → ∞`. The quantifier on `ε` sits outside the `O`, so this is strictly weaker than
-`f =O[cobounded ℂ] fun z => exp (‖z‖ ^ ρ)`. -/
-def HasGrowthOrderLE [Norm E] (f : ℂ → E) (ρ : ℝ) : Prop :=
-  ∀ ε > (0 : ℝ), f =O[cobounded ℂ] fun z => Real.exp (‖z‖ ^ (ρ + ε))
+For every `ε > 0`, the norm is bounded by an exponential of order `ρ + ε`. This formulation is
+the convenient finite-order input for the Jensen/counting estimates used in the Hadamard
+factorization pipeline. -/
+def EntireOfOrderAtMost (ρ : ℝ) (f : ℂ → ℂ) : Prop :=
+    Differentiable ℂ f ∧ ∀ ε : ℝ, 0 < ε →
+  ∃ C > 0, ∀ z : ℂ, ‖f z‖ ≤ Real.exp (C * (1 + ‖z‖) ^ (ρ + ε))
 
-/-- `f` has *order of growth `ρ`*: `ρ ≥ 0`, `f` has order at most `ρ`, and order at most no
-smaller nonnegative exponent. For a nonzero entire `f` this is the classical order
-`limsup log log M(r) / log r`; constants have order `0`. -/
-def HasGrowthOrder [Norm E] (f : ℂ → E) (ρ : ℝ) : Prop :=
-  0 ≤ ρ ∧ HasGrowthOrderLE f ρ ∧ ∀ ρ' ∈ Set.Ico 0 ρ, ¬ HasGrowthOrderLE f ρ'
+/-- For `0 ≤ p < q` and any `C`, eventually `C * (1 + ‖z‖) ^ p ≤ ‖z‖ ^ q` at infinity. -/
+private lemma eventually_mul_one_add_rpow_le {p q : ℝ} (hp : 0 ≤ p) (hpq : p < q) (C : ℝ) :
+    ∀ᶠ z in cobounded ℂ, C * (1 + ‖z‖) ^ p ≤ ‖z‖ ^ q := by
+  have hK : ∀ᶠ r : ℝ in atTop, |C| * 2 ^ p ≤ r ^ (q - p) :=
+    (tendsto_rpow_atTop (sub_pos.2 hpq)).eventually_ge_atTop _
+  filter_upwards [tendsto_norm_cobounded_atTop.eventually hK,
+    tendsto_norm_cobounded_atTop.eventually_ge_atTop 1] with z hz hz1
+  have h0 : (0 : ℝ) < ‖z‖ := by linarith
+  calc C * (1 + ‖z‖) ^ p ≤ |C| * (2 * ‖z‖) ^ p :=
+        (mul_le_mul_of_nonneg_right (le_abs_self C) (by positivity)).trans
+          (mul_le_mul_of_nonneg_left (Real.rpow_le_rpow (by positivity) (by linarith) hp)
+            (abs_nonneg C))
+    _ = |C| * 2 ^ p * ‖z‖ ^ p := by rw [Real.mul_rpow (by norm_num) h0.le]; ring
+    _ ≤ ‖z‖ ^ (q - p) * ‖z‖ ^ p := by gcongr
+    _ = ‖z‖ ^ q := by rw [← Real.rpow_add h0]; ring_nf
 
-section Basic
+namespace EntireOfOrderAtMost
 
-variable [Norm E] {f g : ℂ → E} {ρ ρ' : ℝ}
+variable {ρ ρ' ε : ℝ} {f g : ℂ → ℂ}
 
-/-- `exp (‖z‖ ^ a) ≤ exp (‖z‖ ^ b)` for `a ≤ b` once `‖z‖ ≥ 1`. -/
-private lemma eventually_exp_rpow_le {a b : ℝ} (hab : a ≤ b) :
-    ∀ᶠ z in cobounded ℂ, ‖Real.exp (‖z‖ ^ a)‖ ≤ 1 * ‖Real.exp (‖z‖ ^ b)‖ := by
-  filter_upwards [tendsto_norm_cobounded_atTop.eventually_ge_atTop 1] with z hz
-  rw [one_mul, Real.norm_of_nonneg (Real.exp_pos _).le, Real.norm_of_nonneg (Real.exp_pos _).le]
-  exact Real.exp_le_exp.mpr (Real.rpow_le_rpow_of_exponent_le hz hab)
+/-- An entire function of finite order is differentiable. -/
+theorem differentiable (h : EntireOfOrderAtMost ρ f) : Differentiable ℂ f :=
+  h.1
+
+/-- The growth bound at a given `ε > 0`. -/
+theorem exists_bound (h : EntireOfOrderAtMost ρ f) (hε : 0 < ε) :
+    ∃ C > 0, ∀ z : ℂ, ‖f z‖ ≤ Real.exp (C * (1 + ‖z‖) ^ (ρ + ε)) :=
+  h.2 ε hε
+
+/-- For `ρ ≥ 0`, an entire function of order at most `ρ` is `O(exp (‖z‖ ^ (ρ + ε)))` at
+infinity for every `ε > 0`. -/
+theorem isBigO (h : EntireOfOrderAtMost ρ f) (hρ : 0 ≤ ρ) (hε : 0 < ε) :
+    f =O[cobounded ℂ] fun z => Real.exp (‖z‖ ^ (ρ + ε)) := by
+  obtain ⟨C, -, hC⟩ := h.exists_bound (half_pos hε)
+  refine IsBigO.of_bound 1 ?_
+  filter_upwards [eventually_mul_one_add_rpow_le (by linarith : 0 ≤ ρ + ε / 2)
+    (by linarith : ρ + ε / 2 < ρ + ε) C] with z hz
+  rw [one_mul, Real.norm_of_nonneg (Real.exp_pos _).le]
+  exact (hC z).trans (Real.exp_le_exp.mpr hz)
+
+/-- For `ρ ≥ 0`, an entire function which is `O(exp (‖z‖ ^ (ρ + ε)))` at infinity for every
+`ε > 0` has order at most `ρ`. -/
+theorem of_isBigO (hf : Differentiable ℂ f) (hρ : 0 ≤ ρ)
+    (h : ∀ ε > 0, f =O[cobounded ℂ] fun z => Real.exp (‖z‖ ^ (ρ + ε))) :
+    EntireOfOrderAtMost ρ f := by
+  refine ⟨hf, fun ε hε => ?_⟩
+  set p := ρ + ε with hp_def
+  have hp : 0 < p := by positivity
+  obtain ⟨K, hK⟩ := (h ε hε).bound
+  rw [← comap_norm_atTop, eventually_comap, eventually_atTop] at hK
+  obtain ⟨R, hR⟩ := hK
+  rw [← hp_def] at hR
+  obtain ⟨M, hM⟩ := (isCompact_closedBall (0 : ℂ) R).exists_bound_of_continuousOn
+    hf.continuous.continuousOn
+  have hlK : 0 ≤ Real.log (1 + |K|) := Real.log_nonneg (by linarith [abs_nonneg K])
+  have hlM : 0 ≤ Real.log (1 + |M|) := Real.log_nonneg (by linarith [abs_nonneg M])
+  set C := 1 + Real.log (1 + |K|) + Real.log (1 + |M|) with hC
+  refine ⟨C, by positivity, fun z => ?_⟩
+  have hx1 : 1 ≤ (1 + ‖z‖) ^ p := Real.one_le_rpow (by linarith [norm_nonneg z]) hp.le
+  have hxz : ‖z‖ ^ p ≤ (1 + ‖z‖) ^ p :=
+    Real.rpow_le_rpow (norm_nonneg _) (by linarith) hp.le
+  have hexp : (1 + |K|) * (1 + |M|) * Real.exp (‖z‖ ^ p) ≤ Real.exp (C * (1 + ‖z‖) ^ p) := by
+    rw [← Real.exp_log (by positivity : 0 < (1 + |K|) * (1 + |M|)), ← Real.exp_add,
+      Real.exp_le_exp, Real.log_mul (by positivity) (by positivity)]
+    nlinarith [mul_nonneg (by linarith : 0 ≤ C - 1) (by linarith : 0 ≤ (1 + ‖z‖) ^ p - 1)]
+  have he1 : 1 ≤ Real.exp (‖z‖ ^ p) := Real.one_le_exp (Real.rpow_nonneg (norm_nonneg _) _)
+  refine le_trans ?_ hexp
+  have hKe : 1 ≤ (1 + |K|) * Real.exp (‖z‖ ^ p) :=
+    one_le_mul_of_one_le_of_one_le (by linarith [abs_nonneg K]) he1
+  by_cases hz : ‖z‖ ≤ R
+  · have := hM z (by simpa [dist_eq_norm] using hz)
+    nlinarith [le_abs_self M, abs_nonneg M]
+  · have := hR ‖z‖ (by linarith [not_le.mp hz]) z rfl
+    rw [Real.norm_of_nonneg (Real.exp_pos _).le] at this
+    have hK' : K * Real.exp (‖z‖ ^ p) ≤ |K| * Real.exp (‖z‖ ^ p) :=
+      mul_le_mul_of_nonneg_right (le_abs_self K) (Real.exp_pos _).le
+    nlinarith [abs_nonneg K, abs_nonneg M, Real.exp_pos (‖z‖ ^ p)]
 
 /-- Order at most `ρ` gives order at most every larger exponent. -/
-theorem HasGrowthOrderLE.mono (h : HasGrowthOrderLE f ρ) (hρ : ρ ≤ ρ') :
-    HasGrowthOrderLE f ρ' := fun ε hε =>
-  (h ε hε).trans (IsBigO.of_bound 1 (eventually_exp_rpow_le (by linarith)))
+theorem mono (h : EntireOfOrderAtMost ρ f) (hρ : ρ ≤ ρ') : EntireOfOrderAtMost ρ' f := by
+  refine ⟨h.differentiable, fun ε hε => ?_⟩
+  obtain ⟨C, hC, hCb⟩ := h.exists_bound hε
+  refine ⟨C, hC, fun z => (hCb z).trans (Real.exp_le_exp.mpr ?_)⟩
+  exact mul_le_mul_of_nonneg_left
+    (Real.rpow_le_rpow_of_exponent_le (by linarith [norm_nonneg z]) (by linarith)) hC.le
 
-/-- If `f = O(g)` at infinity and `g` has order at most `ρ`, so does `f`. -/
-theorem HasGrowthOrderLE.trans_isBigO {F : Type*} [SeminormedAddCommGroup F] {g : ℂ → F}
-    (hg : HasGrowthOrderLE g ρ) (hfg : f =O[cobounded ℂ] g) : HasGrowthOrderLE f ρ :=
-  fun ε hε => hfg.trans (hg ε hε)
+/-- An entire function of order at most `ρ` is `O(exp (‖z‖ ^ τ))` at infinity for every
+`τ > max ρ 0`. Unlike `Complex.Hadamard.EntireOfOrderAtMost.isBigO`, this needs no sign condition
+on `ρ`. -/
+theorem isBigO_exp_rpow (h : EntireOfOrderAtMost ρ f) {τ : ℝ} (hρτ : ρ < τ) (hτ : 0 < τ) :
+    f =O[cobounded ℂ] fun z => Real.exp (‖z‖ ^ τ) := by
+  simpa using (h.mono (le_max_left ρ 0)).isBigO (le_max_right ρ 0)
+    (ε := τ - max ρ 0) (sub_pos.2 (max_lt hρτ hτ))
 
-/-- A function bounded at infinity has order at most every `ρ`. -/
-theorem hasGrowthOrderLE_of_isBigO_one (hf : f =O[cobounded ℂ] fun _ => (1 : ℝ)) (ρ : ℝ) :
-    HasGrowthOrderLE f ρ := by
-  intro ε _
-  refine hf.trans (IsBigO.of_bound 1 (Eventually.of_forall fun z => ?_))
+/-- If `f` is entire, `f = O(g)` at infinity and `g` has order at most `ρ ≥ 0`, then so does
+`f`. -/
+theorem trans_isBigO (hg : EntireOfOrderAtMost ρ g) (hρ : 0 ≤ ρ) (hf : Differentiable ℂ f)
+    (hfg : f =O[cobounded ℂ] g) : EntireOfOrderAtMost ρ f :=
+  of_isBigO hf hρ fun _ hε => hfg.trans (hg.isBigO hρ hε)
+
+/-- **Sums.** If `f` and `g` have order at most `ρ ≥ 0`, so does `f + g`. -/
+theorem add (hf : EntireOfOrderAtMost ρ f) (hg : EntireOfOrderAtMost ρ g) (hρ : 0 ≤ ρ) :
+    EntireOfOrderAtMost ρ (fun z => f z + g z) :=
+  of_isBigO (hf.differentiable.add hg.differentiable) hρ fun _ hε =>
+    (hf.isBigO hρ hε).add (hg.isBigO hρ hε)
+
+/-- **Products.** If `f` and `g` have order at most `ρ`, so does `f * g`. -/
+theorem mul (hf : EntireOfOrderAtMost ρ f) (hg : EntireOfOrderAtMost ρ g) :
+    EntireOfOrderAtMost ρ (fun z => f z * g z) := by
+  refine ⟨hf.differentiable.mul hg.differentiable, fun ε hε => ?_⟩
+  obtain ⟨C₁, hC₁, h₁⟩ := hf.exists_bound hε
+  obtain ⟨C₂, hC₂, h₂⟩ := hg.exists_bound hε
+  refine ⟨C₁ + C₂, add_pos hC₁ hC₂, fun z => ?_⟩
+  rw [norm_mul, add_mul, Real.exp_add]
+  exact mul_le_mul (h₁ z) (h₂ z) (norm_nonneg _) (Real.exp_pos _).le
+
+end EntireOfOrderAtMost
+
+variable {ρ : ℝ} {f : ℂ → ℂ}
+
+/-- For `ρ ≥ 0`, an entire function has order at most `ρ` if and only if it is
+`O(exp (‖z‖ ^ (ρ + ε)))` at infinity for every `ε > 0`. The quantifier on `ε` sits outside the
+`O`, so this is strictly weaker than `f =O[cobounded ℂ] fun z => exp (‖z‖ ^ ρ)`. -/
+theorem entireOfOrderAtMost_iff (hρ : 0 ≤ ρ) :
+    EntireOfOrderAtMost ρ f ↔
+      Differentiable ℂ f ∧ ∀ ε > 0, f =O[cobounded ℂ] fun z => Real.exp (‖z‖ ^ (ρ + ε)) :=
+  ⟨fun h => ⟨h.differentiable, fun _ hε => h.isBigO hρ hε⟩,
+    fun h => EntireOfOrderAtMost.of_isBigO h.1 hρ h.2⟩
+
+/-- An entire function bounded at infinity has order at most every `ρ ≥ 0`. -/
+theorem entireOfOrderAtMost_of_isBigO_one (hf : Differentiable ℂ f)
+    (hb : f =O[cobounded ℂ] fun _ => (1 : ℝ)) (hρ : 0 ≤ ρ) : EntireOfOrderAtMost ρ f := by
+  refine EntireOfOrderAtMost.of_isBigO hf hρ fun ε _ => ?_
+  refine hb.trans (IsBigO.of_bound 1 (Eventually.of_forall fun z => ?_))
   rw [one_mul, Real.norm_of_nonneg (Real.exp_pos _).le, norm_one]
   exact Real.one_le_exp (Real.rpow_nonneg (norm_nonneg _) _)
 
-/-- A constant function has order at most every `ρ`. -/
-theorem hasGrowthOrderLE_const (c : E) (ρ : ℝ) : HasGrowthOrderLE (fun _ => c) ρ :=
-  hasGrowthOrderLE_of_isBigO_one (isBigO_const_const c one_ne_zero _) ρ
+/-- A constant function has order at most every `ρ ≥ 0`. -/
+theorem entireOfOrderAtMost_const (c : ℂ) (hρ : 0 ≤ ρ) :
+    EntireOfOrderAtMost ρ (fun _ => c) :=
+  entireOfOrderAtMost_of_isBigO_one (differentiable_const c)
+    (isBigO_const_const c one_ne_zero _) hρ
 
-/-- A function of order `ρ` has order at most `ρ`. -/
-theorem HasGrowthOrder.hasGrowthOrderLE (h : HasGrowthOrder f ρ) : HasGrowthOrderLE f ρ :=
-  h.2.1
-
-/-- **The order is nonnegative.** -/
-theorem HasGrowthOrder.nonneg (h : HasGrowthOrder f ρ) : 0 ≤ ρ :=
-  h.1
-
-/-- A function of order `ρ` has order at most no nonnegative `ρ' < ρ`. -/
-theorem HasGrowthOrder.not_hasGrowthOrderLE (h : HasGrowthOrder f ρ) (h0 : 0 ≤ ρ')
-    (hlt : ρ' < ρ) : ¬ HasGrowthOrderLE f ρ' :=
-  h.2.2 ρ' ⟨h0, hlt⟩
-
-/-- **The order is unique.** -/
-theorem HasGrowthOrder.unique (h : HasGrowthOrder f ρ) (h' : HasGrowthOrder f ρ') :
-    ρ = ρ' := by
-  by_contra hne
-  rcases lt_or_gt_of_ne hne with hlt | hlt
-  · exact h'.not_hasGrowthOrderLE h.nonneg hlt h.hasGrowthOrderLE
-  · exact h.not_hasGrowthOrderLE h'.nonneg hlt h'.hasGrowthOrderLE
-
-/-- `f` has order `0` exactly when it has order at most `0`. -/
-theorem hasGrowthOrder_zero_iff : HasGrowthOrder f 0 ↔ HasGrowthOrderLE f 0 :=
-  ⟨HasGrowthOrder.hasGrowthOrderLE, fun h => ⟨le_rfl, h, fun _ h' => absurd h'.1 h'.2.not_ge⟩⟩
-
-/-- A function bounded at infinity has order `0`. -/
-theorem hasGrowthOrder_zero_of_isBigO_one (hf : f =O[cobounded ℂ] fun _ => (1 : ℝ)) :
-    HasGrowthOrder f 0 :=
-  hasGrowthOrder_zero_iff.mpr (hasGrowthOrderLE_of_isBigO_one hf 0)
-
-/-- A constant function has order `0`. -/
-theorem hasGrowthOrder_const (c : E) : HasGrowthOrder (fun _ => c) 0 :=
-  hasGrowthOrder_zero_iff.mpr (hasGrowthOrderLE_const c 0)
-
-/-- A function with `‖f z‖ ≤ C exp (A ‖z‖)` at infinity (a function of *exponential type*) has
-order at most `1`. -/
-theorem hasGrowthOrderLE_one_of_isBigO_exp_mul_norm {A : ℝ}
-    (hf : f =O[cobounded ℂ] fun z => Real.exp (A * ‖z‖)) : HasGrowthOrderLE f 1 := by
-  intro ε hε
-  refine hf.trans (IsBigO.of_bound 1 ?_)
+/-- An entire function with `‖f z‖ ≤ C exp (A ‖z‖)` at infinity (a function of *exponential
+type*) has order at most `1`. -/
+theorem entireOfOrderAtMost_one_of_isBigO_exp_mul_norm {A : ℝ} (hf : Differentiable ℂ f)
+    (hb : f =O[cobounded ℂ] fun z => Real.exp (A * ‖z‖)) : EntireOfOrderAtMost 1 f := by
+  refine EntireOfOrderAtMost.of_isBigO hf zero_le_one fun ε hε => ?_
+  refine hb.trans (IsBigO.of_bound 1 ?_)
   have hA : ∀ᶠ r : ℝ in atTop, A ≤ r ^ ε := (tendsto_rpow_atTop hε).eventually_ge_atTop A
   filter_upwards [tendsto_norm_cobounded_atTop.eventually hA,
     tendsto_norm_cobounded_atTop.eventually_ge_atTop 1] with z hz hz1
@@ -154,36 +247,68 @@ theorem hasGrowthOrderLE_one_of_isBigO_exp_mul_norm {A : ℝ}
     Real.exp_le_exp, Real.rpow_add (by linarith), Real.rpow_one, mul_comm]
   exact mul_le_mul_of_nonneg_left hz (by linarith)
 
+end Complex.Hadamard
+
+namespace Complex
+
+open Hadamard
+
+/-- `f` has *order of growth `ρ`*: `ρ ≥ 0`, `f` is entire of order at most `ρ`, and of order at
+most no smaller nonnegative exponent. For a nonzero entire `f` this is the classical order
+`limsup log log M(r) / log r`; constants have order `0`. -/
+def HasGrowthOrder (f : ℂ → ℂ) (ρ : ℝ) : Prop :=
+  0 ≤ ρ ∧ EntireOfOrderAtMost ρ f ∧ ∀ ρ' ∈ Set.Ico 0 ρ, ¬ EntireOfOrderAtMost ρ' f
+
+section Basic
+
+variable {f : ℂ → ℂ} {ρ ρ' : ℝ}
+
+/-- A function of order `ρ` has order at most `ρ`. -/
+theorem HasGrowthOrder.entireOfOrderAtMost (h : HasGrowthOrder f ρ) : EntireOfOrderAtMost ρ f :=
+  h.2.1
+
+/-- A function of order `ρ` is entire. -/
+theorem HasGrowthOrder.differentiable (h : HasGrowthOrder f ρ) : Differentiable ℂ f :=
+  h.entireOfOrderAtMost.differentiable
+
+/-- **The order is nonnegative.** -/
+theorem HasGrowthOrder.nonneg (h : HasGrowthOrder f ρ) : 0 ≤ ρ :=
+  h.1
+
+/-- A function of order `ρ` has order at most no nonnegative `ρ' < ρ`. -/
+theorem HasGrowthOrder.not_entireOfOrderAtMost (h : HasGrowthOrder f ρ) (h0 : 0 ≤ ρ')
+    (hlt : ρ' < ρ) : ¬ EntireOfOrderAtMost ρ' f :=
+  h.2.2 ρ' ⟨h0, hlt⟩
+
+/-- **The order is unique.** -/
+theorem HasGrowthOrder.unique (h : HasGrowthOrder f ρ) (h' : HasGrowthOrder f ρ') :
+    ρ = ρ' := by
+  by_contra hne
+  rcases lt_or_gt_of_ne hne with hlt | hlt
+  · exact h'.not_entireOfOrderAtMost h.nonneg hlt h.entireOfOrderAtMost
+  · exact h.not_entireOfOrderAtMost h'.nonneg hlt h'.entireOfOrderAtMost
+
+/-- `f` has order `0` exactly when it has order at most `0`. -/
+theorem hasGrowthOrder_zero_iff : HasGrowthOrder f 0 ↔ EntireOfOrderAtMost 0 f :=
+  ⟨HasGrowthOrder.entireOfOrderAtMost,
+    fun h => ⟨le_rfl, h, fun _ h' => absurd h'.1 h'.2.not_ge⟩⟩
+
+/-- An entire function bounded at infinity has order `0`. -/
+theorem hasGrowthOrder_zero_of_isBigO_one (hf : Differentiable ℂ f)
+    (hb : f =O[cobounded ℂ] fun _ => (1 : ℝ)) : HasGrowthOrder f 0 :=
+  hasGrowthOrder_zero_iff.mpr (entireOfOrderAtMost_of_isBigO_one hf hb le_rfl)
+
+/-- A constant function has order `0`. -/
+theorem hasGrowthOrder_const (c : ℂ) : HasGrowthOrder (fun _ => c) 0 :=
+  hasGrowthOrder_zero_iff.mpr (entireOfOrderAtMost_const c le_rfl)
+
 end Basic
 
-/-- **Sums.** If `f` and `g` have order at most `ρ`, so does `f + g`. -/
-theorem HasGrowthOrderLE.add {F : Type*} [SeminormedAddCommGroup F] {f g : ℂ → F} {ρ : ℝ}
-    (hf : HasGrowthOrderLE f ρ) (hg : HasGrowthOrderLE g ρ) :
-    HasGrowthOrderLE (fun z => f z + g z) ρ :=
-  fun ε hε => (hf ε hε).add (hg ε hε)
-
-/-- **Products.** If `f` and `g` have order at most `ρ`, so does `f * g`. -/
-theorem HasGrowthOrderLE.mul {R : Type*} [SeminormedRing R] {f g : ℂ → R} {ρ : ℝ}
-    (hf : HasGrowthOrderLE f ρ) (hg : HasGrowthOrderLE g ρ) :
-    HasGrowthOrderLE (fun z => f z * g z) ρ := by
-  intro ε hε
-  refine ((hf (ε / 2) (by positivity)).mul (hg (ε / 2) (by positivity))).trans
-    (IsBigO.of_bound 1 ?_)
-  have h2 : ∀ᶠ r : ℝ in atTop, 2 ≤ r ^ (ε / 2) :=
-    (tendsto_rpow_atTop (by positivity)).eventually_ge_atTop 2
-  filter_upwards [tendsto_norm_cobounded_atTop.eventually h2,
-    tendsto_norm_cobounded_atTop.eventually_gt_atTop 0] with z hz hz0
-  rw [one_mul, Real.norm_of_nonneg (by positivity), Real.norm_of_nonneg (Real.exp_pos _).le,
-    ← Real.exp_add, Real.exp_le_exp]
-  have e : ‖z‖ ^ (ρ + ε) = ‖z‖ ^ (ε / 2) * ‖z‖ ^ (ρ + ε / 2) := by
-    rw [← Real.rpow_add hz0]; ring_nf
-  have : 0 ≤ ‖z‖ ^ (ρ + ε / 2) := Real.rpow_nonneg (norm_nonneg _) _
-  rw [e]
-  nlinarith
+end Complex
 
 /-! ### Zeros of entire functions of finite order -/
 
-section Zeros
+namespace Complex.Hadamard.EntireOfOrderAtMost
 
 variable {f : ℂ → ℂ} {ρ : ℝ}
 
@@ -201,11 +326,12 @@ JFM 25.0698.03. Here the estimate is derived from Jensen's formula.
 Source: H. Davenport, *Multiplicative Number Theory*, 3rd ed., Graduate Texts in Mathematics 74,
 Springer, 2000, Chapter 11 (*Integral functions of order 1*),
 DOI 10.1007/978-1-4757-5927-3_11. Generalised from order `1` to any order `ρ ≥ 0`. -/
-theorem HasGrowthOrderLE.isBigO_sum_divisor_closedBall (hf : Differentiable ℂ f)
-    (h : HasGrowthOrderLE f ρ) (hρ : 0 ≤ ρ) {ε : ℝ} (hε : 0 < ε) :
+theorem isBigO_sum_divisor_closedBall (h : EntireOfOrderAtMost ρ f) (hρ : 0 ≤ ρ) {ε : ℝ}
+    (hε : 0 < ε) :
     (fun r : ℝ => ((∑ᶠ u, MeromorphicOn.divisor f (closedBall 0 r) u : ℤ) : ℝ))
       =O[atTop] fun r => r ^ (ρ + ε) := by
   classical
+  have hf := h.differentiable
   have han : ∀ U : Set ℂ, AnalyticOnNhd ℂ f U := fun U z _ => hf.analyticAt z
   set p := ρ + ε with hp
   have hp0 : 0 < p := by linarith
@@ -218,7 +344,7 @@ theorem HasGrowthOrderLE.isBigO_sum_divisor_closedBall (hf : Differentiable ℂ 
     exact isBigO_zero _ _
   push Not at hzero
   obtain ⟨a, ha⟩ := hzero
-  obtain ⟨C, hC⟩ := (h ε hε).bound
+  obtain ⟨C, hC⟩ := (h.isBigO hρ hε).bound
   rw [← comap_norm_atTop, eventually_comap, eventually_atTop] at hC
   obtain ⟨R0, hR0⟩ := hC
   set A := ‖a‖ with hA
@@ -320,11 +446,12 @@ JFM 25.0698.03.
 Source: H. Davenport, *Multiplicative Number Theory*, 3rd ed., Graduate Texts in Mathematics 74,
 Springer, 2000, Chapter 11 (*Integral functions of order 1*),
 DOI 10.1007/978-1-4757-5927-3_11. Generalised from order `1` to any order `ρ ≥ 0`. -/
-theorem HasGrowthOrderLE.summable_norm_rpow_neg {ι : Type*} {z : ι → ℂ} {ε : ℝ}
-    (hf : Differentiable ℂ f) (h : HasGrowthOrderLE f ρ) (hρ : 0 ≤ ρ) (hf0 : f 0 ≠ 0)
+theorem summable_norm_rpow_neg {ι : Type*} {z : ι → ℂ} {ε : ℝ}
+    (h : EntireOfOrderAtMost ρ f) (hρ : 0 ≤ ρ) (hf0 : f 0 ≠ 0)
     (hz : ∀ w, ENat.card {n // z n = w} = analyticOrderAt f w) (hε : 0 < ε) :
     Summable fun n => ‖z n‖ ^ (-ρ - ε) := by
   classical
+  have hf := h.differentiable
   have han : AnalyticOnNhd ℂ f Set.univ := fun w _ => hf.analyticAt w
   -- every order of vanishing is finite
   have h00 : analyticOrderAt f 0 = 0 := (hf.analyticAt 0).analyticOrderAt_eq_zero.mpr hf0
@@ -396,7 +523,7 @@ theorem HasGrowthOrderLE.summable_norm_rpow_neg {ι : Type*} {z : ι → ℂ} {�
   have hδ0 : 0 < δ := by positivity
   set p := ρ + δ with hp
   have hp0 : 0 < p := by positivity
-  obtain ⟨K, hK⟩ := (h.isBigO_sum_divisor_closedBall hf hρ hδ0).bound
+  obtain ⟨K, hK⟩ := (h.isBigO_sum_divisor_closedBall hρ hδ0).bound
   rw [eventually_atTop] at hK
   obtain ⟨R1, hR1⟩ := hK
   set R := max R1 r₀ with hR
@@ -518,6 +645,4 @@ theorem HasGrowthOrderLE.summable_norm_rpow_neg {ι : Type*} {z : ι → ℂ} {�
     _ ≤ ∑' k, A * q ^ k := Summable.sum_le_tsum _ (fun k _ => by positivity)
         ((summable_geometric_of_lt_one hq0 hq1).mul_left A)
 
-end Zeros
-
-end Complex
+end Complex.Hadamard.EntireOfOrderAtMost

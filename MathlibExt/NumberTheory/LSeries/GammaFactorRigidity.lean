@@ -37,7 +37,7 @@ to a constant along the line. Coefficient recovery by vertical mean values then 
 
 ## Main statements
 
-* `Complex.exists_polynomial_eq_exp_of_hasGrowthOrderLE`: a nonvanishing entire function of
+* `Complex.exists_polynomial_eq_exp_of_entireOfOrderAtMost`: a nonvanishing entire function of
   finite order is `exp` of a polynomial.
 * `LSeries.exists_eq_const_of_gamma_functional_equation`: the rigidity theorem.
 -/
@@ -62,13 +62,15 @@ Source: J. Hadamard, "Étude sur les propriétés des fonctions entières et en 
 fonction considérée par Riemann," J. Math. Pures Appl. (4) 9 (1893), 171–215,
 numdam JMPA_1893_4_9__171_0. Special case: the zero-free case of Hadamard's factorization theorem.
 -/
-theorem Complex.exists_polynomial_eq_exp_of_hasGrowthOrderLE {E : ℂ → ℂ} {ρ : ℝ}
-    (hf : Differentiable ℂ E) (hρ : Complex.HasGrowthOrderLE E ρ) (hf0 : ∀ z, E z ≠ 0) :
+theorem Complex.exists_polynomial_eq_exp_of_entireOfOrderAtMost {E : ℂ → ℂ} {ρ : ℝ}
+    (hρ : Complex.Hadamard.EntireOfOrderAtMost ρ E) (hf0 : ∀ z, E z ≠ 0) :
     ∃ g : Polynomial ℂ, ∀ z, E z = Complex.exp (g.eval z) := by
-  obtain ⟨h, hdiff, -, hfexp⟩ := Complex.exists_differentiable_eq_cexp_of_ne_zero hf hf0
-  have hRe : ∀ s > ρ, ∃ A > (0 : ℝ), ∀ z, (h z).re ≤ A + ‖z‖ ^ s := by
+  obtain ⟨h, hdiff, -, hfexp⟩ :=
+    Complex.exists_differentiable_eq_cexp_of_ne_zero hρ.differentiable hf0
+  have hRe : ∀ s > max ρ 0, ∃ A > (0 : ℝ), ∀ z, (h z).re ≤ A + ‖z‖ ^ s := by
     intro s hs
-    obtain ⟨c, hc⟩ := (hρ (s - ρ) (by linarith)).bound
+    obtain ⟨c, hc⟩ := (hρ.isBigO_exp_rpow (τ := s) (lt_of_le_of_lt (le_max_left ρ 0) hs)
+      (lt_of_le_of_lt (le_max_right ρ 0) hs)).bound
     obtain ⟨R0, -, hR0⟩ :=
       (Metric.hasBasis_cobounded_compl_closedBall (0 : ℂ)).eventually_iff.mp hc
     obtain ⟨C0, hC0⟩ := (isCompact_closedBall (0 : ℂ) R0).exists_bound_of_continuousOn
@@ -82,7 +84,7 @@ theorem Complex.exists_polynomial_eq_exp_of_hasGrowthOrderLE {E : ℂ → ℂ} {
       have := abs_nonneg (Real.log (max c 1))
       linarith
     · have h1 := hR0 hz
-      rw [show ρ + (s - ρ) = s by ring, hfexp z, Complex.norm_exp, Real.norm_eq_abs,
+      rw [hfexp z, Complex.norm_exp, Real.norm_eq_abs,
         abs_of_pos (Real.exp_pos _)] at h1
       have h2 : Real.exp (h z).re ≤ Real.exp (Real.log (max c 1) + ‖z‖ ^ s) := by
         rw [Real.exp_add, Real.exp_log (by positivity)]
@@ -93,7 +95,7 @@ theorem Complex.exists_polynomial_eq_exp_of_hasGrowthOrderLE {E : ℂ → ℂ} {
       linarith
   have hzero : ∀ n : ℕ, max ρ 0 < n → iteratedDeriv n h 0 = 0 := by
     intro n hn
-    obtain ⟨A, -, hA'⟩ := hRe ((max ρ 0 + n) / 2) (by have := le_max_left ρ 0; linarith)
+    obtain ⟨A, -, hA'⟩ := hRe ((max ρ 0 + n) / 2) (by linarith)
     exact Complex.iteratedDeriv_eq_zero_of_re_le_rpow hdiff (s := (max ρ 0 + n) / 2)
       (by have := le_max_right ρ 0; linarith)
       zero_le_one (fun z => by simpa using hA' z) (by linarith)
@@ -479,12 +481,13 @@ theorem LSeries.exists_eq_const_of_gamma_functional_equation (f : ℂ → ℂ)
         w * starRingEnd ℂ ((A : ℂ) ^ (1 - starRingEnd ℂ s) *
           (∏ i, Complex.Gamma (α i * (1 - starRingEnd ℂ s) + β i)) /
           (∏ j, Complex.Gamma (γ j * (1 - starRingEnd ℂ s) + δ j)) * f (1 - starRingEnd ℂ s)))
-    (horder : ∃ (E : ℂ → ℂ) (ρ : ℝ), Differentiable ℂ E ∧ Complex.HasGrowthOrderLE E ρ ∧
+    (horder : ∃ (E : ℂ → ℂ) (ρ : ℝ), Complex.Hadamard.EntireOfOrderAtMost ρ E ∧
       ∀ᶠ s in Filter.codiscrete ℂ, E s = (A : ℂ) ^ s * (∏ i, Complex.Gamma (α i * s + β i)) /
         (∏ j, Complex.Gamma (γ j * s + δ j)) * f s) :
     ∃ C : ℂ, ∀ s : ℂ, 1 / 2 ≤ s.re → f s = C := by
   obtain ⟨c, σ₀, hc⟩ := hlog
-  obtain ⟨E, ρ, hEd, hEρ, hEH⟩ := horder
+  obtain ⟨E, ρ, hEρ, hEH⟩ := horder
+  have hEd := hEρ.differentiable
   set G : ℂ → ℂ := fun s => (A : ℂ) ^ s * (∏ i, Complex.Gamma (α i * s + β i)) /
       (∏ j, Complex.Gamma (γ j * s + δ j)) with hG_def
   have hA0 : (A : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr hA.ne'
@@ -557,7 +560,7 @@ theorem LSeries.exists_eq_const_of_gamma_functional_equation (f : ℂ → ℂ)
       refine mul_ne_zero (by rintro rfl; simp at hw) ?_
       rw [map_ne_zero]
       exact mul_ne_zero (hG0 _ (by linarith)) (hne _ hs')
-  obtain ⟨g, hg⟩ := Complex.exists_polynomial_eq_exp_of_hasGrowthOrderLE hEd hEρ hE0
+  obtain ⟨g, hg⟩ := Complex.exists_polynomial_eq_exp_of_entireOfOrderAtMost hEρ hE0
   have hab : LSeries.abscissaOfAbsConv c ≤ σ₀ :=
     LSeries.abscissaOfAbsConv_le_of_forall_lt_LSeriesSummable fun y hy =>
       (hc y (by simpa using hy)).1

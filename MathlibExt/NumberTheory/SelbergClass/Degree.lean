@@ -96,9 +96,9 @@ are in the Selberg class, so is `a₁ * a₂`, whose `L`-function is the product
 `L`-functions. -/
 theorem mul_mem {a₁ a₂ : ArithmeticFunction ℂ} (ha₁ : a₁ ∈ selbergClass)
     (ha₂ : a₂ ∈ selbergClass) : a₁ * a₂ ∈ selbergClass := by
-  obtain ⟨h1₁, ⟨F₁, hF₁, ⟨m₁, G₁, β₁, hG₁d, hG₁o, hG₁F⟩, ⟨D₁⟩⟩, ⟨b₁, θ₁, hθ₁, hlog₁, C₁, hb₁⟩,
+  obtain ⟨h1₁, ⟨F₁, hF₁, ⟨m₁, G₁, β₁, hG₁o, hG₁F⟩, ⟨D₁⟩⟩, ⟨b₁, θ₁, hθ₁, hlog₁, C₁, hb₁⟩,
     hram₁⟩ := ha₁
-  obtain ⟨h1₂, ⟨F₂, hF₂, ⟨m₂, G₂, β₂, hG₂d, hG₂o, hG₂F⟩, ⟨D₂⟩⟩, ⟨b₂, θ₂, hθ₂, hlog₂, C₂, hb₂⟩,
+  obtain ⟨h1₂, ⟨F₂, hF₂, ⟨m₂, G₂, β₂, hG₂o, hG₂F⟩, ⟨D₂⟩⟩, ⟨b₂, θ₂, hθ₂, hlog₂, C₂, hb₂⟩,
     hram₂⟩ := ha₂
   have hF : IsLSeriesContinuation (a₁ * a₂) (fun s => F₁ s * F₂ s) := by
     refine ⟨fun s hs => ?_, hF₁.2.mul hF₂.2⟩
@@ -107,8 +107,8 @@ theorem mul_mem {a₁ a₂ : ArithmeticFunction ℂ} (ha₁ : a₁ ∈ selbergCl
       (LSeriesSummable.of_forall_norm_le_mul_rpow hram₁ hs)
           (LSeriesSummable.of_forall_norm_le_mul_rpow hram₂ hs)]
   refine ⟨by rw [ArithmeticFunction.mul_apply_one, h1₁, h1₂, one_mul],
-    ⟨_, hF, ⟨m₁ + m₂, fun z => G₁ z * G₂ z, max β₁ β₂, hG₁d.mul hG₂d, (hG₁o.mono (le_max_left _
-        _)).mul (hG₂o.mono (le_max_right _ _)), ?_⟩,
+    ⟨_, hF, ⟨m₁ + m₂, fun z => G₁ z * G₂ z, max β₁ β₂,
+        (hG₁o.mono (le_max_left _ _)).mul (hG₂o.mono (le_max_right _ _)), ?_⟩,
       ⟨D₁.mul D₂⟩⟩, ⟨b₁ + b₂, max θ₁ θ₂, max_lt hθ₁ hθ₂, ⟨?_, ?_⟩, |C₁| + |C₂|, ?_⟩,
     forall_norm_mul_le_rpow hram₁ hram₂⟩
   · intro s hs
@@ -180,7 +180,8 @@ private lemma finite_setOf_zeros_of_mem {a : ArithmeticFunction ℂ} (ha : a ∈
     ℂ}
     (hF : IsLSeriesContinuation a F) (T : ℝ) :
     {ρ : ℂ | F ρ = 0 ∧ 0 ≤ ρ.re ∧ 0 ≤ ρ.im ∧ ρ.im ≤ T}.Finite := by
-  obtain ⟨-, ⟨F₀, hF₀, ⟨m, G, β, hGd, -, hGF₀⟩, -⟩, ⟨b, θ, -, hlog, -⟩, -⟩ := ha
+  obtain ⟨-, ⟨F₀, hF₀, ⟨m, G, β, hGo, hGF₀⟩, -⟩, ⟨b, θ, -, hlog, -⟩, -⟩ := ha
+  have hGd := hGo.differentiable
   have hne : ∀ s : ℂ, 1 < s.re → F s ≠ 0 := fun s hs => by
     rw [hF.1 s hs, (hlog.2 s hs).2]; exact Complex.exp_ne_zero _
   have hG2 : G 2 ≠ 0 := by

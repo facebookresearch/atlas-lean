@@ -18,7 +18,9 @@ import MathlibExt.Analysis.PerronKernel
 /-!
 # Perron-type kernels on a vertical line
 
-Principal values of the classical Perron kernels along a line `re s = c` with `c > 0`:
+Principal values (`Complex.HasVerticalIntegral`, the limit of the truncated integrals
+`VIntegral' f c (-R) R` of the PrimeNumberTheoremAnd project) of the classical Perron kernels
+along a line `re s = c` with `c > 0`:
 
 * the discontinuous integral: `(1 / 2πi) ∫_(c) x ^ s / s ds` is `1`, `1 / 2` or `0` according
   as `x > 1`, `x = 1` or `0 < x < 1`;
@@ -34,14 +36,24 @@ kernel is computed by integrating by parts on the line for `x ≥ 1`, and by mov
 `re s → +∞` for `x ≤ 1`. The factorial kernel follows by induction on `k` from the partial
 fraction recursion `1 / P (k + 1) s = (1 / P k s - 1 / P k (s + 1)) / (k + 1)`.
 
+The discontinuous integral converges only conditionally, so it is stated with
+`Complex.HasVerticalIntegral`. The higher-order and Riesz kernels are integrable on the line, and
+their values are also stated as values of the line integral `VerticalIntegral'`.
+
 ## Main statements
 
 * `Complex.hasVerticalIntegral_cpow_div_self_of_one_lt`,
   `Complex.hasVerticalIntegral_cpow_div_self_of_lt_one`, `Complex.hasVerticalIntegral_one_div`
 * `Complex.hasVerticalIntegral_cpow_div_pow_succ_of_one_le`,
-  `Complex.hasVerticalIntegral_cpow_div_pow_succ_of_le_one`
+  `Complex.hasVerticalIntegral_cpow_div_pow_succ_of_le_one`, and the line-integral forms
+  `Complex.verticalIntegral'_cpow_div_pow_succ_of_one_le`,
+  `Complex.verticalIntegral'_cpow_div_pow_succ_of_le_one`
 * `Complex.hasVerticalIntegral_cpow_div_prod_of_one_le`,
-  `Complex.hasVerticalIntegral_cpow_div_prod_of_le_one`
+  `Complex.hasVerticalIntegral_cpow_div_prod_of_le_one`, and the line-integral forms
+  `Complex.verticalIntegral'_cpow_div_prod_of_one_le`,
+  `Complex.verticalIntegral'_cpow_div_prod_of_le_one`
+* `Complex.integrable_cpow_div_pow_succ_line`, `Complex.integrable_cpow_div_prod_line`:
+  integrability of these kernels on the line.
 -/
 
 @[expose] public section
@@ -107,7 +119,10 @@ theorem hasVerticalIntegral_cpow_div_self_of_lt_one {x c : ℝ} (hx0 : 0 < x) (h
 as a principal value.
 
 Source: O. Perron, "Zur Theorie der Dirichletschen Reihen," J. Reine Angew. Math. 134 (1908),
-95–143, DOI 10.1515/crll.1908.134.95. -/
+95–143, DOI 10.1515/crll.1908.134.95.
+
+The integrand is not integrable on the line, so this is only a principal value: the line integral
+`VerticalIntegral' (fun s => 1 / s) c` is the junk value `0`. -/
 theorem hasVerticalIntegral_one_div {c : ℝ} (hc : 0 < c) :
     HasVerticalIntegral c (fun s : ℂ => 1 / s) (1 / 2) := by
   refine hasVerticalIntegral_of_continuous
@@ -459,6 +474,37 @@ theorem hasVerticalIntegral_cpow_div_pow_succ_of_le_one {k : ℕ} {x c : ℝ} (h
       simp only [hGval, hxe]
   rwa [hPhi0, smul_zero] at h
 
+/-- For `k ≥ 1`, `c > 0` and `x ≥ 0`, the kernel `x ^ s / s ^ (k + 1)` is integrable on the
+line `re s = c`. -/
+theorem integrable_cpow_div_pow_succ_line {k : ℕ} {x c : ℝ} (hk : 1 ≤ k) (hc : 0 < c)
+    (hx : 0 ≤ x) :
+    Integrable fun t : ℝ => (x : ℂ) ^ ((c : ℂ) + t * I) / ((c : ℂ) + t * I) ^ (k + 1) := by
+  obtain ⟨n, rfl⟩ : ∃ n : ℕ, k = n + 1 := ⟨k - 1, by omega⟩
+  have hne : ∀ t : ℝ, (c : ℂ) + t * I ≠ 0 := fun t => ofReal_add_mul_I_ne_zero (Or.inl hc.ne')
+  refine integrable_of_norm_le_div_pow (n := n) hc (Real.rpow_nonneg hx c) ?_ fun t => ?_
+  · exact ((by fun_prop : Continuous fun t : ℝ => (c : ℂ) + t * I).const_cpow
+      (Or.inr hne)).div (by fun_prop) fun t => pow_ne_zero _ (hne t)
+  · rw [norm_div, norm_pow, norm_cpow_eq_rpow_re_of_nonneg hx (by simp [hc.ne'])]
+    simp
+
+/-- **The order-`(k + 1)` Perron kernel for `x ≥ 1`, as a line integral.** For `k ≥ 1`, `c > 0`
+and `x ≥ 1` the integrand is integrable on the line, and
+`(1 / 2πi) ∫_(c) x ^ s / s ^ (k + 1) ds = (log x) ^ k / k!`. -/
+theorem verticalIntegral'_cpow_div_pow_succ_of_one_le {k : ℕ} {x c : ℝ} (hk : 1 ≤ k)
+    (hc : 0 < c) (hx : 1 ≤ x) :
+    VerticalIntegral' (fun s : ℂ => (x : ℂ) ^ s / s ^ (k + 1)) c =
+      (Real.log x : ℂ) ^ k / (k.factorial : ℂ) :=
+  (hasVerticalIntegral_cpow_div_pow_succ_of_one_le hk hc hx).verticalIntegral'_eq
+    (integrable_cpow_div_pow_succ_line hk hc (zero_le_one.trans hx))
+
+/-- **The order-`(k + 1)` Perron kernel for `0 < x ≤ 1`, as a line integral.** For `k ≥ 1`,
+`c > 0` and `0 < x ≤ 1`, `(1 / 2πi) ∫_(c) x ^ s / s ^ (k + 1) ds = 0`. -/
+theorem verticalIntegral'_cpow_div_pow_succ_of_le_one {k : ℕ} {x c : ℝ} (hk : 1 ≤ k)
+    (hc : 0 < c) (hx0 : 0 < x) (hx1 : x ≤ 1) :
+    VerticalIntegral' (fun s : ℂ => (x : ℂ) ^ s / s ^ (k + 1)) c = 0 :=
+  (hasVerticalIntegral_cpow_div_pow_succ_of_le_one hk hc hx0 hx1).verticalIntegral'_eq
+    (integrable_cpow_div_pow_succ_line hk hc hx0.le)
+
 /-! ### The kernel `x ^ s / (s (s + 1) ⋯ (s + k))` -/
 
 /-- The partial-fraction recursion for `P n s = s (s + 1) ⋯ (s + n)`. -/
@@ -588,5 +634,60 @@ theorem hasVerticalIntegral_cpow_div_prod_of_le_one {k : ℕ} {x c : ℝ} (hk : 
   · simp [hv₀, h1]
   · have hx1' : x = 1 := le_antisymm hx1 (not_lt.mp h1)
     simp [hx1', zero_pow (by omega : k ≠ 0)]
+
+/-- For `k ≥ 1`, `c > 0` and `x ≥ 0`, the Riesz kernel `x ^ s / (s (s + 1) ⋯ (s + k))` is
+integrable on the line `re s = c`. -/
+theorem integrable_cpow_div_prod_line {k : ℕ} {x c : ℝ} (hk : 1 ≤ k) (hc : 0 < c)
+    (hx : 0 ≤ x) :
+    Integrable fun t : ℝ =>
+      (x : ℂ) ^ ((c : ℂ) + t * I) / ∏ j ∈ Finset.range (k + 1), ((c : ℂ) + t * I + j) := by
+  obtain ⟨n, rfl⟩ : ∃ n : ℕ, k = n + 1 := ⟨k - 1, by omega⟩
+  have hne : ∀ t : ℝ, (c : ℂ) + t * I ≠ 0 := fun t => ofReal_add_mul_I_ne_zero (Or.inl hc.ne')
+  -- the lower bound `‖s‖ ^ (k + 1) ≤ ‖s (s + 1) ⋯ (s + k)‖` on the line
+  have hfac : ∀ (t : ℝ) (j : ℕ), ‖(c : ℂ) + t * I‖ ≤ ‖(c : ℂ) + t * I + j‖ := by
+    intro t j
+    have e2 : (c : ℂ) + t * I + j = ((c + j : ℝ) : ℂ) + t * I := by push_cast; ring
+    rw [e2, norm_add_mul_I, norm_add_mul_I]
+    apply Real.sqrt_le_sqrt
+    nlinarith [(Nat.cast_nonneg j : (0 : ℝ) ≤ j)]
+  have hPge : ∀ t : ℝ, ‖(c : ℂ) + t * I‖ ^ (n + 2) ≤
+      ‖∏ j ∈ Finset.range (n + 1 + 1), ((c : ℂ) + t * I + j)‖ := by
+    intro t
+    rw [norm_prod]
+    calc ‖(c : ℂ) + t * I‖ ^ (n + 2) = ∏ j ∈ Finset.range (n + 1 + 1), ‖(c : ℂ) + t * I‖ := by
+          simp
+      _ ≤ _ := Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun j _ => hfac t j
+  have hwpos : ∀ t : ℝ, 0 < ‖(c : ℂ) + t * I‖ ^ (n + 2) := fun t =>
+    pow_pos (norm_pos_iff.mpr (hne t)) _
+  have hPne : ∀ t : ℝ, ∏ j ∈ Finset.range (n + 1 + 1), ((c : ℂ) + t * I + j) ≠ 0 := by
+    intro t h
+    have h1 := hPge t
+    rw [h, norm_zero] at h1
+    exact absurd h1 (not_le.mpr (hwpos t))
+  refine integrable_of_norm_le_div_pow (n := n) hc (Real.rpow_nonneg hx c) ?_ fun t => ?_
+  · exact ((by fun_prop : Continuous fun t : ℝ => (c : ℂ) + t * I).const_cpow
+      (Or.inr hne)).div (continuous_finsetProd _ fun j _ => by fun_prop) hPne
+  · rw [norm_div, norm_cpow_eq_rpow_re_of_nonneg hx (by simp [hc.ne'])]
+    have hre : ((c : ℂ) + t * I).re = c := by simp
+    rw [hre]
+    exact div_le_div_of_nonneg_left (Real.rpow_nonneg hx c) (hwpos t) (hPge t)
+
+/-- **The Riesz kernel for `x ≥ 1`, as a line integral.** For `k ≥ 1`, `c > 0` and `x ≥ 1` the
+integrand is integrable on the line, and
+`(1 / 2πi) ∫_(c) x ^ s / (s (s + 1) ⋯ (s + k)) ds = (1 - 1 / x) ^ k / k!`. -/
+theorem verticalIntegral'_cpow_div_prod_of_one_le {k : ℕ} {x c : ℝ} (hk : 1 ≤ k)
+    (hc : 0 < c) (hx : 1 ≤ x) :
+    VerticalIntegral' (fun s : ℂ => (x : ℂ) ^ s / ∏ j ∈ Finset.range (k + 1), (s + j)) c =
+      (1 - 1 / (x : ℂ)) ^ k / (k.factorial : ℂ) :=
+  (hasVerticalIntegral_cpow_div_prod_of_one_le hk hc hx).verticalIntegral'_eq
+    (integrable_cpow_div_prod_line hk hc (zero_le_one.trans hx))
+
+/-- **The Riesz kernel for `0 ≤ x ≤ 1`, as a line integral.** For `k ≥ 1`, `c > 0` and
+`0 ≤ x ≤ 1`, `(1 / 2πi) ∫_(c) x ^ s / (s (s + 1) ⋯ (s + k)) ds = 0`. -/
+theorem verticalIntegral'_cpow_div_prod_of_le_one {k : ℕ} {x c : ℝ} (hk : 1 ≤ k)
+    (hc : 0 < c) (hx0 : 0 ≤ x) (hx1 : x ≤ 1) :
+    VerticalIntegral' (fun s : ℂ => (x : ℂ) ^ s / ∏ j ∈ Finset.range (k + 1), (s + j)) c = 0 :=
+  (hasVerticalIntegral_cpow_div_prod_of_le_one hk hc hx0 hx1).verticalIntegral'_eq
+    (integrable_cpow_div_prod_line hk hc hx0)
 
 end Complex

@@ -28,8 +28,8 @@ example (K : ℕ) (hK : 1 ≤ K) :
 
 /-- The hypothesis `M(x) = o(x)` of Axer's theorem is satisfiable: it follows from the
 zero-free-region bound for the Mertens function. -/
-private theorem mertens_isLittleO_id : (fun x : ℝ => (mertens x : ℝ)) =o[atTop] fun x : ℝ => x := by
-  obtain ⟨c, hc, h⟩ := mertens_isBigO_mul_exp_neg_mul_log_rpow
+private theorem M_isLittleO_id : (fun x : ℝ => M x) =o[atTop] fun x : ℝ => x := by
+  obtain ⟨c, hc, h⟩ := M_isBigO_mul_exp_neg_mul_log_rpow
   refine h.trans_isLittleO ?_
   have hg : Tendsto (fun x : ℝ => Real.exp (-c * Real.log x ^ (1 / 10 : ℝ))) atTop (nhds 0) := by
     refine Real.tendsto_exp_atBot.comp ?_
@@ -48,7 +48,7 @@ example : (fun x : ℝ => ∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) * (fun _ : �
     (by simp only [Real.rpow_zero]; exact isBigO_refl _ _)
     (fun _ => MonotoneOn.boundedVariationOn (f := fun _ : ℝ => (1 : ℝ)) (C := 1)
       (fun _ _ _ _ _ => le_rfl) (fun _ _ => by norm_num))
-    mertens_isLittleO_id
+    M_isLittleO_id
 
 -- The bounded-variation closure lemma, for `g = id`.
 example (T : ℝ) :

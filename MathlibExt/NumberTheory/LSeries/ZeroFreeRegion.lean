@@ -49,6 +49,8 @@ for an absolute constant `c > 0` and every real nonprincipal Dirichlet character
 
 @[expose] public section
 
+open Complex (riemannXi)
+
 open Filter Topology
 
 /-! ### The Riemann zeta function -/
@@ -198,9 +200,9 @@ theorem exists_neg_re_logDeriv_riemannZeta_lt_log_sub_tsum :
 /-- The family `Sigma.fst : (Σ w, Fin (analyticOrderAt ξ w).toNat) → ℂ` lists the nontrivial
 zeros of `ζ` with multiplicity. -/
 private lemma riemannXi_sigma_enum :
-    (∀ w, ENat.card {n : (Σ w : ℂ, Fin (analyticOrderAt RiemannXi.riemannXi w).toNat) //
-        n.1 = w} = analyticOrderAt RiemannXi.riemannXi w) ∧
-      ∀ n : (Σ w : ℂ, Fin (analyticOrderAt RiemannXi.riemannXi w).toNat),
+    (∀ w, ENat.card {n : (Σ w : ℂ, Fin (analyticOrderAt Complex.riemannXi w).toNat) //
+        n.1 = w} = analyticOrderAt Complex.riemannXi w) ∧
+      ∀ n : (Σ w : ℂ, Fin (analyticOrderAt Complex.riemannXi w).toNat),
         n.1 ∈ riemannZetaNontrivialZeros :=
   ⟨Complex.card_sigma_fin_analyticOrderAt RiemannXi.differentiable_riemannXi (w₀ := 0)
       (by simp),
@@ -216,9 +218,10 @@ theorem exists_neg_re_logDeriv_riemannZeta_lt_log :
   refine ⟨A, fun s hs1 hs2 ht => ?_⟩
   obtain ⟨hz, hzmem⟩ := riemannXi_sigma_enum
   have key := hA _ hz s hs1 hs2 ht
-  have hnn : 0 ≤ ∑' n : (Σ w : ℂ, Fin (analyticOrderAt RiemannXi.riemannXi w).toNat),
+  have hnn : 0 ≤ ∑' n : (Σ w : ℂ, Fin (analyticOrderAt Complex.riemannXi w).toNat),
       (1 / (s - n.1) + 1 / n.1).re :=
-    tsum_nonneg fun n => Complex.re_one_div_sub_add_one_div_nonneg (hzmem n).2.1 (hzmem n).2.2 hs1
+    tsum_nonneg fun n =>
+      Complex.re_one_div_sub_add_one_div_nonneg (hzmem n).2.1.le (hzmem n).2.2.le hs1
   linarith
 
 /-- There is an absolute constant `A` such that for every nontrivial zero `ρ = β + iγ` of `ζ` with
@@ -231,9 +234,9 @@ theorem exists_neg_re_logDeriv_riemannZeta_lt_log_sub_one_div :
   obtain ⟨A, hA⟩ := exists_neg_re_logDeriv_riemannZeta_lt_log_sub_tsum.{0}
   refine ⟨A, fun ρ hρ hγ σ hσ1 hσ2 => ?_⟩
   have hd := RiemannXi.differentiable_riemannXi
-  have hX0 : RiemannXi.riemannXi 0 ≠ 0 := by simp
+  have hX0 : Complex.riemannXi 0 ≠ 0 := by simp
   have hfin := Complex.analyticOrderAt_ne_top_of_differentiable hd hX0
-  set N : ℂ → ℕ := fun w => (analyticOrderAt RiemannXi.riemannXi w).toNat with hN
+  set N : ℂ → ℕ := fun w => (analyticOrderAt Complex.riemannXi w).toNat with hN
   obtain ⟨hz, hzmem⟩ := riemannXi_sigma_enum
   set s : ℂ := (σ : ℂ) + ρ.im * Complex.I with hs
   have hsre : s.re = σ := by simp [hs]
@@ -245,11 +248,11 @@ theorem exists_neg_re_logDeriv_riemannZeta_lt_log_sub_one_div :
     (RiemannXi.ne_zero_of_card_eq_analyticOrderAt hz) (RiemannXi.summable_norm_rpow_neg_two hz) s
   have hmre := Complex.reCLM.summable hm
   have hnn : ∀ n : (Σ w : ℂ, Fin (N w)), 0 ≤ (1 / (s - n.1) + 1 / n.1).re := fun n =>
-    Complex.re_one_div_sub_add_one_div_nonneg (hzmem n).2.1 (hzmem n).2.2
+    Complex.re_one_div_sub_add_one_div_nonneg (hzmem n).2.1.le (hzmem n).2.2.le
       (by rw [hsre]; exact hσ1)
   -- the index of `ρ`
   have hNρ : 0 < N ρ := by
-    have hne : analyticOrderAt RiemannXi.riemannXi ρ ≠ 0 := by
+    have hne : analyticOrderAt Complex.riemannXi ρ ≠ 0 := by
       intro h
       rcases analyticOrderAt_eq_zero.mp h with h | h
       · exact h (hd.analyticAt ρ)
@@ -267,7 +270,7 @@ theorem exists_neg_re_logDeriv_riemannZeta_lt_log_sub_one_div :
       Complex.ofReal_one]
     have : 0 ≤ (1 / ρ).re := by
       rw [one_div, Complex.inv_re]
-      exact div_nonneg hρ.2.1 (Complex.normSq_nonneg _)
+      exact div_nonneg hρ.2.1.le (Complex.normSq_nonneg _)
     linarith
   simp only [Complex.reCLM_apply] at hle
   linarith

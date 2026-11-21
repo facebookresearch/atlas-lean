@@ -11,6 +11,7 @@ module
 public import Mathlib.Algebra.BigOperators.Finprod
 public import Mathlib.Analysis.Analytic.Order
 public import Mathlib.NumberTheory.LSeries.Nonvanishing
+public import Mathlib.Analysis.Meromorphic.Order
 
 /-!
 # The nontrivial zeros of a Dirichlet `L`-function
@@ -31,7 +32,8 @@ The set is a `Set ℂ`: zeros are counted without multiplicity. The zero-countin
 ## Main definitions
 
 * `DirichletCharacter.nontrivialZeros χ`: the nontrivial zeros of `L(s, χ)`.
-* `DirichletCharacter.zeroCount χ T`: the number `N(T, χ)` of nontrivial zeros with `|Im s| < T`,
+* `DirichletCharacter.zeroCount χ T`: the number `N(T, χ) : ℝ` of nontrivial zeros with
+  `|Im s| < T`,
   counted with multiplicity.
 
 ## Main statements
@@ -123,19 +125,55 @@ theorem nontrivialZeros_primitiveCharacter (χ : DirichletCharacter ℂ q) [NeZe
 
 /-! ### Counting the nontrivial zeros -/
 
+/-- At a nontrivial zero, the meromorphic order of `L(s, χ)` is its analytic order. -/
+private theorem untopD_meromorphicOrderAt_LFunction {ρ : ℂ} (hρ : ρ ∈ χ.nontrivialZeros) :
+    (meromorphicOrderAt (LFunction χ) ρ).untopD 0 = analyticOrderNatAt (LFunction χ) ρ := by
+  have hρ1 : ρ ≠ 1 := fun h => by
+    have := re_lt_one_of_mem_nontrivialZeros hρ
+    rw [h, Complex.one_re] at this
+    exact lt_irrefl _ this
+  have hA : AnalyticAt ℂ (LFunction χ) ρ :=
+    DifferentiableOn.analyticAt (s := {s : ℂ | s ≠ 1})
+      (fun s hs => (differentiableAt_LFunction χ s (.inl hs)).differentiableWithinAt)
+      (isOpen_ne.mem_nhds hρ1)
+  rw [hA.meromorphicOrderAt_eq, analyticOrderNatAt]
+  cases analyticOrderAt (LFunction χ) ρ
+  · simp
+  · rfl
+
 variable (χ) in
 /-- **`N(T, χ)`**: the number of nontrivial zeros `ρ` of `L(s, χ)` with `|Im ρ| < T`, counted
-with multiplicity (`analyticOrderNatAt`). If there were infinitely many such zeros, the `finsum`
-would take the junk value `0`; for primitive `χ` there are finitely many
-(`DirichletCharacter.finite_setOf_mem_nontrivialZeros_abs_im_lt`). -/
-noncomputable def zeroCount (T : ℝ) : ℕ :=
-  ∑ᶠ ρ ∈ {ρ | ρ ∈ χ.nontrivialZeros ∧ |ρ.im| < T}, analyticOrderNatAt (LFunction χ) ρ
+with multiplicity (the meromorphic order, as in the zero sums of PrimeNumberTheoremAnd). This is
+the standard height window for `L(s, χ)`, whose zeros are not symmetric about the real axis;
+PrimeNumberTheoremAnd's `riemannZeta.N T` counts `0 < Im ρ < T` for `ζ` only. If there were
+infinitely many such zeros, the `tsum` would take the junk value `0`; for primitive `χ` there are
+finitely many (`DirichletCharacter.finite_setOf_mem_nontrivialZeros_abs_im_lt`). -/
+noncomputable def zeroCount (T : ℝ) : ℝ :=
+  ∑' ρ : {ρ : ℂ | ρ ∈ χ.nontrivialZeros ∧ |ρ.im| < T},
+    (((meromorphicOrderAt (LFunction χ) ρ).untopD 0 : ℤ) : ℝ)
+
+/-- When the zeros below height `T` are finite, `N(T, χ)` is the finite sum of their analytic
+orders. -/
+theorem zeroCount_eq_natCast_finsum {T : ℝ}
+    (hfin : {ρ | ρ ∈ χ.nontrivialZeros ∧ |ρ.im| < T}.Finite) :
+    χ.zeroCount T = ((∑ᶠ ρ ∈ {ρ | ρ ∈ χ.nontrivialZeros ∧ |ρ.im| < T},
+      analyticOrderNatAt (LFunction χ) ρ : ℕ) : ℝ) := by
+  have := hfin.to_subtype
+  rw [zeroCount, tsum_eq_finsum (Set.toFinite _),
+    finsum_set_coe_eq_finsum_mem (f := fun ρ : ℂ =>
+      (((meromorphicOrderAt (LFunction χ) ρ).untopD 0 : ℤ) : ℝ)),
+    Nat.cast_finsum_mem hfin]
+  refine finsum_mem_congr rfl fun ρ hρ => ?_
+  rw [untopD_meromorphicOrderAt_LFunction hρ.1]
+  push_cast
+  rfl
 
 /-- `N(T, χ) = 0` for `T ≤ 0`. -/
 theorem zeroCount_of_nonpos {T : ℝ} (hT : T ≤ 0) : χ.zeroCount T = 0 := by
   have h : {ρ | ρ ∈ χ.nontrivialZeros ∧ |ρ.im| < T} = ∅ :=
     Set.eq_empty_of_forall_notMem fun ρ hρ => (abs_nonneg ρ.im).not_gt (hρ.2.trans_le hT)
-  rw [zeroCount, h, finsum_mem_empty]
+  rw [zeroCount_eq_natCast_finsum (by rw [h]; exact Set.finite_empty), h, finsum_mem_empty,
+    Nat.cast_zero]
 
 /-- `N(T, χ)` is monotone in `T`, as long as the zeros up to the larger height are finite. -/
 theorem zeroCount_mono {T₁ T₂ : ℝ} (hT : T₁ ≤ T₂)
@@ -143,7 +181,8 @@ theorem zeroCount_mono {T₁ T₂ : ℝ} (hT : T₁ ≤ T₂)
     χ.zeroCount T₁ ≤ χ.zeroCount T₂ := by
   have hsub : {ρ | ρ ∈ χ.nontrivialZeros ∧ |ρ.im| < T₁} ⊆
       {ρ | ρ ∈ χ.nontrivialZeros ∧ |ρ.im| < T₂} := fun _ hρ => ⟨hρ.1, hρ.2.trans_le hT⟩
-  rw [zeroCount, zeroCount, finsum_mem_eq_finite_toFinset_sum _ (hfin.subset hsub),
+  rw [zeroCount_eq_natCast_finsum (hfin.subset hsub), zeroCount_eq_natCast_finsum hfin,
+    Nat.cast_le, finsum_mem_eq_finite_toFinset_sum _ (hfin.subset hsub),
     finsum_mem_eq_finite_toFinset_sum _ hfin]
   exact Finset.sum_le_sum_of_subset (Set.Finite.toFinset_subset_toFinset.mpr hsub)
 

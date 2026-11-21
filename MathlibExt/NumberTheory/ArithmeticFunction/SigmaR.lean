@@ -40,10 +40,14 @@ adapted from the Apache-2.0 licensed `ArithmeticFunction.sigmaR` declaration in
 
 namespace ArithmeticFunction
 
-/-- The complex-valued arithmetic function `σ_s(n) = ∑_{d ∣ n} d ^ s`. -/
-noncomputable def sigmaR (s : ℂ) : ArithmeticFunction ℂ where
-  toFun := fun n => ∑ d ∈ n.divisors, (d : ℂ) ^ s
+/-- The divisor power sum `σ_s(n) = ∑_{d ∣ n} d ^ s` with exponent in a semiring `R`, as in
+PrimeNumberTheoremAnd; the main case is `R = ℂ`. -/
+noncomputable def sigmaR {R : Type*} [Semiring R] [HPow R R R] (s : R) : ArithmeticFunction R where
+  toFun := fun n => ∑ d ∈ n.divisors, (d : R) ^ s
   map_zero' := by simp
+
+@[inherit_doc]
+scoped[ArithmeticFunction] notation "σᴿ" => ArithmeticFunction.sigmaR
 
 /-- The defining finite divisor-sum formula for `sigmaR`. -/
 theorem sigmaR_apply {n : ℕ} {s : ℂ} :
@@ -58,7 +62,7 @@ theorem sigmaR_apply_one (s : ℂ) : sigmaR s 1 = 1 := by
 /-- At exponent zero, `sigmaR` counts the divisors of its input. -/
 @[simp]
 theorem sigmaR_zero_apply (n : ℕ) :
-    sigmaR 0 n = (n.divisors.card : ℂ) := by
+    sigmaR (0 : ℂ) n = (n.divisors.card : ℂ) := by
   simp [sigmaR_apply]
 
 /-- At a natural exponent, `sigmaR` agrees with Mathlib's divisor-power sum after coercion to

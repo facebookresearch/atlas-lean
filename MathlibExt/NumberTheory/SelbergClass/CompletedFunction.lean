@@ -40,8 +40,8 @@ relation between its zeros and those of `F`, and the location and finiteness of 
 * `SelbergClass.completed_zeros_mem_strip`: the zeros of `H` lie in `0 ≤ Re s ≤ 1`.
 * `SelbergClass.exists_finset_completed_zeros_eq`: the finite exceptional set.
 * `SelbergClass.finite_zeros_of_completed`: zeros up to a given height are finite.
-* `Complex.HasGrowthOrderLE.exists_norm_le_exp_strip`: a function of finite order satisfies
-  `‖G s‖ ≤ C exp (|Im s| ^ k)` in a vertical strip.
+* `Complex.Hadamard.EntireOfOrderAtMost.exists_norm_le_exp_strip`: a function of finite order
+  satisfies `‖G s‖ ≤ C exp (|Im s| ^ k)` in a vertical strip.
 * `logDeriv_one_sub_conj_eq_neg_conj`: `H(1 - s̄) = w H̄(s)` gives
   `H'/H (1 - s̄) = -conj (H'/H (s))`.
 * `Complex.finite_setOf_eq_zero_norm_le`: an entire function that is not identically zero has
@@ -142,11 +142,12 @@ theorem finite_setOf_eq_zero_norm_le {H : ℂ → ℂ} (hH : Differentiable ℂ 
 /-- **Growth in a vertical strip.** A function of order at most `β` satisfies
 `‖G s‖ ≤ C exp (|Im s| ^ (β + (|β| + 1) + 1))` in the strip `σm ≤ Re s ≤ σM` (where
 `-σM ≤ σm`) for large `|Im s|`. This is the crude bound needed to apply Phragmén–Lindelöf. -/
-theorem HasGrowthOrderLE.exists_norm_le_exp_strip {G : ℂ → ℂ} {β : ℝ}
-    (hGo : HasGrowthOrderLE G β) (σm σM : ℝ) (hσ : -σM ≤ σm) :
+theorem Hadamard.EntireOfOrderAtMost.exists_norm_le_exp_strip {G : ℂ → ℂ} {β : ℝ}
+    (hGo : Hadamard.EntireOfOrderAtMost β G) (σm σM : ℝ) (hσ : -σM ≤ σm) :
     ∃ C T₀ : ℝ, ∀ s : ℂ, σm ≤ s.re → s.re ≤ σM → T₀ ≤ |s.im| →
       ‖G s‖ ≤ C * Real.exp (|s.im| ^ (β + (|β| + 1) + 1)) := by
-  obtain ⟨c, hc, hcG⟩ := (hGo (|β| + 1) (by positivity)).exists_pos
+  obtain ⟨c, hc, hcG⟩ := (hGo.isBigO_exp_rpow (τ := β + (|β| + 1)) (by linarith [abs_nonneg β])
+    (by linarith [neg_abs_le β])).exists_pos
   have hb1 : 1 ≤ β + (|β| + 1) := by have := neg_abs_le β; linarith
   have hev := hcG.bound
   rw [← comap_norm_atTop, eventually_comap, eventually_atTop] at hev
