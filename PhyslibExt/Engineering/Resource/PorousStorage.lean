@@ -11,6 +11,8 @@ public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Basic.Real.Basic
 
+public import PhyslibExt.EarthScience.PoreVelocity
+
 import Mathlib.Tactic.Ring
 
 /-!
@@ -22,8 +24,9 @@ Storage bookkeeping for a rigid porous medium with bulk volume `V_bulk`,
 porosity `phi`, phase saturations `S` over a finite phase type and phase
 densities `rho`. The pore volume is `phi * V_bulk`, phase `i` occupies
 `phi * V_bulk * S i` and carries mass `phi * V_bulk * S i * rho i`.
-Superficial (Darcy) flux, volumetric flow and pore velocity are distinct
-quantities and are kept distinct here.
+Superficial (Darcy) flux and volumetric flow are defined here; pore
+velocity itself is the imported `EarthScience.poreVelocity`, kept distinct
+from the superficial flux.
 
 ## ii. Key results
 
@@ -32,7 +35,7 @@ quantities and are kept distinct here.
   volume.
 - `PorousStorage.sum_poreInventory`: the total phase mass factors as
   `phi * V_bulk * (sum of S i * rho i)`.
-- `PorousStorage.phi_mul_poreVelocity`: pore velocity rescales the
+- `EarthScience.poreVelocity_mul` (imported): pore velocity rescales the
   superficial flux by the porosity.
 
 ## iii. Table of contents
@@ -137,24 +140,10 @@ carry `A ≠ 0`. -/
 noncomputable def superficialFlux (Q A : ℝ) : ℝ :=
   Q / A
 
-/-- Pore (interstitial) velocity `v = u / phi` for superficial flux `u` and
-porosity `phi`. Distinct from the superficial flux. At `phi = 0` the value
-is the totalized `0`, outside the physical domain; rewrite lemmas
-therefore carry `phi ≠ 0`. -/
-noncomputable def poreVelocity (u phi : ℝ) : ℝ :=
-  u / phi
-
 /-- Volumetric flow from superficial flux and area: `Q = A * u`. -/
 lemma volumetricFlow_eq (u A : ℝ) (hA : A ≠ 0) :
     A * superficialFlux (A * u) A = A * u := by
   unfold superficialFlux
   rw [mul_div_cancel_left₀ _ hA]
-
-/-- The pore velocity rescales the superficial flux by porosity:
-`phi * v = u` for `phi ≠ 0`. -/
-lemma phi_mul_poreVelocity (u phi : ℝ) (hphi : phi ≠ 0) :
-    phi * poreVelocity u phi = u := by
-  unfold poreVelocity
-  exact mul_div_cancel₀ _ hphi
 
 end Engineering.Resource.PorousStorage

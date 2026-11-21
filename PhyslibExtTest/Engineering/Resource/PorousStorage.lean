@@ -71,8 +71,8 @@ example : phaseVolume 1 8 S2 0 ≤ poreVolume 1 8 ∧
 example : (2 : ℝ) * superficialFlux (2 * 3) 2 = 2 * 3 := by
   exact volumetricFlow_eq 3 2 (by norm_num)
 
-example : (1 / 2 : ℝ) * poreVelocity 3 (1 / 2) = 3 := by
-  exact phi_mul_poreVelocity 3 (1 / 2) (by norm_num)
+example : EarthScience.poreVelocity 3 (1 / 2) * (1 / 2) = 3 := by
+  exact EarthScience.poreVelocity_mul (by norm_num)
 
 -- Signed weights summing to one are not saturations: (-1, 2) sums to one
 -- but its first phase volume is negative, so the admissibility hypotheses
@@ -86,9 +86,11 @@ example : (∑ i, (![-1, 2] : Fin 2 → ℝ) i) = 1 ∧
 
 -- Zero denominators are totalized values outside the physical domain, and
 -- the velocity rewrite fails there without its hypothesis.
-example : poreVelocity 3 0 = 0 ∧ ¬ ((0 : ℝ) * poreVelocity 3 0 = 3) := by
-  have h1 : poreVelocity 3 0 = 0 := by simp [poreVelocity]
-  exact ⟨h1, by rw [h1]; norm_num⟩
+example : EarthScience.poreVelocity 3 0 = 0 ∧
+    ¬ (EarthScience.poreVelocity 3 0 * 0 = 3) := by
+  have h0 : EarthScience.poreVelocity 3 0 = 0 := by
+    simp [EarthScience.poreVelocity]
+  exact ⟨h0, by rw [h0]; norm_num⟩
 
 example : superficialFlux 3 0 = 0 := by
   simp [superficialFlux]
