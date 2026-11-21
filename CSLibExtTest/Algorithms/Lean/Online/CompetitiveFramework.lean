@@ -98,6 +98,46 @@ example : Competitive ToyP ((Simulation.refl ToyP).F AlwaysTrue) 1 0 := by
     toy_competitive
   simpa [Simulation.refl] using h
 
+example : RandCompetitive ToyP
+    { μ := MeasureTheory.Measure.dirac true, isProb := by infer_instance,
+      strat := fun _ => AlwaysTrue } 1 0 :=
+  (randCompetitive_dirac_iff ToyP AlwaysTrue true 1 0).mpr toy_competitive
+
+example : ENNReal.ofReal 2
+    ≤ optProfit ToyP (fun τ => (τ.length : ℝ)) [true, false] := by
+  have h := le_optProfit ToyP (fun τ => (τ.length : ℝ))
+    (σ := [true, false]) (τ := [(true, true), (false, true)]) trivial rfl
+  simpa using h
+
+theorem toy_profit_opt (σ : List Bool) :
+    optProfit ToyP (fun τ => (τ.length : ℝ)) σ
+      = ENNReal.ofReal (σ.length : ℝ) := by
+  apply le_antisymm
+  · unfold optProfit
+    apply iSup₂_le
+    intro τ hτ
+    dsimp only
+    have hlen : τ.length = σ.length := by rw [← hτ.2, List.length_map]
+    rw [hlen]
+  · have h := le_optProfit ToyP (fun τ => (τ.length : ℝ)) (σ := σ)
+      (τ := run AlwaysTrue σ) (alwaysTrue_feasible σ trivial)
+      (run_map_fst AlwaysTrue σ)
+    have hlen : (run AlwaysTrue σ).length = σ.length :=
+      runFrom_length AlwaysTrue [] σ
+    simpa [hlen] using h
+
+theorem toy_profitCompetitive : ProfitCompetitive ToyP
+    (fun τ => (τ.length : ℝ)) AlwaysTrue 1 0 := by
+  refine ⟨zero_le_one, le_rfl, le_rfl, alwaysTrue_feasible, fun σ _ => ?_⟩
+  have hlen : (run AlwaysTrue σ).length = σ.length :=
+    runFrom_length AlwaysTrue [] σ
+  simp only [toy_profit_opt, hlen, ENNReal.ofReal_one, one_mul,
+    ENNReal.ofReal_zero, add_zero, le_refl]
+
+example : ProfitCompetitive ToyP (fun τ => (τ.length : ℝ)) AlwaysTrue (1 / 2) 3 :=
+  ProfitCompetitive.mono ToyP _ AlwaysTrue toy_profitCompetitive (by norm_num)
+    (by norm_num) (by norm_num)
+
 #print axioms run_nil
 #print axioms runFrom_length
 #print axioms runFrom_map_fst
@@ -113,6 +153,10 @@ example : Competitive ToyP ((Simulation.refl ToyP).F AlwaysTrue) 1 0 := by
 #print axioms StrictLowerBound.of_additive
 #print axioms not_strictCompetitive_of_strictLowerBound
 #print axioms not_additiveCompetitive_of_additiveLowerBound
+#print axioms randCompetitive_dirac_iff
+#print axioms Simulation.randCompetitive_transfer
+#print axioms le_optProfit
+#print axioms ProfitCompetitive.mono
 
 end Cslib.Algorithms.Lean.Online.CompetitiveFrameworkTest
 
