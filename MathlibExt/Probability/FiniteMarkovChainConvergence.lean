@@ -167,18 +167,17 @@ private theorem sum_abs_vecMul_le {M : Matrix S S ℝ} (hM : M ∈ rowStochastic
     _ = (1 - δ) * ∑ x, |w x| := by rw [Finset.mul_sum]; simp only [mul_comm]
 
 /-- **A stationary vector is invariant under repeated transition.** Row-vector convention:
-`π` is stationary for `P` when `π ᵥ* P = π` (`P x y` is the probability of moving from `x`
-to `y`). Then `π ᵥ* P ^ n = π` for every `n`. The identity is purely algebraic: it needs
-neither stochasticity of `P` nor nonnegativity or normalization of `π`, so it holds over any
-semiring. -/
+`π` is stationary for `P` when `π ᵥ* P = π`. Then `π ᵥ* P ^ n = π` for every `n`. The
+identity is purely algebraic: it needs neither stochasticity of `P` nor nonnegativity or
+normalization of `π`, so it holds over any semiring. -/
 theorem vecMul_pow_eq_self {R : Type*} [Semiring R] {P : Matrix S S R} {π : S → R}
     (hstat : π ᵥ* P = π) (n : ℕ) : π ᵥ* P ^ n = π := by
   induction n with
   | zero => simp
   | succ n ih => rw [pow_succ, ← vecMul_vecMul, ih, hstat]
 
-/-- Entrywise form of `vecMul_pow_eq_self`: starting from a stationary law `π`, the
-probability of being in `y` after `n` steps, `∑ x, π x * Pⁿ(x, y)`, is `π y`. -/
+/-- Entrywise form of `vecMul_pow_eq_self`: the `y`-coordinate of `π ᵥ* P ^ n`,
+`∑ x, π x * (P ^ n) x y`, equals `π y`. -/
 theorem sum_mul_pow_apply_eq_self {R : Type*} [Semiring R] {P : Matrix S S R} {π : S → R}
     (hstat : π ᵥ* P = π) (n : ℕ) (y : S) : ∑ x, π x * (P ^ n) x y = π y := by
   exact congrFun (vecMul_pow_eq_self hstat n) y
