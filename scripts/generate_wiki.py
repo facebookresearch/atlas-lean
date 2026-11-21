@@ -2,7 +2,7 @@
 """Lay out ATLAS wiki pages from the Lean sources: the library scripts/sync_wiki.py imports.
 
 ATLAS v2 is the root Lake package: every public MathlibExt, CSLibExt,
-PhyslibExt and WantedExt declaration with a docstring becomes one article whose
+PhyslibExt, Domains and WantedExt declaration with a docstring becomes one article whose
 statement is that docstring. Theorems are proved and definitions defined unless their
 module contains `sorry`; `theorem_wanted` entries are stated results waiting
 for a proof, and `def_wanted` entries stay unstated, because Autoform counts a
@@ -67,10 +67,7 @@ LIBRARIES = {
         "Interpolation": "Analysis",
         "Languages": "ComputerScience",
         "ModelTheory": "Logic",
-        "OperationsResearch": "Economics",
         "Quantum": "QuantumInformation",
-        "Transport": "Economics",
-        "Urban": "Economics",
     },
     "CSLibExt": {
         "Algorithms": "ComputerScience",
@@ -120,6 +117,8 @@ LIBRARIES = {
         "Statistics": "Physics",
         "Units": "Physics",
     },
+    "Domains": {"MaterialsScience": "Physics", "OperationsResearch": "Economics",
+                "Transport": "Economics", "Urban": "Economics"},
     "WantedExt": {"Complexity": "TheoryOfComputation", "Computation": "TheoryOfComputation", "ModelTheory": "Logic"},
 }
 # Declarations inside a `mutual` block are indented; `declaration_lines` takes indented matches only there, or
@@ -1342,7 +1341,7 @@ def generate(titles: dict | None = None, dependency_file: Path | None = None, re
             )
         )
     coverage = v2_coverage + [
-        ("v2 tests (MathlibExtTest, CSLibExtTest, PhyslibExtTest)", "OUT", "Tests and diagnostics rather than mathematical results."),
+        ("v2 tests (MathlibExtTest, CSLibExtTest, PhyslibExtTest, DomainsTest)", "OUT", "Tests and diagnostics rather than mathematical results."),
         # No file counts: the Pages build leaves Atlas/ out of its checkout.
         ("Atlas/StatisticalMechanics", "MAPPED", "Standalone Lean files; no roadmap articles yet."),
         ("Atlas/FC", "MAPPED", "Standalone Lean files; no roadmap articles yet."),

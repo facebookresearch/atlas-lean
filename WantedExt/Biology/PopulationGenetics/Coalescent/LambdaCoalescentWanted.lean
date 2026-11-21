@@ -17,7 +17,7 @@ Theorem 1) showed that the consistent families of nonnegative rates are exactly 
 `Λ` is unique.
 
 Consistency and uniqueness are proved in
-`MathlibExt.Biology.PopulationGenetics.Coalescent.LambdaCoalescent`
+`Domains.Biology.PopulationGenetics.Coalescent.LambdaCoalescent`
 (`mergerRate_consistent`, `mergerRate_nonneg`, `eq_of_mergerRate_eq`). The existence half
 recorded here is a Hausdorff moment problem: consistency gives
 `r (i + 2 + c) (i + 2) = ((I - E) ^ c m) i` for the sequence `m i = r (i + 2) (i + 2)` and the
@@ -34,14 +34,13 @@ vol. II, 2nd ed. (1971), §VII.3.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Biology.PopulationGenetics.Coalescent.LambdaCoalescent
+public import MathlibExt.MeasureTheory.Measure.UnitIntervalMoments
 
 @[expose] public section
 
 namespace MathlibExt.Biology.PopulationGenetics.Coalescent.LambdaCoalescentWanted
 
 open MeasureTheory unitInterval
-open MathlibExt.Biology.PopulationGenetics.Coalescent.LambdaCoalescent
 
 /-- **Pitman's representation theorem, existence half** (Pitman 1999, Theorem 1): every
 consistent family of nonnegative merger rates `r b k`, `2 ≤ k ≤ b`, is the family of merger
@@ -52,6 +51,7 @@ Source: Pitman (1999), Theorem 1; Hausdorff (1921). -/
 theorem_wanted exists_measure_of_consistent (r : ℕ → ℕ → ℝ)
     (hnonneg : ∀ b k, 2 ≤ k → k ≤ b → 0 ≤ r b k)
     (hcons : ∀ b k, 2 ≤ k → k ≤ b → r b k = r (b + 1) k + r (b + 1) (k + 1)) :
-    ∃ (Λ : Measure I) (_ : IsFiniteMeasure Λ), ∀ b k, 2 ≤ k → k ≤ b → r b k = mergerRate Λ b k
+    ∃ (Λ : Measure I) (_ : IsFiniteMeasure Λ), ∀ b k, 2 ≤ k → k ≤ b →
+      r b k = unitIntervalMoment Λ (k - 2) (b - k)
 
 end MathlibExt.Biology.PopulationGenetics.Coalescent.LambdaCoalescentWanted

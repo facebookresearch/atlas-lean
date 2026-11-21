@@ -16,7 +16,7 @@ Song (2014) show that the expected site frequency spectrum of a sample of size `
 `(c_2, …, c_n)` determine each other, so statements about `(c_m)` are statements about the
 expected SFS; that reduction is not formalized.
 
-Proved in `MathlibExt.Biology.PopulationGenetics.Coalescent.VariableSFS`: a piecewise-constant
+Proved in `Domains.Biology.PopulationGenetics.Coalescent.VariableSFS`: a piecewise-constant
 history with `K` pieces is determined by `c_2, …, c_n` when `n ≥ 2K`
 (`PiecewiseHistory.sizeFn_eq_of_firstCoalMean_eq`), the bound is tight for every `K ≥ 2`
 (`PiecewiseHistory.exists_ne_firstCoalMean_eq_of_lt`), and for every fixed `n` two bounded
@@ -36,14 +36,13 @@ the allelic spectrum?", Theor. Popul. Biol. 73 (2008) 342–348.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Biology.PopulationGenetics.Coalescent.VariableSFS
+public import MathlibExt.Probability.Survival.MeanWaitingTime
 
 @[expose] public section
 
 namespace MathlibExt.Biology.PopulationGenetics.Coalescent.VariableSFSWanted
 
-open MeasureTheory
-open MathlibExt.Biology.PopulationGenetics.Coalescent.VariableSFS
+open MeasureTheory ProbabilityTheory
 
 /-- **Non-identifiability of general histories** (Myers, Fefferman & Patterson 2008): there
 are two measurable population-size functions, bounded between positive constants, that differ
@@ -55,6 +54,7 @@ theorem_wanted exists_ne_ae_firstCoalMean_eq :
     ∃ η₁ η₂ : ℝ → ℝ, Measurable η₁ ∧ Measurable η₂ ∧
       (∃ a b : ℝ, 0 < a ∧ ∀ s, a ≤ η₁ s ∧ η₁ s ≤ b ∧ a ≤ η₂ s ∧ η₂ s ≤ b) ∧
       ¬ (η₁ =ᵐ[volume.restrict (Set.Ici 0)] η₂) ∧
-      ∀ m, 2 ≤ m → firstCoalMean η₁ m = firstCoalMean η₂ m
+      ∀ m : ℕ, 2 ≤ m → meanWaitingTime (fun t => (η₁ t)⁻¹) (m.choose 2) =
+        meanWaitingTime (fun t => (η₂ t)⁻¹) (m.choose 2)
 
 end MathlibExt.Biology.PopulationGenetics.Coalescent.VariableSFSWanted

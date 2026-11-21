@@ -89,7 +89,7 @@ class BlueprintWorkflowTests(unittest.TestCase):
     def test_current_build_and_dump_fail_closed(self):
         build = self.step("Build the current v2 libraries")
         self.assertEqual(build["run"],
-                         "lake build MathlibExt CSLibExt PhyslibExt WantedExt")
+                         "lake build MathlibExt CSLibExt PhyslibExt Domains WantedExt")
         dump = self.step("Dump declaration dependencies")
         self.assertNotIn("continue-on-error", build)
         self.assertNotIn("continue-on-error", dump)
