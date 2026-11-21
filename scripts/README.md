@@ -8,6 +8,12 @@ policies, and builds `MathlibExt`, `CSLibExt`, `PhyslibExt`, `Domains`, `WantedE
 Use `scripts/check.sh preflight` for the fast structure and shell checks, or
 `scripts/check.sh build` to build the libraries and inspect compiler diagnostics,
 axiom dependencies, unsafe declarations, direct imports, and library layering.
+The build checks also import every module of `MathlibExt`, `CSLibExt`, `PhyslibExt`,
+`Domains`, and `WantedExt` into one environment, as the blueprint's dependency dump
+does (`scripts/check_declaration_collisions.sh`). Two modules that never import each
+other each build on their own even when they declare the same name; this check fails
+on such a collision and names the declaration and both modules. Keep one declaration
+and import its module where the other was used.
 Preflight also validates the semantic Lake target graph so the archived `v1/`
 package cannot enter the root build through a glob, dependency, or extra target.
 The approved `theorem_wanted` and `def_wanted` source forms are enforced in
