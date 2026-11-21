@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Probability.Statistics.Bayesian.FiniteConsistency
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Algebra.Order.BigOperators.Group.List
+public import Mathlib.Data.Real.Basic
 
 import Mathlib.Tactic
 
@@ -17,15 +19,17 @@ import Mathlib.Tactic
 
 Weights are real functions on a `Fintype`. `finitePosterior π L θ` is
 `π θ * L θ / ∑ θ', π θ' * L θ'`; at zero evidence Lean's `x / 0 = 0` makes it
-the zero function. Every normalization statement therefore assumes nonzero
-(or positive) evidence, and the zero-evidence and prior-likelihood-conflict
-boundaries are stated explicitly. Sequential updating on a list of
-observations agrees with the one-shot update by the batch likelihood, and
-`postWeight` from `FiniteConsistency` is the sequential update iterated over
-the first `n` observations.
+the zero function. Normalization statements assume nonzero (or positive)
+evidence, and the zero-evidence and prior-likelihood-conflict boundaries are
+stated explicitly. Sequential updating on a list of observations agrees with
+the one-shot update by the batch likelihood, with no evidence hypothesis: at
+zero evidence both sides are the zero function. The identification of
+`postWeight` from `FiniteConsistency` with these updates lives in that file,
+so this module stays free of the asymptotic consistency machinery.
 -/
 
 @[expose] public section
+
 
 namespace MathlibExt.Probability.Statistics.Bayesian
 
@@ -130,23 +134,34 @@ theorem batchLikelihood_perm {Ls Ls' : List (Θ → ℝ)} (h : Ls.Perm Ls') :
   unfold batchLikelihood
   exact List.Perm.prod_eq ((h.map _))
 
-/-- **Sequential/batch agreement**: for a normalized nonnegative prior, nonnegative likelihoods
-and positive joint evidence, updating one observation at a time gives the batch posterior.
-`∑ π = 1` is used for the empty list; positivity of every intermediate evidence follows from
-nonnegativity and positive joint evidence. -/
+private theorem zero_evidence_sequentialPosterior_zero (Ls : List (Θ → ℝ)) :
+    sequentialPosterior (fun _ => 0) Ls = fun _ => 0 := by
+  induction Ls with
+  | nil => rfl
+  | cons L Ls' ih =>
+    have h0 : finitePosterior (fun _ => 0) L = fun _ => 0 := by
+      funext θ
+      exact finitePosterior_eq_zero_of_mul_eq_zero (zero_mul (L θ))
+    have hseq_def : sequentialPosterior (fun _ => 0) (L :: Ls') =
+        sequentialPosterior (finitePosterior (fun _ => 0) L) Ls' := rfl
+    rw [hseq_def, h0, ih]
+
+/-- **Sequential/batch agreement**: for a normalized nonnegative prior and nonnegative
+likelihoods, updating one observation at a time gives the batch posterior. No evidence
+hypothesis is needed: at zero evidence both sides are the zero function. `∑ π = 1` is used
+for the empty list. -/
 theorem sequentialPosterior_eq_finitePosterior_batchLikelihood {π : Θ → ℝ}
     (hπ : ∀ θ, 0 ≤ π θ) (hπ1 : ∑ θ, π θ = 1) {Ls : List (Θ → ℝ)}
-    (hL : ∀ L ∈ Ls, ∀ θ, 0 ≤ L θ) (hE : 0 < finiteEvidence π (batchLikelihood Ls)) :
+    (hL : ∀ L ∈ Ls, ∀ θ, 0 ≤ L θ) :
     sequentialPosterior π Ls = finitePosterior π (batchLikelihood Ls) := by
   have key : ∀ (Ls : List (Θ → ℝ)) (π : Θ → ℝ),
       (∀ θ, 0 ≤ π θ) → ∑ θ, π θ = 1 →
       (∀ L ∈ Ls, ∀ θ, 0 ≤ L θ) →
-      0 < finiteEvidence π (batchLikelihood Ls) →
       sequentialPosterior π Ls = finitePosterior π (batchLikelihood Ls) := by
     intro Ls
     induction Ls with
     | nil =>
-      intro π hπ hπ1 hL hE
+      intro π hπ hπ1 hL
       have hbatch : batchLikelihood ([] : List (Θ → ℝ)) = fun _ => 1 := batchLikelihood_nil
       rw [hbatch]
       have hseq_nil : sequentialPosterior π ([] : List (Θ → ℝ)) = π := rfl
@@ -155,20 +170,17 @@ theorem sequentialPosterior_eq_finitePosterior_batchLikelihood {π : Θ → ℝ}
       simp only [finitePosterior, finiteEvidence, mul_one]
       rw [hπ1, div_one]
     | cons L Ls' ih =>
-      intro π hπ hπ1 hL hE
+      intro π hπ hπ1 hL
       have hLhead : ∀ θ, 0 ≤ L θ := fun θ => hL L (by simp) θ
       have hLtail : ∀ L' ∈ Ls', ∀ θ, 0 ≤ L' θ :=
         fun L' hmem θ => hL L' (by simp [hmem]) θ
       have hbatch_cons : batchLikelihood (L :: Ls') =
           fun θ => L θ * batchLikelihood Ls' θ :=
         batchLikelihood_cons L Ls'
-      rw [hbatch_cons] at hE
-      have hE1_nonneg : 0 ≤ finiteEvidence π L := finiteEvidence_nonneg hπ hLhead
-      have hE1_ne : finiteEvidence π L ≠ 0 := by
-        intro hzero
-        have hf : 0 ≤ (fun θ => π θ * L θ) := fun θ => mul_nonneg (hπ θ) (hLhead θ)
+      by_cases hE1 : finiteEvidence π L = 0
+      · have hf : 0 ≤ (fun θ => π θ * L θ) := fun θ => mul_nonneg (hπ θ) (hLhead θ)
         have hsum : (∑ θ, π θ * L θ) = 0 := by
-          simpa [finiteEvidence] using hzero
+          simpa [finiteEvidence] using hE1
         have hfun : (fun θ => π θ * L θ) = 0 :=
           (Fintype.sum_eq_zero_iff_of_nonneg hf).mp hsum
         have hzero_each : ∀ θ, π θ * L θ = 0 := fun θ => congrFun hfun θ
@@ -178,109 +190,46 @@ theorem sequentialPosterior_eq_finitePosterior_batchLikelihood {π : Θ → ℝ}
           intro θ _
           have hz := hzero_each θ
           rw [← mul_assoc, hz, zero_mul]
-        rw [hjoint_zero] at hE
-        exact lt_irrefl 0 hE
-      have hE1_pos : 0 < finiteEvidence π L :=
-        lt_of_le_of_ne' hE1_nonneg hE1_ne
-      have hπ'_nonneg : ∀ θ, 0 ≤ finitePosterior π L θ :=
-        finitePosterior_nonneg hπ hLhead
-      have hπ'1 : ∑ θ, finitePosterior π L θ = 1 := sum_finitePosterior hE1_ne
-      have hE'_eq : finiteEvidence (finitePosterior π L) (batchLikelihood Ls') =
-          finiteEvidence π (fun θ => L θ * batchLikelihood Ls' θ) / finiteEvidence π L :=
-        finiteEvidence_finitePosterior π L (batchLikelihood Ls')
-      have hE' : 0 < finiteEvidence (finitePosterior π L) (batchLikelihood Ls') := by
-        rw [hE'_eq]
-        exact div_pos hE hE1_pos
-      have hIH := ih (finitePosterior π L) hπ'_nonneg hπ'1 hLtail hE'
-      have hseq_def : sequentialPosterior π (L :: Ls') =
-          sequentialPosterior (finitePosterior π L) Ls' := rfl
-      rw [hseq_def, hIH, finitePosterior_finitePosterior hE1_ne]
-      rw [← hbatch_cons]
-  exact key Ls π hπ hπ1 hL hE
+        have hpost0 : finitePosterior π L = fun _ => 0 := by
+          funext θ
+          exact finitePosterior_eq_zero_of_finiteEvidence_eq_zero hE1 θ
+        have hseq0 : sequentialPosterior π (L :: Ls') = fun _ => 0 := by
+          have hseq_def : sequentialPosterior π (L :: Ls') =
+              sequentialPosterior (finitePosterior π L) Ls' := rfl
+          rw [hseq_def, hpost0]
+          exact zero_evidence_sequentialPosterior_zero Ls'
+        have hbatch0 : finitePosterior π (batchLikelihood (L :: Ls')) = fun _ => 0 := by
+          rw [hbatch_cons]
+          funext θ
+          exact finitePosterior_eq_zero_of_finiteEvidence_eq_zero hjoint_zero θ
+        exact hseq0.trans hbatch0.symm
+      · have hE1_ne : finiteEvidence π L ≠ 0 := hE1
+        have hπ'_nonneg : ∀ θ, 0 ≤ finitePosterior π L θ :=
+          finitePosterior_nonneg hπ hLhead
+        have hπ'1 : ∑ θ, finitePosterior π L θ = 1 := sum_finitePosterior hE1_ne
+        have hIH := ih (finitePosterior π L) hπ'_nonneg hπ'1 hLtail
+        have hseq_def : sequentialPosterior π (L :: Ls') =
+            sequentialPosterior (finitePosterior π L) Ls' := rfl
+        rw [hseq_def, hIH, finitePosterior_finitePosterior hE1_ne]
+        rw [← hbatch_cons]
+  exact key Ls π hπ hπ1 hL
 
 /-- The sequential posterior is normalized. -/
 theorem sum_sequentialPosterior {π : Θ → ℝ}
     (hπ : ∀ θ, 0 ≤ π θ) (hπ1 : ∑ θ, π θ = 1) {Ls : List (Θ → ℝ)}
     (hL : ∀ L ∈ Ls, ∀ θ, 0 ≤ L θ) (hE : 0 < finiteEvidence π (batchLikelihood Ls)) :
     ∑ θ, sequentialPosterior π Ls θ = 1 := by
-  rw [sequentialPosterior_eq_finitePosterior_batchLikelihood hπ hπ1 hL hE]
+  rw [sequentialPosterior_eq_finitePosterior_batchLikelihood hπ hπ1 hL]
   exact sum_finitePosterior (ne_of_gt hE)
 
 /-- The sequential posterior does not depend on the order of the observations. -/
 theorem sequentialPosterior_perm {π : Θ → ℝ}
     (hπ : ∀ θ, 0 ≤ π θ) (hπ1 : ∑ θ, π θ = 1) {Ls Ls' : List (Θ → ℝ)} (h : Ls.Perm Ls')
-    (hL : ∀ L ∈ Ls, ∀ θ, 0 ≤ L θ) (hE : 0 < finiteEvidence π (batchLikelihood Ls)) :
+    (hL : ∀ L ∈ Ls, ∀ θ, 0 ≤ L θ) :
     sequentialPosterior π Ls = sequentialPosterior π Ls' := by
   have hbatch : batchLikelihood Ls = batchLikelihood Ls' := batchLikelihood_perm h
   have hL' : ∀ L ∈ Ls', ∀ θ, 0 ≤ L θ := fun L hmem θ => hL L ((h.mem_iff).mpr hmem) θ
-  have hE' : 0 < finiteEvidence π (batchLikelihood Ls') := by
-    rw [← hbatch]
-    exact hE
-  rw [sequentialPosterior_eq_finitePosterior_batchLikelihood hπ hπ1 hL hE,
-    sequentialPosterior_eq_finitePosterior_batchLikelihood hπ hπ1 hL' hE', hbatch]
-
-/-- The finite-model posterior weights `postWeight` are the Bayes update by the product of the
-first `n` likelihoods. -/
-theorem postWeight_eq_finitePosterior {𝓧 Ω : Type*} (π : Θ → ℝ) (f : Θ → 𝓧 → ℝ)
-    (X : ℕ → Ω → 𝓧) (n : ℕ) (ω : Ω) :
-    postWeight π f X n ω = finitePosterior π (fun θ => ∏ i ∈ Finset.range n, f θ (X i ω)) := by
-  rfl
-
-/-- `postWeight` after `n + 1` observations is the update of `postWeight` after `n` by the next
-likelihood. -/
-theorem postWeight_succ {𝓧 Ω : Type*} (π : Θ → ℝ) (f : Θ → 𝓧 → ℝ) (X : ℕ → Ω → 𝓧)
-    (n : ℕ) (ω : Ω)
-    (hE : finiteEvidence π (fun θ => ∏ i ∈ Finset.range n, f θ (X i ω)) ≠ 0) :
-    postWeight π f X (n + 1) ω = finitePosterior (postWeight π f X n ω) (fun θ => f θ (X n ω)) := by
-  have hprod : (fun θ => ∏ i ∈ Finset.range (n + 1), f θ (X i ω)) =
-      (fun θ => (∏ i ∈ Finset.range n, f θ (X i ω)) * f θ (X n ω)) := by
-    funext θ
-    exact Finset.prod_range_succ (fun i => f θ (X i ω)) n
-  rw [postWeight_eq_finitePosterior, postWeight_eq_finitePosterior, hprod]
-  exact (finitePosterior_finitePosterior hE).symm
-
-omit [Fintype Θ] in
-theorem batchLikelihood_map_range {𝓧 Ω : Type*} (f : Θ → 𝓧 → ℝ) (X : ℕ → Ω → 𝓧)
-    (n : ℕ) (ω : Ω) :
-    batchLikelihood ((List.range n).map fun i θ => f θ (X i ω)) =
-      fun θ => ∏ i ∈ Finset.range n, f θ (X i ω) := by
-  have happ : ∀ (l₁ l₂ : List (Θ → ℝ)),
-      batchLikelihood (l₁ ++ l₂) = fun θ => batchLikelihood l₁ θ * batchLikelihood l₂ θ := by
-    intro l₁ l₂
-    funext θ
-    unfold batchLikelihood
-    simp [List.map_append, List.prod_append]
-  induction n with
-  | zero =>
-    simp [List.range_zero, batchLikelihood_nil]
-  | succ n ih =>
-    rw [List.range_succ, List.map_append]
-    have hsingle : batchLikelihood (List.map (fun i θ => f θ (X i ω)) [n]) =
-        (fun θ => f θ (X n ω)) := by
-      funext θ
-      unfold batchLikelihood
-      simp
-    rw [happ, ih, hsingle]
-    funext θ
-    exact (Finset.prod_range_succ (fun i => f θ (X i ω)) n).symm
-
-/-- `postWeight` is the sequential posterior over the first `n` observations. -/
-theorem postWeight_eq_sequentialPosterior {𝓧 Ω : Type*} {π : Θ → ℝ}
-    (hπ : ∀ θ, 0 ≤ π θ) (hπ1 : ∑ θ, π θ = 1) {f : Θ → 𝓧 → ℝ} (hf : ∀ θ x, 0 ≤ f θ x)
-    (X : ℕ → Ω → 𝓧) (n : ℕ) (ω : Ω)
-    (hE : 0 < finiteEvidence π (fun θ => ∏ i ∈ Finset.range n, f θ (X i ω))) :
-    postWeight π f X n ω = sequentialPosterior π ((List.range n).map fun i θ => f θ (X i ω)) := by
-  have hbatch := batchLikelihood_map_range (Θ := Θ) f X n ω
-  have hLmap : ∀ L ∈ (List.range n).map (fun i θ => f θ (X i ω)), ∀ θ, 0 ≤ L θ := by
-    intro L hmem θ
-    simp only [List.mem_map, List.mem_range] at hmem
-    obtain ⟨i, _, rfl⟩ := hmem
-    exact hf θ (X i ω)
-  have hEmap : 0 < finiteEvidence π
-      (batchLikelihood ((List.range n).map fun i θ => f θ (X i ω))) := by
-    rw [hbatch]
-    exact hE
-  rw [postWeight_eq_finitePosterior,
-    sequentialPosterior_eq_finitePosterior_batchLikelihood hπ hπ1 hLmap hEmap, hbatch]
+  rw [sequentialPosterior_eq_finitePosterior_batchLikelihood hπ hπ1 hL,
+    sequentialPosterior_eq_finitePosterior_batchLikelihood hπ hπ1 hL', hbatch]
 
 end MathlibExt.Probability.Statistics.Bayesian

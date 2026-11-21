@@ -8,9 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Probability.Statistics.Bayesian.FiniteConsistency
 public import MathlibExt.Probability.Statistics.Bayesian.FinitePosterior
 
 @[expose] public section
+
 
 namespace MathlibExtTest.Probability.Statistics.Bayesian.FinitePosterior
 
@@ -44,7 +46,7 @@ whose value at the biased coin is `9/17`. -/
 theorem sequential_coin_value :
     sequentialPosterior coinPrior [heads, heads, tails] 1 = 9 / 17 := by
   rw [sequentialPosterior_eq_finitePosterior_batchLikelihood coinPrior_nonneg coinPrior_sum
-    coin_lik_nonneg coin_evidence_pos]
+    coin_lik_nonneg]
   norm_num [finitePosterior, finiteEvidence, batchLikelihood, coinPrior, heads, tails,
     Fin.sum_univ_two]
 
@@ -58,7 +60,6 @@ theorem sequential_coin_order :
       sequentialPosterior coinPrior [tails, heads, heads] :=
   sequentialPosterior_perm coinPrior_nonneg coinPrior_sum
     (List.perm_append_comm (l₁ := [heads, heads]) (l₂ := [tails])) coin_lik_nonneg
-    coin_evidence_pos
 
 /-- Two-step update equals one update on the product likelihood. -/
 theorem two_step_coin :
@@ -121,9 +122,7 @@ def flips (i : ℕ) (_ : Unit) : Fin 2 := if i = 2 then 1 else 0
 theorem postWeight_coin_value : postWeight coinPrior coinLik flips 3 () 1 = 9 / 17 := by
   rw [postWeight_eq_sequentialPosterior coinPrior_nonneg coinPrior_sum
     (fun θ x => by unfold coinLik; split_ifs <;> fin_cases θ <;> norm_num [heads, tails])
-    flips 3 ()
-    (by norm_num [finiteEvidence, coinLik, flips, coinPrior, heads, tails, Fin.sum_univ_two,
-      Finset.prod_range_succ])]
+    flips 3 ()]
   have hlist : ((List.range 3).map fun i θ => coinLik θ (flips i ())) = [heads, heads, tails] := by
     simp [List.range_succ, coinLik, flips]
   rw [hlist, sequential_coin_value]
@@ -141,3 +140,4 @@ theorem postWeight_coin_step :
   rw [hstep]
 
 end MathlibExtTest.Probability.Statistics.Bayesian.FinitePosterior
+
