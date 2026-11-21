@@ -50,6 +50,22 @@ jobs:
           "$work_dir/venv/bin/python" scripts/check_algebra_notes_migration.py \
             --source-revision HEAD
 
+      # Required checks must keep reporting on every PR and merge group
+      # (CONTRIBUTING.md, How PRs merge). The test parses the workflows with
+      # PyYAML, so it runs here rather than in check.sh preflight.
+      - name: Test that the required checks report on merge groups
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          set -euo pipefail
+          work_dir="$(mktemp -d "${RUNNER_TEMP}/atlas-merge-queue.XXXXXX")"
+          trap 'rm -rf "$work_dir"' EXIT
+          python3 -m venv "$work_dir/venv"
+          "$work_dir/venv/bin/python" -m pip install --disable-pip-version-check \
+            -r scripts/requirements-inventory.txt
+          "$work_dir/venv/bin/python" -m unittest discover \
+            -s scripts -p test_merge_queue_checks.py -v
+
   build:
     needs: preflight
     runs-on: ubuntu-24.04
