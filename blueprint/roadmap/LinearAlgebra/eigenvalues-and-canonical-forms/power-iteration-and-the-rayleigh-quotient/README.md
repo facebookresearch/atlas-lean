@@ -13,5 +13,5 @@ The simplest eigenvalue algorithm: repeated multiplication by $T$ and normalizat
 ## Related topics
 
 - [Arnoldi and Lanczos iterations](../../matrix-decompositions/arnoldi-and-lanczos-iterations/README.md)
-- Principal component analysis
+- [Principal component analysis](../../../Probability/linear-models-multivariate/principal-component-analysis/README.md)
 - [Diagonalization](../diagonalization/README.md)

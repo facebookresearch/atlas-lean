@@ -30,8 +30,8 @@ A real matrix is totally nonnegative (totally positive) if all its minors are no
 
 ## Related topics
 
-- Lindström–Gessel–Viennot lemma: the determinant identity behind the positivity of minors of planar networks.
+- [Lindström–Gessel–Viennot lemma](../../../Combinatorics/catalan-numbers-lattice-paths/dyck-paths-lattice-walks/lindstrom-gessel-viennot-weighted.md): the determinant identity behind the positivity of minors of planar networks.
 - [Cluster algebras](../../../RingTheory/cluster-algebras/README.md): introduced by Fomin and Zelevinsky as an algebraic framework for total positivity; for example the flag minors of $SL_3$ satisfy the exchange relation $P_2 P_{13} = P_1 P_{23} + P_3 P_{12}$ (Fomin, Williams and Zelevinsky, arXiv:1608.05735v5, Example 3.2.1).
-- Standard Young tableaux and the hook length formula: the Robinson–Schensted–Knuth correspondence and Stanley's enumeration of tableaux; Jacobi–Trudi determinants for Schur functions are a classical application of Lindström–Gessel–Viennot.
-- Lorentzian polynomials: Brändén and Huh's positivity theory for polynomials, a different notion of positivity with log-concavity consequences.
+- [Standard Young tableaux and the hook length formula](../../../Combinatorics/symmetric-functions-q-analogues/standard-young-tableaux-and-the-hook-length-form/README.md): the Robinson–Schensted–Knuth correspondence and Stanley's enumeration of tableaux; Jacobi–Trudi determinants for Schur functions are a classical application of Lindström–Gessel–Viennot.
+- [Lorentzian polynomials](../../../Combinatorics/matroid-theory/lorentzian-polynomials/README.md): Brändén and Huh's positivity theory for polynomials, a different notion of positivity with log-concavity consequences.
 - [Tropical varieties](../../../AlgebraicGeometry/varieties-and-projective-geometry/tropical-varieties/README.md): tropical geometry in the sense of Maclagan and Sturmfels; the tropicalisation of the totally positive part of a Grassmannian is a further meeting point of total positivity and tropical geometry.

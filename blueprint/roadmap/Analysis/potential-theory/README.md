@@ -14,4 +14,4 @@ Harmonic and subharmonic functions in the plane and in R^n, the maximum principl
 
 ## Related topics
 
-- Dirichlet forms: Beurling and Deny's axiomatic potential theory: nests, exceptional sets and quasi-continuity for Dirichlet forms.
+- [Dirichlet forms](../../Probability/markov-chains/dirichlet-forms/README.md): Beurling and Deny's axiomatic potential theory: nests, exceptional sets and quasi-continuity for Dirichlet forms.

@@ -37,10 +37,10 @@ $H^1_0(U)$ for Poisson's equation; and interior $H^2$ regularity.
 
 ## Related topics
 
-- Céa's lemma: the Lax–Milgram solution of a
+- [Céa's lemma](../../numerical-analysis/c-a-s-lemma/README.md): the Lax–Milgram solution of a
   coercive variational problem and its Galerkin approximation in subspaces, the basis of the finite
   element method for these weak formulations.
-- Stampacchia's theorem:
+- [Stampacchia's theorem](../../convex-analysis-and-variations/stampacchia-s-theorem/README.md):
   the extension of Lax–Milgram to variational inequalities on closed convex sets (obstacle
   problems).
 - [Sobolev embedding theorem](../../function-spaces/sobolev-embedding-theorem/README.md): Sobolev
@@ -49,6 +49,6 @@ $H^1_0(U)$ for Poisson's equation; and interior $H^2$ regularity.
   the one-dimensional Dirichlet problem $-u'' = f$, solved explicitly.
 - [Pólya's conjecture on Laplacian eigenvalues](../p-lya-s-conjecture-on-laplacian-eigenvalues/README.md):
   the spectrum of the Dirichlet Laplacian, whose weak formulation lives on $H^1_0(U)$.
-- Bayesian inverse problems:
+- [Bayesian inverse problems](../../../Probability/bayesian-statistics/bayesian-inverse-problems/README.md):
   the well-posedness theory there is stated for an abstract forward map; solution operators of
   elliptic equations are a standard example of such maps.

@@ -1191,19 +1191,6 @@ private theorem inorderBB_del {α : Type u} [LinearOrder α] (tree : Tree α) :
                     List.erase_append_right _ hkL, List.erase_cons_head,
                     hrest, List.erase_cons_head]
 
-private theorem ordered_of_pairwise_inorder_bal {α : Type u} [LinearOrder α]
-    {tree : Tree α} (h : List.Pairwise (· < ·) (inorder tree)) : Ordered tree := by
-  induction tree with
-  | empty => trivial
-  | node color left key right ihLeft ihRight =>
-    rw [inorder_node, List.pairwise_append] at h
-    rcases h with ⟨hLeft, hCons, hCross⟩
-    rw [List.pairwise_cons] at hCons
-    refine ⟨ihLeft hLeft, ihRight hCons.2, ?_, ?_⟩
-    · exact all_iff_forall_mem.mpr fun y hy =>
-        hCross y (mem_inorder.mpr hy) key (by simp)
-    · exact all_iff_forall_mem.mpr fun y hy => hCons.1 y (mem_inorder.mpr hy)
-
 /-- Deleting a key erases it from the inorder traversal of an ordered tree. -/
 public theorem inorder_deleteBal {α : Type u} [LinearOrder α] {x : α}
     {tree : Tree α} (hTree : Ordered tree) :
@@ -1232,7 +1219,7 @@ public theorem not_mem_deleteBal_self {α : Type u} [LinearOrder α] {x : α}
 /-- Deletion preserves the strict search-tree invariant. -/
 public theorem ordered_deleteBal {α : Type u} [LinearOrder α] {x : α}
     {tree : Tree α} (hTree : Ordered tree) : Ordered (deleteBal x tree) := by
-  apply ordered_of_pairwise_inorder_bal
+  apply ordered_of_pairwise_inorder
   rw [inorder_deleteBal hTree]
   exact (ordered_inorder hTree).sublist List.erase_sublist
 

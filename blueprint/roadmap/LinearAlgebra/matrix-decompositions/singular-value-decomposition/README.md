@@ -1,6 +1,6 @@
 # Singular value decomposition
 
-Every real or complex matrix factors as $A = U\Sigma V^*$ with $U, V$ unitary and $\Sigma$ rectangular diagonal with nonnegative entries, the singular values. The largest singular value is the spectral norm, and singular values are perfectly conditioned: a perturbation of norm $\varepsilon$ moves each of them by at most $\varepsilon$. Truncating the SVD gives the best low-rank approximations (Eckart–Young), in operator norm and in the Frobenius norm; the latter is principal component analysis.
+Every real or complex matrix factors as $A = U\Sigma V^*$ with $U, V$ unitary and $\Sigma$ rectangular diagonal with nonnegative entries, the singular values. The largest singular value is the spectral norm, and singular values are perfectly conditioned: a perturbation of norm $\varepsilon$ moves each of them by at most $\varepsilon$. Truncating the SVD gives the best low-rank approximations (Eckart–Young), in [operator norm](../../../Analysis/operator-theory/eigenvalue-inequalities/eckart-young-best-rank-approx-operator-n.md) and in the [Frobenius norm](../../../Probability/linear-models-multivariate/principal-component-analysis/is-least-frobenius-sub-sq.md); the latter is principal component analysis.
 
 - [Unitary reduction of a complex matrix to rectangular diagonal form](exists-unitary-group-mul-eq-rectangular.md)
 - [Complex SVD with nonincreasing singular values](exists-unitary-group-rectangular-diagona.md)
@@ -18,7 +18,7 @@ Every real or complex matrix factors as $A = U\Sigma V^*$ with $U, V$ unitary an
 ## Related topics
 
 - [Eckart–Young theorem in operator norm](../../../Analysis/operator-theory/eigenvalue-inequalities/eckart-young-best-rank-approx-operator-n.md)
-- Principal component analysis
+- [Principal component analysis](../../../Probability/linear-models-multivariate/principal-component-analysis/README.md)
 - [Polar decomposition](../polar-decomposition/README.md)
 - [Condition numbers of sign matrices](../condition-numbers-of-sign-matrices/README.md)
 - [QR factorization](../qr-factorization/README.md)
