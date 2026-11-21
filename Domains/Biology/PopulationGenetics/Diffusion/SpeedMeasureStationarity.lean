@@ -9,11 +9,29 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Domains.Biology.PopulationGenetics.Diffusion.SpeedDensity
+public import Mathlib.Analysis.Calculus.ContDiff.Deriv
 public import Mathlib.Analysis.Calculus.ContDiff.Defs
 public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import Mathlib.Analysis.Calculus.Deriv.Inv
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
+public import Mathlib.MeasureTheory.Function.L1Space.Integrable
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
+public import Mathlib.MeasureTheory.Integral.Bochner.Set
+public import Mathlib.MeasureTheory.Integral.IntegrableOn
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Restrict
+public import Mathlib.Order.Interval.Set.Basic
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Topology.Algebra.GroupWithZero
+public import Mathlib.Topology.Algebra.Monoid.Defs
+public import Mathlib.Topology.ContinuousOn
+public import Mathlib.Topology.Instances.ENNReal.Lemmas
 public import Mathlib.Topology.Order
-public import Mathlib
+public import Mathlib.Topology.Order.OrderClosed
 
 /-!
 # Weak stationarity of regular diffusions against the speed measure
