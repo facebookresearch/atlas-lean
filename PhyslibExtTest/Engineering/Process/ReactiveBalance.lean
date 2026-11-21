@@ -24,59 +24,68 @@ namespace Engineering.Process.ReactiveBalance.Tests
 
 open Engineering.Process.ReactiveBalance
 
--- V(t) = 1 + t and constant concentration 2: the stock still grows at
--- rate 2 through the V' * c term, a nonzero fed-batch witness with flows
+-- The product-rule API itself: V(t) = 1 + t and one species with
+-- supplied concentration derivative `c' 0`. The stock derivative is
+-- `1 * 2 + (1 + 0) * c' 0` by `stock_deriv_eq`.
+example {c' : Fin 1 → ℝ}
+    (hc : HasDerivAt (fun t : ℝ => (fun _ _ => (2 : ℝ)) t (0 : Fin 1))
+      (c' 0) 0) :
+    HasDerivAt (fun t : ℝ => (1 + t) * ((fun _ _ => (2 : ℝ)) t (0 : Fin 1)))
+      (1 * 2 + (1 + 0) * c' 0) 0 := by
+  have hV : HasDerivAt (fun t : ℝ => 1 + t) 1 0 :=
+    (hasDerivAt_id' (0 : ℝ)).const_add 1
+  exact stock_deriv_eq (V := fun t : ℝ => 1 + t) (c := fun _ _ => (2 : ℝ))
+    (V' := (1 : ℝ)) (t := (0 : ℝ)) hV (0 : Fin 1) hc
+
+-- The equivalence API itself at the same fed-batch instant, with flows
 -- Fin - Fout + G = 3 - 1 + 0.
-example : HasDerivAt (fun t : ℝ => (1 + t) * 2) (3 - 1 + 0) 0 := by
-  have h : HasDerivAt (fun t : ℝ => (1 + t) * 2) (1 * 2) (0 : ℝ) := by
-    have h1 : HasDerivAt id (1 : ℝ) (0 : ℝ) := hasDerivAt_id 0
-    have h2 : HasDerivAt (fun x => 1 + id x) (1 : ℝ) (0 : ℝ) :=
-      HasDerivAt.const_add 1 h1
-    have h3 : HasDerivAt (fun y => (fun x => 1 + id x) y * 2) (1 * 2) (0 : ℝ) :=
-      HasDerivAt.mul_const h2 2
-    simpa using h3
-  norm_num at h ⊢
-  exact h
+example :
+    (HasDerivAt (fun t : ℝ => (1 + t) * ((fun _ _ => (2 : ℝ)) t (0 : Fin 1)))
+      (3 - 1 + 0) 0) ↔ (1 : ℝ) * 2 + (1 + 0) * 0 = 3 - 1 + 0 := by
+  have hV : HasDerivAt (fun t : ℝ => 1 + t) 1 0 :=
+    (hasDerivAt_id' (0 : ℝ)).const_add 1
+  have hc0 : HasDerivAt (fun _ : ℝ => (2 : ℝ)) 0 0 := hasDerivAt_const 0 2
+  exact stock_iff_concentration (V := fun t : ℝ => 1 + t) (c := fun _ _ => (2 : ℝ))
+    (V' := (1 : ℝ)) (c' := fun _ : Fin 1 => (0 : ℝ)) (t := (0 : ℝ))
+    hV (0 : Fin 1) hc0 3 1 0
 
-example : (1 : ℝ) * 2 + (1 + 0) * 0 = 3 - 1 + 0 := by
-  norm_num
+-- The division API itself at the same fed-batch instant: for any
+-- supplied concentration derivative `c' 0` compatible with the constant
+-- concentration and with the stock balance `3 - 1 + 0`, division by the
+-- nonzero volume gives `c' 0 = (3 - 1 + 0 - 1 * 2) / (1 + 0)`. This is an
+-- application of `concentration_deriv_eq_of_stock`, not arithmetic alone.
+example {c' : Fin 1 → ℝ}
+    (hc : HasDerivAt (fun t : ℝ => (fun _ _ => (2 : ℝ)) t (0 : Fin 1))
+      (c' 0) 0)
+    (hstock : HasDerivAt
+      (fun t : ℝ => (1 + t) * ((fun _ _ => (2 : ℝ)) t (0 : Fin 1)))
+      (3 - 1 + 0) 0) :
+    c' 0 = (3 - 1 + 0 - 1 * 2) / (1 + 0) := by
+  have hV : HasDerivAt (fun t : ℝ => 1 + t) 1 0 :=
+    (hasDerivAt_id' (0 : ℝ)).const_add 1
+  have hVt : (1 : ℝ) + 0 ≠ 0 := by norm_num
+  exact concentration_deriv_eq_of_stock (V := fun t : ℝ => 1 + t)
+    (c := fun _ _ => (2 : ℝ)) (V' := (1 : ℝ)) (t := (0 : ℝ))
+    hV (0 : Fin 1) hc hVt 3 1 0 hstock
 
--- Zero volume at the instant: V(t) = t and c = 2 give stock derivative 2
--- at t = 0, while the V * c' part alone is 0, so the balance cannot be
--- divided into concentration form there.
-example : HasDerivAt (fun t : ℝ => t * 2) 2 0 ∧ (0 : ℝ) * 0 ≠ 2 := by
+-- The closed constant-volume API itself: V0 = 2 and c(t) = 3t.
+example :
+    (HasDerivAt (fun t : ℝ => 2 * ((fun t _ => 3 * t) t (0 : Fin 1))) 6 1) ↔
+      (2 : ℝ) * 3 = 6 := by
+  have hc : HasDerivAt (fun t : ℝ => 3 * t) 3 1 := by
+    have h := HasDerivAt.const_mul (3 : ℝ) (hasDerivAt_id' (1 : ℝ))
+    rw [mul_one] at h
+    exact h
+  exact closed_constant_volume (V0 := (2 : ℝ)) (c := fun t _ => 3 * t)
+    (c' := fun _ : Fin 1 => (3 : ℝ)) (t := (1 : ℝ)) (0 : Fin 1) hc 6
+
+-- Zero volume at the instant: the division hypothesis `V t ≠ 0` fails,
+-- while the stock derivative is still 2 through the product rule.
+example : HasDerivAt (fun t : ℝ => t * 2) 2 0 ∧ ¬ ((0 : ℝ) ≠ 0) := by
   constructor
-  · have h1 : HasDerivAt id (1 : ℝ) (0 : ℝ) := hasDerivAt_id 0
-    have h2 : HasDerivAt (fun y => id y * 2) (1 * 2) (0 : ℝ) :=
-      HasDerivAt.mul_const h1 2
-    norm_num at h2 ⊢
-    simpa using h2
-  · norm_num
-
--- Closed constant-volume numeric case: V0 = 2 and c(t) = 3t give stock
--- derivative 6.
-example : HasDerivAt (fun t : ℝ => 2 * (3 * t)) 6 1 := by
-  have h1 : HasDerivAt id (1 : ℝ) (1 : ℝ) := hasDerivAt_id 1
-  have h2 : HasDerivAt (fun y => 3 * id y) (3 * 1) (1 : ℝ) :=
-    HasDerivAt.const_mul 3 h1
-  have h3 : HasDerivAt (fun y => 2 * (fun y => 3 * id y) y) (2 * (3 * 1)) (1 : ℝ) :=
-    HasDerivAt.const_mul 2 h2
-  norm_num at h3 ⊢
-  simpa using h3
-
--- The frozen statements above apply at a species index of a two-species
--- system with no extra structure.
-example : HasDerivAt (fun t : ℝ => (1 + t) * (![2, 5] : Fin 2 → ℝ) 1)
-    (1 * (![2, 5] : Fin 2 → ℝ) 1 + (1 + 0) * 0) 0 := by
-  have h1 : HasDerivAt id (1 : ℝ) (0 : ℝ) := hasDerivAt_id 0
-  have h2 : HasDerivAt (fun x => 1 + id x) (1 : ℝ) (0 : ℝ) :=
-    HasDerivAt.const_add 1 h1
-  have h3 : HasDerivAt (fun y => (fun x => 1 + id x) y * (![2, 5] : Fin 2 → ℝ) 1)
-      (1 * (![2, 5] : Fin 2 → ℝ) 1) (0 : ℝ) :=
-    HasDerivAt.mul_const h2 ((![2, 5] : Fin 2 → ℝ) 1)
-  have heq : (1 : ℝ) * (![2, 5] : Fin 2 → ℝ) 1 + (1 + 0) * 0
-      = 1 * (![2, 5] : Fin 2 → ℝ) 1 := by ring
-  rw [heq]
-  simpa using h3
+  · have h := HasDerivAt.mul_const (hasDerivAt_id' (0 : ℝ)) (2 : ℝ)
+    rw [one_mul] at h
+    exact h
+  · simp
 
 end Engineering.Process.ReactiveBalance.Tests
