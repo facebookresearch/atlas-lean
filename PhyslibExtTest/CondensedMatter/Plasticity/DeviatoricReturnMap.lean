@@ -40,6 +40,7 @@ No new definitions or results are introduced here.
 -/
 
 open scoped InnerProductSpace Matrix
+open scoped Plasticity
 open MathlibExt.Analysis.InnerProductSpace.ConvexProjection
 
 /-! ## A. Metric identity -/

@@ -23,11 +23,14 @@ matrix inner product at the identity weight,
 `Matrix.toMatrixInnerProductSpace 1 Matrix.PosDef.one.posSemidef`, so
 `⟪A, B⟫_ℝ = ∑ i, ∑ j, A i j * B i j`: the full double contraction
 `A : B`, in which each off-diagonal shear pair of a symmetric tensor is
-counted twice. The norm-induced uniform structure is installed with
-high priority below (equivalent to the entrywise matrix uniformity in
-finite dimension, but not definitionally equal), so `IsComplete K` in
-this file is completeness in the Frobenius metric; no closedness or
-compactness claim is made in the entrywise topology.
+counted twice. These Frobenius structures are scoped instances in the
+`Plasticity` namespace: importing this module alone does not replace the
+metric structures on `Matrix (Fin 3) (Fin 3) ℝ`; consumers opt in with
+`open scoped Plasticity`. The norm-induced uniform structure then has
+high priority (equivalent to the entrywise matrix uniformity in finite
+dimension, but not definitionally equal), so `IsComplete K` here is
+completeness in the Frobenius metric; no closedness or compactness
+claim is made in the entrywise topology.
 
 A trial stress `σTrial` is symmetric; its deviator is
 `Elasticity.deviatoricStress σTrial`. The admissible deviatoric
@@ -90,15 +93,15 @@ open Elasticity
 /-! ## A. Frobenius carrier and admissibility -/
 
 /-- Full Frobenius norm on `3 × 3` real matrices, `‖A‖ = √(A * 1 * Aᴴ).trace`. -/
-noncomputable instance frobeniusNormedAddCommGroup : NormedAddCommGroup 𝕄 :=
+noncomputable scoped instance frobeniusNormedAddCommGroup : NormedAddCommGroup 𝕄 :=
   Matrix.toMatrixNormedAddCommGroup 1 Matrix.PosDef.one
 
 /-- Full Frobenius inner product on `3 × 3` real matrices, `⟪A, B⟫ = (B * 1 * Aᴴ).trace`. -/
-noncomputable instance frobeniusInnerProductSpace : InnerProductSpace ℝ 𝕄 :=
+noncomputable scoped instance frobeniusInnerProductSpace : InnerProductSpace ℝ 𝕄 :=
   Matrix.toMatrixInnerProductSpace 1 Matrix.PosDef.one.posSemidef
 
 /-- Uniform structure of the Frobenius norm, preferred over the entrywise matrix uniformity. -/
-noncomputable instance (priority := high) frobeniusUniformSpace : UniformSpace 𝕄 :=
+noncomputable scoped instance (priority := high) frobeniusUniformSpace : UniformSpace 𝕄 :=
   PseudoMetricSpace.toUniformSpace
 
 /-- The Frobenius inner product space sits over the Frobenius normed group (instance check). -/
