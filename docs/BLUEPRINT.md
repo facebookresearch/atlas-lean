@@ -148,7 +148,11 @@ head commit, and otherwise reports them. Nothing runs `autoform audit` in CI;
 authors may run `autoform audit blueprint --lean-root .`, and reviewers still
 check what it reports, such as overfull folders (`overfull-container`) and two
 pages for one declaration (`duplicate-lean-target`). `autoform work` lists the
-tasks once `lean-facts` has run.
+tasks once `lean-facts` has run. The wiki build writes that list, with the
+commit and the Autoform pin, to `tasks.json`: the site publishes it after each
+`main` build, at <https://facebookresearch.github.io/atlas-lean/tasks.json>, and
+every run keeps it as the `tasks` artifact. CONTRIBUTING.md says how to
+[pick a task](../CONTRIBUTING.md#picking-a-task).
 
 ### Procedures
 
