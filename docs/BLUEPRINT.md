@@ -270,7 +270,9 @@ each page's link to its Markdown source; restoring those links is tracked in
 [#4993](https://github.com/facebookresearch/atlas-lean/issues/4993). Missing
 compiled modules or import collisions fail the workflow rather than silently
 publishing a partial graph. The ordinary repository CI remains the authority
-for the libraries' build and trust-policy checks.
+for the libraries' build and trust-policy checks; it also imports the same modules
+together (`scripts/check_declaration_collisions.sh`), so a pull request that adds a
+colliding declaration fails there.
 
 ## The Mathlib layer
 

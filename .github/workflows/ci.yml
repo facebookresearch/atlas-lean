@@ -105,6 +105,9 @@ jobs:
           restore-keys: |
             lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
 
+      - name: Test the declaration collision check
+        run: python3 -m unittest discover -s scripts -p test_declaration_collisions_native.py -v
+
       # Each of these peaks at 13-15 GB when built alone. Lake builds several
       # modules at once; on this 16 GB runner the three together exhaust memory
       # and swap until the runner is shut down. Build them first, one at a time;

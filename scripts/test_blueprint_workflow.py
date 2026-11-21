@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import os
 import re
 import subprocess
 import tempfile
@@ -126,6 +127,27 @@ class BlueprintWorkflowTests(unittest.TestCase):
             self.assertIn("Missing compiled module: MathlibExt/Example.lean",
                           result.stderr)
             self.assertFalse((root / "v2-dependencies.jsonl").exists())
+
+    def test_dump_reads_non_ascii_paths_literally(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / ".lake/build/lib/lean/MathlibExt").mkdir(parents=True)
+            (root / ".lake/build/lib/lean/MathlibExt/Étale.olean").write_text("")
+            (root / "bin").mkdir()
+            (root / "bin/lake").write_text("#!/usr/bin/env bash\necho '{}'\n")
+            (root / "bin/lake").chmod(0o755)
+            subprocess.run(["git", "init", "-q", str(root)], check=True)
+            (root / "MathlibExt").mkdir()
+            (root / "MathlibExt/Étale.lean").write_text("-- fixture\n")
+            subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+            result = subprocess.run(
+                ["bash", "-c", self.step("Dump declaration dependencies")["run"]],
+                cwd=root, text=True, capture_output=True, check=False,
+                env={**os.environ, "PATH": f"{root / 'bin'}:{os.environ['PATH']}"},
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual((root / "v2-modules.txt").read_text(encoding="utf-8"),
+                             "MathlibExt.Étale\n")
 
     def test_the_build_cache_is_restored_from_ci_and_never_saved(self):
         restore = self.step("Restore local build")

@@ -76,7 +76,8 @@ for roots in MathlibExt:Domains MathlibExtTest:DomainsTest; do
 done
 
 # The fixture runs preflight without recursively running this test suite.
-cp "$REPO_ROOT/scripts/"{check.sh,check_diagnostics.sh} "$TMP_ROOT/repo/scripts/"
+cp "$REPO_ROOT/scripts/"{check.sh,check_diagnostics.sh,check_declaration_collisions.sh,check_declaration_collisions.lean} \
+  "$TMP_ROOT/repo/scripts/"
 touch "$TMP_ROOT/repo/"{lean-toolchain,README.md,REVIEWING.md}
 touch "$TMP_ROOT/repo/scripts/"{check_copyright.py,check_formal_math_sync.py}
 printf '#!/usr/bin/env bash\nexit 0\n' >"$TMP_ROOT/repo/scripts/test_scripts.sh"
@@ -290,7 +291,7 @@ cat >"$FAKE_BIN/lake" <<'SH'
 #!/usr/bin/env bash
 printf '%s\n' "$*" >>"$FAKE_LAKE_LOG"
 if [[ "${1:-}" == "env" && "${2:-}" == "lean" ]]; then
-  cp "$3" "$FAKE_LEAN_INPUT"
+  cp "${@: -1}" "$FAKE_LEAN_INPUT"
 fi
 printf '%s\n' "${FAKE_LAKE_OUTPUT:-Build completed successfully.}"
 exit "${FAKE_LAKE_STATUS:-0}"
@@ -355,6 +356,58 @@ done
 if grep -q '^import v1\.' "$FAKE_LEAN_INPUT"; then
   fail "axiom input included archived v1 source"
 fi
+
+# Declaration collisions: every tracked v2 module, and nothing else, is imported
+# into one environment; a module without its .olean fails before Lean runs; and the
+# module list is the one the wiki's dependency dump imports.
+reset_fixture
+cp "$REPO_ROOT/scripts/check_declaration_collisions.sh" "$TMP_ROOT/repo/scripts/"
+for library in CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest Domains DomainsTest WantedExt; do
+  mkdir -p "$TMP_ROOT/repo/$library/Nested" "$TMP_ROOT/repo/.lake/build/lib/lean/$library/Nested"
+  printf '%s\n' 'def sentinel : Nat := 1' >"$TMP_ROOT/repo/$library/Nested/Sentinel.lean"
+  : >"$TMP_ROOT/repo/.lake/build/lib/lean/$library/Nested/Sentinel.olean"
+done
+git -C "$TMP_ROOT/repo" init -q
+git -C "$TMP_ROOT/repo" add CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest Domains DomainsTest WantedExt v1
+# A non-ASCII path is read literally, not as Git's quoted form.
+printf '%s\n' 'def accented : Nat := 1' >"$TMP_ROOT/repo/MathlibExt/Nested/Étale.lean"
+: >"$TMP_ROOT/repo/.lake/build/lib/lean/MathlibExt/Nested/Étale.olean"
+git -C "$TMP_ROOT/repo" add MathlibExt/Nested/Étale.lean
+printf '%s\n' 'def untracked : Nat := 1' >"$TMP_ROOT/repo/MathlibExt/Untracked.lean"
+: >"$FAKE_LAKE_LOG"
+if ! PATH="$FAKE_BIN:$PATH" "$TMP_ROOT/repo/scripts/check_declaration_collisions.sh" \
+  >"$TMP_ROOT/output.log" 2>&1; then
+  cat "$TMP_ROOT/output.log" >&2
+  fail "collision check failed on distinct modules"
+fi
+grep -Eqx 'env lean --run scripts/check_declaration_collisions\.lean .+' "$FAKE_LAKE_LOG" ||
+  fail "collision check did not run its Lean checker"
+printf '%s\n' CSLibExt.Nested.Sentinel Domains.Nested.Sentinel MathlibExt.Nested.Sentinel \
+  MathlibExt.Nested.Étale PhyslibExt.Nested.Sentinel WantedExt.Nested.Sentinel |
+  LC_ALL=C sort >"$TMP_ROOT/expected-modules"
+LC_ALL=C sort "$FAKE_LEAN_INPUT" | diff -u "$TMP_ROOT/expected-modules" - >&2 ||
+  fail "collision check imported the wrong modules"
+if env PATH="$FAKE_BIN:$PATH" FAKE_LAKE_STATUS=1 \
+  "$TMP_ROOT/repo/scripts/check_declaration_collisions.sh" >"$TMP_ROOT/output.log" 2>&1; then
+  fail "collision check passed a failed Lean import"
+fi
+rm "$TMP_ROOT/repo/.lake/build/lib/lean/Domains/Nested/Sentinel.olean"
+: >"$FAKE_LAKE_LOG"
+if PATH="$FAKE_BIN:$PATH" "$TMP_ROOT/repo/scripts/check_declaration_collisions.sh" \
+  >"$TMP_ROOT/output.log" 2>&1; then
+  fail "collision check passed without a compiled module"
+fi
+grep -q 'missing compiled module: Domains/Nested/Sentinel.lean' "$TMP_ROOT/output.log" ||
+  fail "collision check reported a missing compiled module wrongly"
+[[ ! -s "$FAKE_LAKE_LOG" ]] || fail "collision check ran Lean without every compiled module"
+dump_modules="$(grep -o "read -r -d '' source; do\|git ls-files -z '.*'" \
+  "$REPO_ROOT/.github/workflows/blueprint-pages.yml")"
+check_modules="$(grep -o "read -r -d '' source; do\|git ls-files -z '.*'" \
+  "$REPO_ROOT/scripts/check_declaration_collisions.sh")"
+[[ -n "$dump_modules" && "$dump_modules" == "$check_modules" ]] ||
+  fail "collision check and wiki dump list different modules"
+grep -qx '  run_check "declaration collisions" scripts/check_declaration_collisions.sh' \
+  "$REPO_ROOT/scripts/check.sh" || fail "build checks do not run the collision check"
 
 if grep -q 'github\.event\.pull_request\.draft' \
   "$REPO_ROOT/.github/workflows/ci.yml"; then
