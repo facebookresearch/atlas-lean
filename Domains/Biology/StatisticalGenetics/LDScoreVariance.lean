@@ -10,6 +10,7 @@ module
 
 public import Domains.Biology.StatisticalGenetics.LDScoreInflation
 public import MathlibExt.Probability.FiniteProbability
+public import MathlibExt.Probability.Statistics.CovarianceBounds
 public import Mathlib.Probability.Moments.Covariance
 public import Mathlib.Probability.Moments.Variance
 
@@ -229,21 +230,12 @@ structure LDBlockModel {M : ℕ} (μ : Measure Ω) (χ : Fin M → Ω → ℝ) (
   /-- Each statistic has variance at most `V`. -/
   variance_le : ∀ j, Var[χ j; μ] ≤ V
 
-/-- `2 |Cov(X, Y)| ≤ Var X + Var Y` for square-integrable `X`, `Y`. -/
+/-- `2 |Cov(X, Y)| ≤ Var X + Var Y` for square-integrable `X`, `Y`.
+This is `MathlibExt.Probability.Statistics.two_mul_abs_covariance_le`,
+retained here under its original name. -/
 theorem two_mul_abs_covariance_le [IsFiniteMeasure μ] {X Y : Ω → ℝ} (hX : MemLp X 2 μ)
-    (hY : MemLp Y 2 μ) : 2 * |cov[X, Y; μ]| ≤ Var[X; μ] + Var[Y; μ] := by
-  have hXX := covariance_self (μ := μ) hX.aestronglyMeasurable.aemeasurable
-  have hYY := covariance_self (μ := μ) hY.aestronglyMeasurable.aemeasurable
-  have hYX := covariance_comm (μ := μ) Y X
-  have hp : 0 ≤ Var[X + Y; μ] := variance_nonneg _ _
-  have hm : 0 ≤ Var[X - Y; μ] := variance_nonneg _ _
-  rw [← covariance_self (hX.add hY).aestronglyMeasurable.aemeasurable,
-    covariance_add_left hX hY (hX.add hY), covariance_add_right hX hX hY,
-    covariance_add_right hY hX hY] at hp
-  rw [← covariance_self (hX.sub hY).aestronglyMeasurable.aemeasurable,
-    covariance_sub_left hX hY (hX.sub hY), covariance_sub_right hX hX hY,
-    covariance_sub_right hY hX hY] at hm
-  rcases abs_cases (cov[X, Y; μ]) with ⟨h, -⟩ | ⟨h, -⟩ <;> rw [h] <;> linarith
+    (hY : MemLp Y 2 μ) : 2 * |cov[X, Y; μ]| ≤ Var[X; μ] + Var[Y; μ] :=
+  MathlibExt.Probability.Statistics.two_mul_abs_covariance_le hX hY
 
 namespace LDBlockModel
 
