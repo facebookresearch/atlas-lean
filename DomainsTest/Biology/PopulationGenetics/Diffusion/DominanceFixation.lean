@@ -19,7 +19,6 @@ open Real Set
 namespace MathlibExtTest.Biology.PopulationGenetics.Diffusion.DominanceFixation
 
 open MathlibExt.Biology.PopulationGenetics.Diffusion
-open Domains.Biology.PopulationGenetics.Diffusion.DominanceFixation
 
 /-- Genic identification at an interior frequency: `h = 1 / 2` is Kimura's formula. -/
 example (c : ℝ) :
@@ -65,9 +64,9 @@ example (c : ℝ) : fixationProb (dominanceDrift c 0) (fun x => x * (1 - x)) 0 =
   rw [fixationProb_dominance_zero_h c ⟨le_rfl, zero_le_one⟩,
     intervalIntegral.integral_same, zero_div]
 
-#print axioms Domains.Biology.PopulationGenetics.Diffusion.DominanceFixation.fixationProb_dominance_half
-#print axioms Domains.Biology.PopulationGenetics.Diffusion.DominanceFixation.fixationProb_dominance_zero_h
-#print axioms Domains.Biology.PopulationGenetics.Diffusion.DominanceFixation.fixationProb_dominance_one_h
-#print axioms Domains.Biology.PopulationGenetics.Diffusion.DominanceFixation.fixationProb_dominance_zero_c
+#print axioms MathlibExt.Biology.PopulationGenetics.Diffusion.fixationProb_dominance_half
+#print axioms MathlibExt.Biology.PopulationGenetics.Diffusion.fixationProb_dominance_zero_h
+#print axioms MathlibExt.Biology.PopulationGenetics.Diffusion.fixationProb_dominance_one_h
+#print axioms MathlibExt.Biology.PopulationGenetics.Diffusion.fixationProb_dominance_zero_c
 
 end MathlibExtTest.Biology.PopulationGenetics.Diffusion.DominanceFixation
