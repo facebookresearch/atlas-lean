@@ -88,7 +88,7 @@ theorem listCompletedWeight_ofFn {S : Type*} (q : S → ℝ) (Q : S → S → �
         ring
   exact key n x
 
-private theorem listPathWeight_ofFn {S : Type*} [DecidableEq S] (q : S → ℝ)
+theorem listPathWeight_ofFn {S : Type*} [DecidableEq S] (q : S → ℝ)
     (Q : S → S → ℝ) (i : S) {m : ℕ} (x : Fin (m + 1) → S) :
     listPathWeight q Q i (List.ofFn x)
       = if x 0 = i then ENNReal.ofReal (completedWeight q Q x) else 0 := by
