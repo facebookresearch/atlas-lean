@@ -106,10 +106,13 @@ theorem vanGenuchtenSe_pos_and_le_one {α n h : ℝ} (hα : 0 < α) (hn : 1 < n)
   rw [habs]
   exact ⟨Real.rpow_pos_of_pos hpos _, Real.rpow_le_one_of_one_le_of_nonpos hbase hexp⟩
 
-/-- Source bridge: for `α > 0` and `h ≤ 0`, the gauge-head form equals Eq. [3]
-of van Genuchten (1980), `[1 / (1 + (α h_p)^n)]^m` with the paper's positive
-head `h_p = -h` and `m = 1 - 1/n`. -/
-theorem vanGenuchtenSe_eq_source {α n h : ℝ} (hα : 0 < α) (hh : h ≤ 0) :
+/-- Source bridge: for `α > 0`, `n > 1`, and `h ≤ 0`, the gauge-head form
+equals Eq. [3] of van Genuchten (1980), `[1 / (1 + (α h_p)^n)]^m` with the
+paper's positive head `h_p = -h` and `m = 1 - 1/n`. The premise `n > 1` is
+the source exponent domain; outside it the displayed expressions are only
+totalized values. -/
+theorem vanGenuchtenSe_eq_source {α n h : ℝ} (hα : 0 < α) (_hn : 1 < n)
+    (hh : h ≤ 0) :
     vanGenuchtenSe α n h = (1 / (1 + (α * -h) ^ n)) ^ (1 - 1 / n) := by
   have habs : |h| = -h := abs_of_nonpos hh
   have hB0 : (0 : ℝ) ≤ 1 + (α * -h) ^ n := by

@@ -59,10 +59,10 @@ example {α n h : ℝ} (hα : 0 < α) (hn : 1 < n) (hh : h ≤ 0) :
   EarthScience.vanGenuchtenSe_pos_and_le_one hα hn hh
 
 /-- The public statement shape of the source bridge. -/
-example {α n h : ℝ} (hα : 0 < α) (hh : h ≤ 0) :
+example {α n h : ℝ} (hα : 0 < α) (hn : 1 < n) (hh : h ≤ 0) :
     EarthScience.vanGenuchtenSe α n h =
       (1 / (1 + (α * -h) ^ n)) ^ (1 - 1 / n) :=
-  EarthScience.vanGenuchtenSe_eq_source hα hh
+  EarthScience.vanGenuchtenSe_eq_source hα hn hh
 
 /-- Excluded exponent `n = 1 / 2`: the value is `2`, outside the range. -/
 example : EarthScience.vanGenuchtenSe 1 (1 / 2) (-1) = 2 := by
