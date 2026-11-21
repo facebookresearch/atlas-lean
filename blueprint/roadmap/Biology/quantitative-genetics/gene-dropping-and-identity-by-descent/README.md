@@ -2,7 +2,7 @@
 
 - [Gene-dropping sample space](gene-drop-space.md)
 - [Bernoulli weight of an allele indicator](allele-weight.md)
-- [Probability of a gene-dropping outcome](gene-drop-weight.md)
+- [Weight of a gene-dropping outcome](gene-drop-weight.md)
 - [Gene-dropping probability mass function](gene-drop-pmf.md)
 - [Gene-dropping law](gene-drop-measure.md)
 - [Expectations under the gene-dropping law](integral-gene-drop-measure.md)
