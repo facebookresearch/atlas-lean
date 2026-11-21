@@ -10,12 +10,15 @@ for every real ($\chi^2$ principal), primitive, non-principal Dirichlet characte
 conductor $q$. For such $\chi$, $L(1, \chi)$ is a positive real number. The constant $c$ is
 ineffective: the proof does not compute it.
 
-The proof relates small values of $L(1, \chi)$ to real zeros of $L(\cdot, \chi)$ near $1$, in both
-directions, through the non-negativity of the coefficients of $\zeta(s) L(s, \chi)$, and compares
-two distinct real primitive characters through those of $\zeta(s) L(s, \chi) L(s, \chi') L(s, \chi\chi')$:
-a real zero of one L-function close to $1$ gives a lower bound for $L(1, \chi')$ for every other
-real primitive character $\chi'$. The case distinction on whether such a zero exists makes the constant
-ineffective.
+The proof relates real zeros of $L(\cdot, \chi)$ near $1$ to small values of $L(1, \chi)$: a real
+zero close to $1$ makes $L(1, \chi)$ small, by a bound for the derivative of $L(\cdot, \chi)$ near $1$,
+and conversely a small value $L(1, \chi)$ gives a real zero close to $1$, through the non-negativity
+of the coefficients of $\zeta(s) L(s, \chi)$. Comparing two distinct real primitive characters
+through the coefficients of $\zeta(s) L(s, \chi) L(s, \chi') L(s, \chi\chi')$, a real zero of one
+L-function close to $1$ gives a lower bound for $L(1, \chi')$ for every other real primitive
+character $\chi'$. This gives the bound with an effective constant for all real primitive characters
+but at most one; including that possible exception, using only that its value $L(1, \chi)$ is
+positive, makes the constant ineffective.
 
 ## Sources
 

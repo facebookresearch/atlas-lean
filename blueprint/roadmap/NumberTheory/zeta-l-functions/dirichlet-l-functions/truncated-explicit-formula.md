@@ -17,10 +17,14 @@ continuation of $\sum_{n \ge 1} \chi(n) n^{-s}$.
 The proof applies the truncated Perron formula, a uniform estimate for a partial sum
 $\sum_{n \le x} a_n$ by a contour integral of $\sum_n a_n n^{-s}$ over a vertical segment of
 height $T$, to the coefficients $\Lambda(n) \chi(n)$ of $-L'/L(\cdot, \chi)$, and then moves the
-contour to the left, picking up the residues at the zeros. Moving the contour uses local
-estimates from Jensen's formula and the Borel–Carathéodory theorem: the number of zeros with
-imaginary part in an interval of length $1$ is $O(\log(q(2 + |t|)))$, and $L'/L$ is a sum over
-those zeros up to $O(\log(q(2 + |t|)))$.
+contour to the left, picking up the residues at the zeros. For non-principal $\chi$, moving the
+contour uses local estimates from Jensen's formula and the Borel–Carathéodory theorem: for fixed
+$\varepsilon > 0$, the zeros $\rho$ with $\varepsilon \le \operatorname{Re} \rho \le 1$ and
+$|\operatorname{Im} \rho - t_0| \le 1$ number $O_\varepsilon(\log(q(2 + |t_0|)))$, counted with
+multiplicity; and for fixed $C > \varepsilon$ and $\varepsilon \le \operatorname{Re} s \le C$, away
+from the zeros, $-L'/L(s, \chi)$ equals $-\sum_{|s - \rho| \le \varepsilon/2} m_\rho / (s - \rho)$ up to
+$O_{\varepsilon, C}(\log(q(2 + |\operatorname{Im} s|)))$. The principal case reduces to $\zeta$, whose
+pole at $s = 1$ gives the term $x$.
 
 ## Sources
 
