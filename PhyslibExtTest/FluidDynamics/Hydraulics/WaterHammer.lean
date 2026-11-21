@@ -22,10 +22,11 @@ import PhyslibExt.FluidDynamics.TravelingWave
 ## i. Overview
 
 Elaboration, non-vacuity, and negative-control checks for
-`PhyslibExt.FluidDynamics.Hydraulics.WaterHammer`: a quadratic adapter
-spot check, the sine traveling profiles in both directions at unit
-parameters, a wrong-speed failure, and the second-derivative premise
-control. These are checks, not new results.
+`PhyslibExt.FluidDynamics.Hydraulics.WaterHammer`: the sine traveling
+profiles in both directions at unit parameters and the
+second-derivative premise control. The generic scalar-adapter spot
+check and wrong-speed control live with the scalar wave-field module.
+These are checks, not new results.
 
 ## ii. Key results
 
@@ -34,9 +35,8 @@ No new definitions or results are introduced here.
 ## iii. Table of contents
 
 - A. Derivative helpers
-- B. Adapter spot check
-- C. Traveling profiles
-- D. Negative controls
+- B. Traveling profiles
+- C. Negative control
 
 ## iv. References
 
@@ -46,6 +46,7 @@ No new definitions or results are introduced here.
 
 open Space Time
 open FluidDynamics.WaterHammer
+open PhyslibExt.ClassicalMechanics.WaveEquation.Scalar
 
 /-! ## A. Derivative helpers -/
 
@@ -109,19 +110,7 @@ private lemma hasDerivAt_cos_add_space (d x : ℝ) :
   have h := (Real.hasDerivAt_cos (x + d)).comp x ((hasDerivAt_id x).add_const d)
   rwa [mul_one] at h
 
-/-! ## B. Adapter spot check -/
-
-/-- The Laplacian adapter on the stationary quadratic profile `y ^ 2`
-gives the constant component `2`. -/
-example (t : Time) (x : Space 1) :
-    Δᵥ (scalarWaveField (fun _ y => y ^ 2) t) x =
-      WithLp.toLp 2 (fun _ => (2 : ℝ)) :=
-  laplacianVec_scalarWaveField (φ := fun _ y => y ^ 2)
-    (φx := fun _ y => 2 * y) (φxx := fun _ _ => (2 : ℝ)) t x
-    (fun y => by simpa using hasDerivAt_pow 2 y)
-    (by simpa using (hasDerivAt_id (x 0)).const_mul (2 : ℝ))
-
-/-! ## C. Traveling profiles -/
+/-! ## B. Traveling profiles -/
 
 /-- Right-moving sine profile at unit parameters: the transported head
 satisfies the Physlib wave equation at speed `1`. -/
@@ -237,41 +226,7 @@ example : ∀ (t : Time) (x : Space 1),
   · intro t x
     rfl
 
-/-! ## D. Negative controls -/
-
-/-- Wrong speed: the profile `sin (x - 2t)` does not satisfy the
-Physlib wave equation at speed `1` at `t = 0`, `x = π / 2`. -/
-example :
-    ¬ ClassicalMechanics.WaveEquation
-      (scalarWaveField (fun t x => Real.sin (x - 2 * t))) ⟨0⟩
-        ⟨fun _ => Real.pi / 2⟩ 1 := by
-  intro hw
-  have hL : Δᵥ (scalarWaveField (fun t x => Real.sin (x - 2 * t)) ⟨0⟩)
-        ⟨fun _ => Real.pi / 2⟩ =
-      WithLp.toLp 2 (fun _ => -Real.sin (Real.pi / 2 - 2 * (0 : ℝ))) := by
-    apply laplacianVec_scalarWaveField
-      (φx := fun t x => Real.cos (x - 2 * t))
-      (φxx := fun t x => -Real.sin (x - 2 * t))
-    · intro y
-      simpa using hasDerivAt_sin_sub_space (2 * (0 : ℝ)) y
-    · simpa using hasDerivAt_cos_sub_space (2 * (0 : ℝ)) (Real.pi / 2)
-  have hT : ∂ₜ (fun t => (∂ₜ
-        (fun t => scalarWaveField (fun t x => Real.sin (x - 2 * t)) t
-          ⟨fun _ => Real.pi / 2⟩) t)) ⟨0⟩ =
-      WithLp.toLp 2
-        (fun _ => (-Real.sin (Real.pi / 2 - 2 * (0 : ℝ)) * (-2)) * (-2)) := by
-    apply deriv_deriv_scalarWaveField
-      (φt := fun t x => Real.cos (x - 2 * t) * (-2))
-      (φtt := fun t x => (-Real.sin (x - 2 * t) * (-2)) * (-2))
-    · intro s
-      exact hasDerivAt_sin_sub_mul_time 2 s (Real.pi / 2)
-    · simpa using
-        (hasDerivAt_cos_sub_mul_time 2 (0 : ℝ) (Real.pi / 2)).mul_const (-2)
-  unfold ClassicalMechanics.WaveEquation at hw
-  rw [hL, hT] at hw
-  have h0 := congrArg (fun v : EuclideanSpace ℝ (Fin 1) => v 0) hw
-  simp [PiLp.sub_apply, Real.sin_pi_div_two] at h0
-  norm_num at h0
+/-! ## C. Negative control -/
 
 /-- The second-derivative premise cannot be dropped: with zero fields,
 the purported supplied value `hxx ≡ 1` is not a derivative of the
