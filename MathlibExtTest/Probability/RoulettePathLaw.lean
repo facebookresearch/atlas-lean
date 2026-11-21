@@ -60,5 +60,50 @@ example : listCompletedWeight (fun _ : Unit => (1 / 2 : ℝ))
   simp only [completedWeight, survivalWeight, stepKernel, Fin.prod_univ_one]
   norm_num
 
+/-- One-state `q = 1`: `[x]` has probability `1`. -/
+example : pathPMF (fun _ : Unit => (1 : ℝ)) (fun _ _ => (0 : ℝ)) (1 / 2 : ℝ)
+      (by norm_num) (by norm_num) (fun _ => by norm_num) (fun _ _ => by norm_num)
+      (by intro _; simp) (by intro _; simp) () [()] = 1 := by
+  rw [pathPMF_apply]
+  have h : listPathWeight (fun _ : Unit => (1 : ℝ)) (fun _ _ => (0 : ℝ)) () [()]
+      = (if () = () then ENNReal.ofReal (1 : ℝ) else 0) := rfl
+  rw [h, ite_eq_left rfl, ENNReal.ofReal_one]
+
+/-- One-state `q = 1`: `[x, x]` has probability `0`. -/
+example : pathPMF (fun _ : Unit => (1 : ℝ)) (fun _ _ => (0 : ℝ)) (1 / 2 : ℝ)
+      (by norm_num) (by norm_num) (fun _ => by norm_num) (fun _ _ => by norm_num)
+      (by intro _; simp) (by intro _; simp) () [(), ()] = 0 := by
+  rw [pathPMF_apply]
+  have h : listPathWeight (fun _ : Unit => (1 : ℝ)) (fun _ _ => (0 : ℝ)) ()
+      [(), ()]
+      = (if () = () then ENNReal.ofReal ((0 : ℝ) * 1) else 0) := rfl
+  rw [h, ite_eq_left rfl]
+  have h0 : ((0 : ℝ) * 1) = 0 := by norm_num
+  rw [h0, ENNReal.ofReal_zero]
+
+/-- One-state `q = 1 / 2` via `stepKernel`: `[x]` has probability `1 / 2`. -/
+example : pathPMF (fun _ : Unit => (1 / 2 : ℝ))
+      (stepKernel (fun _ : Unit => (1 / 2 : ℝ)) (fun _ _ => (1 : ℝ))) (1 / 2 : ℝ)
+      (by norm_num) (by norm_num) (fun _ => by norm_num)
+      (by intro a b; unfold stepKernel; norm_num)
+      (by intro j; simp [stepKernel])
+      (by intro a; simp [stepKernel]; norm_num) () [()]
+    = ENNReal.ofReal (1 / 2 : ℝ) := by
+  rw [pathPMF_apply]
+  have h : listPathWeight (fun _ : Unit => (1 / 2 : ℝ))
+        (stepKernel (fun _ : Unit => (1 / 2 : ℝ)) (fun _ _ => (1 : ℝ))) () [()]
+      = (if () = () then ENNReal.ofReal (1 / 2 : ℝ) else 0) := rfl
+  rw [h, ite_eq_left rfl]
+
+/-- Total mass one at `c = 1 / 2`, restated as a `∑'` equality. -/
+example : (∑' l : List Unit, listPathWeight (fun _ : Unit => (1 / 2 : ℝ))
+      (stepKernel (fun _ : Unit => (1 / 2 : ℝ)) (fun _ _ => (1 : ℝ))) () l) = 1 :=
+  (hasSum_listPathWeight (fun _ : Unit => (1 / 2 : ℝ))
+    (stepKernel (fun _ : Unit => (1 / 2 : ℝ)) (fun _ _ => (1 : ℝ))) (1 / 2 : ℝ)
+    (by norm_num) (by norm_num) (fun _ => by norm_num)
+    (by intro a b; unfold stepKernel; norm_num)
+    (by intro j; simp [stepKernel])
+    (by intro a; simp [stepKernel]; norm_num) ()).tsum_eq
+
 end
 public section
