@@ -2,9 +2,15 @@
 
 from __future__ import annotations
 
+import contextlib
+import importlib.util
+import io
 import json
+import os
 import random
 import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -25,6 +31,34 @@ def af(number: int) -> str:
 def walk(edge: dict) -> list[str]:
     steps = edge.get("statement_walk") or edge["walk"]
     return [steps[0]["source"], *(step["target"] for step in steps)]
+
+
+def load_hook():
+    """hooks/card_pages.py, which MkDocs loads by path rather than as a package module."""
+    spec = importlib.util.spec_from_file_location("atlas_hook_card_pages_for_cards",
+                                                  Path(__file__).resolve().parents[1] / "hooks" / "card_pages.py")
+    hook = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = hook
+    spec.loader.exec_module(hook)
+    return hook
+
+
+def site_index(hook) -> dict:
+    """Render's search index of the vault: a statement with a declaration kind boxed on its folder's page, any
+    other one a page of its own, and each folder its page."""
+    annotations = cards.read_annotations()
+    entries = []
+    for page in sorted(wiki.ROADMAP.rglob("*.md")):
+        node = cards.node_id(page)
+        if page.name == "README.md":
+            route = "../roadmap/index.html" if node == "roadmap" else f"../roadmap/{node}/index.html"
+            entries.append({"id": node, "kind": "scope", "route": route, "title": node})
+        elif annotations.get(page.resolve(), {}).get("kind"):
+            route = f"../roadmap/{node.rsplit('/', 1)[0]}/index.html#{page.stem}"
+            entries.append({"id": node, "kind": "node", "route": route, "title": page.stem})
+        else:
+            entries.append({"id": node, "kind": "node", "route": f"../roadmap/{node}.html", "title": page.stem})
+    return {"schema": hook.INDEX_SCHEMA, "nodes": entries}
 
 
 class Vault(unittest.TestCase):
@@ -1110,6 +1144,263 @@ class Arguments(Vault):
                       ["--base-ledger", str(ledger), "--base-links", str(wiki.VAULT / "links")]):
             with self.subTest(given=given):
                 self.assertEqual(cards.run(["check", *given]), 2)
+
+
+class SiteData(Vault):
+    """The wiki job's own rollup gives its site the card data hooks/card_pages.py shows, or, on any error, none."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.g = "Algebra/groups"
+        self.leaf(f"{self.g}/b/b-main.md", 20)
+        self.leaf(f"{self.g}/a/a-main.md", 10, statement=(f"{self.g}/b/b-main.md",))
+        self.card(f"{self.g}/a", 1, 10, ["a-main"])
+        self.card(f"{self.g}/b", 2, 20, ["b-main"])
+        self.output = self.tmp / "build" / "cards.json"
+
+    def run_rollup(self) -> tuple[int, str]:
+        self.write()
+        self.ledger_file()
+        dependencies = self.tmp / "lean-dependencies.json"
+        dependencies.write_text(json.dumps(self.extraction()))
+        errors = io.StringIO()
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(errors):
+            status = cards.run(["rollup", str(self.output), "--dependencies", str(dependencies)])
+        return status, errors.getvalue()
+
+    def test_a_bad_card_leaves_no_card_data(self) -> None:
+        # A deliberately bad card: its kind is no card kind. The rollup fails, and an earlier rollup's file is gone
+        # too, so the site renders exactly as without cards.
+        self.leaf(f"{self.g}/c/c-main.md", 30)
+        self.card(f"{self.g}/c", 3, 30, ["c-main"], kind="lemma")
+        self.output.parent.mkdir()
+        self.output.write_text(json.dumps({"schema": cards.SCHEMA, "cards": []}) + "\n")
+        status, errors = self.run_rollup()
+        self.assertEqual(status, 1)
+        self.assertIn(f"error: {self.g}/c: `kind` is 'lemma'", errors)
+        self.assertFalse(self.output.exists())
+        self.assertEqual(list(self.output.parent.iterdir()), [])
+
+    def test_a_rollup_stopped_by_half_a_history_leaves_no_card_data(self) -> None:
+        # The history options go together; a rollup that stops on that removes an earlier rollup's file first.
+        self.write()
+        self.ledger_file()
+        self.output.parent.mkdir()
+        self.output.write_text(json.dumps({"schema": cards.SCHEMA, "cards": []}) + "\n")
+        dependencies = self.tmp / "lean-dependencies.json"
+        dependencies.write_text(json.dumps(self.extraction()))
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            status = cards.run(["rollup", str(self.output), "--dependencies", str(dependencies), "--base-ledger",
+                                str(wiki.ROOT / "scripts" / cards.MOVES)])
+        self.assertEqual(status, 2)
+        self.assertFalse(self.output.exists())
+
+    def test_the_site_shows_a_passing_rollup(self) -> None:
+        self.assertEqual(self.run_rollup(), (0, ""))
+        data = json.loads(self.output.read_text())
+        hook = load_hook()
+        site = hook.build(data, site_index(hook), "", self.tmp / "site-src")
+        self.assertEqual(sorted(site.blocks), [f"roadmap/{self.g}/{name}/index.html" for name in ("a", "b")])
+        self.assertIn('<dt>Uses</dt><dd><details><summary><a href="../b/index.html">', site.blocks[
+            f"roadmap/{self.g}/a/index.html"])
+
+
+class SiteHistory(Vault):
+    """Histories the strict check accepts, made in a real Git repository (the base commit, the change and its
+    ledger rows, Git's renames between them, the base commit's annotations and ledger), keep every old address on
+    the site, as hooks/card_pages.py resolves it."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.g = "Algebra/groups"
+        self.git("init", "-q")
+        # What the card job reads besides the checkout, kept out of the repository.
+        self.scratch = Path(tempfile.mkdtemp()).resolve()
+        self.addCleanup(shutil.rmtree, self.scratch)
+
+    def git(self, *arguments: str) -> str:
+        return subprocess.run(["git", "-C", str(self.tmp), "-c", "user.name=Test", "-c", "user.email=test@example.com",
+                               "-c", "commit.gpgsign=false", *arguments], check=True, capture_output=True,
+                              text=True).stdout
+
+    def commit(self, message: str) -> str:
+        self.write()
+        self.ledger_file()
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", message)
+        return self.git("rev-parse", "HEAD").strip()
+
+    def start_over(self) -> None:
+        """An empty roadmap, to lay out the change from scratch."""
+        shutil.rmtree(wiki.ROADMAP)
+        self.rows, self.articles = [], {}
+        self.folder("README.md", "Roadmap", ["Algebra/README.md"])
+        self.folder("Algebra/README.md", "Algebra", ["groups/README.md"])
+        self.folder("Algebra/groups/README.md", "Groups", [])
+
+    def change(self, base: str, *rows: dict) -> list[str]:
+        """Commit the change with the ledger ``rows`` and check it as the card job checks a pull request on
+        ``base``: its errors."""
+        (wiki.ROOT / "scripts" / cards.MOVES).write_text("".join(json.dumps(row) + "\n" for row in rows))
+        head = self.commit("change")
+        work = Path(tempfile.mkdtemp(dir=self.scratch))
+        renames = work / "renames.tsv"
+        renames.write_text(self.git("-c", "diff.renameLimit=0", "diff", "--name-status", "-M", base, head, "--",
+                                    "blueprint/roadmap"))
+        (work / "links").mkdir()
+        (work / "links" / "Algebra.jsonl").write_text(self.git("show", f"{base}:blueprint/links/Algebra.jsonl"))
+        return cards.check(dependencies=self.extraction(),
+                           base_ledger=self.git("show", f"{base}:scripts/{cards.MOVES}"),
+                           base_annotations=cards.read_links(work / "links"), renames=cards.read_renames(renames))[0]
+
+    def site(self, base: str, *rows: dict):
+        """The change with its rows, which the strict check accepts, then the site's redirects."""
+        self.assertEqual(self.change(base, *rows), [])
+        ledger = "".join(json.dumps(row) + "\n" for row in rows)
+        hook = load_hook()
+        site = hook.build(cards.rollup(self.extraction()), site_index(hook), ledger, self.tmp / "site-src")
+        table = json.loads(site.files[hook.SCRIPT].split("var moves = ", 1)[1].split(", own = ", 1)[0])
+        return site, table
+
+    def assertKept(self, site, folders: dict[str, str], statements: dict[str, str]) -> None:
+        for old, new in folders.items():
+            notice = site.files[f"roadmap/{old}/README.md"]
+            self.assertIn(f'<p><a href="{Path(os.path.relpath(f"roadmap/{new}", f"roadmap/{old}")).as_posix()}/'
+                          'index.html">Continue', notice)
+        for old, new in statements.items():
+            self.assertIn(f"roadmap/{old}.md", site.files)
+            folder, slug = old.rsplit("/", 1)
+            holder = (site.files.get(f"roadmap/{folder}/README.md", "")
+                      + "".join(element for _, element in site.anchors.get(f"roadmap/{folder}/index.html", [])))
+            self.assertIn(f'<p class="atlas-moved" id="{slug}">', holder)
+
+    def test_a_child_folder_leaves_a_renamed_folder(self) -> None:
+        g = self.g
+        self.folder(f"{g}/old/README.md", "Old", [], {"id": af(50)})
+        self.leaf(f"{g}/old/kept.md", 11)
+        self.leaf(f"{g}/old/sub/x.md", 10)
+        self.card(f"{g}/old/sub", 5, 10, ["x"])
+        base = self.commit("base")
+        self.start_over()
+        self.folder(f"{g}/new/README.md", "Old", [], {"id": af(50)})
+        self.leaf(f"{g}/new/kept.md", 11)
+        self.leaf(f"{g}/elsewhere/x.md", 10)
+        self.card(f"{g}/elsewhere", 5, 10, ["x"])
+        # A folder row moves the folder alone: each page and folder inside it has its own row, at each move.
+        site, table = self.site(base, {"folder": f"{g}/old", "to": f"{g}/new", "article_id": af(50)},
+                                {"page": f"{g}/old/kept", "to": f"{g}/new/kept", "article_id": af(11)},
+                                {"folder": f"{g}/old/sub", "to": f"{g}/new/sub", "article_id": af(5)},
+                                {"page": f"{g}/old/sub/x", "to": f"{g}/new/sub/x", "article_id": af(10)},
+                                {"folder": f"{g}/new/sub", "to": f"{g}/elsewhere", "article_id": af(5)},
+                                {"page": f"{g}/new/sub/x", "to": f"{g}/elsewhere/x", "article_id": af(10)})
+        folders = {f"{g}/old": f"{g}/new", f"{g}/old/sub": f"{g}/elsewhere", f"{g}/new/sub": f"{g}/elsewhere"}
+        statements = {f"{g}/old/kept": f"{g}/new/kept", f"{g}/old/sub/x": f"{g}/elsewhere/x",
+                      f"{g}/new/sub/x": f"{g}/elsewhere/x"}
+        self.assertEqual(table, {**folders, **statements})
+        self.assertKept(site, folders, statements)
+
+    def test_a_child_card_leaves_a_renamed_folder_and_is_retired(self) -> None:
+        g = self.g
+        self.folder(f"{g}/old/README.md", "Old", [], {"id": af(50)})
+        self.leaf(f"{g}/old/kept.md", 11)
+        self.leaf(f"{g}/old/sub/x.md", 10)
+        self.card(f"{g}/old/sub", 5, 10, ["x"])
+        self.leaf(f"{g}/c/c-main.md", 20)
+        self.card(f"{g}/c", 1, 20, ["c-main"])
+        base = self.commit("base")
+        self.start_over()
+        self.folder(f"{g}/new/README.md", "Old", [], {"id": af(50)})
+        self.leaf(f"{g}/new/kept.md", 11)
+        self.leaf(f"{g}/c/c-main.md", 20)
+        self.leaf(f"{g}/c/x.md", 10)
+        self.card(f"{g}/c", 1, 20, ["c-main", "x"])
+        site, table = self.site(base, {"folder": f"{g}/old", "to": f"{g}/new", "article_id": af(50)},
+                                {"page": f"{g}/old/kept", "to": f"{g}/new/kept", "article_id": af(11)},
+                                {"folder": f"{g}/old/sub", "to": f"{g}/new/sub", "article_id": af(5)},
+                                {"page": f"{g}/old/sub/x", "to": f"{g}/new/sub/x", "article_id": af(10)},
+                                {"page": f"{g}/new/sub/x", "to": f"{g}/c/x", "article_id": af(10)},
+                                {"card": af(5), "folder": f"{g}/new/sub", "replaced_by": af(1)})
+        folders = {f"{g}/old": f"{g}/new", f"{g}/old/sub": f"{g}/c", f"{g}/new/sub": f"{g}/c"}
+        statements = {f"{g}/old/kept": f"{g}/new/kept", f"{g}/old/sub/x": f"{g}/c/x", f"{g}/new/sub/x": f"{g}/c/x"}
+        self.assertEqual(table, {**folders, **statements})
+        self.assertKept(site, folders, statements)
+
+    def test_a_statement_leaves_between_two_renames(self) -> None:
+        g = self.g
+        self.folder(f"{g}/old/README.md", "Old", [], {"id": af(50)})
+        self.leaf(f"{g}/old/x.md", 10, facts=None)
+        self.leaf(f"{g}/old/z.md", 11)
+        self.leaf(f"{g}/elsewhere/e.md", 30)
+        self.card(f"{g}/elsewhere", 2, 30, ["e"])
+        base = self.commit("base")
+        self.start_over()
+        self.folder(f"{g}/new/README.md", "Old", [], {"id": af(50)})
+        self.leaf(f"{g}/new/z.md", 11)
+        self.leaf(f"{g}/elsewhere/e.md", 30)
+        self.leaf(f"{g}/elsewhere/y.md", 10, facts=None)
+        self.card(f"{g}/elsewhere", 2, 30, ["e", "y"])
+        site, table = self.site(base, {"folder": f"{g}/old", "to": f"{g}/mid", "article_id": af(50)},
+                                {"page": f"{g}/old/z", "to": f"{g}/mid/z", "article_id": af(11)},
+                                {"page": f"{g}/old/x", "to": f"{g}/mid/x", "article_id": af(10)},
+                                {"page": f"{g}/mid/x", "to": f"{g}/elsewhere/y", "article_id": af(10)},
+                                {"folder": f"{g}/mid", "to": f"{g}/new", "article_id": af(50)},
+                                {"page": f"{g}/mid/z", "to": f"{g}/new/z", "article_id": af(11)})
+        folders = {f"{g}/old": f"{g}/new", f"{g}/mid": f"{g}/new"}
+        statements = {f"{g}/old/z": f"{g}/new/z", f"{g}/mid/z": f"{g}/new/z", f"{g}/old/x": f"{g}/elsewhere/y",
+                      f"{g}/mid/x": f"{g}/elsewhere/y"}
+        self.assertEqual(table, {**folders, **statements})
+        self.assertKept(site, folders, statements)
+        self.assertNotIn(f"{g}/new/x", table)
+
+    def renamed_folder(self) -> str:
+        """The base commit, with the folder old holding x (with an id) and y (a planned page without one), then the
+        change that renames old to new, laid out: the base commit."""
+        g = self.g
+        self.folder(f"{g}/old/README.md", "Old", [], {"id": af(50)})
+        self.leaf(f"{g}/old/x.md", 10)
+        self.leaf(f"{g}/old/y.md", 11, facts=None, row={"id": None})
+        self.leaf(f"{g}/c/c-main.md", 20)
+        self.card(f"{g}/c", 1, 20, ["c-main"])
+        self.rows = [{key: value for key, value in row.items() if value is not None} for row in self.rows]
+        base = self.commit("base")
+        self.start_over()
+        self.folder(f"{g}/new/README.md", "Old", [], {"id": af(50)})
+        self.leaf(f"{g}/new/x.md", 10)
+        self.leaf(f"{g}/new/y.md", 11, facts=None)
+        self.leaf(f"{g}/c/c-main.md", 20)
+        self.card(f"{g}/c", 1, 20, ["c-main"])
+        return base
+
+    def test_a_folder_row_moves_the_folder_alone(self) -> None:
+        g = self.g
+        base = self.renamed_folder()
+        folder = {"folder": f"{g}/old", "to": f"{g}/new", "article_id": af(50)}
+        # The folder's row alone leaves its pages behind: each moved, and no row leads there.
+        errors = self.change(base, folder)
+        self.assertIn(f"{cards.MOVES}: {g}/old/x is now {g}/new/x, and no row leads there", errors)
+        self.assertIn(f"{cards.MOVES}: {g}/old/y is now {g}/new/y, and no row leads there", errors)
+        # With a row for each page, the strict check accepts the change.
+        self.git("reset", "-q", "--soft", "HEAD~1")
+        self.assertEqual(self.change(base, folder, {"page": f"{g}/old/x", "to": f"{g}/new/x", "article_id": af(10)},
+                                     {"page": f"{g}/old/y", "to": f"{g}/new/y", "article_id": af(11)}), [])
+
+    def test_a_page_added_after_its_folder_moved_gets_no_old_address(self) -> None:
+        # One change renames old to new with its pages; a later one adds fresh to new, which needs no row. The
+        # site leads old and its pages to their new places, and nothing from old/fresh, which never existed.
+        g = self.g
+        base = self.renamed_folder()
+        rows = ({"folder": f"{g}/old", "to": f"{g}/new", "article_id": af(50)},
+                {"page": f"{g}/old/x", "to": f"{g}/new/x", "article_id": af(10)},
+                {"page": f"{g}/old/y", "to": f"{g}/new/y", "article_id": af(11)})
+        self.site(base, *rows)
+        moved = self.git("rev-parse", "HEAD").strip()
+        self.leaf(f"{g}/new/fresh.md", 12)
+        site, table = self.site(moved, *rows)
+        folders, statements = {f"{g}/old": f"{g}/new"}, {f"{g}/old/x": f"{g}/new/x", f"{g}/old/y": f"{g}/new/y"}
+        self.assertEqual(table, {**folders, **statements})
+        self.assertKept(site, folders, statements)
+        self.assertFalse([path for path in site.files if "fresh" in path])
+        self.assertNotIn('id="fresh"', site.files[f"roadmap/{g}/old/README.md"])
 
 
 class Workflow(unittest.TestCase):

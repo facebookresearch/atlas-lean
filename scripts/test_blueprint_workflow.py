@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import os
 import re
+import shlex
 import shutil
 import subprocess
 import tempfile
@@ -259,7 +260,7 @@ class BlueprintWorkflowTests(unittest.TestCase):
         self.assertEqual(steps["Keep the Mathlib layer"]["if"], "always()")
 
     def test_the_cards_cannot_hold_back_the_site(self):
-        # The card check has its own job after the wiki job; the wiki job and deployment never run or wait for it.
+        # The card check has its own job after the wiki job; the wiki job and deployment never wait for it.
         jobs = self.workflow["jobs"]
         cards = jobs["cards"]
         self.assertEqual(cards["name"], "check the cards")
@@ -267,9 +268,16 @@ class BlueprintWorkflowTests(unittest.TestCase):
         self.assertEqual(jobs["deploy"]["needs"], "wiki")
         self.assertNotIn("permissions", cards)
         self.assertNotIn("continue-on-error", cards)
-        # Neither the card check nor the card tests run in the wiki job.
-        self.assertFalse(any("cards.py" in step.get("run", "") or "test_cards" in step.get("run", "")
-                             for step in self.steps))
+        # The card tests do not run in the wiki job. It derives the card data its site shows in one step, after
+        # lean-facts and before render, which can neither fail the job nor hold it past its timeout.
+        self.assertFalse(any("test_cards" in step.get("run", "") for step in self.steps))
+        derive = "Derive the card data the site shows"
+        self.assertEqual([step["name"] for step in self.steps if "cards.py" in step.get("run", "")], [derive])
+        self.assertEqual(self.step(derive)["continue-on-error"], "true")
+        self.assertLessEqual(int(self.step(derive)["timeout-minutes"]), 15)
+        wiki_names = [step.get("name") for step in self.steps]
+        self.assertLess(wiki_names.index("Add the Lean-owned facts to the articles"), wiki_names.index(derive))
+        self.assertLess(wiki_names.index(derive), wiki_names.index("Render the blueprint"))
         checkout = next(step for step in cards["steps"] if step.get("name") == "Check out project")
         self.assertEqual(checkout["with"]["persist-credentials"], "false")
         self.assertIn("!/v1/", checkout["with"]["sparse-checkout"])
@@ -283,13 +291,21 @@ class BlueprintWorkflowTests(unittest.TestCase):
         check = steps["Check the cards and derive their edges"]["run"]
         self.assertIn("scripts/cards.py rollup build/cards.json", check)
         self.assertIn("--dependencies build/lean-dependencies.json", check)
-        # The check renders card pages as the site does: with the site build's exact Markdown pins.
+        # The check renders card pages as the site does: with the site build's exact Markdown pins. So does the wiki
+        # job's step that derives the card data its site shows.
         site = next(step["run"] for job in jobs.values() for step in job.get("steps", [])
                     if step.get("name") == "Build the Markdown site")
         for package in ("markdown", "pymdown-extensions"):
             pin = re.search(rf"--with ({re.escape(package)}==[^\s]+)", site).group(1)
-            for run in (steps["Test the card scripts"]["run"], check):
+            for run in (steps["Test the card scripts"]["run"], check, self.step(derive)["run"]):
                 self.assertIn(f"--with {pin}", run)
+        # The site's card data comes from the same inputs as the strict check: its command, without the moves since
+        # the base commit, which only the card job checks.
+        def command(script: str) -> list[str]:
+            return [word for word in shlex.split(script[script.index("uv run"):].replace("\\\n", " "))
+                    if word != "${base[@]}"]
+
+        self.assertEqual(command(self.step(derive)["run"]), command(check))
         # The ledger the base commit published must stay a prefix on a PR (the workflow runs in no merge group).
         ledger = steps["Read the move ledger and annotations the base commit published"]
         self.assertIn("github.event.pull_request.base.sha", ledger["env"]["BASE"])
