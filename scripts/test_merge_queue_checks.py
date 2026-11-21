@@ -3,13 +3,18 @@
 
 A PR can be queued only once the required checks pass on it, and the merge
 queue then waits for the same checks on each merge group it builds. This test
-fails if a required workflow stops being triggered when a PR is opened, updated
-or reopened, or when a merge group is built; if its job can be skipped (a
-skipped job counts as passing); if the check is renamed or another job reports
-the same name; or if a concurrency group is shared across merge groups. The
-required checks are the ones listed under "How PRs merge" in CONTRIBUTING.md.
+fails if a required workflow:
 
-CI runs it in the `repository integrity` job. Locally:
+- loses its trigger for PRs (opened, updated, reopened) or for merge groups,
+  or filters some of them out;
+- can skip the job that reports the check (a skipped job counts as passing):
+  a job-level `if`, a matrix, or a prerequisite that is not required itself;
+- renames the check, or lets another job report the same name;
+- uses a concurrency group that two PRs or two merge groups share, so that
+  one run can cancel or replace another's.
+
+The required checks are the ones listed under "How PRs merge" in
+CONTRIBUTING.md. CI runs this test in the `repository integrity` job. Locally:
 
     python3 -m pip install -r scripts/requirements-inventory.txt
     python3 -m unittest discover -s scripts -p test_merge_queue_checks.py
@@ -37,10 +42,19 @@ REQUIRED = {
 }
 PR_TYPES = {"opened", "synchronize", "reopened"}
 FILTERS = {"branches", "branches-ignore", "paths", "paths-ignore"}
-# Each merge group has its own ref and commit, so a concurrency group keyed by
-# one of these never lets one merge group's run cancel or replace another's.
-PER_MERGE_GROUP = ("github.ref", "github.sha", "github.run_id",
-                   "github.event.merge_group.head_ref", "github.event.merge_group.head_sha")
+# Context values that differ between any two runs of the event. Under
+# pull_request_target, github.ref and github.sha are the base branch's, so two
+# PRs share them.
+DISTINCT = {
+    "merge_group": {"github.ref", "github.ref_name", "github.sha", "github.run_id",
+                    "github.event.merge_group.head_ref", "github.event.merge_group.head_sha"},
+    "pull_request": {"github.ref", "github.ref_name", "github.sha", "github.run_id",
+                     "github.event.number", "github.event.pull_request.number",
+                     "github.event.pull_request.head.sha"},
+    "pull_request_target": {"github.run_id", "github.event.number",
+                            "github.event.pull_request.number",
+                            "github.event.pull_request.head.sha"},
+}
 
 
 def load_workflows() -> dict[str, dict]:
@@ -67,8 +81,10 @@ def events(workflow: dict) -> dict:
     return {event: settings or {} for event, settings in triggers.items()}
 
 
-def concurrency_group(setting) -> str:
-    return setting.get("group", "") if isinstance(setting, dict) else setting or ""
+def context_values(group: str) -> set[str]:
+    """The context names an expression-valued concurrency group reads."""
+    return {name for expression in re.findall(r"\$\{\{(.*?)\}\}", group)
+            for name in re.findall(r"[A-Za-z_][\w.-]*", expression)}
 
 
 def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
@@ -112,8 +128,6 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
         for key in ("if", "strategy"):
             if key in job:
                 found.append(f"{check!r} has a job-level {key!r}")
-        # A job whose prerequisite fails is skipped, which counts as passing,
-        # so every prerequisite must be required too.
         for prerequisite in as_list(job.get("needs")):
             if (name, prerequisite) not in required_jobs:
                 found.append(f"{check!r} needs {prerequisite!r}, which is not required")
@@ -121,15 +135,43 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
         # without cancel-in-progress.
         for scope, setting in (("workflow", workflow.get("concurrency")),
                                ("job", job.get("concurrency"))):
-            group = concurrency_group(setting)
-            if group and not any(key in group for key in PER_MERGE_GROUP):
-                found.append(f"{check!r} shares its {scope} concurrency group {group!r} "
-                             "across merge groups")
+            if not setting:
+                continue
+            group = setting.get("group", "") if isinstance(setting, dict) else setting
+            for event in ("merge_group", pr_event):
+                if not context_values(group) & DISTINCT[event]:
+                    found.append(f"{check!r}: {scope} concurrency group {group!r} is shared "
+                                 f"by two {event} runs")
     return found
 
 
+# A minimal configuration that passes, for the checker's own tests below; the
+# live workflows are checked separately.
+FIXTURE = {
+    "ci.yml": {
+        "on": {"pull_request": {"types": ["opened", "synchronize", "reopened"]},
+               "merge_group": {"types": ["checks_requested"]}},
+        "concurrency": {"group": "${{ github.workflow }}-${{ github.ref }}"},
+        "jobs": {"preflight": {"name": "repository integrity"},
+                 "build": {"needs": "preflight"}},
+    },
+    "source-diagnostics.yml": {
+        "on": {"pull_request": "", "merge_group": ""},
+        "jobs": {"source-diagnostics": {}},
+    },
+    "bump-guard.yml": {
+        "on": {"pull_request_target": {"types": ["opened", "synchronize", "reopened", "edited"]},
+               "merge_group": ""},
+        "concurrency": {"group": "${{ github.workflow }}-${{ github.event.merge_group.head_ref"
+                                 " || github.event.pull_request.number }}"},
+        "jobs": {"guard": {}},
+    },
+    "lint.yml": {"on": {"pull_request": {"paths": ["docs/**"]}}, "jobs": {"lint": {}}},
+}
+
+
 def put(*path):
-    """A change that sets workflows[path[0]]...[path[-2]] to path[-1]."""
+    """A change that sets FIXTURE[path[0]]...[path[-2]] to path[-1]."""
     *keys, value = path
 
     def change(workflows):
@@ -159,30 +201,31 @@ def rename_job(name, old, new):
 
 
 class MergeQueueChecks(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.workflows = load_workflows()
-        cls.documented = documented_checks()
-
     def check(self, change=None, documented=None):
-        workflows = copy.deepcopy(self.workflows)
+        workflows = copy.deepcopy(FIXTURE)
         if change:
             change(workflows)
-        return problems(workflows, self.documented if documented is None else documented)
+        return problems(workflows, list(REQUIRED) if documented is None else documented)
 
-    def test_required_checks_report_on_every_pr_and_merge_group(self):
-        self.assertEqual(self.check(), [])
+    def test_live_workflows_report_every_required_check(self):
+        self.assertEqual(problems(load_workflows(), documented_checks()), [])
 
     def test_equivalent_spellings_pass(self):
-        for change in (put("ci.yml", "on", "merge_group", ""),
+        for change in (None,
+                       put("ci.yml", "on", "merge_group", ""),
                        put("ci.yml", "on", "merge_group", {"types": "checks_requested"}),
-                       put("ci.yml", "on", "pull_request", "")):
-            self.assertEqual(self.check(change), [])
+                       put("ci.yml", "on", "pull_request", ""),
+                       put("ci.yml", "jobs", "build", "name", "build"),
+                       put("ci.yml", "jobs", "build", "concurrency",
+                           "lean-${{ github.run_id }}")):
+            with self.subTest(change):
+                self.assertEqual(self.check(change), [])
 
     def test_changes_that_stop_a_check_from_reporting_fail(self):
+        guard_group = ("bump-guard.yml", "concurrency", "group")
         cases = {
             "lost merge_group": (drop("ci.yml", "on", "merge_group"), "no merge_group"),
-            "list of events": (put("source-diagnostics.yml", "on", ["push", "pull_request"]),
+            "list of events": (put("source-diagnostics.yml", "on", ["pull_request"]),
                                "no merge_group"),
             "merge_group branches": (
                 put("source-diagnostics.yml", "on", "merge_group", "branches", ["main"]),
@@ -192,8 +235,8 @@ class MergeQueueChecks(unittest.TestCase):
                 "filters merge groups"),
             "closed PRs only": (put("ci.yml", "on", "pull_request", {"types": ["closed"]}),
                                 "does not run on pull_request"),
-            "PR paths": (put("source-diagnostics.yml", "on", "pull_request", "paths", ["docs/**"]),
-                         "filters PRs"),
+            "PR paths": (put("source-diagnostics.yml", "on", "pull_request", "paths",
+                             ["docs/**"]), "filters PRs"),
             "lost PR trigger": (drop("bump-guard.yml", "on", "pull_request_target"),
                                 "no pull_request_target"),
             "job-level if": (put("ci.yml", "jobs", "build", "if", "github.event_name == 'push'"),
@@ -204,18 +247,22 @@ class MergeQueueChecks(unittest.TestCase):
                               "'repository integrity' is reported by []"),
             "renamed job id": (rename_job("ci.yml", "build", "lean-build"),
                                "'build' is reported by []"),
-            "duplicate name": (put("float-conformance.yml", "jobs", "conformance", "name", "build"),
+            "duplicate name": (put("lint.yml", "jobs", "lint", "name", "build"),
                                "'build' is reported by"),
-            "duplicate job id": (
-                put("extra.yml", {"on": {"pull_request": ""}, "jobs": {"guard": {}}}),
-                "'guard' is reported by"),
+            "duplicate job id": (rename_job("lint.yml", "lint", "guard"), "'guard' is reported by"),
             "prerequisite not required": (
                 put("ci.yml", "jobs", "build", "needs", ["preflight", "lint"]), "needs 'lint'"),
-            "shared workflow concurrency": (
-                put("ci.yml", "concurrency", "group", "${{ github.workflow }}"),
-                "workflow concurrency group"),
-            "shared job concurrency": (put("ci.yml", "jobs", "build", "concurrency", "lean-build"),
-                                       "job concurrency group"),
+            "plain workflow group": (put("ci.yml", "concurrency", "group", "ci"),
+                                     "workflow concurrency group"),
+            "ref type, not ref": (
+                put("ci.yml", "concurrency", "group",
+                    "${{ github.workflow }}-${{ github.ref_type }}"),
+                "shared by two merge_group runs"),
+            "base ref under pull_request_target": (
+                put(*guard_group, "${{ github.workflow }}-${{ github.ref }}"),
+                "shared by two pull_request_target runs"),
+            "plain job group": (put("ci.yml", "jobs", "build", "concurrency", "lean-build"),
+                                "job concurrency group"),
         }
         for label, (change, message) in cases.items():
             with self.subTest(label):

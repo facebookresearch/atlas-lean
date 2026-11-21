@@ -237,13 +237,15 @@ group before it merges:
 Their workflows run when a PR is opened, updated or reopened, and on every
 merge group; on some fork PRs, CI and Source diagnostics wait until a
 maintainer approves the run. CI's `repository integrity` job runs
-`scripts/test_merge_queue_checks.py`, which fails if a workflow change would
-stop that, make a required job skippable, or rename a check. The other checks
-are advisory. Codex does not run on merge groups. `public-references` runs on
-PRs and merge groups, but stays advisory until the workflow governance described
+`scripts/test_merge_queue_checks.py`. It fails if one of these workflows loses
+or filters those triggers, can skip the job that reports the check, renames the
+check or lets another job report the same name, or keys a concurrency group on
+something that two PRs or two merge groups share. The other checks are
+advisory. Codex does not run on merge groups. `public-references` runs on PRs
+and merge groups, but stays advisory until the workflow governance described
 under [Public references](#public-references) is in place. Blueprint Pages,
-Check workflows and Binary64 conformance run only on PRs that touch their files,
-and Blueprint Pages also builds `main` once a day.
+Check workflows and Binary64 conformance are path-filtered on PRs, and
+Blueprint Pages also builds `main` once a day.
 
 ## Contributor License Agreement ("CLA")
 In order to accept your pull request, we need you to submit a CLA. You only need
