@@ -208,7 +208,8 @@ def load_annotations(root: Path, report: Report) -> dict[Path, dict]:
     vault = root / "blueprint"
     roadmap = (vault / "roadmap").resolve()
     links = vault / "links"
-    seen: dict[Path, str] = {}
+    seen: dict[Path, str] = {}  # pages with a row in a subject's links file, which sync_wiki.py reads
+    rows: set[Path] = set()  # pages with a row in any file Autoform reads
     ids: dict[str, list[tuple[str, str]]] = {}
     annotations: dict[Path, dict] = {}
     symlinks: list[Path] = []
@@ -293,6 +294,10 @@ def load_annotations(root: Path, report: Report) -> dict[Path, dict]:
                 if fact in annotation:
                     report.add(8, subject, f"its annotation commits {fact!r}, which lean-facts adds at build time", at)
             check_row_extensions(subject, annotation, page, at, report)
+            # Autoform merges a row from any file it reads, so a second one anywhere is a second annotation.
+            if page in rows:
+                report.add(5, subject, "the page has more than one annotation", at)
+            rows.add(page)
             if not top_level or source.suffix != ".jsonl":
                 continue
             parts = page.relative_to(roadmap).parts
@@ -300,7 +305,6 @@ def load_annotations(root: Path, report: Report) -> dict[Path, dict]:
             if source.name != f"{expected}.jsonl":
                 report.add(5, subject, f"its annotation belongs in blueprint/links/{expected}.jsonl", at)
             if page in seen:
-                report.add(5, subject, "the page has more than one annotation", at)
                 continue
             seen[page] = at
             annotation["_at"] = at

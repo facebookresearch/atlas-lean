@@ -173,6 +173,15 @@ class GraphRules(unittest.TestCase):
         self.assertIn("blueprint/links/nested/_defaults.json: the defaults commit 'status'", found)
         self.assertIn("nested/_defaults.json: Autoform merges this defaults file too", found)
         self.assertNotIn("README.txt", found)
+        # Autoform merges each of these rows with the page's own, wherever it sits.
+        self.assertIn("blueprint/links/CategoryTheory.jsonl:3: the page has more than one annotation", found)
+        self.assertIn("blueprint/links/extra.ndjson:1: the page has more than one annotation", found)
+
+    def test_a_row_outside_the_subject_files_does_not_displace_the_page_annotation(self) -> None:
+        self.vault.write("blueprint/links/000.json", json.dumps(Vault.row("CategoryTheory/topos-theory/is-topos.md")))
+        annotations = rules.load_annotations(self.vault.root, rules.Report())
+        topos = (self.vault.root / "blueprint/roadmap/CategoryTheory/topos-theory/is-topos.md").resolve()
+        self.assertEqual(annotations[topos]["_at"], "blueprint/links/CategoryTheory.jsonl:3")
 
     def test_links_files_are_found_as_autoform_finds_them(self) -> None:
         self.vault.write("blueprint/links/.scratch/extra.json", json.dumps(Vault.row("Physics/mechanics.md")))
@@ -476,6 +485,15 @@ class GitRules(unittest.TestCase):
         self.vault.save()
         self.commit()
         self.assertEqual(self.run_main("--base", twice, "--blocking"), 1)
+
+    def test_a_new_duplicate_in_an_inherited_extra_file_is_new(self) -> None:
+        self.vault.write("blueprint/links/extra.ndjson", json.dumps(Vault.row("Physics/mechanics.md")) + "\n")
+        self.commit()
+        broken = self.head()
+        self.vault.write("blueprint/links/extra.ndjson", json.dumps(Vault.row("Physics/mechanics.md")) + "\n"
+                         + json.dumps(Vault.row("CategoryTheory/topos-theory/is-topos.md")) + "\n")
+        self.commit()
+        self.assertEqual(self.run_main("--base", broken, "--blocking"), 1)
 
     def test_reordering_rows_or_recasing_a_heading_does_not_make_an_old_finding_new(self) -> None:
         self.vault.annotations["CategoryTheory"][3]["id"] = "af_" + "1" * 24  # shares Topos's id
