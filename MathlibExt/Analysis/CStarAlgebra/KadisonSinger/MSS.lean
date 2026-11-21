@@ -106,12 +106,6 @@ private lemma ksPartialMatrix_succ_update
     · have hjnot : ¬j.val < k + 1 := by omega
       simp [ksPartialMatrix, hji, hjlt, hjnot, Function.update_of_ne]
 
-private lemma ksMixedCharacteristicPolynomial_isMonicOfDegree
-    {m : ℕ} {d : Type*} [Fintype d] [DecidableEq d]
-    (A : Fin m → Matrix d d ℂ) :
-    Polynomial.IsMonicOfDegree (mixedCharacteristicPolynomial A) (Fintype.card d) :=
-  ⟨mixedCharacteristicPolynomial_natDegree A, mixedCharacteristicPolynomial_monic A⟩
-
 private lemma ksPartial_polynomial_eq_weighted_sum
     {m : ℕ} {d : Type*} [Fintype d] [DecidableEq d] {s : Fin m → ℕ}
     (p : (i : Fin m) → Fin (s i) → ℝ)
@@ -223,9 +217,9 @@ private lemma ksExists_partial_succ_maxRealRoot_le
     hne (w := p i) (P := P) (n := Fintype.card d) Fintype.card_pos
   · exact hp i
   · intro a
-    exact ksMixedCharacteristicPolynomial_isMonicOfDegree _
+    exact mixedCharacteristicPolynomial_isMonicOfDegree _
   · rw [← hsumPoly]
-    exact ksMixedCharacteristicPolynomial_isMonicOfDegree _
+    exact mixedCharacteristicPolynomial_isMonicOfDegree _
   · intro a t ht
     rw [← hsumPoly]
     exact ksPartial_segment_isRealRooted p v hp hk ω a t ht

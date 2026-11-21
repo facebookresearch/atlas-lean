@@ -18,3 +18,8 @@ Existence and uniqueness (Cauchy–Peano, Picard, maximal solutions), linear sys
 - [Nonresonant forced oscillator](exists-unique-periodic-solution-and-is-b.md)
 - [Solutions of $xu''+2u'+u=0$ have infinitely many zeros](set-infinite-zero-of-mul-iterated-deriv.md)
 - [Sturm separation theorem](sturm-separation.md)
+
+## Logistic traveling-wave profiles
+
+- [Traveling-wave profile of the Fisher–KPP equation](is-wave-profile.md)
+- [Traveling front of the Fisher–KPP equation](is-front.md)

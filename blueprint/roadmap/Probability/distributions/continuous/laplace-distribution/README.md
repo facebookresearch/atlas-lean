@@ -12,4 +12,4 @@ The Laplace distribution with location $m$ and scale $b > 0$ has density $\exp(-
 ## Related topics
 
 - [Exponential distribution](../exponential-distribution/README.md): the Laplace law is the law of $m + \sigma E$ with $E$ exponential of rate $1/b$ and $\sigma = \pm 1$ an independent fair sign, its symmetric version.
-- Laplace and exponential mechanisms: the Laplace mechanism of differential privacy adds Laplace noise calibrated to the sensitivity of a query.
+- [Laplace and exponential mechanisms](../../../../ComputerScience/cryptography/laplace-and-exponential-mechanisms/README.md): the Laplace mechanism of differential privacy adds Laplace noise calibrated to the sensitivity of a query.

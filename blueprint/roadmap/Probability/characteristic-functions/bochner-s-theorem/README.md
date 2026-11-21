@@ -11,4 +11,4 @@
 
 ## Related topics
 
-- Random Fourier features: sampling frequencies from the measure that Bochner's theorem attaches to a shift-invariant kernel gives an unbiased random approximation of the kernel.
+- [Random Fourier features](../../../ComputerScience/machine-learning/supervised-learning/random-fourier-features/README.md): sampling frequencies from the measure that Bochner's theorem attaches to a shift-invariant kernel gives an unbiased random approximation of the kernel.

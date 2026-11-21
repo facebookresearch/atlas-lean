@@ -153,4 +153,18 @@ example :
   refine not_posDef_of_mulVec_eq_zero _ 0 (Pi.single 1 1) (by simp) ?_ ⟨1, by decide⟩ (by simp)
   rw [diagonal_zero, Matrix.mul_zero, Matrix.zero_mul, zero_mulVec]
 
+/-- At strictly positive weights the weighted arc graph is
+the constant-weight underlying graph; at weight zero it is
+not (the arc above gives no adjacency). -/
+example : positiveArcGraph tail01 head01 (fun _ => (2 : ℝ))
+    = positiveArcGraph tail01 head01 (fun _ => (1 : ℝ)) :=
+  positiveArcGraph_eq_of_pos tail01 head01 (fun _ => by norm_num)
+
+example : ¬ (positiveArcGraph tail01 head01 (fun _ => (0 : ℝ))).Adj 0 1 := by
+  rw [positiveArcGraph, SimpleGraph.fromRel_adj]
+  rintro ⟨-, ⟨e, he, -, -⟩ | ⟨e, he, -, -⟩⟩ <;> simp at he
+
+#print axioms
+  MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian.positiveArcGraph_eq_of_pos
+
 end MathlibExtTest.Combinatorics.Graph.ArcNetworkLaplacian
