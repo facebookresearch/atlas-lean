@@ -17,10 +17,15 @@ fails if a required workflow:
   differ between any two PRs and any two merge groups, or one that another
   workflow's group could match: GitHub concurrency groups are repository-wide
   and case-insensitive, so one run could cancel or replace another's. In a
-  reusable workflow, `github.workflow` is the caller's name.
+  reusable workflow, `github.workflow` is the caller's name;
+- runs on pushes to the queue's `gh-readonly-queue/...` branches, which GitHub
+  creates for each merge group: that run would report the same check on the
+  same commit, and could share the merge group's concurrency group.
 
-The required checks are the ones listed under "How PRs merge" in
-CONTRIBUTING.md. CI runs this test in the `repository integrity` job. Locally:
+It also fails unless both `repository integrity` and `source-diagnostics` run
+this test, so a change that makes one workflow skip its jobs is still caught
+by the other. The required checks are the ones listed under "How PRs merge" in
+CONTRIBUTING.md. Locally:
 
     python3 -m pip install -r scripts/requirements-inventory.txt
     python3 -m unittest discover -s scripts -p test_merge_queue_checks.py
@@ -50,6 +55,11 @@ REQUIRED = {
 }
 PR_TYPES = {"opened", "synchronize", "reopened"}
 FILTERS = {"branches", "branches-ignore", "paths", "paths-ignore"}
+# The checks whose jobs run this test.
+RUN_THIS_TEST = ("repository integrity", "source-diagnostics")
+THIS_TEST = "test_merge_queue_checks.py"
+# A branch the queue creates for a merge group.
+QUEUE_BRANCH = "gh-readonly-queue/main/pr-1-0123456789abcdef0123456789abcdef01234567"
 # Concurrency groups known to differ between any two runs of the PR event and
 # between any two merge groups. Both start with the workflow's name. Under
 # pull_request_target, github.ref is the default branch for every PR, so the
@@ -99,12 +109,55 @@ def concurrency_group(setting) -> str:
 def literal_start(workflow_name: str | None, group: str) -> str:
     """The text a group always starts with, case-folded, after expanding a
     leading `${{ github.workflow }}`; empty if an expression comes first. In a
-    reusable workflow, github.workflow is the caller's name, so pass None."""
+    reusable workflow, github.workflow is the caller's name, so pass None.
+    github.ref is always a full ref, so it starts with `refs/`."""
     group = normalised(group)
     lead = "${{ github.workflow }}"
     if group.startswith(lead) and workflow_name is not None:
         group = workflow_name + group[len(lead):]
-    return group.split("${{", 1)[0].casefold()
+    head, _, tail = group.partition("${{")
+    if ("${{" + tail).startswith("${{ github.ref }}"):
+        head += "refs/"
+    return head.casefold()
+
+
+def matches(pattern: str, branch: str) -> bool:
+    """Whether a branch filter pattern matches, as GitHub's filter syntax reads
+    `*`, `**`, `?`, `+` and `[...]`."""
+    regex, i = "", 0
+    while i < len(pattern):
+        if pattern.startswith("**", i):
+            regex, i = regex + ".*", i + 2
+        elif pattern[i] == "*":
+            regex, i = regex + "[^/]*", i + 1
+        elif pattern[i] in "?+":
+            regex, i = regex + pattern[i], i + 1
+        elif pattern[i] == "[" and "]" in pattern[i:]:
+            end = pattern.index("]", i)
+            regex, i = regex + pattern[i:end + 1], end + 1
+        else:
+            regex, i = regex + re.escape(pattern[i]), i + 1
+    return re.fullmatch(regex, branch) is not None
+
+
+def filtered_in(patterns: list[str], branch: str) -> bool:
+    """Whether a `branches` list selects the branch; later `!` patterns win."""
+    selected = False
+    for pattern in patterns:
+        if pattern.startswith("!"):
+            selected = selected and not matches(pattern[1:], branch)
+        elif matches(pattern, branch):
+            selected = True
+    return selected
+
+
+def pushes_to_queue_branches(push: dict) -> bool:
+    if "branches" in push:
+        return filtered_in(as_list(push["branches"]), QUEUE_BRANCH)
+    if "branches-ignore" in push:
+        return not filtered_in(as_list(push["branches-ignore"]), QUEUE_BRANCH)
+    # A push filter on tags alone does not run for branches.
+    return not ({"tags", "tags-ignore"} & set(push))
 
 
 def may_be_named(name: str, check: str) -> bool:
@@ -170,6 +223,8 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
             missing = PR_TYPES - set(as_list(settings.get("types", sorted(PR_TYPES))))
             if missing:
                 found.append(f"{name} does not run on {pr_event} {sorted(missing)}")
+        if "push" in triggers and pushes_to_queue_branches(triggers["push"]):
+            found.append(f"{name} runs on pushes to the queue's branches")
         (_, job_id), = reporters[check]
         job = workflow["jobs"][job_id]
         if "${{" in job.get("name", ""):
@@ -199,6 +254,11 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
                                  f"{name}'s {group!r}")
         if job.get("concurrency"):
             found.append(f"{check!r} has a job-level concurrency group, which is unverified")
+        if check in RUN_THIS_TEST and not any(
+                isinstance(step, dict) and THIS_TEST in str(step.get("run", ""))
+                and not {"if", "continue-on-error"} & set(step)
+                for step in as_list(job.get("steps"))):
+            found.append(f"{check!r} does not run {THIS_TEST} unconditionally")
     return found
 
 
@@ -207,16 +267,19 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
 FIXTURE = {
     "ci.yml": {
         "name": "CI",
-        "on": {"pull_request": {"types": ["opened", "synchronize", "reopened"]},
+        "on": {"push": {"branches": ["main"]},
+               "pull_request": {"types": ["opened", "synchronize", "reopened"]},
                "merge_group": {"types": ["checks_requested"]}},
         "concurrency": {"group": "${{ github.workflow }}-${{ github.ref }}"},
-        "jobs": {"preflight": {"name": "repository integrity"},
+        "jobs": {"preflight": {"name": "repository integrity",
+                               "steps": [{"run": "python -m unittest " + THIS_TEST}]},
                  "build": {"needs": "preflight"}},
     },
     "source-diagnostics.yml": {
         "name": "Source diagnostics",
-        "on": {"pull_request": "", "merge_group": ""},
-        "jobs": {"source-diagnostics": {}},
+        "on": {"push": {"branches": "main"}, "pull_request": "", "merge_group": ""},
+        "jobs": {"source-diagnostics": {"steps": [{"uses": "actions/checkout"},
+                                                  {"run": "unittest " + THIS_TEST}]}},
     },
     "bump-guard.yml": {
         "name": "Bump guard",
@@ -275,7 +338,13 @@ class MergeQueueChecks(unittest.TestCase):
                        put("ci.yml", "on", "pull_request", ""),
                        put("ci.yml", "jobs", "build", "name", "build"),
                        put("ci.yml", "concurrency", "group",
-                           "${{github.workflow}}-${{  github.ref }}")):
+                           "${{github.workflow}}-${{  github.ref }}"),
+                       put("ci.yml", "on", "push", {"branches": ["**", "!gh-readonly-queue/**"]}),
+                       put("ci.yml", "on", "push", {"tags": ["v*"]}),
+                       put("nightly.yml", {"name": "CI-nightly", "on": {"schedule": ""},
+                                           "concurrency": {"group": "${{ github.workflow }}-"
+                                                                    "${{ github.ref }}"},
+                                           "jobs": {"nightly": {}}})):
             with self.subTest(change):
                 self.assertEqual(self.check(change), [])
 
@@ -336,7 +405,7 @@ class MergeQueueChecks(unittest.TestCase):
             "renamed onto another workflow's literal group": (put("ci.yml", "name", "lint"),
                                                                "could match"),
             "another workflow's group starting with an expression": (
-                put("lint.yml", "concurrency", "${{ github.ref }}"), "could match"),
+                put("lint.yml", "concurrency", "${{ github.head_ref }}"), "could match"),
             "expression job name that can render as a required one": (
                 put("lint.yml", "jobs", "lint", "name", "${{ matrix.part }}"),
                 "'build' is reported by"),
@@ -352,6 +421,20 @@ class MergeQueueChecks(unittest.TestCase):
             "job-level group": (put("ci.yml", "jobs", "build", "concurrency",
                                     "${{ github.workflow }}-${{ github.ref }}"),
                                 "job-level concurrency group"),
+            "push on every branch": (put("ci.yml", "on", "push", ""),
+                                     "pushes to the queue's branches"),
+            "push on queue branches": (
+                put("source-diagnostics.yml", "on", "push", "branches",
+                    ["main", "gh-readonly-queue/main/**"]), "pushes to the queue's branches"),
+            "push ignoring only main": (put("ci.yml", "on", "push", {"branches-ignore": "main"}),
+                                        "pushes to the queue's branches"),
+            "this test dropped from Source diagnostics": (
+                put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
+                    [{"uses": "actions/checkout"}]), "does not run test_merge_queue_checks.py"),
+            "this test made conditional": (
+                put("ci.yml", "jobs", "preflight", "steps",
+                    [{"if": "github.event_name == 'push'", "run": "unittest " + THIS_TEST}]),
+                "does not run test_merge_queue_checks.py"),
         }
         for label, (change, message) in cases.items():
             with self.subTest(label):

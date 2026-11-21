@@ -219,7 +219,8 @@ merged, or removed from the queue.
 
 The queue removes a PR whose required checks fail on its merge group, or do not
 conclude before the queue's timeout; the PR's timeline says why, and the PRs
-behind it rebuild without it. Fix the PR and queue it again. To take a PR out
+behind it rebuild without it. In a stack of pull requests, the PRs above it in
+the stack leave the queue too. Fix the PR and queue it again. To take a PR out
 of the queue, use **Remove from queue** on the PR or on the queue's page, or the
 GraphQL mutation `dequeuePullRequest`; `gh` cannot do it.
 
@@ -234,13 +235,15 @@ group before it merges:
 
 Their workflows are configured to run when a PR is opened, updated or reopened,
 and on every merge group; on some fork PRs, CI and Source diagnostics wait until
-a maintainer approves the run. CI's `repository integrity` job runs
-`scripts/test_merge_queue_checks.py`. It fails if one of these workflows loses
-or filters those triggers, can skip the job that reports the check, renames the
-check or puts an expression in its job name, lets another job report (or
-possibly report) the same name, or uses a concurrency group that the test does
-not know to differ between PRs and between merge groups, or that another
-workflow's group could match.
+a maintainer approves the run. Both CI's `repository integrity` job and Source
+diagnostics run `scripts/test_merge_queue_checks.py`, so a change that makes one
+of them skip its jobs is caught by the other. The test fails if one of these
+workflows loses or filters those triggers, also runs on pushes to the queue's
+branches, can skip the job that reports the check, renames the check or puts an
+expression in its job name, lets another job report (or possibly report) the
+same name, or uses a concurrency group that the test does not know to differ
+between PRs and between merge groups, or that another workflow's group could
+match.
 
 The other checks are advisory. The bump guard's `guard` checks Lean and Mathlib
 pin changes on PRs and merge groups; on PRs it runs through

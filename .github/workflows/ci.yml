@@ -52,7 +52,9 @@ jobs:
 
       # Required checks must keep reporting on every PR and merge group
       # (CONTRIBUTING.md, How PRs merge). The test parses the workflows with
-      # PyYAML, so it runs here rather than in check.sh preflight.
+      # PyYAML, so it runs here rather than in check.sh preflight. Source
+      # diagnostics runs it too, so a change that makes this workflow skip its
+      # jobs is still caught.
       - name: Test that the required checks report on merge groups
         env:
           PYTHONDONTWRITEBYTECODE: "1"
