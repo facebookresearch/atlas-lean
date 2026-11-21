@@ -16,8 +16,11 @@ Milne's proof (Section VII.9) first shows that a subgroup of $C_K$ containing a 
 group (Lemma VII.9.1, from the reciprocity law). The key case is an open subgroup $V$ such that
 $C_K / V$ is killed by a prime $p$, when $K$ contains a primitive $p$-th root of unity: $V$ contains
 the norm group of the Kummer extension obtained by adjoining the $p$-th roots of the $S$-units, for a
-suitable finite set $S$ of places (Lemma VII.9.3). An induction on the index, adjoining roots of unity
-and using the norm limitation theorem (Lemma VII.9.4), gives the general case (Theorem VII.9.5).
+suitable finite set $S$ of places (Lemma VII.9.3). An induction on the index, adjoining roots of unity,
+gives the general case (Theorem VII.9.5); it uses Lemma VII.9.4, that $U$ is a norm group when
+$\mathrm{Nm}_{K'/K}^{-1}(U)$ is one for some finite extension $K'/K$, whose proof rests on the norm
+limitation theorem: $\mathrm{Nm}_{E/K} C_E = \mathrm{Nm}_{M/K} C_M$ for a finite extension $E/K$ with
+maximal abelian subextension $M$ (Theorem VIII.4.8).
 
 ## Depends on
 
@@ -31,7 +34,8 @@ and using the norm limitation theorem (Lemma VII.9.4), gives the general case (T
 
 - J. S. Milne, *Class Field Theory*, version 4.03 (2020),
   <https://www.jmilne.org/math/CourseNotes/CFT.pdf>: Theorem V.5.5 (Existence Theorem) and
-  Corollary V.5.6 (the statement); Section VII.9, Lemmas 9.1, 9.3 and 9.4 and Theorem 9.5 (the proof).
+  Corollary V.5.6 (the statement); Section VII.9, Lemmas 9.1, 9.3 and 9.4 and Theorem 9.5 (the proof);
+  Theorem VIII.4.8 (norm limitation theorem), used in the proof of Lemma VII.9.4.
 - A. V. Sutherland, *Number Theory I* (MIT 18.785, Fall 2021), Lecture 28,
   <https://math.mit.edu/classes/18.785/2021fa/LectureNotes28.pdf>: Theorem 28.6 (Global Existence
   Theorem) and Theorem 28.7.

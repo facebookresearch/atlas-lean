@@ -19,9 +19,12 @@ primitive characters). Then:
 
     $$\operatorname{tr} \pi_\theta(g) = (-1)^{n-1} \sum_{i=0}^{n-1} \theta\bigl(z^{q^i}\bigr).$$
 
-The number of Galois orbits of regular characters equals the number of irreducible monic polynomials of
-degree $n$ over $\mathbb{F}_q$, that is, the number of conjugacy classes of elements of
-$\mathrm{GL}_n(\mathbb{F}_q)$ with irreducible characteristic polynomial (A. Prasad, after Theorem 4.1).
+The number of Galois orbits of regular characters equals the number of monic irreducible polynomials of
+degree $n$ over $\mathbb{F}_q$ with nonzero constant term, that is, the number of conjugacy classes of
+elements of $\mathrm{GL}_n(\mathbb{F}_q)$ with irreducible characteristic polynomial (A. Prasad, after
+Theorem 4.1). For $n \ge 2$ every monic irreducible polynomial of degree $n$ has nonzero constant term;
+for $n = 1$ the polynomial $T$ is excluded, leaving the $q - 1$ classes of $\mathrm{GL}_1(\mathbb{F}_q)$
+and the $q - 1$ characters of $\mathbb{F}_q^\times$, all regular.
 For $n = 2$ the cuspidal characters have degree $q - 1$ and value $-(\theta(z) + \theta(z^q))$ on such
 elements. The degree is $|\mathrm{GL}_n(\mathbb{F}_q)|_{p'} / |\mathbb{F}_{q^n}^\times|$, the
 prime-to-$p$ part of the group order divided by the order of the torus $\mathbb{F}_{q^n}^\times$ (D. Prasad,
@@ -33,7 +36,8 @@ Example 5.2(1)).
   $GL_n(\mathbb{F}_q)$*, lecture notes, Advanced Instructional School, Pune (2007),
   <https://www.imsc.res.in/~amri/notes.pdf>, Chapter 4: Section 4.2 (cuspidal representations, primitive
   characters), Theorem 4.1 (the bijection) and Theorem 4.2 (the character values); the chapter states
-  these results of Green without proof.
+  these results of Green without proof. Its count of orbits after Theorem 4.1 omits the condition of a
+  nonzero constant term, which matters only for $n = 1$.
 - D. Prasad, *Notes on representations of finite groups of Lie type*, arXiv:1404.0861v1 (2014): §4
   (regular characters and Green's classification), Example 5.2 (1) (the dimension
   $\prod_{i=1}^{n-1} (q^i - 1)$) and (3) (the value $-(\chi(x) + \chi(x^\sigma))$ for $n = 2$). His

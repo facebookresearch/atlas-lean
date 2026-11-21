@@ -11,15 +11,22 @@ $$\Lambda(s, \chi) = \varepsilon(s, \chi) \, \Lambda(1 - s, \chi^{-1})$$
 as meromorphic functions of $s$, where $\varepsilon(s, \chi) = \prod_v \varepsilon(\chi_v |\cdot|_v^s)$ is
 the product of the local $\varepsilon$-factors of Tate's thesis, taken with the standard additive
 character of $\mathbb{A}_K / K$ and self-dual measures; only finitely many of them differ from $1$, and
-$\varepsilon(s, \chi) = A e^{Bs}$ for constants $A \neq 0$ and $B$, so it is entire and has no zeros.
-Here $\chi^{-1} = \overline{\chi}$, and the identity holds at every $s$ other than $-i\tau$ and
-$1 - i\tau$ in the exceptional case, where both sides are holomorphic.
+$\varepsilon(s, \chi) = a e^{bs}$ for constants $a \neq 0$ and $b$, so it is entire and has no zeros.
+Here $\chi^{-1} = \overline{\chi}$. The identity holds as an identity of meromorphic functions on all of
+$\mathbb{C}$, also when $\chi = |\cdot|^{i\tau}$. As an equality of finite values it holds at every
+$s$, except, when $\chi = |\cdot|^{i\tau}$, at $s = -i\tau$ and $s = 1 - i\tau$, the possible poles of
+both sides (Poonen, Definition 5.20, Theorem 5.22 and the formula after it).
 
-The value $W(\chi) = \varepsilon(1/2, \chi)$ is the root number. Hecke completed his $L$-functions as
+The value $W(\chi) = \varepsilon(1/2, \chi)$ is the root number of this normalization, the constant
+in the equation written from $\Lambda(s, \chi)$ to $\Lambda(1 - s, \chi^{-1})$. Hecke completed his
+$L$-functions differently, as
 $\xi(s; \lambda) = \gamma(\lambda) \Gamma(s; \lambda) A^s \zeta(s; \lambda)$, with a product of Gamma
-factors $\Gamma(s; \lambda)$ and a constant $A$; for a primitive character his functional equation reads
-$\xi(1 - s; \overline{\lambda}) = W(\lambda) \, \xi(s; \lambda)$, with a constant $W(\lambda)$ of
-absolute value $1$ (Hecke 1920, equation (45)).
+factors $\Gamma(s; \lambda)$ and a constant $A$, and wrote his functional equation for a primitive
+character in the other direction:
+$\xi(1 - s; \overline{\lambda}) = W_{\mathrm{H}}(\lambda) \, \xi(s; \lambda)$, with a constant
+$W_{\mathrm{H}}(\lambda)$ of absolute value $1$ (Hecke 1920, equation (45)). The two constants belong to
+different conventions: for one and the same completed function, writing the equation in the reverse
+direction replaces its constant by the inverse.
 
 In Tate's proof the functional equation comes from the global functional equation
 $Z(f, \chi) = Z(\hat f, \chi^\vee)$ of the zeta integrals, with $\chi^\vee = \chi^{-1} |\cdot|$, which
@@ -35,10 +42,10 @@ the local $\varepsilon$-factors (Poonen, Theorems 5.16(c) and 4.18(e) and the pr
 ## Sources
 
 - B. Poonen, *Tate's thesis*, lecture notes for MIT 18.786 (Spring 2015), PDF of 2025-10-11,
-  <https://math.mit.edu/~poonen/786/notes.pdf>: Theorem 5.22 (a) and (c), the formula
-  $L(s, \chi) = \epsilon(s, \chi) L(1 - s, \chi^{-1})$ after its proof (Poonen's $L(s, \chi)$ is the
+  <https://math.mit.edu/~poonen/786/notes.pdf>: Definition 5.20, Theorem 5.22 (a), (b) and (c), the
+  formula $L(s, \chi) = \epsilon(s, \chi) L(1 - s, \chi^{-1})$ after its proof (Poonen's $L(s, \chi)$ is the
   completed function, with the archimedean factors), Remark 5.21, Theorem 4.18(e) (local
-  $\epsilon$-factors of the form $A e^{Bs}$) and Theorem 5.16.
+  $\epsilon$-factors of the form $a e^{bs}$) and Theorem 5.16.
 - E. Hecke, *Eine neue Art von Zetafunktionen und ihre Beziehungen zur Verteilung der Primzahlen
   (Zweite Mitteilung)*, Math. Z. 6 (1920), 11–51, end of §6: the Hauptsatz and equation (45).
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror

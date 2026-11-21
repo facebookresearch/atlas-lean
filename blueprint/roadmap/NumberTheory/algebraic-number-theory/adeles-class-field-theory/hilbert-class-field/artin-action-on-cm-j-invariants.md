@@ -46,9 +46,12 @@ law, then identifies the Galois action with the Artin map.
 - J. S. Milne, *Modular Functions and Modular Forms*, version 1.31 (2017),
   <https://www.jmilne.org/math/CourseNotes/MF.pdf>, Chapter 12: Theorem 12.18 (c) and (b), with
   Propositions 12.3, 12.6 and 12.20, Theorem 12.8, Corollary 12.16 and Lemma 12.25 (the proof). The
-  proof in these notes is incomplete: for Proposition 12.21, that the class group acts simply
-  transitively on the curves with complex multiplication by $\mathcal{O}_K$ over a field other than
-  $\mathbb{C}$, Milne writes "We omit the proof of the general case, although this is a key point."
+  proof in these notes is incomplete. Proposition 12.21 says that the class group acts simply
+  transitively on the isomorphism classes of elliptic curves with complex multiplication by
+  $\mathcal{O}_K$; this is to be read for geometric isomorphism classes, that is, over an algebraically
+  closed field (over $\mathbb{Q}(i)$, whose class group is trivial, $y^2 = x^3 - x$ and $y^2 = x^3 - 3x$
+  both have complex multiplication by $\mathbb{Z}[i]$ but are not isomorphic). Milne proves it for
+  $\mathbb{C}$ only: "We omit the proof of the general case, although this is a key point."
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
   no licence) uses this result, as `GroundTheory.Global.Elliptic.hilbertClassFieldArtinEquiv_apply_j`.

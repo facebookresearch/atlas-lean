@@ -48,4 +48,4 @@ to $s = 1$.
   original source, as cited by Kaneko.
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
-  no licence) uses this identity, for $|D| > 4$, as `GlobalTheory.QuadraticZeta.chowla_selberg_eta`.
+  no licence) uses this identity, for $|D| > 4$, as `GlobalTheory.chowla_selberg_eta`.

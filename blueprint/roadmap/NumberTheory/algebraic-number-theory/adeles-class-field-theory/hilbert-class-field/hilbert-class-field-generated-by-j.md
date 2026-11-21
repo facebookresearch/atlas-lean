@@ -38,8 +38,9 @@ out here; it is not Milne's text.)
 - J. S. Milne, *Modular Functions and Modular Forms*, version 1.31 (2017),
   <https://www.jmilne.org/math/CourseNotes/MF.pdf>, Chapter 12: Theorem 12.18 (a) ("For any elliptic
   curve $E$ over $\mathbb{C}$ with complex multiplication by $\mathcal{O}_K$, $K[j(E)]$ is the Hilbert
-  class field of $K$") and its proof, which omits the proof of Proposition 12.21 over fields other than
-  $\mathbb{C}$ ("a key point"); Propositions 12.3 and 12.6.
+  class field of $K$") and its proof, which omits the proof of Proposition 12.21 (the class group acts
+  simply transitively on the geometric isomorphism classes of curves with complex multiplication by
+  $\mathcal{O}_K$) over fields other than $\mathbb{C}$ ("a key point"); Propositions 12.3 and 12.6.
 - J. S. Milne, *Complex Multiplication*, version 0.10 (2020),
   <https://www.jmilne.org/math/CourseNotes/CM.pdf>, Preface: the statement as the first result of the
   theory, due to Kronecker and Weber.

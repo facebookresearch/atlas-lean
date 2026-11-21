@@ -33,5 +33,6 @@ indefinite space of rank at least $2$, the special genus of a lattice consists o
   Corollary 5.1.4.
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
-  no licence) uses an adelic form of this result, for CM extensions and a finite set of places at which
-  the group is non-compact, as `GlobalTheory.Published.StrongApproxSU`.
+  no licence) uses an adelic form of this result, for CM extensions and a finite set $S$ of places such
+  that the product over $S$ of the local special unitary groups is non-compact (it suffices that one
+  factor is non-compact), as `GlobalTheory.Published.StrongApproxSU`.

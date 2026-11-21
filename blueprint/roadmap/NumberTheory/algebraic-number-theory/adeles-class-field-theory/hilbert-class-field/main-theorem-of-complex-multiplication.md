@@ -22,8 +22,11 @@ torsion points of $A$ through the idèle $s$.
 Milne states the theorem for abelian varieties with complex multiplication by a CM-algebra $E$ of
 CM-type $\Phi$, for $\sigma$ fixing the reflex field $E^*$, as
 $\alpha(N_\Phi(s') \cdot x) = \sigma x$ for $s'$ with $\mathrm{art}_{E^*}(s') = \sigma|_{E^{*\mathrm{ab}}}$,
-where $N_\Phi$ is the reflex norm and $\mathrm{art}$ is the reciprocal of the usual Artin map: a
-uniformizer acts as the inverse of the arithmetic Frobenius. For an elliptic curve normalised as
+where $N_\Phi$ is the reflex norm and $\mathrm{art} = \mathrm{rec}^{-1}$ is the reciprocal of the usual
+Artin map $\mathrm{rec}$: for the idèle $a$ that is a uniformizer at one finite place $v$ and $1$
+elsewhere, $\mathrm{art}(a)$ lies in the decomposition group at $v$, and its image in the unramified
+quotient of that group, the Galois group of the maximal unramified extension of the completion at $v$,
+is the inverse of the arithmetic Frobenius. For an elliptic curve normalised as
 above, $E = K$, $\Phi$ is the inclusion $K \subset \overline{\mathbb{Q}}$, the reflex field is $K$ and
 $N_\Phi$ is the identity, since by Milne's definition $N_\Phi(a)$ is the determinant of multiplication
 by $a$ on a one-dimensional $K$-vector space; with $s = s'^{-1}$ this is the statement above. (This
@@ -44,9 +47,11 @@ which relates idèles to ray class groups.
 - J. S. Milne, *Complex Multiplication*, version 0.10 (2020),
   <https://www.jmilne.org/math/CourseNotes/CM.pdf>, Section 9: Theorem 9.10 (the fundamental theorem in
   terms of idèles) and its proof; the review of the reflex norm at the start of Section 9; the
-  convention $\mathrm{art}_k(s) = \mathrm{rec}_k(s)^{-1}$ stated before Lemma 9.6.
-- J. S. Milne, *The fundamental theorem of complex multiplication*, arXiv:0705.3446v1 (2007), Section 3
-  (the same theorem over the reflex field).
+  convention $\mathrm{art}_k(s) = \mathrm{rec}_k(s)^{-1}$, stated immediately before Lemma 9.4 and
+  described at the start of Section 10 (a prime element corresponds to the inverse of the arithmetic
+  Frobenius).
+- J. S. Milne, *The fundamental theorem of complex multiplication*, arXiv:0705.3446v1 (2007),
+  Theorem 3.10 (the same theorem, for $\sigma$ fixing the reflex field).
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
   no licence) uses an analytic form of this result, for curves $\mathbb{C}/\mathfrak{a}$ with
