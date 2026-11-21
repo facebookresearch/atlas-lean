@@ -9,9 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Domains.Biology.PopulationGenetics.Diffusion.Sojourn
+public import MathlibExt.Analysis.SpecialFunctions.Dilog
 import Mathlib.Analysis.Calculus.Deriv.Polynomial
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
-import Mathlib.NumberTheory.ZetaValues
 
 /-!
 # How old is the most recent ancestor of two copies of an allele?
@@ -43,7 +43,10 @@ Corollary 2 is `integral_neutralGreen` (both `Sojourn`; the value is
   the killed diffusion: in the diffusion reading, `G_C(x, y) = ∫₀^∞ C(x, y; t) dt`.
   It is built from the two solutions `pattersonAux1`, `pattersonAux2` of
   `x² (1 - x) / 2 * w'' = w` in his Appendix.
-* `pattersonDilog x = ∫₁ˣ (log t) / (1 - t) dt` is his `dilog` (Equation 16).
+* `pattersonDilog x = Real.li2 (1 - x)` is his `dilog` (Equation 16), using the
+  generic dilogarithm API in `MathlibExt.Analysis.SpecialFunctions.Dilog`;
+  `pattersonDilog_eq_integral` identifies it on `(0, 1)` with Patterson's integral
+  `∫₁ˣ (log t) / (1 - t) dt`.
 * `meanMrcaNew y` is `M₁(y)` (Equation 16), in the diffusion reading the expected
   MRCA age of two copies of an allele known to be new (nonancestral) at frequency `y`;
   `meanMrcaOld y` is `M₂(y)` (Equation 17), the same expectation for an old
@@ -68,9 +71,11 @@ Corollary 2 is `integral_neutralGreen` (both `Sojourn`; the value is
   posterior probability `x` that an allele at frequency `x` is old.
 * `hasDerivAt_pattersonDilog`, `pattersonDilog_one`: `dilog` differentiates to
   `log x / (1 - x)` on `(0, 1)` and vanishes at `1`.
+* `pattersonDilog_eq_integral`: on `(0, 1)`, the `Real.li2` definition agrees with
+  Patterson's integral definition of `dilog`.
 * `pattersonDilog_zero`, `pattersonDilog_reflection`: `dilog 0 = π² / 6`, and
-  `dilog y + dilog (1 - y) + log y * log (1 - y) = π² / 6` (Euler's reflection
-  formula for `Li₂`, in Patterson's normalization).
+  `dilog y + dilog (1 - y) + log y * log (1 - y) = π² / 6` (corollaries of
+  `Real.li2_one` and `Real.li2_reflection`, in Patterson's normalization).
 * `meanMrcaNew_eq_integral`: `M₁(y) = y ∫₀¹ G_C(x, y) / x dx`, Patterson's route to
   Equation 16 (p. 1103): Equation 16 is derived here from Theorem 4, not transcribed.
 * `killedGreen_weighted_integral_add_pattersonAux1` and
@@ -149,12 +154,15 @@ noncomputable def killedGreen (x y : ℝ) : ℝ :=
   else 2 * (1 - x) * (2 * y - y ^ 2 + 2 * log (1 - y) - 2 * y * log (1 - y)) /
     ((1 - y) * y ^ 2 * x)
 
-/-- Patterson's `dilog` (Equation 16): `dilog x = ∫₁ˣ (log t) / (1 - t) dt`.
-This is his sign and normalization convention: `dilog 1 = 0`, derivative
-`log x / (1 - x)` on `(0, 1)`. In classical notation `pattersonDilog x = Li₂(1 - x)`
-(Maple's `dilog`); Mathlib has no `Li₂`. -/
+/-- Patterson's `dilog` (Equation 16), defined here by
+`pattersonDilog x = Real.li2 (1 - x)`, using the generic dilogarithm API in
+`MathlibExt.Analysis.SpecialFunctions.Dilog`. Patterson's own definition is the
+integral `∫₁ˣ (log t) / (1 - t) dt`; `pattersonDilog_eq_integral` proves that the
+two agree on `(0, 1)`. This is his sign and normalization convention:
+`dilog 1 = 0`, derivative `log x / (1 - x)` on `(0, 1)`. In classical notation
+`pattersonDilog x = Li₂(1 - x)` (Maple's `dilog`). -/
 noncomputable def pattersonDilog (x : ℝ) : ℝ :=
-  ∫ t in (1 : ℝ)..x, log t / (1 - t)
+  Real.li2 (1 - x)
 
 /-- Patterson's `M₁(y)` (Equation 16, Theorem 6(2)): in the diffusion reading, the
 expected age (in units of `2N` generations) of the MRCA of two copies of an allele
@@ -519,21 +527,26 @@ private theorem intervalIntegrable_log_div_one_sub {a b : ℝ} (ha : 0 < a) (ha1
   · rw [Real.volume_Ioc]
     exact ENNReal.ofReal_lt_top
 
-/-- Patterson's `dilog` vanishes at `1` (its defining integral collapses). -/
+/-- Patterson's `dilog` vanishes at `1`, since `Real.li2 0 = 0`. -/
 theorem pattersonDilog_one : pattersonDilog 1 = 0 := by
-  simp [pattersonDilog]
+  simp only [pattersonDilog, sub_self, Real.li2_zero]
 
-/-- The derivative of Patterson's `dilog` on `(0, 1)` is `log x / (1 - x)`. -/
+/-- The derivative of Patterson's `dilog` on `(0, 1)` is `log x / (1 - x)`, from
+`Real.hasDerivAt_li2` by the chain rule. -/
 theorem hasDerivAt_pattersonDilog {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
     HasDerivAt pattersonDilog (log x / (1 - x)) x := by
-  have hc : ContinuousOn (fun t => log t / (1 - t)) (Ioo 0 1) :=
-    (Real.continuousOn_log.mono fun t ht => ht.1.ne').div
-      (continuousOn_const.sub continuousOn_id) fun t ht => (sub_pos.mpr ht.2).ne'
-  unfold pattersonDilog
-  exact intervalIntegral.integral_hasDerivAt_right
-    (intervalIntegrable_log_div_one_sub one_pos le_rfl hx.1 hx.2.le)
-    (hc.stronglyMeasurableAtFilter isOpen_Ioo x hx)
-    (hc.continuousAt (Ioo_mem_nhds hx.1 hx.2))
+  have h1mx : HasDerivAt (fun x : ℝ => 1 - x) (-1) x := by
+    have h := (hasDerivAt_const x (1 : ℝ)).sub (hasDerivAt_id' x)
+    refine h.congr_deriv ?_
+    simp
+  have habs : |(1 : ℝ) - x| < 1 := by
+    rw [abs_of_pos (sub_pos.mpr hx.2)]
+    exact sub_lt_self 1 hx.1
+  have h := (Real.hasDerivAt_li2 habs (sub_pos.mpr hx.2).ne').comp x h1mx
+  change HasDerivAt (fun x => Real.li2 (1 - x)) (log x / (1 - x)) x
+  refine h.congr_deriv ?_
+  have e : (1 : ℝ) - (1 - x) = x := by ring
+  rw [e, mul_neg, mul_one, neg_div, neg_neg]
 
 /-- `log y / (1 - y) → -1` as `y → 1⁻` (the slope of `log` at `1`). -/
 private theorem tendsto_log_div_one_sub_nhdsLT_one :
@@ -572,365 +585,43 @@ private theorem tendsto_one_sub_mul_log_one_sub_nhdsLT_one :
   simp only [negMulLog]
   ring
 
-/-- Patterson's `dilog` tends to `0` at `1` from below. -/
+/-- Patterson's `dilog` tends to `0` at `1` from below, by continuity of
+`Real.li2` at `0`. -/
 theorem tendsto_pattersonDilog_nhdsLT_one :
     Tendsto pattersonDilog (𝓝[<] (1 : ℝ)) (𝓝 0) := by
-  rw [tendsto_zero_iff_norm_tendsto_zero]
-  have hboundfun : Tendsto (fun y : ℝ => 2 * |y - 1|) (𝓝[<] (1 : ℝ)) (𝓝 0) := by
-    have hcont : Continuous (fun y : ℝ => 2 * |y - 1|) :=
-      ((continuous_id.sub continuous_const).abs).const_mul 2
-    have hh : Tendsto (fun y : ℝ => 2 * |y - 1|) (𝓝[<] (1 : ℝ))
-        (𝓝 (2 * |(1 : ℝ) - 1|)) :=
-      (hcont.tendsto (1 : ℝ)).mono_left nhdsWithin_le_nhds
-    simpa using hh
-  refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hboundfun
-    (Filter.Eventually.of_forall fun y => norm_nonneg _) ?_
-  filter_upwards [self_mem_nhdsWithin,
-    eventually_nhdsWithin_of_eventually_nhds
-      (Ioi_mem_nhds (show (1 : ℝ) / 2 < 1 by norm_num))] with y hy1 hy2
-  unfold pattersonDilog
-  refine intervalIntegral.norm_integral_le_of_norm_le_const (a := 1) (b := y) (C := 2) ?_
-  intro t ht
-  have hy1' : y < 1 := hy1
-  have htIcc : t ∈ Set.Icc y 1 := by
-    rcases Set.mem_uIoc.mp ht with h | h
-    · exfalso
-      linarith
-    · exact ⟨h.1.le, h.2⟩
-  exact (norm_log_div_one_sub_le
-      ((by norm_num : (0 : ℝ) < 1 / 2).trans (hy2.trans_le htIcc.1)) htIcc.2).trans
-    ((one_div_le_one_div_of_le (by norm_num : (0 : ℝ) < 1 / 2)
-      (hy2.le.trans htIcc.1)).trans_eq (by norm_num))
+  have hsub : Tendsto (fun x : ℝ => 1 - x) (𝓝[<] (1 : ℝ)) (𝓝 0) := by
+    have h : Tendsto (fun x : ℝ => (1 : ℝ) - x) (𝓝[<] (1 : ℝ))
+        (𝓝 ((1 : ℝ) - 1)) :=
+      ((continuous_const.sub continuous_id).tendsto (1 : ℝ)).mono_left
+        nhdsWithin_le_nhds
+    simpa using h
+  have hcont : Tendsto Real.li2 (𝓝 (0 : ℝ)) (𝓝 (Real.li2 0)) :=
+    Real.continuousAt_li2_zero.tendsto
+  rw [Real.li2_zero] at hcont
+  exact hcont.comp hsub
 
-/-- `‖t log t / (1 - t)‖ ≤ 1` on `[0, 1]` (from `norm_log_div_one_sub_le`). -/
-private theorem norm_id_mul_log_div_one_sub_le {t : ℝ}
-    (ht : t ∈ Set.Icc (0 : ℝ) 1) :
-    ‖t * (log t / (1 - t))‖ ≤ 1 := by
-  rcases ht.1.eq_or_lt with rfl | ht0
-  · simp
-  · rcases ht.2.eq_or_lt with rfl | ht1
-    · simp
-    · rw [norm_mul, Real.norm_of_nonneg ht0.le]
-      have ht0' : t ≠ 0 := ht0.ne'
-      refine (mul_le_mul_of_nonneg_left (norm_log_div_one_sub_le ht0 ht.2)
-        ht0.le).trans_eq ?_
-      field_simp
-
-/-- `t log t / (1 - t)` is integrable on every subinterval of `[0, 1]`. -/
-private theorem intervalIntegrable_id_mul_log_div_one_sub {a b : ℝ} (ha : 0 ≤ a)
-    (ha1 : a ≤ 1) (hb : 0 ≤ b) (hb1 : b ≤ 1) :
-    IntervalIntegrable (fun t => t * (log t / (1 - t))) MeasureTheory.volume a b := by
-  have hmeas : Measurable (fun t => t * (log t / (1 - t))) :=
-    measurable_id.mul (Real.measurable_log.div (measurable_const.sub measurable_id))
-  have key : ∀ s : Set ℝ, MeasurableSet s → s ⊆ Set.Icc (0 : ℝ) 1 →
-      MeasureTheory.volume s < ⊤ → MeasureTheory.IntegrableOn
-        (fun t => t * (log t / (1 - t))) s MeasureTheory.volume := by
-    intro s hsmeas hs hsfin
-    refine MeasureTheory.IntegrableOn.of_bound hsfin hmeas.aestronglyMeasurable 1 ?_
-    rw [MeasureTheory.ae_restrict_iff' hsmeas]
-    exact Filter.Eventually.of_forall fun t ht => norm_id_mul_log_div_one_sub_le (hs ht)
-  refine ⟨key (Set.Ioc a b) measurableSet_Ioc ?_ ?_,
-    key (Set.Ioc b a) measurableSet_Ioc ?_ ?_⟩
-  · intro t ht
-    exact ⟨ha.trans ht.1.le, ht.2.trans hb1⟩
-  · rw [Real.volume_Ioc]
-    exact ENNReal.ofReal_lt_top
-  · intro t ht
-    exact ⟨hb.trans ht.1.le, ht.2.trans ha1⟩
-  · rw [Real.volume_Ioc]
-    exact ENNReal.ofReal_lt_top
-
-/-- On `(0, 1)`, `log t / (1 - t) = log t + t log t / (1 - t)`. -/
-private theorem log_div_one_sub_eqOn :
-    Set.EqOn (fun t => log t / (1 - t))
-      (fun t => log t + t * (log t / (1 - t))) (Set.Ioo (0 : ℝ) 1) := by
-  intro t ht
-  change log t / (1 - t) = log t + t * (log t / (1 - t))
-  have h1t : (1 : ℝ) - t ≠ 0 := (sub_pos.mpr ht.2).ne'
-  field_simp
-  ring
-
-/-- `log t / (1 - t)` is integrable on the whole of `[0, 1]`, including the
-logarithmic singularity at `0`. -/
-private theorem intervalIntegrable_log_div_one_sub_zero_one :
-    IntervalIntegrable (fun t => log t / (1 - t)) MeasureTheory.volume 0 1 := by
-  have hEq : Set.EqOn (fun t => log t + t * (log t / (1 - t)))
-      (fun t => log t / (1 - t)) (Set.uIoo (0 : ℝ) 1) := by
-    rw [Set.uIoo_of_le zero_le_one]
-    exact log_div_one_sub_eqOn.symm
-  exact (intervalIntegral.intervalIntegrable_log'.add
-    (intervalIntegrable_id_mul_log_div_one_sub le_rfl zero_le_one zero_le_one
-      le_rfl)).congr_uIoo hEq
-
-/-- `x log x → 0` as `x → 0⁺` (continuity of `negMulLog` at `0`). -/
-private theorem tendsto_id_mul_log_nhdsGT_zero :
-    Tendsto (fun x => x * log x) (𝓝[>] (0 : ℝ)) (𝓝 0) := by
-  have h0 : negMulLog (0 : ℝ) = 0 := by simp [negMulLog]
-  have h2 : Tendsto negMulLog (𝓝[>] (0 : ℝ)) (𝓝 (0 : ℝ)) := by
-    have h3 : Tendsto negMulLog (𝓝[>] (0 : ℝ)) (𝓝 (negMulLog 0)) :=
-      (continuous_negMulLog.tendsto (0 : ℝ)).mono_left nhdsWithin_le_nhds
-    rwa [h0] at h3
-  have h1 : Tendsto (fun x => -negMulLog x) (𝓝[>] (0 : ℝ)) (𝓝 0) := by
-    simpa using h2.neg
-  refine h1.congr (fun x => ?_)
-  simp only [negMulLog]
-  ring
-
-/-- Patterson's `dilog` is right-continuous at `0`: this identifies the constant
-in the reflection identity `pattersonDilog_reflection` with `pattersonDilog 0`. -/
-private theorem tendsto_pattersonDilog_nhdsGT_zero :
-    Tendsto pattersonDilog (𝓝[>] (0 : ℝ)) (𝓝 (pattersonDilog 0)) := by
-  have hInt := intervalIntegrable_log_div_one_sub_zero_one
-  have hIntx : ∀ x ∈ Set.Icc (0 : ℝ) 1,
-      IntervalIntegrable (fun t => log t / (1 - t)) MeasureTheory.volume 0 x := by
-    intro x hx
-    refine ⟨hInt.1.mono_set (Set.Ioc_subset_Ioc le_rfl hx.2), ?_⟩
-    have hempty : Set.Ioc x (0 : ℝ) = ∅ := Set.Ioc_eq_empty (not_lt.mpr hx.1)
-    rw [hempty]
-    exact MeasureTheory.integrableOn_empty
-  have hsum : ∀ x ∈ Set.Ioo (0 : ℝ) 1, (∫ t in (0 : ℝ)..x, log t / (1 - t)) =
-      (x * log x - x) + ∫ t in (0 : ℝ)..x, t * (log t / (1 - t)) := by
-    intro x hx
-    have hEqx : Set.EqOn (fun t => log t / (1 - t))
-        (fun t => log t + t * (log t / (1 - t))) (Set.uIoo (0 : ℝ) x) := by
-      rw [Set.uIoo_of_le hx.1.le]
-      exact log_div_one_sub_eqOn.mono (Set.Ioo_subset_Ioo le_rfl hx.2.le)
-    rw [intervalIntegral.integral_congr_uIoo hEqx,
-      intervalIntegral.integral_add intervalIntegral.intervalIntegrable_log'
-        (intervalIntegrable_id_mul_log_div_one_sub le_rfl zero_le_one hx.1.le
-          hx.2.le),
-      integral_log]
-    simp
-  have hTendstoInt : Tendsto (fun x => ∫ t in (0 : ℝ)..x, log t / (1 - t))
-      (𝓝[>] (0 : ℝ)) (𝓝 0) := by
-    rw [tendsto_zero_iff_norm_tendsto_zero]
-    have hid : Tendsto (fun x : ℝ => x) (𝓝[>] (0 : ℝ)) (𝓝 (0 : ℝ)) :=
-      (continuous_id.tendsto (0 : ℝ)).mono_left nhdsWithin_le_nhds
-    have hboundfun : Tendsto (fun x : ℝ => ‖x * log x - x‖ + x) (𝓝[>] (0 : ℝ))
-        (𝓝 0) := by
-      have h1 : Tendsto (fun x : ℝ => ‖x * log x - x‖) (𝓝[>] (0 : ℝ)) (𝓝 0) := by
-        have hh := (tendsto_id_mul_log_nhdsGT_zero.sub hid).norm
-        simpa using hh
-      simpa using h1.add hid
-    refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hboundfun
-      (Filter.Eventually.of_forall fun x => norm_nonneg _) ?_
-    filter_upwards [self_mem_nhdsWithin,
-      eventually_nhdsWithin_of_eventually_nhds (Iio_mem_nhds zero_lt_one)]
-      with x hx0 hx1
-    have hx : x ∈ Set.Ioo (0 : ℝ) 1 := ⟨hx0, hx1⟩
-    rw [hsum x hx]
-    refine (norm_add_le _ _).trans (add_le_add_right ?_ _)
-    refine (intervalIntegral.norm_integral_le_of_norm_le_const (a := (0 : ℝ))
-      (b := x) (C := 1) ?_).trans_eq ?_
-    · intro t ht
-      rcases Set.mem_uIoc.mp ht with h | h
-      · exact norm_id_mul_log_div_one_sub_le ⟨h.1.le, h.2.trans hx.2.le⟩
-      · exact absurd (h.1.trans_le h.2) (not_lt.mpr hx0.le)
-    · rw [sub_zero, abs_of_pos hx0, one_mul]
-  have hEqFun : pattersonDilog =ᶠ[𝓝[>] (0 : ℝ)]
-      fun x => pattersonDilog 0 + ∫ t in (0 : ℝ)..x, log t / (1 - t) := by
-    filter_upwards [self_mem_nhdsWithin,
-      eventually_nhdsWithin_of_eventually_nhds (Iio_mem_nhds zero_lt_one)]
-      with x hx0 hx1
-    unfold pattersonDilog
-    exact (intervalIntegral.integral_add_adjacent_intervals hInt.symm
-      (hIntx x ⟨hx0.le, hx1.le⟩)).symm
-  have hT : Tendsto (fun x => pattersonDilog 0 + ∫ t in (0 : ℝ)..x, log t / (1 - t))
-      (𝓝[>] (0 : ℝ)) (𝓝 (pattersonDilog 0 + 0)) :=
-    tendsto_const_nhds.add hTendstoInt
-  rw [add_zero] at hT
-  exact hT.congr' hEqFun.symm
-
-/-- `t ^ n log t` is integrable on `[0, 1]`, by comparison with `log t`. -/
-private theorem intervalIntegrable_pow_mul_log_zero_one (n : ℕ) :
-    IntervalIntegrable (fun t => t ^ n * log t) MeasureTheory.volume 0 1 := by
-  refine ⟨?_, ?_⟩
-  · refine MeasureTheory.Integrable.mono
-      intervalIntegral.intervalIntegrable_log'.1 ?_ ?_
-    · exact ((measurable_id.pow_const n).mul
-        Real.measurable_log).aestronglyMeasurable
-    · rw [MeasureTheory.ae_restrict_iff' measurableSet_Ioc]
-      refine Filter.Eventually.of_forall fun t ht => ?_
-      change ‖t ^ n * log t‖ ≤ ‖log t‖
-      rw [norm_mul]
-      refine (mul_le_mul_of_nonneg_right ?_ (norm_nonneg _)).trans_eq (one_mul _)
-      rw [Real.norm_of_nonneg (pow_nonneg ht.1.le n)]
-      exact pow_le_one₀ ht.1.le ht.2
-  · have hempty : Set.Ioc (1 : ℝ) 0 = ∅ := Set.Ioc_eq_empty (by norm_num)
-    rw [hempty]
-    exact MeasureTheory.integrableOn_empty
-
-/-- The moments `∫₀¹ t ^ n log t dt = -1 / (n + 1)²`, by the fundamental theorem of
-calculus with antiderivative `t ^ (n+1) log t / (n+1) - t ^ (n+1) / (n+1)²`. -/
-private theorem integral_pow_mul_log_zero_one (n : ℕ) :
-    ∫ t in (0 : ℝ)..1, t ^ n * log t = -1 / ((n : ℝ) + 1) ^ 2 := by
-  set m : ℝ := (n : ℝ) + 1 with hm
-  have hmpos : (0 : ℝ) < m := by
-    have h : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
-    rw [hm]
-    linarith
-  have hm0 : m ≠ 0 := hmpos.ne'
-  have hderiv : ∀ t ∈ Set.Ioo (0 : ℝ) 1,
-      HasDerivAt (fun t => t ^ (n + 1) * log t / m - t ^ (n + 1) / m ^ 2)
-        (t ^ n * log t) t := by
-    intro t ht
-    have ht0 : t ≠ 0 := ht.1.ne'
-    have hpow : HasDerivAt (fun t : ℝ => t ^ (n + 1)) (m * t ^ n) t := by
-      have h := (hasDerivAt_id' t).pow (n + 1)
-      refine h.congr_deriv ?_
-      simp only [Nat.add_sub_cancel, mul_one]
-      rw [hm]
-      push_cast
-      ring
-    have h1 : HasDerivAt (fun t => t ^ (n + 1) * log t / m)
-        ((m * t ^ n * log t + t ^ (n + 1) * t⁻¹) / m) t :=
-      (hpow.mul (Real.hasDerivAt_log ht0)).div_const m
-    have h2 : HasDerivAt (fun t => t ^ (n + 1) / m ^ 2) ((m * t ^ n) / m ^ 2) t :=
-      hpow.div_const _
-    refine (h1.sub h2).congr_deriv ?_
-    have htn : t ^ (n + 1) * t⁻¹ = t ^ n := by
-      rw [pow_succ]
-      field_simp
-    rw [htn]
-    field_simp
-    ring
-  have hlim0 : Tendsto (fun t => t ^ (n + 1) * log t / m - t ^ (n + 1) / m ^ 2)
-      (𝓝[>] (0 : ℝ)) (𝓝 0) := by
-    have hpowT : Tendsto (fun t : ℝ => t ^ (n + 1)) (𝓝[>] (0 : ℝ)) (𝓝 0) := by
-      have h : Tendsto (fun t : ℝ => t ^ (n + 1)) (𝓝[>] (0 : ℝ))
-          (𝓝 ((0 : ℝ) ^ (n + 1))) :=
-        ((continuous_id.pow (n + 1)).tendsto (0 : ℝ)).mono_left nhdsWithin_le_nhds
-      simpa only [zero_pow (show n + 1 ≠ 0 by omega)] using h
-    have hterm : Tendsto (fun t : ℝ => t ^ (n + 1) * log t) (𝓝[>] (0 : ℝ))
-        (𝓝 0) := by
-      have hnT : Tendsto (fun t : ℝ => t ^ n) (𝓝[>] (0 : ℝ)) (𝓝 ((0 : ℝ) ^ n)) :=
-        ((continuous_id.pow n).tendsto (0 : ℝ)).mono_left nhdsWithin_le_nhds
-      have hmul := hnT.mul tendsto_id_mul_log_nhdsGT_zero
-      rw [mul_zero] at hmul
-      refine hmul.congr (fun t => ?_)
-      rw [pow_succ]
-      ring
-    have hsub := (hterm.div_const m).sub (hpowT.div_const (m ^ 2))
-    simpa using hsub
-  have hlim1 : Tendsto (fun t => t ^ (n + 1) * log t / m - t ^ (n + 1) / m ^ 2)
-      (𝓝[<] (1 : ℝ)) (𝓝 (-1 / m ^ 2)) := by
-    have hc : ContinuousAt (fun t => t ^ (n + 1) * log t / m - t ^ (n + 1) / m ^ 2) 1 :=
-      (((continuous_id.pow (n + 1)).continuousAt.mul
-        (Real.continuousAt_log one_ne_zero)).div_const m).sub
-        ((continuous_id.pow (n + 1)).continuousAt.div_const _)
-    have hT : Tendsto (fun t => t ^ (n + 1) * log t / m - t ^ (n + 1) / m ^ 2)
-        (𝓝[<] (1 : ℝ))
-        (𝓝 ((1 : ℝ) ^ (n + 1) * log 1 / m - (1 : ℝ) ^ (n + 1) / m ^ 2)) :=
-      hc.continuousWithinAt
-    convert hT using 2
-    simp
-    ring
-  have hftc := intervalIntegral.integral_eq_sub_of_hasDerivAt_of_tendsto zero_lt_one
-    hderiv (intervalIntegrable_pow_mul_log_zero_one n) hlim0 hlim1
-  rw [hftc]
+/-- On `(0, 1)`, Patterson's `dilog`, defined here through `Real.li2`, agrees
+with Patterson's integral definition `∫₁ˣ (log t) / (1 - t) dt`. The proof
+integrates the derivative from `x` to `1` and uses the limit `0` at `1`. -/
+theorem pattersonDilog_eq_integral {x : ℝ} (hx : x ∈ Set.Ioo (0 : ℝ) 1) :
+    pattersonDilog x = ∫ t in (1 : ℝ)..x, log t / (1 - t) := by
+  have hderiv : ∀ t ∈ Set.Ioo x 1,
+      HasDerivAt pattersonDilog (log t / (1 - t)) t :=
+    fun t ht => hasDerivAt_pattersonDilog ⟨hx.1.trans ht.1, ht.2⟩
+  have hint : IntervalIntegrable (fun t => log t / (1 - t))
+      MeasureTheory.volume x 1 :=
+    intervalIntegrable_log_div_one_sub hx.1 hx.2.le one_pos le_rfl
+  have hlimx : Tendsto pattersonDilog (𝓝[>] x) (𝓝 (pattersonDilog x)) :=
+    (hasDerivAt_pattersonDilog hx).continuousAt.continuousWithinAt
+  have h := intervalIntegral.integral_eq_sub_of_hasDerivAt_of_tendsto hx.2
+    hderiv hint hlimx tendsto_pattersonDilog_nhdsLT_one
+  rw [intervalIntegral.integral_symm, h]
   simp
 
-/-- The Basel sum shifted by one index: `∑' n, 1 / (n + 1)² = π² / 6`. -/
-private theorem hasSum_one_div_add_one_sq :
-    HasSum (fun n : ℕ => (1 : ℝ) / ((n : ℝ) + 1) ^ 2) (π ^ 2 / 6) := by
-  have h := (hasSum_nat_add_iff (f := fun n : ℕ => (1 : ℝ) / (n : ℝ) ^ 2) 1).mpr
-    (by simpa using hasSum_zeta_two)
-  simpa only [Nat.cast_add, Nat.cast_one] using h
-
-/-- **The value `dilog 0 = π² / 6`** in Patterson's normalization:
-`pattersonDilog 0 = ∫₀¹ (-log t) / (1 - t) dt`, computed by expanding
-`1 / (1 - t)` as a geometric series, integrating term by term
-(`integral_pow_mul_log_zero_one`, Tonelli), and applying `hasSum_zeta_two`. -/
+/-- **The value `dilog 0 = π² / 6`** in Patterson's normalization, the
+`Real.li2_one` Basel value. -/
 theorem pattersonDilog_zero : pattersonDilog 0 = π ^ 2 / 6 := by
-  have hnn : ∀ᵐ t ∂(MeasureTheory.volume.restrict (Set.Ioc (0 : ℝ) 1)),
-      (0 : ℝ) ≤ -(log t / (1 - t)) := by
-    rw [MeasureTheory.ae_restrict_iff' measurableSet_Ioc]
-    refine Filter.Eventually.of_forall fun t ht => ?_
-    exact neg_nonneg.mpr
-      (div_nonpos_of_nonpos_of_nonneg (Real.log_nonpos ht.1.le ht.2)
-        (sub_nonneg.mpr ht.2))
-  have h1 : (∫ t in Set.Ioc (0 : ℝ) 1, -(log t / (1 - t))
-        ∂MeasureTheory.volume) =
-      (∫⁻ t in Set.Ioc (0 : ℝ) 1, ENNReal.ofReal (-(log t / (1 - t)))
-        ∂MeasureTheory.volume).toReal :=
-    MeasureTheory.integral_eq_lintegral_of_nonneg_ae hnn
-      ((Real.measurable_log.div
-        (measurable_const.sub measurable_id)).neg).aestronglyMeasurable
-  have h2 : (∫⁻ t in Set.Ioc (0 : ℝ) 1, ENNReal.ofReal (-(log t / (1 - t)))
-        ∂MeasureTheory.volume) =
-      ∑' n : ℕ, ∫⁻ t in Set.Ioc (0 : ℝ) 1, ENNReal.ofReal ((-log t) * t ^ n)
-        ∂MeasureTheory.volume := by
-    have htsum : (∫⁻ t in Set.Ioc (0 : ℝ) 1,
-          ∑' n : ℕ, ENNReal.ofReal ((-log t) * t ^ n) ∂MeasureTheory.volume) =
-        ∑' n : ℕ, ∫⁻ t in Set.Ioc (0 : ℝ) 1, ENNReal.ofReal ((-log t) * t ^ n)
-          ∂MeasureTheory.volume :=
-      MeasureTheory.lintegral_tsum (fun n => by fun_prop)
-    rw [← htsum]
-    refine MeasureTheory.lintegral_congr_ae
-      ((MeasureTheory.ae_restrict_iff' measurableSet_Ioc).mpr
-        (Filter.Eventually.of_forall fun t ht => ?_))
-    change ENNReal.ofReal (-(log t / (1 - t))) =
-      ∑' n : ℕ, ENNReal.ofReal ((-log t) * t ^ n)
-    by_cases ht1 : t = 1
-    · subst ht1
-      simp
-    · have htlt : t < 1 := ht.2.lt_of_ne ht1
-      have hsum : HasSum (fun n => (-log t) * t ^ n) ((-log t) * (1 - t)⁻¹) :=
-        (hasSum_geometric_of_lt_one ht.1.le htlt).mul_left _
-      have hgnn : ∀ n : ℕ, (0 : ℝ) ≤ (-log t) * t ^ n :=
-        fun n => mul_nonneg (neg_nonneg.mpr (Real.log_nonpos ht.1.le ht.2))
-          (pow_nonneg ht.1.le n)
-      have hgeq : -(log t / (1 - t)) = (-log t) * (1 - t)⁻¹ := by
-        rw [div_eq_mul_inv, neg_mul]
-      rw [hgeq, ← hsum.tsum_eq, ENNReal.ofReal_tsum_of_nonneg hgnn hsum.summable]
-  have h3 : ∀ n : ℕ, (∫⁻ t in Set.Ioc (0 : ℝ) 1,
-        ENNReal.ofReal ((-log t) * t ^ n) ∂MeasureTheory.volume) =
-      ENNReal.ofReal (1 / ((n : ℝ) + 1) ^ 2) := by
-    intro n
-    have hIntNeg : IntervalIntegrable (fun t => (-log t) * t ^ n)
-        MeasureTheory.volume 0 1 := by
-      refine (intervalIntegrable_pow_mul_log_zero_one n).neg.congr_ae ?_
-      refine Filter.EventuallyEq.of_eq (funext fun t => ?_)
-      simp only [Pi.neg_apply]
-      ring
-    have hterm : (∫ t in (0 : ℝ)..1, (-log t) * t ^ n) = 1 / ((n : ℝ) + 1) ^ 2 := by
-      have h1 : (fun t => (-log t) * t ^ n) = fun t => -(t ^ n * log t) :=
-        funext fun t => by ring
-      rw [h1, intervalIntegral.integral_neg, integral_pow_mul_log_zero_one]
-      ring
-    have stepA : (∫⁻ t in Set.Ioc (0 : ℝ) 1, ENNReal.ofReal ((-log t) * t ^ n)
-          ∂MeasureTheory.volume) =
-        ENNReal.ofReal (∫ t in Set.Ioc (0 : ℝ) 1, (-log t) * t ^ n
-          ∂MeasureTheory.volume) := by
-      refine (MeasureTheory.ofReal_integral_eq_lintegral_ofReal hIntNeg.1 ?_).symm
-      refine (MeasureTheory.ae_restrict_iff' measurableSet_Ioc).mpr
-        (Filter.Eventually.of_forall fun t ht => ?_)
-      exact mul_nonneg (neg_nonneg.mpr (Real.log_nonpos ht.1.le ht.2))
-        (pow_nonneg ht.1.le n)
-    have stepB : ENNReal.ofReal (∫ t in Set.Ioc (0 : ℝ) 1, (-log t) * t ^ n
-          ∂MeasureTheory.volume) =
-        ENNReal.ofReal (1 / ((n : ℝ) + 1) ^ 2) := by
-      rw [← intervalIntegral.integral_of_le zero_le_one, hterm]
-    exact stepA.trans stepB
-  have h4 : (∑' n : ℕ, ∫⁻ t in Set.Ioc (0 : ℝ) 1,
-        ENNReal.ofReal ((-log t) * t ^ n) ∂MeasureTheory.volume) =
-      ENNReal.ofReal (π ^ 2 / 6) := by
-    rw [tsum_congr h3,
-      ← ENNReal.ofReal_tsum_of_nonneg (fun n => by positivity)
-        hasSum_one_div_add_one_sq.summable,
-      hasSum_one_div_add_one_sq.tsum_eq]
-  calc pattersonDilog 0 = ∫ t in (0 : ℝ)..1, -(log t / (1 - t)) := by
-        unfold pattersonDilog
-        rw [intervalIntegral.integral_symm,
-          ← intervalIntegral.integral_neg]
-    _ = ∫ t in Set.Ioc (0 : ℝ) 1, -(log t / (1 - t)) ∂MeasureTheory.volume :=
-        intervalIntegral.integral_of_le zero_le_one
-    _ = (∫⁻ t in Set.Ioc (0 : ℝ) 1, ENNReal.ofReal (-(log t / (1 - t)))
-          ∂MeasureTheory.volume).toReal := h1
-    _ = (ENNReal.ofReal (π ^ 2 / 6)).toReal := by rw [h2, h4]
-    _ = π ^ 2 / 6 :=
-        ENNReal.toReal_ofReal
-          (div_nonneg (pow_nonneg Real.pi_pos.le 2) (by norm_num))
+  simp only [pattersonDilog, sub_zero, Real.li2_one]
 
 /-- Derivative of `pattersonDilog (1 - z)` on `(0, 1)`. -/
 private theorem hasDerivAt_pattersonDilog_one_sub {z : ℝ}
@@ -948,83 +639,16 @@ private theorem hasDerivAt_pattersonDilog_one_sub {z : ℝ}
   ring
 
 /-- **Euler's reflection formula for Patterson's `dilog`**: for `y ∈ (0, 1)`,
-`dilog y + dilog (1 - y) + log y * log (1 - y) = π² / 6`. The left side has
-derivative `0` on `(0, 1)`, and tends to `dilog 0 = π² / 6` as `y → 1⁻`
-(`tendsto_pattersonDilog_nhdsGT_zero`, `pattersonDilog_zero`). -/
+`dilog y + dilog (1 - y) + log y * log (1 - y) = π² / 6`. This is
+`Real.li2_reflection` in Patterson's normalization. -/
 theorem pattersonDilog_reflection {y : ℝ} (hy : y ∈ Set.Ioo (0 : ℝ) 1) :
     pattersonDilog y + pattersonDilog (1 - y) + log y * log (1 - y) =
       π ^ 2 / 6 := by
-  have hS : ∀ z ∈ Set.Ioo (0 : ℝ) 1,
-      HasDerivAt (fun z => pattersonDilog z + pattersonDilog (1 - z) +
-        log z * log (1 - z)) 0 z := by
-    intro z hz
-    have hz0 : z ≠ 0 := hz.1.ne'
-    have h1z : (1 : ℝ) - z ≠ 0 := (sub_pos.mpr hz.2).ne'
-    have h3 : HasDerivAt (fun z => log z * log (1 - z))
-        (z⁻¹ * log (1 - z) + log z * (-(1 - z)⁻¹)) z :=
-      (Real.hasDerivAt_log hz0).mul (hasDerivAt_log_one_sub (ne_of_lt hz.2))
-    refine (((hasDerivAt_pattersonDilog hz).add
-      (hasDerivAt_pattersonDilog_one_sub hz)).add h3).congr_deriv ?_
-    field_simp
-    ring
-  have hconst : ∀ z ∈ Set.Ioo (0 : ℝ) 1,
-      pattersonDilog z + pattersonDilog (1 - z) + log z * log (1 - z) =
-        pattersonDilog (1 / 2) + pattersonDilog (1 - 1 / 2) +
-          log (1 / 2) * log (1 - 1 / 2) := by
-    intro z hz
-    have h := intervalIntegral.integral_eq_sub_of_hasDerivAt (a := (1 : ℝ) / 2)
-      (b := z)
-      (f := fun z => pattersonDilog z + pattersonDilog (1 - z) +
-        log z * log (1 - z))
-      (f' := fun _ => (0 : ℝ)) ?_ intervalIntegrable_const
-    · rw [intervalIntegral.integral_zero] at h
-      change (0 : ℝ) = (pattersonDilog z + pattersonDilog (1 - z) +
-          log z * log (1 - z)) -
-        (pattersonDilog (1 / 2) + pattersonDilog (1 - 1 / 2) +
-          log (1 / 2) * log (1 - 1 / 2)) at h
-      linarith [h]
-    · intro w hw
-      refine hS w ?_
-      rcases Set.mem_uIcc.mp hw with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;>
-        constructor <;> linarith [hz.1, hz.2]
-  have hlim : Tendsto (fun z => pattersonDilog z + pattersonDilog (1 - z) +
-      log z * log (1 - z)) (𝓝[<] (1 : ℝ)) (𝓝 (pattersonDilog 0)) := by
-    have hcomp : Tendsto (fun z => pattersonDilog (1 - z)) (𝓝[<] (1 : ℝ))
-        (𝓝 (pattersonDilog 0)) := by
-      refine tendsto_pattersonDilog_nhdsGT_zero.comp ?_
-      refine tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within _ ?_ ?_
-      · have h : Tendsto (fun z : ℝ => (1 : ℝ) - z) (𝓝[<] (1 : ℝ))
-            (𝓝 ((1 : ℝ) - 1)) :=
-          ((continuous_const.sub continuous_id).tendsto (1 : ℝ)).mono_left
-            nhdsWithin_le_nhds
-        simpa using h
-      · filter_upwards [self_mem_nhdsWithin] with z hz
-        exact sub_pos.mpr hz
-    have hprod : Tendsto (fun z => log z * log (1 - z)) (𝓝[<] (1 : ℝ))
-        (𝓝 0) := by
-      have key : Tendsto (fun z => (log z / (1 - z)) * ((1 - z) * log (1 - z)))
-          (𝓝[<] (1 : ℝ)) (𝓝 ((-1) * 0)) :=
-        tendsto_log_div_one_sub_nhdsLT_one.mul
-          tendsto_one_sub_mul_log_one_sub_nhdsLT_one
-      rw [mul_zero] at key
-      refine key.congr' ?_
-      filter_upwards [self_mem_nhdsWithin] with z hz
-      have h1z : (1 : ℝ) - z ≠ 0 := (sub_pos.mpr hz).ne'
-      field_simp
-    have hsumT := (tendsto_pattersonDilog_nhdsLT_one.add hcomp).add hprod
-    simpa using hsumT
-  have hlimC : Tendsto (fun z => pattersonDilog z + pattersonDilog (1 - z) +
-      log z * log (1 - z)) (𝓝[<] (1 : ℝ))
-      (𝓝 (pattersonDilog (1 / 2) + pattersonDilog (1 - 1 / 2) +
-        log (1 / 2) * log (1 - 1 / 2))) := by
-    refine tendsto_const_nhds.congr' ?_
-    filter_upwards [self_mem_nhdsWithin,
-      eventually_nhdsWithin_of_eventually_nhds
-        (Ioi_mem_nhds (show (0 : ℝ) < 1 by norm_num))]
-      with z hz1 hz0
-    exact (hconst z ⟨hz0, hz1⟩).symm
-  have hval := tendsto_nhds_unique hlimC hlim
-  rw [hconst y hy, hval, pattersonDilog_zero]
+  have h := Real.li2_reflection hy
+  have e : (1 : ℝ) - (1 - y) = y := by ring
+  simp only [pattersonDilog]
+  rw [e]
+  linarith [h]
 
 /-- **Patterson's Corollary 1, analytic form.** For `0 < ε < x < 1 - ε`, the Green
 values `G_K(ε, x) = 2ε / x` (allele new) and `G_K(1 - ε, x) = 2ε / (1 - x)` (allele
