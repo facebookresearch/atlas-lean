@@ -38,7 +38,7 @@ This file proves Mertens' third theorem,
 `∏_{p ≤ x} (1 - 1/p) ~ e^{-γ} / log x`, where `γ` is the Euler–Mascheroni constant.
 
 Let `A(x) = ∑_{n ≤ x} Λ(n) / (n log n)`. Abel summation and Mertens' first theorem show that
-`A(x) - log log x` converges. The limit is identified as `-γ` by comparing the Laplace transform
+`A(x) - log log x` converges. The limit is identified as `γ` by comparing the Laplace transform
 of `A` with `log ζ(σ) = ∑ Λ(n) / (n^σ log n)` as `σ → 1⁺`, using `ζ(σ) ~ 1 / (σ - 1)`. Finally
 `log ∏_{p ≤ x} (1 - 1/p)⁻¹ - A(x) → 0`, since the two differ by the prime powers `p^k > x`.
 

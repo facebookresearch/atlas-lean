@@ -43,11 +43,37 @@ example : ∃ C : ℝ, ∀ t : ℝ, 1 ≤ t → ∀ z : ℝ, 3 ≤ z →
         ∏ _p ∈ d.primeFactors, (1 : ℝ) ≤
       C * t * Real.log z ^ (1 : ℝ) * Real.exp (-(Real.log t / Real.log z)) := by
   refine sum_divisors_siftingPrimorial_le (fun _ => True) (fun _ => 1) 1 (Real.log 4 + 6)
-    (fun _ => zero_le_one) fun z hz => ?_
+    (fun _ _ _ => zero_le_one) fun z hz => ?_
   have h := Chebyshev.sum_primesLE_log_div_le ⌊z⌋₊
   have h1 : (1 : ℝ) ≤ ⌊z⌋₊ := by exact_mod_cast Nat.le_floor (show ((1 : ℕ) : ℝ) ≤ z by
     norm_num; linarith)
   have hfl : Real.log ⌊z⌋₊ ≤ Real.log z :=
     Real.log_le_log (by linarith) (Nat.floor_le (by linarith))
   simp only [Finset.filter_true, one_mul]
+  linarith
+
+/-! ### Only the values at the sifting primes matter
+
+The nonnegativity hypothesis constrains `ω` only at the sifting primes: here `ω(n) = -n` off the
+primes, and Rankin's bound still applies. -/
+
+example : ∃ C : ℝ, ∀ t : ℝ, 1 ≤ t → ∀ z : ℝ, 3 ≤ z →
+    ∑ d ∈ (siftingPrimorial (fun _ => True) ⌊z⌋₊).divisors with ((d : ℕ) : ℝ) ≤ t,
+        ∏ p ∈ d.primeFactors, (if p.Prime then (1 : ℝ) else -p) ≤
+      C * t * Real.log z ^ (1 : ℝ) * Real.exp (-(Real.log t / Real.log z)) := by
+  refine sum_divisors_siftingPrimorial_le (fun _ => True)
+    (fun n => if n.Prime then (1 : ℝ) else -n) 1 (Real.log 4 + 6)
+    (fun _ _ hp => by simp [hp]) fun z hz => ?_
+  have h := Chebyshev.sum_primesLE_log_div_le ⌊z⌋₊
+  have h1 : (1 : ℝ) ≤ ⌊z⌋₊ := by exact_mod_cast Nat.le_floor (show ((1 : ℕ) : ℝ) ≤ z by
+    norm_num; linarith)
+  have hfl : Real.log ⌊z⌋₊ ≤ Real.log z :=
+    Real.log_le_log (by linarith) (Nat.floor_le (by linarith))
+  have e : ∑ p ∈ (Nat.primesLE ⌊z⌋₊).filter (fun _ => True),
+      (if p.Prime then (1 : ℝ) else -p) * Real.log p / p =
+      ∑ p ∈ Nat.primesLE ⌊z⌋₊, Real.log p / p := by
+    rw [Finset.filter_true]
+    refine Finset.sum_congr rfl fun p hp => ?_
+    simp [(Nat.mem_primesLE.mp hp).2]
+  rw [e, one_mul]
   linarith

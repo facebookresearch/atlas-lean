@@ -79,8 +79,32 @@ example : ∃ c₄ K : ℝ, ∀ z : ℝ, 3 ≤ z → ∀ r : ℕ,
           ∏ p ∈ δ.primeFactors, ((p : ℝ) - 1)| ≤
       K * (1 * Real.log (Real.log z) + c₄) ^ r / r.factorial * Real.log z ^ (1 : ℝ) := by
   obtain ⟨C, hC⟩ := Chebyshev.abs_sum_primesLE_inv_sub_log_log_le
-  refine abs_sum_brunPsi_mul_div_le (fun _ => True) (fun _ => 1) 1 1 C (fun _ => zero_le_one)
-    (fun _p _ hp => by exact_mod_cast hp.one_lt) (fun _ => le_rfl) fun z hz => ?_
+  refine abs_sum_brunPsi_mul_div_le (fun _ => True) (fun _ => 1) 1 1 C
+    (fun _ _ _ => zero_le_one) (fun _p _ hp => by exact_mod_cast hp.one_lt) (fun _ _ _ => le_rfl)
+    fun z hz => ?_
   have h := (abs_le.mp (hC z (by linarith))).2
   simp only [one_div, one_mul, Finset.filter_true]
+  linarith
+
+/-! ### Only the values at the sifting primes matter
+
+The density hypotheses constrain `ω` only at the sifting primes, so values elsewhere may be
+arbitrary: here `ω(n) = n` off the primes, unbounded, and the bound still holds with `c = 1`. -/
+
+example : ∃ c₄ K : ℝ, ∀ z : ℝ, 3 ≤ z → ∀ r : ℕ,
+    |∑ δ ∈ (Nat.siftingPrimorial (fun _ => True) ⌊z⌋₊).divisors with 1 < δ,
+        (brunPsi r δ : ℝ) * (∏ p ∈ δ.primeFactors, (if p.Prime then (1 : ℝ) else p)) /
+          ∏ p ∈ δ.primeFactors, ((p : ℝ) - if p.Prime then (1 : ℝ) else p)| ≤
+      K * (1 * Real.log (Real.log z) + c₄) ^ r / r.factorial * Real.log z ^ (1 : ℝ) := by
+  obtain ⟨C, hC⟩ := Chebyshev.abs_sum_primesLE_inv_sub_log_log_le
+  refine abs_sum_brunPsi_mul_div_le (fun _ => True) (fun n => if n.Prime then (1 : ℝ) else n)
+    1 1 C (fun _ _ hp => by simp [hp]) (fun _p _ hp => by simp [hp]; exact_mod_cast hp.one_lt)
+    (fun _ _ hp => by simp [hp]) fun z hz => ?_
+  have h := (abs_le.mp (hC z (by linarith))).2
+  have e : ∑ p ∈ (Nat.primesLE ⌊z⌋₊).filter (fun _ => True),
+      (if p.Prime then (1 : ℝ) else p) / p = ∑ p ∈ Nat.primesLE ⌊z⌋₊, (p : ℝ)⁻¹ := by
+    rw [Finset.filter_true]
+    refine Finset.sum_congr rfl fun p hp => ?_
+    simp [(Nat.mem_primesLE.mp hp).2]
+  rw [e]
   linarith

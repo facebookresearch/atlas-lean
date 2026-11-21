@@ -277,8 +277,9 @@ section Weighted
 variable (P : ℕ → Prop) [DecidablePred P] (ω : ℕ → ℝ) (κ B : ℝ)
 
 /-- A sieve-dimension hypothesis `∑_{p ≤ z, P p} ω(p) log p / p ≤ κ log z + B` with `ω ≥ 0`
+at the sifting primes
 forces `κ ≥ 0`. -/
-private lemma kappa_nonneg (hω0 : ∀ p, 0 ≤ ω p)
+private lemma kappa_nonneg (hω0 : ∀ p, P p → p.Prime → 0 ≤ ω p)
     (hκ : ∀ z : ℝ, 2 ≤ z →
       ∑ p ∈ (primesLE ⌊z⌋₊).filter P, ω p * Real.log p / p ≤ κ * Real.log z + B) :
     0 ≤ κ := by
@@ -291,8 +292,9 @@ private lemma kappa_nonneg (hω0 : ∀ p, 0 ≤ ω p)
     rw [Real.le_log_iff_exp_le (by linarith)]; linarith
   have hsum := hκ z₀ h2
   have hnn : 0 ≤ ∑ p ∈ (primesLE ⌊z₀⌋₊).filter P, ω p * Real.log p / p :=
-    Finset.sum_nonneg fun p _ => by
-      have := hω0 p; have := Real.log_natCast_nonneg p; positivity
+    Finset.sum_nonneg fun p hp => by
+      have := hω0 p (Finset.mem_filter.mp hp).2 (prime_of_mem_primesLE_filter hp)
+      have := Real.log_natCast_nonneg p; positivity
   have : κ * Real.log z₀ ≤ -(|B| + 1) := by
     rw [div_le_iff₀ hpos] at hlog; linarith
   linarith [le_abs_self B]
@@ -376,11 +378,12 @@ private lemma sum_div_le_log_log (hκ : ∀ z : ℝ, 2 ≤ z →
   have e : B * (1 / Real.log 2 - 1 / Real.log N) = B / Real.log 2 - B / Real.log N := by ring
   linarith
 
-/-- **Rankin's bound.** Let `ω ≥ 0` satisfy the sieve-dimension condition
+/-- **Rankin's bound.** Let `ω(p) ≥ 0` at the sifting primes `p` (values of `ω` elsewhere are
+irrelevant) and satisfy the sieve-dimension condition
 `∑_{p ≤ z, P p} ω(p) log p / p ≤ κ log z + B` for `z ≥ 2`. Then, writing
 `ω(d) = ∏_{p ∣ d} ω(p)` and `P(z) = ∏_{p ≤ z, P p} p`,
 `∑_{d ∣ P(z), d ≤ t} ω(d) ≤ C t (log z)^κ exp(-log t / log z)` for `t ≥ 1`, `z ≥ 3`. -/
-theorem sum_divisors_siftingPrimorial_le (hω0 : ∀ p, 0 ≤ ω p)
+theorem sum_divisors_siftingPrimorial_le (hω0 : ∀ p, P p → p.Prime → 0 ≤ ω p)
     (hκ : ∀ z : ℝ, 2 ≤ z →
       ∑ p ∈ (primesLE ⌊z⌋₊).filter P, ω p * Real.log p / p ≤ κ * Real.log z + B) :
     ∃ C : ℝ, ∀ t : ℝ, 1 ≤ t → ∀ z : ℝ, 3 ≤ z →
@@ -411,6 +414,9 @@ theorem sum_divisors_siftingPrimorial_le (hω0 : ∀ p, 0 ≤ ω p)
   have hSprime : ∀ p ∈ S, p.Prime := fun p hp => prime_of_mem_primesLE_filter hp
   have hsq : Squarefree (siftingPrimorial P ⌊z⌋₊) := squarefree_siftingPrimorial P _
   have hpf : (siftingPrimorial P ⌊z⌋₊).primeFactors = S := primeFactors_siftingPrimorial P _
+  have hωS : ∀ p ∈ S, 0 ≤ ω p := fun p hp => hω0 p (Finset.mem_filter.mp hp).2 (hSprime p hp)
+  have hpS : ∀ d ∈ (siftingPrimorial P ⌊z⌋₊).divisors, d.primeFactors ⊆ S := fun d hd =>
+    hpf ▸ Nat.primeFactors_mono (Nat.dvd_of_mem_divisors hd) (siftingPrimorial_ne_zero P _)
   set g : ArithmeticFunction ℝ :=
     ArithmeticFunction.prodPrimeFactors (fun p => ω p * (p : ℝ) ^ (-δ)) with hg
   have heuler := (ArithmeticFunction.IsMultiplicative.prodPrimeFactors
@@ -419,18 +425,17 @@ theorem sum_divisors_siftingPrimorial_le (hω0 : ∀ p, 0 ≤ ω p)
     fun d hd => ArithmeticFunction.prodPrimeFactors_apply hd
   have hgp : ∀ p : ℕ, p.Prime → g p = ω p * (p : ℝ) ^ (-δ) := fun p hp => by
     rw [hgd p hp.ne_zero, hp.primeFactors, Finset.prod_singleton]
-  have hg0 : ∀ d : ℕ, 0 ≤ g d := by
-    intro d
-    rcases eq_or_ne d 0 with rfl | hd
-    · simp
-    · rw [hgd d hd]
-      exact Finset.prod_nonneg fun p _ => mul_nonneg (hω0 p) (by positivity)
+  have hg0 : ∀ d ∈ (siftingPrimorial P ⌊z⌋₊).divisors, 0 ≤ g d := by
+    intro d hdD
+    rw [hgd d (Nat.ne_of_gt (Nat.pos_of_mem_divisors hdD))]
+    exact Finset.prod_nonneg fun p hp => mul_nonneg (hωS p (hpS d hdD hp)) (by positivity)
   -- Rankin's trick
   have step1 : ∑ d ∈ (siftingPrimorial P ⌊z⌋₊).divisors with ((d : ℕ) : ℝ) ≤ t,
       ∏ p ∈ d.primeFactors, ω p ≤ t ^ δ * ∑ d ∈ (siftingPrimorial P ⌊z⌋₊).divisors, g d := by
     rw [Finset.mul_sum]
     calc _ ≤ ∑ d ∈ (siftingPrimorial P ⌊z⌋₊).divisors with ((d : ℕ) : ℝ) ≤ t, t ^ δ * g d := by
           refine Finset.sum_le_sum fun d hd => ?_
+          have hdD := (Finset.mem_filter.mp hd).1
           simp only [Finset.mem_filter, Nat.mem_divisors] at hd
           obtain ⟨⟨hdvd, -⟩, hdt⟩ := hd
           have hdsq : Squarefree d := hsq.squarefree_of_dvd hdvd
@@ -439,7 +444,8 @@ theorem sum_divisors_siftingPrimorial_le (hω0 : ∀ p, 0 ≤ ω p)
             Real.finsetProd_rpow _ _ (fun p _ => by positivity),
             ← Nat.cast_prod, Nat.prod_primeFactors_of_squarefree hdsq,
             Real.rpow_neg (by positivity)]
-          have hW : 0 ≤ ∏ p ∈ d.primeFactors, ω p := Finset.prod_nonneg fun p _ => hω0 p
+          have hW : 0 ≤ ∏ p ∈ d.primeFactors, ω p :=
+            Finset.prod_nonneg fun p hp => hωS p (hpS d hdD hp)
           have hdpos : (0 : ℝ) < d := by exact_mod_cast Nat.pos_of_ne_zero hd0
           have hdδ : (0 : ℝ) < (d : ℝ) ^ δ := by positivity
           have hdt' : (d : ℝ) ^ δ ≤ t ^ δ := Real.rpow_le_rpow hdpos.le hdt hδpos.le
@@ -447,14 +453,18 @@ theorem sum_divisors_siftingPrimorial_le (hω0 : ∀ p, 0 ≤ ω p)
             (∏ p ∈ d.primeFactors, ω p) * (t ^ δ / (d : ℝ) ^ δ) by ring]
           exact le_mul_of_one_le_right hW ((one_le_div hdδ).mpr hdt')
       _ ≤ _ := Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
-          (fun d _ _ => mul_nonneg (by positivity) (hg0 d))
+          (fun d hd _ => mul_nonneg (by positivity) (hg0 d hd))
   -- Euler product and `1 + y ≤ e^y`
   have step2 : ∑ d ∈ (siftingPrimorial P ⌊z⌋₊).divisors, g d ≤
       Real.exp (∑ p ∈ S, ω p * (p : ℝ) ^ (-δ)) := by
     rw [← heuler, hpf]
     calc ∏ p ∈ S, (1 + g p) = ∏ p ∈ S, (1 + ω p * (p : ℝ) ^ (-δ)) :=
           Finset.prod_congr rfl fun p hp => by rw [hgp p (hSprime p hp)]
-      _ ≤ _ := Real.prod_one_add_le_exp_sum S fun i => mul_nonneg (hω0 i) (by positivity)
+      _ ≤ ∏ p ∈ S, Real.exp (ω p * (p : ℝ) ^ (-δ)) :=
+          Finset.prod_le_prod₀ (fun i hi => add_nonneg zero_le_one
+            (mul_nonneg (hωS i hi) (by positivity)))
+            fun i _ => (add_comm 1 _).le.trans (Real.add_one_le_exp _)
+      _ = _ := (Real.exp_sum _ _).symm
   have hneg : -δ = 1 / Real.log z - 1 := by rw [hδ, hη]; ring
   have step3 : ∑ p ∈ S, ω p * (p : ℝ) ^ (-δ) ≤
       ∑ p ∈ S, ω p / p + E * η * ∑ p ∈ S, ω p * Real.log p / p := by
@@ -469,7 +479,7 @@ theorem sum_divisors_siftingPrimorial_le (hω0 : ∀ p, 0 ≤ ω p)
     rw [hneg]
     calc ω p * (p : ℝ) ^ (1 / Real.log z - 1)
         ≤ ω p * ((p : ℝ)⁻¹ + E * η * (Real.log p / p)) :=
-          mul_le_mul_of_nonneg_left h (hω0 p)
+          mul_le_mul_of_nonneg_left h (hωS p hp)
       _ = ω p / p + E * η * (ω p * Real.log p / p) := by ring
   have hlp : E * η * ∑ p ∈ S, ω p * Real.log p / p ≤ E * (κ + |B|) := by
     have h := hκ z (by linarith)
@@ -501,7 +511,8 @@ theorem sum_divisors_siftingPrimorial_le (hω0 : ∀ p, 0 ≤ ω p)
 /-- The tail of the sifted divisor sum: under the hypotheses of
 `Nat.sum_divisors_siftingPrimorial_le`, for every `c > 0`,
 `∑_{d ∣ P(z), d > c x} ω(d) / d ≤ K (log z)^{κ+1} exp(-log x / log z)` for `x ≥ 1`, `z ≥ 3`. -/
-theorem sum_divisors_siftingPrimorial_div_le (c : ℝ) (hω0 : ∀ p, 0 ≤ ω p)
+theorem sum_divisors_siftingPrimorial_div_le (c : ℝ)
+    (hω0 : ∀ p, P p → p.Prime → 0 ≤ ω p)
     (hκ : ∀ z : ℝ, 2 ≤ z →
       ∑ p ∈ (primesLE ⌊z⌋₊).filter P, ω p * Real.log p / p ≤ κ * Real.log z + B)
     (hc : 0 < c) :
@@ -517,7 +528,11 @@ theorem sum_divisors_siftingPrimorial_div_le (c : ℝ) (hω0 : ∀ p, 0 ≤ ω p
   intro x hx z hz
   set D := (siftingPrimorial P ⌊z⌋₊).divisors with hD
   set W : ℕ → ℝ := fun d => ∏ p ∈ d.primeFactors, ω p with hW
-  have hW0 : ∀ d, 0 ≤ W d := fun d => Finset.prod_nonneg fun p _ => hω0 p
+  have hW0 : ∀ d ∈ D, 0 ≤ W d := fun d hd => Finset.prod_nonneg fun p hp => by
+    have hpD : p ∈ (siftingPrimorial P ⌊z⌋₊).primeFactors :=
+      Nat.primeFactors_mono (Nat.dvd_of_mem_divisors hd) (siftingPrimorial_ne_zero P _) hp
+    rw [primeFactors_siftingPrimorial] at hpD
+    exact hω0 p (Finset.mem_filter.mp hpD).2 (prime_of_mem_primesLE_filter hpD)
   have hlog3 : 1 < Real.log 3 := (Real.lt_log_iff_exp_lt (by norm_num)).2 Real.exp_one_lt_three
   set L := Real.log z with hL
   have hL1 : 1 < L := hlog3.trans_le (Real.log_le_log (by norm_num) hz)
@@ -544,11 +559,11 @@ theorem sum_divisors_siftingPrimorial_div_le (c : ℝ) (hω0 : ∀ p, 0 ≤ ω p
           ≤ ∑ d ∈ D with 2 ^ k * y < ((d : ℕ) : ℝ) ∧ ((d : ℕ) : ℝ) ≤ t, W d / (2 ^ k * y) := by
             refine Finset.sum_le_sum fun d hd => ?_
             have hd' := (Finset.mem_filter.mp hd).2.1
-            exact div_le_div_of_nonneg_left (hW0 d) hk0 hd'.le
+            exact div_le_div_of_nonneg_left (hW0 d (Finset.mem_filter.mp hd).1) hk0 hd'.le
         _ ≤ ∑ d ∈ D with ((d : ℕ) : ℝ) ≤ t, W d / (2 ^ k * y) := by
             refine Finset.sum_le_sum_of_subset_of_nonneg (fun d hd => ?_) ?_
             · simp only [Finset.mem_filter] at hd ⊢; exact ⟨hd.1, hd.2.2⟩
-            · intro d _ _; exact div_nonneg (hW0 d) hk0.le
+            · intro d hd _; exact div_nonneg (hW0 d (Finset.mem_filter.mp hd).1) hk0.le
         _ = (∑ d ∈ D with ((d : ℕ) : ℝ) ≤ t, W d) / (2 ^ k * y) := by rw [Finset.sum_div]
         _ ≤ (C' * t * L ^ κ * Real.exp (-(Real.log t / L))) / (2 ^ k * y) := by
             gcongr
@@ -584,11 +599,11 @@ theorem sum_divisors_siftingPrimorial_div_le (c : ℝ) (hω0 : ∀ p, 0 ≤ ω p
       rw [Finset.sum_range_succ, mul_add]
       refine le_trans ?_ (_root_.add_le_add ih (hblock k))
       rw [Finset.sum_filter, Finset.sum_filter, Finset.sum_filter, ← Finset.sum_add_distrib]
-      refine Finset.sum_le_sum fun d _ => ?_
+      refine Finset.sum_le_sum fun d hdD => ?_
       have h2 : (2 : ℝ) ^ k * y ≤ 2 ^ (k + 1) * y := by
         rw [pow_succ]; nlinarith [pow_pos (by norm_num : (0 : ℝ) < 2) k]
       have h1 : y ≤ 2 ^ k * y := le_mul_of_one_le_left hy0.le (one_le_pow₀ (by norm_num))
-      have hnn : 0 ≤ W d / d := div_nonneg (hW0 d) (Nat.cast_nonneg d)
+      have hnn : 0 ≤ W d / d := div_nonneg (hW0 d hdD) (Nat.cast_nonneg d)
       split_ifs with c1 c2 <;>
         first
         | linarith

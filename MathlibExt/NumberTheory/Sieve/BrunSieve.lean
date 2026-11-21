@@ -222,7 +222,8 @@ Zbl 0298.10026. Brun's pure sieve in the modern form of these accounts, for a ge
 The method originates in V. Brun, "Le crible d'Eratosthène et le théorème de Goldbach",
 Skr. Vidensk.-Selsk. Christiania 1920, No. 3, JFM 47.0162.02. -/
 theorem abs_sum_brunPsi_mul_div_le (P : ℕ → Prop) [DecidablePred P] (ω' : ℕ → ℝ) (c c₁ c₂ : ℝ)
-    (hω0 : ∀ p, 0 ≤ ω' p) (hωp : ∀ p, P p → p.Prime → ω' p < p) (hωc : ∀ p, ω' p ≤ c)
+    (hω0 : ∀ p, P p → p.Prime → 0 ≤ ω' p) (hωp : ∀ p, P p → p.Prime → ω' p < p)
+    (hωc : ∀ p, P p → p.Prime → ω' p ≤ c)
     (hsum : ∀ z : ℝ, 3 ≤ z →
       ∑ p ∈ (Nat.primesLE ⌊z⌋₊).filter P, ω' p / p ≤ c₁ * Real.log (Real.log z) + c₂) :
     ∃ c₄ K : ℝ, ∀ z : ℝ, 3 ≤ z → ∀ r : ℕ,
@@ -232,7 +233,7 @@ theorem abs_sum_brunPsi_mul_div_le (P : ℕ → Prop) [DecidablePred P] (ω' : �
         K * (c₁ * Real.log (Real.log z) + c₄) ^ r / r.factorial * Real.log z ^ c₁ := by
   set a : ℕ → ℝ := fun p => ω' p / ((p : ℝ) - ω' p) with ha_def
   have ha0 : ∀ p, P p → p.Prime → 0 ≤ a p := fun p hP hp =>
-    div_nonneg (hω0 p) (by linarith [hωp p hP hp])
+    div_nonneg (hω0 p hP hp) (by linarith [hωp p hP hp])
   set Q : Finset ℕ := (Finset.range (⌊2 * c⌋₊ + 1)).filter (fun p => P p ∧ p.Prime) with hQ
   set B : ℝ := ∑ p ∈ Q, a p with hB
   refine ⟨c₂ + 4 * c ^ 2 + B, Real.exp (c₂ + 4 * c ^ 2 + B), ?_⟩
@@ -295,13 +296,13 @@ theorem abs_sum_brunPsi_mul_div_le (P : ℕ → Prop) [DecidablePred P] (ω' : �
         (if (p : ℝ) ≤ 2 * c then a p else 0) := by
       intro p hp
       have hp0 : (0 : ℝ) < p := by exact_mod_cast (hSp p hp).1.pos
-      have h1 : 0 ≤ ω' p / p := div_nonneg (hω0 p) hp0.le
+      have h1 : 0 ≤ ω' p / p := div_nonneg (hω0 p (hSp p hp).2.1 (hSp p hp).1) hp0.le
       have h2 : 0 ≤ 2 * c ^ 2 * ((p : ℝ) ^ 2)⁻¹ := by positivity
       split_ifs with hpc
       · linarith
       · push Not at hpc
-        have hw := hωc p
-        have hw0 := hω0 p
+        have hw := hωc p (hSp p hp).2.1 (hSp p hp).1
+        have hw0 := hω0 p (hSp p hp).2.1 (hSp p hp).1
         have hqw : (p : ℝ) / 2 < p - ω' p := by linarith
         have hqw0 : 0 < (p : ℝ) - ω' p := by linarith
         simp only [ha_def]
