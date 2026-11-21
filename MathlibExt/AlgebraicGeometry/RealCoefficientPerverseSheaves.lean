@@ -1,0 +1,110 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+module
+
+public import MathlibExt.AlgebraicGeometry.PerverseSheaves
+public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRingsExact
+
+/-!
+# Actual perverse realizations with a real coefficient subfield
+
+The coefficient is an actual subfield A of R, with its canonical embedding
+into C. The sheaf and derived categories, finite-rank local systems,
+algebraic constructibility, stalk/costalk supports and characterized middle
+perverse heart are the native constructions with these exact coefficients.
+This extends the existing rational perverse dictionary; it supplies no new
+perverse/Hodge theorem oracle and assumes no Hodge-module preservation law.
+
+Sources: Morihiko Saito, arXiv:1307.2140v5, Introduction and section 1.1;
+the existing PerverseSheaves source credits for the middle t-structure;
+Mathlib 56a005855ea17e0b0958f73ec801ae140b0a1679,
+ModuleCat/ChangeOfRings (Jujian Zhang) and sheaf/derived-category
+primitives, Apache 2.0. Ordinary coefficient extension is the literal
+sectionwise native tensor followed by native sheafification.
+-/
+
+set_option backward.isDefEq.respectTransparency false
+set_option backward.isDefEq.respectTransparency.instanceSearchTypes false
+@[expose] public noncomputable section
+
+namespace MathlibExt.AlgebraicGeometry.RealCoefficientPerverseSheaves
+
+open _root_.CategoryTheory _root_.CategoryTheory.Limits TopologicalSpace
+open _root_.AlgebraicGeometry PerverseSheaves ComplexAnalytification Opposite
+
+attribute [local instance] HasDerivedCategory.standard
+
+variable (A : Subfield ℝ)
+
+def complexEmbedding : A →+* ℂ := Complex.ofRealHom.comp A.subtype
+
+@[simp] theorem complexEmbedding_apply (a : A) : complexEmbedding A a = (a : ℝ) := rfl
+
+@[simp] theorem complexEmbedding_star (a : A) : star (complexEmbedding A a) =
+    complexEmbedding A a := by simp
+
+abbrev CoefficientSheaf (Z : TopCat.{0}) := TopCat.Sheaf (ModuleCat.{0} A) Z
+abbrev CoefficientDerived (Z : TopCat.{0}) := DerivedCategory (CoefficientSheaf A Z)
+
+def constantCoefficient (Z : TopCat.{0}) : CoefficientSheaf A Z :=
+  (constantSheaf (Opens.grothendieckTopology Z) (ModuleCat.{0} A)).obj (ModuleCat.of A A)
+
+def IsFiniteRankLocalSystem (Z : TopCat.{0}) (L : CoefficientSheaf A Z) : Prop :=
+  ∀ x : Z, ∃ U : Opens Z, x ∈ U ∧ ∃ V : ModuleCat.{0} A, FiniteDimensional A V ∧
+    Nonempty ((TopCat.Sheaf.pullback (ModuleCat.{0} A) (openInclusion Z U)).obj L ≅
+      (constantSheaf (Opens.grothendieckTopology (TopCat.of U)) (ModuleCat.{0} A)).obj V)
+
+def boundedConstructible (X : ComplexScheme) : ObjectProperty (CoefficientDerived A (space X)) :=
+  fun K ↦ (∃ a b : ℤ, ∀ j : ℤ, j < a ∨ b < j →
+    IsZero ((DerivedCategory.homologyFunctor _ j).obj K)) ∧
+    ∃ S : AlgebraicStratification X, ∀ a j,
+      IsFiniteRankLocalSystem A (space (S.stratum a))
+        ((TopCat.Sheaf.pullback (ModuleCat.{0} A) (spaceMap (S.inclusion a))).obj
+          ((DerivedCategory.homologyFunctor _ j).obj K))
+
+def stalkSupport (X : ComplexScheme) (K : CoefficientDerived A (space X)) (j : ℤ) : Set X.left :=
+  ComplexPoints.schemePoint '' {p : space X | ¬ IsZero
+    (((DerivedCategory.homologyFunctor _ j).obj K).presheaf.stalk p)}
+
+def skyscraper (X : ComplexScheme) (p : space X) : CoefficientDerived A (space X) := by
+  classical
+  exact (DerivedCategory.singleFunctor _ 0).obj (skyscraperSheaf p (ModuleCat.of A A))
+
+def costalkSupport (X : ComplexScheme) (K : CoefficientDerived A (space X)) (j : ℤ) : Set X.left :=
+  ComplexPoints.schemePoint '' {p : space X | ¬ Subsingleton (skyscraper A X p ⟶ K⟦j⟧)}
+
+class PerverseTheory (X : ComplexScheme) [IsComplexVariety X] where
+  [isTriangulated : (boundedConstructible A X).IsTriangulated]
+  t : _root_.CategoryTheory.Triangulated.TStructure (boundedConstructible A X).FullSubcategory
+  le_iff : ∀ K m, t.le m K ↔ ∀ j,
+    SupportDimensionLE X (stalkSupport A X K.obj j) (m - j)
+  ge_iff : ∀ K m, t.ge m K ↔ ∀ j,
+    SupportDimensionLE X (costalkSupport A X K.obj j) (j - m)
+
+attribute [instance] PerverseTheory.isTriangulated
+
+def perverseTStructure (X : ComplexScheme) [IsComplexVariety X] [PerverseTheory A X] :=
+  PerverseTheory.t (A := A) (X := X)
+
+abbrev Perverse (X : ComplexScheme) [IsComplexVariety X] [PerverseTheory A X] :=
+  (perverseTStructure A X).heart.FullSubcategory
+
+def perverseCohomology (X : ComplexScheme) [IsComplexVariety X] [PerverseTheory A X]
+    (j : ℤ) (K : (boundedConstructible A X).FullSubcategory) : Perverse A X :=
+  ⟨((perverseTStructure A X).truncGELE 0 0).obj (K⟦j⟧), by
+    rw [_root_.CategoryTheory.Triangulated.TStructure.mem_heart_iff]
+    constructor <;> infer_instance⟩
+
+def extendCoefficients (Z : TopCat.{0}) :
+    CoefficientSheaf A Z ⥤ TopCat.Sheaf (ModuleCat.{0} ℂ) Z :=
+  sheafToPresheaf (Opens.grothendieckTopology Z) (ModuleCat.{0} A) ⋙
+    (Functor.whiskeringRight (Opens Z)ᵒᵖ (ModuleCat.{0} A) (ModuleCat.{0} ℂ)).obj
+      (ModuleCat.extendScalars (complexEmbedding A)) ⋙
+        presheafToSheaf (Opens.grothendieckTopology Z) (ModuleCat.{0} ℂ)
+
+end MathlibExt.AlgebraicGeometry.RealCoefficientPerverseSheaves
