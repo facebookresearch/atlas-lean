@@ -32,11 +32,13 @@ range statement.
 
 The scope is the closed-form saturation, its range, the bridge to the
 source form, the zero-head value, the strict bound at a finite negative
-head, and two controls on the exponent restriction. No hydraulic
-conductivity, Richards equation, hysteresis model, calibrated parameter,
-dry-limit statement, or saturated-branch extension (`h > 0`) is included.
-Water contents `θ_r` and `θ_s` enter only through the definition of
-effective saturation quoted above.
+head, two controls on the exponent restriction, and the volumetric
+water-content reading `θ = θ_r + (θ_s - θ_r) * S_e` of Eq. [2]: its
+bounds `θ_r < θ ≤ θ_s` on the unsaturated branch and the `θ_s ≤ θ_r`
+control. No hydraulic conductivity, Richards equation, hysteresis model,
+calibrated parameter, dry-limit statement, or saturated-branch extension
+(`h > 0`) is included. No separate water-content definition is
+introduced; `θ` is written inline as above.
 
 ## ii. Key results
 
@@ -53,10 +55,17 @@ effective saturation quoted above.
   `n = 1` the saturation is identically `1`, so the range endpoint still
   holds but the strict unsaturated bound fails; for `0 < n < 1` the upper
   bound `S_e ≤ 1` itself fails.
+- `EarthScience.vanGenuchtenSe_eq_div_iff_waterContent`: the Eq. [2]
+  bridge between effective saturation and water content.
+- `EarthScience.vanGenuchten_waterContent_mem_Icc`: the water content
+  lies in `[θ_r, θ_s]` and strictly exceeds `θ_r`.
+- `EarthScience.vanGenuchten_waterContent_le_residual_of_le`: for
+  `θ_s ≤ θ_r` the water content is at most `θ_r`.
 
 ## iii. Table of contents
 
 - A. Effective saturation and range
+- B. Volumetric water content
 
 ## iv. References
 
@@ -164,5 +173,46 @@ lemma one_lt_vanGenuchtenSe_of_lt_one {α n h : ℝ} (hα : 0 < α) (hn₀ : 0 <
     one_lt_one_add_rpow_base hα hh
   unfold vanGenuchtenSe
   exact Real.one_lt_rpow hbase hexp
+
+/-! ## B. Volumetric water content -/
+
+/-- Eq. [2] bridge (van Genuchten (1980), Eq. [2] on p. 892; the
+water-content form is Eq. [21] with [22] on p. 894): for residual and
+saturated water contents `θr < θs`, a
+water content `θ` has effective saturation `(θ - θr) / (θs - θr)` equal to the
+van Genuchten value at head `h` exactly when
+`θ = θr + (θs - θr) * vanGenuchtenSe α n h`. -/
+theorem vanGenuchtenSe_eq_div_iff_waterContent {θr θs θ α n h : ℝ}
+    (hθ : θr < θs) :
+    (θ - θr) / (θs - θr) = vanGenuchtenSe α n h ↔
+      θ = θr + (θs - θr) * vanGenuchtenSe α n h := by
+  have hne : θs - θr ≠ 0 := sub_ne_zero.mpr (ne_of_gt hθ)
+  rw [div_eq_iff hne]
+  constructor <;> intro h <;> linear_combination h
+
+/-- Water-content bounds: for `θr < θs`, on the unsaturated branch `h ≤ 0`
+with `α > 0` and `n > 1`, the volumetric water content
+`θr + (θs - θr) * S_e(h)` lies in `[θr, θs]` and strictly exceeds `θr`. -/
+theorem vanGenuchten_waterContent_mem_Icc
+    {θr θs α n h : ℝ} (hθ : θr < θs) (hα : 0 < α) (hn : 1 < n) (hh : h ≤ 0) :
+    θr + (θs - θr) * vanGenuchtenSe α n h ∈ Set.Icc θr θs ∧
+      0 < θr + (θs - θr) * vanGenuchtenSe α n h - θr := by
+  obtain ⟨hSe_pos, hSe_le⟩ := vanGenuchtenSe_pos_and_le_one hα hn hh
+  have hd : 0 < θs - θr := sub_pos.mpr hθ
+  have hmul_pos : 0 < (θs - θr) * vanGenuchtenSe α n h := mul_pos hd hSe_pos
+  have hmul_le : (θs - θr) * vanGenuchtenSe α n h ≤ (θs - θr) * 1 :=
+    mul_le_mul_of_nonneg_left hSe_le hd.le
+  rw [mul_one] at hmul_le
+  refine ⟨⟨?_, ?_⟩, ?_⟩ <;> linarith
+
+/-- Control, `θs ≤ θr`: on the unsaturated branch with `α > 0` and `n > 1`,
+the water content is at most `θr`, so the positive excess needs `θr < θs`. -/
+lemma vanGenuchten_waterContent_le_residual_of_le
+    {θr θs α n h : ℝ} (hθ : θs ≤ θr) (hα : 0 < α) (hn : 1 < n) (hh : h ≤ 0) :
+    θr + (θs - θr) * vanGenuchtenSe α n h ≤ θr := by
+  obtain ⟨hSe_pos, _⟩ := vanGenuchtenSe_pos_and_le_one hα hn hh
+  have hmul : (θs - θr) * vanGenuchtenSe α n h ≤ 0 :=
+    mul_nonpos_of_nonpos_of_nonneg (sub_nonpos.mpr hθ) hSe_pos.le
+  linarith
 
 end EarthScience
