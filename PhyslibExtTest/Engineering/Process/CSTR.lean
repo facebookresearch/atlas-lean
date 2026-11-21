@@ -10,6 +10,7 @@ module
 import PhyslibExt.Engineering.Process.CSTR
 
 import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 
 /-!
 # Tests for the CSTR explicit solution
@@ -65,5 +66,38 @@ example (t : ℝ) (ht : 0 ≤ t) : 0 ≤ solution 1 1 1 0 3 t := by
   have hcin : (0 : ℝ) ≤ 0 := by norm_num
   have hc0 : (0 : ℝ) ≤ 3 := by norm_num
   exact solution_nonneg hV hQ hk hcin hc0 ht
+
+-- Two differentiable solutions with the same initial value agree: the
+-- explicit solution agrees with itself through the uniqueness theorem on
+-- a nontrivial interval.
+example : Set.EqOn (solution 1 1 1 2 0) (solution 1 1 1 2 0)
+    (Set.Icc 0 2) := by
+  have hV : (0:ℝ) < 1 := by norm_num
+  have hQ : (0:ℝ) < 1 := by norm_num
+  have hk : (0:ℝ) ≤ 1 := by norm_num
+  apply eq_solution_of_hasDerivAt hV hQ hk
+  · exact HasDerivAt.continuousOn
+      (fun t _ => solution_hasDerivAt 1 1 1 2 0 t hV hQ hk)
+  · intro t _
+    exact (solution_hasDerivAt 1 1 1 2 0 t hV hQ hk).hasDerivWithinAt
+  · rfl
+
+-- Different initial values need not agree: at time zero the solutions
+-- from 0 and from 3 already differ by their initial values.
+example : solution 1 1 1 2 0 0 ≠ solution 1 1 1 2 3 0 := by
+  rw [solution_initial, solution_initial]
+  norm_num
+
+-- The decaying difference of the two initial data at a later time is the
+-- initial difference times the exponential factor.
+example (t : ℝ) :
+    solution 1 1 1 2 3 t - solution 1 1 1 2 0 t = 3 * Real.exp (-2 * t) := by
+  have hsteady : steady 1 1 1 2 = 1 := by
+    unfold steady
+    norm_num
+  have hrate : (1:ℝ) / 1 + 1 = 2 := by norm_num
+  unfold solution
+  rw [hsteady, hrate]
+  ring
 
 end Engineering.Process.CSTR.Tests
