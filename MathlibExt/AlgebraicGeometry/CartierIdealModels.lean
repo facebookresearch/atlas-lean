@@ -1,0 +1,36 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+module
+
+public import Mathlib.AlgebraicGeometry.IdealSheaf.Functorial
+
+/-!
+# Effective Cartier ideal data
+
+An effective Cartier ideal has an actual single generator on affine open
+neighborhoods, and multiplication by that generator is injective. This is
+the local non-zero-divisor condition on the native scheme ideal sheaf.
+
+Reference: Stacks Project, Tag 01WQ. Generic Cartier and blowup properties
+are already proved in AxiomMath/Stacks; no such provider is requested here.
+-/
+
+@[expose] public noncomputable section
+
+namespace MathlibExt.AlgebraicGeometry.CartierIdealModels
+
+open _root_.AlgebraicGeometry
+
+universe u
+
+def IsEffectiveCartier {X : Scheme.{u}} (I : X.IdealSheafData) : Prop :=
+  ∀ x : X, ∃ U : X.affineOpens, x ∈ U.1 ∧ ∃ a : Γ(X, U.1),
+    Function.Injective (fun b : Γ(X, U.1) ↦ a * b) ∧
+      I.ideal U = Ideal.span {a}
+
+end MathlibExt.AlgebraicGeometry.CartierIdealModels
