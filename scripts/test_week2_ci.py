@@ -404,6 +404,27 @@ class SourceDiagnosticsTests(DiagnosticFixture):
         self.assertIn("Candidate groups: 4", result.stdout)
 
 
+def step_scripts(workflow: str, step_id: str) -> list[str]:
+    """The `run: |` blocks of the steps with this id, read from the workflow's
+    text: steps start with `      - `, their keys are indented by 8 spaces and
+    a literal block's lines by at least 10."""
+    scripts = []
+    for step in workflow.split("\n      - ")[1:]:
+        lines = ("        " + step).splitlines()
+        if f"        id: {step_id}" not in lines:
+            continue
+        for index, line in enumerate(lines):
+            if line != "        run: |":
+                continue
+            block = []
+            for body in lines[index + 1:]:
+                if body.strip() and not body.startswith(" " * 10):
+                    break
+                block.append(body)
+            scripts.append(textwrap.dedent("\n".join(block)).strip("\n") + "\n")
+    return scripts
+
+
 class WorkflowTests(DiagnosticFixture):
     # Use the actual run block, with miniature libraries and an isolated test
     # sentinel to avoid recursively running this workflow test inside itself.
@@ -422,13 +443,24 @@ class WorkflowTests(DiagnosticFixture):
         self.assertNotIn("continue-on-error", workflow)
         self.assertIn('PYTHONDONTWRITEBYTECODE: "1"', workflow)
         # The job also runs the merge-queue check (CONTRIBUTING.md, How PRs
-        # merge) in a step of its own; select the diagnostics step by its id.
-        steps = [step for step in workflow.split("\n      - ")
-                 if "\n        id: diagnostics\n" in step]
-        self.assertEqual(len(steps), 1, "expected one step with id diagnostics")
-        blocks = steps[0].split("        run: |\n")
-        self.assertEqual(len(blocks), 2, "expected one executable block in that step")
-        return textwrap.dedent(blocks[1])
+        # merge) in steps of its own; select the diagnostics step by its id.
+        scripts = step_scripts(workflow, "diagnostics")
+        self.assertEqual(len(scripts), 1, "expected one run block in the step with id diagnostics")
+        return scripts[0]
+
+    def test_diagnostics_step_is_found_whatever_its_key_order(self) -> None:
+        workflow = (
+            ROOT.parent / ".github/workflows/source-diagnostics.yml"
+        ).read_text()
+        expected = step_scripts(workflow, "diagnostics")
+        reordered = workflow.replace(
+            "      - name: Test and run source diagnostics\n        id: diagnostics\n",
+            "      - id: diagnostics\n        name: Test and run source diagnostics\n",
+        )
+        self.assertNotEqual(reordered, workflow)
+        reordered = reordered.rstrip("\n") + "\n        timeout-minutes: 8\n"
+        self.assertEqual(len(expected), 1)
+        self.assertEqual(step_scripts(reordered, "diagnostics"), expected)
 
     def prepare_workflow(self) -> None:
         scripts = self.root / "scripts"

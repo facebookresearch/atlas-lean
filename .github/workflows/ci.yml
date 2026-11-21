@@ -54,19 +54,21 @@ jobs:
       # (CONTRIBUTING.md, How PRs merge). The test parses the workflows with
       # PyYAML, so it runs here rather than in check.sh preflight. Source
       # diagnostics runs it too, so a change that makes this workflow skip its
-      # jobs is still caught.
+      # jobs is still caught. The test requires its own step to be exactly
+      # this command, with no condition.
+      - name: Install PyYAML for the merge-queue test
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/merge-queue-venv"
+          "$RUNNER_TEMP/merge-queue-venv/bin/python" -m pip install \
+            --disable-pip-version-check -r scripts/requirements-inventory.txt
+
       - name: Test that the required checks report on merge groups
         env:
           PYTHONDONTWRITEBYTECODE: "1"
-        run: |
-          set -euo pipefail
-          work_dir="$(mktemp -d "${RUNNER_TEMP}/atlas-merge-queue.XXXXXX")"
-          trap 'rm -rf "$work_dir"' EXIT
-          python3 -m venv "$work_dir/venv"
-          "$work_dir/venv/bin/python" -m pip install --disable-pip-version-check \
-            -r scripts/requirements-inventory.txt
-          "$work_dir/venv/bin/python" -m unittest discover \
-            -s scripts -p test_merge_queue_checks.py -v
+        run: >-
+          "$RUNNER_TEMP/merge-queue-venv/bin/python" -m unittest discover
+          -s scripts -p test_merge_queue_checks.py -v
 
   build:
     needs: preflight

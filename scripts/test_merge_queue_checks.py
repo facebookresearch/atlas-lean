@@ -22,9 +22,13 @@ fails if a required workflow:
   creates for each merge group: that run would report the same check on the
   same commit, and could share the merge group's concurrency group.
 
-It also fails unless both `repository integrity` and `source-diagnostics` run
-this whole test, unconditionally, so a change that makes one workflow skip its
-jobs is still caught by the other. The required checks are the ones listed under "How PRs merge" in
+It also fails if a required workflow gains another event that could report
+the same checks on a PR's head (such as `pull_request_target`), or unless both
+`repository integrity` and `source-diagnostics` have a step that is exactly
+the command that runs this whole test, with no condition, so that a change
+that makes one workflow skip its jobs is still caught by the other.
+
+The required checks are the ones listed under "How PRs merge" in
 CONTRIBUTING.md. Locally:
 
     python3 -m pip install -r scripts/requirements-inventory.txt
@@ -55,11 +59,15 @@ REQUIRED = {
 }
 PR_TYPES = {"opened", "synchronize", "reopened"}
 FILTERS = {"branches", "branches-ignore", "paths", "paths-ignore"}
-# The checks whose jobs run this test, and the command line they must use:
-# the whole test file, with no selection of tests and nothing after it.
+# The checks whose jobs run this test, and the whole `run` of the step that
+# does it: an earlier step installs PyYAML into that virtual environment.
 RUN_THIS_TEST = ("repository integrity", "source-diagnostics")
-INVOCATION = re.compile(
-    r"-m unittest discover -s scripts -p test_merge_queue_checks\.py(?: -v)?$", re.M)
+COMMAND = ('"$RUNNER_TEMP/merge-queue-venv/bin/python" -m unittest discover '
+           "-s scripts -p test_merge_queue_checks.py -v")
+STEP_KEYS = {"name", "id", "env", "run", "timeout-minutes"}
+# Events a required workflow may run on besides its PR event: none of them
+# reports on a PR's head commit.
+OTHER_EVENTS = {"push", "merge_group", "workflow_dispatch", "schedule"}
 # The queue creates a branch under this prefix for each merge group; a branch
 # filter excludes them all only through one of these patterns.
 QUEUE_PREFIX = "gh-readonly-queue/"
@@ -168,11 +176,8 @@ def may_be_named(name: str, check: str) -> bool:
 
 
 def runs_this_test(step) -> bool:
-    if not isinstance(step, dict) or {"if", "continue-on-error"} & set(step):
-        return False
-    script = re.sub(r"\\\n\s*", " ", str(step.get("run", "")))
-    script = "\n".join(" ".join(line.split()) for line in script.splitlines())
-    return INVOCATION.search(script) is not None
+    return (isinstance(step, dict) and set(step) <= STEP_KEYS
+            and " ".join(str(step.get("run", "")).split()) == COMMAND)
 
 
 def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
@@ -231,6 +236,10 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
                 found.append(f"{name} does not run on {pr_event} {sorted(missing)}")
         if "push" in triggers and pushes_to_queue_branches(triggers["push"]):
             found.append(f"{name} runs on pushes to the queue's branches")
+        extra = sorted(set(triggers) - OTHER_EVENTS - {pr_event})
+        if extra:
+            found.append(f"{name} also runs on {extra}, which could report its checks "
+                         "for another tree")
         (_, job_id), = reporters[check]
         job = workflow["jobs"][job_id]
         if "${{" in job.get("name", ""):
@@ -261,8 +270,7 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
         if job.get("concurrency"):
             found.append(f"{check!r} has a job-level concurrency group, which is unverified")
         if check in RUN_THIS_TEST and not any(map(runs_this_test, as_list(job.get("steps")))):
-            found.append(f"{check!r} does not run all of test_merge_queue_checks.py "
-                         "unconditionally")
+            found.append(f"{check!r} has no step that is exactly {COMMAND!r}")
     return found
 
 
@@ -276,8 +284,7 @@ FIXTURE = {
                "merge_group": {"types": ["checks_requested"]}},
         "concurrency": {"group": "${{ github.workflow }}-${{ github.ref }}"},
         "jobs": {"preflight": {"name": "repository integrity",
-                               "steps": [{"run": "python -m unittest discover -s scripts "
-                                                 "-p test_merge_queue_checks.py -v"}]},
+                               "steps": [{"run": "pip install"}, {"run": COMMAND}]},
                  "build": {"needs": "preflight"}},
     },
     "source-diagnostics.yml": {
@@ -285,8 +292,7 @@ FIXTURE = {
         "on": {"push": {"branches": "main"}, "pull_request": "", "merge_group": ""},
         "jobs": {"source-diagnostics": {"steps": [
             {"uses": "actions/checkout"},
-            {"run": "set -eu\n\"$venv/python\" -m unittest discover \\\n"
-                    "  -s scripts -p test_merge_queue_checks.py\n"}]}},
+            {"name": "Test", "run": COMMAND.replace(" -s", "\n-s") + "\n"}]}},
     },
     "bump-guard.yml": {
         "name": "Bump guard",
@@ -445,21 +451,33 @@ class MergeQueueChecks(unittest.TestCase):
                              "pushes to the queue's branches"),
             "this test dropped from Source diagnostics": (
                 put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
-                    [{"uses": "actions/checkout"}]), "does not run all of"),
+                    [{"uses": "actions/checkout"}]), "has no step that is exactly"),
             "this test made conditional": (
                 put("ci.yml", "jobs", "preflight", "steps",
-                    [{"if": "github.event_name == 'push'",
-                      "run": "python -m unittest discover -s scripts "
-                             "-p test_merge_queue_checks.py"}]),
-                "does not run all of"),
+                    [{"if": "github.event_name == 'push'", "run": COMMAND}]),
+                "has no step that is exactly"),
             "only some of this test": (
                 put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
-                    [{"run": "python -m unittest discover -s scripts -p test_merge_queue_checks.py"
-                             " -k equivalent_spellings"}]), "does not run all of"),
+                    [{"run": COMMAND + " -k equivalent_spellings"}]),
+                "has no step that is exactly"),
             "failure of this test ignored": (
+                put("ci.yml", "jobs", "preflight", "steps", [{"run": COMMAND + " || true"}]),
+                "has no step that is exactly"),
+            "this test inside a shell condition": (
+                put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
+                    [{"run": 'if [ "$GITHUB_EVENT_NAME" = pull_request ]; then\n'
+                             + COMMAND + "\nfi\n"}]), "has no step that is exactly"),
+            "this test commented out": (
+                put("ci.yml", "jobs", "preflight", "steps", [{"run": "# " + COMMAND}]),
+                "has no step that is exactly"),
+            "this test with continue-on-error": (
                 put("ci.yml", "jobs", "preflight", "steps",
-                    [{"run": "python -m unittest discover -s scripts -p test_merge_queue_checks.py"
-                             " || true"}]), "does not run all of"),
+                    [{"continue-on-error": "true", "run": COMMAND}]),
+                "has no step that is exactly"),
+            "pull_request_target added to CI": (
+                put("ci.yml", "on", "pull_request_target", ""), "also runs on"),
+            "pull_request_review added": (
+                put("source-diagnostics.yml", "on", "pull_request_review", ""), "also runs on"),
         }
         for label, (change, message) in cases.items():
             with self.subTest(label):

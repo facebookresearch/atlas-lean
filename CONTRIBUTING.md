@@ -200,8 +200,8 @@ To queue a PR, use one of:
 
 - **Merge when ready** in the PR's merge box.
 - `gh pr merge <number>`, which needs the repository's **Allow auto-merge**
-  setting: on a queue branch, `gh` (2.105.0 and earlier) always asks GitHub to
-  turn on auto-merge, which GitHub refuses while that setting is off
+  setting: on a queue branch, `gh` 2.105.0 asks GitHub to turn on auto-merge,
+  which GitHub refuses while that setting is off
   ([cli/cli#13398](https://github.com/cli/cli/issues/13398)). With it on, the
   PR is queued at once if its required checks have passed, and otherwise when
   they pass. `--match-head-commit <sha>` checks the head only when you run the
@@ -219,9 +219,10 @@ not support merge queues, and of the GraphQL mutation `mergePullRequest`.
 Scripts and bots that merge directly should switch to `enqueuePullRequest`, or
 to `PUT /repos/{owner}/{repo}/pulls/{number}/merge-async` with
 `"merge_action": "merge_queue"`; both only ever queue. `merge-async` answers
-`202` when it accepts the request; `GET .../merge-async/{uuid}` gives the
-result. A queue request is not a merge: read the PR's state afterwards to learn
-whether it was queued, merged, or removed from the queue.
+`202` when it accepts the request, `200` if the PR is already queued or merged,
+and `409` if another request is pending; `GET .../merge-async/{uuid}` gives a
+request's result. A queue request is not a merge: read the PR's state
+afterwards to learn whether it was queued, merged, or removed from the queue.
 
 Consecutive PRs that pass land together, up to the queue's merge limit, which
 GitHub may exceed by up to half to keep a stack together. The queue removes a PR
@@ -244,14 +245,15 @@ group before it merges:
 Their workflows are configured to run when a PR is opened, updated or reopened,
 and on every merge group; on some fork PRs, CI and Source diagnostics wait until
 a maintainer approves the run. Both CI's `repository integrity` job and Source
-diagnostics run `scripts/test_merge_queue_checks.py`, so a change that makes one
-of them skip its jobs is caught by the other. The test fails if one of these
-workflows loses or filters those triggers, also runs on pushes to the queue's
-branches, can skip the job that reports the check, renames the check or puts an
-expression in its job name, lets another job report (or possibly report) the
-same name, or uses a concurrency group that the test does not know to differ
-between PRs and between merge groups, or that another workflow's group could
-match.
+diagnostics run `scripts/test_merge_queue_checks.py`, each in a step that is
+exactly the test command, so a change that makes one of them skip its jobs is
+caught by the other. The test fails if one of these workflows loses or filters
+those triggers, also runs on pushes to the queue's branches or on another event
+that could report its checks for another tree (such as `pull_request_target`),
+can skip the job that reports the check, renames the check or puts an expression
+in its job name, lets another job report (or possibly report) the same name, or
+uses a concurrency group that the test does not know to differ between PRs and
+between merge groups, or that another workflow's group could match.
 
 The other checks are advisory. The bump guard's `guard` checks Lean and Mathlib
 pin changes on PRs and merge groups; on PRs it runs through
