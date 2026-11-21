@@ -39,8 +39,9 @@ continuous `[0, 1]`-valued process `X`, adapted to a filtration `ℱ` indexed by
 
 * `IsWrightFisherSolution`, `absorptionTime`: the martingale problem and the first time the
   path is at `0` or `1`.
-* `Diffusion.contDiff_kimuraFixation`, `Diffusion.kimuraSlope_pos`,
-  `Diffusion.strictMono_kimuraFixation`: regularity and monotonicity of Kimura's formula.
+* `Diffusion.contDiff_kimuraFixation`: `C²` regularity of Kimura's formula. The slope
+  positivity and strict monotonicity used below are `Diffusion.kimuraSlope_pos` and
+  `Diffusion.strictMono_kimuraFixation` in `WrightFisher`.
 * `ae_exists_absorbed`: a solution is almost surely absorbed in finite time.
 * `measureReal_fixation`: it is eventually fixed with probability `kimuraFixation σ x`.
 * `integral_absorptionTime`: in the neutral case the expected absorption time is
@@ -119,25 +120,6 @@ theorem _root_.MathlibExt.Biology.PopulationGenetics.Diffusion.contDiff_kimuraFi
       funext fun y => by simp [kimuraFixation, h]
     rw [hk]
     exact (contDiff_const.sub ((contDiff_const.mul contDiff_id).exp)).div_const _
-
-/-- The slope constant of Kimura's formula is positive. -/
-theorem _root_.MathlibExt.Biology.PopulationGenetics.Diffusion.kimuraSlope_pos (σ : ℝ) :
-    0 < kimuraSlope σ := by
-  unfold kimuraSlope
-  split_ifs with h
-  · exact one_pos
-  rcases lt_or_gt_of_ne h with hσ | hσ
-  · have : 1 < Real.exp (-2 * σ) := Real.one_lt_exp_iff.2 (by linarith)
-    exact div_pos_of_neg_of_neg (by linarith) (by linarith)
-  · have : Real.exp (-2 * σ) < 1 := Real.exp_lt_one_iff.2 (by linarith)
-    exact div_pos (by linarith) (by linarith)
-
-/-- Kimura's fixation probability is strictly increasing in the initial frequency. -/
-theorem _root_.MathlibExt.Biology.PopulationGenetics.Diffusion.strictMono_kimuraFixation
-    (σ : ℝ) : StrictMono (kimuraFixation σ) :=
-  strictMono_of_deriv_pos fun x => by
-    rw [Diffusion.deriv_kimuraFixation]
-    exact mul_pos (kimuraSlope_pos σ) (Real.exp_pos _)
 
 /-- The polynomial `p_n(y) = -2 ∑_{k < n} (y ^ (k + 2) + (1 - y) ^ (k + 2)) / ((k + 1) (k + 2))`,
 with `p_n'' = -2 ∑_{k < n} (y ^ k + (1 - y) ^ k)`. -/
