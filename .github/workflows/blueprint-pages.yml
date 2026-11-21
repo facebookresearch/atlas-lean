@@ -104,11 +104,15 @@ jobs:
 
       # The graph rules' mechanical checks (docs/BLUEPRINT.md, Graph rules), on
       # the committed tree before lean-facts changes it, and before the Lean
-      # build so they report fast. Report-only, as new checks start (#4273):
-      # findings are annotations and a job-summary table. A PR or merge group
-      # is compared with its base, and once a maintainer sets the Actions
-      # variable GRAPH_RULES_BLOCKING to true, a finding the base doesn't have
-      # fails the step. The daily build of main reports every finding.
+      # build so they report fast. Pass or fail on the whole tree, as a linter
+      # is: main is kept at zero findings. Findings are annotations and a
+      # job-summary list. Report-only, as new checks start (#4273), until a
+      # maintainer sets the Actions variable GRAPH_RULES_BLOCKING to true; then
+      # any finding fails the step on a PR or merge group. The daily or manual
+      # build of main also deploys the site, so a finding there is reported, to
+      # be fixed or reverted, and does not break the deploy. A PR or merge group
+      # passes its base for the size check (rule 15). A merge group has no
+      # paths filter, so one that changes none of the checker's inputs skips it.
       - name: Check the graph's rules
         timeout-minutes: 10
         env:
@@ -121,6 +125,13 @@ jobs:
             # The checkout is the merge commit, whose first parent is the base it
             # merges into; pull_request.base.sha can be older than that.
             git fetch --no-tags --depth=2 origin "$GITHUB_SHA"
+            if [ "$EVENT" = merge_group ]; then
+              changed="$(git diff --name-only HEAD^1 HEAD)"
+              if ! grep -qE '^(blueprint/|scripts/taxonomy\.json$|scripts/check_graph_rules\.py$|\.github/autoform-ref$)' <<<"$changed"; then
+                echo "This merge group changes none of the graph rules' inputs; skipping the check."
+                exit 0
+              fi
+            fi
             args+=(--base "$(git rev-parse HEAD^1)")
             if [ "${BLOCKING:-}" = true ]; then
               args+=(--blocking)
@@ -221,15 +232,6 @@ jobs:
         run: >-
           uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
           autoform check blueprint --lean-root .
-
-      # Rule 11 on the built graph: on the committed tree a linked page has no
-      # dependency sections, so only after lean-facts can the check see an
-      # informal link that closes a cycle through Lean edges. Report-only.
-      - name: Check the graph's rules on the built graph (report only)
-        timeout-minutes: 10
-        run: >-
-          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
-          python scripts/check_graph_rules.py --built --summary "$GITHUB_STEP_SUMMARY"
 
       # Report only, so that its findings can be measured before any of them
       # blocks a PR: two pages for one declaration, overfull folders,

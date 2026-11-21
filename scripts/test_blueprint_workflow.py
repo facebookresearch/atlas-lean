@@ -15,10 +15,6 @@ ROOT = Path(__file__).resolve().parent.parent
 WORKFLOW = ROOT / ".github" / "workflows" / "blueprint-pages.yml"
 
 
-def positions_of(steps):
-    return {step.get("name"): index for index, step in enumerate(steps)}
-
-
 class BlueprintWorkflowTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -215,22 +211,32 @@ class BlueprintWorkflowTests(unittest.TestCase):
         self.assertNotIn("BLUEPRINT_PAGES", condition)
         self.assertNotIn("push", condition)
 
-    def test_the_graph_rules_run_early_and_compare_with_the_merge_commits_first_parent(self):
+    def test_the_graph_rules_run_early_and_block_prs_on_any_finding_once_switched_on(self):
         step = self.step("Check the graph's rules")
-        self.assertIn('git fetch --no-tags --depth=2 origin "$GITHUB_SHA"', step["run"])
-        self.assertIn('args+=(--base "$(git rev-parse HEAD^1)")', step["run"])
-        self.assertIn('--summary "$GITHUB_STEP_SUMMARY"', step["run"])
-        # Report-only until a maintainer turns blocking on, and blocking only ever compares with a base.
+        run = step["run"]
+        # The base, the merge commit's first parent, serves only the size check; pull_request.base.sha can be
+        # older than it.
+        self.assertIn('git fetch --no-tags --depth=2 origin "$GITHUB_SHA"', run)
+        self.assertIn('args+=(--base "$(git rev-parse HEAD^1)")', run)
+        self.assertIn('--summary "$GITHUB_STEP_SUMMARY"', run)
+        self.assertNotIn("${{ github.event.pull_request.base.sha", self.text)
+        # Report-only until a maintainer turns blocking on; then any finding fails a PR or merge group, but
+        # only reports on main's daily or manual build, which also deploys the site.
         self.assertEqual(step["env"]["BLOCKING"], "${{ vars.GRAPH_RULES_BLOCKING }}")
-        self.assertIn('if [ "${BLOCKING:-}" = true ]; then', step["run"])
-        self.assertLess(step["run"].index("--base"), step["run"].index("--blocking"))
+        events = run[run.index('if [ "$EVENT" = pull_request ] || [ "$EVENT" = merge_group ]; then'):run.index("\nfi\n") + 1]
+        self.assertIn('\n  if [ "${BLOCKING:-}" = true ]; then\n    args+=(--blocking)\n  fi\n', events)
+        self.assertEqual(run.count("--blocking"), 1)
+        # A merge group has no paths filter: one that changes none of the checker's inputs skips it.
+        self.assertIn("git diff --name-only HEAD^1 HEAD", run)
+        skip = run[run.index('if [ "$EVENT" = merge_group ]'):run.index("args+=(--base")]
+        for path in ("blueprint/", r"scripts/taxonomy\.json", r"scripts/check_graph_rules\.py",
+                     r"\.github/autoform-ref"):
+            self.assertIn(path, skip)
+        self.assertIn("exit 0", skip)
         self.assertNotIn("continue-on-error", step)
         self.assertEqual(step["timeout-minutes"], "10")
-        self.assertNotIn("${{ github.event.pull_request.base.sha", self.text)
-        built = self.step("Check the graph's rules on the built graph (report only)")
-        self.assertIn("check_graph_rules.py --built", built["run"])
-        self.assertEqual(built["timeout-minutes"], "10")
-        self.assertLess(positions_of(self.steps)["Add the Lean-owned facts to the articles"], positions_of(self.steps)[built["name"]])
+        # Autoform's check reports informal links that close a cycle through Lean edges; no second pass.
+        self.assertNotIn("--built", self.text)
         positions = {s.get("name"): i for i, s in enumerate(self.steps)}
         self.assertLess(positions["Test the wiki scripts"], positions[step["name"]])
         self.assertLess(positions[step["name"]], positions["Build the current v2 libraries"])
