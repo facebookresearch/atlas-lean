@@ -41,7 +41,7 @@ Sawyer–Hartl (1992) Poisson-random-field spectrum and its neutral case
 
 @[expose] public section
 
-namespace Domains.Biology.PopulationGenetics.Diffusion.SFSTotals
+namespace MathlibExt.Biology.PopulationGenetics.Diffusion
 
 private theorem sum_range_cast (n : ℕ) :
     ∑ i ∈ Finset.range n, (i : ℝ) = (n : ℝ) * ((n : ℝ) - 1) / 2 := by
@@ -118,4 +118,4 @@ theorem sum_pairwiseDiversity_expectedSFS_neutral (θ : ℝ) (n : ℕ) (hn : 2 �
   rw [Finset.sum_congr rfl hterm, ← Finset.mul_sum, ← Finset.sum_div,
     sum_two_mul_sub_Ico n hn, div_self hD, mul_one]
 
-end Domains.Biology.PopulationGenetics.Diffusion.SFSTotals
+end MathlibExt.Biology.PopulationGenetics.Diffusion

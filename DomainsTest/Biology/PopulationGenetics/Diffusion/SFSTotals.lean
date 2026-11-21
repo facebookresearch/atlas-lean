@@ -17,7 +17,6 @@ totals at sample sizes `2` and `3`. -/
 
 namespace MathlibExtTest.Biology.PopulationGenetics.Diffusion.SFSTotals
 
-open Domains.Biology.PopulationGenetics.Diffusion.SFSTotals
 open MathlibExt.Biology.PopulationGenetics.Diffusion
 
 /-- Empty harmonic total: no segregating classes in an empty sample. -/
