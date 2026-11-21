@@ -31,7 +31,7 @@ open MeasureTheory Filter Set
 open scoped NNReal unitInterval
 
 open MathlibExt.Biology.PopulationGenetics.Diffusion
-  (generator generator_zero_two_mul_one_sub integral_two_mul_one_sub_absorptionTime
+  (generator generator_heterozygosity integral_two_mul_one_sub_absorptionTime
     integral_two_mul_one_sub_absorptionTime_modifiedProcess)
 open MathlibExt.Biology.PopulationGenetics.Diffusion.KimuraFixationProcess
   (IsWrightFisherSolution absorptionTime)
@@ -41,15 +41,15 @@ open MathlibExt.Biology.PopulationGenetics.Diffusion.NeutralWrightFisherRaw
 namespace MathlibExtTest.Biology.PopulationGenetics.Diffusion.PathFunctionals
 
 example : generator 0 (fun z => 2 * z * (1 - z)) 0 = 0 := by
-  rw [generator_zero_two_mul_one_sub]
+  rw [generator_heterozygosity]
   norm_num
 
 example : generator 0 (fun z => 2 * z * (1 - z)) 1 = 0 := by
-  rw [generator_zero_two_mul_one_sub]
+  rw [generator_heterozygosity]
   norm_num
 
 example : generator 0 (fun z => 2 * z * (1 - z)) (1 / 2) = -(1 / 2) := by
-  rw [generator_zero_two_mul_one_sub]
+  rw [generator_heterozygosity]
   norm_num
 
 example : ∫ ω, (∫ s in (0 : ℝ)..(absorptionTime
@@ -114,7 +114,6 @@ example {Ω : Type*} {mΩ : MeasurableSpace Ω} {x : ℝ} {ℱ : Filtration ℝ�
       = 2 * x * (1 - x) :=
   (integral_two_mul_one_sub_absorptionTime hX hX0).2
 
-#print axioms generator_zero_two_mul_one_sub
 #print axioms integral_two_mul_one_sub_absorptionTime
 #print axioms integral_two_mul_one_sub_absorptionTime_modifiedProcess
 

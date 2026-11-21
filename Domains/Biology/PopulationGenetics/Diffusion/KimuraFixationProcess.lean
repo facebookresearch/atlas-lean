@@ -553,7 +553,7 @@ private theorem fixed_time_zero {Ω : Type*} {mΩ : MeasurableSpace Ω}
   exact hr.1.le
 
 /-- A nonnegative martingale with continuous paths stays at `0` once it hits `0`. -/
-private theorem ae_stay_zero_of_martingale {Ω : Type*} {mΩ : MeasurableSpace Ω}
+theorem ae_stay_zero_of_martingale {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {ℱ : Filtration ℝ≥0 mΩ} {μ : Measure Ω}
     [IsProbabilityMeasure μ] {Y : ℝ≥0 → Ω → ℝ} (hY : Martingale Y ℱ μ)
     (hnn : ∀ t ω, 0 ≤ Y t ω) (hc : ∀ ω, Continuous fun t => Y t ω) :
@@ -735,7 +735,7 @@ private theorem integrable_comp [IsFiniteMeasure μ] (hX : IsWrightFisherSolutio
     (ae_of_all _ fun ω => hB _ (hX.1 t ω))
 
 /-- **Dynkin's formula at a fixed time.** -/
-private theorem integral_generator [IsFiniteMeasure μ] (hX : IsWrightFisherSolution σ ℱ μ X)
+theorem integral_generator [IsFiniteMeasure μ] (hX : IsWrightFisherSolution σ ℱ μ X)
     {f : ℝ → ℝ} (hf : ContDiff ℝ 2 f) (t : ℝ≥0) :
     Integrable (fun ω => ∫ s in (0 : ℝ)..(t : ℝ), generator σ f (X (Real.toNNReal s) ω)) μ ∧
       ∫ ω, (∫ s in (0 : ℝ)..(t : ℝ), generator σ f (X (Real.toNNReal s) ω)) ∂μ =

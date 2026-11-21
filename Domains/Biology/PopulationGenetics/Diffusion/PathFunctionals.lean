@@ -39,7 +39,8 @@ frequency `x` is `2x(1-x)` in diffusion time units.
 
 ## Main results
 
-* `generator_zero_two_mul_one_sub`: `generator 0 (fun z => 2z(1-z)) y = -(2y(1-y))` pointwise.
+* `generator_heterozygosity` (existing input): `generator 0 (fun z => 2z(1-z)) y = -(2y(1-y))`
+  pointwise.
 * `integral_two_mul_one_sub_absorptionTime`: for any neutral solution started at `x`, the
   stopped heterozygosity integral is integrable and its mean is `2x(1-x)`.
 * `integral_two_mul_one_sub_absorptionTime_modifiedProcess`: the same identity for the
@@ -83,12 +84,6 @@ private theorem heterozygosity_mem_Icc {y : ℝ} (hy : y ∈ Icc (0 : ℝ) 1) :
   · exact mul_nonneg (mul_nonneg (by norm_num) h1) (by linarith)
   · nlinarith [sq_nonneg (y - 1 / 2), h1, h2]
 
-/-- Neutral generator applied to heterozygosity: for every real `y` (no restriction to
-the unit interval), `generator 0 (fun z => 2z(1-z)) y = -(2y(1-y))`, pointwise in `y`. -/
-theorem generator_zero_two_mul_one_sub (y : ℝ) :
-    generator 0 (fun z => 2 * z * (1 - z)) y = -(2 * y * (1 - y)) := by
-  exact MathlibExt.Biology.PopulationGenetics.Diffusion.generator_heterozygosity y
-
 private theorem measurable_apply {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {sig : ℝ} {ℱ : Filtration ℝ≥0 mΩ} {μ : Measure Ω} {X : ℝ≥0 → Ω → ℝ}
     (hX : IsWrightFisherSolution sig ℱ μ X) (t : ℝ≥0) :
@@ -115,203 +110,22 @@ private theorem dynkin_heterozygosity {Ω : Type*} {mΩ : MeasurableSpace Ω}
       ∫ ω, (∫ s in (0 : ℝ)..(t : ℝ),
         2 * X (Real.toNNReal s) ω * (1 - X (Real.toNNReal s) ω)) ∂μ =
         2 * x * (1 - x) - ∫ ω, 2 * X t ω * (1 - X t ω) ∂μ := by
-  have hM := hX.2.2.2 (fun y : ℝ => 2 * y * (1 - y)) contDiff_heterozygosity
-  have h0 := hM.setIntegral_eq (zero_le (a := t)) MeasurableSet.univ
-  simp only [setIntegral_univ, NNReal.coe_zero, intervalIntegral.integral_same, sub_self,
-    integral_zero] at h0
-  have hft := integrable_heterozygosity_apply hX t
-  have hf0 := integrable_heterozygosity_apply hX 0
-  have heq : (fun ω => ∫ s in (0 : ℝ)..(t : ℝ), generator 0 (fun y : ℝ => 2 * y * (1 - y))
-      (X (Real.toNNReal s) ω)) =
-      fun ω => (2 * X t ω * (1 - X t ω) - 2 * X 0 ω * (1 - X 0 ω)) -
-        ((2 * X t ω * (1 - X t ω) - 2 * X 0 ω * (1 - X 0 ω)) -
-        ∫ s in (0 : ℝ)..(t : ℝ), generator 0 (fun y : ℝ => 2 * y * (1 - y))
-          (X (Real.toNNReal s) ω)) := by
-    funext ω; ring
-  have hd : Integrable
-      (fun ω => 2 * X t ω * (1 - X t ω) - 2 * X 0 ω * (1 - X 0 ω)) μ :=
-    hft.sub hf0
-  have hMt : Integrable (fun ω => (2 * X t ω * (1 - X t ω) - 2 * X 0 ω * (1 - X 0 ω)) -
-      ∫ s in (0 : ℝ)..(t : ℝ), generator 0 (fun y : ℝ => 2 * y * (1 - y))
-        (X (Real.toNNReal s) ω)) μ := hM.integrable t
-  have h1 : Integrable (fun ω => ∫ s in (0 : ℝ)..(t : ℝ), generator 0
-      (fun y : ℝ => 2 * y * (1 - y)) (X (Real.toNNReal s) ω)) μ := by
-    rw [heq]; exact hd.sub hMt
-  have hMt0 : (∫ ω, ((2 * X t ω * (1 - X t ω) - 2 * X 0 ω * (1 - X 0 ω)) -
-      ∫ s in (0 : ℝ)..(t : ℝ), generator 0 (fun y : ℝ => 2 * y * (1 - y))
-        (X (Real.toNNReal s) ω)) ∂μ) = 0 := by
-    exact h0.symm
-  have h2 : (∫ ω, (∫ s in (0 : ℝ)..(t : ℝ), generator 0 (fun y : ℝ => 2 * y * (1 - y))
-      (X (Real.toNNReal s) ω)) ∂μ) =
-      (∫ ω, 2 * X t ω * (1 - X t ω) ∂μ) - ∫ ω, 2 * X 0 ω * (1 - X 0 ω) ∂μ := by
-    rw [heq, integral_sub hd hMt, integral_sub hft hf0, hMt0, sub_zero]
-  simp only [generator_zero_two_mul_one_sub, intervalIntegral.integral_neg, integral_neg] at h1 h2
+  have hDyn := hX.integral_generator contDiff_heterozygosity t
+  simp only [generator_heterozygosity, intervalIntegral.integral_neg, integral_neg] at hDyn
   have hE0 : ∫ ω, 2 * X 0 ω * (1 - X 0 ω) ∂μ = 2 * x * (1 - x) := by
     rw [integral_congr_ae (g := fun _ => 2 * x * (1 - x))
       (hX0.mono fun ω hω => by simp only [hω])]
     simp
-  rw [hE0] at h2
+  rw [hE0] at hDyn
   refine ⟨?_, ?_⟩
-  · simpa using h1.neg
-  · linarith [h2]
-
-private theorem finite_hit_bound {Ω : Type*} {mΩ : MeasurableSpace Ω}
-    {ℱ : Filtration ℝ≥0 mΩ} {μ : Measure Ω} [IsProbabilityMeasure μ]
-    {Y : ℝ≥0 → Ω → ℝ} (hY : Martingale Y ℱ μ) (t : ℝ≥0) (δ : ℝ)
-    (S : Finset ℝ≥0) (ht : ∀ r ∈ S, r ≤ t) :
-    (∫ ω in {ω | ∃ r ∈ S, Y r ω ≤ δ}, Y t ω ∂μ) ≤
-      ∫ _ in {ω | ∃ r ∈ S, Y r ω ≤ δ}, δ ∂μ := by
-  classical
-  revert ht
-  induction S using Finset.induction_on_max with
-  | empty => simp
-  | @insert a S hmax ih =>
-    intro ht
-    let E : Set Ω := {ω | ∃ r ∈ S, Y r ω ≤ δ}
-    let A : Set Ω := {ω | Y a ω ≤ δ} \ E
-    have hE : MeasurableSet[ℱ a] E := by
-      have heq : E = ⋃ r ∈ S, {ω | Y r ω ≤ δ} := by ext; simp [E]
-      rw [heq]
-      exact Finset.measurableSet_biUnion S fun r hr =>
-        measurableSet_le ((hY.stronglyMeasurable r).mono
-          (ℱ.mono ((hmax r hr).le))).measurable
-          measurable_const
-    have hA : MeasurableSet[ℱ a] A :=
-      (measurableSet_le (hY.stronglyMeasurable a).measurable measurable_const).diff hE
-    have hA0 : MeasurableSet A := ℱ.le a A hA
-    have hdis : Disjoint E A := by
-      apply Set.disjoint_left.mpr
-      intro ω hω hAω
-      exact hAω.2 hω
-    have heq : {ω | ∃ r ∈ insert a S, Y r ω ≤ δ} = E ∪ A := by
-      ext ω
-      simp only [Finset.mem_insert, or_and_right, exists_or, exists_eq_left]
-      change (Y a ω ≤ δ ∨ ω ∈ E) ↔ ω ∈ E ∨ (Y a ω ≤ δ ∧ ω ∉ E)
-      tauto
-    rw [heq, setIntegral_union hdis hA0 (hY.integrable t).integrableOn
-      (hY.integrable t).integrableOn,
-      setIntegral_union hdis hA0 (integrable_const δ).integrableOn
-        (integrable_const δ).integrableOn]
-    refine add_le_add (ih (fun r hr => ht r (Finset.mem_insert_of_mem hr))) ?_
-    have hAeq : (∫ ω in A, Y t ω ∂μ) = ∫ ω in A, Y a ω ∂μ := by
-      exact (hY.setIntegral_eq (ht a (Finset.mem_insert_self a S)) hA).symm
-    rw [hAeq]
-    refine integral_mono_ae (hY.integrable a).integrableOn
-      (integrable_const δ).integrableOn ?_
-    exact (ae_restrict_iff' hA0).mpr (ae_of_all _ fun ω hω => hω.1)
-
-private theorem countable_hit_bound {Ω : Type*} {mΩ : MeasurableSpace Ω}
-    {ℱ : Filtration ℝ≥0 mΩ} {μ : Measure Ω} [IsProbabilityMeasure μ]
-    {Y : ℝ≥0 → Ω → ℝ} (hY : Martingale Y ℱ μ)
-    (t : ℝ≥0) (δ : ℝ) (hδ : 0 ≤ δ) (u : ℕ → ℝ≥0) :
-    (∫ ω in {ω | ∃ k, Y (min (u k) t) ω ≤ δ}, Y t ω ∂μ) ≤ δ := by
-  classical
-  let S : ℕ → Finset ℝ≥0 := fun n => (Finset.range n).image (fun k => min (u k) t)
-  let E : ℕ → Set Ω := fun n => {ω | ∃ r ∈ S n, Y r ω ≤ δ}
-  have hE : ∀ n, MeasurableSet (E n) := by
-    intro n
-    have heq : E n = ⋃ r ∈ S n, {ω | Y r ω ≤ δ} := by ext; simp [E]
-    rw [heq]
-    exact Finset.measurableSet_biUnion (S n) fun r _ =>
-      measurableSet_le ((hY.stronglyMeasurable r).mono (ℱ.le r)).measurable
-        measurable_const
-  have hmono : Monotone E := by
-    intro n m hnm ω hω
-    rcases hω with ⟨r, hr, hYω⟩
-    refine ⟨r, ?_, hYω⟩
-    exact Finset.image_subset_image (Finset.range_mono hnm) hr
-  have heq : (⋃ n, E n) = {ω | ∃ k, Y (min (u k) t) ω ≤ δ} := by
-    ext ω
-    simp only [mem_iUnion, E, Set.mem_ofPred, S, Finset.mem_image, Finset.mem_range]
-    constructor
-    · rintro ⟨n, r, ⟨k, _, rfl⟩, hω⟩
-      exact ⟨k, hω⟩
-    · rintro ⟨k, hω⟩
-      exact ⟨k + 1, min (u k) t, ⟨k, Nat.lt_succ_self k, rfl⟩, hω⟩
-  rw [← heq]
-  apply le_of_tendsto (tendsto_setIntegral_of_monotone hE hmono
-    (hY.integrable t).integrableOn)
-  exact Eventually.of_forall fun n => (finite_hit_bound hY t δ (S n) (by
-    intro r hr
-    rcases Finset.mem_image.mp hr with ⟨k, _, rfl⟩
-    exact min_le_right _ _)).trans (by
-      calc (∫ _ in E n, δ ∂μ) ≤ ∫ _, δ ∂μ :=
-             setIntegral_le_integral (integrable_const δ) (Eventually.of_forall fun _ => hδ)
-           _ = δ := by simp)
-
-private theorem fixed_time_zero {Ω : Type*} {mΩ : MeasurableSpace Ω}
-    {ℱ : Filtration ℝ≥0 mΩ} {μ : Measure Ω} [IsProbabilityMeasure μ]
-    {Y : ℝ≥0 → Ω → ℝ} (hY : Martingale Y ℱ μ) (hnn : ∀ t ω, 0 ≤ Y t ω)
-    (hc : ∀ ω, Continuous fun t => Y t ω) (u : ℕ → ℝ≥0) (hu : DenseRange u)
-    (t : ℝ≥0) :
-    ∀ᵐ ω ∂μ, ∀ s, s < t → Y s ω = 0 → Y t ω = 0 := by
-  let E : ℕ → Set Ω := fun m =>
-    {ω | ∃ k, Y (min (u k) t) ω ≤ 1 / ((m : ℝ) + 1)}
-  let D : Set Ω := ⋂ m, E m
-  have hE : ∀ m, MeasurableSet (E m) := by
-    intro m
-    have heq : E m = ⋃ k, {ω | Y (min (u k) t) ω ≤ 1 / ((m : ℝ) + 1)} := by
-      ext; simp [E]
-    rw [heq]
-    exact MeasurableSet.iUnion fun k =>
-      measurableSet_le ((hY.stronglyMeasurable (min (u k) t)).mono
-        (ℱ.le _)).measurable measurable_const
-  have hD : MeasurableSet D := MeasurableSet.iInter hE
-  have hbound : ∀ m : ℕ, (∫ ω in D, Y t ω ∂μ) ≤ 1 / ((m : ℝ) + 1) := by
-    intro m
-    refine (setIntegral_mono_set (hY.integrable t).integrableOn ?_ ?_).trans
-        (countable_hit_bound hY t _ (by positivity) u)
-    · exact Eventually.of_forall fun ω => hnn t ω
-    · exact Eventually.of_forall fun ω hω => mem_iInter.mp hω m
-  have hzero : (∫ ω in D, Y t ω ∂μ) = 0 := by
-    apply le_antisymm
-    · exact ge_of_tendsto tendsto_one_div_add_atTop_nhds_zero_nat
-        (Eventually.of_forall hbound)
-    · exact integral_nonneg (hnn t)
-  have hae : ∀ᵐ ω ∂μ, ω ∈ D → Y t ω = 0 := by
-    apply (ae_restrict_iff' hD).mp
-    exact (setIntegral_eq_zero_iff_of_nonneg_ae
-      (Eventually.of_forall fun ω => hnn t ω) (hY.integrable t).integrableOn).mp hzero
-  filter_upwards [hae] with ω hω
-  intro s hst hs
-  apply hω
-  apply mem_iInter.mpr
-  intro m
-  have hδ : 0 < 1 / ((m : ℝ) + 1) := by positivity
-  obtain ⟨k, hr⟩ := hu.exists_mem_open
-    ((isOpen_lt (hc ω) continuous_const).inter isOpen_Iio)
-    (show ({r | Y r ω < 1 / ((m : ℝ) + 1)} ∩ Iio t).Nonempty from
-      ⟨s, by simpa [hs] using hδ, hst⟩)
-  refine ⟨k, ?_⟩
-  rw [min_eq_left (show u k ≤ t from hr.2.le)]
-  exact hr.1.le
-
-private theorem ae_stay_zero_of_martingale {Ω : Type*} {mΩ : MeasurableSpace Ω}
-    {ℱ : Filtration ℝ≥0 mΩ} {μ : Measure Ω}
-    [IsProbabilityMeasure μ] {Y : ℝ≥0 → Ω → ℝ} (hY : Martingale Y ℱ μ)
-    (hnn : ∀ t ω, 0 ≤ Y t ω) (hc : ∀ ω, Continuous fun t => Y t ω) :
-    ∀ᵐ ω ∂μ, ∀ s t, s ≤ t → Y s ω = 0 → Y t ω = 0 := by
-  obtain ⟨u, hu⟩ := TopologicalSpace.exists_dense_seq ℝ≥0
-  have hall : ∀ᵐ ω ∂μ, ∀ k : ℕ, ∀ s, s < u k → Y s ω = 0 → Y (u k) ω = 0 :=
-    ae_all_iff.mpr fun k => fixed_time_zero hY hnn hc u hu (u k)
-  filter_upwards [hall] with ω hω
-  intro s t hst hs
-  rcases hst.eq_or_lt with rfl | hst
-  · exact hs
-  · by_contra ht
-    obtain ⟨k, hr⟩ := hu.exists_mem_open
-      ((isOpen_lt continuous_const (hc ω)).inter isOpen_Ioi)
-      (show ({r | 0 < Y r ω} ∩ Ioi s).Nonempty from
-        ⟨t, lt_of_le_of_ne (hnn t ω) (Ne.symm ht), hst⟩)
-    have hr1 : 0 < Y (u k) ω := hr.1
-    have hr2 : s < u k := hr.2
-    exact hr1.ne' (hω k s hr2 hs)
+  · simpa using hDyn.1.neg
+  · linarith [hDyn.2]
 
 private theorem ae_stay_zero_neutral {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {ℱ : Filtration ℝ≥0 mΩ} {μ : Measure Ω} [IsProbabilityMeasure μ]
     {X : ℝ≥0 → Ω → ℝ} (hX : IsWrightFisherSolution 0 ℱ μ X) :
     ∀ᵐ ω ∂μ, ∀ s t, s ≤ t → X s ω = 0 → X t ω = 0 :=
-  ae_stay_zero_of_martingale
+  MathlibExt.Biology.PopulationGenetics.Diffusion.KimuraFixationProcess.ae_stay_zero_of_martingale
     (MathlibExt.Biology.PopulationGenetics.Diffusion.NeutralMartingaleProblem.martingale_of_neutral
       hX)
     (fun t ω => (hX.1 t ω).1) hX.2.1
