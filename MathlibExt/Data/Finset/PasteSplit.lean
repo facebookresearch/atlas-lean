@@ -1,0 +1,86 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import Mathlib.Data.Finset.BooleanAlgebra
+public import Mathlib.Data.Finset.Defs
+public import Mathlib.Data.Finset.Image
+
+@[expose] public section
+
+/-!
+# Splitting and gluing functions along a finset
+
+`pasteOn A x z` glues a function on a finset `A` and a function on its complement into a
+function on the whole index type, `splitOnEquiv` packages this as an equivalence, and
+`finsetMapEquiv` / `finsetMapComplEquiv` transport a finset and its complement along an
+equivalence of the index type.
+
+Extracted from the absolutely-maximally-entangled-state development now in
+`PhyslibExt.QuantumInfo.AbsolutelyMaximallyEntangled`.
+-/
+
+namespace MetaMathlibExt
+
+/-- An equivalence `e : α ≃ β` restricts to an equivalence between a finset `S` and its
+image `S.map e.toEmbedding`. -/
+def finsetMapEquiv {α β : Type*} [DecidableEq α] [DecidableEq β]
+    (e : α ≃ β) (S : Finset α) : S ≃ S.map e.toEmbedding where
+  toFun x := ⟨e x, by simp⟩
+  invFun y := ⟨e.symm y.1, by
+    simpa only [Finset.mem_map_equiv] using y.2⟩
+  left_inv x := by ext; simp
+  right_inv y := by ext; simp
+
+/-- A permutation `e` of `α` restricts to an equivalence between the complement of a
+finset `S` and the complement of its image `S.map e.toEmbedding`. -/
+def finsetMapComplEquiv {α : Type*} [Fintype α] [DecidableEq α]
+    (e : Equiv.Perm α) (S : Finset α) :
+    ↥(Sᶜ) ≃ ↥((S.map e.toEmbedding)ᶜ) where
+  toFun x := ⟨e x.1, by
+    simp only [Finset.mem_compl, Finset.mem_map_equiv, Equiv.symm_apply_apply]
+    simpa only [Finset.mem_compl] using x.2⟩
+  invFun y := ⟨e.symm y.1, by
+    simp only [Finset.mem_compl]
+    have hy := y.2
+    simpa only [Finset.mem_compl, Finset.mem_map_equiv] using hy⟩
+  left_inv x := by ext; simp
+  right_inv y := by ext; simp
+
+/-- Glue a function defined on a finset `A` and a function defined on its complement into
+a function on the whole index type. -/
+def pasteOn {ι R : Type*} [DecidableEq ι] (A : Finset ι)
+    (x : A → R) (z : {i : ι // i ∉ A} → R) : ι → R :=
+  fun i => if hi : i ∈ A then x ⟨i, hi⟩ else z ⟨i, hi⟩
+
+/-- On `A`, `pasteOn` is the first function. -/
+@[simp] lemma pasteOn_mem {ι R : Type*} [DecidableEq ι] (A : Finset ι)
+    (x : A → R) (z : {i : ι // i ∉ A} → R) (i : A) :
+    pasteOn A x z i.1 = x i := by simp [pasteOn, i.2]
+
+/-- Off `A`, `pasteOn` is the second function. -/
+@[simp] lemma pasteOn_not_mem {ι R : Type*} [DecidableEq ι] (A : Finset ι)
+    (x : A → R) (z : {i : ι // i ∉ A} → R) (i : {i : ι // i ∉ A}) :
+    pasteOn A x z i.1 = z i := by simp [pasteOn, i.2]
+
+/-- Functions on `ι` are the same thing as a pair of functions, one on a finset `A` and one
+on its complement; the forward map is `pasteOn`. -/
+def splitOnEquiv {ι R : Type*} [DecidableEq ι] (A : Finset ι) :
+    ((A → R) × ({i : ι // i ∉ A} → R)) ≃ (ι → R) where
+  toFun p := pasteOn A p.1 p.2
+  invFun f := (fun i => f i.1, fun i => f i.1)
+  left_inv p := by
+    apply Prod.ext <;> funext i
+    · exact pasteOn_mem A p.1 p.2 i
+    · exact pasteOn_not_mem A p.1 p.2 i
+  right_inv f := by
+    funext i
+    by_cases hi : i ∈ A <;> simp [pasteOn, hi]
+
+end MetaMathlibExt

@@ -44,8 +44,20 @@ root validation with:
 scripts/check.sh
 ```
 
-The existing `Atlas/` developments and archived `v1/` release are not part of
-this root build. They retain their own build configuration.
+The [CPython listsort model](CSLibExt/Algorithms/Sorting/CPythonListsort/README.md)
+is integrated into `CSLibExt`, with kernel-checked proof layers and asserting
+regression clients in `CSLibExtTest`. It uses the root toolchain rather than an
+independent package; its original source and verification provenance are retained.
+
+The [Formal Conjectures migration record](docs/provenance/formal-conjectures-migration.md)
+links the eight mathematical developments now in `MathlibExt` and the
+absolutely-maximally-entangled-state development in `PhyslibExt`, with their
+matching tests and source-statement comparisons.
+
+Remaining `Atlas/` development material and the archived `v1/` release are not
+part of this root build. `v1/` retains its original build configuration. The
+[`StatisticalMechanics`](Atlas/StatisticalMechanics/MIGRATED.md) archive and
+migration ledger keep their existing paths while the library migration continues.
 
 ## Dependency explorer
 
