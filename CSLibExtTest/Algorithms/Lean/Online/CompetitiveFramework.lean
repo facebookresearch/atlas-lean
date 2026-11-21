@@ -78,6 +78,26 @@ theorem toy_competitive : Competitive ToyP AlwaysTrue 1 0 := by
 example : Competitive ToyP AlwaysTrue 2 5 :=
   Competitive.mono ToyP AlwaysTrue toy_competitive (by norm_num) (by norm_num)
 
+/-- Two-state toggle machine: answers the current state, negates the state
+on a `true` request and keeps it otherwise. -/
+def Toggle : StateMachine Bool Bool Bool where
+  init := false
+  step := fun s r => (s, if r then s.not else s)
+
+example : run Toggle.toStrategy [true, true, false]
+    = [(true, false), (true, true), (false, false)] := by
+  rw [StateMachine.run_toStrategy]
+  rfl
+
+example (σ : List Bool) : ∃ τ : List (Bool × Bool), ToyP.feasible τ ∧
+    τ.map Prod.fst = σ ∧ optCost ToyP σ = ENNReal.ofReal (ToyP.cost τ) :=
+  exists_optimal_of_natCost ToyP (fun τ => ⟨τ.length, toy_cost τ⟩) trivial
+
+example : Competitive ToyP ((Simulation.refl ToyP).F AlwaysTrue) 1 0 := by
+  have h := Simulation.competitive_transfer (Simulation.refl ToyP) AlwaysTrue
+    toy_competitive
+  simpa [Simulation.refl] using h
+
 #print axioms run_nil
 #print axioms runFrom_length
 #print axioms runFrom_map_fst
