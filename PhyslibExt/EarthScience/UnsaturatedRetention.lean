@@ -49,8 +49,10 @@ effective saturation quoted above.
   `EarthScience.vanGenuchtenSe_lt_one`: the endpoint value and the strict
   bound at negative head.
 - `EarthScience.vanGenuchtenSe_exponent_one` and
-  `EarthScience.one_lt_vanGenuchtenSe_of_lt_one`: controls showing the
-  exponent restriction cannot be relaxed to `n = 1` or `0 < n < 1`.
+  `EarthScience.one_lt_vanGenuchtenSe_of_lt_one`: endpoint controls. At
+  `n = 1` the saturation is identically `1`, so the range endpoint still
+  holds but the strict unsaturated bound fails; for `0 < n < 1` the upper
+  bound `S_e ≤ 1` itself fails.
 
 ## iii. Table of contents
 
