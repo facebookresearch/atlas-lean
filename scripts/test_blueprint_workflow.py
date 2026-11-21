@@ -201,14 +201,49 @@ class BlueprintWorkflowTests(unittest.TestCase):
         self.assertEqual(steps["Keep the Mathlib layer"]["with"]["name"], "mathlib-graph")
         self.assertEqual(steps["Keep the Mathlib layer"]["if"], "always()")
 
-    def test_built_site_is_kept_only_for_main_builds(self):
-        condition = self.step("Keep the built site")["if"]
+    def test_every_build_keeps_its_site_and_only_main_keeps_the_full_site(self):
+        # The built site is a one-day artifact of every successful build, which the Mathlib pages job reads; only
+        # main keeps the site with its Mathlib pages, and neither is a Pages upload.
+        keep = self.step("Keep the built site")
+        self.assertEqual(keep["if"], "success()")
+        self.assertEqual((keep["with"]["name"], keep["with"]["retention-days"]), ("blueprint-site", "1"))
+        steps = {step.get("name"): step for step in self.workflow["jobs"]["mathlib-pages"]["steps"]}
+        full = steps["Keep the site with its Mathlib pages"]
+        self.assertIn("actions/upload-artifact@", full["uses"])
+        self.assertEqual((full["with"]["name"], full["with"]["path"]), ("blueprint-site-full", "site-full"))
         for clause in ("github.ref == 'refs/heads/main'",
                        "github.event_name != 'pull_request'",
                        "github.event_name != 'merge_group'"):
-            self.assertIn(clause, condition)
-        self.assertNotIn("BLUEPRINT_PAGES", condition)
-        self.assertNotIn("push", condition)
+            self.assertIn(clause, full["if"])
+        self.assertNotIn("BLUEPRINT_PAGES", full["if"])
+        self.assertNotIn("push", full["if"])
+
+    def test_the_mathlib_pages_cannot_hold_back_the_site(self):
+        # The pages have their own read-only job after the wiki and the Mathlib layer; deployment waits for the
+        # wiki job alone, and the wiki job never runs the pages script.
+        jobs = self.workflow["jobs"]
+        pages = jobs["mathlib-pages"]
+        self.assertEqual(pages["needs"], ["wiki", "mathlib"])
+        self.assertEqual(jobs["deploy"]["needs"], "wiki")
+        for key in ("permissions", "continue-on-error", "if"):
+            self.assertNotIn(key, pages)
+        self.assertFalse(any("build_mathlib_pages" in step.get("run", "") for step in self.steps))
+        steps = {step.get("name"): step for step in pages["steps"]}
+        checkout = steps["Check out project"]["with"]
+        self.assertEqual(checkout["persist-credentials"], "false")
+        self.assertIn("!/v1/", checkout["sparse-checkout"])
+        self.assertIn("!/Atlas/", checkout["sparse-checkout"])
+        fetched = {(s["with"]["name"], s["with"]["path"]) for s in pages["steps"] if "download-artifact@" in s.get("uses", "")}
+        self.assertEqual(fetched, {("blueprint-site", "site"), ("mathlib-graph", "mathlib-graph")})
+        self.assertIn("python -m unittest scripts.test_build_mathlib_pages", steps["Test the Mathlib pages script"]["run"])
+        self.assertIn("scripts/test_build_mathlib_pages.py", self.workflow["on"]["pull_request"]["paths"])
+        build = steps["Build the Mathlib pages"]["run"]
+        self.assertIn("build_mathlib_pages.py build", build)
+        self.assertIn("github.event_name == 'pull_request' && '--strict-links' || ''", build)
+        self.assertIn("build_mathlib_pages.py check site mathlib-graph site-full", steps["Check the site with its Mathlib pages"]["run"])
+        for step in pages["steps"]:
+            self.assertNotIn("continue-on-error", step)
+            self.assertFalse(step.get("uses", "").startswith(("actions/upload-pages-artifact@", "actions/deploy-pages@")))
 
 
 if __name__ == "__main__":
