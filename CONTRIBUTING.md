@@ -178,14 +178,14 @@ the merge-group route does not enumerate every grouped PR's metadata.
 
 Before making this check required, maintainers must establish trusted workflow
 governance. GitHub selects a merge-group workflow definition from the event
-ref, and a PR-target workflow from the PR's base branch. Pinning the scanner
-does not authenticate the workflow that invokes it. Use a required workflow
-from a separately protected source, or enforce trusted review and protection
-for all workflow definitions, relevant policy, and default-branch scanner
-code. A required job name alone cannot prevent another workflow from reporting
-the same name. Verify ordinary PR, fork, and merge-queue delivery after an
-authorized deployment before enabling required enforcement. Until then this
-is advisory CI, not a standalone merge barrier.
+ref, and a PR-target workflow from the base repository's default branch.
+Pinning the scanner does not authenticate the workflow that invokes it. Use a
+required workflow from a separately protected source, or enforce trusted review
+and protection for all workflow definitions, relevant policy, and
+default-branch scanner code. A required job name alone cannot prevent another
+workflow from reporting the same name. Verify ordinary PR, fork, and
+merge-queue delivery after an authorized deployment before enabling required
+enforcement. Until then this is advisory CI, not a standalone merge barrier.
 
 ## How PRs merge
 
@@ -232,22 +232,23 @@ group before it merges:
 - `build` (CI): the Lean build and its policy checks.
 - `source-diagnostics` (Source diagnostics).
 
-Their workflows are triggered when a PR is opened, updated or reopened, and on
-every merge group; on some fork PRs, CI and Source diagnostics wait until a
-maintainer approves the run. CI's `repository integrity` job runs
+Their workflows are configured to run when a PR is opened, updated or reopened,
+and on every merge group; on some fork PRs, CI and Source diagnostics wait until
+a maintainer approves the run. CI's `repository integrity` job runs
 `scripts/test_merge_queue_checks.py`. It fails if one of these workflows loses
 or filters those triggers, can skip the job that reports the check, renames the
-check, lets another job report the same name, or uses a concurrency group that
-the test does not know to differ between PRs and between merge groups.
+check, lets another job report (or possibly report) the same name, or uses a
+concurrency group that the test does not know to differ between PRs and between
+merge groups, or that another workflow's group could match.
 
 The other checks are advisory. The bump guard's `guard` checks Lean and Mathlib
 pin changes on PRs and merge groups; on PRs it runs through
 `pull_request_target`, which GitHub blocks by default in public repositories
-unless an Actions event policy allows it, so it is not required. Codex does not
-run on merge groups. `public-references` runs on PRs and merge groups, but
-stays advisory until the workflow governance described under
-[Public references](#public-references) is in place. Blueprint Pages, Check
-workflows and Binary64 conformance are path-filtered on PRs, and Blueprint
+from 2 December 2026 unless an Actions event policy allows it, so it is not
+required. Codex does not run on merge groups. `public-references` runs on PRs
+and merge groups, but stays advisory until the workflow governance described
+under [Public references](#public-references) is in place. Blueprint Pages,
+Check workflows and Binary64 conformance are path-filtered on PRs, and Blueprint
 Pages also builds `main` once a day.
 
 ## Contributor License Agreement ("CLA")

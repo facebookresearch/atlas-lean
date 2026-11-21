@@ -9,11 +9,13 @@ fails if a required workflow:
   or filters some of them out;
 - can skip the job that reports the check (a skipped job counts as passing):
   a job-level `if`, a matrix, or a prerequisite that is not required itself;
-- renames the check, lets another job report the same name, or moves the job
-  into a reusable workflow (which reports `caller / callee` instead);
+- renames the check, lets another job report (or possibly report, through an
+  expression in its name) the same name, or moves the job into a reusable
+  workflow (which reports `caller / callee` instead);
 - uses a concurrency group other than the forms below, which are known to
-  differ between any two PRs and any two merge groups, so that no run can
-  cancel or replace another's.
+  differ between any two PRs and any two merge groups, or one that another
+  workflow's group could match: GitHub concurrency groups are repository-wide
+  and case-insensitive, so one run could cancel or replace another's.
 
 The required checks are the ones listed under "How PRs merge" in
 CONTRIBUTING.md. CI runs this test in the `repository integrity` job. Locally:
@@ -47,9 +49,9 @@ REQUIRED = {
 PR_TYPES = {"opened", "synchronize", "reopened"}
 FILTERS = {"branches", "branches-ignore", "paths", "paths-ignore"}
 # Concurrency groups known to differ between any two runs of the PR event and
-# between any two merge groups. Both start with the workflow's name, which is
-# unique. Under pull_request_target, github.ref is the base branch, so the
-# second form is needed there; GitHub treats group names case-insensitively.
+# between any two merge groups. Both start with the workflow's name. Under
+# pull_request_target, github.ref is the default branch for every PR, so the
+# second form is needed there.
 SAFE_GROUPS = {
     "pull_request": {"${{ github.workflow }}-${{ github.ref }}"},
     "pull_request_target": {
@@ -88,6 +90,29 @@ def normalised(group: str) -> str:
                   lambda m: "${{ " + " ".join(m.group(1).split()) + " }}", group.strip())
 
 
+def concurrency_group(setting) -> str:
+    return (setting.get("group", "") if isinstance(setting, dict) else setting) or ""
+
+
+def literal_start(workflow_name: str, group: str) -> str:
+    """The text a group always starts with, case-folded, after expanding a
+    leading `${{ github.workflow }}`; empty if an expression comes first."""
+    group = normalised(group)
+    lead = "${{ github.workflow }}"
+    if group.startswith(lead):
+        group = workflow_name + group[len(lead):]
+    return group.split("${{", 1)[0].casefold()
+
+
+def may_be_named(name: str, check: str) -> bool:
+    """Whether a job name, possibly with expressions, can render as `check`."""
+    if "${{" not in name:
+        return name == check
+    prefix, suffix = name.split("${{", 1)[0], name.rsplit("}}", 1)[-1]
+    return (check.startswith(prefix) and check.endswith(suffix)
+            and len(check) >= len(prefix) + len(suffix))
+
+
 def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
     """Every way the required checks could stop reporting; empty when none."""
     found = []
@@ -103,7 +128,15 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
     reporters: dict[str, list[tuple[str, str]]] = {}
     for name, workflow in workflows.items():
         for job_id, job in (workflow.get("jobs") or {}).items():
-            reporters.setdefault(job.get("name", job_id), []).append((name, job_id))
+            for check in REQUIRED:
+                if may_be_named(job.get("name", job_id), check):
+                    reporters.setdefault(check, []).append((name, job_id))
+    groups = [(name, str(workflow.get("name", name)), scope, concurrency_group(setting))
+              for name, workflow in workflows.items()
+              for scope, setting in [("workflow", workflow.get("concurrency"))] + [
+                  (f"job {job_id}", job.get("concurrency"))
+                  for job_id, job in (workflow.get("jobs") or {}).items()]
+              if concurrency_group(setting)]
     required_jobs = {(name, job_id) for check, (name, _) in REQUIRED.items()
                      for owner, job_id in reporters.get(check, []) if owner == name}
     for check, (name, pr_event) in REQUIRED.items():
@@ -141,12 +174,20 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
                 found.append(f"{check!r} needs {prerequisite!r}, which is not required")
         # A new run in a concurrency group cancels the group's pending run even
         # without cancel-in-progress.
-        setting = workflow.get("concurrency")
-        if setting:
-            group = setting.get("group", "") if isinstance(setting, dict) else setting
+        group = concurrency_group(workflow.get("concurrency"))
+        if group:
             if normalised(group) not in SAFE_GROUPS[pr_event]:
                 found.append(f"{name} concurrency group {group!r} is not one of the forms "
                              f"known to differ per {pr_event} and per merge group")
+            start = literal_start(str(workflow.get("name", name)), group)
+            for owner, title, scope, other in groups:
+                if (owner, scope) == (name, "workflow"):
+                    continue
+                other_start = literal_start(title, other)
+                if not other_start or other_start.startswith(start) or start.startswith(
+                        other_start):
+                    found.append(f"{owner} {scope} concurrency group {other!r} could match "
+                                 f"{name}'s {group!r}")
         if job.get("concurrency"):
             found.append(f"{check!r} has a job-level concurrency group, which is unverified")
     return found
@@ -173,7 +214,8 @@ FIXTURE = {
         "on": {"pull_request_target": "", "merge_group": ""},
         "jobs": {"guard": {}},
     },
-    "lint.yml": {"on": {"pull_request": {"paths": ["docs/**"]}}, "jobs": {"lint": {}}},
+    "lint.yml": {"on": {"pull_request": {"paths": ["docs/**"]}},
+                 "concurrency": {"group": "lint-${{ github.ref }}"}, "jobs": {"lint": {}}},
 }
 
 
@@ -282,6 +324,13 @@ class MergeQueueChecks(unittest.TestCase):
                     "github.event.pull_request.number }}"), "is not one of the forms"),
             "workflow names differing only in case": (put("lint.yml", "name", "ci"),
                                                       "share the name 'ci'"),
+            "renamed onto another workflow's literal group": (put("ci.yml", "name", "lint"),
+                                                               "could match"),
+            "another workflow's group starting with an expression": (
+                put("lint.yml", "concurrency", "${{ github.ref }}"), "could match"),
+            "expression job name that can render as a required one": (
+                put("lint.yml", "jobs", "lint", "name", "${{ matrix.part }}"),
+                "'build' is reported by"),
             "job-level group": (put("ci.yml", "jobs", "build", "concurrency",
                                     "${{ github.workflow }}-${{ github.ref }}"),
                                 "job-level concurrency group"),
