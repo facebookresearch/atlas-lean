@@ -679,4 +679,24 @@ example (k : Fin 0 → Fin 0 → ℝ) : (stiffnessMatrix k 0).PosDef :=
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.innerProductM_eq_zero_of_ne
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.rayleigh_nonneg
 
+/-- Balanced couple: moment is the same about the origin and
+about a shifted point. -/
+example : moment2D (fun i => (![![0, 0], ![4, 0]] : Fin 2 → Fin 2 → ℝ) i
+      - ![3, -2]) ![![0, 1], ![0, -1]]
+    = moment2D ![![0, 0], ![4, 0]] ![![0, 1], ![0, -1]] :=
+  moment2D_shift_eq_of_isEquilibrated _ _ _
+    (by simp [IsEquilibrated, resultantForce, Fin.sum_univ_two])
+
+/-- Unbalanced single force: the shift changes the moment by
+the resultant term (sign control). -/
+example : moment2D (fun _ : Fin 1 => (![0, 0] : Fin 2 → ℝ) - ![1, 0])
+      (fun _ => ![0, 1]) = -1
+    ∧ moment2D (fun _ : Fin 1 => (![0, 0] : Fin 2 → ℝ))
+      (fun _ => ![0, 1]) = 0 := by
+  constructor <;> simp [moment2D]
+
+#print axioms PhyslibExt.Mechanics.HarmonicMechanics.moment2D_shift
+#print axioms PhyslibExt.Mechanics.HarmonicMechanics.moment2D_shift_eq_of_isEquilibrated
+#print axioms PhyslibExt.Mechanics.HarmonicMechanics.resultantForce_eq_zero_of_moment2D_shift_eq
+
 end PhyslibExtTest.Mechanics.HarmonicMechanics

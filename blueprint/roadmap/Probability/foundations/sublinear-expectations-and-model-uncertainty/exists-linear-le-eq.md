@@ -8,7 +8,7 @@ through $x$.
 
 ## Informally uses
 
-- Hahn–Banach theorem: Peng's proof extends the functional $c x \mapsto c\, E(x)$ from the
+- [Hahn–Banach theorem](../../../Analysis/banach-spaces/duality-and-weak-topologies/hahn-banach-theorem/README.md): Peng's proof extends the functional $c x \mapsto c\, E(x)$ from the
   line through $x$ to the whole space under the sublinear bound $E$ (arXiv:1002.4546v1,
   Appendix A, Theorem 2.2, the real-vector-space form).
 

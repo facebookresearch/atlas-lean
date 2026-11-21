@@ -15,5 +15,5 @@
 
 ## Related topics
 
-- Randomized rounding for MAX-SAT: the algorithmic side for MAX SAT with
+- [Randomized rounding for MAX-SAT](../../../ComputerScience/approximation-algorithms/randomized-rounding-for-max-sat/README.md): the algorithmic side for MAX SAT with
   clauses of any length, a $\frac34$-approximation.

@@ -143,7 +143,8 @@ class LeanFacts(Vault):
         index = SimpleNamespace(declarations={})
         for _ in range(2):
             counts, unlinked = sync.apply_lean_facts(index, {})
-            self.assertEqual(counts, {"articles": 0, "unresolved": 1, "edges": 0})
+            # A page whose annotation names no declaration is planned, not unresolved.
+            self.assertEqual(counts, {"articles": 0, "unresolved": 0, "edges": 0})
             self.assertEqual(unlinked, [])
             self.assertEqual(page.read_text(), "# Unlinked\n\nKeep the edited statement.\n")
         row = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][0]
@@ -288,6 +289,61 @@ class LeanFacts(Vault):
         self.assertNotIn("kind", row)
         self.assertNotIn("status", row)
 
+    def test_a_planned_page_keeps_its_prerequisites_but_is_no_task(self) -> None:
+        # A page whose annotation names no declaration records its prerequisites by hand (Graph rules, Edges); it has
+        # no kind or status, so Autoform never lists it as a task.
+        body = ("# Main\n\nPlanned.\n\n## Depends on\n\n- [Base](base.md)\n\n"
+                "## Proof depends on\n\n- [Lemma](lemma.md)\n")
+        page = self.page("Algebra/main.md", body)
+        self.annotate([self.about("Algebra/main.md", kind="theorem", status="stated", id="af_0123456789abcdef01234567",
+                                  extensions={"org.autoform": {"not_ready": True}})])
+        for _ in range(2):
+            counts, unlinked = sync.apply_lean_facts(SimpleNamespace(declarations={}), {})
+            self.assertEqual((counts["unresolved"], unlinked), (0, []))
+            self.assertEqual(page.read_text(), body)
+        row = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][0]
+        self.assertEqual(row, self.about("Algebra/main.md", id="af_0123456789abcdef01234567",
+                                         extensions={"org.autoform": {"not_ready": True}}))
+
+    def test_an_expansion_keeps_a_planned_prerequisite_only_on_a_planned_page(self) -> None:
+        # Graph rules, expanding a node: a new page whose proof needs the planned page B stays planned and keeps that
+        # edge; made a wanted statement too early, it would lose it, since its edges come only from the Lean.
+        source = self.tmp / "Ext" / "Groups.lean"
+        source.parent.mkdir(parents=True)
+        source.write_text("theorem_wanted early : True\n")
+        self.page("Algebra/b.md", "# B\n\nStill planned.\n")
+        waiting = "# Waiting\n\nPlanned.\n\n## Depends on\n\nThis node has no prerequisites.\n\n## Proof depends on\n\n- [B](b.md)\n"
+        kept = self.page("Algebra/waiting.md", waiting)
+        early = self.page("Algebra/early.md", "# Early\n\nWanted.\n\n## Proof depends on\n\n- [B](b.md)\n")
+        self.annotate([self.about("Algebra/b.md"), self.about("Algebra/waiting.md"),
+                       self.about("Algebra/early.md", object=[{"location": {"declaration": "Ext.early"}}])])
+        index = SimpleNamespace(declarations={"Ext.early": SimpleNamespace(keyword="theorem_wanted",
+                                                                           path=Path("Ext/Groups.lean"))})
+        sync.apply_lean_facts(index, {"Ext.early": {"module": "Ext.Groups", "statement": [], "proof": []}})
+        self.assertEqual(kept.read_text(), waiting)
+        self.assertEqual(early.read_text(), "# Early\n\nWanted.\n\n## Depends on\n\nThis node has no prerequisites.\n")
+
+    def test_a_wanted_statement_records_no_proof_edge_to_an_unproved_prerequisite(self) -> None:
+        # Graph rules, expanding a node: B is in Lean but unproved. A wanted statement has no proof, so the Lean
+        # records no proof edge from it to B; only a page that stays planned keeps that edge.
+        source = self.tmp / "Ext" / "Groups.lean"
+        source.parent.mkdir(parents=True)
+        source.write_text("theorem_wanted b : True\ntheorem_wanted early : True\n")
+        self.page("Algebra/b.md", "# B\n\nUnproved.\n")
+        waiting = "# Waiting\n\nPlanned.\n\n## Depends on\n\nThis node has no prerequisites.\n\n## Proof depends on\n\n- [B](b.md)\n"
+        kept = self.page("Algebra/waiting.md", waiting)
+        early = self.page("Algebra/early.md", "# Early\n\nWanted.\n\n## Proof depends on\n\n- [B](b.md)\n")
+        self.annotate([self.about("Algebra/b.md", object=[{"location": {"declaration": "Ext.b"}}]),
+                       self.about("Algebra/waiting.md"),
+                       self.about("Algebra/early.md", object=[{"location": {"declaration": "Ext.early"}}])])
+        wanted = SimpleNamespace(keyword="theorem_wanted", path=Path("Ext/Groups.lean"))
+        sync.apply_lean_facts(SimpleNamespace(declarations={"Ext.b": wanted, "Ext.early": wanted}),
+                              {name: {"module": "Ext.Groups", "statement": [], "proof": []} for name in ("Ext.b", "Ext.early")})
+        rows = {sync.subject_path(r).name: r for r in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
+        self.assertEqual((rows["b.md"]["kind"], rows["b.md"]["status"]), ("theorem", "stated"))
+        self.assertEqual(kept.read_text(), waiting)
+        self.assertEqual(early.read_text(), "# Early\n\nWanted.\n\n## Depends on\n\nThis node has no prerequisites.\n")
+
     def test_pages_taken_from_docstrings_get_their_facts(self) -> None:
         # declarations marks its pages with OWN's "from", which names a module only for a page with no Lean name.
         source = self.tmp / "Ext" / "Groups.lean"
@@ -413,7 +469,8 @@ class Declarations(Vault):
         old = self.page("Algebra/groups/old.md", "# Old, as the wiki wrote it\n\nEdited text.\n")
         self.page("Algebra/README.md", "# Algebra\n\n- [Groups](groups/README.md)\n")
         self.annotate([
-            self.about("Algebra/groups/old.md", object=[{"location": {"declaration": "Ext.old"}}]),
+            self.about("Algebra/groups/old.md", id="af_000000000000000000000001",
+                       object=[{"location": {"declaration": "Ext.old"}}]),
             self.about("Algebra/groups/gone.md", object=[{"location": {"declaration": "Ext.gone"}}]),
         ])
         targets = [
@@ -446,6 +503,62 @@ class Declarations(Vault):
         self.assertEqual(rows["new.md"]["object"], [{"location": {"declaration": "Ext.new"}}])
         self.assertEqual(rows["new.md"]["extensions"], {"org.atlas-wiki": {"from": "docstring"}})
         self.assertNotIn("wanted.md", rows)
+        # Each row the sync adds gets a fresh id (Graph rules, Data and metadata); one it already had keeps its own, and one without
+        # stays without until the one-off fill.
+        self.assertEqual(rows["old.md"]["id"], "af_000000000000000000000001")
+        self.assertNotIn("id", rows["gone.md"])
+        added = [rows["new.md"]["id"], rows["lone.md"]["id"]]
+        for article_id in added:
+            self.assertRegex(article_id, r"^af_[0-9a-f]{24}$")
+        self.assertEqual(len(set(added + ["af_000000000000000000000001"])), 3)
+
+    def test_a_held_declaration_keeps_its_page_unlinked_and_gets_no_other(self) -> None:
+        self.page("Algebra/README.md", "# Algebra\n\n- [Claim](claim.md)\n")
+        claim = self.page("Algebra/claim.md", "# Claim\n\nThe source's statement.\n")
+        held = {"declaration": "Ext.claim", "reason": "false", "issue": 1}
+        self.annotate([self.about("Algebra/claim.md", extensions={"org.atlas-wiki": {"held": held}})])
+        targets = [declaration("Ext.claim", "claim", "Claim", "A statement that is false as written."),
+                   declaration("Ext.new", "new", "New result", "A new statement.")]
+        report = sync.apply_declarations(targets, SimpleNamespace(declarations={"Ext.claim": None, "Ext.new": None}))
+        self.assertEqual(report["added"], ["Ext.new -> Algebra/new.md"])
+        self.assertEqual(report["held"], ["Ext.claim (Algebra/claim.md)"])
+        self.assertEqual(claim.read_text(), "# Claim\n\nThe source's statement.\n")
+        self.assertFalse((wiki.ROADMAP / "Algebra" / "claim-2.md").exists())
+        rows = {sync.subject_path(row).name: row for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
+        self.assertNotIn("object", rows["claim.md"])
+        self.assertEqual(rows["claim.md"]["extensions"], {"org.atlas-wiki": {"held": held}})
+
+    def test_a_held_marker_that_cannot_hold_its_declaration_back_is_reported(self) -> None:
+        self.page("Algebra/README.md", "# Algebra\n\n" + "".join(f"- [{n.upper()}]({n}.md)\n" for n in "abcdefgh"))
+        for name in "abcdefgh":
+            self.page(f"Algebra/{name}.md", f"# {name.upper()}\n")
+        held = lambda value: {"org.atlas-wiki": {"held": value}}
+        self.annotate([
+            self.about("Algebra/a.md", extensions=held("Ext.a")),
+            self.about("Algebra/b.md", extensions=held({"declaration": ["Ext.b"]})),
+            self.about("Algebra/c.md", object=[{"location": {"declaration": "Ext.c"}}],
+                       extensions=held({"declaration": "Ext.c", "reason": "false"})),
+            self.about("Algebra/d.md", extensions=held({"declaration": "Ext.renamed", "reason": "false"})),
+            self.about("Algebra/e.md", object=[{"location": {"declaration": "Ext.e"}}]),
+            self.about("Algebra/f.md", extensions=held({"declaration": "Ext.e", "reason": "false"})),
+            self.about("Algebra/g.md", extensions=held({"declaration": "Ext.g", "reason": "false"})),
+            self.about("Algebra/h.md", extensions=held({"declaration": "Ext.g", "reason": "vacuous"})),
+        ])
+        targets = [declaration("Ext.c", "c", "C", "C."), declaration("Ext.e", "e", "E", "E."),
+                   declaration("Ext.g", "g", "G", "G."), declaration("Ext.new", "new", "New", "A new statement.")]
+        report = sync.apply_declarations(targets, SimpleNamespace(declarations={f"Ext.{n}": None for n in ("c", "e", "g", "new")}))
+        self.assertEqual(report["held"], ["Ext.g (Algebra/g.md)"])
+        self.assertEqual(report["held_problems"], [
+            "Algebra/a.md: its held marker names no declaration",
+            "Algebra/b.md: its held marker names no declaration",
+            "Algebra/c.md: it holds Ext.c back but is linked to Ext.c",
+            "Algebra/d.md: it holds Ext.renamed back, which the Lean index does not resolve",
+            "Algebra/f.md: it holds Ext.e back, which Algebra/e.md links",
+            "Algebra/h.md: it holds Ext.g back, as Algebra/g.md does",
+        ])
+        # A marker the run cannot use stops it before it writes anything.
+        self.assertEqual(report["added"], [])
+        self.assertFalse((wiki.ROADMAP / "Algebra" / "new.md").exists())
 
     def test_a_new_page_never_takes_the_name_of_its_folder_page(self) -> None:
         self.page("Algebra/groups/README.md", "# Groups\n")
@@ -597,7 +710,9 @@ class Declarations(Vault):
         self.assertEqual((wiki.ROADMAP / "Algebra" / "README.md").read_text(),
                          "# Algebra\n\n- [Fields](fields/README.md)\n- [Rings](rings/README.md)\n- [Topology](topology/README.md)\n")
         rows = {sync.subject_path(row).relative_to(wiki.ROADMAP).as_posix(): row for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
-        self.assertEqual(rows["Algebra/rings/README.md"], {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/rings/README.md"}]})
+        self.assertEqual(rows["Algebra/rings/README.md"]["subject"], [{"type": "generic", "uri": "../roadmap/Algebra/rings/README.md"}])
+        self.assertEqual(set(rows["Algebra/rings/README.md"]), {"subject", "id"})
+        self.assertRegex(rows["Algebra/rings/README.md"]["id"], r"^af_[0-9a-f]{24}$")
         self.assertEqual(rows["Algebra/rings/ideals/README.md"]["extensions"], {"org.autoform": {"navigation": "module"}})
         self.assertNotIn("Algebra/rings/ideals/old.md", rows)
 
@@ -1035,7 +1150,8 @@ class Declarations(Vault):
                 self.assertEqual((report["appended"], report["unlisted"]), (["Algebra/groups/sylow.md"], []))
 
     def test_a_page_listed_nowhere_fails_the_run(self) -> None:
-        report = {kind: [] for kind in ("added", "folders", "gone", "changed", "unindexed", "parts", "replaced", "appended")}
+        report = {kind: [] for kind in ("added", "folders", "gone", "changed", "unindexed", "parts", "replaced", "appended",
+                                         "held", "held_problems")}
         report["unlisted"] = ["Algebra/groups/sylow.md"]
         lean = SimpleNamespace(index_project=lambda *args, **kwargs: SimpleNamespace(declarations={}))
         with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean), "autoform_cli.lean": lean}), \
@@ -1045,6 +1161,21 @@ class Declarations(Vault):
             self.assertEqual(sync.run_declarations(), 1)
         self.assertIn("error: Algebra/groups/sylow.md is listed on no folder page", errors.getvalue())
         self.assertIn("Lines of a part list that the refresh replaced or removed", output.getvalue())
+
+    def test_a_held_marker_to_fix_stops_the_run_before_the_catalog(self) -> None:
+        report = {kind: [] for kind in ("added", "folders", "gone", "changed", "unindexed", "parts", "replaced", "appended",
+                                         "unlisted", "held")}
+        report["held_problems"] = ["Algebra/a.md: its held marker names no declaration"]
+        refreshed = []
+        lean = SimpleNamespace(index_project=lambda *args, **kwargs: SimpleNamespace(declarations={}))
+        with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean), "autoform_cli.lean": lean}), \
+                patch.object(wiki, "generate", lambda *args: {}), patch.object(sync, "apply_declarations", lambda *args: report), \
+                patch.object(sync, "refresh_catalog", refreshed.append), \
+                patch("sys.stdout", new_callable=io.StringIO) as output, patch("sys.stderr", new_callable=io.StringIO) as errors:
+            self.assertEqual(sync.run_declarations(), 1)
+        self.assertEqual(refreshed, [])
+        self.assertEqual(output.getvalue(), "Held markers to fix: 1; the run wrote nothing\n")
+        self.assertIn("error: Algebra/a.md: its held marker names no declaration; fix the marker", errors.getvalue())
 
     def test_an_edit_that_does_not_render_as_meant_is_left_out(self) -> None:
         # The whitelist admits a heading holding raw HTML, but a browser builds the rest of the page inside the

@@ -12,6 +12,10 @@ So the forward map from canonical to mean parameters is $\theta \mapsto \nabla A
 
 - [The partition function is positive](partition-sum-pos.md): the chain rule for $\log Z$ at $Z(\theta) > 0$.
 
+## Related topics
+
+- [The gradient of the log-partition function with base weights is the mean](has-gradient-at-log-partition-2.md): the form with base weights $h$ and a statistic in $\mathbb{R}^\iota$, instead of the counting base measure and a statistic in an inner product space.
+
 ## Sources
 
 - M. J. Wainwright and M. I. Jordan, *Graphical models, exponential families, and variational inference*, Found. Trends Mach. Learn. 1(1–2) (2008) 1–305, Proposition 3.1(a), first-derivative part, equation (3.41a), with the counting measure (no differentiation under an integral is needed).

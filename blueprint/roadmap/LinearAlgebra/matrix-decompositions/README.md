@@ -22,7 +22,7 @@ Factorizations of matrices (QR, singular value, polar, Schur and LU decompositio
 
 - [Numerical analysis](../../Analysis/numerical-analysis/README.md)
 - [Chebyshev series and interpolation](../../Analysis/approximation-theory/chebyshev-series-and-interpolation/README.md)
-- Least squares, ridge and lasso regression
+- [Least squares, ridge and lasso regression](../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/README.md)
 - [Principal component analysis](../../Probability/linear-models-multivariate/principal-component-analysis/README.md)
-- Rounding error analysis
-- Communication lower bounds
+- [Rounding error analysis](../../ComputerScience/algebraic-and-numerical-algorithms/rounding-error-analysis/README.md)
+- [Communication lower bounds](../../ComputerScience/algebraic-and-numerical-algorithms/communication-lower-bounds/README.md)

@@ -16,7 +16,7 @@ Carlen's notes give Ando's tensor-product proof. Taking $K = I$, $q = 1 - p$, $r
 ## Background
 
 - [Lieb's concavity theorem](lieb-concavity.md): the exponential form $A \mapsto \operatorname{tr}\exp(H + \log A)$, from the same 1973 paper.
-- The square is operator convex: an example of operator convexity, the operator-level notion behind the one-variable concavity of $t^q$.
+- [The square is operator convex](../../../Analysis/operator-algebras/operator-monotone-and-operator-convex-functions/sq-convex-comb-le.md): an example of operator convexity, the operator-level notion behind the one-variable concavity of $t^q$.
 
 ## Sources
 

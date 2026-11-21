@@ -12,7 +12,7 @@ The proof walks from $x_0$ to $g x_0$ along a geodesic in unit steps and chooses
 
 ## Background
 
-- Quasi-isometry: the notion the conclusion instantiates; see also the corollary [Švarc–Milnor as a quasi-isometry](is-quasi-isometry.md).
+- [Quasi-isometry](../../../Geometry/metric-geometry/quasi-isometries/is-quasi-isometry.md): the notion the conclusion instantiates; see also the corollary [Švarc–Milnor as a quasi-isometry](is-quasi-isometry.md).
 
 ## Sources
 

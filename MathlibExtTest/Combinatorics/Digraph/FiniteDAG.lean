@@ -10,14 +10,12 @@ module
 
 public import MathlibExt.Combinatorics.Digraph.FiniteDAG
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import MathlibExt.Biology.PopulationGenetics.AdmixtureGraph
 
 /-!
 # Tests for finite DAGs
 
 The examples check the directed path and the directed 3-cycle, the empty and edgeless
-digraphs, the undirected-acyclicity reuse, and that an admixture graph's parent digraph
-is acyclic.
+digraphs, and the undirected acyclicity criterion.
 -/
 
 @[expose] public section
@@ -80,13 +78,6 @@ example {W : Type*} (H : SimpleGraph W) :
     H.IsAcyclic ↔ ∀ ⦃v : W⦄ (c : H.Walk v v), ¬ c.IsCycle := Iff.rfl
 
 example {W : Type*} : (⊥ : SimpleGraph W).IsAcyclic := SimpleGraph.isAcyclic_bot
-
-/-- Integration with Atlas: the parent digraph of an admixture graph (edges parent → child) is
-acyclic, via `isAcyclic_iff_wellFounded` and the structure's well-foundedness field. -/
-example {W : Type*} [Finite W] (A : MathlibExt.Biology.PopulationGenetics.AdmixtureGraph W) :
-    (⟨fun Y X => Y ∈ A.parents X⟩ : Digraph W).IsAcyclic :=
-  isAcyclic_iff_wellFounded.mpr A.wf
-
 
 #print axioms Digraph.isAcyclic_iff_wellFounded
 #print axioms Digraph.IsAcyclic.exists_isTopologicalOrder

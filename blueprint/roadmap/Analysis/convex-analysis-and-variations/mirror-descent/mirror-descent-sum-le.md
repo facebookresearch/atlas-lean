@@ -16,7 +16,7 @@ The vectors $g_t$ are arbitrary, so the bound is a regret bound for online linea
 
 ## Background
 
-- The $\sqrt{T}$ regret bound of Hedge: linear losses on the simplex, where the multiplicative-weights update of Hedge is the entropic prox step ([entropic prox step](entropy-prox-multiplicative.md)); Hedge's bound follows there from a potential argument, a different inequality from this one.
+- [The $\sqrt{T}$ regret bound of Hedge](../../../ComputerScience/machine-learning/online-learning-and-boosting/hedge-algorithm/regret-le-two-sqrt.md): linear losses on the simplex, where the multiplicative-weights update of Hedge is the entropic prox step ([entropic prox step](entropy-prox-multiplicative.md)); Hedge's bound follows there from a potential argument, a different inequality from this one.
 
 ## Sources
 

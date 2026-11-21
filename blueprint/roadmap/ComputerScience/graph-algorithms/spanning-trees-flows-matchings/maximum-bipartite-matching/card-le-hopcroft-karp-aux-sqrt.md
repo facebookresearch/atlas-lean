@@ -13,7 +13,7 @@ Hopcroft and Karp bound the number of phases by $2\lfloor\sqrt{s}\rfloor + 2$, w
 
 ## Background
 
-- A short augmenting path exists (Hopcroft–Karp, Corollary 2): the general-graph counting step of the original proof.
+- [A short augmenting path exists (Hopcroft–Karp, Corollary 2)](../../../../GraphTheory/matchings-and-flows/berge-s-lemma/exists-is-augmenting-walk-length-le.md): the general-graph counting step of the original proof.
 
 ## Sources
 

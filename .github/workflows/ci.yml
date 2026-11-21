@@ -111,6 +111,9 @@ jobs:
       # the full build then finds them up to date and replays their logs. When
       # one fails, the full build is skipped: it would retry that module
       # alongside the others.
+      - name: Test initialized compiled-audit isolation
+        run: python3 -m unittest discover -s scripts -p test_compiled_audit_native.py -v
+
       - name: Build memory-heavy modules one at a time
         run: |
           set -euo pipefail
