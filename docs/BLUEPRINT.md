@@ -136,9 +136,10 @@ The tools write these, so they are never edited or committed by hand:
   [Maintaining articles](#maintaining-articles) describes.
 
 Each annotation has an `id` (`af_` and 24 hex digits) that is unique and never
-changes; `autoform work` refuses an unfinished formalizable leaf without one.
-The sync gives each row it adds an `id`. A row without one is not a review
-finding until the one-off fill (#5524).
+changes; `autoform work` refuses an unfinished formalizable leaf without one,
+so one such row stops the task list. `sync_wiki.py declarations` gives each row
+it adds an `id`, and `sync_wiki.py ids` gives one to every row that has none,
+such as a row written by hand; the wiki tests fail on a row without one.
 
 Blueprint Pages' `build the wiki` job runs `autoform check blueprint`, which
 fails on cycles, dangling dependency targets and missing declarations. The job

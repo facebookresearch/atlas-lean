@@ -4,6 +4,7 @@
     python scripts/sync_wiki.py import TITLES.jsonl DEPENDENCIES.json   seed blueprint/ once from the Lean docstrings
     python scripts/sync_wiki.py lean-facts DEPENDENCIES.json            the Lean's facts, at build; never committed
     python scripts/sync_wiki.py declarations                            new declarations' pages, after an upstream merge
+    python scripts/sync_wiki.py ids                                     an article id for each annotation without one
 
 The wiki owns every page's text: titles, statements, sources, prose and the page
 tree under blueprint/roadmap/. Each article's annotation in blueprint/links/
@@ -43,6 +44,14 @@ typed, with no link, and the text it publishes is rendered with the site's
 Markdown extensions and read as a browser builds it. An edit that would lose a
 link, move a heading or its id, or show its new link elsewhere or not at all is
 left out and reported too, and a page keeps its line ends and bytes.
+
+ids gives each annotation that has no id a fresh one, as declarations gives one
+to each annotation it adds: a row written by hand, say. The id goes right after
+the row's subject, where declarations puts it, and every other byte of the links
+files stays as it is; an id a row has never changes. A row that is not strict
+JSON (one object, no key twice in any object, no NaN or Infinity) or has no
+subject, and an id that is malformed or that another row has too, are errors,
+and the run then writes nothing.
 
 import runs once, on a tree whose Lean still holds the wiki's English. TITLES.jsonl
 holds checked titles, one {"file", "name", "opening", "title"} per line: a
@@ -111,6 +120,9 @@ CHILD = re.compile(r"[^./#?%&$\s]+(?:/README)?\.md")
 CLOSING = {"related topics", "sources", "references", "bibliography", "see also", "further reading", "depends on",
            "proof depends on", "mathematical overview"}
 PART = re.compile(r"part-\d+")
+# An article id, as new_article_id makes one, and the space JSON allows between tokens.
+ARTICLE_ID = re.compile(r"af_[0-9a-f]{24}")
+JSON_SPACE = re.compile(r"[ \t\n\r]*")
 
 
 def split_frontmatter(text: str) -> tuple[dict[str, str], str]:
@@ -1121,6 +1133,128 @@ def new_article_id(taken: set[str]) -> str:
     return article_id
 
 
+class RowError(ValueError):
+    """Why a links row is not one the ids command may fill (see members)."""
+
+
+def unique_keys(pairs: list[tuple[str, object]]) -> dict:
+    """An object of a links row, refused when it has a key twice: JSON would keep the last, and a reader the first."""
+    keys = [key for key, _ in pairs]
+    if repeated := sorted({key for key in keys if keys.count(key) > 1}):
+        raise RowError(f"the row repeats {', '.join(repeated)}")
+    return dict(pairs)
+
+
+def no_constant(name: str) -> None:
+    raise RowError(f"the row holds {name}, which JSON does not allow")
+
+
+# JSON as RFC 8259 has it, and no object with a key twice.
+STRICT_JSON = json.JSONDecoder(object_pairs_hook=unique_keys, parse_constant=no_constant)
+
+
+def members(row: str) -> list[tuple[str, int]]:
+    """The top-level members of the JSON object a links row holds, in order: each key, and where its value ends in the
+    row. ValueError, saying why, when the row is not strict JSON (see STRICT_JSON) holding one object."""
+    found: list[tuple[str, int]] = []
+    try:
+        at = JSON_SPACE.match(row).end()
+        if row[at:at + 1] != "{":
+            raise ValueError
+        at = JSON_SPACE.match(row, at + 1).end()
+        while row[at:at + 1] != "}":
+            if found:
+                if row[at:at + 1] != ",":
+                    raise ValueError
+                at = JSON_SPACE.match(row, at + 1).end()
+            if row[at:at + 1] != '"':
+                raise ValueError
+            key, at = STRICT_JSON.raw_decode(row, at)
+            at = JSON_SPACE.match(row, at).end()
+            if row[at:at + 1] != ":":
+                raise ValueError
+            _, at = STRICT_JSON.raw_decode(row, JSON_SPACE.match(row, at + 1).end())
+            found.append((key, at))
+            at = JSON_SPACE.match(row, at).end()
+        if row[at + 1:].strip(" \t\n\r"):
+            raise ValueError
+    except RowError:
+        raise
+    except ValueError:
+        raise ValueError("the row is not a JSON object") from None
+    unique_keys(found)
+    return found
+
+
+def with_article_id(row: str, article_id: str) -> str:
+    """A links row that has no id, with *article_id* right after the value of its subject, where declarations puts the
+    id of an annotation it adds; every other byte of the row stays as it is. ValueError for a row that is not strict
+    JSON holding one object with a subject (see members)."""
+    ends = [end for key, end in members(row) if key == "subject"]
+    if not ends:
+        raise ValueError("the row has no subject")
+    return f'{row[:ends[0]]}, "id": {json.dumps(article_id)}{row[ends[0]:]}'
+
+
+def location(path: Path, line: int) -> str:
+    """A row of a links file, as a report names it for a reader: `file:line`, the file from the repository's root."""
+    return f"{path.relative_to(wiki.ROOT).as_posix()}:{line}"
+
+
+def apply_ids(write: bool = True) -> tuple[list[str], list[str]]:
+    """Give each annotation that has no id a fresh one (see new_article_id and with_article_id). Returns the rows
+    without an id and the problems that stop the run, each as `file:line`: a row that is not strict JSON holding one
+    object (see members) or has no subject, and an id that is not `af_` and 24 hex digits or that another row has too.
+    A links file that is not a regular file is a problem too, as writing through a symbolic link would change a file
+    outside the folder. With a problem, or with *write* false, nothing is written."""
+    paths = sorted(LINKS.glob("*.jsonl"))
+    regular = [path for path in paths if path.is_file() and not path.is_symlink()]
+    problems = [f"{path.relative_to(wiki.ROOT).as_posix()}: it is not a regular file"
+                for path in paths if path not in regular]
+    lines = {path: path.read_bytes().decode("utf-8").split("\n") for path in regular}
+    owners: dict[str, str] = {}
+    missing: list[tuple[Path, int]] = []
+    for path, rows in lines.items():
+        for number, row in enumerate(rows):
+            # A blank line, such as the empty end after the last line end; any other character is checked, a form feed
+            # included, which JSON does not count as space.
+            if not row.strip(" \t\r"):
+                continue
+            where = location(path, number + 1)
+            try:
+                keys = [key for key, _ in members(row)]
+            except ValueError as error:
+                problems.append(f"{where}: {error}")
+                continue
+            if "subject" not in keys:
+                problems.append(f"{where}: the row has no subject")
+            elif "id" not in keys:
+                missing.append((path, number))
+            elif not isinstance(article_id := STRICT_JSON.decode(row)["id"], str) or not ARTICLE_ID.fullmatch(
+                    article_id):
+                problems.append(f"{where}: its id {json.dumps(article_id, ensure_ascii=False)} is not af_ and 24 hex "
+                                "digits")
+            elif article_id in owners:
+                problems.append(f"{where}: its id {article_id} is the id of {owners[article_id]} too")
+            else:
+                owners[article_id] = where
+    without = [location(path, number + 1) for path, number in missing]
+    if problems or not write:
+        return without, problems
+    taken = set(owners)
+    for path, number in missing:
+        row = lines[path][number]
+        article_id = new_article_id(taken)
+        lines[path][number] = filled = with_article_id(row, article_id)
+        # The rows' own check: with its id taken out, a row is the row it was, byte for byte, and it reads as it did.
+        if (filled.replace(f', "id": "{article_id}"', "", 1) != row
+                or json.loads(filled) != {**json.loads(row), "id": article_id}):
+            raise RuntimeError(f"{location(path, number + 1)}: adding the id would change the row otherwise")
+    for path in sorted({path for path, _ in missing}):
+        path.write_bytes("\n".join(lines[path]).encode("utf-8"))
+    return without, problems
+
+
 def apply_declarations(targets: list, index, generated: dict[Path, str] | None = None,
                        unindexed: list[str] | None = None) -> dict[str, list[str]]:
     """Pages for new declarations, and the report; see the module docstring. ``generated`` holds generate_wiki's
@@ -1338,6 +1472,17 @@ def run_declarations() -> int:
     return 1 if report["unlisted"] else 0
 
 
+def run_ids() -> int:
+    without, problems = apply_ids()
+    for problem in problems:
+        print(f"error: {problem}", file=sys.stderr)
+    if problems:
+        print(f"error: {len(problems)} rows to fix; the run wrote nothing", file=sys.stderr)
+        return 1
+    print(f"{len(without)} annotations got an article id")
+    return 0
+
+
 def main(argv: list[str]) -> int:
     if len(argv) == 3 and argv[0] == "import":
         return run_import(Path(argv[1]), Path(argv[2]))
@@ -1345,6 +1490,8 @@ def main(argv: list[str]) -> int:
         return run_lean_facts(Path(argv[1]))
     if argv == ["declarations"]:
         return run_declarations()
+    if argv == ["ids"]:
+        return run_ids()
     print(__doc__, file=sys.stderr)
     return 2
 
