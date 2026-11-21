@@ -128,7 +128,9 @@ lemma si4_meanfield_lower_bound_of_finiteVolume (β₀ : ℝ) (hβ₀ : 0 < β�
 /-! ## B. Integration -/
 
 /-- If `(m²)' ≥ (2/β)(1 - m²)` above `β₀ > 0` and `m ≥ 0`, then `m(β) ≥ √(1 - (β₀/β)²)` for `β ≥
-β₀`. This strengthens `meanfield_lower_bound` by dropping `m(β₀) = 0`. -/
+β₀`. Unlike `meanfield_lower_bound`, this does not require `m(β₀) = 0`; it retains
+differentiability of `β ↦ (m β) ^ 2` at `β₀` itself, which `meanfield_lower_bound` weakens to
+continuity on `Ici β₀`, so neither statement implies the other. -/
 lemma meanfield_lower_bound_of_initial_nonneg
     (β₀ : ℝ) (hβ₀ : 0 < β₀) (m : ℝ → ℝ)
     (hdiff : ∀ β ∈ Ici β₀, DifferentiableAt ℝ (fun β => (m β) ^ 2) β)
