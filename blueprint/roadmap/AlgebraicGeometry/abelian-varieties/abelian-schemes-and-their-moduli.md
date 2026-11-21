@@ -57,8 +57,8 @@ varieties; over a variety $S$ this is a family of abelian varieties.
   and Chai construct from the degenerations of polarized abelian varieties into semi-abelian
   schemes. A semi-abelian scheme is a smooth commutative group scheme of finite type whose fibres
   are connected and are extensions of abelian varieties by tori. Over a base
-  $S = \operatorname{Spec} A$ with $A$ an excellent integrally closed noetherian ring complete for an
-  $I$-adic topology, Mumford starts from a split torus $\tilde G$ over $S$ and a group of periods
+  $S = \operatorname{Spec} A$ with $A$ an excellent integrally closed noetherian ring complete for the
+  $I$-adic topology of a radical ideal $I$, Mumford starts from a split torus $\tilde G$ over $S$ and a group of periods
   $Y \subset \tilde G(K)$, $K$ the fraction field of $A$, that admits a polarization. He builds a
   relatively complete model of $\tilde G$, divides its $I$-adic completion by $Y$ and algebraizes
   the quotient to a projective $S$-scheme; a suitable open subscheme is a semi-abelian group scheme

@@ -19,11 +19,11 @@ correspondence for the groups $G_n$. Write $\nu = \lvert \det \rvert_F$.
   two unrefined minimal $K$-types contained in $\pi$ are associate. An unrefined minimal $K$-type of
   depth zero is the inflation to a parahoric subgroup $G_x$ of a cuspidal representation of the
   finite reductive quotient $G_x/G_{x,0+}$.
-- **Geometric lemma.** For Levi subgroups $M$ and $N$, the functor $r_{N,G} \circ i_{G,M}$ has a
-  filtration, functorial in the representation, whose subquotients are the functors
-  $i_{N, N'} \circ w \circ r_{M', M}$ for $w$ in a set $W^{M,N}$ of representatives of the double
-  cosets $W_N \backslash W / W_M$, where $M' = M \cap w^{-1}(N)$ and $N' = w(M) \cap N$
-  (Bernstein–Zelevinsky).
+- **Geometric lemma.** For standard Levi subgroups $M$ and $N$, relative to the chosen minimal
+  parabolic subgroup, the functor $r_{N,G} \circ i_{G,M}$ has a filtration, functorial in the
+  representation, whose subquotients are the functors $i_{N, N'} \circ w \circ r_{M', M}$ for $w$ in
+  the set $W^{M,N}$ of distinguished representatives of the double cosets $W_N \backslash W / W_M$,
+  where $M' = M \cap w^{-1}(N)$ and $N' = w(M) \cap N$ (Bernstein–Zelevinsky, §§2.11–2.12).
 - **Finite length.** A representation induced from an irreducible cuspidal representation has
   finite length; with the embedding theorem and the geometric lemma it follows that parabolic
   induction and Jacquet functors carry representations of finite length to representations of
@@ -77,8 +77,9 @@ correspondence for the groups $G_n$. Write $\nu = \lvert \det \rvert_F$.
 - **Local converse theorem.** Two irreducible generic representations of $G_n$ with the same
   central character whose twisted $\gamma$-factors $\gamma(s, \pi_i \times \tau, \psi)$ agree for
   all irreducible generic representations $\tau$ of $G_r$, $1 \le r \le \lfloor n/2 \rfloor$, are
-  isomorphic (Jacquet–Liu, Chai). Henniart had proved that twists by the irreducible generic
-  representations of $G_{n-1}$ suffice.
+  isomorphic (Jacquet–Liu, Chai). For $n \ge 2$, Henniart had proved that twists by the irreducible
+  generic representations of $G_{n-1}$ suffice; for $n = 1$ the central character determines the
+  representation.
 
 Representations of real groups and the Weil representation are outside this node.
 

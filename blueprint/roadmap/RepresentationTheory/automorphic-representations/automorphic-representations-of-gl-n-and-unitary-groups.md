@@ -113,9 +113,9 @@ each citing the source and locator below.
   Change" (pp. 199–224). Their results are summarized in L. Clozel, "Base change for GL(n)",
   Proceedings of the International Congress of Mathematicians (Berkeley, 1986), Vol. 1, American
   Mathematical Society, 1987, 791–797,
-  <https://www.mathunion.org/fileadmin/ICM/Proceedings/ICM1986.1/ICM1986.1.ocr.pdf>: §1.4,
-  Theorem 1.2 (base change and automorphic induction along solvable extensions) and §2 (the cyclic
-  case, to which the proofs reduce).
+  <https://www.mathunion.org/fileadmin/ICM/Proceedings/ICM1986.1/ICM1986.1.ocr.pdf>: the setup
+  of §1.4, Theorem 1.2 in §1.5, p. 793 (base change and automorphic induction along solvable
+  extensions), and §2 (the cyclic case, to which the proofs reduce).
 - L. Clozel, "Motifs et formes automorphes : applications du principe de fonctorialité", in
   *Automorphic Forms, Shimura Varieties, and L-functions*, Vol. I, Perspect. Math. 10, Academic
   Press, 1990, 77–159; the purity lemma as stated in D. Ramakrishnan, "Decomposition and parity of
