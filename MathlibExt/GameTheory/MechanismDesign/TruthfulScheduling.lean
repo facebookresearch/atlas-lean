@@ -15,6 +15,34 @@ public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Logic.Function.Basic
 import Mathlib.Tactic.Linarith
 
+/-!
+# Truthful scheduling on unrelated machines
+
+The finite unrelated-machines scheduling model: machine `i` privately
+knows its processing times `t i j ≥ 0`; a direct-revelation mechanism is an
+allocation rule with payments to the machines, utility is payment minus
+true load, and the objective is the makespan. The module defines loads,
+makespan and the optimal makespan, dominant-strategy truthfulness and weak
+monotonicity on the nonnegative type space, and the MinWork mechanism
+(each task to a fastest machine, the winner of a task paid the
+second-fastest time for it).
+
+Main declarations: `load`, `makespanOf`, `optMakespan`, `IsTruthful`,
+`IsWeaklyMonotone`, `minWork`, `minWorkPayment`, `IsApproximate`.
+Main theorems: `isWeaklyMonotone_of_isTruthful` (every truthful allocation
+rule is weakly monotone), `isTruthful_minWork` (MinWork with per-task
+second-price payments is truthful), `isApproximate_minWork` (MinWork is
+an `n`-approximation, `n` the number of machines).
+
+References: N. Nisan and A. Ronen, "Algorithmic mechanism design",
+*Games and Economic Behavior* 35(1–2), 2001, §4 (the task scheduling
+problem, the MinWork mechanism and its approximation ratio);
+G. Christodoulou, E. Koutsoupias and A. Kovács, "A proof of the
+Nisan–Ronen conjecture", arXiv:2301.11905, §2.1 (the mechanism-design
+setting) and §2.2, Definition 2 (weak monotonicity). Lower bounds on the
+approximation ratio are out of scope.
+-/
+
 set_option autoImplicit false
 
 namespace MathlibExt.GameTheory.MechanismDesign.TruthfulScheduling
@@ -42,25 +70,28 @@ noncomputable def optMakespan {Machine Task : Type*} [Fintype Machine]
   ((Finset.univ : Finset (Task → Machine)).image (makespanOf t)).min'
     (Finset.image_nonempty.mpr Finset.univ_nonempty)
 
-/-- Truthfulness (dominant strategies): with true type profile `t`, no
-machine gains by unilaterally reporting a different row `b`. Utility is
-payment received minus true load. -/
+/-- Truthfulness (dominant strategies) on the nonnegative type space:
+with true type profile `t` (nonnegative processing times), no machine
+gains by unilaterally reporting a different nonnegative row `b`. Utility
+is payment received minus true load. -/
 def IsTruthful {Machine Task : Type*} [Fintype Task] [DecidableEq Machine]
     (A : (Machine → Task → ℝ) → Task → Machine)
     (P : (Machine → Task → ℝ) → Machine → ℝ) : Prop :=
-  ∀ (t : Machine → Task → ℝ) (i : Machine) (b : Task → ℝ),
-    P (Function.update t i b) i - load t (A (Function.update t i b)) i ≤
-      P t i - load t (A t) i
+  ∀ (t : Machine → Task → ℝ), (∀ i j, 0 ≤ t i j) →
+    ∀ (i : Machine) (b : Task → ℝ), (∀ j, 0 ≤ b j) →
+      P (Function.update t i b) i - load t (A (Function.update t i b)) i ≤
+        P t i - load t (A t) i
 
-/-- Weak monotonicity of an allocation rule: if only machine `i`'s row
-changes from `t` to `t'`, then
-`t`-load of the old bundle minus `t`-load of the new bundle is at most the
-same difference measured with `t'`. -/
+/-- Weak monotonicity of an allocation rule on the nonnegative type
+space: if only machine `i`'s row changes from `t` to `t'` (both
+nonnegative), then `t`-load of the old bundle minus `t`-load of the new
+bundle is at most the same difference measured with `t'`. -/
 def IsWeaklyMonotone {Machine Task : Type*} [Fintype Task]
     [DecidableEq Machine] (A : (Machine → Task → ℝ) → Task → Machine) :
     Prop :=
-  ∀ (t t' : Machine → Task → ℝ) (i : Machine), (∀ k ≠ i, t' k = t k) →
-    load t (A t) i - load t (A t') i ≤ load t' (A t) i - load t' (A t') i
+  ∀ (t t' : Machine → Task → ℝ), (∀ i j, 0 ≤ t i j) →
+    (∀ i j, 0 ≤ t' i j) → ∀ (i : Machine), (∀ k ≠ i, t' k = t k) →
+      load t (A t) i - load t (A t') i ≤ load t' (A t) i - load t' (A t') i
 
 /-- A fastest machine for task `j` at profile `t` (chosen classically). -/
 noncomputable def fastest {Machine Task : Type*} [Fintype Machine]
@@ -130,7 +161,7 @@ theorem isWeaklyMonotone_of_isTruthful {Machine Task : Type*}
     {A : (Machine → Task → ℝ) → Task → Machine}
     {P : (Machine → Task → ℝ) → Machine → ℝ} (hA : IsTruthful A P) :
     IsWeaklyMonotone A := by
-  intro t t' i h
+  intro t t' ht ht' i h
   have h1 : Function.update t i (t' i) = t' := by
     funext k
     by_cases hk : k = i
@@ -145,9 +176,9 @@ theorem isWeaklyMonotone_of_isTruthful {Machine Task : Type*}
       exact Function.update_self i (t i) t'
     · rw [Function.update_of_ne hk]
       exact h k hk
-  have e1 := hA t i (t' i)
+  have e1 := hA t ht i (t' i) (fun j => ht' i j)
   rw [h1] at e1
-  have e2 := hA t' i (t i)
+  have e2 := hA t' ht' i (t i) (fun j => ht i j)
   rw [h2] at e2
   linarith
 
@@ -179,7 +210,7 @@ theorem isTruthful_minWork {Machine Task : Type*} [Fintype Machine]
     [Nonempty Machine] [Nontrivial Machine] :
     IsTruthful (Machine := Machine) (Task := Task) minWork minWorkPayment := by
   classical
-  intro t i b
+  intro t ht i b hb
   have hagree : ∀ k : Machine, k ≠ i → Function.update t i b k = t k :=
     fun k hk => Function.update_of_ne hk b t
   have hne : ∀ j : Task,

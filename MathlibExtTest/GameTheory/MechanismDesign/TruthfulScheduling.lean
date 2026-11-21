@@ -15,6 +15,15 @@ public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Finset.Max
 import Mathlib.Tactic.NormNum
 
+/-!
+# Tests for truthful scheduling on unrelated machines
+
+Tests for `MathlibExt.GameTheory.MechanismDesign.TruthfulScheduling` on a
+concrete 2-machine 2-task profile: `t1_loads_split` checks loads and makespan
+under the split allocation, `t2_minwork_values` checks the MinWork makespan and
+second-price payment, and `t3_opt_le_one` bounds the optimal makespan.
+-/
+
 set_option autoImplicit false
 
 namespace MathlibExtTest.GameTheory.MechanismDesign.TruthfulScheduling
