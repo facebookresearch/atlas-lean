@@ -324,6 +324,29 @@ class BlueprintWorkflowTests(unittest.TestCase):
         self.assertEqual(steps["Keep the card data"]["with"]["name"], "cards")
         self.assertEqual(steps["Keep the card data"]["if"], "always()")
 
+    def test_mathlib_credited_pages_get_their_edges_from_the_same_dump(self):
+        # The credited Mathlib names are listed before the dump, which records their uses; the extraction writes the
+        # registry beside the unchanged v2 extraction, and lean-facts reads it in both jobs that run it.
+        names = [step.get("name") for step in self.steps]
+        listing = "List the Mathlib declarations the wiki credits"
+        self.assertIn("scripts/sync_wiki.py mathlib-names build/mathlib-names.txt", self.step(listing)["run"])
+        self.assertLess(names.index(listing), names.index("Dump declaration dependencies"))
+        dump = " ".join(self.step("Dump declaration dependencies")["run"].replace("\\\n", " ").split())
+        self.assertIn("dump_v2_dependencies.lean v2-modules.txt build/mathlib-names.txt > v2-dependencies.jsonl", dump)
+        self.assertIn("--registry build/mathlib-registry.json --names build/mathlib-names.txt",
+                      self.step("Collapse dependencies onto the wiki articles")["run"])
+        facts = "lean-facts build/lean-dependencies.json --registry build/mathlib-registry.json"
+        self.assertIn(facts, self.step("Add the Lean-owned facts to the articles")["run"])
+        self.assertIn("build/mathlib-registry.json", self.step("Keep dependency diagnostics")["with"]["path"])
+        cards = {step.get("name"): step for step in self.workflow["jobs"]["cards"]["steps"]}
+        self.assertIn(facts, cards["Add the Lean-owned facts to the articles"]["run"])
+        self.assertIn("--registry build/mathlib-registry.json", cards["Check the cards and derive their edges"]["run"])
+        # The card data the site shows comes from the same registry, so a Mathlib-credited main shows its edges.
+        names = [step.get("name") for step in self.steps]
+        derive = "Derive the card data the site shows"
+        self.assertIn("--registry build/mathlib-registry.json", self.step(derive)["run"])
+        self.assertLess(names.index("Collapse dependencies onto the wiki articles"), names.index(derive))
+
     def test_every_build_keeps_its_site_and_only_main_keeps_the_full_site(self):
         # The built site is a one-day artifact of every successful build, which the Mathlib pages job reads; only
         # main keeps the site with its Mathlib pages, and neither is a Pages upload.
