@@ -261,7 +261,7 @@ theorem discharge_wave {a g A : ℝ} (ha : 0 < a) (hg : 0 < g) (hA : 0 < A)
   exact (discharge_wave_iff_mixed ha hg hA hht hqt hhx hqx hpde1 hpde2 hqxx hhxt hhtx t x).mpr
     (hmix t x)
 
-private theorem smul_toLp_const (c v : ℝ) :
+private lemma smul_toLp_const (c v : ℝ) :
     c • WithLp.toLp 2 (fun _ : Fin 1 => v) =
       WithLp.toLp 2 (fun _ : Fin 1 => c * v) := by
   rw [WithLp.ext_iff]

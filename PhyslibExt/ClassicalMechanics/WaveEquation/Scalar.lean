@@ -59,6 +59,7 @@ read through `Time.val` and the coordinate `x 0` of `Space 1`. -/
 def scalarWaveField (φ : ℝ → ℝ → ℝ) : Time → Space 1 → EuclideanSpace ℝ (Fin 1) :=
   fun t x => WithLp.toLp 2 (fun _ => φ t.val (x 0))
 
+/-- Coordinate evaluation at `0 : Fin 1` on `Space 1`, as a linear map. -/
 private def evalZeroLinear : Space 1 →ₗ[ℝ] ℝ where
   toFun x' := x' 0
   map_add' x y := Space.add_apply x y 0
@@ -67,13 +68,15 @@ private def evalZeroLinear : Space 1 →ₗ[ℝ] ℝ where
     rw [smul_eq_mul]
     exact Space.smul_apply c x 0
 
+/-- Coordinate evaluation at `0 : Fin 1` on `Space 1`, as a continuous linear
+map with operator bound `1`. -/
 private noncomputable def evalZeroCLM : Space 1 →L[ℝ] ℝ :=
   LinearMap.mkContinuous evalZeroLinear 1 (fun x' => by
     show ‖x' 0‖ ≤ 1 * ‖x'‖
     rw [Real.norm_eq_abs, one_mul]
     exact Space.abs_eval_le_norm x' 0)
 
-private theorem evalZeroCLM_basis_zero :
+private lemma evalZeroCLM_basis_zero :
     evalZeroCLM (Space.basis (d := 1) 0) = 1 := by
   show ((Space.basis (d := 1)) 0) (0 : Fin 1) = 1
   have h1 := OrthonormalBasis.repr_self (Space.basis (d := 1)) (0 : Fin 1)
@@ -90,7 +93,7 @@ private theorem evalZeroCLM_basis_zero :
   rw [hRHS] at h2
   exact h2
 
-private theorem fderiv_space_slice (ψ : ℝ → ℝ) (ψ' : ℝ) (x' : Space 1)
+private lemma fderiv_space_slice (ψ : ℝ → ℝ) (ψ' : ℝ) (x' : Space 1)
     (hψ : HasDerivAt ψ ψ' (x' 0)) :
     fderiv ℝ (fun z : Space 1 => ψ (z 0)) x' (Space.basis (d := 1) 0) = ψ' := by
   have hπ : HasFDerivAt (fun z : Space 1 => z 0) evalZeroCLM x' :=
@@ -104,6 +107,7 @@ private theorem fderiv_space_slice (ψ : ℝ → ℝ) (ψ' : ℝ) (x' : Space 1)
   simp only [ContinuousLinearMap.comp_apply, evalZeroCLM_basis_zero,
     ContinuousLinearMap.toSpanSingleton_apply, one_smul]
 
+/-- The underlying real value of a `Time`, as a linear map. -/
 private def timeValLinear : Time →ₗ[ℝ] ℝ where
   toFun t := t.val
   map_add' t1 t2 := Time.add_val t1 t2
@@ -112,14 +116,17 @@ private def timeValLinear : Time →ₗ[ℝ] ℝ where
     rw [smul_eq_mul]
     exact Time.smul_real_val c t
 
+/-- The underlying real value of a `Time`, as a continuous linear map. -/
 private def timeValCLM : Time →L[ℝ] ℝ :=
   LinearMap.mkContinuous timeValLinear 1
     (fun t => le_of_eq ((Time.norm_eq_val t).symm.trans (one_mul _).symm))
 
-private theorem timeValCLM_one : timeValCLM 1 = 1 := by
+private lemma timeValCLM_one : timeValCLM 1 = 1 := by
   show (1 : Time).val = 1
   exact Time.one_val
 
+/-- The constant vector with every `Fin 1` component equal to the input,
+as a linear map. -/
 private def constVecLinear : ℝ →ₗ[ℝ] EuclideanSpace ℝ (Fin 1) where
   toFun y := WithLp.toLp 2 (fun _ : Fin 1 => y)
   map_add' a b := by
@@ -135,6 +142,8 @@ private def constVecLinear : ℝ →ₗ[ℝ] EuclideanSpace ℝ (Fin 1) where
     funext i
     simp only [PiLp.smul_apply]
 
+/-- The constant vector with every `Fin 1` component equal to the input,
+as a continuous linear map. -/
 private noncomputable def constVecCLM : ℝ →L[ℝ] EuclideanSpace ℝ (Fin 1) :=
   LinearMap.mkContinuous constVecLinear 1 (fun y => by
     show ‖WithLp.toLp 2 (fun _ : Fin 1 => y)‖ ≤ 1 * ‖y‖
@@ -144,10 +153,10 @@ private noncomputable def constVecCLM : ℝ →L[ℝ] EuclideanSpace ℝ (Fin 1)
     rw [hnorm]
     exact le_of_eq (one_mul _).symm)
 
-private theorem constVecCLM_apply (y : ℝ) :
+private lemma constVecCLM_apply (y : ℝ) :
     constVecCLM y = WithLp.toLp 2 (fun _ : Fin 1 => y) := rfl
 
-private theorem fderiv_time_transport (ψ : ℝ → ℝ) (ψ' : ℝ) (t' : Time)
+private lemma fderiv_time_transport (ψ : ℝ → ℝ) (ψ' : ℝ) (t' : Time)
     (hψ : HasDerivAt ψ ψ' t'.val) :
     fderiv ℝ (fun s : Time => WithLp.toLp 2 (fun _ : Fin 1 => ψ s.val)) t' 1 =
       WithLp.toLp 2 (fun _ : Fin 1 => ψ') := by
