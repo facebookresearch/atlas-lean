@@ -33,6 +33,8 @@ Sawyer–Hartl (1992) Poisson-random-field spectrum and its neutral case
 
 ## References
 
+* G. A. Watterson, *On the number of segregating sites in genetical models without recombination*,
+  Theor. Popul. Biol. 7 (1975) 256–276.
 * S. A. Sawyer and D. L. Hartl, *Population genetics of polymorphism and divergence*,
   Genetics 132 (1992) 1161–1176.
 * Y.-X. Fu, *Statistical properties of segregating sites*, Theor. Popul. Biol. 48 (1995)
