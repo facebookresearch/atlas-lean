@@ -7,23 +7,27 @@ correspondence for the groups $G_n$. Write $\nu = \lvert \det \rvert_F$.
 - **Induction and Jacquet modules.** For a reductive $p$-adic group $G$ and a Levi subgroup $M$
   of a parabolic subgroup, normalized parabolic induction $i_{G,M}$ and the Jacquet functor
   $r_{M,G}$ are exact, $r_{M,G}$ is left adjoint to $i_{G,M}$, and both carry admissible
-  representations to admissible ones (the Jacquet functor by a theorem of Jacquet). Both carry
-  representations of finite length to representations of finite length.
+  representations to admissible ones (the Jacquet functor by a theorem of Jacquet).
 - **Cuspidal support.** Every irreducible smooth representation of $G$ embeds in
   $i_{G,M}(\rho)$ for some Levi subgroup $M$ and some irreducible cuspidal representation $\rho$ of
   $M$; in particular it is admissible (Jacquet).
-- **Depth.** For $F$ of characteristic zero, Moy and Prasad attach to each point $x$ of the
-  Bruhat–Tits building a filtration $(P_{x,r})_{r \ge 0}$ of the parahoric subgroup
-  $P_x = P_{x,0}$. Every irreducible admissible representation $\pi$ of $G$ has a depth
-  $\rho(\pi) \in \mathbb{Q}_{\ge 0}$, the least $r$ such that $\pi$ has nonzero $P_{x,r+}$-fixed
-  vectors for some $x$; $\pi$ contains an unrefined minimal $K$-type of depth $\rho(\pi)$, and any two
-  such types are associate. A representation of depth zero contains, for some $x$, the inflation to
-  $P_{x,0}$ of a cuspidal representation of the finite reductive quotient $P_{x,0}/P_{x,0+}$.
+- **Depth.** Moy and Prasad attach to each point $x$ of the Bruhat–Tits building of $G$ a
+  filtration $(G_{x,r})_{r \ge 0}$ of the parahoric subgroup $G_x = G_{x,0}$. Every irreducible
+  admissible representation $\pi$ of $G$ has a depth $\rho(\pi) \in \mathbb{Q}_{\ge 0}$: for some
+  $x$ the vectors fixed by $G_{x,\rho(\pi)+}$ are nonzero, and $\rho(\pi)$ is the least number with
+  this property. Moreover $\pi$ contains an unrefined minimal $K$-type of depth $\rho(\pi)$, and any
+  two unrefined minimal $K$-types contained in $\pi$ are associate. An unrefined minimal $K$-type of
+  depth zero is the inflation to a parahoric subgroup $G_x$ of a cuspidal representation of the
+  finite reductive quotient $G_x/G_{x,0+}$.
 - **Geometric lemma.** For Levi subgroups $M$ and $N$, the functor $r_{N,G} \circ i_{G,M}$ has a
   filtration, functorial in the representation, whose subquotients are the functors
   $i_{N, N'} \circ w \circ r_{M', M}$ for $w$ in a set $W^{M,N}$ of representatives of the double
   cosets $W_N \backslash W / W_M$, where $M' = M \cap w^{-1}(N)$ and $N' = w(M) \cap N$
   (Bernstein–Zelevinsky).
+- **Finite length.** A representation induced from an irreducible cuspidal representation has
+  finite length; with the embedding theorem and the geometric lemma it follows that parabolic
+  induction and Jacquet functors carry representations of finite length to representations of
+  finite length.
 - **Zelevinsky's classification.** Write $\times$ for the product of representations of the $G_n$
   given by parabolic induction. A segment is a set
   $\Delta = \{\rho, \nu\rho, \dots, \nu^{k}\rho\}$, $k \ge 0$, with $\rho$ an irreducible
@@ -52,19 +56,24 @@ correspondence for the groups $G_n$. Write $\nu = \lvert \det \rvert_F$.
   subspace of an unramified principal series has nonzero $B$-fixed vectors (Borel, Casselman).
 - **Whittaker models.** For every irreducible representation $\omega$ of $G_n$ there is a
   character $\theta$ of the group $U$ of upper triangular unipotent matrices, built from the
-  derivatives of $\omega$, such that $\omega$ embeds in a unique way in the representation of $G_n$
-  induced from $\theta$ (Zelevinsky's degenerate Whittaker model; for generic $\omega$ this is the
-  uniqueness of Whittaker models of Gelfand and Kazhdan). The contragredient of an irreducible
-  smooth representation $\pi$ is isomorphic to $g \mapsto \pi({}^t g^{-1})$ (Gelfand–Kazhdan).
+  derivatives of $\omega$, such that $\omega$ embeds in the representation of $G_n$ induced from
+  $\theta$, the embedding being unique up to a scalar (Zelevinsky's degenerate Whittaker model; for
+  generic $\omega$ this is the uniqueness, up to a scalar, of Whittaker functionals, due to Gelfand
+  and Kazhdan). The contragredient of an irreducible smooth representation $\pi$ is isomorphic to
+  $g \mapsto \pi({}^t g^{-1})$ (Gelfand–Kazhdan).
 - **Local Langlands correspondence.** For $F$ a finite extension of $\mathbb{Q}_p$ there is a unique
   family of bijections $\mathrm{rec}_n$ from the irreducible admissible representations of $G_n$
   to the $n$-dimensional Frobenius-semisimple Weil–Deligne representations of the Weil group $W_F$
   such that $\mathrm{rec}_1$ is given by local class field theory, $\mathrm{rec}_n$ preserves
   $L$- and $\varepsilon$-factors of pairs, and $\mathrm{rec}_n$ is compatible with twists by
-  characters, central characters and contragredients (Harris–Taylor, Henniart; uniqueness by
-  Henniart). Supercuspidal representations correspond to irreducible representations and essentially
-  square-integrable ones to indecomposable ones. For local fields of positive characteristic the
-  correspondence is due to Laumon, Rapoport and Stuhler.
+  characters, central characters and contragredients (existence: Harris–Taylor, Henniart;
+  uniqueness: Henniart, who first showed that a correspondence between irreducible representations
+  of $W_F$ and supercuspidal representations is determined by local class field theory and
+  $\varepsilon$-factors of pairs, and then that the whole family is characterized by local class
+  field theory and $L$- and $\varepsilon$-factors of pairs). Supercuspidal representations correspond
+  to irreducible representations and essentially square-integrable ones to indecomposable ones. For
+  local fields of positive characteristic the correspondence is due to Laumon, Rapoport and
+  Stuhler.
 - **Local converse theorem.** Two irreducible generic representations of $G_n$ with the same
   central character whose twisted $\gamma$-factors $\gamma(s, \pi_i \times \tau, \psi)$ agree for
   all irreducible generic representations $\tau$ of $G_r$, $1 \le r \le \lfloor n/2 \rfloor$, are
@@ -79,9 +88,11 @@ A good expansion replaces this node by definition pages and statements in the fo
 each citing the source and locator below.
 
 1. Smooth and admissible representations, contragredients, normalized parabolic induction and the
-   Jacquet functor, with exactness, adjunction and preservation of admissibility and finite length.
+   Jacquet functor, with exactness, adjunction and preservation of admissibility.
 2. Cuspidal representations, the embedding theorem and admissibility of irreducible representations,
-   and the geometric lemma, which uses step 1; Moy–Prasad filtrations and depth.
+   the geometric lemma, which uses step 1, and then the finite length of representations induced
+   from cuspidal ones and the preservation of finite length, which use them; Moy–Prasad filtrations
+   and depth.
 3. For $G_n$: the product of representations, segments and linking, the representations
    $\langle \Delta \rangle$, Zelevinsky's classification, the polynomial structure of the
    Grothendieck ring, the irreducibility criterion, essentially square-integrable representations,
@@ -102,13 +113,15 @@ each citing the source and locator below.
   <http://www.numdam.org/item?id=ASENS_1977_4_10_4_441_0>: §§1.2–1.8 (smooth and admissible
   representations, the functors $i$ and $r$), Proposition 2.3 (exactness, adjunction,
   admissibility), §2.4 and Theorem 2.5 (cuspidal representations and the embedding theorem, with
-  references to Jacquet and, for $\mathrm{GL}_n$, to Bernstein–Zelevinsky 1976), Lemma 2.11 and
-  the Geometrical Lemma 2.12.
+  references to Jacquet and, for $\mathrm{GL}_n$, to Bernstein–Zelevinsky 1976), Theorem 2.8 (finite
+  length of representations induced from cuspidal ones), Lemma 2.11 and the Geometrical Lemma 2.12.
 - A. V. Zelevinsky, "Induced representations of reductive p-adic groups. II. On irreducible
   representations of GL(n)", Ann. Sci. École Norm. Sup. (4) 13 (1980), 165–210,
-  <http://www.numdam.org/item?id=ASENS_1980_4_13_2_165_0>: Proposition 1.4 (finite length),
+  <http://www.numdam.org/item?id=ASENS_1980_4_13_2_165_0>: Proposition 1.4 (finite length, proved
+  from Bernstein–Zelevinsky 1977, 2.5, 2.8 and 2.12),
   Theorem 4.2 (irreducibility criterion), Theorems 6.1 and 6.5 (classification), Corollary 7.5
-  (Grothendieck ring), the Corollary in §8.3 (degenerate Whittaker models), Theorem 9.3 (essentially
+  (Grothendieck ring), the Corollary in §8.3 (degenerate Whittaker models, realized "in a unique
+  way") with the reference there to Gelfand–Kazhdan, Theorem 9.3 (essentially
   square-integrable representations, due to Bernstein) and Theorem 9.7.
 - W. Casselman, *Introduction to the theory of admissible representations of p-adic reductive
   groups*, notes, draft of 1 May 1995, <https://personal.math.ubc.ca/~cass/research/pdf/p-adic-book.pdf>:
@@ -125,9 +138,12 @@ each citing the source and locator below.
   Compositio Math. 40 (1980), 387–406, <http://www.numdam.org/item?id=CM_1980__40_3_387_0>:
   Propositions 2.4 and 2.6 (Iwahori-fixed vectors; the injectivity argument is credited there to
   A. Borel, Invent. Math. 35 (1976), Lemma 4.7).
-- A. Moy and G. Prasad, "Unrefined minimal K-types for p-adic groups", Invent. Math. 116 (1994),
-  393–408, <https://gdz.sub.uni-goettingen.de/id/PPN356556735_0116>: §1 and §5, Definition 5.1 and
-  Theorem 5.2 (filtrations, depth, depth zero, for $F$ of characteristic zero).
+- A. Moy and G. Prasad, "Jacquet functors and unrefined minimal K-types", Comment. Math. Helv. 71
+  (1996), 98–121, <https://doi.org/10.5169/seals-53837>: §1, §3.1 (parahoric subgroups and their
+  filtrations for a reductive group), §3.4 (unrefined minimal K-types and associativity) and
+  Theorem 3.5 (depth). This extends Theorem 5.2 of A. Moy and G. Prasad, "Unrefined minimal K-types
+  for p-adic groups", Invent. Math. 116 (1994), 393–408, which treats absolutely quasi-simple, simply
+  connected groups over fields of characteristic zero.
 - T. Wedhorn, "The local Langlands correspondence for GL(n) over p-adic fields", lecture notes,
   arXiv:math/0011210 (version 2): Theorem (1.2.2) (the correspondence and its characterizing
   properties), Theorem (1.2.3) (supercuspidal and essentially square-integrable representations),
@@ -137,8 +153,16 @@ each citing the source and locator below.
   local fields of positive characteristic).
 - G. Henniart, "Caractérisation de la correspondance de Langlands locale par les facteurs ε de
   paires", Invent. Math. 113 (1993), 339–350,
-  <https://gdz.sub.uni-goettingen.de/id/PPN356556735_0113>: the summary (uniqueness), Théorème 1.1
-  and its Corollaire (twists by $\mathrm{GL}_{n-1}$).
+  <https://gdz.sub.uni-goettingen.de/id/PPN356556735_0113>: the summary (a correspondence between
+  irreducible representations of the Weil group and supercuspidal representations is determined by
+  local class field theory and $\varepsilon$-factors of pairs), Théorème 1.1 (generic representations
+  of $\mathrm{GL}_n$, $\gamma$-factors twisted by the generic representations of $\mathrm{GL}_{n-1}$)
+  and its Corollaire (supercuspidal representations, $\varepsilon$-factors twisted by the supercuspidal
+  representations of $\mathrm{GL}_r$ for $1 \le r \le n - 1$).
+- G. Henniart, "Une caractérisation de la correspondance de Langlands locale pour GL(n)", Bull. Soc.
+  Math. France 130 (2002), 587–602, <http://www.numdam.org/item/BSMF_2002__130_4_587_0/>: §1.8,
+  Corollaire (the family of correspondences for all $n$ is characterized by local class field theory
+  and $L$- and $\varepsilon$-factors of pairs).
 - P. Scholze, "The local Langlands correspondence for GL_n over p-adic fields", Invent. Math. 192
   (2013), arXiv:1010.1540 (version 1): Theorem 1.2 (a new proof for supercuspidal representations
   and irreducible representations of the Weil group).
@@ -153,9 +177,12 @@ each citing the source and locator below.
   its five main theorems by A. Sutherland (<https://math.mit.edu/~drew/grh/>). Source mirror:
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>.
   The library has no licence, so none of its Lean comes into ATLAS; ATLAS has no Lean proof of
-  its own. Alpöge's proof uses results of this cluster,
-  such as `GlobalTheory.Published.IrreducibleAdmissibleGL`,
+  its own. Related formal statements in Alpöge's proof, often in specialised forms,
+  include `GlobalTheory.Published.IrreducibleAdmissibleGL`,
   `GlobalTheory.Published.BernsteinZelevinskyFiniteness`, `GlobalTheory.Published.GeometricLemma`,
   `GlobalTheory.Published.SegmentRepresentation`, `GlobalTheory.Published.LanglandsMultisegments`,
-  `GlobalTheory.Published.BorelCasselman` and `GlobalTheory.Published.LocalConverseGL`; its local
-  Langlands correspondence is constructed in `UpperTheory.Zero.LLC.recTExists`.
+  `GlobalTheory.Published.BorelCasselman`, `GlobalTheory.Published.LocalConverseGL` (for cuspidal
+  representations of $\mathrm{GL}_{m+1}$, with $\varepsilon$-factors twisted by $\mathrm{GL}_m$) and
+  `UpperTheory.Zero.LLC.recTExists` (at the completions of number fields, a map from irreducible
+  representations of the groups $\mathrm{GL}_n$ to Weil–Deligne representations satisfying a
+  restricted list of laws, not the full correspondence stated above).

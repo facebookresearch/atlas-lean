@@ -41,9 +41,11 @@ closure.
   $0 \to \operatorname{Lie} G \otimes C(1) \to T_p G \otimes C \to (\operatorname{Lie} G^\vee \otimes C)^\vee \to 0$
   is exact; its integral version over $\mathcal{O}_C$ is exact up to cohomology killed by
   $p^{1/(p-1)+\varepsilon}$ for every $\varepsilon > 0$ (Fargues). For a bounded prism
-  $(A, (p))$ and a smooth $p$-adic formal scheme $X$ over $A/p$, crystalline cohomology
-  $R\Gamma_{\mathrm{crys}}(X/A)$ is the Frobenius twist of prismatic cohomology
-  $R\Gamma_{\Delta}(X/A)$, and prismatic $F$-crystals on $\operatorname{Spf}(\mathcal{O}_K)$ are
+  $(A, (p))$ and a smooth $p$-adic formal scheme $X$ over $A/p$, there is a canonical
+  Frobenius-equivariant isomorphism of commutative algebras in the derived category of $A$-modules
+  between crystalline cohomology $R\Gamma_{\mathrm{crys}}(X/A)$ and the derived completed base change
+  $R\Gamma_{\Delta}(X/A) \mathbin{\widehat{\otimes}}^{L}_{A, \varphi_A} A$ of prismatic cohomology along
+  the Frobenius $\varphi_A$ of $A$, and prismatic $F$-crystals on $\operatorname{Spf}(\mathcal{O}_K)$ are
   equivalent to $\mathbb{Z}_p$-lattices with continuous $G_K$-action in crystalline
   representations (Bhatt–Scholze).
 
@@ -85,8 +87,8 @@ each citing the source and locator below.
 - J.-M. Fontaine and Y. Ouyang, *Theory of p-adic Galois Representations*, book draft (PDF of
   2022-05-26), archived at
   <http://web.archive.org/web/20261014003209/http://staff.ustc.edu.cn/~yiouyang/galoisrep.pdf>:
-  §2.3.1, Theorem 2.26 and Corollary 2.27 (the $\ell$-adic monodromy theorem), Definition 2.33 and
-  Example 2.35 (Weil–Deligne representations); Definitions 6.1, 6.13, 7.7 and 8.1 (the period
+  §2.3.1, Theorem 2.26 and Corollary 2.27 (the $\ell$-adic monodromy theorem); §2.3.3,
+  Definition 2.33 and Example 2.35 (Weil–Deligne representations); Definitions 6.1, 6.13, 7.7 and 8.1 (the period
   rings; Definition 8.1 defines $B_{\mathrm{st}}$ as the subalgebra $B_{\mathrm{cris}}[u]$ of
   $B_{\mathrm{dR}}$) and 6.3, 6.27 and 8.9 (Hodge–Tate, de Rham, semistable and crystalline
   representations), Definition 8.39 (weakly admissible filtered $(\varphi, N)$-modules, called
@@ -108,7 +110,7 @@ each citing the source and locator below.
   145–237, arXiv:1211.6357 (version 2): Proposition 4.3.6 and Remark 4.3.7 (the integral
   Hodge–Tate sequence, after Fargues), Proposition 5.1.6 (the Hodge–Tate sequence over $C$).
 - B. Bhatt and P. Scholze, "Prisms and prismatic cohomology", arXiv:1905.08229 (version 4):
-  Theorem 1.8 (1) (crystalline comparison).
+  Theorem 1.8 (1) (crystalline comparison, through the derived completed Frobenius base change).
 - B. Bhatt and P. Scholze, "Prismatic F-crystals and crystalline Galois representations",
   Cambridge J. Math. 11 (2023), 507–562, arXiv:2106.14735 (version 2): Theorem 1.2.
 - Proof of the Riemann hypothesis and of the generalized Riemann hypothesis for Dirichlet
@@ -119,9 +121,10 @@ each citing the source and locator below.
   its five main theorems by A. Sutherland (<https://math.mit.edu/~drew/grh/>). Source mirror:
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>.
   The library has no licence, so none of its Lean comes into ATLAS; ATLAS has no Lean proof of
-  its own. Alpöge's proof uses results of this cluster,
-  such as `Formalism.GaloisCohomology.LocalTateDualityK`,
-  `GlobalTheory.Published.PoitouTateNormalised`, `ReciprocityTheory.Gal.GreenbergWiles`,
+  its own. Related formal statements in Alpöge's proof, often in specialised forms,
+  include `Formalism.GaloisCohomology.LocalTateDualityK`,
+  `GlobalTheory.Published.PoitouTateNormalised` (the nine-term sequence for finite sets of places,
+  assuming $\ell \ne 2$ or $F$ totally complex), `ReciprocityTheory.Gal.GreenbergWiles`,
   `GlobalTheory.Published.FontaineBcris`, `GlobalTheory.Published.DeRhamPotSemistable`,
   `GlobalTheory.Published.BlochKatoLocal`, `GlobalTheory.Published.BhattScholzeCrystallineLattices`
   and `GlobalTheory.CompanionTheory.Ar.HT.FarguesExact` (a kernel–annihilator identity for the

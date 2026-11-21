@@ -2,11 +2,13 @@
 
 This node covers the Weil representation and the theta correspondence, local and global, for
 unitary dual pairs, with the Siegel–Weil formula, the doubling method and the Rallis inner product
-formula in their convergent ranges. Let $E/F$ be a quadratic extension of local or global fields of
-characteristic different from $2$, with quadratic character $\varepsilon_{E/F}$, let $V$ be a
-Hermitian space and $W$ a skew-Hermitian space over $E$, and let $\mathbb{W}$ be the symplectic
-$F$-space obtained from $V \otimes_E W$, so that $(\mathrm{U}(V), \mathrm{U}(W))$ is a dual pair in
-$\mathrm{Sp}(\mathbb{W})$. Fix a nontrivial additive character $\psi$.
+formula in their convergent ranges. Let $E/F$ be a quadratic extension of local fields of
+characteristic different from $2$ or of number fields, with quadratic character $\varepsilon_{E/F}$
+of $F^\times$ (in the global case, of $\mathbb{A}_F^\times / F^\times$, by class field theory), let
+$V$ be a Hermitian space and $W$ a skew-Hermitian space over $E$, and let $\mathbb{W}$ be the
+symplectic $F$-space obtained from $V \otimes_E W$, so that $(\mathrm{U}(V), \mathrm{U}(W))$ is a
+dual pair in $\mathrm{Sp}(\mathbb{W})$. Fix a nontrivial additive character $\psi$ of $F$ (in the
+global case, of $\mathbb{A}_F / F$).
 
 - **Stone–von Neumann theorem.** Over a local field, the Heisenberg group of $\mathbb{W}$ has, up to
   isomorphism, a unique irreducible representation on which its centre acts by $\psi$ (smooth
@@ -17,18 +19,21 @@ $\mathrm{Sp}(\mathbb{W})$. Fix a nontrivial additive character $\psi$.
   non-archimedean field this extension is nontrivial. Over a number field the adelic metaplectic
   extension splits over $\mathrm{Sp}(\mathbb{W})(F)$, and the theta distribution is
   $\mathrm{Sp}(\mathbb{W})(F)$-invariant (Weil).
-- **Splitting over unitary groups.** A pair of unitary characters of $E^\times$ (globally, of
-  $\mathbb{A}_E^\times / E^\times$) whose restrictions to $F^\times$ are $\varepsilon_{E/F}^{\dim W}$
-  and $\varepsilon_{E/F}^{\dim V}$ determines a splitting over $\mathrm{U}(V) \times \mathrm{U}(W)$ of
-  the metaplectic extension of $\mathrm{Sp}(\mathbb{W})$ by $\mathbb{C}^1$, and hence a Weil
-  representation of $\mathrm{U}(V) \times \mathrm{U}(W)$ (Kudla; Harris–Kudla–Sweet).
+- **Splitting over unitary groups.** A pair of unitary characters of $E^\times$ whose restrictions
+  to $F^\times$ are $\varepsilon_{E/F}^{\dim W}$ and $\varepsilon_{E/F}^{\dim V}$ (in the global
+  case, a pair of characters of $\mathbb{A}_E^\times / E^\times$ whose restrictions to
+  $\mathbb{A}_F^\times$ are $\varepsilon_{E/F}^{\dim W}$ and $\varepsilon_{E/F}^{\dim V}$) determines a
+  splitting over $\mathrm{U}(V) \times \mathrm{U}(W)$ of the metaplectic extension of
+  $\mathrm{Sp}(\mathbb{W})$ by $\mathbb{C}^1$, and hence a Weil representation of
+  $\mathrm{U}(V) \times \mathrm{U}(W)$ (Kudla; Harris–Kudla–Sweet).
 - **Local Howe duality.** Let $F$ be non-archimedean and $\pi$ an irreducible smooth representation
   of $\mathrm{U}(W)$. The maximal $\pi$-isotypic quotient of the Weil representation is
   $\pi \otimes \Theta(\pi)$, where $\Theta(\pi)$ has finite length (Kudla); $\Theta(\pi)$ has at most
   one irreducible quotient $\theta(\pi)$, and $\theta(\pi) = \theta(\pi') \ne 0$ implies
   $\pi \cong \pi'$ (Waldspurger for odd residue characteristic; Gan–Takeda in general). For reductive
-  dual pairs in a real symplectic group, $\Theta(\pi)$ is finitely generated, admissible and
-  quasisimple with a unique irreducible quotient, and the pairs that occur form the graph of a
+  dual pairs in a real symplectic group, working up to infinitesimal equivalence: if $\pi$ occurs as
+  a quotient of the smooth Weil representation, then $\Theta(\pi)$ is finitely generated, admissible
+  and quasisimple with a unique irreducible quotient, and the pairs that occur form the graph of a
   bijection (Howe).
 - **Global theta lifts.** Over a number field, the integral of the theta function
   $\theta(\varphi)(g, h)$ against a cusp form $f$ on one member of the dual pair is an automorphic
@@ -43,21 +48,27 @@ $\mathrm{Sp}(\mathbb{W})$. Fix a nontrivial additive character $\psi$.
   and $c = 2$ if $m \le n$, for the Haar measure giving $[\mathrm{U}(V)]$ volume $1$ (Weil for
   $m > 2n$, Ichino for $n < m \le 2n$, Yamana for $m \le n$).
 - **Doubling method** (Piatetski-Shapiro–Rallis). For a skew-Hermitian space $U$ and cusp forms
-  $f_1, f_2$ in a cuspidal representation $\pi$ of $\mathrm{U}(U)$, the integral of a Siegel
-  Eisenstein series on $\mathrm{U}(U \oplus U^-)$ against $f_1 \otimes f_2$ (twisted by a splitting
-  character) converges for $\operatorname{Re}(s) \gg 0$, extends to a meromorphic function, and for
-  factorizable data is an Euler product of local zeta integrals of matrix coefficients
-  $\int \Phi_v(g_v, 1)\, \langle \pi_v(g_v) f_{1}, f_{2} \rangle\, dg_v$. Siegel Eisenstein series
-  have meromorphic continuation.
+  $f_1, f_2$ in a cuspidal representation $\pi$ of $\mathrm{U}(U)$, the doubling zeta integral
+  $Z(s, \Phi, f_1, f_2) = \iint E(s, \Phi)(g_1, g_2)\, \overline{f_1(g_1)}\, f_2(g_2)\, \chi_V^{-1}(\det g_2)\, dg_1\, dg_2$
+  of a Siegel Eisenstein series on $\mathrm{U}(U \oplus U^-)$, over
+  $[\mathrm{U}(U)] \times [\mathrm{U}(U)]$ and with $\chi_V$ a splitting character, converges for
+  $\operatorname{Re}(s) \gg 0$, extends to a meromorphic function, and for factorizable data is an
+  Euler product of local zeta integrals of matrix coefficients
+  $\int \Phi_v(g_v, 1)\, \overline{\langle \pi_v(g_v) f_{1}, f_{2} \rangle}\, dg_v$. Siegel Eisenstein
+  series have meromorphic continuation.
 - **Rallis inner product formula.** Let $U$ have dimension $n$ and $V$ dimension $m$ and Witt index
-  $r \le n$, with $n < m \le 2n$, and let $\pi$ be an irreducible cuspidal representation of
-  $\mathrm{U}(U)$ whose theta lifts to the smaller spaces of the Witt tower of $V$ vanish, so that its
-  lift to $\mathrm{U}(V)$ is cuspidal. Then
-  $\langle \theta(\varphi_1, f_1), \theta(\varphi_2, f_2) \rangle = 2 \cdot \operatorname{Val}_{s = s_{m,n}} L(s + \tfrac12, \pi \times \chi_V) \cdot Z^*(s, \varphi_1 \otimes \varphi_2, f_1, f_2)$,
-  where $s_{m,n} = (m - n)/2$, $\chi_V$ is the splitting character attached to $V$ and $Z^*$ is the
-  normalized doubling zeta integral (Gan–Qiu–Takeda; Rallis for symplectic–orthogonal dual pairs).
+  $r \le n$, with $n < m \le 2n$ and $m - r > n$, so that $(n, m, r)$ lies in Weil's convergent
+  range, and let $\pi$ be an irreducible cuspidal representation of $\mathrm{U}(U)$ whose theta
+  lifts to the smaller spaces of the Witt tower of $V$ vanish, so that its lift to $\mathrm{U}(V)$ is
+  cuspidal. Then
+  $\langle \theta(\varphi_1, f_1), \theta(\varphi_2, f_2) \rangle = 2 \cdot \operatorname{Val}_{s = s_{m,n}} \bigl( L(s + \tfrac12, \pi \times \chi_V) \cdot Z^*(s, \varphi_1 \otimes \overline{\varphi_2}, f_1, f_2) \bigr)$,
+  where $s_{m,n} = (m - n)/2$, $\chi_V$ is the splitting character attached to $V$, $Z^*$ is the
+  normalized doubling zeta integral and $2 = [E : F]$ (Gan–Qiu–Takeda; Rallis for
+  symplectic–orthogonal dual pairs).
 
-Regularized Siegel–Weil formulas outside the convergent range are outside this node.
+Regularized Siegel–Weil formulas outside the convergent range, and the Rallis inner product
+formula in the range $n < m \le n + r$, which Gan, Qiu and Takeda deduce from them, are outside this
+node.
 
 ## Expansion
 
@@ -70,8 +81,9 @@ each citing the source and locator below.
 3. The local theta correspondence and Howe duality; the representations of the local groups are
    under [Reductive groups over local fields and their representations](../reductive-groups-over-local-fields/README.md).
 4. Theta functions, global theta lifts of cusp forms and Weil's convergence criterion.
-5. Siegel Eisenstein series, the Siegel–Weil formula in the anisotropic case, the doubling method
-   and the Rallis inner product formula, which uses the previous items.
+5. Siegel Eisenstein series, the Siegel–Weil formula in Weil's convergent range (the anisotropic
+   case above, and the isotropic case, which Gan, Qiu and Takeda cite to Kudla–Rallis and Ichino),
+   the doubling method and the Rallis inner product formula, which uses the previous items.
 
 ## Sources
 
@@ -97,15 +109,19 @@ each citing the source and locator below.
   by Kudla; Waldspurger's theorem), §2.8 (splitting characters).
 - R. Howe, "Transcending classical invariant theory", J. Amer. Math. Soc. 2 (1989), 535–552,
   <https://www.ams.org/journals/jams/1989-02-03/S0894-0347-1989-0985172-6/S0894-0347-1989-0985172-6.pdf>:
-  §1, Theorems 1 and 1A.
+  §1, Theorems 1 and 1A (for representations occurring as quotients of the smooth Weil
+  representation).
 - W. T. Gan, Y. Qiu and S. Takeda, "The regularized Siegel-Weil formula (the second term identity)
   and the Rallis inner product formula", Invent. Math. 198 (2014), 739–831, arXiv:1207.4709
-  (version 3): §2.2 (notation), §3.1 (Weil's convergent range, from A. Weil, Acta Math. 113 (1965),
-  1–87), §6.1 (Siegel Eisenstein series), Theorem 7.1 and the paragraph after it (Siegel–Weil
-  formula in the anisotropic case; A. Ichino, Math. Z. 255 (2007), 721–729; S. Yamana, Compositio
-  Math. 147 (2011), 1003–1021), §§11.2–11.6 (theta lifts, doubling see-saw, doubling zeta integral
-  after I. I. Piatetski-Shapiro and S. Rallis, LNM 1254 (1987), Part A), Theorem 11.4 (Rallis inner
-  product formula).
+  (version 3, whose TeX source shows the complex conjugations): §2.1 (the additive character of
+  $\mathbb{A}_F / F$ and the quadratic character of $\mathbb{A}_F^\times$), §2.2 (notation), §3.1
+  (Weil's convergent range, from A. Weil, Acta Math. 113 (1965), 1–87), §6.1 (Siegel Eisenstein
+  series), Theorem 7.1 and the paragraph after it (Siegel–Weil formula in the anisotropic case;
+  A. Ichino, Math. Z. 255 (2007), 721–729; S. Yamana, Compositio Math. 147 (2011), 1003–1021),
+  §11.2 (splitting characters), Proposition 11.1 (convergent and second-term ranges), §§11.3–11.6
+  (doubling see-saw, doubling zeta integral after I. I. Piatetski-Shapiro and S. Rallis, LNM 1254
+  (1987), Part A, local zeta integrals), Theorem 1.3 and Theorem 11.4 (Rallis inner product
+  formula).
 - S. Rallis, "Injectivity properties of liftings associated to Weil representations", Compositio
   Math. 52 (1984), 139–169, <http://www.numdam.org/item?id=CM_1984__52_2_139_0>: introduction (the
   inner product formula for symplectic–orthogonal dual pairs).
@@ -117,8 +133,8 @@ each citing the source and locator below.
   its five main theorems by A. Sutherland (<https://math.mit.edu/~drew/grh/>). Source mirror:
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>.
   The library has no licence, so none of its Lean comes into ATLAS; ATLAS has no Lean proof of
-  its own. Alpöge's proof uses results of this cluster,
-  such as `GlobalTheory.Published.StoneVonNeumann`, `GlobalTheory.Published.WeilRepresentationExists`,
+  its own. Related formal statements in Alpöge's proof, often in specialised forms,
+  include `GlobalTheory.Published.StoneVonNeumann`, `GlobalTheory.Published.WeilRepresentationExists`,
   `GlobalTheory.Published.KudlaSplittingSplitUnitary`, `GlobalTheory.Published.HoweDualityReal`,
   `GlobalTheory.Published.WeilThetaConvergence`, `GlobalTheory.Published.SiegelWeilUnitaryConvergent`,
   `GlobalTheory.Published.DoublingMethodLocalZetaIntegrals` and

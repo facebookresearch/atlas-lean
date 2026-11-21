@@ -17,9 +17,14 @@ $\mathbb{C}$ for multiplier ideals; the analytic statements are over $\mathbb{C}
 - **Resolution of singularities** (Hironaka). Every quasi-projective variety $X$ over a field of
   characteristic zero has a projective birational morphism $\Pi \colon X' \to X$ with $X'$ smooth
   that is an isomorphism over the smooth locus of $X$ and such that $\Pi^{-1}(\operatorname{Sing} X)$
-  is a divisor with simple normal crossings; this extends, functorially for smooth morphisms, to all
-  schemes of finite type over such a field. The resolution comes from a principalization in a
+  is a divisor with simple normal crossings. The resolution comes from a principalization in a
   smooth ambient variety, and it need not be a composite of blow-ups of smooth centres of $X$.
+- **Resolution of schemes of finite type.** For every scheme $X$ of finite type over a field of
+  characteristic zero, possibly nonreduced, there is a sequence of blow-ups
+  $\Pi \colon X_r \to \dots \to X_0 = X$, functorial for smooth morphisms and for change of fields,
+  with $X_r$ smooth, $\Pi$ an isomorphism over the smooth locus of $X$, and
+  $\Pi^{-1}(\operatorname{Sing} X)$ a divisor with simple normal crossings. This statement does not
+  include birationality.
 - **Kodaira vanishing.** For an ample line bundle $A$ on $X$,
   $H^i(X, \omega_X \otimes A) = 0$ for $i > 0$.
 - **Kawamata–Viehweg vanishing.** Let $L$ be an integral divisor and $D$ an effective
@@ -59,7 +64,8 @@ A good expansion replaces this node by definition pages and statements in the fo
 each citing the source and locator below.
 
 1. Blow-ups, divisors with simple normal crossings and log resolutions; principalization, then
-   resolution of singularities, deduced from it. They build on
+   resolution of quasi-projective varieties, deduced from it, and the functorial resolution of
+   schemes of finite type. They build on
    [Varieties and projective geometry](../varieties-and-projective-geometry/README.md).
 2. Nef and big divisors, the volume and its properties.
 3. Kodaira vanishing, then Kawamata–Viehweg vanishing, whose statement uses the divisors of step 1
@@ -111,8 +117,8 @@ each citing the source and locator below.
   its five main theorems by A. Sutherland (<https://math.mit.edu/~drew/grh/>). Source mirror:
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>.
   The library has no licence, so none of its Lean comes into ATLAS; ATLAS has no Lean proof of
-  its own. Alpöge's proof uses results of this cluster,
-  such as `GlobalTheory.CompanionTheory.Hypotheses₂.ResolutionCharZero`,
+  its own. Related formal statements in Alpöge's proof, often in specialised forms,
+  include `GlobalTheory.CompanionTheory.Hypotheses₂.ResolutionCharZero`,
   `GlobalTheory.CompanionTheory.Hypotheses₂.PrincipalisationCharZero`,
   `GlobalTheory.Published.KawamataViehweg`, `GlobalTheory.Published.NadelVanishingAndNonKltDivisor`,
   `GlobalTheory.Published.L2ExtensionLogCanonical` and `GlobalTheory.Published.NefNumerics`.
