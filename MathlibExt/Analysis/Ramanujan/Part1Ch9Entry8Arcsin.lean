@@ -41,10 +41,10 @@ noncomputable section
 def chapter9Entry8DilogTerm (x : ℝ) (n : ℕ) : ℝ :=
   x ^ (n + 1) / (((n + 1 : ℕ) : ℝ) ^ 2)
 
-/-- The dilogarithm in this entry is `Real.li2`; the name is kept for the
+/-- The dilogarithm in this entry is `Real.li2PowerSeries`; the name is kept for the
 chapter-local development below. -/
 def chapter9Entry8Dilog (x : ℝ) : ℝ :=
-  Real.li2 x
+  Real.li2PowerSeries x
 
 def chapter9OddHarmonic (n : ℕ) : ℝ :=
   ∑ j ∈ range n, 1 / ((2 * j + 1 : ℕ) : ℝ)
@@ -77,7 +77,7 @@ private lemma oddHarmonic_le (n : ℕ) : chapter9OddHarmonic n ≤ n := by
 
 private lemma summable_dilogTerm {x : ℝ} (hx : |x| < 1) :
     Summable (chapter9Entry8DilogTerm x) :=
-  (Real.hasSum_li2 hx).summable
+  (Real.hasSum_li2PowerSeries hx).summable
 
 private lemma summable_FTerm {z : ℝ} (hz : |z| < 1) :
     Summable (chapter9Entry8FTerm z) := by
@@ -487,7 +487,7 @@ private lemma hasDerivAt_Dfun {x0 R : ℝ} (_hR0 : 0 < R) (hR1 : R < 1)
     HasDerivAt (fun x => chapter9Entry8Dilog x)
       (∑' n, x0 ^ n / (((n + 1 : ℕ)) : ℝ)) x0 := by
   have hx01 : |x0| < 1 := lt_trans hx0 hR1
-  simpa only [chapter9Entry8Dilog] using Real.hasDerivAt_li2_tsum hx01
+  simpa only [chapter9Entry8Dilog] using Real.hasDerivAt_li2PowerSeries_tsum hx01
 
 private lemma hasDerivAt_Gfun {x0 R : ℝ} (hR0 : 0 < R) (hR1 : R < 1) (hx0 : |x0| < R) :
     HasDerivAt (fun x => (1 / 8 : ℝ) * (Real.log (1 - x)) ^ 2
@@ -695,7 +695,7 @@ theorem ramanujan_part1_ch9_entry8_arcsin (x : ℝ) (hx : |x| < 1) :
     show (∑' n, chapter9Entry8FTerm ((0 : ℝ) / (2 - 0)) n) = 0
     rw [ef]
     exact tsum_zero
-  have e1 : chapter9Entry8Dilog (0 : ℝ) = 0 := Real.li2_zero
+  have e1 : chapter9Entry8Dilog (0 : ℝ) = 0 := Real.li2PowerSeries_zero
   have hderiv : ∀ t ∈ Set.uIcc (0 : ℝ) x,
       HasDerivAt ((fun x => chapter9Entry8F (x / (2 - x)))
         - (fun x => (1 / 8 : ℝ) * Real.log (1 - x) ^ 2

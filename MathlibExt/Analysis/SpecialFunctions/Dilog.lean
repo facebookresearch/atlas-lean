@@ -19,25 +19,28 @@ import Mathlib.NumberTheory.ZetaValues
 @[expose] public section
 
 /-!
-# The dilogarithm
+# The dilogarithm power series
 
-The real dilogarithm `Li₂`, defined by its power series
-`Li₂(z) = ∑' n : ℕ, z ^ (n + 1) / (n + 1) ^ 2`.
+`Real.li2PowerSeries` is the power-series form of the dilogarithm,
+`∑' n : ℕ, z ^ (n + 1) / (n + 1) ^ 2`. It agrees with the standard real
+`Li₂` on `[-1, 1]`, where the series converges. It is not an analytic
+continuation: outside the convergence domain, `tsum` totalization gives `0`.
+The results below are stated only where the series converges.
 
 ## Main results
 
-* `Real.li2_zero`, `Real.li2_one`: the values `Li₂(0) = 0` and `Li₂(1) = π² / 6`.
-* `Real.continuousOn_li2`: `Li₂` is continuous on `[-1, 1]` (Weierstrass
-  M-test with majorant `∑ 1 / (n + 1)²`).
-* `Real.hasDerivAt_li2`: `Li₂'(z) = -log (1 - z) / z` for `0 < |z| < 1`;
-  `Real.hasDerivAt_li2_tsum` gives the termwise-series derivative on all of
-  `(-1, 1)`, including at `0`.
-* `Real.li2_reflection`: Euler's reflection formula
-  `Li₂(z) + Li₂(1 - z) = π² / 6 - log z * log (1 - z)` on `(0, 1)`.
+* `Real.li2PowerSeries_zero`, `Real.li2PowerSeries_one`: the values at `0`
+  and `1`, namely `0` and `π² / 6`.
+* `Real.continuousOn_li2PowerSeries`: continuity on `[-1, 1]` by the
+  Weierstrass M-test with majorant `∑ 1 / (n + 1)²`.
+* `Real.hasDerivAt_li2PowerSeries`: the derivative is `-log (1 - z) / z`
+  for `0 < |z| < 1`; `Real.hasDerivAt_li2PowerSeries_tsum` gives the
+  termwise-series derivative on all of `(-1, 1)`, including at `0`.
+* `Real.li2PowerSeries_reflection`: Euler's reflection formula on `(0, 1)`.
 
 The series definition matches `chapter9Entry8Dilog` of
 `MathlibExt.Analysis.Ramanujan.Part1Ch9.Entry8Arcsin`, which is now defined
-through `Real.li2`.
+through `Real.li2PowerSeries`.
 -/
 
 open Filter Set
@@ -45,13 +48,14 @@ open scoped Topology
 
 namespace Real
 
-/-- The dilogarithm `Li₂(z) = ∑' n : ℕ, z ^ (n + 1) / (n + 1) ^ 2`, defined by
-its power series (and by `0` where the series diverges, through `tsum`
-totalization). -/
-noncomputable def li2 (z : ℝ) : ℝ :=
+/-- The dilogarithm power series
+`∑' n : ℕ, z ^ (n + 1) / (n + 1) ^ 2`. On `[-1, 1]` this is the standard
+real dilogarithm `Li₂`; outside that interval this totalized series is not
+an analytic continuation (`tsum` gives `0` where the series is not summable). -/
+noncomputable def li2PowerSeries (z : ℝ) : ℝ :=
   ∑' n : ℕ, z ^ (n + 1) / (((n + 1 : ℕ)) : ℝ) ^ 2
 
-private theorem summable_li2_term_of_abs_lt_one {z : ℝ} (hz : |z| < 1) :
+private theorem summable_li2PowerSeries_term_of_abs_lt_one {z : ℝ} (hz : |z| < 1) :
     Summable (fun n : ℕ => z ^ (n + 1) / (((n + 1 : ℕ)) : ℝ) ^ 2) := by
   have hax : |(|z|)| < 1 := by rwa [abs_abs]
   have hgeo : Summable (fun n : ℕ => |z| ^ (n + 1)) := by
@@ -65,16 +69,16 @@ private theorem summable_li2_term_of_abs_lt_one {z : ℝ} (hz : |z| < 1) :
   simp only [norm_div, norm_pow, Real.norm_eq_abs, habs]
   exact div_le_self (by positivity) h2
 
-/-- The series for `Li₂` converges to `Li₂(z)` for `|z| < 1`. -/
-theorem hasSum_li2 {z : ℝ} (hz : |z| < 1) :
-    HasSum (fun n : ℕ => z ^ (n + 1) / (((n + 1 : ℕ)) : ℝ) ^ 2) (li2 z) :=
-  (summable_li2_term_of_abs_lt_one hz).hasSum
+/-- The defining series converges to `li2PowerSeries z` for `|z| < 1`. -/
+theorem hasSum_li2PowerSeries {z : ℝ} (hz : |z| < 1) :
+    HasSum (fun n : ℕ => z ^ (n + 1) / (((n + 1 : ℕ)) : ℝ) ^ 2) (li2PowerSeries z) :=
+  (summable_li2PowerSeries_term_of_abs_lt_one hz).hasSum
 
 /-- `Li₂(0) = 0`. -/
-theorem li2_zero : li2 0 = 0 := by
+theorem li2PowerSeries_zero : li2PowerSeries 0 = 0 := by
   have h : ∀ n : ℕ, (0 : ℝ) ^ (n + 1) / (((n + 1 : ℕ)) : ℝ) ^ 2 = 0 :=
     fun n => by rw [zero_pow (by omega : n + 1 ≠ 0), zero_div]
-  simp only [li2, h, tsum_zero]
+  simp only [li2PowerSeries, h, tsum_zero]
 
 private theorem hasSum_one_div_add_one_sq_cast :
     HasSum (fun n : ℕ => (1 : ℝ) / (((n + 1 : ℕ)) : ℝ) ^ 2) (π ^ 2 / 6) :=
@@ -82,14 +86,14 @@ private theorem hasSum_one_div_add_one_sq_cast :
     (by simpa using hasSum_zeta_two)
 
 /-- The Basel value `Li₂(1) = π² / 6`. -/
-theorem li2_one : li2 1 = π ^ 2 / 6 := by
+theorem li2PowerSeries_one : li2PowerSeries 1 = π ^ 2 / 6 := by
   have h := hasSum_one_div_add_one_sq_cast.tsum_eq
-  rw [li2]
+  rw [li2PowerSeries]
   simpa only [one_pow] using h
 
-/-- `Li₂` is continuous on `[-1, 1]`, by the Weierstrass M-test against the
-convergent majorant `∑ 1 / (n + 1)²`. -/
-theorem continuousOn_li2 : ContinuousOn li2 (Set.Icc (-1) 1) := by
+/-- `li2PowerSeries` is continuous on `[-1, 1]`, by the Weierstrass M-test
+against the convergent majorant `∑ 1 / (n + 1)²`. -/
+theorem continuousOn_li2PowerSeries : ContinuousOn li2PowerSeries (Set.Icc (-1) 1) := by
   have hbound : ∀ n : ℕ, ∀ z ∈ Set.Icc (-1) 1,
       ‖z ^ (n + 1) / (((n + 1 : ℕ)) : ℝ) ^ 2‖ ≤ (1 : ℝ) / (((n + 1 : ℕ)) : ℝ) ^ 2 := by
     intro n z hz
@@ -109,15 +113,15 @@ theorem continuousOn_li2 : ContinuousOn li2 (Set.Icc (-1) 1) := by
       continuousOn_finsetSum s fun n _ => (continuousOn_id.pow _).div_const _).frequently)
   exact hcont
 
-/-- `Li₂` is continuous at `0`. -/
-theorem continuousAt_li2_zero : ContinuousAt li2 0 :=
-  continuousOn_li2.continuousAt (Icc_mem_nhds (by norm_num) (by norm_num))
+/-- `li2PowerSeries` is continuous at `0`. -/
+theorem continuousAt_li2PowerSeries_zero : ContinuousAt li2PowerSeries 0 :=
+  continuousOn_li2PowerSeries.continuousAt (Icc_mem_nhds (by norm_num) (by norm_num))
 
-private theorem tendsto_li2_nhdsLT_one :
-    Tendsto li2 (𝓝[<] (1 : ℝ)) (𝓝 (π ^ 2 / 6)) := by
-  have h1 : Tendsto li2 (𝓝[Set.Icc (-1) 1] (1 : ℝ)) (𝓝 (li2 1)) :=
-    continuousOn_li2.continuousWithinAt (by norm_num : (1 : ℝ) ∈ Set.Icc (-1) 1)
-  rw [li2_one] at h1
+private theorem tendsto_li2PowerSeries_nhdsLT_one :
+    Tendsto li2PowerSeries (𝓝[<] (1 : ℝ)) (𝓝 (π ^ 2 / 6)) := by
+  have h1 : Tendsto li2PowerSeries (𝓝[Set.Icc (-1) 1] (1 : ℝ)) (𝓝 (li2PowerSeries 1)) :=
+    continuousOn_li2PowerSeries.continuousWithinAt (by norm_num : (1 : ℝ) ∈ Set.Icc (-1) 1)
+  rw [li2PowerSeries_one] at h1
   refine h1.mono_left ?_
   refine nhdsWithin_le_of_mem ?_
   filter_upwards [self_mem_nhdsWithin,
@@ -127,8 +131,8 @@ private theorem tendsto_li2_nhdsLT_one :
 
 /-- The termwise derivative of the defining series for `Li₂`, valid on all of
 `(-1, 1)`, including at `0`. -/
-theorem hasDerivAt_li2_tsum {z : ℝ} (hz : |z| < 1) :
-    HasDerivAt li2 (∑' n : ℕ, z ^ n / (((n + 1 : ℕ)) : ℝ)) z := by
+theorem hasDerivAt_li2PowerSeries_tsum {z : ℝ} (hz : |z| < 1) :
+    HasDerivAt li2PowerSeries (∑' n : ℕ, z ^ n / (((n + 1 : ℕ)) : ℝ)) z := by
   obtain ⟨R, hzR, hR1⟩ : ∃ R : ℝ, |z| < R ∧ R < 1 := exists_between hz
   have hR0 : (0 : ℝ) < R := (abs_nonneg z).trans_lt hzR
   have hmem : z ∈ Set.Ioo (-R) R := Set.mem_Ioo.mpr (abs_lt.mp hzR)
@@ -163,7 +167,7 @@ theorem hasDerivAt_li2_tsum {z : ℝ} (hz : |z| < 1) :
           div_le_div_of_nonneg_right hYp hnn
       _ ≤ R ^ n := div_le_self (by positivity) hD1
   have hsum0 : Summable (fun n : ℕ => z ^ (n + 1) / ((((n + 1 : ℕ)) : ℝ) ^ 2)) :=
-    summable_li2_term_of_abs_lt_one hz
+    summable_li2PowerSeries_term_of_abs_lt_one hz
   have hmain := hasDerivAt_tsum_of_isPreconnected hsumv isOpen_Ioo
     (convex_Ioo (-R) R).isPreconnected hderiv1 hbound hmem hsum0 hmem
   exact hmain
@@ -179,12 +183,12 @@ private theorem tsum_pow_div_eq_neg_log_div {z : ℝ} (hz : |z| < 1) (hz0 : z �
     field_simp
   rw [tsum_congr hcast, tsum_mul_left, h, div_eq_inv_mul]
 
-/-- The derivative of the dilogarithm: `Li₂'(z) = -log (1 - z) / z` for
-`0 < |z| < 1`. -/
-theorem hasDerivAt_li2 {z : ℝ} (hz : |z| < 1) (hz0 : z ≠ 0) :
-    HasDerivAt li2 (-log (1 - z) / z) z := by
+/-- The derivative of the dilogarithm power series:
+`Li₂'(z) = -log (1 - z) / z` for `0 < |z| < 1`. -/
+theorem hasDerivAt_li2PowerSeries {z : ℝ} (hz : |z| < 1) (hz0 : z ≠ 0) :
+    HasDerivAt li2PowerSeries (-log (1 - z) / z) z := by
   rw [← tsum_pow_div_eq_neg_log_div hz hz0]
-  exact hasDerivAt_li2_tsum hz
+  exact hasDerivAt_li2PowerSeries_tsum hz
 
 private theorem negMulLog_one_sub (x : ℝ) : (1 - x) * log (1 - x) =
     -negMulLog (1 - x) := by
@@ -228,10 +232,11 @@ private theorem tendsto_log_div_one_sub_nhdsLT_one :
 `Li₂(z) + Li₂(1 - z) = π² / 6 - log z * log (1 - z)`. The left side plus the log
 product has derivative `0` on `(0, 1)` and tends to `Li₂(1) = π² / 6` as
 `z → 1⁻`. -/
-theorem li2_reflection {z : ℝ} (hz : z ∈ Set.Ioo (0 : ℝ) 1) :
-    li2 z + li2 (1 - z) = π ^ 2 / 6 - log z * log (1 - z) := by
+theorem li2PowerSeries_reflection {z : ℝ} (hz : z ∈ Set.Ioo (0 : ℝ) 1) :
+    li2PowerSeries z + li2PowerSeries (1 - z) = π ^ 2 / 6 - log z * log (1 - z) := by
   have hS : ∀ w ∈ Set.Ioo (0 : ℝ) 1,
-      HasDerivAt (fun w => li2 w + li2 (1 - w) + log w * log (1 - w)) 0 w := by
+      HasDerivAt (fun w => li2PowerSeries w + li2PowerSeries (1 - w) +
+        log w * log (1 - w)) 0 w := by
     intro w hw
     have hw0 : w ≠ 0 := hw.1.ne'
     have h1w : (1 : ℝ) - w ≠ 0 := (sub_pos.mpr hw.2).ne'
@@ -242,8 +247,8 @@ theorem li2_reflection {z : ℝ} (hz : z ∈ Set.Ioo (0 : ℝ) 1) :
       have h := (hasDerivAt_const w (1 : ℝ)).sub (hasDerivAt_id' w)
       apply h.congr_deriv
       simp
-    have hcomp : HasDerivAt (fun w => li2 (1 - w)) (log w / (1 - w)) w := by
-      have h := (hasDerivAt_li2 habs h1w).comp w h1mx
+    have hcomp : HasDerivAt (fun w => li2PowerSeries (1 - w)) (log w / (1 - w)) w := by
+      have h := (hasDerivAt_li2PowerSeries habs h1w).comp w h1mx
       refine h.congr_deriv ?_
       have e : (1 : ℝ) - (1 - w) = w := by ring
       rw [e]
@@ -255,30 +260,30 @@ theorem li2_reflection {z : ℝ} (hz : z ∈ Set.Ioo (0 : ℝ) 1) :
     have h3 : HasDerivAt (fun w => log w * log (1 - w))
         (w⁻¹ * log (1 - w) + log w * (-(1 - w)⁻¹)) w :=
       (Real.hasDerivAt_log hw0).mul hlog1w
-    have hli2w : HasDerivAt li2 (-log (1 - w) / w) w :=
-      hasDerivAt_li2 (by rw [abs_of_pos hw.1]; exact hw.2) hw0
+    have hli2w : HasDerivAt li2PowerSeries (-log (1 - w) / w) w :=
+      hasDerivAt_li2PowerSeries (by rw [abs_of_pos hw.1]; exact hw.2) hw0
     refine (((hli2w).add hcomp).add h3).congr_deriv ?_
     field_simp
     ring
   have hconst : ∀ w ∈ Set.Ioo (0 : ℝ) 1,
-      li2 w + li2 (1 - w) + log w * log (1 - w) =
-        li2 (1 / 2) + li2 (1 - 1 / 2) + log (1 / 2) * log (1 - 1 / 2) := by
+      li2PowerSeries w + li2PowerSeries (1 - w) + log w * log (1 - w) =
+        li2PowerSeries (1 / 2) + li2PowerSeries (1 - 1 / 2) + log (1 / 2) * log (1 - 1 / 2) := by
     intro w hw
     have h := intervalIntegral.integral_eq_sub_of_hasDerivAt (a := (1 : ℝ) / 2)
       (b := w)
-      (f := fun w => li2 w + li2 (1 - w) + log w * log (1 - w))
+      (f := fun w => li2PowerSeries w + li2PowerSeries (1 - w) + log w * log (1 - w))
       (f' := fun _ => (0 : ℝ)) ?_ intervalIntegrable_const
     · rw [intervalIntegral.integral_zero] at h
-      change (0 : ℝ) = (li2 w + li2 (1 - w) + log w * log (1 - w)) -
-        (li2 (1 / 2) + li2 (1 - 1 / 2) + log (1 / 2) * log (1 - 1 / 2)) at h
+      change (0 : ℝ) = (li2PowerSeries w + li2PowerSeries (1 - w) + log w * log (1 - w)) -
+        (li2PowerSeries (1 / 2) + li2PowerSeries (1 - 1 / 2) + log (1 / 2) * log (1 - 1 / 2)) at h
       linarith [h]
     · intro x hx
       refine hS x ?_
       rcases Set.mem_uIcc.mp hx with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;>
         constructor <;> linarith [hw.1, hw.2]
-  have hlim : Tendsto (fun w => li2 w + li2 (1 - w) + log w * log (1 - w))
+  have hlim : Tendsto (fun w => li2PowerSeries w + li2PowerSeries (1 - w) + log w * log (1 - w))
       (𝓝[<] (1 : ℝ)) (𝓝 (π ^ 2 / 6)) := by
-    have hcomp : Tendsto (fun w => li2 (1 - w)) (𝓝[<] (1 : ℝ)) (𝓝 0) := by
+    have hcomp : Tendsto (fun w => li2PowerSeries (1 - w)) (𝓝[<] (1 : ℝ)) (𝓝 0) := by
       have hmap : Tendsto (fun w : ℝ => 1 - w) (𝓝[<] (1 : ℝ)) (𝓝[>] (0 : ℝ)) := by
         refine tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within _ ?_ ?_
         · have h : Tendsto (fun w : ℝ => (1 : ℝ) - w) (𝓝[<] (1 : ℝ))
@@ -288,9 +293,9 @@ theorem li2_reflection {z : ℝ} (hz : z ∈ Set.Ioo (0 : ℝ) 1) :
           simpa using h
         · filter_upwards [self_mem_nhdsWithin] with w hw
           exact sub_pos.mpr hw
-      have hcont : Tendsto li2 (𝓝[>] (0 : ℝ)) (𝓝 (li2 0)) :=
-        continuousAt_li2_zero.tendsto.mono_left nhdsWithin_le_nhds
-      rw [li2_zero] at hcont
+      have hcont : Tendsto li2PowerSeries (𝓝[>] (0 : ℝ)) (𝓝 (li2PowerSeries 0)) :=
+        continuousAt_li2PowerSeries_zero.tendsto.mono_left nhdsWithin_le_nhds
+      rw [li2PowerSeries_zero] at hcont
       exact hcont.comp hmap
     have hprod : Tendsto (fun w => log w * log (1 - w)) (𝓝[<] (1 : ℝ)) (𝓝 0) := by
       have key : Tendsto (fun w => (log w / (1 - w)) * ((1 - w) * log (1 - w)))
@@ -302,11 +307,12 @@ theorem li2_reflection {z : ℝ} (hz : z ∈ Set.Ioo (0 : ℝ) 1) :
       filter_upwards [self_mem_nhdsWithin] with w hw
       have h1w : (1 : ℝ) - w ≠ 0 := (sub_pos.mpr hw).ne'
       field_simp
-    have hsumT := (tendsto_li2_nhdsLT_one.add hcomp).add hprod
+    have hsumT := (tendsto_li2PowerSeries_nhdsLT_one.add hcomp).add hprod
     simpa using hsumT
-  have hlimC : Tendsto (fun w => li2 w + li2 (1 - w) + log w * log (1 - w))
+  have hlimC : Tendsto (fun w => li2PowerSeries w + li2PowerSeries (1 - w) + log w * log (1 - w))
       (𝓝[<] (1 : ℝ))
-      (𝓝 (li2 (1 / 2) + li2 (1 - 1 / 2) + log (1 / 2) * log (1 - 1 / 2))) := by
+      (𝓝 (li2PowerSeries (1 / 2) + li2PowerSeries (1 - 1 / 2) +
+        log (1 / 2) * log (1 - 1 / 2))) := by
     refine tendsto_const_nhds.congr' ?_
     filter_upwards [self_mem_nhdsWithin,
       eventually_nhdsWithin_of_eventually_nhds (Ioi_mem_nhds zero_lt_one)]

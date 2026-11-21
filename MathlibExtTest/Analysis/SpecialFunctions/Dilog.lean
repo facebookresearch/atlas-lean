@@ -12,28 +12,28 @@ import MathlibExt.Analysis.SpecialFunctions.Dilog
 
 open Real
 
-example : li2 0 = 0 := li2_zero
+example : li2PowerSeries 0 = 0 := li2PowerSeries_zero
 
-example : li2 1 = π ^ 2 / 6 := li2_one
+example : li2PowerSeries 1 = π ^ 2 / 6 := li2PowerSeries_one
 
 example : HasSum (fun n : ℕ => (1 / 2 : ℝ) ^ (n + 1) / (((n + 1 : ℕ)) : ℝ) ^ 2)
-    (li2 (1 / 2)) :=
-  hasSum_li2 (by norm_num)
+    (li2PowerSeries (1 / 2)) :=
+  hasSum_li2PowerSeries (by norm_num)
 
-example : HasDerivAt li2 (-Real.log (1 - 1 / 2) / (1 / 2)) (1 / 2) :=
-  hasDerivAt_li2 (by norm_num) (by norm_num)
+example : HasDerivAt li2PowerSeries (-Real.log (1 - 1 / 2) / (1 / 2)) (1 / 2) :=
+  hasDerivAt_li2PowerSeries (by norm_num) (by norm_num)
 
-example : HasDerivAt li2
+example : HasDerivAt li2PowerSeries
     (∑' n : ℕ, (0 : ℝ) ^ n / (((n + 1 : ℕ)) : ℝ)) 0 :=
-  hasDerivAt_li2_tsum (by norm_num)
+  hasDerivAt_li2PowerSeries_tsum (by norm_num)
 
-example : ContinuousOn li2 (Set.Icc (-1) 1) := continuousOn_li2
+example : ContinuousOn li2PowerSeries (Set.Icc (-1) 1) := continuousOn_li2PowerSeries
 
-example : ContinuousAt li2 0 := continuousAt_li2_zero
+example : ContinuousAt li2PowerSeries 0 := continuousAt_li2PowerSeries_zero
 
-example : li2 (1 / 2) + li2 (1 - 1 / 2) =
+example : li2PowerSeries (1 / 2) + li2PowerSeries (1 - 1 / 2) =
     π ^ 2 / 6 - Real.log (1 / 2) * Real.log (1 - 1 / 2) :=
-  li2_reflection ⟨by norm_num, by norm_num⟩
+  li2PowerSeries_reflection ⟨by norm_num, by norm_num⟩
 
-#print axioms Real.li2_one
-#print axioms Real.li2_reflection
+#print axioms Real.li2PowerSeries_one
+#print axioms Real.li2PowerSeries_reflection

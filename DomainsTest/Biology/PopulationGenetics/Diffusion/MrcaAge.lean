@@ -129,7 +129,7 @@ example : HasDerivAt pattersonDilog (log (1 / 2) / (1 - 1 / 2)) (1 / 2) :=
 example : Tendsto pattersonDilog (𝓝[<] (1 : ℝ)) (𝓝 0) :=
   tendsto_pattersonDilog_nhdsLT_one
 
-/-- On `(0, 1)`, the `Real.li2` definition agrees with Patterson's integral
+/-- On `(0, 1)`, the `Real.li2PowerSeries` definition agrees with Patterson's integral
 definition, here at `1 / 2`. -/
 example : pattersonDilog (1 / 2) =
     ∫ t in (1 : ℝ)..(1 / 2), log t / (1 - t) :=

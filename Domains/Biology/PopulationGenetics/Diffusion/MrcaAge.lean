@@ -43,8 +43,8 @@ Corollary 2 is `integral_neutralGreen` (both `Sojourn`; the value is
   the killed diffusion: in the diffusion reading, `G_C(x, y) = ∫₀^∞ C(x, y; t) dt`.
   It is built from the two solutions `pattersonAux1`, `pattersonAux2` of
   `x² (1 - x) / 2 * w'' = w` in his Appendix.
-* `pattersonDilog x = Real.li2 (1 - x)` is his `dilog` (Equation 16), using the
-  generic dilogarithm API in `MathlibExt.Analysis.SpecialFunctions.Dilog`;
+* `pattersonDilog x = Real.li2PowerSeries (1 - x)` is his `dilog` (Equation 16), using the
+  generic dilogarithm power-series API in `MathlibExt.Analysis.SpecialFunctions.Dilog`;
   `pattersonDilog_eq_integral` identifies it on `(0, 1)` with Patterson's integral
   `∫₁ˣ (log t) / (1 - t) dt`.
 * `meanMrcaNew y` is `M₁(y)` (Equation 16), in the diffusion reading the expected
@@ -71,11 +71,11 @@ Corollary 2 is `integral_neutralGreen` (both `Sojourn`; the value is
   posterior probability `x` that an allele at frequency `x` is old.
 * `hasDerivAt_pattersonDilog`, `pattersonDilog_one`: `dilog` differentiates to
   `log x / (1 - x)` on `(0, 1)` and vanishes at `1`.
-* `pattersonDilog_eq_integral`: on `(0, 1)`, the `Real.li2` definition agrees with
+* `pattersonDilog_eq_integral`: on `(0, 1)`, the `Real.li2PowerSeries` definition agrees with
   Patterson's integral definition of `dilog`.
 * `pattersonDilog_zero`, `pattersonDilog_reflection`: `dilog 0 = π² / 6`, and
   `dilog y + dilog (1 - y) + log y * log (1 - y) = π² / 6` (corollaries of
-  `Real.li2_one` and `Real.li2_reflection`, in Patterson's normalization).
+  `Real.li2PowerSeries_one` and `Real.li2PowerSeries_reflection`, in Patterson's normalization).
 * `meanMrcaNew_eq_integral`: `M₁(y) = y ∫₀¹ G_C(x, y) / x dx`, Patterson's route to
   Equation 16 (p. 1103): Equation 16 is derived here from Theorem 4, not transcribed.
 * `killedGreen_weighted_integral_add_pattersonAux1` and
@@ -155,14 +155,14 @@ noncomputable def killedGreen (x y : ℝ) : ℝ :=
     ((1 - y) * y ^ 2 * x)
 
 /-- Patterson's `dilog` (Equation 16), defined here by
-`pattersonDilog x = Real.li2 (1 - x)`, using the generic dilogarithm API in
+`pattersonDilog x = Real.li2PowerSeries (1 - x)`, using the generic dilogarithm power-series API in
 `MathlibExt.Analysis.SpecialFunctions.Dilog`. Patterson's own definition is the
 integral `∫₁ˣ (log t) / (1 - t) dt`; `pattersonDilog_eq_integral` proves that the
 two agree on `(0, 1)`. This is his sign and normalization convention:
 `dilog 1 = 0`, derivative `log x / (1 - x)` on `(0, 1)`. In classical notation
 `pattersonDilog x = Li₂(1 - x)` (Maple's `dilog`). -/
 noncomputable def pattersonDilog (x : ℝ) : ℝ :=
-  Real.li2 (1 - x)
+  Real.li2PowerSeries (1 - x)
 
 /-- Patterson's `M₁(y)` (Equation 16, Theorem 6(2)): in the diffusion reading, the
 expected age (in units of `2N` generations) of the MRCA of two copies of an allele
@@ -527,12 +527,12 @@ private theorem intervalIntegrable_log_div_one_sub {a b : ℝ} (ha : 0 < a) (ha1
   · rw [Real.volume_Ioc]
     exact ENNReal.ofReal_lt_top
 
-/-- Patterson's `dilog` vanishes at `1`, since `Real.li2 0 = 0`. -/
+/-- Patterson's `dilog` vanishes at `1`, since `Real.li2PowerSeries 0 = 0`. -/
 theorem pattersonDilog_one : pattersonDilog 1 = 0 := by
-  simp only [pattersonDilog, sub_self, Real.li2_zero]
+  simp only [pattersonDilog, sub_self, Real.li2PowerSeries_zero]
 
 /-- The derivative of Patterson's `dilog` on `(0, 1)` is `log x / (1 - x)`, from
-`Real.hasDerivAt_li2` by the chain rule. -/
+`Real.hasDerivAt_li2PowerSeries` by the chain rule. -/
 theorem hasDerivAt_pattersonDilog {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
     HasDerivAt pattersonDilog (log x / (1 - x)) x := by
   have h1mx : HasDerivAt (fun x : ℝ => 1 - x) (-1) x := by
@@ -542,8 +542,8 @@ theorem hasDerivAt_pattersonDilog {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
   have habs : |(1 : ℝ) - x| < 1 := by
     rw [abs_of_pos (sub_pos.mpr hx.2)]
     exact sub_lt_self 1 hx.1
-  have h := (Real.hasDerivAt_li2 habs (sub_pos.mpr hx.2).ne').comp x h1mx
-  change HasDerivAt (fun x => Real.li2 (1 - x)) (log x / (1 - x)) x
+  have h := (Real.hasDerivAt_li2PowerSeries habs (sub_pos.mpr hx.2).ne').comp x h1mx
+  change HasDerivAt (fun x => Real.li2PowerSeries (1 - x)) (log x / (1 - x)) x
   refine h.congr_deriv ?_
   have e : (1 : ℝ) - (1 - x) = x := by ring
   rw [e, mul_neg, mul_one, neg_div, neg_neg]
@@ -586,7 +586,7 @@ private theorem tendsto_one_sub_mul_log_one_sub_nhdsLT_one :
   ring
 
 /-- Patterson's `dilog` tends to `0` at `1` from below, by continuity of
-`Real.li2` at `0`. -/
+`Real.li2PowerSeries` at `0`. -/
 theorem tendsto_pattersonDilog_nhdsLT_one :
     Tendsto pattersonDilog (𝓝[<] (1 : ℝ)) (𝓝 0) := by
   have hsub : Tendsto (fun x : ℝ => 1 - x) (𝓝[<] (1 : ℝ)) (𝓝 0) := by
@@ -595,12 +595,12 @@ theorem tendsto_pattersonDilog_nhdsLT_one :
       ((continuous_const.sub continuous_id).tendsto (1 : ℝ)).mono_left
         nhdsWithin_le_nhds
     simpa using h
-  have hcont : Tendsto Real.li2 (𝓝 (0 : ℝ)) (𝓝 (Real.li2 0)) :=
-    Real.continuousAt_li2_zero.tendsto
-  rw [Real.li2_zero] at hcont
+  have hcont : Tendsto Real.li2PowerSeries (𝓝 (0 : ℝ)) (𝓝 (Real.li2PowerSeries 0)) :=
+    Real.continuousAt_li2PowerSeries_zero.tendsto
+  rw [Real.li2PowerSeries_zero] at hcont
   exact hcont.comp hsub
 
-/-- On `(0, 1)`, Patterson's `dilog`, defined here through `Real.li2`, agrees
+/-- On `(0, 1)`, Patterson's `dilog`, defined here through `Real.li2PowerSeries`, agrees
 with Patterson's integral definition `∫₁ˣ (log t) / (1 - t) dt`. The proof
 integrates the derivative from `x` to `1` and uses the limit `0` at `1`. -/
 theorem pattersonDilog_eq_integral {x : ℝ} (hx : x ∈ Set.Ioo (0 : ℝ) 1) :
@@ -619,9 +619,9 @@ theorem pattersonDilog_eq_integral {x : ℝ} (hx : x ∈ Set.Ioo (0 : ℝ) 1) :
   simp
 
 /-- **The value `dilog 0 = π² / 6`** in Patterson's normalization, the
-`Real.li2_one` Basel value. -/
+`Real.li2PowerSeries_one` Basel value. -/
 theorem pattersonDilog_zero : pattersonDilog 0 = π ^ 2 / 6 := by
-  simp only [pattersonDilog, sub_zero, Real.li2_one]
+  simp only [pattersonDilog, sub_zero, Real.li2PowerSeries_one]
 
 /-- Derivative of `pattersonDilog (1 - z)` on `(0, 1)`. -/
 private theorem hasDerivAt_pattersonDilog_one_sub {z : ℝ}
@@ -640,11 +640,11 @@ private theorem hasDerivAt_pattersonDilog_one_sub {z : ℝ}
 
 /-- **Euler's reflection formula for Patterson's `dilog`**: for `y ∈ (0, 1)`,
 `dilog y + dilog (1 - y) + log y * log (1 - y) = π² / 6`. This is
-`Real.li2_reflection` in Patterson's normalization. -/
+`Real.li2PowerSeries_reflection` in Patterson's normalization. -/
 theorem pattersonDilog_reflection {y : ℝ} (hy : y ∈ Set.Ioo (0 : ℝ) 1) :
     pattersonDilog y + pattersonDilog (1 - y) + log y * log (1 - y) =
       π ^ 2 / 6 := by
-  have h := Real.li2_reflection hy
+  have h := Real.li2PowerSeries_reflection hy
   have e : (1 : ℝ) - (1 - y) = y := by ring
   simp only [pattersonDilog]
   rw [e]
