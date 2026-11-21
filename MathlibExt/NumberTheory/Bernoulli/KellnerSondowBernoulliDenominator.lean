@@ -91,11 +91,11 @@ private theorem kummer_digit_le {q k n : ℕ} (hq : Nat.Prime q) (hkn : k ≤ n)
     (hdiv : ¬ q ∣ n.choose k) : (q.digits k).sum ≤ (q.digits n).sum := by
   have : Fact (Nat.Prime q) := ⟨hq⟩
   have hpos : 0 < n.choose k := Nat.choose_pos hkn
-  have hval : padicValNat q (n.choose k) = 0 := by
-    rw [padicValNat.eq_zero_iff]
+  have hval : multiplicity q (n.choose k) = 0 := by
+    rw [Nat.multiplicity_eq_zero_iff]
     right; right
     exact hdiv
-  have hkum := sub_one_mul_padicValNat_choose_eq_sub_sum_digits hkn (p := q)
+  have hkum := sub_one_mul_multiplicity_choose_eq_sub_sum_digits hkn (p := q)
   rw [hval, mul_zero] at hkum
   omega
 
@@ -150,11 +150,11 @@ private theorem digit_sum_n_ge_of_mem {q k n : ℕ} (hq : Nat.Prime q) (hkn : k 
   have h2 : (q.digits k).sum ≤ (q.digits n).sum := by
     have : Fact (Nat.Prime q) := ⟨hq⟩
     have hpos : 0 < n.choose k := Nat.choose_pos hkn
-    have hval : padicValNat q (n.choose k) = 0 := by
-      rw [padicValNat.eq_zero_iff]
+    have hval : multiplicity q (n.choose k) = 0 := by
+      rw [Nat.multiplicity_eq_zero_iff]
       right; right
       exact hdiv
-    have hkum := sub_one_mul_padicValNat_choose_eq_sub_sum_digits hkn (p := q)
+    have hkum := sub_one_mul_multiplicity_choose_eq_sub_sum_digits hkn (p := q)
     rw [hval, mul_zero] at hkum
     omega
   omega
@@ -589,15 +589,15 @@ private theorem lower_mem_S {n p : ℕ}
   have hnc : ¬ p ∣ n.choose k := by
     have : Fact (Nat.Prime p) := ⟨hprime⟩
     have hpos : 0 < n.choose k := Nat.choose_pos hkn
-    have hkum := sub_one_mul_padicValNat_choose_eq_sub_sum_digits hkn (p := p)
+    have hkum := sub_one_mul_multiplicity_choose_eq_sub_sum_digits hkn (p := p)
     have hrhs : (p.digits k).sum + (p.digits (n - k)).sum - (p.digits n).sum = 0 := by
       omega
     rw [hrhs] at hkum
-    have hv0 : padicValNat p (n.choose k) = 0 := by
+    have hv0 : multiplicity p (n.choose k) = 0 := by
       rcases Nat.mul_eq_zero.mp hkum with h | h
       · omega
       · exact h
-    rw [padicValNat.eq_zero_iff] at hv0
+    rw [Nat.multiplicity_eq_zero_iff] at hv0
     rcases hv0 with h | h | h
     · exact absurd h hprime.ne_one
     · omega

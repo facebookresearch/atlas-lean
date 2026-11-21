@@ -48,13 +48,13 @@ namespace MathlibExt.Analysis.FunctionalAnalysis.AnnulusWeightedHardyInequalityW
 abbrev R2 : Type := EuclideanSpace ℝ (Fin 2)
 
 /-- The open ball of radius `r` about the origin of the plane. -/
-abbrev B (r : ℝ) : Set R2 := Metric.ball (0 : R2) r
+noncomputable abbrev B (r : ℝ) : Set R2 := Metric.ball (0 : R2) r
 
 /-- The annulus `B 3 \ closure (B 1)`. -/
-abbrev Omega1 : Set R2 := B 3 \ closure (B 1)
+noncomputable abbrev Omega1 : Set R2 := B 3 \ closure (B 1)
 
 /-- The annulus `B 3 \ closure (B 2)`. -/
-abbrev Omega2 : Set R2 := B 3 \ closure (B 2)
+noncomputable abbrev Omega2 : Set R2 := B 3 \ closure (B 2)
 
 /-- `phi x = max (‖x‖ - 1) 0`. -/
 noncomputable def phi (x : R2) : ℝ := max (‖x‖ - 1) 0

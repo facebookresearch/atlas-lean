@@ -37,7 +37,7 @@ non-abelian factor (by Jordan-Hölder, the same as for one composition series).
 -/
 
 /-- The spectrum `ω(G)` of a group: the set of orders of its elements. -/
-def spectrum (G : Type*) [Group G] : Set ℕ :=
+noncomputable def spectrum (G : Type*) [Group G] : Set ℕ :=
   Set.range (orderOf : G → ℕ)
 
 /-- `s` is a composition series of `G` of length `m`: `s 0 = ⊥`, `s m = ⊤`, and every `s i` is a

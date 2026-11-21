@@ -29,7 +29,7 @@ open scoped ENNReal
 export MathlibExt.Analysis.InnerProductSpace.LineIsometry (lineIsometry lineIsometry_apply)
 
 /-- An actual closed symmetric interval in one-dimensional Euclidean space. -/
-def symmetricInterval (a : ℝ) : Set (EuclideanSpace ℝ (Fin 1)) :=
+noncomputable def symmetricInterval (a : ℝ) : Set (EuclideanSpace ℝ (Fin 1)) :=
   lineIsometry.symm ⁻¹' Set.Icc (-a) a
 
 theorem symmetricInterval_measurable (a : ℝ) : MeasurableSet (symmetricInterval a) :=

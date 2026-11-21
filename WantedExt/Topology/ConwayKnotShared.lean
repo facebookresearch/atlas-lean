@@ -340,7 +340,7 @@ structure PLKnot where
   three_le : 3 ≤ vertices.length
 
 /-- The image of the PL knot in `ℝ³` (the trace of the polyline). -/
-def PLKnot.image (K : PLKnot) : Set R3 :=
+noncomputable def PLKnot.image (K : PLKnot) : Set R3 :=
   plCurve K.vertices '' Set.Ico (0 : ℝ) (K.vertices.length : ℝ)
 
 /-- The polyline is a *simple closed curve*: the periodic parametrization is

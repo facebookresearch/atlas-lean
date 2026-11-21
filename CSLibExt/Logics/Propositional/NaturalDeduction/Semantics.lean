@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Cslib.Logics.Propositional.NaturalDeduction.Theory
+public import CSLibExt.Logics.Propositional.Legacy.NaturalDeduction.Theory
 
 /-!
 # Truth-table semantics and soundness of natural deduction

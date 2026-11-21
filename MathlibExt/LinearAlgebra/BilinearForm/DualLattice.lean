@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Algebra.Module.Lattice
+public import Mathlib.Algebra.Module.Lattice.Full
 public import Mathlib.LinearAlgebra.BilinearForm.DualLattice
 public import Mathlib.RingTheory.Localization.FractionRing
 public import Mathlib.RingTheory.Localization.Integer
@@ -144,19 +144,21 @@ theorem LinearMap.BilinForm.dualSubmodule_span_eq_top
 /-- The dual submodule of a lattice is a lattice. -/
 theorem LinearMap.BilinForm.dualSubmodule_isLattice [IsDomain A] [IsNoetherianRing A]
     (B : LinearMap.BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)
-    [Submodule.IsLattice K M] : Submodule.IsLattice K (B.dualSubmodule M) where
-  fg := B.dualSubmodule_fg hB M IsLattice.span_eq_top
-  span_eq_top := B.dualSubmodule_span_eq_top M IsLattice.fg
+    [Submodule.IsFullLattice K M] : Submodule.IsFullLattice K (B.dualSubmodule M) where
+  toIsLattice :=
+    haveI := IsLattice.finite K M
+    IsLattice.of_fg K (B.dualSubmodule_fg hB M IsFullLattice.span_eq_top)
+  span_eq_top := B.dualSubmodule_span_eq_top M (IsLattice.fg K M)
 
 /-- Combined endpoint: the dual submodule is a lattice and dual map is bijective. -/
 theorem LinearMap.BilinForm.dualSubmodule_isLattice_and_dualSubmoduleToDual_bijective
     [IsDomain A] [FiniteDimensional K V] [IsNoetherianRing A]
     (B : LinearMap.BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)
-    [Submodule.IsLattice K M] :
-    Submodule.IsLattice K (B.dualSubmodule M) ∧
+    [Submodule.IsFullLattice K M] :
+    Submodule.IsFullLattice K (B.dualSubmodule M) ∧
       Function.Bijective (B.dualSubmoduleToDual M) :=
   ⟨B.dualSubmodule_isLattice hB M,
-    B.dualSubmoduleToDual_bijective hB M IsLattice.span_eq_top⟩
+    B.dualSubmoduleToDual_bijective hB M IsFullLattice.span_eq_top⟩
 
 /-- The canonical equivalence induced by the bilinear pairing. -/
 noncomputable def LinearMap.BilinForm.dualSubmoduleLinearEquiv

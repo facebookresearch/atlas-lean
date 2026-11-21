@@ -42,7 +42,7 @@ public import Mathlib
 namespace MathlibExt.Analysis.Complex.InjectiveDiskMapExtremalDerivWanted
 
 /-- The open unit disc. -/
-abbrev unitDisk : Set ℂ := Metric.ball (0 : ℂ) 1
+noncomputable abbrev unitDisk : Set ℂ := Metric.ball (0 : ℂ) 1
 
 /-- Injective holomorphic maps from `Ω` into the unit disc that fix `0`. -/
 def AdmissibleFamily (Ω : Set ℂ) : Set (ℂ → ℂ) :=

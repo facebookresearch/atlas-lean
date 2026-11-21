@@ -22,7 +22,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import Cslib.Logics.Propositional.Defs
+public import CSLibExt.Logics.Propositional.Legacy.Defs
 public import CSLibExt.Logics.Propositional.NaturalDeduction.Semantics
 
 @[expose] public section

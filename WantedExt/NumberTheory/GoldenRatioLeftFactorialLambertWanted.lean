@@ -72,7 +72,7 @@ Article 24.5.7, Section 2.2, definition (4). -/
 public theorem goldenFactorialExponent_mem (n : ℕ) :
     1 ≤ goldenFactorialExponent n ∧
       (n.factorial : ℝ) ≤ goldenRatio ^ goldenFactorialExponent n :=
-  Nat.sInf_mem (exists_goldenRatio_pow_ge_factorial n)
+  Nat.sInf_mem (s := .ofPred _) (exists_goldenRatio_pow_ge_factorial n)
 
 /-- Minimality of `α n`: every positive `m` with `n! ≤ φ ^ m` satisfies `α n ≤ m`.
 

@@ -40,7 +40,7 @@ finitely generated non-abelian free group, i.e. every rank `n ≥ 2`.
 group `F = F(x₀, …, x_{n-1})`, `n ≥ 2`, the abelianization of the unrestricted (Cartesian) product
 `F^ℕ` of countably many copies of `F` is torsion-free. -/
 def cartesianPowerAbelianizationTorsionFree : Prop :=
-  ∀ n : ℕ, 2 ≤ n → ∀ g : Abelianization (ℕ → FreeGroup (Fin n)), g ≠ 1 → ¬ IsOfFinOrder g
+  ∀ n : ℕ, 2 ≤ n → ∀ g : Group.Abelianization (ℕ → FreeGroup (Fin n)), g ≠ 1 → ¬ IsOfFinOrder g
 
 /--
 Resolved false: the Kourovka Archive answers 13.18 "No, it may contain elements of order 2" (O.

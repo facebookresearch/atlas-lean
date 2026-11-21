@@ -72,7 +72,7 @@ theorem cfCylinder_nil : cfCylinder [] = Set.Ico 0 1 := by
 Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
 Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
 Section 2.3 (interval notation). -/
-def fundInterval (α β : ℝ) : Set ℝ :=
+noncomputable def fundInterval (α β : ℝ) : Set ℝ :=
   if α < β then Set.Ico α β else Set.Ioc β α
 
 /-- `⟨α, β⟩ = [α, β)` when `α < β`.

@@ -153,7 +153,7 @@ private lemma aux_protected {α : Type u} [AddCommMonoid α] [LinearOrder α]
     (memoizedCutRodAux prices j hjn cache).ret.2[k]'(by omega) = cache[k] := by
   revert hjn cache k hkn hprotect
   induction j using Nat.strong_induction_on with
-  | h j ih =>
+  | ind j ih =>
       intro hjn cache k hkn hprotect
       cases htarget : cache[j]'(by omega) with
       | some value =>
@@ -335,7 +335,7 @@ private lemma aux_valid {α : Type u} [AddCommMonoid α] [LinearOrder α]
       (memoizedCutRodAux prices j hjn cache).ret.1 := by
   revert hjn cache hvalid
   induction j using Nat.strong_induction_on with
-  | h j ih =>
+  | ind j ih =>
       intro hjn cache hvalid
       cases htarget : cache[j]'(by omega) with
       | some value =>
@@ -469,7 +469,7 @@ private lemma aux_potential {α : Type u} [AddCommMonoid α] [LinearOrder α]
       1 + pendingPotential cache := by
   revert hjn cache
   induction j using Nat.strong_induction_on with
-  | h j ih =>
+  | ind j ih =>
       intro hjn cache
       cases htarget : cache[j]'(by omega) with
       | some value =>
@@ -535,7 +535,7 @@ private lemma aux_prefix {α : Type u} [AddCommMonoid α] [LinearOrder α]
         some value := by
   revert hjn
   induction j using Nat.strong_induction_on with
-  | h j ih =>
+  | ind j ih =>
       intro hjn k hk
       by_cases hkj : k = j
       · subst k

@@ -34,7 +34,7 @@ non-isomorphic finite groups with spectrum `Γ`", which avoids counting isomorph
 -/
 
 /-- The spectrum `π_e(G)`: the set of orders of elements of `G`. -/
-def elementOrders (G : Type*) [Group G] : Set ℕ :=
+noncomputable def elementOrders (G : Type*) [Group G] : Set ℕ :=
   Set.range (orderOf : G → ℕ)
 
 /-- `h(Γ) ≤ k`: among any `k + 1` finite groups with spectrum `Γ`, two are isomorphic. -/

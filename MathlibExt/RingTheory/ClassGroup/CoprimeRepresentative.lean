@@ -43,7 +43,7 @@ theorem Ideal.exists_isCoprime_mul_isPrincipal (I a : Ideal A) (hI : I ≠ ⊥)
     exact ⟨⟨x, rfl⟩⟩
 
 /-- Every ideal class has an integral representative coprime to any prescribed nonzero ideal. -/
-theorem ClassGroup.exists_mk0_eq_and_isCoprime (c : ClassGroup A) (a : Ideal A)
+theorem ClassGroup.exists_mk0_eq_and_isCoprime' (c : ClassGroup A) (a : Ideal A)
     (ha : a ≠ ⊥) :
     ∃ (K : Ideal A) (hK : K ≠ ⊥),
       ClassGroup.mk0 ⟨K, mem_nonZeroDivisors_iff_ne_zero.mpr hK⟩ = c ∧

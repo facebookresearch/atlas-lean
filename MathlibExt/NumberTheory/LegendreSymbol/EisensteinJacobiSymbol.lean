@@ -378,7 +378,7 @@ private theorem double_modEq (m b : ℕ) (hb : Odd b) (hbpos : 0 < b) (hcopm : N
 private theorem eis_jacobi_gen (a : ℕ) : ∀ b : ℕ, Odd b → Nat.Coprime a b →
     jacobiSym (a : ℤ) b = (-1 : ℤ) ^ (eisS a b + (if Even a then (b ^ 2 - 1) / 8 else 0)) := by
   induction a using Nat.strong_induction_on with
-  | h a IHa =>
+  | ind a IHa =>
   intro b hb hcop
   have hbpos : 0 < b := hb.pos
   rcases eq_or_ne b 1 with rfl | hb1

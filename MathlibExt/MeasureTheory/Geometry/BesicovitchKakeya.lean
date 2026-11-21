@@ -32,7 +32,7 @@ private def kakBowtie (c a u₁ u₂ : ℝ) : Set (ℝ × ℝ) :=
 private noncomputable def kakSlope (N k : ℕ) : ℝ := -1 + 2 * (k : ℝ) / (N : ℝ)
 
 /-- Finite bowtie approximation: a finite set plus `N` consecutive bowties. -/
-private def kakBowtieApprox (F : Set (ℝ × ℝ)) (N : ℕ) (x : ℕ → ℝ) (a : ℝ) :
+private noncomputable def kakBowtieApprox (F : Set (ℝ × ℝ)) (N : ℕ) (x : ℕ → ℝ) (a : ℝ) :
     Set (ℝ × ℝ) :=
   F ∪ ⋃ k ∈ (Finset.range N : Set ℕ),
     kakBowtie (x k + kakSlope N k * a) a (kakSlope N k) (kakSlope N (k + 1))
@@ -371,7 +371,7 @@ private theorem kak_isClosed_kakeyaFamily : IsClosed kakFamily := by
         (Q : Set (ℝ × ℝ)) ⊆ Set.univ ×ˢ Set.Icc (0 : ℝ) 1} :=
       TopologicalSpace.NonemptyCompacts.isClosed_subsets_of_isClosed
         (isClosed_univ.prod isClosed_Icc)
-    exact closure_minimal (fun Q hQ => hQ.1) hclosed hP
+    exact closure_minimal (fun Q (hQ : Q ∈ kakFamily) => hQ.1) hclosed hP
   refine ⟨hPstrip, fun u hu => ?_⟩
   have hQ : ∀ n : ℕ, ∃ Qn : TopologicalSpace.NonemptyCompacts (ℝ × ℝ),
       Qn ∈ kakFamily ∧ dist Qn P < 1 / ((n : ℝ) + 1) := by

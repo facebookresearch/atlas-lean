@@ -146,7 +146,7 @@ noncomputable def continuousOverlap (f g : ℝ → ℝ) (x : ℝ) : ℝ :=
   ∫ t in continuousSupportInterval, continuousOverlapIntegrand f g x t
 
 /-- Overlap values over all source translations. -/
-def continuousOverlapValues (f g : ℝ → ℝ) : Set ℝ :=
+noncomputable def continuousOverlapValues (f g : ℝ → ℝ) : Set ℝ :=
   continuousOverlap f g '' continuousTranslationInterval
 
 /--

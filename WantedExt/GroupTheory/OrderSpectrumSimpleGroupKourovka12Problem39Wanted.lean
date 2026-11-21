@@ -35,7 +35,7 @@ immediate); the set of element orders is the range of `orderOf`.
 -/
 
 /-- The set of orders of elements of `G`. -/
-def elementOrders (G : Type*) [Group G] : Set ℕ :=
+noncomputable def elementOrders (G : Type*) [Group G] : Set ℕ :=
   Set.range (orderOf : G → ℕ)
 
 /-- Kourovka 12.39 (W. J. Shi): a finite group and a finite simple group with equal orders and

@@ -51,6 +51,8 @@ set_option autoImplicit false
 
 namespace OnPropertyT
 
+open scoped Pointwise
+
 /-- For a group `G` with a finite symmetric generating set `S`, the Laplacian element is
 the element `|S| - ∑_{s ∈ S} s` of `ℝG`, as defined in Equation (1) of the paper. -/
 noncomputable def Laplacian {G : Type*} [Group G] (S : Finset G) : MonoidAlgebra ℝ G :=

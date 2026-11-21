@@ -120,7 +120,7 @@ theorem darySiftUp_perm {α : Type u} [LinearOrder α]
     (a : Array α) (i d : Nat) (hd : 2 ≤ d) :
     (darySiftUp a i d hd).Perm a := by
   induction i using Nat.strong_induction_on generalizing a with
-  | h i ih =>
+  | ind i ih =>
     rw [darySiftUp]
     split
     · split
@@ -143,7 +143,7 @@ theorem DaryHeapOrdered.root_le {α : Type u} [LinearOrder α]
     {d : Nat} (hd : 2 ≤ d) {a : Array α} (h : DaryHeapOrdered d a)
     (i : Nat) (hi : i < a.size) : a[0]'(by omega) ≤ a[i] := by
   induction i using Nat.strong_induction_on with
-  | h i ih =>
+  | ind i ih =>
     by_cases hzero : i = 0
     · subst i
       exact le_rfl
@@ -239,7 +239,7 @@ theorem darySiftUp_ordered {α : Type u} [LinearOrder α]
     (d : Nat) (a : Array α) (i : Nat) (h : DarySiftUpReady d a i) :
     DaryHeapOrdered d (darySiftUp a i d h.arity_valid) := by
   induction i using Nat.strong_induction_on generalizing a with
-  | h i ih =>
+  | ind i ih =>
     rw [darySiftUp]
     split
     · split
@@ -554,7 +554,7 @@ theorem darySiftDown_perm {α : Type u} [LinearOrder α]
     (a : Array α) (i d : Nat) (hd : 2 ≤ d) :
     (darySiftDown a i d hd).Perm a := by
   induction hm : a.size - i using Nat.strong_induction_on generalizing a i with
-  | h n ih =>
+  | ind n ih =>
     rw [darySiftDown]
     split
     · exact Array.Perm.refl _
@@ -674,7 +674,7 @@ theorem darySiftDown_ordered {α : Type u} [LinearOrder α]
     (h : DarySiftDownReady d a i) :
     DaryHeapOrdered d (darySiftDown a i d hd) := by
   induction hm : a.size - i using Nat.strong_induction_on generalizing a i with
-  | h n ih =>
+  | ind n ih =>
     rw [darySiftDown]
     split
     · rename_i hchild

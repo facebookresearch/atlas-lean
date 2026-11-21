@@ -54,7 +54,7 @@ Kirby (1969)), so both entries use the same `FlatSphere` API.
 abbrev Amb (n : ℕ) : Type := EuclideanSpace ℝ (Fin n)
 
 /-- The unit `(n-1)`-sphere `Sⁿ⁻¹ ⊂ ℝⁿ`. -/
-abbrev Sph (n : ℕ) : Set (Amb n) := sphere (0 : Amb n) 1
+noncomputable abbrev Sph (n : ℕ) : Set (Amb n) := sphere (0 : Amb n) 1
 
 /-- The model hyperplane `{x | x₀ = 0}` in `ℝⁿ`, the local model for a flatly
 embedded sphere. -/

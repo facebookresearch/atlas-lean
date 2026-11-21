@@ -806,7 +806,7 @@ public theorem zeckendorfGenericExponent_spec {Q Q' : ℕ → ℝ}
     0 < zeckendorfGenericExponent Q Q' ∧
       Real.logb (Q' 0) (Q 0) * Q' 0 ^ (zeckendorfGenericExponent Q Q' - 1) <
         Q 0 ^ zeckendorfGenericExponent Q Q' :=
-  Nat.sInf_mem h
+  Nat.sInf_mem (s := .ofPred _) h
 
 /-- The set `U = eval_Q̃(Ẽ* − Ē*)` (Notation 2).
 

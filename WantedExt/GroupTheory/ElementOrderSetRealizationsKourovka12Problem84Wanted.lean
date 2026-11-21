@@ -34,7 +34,7 @@ many" is "for every `k`, at least `k` pairwise non-isomorphic".
 -/
 
 /-- The set of orders of elements of `G`. -/
-def elementOrders (G : Type*) [Group G] : Set ℕ :=
+noncomputable def elementOrders (G : Type*) [Group G] : Set ℕ :=
   Set.range (orderOf : G → ℕ)
 
 /-- Kourovka 12.84 (S. A. Syskin; well-known problem): if two non-isomorphic finite groups have

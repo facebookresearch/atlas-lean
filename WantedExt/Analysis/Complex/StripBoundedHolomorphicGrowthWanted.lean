@@ -42,7 +42,7 @@ public import Mathlib
 namespace MathlibExt.Analysis.Complex.StripBoundedHolomorphicGrowthWanted
 
 /-- The open unit disc. -/
-abbrev D : Set ℂ := Metric.ball (0 : ℂ) 1
+noncomputable abbrev D : Set ℂ := Metric.ball (0 : ℂ) 1
 
 /-- Let $D=\{z:|z|<1\}\subset\mathbb{C}$ be the unit disk and $g:D\to\mathbb{C}$ be a holomorphic
 function such that $g(0)=0$ and $|\operatorname{Re} g(z)|<1$ for any $z\in D$. Prove that for any

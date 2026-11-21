@@ -40,13 +40,13 @@ image in `Mₙ`. "Conjugate by an automorphism" means mapped one to the other by
 
 /-- The free metabelian group `Mₙ = Fₙ / Fₙ''` of rank `n`. -/
 abbrev FreeMetabelian (n : ℕ) :=
-  FreeGroup (Fin n) ⧸ derivedSeries (FreeGroup (Fin n)) 2
+  FreeGroup (Fin n) ⧸ Subgroup.derivedSeries (FreeGroup (Fin n)) 2
 
 /-- Words `w₁, w₂ ∈ Fₙ` have the same distribution: for every finite metabelian group `G` and every
 `g ∈ G`, the equations `w₁(a₁, …, aₙ) = g` and `w₂(a₁, …, aₙ) = g` have equally many solutions
 `(a₁, …, aₙ) ∈ Gⁿ`. Since `G` is metabelian this depends only on the images of `w₁, w₂` in `Mₙ`. -/
 def SameDistribution {n : ℕ} (w₁ w₂ : FreeGroup (Fin n)) : Prop :=
-  ∀ (G : Type) [Group G] [Finite G], derivedSeries G 2 = ⊥ → ∀ g : G,
+  ∀ (G : Type) [Group G] [Finite G], Subgroup.derivedSeries G 2 = ⊥ → ∀ g : G,
     Nat.card {a : Fin n → G // FreeGroup.lift a w₁ = g} =
       Nat.card {a : Fin n → G // FreeGroup.lift a w₂ = g}
 

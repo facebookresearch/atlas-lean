@@ -8848,7 +8848,7 @@ private lemma ntDistance_reaches_aux {n m : ℕ} {reps : List (List ℕ)}
       label (ntCode σ) = k.val → distance (ntCode σ) = d →
         Relation.EqvGen (ntMove n) σ (rep k) := by
   induction d using Nat.strong_induction_on with
-  | h d ih =>
+  | ind d ih =>
       intro σ k hlabel hdist
       have hparts := ntClassOk_parts n m reps label distance
         (ntClassOk_code hcert σ)
@@ -9560,7 +9560,7 @@ private lemma ntDist7_reaches_aux (d : ℕ) :
       Relation.EqvGen (ntMove 7) σ (ntEven 7) ∨
         Relation.EqvGen (ntMove 7) σ (ntOdd 5) := by
   induction d using Nat.strong_induction_on with
-  | h d ih =>
+  | ind d ih =>
       intro σ hdist hd
       have hok := (List.all_eq_true.mp ntCertificate7) (ntCode σ)
         (ntCode_mem_permutations' σ)

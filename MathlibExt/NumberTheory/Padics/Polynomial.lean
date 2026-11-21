@@ -26,7 +26,7 @@ The definition follows Itamar Nir, arXiv:2608.00668v1, line 419.
 
 /-- The minimum `p`-adic valuation of the nonzero coefficients of `f`. -/
 @[nolint unusedArguments]
-def padicValuation (p : ℕ) (_hp : Nat.Prime p) (f : Polynomial ℤ) (hf : f ≠ 0) : ℕ :=
+noncomputable def padicValuation (p : ℕ) (_hp : Nat.Prime p) (f : Polynomial ℤ) (hf : f ≠ 0) : ℕ :=
   (f.support.image (fun n => padicValInt p (f.coeff n))).min'
     ((support_nonempty.mpr hf).image fun n => padicValInt p (f.coeff n))
 

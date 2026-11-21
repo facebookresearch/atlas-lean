@@ -39,7 +39,7 @@ endomorphism.
 /-- The free soluble group of rank `2` and derived length `d`: the quotient `F₂ / F₂⁽ᵈ⁾` of the free
 group on two generators by the `d`-th term of its derived series. -/
 abbrev FreeSolubleGroupRankTwo (d : ℕ) : Type :=
-  FreeGroup (Fin 2) ⧸ derivedSeries (FreeGroup (Fin 2)) d
+  FreeGroup (Fin 2) ⧸ Subgroup.derivedSeries (FreeGroup (Fin 2)) d
 
 /-- `u` is a test element of `G`: every endomorphism of `G` fixing `u` is an automorphism. -/
 def IsTestElement {G : Type*} [Group G] (u : G) : Prop :=

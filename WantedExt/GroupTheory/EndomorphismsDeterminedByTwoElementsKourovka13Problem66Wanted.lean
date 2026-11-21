@@ -37,7 +37,7 @@ rank no such pair exists ("not always"). The free metabelian group of rank `n` i
 
 /-- The free metabelian group `F_n / F_n''` of rank `n`. -/
 abbrev FreeMetabelianGroup (n : ℕ) : Type :=
-  FreeGroup (Fin n) ⧸ derivedSeries (FreeGroup (Fin n)) 2
+  FreeGroup (Fin n) ⧸ Subgroup.derivedSeries (FreeGroup (Fin n)) 2
 
 /-- Two elements `g, h ∈ F` determine every endomorphism of `F` with non-cyclic image: if `φ`, `ψ`
 have non-cyclic images and agree at `g` and at `h`, then `φ = ψ`. -/

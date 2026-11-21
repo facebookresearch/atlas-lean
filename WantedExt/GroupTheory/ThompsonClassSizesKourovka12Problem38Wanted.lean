@@ -37,7 +37,7 @@ b, a b ≠ b a`, and trivial centre is `Subgroup.center H = ⊥`.
 -/
 
 /-- `N(G)`: the set of sizes of the conjugacy classes of `G`. -/
-def classSizes (G : Type*) [Group G] : Set ℕ :=
+noncomputable def classSizes (G : Type*) [Group G] : Set ℕ :=
   Set.range fun x : G => Nat.card {y : G // IsConj x y}
 
 /-- Kourovka 12.38 (J. G. Thompson): if `G` is a finite non-abelian simple group and `H` is a

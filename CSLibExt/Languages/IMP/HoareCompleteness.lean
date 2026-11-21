@@ -13,7 +13,7 @@ module
 
 public import CSLibExt.Languages.IMP.HoareTotal
 public import CSLibExt.Languages.IMP.Denotational
-public import Cslib.Foundations.Logic.InferenceSystem
+public import Cslib.Foundations.Logic.InferenceSystem.Defs
 
 /-!
 # Soundness and relative completeness of Hoare logic for IMP

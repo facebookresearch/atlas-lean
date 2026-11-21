@@ -33,7 +33,7 @@ The spectrum `ω(G)` is the set of element orders, `Set.range orderOf`. Groups a
 -/
 
 /-- The spectrum `ω(G)` of a group: the set of orders of its elements. -/
-def spectrum (G : Type*) [Group G] : Set ℕ :=
+noncomputable def spectrum (G : Type*) [Group G] : Set ℕ :=
   Set.range (orderOf : G → ℕ)
 
 /-- Kourovka 16.25 (A. V. Vasil'ev): there are three pairwise non-isomorphic finite non-abelian

@@ -358,7 +358,7 @@ private theorem abel_poly (x : ℂ) (hx : x ≠ 0) (m : ℕ) :
         = Polynomial.C ((AbelPoly x (m + 1) - (Polynomial.X + Polynomial.C x) ^ (m + 1)).coeff 0) := by
       conv_lhs => rw [hDsum]
       rw [Finset.sum_range_succ']
-      simp [hD0]
+      simp only [hD0, map_zero, zero_mul, Finset.sum_const_zero, zero_add, pow_zero, mul_one]
     have hcoeff0 : (AbelPoly x (m + 1) - (Polynomial.X + Polynomial.C x) ^ (m + 1)).coeff 0
         = 0 := by
       have h := heval

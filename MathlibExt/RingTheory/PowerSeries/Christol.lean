@@ -225,9 +225,9 @@ private theorem chr_lamP_coeff (hq : 1 ≤ Fintype.card K) (j : ℕ)
   rw [Polynomial.finsetSum_coeff]
   by_cases hn : n < c.natDegree + 1
   · rw [Finset.sum_eq_single n]
-    · rw [Polynomial.coeff_monomial, ite_eq_left rfl]
+    · rw [Polynomial.coeff_monomial_apply, ite_eq_left rfl]
     · intro m _ hne
-      rw [Polynomial.coeff_monomial, ite_eq_right hne]
+      rw [Polynomial.coeff_monomial_apply, ite_eq_right hne]
     · intro hcon
       exact absurd (Finset.mem_range.mpr hn) hcon
   · have hnle : c.natDegree + 1 ≤ n := not_lt.mp hn
@@ -241,7 +241,7 @@ private theorem chr_lamP_coeff (hq : 1 ≤ Fintype.card K) (j : ℕ)
       intro m hm
       have hm' : m < c.natDegree + 1 := Finset.mem_range.mp hm
       have hnm : ¬ m = n := by omega
-      rw [Polynomial.coeff_monomial, ite_eq_right hnm]
+      rw [Polynomial.coeff_monomial_apply, ite_eq_right hnm]
     rw [Finset.sum_eq_zero h1]
     have h2 : c.natDegree < Fintype.card K * n + j := by omega
     exact (Polynomial.coeff_eq_zero_of_natDegree_lt h2).symm
@@ -459,14 +459,14 @@ private theorem chr_isAlgebraic_of_finite_kernel (hq : 1 ≤ Fintype.card K)
               (Fintype.card K ^ l₁.val))
           = g l₁ := by
         rw [Finset.sum_eq_single l₁]
-        · rw [Polynomial.coeff_monomial, ite_eq_left rfl]
+        · rw [Polynomial.coeff_monomial_apply, ite_eq_left rfl]
         · intro l _ hne
           have hneg : ¬ Fintype.card K ^ l.val
               = Fintype.card K ^ l₁.val := by
             intro hcon2
             apply hne
             exact Fin.ext (Nat.pow_right_injective hq2 hcon2)
-          rw [Polynomial.coeff_monomial, ite_eq_right hneg]
+          rw [Polynomial.coeff_monomial_apply, ite_eq_right hneg]
         · intro hcon2
           exact absurd (Finset.mem_univ l₁) hcon2
       rw [hPdef, Polynomial.finsetSum_coeff, hsingle] at hcoeff

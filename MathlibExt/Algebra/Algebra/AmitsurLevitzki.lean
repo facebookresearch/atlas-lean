@@ -677,10 +677,10 @@ private theorem al_pow_eq_zero_of_trace_pow_eq_zero {C : Type*} [CommRing C] (n 
       intro k
       cases k with
       | zero =>
-        have h := congrArg (fun p => Polynomial.coeff p 0) hN12
+        have h := congrArg (fun p : Polynomial C => p.coeff 0) hN12
         simpa using h
       | succ j =>
-        have h := congrArg (fun p => Polynomial.coeff p (j + 1)) hN12
+        have h := congrArg (fun p : Polynomial C => p.coeff (j + 1)) hN12
         rw [Polynomial.coeff_X_mul, Polynomial.coeff_derivative,
           Polynomial.coeff_natCast_mul] at h
         push_cast

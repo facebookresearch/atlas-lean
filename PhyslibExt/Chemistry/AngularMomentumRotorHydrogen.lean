@@ -750,10 +750,11 @@ theorem rydbergWavenumber_pos {R Z : ℝ} (hR : 0 < R) (hZ : Z ≠ 0) {n1 n2 : �
 Physlib's level `n` (counted from `0`) is the level with principal quantum number `n + 1`, and
 Physlib's Rydberg energy is `Z ^ 2 * R` here (the nuclear charge is part of Physlib's coupling
 `k`, so `Z = 1`). -/
-lemma energyLevel_eq_hydrogenEnergy (H : QuantumMechanics.HydrogenAtom) (hd : H.d = 3)
+lemma energyLevel_eq_hydrogenEnergy {d : ℕ} (H : QuantumMechanics.HydrogenAtom d) (hd : d = 3)
     (n : ℕ) : H.energyLevel n = hydrogenEnergy 1 H.rydbergEnergy n.succPNat := by
+  subst hd
   rw [QuantumMechanics.HydrogenAtom.energyLevel_eq, QuantumMechanics.HydrogenAtom.levelIndex_eq,
-    hd, hydrogenEnergy, Nat.succPNat_coe, Nat.cast_succ]
+    hydrogenEnergy, Nat.succPNat_coe, Nat.cast_succ]
   norm_num
 
 /-- Bridge to Physlib's Rydberg formula: for a three-dimensional
@@ -761,12 +762,13 @@ lemma energyLevel_eq_hydrogenEnergy (H : QuantumMechanics.HydrogenAtom) (hd : H.
 `n₂` to `n₁` is `rydbergWavenumber` between the principal quantum numbers `n₂ + 1` and
 `n₁ + 1`, with the Rydberg constant `R_ν / c` (`Z = 1`, as in
 `energyLevel_eq_hydrogenEnergy`). -/
-lemma wavelength_inv_eq_rydbergWavenumber (H : QuantumMechanics.HydrogenAtom) (hd : H.d = 3)
-    (c : SpeedOfLight) (n₁ n₂ : ℕ) :
+lemma wavelength_inv_eq_rydbergWavenumber {d : ℕ} (H : QuantumMechanics.HydrogenAtom d)
+    (hd : d = 3) (c : SpeedOfLight) (n₁ n₂ : ℕ) :
     (H.wavelength c n₁ n₂)⁻¹ =
       rydbergWavenumber (H.rydbergFrequency / c) 1 n₁.succPNat n₂.succPNat := by
+  subst hd
   rw [QuantumMechanics.HydrogenAtom.wavelength_inv, QuantumMechanics.HydrogenAtom.levelIndex_eq,
-    QuantumMechanics.HydrogenAtom.levelIndex_eq, hd, rydbergWavenumber, Nat.succPNat_coe,
+    QuantumMechanics.HydrogenAtom.levelIndex_eq, rydbergWavenumber, Nat.succPNat_coe,
     Nat.succPNat_coe, Nat.cast_succ, Nat.cast_succ]
   norm_num
 

@@ -55,7 +55,7 @@ Clause list (every item below appears in the formal text below):
 /-- First Betti rank of a group, as the `ℤ`-rank of its abelianization
 [AMR-109-0273] (Question 2.5, PDF p. 330). -/
 noncomputable def firstBettiRank (G : Type*) [Group G] : Cardinal :=
-  Module.rank ℤ (Additive (Abelianization G))
+  Module.rank ℤ (Additive (Group.Abelianization G))
 
 /-- Farb Question 2.5 [AMR-109-0273] (PDF p. 330): for `n > 3`, does
 `Aut(F_n)` have a finite-index subgroup with positive first Betti

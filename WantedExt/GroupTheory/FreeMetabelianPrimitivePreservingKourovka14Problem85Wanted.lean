@@ -36,7 +36,7 @@ ranks at most `2` were known).
 
 /-- The free metabelian group `M_n = F_n / F_n''` of rank `n`. -/
 abbrev FreeMetabelianGroup (n : ℕ) : Type :=
-  FreeGroup (Fin n) ⧸ derivedSeries (FreeGroup (Fin n)) 2
+  FreeGroup (Fin n) ⧸ Subgroup.derivedSeries (FreeGroup (Fin n)) 2
 
 /-- `y ∈ M_n` is primitive: it belongs to a free basis of `M_n`, that is, `y = σ(xᵢ)` for an
 automorphism `σ` of `M_n` and a basis element `xᵢ` (the image of a free generator of `F_n`). -/

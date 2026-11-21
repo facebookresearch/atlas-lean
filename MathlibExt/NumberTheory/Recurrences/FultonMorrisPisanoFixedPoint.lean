@@ -675,15 +675,17 @@ private theorem not_pow5_dvd_fib_24_mul (k : ℕ) (hk1 : 1 ≤ k)
     hn_ne0 ((Nat.fib_eq_zero).mp h)
   have hval := lengyel_fibonacci_five_adic (24 * 5 ^ (k - 1)) hn1
   have hval_mul : padicValNat 5 (24 * 5 ^ (k - 1))
-      = padicValNat 5 24 + padicValNat 5 (5 ^ (k - 1)) :=
-    padicValNat.mul (by norm_num) (pow_ne_zero _ (by norm_num))
+      = padicValNat 5 24 + padicValNat 5 (5 ^ (k - 1)) := by
+    simp only [Nat.padicValNat_def]
+    exact Nat.multiplicity_mul (by norm_num) (pow_ne_zero _ (by norm_num))
   have hval24 : padicValNat 5 24 = 0 :=
-    padicValNat.eq_zero_of_not_dvd (by decide : ¬ 5 ∣ 24)
-  have hval5 : padicValNat 5 (5 ^ (k - 1)) = k - 1 := padicValNat.prime_pow (k - 1)
+    Nat.padicValNat_def.trans (multiplicity_eq_zero_of_not_dvd (by decide : ¬ 5 ∣ 24))
+  have hval5 : padicValNat 5 (5 ^ (k - 1)) = k - 1 :=
+    Nat.padicValNat_def.trans (Nat.multiplicity_prime_pow (k - 1))
   have hval_n : padicValNat 5 (24 * 5 ^ (k - 1)) = k - 1 := by
     rw [hval_mul, hval24, hval5, zero_add]
   have hle : k ≤ padicValNat 5 (Nat.fib (24 * 5 ^ (k - 1))) :=
-    (padicValNat_dvd_iff_le hf_ne0).mp hdvd
+    ((multiplicity_dvd_iff_le hf_ne0).mp hdvd).trans_eq Nat.padicValNat_def.symm
   rw [hval, hval_n] at hle
   omega
 

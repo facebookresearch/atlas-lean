@@ -33,7 +33,7 @@ every" means "for all sufficiently large `n`", as the problem states.
 -/
 
 /-- The spectrum `π_e(G)`: the set of orders of elements of `G`. -/
-def elementOrders (G : Type*) [Group G] : Set ℕ :=
+noncomputable def elementOrders (G : Type*) [Group G] : Set ℕ :=
   Set.range (orderOf : G → ℕ)
 
 /-- Kourovka 16.107 (W. J. Shi): for all large `n`, every finite group with the same set of element

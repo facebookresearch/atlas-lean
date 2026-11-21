@@ -99,7 +99,7 @@ def primeToPNum (p : ℕ) (x : ℚ) : ℕ := x.num.natAbs / p ^ padicValNat p x.
 /-- Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Notation 2 (`x_N`, `x_D` of `1`). -/
 theorem primeToPDen_one_primeToPNum_one (p : ℕ) : primeToPDen p 1 = 1 ∧ primeToPNum p 1 = 1 := by
-  simp [primeToPDen, primeToPNum]
+  simp [primeToPDen, primeToPNum, Nat.padicValNat_def]
 
 /-- The period `L_x` of the repeating part of the base-`p` expansion of `x`, taken as the order
 of `p` in `(ℤ/x_Dℤ)^×`; Lemma 2 (`basePDigit_eventually_periodic_iff`) identifies it with the

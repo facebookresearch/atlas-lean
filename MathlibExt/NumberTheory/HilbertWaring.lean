@@ -3075,7 +3075,7 @@ private theorem hw_exists_moment_bound (k c : ℕ) (hk : 2 ≤ k) :
         C * N ^ (8 ^ (k - 1) - k) := by
   revert c
   induction k using Nat.strong_induction_on with
-  | h k ih =>
+  | ind k ih =>
       intro c
       by_cases hk₂ : k = 2
       · subst k

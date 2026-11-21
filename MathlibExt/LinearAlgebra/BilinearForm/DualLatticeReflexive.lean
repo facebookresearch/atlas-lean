@@ -31,13 +31,13 @@ no basis is needed when the lattice `M` is reflexive as an `A`-module. -/
 theorem LinearMap.BilinForm.dualSubmodule_flip_dualSubmodule_of_isLattice
     [FiniteDimensional K V] [IsDomain A]
     (B : BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)
-    [Submodule.IsLattice K M] [Module.IsReflexive A M] :
+    [Submodule.IsFullLattice K M] [Module.IsReflexive A M] :
     B.flip.dualSubmodule (B.dualSubmodule M) = M := by
   apply le_antisymm
   · intro x hx
     -- Identify `D(M)` with the module dual via the pairing.
     let e : (B.dualSubmodule M) ≃ₗ[A] Module.Dual A M :=
-      B.dualSubmoduleLinearEquiv hB M Submodule.IsLattice.span_eq_top
+      B.dualSubmoduleLinearEquiv hB M Submodule.IsFullLattice.span_eq_top
     -- The functional on `D(M)` cut out by `x` against `B.flip`.
     let φ : Module.Dual A (B.dualSubmodule M) :=
       B.flip.dualSubmoduleToDual (B.dualSubmodule M) ⟨x, hx⟩
@@ -50,7 +50,7 @@ theorem LinearMap.BilinForm.dualSubmodule_flip_dualSubmodule_of_isLattice
       exact hgm.symm
     -- It suffices to show `x = m`, comparing in the flip-double dual.
     have hspan₂ : Submodule.span K (B.dualSubmodule M : Set V) = ⊤ :=
-      B.dualSubmodule_span_eq_top M Submodule.IsLattice.fg
+      B.dualSubmodule_span_eq_top M (Submodule.IsLattice.fg K M)
     have hinj := B.flip.dualSubmoduleToDual_injective hB.flip
       (B.dualSubmodule M) hspan₂
     have hme : (m : V) ∈ B.flip.dualSubmodule (B.dualSubmodule M) :=
@@ -87,10 +87,11 @@ so no explicit `Module.IsReflexive` assumption is needed. -/
 theorem LinearMap.BilinForm.dualSubmodule_dualSubmodule_of_isLattice
     [FiniteDimensional K V] [IsDedekindDomain A]
     (B : BilinForm K V) (hB : B.Nondegenerate) (hBsymm : B.IsSymm)
-    (M : Submodule A V) [Submodule.IsLattice K M] :
+    (M : Submodule A V) [Submodule.IsFullLattice K M] :
     B.dualSubmodule (B.dualSubmodule M) = M := by
   have : Module.IsTorsionFree A V :=
     Module.IsTorsionFree.trans_faithfulSMul A K V
+  have : Module.Finite A M := Submodule.IsLattice.finite K M
   have : Module.FinitePresentation A M :=
     Module.finitePresentation_of_finite A M
   have : Module.Projective A M :=

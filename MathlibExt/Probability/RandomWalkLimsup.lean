@@ -627,6 +627,7 @@ theorem measurableSet_coord_driftsToBot :
 theorem measurableSet_coord_oscillates :
     MeasurableSet {ω : ℕ → ℝ |
       randomWalkLimsup coordSeq ω = ⊤ ∧ randomWalkLiminf coordSeq ω = ⊥} := by
+  rw [Set.ofPred_and]
   apply MeasurableSet.inter
   · exact (measurable_randomWalkLimsup coordSeq (fun i => measurable_pi_apply i))
       (measurableSet_singleton ⊤)

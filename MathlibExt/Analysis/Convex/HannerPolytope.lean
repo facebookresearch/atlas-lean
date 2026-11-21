@@ -19,13 +19,13 @@ public import MathlibExt.Geometry.Convex.CubeCovering
 
 @[expose] public section
 
-open Set
+open Set Pointwise
 
 namespace MetaMathlibExt
 
 /-- The centered unit segment, the one-dimensional leaf in the recursive
 definition of Hanner polytopes. -/
-def hannerUnitSegment : Set (EuclideanSpace ℝ (Fin 1)) :=
+noncomputable def hannerUnitSegment : Set (EuclideanSpace ℝ (Fin 1)) :=
   Metric.closedBall 0 1
 
 /-- The `l_infinity` body sum, expressed in canonical product coordinates. -/

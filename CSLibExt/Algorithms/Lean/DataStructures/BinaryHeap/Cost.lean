@@ -67,7 +67,7 @@ decreasing_by
 theorem ret_siftUp {α : Type u} [LinearOrder α] (a : Array α) (i : Nat) :
     (siftUp a i).ret = Cslib.Algorithms.Lean.siftUp a i := by
   induction i using Nat.strong_induction_on generalizing a with
-  | h i ih =>
+  | ind i ih =>
     rw [siftUp, Cslib.Algorithms.Lean.siftUp]
     split
     · split
@@ -84,7 +84,7 @@ theorem ret_siftUp {α : Type u} [LinearOrder α] (a : Array α) (i : Nat) :
 theorem comparisons_siftUp_le_log2 {α : Type u} [LinearOrder α]
     (a : Array α) (i : Nat) : (siftUp a i).time.1 ≤ Nat.log2 (i + 1) := by
   induction i using Nat.strong_induction_on generalizing a with
-  | h i ih =>
+  | ind i ih =>
     rw [siftUp]
     split
     · split
@@ -107,7 +107,7 @@ theorem comparisons_siftUp_le_log2 {α : Type u} [LinearOrder α]
 theorem swaps_siftUp_le_log2 {α : Type u} [LinearOrder α]
     (a : Array α) (i : Nat) : (siftUp a i).time.2 ≤ Nat.log2 (i + 1) := by
   induction i using Nat.strong_induction_on generalizing a with
-  | h i ih =>
+  | ind i ih =>
     rw [siftUp]
     split
     · split

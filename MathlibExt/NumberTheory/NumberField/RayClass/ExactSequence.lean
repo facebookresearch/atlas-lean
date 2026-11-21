@@ -25,7 +25,7 @@ Source (immutable, ATLAS NumberTheoryI N406 at commit
 
 Source-to-API map:
 - Lemma 21.7 at lines 958--1010 is reused via the stronger existing
-  formal-math theorem `ClassGroup.exists_mk0_eq_and_isCoprime`, which subsumes
+  formal-math theorem `ClassGroup.exists_mk0_eq_and_isCoprime'`, which subsumes
   it: every ideal class has an integral representative coprime to any
   prescribed nonzero ideal;
 - ATLAS lines 1431--1465 to `fractionalIdealMk0_mem_coprimeFractionalIdeals`
@@ -88,12 +88,12 @@ theorem fractionalIdealMk0_mem_coprimeFractionalIdeals
 
 /-- Surjectivity of the ideal-class map on coprime fractional ideals
 (ATLAS lines 1466--1476; Lemma 21.7 at lines 958--1010 reused via the stronger
-`ClassGroup.exists_mk0_eq_and_isCoprime`). -/
+`ClassGroup.exists_mk0_eq_and_isCoprime'`). -/
 theorem coprimeIdealClassMap_surjective (m : Modulus K) :
     Function.Surjective (coprimeIdealClassMap m) := by
   intro c
   obtain ⟨J, hJne, hJclass, hJcop⟩ :=
-    ClassGroup.exists_mk0_eq_and_isCoprime c
+    ClassGroup.exists_mk0_eq_and_isCoprime' c
       (m.finitePart : Ideal (𝓞 K))
       (mem_nonZeroDivisors_iff_ne_zero.mp m.finitePart.property)
   have hJne0 : J ≠ 0 := by simpa using hJne

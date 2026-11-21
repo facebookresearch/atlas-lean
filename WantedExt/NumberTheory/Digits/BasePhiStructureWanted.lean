@@ -142,7 +142,7 @@ def beattySet (p q r : ℤ) : Set ℤ :=
 
 Source: F. Michel Dekking, *The Structure of Base Phi Expansions*, INTEGERS 24
 (2024), Article A24, Section 6 (definition of `V₀`). -/
-def beattySet₀ (p q r : ℤ) : Set ℤ :=
+noncomputable def beattySet₀ (p q r : ℤ) : Set ℤ :=
   Set.range (generalizedBeatty p q r)
 
 /-- `V(p, q, r)(1) = p + q + r` is a term of `V(p, q, r)`.

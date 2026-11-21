@@ -73,7 +73,7 @@ def IsSofa (K : Set ℂ) : Prop :=
 noncomputable def optimalArea : ℝ≥0∞ := ⨆ (K : Set ℂ) (_ : IsSofa K), volume K
 
 /-- A positive-area square, not a supplied area or motion oracle. -/
-def unitSquare : Set ℂ :=
+noncomputable def unitSquare : Set ℂ :=
   Complex.measurableEquivRealProd ⁻¹' (Icc (0 : ℝ) 1 ×ˢ Icc (0 : ℝ) 1)
 
 /-- The square follows a two-segment translation through the corner. -/

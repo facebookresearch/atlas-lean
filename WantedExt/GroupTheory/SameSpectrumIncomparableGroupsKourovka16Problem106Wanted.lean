@@ -35,7 +35,7 @@ equivalent since there are finitely many groups of each order. A quotient of a n
 -/
 
 /-- The spectrum `π_e(G)`: the set of orders of elements of `G`. -/
-def elementOrders (G : Type*) [Group G] : Set ℕ :=
+noncomputable def elementOrders (G : Type*) [Group G] : Set ℕ :=
   Set.range (orderOf : G → ℕ)
 
 /-- `A` is isomorphic to a subgroup of `B` or to a quotient of a normal subgroup of `B`. -/

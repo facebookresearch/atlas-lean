@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Cslib.Logics.LinearLogic.CLL.Basic
-public import Cslib.Logics.Propositional.NaturalDeduction.Basic
+public import CSLibExt.Logics.Propositional.Legacy.NaturalDeduction.Basic
 public import Mathlib.Algebra.Order.Group.Multiset
 
 @[expose] public section

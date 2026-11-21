@@ -38,7 +38,7 @@ Source: Roberto Amato, *Groups and Monoid in the Set of Pythagorean Triples*, IN
 Article A5, Theorem 1 (quoting [1]) (`integers-2024-A5-thm-1`). -/
 theorem two_mem_amatoCathetusParams_four : 2 ∈ amatoCathetusParams 4 := by
   have h4 : padicValNat 2 4 = 2 := by
-    rw [show (4 : ℕ) = 2 ^ 2 by norm_num, padicValNat.prime_pow]
+    rw [show (4 : ℕ) = 2 ^ 2 by norm_num, Nat.padicValNat_def, Nat.multiplicity_prime_pow]
   refine ⟨by norm_num, by norm_num, fun _ => ⟨1, 1, le_refl 1, ?_, one_dvd _, by norm_num⟩⟩
   rw [h4]
 

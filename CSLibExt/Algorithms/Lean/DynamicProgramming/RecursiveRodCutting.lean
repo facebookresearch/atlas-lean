@@ -126,7 +126,7 @@ private lemma recursiveCutRodAux_correct {α : Type u} [AddCommMonoid α]
       (recursiveCutRodAux prices j hjn).ret := by
   revert hjn
   induction j using Nat.strong_induction_on with
-  | h j ih =>
+  | ind j ih =>
       intro hjn
       cases j with
       | zero =>
@@ -163,7 +163,7 @@ private lemma recursiveCutRodAux_time {α : Type u} [AddCommMonoid α]
     (recursiveCutRodAux prices j hjn).time = 2 ^ j := by
   revert hjn
   induction j using Nat.strong_induction_on with
-  | h j ih =>
+  | ind j ih =>
       intro hjn
       cases j with
       | zero => simp [recursiveCutRodAux]

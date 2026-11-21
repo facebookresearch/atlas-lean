@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Languages.LambdaCalculus.DeBruijn.Stlc.Syntax
-public import Cslib.Logics.Propositional.NaturalDeduction.Basic
+public import CSLibExt.Logics.Propositional.Legacy.NaturalDeduction.Basic
 
 /-!
 # Curry-Howard: STLC terms to natural deduction

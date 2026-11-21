@@ -41,7 +41,7 @@ private noncomputable def ehd_poly (m : ℕ) : Polynomial ℤ :=
 private theorem ehd_poly_coeff_eq (m k : ℕ) :
     (ehd_poly m).coeff k = if k < m + 1 then ehd_coeff m k else 0 := by
   rw [ehd_poly, Polynomial.finsetSum_coeff]
-  simp only [Polynomial.coeff_monomial]
+  simp only [Polynomial.coeff_monomial_apply]
   simp [eq_comm, Finset.mem_range, Finset.sum_ite_eq]
 
 private theorem ehd_altSum_succ (m q : ℕ) (hq : q ≤ m + 1) :

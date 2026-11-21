@@ -327,7 +327,7 @@ least two in each block. -/
 theorem twoAssocStirlingSecond_eq_zero_of_lt_two_mul (n k : ℕ) (hnk : n < 2 * k) :
     twoAssocStirlingSecond n k = 0 := by
   induction n using Nat.strong_induction_on generalizing k with
-  | h n ih =>
+  | ind n ih =>
       have hk : 1 ≤ k := by omega
       by_cases hnk' : n < k
       · exact twoAssoc_eq_zero_of_lt n k hnk'

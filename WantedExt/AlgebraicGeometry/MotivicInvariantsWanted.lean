@@ -143,10 +143,10 @@ noncomputable instance : Group (X.BirationalMap X) where
 `BirationalMap` whose underlying forward rational map is an `S`-map.
 The inverse is then automatically an `S`-map too; see the instance below. -/
 abbrev IsOver (S : Scheme.{u}) [X.Over S] [Y.Over S] (f : X.BirationalMap Y) : Prop :=
-  f.hom.IsOver S
+  f.hom.IsOver (X ↘ S) (Y ↘ S)
 
 instance (S : Scheme.{u}) [X.Over S] [Y.Over S] (f : BirationalMap X Y) [hf : f.IsOver S] :
-    f.inv.IsOver S := by
+    f.inv.IsOver (Y ↘ S) (X ↘ S) := by
   simp [RationalMap.isOver_iff, ← RationalMap.isOver_iff.mp hf, ← RationalMap.comp_toRationalMap,
     ← RationalMap.comp_assoc]
 
@@ -205,9 +205,11 @@ variable (X) in
 that are defined over the base scheme `S`. -/
 def birationalAutOver (S : Scheme.{u}) [X.Over S] : Subgroup (X.BirationalMap X) where
   carrier := { f | f.IsOver S }
-  one_mem' := inferInstanceAs ((RationalMap.id X).IsOver S)
-  mul_mem' {f g} (_ : f.IsOver S) (_ : g.IsOver S) := inferInstanceAs ((f.hom.comp g.hom).IsOver S)
-  inv_mem' {f} (_ : f.IsOver S) := inferInstanceAs (f.inv.IsOver S)
+  one_mem' :=
+    have := Hom.isOver_toPartialMap (Category.id_comp (X ↘ S))
+    inferInstanceAs ((RationalMap.id X).IsOver (X ↘ S) (X ↘ S))
+  mul_mem' {f g} (hf : f.IsOver S) (hg : g.IsOver S) := RationalMap.isOver_comp f.hom hf g.hom hg
+  inv_mem' {f} (_ : f.IsOver S) := inferInstanceAs (f.inv.IsOver (X ↘ S) (X ↘ S))
 
 instance (S : Scheme.{u}) [X.Over S] (f : birationalAutOver X S) :
     (f : X.BirationalMap X).IsOver S := f.2

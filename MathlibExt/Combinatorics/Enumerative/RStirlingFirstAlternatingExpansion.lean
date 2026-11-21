@@ -183,10 +183,9 @@ The definition below is the coefficient of `X^m` in
 which directly implements Equation (24), including zero outside the
 triangular support. -/
 noncomputable def rStirlingFirst (n m r : ℕ) : ℕ :=
-  Polynomial.coeff
-    ((Polynomial.X : Polynomial ℕ) ^ r *
+  ((Polynomial.X : Polynomial ℕ) ^ r *
       Finset.prod (Finset.Ico r n)
-        (fun k => (Polynomial.X : Polynomial ℕ) + Polynomial.C k)) m
+        (fun k => (Polynomial.X : Polynomial ℕ) + Polynomial.C k)).coeff m
 
 /-- At `n = r` the product is empty, so `[r, m]_r` is `1` at `m = r` and `0` otherwise. -/
 theorem rStirlingFirst_self (m r : ℕ) :

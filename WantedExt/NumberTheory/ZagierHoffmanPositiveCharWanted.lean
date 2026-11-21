@@ -85,25 +85,25 @@ noncomputable def 𝒵 (w : ℕ) : Submodule (RatFunc F) (CompletionAtInfty F) :
 
 /-- Let `q` be the size of the finite field `F`. `𝒯_aux w r` is the set of `ζ_A(s_1, ..., s_r)` of
 weight `w`, with `1 ≤ s_i ≤ q` for `1 ≤ i ≤ r − 1` and `1 ≤ s_r < q`. -/
-def 𝒯_aux (w : ℕ) (r : ℕ+) : Set (CompletionAtInfty F) :=
+noncomputable def 𝒯_aux (w : ℕ) (r : ℕ+) : Set (CompletionAtInfty F) :=
   let q := Nat.card F
   let 𝔖'_w := {𝔰 ∈ 𝔖_w w r | (∀ i : Fin r, i < (r - 1 : ℕ) → 𝔰 i ≤ q) ∧ 𝔰 ⟨r - 1, by simp⟩ < q}
   {ζ_A F s | s ∈ 𝔖'_w}
 
 /-- Let `q` be the size of the finite field `F`. `𝒯_w` is the set of `ζ_A(s_1,..., s_r)` of weight
 `w`, with `1 ≤ s_i ≤ q` for `1 ≤ i ≤ r − 1` and `1 ≤ s_r < q`, as `r` varies. -/
-def 𝒯 (w : ℕ) : Set (CompletionAtInfty F) := ⋃ r : ℕ+, 𝒯_aux F w r
+noncomputable def 𝒯 (w : ℕ) : Set (CompletionAtInfty F) := ⋃ r : ℕ+, 𝒯_aux F w r
 
 /-- Let `q` be the size of the finite field `F`. `𝒯0_aux` is the set of `ζ_A(s_1,..., s_r)` of
 weight `w`, with `1 ≤ s_i < q` for all `i`. -/
-def 𝒯0_aux (w : ℕ) (r : ℕ+) : Set (CompletionAtInfty F) :=
+noncomputable def 𝒯0_aux (w : ℕ) (r : ℕ+) : Set (CompletionAtInfty F) :=
   let q := Nat.card F
   let 𝔖'_w := {𝔰 ∈ 𝔖_w w r | ∀ i, 𝔰 i < q}
   {ζ_A F s | s ∈ 𝔖'_w}
 
 /-- Let `q` be the size of the finite field `F`. `𝒯0 w` is the set of `ζ_A(s_1,..., s_r)` of weight
 `w`, with `1 ≤ s_i < q` for all `i`, as `r` varies. -/
-def 𝒯0 (w : ℕ) : Set (CompletionAtInfty F) := ⋃ r : ℕ+, 𝒯0_aux F w r
+noncomputable def 𝒯0 (w : ℕ) : Set (CompletionAtInfty F) := ⋃ r : ℕ+, 𝒯0_aux F w r
 
 /-- The sequence `d(w)` from Conjecture 1.5 and Theorems A and D. -/
 noncomputable def d (w : ℕ) : ℕ :=

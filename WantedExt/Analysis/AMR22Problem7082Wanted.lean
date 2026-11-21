@@ -22,7 +22,7 @@ namespace MathlibExt.Analysis.AMR22Problem7082Wanted
 /-! Source record `AMR-022-7082__2307082`. -/
 
 /-- Unit disc `𝔻` from [AMR-022-7082] Problem 7.82. -/
-def UnitDisc : Set ℂ := Metric.ball (0 : ℂ) 1
+noncomputable def UnitDisc : Set ℂ := Metric.ball (0 : ℂ) 1
 
 /-- Condition (a) from [AMR-022-7082] Problem 7.82: for every fixed
 `z ∈ 𝔻`, the map `w ↦ F w z` is injective on `E`. -/
