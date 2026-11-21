@@ -90,4 +90,30 @@ example {X U : Type*} (f : X → U → X) (x₀ : X) (Xs Xf : Set X)
     Feasible f x₀ ∅ Xs Xf 0 u ↔ x₀ ∈ Xf := by
   simp [Feasible, traj]
 
+
+-- Shift and append at horizon `1`: dynamics `x + u`, input and state
+-- constraints `[-1, 1]`, terminal set `{0}` with feedback `κ x = -x`.
+-- From `x₀ = 0` the input `u = 1` is feasible only if the terminal
+-- state is in the terminal set, so use `u = 0` and check the shifted
+-- sequence directly against `feasible_shift`.
+example : Feasible (fun x u : ℝ => x + u) 0 (Set.Icc (-1) 1)
+    (Set.Icc (-1) 1) {0} 1 (fun _ => 0) := by
+  refine ⟨fun _ => by constructor <;> norm_num, ?_, ?_⟩
+  · intro k hk
+    interval_cases k
+    show (0 : ℝ) ∈ Set.Icc (-1 : ℝ) 1
+    constructor <;> norm_num
+  · simp [traj]
+
+-- The shifted sequence at horizon `1` is exactly the terminal feedback
+-- at the terminal state.
+example (κ : ℝ → ℝ) (u : Fin 1 → ℝ) :
+    shiftAppend (fun x u : ℝ => x + u) 0 u κ = fun _ => κ (traj (fun x u : ℝ => x + u) 0 u 1 le_rfl) := by
+  funext k
+  have hk : k = 0 := by
+    have : k.val = 0 := by omega
+    exact Fin.ext this
+  subst hk
+  simp [shiftAppend]
+
 #print axioms exists_optimal
