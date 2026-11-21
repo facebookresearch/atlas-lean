@@ -67,7 +67,6 @@ LIBRARIES = {
         "Interpolation": "Analysis",
         "Languages": "ComputerScience",
         "ModelTheory": "Logic",
-        "OperationsResearch": "Economics",
         "Quantum": "QuantumInformation",
     },
     "CSLibExt": {
@@ -118,7 +117,8 @@ LIBRARIES = {
         "Statistics": "Physics",
         "Units": "Physics",
     },
-    "Domains": {"Transport": "Economics", "Urban": "Economics"},
+    "Domains": {"MaterialsScience": "Physics", "OperationsResearch": "Economics",
+                "Transport": "Economics", "Urban": "Economics"},
     "WantedExt": {"Complexity": "TheoryOfComputation", "Computation": "TheoryOfComputation", "ModelTheory": "Logic"},
 }
 # Declarations inside a `mutual` block are indented; `declaration_lines` takes indented matches only there, or

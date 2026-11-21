@@ -33,7 +33,7 @@ The root Lake package is organized into the following libraries:
 | [`CSLibExtTest/`](CSLibExtTest/README.md) | Tests and diagnostics for `CSLibExt` |
 | [`PhyslibExt/`](PhyslibExt/README.md) | Reusable, fully proved physics developments built on Physlib |
 | [`PhyslibExtTest/`](PhyslibExtTest/README.md) | Tests and diagnostics for `PhyslibExt` |
-| [`Domains/`](Domains/README.md) | Proved domain models: [biology](Domains/Biology/), [economics](Domains/Economics/), [transport](Domains/Transport/), and [urban planning](Domains/Urban/) |
+| [`Domains/`](Domains/README.md) | Proved domain models: [biology](Domains/Biology/), [economics and finance](Domains/Economics/), [operations research](Domains/OperationsResearch/), [materials science](Domains/MaterialsScience/), [chemistry](Domains/Chemistry/), [transport](Domains/Transport/), and [urban planning](Domains/Urban/) |
 | [`DomainsTest/`](DomainsTest/README.md) | Tests and diagnostics for domain models |
 | [`WantedExt/`](WantedExt/README.md) | Established results whose Lean implementation or proof is deferred |
 

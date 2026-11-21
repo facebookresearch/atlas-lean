@@ -63,6 +63,7 @@ class CompiledAuditTests(unittest.TestCase):
         sources = {
             'Domains.AuditFixture.Model': 'module\npublic def domainFixture : Nat := 1\n',
             'DomainsTest.AuditFixture.Model': 'module\npublic import Domains.AuditFixture.Model\n',
+            'WantedExt.AuditFixture.Model': 'module\npublic import Domains.AuditFixture.Model\n',
             'MathlibExt.AuditFixture.Reverse': 'module\npublic import Domains.AuditFixture.Model\n',
         }
         for module, source in sources.items():
@@ -75,6 +76,9 @@ class CompiledAuditTests(unittest.TestCase):
         with self.assertRaisesRegex(audit.AuditFailure,
                                     r'MathlibExt\.AuditFixture\.Reverse must not import Domains\.AuditFixture\.Model'):
             audit.audit(self.fixture, ['MathlibExt.AuditFixture.Reverse'], self.checker)
+        with self.assertRaisesRegex(audit.AuditFailure,
+                                    r'WantedExt\.AuditFixture\.Model must not import Domains\.AuditFixture\.Model'):
+            audit.audit(self.fixture, ['WantedExt.AuditFixture.Model'], self.checker)
 
     def test_forbidden_axiom_still_fails(self):
         with self.assertRaisesRegex(audit.AuditFailure, 'depends on forbidden axioms'):

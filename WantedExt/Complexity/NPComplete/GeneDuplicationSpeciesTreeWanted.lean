@@ -22,7 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.CookLevin
-public import MathlibExt.Biology.Phylogenetics.UnrootedTreeCount
+public import MathlibExt.Combinatorics.Enumerative.UnrootedBinaryTreeCount
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 
