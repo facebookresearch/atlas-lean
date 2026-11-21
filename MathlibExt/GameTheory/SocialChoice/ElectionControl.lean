@@ -36,7 +36,7 @@ Condorcet winner.
 ## References
 
 * P. Faliszewski and J. Rothe, *Handbook of Computational Social Choice*,
-  Chapter 7, Definition 7.2 and Theorem 7.3.
+  Chapter 7, Definition 7.1 and Theorem 7.3.
 -/
 /-- The restriction of a strict total order to a finset of alternatives,
 as an order on the subtype. -/

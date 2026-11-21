@@ -562,5 +562,69 @@ theorem t3_plurality_spoiler :
         pluralityScore (restrictProfile plurP {0, 1}) ⟨0, by decide⟩ = 4 :=
   ⟨winners_plur_full, score_rPlur_e1, score_rPlur_e0⟩
 
+/-- A unanimous profile: every voter uses voter `0`'s cyclic order. -/
+def unanP : Profile (Fin 3) (Fin 3) := fun _ => cycleOrder 0
+
+theorem unanP_net01 : netPreference unanP 0 1 = 3 := by
+  unfold netPreference
+  have hf1 : Finset.univ.filter (fun i : Fin 3 => (unanP i).lt 0 1) =
+      Finset.univ := by
+    ext i
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    show cycleRank 0 0 < cycleRank 0 1 ↔ True
+    decide
+  have hf2 : Finset.univ.filter (fun i : Fin 3 => (unanP i).lt 1 0) = ∅ := by
+    ext i
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.notMem_empty]
+    show cycleRank 0 1 < cycleRank 0 0 ↔ False
+    decide
+  rw [hf1, hf2]
+  decide
+
+theorem unanP_net02 : netPreference unanP 0 2 = 3 := by
+  unfold netPreference
+  have hf1 : Finset.univ.filter (fun i : Fin 3 => (unanP i).lt 0 2) =
+      Finset.univ := by
+    ext i
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    show cycleRank 0 0 < cycleRank 0 2 ↔ True
+    decide
+  have hf2 : Finset.univ.filter (fun i : Fin 3 => (unanP i).lt 2 0) = ∅ := by
+    ext i
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.notMem_empty]
+    show cycleRank 0 2 < cycleRank 0 0 ↔ False
+    decide
+  rw [hf1, hf2]
+  decide
+
+theorem unanP_winner : IsCondorcetWinner unanP 0 := by
+  intro b hb
+  fin_cases b
+  · exact absurd rfl hb
+  · rw [majorityPrefers_iff_netPreference_pos]
+    show (0 : ℤ) < netPreference unanP 0 1
+    rw [unanP_net01]; decide
+  · rw [majorityPrefers_iff_netPreference_pos]
+    show (0 : ℤ) < netPreference unanP 0 2
+    rw [unanP_net02]; decide
+
+/-- T4: the immunity theorem, applied to the cycle at every budget. -/
+theorem t4_no_adding_control_cycle (k : ℕ) :
+    ¬ CanControlByAddingCandidates cycleP {0, 1} 0 k :=
+  not_canControlByAddingCandidates cycleP {0, 1} 0 k
+
+/-- T5: the deleting-candidates susceptibility existential. -/
+theorem t5_exists_deleting_control :
+    ∃ (P : Profile (Fin 3) (Fin 3)) (p : Fin 3) (S : Finset (Fin 3))
+      (hp : p ∈ S),
+      ¬ IsCondorcetWinner P p ∧
+        IsCondorcetWinner (restrictProfile P S) ⟨p, hp⟩ ∧ S.card = 2 :=
+  exists_controlByDeletingCandidates
+
+/-- T6: restriction preserves the unanimous Condorcet winner. -/
+theorem t6_restricted_unan_winner :
+    IsCondorcetWinner (restrictProfile unanP {0, 2}) ⟨0, by decide⟩ :=
+  isCondorcetWinner_restrictProfile unanP {0, 2} (by decide) unanP_winner
+
 end MathlibExtTest.GameTheory.SocialChoice.ElectionControl
 end
