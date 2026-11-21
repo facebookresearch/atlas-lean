@@ -99,8 +99,9 @@ A graph PR changes the ATLAS wiki: `blueprint/roadmap/`, `blueprint/links/`,
 [graph rules](docs/BLUEPRINT.md#graph-rules) and the
 [graph PR requirements](CONTRIBUTING.md#graph-prs). Once Blueprint Pages'
 `build the wiki` job has passed on the head commit, don't re-report what its
-`autoform check blueprint` fails on ([What the tools own](docs/BLUEPRINT.md#what-the-tools-own)); if it
-failed or hasn't run, report those too. Check what only a reader can:
+`autoform check blueprint` fails on
+([What the tools own](docs/BLUEPRINT.md#what-the-tools-own)); if it failed or
+hasn't run, report those too. Check what only a reader can:
 
 | Aspect | Question | What to check |
 | --- | --- | --- |
