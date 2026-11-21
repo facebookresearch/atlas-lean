@@ -121,7 +121,17 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
     as Autoform's format says, and `lean-facts` leaves them alone on a page
     whose annotation has no Lean link (`object`), a held page included (a row
     an earlier sync wrote with only a module and a name counts as linked). Such
-    a page has no `kind`, so it is not a task (rule 14). A planned page is
+    a page has no status, but when it states a result, that result is not yet
+    in Lean, so it counts as ready to state or planned and its topic does not
+    read fully proved while it remains: `lean-facts` gives a held page the
+    `kind` of the declaration it holds back, as a linked page would get it (a
+    `theorem_wanted` is a theorem), and any other such page the kind its
+    annotation records, as `"extensions": {"org.atlas-wiki": {"kind":
+    "theorem"}}` (or `lemma`, `def`, `abbrev`, `instance`, `structure`,
+    `class`, `inductive` or `opaque`). An exposition records none, as
+    Autoform's format gives it no declaration, and nothing counts it; a page
+    whose declaration the Lean no longer has is relinked rather than given a
+    kind. Once ready, a page with a kind is a task (rule 14). A planned page is
     held to the same standard as any article: it states its result precisely
     and cites the source it follows, and a reviewer checks the statement
     against that source. When its declaration is ready to link under rules 7
@@ -129,7 +139,8 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
     sections (rule 9); until then the page stays unlinked and keeps its
     prerequisites, even if a declaration for it already exists. *Reason:*
     nothing else records a planned node's prerequisites, and a planned page is
-    the graph's record of mathematics not yet in Lean.
+    the graph's record of mathematics not yet in Lean, which the counts of
+    what is left must include.
 11. **`## Informally uses` lists only results the cited proof uses** but the
     Lean need not. What the statement needs (its definitions and ingredients)
     is described in the page's prose, not listed here. A result the Lean also
@@ -182,7 +193,8 @@ the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
 ### Tasks and review
 
 14. **Formalization tasks are the articles Autoform finds ready:** ready to
-    state (a `def_wanted`, or a definition in a module with `sorry`) or ready
+    state (a `def_wanted`, a definition in a module with `sorry`, or a page
+    with a kind and no Lean link, rule 10) or ready
     to prove (a `theorem_wanted`, or a theorem in a module with `sorry`), once
     its prerequisites are as far along as Autoform requires: statement
     prerequisites stated, proof prerequisites proved. Proved and Mathlib-backed
@@ -350,12 +362,16 @@ design>", "issue": <number>}`, where `issue` is the issue, or a list of
 issues, that tracks the Lean fix; a declaration private by design has none, and
 its marker goes once the declaration is public. When a declaration has several
 problems, `reason` names the one in its statement. `declarations` gives a held
-declaration no page and lists it as held. A marker that names no declaration,
-sits on a linked row, names a declaration the Lean index does not resolve, or
-holds back a declaration that another row links or holds is reported as an
-error, and the run then writes nothing. Relink the page once every listed issue
-is fixed and the declaration states what the page does: restore its `object`
-and remove `held`.
+declaration no page and lists it as held; `lean-facts` gives the held page the
+declaration's kind, so it counts as a statement not yet in Lean (rule 10),
+private by design or not. A marker that names no declaration the Lean index
+resolves, or one that another page links or holds back first, gives no kind,
+whatever kind the row records. In `declarations`, a marker that names no
+declaration, sits on a linked row, names a declaration the Lean index does not
+resolve, or holds back a declaration that another row links or holds is
+reported as an error, and the run then writes nothing. Relink the page once
+every listed issue is fixed and the declaration states what the page does:
+restore its `object` and remove `held`.
 
 `scripts/wiki-sync.json` is the
 reviewed docstring-digest baseline. Removed declarations' articles are kept

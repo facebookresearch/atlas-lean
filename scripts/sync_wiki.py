@@ -12,7 +12,8 @@ article id and origin. The Lean owns what lean-facts adds on the build's checkou
 an article's `## Depends on` and `## Proof depends on`, from the dependency dump,
 and its annotation's kind and status, from the Lean sources. A planned page, one
 whose annotation has no Lean link, keeps the prerequisites it records by hand,
-and gets no kind or status.
+and gets no status; one that states a result not yet in Lean gets a kind (see
+unlinked_kind), so that no topic reads fully proved while it remains.
 
 declarations gives each declaration with a docstring and no page a page from its
 docstring, beside its module's other pages and listed on their page in source
@@ -75,6 +76,9 @@ LINKS = wiki.VAULT / "links"
 NAMESPACE = "org.autoform"
 # Where an article with no Lean name in the index keeps its module and name, for lean-facts.
 OWN = "org.atlas-wiki"
+# The kinds a page with no Lean link may record as its own (see unlinked_kind): Lean declaration commands that
+# Autoform captions.
+KINDS = frozenset({"theorem", "lemma", "def", "abbrev", "instance", "structure", "class", "inductive", "opaque"})
 DEFAULTS = {"object": {"type": "lean", "uri": "../.."}}
 STATE = wiki.ROOT / "scripts" / "wiki-sync.json"
 # The site's build configuration, whose Markdown extensions a folder page is rendered with to check an edit.
@@ -294,6 +298,39 @@ def legacy_lean_name(own: dict | None, index) -> str | None:
     return names[0] if len(names) == 1 else None
 
 
+def usable_holds(files: dict[Path, list[dict]], index) -> set[int]:
+    """The page rows whose held marker gives their page its declaration's kind, read as declarations reads markers
+    (see apply_declarations): a marker held_problem passes, on a row with no Lean link, whose declaration no page links
+    and no earlier page holds back. Folder rows, which lean-facts never reads, hold nothing."""
+    keyed = [(annotation_key(a, index), a) for rows in files.values() for a in rows
+             if subject_path(a).name != "README.md"]
+    linked = {key for key, _ in keyed if key}
+    usable: set[int] = set()
+    holders: set[str] = set()
+    for key, a in keyed:
+        if (name := held_name(a)) and not held_problem(a, key, index):
+            if name not in linked and name not in holders:
+                usable.add(id(a))
+            holders.add(name)
+    return usable
+
+
+def unlinked_kind(annotation: dict, index, usable: set[int]) -> str | None:
+    """The kind of a page that builds with no Lean link. It is a statement not yet in Lean, which Autoform counts,
+    as ready to state or planned, only with a kind. A held page takes that of the declaration it holds back, as a
+    linked page would get it, when its marker is usable (see usable_holds), and none otherwise, whatever it records,
+    so that no declaration counts twice; any other page the one of KINDS its annotation records under OWN as "kind";
+    else None, as no kind is guessed."""
+    own = annotation.get("extensions", {}).get(OWN)
+    if isinstance(own, dict) and "held" in own:
+        if id(annotation) not in usable:
+            return None
+        keyword = index.declarations[held_name(annotation)].keyword
+        return wiki.WANTED.get(keyword, keyword)
+    kind = own.get("kind") if isinstance(own, dict) else None
+    return kind if isinstance(kind, str) and kind in KINDS else None
+
+
 def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[str]]:
     """Write the Lean's facts into the checkout's pages and annotations, and name each page whose declaration the
     Lean no longer has. Such a page loses its link here, so it builds unlinked: a Lean change that renames or
@@ -311,6 +348,7 @@ def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[st
         return sorry_cache[path]
 
     articles: dict[Path, dict] = {}
+    without_link: list[dict] = []
     for rows in files.values():
         for annotation in rows:
             path = subject_path(annotation)
@@ -318,9 +356,8 @@ def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[st
                 continue
             name, own = lean_name(annotation), annotation.get("extensions", {}).get(OWN)
             if not name and not has_legacy_name(own):
-                # A planned page: its prerequisites are its own, and with no declaration it has no kind or status.
-                annotation.pop("kind", None)
-                annotation.pop("status", None)
+                # A planned page: its prerequisites are its own, and with no declaration it has no status.
+                without_link.append(annotation)
                 continue
             kind, status = lean_facts_for(name, own, index, sorry)
             if kind is None:
@@ -329,8 +366,7 @@ def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[st
                     annotation.pop("object", None)
                     unlinked.append(f"{name} ({path.relative_to(wiki.ROADMAP)})")
                 # A fact an earlier pass derived no longer holds.
-                annotation.pop("kind", None)
-                annotation.pop("status", None)
+                without_link.append(annotation)
                 stale.append(path)
                 continue
             annotation["kind"] = kind
@@ -340,6 +376,15 @@ def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[st
                 annotation.pop("status", None)
             articles[path] = annotation
             counts["articles"] += 1
+    # A page that builds with no Lean link has no status, and the kind unlinked_kind gives it, if any. Held markers are
+    # read once every link the Lean no longer has is gone, so that a second pass reads them as this one does.
+    usable = usable_holds(files, index)
+    for annotation in without_link:
+        annotation.pop("status", None)
+        if kind := unlinked_kind(annotation, index, usable):
+            annotation["kind"] = kind
+        else:
+            annotation.pop("kind", None)
     by_name = {lean_name(a): path for path, a in articles.items() if lean_name(a)}
     for path, a in articles.items():
         resolved = None if lean_name(a) else legacy_lean_name(a.get("extensions", {}).get(OWN), index)
@@ -449,7 +494,7 @@ def run_lean_facts(dependency_file: Path) -> int:
               "sync_wiki.py declarations lists it for an editor", file=sys.stderr)
     if counts["unresolved"] > len(unlinked):
         print(f"warning: {counts['unresolved'] - len(unlinked)} articles name no declaration the Lean sources hold, "
-              "so they get no kind or status", file=sys.stderr)
+              "so they get no status, and only the kind their annotation records", file=sys.stderr)
     print(f"{counts['articles']} articles, {counts['edges']} dependency links")
     return 0
 

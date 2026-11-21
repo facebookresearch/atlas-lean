@@ -289,9 +289,10 @@ class LeanFacts(Vault):
         self.assertNotIn("kind", row)
         self.assertNotIn("status", row)
 
-    def test_a_planned_page_keeps_its_prerequisites_but_is_no_task(self) -> None:
-        # A page whose annotation names no declaration records its prerequisites by hand (Graph rules, Edges); it has
-        # no kind or status, so Autoform never lists it as a task.
+    def test_a_planned_page_keeps_its_prerequisites_but_not_a_committed_kind(self) -> None:
+        # A page whose annotation names no declaration records its prerequisites by hand (Graph rules, Edges). The
+        # Lean owns an annotation's kind and status, so lean-facts drops any committed beside its subject; such a page
+        # records its kind under OWN (test_a_page_with_no_lean_link_takes_the_kind_it_records).
         body = ("# Main\n\nPlanned.\n\n## Depends on\n\n- [Base](base.md)\n\n"
                 "## Proof depends on\n\n- [Lemma](lemma.md)\n")
         page = self.page("Algebra/main.md", body)
@@ -304,6 +305,168 @@ class LeanFacts(Vault):
         row = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][0]
         self.assertEqual(row, self.about("Algebra/main.md", id="af_0123456789abcdef01234567",
                                          extensions={"org.autoform": {"not_ready": True}}))
+
+    def test_a_held_page_takes_the_kind_of_the_declaration_it_holds_back(self) -> None:
+        # A held page is a statement not yet in Lean (Graph rules, rule 7): it takes the kind its declaration would
+        # give a linked page, and no status. It keeps the prerequisites it records and is no other page's Lean target.
+        (self.tmp / "Ext").mkdir()
+        (self.tmp / "Ext" / "Held.lean").write_text(
+            "theorem false_claim : 1 = 2 := sorry\ndef bad : Nat := 1\ntheorem_wanted vacuous : True\n"
+            "private theorem helper : True := trivial\n")
+        (self.tmp / "Ext" / "Groups.lean").write_text("theorem user : True := trivial\n")
+        body = "# Claim\n\nThe source's statement.\n\n## Depends on\n\n- [Bad](bad.md)\n"
+        claim = self.page("Algebra/claim.md", body)
+        for name in ("bad", "vacuous", "helper", "missing"):
+            self.page(f"Algebra/{name}.md", f"# {name}\n\nHeld.\n")
+        user = self.page("Algebra/user.md", "# User\n\nUses the helper.\n")
+
+        def held(name: str, reason: str, issue: int | None = 1) -> dict:
+            return {sync.OWN: {"held": {"declaration": name, "reason": reason, **({"issue": issue} if issue else {})}}}
+
+        self.annotate([
+            self.about("Algebra/claim.md", extensions=held("Ext.false_claim", "false")),
+            self.about("Algebra/bad.md", status="formalized", extensions=held("Ext.bad", "mis-specified")),
+            self.about("Algebra/vacuous.md", extensions=held("Ext.vacuous", "vacuous")),
+            self.about("Algebra/helper.md", extensions=held("Ext.helper", "private by design", None)),
+            self.about("Algebra/missing.md", extensions=held("Ext.missing", "false")),
+            self.about("Algebra/user.md", object=[{"location": {"declaration": "Ext.user"}}]),
+        ])
+        held_source, source = Path("Ext/Held.lean"), Path("Ext/Groups.lean")
+        index = SimpleNamespace(declarations={
+            "Ext.false_claim": SimpleNamespace(keyword="theorem", path=held_source),
+            "Ext.bad": SimpleNamespace(keyword="def", path=held_source),
+            "Ext.vacuous": SimpleNamespace(keyword="theorem_wanted", path=held_source),
+            "Ext.helper": SimpleNamespace(keyword="theorem", path=held_source),
+            "Ext.user": SimpleNamespace(keyword="theorem", path=source)})
+        dependencies = {"Ext.user": {"module": "Ext.Groups", "statement": [], "proof": ["Ext.helper"]}}
+        for _ in range(2):
+            counts, unlinked = sync.apply_lean_facts(index, dependencies)
+            self.assertEqual((counts, unlinked), ({"articles": 1, "unresolved": 0, "edges": 0}, []))
+            rows = {sync.subject_path(r).name: r for r in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
+            facts = {name: (row.get("kind"), row.get("status"), "object" in row) for name, row in rows.items()}
+            self.assertEqual(facts, {
+                "claim.md": ("theorem", None, False), "bad.md": ("def", None, False),
+                "vacuous.md": ("theorem", None, False), "helper.md": ("theorem", None, False),
+                "missing.md": (None, None, False), "user.md": ("theorem", "formalized", True)})
+            self.assertEqual(claim.read_text(), body)
+            self.assertEqual(user.read_text(),
+                             "# User\n\nUses the helper.\n\n## Depends on\n\nThis node has no prerequisites.\n")
+
+    def test_a_held_marker_that_declarations_reports_gives_no_kind(self) -> None:
+        # Held markers count as declarations takes them: one whose declaration another page links, that an earlier
+        # page already holds, that the index does not resolve or that names no declaration gives its page no kind,
+        # even one the row records, so no declaration is counted twice. Folder rows hold nothing, and lean-facts reads
+        # none of them, malformed or not.
+        (self.tmp / "Ext").mkdir()
+        (self.tmp / "Ext" / "Held.lean").write_text("theorem a : True := trivial\ntheorem b : True := trivial\n")
+        for name in ("linked", "holds-linked", "first", "second", "unresolved", "unnamed"):
+            self.page(f"Algebra/{name}.md", f"# {name}\n\nText.\n")
+
+        def held(name: str | None, kind: str | None = None) -> dict:
+            marker = {"held": {"reason": "false", "issue": 1, **({"declaration": name} if name else {})}}
+            return {sync.OWN: {**marker, **({"kind": kind} if kind else {})}}
+
+        folders = [{"subject": [{"type": "generic", "uri": "../roadmap/Algebra/README.md"}], "extensions": None},
+                   self.about("Algebra/sub/README.md", extensions={sync.OWN: "module name"})]
+        self.annotate([*folders,
+                       self.about("Algebra/linked.md", object=[{"location": {"declaration": "Ext.a"}}]),
+                       self.about("Algebra/holds-linked.md", extensions=held("Ext.a", "theorem")),
+                       self.about("Algebra/first.md", extensions=held("Ext.b")),
+                       self.about("Algebra/second.md", extensions=held("Ext.b", "def")),
+                       self.about("Algebra/unresolved.md", extensions=held("Ext.gone", "theorem")),
+                       self.about("Algebra/unnamed.md", extensions=held(None, "lemma"))])
+        path = Path("Ext/Held.lean")
+        index = SimpleNamespace(declarations={"Ext.a": SimpleNamespace(keyword="theorem", path=path),
+                                              "Ext.b": SimpleNamespace(keyword="lemma", path=path)})
+        for _ in range(2):
+            sync.apply_lean_facts(index, {"Ext.a": {"module": "Ext.Held", "statement": [], "proof": []}})
+            rows = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]
+            self.assertEqual(rows[:2], folders)
+            self.assertEqual({sync.subject_path(row).name: row.get("kind") for row in rows[2:]},
+                             {"linked.md": "theorem", "holds-linked.md": None, "first.md": "lemma", "second.md": None,
+                              "unresolved.md": None, "unnamed.md": None})
+
+    def test_a_second_pass_writes_what_the_first_wrote(self) -> None:
+        # A page whose Lean link is gone builds unlinked, so its held marker is read once the link is gone, on the
+        # first pass as on the second; every page and annotation the first pass writes, the second writes again.
+        (self.tmp / "Ext").mkdir()
+        (self.tmp / "Ext" / "Groups.lean").write_text(
+            "def c : Nat := 0\ndef d : Nat := 1\ntheorem e : True := trivial\n")
+        relinked = self.page("Algebra/relinked.md", "# Relinked\n\nText.\n\n## Depends on\n\n- [Gone](gone.md)\n")
+        for name in ("gone", "holder", "late", "linked", "holds-linked"):
+            self.page(f"Algebra/{name}.md", f"# {name}\n\nText.\n")
+
+        def own(**fields) -> dict:
+            return {sync.OWN: fields}
+
+        held = lambda name: {"declaration": name, "reason": "false", "issue": 1}
+        self.annotate([
+            self.about("Algebra/relinked.md", object=[{"location": {"declaration": "Ext.old"}}],
+                       extensions=own(held=held("Ext.c"), kind="theorem")),
+            self.about("Algebra/gone.md", object=[{"location": {"declaration": "Ext.older"}}],
+                       extensions=own(kind="lemma")),
+            self.about("Algebra/holder.md", extensions=own(held=held("Ext.e"))),
+            self.about("Algebra/late.md", extensions=own(held=held("Ext.e"), kind="def")),
+            self.about("Algebra/linked.md", object=[{"location": {"declaration": "Ext.d"}}]),
+            self.about("Algebra/holds-linked.md", object=[{"location": {"declaration": "Ext.older"}}],
+                       extensions=own(held=held("Ext.d"), kind="theorem")),
+        ])
+        source = Path("Ext/Groups.lean")
+        index = SimpleNamespace(declarations={"Ext.c": SimpleNamespace(keyword="def", path=source),
+                                              "Ext.d": SimpleNamespace(keyword="def", path=source),
+                                              "Ext.e": SimpleNamespace(keyword="theorem", path=source)})
+
+        def written() -> dict[Path, bytes]:
+            return {path: path.read_bytes() for path in sorted(self.tmp.rglob("*")) if path.is_file()}
+
+        outputs = []
+        for _ in range(2):
+            sync.apply_lean_facts(index, {"Ext.d": {"module": "Ext.Groups", "statement": [], "proof": []}})
+            outputs.append(written())
+        self.assertEqual(outputs[0], outputs[1])
+        rows = {sync.subject_path(r).name: r for r in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
+        facts = {name: (row.get("kind"), row.get("status"), "object" in row) for name, row in rows.items()}
+        self.assertEqual(facts, {
+            "relinked.md": ("def", None, False), "gone.md": ("lemma", None, False),
+            "holder.md": ("theorem", None, False), "late.md": (None, None, False),
+            "linked.md": ("def", "formalized", True), "holds-linked.md": (None, None, False)})
+        self.assertEqual(relinked.read_text(), "# Relinked\n\nText.\n")
+
+    def test_a_page_with_no_lean_link_takes_the_kind_it_records(self) -> None:
+        # A page that holds no declaration back, or whose declaration the Lean no longer has, takes the kind its
+        # annotation records under OWN when it is a kind lean-facts gives linked pages; a linked page takes the Lean's.
+        (self.tmp / "Ext").mkdir()
+        (self.tmp / "Ext" / "Groups.lean").write_text("theorem lagrange : True := trivial\n")
+        body = "# Planned\n\nA definition.\n\n## Depends on\n\n- [Lagrange](lagrange.md)\n"
+        planned = self.page("Algebra/planned.md", body)
+        for name in ("lagrange", "stated", "typo", "listed", "gone", "legacy"):
+            self.page(f"Algebra/{name}.md", f"# {name}\n\nText.\n")
+
+        def own(**fields) -> dict:
+            return {sync.OWN: fields}
+
+        self.annotate([
+            self.about("Algebra/planned.md", extensions=own(kind="def")),
+            self.about("Algebra/stated.md", kind="def", status="stated", extensions=own(kind="theorem")),
+            self.about("Algebra/typo.md", extensions=own(kind="theroem")),
+            self.about("Algebra/listed.md", extensions=own(kind=["theorem"])),
+            self.about("Algebra/gone.md", object=[{"location": {"declaration": "Ext.gone"}}],
+                       extensions=own(kind="theorem")),
+            self.about("Algebra/legacy.md", extensions=own(module="Ext.Moved", name="moved", kind="lemma")),
+            self.about("Algebra/lagrange.md", object=[{"location": {"declaration": "Ext.lagrange"}}],
+                       extensions=own(kind="def")),
+        ])
+        lagrange = SimpleNamespace(keyword="theorem", path=Path("Ext/Groups.lean"))
+        index = SimpleNamespace(declarations={"Ext.lagrange": lagrange})
+        for _ in range(2):
+            sync.apply_lean_facts(index, {"Ext.lagrange": {"module": "Ext.Groups", "statement": [], "proof": []}})
+            rows = {sync.subject_path(r).name: r for r in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
+            self.assertEqual({name: (row.get("kind"), row.get("status")) for name, row in rows.items()}, {
+                "planned.md": ("def", None), "stated.md": ("theorem", None), "typo.md": (None, None),
+                "listed.md": (None, None), "gone.md": ("theorem", None), "legacy.md": ("lemma", None),
+                "lagrange.md": ("theorem", "formalized")})
+            self.assertNotIn("object", rows["gone.md"])
+            self.assertEqual(planned.read_text(), body)
 
     def test_an_expansion_keeps_a_planned_prerequisite_only_on_a_planned_page(self) -> None:
         # Graph rules, expanding a node: a new page whose proof needs the planned page B stays planned and keeps that
