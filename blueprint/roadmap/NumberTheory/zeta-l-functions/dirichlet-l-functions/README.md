@@ -10,4 +10,6 @@ Dirichlet characters, conductors, primitive and quadratic characters, Dirichlet 
 - [Moments of Dedekind zeta coefficients over sums of six squares](moments-of-dedekind-zeta-coefficients-over-sums/README.md)
 - [Perron's formula](perron-s-formula/README.md)
 - [Subconvexity bounds for Dirichlet L-functions](subconvexity-bounds-for-dirichlet-l-functions/README.md)
+- [Zeros of Dirichlet L-functions](zeros-of-dirichlet-l-functions/README.md)
+- [Truncated explicit formula for `ψ(x, χ)`](truncated-explicit-formula.md)
 - [Functional equation of the Dirichlet beta function](ramanujan-part1-ch7-entry18-bernoullidif.md)

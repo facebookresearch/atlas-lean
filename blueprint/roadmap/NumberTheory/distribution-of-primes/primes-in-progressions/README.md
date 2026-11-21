@@ -10,3 +10,4 @@ Dirichlet density, PNT for progressions, Siegel–Walfisz, Bombieri–Vinogradov
 - [Siegel–Walfisz theorem](siegel-walfisz-theorem/README.md)
 - [Wallis-type prime products in residue classes](wallis-type-prime-products-in-residue-classes/README.md)
 - [Dirichlet density of primes in an arithmetic progression](dirichlet-density-primes-arithmetic-prog.md)
+- [Linnik's theorem on the least prime in an arithmetic progression](linnik-theorem.md)
