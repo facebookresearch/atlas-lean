@@ -98,9 +98,9 @@ private theorem hbl_prov_implies_prov_false
   exact hbl_apply_under Proves imp mp s U (Prov G) (Prov (Prov G))
     (Prov falseStmt) hchain (d3 G)
 
-/-- **Gödel's second incompleteness theorem, abstract Hilbert–Bernays–Löb form.** Let $\mathcal{L}$
-be a set of sentences with an implication $\to$, a sentence $\bot$, a negation satisfying
-$\neg A = (A \to \bot)$ for all $A$, and a provability operator
+/-- **Gödel's second incompleteness theorem, abstract Hilbert–Bernays–Löb form.** Let
+$\mathcal{L}$ be a set of sentences with an implication $\to$, a sentence $\bot$, a negation
+satisfying $\neg A = (A \to \bot)$ for all $A$, and a provability operator
 $\Box : \mathcal{L} \to \mathcal{L}$.
 Let $U \vdash A$ be a relation between theories $U \subseteq \mathcal{L}$ and sentences
 $A \in \mathcal{L}$ such that for every theory $U$ and all sentences $A$, $B$, $C$:

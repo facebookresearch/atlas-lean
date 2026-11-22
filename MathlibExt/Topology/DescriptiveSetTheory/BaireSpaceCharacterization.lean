@@ -85,8 +85,8 @@ with the product of the discrete topologies.
 
 Proves `Wanted` entry `baire_space_characterization`.
 
-Source: Alexandrov–Urysohn characterization; A. S. Kechris, Classical Descriptive Set Theory (1995),
-Theorem 7.7.
+Source: Alexandrov–Urysohn characterization; A. S. Kechris, Classical Descriptive Set Theory
+(1995), Theorem 7.7.
 -/
 theorem baire_space_characterization
     {X : Type*} [TopologicalSpace X] [PolishSpace X] [Nonempty X]

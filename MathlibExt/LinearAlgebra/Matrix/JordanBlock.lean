@@ -27,8 +27,10 @@ variable {K : Type*} [Field K]
 namespace MathlibExt.LinearAlgebra.Matrix.JordanNormalFormWanted
 
 /--
-A Jordan block of size `s` with eigenvalue `μ`: `μ` on the diagonal, `1` on the first
-superdiagonal, `0` elsewhere.
+**Jordan block.** For a natural number $s$ and a scalar $\mu$ in a field $K$, the Jordan block of
+size $s$ with eigenvalue $\mu$ is the $s \times s$ matrix over $K$, with rows and columns indexed
+by $\{0, \dots, s-1\}$, whose $(i, j)$ entry is $1$ if $j = i + 1$, $\mu$ if $i = j$, and $0$
+otherwise: it has $\mu$ on the diagonal, $1$ on the first superdiagonal and $0$ elsewhere.
 
 Sources: Mathlib `docs/undergrad.yaml`, Linear algebra / Structure theory of endomorphisms /
 Jordan normal form; R. A. Horn and C. R. Johnson, Matrix Analysis, 2nd ed., Cambridge University
@@ -38,7 +40,9 @@ def jordanBlock (s : ℕ) (μ : K) : Matrix (Fin s) (Fin s) K :=
   fun i j => if i.val + 1 = j.val then 1 else if i = j then μ else 0
 
 /--
-Characteristic entrywise description of a Jordan block.
+**Entries of a Jordan block.** For a natural number $s$, a scalar $\mu$ in a field $K$ and indices
+$i, j \in \{0, \dots, s-1\}$, the $(i, j)$ entry of the Jordan block of size $s$ with eigenvalue
+$\mu$ is $1$ if $j = i + 1$, is $\mu$ if $i = j$, and is $0$ otherwise.
 
 Sources: Mathlib `docs/undergrad.yaml`, Linear algebra / Structure theory of endomorphisms /
 Jordan normal form; https://en.wikipedia.org/wiki/Jordan_normal_form.

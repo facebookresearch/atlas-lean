@@ -522,8 +522,8 @@ $M$ has projective dimension at most $n$ in the category of $k[X_1, \dots, X_n]$
 Proves `Wanted` entry `hilbert_syzygy`.
 
 Source: D. Hilbert, Math. Ann. 36 (1890)
-473–534 finite free resolution length ≤n; Lang, Algebra; Lean states field case `k[X₁, …, Xₙ]`
-with `HasProjectiveDimensionLE n` and n=0 field case.
+473–534 finite free resolution length ≤n; Lang, Algebra; Lean states field case
+`k[X₁, …, Xₙ]` with `HasProjectiveDimensionLE n` and n=0 field case.
 -/
 theorem hilbert_syzygy
     {k : Type*} [Field k]

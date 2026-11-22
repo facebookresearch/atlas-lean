@@ -679,7 +679,7 @@ public def zagierInverseQ (K : ℕ) : Matrix (Fin (K - 1)) (Fin (K - 1)) ℚ := 
         * (Nat.choose (n + 2 * (i.val + 1) - 2) n : ℚ) * bernoulli n
 
 /-- **The two Bernoulli formulas for the inverse of Zagier's matrix agree.** For every natural
-number $K \ge 2$, the matrices $P_K$ and $Q_K$ given by the first and second Bernoulli formulas
+number $K$, the matrices $P_K$ and $Q_K$ given by the first and second Bernoulli formulas
 for the inverse of Zagier's matrix are equal: $P_K = Q_K$. -/
 public lemma zagierInverseP_eq_zagierInverseQ (K : ℕ) :
     zagierInverseP K = zagierInverseQ K := by
@@ -832,7 +832,7 @@ private lemma zmi_product_sum (K s t : ℕ) (hs1 : 1 ≤ s) (hsK : s < K)
       dsimp only [d, common]
       exact zmi_bernoulli_delta K s t hs1 hsK ht1 htK
 
-/-- **Left inverse of Zagier's matrix.** For every natural number $K \ge 2$, the matrix $P_K$
+/-- **Left inverse of Zagier's matrix.** For every natural number $K$, the matrix $P_K$
 given by the first Bernoulli formula is a left inverse of Zagier's matrix $A_K$:
 $P_K A_K = I$, where $I$ is the $(K - 1) \times (K - 1)$ identity matrix. -/
 public lemma zagierInverseP_mul_zagierMatrix (K : ℕ) :
@@ -873,7 +873,7 @@ public lemma zagierInverseP_mul_zagierMatrix (K : ℕ) :
           exact Fin.ext h
         simp [hij, hval]
 
-/-- **Right inverse of Zagier's matrix.** For every natural number $K \ge 2$, the matrix $P_K$
+/-- **Right inverse of Zagier's matrix.** For every natural number $K$, the matrix $P_K$
 given by the first Bernoulli formula is a right inverse of Zagier's matrix $A_K$:
 $A_K P_K = I$, where $I$ is the $(K - 1) \times (K - 1)$ identity matrix. -/
 public lemma zagierMatrix_mul_zagierInverseP (K : ℕ) :

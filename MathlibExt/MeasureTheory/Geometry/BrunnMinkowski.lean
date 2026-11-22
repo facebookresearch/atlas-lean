@@ -335,8 +335,8 @@ $$\mathrm{vol}(A + B)^{1/n} \ge \mathrm{vol}(A)^{1/n} + \mathrm{vol}(B)^{1/n}.$$
 
 Proves `Wanted` entry `brunn_minkowski`.
 
-Source: H. Brunn, Über Ovale und Eiflächen (1887); H. Minkowski, Geometrie der Zahlen (1896); modern
-formulation R. J. Gardner, Bull. AMS 39 (2002), 355–406, DOI 10.1090/S0273-0979-02-00941-2.
+Source: H. Brunn, Über Ovale und Eiflächen (1887); H. Minkowski, Geometrie der Zahlen (1896);
+modern formulation R. J. Gardner, Bull. AMS 39 (2002), 355–406, DOI 10.1090/S0273-0979-02-00941-2.
 -/
 public theorem brunn_minkowski
     {n : ℕ} (hn : 0 < n)

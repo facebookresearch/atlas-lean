@@ -1033,7 +1033,8 @@ Proves `Wanted` entry `besicovitch_kakeya_compact_measure_zero`.
 
 Source: A. S. Besicovitch, Math. Z. 27
 (1928) 312–320 and S. Kakeya, Tohoku Rep. 6 (1917); Perron-tree gives compact measure-zero Kakeya
-set; Lean states compact Lebesgue-null oriented version in ℝ² with segments `a+t•v`, `t∈[0, 1]`.
+set; Lean states compact Lebesgue-null oriented version in ℝ² with segments `a+t•v`,
+`t∈[0, 1]`.
 -/
 public theorem besicovitch_kakeya_compact_measure_zero
     [MeasurableSpace (EuclideanSpace ℝ (Fin 2))]

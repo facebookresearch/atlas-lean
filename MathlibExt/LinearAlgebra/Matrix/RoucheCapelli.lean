@@ -102,8 +102,8 @@ private theorem roucheCapelli_span_cols_eq_of_rank_eq {m n K : Type*} [Fintype n
 @[expose]
 public section
 
-/-- **Rouché–Capelli theorem.** Let $K$ be a field, let $m$ be a set and $n$ a finite set, let $A$
-be an $m \times n$ matrix over $K$, and let $b \in K^m$. Then the linear system $Ax = b$ has a
+/-- **Rouché–Capelli theorem.** Let $K$ be a field, let $m$ be a set and $n$ a finite set, let
+$A$ be an $m \times n$ matrix over $K$, and let $b \in K^m$. Then the linear system $Ax = b$ has a
 solution $x \in K^n$ if and only if the rank of $A$ equals the rank of the augmented matrix
 $(A \mid b)$, whose columns are the columns of $A$ followed by the single column $b$.
 

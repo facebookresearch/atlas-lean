@@ -1520,8 +1520,8 @@ $$\Big(\int f(x)\,dx\Big)^{1-t} \Big(\int g(x)\,dx\Big)^{t} \le \int h(x)\,dx.$$
 
 Proves `Wanted` entry `prekopa_leindler`.
 
-Source: A. Prékopa, Acta Sci. Math. 32 (1971), 301–316; H. J. Brascamp and E. Lieb, J. Funct. Anal.
-22 (1976), 366–389, DOI 10.1016/0022-1236(76)90004-5.
+Source: A. Prékopa, Acta Sci. Math. 32 (1971), 301–316; H. J. Brascamp and E. Lieb, J. Funct.
+Anal. 22 (1976), 366–389, DOI 10.1016/0022-1236(76)90004-5.
 -/
 theorem prekopa_leindler
     {n : ℕ}
