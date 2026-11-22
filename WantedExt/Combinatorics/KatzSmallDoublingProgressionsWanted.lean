@@ -20,25 +20,38 @@ public import Batteries.Util.ProofWanted
 
 namespace MathlibExt.Combinatorics.KatzSmallDoublingProgressionsWanted
 
-/-- Sumset `A + A` of a finite set of integers as a `Finset ℤ`, whose
-cardinality is `|A + A|` in the source. Source: [AIM-COMBINATORICS-0211],
+/-- **Sumset of a finite set of integers.** For a finite set $A \subseteq \mathbb{Z}$, the sumset
+$A + A = \{a + b : a, b \in A\}$, a finite set of integers.
+
+Source: [AIM-COMBINATORICS-0211],
 AIM Problem Lists, Recent trends in additive combinatorics, item 1.5,
 `aim-combinatorics-notes.json notes[210]`. -/
 def katzSumset (A : Finset ℤ) : Finset ℤ :=
   Finset.image (fun p : ℤ × ℤ => p.1 + p.2) (Finset.product A A)
 
-/-- Set of `k`-term arithmetic progressions in `A`, as start/difference pairs
-`(a, d)` with `a + i * d ∈ A` for all `i < k`; its `Set.ncard` is the number
-of `k`-term progressions in the source. Source: [AIM-COMBINATORICS-0211],
+/-- **Arithmetic progressions in a finite set of integers, as pairs.** For a natural number $k$
+and a finite set $A \subseteq \mathbb{Z}$, the set of pairs $(a, d)$ of integers such that
+$a + i d \in A$ for every natural number $i < k$. The pair $(a, d)$ stands for the $k$-term
+arithmetic progression $a, a + d, \dots, a + (k - 1)d$; the difference $d$ may be zero or
+negative.
+
+Source: [AIM-COMBINATORICS-0211],
 AIM Problem Lists, Recent trends in additive combinatorics, item 1.5,
 `aim-combinatorics-notes.json notes[210]`. -/
 def katzAPSet (k : ℕ) (A : Finset ℤ) : Set (ℤ × ℤ) :=
   {p : ℤ × ℤ | ∀ i : ℕ, i < k → p.1 + (i : ℤ) * p.2 ∈ A}
 
-/-- Katz's question (Problem 1.5): for fixed integer `k ≥ 3` and real `C ≥ 2`,
-does every finite `A ⊆ ℤ` with `|A + A| < C * |A|` contain at least
-`c * |A|^2` `k`-term arithmetic progressions for some `c > 0` depending only
-on `k` and `C`? Source: [AIM-COMBINATORICS-0211], AIM Problem Lists, Recent
+/-- **Katz's question on progressions in sets of small doubling.** For a finite set
+$A \subseteq \mathbb{Z}$ write $A + A = \{a + b : a, b \in A\}$. This is the statement that for
+every natural number $k \ge 3$ and every real number $C \ge 2$ there is a real number $c > 0$ such
+that every finite set $A \subseteq \mathbb{Z}$ with $|A + A| < C|A|$ has at least $c|A|^2$ pairs
+$(a, d)$ of integers with $a + i d \in A$ for all natural numbers $i < k$.
+
+Each pair $(a, d)$ is a $k$-term arithmetic progression $a, a + d, \dots, a + (k - 1)d$ in $A$;
+pairs with $d = 0$ or $d < 0$ are counted too. The question is Problem 1.5 of the AIM problem
+list on additive combinatorics, posed by N. Katz.
+
+Source: [AIM-COMBINATORICS-0211], AIM Problem Lists, Recent
 trends in additive combinatorics, item 1.5,
 `aim-combinatorics-notes.json notes[210]`,
 https://aimath.org/WWN/additivecomb/additivecomb.pdf. -/
@@ -48,10 +61,18 @@ def conjecture : Prop :=
     c * ((Finset.card A : ℝ) ^ 2) ≤ (Set.ncard (katzAPSet k A) : ℝ)
 
 /--
-Resolved true: Resolved true: on the AIM additive-combinatorics list B. Green answers Katz's
-Problem 1.5: a large subset of A is Freiman-isomorphic to a dense subset of Z/pZ (Ruzsa's
-lemma), and Szemerédi's theorem with Varnavides averaging gives >>_{k,C} |A|^2 k-term
-progressions. The d = 0 pairs counted by the Lean statement cover small sets. Source: AIM
+**Sets of small doubling contain many arithmetic progressions.** For a finite set
+$A \subseteq \mathbb{Z}$ write $A + A = \{a + b : a, b \in A\}$. For every natural number $k \ge 3$
+and every real number $C \ge 2$ there is a real number $c > 0$ such that every finite set
+$A \subseteq \mathbb{Z}$ with $|A + A| < C|A|$ has at least $c|A|^2$ pairs $(a, d)$ of integers
+with $a + i d \in A$ for all natural numbers $i < k$.
+
+This answers Katz's Problem 1.5 affirmatively. On the AIM additive-combinatorics list B. Green
+observes that a large subset of $A$ is Freiman-isomorphic to a dense subset of
+$\mathbb{Z}/p\mathbb{Z}$ (Ruzsa's lemma), and Szemerédi's theorem with Varnavides averaging gives
+$\gg_{k,C} |A|^2$ $k$-term progressions. The pairs with $d = 0$ counted here cover small sets.
+
+Source: AIM
 workshop problem list, Additive combinatorics (additivecomb.pdf), Problem 1.5 (N. Katz) and
 remark by B. Green, https://aimath.org/WWN/additivecomb/additivecomb.pdf. Moved from
 `OpenConjectures/Combinatorics/KatzSmallDoublingProgressions`.
