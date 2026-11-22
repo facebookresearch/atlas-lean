@@ -22,27 +22,14 @@ auxiliary sums are
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.NumberTheory.Harmonic.Defs
-public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.Combinatorics.Enumerative.IncompleteBinomialHarmonicSums
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.Combinatorics.Enumerative.IncompleteBinomialHarmonicSumsWanted
-
-/-- Kollár's auxiliary sum `Cₙ = ∑ k ∈ [1,n], 1 / (k * 2 ^ k)`. -/
-def invPowTwoSum (n : ℕ) : ℚ :=
-  ∑ k ∈ Finset.Icc 1 n, (1 : ℚ) / (k * 2 ^ k)
-
-/-- Kollár's auxiliary sum
-`Dₙ = ∑ k ∈ [1,n], (2k).choose k / ((2 * k) * 2 ^ (2 * k))`. -/
-def centralBinomWeightedSum (n : ℕ) : ℚ :=
-  ∑ k ∈ Finset.Icc 1 n,
-    ((2 * k).choose k : ℚ) / ((2 * k : ℚ) * 2 ^ (2 * k))
 
 /-- Kollár's Lemma 1: the recursive incomplete binomial-sum
 identity for an arbitrary real sequence.
@@ -54,17 +41,6 @@ theorem_wanted sum_range_choose_mul_eq_sum_range_choose_add
     (∑ k ∈ Finset.range (m + 1), (N.choose k : ℝ) * a k) =
       (∑ k ∈ Finset.range m, ((N - 1).choose k : ℝ) * (a k + a (k + 1))) +
         ((N - 1).choose m : ℝ) * a m
-
-/-- The odd case of Kollár's Corollary 2.
-
-Source: Richard Kollár, "Incomplete Finite Binomial Sums of
-Harmonic Numbers", Corollary 2, equation `Lemma7`. -/
-theorem_wanted sum_range_choose_two_mul_sub_one_mul_eq
-    (a : ℕ → ℝ) (m n : ℕ) (hn : 0 < n) (hmn : m ≤ n) :
-    (∑ k ∈ Finset.range (m + 1), ((2 * n - 1).choose k : ℝ) * a k) =
-      (∑ k ∈ Finset.range (m + 1),
-        ((2 * n - 2).choose k : ℝ) * (a k + a (k + 1))) -
-        ((2 * n - 2).choose m : ℝ) * a (m + 1)
 
 /-- The even case of Kollár's Corollary 2.
 
