@@ -341,7 +341,8 @@ private lemma sqrt_le_div_of_sq_mul_le {a B n N : ℕ} (ha : 0 < a)
   rw [Nat.le_div_iff_mul_le ha]
   simpa [s, Nat.mul_comm] using hle
 
-/-- If `N ≤ 4 * n` and `n` is large enough, then `sqrt N` is at most `n / 15`. -/
+/-- **Square root bound on a linear range.** Let $n$ and $N$ be natural numbers with
+$900 \le n$ and $N \le 4n$. Then $\lfloor \sqrt{N} \rfloor \le \lfloor n/15 \rfloor$. -/
 lemma sqrt_le_div_fifteen_of_le_four_mul {n N : ℕ} (hn : 900 ≤ n)
     (hNhi : N ≤ 4 * n) :
     Nat.sqrt N ≤ n / 15 := by
@@ -443,8 +444,9 @@ private lemma nthRoot_three_mul_log_le_one_fifth_of_ge_sixteen
     nthRoot_three_mul_log_le_one_fifth_of_nthRoot_ge
       (N := N) (n := n) (by simpa [c] using hc100) (by simpa [c] using hc3n)
 
-/-- In the range `N ≤ 4 * n`, the `Nat.nthRoot 3 N * Nat.log 2 N` contribution is at
-most `n / 5`. -/
+/-- **Cube root times logarithm on a linear range.** Let $n$ and $N$ be natural numbers with
+$945 \le n$ and $N \le 4n$. Then $\lfloor N^{1/3} \rfloor \cdot \lfloor \log_2 N \rfloor \le
+\lfloor n/5 \rfloor$, where $\lfloor \log_2 N \rfloor$ is read as $0$ when $N = 0$. -/
 lemma nthRoot_three_mul_log_le_one_fifth_of_le_four_mul {n N : ℕ}
     (hn : 945 ≤ n) (hNhi : N ≤ 4 * n) :
     Nat.nthRoot 3 N * Nat.log 2 N ≤ n / 5 := by
@@ -910,8 +912,13 @@ private lemma first_residual_large_cancelled_bound {n N : ℕ}
   · exact first_residual_large_cancelled_bound_range_64_512 hn (by omega) hN512
   exact first_residual_large_cancelled_bound_range_512 hn (by omega) hNhi
 
-/-- Large-`n` first residual estimate: after scaling to the ternary lower bound,
-the Erdős three-layer upper bound is too small throughout `3 * n ≤ N ≤ n ^ 2 + n`. -/
+/-- **Scaled ternary bound for the first residual estimate.** Let $n$ and $N$ be natural numbers
+with $945 \le n$ and $3n \le N \le n^2 + n$. Then
+$$
+n \cdot 2^{n} \cdot (3n)^{n} \cdot 4^{n + \lfloor \sqrt{N} \rfloor + \lfloor N^{1/3} \rfloor
+\lfloor \log_2 N \rfloor} < 3^{n} \cdot 4^{n} \cdot N^{n}.
+$$
+-/
 lemma first_residual_large_scaled_ternary_bound {n N : ℕ}
     (hn : 945 ≤ n) (hNlo : 3 * n ≤ N) (hNhi : N ≤ n ^ 2 + n) :
     n * (2 ^ n * ((3 * n) ^ n *

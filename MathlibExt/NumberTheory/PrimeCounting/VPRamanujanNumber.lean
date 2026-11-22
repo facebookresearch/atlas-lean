@@ -23,16 +23,21 @@ This file formalizes the `(v, P)`-Ramanujan-number definition of Shevelev:
 
 namespace MetaMathlibExt
 
-/-- The number of members of `P` not exceeding the real bound `x`.
-On the source domain, `P` is an infinite set consisting only of primes. -/
+/-- **Counting members of a set up to a real bound.** For a set $P$ of natural numbers and a
+real number $x$, $\pi_P(x)$ is the number of members of $P$ that are at most $x$.
+
+In the intended application $P$ is an infinite set of primes. -/
 noncomputable def primeCountingWithin (P : Set ℕ) (x : ℝ) : ℕ :=
   Set.ncard {p : ℕ | p ∈ P ∧ (p : ℝ) ≤ x}
 
-/-- `R` is the `(v, P)`-Ramanujan number of index `m`: `P` is an infinite
-set of primes, `v > 1`, and `R` is the least natural threshold after which
-every interval `(x / v, x]` contains at least `m` members of `P`.
+/-- **Generalized Ramanujan numbers.** Let $P$ be a set of natural numbers, $v$ a real number and
+$m$, $R$ natural numbers, and write $\pi_P(x)$ for the number of members of $P$ that are at most
+$x$. Then $R$ is the $(v, P)$-Ramanujan number of index $m$ when $P$ is an infinite set of
+primes, $v > 1$, and $R$ is the least natural number such that $\pi_P(x) - \pi_P(x/v) \ge m$
+for every real $x \ge R$, that is, every interval $(x/v, x]$ with $x \ge R$ contains at least
+$m$ members of $P$.
 
-The source concept is `jis_sem_15d6f90b779184192e0e80e3`. -/
+Source: concept `jis_sem_15d6f90b779184192e0e80e3`. -/
 def IsVPRamanujanNumber (P : Set ℕ) (v : ℝ) (m R : ℕ) : Prop :=
   P.Infinite ∧
     P ⊆ {p : ℕ | p.Prime} ∧

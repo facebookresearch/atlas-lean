@@ -43,43 +43,52 @@ form is stated here. MathlibExt's `SimpleGraph.chromaticProfileCount` counts the
 each coefficient of `X_G`; the `e`-expansion needs the polynomial itself, defined below.
 -/
 
-/-- `P` is `(3+1)`-free: no induced subposet is a `3`-element chain together with an element
-incomparable to each of its elements. -/
+/-- **$(3+1)$-free posets.** A partially ordered set $P$ is $(3+1)$-free when there are no
+elements $a, b, c, d \in P$ with $a < b < c$ such that $d$ is incomparable to each of $a$, $b$
+and $c$ (neither $d \le x$ nor $x \le d$ for $x = a, b, c$). -/
 def IsThreePlusOneFree (P : Type*) [PartialOrder P] : Prop :=
   ¬ ∃ a b c d : P, a < b ∧ b < c ∧ (¬ a ≤ d ∧ ¬ d ≤ a) ∧ (¬ b ≤ d ∧ ¬ d ≤ b) ∧
     (¬ c ≤ d ∧ ¬ d ≤ c)
 
-/-- The incomparability graph `inc(P)`: distinct elements are adjacent when they are
-incomparable. -/
+/-- **Incomparability graph of a poset.** The incomparability graph $\operatorname{inc}(P)$ of a
+partially ordered set $P$ is the simple graph on $P$ in which two distinct elements $x$ and $y$ are
+adjacent when they are incomparable, that is, neither $x \le y$ nor $y \le x$. -/
 def incomparabilityGraph (P : Type*) [PartialOrder P] : SimpleGraph P :=
   SimpleGraph.fromRel fun x y => ¬ x ≤ y ∧ ¬ y ≤ x
 
 open Classical in
-/-- The chromatic symmetric function `X_G` of a graph on `n = |V|` vertices, in the variables
-`x₀, …, x_{n-1}`: the sum of `∏_v x_{κ v}` over all proper colourings `κ : V → Fin n`. -/
+/-- **Chromatic symmetric function in as many variables as vertices.** For a simple graph $G$ on
+a finite vertex set $V$ with $n = |V|$ elements, $X_G$ is the polynomial with integer coefficients
+in the variables $x_0, \dots, x_{n-1}$ given by $X_G = \sum_{\kappa} \prod_{v \in V} x_{\kappa(v)}$,
+where $\kappa$ ranges over the proper colourings $\kappa : V \to \{0, \dots, n - 1\}$ of $G$, that
+is, the maps with $\kappa(u) \ne \kappa(v)$ whenever $u$ and $v$ are adjacent. -/
 noncomputable def chromaticSymmetricPoly {V : Type*} [Fintype V] (G : SimpleGraph V) :
     MvPolynomial (Fin (Fintype.card V)) ℤ :=
   ∑ κ ∈ Finset.univ.filter (fun κ : V → Fin (Fintype.card V) => ∀ u v, G.Adj u v → κ u ≠ κ v),
     ∏ v, MvPolynomial.X (κ v)
 
-/-- A polynomial in `n` variables is `e`-positive: a combination with nonnegative integer
-coefficients of the products `e_λ = ∏ᵢ e_{λᵢ}` of elementary symmetric polynomials over the
-partitions `λ` of `n`. -/
+/-- **$e$-positive polynomials.** A polynomial $f$ with integer coefficients in the $n$ variables
+$x_0, \dots, x_{n-1}$ is $e$-positive when $f = \sum_{\lambda} c_\lambda e_\lambda$ for some
+natural numbers $c_\lambda$, where $\lambda = (\lambda_1, \dots, \lambda_k)$ ranges over the
+partitions of $n$ and $e_\lambda = e_{\lambda_1} \cdots e_{\lambda_k}$ is the product of the
+elementary symmetric polynomials $e_{\lambda_i}$ in $x_0, \dots, x_{n-1}$. -/
 def IsEPositive {n : ℕ} (f : MvPolynomial (Fin n) ℤ) : Prop :=
   ∃ c : Nat.Partition n → ℕ, f = ∑ p : Nat.Partition n,
     (c p : MvPolynomial (Fin n) ℤ) * (p.parts.map fun i => MvPolynomial.esymm (Fin n) ℤ i).prod
 
-/-- The Stanley–Stembridge conjecture (Stanley, Positivity Problems, Problem 21): the chromatic
-symmetric function of the incomparability graph of every finite `(3+1)`-free poset is
-`e`-positive. -/
+/-- **Statement of the Stanley–Stembridge conjecture.** The proposition that for every finite
+$(3+1)$-free partially ordered set $P$, the chromatic symmetric function in $|P|$ variables of the
+incomparability graph of $P$ is $e$-positive. -/
 def stanleyStembridge : Prop :=
   ∀ (P : Type) [Fintype P] [PartialOrder P], IsThreePlusOneFree P →
     IsEPositive (chromaticSymmetricPoly (incomparabilityGraph P))
 
 /--
-Resolved true: Hikita proved that the coefficients of the `e`-expansion of the chromatic
-quasisymmetric function of every unit interval graph are nonnegative and, as a corollary, the
-Stanley-Stembridge conjecture (J. Amer. Math. Soc., Early View 2026). Source: R. P. Stanley,
+**Hikita's theorem: the Stanley–Stembridge conjecture holds.** For every finite $(3+1)$-free
+partially ordered set $P$, the chromatic symmetric function in $|P|$ variables of the
+incomparability graph of $P$ is $e$-positive.
+
+Source: R. P. Stanley,
 Positivity Problems and Conjectures in Algebraic Combinatorics (1999), Problem 21
 (Stanley-Stembridge conjecture; Stanley and Stembridge, J. Combin. Theory Ser. A 62 (1993),
 Conjecture 5.5); resolution: T. Hikita, A proof of the Stanley-Stembridge conjecture, J. Amer. Math.
