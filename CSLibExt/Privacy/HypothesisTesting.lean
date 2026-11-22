@@ -34,72 +34,91 @@ Finite-discrete formalization of the Kairouz-Oh-Viswanath (KOV) equivalence
 between approximate differential privacy and hypothesis-testing tradeoffs,
 plus f-DP basics and post-processing. All reasoning is over finite types with
 explicit real-valued sums; no measure theory is used.
+
+## Primary references
+
+Kairouz, Oh and Viswanath, *The Composition Theorem for Differential
+Privacy* (ICML 2015; journal version, *IEEE Transactions on Information
+Theory*, 2017; arXiv:1311.0776): the pair of tradeoff inequalities is
+`KOVpair` (their Theorem 2.1, Eq. 1); the equivalence between the pair
+condition and the ordered DP event bounds is `kovpair_iff_event_bounds`;
+the mechanism-level equivalence is `isApproxDPFin_iff_forall_kovpair` and
+`isApproxDP_iff_forall_kovpair` (Theorem 2.1, region form in Corollary 2.3).
+
+Dong, Roth and Su, *Gaussian Differential Privacy* (*Journal of the Royal
+Statistical Society: Series B*, 2022; arXiv:1905.02383): the tradeoff
+function `T(P, Q)` is `tradeoff` (their Definition 2.1, with `IsTest`,
+`alphaOf` and `betaOf`); the `(eps, delta)` bound function is `fEpsDelta`
+(their `f_{eps,delta}`); its lower bound on the tradeoff is
+`kovpair_forward_tradeoff_ge` with converse `kovpair_of_tradeoff_ge` (the
+two directions of Proposition 2.5); post-processing is `tradeoff_postprocess`
+(Lemma 2.9, mechanism form in Proposition 2.8; also Theorem 2.4 of KOV).
 -/
 
 @[expose] public section
 
 namespace CSLibExt.Privacy.HypothesisTesting
 
-/-! ## Small wrappers around order and `ENNReal` lemmas -/
+/-! ## Private wrappers around order and `ENNReal` lemmas -/
 
-lemma mul_le_mul_left_real {a b c : ℝ} (h : b ≤ c) (ha : 0 ≤ a) :
+private lemma mul_le_mul_left_real {a b c : ℝ} (h : b ≤ c) (ha : 0 ≤ a) :
     a * b ≤ a * c := by
   exact mul_le_mul_of_nonneg_left h ha
 
-lemma mul_le_mul_right_real {a b c : ℝ} (h : a ≤ b) (hc : 0 ≤ c) :
+private lemma mul_le_mul_right_real {a b c : ℝ} (h : a ≤ b) (hc : 0 ≤ c) :
     a * c ≤ b * c := by
   exact mul_le_mul_of_nonneg_right h hc
 
-lemma mul_nonneg_real {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) : 0 ≤ a * b := by
+private lemma mul_nonneg_real {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) : 0 ≤ a * b := by
   exact mul_nonneg ha hb
 
-lemma mul_nonpos_real {a b : ℝ} (ha : 0 ≤ a) (hb : b ≤ 0) : a * b ≤ 0 := by
+private lemma mul_nonpos_real {a b : ℝ} (ha : 0 ≤ a) (hb : b ≤ 0) : a * b ≤ 0 := by
   exact mul_nonpos_of_nonneg_of_nonpos ha hb
 
-lemma max_le_real {a b c : ℝ} (h1 : a ≤ c) (h2 : b ≤ c) : max a b ≤ c := by
+private lemma max_le_real {a b c : ℝ} (h1 : a ≤ c) (h2 : b ≤ c) : max a b ≤ c := by
   exact max_le h1 h2
 
-lemma le_max_left_real {a b : ℝ} : a ≤ max a b := by
+private lemma le_max_left_real {a b : ℝ} : a ≤ max a b := by
   exact le_max_left _ _
 
-lemma le_max_right_real {a b : ℝ} : b ≤ max a b := by
+private lemma le_max_right_real {a b : ℝ} : b ≤ max a b := by
   exact le_max_right _ _
 
-lemma max_eq_right_real {a b : ℝ} (h : a ≤ b) : max a b = b := by
+private lemma max_eq_right_real {a b : ℝ} (h : a ≤ b) : max a b = b := by
   exact max_eq_right h
 
-lemma max_eq_left_real {a b : ℝ} (h : b ≤ a) : max a b = a := by
+private lemma max_eq_left_real {a b : ℝ} (h : b ≤ a) : max a b = a := by
   exact max_eq_left h
 
-lemma toReal_ofReal_eq {x : ℝ} (hx : 0 ≤ x) :
+private lemma toReal_ofReal_eq {x : ℝ} (hx : 0 ≤ x) :
     (ENNReal.ofReal x).toReal = x := by
   exact ENNReal.toReal_ofReal hx
 
-lemma toReal_nonneg_real {x : ℝ≥0∞} : 0 ≤ x.toReal := by
+private lemma toReal_nonneg_real {x : ℝ≥0∞} : 0 ≤ x.toReal := by
   exact ENNReal.toReal_nonneg
 
-lemma mul_ne_top_real {x y : ℝ≥0∞} (hx : x ≠ ⊤) (hy : y ≠ ⊤) :
+private lemma mul_ne_top_real {x y : ℝ≥0∞} (hx : x ≠ ⊤) (hy : y ≠ ⊤) :
     x * y ≠ ⊤ := by
   exact ENNReal.mul_ne_top hx hy
 
-lemma pmf_ne_top (Ω : Type*) [Fintype Ω] (P : PMF Ω) (w : Ω) :
+private lemma pmf_ne_top (Ω : Type*) [Fintype Ω] (P : PMF Ω) (w : Ω) :
     (P w : ℝ≥0∞) ≠ ⊤ := by
   exact PMF.apply_ne_top P w
 
-lemma exp_log_three (h3 : (0 : ℝ) < 3) : Real.exp (Real.log 3) = 3 := by
+private lemma exp_log_three (h3 : (0 : ℝ) < 3) : Real.exp (Real.log 3) = 3 := by
   exact Real.exp_log h3
 
 /-! ## Finite-sum helpers -/
 
-lemma sum_zero_eq (Ω : Type*) [Fintype Ω] (s : Finset Ω) :
+private lemma sum_zero_eq (Ω : Type*) [Fintype Ω] (s : Finset Ω) :
     ∑ _w ∈ s, (0 : ℝ) = 0 := by
   exact Finset.sum_const_zero
 
-lemma sum_singleton_eq (Ω : Type*) [Fintype Ω] (f : Ω → ℝ) (a : Ω) :
+private lemma sum_singleton_eq (Ω : Type*) [Fintype Ω] (f : Ω → ℝ) (a : Ω) :
     ∑ w ∈ ({a} : Finset Ω), f w = f a := by
   exact Finset.sum_singleton f a
 
-lemma sum_empty_eq (Ω : Type*) [Fintype Ω] (f : Ω → ℝ) :
+private lemma sum_empty_eq (Ω : Type*) [Fintype Ω] (f : Ω → ℝ) :
     ∑ w ∈ (∅ : Finset Ω), f w = 0 := by
   exact Finset.sum_empty
 
@@ -157,10 +176,11 @@ def KOVpair (Ω : Type*) [Fintype Ω] [DecidableEq Ω]
     typeI Ω P Q S + Real.exp eps * typeII Ω P Q S ≥ 1 - delta ∧
       Real.exp eps * typeI Ω P Q S + typeII Ω P Q S ≥ 1 - delta
 
-/-- Approximate differential privacy of a mechanism on finite outputs. -/
+/-- Approximate differential privacy of a mechanism on finite outputs, with
+global nonnegative real budgets as in `DifferentialPrivacy.IsApproxDP`. -/
 def IsApproxDPFin (D Ω : Type*) [Fintype Ω] [DecidableEq Ω]
     (M : D → PMF Ω) (adj : D → D → Prop) (eps delta : ℝ) : Prop :=
-  ∀ d d2 : D, adj d d2 → ∀ S : Finset Ω,
+  0 ≤ eps ∧ 0 ≤ delta ∧ ∀ d d2 : D, adj d d2 → ∀ S : Finset Ω,
     (∑ w ∈ S, ((M d) w).toReal)
       ≤ Real.exp eps * (∑ w ∈ S, ((M d2) w).toReal) + delta
 
@@ -222,27 +242,28 @@ theorem kovpair_of_isApproxDPFin_of_swap (D Ω : Type*) [Fintype Ω] [DecidableE
     KOVpair Ω (M d) (M d2) eps delta := by
   rw [kovpair_iff_event_bounds Ω (M d) (M d2) eps delta]
   intro S
-  exact ⟨hdp d d2 h12 S, hdp d2 d h21 S⟩
+  exact ⟨hdp.2.2 d d2 h12 S, hdp.2.2 d2 d h21 S⟩
 
 /-- One-sided ordered lemma: the pair condition at every adjacent pair gives
 DP, with no symmetry hypothesis. -/
 theorem isApproxDPFin_of_forall_kovpair (D Ω : Type*) [Fintype Ω] [DecidableEq Ω]
     (M : D → PMF Ω) (adj : D → D → Prop) (eps delta : ℝ)
+    (hε : 0 ≤ eps) (hδ : 0 ≤ delta)
     (hkov : ∀ d d2 : D, adj d d2 → KOVpair Ω (M d) (M d2) eps delta) :
     IsApproxDPFin D Ω M adj eps delta := by
-  unfold IsApproxDPFin
-  intro d d2 hadj S
+  refine ⟨hε, hδ, fun d d2 hadj S => ?_⟩
   exact ((kovpair_iff_event_bounds Ω (M d) (M d2) eps delta).mp
     (hkov d d2 hadj) S).1
 
-/-- H1 mechanism theorem: for symmetric adjacency, approximate DP is
-equivalent to the KOV pair condition at every adjacent pair. Symmetry is
-required: quantifying the pair condition over ordered adjacent pairs alone
-does not imply DP without it, since the reverse-order event bound at
-`(d, d2)` is only available from the pair condition at `(d2, d)`. -/
+/-- H1 mechanism theorem: for symmetric adjacency and nonnegative budgets,
+approximate DP is equivalent to the KOV pair condition at every adjacent
+pair. Only the forward direction needs symmetry: ordered DP at `(d, d2)`
+supplies just one of the two event bounds, so the reverse bound comes from
+DP at `(d2, d)` via symmetry. The converse needs none: the pair condition
+at each ordered adjacent pair already yields the ordered DP bound there. -/
 theorem isApproxDPFin_iff_forall_kovpair (D Ω : Type*) [Fintype Ω] [DecidableEq Ω]
     (M : D → PMF Ω) (adj : D → D → Prop) (eps delta : ℝ)
-    (hsym : Symmetric adj) :
+    (hε : 0 ≤ eps) (hδ : 0 ≤ delta) (hsym : Symmetric adj) :
     IsApproxDPFin D Ω M adj eps delta ↔
       ∀ d d2 : D, adj d d2 → KOVpair Ω (M d) (M d2) eps delta := by
   constructor
@@ -250,7 +271,7 @@ theorem isApproxDPFin_iff_forall_kovpair (D Ω : Type*) [Fintype Ω] [DecidableE
     exact kovpair_of_isApproxDPFin_of_swap D Ω M adj eps delta d d2 hdp hadj
       (hsym hadj)
   · intro hkov
-    exact isApproxDPFin_of_forall_kovpair D Ω M adj eps delta hkov
+    exact isApproxDPFin_of_forall_kovpair D Ω M adj eps delta hε hδ hkov
 
 /-! ## Bridge to the event-form predicate -/
 
@@ -281,10 +302,9 @@ lemma toOuterMeasure_ne_top (Ω : Type*) (p : PMF Ω) (s : Set Ω) :
   exact ne_of_lt ((toOuterMeasure_le_one Ω p s).trans_lt ENNReal.one_lt_top)
 
 /-- The finite-sum predicate agrees with the event-form predicate on finite
-outputs, given nonnegative budgets. -/
+outputs. Both sides carry their own nonnegative-budget invariants. -/
 theorem isApproxDPFin_iff_isApproxDP (D Ω : Type*) [Fintype Ω] [DecidableEq Ω]
-    (M : D → PMF Ω) (adj : D → D → Prop) (eps delta : ℝ)
-    (hε : 0 ≤ eps) (hδ : 0 ≤ delta) :
+    (M : D → PMF Ω) (adj : D → D → Prop) (eps delta : ℝ) :
     IsApproxDPFin D Ω M adj eps delta ↔
       DifferentialPrivacy.IsApproxDP M adj eps delta := by
   classical
@@ -298,7 +318,7 @@ theorem isApproxDPFin_iff_isApproxDP (D Ω : Type*) [Fintype Ω] [DecidableEq Ω
         (toOuterMeasure_ne_top Ω p s) h1
     · exact ENNReal.ofReal_ne_top h2
   constructor
-  · intro hFin
+  · rintro ⟨hε, hδ, hFin⟩
     refine ⟨hε, hδ, fun d d' hadj s => ?_⟩
     have hS := hFin d d' hadj (Finset.univ.filter fun w => w ∈ s)
     have hto : ((M d).toOuterMeasure s).toReal
@@ -314,8 +334,8 @@ theorem isApproxDPFin_iff_isApproxDP (D Ω : Type*) [Fintype Ω] [DecidableEq Ω
       exact hS
     exact (ENNReal.toReal_le_toReal (toOuterMeasure_ne_top Ω (M d) s)
       (htop (M d') s)).mp hto
-  · rintro ⟨-, -, hEvent⟩
-    intro d d' hadj S
+  · rintro ⟨hε, hδ, hEvent⟩
+    refine ⟨hε, hδ, fun d d' hadj S => ?_⟩
     have h := hEvent d d' hadj (↑S)
     have hto := ENNReal.toReal_mono (htop (M d') (↑S)) h
     rw [toOuterMeasure_toReal, ENNReal.toReal_add
@@ -338,8 +358,8 @@ theorem isApproxDP_iff_forall_kovpair (D Ω : Type*) [Fintype Ω] [DecidableEq �
     (hε : 0 ≤ eps) (hδ : 0 ≤ delta) (hsym : Symmetric adj) :
     DifferentialPrivacy.IsApproxDP M adj eps delta ↔
       ∀ d d2 : D, adj d d2 → KOVpair Ω (M d) (M d2) eps delta := by
-  rw [← isApproxDPFin_iff_isApproxDP D Ω M adj eps delta hε hδ]
-  exact isApproxDPFin_iff_forall_kovpair D Ω M adj eps delta hsym
+  rw [← isApproxDPFin_iff_isApproxDP D Ω M adj eps delta]
+  exact isApproxDPFin_iff_forall_kovpair D Ω M adj eps delta hε hδ hsym
 
 /-- The KOV pair condition is symmetric in the two distributions. -/
 lemma kovpair_symm (Ω : Type*) [Fintype Ω] [DecidableEq Ω]
@@ -367,7 +387,13 @@ noncomputable def betaOf (Ω : Type*) [Fintype Ω]
   ∑ w, (Q w).toReal * (1 - phi w)
 
 /-- The hypothesis-testing tradeoff function: the least type-II error among
-tests whose type-I error is at most `alpha`. -/
+tests whose type-I error is at most `alpha`.
+
+Total extension outside `[0, 1]`: for `alpha < 0` no test is feasible, since
+type-I error is always nonnegative, so the feasible set is empty and
+`sInf ∅ = 0` (see `tradeoff_eq_zero_of_neg`); for `1 ≤ alpha` the
+always-reject test is feasible with type-II error `0`, so the value is `0`
+(see `tradeoff_eq_zero_of_one_le`). -/
 noncomputable def tradeoff (Ω : Type*) [Fintype Ω]
     (P Q : PMF Ω) (alpha : ℝ) : ℝ :=
   sInf { b : ℝ | ∃ phi : Ω → ℝ,
@@ -485,6 +511,40 @@ theorem tradeoff_at_one (Ω : Type*) [Fintype Ω] (P Q : PMF Ω) :
     rw [betaOf_phi1 Ω P Q] at h
     exact h
   · refine le_tradeoff Ω P Q 1 0 zero_le_one ?_
+    intro phi hphi _
+    exact betaOf_nonneg Ω P Q phi hphi
+
+/-- Below `[0, 1]`: no test is feasible, so the tradeoff is `sInf ∅ = 0`. -/
+theorem tradeoff_eq_zero_of_neg (Ω : Type*) [Fintype Ω]
+    (P Q : PMF Ω) (alpha : ℝ) (hα : alpha < 0) :
+    tradeoff Ω P Q alpha = 0 := by
+  have hempty : { b : ℝ | ∃ phi : Ω → ℝ,
+      IsTest Ω phi ∧ alphaOf Ω P Q phi ≤ alpha ∧ betaOf Ω P Q phi = b } = ∅ := by
+    rw [Set.eq_empty_iff_forall_notMem]
+    intro b hb
+    simp only [Set.mem_ofPred_eq] at hb
+    obtain ⟨phi, hphi, hαphi, -⟩ := hb
+    have hnn := alphaOf_nonneg Ω P Q phi hphi
+    linarith
+  show sInf { b : ℝ | ∃ phi : Ω → ℝ,
+    IsTest Ω phi ∧ alphaOf Ω P Q phi ≤ alpha ∧ betaOf Ω P Q phi = b } = 0
+  rw [hempty, Real.sInf_empty]
+
+/-- Above `[0, 1]`: the always-reject test is feasible with type-II error `0`,
+so the tradeoff is `0`. -/
+theorem tradeoff_eq_zero_of_one_le (Ω : Type*) [Fintype Ω]
+    (P Q : PMF Ω) (alpha : ℝ) (hα : 1 ≤ alpha) :
+    tradeoff Ω P Q alpha = 0 := by
+  apply le_antisymm
+  · have htest1 : IsTest Ω (fun _ => (1 : ℝ)) := test_phi1 Ω
+    have hαphi : alphaOf Ω P Q (fun _ => (1 : ℝ)) ≤ alpha := by
+      rw [alphaOf_phi1 Ω P Q]
+      exact hα
+    have h := tradeoff_le_betaOf Ω P Q alpha (fun _ => (1 : ℝ))
+      (by linarith) htest1 hαphi
+    rw [betaOf_phi1 Ω P Q] at h
+    exact h
+  · refine le_tradeoff Ω P Q alpha 0 (by linarith) ?_
     intro phi hphi _
     exact betaOf_nonneg Ω P Q phi hphi
 

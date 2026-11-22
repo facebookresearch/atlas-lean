@@ -36,9 +36,9 @@ example : (∑ w ∈ ({false} : Finset Bool), (PH5 w).toReal)
     ≤ Real.exp (Real.log 3) * (∑ w ∈ ({false} : Finset Bool),
       (QH5 w).toReal) + 0 := by
   have h3 : (0 : ℝ) < 3 := by norm_num
-  have hexp : Real.exp (Real.log 3) = 3 := exp_log_three h3
-  rw [sum_singleton_eq Bool (fun w => (PH5 w).toReal) false,
-    sum_singleton_eq Bool (fun w => (QH5 w).toReal) false,
+  have hexp : Real.exp (Real.log 3) = 3 := Real.exp_log h3
+  rw [Finset.sum_singleton (fun w => (PH5 w).toReal) false,
+    Finset.sum_singleton (fun w => (QH5 w).toReal) false,
     PH5_false, QH5_false, hexp]
   norm_num
 
@@ -46,9 +46,9 @@ example : (∑ w ∈ ({false} : Finset Bool), (QH5 w).toReal)
     ≤ Real.exp (Real.log 3) * (∑ w ∈ ({false} : Finset Bool),
       (PH5 w).toReal) + 0 := by
   have h3 : (0 : ℝ) < 3 := by norm_num
-  have hexp : Real.exp (Real.log 3) = 3 := exp_log_three h3
-  rw [sum_singleton_eq Bool (fun w => (QH5 w).toReal) false,
-    sum_singleton_eq Bool (fun w => (PH5 w).toReal) false,
+  have hexp : Real.exp (Real.log 3) = 3 := Real.exp_log h3
+  rw [Finset.sum_singleton (fun w => (QH5 w).toReal) false,
+    Finset.sum_singleton (fun w => (PH5 w).toReal) false,
     QH5_false, PH5_false, hexp]
   norm_num
 
@@ -86,7 +86,7 @@ theorem tradeoff_PH5_QH5_zero : tradeoff Bool PH5 QH5 0 = 1 := by
       have hiff : (∑ w, (PH5 w).toReal * phi w) = 0 ↔
           ∀ w ∈ (Finset.univ : Finset Bool), (PH5 w).toReal * phi w = 0 :=
         Finset.sum_eq_zero_iff_of_nonneg (fun w _ =>
-          mul_nonneg_real toReal_nonneg_real (hphi w).1)
+          mul_nonneg ENNReal.toReal_nonneg (hphi w).1)
       have hzero' : ∑ w, (PH5 w).toReal * phi w = 0 := hzero
       exact hiff.mp hzero'
     have hphi0 : ∀ w : Bool, phi w = 0 := by
@@ -125,7 +125,7 @@ theorem fEpsDelta_zero_eq (eps delta : ℝ) (hε : 0 ≤ eps) (hδ : delta ≤ 1
     exact hle
   have hnn : 0 ≤ 1 - delta := by linarith
   have h2 : Real.exp (-eps) * (1 - delta - 0) ≤ 1 - delta := by
-    have hmul := mul_le_mul_right_real hE' hnn
+    have hmul := mul_le_mul_of_nonneg_right hE' hnn
     simp only [one_mul] at hmul
     simp only [sub_zero]
     exact hmul
@@ -134,11 +134,11 @@ theorem fEpsDelta_zero_eq (eps delta : ℝ) (hε : 0 ≤ eps) (hδ : delta ≤ 1
     have e1 : (1 - delta - Real.exp eps * 0 : ℝ) = 1 - delta := by
       simp only [mul_zero, sub_zero]
     rw [e1]
-    exact max_eq_left_real h2
+    exact max_eq_left h2
   show max 0 (max (1 - delta - Real.exp eps * 0)
     (Real.exp (-eps) * (1 - delta - 0))) = 1 - delta
   rw [hmax1]
-  exact max_eq_right_real hnn
+  exact max_eq_right hnn
 
 /-! ## Axiom checks -/
 
