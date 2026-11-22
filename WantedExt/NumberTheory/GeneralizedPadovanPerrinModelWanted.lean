@@ -14,6 +14,7 @@ public import Mathlib.FieldTheory.Separable
 public import Mathlib.Algebra.LinearRecurrence
 public import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.Data.Matrix.Mul
+public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinModel
 
 namespace MetaMathlibExt
 
