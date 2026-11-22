@@ -41,12 +41,16 @@ integer coefficients: the product is `P` mapped from `ℕ[q]`.
 
 open Polynomial
 
-/-- The `q`-integer `[a]_q = 1 + q + ⋯ + q^{a-1}`. -/
+/-- **q-integers.** For a natural number $a$, the $q$-integer is the integer polynomial
+$[a]_q = 1 + q + \dots + q^{a-1} = \sum_{i=0}^{a-1} q^i$; in particular $[0]_q = 0$. -/
 noncomputable def qInt (a : ℕ) : ℤ[X] :=
   ∑ i ∈ Finset.range a, X ^ i
 
-/-- Types of the irreducible finite Coxeter groups: `A_n`, `B_n`, `D_n`, `E₆`, `E₇`, `E₈`, `F₄`,
-`H₃`, `H₄` and the dihedral types `I₂(m)`. -/
+/-- **Types of irreducible finite Coxeter groups.** The labels $A_n$, $B_n$, $D_n$ and $I_2(m)$
+for natural numbers $n$ and $m$, together with $E_6$, $E_7$, $E_8$, $F_4$, $H_3$ and $H_4$. Every
+natural number parameter is allowed here; the classification of irreducible finite Coxeter groups
+uses $A_n$ ($n \ge 1$), $B_n$ ($n \ge 2$), $D_n$ ($n \ge 4$), the six exceptional labels and the
+dihedral types $I_2(m)$ ($m \ge 3$). -/
 inductive CoxeterType
   | A (n : ℕ)
   | B (n : ℕ)
@@ -61,8 +65,10 @@ inductive CoxeterType
 
 namespace CoxeterType
 
-/-- The parameter range of the classification: `A_n` (`n ≥ 1`), `B_n` (`n ≥ 2`), `D_n` (`n ≥ 4`),
-`I₂(m)` (`m ≥ 3`). -/
+/-- **Valid Coxeter types.** A Coxeter type is valid when it lies in the parameter range of the
+classification of irreducible finite Coxeter groups: $A_n$ is valid when $n \ge 1$, $B_n$ when
+$n \ge 2$, $D_n$ when $n \ge 4$ and $I_2(m)$ when $m \ge 3$, while $E_6$, $E_7$, $E_8$, $F_4$,
+$H_3$ and $H_4$ are always valid. -/
 def IsValid : CoxeterType → Prop
   | A n => 1 ≤ n
   | B n => 2 ≤ n
@@ -70,10 +76,12 @@ def IsValid : CoxeterType → Prop
   | I2 m => 3 ≤ m
   | _ => True
 
-/-- The degrees `d₁, …, dₙ` of the basic invariants, `dᵢ = eᵢ + 1` for the exponents `eᵢ`:
-`A_n`: `2, …, n + 1`; `B_n`: `2, 4, …, 2n`; `D_n`: `2, 4, …, 2n - 2, n`; `E₆`: `2, 5, 6, 8, 9, 12`;
-`E₇`: `2, 6, 8, 10, 12, 14, 18`; `E₈`: `2, 8, 12, 14, 18, 20, 24, 30`; `F₄`: `2, 6, 8, 12`;
-`H₃`: `2, 6, 10`; `H₄`: `2, 12, 20, 30`; `I₂(m)`: `2, m`. -/
+/-- **Degrees of the irreducible finite Coxeter groups.** The list of degrees $d_1, \dots, d_r$ of
+the basic invariants of a Coxeter type (so $d_i = e_i + 1$ for the exponents $e_i$) is:
+$2, 3, \dots, n + 1$ for $A_n$; $2, 4, \dots, 2n$ for $B_n$; $n, 2, 4, \dots, 2n - 2$ for $D_n$;
+$2, 5, 6, 8, 9, 12$ for $E_6$; $2, 6, 8, 10, 12, 14, 18$ for $E_7$;
+$2, 8, 12, 14, 18, 20, 24, 30$ for $E_8$; $2, 6, 8, 12$ for $F_4$; $2, 6, 10$ for $H_3$;
+$2, 12, 20, 30$ for $H_4$; and $2, m$ for $I_2(m)$. -/
 def degrees : CoxeterType → List ℕ
   | A n => (List.range n).map (· + 2)
   | B n => (List.range n).map fun i => 2 * (i + 1)
@@ -86,25 +94,38 @@ def degrees : CoxeterType → List ℕ
   | H4 => [2, 12, 20, 30]
   | I2 m => [2, m]
 
-/-- The Coxeter number `h`, the largest degree. -/
+/-- **Coxeter number.** The Coxeter number $h$ of a Coxeter type is the largest of its degrees,
+and $0$ if its list of degrees is empty. -/
 def coxeterNumber (T : CoxeterType) : ℕ :=
   T.degrees.foldr max 0
 
 end CoxeterType
 
-/-- AIM Braid groups, clusters and free probability, Problem 2.1, as a claim: for every
-irreducible finite Coxeter group `W` with degrees `d₁, …, dₙ` (`dᵢ = eᵢ + 1`) and Coxeter number
-`h`, and every integer `k ≥ 1`, `∏ᵢ [k h + dᵢ]_q / [dᵢ]_q` is a polynomial in `q` with nonnegative
-integer coefficients. -/
+/-- **AIM Problem 2.1: positivity of q-Fuss-Catalan numbers.** The claim that for every type $T$
+among $A_n$ ($n \ge 1$), $B_n$ ($n \ge 2$), $D_n$ ($n \ge 4$), $E_6$, $E_7$, $E_8$, $F_4$, $H_3$,
+$H_4$ and $I_2(m)$ ($m \ge 3$) of irreducible finite Coxeter groups, with degrees
+$d_1, \dots, d_r$ and Coxeter number $h$ (the largest degree), and every integer $k \ge 1$, there
+is a polynomial $P(q)$ with nonnegative integer coefficients such that
+$P(q) \prod_i [d_i]_q = \prod_i [kh + d_i]_q$, where $[a]_q = 1 + q + \dots + q^{a-1}$ is the
+$q$-integer. Equivalently, $\prod_i [kh + d_i]_q / [d_i]_q$ is a polynomial in $q$ with
+nonnegative integer coefficients. -/
 def coxeterFussCatalanPositive : Prop :=
   ∀ T : CoxeterType, T.IsValid → ∀ k : ℕ, 1 ≤ k →
     ∃ P : ℕ[X], P.map (Nat.castRingHom ℤ) * (T.degrees.map qInt).prod =
       (T.degrees.map fun d => qInt (k * T.coxeterNumber + d)).prod
 
 /--
-Resolved true: Gordon and Griffeth proved that the `q`-Fuss-Catalan number `∏ᵢ [mh + dᵢ]_q / [dᵢ]_q`
-of every irreducible finite Coxeter group (a well-generated real reflection group, for which their
-Hecke algebra hypothesis holds) is a polynomial in `q` with nonnegative integer coefficients.
+**Positivity of q-Fuss-Catalan numbers of Coxeter groups.** Let $T$ be one of the types $A_n$
+($n \ge 1$), $B_n$ ($n \ge 2$), $D_n$ ($n \ge 4$), $E_6$, $E_7$, $E_8$, $F_4$, $H_3$, $H_4$ or
+$I_2(m)$ ($m \ge 3$) of irreducible finite Coxeter groups, with degrees $d_1, \dots, d_r$ and
+Coxeter number $h$ (the largest degree), and let $k \ge 1$ be an integer. With the $q$-integers
+$[a]_q = 1 + q + \dots + q^{a-1}$, there is a polynomial $P(q)$ with nonnegative integer
+coefficients such that $P(q) \prod_i [d_i]_q = \prod_i [kh + d_i]_q$; that is, the quotient
+$\prod_i [kh + d_i]_q / [d_i]_q$ is a polynomial in $q$ with nonnegative integer coefficients.
+
+Gordon and Griffeth proved this for every irreducible finite Coxeter group (a well-generated real
+reflection group, for which their Hecke algebra hypothesis holds).
+
 Source: AIM workshop Braid groups, clusters and free probability (January 2005), outline by D.
 Armstrong, Problem 2.1 (C. Athanasiadis), https://aimath.org/WWN/braidgroups/braidgroups.pdf;
 resolution: I. Gordon and S. Griffeth, Catalan numbers for complex reflection groups, Amer. J. Math.

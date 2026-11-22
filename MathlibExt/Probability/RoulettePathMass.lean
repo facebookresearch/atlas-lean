@@ -18,6 +18,32 @@ import Mathlib.Tactic
 
 @[expose] public section
 
+/-!
+# Russian-roulette path weights and masses
+
+This module is the finite-level layer only: it defines raw weights and masses of
+fixed-length paths in a finite state space. It does not by itself define a
+probability law or an estimator expectation.
+
+A path is `x : Fin (n + 1) → S` with `n` transitions, starting at `x 0`; the
+level-`n` sums run over such paths with `x 0 = i`.
+
+Here `q` is the stop (termination) probability and `P` the conditional next-state
+kernel given survival, so the survival kernel is `Q = (1 − q) • P` entrywise
+(`stepKernel`), and the stop factor `q` is applied at the path's final state. This
+is the termination-probability convention, not a continuation probability.
+
+This is the finite translation of Kong and Spanier, "A new proof of geometric
+convergence for general transport problems based on sequential correlated sampling
+methods", Journal of Computational Physics 227(23), 2008, pp. 9762–9777,
+DOI 10.1016/j.jcp.2008.07.016: their equations (8)–(9) (substochastic kernel with
+row mass `1 − p̂`, conditional law, termination probability `p̂`, here `p̂ ↦ q`,
+kernel ↦ `Q`, conditional law ↦ `P`); equation (11)'s accumulated-score estimator
+is formalized in downstream modules, not here. See also M. Pharr, W. Jakob and
+G. Humphreys, Physically Based Rendering, 4th edition, MIT Press, 2023, §2.2.4
+(Russian Roulette), which uses the same termination-probability convention.
+-/
+
 namespace RussianRoulette
 
 /-- Continuation (survival) kernel `Q i j = (1 - q i) * P i j`, where `q` is the
@@ -222,11 +248,12 @@ theorem survivalMass_le_pow {S : Type*} [Fintype S] [DecidableEq S] (Q : S → S
         _ = c ^ (n + 1) := (pow_succ' c n).symm
 
 theorem sum_survivalMass_le {S : Type*} [Fintype S] [DecidableEq S] (q : S → ℝ) (P : S → S → ℝ)
-    (qmin : ℝ) (hq0 : 0 < qmin) (hq1 : qmin ≤ 1)
+    (qmin : ℝ) (hq0 : 0 < qmin)
     (hq : ∀ a : S, qmin ≤ q a ∧ q a ≤ 1)
     (hP : ∀ a b : S, 0 ≤ P a b) (hProw : ∀ a : S, ∑ b : S, P a b = 1) (i : S)
     (n : ℕ) :
     ∑ k ∈ Finset.range n, survivalMass (stepKernel q P) i k ≤ 1 / qmin := by
+  have hq1 : qmin ≤ 1 := (hq i).1.trans (hq i).2
   have hQ : ∀ a b : S, 0 ≤ stepKernel q P a b := by
     intro a b
     unfold stepKernel
