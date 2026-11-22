@@ -49,12 +49,13 @@ fails if a required workflow:
   branches, which GitHub creates for each merge group, would report them on
   the merge group's commit and could share its concurrency group.
 
-It also fails if any job of any workflow can write checks: a check run that a
-job creates through the Checks API with its token is reported by the same
+It also fails if any job of any workflow can write checks or commit statuses:
+a check run or status that a job creates with its token is reported by the same
 GitHub Actions app as the required checks, so it could stand in for one. Every
 job must therefore have explicit token permissions, at the workflow or job
 level (a job without them gets the repository's default, which may include
-`checks: write`), and none may grant `checks: write` or `write-all`.
+`checks: write`), and none may grant `checks: write`, `statuses: write` or
+`write-all`.
 
 It also fails if a required workflow gains another event that could report the
 same checks on a PR's head (such as `pull_request_target`), or unless both
@@ -70,10 +71,11 @@ Each of those steps starts with the same workspace check (`VERIFY`): `HEAD`
 must be `GITHUB_SHA`, the commit the run tests (for a PR, GitHub's test merge
 of it into the base branch; for a merge group, the group's commit),
 `git status` must succeed and show no changed or added file (ignored build
-outputs are allowed), and the checkout must not be sparse. An earlier step that
-checked out or edited another tree would otherwise make the check test that
-tree. The check is in the workflow, not in a script, because a script in the
-workspace would be replaced with the tree.
+outputs are allowed), no index entry may be marked skip-worktree or
+assume-unchanged (which hide edits from `git status`), and the checkout must
+not be sparse. An earlier step that checked out or edited another tree would
+otherwise make the check test that tree. The check is in the workflow, not in a
+script, because a script in the workspace would be replaced with the tree.
 
 This test reads the workflow files. It cannot see what a step's commands or an
 action do when they run (a step could replace bash itself), so it catches
@@ -121,6 +123,7 @@ COMMAND = ('"$RUNNER_TEMP/merge-queue-venv/bin/python" -m unittest discover '
            "-s scripts -p test_merge_queue_checks.py -v")
 # The workspace check each protected step runs first, with whitespace collapsed.
 VERIFY = ('{ changes="$(git status --porcelain --untracked-files=all)" '
+          "&& ! git ls-files -v | grep -qv '^H ' "
           '&& [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" && -z "$changes" '
           '&& "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]; } '
           '|| { echo "::error::The workspace is not $GITHUB_SHA"; exit 1; };')
@@ -251,9 +254,9 @@ def may_be_named(name: str, check: str) -> bool:
 
 
 def check_writers(name: str, workflow: dict) -> list[str]:
-    """The jobs in a workflow whose token can create check runs, or may: a job's
-    `permissions` replace the workflow's, and a job with neither gets the
-    repository's default."""
+    """The jobs in a workflow whose token can create check runs or commit
+    statuses, or may: a job's `permissions` replace the workflow's, and a job
+    with neither gets the repository's default."""
     found = []
     for job_id, job in (workflow.get("jobs") or {}).items():
         job = job if isinstance(job, dict) else {}
@@ -263,9 +266,10 @@ def check_writers(name: str, workflow: dict) -> list[str]:
                          "repository's default, which may let it write checks")
         elif permissions not in ("", "read-all") and not (
                 isinstance(permissions, dict)
-                and permissions.get("checks", "none") in ("read", "none")):
-            found.append(f"{name} job {job_id!r} can write checks, so it could report a "
-                         "required check without running it")
+                and all(permissions.get(scope, "none") in ("read", "none")
+                        for scope in ("checks", "statuses"))):
+            found.append(f"{name} job {job_id!r} can write checks or commit statuses, so it "
+                         "could report a required check without running it")
     return found
 
 
@@ -289,28 +293,49 @@ def workflow_name(filename: str, workflow: dict) -> str:
     return str(workflow.get("name") or f".github/workflows/{filename}")
 
 
-def step_texts(step) -> list[str]:
-    """A step's command and its `env` and `with` values, as text."""
+def shell_code(line: str) -> str:
+    """A shell line without its comment, which starts at a `#` that begins a
+    word outside quotes."""
+    quote, escaped = None, False
+    for i, char in enumerate(line):
+        if escaped:
+            escaped = False
+        elif char == "\\" and quote != "'":
+            escaped = True
+        elif quote:
+            quote = None if char == quote else quote
+        elif char in "'\"":
+            quote = char
+        elif char == "#" and (i == 0 or line[i - 1].isspace()):
+            return line[:i]
+    return line
+
+
+def step_texts(step) -> tuple[list[str], list[str]]:
+    """A step's command lines, without shell comments, and its `env` and `with`
+    values, as text."""
     if not isinstance(step, dict):
-        return []
-    texts = [str(step.get("run", ""))]
+        return [], []
+    lines = [shell_code(line).strip() for line in str(step.get("run", "")).splitlines()]
+    values = []
     for key in ("env", "with"):
         value = step.get(key) or {}
-        texts += [str(v) for v in value.values()] if isinstance(value, dict) else [str(value)]
-    return texts
+        values += [str(v) for v in value.values()] if isinstance(value, dict) else [str(value)]
+    return lines, values
+
+
+def sets_later_env(step) -> bool:
+    """Whether a step can set variables for the steps after it."""
+    lines, values = step_texts(step)
+    return any(SETS_LATER_ENV.search(text) for text in lines + values)
 
 
 def changes_later_path(step, allowed: set[str]) -> bool:
     """Whether a step can change PATH for the steps after it, other than with an
     allowed line."""
-    texts = step_texts(step)
-    if not texts:
-        return False
-    run, values = texts[0], texts[1:]
+    lines, values = step_texts(step)
     return (any(SETS_LATER_PATH.search(value) for value in values)
-            or any(SETS_LATER_PATH.search(line) and not line.strip().startswith("#")
-                   and re.sub(r"\s+#.*", "", line.strip()) not in allowed
-                   for line in run.splitlines()))
+            or any(SETS_LATER_PATH.search(line) and line not in allowed for line in lines))
 
 
 def default_runs(job: dict, workflow: dict) -> list[dict]:
@@ -473,7 +498,7 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
             if env_problems(level):
                 found.append(f"{check!r} gets {env_problems(level)} from its {scope} env, "
                              "which could change how its steps run")
-        if any(SETS_LATER_ENV.search(text) for step in steps for text in step_texts(step)):
+        if any(sets_later_env(step) for step in steps):
             found.append(f"{check!r} has a step that can set variables for the steps after it")
         allowed = ALLOWED_PATH_LINES if check == "build" else set()
         if any(changes_later_path(step, allowed) for step in steps):
@@ -613,7 +638,8 @@ class MergeQueueChecks(unittest.TestCase):
                                        "run": DIAGNOSTICS}]}),
                        put("ci.yml", "jobs", "build", "runs-on", ["ubuntu-26.04"]),
                        put("ci.yml", "jobs", "build", "steps",
-                           [{"run": '# PATH takes $GITHUB_PATH in the next step.\n'
+                           [{"run": '# Use $GITHUB_PATH rather than $GITHUB_ENV for elan.\n'
+                                    'elan-init -y  # The next line adds elan to $GITHUB_PATH.\n'
                                     'echo "$HOME/.elan/bin" >> "$GITHUB_PATH"  # for lake'},
                             {"run": BUILD}]),
                        put("ci.yml", "jobs", "build", "runs-on", {"labels": ["ubuntu-24.04"]}),
@@ -832,6 +858,18 @@ class MergeQueueChecks(unittest.TestCase):
             "a workflow whose token can write checks": (
                 put("report.yml", {"on": {"pull_request": ""}, "permissions": {"checks": "write"},
                                    "jobs": {"report": {}}}), "can write checks"),
+            "a workflow whose token can write commit statuses": (
+                put("report.yml", {"on": {"pull_request": ""},
+                                   "permissions": {"statuses": "write"},
+                                   "jobs": {"report": {}}}), "commit statuses"),
+            "a GITHUB_ENV write before a comment": (
+                put("ci.yml", "jobs", "build", "steps",
+                    [{"run": 'echo "BASH_ENV=x" >> "$GITHUB_ENV" # for later steps'},
+                     {"run": BUILD}]), "set variables for the steps after it"),
+            "a quoted # before a GITHUB_PATH write": (
+                put("ci.yml", "jobs", "build", "steps",
+                    [{"run": 'echo "/tmp/#bin" >> "$GITHUB_PATH"'}, {"run": BUILD}]),
+                "change PATH for the steps after it"),
             "a job with write-all permissions": (
                 put("ci.yml", "jobs", "build", "permissions", "write-all"), "can write checks"),
             "checks permission from an expression": (
@@ -1053,6 +1091,12 @@ class WorkspaceCheck(unittest.TestCase):
                 lambda repo, git: (repo / "added.py").write_text("")),
             "a sparse checkout": lambda: self.run_check(
                 lambda repo, git: git("config", "core.sparseCheckout", "true")),
+            "an edit hidden by skip-worktree": lambda: self.run_check(
+                lambda repo, git: (git("update-index", "--skip-worktree", "file"),
+                                   (repo / "file").write_text("edited\n"))),
+            "an edit hidden by assume-unchanged": lambda: self.run_check(
+                lambda repo, git: (git("update-index", "--assume-unchanged", "file"),
+                                   (repo / "file").write_text("edited\n"))),
         }
         if os.geteuid() != 0:  # root can read an unreadable index
             changes["git status failing"] = lambda: self.run_check(unreadable_index)

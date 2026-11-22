@@ -32,6 +32,7 @@ jobs:
       - name: Run deterministic repository checks
         run: >-
           { changes="$(git status --porcelain --untracked-files=all)"
+          && ! git ls-files -v | grep -qv '^H '
           && [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" && -z "$changes"
           && "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]; }
           || { echo "::error::The workspace is not $GITHUB_SHA"; exit 1; };
@@ -76,6 +77,7 @@ jobs:
           PYTHONDONTWRITEBYTECODE: "1"
         run: >-
           { changes="$(git status --porcelain --untracked-files=all)"
+          && ! git ls-files -v | grep -qv '^H '
           && [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" && -z "$changes"
           && "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]; }
           || { echo "::error::The workspace is not $GITHUB_SHA"; exit 1; };
@@ -165,6 +167,7 @@ jobs:
       - name: Build extension libraries
         run: >-
           { changes="$(git status --porcelain --untracked-files=all)"
+          && ! git ls-files -v | grep -qv '^H '
           && [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" && -z "$changes"
           && "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]; }
           || { echo "::error::The workspace is not $GITHUB_SHA"; exit 1; };

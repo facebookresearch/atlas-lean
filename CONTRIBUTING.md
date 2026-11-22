@@ -291,14 +291,15 @@ the workflow rather than in a script that a different checkout would replace:
 `HEAD` must be `GITHUB_SHA`, the commit the run tests (for a PR, GitHub's test
 merge of it into its base branch; for a merge group, the group's commit), `git
 status` must succeed and show no changed or added file (ignored build outputs
-are allowed), and the checkout must not be sparse. So an earlier step that
-checks out or edits another tree makes the check fail. It also fails if any job
-in any workflow can write checks (`checks: write`, `write-all`, or no explicit
-token permissions, which leaves the repository's default): a check run created
-with a job's token comes from the same GitHub Actions app as the required
-checks. The test reads workflow files, so it catches mistakes in workflow edits
-but not a deliberately malicious step; review of changes to `.github/` and to
-the scripts these steps run has to.
+are allowed), no index entry may be marked skip-worktree or assume-unchanged,
+and the checkout must not be sparse. So an earlier step that checks out or edits
+another tree makes the check fail. It also fails if any job in any workflow can
+write checks or commit statuses (`checks: write`, `statuses: write`,
+`write-all`, or no explicit token permissions, which leaves the repository's
+default): a check run or status created with a job's token comes from the same
+GitHub Actions app as the required checks. The test reads workflow files, so it
+catches mistakes in workflow edits but not a deliberately malicious step; review
+of changes to `.github/` and to the scripts these steps run has to.
 
 The other checks are advisory. The bump guard's `guard` checks Lean and Mathlib
 pin changes on PRs and merge groups; on PRs it runs through
