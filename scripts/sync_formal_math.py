@@ -30,7 +30,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_formal_math_sync import (  # noqa: E402  (the checker owns the header parser)
     BACKPORT, MANIFEST, ROOTS, SCHEMA_VERSION, UPSTREAM_REPOSITORY, count_rows, dump_manifest, is_flt, leading_notice,
-    last_committed_text, library_files, retired_row, sha256, split_published, upstream_body,
+    last_committed_text, library_files, path_problem, retired_row, sha256, split_published, upstream_body,
 )
 
 ZERO = "0" * 40
@@ -77,6 +77,8 @@ class Blobs:
             except BrokenPipeError:
                 pass
         self.proc.wait()
+        if self.proc.stdout:
+            self.proc.stdout.close()
 
 
 def upstream_tree(repo: Path, commit: str) -> dict[str, str]:
@@ -166,7 +168,7 @@ def load_json(path: Path | None) -> dict:
 
 
 def build(atlas: Path, repo: Path, commit: str, previous: dict,
-          rationales: dict) -> tuple[dict, list[str], int]:
+          rationales: dict, reserved_paths: set[str] | None = None) -> tuple[dict, list[str], int]:
     """Return (manifest, paths that newly diverged without a rationale, count of files with no row)."""
     files, links = library_files(atlas)
     if links:
@@ -175,9 +177,32 @@ def build(atlas: Path, repo: Path, commit: str, previous: dict,
     history = upstream_history(repo, commit, files)
     old_rows = {row["path"]: row for row in previous.get("rows", [])}
     same_pin = previous.get("upstream", {}).get("commit") == commit
+    reserved_paths = reserved_paths or set()
+    for path in sorted(reserved_paths):
+        if why := path_problem(atlas, path):
+            raise SystemExit(f"sync: cannot reserve {path!r}: {why}")
+        if (atlas / path).exists():
+            raise SystemExit(f"sync: cannot reserve {path}: the path is already present")
+        old = old_rows.get(path)
+        if old and old.get("disposition") != "reserved":
+            raise SystemExit(f"sync: cannot reserve {path}: it already has published provenance")
+        if old is None and same_pin:
+            raise SystemExit(f"sync: cannot enroll reservation {path} without moving the upstream pin")
+        if path not in tree:
+            raise SystemExit(f"sync: cannot reserve {path}: no regular Lean source file at the chosen commit")
     blobs = Blobs(repo)
     rows, unexplained, dropped, local = [], [], [], 0
     try:
+        for path in sorted(reserved_paths):
+            text = blobs.read(tree[path]).decode("utf-8", "replace")
+            if is_flt(text):
+                raise SystemExit(f"sync: cannot reserve {path}: FLT content has separate provenance")
+            row = {"path": path, "disposition": "reserved", "upstream_commit": commit,
+                   "upstream_sha256": sha256(upstream_body(text))}
+            old = old_rows.get(path)
+            if old and row != old:
+                raise SystemExit(f"sync: cannot change reserved source identity for {path}")
+            rows.append(row)
         for path in sorted(files):
             data = (atlas / path).read_bytes()
             text = data.decode("utf-8", "replace")
@@ -191,6 +216,14 @@ def build(atlas: Path, repo: Path, commit: str, previous: dict,
                 local += 1
                 continue
             old = old_rows.get(path, {})
+            if old.get("disposition") == "reserved":
+                if commit != old.get("upstream_commit") or up_text is None \
+                        or sha256(upstream_body(up_text)) != old.get("upstream_sha256"):
+                    raise SystemExit(f"sync: publication of {path} must use its exact reserved source snapshot")
+                if row["disposition"] not in ("identical", "attributed", "diverged"):
+                    raise SystemExit(f"sync: reserved publication {path} is not identical, attributed or diverged")
+                row["upstream_commit"] = old["upstream_commit"]
+                row["upstream_sha256"] = old["upstream_sha256"]
             if row["disposition"] == "diverged" and same_pin and old.get("disposition") == "diverged" \
                     and old.get("published_sha256") == row["published_sha256"] and path not in rationales:
                 rows.append(dict(old))  # same pin, same bytes: the recorded row stands as reviewed
@@ -211,8 +244,9 @@ def build(atlas: Path, repo: Path, commit: str, previous: dict,
         raise SystemExit("sync: these files have manifest rows but no longer look upstream-derived "
                          "(third-party FLT header or no upstream history); resolve them by hand: " + ", ".join(dropped))
     # A file that left ATLAS keeps its row as retired, with its provenance and line fingerprint.
-    rows += [retired_row(old_rows[path], path, last_committed_text(atlas, path))
-             for path in sorted(old_rows) if not (atlas / path).exists()]
+    rows += [dict(old_rows[path]) if old_rows[path].get("disposition") == "reserved"
+             else retired_row(old_rows[path], path, last_committed_text(atlas, path))
+             for path in sorted(old_rows) if not (atlas / path).exists() and path not in reserved_paths]
     rows.sort(key=lambda row: row["path"])
     toolchain = (atlas / "lean-toolchain").read_text().strip()
     manifest = {
@@ -254,6 +288,10 @@ def report(previous: dict, manifest: dict, local: int) -> str:
             + ("" if old[p].get("published_sha256") == new[p].get("published_sha256") else ", ATLAS bytes changed"))
     section("Diverged", diverged, lambda p: f": {new[p].get('rationale', 'NO RATIONALE')} "
             f"(backport: {new[p].get('backport', 'none')})")
+    reserved = [p for p in sorted(new) if new[p]["disposition"] == "reserved"]
+    if reserved:
+        section("Reserved source (not published)", reserved,
+                lambda p: f": {new[p]['upstream_commit']}, body SHA-256 {new[p]['upstream_sha256']}")
     return "\n".join(lines)
 
 
@@ -265,6 +303,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--manifest", type=Path, help=f"default: <atlas>/{MANIFEST}")
     ap.add_argument("--rationales", type=Path, help="JSON: path -> {rationale, backport} for new divergences")
     ap.add_argument("--report", type=Path, help="also write the sync report here")
+    ap.add_argument("--reserve-paths", type=Path,
+                    help="JSON list of absent source paths to reserve at this real upstream pin change")
     a = ap.parse_args(argv)
     manifest_path = a.manifest or a.atlas / MANIFEST
     if git(a.formal_math, "rev-parse", "--is-shallow-repository").decode().strip() != "false":
@@ -275,7 +315,12 @@ def main(argv: list[str] | None = None) -> int:
     rationales = load_json(a.rationales)
     if not isinstance(rationales, dict):
         raise SystemExit("sync: --rationales must be a JSON object mapping paths to {rationale, backport}")
-    manifest, unexplained, local = build(a.atlas, a.formal_math, commit, previous, rationales)
+    reserved_paths = load_json(a.reserve_paths) if a.reserve_paths else []
+    if not isinstance(reserved_paths, list) or not all(isinstance(path, str) for path in reserved_paths) \
+            or len(reserved_paths) != len(set(reserved_paths)):
+        raise SystemExit("sync: --reserve-paths must be a JSON list of unique source paths")
+    manifest, unexplained, local = build(a.atlas, a.formal_math, commit, previous, rationales,
+                                        set(reserved_paths))
     text = report(previous, manifest, local)
     print(text)
     if unexplained:
