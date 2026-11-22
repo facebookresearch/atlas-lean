@@ -3101,17 +3101,6 @@ class ScopedRows(Vault):
             sync.insert_rows(path, [self.about(f"Algebra/q{number}.md") for number in range(3)])
         self.assertEqual(len(calls), 23)
 
-    def test_a_problem_of_too_many_is_counted_once_for_each_too_many(self) -> None:
-        # So that taking a row or a page away is no new problem, and adding one is (see excess).
-        three = sync.shared_owner("Ext.a", {"A/a.md": False, "A/b.md": True, "A/c.md": False})
-        self.assertEqual(sync.excess(three), ["the declaration Ext.a of this project has a page too many; a declaration "
-                                              "has one page"] * 2)
-        self.assertEqual(len(sync.excess(sync.shared_owner("Ext.a", {"A/a.md": False, "A/b.md": False}))), 1)
-        self.assertEqual(sync.excess("A/a.md and A/c.md both credit the Mathlib declaration M.x; a declaration has one "
-                                     "page"), ["the Mathlib declaration M.x has a page too many; a declaration has one page"])
-        self.assertEqual(len(sync.excess("A/a.md has 3 rows, which Autoform reads together; a page has one row")), 2)
-        self.assertEqual(sync.excess("something else"), ["something else"])
-
     def test_a_file_without_a_last_line_end_keeps_its_bytes(self) -> None:
         sync.LINKS.mkdir(parents=True)
         path = sync.LINKS / "Algebra.jsonl"
@@ -4020,6 +4009,31 @@ class ScopedRun(unittest.TestCase):
         self.assertEqual((status, report["errors"]), (1, [
             "Algebra/groups/group-basics/planned.md has a row too many, which Autoform reads together with its others; "
             "a page has one row; fix it"]))
+
+
+    def test_a_declarations_pages_are_counted_once_whatever_credits_them(self) -> None:
+        # Three pages stand for Ext.lagrange on the base, one by the module and name an earlier sync wrote: taking one
+        # away is no new problem; making that row an explicit link and adding a fourth page is one.
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        folder = "blueprint/roadmap/Algebra/groups/group-basics"
+        explicit = {"location": {"declaration": "Ext.lagrange"}}
+        rows = {name: {"subject": [{"type": "generic", "uri": f"../roadmap/Algebra/groups/group-basics/{name}.md"}],
+                       "id": f"af_{letter * 24}"} for name, letter in (("p2", "a"), ("p3", "b"), ("p4", "c"))}
+        for name in rows:
+            self.write(f"{folder}/{name}.md", f"# {name}\n\nThe same result.\n")
+        base = [{**rows["p2"], "object": [explicit]},
+                {**rows["p3"], "extensions": {sync.OWN: {"module": "MathlibExt.Algebra.Groups", "name": "lagrange"}}}]
+        links.write_text(links.read_text() + "".join(json.dumps(row) + "\n" for row in base))
+        self.base = self.commit("three pages for one declaration")
+        kept = links.read_text()
+        links.write_text(kept.replace(json.dumps(base[0]) + "\n", ""))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (0, []))
+        links.write_text(kept.replace(json.dumps(base[1]), json.dumps({**rows["p3"], "object": [explicit]}))
+                         + json.dumps({**rows["p4"], "object": [explicit]}) + "\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (1, [
+            "the declaration Ext.lagrange of this project has a page too many; a declaration has one page; fix it"]))
 
 
 
