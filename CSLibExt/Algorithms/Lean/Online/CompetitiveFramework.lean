@@ -197,7 +197,7 @@ theorem Competitive.mono {Req Ans : Type*} (P : OnlineProblem Req Ans)
 
 /-- Strict lower-bound predicate: no strategy beats the factor `cstar`
 without an additive constant. -/
-def StrictLowerBound {Req Ans : Type*} (P : OnlineProblem Req Ans)
+def StrictLowerBound {Req Ans : Type*} [Nonempty Ans] (P : OnlineProblem Req Ans)
     (cstar : ℝ) : Prop :=
   ∀ (A : Strategy Req Ans), StrategyFeasible P A →
     ∀ c : ℝ, 0 ≤ c → c < cstar →
@@ -208,7 +208,7 @@ def StrictLowerBound {Req Ans : Type*} (P : OnlineProblem Req Ans)
 even with an arbitrary uniform additive constant. Distinct from the strict
 predicate: a bounded-cost strategy refutes every positive additive lower
 bound. -/
-def AdditiveLowerBound {Req Ans : Type*} (P : OnlineProblem Req Ans)
+def AdditiveLowerBound {Req Ans : Type*} [Nonempty Ans] (P : OnlineProblem Req Ans)
     (cstar : ℝ) : Prop :=
   ∀ (A : Strategy Req Ans), StrategyFeasible P A →
     ∀ c b : ℝ, 0 ≤ c → c < cstar → 0 ≤ b →
@@ -216,7 +216,7 @@ def AdditiveLowerBound {Req Ans : Type*} (P : OnlineProblem Req Ans)
         ENNReal.ofReal c * optCost P σ + ENNReal.ofReal b
           < ENNReal.ofReal (algCost P A σ)
 
-theorem StrictLowerBound.of_additive {Req Ans : Type*}
+theorem StrictLowerBound.of_additive {Req Ans : Type*} [Nonempty Ans]
     (P : OnlineProblem Req Ans) {cstar : ℝ} (h : AdditiveLowerBound P cstar) :
     StrictLowerBound P cstar := by
   intro A hA c hc0 hc
@@ -225,6 +225,7 @@ theorem StrictLowerBound.of_additive {Req Ans : Type*}
   exact ⟨σ, hσ, hlt⟩
 
 theorem not_strictCompetitive_of_strictLowerBound {Req Ans : Type*}
+    [Nonempty Ans]
     (P : OnlineProblem Req Ans) (A : Strategy Req Ans) {cstar c : ℝ}
     (h : StrictLowerBound P cstar) (hc : c < cstar) :
     ¬ StrictCompetitive P A c := by
@@ -236,6 +237,7 @@ theorem not_strictCompetitive_of_strictLowerBound {Req Ans : Type*}
   exact (not_le_of_gt hlt) hle
 
 theorem not_additiveCompetitive_of_additiveLowerBound {Req Ans : Type*}
+    [Nonempty Ans]
     (P : OnlineProblem Req Ans) (A : Strategy Req Ans) {cstar c : ℝ}
     (h : AdditiveLowerBound P cstar) (hc : c < cstar) :
     ¬ AdditiveCompetitive P A c := by
@@ -243,6 +245,172 @@ theorem not_additiveCompetitive_of_additiveLowerBound {Req Ans : Type*}
   obtain ⟨b, hc0, hb0, hA, hineq⟩ := hadd
   obtain ⟨σ, hσ, hlt⟩ := h A hA c b hc0 hc hb0
   exact (not_le_of_gt hlt) (hineq σ hσ)
+
+theorem run_append_singleton {Req Ans : Type*} (A : Strategy Req Ans)
+    (σ : List Req) (r : Req) :
+    run A (σ ++ [r]) = run A σ ++ [(r, A (σ ++ [r]))] := by
+  have h := runFrom_append A [] σ [r]
+  simp only [List.nil_append] at h
+  have h1 : runFrom A σ [r] = [(r, A (σ ++ [r]))] := rfl
+  unfold run
+  rw [h, h1]
+
+open Classical in
+private noncomputable def pickAnswer {Req Ans : Type*} [Nonempty Ans]
+    (P : OnlineProblem Req Ans) (τ : List (Req × Ans)) (r : Req) : Ans :=
+  if h : P.feasible τ ∧ P.legal (τ.map Prod.fst ++ [r]) then
+    Classical.choose (P.nonblocking h.1 h.2)
+  else Classical.choice inferInstance
+
+private theorem pickAnswer_spec {Req Ans : Type*} [Nonempty Ans]
+    (P : OnlineProblem Req Ans) (τ : List (Req × Ans)) (r : Req)
+    (h : P.feasible τ ∧ P.legal (τ.map Prod.fst ++ [r])) :
+    P.feasible (τ ++ [(r, pickAnswer P τ r)]) := by
+  unfold pickAnswer
+  rw [dite_eq_left h]
+  exact Classical.choose_spec (P.nonblocking h.1 h.2)
+
+private noncomputable def stratAux {Req Ans : Type*} [Nonempty Ans]
+    (P : OnlineProblem Req Ans) : Nat → List Req → Ans
+  | 0, _ => Classical.choice inferInstance
+  | _ + 1, [] => Classical.choice inferInstance
+  | n + 1, r :: rest =>
+    pickAnswer P (run (stratAux P n) (r :: rest).dropLast)
+      ((r :: rest).getLast (by simp))
+
+private noncomputable def stratOf {Req Ans : Type*} [Nonempty Ans]
+    (P : OnlineProblem Req Ans) : Strategy Req Ans :=
+  fun σ => stratAux P σ.length σ
+
+private theorem runFrom_strat_congr {Req Ans : Type*} {f g : Strategy Req Ans}
+    (past : List Req) : ∀ (σ : List Req),
+    (∀ ρ : List Req, ρ.length ≤ past.length + σ.length → f ρ = g ρ) →
+    runFrom f past σ = runFrom g past σ := by
+  intro σ
+  induction σ generalizing past with
+  | nil => intro _; rfl
+  | cons r σ ih =>
+    intro h
+    have e1 : (past ++ [r]).length = past.length + 1 := by simp
+    have e2 : (r :: σ).length = σ.length + 1 := by simp
+    have hq : f (past ++ [r]) = g (past ++ [r]) := h _ (by omega)
+    have ht : runFrom f (past ++ [r]) σ = runFrom g (past ++ [r]) σ :=
+      ih _ (fun ρ hρ => h ρ (by omega))
+    simp only [runFrom, hq, ht]
+
+private theorem run_strat_congr {Req Ans : Type*} {f g : Strategy Req Ans}
+    {σ : List Req} (h : ∀ ρ : List Req, ρ.length ≤ σ.length → f ρ = g ρ) :
+    run f σ = run g σ := by
+  unfold run
+  exact runFrom_strat_congr _ _ (fun ρ hρ => h ρ (by simpa using hρ))
+
+private theorem stratAux_coh {Req Ans : Type*} [Nonempty Ans]
+    (P : OnlineProblem Req Ans) (n : Nat) : ∀ (m : Nat) (σ : List Req),
+    σ.length ≤ n → σ.length ≤ m → stratAux P n σ = stratAux P m σ := by
+  induction n with
+  | zero =>
+    intro m σ hn _
+    have hσ : σ = [] := List.length_eq_zero_iff.mp (Nat.le_zero.mp hn)
+    subst hσ
+    cases m with
+    | zero => rfl
+    | succ m => simp only [stratAux]
+  | succ n ih =>
+    intro m σ hn hm
+    cases m with
+    | zero =>
+      have hσ : σ = [] := List.length_eq_zero_iff.mp (Nat.le_zero.mp hm)
+      subst hσ
+      simp only [stratAux]
+    | succ m =>
+      cases σ with
+      | nil => simp only [stratAux]
+      | cons r rest =>
+        simp only [stratAux]
+        have hlen : ((r :: rest).dropLast).length ≤ n
+            ∧ ((r :: rest).dropLast).length ≤ m := by
+          have e : ((r :: rest).dropLast).length = (r :: rest).length - 1 :=
+            List.length_dropLast
+          have e2 : (r :: rest).length = rest.length + 1 := by simp
+          omega
+        have hrun : run (stratAux P n) (r :: rest).dropLast
+            = run (stratAux P m) (r :: rest).dropLast := by
+          apply run_strat_congr
+          intro ρ hρ
+          exact ih m ρ (Nat.le_trans hρ hlen.1) (Nat.le_trans hρ hlen.2)
+        rw [hrun]
+
+private theorem stratOf_run_feasible {Req Ans : Type*} [Nonempty Ans]
+    (P : OnlineProblem Req Ans) (n : Nat) : ∀ (σ : List Req),
+    σ.length ≤ n → P.legal σ → P.feasible (run (stratOf P) σ) := by
+  induction n with
+  | zero =>
+    intro σ hn _
+    have hσ0 : σ = [] := List.length_eq_zero_iff.mp (Nat.le_zero.mp hn)
+    subst hσ0
+    rw [run_nil]
+    exact P.feasible_nil
+  | succ n ih =>
+    intro σ hn hσ
+    cases σ with
+    | nil =>
+      rw [run_nil]
+      exact P.feasible_nil
+    | cons r rest =>
+      have hne : (r :: rest) ≠ [] := by simp
+      have hEq : (r :: rest).dropLast ++ [(r :: rest).getLast hne]
+          = r :: rest :=
+        List.dropLast_append_getLast hne
+      have hlen : ((r :: rest).dropLast).length < (r :: rest).length := by
+        have e : ((r :: rest).dropLast).length = (r :: rest).length - 1 :=
+          List.length_dropLast
+        have e2 : (r :: rest).length = rest.length + 1 := by simp
+        omega
+      have hle : P.legal
+          ((r :: rest).dropLast ++ [(r :: rest).getLast hne]) := by
+        rwa [hEq]
+      have hσ' : P.legal (r :: rest).dropLast := P.legal_prefix hle
+      have hfeas : P.feasible (run (stratOf P) (r :: rest).dropLast) :=
+        ih _ (by omega) hσ'
+      have hleg : P.legal ((run (stratOf P) (r :: rest).dropLast).map Prod.fst
+          ++ [(r :: rest).getLast hne]) := by
+        have hmap : (run (stratOf P) (r :: rest).dropLast).map Prod.fst
+            = (r :: rest).dropLast :=
+          run_map_fst _ _
+        rwa [hmap]
+      have hpick := pickAnswer_spec P (run (stratOf P) (r :: rest).dropLast)
+        ((r :: rest).getLast hne) ⟨hfeas, hleg⟩
+      have hA : stratOf P (r :: rest)
+          = pickAnswer P (run (stratOf P) (r :: rest).dropLast)
+              ((r :: rest).getLast hne) := by
+        have hL : (r :: rest).length = rest.length + 1 := by simp
+        simp only [stratOf]
+        rw [hL]
+        simp only [stratAux]
+        have hrun : run (stratAux P rest.length) (r :: rest).dropLast
+            = run (stratOf P) (r :: rest).dropLast := by
+          apply run_strat_congr
+          intro ρ hρ
+          have hρle : ρ.length ≤ rest.length := by omega
+          simp only [stratOf]
+          exact stratAux_coh P _ _ _ hρle le_rfl
+        rw [hrun]
+      have hrun2 : run (stratOf P) (r :: rest)
+          = run (stratOf P) (r :: rest).dropLast
+            ++ [((r :: rest).getLast hne, stratOf P (r :: rest))] := by
+        have h := run_append_singleton (stratOf P) (r :: rest).dropLast
+          ((r :: rest).getLast hne)
+        rwa [hEq] at h
+      rw [hrun2, hA]
+      exact hpick
+
+/-- A feasible strategy exists whenever answers exist: choose answers
+inductively along request prefixes using `nonblocking`. This keeps the
+lower-bound predicates from holding vacuously. -/
+theorem exists_strategyFeasible {Req Ans : Type*} [Nonempty Ans]
+    (P : OnlineProblem Req Ans) :
+    ∃ A : Strategy Req Ans, StrategyFeasible P A := by
+  exact ⟨stratOf P, fun σ hσ => stratOf_run_feasible P σ.length σ le_rfl hσ⟩
 
 end Cslib.Algorithms.Lean.Online.CompetitiveFramework
 
