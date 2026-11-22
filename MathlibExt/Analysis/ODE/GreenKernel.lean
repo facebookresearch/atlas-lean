@@ -17,13 +17,14 @@ public import Mathlib.Analysis.Calculus.Deriv.Mul
 
 This file packages the elementary two-solution formula for a one-dimensional
 Green kernel. Given a left solution `u`, a right solution `v`, and a
-normalization `C`, the kernel is
+left-branch coefficient `C`, the kernel is
 
 `G(x, y) = C y * u x` for `x ≤ y`, and
 `G(x, y) = C y * (u y / v y) * v x` for `y < x`.
 
-The normalization is left abstract: in Sturm-Liouville examples it is the
-reciprocal Wronskian factor for the chosen operator and boundary conditions.
+The coefficient is left abstract: `C y` is the entire left-branch coefficient.
+In Sturm-Liouville examples it may absorb `v y`, the Wronskian, and the
+operator's leading coefficient; it is not by itself a reciprocal Wronskian.
 The point of the file is the reusable analytic bookkeeping that follows from
 the formula alone: branch values, agreement of the right branch on the
 diagonal, positivity, continuity across the diagonal, one-sided derivatives,
@@ -53,7 +54,7 @@ open scoped Topology
 namespace GreenKernel
 
 /-- The two-solution Green kernel with left solution `u`, right solution `v`,
-and normalization `C`: for `x ≤ y` it is `C y * u x`, and for `y < x` it is
+and left-branch coefficient `C`: for `x ≤ y` it is `C y * u x`, and for `y < x` it is
 `C y * (u y / v y) * v x`. The right branch is normalized so that it agrees with
 the left branch at `x = y` whenever `v y ≠ 0`. -/
 noncomputable def kernel (u v C : ℝ → ℝ) (x y : ℝ) : ℝ :=
