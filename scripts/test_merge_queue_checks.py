@@ -9,6 +9,8 @@ fails if a required workflow:
   or filters some of them out;
 - can skip the job that reports the check (a skipped job counts as passing):
   a job-level `if`, a matrix, or a prerequisite that is not required itself;
+- checks out another ref or repository in that job, so that the check would
+  report on the PR or merge group without testing its tree;
 - renames the check, puts an expression in the job's name, lets another job
   report (or possibly report, through an expression in its name) the same
   name, or moves the job into a reusable workflow (which reports
@@ -223,6 +225,10 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
         for key in ("if", "strategy", "uses"):
             if key in job:
                 found.append(f"{check!r} has a job-level {key!r}")
+        for step in as_list(job.get("steps")):
+            if (isinstance(step, dict) and "actions/checkout" in str(step.get("uses", ""))
+                    and {"ref", "repository"} & set(step.get("with") or {})):
+                found.append(f"{check!r} checks out another ref or repository")
         for prerequisite in as_list(job.get("needs")):
             if (name, prerequisite) not in required_jobs:
                 found.append(f"{check!r} needs {prerequisite!r}, which is not required")
@@ -260,7 +266,8 @@ FIXTURE = {
         "concurrency": {"group": "${{ github.workflow }}-${{ github.ref }}"},
         "jobs": {"preflight": {"name": "repository integrity",
                                "steps": [{"run": "pip install"}, {"run": COMMAND}]},
-                 "build": {"needs": "preflight"}},
+                 "build": {"needs": "preflight", "steps": [
+                     {"uses": "actions/checkout@v7", "with": {"persist-credentials": "false"}}]}},
     },
     "source-diagnostics.yml": {
         "name": "Source diagnostics",
@@ -441,6 +448,15 @@ class MergeQueueChecks(unittest.TestCase):
             "this test split over two lines": (
                 put("ci.yml", "jobs", "preflight", "steps",
                     [{"run": COMMAND.replace(" -s", "\n-s")}]), "has no step that is exactly"),
+            "build checks out the PR's head branch": (
+                put("ci.yml", "jobs", "build", "steps",
+                    [{"uses": "actions/checkout@v7", "with": {"ref": "${{ github.head_ref || "
+                                                                     "'main' }}"}}]),
+                "checks out another ref"),
+            "build checks out another repository": (
+                put("ci.yml", "jobs", "build", "steps",
+                    [{"uses": "actions/checkout@v7", "with": {"repository": "someone/fork"}}]),
+                "checks out another ref"),
             "this test commented out": (
                 put("ci.yml", "jobs", "preflight", "steps", [{"run": "# " + COMMAND}]),
                 "has no step that is exactly"),

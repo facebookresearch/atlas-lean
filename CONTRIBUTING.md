@@ -196,7 +196,7 @@ it on top of the current `main` and the PRs queued ahead of it, and
 squash-merges it only if the required checks pass on that combined tree, so
 each commit it adds to `main` has passed them on its own tree.
 
-To queue a PR, use one of:
+To queue a standalone PR, use one of:
 
 - **Merge when ready** in the PR's merge box.
 - `gh pr merge <number>`, which needs the repository's **Allow auto-merge**
@@ -212,6 +212,11 @@ To queue a PR, use one of:
 - The GraphQL mutation `enqueuePullRequest` (`pullRequestId`, and
   `expectedHeadOid` to pin the head). It queues the PR only if it can be queued
   now, and otherwise returns an error that says why; it never merges directly.
+
+To queue a stack of pull requests, use the merge box of the highest PR you want
+to merge, or `PUT /repos/{owner}/{repo}/pulls/{number}/merge-async` with
+`"merge_action": "merge_queue"` on that PR. Either queues that PR together with
+every open PR below it in the stack.
 
 Once the queue is required, `main` refuses direct merges, including those of
 the REST endpoint `PUT /repos/{owner}/{repo}/pulls/{number}/merge`, which does
@@ -251,20 +256,21 @@ exactly the test command, so a change that makes one of them skip its jobs is
 caught by the other. The test fails if one of these workflows loses or filters
 those triggers, also runs on pushes to any branch but `main` or on another event
 that could report its checks for another tree (such as `pull_request_target`),
-can skip the job that reports the check, renames the check or puts an expression
-in its job name, lets another job report (or possibly report) the same name, or
-uses a concurrency group that the test does not know to differ between PRs and
-between merge groups, or that another workflow's group could match.
+can skip the job that reports the check, checks out another ref or repository in
+it, renames the check or puts an expression in its job name, lets another job
+report (or possibly report) the same name, or uses a concurrency group that the
+test does not know to differ between PRs and between merge groups, or that
+another workflow's group could match.
 
 The other checks are advisory. The bump guard's `guard` checks Lean and Mathlib
 pin changes on PRs and merge groups; on PRs it runs through
 `pull_request_target`, which GitHub blocks by default in public repositories
 from 2 December 2026 unless an Actions event policy allows it, so it is not
-required. Codex does not run on merge groups. `public-references` runs on PRs
-and merge groups, but stays advisory until the workflow governance described
-under [Public references](#public-references) is in place. Blueprint Pages,
-Check workflows and Binary64 conformance are path-filtered on PRs, and Blueprint
-Pages also builds `main` once a day.
+required. Codex does not run on merge groups. `public-references` is configured
+to run on PRs and merge groups, but stays advisory until the workflow governance
+described under [Public references](#public-references) is in place. Blueprint
+Pages, Check workflows and Binary64 conformance are path-filtered on PRs, and
+Blueprint Pages also builds `main` once a day.
 
 ## Contributor License Agreement ("CLA")
 In order to accept your pull request, we need you to submit a CLA. You only need
