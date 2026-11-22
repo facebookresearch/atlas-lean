@@ -104,7 +104,11 @@ public theorem_wanted sum_inv_modEq_orderOf_mod_sixteen_le {p : ℕ} (hp : p.Pri
 $2 \le y < x$ and $0 < s < 1$. Call a positive integer $y$-smooth if all its prime factors are
 at most $y$ (so $1$ is $y$-smooth). Let $S(x, y)$ be the sum of $1/n$ over the $y$-smooth
 integers $n > x$, and let $\zeta(\sigma, y)$ be the sum of $n^{-\sigma}$ over all $y$-smooth
-integers $n$. Then $S(x, y) \le x^{-s} \zeta(1 - s, y)$, where both series converge.
+integers $n$. Then $S(x, y) \le x^{-s} \zeta(1 - s, y)$.
+
+Both sums are unconditional sums of real numbers, which take the value $0$ for a family that is
+not summable; the statement asserts only the inequality between these values, not that the
+series converge.
 
 Source: Cheng, Kinlaw and Nguyen, *The Reciprocal Sum of Even Pseudoprimes*, Journal of
 Integer Sequences 29 (2026), Article 26.1.3, Lemma 8, display (smooth1)

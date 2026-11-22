@@ -88,7 +88,11 @@ $l \le \exp(10^k)$.
 The source requires $k_0$ to be effectively computable; the formal statement does not enforce
 this.
 
-Source: M. Bennett and S. Siksek, `A conjecture of Erdős, supersingular primes and short character sums`, Annals of Math, 191 (2) 2020. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2020-191-2-ErdosSupersingularPrimes.lean Via leanprover/lean-eval@38361be, problem `annals_erdos_supersingular_primes`. -/
+Source: M. Bennett and S. Siksek,
+`A conjecture of Erdős, supersingular primes and short character sums`, Annals of Math, 191
+(2) 2020. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0,
+e32eb14), AnnalsChallenge/AnnalsOfMathematics/2020-191-2-ErdosSupersingularPrimes.lean Via
+leanprover/lean-eval@38361be, problem `annals_erdos_supersingular_primes`. -/
 public def_wanted k₀ : ℕ
 
 /--

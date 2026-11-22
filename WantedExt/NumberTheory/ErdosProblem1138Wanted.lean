@@ -39,7 +39,10 @@ positive Vardi asymptotic is preserved as `vardiAsymptotic` (disproved);
 its disproof is the unregistered companion `disprovedVardi`. Status:
 resolved false (Sunder–Kumrawat–Cheri, Lean-verified). -/
 
-/-- The maximal prime gap below `x`. -/
+/-- **Largest prime gap below $x$.** Let $p_0 = 2 < p_1 = 3 < p_2 = 5 < \dots$ be the primes in
+increasing order. For a real number $x$, $d(x)$ is the largest prime gap $p_{n+1} - p_n$ over all
+$n$ with $p_n < x$ (the next prime $p_{n+1}$ may exceed $x$), and $d(x) = 0$ when no prime is
+less than $x$. -/
 noncomputable def supPrimeGap (x : ℝ) : ℕ :=
   (Finset.range (Nat.primeCounting' ⌈x⌉₊)).sup primeGap
 
@@ -47,7 +50,9 @@ noncomputable def supPrimeGap (x : ℝ) : ℕ :=
 @[deprecated (since := "2026-10-21"), nolint defsWithUnderscore]
 alias sup_primeGap := supPrimeGap
 
-/-- The filter on `ℝ × ℝ` sending `x → ∞` subject to `x/2 < y < x`. -/
+/-- **The regime $x \to \infty$ with $x/2 < y < x$.** The filter on pairs $(x, y)$ of real
+numbers along which $x \to \infty$ while $x/2 < y < x$: a set of pairs belongs to it exactly
+when it contains every pair $(x, y)$ with $x/2 < y < x$ and $x$ sufficiently large. -/
 abbrev sndGtHalfFst : Filter (ℝ × ℝ) :=
   atTop.comap Prod.fst ⊓ Filter.principal {p | p.2 ∈ Set.Ioo (p.1 / 2) p.1}
 
@@ -55,7 +60,15 @@ abbrev sndGtHalfFst : Filter (ℝ × ℝ) :=
 @[deprecated (since := "2026-10-21"), nolint defsWithUnderscore]
 alias snd_gt_half_fst := sndGtHalfFst
 
-/-- The prime count in `(y, y + C·d]`, where `d` is the largest prime gap before `x`. -/
+/-- **Primes in a window of $C$ maximal prime gaps.** Let $p_0 = 2 < p_1 = 3 < p_2 = 5 < \dots$
+be the primes in increasing order, let $\pi$ be the prime-counting function, and for real $x$
+let $d(x)$ be the largest prime gap $p_{n+1} - p_n$ over all $n$ with $p_n < x$, with
+$d(x) = 0$ when no prime is less than $x$. For a real number $C$, this is the function on pairs
+$(x, y)$ of real numbers given by $\pi(\lfloor y + C\,d(x) \rfloor) - \pi(\lfloor y \rfloor)$,
+where the floors are taken in $\mathbb{N}$ (so negative numbers have floor $0$) and the
+difference is taken in $\mathbb{R}$.
+
+When $C \ge 0$ this is the number of primes in the interval $(y, y + C\,d(x)]$. -/
 noncomputable def primeCountIocMulConst (C : ℝ) : (ℝ × ℝ) → ℝ :=
   fun (x, y) ↦ (Nat.primeCounting ⌊y + C * supPrimeGap x⌋₊ - Nat.primeCounting ⌊y⌋₊)
 
