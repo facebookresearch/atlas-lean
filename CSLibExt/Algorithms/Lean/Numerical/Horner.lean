@@ -69,9 +69,9 @@ theorem hornerEval_time {n : Nat} (x : R) (coefficients : Fin n → R) :
   simpa only [hornerEval, List.length_ofFn] using
     hornerFold_time x (List.ofFn coefficients)
 
-/-- **Horner evaluation computes the coefficient sum.** For every commutative semiring $R$,
-every $x \in R$ and all coefficients $a_0, \dots, a_{n-1} \in R$, the value returned by Horner
-evaluation of $a_0, \dots, a_{n-1}$ at $x$ is $\sum_{i=0}^{n-1} a_i x^i$. -/
+/-- **Horner evaluation computes the polynomial value.** For every commutative semiring $R$, every
+$x \in R$ and all coefficients $a_0, \dots, a_{n-1} \in R$, the value returned by Horner evaluation
+of $a_0, \dots, a_{n-1}$ at $x$ is $\sum_{i=0}^{n-1} a_i x^i$. -/
 theorem hornerEval_ret_eq_sum {n : Nat} (x : R) (coefficients : Fin n → R) :
     (hornerEval x coefficients).ret = ∑ i : Fin n, coefficients i * x ^ i.val := by
   induction n with
