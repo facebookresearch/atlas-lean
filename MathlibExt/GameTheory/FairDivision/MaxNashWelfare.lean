@@ -23,6 +23,21 @@ namespace MathlibExt.GameTheory.FairDivision.Indivisible
 
 @[expose] public section
 
+/-!
+# Maximum Nash welfare and Pareto optimality
+
+The refined maximum Nash welfare rule used here first maximises the
+number of agents with positive value and, subject to that, the product
+of those agents' values. The main theorem is that every such allocation
+is Pareto optimal for additive nonnegative valuations.
+
+## References
+
+* I. Caragiannis, D. Kurokawa, H. Moulin, A. D. Procaccia, N. Shah and J. Wang,
+  "The unreasonable fairness of maximum Nash welfare", *ACM Transactions
+  on Economics and Computation* 7(3), 2019.
+-/
+
 /-- Agents whose bundle has positive value under `A`. -/
 noncomputable def positiveAgents {ι γ : Type*} [Fintype ι] [Fintype γ]
     [DecidableEq ι] (v : ι → γ → ℝ) (A : γ → ι) : Finset ι :=
