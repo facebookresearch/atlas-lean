@@ -6,6 +6,15 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`Mathlib/Probability/CentralLimitTheorem.lean` (Mathlib):
+Copyright (c) 2024 Thomas Zhu. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Thomas Zhu, Etienne Marion
+-/
+
 module
 
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
@@ -529,9 +538,10 @@ $$f_n(t_{\text{next}}) - f_n(t_{\text{prev}}) =
 \mathrm{scaledIncrement}\,R\,n\,\lfloor n t_{\text{prev}} \rfloor\,\lfloor n t_{\text{next}} \rfloor
 + \frac{1}{\sqrt{n}}\Bigl(\{n t_{\text{next}}\} R_{\lfloor n t_{\text{next}} \rfloor}
 - \{n t_{\text{prev}}\} R_{\lfloor n t_{\text{prev}} \rfloor}\Bigr).$$
-The error term is uniformly bounded by $2/\sqrt{n}$ (provided $|R_i| \le 1$) and so
-vanishes in the limit; this is the basis of the Slutsky argument for
-`brownian_fdd_convergence`. -/
+For nonnegative times the error term is uniformly bounded by $2/\sqrt{n}$ (provided
+$|R_i| \le 1$) and so vanishes in the limit; this is the basis of the Slutsky argument for
+`brownian_fdd_convergence`. (For a negative time `t`, `⌊n t⌋₊ = 0`, so the coefficient
+`n t - ⌊n t⌋₊ = n t` is unbounded; the identity itself holds for all times.) -/
 lemma fnIncrement_eq_scaledIncrement_add_error {Ω : Type*} (R : ℕ → Ω → ℝ) (n : ℕ)
     (t_prev t_next : ℝ) (ω : Ω) :
     fnIncrement R n t_prev t_next ω =
