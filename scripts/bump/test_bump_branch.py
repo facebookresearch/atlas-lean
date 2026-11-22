@@ -247,6 +247,18 @@ class MergeAdjacentTest(unittest.TestCase):
         self.assertEqual(bb.merge_adjacent(self.BASE, ours, theirs), expected)
         self.assertEqual(bb.merge_conflicts_adjacent(self.BASE, ours, theirs), expected)
 
+    def test_disjoint_changes(self):
+        base = b"a\n/-- doc -/\ndef x := 1\nb\nc\n"
+        neighbours = (b"a\n/-- doc -/\nnoncomputable def x := 1\nb\nc\n", b"a\n/-- new doc -/\ndef x := 1\nb\nc\n")
+        self.assertTrue(bb.disjoint_changes(base, *neighbours), "edits on neighbouring lines are different edits")
+        shared = (b"a\n/-- doc -/\nnoncomputable def x := 1\nB\nc\n", b"a\n/-- doc -/\nnoncomputable def x := 1\nb\nC\n")
+        self.assertFalse(bb.disjoint_changes(base, *shared), "a line changed the same way on both sides")
+        self.assertFalse(bb.disjoint_changes(base, b"a\nX\n/-- doc -/\ndef x := 1\nb\nc\n",
+                                             b"a\nY\n/-- doc -/\ndef x := 1\nb\nc\n"), "insertions at one place")
+        self.assertFalse(bb.disjoint_changes(base, b"a\nnew line\n/-- doc -/\ndef x := 1\nb\nc\n",
+                                             b"a\n/-- doc -/\ndef x := 1\nb\nc\nnew line\n"), "a line added by both")
+        self.assertFalse(bb.disjoint_changes(base, base, neighbours[1]), "one side changed nothing")
+
     def test_what_needs_a_person(self):
         same_line = (self.BASE.replace("def x := 1", "noncomputable def x := 1"),
                      self.BASE.replace("def x := 1", "def x : Nat := 1"))
@@ -731,6 +743,62 @@ class GitTest(unittest.TestCase):
                 self.assertEqual(proc.returncode, 3, proc.stdout + proc.stderr)
                 self.assertIn("first rationales differ", proc.stdout)
                 self.assertEqual(self.git("rev-parse", "HEAD").stdout, head)
+
+    def test_a_shared_edit_beside_independent_edits_needs_a_person(self):
+        files, rows = self.base_tree()
+        i = "MathlibExt/I.lean"
+        body = "".join(f"def i{n} := {n}\n" for n in range(20))
+        synced = META + "\n" + body
+        identical = {"path": i, "disposition": "identical", "published_sha256": fms.sha256(synced.encode()),
+                     "upstream_sha256": fms.sha256(body.encode())}
+        rows = rows + [identical]
+        self.write({i: synced}, rows, "sync I")
+        shared = synced.replace("def i9 ", "noncomputable def i9 ")
+
+        def diverge_i(text, rationale):
+            row = {**identical, "disposition": "diverged", "published_sha256": fms.sha256(text.encode()),
+                   "rationale": rationale, "backport": "pending"}
+            return [row if r["path"] == i else r for r in rows]
+
+        bump_text = shared.replace("def i1 := 1", "def i1 : Nat := 1")
+        main_text = shared.replace("def i17 := 17", "def i17 : Nat := 17")
+        self.git("checkout", "-q", "-b", "bump")
+        self.write({i: bump_text}, diverge_i(bump_text, "Annotation on i9 solely from PR #12."), "bump")
+        self.git("checkout", "-q", "main")
+        self.write({i: main_text}, diverge_i(main_text, "Annotation on i9 solely from PR #21."), "Port I (#21)")
+        self.git("checkout", "-q", "bump")
+        head = self.git("rev-parse", "HEAD").stdout
+        proc = self.tool("merge-main", "--main", "main")
+        self.assertEqual(proc.returncode, 3, proc.stdout + proc.stderr)
+        self.assertIn("edits may overlap", proc.stdout)
+        self.assertEqual(self.git("rev-parse", "HEAD").stdout, head)
+
+    def test_first_accounts_of_disjoint_edits_are_combined(self):
+        files, rows = self.base_tree()
+        i = "MathlibExt/I.lean"
+        body = "".join(f"def i{n} := {n}\n" for n in range(20))
+        synced = META + "\n" + body
+        identical = {"path": i, "disposition": "identical", "published_sha256": fms.sha256(synced.encode()),
+                     "upstream_sha256": fms.sha256(body.encode())}
+        rows = rows + [identical]
+        self.write({i: synced}, rows, "sync I")
+
+        def diverge_i(text, rationale):
+            row = {**identical, "disposition": "diverged", "published_sha256": fms.sha256(text.encode()),
+                   "rationale": rationale, "backport": "pending"}
+            return [row if r["path"] == i else r for r in rows]
+
+        bump_text = synced.replace("def i1 := 1", "noncomputable def i1 := 1")
+        main_text = synced.replace("def i17 := 17", "def i17 : Nat := 17")
+        self.git("checkout", "-q", "-b", "bump")
+        self.write({i: bump_text}, diverge_i(bump_text, "Adapted i1 to the new toolchain."), "bump")
+        self.git("checkout", "-q", "main")
+        self.write({i: main_text}, diverge_i(main_text, "Typed i17 (#22)."), "Type i17 (#22)")
+        self.git("checkout", "-q", "bump")
+        proc = self.tool("merge-main", "--main", "main")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        row = bb.manifest_rows((self.repo / bb.MANIFEST).read_text())[i]
+        self.assertEqual(row["rationale"], "Typed i17 (#22). Also: Adapted i1 to the new toolchain.")
 
     def test_refuses_a_dirty_tree(self):
         self.base_tree()

@@ -35,8 +35,9 @@ the file resolved and staged:
   stays, and the other side's added sentences follow it)
 - the staged file is git's clean merge of the two sides, or --adjacent's, even if that
   equals one side: the staged hash, the other fields merged three ways, and the two
-  rationales combined (if it equals one side and there was no base rationale, two
-  different first rationales go to a person: they may describe the same edit);
+  rationales combined (with no base rationale, two different first rationales are
+  combined only when the two edits provably touch different lines; otherwise they may
+  describe the same edit and go to a person);
 - a conflict resolved by keeping main's file: main's row (or the bump's, for the bump's
   file), as long as the other side changed nothing else in the row.
 Anything else, such as a removed row, a file resolved by hand or put back to the merge
@@ -238,20 +239,19 @@ def combine_rationales(b, o: dict, t: dict, mode: str) -> str | None:
 
     mode "same": both sides made the same change to the file, so two different
     rationales are two accounts of one change and are never joined. mode "row": one side
-    changed only the row. mode "contained": the merge equals one side's file, whose change
-    contains the other's, so the two accounts may describe the same edit. mode "distinct":
-    the staged file merges two different changes and equals neither side. Otherwise a side
-    that rewrote the base rationale (a correction, say) keeps its account, and the other
-    side's added sentences follow it; when both rewrote it, or there was no base rationale
-    and the changes may overlap (modes "row" and "contained"), the accounts may contradict
-    each other and a person writes one."""
+    changed only the row. mode "overlap": both changed the file and the edits may share
+    lines (one may contain the other). mode "distinct": the edits provably touch different
+    lines (`disjoint_changes`). Otherwise a side that rewrote the base rationale (a
+    correction, say) keeps its account, and the other side's added sentences follow it;
+    when both rewrote it, or there was no base rationale and the changes may overlap (modes
+    "row" and "overlap"), the accounts may contradict each other and a person writes one."""
     base = (b or {}).get("rationale", "").strip()
     mine, theirs = o.get("rationale", "").strip(), t.get("rationale", "").strip()
     if mine in (base, theirs):
         return theirs
     if theirs == base:
         return mine
-    if mode == "same" or (mode in ("row", "contained") and not base):
+    if mode == "same" or (mode in ("row", "overlap") and not base):
         return None
     added_by_bump, added_by_main = appended(base, mine), appended(base, theirs)
     if added_by_bump is not None and added_by_bump == added_by_main:
@@ -288,7 +288,7 @@ def merge_both_changed(path: str, b, o: dict, t: dict, versions) -> tuple[dict |
         rationale = combine_rationales(b, o, t, mode)
         if rationale is None:
             why = {"same": "both sides describe the same change differently",
-                   "contained": "one side's change contains the other's and the two first rationales differ",
+                   "overlap": "both sides' first rationales differ and their edits may overlap",
                    }.get(mode, "the two sides' rationales cannot be combined")
             return None, "", f"{why}; write one rationale that covers both"
         if file_changed_from_main and rationale == t.get("rationale", "").strip():
@@ -307,7 +307,8 @@ def merge_both_changed(path: str, b, o: dict, t: dict, versions) -> tuple[dict |
     if data == files["auto"]:
         # Git's own merge (or --adjacent's) keeps both sides' changes, even when it comes out
         # equal to one side because that side's change contains the other's.
-        return combined("both", "contained" if data in (ours, theirs) else "distinct", data != theirs)
+        disjoint = data not in (ours, theirs) and disjoint_changes(base, ours, theirs)
+        return combined("both", "distinct" if disjoint else "overlap", data != theirs)
     # A conflict resolved by keeping one side's file drops the other side's change.
     if data == theirs:
         if others(o) != others(b):
@@ -426,6 +427,28 @@ def edits(base: list[str], side: list[str]) -> list[tuple[int, int, list[str]]]:
     """The changes from `base` to `side` as (start, end, new lines) over base line ranges."""
     matcher = difflib.SequenceMatcher(None, base, side, autojunk=False)
     return [(i1, i2, side[j1:j2]) for tag, i1, i2, j1, j2 in matcher.get_opcodes() if tag != "equal"]
+
+
+def disjoint_changes(base: bytes, ours: bytes, theirs: bytes) -> bool:
+    """Whether the two sides provably made different edits: no base line is changed by both,
+    neither inserts at the same place as the other or inside the other's change, and no
+    line with a letter or digit was added by both. A shared edit (the same line changed the
+    same way on both sides) always fails this; two edits on neighbouring lines pass."""
+    try:
+        b, o, t = (lines_of(data.decode("utf-8")) for data in (base, ours, theirs))
+    except UnicodeDecodeError:
+        return False
+    mine, other = edits(b, o), edits(b, t)
+    if not mine or not other:
+        return False
+    for s1, e1, _ in mine:
+        for s2, e2, _ in other:
+            if s1 < e2 and s2 < e1:  # both change some of the same lines
+                return False
+            if (s1 == e1 and s2 <= s1 <= e2) or (s2 == e2 and s1 <= s2 <= e1):  # an insertion there
+                return False
+    added = lambda changes: {line.strip() for _, _, new in changes for line in new if re.search(r"\w", line)}
+    return not added(mine) & added(other)
 
 
 DOC_OPENERS = ("/--", "/-!")
