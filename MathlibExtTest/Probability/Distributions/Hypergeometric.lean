@@ -54,6 +54,36 @@ example : ∑ k ∈ range 3, (k : ℝ) * hypergeometricReal 5 2 2 k = 2 * 2 / 5 
 example : ∑ k ∈ range 3, (k : ℝ) * hypergeometricReal 5 2 2 k = 4 / 5 := by
   norm_num [Finset.sum_range_succ, hypergeometricReal, Nat.choose]
 
+/-- Second factorial moment for `N = 5`, `K = 2`, `n = 2`: `2·1·2·1 / (5·4) = 1/5`, by the
+theorem and by direct evaluation (only `k = 2` contributes: `2 · 1 · 1/10`). -/
+example : ∑ k ∈ range 3, (k : ℝ) * ((k : ℝ) - 1) * hypergeometricReal 5 2 2 k = 1 / 5 := by
+  rw [sum_mul_sub_one_mul_hypergeometricReal (by norm_num) (by norm_num) (by norm_num)]
+  norm_num
+
+example : ∑ k ∈ range 3, (k : ℝ) * ((k : ℝ) - 1) * hypergeometricReal 5 2 2 k = 1 / 5 := by
+  norm_num [Finset.sum_range_succ, hypergeometricReal, Nat.choose]
+
+/-- Variance for `N = 5`, `K = 2`, `n = 2`: `2·2·3·3 / (5²·4) = 9/25`, by the theorem and by
+direct evaluation around the mean `4/5`. -/
+example : ∑ k ∈ range 3, ((k : ℝ) - 2 * 2 / 5) ^ 2 * hypergeometricReal 5 2 2 k = 9 / 25 := by
+  have h := sum_sq_sub_mean_mul_hypergeometricReal (N := 5) (K := 2) (n := 2) (by norm_num)
+    (by norm_num) (by norm_num)
+  norm_num at h ⊢
+  linarith
+
+example : ∑ k ∈ range 3, ((k : ℝ) - 4 / 5) ^ 2 * hypergeometricReal 5 2 2 k = 9 / 25 := by
+  norm_num [Finset.sum_range_succ, hypergeometricReal, Nat.choose]
+
+/-- Boundary `n = N`: drawing the whole urn is deterministic, variance `0`. -/
+example : ∑ k ∈ range 5, ((k : ℝ) - 4 * 3 / 4) ^ 2 * hypergeometricReal 4 3 4 k = 0 := by
+  have h := sum_sq_sub_mean_mul_hypergeometricReal (N := 4) (K := 3) (n := 4) (by norm_num)
+    (by norm_num) (by norm_num)
+  norm_num at h ⊢
+  linarith
+
+#print axioms sum_mul_sub_one_mul_hypergeometricReal
+#print axioms sum_sq_sub_mean_mul_hypergeometricReal
+
 /-- The `PMF` assigns the hypergeometric mass. -/
 example : hypergeometric 5 2 2 (by norm_num) (by norm_num) 1 = ENNReal.ofReal (3 / 5) := by
   rw [hypergeometric_apply]

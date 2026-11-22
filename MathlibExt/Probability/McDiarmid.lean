@@ -21,16 +21,6 @@ namespace MathlibExt.Probability.McDiarmid
 # McDiarmid bounded-differences
 -/
 
-/-- Product weights are nonnegative. -/
-private lemma prod_weight_nonneg
-    {α : Type*}
-    {n : ℕ}
-    (p : α → ℝ)
-    (hp_nonneg : ∀ a, 0 ≤ p a)
-    (x : Fin n → α) :
-    0 ≤ ∏ i : Fin n, p (x i) :=
-  Finset.prod_nonneg fun _ _ => hp_nonneg _
-
 /-- Product weights sum to one. -/
 private lemma prod_weight_sum
     {α : Type*} [Fintype α]
@@ -414,7 +404,7 @@ theorem mcdiarmid_one_sided_finite_iid_of_sum_sq_eq_zero
     simpa only [neg_mul, Function.comp_def, id] using
       Real.tendsto_exp_neg_atTop_nhds_zero.comp (Filter.tendsto_id.atTop_mul_const ht)
   exact le_antisymm (ge_of_tendsto htend ((Filter.eventually_ge_atTop 0).mono hle))
-    (Finset.sum_nonneg fun x _ => prod_weight_nonneg p hp_nonneg x)
+    (Finset.sum_nonneg fun _ _ => Finset.prod_nonneg fun _ _ => hp_nonneg _)
 
 set_option linter.unusedDecidableInType false in
 /--

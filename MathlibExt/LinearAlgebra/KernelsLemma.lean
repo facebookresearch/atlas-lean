@@ -111,7 +111,7 @@ Sources: Mathlib `docs/undergrad.yaml`, Linear algebra / Structure theory of end
 kernels lemma; https://fr.wikipedia.org/wiki/Lemme_des_noyaux; S. Axler, Linear Algebra Done
 Right, 4th ed., Springer (2024), Section 8C.
 -/
-theorem kernels_lemma_pairwise_isCoprime {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem kernels_lemma_pairwise_isCoprime {ι : Type*} [Fintype ι]
     (f : Module.End R M) (p : ι → R[X])
     (hcop : Pairwise fun i j => IsCoprime (p i) (p j)) :
     iSupIndep (fun i => LinearMap.ker (aeval f (p i))) ∧

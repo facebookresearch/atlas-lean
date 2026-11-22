@@ -645,6 +645,7 @@ theorem isReducedRowEchelon_unique_of_rowEquivalent
   change R₁ i (e (e.symm j)) = R₂ i (e (e.symm j)) at hij
   simpa only [e.apply_symm_apply] using hij
 
+omit [LinearOrder m] [LinearOrder n] in
 /--
 **Invertible row operations preserve the null space.** Let $K$ be a field, let $m$ and $n$ be
 finite linearly ordered sets, let $A$ be an $m \times n$ matrix over $K$, and let $P$ be an

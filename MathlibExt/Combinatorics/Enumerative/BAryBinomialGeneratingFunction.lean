@@ -13,12 +13,12 @@ public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Algebra.Ring.Basic
 public import MathlibExt.Combinatorics.Enumerative.BAryBinomialCoefficient
-import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Data.List.GetD
 import Mathlib.Data.Nat.Choose.Sum
 import Mathlib.Data.Nat.Digits.Lemmas
 import Mathlib.Tactic.Ring
+import Mathlib.Data.Fintype.BigOperators
 
 @[expose] public section
 

@@ -247,13 +247,9 @@ private lemma chap9H_continuousOn : ContinuousOn chap9H (Set.Icc 0 (Real.pi / 4)
   unfold chap9H
   exact h
 
-private lemma chap9_two_mul_hasDerivAt (x : ℝ) :
-    HasDerivAt (fun x : ℝ => 2 * x) 2 x := by
-  simpa using (hasDerivAt_id' x).const_mul (2 : ℝ)
-
 private lemma chap9_sin_two_mul_hasDerivAt (x : ℝ) :
     HasDerivAt (fun x : ℝ => Real.sin (2 * x)) (Real.cos (2 * x) * 2) x :=
-  (Real.hasDerivAt_sin (2 * x)).comp x (chap9_two_mul_hasDerivAt x)
+  (Real.hasDerivAt_sin (2 * x)).comp x (hasDerivAt_const_mul 2)
 
 private lemma chap9_Fcos_hasDerivAt {x : ℝ} (hx : x ∈ Set.Ioo 0 (Real.pi / 4)) :
     HasDerivAt (fun x : ℝ => arcsinIntegralSeries (Real.cos x))

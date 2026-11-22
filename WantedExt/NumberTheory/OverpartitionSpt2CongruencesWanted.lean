@@ -15,7 +15,8 @@ public import MathlibExt.Combinatorics.Enumerative.Partition.Overpartition
 /-!
 # Congruences for `spt2‾(n)` (statements)
 
-Statement-only targets from Robson da Silva, *Extending Congruences for the Number of Smallest Parts in Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62.
+Statement-only targets from Robson da Silva, *Extending Congruences for the Number of Smallest Parts
+in Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62.
 `spt2‾(n)` is the number of smallest parts in the overpartitions of `n` whose smallest part is even
 and not overlined, counted over the repo's `Nat.Overpartition`. The q-series dissections are
 stated with `f_k = (q^k;q^k)_∞ = qPochhammerInfRaw (q^k) (q^k)` for complex `‖q‖ < 1`, with
@@ -31,7 +32,9 @@ open QPochhammer
 /-- Contribution of one overpartition to `spt2‾`: if its smallest part `s` is even and `s` is
 not overlined, the number of copies of `s`; otherwise `0` (also for the empty overpartition).
 
-Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Section 1 (definition of `spt2‾(n)`). -/
+Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in Overpartitions
+with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Section 1 (definition of
+`spt2‾(n)`). -/
 public def overpartitionSpt2Contribution {n : ℕ} (O : Nat.Overpartition n) : ℕ :=
   if h : O.toPartition.parts.toFinset.Nonempty then
     let s := O.toPartition.parts.toFinset.min' h
@@ -43,13 +46,15 @@ public def overpartitionSpt2Contribution {n : ℕ} (O : Nat.Overpartition n) : �
 even and not overlined. The paper's example gives `spt2‾(4) = 3` (from `4` and `2 + 2`; `2̄ + 2`
 does not count); the values for `n = 0, …, 8` are `0, 0, 1, 0, 3, 2, 6, 6, 15`.
 
-Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Section 1. -/
+Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in Overpartitions
+with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Section 1. -/
 public def overpartitionSpt2 (n : ℕ) : ℕ :=
   ∑ O : Nat.Overpartition n, overpartitionSpt2Contribution O
 
 /-- `spt2‾(0) = 0`: the empty overpartition has no smallest part.
 
-Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Section 1. -/
+Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in Overpartitions
+with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Section 1. -/
 public theorem overpartitionSpt2_zero : overpartitionSpt2 0 = 0 := by
   refine Finset.sum_eq_zero fun O _ => ?_
   have h : O.toPartition.parts = 0 := by
@@ -60,7 +65,8 @@ public theorem overpartitionSpt2_zero : overpartitionSpt2 0 = 0 := by
 
 /-- An overpartition whose smallest part is odd contributes nothing to `spt2‾`.
 
-Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in Overpartitions with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Section 1. -/
+Source: Robson da Silva, *Extending Congruences for the Number of Smallest Parts in Overpartitions
+with Smallest Part Even*, INTEGERS 26 (2026), Article A62, Section 1. -/
 public theorem overpartitionSpt2Contribution_eq_zero_of_odd {n : ℕ} (O : Nat.Overpartition n)
     (h : O.toPartition.parts.toFinset.Nonempty)
     (hodd : Odd (O.toPartition.parts.toFinset.min' h)) :

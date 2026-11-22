@@ -11,7 +11,6 @@ Author: Nam Trang
 -/
 module
 
-public import Mathlib.Order.Defs.Unbundled
 public import MathlibExt.SetTheory.Cardinal.Cofinality.CountableSubsets
 
 @[expose] public section

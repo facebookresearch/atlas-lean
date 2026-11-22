@@ -13,8 +13,6 @@ module
 
 public import Mathlib.Data.Set.Countable
 public import Mathlib.Order.PFilter
-public import Mathlib.SetTheory.Cardinal.Aleph
-public import Mathlib.SetTheory.Cardinal.Basic
 public import Mathlib.SetTheory.Cardinal.Order
 
 @[expose] public section

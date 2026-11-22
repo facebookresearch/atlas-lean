@@ -128,7 +128,7 @@ diagonalization; R. A. Horn and C. R. Johnson, Matrix Analysis, 2nd ed., Cambrid
 Press (2013), Theorem 1.3.12.
 -/
 theorem exists_eigenbasis_of_isSemisimple_of_splits
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (f : Module.End K V) (hs : f.IsSemisimple) (h : f.charpoly.Splits)
     (hdim : Module.finrank K V = Fintype.card ι) :
     ∃ (b : Module.Basis ι K V) (μ : ι → K), ∀ i, f.HasEigenvector (μ i) (b i) := by

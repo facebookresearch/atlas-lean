@@ -61,11 +61,6 @@ namespace MathlibExt.Analysis.InnerProductSpace.StrangLemma
 variable {E V : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
   [NormedAddCommGroup V] [InnerProductSpace ℝ V]
 
-/-- For real `a`, `a ≤ ‖a‖`. -/
-private theorem le_norm_self_real (a : ℝ) : a ≤ ‖a‖ := by
-  rw [Real.norm_eq_abs]
-  exact le_abs_self a
-
 /-- **Strang's first lemma** (pointwise form): if `u` solves the exact
 variational problem `B u w = ℓ w` and `uh` solves the perturbed problem
 `Bh uh w = ℓh w` on the discrete space `V` (embedded by the linear isometry
@@ -113,7 +108,7 @@ theorem strang_first_lemma
   have hbD : ‖D vh (uh - vh)‖ ≤ ‖D‖ * ‖vh‖ * ‖uh - vh‖ := D.le_opNorm₂ vh _
   have hbound : Bh (uh - vh) (uh - vh)
       ≤ (‖F‖ + ‖B‖ * ‖u - J vh‖ + ‖D‖ * ‖vh‖) * ‖uh - vh‖ := by
-    calc Bh (uh - vh) (uh - vh) ≤ ‖Bh (uh - vh) (uh - vh)‖ := le_norm_self_real _
+    calc Bh (uh - vh) (uh - vh) ≤ ‖Bh (uh - vh) (uh - vh)‖ := Real.le_norm_self _
       _ = ‖F (uh - vh) + B (u - J vh) (J (uh - vh)) - D vh (uh - vh)‖ := by
           rw [hident]
       _ ≤ ‖F (uh - vh)‖ + ‖B (u - J vh) (J (uh - vh))‖ + ‖D vh (uh - vh)‖ := by

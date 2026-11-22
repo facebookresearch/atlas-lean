@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Analysis.InnerProductSpace.LineIsometry
 public import MathlibExt.Probability.Geometry.LogConcaveUniform
 public import Mathlib.Tactic.FieldSimp
 
@@ -25,12 +26,7 @@ namespace MathlibExt.Probability.ThinShell
 open MeasureTheory
 open scoped ENNReal
 
-/-- The volume-preserving orthonormal identification of ℝ with EuclideanSpace ℝ (Fin 1). -/
-noncomputable def lineIsometry : ℝ ≃ₗᵢ[ℝ] EuclideanSpace ℝ (Fin 1) :=
-  (OrthonormalBasis.singleton (Fin 1) ℝ).repr
-
-@[simp] theorem lineIsometry_apply (x : ℝ) (i : Fin 1) : lineIsometry x i = x :=
-  OrthonormalBasis.singleton_repr x i
+export MathlibExt.Analysis.InnerProductSpace.LineIsometry (lineIsometry lineIsometry_apply)
 
 /-- An actual closed symmetric interval in one-dimensional Euclidean space. -/
 def symmetricInterval (a : ℝ) : Set (EuclideanSpace ℝ (Fin 1)) :=

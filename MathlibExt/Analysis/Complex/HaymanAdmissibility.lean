@@ -43,22 +43,37 @@ namespace MetaMathlibExt
 open Asymptotics Filter MeasureTheory Metric Set
 open scoped Interval Real Topology
 
-/-- Hayman auxiliary function `A(r)`, the real part of `r * G'(r) / G(r)`. -/
+/-- **Hayman auxiliary function $A$.** For a function $G : \mathbb{C} \to \mathbb{C}$ and a real
+number $r$, $A(r)$ is the real part of $r\,G'(r)/G(r)$, where $G'$ is the complex derivative of
+$G$. -/
 noncomputable def haymanAuxiliaryA (G : ℂ → ℂ) (r : ℝ) : ℝ :=
   Complex.re (((r : ℂ) * deriv G (r : ℂ) / G (r : ℂ)))
 
-/-- Hayman auxiliary function `B(r) = r * A'(r)`. -/
+/-- **Hayman auxiliary function $B$.** For a function $G : \mathbb{C} \to \mathbb{C}$ and a real
+number $r$, $B(r) = r\,A'(r)$, where $A$ is the Hayman auxiliary function of $G$, viewed as a
+real function of $r$, and $A'$ is its derivative. -/
 noncomputable def haymanAuxiliaryB (G : ℂ → ℂ) (r : ℝ) : ℝ :=
   r * deriv (haymanAuxiliaryA G) r
 
-/-- Hayman admissibility for finite radius: analyticity on the disk, positivity
-and reality of the logarithmic derivative on the positive axis, capture of both
-auxiliary functions, plus uniform locality and decay cutoffs. The full
-capture/locality/decay definition here follows the Flajolet-Sedgewick
-formulation rather than the abbreviated maximum-modulus restatement (Jiyou Li,
-"Asymptotic Estimate for the Multinomial Coefficients", Journal of Integer
-Sequences 23 (2020), Article 20.1.3, Lemma [Hayman] `lem2`), whose
-maximum-modulus condition is insufficient as stated and is not used. -/
+/-- **Hayman-admissible function (finite radius).** Let $G : \mathbb{C} \to \mathbb{C}$, let
+$R_0$ and $\rho$ be real numbers, write $G'$ for the complex derivative of $G$ and $A$, $B$ for
+the Hayman auxiliary functions of $G$, and say that a property holds for $r$ near $\rho$ if there
+is $\eta > 0$ such that it holds for every $r \in (R_0, \rho)$ with $r > \rho - \eta$. Then $G$ is
+Hayman admissible on $(R_0, \rho)$ when $0 < R_0 < \rho$; $G$ is analytic on the open disk
+$|z| < \rho$; for every $r \in (R_0, \rho)$, $G(r)$ is a positive real number and
+$r\,G'(r)/G(r)$ is real; $A(r) \to \infty$ and $B(r) \to \infty$ as $r$ tends to $\rho$ within
+$(R_0, \rho)$; and there is a function $\delta : \mathbb{R} \to \mathbb{R}$ with
+$0 < \delta(r) < \pi$ for $r$ near $\rho$ such that for every $\varepsilon > 0$ and all $r$ near
+$\rho$, every real $\theta$ with $|\theta| \le \delta(r)$ satisfies the locality estimate
+$$\left|G(re^{i\theta}) - G(r)\,e^{i\theta A(r) - \theta^2 B(r)/2}\right|
+\le \varepsilon \left|G(r)\,e^{i\theta A(r) - \theta^2 B(r)/2}\right|,$$
+and every real $\theta$ with $\delta(r) \le |\theta| < \pi$ satisfies the decay estimate
+$|G(re^{i\theta})| \le \varepsilon\,|G(r)|/\sqrt{B(r)}$.
+
+The capture, locality and decay conditions follow the Flajolet-Sedgewick formulation rather than
+the abbreviated maximum-modulus restatement (Jiyou Li, "Asymptotic Estimate for the Multinomial
+Coefficients", Journal of Integer Sequences 23 (2020), Article 20.1.3, Lemma [Hayman] `lem2`),
+whose maximum-modulus condition is insufficient as stated and is not used. -/
 noncomputable def IsHaymanAdmissible (G : ℂ → ℂ) (R0 ρ : ℝ) : Prop :=
   0 < R0 ∧ R0 < ρ ∧
   AnalyticOn ℂ G (Metric.ball (0 : ℂ) ρ) ∧
@@ -864,15 +879,20 @@ private theorem hayman_coefficient_ratio_identity
   push_cast
   ring
 
-/-- Finite-radius specialization of the Hayman coefficient asymptotic
-(arXiv:1906.07169v2, tex lines 495-506): under admissibility, power-series
-expansion, and saddle-point uniqueness,
-`coeff n` is equivalent to `G(r_n) / (r_n^n * sqrt(2 * pi * B(r_n)))`.
-
-Proves `Wanted` entry `hayman_coefficient_asymptotic`.
+/-- **Hayman's coefficient asymptotic (finite radius).** Let $G : \mathbb{C} \to \mathbb{C}$ be
+Hayman admissible on $(R_0, \rho)$, with Hayman auxiliary functions $A$ and $B$. Let
+$(c_n)_{n \ge 0}$ be complex numbers such that $\sum_{n \ge 0} c_n z^n$ converges absolutely to
+$G(z)$ for every complex $z$ with $|z| < \rho$, and let $(r_n)_{n \ge 0}$ be real numbers such
+that for all sufficiently large $n$, $r_n \in (R_0, \rho)$, $A(r_n) = n$, and $r_n$ is the only
+$r \in (R_0, \rho)$ with $A(r) = n$. Then, as $n \to \infty$,
+$$c_n \sim \frac{G(r_n)}{r_n^n \sqrt{2\pi B(r_n)}}.$$
 
 Proof: The saddle converges to the finite radius, Cauchy's coefficient integral is split at the
 admissibility cutoff, and the central Gaussian term and decaying tails are normalized separately.
+
+Proves `Wanted` entry `hayman_coefficient_asymptotic`.
+
+Source: arXiv:1906.07169v2, tex lines 495-506.
 -/
 theorem hayman_coefficient_asymptotic
     (G : ℂ → ℂ) (coeff : ℕ → ℂ) (R0 ρ : ℝ) (saddle : ℕ → ℝ) :

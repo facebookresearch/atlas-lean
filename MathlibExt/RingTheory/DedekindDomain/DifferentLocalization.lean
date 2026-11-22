@@ -48,10 +48,12 @@ variable (S : Submonoid A) (hS : S ≤ nonZeroDivisors A)
 local notation "Aₛ" => Localization.subalgebra.ofField K S hS
 
 /-- The canonical localization of an integrally closed domain is integrally closed. -/
-instance : IsIntegrallyClosed Aₛ := isIntegrallyClosed_of_isLocalization _ S hS
+instance instIsIntegrallyClosedSubtypeMemSubalgebraOfField_mathlibExt :
+    IsIntegrallyClosed Aₛ := isIntegrallyClosed_of_isLocalization _ S hS
 
 /-- The canonical localization of a Dedekind domain is a Dedekind domain. -/
-instance : IsDedekindDomain Aₛ := IsLocalization.isDedekindDomain A hS _
+instance instIsDedekindDomainSubtypeMemSubalgebraOfField_mathlibExt :
+    IsDedekindDomain Aₛ := IsLocalization.isDedekindDomain A hS _
 
 variable (SB : Type*) [CommRing SB] [Algebra B SB]
   [IsLocalization (Algebra.algebraMapSubmonoid B S) SB]

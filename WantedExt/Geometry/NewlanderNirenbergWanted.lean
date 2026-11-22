@@ -23,14 +23,18 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Geometry.NewlanderNirenberg` — newlander_nirenberg (manifest `manifests/problems/newlander_nirenberg.toml`, rev 1, submitter Kim Morrison, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Geometry.NewlanderNirenberg` —
+newlander_nirenberg (manifest `manifests/problems/newlander_nirenberg.toml`, rev 1, submitter Kim
+Morrison, status active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Geometry.NewlanderNirenbergWanted` namespace. Mathematical
-statements are unchanged. Source: A. Newlander and L. Nirenberg, `Complex analytic coordinates in almost complex manifolds`, Annals of Math, 65 (3) 1957, 391-404.
+and placed the declarations in the `MathlibExt.Geometry.NewlanderNirenbergWanted` namespace.
+Mathematical
+statements are unchanged. Source: A. Newlander and L. Nirenberg,
+`Complex analytic coordinates in almost complex manifolds`, Annals of Math, 65 (3) 1957, 391-404.
 -/
 module
 
@@ -116,7 +120,9 @@ differential is complex linear:
   `dφ_y (J y v) = i · dφ_y v`.
 
 Such charts are holomorphic coordinates for `J`. -/
-/-- Source: A. Newlander and L. Nirenberg, `Complex analytic coordinates in almost complex manifolds`, Annals of Math, 65 (3) 1957, 391-404. Via leanprover/lean-eval@38361be, problem `newlander_nirenberg`. -/
+/-- Source: A. Newlander and L. Nirenberg,
+`Complex analytic coordinates in almost complex manifolds`, Annals of Math, 65 (3) 1957, 391-404.
+Via leanprover/lean-eval@38361be, problem `newlander_nirenberg`. -/
 public theorem_wanted newlander_nirenberg {n : ℕ} {U : Set (E n)} (_hU : IsOpen U)
     (J : E n → E n →L[ℝ] E n) (_hJ : IsAlmostComplexOn J U)
     (_hN : NijenhuisVanishesOn J U) {x : E n} (_hx : x ∈ U) :

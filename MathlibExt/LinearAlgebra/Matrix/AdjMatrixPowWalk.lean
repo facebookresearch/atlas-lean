@@ -50,13 +50,6 @@ private theorem cons_prod_aux {k : ℕ} {R : Type*} [CommSemiring R]
     rw [h2 i, h3 i]
   rw [hprod]
 
-private theorem cons_last_aux {k : ℕ} (n : ℕ) (a : Fin k) (q : Fin (n + 1) → Fin k) :
-    (Fin.cons (α := fun _ => Fin k) a q) (Fin.last (n + 1)) = q (Fin.last n) := by
-  have h : Fin.last (n + 1) = (Fin.last n).succ := by
-    simp [Fin.succ_last]
-  rw [h]
-  exact Fin.cons_succ (α := fun _ => Fin k) a q (Fin.last n)
-
 /--
 **Powers of a weighted adjacency matrix sum the weights of walks.** Let $R$ be a commutative
 semiring, let $k$ and $n$ be natural numbers, and let $A$ be a $k \times k$ matrix over $R$ with
@@ -138,7 +131,7 @@ theorem adjMatrix_pow_weighted_walk_sum
           forall_const, true_and] at hq ⊢
         constructor
         · exact Fin.cons_zero (α := fun _ => Fin k) i q
-        · rw [cons_last_aux n i q, hq]
+        · rw [Fin.cons_last, hq]
       · intro q1 hq1 q2 hq2 hEq
         have hTail : Fin.tail (Fin.cons (α := fun _ => Fin k) i q1)
             = Fin.tail (Fin.cons (α := fun _ => Fin k) i q2) := by rw [hEq]

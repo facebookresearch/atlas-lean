@@ -46,15 +46,18 @@ character-theoretic theorems from the same v1 file.
 
 namespace CharacterTheory
 
-universe u
+universe uG uV
 
 set_option linter.style.haveILetI false in
 /-- **Character values at inverses are complex conjugates.** Let $\rho$ be a representation of a
 finite group $G$ on a finite-dimensional complex vector space $V$, with character $\chi_\rho$.
-For every $g \in G$, $\chi_\rho(g^{-1}) = \overline{\chi_\rho(g)}$. -/
+For every $g \in G$, $\chi_\rho(g^{-1}) = \overline{\chi_\rho(g)}$.
+
+The group and the representation live in independent universes, so this applies to
+representations whose carrier is not in the same universe as the group. -/
 theorem char_inv_eq_conj
-    {G : Type u} [Group G] [Fintype G]
-    {V : Type u} [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V]
+    {G : Type uG} [Group G] [Fintype G]
+    {V : Type uV} [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V]
     (ρ : Representation ℂ G V) (g : G) :
     ρ.character g⁻¹ = starRingEnd ℂ (ρ.character g) := by
   classical
@@ -132,8 +135,8 @@ $G$ on a finite-dimensional complex vector space $V$, and let $\rho^*$ be its du
 For every $g \in G$, the character of $\rho^*$ at $g$ is the complex conjugate of the character of
 $\rho$ at $g$: $\chi_{\rho^*}(g) = \overline{\chi_\rho(g)}$. -/
 theorem char_dual_eq_conj
-    {G : Type u} [Group G] [Fintype G]
-    {V : Type u} [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V]
+    {G : Type uG} [Group G] [Fintype G]
+    {V : Type uV} [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V]
     (ρ : Representation ℂ G V) (g : G) :
     ρ.dual.character g = starRingEnd ℂ (ρ.character g) := by
   rw [Representation.char_dual, char_inv_eq_conj]

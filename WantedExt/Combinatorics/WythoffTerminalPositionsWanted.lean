@@ -280,7 +280,8 @@ theorem larssonSetThree_examples :
 
 /-- Theorem 17: for `ℓ ≥ 1`, the non-terminal P-positions of `K^ℓ` are exactly the `(a_n, b_n)`
 and `(b_n, a_n)` of the mex recursion; stated as: terminal positions plus these pairs form a
-stable (no move inside) and absorbing (a move into it from outside) set of the move relation, which determines the P-positions
+stable (no move inside) and absorbing (a move into it from outside) set of the move relation, which
+determines the P-positions
 (`MetaMathlibExt.pPositions_unique`).
 
 Source: Antoine Renard and Michel Rigo, *Variants of Wythoff Game With Terminal Positions

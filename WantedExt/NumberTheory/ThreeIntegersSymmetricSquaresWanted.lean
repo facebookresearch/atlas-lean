@@ -80,7 +80,8 @@ def IsSumTwoNonzeroSquaresℤ (z : ℤ) : Prop :=
 /-- **Lemma 1**: a ratio of two nonzero rational sums of two squares is a sum
 of two rational squares.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Lemma 1. -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Lemma 1. -/
 theorem_wanted sum_two_squares_div_sum_two_squaresℚ
     {α β : ℚ} (hα : α ≠ 0) (hβ : β ≠ 0)
     (hα₂ : IsSumTwoSquaresℚ α) (hβ₂ : IsSumTwoSquaresℚ β) :
@@ -88,7 +89,8 @@ theorem_wanted sum_two_squares_div_sum_two_squaresℚ
 
 /-- **Lemma 2**: the pairwise products of a solution form another solution.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Lemma 2. -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Lemma 2. -/
 theorem_wanted hasSquareElementarySymmetricFunctions_pairwise_products
     {a b c : ℤ}
     (h : HasSquareElementarySymmetricFunctions a b c) :
@@ -98,7 +100,8 @@ theorem_wanted hasSquareElementarySymmetricFunctions_pairwise_products
 squares, and scaling the rational solution gives an integer solution whose
 entries are integer sums of two squares.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Lemma 3. -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Lemma 3. -/
 theorem_wanted isSumTwoSquaresℚ_of_hasSquareElementarySymmetricFunctionsℚ_and_scaling
     {a b c : ℚ}
     (h : HasSquareElementarySymmetricFunctionsℚ a b c) :
@@ -123,7 +126,8 @@ private abbrev secondShiftedSextic (s t : ℤ) : ℤ :=
 
 /-- **Theorem 1, family (3.3)**.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.3). -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.3). -/
 theorem_wanted hasSquareElementarySymmetricFunctions_family33
     (s t : ℤ) :
     HasSquareElementarySymmetricFunctions
@@ -133,7 +137,8 @@ theorem_wanted hasSquareElementarySymmetricFunctions_family33
 
 /-- **Theorem 1, family (3.4)**.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.4). -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.4). -/
 theorem_wanted hasSquareElementarySymmetricFunctions_family34
     (s t : ℤ) :
     HasSquareElementarySymmetricFunctions
@@ -143,7 +148,8 @@ theorem_wanted hasSquareElementarySymmetricFunctions_family34
 
 /-- **Theorem 1, family (3.5)**.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.5). -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.5). -/
 theorem_wanted hasSquareElementarySymmetricFunctions_family35
     (s t : ℤ) :
     HasSquareElementarySymmetricFunctions
@@ -155,7 +161,8 @@ theorem_wanted hasSquareElementarySymmetricFunctions_family35
 
 /-- **Theorem 1, family (3.6)**.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.6). -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.6). -/
 theorem_wanted hasSquareElementarySymmetricFunctions_family36
     (s t : ℤ) :
     HasSquareElementarySymmetricFunctions
@@ -180,7 +187,8 @@ private abbrev secondDegreeTwelve (m n : ℤ) : ℤ :=
 
 /-- **Theorem 2, family (3.30)**.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Theorem 2, family (3.30). -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Theorem 2, family (3.30). -/
 theorem_wanted hasSquareElementarySymmetricFunctions_family330_and_entries_square
     (m n : ℤ) :
     let a := (m ^ 4 - n ^ 4) ^ 2 * (shiftedQuartic m n) ^ 2
@@ -192,7 +200,8 @@ theorem_wanted hasSquareElementarySymmetricFunctions_family330_and_entries_squar
 
 /-- **Theorem 2, family (3.31)**.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Theorem 2, family (3.31). -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Theorem 2, family (3.31). -/
 theorem_wanted hasSquareElementarySymmetricFunctions_family331_and_entries_square
     (m n : ℤ) :
     let a := 64 * m ^ 4 * n ^ 4 * (m ^ 2 - n ^ 2) ^ 2
@@ -203,7 +212,8 @@ theorem_wanted hasSquareElementarySymmetricFunctions_family331_and_entries_squar
 
 /-- **Theorem 2, family (3.32)**.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Theorem 2, family (3.32). -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Theorem 2, family (3.32). -/
 theorem_wanted hasSquareElementarySymmetricFunctions_family332_and_entries_square
     (m n : ℤ) :
     let a := 64 * m ^ 4 * n ^ 4 * (m ^ 2 - n ^ 2) ^ 2
@@ -217,7 +227,8 @@ theorem_wanted hasSquareElementarySymmetricFunctions_family332_and_entries_squar
 
 /-- **Theorem 2, family (3.33)**.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Theorem 2, family (3.33). -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Theorem 2, family (3.33). -/
 theorem_wanted hasSquareElementarySymmetricFunctions_family333_and_entries_square
     (m n : ℤ) :
     let a := (m ^ 4 - n ^ 4) ^ 2 * (shiftedQuartic m n) ^ 2
@@ -245,7 +256,8 @@ private abbrev degreeSixFactor (r s : ℤ) : ℤ :=
 the proof, the entries are sums of two nonzero integer squares and their
 symmetric functions are squares.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Theorem 3, family (3.34). -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Theorem 3, family (3.34). -/
 theorem_wanted hasSquareElementarySymmetricFunctions_family334_and_entries_sum_two_nonzero_squares
     (r s : ℤ) (hr : r ≠ 0) (hs : s ≠ 0) :
     let a := r ^ 2 * (r ^ 2 + s ^ 2) * (degreeEightFactor r s) ^ 2

@@ -313,6 +313,7 @@ variable {K : Type*} [Field K]
 variable {m n : Type*} [Fintype m] [DecidableEq m] [LinearOrder m]
 variable [Fintype n] [DecidableEq n] [LinearOrder n]
 
+omit [Fintype n] [DecidableEq n] [LinearOrder n] in
 /--
 **One pivot step of Gaussian elimination.** Let $K$ be a field and let $A$ be a matrix over $K$
 whose rows and columns are indexed by finite linearly ordered sets. Let $r$ and $i_0$ be row
@@ -340,6 +341,7 @@ theorem gauss_pivot_elim_step (A : Matrix m n K) (r : m) (j : n)
       ∀ i > r, (P * A.submatrix (Equiv.swap r i₀) id) i j = 0 := by
   exact gaussPivot_elimStep A r j i₀ h
 
+omit [DecidableEq n] in
 /--
 **Gaussian elimination as a product of row operations.** Let $K$ be a field and let $A$ be a
 matrix over $K$ whose rows and columns are indexed by finite linearly ordered sets. Then there

@@ -10,7 +10,7 @@ module
 
 public import Mathlib.Data.List.Basic
 import Mathlib.Data.Fintype.Perm
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.Push

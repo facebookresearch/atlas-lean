@@ -29,6 +29,10 @@ number of marked items drawn has the hypergeometric law
 * `sum_hypergeometricReal`: `∑ k ≤ n, h(k) = 1` (Vandermonde's identity,
   `Nat.add_choose_eq`).
 * `sum_mul_hypergeometricReal`: the mean is `n K / N` (for `N > 0`).
+* `sum_mul_sub_one_mul_hypergeometricReal`: the second factorial moment is
+  `n (n - 1) K (K - 1) / (N (N - 1))` (for `N > 1`).
+* `sum_sq_sub_mean_mul_hypergeometricReal`: the variance is `n K (N - K) (N - n) / (N² (N - 1))`
+  (for `N > 1`).
 
 ## References
 
@@ -125,6 +129,100 @@ theorem sum_mul_hypergeometricReal {N K n : ℕ} (hN : 0 < N) (hK : K ≤ N) (hn
         ring
     _ = n * K / N := by
         rw [div_eq_div_iff hpos.ne' hNpos.ne', h]
+
+/-- The second-factorial-moment identity
+`(∑ₖ k (k - 1) C(K, k) C(N - K, n - k)) N (N - 1) = n (n - 1) K (K - 1) C(N, n)`. -/
+private lemma sum_descFactorial_mul_choose_mul_choose {N K : ℕ} (hK : K ≤ N) (n : ℕ) :
+    (∑ k ∈ range (n + 1), k * (k - 1) * (K.choose k * (N - K).choose (n - k))) * (N * (N - 1)) =
+      n * (n - 1) * (K * (K - 1)) * N.choose n := by
+  rcases n with _ | _ | n
+  · simp
+  · simp [Finset.sum_range_succ]
+  rcases K with _ | _ | K
+  · rw [Finset.sum_eq_zero fun k _ => by rcases k with _ | k <;> simp]
+    simp
+  · rw [Finset.sum_eq_zero fun k _ => by
+      rcases k with _ | _ | k
+      · simp
+      · simp
+      · simp [Nat.choose_eq_zero_of_lt (by omega : 1 < k + 1 + 1)]]
+    simp
+  obtain ⟨N, rfl⟩ : ∃ N', N = N' + 2 := ⟨N - 2, by omega⟩
+  rw [Finset.sum_range_succ', Finset.sum_range_succ']
+  have hterm : ∀ k ∈ range (n + 1), (k + 1 + 1) * (k + 1 + 1 - 1) *
+      ((K + 1 + 1).choose (k + 1 + 1) * (N + 2 - (K + 1 + 1)).choose (n + 1 + 1 - (k + 1 + 1))) =
+      (K + 1 + 1) * (K + 1) * (K.choose k * (N - K).choose (n - k)) := by
+    intro k _
+    have h1 := Nat.add_one_mul_choose_eq K k
+    have h2 := Nat.add_one_mul_choose_eq (K + 1) (k + 1)
+    rw [Nat.add_sub_cancel, show N + 2 - (K + 1 + 1) = N - K by omega, Nat.add_sub_add_right,
+      Nat.add_sub_add_right]
+    calc (k + 1 + 1) * (k + 1) * ((K + 1 + 1).choose (k + 1 + 1) * (N - K).choose (n - k))
+        = ((K + 1 + 1).choose (k + 1 + 1) * (k + 1 + 1)) * (k + 1) *
+            (N - K).choose (n - k) := by ring
+      _ = (K + 1 + 1) * ((K + 1).choose (k + 1) * (k + 1)) * (N - K).choose (n - k) := by
+          rw [← h2]; ring
+      _ = _ := by rw [← h1]; ring
+  rw [Finset.sum_congr rfl hterm, ← Finset.mul_sum, sum_choose_mul_choose (by omega : K ≤ N) n]
+  have h3 := Nat.add_one_mul_choose_eq N n
+  have h4 := Nat.add_one_mul_choose_eq (N + 1) (n + 1)
+  have key : (N + 1 + 1) * (N + 1) * N.choose n =
+      (N + 1 + 1).choose (n + 1 + 1) * (n + 1 + 1) * (n + 1) := by
+    rw [mul_assoc, h3, ← mul_assoc, h4]
+  simp only [mul_zero, zero_mul, add_zero, Nat.add_sub_cancel]
+  calc (K + 1 + 1) * (K + 1) * N.choose n * ((N + 2) * (N + 1))
+      = (K + 1 + 1) * (K + 1) * ((N + 1 + 1) * (N + 1) * N.choose n) := by ring
+    _ = _ := by rw [key]; ring
+
+/-- **Second factorial moment.** For `1 < N`, `K ≤ N` and `n ≤ N` the hypergeometric law has
+`E[X (X - 1)] = n (n - 1) K (K - 1) / (N (N - 1))`. -/
+theorem sum_mul_sub_one_mul_hypergeometricReal {N K n : ℕ} (hN : 1 < N) (hK : K ≤ N)
+    (hn : n ≤ N) :
+    ∑ k ∈ range (n + 1), (k : ℝ) * ((k : ℝ) - 1) * hypergeometricReal N K n k =
+      n * (n - 1) * (K * (K - 1)) / (N * (N - 1)) := by
+  have hpos : (0 : ℝ) < N.choose n := by exact_mod_cast Nat.choose_pos hn
+  have hNpos : (0 : ℝ) < N * (N - 1) := by
+    have : (1 : ℝ) < N := by exact_mod_cast hN
+    nlinarith
+  have hcast : ∀ m : ℕ, (m : ℝ) * ((m - 1 : ℕ) : ℝ) = (m : ℝ) * ((m : ℝ) - 1) := fun m => by
+    rcases m with _ | m
+    · simp
+    · rw [Nat.add_sub_cancel]; push_cast; ring
+  have h := sum_descFactorial_mul_choose_mul_choose hK n
+  have h' : (∑ k ∈ range (n + 1), (k : ℝ) * ((k : ℝ) - 1) *
+      (K.choose k * (N - K).choose (n - k) : ℝ)) * (N * (N - 1)) =
+      n * (n - 1) * (K * (K - 1)) * N.choose n := by
+    have := congrArg (fun x : ℕ => (x : ℝ)) h
+    simpa only [Nat.cast_mul, Nat.cast_sum, hcast] using this
+  calc ∑ k ∈ range (n + 1), (k : ℝ) * ((k : ℝ) - 1) * hypergeometricReal N K n k
+      = (∑ k ∈ range (n + 1), (k : ℝ) * ((k : ℝ) - 1) *
+          (K.choose k * (N - K).choose (n - k) : ℝ)) / N.choose n := by
+        rw [Finset.sum_div]
+        refine Finset.sum_congr rfl fun k hk => ?_
+        rw [hypergeometricReal, ite_eq_left (Nat.lt_succ_iff.1 (mem_range.1 hk))]
+        ring
+    _ = n * (n - 1) * (K * (K - 1)) / (N * (N - 1)) := by
+        rw [div_eq_div_iff hpos.ne' hNpos.ne', h']
+
+/-- **Variance.** For `1 < N`, `K ≤ N` and `n ≤ N` the hypergeometric law has variance
+`n K (N - K) (N - n) / (N² (N - 1))`. -/
+theorem sum_sq_sub_mean_mul_hypergeometricReal {N K n : ℕ} (hN : 1 < N) (hK : K ≤ N)
+    (hn : n ≤ N) :
+    ∑ k ∈ range (n + 1), ((k : ℝ) - n * K / N) ^ 2 * hypergeometricReal N K n k =
+      n * K * ((N : ℝ) - K) * ((N : ℝ) - n) / ((N : ℝ) ^ 2 * ((N : ℝ) - 1)) := by
+  have h0 := sum_hypergeometricReal hK hn
+  have h1 := sum_mul_hypergeometricReal (by omega) hK hn
+  have h2 := sum_mul_sub_one_mul_hypergeometricReal hN hK hn
+  have hN0 : (N : ℝ) ≠ 0 := by positivity
+  have hN1 : (N : ℝ) - 1 ≠ 0 := sub_ne_zero.2 (by exact_mod_cast (by omega : N ≠ 1))
+  have hexp : ∀ k ∈ range (n + 1), ((k : ℝ) - n * K / N) ^ 2 * hypergeometricReal N K n k =
+      (k : ℝ) * ((k : ℝ) - 1) * hypergeometricReal N K n k +
+        (1 - 2 * (n * K / N)) * ((k : ℝ) * hypergeometricReal N K n k) +
+          (n * K / N) ^ 2 * hypergeometricReal N K n k := fun k _ => by ring
+  rw [Finset.sum_congr rfl hexp, Finset.sum_add_distrib, Finset.sum_add_distrib,
+    ← Finset.mul_sum, ← Finset.mul_sum, h0, h1, h2]
+  field_simp
+  ring
 
 /-- The hypergeometric law on `ℕ` with population size `N`, `K ≤ N` marked items, and
 `n ≤ N` draws without replacement. -/
