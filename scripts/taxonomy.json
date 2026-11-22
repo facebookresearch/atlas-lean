@@ -11337,6 +11337,7 @@
   "MathlibExt/NumberTheory/ProdigiousNumber": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Prodigious numbers"},
   "MathlibExt/NumberTheory/ProthTheorem": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Proth's theorem"},
   "MathlibExt/NumberTheory/QRDowlingPolynomial": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "(q, r)-Whitney and Dowling numbers"},
+  "MathlibExt/NumberTheory/QuadraticForms/BinaryQuadraticArithmeticProgressions": {"to": "NumberTheory/quadratic-forms-sums-of-squares/binary-quaternary-forms", "title": "Arithmetic progressions represented by binary forms"},
   "MathlibExt/NumberTheory/QuadraticForms/DifferenceOfTwoSquares": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Differences of two squares"},
   "MathlibExt/NumberTheory/QuadraticForms/FibonacciNormEquation": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Equation x² − xy − y² = ±1"},
   "MathlibExt/NumberTheory/QuadraticForms/GoldenRatioIntegerRingUnits": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "Units of the golden ratio ring"},
