@@ -35,7 +35,7 @@ Caveats (derived; the paper states the attention equations, not these bounds):
 
 ## Informally uses
 
-- [Rank of a product of matrices](../../../LinearAlgebra/linear-maps-and-duality/rank-of-a-product.md):
+- [Rank of a product of matrices](../../../LinearAlgebra/linear-maps-and-duality/rank-of-a-matrix-product/rank-of-a-product.md):
   mathematical prerequisite, the bound $\operatorname{rank} M_i \le d_h$.
 
 ## Background
