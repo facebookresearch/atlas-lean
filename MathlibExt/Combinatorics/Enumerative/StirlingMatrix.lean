@@ -190,10 +190,11 @@ def omega (α : ℕ → ℚ) (j : ℕ) : ℚ :=
 /-- **The sum $\Lambda(\alpha, k_1, k_2)$.** For a sequence $\alpha = (\alpha_0, \alpha_1, \dots)$
 of rationals and natural numbers $k_1, k_2$,
 $$
-\Lambda(\alpha, k_1, k_2) = \sum_{l=0}^{k_1-1} \binom{k_1-1}{l}
+\Lambda(\alpha, k_1, k_2) = \sum_{0 \le l < k_1} \binom{k_1-1}{l}
 \frac{(l+k_2-k_1)!}{(k_2-k_1)!} \, \alpha_{l+k_2-k_1},
 $$
-where differences of natural numbers are truncated at $0$ (this matters only when $k_2 < k_1$). -/
+an empty sum, equal to $0$, when $k_1 = 0$. The differences of natural numbers in the summand are
+truncated at $0$ (this matters only when $k_2 < k_1$). -/
 def lambda (α : ℕ → ℚ) (k₁ k₂ : ℕ) : ℚ :=
   ∑ l ∈ Finset.range k₁, (Nat.choose (k₁ - 1) l : ℚ) *
     ((l + k₂ - k₁).factorial : ℚ) / (k₂ - k₁).factorial *
