@@ -32,13 +32,15 @@ Mathlib has finite sums of independent Gaussians (`iIndepFun.hasGaussianLaw_sum`
 Code-derived port of `SumIndependentGaussians.sum_independent_gaussians` and its helpers from
 `v1/Atlas/FourierAnalysis/code/BrownianMotion.lean` at commit
 `6191bf1ba03d204784385ef5be2472be88035b93`, lines 2054–2385 (Proposition 1 of Chapter 1,
-Brownian Motion), with the archived wrappers of `HasLaw.hasGaussianLaw`,
-`HasGaussianLaw.memLp_two`, `HasLaw.variance_eq` and `HasLaw.integral_eq` inlined and the
-heartbeat overrides dropped. The law of the limit is identified with ATLAS's
-`HasGaussianLaw.of_tendsto_eLpNorm_real` instead of the archived argument through convergence in
-distribution and Lévy's continuity theorem. The archived formalization and its original
-license/provenance remain in `v1/` (the original license text is `v1/LICENSE`). This records
-equivalence to the archived Lean statement, not verification against the printed textbook.
+Brownian Motion). The archived wrappers `hasGaussianLaw_of_hasLaw` and `memLp_two_of_hasLaw`
+are inlined as `HasLaw.hasGaussianLaw` and `HasGaussianLaw.memLp_two`, `variance_of_hasLaw` and
+`integral_eq_zero_of_hasLaw` are kept with one-line proofs from `HasLaw.variance_eq` and
+`HasLaw.integral_eq`, and the heartbeat overrides are dropped. The law of the limit is
+identified with ATLAS's `HasGaussianLaw.of_tendsto_eLpNorm_real` instead of the archived argument
+through convergence in distribution and Lévy's continuity theorem. The archived formalization and
+its original license/provenance remain in `v1/` (the original license text is `v1/LICENSE`). This
+records equivalence to the archived Lean statement, not verification against the printed
+textbook.
 -/
 
 set_option autoImplicit false
