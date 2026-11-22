@@ -360,7 +360,8 @@ gives with $n^\mu$ in place of $n$: there $2^{2j+k} = 2^{j+k} \cdot 2^j$, where 
 factor of the index $(2n-1) 2^j$ in the summand $n$, which becomes $2^{\mu j}$ for $n^\mu$.
 
 Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
-Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5, Corollary 17 (`jis-2024-24.5.5-cor-17`). -/
+Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5, Corollary 17
+(`jis-2024-24.5.5-cor-17`). -/
 public theorem_wanted lambertMu_sigma_eq_tsum_twoAdic (μ : {μ : ℕ // 1 ≤ μ}) (q : ℂ)
     (hq : ‖q‖ < 1) :
     lambertFMu ⟨q, hq⟩ μ
@@ -382,7 +383,8 @@ ranges for $s$ and $x$; the growth bound and the ranges above make all the serie
 absolutely.
 
 Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
-Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5, Proposition 18 (`jis-2024-24.5.5-prop-18`). -/
+Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5, Proposition 18
+(`jis-2024-24.5.5-prop-18`). -/
 public theorem_wanted eta_mul_LSeries_iff_lambert (a b : ℕ → ℂ) (C K : ℝ)
     (ha : ∀ n : ℕ, 1 ≤ n → ‖a n‖ ≤ C * (n : ℝ) ^ K)
     (hb : ∀ n : ℕ, 1 ≤ n → ‖b n‖ ≤ C * (n : ℝ) ^ K) :
@@ -434,7 +436,8 @@ from the source, exclude the poles of every Gamma factor on both sides and the v
 and $b - z$.
 
 Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
-Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5, Proposition 23 (`jis-2024-24.5.5-prop-23`). -/
+Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5, Proposition 23
+(`jis-2024-24.5.5-prop-23`). -/
 public theorem_wanted gammaQuadraticRatio_eq_tprod_twoAdic (a b z : ℂ)
     (hb : ∀ m : ℤ, (0 ≤ m ∨ ∃ j : ℕ, m = -2 ^ j) → (m : ℂ) ^ 2 + 2 * a * m + b ≠ 0)
     (hz : ∀ m : ℤ, (0 ≤ m ∨ ∃ j : ℕ, m = -2 ^ j) → (m : ℂ) ^ 2 + 2 * a * m + b - z ≠ 0) :

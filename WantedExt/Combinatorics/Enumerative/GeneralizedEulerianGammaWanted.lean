@@ -118,7 +118,8 @@ where the quotient has constant term $1$ and $\log$ is the formal logarithm of a
 with constant term $1$.
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
-Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Proposition 1 (`jis-2024-24.1.5-prop-1`). -/
+Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Proposition 1
+(`jis-2024-24.1.5-prop-1`). -/
 public theorem_wanted cyclicExcedanceEGF_eq (x : ℚ) (hx : x ≠ 1) :
     PowerSeries.mk (fun n ↦ if n = 0 then 0 else
         (∑ m ∈ Finset.range (n + 1), (circularEulerian n m : ℚ) * x ^ m) / (n.factorial : ℚ)) =
@@ -136,7 +137,8 @@ y^{\mathrm{exc}(w^{-1})} (x + y)^{\mathrm{fix}(w)}.
 $$
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
-Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Theorem 2 (`jis-2024-24.1.5-thm-2`). -/
+Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Theorem 2
+(`jis-2024-24.1.5-thm-2`). -/
 public theorem_wanted generalizedEulerianP_eq_sum_perm (q t x y : ℚ) (hxy : x ≠ y) (n : ℕ) :
     generalizedEulerianP q t x y n =
       ∑ w : Equiv.Perm (Fin n),
@@ -156,7 +158,8 @@ That is, the gamma coefficients $\gamma_{n,k}$ are polynomials in $q$ and $t$ wi
 integer coefficients.
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
-Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Theorem 4 (`jis-2024-24.1.5-thm-4`). -/
+Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Theorem 4
+(`jis-2024-24.1.5-thm-4`). -/
 public theorem_wanted generalizedEulerianP_gamma_nonneg (n : ℕ) :
     ∃ c : ℕ → ℕ → ℕ → ℕ, ∀ q t x y : ℚ, x ≠ y →
       generalizedEulerianP q t x y n =
@@ -173,7 +176,8 @@ $p_{i+1} \le p_i$ for every $i \ge m$. That is, $P_n(q, t; x, 1)$ is a unimodal 
 Only unimodality is asserted, not symmetry of the coefficients.
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
-Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Corollary 5 (`jis-2024-24.1.5-cor-5`). -/
+Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Corollary 5
+(`jis-2024-24.1.5-cor-5`). -/
 public theorem_wanted generalizedEulerianP_unimodal (q t n : ℕ) :
     ∃ p : Polynomial ℚ, (∀ x : ℚ, x ≠ 1 → p.eval x = generalizedEulerianP q t x 1 n) ∧
       ∃ m : ℕ, (∀ i < m, p.coeff i ≤ p.coeff (i + 1)) ∧
@@ -197,7 +201,8 @@ $\gamma_{n,k,i,j}$ is the number of permutations $w$ of $\{0, 1, \dots, n-1\}$ w
 $\mathrm{exc}(w) = k$, $\mathrm{dexc}(w) = 0$, $\mathrm{cyc}(w) = i$ and $\mathrm{fix}(w) = j$.
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
-Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Theorem 7 (`jis-2024-24.1.5-thm-7`). -/
+Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Theorem 7
+(`jis-2024-24.1.5-thm-7`). -/
 public theorem_wanted generalizedEulerianP_gamma_eq (n : ℕ) :
     (∀ q t x y : ℚ, x ≠ y →
       generalizedEulerianP q t x y n =
@@ -229,7 +234,8 @@ $$
 where the exponent $n - \mathrm{exc}(w)$ is an integer, possibly negative.
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
-Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Corollary 8 (`jis-2024-24.1.5-cor-8`). -/
+Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Corollary 8
+(`jis-2024-24.1.5-cor-8`). -/
 public theorem_wanted generalizedEulerianP_neg_one (q t : ℚ) (n : ℕ) :
     generalizedEulerianP q t (-1) 1 (2 * n + 1) = 0 ∧
       (-1) ^ n * generalizedEulerianP q t (-1) 1 (2 * n) =

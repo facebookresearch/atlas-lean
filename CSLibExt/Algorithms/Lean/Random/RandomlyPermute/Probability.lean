@@ -10,6 +10,7 @@ module
 
 public import CSLibExt.Algorithms.Lean.Random.RandomlyPermute.Basic
 public import Cslib.Probability.PMF
+public import CSLibExt.Algorithms.Lean.Random.ExpectedCost
 import all CSLibExt.Algorithms.Lean.Random.RandomlyPermute.Correctness
 import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.Fintype.BigOperators
@@ -264,6 +265,21 @@ public theorem randomlyPermuteDistribution_eq_map_uniform {α : Type u} {n : Nat
   let : Nonempty ((i : Fin n) → Fin (n - i.val)) := ⟨fun i => ⟨0, by omega⟩⟩
   rw [distribution_eq_sequential, sequentialHistory_eq_uniform]
   exact uniform_output xs
+
+/-- **Fisher–Yates samples `uniformPermutation`**: forgetting the cost and reading the saved
+vector as a list, the law of the actual run is the uniform-permutation input distribution of
+`ExpectedCost.lean`. Expected-cost results stated over `uniformPermutation xs.toList` therefore
+apply to the output of `randomlyPermute`. -/
+public theorem randomlyPermuteDistribution_map_toList {α : Type u} {n : Nat}
+    (xs : Vector α n) :
+    (randomlyPermuteDistribution xs).map (fun r => r.ret.toList) =
+      uniformPermutation xs.toList := by
+  rw [randomlyPermuteDistribution_eq_map_uniform, PMF.map_comp]
+  obtain ⟨⟨l⟩, rfl⟩ := xs
+  simp only [uniformPermutation]
+  congr 1
+  funext σ
+  simp [Function.comp, List.ofFn, Vector.toList]
 
 /-- Every injective labelled prefix has mass `(n - k)! / n!` in the actual run.
 The finite sum uses the proved complete independent-history mass `1 / n!`;

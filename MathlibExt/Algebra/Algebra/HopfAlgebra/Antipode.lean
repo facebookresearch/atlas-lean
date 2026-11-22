@@ -62,17 +62,6 @@ private theorem antipode_algebraMap (r : R) :
     HopfAlgebra.antipode R (algebraMap R A r) = algebraMap R A r := by
   rw [Algebra.algebraMap_eq_smul_one, map_smul, HopfAlgebra.antipode_one]
 
-private theorem toConv_antipode_mul_toConv_id :
-    WithConv.toConv (HopfAlgebra.antipode R (A := A)) *
-        WithConv.toConv (LinearMap.id : A →ₗ[R] A)
-      = (1 : WithConv (A →ₗ[R] A)) := by
-  refine WithConv.ext (LinearMap.ext fun a => ?_)
-  simp only [LinearMap.convMul_def, LinearMap.convOne_def, WithConv.ofConv_toConv,
-    LinearMap.comp_apply, Algebra.linearMap_apply]
-  rw [← (Coalgebra.Repr.arbitrary R a).eq]
-  simp only [map_sum, TensorProduct.map_tmul, LinearMap.mul'_apply, LinearMap.id_coe, id_eq]
-  exact HopfAlgebra.sum_antipode_mul_eq_algebraMap_counit (Coalgebra.Repr.arbitrary R a)
-
 end HopfAntipodeAux
 
 namespace HopfAntipodeAux
@@ -113,7 +102,7 @@ private theorem antipode_comp_antipode :
     (HopfAlgebra.antipode R ∘ₗ HopfAlgebra.antipode R : A →ₗ[R] A) = LinearMap.id :=
   WithConv.toConv_injective
     (left_inv_eq_right_inv toConv_antipode_comp_antipode_mul_toConv_antipode
-      toConv_antipode_mul_toConv_id)
+      LinearMap.antipode_mul_id)
 
 end HopfAntipodeAux
 
