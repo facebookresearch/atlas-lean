@@ -40,7 +40,8 @@ For the hovering rotor: the disk in still air with `ρ = 1`, `A = 2`, induced ve
 wake `6` satisfies the port laws, has thrust `36 = 2 ρ A v_i²`, induced velocity `3 = √(36 / 4)`
 and induced power `108`; the wind-extraction normalization vanishes in hover; and the state with
 every speed reversed keeps the port laws and the thrust but is not powered, and its induced
-velocity is not the square root.
+velocity is not the square root. The energy balance still gives the reversed state the induced
+power `-108`, and a still-air state with no force the induced power `0`.
 
 ## i. Overview
 
@@ -448,5 +449,36 @@ lemma fixture_hoverReversed :
     rw [hd, h9, h3]
     norm_num
   exact ⟨hPL, hW, hne⟩
+
+/-- The energy balance needs no powered hypothesis: the reversed fixture state, which
+`hover_power_eq` excludes, has the induced power `36 · (-3) = -108`, the negative of its extracted
+power. -/
+example :
+    inducedPower ({ hoverFixture with uDisk := -3, uWake := -6 } : ActuatorDisk) = -108 ∧
+      inducedPower ({ hoverFixture with uDisk := -3, uWake := -6 } : ActuatorDisk) =
+        -extractedPower ({ hoverFixture with uDisk := -3, uWake := -6 } : ActuatorDisk) := by
+  have hT : ({ hoverFixture with uDisk := -3, uWake := -6 } : ActuatorDisk).force = -(36:ℝ) := rfl
+  obtain ⟨hE, hP, -⟩ := inducedPower_eq fixture_hoverReversed.1 hT
+  refine ⟨?_, hE⟩
+  rw [hP]
+  norm_num [hoverFixture]
+
+/-- A still-air disk with no force: induced velocity `3`, far wake `0`, gauge pressures
+`p⁺ = p⁻ = -9/2`. -/
+noncomputable def zeroThrustFixture : ActuatorDisk :=
+  { hoverFixture with uWake := 0, pDown := -9 / 2, force := 0 }
+
+/-- The energy balance also covers zero thrust, outside `hover_power_eq`: the zero-thrust state
+satisfies the port laws and its induced power is `0 · 3 = 0`. Its far wake `0` is not `2 · 3`, so
+the nonzero-force hypothesis of `hover_uWake_eq` cannot be dropped either. -/
+example :
+    zeroThrustFixture.PortLaws ∧ inducedPower zeroThrustFixture = 0 ∧
+      zeroThrustFixture.uWake ≠ 2 * zeroThrustFixture.uDisk := by
+  have hPL : zeroThrustFixture.PortLaws :=
+    ⟨by norm_num [zeroThrustFixture, hoverFixture], by norm_num [zeroThrustFixture, hoverFixture],
+      by norm_num [zeroThrustFixture, hoverFixture], by norm_num [zeroThrustFixture, hoverFixture]⟩
+  have hT : zeroThrustFixture.force = -(0:ℝ) := by norm_num [zeroThrustFixture]
+  refine ⟨hPL, ?_, by norm_num [zeroThrustFixture, hoverFixture]⟩
+  rw [(inducedPower_eq hPL hT).2.1, zero_mul]
 
 end PhyslibExtTest.FluidDynamics.RotorPorts

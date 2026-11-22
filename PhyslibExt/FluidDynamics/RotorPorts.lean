@@ -122,9 +122,11 @@ the fluid on the disk, positive along the flow. A powered disk pushes the fluid 
 downward).
 
 With `U∞ = 0`, Bernoulli on the two sides gives `F = -ρ A U_w² / 2` and the streamtube gives
-`F = -ρ A v_i U_w`; a nonzero force makes `U_w ≠ 0`, so `U_w = 2 v_i`. Then `T = 2 ρ A v_i²`,
-and the induced power, the kinetic power `ṁ (U_w² - U∞²) / 2` that the disk adds to the stream
-(`ṁ = ρ A v_i`), is `P = T v_i`, the power `-F v_i` of the disk on the stream. A powered disk
+`F = -ρ A v_i U_w`; a nonzero force makes `U_w ≠ 0`, so `U_w = 2 v_i`. Then `T = 2 ρ A v_i²`.
+The induced power, the kinetic power `ṁ (U_w² - U∞²) / 2` that the disk adds to the stream
+(`ṁ = ρ A v_i`), is the negative of the extracted power for every state satisfying the port laws,
+`P = T v_i`, the power `-F v_i` of the disk on the stream, with no still-air, sign or powered
+assumption. A powered disk
 delivers positive power, `T v_i > 0`; then `v_i > 0`, so the far wake moves at
 `U_w = 2 v_i > U∞ = 0`, outside the wind-extraction branch, which has `U_w < U∞`, and
 `v_i = √(T / (2 ρ A))` and `P = T √(T / (2 ρ A))`. The port laws do not change when every speed
@@ -166,6 +168,8 @@ or motor model is used, and no empirical adequacy or vehicle safety claim is mad
   satisfying the port laws.
 - `FluidDynamics.RotorPorts.hover_uWake_eq`, `FluidDynamics.RotorPorts.hover_thrust_eq`: in
   still air the far wake moves at `U_w = 2 v_i` and `T = 2 ρ A v_i²`.
+- `FluidDynamics.RotorPorts.inducedPower_eq`: for every state satisfying the port laws the induced
+  power is the negative of the extracted power, `-F U_d`, or `T U_d` with the thrust `T = -F`.
 - `FluidDynamics.RotorPorts.hover_inducedVelocity_eq`, `FluidDynamics.RotorPorts.hover_power_eq`:
   for a powered disk `v_i = √(T / (2 ρ A))`, and the induced power is `T v_i = -F v_i`.
 - A compressor with a nonzero swirl change, the same ports with the throughflow reversed, blade
@@ -705,6 +709,21 @@ lemma ofInduction_spec (ρ A uInf pAmb a : ℝ) :
 disk adds to the stream through it. -/
 noncomputable def inducedPower (d : ActuatorDisk) : ℝ :=
   d.ρ * d.A * d.uDisk * (d.uWake ^ 2 - d.uInf ^ 2) / 2
+
+/-- **Energy balance of the disk.** For every state satisfying the port laws, the induced power is
+the negative of the extracted power `F U_d`, with `F` the axial force of the fluid on the disk: it
+is the power `-F U_d` of the disk on the stream and, with the rotor thrust `T = -F`, it equals
+`T U_d`. No still air, sign or powered assumption is needed, so the identities also cover the
+reversed and zero-thrust states outside `hover_power_eq`. -/
+lemma inducedPower_eq {d : ActuatorDisk} (h : d.PortLaws) {T : ℝ} (hT : d.force = -T) :
+    inducedPower d = -extractedPower d ∧ inducedPower d = T * d.uDisk ∧
+      inducedPower d = -(d.force * d.uDisk) := by
+  have hE : inducedPower d = -extractedPower d := by
+    rw [extractedPower_eq h]
+    unfold inducedPower
+    ring
+  have hF : inducedPower d = -(d.force * d.uDisk) := by rw [hE, extractedPower]
+  exact ⟨hE, by rw [hF, hT]; ring, hF⟩
 
 /-- **Hover wake.** For a disk in still air (`U∞ = 0`) carrying a nonzero force, with positive
 density and area, the port laws give the far-wake speed `U_w = 2 v_i`, twice the induced velocity
