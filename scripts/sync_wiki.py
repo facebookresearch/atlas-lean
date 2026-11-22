@@ -2866,7 +2866,8 @@ def changed_paths(base: str) -> list[str]:
     the repository's root: what a pull request from *base* changes."""
     found = (git("diff", "--name-only", "--no-renames", "-z", base, "--")
              + git("ls-files", "--others", "--exclude-standard", "-z"))
-    return sorted({path for path in found.decode("utf-8").split("\0") if path})
+    # Named as the file system names them, whatever their bytes.
+    return sorted({os.fsdecode(path) for path in found.split(b"\0") if path})
 
 
 def lean_source(path: str) -> bool:
@@ -2890,10 +2891,11 @@ def extract_tree(base: str, into: Path, wanted) -> dict[str, str]:
     under *into*, which holds nothing there yet, so no write follows a link; returns the git mode of each path it
     accepts, of any kind."""
     entries, modes = [], {}
-    for record in git("ls-tree", "-r", "-z", "--full-tree", base).decode("utf-8").split("\0"):
+    for record in git("ls-tree", "-r", "-z", "--full-tree", base).split(b"\0"):
         if record:
-            meta, path = record.split("\t", 1)
-            mode, kind, name = meta.split(" ")
+            meta, raw = record.split(b"\t", 1)
+            mode, kind, name = meta.decode("ascii").split(" ")
+            path = os.fsdecode(raw)
             if wanted(path):
                 modes[path] = mode
                 if kind == "blob" and mode in ("100644", "100755"):
@@ -3113,8 +3115,8 @@ def base_baseline(base: str) -> dict[str, str]:
 
 def base_folders(base: str) -> set[str]:
     """The folder pages of commit *base*'s wiki, by their path in the roadmap."""
-    listing = git("ls-tree", "-r", "-z", "--name-only", "--full-tree", base, "--", "blueprint/roadmap").decode("utf-8")
-    return {path.removeprefix("blueprint/roadmap/") for path in listing.split("\0") if path.endswith("README.md")}
+    listing = git("ls-tree", "-r", "-z", "--name-only", "--full-tree", base, "--", "blueprint/roadmap").split(b"\0")
+    return {os.fsdecode(path).removeprefix("blueprint/roadmap/") for path in listing if path.endswith(b"README.md")}
 
 
 def in_background(function, *args):
@@ -3308,22 +3310,18 @@ def read_by_sync(path: str) -> bool:
 
 
 def links_in_wiki(changed: list[str] = ()) -> list[str]:
-    """The links the sync could read or write through, by their path in the repository: among the wiki's files (all of
-    blueprint/: pages, links files, sources and the rest), at the baseline, the taxonomy, the card move ledger and the
-    site configuration, in the theme and the hooks, or the folders they are reached through; the files of *changed*,
-    the changes' own, that a run reads (see read_by_sync); and the Lean the repository holds as links. A read through
-    one could lead anywhere, and a write leave the repository."""
+    """The links the sync could read or write through, by their path in the repository, as the working tree has
+    them: among the wiki's files (all of blueprint/: pages, links files, sources and the rest), at the baseline, the
+    taxonomy, the card move ledger and the site configuration, in the theme, the hooks and the Lean libraries the
+    pages are generated from (see wiki.LIBRARIES), or the folders they are reached through; and the files of *changed*,
+    the changes' own, that a run reads (see read_by_sync). A read through one could lead anywhere, and a write leave
+    the repository."""
+    libraries = [wiki.ROOT / library for library in wiki.LIBRARIES]
     inputs = (wiki.VAULT, wiki.ROADMAP, LINKS, STATE.parent, STATE, wiki.TAXONOMY,
-              wiki.ROOT / "scripts" / "card-moves.jsonl", SITE, wiki.ROOT / "theme", wiki.ROOT / "hooks",
+              wiki.ROOT / "scripts" / "card-moves.jsonl", SITE, wiki.ROOT / "theme", wiki.ROOT / "hooks", *libraries,
               *(wiki.ROOT / path for path in changed if read_by_sync(path)))
     found = [path for path in inputs if path.is_symlink() or path.exists() and os.path.realpath(path) != str(path)]
-    try:
-        tracked = git("ls-files", "-s", "-z").decode("utf-8").split("\0")
-    except GitError:
-        tracked = []
-    found += [wiki.ROOT / path for record in tracked if record.startswith("120000 ")
-              and lean_source(path := record.split("\t", 1)[1])]
-    pending = [folder for folder in (wiki.VAULT, wiki.ROOT / "theme", wiki.ROOT / "hooks")
+    pending = [folder for folder in (wiki.VAULT, wiki.ROOT / "theme", wiki.ROOT / "hooks", *libraries)
                if folder.is_dir() and folder not in found]
     while pending:
         with os.scandir(pending.pop()) as entries:

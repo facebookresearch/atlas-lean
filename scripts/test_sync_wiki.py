@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import io
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -4255,6 +4256,39 @@ class ScopedRun(unittest.TestCase):
         (self.root / "docs/guide-alias.md").symlink_to("guide.md")
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((status, report["in_step"], report["wiki_changes"], report["errors"]), (0, True, "none", []))
+
+
+    def test_a_link_in_a_lean_library_stops_the_run_as_the_working_tree_has_it(self) -> None:
+        # A folder of a library the pages are generated from, linked: refused, staged or not; once the link is gone
+        # from the working tree, staged or not, the run goes on.
+        elsewhere = self.root.parent / f"{self.root.name}-lean"
+        elsewhere.mkdir()
+        self.addCleanup(shutil.rmtree, elsewhere, True)
+        (elsewhere / "Linked.lean").write_text("theorem linked : True := trivial\n")
+        linked = self.root / "MathlibExt/Linked"
+        linked.symlink_to(elsewhere)
+        self.base = self.commit("a linked folder of Lean")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (1, [
+            "MathlibExt/Linked is a link: the sync reads and writes through none; put what it links to in its place"]))
+        linked.unlink()
+        linked.mkdir()
+        (linked / "Linked.lean").write_text("theorem linked : True := trivial\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (0, []))
+
+
+    def test_a_file_name_that_is_not_utf8_is_read_as_the_file_system_names_it(self) -> None:
+        (self.root / "docs").mkdir()
+        with open(os.path.join(os.fsencode(self.root), b"docs", b"caf\xe9.md"), "w") as handle:
+            handle.write("Bytes.\n")
+        self.base = self.commit("a file name that is not UTF-8")
+        self.write("docs/guide.md", "A guide.\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "none"))
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["missing"]), (1, ["Ext.fresh"]))
 
 
 
