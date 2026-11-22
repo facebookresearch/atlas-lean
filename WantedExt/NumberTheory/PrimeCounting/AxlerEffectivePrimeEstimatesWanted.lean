@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import MathlibExt.Analysis.SpecialFunctions.Log.IntegralDerivative
+public import MathlibExt.NumberTheory.PrimeCounting.AxlerEffectivePrimeEstimates
 public import Mathlib.NumberTheory.Chebyshev
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
@@ -270,31 +271,6 @@ public theorem_wanted prod_one_add_inv_prime_bounds (x : ℝ) (hx : 175712663079
       6 * Real.exp Real.eulerMascheroniConstant / Real.pi ^ 2 * (1 + 1 / x) *
         Real.exp (0.024334 / (3 * Real.log x ^ 3) * (1 + 15 / (4 * Real.log x))) *
         Real.log x
-
-
-/-- Converting a lower bound `π(x) > x / (a₀ log x + a₁ + a₂/log x + ⋯ + aₙ/logⁿ⁻¹ x)` into a
-truncated series: let `n ≥ 1`, `a₀ > 0` and `a₁, …, aₙ < 0`; if for every `x ≥ x₀ > 0` the
-denominator is positive (the paper's (49)) and the lower bound (50) holds, then
-`π(x) > b₀x/log x + b₁x/log² x + ⋯ + bₙx/logⁿ⁺¹ x` for every `x ≥ x₀`, where `b₀ = 1/a₀` and
-`bₖ = -(1/a₀) ∑_{i=1}^k aᵢ b_{k-i}` for `1 ≤ k ≤ n`. The recursion (51) is read with
-`b_{k-i}` (the index the paper's proof uses, and the one that turns Table 5, first row, into the
-Table 6 coefficients `1, 1, 2, 5.975666, 23.975666, …`); the record prints `b_{k-1}`, which gives
-`b₃ = 9.951332` there. `π(x)` is `Nat.primeCounting ⌊x⌋₊`.
-
-Source: Christian Axler, *Effective Estimates for Some Functions Defined over Primes*,
-INTEGERS 24 (2024), Article A34, Proposition 6 (`integers-2024-A34-prop-6`). -/
-public theorem_wanted series_lt_primeCounting_of_lt_primeCounting (n : ℕ) (hn : 1 ≤ n)
-    (a b : ℕ → ℝ) (ha₀ : 0 < a 0) (ha : ∀ i ∈ Finset.Icc 1 n, a i < 0) (x₀ : ℝ) (hx₀ : 0 < x₀)
-    (hpos : ∀ x : ℝ, x₀ ≤ x →
-      0 < a 0 * Real.log x + ∑ i ∈ Finset.Icc 1 n, a i / Real.log x ^ (i - 1))
-    (hlow : ∀ x : ℝ, x₀ ≤ x →
-      x / (a 0 * Real.log x + ∑ i ∈ Finset.Icc 1 n, a i / Real.log x ^ (i - 1)) <
-        (Nat.primeCounting ⌊x⌋₊ : ℝ))
-    (hb₀ : b 0 = 1 / a 0)
-    (hb : ∀ k ∈ Finset.Icc 1 n, b k = -(1 / a 0) * ∑ i ∈ Finset.Icc 1 k, a i * b (k - i))
-    (x : ℝ) (hx : x₀ ≤ x) :
-    ∑ k ∈ Finset.range (n + 1), b k * x / Real.log x ^ (k + 1) <
-      (Nat.primeCounting ⌊x⌋₊ : ℝ)
 
 
 /-- Prime counting between the auxiliary functions `J`: let `k ≥ 1`, `η > 0`, `x₁ > 1` with
