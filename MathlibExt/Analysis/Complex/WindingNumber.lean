@@ -20,7 +20,12 @@ import Mathlib.MeasureTheory.Integral.DivergenceTheorem
 # Winding numbers of closed piecewise `C¹` paths
 
 A path `γ` is piecewise `C¹` (`Path.IsPiecewiseC1`) if it is `C¹` on each closed piece of a finite
-subdivision of `[0, 1]`. For a closed path `γ : Path x x` in `ℂ`, the winding number around `z` is
+subdivision of `[0, 1]`. Paths that are `C¹` on `[0, 1]` (`Path.IsPiecewiseC1.of_contDiffOn`), such
+as segments (`Path.isPiecewiseC1_segment`), are piecewise `C¹`, and so are concatenations
+(`Path.IsPiecewiseC1.trans`) and reversals (`Path.IsPiecewiseC1.symm`) of piecewise `C¹` paths;
+closed polygons are built this way.
+
+For a closed path `γ : Path x x` in `ℂ`, the winding number around `z` is
 `Complex.windingNumber γ z = (2πi)⁻¹ ∫_γ (ζ - z)⁻¹ dζ`, where `∫_γ φ(ζ) dζ` is Mathlib's curve
 integral `∫ᶜ ζ in γ, φ ζ • ContinuousLinearMap.id ℂ ℂ` of the `1`-form `φ(ζ) dζ`.
 
@@ -29,7 +34,8 @@ For a closed piecewise `C¹` path the winding number is an integer off the path
 (`Complex.eventually_windingNumber_eq`), hence constant on every preconnected set missing the path
 (`Complex.windingNumber_eq_of_isPreconnected`), and zero near infinity
 (`Complex.eventually_windingNumber_eq_zero`) and on the unbounded components of the complement of
-the path (`Complex.windingNumber_eq_zero_of_not_isBounded`).
+the path (`Complex.windingNumber_eq_zero_of_not_isBounded`). Reversing a path negates its winding
+numbers (`Complex.windingNumber_symm`).
 
 Supporting results on curve integrals along a piecewise `C¹` path `γ`:
 * holomorphic dependence on a parameter (`Complex.differentiableOn_curveIntegral`);
@@ -82,6 +88,70 @@ public theorem IsPiecewiseC1.of_contDiffOn {γ : Path x y}
     obtain rfl : k = 0 := by omega
     simpa using h⟩
 
+/-- The concatenation of two piecewise `C¹` paths is piecewise `C¹`: their subdivisions, rescaled
+to `[0, 1/2]` and `[1/2, 1]`, subdivide `γ₁.trans γ₂`. The concatenation may have a corner at
+`1/2`. -/
+public theorem IsPiecewiseC1.trans {z : E} {γ₁ : Path x y} {γ₂ : Path y z}
+    (h₁ : γ₁.IsPiecewiseC1) (h₂ : γ₂.IsPiecewiseC1) : (γ₁.trans γ₂).IsPiecewiseC1 := by
+  obtain ⟨n₁, p₁, hp₁, hp₁0, hp₁1, hC₁⟩ := h₁
+  obtain ⟨n₂, p₂, hp₂, hp₂0, hp₂1, hC₂⟩ := h₂
+  have hn₂ : n₂ ≠ 0 := by
+    rintro rfl
+    exact zero_ne_one (hp₂0.symm.trans hp₂1)
+  let p : ℕ → ℝ := fun k => if k ≤ n₁ then p₁ k / 2 else (1 + p₂ (k - n₁)) / 2
+  have hp_le (k : ℕ) (hk : k ≤ n₁) : p k = p₁ k / 2 := ite_eq_left hk
+  have hp_ge (k : ℕ) (hk : n₁ ≤ k) : p k = (1 + p₂ (k - n₁)) / 2 := by
+    rcases hk.lt_or_eq with hk | rfl
+    · exact ite_eq_right (not_le.2 hk)
+    · rw [hp_le _ le_rfl, hp₁1, Nat.sub_self, hp₂0]
+      norm_num
+  have hp₁_le_one (k : ℕ) (hk : k ≤ n₁) : p₁ k ≤ 1 := hp₁1 ▸ hp₁ hk
+  have hp₁_nonneg (k : ℕ) : 0 ≤ p₁ k := hp₁0 ▸ hp₁ (Nat.zero_le k)
+  have hp₂_nonneg (k : ℕ) : 0 ≤ p₂ k := hp₂0 ▸ hp₂ (Nat.zero_le k)
+  refine ⟨n₁ + n₂, p, fun k l hkl => ?_, ?_, ?_, fun k hk => ?_⟩
+  · rcases le_total l n₁ with hl | hl
+    · rw [hp_le k (hkl.trans hl), hp_le l hl]
+      linarith [hp₁ hkl]
+    rcases le_total k n₁ with hk | hk
+    · rw [hp_le k hk, hp_ge l hl]
+      linarith [hp₁_le_one k hk, hp₂_nonneg (l - n₁)]
+    · rw [hp_ge k hk, hp_ge l hl]
+      linarith [hp₂ (Nat.sub_le_sub_right hkl n₁)]
+  · rw [hp_le 0 (Nat.zero_le _), hp₁0, zero_div]
+  · rw [hp_ge _ (Nat.le_add_right _ _), Nat.add_sub_cancel_left, hp₂1]
+    norm_num
+  · rcases lt_or_ge k n₁ with hk₁ | hk₁
+    · rw [hp_le k hk₁.le, hp_le (k + 1) hk₁]
+      refine ((hC₁ k hk₁).comp (by fun_prop : ContDiff ℝ 1 fun t : ℝ => 2 * t).contDiffOn
+        fun t ht => ⟨by linarith [ht.1], by linarith [ht.2]⟩).congr fun t ht => ?_
+      exact extend_trans_of_le_half _ _ (by linarith [ht.2, hp₁_le_one (k + 1) hk₁])
+    · obtain ⟨j, rfl⟩ := Nat.exists_eq_add_of_le hk₁
+      have hj : j < n₂ := by omega
+      rw [hp_ge _ hk₁, hp_ge (n₁ + j + 1) (by omega), Nat.add_sub_cancel_left,
+        show n₁ + j + 1 - n₁ = j + 1 by omega]
+      refine ((hC₂ j hj).comp (by fun_prop : ContDiff ℝ 1 fun t : ℝ => 2 * t - 1).contDiffOn
+        fun t ht => ⟨by linarith [ht.1], by linarith [ht.2]⟩).congr fun t ht => ?_
+      exact extend_trans_of_half_le _ _ (by linarith [ht.1, hp₂_nonneg j])
+
+/-- The reverse of a piecewise `C¹` path is piecewise `C¹`. -/
+public theorem IsPiecewiseC1.symm {γ : Path x y} (h : γ.IsPiecewiseC1) : γ.symm.IsPiecewiseC1 := by
+  obtain ⟨n, p, hp, hp0, hp1, hC⟩ := h
+  refine ⟨n, fun k => 1 - p (n - k), fun k l hkl => ?_, by simp [hp1], by simp [hp0],
+    fun k hk => ?_⟩
+  · linarith [hp (Nat.sub_le_sub_left hkl n)]
+  · have e : n - k = n - (k + 1) + 1 := by omega
+    simp only
+    rw [e]
+    refine ((hC (n - (k + 1)) (by omega)).comp (by fun_prop : ContDiff ℝ 1 fun t : ℝ => 1 - t
+      ).contDiffOn fun t ht => ⟨by linarith [ht.2], by linarith [ht.1]⟩).congr fun t _ => ?_
+    exact extend_symm_apply γ t
+
+/-- A segment is a `C¹`, hence piecewise `C¹`, path. -/
+public theorem isPiecewiseC1_segment (a b : E) : (Path.segment a b).IsPiecewiseC1 :=
+  IsPiecewiseC1.of_contDiffOn <|
+    (by fun_prop : ContDiff ℝ 1 fun t : ℝ => (1 - t) • a + t • b).contDiffOn.congr fun t ht => by
+      rw [eqOn_extend_segment a b ht, AffineMap.lineMap_apply_module]
+
 private theorem exists_mem_Ioo_of_notMem_range {p : ℕ → ℝ} {n : ℕ} (h0 : p 0 = 0) (hn : p n = 1)
     {t : ℝ} (ht : t ∈ Ioo (0 : ℝ) 1) (htp : t ∉ range p) :
     ∃ k < n, t ∈ Ioo (p k) (p (k + 1)) := by
@@ -131,6 +201,11 @@ meaningful for a piecewise `C¹` path and `z` off the path; otherwise the curve 
 junk value. -/
 @[expose] public noncomputable def windingNumber {x : ℂ} (γ : Path x x) (z : ℂ) : ℂ :=
   (2 * π * I)⁻¹ * ∫ᶜ ζ in γ, (ζ - z)⁻¹ • ContinuousLinearMap.id ℂ ℂ
+
+/-- Reversing a closed path negates its winding numbers. -/
+public theorem windingNumber_symm {x : ℂ} (γ : Path x x) (z : ℂ) :
+    windingNumber γ.symm z = -windingNumber γ z := by
+  simp only [windingNumber, curveIntegral_symm, mul_neg]
 
 /-! ### Curve integrals along a piecewise `C¹` path -/
 
