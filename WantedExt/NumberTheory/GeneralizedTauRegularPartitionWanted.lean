@@ -117,7 +117,9 @@ $$\tau_{-k}(n + 1) = \sum_{\lambda} \prod_{a} \binom{f_a + k - 1}{k - 1},$$
 where $\lambda$ runs over all partitions of $n$ and the product again runs over the distinct parts
 $a$ of $\lambda$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 1 (`integers-2024-A39-thm-1`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 1 (`integers-2024-A39-thm-1`). -/
 public theorem_wanted generalizedTau_succ_eq_partition_sum (k : ℕ) (hk : 0 < k) (n : ℕ) :
     (generalizedTau k (n + 1) =
         ∑ p ∈ Finset.univ.filter
@@ -133,7 +135,9 @@ natural numbers, and let $A$ be the set of integers $a$ with $1 \le a \le k$ and
 odd. Then $\tau_k(n + 1)$ is congruent modulo $2$ to the number of partitions of $n$ in which the
 number of times each part occurs lies in $A$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 2 (`integers-2024-A39-thm-2`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 2 (`integers-2024-A39-thm-2`). -/
 public theorem_wanted generalizedTau_succ_modEq_card_frequency_two (k : ℕ) (hk : 0 < k) (n : ℕ) :
     generalizedTau k (n + 1) ≡
       ((Finset.univ.filter fun p : Nat.Partition n =>
@@ -145,7 +149,9 @@ public theorem_wanted generalizedTau_succ_modEq_card_frequency_two (k : ℕ) (hk
 the number of partitions of $n$ with no part divisible by $4$. Then $R_4(n)$ is odd if and only if
 $n$ is a triangular number, that is, $n = m(m + 1)/2$ for some integer $m \ge 0$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 3 (`integers-2024-A39-thm-3`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 3 (`integers-2024-A39-thm-3`). -/
 public theorem_wanted odd_card_four_regular_iff_triangular (n : ℕ) (hn : 0 < n) :
     Odd (Nat.Partition.restricted n (¬ 4 ∣ ·)).card ↔ ∃ m : ℕ, n = m * (m + 1) / 2
 
@@ -155,7 +161,9 @@ the number of partitions of $n$ in which no part is divisible by $8$. For every 
 $n$: (a) $\tau_{14}(2n + 1) \equiv R_8(n) \pmod 2$; (b) $\tau_6(2n + 1)$ is odd if and only if
 $n$ is a triangular number, that is, $n = m(m + 1)/2$ for some natural number $m$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 4 (`integers-2024-A39-thm-4`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 4 (`integers-2024-A39-thm-4`). -/
 public theorem_wanted generalizedTau_fourteen_six_odd_index_mod_two (n : ℕ) (hn : 0 < n) :
     generalizedTau 14 (2 * n + 1) ≡ ((Nat.Partition.restricted (n) (¬ 8 ∣ ·)).card : ℤ) [ZMOD 2] ∧
       (Odd (generalizedTau 6 (2 * n + 1)) ↔ ∃ m : ℕ, n = m * (m + 1) / 2)
@@ -165,7 +173,9 @@ integer and $n$ a natural number. Let $R_{2^s}(n)$ be the number of partitions o
 part is divisible by $2^s$, and let $\tau_k(m)$ be the generalized tau function, the coefficient
 of $q^m$ in $q \prod_{j \ge 1} (1 - q^j)^k$. Then $R_{2^s}(n) \equiv \tau_{2^s - 1}(n + 1) \pmod 2$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 5 (`integers-2024-A39-thm-5`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 5 (`integers-2024-A39-thm-5`). -/
 public theorem_wanted card_two_pow_regular_modEq_generalizedTau (s : ℕ) (hs : 0 < s) (n : ℕ) :
     ((Nat.Partition.restricted (n) (¬ 2 ^ s ∣ ·)).card : ℤ)
         ≡ generalizedTau ((2 : ℤ) ^ s - 1) (n + 1) [ZMOD 2]
@@ -176,7 +186,9 @@ the number of partitions of $m$ with no part divisible by $9$. For every integer
 $\tau(n + 1) \equiv R_9(n/3) \pmod 3$ if $3$ divides $n$, and $\tau(n + 1) \equiv 0 \pmod 3$
 otherwise.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 6 (`integers-2024-A39-thm-6`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 6 (`integers-2024-A39-thm-6`). -/
 public theorem_wanted ramanujanTau_succ_modEq_nine_regular (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (n + 1) ≡
       (if 3 ∣ n then ((Nat.Partition.restricted (n / 3) (¬ 9 ∣ ·)).card : ℤ) else 0) [ZMOD 3]
@@ -185,7 +197,9 @@ public theorem_wanted ramanujanTau_succ_modEq_nine_regular (n : ℕ) (hn : 0 < n
 tau function, where $\tau_k$ is the generalized tau function. For every integer $n \ge 1$,
 $\tau(3n) \equiv 0 \pmod 3$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Corollary 1 (`integers-2024-A39-cor-1`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Corollary 1 (`integers-2024-A39-cor-1`). -/
 public theorem_wanted ramanujanTau_three_mul_modEq_zero (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (3 * n) ≡ 0 [ZMOD 3]
 
@@ -193,7 +207,9 @@ public theorem_wanted ramanujanTau_three_mul_modEq_zero (n : ℕ) (hn : 0 < n) :
 partitions of $m$ in which no part is divisible by $9$, and let $\sigma(m)$ be the sum of the
 positive divisors of $m$. For every positive integer $n$, $R_9(n) \equiv \sigma(3n + 1) \pmod 3$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Corollary 2 (`integers-2024-A39-cor-2`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Corollary 2 (`integers-2024-A39-cor-2`). -/
 public theorem_wanted card_nine_regular_modEq_sigma (n : ℕ) (hn : 0 < n) :
     ((Nat.Partition.restricted (n) (¬ 9 ∣ ·)).card : ℤ)
         ≡ (ArithmeticFunction.sigma 1 (3 * n + 1) : ℤ) [ZMOD 3]
@@ -203,7 +219,9 @@ Ramanujan's tau function, where $\tau_k$ is the generalized tau function, and le
 the number of partitions of $n$ with no part divisible by $25$. For every integer $n \ge 1$,
 $\tau(n + 1) \equiv R_{25}(n) \pmod 5$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 7 (`integers-2024-A39-thm-7`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 7 (`integers-2024-A39-thm-7`). -/
 public theorem_wanted ramanujanTau_succ_modEq_twentyfive_regular (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (n + 1) ≡ ((Nat.Partition.restricted (n) (¬ 25 ∣ ·)).card : ℤ) [ZMOD 5]
 
@@ -212,7 +230,9 @@ partitions of $m$ in which no part is divisible by $25$, and let $\sigma(m)$ be 
 positive divisors of $m$. For every positive integer $n$,
 $R_{25}(n) \equiv (n + 1) \, \sigma(n + 1) \pmod 5$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Corollary 3 (`integers-2024-A39-cor-3`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Corollary 3 (`integers-2024-A39-cor-3`). -/
 public theorem_wanted card_twentyfive_regular_modEq_mul_sigma (n : ℕ) (hn : 0 < n) :
     ((Nat.Partition.restricted (n) (¬ 25 ∣ ·)).card : ℤ) ≡ ((n + 1 : ℕ) : ℤ)
         * (ArithmeticFunction.sigma 1 (n + 1) : ℤ) [ZMOD 5]
@@ -222,7 +242,9 @@ tau function, where $\tau_k$ is the generalized tau function. For every integer 
 $\tau(n + 1)$ is congruent modulo $7$ to the sum of $(-1)^{m + r} (2m + 1)(2r + 1)$ over all
 pairs of integers $m, r \ge 0$ with $m(m + 1)/2 + 7r(r + 1)/2 = n$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 8 (`integers-2024-A39-thm-8`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 8 (`integers-2024-A39-thm-8`). -/
 public theorem_wanted ramanujanTau_succ_modEq_triangular_sum_seven (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (n + 1) ≡
       ∑ m ∈ Finset.range (n + 1), ∑ r ∈ Finset.range (n + 1),
@@ -236,7 +258,9 @@ integers $r$. For every integer $n \ge 1$, $\tau(n + 1)$ is congruent modulo $11
 $(-1)^{l + m + s + r}$ over all quadruples of integers $(l, m, s, r)$ with
 $P(l) + P(m) + 11P(s) + 11P(r) = n$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 9 (`integers-2024-A39-thm-9`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 9 (`integers-2024-A39-thm-9`). -/
 public theorem_wanted ramanujanTau_succ_modEq_pentagonal_sum_eleven (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (n + 1) ≡
       ∑ l ∈ Finset.Icc (-(n : ℤ)) n, ∑ m ∈ Finset.Icc (-(n : ℤ)) n, ∑ s ∈ Finset.Icc (-(n : ℤ)) n,
@@ -256,7 +280,9 @@ that version is false at $n = 1$. The shifted index comes from the identity
 $\prod_{m \ge 1} (1 - q^m)^{11} (1 - q^{13m}) = \sum_{r, s} (-1)^r \tau_{11}(s + 1) q^{13P(r) + s}$,
 which follows from Definition 1.1 and is used in the proof.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 10 (`integers-2024-A39-thm-10`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 10 (`integers-2024-A39-thm-10`). -/
 public theorem_wanted ramanujanTau_succ_modEq_pentagonal_tau_eleven (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (n + 1) ≡
       ∑ r ∈ Finset.Icc (-(n : ℤ)) n,
@@ -275,7 +301,9 @@ that version is false at $n = 1$. The shifted index comes from the identity
 $\prod_{m \ge 1} (1 - q^m)^7 (1 - q^{17m}) = \sum_{r, s} (-1)^r \tau_7(s + 1) q^{17P(r) + s}$,
 which follows from Definition 1.1 and is used in the proof.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 11 (`integers-2024-A39-thm-11`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 11 (`integers-2024-A39-thm-11`). -/
 public theorem_wanted ramanujanTau_succ_modEq_pentagonal_tau_seven (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (n + 1) ≡
       ∑ r ∈ Finset.Icc (-(n : ℤ)) n,
@@ -294,7 +322,9 @@ that version is false at $n = 1$. The shifted index comes from the identity
 $\prod_{m \ge 1} (1 - q^m)^5 (1 - q^{19m}) = \sum_{r, s} (-1)^r \tau_5(s + 1) q^{19P(r) + s}$,
 which follows from Definition 1.1 and is used in the proof.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 12 (`integers-2024-A39-thm-12`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 12 (`integers-2024-A39-thm-12`). -/
 public theorem_wanted ramanujanTau_succ_modEq_pentagonal_tau_five (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (n + 1) ≡
       ∑ r ∈ Finset.Icc (-(n : ℤ)) n,
@@ -308,7 +338,9 @@ $P(r) = r(3r - 1)/2$ for integers $r$. For every integer $n \ge 1$, $\tau(n + 1)
 modulo $23$ to the sum of $(-1)^{r + s}$ over all pairs of integers $(r, s)$ with
 $P(r) + 23P(s) = n$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 13 (`integers-2024-A39-thm-13`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 13 (`integers-2024-A39-thm-13`). -/
 public theorem_wanted ramanujanTau_succ_modEq_pentagonal_sum_twentythree (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (n + 1) ≡
       ∑ r ∈ Finset.Icc (-(n : ℤ)) n, ∑ s ∈ Finset.Icc (-(n : ℤ)) n,
@@ -322,7 +354,9 @@ integers $t$. For every integer $n \ge 1$,
 $$\tau(n + 1) \equiv \sum (-1)^{s + t} (2s + 1) R_5\big(n - 5s(s + 1)/2 - 5P(t)\big) \pmod{25},$$
 the sum running over all integers $s \ge 0$ and $t$ with $5s(s + 1)/2 + 5P(t) \le n$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 14 (`integers-2024-A39-thm-14`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 14 (`integers-2024-A39-thm-14`). -/
 public theorem_wanted ramanujanTau_succ_modEq_five_regular_sum_twentyfive (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (n + 1) ≡
       ∑ s ∈ Finset.range (n + 1), ∑ t ∈ Finset.Icc (-(n : ℤ)) n,
@@ -340,7 +374,9 @@ the integers $t$ with $-n \le t \le n$ and $n = p^s P(t)$.
 Since $P$ is injective, this sum has at most one term: $\tau_{p^s}(n + 1) \equiv (-1)^t \pmod{p}$
 if $n = p^s P(t)$, and $\tau_{p^s}(n + 1) \equiv 0 \pmod{p}$ if $n$ is not of this form.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 15 (`integers-2024-A39-thm-15`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 15 (`integers-2024-A39-thm-15`). -/
 public theorem_wanted generalizedTau_prime_pow_succ_modEq (p : ℕ) (hp : p.Prime) (s : ℕ)
     (hs : 0 < s) (n : ℕ) :
     generalizedTau ((p ^ s : ℕ) : ℤ) (n + 1) ≡
@@ -359,7 +395,9 @@ left side is $\tau_{2p}(1) = 1$ while that sum is empty. The identity
 $\sum_{n \ge 0} \tau_{2p}(n + 1) q^n \equiv \prod_{m \ge 1} (1 - q^{pm})^2 \pmod p$ from the
 paper's proof gives $n = p(P(r) + P(s))$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 16 (`integers-2024-A39-thm-16`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 16 (`integers-2024-A39-thm-16`). -/
 public theorem_wanted generalizedTau_two_mul_prime_succ_modEq (p : ℕ) (hp : p.Prime) (hodd : Odd p)
     (n : ℕ) :
     generalizedTau (2 * p) (n + 1) ≡
@@ -374,7 +412,9 @@ The record prints the hypothesis as $p \nmid n + 1$; that is false, and the coro
 Theorem 3.26 (the record's Theorem 16) in its corrected form, which forces $p \mid n$ for a nonzero
 residue.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Corollary 4 (`integers-2024-A39-cor-4`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Corollary 4 (`integers-2024-A39-cor-4`). -/
 public theorem_wanted generalizedTau_two_mul_prime_succ_modEq_zero (p : ℕ) (hp : p.Prime)
     (hodd : Odd p) (n : ℕ) (hn : ¬ p ∣ n) :
     generalizedTau (2 * p) (n + 1) ≡ 0 [ZMOD p]
@@ -388,7 +428,9 @@ The record prints the condition as $n + 1 = P(r) + p(P(s) + P(t))$; that is fals
 proof's identity $\sum \tau_{2p+1}(n + 1) q^n \equiv \prod (1 - q^m)(1 - q^{pm})^2 \pmod{p}$
 gives the index $n$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 17 (`integers-2024-A39-thm-17`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 17 (`integers-2024-A39-thm-17`). -/
 public theorem_wanted generalizedTau_two_mul_prime_add_one_succ_modEq (p : ℕ) (hp : p.Prime)
     (hodd : Odd p) (n : ℕ) :
     generalizedTau (2 * p + 1) (n + 1) ≡
@@ -406,7 +448,9 @@ The record prints the condition as $n + 1 = P(r) + p^2 P(s)$; that is false, and
 identity $\sum \tau_{p^2+1}(n + 1) q^n \equiv \prod (1 - q^m)(1 - q^{p^2 m}) \pmod{p}$ gives the
 index $n$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 18 (`integers-2024-A39-thm-18`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 18 (`integers-2024-A39-thm-18`). -/
 public theorem_wanted generalizedTau_prime_sq_add_one_succ_modEq (p : ℕ) (hp : p.Prime)
     (hodd : Odd p) (n : ℕ) :
     generalizedTau (p ^ 2 + 1) (n + 1) ≡
@@ -418,7 +462,9 @@ public theorem_wanted generalizedTau_prime_sq_add_one_succ_modEq (p : ℕ) (hp :
 partitions of $m$ in which no part is divisible by $9$. For every positive integer $n$,
 $R_9(4n + 1) \equiv R_9(n) \pmod 3$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 19 (`integers-2024-A39-thm-19`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 19 (`integers-2024-A39-thm-19`). -/
 public theorem_wanted card_nine_regular_four_mul_add_one_modEq (n : ℕ) (hn : 0 < n) :
     ((Nat.Partition.restricted (4 * n + 1) (¬ 9 ∣ ·)).card : ℤ)
     ≡ ((Nat.Partition.restricted (n) (¬ 9 ∣ ·)).card : ℤ) [ZMOD 3]
@@ -429,7 +475,9 @@ positive integers $r$ and $s$, $R_9((r - 1) 4^{s-1} + N_s) \equiv R_9(r) \pmod 3
 $R_9(N_s) \equiv 1 \pmod 3$, $R_9(4^{s-1} + N_s) \equiv 2 \pmod 3$ and
 $R_9(2 \cdot 4^{s-1} + N_s) \equiv 0 \pmod 3$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Corollary 5 (`integers-2024-A39-cor-5`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Corollary 5 (`integers-2024-A39-cor-5`). -/
 public theorem_wanted card_nine_regular_iterate_modEq (r s : ℕ) (hr : 0 < r) (hs : 0 < s) :
     ((Nat.Partition.restricted ((r - 1) * 4 ^ (s - 1) + (4 ^ s - 1) / 3) (¬ 9 ∣ ·)).card : ℤ)
         ≡ ((Nat.Partition.restricted (r) (¬ 9 ∣ ·)).card : ℤ) [ZMOD 3] ∧
@@ -443,7 +491,9 @@ natural number. Let $R_p(n)$ be the number of partitions of $n$ in which no part
 $p$, and let $\tau_k(m)$ be the generalized tau function, the coefficient of $q^m$ in
 $q \prod_{j \ge 1} (1 - q^j)^k$. Then $R_p(n) \equiv \tau_{p-1}(n + 1) \pmod p$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 20 (`integers-2024-A39-thm-20`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 20 (`integers-2024-A39-thm-20`). -/
 public theorem_wanted card_prime_regular_modEq_generalizedTau_pred (p : ℕ) (hp : p.Prime) (n : ℕ) :
     ((Nat.Partition.restricted (n) (¬ p ∣ ·)).card : ℤ)
         ≡ generalizedTau ((p : ℤ) - 1) (n + 1) [ZMOD p]
@@ -453,7 +503,9 @@ an integer with $1 \le k < l$, $n$ a natural number, and $r$ the remainder of $n
 $r \le l - k - 1$, then $\binom{n+k}{k} \equiv (-1)^r \binom{l-k-1}{r} \pmod l$; otherwise
 $\binom{n+k}{k} \equiv 0 \pmod l$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Lemma 1 (`integers-2024-A39-lem-1`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Lemma 1 (`integers-2024-A39-lem-1`). -/
 public theorem_wanted choose_add_modEq_prime (l : ℕ) (hl : l.Prime) (hodd : Odd l) (k : ℕ)
     (hk : 1 ≤ k) (hkl : k < l) (n : ℕ) :
     ((n + k).choose k : ℤ) ≡
@@ -474,7 +526,9 @@ $\prod (1 - q^m)^{-k} \equiv \prod (1 - q^m)^{l-k} (1 - q^{lm})^{-1} \pmod{l}$ t
 Definition 1.1 ($\prod (1 - q^m)^j = \sum \tau_j(t + 1) q^t$) gives $\tau_{l-k}(t + 1)$;
 Corollary 4.3 (the record's Corollary 6) uses this shifted form, $\omega(t) = \tau_1(t + 1)$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Theorem 21 (`integers-2024-A39-thm-21`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Theorem 21 (`integers-2024-A39-thm-21`). -/
 public theorem_wanted generalizedTau_neg_succ_modEq_partition_convolution (k : ℕ) (hk : 2 ≤ k)
     (l : ℕ) (hl : l.Prime) (hodd : Odd l) (hkl : k < l) (n : ℕ) :
     generalizedTau (-(k : ℤ)) (n + 1) ≡
@@ -494,7 +548,9 @@ $$\sum_{a + b = n} p(a)\, p(b) \equiv \sum_{0 \le s \le n/3} \omega(n - 3s)\, p(
 the left sum running over pairs $(a, b)$ of nonnegative integers and the right one over integers
 $s$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Corollary 6 (`integers-2024-A39-cor-6`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Corollary 6 (`integers-2024-A39-cor-6`). -/
 public theorem_wanted partition_convolution_two_modEq_three (n : ℕ) :
     (∑ x ∈ Finset.antidiagonal n,
         (Fintype.card (Nat.Partition x.1) : ℤ) * (Fintype.card (Nat.Partition x.2) : ℤ)) ≡
@@ -511,7 +567,9 @@ $$\sum_{a_1 + \cdots + a_{\ell - 3} = n} p(a_1) \cdots p(a_{\ell - 3}) \equiv 0 
 the sum running over all $(\ell - 3)$-tuples $(a_1, \dots, a_{\ell - 3})$ of nonnegative integers
 with sum $n$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Corollary 7 (`integers-2024-A39-cor-7`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Corollary 7 (`integers-2024-A39-cor-7`). -/
 public theorem_wanted partition_composition_sum_modEq_zero (l : ℕ) (hl : l.Prime) (h5 : 5 ≤ l)
     (m : ℕ) (hm0 : ¬ (m : ℤ) ≡ 0 [ZMOD l])
     (hm : ∀ r ≤ (l - 3) / 2, ¬ (m : ℤ) ≡ (-1 : ℤ) ^ r * ((l - 3).choose r : ℤ) [ZMOD l])
@@ -523,7 +581,9 @@ public theorem_wanted partition_composition_sum_modEq_zero (l : ℕ) (hl : l.Pri
 function, the generalized tau function with $k = 24$. For every positive integer $n$,
 $\tau(7n) \equiv 0 \pmod 7$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Corollary 8 (`integers-2024-A39-cor-8`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Corollary 8 (`integers-2024-A39-cor-8`). -/
 public theorem_wanted ramanujanTau_seven_mul_modEq_zero (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (7 * n) ≡ 0 [ZMOD 7]
 
@@ -532,7 +592,9 @@ number such that $k - 1$ is prime. For an integer $t$ let $P(t) = t(3t - 1)/2$ b
 pentagonal number. If $k - 1$ does not divide $n - 1 - P(t)$ for any integer $t$ with
 $P(t) \le n - 1$, then the generalized tau function satisfies $\tau_k(n) \equiv 0 \pmod{k - 1}$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Proposition 1 (`integers-2024-A39-prop-1`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Proposition 1 (`integers-2024-A39-prop-1`). -/
 public theorem_wanted generalizedTau_modEq_zero_of_pentagonal (n : ℕ) (hn : 0 < n) (k : ℕ)
     (hk : (k - 1).Prime)
     (h : ∀ t : ℤ, pentagonal t ≤ n - 1 → ¬ (k - 1) ∣ n - 1 - pentagonal t) :
@@ -542,7 +604,9 @@ public theorem_wanted generalizedTau_modEq_zero_of_pentagonal (n : ℕ) (hn : 0 
 For every positive integer $n$ and every integer $k$ with $|k| \ge 2$,
 $n\,\tau_k(n + 1) \equiv 0 \pmod{|k|}$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Proposition 2 (`integers-2024-A39-prop-2`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Proposition 2 (`integers-2024-A39-prop-2`). -/
 public theorem_wanted mul_generalizedTau_succ_modEq_zero (n : ℕ) (hn : 0 < n) (k : ℤ) (hk : 2 ≤ |k|)
     :
     (n : ℤ) * generalizedTau k (n + 1) ≡ 0 [ZMOD |k|]
@@ -553,7 +617,9 @@ an integer with $|k| \ge 2$ and $d$ a natural number dividing $|k|$ with $d < |k
 natural numbers $m$ and $r$ with $\gcd(r, |k|/d) = 1$,
 $\tau_k(|k| m + d r + 1) \equiv 0 \pmod{|k|/d}$.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Proposition 3 (`integers-2024-A39-prop-3`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Proposition 3 (`integers-2024-A39-prop-3`). -/
 public theorem_wanted generalizedTau_modEq_zero_of_coprime (m : ℕ) (k : ℤ) (hk : 2 ≤ |k|) (d : ℕ)
     (hd : d ∣ k.natAbs) (hdk : d < k.natAbs) (r : ℕ)
     (hr : Nat.gcd r (k.natAbs / d) = 1) :
@@ -572,7 +638,9 @@ which is false (for instance $\tau(5) = 4830$ is not divisible by $12$); the mod
 $24/\gcd(r, 24)$, which the paper's Proposition 2.4 at $k = 24$ gives. The first and third
 congruences are as printed.
 
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024), Article A39, Proposition 4 (`integers-2024-A39-prop-4`). -/
+Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
+Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
+Article A39, Proposition 4 (`integers-2024-A39-prop-4`). -/
 public theorem_wanted ramanujanTau_modEq_divisors_twentyfour (m : ℕ) :
     (∀ r ∈ ({1, 5, 7, 11, 13, 17, 19, 23} : Finset ℕ),
         generalizedTau 24 (24 * m + r + 1) ≡ 0 [ZMOD 24]) ∧

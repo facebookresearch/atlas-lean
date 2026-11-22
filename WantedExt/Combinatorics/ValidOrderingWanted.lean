@@ -21,9 +21,8 @@ such ordering (exhaustive check), contradicting
 Theorem 2; the form stated was verified by exhaustive
 search on hundreds of small sets.
 
-Not stated (see the source audit table): Theorem 1,
-whose size bound is garbled in the extracted statement
-by two-column interleaving.
+Theorem 1's bound `|A| ≤ log p / log log p` is read from
+the journal PDF.
 -/
 module
 
@@ -65,5 +64,18 @@ theorem_wanted exists_freimanIso_to_int (ℓ p : ℕ)
     (hA : A.card ≤ ⌈Real.log p / Real.log ℓ⌉₊) :
     ∃ (B : Finset ℤ) (f : ZMod p → ℤ),
       IsAddFreimanIso ℓ (A : Set (ZMod p)) (B : Set ℤ) f
+
+/-- **Theorem 1**: for a prime `p`, every `A ⊆ 𝔽_p \ {0}` with
+`|A| ≤ log p / log log p` has a valid ordering (pairwise distinct
+partial sums `a₁, a₁ + a₂, …`).
+
+Source: Noah Kravitz, "Rearranging Small Sets for
+Distinct Partial Sums", INTEGERS 24 (2024), Article A113,
+Theorem 1. -/
+theorem_wanted exists_distinct_partial_sums_ordering_zmod (p : ℕ) [Fact p.Prime]
+    (A : Finset (ZMod p)) (h0 : 0 ∉ A)
+    (hA : (A.card : ℝ) ≤ Real.log p / Real.log (Real.log p)) :
+    ∃ l : List (ZMod p), List.Perm l A.toList ∧
+      ((l.scanl (· + ·) 0).tail).Nodup
 
 end MathlibExt.Combinatorics.ValidOrderingWanted

@@ -860,34 +860,10 @@ private theorem updateNeighborsImpl_rel {α : Type u} [DecidableEq α] [Hashable
           induction actualDegrees modelDegrees actualQueue modelQueue
             hdegrees hqueue hedgesTail
 
-private theorem erase_eq_filter_ne {α : Type u} [DecidableEq α]
-    (xs : List α) (target : α) (hnodup : xs.Nodup) (hmem : target ∈ xs) :
-    xs.erase target = xs.filter fun x => decide (x ≠ target) := by
-  induction xs with
-  | nil => simp at hmem
-  | cons x xs induction =>
-      have htail : xs.Nodup := (List.nodup_cons.mp hnodup).2
-      by_cases hxt : x = target
-      · subst x
-        have hnot : target ∉ xs := (List.nodup_cons.mp hnodup).1
-        simp only [List.erase_cons_head, ne_eq, decide_not, decide_true, Bool.not_true,
-          Bool.false_eq_true, not_false_eq_true, List.filter_cons_of_neg]
-        symm
-        apply List.filter_eq_self.mpr
-        intro y hy
-        have hyt : y ≠ target := by
-          intro h
-          subst y
-          exact hnot hy
-        simp [hyt]
-      · have hmemTail : target ∈ xs := (List.mem_cons.mp hmem).resolve_left (Ne.symm hxt)
-        simp [hxt, induction htail hmemTail]
-
 private theorem filter_erase_active {α : Type u} [DecidableEq α] [Hashable α]
     (vertices : List α) (active : Std.HashSet α) (remaining : List α) (target : α)
     (hvertices : vertices.Nodup)
-    (horder : vertices.filter (fun x => active.contains x) = remaining)
-    (htarget : target ∈ remaining) :
+    (horder : vertices.filter (fun x => active.contains x) = remaining) :
     vertices.filter (fun x => (active.erase target).contains x) = remaining.erase target := by
   calc
     vertices.filter (fun x => (active.erase target).contains x) =
@@ -899,18 +875,12 @@ private theorem filter_erase_active {α : Type u} [DecidableEq α] [Hashable α]
           (fun x => !(target == x)) := by
       rw [List.filter_filter]
     _ = remaining.filter (fun x => !(target == x)) := by rw [horder]
-    _ = remaining.filter (fun x => decide (x ≠ target)) := by
-      apply List.filter_congr
-      intro x hx
-      by_cases hxt : x = target
-      · subst x
-        simp
-      · simp [hxt, Ne.symm hxt]
     _ = remaining.erase target := by
       have hremainingNodup : remaining.Nodup := by
         rw [← horder]
         exact hvertices.filter _
-      exact (erase_eq_filter_ne remaining target hremainingNodup htarget).symm
+      rw [hremainingNodup.erase_eq_filter]
+      exact List.filter_congr fun x _ => by rw [BEq.comm]; rfl
 
 private theorem setRel_of_order {α : Type u} [DecidableEq α] [Hashable α]
     (g : DirectedAdjacency α) (active : Std.HashSet α) (remaining : List α)
@@ -980,7 +950,7 @@ private theorem implRel_after_dequeue {α : Type u} [DecidableEq α] [Hashable �
     rw [hcontents]
     simp)
   have horder := filter_erase_active g.vertices actual.active model.remaining source
-    g.vertices_nodup hrel.remaining hsource
+    g.vertices_nodup hrel.remaining
   have hactive : SetRel (actual.active.erase source) (model.remaining.erase source) :=
     setRel_of_order g _ _ horder
   have hscan : dedupNeighborsImpl (g.adjacency source) = neighborScan g source := by
@@ -1090,13 +1060,6 @@ private abbrev iterSort {α : Type u} [DecidableEq α]
     (g : DirectedAdjacency α) (fuel : Nat) (s : State α) : Result α :=
   finish ((advance g)^[fuel] s)
 
-private theorem iterate_fixed {α : Type u} (f : α → α) (x : α)
-    (h : f x = x) : ∀ n, f^[n] x = x := by
-  intro n
-  induction n with
-  | zero => rfl
-  | succ n => simpa [Function.iterate_succ_apply, h] using ‹f^[n] x = x›
-
 private theorem iterSort_eq_loop {α : Type u} [DecidableEq α]
     (g : DirectedAdjacency α) (fuel : Nat) (s : State α) (hinv : StateInvariant g s)
     (hfuel : fuel = s.remaining.length) : iterSort g fuel s = loop g fuel s := by
@@ -1116,7 +1079,7 @@ private theorem iterSort_eq_loop {α : Type u} [DecidableEq α]
       | none =>
           have hadvance : advance g s = s := by
             rw [advance_eq_step, hstep]
-          have hiterate := iterate_fixed (advance g) s hadvance (fuel + 1)
+          have hiterate := Function.iterate_fixed hadvance (fuel + 1)
           simp [iterSort, finish, loop, hiterate, hisempty, hstep]
       | some s' =>
           have hadvance : advance g s = s' := by

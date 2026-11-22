@@ -1,0 +1,3 @@
+# Stochastic domination from above passes to weak limits
+
+Let $E$ be a countable set, $(\mu_n)$ and $\nu$ probability measures on $\{0, 1\}^E$ with $\mu_n \to \nu$ [weakly](weak-converges-to.md), and $\rho$ a finite measure on $\{0, 1\}^E$ with $\mu_n \preceq \rho$ for every $n$ ([stochastic domination](../../correlation-inequalities/stochastic-domination-and-strassen-s-theorem/stochastic-domination-of-measures-on-configurati/stochastically-dominated.md)). Then $\nu(A) \le \rho(A)$ for every clopen [increasing](../../correlation-inequalities/harris-fkg-bk/increasing-events-and-the-fkg-lattice-condition/is-increasing.md) event $A$.

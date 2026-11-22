@@ -644,8 +644,13 @@ private theorem aux_step {c : ℂ} {R : ℝ} (hR : 0 < R) {f g : ℂ → ℂ}
   exact sub_eq_zero.mp hsub
 
 /--
-Rouché theorem on a closed disc.
+**Rouché's theorem on a disc.** Let $c \in \mathbb{C}$ and $R > 0$, and let $f$ and $g$ be analytic
+at every point of the closed disc $|z - c| \le R$. If $|g(z)| < |f(z)|$ for every $z$ on the circle
+$|z - c| = R$, then $f$ and $f + g$ have the same number of zeros in the open disc $|z - c| < R$,
+counted with multiplicity: the divisors of $f$ and of $f + g$ on the open disc have equal sums.
+
 Source: E. Rouché, Mémoire sur la série de Lagrange, J. École Polytechnique 22 (1862), 193-224
+
 Proves `Wanted` entry `rouche_closedBall`.
 -/
 theorem rouche_closedBall
