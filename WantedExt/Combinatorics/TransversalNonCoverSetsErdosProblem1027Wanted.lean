@@ -34,21 +34,29 @@ is `≥ δ 2^{|X|}` with `δ > 0` depending only on `c`. Compared with the forma
 `ErdosProblems/1027.lean` (equivalent; no code imported).
 -/
 
-/-- The sets `B ⊆ X = ⋃ F` that meet every member of `F` but contain none of them. -/
+/-- **Sets meeting but not containing the members of a family.** For a finite family $F$ of finite
+sets of natural numbers with union $X$, this is the finite set of all $B \subseteq X$ that meet
+every member of $F$ and contain none of them. -/
 def transversalNonCoverSets (F : Finset (Finset ℕ)) : Finset (Finset ℕ) :=
   (F.biUnion id).powerset.filter fun B => ∀ A ∈ F, (A ∩ B).Nonempty ∧ ¬ A ⊆ B
 
-/-- Erdős Problem 1027: for every `c > 0` there is `δ > 0` such that, for all large `n`, every
-family `F` of at most `c 2ⁿ` sets of size `n` with union `X` has at least `δ 2^{|X|}` sets `B ⊆ X`
-meeting every member of `F` and containing none of them. -/
+/-- **Erdős Problem 1027 (sets meeting but not containing members of a family).** For every real
+$c > 0$ there is a real $\delta > 0$ such that, for all sufficiently large $n$, every finite family
+$F$ of finite sets of natural numbers, each of size $n$, with $|F| \le c \cdot 2^n$ and with union
+$X$, has at least $\delta \cdot 2^{|X|}$ subsets $B \subseteq X$ that meet every member of $F$ and
+contain none of them. -/
 def manyTransversalNonCoverSets : Prop :=
   ∀ c : ℝ, 0 < c → ∃ δ : ℝ, 0 < δ ∧ ∀ᶠ n : ℕ in Filter.atTop, ∀ F : Finset (Finset ℕ),
     (∀ A ∈ F, A.card = n) → (F.card : ℝ) ≤ c * 2 ^ n →
       δ * 2 ^ (F.biUnion id).card ≤ (transversalNonCoverSets F).card
 
 /--
-Resolved true: erdosproblems.com/1027 lists the problem as proved, by a proof of Koishi Chan in its
-comments, and a formal proof of this statement is in plby/lean-proofs (`Erdos1027.lean`). Source: T.
+**Erdős Problem 1027 holds.** For every real $c > 0$ there is a real $\delta > 0$ such that, for
+all sufficiently large $n$, every finite family $F$ of finite sets of natural numbers, each of
+size $n$, with $|F| \le c \cdot 2^n$ and with union $X$, has at least $\delta \cdot 2^{|X|}$
+subsets $B \subseteq X$ that meet every member of $F$ and contain none of them.
+
+Source: T.
 F. Bloom, Erdős Problems, Problem #1027, https://www.erdosproblems.com/1027 (status PROVED);
 resolution: K. Chan, proof in the erdosproblems.com/1027 comments; formal proof plby/lean-proofs,
 src/latest/ErdosProblems/Erdos1027.lean, erdosproblems.com/1027: 'This is true, and a proof was

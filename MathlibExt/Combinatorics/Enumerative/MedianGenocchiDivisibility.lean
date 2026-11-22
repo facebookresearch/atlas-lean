@@ -11,6 +11,7 @@ module
 public import MathlibExt.Combinatorics.Enumerative.MedianGenocchiNumber
 import MathlibExt.Combinatorics.Enumerative.EulerSeidelMatrix
 import MathlibExt.NumberTheory.GenocchiBernoulli
+import Mathlib.Algebra.BigOperators.ModEq
 import Mathlib.Algebra.Ring.Parity
 import Mathlib.Data.Int.ModEq
 import Mathlib.Tactic.FieldSimp
@@ -691,17 +692,6 @@ private theorem mgen_sum_range_add_three {R : Type*} [AddCommMonoid R]
   simp only [zero_add, Nat.reduceAdd]
   ac_rfl
 
-private theorem mgen_sum_modEq_zero {s : Finset ℕ} {f : ℕ → ℤ} {m : ℤ}
-    (h : ∀ k ∈ s, f k ≡ 0 [ZMOD m]) :
-    (∑ k ∈ s, f k) ≡ 0 [ZMOD m] := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | @insert a s ha ih =>
-      rw [Finset.sum_insert ha]
-      exact (h a (Finset.mem_insert_self a s)).add
-        (ih (fun k hk => h k (Finset.mem_insert_of_mem hk)))
-
 private theorem mgenQuotient_modEq_first_columns (n : ℕ) (hn : 2 ≤ n) :
     mgenQuotient n ≡
       (-1 : ℤ) ^ (n + 1) +
@@ -713,7 +703,7 @@ private theorem mgenQuotient_modEq_first_columns (n : ℕ) (hn : 2 ≤ n) :
       f 0 + f 1 + f 2 + ∑ k ∈ Finset.range (n - 2), f (k + 3) := by
     rw [mgenQuotient, hlen, mgen_sum_range_add_three]
   have htail : (∑ k ∈ Finset.range (n - 2), f (k + 3)) ≡ 0 [ZMOD 6] := by
-    apply mgen_sum_modEq_zero
+    apply Int.ModEq.sum_zero
     intro k _
     rw [Int.modEq_zero_iff_dvd]
     have hdNat : 6 ∣ mgenFactor (k + 3) := mgen_factor_six_dvd (k + 3) (by omega)

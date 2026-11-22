@@ -35,6 +35,10 @@ definitions (`IsCDCongruenceSetOf`, `IsNonIntersecting`)
 and its Section 2 density
 `δ(A) = lim_{N → ∞} A(N) / N`, where `A(N)` counts the
 integers in `[1, N]` covered by `A`.
+
+Proved in `MathlibExt.NumberTheory.ErdosGrahamCovering`,
+which this module imports: Lemma 2.2
+(`one_le_sum_inv_moduli`).
 -/
 module
 
@@ -47,6 +51,7 @@ public import Mathlib.Data.Nat.GCD.Basic
 public import MathlibExt.NumberTheory.CoveringSystem
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import Mathlib.Data.Nat.Factorization.Defs
+public import MathlibExt.NumberTheory.ErdosGrahamCovering
 
 set_option autoImplicit false
 
@@ -77,19 +82,6 @@ theorem_wanted not_covering_of_nonintersecting (n : ℕ)
     ¬ ∃ b : ℕ → ℤ, Int.IsCoveringSystem
         ((n.divisors.filter (fun d => 1 < d)).image
           (fun d => (b d, d)))
-
-/-- **Lemma 2.2**: for any covering set
-`{a_1 (mod d_1), …, a_t (mod d_t)}`,
-`∑_{i=1}^t 1 / d_i ≥ 1`.
-
-Source: Sarosh Adenwalla, "A Question of Erdős and
-Graham on Covering Systems", Lemma 2.2. -/
-theorem_wanted one_le_sum_inv_moduli {t : ℕ}
-    (moduli : Fin t → ℕ) (residues : Fin t → ℤ)
-    (hpos : ∀ i, 0 < moduli i)
-    (hcov : Int.IsCoveringSystem
-      (Int.indexedCoveringClasses moduli residues)) :
-    (1 : ℚ) ≤ ∑ i, (1 : ℚ) / (moduli i : ℚ)
 
 /-- `a` gives a CD congruence set of `n`: the classes
 `a d (mod d)` for the divisors `d > 1` of `n`, where

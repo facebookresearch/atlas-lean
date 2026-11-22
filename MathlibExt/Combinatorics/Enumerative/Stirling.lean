@@ -280,17 +280,12 @@ private noncomputable def decomposeFinZeroQuotientEquiv {n : ℕ}
       intro x
       exact ⟨Quotient.mk _ x.succ, rfl⟩
 
-private theorem natCardOption (α : Type*) [Finite α] :
-    Nat.card (Option α) = Nat.card α + 1 := by
-  let finiteType : Fintype α := Fintype.ofFinite α
-  rw [Nat.card_eq_fintype_card, Fintype.card_option, Nat.card_eq_fintype_card]
-
 private theorem cycleQuotientCount_decomposeFin_zero {n : ℕ}
     (e : Equiv.Perm (Fin n)) :
     cycleQuotientCount (Equiv.Perm.decomposeFin.symm (0, e)) =
       cycleQuotientCount e + 1 := by
   rw [cycleQuotientCount, cycleQuotientCount,
-    Nat.card_congr (decomposeFinZeroQuotientEquiv e), natCardOption]
+    Nat.card_congr (decomposeFinZeroQuotientEquiv e), Finite.card_option]
 
 private theorem cycleQuotientCount_decomposeFin_succ {n : ℕ} (q : Fin n)
     (e : Equiv.Perm (Fin n)) :
