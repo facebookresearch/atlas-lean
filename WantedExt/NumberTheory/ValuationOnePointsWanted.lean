@@ -15,6 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.LinearAlgebra.Matrix.Rank
 public import Mathlib.RingTheory.Polynomial.Resultant.Basic
+public import MathlibExt.NumberTheory.ValuationOnePoints
 
 /-!
 # Points of valuation 1 for a polynomial in two variables
