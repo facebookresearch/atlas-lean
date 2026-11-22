@@ -33,15 +33,20 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The trivial elements of the `h`-fold sumset of `{a 0, a 1, …, a (k - 1)}`: the
-elements `h • a 0` and `(h - i) • a j + i • a (j + 1)` for `0 ≤ i ≤ h` and
-`j + 1 < k`, the sums obtained by moving one summand at a time from each element to the
-next.  When `a 0 < a 1 < ⋯ < a (k - 1)` in a linearly ordered additive group (the
-paper's setting) these form an increasing list of `hk - h + 1` distinct sums; for an
-arbitrary `a` they may coincide (e.g. `a = 0`, `h = k = 2` gives one element).  An
-element of `h • A` outside this finset is called nontrivial.  `h • a 0` is listed
-separately so that a one-element set has its single sum as a trivial element, as in the
-paper's list; the empty set (`k = 0`) has no trivial elements.
+/-- **Trivial elements of an $h$-fold sumset.** Let $G$ be an additive commutative monoid, let
+$h, k \in \mathbb{N}$ and let $a \colon \mathbb{N} \to G$ list the set
+$A = \{a_0, a_1, \dots, a_{k-1}\}$; write $n x$ for the $n$-fold sum $x + \dots + x$. The
+trivial elements of the $h$-fold sumset $hA$ form the finite set that is empty when $k = 0$ and
+otherwise consists of $h a_0$ together with the sums $(h - i) a_j + i a_{j+1}$ for all natural
+numbers $i \le h$ and $j$ with $j + 1 < k$. An element of $hA$ that is not trivial is called
+nontrivial.
+
+These are the sums obtained by moving one summand at a time from each element to the next.
+When $k \ge 1$ and $a_0 < a_1 < \dots < a_{k-1}$ in a linearly ordered additive group (the
+paper's setting) they form an increasing list of $hk - h + 1$ distinct sums; for an arbitrary
+$a$ they may coincide (for example $a = 0$ and $h = k = 2$ give a single element). The sum
+$h a_0$ is listed separately so that for $k = 1$ the single sum $h a_0$ is trivial, as in the
+paper's list.
 
 Source: Vincent Schinina, *On the Sumset of Sets of Size k*, INTEGERS 26 (2026),
 Article A31, definition of trivial and nontrivial elements (arXiv:2505.07679v2,
@@ -52,7 +57,9 @@ public def sumsetTrivialElements {G : Type*} [AddCommMonoid G] [DecidableEq G]
   else insert (h • a 0) ((Finset.range (k - 1) ×ˢ Finset.range (h + 1)).image
     fun p => (h - p.2) • a p.1 + p.2 • a (p.1 + 1))
 
-/-- The empty set (`k = 0`) has no trivial elements.
+/-- **No trivial elements for $k = 0$.** Let $G$ be an additive commutative monoid, $h$ a natural
+number and $a \colon \mathbb{N} \to G$. For $k = 0$, when $\{a_0, \dots, a_{k-1}\}$ is the empty
+set, the set of trivial elements of its $h$-fold sumset is empty.
 
 Source: Vincent Schinina, *On the Sumset of Sets of Size k*, INTEGERS 26 (2026),
 Article A31, definition of trivial elements (arXiv:2505.07679v2, Definition 1.8). -/
@@ -60,7 +67,10 @@ public theorem sumsetTrivialElements_zero {G : Type*} [AddCommMonoid G] [Decidab
     (h : ℕ) (a : ℕ → G) : sumsetTrivialElements h 0 a = ∅ := by
   simp [sumsetTrivialElements]
 
-/-- A one-element set has its single `h`-fold sum as its only trivial element.
+/-- **Trivial elements of a one-element set.** Let $G$ be an additive commutative monoid, $h$ a
+natural number and $a \colon \mathbb{N} \to G$. For $k = 1$, when $\{a_0, \dots, a_{k-1}\}$ is
+the one-element set $\{a_0\}$, the set of trivial elements of its $h$-fold sumset is exactly
+$\{h a_0\}$, where $h a_0 = a_0 + \dots + a_0$ is the $h$-fold sum of $a_0$.
 
 Source: Vincent Schinina, *On the Sumset of Sets of Size k*, INTEGERS 26 (2026),
 Article A31, definition of trivial elements (arXiv:2505.07679v2, Definition 1.8). -/
@@ -68,8 +78,10 @@ public theorem sumsetTrivialElements_one {G : Type*} [AddCommMonoid G] [Decidabl
     (h : ℕ) (a : ℕ → G) : sumsetTrivialElements h 1 a = {h • a 0} := by
   simp [sumsetTrivialElements]
 
-/-- Each listed sum `(h - i) • a j + i • a (j + 1)` with `j + 1 < k` and `i ≤ h` is a
-trivial element.
+/-- **Adjacent sums are trivial elements.** Let $G$ be an additive commutative monoid,
+$a_0, a_1, \ldots$ a sequence in $G$, and $h, k, i, j$ natural numbers with $j + 1 < k$ and
+$i \le h$. Then $(h - i)a_j + i a_{j+1}$ is a trivial element of the $h$-fold sumset of
+$a_0, \ldots, a_{k-1}$.
 
 Source: Vincent Schinina, *On the Sumset of Sets of Size k*, INTEGERS 26 (2026),
 Article A31, definition of trivial elements (arXiv:2505.07679v2, Definition 1.8). -/
@@ -82,8 +94,11 @@ public theorem adjacent_sum_mem_sumsetTrivialElements {G : Type*} [AddCommMonoid
   simp only [Finset.mem_product, Finset.mem_range]
   omega
 
-/-- Membership in the trivial elements: `x` is trivial exactly when `k > 0` and
-`x = h • a 0`, or `x = (h - i) • a j + i • a (j + 1)` for some `j + 1 < k` and `i ≤ h`.
+/-- **Characterization of the trivial elements.** Let $G$ be an additive commutative monoid,
+$a_0, a_1, \ldots$ a sequence in $G$, and $h, k$ natural numbers. An element $x \in G$ is a
+trivial element of the $h$-fold sumset of $a_0, \ldots, a_{k-1}$ if and only if either $k > 0$
+and $x = h a_0$, or $x = (h - i)a_j + i a_{j+1}$ for some natural numbers $j$ and $i$ with
+$j + 1 < k$ and $i \le h$.
 
 Source: Vincent Schinina, *On the Sumset of Sets of Size k*, INTEGERS 26 (2026),
 Article A31, definition of trivial elements (arXiv:2505.07679v2, Definition 1.8). -/
@@ -106,11 +121,16 @@ public theorem mem_sumsetTrivialElements_iff {G : Type*} [AddCommMonoid G] [Deci
     · exact Or.inl hx
     · exact Or.inr ⟨j, i, ⟨by omega, by omega⟩, rfl⟩
 
-/-- Dropping the largest element: for `a 0 < a 1 < ⋯ < a (k - 1)` in a linearly ordered
-additive abelian group with `k > 1`, `A = {a 0, …, a (k - 1)}` and
-`B = {a 0, …, a (k - 2)}`, we have `h • B ⊆ h • A`, and every nontrivial element of
-`h • B` is a nontrivial element of `h • A`.  The paper takes `h > 1`; the statement
-holds for every `h` (for `h = 0` there are no nontrivial elements).
+/-- **Dropping the largest element keeps nontrivial sums nontrivial.** Let $G$ be a linearly
+ordered additive commutative group, let $h$ and $k > 1$ be natural numbers, and let
+$a_0, a_1, \ldots$ be a sequence in $G$ with $a_0 < a_1 < \cdots < a_{k-1}$. Put
+$A = \{a_0, \ldots, a_{k-1}\}$ and $B = \{a_0, \ldots, a_{k-2}\}$, and write $hX$ for the
+$h$-fold sumset of a set $X$, the set of sums of $h$ elements of $X$. Then $hB \subseteq hA$,
+and every element of $hB$ that is not a trivial element of the $h$-fold sumset of
+$a_0, \ldots, a_{k-2}$ is not a trivial element of the $h$-fold sumset of $a_0, \ldots, a_{k-1}$.
+
+The paper takes $h > 1$; the statement holds for every $h$ (for $h = 0$ there are no
+nontrivial elements).
 
 Source: Vincent Schinina, *On the Sumset of Sets of Size k*, INTEGERS 26 (2026),
 Article A31, Lemma 1 (`integers-2026-A31-lem-1`; arXiv:2505.07679v2, Lemma 3.2). -/
@@ -121,12 +141,16 @@ public theorem_wanted nsmul_sumset_erase_max_nontrivial
       ∀ c ∈ h • (Finset.range (k - 1)).image a,
         c ∉ sumsetTrivialElements h (k - 1) a → c ∉ sumsetTrivialElements h k a
 
-/-- Many nontrivial sums when the last gap is not a multiple of the one before: let
-`k ≥ 4` and `0 = a 0 < a 1 < ⋯ < a (k - 3)` in a linearly ordered additive abelian
-group, and let `a (k - 2) = a (k - 3) + b`, `a (k - 1) = a (k - 3) + b + c` with
-`b, c > 0` and `c ≠ d • b` for every `d ≥ 1`.  Then `h • {a 0, …, a (k - 1)}` has at
-least `h - 1` nontrivial elements.  The paper takes `h > 1`; the bound is vacuous for
-`h ≤ 1`.
+/-- **Many nontrivial sums when the last gap is not a multiple of the previous one.** Let $G$ be
+a linearly ordered additive commutative group, let $h$ and $k \ge 4$ be natural numbers, and let
+$a_0, a_1, \ldots$ be a sequence in $G$ with $0 = a_0 < a_1 < \cdots < a_{k-3}$. Suppose that
+$a_{k-2} = a_{k-3} + b$ and $a_{k-1} = a_{k-3} + b + c$, where $b, c \in G$ satisfy $b > 0$,
+$c > 0$ and $c \ne db$ for every integer $d \ge 1$. Then at least $h - 1$ elements of the
+$h$-fold sumset $h\{a_0, \ldots, a_{k-1}\}$ (the set of sums of $h$ elements of
+$\{a_0, \ldots, a_{k-1}\}$) are not trivial elements of the $h$-fold sumset of
+$a_0, \ldots, a_{k-1}$.
+
+The paper takes $h > 1$; the bound is vacuous for $h \le 1$.
 
 Source: Vincent Schinina, *On the Sumset of Sets of Size k*, INTEGERS 26 (2026),
 Article A31, Theorem 1 (`integers-2026-A31-thm-1`; arXiv:2505.07679v2,
@@ -139,12 +163,16 @@ public theorem_wanted nontrivial_sumset_card_of_last_gap_ne_nsmul
     (hcb : ∀ d : ℕ, 1 ≤ d → c ≠ d • b) :
     h - 1 ≤ (h • (Finset.range k).image a \ sumsetTrivialElements h k a).card
 
-/-- Many nontrivial sums when the last gap is a proper multiple of the one before: let
-`k ≥ 4` and `0 = a 0 < a 1 < ⋯ < a (k - 3)` in a linearly ordered additive abelian
-group, and let `a (k - 2) = a (k - 3) + b`, `a (k - 1) = a (k - 3) + b + d • b` with
-`b > 0` and `d > 1`.  Then `h • {a 0, …, a (k - 1)}` has at least `h - 1` nontrivial
-elements.  The paper's `c` is written as `d • b` (its positivity follows).  The paper
-takes `h > 1`; the bound is vacuous for `h ≤ 1`.
+/-- **Many nontrivial sums when the last gap is a proper multiple of the previous one.** Let $G$
+be a linearly ordered additive commutative group, let $h$ and $k \ge 4$ be natural numbers, and
+let $a_0, a_1, \ldots$ be a sequence in $G$ with $0 = a_0 < a_1 < \cdots < a_{k-3}$. Suppose
+that $a_{k-2} = a_{k-3} + b$ and $a_{k-1} = a_{k-3} + b + db$, where $b \in G$ satisfies
+$b > 0$ and $d > 1$ is an integer. Then at least $h - 1$ elements of the $h$-fold sumset
+$h\{a_0, \ldots, a_{k-1}\}$ (the set of sums of $h$ elements of $\{a_0, \ldots, a_{k-1}\}$)
+are not trivial elements of the $h$-fold sumset of $a_0, \ldots, a_{k-1}$.
+
+The paper's last gap $c$ is written as $db$ (its positivity follows). The paper takes $h > 1$;
+the bound is vacuous for $h \le 1$.
 
 Source: Vincent Schinina, *On the Sumset of Sets of Size k*, INTEGERS 26 (2026),
 Article A31, Theorem 2 (`integers-2026-A31-thm-2`; arXiv:2505.07679v2,
@@ -156,13 +184,16 @@ public theorem_wanted nontrivial_sumset_card_of_last_gap_eq_nsmul
     (hb' : a (k - 2) = a (k - 3) + b) (hc' : a (k - 1) = a (k - 3) + b + d • b) :
     h - 1 ≤ (h • (Finset.range k).image a \ sumsetTrivialElements h k a).card
 
-/-- Equal last two gaps: let `k ≥ 4` and `0 = a 0 < a 1 < ⋯ < a (k - 1)` in a linearly
-ordered additive abelian group with `a (k - 1) - a (k - 2) = a (k - 2) - a (k - 3)`
-(the paper's `b_{k-2} = b_{k-3}` for `A = {0, a, a + b₁, …, a + b₁ + ⋯ + b_{k-2}}`).
-Then either `A = {a 0, …, a (k - 1)}` is the arithmetic progression
-`a i = i • a 1`, or `h • B`, for `B = {a 0, …, a (k - 2)}`, has at least `h - 1`
-nontrivial elements.  The paper takes `h > 1`; the second alternative is vacuous for
-`h ≤ 1`.
+/-- **Equal last two gaps: an arithmetic progression or many nontrivial sums.** Let $G$ be a
+linearly ordered additive commutative group, let $h$ and $k \ge 4$ be natural numbers, and let
+$a_0, a_1, \ldots$ be a sequence in $G$ with $0 = a_0 < a_1 < \cdots < a_{k-1}$ and
+$a_{k-1} - a_{k-2} = a_{k-2} - a_{k-3}$. Then either $a_i = i a_1$ for every $i < k$, or at
+least $h - 1$ elements of the $h$-fold sumset $hB$ of $B = \{a_0, \ldots, a_{k-2}\}$ (the set
+of sums of $h$ elements of $B$) are not trivial elements of the $h$-fold sumset of
+$a_0, \ldots, a_{k-2}$.
+
+The gap hypothesis is the paper's $b_{k-2} = b_{k-3}$, where $b_j = a_{j+1} - a_j$ for
+$j \ge 1$. The paper takes $h > 1$; the second alternative is vacuous for $h \le 1$.
 
 Source: Vincent Schinina, *On the Sumset of Sets of Size k*, INTEGERS 26 (2026),
 Article A31, Theorem 3 (`integers-2026-A31-thm-3`; arXiv:2505.07679v2,
@@ -176,10 +207,14 @@ public theorem_wanted arithProg_or_nontrivial_sumset_card_of_last_gaps_eq
       h - 1 ≤ (h • (Finset.range (k - 1)).image a \
         sumsetTrivialElements h (k - 1) a).card
 
-/-- A missing interval of sumset sizes: in a torsion-free additive abelian group, for
-`k ≥ 4` no `k`-element set `A` has `hk - h + 2 ≤ |h • A| ≤ hk - 1`, i.e.
-`R_G(h, k) ∩ [hk - h + 2, hk - 1] = ∅`.  Stated for every `h : ℕ` (the interval is
-empty for `h ≤ 1`).
+/-- **A gap in the possible sumset sizes.** Let $G$ be a torsion-free additive commutative
+group and let $h$ and $k \ge 4$ be natural numbers. For every $k$-element set $A \subseteq G$,
+the $h$-fold sumset $hA$ (the set of sums of $h$ elements of $A$) does not satisfy
+$hk - h + 2 \le |hA| \le hk - 1$.
+
+Equivalently, writing $R_G(h, k)$ for the set of sizes $|hA|$ of $k$-element sets
+$A \subseteq G$, $R_G(h, k) \cap [hk - h + 2, hk - 1] = \emptyset$. The interval is empty for
+$h \le 1$.
 
 Source: Vincent Schinina, *On the Sumset of Sets of Size k*, INTEGERS 26 (2026),
 Article A31, Theorem 4 (`integers-2026-A31-thm-4`; arXiv:2505.07679v2,
@@ -189,13 +224,17 @@ public theorem_wanted card_nsmul_notMem_Icc_of_isAddTorsionFree
     (h k : ℕ) (hk : 4 ≤ k) (A : Finset G) (hA : A.card = k) :
     (h • A).card ∉ Set.Icc (h * k - h + 2) (h * k - 1)
 
-/-- The sumset sizes in `[hk - h + 1, hk]`: in a nontrivial torsion-free additive
-abelian group, for `k ≥ 4` and `h ≥ 1`,
-`R_G(h, k) ∩ [hk - h + 1, hk] = {hk - h + 1, hk}`.  Added hypotheses: `G` nontrivial
-(otherwise there is no `k`-element set and `R_G(h, k) = ∅`) and `h ≥ 1` (for `h = 0`
-the interval `[1, 0]` is empty while the right side is `{1, 0}`).  The arXiv version
-states only the part `hk ∈ R_G(h, k)` (Corollary 3.8); the rest combines Theorem 4
-with the arithmetic-progression size `hk - h + 1`.
+/-- **Sumset sizes between $hk - h + 1$ and $hk$.** Let $G$ be a nontrivial torsion-free
+additive commutative group and let $h \ge 1$ and $k \ge 4$ be natural numbers. For a finite
+set $A \subseteq G$ write $hA$ for its $h$-fold sumset, the set of sums of $h$ elements of $A$,
+and write $R_G(h, k)$ for the set of sizes $|hA|$ of $k$-element sets $A \subseteq G$. Then
+$R_G(h, k) \cap [hk - h + 1, hk] = \{hk - h + 1, hk\}$.
+
+The hypotheses that $G$ is nontrivial (otherwise there is no $k$-element set and
+$R_G(h, k)$ is empty) and that $h \ge 1$ (for $h = 0$ the interval $[1, 0]$ is empty while
+the right side is $\{1, 0\}$) are added. The arXiv version states only $hk \in R_G(h, k)$
+(Corollary 3.8); the rest combines Theorem 4 with the arithmetic-progression size
+$hk - h + 1$.
 
 Source: Vincent Schinina, *On the Sumset of Sets of Size k*, INTEGERS 26 (2026),
 Article A31, Corollary 1 (`integers-2026-A31-cor-1`). -/
@@ -205,10 +244,13 @@ public theorem_wanted sumsetSizes_inter_Icc_of_isAddTorsionFree
     {n : ℕ | ∃ A : Finset G, A.card = k ∧ (h • A).card = n} ∩
         Set.Icc (h * k - h + 1) (h * k) = {h * k - h + 1, h * k}
 
-/-- An arithmetic progression with its second-to-last term moved: in a linearly
-ordered additive abelian group, for `a > 0`, `k ≥ 3` and `h ≥ 1`, the set
-`A = {0, a, 2a, …, (k - 2)a, ka}` has `|hA| = hk`, where `hA` is the `h`-fold sumset
-`h • A`.  The paper leaves `h` unquantified; `h ≥ 1` is needed (`|0 • A| = 1`).
+/-- **Sumset of an arithmetic progression with its second-to-last term removed.** Let $G$ be a
+linearly ordered additive commutative group, let $a \in G$ with $a > 0$, and let $k \ge 3$ and
+$h \ge 1$ be natural numbers. The set $A = \{0, a, 2a, \ldots, (k - 2)a, ka\}$, obtained from
+$\{0, a, 2a, \ldots, ka\}$ by removing $(k - 1)a$, has $|hA| = hk$, where $hA$ is the $h$-fold
+sumset of $A$, the set of sums of $h$ elements of $A$.
+
+The paper leaves $h$ unquantified; $h \ge 1$ is needed, since $|0A| = 1$.
 
 Source: Vincent Schinina, *On the Sumset of Sets of Size k*, INTEGERS 26 (2026),
 Article A31, Theorem 5 (`integers-2026-A31-thm-5`). -/
@@ -218,13 +260,18 @@ public theorem_wanted card_nsmul_arithProg_skip_penultimate
     (h • insert (k • a) ((Finset.range (k - 1)).image fun i => i • a)).card = h * k
 
 
-/-- Rajagopal's family of missing intervals: in a torsion-free additive abelian group, for
-`0 ≤ ℓ ≤ min(h, k) - 3` no `k`-element set `A` has
-`hk - h + 1 + ℓh + 1 ≤ |h • A| ≤ hk - h + 1 + ℓh + (h - 2 - ℓ)`, i.e.
-`R_G(h, k) ∩ ⋃_{ℓ=0}^{min(h,k)-3} [hk - h + 2 + ℓh, hk - h + 1 + ℓh + (h - 2 - ℓ)] = ∅`, stated
-one `ℓ` at a time.  The journal statement does not repeat the group; torsion-freeness is the
-setting of Theorem 4 and Corollary 1, of which this is the stated generalization (`ℓ = 0` is
-Theorem 4, here also for `k = 3`).
+/-- **Rajagopal's family of missing sumset sizes.** Let $G$ be a torsion-free additive
+commutative group and let $h$, $k$ and $\ell$ be natural numbers with $\ell + 3 \le \min(h, k)$.
+For every $k$-element set $A \subseteq G$, the $h$-fold sumset $hA$ (the set of sums of $h$
+elements of $A$) does not satisfy
+$hk - h + 2 + \ell h \le |hA| \le hk - h + 1 + \ell h + (h - 2 - \ell)$.
+
+Equivalently, writing $R_G(h, k)$ for the set of sizes $|hA|$ of $k$-element sets
+$A \subseteq G$, $R_G(h, k)$ misses the interval
+$[hk - h + 2 + \ell h, hk - h + 1 + \ell h + (h - 2 - \ell)]$ for each
+$0 \le \ell \le \min(h, k) - 3$, stated here one $\ell$ at a time. The journal statement does
+not name the group; torsion-freeness is the setting of Theorem 4 and Corollary 1, which this
+generalizes ($\ell = 0$ is Theorem 4, here also for $k = 3$).
 
 Source: Vincent Schinina, *On the Sumset of Sets of Size k*, INTEGERS 26 (2026),
 Article A31, Theorem 6 (`integers-2026-A31-thm-6`, journal version; credited to Rajagopal,

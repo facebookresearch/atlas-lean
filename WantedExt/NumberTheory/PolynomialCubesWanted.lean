@@ -30,9 +30,10 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.PolynomialCubesWanted
 
-/-- Choudhry's Theorem 1: every integer of the form `p ^ 3 + q ^ 3` or
-`2 * (p ^ 6 - q ^ 6)` is a sum of four cubes of nonconstant integer
-polynomials.
+/-- **Integers of the form $p^3 + q^3$ or $2(p^6 - q^6)$ as sums of four polynomial cubes.**
+Let $p$ and $q$ be integers and let $N = p^3 + q^3$ or $N = 2(p^6 - q^6)$. Then there are
+polynomials $f, g, h, k \in \mathbb{Z}[x]$, each of degree at least $1$, such that
+$f^3 + g^3 + h^3 + k^3 = N$ as an identity in $\mathbb{Z}[x]$.
 
 Source: Ajai Choudhry, "Expressing an Integer as a Sum of Cubes of
 Polynomials", Theorem 1. -/
@@ -44,8 +45,9 @@ theorem_wanted int_sum_four_polynomial_cubes_of_cube_form
         1 ≤ k.natDegree ∧
         f ^ 3 + g ^ 3 + h ^ 3 + k ^ 3 = Polynomial.C N
 
-/-- Choudhry's Theorem 2: every integer is a sum of five cubes of
-nonconstant integer polynomials.
+/-- **Every integer is a sum of five cubes of polynomials.** For every integer $N$ there are
+polynomials $f, g, h, k, l \in \mathbb{Z}[x]$, each of degree at least $1$, such that
+$f^3 + g^3 + h^3 + k^3 + l^3 = N$ as an identity in $\mathbb{Z}[x]$.
 
 Source: Ajai Choudhry, "Expressing an Integer as a Sum of Cubes of
 Polynomials", Theorem 2. -/

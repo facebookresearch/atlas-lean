@@ -39,11 +39,17 @@ open scoped ENNReal
 
 namespace AmbidextrousSofaWanted
 
-/-- Source: catalogue upper row, Hammersley (1968), adapted from C41a. -/
+/-- **Hammersley upper bound for the ambidextrous sofa.** The supremum of the areas of
+ambidextrous sofas, taken in $[0, \infty]$, is at most $2\sqrt{2}$.
+
+Source: catalogue upper row, Hammersley (1968), adapted from C41a. -/
 public theorem_wanted hammersley_upper :
     MovingSofa.ambidextrousOptimalArea ≤ ENNReal.ofReal (2 * Real.sqrt 2)
 
-/-- Source: catalogue upper row, Baek (2024) naive bound from C41a. The catalogue
+/-- **Baek upper bound for the ambidextrous sofa.** The supremum of the areas of
+ambidextrous sofas, taken in $[0, \infty]$, is at most $22196/10000 = 2.2196$.
+
+Source: catalogue upper row, Baek (2024) naive bound from C41a. The catalogue
 prints Gerver's constant truncated as `2.2195`; the endpoint here is rounded up to
 `22196 / 10000` so that it dominates Gerver's constant `2.21953166…`, as Baek's
 theorem requires. -/
@@ -51,13 +57,20 @@ public theorem_wanted baek_upper :
     MovingSofa.ambidextrousOptimalArea ≤
       ENNReal.ofReal ((22196 : ℝ) / 10000)
 
-/-- Source: catalogue lower row, Gibbs (2014) numerical construction,
+/-- **Gibbs lower bound for the ambidextrous sofa.** The supremum of the areas of
+ambidextrous sofas, taken in $[0, \infty]$, is at least $164495/100000 = 1.64495$.
+
+Source: catalogue lower row, Gibbs (2014) numerical construction,
 exact decimal endpoint `164495 / 100000`. -/
 public theorem_wanted gibbs_lower :
     ENNReal.ofReal ((164495 : ℝ) / 100000) ≤
       MovingSofa.ambidextrousOptimalArea
 
-/-- Source: catalogue lower row, Romik (2016), exact decimal endpoint
+/-- **Romik lower bound for the ambidextrous sofa.** The supremum of the areas of
+ambidextrous sofas, taken in $[0, \infty]$, is at least
+$164495521/100000000 = 1.64495521$.
+
+Source: catalogue lower row, Romik (2016), exact decimal endpoint
 `164495521 / 100000000`. -/
 public theorem_wanted romik_lower :
     ENNReal.ofReal ((164495521 : ℝ) / 100000000) ≤

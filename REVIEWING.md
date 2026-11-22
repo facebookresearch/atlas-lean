@@ -95,7 +95,8 @@ Check that each added or changed module is in the correct top-level library.
 
 A graph PR changes the ATLAS wiki: `blueprint/roadmap/`, `blueprint/links/`,
 `blueprint/atlas.json`, `blueprint/coverage/`, `scripts/taxonomy.json`,
-`scripts/wiki-sync.json`, or `scripts/card-moves.jsonl`. Hold it against the
+`scripts/wiki-sync.json`, `scripts/card-moves.jsonl`, or
+`scripts/mathgraph-map.jsonl`. Hold it against the
 [graph rules](docs/BLUEPRINT.md#graph-rules) and the
 [graph PR requirements](CONTRIBUTING.md#graph-prs). Don't re-report what CI's
 required `check the graph` job fails on

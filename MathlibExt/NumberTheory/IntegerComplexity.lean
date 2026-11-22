@@ -15,8 +15,12 @@ public import Mathlib.Data.Nat.Find
 
 namespace IntegerComplexity
 
-/-- Inductive syntax for expressions built from `1`, `+`, `*` with parentheses
-    determined by tree structure. Source C2. -/
+/-- **Expressions built from one, addition and multiplication.** An expression is either the
+constant $1$, or a sum $e_1 + e_2$ of two expressions, or a product $e_1 \times e_2$ of two
+expressions. Expressions are formal syntax trees, so the tree structure plays the role of
+parentheses.
+
+Source: C2. -/
 inductive Expr where
   | one : Expr
   | add : Expr → Expr → Expr
@@ -25,13 +29,21 @@ inductive Expr where
 
 namespace Expr
 
-/-- Natural evaluation. Source C2. -/
+/-- **Value of an expression.** The value of an expression is the natural number obtained by
+evaluating it: the constant $1$ has value $1$, the value of $e_1 + e_2$ is the sum of the values
+of $e_1$ and $e_2$, and the value of $e_1 \times e_2$ is the product of their values.
+
+Source: C2. -/
 def eval : Expr → ℕ
   | .one => 1
   | .add a b => a.eval + b.eval
   | .mul a b => a.eval * b.eval
 
-/-- Number of ones (leaf count). Source C3. -/
+/-- **Number of ones in an expression.** The number of ones of an expression is the number of
+occurrences of the constant $1$ in it: the constant $1$ has one, and both $e_1 + e_2$ and
+$e_1 \times e_2$ have as many as $e_1$ and $e_2$ together.
+
+Source: C3. -/
 def count : Expr → ℕ
   | .one => 1
   | .add a b => a.count + b.count
@@ -60,8 +72,10 @@ end Expr
 
 open Expr
 
-/-- Existence of representing expression for every positive natural.
-    Source C2/C4 existence side. -/
+/-- **Every positive integer is the value of an expression.** For every natural number
+$n > 0$ there is an expression whose value is $n$.
+
+Source: C2/C4 existence side. -/
 theorem exists_expr_of_pos {n : ℕ} (h : 0 < n) : ∃ e : Expr, e.eval = n := by
   induction n with
   | zero => omega
@@ -75,16 +89,21 @@ theorem exists_expr_of_pos {n : ℕ} (h : 0 < n) : ∃ e : Expr, e.eval = n := b
 theorem exists_expr (n : ℕ+) : ∃ e : Expr, e.eval = n.val :=
   exists_expr_of_pos n.pos
 
-/-- Predicate: leaf count `c` is achievable for `n`. Replaces Set S. -/
+/-- **Achievable numbers of ones.** For a positive integer $n$ and a natural number $c$, the
+predicate holds when some expression has value $n$ and exactly $c$ ones.
+
+Source: replaces Set S. -/
 def Pred (n : ℕ+) (c : ℕ) : Prop := ∃ e : Expr, e.eval = (n : ℕ) ∧ e.count = c
 
 theorem Pred_nonempty (n : ℕ+) : ∃ c, Pred n c := by
   obtain ⟨e, he⟩ := exists_expr n
   exact ⟨e.count, e, he, rfl⟩
 
-/-- Integer complexity: least number of ones needed to express `n`
-    using `1`, `+`, `*` and parentheses. Source C4.
-    Implemented via Nat.find on proved existential predicate. -/
+/-- **Integer complexity.** The integer complexity of a positive integer $n$ is the least
+number of ones in an expression whose value is $n$, that is, the least number of ones needed
+to write $n$ using $1$, $+$, $\times$ and parentheses.
+
+Source: C4. Implemented via Nat.find on proved existential predicate. -/
 noncomputable def complexity (n : ℕ+) : ℕ := by
   classical
   exact Nat.find (Pred_nonempty n)
@@ -100,7 +119,11 @@ theorem complexity_min_le (n : ℕ+) {m : ℕ} (hm : Pred n m) : complexity n �
 theorem exists_optimal (n : ℕ+) : ∃ e : Expr, e.eval = (n : ℕ) ∧ e.count = complexity n :=
   complexity_spec n
 
-/-- Minimality: complexity is least leaf count. Source C4. -/
+/-- **Expressions bound the integer complexity from above.** Let $n$ be a positive integer. If
+an expression $e$ has value $n$, then the integer complexity of $n$ is at most the number of
+ones of $e$.
+
+Source: C4. -/
 theorem complexity_le {n : ℕ+} {e : Expr} (he : e.eval = (n : ℕ)) : complexity n ≤ e.count :=
   complexity_min_le n ⟨e, he, rfl⟩
 
@@ -119,7 +142,8 @@ theorem complexity_one : complexity (1 : ℕ+) = 1 := by
     have hpos := e.count_pos
     omega
 
-/-- Upper bound via addition of optimal witnesses. -/
+/-- **Integer complexity of a sum.** For all positive integers $a$ and $b$, the integer
+complexity of $a + b$ is at most the sum of the integer complexities of $a$ and $b$. -/
 theorem complexity_add_le (a b : ℕ+) : complexity (a + b) ≤ complexity a + complexity b := by
   obtain ⟨ea, hea, hca⟩ := exists_optimal a
   obtain ⟨eb, heb, hcb⟩ := exists_optimal b
@@ -128,7 +152,8 @@ theorem complexity_add_le (a b : ℕ+) : complexity (a + b) ≤ complexity a + c
   simp only [count_add, hca, hcb, ge_iff_le] at hle ⊢
   exact hle
 
-/-- Upper bound via multiplication of optimal witnesses. -/
+/-- **Integer complexity of a product.** For all positive integers $a$ and $b$, the integer
+complexity of $ab$ is at most the sum of the integer complexities of $a$ and $b$. -/
 theorem complexity_mul_le (a b : ℕ+) : complexity (a * b) ≤ complexity a + complexity b := by
   obtain ⟨ea, hea, hca⟩ := exists_optimal a
   obtain ⟨eb, heb, hcb⟩ := exists_optimal b

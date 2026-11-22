@@ -33,15 +33,27 @@ namespace MathlibExt.Combinatorics.ErdosProblem794Wanted
 The reusable finite-hypergraph predicates live in `MathlibExt`. The historical target remains
 the positive proposition even though its external status is resolved false. -/
 
-/-- The original Erdős problem, preserved as the positive historical conjecture. -/
+/-- **Erdős Problem 794 on dense 3-uniform hypergraphs.** The proposition asserts that for every
+natural number $n$ and every family $H$ of $3$-element subsets of $\{0, 1, \dots, 3n - 1\}$ with
+at least $n^3 + 1$ members, there is a $4$-element set $S$ such that at least $3$ members of $H$
+are subsets of $S$, or there is a $5$-element set $S$ such that at least $7$ members of $H$ are
+subsets of $S$.
+
+This is Erdős's original question in its positive form; it is known to be false. -/
 def conjecture : Prop :=
   ∀ n : ℕ, ∀ H : Finset (Finset (Fin (3 * n))), SetFamily.IsUniform H 3 →
     n ^ 3 + 1 ≤ H.card →
       SetFamily.ContainsSubgraph H 4 3 ∨ SetFamily.ContainsSubgraph H 5 7
 
 /--
-Resolved false: Resolved false by Phillip Harris’s explicit 9-vertex counterexample; an external
-Lean proof checks that construction. Source: Phillip Harris counterexample, formalized by
+**Refutation of Erdős Problem 794.** It is not true that for every natural number $n$ and every
+family $H$ of $3$-element subsets of $\{0, 1, \dots, 3n - 1\}$ with at least $n^3 + 1$ members,
+there is a $4$-element set $S$ such that at least $3$ members of $H$ are subsets of $S$, or there
+is a $5$-element set $S$ such that at least $7$ members of $H$ are subsets of $S$.
+
+Phillip Harris gave an explicit counterexample on $9$ vertices.
+
+Source: Phillip Harris counterexample, formalized by
 Aristotle, ChatGPT, and Boris Alexeev at plby/lean-proofs commit
 8822f7ddef30fadbd92e1c6ab4ed897af356af5e,
 https://github.com/plby/lean-proofs/blob/8822f7ddef30fadbd92e1c6ab4ed897af356af5e/src/v4.29.1/ErdosProblems/Erdos794.lean.

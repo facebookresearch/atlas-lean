@@ -20,11 +20,12 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Witt's multigraded value `M(n₁, …, nᵣ)`: let `n` be the sum of all entries
-of `degree` and `g` their finite gcd; `M` is `(1/n)` times the sum over
-positive `d` dividing `g` of `μ(d)` times the multinomial coefficient for
-`i ↦ degree i / d` (`ArithmeticFunction.moebius` and `Nat.multinomial`,
-coerced into `ℚ`); the `n = 0` boundary is `0`.
+/-- **Witt's multigraded value.** For natural numbers $n_1, \dots, n_r$, let
+$n = n_1 + \dots + n_r$ and $g = \gcd(n_1, \dots, n_r)$. The rational number
+$M(n_1, \dots, n_r)$ is $0$ if $n = 0$, and otherwise
+$M(n_1, \dots, n_r) = \frac{1}{n} \sum_{d \mid g} \mu(d) \binom{n/d}{n_1/d, \ldots, n_r/d}$,
+where the sum runs over the positive divisors $d$ of $g$, $\mu$ is the Möbius function, and the
+last factor is the multinomial coefficient of $n_1/d, \dots, n_r/d$.
 
 Source: Pieter Moree, *Convoluted Convolved Fibonacci Numbers*, Journal of
 Integer Sequences 7 (2004), Article 04.2.2, equations `witty`/`basaal`,
