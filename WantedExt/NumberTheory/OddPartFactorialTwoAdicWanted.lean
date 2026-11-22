@@ -445,10 +445,12 @@ public theorem_wanted oddPart_factorial_congr_previous (e : ℕ) (he : 3 ≤ e) 
       (oddPart (Nat.factorial (2 ^ e)) : ℤ)
 
 /--
-There is a 2-adic integer `z` congruent to `od((2^(e-1))!)` modulo `2^e` for
-every `e≥3`.  The paper's limiting equality is represented by divisibility in
-`ℤ_[2]`.  The congruences start at `e=3`, as in Corollary 7: at `e=2` and `e=3`
-they would require `z ≡ 1 (mod 4)` and `z ≡ 3 (mod 8)`, which no `z` satisfies.
+**A 2-adic limit of the odd parts of $(2^e)!$.** There is a 2-adic integer $z \in \mathbb{Z}_2$
+such that $z \equiv \operatorname{od}((2^{e-1})!) \pmod{2^e}$ in $\mathbb{Z}_2$ for every natural
+number $e \ge 3$, where $\operatorname{od}(n)$ is the odd part of $n$.
+
+The congruences start at $e = 3$: the one for $e = 2$, $z \equiv 1 \pmod 4$, contradicts the
+one for $e = 3$, $z \equiv 3 \pmod 8$.
 
 Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
 Sequences 29 (2026), Article 26.3.1, Corollary 8.
@@ -513,7 +515,7 @@ public theorem_wanted exists_twoAdic_oddDoubleFactorial_limit :
 part of $n$, $(2^e-1)!!$ for the product of the odd numbers from $1$ to $2^e-1$, and
 $\lfloor x \rfloor$ for the floor of $x$; congruences are taken in the $2$-adic integers
 $\mathbb{Z}_2$. Let $z, w \in \mathbb{Z}_2$ satisfy $z \equiv \mathrm{od}((2^{e-1})!) \pmod{2^e}$
-for every $e \ge 1$ and $w \equiv \lfloor ((2^e-1)!! - 1)/2^e \rfloor \pmod{2^{e-1}}$ for every
+for every $e \ge 3$ and $w \equiv \lfloor ((2^e-1)!! - 1)/2^e \rfloor \pmod{2^{e-1}}$ for every
 $e \ge 3$. Then for every $e \ge 3$,
 $$\lfloor (\mathrm{od}((2^e)!) - \mathrm{od}((2^{e-1})!))/2^e \rfloor \equiv zw \pmod{2^{e-1}}.$$
 
@@ -539,7 +541,7 @@ $\operatorname{uns}(e,d) = \lfloor \operatorname{od}((2^e)!)/2^{e+1} \rfloor \bm
 $\operatorname{stab}(e+1,d) = \lfloor \operatorname{od}((2^{e+d})!)/2^{e+1} \rfloor \bmod 2^d$.
 Let $K$, $z$ and $w$ be $2$-adic integers such that, with congruences in $\mathbb{Z}_2$,
 $\operatorname{uns}(e,d) + K \equiv \operatorname{stab}(e+1,d) \pmod{2^d}$ for all natural
-numbers $d < e$, $z \equiv \operatorname{od}((2^{e-1})!) \pmod{2^e}$ for all $e \ge 1$, and
+numbers $d < e$, $z \equiv \operatorname{od}((2^{e-1})!) \pmod{2^e}$ for all $e \ge 3$, and
 $w \equiv \lfloor ((2^e-1)!! - 1)/2^e \rfloor \pmod{2^{e-1}}$ for all $e \ge 3$. Then $K = -zw$.
 
 The three hypotheses are the defining properties of $K$ (Theorem 1), $z$ (Corollary 8) and $w$

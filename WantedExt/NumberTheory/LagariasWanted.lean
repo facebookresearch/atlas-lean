@@ -67,7 +67,8 @@ $$\sigma(n) \le H_n + e^{H_n} \log H_n,$$
 where $\sigma(n)$ is the sum of the positive divisors of $n$ and $H_n = \sum_{k=1}^{n} 1/k$ is
 the $n$-th harmonic number.
 
-Source: https://arxiv.org/abs/math/0008177 Via leanprover/lean-eval@38361be, problem `riemann_hypothesis_iff_lagarias_elementary_criterion`. -/
+Source: https://arxiv.org/abs/math/0008177 Via leanprover/lean-eval@38361be, problem
+`riemann_hypothesis_iff_lagarias_elementary_criterion`. -/
 public theorem_wanted riemann_hypothesis_iff_lagarias_elementary_criterion :
     RiemannHypothesis ↔ LagariasElementaryCriterion
 

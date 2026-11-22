@@ -63,7 +63,8 @@ isomorphism $\sigma \colon \overline{K_2} \to \overline{K_1}$ that maps the imag
 $\overline{K_2}$ onto the image of $K_1$ in $\overline{K_1}$ and satisfies
 $\varphi(g) = \sigma^{-1} \circ g \circ \sigma$ for every $g \in \mathrm{Gal}(\overline{K_1}/K_1)$.
 
-Source: Jürgen Neukirch, Alexander Schmidt, Kay Wingberg. *Cohomology of Number Fields*, Theorem 12.2.1. Via leanprover/lean-eval@38361be, problem `neukirch_uchida`. -/
+Source: Jürgen Neukirch, Alexander Schmidt, Kay Wingberg. *Cohomology of Number Fields*, Theorem
+12.2.1. Via leanprover/lean-eval@38361be, problem `neukirch_uchida`. -/
 public theorem_wanted neukirch_uchida {K₁ K₂ K₁' K₂' : Type*} [Field K₁] [Field K₂] [Field K₁'] [Field K₂']
     [NumberField K₁] [NumberField K₂] [Algebra K₁ K₁'] [Algebra K₂ K₂'] [IsSepClosure K₁ K₁']
     [IsSepClosure K₂ K₂'] (ϕ : Gal(K₁'/K₁) ≃* Gal(K₂'/K₂)) (he : IsHomeomorph ϕ) :

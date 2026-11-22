@@ -166,12 +166,15 @@ def mallowsInserted : List (ℕ × ℕ) → List (ℕ × ℕ)
 
 /-- **Mallows levels.** Fractions $n/m$ are written as pairs $(n, m)$ of natural numbers. Start
 from the list $\langle 0/1, 1/1\rangle$ and refine it repeatedly, each refinement step inserting
-between every two adjacent entries the pair of fractions given by Mallows' insertion rule. For
-$i \ge 1$, $MT_i$ is the list of the fractions inserted at the $i$-th step: the fractions that
-Mallows' rule inserts between adjacent entries of the list obtained after $i - 1$ steps, taken
-from left to right, two for each adjacent pair.
+between every two adjacent entries the pair of fractions given by Mallows' insertion rule. For a
+natural number $i$, `mallowsLevel i` is the list of the fractions inserted at step $i + 1$: the
+fractions that Mallows' rule inserts between adjacent entries of the list obtained after $i$
+steps, taken from left to right, two for each adjacent pair.
 
-After $k$ steps the list has $3^k + 1$ entries, so $MT_i$ has $2 \cdot 3^{i-1}$ entries.
+The index is zero-based: in the paper's numbering, where $MT_j$ is the list of fractions
+inserted at step $j \ge 1$, `mallowsLevel i` is $MT_{i+1}$; for example
+`mallowsLevel 0` is $MT_1 = \langle 1/2, 2/3\rangle$. After $k$ steps the list has $3^k + 1$
+entries, so `mallowsLevel i` has $2 \cdot 3^i$ entries.
 
 Source: Takanori Hida, *The Mallows Representation of the Irrational Numbers*, INTEGERS 25
 (2025), Article A78, Section 2.3. -/
@@ -691,11 +694,13 @@ public theorem_wanted mallowsTree_label_unique_order :
 /-- **Mallows levels from the Stern–Brocot maps.** Encode each vertex of the Stern–Brocot tree
 (left subtree, root $1/2$) by its gap, so that the root is the gap $(0/1, 1/1)$, and extend
 $\psi_{\mathrm{SBT}}$ and $\varphi_{\mathrm{SBT}}$ to lists of vertices by applying them to each
-entry and concatenating the results in order. Then for every $i \ge 1$ the ordered list $MT_i$
-of fractions inserted at step $i$ of Mallows' construction is
-$MT_i = \varphi_{\mathrm{SBT}}(\psi_{\mathrm{SBT}}^{\,i-1}(\langle 1/2\rangle))$, where
-$\psi_{\mathrm{SBT}}^{\,i-1}$ is the $(i-1)$-fold iterate and $\langle 1/2\rangle$ is the list
-whose only entry is the root.
+entry and concatenating the results in order. Then for every natural number $i$ the ordered list
+$MT_{i+1}$ of fractions inserted at step $i + 1$ of Mallows' construction (the zero-based
+`mallowsLevel i`) is
+$MT_{i+1} = \varphi_{\mathrm{SBT}}(\psi_{\mathrm{SBT}}^{\,i}(\langle 1/2\rangle))$, where
+$\psi_{\mathrm{SBT}}^{\,i}$ is the $i$-fold iterate and $\langle 1/2\rangle$ is the list whose
+only entry is the root. Equivalently, in the paper's one-based numbering, for every $j \ge 1$,
+$MT_j = \varphi_{\mathrm{SBT}}(\psi_{\mathrm{SBT}}^{\,j-1}(\langle 1/2\rangle))$.
 
 The paper quotes this identity from Hida, J. Comb. 14 (2023).
 

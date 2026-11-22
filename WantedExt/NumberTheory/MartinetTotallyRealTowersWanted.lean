@@ -78,7 +78,11 @@ that works. -/
 $N \in \mathbb{N}$ there exist a natural number $d \ge N$ and a totally real number field $K$ of
 degree $[K : \mathbb{Q}] = d$ whose discriminant $\Delta_K$ satisfies $|\Delta_K| \le C^d$.
 
-Source: Theorem 3.2 of T. F. Bloom, W. Sawin, C. Schildkraut, D. Zhelezov, *The sum-product conjecture is false for real numbers*, arXiv:2605.28781. Lean axiom: https://github.com/mathlib-initiative/sum_product (SumProduct.exists_totallyReal_discr_le). Underlying result: J. Martinet, *Tours de corps de classes et estimations de discriminants*, Invent. Math. 44 (1978), 65–73. Via leanprover/lean-eval@38361be, problem `martinet_totally_real_towers`. -/
+Source: Theorem 3.2 of T. F. Bloom, W. Sawin, C. Schildkraut, D. Zhelezov, *The sum-product
+conjecture is false for real numbers*, arXiv:2605.28781. Lean axiom:
+https://github.com/mathlib-initiative/sum_product (SumProduct.exists_totallyReal_discr_le).
+Underlying result: J. Martinet, *Tours de corps de classes et estimations de discriminants*, Invent.
+Math. 44 (1978), 65–73. Via leanprover/lean-eval@38361be, problem `martinet_totally_real_towers`. -/
 public theorem_wanted exists_totallyReal_discr_le :
     ∃ C : ℝ, 0 < C ∧ ∀ N : ℕ, ∃ d : ℕ, N ≤ d ∧
       ∃ (K : Type) (_ : Field K) (_ : NumberField K) (_ : NumberField.IsTotallyReal K),
