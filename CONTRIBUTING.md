@@ -32,15 +32,17 @@ A claim is active while it is open and, for a draft pull request, has had a
 push in the last 7 days or, for an issue, has been updated in the last 30
 days. A pull request that is ready for review stays active until it is closed.
 Look for an active claim before you start. When two active claims cover the
-same task, the earlier one keeps it; a pull request that continues a `[Claim]`
-issue dates from the issue. A claim only saves duplicated work: it reserves
-nothing else, and anyone may still review, fix or improve merged code.
+same task, the one that has been active longer without a break keeps it; a
+pull request that continues an active `[Claim]` issue counts from the issue.
+A claim only saves duplicated work: it reserves nothing else, and anyone may
+still review, fix or improve merged code.
 
 To update a branch that someone else may also push to, such as another
 contributor's pull request, push a fast-forward of the tip you fetched. If you
 must rewrite it, use
 `git push --force-with-lease=<branch>:<tip you fetched> <remote> HEAD:<branch>`,
-which fails if anyone has pushed to it since.
+which refuses the rewrite if the branch no longer points at the tip you
+fetched.
 
 ### Say how a pull request touches the graph
 
@@ -55,8 +57,11 @@ it takes, and adds `new` when it adds declarations that get pages under
   `scripts/sync_wiki.py declarations` writes for the pull request's own
   declarations. When the sync cannot find a new module's subject, or puts it in
   the wrong place, also place the module in `scripts/taxonomy.json`.
-- **A renamed, moved or removed declaration keeps its pages.** Update the
-  annotation of each page that links it, in the same pull request.
+- **A renamed or removed declaration keeps its pages.** In the same pull
+  request, update each annotation that names it, as its Lean link or as a
+  `held` marker, and keep the article id. When a declaration goes with no
+  successor, remove the link and keep the page as a planned page
+  ([Writing pages](docs/BLUEPRINT.md#writing-pages)).
 
 These are graph changes; [Graph PRs](#graph-prs) says what they need.
 
@@ -236,9 +241,9 @@ is advisory CI, not a standalone merge barrier.
 A graph PR changes the ATLAS wiki; its content follows the
 [graph rules](docs/BLUEPRINT.md#graph-rules). When a pull request's only wiki
 changes are what `scripts/sync_wiki.py declarations` writes for its own
-declarations, it needs no issue and no code owner's approval; Codex still
-reviews it. Any other wiki change, a new place in `scripts/taxonomy.json`
-included, makes it a graph PR in full.
+declarations, it needs no issue and, unless GitHub requires one, no code
+owner's approval; Codex still reviews it. Any other wiki change, a new place
+in `scripts/taxonomy.json` included, makes it a graph PR in full.
 
 - **Keep it under 3,000 changed files and name its issue** (`Closes #…` or
   `Part of #…`). GitHub shows at most 3,000 files in one diff.
