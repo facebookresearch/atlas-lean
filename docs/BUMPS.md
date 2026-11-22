@@ -1,0 +1,137 @@
+# Lean and Mathlib bumps
+
+ATLAS pins Lean, Mathlib, CSLib and Physlib to one final release, `vX.Y.Z`,
+that all four have tagged. This page is the routine for moving to the next one
+while main takes 100 to 300 pull requests a day through the merge queue.
+
+## What makes a bump hard
+
+A bump touches many files, so main keeps conflicting with it, and new code on
+main keeps failing on the new toolchain. Its CI also starts from nothing.
+Measured on #6018 (v4.36.0):
+
+- It changed 623 Lean files and 342 rows of `provenance/formal-math-sync.json`.
+  While it was open, 202 pull requests merged. Each of its first six merges of
+  main conflicted in the manifest, two also in Lean files, and the next
+  conflict came a median of 6 minutes after a merge. Docstring campaigns edit
+  the same files and rows as the bump.
+- 7 of those 202 pull requests (3.5%) failed on the new toolchain, each fixed
+  in one to four lines.
+- No cached build matches the new pins, because `ci.yml` keys its cache on
+  `lean-toolchain` and `lake-manifest.json`. Its only complete CI run took 316
+  minutes against a 360-minute limit, and every push cancelled the run before
+  it.
+
+The merge queue solves the last-minute race: once the bump is at the front of
+the queue, nothing can merge ahead of it, and every pull request behind it is
+tested on top of it. The routine below makes the bump small, keeps it close to
+main, and gives the queue a warm build.
+
+## When
+
+Lean releases about monthly (v4.34.0 on 14 September 2026, v4.35.0 on 12
+October, v4.36.0 on 16 November) and publishes the next release candidate a day
+or two later. Mathlib and CSLib tag a release within a day of Lean, Physlib
+three to eleven days later, and Physlib tags no release candidates. `guard`
+accepts only a forward move to a final release that every pinned dependency has
+tagged, so the bump can land once the last of them, usually Physlib, has tagged
+it.
+
+## Who
+
+Each release has one bump owner: a maintainer, or an agent working for one, on
+a machine that keeps a warm build of the bump branch. A cold build of every
+library takes about 45 minutes on 48 cores, and an incremental one after a
+merge of main a few minutes. A maintainer decides when to queue the bump.
+
+## Steps
+
+1. **Start on the release candidate.** When Lean, Mathlib and CSLib have tagged
+   `vX.Y.0-rc1`, build ATLAS on them in a preview branch that is never merged,
+   and fix what fails. Physlib tags only final releases and moves to a new
+   toolchain only then, so leave it at the current release and skip
+   `PhyslibExt` until it moves. Upstream API changes mostly arrive with the
+   first candidate.
+
+2. **Land fixes that build on both toolchains.** Many fixes also build on the
+   current toolchain: explicit arguments, fully qualified names, type
+   ascriptions on binders, `noncomputable`. Of the 622 library files #6018
+   changed, 373 (60%) built on v4.35.0 with their changes, and they hold 190 of
+   its 342 manifest rows. Send such fixes to main as ordinary pull requests,
+   through the queue like any other. Each one that merges is a file the bump no
+   longer touches, so main conflicts with the bump less often.
+
+3. **Open the bump** when every pinned dependency has tagged `vX.Y.Z`. Commit
+   the output of `python3 scripts/bump/pinned_bump.py prepare vX.Y.Z` unchanged,
+   so that `guard` accepts it. Put the remaining fixes in separate commits after
+   it.
+
+4. **Keep it close to main.** Merge main in, never rebase, so the first commit
+   stays exactly what `pinned_bump.py` produced:
+
+   ```sh
+   git fetch origin main
+   python3 scripts/bump/bump_branch.py status                 # how far behind, what conflicts
+   python3 scripts/bump/bump_branch.py merge-main --adjacent  # merge, resolve, commit
+   ```
+
+   `merge-main` resolves the manifest row by row. A row that only one side
+   changed takes that side's row. A row that both sides changed starts from
+   main's row, takes the hash of the merged file, and appends the bump's
+   rationale. With `--adjacent` it also merges a Lean file where the two sides
+   changed different lines that merely touch, which is how docstring campaigns
+   on main usually meet the bump's edits. It leaves every other conflict to
+   you: resolve it, `git add` it, then run `bump_branch.py resolve-manifest`.
+   Re-run any fixer the bump needs for files main adds, such as a rename
+   script. Then build: what fails is new code from main, and
+   `bump_branch.py breakage <build log>` names the pull requests that changed
+   each failing module. Fix, commit, push.
+
+5. **Warm CI right before queueing.** Dispatch `bump-cache.yml` from main with
+   the pull request number and the head you reviewed:
+
+   ```sh
+   gh workflow run bump-cache.yml --repo facebookresearch/atlas-lean --ref main \
+     -f pull-request=<number> -f head-sha=<full head SHA>
+   ```
+
+   It builds and checks that head as CI does and saves the build where the
+   bump's own CI runs, its merge group and the groups behind it find it. The
+   first warm-up for a release is a cold build, about five hours on a CI runner.
+   A run that runs out of time saves what it built, and the next dispatch
+   continues from there. Main saves a new cache entry every 30 to 60 minutes
+   and about five fit, so an entry lasts a few hours unless a build uses it.
+
+6. **Queue it at the front of the queue.** Queue it right after a merge of main
+   whose required checks passed, at a quiet hour: 11:00 to 13:00 UTC merges
+   about 4 to 7 pull requests an hour, 00:00 to 09:00 UTC 13 to 18. Queue it
+   with `jump`, pinned to the head you checked:
+
+   ```sh
+   gh api graphql -f query='
+     mutation($id: ID!, $head: GitObjectID!) {
+       enqueuePullRequest(input: {pullRequestId: $id, expectedHeadOid: $head, jump: true}) {
+         mergeQueueEntry { position }
+       }
+     }' -f id="$(gh pr view <number> --json id --jq .id)" -f head=<full head SHA>
+   ```
+
+   The bump's merge group is then main plus the bump, and every group already
+   building is rebuilt on top of it. Jumping restarts those builds, so do it
+   about once a month, not more. It needs the "Jump to the front of the queue"
+   permission. Without it, queue the bump normally once the queue is short. If
+   main conflicts with the bump before its checks pass, go back to step 4.
+
+7. **After it merges.** The queue removes any pull request whose merge group
+   fails on the new toolchain, and its timeline says why. Its author merges
+   main, fixes it, and queues it again. Post the common fixes on the bump pull
+   request so they are easy to find.
+
+## Contributors and agents
+
+A bump forces a new build on every machine. Start it before the bump merges:
+while the bump is in the queue, build its head in a separate worktree. Once it
+has merged, merge main into your branch and copy that build's `.lake` into your
+worktree (`cp -a --reflink=auto`), so only what changed since gets rebuilt. A
+pull request that was queued behind the bump and fails is removed from the
+queue, not merged. Watch for that and fix it as in step 7.
