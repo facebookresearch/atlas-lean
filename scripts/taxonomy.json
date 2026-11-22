@@ -11078,6 +11078,7 @@
   "MathlibExt/NumberTheory/FraenkelCoveringBernoulli": {"to": "NumberTheory/congruences/covering-systems", "title": "Exact covering systems"},
   "MathlibExt/NumberTheory/FrobeniusPseudoprime": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Frobenius pseudoprimes"},
   "MathlibExt/NumberTheory/FunctionField/AdeleRing": {"to": "NumberTheory/function-fields", "title": "Adeles of function fields"},
+  "MathlibExt/NumberTheory/FunctionField/MonicCount": {"to": "NumberTheory/function-fields", "title": "Divisor problems for B-free polynomials"},
   "MathlibExt/NumberTheory/FussCatalanNumber": {"to": "NumberTheory/special-numbers/catalan-numbers", "title": "Fuss–Catalan numbers"},
   "MathlibExt/NumberTheory/GPYMaynardSieveReduction": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "GPY–Maynard sieve"},
   "MathlibExt/NumberTheory/GaussianIntPrimeBasics": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "Gaussian primes"},
