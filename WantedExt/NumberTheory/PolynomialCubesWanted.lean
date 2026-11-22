@@ -17,6 +17,9 @@ An integer `N` is represented by the constant polynomial `Polynomial.C N`.
 Following the paper's polynomial-identity convention, every witness is
 nonconstant: each has `1 ≤ natDegree`. Without that condition, constant
 witnesses would reduce the claims to elementary sums of integer cubes.
+
+Proved in `MathlibExt.NumberTheory.PolynomialCubes`: Theorem 2
+(`int_eq_sum_five_polynomial_cubes`).
 -/
 module
 
@@ -43,16 +46,5 @@ theorem_wanted int_sum_four_polynomial_cubes_of_cube_form
       1 ≤ f.natDegree ∧ 1 ≤ g.natDegree ∧ 1 ≤ h.natDegree ∧
         1 ≤ k.natDegree ∧
         f ^ 3 + g ^ 3 + h ^ 3 + k ^ 3 = Polynomial.C N
-
-/-- Choudhry's Theorem 2: every integer is a sum of five cubes of
-nonconstant integer polynomials.
-
-Source: Ajai Choudhry, "Expressing an Integer as a Sum of Cubes of
-Polynomials", Theorem 2. -/
-theorem_wanted int_eq_sum_five_polynomial_cubes (N : ℤ) :
-    ∃ f g h k l : Polynomial ℤ,
-      1 ≤ f.natDegree ∧ 1 ≤ g.natDegree ∧ 1 ≤ h.natDegree ∧
-        1 ≤ k.natDegree ∧ 1 ≤ l.natDegree ∧
-        f ^ 3 + g ^ 3 + h ^ 3 + k ^ 3 + l ^ 3 = Polynomial.C N
 
 end MathlibExt.NumberTheory.PolynomialCubesWanted

@@ -11264,6 +11264,7 @@
   "MathlibExt/NumberTheory/PocklingtonPrimePowerCriterion": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Pocklington primality test"},
   "MathlibExt/NumberTheory/PolygonalNumber": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Polygonal numbers"},
   "MathlibExt/NumberTheory/Polynomial/DumasIrreducibilityCriterion": {"to": "Algebra/polynomials", "title": "Irreducibility criteria for integer polynomials"},
+  "MathlibExt/NumberTheory/PolynomialCubes": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Sums of cubes of polynomials"},
   "MathlibExt/NumberTheory/PolynomialTL1": {"to": "Combinatorics/binomial-coefficients/central-binomial-harmonic-sums", "title": "Series of reciprocal central binomial coefficients"},
   "MathlibExt/NumberTheory/PowerFree": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Power-free integers"},
   "MathlibExt/NumberTheory/PowerSumVanishing": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Power sums modulo a prime"},
