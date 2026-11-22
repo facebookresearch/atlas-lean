@@ -24,7 +24,6 @@ Jacobsthal and Tribonacci-type sequences, Lucas sequences and their primitive di
 the terms. Arithmetic functions, digits and numeration systems, modular forms and partitions, special numbers such as
 the Bernoulli and Catalan numbers, and integer sequences make up much of the rest.
 
-- [Divisibility and factorization of integers](divisibility-factorization/README.md)
 - [Congruences and power residues](congruences/README.md)
 - [Primes and primality](primes-primality/README.md)
 - [Distribution of primes](distribution-of-primes/README.md)
