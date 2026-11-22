@@ -66,9 +66,9 @@ public theorem root_re_le_maxRealRoot {p : Polynomial ℂ} {z : ℂ} (hz : z ∈
     apply h
     exact ⟨z.re, by simpa using Multiset.mem_map.mpr ⟨z, hz, rfl⟩⟩
 
-/-- **For a polynomial with a root, the largest real part of a root is attained.** Let $p$ be a
-complex polynomial whose multiset of roots is nonempty, and let $\rho(p)$ be the largest real part
-of a root of $p$. Then some root $z$ of $p$ satisfies $\operatorname{Re} z = \rho(p)$. -/
+/-- **A nonempty root multiset attains its largest real part.** Let $p$ be a complex polynomial
+whose multiset of roots is nonempty, and let $\rho(p)$ be the largest real part of a root of $p$.
+Then some root $z$ of $p$ satisfies $\operatorname{Re} z = \rho(p)$. -/
 public theorem exists_root_re_eq_maxRealRoot {p : Polynomial ℂ} (hp : p.roots ≠ 0) :
     ∃ z ∈ p.roots, z.re = p.maxRealRoot := by
   classical
