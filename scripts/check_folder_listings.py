@@ -1,19 +1,41 @@
 #!/usr/bin/env python3
 """Fail if a page or subfolder is not listed on its folder page (docs/BLUEPRINT.md, "Placing pages").
 
-A page's folder page is its nearest ancestor `README.md`, as Autoform finds it. Any link to the page
-counts, read with Autoform's own reader, so a link in code or a comment does not.
+A page's folder page is its nearest ancestor `README.md`, as Autoform finds it. A page is listed by
+the first link of a list item or a heading (a part's), read with Autoform's own reader, outside a
+closing section such as "Related topics"; a link in prose, code or a comment does not list it.
 """
 
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
-from autoform_cli.markdown import markdown_links
+from autoform_cli.markdown import content_lines, markdown_links
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from sync_wiki import CLOSING  # noqa: E402
+
+ENTRY = re.compile(r"\s*(?:[-*+]|\d{1,9}[.)])\s|\s{0,3}#{2,6}\s")
+HEADING = re.compile(r"\s{0,3}#{1,6}\s+(.*?)\s*$")
 
 ROADMAP = Path(__file__).resolve().parent.parent / "blueprint" / "roadmap"
+
+
+def entries(text: str) -> list[str]:
+    """The first link of each list item and heading, outside closing sections."""
+    first: dict[int, str] = {}
+    for number, target, _ in markdown_links(text):
+        first.setdefault(number, target)
+    found, closing = [], False
+    for number, line in enumerate(content_lines(text), 1):
+        if heading := HEADING.match(line):
+            closing = heading.group(1).strip("*_` ").casefold() in CLOSING
+        if not closing and number in first and ENTRY.match(line):
+            found.append(first[number])
+    return found
 
 
 def unlisted(roadmap: Path) -> list[str]:
@@ -28,7 +50,7 @@ def unlisted(roadmap: Path) -> list[str]:
             folder = folder.parent
         readme = folder / "README.md"
         if readme not in links:
-            targets = (urlsplit(target) for _, target, _ in markdown_links(readme.read_text(encoding="utf-8")))
+            targets = (urlsplit(target) for target in entries(readme.read_text(encoding="utf-8")))
             paths = {Path(folder, unquote(t.path)).resolve() for t in targets if t.path and not t.scheme}
             links[readme] = {path / "README.md" if path.is_dir() else path for path in paths}
         if page not in links[readme]:

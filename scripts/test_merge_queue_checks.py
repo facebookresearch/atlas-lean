@@ -94,6 +94,11 @@ class MergeQueueChecks(unittest.TestCase):
     def test_contributing_lists_the_required_checks(self):
         self.assertEqual(documented_checks(), list(REQUIRED))
 
+    def test_the_graph_job_runs_both_graph_checks(self):
+        body = " ".join(jobs(workflow("ci.yml"))["graph"])
+        self.assertIn("autoform check blueprint --lean-root .", body)
+        self.assertIn("python scripts/check_folder_listings.py", body)
+
     def test_required_workflows_run_on_every_pr_and_every_merge_group(self):
         for name in sorted(set(REQUIRED.values())):
             with self.subTest(workflow=name):

@@ -22,29 +22,32 @@ class FolderListingTests(unittest.TestCase):
     def test_listed_pages_and_folders_pass(self):
         self.assertEqual(self.check({
             "README.md": "- [Algebra](Algebra/)\n",
-            "Algebra/README.md": "- [A lemma](a%20lemma.md)\n\n[Groups][g]\n\n[g]: groups/README.md\n",
+            "Algebra/README.md": "- [A lemma](a%20lemma.md): a card's description\n\n- [Groups][g]\n\n[g]: groups/README.md\n",
             "Algebra/a lemma.md": "# A lemma\n",
-            "Algebra/groups/README.md": "- [Lagrange](lagrange.md)\n",
-            "Algebra/groups/lagrange.md": "# Lagrange\n",
+            "Algebra/groups/README.md": "## [Part 1](part-01/README.md)\n",
+            "Algebra/groups/part-01/README.md": "- [Lagrange on $[0, 1]$](lagrange.md)\n",
+            "Algebra/groups/part-01/lagrange.md": "# Lagrange\n",
         }), [])
 
-    def test_unlisted_pages_fail_and_code_does_not_list(self):
+    def test_unlisted_pages_fail_and_only_entries_list(self):
         self.assertEqual(self.check({
             "README.md": "# Root\n",
-            "Algebra/README.md": "`[In code](b.md)`\n",
+            "Algebra/README.md": ("- [A](a.md): see [B](b.md)\n\nProse links [C](c.md).\n\n`- [In code](d.md)`\n\n"
+                                  "## Related topics\n\n- [E](e.md)\n"),
+            "Algebra/a.md": "# A\n",
             "Algebra/b.md": "# B\n",
+            "Algebra/c.md": "# C\n",
+            "Algebra/d.md": "# D\n",
+            "Algebra/e.md": "# E\n",
             "plain/c.md": "# C\n",
         }), [
             "Algebra/README.md: not listed on README.md",
             "Algebra/b.md: not listed on Algebra/README.md",
+            "Algebra/c.md: not listed on Algebra/README.md",
+            "Algebra/d.md: not listed on Algebra/README.md",
+            "Algebra/e.md: not listed on Algebra/README.md",
             "plain/c.md: not listed on README.md",
         ])
-
-    def test_the_required_graph_job_runs_both_checks(self):
-        job = Path(__file__).resolve().parent.parent.joinpath(".github/workflows/ci.yml").read_text()
-        job = job.split("\n  graph:\n", 1)[1].split("\n  build:\n", 1)[0]
-        self.assertIn("autoform check blueprint --lean-root .", job)
-        self.assertIn("python scripts/check_folder_listings.py", job)
 
 
 if __name__ == "__main__":
