@@ -7,7 +7,6 @@ Author: Adam Kiezun
 module
 
 public import CSLibExt.MachineLearning.GraphicalModels.CausalBayesNet
-public import CSLibExt.MachineLearning.GraphicalModels.MarkovBlanket
 public import CSLibExt.MachineLearning.GraphicalModels.MarkovEquivalence
 import Mathlib.Data.Fintype.Sort
 import Mathlib.Order.Extension.Linear
@@ -137,44 +136,44 @@ theorem BayesNet.dSeparated_iff_dSeparatedPa_toPa {n : ℕ} (b : BayesNet α n)
 
 /-! ### T3: relabeling -/
 
-theorem mem_relabel {V W : Type*} {Pa : V → Finset V} (e : V ≃ W) (u w : V) :
+private theorem mem_relabel {V W : Type*} {Pa : V → Finset V} (e : V ≃ W) (u w : V) :
     e u ∈ relabel e Pa (e w) ↔ u ∈ Pa w := by
   unfold relabel
   simp [Equiv.symm_apply_apply]
 
-theorem mem_relabel_symm {V W : Type*} {Pa : V → Finset V} (e : V ≃ W) (x y : W) :
+private theorem mem_relabel_symm {V W : Type*} {Pa : V → Finset V} (e : V ≃ W) (x y : W) :
     x ∈ relabel e Pa y ↔ e.symm x ∈ Pa (e.symm y) := by
   simp [relabel]
 
-theorem transGen_relabel_of {V W : Type*} {Pa : V → Finset V} (e : V ≃ W)
+private theorem transGen_relabel_of {V W : Type*} {Pa : V → Finset V} (e : V ≃ W)
     {a b : V} (h : Relation.TransGen (fun u w => u ∈ Pa w) a b) :
     Relation.TransGen (fun u w => u ∈ relabel e Pa w) (e a) (e b) := by
   induction h with
   | single hmem => exact Relation.TransGen.single ((mem_relabel e _ _).mpr hmem)
   | tail _ hmem ih => exact ih.tail ((mem_relabel e _ _).mpr hmem)
 
-theorem transGen_of_relabel {V W : Type*} {Pa : V → Finset V} (e : V ≃ W)
+private theorem transGen_of_relabel {V W : Type*} {Pa : V → Finset V} (e : V ≃ W)
     {x y : W} (h : Relation.TransGen (fun u w => u ∈ relabel e Pa w) x y) :
     Relation.TransGen (fun u w => u ∈ Pa w) (e.symm x) (e.symm y) := by
   induction h with
   | single hmem => exact Relation.TransGen.single ((mem_relabel_symm e _ _).mp hmem)
   | tail _ hmem ih => exact ih.tail ((mem_relabel_symm e _ _).mp hmem)
 
-theorem reflTransGen_relabel_of {V W : Type*} {Pa : V → Finset V} (e : V ≃ W)
+private theorem reflTransGen_relabel_of {V W : Type*} {Pa : V → Finset V} (e : V ≃ W)
     {a b : V} (h : Relation.ReflTransGen (fun u w => u ∈ Pa w) a b) :
     Relation.ReflTransGen (fun u w => u ∈ relabel e Pa w) (e a) (e b) := by
   induction h with
   | refl => exact Relation.ReflTransGen.refl
   | tail _ hmem ih => exact ih.tail ((mem_relabel e _ _).mpr hmem)
 
-theorem reflTransGen_of_relabel {V W : Type*} {Pa : V → Finset V} (e : V ≃ W)
+private theorem reflTransGen_of_relabel {V W : Type*} {Pa : V → Finset V} (e : V ≃ W)
     {x y : W} (h : Relation.ReflTransGen (fun u w => u ∈ relabel e Pa w) x y) :
     Relation.ReflTransGen (fun u w => u ∈ Pa w) (e.symm x) (e.symm y) := by
   induction h with
   | refl => exact Relation.ReflTransGen.refl
   | tail _ hmem ih => exact ih.tail ((mem_relabel_symm e _ _).mp hmem)
 
-theorem isDescendantPa_relabel {V W : Type*} {Pa : V → Finset V} (e : V ≃ W)
+private theorem isDescendantPa_relabel {V W : Type*} {Pa : V → Finset V} (e : V ≃ W)
     (a b : V) : IsDescendantPa (relabel e Pa) (e a) (e b) ↔ IsDescendantPa Pa a b := by
   unfold IsDescendantPa
   constructor
@@ -184,7 +183,7 @@ theorem isDescendantPa_relabel {V W : Type*} {Pa : V → Finset V} (e : V ≃ W)
   · intro h
     exact reflTransGen_relabel_of e h
 
-theorem isDescendantPa_relabel_symm {V W : Type*} {Pa : V → Finset V} (e : V ≃ W)
+private theorem isDescendantPa_relabel_symm {V W : Type*} {Pa : V → Finset V} (e : V ≃ W)
     (m : V) (d : W) :
     IsDescendantPa (relabel e Pa) (e m) d ↔ IsDescendantPa Pa m (e.symm d) := by
   unfold IsDescendantPa
@@ -196,11 +195,11 @@ theorem isDescendantPa_relabel_symm {V W : Type*} {Pa : V → Finset V} (e : V �
     have h' := reflTransGen_relabel_of e h
     simpa [Equiv.apply_symm_apply] using h'
 
-theorem mem_image_relabel {V W : Type*} {Z : Set V} (e : V ≃ W) (a : V) :
+private theorem mem_image_relabel {V W : Type*} {Z : Set V} (e : V ≃ W) (a : V) :
     e a ∈ e '' Z ↔ a ∈ Z := by
   simp
 
-theorem mem_image_relabel_symm {V W : Type*} {Z : Set V} (e : V ≃ W) (d : W) :
+private theorem mem_image_relabel_symm {V W : Type*} {Z : Set V} (e : V ≃ W) (d : W) :
     d ∈ e '' Z ↔ e.symm d ∈ Z := by
   constructor
   · intro h
@@ -212,7 +211,7 @@ theorem mem_image_relabel_symm {V W : Type*} {Z : Set V} (e : V ≃ W) (d : W) :
   · intro h
     exact Set.mem_image e Z d |>.mpr ⟨e.symm d, h, Equiv.apply_symm_apply e d⟩
 
-theorem blockedAtPa_relabel {V W : Type*} {Pa : V → Finset V} {Z : Set V}
+private theorem blockedAtPa_relabel {V W : Type*} {Pa : V → Finset V} {Z : Set V}
     (e : V ≃ W) (u m w : V) :
     BlockedAtPa (relabel e Pa) (e '' Z) (e u) (e m) (e w) ↔
       BlockedAtPa Pa Z u m w := by
@@ -231,7 +230,7 @@ theorem blockedAtPa_relabel {V W : Type*} {Pa : V → Finset V} {Z : Set V}
         ((mem_image_relabel_symm e d).mp hmem)
   rw [hmem1, hmem2, hmemZ, hdesc]
 
-theorem isChain_map_relabel {V W : Type*} {Pa : V → Finset V} (e : V ≃ W)
+private theorem isChain_map_relabel {V W : Type*} {Pa : V → Finset V} (e : V ≃ W)
     (q : List V) :
     (q.map e).IsChain (Adjacent (relabel e Pa)) ↔ q.IsChain (Adjacent Pa) := by
   induction q with
@@ -246,31 +245,31 @@ theorem isChain_map_relabel {V W : Type*} {Pa : V → Finset V} (e : V ≃ W)
           (b :: q').IsChain (Adjacent Pa) := ih
       simp [List.map_cons, List.isChain_cons_cons, hadj, ih']
 
-theorem nodup_map_relabel {V W : Type*} (e : V ≃ W) (q : List V) :
+private theorem nodup_map_relabel {V W : Type*} (e : V ≃ W) (q : List V) :
     (q.map e).Nodup ↔ q.Nodup :=
   List.nodup_map_iff (Equiv.injective e)
 
-theorem head_map_relabel {V W : Type*} (e : V ≃ W) (q : List V) (x : V) :
+private theorem head_map_relabel {V W : Type*} (e : V ≃ W) (q : List V) (x : V) :
     (q.map e).head? = some (e x) ↔ q.head? = some x := by
   rw [List.head?_map]
   cases q.head? with
   | none => simp
   | some a => simp
 
-theorem getLast_map_relabel {V W : Type*} (e : V ≃ W) (q : List V) (y : V) :
+private theorem getLast_map_relabel {V W : Type*} (e : V ≃ W) (q : List V) (y : V) :
     (q.map e).getLast? = some (e y) ↔ q.getLast? = some y := by
   rw [List.getLast?_map]
   cases q.getLast? with
   | none => simp
   | some a => simp
 
-theorem isPathPa_map {V W : Type*} {Pa : V → Finset V} (e : V ≃ W) (x y : V)
+private theorem isPathPa_map {V W : Type*} {Pa : V → Finset V} (e : V ≃ W) (x y : V)
     (q : List V) :
     IsPathPa (relabel e Pa) (e x) (e y) (q.map e) ↔ IsPathPa Pa x y q := by
   unfold IsPathPa
   rw [nodup_map_relabel, isChain_map_relabel, head_map_relabel, getLast_map_relabel]
 
-theorem pathBlockedPa_map {V W : Type*} {Pa : V → Finset V} {Z : Set V}
+private theorem pathBlockedPa_map {V W : Type*} {Pa : V → Finset V} {Z : Set V}
     (e : V ≃ W) (q : List V) :
     PathBlockedPa (relabel e Pa) (e '' Z) (q.map e) ↔ PathBlockedPa Pa Z q := by
   unfold PathBlockedPa
@@ -282,11 +281,11 @@ theorem pathBlockedPa_map {V W : Type*} {Pa : V → Finset V} {Z : Set V}
   simp only [List.getElem_map]
   exact blockedAtPa_relabel e _ _ _
 
-theorem map_symm_map {V W : Type*} (e : V ≃ W) (p : List W) :
+private theorem map_symm_map {V W : Type*} (e : V ≃ W) (p : List W) :
     (p.map e.symm).map e = p := by
   simp
 
-theorem map_map_symm {V W : Type*} (e : V ≃ W) (q : List V) :
+private theorem map_map_symm {V W : Type*} (e : V ≃ W) (q : List V) :
     (q.map e).map e.symm = q := by
   simp
 
@@ -539,7 +538,7 @@ theorem IsAcyclic.coveredReversal {V : Type*} [DecidableEq V] {Pa Pa' : V → Fi
 /-! ### C1 edge helpers: the parent sets after a covered reversal -/
 
 /-- Off the covered edge, `Pa'` agrees with `Pa`. -/
-theorem pa'_of_coveredReversal_ne {V : Type*} [DecidableEq V]
+private theorem pa'_of_coveredReversal_ne {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x)))
@@ -547,7 +546,7 @@ theorem pa'_of_coveredReversal_ne {V : Type*} [DecidableEq V]
   rw [hPa', Function.update_of_ne hwx, Function.update_of_ne hwy]
 
 /-- After the reversal, `y` has the parents `x` used to have. -/
-theorem pa'_of_coveredReversal_y {V : Type*} [DecidableEq V]
+private theorem pa'_of_coveredReversal_y {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x))) :
@@ -555,7 +554,7 @@ theorem pa'_of_coveredReversal_y {V : Type*} [DecidableEq V]
   rw [hPa', Function.update_of_ne (Ne.symm hxy), Function.update_self]
 
 /-- After the reversal, `x` gains `y` as a parent and keeps its old parents. -/
-theorem pa'_of_coveredReversal_x {V : Type*} [DecidableEq V]
+private theorem pa'_of_coveredReversal_x {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x))) :
@@ -563,7 +562,7 @@ theorem pa'_of_coveredReversal_x {V : Type*} [DecidableEq V]
   rw [hPa', Function.update_self]
 
 /-- Membership version of `pa'_of_coveredReversal_ne`. -/
-theorem mem_pa'_of_coveredReversal_ne {V : Type*} [DecidableEq V]
+private theorem mem_pa'_of_coveredReversal_ne {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x)))
@@ -571,7 +570,7 @@ theorem mem_pa'_of_coveredReversal_ne {V : Type*} [DecidableEq V]
   rw [pa'_of_coveredReversal_ne h hc x y hxy hPay hPa' hwx hwy]
 
 /-- Membership version of `pa'_of_coveredReversal_y`. -/
-theorem mem_pa'_of_coveredReversal_y {V : Type*} [DecidableEq V]
+private theorem mem_pa'_of_coveredReversal_y {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x)))
@@ -579,7 +578,7 @@ theorem mem_pa'_of_coveredReversal_y {V : Type*} [DecidableEq V]
   rw [pa'_of_coveredReversal_y h hc x y hxy hPay hPa']
 
 /-- Membership version of `pa'_of_coveredReversal_x`. -/
-theorem mem_pa'_of_coveredReversal_x {V : Type*} [DecidableEq V]
+private theorem mem_pa'_of_coveredReversal_x {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x)))
@@ -587,7 +586,7 @@ theorem mem_pa'_of_coveredReversal_x {V : Type*} [DecidableEq V]
   rw [pa'_of_coveredReversal_x h hc x y hxy hPay hPa', Finset.mem_insert]
 
 /-- Descendants of a node off the covered edge agree before and after the reversal. -/
-theorem isDescendantPa_iff_of_coveredReversal_off {V : Type*} [DecidableEq V]
+private theorem isDescendantPa_iff_of_coveredReversal_off {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x)))
@@ -669,7 +668,7 @@ theorem isDescendantPa_iff_of_coveredReversal_off {V : Type*} [DecidableEq V]
     exact (key hpd).1
 
 /-- After the reversal, the descendants of `y` are the old descendants of `x`. -/
-theorem isDescendantPa_y_iff_of_coveredReversal {V : Type*} [DecidableEq V]
+private theorem isDescendantPa_y_iff_of_coveredReversal {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x)))
@@ -733,7 +732,7 @@ theorem isDescendantPa_y_iff_of_coveredReversal {V : Type*} [DecidableEq V]
     exact key hpd
 
 /-- Every old descendant of `y` stays a descendant of `y` after the reversal. -/
-theorem isDescendantPa_y_of_coveredReversal {V : Type*} [DecidableEq V]
+private theorem isDescendantPa_y_of_coveredReversal {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x)))
@@ -774,7 +773,7 @@ theorem isDescendantPa_y_of_coveredReversal {V : Type*} [DecidableEq V]
   exact key hpd
 
 /-- A covered reversal is symmetric as data: `Pa` is a covered reversal of `Pa'`. -/
-theorem coveredReversal_symm_data {V : Type*} [DecidableEq V]
+private theorem coveredReversal_symm_data {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x))) :
@@ -795,7 +794,7 @@ theorem coveredReversal_symm_data {V : Type*} [DecidableEq V]
           pa'_of_coveredReversal_ne h hc x y hxy hPay hPa' hwx hwy]
 
 /-- A covered reversal preserves adjacency. -/
-theorem adjacent_of_coveredReversal {V : Type*} [DecidableEq V]
+private theorem adjacent_of_coveredReversal {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x)))
@@ -864,7 +863,7 @@ theorem adjacent_of_coveredReversal {V : Type*} [DecidableEq V]
       · exact Or.inr (Or.inr ⟨h, hcon⟩)
 
 /-- A covered reversal preserves skeleton paths. -/
-theorem isPathPa_of_coveredReversal {V : Type*} [DecidableEq V]
+private theorem isPathPa_of_coveredReversal {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x)))
@@ -879,7 +878,7 @@ theorem isPathPa_of_coveredReversal {V : Type*} [DecidableEq V]
     exact ⟨h1, h2.imp (fun u w => (hadj u w).mpr), h3, h4⟩
 
 /-- Off the covered edge, the blocked-at status of a triple agrees. -/
-theorem blockedAtPa_of_coveredReversal_ne {V : Type*} [DecidableEq V]
+private theorem blockedAtPa_of_coveredReversal_ne {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x)))
@@ -903,7 +902,7 @@ theorem blockedAtPa_of_coveredReversal_ne {V : Type*} [DecidableEq V]
 /-- Descendants of `x` after the reversal: `x` itself and the old descendants of the old
 non-`y` children of `x`. (A `Pa`-path starting with the covered edge `x → y` has no `Pa'`
 counterpart, so there is no plain `Pa'`/`Pa` iff for `x`.) -/
-theorem isDescendantPa_x_iff_of_coveredReversal {V : Type*} [DecidableEq V]
+private theorem isDescendantPa_x_iff_of_coveredReversal {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x)))
@@ -956,7 +955,7 @@ theorem isDescendantPa_x_iff_of_coveredReversal {V : Type*} [DecidableEq V]
       exact (Relation.ReflTransGen.single hxv').trans hvd'
 
 /-- An infix triple occurs at some index. -/
-theorem infix_triple_getElem {V : Type*} {p : List V} {x y w : V}
+private theorem infix_triple_getElem {V : Type*} {p : List V} {x y w : V}
     (hinfix : List.IsInfix [x, y, w] p) :
     ∃ (i : ℕ) (_ : i + 2 < p.length), p[i] = x ∧ p[i + 1] = y ∧ p[i + 2] = w := by
   obtain ⟨s, t, hst⟩ := hinfix
@@ -982,7 +981,7 @@ theorem infix_triple_getElem {V : Type*} {p : List V} {x y w : V}
     rfl
 
 /-- A path is blocked iff some infix triple of it is. -/
-theorem pathBlockedPa_iff {V : Type*} (Pa : V → Finset V) (Z : Set V) (p : List V) :
+private theorem pathBlockedPa_iff {V : Type*} (Pa : V → Finset V) (Z : Set V) (p : List V) :
     PathBlockedPa Pa Z p ↔
       ∃ u m w, List.IsInfix [u, m, w] p ∧ BlockedAtPa Pa Z u m w := by
   constructor
@@ -1006,7 +1005,7 @@ theorem pathBlockedPa_iff {V : Type*} (Pa : V → Finset V) (Z : Set V) (p : Lis
     rwa [e0, e1, e2]
 
 /-- Removing one interior node across a shortcut keeps a path a path. -/
-theorem isPathPa_eraseIdx {V : Type*} (Pa : V → Finset V) {a b : V} {p : List V} {i : ℕ}
+private theorem isPathPa_eraseIdx {V : Type*} (Pa : V → Finset V) {a b : V} {p : List V} {i : ℕ}
     (hpath : IsPathPa Pa a b p) (hi : i + 2 < p.length)
     (hadj : Adjacent Pa p[i] p[i + 2]) :
     IsPathPa Pa a b (p.eraseIdx (i + 1)) := by
@@ -1061,7 +1060,7 @@ theorem isPathPa_eraseIdx {V : Type*} (Pa : V → Finset V) {a b : V} {p : List 
     exact hsome.symm.trans hlast'
 
 /-- Every triple of the spliced list is an old triple or a splice triple. -/
-theorem eraseIdx_triple_transfer {V : Type*} (p : List V) (i : ℕ)
+private theorem eraseIdx_triple_transfer {V : Type*} (p : List V) (i : ℕ)
     (hi : i + 2 < p.length) (j : ℕ) (hj : j + 2 < (p.eraseIdx (i + 1)).length) :
     (∃ (k : ℕ) (_ : k + 2 < p.length), (p.eraseIdx (i + 1))[j] = p[k] ∧
       (p.eraseIdx (i + 1))[j + 1] = p[k + 1] ∧ (p.eraseIdx (i + 1))[j + 2] = p[k + 2])
@@ -1114,7 +1113,7 @@ theorem eraseIdx_triple_transfer {V : Type*} (p : List V) (i : ℕ)
           (by omega) (by omega)
 
 /-- An unblocked path through a covered `x, y` with a shortcut `x ~ w` shortens. -/
-theorem exists_shorter_unblocked_of_x_y_w {V : Type*} [DecidableEq V]
+private theorem exists_shorter_unblocked_of_x_y_w {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x)))
@@ -1175,7 +1174,7 @@ theorem exists_shorter_unblocked_of_x_y_w {V : Type*} [DecidableEq V]
         exact hnb ⟨hcold, hwZ⟩
 
 /-- An unblocked path through a covered `x, y` with a shortcut `u ~ x` shortens. -/
-theorem exists_shorter_unblocked_of_u_y_x {V : Type*} [DecidableEq V]
+private theorem exists_shorter_unblocked_of_u_y_x {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x)))
@@ -1236,7 +1235,7 @@ theorem exists_shorter_unblocked_of_u_y_x {V : Type*} [DecidableEq V]
       exact hnb ⟨hnc, hxZ⟩
 
 /-- The covered child `y` is not a parent of `x`. -/
-theorem y_not_mem_pa_x_of_coveredReversal {V : Type*} [DecidableEq V]
+private theorem y_not_mem_pa_x_of_coveredReversal {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x))) :
@@ -1247,7 +1246,7 @@ theorem y_not_mem_pa_x_of_coveredReversal {V : Type*} [DecidableEq V]
   exact h x ((Relation.TransGen.single hxyPa).tail hyx)
 
 /-- Parents of `x` have neither `x` nor `y` as a parent. -/
-theorem not_mem_pa_of_mem_pa_x_of_coveredReversal {V : Type*} [DecidableEq V]
+private theorem not_mem_pa_of_mem_pa_x_of_coveredReversal {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x)))
@@ -1261,7 +1260,7 @@ theorem not_mem_pa_of_mem_pa_x_of_coveredReversal {V : Type*} [DecidableEq V]
     exact h y (((Relation.TransGen.single hyu).tail hux).tail hxyPa)
 
 /-- An unblocked path through a covered `x, y` with a shortcut `y ~ w` shortens. -/
-theorem exists_shorter_unblocked_of_y_x_w {V : Type*} [DecidableEq V]
+private theorem exists_shorter_unblocked_of_y_x_w {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x)))
@@ -1318,7 +1317,7 @@ theorem exists_shorter_unblocked_of_y_x_w {V : Type*} [DecidableEq V]
       exact hold (Or.inr ⟨hnc, hwZ⟩)
 
 /-- An unblocked path through a covered `x, y` with a shortcut `u ~ y` shortens. -/
-theorem exists_shorter_unblocked_of_u_x_y {V : Type*} [DecidableEq V]
+private theorem exists_shorter_unblocked_of_u_x_y {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x)))
@@ -1376,7 +1375,7 @@ theorem exists_shorter_unblocked_of_u_x_y {V : Type*} [DecidableEq V]
 
 /-- Replacing the covered parent `x` by `y` turns an unblocked `Pa`-path through the interior
 node `x` into an unblocked `Pa'`-path. -/
-theorem replace_x_with_y_unblocked {V : Type*} [DecidableEq V]
+private theorem replace_x_with_y_unblocked {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x)))
@@ -1570,13 +1569,13 @@ theorem replace_x_with_y_unblocked {V : Type*} [DecidableEq V]
           exact hunblocked ⟨j, hj, hb_old⟩
 
 /-- Length of a take/drop splice. -/
-theorem splice_length {V : Type*} (p : List V) (k₁ k₂ : ℕ)
+private theorem splice_length {V : Type*} (p : List V) (k₁ k₂ : ℕ)
     (hk₁ : k₁ ≤ p.length) :
     (p.take k₁ ++ p.drop k₂).length = k₁ + (p.length - k₂) := by
   rw [List.length_append, List.length_take, List.length_drop, min_eq_left hk₁]
 
 /-- Reading a prefix element of a take/drop splice. -/
-theorem splice_getElem_of_lt {V : Type*} (p : List V) (k₁ k₂ r : ℕ)
+private theorem splice_getElem_of_lt {V : Type*} (p : List V) (k₁ k₂ r : ℕ)
     (hk₁ : k₁ ≤ p.length)
     (hr : r < (p.take k₁ ++ p.drop k₂).length) (hlt : r < k₁) :
     (p.take k₁ ++ p.drop k₂)[r] = p[r] := by
@@ -1586,7 +1585,7 @@ theorem splice_getElem_of_lt {V : Type*} (p : List V) (k₁ k₂ r : ℕ)
   exact List.getElem_take
 
 /-- Reading a suffix element of a take/drop splice. -/
-theorem splice_getElem_of_ge {V : Type*} (p : List V) (k₁ k₂ r : ℕ)
+private theorem splice_getElem_of_ge {V : Type*} (p : List V) (k₁ k₂ r : ℕ)
     (hk₁ : k₁ ≤ p.length)
     (hr : r < (p.take k₁ ++ p.drop k₂).length) (hge : k₁ ≤ r)
     (hqlen : (p.take k₁ ++ p.drop k₂).length = k₁ + (p.length - k₂) :=
@@ -1599,7 +1598,7 @@ theorem splice_getElem_of_ge {V : Type*} (p : List V) (k₁ k₂ r : ℕ)
   exact List.getElem_drop
 
 /-- Splicing a path across a shortcut keeps it a path. -/
-theorem isPathPa_take_drop {V : Type*} (Pa : V → Finset V) {a b : V} {p : List V}
+private theorem isPathPa_take_drop {V : Type*} (Pa : V → Finset V) {a b : V} {p : List V}
     {k₁ k₂ : ℕ} (hpath : IsPathPa Pa a b p)
     (hk : k₁ < k₂) (hk₂ : k₂ < p.length) (hk₁pos : 1 ≤ k₁)
     (hadj : Adjacent Pa p[k₁ - 1] p[k₂]) :
@@ -1677,7 +1676,7 @@ theorem isPathPa_take_drop {V : Type*} (Pa : V → Finset V) {a b : V} {p : List
     rfl
 
 /-- Every triple of a take/drop splice is an old triple or a crossing triple. -/
-theorem splice_triple_transfer {V : Type*} (p : List V) (k₁ k₂ : ℕ)
+private theorem splice_triple_transfer {V : Type*} (p : List V) (k₁ k₂ : ℕ)
     (hk : k₁ < k₂) (hk₂ : k₂ < p.length) (hk₁pos : 1 ≤ k₁)
     (t : ℕ) (ht : t + 2 < (p.take k₁ ++ p.drop k₂).length)
     (hk₁ : k₁ ≤ p.length := by omega)
@@ -1728,7 +1727,7 @@ theorem splice_triple_transfer {V : Type*} (p : List V) (k₁ k₂ : ℕ)
         exact ⟨by omega, e1, e2, e3⟩
 
 /-- A collider at `x` with `y` elsewhere on an unblocked path shortens it. -/
-theorem exists_shorter_unblocked_of_collider_x_y_mem {V : Type*} [DecidableEq V]
+private theorem exists_shorter_unblocked_of_collider_x_y_mem {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x)))
@@ -1850,7 +1849,7 @@ theorem exists_shorter_unblocked_of_collider_x_y_mem {V : Type*} [DecidableEq V]
       · exact hxZ hxZ'
 
 /-- An unblocked path in `Pa` yields an unblocked path in `Pa'`. -/
-theorem exists_unblocked_transport {V : Type*} [DecidableEq V]
+private theorem exists_unblocked_transport {V : Type*} [DecidableEq V]
     {Pa Pa' : V → Finset V} (h : IsAcyclic Pa) (hc : CoveredReversal Pa Pa')
     (x y : V) (hxy : x ≠ y) (hPay : Pa y = insert x (Pa x))
     (hPa' : Pa' = Function.update (Function.update Pa y (Pa x)) x (insert y (Pa x)))
