@@ -890,45 +890,49 @@ theorem Simulation.randCompetitive_transfer {Req AnsX AnsY Ω : Type*}
       _ = ENNReal.ofReal (S.a * c * S.d) * optCost X σ
             + ENNReal.ofReal (S.a * c * S.q + S.a * b + S.p) := step3
 
-/-- Feasible-profit supremum for an explicitly given profit function on
-traces (maximization form; the profit counterpart of `optCost`). -/
+/-- Feasible-profit supremum for an explicitly given nonnegative profit
+function on traces (maximization form; the profit counterpart of
+`optCost`). Profit is nonnegative by type: the maximization ratio is
+meaningful only on that domain, and negative values cannot be silently
+truncated. -/
 noncomputable def optProfit {Req Ans : Type*} (P : OnlineProblem Req Ans)
-    (profit : List (Req × Ans) → ℝ) (σ : List Req) : ENNReal :=
+    (profit : List (Req × Ans) → NNReal) (σ : List Req) : ENNReal :=
   ⨆ τ ∈ {τ : List (Req × Ans) | P.feasible τ ∧ τ.map Prod.fst = σ},
-    ENNReal.ofReal (profit τ)
+    (profit τ : ENNReal)
 
 theorem le_optProfit {Req Ans : Type*} (P : OnlineProblem Req Ans)
-    (profit : List (Req × Ans) → ℝ) {σ : List Req} {τ : List (Req × Ans)}
+    (profit : List (Req × Ans) → NNReal) {σ : List Req} {τ : List (Req × Ans)}
     (hτ : P.feasible τ) (hστ : τ.map Prod.fst = σ) :
-    ENNReal.ofReal (profit τ) ≤ optProfit P profit σ := by
+    (profit τ : ENNReal) ≤ optProfit P profit σ := by
   unfold optProfit
-  exact le_biSup (fun τ => ENNReal.ofReal (profit τ)) ⟨hτ, hστ⟩
+  exact le_biSup (fun τ => (profit τ : ENNReal)) ⟨hτ, hστ⟩
 
 /-- Profit-form competitiveness for maximization consumers:
-`ρ • OPT_profit ≤ ALG_profit + b` with `0 ≤ ρ ≤ 1`. This is a separate
-predicate from the cost form; the two are not interchangeable. -/
+`ρ • OPT_profit ≤ ALG_profit + b` with `0 ≤ ρ ≤ 1`, for a nonnegative
+profit function. This is a separate predicate from the cost form; the
+two are not interchangeable. -/
 def ProfitCompetitive {Req Ans : Type*} (P : OnlineProblem Req Ans)
-    (profit : List (Req × Ans) → ℝ) (A : Strategy Req Ans) (ρ b : ℝ) :
+    (profit : List (Req × Ans) → NNReal) (A : Strategy Req Ans) (ρ b : ℝ) :
     Prop :=
   0 ≤ ρ ∧ ρ ≤ 1 ∧ 0 ≤ b ∧ StrategyFeasible P A ∧
     ∀ σ : List Req, P.legal σ →
       ENNReal.ofReal ρ * optProfit P profit σ
-        ≤ ENNReal.ofReal (profit (run A σ)) + ENNReal.ofReal b
+        ≤ (profit (run A σ) : ENNReal) + ENNReal.ofReal b
 
 /-- Randomized profit-form competitiveness: expected profit replaces the
 deterministic profit. -/
 def RandProfitCompetitive {Req Ans Ω : Type*} [MeasurableSpace Ω]
-    (P : OnlineProblem Req Ans) (profit : List (Req × Ans) → ℝ)
+    (P : OnlineProblem Req Ans) (profit : List (Req × Ans) → NNReal)
     (A : RandStrategy Req Ans Ω) (ρ b : ℝ) : Prop :=
   0 ≤ ρ ∧ ρ ≤ 1 ∧ 0 ≤ b ∧ (∀ ω, StrategyFeasible P (A.strat ω)) ∧
     ∀ σ : List Req, P.legal σ →
-      Measurable (fun ω => ENNReal.ofReal (profit (run (A.strat ω) σ))) ∧
+      Measurable (fun ω => (profit (run (A.strat ω) σ) : ENNReal)) ∧
       ENNReal.ofReal ρ * optProfit P profit σ
-        ≤ (∫⁻ ω, ENNReal.ofReal (profit (run (A.strat ω) σ)) ∂A.μ)
+        ≤ (∫⁻ ω, (profit (run (A.strat ω) σ) : ENNReal) ∂A.μ)
           + ENNReal.ofReal b
 
 theorem ProfitCompetitive.mono {Req Ans : Type*} (P : OnlineProblem Req Ans)
-    (profit : List (Req × Ans) → ℝ) (A : Strategy Req Ans) {ρ b ρ' b' : ℝ}
+    (profit : List (Req × Ans) → NNReal) (A : Strategy Req Ans) {ρ b ρ' b' : ℝ}
     (h : ProfitCompetitive P profit A ρ b) (hρ : ρ' ≤ ρ) (hb : b ≤ b')
     (hρ'0 : 0 ≤ ρ') : ProfitCompetitive P profit A ρ' b' := by
   obtain ⟨hρ0, hρ1, hb0, hA, hineq⟩ := h
