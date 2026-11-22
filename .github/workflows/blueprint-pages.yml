@@ -26,6 +26,9 @@ on:
       - "scripts/build_mathlib_pages.py"
       - "scripts/mathlib_link.py"
       - "scripts/mathlib_pages.css"
+      - "scripts/pack_pages_site.py"
+      - "scripts/pages_packing.js"
+      - "scripts/pages_size.sh"
       - "scripts/cards.py"
       - "scripts/card-moves.jsonl"
       - "scripts/taxonomy.json"
@@ -43,6 +46,7 @@ on:
       - "scripts/test_blueprint_workflow.py"
       - "scripts/test_blueprint_taxonomy.py"
       - "scripts/test_build_mathlib_pages.py"
+      - "scripts/test_pack_pages_site.py"
       - "scripts/test_cards.py"
       - "scripts/test_card_pages.py"
       - "mkdocs.yml"
@@ -370,11 +374,27 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
+      # GitHub Pages publishes sites of up to 1 GB: its copy of the site stores
+      # the pages under roadmap/ gzipped, and the browser inflates them
+      # (docs/BLUEPRINT.md, The GitHub Pages copy). The check measures the
+      # Pages artifact as its upload packs it, which is larger than the site's
+      # files, and refuses one over 950 MB, 5% below 10^9 bytes, before it is
+      # uploaded.
+      - name: Pack the site for GitHub Pages
+        if: vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
+        run: python scripts/pack_pages_site.py pack site site-pages
+
+      - name: Check the packed site
+        if: vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
+        run: |
+          python scripts/pack_pages_site.py check site site-pages
+          bash scripts/pages_size.sh site-pages 950000000
+
       - name: Upload Pages artifact
         if: vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
-          path: site
+          path: site-pages
 
       # Input of the `mathlib` job below, which builds the graph's Mathlib
       # layer and reports a failure here: the site does not read it. It comes
@@ -517,7 +537,9 @@ jobs:
   # The Mathlib pages (docs/mathlib-pages.md) are built from the site and the
   # Mathlib layer of this run in their own read-only job: a failure fails this
   # check only, and the site and its deployment never wait for it. No Lean
-  # runs here; MkDocs renders the pages' chrome with the site's theme.
+  # runs here; MkDocs renders the pages' chrome with the site's theme. The job
+  # also packs the full site for GitHub Pages, which publishes it once the
+  # wiki job's site is published (the `promote` job below).
   mathlib-pages:
     name: build the Mathlib pages
     needs: [wiki, mathlib]
@@ -551,6 +573,9 @@ jobs:
           --with markdown==3.10.3
           python -m unittest scripts.test_build_mathlib_pages
 
+      - name: Test the Pages packing script
+        run: python -m unittest scripts.test_pack_pages_site
+
       - name: Fetch the built site
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
@@ -580,8 +605,7 @@ jobs:
       - name: Check the site with its Mathlib pages
         run: python scripts/build_mathlib_pages.py check site mathlib-graph site-full
 
-      # Kept for hosting the full site outside GitHub Pages, which caps a site
-      # at 1 GB.
+      # Kept as it is, for hosting the full site outside GitHub Pages.
       - name: Keep the site with its Mathlib pages
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -590,6 +614,23 @@ jobs:
           path: site-full
           if-no-files-found: error
           retention-days: 3
+
+      # GitHub Pages publishes sites of up to 1 GB: its copy stores the pages
+      # under mathlib/ and roadmap/ gzipped, and the browser inflates them.
+      - name: Pack the full site for GitHub Pages
+        run: python scripts/pack_pages_site.py pack site-full site-pages
+
+      - name: Check the packed site
+        run: |
+          python scripts/pack_pages_site.py check site-full site-pages
+          bash scripts/pages_size.sh site-pages 950000000
+
+      - name: Upload the packed site
+        if: vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          name: github-pages-full
+          path: site-pages
 
   # The cards (docs/cards.md) are tested and checked in their own read-only
   # job, after the wiki job and from its dependency artifact: lean-facts needs
@@ -707,17 +748,126 @@ jobs:
     needs: wiki
     if: vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     permissions:
       pages: write
       id-token: write
+      deployments: read
+      contents: read
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # Publish only over a site of this run's commit or of one of its
+      # ancestors, so that a re-run never takes the site back to an earlier
+      # commit. The site served is that of the newest successful deployment:
+      # a deployment job succeeds only when it publishes, and fails here
+      # otherwise. Deployments that were live once and none live now, or a
+      # failed read, leave the live commit unknown: nothing is published.
+      - name: Check the commit of the published site
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          ids="$(gh api --paginate "repos/$GITHUB_REPOSITORY/deployments?environment=github-pages&per_page=100" --jq '.[].id')"
+          live=""
+          once=false
+          for id in $ids; do
+            state="$(gh api "repos/$GITHUB_REPOSITORY/deployments/$id/statuses?per_page=1" --jq '.[0].state // ""')"
+            if [[ "$state" == success ]]; then
+              live="$(gh api "repos/$GITHUB_REPOSITORY/deployments/$id" --jq .sha)"
+              break
+            fi
+            [[ "$state" != inactive ]] || once=true
+          done
+          if [[ -z "$live" ]]; then
+            if [[ "$once" == true ]]; then
+              echo "::error::No deployment is live, though some were: the published commit is unknown."
+              exit 1
+            fi
+            echo "No site has been published yet."
+            exit 0
+          fi
+          status="$(gh api "repos/$GITHUB_REPOSITORY/compare/$live...$GITHUB_SHA" --jq .status)"
+          echo "The published site is of $live; this run's commit $GITHUB_SHA is $status."
+          case "$status" in
+            ahead|identical) ;;
+            *)
+              echo "::error::The published site is of a later commit than this run's: it stays."
+              exit 1
+              ;;
+          esac
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
 
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+
+  # Once this run's site is published, the full site with its Mathlib pages,
+  # packed for GitHub Pages, replaces it if their job succeeded: the site never
+  # waits for it.
+  promote:
+    name: publish the full site
+    needs: [deploy, mathlib-pages]
+    if: vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      pages: write
+      id-token: write
+      deployments: read
+      contents: read
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # Publish only over a site of this run's commit or of one of its
+      # ancestors, so that a re-run never takes the site back to an earlier
+      # commit. The site served is that of the newest successful deployment:
+      # a deployment job succeeds only when it publishes, and fails here
+      # otherwise. Deployments that were live once and none live now, or a
+      # failed read, leave the live commit unknown: nothing is published.
+      - name: Check the commit of the published site
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          ids="$(gh api --paginate "repos/$GITHUB_REPOSITORY/deployments?environment=github-pages&per_page=100" --jq '.[].id')"
+          live=""
+          once=false
+          for id in $ids; do
+            state="$(gh api "repos/$GITHUB_REPOSITORY/deployments/$id/statuses?per_page=1" --jq '.[0].state // ""')"
+            if [[ "$state" == success ]]; then
+              live="$(gh api "repos/$GITHUB_REPOSITORY/deployments/$id" --jq .sha)"
+              break
+            fi
+            [[ "$state" != inactive ]] || once=true
+          done
+          if [[ -z "$live" ]]; then
+            if [[ "$once" == true ]]; then
+              echo "::error::No deployment is live, though some were: the published commit is unknown."
+              exit 1
+            fi
+            echo "No site has been published yet."
+            exit 0
+          fi
+          status="$(gh api "repos/$GITHUB_REPOSITORY/compare/$live...$GITHUB_SHA" --jq .status)"
+          echo "The published site is of $live; this run's commit $GITHUB_SHA is $status."
+          case "$status" in
+            ahead|identical) ;;
+            *)
+              echo "::error::The published site is of a later commit than this run's: it stays."
+              exit 1
+              ;;
+          esac
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+        with:
+          artifact_name: github-pages-full
