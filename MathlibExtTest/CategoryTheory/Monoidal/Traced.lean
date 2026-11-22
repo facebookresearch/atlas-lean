@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 module
 import MathlibExt.CategoryTheory.Monoidal.Traced
-import Mathlib.CategoryTheory.Monoidal.Rigid.Braided
 import Mathlib.Algebra.Category.FGModuleCat.Basic
 
 open CategoryTheory MonoidalCategory
@@ -18,9 +17,9 @@ noncomputable section
 
 universe v u
 variable (C : Type u) [Category.{v} C] [MonoidalCategory C]
-  [SymmetricCategory C] [RigidCategory C]
+  [SymmetricCategory C] [RightRigidCategory C]
 
--- The full structure is constructed without additional trace assumptions.
+-- Right duals suffice; no left-dual or additional trace assumptions are needed.
 example : SymmetricTrace C := symmetricTraceOfRigid C
 
 example (X : C) : (symmetricTraceOfRigid C).trace (β_ X X).hom = 𝟙 X :=
@@ -38,9 +37,7 @@ example {X Y U D : C} [ExactPairing U D] (f : X ⊗ U ⟶ Y ⊗ U) :
   SymmetricTrace.traceOfPairing_independent f
 
 -- The construction works in a concrete nontrivial linear category.
-example : SymmetricTrace (FGModuleCat ℚ) := by
-  letI := BraidedCategory.rigidCategoryOfRightRigidCategory (C := FGModuleCat ℚ)
-  exact symmetricTraceOfRigid (FGModuleCat ℚ)
+example : SymmetricTrace (FGModuleCat ℚ) := symmetricTraceOfRigid (FGModuleCat ℚ)
 
 -- Zero linear maps have zero partial trace, directly from the constructed operation.
 example (X Y U : FGModuleCat ℚ) :
