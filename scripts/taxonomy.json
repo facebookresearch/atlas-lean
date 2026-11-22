@@ -9867,6 +9867,7 @@
   "MathlibExt/Combinatorics/Additive/CombinatorialNullstellensatz": {"to": "Combinatorics/additive-combinatorics", "title": "Combinatorial Nullstellensatz"},
   "MathlibExt/Combinatorics/Additive/CommonDifferenceProgressions": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Vosper's theorem"},
   "MathlibExt/Combinatorics/Additive/Convolution": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Additive representation functions"},
+  "MathlibExt/Combinatorics/Additive/CoprimeDenominatorProgressions": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Unions of two progressions are not sum-dominant"},
   "MathlibExt/Combinatorics/Additive/ErdosHeilbronn": {"to": "Combinatorics/additive-combinatorics", "title": "Combinatorial Nullstellensatz"},
   "MathlibExt/Combinatorics/Additive/GowersNorm": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Gowers uniformity norms"},
   "MathlibExt/Combinatorics/Additive/MinimumRestrictedAdditiveBasis": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Restricted additive bases"},
