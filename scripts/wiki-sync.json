@@ -24268,7 +24268,7 @@
 "MathlibExt.Analysis.Calculus.EvenC2SquareFactorWanted.exists_contDiffOn_comp_sq_of_even": "5a1104e547c5bb0c",
 "MathlibExt.Analysis.Calculus.ExpTaylorPolyOddUniqueZeroWanted.existsUnique_sum_pow_div_factorial_eq_zero_of_odd": "27d4b4553b376334",
 "MathlibExt.Analysis.Calculus.GraphNonAccumulationPointsCountableWanted.countable_diff_setOf_exists_seq_tendsto_and_tendsto_apply": "97148a0cc68b1dc4",
-"MathlibExt.Analysis.Calculus.ImplicitFunctionExpExampleWanted.exists_implicit_function_sq_mul_add_exp_add": "cdc18b5adb3724a7",
+"MathlibExt.Analysis.Calculus.ImplicitFunctionExpExampleWanted.exists_implicit_function_sq_mul_add_exp_add": "9811cb1fb9b8e627",
 "MathlibExt.Analysis.Calculus.IntegralSinSqUnitWindowBoundWanted.abs_integral_sin_sq_lt_inv": "78c6fd63360d47da",
 "MathlibExt.Analysis.Calculus.IntegralXFDerivFWanted.integral_mul_mul_deriv_eq_neg_half": "71512aeb94c3541a",
 "MathlibExt.Analysis.Calculus.IterateLipschitzNullFixedPointWanted.exists_fixedPoint_of_iterate_lipschitz_tendsto_zero": "0d252e674c3d33d6",
