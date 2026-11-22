@@ -2861,10 +2861,22 @@ def git(*args: str, data: bytes | None = None) -> bytes:
     return result.stdout
 
 
+def index_modes() -> dict[str, str]:
+    """The mode the index gives each file the sync may write (see written_by_sync), by its path from the repository's
+    root, as the file system names it."""
+    modes = {}
+    for record in git("ls-files", "-s", "-z", "--", "blueprint", "scripts").split(b"\0"):
+        if record:
+            meta, raw = record.split(b"\t", 1)
+            modes[os.fsdecode(raw)] = meta.split(b" ", 1)[0].decode("ascii")
+    return modes
+
+
 def changed_paths(base: str) -> list[str]:
-    """The files that differ between commit *base* and the working tree, untracked ones included, by their path from
-    the repository's root: what a pull request from *base* changes."""
+    """The files that differ between commit *base* and the working tree or the index, untracked ones included, by
+    their path from the repository's root: what a pull request from *base* changes."""
     found = (git("diff", "--name-only", "--no-renames", "-z", base, "--")
+             + git("diff", "--cached", "--name-only", "--no-renames", "-z", base, "--")
              + git("ls-files", "--others", "--exclude-standard", "-z"))
     # Named as the file system names them, whatever their bytes.
     return sorted({os.fsdecode(path) for path in found.split(b"\0") if path})
@@ -3413,13 +3425,18 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
         if left := unfinished(report):
             return "other", [f"the sync fails on the base's wiki: {row}" for row in left]
         differences = []
+        # What the index holds, whatever the working tree has: a submodule there may have no folder at all.
+        staged = index_modes()
         for path in sorted(set(paths) | {path.relative_to(scratch).as_posix() for path in written}):
             mine, theirs = scratch / path, wiki.ROOT / path
             linked = theirs.is_symlink() or os.path.realpath(theirs) != str(theirs)
             # A file written in place keeps its mode, and one the sync makes is not executable.
             expected = (mine.read_bytes(), modes.get(path) != "100755") if mine.is_file() else None
             actual = None if linked or not theirs.is_file() else (theirs.read_bytes(), not theirs.stat().st_mode & 0o111)
-            if linked or modes.get(path, "100644") not in ("100644", "100755"):
+            # Anything but a file, in the working tree or the index: a folder, a submodule, a link.
+            other = (os.path.lexists(theirs) and not theirs.is_file()) or staged.get(path, "100644") not in (
+                "100644", "100755")
+            if linked or other or modes.get(path, "100644") not in ("100644", "100755"):
                 differences.append(f"{path}: the sync writes no link or other kind of file")
             elif expected != actual:
                 differences.append(f"{path}: " + (

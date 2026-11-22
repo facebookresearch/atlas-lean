@@ -376,8 +376,8 @@ python scripts/build_mathlib_pages.py check site mathlib-graph site-full
 ## Maintaining articles
 
 A pull request that changes the Lean runs the sync scoped to its own changes,
-from the commit its branch starts at (with `origin` this repository), and
-commits what it writes:
+from the commit its branch starts at on the branch it targets (here `main`,
+with `origin` this repository), and commits what it writes:
 
 ```sh
 python scripts/sync_wiki.py declarations --base "$(git merge-base origin/main HEAD)"

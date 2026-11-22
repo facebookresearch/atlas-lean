@@ -58,16 +58,21 @@ jobs:
           EVENT: ${{ github.event_name }}
           MERGE_GROUP_BASE: ${{ github.event.merge_group.base_sha }}
           DISPATCH_BASE: ${{ inputs.base }}
+          PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
+          MERGE_GROUP_REF: ${{ github.event.merge_group.base_ref }}
         run: |
           set -euo pipefail
           case "$EVENT" in
-            pull_request) base="$(git rev-parse HEAD^1)" ;;
-            merge_group) base="$MERGE_GROUP_BASE" ;;
-            *) base="$DISPATCH_BASE" ;;
+            pull_request) base="$(git rev-parse HEAD^1)" ref="${PR_BASE_REF:-}" ;;
+            merge_group) base="$MERGE_GROUP_BASE" ref="${MERGE_GROUP_REF#refs/heads/}" ;;
+            *) base="$DISPATCH_BASE" ref="" ;;
           esac
           [[ "$base" =~ ^[0-9a-f]{40}$ ]] || { echo "No base commit for this $EVENT run" >&2; exit 1; }
           git cat-file -e "$base^{commit}" 2>/dev/null || git fetch --no-tags --depth=1 origin "$base"
+          # The branch the fix command fetches: the one the change targets, named plainly; else the base commit.
+          [[ "$ref" =~ ^[A-Za-z0-9._/-]+$ ]] || ref=""
           echo "BASE=$base" >> "$GITHUB_ENV"
+          echo "FIX_REF=$ref" >> "$GITHUB_ENV"
 
       # The verdicts come first: whether the pull request is in step, with the
       # command that fixes it, and whether its wiki changes are only what that
@@ -111,15 +116,18 @@ jobs:
               echo
               echo "The check could not run (exit $status): the log above says why."
             elif [[ "$status" -ne 0 ]]; then
-              cat <<'TEXT'
-
-          The check ran on the pull request merged into its base. On the pull request's branch, run the sync as:
-
-          ```sh
-          git fetch https://github.com/facebookresearch/atlas-lean.git main
-          python3 scripts/sync_wiki.py declarations --base "$(git merge-base FETCH_HEAD HEAD)"
-          ```
-          TEXT
+              # From the branch the change targets, or, with none, the commit the check compared with.
+              if [[ -n "${FIX_REF:-}" ]]; then
+                fetch="git fetch https://github.com/facebookresearch/atlas-lean.git $FIX_REF"
+                # shellcheck disable=SC2016 # The command is shown, not run.
+                sync='python3 scripts/sync_wiki.py declarations --base "$(git merge-base FETCH_HEAD HEAD)"'
+              else
+                fetch="git fetch https://github.com/facebookresearch/atlas-lean.git $BASE"
+                sync="python3 scripts/sync_wiki.py declarations --base $BASE"
+              fi
+              # shellcheck disable=SC2016 # The backquotes are Markdown's.
+              printf '\nThe check ran on the change merged into its base. On its branch, run the sync as:\n\n```sh\n%s\n%s\n```\n' \
+                "$fetch" "$sync"
             fi
           } >> "$GITHUB_STEP_SUMMARY"
           if [[ "$failed" == yes ]]; then

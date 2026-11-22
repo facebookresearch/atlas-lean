@@ -851,7 +851,7 @@ class GraphSyncWorkflowTests(unittest.TestCase):
             if "uses" in step:
                 self.assertRegex(step["uses"], r"@[0-9a-f]{40}\Z")
 
-    def run_check(self, status: int, report: str | None = None, extra: str = ""):
+    def run_check(self, status: int, report: str | None = None, extra: str = "", fix_ref: str = "main"):
         """Run the check's step with a uv that prints a verdict, writes *report* as the check's JSON report, if any,
         and exits with *status*; returns the result, the job summary and the arguments uv got."""
         directory = tempfile.TemporaryDirectory()
@@ -869,7 +869,7 @@ class GraphSyncWorkflowTests(unittest.TestCase):
             ["bash", "-c", self.steps["Check that the graph is in step with the Lean"]["run"]], cwd=root, text=True,
             capture_output=True, env={**os.environ, "PATH": f"{root / 'bin'}:{os.environ['PATH']}", "BASE": "b" * 40,
                                       "AUTOFORM_SOURCE": "https://example.invalid/autoform.git", "AUTOFORM_REF": "a" * 40,
-                                      "GITHUB_STEP_SUMMARY": str(summary), "UV_EXTRA": extra})
+                                      "GITHUB_STEP_SUMMARY": str(summary), "UV_EXTRA": extra, "FIX_REF": fix_ref})
         return result, summary.read_text(), (root / "uv-arguments").read_text().split()
 
     def test_the_check_output_can_neither_issue_a_command_nor_end_the_summary_block(self):
@@ -901,7 +901,12 @@ class GraphSyncWorkflowTests(unittest.TestCase):
         self.assertIn("In step: no\nerror: a link\n", result.stdout)
         self.assertIn("::warning title=Graph sync::", result.stdout)
         self.assertIn("    In step: no\n    error: a link\n", summary)
-        self.assertIn('python3 scripts/sync_wiki.py declarations --base "$(git merge-base FETCH_HEAD HEAD)"\n', summary)
+        self.assertIn('git fetch https://github.com/facebookresearch/atlas-lean.git main\n'
+                      'python3 scripts/sync_wiki.py declarations --base "$(git merge-base FETCH_HEAD HEAD)"\n', summary)
+        # A run with no branch to fetch, as one dispatched with a commit, names the commit it compared with.
+        result, summary, _ = self.run_check(1, '{"in_step": false}', fix_ref="")
+        self.assertIn(f"git fetch https://github.com/facebookresearch/atlas-lean.git {'b' * 40}\n"
+                      f"python3 scripts/sync_wiki.py declarations --base {'b' * 40}\n", summary)
         result, summary, _ = self.run_check(0)
         self.assertEqual(result.returncode, 0)
         self.assertNotIn("::warning", result.stdout)
@@ -943,12 +948,18 @@ class GraphSyncWorkflowTests(unittest.TestCase):
         env = self.steps["Find the base commit"]["env"]
         self.assertEqual(env["MERGE_GROUP_BASE"], "${{ github.event.merge_group.base_sha }}")
         self.assertEqual(env["DISPATCH_BASE"], "${{ inputs.base }}")
+        self.assertEqual(env["PR_BASE_REF"], "${{ github.event.pull_request.base.ref }}")
+        self.assertEqual(env["MERGE_GROUP_REF"], "${{ github.event.merge_group.base_ref }}")
         self.assertEqual(self.steps["Check out project"]["with"]["fetch-depth"], "2")
-        result, written, main, merge = self.find_base("pull_request")
-        self.assertEqual((result.returncode, written), (0, f"BASE={main}\n"), result.stderr)
+        result, written, main, merge = self.find_base("pull_request", lambda main, merge: {"PR_BASE_REF": "release/1.x"})
+        self.assertEqual((result.returncode, written), (0, f"BASE={main}\nFIX_REF=release/1.x\n"), result.stderr)
+        # A branch name the fix command could not quote plainly is left out: the command names the commit instead.
+        result, written, main, merge = self.find_base("pull_request", lambda main, merge: {"PR_BASE_REF": "a b;c"})
+        self.assertEqual((result.returncode, written), (0, f"BASE={main}\nFIX_REF=\n"), result.stderr)
         # The queue's base, here the merge commit itself, which the checkout already has.
-        result, written, main, merge = self.find_base("merge_group", lambda main, merge: {"MERGE_GROUP_BASE": merge})
-        self.assertEqual((result.returncode, written), (0, f"BASE={merge}\n"), result.stderr)
+        result, written, main, merge = self.find_base("merge_group", lambda main, merge: {
+            "MERGE_GROUP_BASE": merge, "MERGE_GROUP_REF": "refs/heads/main"})
+        self.assertEqual((result.returncode, written), (0, f"BASE={merge}\nFIX_REF=main\n"), result.stderr)
         # A run with no commit to compare with fails rather than checking against nothing.
         result, written, _, _ = self.find_base("workflow_dispatch", lambda main, merge: {"DISPATCH_BASE": "main"})
         self.assertNotEqual(result.returncode, 0)

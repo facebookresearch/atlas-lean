@@ -4307,6 +4307,21 @@ class ScopedRun(unittest.TestCase):
         self.assertIn(os.fsdecode(b"blueprint/roadmap/Algebra/caf\xe9.md"), " ".join(report["differences"]))
 
 
+    def test_a_submodule_in_the_wiki_is_not_the_syncs(self) -> None:
+        # A submodule the changes add under the roadmap beside what the sync writes, whether or not the working tree
+        # has its folder: the sync writes none.
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        self.git("update-index", "--add", "--cacheinfo", f"160000,{'1' * 40},blueprint/roadmap/Algebra/sub")
+        for folder in (False, True):
+            if folder:
+                (self.root / "blueprint/roadmap/Algebra/sub").mkdir()
+            status, out, err, report = self.run_sync("--check")
+            self.assertEqual(report["wiki_changes"], "other", (folder, report))
+            self.assertIn("blueprint/roadmap/Algebra/sub: the sync writes no link or other kind of file",
+                          report["differences"], folder)
+
+
 
 class BuildPath(Vault):
     """What the build's own steps refuse before they write, beside what credit_problems refuses everywhere."""
