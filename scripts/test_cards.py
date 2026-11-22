@@ -337,6 +337,20 @@ class Origins(Vault):
         self.assertEqual([result["pages"][f"{g}/{folder}/{folder}-main"]["credit"] for folder in ("m", "n")],
                          ["mathlib", "mathlib"])
 
+    def test_a_reference_to_mathlib_beside_an_atlas_link_credits_atlas(self) -> None:
+        # Only a Lean link credits: a generic link to Mathlib's repository is a reference, before or after the row's
+        # shorthand link to the project's declaration.
+        g = "Algebra/groups"
+        reference = {"type": "generic", "uri": cards.MATHLIB + ".git/", "location": {"declaration": "Mathlib.source"}}
+        for folder, number, main, first in (("a", 1, 10, True), ("b", 2, 20, False)):
+            self.leaf(f"{g}/{folder}/{folder}-main.md", main)
+            own = self.rows[-1]["object"]
+            self.rows[-1]["object"] = [reference, *own] if first else [*own, reference]
+            self.card(f"{g}/{folder}", number, main, [f"{folder}-main"])
+        result = self.rollup()
+        self.assertEqual([result["pages"][f"{g}/{folder}/{folder}-main"]["credit"] for folder in ("a", "b")],
+                         ["atlas", "atlas"])
+
     def test_a_walk_never_passes_through_a_folder_page(self) -> None:
         # A folder page's hand-written link is no statement's dependency: it is counted as reaching a folder, and
         # no need runs through it.

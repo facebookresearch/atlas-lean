@@ -414,9 +414,11 @@ class LeanFacts(Vault):
 
     def test_a_mathlib_flag_without_a_mathlib_declaration_keeps_no_kind(self) -> None:
         # The kind is kept only beside a Lean link to Mathlib's repository that names a declaration: a link to the
-        # whole repository or a link of another type names no theorem, so the page gets no kind.
+        # whole repository, a link of another type, or a name Autoform's reader refuses names no theorem, so the
+        # page gets no kind.
         ends = {"whole-repository": {"type": "lean", "uri": sync.MATHLIB},
-                "html": {"type": "html", "uri": sync.MATHLIB, "location": {"declaration": "Group.exists"}}}
+                "html": {"type": "html", "uri": sync.MATHLIB, "location": {"declaration": "Group.exists"}},
+                "line-break": {"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": "Group.exists\n"}}}
         for page in ends:
             self.page(f"Algebra/{page}.md", f"# {page}\n\nIt holds.\n")
         self.annotate([self.about(f"Algebra/{page}.md", object=[end], kind="theorem", id=f"af_{page}",
