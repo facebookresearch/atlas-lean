@@ -35,8 +35,15 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          id="$(gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts?name=lake-build-${GITHUB_SHA}" \
-            --jq '[.artifacts[] | select(.expired | not)][0].id // empty')"
+          # Artifact names are not unique, so take the artifact of the
+          # successful merge-group CI run that built this exact commit.
+          run="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/ci.yml/runs?event=merge_group&head_sha=${GITHUB_SHA}&status=success" \
+            --jq '.workflow_runs[0].id // empty')"
+          id=""
+          if [[ -n "$run" ]]; then
+            id="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${run}/artifacts?name=lake-build-${GITHUB_SHA}" \
+              --jq '[.artifacts[] | select(.expired | not)][0].id // empty')"
+          fi
           if [[ -z "$id" ]]; then
             echo "No merge-group build for ${GITHUB_SHA}: CI's push run saves its own."
             exit 0
