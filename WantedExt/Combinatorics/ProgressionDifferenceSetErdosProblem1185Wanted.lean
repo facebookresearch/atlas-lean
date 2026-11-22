@@ -36,19 +36,31 @@ no statement.
 
 open Filter
 
-/-- Erdős Problem 1185: for all `δ > 0` and `k ≥ 3` there is `m ≥ 1` such that for all large `N`,
-whenever `A, B ⊆ {1, …, N}` with `|A| ≥ δ N` and `|B| ≥ m`, the set `A` contains a `k`-term
-arithmetic progression `a, a + d, …, a + (k - 1) d` with `d > 0` and `d ∈ B - B`. -/
+/-- **Erdős Problem 1185: progressions with difference in a difference set.** This is the
+statement that for every real $\delta > 0$ and every natural number $k \ge 3$ there is a natural
+number $m \ge 1$ such that for all sufficiently large natural numbers $N$, whenever $A$ and $B$
+are subsets of $\{1, \dots, N\}$ with $|A| \ge \delta N$ and $|B| \ge m$, there are natural
+numbers $a$ and $d > 0$ such that $b_1 = b_2 + d$ for some $b_1, b_2 \in B$ and $a + i d \in A$
+for every natural number $i < k$; that is, $A$ contains the $k$-term arithmetic progression
+$a, a + d, \dots, a + (k - 1) d$, whose common difference $d$ is positive and lies in $B - B$. -/
 def progressionWithDifferenceInDifferenceSet : Prop :=
   ∀ δ : ℝ, 0 < δ → ∀ k : ℕ, 3 ≤ k → ∃ m : ℕ, 1 ≤ m ∧ ∀ᶠ N : ℕ in atTop,
     ∀ A B : Finset ℕ, A ⊆ Finset.Icc 1 N → B ⊆ Finset.Icc 1 N → δ * N ≤ A.card → m ≤ B.card →
       ∃ a d : ℕ, 0 < d ∧ (∃ b₁ ∈ B, ∃ b₂ ∈ B, b₂ + d = b₁) ∧ ∀ i < k, a + i * d ∈ A
 
 /--
-Resolved false: erdosproblems.com/1185 records that the answer is no already for `k = 3`:
-Furstenberg gave an infinite set `B` such that `B - B` is not `2`-intersective, i.e. some set of
-positive density contains no `3`-term progression with difference in `B - B`; truncating both sets
-at `N` gives counterexamples with `|B ∩ [1, N]|` unbounded. Source: T. F. Bloom, Erdős Problems,
+**Erdős Problem 1185 is false.** The following statement is false: for every real $\delta > 0$
+and every natural number $k \ge 3$ there is a natural number $m \ge 1$ such that for all
+sufficiently large natural numbers $N$, whenever $A$ and $B$ are subsets of $\{1, \dots, N\}$
+with $|A| \ge \delta N$ and $|B| \ge m$, there are natural numbers $a$ and $d > 0$ such that
+$b_1 = b_2 + d$ for some $b_1, b_2 \in B$ and $a + i d \in A$ for every natural number $i < k$.
+
+The answer is negative already for $k = 3$: Furstenberg gave an infinite set $B$ such that
+$B - B$ is not $2$-intersective, that is, some set of positive density contains no $3$-term
+progression with common difference in $B - B$; truncating both sets at $N$ gives
+counterexamples with $|B \cap [1, N]|$ unbounded.
+
+Source: T. F. Bloom, Erdős Problems,
 Problem #1185, https://www.erdosproblems.com/1185 (status SOLVED); resolution: H. Furstenberg,
 Recurrence in Ergodic Theory and Combinatorial Number Theory, Princeton University Press (1981),
 erdosproblems.com/1185: false already at k = 3, since Furstenberg gave an infinite set B such that B

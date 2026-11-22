@@ -42,12 +42,19 @@ conjecture is not formalized here.
 
 open MeasureTheory
 
-/-- The AimPL question (Hereditary discrepancy and factorization norms, Problem 1.5) as a claim:
-Banaszczyk's volume lower bound `√d (vol B_X / vol B_Y)^{1/d}` for the vector balancing constant
-`α(X, Y, d)` is also an upper bound up to polylogarithmic factors. That is, there are constants
-`C, c` such that for every `d ≥ 2`, all norms `X, Y` on `ℝ^d` (definite seminorms) and all
-vectors `v₁, …, vₙ` with `X(vᵢ) ≤ 1` there are signs `εᵢ = ±1` with
-`Y(∑ εᵢ vᵢ) ≤ C (log d)^c √d (vol B_X / vol B_Y)^{1/d}`, where `B_X = {x | X x ≤ 1}`. -/
+/-- **Banaszczyk's volume bound as an upper bound for vector balancing (statement).** This is the
+proposition that there are real constants $C$ and $c$ such that for every natural number $d \ge 2$,
+all norms $X$ and $Y$ on $\mathbb{R}^d$, every natural number $n$ and all vectors
+$v_1, \dots, v_n \in \mathbb{R}^d$ with $X(v_i) \le 1$ for every $i$, there are signs
+$\varepsilon_1, \dots, \varepsilon_n \in \{1, -1\}$ such that
+$Y(\varepsilon_1 v_1 + \dots + \varepsilon_n v_n)$ is at most
+$C (\log d)^c \sqrt{d} \, (\mathrm{vol}(B_X) / \mathrm{vol}(B_Y))^{1/d}$, where
+$B_X = \{x : X(x) \le 1\}$ and $B_Y = \{x : Y(x) \le 1\}$ are the closed unit balls and
+$\mathrm{vol}$ is Lebesgue measure.
+
+Banaszczyk proved that $\sqrt{d} \, (\mathrm{vol}(B_X) / \mathrm{vol}(B_Y))^{1/d}$ is a lower bound
+for the vector balancing constant of $X$ and $Y$; the AimPL question asks whether it is also an
+upper bound up to polylogarithmic factors in $d$. -/
 def volumeBoundIsUpperBound : Prop :=
   ∃ C c : ℝ, ∀ d : ℕ, 2 ≤ d → ∀ X Y : Seminorm ℝ (EuclideanSpace ℝ (Fin d)),
     (∀ x, X x = 0 → x = 0) → (∀ x, Y x = 0 → x = 0) →
@@ -57,10 +64,20 @@ def volumeBoundIsUpperBound : Prop :=
           ((volume {x | X x ≤ 1}).toReal / (volume {x | Y x ≤ 1}).toReal) ^ ((1 : ℝ) / d)
 
 /--
-Resolved false: the problem list's own remark (S. Nikolov) records that Banaszczyk's volume bound
-can be too small by a factor of `√d`, for example for `X = Y = ℓ₁^d`, where the bound is `√d` while
-the standard basis vectors have `‖∑ ±eᵢ‖₁ = d` for every choice of signs; a factor `√d` is not
-polylogarithmic in `d`. Source: AimPL: Hereditary discrepancy and factorization norms, Section 1,
+**Banaszczyk's volume bound is not an upper bound for vector balancing.** There are no real
+constants $C$ and $c$ such that for every natural number $d \ge 2$, all norms $X$ and $Y$ on
+$\mathbb{R}^d$, every natural number $n$ and all vectors $v_1, \dots, v_n \in \mathbb{R}^d$ with
+$X(v_i) \le 1$ for every $i$, there are signs $\varepsilon_1, \dots, \varepsilon_n \in \{1, -1\}$
+such that $Y(\varepsilon_1 v_1 + \dots + \varepsilon_n v_n)$ is at most
+$C (\log d)^c \sqrt{d} \, (\mathrm{vol}(B_X) / \mathrm{vol}(B_Y))^{1/d}$, where
+$B_X = \{x : X(x) \le 1\}$ and $B_Y = \{x : Y(x) \le 1\}$ are the closed unit balls and
+$\mathrm{vol}$ is Lebesgue measure.
+
+S. Nikolov's remark on the problem gives the counterexample $X = Y = \ell_1^d$ with the standard
+basis vectors $e_1, \dots, e_d$: the volume bound is $\sqrt{d}$, while every choice of signs gives
+$\|\pm e_1 \pm \dots \pm e_d\|_1 = d$, and a factor $\sqrt{d}$ is not polylogarithmic in $d$.
+
+Source: AimPL: Hereditary discrepancy and factorization norms, Section 1,
 Problem 1.5 (Vector balancing), http://aimpl.org/hereddiscrep/1/; resolution: AimPL: Hereditary
 discrepancy and factorization norms, remark by S. Nikolov to Problem 1.5, remark: 'In fact, this
 lower bound can be too small by a factor of √d, for example when X = Y = ℓ_1^d' (for X = Y the
