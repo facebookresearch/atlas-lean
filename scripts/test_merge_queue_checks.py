@@ -159,13 +159,25 @@ def may_be_named(name: str, check: str) -> bool:
             and len(check) >= len(prefix) + len(suffix))
 
 
-def runs_exactly(step, command: str) -> bool:
+def default_shell(*levels: dict) -> str:
+    """The shell a step without `shell` inherits from its job, then its
+    workflow; bash otherwise."""
+    for level in levels:
+        defaults = level.get("defaults") or {}
+        shell = (defaults.get("run") or {}).get("shell") if isinstance(defaults, dict) else None
+        if shell:
+            return shell
+    return "bash"
+
+
+def runs_exactly(step, command: str, shell: str = "bash") -> bool:
     """Whether a step runs exactly this one command line, unconditionally, in
-    the default shell or bash, with nothing able to ignore its failure."""
+    bash, with nothing able to ignore its failure. `shell` is the inherited
+    default."""
     if not isinstance(step, dict):
         return False
     run = str(step.get("run", "")).strip()
-    return (set(step) <= STEP_KEYS and step.get("shell", "bash") == "bash"
+    return (set(step) <= STEP_KEYS and step.get("shell", shell) == "bash"
             and "\n" not in run and " ".join(run.split()) == command)
 
 
@@ -238,7 +250,8 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
             if key in job:
                 found.append(f"{check!r} has a job-level {key!r}")
         steps = as_list(job.get("steps"))
-        if not any(runs_exactly(step, ENTRY_POINTS[check]) for step in steps):
+        shell = default_shell(job, workflow)
+        if not any(runs_exactly(step, ENTRY_POINTS[check], shell) for step in steps):
             found.append(f"{check!r} has no step that is exactly {ENTRY_POINTS[check]!r}")
         for step in as_list(job.get("steps")):
             if (isinstance(step, dict) and "actions/checkout" in str(step.get("uses", ""))
@@ -265,7 +278,7 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
                                  f"{name}'s {group!r}")
         if job.get("concurrency"):
             found.append(f"{check!r} has a job-level concurrency group, which is unverified")
-        if check in RUN_THIS_TEST and not any(runs_exactly(step, COMMAND) for step in steps):
+        if check in RUN_THIS_TEST and not any(runs_exactly(step, COMMAND, shell) for step in steps):
             found.append(f"{check!r} has no step that is exactly {COMMAND!r}")
     return found
 
@@ -489,6 +502,12 @@ class MergeQueueChecks(unittest.TestCase):
                     [{"run": COMMAND},
                      {"shell": "bash {0} || true", "run": "scripts/run_source_diagnostics.sh"}]),
                 "no step that is exactly 'scripts/run_source_diagnostics.sh'"),
+            "build job defaulting to sh": (
+                put("ci.yml", "jobs", "build", "defaults", {"run": {"shell": "sh"}}),
+                "no step that is exactly 'scripts/check.sh build'"),
+            "CI defaulting to sh": (
+                put("ci.yml", "defaults", {"run": {"shell": "sh"}}),
+                "no step that is exactly 'scripts/check.sh preflight'"),
             "preflight dropped": (
                 put("ci.yml", "jobs", "preflight", "steps", [{"run": COMMAND}]),
                 "no step that is exactly 'scripts/check.sh preflight'"),
