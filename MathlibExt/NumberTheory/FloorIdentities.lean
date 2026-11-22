@@ -13,8 +13,10 @@ public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 /-!
 # Two floor-function identities
 
-The statement follows the ATLAS wiki article *Two floor-function identities*, which attributes
-the identities to Onphaeng, Khemaratchatakumthorn, Phunphayap and Pongsriiam.
+The ATLAS wiki article *Two floor-function identities* cites Lemma 6, parts (iii) and (v), of
+Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Phakhinkon Napp Phunphayap and
+Prapanpong Pongsriiam, *Exact Formulas for the Number of Palindromes in Certain Arithmetic
+Progressions*, Journal of Integer Sequences 27 (2024), Article 24.4.8.
 -/
 
 namespace MetaMathlibExt
