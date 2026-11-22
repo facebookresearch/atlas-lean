@@ -12,6 +12,7 @@ Portions of this file are adapted from:
 arnovich/gimle-forseti, commit d5239d8f0ebbc12b11616a1e3ce0228203fd231f,
 `docs/spikes/353-scout-ks/round7/KSProjection/Product.lean`.
 Authors: arnovich.
+Copyright holder: arnovich.
 
 The source snapshot contains no separate copyright or license notice.
 The author contributes these adapted portions under the license in the
