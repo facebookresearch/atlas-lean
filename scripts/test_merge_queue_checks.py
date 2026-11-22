@@ -16,13 +16,17 @@ fails if a required workflow:
 - leaves Ubuntu runners (the build needs a full Ubuntu VM), runs in a
   container, or runs its steps in a shell other than bash by default or outside
   the repository root, whether the job's `defaults.run` replaces the
-  workflow's or is merged with it key by key;
+  workflow's or is merged with it key by key, or takes `defaults` from an
+  expression, which could set any shell or directory;
 - sets an environment variable other than `PYTHONDONTWRITEBYTECODE` for the
   whole workflow, for the job or on its checked steps, or has a step that can
   set variables for the steps after it (one that mentions `$GITHUB_ENV`, the
   `github.env` context, the runner's command files or `exportVariable`): a
   variable such as `BASH_ENV` makes bash run a file before each step's
-  command, which could exit early and report success;
+  command, which could exit early and report success. Likewise, no step may
+  change `PATH` for later steps (`$GITHUB_PATH`, `github.path`, `addPath`),
+  which could put another `git` or `bash` first, except the build's exact
+  line adding elan's `bin` directory;
 - checks out another ref or repository, or only part of the tree (any checkout
   input beyond credentials, history and progress settings), in that job, so
   that the check would report on the PR or merge group without testing all of
@@ -42,12 +46,15 @@ fails if a required workflow:
   branches, which GitHub creates for each merge group, would report them on
   the merge group's commit and could share its concurrency group.
 
-It also fails if a required workflow gains another event that could report
-the same checks on a PR's head (such as `pull_request_target`), or unless both
-`repository integrity` and `source-diagnostics` have a step that is exactly
-the workspace check followed by the command that runs this whole test, with no
-condition, so that a change
-that makes one workflow skip its jobs is still caught by the other.
+It also fails if a required workflow gains another event that could report the
+same checks on a PR's head (such as `pull_request_target`), or unless both
+`repository integrity` and `source-diagnostics` have a step that is exactly the
+workspace check followed by the command that runs this whole test, with no
+condition, so that a change that makes one workflow skip its jobs is still
+caught by the other. `workflow_dispatch` and `schedule` stay allowed: GitHub
+does not count checks from runs those events trigger toward a branch ruleset's
+required checks, even on a PR's head commit (GitHub Docs, "Troubleshooting
+required status checks", "Checks from some workflow jobs are not evaluated").
 
 Each of those steps starts with the same workspace check (`VERIFY`): `HEAD`
 must be `GITHUB_SHA`, the commit the run tests (for a PR, GitHub's test merge
@@ -119,6 +126,10 @@ STEP_KEYS = {"name", "id", "env", "run", "timeout-minutes", "shell"}
 # The only environment variable a required workflow, job or checked step may set.
 ENV_ALLOWED = {"PYTHONDONTWRITEBYTECODE"}
 # Ways a step can set variables for the steps after it.
+# Ways a step can change PATH for the steps after it, and the one such line allowed.
+SETS_LATER_PATH = re.compile(
+    r"GITHUB_PATH|github\s*(?:\.\s*path\b|\[\s*['\"]path['\"]\s*\])|addPath", re.I)
+ALLOWED_PATH_LINES = {'echo "$HOME/.elan/bin" >> "$GITHUB_PATH"'}
 SETS_LATER_ENV = re.compile(
     r"GITHUB_ENV|github\s*(?:\.\s*env\b|\[\s*['\"]env['\"]\s*\])|_runner_file_commands"
     r"|exportVariable", re.I)
@@ -142,6 +153,10 @@ DIAGNOSTICS = exact(ENTRY_POINTS["source-diagnostics"])
 # Events a required workflow may run on besides its PR event. Pushes must be
 # limited to `main`; a workflow_dispatch run reports on a PR's head only if a
 # maintainer starts it on that branch.
+# Events a required workflow may also run on. Checks from workflow_dispatch and
+# schedule runs never satisfy a branch ruleset's required checks (GitHub Docs,
+# "Troubleshooting required status checks"), so they cannot stand in for a PR's
+# or merge group's run.
 OTHER_EVENTS = {"push", "merge_group", "workflow_dispatch", "schedule"}
 # Concurrency groups known to differ between any two runs of the PR event and
 # between any two merge groups. Both start with the workflow's name. Under
@@ -219,6 +234,29 @@ def may_be_named(name: str, check: str) -> bool:
     prefix, suffix = name.split("${{", 1)[0], name.rsplit("}}", 1)[-1]
     return (check.startswith(prefix) and check.endswith(suffix)
             and len(check) >= len(prefix) + len(suffix))
+
+
+def step_texts(step) -> list[str]:
+    """A step's command and its `env` and `with` values, as text."""
+    if not isinstance(step, dict):
+        return []
+    texts = [str(step.get("run", ""))]
+    for key in ("env", "with"):
+        value = step.get(key) or {}
+        texts += [str(v) for v in value.values()] if isinstance(value, dict) else [str(value)]
+    return texts
+
+
+def changes_later_path(step) -> bool:
+    """Whether a step can change PATH for the steps after it, other than with an
+    allowed line."""
+    texts = step_texts(step)
+    if not texts:
+        return False
+    run, values = texts[0], texts[1:]
+    return (any(SETS_LATER_PATH.search(value) for value in values)
+            or any(SETS_LATER_PATH.search(line) and line.strip() not in ALLOWED_PATH_LINES
+                   for line in run.splitlines()))
 
 
 def default_runs(job: dict, workflow: dict) -> list[dict]:
@@ -366,14 +404,16 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
             if env_problems(level):
                 found.append(f"{check!r} gets {env_problems(level)} from its {scope} env, "
                              "which could change how its steps run")
-        if any(isinstance(step, dict) and SETS_LATER_ENV.search(
-                " ".join([str(step.get("run", ""))]
-                         + [str(v) for key in ("env", "with")
-                            for v in ((step.get(key) or {}).values()
-                                      if isinstance(step.get(key), dict)
-                                      else [step.get(key) or ""])]))
-               for step in steps):
+        if any(SETS_LATER_ENV.search(text) for step in steps for text in step_texts(step)):
             found.append(f"{check!r} has a step that can set variables for the steps after it")
+        if any(changes_later_path(step) for step in steps):
+            found.append(f"{check!r} has a step that can change PATH for the steps after it")
+        for scope, level in (("workflow", workflow), ("job", job)):
+            defaults = level.get("defaults")
+            if defaults not in (None, "") and not (
+                    isinstance(defaults, dict) and isinstance(defaults.get("run", {}), dict)):
+                found.append(f"{check!r} gets defaults from an expression in its {scope}, "
+                             "which could set any shell or directory")
         for prerequisite in as_list(job.get("needs")):
             if (name, prerequisite) not in required_jobs:
                 found.append(f"{check!r} needs {prerequisite!r}, which is not required")
@@ -671,6 +711,32 @@ class MergeQueueChecks(unittest.TestCase):
                 put("ci.yml", "jobs", "build", "defaults",
                     {"run": {"working-directory": "scripts"}}),
                 "outside the repository root"),
+            "a step that adds to $GITHUB_PATH": (
+                put("ci.yml", "jobs", "build", "steps",
+                    [{"run": 'echo "$PWD/bin" >> "$GITHUB_PATH"'}, {"run": BUILD}]),
+                "change PATH for the steps after it"),
+            "a step that writes the github.path context": (
+                put("ci.yml", "jobs", "build", "steps",
+                    [{"run": "echo /tmp/bin >> '${{ github.path }}'"}, {"run": BUILD}]),
+                "change PATH for the steps after it"),
+            "addPath in an action's script": (
+                put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
+                    [{"uses": "actions/github-script@v7",
+                      "with": {"script": "core.addPath('/tmp/bin')"}},
+                     {"run": TEST}, {"run": DIAGNOSTICS}]),
+                "change PATH for the steps after it"),
+            "the allowed elan line followed by another PATH change": (
+                put("ci.yml", "jobs", "build", "steps",
+                    [{"run": 'echo "$HOME/.elan/bin" >> "$GITHUB_PATH"\n'
+                             'echo "$PWD/bin" >> "$GITHUB_PATH"'}, {"run": BUILD}]),
+                "change PATH for the steps after it"),
+            "a job's run defaults from an expression": (
+                put("ci.yml", "jobs", "build", "defaults",
+                    {"run": "${{ fromJSON(vars.CI_RUN_DEFAULTS) }}"}),
+                "gets defaults from an expression in its job"),
+            "a workflow's defaults from an expression": (
+                put("ci.yml", "defaults", "${{ fromJSON(vars.CI_DEFAULTS) }}"),
+                "gets defaults from an expression in its workflow"),
             "push of tags only": (put("ci.yml", "on", "push", {"tags": ["v*"]}),
                                   "pushes to refs other than the main branch"),
             "push of main and tags": (

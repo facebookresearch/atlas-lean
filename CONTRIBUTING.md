@@ -279,8 +279,9 @@ that reports the check or, through a step-level condition, the job's own check,
 lets the job report success after a failure (`continue-on-error`), checks out
 another ref or repository in it, moves it off Ubuntu runners, into a container
 or out of bash, sets environment variables that could change how its steps run
-(only `PYTHONDONTWRITEBYTECODE` is allowed) or has a step that can set them for
-later steps, renames the check or puts an expression in its job name, lets
+(only `PYTHONDONTWRITEBYTECODE` is allowed) or has a step that can set them, or
+change `PATH`, for later steps (the build's line adding elan to `PATH` is the
+one exception), renames the check or puts an expression in its job name, lets
 another job report (or possibly report) the same name, or uses a concurrency
 group that the test does not know to differ between PRs and between merge
 groups, or that another workflow's group could match. Each step that runs a
