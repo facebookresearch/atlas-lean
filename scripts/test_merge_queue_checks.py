@@ -9,8 +9,8 @@ fails if a required workflow:
   or filters some of them out;
 - can skip the job that reports the check (a skipped job counts as passing):
   a job-level `if`, a matrix, or a prerequisite that is not required itself;
-- can skip the job's own check: the step that runs it must be there, with no
-  step-level `if` or `continue-on-error`;
+- can skip the job's own check: the job needs a step that is exactly the
+  command running it, with no step-level `if` or `continue-on-error`;
 - checks out another ref or repository in that job, so that the check would
   report on the PR or merge group without testing its tree;
 - renames the check, puts an expression in the job's name, lets another job
@@ -70,12 +70,12 @@ FILTERS = {"branches", "branches-ignore", "paths", "paths-ignore"}
 RUN_THIS_TEST = ("repository integrity", "source-diagnostics")
 COMMAND = ('"$RUNNER_TEMP/merge-queue-venv/bin/python" -m unittest discover '
            "-s scripts -p test_merge_queue_checks.py -v")
-STEP_KEYS = {"name", "id", "env", "run", "timeout-minutes"}
-# What each required job checks: a step whose `run` holds all of these.
+STEP_KEYS = {"name", "id", "env", "run", "timeout-minutes", "shell"}
+# The command that runs each required job's own check.
 ENTRY_POINTS = {
-    "repository integrity": ("scripts/check.sh preflight",),
-    "build": ("scripts/check.sh build",),
-    "source-diagnostics": ("scripts/check_duplicate_defs.py", "scripts/check_hypothesis_debt.py"),
+    "repository integrity": "scripts/check.sh preflight",
+    "build": "scripts/check.sh build",
+    "source-diagnostics": "scripts/run_source_diagnostics.sh",
 }
 # Events a required workflow may run on besides its PR event. Pushes must be
 # limited to `main`; a workflow_dispatch run reports on a PR's head only if a
@@ -159,10 +159,14 @@ def may_be_named(name: str, check: str) -> bool:
             and len(check) >= len(prefix) + len(suffix))
 
 
-def runs_this_test(step) -> bool:
-    run = str(step.get("run", "")).strip() if isinstance(step, dict) else ""
-    return (set(step or {}) <= STEP_KEYS and "\n" not in run
-            and " ".join(run.split()) == COMMAND)
+def runs_exactly(step, command: str) -> bool:
+    """Whether a step runs exactly this one command line, unconditionally, in
+    the default shell or bash, with nothing able to ignore its failure."""
+    if not isinstance(step, dict):
+        return False
+    run = str(step.get("run", "")).strip()
+    return (set(step) <= STEP_KEYS and step.get("shell", "bash") == "bash"
+            and "\n" not in run and " ".join(run.split()) == command)
 
 
 def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
@@ -233,11 +237,9 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
         for key in ("if", "strategy", "uses"):
             if key in job:
                 found.append(f"{check!r} has a job-level {key!r}")
-        if not any(isinstance(step, dict) and not {"if", "continue-on-error"} & set(step)
-                   and all(part in str(step.get("run", "")) for part in ENTRY_POINTS[check])
-                   for step in as_list(job.get("steps"))):
-            found.append(f"{check!r} has no unconditional step that runs "
-                         f"{' and '.join(ENTRY_POINTS[check])}")
+        steps = as_list(job.get("steps"))
+        if not any(runs_exactly(step, ENTRY_POINTS[check]) for step in steps):
+            found.append(f"{check!r} has no step that is exactly {ENTRY_POINTS[check]!r}")
         for step in as_list(job.get("steps")):
             if (isinstance(step, dict) and "actions/checkout" in str(step.get("uses", ""))
                     and {"ref", "repository"} & set(step.get("with") or {})):
@@ -263,7 +265,7 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
                                  f"{name}'s {group!r}")
         if job.get("concurrency"):
             found.append(f"{check!r} has a job-level concurrency group, which is unverified")
-        if check in RUN_THIS_TEST and not any(map(runs_this_test, as_list(job.get("steps")))):
+        if check in RUN_THIS_TEST and not any(runs_exactly(step, COMMAND) for step in steps):
             found.append(f"{check!r} has no step that is exactly {COMMAND!r}")
     return found
 
@@ -291,9 +293,7 @@ FIXTURE = {
         "jobs": {"source-diagnostics": {"steps": [
             {"uses": "actions/checkout"},
             {"name": "Test", "run": COMMAND.replace(" -s", "  -s") + "\n"},
-            {"id": "diagnostics",
-             "run": "python3 scripts/check_duplicate_defs.py --report-only\n"
-                    "python3 scripts/check_hypothesis_debt.py --report-only\n"}]}},
+            {"id": "diagnostics", "shell": "bash", "run": "scripts/run_source_diagnostics.sh"}]}},
     },
     "bump-guard.yml": {
         "name": "Bump guard",
@@ -471,20 +471,27 @@ class MergeQueueChecks(unittest.TestCase):
                 put("ci.yml", "jobs", "build", "steps",
                     [{"if": "github.event_name != 'merge_group'",
                       "run": "scripts/check.sh build"}]),
-                "no unconditional step that runs scripts/check.sh build"),
+                "no step that is exactly 'scripts/check.sh build'"),
             "build step allowed to fail": (
                 put("ci.yml", "jobs", "build", "steps",
                     [{"continue-on-error": "true", "run": "scripts/check.sh build"}]),
-                "no unconditional step that runs scripts/check.sh build"),
-            "diagnostics step made conditional": (
+                "no step that is exactly 'scripts/check.sh build'"),
+            "diagnostics step made conditional, with a decoy that names the scanners": (
                 put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
                     [{"run": COMMAND},
+                     {"run": "python3 -m py_compile scripts/check_duplicate_defs.py "
+                             "scripts/check_hypothesis_debt.py scripts/run_source_diagnostics.sh"},
                      {"if": "github.event_name == 'pull_request'",
-                      "run": "scripts/check_duplicate_defs.py\nscripts/check_hypothesis_debt.py"}]),
-                "no unconditional step that runs scripts/check_duplicate_defs.py"),
+                      "run": "scripts/run_source_diagnostics.sh"}]),
+                "no step that is exactly 'scripts/run_source_diagnostics.sh'"),
+            "diagnostics step with another shell": (
+                put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
+                    [{"run": COMMAND},
+                     {"shell": "bash {0} || true", "run": "scripts/run_source_diagnostics.sh"}]),
+                "no step that is exactly 'scripts/run_source_diagnostics.sh'"),
             "preflight dropped": (
                 put("ci.yml", "jobs", "preflight", "steps", [{"run": COMMAND}]),
-                "no unconditional step that runs scripts/check.sh preflight"),
+                "no step that is exactly 'scripts/check.sh preflight'"),
             "build checks out the PR's head branch": (
                 put("ci.yml", "jobs", "build", "steps",
                     [{"uses": "actions/checkout@v7", "with": {"ref": "${{ github.head_ref || "

@@ -41,14 +41,10 @@ jobs:
           -s scripts -p test_merge_queue_checks.py -v
 
       # Findings are advisory. Failed tests, missing inputs, and scan errors
-      # fail this job; report-only only relaxes the findings exit status.
+      # fail this job; report-only only relaxes the findings exit status. The
+      # merge-queue test requires this step to be exactly this command, with no
+      # condition.
       - name: Test and run source diagnostics
         id: diagnostics
         shell: bash
-        run: |
-          set -euo pipefail
-          python3 -m unittest discover -s scripts -p test_week2_ci.py -v
-          python3 scripts/check_duplicate_defs.py --report-only --require-declarations \
-            CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest Domains DomainsTest WantedExt
-          python3 scripts/check_hypothesis_debt.py --report-only --require-declarations \
-            CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest Domains DomainsTest WantedExt
+        run: scripts/run_source_diagnostics.sh

@@ -404,30 +404,9 @@ class SourceDiagnosticsTests(DiagnosticFixture):
         self.assertIn("Candidate groups: 4", result.stdout)
 
 
-def step_scripts(workflow: str, step_id: str) -> list[str]:
-    """The `run: |` blocks of the steps with this id, read from the workflow's
-    text: steps start with `      - `, their keys are indented by 8 spaces and
-    a literal block's lines by at least 10."""
-    scripts = []
-    for step in workflow.split("\n      - ")[1:]:
-        lines = ("        " + step).splitlines()
-        if f"        id: {step_id}" not in lines:
-            continue
-        for index, line in enumerate(lines):
-            if line != "        run: |":
-                continue
-            block = []
-            for body in lines[index + 1:]:
-                if body.strip() and not body.startswith(" " * 10):
-                    break
-                block.append(body)
-            scripts.append(textwrap.dedent("\n".join(block)).strip("\n") + "\n")
-    return scripts
-
-
 class WorkflowTests(DiagnosticFixture):
-    # Use the actual run block, with miniature libraries and an isolated test
-    # sentinel to avoid recursively running this workflow test inside itself.
+    # Use the actual diagnostics script, with miniature libraries and an isolated
+    # test sentinel to avoid recursively running this workflow test inside itself.
     def workflow_command(self) -> str:
         workflow = (
             ROOT.parent / ".github/workflows/source-diagnostics.yml"
@@ -442,32 +421,9 @@ class WorkflowTests(DiagnosticFixture):
         self.assertIn(checkout.group(), current_ci)
         self.assertNotIn("continue-on-error", workflow)
         self.assertIn('PYTHONDONTWRITEBYTECODE: "1"', workflow)
-        # The job also runs the merge-queue check (CONTRIBUTING.md, How PRs
-        # merge) in steps of its own; select the diagnostics step by its id.
-        scripts = step_scripts(workflow, "diagnostics")
-        self.assertEqual(len(scripts), 1, "expected one run block in the step with id diagnostics")
-        return scripts[0]
-
-    def test_diagnostics_step_is_found_whatever_its_key_order(self) -> None:
-        script = "set -euo pipefail\npython3 -m unittest discover -s scripts -v\n"
-        block = "".join(f"          {line}\n" for line in script.splitlines())
-        layouts = {
-            "id after name": (
-                "jobs:\n  diagnostics:\n    steps:\n"
-                "      - name: Other\n        run: |\n          echo other\n"
-                "      - name: Test and run source diagnostics\n        id: diagnostics\n"
-                "        shell: bash\n        run: |\n" + block
-            ),
-            "id first, key after the block": (
-                "jobs:\n  diagnostics:\n    steps:\n"
-                "      - id: diagnostics\n        name: Test and run source diagnostics\n"
-                "        run: |\n" + block + "        timeout-minutes: 8\n"
-                "      - name: Later\n        run: echo later\n"
-            ),
-        }
-        for label, workflow in layouts.items():
-            with self.subTest(label):
-                self.assertEqual(step_scripts(workflow, "diagnostics"), [script])
+        # The job runs scripts/run_source_diagnostics.sh; the merge-queue test
+        # (CONTRIBUTING.md, How PRs merge) checks that wiring.
+        return (ROOT / "run_source_diagnostics.sh").read_text()
 
     def prepare_workflow(self) -> None:
         scripts = self.root / "scripts"
