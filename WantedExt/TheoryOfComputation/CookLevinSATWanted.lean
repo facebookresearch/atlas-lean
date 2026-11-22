@@ -17,10 +17,11 @@ open Cslib.CookLevin
 
 namespace MetaMathlibExt
 
-/-- Cook–Levin theorem: SAT is NP-complete, i.e. SAT is in NP and every
-NP decision problem reduces in polynomial time to SAT. Both membership and
-hardness are stated through the canonical `ComplexityTheory` API, so this is
-completeness for the same NP class used by the P-vs-NP statements.
+/-- **Cook–Levin theorem: SAT is NP-complete.** Let SAT be the decision problem on
+bitstrings that accepts exactly the encodings of satisfiable CNF formulas. Then SAT belongs to
+NP, and every decision problem $L$ in NP is polynomial-time many-one reducible to SAT: there
+is a function $f$ from bitstrings to bitstrings, computable in polynomial time, such that
+$L(x) = \mathrm{SAT}(f(x))$ for every bitstring $x$.
 
 Sources: Stephen A. Cook, "The Complexity of Theorem-Proving Procedures,"
 STOC 1971, 151–158, <https://doi.org/10.1145/800157.805047>; Leonid A. Levin,
