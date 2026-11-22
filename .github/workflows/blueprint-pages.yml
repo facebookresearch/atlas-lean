@@ -111,15 +111,6 @@ jobs:
           scripts.test_blueprint_taxonomy
           scripts.test_card_pages
 
-      # The committed graph, as authors wrote it. `lean-facts` below unlinks a
-      # page whose declaration is gone, so the check after it cannot see a
-      # stale link. Report-only for now (#4273, step 4).
-      - name: Check the committed graph
-        continue-on-error: true
-        run: >-
-          uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
-          autoform check blueprint --lean-root .
-
       - name: Free disk space for Lean caches
         run: |
           set -euo pipefail

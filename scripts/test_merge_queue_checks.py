@@ -26,6 +26,7 @@ WORKFLOWS = ROOT / ".github" / "workflows"
 REQUIRED = {
     "repository integrity": "ci.yml",
     "build": "ci.yml",
+    "check the graph": "ci.yml",
     "source-diagnostics": "source-diagnostics.yml",
     "guard": "bump-guard.yml",
 }

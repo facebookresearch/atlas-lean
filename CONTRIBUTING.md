@@ -245,6 +245,8 @@ group before it merges:
 
 - `repository integrity` (CI): the deterministic repository checks.
 - `build` (CI): the Lean build and its policy checks.
+- `check the graph` (CI): `autoform check` and the folder lists, on the graph
+  as committed.
 - `source-diagnostics` (Source diagnostics).
 - `guard` (Bump guard): the Lean and Mathlib pin check. On a merge group it
   checks a pin change again against the queue's base.
