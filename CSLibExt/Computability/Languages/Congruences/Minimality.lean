@@ -160,9 +160,9 @@ theorem NerodeClass.toDFAState_injective (M : DFA Symbol State) (hM : M.accepts 
   apply (nerodeClass_eq_iff (L := L)).mpr
   simpa only [hM] using nerodeRel_of_eval_eq M hpq
 
-/-- **Nerode classes bound the number of DFA states.** Let $L$ be a language with finitely many
-Nerode classes, and let $M$ be a DFA with a finite set of states $Q$ that accepts exactly $L$.
-Then the number of Nerode classes of $L$ is at most $|Q|$.
+/-- **The number of Nerode classes is a lower bound on the number of states of a recognizing DFA.**
+Let $L$ be a language with finitely many Nerode classes, and let $M$ be a DFA with a finite set of
+states $Q$ that accepts exactly $L$. Then the number of Nerode classes of $L$ is at most $|Q|$.
 
 Upstream counterpart: `Language.dfa_num_state_min`, bridged by
 `Cslib.Language.natCard_nerodeQuotient_le_natCard_state`. -/

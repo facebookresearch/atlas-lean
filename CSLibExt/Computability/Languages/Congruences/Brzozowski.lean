@@ -72,9 +72,10 @@ def revDet : DFA α (Finset σ) where
 instance decidableMemRevDetAccept : DecidablePred (· ∈ M.revDet.accept) := fun S =>
   inferInstanceAs (Decidable (M.start ∈ S))
 
-/-- **States reached in the determinized reversal.** Let $M$ be a DFA with finitely many states
-and $w$ a word. On input $w$, the determinized reversal of $M$ reaches the set of states $q$ of
-$M$ from which $M$, reading $w$ backwards starting at $q$, ends in an accepting state. -/
+/-- **States reached in the determinized reversal.** Let $M$ be a DFA with finitely many states,
+decidable equality of states and decidable acceptance, and let $w$ be a word. On input $w$, the
+determinized reversal of $M$ reaches the set of states $q$ of $M$ from which $M$, reading $w$
+backwards starting at $q$, ends in an accepting state. -/
 theorem revDet_eval (w : List α) :
     M.revDet.eval w = Finset.univ.filter fun q => M.evalFrom q w.reverse ∈ M.accept := by
   induction w using List.reverseRecOn with

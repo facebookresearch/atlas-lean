@@ -107,9 +107,10 @@ theorem mooreStep_mooreRel : M.mooreStep M.mooreRel = M.mooreRel := by
   · obtain rfl : k = Fintype.card (σ × σ) := le_antisymm hk hge
     exact Finset.gfpFin_fixed M.mooreStep_mono
 
-/-- **Moore's relation contains every post-fixed point.** Let $M$ be a DFA. If a set $Z$ of
-pairs of states of $M$ is contained in its image under one round of Moore's refinement, then
-$Z$ is contained in Moore's relation of $M$. -/
+/-- **Moore's relation contains every post-fixed point.** Let $M$ be a DFA over a finite alphabet
+with finitely many states, decidable equality of states and decidable acceptance. If a set $Z$ of
+pairs of states of $M$ is contained in its image under one round of Moore's refinement, then $Z$ is
+contained in Moore's relation of $M$. -/
 theorem subset_mooreRel {Z : Finset (σ × σ)} (hZ : Z ⊆ M.mooreStep Z) : Z ⊆ M.mooreRel := by
   obtain ⟨k, -, heq, -⟩ := M.mooreIter_spec (Fintype.card (σ × σ)) Finset.univ
   rw [mooreRel, heq]
@@ -292,10 +293,11 @@ private theorem dfa_ext {τ : Type*} {A B : DFA α τ} (h₁ : A.step = B.step) 
   cases h₃
   rfl
 
-/-- **Moore's automaton is the minimal automaton.** Let $M$ be a DFA. Renaming each state of
-Moore's minimal automaton of $M$, a class of reachable states, to the continuation language
-accepted from its members turns Moore's automaton into exactly the minimized DFA of $M$, whose
-states are the reachable continuation languages of $M$. -/
+/-- **After reindexing, Moore's automaton is the minimal automaton.** Let $M$ be a DFA over a finite
+alphabet with finitely many states, decidable equality of states and decidable acceptance. Renaming
+each state of Moore's minimal automaton of $M$, a class of reachable states, to the continuation
+language accepted from its members turns Moore's automaton into exactly the minimized DFA of $M$,
+whose states are the reachable continuation languages of $M$. -/
 theorem reindex_mooreDFA : DFA.reindex M.mooreEquiv M.mooreDFA = minimizedDFA M := by
   have hsurj : ∀ q : reachableResiduals M, ∃ p : {s // s ∈ M.reachable},
       M.mooreEquiv (M.mooreClass p) = q := fun q => by
