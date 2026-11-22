@@ -27,13 +27,13 @@ jobs:
           persist-credentials: false
 
       # Each required check's step first checks that the workspace is exactly
-      # the commit GitHub reports the check for, then runs the check
+      # the commit this run tests (GITHUB_SHA), then runs the check
       # (scripts/test_merge_queue_checks.py, VERIFY, explains why).
       - name: Run deterministic repository checks
         run: >-
-          [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA"
-          && -z "$(git status --porcelain --untracked-files=all)"
-          && "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]
+          { changes="$(git status --porcelain --untracked-files=all)"
+          && [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" && -z "$changes"
+          && "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]; }
           || { echo "::error::The workspace is not $GITHUB_SHA"; exit 1; };
           scripts/check.sh preflight
 
@@ -75,9 +75,9 @@ jobs:
         env:
           PYTHONDONTWRITEBYTECODE: "1"
         run: >-
-          [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA"
-          && -z "$(git status --porcelain --untracked-files=all)"
-          && "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]
+          { changes="$(git status --porcelain --untracked-files=all)"
+          && [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" && -z "$changes"
+          && "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]; }
           || { echo "::error::The workspace is not $GITHUB_SHA"; exit 1; };
           "$RUNNER_TEMP/merge-queue-venv/bin/python" -m unittest discover
           -s scripts -p test_merge_queue_checks.py -v
@@ -164,9 +164,9 @@ jobs:
 
       - name: Build extension libraries
         run: >-
-          [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA"
-          && -z "$(git status --porcelain --untracked-files=all)"
-          && "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]
+          { changes="$(git status --porcelain --untracked-files=all)"
+          && [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" && -z "$changes"
+          && "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]; }
           || { echo "::error::The workspace is not $GITHUB_SHA"; exit 1; };
           scripts/check.sh build
 

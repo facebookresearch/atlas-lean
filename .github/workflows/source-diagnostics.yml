@@ -37,9 +37,9 @@ jobs:
 
       - name: Test that the required checks report on merge groups
         run: >-
-          [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA"
-          && -z "$(git status --porcelain --untracked-files=all)"
-          && "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]
+          { changes="$(git status --porcelain --untracked-files=all)"
+          && [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" && -z "$changes"
+          && "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]; }
           || { echo "::error::The workspace is not $GITHUB_SHA"; exit 1; };
           "$RUNNER_TEMP/merge-queue-venv/bin/python" -m unittest discover
           -s scripts -p test_merge_queue_checks.py -v
@@ -52,8 +52,8 @@ jobs:
         id: diagnostics
         shell: bash
         run: >-
-          [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA"
-          && -z "$(git status --porcelain --untracked-files=all)"
-          && "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]
+          { changes="$(git status --porcelain --untracked-files=all)"
+          && [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" && -z "$changes"
+          && "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]; }
           || { echo "::error::The workspace is not $GITHUB_SHA"; exit 1; };
           scripts/run_source_diagnostics.sh

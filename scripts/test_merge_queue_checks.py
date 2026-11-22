@@ -49,11 +49,13 @@ condition, so that a change
 that makes one workflow skip its jobs is still caught by the other.
 
 Each of those steps starts with the same workspace check (`VERIFY`): `HEAD`
-must be `GITHUB_SHA`, the commit GitHub reports the check for, no file may be
-changed or added (ignored build outputs are allowed), and the checkout must not
-be sparse. An earlier step that checked out or edited another tree would
-otherwise make the check test that tree. The check is in the workflow, not in a
-script, because a script in the workspace would be replaced with the tree.
+must be `GITHUB_SHA`, the commit the run tests (for a PR, GitHub's test merge
+of it into the base branch; for a merge group, the group's commit),
+`git status` must succeed and show no changed or added file (ignored build
+outputs are allowed), and the checkout must not be sparse. An earlier step that
+checked out or edited another tree would otherwise make the check test that
+tree. The check is in the workflow, not in a script, because a script in the
+workspace would be replaced with the tree.
 
 This test reads the workflow files. It cannot see what a step's commands or an
 action do when they run (a step could replace bash itself), so it catches
@@ -70,7 +72,10 @@ CONTRIBUTING.md. Locally:
 from __future__ import annotations
 
 import copy
+import os
 import re
+import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -97,9 +102,9 @@ RUN_THIS_TEST = ("repository integrity", "source-diagnostics")
 COMMAND = ('"$RUNNER_TEMP/merge-queue-venv/bin/python" -m unittest discover '
            "-s scripts -p test_merge_queue_checks.py -v")
 # The workspace check each protected step runs first, with whitespace collapsed.
-VERIFY = ('[[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" '
-          '&& -z "$(git status --porcelain --untracked-files=all)" '
-          '&& "$(git config --type=bool --default=false core.sparseCheckout)" == false ]] '
+VERIFY = ('{ changes="$(git status --porcelain --untracked-files=all)" '
+          '&& [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" && -z "$changes" '
+          '&& "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]; } '
           '|| { echo "::error::The workspace is not $GITHUB_SHA"; exit 1; };')
 
 
@@ -753,6 +758,71 @@ class MergeQueueChecks(unittest.TestCase):
                 found = self.check(change)
                 self.assertTrue(any(message in problem for problem in found), found)
         self.assertTrue(self.check(documented=list(REQUIRED)[:-1]))
+
+
+class WorkspaceCheck(unittest.TestCase):
+    """VERIFY, run as GitHub runs a step without `shell` (`bash -e`), in a scratch
+    repository, before a command that prints RAN."""
+
+    def run_check(self, change=None, sha=None):
+        with tempfile.TemporaryDirectory() as directory:
+            repo = Path(directory)
+
+            def git(*args):
+                return subprocess.run(["git", "-C", directory, *args], check=True,
+                                      capture_output=True, text=True).stdout.strip()
+
+            git("init", "-q")
+            (repo / ".gitignore").write_text(".lake/\n")
+            (repo / "file").write_text("one\n")
+            git("add", ".")
+            git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "one")
+            (repo / "file").write_text("two\n")
+            git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qam", "two")
+            head = git("rev-parse", "HEAD")
+            if change:
+                change(repo, git)
+            environment = {"PATH": os.environ["PATH"], "HOME": directory,
+                           "GIT_CONFIG_NOSYSTEM": "1", "GITHUB_SHA": sha or head}
+            result = subprocess.run(["bash", "-e", "-c", exact("echo RAN")], cwd=directory,
+                                    env=environment, capture_output=True, text=True)
+            try:
+                return result.returncode, result.stdout
+            finally:
+                (repo / ".git" / "index").chmod(0o644)
+
+    def test_runs_the_command_on_the_tested_commit(self):
+        def ignored_build_output(repo, git):
+            (repo / ".lake").mkdir()
+            (repo / ".lake" / "out").write_text("")
+
+        self.assertEqual(self.run_check(), (0, "RAN\n"))
+        self.assertEqual(self.run_check(ignored_build_output), (0, "RAN\n"))
+
+    def test_refuses_any_other_workspace(self):
+        def unreadable_index(repo, git):
+            (repo / ".git" / "index").chmod(0)
+
+        changes = {
+            "another commit reported": lambda: self.run_check(sha="0" * 40),
+            "another commit checked out": lambda: self.run_check(
+                lambda repo, git: git("checkout", "-q", "HEAD~1")),
+            "files from another commit": lambda: self.run_check(
+                lambda repo, git: git("checkout", "-q", "HEAD~1", "--", ".")),
+            "an edited file": lambda: self.run_check(
+                lambda repo, git: (repo / "file").write_text("edited\n")),
+            "an added file": lambda: self.run_check(
+                lambda repo, git: (repo / "added.py").write_text("")),
+            "a sparse checkout": lambda: self.run_check(
+                lambda repo, git: git("config", "core.sparseCheckout", "true")),
+        }
+        if os.geteuid() != 0:  # root can read an unreadable index
+            changes["git status failing"] = lambda: self.run_check(unreadable_index)
+        for label, run in changes.items():
+            with self.subTest(label):
+                code, output = run()
+                self.assertNotEqual(code, 0)
+                self.assertNotIn("RAN", output)
 
 
 if __name__ == "__main__":
