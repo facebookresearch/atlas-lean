@@ -428,10 +428,8 @@ class WorkflowTests(DiagnosticFixture):
     def prepare_workflow(self) -> None:
         scripts = self.root / "scripts"
         (scripts / "bump").mkdir(parents=True)
-        for name in (*SCANNERS, "source_diagnostics.py", "bump/pinned_bump.py",
-                     "require_ci_checkout.sh"):
+        for name in (*SCANNERS, "source_diagnostics.py", "bump/pinned_bump.py"):
             shutil.copyfile(ROOT / name, scripts / name)
-        (scripts / "require_ci_checkout.sh").chmod(0o755)
         self.write(
             "scripts/test_week2_ci.py",
             "import unittest\n"
@@ -448,9 +446,7 @@ class WorkflowTests(DiagnosticFixture):
         return subprocess.run(
             ["bash", "-c", self.workflow_command()],
             cwd=self.root,
-            # The fixture is not the commit CI checked out: run as outside CI.
-            env={**{key: value for key, value in os.environ.items()
-                    if key != "GITHUB_ACTIONS"}, "PYTHONDONTWRITEBYTECODE": "1"},
+            env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"},
             capture_output=True,
             text=True,
             timeout=30,

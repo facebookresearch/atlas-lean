@@ -10,7 +10,9 @@ fails if a required workflow:
 - can skip the job that reports the check (a skipped job counts as passing):
   a job-level `if`, a matrix, or a prerequisite that is not required itself;
 - can skip the job's own check: the job needs a step that is exactly the
-  command running it, with no step-level `if` or `continue-on-error`;
+  workspace check below followed by the command running it, with no
+  step-level `if` or `continue-on-error`, and the job must not have a
+  job-level `continue-on-error`;
 - leaves Ubuntu runners (the build needs a full Ubuntu VM), runs in a
   container, or runs its steps in a shell other than bash by default or outside
   the repository root;
@@ -42,13 +44,16 @@ fails if a required workflow:
 It also fails if a required workflow gains another event that could report
 the same checks on a PR's head (such as `pull_request_target`), or unless both
 `repository integrity` and `source-diagnostics` have a step that is exactly
-the command that runs this whole test, with no condition, so that a change
+the workspace check followed by the command that runs this whole test, with no
+condition, so that a change
 that makes one workflow skip its jobs is still caught by the other.
 
-The entry points themselves (`scripts/check.sh` and
-`scripts/run_source_diagnostics.sh`) refuse, in GitHub Actions, any tree but
-the commit GitHub reports the checks for (`scripts/require_ci_checkout.sh`), so
-a step that checks out or edits another tree makes the check fail.
+Each of those steps starts with the same workspace check (`VERIFY`): `HEAD`
+must be `GITHUB_SHA`, the commit GitHub reports the check for, no file may be
+changed or added (ignored build outputs are allowed), and the checkout must not
+be sparse. An earlier step that checked out or edited another tree would
+otherwise make the check test that tree. The check is in the workflow, not in a
+script, because a script in the workspace would be replaced with the tree.
 
 This test reads the workflow files. It cannot see what a step's commands or an
 action do when they run (a step could replace bash itself), so it catches
@@ -91,6 +96,19 @@ FILTERS = {"branches", "branches-ignore", "paths", "paths-ignore"}
 RUN_THIS_TEST = ("repository integrity", "source-diagnostics")
 COMMAND = ('"$RUNNER_TEMP/merge-queue-venv/bin/python" -m unittest discover '
            "-s scripts -p test_merge_queue_checks.py -v")
+# The workspace check each protected step runs first, with whitespace collapsed.
+VERIFY = ('[[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" '
+          '&& -z "$(git status --porcelain --untracked-files=all)" '
+          '&& "$(git config --type=bool --default=false core.sparseCheckout)" == false ]] '
+          '|| { echo "::error::The workspace is not $GITHUB_SHA"; exit 1; };')
+
+
+def exact(command: str) -> str:
+    """The one line a protected step must run: the workspace check, then the
+    command."""
+    return f"{VERIFY} {command}"
+
+
 STEP_KEYS = {"name", "id", "env", "run", "timeout-minutes", "shell"}
 # The only environment variable a required workflow, job or checked step may set.
 ENV_ALLOWED = {"PYTHONDONTWRITEBYTECODE"}
@@ -109,6 +127,12 @@ ENTRY_POINTS = {
     "build": "scripts/check.sh build",
     "source-diagnostics": "scripts/run_source_diagnostics.sh",
 }
+
+# The protected steps' exact lines, for the fixtures below.
+TEST = exact(COMMAND)
+PREFLIGHT = exact(ENTRY_POINTS["repository integrity"])
+BUILD = exact(ENTRY_POINTS["build"])
+DIAGNOSTICS = exact(ENTRY_POINTS["source-diagnostics"])
 # Events a required workflow may run on besides its PR event. Pushes must be
 # limited to `main`; a workflow_dispatch run reports on a PR's head only if a
 # maintainer starts it on that branch.
@@ -208,15 +232,15 @@ def default_shell(job: dict, workflow: dict) -> str:
 
 
 def runs_exactly(step, command: str, shell: str = "bash") -> bool:
-    """Whether a step runs exactly this one command line, unconditionally, in
-    bash, with nothing able to ignore its failure. `shell` is the inherited
-    default."""
+    """Whether a step runs exactly the workspace check and then this command,
+    as one line, unconditionally, in bash, with nothing able to ignore its
+    failure. `shell` is the inherited default."""
     if not isinstance(step, dict):
         return False
     run = str(step.get("run", "")).strip()
     return (set(step) <= STEP_KEYS and not env_problems(step)
             and step.get("shell", shell) == "bash"
-            and "\n" not in run and " ".join(run.split()) == command)
+            and "\n" not in run and " ".join(run.split()) == exact(command))
 
 
 def env_problems(level: dict) -> list[str]:
@@ -309,7 +333,8 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
         if default_run(job, workflow).get("working-directory", ".") not in (".", "./"):
             found.append(f"{check!r} runs its steps outside the repository root by default")
         if not any(runs_exactly(step, ENTRY_POINTS[check], shell) for step in steps):
-            found.append(f"{check!r} has no step that is exactly {ENTRY_POINTS[check]!r}")
+            found.append(f"{check!r} has no step that is exactly the workspace check followed "
+                         f"by {ENTRY_POINTS[check]!r}")
         for step in as_list(job.get("steps")):
             # GitHub resolves action names case-insensitively and ignores empty
             # path components, so compare the repository the action comes from.
@@ -320,6 +345,9 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
                     found.append(f"{check!r} checks out with {extra}, which can change the tree")
         if job.get("container"):
             found.append(f"{check!r} runs in a container")
+        if "continue-on-error" in job:
+            found.append(f"{check!r} has a job-level continue-on-error, which can report a "
+                         "failed job as successful")
         for scope, level in (("workflow", workflow), ("job", job)):
             if env_problems(level):
                 found.append(f"{check!r} gets {env_problems(level)} from its {scope} env, "
@@ -354,7 +382,8 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
         if job.get("concurrency"):
             found.append(f"{check!r} has a job-level concurrency group, which is unverified")
         if check in RUN_THIS_TEST and not any(runs_exactly(step, COMMAND, shell) for step in steps):
-            found.append(f"{check!r} has no step that is exactly {COMMAND!r}")
+            found.append(f"{check!r} has no step that is exactly the workspace check followed "
+                         f"by {COMMAND!r}")
     return found
 
 
@@ -368,11 +397,11 @@ FIXTURE = {
                "merge_group": {"types": ["checks_requested"]}},
         "concurrency": {"group": "${{ github.workflow }}-${{ github.ref }}"},
         "jobs": {"preflight": {"name": "repository integrity", "runs-on": "ubuntu-24.04",
-                               "steps": [{"run": "scripts/check.sh preflight"},
-                                         {"run": "pip install"}, {"run": COMMAND}]},
+                               "steps": [{"run": PREFLIGHT},
+                                         {"run": "pip install"}, {"run": TEST}]},
                  "build": {"needs": "preflight", "runs-on": "ubuntu-24.04", "steps": [
                      {"uses": "actions/checkout@v7", "with": {"persist-credentials": "false"}},
-                     {"name": "Build", "run": "scripts/check.sh build"},
+                     {"name": "Build", "run": BUILD},
                      {"if": "github.ref == 'refs/heads/main'", "uses": "actions/cache/save@v5"}]}},
     },
     "source-diagnostics.yml": {
@@ -380,8 +409,8 @@ FIXTURE = {
         "on": {"push": {"branches": "main"}, "pull_request": "", "merge_group": ""},
         "jobs": {"source-diagnostics": {"runs-on": "ubuntu-24.04", "steps": [
             {"uses": "actions/checkout"},
-            {"name": "Test", "run": COMMAND.replace(" -s", "  -s") + "\n"},
-            {"id": "diagnostics", "shell": "bash", "run": "scripts/run_source_diagnostics.sh"}]}},
+            {"name": "Test", "run": TEST.replace(" -s", "  -s") + "\n"},
+            {"id": "diagnostics", "shell": "bash", "run": DIAGNOSTICS}]}},
     },
     "bump-guard.yml": {
         "name": "Bump guard",
@@ -450,9 +479,9 @@ class MergeQueueChecks(unittest.TestCase):
                                {"run": {"shell": "bash"}})(workflows)),
                        put("source-diagnostics.yml", "jobs", "source-diagnostics",
                            {"runs-on": "ubuntu-24.04", "env": {"PYTHONDONTWRITEBYTECODE": "1"},
-                            "steps": [{"env": {"PYTHONDONTWRITEBYTECODE": "1"}, "run": COMMAND},
+                            "steps": [{"env": {"PYTHONDONTWRITEBYTECODE": "1"}, "run": TEST},
                                       {"id": "diagnostics",
-                                       "run": "scripts/run_source_diagnostics.sh"}]}),
+                                       "run": DIAGNOSTICS}]}),
                        put("ci.yml", "on", "push", {"tags": ["v*"]}),
                        put("nightly.yml", {"name": "CI-nightly", "on": {"schedule": ""},
                                            "concurrency": {"group": "${{ github.workflow }}-"
@@ -550,14 +579,14 @@ class MergeQueueChecks(unittest.TestCase):
                     [{"uses": "actions/checkout"}]), "has no step that is exactly"),
             "this test made conditional": (
                 put("ci.yml", "jobs", "preflight", "steps",
-                    [{"if": "github.event_name == 'push'", "run": COMMAND}]),
+                    [{"if": "github.event_name == 'push'", "run": TEST}]),
                 "has no step that is exactly"),
             "only some of this test": (
                 put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
-                    [{"run": COMMAND + " -k equivalent_spellings"}]),
+                    [{"run": TEST + " -k equivalent_spellings"}]),
                 "has no step that is exactly"),
             "failure of this test ignored": (
-                put("ci.yml", "jobs", "preflight", "steps", [{"run": COMMAND + " || true"}]),
+                put("ci.yml", "jobs", "preflight", "steps", [{"run": TEST + " || true"}]),
                 "has no step that is exactly"),
             "this test inside a shell condition": (
                 put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
@@ -565,32 +594,32 @@ class MergeQueueChecks(unittest.TestCase):
                              + COMMAND + "\nfi\n"}]), "has no step that is exactly"),
             "this test split over two lines": (
                 put("ci.yml", "jobs", "preflight", "steps",
-                    [{"run": COMMAND.replace(" -s", "\n-s")}]), "has no step that is exactly"),
+                    [{"run": TEST.replace(" -s", "\n-s")}]), "has no step that is exactly"),
             "build step made conditional": (
                 put("ci.yml", "jobs", "build", "steps",
                     [{"if": "github.event_name != 'merge_group'",
-                      "run": "scripts/check.sh build"}]),
-                "no step that is exactly 'scripts/check.sh build'"),
+                      "run": BUILD}]),
+                "followed by 'scripts/check.sh build'"),
             "build step allowed to fail": (
                 put("ci.yml", "jobs", "build", "steps",
-                    [{"continue-on-error": "true", "run": "scripts/check.sh build"}]),
-                "no step that is exactly 'scripts/check.sh build'"),
+                    [{"continue-on-error": "true", "run": BUILD}]),
+                "followed by 'scripts/check.sh build'"),
             "diagnostics step made conditional, with a decoy that names the scanners": (
                 put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
-                    [{"run": COMMAND},
+                    [{"run": TEST},
                      {"run": "python3 -m py_compile scripts/check_duplicate_defs.py "
                              "scripts/check_hypothesis_debt.py scripts/run_source_diagnostics.sh"},
                      {"if": "github.event_name == 'pull_request'",
-                      "run": "scripts/run_source_diagnostics.sh"}]),
-                "no step that is exactly 'scripts/run_source_diagnostics.sh'"),
+                      "run": DIAGNOSTICS}]),
+                "followed by 'scripts/run_source_diagnostics.sh'"),
             "diagnostics step with another shell": (
                 put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
-                    [{"run": COMMAND},
-                     {"shell": "bash {0} || true", "run": "scripts/run_source_diagnostics.sh"}]),
-                "no step that is exactly 'scripts/run_source_diagnostics.sh'"),
+                    [{"run": TEST},
+                     {"shell": "bash {0} || true", "run": DIAGNOSTICS}]),
+                "followed by 'scripts/run_source_diagnostics.sh'"),
             "build job defaulting to sh": (
                 put("ci.yml", "jobs", "build", "defaults", {"run": {"shell": "sh"}}),
-                "no step that is exactly 'scripts/check.sh build'"),
+                "followed by 'scripts/check.sh build'"),
             "Source diagnostics in a container": (
                 put("source-diagnostics.yml", "jobs", "source-diagnostics", "container",
                     "python:3.12-bookworm"),
@@ -598,8 +627,8 @@ class MergeQueueChecks(unittest.TestCase):
             "container with bash only on the checked steps": (
                 put("source-diagnostics.yml", "jobs", "source-diagnostics",
                     {"container": "python:3.12-bookworm", "runs-on": "ubuntu-24.04",
-                     "steps": [{"shell": "bash", "run": COMMAND},
-                               {"shell": "bash", "run": "scripts/run_source_diagnostics.sh"}]}),
+                     "steps": [{"shell": "bash", "run": TEST},
+                               {"shell": "bash", "run": DIAGNOSTICS}]}),
                 "by default, not bash"),
             "job defaults replacing a workflow bash default in a container": (
                 lambda workflows: (
@@ -613,21 +642,36 @@ class MergeQueueChecks(unittest.TestCase):
                 put("ci.yml", "jobs", "build", "steps",
                     [{"uses": "actions/checkout@v7",
                       "with": {"sparse-checkout": "MathlibExt/\n!DomainsTest/Biology/"}},
-                     {"run": "scripts/check.sh build"}]), "which can change the tree"),
+                     {"run": BUILD}]), "which can change the tree"),
             "build sparse checkout with a mixed-case action name": (
                 put("ci.yml", "jobs", "build", "steps",
                     [{"uses": "Actions/Checkout@v7",
                       "with": {"sparse-checkout": "MathlibExt/"}},
-                     {"run": "scripts/check.sh build"}]), "which can change the tree"),
+                     {"run": BUILD}]), "which can change the tree"),
             "build sparse checkout with a trailing slash in the action name": (
                 put("ci.yml", "jobs", "build", "steps",
                     [{"uses": "actions/checkout/@v7",
                       "with": {"sparse-checkout": "MathlibExt/"}},
-                     {"run": "scripts/check.sh build"}]), "which can change the tree"),
+                     {"run": BUILD}]), "which can change the tree"),
             "build running in scripts/ by default": (
                 put("ci.yml", "jobs", "build", "defaults",
                     {"run": {"working-directory": "scripts"}}),
                 "outside the repository root"),
+            "build without the workspace check": (
+                put("ci.yml", "jobs", "build", "steps", [{"run": "scripts/check.sh build"}]),
+                "followed by 'scripts/check.sh build'"),
+            "workspace check without the HEAD comparison": (
+                put("ci.yml", "jobs", "build", "steps",
+                    [{"run": BUILD.replace(
+                        '"$(git rev-parse HEAD)" == "$GITHUB_SHA" && ', "")}]),
+                "followed by 'scripts/check.sh build'"),
+            "this test without the workspace check": (
+                put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
+                    [{"run": COMMAND}, {"run": DIAGNOSTICS}]),
+                "followed by " + repr(COMMAND)),
+            "job-level continue-on-error": (
+                put("ci.yml", "jobs", "build", "continue-on-error", "true"),
+                "job-level continue-on-error"),
             "BASH_ENV for the whole workflow": (
                 put("ci.yml", "env", {"BASH_ENV": "scripts/exit0.sh"}),
                 "from its workflow env"),
@@ -636,31 +680,31 @@ class MergeQueueChecks(unittest.TestCase):
                     {"BASH_ENV": "scripts/exit0.sh"}), "from its job env"),
             "BASH_ENV on the checked step": (
                 put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
-                    [{"run": COMMAND},
+                    [{"run": TEST},
                      {"id": "diagnostics", "env": {"BASH_ENV": "scripts/exit0.sh"},
-                      "run": "scripts/run_source_diagnostics.sh"}]),
-                "no step that is exactly 'scripts/run_source_diagnostics.sh'"),
+                      "run": DIAGNOSTICS}]),
+                "followed by 'scripts/run_source_diagnostics.sh'"),
             "job env from an expression": (
                 put("ci.yml", "jobs", "build", "env", "${{ fromJSON(vars.BUILD_ENV) }}"),
                 "from its job env"),
             "a step that writes $GITHUB_ENV": (
                 put("ci.yml", "jobs", "build", "steps",
                     [{"run": 'echo "BASH_ENV=$PWD/scripts/exit0.sh" >> "$GITHUB_ENV"'},
-                     {"run": "scripts/check.sh build"}]), "set variables for the steps after it"),
+                     {"run": BUILD}]), "set variables for the steps after it"),
             "a step that writes the github.env context": (
                 put("ci.yml", "jobs", "build", "steps",
                     [{"run": "echo 'BASH_ENV=scripts/exit0.sh' >> '${{ github.env }}'"},
-                     {"run": "scripts/check.sh build"}]), "set variables for the steps after it"),
+                     {"run": BUILD}]), "set variables for the steps after it"),
             "github['env'] through a step env alias": (
                 put("ci.yml", "jobs", "build", "steps",
                     [{"env": {"FILE": "${{ github['env'] }}"},
                       "run": 'echo BASH_ENV=scripts/exit0.sh >> "$FILE"'},
-                     {"run": "scripts/check.sh build"}]), "set variables for the steps after it"),
+                     {"run": BUILD}]), "set variables for the steps after it"),
             "exportVariable in an action's script": (
                 put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
                     [{"uses": "actions/github-script@v7",
                       "with": {"script": "core.exportVariable('BASH_ENV', 'scripts/exit0.sh')"}},
-                     {"run": COMMAND}, {"run": "scripts/run_source_diagnostics.sh"}]),
+                     {"run": TEST}, {"run": DIAGNOSTICS}]),
                 "set variables for the steps after it"),
             "required job in a container with a bash default": (
                 put("source-diagnostics.yml", "jobs", "source-diagnostics",
@@ -679,10 +723,10 @@ class MergeQueueChecks(unittest.TestCase):
                     "windows-latest"), "not an Ubuntu runner"),
             "CI defaulting to sh": (
                 put("ci.yml", "defaults", {"run": {"shell": "sh"}}),
-                "no step that is exactly 'scripts/check.sh preflight'"),
+                "followed by 'scripts/check.sh preflight'"),
             "preflight dropped": (
-                put("ci.yml", "jobs", "preflight", "steps", [{"run": COMMAND}]),
-                "no step that is exactly 'scripts/check.sh preflight'"),
+                put("ci.yml", "jobs", "preflight", "steps", [{"run": TEST}]),
+                "followed by 'scripts/check.sh preflight'"),
             "build checks out the PR's head branch": (
                 put("ci.yml", "jobs", "build", "steps",
                     [{"uses": "actions/checkout@v7", "with": {"ref": "${{ github.head_ref || "
@@ -697,7 +741,7 @@ class MergeQueueChecks(unittest.TestCase):
                 "has no step that is exactly"),
             "this test with continue-on-error": (
                 put("ci.yml", "jobs", "preflight", "steps",
-                    [{"continue-on-error": "true", "run": COMMAND}]),
+                    [{"continue-on-error": "true", "run": TEST}]),
                 "has no step that is exactly"),
             "pull_request_target added to CI": (
                 put("ci.yml", "on", "pull_request_target", ""), "also runs on"),

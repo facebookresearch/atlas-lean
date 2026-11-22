@@ -76,16 +76,15 @@ for roots in MathlibExt:Domains MathlibExtTest:DomainsTest; do
 done
 
 # The fixture runs preflight without recursively running this test suite.
-cp "$REPO_ROOT/scripts/"{check.sh,check_diagnostics.sh,check_declaration_collisions.sh,check_declaration_collisions.lean,list_v2_modules.sh,require_ci_checkout.sh} \
+cp "$REPO_ROOT/scripts/"{check.sh,check_diagnostics.sh,check_declaration_collisions.sh,check_declaration_collisions.lean,list_v2_modules.sh} \
   "$TMP_ROOT/repo/scripts/"
 touch "$TMP_ROOT/repo/"{lean-toolchain,README.md,REVIEWING.md}
 touch "$TMP_ROOT/repo/scripts/"{check_copyright.py,check_formal_math_sync.py}
 printf '#!/usr/bin/env bash\nexit 0\n' >"$TMP_ROOT/repo/scripts/test_scripts.sh"
 chmod +x "$TMP_ROOT/repo/scripts/test_scripts.sh"
 # LC_ALL=C keeps bash's syntax-error messages untranslated for the greps below.
-# The fixture is not the commit CI checked out, so run it as outside CI.
 run_preflight() {
-  LC_ALL=C env -u GITHUB_ACTIONS "$TMP_ROOT/repo/scripts/check.sh" preflight \
+  LC_ALL=C "$TMP_ROOT/repo/scripts/check.sh" preflight \
     >"$TMP_ROOT/output.log" 2>&1
 }
 if ! run_preflight; then
@@ -496,45 +495,6 @@ grep -q 'New.lean' "$TMP_ROOT/output.log" || fail "--all did not report the file
 check_copyright --all || { cat "$TMP_ROOT/output.log" >&2; fail "--all rejected a repository whose files all have headers"; }
 grep -q 'check_copyright.py --all' "$REPO_ROOT/scripts/check.sh" ||
   fail "preflight does not check every file's copyright header"
-
-# In CI, the required checks refuse any tree but the commit GitHub reports them for.
-CO="$TMP_ROOT/checkout"
-mkdir -p "$CO/scripts" && cp "$REPO_ROOT/scripts/require_ci_checkout.sh" "$CO/scripts/"
-(cd "$CO" && git init -q && printf 'a\n' >file && git add file scripts &&
-  git -c user.name=t -c user.email=t@t commit -qm base)
-head_sha="$(git -C "$CO" rev-parse HEAD)"
-require_checkout() {
-  env -u GITHUB_ACTIONS -u GITHUB_SHA "$@" "$CO/scripts/require_ci_checkout.sh" \
-    >"$TMP_ROOT/output.log" 2>&1
-}
-require_checkout || fail "checkout check failed outside CI"
-require_checkout GITHUB_ACTIONS=true GITHUB_SHA="$head_sha" ||
-  { cat "$TMP_ROOT/output.log" >&2; fail "checkout check rejected the reported commit"; }
-if require_checkout GITHUB_ACTIONS=true GITHUB_SHA=0000000000000000000000000000000000000000; then
-  fail "checkout check accepted another commit"
-fi
-grep -q 'HEAD is' "$TMP_ROOT/output.log" || fail "checkout check gave the wrong diagnostic for another commit"
-if require_checkout GITHUB_ACTIONS=true; then fail "checkout check accepted a missing GITHUB_SHA"; fi
-printf 'b\n' >"$CO/file"
-if require_checkout GITHUB_ACTIONS=true GITHUB_SHA="$head_sha"; then
-  fail "checkout check accepted an edited tracked file"
-fi
-grep -q 'workspace differs' "$TMP_ROOT/output.log" || fail "checkout check gave the wrong diagnostic for an edit"
-git -C "$CO" checkout -q -- file
-printf 'import os\n' >"$CO/scripts/re.py"
-if require_checkout GITHUB_ACTIONS=true GITHUB_SHA="$head_sha"; then
-  fail "checkout check accepted an added file"
-fi
-rm "$CO/scripts/re.py"
-git -C "$CO" config core.sparseCheckout true
-if require_checkout GITHUB_ACTIONS=true GITHUB_SHA="$head_sha"; then
-  fail "checkout check accepted a sparse checkout"
-fi
-git -C "$CO" config core.sparseCheckout false
-for script in check.sh run_source_diagnostics.sh; do
-  grep -q '^scripts/require_ci_checkout.sh' "$REPO_ROOT/scripts/$script" ||
-    fail "$script does not check the checkout"
-done
 
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_quality_eval.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_formal_math_sync.py -v
