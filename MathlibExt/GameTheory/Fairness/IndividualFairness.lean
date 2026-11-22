@@ -12,6 +12,7 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.ConditionallyCompleteLattice.Basic
 import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
+public import MathlibExt.Probability.MarkovMixing
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Order.ConditionallyCompleteLattice.Indexed
 import Mathlib.Tactic.Linarith
@@ -31,7 +32,7 @@ noncomputable section
 /-- Total variation distance between two real-valued functions on a finite
 type: half the sum of pointwise absolute differences. -/
 def tvDist {α : Type*} [Fintype α] (p q : α → ℝ) : ℝ :=
-  (1 / 2) * ∑ i, |p i - q i|
+  MathlibExt.Probability.MarkovMixing.tvDist p q
 
 /-- A probability vector on a finite type: nonnegative entries summing to 1. -/
 def IsDist {α : Type*} [Fintype α] (p : α → ℝ) : Prop :=
@@ -69,27 +70,25 @@ def bias {V : Type*} [Fintype V] (S T f : V → ℝ) : ℝ :=
 /-- Total variation distance is nonnegative. -/
 theorem tvDist_nonneg {α : Type*} [Fintype α] (p q : α → ℝ) :
     0 ≤ tvDist p q := by
-  unfold tvDist
+  unfold tvDist MathlibExt.Probability.MarkovMixing.tvDist
   apply mul_nonneg
   · norm_num
   · exact Finset.sum_nonneg (fun i _ => abs_nonneg _)
 
 /-- Total variation distance is symmetric. -/
 theorem tvDist_comm {α : Type*} [Fintype α] (p q : α → ℝ) :
-    tvDist p q = tvDist q p := by
-  unfold tvDist
-  congr 1
-  refine Finset.sum_congr rfl (fun i _ => abs_sub_comm _ _)
+    tvDist p q = tvDist q p :=
+  MathlibExt.Probability.MarkovMixing.tvDist_comm p q
 
 /-- Total variation distance from a function to itself is zero. -/
 theorem tvDist_self {α : Type*} [Fintype α] (p : α → ℝ) :
-    tvDist p p = 0 := by
-  simp [tvDist]
+    tvDist p p = 0 :=
+  MathlibExt.Probability.MarkovMixing.tvDist_self p
 
 /-- Total variation distance satisfies the triangle inequality. -/
 theorem tvDist_triangle {α : Type*} [Fintype α] (p q r : α → ℝ) :
     tvDist p r ≤ tvDist p q + tvDist q r := by
-  unfold tvDist
+  unfold tvDist MathlibExt.Probability.MarkovMixing.tvDist
   have h : ∀ i : α, |p i - r i| ≤ |p i - q i| + |q i - r i| :=
     fun i => abs_sub_le _ _ _
   have hsum : ∑ i, |p i - r i| ≤ ∑ i, (|p i - q i| + |q i - r i|) :=
@@ -146,7 +145,7 @@ theorem abs_event_sub_le_tvDist {α : Type*} [Fintype α] (p q : α → ℝ)
     exact hsplit
   have hkey : (∑ i ∈ Finset.univ.filter (fun i => 0 < p i - q i), (p i - q i))
       = tvDist p q := by
-    unfold tvDist
+    unfold tvDist MathlibExt.Probability.MarkovMixing.tvDist
     linarith [h0, hS]
   have hle : ∀ F : Finset α, ∑ i ∈ F, (p i - q i) ≤ tvDist p q := by
     intro F
@@ -198,7 +197,7 @@ theorem tvDist_le_one {α : Type*} [Fintype α] {p q : α → ℝ}
     tvDist p q ≤ 1 := by
   obtain ⟨hp_nonneg, hp_sum⟩ := hp
   obtain ⟨hq_nonneg, hq_sum⟩ := hq
-  unfold tvDist
+  unfold tvDist MathlibExt.Probability.MarkovMixing.tvDist
   have hpt : ∀ i : α, |p i - q i| ≤ p i + q i := by
     intro i
     rw [abs_sub_le_iff]
@@ -242,7 +241,7 @@ theorem isLipschitzFair_convexCombo {V O : Type*} [Fintype O]
   intro x y
   show tvDist (fun o => a * M x o + (1 - a) * M' x o)
       (fun o => a * M y o + (1 - a) * M' y o) ≤ d x y
-  unfold tvDist
+  unfold tvDist MathlibExt.Probability.MarkovMixing.tvDist
   show (1 / 2 : ℝ) * ∑ o, |(a * M x o + (1 - a) * M' x o)
       - (a * M y o + (1 - a) * M' y o)| ≤ d x y
   have hpt : ∀ o : O, |(a * M x o + (1 - a) * M' x o)
@@ -266,7 +265,7 @@ theorem isLipschitzFair_convexCombo {V O : Type*} [Fintype O]
   rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum] at hsum
   have h1 : tvDist (M x) (M y) ≤ d x y := hM x y
   have h2 : tvDist (M' x) (M' y) ≤ d x y := hM' x y
-  unfold tvDist at h1 h2
+  unfold tvDist MathlibExt.Probability.MarkovMixing.tvDist at h1 h2
   have hmul : (1 / 2 : ℝ) * (∑ o, |(a * M x o + (1 - a) * M' x o)
       - (a * M y o + (1 - a) * M' y o)|)
       ≤ (1 / 2) * (a * ∑ o, |M x o - M y o|
@@ -378,6 +377,110 @@ theorem bias_le_earthmover {V : Type*} [Fintype V]
   have hne : Nonempty {π // IsCoupling S T π} := ⟨⟨π, hπ⟩⟩
   show bias S T f ≤ ⨅ π : {π // IsCoupling S T π}, transportCost d π
   exact @le_ciInf _ _ _ hne _ _ (fun π' => bias_le_transportCost π'.2 hf)
+
+/-- The outcome distribution induced by a classifier `M` on a population
+distribution `S`: outcome `o` has mass `∑ x, S x * M x o`. -/
+def inducedDist {V O : Type*} [Fintype V] (M : V → O → ℝ) (S : V → ℝ) :
+    O → ℝ :=
+  fun o => ∑ x, S x * M x o
+
+/-- The induced outcome distribution is a probability vector when the
+population and every classifier row are probability vectors. -/
+theorem inducedDist_isDist {V O : Type*} [Fintype V] [Fintype O]
+    {M : V → O → ℝ} {S : V → ℝ} (hS : IsDist S)
+    (hrows : ∀ x, IsDist (M x)) :
+    IsDist (inducedDist M S) := by
+  obtain ⟨hS_nonneg, hS_sum⟩ := hS
+  refine ⟨?_, ?_⟩
+  · intro o
+    unfold inducedDist
+    exact Finset.sum_nonneg fun x _ =>
+      mul_nonneg (hS_nonneg x) ((hrows x).1 o)
+  · have hswap : (∑ o, inducedDist M S o) = ∑ x, ∑ o, S x * M x o :=
+      Finset.sum_comm
+    rw [hswap]
+    calc (∑ x, ∑ o, S x * M x o)
+        = ∑ x, S x * ∑ o, M x o := by
+          refine Finset.sum_congr rfl fun x _ => (Finset.mul_sum ..).symm
+      _ = ∑ x, S x := by
+          refine Finset.sum_congr rfl fun x _ => by rw [(hrows x).2, mul_one]
+      _ = 1 := hS_sum
+
+/-- Classifier-level transport bound: for every coupling, the total
+variation distance between the induced outcome distributions is at most
+that coupling's transport cost. -/
+theorem tvDist_inducedDist_le_transportCost {V O : Type*} [Fintype V]
+    [Fintype O] {d : V → V → ℝ} {M : V → O → ℝ} {S T : V → ℝ}
+    {π : V → V → ℝ} (hM : IsLipschitzFair d M) (hπ : IsCoupling S T π) :
+    tvDist (inducedDist M S) (inducedDist M T) ≤ transportCost d π := by
+  obtain ⟨hπ_nonneg, hπ_row, hπ_col⟩ := hπ
+  have hdiff : ∀ o : O, inducedDist M S o - inducedDist M T o
+      = ∑ x, ∑ y, π x y * (M x o - M y o) := by
+    intro o
+    have hS : inducedDist M S o = ∑ x, ∑ y, π x y * M x o := by
+      unfold inducedDist
+      refine Finset.sum_congr rfl fun x _ => ?_
+      show S x * M x o = ∑ y, π x y * M x o
+      rw [← hπ_row x, Finset.sum_mul]
+    have hT : inducedDist M T o = ∑ x, ∑ y, π x y * M y o := by
+      unfold inducedDist
+      calc (∑ y, T y * M y o)
+          = ∑ y, ∑ x, π x y * M y o := by
+            refine Finset.sum_congr rfl fun y _ => ?_
+            show T y * M y o = ∑ x, π x y * M y o
+            rw [← hπ_col y, Finset.sum_mul]
+        _ = ∑ x, ∑ y, π x y * M y o := Finset.sum_comm
+    rw [hS, hT, ← Finset.sum_sub_distrib]
+    refine Finset.sum_congr rfl fun x _ => ?_
+    rw [← Finset.sum_sub_distrib]
+    refine Finset.sum_congr rfl fun y _ => (mul_sub ..).symm
+  have hpt : ∀ o : O, |inducedDist M S o - inducedDist M T o|
+      ≤ ∑ x, ∑ y, π x y * |M x o - M y o| := by
+    intro o
+    rw [hdiff o]
+    refine (Finset.abs_sum_le_sum_abs _ _).trans ?_
+    refine Finset.sum_le_sum fun x _ => ?_
+    refine (Finset.abs_sum_le_sum_abs _ _).trans ?_
+    refine Finset.sum_le_sum fun y _ => ?_
+    rw [abs_mul, abs_of_nonneg (hπ_nonneg x y)]
+  have hsum : (∑ o, |inducedDist M S o - inducedDist M T o|)
+      ≤ ∑ o, ∑ x, ∑ y, π x y * |M x o - M y o| :=
+    Finset.sum_le_sum fun o _ => hpt o
+  have hswap : (∑ o, ∑ x, ∑ y, π x y * |M x o - M y o|)
+      = ∑ x, ∑ y, ∑ o, π x y * |M x o - M y o| := by
+    rw [Finset.sum_comm]
+    refine Finset.sum_congr rfl fun x _ => Finset.sum_comm
+  have hfactor : ∀ x y : V, (∑ o, π x y * |M x o - M y o|)
+      = π x y * ∑ o, |M x o - M y o| :=
+    fun x y => (Finset.mul_sum ..).symm
+  unfold tvDist MathlibExt.Probability.MarkovMixing.tvDist transportCost
+  calc (1 / 2) * ∑ o, |inducedDist M S o - inducedDist M T o|
+      ≤ (1 / 2) * ∑ o, ∑ x, ∑ y, π x y * |M x o - M y o| :=
+        mul_le_mul_of_nonneg_left hsum (by norm_num)
+    _ = ∑ x, ∑ y, π x y * ((1 / 2) * ∑ o, |M x o - M y o|) := by
+        rw [hswap, Finset.mul_sum]
+        refine Finset.sum_congr rfl fun x _ => ?_
+        rw [Finset.mul_sum]
+        refine Finset.sum_congr rfl fun y _ => ?_
+        rw [hfactor x y]
+        ring
+    _ ≤ ∑ x, ∑ y, π x y * d x y := by
+        refine Finset.sum_le_sum fun x _ => Finset.sum_le_sum fun y _ => ?_
+        exact mul_le_mul_of_nonneg_left (hM x y) (hπ_nonneg x y)
+
+/-- **Classifier-level earthmover bound.** For an individually fair
+classifier, the total variation distance between the induced outcome
+distributions on two populations is at most their earthmover distance. -/
+theorem tvDist_inducedDist_le_earthmover {V O : Type*} [Fintype V]
+    [Fintype O] {d : V → V → ℝ} {M : V → O → ℝ} {S T : V → ℝ}
+    (hM : IsLipschitzFair d M) (hS : IsDist S) (hT : IsDist T) :
+    tvDist (inducedDist M S) (inducedDist M T) ≤ earthmover d S T := by
+  obtain ⟨π, hπ⟩ := exists_coupling hS hT
+  have hne : Nonempty {π // IsCoupling S T π} := ⟨⟨π, hπ⟩⟩
+  show tvDist (inducedDist M S) (inducedDist M T)
+    ≤ ⨅ π : {π // IsCoupling S T π}, transportCost d π
+  exact @le_ciInf _ _ _ hne _ _
+    (fun π' => tvDist_inducedDist_le_transportCost hM π'.2)
 
 end
 

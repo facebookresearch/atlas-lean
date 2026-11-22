@@ -34,8 +34,8 @@ theorem t1_tvDist_values :
     ∧ tvDist (fun _ : Fin 2 => (1 / 2 : ℝ))
         (fun _ : Fin 2 => (1 / 2 : ℝ)) = 0 := by
   constructor
-  · norm_num [tvDist, Fin.sum_univ_two]
-  · norm_num [tvDist, Fin.sum_univ_two]
+  · norm_num [tvDist, MathlibExt.Probability.MarkovMixing.tvDist, Fin.sum_univ_two]
+  · norm_num [tvDist, MathlibExt.Probability.MarkovMixing.tvDist, Fin.sum_univ_two]
 
 /-- The constant fair-coin classifier on `Fin 2` is individually fair for
 the discrete metric. -/
@@ -69,6 +69,48 @@ theorem t3_coupling_cost :
       · norm_num [Fin.sum_univ_two]
       · norm_num [Fin.sum_univ_two]
   · norm_num [transportCost, d2, Fin.sum_univ_two]
+
+/-- T4: the induced distribution of the constant fair-coin classifier is
+the fair coin, and is a probability distribution. -/
+theorem t4_inducedDist_const :
+    inducedDist (fun _ _ : Fin 2 => (1 / 2 : ℝ))
+        (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0)
+      = (fun _ : Fin 2 => (1 / 2 : ℝ))
+    ∧ IsDist (inducedDist (fun _ _ : Fin 2 => (1 / 2 : ℝ))
+        (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0)) := by
+  have hS : IsDist (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0) := by
+    refine ⟨?_, ?_⟩
+    · intro i
+      by_cases h : i = 0 <;> simp [h]
+    · norm_num [Fin.sum_univ_two]
+  have hrows : ∀ _ : Fin 2, IsDist (fun _ : Fin 2 => (1 / 2 : ℝ)) := by
+    intro _
+    refine ⟨fun _ => by norm_num, ?_⟩
+    norm_num [Fin.sum_univ_two]
+  refine ⟨?_, inducedDist_isDist hS hrows⟩
+  funext o
+  simp [inducedDist]
+
+/-- T5: the classifier-level earthmover bound, applied to the constant
+fair-coin classifier and the two point masses. -/
+theorem t5_classifier_earthmover :
+    tvDist (inducedDist (fun _ _ : Fin 2 => (1 / 2 : ℝ))
+        (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0))
+      (inducedDist (fun _ _ : Fin 2 => (1 / 2 : ℝ))
+        (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1))
+    ≤ earthmover d2 (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0)
+        (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1) := by
+  have hS : IsDist (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0) := by
+    refine ⟨?_, ?_⟩
+    · intro i
+      by_cases h : i = 0 <;> simp [h]
+    · norm_num [Fin.sum_univ_two]
+  have hT : IsDist (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1) := by
+    refine ⟨?_, ?_⟩
+    · intro i
+      by_cases h : i = 0 <;> simp [h]
+    · norm_num [Fin.sum_univ_two]
+  exact tvDist_inducedDist_le_earthmover t2_const_fair hS hT
 
 end
 
