@@ -144,9 +144,10 @@ jobs:
       # Main's bump guard, run on the head against current main the way the
       # Bump guard workflow runs it on a pull request: the pin files of main,
       # of the merge base and of the head go in as data, and only main's copy of
-      # the guard runs. It accepts only a forward move to a final release that
-      # every pinned dependency has tagged, and fails a pin change that also
-      # touches the guard code.
+      # the guard runs. It accepts a forward move to a final release that every
+      # pinned dependency has tagged, or a dependency added at the current
+      # release; both change ci.yml's key, so both can be warmed. It fails a
+      # pin change that also touches the guard code.
       - name: Run main's bump guard on the head
         env:
           GH_TOKEN: ${{ github.token }}
@@ -168,23 +169,33 @@ jobs:
             git show "${MAIN_SHA}:scripts/bump/${file}" > "${guard}/main/scripts/bump/${file}"
           done
           trees=("base:${MAIN_SHA}" "merge-base:${merge_base}" "pr:${HEAD_SHA}")
-          # Copy one file of one tree in, as data. Missing optional files stay
-          # missing; the guard decides what that means.
+          # Copy one file of one tree in, as data. An optional file that the
+          # tree does not have stays missing, and the guard decides what that
+          # means; any other failure stops the run.
           put() {
-            local dir="$1" rev="$2" file="$3" required="$4" dest
+            local dir="$1" rev="$2" file="$3" required="$4" dest entry
             dest="$(realpath -m "${guard}/${dir}/${file}")"
             case "$dest" in
               "${guard}/${dir}"/*) ;;
               *) echo "::error::refusing to copy ${file}: it leaves ${guard}/${dir}"; exit 1 ;;
             esac
-            mkdir -p "$(dirname "$dest")"
-            if ! git show "${rev}:${file}" > "$dest" 2> /dev/null; then
-              rm -f "$dest"
+            if ! entry="$(git ls-tree "$rev" -- "$file")"; then
+              echo "::error::could not read the tree of ${rev}"
+              exit 1
+            fi
+            if [ -z "$entry" ]; then
               if [ "$required" = true ]; then
                 echo "::error::${file} is missing at ${rev}"
                 exit 1
               fi
+              return 0
             fi
+            case "$entry" in
+              "100644 blob "*) ;;
+              *) echo "::error::${file} at ${rev} is not a regular file (${entry%%$'\t'*})"; exit 1 ;;
+            esac
+            mkdir -p "$(dirname "$dest")"
+            git show "${rev}:${file}" > "$dest"
           }
           for tree in "${trees[@]}"; do
             dir="${tree%%:*}"

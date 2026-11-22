@@ -313,5 +313,59 @@ class CompareStepTest(unittest.TestCase):
         self.assertIn("must be a regular file", proc.stdout)
 
 
+
+class GuardInputTest(unittest.TestCase):
+    """The guard step's `put`: an optional file the tree lacks stays missing; anything else fails."""
+
+    def setUp(self) -> None:
+        text = WARM.read_text(encoding="utf-8")
+        script = textwrap.dedent(step(text, "name: Run main's bump guard on the head").split("run: |\n", 1)[1])
+        start = script.index("put() {")
+        self.put = script[start:script.index("\n}\n", start) + 3]
+        self.tmp = tempfile.TemporaryDirectory()
+        self.repo = Path(self.tmp.name) / "repo"
+        self.guard = Path(self.tmp.name) / "guard"
+        (self.guard / "pr").mkdir(parents=True)
+        subprocess.run(["git", "init", "-q", str(self.repo)], check=True)
+        (self.repo / "docs").mkdir()
+        (self.repo / "docs" / "README.md").write_text("readme\n")
+        os.symlink("README.md", self.repo / "docs" / "link.md")
+        subprocess.run(["git", "add", "-A"], cwd=self.repo, check=True)
+        subprocess.run(["git", "-c", "user.name=T", "-c", "user.email=t@example.com", "commit", "-q", "-m", "x"],
+                       cwd=self.repo, check=True)
+
+    def tearDown(self) -> None:
+        self.tmp.cleanup()
+
+    def call(self, file: str, required: str) -> subprocess.CompletedProcess:
+        script = f'set -euo pipefail\nguard="{self.guard}"\n{self.put}\nput pr HEAD "{file}" {required}\n'
+        return subprocess.run(["bash", "-e", "-c", script], cwd=self.repo, capture_output=True, text=True)
+
+    def test_present_file_is_copied(self) -> None:
+        self.assertEqual(self.call("docs/README.md", "true").returncode, 0)
+        self.assertEqual((self.guard / "pr" / "docs" / "README.md").read_text(), "readme\n")
+
+    def test_absent_optional_file_stays_missing(self) -> None:
+        self.assertEqual(self.call("docs/missing.md", "false").returncode, 0)
+        self.assertFalse((self.guard / "pr" / "docs" / "missing.md").exists())
+
+    def test_absent_required_file_fails(self) -> None:
+        proc = self.call("docs/missing.md", "true")
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn("is missing at HEAD", proc.stdout)
+
+    def test_unusable_entries_fail(self) -> None:
+        self.assertNotEqual(self.call("docs/link.md", "false").returncode, 0)
+        self.assertNotEqual(self.call("../escape.md", "false").returncode, 0)
+        if os.geteuid() == 0:
+            self.skipTest("root can write to a read-only directory")
+        (self.guard / "pr" / "docs").mkdir()
+        (self.guard / "pr" / "docs").chmod(0o500)
+        try:
+            proc = self.call("docs/README.md", "false")
+        finally:
+            (self.guard / "pr" / "docs").chmod(0o700)
+        self.assertNotEqual(proc.returncode, 0, "a present file that cannot be copied must stop the run")
+
 if __name__ == "__main__":
     unittest.main()
