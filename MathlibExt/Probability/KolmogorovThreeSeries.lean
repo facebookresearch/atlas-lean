@@ -108,7 +108,7 @@ private lemma eLpNorm_one_le_two {f : Ω → ℝ} (hf : AEStronglyMeasurable f �
 
 /-- If `∫ ‖f‖² dμ ≤ C` for an `L²` function on a probability space, then
 `‖f‖₁ ≤ √C`. -/
-private lemma eLpNorm_one_le_sqrt_integral_sq {f : Ω → ℝ} (hf : MemLp f 2 μ) {C : ℝ}
+lemma eLpNorm_one_le_sqrt_integral_sq {f : Ω → ℝ} (hf : MemLp f 2 μ) {C : ℝ}
     (h_int_sq : ∫ x, ‖f x‖ ^ (2 : ℝ) ∂μ ≤ C) [IsProbabilityMeasure μ] :
     eLpNorm f 1 μ ≤ ENNReal.ofReal (Real.sqrt C) := by
   have h1 : eLpNorm f 1 μ ≤ eLpNorm f 2 μ := eLpNorm_one_le_two hf.aestronglyMeasurable
@@ -179,6 +179,59 @@ threshold `A`, i.e. `Yₙ(ω) = Xₙ(ω)` when `|Xₙ(ω)| ≤ A` and `0` otherw
 This is the key construction in the Kolmogorov three-series theorem. -/
 noncomputable def truncatedRV (X : ℕ → Ω → ℝ) (A : ℝ) (n : ℕ) : Ω → ℝ :=
   fun ω => X n ω * Set.indicator {ω | |X n ω| ≤ A} 1 ω
+
+omit [MeasurableSpace Ω] in
+/-- The canonical truncation is the identity inside the cutoff and zero outside it. -/
+@[simp] theorem truncatedRV_apply (X : ℕ → Ω → ℝ) (A : ℝ) (n : ℕ) (ω : Ω) :
+    truncatedRV X A n ω = if |X n ω| ≤ A then X n ω else 0 := by
+  simp only [truncatedRV, Set.indicator_apply, Set.mem_ofPred_eq, Pi.one_apply]
+  split_ifs <;> simp
+
+/-- The canonical truncation of a measurable random variable is measurable. -/
+theorem measurable_truncatedRV {X : ℕ → Ω → ℝ} (hX : ∀ n, Measurable (X n))
+    (A : ℝ) (n : ℕ) : Measurable (truncatedRV X A n) :=
+  (hX n).mul (measurable_one.indicator
+    (measurableSet_le (hX n).norm measurable_const))
+
+/-- Truncation preserves independence. -/
+theorem iIndepFun_truncatedRV {X : ℕ → Ω → ℝ} (hX : iIndepFun X μ) (A : ℝ) :
+    iIndepFun (fun n => truncatedRV X A n) μ := by
+  have heq : (fun n => truncatedRV X A n) =
+      fun n => (fun x : ℝ => x * Set.indicator {y : ℝ | |y| ≤ A} 1 x) ∘ X n := by
+    funext n ω
+    simp only [truncatedRV, Function.comp_apply, Set.indicator, Set.mem_ofPred_eq,
+      Pi.one_apply]
+  rw [heq]
+  exact hX.comp _ (fun _ => measurable_id.mul
+    (measurable_one.indicator (measurableSet_le measurable_norm measurable_const)))
+
+omit [MeasurableSpace Ω] in
+/-- A canonical truncation is bounded by a nonnegative cutoff in absolute value. -/
+theorem abs_truncatedRV_le {X : ℕ → Ω → ℝ} {A : ℝ} (hA : 0 ≤ A) (n : ℕ) (ω : Ω) :
+    |truncatedRV X A n ω| ≤ A := by
+  rw [truncatedRV_apply]
+  by_cases h : |X n ω| ≤ A
+  · rw [ite_eq_left h]
+    exact h
+  · rw [ite_eq_right h, abs_zero]
+    exact hA
+
+omit [MeasurableSpace Ω] in
+/-- A canonical truncation is bounded by the absolute value of any cutoff. -/
+theorem abs_truncatedRV_le_abs {X : ℕ → Ω → ℝ} (A : ℝ) (n : ℕ) (ω : Ω) :
+    |truncatedRV X A n ω| ≤ |A| := by
+  rw [truncatedRV_apply]
+  by_cases h : |X n ω| ≤ A
+  · rw [ite_eq_left h]
+    exact h.trans (le_abs_self A)
+  · rw [ite_eq_right h, abs_zero]
+    exact abs_nonneg _
+
+omit [MeasurableSpace Ω] in
+/-- Truncation fixes points inside or on the cutoff. -/
+theorem truncatedRV_eq_of_abs_le {X : ℕ → Ω → ℝ} {A : ℝ} {n : ℕ} {ω : Ω}
+    (h : |X n ω| ≤ A) : truncatedRV X A n ω = X n ω := by
+  rw [truncatedRV_apply, ite_eq_left h]
 
 /-- If the truncated variables have summable variances, then almost surely
 the partial sums of the centered truncations converge:

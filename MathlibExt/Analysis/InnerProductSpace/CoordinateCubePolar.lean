@@ -46,7 +46,10 @@ private theorem exists_coordinateCube_support {n : ℕ} (y : EuclideanSpace ℝ 
     · simp [h, abs_of_nonneg h]
     · simp [h, abs_of_neg (lt_of_not_ge h)]
 
-/-- The one-sided inner-product polar of the coordinate cube is the coordinate ℓ¹ unit ball. -/
+/-- **The polar of the cube is the $\ell^1$ unit ball.** For every $n$, the polar of the
+coordinate cube $[-1, 1]^n$ in the Euclidean space $\mathbb{R}^n$, that is the set of all $y$
+with $\langle x, y \rangle \le 1$ for every $x$ in the cube, is the closed $\ell^1$ unit ball
+$\{y \in \mathbb{R}^n : \sum_i |y_i| \le 1\}$. -/
 theorem polarSet_coordinateCube (n : ℕ) :
     polarSet (ConvexCovering.coordinateCube n) =
       {y : EuclideanSpace ℝ (Fin n) | ∑ i, |y i| ≤ 1} := by

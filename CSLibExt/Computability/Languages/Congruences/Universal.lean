@@ -38,6 +38,7 @@ variable {Symbol : Type u} {State : Type v} {State' : Type w}
 
 /-- A morphism of deterministic automata preserves the start state, transitions, and acceptance. -/
 structure DFAHom (M : DFA Symbol State) (N : DFA Symbol State') where
+  /-- The underlying map on states. -/
   toFun : State → State'
   map_start : toFun M.start = N.start
   map_step : ∀ q a, toFun (M.step q a) = N.step (toFun q) a
@@ -144,7 +145,13 @@ theorem canonicalResidualHom_injective_iff (M : DFA Symbol State) (hacc : Access
     apply hsep
     exact Subtype.ext_iff.mp hpq
 
-/-- An accessible, state-separated automaton has exactly the canonical residual state space. -/
+/-- An accessible, state-separated automaton has exactly the canonical residual state space.
+This construction supports arbitrary universes.
+Upstream counterpart: `Cslib.Automata.DA.FinAcc.unique_minimal`, bridged by
+`Cslib.Automata.DA.FinAcc.stateEquivResidualsOfSeparated_eq_trans` for alphabets and states in
+`Type`. For alphabets in `Type` and states in any universe,
+`Cslib.Language.stateEquivResidualsOfSeparated_eq_minimal_equiv` characterizes its transport to
+upstream Nerode classes by reached words, with no finiteness assumption. -/
 noncomputable def stateEquivResidualsOfSeparated (M : DFA Symbol State) (hacc : Accessible M)
     (hsep : StateSeparated M) : State ≃ Set.range M.accepts.leftQuotient :=
   Equiv.ofBijective (canonicalResidualHom M hacc)

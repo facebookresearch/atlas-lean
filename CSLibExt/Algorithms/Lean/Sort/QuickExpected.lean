@@ -241,13 +241,6 @@ private theorem mem_aboveFilter {pivot x : α} {tail : List α} :
     x ∈ tail.filter (fun x => pivot < x) ↔ x ∈ tail ∧ pivot < x := by
   simp [List.mem_filter]
 
-omit [LinearOrder α] in
-private theorem mem_tail_of_mem_cons_ne {pivot x : α} {tail : List α}
-    (hx : x ∈ pivot :: tail) (hne : x ≠ pivot) : x ∈ tail := by
-  rcases List.mem_cons.mp hx with h | h
-  · exact absurd h hne
-  · exact h
-
 private theorem filter_pairTag_zero (pivot : α) (tail : List α) :
     (pairSet (pivot :: tail)).filter (fun p => pairTag pivot p = 0) =
       pairSet (tail.filter (fun x => x < pivot)) := by
@@ -258,9 +251,9 @@ private theorem filter_pairTag_zero (pivot : α) (tail : List α) :
     have hylt : y < pivot := pairTag_eq_zero.mp htag
     have hxlt : x < pivot := hlt.trans hylt
     exact ⟨mem_belowFilter.mpr
-        ⟨mem_tail_of_mem_cons_ne hx (ne_of_lt hxlt), hxlt⟩,
+        ⟨List.mem_of_ne_of_mem (ne_of_lt hxlt) hx, hxlt⟩,
       mem_belowFilter.mpr
-        ⟨mem_tail_of_mem_cons_ne hy (ne_of_lt hylt), hylt⟩, hlt⟩
+        ⟨List.mem_of_ne_of_mem (ne_of_lt hylt) hy, hylt⟩, hlt⟩
   · rintro ⟨hx, hy, hlt⟩
     obtain ⟨hxt, hxlt⟩ := mem_belowFilter.mp hx
     obtain ⟨hyt, hylt⟩ := mem_belowFilter.mp hy
@@ -277,9 +270,9 @@ private theorem filter_pairTag_one (pivot : α) (tail : List α) :
     have hxgt : pivot < x := (pairTag_eq_one hlt).mp htag
     have hygt : pivot < y := hxgt.trans hlt
     exact ⟨mem_aboveFilter.mpr
-        ⟨mem_tail_of_mem_cons_ne hx (ne_of_gt hxgt), hxgt⟩,
+        ⟨List.mem_of_ne_of_mem (ne_of_gt hxgt) hx, hxgt⟩,
       mem_aboveFilter.mpr
-        ⟨mem_tail_of_mem_cons_ne hy (ne_of_gt hygt), hygt⟩, hlt⟩
+        ⟨List.mem_of_ne_of_mem (ne_of_gt hygt) hy, hygt⟩, hlt⟩
   · rintro ⟨hx, hy, hlt⟩
     obtain ⟨hxt, hxgt⟩ := mem_aboveFilter.mp hx
     obtain ⟨hyt, -⟩ := mem_aboveFilter.mp hy
@@ -298,7 +291,7 @@ private theorem filter_pairTag_two (pivot : α) (tail : List α) :
     have hyEq : y = pivot := (pairTag_eq_two hlt).mp htag
     have hxlt : x < pivot := hyEq ▸ hlt
     exact ⟨x, mem_belowFilter.mpr
-      ⟨mem_tail_of_mem_cons_ne hx (ne_of_lt hxlt), hxlt⟩,
+      ⟨List.mem_of_ne_of_mem (ne_of_lt hxlt) hx, hxlt⟩,
       Prod.ext rfl hyEq.symm⟩
   · rintro ⟨a, ha, hEq⟩
     have hax : a = x := congrArg Prod.fst hEq
@@ -321,7 +314,7 @@ private theorem filter_pairTag_three (pivot : α) (tail : List α) :
     have hxEq : x = pivot := (pairTag_eq_three hlt).mp htag
     have hygt : pivot < y := hxEq ▸ hlt
     exact ⟨y, mem_aboveFilter.mpr
-      ⟨mem_tail_of_mem_cons_ne hy (ne_of_gt hygt), hygt⟩,
+      ⟨List.mem_of_ne_of_mem (ne_of_gt hygt) hy, hygt⟩,
       Prod.ext hxEq.symm rfl⟩
   · rintro ⟨b, hb, hEq⟩
     have hpx : pivot = x := congrArg Prod.fst hEq

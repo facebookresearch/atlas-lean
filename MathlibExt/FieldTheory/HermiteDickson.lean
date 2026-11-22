@@ -93,39 +93,8 @@ private theorem hd_card_roots_eq_one_of_bijective {Fq : Type*} [Field Fq] [Finty
     · intro hx; rw [hx]; simpa using ha
   rw [hfilter, Finset.card_singleton]
 
--- Helper: power sums reindex along a permutation polynomial.
-private theorem hd_sum_pow_comp_bij {Fq : Type*} [Field Fq] [Fintype Fq]
-    (f : Polynomial Fq) (t : ℕ)
-    (hbij : Function.Bijective fun x => f.eval x) :
-    (∑ x : Fq, (f.eval x) ^ t) = ∑ y : Fq, y ^ t := by
-  let e : Fq ≃ Fq := Equiv.ofBijective (fun x => f.eval x) hbij
-  have he : ∀ x, e x = f.eval x := fun x => rfl
-  have h := Equiv.sum_comp e (fun y => y ^ t)
-  simpa [e, he] using h
-
--- Helper: `natDegree (X ^ q - X) = q`.
-private theorem hd_natDegree_X_pow_sub {Fq : Type*} [Field Fq] [Fintype Fq]
-    (hq : 2 ≤ Fintype.card Fq) :
-    (Polynomial.X ^ Fintype.card Fq - Polynomial.X : Polynomial Fq).natDegree =
-      Fintype.card Fq := by
-  have hlt : (Polynomial.X : Polynomial Fq).natDegree <
-      ((Polynomial.X : Polynomial Fq) ^ Fintype.card Fq).natDegree := by
-    rw [Polynomial.natDegree_X, Polynomial.natDegree_X_pow]
-    omega
-  have h := Polynomial.natDegree_sub_eq_left_of_natDegree_lt hlt
-  rwa [Polynomial.natDegree_X_pow] at h
-
--- Helper: the field size vanishes in the field.
-private theorem hd_card_cast_eq_zero {p : ℕ} {Fq : Type*} [Field Fq] [Fintype Fq]
-    [CharP Fq p] [Fact p.Prime] :
-    (Fintype.card Fq : Fq) = 0 := by
-  obtain ⟨n, _, hcard⟩ := FiniteField.card Fq p
-  rw [hcard]
-  simp
-
 -- Helper: the `(q - 1)`-st power sum over the whole field is `-1`.
-private theorem hd_sum_pow_card_sub_one {p : ℕ} {Fq : Type*} [Field Fq] [Fintype Fq]
-    [CharP Fq p] [Fact p.Prime]
+private theorem hd_sum_pow_card_sub_one {Fq : Type*} [Field Fq] [Fintype Fq]
     (hq : 2 ≤ Fintype.card Fq) :
     (∑ x : Fq, x ^ (Fintype.card Fq - 1)) = -1 := by
   classical
@@ -139,7 +108,7 @@ private theorem hd_sum_pow_card_sub_one {p : ℕ} {Fq : Type*} [Field Fq] [Finty
   rw [Finset.sum_ite, Finset.sum_const_zero, zero_add]
   rw [Finset.sum_const, Finset.filter_ne']
   simp only [nsmul_eq_mul, mul_one]
-  have hcard0 : (Fintype.card Fq : Fq) = 0 := hd_card_cast_eq_zero
+  have hcard0 : (Fintype.card Fq : Fq) = 0 := FiniteField.cast_card_eq_zero Fq
   have hcard_erase : (Finset.univ.erase (0 : Fq)).card = Fintype.card Fq - 1 := by
     rw [Finset.card_erase_of_mem (Finset.mem_univ 0), Finset.card_univ]
   rw [hcard_erase]
@@ -155,8 +124,7 @@ private theorem hd_sum_pow_card_sub_one {p : ℕ} {Fq : Type*} [Field Fq] [Finty
   exact hcast
 
 -- Helper: if `natDegree g = q - 1` then the sum of `g` is the negated top coefficient.
-private theorem hd_sum_eq_neg_coeff_top {p : ℕ} {Fq : Type*} [Field Fq] [Fintype Fq]
-    [CharP Fq p] [Fact p.Prime]
+private theorem hd_sum_eq_neg_coeff_top {Fq : Type*} [Field Fq] [Fintype Fq]
     (hq : 2 ≤ Fintype.card Fq) (g : Polynomial Fq)
     (hdeg : g.natDegree = Fintype.card Fq - 1) :
     ∑ x : Fq, g.eval x = - g.coeff (Fintype.card Fq - 1) := by
@@ -230,8 +198,8 @@ private theorem hd_sum_pow_eq_zero_of_hyp {p : ℕ} {Fq : Type*} [Field Fq] [Fin
       exact hsum
 
 -- Helper: the `(q - 1)`-st power sum of `f` is `-1` when `f` has exactly one root.
-private theorem hd_sum_f_pow_card_sub_one_of_roots {p : ℕ} {Fq : Type*} [Field Fq] [Fintype Fq]
-    [DecidableEq Fq] [CharP Fq p] [Fact p.Prime]
+private theorem hd_sum_f_pow_card_sub_one_of_roots {Fq : Type*} [Field Fq] [Fintype Fq]
+    [DecidableEq Fq]
     (hq : 2 ≤ Fintype.card Fq)
     (f : Polynomial Fq)
     (hroots : (Finset.univ.filter (fun x => Polynomial.eval x f = 0)).card = 1) :
@@ -254,7 +222,7 @@ private theorem hd_sum_f_pow_card_sub_one_of_roots {p : ℕ} {Fq : Type*} [Field
     simp only [Finset.card_univ] at hpart
     omega
   rw [hcompl]
-  have hcard0 : (Fintype.card Fq : Fq) = 0 := hd_card_cast_eq_zero
+  have hcard0 : (Fintype.card Fq : Fq) = 0 := FiniteField.cast_card_eq_zero Fq
   have hcast : ((Fintype.card Fq - 1 : ℕ) : Fq) = -1 := by
     have h1 : ((Fintype.card Fq : ℕ) : Fq) =
         (((Fintype.card Fq - 1 : ℕ) : Fq) + 1) := by
@@ -267,8 +235,7 @@ private theorem hd_sum_f_pow_card_sub_one_of_roots {p : ℕ} {Fq : Type*} [Field
   exact hcast
 
 -- Helper: the degree bound follows from bijectivity (forward direction).
-private theorem hd_deg_le_of_bij {p : ℕ} {Fq : Type*} [Field Fq] [Fintype Fq]
-    [CharP Fq p] [Fact p.Prime]
+private theorem hd_deg_le_of_bij {Fq : Type*} [Field Fq] [Fintype Fq]
     (hq : 2 ≤ Fintype.card Fq)
     (f : Polynomial Fq)
     (hbij : Function.Bijective fun x => f.eval x)
@@ -279,7 +246,7 @@ private theorem hd_deg_le_of_bij {p : ℕ} {Fq : Type*} [Field Fq] [Fintype Fq]
   push Not at hcon
   have hdivdeg : (Polynomial.X ^ Fintype.card Fq - Polynomial.X :
       Polynomial Fq).natDegree = Fintype.card Fq :=
-    hd_natDegree_X_pow_sub hq
+    FiniteField.X_pow_card_sub_X_natDegree_eq Fq (Nat.lt_of_succ_le hq)
   have hmodlt : ((f ^ t) % (Polynomial.X ^ Fintype.card Fq - Polynomial.X :
       Polynomial Fq)).natDegree < Fintype.card Fq := by
     have hne : (Polynomial.X ^ Fintype.card Fq - Polynomial.X :
@@ -324,7 +291,7 @@ private theorem hd_deg_le_of_bij {p : ℕ} {Fq : Type*} [Field Fq] [Fintype Fq]
       rw [hd_mod_eval hq]
       simp [Polynomial.eval_pow]
     simp_rw [heval]
-    rw [hd_sum_pow_comp_bij f t hbij]
+    rw [hbij.sum_comp (· ^ t)]
     apply FiniteField.sum_pow_lt_card_sub_one
     omega
   exact hsumne hsum0
@@ -370,7 +337,7 @@ theorem hermite_dickson_permutation_criterion
     have hS0 : ∑ x : Fq, (f.eval x) ^ 0 = 0 := by
       simp only [pow_zero]
       rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one]
-      have hcard0 : (Fintype.card Fq : Fq) = 0 := hd_card_cast_eq_zero
+      have hcard0 : (Fintype.card Fq : Fq) = 0 := FiniteField.cast_card_eq_zero Fq
       simp [hcard0]
     have hStop : ∑ x : Fq, (f.eval x) ^ (Fintype.card Fq - 1) = -1 :=
       hd_sum_f_pow_card_sub_one_of_roots hq f hroots
@@ -391,7 +358,7 @@ theorem hermite_dickson_permutation_criterion
     have hsumLHS : ∑ x : Fq, (f.eval x - a) ^ (Fintype.card Fq - 1) = 0 := by
       simp_rw [hone]
       rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one]
-      have hcard0 : (Fintype.card Fq : Fq) = 0 := hd_card_cast_eq_zero
+      have hcard0 : (Fintype.card Fq : Fq) = 0 := FiniteField.cast_card_eq_zero Fq
       simp [hcard0]
     have hexpand : ∀ x : Fq, (f.eval x - a) ^ (Fintype.card Fq - 1)
         = ∑ j ∈ Finset.range (Fintype.card Fq - 1 + 1),

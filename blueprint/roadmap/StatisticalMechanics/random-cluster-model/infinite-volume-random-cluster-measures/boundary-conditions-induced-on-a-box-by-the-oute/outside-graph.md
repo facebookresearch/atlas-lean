@@ -1,0 +1,3 @@
+# Outer open graph plus the outer boundary clique
+
+Let $d, n \in \mathbb{N}$, let $\Lambda_m = \{-m, \dots, m\}^d$ carry its nearest-neighbour edges (so $\Lambda_n \subseteq \Lambda_{n+1}$), and let $\psi$ be an assignment of open/closed states to the unordered pairs of vertices of $\Lambda_{n+1}$ (the outer configuration). The outer graph $O_\psi$ is the graph on $\Lambda_{n+1}$ whose edges are the [outer open edges](outside-open-graph.md) (edges of $\Lambda_{n+1}$ open in $\psi$ that do not have both endpoints in $\Lambda_n$) together with all pairs of distinct vertices of $\partial\Lambda_{n+1}$, where $\partial\Lambda_m$ is the vertex boundary of $\Lambda_m$ (the sites of $\Lambda_m$ not in $\Lambda_{m-1}$, with $m - 1$ truncated at $0$).
