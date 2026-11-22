@@ -11,10 +11,10 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Int.ModEq
-public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Rat.Defs
 public import MathlibExt.NumberTheory.JacobsthalLucasNumber
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.OresmeConvolutions
 public import MathlibExt.NumberTheory.PellLucasSequence
 public import MathlibExt.NumberTheory.PellNumberSequence
 
@@ -53,15 +53,6 @@ Article cookbacon061124, Proposition 4.1 (`fq-2024-cookbacon061124-prop-4.1`). -
 public theorem_wanted fib_oresme_convolution (n : ℕ) :
     ∑ k ∈ Finset.range (n + 1), (Nat.fib k : ℚ) * (((n - k : ℕ) : ℚ) / 2 ^ (n - k)) =
       2 / 5 * (Nat.fib (n + 1) : ℚ) - 2 * ((n : ℚ) + 1) / (5 * 2 ^ n)
-
-/-- `2^{n-1} F_n ≡ n (mod 5)` for every `n ≥ 0` (at `n = 0` both sides vanish, so the
-truncated exponent `0 - 1 = 0` is harmless).
-
-Source: Michael R. Bacon and Charles K. Cook, *Some Properties of Oresme Numbers and
-Convolutions with Various Second Order Sequences*, The Fibonacci Quarterly 62 (2024), no. 3,
-Article cookbacon061124, Corollary 4.2 (`fq-2024-cookbacon061124-cor-4.2`). -/
-public theorem_wanted two_pow_pred_mul_fib_modEq_five (n : ℕ) :
-    2 ^ (n - 1) * Nat.fib n ≡ n [MOD 5]
 
 /-- The Lucas–Oresme convolution:
 `∑_{k=0}^n L_k O_{n-k} = (2/5) L_{n+1} - 2/(5 · 2^n)` for every `n ≥ 0`.
