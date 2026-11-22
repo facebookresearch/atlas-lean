@@ -228,16 +228,23 @@ def merge_fields(b, o: dict, t: dict, skip: tuple[str, ...]) -> tuple[dict | Non
     return row, None
 
 
-def combine_rationales(b, o: dict, t: dict) -> str | None:
-    """One rationale for both sides' changes to a row: the side that rewrote the base
-    rationale (a correction, say) keeps its account, and the other side's added sentences
-    follow it. None when both sides rewrote it: their accounts may contradict each other."""
+def combine_rationales(b, o: dict, t: dict, mode: str) -> str | None:
+    """One rationale for both sides' changes to a row, or None for a person to write.
+
+    mode "same": both sides made the same change to the file, so two different
+    rationales are two accounts of one change and are never joined. mode "row": one side
+    changed only the row; mode "distinct": the staged file merges two different changes.
+    Otherwise a side that rewrote the base rationale (a correction, say) keeps its account,
+    and the other side's added sentences follow it; when both rewrote it, or there was no
+    base rationale and only one side changed the file, the accounts may contradict."""
     base = (b or {}).get("rationale", "").strip()
     mine, theirs = o.get("rationale", "").strip(), t.get("rationale", "").strip()
     if mine in (base, theirs):
         return theirs
     if theirs == base:
         return mine
+    if mode == "same" or (mode == "row" and not base):
+        return None
     added_by_bump, added_by_main = appended(base, mine), appended(base, theirs)
     if added_by_bump is not None:
         return join_rationale(theirs, added_by_bump)
@@ -263,25 +270,27 @@ def merge_both_changed(path: str, b, o: dict, t: dict, versions) -> tuple[dict |
     def others(row) -> dict:
         return {k: v for k, v in (row or {}).items() if k not in content}
 
-    def combined(whose: str, file_changed_from_main: bool):
+    def combined(whose: str, mode: str, file_changed_from_main: bool):
         """Every field merged three ways, the staged file's hash, both rationales combined."""
         row, clash = merge_fields(b, o, t, content)
         if clash is not None:
             return None, "", f"both sides changed its {clash!r}"
-        rationale = combine_rationales(b, o, t)
+        rationale = combine_rationales(b, o, t, mode)
         if rationale is None:
-            return None, "", "both sides rewrote the rationale; write one that covers both"
+            why = ("both sides describe the same change differently" if mode == "same"
+                   else "the two sides' rationales cannot be combined")
+            return None, "", f"{why}; write one rationale that covers both"
         if file_changed_from_main and rationale == t.get("rationale", "").strip():
             return None, "", "the bump's rationale adds nothing to main's; write one for the merged file"
         row["published_sha256"], row["rationale"] = fms.sha256(data), rationale
         return row, whose, None
 
     if data == ours == theirs:
-        return combined("both", False)
+        return combined("both", "same", False)
     if data == theirs and ours == base:  # the bump changed only the row
-        return combined("main", False)
+        return combined("main", "row", False)
     if data == ours and theirs == base:  # main changed only the row, a correction for instance
-        return combined("bump", True)
+        return combined("bump", "row", True)
     if data == theirs:
         if others(o) != others(b):
             return None, "", "the staged file is main's, but the bump also changed the row's other fields"
@@ -294,7 +303,7 @@ def merge_both_changed(path: str, b, o: dict, t: dict, versions) -> tuple[dict |
         return None, "", "the staged file is back to the merge base, so neither side's rationale holds"
     if data != files["auto"]:
         return None, "", "the file was resolved by hand: record its rationale with --record-divergence"
-    return combined("both", True)
+    return combined("both", "distinct", True)
 
 
 def merge_manifest(base_text: str, ours_text: str, theirs_text: str, versions) -> tuple[str, dict, list[str]]:
@@ -519,10 +528,15 @@ def stage_entries(path: str) -> dict[int, str]:
 
 def resolve_adjacent(paths: list[str]) -> list[str]:
     """Resolve and stage each conflicted file whose conflicts only join changes to
-    neighbouring lines; return the files that still need a person. Only regular text files
-    in UTF-8, with all three versions ending in a newline, are tried."""
-    left = []
+    neighbouring lines; return the files that still need a person. Only files still exactly
+    as merge-main's `git merge` left them, regular, in UTF-8 and with all three versions
+    ending in a newline, are tried."""
+    left, edited = [], []
     for path in paths:
+        if not untouched(path):
+            edited.append(path)
+            left.append(path)
+            continue
         texts = None
         if stage_entries(path) == {1: "100644", 2: "100644", 3: "100644"}:
             blobs = [git_bytes("show", f":{stage}:{path}") for stage in (1, 2, 3)]
@@ -540,6 +554,8 @@ def resolve_adjacent(paths: list[str]) -> list[str]:
         (REPO / path).write_bytes(merged.encode("utf-8"))
         git("add", "--", path)
         print(f"{path}: merged changes to neighbouring lines")
+    for path in edited:
+        print(f"{path}: not as merge-main's `git merge` left it, so --adjacent leaves it to you")
     return left
 
 
@@ -595,12 +611,22 @@ def save_state(state: dict) -> None:
                                                   encoding="utf-8")
 
 
-def record_preimage() -> None:
-    """Remember the manifest exactly as `git merge` left it, so resolve-manifest knows it may
-    replace that file and nothing else."""
-    target = REPO / MANIFEST
-    preimage = fms.sha256(target.read_bytes()) if target.is_file() and MANIFEST in unmerged_paths() else None
-    save_state({"preimage": preimage, "draft": None})
+def record_preimages() -> None:
+    """Remember every conflicted file exactly as `git merge` left it: the tool replaces such a
+    file only while it is still that, never once someone has edited it."""
+    preimages = {}
+    for path in unmerged_paths():
+        target = REPO / path
+        if target.is_file() and not target.is_symlink():
+            preimages[path] = fms.sha256(target.read_bytes())
+    save_state({"preimages": preimages, "draft": None})
+
+
+def untouched(path: str) -> bool:
+    """Whether `path` is still exactly as merge-main's `git merge` left it."""
+    target, recorded = REPO / path, load_state().get("preimages", {}).get(path)
+    return bool(recorded) and target.is_file() and not target.is_symlink() \
+        and fms.sha256(target.read_bytes()) == recorded
 
 
 def write_draft(merged: str, regenerate: bool) -> bool:
@@ -610,7 +636,7 @@ def write_draft(merged: str, regenerate: bool) -> bool:
     target, state = REPO / MANIFEST, load_state()
     data = merged.encode("utf-8")
     current = target.read_bytes() if target.is_file() else None
-    known = {state.get("preimage"), state.get("draft")} - {None}
+    known = {state.get("preimages", {}).get(MANIFEST), state.get("draft")} - {None}
     if current is not None and current != data and fms.sha256(current) not in known:
         if not regenerate:
             print(f"{MANIFEST} has changes this tool did not make: `git add {MANIFEST}` if it is your "
@@ -682,7 +708,7 @@ def merge_main(main_ref: str, commit: bool, adjacent: bool = False) -> int:
     proc = git("merge", "--no-ff", "--no-commit", main, check=False)
     if proc.returncode != 0 and not unmerged_paths():
         raise Stop(f"git merge failed:\n{proc.stdout.strip()}\n{proc.stderr.strip()}")
-    record_preimage()
+    record_preimages()
     return resolve_manifest(commit, adjacent)
 
 

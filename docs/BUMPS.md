@@ -88,9 +88,9 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
    rewrote one whole doc comment and the other changed the one line next to it
    (a non-blank line with no `/-` or `-/`), which is how docstring campaigns on
    main usually meet the bump's edits. Before committing it checks the manifest
-   against main on the exact tree it would commit. It writes the manifest only
-   over the file `git merge` left or its own unedited draft; if you edit the
-   manifest yourself, `git add` it.
+   against main on the exact tree it would commit. It only ever replaces a file
+   that is exactly as its own `git merge` left it (or its own unedited draft of
+   the manifest): once you edit a file, `git add` it when it is resolved.
 
    Other conflicts are yours:
 

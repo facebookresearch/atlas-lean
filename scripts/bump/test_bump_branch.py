@@ -21,6 +21,7 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parent))
 import bump_branch as bb  # noqa: E402
 import check_formal_math_sync as fms  # noqa: E402
+from check_copyright import META  # noqa: E402
 
 TOOL = HERE / "bump_branch.py"
 BUMP = "Also adapted to the v9.9.0 toolchain bump."
@@ -134,10 +135,15 @@ class MergeManifestTest(unittest.TestCase):
         self.assertEqual(bb.appended("", "Adapted."), "Adapted.")
         self.assertEqual(bb.appended("Base.", "Base."), "")
         rows = lambda *texts: [{"rationale": text} for text in texts]
-        self.assertEqual(bb.combine_rationales(*rows("PR #12.", "PR #12. Bump.", "PR #21.")), "PR #21. Also: Bump.")
-        self.assertEqual(bb.combine_rationales(*rows("PR #12.", "PR #21.", "PR #12. Main.")), "PR #21. Also: Main.")
-        self.assertEqual(bb.combine_rationales(*rows("A.", "A. Bump.", "A. Main.")), "A. Main. Also: Bump.")
-        self.assertIsNone(bb.combine_rationales(*rows("PR #12.", "PR #21.", "PR #13.")), "two rewrites may contradict")
+        self.assertEqual(bb.combine_rationales(*rows("PR #12.", "PR #12. Bump.", "PR #21."), "row"), "PR #21. Also: Bump.")
+        self.assertEqual(bb.combine_rationales(*rows("PR #12.", "PR #21.", "PR #12. Main."), "row"), "PR #21. Also: Main.")
+        self.assertEqual(bb.combine_rationales(*rows("A.", "A. Bump.", "A. Main."), "distinct"), "A. Main. Also: Bump.")
+        self.assertEqual(bb.combine_rationales(*rows("", "Bump.", "Main."), "distinct"), "Main. Also: Bump.")
+        self.assertIsNone(bb.combine_rationales(*rows("PR #12.", "PR #21.", "PR #13."), "distinct"), "two rewrites")
+        self.assertIsNone(bb.combine_rationales(*rows("", "Solely #12.", "Solely #21."), "same"), "one change, two accounts")
+        self.assertIsNone(bb.combine_rationales(*rows("A.", "A. From #12.", "A. From #21."), "same"))
+        self.assertIsNone(bb.combine_rationales(*rows("", "Note.", "Main."), "row"))
+        self.assertEqual(bb.combine_rationales(*rows("", "Same.", "Same."), "same"), "Same.")
         self.assertEqual(bb.join_rationale("Main.", "Also bump."), "Main. Also bump.")
         self.assertEqual(bb.join_rationale("Main", "Also bump."), "Main. Also bump.")
         self.assertEqual(bb.join_rationale("Main (#1).", "Adapted."), "Main (#1). Also: Adapted.")
@@ -547,6 +553,56 @@ class GitTest(unittest.TestCase):
         proc = self.tool("resolve-manifest", "--regenerate")
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertIn("saved as", proc.stdout)
+
+    def test_two_accounts_of_the_same_change_need_a_person(self):
+        files, rows = self.base_tree()
+        i = "MathlibExt/I.lean"
+        body = "def i := 1\n"
+        synced = META + "\n" + body
+        identical = {"path": i, "disposition": "identical", "published_sha256": fms.sha256(synced.encode()),
+                     "upstream_sha256": fms.sha256(body.encode())}
+        self.write({i: synced}, rows + [identical], "sync I")
+        changed = synced.replace("def i", "noncomputable def i")
+        rows = rows + [identical]
+
+        def diverge_i(rationale):
+            row = {**identical, "disposition": "diverged", "published_sha256": fms.sha256(changed.encode()),
+                   "rationale": rationale, "backport": "pending"}
+            return [row if r["path"] == i else r for r in rows]
+
+        self.git("checkout", "-q", "-b", "bump")
+        self.write({i: changed}, diverge_i("Ported solely from PR #12."), "bump")
+        self.git("checkout", "-q", "main")
+        self.write({i: changed}, diverge_i("Ported solely from PR #21."), "Port I (#21)")
+        self.git("checkout", "-q", "bump")
+        head = self.git("rev-parse", "HEAD").stdout
+        proc = self.tool("merge-main", "--main", "main")
+        self.assertEqual(proc.returncode, 3, proc.stdout + proc.stderr)
+        self.assertIn("describe the same change differently", proc.stdout)
+        self.assertEqual(self.git("rev-parse", "HEAD").stdout, head)
+        record = subprocess.run([sys.executable, "scripts/check_formal_math_sync.py", "--record-divergence", i,
+                                 "--rationale", "Ported from PR #21 (first proposed in PR #12).", "--backport",
+                                 "pending"], cwd=self.repo, capture_output=True, text=True,
+                                env=dict(os.environ, PYTHONDONTWRITEBYTECODE="1"))
+        self.assertEqual(record.returncode, 0, record.stdout + record.stderr)
+        self.git("add", bb.MANIFEST)
+        proc = self.tool("resolve-manifest")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+
+    def test_adjacent_never_overwrites_an_edited_conflict_file(self):
+        d = "MathlibExt/D.lean"
+        self.diverge({d: ("def d := 1", "noncomputable def d := 1", f"Port {d}. {BUMP}")},
+                     {d: ("/-- D doc -/", "/-- D, restated -/", "Restate docstrings (#7).")}, "Restate docstrings (#7)")
+        head = self.git("rev-parse", "HEAD").stdout
+        self.assertEqual(self.tool("merge-main", "--main", "main").returncode, 3)
+        edited = (self.repo / d).read_text() + "-- my note, outside the conflict\n"
+        (self.repo / d).write_text(edited)
+        proc = self.tool("resolve-manifest", "--adjacent")
+        self.assertEqual(proc.returncode, 3, proc.stdout + proc.stderr)
+        self.assertIn("leaves it to you", proc.stdout)
+        self.assertEqual((self.repo / d).read_text(), edited)
+        self.assertNotEqual(self.git("ls-files", "-u", "--", d).stdout, "")
+        self.assertEqual(self.git("rev-parse", "HEAD").stdout, head)
 
     def test_refuses_a_dirty_tree(self):
         self.base_tree()
