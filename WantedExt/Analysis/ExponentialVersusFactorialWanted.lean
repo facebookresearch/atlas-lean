@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import MathlibExt.Analysis.SpecialFunctions.Gamma.RpowLowerBound
 
 namespace MetaMathlibExt
 
@@ -35,14 +36,6 @@ public theorem_wanted iterate_logb_tetration_strictMono_and_converges {a b : ℝ
     StrictMono (fun n : ℕ => (Real.logb a)^[n] ((fun x : ℝ => b ^ x)^[n] 1)) ∧
       ∃ L : ℝ, Tendsto (fun n : ℕ => (Real.logb a)^[n] ((fun x : ℝ => b ^ x)^[n] 1))
         atTop (𝓝 L)
-
-/-- **Lower bound $\Gamma(x + 1) > (x/e)^x$ for the Gamma function.** For every real number
-$x \ge 1$, $\Gamma(x + 1) > (x/e)^x$.
-
-Source: Karol Gryszka, *Exponential versus Factorial Revisited*, Journal of
-Integer Sequences 28 (2025), Article 25.2.8, Lemma 9 (`jis-2025-25.2.8-lem-9`). -/
-public theorem_wanted div_exp_one_rpow_lt_Gamma_add_one {x : ℝ} (hx : 1 ≤ x) :
-    (x / Real.exp 1) ^ x < Real.Gamma (x + 1)
 
 /-- **Upper bound $\Gamma(x + 1) \ln \Gamma(x + 1) \le \Gamma(x)^{\Gamma(x)}$.** For every real
 number $x > 4$, $\Gamma(x + 1) \ln \Gamma(x + 1) \le \Gamma(x)^{\Gamma(x)}$.
