@@ -24,9 +24,9 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Eneström–Kakeya theorem, monotone form: if a nonzero real polynomial
-`a₀ + a₁ x + ⋯ + aₙ xⁿ` of degree `n` satisfies `0 ≤ a₀ ≤ a₁ ≤ ⋯ ≤ aₙ`, then every complex
-root `z` satisfies `‖z‖ ≤ 1`.
+/-- **Eneström–Kakeya theorem.** Let $a_0 + a_1 x + \cdots + a_n x^n$ be a nonzero real
+polynomial of degree $n$ with $0 \le a_0 \le a_1 \le \cdots \le a_n$. Then every complex root $z$
+of this polynomial satisfies $|z| \le 1$.
 
 Source: Tingting Du, *On the Reciprocal Sums and Products of m th-order Linear Recursive
 Sequences*, Journal of Integer Sequences 27 (2024), Article 24.2.3, Lemma 3
@@ -36,10 +36,12 @@ public theorem_wanted norm_le_one_of_aeval_eq_zero_of_monotone_coeff
     (hmono : ∀ i < p.natDegree, p.coeff i ≤ p.coeff (i + 1))
     (z : ℂ) (hz : aeval z p = 0) : ‖z‖ ≤ 1
 
-/-- For `m ≥ 2` and positive integers `a₁, …, aₘ` (here `a i = a_{i+1}`), the polynomial
-`φ(x) = xᵐ - a₁ xᵐ⁻¹ - ⋯ - aₘ` has exactly one positive root `λ`, it satisfies `λ > 1`, and
-the complex roots of `φ` are `λ` (once) together with `m - 1` roots of modulus less
-than `λ`.
+/-- **Dominant root of $x^m - a_1 x^{m-1} - \cdots - a_m$ with positive coefficients.** Let
+$m \ge 2$ and let $a_1, \dots, a_m$ be positive integers. Then the polynomial
+$\varphi(x) = x^m - a_1 x^{m-1} - \cdots - a_m$ has exactly one positive real root $\lambda$,
+this root satisfies $\lambda > 1$, and the complex roots of $\varphi$, counted with
+multiplicity, are $\lambda$ (a simple root) together with $m - 1$ roots of modulus less than
+$\lambda$.
 
 Source: Tingting Du, *On the Reciprocal Sums and Products of m th-order Linear Recursive
 Sequences*, Journal of Integer Sequences 27 (2024), Article 24.2.3, Lemma 4
@@ -51,9 +53,12 @@ public theorem_wanted exists_dominant_root_of_pos_coeff_charPoly
       ∃ s : Multiset ℂ, (φ.map (Int.castRingHom ℂ)).roots = (ρ : ℂ) ::ₘ s ∧
         ∀ z ∈ s, ‖z‖ < ρ
 
-/-- Let `1 < μ < λ` (written `α` here) and let `eₖ = O((μ/λ³)^{k/2})`. Then for every
-nonzero real constant `c`, as `n → ∞`,
-`∏_{k ≥ n} (1 - 1/(c λᵏ) + eₖ) = 1 - ∑_{k ≥ n} 1/(c λᵏ) + O((μ/λ³)^{n/2})`.
+/-- **Asymptotic expansion of a perturbed tail product.** Let $\mu$ and $\lambda$ be real numbers
+with $1 < \mu < \lambda$, let $c \ne 0$ be a real number, and let $(e_k)_{k \ge 0}$ be a real
+sequence with $e_k = O\bigl((\mu/\lambda^3)^{k/2}\bigr)$ as $k \to \infty$. Then, as
+$n \to \infty$,
+$\prod_{k \ge n} \bigl(1 - 1/(c\lambda^k) + e_k\bigr) = 1 - \sum_{k \ge n} 1/(c\lambda^k) +
+O\bigl((\mu/\lambda^3)^{n/2}\bigr)$.
 
 Source: Tingting Du, *On the Reciprocal Sums and Products of m th-order Linear Recursive
 Sequences*, Journal of Integer Sequences 27 (2024), Article 24.2.3, Lemma 7

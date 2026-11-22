@@ -32,19 +32,22 @@ An embedding is an injective homomorphism into the group of units `Dˣ`. Divisio
 `SL(2, ℚ)` is countable.
 -/
 
-/-- Kourovka 11.110 (B. Hartley): `SL(2, ℚ)` embeds in the multiplicative group of some division
-ring. -/
+/-- **Kourovka Problem 11.110 (B. Hartley).** The group $\mathrm{SL}(2, \mathbb{Q})$ embeds in the
+multiplicative group of some division ring: there are a division ring $D$ and an injective group
+homomorphism $\mathrm{SL}(2, \mathbb{Q}) \to D^\times$. -/
 def specialLinearRationalEmbedsInDivisionRing : Prop :=
   ∃ (D : Type) (_ : DivisionRing D) (f : Matrix.SpecialLinearGroup (Fin 2) ℚ →* Dˣ),
     Function.Injective f
 
 /--
-Resolved false: the Kourovka Archive answers 11.110 "No, it is not", citing Dicks and Hartley
-(1991): `SL(2, ℚ)` does not embed in the multiplicative group of any division ring. Source: E. I.
-Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st
-issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 11.110 (B. Hartley);
-resolution: W. Dicks and B. Hartley, Commun. Algebra 19 (1991), 1919-1943, Kourovka Archive, Problem
-11.110 ("No, it is not").
+**SL(2, ℚ) does not embed in a division ring.** There is no division ring $D$ with an injective
+group homomorphism $\mathrm{SL}(2, \mathbb{Q}) \to D^\times$: the group $\mathrm{SL}(2, \mathbb{Q})$
+does not embed in the multiplicative group of any division ring.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 11.110 (B.
+Hartley); resolution: W. Dicks and B. Hartley, Commun. Algebra 19 (1991), 1919-1943, Kourovka
+Archive, Problem 11.110 ("No, it is not").
 -/
 public theorem_wanted specialLinearRationalEmbedsInDivisionRing_refuted :
     ¬ specialLinearRationalEmbedsInDivisionRing
