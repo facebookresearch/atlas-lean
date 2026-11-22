@@ -211,27 +211,32 @@ theorem halfspaceClass_not_shatters (d : ℕ)
   have h2 : ⟪w, p⟫_ℝ + b ≤ 0 := convexHull_min hsub2 hconv2 hpIc
   exact not_lt_of_ge h2 h1
 
+/-- Any shattered finite set has at most `d + 1` points. -/
+theorem halfspaceClass_card_le_of_shatters (d : ℕ)
+    {W : Finset (EuclideanSpace ℝ (Fin d))}
+    (hW : SetShatters (halfspaceClass d) ↑W) :
+    W.card ≤ d + 1 := by
+  by_contra hcon
+  push Not at hcon
+  obtain ⟨t, htsub, htcard⟩ :=
+    Finset.exists_subset_card_eq (show d + 2 ≤ W.card by omega)
+  exact halfspaceClass_not_shatters d t htcard
+    (hW.subset (Finset.coe_subset.mpr htsub))
+
+/-- Affine halfspaces have finite VC dimension. -/
+theorem halfspaceClass_hasFiniteVCDim (d : ℕ) :
+    HasFiniteVCDim (halfspaceClass d) := by
+  rw [hasFiniteVCDim_iff]
+  exact ⟨d + 1, fun W hW => halfspaceClass_card_le_of_shatters d hW⟩
+
 /-- The VC dimension of affine halfspaces in `ℝᵈ` is `d + 1`. -/
 theorem halfspaceClass_vcDim (d : ℕ) : vcDim (halfspaceClass d) = d + 1 := by
-  have hupper : ∀ W : Finset (EuclideanSpace ℝ (Fin d)),
-      SetShatters (halfspaceClass d) ↑W → W.card ≤ d + 1 := by
-    intro W hW
-    by_contra hcon
-    push Not at hcon
-    obtain ⟨t, htsub, htcard⟩ :=
-      Finset.exists_subset_card_eq (show d + 2 ≤ W.card by omega)
-    exact halfspaceClass_not_shatters d t htcard
-      (hW.subset (Finset.coe_subset.mpr htsub))
   have hlower_mem : d + 1 ∈ {n : ℕ | ∃ W : Finset (EuclideanSpace ℝ (Fin d)),
       W.card = n ∧ SetShatters (halfspaceClass d) ↑W} :=
     ⟨halfspaceWitness d, halfspaceWitness_card d, halfspaceClass_shatters d⟩
   have hbdd : BddAbove {n : ℕ | ∃ W : Finset (EuclideanSpace ℝ (Fin d)),
-      W.card = n ∧ SetShatters (halfspaceClass d) ↑W} := by
-    refine ⟨d + 1, ?_⟩
-    intro n hn
-    obtain ⟨W, hWc, hW⟩ := hn
-    rw [← hWc]
-    exact hupper W hW
+      W.card = n ∧ SetShatters (halfspaceClass d) ↑W} :=
+    halfspaceClass_hasFiniteVCDim d
   have hne : {n : ℕ | ∃ W : Finset (EuclideanSpace ℝ (Fin d)),
       W.card = n ∧ SetShatters (halfspaceClass d) ↑W}.Nonempty :=
     ⟨d + 1, hlower_mem⟩
@@ -240,7 +245,7 @@ theorem halfspaceClass_vcDim (d : ℕ) : vcDim (halfspaceClass d) = d + 1 := by
     intro n hn
     obtain ⟨W, hWc, hW⟩ := hn
     rw [← hWc]
-    exact hupper W hW
+    exact halfspaceClass_card_le_of_shatters d hW
   exact le_antisymm (csSup_le hne hle) (le_csSup hbdd hlower_mem)
 
 end Cslib.MachineLearning.PACLearning

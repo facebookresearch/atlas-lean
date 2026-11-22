@@ -83,8 +83,17 @@ theorem halfspace_const_true_mem (d : ℕ) :
   have h1 : decide (0 < (1 : ℝ)) = true := by simp
   rw [h1]
 
+/-- In dimension `0`, halfspaces have finite VC dimension. -/
+theorem halfspace_hasFiniteVCDim_zero : HasFiniteVCDim (halfspaceClass 0) :=
+  halfspaceClass_hasFiniteVCDim 0
+
+/-- In dimension `2`, halfspaces have finite VC dimension. -/
+theorem halfspace_hasFiniteVCDim_two : HasFiniteVCDim (halfspaceClass 2) :=
+  halfspaceClass_hasFiniteVCDim 2
+
 #print axioms halfspaceClass_shatters
 #print axioms halfspaceClass_not_shatters
 #print axioms halfspaceClass_vcDim
+#print axioms halfspaceClass_hasFiniteVCDim
 
 end CSLibExtTest.MachineLearning.PACLearning
