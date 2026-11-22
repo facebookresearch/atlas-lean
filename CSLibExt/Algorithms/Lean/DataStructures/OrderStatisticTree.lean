@@ -127,7 +127,8 @@ public theorem cacheCorrect_node {α : Type u} {key : α} {left right : Tree α}
   refine ⟨hLeft, hRight, ?_⟩
   simp [cachedSize_eq_numNodes hLeft, cachedSize_eq_numNodes hRight]
 
-private theorem erase_node {α : Type u} (key : α) (left right : Tree α) :
+/-- Erasing the sizes of a node keeps its key and erases both subtrees. -/
+theorem erase_node {α : Type u} (key : α) (left right : Tree α) :
     erase (node key left right) = .node key (erase left) (erase right) :=
   rfl
 
