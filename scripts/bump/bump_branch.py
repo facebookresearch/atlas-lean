@@ -33,11 +33,11 @@ the file resolved and staged:
   fields merged three ways and the two rationales combined;
   (two rationales combine when at most one side rewrote the base one: the rewrite
   stays, and the other side's added sentences follow it)
-- the staged file is main's: main's row (or the bump's, for the bump's file), as long as
-  the other side changed nothing else in the row;
-- the staged file is git's clean merge of the two sides, or --adjacent's: main's row
-  with the staged hash, its other fields merged three ways, and what the bump added to
-  the base rationale appended.
+- the staged file is git's clean merge of the two sides, or --adjacent's, even if that
+  equals one side: the staged hash, the other fields merged three ways, and the two
+  rationales combined;
+- a conflict resolved by keeping main's file: main's row (or the bump's, for the bump's
+  file), as long as the other side changed nothing else in the row.
 Anything else, such as a removed row, a file resolved by hand or put back to the merge
 base, stops with the rows to finish by hand. The manifest is then left parseable, with
 main's version of those rows, for `scripts/check_formal_math_sync.py
@@ -297,6 +297,13 @@ def merge_both_changed(path: str, b, o: dict, t: dict, versions) -> tuple[dict |
         return combined("main", "row", False)
     if data == ours and theirs == base:  # main changed only the row, a correction for instance
         return combined("bump", "row", True)
+    if data == base:
+        return None, "", "the staged file is back to the merge base, so neither side's rationale holds"
+    if data == files["auto"]:
+        # Git's own merge (or --adjacent's) keeps both sides' changes, even when it comes out
+        # equal to one side because that side's change contains the other's.
+        return combined("both", "distinct", data != theirs)
+    # A conflict resolved by keeping one side's file drops the other side's change.
     if data == theirs:
         if others(o) != others(b):
             return None, "", "the staged file is main's, but the bump also changed the row's other fields"
@@ -305,11 +312,7 @@ def merge_both_changed(path: str, b, o: dict, t: dict, versions) -> tuple[dict |
         if others(t) != others(b):
             return None, "", "the staged file is the bump's, but main also changed the row's other fields"
         return o, "bump", None
-    if data == base:
-        return None, "", "the staged file is back to the merge base, so neither side's rationale holds"
-    if data != files["auto"]:
-        return None, "", "the file was resolved by hand: record its rationale with --record-divergence"
-    return combined("both", "distinct", True)
+    return None, "", "the file was resolved by hand: record its rationale with --record-divergence"
 
 
 def merge_manifest(base_text: str, ours_text: str, theirs_text: str, versions) -> tuple[str, dict, list[str]]:

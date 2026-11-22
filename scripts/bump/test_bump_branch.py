@@ -108,6 +108,22 @@ class MergeManifestTest(unittest.TestCase):
         self.assertEqual((problems, row["published_sha256"]), ([], theirs2["published_sha256"]))
         self.assertEqual(row["rationale"], "The local lemma is from PR #12; restated (#961). Also: Attributed to its authors.")
 
+    def test_a_clean_merge_equal_to_one_side_keeps_both_accounts(self):
+        base = diverged("MathlibExt/A.lean", "A", "Port the lemma.")
+        ours = diverged(base["path"], "AX", "Port the lemma. Adapted for the bump.")
+        theirs = diverged(base["path"], "AXY", "Port the lemma. Restated (#961).")
+        clean = merged_file(b"AXY", ours=b"AX", theirs=b"AXY", base=b"A", auto=b"AXY")
+        text, _, problems = self.merge([base], [ours], [theirs], {base["path"]: clean})
+        row = bb.manifest_rows(text)[base["path"]]
+        self.assertEqual(problems, [])
+        self.assertEqual(row["rationale"], "Port the lemma. Restated (#961). Also: Adapted for the bump.")
+        self.assertEqual(row["published_sha256"], fms.sha256(b"AXY"))
+        clean = merged_file(b"AX", ours=b"AX", theirs=b"A1", base=b"A", auto=b"AX")
+        text, _, problems = self.merge([base], [ours], [theirs], {base["path"]: clean})
+        row = bb.manifest_rows(text)[base["path"]]
+        self.assertEqual((problems, row["published_sha256"]), ([], fms.sha256(b"AX")))
+        self.assertEqual(row["rationale"], "Port the lemma. Restated (#961). Also: Adapted for the bump.")
+
     def test_metadata_only_changes_merge_field_by_field(self):
         base = diverged("MathlibExt/A.lean", "A", "Port the lemma.")
         ours = {**base, "backport": "https://example.org/3"}
@@ -651,6 +667,23 @@ class GitTest(unittest.TestCase):
         self.assertIn("leaves it to you", proc.stdout)
         self.assertNotEqual(self.git("ls-files", "-u", "--", d).stdout, "")
         self.assertEqual(self.git("rev-parse", "HEAD").stdout, head)
+
+    def test_a_clean_merge_equal_to_mains_file_keeps_the_bumps_account(self):
+        files, rows = self.base_tree()
+        a = "MathlibExt/A.lean"
+        same = files[a].replace("def a := 1", "noncomputable def a := 1")
+        more = same.replace("theorem a_eq := rfl", "theorem a_eq : a = 1 := rfl")
+        self.git("checkout", "-q", "-b", "bump")
+        self.write(*self.edit(files, rows, a, same, f"Port {a}. {BUMP}"))
+        self.git("checkout", "-q", "main")
+        self.write(*self.edit(files, rows, a, more, f"Port {a}. Type a_eq (#8)."), message="Type a_eq (#8)")
+        self.git("checkout", "-q", "bump")
+        proc = self.tool("merge-main", "--main", "main")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertEqual((self.repo / a).read_text(), more)
+        row = bb.manifest_rows((self.repo / bb.MANIFEST).read_text())[a]
+        self.assertEqual(row["rationale"], f"Port {a}. Type a_eq (#8). {BUMP}")
+        self.assertEqual(row["published_sha256"], fms.sha256(more.encode()))
 
     def test_refuses_a_dirty_tree(self):
         self.base_tree()
