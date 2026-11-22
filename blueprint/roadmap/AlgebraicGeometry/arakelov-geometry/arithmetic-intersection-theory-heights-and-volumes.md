@@ -66,9 +66,9 @@ complex conjugation, and $d^c = \frac{i}{4\pi}(\bar\partial - \partial)$.
 Heights of algebraic numbers and of points of projective space, and Arakelov divisors of number
 fields, are outside this node.
 
-## Depends on
+## Proof depends on
 
-- [Vanishing theorems and resolution of singularities in characteristic zero](../birational-geometry/vanishing-theorems-and-resolution-in-characteristic-zero.md)
+- [Vanishing theorems and resolution of singularities in characteristic zero](../birational-geometry/vanishing-theorems-and-resolution-in-characteristic-zero.md), for the Poincaré–Lelong formula and the existence of a generic resolution of singularities only
 
 ## Expansion
 

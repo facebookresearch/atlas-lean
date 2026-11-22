@@ -67,8 +67,8 @@ the trace formula and the cohomology of arithmetic groups are outside this node.
 
 ## Depends on
 
-- [Smooth representations of p-adic GLₙ and the local Langlands correspondence](../reductive-groups-over-local-fields/smooth-representations-of-p-adic-gl-n-and-local-langlands.md)
-- [Representations of U(p, q)](../reductive-groups-over-local-fields/representations-of-u-p-q.md)
+- [Smooth representations of p-adic GLₙ and the local Langlands correspondence](../reductive-groups-over-local-fields/smooth-representations-of-p-adic-gl-n-and-local-langlands.md), for the local components of automorphic representations of $\mathrm{GL}_n$ at the finite places
+- [Representations of U(p, q)](../reductive-groups-over-local-fields/representations-of-u-p-q.md), for the local components of automorphic representations of unitary groups at the real places
 
 ## Expansion
 

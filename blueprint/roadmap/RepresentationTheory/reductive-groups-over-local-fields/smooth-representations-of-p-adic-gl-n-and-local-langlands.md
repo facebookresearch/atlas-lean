@@ -85,7 +85,7 @@ Representations of real groups and the Weil representation are outside this node
 
 ## Depends on
 
-- [Galois cohomology and p-adic Hodge theory](../../NumberTheory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md)
+- [Galois cohomology and p-adic Hodge theory](../../NumberTheory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md), for the Weil–Deligne representations on the Galois side of the local Langlands correspondence
 
 ## Expansion
 

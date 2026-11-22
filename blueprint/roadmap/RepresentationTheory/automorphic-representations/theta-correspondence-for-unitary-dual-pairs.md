@@ -72,7 +72,9 @@ node.
 
 ## Depends on
 
-- [Representations of U(p, q)](../reductive-groups-over-local-fields/representations-of-u-p-q.md)
+- [Representations of U(p, q)](../reductive-groups-over-local-fields/representations-of-u-p-q.md), for the representations of the real unitary groups in the local correspondence
+- [Topological idele class group](../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adeles-and-ideles/topological-idele-class-group.md), on which the global characters $\varepsilon_{E/F}$ and the splitting characters are defined
+- [Automorphic representations of GLₙ and unitary groups](automorphic-representations-of-gl-n-and-unitary-groups.md), for the cusp forms and cuspidal automorphic representations of the global theta lifts and the Rallis inner product formula
 
 ## Expansion
 
