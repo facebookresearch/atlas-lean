@@ -32,7 +32,9 @@ namespace MetaMathlibExt
 open ArithmeticFunction
 open scoped Nat
 
-/-- Every positive integer is a practical number plus a triangular number.
+/-- **Every positive integer is a practical number plus a triangular number.** For every natural
+number $n > 0$ there are a practical number $q$ and a natural number $k$ with
+$n = q + k(k+1)/2$; the case $k = 0$, where the triangular number is $0$, is allowed.
 
 Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
 Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Theorem 1
@@ -40,8 +42,11 @@ Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Theorem 1
 public theorem_wanted exists_practical_add_triangular (n : ℕ) (hn : 0 < n) :
     ∃ q k : ℕ, IsPracticalNumber q ∧ n = q + Nat.polygonalNumber 3 k
 
-/-- For `s > 3`, every sufficiently large positive integer is a practical number plus two
-`s`-gonal numbers.
+/-- **Large integers as a practical number plus two polygonal numbers.** Let $s > 3$ be a natural
+number and, for a natural number $x$, let $P_s(x) = (s-2)\binom{x}{2} + x$ be the $x$-th
+$s$-gonal number, so that $P_s(0) = 0$. There is a natural number $N$ such that every natural
+number $n > N$ can be written as $n = q + P_s(x) + P_s(y)$ with $q$ a practical number and
+$x, y$ natural numbers.
 
 Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
 Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Theorem 2
@@ -50,7 +55,8 @@ public theorem_wanted eventually_practical_add_two_polygonal (s : ℕ) (hs : 3 <
     ∃ N : ℕ, ∀ n > N, ∃ q x y : ℕ,
       IsPracticalNumber q ∧ n = q + Nat.polygonalNumber s x + Nat.polygonalNumber s y
 
-/-- For positive `m, n` there is `1 ≤ x ≤ 2^m - 1` with `x² ≡ 8n + 1 (mod 2^(m+2))`.
+/-- **Square roots modulo powers of two.** For all natural numbers $m > 0$ and $n > 0$ there is
+a natural number $x$ with $1 \le x \le 2^m - 1$ and $x^2 \equiv 8n + 1 \pmod{2^{m+2}}$.
 
 Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
 Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 3
@@ -58,7 +64,9 @@ Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 3
 public theorem_wanted exists_sq_modEq_eight_mul_add_one (m n : ℕ) (hm : 0 < m) (hn : 0 < n) :
     ∃ x : ℕ, 1 ≤ x ∧ x ≤ 2 ^ m - 1 ∧ x ^ 2 ≡ 8 * n + 1 [MOD 2 ^ (m + 2)]
 
-/-- If `m` is practical and `1 ≤ n ≤ σ(m) + 1`, then `m n` is practical.
+/-- **Products of a practical number with small factors.** Let $m$ be a practical number and let
+$\sigma(m)$ denote the sum of the positive divisors of $m$. Then for every natural number $n$
+with $1 \le n \le \sigma(m) + 1$, the product $mn$ is a practical number.
 
 Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
 Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 4
@@ -67,7 +75,9 @@ public theorem_wanted isPracticalNumber_mul_of_le_sigma_add_one (m n : ℕ)
     (hm : IsPracticalNumber m) (hn : 0 < n) (hnm : n ≤ sigma 1 m + 1) :
     IsPracticalNumber (m * n)
 
-/-- For odd `x`, `(x² - 1) / 8` is a triangular number.
+/-- **Odd squares and triangular numbers.** For every odd natural number $x$, the number
+$(x^2 - 1)/8$ is a triangular number: there is a natural number $k$ with
+$(x^2 - 1)/8 = p_3(k)$, where $p_3(k) = k(k+1)/2$ is the $k$-th $3$-gonal number.
 
 Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
 Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 5
@@ -75,8 +85,10 @@ Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 5
 public theorem_wanted sq_sub_one_div_eight_eq_triangular (x : ℕ) (hx : Odd x) :
     ∃ k : ℕ, (x ^ 2 - 1) / 8 = Nat.polygonalNumber 3 k
 
-/-- For an odd prime `p`, positive `n` and `s > 3`, some positive `x, y` have
-`P_s(x) + P_s(y) ≡ n (mod p)`.
+/-- **Sums of two polygonal numbers modulo an odd prime.** For a natural number $s > 3$ and a
+natural number $x$, let $P_s(x) = (s-2)\binom{x}{2} + x$ be the $x$-th $s$-gonal number. For
+every odd prime $p$ and every natural number $n > 0$ there are natural numbers $x, y > 0$ with
+$P_s(x) + P_s(y) \equiv n \pmod{p}$.
 
 Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
 Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 6
@@ -85,8 +97,11 @@ public theorem_wanted exists_polygonal_add_polygonal_modEq_prime (p n s : ℕ) (
     (hp2 : p ≠ 2) (hn : 0 < n) (hs : 3 < s) :
     ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ Nat.polygonalNumber s x + Nat.polygonalNumber s y ≡ n [MOD p]
 
-/-- For positive `n` and `s > 3` there are positive `x, y` such that
-`P_s(x₁) + P_s(y₁) ≡ n (mod 2)` for all positive `x₁ ≡ x`, `y₁ ≡ y (mod 4)`.
+/-- **Parity of sums of two polygonal numbers.** For a natural number $s > 3$ and a natural
+number $x$, let $P_s(x) = (s-2)\binom{x}{2} + x$ be the $x$-th $s$-gonal number. For every
+natural number $n > 0$ there are natural numbers $x, y > 0$ such that
+$P_s(x_1) + P_s(y_1) \equiv n \pmod{2}$ for all natural numbers $x_1, y_1 > 0$ with
+$x_1 \equiv x \pmod{4}$ and $y_1 \equiv y \pmod{4}$.
 
 Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
 Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 7
@@ -96,8 +111,9 @@ public theorem_wanted exists_polygonal_add_polygonal_modEq_two (n s : ℕ) (hn :
     ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ ∀ x₁ y₁ : ℕ, 0 < x₁ → 0 < y₁ → x₁ ≡ x [MOD 4] → y₁ ≡ y [MOD 4] →
       Nat.polygonalNumber s x₁ + Nat.polygonalNumber s y₁ ≡ n [MOD 2]
 
-/-- For a prime `p ≡ 1 (mod 4)` and positive `n, k` there are positive `x, y` with
-`x² + y² ≡ n (mod p^k)` and `p ∤ y`.
+/-- **Sums of two squares modulo prime powers.** Let $p$ be a prime with $p \equiv 1 \pmod{4}$.
+For all natural numbers $n > 0$ and $k > 0$ there are natural numbers $x, y > 0$ with
+$x^2 + y^2 \equiv n \pmod{p^k}$ and $p \nmid y$.
 
 Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
 Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 8
@@ -106,10 +122,14 @@ public theorem_wanted exists_sq_add_sq_modEq_prime_pow (p n k : ℕ) (hp : p.Pri
     (hp4 : p % 4 = 1) (hn : 0 < n) (hk : 0 < k) :
     ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ x ^ 2 + y ^ 2 ≡ n [MOD p ^ k] ∧ ¬ p ∣ y
 
-/-- For `s > 3` there is an odd prime `p ∤ s - 2` such that for all positive `k, n` some
-positive `x, y` have `P_s(x) + P_s(y) ≡ n (mod p^k)`. The witness is required to satisfy
-`p ≡ 1 (mod 4)` (hence odd), as chosen in the paper's proof via Lemma 8 (arXiv Lemma 4.3);
-the printed statement asks only for an odd prime.
+/-- **Sums of two polygonal numbers modulo prime powers.** For a natural number $s > 3$ and a
+natural number $x$, let $P_s(x) = (s-2)\binom{x}{2} + x$ be the $x$-th $s$-gonal number. There
+is a prime $p$ with $p \equiv 1 \pmod{4}$ and $p \nmid s - 2$ such that for all natural numbers
+$k > 0$ and $n > 0$ there are natural numbers $x, y > 0$ with
+$P_s(x) + P_s(y) \equiv n \pmod{p^k}$.
+
+The paper's statement asks only for an odd prime; the condition $p \equiv 1 \pmod{4}$ is the
+choice made in its proof via Lemma 8 (arXiv Lemma 4.3).
 
 Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
 Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 9
@@ -119,9 +139,13 @@ public theorem_wanted exists_prime_polygonal_add_polygonal_modEq_prime_pow (s : 
     ∃ p : ℕ, p.Prime ∧ p % 4 = 1 ∧ ¬ p ∣ s - 2 ∧ ∀ k n : ℕ, 0 < k → 0 < n →
       ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ Nat.polygonalNumber s x + Nat.polygonalNumber s y ≡ n [MOD p ^ k]
 
-/-- For `s > 3` and every natural `c` there is a constant `A` with
-`2 P_s(2 c x) ≤ A x²` for all `x ≥ 1`. The paper states this for the specific prime
-`c = p_{i(s)}` of Lemma 9 (arXiv Lemma 4.4), with `x` real; here `c` is arbitrary and `x` natural.
+/-- **Quadratic upper bound for polygonal numbers.** For a natural number $s > 3$ and a natural
+number $x$, let $P_s(x) = (s-2)\binom{x}{2} + x$ be the $x$-th $s$-gonal number. For every natural
+number $c$ there is a natural number $A$ such that $2 P_s(2cx) \le A x^2$ for every natural
+number $x \ge 1$.
+
+The paper states this only for one specific prime $c$, the prime chosen in Lemma 9 (arXiv
+Lemma 4.4), and for real $x$; here $c$ is an arbitrary natural number and $x$ is a natural number.
 
 Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
 Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 10
@@ -129,7 +153,8 @@ Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 10
 public theorem_wanted exists_two_polygonal_two_mul_le_mul_sq (s c : ℕ) (hs : 3 < s) :
     ∃ A : ℕ, ∀ x : ℕ, 1 ≤ x → 2 * Nat.polygonalNumber s (2 * c * x) ≤ A * x ^ 2
 
-/-- A practical number divisible by neither `3` nor `4` is `1` or `2`.
+/-- **Practical numbers divisible by neither 3 nor 4.** If $q$ is a practical number that is
+divisible by neither $3$ nor $4$, then $q = 1$ or $q = 2$.
 
 Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
 Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 11
@@ -138,10 +163,12 @@ public theorem_wanted isPracticalNumber_eq_one_or_two (q : ℕ) (hq : IsPractica
     (h3 : ¬ 3 ∣ q) (h4 : ¬ 4 ∣ q) :
     q = 1 ∨ q = 2
 
-/-- (a) If `s ≥ 3` and `s ≡ 0` or `4 (mod 12)`, infinitely many positive integers are not a
-practical number plus an `s`-gonal number. (b) The number `E(s)` of positive integers that
-are not a practical number plus two `s`-gonal numbers tends to infinity: for every `M`, all
-large `s` have at least `M` such integers.
+/-- **Exceptions to sums of a practical number and polygonal numbers.** (a) Let $s \ge 3$ with
+$s \equiv 0$ or $s \equiv 4 \pmod{12}$. Then there are infinitely many positive integers $n$ that
+cannot be written as $n = q + p_s(m)$ with $q$ a practical number and $m \ge 0$ an integer, where
+$p_s(m)$ is the $m$-th $s$-gonal number. (b) For every natural number $M$ there is a natural
+number $S$ such that for every $t \ge S$ there are at least $M$ positive integers $n$ that cannot
+be written as $n = q + p_t(x) + p_t(y)$ with $q$ a practical number and integers $x, y \ge 0$.
 
 Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
 Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Proposition 12

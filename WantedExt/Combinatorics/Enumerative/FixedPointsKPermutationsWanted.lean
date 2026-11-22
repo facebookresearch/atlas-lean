@@ -31,6 +31,7 @@ public import Mathlib.GroupTheory.Perm.Cycle.Type
 public import Mathlib.Probability.CDF
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import MathlibExt.Combinatorics.Enumerative.Stirling
+public import MathlibExt.Combinatorics.Sequences.NewtonInequalities
 
 namespace MetaMathlibExt
 
@@ -197,28 +198,6 @@ public theorem_wanted derangementCyclePolynomial_real_roots {n : ℕ} (hn : 2 �
     let D : ℝ[X] := ∑ k ∈ Finset.Icc 1 n,
       C (kPermFixedPointCount (n + k) k 0 : ℝ) * X ^ (k - 1)
     D.Splits
-
-/-- **Positive sequences satisfying Newton's inequalities are unimodal.** Let $n$ be a natural
-number and let $(a_j)_{j \ge 0}$ be a sequence of real numbers with $a_j > 0$ for every $j \le n$,
-such that
-$$a_j^2 \ge \frac{j + 1}{j} \cdot \frac{n - j + 1}{n - j} \, a_{j-1} a_{j+1}$$
-for every $j$ with $1 \le j \le n - 1$. Then there is an $m \le n$ such that $(a_j)$ is strictly
-increasing on $\{0, \dots, m\}$, and either $(a_j)$ is strictly decreasing on $\{m, \dots, n\}$,
-or $m < n$, $a_m = a_{m+1}$ and $(a_j)$ is strictly decreasing on $\{m + 1, \dots, n\}$.
-
-The paper's "SLC" conclusion is not stated (the abbreviation is not defined in the extracted
-statement).
-
-Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
-INTEGERS 24 (2024), Article A54, Corollary 1 (`integers-2024-A54-cor-1`). -/
-public theorem_wanted unimodal_of_newton_inequalities {a : ℕ → ℝ} {n : ℕ}
-    (hpos : ∀ j ≤ n, 0 < a j)
-    (hnewton : ∀ j, 1 ≤ j → j ≤ n - 1 →
-      ((j + 1 : ℝ) / j) * (((n : ℝ) - j + 1) / ((n : ℝ) - j)) * (a (j - 1) * a (j + 1)) ≤
-        a j ^ 2) :
-    ∃ m ≤ n, StrictMonoOn a (Set.Icc 0 m) ∧
-      (StrictAntiOn a (Set.Icc m n) ∨
-        (m < n ∧ a m = a (m + 1) ∧ StrictAntiOn a (Set.Icc (m + 1) n)))
 
 /-- **Unimodality of fixed-point counts for permutations with a given number of cycles.** Write
 $a(n, k, j)$ for the number of permutations of an $n$-element set with exactly $k$ cycles (fixed

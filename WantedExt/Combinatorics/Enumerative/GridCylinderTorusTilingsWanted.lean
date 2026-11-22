@@ -516,16 +516,8 @@ public theorem_wanted squareGrid_r3f {T : Type*} [Fintype T] [DecidableEq T]
     fixedTilingCount (cellR3F n) σ =
       Fintype.card T ^ ((n ^ 2 - n) / 2) * tileFixedCount σ 1 ^ n
 
-/-- **Solution of $x = -1-x-a$ modulo odd $n$.** Let $n$ be a positive odd integer and
-$a \in \mathbb{Z}/n$. Then the set of $x \in \mathbb{Z}/n$ with $x = -1-x-a$ is the singleton
-$\{k(-1-a)\}$, where $k$ is the residue mod $n$ of the integer $(n+1)/2$.
-
-Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
-        Journal of Integer Sequences 27 (2024), Article 24.6.1, Lemma 25. -/
-public theorem_wanted reflection_shift_solutions_odd (n : ℕ) [NeZero n]
-    (a : ZMod n) (hn : Odd n) :
-    {x : ZMod n | x = -1 - x - a} =
-      {(((n + 1) / 2 : ℕ) : ZMod n) * (-1 - a)}
+-- The case of an odd modulus, `reflection_shift_solutions_odd`, is proved in
+-- `MathlibExt.Combinatorics.Enumerative.GridCylinderTorusTilings`.
 
 /-- **Solutions of $x = -1-x-a$ modulo even $n$ for odd $a$.** Let $n$ be a positive even
 integer and $a \in \mathbb{Z}/n$ whose representative $\bar a \in \{0, \dots, n-1\}$ is odd.
