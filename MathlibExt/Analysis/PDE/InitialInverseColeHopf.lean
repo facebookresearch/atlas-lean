@@ -147,17 +147,21 @@ private theorem positive_slice {u : ℝ → ℝ → ℝ}
   rw [← contDiffOn_univ]
   exact hu.comp (contDiffOn_const.prodMk contDiffOn_id) (fun _ hx => ⟨ht, hx⟩)
 
-private theorem moment_hasDerivAt {u : ℝ → ℝ → ℝ} {ν t : ℝ}
-    (hu : ContDiffOn ℝ 2 (Function.uncurry u) (Ioi 0 ×ˢ univ)) (ht : 0 < t)
+/-- Averaged Burgers flux identity on any open time domain. -/
+theorem initialInverseMoment_hasDerivAt {u : ℝ → ℝ → ℝ} {ν t : ℝ}
+    {I : Set ℝ} (hI : IsOpen I)
+    (hu : ContDiffOn ℝ 2 (Function.uncurry u) (I ×ˢ univ)) (ht : t ∈ I)
     (hb : ∀ x, deriv (fun s => u s x) t + u t x * deriv (u t) x =
       ν * iteratedDeriv 2 (u t) x) (a : ℝ) :
     HasDerivAt (initialInverseMoment u a)
       (ν * (u t (a + 1) - u t a) - (∫ y in a..a + 1, u t y ^ 2) / 2 -
         (ν * deriv (u t) a - u t a ^ 2 / 2)) t := by
-  have hs := positive_slice hu ht
-  have hd := OnInterval.contDiffOn_spaceDeriv isOpen_Ioi isOpen_univ hu
+  have hs : ContDiff ℝ 2 (u t) := by
+    rw [← contDiffOn_univ]
+    exact hu.comp (contDiffOn_const.prodMk contDiffOn_id) (fun _ hx => ⟨ht, hx⟩)
+  have hd := OnInterval.contDiffOn_spaceDeriv hI isOpen_univ hu
     (by norm_num) (m := 1) (by norm_num)
-  have hdt := OnInterval.contDiffOn_timeDeriv isOpen_Ioi isOpen_univ hu
+  have hdt := OnInterval.contDiffOn_timeDeriv hI isOpen_univ hu
     (by norm_num) (m := 1) (by norm_num)
   have htc : Continuous (fun y => deriv (fun s => u s y) t) := by
     rw [← continuousOn_univ]
@@ -167,9 +171,9 @@ private theorem moment_hasDerivAt {u : ℝ → ℝ → ℝ} {ν t : ℝ}
   let q : ℝ → ℝ := fun y => ν * deriv (u t) y - u t y ^ 2 / 2
   have hq : Continuous q := (hxc.const_mul ν).sub ((hs.continuous.pow 2).div_const 2)
   have hq' (y : ℝ) : HasDerivAt q (deriv (fun s => u s y) t) y := by
-    have h0 := OnInterval.space_derivative isOpen_Ioi isOpen_univ hu (by norm_num)
+    have h0 := OnInterval.space_derivative hI isOpen_univ hu (by norm_num)
       t y ht (mem_univ _)
-    have h1 := OnInterval.space_derivative isOpen_Ioi isOpen_univ hd (by norm_num)
+    have h1 := OnInterval.space_derivative hI isOpen_univ hd (by norm_num)
       t y ht (mem_univ _)
     convert (h1.const_mul ν).sub ((h0.pow 2).div_const 2) using 1
     have he := hb y
@@ -177,16 +181,16 @@ private theorem moment_hasDerivAt {u : ℝ → ℝ → ℝ} {ν t : ℝ}
     simp only [Nat.cast_ofNat, Nat.reduceSub, pow_one]
     linarith
   have hw : ContDiffOn ℝ 2
-      (Function.uncurry (fun s y => (a + 1 - y) * u s y)) (Ioi 0 ×ˢ univ) := by
+      (Function.uncurry (fun s y => (a + 1 - y) * u s y)) (I ×ˢ univ) := by
     simpa only [Function.uncurry_def, Pi.mul_apply, Pi.sub_apply] using!
       (contDiffOn_const (c := a + 1) |>.sub contDiffOn_snd).mul hu
-  have hm := OnInterval.integral_hasDerivAt_time isOpen_Ioi isOpen_univ ordConnected_univ
+  have hm := OnInterval.integral_hasDerivAt_time hI isOpen_univ ordConnected_univ
     hw a (a + 1) t (mem_univ _) (mem_univ _) ht
   have he : (∫ y in a..a + 1, deriv (fun s => (a + 1 - y) * u s y) t) =
       ∫ y in a..a + 1, (a + 1 - y) * deriv (fun s => u s y) t := by
     apply intervalIntegral.integral_congr
     intro y _
-    exact ((OnInterval.time_derivative isOpen_Ioi isOpen_univ hu (by norm_num)
+    exact ((OnInterval.time_derivative hI isOpen_univ hu (by norm_num)
       t y ht (mem_univ _)).const_mul (a + 1 - y)).deriv
   rw [he] at hm
   have hip := intervalIntegral.integral_mul_deriv_eq_deriv_mul_of_hasDerivAt
@@ -227,8 +231,8 @@ theorem initialInverseNormalization_hasDerivAt {u : ℝ → ℝ → ℝ} {ν t :
       (hr.mono (by rw [uIcc_of_le ht.le]; exact fun _ hs => hs.1)).intervalIntegrable
       (ContinuousOn.stronglyMeasurableAtFilter isOpen_Ioi (hr.mono Ioi_subset_Ici_self) t ht)
       (hr.continuousAt (Ici_mem_nhds ht))
-  convert (((moment_hasDerivAt hu ht hb a).sub_const (initialInverseMoment u a 0)).div_const
-    (2 * ν)).add hi using 1
+  convert (((initialInverseMoment_hasDerivAt isOpen_Ioi hu ht hb a).sub_const
+    (initialInverseMoment u a 0)).div_const (2 * ν)).add hi using 1
   · rfl
   · unfold normalizationRate initialInverseRate
     field_simp
