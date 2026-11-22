@@ -2991,14 +2991,15 @@ def link_view(index) -> dict:
             # A row an earlier sync wrote with a module and a name, and that credits nothing else, links the declaration
             # the index resolves them to, as annotation_key reads it: one that resolves to none, or to several, links
             # none the Lean has.
-            pair = legacy_pair(row)
-            if pair is None or "held" in row["extensions"][OWN] or legacy_lean_name(row["extensions"][OWN], index):
-                continue
             try:
                 if page_owner(row)[0] != "none":
                     continue
             except CreditError:
                 continue  # Left to the rows Autoform cannot read, below.
+            pair = legacy_pair(row)
+            if (pair is None or not all(isinstance(part, str) for part in pair) or "held" in row["extensions"][OWN]
+                    or legacy_lean_name(row["extensions"][OWN], index)):
+                continue
             name = f"{pair[1]} in {pair[0]}{BY_MODULE_AND_NAME}"
         # Named as the working tree's file, which a copy of the wiki (see sync_output) stands for.
         where = location(wiki.ROOT / path.relative_to(LINKS.parent.parent), number)
@@ -3030,7 +3031,9 @@ def link_view(index) -> dict:
                 except CreditError as error:
                     words = str(error)
                 else:
-                    if owner == "none" and legacy_pair(row) is not None and "held" not in row["extensions"][OWN]:
+                    pair = legacy_pair(row) if owner == "none" else None
+                    if (pair is not None and all(isinstance(part, str) for part in pair)
+                            and "held" not in row["extensions"][OWN]):
                         owner, name = "atlas", legacy_lean_name(row["extensions"][OWN], index)
                     if owner != "none" and name and page.name != "README.md":
                         pages_of[(owner, name)].add(page)

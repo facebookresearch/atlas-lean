@@ -4082,6 +4082,11 @@ class ScopedRun(unittest.TestCase):
         self.groups()
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((status, report["errors"]), (0, []))
+        # Its module and name are never read, even when they name nothing.
+        links.write_text(links.read_text().replace('"module": "MathlibExt.Algebra.Groups"', '"module": null'))
+        with patch.object(sync, "legacy_lean_name", side_effect=AssertionError("read the module and name")):
+            status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (0, True))
 
     def test_a_row_the_run_cannot_settle_stops_it_before_it_writes(self) -> None:
         # Every row the run may add is checked before anything is written: one that would not credit its declaration
