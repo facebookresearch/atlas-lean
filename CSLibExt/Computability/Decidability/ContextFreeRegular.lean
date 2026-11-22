@@ -101,9 +101,10 @@ def interEmptyB (g : EncodedCFG T) (D : EncodedDFA T) : Bool :=
 
 /-! ## Stabilization -/
 
-/-- **Start states of a right-hand side are states of the DFA.** Let $D$ be an encoded DFA, $R$ a
-list of natural numbers and $q$ one of the states of $D$. Then for every right-hand side $\beta$,
-every start state of $\beta$ for $q$ given $R$ is one of the states of $D$. -/
+/-- **For a state of the DFA, all computed start states of a right-hand side belong to the DFA.**
+Let $D$ be an encoded DFA, $R$ a list of natural numbers and $q$ one of the states of $D$. Then for
+every right-hand side $\beta$, every start state of $\beta$ for $q$ given $R$ is one of the states
+of $D$. -/
 theorem dfaStarts_subset {D : EncodedDFA T} {R : List ℕ} {q : ℕ} (hq : q ∈ D.states)
     (rhs : List (ℕ ⊕ T)) : ∀ p ∈ dfaStarts D R q rhs, p ∈ D.states := by
   cases rhs with

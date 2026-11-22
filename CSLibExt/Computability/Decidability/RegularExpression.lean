@@ -456,11 +456,13 @@ theorem flags_append_singleton (l : List (RegexNode α)) (n : RegexNode α) :
   rw [flags, List.foldl_append, ← flags]
   rfl
 
-/-- **Correctness of the flag pass.** For a list $l$ of nodes and a natural number $k$, let $f_k$
-be the entry at position $k$ of the flags of $l$, or the zero flags
-$(\mathrm{false}, \mathrm{false}, \mathrm{false})$ if $k$ is at least the length of $l$. Then
-$f_k$ describes the language of the regular expression at node $k$ of the encoding $l$ when $k$
-is less than the length of $l$, and describes the empty language otherwise. -/
+/-- **Correctness of the flag pass.** For a list $l$ of nodes and a natural number $k$, let $f_k$ be
+the entry at position $k$ of the flags of $l$, or the zero flags
+$(\mathrm{false}, \mathrm{false}, \mathrm{false})$ if $k$ is at least the length of $l$. Then $f_k$
+describes the language $L$ of the regular expression at node $k$ of the encoding $l$ when $k$ is
+less than the length of $l$, and describes the empty language otherwise. Here a triple describes $L$
+when its first entry says whether $L$ is nonempty, its second whether $L$ contains a nonempty word,
+and its third whether $L$ is infinite. -/
 theorem flagsOK_flags (l : List (RegexNode α)) :
     ∀ k, FlagsOK ((flags l).getD k zeroFlags)
       (if k < l.length then (⟨l⟩ : EncodedRegex α).regexAt k else 0).matches' := by

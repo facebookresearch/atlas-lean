@@ -178,7 +178,8 @@ finite alphabet with finitely many states. For every natural number $n$ at least
 states of $M$, the early-stopping reachability search for $M$ from the empty set with at most $n$
 rounds returns the set of reachable states of $M$.
 
-Since the search stops once a round changes nothing, a generous bound costs nothing. -/
+Since the search stops once a round changes nothing, increasing the bound beyond the number of
+states does not change the result, and no further rounds run once a round changes nothing. -/
 theorem reachableWithin_eq_reachable {n : ℕ} (hn : Fintype.card σ ≤ n) :
     M.reachableWithin n ∅ = M.reachable := by
   rw [reachableWithin_eq_iterate, reachable, Finset.lfpFin, ← Nat.sub_add_cancel hn,
@@ -197,7 +198,8 @@ the start state of $M$, whose transition function is that of $M$ restricted to t
 whose accepting states are those of them that $M$ accepts.
 
 Since $n \ge |\sigma|$, the search finds exactly the states that some word leads to from the start
-state of $M$, and it stops as soon as a round adds nothing, so a larger bound costs nothing. -/
+state of $M$, and it stops as soon as a round adds nothing, so a larger bound does not change the
+result. -/
 def accessiblePartWithin (n : ℕ) (hn : Fintype.card σ ≤ n) :
     DFA α {s // s ∈ M.reachableWithin n ∅} where
   step p a := ⟨M.step p.1 a, (M.mem_reachableWithin_iff hn).2 <| by

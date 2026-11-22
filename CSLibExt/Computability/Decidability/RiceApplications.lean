@@ -94,10 +94,10 @@ machines: some multi-stack machine halts on the binary encoding of a code $c$ ex
 function coded by $c$ is defined on at least one input. -/
 theorem tm2CoRecognizable_empty : TM2CoRecognizable EmptyCode := tm2Recognizable_not_empty
 
-/-- **Emptiness is not recognizable.** The set $E$ of codes of partial recursive functions on
-$\mathbb{N}$ that are defined on no input is not recognizable by multi-stack machines: no
-multi-stack machine, started on the binary encoding of a code, halts exactly when the code is
-in $E$.
+/-- **Codes of partial recursive functions with empty domain are not recognizable.** The set $E$ of
+codes of partial recursive functions on $\mathbb{N}$ that are defined on no input is not
+recognizable by multi-stack machines: no multi-stack machine, started on the binary encoding of a
+code, halts exactly when the code is in $E$.
 
 Since $E$ is co-recognizable, it would otherwise be decidable, by Post's theorem. -/
 theorem not_tm2Recognizable_empty : ¬TM2Recognizable EmptyCode := fun h ↦

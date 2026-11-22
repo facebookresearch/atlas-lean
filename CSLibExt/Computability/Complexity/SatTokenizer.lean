@@ -652,11 +652,11 @@ theorem clauses_fail : ∀ (n : ℕ) (r w : List Bool) (t b : List Sym) (v : Boo
 
 /-! ### The whole input -/
 
-/-- **The tokenizer accepts when the formula stack is empty.** Let $w$, $t$, $b$ be lists of
-symbols, $i, j \in \mathbb{N}$ and $v$ a bit. In exactly one step, the SAT tokenizer goes from the
-label $\mathsf{fin}$ with internal bit $v$, empty formula stack $X$, stacks $W$, $T$, $B$ holding
-$w$, $t$, $b$, and $i$ and $j$ marks on the clause and literal counters, to the label
-$\mathsf{acc}$ with internal bit false and all stacks unchanged. -/
+/-- **At $\mathsf{fin}$, an empty formula stack takes the tokenizer to $\mathsf{acc}$ in one step.**
+Let $w$, $t$, $b$ be lists of symbols, $i, j \in \mathbb{N}$ and $v$ a bit. In exactly one step, the
+SAT tokenizer goes from the label $\mathsf{fin}$ with internal bit $v$, empty formula stack $X$,
+stacks $W$, $T$, $B$ holding $w$, $t$, $b$, and $i$ and $j$ marks on the clause and literal
+counters, to the label $\mathsf{acc}$ with internal bit false and all stacks unchanged. -/
 theorem fin_acc (w t b : List Sym) (cc lc : ℕ) (v : Bool) :
     Run prog 1 ⟨some .fin, v, st [] w t b cc lc⟩ ⟨some .acc, false, st [] w t b cc lc⟩ :=
   Run.single (by simp [prog, TM2.stepAux])
