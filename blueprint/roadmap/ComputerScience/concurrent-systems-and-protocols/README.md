@@ -17,4 +17,5 @@ Specific concurrent or distributed systems and their verified properties: deadlo
 - [Paxos consensus](paxos-consensus/README.md)
 - [Synchronous consensus with crash failures](synchronous-consensus-with-crash-failures/README.md)
 - [Two-phase commit](two-phase-commit/README.md)
+- [Two-process bakery algorithm](two-process-bakery-algorithm/README.md)
 - [Vector clocks](vector-clocks/README.md)

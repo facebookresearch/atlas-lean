@@ -73,3 +73,25 @@ end ControlTheory.StateSpaceCoeffs
 #print axioms ControlTheory.StateSpaceCoeffs.dtTraj_unique
 #print axioms ControlTheory.StateSpaceCoeffs.dtOutput_apply
 #print axioms ControlTheory.StateSpaceCoeffs.dtOutput_closedForm
+
+namespace ControlTheory.StateSpaceCoeffs
+
+-- The feedthrough Markov parameter is `D`.
+example : markov acc 0 = acc.D :=
+  markov_zero acc
+
+-- The unit-sample response is the Markov sequence itself.
+example : dtOutput acc (fun k => if k = 0 then (1 : ℝ) else 0) 0 2 = markov acc 2 1 :=
+  dtOutput_unitSample acc 1 2
+
+-- Zero-state output with constant unit input over two steps is `2`:
+-- the trajectory accumulates `0, 1, 2` and `C = 1`, `D = 0`.
+example : dtOutput acc (fun _ => (1 : ℝ)) 0 2 = 2 := by
+  norm_num [acc, dtOutput, dtTraj]
+
+-- The same value through the Markov convolution formula.
+example : dtOutput acc (fun _ => (1 : ℝ)) 0 2 =
+    ∑ k ∈ Finset.range 3, markov acc k 1 :=
+  zeroState_output_eq_sum_markov acc (fun _ => (1 : ℝ)) 2
+
+end ControlTheory.StateSpaceCoeffs

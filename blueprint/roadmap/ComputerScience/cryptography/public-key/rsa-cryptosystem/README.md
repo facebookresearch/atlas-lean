@@ -22,3 +22,7 @@
 - [RSA-CRT decryption is correct](crt-decrypt-eq.md)
 - [RSA-CRT decryption with the standard exponents](crt-decrypt-mod-eq.md)
 - [RSA key from the totient condition](of-totient.md)
+
+## Public keys
+
+- [Textbook RSA encryption under a public key](encrypt-2.md)

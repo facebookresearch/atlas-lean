@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Biology.StatisticalGenetics.GeneConstraint
+public import MathlibExt.Probability.Statistics.PoissonLikelihood
 public import CSLibExt.MachineLearning.LatentVariable.ExpectationMaximization
 
 
@@ -44,7 +44,7 @@ No running-time model: the subject is the likelihood, over the reals.
 @[expose] public section
 
 open Real Finset
-open MathlibExt.Biology.StatisticalGenetics.GeneConstraint
+open MathlibExt.Probability.Statistics.PoissonLikelihood
 open Cslib.MachineLearning.LatentVariable.ExpectationMaximization
 
 namespace Cslib.Bioinformatics.StatisticalGenetics.PoissonClassEM

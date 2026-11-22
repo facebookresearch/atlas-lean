@@ -34,6 +34,7 @@ Frobenius groups to highly homogeneous and cofinitary groups on infinite sets, a
 - [Sylow and Hall subgroups](sylow-and-hall-subgroups/README.md)
 - [Subgroup embedding and subgroup lattices](subgroup-embedding/README.md)
 - [Soluble and supersoluble finite groups](soluble-finite-groups/README.md)
+- [Factorized groups](factorized-groups/README.md)
 - [Finite p-groups](finite-p-groups/README.md)
 - [Characters of finite groups](characters-of-finite-groups/README.md)
 - [Permutation groups and group actions](permutation-groups/README.md)

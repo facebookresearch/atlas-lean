@@ -82,10 +82,6 @@ public theorem cacheCorrect_delete {α : Type u} [LinearOrder α] {key : α}
         rw [hDelete]
         exact cacheCorrect_merge hLeft hRight
 
-private theorem erase_node' {α : Type u} (key : α) (left right : Tree α) :
-    erase (node key left right) = .node key (erase left) (erase right) :=
-  rfl
-
 /--
 Erasing the caches of a merge gives `BinarySearchTree.join` of the erased trees,
 for any two trees, with no ordering, separation, or cache hypothesis.
@@ -95,7 +91,7 @@ public theorem erase_merge {α : Type u} (left right : Tree α) :
   induction left generalizing right with
   | nil => rfl
   | node entry subLeft subRight _ihLeft ihRight =>
-    simp [merge, BinarySearchTree.join, erase, erase_node', ihRight]
+    simp [merge, BinarySearchTree.join, erase, erase_node, ihRight]
 
 /--
 Erasing after deletion agrees with deletion in the underlying binary search tree,
@@ -108,9 +104,9 @@ public theorem erase_delete {α : Type u} [LinearOrder α] (key : α) (tree : Tr
   | node entry left right ihLeft ihRight =>
     simp only [delete, BinarySearchTree.delete, erase]
     by_cases hLeft : key < entry.key
-    · simp [hLeft, erase_node', ihLeft]
+    · simp [hLeft, erase_node, ihLeft]
     · by_cases hRight : entry.key < key
-      · simp [hLeft, hRight, erase_node', ihRight]
+      · simp [hLeft, hRight, erase_node, ihRight]
       · simp [hLeft, hRight, erase_merge]
 
 /-- Merging separated trees preserves the prerequisite BST ordering invariant. -/

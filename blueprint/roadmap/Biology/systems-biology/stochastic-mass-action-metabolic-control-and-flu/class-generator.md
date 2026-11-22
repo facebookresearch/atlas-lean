@@ -1,6 +1,6 @@
 # Generator of the mass-action chain on a finite state class
 
-Let $N$ be a [chemical reaction network](../complex-balancing-and-the-deficiency-zero-theore/reaction-network.md) with finite species set $S$ and finite reaction set $\rho$, let $k \in \mathbb{R}^\rho$ be rate constants and $\Omega \subseteq \mathbb{N}^S$ a finite
+Let $N$ be a [chemical reaction network](../../../Dynamics/smooth-dynamics/reaction-network.md) with finite species set $S$ and finite reaction set $\rho$, let $k \in \mathbb{R}^\rho$ be rate constants and $\Omega \subseteq \mathbb{N}^S$ a finite
 set of states. The generator of the stochastic mass-action chain restricted to $\Omega$ is the matrix
 indexed by $\Omega$ with entries
 

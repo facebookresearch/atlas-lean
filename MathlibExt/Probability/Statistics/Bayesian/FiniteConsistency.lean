@@ -11,6 +11,7 @@ module
 public import Mathlib.Probability.StrongLaw
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import MathlibExt.Probability.WeightLaw
+public import MathlibExt.Probability.Statistics.Bayesian.FinitePosterior
 
 /-!
 # Posterior consistency in a finite model
@@ -306,5 +307,70 @@ theorem twoPoint_postWeight_tendsto_one {Ω : Type*} [MeasurableSpace Ω]
     (0 : Fin 2) zero_lt_one
     (fun θ : Fin 2 => bernPMF (if θ = 0 then p₀ else p₁))
     hf_pos hf_sum hKL X hX hlaw' hindep
+
+
+/-! ## `postWeight` as a finite Bayes update -/
+
+variable {Θ : Type*} [Fintype Θ]
+
+/-- The finite-model posterior weights `postWeight` are the Bayes update by the product of the
+first `n` likelihoods. -/
+theorem postWeight_eq_finitePosterior {𝓧 Ω : Type*} (π : Θ → ℝ) (f : Θ → 𝓧 → ℝ)
+    (X : ℕ → Ω → 𝓧) (n : ℕ) (ω : Ω) :
+    postWeight π f X n ω = finitePosterior π (fun θ => ∏ i ∈ Finset.range n, f θ (X i ω)) := by
+  rfl
+
+/-- `postWeight` after `n + 1` observations is the update of `postWeight` after `n` by the next
+likelihood. -/
+theorem postWeight_succ {𝓧 Ω : Type*} (π : Θ → ℝ) (f : Θ → 𝓧 → ℝ) (X : ℕ → Ω → 𝓧)
+    (n : ℕ) (ω : Ω)
+    (hE : finiteEvidence π (fun θ => ∏ i ∈ Finset.range n, f θ (X i ω)) ≠ 0) :
+    postWeight π f X (n + 1) ω = finitePosterior (postWeight π f X n ω) (fun θ => f θ (X n ω)) := by
+  have hprod : (fun θ => ∏ i ∈ Finset.range (n + 1), f θ (X i ω)) =
+      (fun θ => (∏ i ∈ Finset.range n, f θ (X i ω)) * f θ (X n ω)) := by
+    funext θ
+    exact Finset.prod_range_succ (fun i => f θ (X i ω)) n
+  rw [postWeight_eq_finitePosterior, postWeight_eq_finitePosterior, hprod]
+  exact (finitePosterior_finitePosterior hE).symm
+
+omit [Fintype Θ] in
+theorem batchLikelihood_map_range {𝓧 Ω : Type*} (f : Θ → 𝓧 → ℝ) (X : ℕ → Ω → 𝓧)
+    (n : ℕ) (ω : Ω) :
+    batchLikelihood ((List.range n).map fun i θ => f θ (X i ω)) =
+      fun θ => ∏ i ∈ Finset.range n, f θ (X i ω) := by
+  have happ : ∀ (l₁ l₂ : List (Θ → ℝ)),
+      batchLikelihood (l₁ ++ l₂) = fun θ => batchLikelihood l₁ θ * batchLikelihood l₂ θ := by
+    intro l₁ l₂
+    funext θ
+    unfold batchLikelihood
+    simp [List.map_append, List.prod_append]
+  induction n with
+  | zero =>
+    simp [List.range_zero, batchLikelihood_nil]
+  | succ n ih =>
+    rw [List.range_succ, List.map_append]
+    have hsingle : batchLikelihood (List.map (fun i θ => f θ (X i ω)) [n]) =
+        (fun θ => f θ (X n ω)) := by
+      funext θ
+      unfold batchLikelihood
+      simp
+    rw [happ, ih, hsingle]
+    funext θ
+    exact (Finset.prod_range_succ (fun i => f θ (X i ω)) n).symm
+
+/-- `postWeight` is the sequential posterior over the first `n` observations. -/
+theorem postWeight_eq_sequentialPosterior {𝓧 Ω : Type*} {π : Θ → ℝ}
+    (hπ : ∀ θ, 0 ≤ π θ) (hπ1 : ∑ θ, π θ = 1) {f : Θ → 𝓧 → ℝ} (hf : ∀ θ x, 0 ≤ f θ x)
+    (X : ℕ → Ω → 𝓧) (n : ℕ) (ω : Ω) :
+    postWeight π f X n ω = sequentialPosterior π ((List.range n).map fun i θ => f θ (X i ω)) := by
+  have hbatch := batchLikelihood_map_range (Θ := Θ) f X n ω
+  have hLmap : ∀ L ∈ (List.range n).map (fun i θ => f θ (X i ω)), ∀ θ, 0 ≤ L θ := by
+    intro L hmem θ
+    simp only [List.mem_map, List.mem_range] at hmem
+    obtain ⟨i, _, rfl⟩ := hmem
+    exact hf θ (X i ω)
+  rw [postWeight_eq_finitePosterior,
+    sequentialPosterior_eq_finitePosterior_batchLikelihood hπ hπ1 hLmap, hbatch]
+
 
 end MathlibExt.Probability.Statistics.Bayesian

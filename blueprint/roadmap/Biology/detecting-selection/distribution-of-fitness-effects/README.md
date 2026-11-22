@@ -28,9 +28,7 @@
 
 ## The Poisson likelihood of the spectrum
 
-- [Poisson log-likelihood of counts](poisson-log-lik.md)
-- [Probability of a count vector under independent Poisson laws](pi-poisson-measure-real-singleton.md)
-- [The Poisson-random-field log-likelihood](log-pi-poisson-measure-real-singleton.md)
+- [Likelihood of independent Poisson counts](../../../Probability/statistical-estimation/likelihood-and-maximum-likelihood-estimators/README.md#likelihood-of-independent-poisson-counts)
 - [Derivative of the Poisson log-likelihood](has-fderiv-at-poisson-log-lik.md)
 - [Score equations](score-eq-zero-of-is-max-on.md)
 - [Profile maximum in the mutation parameter](poisson-log-lik-le-profile.md)

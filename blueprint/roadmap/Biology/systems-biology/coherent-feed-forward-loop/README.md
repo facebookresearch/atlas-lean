@@ -1,7 +1,7 @@
 # Coherent feed-forward loop
 
-- [Variation-of-constants solution of a linear relaxation equation](relaxation.md)
-- [Relaxation solution satisfies its differential equation](has-deriv-at-relaxation.md)
+- [Variation-of-constants solution of a linear relaxation equation](../../../Analysis/ordinary-differential-equations/linear-systems-and-fundamental-matrices/relaxation.md)
+- [Relaxation solution satisfies its differential equation](../../../Analysis/ordinary-differential-equations/linear-systems-and-fundamental-matrices/has-deriv-at-relaxation.md)
 - [AND-gate production rate in the logic approximation](and-gate.md)
 - [Single-input production rate in the logic approximation](simple-gate.md)
 - [Intermediate factor after an ON step](y-on.md)

@@ -1,6 +1,6 @@
 # The allelic partition of the Chinese restaurant process follows the Ewens sampling formula
 
-For every real $\theta > 0$ and every integer partition $p$ of $n$, the probability that the [multiset of block sizes](block-sizes.md) of a partition drawn from the [Chinese restaurant process](crp.md) $\mathrm{CRP}_n$ equals $p$ is $E_\theta(p)$, the [Ewens sampling formula](ewens-prob.md).
+For every real $\theta > 0$ and every integer partition $p$ of $n$, the probability that the [multiset of block sizes](../../../Probability/bayesian-statistics/blackwell-macqueen-urn/block-sizes.md) of a partition drawn from the [Chinese restaurant process](../../../Probability/bayesian-statistics/blackwell-macqueen-urn/crp.md) $\mathrm{CRP}_n$ equals $p$ is $E_\theta(p)$, the [Ewens sampling formula](ewens-prob.md).
 
 ## Sources
 
