@@ -17,7 +17,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 Statement-only requests for the self-contained lemmas of Du's paper on reciprocal sums
 and products of `m`th-order linear recursive sequences. The Eneström–Kakeya bound
 `norm_le_one_of_aeval_eq_zero_of_monotone_coeff` is proved in
-`MathlibExt.NumberTheory.Recurrences.ReciprocalSumsLinearRecurrence`.
+`MathlibExt.Analysis.Complex.EnestromKakeya`.
 -/
 
 open Polynomial Filter Asymptotics

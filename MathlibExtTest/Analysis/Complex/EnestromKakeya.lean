@@ -8,14 +8,18 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import MathlibExt.NumberTheory.Recurrences.ReciprocalSumsLinearRecurrence
+import MathlibExt.Analysis.Complex.EnestromKakeya
 import Mathlib.Tactic.ComputeDegree
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.NormNum
 
-/-! # Tests for `MathlibExt.NumberTheory.Recurrences.ReciprocalSumsLinearRecurrence` -/
+/-! # Tests for `MathlibExt.Analysis.Complex.EnestromKakeya`
 
-namespace MathlibExtTest.NumberTheory.Recurrences.ReciprocalSumsLinearRecurrence
+Examples for the monotone form of the Eneström–Kakeya theorem,
+`MetaMathlibExt.norm_le_one_of_aeval_eq_zero_of_monotone_coeff`.
+-/
+
+namespace MathlibExtTest.Analysis.Complex.EnestromKakeya
 
 open Polynomial MetaMathlibExt
 
@@ -79,4 +83,4 @@ example : ∃ p : ℝ[X], p ≠ 0 ∧ 0 ≤ p.coeff 0 ∧ ∃ z : ℂ, aeval z p
   · simp
   · simp
 
-end MathlibExtTest.NumberTheory.Recurrences.ReciprocalSumsLinearRecurrence
+end MathlibExtTest.Analysis.Complex.EnestromKakeya
