@@ -325,6 +325,18 @@ class Origins(Vault):
                          ("none", True))
         self.assertEqual(result["cards"][0]["supporting"]["stale"], 1)
 
+    def test_a_mathlib_link_credits_mathlib_however_its_repository_is_spelled(self) -> None:
+        # The spellings of Mathlib's repository that Autoform's reader accepts (sync_wiki.mathlib_uri) credit Mathlib.
+        g = "Algebra/groups"
+        for folder, number, main, uri in (("m", 4, 30, cards.MATHLIB), ("n", 5, 31, cards.MATHLIB + ".git/")):
+            row = {"id": af(main), "kind": "theorem", "extensions": {"org.autoform": {"mathlib": True}},
+                   "object": [{"type": "lean", "uri": uri, "location": {"declaration": f"Mathlib.thing_{folder}"}}]}
+            self.page(f"{g}/{folder}/{folder}-main.md", f"# {folder}\n\nA Mathlib theorem.\n", row)
+            self.card(f"{g}/{folder}", number, main, [f"{folder}-main"])
+        result = self.rollup()
+        self.assertEqual([result["pages"][f"{g}/{folder}/{folder}-main"]["credit"] for folder in ("m", "n")],
+                         ["mathlib", "mathlib"])
+
     def test_a_walk_never_passes_through_a_folder_page(self) -> None:
         # A folder page's hand-written link is no statement's dependency: it is counted as reaching a folder, and
         # no need runs through it.

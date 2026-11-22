@@ -221,10 +221,11 @@ def lean_name(annotation: dict) -> str | None:
 
 
 def credits_mathlib(annotation: dict) -> bool:
-    """Whether the annotation credits its page to Mathlib: the `org.autoform` extension's `mathlib: true` and a Lean
-    link to Mathlib's repository."""
+    """Whether the annotation credits its page to a Mathlib declaration: the `org.autoform` extension's
+    `mathlib: true` and a Lean link to Mathlib's repository that names a declaration."""
     return annotation.get("extensions", {}).get(NAMESPACE, {}).get("mathlib") is True and any(
-        mathlib_uri(end.get("uri")) for end in annotation.get("object", []))
+        end.get("type") == "lean" and mathlib_uri(end.get("uri")) and end.get("location", {}).get("declaration")
+        for end in annotation.get("object", []))
 
 
 def read_annotations() -> dict[Path, list[dict]]:

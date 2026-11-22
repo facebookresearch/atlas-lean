@@ -174,7 +174,7 @@ def credit(annotation: dict | None) -> str:
     """Whom a row credits: `atlas` for a declaration of the project, `mathlib` for one of Mathlib, else `none`."""
     for end in (annotation or {}).get("object", []):
         if end.get("location", {}).get("declaration"):
-            return "mathlib" if end.get("uri") == MATHLIB else "atlas"
+            return "mathlib" if sync.mathlib_uri(end.get("uri")) else "atlas"
     return "atlas" if legacy(annotation) else "none"
 
 

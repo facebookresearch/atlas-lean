@@ -412,6 +412,21 @@ class LeanFacts(Vault):
                               facts.get("mathlib_file")),
                              ("theorem", "true", "Group.exists", "Mathlib/Algebra/Group.lean"), path.name)
 
+    def test_a_mathlib_flag_without_a_mathlib_declaration_keeps_no_kind(self) -> None:
+        # The kind is kept only beside a Lean link to Mathlib's repository that names a declaration: a link to the
+        # whole repository or a link of another type names no theorem, so the page gets no kind.
+        ends = {"whole-repository": {"type": "lean", "uri": sync.MATHLIB},
+                "html": {"type": "html", "uri": sync.MATHLIB, "location": {"declaration": "Group.exists"}}}
+        for page in ends:
+            self.page(f"Algebra/{page}.md", f"# {page}\n\nIt holds.\n")
+        self.annotate([self.about(f"Algebra/{page}.md", object=[end], kind="theorem", id=f"af_{page}",
+                                  extensions={"org.autoform": {"mathlib": True}}) for page, end in ends.items()])
+        sync.apply_lean_facts(SimpleNamespace(declarations={}), {})
+        after = {sync.subject_path(row).name: row for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
+        for page, end in ends.items():
+            self.assertNotIn("kind", after[f"{page}.md"], page)
+            self.assertEqual(after[f"{page}.md"]["object"], [end])
+
     def test_pages_the_declarations_sync_wrote_get_their_facts(self) -> None:
         # declarations marks its pages with {"from": "docstring"}; an earlier sync also wrote a module and a name for
         # a page without a Lean link, which lean-facts reads through the index.

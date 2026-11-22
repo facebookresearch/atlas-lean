@@ -153,7 +153,10 @@ The tools write these, so they are never edited or committed by hand:
 - `## Depends on` and `## Proof depends on` on a page linked to a declaration
   (an annotation with an `object`, or the module and name an earlier sync
   wrote): `sync_wiki.py lean-facts` writes them from the compiled Lean.
-- `kind` and `status` on an annotation, which `lean-facts` adds at build time.
+- `kind` and `status` on an annotation, which `lean-facts` adds at build time. The one exception is
+  the `kind` of a page credited to a Mathlib declaration (`mathlib: true` and a Lean link to
+  Mathlib's repository that names the declaration): no Lean of this project gives it one, so its
+  row records it and `lean-facts` keeps it, still with no `status`.
 - Build outputs, which are never committed: `lean-facts` output, `site-src/`,
   `site/`, the dependency dump.
 - `scripts/wiki-sync.json` and `blueprint/atlas.json`, which change only as
