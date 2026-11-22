@@ -91,12 +91,14 @@ theorem skip_other_state_not_mem_collecting :
   simp only [oneState, zeroState, Function.update_self] at h0
   exact absurd h0 (by decide)
 
-/-- The collecting semantics is a fixed point of its transformer. -/
-theorem collectingStep_collecting (initial : Set Config) :
-    collectingStep initial (collecting initial) = collecting initial := by
-  have hRaw := OrderHom.map_lfp
-    (⟨collectingStep initial,
-      collectingStep_monotone initial⟩ : Set Config →o Set Config)
-  simpa only [collecting, OrderHom.coe_mk] using hRaw
+/-- An initial configuration is collected, by one unfolding of the
+public fixed-point equation. -/
+theorem initial_mem_collecting_via_unfold :
+    (.assign 0 (.const 4), zeroState) ∈
+      collecting {(.assign 0 (.const 4), zeroState)} := by
+  rw [← collectingStep_collecting]
+  unfold collectingStep
+  simp only [Set.mem_union]
+  exact Or.inl rfl
 
 end Cslib.IMP.CollectingTests

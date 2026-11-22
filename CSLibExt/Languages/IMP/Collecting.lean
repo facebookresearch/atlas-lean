@@ -68,6 +68,14 @@ complete lattice on sets of configurations. -/
 def collecting (initial : Set Config) : Set Config :=
   OrderHom.lfp ⟨collectingStep initial, collectingStep_monotone initial⟩
 
+/-- The collecting semantics is a fixed point of its transformer. -/
+theorem collectingStep_collecting (initial : Set Config) :
+    collectingStep initial (collecting initial) = collecting initial := by
+  have hRaw := OrderHom.map_lfp
+    (⟨collectingStep initial,
+      collectingStep_monotone initial⟩ : Set Config →o Set Config)
+  simpa only [collecting, OrderHom.coe_mk] using hRaw
+
 /-- Configurations reachable from an initial set by finitely many
 small steps, including the initial configurations themselves. -/
 def reachableConfigs (initial : Set Config) : Set Config :=
@@ -101,24 +109,12 @@ theorem collecting_eq_reachableConfigs (initial : Set Config) :
     obtain ⟨c, hc, hsteps⟩ := hx
     induction hsteps with
     | refl =>
-      have hRaw := OrderHom.map_lfp
-        (⟨collectingStep initial,
-          collectingStep_monotone initial⟩ : Set Config →o Set Config)
-      have hFix : collectingStep initial (collecting initial)
-          = collecting initial := by
-        simpa only [collecting, OrderHom.coe_mk] using hRaw
-      rw [←hFix]
+      rw [← collectingStep_collecting initial]
       unfold collectingStep
       simp only [Set.mem_union]
       exact Or.inl hc
     | tail _ hStep ih =>
-      have hRaw := OrderHom.map_lfp
-        (⟨collectingStep initial,
-          collectingStep_monotone initial⟩ : Set Config →o Set Config)
-      have hFix : collectingStep initial (collecting initial)
-          = collecting initial := by
-        simpa only [collecting, OrderHom.coe_mk] using hRaw
-      rw [←hFix]
+      rw [← collectingStep_collecting initial]
       unfold collectingStep stepPost
       simp only [Set.mem_union, Set.mem_ofPred_eq]
       exact Or.inr ⟨_, ih, hStep⟩
