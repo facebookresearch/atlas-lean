@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Cslib.MachineLearning.PACLearning.Defs
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Fin.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
@@ -22,23 +23,31 @@ import Mathlib.Tactic.Ring
 
 /-! # Natarajan dimension and the Natarajan lemma
 
-This file defines N-shattering and the Natarajan dimension for finite hypothesis
-classes of `Fin k`-valued functions, and proves the Natarajan lemma: a class of
+This file defines N-shattering and the Natarajan dimension for concept classes
+of `Fin k`-valued functions, and proves the Natarajan lemma: a class of
 Natarajan dimension at most `d` induces at most `m ^ d * k ^ (2 * d)` distinct
 restrictions on any nonempty sample of `m` points.
 
+The public interface is set-based, over `ConceptClass α (Fin k)`: the class
+itself may be infinite; only the sample is finite. The proof goes through a
+private finite-class core (`FinCore`): for each realized labeling, one witness
+concept is chosen from the class, and the finite witness class inherits both
+the trace count and the dimension bound.
+
 ## Main definitions
 
-- `NShatters H s`: the class `H` N-shatters the sample `s`.
-- `NDimLE H d`: the class `H` has Natarajan dimension at most `d`.
-- `tracesCard H s`: the number of distinct restrictions of `H` to `s`.
+- `NShatters C s`: the class `C` N-shatters the sample `s`.
+- `NDimLE C d`: the class `C` has Natarajan dimension at most `d`.
+- `tracesCard C s`: the number of distinct restrictions of `C` to `s`.
 
 ## Main statements
 
 - `nShatters_subset`: N-shattering is hereditary to subsets.
 - `nDimLE_mono`: the dimension bound is monotone in `d`.
 - `natarajan_lemma`: the Natarajan lemma growth bound.
-- `nDimLE_zero`: under a zero-dimensional bound, all hypotheses agree everywhere.
+- `nDimLE_zero`: under a zero-dimensional bound, all concepts agree everywhere.
+- `tracesCard_coe_finset`: trace-count bridge for coerced finite classes.
+- `natarajan_lemma_finset`: the lemma for executable finite classes.
 
 ## References
 
@@ -53,11 +62,58 @@ restrictions on any nonempty sample of `m` points.
 
 namespace Cslib.MachineLearning.PACLearning
 
+/-- A concept class `C` of `Fin k`-valued functions *N-shatters* a finite
+sample `s` if there are two labelings `f₀ f₁` of the domain, disagreeing at
+every point of `s`, such that every subset `t` of `s` is realized by some
+concept agreeing with `f₁` on `t` and with `f₀` on the rest of `s`. The class
+itself may be infinite. -/
+def NShatters {α : Type*} {k : ℕ} (C : ConceptClass α (Fin k))
+    (s : Finset α) : Prop :=
+  ∃ f₀ f₁ : α → Fin k, (∀ x ∈ s, f₀ x ≠ f₁ x) ∧
+    ∀ t : Finset α, t ⊆ s → ∃ h ∈ C,
+      (∀ x ∈ t, h x = f₁ x) ∧ ∀ x ∈ s, x ∉ t → h x = f₀ x
+
+/-- A concept class has *Natarajan dimension at most `d`* if no set of `d + 1`
+points is N-shattered by it. Stated in `≤`-form to avoid supremum conventions
+for the dimension itself. -/
+def NDimLE {α : Type*} {k : ℕ} (C : ConceptClass α (Fin k)) (d : ℕ) : Prop :=
+  ∀ s : Finset α, s.card = d + 1 → ¬ NShatters C s
+
+open scoped Classical in
+/-- The number of distinct restrictions of the concepts in `C` to the sample
+`s`: the labelings of `s` realized by some concept in `C`. The class itself
+may be infinite; only the sample is finite. -/
+noncomputable def tracesCard {α : Type*} {k : ℕ}
+    (C : ConceptClass α (Fin k)) (s : Finset α) : ℕ :=
+  (Finset.univ.filter fun g : s → Fin k =>
+    ∃ c ∈ C, ∀ x : s, c x.val = g x).card
+
+/-- N-shattering is hereditary: if `C` N-shatters `s`, it N-shatters every
+subset of `s`. -/
+theorem nShatters_subset {α : Type*} {k : ℕ} (C : ConceptClass α (Fin k))
+    (s t : Finset α) (h : NShatters C s) (hsub : t ⊆ s) :
+    NShatters C t := by
+  obtain ⟨f₀, f₁, hne, hwit⟩ := h
+  refine ⟨f₀, f₁, fun x hx => hne x (hsub hx), fun u hu => ?_⟩
+  obtain ⟨h, mh, h1, h0⟩ := hwit u (hu.trans hsub)
+  exact ⟨h, mh, h1, fun x hx hxu => h0 x (hsub hx) hxu⟩
+
+/-- The `NDimLE` bound is monotone in `d`: a `(d' + 1)`-set contains a
+`(d + 1)`-subset, to which shattering descends. -/
+theorem nDimLE_mono {α : Type*} {k : ℕ} (C : ConceptClass α (Fin k))
+    (d d' : ℕ) (hle : d ≤ d') (hd : NDimLE C d) : NDimLE C d' := by
+  intro s hs hsh
+  have hle' : d + 1 ≤ s.card := by omega
+  obtain ⟨t, hts, hcard⟩ := Finset.exists_subset_card_eq hle'
+  exact hd t hcard (nShatters_subset C s t hsh hts)
+
+namespace FinCore
+
 /-- A finite hypothesis class `H` of `Fin k`-valued functions *N-shatters* a
 finite sample `s` if there are two labelings `f₀ f₁` of the domain, disagreeing
 at every point of `s`, such that every subset `t` of `s` is realized by some
 hypothesis agreeing with `f₁` on `t` and with `f₀` on the rest of `s`. -/
-def NShatters {α : Type*} {k : ℕ} (H : Finset (α → Fin k))
+private def NShatters {α : Type*} {k : ℕ} (H : Finset (α → Fin k))
     (s : Finset α) : Prop :=
   ∃ f₀ f₁ : α → Fin k, (∀ x ∈ s, f₀ x ≠ f₁ x) ∧
     ∀ t : Finset α, t ⊆ s → ∃ h ∈ H,
@@ -66,33 +122,14 @@ def NShatters {α : Type*} {k : ℕ} (H : Finset (α → Fin k))
 /-- A finite hypothesis class has *Natarajan dimension at most `d`* if no set of
 `d + 1` points is N-shattered by it. Stated in `≤`-form to avoid supremum
 conventions for the dimension itself. -/
-def NDimLE {α : Type*} {k : ℕ} (H : Finset (α → Fin k)) (d : ℕ) : Prop :=
+private def NDimLE {α : Type*} {k : ℕ} (H : Finset (α → Fin k)) (d : ℕ) : Prop :=
   ∀ s : Finset α, s.card = d + 1 → ¬ NShatters H s
 
 /-- The number of distinct restrictions of the hypotheses in `H` to the sample
 `s`, i.e. the cardinality of the image of `H` under evaluation on `s`. -/
-noncomputable def tracesCard {α : Type*} [DecidableEq α] {k : ℕ}
+private noncomputable def tracesCard {α : Type*} [DecidableEq α] {k : ℕ}
     (H : Finset (α → Fin k)) (s : Finset α) : ℕ :=
   (H.image fun h (x : s) => h x.val).card
-
-/-- N-shattering is hereditary: if `H` N-shatters `s`, it N-shatters every
-subset of `s`. -/
-theorem nShatters_subset {α : Type*} {k : ℕ} (H : Finset (α → Fin k))
-    (s t : Finset α) (h : NShatters H s) (hsub : t ⊆ s) :
-    NShatters H t := by
-  obtain ⟨f₀, f₁, hne, hwit⟩ := h
-  refine ⟨f₀, f₁, fun x hx => hne x (hsub hx), fun u hu => ?_⟩
-  obtain ⟨h, mh, h1, h0⟩ := hwit u (hu.trans hsub)
-  exact ⟨h, mh, h1, fun x hx hxu => h0 x (hsub hx) hxu⟩
-
-/-- The `NDimLE` bound is monotone in `d`: a `(d' + 1)`-set contains a
-`(d + 1)`-subset, to which shattering descends. -/
-theorem nDimLE_mono {α : Type*} {k : ℕ} (H : Finset (α → Fin k))
-    (d d' : ℕ) (hle : d ≤ d') (hd : NDimLE H d) : NDimLE H d' := by
-  intro s hs hsh
-  have hle' : d + 1 ≤ s.card := by omega
-  obtain ⟨t, hts, hcard⟩ := Finset.exists_subset_card_eq hle'
-  exact hd t hcard (nShatters_subset H s t hsh hts)
 
 /-- Relativized dimension bound: no `(d + 1)`-subset of `s` is N-shattered.
 The growth induction carries this form so the dimension-drop step applies to
@@ -121,14 +158,6 @@ private theorem agree_of_relDim_zero {α : Type*} {k : ℕ}
         fun z _ _ => rfl⟩
     · exact ⟨h₂, m₂, fun z _ => rfl,
         fun z hz1 hz2 => absurd hz1 hz2⟩
-
-/-- Under `NDimLE H 0`, any two hypotheses in `H` agree at every point: a
-disagreement at `x` would N-shatter the singleton `{x}`. -/
-theorem nDimLE_zero {α : Type*} {k : ℕ} (H : Finset (α → Fin k))
-    (hd : NDimLE H 0) (h₁ h₂ : α → Fin k) (m₁ : h₁ ∈ H) (m₂ : h₂ ∈ H)
-    (x : α) : h₁ x = h₂ x :=
-  agree_of_relDim_zero (fun T _ hcard => hd T hcard) m₁ m₂
-    (Finset.mem_singleton_self x)
 
 /-- Restriction of a trace on `s` to the erased sample `s.erase x`. -/
 private def restrictErase {α : Type*} [DecidableEq α] {k : ℕ} (s : Finset α)
@@ -568,19 +597,125 @@ private theorem natarajan_aux {α : Type*} [DecidableEq α] {k : ℕ} :
             _ ≤ (t + 1) ^ (d + 1) * k ^ (2 * (d + 1)) :=
                 Nat.mul_le_mul_right _ hfact
 
-/-- The Natarajan lemma: if `H` has Natarajan dimension at most `d`, the
-number of distinct restrictions of `H` to any nonempty sample `s` is at most
-`s.card ^ d * k ^ (2 * d)`.
+/-- Finite-class core of the Natarajan lemma: if `H` has Natarajan dimension
+at most `d`, the number of distinct restrictions of `H` to any nonempty
+sample `s` is at most `s.card ^ d * k ^ (2 * d)`.
 
 Corners: the empty sample is excluded by `hs` (a single empty restriction
 would exceed `0 ^ d * k ^ (2 * d) = 0` for `d ≥ 1`); the empty class gives
 zero restrictions; `k = 0` forces the class empty on a nonempty sample; at
 `k = 1` no nonempty set is N-shattered and the bound holds trivially. -/
-theorem natarajan_lemma {α : Type*} [DecidableEq α] {k : ℕ}
+private theorem natarajan_lemma {α : Type*} [DecidableEq α] {k : ℕ}
     (H : Finset (α → Fin k)) (d : ℕ) (hd : NDimLE H d) (s : Finset α)
     (hs : s.Nonempty) :
     tracesCard H s ≤ s.card ^ d * k ^ (2 * d) := by
   have hrel : NDimLERel H s d := fun T _ hcard => hd T hcard
   exact natarajan_aux _ _ H s le_rfl hrel hs
+
+end FinCore
+
+/-- Under `NDimLE C 0`, any two concepts in `C` agree at every point: a
+disagreement at `x` would N-shatter the singleton `{x}`. -/
+theorem nDimLE_zero {α : Type*} {k : ℕ} (C : ConceptClass α (Fin k))
+    (hd : NDimLE C 0) (c₁ c₂ : α → Fin k) (m₁ : c₁ ∈ C) (m₂ : c₂ ∈ C)
+    (x : α) : c₁ x = c₂ x := by
+  by_contra hne
+  apply hd {x} (Finset.card_singleton x)
+  refine ⟨c₁, c₂, ?_, ?_⟩
+  · intro z hz
+    obtain rfl := Finset.mem_singleton.mp hz
+    exact hne
+  · intro t ht
+    obtain rfl | rfl := Finset.subset_singleton_iff.mp ht
+    · exact ⟨c₁, m₁, fun z hz => absurd hz (Finset.notMem_empty z),
+        fun z _ _ => rfl⟩
+    · exact ⟨c₂, m₂, fun z _ => rfl,
+        fun z hz1 hz2 => absurd hz1 hz2⟩
+
+/-- The Natarajan lemma: if `C` has Natarajan dimension at most `d`, the
+number of distinct restrictions of `C` to any nonempty sample `s` is at most
+`s.card ^ d * k ^ (2 * d)`. The class may be infinite: the proof chooses one
+witness concept in `C` per realized labeling and applies the finite-class
+core to the resulting finite witness class.
+
+Corners: the empty sample is excluded by `hs` (a single empty restriction
+would exceed `0 ^ d * k ^ (2 * d) = 0` for `d ≥ 1`); the empty class gives
+zero restrictions; `k = 0` forces no realized labeling on a nonempty sample;
+at `k = 1` no nonempty set is N-shattered and the bound holds trivially. -/
+theorem natarajan_lemma {α : Type*} {k : ℕ}
+    (C : ConceptClass α (Fin k)) (d : ℕ) (hd : NDimLE C d) (s : Finset α)
+    (hs : s.Nonempty) :
+    tracesCard C s ≤ s.card ^ d * k ^ (2 * d) := by
+  classical
+  -- Explicit pointwise choice: one witness concept per realized labeling.
+  have hmem : ∀ t : { g : s → Fin k // ∃ c ∈ C, ∀ x : s, c x.val = g x },
+      ∃ c ∈ C, ∀ x : s, c x.val = t.val x :=
+    fun t => t.property
+  -- The finite witness class, via its finite range of witnesses.
+  have hfin : (Set.range fun t : { g : s → Fin k //
+      ∃ c ∈ C, ∀ x : s, c x.val = g x } =>
+      Classical.choose (hmem t)).Finite :=
+    Set.finite_range _
+  obtain ⟨W, hW⟩ := hfin.exists_finset_coe
+  -- Every witness lies in `C`.
+  have hWsub : (↑W : Set (α → Fin k)) ⊆ C := by
+    intro w hw
+    rw [hW] at hw
+    obtain ⟨t, ht⟩ := Set.mem_range.mp hw
+    rw [← ht]
+    exact (Classical.choose_spec (hmem t)).1
+  -- The witness class realizes exactly the same traces.
+  have htraces : FinCore.tracesCard W s = tracesCard C s := by
+    unfold FinCore.tracesCard tracesCard
+    congr 1
+    ext g
+    simp only [Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
+    constructor
+    · rintro ⟨w, hw, rfl⟩
+      exact ⟨w, hWsub (Finset.mem_coe.mpr hw), fun x => rfl⟩
+    · rintro ⟨c, hc, hcg⟩
+      refine ⟨Classical.choose (hmem ⟨g, c, hc, hcg⟩), ?_, ?_⟩
+      · rw [← Finset.mem_coe, hW]
+        exact ⟨_, rfl⟩
+      · have hspec := (Classical.choose_spec (hmem ⟨g, c, hc, hcg⟩)).2
+        exact funext fun x => hspec x
+  -- The dimension bound transfers to the finite witness subclass.
+  have hWdim : FinCore.NDimLE W d := by
+    intro s' hcard' hsh
+    apply hd s' hcard'
+    obtain ⟨f₀, f₁, hne, hwit⟩ := hsh
+    refine ⟨f₀, f₁, hne, fun t ht => ?_⟩
+    obtain ⟨h, mh, h1, h0⟩ := hwit t ht
+    exact ⟨h, hWsub (Finset.mem_coe.mpr mh), h1, h0⟩
+  rw [← htraces]
+  exact FinCore.natarajan_lemma W d hWdim s hs
+
+/-- The set-based trace count on a coerced finite class agrees with the
+image-of-finite-class count. -/
+theorem tracesCard_coe_finset {α : Type*} {k : ℕ}
+    (H : Finset (α → Fin k)) (s : Finset α) :
+    tracesCard (↑H : ConceptClass α (Fin k)) s =
+      (H.image fun h (x : s) => h x.val).card := by
+  unfold tracesCard
+  congr 1
+  ext g
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_image,
+    Finset.mem_coe]
+  constructor
+  · rintro ⟨c, hc, hcg⟩
+    exact ⟨c, hc, funext hcg⟩
+  · rintro ⟨h, mh, rfl⟩
+    exact ⟨h, mh, fun x => rfl⟩
+
+/-- Finite-class corollary of the Natarajan lemma, stated with a `Finset`
+throughout: the dimension hypothesis takes the coerced class and the
+conclusion counts the image of the finite class. -/
+theorem natarajan_lemma_finset {α : Type*} {k : ℕ}
+    (H : Finset (α → Fin k)) (d : ℕ)
+    (hd : NDimLE (↑H : ConceptClass α (Fin k)) d) (s : Finset α)
+    (hs : s.Nonempty) :
+    (H.image fun h (x : s) => h x.val).card ≤ s.card ^ d * k ^ (2 * d) := by
+  rw [← tracesCard_coe_finset]
+  exact natarajan_lemma _ d hd s hs
 
 end Cslib.MachineLearning.PACLearning
