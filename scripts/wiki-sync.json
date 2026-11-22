@@ -65786,7 +65786,7 @@
 "MetaMathlibExt.fib_quadratic_linear_coeff_isInt_iff": "9d81a3dffe1f11eb",
 "MetaMathlibExt.fib_succ_sq_eq_sum_choose_mul_choose": "695f0808c35f5cea",
 "MetaMathlibExt.fib_succ_sq_sub_parity_eq_sum": "6418bcda4b81f321",
-"MetaMathlibExt.fib_two_mul_eq_sum_sum_choose_mul_fib_odd": "57aa42461a1d7b7d",
+"MetaMathlibExt.fib_two_mul_eq_sum_sum_choose_mul_fib_odd": "8c54f51a250870b4",
 "MetaMathlibExt.fibonacciAlternatingSum": "a0b7eacfbb3fe610",
 "MetaMathlibExt.fibonacciAlternatingSum_succ": "1020f32a631925ec",
 "MetaMathlibExt.fibonacciAlternatingSum_tempered": "8437c07f8b56f86e",
