@@ -11457,6 +11457,7 @@
   "MathlibExt/NumberTheory/SophieGermainPrime": {"to": "NumberTheory/primes-primality/special-primes", "title": "Sophie Germain primes"},
   "MathlibExt/NumberTheory/SpectralNormUnitBall": {"to": "NumberTheory/p-adic-numbers", "title": "Spectral norm on algebraic extensions"},
   "MathlibExt/NumberTheory/SquareModEight": {"to": "NumberTheory/congruences/power-residues-reciprocity", "title": "Squares modulo powers of two"},
+  "MathlibExt/NumberTheory/SternBrocotSumTwoSquares": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Sums of two squares via the Stern–Brocot tree"},
   "MathlibExt/NumberTheory/SternSequence": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Stern's diatomic sequence"},
   "MathlibExt/NumberTheory/SteuerwaldThreePerfect": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Multiperfect numbers"},
   "MathlibExt/NumberTheory/Stormer": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Størmer's theorem"},
