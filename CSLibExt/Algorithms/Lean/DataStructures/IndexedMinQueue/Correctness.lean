@@ -28,13 +28,19 @@ set_option autoImplicit false
 
 universe u
 
-/-- Every stored inverse slot lies within the current heap. -/
+/-- **Recorded positions lie inside the heap.** Let $W$ be a linearly ordered type and let $q$
+be an indexed min-queue over $W$ with identities in $\{0, \dots, n-1\}$. If the position
+table of $q$ records slot $i$ for an identity $v$, then $i$ is less than the number of
+entries currently stored in the heap array of $q$. -/
 theorem position_valid {W : Type u} [LinearOrder W] {n : Nat}
     (q : IndexedMinQueue W n) (v i : Fin n)
     (h : q.position[v] = some i) : i.val < q.heap.data.size := by
   exact (q.inverse v i).1 h |>.choose
 
-/-- An identity is absent exactly when no heap entry carries it. -/
+/-- **Absent identities carry no heap entry.** Let $q$ be an indexed min queue over a linear
+order $W$ with identities in $\{0, \dots, n-1\}$ and let $v$ be an identity. The position
+vector of $q$ records no slot for $v$ if and only if no entry of the heap array of $q$ has
+identity $v$. -/
 theorem position_eq_none_iff {W : Type u} [LinearOrder W] {n : Nat}
     (q : IndexedMinQueue W n) (v : Fin n) :
     q.position[v] = none ↔
@@ -54,12 +60,17 @@ theorem position_eq_none_iff {W : Type u} [LinearOrder W] {n : Nat}
       apply hnot
       exact ⟨q.heap.data[i.val]'hi, by simp [Array.mem_toList_iff], hid⟩
 
-/-- The empty queue marks every identity absent. -/
+/-- **The empty indexed min queue has no present identity.** For every linear order $W$, every
+$n$ and every identity $v \in \{0, \dots, n-1\}$, the position vector of the empty indexed min
+queue over $W$ with identities in $\{0, \dots, n-1\}$ records no slot for $v$. -/
 theorem empty_position {W : Type u} [LinearOrder W] {n : Nat}
     (v : Fin n) : (empty (W := W) n).position[v] = none := by
   simp [empty]
 
-/-- INSERT rejects exactly the identities already present. -/
+/-- **Insertion fails exactly on present identities.** Let $q$ be an indexed min queue over a
+linear order $W$ with identities in $\{0, \dots, n-1\}$, let $v$ be an identity and let
+$k \in W \cup \{\top\}$. Inserting $v$ with key $k$ into $q$ returns no queue if and only if
+the position vector of $q$ records a slot for $v$. -/
 theorem insert_eq_none_iff {W : Type u} [LinearOrder W] {n : Nat}
     (q : IndexedMinQueue W n) (v : Fin n) (key : WithTop W) :
     (insert q v key).ret = none ↔ q.position[v].isSome = true := by
@@ -73,7 +84,9 @@ theorem insert_eq_none_iff {W : Type u} [LinearOrder W] {n : Nat}
     simp only [Option.some_ne_none, false_iff]
     exact hp
 
-/-- EXTRACT-MIN rejects exactly an empty heap. -/
+/-- **Extraction from an indexed min queue fails exactly when it is empty.** Let $q$ be an
+indexed min queue over a linear order $W$ with identities in $\{0, \dots, n-1\}$. Extracting
+the minimum of $q$ returns no result if and only if the heap array of $q$ has size $0$. -/
 theorem extractMin_eq_none_iff {W : Type u} [LinearOrder W] {n : Nat}
     (q : IndexedMinQueue W n) :
     (extractMin q).ret = none ↔ q.heap.data.size = 0 := by
@@ -83,14 +96,21 @@ theorem extractMin_eq_none_iff {W : Type u} [LinearOrder W] {n : Nat}
   · dsimp only
     split <;> dsimp only <;> simp_all
 
-/-- Membership returns the actual inverse-vector presence flag. -/
+/-- **Membership reads the position vector.** Let $q$ be an indexed min queue over a linear
+order $W$ with identities in $\{0, \dots, n-1\}$ and let $v$ be an identity. The membership
+test for $v$ in $q$ returns true if and only if the position vector of $q$ records a slot for
+$v$. -/
 theorem member_ret {W : Type u} [LinearOrder W] {n : Nat}
     (q : IndexedMinQueue W n) (v : Fin n) :
     (member q v).ret = q.position[v].isSome := by
   unfold member
   rfl
 
-/-- Membership performs exactly one selected inverse read. -/
+/-- **Membership costs one position read.** Let $q$ be an indexed min queue over a linear
+order $W$ with identities in $\{0, \dots, n-1\}$ and let $v$ be an identity. The cost of the
+membership test for $v$ in $q$, counted in five event classes (comparisons, swaps,
+position-vector reads, position-vector writes, and entry appends, pops or replacements), is
+exactly one position-vector read and no event of any other class. -/
 theorem member_time {W : Type u} [LinearOrder W] {n : Nat}
     (q : IndexedMinQueue W n) (v : Fin n) :
     (member q v).time = fun c : Fin 5 => if c = 2 then 1 else 0 := by
@@ -133,7 +153,13 @@ private lemma insert_heap_eq {W : Type u} [LinearOrder W] {n : Nat}
     apply heap_eq_of_data_eq
     exact siftUpTracked_data _ _ _ _
 
-/-- Successful INSERT refines canonical push and preserves all other identities. -/
+/-- **Successful insertion into an indexed min queue.** Let $q$ be an indexed min queue over a
+linear order $W$ with identities in $\{0, \dots, n-1\}$, let $v$ be an identity and let
+$k \in W \cup \{\top\}$, and suppose that inserting $v$ with key $k$ into $q$ returns the
+queue $q'$. Then the heap of $q'$ is the binary min-heap push of the entry $(k, v)$ onto the
+heap of $q$; the position vector of $q'$ records a slot $i$ for $v$, with $i$ less than the
+size of the heap array of $q'$, and that array holds $(k, v)$ at index $i$; and every identity
+$w \neq v$ has a recorded slot in $q'$ if and only if it has one in $q$. -/
 theorem insert_ret {W : Type u} [LinearOrder W] {n : Nat}
     (q q' : IndexedMinQueue W n) (v : Fin n) (key : WithTop W)
     (h : (insert q v key).ret = some q') :
@@ -212,7 +238,12 @@ private lemma inverse_isSome_eq_of_perm {W : Type u} [LinearOrder W] {n : Nat}
     rw [Array.mem_toList_iff] at he ⊢
     exact hperm.mem_iff.mpr he
 
-/-- DECREASE-KEY rejects absent identities and non-strict decreases. -/
+/-- **Decrease-key fails exactly on absent identities and non-decreases.** Let $q$ be an
+indexed min queue over a linear order $W$ with identities in $\{0, \dots, n-1\}$, let $v$ be
+an identity and let $k \in W$. Decreasing the key of $v$ to $k$ in $q$ returns no queue if and
+only if either the position vector of $q$ records no slot for $v$, or it records a slot $i$
+for $v$ with $i$ less than the size of the heap array of $q$ and $k$ is not strictly less, in
+$W \cup \{\top\}$, than the key of the heap entry at index $i$. -/
 theorem decreaseKey_eq_none_iff {W : Type u} [LinearOrder W] {n : Nat}
     (q : IndexedMinQueue W n) (v : Fin n) (key : W) :
     (decreaseKey q v key).ret = none ↔
@@ -243,7 +274,14 @@ theorem decreaseKey_eq_none_iff {W : Type u} [LinearOrder W] {n : Nat}
       simp only [true_iff]
       exact Or.inr ⟨i, position_valid q v i hp, hp, hnlt⟩
 
-/-- A successful decrease replaces its key and preserves every identity. -/
+/-- **Successful decrease-key.** Let $q$ be an indexed min queue over a linear order $W$ with
+identities in $\{0, \dots, n-1\}$, let $v$ be an identity and let $k \in W$, and suppose that
+decreasing the key of $v$ to $k$ in $q$ returns the queue $q'$. Let $a$ be the heap array of
+$q$. Then the position vector of $q$ records a slot $i$ for $v$ with $i$ less than the size of
+$a$, $k$ is strictly less, in $W \cup \{\top\}$, than the key of the entry $a_i$, and the heap
+array of $q'$ is obtained by sifting up from index $i$ the array that agrees with $a$ except
+that $a_i$ is replaced by $(k, v)$. Moreover, every identity has a recorded slot in $q'$ if and
+only if it has one in $q$. -/
 theorem decreaseKey_ret {W : Type u} [LinearOrder W] {n : Nat}
     (q q' : IndexedMinQueue W n) (v : Fin n) (key : W)
     (h : (decreaseKey q v key).ret = some q') :
@@ -365,7 +403,13 @@ private lemma extract_position_none {W : Type u} [LinearOrder W] {n : Nat}
       exact siftDownTracked_none aSwap.pop (pSwap.set v none) hcp hip v
         (by simp) 0
 
-/-- Successful extraction refines canonical extraction and removes only its identity. -/
+/-- **Successful extraction from an indexed min queue.** Let $q$ be an indexed min queue over a
+linear order $W$ with identities in $\{0, \dots, n-1\}$, and suppose that extracting the
+minimum of $q$ returns the heap entry $e = (k, u)$, with key $k \in W \cup \{\top\}$ and
+identity $u$, together with the queue $q'$. Then binary min-heap extraction on the heap of $q$
+returns $e$ together with the heap of $q'$; the position vector of $q'$ records no slot for
+$u$; and every identity $w \neq u$ has a recorded slot in $q'$ if and only if it has one in
+$q$. -/
 theorem extractMin_ret {W : Type u} [LinearOrder W] {n : Nat}
     (q q' : IndexedMinQueue W n) (entry : WithTop W ×ₗ Fin n)
     (h : (extractMin q).ret = some (entry, q')) :
