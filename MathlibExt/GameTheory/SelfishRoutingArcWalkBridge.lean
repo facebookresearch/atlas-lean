@@ -28,7 +28,9 @@ as its arc set, and its `edgeFlow` counts a route once on each of its arcs. The
 arc-list model of `MathlibExt.Combinatorics.Graph.ArcNetworkWalk` stores a route as
 an arc list, and its `edgeVolume` counts every traversal. On routes that repeat no
 arc the two counts agree (`edgeFlow_eq_edgeVolume`); a route with a repeated arc is
-outside the bridge and is never collapsed to a set of arcs.
+outside the bridge and is never collapsed to a set of arcs. On routes that repeat no
+arc, `pathLatency` is also the arc-list route travel time at the induced volumes
+(`pathLatency_eq_sum_map`).
 -/
 
 /-- Link-simple bridge to the set-based routing model: on the OD instance with commodity
@@ -53,5 +55,46 @@ theorem edgeFlow_eq_edgeVolume {V E P : Type*} [Fintype P] [DecidableEq E]
   · rw [List.count_eq_zero_of_not_mem h,
       ite_eq_right (fun hm => h (List.mem_toFinset.mp hm))]
     simp
+
+/-- Link-simple bridge for route travel times: on the OD instance with commodity
+`p ↦ (orig p, dest p)`, arc sets `(edges p).toFinset` and latency `ℓ`, routes that repeat no
+arc give `pathLatency f p = ((edges p).map fun e => ℓ e (edgeVolume edges f e)).sum`, the route
+travel time at the induced volumes. Neither side depends on the commodity. `Nodup` is needed:
+`pathLatency` charges a repeated arc once, at the set-based `edgeFlow`. With
+`cost_eq_sum_pathLatency_mul` and `sum_mul_sum_map_eq_sum_edgeVolume_mul`, the set-based cost
+of such routes is the edge-side total travel time. -/
+theorem pathLatency_eq_sum_map {V E P : Type*} [Fintype P] [DecidableEq E]
+    (orig dest : P → V) (edges : P → List E) (ℓ : E → ℝ → ℝ)
+    (hsimple : ∀ p, (edges p).Nodup) (f : P → ℝ) (p : P) :
+    RoutingInstance.pathLatency
+        { commodity := fun p => (orig p, dest p), edges := fun p => (edges p).toFinset,
+          latency := ℓ } f p =
+      ((edges p).map fun e => ℓ e (edgeVolume edges f e)).sum := by
+  have hsum : ((edges p).map fun e => ℓ e (edgeVolume edges f e)).sum
+      = (edges p).toFinset.sum (fun e => ℓ e (edgeVolume edges f e)) :=
+    (List.sum_toFinset _ (hsimple p)).symm
+  rw [hsum]
+  simp only [RoutingInstance.pathLatency, RoutingInstance.edgeFlow]
+  apply Finset.sum_congr rfl
+  intro e _
+  congr 1
+  simp only [edgeVolume]
+  have hfil : (∑ q ∈ Finset.univ.filter (fun q => e ∈ (edges q).toFinset),
+        f q * ((((edges q).count e : ℕ) : ℝ)))
+      = ∑ q, f q * ((((edges q).count e : ℕ) : ℝ)) := by
+    apply Finset.sum_subset (Finset.filter_subset _ _)
+    intro q _ hq
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hq
+    rw [List.mem_toFinset] at hq
+    rw [List.count_eq_zero_of_not_mem hq]
+    simp
+  rw [← hfil]
+  apply Finset.sum_congr rfl
+  intro q hq
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hq
+  rw [List.mem_toFinset] at hq
+  have hc : (edges q).count e = 1 := List.count_eq_one_of_mem (hsimple q) hq
+  rw [hc]
+  simp
 
 end MathlibExt.GameTheory.SelfishRouting.RoutingInstance
