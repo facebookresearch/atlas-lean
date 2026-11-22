@@ -22,6 +22,7 @@ reset_fixture() {
     "$REPO_ROOT/scripts/check_axioms.sh" \
     "$REPO_ROOT/scripts/check_axioms.lean" \
     "$REPO_ROOT/scripts/audit_compiled_modules.py" \
+    "$REPO_ROOT/scripts/audit_rebuilt_modules.py" \
     "$REPO_ROOT/scripts/check_health.sh" \
     "$REPO_ROOT/scripts/check_lake_surface.py" \
     "$TMP_ROOT/repo/scripts/"
@@ -357,35 +358,44 @@ if grep -q '^import v1\.' "$FAKE_LEAN_INPUT"; then
   fail "axiom input included archived v1 source"
 fi
 
-# A pull request audits only the modules whose .olean is missing, new or
-# rewritten since CI recorded the restored build, and only under its policy.
+# A pull request audits only the modules whose .olean is missing, new,
+# rewritten or not audited at the restored commit, and only under its policy.
 OLEANS="$TMP_ROOT/repo/.lake/build/lib/lean"
-for library in CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest Domains DomainsTest; do
+for library in CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest Domains DomainsTest WantedExt; do
   mkdir -p "$OLEANS/$library" && : >"$OLEANS/$library/Sentinel.olean"
 done
-git -C "$TMP_ROOT/repo" init -q && git -C "$TMP_ROOT/repo" add scripts &&
+# The restored commit has no WantedExt.Sentinel, which left a stale .olean.
+git -C "$TMP_ROOT/repo" init -q && git -C "$TMP_ROOT/repo" add scripts \
+  CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest Domains DomainsTest &&
   git -C "$TMP_ROOT/repo" -c user.name=t -c user.email=t@t commit -qm restored
-python3 "$TMP_ROOT/repo/scripts/audit_compiled_modules.py" --record "$TMP_ROOT/restored.json" HEAD
+python3 "$TMP_ROOT/repo/scripts/audit_rebuilt_modules.py" record "$TMP_ROOT/restored.json" HEAD
 printf 'x' >"$OLEANS/MathlibExt/Sentinel.olean"
+rm "$OLEANS/DomainsTest/Sentinel.olean"
 if ! env PATH="$FAKE_BIN:$PATH" ATLAS_AUDIT_RESTORED="$TMP_ROOT/restored.json" \
   "$TMP_ROOT/repo/scripts/check_axioms.sh" >"$TMP_ROOT/output.log" 2>&1; then
   cat "$TMP_ROOT/output.log" >&2
   fail "scoped compiled audit failed"
 fi
-[[ "$(grep -x 'import [A-Za-z]*\.Sentinel' "$FAKE_LEAN_INPUT")" == $'import MathlibExt.Sentinel\nimport WantedExt.Sentinel' ]] ||
+[[ "$(grep -x 'import [A-Za-z]*\.Sentinel' "$FAKE_LEAN_INPUT")" == \
+  $'import MathlibExt.Sentinel\nimport DomainsTest.Sentinel\nimport WantedExt.Sentinel' ]] ||
   fail "scoped compiled audit checked the wrong modules"
-mkdir -p "$OLEANS/WantedExt" && : >"$OLEANS/WantedExt/Sentinel.olean"
-python3 "$TMP_ROOT/repo/scripts/audit_compiled_modules.py" --record "$TMP_ROOT/restored.json" HEAD
+: >"$OLEANS/DomainsTest/Sentinel.olean"
+git -C "$TMP_ROOT/repo" add WantedExt && git -C "$TMP_ROOT/repo" -c user.name=t -c user.email=t@t commit -qm audited
+python3 "$TMP_ROOT/repo/scripts/audit_rebuilt_modules.py" record "$TMP_ROOT/restored.json" HEAD
 : >"$FAKE_LAKE_LOG"
 if ! env PATH="$FAKE_BIN:$PATH" ATLAS_AUDIT_RESTORED="$TMP_ROOT/restored.json" \
   "$TMP_ROOT/repo/scripts/check_axioms.sh" >"$TMP_ROOT/output.log" 2>&1 || [[ -s "$FAKE_LAKE_LOG" ]]; then
   fail "scoped compiled audit of an unchanged build ran Lean or failed"
 fi
-printf '\n' >>"$TMP_ROOT/repo/scripts/check_axioms.lean"
-if python3 "$TMP_ROOT/repo/scripts/audit_compiled_modules.py" --record "$TMP_ROOT/changed.json" HEAD \
-  >/dev/null || [[ -e "$TMP_ROOT/changed.json" ]]; then
-  fail "a restored build audited under another policy was recorded"
-fi
+for policy in audit_compiled_modules.py check_axioms.lean; do
+  cp "$TMP_ROOT/repo/scripts/$policy" "$TMP_ROOT/$policy"
+  printf '\n' >>"$TMP_ROOT/repo/scripts/$policy"
+  if python3 "$TMP_ROOT/repo/scripts/audit_rebuilt_modules.py" record "$TMP_ROOT/changed.json" HEAD \
+    >/dev/null || [[ -e "$TMP_ROOT/changed.json" ]]; then
+    fail "a restored build audited under another $policy was recorded"
+  fi
+  cp "$TMP_ROOT/$policy" "$TMP_ROOT/repo/scripts/$policy"
+done
 
 # Declaration collisions: every tracked v2 module, and nothing else, is imported
 # into one environment; a module without its .olean, or a failing `git ls-files`,

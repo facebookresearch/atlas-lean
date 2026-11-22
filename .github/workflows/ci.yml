@@ -116,7 +116,7 @@ jobs:
           set -euo pipefail
           sha="$GITHUB_SHA"
           if [[ "$GITHUB_EVENT_NAME" == pull_request || "$GITHUB_EVENT_NAME" == merge_group ]]; then
-            sha="$(git cat-file -p HEAD | awk '/^parent /{print $2; exit}')"
+            sha="$(git cat-file -p HEAD | awk '/^parent / && !seen {print $2; seen = 1}')"
           fi
           echo "sha=${sha:-$GITHUB_SHA}" >> "$GITHUB_OUTPUT"
 
@@ -140,7 +140,7 @@ jobs:
         run: |
           set -euo pipefail
           git fetch --quiet --no-tags --depth=1 origin "${RESTORED_KEY##*-}"
-          if python3 scripts/audit_compiled_modules.py --record "$RUNNER_TEMP/restored-build.json" FETCH_HEAD; then
+          if python3 scripts/audit_rebuilt_modules.py record "$RUNNER_TEMP/restored-build.json" FETCH_HEAD; then
             echo "ATLAS_AUDIT_RESTORED=$RUNNER_TEMP/restored-build.json" >> "$GITHUB_ENV"
           fi
 

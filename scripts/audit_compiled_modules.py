@@ -1,29 +1,17 @@
 #!/usr/bin/env python3
-"""Audit every project module in bounded, initialized Lean environments.
-
-With ATLAS_AUDIT_RESTORED=FILE, written by `--record FILE REVISION` right after
-CI restores a build that passed this audit at REVISION, only modules whose
-.olean is missing, new or rewritten since are audited. The record is written
-only if REVISION has the same policy: the checker and the audited roots. Lake
-rebuilds a module whenever its source or what it needs from its imports
-changes, and anything else such a module reaches changed in a rebuilt module.
-"""
+"""Audit every project module in bounded, initialized Lean environments."""
 from __future__ import annotations
 
-import ast
 import json
-import os
 from pathlib import Path
 import re
 import subprocess
-import sys
 import tempfile
 
 ROOTS = ('CSLibExt', 'CSLibExtTest', 'MathlibExt', 'MathlibExtTest',
          'PhyslibExt', 'PhyslibExtTest', 'Domains', 'DomainsTest', 'WantedExt')
 BATCH_SIZE = 1024
 COLLISION = re.compile(r"^.*:\d+:\d+: error: import [^\n]* failed, environment already contains[^\n]*$")
-OLEANS = Path('.lake/build/lib/lean')
 
 
 def only_import_collision(output: str) -> bool:
@@ -52,40 +40,6 @@ def inventory(root: Path) -> list[str]:
     if not modules:
         raise AuditFailure('the audited source inventory is empty')
     return modules
-
-
-def policy(root: Path, revision: str | None = None) -> tuple[str, tuple[str, ...]]:
-    """The checker source and the audited roots, in the worktree or at `revision`."""
-    def read(name: str) -> str:
-        if revision is None:
-            return (root / name).read_text(encoding='utf-8')
-        return subprocess.run(['git', 'show', f'{revision}:{name}'], cwd=root, check=True,
-                              stdout=subprocess.PIPE, text=True).stdout
-    tree = ast.parse(read('scripts/audit_compiled_modules.py'))
-    roots = next(ast.literal_eval(node.value) for node in tree.body if isinstance(node, ast.Assign)
-                 and [getattr(target, 'id', None) for target in node.targets] == ['ROOTS'])
-    return read('scripts/check_axioms.lean'), roots
-
-
-def compiled(root: Path) -> dict[str, list[int]]:
-    """Each compiled module's .olean, identified by its inode, size and timestamps."""
-    result = {}
-    for path in (root / OLEANS).rglob('*.olean'):
-        status = path.stat()
-        result[path.relative_to(root / OLEANS).as_posix()] = [
-            status.st_ino, status.st_size, status.st_mtime_ns, status.st_ctime_ns]
-    return result
-
-
-def rebuilt(root: Path, modules: list[str], restored: dict[str, list[int]]) -> list[str]:
-    """The modules whose .olean is missing, new or rewritten since `restored`."""
-    current = compiled(root)
-    rewritten = []
-    for module in modules:
-        olean = module.replace('.', '/') + '.olean'
-        if olean not in current or current[olean] != restored.get(olean):
-            rewritten.append(module)
-    return rewritten
 
 
 def audit(root: Path, modules: list[str], checker: str, *, batch_size: int = BATCH_SIZE) -> dict:
@@ -140,24 +94,9 @@ def audit(root: Path, modules: list[str], checker: str, *, batch_size: int = BAT
 
 def main() -> int:
     root = Path(__file__).resolve().parent.parent
-    if sys.argv[1:2] == ['--record']:
-        if len(sys.argv) != 4:
-            print('usage: audit_compiled_modules.py [--record FILE REVISION]', flush=True)
-            return 2
-        if policy(root, sys.argv[3]) != policy(root):
-            print('The audit policy changed since the restored build; the audit checks every module.')
-            return 1
-        Path(sys.argv[2]).write_text(json.dumps(compiled(root)), encoding='utf-8')
-        return 0
     try:
-        modules = inventory(root)
-        restored = os.environ.get('ATLAS_AUDIT_RESTORED')
-        if restored:
-            modules = rebuilt(root, modules, json.loads(Path(restored).read_text(encoding='utf-8')))
-            print(f'compiled audit: {len(modules)} modules rebuilt since the restored build', flush=True)
-        checker = (root / 'scripts/check_axioms.lean').read_text()
-        result = audit(root, modules, checker) if modules else {'modules': 0}
-    except (AuditFailure, OSError, ValueError, subprocess.SubprocessError) as error:
+        result = audit(root, inventory(root), (root / 'scripts/check_axioms.lean').read_text())
+    except (AuditFailure, OSError, subprocess.SubprocessError) as error:
         print(f'FAIL [environment]: {error}', flush=True)
         return 1
     summary = {key: value for key, value in result.items() if key != 'checkedModules'}
