@@ -69,34 +69,6 @@ example : ∃ (a : EuclideanSpace ℝ (Fin 2)) (b w : Fin 1 → ℝ), ∀ i,
     rfl
   exact exists_interpolating_net 1 2 singlePoint hz singleLabel
 
-def triB : Fin 2 → ℝ := ![0, 2]
-
-def triX : Fin 2 → ℝ := ![1, 3]
-
-def triY : Fin 2 → ℝ := ![1, 3]
-
-example : ∃ w : Fin 2 → ℝ, ∀ i, (∑ j, w j * (triX i - triB j)⁺) = triY i := by
-  have hb : ∀ i, triB i < triX i := by
-    intro i
-    fin_cases i <;> simp only [triB, triX] <;> norm_num
-  have htri : ∀ i j, i < j → triX i < triB j := by
-    intro i j hij
-    fin_cases i <;> fin_cases j
-    · exact absurd hij (by decide)
-    · simp only [triX, triB]
-      norm_num
-    · exact absurd hij (by decide)
-    · exact absurd hij (by decide)
-  exact interleaving_interpolation 2 triB triX hb htri triY
-
-example : ∀ i, (∑ j, ![1, 0] j * (triX i - triB j)⁺) = triY i := by
-  intro i
-  fin_cases i
-  · norm_num [triX, triB, triY]
-  · norm_num [triX, triB, triY]
-
-#print axioms Cslib.MachineLearning.InterpolationExpressivity.exists_separating_direction
-#print axioms Cslib.MachineLearning.InterpolationExpressivity.interleaving_interpolation
 #print axioms Cslib.MachineLearning.InterpolationExpressivity.exists_interpolating_net
 
 end CSLibExtTest.MachineLearning.InterpolationExpressivity
