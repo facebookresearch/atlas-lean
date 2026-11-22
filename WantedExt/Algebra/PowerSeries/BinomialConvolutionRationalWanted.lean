@@ -9,10 +9,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.RingTheory.Polynomial.Resultant.Basic
 public import Mathlib.RingTheory.PowerSeries.Derivative
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
+public import MathlibExt.RingTheory.Polynomial.PairwiseSumResultant
 public import MathlibExt.RingTheory.PowerSeries.BinomialProduct
 
 /-!
@@ -121,22 +121,6 @@ public theorem_wanted binomialProduct_X_pow {K : Type*} [Field K] [CharZero K] (
     (A : PowerSeries K) :
     binomialProduct (X ^ m) A =
       C ((m.factorial : K)⁻¹) * X ^ m * (⇑(PowerSeries.derivative (R := K)))^[m] (X ^ m * A)
-
-/-- **Theorem 10.** With `U(x) = ∏_{i ≤ m} (1 - αᵢx)` and `V(x) = ∏_{j ≤ n} (1 - βⱼx)`,
-`∏ᵢ ∏ⱼ (1 - (αᵢ + βⱼ)x) = (-1)^{mn} Res((1 - y)^m U(x / (1 - y)), yⁿ V(x / y), y)`.
-
-The two resultant arguments are written expanded as polynomials in `y` over `K[x]`:
-`(1 - y)^m U(x / (1 - y)) = ∏ᵢ (1 - y - αᵢx)` and `yⁿ V(x / y) = ∏ⱼ (y - βⱼx)`; the resultant
-uses the formal degrees `m` and `n`.
-
-Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
-Journal of Integer Sequences 27 (2024), Article 24.1.3, Theorem 10 (`jis-2024-24.1.3-thm-10`). -/
-public theorem_wanted prod_one_sub_add_eq_resultant {K : Type*} [Field K] [CharZero K] (m n : ℕ)
-    (α : Fin m → K) (β : Fin n → K) :
-    ∏ i, ∏ j, (1 - Polynomial.C (α i + β j) * Polynomial.X) =
-      (-1) ^ (m * n) * Polynomial.resultant
-        (∏ i, (1 - Polynomial.X - Polynomial.C (Polynomial.C (α i) * Polynomial.X)))
-        (∏ j, (Polynomial.X - Polynomial.C (Polynomial.C (β j) * Polynomial.X))) m n
 
 /-- **Theorem 11.** If `g(x) = ∑ Gₙ xⁿ = (2 - ax) / (1 - ax - bx²)`, then
 `g ⊙ g = 2 / (1 - ax) + g(2x)`, so `∑_k binom(n, k) G_k G_{n-k} = 2aⁿ + 2ⁿ Gₙ`.

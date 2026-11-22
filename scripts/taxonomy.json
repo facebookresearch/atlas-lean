@@ -12019,6 +12019,7 @@
   "MathlibExt/RingTheory/Polynomial/Eisenstein/AdjoinRoot": {"to": "RingTheory/ramification", "title": "Totally ramified extensions and Eisenstein polynomials"},
   "MathlibExt/RingTheory/Polynomial/HilbertSyzygy": {"to": "RingTheory/syzygies-and-resolutions", "title": "Hilbert's syzygy theorem"},
   "MathlibExt/RingTheory/Polynomial/MorganVoycePolynomial": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Morgan–Voyce polynomials"},
+  "MathlibExt/RingTheory/Polynomial/PairwiseSumResultant": {"to": "Algebra/polynomials", "title": "Binomial convolutions of rational power series"},
   "MathlibExt/RingTheory/PowerSeries/BellRiordanCentralCoefficient": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Bell matrices"},
   "MathlibExt/RingTheory/PowerSeries/BinomialProduct": {"to": "Algebra/polynomials", "title": "Binomial convolutions of rational power series"},
   "MathlibExt/RingTheory/PowerSeries/BinomialTransformGeneratingFunction": {"to": "Combinatorics/riordan-arrays-transforms/sequence-transforms", "title": "Binomial transforms"},
