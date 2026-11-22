@@ -88,21 +88,21 @@ def ZeroWalk {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     [IsProbabilityMeasure μ] (X : ℕ → Ω → ℝ) : Prop :=
   ∀ᵐ ω ∂μ, ∀ n, randomWalkPartialSum X n ω = 0
 
-/-- **Random walk drifting to $+\infty$.** Let $X_0, X_1, \dots$ be real random variables on a
+/-- **Random walk drifting to $+\infty$.** Let $X_0, X_1, \dots$ be real-valued functions on a
 probability space $(\Omega, \mu)$ and $S_n = \sum_{i < n} X_i$. The random walk $(S_n)$ drifts
 to $+\infty$ if for $\mu$-almost every $\omega$, $S_n(\omega) \to +\infty$ as $n \to \infty$. -/
 def DriftsToTop {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     [IsProbabilityMeasure μ] (X : ℕ → Ω → ℝ) : Prop :=
   ∀ᵐ ω ∂μ, Tendsto (fun n => randomWalkPartialSum X n ω) Filter.atTop Filter.atTop
 
-/-- **Random walk drifting to $-\infty$.** Let $X_0, X_1, \dots$ be real random variables on a
+/-- **Random walk drifting to $-\infty$.** Let $X_0, X_1, \dots$ be real-valued functions on a
 probability space $(\Omega, \mu)$ and $S_n = \sum_{i < n} X_i$. The random walk $(S_n)$ drifts
 to $-\infty$ if for $\mu$-almost every $\omega$, $S_n(\omega) \to -\infty$ as $n \to \infty$. -/
 def DriftsToBot {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     [IsProbabilityMeasure μ] (X : ℕ → Ω → ℝ) : Prop :=
   ∀ᵐ ω ∂μ, Tendsto (fun n => randomWalkPartialSum X n ω) Filter.atTop Filter.atBot
 
-/-- **Oscillating random walk.** Let $X_0, X_1, \dots$ be real random variables on a probability
+/-- **Oscillating random walk.** Let $X_0, X_1, \dots$ be real-valued functions on a probability
 space $(\Omega, \mu)$ and $S_n = \sum_{i < n} X_i$. The random walk $(S_n)$ oscillates if for
 $\mu$-almost every $\omega$, $\limsup_n S_n(\omega) = +\infty$ and
 $\liminf_n S_n(\omega) = -\infty$, the limits taken in the extended reals. -/
@@ -110,7 +110,7 @@ def Oscillates {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     [IsProbabilityMeasure μ] (X : ℕ → Ω → ℝ) : Prop :=
   ∀ᵐ ω ∂μ, randomWalkLimsup X ω = ⊤ ∧ randomWalkLiminf X ω = ⊥
 
-/-- **Random walk with a finite limit.** Let $X_0, X_1, \dots$ be real random variables on a
+/-- **Random walk with a finite limit.** Let $X_0, X_1, \dots$ be real-valued functions on a
 probability space $(\Omega, \mu)$ and $S_n = \sum_{i < n} X_i$. The random walk $(S_n)$
 converges to a finite limit if for $\mu$-almost every $\omega$ there is $l \in \mathbb{R}$ with
 $S_n(\omega) \to l$ as $n \to \infty$.
@@ -122,8 +122,8 @@ def ConvergesFinite {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
   ∀ᵐ ω ∂μ, ∃ l : ℝ, Tendsto (fun n => randomWalkPartialSum X n ω) Filter.atTop
     (𝓝 l)
 
-/-- **A random walk is zero exactly when its steps are.** Let $X_0, X_1, \dots$ be real random
-variables on a probability space and $S_n = \sum_{i < n} X_i$. Then almost surely $S_n = 0$ for
+/-- **A random walk is zero exactly when its steps are.** Let $X_0, X_1, \dots$ be real-valued
+functions on a probability space and $S_n = \sum_{i < n} X_i$. Then almost surely $S_n = 0$ for
 every $n$ if and only if almost surely $X_i = 0$ for every $i$. -/
 theorem zeroWalk_iff_ae_forall_eq_zero {Ω : Type*} [MeasurableSpace Ω]
     {μ : Measure Ω} [IsProbabilityMeasure μ] {X : ℕ → Ω → ℝ} :
@@ -138,8 +138,8 @@ theorem zeroWalk_iff_ae_forall_eq_zero {Ω : Type*} [MeasurableSpace Ω]
     filter_upwards [h] with ω hω n
     exact Finset.sum_eq_zero fun i _ => hω i
 
-/-- **A zero walk converges to a finite limit.** Let $X_0, X_1, \dots$ be real random
-variables on a probability space and $S_n = \sum_{i < n} X_i$. If almost surely $S_n = 0$ for
+/-- **A zero walk converges to a finite limit.** Let $X_0, X_1, \dots$ be real-valued
+functions on a probability space and $S_n = \sum_{i < n} X_i$. If almost surely $S_n = 0$ for
 every $n$, then almost surely there is $l \in \mathbb{R}$ with $S_n \to l$ as $n \to \infty$. -/
 theorem ZeroWalk.convergesFinite {Ω : Type*} [MeasurableSpace Ω]
     {μ : Measure Ω} [IsProbabilityMeasure μ] {X : ℕ → Ω → ℝ}

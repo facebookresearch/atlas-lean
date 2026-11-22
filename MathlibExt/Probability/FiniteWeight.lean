@@ -90,7 +90,10 @@ $p(x_U)$ for the marginal of $p$ on $U$ at $x$, the total weight of the configur
 with $x$ on $U$. For $A, B, S \subseteq V$, the variables in $A$ and in $B$ are conditionally
 independent given those in $S$ under $p$ when
 $$p(x_{A \cup B \cup S})\, p(x_S) = p(x_{A \cup S})\, p(x_{B \cup S})$$
-for every configuration $x$. -/
+for every configuration $x$.
+
+For a weight that is not a probability distribution (signed, or of total weight other than $1$)
+this is only an identity between marginals, not probabilistic conditional independence. -/
 def CondIndep (p : (V → α) → ℝ) (A B S : Set V) : Prop :=
   ∀ x, marginal p (A ∪ B ∪ S) x * marginal p S x = marginal p (A ∪ S) x * marginal p (B ∪ S) x
 
@@ -100,6 +103,12 @@ $p(x_U)$ for the marginal of $p$ on $U$ at $x$. If, for $A, B, S \subseteq V$, t
 $A$ and in $B$ are conditionally independent given those in $S$ under $p$, then every
 configuration $x$ with $p(x_S) \ne 0$ satisfies
 $$\frac{p(x_{A\cup B\cup S})}{p(x_S)} = \frac{p(x_{A\cup S})}{p(x_S)}\frac{p(x_{B\cup S})}{p(x_S)}$$
+
+Here conditional independence is the predicate `CondIndep`: under a weight $q$, the variables in
+$A'$ and in $B'$ are conditionally independent given those in $S'$ when
+$q(x_{A' \cup B' \cup S'})\, q(x_{S'}) = q(x_{A' \cup S'})\, q(x_{B' \cup S'})$ for every
+configuration $x$. For a weight that is not a probability distribution this is only an identity
+between marginals.
 
 For a nonnegative weight of positive total mass these ratios are the conditional probabilities of
 the normalized distribution, so this is $P(x_A, x_B \mid x_S) = P(x_A \mid x_S)\, P(x_B \mid x_S)$.
@@ -182,7 +191,13 @@ types, let $f$ and $g$ be real-valued weights on the configurations $x : V \to \
 $P, Q \subseteq V$ with $P \cup Q = V$ such that $f(x)$ depends only on the values of $x$ on $P$
 and $g(x)$ only on its values on $Q$. If $A \subseteq V$ is disjoint from $Q$ and $B \subseteq V$
 is disjoint from $P$, then the variables in $A$ and in $B$ are conditionally independent given
-those in $P \cap Q$ under the pointwise product $fg$. -/
+those in $P \cap Q$ under the pointwise product $fg$.
+
+Here conditional independence is the predicate `CondIndep`: under a weight $q$, the variables in
+$A'$ and in $B'$ are conditionally independent given those in $S'$ when
+$q(x_{A' \cup B' \cup S'})\, q(x_{S'}) = q(x_{A' \cup S'})\, q(x_{B' \cup S'})$ for every
+configuration $x$. For a weight that is not a probability distribution this is only an identity
+between marginals. -/
 theorem condIndep_of_dependsOn {f g : (V → α) → ℝ} {P Q : Set V} (hf : DependsOn f P)
     (hg : DependsOn g Q) (hPQ : ∀ v, v ∈ P ∨ v ∈ Q) {A B : Set V} (hA : ∀ v ∈ A, v ∉ Q)
     (hB : ∀ v ∈ B, v ∉ P) : CondIndep (f * g) A B (P ∩ Q) := by
@@ -217,7 +232,13 @@ theorem condIndep_of_dependsOn {f g : (V → α) → ℝ} {P Q : Set V} (hf : De
 $\alpha$ be finite types, let $p$ be a real-valued weight on the configurations
 $x : V \to \alpha$, and let $A, B, S \subseteq V$. If the variables in $A \setminus S$ and in
 $B \setminus S$ are conditionally independent given those in $S$ under $p$, then the variables in
-$A$ and in $B$ are conditionally independent given those in $S$ under $p$. -/
+$A$ and in $B$ are conditionally independent given those in $S$ under $p$.
+
+Here conditional independence is the predicate `CondIndep`: under a weight $q$, the variables in
+$A'$ and in $B'$ are conditionally independent given those in $S'$ when
+$q(x_{A' \cup B' \cup S'})\, q(x_{S'}) = q(x_{A' \cup S'})\, q(x_{B' \cup S'})$ for every
+configuration $x$. For a weight that is not a probability distribution this is only an identity
+between marginals. -/
 theorem condIndep_of_sdiff {p : (V → α) → ℝ} {A B S : Set V}
     (h : CondIndep p (A \ S) (B \ S) S) : CondIndep p A B S := by
   intro x
@@ -293,7 +314,13 @@ let $p$ be a real-valued weight on the configurations $x : V \to \alpha$, let $W
 let $p_W$ be the $W$-marginal of $p$, the weight sending $x$ to the total weight of the
 configurations that agree with $x$ on $W$. For all $A, B, S \subseteq W$, the variables in $A$
 and in $B$ are conditionally independent given those in $S$ under $p_W$ if and only if they are
-conditionally independent given those in $S$ under $p$. -/
+conditionally independent given those in $S$ under $p$.
+
+Here conditional independence is the predicate `CondIndep`: under a weight $q$, the variables in
+$A'$ and in $B'$ are conditionally independent given those in $S'$ when
+$q(x_{A' \cup B' \cup S'})\, q(x_{S'}) = q(x_{A' \cup S'})\, q(x_{B' \cup S'})$ for every
+configuration $x$. For a weight that is not a probability distribution this is only an identity
+between marginals. -/
 theorem condIndep_marginal_iff {p : (V → α) → ℝ} {A B S W : Set V} (hA : A ⊆ W) (hB : B ⊆ W)
     (hS : S ⊆ W) : CondIndep (marginal p W) A B S ↔ CondIndep p A B S := by
   have hpos : ∀ x : V → α,
