@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Basic.Sign.Defs
-public import PhyslibExt.Chemistry.Stoichiometry.Extent
 public import PhyslibExt.Chemistry.Thermodynamics.Thermochemistry
 public import PhyslibExt.Thermodynamics.ProcessPorts
 
@@ -56,11 +55,8 @@ thermoneutral voltage, rejects heat above it, and exchanges none at `V = Etn`.
 
 For `n, F > 0`, species `i` changes at the rate `ν i * r`, of sign `sign (ν i) * sign I`. At
 `I < 0` the reversed vector `-ν` runs at the positive rate `-I / (n F)` and has the reaction
-enthalpy `-ΔH`. The forward-feasibility statement `forwardFeasibleExtents` of the stoichiometry
-layer admits only nonnegative extents, so it rejects the negative extent of the electrolyzer in the
-fuel-cell orientation. An extent `ξ` of `-ν` is forward-feasible exactly when `-ξ` is
-reverse-feasible for `ν`; from nonnegative amounts, when `ν` produces some species, these extents
-are bounded by the inventory of the species `ν` produces, which `-ν` consumes.
+enthalpy `-ΔH`. Which positive extents of `-ν` an inventory allows is a stoichiometry question,
+answered by the reversed-vector results of `PhyslibExt.Chemistry.Stoichiometry.Extent`.
 
 ## ii. Key results
 
@@ -78,8 +74,6 @@ are bounded by the inventory of the species `ν` produces, which `-ν` consumes.
   `V ≥ Erev`.
 - `ElectrochemicalPorts.sign_heatReleased_of_neg`: for `n, F > 0` and `I < 0` the heat rejected has
   the sign of `V - Etn`.
-- `ElectrochemicalPorts.mem_forwardFeasibleExtents_neg_iff`: forward feasibility of `-ν` is reverse
-  feasibility of `ν` at the negated extent.
 - `ElectrochemicalPorts.electrolyzer_accounting`: the combined power, heat and species statement
   with `ΔH = reactionEnthalpy H ν` and `I < 0`.
 
@@ -88,7 +82,7 @@ are bounded by the inventory of the species `ν` produces, which `-ν` consumes.
 - A. Reversible and thermoneutral voltages
 - B. Heat accounting
 - C. Electrical input and heat under a reversed current
-- D. Species direction and the reversed stoichiometric vector
+- D. Species direction
 - E. Electrolyzer accounting
 
 ## iv. References
@@ -99,11 +93,9 @@ are bounded by the inventory of the species `ν` produces, which `-ν` consumes.
 - A. J. Bard and L. R. Faulkner, *Electrochemical Methods*, ch. 1-2: galvanic and electrolytic
   cells, Faraday's law and `ΔG = -n F E`.
 - E. R. Cohen et al., *Quantities, Units and Symbols in Physical Chemistry* (IUPAC Green Book),
-  3rd ed., 2007: `ΔU = q + w` with `w` the work done on the system, and the extent of reaction.
-- `PhyslibExt.Thermodynamics.ProcessPorts` (`workOut`),
-  `PhyslibExt.Chemistry.Thermodynamics.Thermochemistry` (`reactionEnthalpy`) and
-  `PhyslibExt.Chemistry.Stoichiometry.Extent` (`forwardFeasibleExtents`,
-  `reverseFeasibleExtents`).
+  3rd ed., 2007: `ΔU = q + w` with `w` the work done on the system.
+- `PhyslibExt.Thermodynamics.ProcessPorts` (`workOut`) and
+  `PhyslibExt.Chemistry.Thermodynamics.Thermochemistry` (`reactionEnthalpy`).
 -/
 
 @[expose] public section
@@ -229,8 +221,6 @@ lemma fuelCell_heat_accounting {ι : Type*} [Fintype ι] {H ν : ι → ℝ} {Δ
     div_nonneg hV₀ (le_of_lt hE)
   exact ⟨hheat.1, hheat.2, hirr, hnonneg, hle⟩
 
-open Chemistry.Stoichiometry
-
 /-! ## C. Electrical input and heat under a reversed current -/
 
 /-- Electrical input under the port law `W_out = I V`: the work received by the cell is
@@ -280,7 +270,7 @@ lemma sign_heatReleased_of_neg {ΔH n F I V r q w : ℝ} (hn : 0 < n) (hF : 0 < 
   rw [h, sign_mul, sign_neg hI, show V - thermoneutralVoltage ΔH n F =
     -(thermoneutralVoltage ΔH n F - V) by ring, Left.sign_neg, neg_one_mul]
 
-/-! ## D. Species direction and the reversed stoichiometric vector -/
+/-! ## D. Species direction -/
 
 /-- Species direction: with Faraday's law `I = n F r` and `n, F > 0`, the rate `ν i * r` at which
 species `i` changes has the sign `sign (ν i) * sign I`. At `I < 0` every species with a nonzero
@@ -290,32 +280,6 @@ lemma sign_speciesRate {ι : Type*} {ν : ι → ℝ} {n F I r : ℝ} (hn : 0 < 
     SignType.sign (ν i * r) = SignType.sign (ν i) * SignType.sign I := by
   subst hFaraday
   simp only [sign_mul, sign_pos hn, sign_pos hF, one_mul]
-
-/-- A forward-only feasibility statement rejects a negative extent: no `ξ < 0` is a
-forward-feasible extent, for any reaction and any initial amounts. -/
-lemma notMem_forwardFeasibleExtents_of_neg {ι : Type*} {ν n₀ : ι → ℝ} {ξ : ℝ} (hξ : ξ < 0) :
-    ξ ∉ forwardFeasibleExtents ν n₀ := by
-  intro h
-  exact (not_le_of_gt hξ) h.1
-
-/-- Reversing the stoichiometric vector: `ξ` is a forward-feasible extent of `-ν` exactly when
-`-ξ` is a reverse-feasible extent of `ν`; both leave the amounts `n₀ i + ν i * (-ξ)`. -/
-lemma mem_forwardFeasibleExtents_neg_iff {ι : Type*} {ν n₀ : ι → ℝ} {ξ : ℝ} :
-    ξ ∈ forwardFeasibleExtents (-ν) n₀ ↔ -ξ ∈ reverseFeasibleExtents ν n₀ := by
-  simp only [forwardFeasibleExtents, reverseFeasibleExtents, Set.mem_ofPred_eq, Pi.neg_apply,
-    neg_nonpos, neg_mul, mul_neg]
-
-/-- Inventory of the reversed reaction: if every initial amount is nonnegative and `ν` produces
-some species, the forward-feasible extents of `-ν` form the closed interval from `0` to
-`-minExtent ν n₀ h`, the smallest ratio `n₀ i / ν i` over the species `ν` produces, which are the
-species `-ν` consumes. -/
-lemma forwardFeasibleExtents_neg_eq_Icc {ι : Type*} [Fintype ι] {ν n₀ : ι → ℝ}
-    (hn₀ : ∀ i, 0 ≤ n₀ i) (h : ∃ i, 0 < ν i) :
-    forwardFeasibleExtents (-ν) n₀ = Set.Icc 0 (-minExtent ν n₀ h) := by
-  ext ξ
-  rw [mem_forwardFeasibleExtents_neg_iff, reverseFeasibleExtents_eq_Icc ν n₀ hn₀ h]
-  simp only [Set.mem_Icc]
-  constructor <;> rintro ⟨h1, h2⟩ <;> exact ⟨by linarith, by linarith⟩
 
 /-! ## E. Electrolyzer accounting -/
 
