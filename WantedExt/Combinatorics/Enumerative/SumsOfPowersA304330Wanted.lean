@@ -40,6 +40,7 @@ public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.Basic.Real.Basic
 public import MathlibExt.Combinatorics.Enumerative.LegendreStirlingFirstKind
+public import MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330
 
 set_option autoImplicit false
 
