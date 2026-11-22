@@ -210,7 +210,9 @@ $(0, \beta, 0)$ (second kind).
 Proves `Wanted` entry `generalized_stirling_matrix_factorization`.
 
 Source: Jiaqiang Pan, “Matrix Decomposition of the Unified Generalized Stirling Numbers and
-Inversion of the Generalized Factorial Matrices,” Journal of Integer Sequences 15 (2012), Article 12.6.6, Theorem `t:Decomposition`, lines 250-256, <https://cs.uwaterloo.ca/journals/JIS/VOL15/Pan/pan19.tex>.
+Inversion of the Generalized Factorial Matrices,” Journal of Integer Sequences 15 (2012), Article
+12.6.6, Theorem `t:Decomposition`, lines 250-256,
+<https://cs.uwaterloo.ca/journals/JIS/VOL15/Pan/pan19.tex>.
 -/
 theorem generalized_stirling_matrix_factorization
     (S : ℝ → ℝ → ℝ → ℕ → ℕ → ℝ)

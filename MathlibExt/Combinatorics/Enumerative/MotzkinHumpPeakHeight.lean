@@ -1592,7 +1592,9 @@ where both sums run over the integers $0 \le j \le n - 2k$ with $j \equiv n \pmo
 
 Proves `Wanted` entry `motzkin_hump_peak_height_distribution`.
 
-Source: Xiaomei Chen, "Humps in Motzkin Paths and Standard Young Tableaux in a $(2,1)$-Hook", Journal of Integer Sequences 28 (2025), Article 25.8.1, Theorem `thm:22`, lines 147-156, <https://cs.uwaterloo.ca/journals/JIS/VOL28/Chen/chen36.tex>.
+Source: Xiaomei Chen, "Humps in Motzkin Paths and Standard Young Tableaux in a $(2,1)$-Hook",
+Journal of Integer Sequences 28 (2025), Article 25.8.1, Theorem `thm:22`, lines 147-156,
+<https://cs.uwaterloo.ca/journals/JIS/VOL28/Chen/chen36.tex>.
 -/
 public theorem motzkin_hump_peak_height_distribution
     (n k : ℕ) (hn : 2 ≤ n) (hk : 1 ≤ k) :

@@ -2656,7 +2656,9 @@ $$\sum_{n, r \ge 0} a_{n,r}\, x^n y^r =
 
 Proves `Wanted` entry `setPartition_twoRise_ordinaryGeneratingFunction`.
 
-Source: Toufik Mansour and Augustine O. Munagi, “Enumeration of Partitions by Long Rises, Levels, and Descents”, Journal of Integer Sequences 12 (2009), Article 09.1.8, Theorem `thrise2`, lines 505-510, <https://cs.uwaterloo.ca/journals/JIS/VOL12/Munagi/munagi15.tex>.
+Source: Toufik Mansour and Augustine O. Munagi, “Enumeration of Partitions by Long Rises, Levels,
+and Descents”, Journal of Integer Sequences 12 (2009), Article 09.1.8, Theorem `thrise2`, lines
+505-510, <https://cs.uwaterloo.ca/journals/JIS/VOL12/Munagi/munagi15.tex>.
 -/
 theorem setPartition_twoRise_ordinaryGeneratingFunction
     (k : ℕ) (hk : 1 ≤ k) :

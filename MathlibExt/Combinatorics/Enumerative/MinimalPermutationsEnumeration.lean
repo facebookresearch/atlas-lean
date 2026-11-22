@@ -2234,7 +2234,9 @@ than $d$ descents, equals $2^{d+2} - (d + 1)(d + 2) - 2$.
 
 Proves `Wanted` entry `minimal_permutations_card`.
 
-Source: Stefano Bilotta, Elisabetta Grazzini, and Elisa Pergola, "Enumeration of Two Particular Sets of Minimal Permutations", Journal of Integer Sequences 18 (2015), Article 15.10.2, Theorem `thm:enum`, lines 324-326, <https://cs.uwaterloo.ca/journals/JIS/VOL18/Grazzini/graz3.tex>.
+Source: Stefano Bilotta, Elisabetta Grazzini, and Elisa Pergola, "Enumeration of Two Particular Sets
+of Minimal Permutations", Journal of Integer Sequences 18 (2015), Article 15.10.2, Theorem
+`thm:enum`, lines 324-326, <https://cs.uwaterloo.ca/journals/JIS/VOL18/Grazzini/graz3.tex>.
 -/
 public theorem minimal_permutations_card (d : ℕ) :
     (Finset.univ.filter fun σ : Equiv.Perm (Fin (d + 2)) =>
