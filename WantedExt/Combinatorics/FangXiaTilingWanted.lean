@@ -150,7 +150,10 @@ positive integer $r$ such that for any two ordered set partitions $P = (P_0, \do
 and $Q = (Q_0, \dots, Q_{k-1})$ of $\{0, \dots, n-1\}$ with $|P_i| = |Q_i| = \lambda_i$ for
 every $i$, exactly $r$ permutations $\sigma \in Y$ satisfy $\sigma(P_i) = Q_i$ for every $i$.
 
-Source: T. Fang and B. Xia, 'Tiling the symmetric group by transpositions', Bull. London Math. Soc. 58(5) (2026); DOI 10.1112/blms.70366; arXiv:2506.00360. The λ-transitivity notion in the statement is due to Martin–Sagan. Via leanprover/lean-eval@38361be, problem `fang_xia_tiling_partition_transitive`. -/
+Source: T. Fang and B. Xia, 'Tiling the symmetric group by transpositions', Bull. London Math. Soc.
+58(5) (2026); DOI 10.1112/blms.70366; arXiv:2506.00360. The λ-transitivity notion in the statement
+is due to Martin–Sagan. Via leanprover/lean-eval@38361be, problem
+`fang_xia_tiling_partition_transitive`. -/
 public theorem_wanted fang_xia_partition_transitive_of_tiling
     {n : ℕ} {Y : Set (Equiv.Perm (Fin n))}
     (_h : IsTiling (transpositionsWithOne n) Y) :

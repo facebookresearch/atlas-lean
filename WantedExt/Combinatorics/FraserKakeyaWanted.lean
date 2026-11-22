@@ -23,14 +23,18 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Combinatorics.FraserKakeya` — fraser_kakeya_fourier_decay (manifest `manifests/problems/fraser_kakeya_fourier_decay.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Combinatorics.FraserKakeya` —
+fraser_kakeya_fourier_decay (manifest `manifests/problems/fraser_kakeya_fourier_decay.toml`, rev 1,
+submitter Kim Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Combinatorics.FraserKakeyaWanted` namespace. Mathematical
-statements are unchanged. Source: J.M. Fraser, 'Fourier analytic properties of Kakeya sets in finite fields', Bull. London Math. Soc. 58(5) (2026); DOI 10.1112/blms.70367; arXiv:2505.09464.
+and placed the declarations in the `MathlibExt.Combinatorics.FraserKakeyaWanted` namespace.
+Mathematical
+statements are unchanged. Source: J.M. Fraser, 'Fourier analytic properties of Kakeya sets in finite
+fields', Bull. London Math. Soc. 58(5) (2026); DOI 10.1112/blms.70367; arXiv:2505.09464.
 -/
 module
 
@@ -126,7 +130,9 @@ that every probability measure $\mu$ on $K'$ has a nonzero $\xi \in (F')^d$ at w
 transform $\hat{\mu}$ with respect to a fixed primitive additive character of $F'$ satisfies
 $|\hat{\mu}(\xi)| \ge \kappa \, q'^{-1}$.
 
-Source: J.M. Fraser, 'Fourier analytic properties of Kakeya sets in finite fields', Bull. London Math. Soc. 58(5) (2026); DOI 10.1112/blms.70367; arXiv:2505.09464. Via leanprover/lean-eval@38361be, problem `fraser_kakeya_fourier_decay`. -/
+Source: J.M. Fraser, 'Fourier analytic properties of Kakeya sets in finite fields', Bull. London
+Math. Soc. 58(5) (2026); DOI 10.1112/blms.70367; arXiv:2505.09464. Via leanprover/lean-eval@38361be,
+problem `fraser_kakeya_fourier_decay`. -/
 public theorem_wanted fraser_kakeya_fourier_decay_and_sharp
     {d : ℕ} (_hd : 2 ≤ d) {K : Set (Space F d)} (_hK : IsKakeya K)
     (χ : AddChar F ℂ) (_hχ : χ ≠ 1) :

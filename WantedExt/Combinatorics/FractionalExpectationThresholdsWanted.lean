@@ -101,7 +101,11 @@ specified, that is to serve as the universal constant in the bound of the thresh
 increasing family by $K$ times its fractional expectation-threshold times the logarithm of the
 size of its largest minimal element.
 
-Source: K. Frankston, J. Kahn, B. Narayanan, and J. Park, `Thresholds versus fractional expectation-thresholds`, Annals of Math, 194 (2) 2021. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2021-194-2-FractionalExpectationThresholds.lean Via leanprover/lean-eval@38361be, problem `annals_fractional_expectation_thresholds`. -/
+Source: K. Frankston, J. Kahn, B. Narayanan, and J. Park, `Thresholds versus fractional
+expectation-thresholds`, Annals of Math, 194 (2) 2021. Statement taken from
+https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14),
+AnnalsChallenge/AnnalsOfMathematics/2021-194-2-FractionalExpectationThresholds.lean Via
+leanprover/lean-eval@38361be, problem `annals_fractional_expectation_thresholds`. -/
 public def_wanted K : ℝ
 
 /-- **Thresholds versus fractional expectation-thresholds.** Let $K$ be the universal real

@@ -1,0 +1,3 @@
+# Signed boundary coefficient on an outgoing edge
+
+Let $L \in \mathbb{N}$, $P : T_L \to \mathbb{Z}/2$ a function on the sites of the discrete torus $T_L = (\mathbb{Z}/L\mathbb{Z})^2$ ($L \in \mathbb{N}$, with $\mathbb{Z}/0\mathbb{Z} = \mathbb{Z}$), $p$ a site and $\mu \in \{0, 1, 2, 3\}$ a direction. The coefficient is $\beta_h(p)$ for $\mu = 0$, $\beta_v(p)$ for $\mu = 1$, $-\beta_h(p - (1, 0))$ for $\mu = 2$, and $-\beta_v(p - (0, 1))$ for $\mu = 3$, where $\beta_h$ and $\beta_v$ are the [horizontal](ons-signed-horizontal-boundary.md) and [vertical signed boundaries](ons-signed-vertical-boundary.md) of $P$.

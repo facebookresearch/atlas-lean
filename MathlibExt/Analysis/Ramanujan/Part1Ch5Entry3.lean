@@ -98,11 +98,6 @@ private theorem aux_eval_Dexp_X_pow (a : ℕ → ℂ) (h x : ℂ) (k : ℕ) :
   intro n hn
   rw [Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X]
 
-private theorem aux_eval_Sexp (h x : ℂ) (q : Polynomial ℂ) :
-    (Polynomial.taylor h q).eval x = q.eval (x + h) := by
-  rw [Polynomial.taylor_apply, Polynomial.eval_comp, Polynomial.eval_add, Polynomial.eval_X,
-    Polynomial.eval_C]
-
 private theorem aux_eval_Dexp_at_self (a : ℕ → ℂ) (h : ℂ) (k : ℕ) :
     (chapter5DerivativeExpansion a h (Polynomial.X ^ k : ℂ[X])).eval h =
       h ^ k * ∑ n ∈ range (k + 1), a n * ((Nat.descFactorial k n : ℕ) : ℂ) := by
@@ -142,7 +137,7 @@ private theorem aux_eval_Op_at_zero (p : ℂ) (a : ℕ → ℂ) (h : ℂ) (k : �
       Polynomial.C p * chapter5DerivativeExpansion a h (Polynomial.X ^ k : ℂ[X])).eval 0 =
       (chapter5DerivativeExpansion a h (Polynomial.X ^ k : ℂ[X])).eval h +
         p * ((chapter5DerivativeExpansion a h (Polynomial.X ^ k : ℂ[X])).eval 0) := by
-  rw [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_C, aux_eval_Sexp]
+  rw [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_C, Polynomial.taylor_eval]
   simp only [zero_add]
 
 private theorem aux_eval_Dexp_one_one (a : ℕ → ℂ) (k : ℕ) :
@@ -1054,7 +1049,7 @@ private theorem aux_Op_X_pow_of_Rec (p : ℂ) (a : ℕ → ℂ) (ha : auxRec p a
       x ^ m * (p * a (m - m) * h ^ (m - m) * ↑(Nat.descFactorial m (m - m)))) = 0 := by
     intro hcon
     simp at hcon
-  rw [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_C, aux_eval_Sexp,
+  rw [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_C, Polynomial.taylor_eval,
     aux_eval_Dexp_X_pow a h (x + h) m, aux_eval_Dexp_X_pow a h x m,
     Polynomial.eval_pow, Polynomial.eval_X, hLHS1, hpterm, ← Finset.sum_add_distrib,
     Finset.sum_eq_single m h0 h1]
@@ -1135,7 +1130,7 @@ private theorem aux_Op_eq_of_monomials (p : ℂ) (a : ℕ → ℂ)
     intro m x
     have hmx := congrArg (fun q : Polynomial ℂ => q.eval x) (hm h m)
     rwa [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_C,
-      aux_eval_Sexp] at hmx
+      Polynomial.taylor_eval] at hmx
   have Hphi : ∀ (x : ℂ),
       (∑ m ∈ range (phi.natDegree + 1),
         phi.coeff m * ((Polynomial.X ^ m : ℂ[X]).eval x)) = phi.eval x := by
@@ -1144,7 +1139,7 @@ private theorem aux_Op_eq_of_monomials (p : ℂ) (a : ℕ → ℂ)
     exact (Polynomial.eval_eq_sum_range x).symm
   apply Polynomial.funext
   intro x
-  rw [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_C, aux_eval_Sexp,
+  rw [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_C, Polynomial.taylor_eval,
     HD, HD, Finset.mul_sum, ← Finset.sum_add_distrib]
   trans ∑ m ∈ range (phi.natDegree + 1), phi.coeff m * ((Polynomial.X ^ m : ℂ[X]).eval x)
   · apply Finset.sum_congr rfl
@@ -1157,7 +1152,22 @@ private theorem aux_Op_eq_of_monomials (p : ℂ) (a : ℕ → ℂ)
       _ = phi.coeff m * ((Polynomial.X ^ m : ℂ[X]).eval x) := by rw [Hm]
   · exact Hphi x
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 5.
+/-- **Eulerian-polynomial inverse of a shift-plus-multiple operator.** Let $A(n, k)$ be the
+Eulerian numbers, given by $A(0, 0) = 1$, $A(0, k) = 0$ for $k \ge 1$ and
+$A(n + 1, k) = (k + 1) A(n, k) + (n + 1 - k) A(n, k - 1)$, the last term read as $0$ when
+$k = 0$. For $p \in \mathbb{C}$ set $\psi_0(p) = 1$ and
+$\psi_n(p) = \sum_{k=0}^{n-1} A(n, k) (-p)^k$ for $n \ge 1$. For a sequence $a_0, a_1, \ldots$
+of complex numbers, $h \in \mathbb{C}$ and a polynomial $\varphi \in \mathbb{C}[x]$, write
+$E_{a,h} \varphi = \sum_{n=0}^{\deg \varphi} a_n h^n \varphi^{(n)}$, where $\varphi^{(n)}$ is the
+$n$-th derivative. Fix $p \in \mathbb{C}$ with $p \ne -1$ and put
+$c_n = \frac{(-1)^n \psi_n(p)}{n! \, (p + 1)^{n + 1}}$. Then:
+(1) for every $h \in \mathbb{C}$ and every $\varphi \in \mathbb{C}[x]$, the polynomial
+$f = E_{c,h} \varphi$ satisfies $f(x + h) + p f(x) = \varphi(x)$ as polynomials in $x$;
+(2) if a sequence $a$ of complex numbers is such that $f = E_{a,h} \varphi$ satisfies
+$f(x + h) + p f(x) = \varphi(x)$ for every $h \in \mathbb{C}$ and every $\varphi \in \mathbb{C}[x]$,
+then $a_n = c_n$ for every $n \ge 0$.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 5.
 Proves `Wanted` entry `ramanujan_part1_ch5_entry3`.
 -/
 theorem ramanujan_part1_ch5_entry3 (p : ℂ) (hp : p ≠ -1) :

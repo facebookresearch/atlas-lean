@@ -14,7 +14,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.SimpleGraph.Ramsey
 public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Lattice.Nat
 
 @[expose] public section

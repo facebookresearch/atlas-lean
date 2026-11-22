@@ -16,6 +16,7 @@ public import Mathlib.Data.Fin.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.WellFounded
 import Mathlib.Order.Lattice.Nat
+import Batteries.Data.Nat.Bitwise.Lemmas
 
 @[expose] public section
 
@@ -97,19 +98,13 @@ theorem isP_iff (G : ImpartialGame) (p : G.Pos) :
   unfold IsP
   rw [WellFounded.fix_eq]
 
-private theorem exists_not_mem (s : Finset ℕ) : ∃ n, n ∉ s := by
-  refine ⟨s.sup id + 1, fun h => ?_⟩
-  have hle : id (s.sup id + 1) ≤ s.sup id := Finset.le_sup (f := id) h
-  simp only [id_eq] at hle
-  omega
-
-private noncomputable def mex (s : Finset ℕ) : ℕ := Nat.find (exists_not_mem s)
+private noncomputable def mex (s : Finset ℕ) : ℕ := Nat.find (Infinite.exists_notMem_finset s)
 
 private theorem mex_not_mem (s : Finset ℕ) : mex s ∉ s :=
-  Nat.find_spec (exists_not_mem s)
+  Nat.find_spec (Infinite.exists_notMem_finset s)
 
 private theorem mex_le_of_not_mem (s : Finset ℕ) {m : ℕ} (h : m ∉ s) : mex s ≤ m :=
-  Nat.find_min' (exists_not_mem s) h
+  Nat.find_min' (Infinite.exists_notMem_finset s) h
 
 private theorem mem_of_lt_mex (s : Finset ℕ) {m : ℕ} (h : m < mex s) : m ∈ s := by
   by_contra hc
@@ -223,15 +218,6 @@ private theorem nim_grundy_aux (n : ℕ) (v : ℕ) (k : Fin (n + 1)) (hk : k.val
 private theorem nim_grundy (n : ℕ) (k : Fin (n + 1)) :
     grundy (nimHeap n) k = k.val :=
   nim_grundy_aux n k.val k (Nat.le_refl _)
-
-private theorem xor_eq_zero_iff {x y : ℕ} : x ^^^ y = 0 ↔ x = y := by
-  constructor
-  · intro h
-    have h2 : (x ^^^ y) ^^^ y = (0 : ℕ) ^^^ y := by rw [h]
-    rw [Nat.xor_assoc, Nat.xor_self, Nat.xor_zero, Nat.zero_xor] at h2
-    exact h2
-  · intro h
-    rw [h, Nat.xor_self]
 
 private theorem sum_mem_left (G H : ImpartialGame) (a : G.Pos) (b : H.Pos)
     (a' : G.Pos) (h : a' ∈ G.moves a) :
@@ -394,8 +380,8 @@ private theorem isP_sum_iff_aux (G H : ImpartialGame) (t : ℕ) (a : G.Pos) (b :
         have hi := ih a' b hle2
         rw [heq] at hP
         have ha0 : grundy G a' ^^^ grundy H b = 0 := hi.mp hP
-        have hea : grundy G a' = grundy H b := xor_eq_zero_iff.mp ha0
-        have hxx : grundy G a = grundy H b := xor_eq_zero_iff.mp hxor
+        have hea : grundy G a' = grundy H b := Nat.xor_eq_zero_iff.mp ha0
+        have hxx : grundy G a = grundy H b := Nat.xor_eq_zero_iff.mp hxor
         have hne : grundy G a' ≠ grundy G a := grundy_ne_of_mem G ha'
         exact hne (hea.trans hxx.symm)
       | inr hr =>
@@ -407,8 +393,8 @@ private theorem isP_sum_iff_aux (G H : ImpartialGame) (t : ℕ) (a : G.Pos) (b :
         have hi := ih a b' hle2
         rw [heq] at hP
         have hb0 : grundy G a ^^^ grundy H b' = 0 := hi.mp hP
-        have heb : grundy G a = grundy H b' := xor_eq_zero_iff.mp hb0
-        have hxx : grundy G a = grundy H b := xor_eq_zero_iff.mp hxor
+        have heb : grundy G a = grundy H b' := Nat.xor_eq_zero_iff.mp hb0
+        have hxx : grundy G a = grundy H b := Nat.xor_eq_zero_iff.mp hxor
         have hne : grundy H b' ≠ grundy H b := grundy_ne_of_mem H hb'
         exact hne (heb.symm.trans hxx)
 

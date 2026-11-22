@@ -23,7 +23,7 @@ import Mathlib.Tactic.Abel
 
 For a normal operator `A` on a complex Hilbert space and any bounded
 perturbation `E`, every point `μ` of the spectrum of `A + E` lies within
-`‖E‖` of the spectrum of `A`. This is the Bauer–Fike theorem
+`‖E‖` of the spectrum of `A`. This is the normal case of the Bauer–Fike theorem
 (F. L. Bauer and C. T. Fike, *Norms and exclusion theorems*, Numer. Math. 2
 (1960), 137–141). In particular, for self-adjoint `A` and `A + E` the two
 spectra are Hausdorff-close by at most `‖E‖`, which is the
@@ -203,8 +203,10 @@ theorem norm_ringInverse_sub_smul_one_le {A : H →L[ℂ] H} [IsStarNormal A] {z
     exact hle
   exact hle'
 
-/-- The Bauer–Fike theorem: every point of the spectrum of `A + E` lies
-within `‖E‖` of the spectrum of a normal operator `A`. -/
+/-- The Bauer–Fike theorem for normal operators: every point of the spectrum of `A + E` lies
+within `‖E‖` of the spectrum of a normal operator `A`. For a diagonalizable matrix
+`A = V Λ V⁻¹` the general theorem has the factor `‖V‖ ‖V⁻¹‖`, which is `1` when `V` is unitary;
+see `MathlibExt.Analysis.Matrix.BauerFikeDiagonalizable`. -/
 theorem infDist_le_norm_of_mem_spectrum_add {A E : H →L[ℂ] H} [IsStarNormal A]
     {μ : ℂ} (hμ : μ ∈ spectrum ℂ (A + E)) :
     Metric.infDist μ (spectrum ℂ A) ≤ ‖E‖ := by
@@ -254,8 +256,8 @@ theorem infDist_le_norm_of_mem_spectrum_add {A E : H →L[ℂ] H} [IsStarNormal 
     exact hunitB.mul hunit1
   exact (spectrum.mem_iff.mp hμ) hunit
 
-/-- The attained form of Bauer–Fike: some eigenvalue-like point of the
-spectrum of `A` is within `‖E‖` of `μ`. -/
+/-- The attained form of Bauer–Fike for normal operators: some point of the
+spectrum of the normal operator `A` is within `‖E‖` of `μ`. -/
 theorem exists_mem_spectrum_norm_sub_le {A E : H →L[ℂ] H} [IsStarNormal A]
     {μ : ℂ} (hμ : μ ∈ spectrum ℂ (A + E)) :
     ∃ v ∈ spectrum ℂ A, ‖μ - v‖ ≤ ‖E‖ := by

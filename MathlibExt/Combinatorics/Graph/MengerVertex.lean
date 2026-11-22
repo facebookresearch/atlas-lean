@@ -1939,7 +1939,7 @@ namespace MathlibExt.Combinatorics.SimpleGraph.MengerVertexWanted
 Adapted from `WantedExt/Combinatorics/SimpleGraph/MengerVertexWanted.lean`: the
 definitions `IsInternallyVertexDisjointSTPaths` and `IsSTVertexCut`, and the statement
 of `menger_vertex_max_min`, follow the API proposed there, originally contributed by
-`@toskua, Avocado`. All proofs given here are new.
+`@toskua, Meta Muse`. All proofs given here are new.
 -/
 
 /-- Internally vertex-disjoint `s-t` paths: common vertex of distinct paths is `s` or `t`. -/

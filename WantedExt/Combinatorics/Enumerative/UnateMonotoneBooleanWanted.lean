@@ -333,19 +333,6 @@ quoting Bakoev. -/
 public theorem_wanted monotone_boolFunConcat_iff {n : ℕ} (g h : (Fin n → Bool) → Bool) :
     Monotone (boolFunConcat g h) ↔ Monotone g ∧ Monotone h ∧ g ≤ h
 
-/-- **The dual of a monotone Boolean function is monotone.** If a Boolean function $f$ on $n$
-variables is monotone, then so is its dual $f^\star$, defined by $f^\star(x) = \neg f(\bar{x})$,
-where $\bar{x}$ is the coordinatewise complement of $x \in \{0,1\}^n$.
-
-In the notation of the source, $f^\star$ is $\overline{f^r}$, where $f^r(x) = f(\bar{x})$ is
-the function whose truth table is that of $f$ reversed.
-
-Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
-under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
-Sequences 28 (2025), Article 25.3.4, Proposition 5 (`jis-2025-25.3.4-prop-5`). -/
-public theorem_wanted monotone_booleanFunctionDual {n : ℕ} {f : (Fin n → Bool) → Bool}
-    (hf : Monotone f) : Monotone (booleanFunctionDual n f)
-
 /-- **Unateness of a concatenation.** Let $g$ and $h$ be $n$-variable Boolean functions and let
 $g \| h$ be their concatenation, the $(n+1)$-variable function equal to $g$ of the remaining
 variables when the first variable is $0$ and to $h$ of them when it is $1$. Then $g \| h$ is

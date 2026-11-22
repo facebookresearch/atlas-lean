@@ -1,0 +1,3 @@
+# Shift decay extends from a dense set of test functions
+
+Let $d \in \mathbb{N}$, $(\mu_n)$ probability measures on configurations of $\mathbb{Z}^d$ (assignments of open/closed states to all unordered pairs of sites), $g \in \mathbb{Z}^d$, and $\mathcal{D}$ a dense set of bounded continuous functions (supremum norm) with $D_n(f') \to 0$ for every $f' \in \mathcal{D}$, where $D_n(f) = \int f\, d\mu_n - \int f \circ \tau_g\, d\mu_n$ and $\mathbb{Z}^d$ acts on configurations by $(\tau_g\omega)(e) = \omega(e - g)$, where $e - g$ is the pair $e$ translated by $-g$. Then $D_n(f) \to 0$ for every bounded continuous $f$.
