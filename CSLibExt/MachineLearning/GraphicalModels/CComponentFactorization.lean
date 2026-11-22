@@ -44,15 +44,6 @@ open Finset
 
 variable {α : Type*} {n : ℕ} [Nonempty α] (b : BayesNet α n)
 
-/-- Without intervened nodes, the joint is that of `b`. -/
-theorem joint_mutilateSet_empty (w : Fin n → α) :
-    (b.mutilateSet ∅ w).joint = b.joint := by
-  classical
-  funext x
-  rw [joint_mutilateSet, joint_eq_prod]
-  simp only [notMem_empty, ite_false]
-  rfl
-
 end Cslib.MachineLearning.GraphicalModels.BayesNet
 
 namespace Cslib.MachineLearning.GraphicalModels
@@ -92,7 +83,12 @@ open Finset MetaMathlibExt.FiniteWeight
 variable {α : Type*} [Fintype α] [DecidableEq α] [Nonempty α] {n : ℕ}
   (b : BayesNet α n) (L : Finset (Fin n))
 
-/-- TP02 p. 568: no latent node is a descendant of an observed node. -/
+/-- Semi-Markovian in TP02's usage (AAAI-02, p. 568): no latent node is a
+descendant of an observed node. This is the weaker of the two conventions in
+the sources: TR (R-290-L, p. 6) instead calls a model semi-Markovian when
+each unobserved variable is a root node with exactly two observed children.
+The name here follows TP02, whose factorization statements are the ones
+formalized below. -/
 def IsSemiMarkovian : Prop := ∀ u ∈ L, ∀ w ∉ L, ¬ b.IsDescendant w u
 
 /-- The Q-factor as a truncated product (TP02 (26), TR (55)), summed over the latent

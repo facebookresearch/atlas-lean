@@ -130,6 +130,13 @@ noncomputable def mutilateSet (W : Finset (Fin n)) (w : Fin n → α) : BayesNet
   cpt j z := if h : j ∈ W then StdSimplex.single (w j) else
     b.cpt j fun i => z ⟨i, by simp [h]⟩
 
+/-- Without intervened nodes, the joint is that of `b`. -/
+theorem joint_mutilateSet_empty (w : Fin n → α) :
+    (b.mutilateSet ∅ w).joint = b.joint := by
+  funext x
+  rw [joint_eq_prod, joint_eq_prod]
+  exact prod_congr rfl fun j _ => by simp [mutilateSet]
+
 /-- **The truncated factorization** (Pearl 2009, eq. (3.10)): after `do(X_k = a)` the joint is
 the product of the tables of all nodes other than `k` on assignments with `x_k = a`, and `0`
 elsewhere. -/

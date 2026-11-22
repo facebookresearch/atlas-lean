@@ -345,15 +345,6 @@ private lemma joint_mutilateSet_mul {W W' : Finset (Fin n)} (hWW' : W ⊆ W')
     · simp [hj, hj', hx j hj']
     · simp [hj, hj']
 
-/-- Without intervened nodes, the joint is that of `b`. -/
-private lemma joint_mutilateSet_empty (w : Fin n → α) :
-    (b.mutilateSet ∅ w).joint = b.joint := by
-  classical
-  funext x
-  rw [joint_mutilateSet, joint_eq_prod]
-  simp only [notMem_empty, ite_false]
-  rfl
-
 /-- `do(X_k = a)` as an intervention on the set `{k}`. -/
 private lemma joint_mutilateSet_singleton {k : Fin n} {w : Fin n → α} {a : α}
     (hw : w k = a) : (b.mutilateSet {k} w).joint = (b.intervene k a).joint := by
