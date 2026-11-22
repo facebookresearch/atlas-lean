@@ -224,7 +224,7 @@ private theorem pureFalse_false : (PMF.pure false : PMF Bool) false = 1 := by
 theorem klDiv_pure_true_false_eq_top :
     InformationTheory.klDiv (PMF.pure true : PMF Bool).toMeasure
       (PMF.pure false : PMF Bool).toMeasure = ∞ :=
-  klDiv_toMeasure_eq_top_of_disjoint_support _ _ true
+  klDiv_toMeasure_eq_top_of_not_ac_witness _ _ true
     (by rw [pureTrue_true]; exact one_ne_zero) pureFalse_true
 
 /-- Contrast: the real-valued loss expectation totalizes to `0` on disjoint
@@ -248,7 +248,7 @@ theorem privacyLossExpectation_pure_true_false_eq_zero :
 #print axioms klDiv_toMeasure_eq_ofReal_privacyLossExpectation
 #print axioms klDiv_toMeasure_le_of_dp_two_sided
 #print axioms toReal_klDiv_toMeasure_eq_privacyLossExpectation
-#print axioms klDiv_toMeasure_eq_top_of_disjoint_support
+#print axioms klDiv_toMeasure_eq_top_of_not_ac_witness
 #print axioms privacyLoss_le_of_isDP
 #print axioms privacyLossExpectation_nonneg_of_isDP
 #print axioms privacyLossExpectation_le_of_isDP

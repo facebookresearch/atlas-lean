@@ -71,10 +71,13 @@ noncomputable def privacyLoss {Ω : Type*} (P Q : PMF Ω) (w : Ω) : ℝ :=
   Real.log ((P w).toReal / (Q w).toReal)
 
 /-- Real-valued loss expectation: the `P`-expectation of `privacyLoss`.
-This agrees with `InformationTheory.klDiv P.toMeasure Q.toMeasure` only under
-the two-sided pointwise DP bounds assumed below; off the common support the sum
-totalizes to `0` while the true divergence is infinite (see
-`klDiv_toMeasure_eq_top_of_disjoint_support`). -/
+Agreement with `InformationTheory.klDiv P.toMeasure Q.toMeasure` needs
+absolute continuity of `P.toMeasure` with respect to `Q.toMeasure` together
+with finiteness/integrability of the log-likelihood ratio. The two-sided
+pointwise DP bounds assumed below are one sufficient condition (see
+`klDiv_toMeasure_eq_ofReal_privacyLossExpectation`); a `P`-charged outcome
+missed by `Q` contributes `0` to this sum while making the true divergence
+infinite (see `klDiv_toMeasure_eq_top_of_not_ac_witness`). -/
 noncomputable def privacyLossExpectation {Ω : Type*} (P Q : PMF Ω) : ℝ :=
   ∑' w, (P w).toReal * privacyLoss P Q w
 
@@ -546,11 +549,10 @@ theorem toReal_klDiv_toMeasure_eq_privacyLossExpectation {Ω : Type*} [Countable
     ENNReal.toReal_ofReal
       (privacyLossExpectation_nonneg P Q ε hε hPQ hQP)]
 
-/-- Disjoint support gives infinite `klDiv`: if `P` charges `a` and `Q` does not,
-`P.toMeasure` is not absolutely continuous with respect to `Q.toMeasure`. In
-particular the real-valued `privacyLossExpectation`, which totalizes to `0` here,
-is not the KL divergence off the two-sided bounds. -/
-theorem klDiv_toMeasure_eq_top_of_disjoint_support {Ω : Type*} [MeasurableSpace Ω]
+/-- A non-absolute-continuity witness gives infinite `klDiv`: if `P` charges
+`a` and `Q` does not, `P.toMeasure` is not absolutely continuous with respect
+to `Q.toMeasure`. -/
+theorem klDiv_toMeasure_eq_top_of_not_ac_witness {Ω : Type*} [MeasurableSpace Ω]
     [MeasurableSingletonClass Ω] (P Q : PMF Ω) (a : Ω) (hP : P a ≠ 0) (hQ : Q a = 0) :
     InformationTheory.klDiv P.toMeasure Q.toMeasure = ∞ := by
   apply InformationTheory.klDiv_of_not_ac
