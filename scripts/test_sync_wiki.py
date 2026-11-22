@@ -513,6 +513,108 @@ class Declarations(Vault):
             self.assertRegex(article_id, r"^af_[0-9a-f]{24}$")
         self.assertEqual(len(set(added + ["af_000000000000000000000001"])), 3)
 
+    def test_a_new_page_never_joins_a_card(self) -> None:
+        # A card holds only the statements its editors placed in it (docs/cards.md): a new declaration whose module's
+        # pages sit in a card goes beside the card, and the run lists it for an editor.
+        self.page("Algebra/README.md", "# Algebra\n\n- [Groups](groups/README.md)\n")
+        self.page("Algebra/groups/README.md", "# Groups\n\nProse.\n\n- [Orders](orders/README.md)\n")
+        self.page("Algebra/groups/orders/README.md", "# Orders\n\nIt says.\n\n## Idea\n\nWhy.\n\n## Statements\n\n"
+                  "- [Old](old.md)\n")
+        self.page("Algebra/groups/orders/old.md", "# Old\n\nText.\n")
+        card = {"kind": "result", "main": "af_000000000000000000000001", "importance": "key", "level": "undergraduate"}
+        self.annotate([
+            self.about("Algebra/README.md"), self.about("Algebra/groups/README.md"),
+            self.about("Algebra/groups/orders/README.md", id="af_000000000000000000000002",
+                       extensions={"org.atlas-wiki": {"card": card}}),
+            self.about("Algebra/groups/orders/old.md", id="af_000000000000000000000001",
+                       object=[{"location": {"declaration": "Ext.old"}}]),
+        ])
+        targets = [declaration("Ext.old", "old", "Old", "Text."), declaration("Ext.new", "new", "New", "New text.")]
+        report = sync.apply_declarations(targets, SimpleNamespace(declarations={"Ext.old": None, "Ext.new": None}))
+        self.assertEqual(report["added"], ["Ext.new -> Algebra/groups/new.md"])
+        self.assertEqual(report["unassigned"], ["Algebra/groups/new.md"])
+        self.assertFalse((wiki.ROADMAP / "Algebra/groups/orders/new.md").exists())
+        self.assertEqual((wiki.ROADMAP / "Algebra/groups/README.md").read_text(),
+                         "# Groups\n\nProse.\n\n- [Orders](orders/README.md)\n- [New](new.md)\n")
+        self.assertNotIn("New", (wiki.ROADMAP / "Algebra/groups/orders/README.md").read_text())
+
+    def card_beside_a_folder(self) -> None:
+        """Algebra/groups holds a page of module Groups and the card orders (docs/cards.md)."""
+        self.page("Algebra/README.md", "# Algebra\n\n- [Groups](groups/README.md)\n")
+        self.page("Algebra/groups/README.md", "# Groups\n\nProse.\n\n- [G](g.md)\n- [Orders](orders/README.md)\n")
+        self.page("Algebra/groups/g.md", "# G\n\nText.\n")
+        self.page("Algebra/groups/orders/README.md", "# Orders\n\nIt says.\n\n## Idea\n\nWhy.\n\n## Statements\n\n"
+                  "- [Old](old.md)\n")
+        self.page("Algebra/groups/orders/old.md", "# Old\n\nText.\n")
+        card = {"kind": "result", "main_article_id": "af_000000000000000000000001", "importance": "key",
+                "level": "undergraduate"}
+        self.annotate([
+            self.about("Algebra/README.md"), self.about("Algebra/groups/README.md"),
+            self.about("Algebra/groups/g.md", id="af_000000000000000000000003",
+                       object=[{"location": {"declaration": "Ext.g"}}]),
+            self.about("Algebra/groups/orders/README.md", id="af_000000000000000000000002",
+                       extensions={"org.atlas-wiki": {"card": card}}),
+            self.about("Algebra/groups/orders/old.md", id="af_000000000000000000000001",
+                       object=[{"location": {"declaration": "Ext.old"}}]),
+        ])
+
+    def new_module_below_the_card(self, generated: bool) -> dict:
+        # generate_wiki lays a new module's folder out inside the card; the run makes no folder or page there,
+        # with or without generate_wiki's folder page for it.
+        self.card_beside_a_folder()
+        new = declaration("Ext.new", "new", "New", "New text.", module=("Ext", "Fresh"))
+        new.path = wiki.ROADMAP / "Algebra" / "groups" / "orders" / "fresh" / "new.md"
+        layout = {wiki.ROADMAP / "Algebra/groups/orders/fresh/README.md": "# Fresh\n\n- [New](new.md)\n"}
+        return sync.apply_declarations(
+            [declaration("Ext.g", "g", "G", "Text."), declaration("Ext.old", "old", "Old", "Text."), new],
+            SimpleNamespace(declarations={"Ext.g": None, "Ext.old": None, "Ext.new": None}),
+            generated=layout if generated else {})
+
+    def assert_beside_the_card(self, report: dict) -> None:
+        self.assertEqual(report["added"], ["Ext.new -> Algebra/groups/new.md"])
+        self.assertEqual(report["unassigned"], ["Algebra/groups/new.md"])
+        self.assertEqual(sorted(path.name for path in (wiki.ROADMAP / "Algebra/groups/orders").iterdir()),
+                         ["README.md", "old.md"])
+
+    def test_a_new_module_laid_out_below_a_card_goes_beside_it(self) -> None:
+        self.assert_beside_the_card(self.new_module_below_the_card(generated=True))
+
+    def test_the_fallback_to_the_nearest_folder_page_never_lands_in_a_card(self) -> None:
+        self.assert_beside_the_card(self.new_module_below_the_card(generated=False))
+
+    def test_a_new_folder_takes_no_recorded_address(self) -> None:
+        # generate_wiki lays a new module out in Algebra/groups/former/, an address a moved page left: the run makes
+        # no folder there and places the page in the nearest folder the wiki has.
+        self.card_beside_a_folder()
+        (wiki.ROOT / "scripts").mkdir(exist_ok=True)
+        (wiki.ROOT / "scripts" / "card-moves.jsonl").write_text(json.dumps(
+            {"page": "Algebra/groups/former", "to": "Algebra/groups/orders/old", "article_id": "af_000000000000000000000001"})
+            + "\n")
+        new = declaration("Ext.new", "new", "New", "New text.", module=("Ext", "Fresh"))
+        new.path = wiki.ROADMAP / "Algebra" / "groups" / "former" / "new.md"
+        layout = {wiki.ROADMAP / "Algebra/groups/former/README.md": "# Former\n\n- [New](new.md)\n"}
+        report = sync.apply_declarations(
+            [declaration("Ext.g", "g", "G", "Text."), declaration("Ext.old", "old", "Old", "Text."), new],
+            SimpleNamespace(declarations={"Ext.g": None, "Ext.old": None, "Ext.new": None}), generated=layout)
+        self.assertEqual(report["added"], ["Ext.new -> Algebra/groups/new.md"])
+        self.assertFalse((wiki.ROADMAP / "Algebra/groups/former").exists())
+
+    def test_a_new_page_takes_no_name_a_folder_or_a_recorded_address_has(self) -> None:
+        # A page named like the card's folder would share its node id; a moved page's old address keeps
+        # redirecting to its article.
+        self.card_beside_a_folder()
+        (wiki.ROOT / "scripts").mkdir(exist_ok=True)
+        (wiki.ROOT / "scripts" / "card-moves.jsonl").write_text(json.dumps(
+            {"page": "Algebra/groups/gone", "to": "Algebra/groups/orders/old", "article_id": "af_000000000000000000000001"})
+            + "\n")
+        report = sync.apply_declarations(
+            [declaration("Ext.g", "g", "G", "Text."), declaration("Ext.old", "old", "Old", "Text."),
+             declaration("Ext.orders", "orders", "Orders lemma", "A statement."),
+             declaration("Ext.gone", "gone", "Gone lemma", "Another statement.")],
+            SimpleNamespace(declarations={"Ext.g": None, "Ext.old": None, "Ext.orders": None, "Ext.gone": None}))
+        self.assertEqual(sorted(report["added"]), ["Ext.gone -> Algebra/groups/gone-2.md",
+                                                   "Ext.orders -> Algebra/groups/orders-2.md"])
+
     def test_a_held_declaration_keeps_its_page_unlinked_and_gets_no_other(self) -> None:
         self.page("Algebra/README.md", "# Algebra\n\n- [Claim](claim.md)\n")
         claim = self.page("Algebra/claim.md", "# Claim\n\nThe source's statement.\n")
@@ -1152,7 +1254,7 @@ class Declarations(Vault):
 
     def test_a_page_listed_nowhere_fails_the_run(self) -> None:
         report = {kind: [] for kind in ("added", "folders", "gone", "changed", "unindexed", "parts", "replaced", "appended",
-                                         "held", "held_problems")}
+                                         "held", "held_problems", "unassigned")}
         report["unlisted"] = ["Algebra/groups/sylow.md"]
         lean = SimpleNamespace(index_project=lambda *args, **kwargs: SimpleNamespace(declarations={}))
         with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean), "autoform_cli.lean": lean}), \

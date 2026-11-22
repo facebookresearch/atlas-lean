@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.Elasticity.ContactAndLubrication
+import PhyslibExt.CondensedMatter.Elasticity.StressStrain
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
@@ -21,7 +22,13 @@ converging film `h0 = 2`, `hL = 1`, `μ = U = L = 1` (existence, uniqueness, pos
 the load `6 log 2 - 4 > 0`), the diverging film `h0 = 1`, `hL = 2` (pressure `-2/9` at the
 midpoint) and the film that closes at the outlet (no solution). Scalar contact: loaded contact
 `k = 2`, `g = 1`, `f = 4` (the hypotheses of Stampacchia's theorem, existence, uniqueness and
-complementarity), separation `f = 1`, and the failure of coercivity at `k = 0`.
+complementarity), separation `f = 1`, and the failure of coercivity at `k = 0`. Coulomb
+friction at `μ = 1/2`, `N = 10`: nonzero slip in each direction with its nonpositive power,
+non-unique stick forces and the static-equilibrium criterion; and the negative coefficient
+`μ = -1/2`, which admits no stick force and makes slip supply power. Contact admission: the
+public shapes of Section D, separated and closed contact at friction coefficient `1`, the
+non-convex admissible set, the frictionless bridge to Section B, and invalid controls
+(negative friction coefficient, tension excluded by the cone at `μ = 0`, a non-unit normal).
 
 ## i. Overview
 
@@ -35,6 +42,8 @@ No new definitions or results are introduced here.
 
 - A. Plane-slider lubrication
 - B. Scalar unilateral contact
+- C. Coulomb friction
+- D. Unilateral contact with Coulomb friction
 
 ## iv. References
 
@@ -206,3 +215,162 @@ example :
   rw [hmap, inner_zero_left] at h1
   simp only [norm_one, one_pow, mul_one] at h1
   linarith
+
+/-! ## C. Coulomb friction -/
+
+/-- Nonzero slip in each direction, `μ = 1/2`, `N = 10`: at `v = 2` the only admissible force is
+`-5` (power `-10`), at `v = -3` it is `5` (power `-15`). -/
+example :
+    (∀ F, IsCoulombFriction (1 / 2) 10 2 F ↔ F = -5) ∧
+      ∀ F, IsCoulombFriction (1 / 2) 10 (-3) F ↔ F = 5 := by
+  constructor
+  · intro F
+    rw [isCoulombFriction_of_ne_zero (by norm_num : (2:ℝ) ≠ 0),
+      Real.sign_of_pos (by norm_num : (0:ℝ) < 2)]
+    norm_num
+  · intro F
+    rw [isCoulombFriction_of_ne_zero (by norm_num : (-3:ℝ) ≠ 0),
+      Real.sign_of_neg (by norm_num : (-3:ℝ) < 0)]
+    norm_num
+
+/-- Friction power on the slip fixture `μ = 1/2`, `N = 10`: every graph force at `v = 2` delivers
+the power `-μ N |v| = -10`, which is nonpositive. -/
+example : ∀ F, IsCoulombFriction (1 / 2) 10 2 F → F * 2 = -10 ∧ F * 2 ≤ 0 := by
+  intro F h
+  refine ⟨?_, coulomb_power_nonpos (by norm_num) (by norm_num) h⟩
+  rw [coulomb_power_eq h]
+  norm_num
+
+/-- At rest, `μ = 1/2`, `N = 10`: the forces `0` and `5` are both admissible and `6` is not; the
+applied force `4` is held in static equilibrium and `6` is not. -/
+example :
+    IsCoulombFriction (1 / 2) 10 0 0 ∧ IsCoulombFriction (1 / 2) 10 0 5 ∧
+      ¬ IsCoulombFriction (1 / 2) 10 0 6 ∧
+      (∃ F, IsCoulombFriction (1 / 2) 10 0 F ∧ 4 + F = 0) ∧
+      ¬ ∃ F, IsCoulombFriction (1 / 2) 10 0 F ∧ 6 + F = 0 := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · rw [isCoulombFriction_zero]
+    norm_num [Set.mem_Icc]
+  · rw [isCoulombFriction_zero]
+    norm_num [Set.mem_Icc]
+  · rw [isCoulombFriction_zero]
+    norm_num [Set.mem_Icc]
+  · exact coulomb_static_equilibrium_iff.mpr (by norm_num [Set.mem_Icc])
+  · intro h
+    have hFa := coulomb_static_equilibrium_iff.mp h
+    norm_num [Set.mem_Icc] at hFa
+
+/-- At rest the friction force is not determined: for `μ = 1/2`, `N = 10` two different forces
+are admissible at `v = 0`. -/
+example :
+    ∃ F₁ F₂ : ℝ, F₁ ≠ F₂ ∧ IsCoulombFriction (1 / 2) 10 0 F₁ ∧ IsCoulombFriction (1 / 2) 10 0 F₂ :=
+  coulomb_stick_not_unique (by norm_num) (by norm_num)
+
+/-- A negative coefficient, `μ = -1/2`, `N = 10`: no force is admissible at rest, and at `v = 1`
+the only graph force is `5`, along the motion, which supplies the power `5`. -/
+example :
+    (¬ ∃ F, IsCoulombFriction (-1 / 2) 10 0 F) ∧
+      ∀ F, IsCoulombFriction (-1 / 2) 10 1 F ↔ F = 5 := by
+  constructor
+  · exact coulomb_not_exists_stick_of_neg (by norm_num : (-1 / 2 : ℝ) < 0)
+      (by norm_num : (0:ℝ) < 10)
+  · intro F
+    rw [isCoulombFriction_of_ne_zero (by norm_num : (1:ℝ) ≠ 0),
+      Real.sign_of_pos (by norm_num : (0:ℝ) < 1)]
+    norm_num
+
+/-- A negative coefficient makes slip supply power: for `μ = -1/2`, `N = 10` every graph force at
+`v = 1` delivers positive power. -/
+example : ∀ F, IsCoulombFriction (-1 / 2) 10 1 F → 0 < F * 1 :=
+  fun _ h => coulomb_slip_power_pos_of_neg (by norm_num) (by norm_num) one_ne_zero h
+
+/-! ## D. Unilateral contact with Coulomb friction -/
+
+/-- The public statement shape of the frame bridge. -/
+example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] {n τ t : E} {N : ℝ}
+    (hn : ‖n‖ = 1) :
+    (τ = t - N • n ∧ ⟪t, n⟫_ℝ = 0) ↔ (N = -⟪τ, n⟫_ℝ ∧ t = τ - ⟪τ, n⟫_ℝ • n) :=
+  normal_tangent_decomposition_iff hn
+
+/-- The public statement shapes of the cone results. -/
+example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] {μ : ℝ} (hμ : 0 ≤ μ) :
+    Convex ℝ (frictionCone (E := E) μ) ∧
+      ¬ Convex ℝ {p : ℝ × ℝ | 0 ≤ p.1 ∧ 0 ≤ p.2 ∧ p.1 * p.2 = 0} :=
+  ⟨convex_frictionCone hμ, not_convex_complementarity⟩
+
+/-- Frame coordinates directly from a traction: `N = -⟪τ, n⟫` and
+`t = τ - ⟪τ, n⟫ • n` give the decomposition `τ = t - N • n` with `t` orthogonal to `n`. -/
+example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] {n τ : E}
+    (hn : ‖n‖ = 1) :
+    τ = (τ - ⟪τ, n⟫_ℝ • n) - (-⟪τ, n⟫_ℝ) • n ∧ ⟪τ - ⟪τ, n⟫_ℝ • n, n⟫_ℝ = 0 :=
+  (normal_tangent_decomposition_iff hn).mpr ⟨rfl, rfl⟩
+
+/-- Separated contact: the state `N = 0`, `g = 1`, `t = 0` over `ℝ` is admissible at
+friction coefficient `1`, and every admissible state with `0 < g` has zero force. -/
+example : IsAdmissibleContact 1 0 1 (0 : ℝ) ∧
+    ∀ {μ N g : ℝ} {t : ℝ}, IsAdmissibleContact μ N g t → 0 < g → N = 0 ∧ t = 0 :=
+  ⟨by norm_num [IsAdmissibleContact], fun h hg =>
+    IsAdmissibleContact.eq_zero_of_gap_pos h hg⟩
+
+/-- Closed loaded contact at `g = 0` (the removed pin target, as a test): at zero gap,
+admission is exactly cone membership. At `μ = 1`, `N = 1` the stick
+state `t = 1 / 2` and the slip threshold `t = 1` are admissible over `ℝ`, and `t = 2` is not. -/
+example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] {μ N : ℝ} {t : E} :
+    (IsAdmissibleContact μ N 0 t ↔ (N, t) ∈ frictionCone μ) ∧
+      IsAdmissibleContact 1 1 0 (1 / 2 : ℝ) ∧ IsAdmissibleContact 1 1 0 (1 : ℝ) ∧
+      ¬ IsAdmissibleContact 1 1 0 (2 : ℝ) := by
+  refine ⟨?_, by norm_num [IsAdmissibleContact], by norm_num [IsAdmissibleContact],
+    by norm_num [IsAdmissibleContact]⟩
+  simp [IsAdmissibleContact, frictionCone, and_comm]
+
+/-- At `μ = 0` the cone is the nonnegative normal ray; tension is excluded by the cone and
+by admission: `(-1, 0)` is outside `frictionCone 0`, `(1, 0)` is inside, and the state
+with `N = -1` is not admissible. Universally, `frictionCone 0` is the ray
+`{p | 0 ≤ p.1 ∧ p.2 = 0}`. -/
+example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] :
+    ((-1, 0) : ℝ × ℝ) ∉ frictionCone 0 ∧ ((1, 0) : ℝ × ℝ) ∈ frictionCone 0 ∧
+      ¬ IsAdmissibleContact 0 (-1) 0 (0 : ℝ) ∧
+      frictionCone (E := E) 0 = {p | 0 ≤ p.1 ∧ p.2 = 0} := by
+  refine ⟨by norm_num [frictionCone], by norm_num [frictionCone],
+    by norm_num [IsAdmissibleContact], ?_⟩
+  ext ⟨N, t⟩
+  simp only [frictionCone, Set.mem_ofPred_eq, zero_mul]
+  constructor
+  · rintro ⟨h1, h2⟩
+    exact ⟨h2, norm_le_zero_iff.mp h1⟩
+  · rintro ⟨h1, h2⟩
+    exact ⟨by rw [h2, norm_zero], h1⟩
+
+/-- The full admissible set in `(N, g, t)` over `ℝ` at `μ = 1` is not convex: the midpoint
+of the closed state `(1, 0, 0)` and the separated state `(0, 1, 0)` has `N * g = 1 / 4`. -/
+example : ¬ Convex ℝ {p : ℝ × ℝ × ℝ | IsAdmissibleContact 1 p.1 p.2.1 p.2.2} := by
+  intro h
+  have hx : ((1, 0, 0) : ℝ × ℝ × ℝ) ∈ {p : ℝ × ℝ × ℝ | IsAdmissibleContact 1 p.1 p.2.1 p.2.2} := by
+    norm_num [IsAdmissibleContact]
+  have hy : ((0, 1, 0) : ℝ × ℝ × ℝ) ∈ {p : ℝ × ℝ × ℝ | IsAdmissibleContact 1 p.1 p.2.1 p.2.2} := by
+    norm_num [IsAdmissibleContact]
+  have hm := h hx hy (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num : (0 : ℝ) ≤ 1 / 2)
+    (by norm_num : (1 / 2 : ℝ) + 1 / 2 = 1)
+  simp only [Set.mem_ofPred_eq, Prod.smul_mk, Prod.mk_add_mk, smul_eq_mul, IsAdmissibleContact]
+    at hm
+  norm_num at hm
+
+/-- Frictionless bridge to Section B: the scalar contact solution's complementarity triple is
+an admissible Section D state with zero tangent traction, for every `0 ≤ μ`. -/
+example {k g f u μ : ℝ} (hμ : 0 ≤ μ)
+    (hu : u ∈ admissibleSet g ∧ ∀ v ∈ admissibleSet g, 0 ≤ ⟪stiffnessMap k u - f, v - u⟫_ℝ) :
+    IsAdmissibleContact μ (contactForce k f u) (contactGap g u) (0 : ℝ) :=
+  (isAdmissibleContact_zero_tangent_iff hμ).mpr (complementarity_of_vi hu)
+
+/-- Compression-positive traction sign binding: `compressionPositiveTraction` is the negative
+of the Cauchy traction, the sign behind `N = -⟪τ, n⟫`. -/
+example {n : ℕ} (σ : Matrix (Fin n) (Fin n) ℝ) (v : Fin n → ℝ) :
+    Elasticity.compressionPositiveTraction σ v = -Elasticity.traction σ v := rfl
+
+/-- Invalid controls: a negative friction coefficient admits no zero-tangent state with
+`N = 1`; the frame formulas need a unit normal (`n = 2` over `ℝ` satisfies the left side of
+the decomposition for `τ = -2`, `t = 0`, `N = 1`, but `N ≠ -⟪τ, n⟫ = 4`). -/
+example : ¬ IsAdmissibleContact (-1) 1 0 (0 : ℝ) ∧
+    ((-(2 : ℝ)) = (0 : ℝ) - (1 : ℝ) • (2 : ℝ) ∧ ⟪(0 : ℝ), (2 : ℝ)⟫_ℝ = 0) ∧
+      (1 : ℝ) ≠ -⟪(-(2 : ℝ)), (2 : ℝ)⟫_ℝ := by
+  norm_num [IsAdmissibleContact, RCLike.inner_apply]

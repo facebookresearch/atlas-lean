@@ -17,13 +17,14 @@ public import Mathlib.Analysis.Calculus.Deriv.Mul
 
 This file packages the elementary two-solution formula for a one-dimensional
 Green kernel. Given a left solution `u`, a right solution `v`, and a
-normalization `C`, the kernel is
+left-branch coefficient `C`, the kernel is
 
 `G(x, y) = C y * u x` for `x ≤ y`, and
 `G(x, y) = C y * (u y / v y) * v x` for `y < x`.
 
-The normalization is left abstract: in Sturm-Liouville examples it is the
-reciprocal Wronskian factor for the chosen operator and boundary conditions.
+The coefficient is left abstract: `C y` is the entire left-branch coefficient.
+In Sturm-Liouville examples it may absorb `v y`, the Wronskian, and the
+operator's leading coefficient; it is not by itself a reciprocal Wronskian.
 The point of the file is the reusable analytic bookkeeping that follows from
 the formula alone: branch values, agreement of the right branch on the
 diagonal, positivity, continuity across the diagonal, one-sided derivatives,
@@ -44,7 +45,7 @@ kernel in `Domains.Biology.PopulationGenetics.Diffusion`.
   `GreenKernel.hasDerivWithinAt_kernel_Ici`: one-sided derivatives at the
   diagonal.
 * `GreenKernel.derivWithin_kernel_jump_wronskian`: the derivative jump is
-  `-C y * wronskian u v y / v y`.
+  `C y * wronskian u v y / v y`.
 -/
 
 open Filter Set
@@ -53,15 +54,16 @@ open scoped Topology
 namespace GreenKernel
 
 /-- The two-solution Green kernel with left solution `u`, right solution `v`,
-and normalization `C`: for `x ≤ y` it is `C y * u x`, and for `y < x` it is
+and left-branch coefficient `C`: for `x ≤ y` it is `C y * u x`, and for `y < x` it is
 `C y * (u y / v y) * v x`. The right branch is normalized so that it agrees with
 the left branch at `x = y` whenever `v y ≠ 0`. -/
 noncomputable def kernel (u v C : ℝ → ℝ) (x y : ℝ) : ℝ :=
   if x ≤ y then C y * u x else C y * (u y / v y) * v x
 
-/-- The Wronskian `u' v - u v'` of two real functions. -/
+/-- The Wronskian `u v' - u' v` of two real functions, matching the determinant
+convention `det [[u, v], [u', v']]`. -/
 noncomputable def wronskian (u v : ℝ → ℝ) (x : ℝ) : ℝ :=
-  deriv u x * v x - u x * deriv v x
+  u x * deriv v x - deriv u x * v x
 
 /-- The left branch of the two-solution Green kernel. -/
 theorem kernel_of_le {u v C : ℝ → ℝ} {x y : ℝ} (hxy : x ≤ y) :
@@ -162,10 +164,9 @@ theorem derivWithin_kernel_jump_wronskian {u v C : ℝ → ℝ} {y : ℝ}
     (hu : DifferentiableAt ℝ u y) (hv : DifferentiableAt ℝ v y) (hvy : v y ≠ 0) :
     derivWithin (fun x => kernel u v C x y) (Ici y) y -
         derivWithin (fun x => kernel u v C x y) (Iic y) y =
-      -C y * wronskian u v y / v y := by
+      C y * wronskian u v y / v y := by
   rw [derivWithin_kernel_jump hu hv hvy]
   unfold wronskian
   field_simp
-  ring
 
 end GreenKernel
