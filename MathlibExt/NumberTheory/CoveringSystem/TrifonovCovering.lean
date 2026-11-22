@@ -120,8 +120,7 @@ theorem exists_mem_of_testBit_coverMask {L n : ℕ} {cs : List (ℕ × ℕ)}
 
 /-- **Bitmask criterion for covering systems.** Let `cs` be a list of pairs `(r, m)` of natural
 numbers, standing for the classes `r mod m`, whose moduli all divide `L > 0`. If
-`coverMask L cs = 2 ^ L - 1`, that is, if every integer of `[0, L)` is a set bit of
-`coverMask L cs`, then the classes cover the integers. -/
+`coverMask L cs = 2 ^ L - 1`, then every bit below `L` is set, so the classes cover the integers. -/
 theorem isCoveringSystem_of_coverMask_eq {L : ℕ} (hL : 0 < L) {cs : List (ℕ × ℕ)}
     (hdvd : ∀ c ∈ cs, c.2 ∣ L) (h : coverMask L cs = 2 ^ L - 1) :
     Int.IsCoveringSystem (cs.map fun c => ((c.1 : ℤ), c.2)).toFinset := by
