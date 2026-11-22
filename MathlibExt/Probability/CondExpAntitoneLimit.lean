@@ -50,11 +50,16 @@ namespace MathlibExt.Probability.CondExpAntitoneLimit
 
 variable {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
 
-/-- `L¹` convergence of conditional expectations to an identified a.e. limit:
-if `μ[g | m n] → h` almost everywhere and `h` is integrable, then the
-convergence also holds in `L¹`. This is Vitali's theorem applied to the
-uniformly integrable family of conditional expectations of a single
-integrable function. -/
+/-- **Almost-everywhere convergent conditional expectations converge in L¹.** Let $\mu$ be a finite
+measure on a measurable space $(\Omega, \mathcal{F})$, let $(\mathcal{G}_n)_{n \in \mathbb{N}}$ be
+a sequence of sub-σ-algebras of $\mathcal{F}$, let $g : \Omega \to \mathbb{R}$ be integrable,
+and write $\mu[g \mid \mathcal{G}_n]$ for the conditional expectation of $g$ given
+$\mathcal{G}_n$ with respect to $\mu$. If $h : \Omega \to \mathbb{R}$ is integrable and
+$\mu[g \mid \mathcal{G}_n] \to h$ $\mu$-almost everywhere as $n \to \infty$, then
+$\int_\Omega |\mu[g \mid \mathcal{G}_n] - h| \, d\mu \to 0$ as $n \to \infty$.
+
+This is Vitali's theorem applied to the uniformly integrable family of conditional expectations of
+a single integrable function. -/
 theorem tendsto_eLpNorm_condExp_sub_of_ae_tendsto [IsFiniteMeasure μ]
     (g : Ω → ℝ) (m : ℕ → MeasurableSpace Ω)
     (hm_le : ∀ n, m n ≤ m0)
@@ -71,11 +76,15 @@ theorem tendsto_eLpNorm_condExp_sub_of_ae_tendsto [IsFiniteMeasure μ]
     (memLp_one_iff_integrable.mpr hh_int) hui.1
     (tendstoInMeasure_of_tendsto_ae haem hh_ae)
 
-/-- Identification of the a.e. limit of conditional expectations along a
-sequence of sub-σ-algebras. Suppose `m n` is any sequence of sub-σ-algebras
-of `m0`, `g` is integrable, and `μ[g | m n] → h` pointwise a.e. with `h`
-integrable and measurable with respect to the intersection σ-algebra
-`⨅ n, m n`. Then `h = μ[g | ⨅ n, m n]` `μ`-a.e. -/
+/-- **Identifying the a.e. limit of conditional expectations.** Let $\mu$ be a finite measure on a
+measurable space $(\Omega, \mathcal{F})$, let $(\mathcal{G}_n)_{n \in \mathbb{N}}$ be any
+sequence of sub-σ-algebras of $\mathcal{F}$ (not assumed monotone), and let
+$g : \Omega \to \mathbb{R}$ be integrable. Write $\mu[g \mid \mathcal{G}]$ for the conditional
+expectation of $g$ given a sub-σ-algebra $\mathcal{G}$ with respect to $\mu$, and
+$\mathcal{G}_\infty = \bigcap_n \mathcal{G}_n$. Suppose $h : \Omega \to \mathbb{R}$ is
+integrable, strongly measurable with respect to $\mathcal{G}_\infty$, and
+$\mu[g \mid \mathcal{G}_n](\omega) \to h(\omega)$ as $n \to \infty$ for $\mu$-almost every
+$\omega$. Then $h = \mu[g \mid \mathcal{G}_\infty]$ $\mu$-almost everywhere. -/
 theorem condExp_antitone_limit_eq [IsFiniteMeasure μ]
     (g : Ω → ℝ) (m : ℕ → MeasurableSpace Ω)
     (hm_le : ∀ n, m n ≤ m0)

@@ -122,9 +122,11 @@ private lemma FG_eq : Fsq = G := by
     Fsq Fsq_isMult G G_isMult).mpr (fun p i hp => prime_pow_eq hp)
   exact h
 
-/-- Liouville's divisor-function identity for every `n`: the square of the sum of divisor
-counts over the divisors of `n` equals the sum of the cubes of those divisor counts. At `n = 0`
-both sides are `0`. `liouville_divisor_function_identity` is the source-shaped form. -/
+/-- **Liouville's divisor-function identity for all natural numbers.** For every natural number
+$n$, writing $\tau(d)$ for the number of positive divisors of $d$,
+$$\left(\sum_{d \mid n} \tau(d)\right)^2 = \sum_{d \mid n} \tau(d)^3,$$
+where both sums run over the positive divisors $d$ of $n$. By convention the divisor set of $0$
+is empty here, so for $n = 0$ both sides are $0$. -/
 theorem liouville_divisor_function_identity_general (n : ℕ) :
     (∑ d ∈ n.divisors, d.divisors.card) ^ 2 =
       ∑ d ∈ n.divisors, (d.divisors.card) ^ 3 := by
@@ -133,9 +135,10 @@ theorem liouville_divisor_function_identity_general (n : ℕ) :
   exact h
 
 set_option linter.unusedVariables false in
-/-- Liouville's divisor-function identity (source-shaped form): for `0 < n`, the square
-of the sum of divisor counts over the divisors of `n` equals the sum of the cubes
-of those divisor counts.
+/-- **Liouville's divisor-function identity.** For every positive integer $n$, writing $\tau(d)$
+for the number of positive divisors of $d$,
+$$\left(\sum_{d \mid n} \tau(d)\right)^2 = \sum_{d \mid n} \tau(d)^3,$$
+where both sums run over the positive divisors $d$ of $n$.
 
 Source: Seon-Hong Kim and Kenneth B. Stolarsky, “Translations and Extensions of the
 Nicomachean Identity,” Journal of Integer Sequences 27 (2024), lines 317–322,

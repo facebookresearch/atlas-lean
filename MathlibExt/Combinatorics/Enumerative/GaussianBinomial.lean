@@ -26,8 +26,10 @@ defined by the Pascal recursion in `M`, the finite q-Pochhammer symbol
 
 namespace MathlibExt
 
-/-- Gaussian binomial coefficient `G_Q(M, k)`: `G(M, 0) = 1`, `G(0, k+1) = 0`,
-and `G(M+1, k+1) = G(M, k) + Q^(k+1) * G(M, k+1)`. -/
+/-- **Gaussian binomial coefficient.** Let $R$ be a semiring and $Q \in R$. For natural numbers
+$M$ and $k$, the Gaussian binomial coefficient $\binom{M}{k}_Q \in R$ is defined recursively by
+$\binom{M}{0}_Q = 1$, $\binom{0}{k+1}_Q = 0$ and
+$\binom{M+1}{k+1}_Q = \binom{M}{k}_Q + Q^{k+1} \binom{M}{k+1}_Q$. -/
 def gaussBinom {R : Type*} [Semiring R] (Q : R) (M : ℕ) : ℕ → R
   | 0 => 1
   | k + 1 =>
@@ -35,26 +37,32 @@ def gaussBinom {R : Type*} [Semiring R] (Q : R) (M : ℕ) : ℕ → R
       | 0 => 0
       | M + 1 => gaussBinom Q M k + Q ^ (k + 1) * gaussBinom Q M (k + 1)
 
-/-- The `k = 0` case: `G(M, 0) = 1`. -/
+/-- **Gaussian binomial coefficients with $k = 0$.** Let $R$ be a semiring and $Q \in R$. For
+every natural number $M$, the Gaussian binomial coefficient $\binom{M}{0}_Q$ equals $1$. -/
 @[simp]
 theorem gaussBinom_zero_right {R : Type*} [Semiring R] (Q : R) (M : ℕ) :
     gaussBinom Q M 0 = 1 := by
   simp [gaussBinom]
 
-/-- The `M = 0` case: `G(0, k+1) = 0`. -/
+/-- **Gaussian binomial coefficients with $M = 0$.** Let $R$ be a semiring and $Q \in R$. For
+every natural number $k$, the Gaussian binomial coefficient $\binom{0}{k+1}_Q$ equals $0$. -/
 @[simp]
 theorem gaussBinom_zero_succ {R : Type*} [Semiring R] (Q : R) (k : ℕ) :
     gaussBinom Q 0 (k + 1) = 0 := by
   simp [gaussBinom]
 
-/-- The Pascal recursion for `G`. -/
+/-- **$Q$-Pascal recursion for Gaussian binomial coefficients.** Let $R$ be a semiring and
+$Q \in R$. For all natural numbers $M$ and $k$, the Gaussian binomial coefficients satisfy
+$\binom{M+1}{k+1}_Q = \binom{M}{k}_Q + Q^{k+1} \binom{M}{k+1}_Q$. -/
 theorem gaussBinom_succ_succ {R : Type*} [Semiring R] (Q : R)
     (M k : ℕ) :
     gaussBinom Q (M + 1) (k + 1)
       = gaussBinom Q M k + Q ^ (k + 1) * gaussBinom Q M (k + 1) := by
   simp [gaussBinom]
 
-/-- Vanishing when `M < k`. -/
+/-- **Gaussian binomial coefficients vanish when $k > M$.** Let $R$ be a semiring and $Q \in R$.
+For natural numbers $M$ and $k$ with $M < k$, the Gaussian binomial coefficient $\binom{M}{k}_Q$
+is $0$. -/
 theorem gaussBinom_eq_zero_of_lt {R : Type*} [Semiring R] (Q : R)
     (M k : ℕ) (h : M < k) : gaussBinom Q M k = 0 := by
   induction M generalizing k with
@@ -69,7 +77,8 @@ theorem gaussBinom_eq_zero_of_lt {R : Type*} [Semiring R] (Q : R)
           rw [gaussBinom_succ_succ, ih k (by omega), ih (k + 1) (by omega)]
           simp
 
-/-- The diagonal case: `G(M, M) = 1`. -/
+/-- **Diagonal Gaussian binomial coefficients.** Let $R$ be a semiring and $Q \in R$. For every
+natural number $M$, the Gaussian binomial coefficient $\binom{M}{M}_Q$ equals $1$. -/
 @[simp]
 theorem gaussBinom_self {R : Type*} [Semiring R] (Q : R) (M : ℕ) :
     gaussBinom Q M M = 1 := by
@@ -80,23 +89,32 @@ theorem gaussBinom_self {R : Type*} [Semiring R] (Q : R) (M : ℕ) :
         gaussBinom_eq_zero_of_lt Q M (M + 1) (Nat.lt_succ_self M)]
       simp
 
-/-- Finite q-Pochhammer symbol `P_Q(m) = ∏_{i < m} (1 - Q^(i+1))`. -/
+/-- **Finite $Q$-Pochhammer symbol.** Let $R$ be a commutative ring and $Q \in R$. For a natural
+number $m$, the finite $Q$-Pochhammer symbol $P_Q(m) \in R$ is the product
+$\prod_{i < m} (1 - Q^{i+1})$ of $1 - Q^{i+1}$ over the natural numbers $i < m$. -/
 def qPochFin {R : Type*} [CommRing R] (Q : R) (m : ℕ) : R :=
   ∏ i ∈ Finset.range m, (1 - Q ^ (i + 1))
 
-/-- The empty product: `P_Q(0) = 1`. -/
+/-- **The finite $Q$-Pochhammer symbol at $0$.** Let $R$ be a commutative ring and $Q \in R$. The
+finite $Q$-Pochhammer symbol $P_Q(m) = \prod_{i < m} (1 - Q^{i+1})$, the product running over the
+natural numbers $i < m$, satisfies $P_Q(0) = 1$. -/
 @[simp]
 theorem qPochFin_zero {R : Type*} [CommRing R] (Q : R) :
     qPochFin Q 0 = 1 := by
   simp [qPochFin]
 
-/-- Peeling off the last factor of `P_Q`. -/
+/-- **Recursion for the finite $Q$-Pochhammer symbol.** Let $R$ be a commutative ring and
+$Q \in R$, and write $P_Q(m) = \prod_{i < m} (1 - Q^{i+1})$ for the finite $Q$-Pochhammer symbol,
+the product running over the natural numbers $i < m$. For every natural number $m$,
+$P_Q(m+1) = P_Q(m) \, (1 - Q^{m+1})$. -/
 theorem qPochFin_succ {R : Type*} [CommRing R] (Q : R) (m : ℕ) :
     qPochFin Q (m + 1) = qPochFin Q m * (1 - Q ^ (m + 1)) := by
   simp [qPochFin, Finset.prod_range_succ]
 
-/-- Product formula: for `k ≤ M`,
-`gaussBinom Q M k * qPochFin Q k * qPochFin Q (M - k) = qPochFin Q M`. -/
+/-- **Product formula for Gaussian binomial coefficients.** Let $R$ be a commutative ring and
+$Q \in R$, and write $P_Q(m) = \prod_{i < m} (1 - Q^{i+1})$ for the finite $Q$-Pochhammer symbol,
+the product running over the natural numbers $i < m$. For natural numbers $k \le M$, the Gaussian
+binomial coefficient satisfies $\binom{M}{k}_Q \, P_Q(k) \, P_Q(M - k) = P_Q(M)$. -/
 theorem gaussBinom_mul_qPochFin_mul_qPochFin {R : Type*}
     [CommRing R] (Q : R) (M k : ℕ) (h : k ≤ M) :
     gaussBinom Q M k * qPochFin Q k * qPochFin Q (M - k)
