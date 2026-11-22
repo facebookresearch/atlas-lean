@@ -23,6 +23,10 @@ namespace MathlibExtTest.Probability.Statistics.PoissonLikelihood
 
 open MathlibExt.Probability.Statistics.PoissonLikelihood
 
+/-- The scalar likelihood used by EM agrees with the Poisson measure, including at rate zero. -/
+example (r : NNReal) (o : ℕ) : poissonLik r o = (poissonMeasure r).real {o} :=
+  (poissonMeasure_real_singleton r o).symm
+
 /-- The log-likelihood of counts `(2, 0)` at means `(1, 1)` is `-2 - log 2`. -/
 example : poissonLogLik (fun _ : Fin 2 => (1 : ℝ)) ![2, 0] = -2 - log 2 := by
   simp [poissonLogLik, Fin.sum_univ_two]

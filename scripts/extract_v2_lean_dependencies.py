@@ -28,12 +28,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 BLUEPRINT = ROOT / "blueprint"
-LIBRARIES = frozenset({"MathlibExt", "CSLibExt", "PhyslibExt", "WantedExt"})
+LIBRARIES = frozenset({"MathlibExt", "CSLibExt", "PhyslibExt", "Domains", "WantedExt"})
 # The key of `missing_articles` for absent targets whose names start with no library name.
 UNPREFIXED = "unprefixed"
 # A definition is its body and an inductive type its constructors, so their values are part of the statement
-# (`abbrev` and `instance` compile to `def`). Lean cannot unfold a theorem's proof or an `opaque` body, so no
-# statement can depend on them: those values give proof dependencies only.
+# (`abbrev`, and `instance` of a class of data, compile to `def`; an `instance` of a proposition compiles to
+# `theorem`). Lean cannot unfold a theorem's proof or an `opaque` body, so no statement can depend on them: those
+# values give proof dependencies only.
 STATEMENT_VALUE = frozenset({"def", "inductive"})
 
 

@@ -3,3 +3,7 @@
 Let $G$ be a finite commutative group. For a pair
 of messages $(m_0, m_1) \in G \times G$ and a bit $b$, the selected message is $m_1$ if $b$ is
 true and $m_0$ if $b$ is false.
+
+## Related topics
+
+- [Selecting the challenge message by a bit in the deterministic public-key game](../deterministic-public-key-encryption/pick.md): the same selection for the messages of any set, used by the deterministic public-key eavesdropping game.

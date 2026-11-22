@@ -23,6 +23,13 @@ set_option autoImplicit false
 
 namespace Cslib.Algorithms.Lean.BinaryHeapTests
 
+-- Pure binary-heap fixtures migrated from formal-math's DaryHeapTests.
+#guard siftUp #[1, 5, 3, 7, 0] 4 == #[0, 1, 3, 7, 5]
+#guard siftDown #[9, 2, 1, 4, 3] 0 == #[1, 2, 9, 4, 3]
+
+-- Equal children select the left child.
+example : smallerChild (#[9, 4, 4] : Array Nat) 0 = some 1 := by decide
+
 example {α : Type} [LinearOrder α] (heap : MinHeap α) (value : α) :
     HeapOrdered (heap.push value).data :=
   heap.push_ordered value
