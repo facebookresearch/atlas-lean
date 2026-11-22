@@ -27843,7 +27843,7 @@
 "MathlibExt.Analysis.SpecialFunctions.CatalanSqrtTwo.catalan_hasProd_sqrt_two": "b30703b9f7f667a9",
 "MathlibExt.Analysis.SpecialFunctions.ContinuousMultiplicativeFunctionalEqExpWanted.exists_eq_exp_mul_of_map_add_eq_mul": "e17b6ce708b27d7b",
 "MathlibExt.Analysis.SpecialFunctions.ExpSubExpUniqueFixedPointWanted.existsUnique_exp_sub_one_sub_exp_one_sub_eq_self": "a7d62640db78db7c",
-"MathlibExt.Analysis.SpecialFunctions.IntegralInvAddMulCosWanted.integral_one_div_add_mul_cos_eq": "908d720289b28e88",
+"MathlibExt.Analysis.SpecialFunctions.IntegralInvAddMulCosWanted.integral_one_div_add_mul_cos_eq": "40c643ceba1a28a3",
 "MathlibExt.Analysis.SpecialFunctions.IntegralLogOnePlusOverOnePlusSqWanted.integral_log_one_add_div_one_add_sq": "520c7825519c84f6",
 "MathlibExt.Analysis.SpecialFunctions.IntegralSincSqHalfLineWanted.integral_sin_div_sq_Ioi_eq_pi_div_two": "6516310ab2e84600",
 "MathlibExt.Analysis.SpecialFunctions.OneStepPayoffMax.payoff_le_of_eq_max_sqrt": "4898b994e5fb7d42",
