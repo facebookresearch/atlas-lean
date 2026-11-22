@@ -37,6 +37,7 @@ the Bernoulli and Catalan numbers, and integer sequences make up much of the res
 - [Heights and Mahler measure](heights-mahler-measure/README.md)
 - [Algebraic number theory](algebraic-number-theory/README.md)
 - [p-adic numbers and local fields](p-adic-numbers/README.md)
+- [Galois representations and p-adic Hodge theory](galois-representations/README.md)
 - [Modular forms, q-series and partitions](modular-forms-q-series/README.md)
 - [Linear recurrence sequences](linear-recurrences/README.md)
 - [Special numbers and polynomials](special-numbers/README.md)

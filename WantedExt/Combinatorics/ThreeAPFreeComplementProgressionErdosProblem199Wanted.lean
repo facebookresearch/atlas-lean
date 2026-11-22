@@ -33,16 +33,25 @@ stronger refutation. Compared with the formal-conjectures statement `ErdosProble
 (equivalent; no code imported).
 -/
 
-/-- Erdős Problem 199: if `A ⊆ ℝ` contains no three-term arithmetic progression, then `ℝ \ A`
-contains an infinite arithmetic progression `a, a + d, a + 2d, …` with `d ≠ 0`. -/
+/-- **Erdős Problem 199.** The statement that for every set $A \subseteq \mathbb{R}$ containing no
+three-term arithmetic progression (no $x, y, z \in A$ with $x + z = 2y$ and $x \ne y$) there are
+reals $a$ and $d \ne 0$ with $a + nd \notin A$ for every natural number $n$, that is, the
+complement $\mathbb{R} \setminus A$ contains the infinite arithmetic progression
+$a, a + d, a + 2d, \dots$. -/
 def threeAPFreeComplementContainsProgression : Prop :=
   ∀ A : Set ℝ, ThreeAPFree A → ∃ a d : ℝ, d ≠ 0 ∧ ∀ n : ℕ, a + n * d ∉ A
 
 /--
-Resolved false: Baumgartner constructed, with the axiom of choice (a basis of `ℝ` over `ℚ`), a set
-`A ⊆ ℝ` with no three-term progression whose complement contains no infinite arithmetic progression;
-erdosproblems.com/199 lists the problem as disproved, with a formal proof in plby/lean-proofs
-(`Erdos199.lean`). Source: T. F. Bloom, Erdős Problems, Problem #199,
+**Erdős Problem 199 is false.** There is a set $A \subseteq \mathbb{R}$ containing no three-term
+arithmetic progression (no $x, y, z \in A$ with $x + z = 2y$ and $x \ne y$) such that for all reals
+$a$ and $d \ne 0$ some term $a + nd$, with $n$ a natural number, lies in $A$: the complement
+$\mathbb{R} \setminus A$ contains no infinite arithmetic progression $a, a + d, a + 2d, \dots$
+with $d \ne 0$.
+
+Baumgartner constructed such a set with the axiom of choice, from a basis of $\mathbb{R}$ over
+$\mathbb{Q}$.
+
+Source: T. F. Bloom, Erdős Problems, Problem #199,
 https://www.erdosproblems.com/199 (status DISPROVED (LEAN)); resolution: J. E. Baumgartner,
 Partitioning vector spaces, J. Combin. Theory Ser. A 18 (1975), 231-233; formal proof
 plby/lean-proofs, src/v4.29.1/ErdosProblems/Erdos199.lean, erdosproblems.com/199: answered no by

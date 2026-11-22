@@ -694,24 +694,12 @@ private theorem knOut_image_card {n : ℕ} (σ : Finset (Finset (Bool × Fin n))
   have hxo : x ∈ knOut σ L := Finset.mem_coe.mp hx
   exact (knMem_out.mp hxo).1
 
-private theorem knErase_injOn_in {n : ℕ} (σ : Finset (Finset (Bool × Fin n))) :
-    Set.InjOn (fun w => σ.erase w) (↑σ : Set (Finset (Bool × Fin n))) := by
-  classical
-  intro a ha b hb hab
-  have ha' : a ∈ σ := Finset.mem_coe.mp ha
-  have hb' : b ∈ σ := Finset.mem_coe.mp hb
-  by_contra hne0
-  have hmem : a ∈ σ.erase b := Finset.mem_erase.mpr ⟨hne0, ha'⟩
-  have hab' : σ.erase a = σ.erase b := hab
-  rw [← hab'] at hmem
-  exact Finset.notMem_erase a σ hmem
-
 private theorem knIn_image_card {n : ℕ} (σ : Finset (Finset (Bool × Fin n)))
     (L : Finset (Bool × Fin n) → Bool × Fin n) :
     ((knIn σ L).image (fun w => σ.erase w)).card = (knIn σ L).card := by
   classical
   apply Finset.card_image_of_injOn
-  refine Set.InjOn.mono ?_ (knErase_injOn_in σ)
+  refine Set.InjOn.mono ?_ (Finset.erase_injOn σ)
   intro x hx
   have hxo : x ∈ knIn σ L := Finset.mem_coe.mp hx
   exact Finset.mem_coe.mpr (knMem_in.mp hxo).1
