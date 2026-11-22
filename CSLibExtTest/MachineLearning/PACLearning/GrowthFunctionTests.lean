@@ -287,14 +287,13 @@ theorem interval_vcDim : vcDim intervalClass = 2 := by
     exact le_csSup hfin h2mem
 
 /-- The two-constant class has VC dimension at most one. -/
-theorem two_const_vcDim_le_one {α : Type*} [Nonempty α]
-    (hC : HasFiniteVCDim (twoConstClass α)) :
+theorem two_const_vcDim_le_one {α : Type*} [Nonempty α] :
     vcDim (twoConstClass α) ≤ 1 := by
   have hH : ({fun _ : α => false, fun _ : α => true} : Finset (α → Bool)).Nonempty :=
     ⟨fun _ : α => false, by simp⟩
   have hL4 := vcDim_le_log_two_card
     ({fun _ : α => false, fun _ : α => true} : Finset (α → Bool))
-    (twoConstClass α) rfl hC hH
+    (twoConstClass α) rfl hH
   have hne : (fun _ : α => false) ≠ (fun _ : α => true) := by
     intro h
     obtain ⟨x⟩ := (inferInstance : Nonempty α)

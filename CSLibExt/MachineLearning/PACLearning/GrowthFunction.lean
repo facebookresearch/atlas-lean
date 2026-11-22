@@ -111,24 +111,9 @@ theorem growthFunction_le_exp_pow {α : Type*} (C : ConceptClass α Bool) (m : �
     Real.sum_choose_le_exp_mul_div_pow (D := m) (r := vcDim C) hd hdm
   exact hcast.trans hclosed
 
-/-- A finite concept class bounds the VC dimension. -/
-theorem vcDim_le_log_two_card {α : Type*} (H : Finset (α → Bool))
-    (C : ConceptClass α Bool) (hCH : C = ↑H) (hC : HasFiniteVCDim C)
-    (hH : H.Nonempty) :
-    2 ^ vcDim C ≤ H.card := by
-  have hne : {n : ℕ | ∃ W : Finset α, W.card = n ∧ SetShatters C (↑W)}.Nonempty := by
-    obtain ⟨c₀, hc₀⟩ := hH
-    have hc₀C : c₀ ∈ C := by
-      rw [hCH]
-      exact Finset.mem_coe.mpr hc₀
-    refine ⟨0, ∅, Finset.card_empty, ?_⟩
-    intro W' hW'
-    rw [Finset.coe_empty, Set.subset_empty_iff] at hW'
-    subst hW'
-    exact ⟨c₀, hc₀C, by rw [Finset.coe_empty, Set.inter_empty]⟩
-  obtain ⟨W, hWcard, hWshat⟩ := Nat.sSup_mem hne hC
-  have hdim : vcDim C = W.card := hWcard.symm
-  rw [hdim]
+private theorem two_pow_card_le_of_shatters {α : Type*} (H : Finset (α → Bool))
+    (C : ConceptClass α Bool) (hCH : C = ↑H) (W : Finset α)
+    (hWshat : SetShatters C (↑W)) : 2 ^ W.card ≤ H.card := by
   have hreal : ∀ t : Finset ↥W, ∃ c : α → Bool,
       c ∈ C ∧ ∀ w : ↥W, (c ↑w = true ↔ w ∈ t) := by
     intro t
@@ -167,5 +152,31 @@ theorem vcDim_le_log_two_card {α : Type*} (H : Finset (α → Bool))
   have hcard := Fintype.card_le_of_injective _ hginj
   rw [Fintype.card_finset, Fintype.card_coe, Fintype.card_coe] at hcard
   exact hcard
+
+/-- A finite concept class bounds the VC dimension. -/
+theorem vcDim_le_log_two_card {α : Type*} (H : Finset (α → Bool))
+    (C : ConceptClass α Bool) (hCH : C = ↑H)
+    (hH : H.Nonempty) :
+    2 ^ vcDim C ≤ H.card := by
+  have hne : {n : ℕ | ∃ W : Finset α, W.card = n ∧ SetShatters C (↑W)}.Nonempty := by
+    obtain ⟨c₀, hc₀⟩ := hH
+    have hc₀C : c₀ ∈ C := by
+      rw [hCH]
+      exact Finset.mem_coe.mpr hc₀
+    refine ⟨0, ∅, Finset.card_empty, ?_⟩
+    intro W' hW'
+    rw [Finset.coe_empty, Set.subset_empty_iff] at hW'
+    subst hW'
+    exact ⟨c₀, hc₀C, by rw [Finset.coe_empty, Set.inter_empty]⟩
+  have hbdd : BddAbove {n : ℕ | ∃ W : Finset α, W.card = n ∧ SetShatters C (↑W)} := by
+    refine ⟨H.card, ?_⟩
+    rintro n ⟨W, hWcard, hWshat⟩
+    have hle := two_pow_card_le_of_shatters H C hCH W hWshat
+    rw [hWcard] at hle
+    exact Nat.lt_two_pow_self.le.trans hle
+  obtain ⟨W, hWcard, hWshat⟩ := Nat.sSup_mem hne hbdd
+  have hdim : vcDim C = W.card := hWcard.symm
+  rw [hdim]
+  exact two_pow_card_le_of_shatters H C hCH W hWshat
 
 end Cslib.MachineLearning.PACLearning
