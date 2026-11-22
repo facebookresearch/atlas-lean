@@ -19,7 +19,8 @@ commit it was computed from. You don't need to build the repository to pick
 one, and people and agents follow the same steps:
 
 1. Take a task from `tasks.json`. `python3 scripts/next_task.py` prints the
-   next ones; `--json` prints them for agents.
+   next ones; `--json` prints them for agents. It prints the statements to
+   write first, then the tasks by [priority](#which-areas-come-first).
 2. Skip a task that an open pull request names, by its article id (`af_…`) or
    its Lean declaration, in its title, body or branch. `next_task.py` skips
    those, including those an older pull request names, in its title, branch or
@@ -28,6 +29,24 @@ one, and people and agents follow the same steps:
 3. Open a draft pull request early, with the task's article id in its body, so
    that others see the task is taken. Mark it ready for review when it is done,
    or close it if you stop.
+
+### Which areas come first
+
+[`blueprint/priorities.json`](blueprint/priorities.json) weighs the areas of
+the graph so that ATLAS and [Tau Ceti](https://github.com/TauCetiProject/TauCetiRoadmap)
+complement each other: 2 for an area ATLAS takes first, where Tau Ceti has
+few or no roadmaps (applications, computer science, discrete mathematics,
+probability), 1 as usual, and 0.5 for one it leaves for later, as Tau Ceti's
+roadmaps already cover it. A weight belongs to a subject (`Combinatorics`) or
+a field (`NumberTheory/zeta-l-functions`) of `scripts/taxonomy.json`, named as
+its folder under `blueprint/roadmap/`, which starts the node ids of the tasks
+under it; a field's weight overrides its subject's, and `default` gives the
+others theirs.
+`next_task.py` lists the statements to write first, then the proofs; within
+each, the free tasks of higher weight come first, and those of equal weight in
+`tasks.json`'s order. `--priorities` reads another file, or a URL.
+Tools that pick tasks their own way can call its `load_priorities` and
+`priority`. The weights change by pull request, like the code.
 
 ## Pull Requests
 We actively welcome your pull requests.
