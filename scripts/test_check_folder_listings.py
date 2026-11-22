@@ -33,12 +33,13 @@ class FolderListingTests(unittest.TestCase):
         self.assertEqual(self.check({
             "README.md": "# Root\n",
             "Algebra/README.md": ("- [A](a.md): see [B](b.md)\n\nProse links [C](c.md).\n\n`- [In code](d.md)`\n\n"
-                                  "## Related topics\n\n- [E](e.md)\n"),
+                                  "## Related topics\n\n### Nested\n\n- [E](e.md)\n\n## Statements\n\n- [F](f.md)\n"),
             "Algebra/a.md": "# A\n",
             "Algebra/b.md": "# B\n",
             "Algebra/c.md": "# C\n",
             "Algebra/d.md": "# D\n",
             "Algebra/e.md": "# E\n",
+            "Algebra/f.md": "# F\n",
             "plain/c.md": "# C\n",
         }), [
             "Algebra/README.md: not listed on README.md",

@@ -19,7 +19,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from sync_wiki import CLOSING  # noqa: E402
 
 ENTRY = re.compile(r"\s*(?:[-*+]|\d{1,9}[.)])\s|\s{0,3}#{2,6}\s")
-HEADING = re.compile(r"\s{0,3}#{1,6}\s+(.*?)\s*$")
+HEADING = re.compile(r"\s{0,3}(#{1,6})\s+(.*?)\s*$")
 
 ROADMAP = Path(__file__).resolve().parent.parent / "blueprint" / "roadmap"
 
@@ -29,10 +29,10 @@ def entries(text: str) -> list[str]:
     first: dict[int, str] = {}
     for number, target, _ in markdown_links(text):
         first.setdefault(number, target)
-    found, closing = [], False
+    found, closing = [], 0  # the level of the closing section's heading; its subsections are in it too
     for number, line in enumerate(content_lines(text), 1):
-        if heading := HEADING.match(line):
-            closing = heading.group(1).strip("*_` ").casefold() in CLOSING
+        if (heading := HEADING.match(line)) and (not closing or len(heading.group(1)) <= closing):
+            closing = len(heading.group(1)) if heading.group(2).strip("*_` ").casefold() in CLOSING else 0
         if not closing and number in first and ENTRY.match(line):
             found.append(first[number])
     return found
