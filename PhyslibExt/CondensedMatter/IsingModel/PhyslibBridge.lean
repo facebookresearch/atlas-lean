@@ -138,15 +138,16 @@ instance (h : ℝ) : (canonicalEnsemble G h).IsFinite where
   dof_eq_zero := rfl
   phase_space_unit_eq_one := rfl
 
-/-- The Ising partition function at inverse temperature `T.β kB` is Physlib's mathematical
-partition function of `canonicalEnsemble G h` at temperature `T`. -/
+/-- For every Boltzmann constant `kB`, the Ising partition function at inverse temperature
+`T.β kB` is Physlib's mathematical partition function of `canonicalEnsemble G h` at temperature
+`T`. -/
 lemma isingZ_eq_mathematicalPartitionFunction (h : ℝ) (kB : BoltzmannConstant) (T : Temperature) :
     isingZ G (T.β kB) h = (canonicalEnsemble G h).mathematicalPartitionFunction kB T := by
   rw [CanonicalEnsemble.mathematicalPartitionFunction_of_fintype]
   rfl
 
-/-- The Ising Gibbs probability at inverse temperature `T.β kB` is Physlib's canonical probability
-of `canonicalEnsemble G h` at temperature `T`. -/
+/-- For every Boltzmann constant `kB`, the Ising Gibbs probability at inverse temperature
+`T.β kB` is Physlib's canonical probability of `canonicalEnsemble G h` at temperature `T`. -/
 lemma isingProb_eq_probability (h : ℝ) (kB : BoltzmannConstant) (T : Temperature)
     (s : ConfigSpace V) :
     isingProb G (T.β kB) h s = (canonicalEnsemble G h).probability kB T s := by
