@@ -9870,6 +9870,7 @@
   "MathlibExt/Combinatorics/Additive/Convolution": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Additive representation functions"},
   "MathlibExt/Combinatorics/Additive/ErdosHeilbronn": {"to": "Combinatorics/additive-combinatorics", "title": "Combinatorial Nullstellensatz"},
   "MathlibExt/Combinatorics/Additive/GowersNorm": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Gowers uniformity norms"},
+  "MathlibExt/Combinatorics/Additive/IntervalEraseAddSub": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Alternating sum- and difference-dominated sets"},
   "MathlibExt/Combinatorics/Additive/MinimumRestrictedAdditiveBasis": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Restricted additive bases"},
   "MathlibExt/Combinatorics/Additive/NoSmallSumDominantSet": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Minimum size of a sum-dominant set"},
   "MathlibExt/Combinatorics/Additive/RepresentationCount": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Additive representation functions"},
