@@ -10,3 +10,4 @@ Counting basic objects under simple constraints: subsets, multisets and function
 - [Necklaces over a group with identity product](necklaces-over-a-group-with-identity-product/README.md)
 - [Schreier sets](schreier-sets/README.md)
 - [Special counting sequences](special-counting-sequences/README.md)
+- [Divisibility of a product through the gcd](int-dvd-mul-iff-div-gcd-dvd.md)
