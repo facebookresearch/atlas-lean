@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.ODE.ExistUnique
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
@@ -21,7 +22,7 @@ import Mathlib.Tactic.Ring
 import MathlibExt.Analysis.ODE.InvariantRegions
 
 /-!
-# Heat exchangers: the parallel-flow and counterflow solutions
+# Heat exchangers: the parallel-flow and counterflow solutions and their effectiveness
 
 ## i. Overview
 
@@ -64,6 +65,19 @@ accounting fails whenever the hot temperature changes. With equal capacity rates
 difference is the constant `(Thi - Tci) / (1 + UA / C)` and the duty is
 `UA (Thi - Tci) / (1 + UA / C)`.
 
+The effectiveness-NTU form follows from the two solutions. With `Cmin = min Ch Cc`,
+`Cmax = max Ch Cc`, the capacity-rate ratio `Cr = Cmin / Cmax` and the number of transfer units
+`NTU = UA / Cmin`, finite positive rates give `0 < Cr ≤ 1`, with `Cr = 1` exactly for equal rates;
+`Cr = 0` would be a reservoir stream, not a finite exchanger. The heat lost by the hot stream, and
+gained by the cold one, is `Q = ε Cmin (Thi - Tci)`, with
+`ε_p = (1 - exp (-NTU (1 + Cr))) / (1 + Cr)` in parallel flow and
+`ε_c = (1 - exp (-NTU (1 - Cr))) / (1 - Cr exp (-NTU (1 - Cr)))` in counterflow for `Cr < 1`; at
+`Cr = 1` that formula is `0 / 0`, and `ε_c` takes its equal-capacity value `NTU / (1 + NTU)`
+instead of Lean's junk value `0`. Both effectivenesses lie in `[0, 1]`, and `ε_p ≤ ε_c` at equal
+`NTU` and `Cr`: after clearing the positive denominators, `ε_c - ε_p` has the sign of
+`Cr sinh NTU - sinh (Cr NTU)` (of `NTU cosh NTU - sinh NTU` at `Cr = 1`), which is nonnegative
+because `cosh` increases on `[0, ∞)`.
+
 Model inputs: constant capacity rates and `UA`, no phase change or axial conduction; the
 exchanger equations are hypotheses of the solution predicate, not derived. Each result assumes
 only the hypotheses its proof uses.
@@ -97,6 +111,19 @@ only the hypotheses its proof uses.
 - `HeatTransfer.HeatExchangers.IsCounterflowSolution.equalCapacity_sub_const` and
   `HeatTransfer.HeatExchangers.IsCounterflowSolution.equalCapacity_heat`: constant difference and
   `Q = UA (Thi - Tci) / (1 + UA / C)` for equal capacity rates.
+- `HeatTransfer.HeatExchangers.capacityRatio`, `HeatTransfer.HeatExchangers.transferUnits` and
+  `HeatTransfer.HeatExchangers.capacityRatio_domain`: `Cr`, `NTU`, `0 < Cr ≤ 1` and `NTU ≥ 0`.
+- `HeatTransfer.HeatExchangers.parallelEffectiveness`,
+  `HeatTransfer.HeatExchangers.counterflowEffectiveness`,
+  `HeatTransfer.HeatExchangers.IsParallelFlowSolution.heat_eq_effectiveness` and
+  `HeatTransfer.HeatExchangers.IsCounterflowSolution.heat_eq_effectiveness`: the effectiveness of
+  each arrangement and `Q = ε Cmin (Thi - Tci)` from the solutions.
+- `HeatTransfer.HeatExchangers.parallelEffectiveness_bounds`,
+  `HeatTransfer.HeatExchangers.counterflowEffectiveness_bounds` and
+  `HeatTransfer.HeatExchangers.parallelEffectiveness_le_counterflowEffectiveness`: `0 ≤ ε ≤ 1`
+  and `ε_p ≤ ε_c`.
+- `HeatTransfer.HeatExchangers.counterflowEffectiveness_one_substitution`: at `Cr = 1` the general
+  counterflow formula is Lean's `0 / 0 = 0`, not the effectiveness.
 
 ## iii. Table of contents
 
@@ -104,6 +131,10 @@ only the hypotheses its proof uses.
 - B. Outlets, heat duty and the logarithmic mean
 - C. The counterflow solution
 - D. Counterflow bounds, heat balance and equal capacity rates
+- E. Capacity-rate ratio, transfer units and effectiveness
+- F. Effectiveness from the two solutions
+- G. Bounds and the flow-arrangement comparison
+- H. The equal-capacity boundary
 
 ## iv. References
 
@@ -113,6 +144,13 @@ only the hypotheses its proof uses.
   `ΔT_lm = (ΔT₁ - ΔT₂) / ln (ΔT₁ / ΔT₂)`, `ΔT₁ = Thi - Tci`, `ΔT₂ = Tho - Tco`; the counterflow
   exchanger, whose cold outlet may exceed the hot outlet, and its equal-capacity case with
   constant `ΔT`.
+- F. P. Incropera, D. P. DeWitt, T. L. Bergman and A. S. Lavine, *Fundamentals of Heat and Mass
+  Transfer*, 6th ed., Wiley (2007), Section 11.4: the effectiveness-NTU method, `Cmin`, `Cmax`,
+  `Cr = Cmin / Cmax`, `NTU = UA / Cmin`, `q = ε Cmin (Th,i - Tc,i)` and the parallel-flow and
+  counterflow effectiveness relations, including `ε = NTU / (1 + NTU)` for counterflow at
+  `Cr = 1`.
+- W. M. Kays and A. L. London, *Compact Heat Exchangers*, 3rd ed., McGraw-Hill (1984), chapter 2:
+  counterflow effectiveness exceeds parallel-flow effectiveness at equal `NTU` and `Cr`.
 - Mathlib's `ODE_solution_unique_of_mem_Icc` and its one-sided variants for uniqueness.
 -/
 
@@ -1260,5 +1298,339 @@ lemma IsCounterflowSolution.equalCapacity_heat {C UA L Thi Tci : ℝ} {Th Tc : �
     rw [← hbal]
     exact hleft
   exact ⟨hleft, hright⟩
+
+/-! ## E. Capacity-rate ratio, transfer units and effectiveness -/
+
+/-- The capacity-rate ratio `Cr = Cmin / Cmax`, with `Cmin = min Ch Cc` and `Cmax = max Ch Cc`, of
+an exchanger with stream capacity rates `Ch`, `Cc`. For finite positive rates `0 < Cr ≤ 1`. -/
+noncomputable def capacityRatio (Ch Cc : ℝ) : ℝ := min Ch Cc / max Ch Cc
+
+/-- The number of transfer units `NTU = UA / Cmin` of an exchanger with overall conductance `UA`
+and stream capacity rates `Ch`, `Cc`. -/
+noncomputable def transferUnits (UA Ch Cc : ℝ) : ℝ := UA / min Ch Cc
+
+/-- Parallel-flow effectiveness `ε_p = (1 - exp (-NTU (1 + Cr))) / (1 + Cr)`. Domain `NTU ≥ 0`,
+`0 < Cr ≤ 1`, where the denominator is at least `1`. -/
+noncomputable def parallelEffectiveness (NTU Cr : ℝ) : ℝ :=
+  (1 - Real.exp (-(NTU * (1 + Cr)))) / (1 + Cr)
+
+/-- Counterflow effectiveness: `(1 - exp (-NTU (1 - Cr))) / (1 - Cr exp (-NTU (1 - Cr)))` for
+`Cr ≠ 1`, and the equal-capacity branch `NTU / (1 + NTU)` at `Cr = 1`, where the general formula
+is `0 / 0`. Domain `NTU ≥ 0`, `0 < Cr ≤ 1`; for `Cr < 1` the denominator is at least `1 - Cr`. -/
+noncomputable def counterflowEffectiveness (NTU Cr : ℝ) : ℝ :=
+  if Cr = 1 then NTU / (1 + NTU)
+  else (1 - Real.exp (-(NTU * (1 - Cr)))) / (1 - Cr * Real.exp (-(NTU * (1 - Cr))))
+
+/-- **The stream data give the effectiveness domain.** For finite positive capacity rates
+`0 < Cr ≤ 1`, with `Cr = 1` exactly for equal rates, and `UA ≥ 0` gives `NTU ≥ 0`. -/
+lemma capacityRatio_domain {Ch Cc UA : ℝ} (hCh : 0 < Ch) (hCc : 0 < Cc) (hUA : 0 ≤ UA) :
+    0 < capacityRatio Ch Cc ∧ capacityRatio Ch Cc ≤ 1 ∧ (capacityRatio Ch Cc = 1 ↔ Ch = Cc) ∧
+      0 ≤ transferUnits UA Ch Cc := by
+  unfold capacityRatio transferUnits
+  rcases le_total Ch Cc with hle | hle
+  · rw [min_eq_left hle, max_eq_right hle, div_eq_one_iff_eq hCc.ne']
+    exact ⟨div_pos hCh hCc, (div_le_one hCc).mpr hle, Iff.rfl, div_nonneg hUA hCh.le⟩
+  · rw [min_eq_right hle, max_eq_left hle, div_eq_one_iff_eq hCh.ne']
+    exact ⟨div_pos hCc hCh, (div_le_one hCh).mpr hle, eq_comm, div_nonneg hUA hCc.le⟩
+
+/-! ## F. Effectiveness from the two solutions -/
+
+/-- **Parallel-flow effectiveness.** For `K = UA / L` with `L > 0`, every parallel-flow solution
+loses `Q = ε_p(NTU, Cr) Cmin (Thi - Tci)` from the hot stream and passes the same `Q` to the cold
+stream. -/
+lemma IsParallelFlowSolution.heat_eq_effectiveness {Ch Cc UA L Thi Tci : ℝ} {Th Tc : ℝ → ℝ}
+    (hCh : 0 < Ch) (hCc : 0 < Cc) (hL : 0 < L)
+    (h : IsParallelFlowSolution Ch Cc (UA / L) L Thi Tci Th Tc) :
+    Ch * (Thi - Th L) = parallelEffectiveness (transferUnits UA Ch Cc) (capacityRatio Ch Cc) *
+        min Ch Cc * (Thi - Tci) ∧
+      Cc * (Tc L - Tci) = parallelEffectiveness (transferUnits UA Ch Cc) (capacityRatio Ch Cc) *
+        min Ch Cc * (Thi - Tci) := by
+  have hCh0 : Ch ≠ 0 := hCh.ne'
+  have hCc0 : Cc ≠ 0 := hCc.ne'
+  have hCC : Ch + Cc ≠ 0 := (add_pos hCh hCc).ne'
+  obtain ⟨hTh, -⟩ := h.outlet hCh hCc hL
+  have hbal := h.heat_balance hCh hCc L ⟨hL.le, le_rfl⟩
+  have key : Ch * (Thi - Th L) =
+      parallelEffectiveness (transferUnits UA Ch Cc) (capacityRatio Ch Cc) * min Ch Cc *
+        (Thi - Tci) := by
+    rw [hTh]
+    unfold parallelEffectiveness transferUnits capacityRatio
+    rcases le_total Ch Cc with hle | hle
+    · rw [min_eq_left hle, max_eq_right hle]
+      have hexp : UA / Ch * (1 + Ch / Cc) = UA * (1 / Ch + 1 / Cc) := by
+        field_simp
+      have h1 : 1 + Ch / Cc ≠ 0 := (by positivity : (0 : ℝ) < 1 + Ch / Cc).ne'
+      rw [hexp]
+      field_simp
+      ring
+    · rw [min_eq_right hle, max_eq_left hle]
+      have hexp : UA / Cc * (1 + Cc / Ch) = UA * (1 / Ch + 1 / Cc) := by
+        field_simp
+        ring
+      have h1 : 1 + Cc / Ch ≠ 0 := (by positivity : (0 : ℝ) < 1 + Cc / Ch).ne'
+      rw [hexp]
+      field_simp
+      ring
+  exact ⟨key, hbal.symm.trans key⟩
+
+private lemma counterflow_duty_of_ne {Ch Cc UA L Thi Tci : ℝ} (hCh : 0 < Ch) (hCc : 0 < Cc)
+    (hUA : 0 ≤ UA) (hL : 0 < L) (hne : Ch ≠ Cc) :
+    Ch * (Thi - counterflowHotTemp Ch Cc (UA / L) L Thi Tci L) =
+      Ch * Cc * (Thi - Tci) * (1 - Real.exp (-(UA * (1 / Ch - 1 / Cc)))) /
+        (Cc - Ch * Real.exp (-(UA * (1 / Ch - 1 / Cc)))) := by
+  have hCh0 : Ch ≠ 0 := hCh.ne'
+  have hCc0 : Cc ≠ 0 := hCc.ne'
+  have hL0 : L ≠ 0 := hL.ne'
+  have hK : 0 ≤ UA / L := div_nonneg hUA hL.le
+  have hsL : counterflowRate Ch Cc (UA / L) * L = UA * (1 / Ch - 1 / Cc) := by
+    unfold counterflowRate
+    field_simp
+  have hD := counterflowInletDiff_eq_of_ne hCh hCc hK hL.le hne Thi Tci
+  rw [hsL] at hD
+  have hden : Cc - Ch * Real.exp (-(UA * (1 / Ch - 1 / Cc))) ≠ 0 := by
+    rcases lt_or_gt_of_ne hne with hlt | hgt
+    · have h1 : 0 ≤ 1 / Ch - 1 / Cc := sub_nonneg.mpr (one_div_le_one_div_of_le hCh hlt.le)
+      have hE : Real.exp (-(UA * (1 / Ch - 1 / Cc))) ≤ 1 :=
+        Real.exp_le_one_iff.mpr (by nlinarith)
+      apply ne_of_gt
+      nlinarith
+    · have h1 : 1 / Ch - 1 / Cc ≤ 0 := sub_nonpos.mpr (one_div_le_one_div_of_le hCc hgt.le)
+      have hE : 1 ≤ Real.exp (-(UA * (1 / Ch - 1 / Cc))) := Real.one_le_exp (by nlinarith)
+      apply ne_of_lt
+      nlinarith
+  unfold counterflowHotTemp
+  rw [hD]
+  rcases hUA.lt_or_eq with hUApos | hUA0
+  · have h11 : 1 / Ch - 1 / Cc ≠ 0 := by
+      intro h0
+      apply hne
+      rw [sub_eq_zero, one_div, one_div, inv_inj] at h0
+      exact h0
+    have hs : counterflowRate Ch Cc (UA / L) ≠ 0 := by
+      unfold counterflowRate
+      exact mul_ne_zero (div_pos hUApos hL).ne' h11
+    have hφ : expDecayIntegral (counterflowRate Ch Cc (UA / L)) L =
+        (1 - Real.exp (-(UA * (1 / Ch - 1 / Cc)))) / counterflowRate Ch Cc (UA / L) := by
+      simp only [expDecayIntegral, ite_eq_right hs]
+      rw [hsL]
+    rw [hφ]
+    unfold counterflowRate
+    field_simp
+    ring
+  · subst hUA0
+    simp
+
+private lemma counterflowEffectiveness_mul_min_of_ne {Ch Cc UA : ℝ} (hCh : 0 < Ch)
+    (hCc : 0 < Cc) (hUA : 0 ≤ UA) (hne : Ch ≠ Cc) :
+    counterflowEffectiveness (transferUnits UA Ch Cc) (capacityRatio Ch Cc) * min Ch Cc =
+      Ch * Cc * (1 - Real.exp (-(UA * (1 / Ch - 1 / Cc)))) /
+        (Cc - Ch * Real.exp (-(UA * (1 / Ch - 1 / Cc)))) := by
+  have hCh0 : Ch ≠ 0 := hCh.ne'
+  have hCc0 : Cc ≠ 0 := hCc.ne'
+  have hCr : capacityRatio Ch Cc ≠ 1 := fun h1 =>
+    hne ((capacityRatio_domain hCh hCc hUA).2.2.1.mp h1)
+  unfold counterflowEffectiveness
+  rw [ite_eq_right hCr]
+  unfold transferUnits capacityRatio
+  rcases lt_or_gt_of_ne hne with hlt | hgt
+  · rw [min_eq_left hlt.le, max_eq_right hlt.le]
+    have hexp : UA / Ch * (1 - Ch / Cc) = UA * (1 / Ch - 1 / Cc) := by
+      field_simp
+    rw [hexp]
+    have h1 : 0 ≤ 1 / Ch - 1 / Cc := sub_nonneg.mpr (one_div_le_one_div_of_le hCh hlt.le)
+    have hE : Real.exp (-(UA * (1 / Ch - 1 / Cc))) ≤ 1 := Real.exp_le_one_iff.mpr (by nlinarith)
+    generalize Real.exp (-(UA * (1 / Ch - 1 / Cc))) = E at hE ⊢
+    have hden2 : 0 < Cc - Ch * E := by nlinarith
+    have hden1 : 1 - Ch / Cc * E ≠ 0 := by
+      have : 1 - Ch / Cc * E = (Cc - Ch * E) / Cc := by field_simp
+      rw [this]
+      exact div_ne_zero hden2.ne' hCc0
+    field_simp
+  · rw [min_eq_right hgt.le, max_eq_left hgt.le]
+    have hexp : UA / Cc * (1 - Cc / Ch) = -(UA * (1 / Ch - 1 / Cc)) := by
+      field_simp
+      ring
+    rw [hexp, neg_neg]
+    have h1 : 1 / Ch - 1 / Cc ≤ 0 := sub_nonpos.mpr (one_div_le_one_div_of_le hCc hgt.le)
+    have hE : 1 ≤ Real.exp (-(UA * (1 / Ch - 1 / Cc))) := Real.one_le_exp (by nlinarith)
+    have hF : Real.exp (UA * (1 / Ch - 1 / Cc)) ≤ 1 := Real.exp_le_one_iff.mpr (by nlinarith)
+    have hFE : Real.exp (UA * (1 / Ch - 1 / Cc)) * Real.exp (-(UA * (1 / Ch - 1 / Cc))) = 1 := by
+      rw [← Real.exp_add, add_neg_cancel, Real.exp_zero]
+    generalize Real.exp (-(UA * (1 / Ch - 1 / Cc))) = E at hE hFE ⊢
+    generalize Real.exp (UA * (1 / Ch - 1 / Cc)) = F at hF hFE ⊢
+    have hden2 : Cc - Ch * E < 0 := by nlinarith
+    have hden1' : 0 < Ch - Cc * F := by nlinarith
+    have hden1 : 1 - Cc / Ch * F ≠ 0 := by
+      have : 1 - Cc / Ch * F = (Ch - Cc * F) / Ch := by field_simp
+      rw [this]
+      exact div_ne_zero hden1'.ne' hCh0
+    rw [div_mul_eq_mul_div, div_eq_div_iff hden1 hden2.ne]
+    field_simp
+    linear_combination (Ch - Cc) * hFE
+
+/-- **Counterflow effectiveness.** For `K = UA / L` with `L > 0` and `UA ≥ 0`, every counterflow
+solution loses `Q = ε_c(NTU, Cr) Cmin (Thi - Tci)` from the hot stream and passes the same `Q` to
+the cold stream, whose outlet is at `x = 0`; at equal capacity rates `ε_c` takes its `Cr = 1`
+branch. -/
+lemma IsCounterflowSolution.heat_eq_effectiveness {Ch Cc UA L Thi Tci : ℝ} {Th Tc : ℝ → ℝ}
+    (hCh : 0 < Ch) (hCc : 0 < Cc) (hUA : 0 ≤ UA) (hL : 0 < L)
+    (h : IsCounterflowSolution Ch Cc (UA / L) L Thi Tci Th Tc) :
+    Ch * (Thi - Th L) = counterflowEffectiveness (transferUnits UA Ch Cc) (capacityRatio Ch Cc) *
+        min Ch Cc * (Thi - Tci) ∧
+      Cc * (Tc 0 - Tci) = counterflowEffectiveness (transferUnits UA Ch Cc)
+        (capacityRatio Ch Cc) * min Ch Cc * (Thi - Tci) := by
+  have hLmem : L ∈ Set.Icc (0 : ℝ) L := ⟨hL.le, le_rfl⟩
+  have hbal := h.heat_balance L hLmem
+  rw [h.2.1] at hbal
+  have key : Ch * (Thi - Th L) = counterflowEffectiveness (transferUnits UA Ch Cc)
+      (capacityRatio Ch Cc) * min Ch Cc * (Thi - Tci) := by
+    by_cases hne : Ch = Cc
+    · subst hne
+      rw [(h.equalCapacity_heat hCh hUA hL).1]
+      have hCr : capacityRatio Ch Ch = 1 := by
+        unfold capacityRatio
+        rw [min_self, max_self, div_self hCh.ne']
+      rw [hCr]
+      unfold counterflowEffectiveness transferUnits
+      rw [ite_eq_left rfl, min_self]
+      have hUC : 0 ≤ UA / Ch := div_nonneg hUA hCh.le
+      have h1 : 1 + UA / Ch ≠ 0 := by linarith
+      field_simp
+    · have hK : 0 ≤ UA / L := div_nonneg hUA hL.le
+      rw [(h.eq_closedForm hCh hCc hK L hLmem).1, counterflow_duty_of_ne hCh hCc hUA hL hne,
+        counterflowEffectiveness_mul_min_of_ne hCh hCc hUA hne]
+      ring
+  exact ⟨key, hbal.symm.trans key⟩
+
+/-! ## G. Bounds and the flow-arrangement comparison -/
+
+/-- **Parallel-flow bounds.** For `NTU ≥ 0` and `Cr ≥ 0`, `0 ≤ ε_p ≤ 1`. -/
+lemma parallelEffectiveness_bounds {NTU Cr : ℝ} (hN : 0 ≤ NTU) (hCr : 0 ≤ Cr) :
+    0 ≤ parallelEffectiveness NTU Cr ∧ parallelEffectiveness NTU Cr ≤ 1 := by
+  unfold parallelEffectiveness
+  have hE : Real.exp (-(NTU * (1 + Cr))) ≤ 1 := Real.exp_le_one_iff.mpr (by nlinarith)
+  have hEpos := Real.exp_pos (-(NTU * (1 + Cr)))
+  have hd : 0 < 1 + Cr := by linarith
+  exact ⟨div_nonneg (by linarith) hd.le, (div_le_one hd).mpr (by linarith)⟩
+
+/-- **Counterflow bounds.** For `NTU ≥ 0` and `Cr ≤ 1`, `0 ≤ ε_c ≤ 1`, on both branches. -/
+lemma counterflowEffectiveness_bounds {NTU Cr : ℝ} (hN : 0 ≤ NTU) (hCr : Cr ≤ 1) :
+    0 ≤ counterflowEffectiveness NTU Cr ∧ counterflowEffectiveness NTU Cr ≤ 1 := by
+  unfold counterflowEffectiveness
+  split_ifs with h1
+  · have hd : 0 < 1 + NTU := by linarith
+    exact ⟨div_nonneg hN hd.le, (div_le_one hd).mpr (by linarith)⟩
+  · have hlt : Cr < 1 := lt_of_le_of_ne hCr h1
+    have hE1 : Real.exp (-(NTU * (1 - Cr))) ≤ 1 := Real.exp_le_one_iff.mpr (by nlinarith)
+    have hE0 := Real.exp_pos (-(NTU * (1 - Cr)))
+    have hm := mul_pos hE0 (sub_pos.mpr hlt)
+    have hd : 0 < 1 - Cr * Real.exp (-(NTU * (1 - Cr))) := by nlinarith
+    exact ⟨div_nonneg (by linarith) hd.le, (div_le_one hd).mpr (by nlinarith)⟩
+
+private lemma sinh_mul_le_mul_sinh {c t : ℝ} (hc0 : 0 ≤ c) (hc1 : c ≤ 1) (ht : 0 ≤ t) :
+    Real.sinh (c * t) ≤ c * Real.sinh t := by
+  have hd : ∀ s : ℝ, HasDerivAt (fun s => c * Real.sinh s - Real.sinh (c * s))
+      (c * Real.cosh s - Real.cosh (c * s) * c) s := by
+    intro s
+    have h1 := (Real.hasDerivAt_sinh s).const_mul c
+    have h2 : HasDerivAt (fun s => Real.sinh (c * s)) (Real.cosh (c * s) * c) s := by
+      have h3 := ((hasDerivAt_id' s).const_mul c).sinh
+      simpa using h3
+    exact h1.sub h2
+  have hmono : MonotoneOn (fun s => c * Real.sinh s - Real.sinh (c * s)) (Set.Ici 0) := by
+    refine monotoneOn_of_deriv_nonneg (convex_Ici 0) ?_ ?_ ?_
+    · exact fun s _ => (hd s).continuousAt.continuousWithinAt
+    · exact fun s _ => (hd s).differentiableAt.differentiableWithinAt
+    · intro s hs
+      rw [interior_Ici] at hs
+      have hs0 : 0 ≤ s := le_of_lt hs
+      rw [(hd s).deriv]
+      have hcs : Real.cosh (c * s) ≤ Real.cosh s := by
+        rw [Real.cosh_le_cosh, abs_of_nonneg (mul_nonneg hc0 hs0), abs_of_nonneg hs0]
+        nlinarith
+      nlinarith [mul_nonneg hc0 (sub_nonneg.mpr hcs)]
+  have h := hmono (Set.mem_Ici.mpr le_rfl) (Set.mem_Ici.mpr ht) ht
+  simp only [Real.sinh_zero, mul_zero, sub_zero] at h
+  linarith
+
+private lemma sinh_le_mul_cosh {t : ℝ} (ht : 0 ≤ t) : Real.sinh t ≤ t * Real.cosh t := by
+  have hd : ∀ s : ℝ, HasDerivAt (fun s => s * Real.cosh s - Real.sinh s)
+      (1 * Real.cosh s + s * Real.sinh s - Real.cosh s) s := by
+    intro s
+    exact ((hasDerivAt_id' s).mul (Real.hasDerivAt_cosh s)).sub (Real.hasDerivAt_sinh s)
+  have hmono : MonotoneOn (fun s => s * Real.cosh s - Real.sinh s) (Set.Ici 0) := by
+    refine monotoneOn_of_deriv_nonneg (convex_Ici 0) ?_ ?_ ?_
+    · exact fun s _ => (hd s).continuousAt.continuousWithinAt
+    · exact fun s _ => (hd s).differentiableAt.differentiableWithinAt
+    · intro s hs
+      rw [interior_Ici] at hs
+      rw [(hd s).deriv]
+      have : 0 ≤ Real.sinh s := Real.sinh_nonneg_iff.mpr hs.le
+      nlinarith [mul_nonneg hs.le this]
+  have h := hmono (Set.mem_Ici.mpr le_rfl) (Set.mem_Ici.mpr ht) ht
+  simp only [Real.sinh_zero, zero_mul, sub_zero] at h
+  linarith
+
+/-- **Counterflow is at least as effective as parallel flow.** For `NTU ≥ 0` and `0 ≤ Cr ≤ 1`,
+`ε_p(NTU, Cr) ≤ ε_c(NTU, Cr)`. -/
+lemma parallelEffectiveness_le_counterflowEffectiveness {NTU Cr : ℝ} (hN : 0 ≤ NTU)
+    (hCr0 : 0 ≤ Cr) (hCr1 : Cr ≤ 1) :
+    parallelEffectiveness NTU Cr ≤ counterflowEffectiveness NTU Cr := by
+  have hu : 0 < Real.exp (-NTU) := Real.exp_pos _
+  have huN : Real.exp NTU * Real.exp (-NTU) = 1 := by
+    rw [← Real.exp_add, add_neg_cancel, Real.exp_zero]
+  unfold parallelEffectiveness counterflowEffectiveness
+  by_cases h1 : Cr = 1
+  · subst h1
+    rw [ite_eq_left rfl]
+    have hE2 : Real.exp (-(NTU * (1 + 1))) = Real.exp (-NTU) * Real.exp (-NTU) := by
+      rw [← Real.exp_add]
+      ring_nf
+    have key := sinh_le_mul_cosh hN
+    rw [Real.sinh_eq, Real.cosh_eq] at key
+    rw [hE2, div_le_div_iff₀ (by norm_num) (by linarith)]
+    nlinarith [mul_le_mul_of_nonneg_left key hu.le]
+  · rw [ite_eq_right h1]
+    have hlt : Cr < 1 := lt_of_le_of_ne hCr1 h1
+    have hE1 : Real.exp (-(NTU * (1 - Cr))) = Real.exp (-NTU) * Real.exp (Cr * NTU) := by
+      rw [← Real.exp_add]
+      ring_nf
+    have hE2 : Real.exp (-(NTU * (1 + Cr))) = Real.exp (-NTU) * Real.exp (-(Cr * NTU)) := by
+      rw [← Real.exp_add]
+      ring_nf
+    have hvw : Real.exp (Cr * NTU) * Real.exp (-(Cr * NTU)) = 1 := by
+      rw [← Real.exp_add, add_neg_cancel, Real.exp_zero]
+    have key := sinh_mul_le_mul_sinh hCr0 hCr1 hN
+    rw [Real.sinh_eq, Real.sinh_eq] at key
+    have hE1le : Real.exp (-(NTU * (1 - Cr))) ≤ 1 := Real.exp_le_one_iff.mpr (by nlinarith)
+    have hE10 := Real.exp_pos (-(NTU * (1 - Cr)))
+    have hm := mul_pos hE10 (sub_pos.mpr hlt)
+    have hden : 0 < 1 - Cr * Real.exp (-(NTU * (1 - Cr))) := by nlinarith
+    rw [div_le_div_iff₀ (by linarith) hden]
+    have hdiff : (1 - Real.exp (-(NTU * (1 - Cr)))) * (1 + Cr) -
+        (1 - Real.exp (-(NTU * (1 + Cr)))) * (1 - Cr * Real.exp (-(NTU * (1 - Cr)))) =
+        Real.exp (-NTU) * (Cr * (Real.exp NTU - Real.exp (-NTU)) -
+          (Real.exp (Cr * NTU) - Real.exp (-(Cr * NTU)))) := by
+      rw [hE1, hE2]
+      linear_combination (-Cr * Real.exp (-NTU) ^ 2) * hvw - Cr * huN
+    have hnn : 0 ≤ Real.exp (-NTU) * (Cr * (Real.exp NTU - Real.exp (-NTU)) -
+        (Real.exp (Cr * NTU) - Real.exp (-(Cr * NTU)))) :=
+      mul_nonneg hu.le (by linarith [key])
+    linarith
+
+/-! ## H. The equal-capacity boundary -/
+
+/-- **No substitution of `Cr = 1` into the general formula.** At `Cr = 1` the general counterflow
+formula is `0 / 0`, which Lean evaluates to the junk value `0`; for `NTU > 0` the effectiveness is
+the positive branch value `NTU / (1 + NTU)`. -/
+lemma counterflowEffectiveness_one_substitution {NTU : ℝ} (hN : 0 < NTU) :
+    (1 - Real.exp (-(NTU * (1 - 1)))) / (1 - 1 * Real.exp (-(NTU * (1 - 1)))) = 0 ∧
+      counterflowEffectiveness NTU 1 = NTU / (1 + NTU) ∧ 0 < counterflowEffectiveness NTU 1 := by
+  refine ⟨by simp, ?_, ?_⟩
+  · unfold counterflowEffectiveness
+    rw [ite_eq_left rfl]
+  · unfold counterflowEffectiveness
+    rw [ite_eq_left rfl]
+    exact div_pos hN (by linarith)
 
 end HeatTransfer.HeatExchangers

@@ -18,8 +18,11 @@ instance, constant mass, and the zero-mass input that the positivity hypothesis 
 parcel step of the vehicle of mass `2` at rest with flow `1` and exhaust speed `3`, and the parcel
 lemmas applied to it, to the linear burning history `M s = 2 - s` and to the nonlinear burning
 history `M s = 2 - s - s ^ 2`, with forward steps for the histories, and a forward step that
-leaves no mass; and the separate-flow thrust of a rocket and of a turbojet, and a steady duct flow
-on the unit square that satisfies the box momentum balance with a nonzero wall thrust.
+leaves no mass; the separate-flow thrust of a rocket and of a turbojet, and a steady duct flow on
+the unit square that satisfies the box momentum balance with a nonzero wall thrust; finally staged
+burns: a burn from `4` to `3`, a jettison from `3` to `2` and a burn from `2` to `1` at `ve = 1`,
+two stages with exhaust speeds `2` and `3` and a discarded dry mass `1`, and a mass increase that
+balances momentum but is no jettison.
 
 ## i. Overview
 
@@ -28,7 +31,8 @@ These are elaboration and non-vacuity checks, not new results.
 ## ii. Key results
 
 No new general results are introduced here; section E defines the fixture stress
-`shearDuctStress`.
+`shearDuctStress`, and section F the two-stage fixture data `twoStageMass`, `twoStageExhaust` and
+`twoStageVelocity`.
 
 ## iii. Table of contents
 
@@ -37,6 +41,7 @@ No new general results are introduced here; section E defines the fixture stress
 - C. Parcel fixture
 - D. Parcel lemmas on the fixture state
 - E. Separate-flow thrust
+- F. Staged burns and dry-mass jettison
 
 ## iv. References
 
@@ -357,5 +362,154 @@ lemma shearDuct_wallForce :
     · simp
 
 end SeparateFlowThrust
+
+/-! ## F. Staged burns and dry-mass jettison -/
+
+private lemma hasDerivAt_log_div_sub {c t : ℝ} (hc : c ≠ 0) (hct : c - t ≠ 0) :
+    HasDerivAt (fun u => Real.log (c / (c - u))) (1 / (c - t)) t := by
+  have hsub : HasDerivAt (fun u : ℝ => c - u) (-1) t :=
+    HasDerivAt.const_sub c (hasDerivAt_id t)
+  have hdiv : HasDerivAt (fun u : ℝ => c / (c - u)) (c / (c - t) ^ 2) t := by
+    refine (HasDerivAt.fun_div (hasDerivAt_const t c) hsub hct).congr_deriv ?_
+    field_simp
+    ring
+  have hne : c / (c - t) ≠ 0 := div_ne_zero hc hct
+  have hlog := HasDerivAt.log hdiv hne
+  refine hlog.congr_deriv ?_
+  field_simp
+
+/-- Burn from `4` to `3`, jettison from `3` to `2`, burn from `2` to `1`, all at `ve = 1`: the
+staged increment is `log (8 / 3)`, less than `log 4`, the increment of one burn from `4` to `1`
+that counts the jettison as propellant. -/
+lemma staged_ratio_fixture :
+    1 * Real.log (4 / 3) + 1 * Real.log (2 / 1) = Real.log (8 / 3) ∧
+      Real.log (8 / 3) < 1 * Real.log (4 / 1) := by
+  have hmul : (4 / 3 : ℝ) * (2 / 1) = 8 / 3 := by norm_num
+  have hlog := Real.log_mul (show (4 / 3 : ℝ) ≠ 0 by norm_num) (show (2 / 1 : ℝ) ≠ 0 by norm_num)
+  rw [hmul] at hlog
+  refine ⟨?_, ?_⟩
+  · linarith [hlog]
+  · have h4 : (4 : ℝ) / 1 = 4 := by norm_num
+    rw [h4, one_mul]
+    exact Real.log_lt_log (by norm_num) (by norm_num)
+
+/-- Fixture masses on `[0, 1]`: burn `0` from `4` to `3`, burn `1` (and later) from `2` to `1`. -/
+noncomputable def twoStageMass : ℕ → ℝ → ℝ
+  | 0 => fun t => 4 - t
+  | _ + 1 => fun t => 2 - t
+
+/-- Fixture exhaust speeds: `2` for burn `0`, `3` for burn `1` (and later). -/
+noncomputable def twoStageExhaust : ℕ → ℝ
+  | 0 => 2
+  | _ + 1 => 3
+
+/-- Fixture velocities: `2 log (4 / (4 - t))` in burn `0`; after the jettison, which keeps the
+velocity `2 log (4 / 3)`, `2 log (4 / 3) + 3 log (2 / (2 - t))` in burn `1` (and later). -/
+noncomputable def twoStageVelocity : ℕ → ℝ → ℝ
+  | 0 => fun t => 2 * Real.log (4 / (4 - t))
+  | _ + 1 => fun t => 2 * Real.log (4 / 3) + 3 * Real.log (2 / (2 - t))
+
+/-- Two stages with different exhaust speeds and a nonzero discarded dry mass: both burns satisfy
+the reduced law with mass rate `-1` on `[0, 1]`, the jettison from `3` to `2` conserves momentum
+at zero relative velocity, and the velocity gained is `2 log (4 / 3) + 3 log 2`, less than the
+`2 log (4 / 2) + 3 log 2` obtained by counting the dropped mass as first-stage propellant. -/
+lemma twoStage_fixture :
+    (∀ i ≤ 1, ∀ t ∈ Icc (0 : ℝ) 1, HasDerivAt (twoStageMass i) (-1) t ∧
+        HasDerivAt (twoStageVelocity i) (twoStageExhaust i / twoStageMass i t) t ∧
+        0 < twoStageMass i t ∧
+        twoStageMass i t * (twoStageExhaust i / twoStageMass i t) = -twoStageExhaust i * -1) ∧
+      twoStageMass 1 0 * twoStageVelocity 1 0 +
+          (twoStageMass 0 1 - twoStageMass 1 0) * twoStageVelocity 0 1 =
+        twoStageMass 0 1 * twoStageVelocity 0 1 ∧
+      twoStageMass 1 0 < twoStageMass 0 1 ∧ twoStageExhaust 0 ≠ twoStageExhaust 1 ∧
+      twoStageVelocity 1 1 - twoStageVelocity 0 0 = 2 * Real.log (4 / 3) + 3 * Real.log 2 ∧
+      2 * Real.log (4 / 3) + 3 * Real.log 2 < 2 * Real.log (4 / 2) + 3 * Real.log 2 := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro i hi t ht
+    have hi01 : i = 0 ∨ i = 1 := by omega
+    obtain ⟨ht0, ht1⟩ := Set.mem_Icc.mp ht
+    rcases hi01 with rfl | rfl
+    · simp only [twoStageMass, twoStageExhaust, twoStageVelocity]
+      have h4t : (0 : ℝ) < 4 - t := by linarith
+      have h4t' : (4 : ℝ) - t ≠ 0 := ne_of_gt h4t
+      refine ⟨?_, ?_, h4t, ?_⟩
+      · exact HasDerivAt.const_sub 4 (hasDerivAt_id t)
+      · have hlog := hasDerivAt_log_div_sub (c := 4) (t := t) (by norm_num) h4t'
+        have h2 := HasDerivAt.const_mul 2 hlog
+        exact h2.congr_deriv (mul_one_div 2 (4 - t))
+      · field_simp
+    · simp only [twoStageMass, twoStageExhaust, twoStageVelocity]
+      have h2t : (0 : ℝ) < 2 - t := by linarith
+      have h2t' : (2 : ℝ) - t ≠ 0 := ne_of_gt h2t
+      refine ⟨?_, ?_, h2t, ?_⟩
+      · exact HasDerivAt.const_sub 2 (hasDerivAt_id t)
+      · have hlog := hasDerivAt_log_div_sub (c := 2) (t := t) (by norm_num) h2t'
+        have h3 := HasDerivAt.const_mul 3 hlog
+        have hadd := HasDerivAt.const_add (2 * Real.log (4 / 3)) h3
+        exact hadd.congr_deriv (mul_one_div 3 (2 - t))
+      · field_simp
+  · have e1 : twoStageMass 1 0 = 2 := by norm_num [twoStageMass]
+    have e2 : twoStageMass 0 1 = 3 := by norm_num [twoStageMass]
+    have ev1 : twoStageVelocity 1 0 = 2 * Real.log (4 / 3) := by
+      have h21 : (2 : ℝ) / (2 - 0) = 1 := by norm_num
+      simp only [twoStageVelocity]
+      rw [h21, Real.log_one, mul_zero, add_zero]
+    have ev0 : twoStageVelocity 0 1 = 2 * Real.log (4 / 3) := by
+      have h41 : (4 : ℝ) / (4 - 1) = 4 / 3 := by norm_num
+      simp only [twoStageVelocity]
+      rw [h41]
+    rw [e1, e2, ev1, ev0]
+    ring
+  · norm_num [twoStageMass]
+  · norm_num [twoStageExhaust]
+  · have ev11 : twoStageVelocity 1 1 = 2 * Real.log (4 / 3) + 3 * Real.log 2 := by
+      have h21 : (2 : ℝ) / (2 - 1) = 2 := by norm_num
+      simp only [twoStageVelocity]
+      rw [h21]
+    have ev00 : twoStageVelocity 0 0 = 0 := by
+      have h40 : (4 : ℝ) / (4 - 0) = 1 := by norm_num
+      simp only [twoStageVelocity]
+      rw [h40, Real.log_one, mul_zero]
+    rw [ev11, ev00, sub_zero]
+  · have hlt : Real.log (4 / 3 : ℝ) < Real.log (4 / 2) :=
+      Real.log_lt_log (by norm_num) (by norm_num)
+    linarith [hlt]
+
+-- The staged lemma on the two-stage fixture: the burns satisfy the reduced law with mass rate `-1`
+-- and the jettison conserves momentum, so the velocity gained is the sum of the burn increments
+-- `2 log (4 / 3) + 3 log (2 / 1)`; the dropped mass `1` enters no logarithm.
+example : twoStageVelocity 1 1 - twoStageVelocity 0 0 =
+    2 * Real.log (4 / 3) + 3 * Real.log (2 / 1) := by
+  obtain ⟨hdata, hjet, hdrop, -⟩ := twoStage_fixture
+  have h := staged_velocity_increment 1 (m := twoStageMass) (v := twoStageVelocity)
+    (m' := fun _ _ => -1) (v' := fun i t => twoStageExhaust i / twoStageMass i t)
+    (ve := twoStageExhaust) (tb := fun _ => 1) (fun _ _ => zero_le_one)
+    (fun i hi t ht => (hdata i hi t ht).1) (fun i hi t ht => (hdata i hi t ht).2.1)
+    (fun i hi t ht => (hdata i hi t ht).2.2.1) (fun i hi t ht => (hdata i hi t ht).2.2.2)
+    (fun i hi => by
+      obtain rfl : i = 0 := by omega
+      exact hdrop.le)
+    (fun i hi => by
+      obtain rfl : i = 0 := by omega
+      exact hjet)
+  rw [h, Finset.sum_range_succ, Finset.sum_range_one]
+  norm_num [twoStageExhaust, twoStageMass]
+
+-- The jettison of the two-stage fixture keeps the velocity: from mass `3` at the velocity
+-- `2 log (4 / 3)` to mass `2`, the balance holds exactly for the unchanged velocity.
+example (w : ℝ) : 2 * w + (3 - 2) * (2 * Real.log (4 / 3)) = 3 * (2 * Real.log (4 / 3)) ↔
+    w = 2 * Real.log (4 / 3) :=
+  jettison_velocity_eq (by norm_num)
+
+-- Counting the jettison `3 → 2` as propellant of the burn from `4` adds `log (3 / 2) > 0` at
+-- `ve = 1`.
+example : 1 * Real.log (4 / 2) = 1 * Real.log (4 / 3) + 1 * Real.log (3 / 2) ∧
+    1 * Real.log (4 / 3) < 1 * Real.log (4 / 2) :=
+  jettison_as_propellant_overstates one_pos (by norm_num) (by norm_num) (by norm_num)
+
+-- A momentum balance alone does not make a transition a jettison: the mass increase from `1` to `2`
+-- at zero velocity balances momentum, but it is no drop, so it is not a transition of the staged
+-- lemma.
+example : (2 : ℝ) * 0 + (1 - 2) * 0 = 1 * 0 ∧ ¬ (2 : ℝ) ≤ 1 := by norm_num
 
 end PhyslibExtTest.Mechanics.PropulsionPorts

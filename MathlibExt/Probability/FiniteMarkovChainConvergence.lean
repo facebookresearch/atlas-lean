@@ -41,6 +41,9 @@ of the row `Pⁿ(x, ·)` from `π` is `tvDist (fun y => (P ^ n) x y) π`
   `stationary_pos`: it has full support.
 * `exists_stationary`: every row-stochastic matrix on a nonempty finite state space has a
   stationary distribution, by Cesàro averages.
+* `vecMul_pow_eq_self`: a stationary vector is invariant under repeated transition,
+  `π ᵥ* P ^ n = π` for every `n`, over any semiring; `sum_mul_pow_apply_eq_self` is its
+  entrywise form.
 * `perron_frobenius_primitive`: the packaged primitive case, with existence, uniqueness,
   strict positivity, and geometric total-variation convergence.
 
@@ -163,11 +166,21 @@ private theorem sum_abs_vecMul_le {M : Matrix S S ℝ} (hM : M ∈ rowStochastic
           ← Finset.mul_sum, hπ1, mul_one]
     _ = (1 - δ) * ∑ x, |w x| := by rw [Finset.mul_sum]; simp only [mul_comm]
 
-private theorem vecMul_pow_of_stat {P : Matrix S S ℝ} {π : S → ℝ} (hstat : π ᵥ* P = π)
-    (n : ℕ) : π ᵥ* P ^ n = π := by
+/-- **A stationary vector is invariant under repeated transition.** Row-vector convention:
+`π` is stationary for `P` when `π ᵥ* P = π`. Then `π ᵥ* P ^ n = π` for every `n`. The
+identity is purely algebraic: it needs neither stochasticity of `P` nor nonnegativity or
+normalization of `π`, so it holds over any semiring. -/
+theorem vecMul_pow_eq_self {R : Type*} [Semiring R] {P : Matrix S S R} {π : S → R}
+    (hstat : π ᵥ* P = π) (n : ℕ) : π ᵥ* P ^ n = π := by
   induction n with
   | zero => simp
   | succ n ih => rw [pow_succ, ← vecMul_vecMul, ih, hstat]
+
+/-- Entrywise form of `vecMul_pow_eq_self`: the `y`-coordinate of `π ᵥ* P ^ n`,
+`∑ x, π x * (P ^ n) x y`, equals `π y`. -/
+theorem sum_mul_pow_apply_eq_self {R : Type*} [Semiring R] {P : Matrix S S R} {π : S → R}
+    (hstat : π ᵥ* P = π) (n : ℕ) (y : S) : ∑ x, π x * (P ^ n) x y = π y := by
+  exact congrFun (vecMul_pow_eq_self hstat n) y
 
 /-- The `ℓ¹` distance of a row of `P ^ (j + r * k)` from `π` decays like `(1 - δ) ^ k`. -/
 private theorem sum_abs_row_sub_le {P : Matrix S S ℝ} (hP : P ∈ rowStochastic ℝ S)
@@ -188,7 +201,7 @@ private theorem sum_abs_row_sub_le {P : Matrix S S ℝ} (hP : P ∈ rowStochasti
       intro y
       have h1 : P ^ (j + r * (k + 1)) = P ^ (j + r * k) * P ^ r := by
         rw [← pow_add]; ring_nf
-      have h2 : (π ᵥ* P ^ r) y = π y := by rw [vecMul_pow_of_stat hstat]
+      have h2 : (π ᵥ* P ^ r) y = π y := by rw [vecMul_pow_eq_self hstat]
       rw [h1, Matrix.mul_apply, ← h2]
       simp only [w, vecMul, dotProduct, sub_mul, Finset.sum_sub_distrib]
     calc ∑ y, |(P ^ (j + r * (k + 1))) x y - π y| = ∑ y, |(w ᵥ* P ^ r) y| := by
@@ -305,7 +318,7 @@ theorem stationary_unique {P : Matrix S S ℝ} (hP : P ∈ rowStochastic ℝ S)
       (tendsto_pow_apply hP hprim hπ0 hπ1 hstat x y).const_mul (π' x)
   have hconst : (fun n => ∑ x, π' x * (P ^ n) x y) = fun _ => π' y := by
     funext n
-    have := congrFun (vecMul_pow_of_stat hstat' n) y
+    have := congrFun (vecMul_pow_eq_self hstat' n) y
     simpa [vecMul, dotProduct] using this
   rw [hconst, ← Finset.sum_mul, hπ1', one_mul] at hlim
   exact tendsto_nhds_unique hlim tendsto_const_nhds
@@ -320,7 +333,7 @@ theorem stationary_pos {P : Matrix S S ℝ} (hprim : P.IsPrimitive) {π : S → 
     have : ∑ x, π x ≤ 0 := Finset.sum_nonpos fun x _ => h x
     linarith
   have hy : π y = ∑ x, π x * (P ^ r) x y := by
-    have := congrFun (vecMul_pow_of_stat hstat r) y
+    have := congrFun (vecMul_pow_eq_self hstat r) y
     simpa [vecMul, dotProduct] using this.symm
   rw [hy]
   exact lt_of_lt_of_le (mul_pos hx₀ (hpos x₀ y))

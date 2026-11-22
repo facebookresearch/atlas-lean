@@ -490,7 +490,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/README.md"}], "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/ambidextrous-optimal-area-le-optimal-are.md"}], "object": [{"location": {"declaration": "MovingSofa.ambidextrousOptimalArea_le_optimalArea"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/ambidextrous-optimal-area.md"}], "object": [{"location": {"declaration": "MovingSofa.ambidextrousOptimalArea"}}]}
-{"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/baek-upper.md"}], "extensions": {"org.atlas-wiki": {"held": {"declaration": "AmbidextrousSofaWanted.baek_upper", "reason": "mis-specified", "issue": [5079, 5117]}}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/baek-upper.md"}], "object": [{"location": {"declaration": "AmbidextrousSofaWanted.baek_upper"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/can-pass-other.md"}], "object": [{"location": {"declaration": "MovingSofa.CanPassOther"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/can-pass-z.md"}], "object": [{"location": {"declaration": "MovingSofa.CanPassZ"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/can-pass-zat.md"}], "object": [{"location": {"declaration": "MovingSofa.CanPassZAt"}}]}
@@ -505,10 +505,10 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/exit-z.md"}], "object": [{"location": {"declaration": "MovingSofa.exitZ"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/exit.md"}], "object": [{"location": {"declaration": "MovingSofa.exit"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/gerver-printed-lower.md"}], "object": [{"location": {"declaration": "MovingSofaWanted.gerver_printed_lower"}}]}
-{"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/gibbs-lower.md"}], "extensions": {"org.atlas-wiki": {"held": {"declaration": "AmbidextrousSofaWanted.gibbs_lower", "reason": "module-private", "issue": 5117}}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/gibbs-lower.md"}], "object": [{"location": {"declaration": "AmbidextrousSofaWanted.gibbs_lower"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/hammersley-lower.md"}], "object": [{"location": {"declaration": "MovingSofaWanted.hammersley_lower"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/hammersley-upper-2.md"}], "object": [{"location": {"declaration": "MovingSofaWanted.hammersley_upper"}}]}
-{"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/hammersley-upper.md"}], "extensions": {"org.atlas-wiki": {"held": {"declaration": "AmbidextrousSofaWanted.hammersley_upper", "reason": "module-private", "issue": 5117}}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/hammersley-upper.md"}], "object": [{"location": {"declaration": "AmbidextrousSofaWanted.hammersley_upper"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/is-ambidextrous-sofa.md"}], "object": [{"location": {"declaration": "MovingSofa.IsAmbidextrousSofa"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/is-sofa.md"}], "object": [{"location": {"declaration": "MovingSofa.IsSofa"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/kallus-romik-upper.md"}], "object": [{"location": {"declaration": "MovingSofaWanted.kallus_romik_upper"}}]}
@@ -518,7 +518,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/one-le-optimal-area.md"}], "object": [{"location": {"declaration": "MovingSofa.one_le_optimalArea"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/optimal-area.md"}], "object": [{"location": {"declaration": "MovingSofa.optimalArea"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/position.md"}], "object": [{"location": {"declaration": "MovingSofa.Motion.position"}}]}
-{"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/romik-lower.md"}], "extensions": {"org.atlas-wiki": {"held": {"declaration": "AmbidextrousSofaWanted.romik_lower", "reason": "module-private", "issue": 5117}}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/romik-lower.md"}], "object": [{"location": {"declaration": "AmbidextrousSofaWanted.romik_lower"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/square-area.md"}], "object": [{"location": {"declaration": "MovingSofa.square_area"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/square-can-pass-other.md"}], "object": [{"location": {"declaration": "MovingSofa.square_canPassOther"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/discrete-geometry/part-01/moving-sofa-problem/square-can-pass-z.md"}], "object": [{"location": {"declaration": "MovingSofa.square_canPassZ"}}]}

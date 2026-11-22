@@ -2,7 +2,7 @@
 
 Reconstruction of evolutionary trees from sequence data: substitution models, likelihood and parsimony, distance methods, tree metrics, splits and the enumeration of phylogenetic trees.
 
-- [Counting binary phylogenetic trees](counting-binary-phylogenetic-trees/README.md)
+- [Counting binary phylogenetic trees](../../Combinatorics/elementary-enumeration/counting-binary-phylogenetic-trees/README.md)
 - [Felsenstein's pruning algorithm](felsenstein-s-pruning-algorithm/README.md)
 - [Jukes–Cantor model](jukes-cantor-model/README.md)
 - [Maximum-likelihood ancestral reconstruction](maximum-likelihood-ancestral-reconstruction/README.md)
@@ -15,6 +15,6 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 - [Pulley principle, LogDet distances and Felsenstein zone](pulley-principle-logdet-distances-and-felsenstei/README.md)
 - [Time-reversible nucleotide substitution models](time-reversible-nucleotide-substitution-models/README.md)
 - [Codon substitution models and dN/dS](codon-substitution-models-and-dn-ds/README.md)
-- [Tree metrics and the four-point condition](tree-metrics-and-the-four-point-condition/README.md)
+- [Tree metrics and the four-point condition](../../GraphTheory/graph-families-and-operations/tree-metrics-and-the-four-point-condition/README.md)
 - [Splits, compatibility, ultrametrics and UPGMA](splits-compatibility-ultrametrics-and-upgma/README.md)
 - [Evolutionary conservation scores](evolutionary-conservation-scores/README.md)

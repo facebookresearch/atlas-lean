@@ -11,9 +11,11 @@ public import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+public import Mathlib.Analysis.Convex.Function
 public import Mathlib.MeasureTheory.Integral.Prod
 import PhyslibExt.ContinuumMechanics.ControlVolumes
 import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Analysis.Calculus.BumpFunction.Normed
 
 /-!
@@ -58,6 +60,16 @@ against every admissible test exactly when the Rankine-Hugoniot identity
 `c * (uR - uL) = f uR - f uL` holds. One test alone establishes nothing: the zero test has zero
 residual against every step.
 
+Part D specializes to the Burgers flux `f u = u ^ 2 / 2` with two unequal constant states. The
+Rankine-Hugoniot identity forces the speed `c = (uL + uR) / 2`; equivalently, by Part A, mass on a
+fixed interval crossing the front is conserved exactly at that speed. For the convex entropy
+`η u = u ^ 2 / 2` with entropy flux `q u = u ^ 3 / 3`, the entropy production of the jump at that
+speed is `[q] - c * [η] = (uR - uL) ^ 3 / 12`, so a decreasing jump `uR < uL` has nonpositive
+entropy production and `uR < c < uL`, while an expansion jump `uL < uR` satisfies the
+Rankine-Hugoniot identity but has positive entropy production. Only this scalar model is treated:
+no generic convex flux or entropy pair, no gas-dynamics system, and no existence or uniqueness of
+entropy solutions.
+
 ## ii. Key results
 
 - `ScalarShock.conservation_iff_rankineHugoniot`: conservation on a fixed interval crossing the
@@ -83,12 +95,27 @@ residual against every step.
   `2 | 0` a positive residual at the incorrect speed `0`;
   `ScalarShock.exists_test_weakResidual_eq_zero_not_rankineHugoniot`: one zero test cannot
   establish the weak equation.
+- `ScalarShock.burgersFlux`, `burgersEntropy`, `burgersEntropyFlux` and
+  `burgersEntropyProduction`: the Burgers model and the entropy production `[q] - c * [η]`.
+- `ScalarShock.burgers_entropyPair`: `q' = η' * f'` and `η` is strictly convex.
+- `ScalarShock.burgers_rankineHugoniot_iff`: for `uL ≠ uR` the jump identity holds exactly at
+  `c = (uL + uR) / 2`.
+- `ScalarShock.burgers_conservation_iff_speed`: crossing-interval conservation holds exactly at
+  that speed.
+- `ScalarShock.burgers_entropyProduction_mean`: the production at that speed is
+  `(uR - uL) ^ 3 / 12`.
+- `ScalarShock.burgers_decreasingJump_admissible` and
+  `ScalarShock.burgers_expansionJump_rejected`: a decreasing jump has nonpositive production with
+  `uR < c < uL`; an expansion jump has positive production.
+- `ScalarShock.burgers_shock_two_zero` and `ScalarShock.burgers_expansion_zero_two`: the fixtures
+  `2 | 0` (production `-2 / 3`) and `0 | 2` (production `2 / 3` despite the jump identity).
 
 ## iii. Table of contents
 
 - A. Rankine-Hugoniot from two classical sides
 - B. Weak residual of a straight moving step
 - C. Nonzero interface test and weak jump equivalence
+- D. Burgers shock entropy and expansion rejection
 
 ## iv. References
 
@@ -1035,5 +1062,199 @@ lemma exists_test_weakResidual_eq_zero_not_rankineHugoniot :
   · intro p hp
     exact absurd rfl hp
   · simp [weakResidual]
+
+/-! ## D. Burgers shock entropy and expansion rejection -/
+
+/-! ### Burgers model -/
+
+/-- Burgers flux `f u = u ^ 2 / 2`. -/
+noncomputable def burgersFlux (u : ℝ) : ℝ := u ^ 2 / 2
+
+/-- Entropy `η u = u ^ 2 / 2` for the Burgers flux. -/
+noncomputable def burgersEntropy (u : ℝ) : ℝ := u ^ 2 / 2
+
+/-- Entropy flux `q u = u ^ 3 / 3` paired with `burgersEntropy`. -/
+noncomputable def burgersEntropyFlux (u : ℝ) : ℝ := u ^ 3 / 3
+
+/-- Entropy production `[q] - c * [η]` of a jump from the left state `uL` to
+the right state `uR` moving with speed `c` (jumps are right minus left). The
+jump form of the entropy inequality `η_t + q_x ≤ 0` is that this quantity is
+nonpositive. -/
+noncomputable def burgersEntropyProduction (c uL uR : ℝ) : ℝ :=
+  (burgersEntropyFlux uR - burgersEntropyFlux uL) -
+    c * (burgersEntropy uR - burgersEntropy uL)
+
+/-! ### Rankine-Hugoniot speed -/
+
+/-- Entropy pair: `f' u = u`, `η' u = u` and `q' u = u * u = η' u * f' u`, and
+the entropy `η` is strictly convex. -/
+lemma burgers_entropyPair :
+    (∀ u : ℝ, HasDerivAt burgersFlux u u) ∧
+      (∀ u : ℝ, HasDerivAt burgersEntropy u u) ∧
+      (∀ u : ℝ, HasDerivAt burgersEntropyFlux (u * u) u) ∧
+      StrictConvexOn ℝ Set.univ burgersEntropy := by
+  have hflux : ∀ u : ℝ, HasDerivAt burgersFlux u u := by
+    intro u
+    change HasDerivAt (fun x => x ^ 2 / 2) u u
+    refine ((hasDerivAt_pow 2 u).div_const (2 : ℝ)).congr_deriv ?_
+    have h21 : (2 : ℕ) - 1 = 1 := rfl
+    rw [h21, pow_one]
+    ring
+  have hent : ∀ u : ℝ, HasDerivAt burgersEntropy u u := by
+    intro u
+    change HasDerivAt (fun x => x ^ 2 / 2) u u
+    refine ((hasDerivAt_pow 2 u).div_const (2 : ℝ)).congr_deriv ?_
+    have h21 : (2 : ℕ) - 1 = 1 := rfl
+    rw [h21, pow_one]
+    ring
+  have hentflux : ∀ u : ℝ, HasDerivAt burgersEntropyFlux (u * u) u := by
+    intro u
+    change HasDerivAt (fun x => x ^ 3 / 3) (u * u) u
+    refine ((hasDerivAt_pow 3 u).div_const (3 : ℝ)).congr_deriv ?_
+    have h31 : (3 : ℕ) - 1 = 2 := rfl
+    rw [h31, pow_two]
+    ring
+  have hconv : StrictConvexOn ℝ Set.univ burgersEntropy := by
+    refine ⟨convex_univ, ?_⟩
+    intro x _ y _ hne a b ha hb hab
+    have hb' : b = 1 - a := by linarith
+    have hsq : (0 : ℝ) < (x - y) ^ 2 := by
+      rw [pow_two]
+      exact mul_self_pos.mpr (sub_ne_zero.mpr hne)
+    have hpos : (0 : ℝ) < a * b * (x - y) ^ 2 / 2 :=
+      div_pos (mul_pos (mul_pos ha hb) hsq) (by norm_num)
+    have hdiff : a * burgersEntropy x + b * burgersEntropy y -
+        burgersEntropy (a * x + b * y) = a * b * (x - y) ^ 2 / 2 := by
+      simp only [burgersEntropy]
+      rw [hb']
+      ring
+    simp only [smul_eq_mul]
+    linarith
+  exact ⟨hflux, hent, hentflux, hconv⟩
+
+/-- Rankine-Hugoniot speed for Burgers: for unequal states `uL ≠ uR`, the jump
+identity `c * (uR - uL) = f uR - f uL` holds exactly when `c = (uL + uR) / 2`. -/
+lemma burgers_rankineHugoniot_iff {uL uR c : ℝ} (hne : uL ≠ uR) :
+    c * (uR - uL) = burgersFlux uR - burgersFlux uL ↔ c = (uL + uR) / 2 := by
+  have hsub : uR - uL ≠ 0 := sub_ne_zero.mpr (Ne.symm hne)
+  have hfactor : burgersFlux uR - burgersFlux uL = (uL + uR) / 2 * (uR - uL) := by
+    unfold burgersFlux
+    ring
+  rw [hfactor]
+  constructor
+  · intro h
+    exact mul_right_cancel₀ hsub h
+  · intro h
+    rw [h]
+
+/-- Conservation form of the Burgers Rankine-Hugoniot speed. Constant states
+`uL ≠ uR` lie left and right of an interface `x = s τ` that is differentiable
+at time `t` with speed `c` and lies strictly inside `[a, b]`. The split mass on
+`[a, b]` changes at the conservation rate `f uL - f uR` (flux in at `a` minus
+flux out at `b`) exactly when `c = (uL + uR) / 2`. -/
+lemma burgers_conservation_iff_speed {uL uR c a b t : ℝ} {s : ℝ → ℝ}
+    (hne : uL ≠ uR)
+    (hs : HasDerivAt s c t) (has : a < s t) (hsb : s t < b) :
+    HasDerivAt (fun τ : ℝ => (∫ _x in a..s τ, uL) + (∫ _x in s τ..b, uR))
+        (burgersFlux uL - burgersFlux uR) t ↔ c = (uL + uR) / 2 := by
+  have hiff := conservation_iff_rankineHugoniot
+    (f := burgersFlux)
+    (uL := fun _ _ => uL) (uR := fun _ _ => uR)
+    (vL := fun _ _ => (0 : ℝ)) (vR := fun _ _ => (0 : ℝ))
+    (gL := fun _ => (0 : ℝ)) (gR := fun _ => (0 : ℝ))
+    (UL := Set.univ) (UR := Set.univ)
+    hs has hsb
+    isOpen_univ (Set.subset_univ _)
+    (show ContinuousOn (fun _ : ℝ × ℝ => uL) Set.univ from continuousOn_const)
+    (fun p _ => show HasDerivAt (fun _ : ℝ => uL) 0 p.1 from hasDerivAt_const _ _)
+    (show ContinuousOn (fun _ : ℝ × ℝ => (0 : ℝ)) Set.univ from continuousOn_const)
+    (show ContinuousOn (fun _ : ℝ => burgersFlux uL) (Set.Icc a (s t)) from continuousOn_const)
+    (fun x _ => show HasDerivAt (fun _ : ℝ => burgersFlux uL) 0 x from hasDerivAt_const _ _)
+    (fun _ _ => by simp)
+    isOpen_univ (Set.subset_univ _)
+    (show ContinuousOn (fun _ : ℝ × ℝ => uR) Set.univ from continuousOn_const)
+    (fun p _ => show HasDerivAt (fun _ : ℝ => uR) 0 p.1 from hasDerivAt_const _ _)
+    (show ContinuousOn (fun _ : ℝ × ℝ => (0 : ℝ)) Set.univ from continuousOn_const)
+    (show ContinuousOn (fun _ : ℝ => burgersFlux uR) (Set.Icc (s t) b) from continuousOn_const)
+    (fun x _ => show HasDerivAt (fun _ : ℝ => burgersFlux uR) 0 x from hasDerivAt_const _ _)
+    (fun _ _ => by simp)
+  exact hiff.trans (burgers_rankineHugoniot_iff hne)
+
+/-! ### Entropy production and admissibility -/
+
+/-- Entropy production at the Rankine-Hugoniot speed:
+`[q] - ((uL + uR) / 2) * [η] = (uR - uL) ^ 3 / 12`. -/
+lemma burgers_entropyProduction_mean (uL uR : ℝ) :
+    burgersEntropyProduction ((uL + uR) / 2) uL uR = (uR - uL) ^ 3 / 12 := by
+  unfold burgersEntropyProduction burgersEntropyFlux burgersEntropy
+  ring
+
+/-- A decreasing jump `uR < uL` moving with a speed `c` that satisfies the
+Rankine-Hugoniot identity has nonpositive entropy production, and its speed
+lies strictly between the states: `uR < c < uL`. -/
+theorem burgers_decreasingJump_admissible {uL uR c : ℝ} (hlt : uR < uL)
+    (hRH : c * (uR - uL) = burgersFlux uR - burgersFlux uL) :
+    burgersEntropyProduction c uL uR ≤ 0 ∧ uR < c ∧ c < uL := by
+  have hne : uL ≠ uR := ne_of_gt hlt
+  have hc : c = (uL + uR) / 2 := (burgers_rankineHugoniot_iff hne).mp hRH
+  have hneg : uR - uL < 0 := sub_neg.mpr hlt
+  have hcube : (uR - uL) ^ 3 < 0 := by
+    have hsq : (0 : ℝ) < (uR - uL) ^ 2 := by
+      rw [pow_two]
+      exact mul_self_pos.mpr (ne_of_lt hneg)
+    calc (uR - uL) ^ 3 = (uR - uL) ^ 2 * (uR - uL) := by ring
+      _ < 0 := mul_neg_of_pos_of_neg hsq hneg
+  have hprod : burgersEntropyProduction c uL uR = (uR - uL) ^ 3 / 12 := by
+    rw [hc]
+    exact burgers_entropyProduction_mean uL uR
+  refine ⟨?_, ?_, ?_⟩
+  · rw [hprod]
+    have h12 : (0 : ℝ) < 12 := by norm_num
+    exact div_nonpos_of_nonpos_of_nonneg (le_of_lt hcube) (le_of_lt h12)
+  · rw [hc]; linarith
+  · rw [hc]; linarith
+
+/-- Expansion rejection: an increasing jump `uL < uR` moving with a speed `c`
+that satisfies the Rankine-Hugoniot identity has positive entropy production,
+so it violates the entropy inequality. -/
+theorem burgers_expansionJump_rejected {uL uR c : ℝ} (hlt : uL < uR)
+    (hRH : c * (uR - uL) = burgersFlux uR - burgersFlux uL) :
+    0 < burgersEntropyProduction c uL uR := by
+  have hne : uL ≠ uR := ne_of_lt hlt
+  have hc : c = (uL + uR) / 2 := (burgers_rankineHugoniot_iff hne).mp hRH
+  have hpos : (0 : ℝ) < uR - uL := sub_pos.mpr hlt
+  have hcube : (0 : ℝ) < (uR - uL) ^ 3 := pow_pos hpos 3
+  have hprod : burgersEntropyProduction c uL uR = (uR - uL) ^ 3 / 12 := by
+    rw [hc]
+    exact burgers_entropyProduction_mean uL uR
+  rw [hprod]
+  exact div_pos hcube (by norm_num)
+
+/-! ### Fixtures -/
+
+/-- Fixture: states `uL = 2`, `uR = 0` with speed `1` satisfy the
+Rankine-Hugoniot identity, and the entropy production is `-2 / 3`. -/
+lemma burgers_shock_two_zero :
+    (1 : ℝ) * (0 - 2) = burgersFlux 0 - burgersFlux 2 ∧
+      burgersEntropyProduction 1 2 0 = -2 / 3 := by
+  constructor
+  · unfold burgersFlux
+    norm_num
+  · unfold burgersEntropyProduction burgersEntropyFlux burgersEntropy
+    norm_num
+
+/-- Invalid fixture: states `uL = 0`, `uR = 2` with speed `1` also satisfy the
+Rankine-Hugoniot identity, but the entropy production is `2 / 3 > 0`. -/
+lemma burgers_expansion_zero_two :
+    (1 : ℝ) * (2 - 0) = burgersFlux 2 - burgersFlux 0 ∧
+      burgersEntropyProduction 1 0 2 = 2 / 3 ∧
+      0 < burgersEntropyProduction 1 0 2 := by
+  refine ⟨?_, ?_, ?_⟩
+  · unfold burgersFlux
+    norm_num
+  · unfold burgersEntropyProduction burgersEntropyFlux burgersEntropy
+    norm_num
+  · unfold burgersEntropyProduction burgersEntropyFlux burgersEntropy
+    norm_num
 
 end ScalarShock
