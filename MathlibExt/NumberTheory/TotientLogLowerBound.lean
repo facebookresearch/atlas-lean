@@ -15,10 +15,12 @@ public import Mathlib.Data.Real.Basic
 /-!
 # An elementary lower bound for Euler's totient
 
-For every positive `r`, `r ≤ (1 + log₂ r) * φ(r)`: each distinct prime
-factor of `r` contributes a factor of at most `1 / 2` to `φ(r) / r`, and
-`r` has at most `log₂ r` distinct prime factors. This is the elementary
-totient estimate behind the `O(log N)` repetition budget in Shor's
+For every positive `r`, `r ≤ (1 + log₂ r) * φ(r)`. Write
+`r / φ(r) = ∏ p / (p - 1)` over the distinct prime factors of `r`.
+Ordering those primes increasingly, the `i`-th of them is at least
+`i + 1`, so the product telescopes to at most one plus the number `k`
+of distinct prime factors; and `2 ^ k ≤ r`, so `k ≤ log₂ r`.
+This is the elementary totient estimate behind the `O(log N)` repetition budget in Shor's
 algorithm.
 -/
 
