@@ -43,9 +43,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Deadline-driven (EDF) feasibility
 
-Theorem statements (proofs deferred to Stage B) for Liu-Layland Theorems 6
-and 7 over the discrete provider model in
-`CSLibExt.Scheduling.RealTime.PeriodicTasks`.
+Completed proofs of Liu-Layland Theorems 6 and 7 over the discrete
+provider model in `CSLibExt.Scheduling.RealTime.PeriodicTasks`.
 
 Source: C. L. Liu and J. W. Layland, "Scheduling Algorithms for
 Multiprogramming in a Hard-Real-Time Environment", J. ACM 20(1), 1973,
@@ -53,12 +52,13 @@ Section 6. Theorem 6: under the deadline-driven algorithm there is no idle
 time before an overflow. Theorem 7: the deadline-driven algorithm is
 feasible if and only if total utilization is at most one.
 
-Discrete-model adaptations (justified in the Stage A report): Theorem 6 is
-stated over the busy window before the first overflow, since slots before
-the first release are vacuously idle when phases are nonzero; the
-hyperperiod reduction is stated as a bounded-overflow witness for overfull
-systems, since neither unconditional schedule periodicity nor a fixed
-hyperperiod-only overflow bound holds in this model.
+Discrete-model adaptations: Theorem 6 is stated over the busy window
+before the first overflow, since with nonzero phases the slots before the
+first release are idle even before any overflow occurs, so the no-idle
+claim starts from `windowStart`; the hyperperiod reduction is stated as a
+bounded-overflow witness for overfull systems, with the bound using
+`maxPhase` plus whole hyperperiods, since a hyperperiod-only first-overflow
+bound is not valid for phased tasks in this discrete model.
 
 ## Main definitions
 
