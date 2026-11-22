@@ -36,8 +36,11 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The supergeneralized Leonardo `p`-numbers `𝓛_{p,k,x}(n)`: `x n` for `n ≤ p`, and
-`𝓛(n-1) + 𝓛(n-p-1) + k` for `n > p`. Only the initial values `x 0, …, x p` are used.
+/-- **Supergeneralized Leonardo p-numbers.** For natural numbers $p$ and $k$ and a real sequence
+$x = (x_n)_{n \in \mathbb{N}}$, the supergeneralized Leonardo $p$-numbers are the real numbers
+$\mathcal{L}_{p,k,x}(n)$, $n \in \mathbb{N}$, given by $\mathcal{L}_{p,k,x}(n) = x_n$ for
+$n \le p$ and $\mathcal{L}_{p,k,x}(n) = \mathcal{L}_{p,k,x}(n-1) + \mathcal{L}_{p,k,x}(n-p-1) + k$
+for $n > p$. Only the initial values $x_0, \dots, x_p$ are used.
 
 Source: Clemens Schütz and Kristian Kelly, *An Explicit Formula for Supergeneralized
 Leonardo `p`-numbers*, Journal of Integer Sequences 28 (2025), Article 25.8.2,
@@ -48,7 +51,9 @@ noncomputable def superLeonardoP (p k : ℕ) (x : ℕ → ℝ) (n : ℕ) : ℝ :
 termination_by n
 decreasing_by all_goals omega
 
-/-- The initial values: `𝓛_{p,k,x}(n) = x_n` for `n ≤ p`.
+/-- **Initial values of the supergeneralized Leonardo p-numbers.** For all natural numbers $p$,
+$k$ and $n$ with $n \le p$ and every real sequence $x$, the supergeneralized Leonardo $p$-number
+$\mathcal{L}_{p,k,x}(n)$ equals $x_n$.
 
 Source: Schütz and Kelly, Journal of Integer Sequences 28 (2025), Article 25.8.2,
 Definition 1. -/
@@ -56,7 +61,10 @@ theorem superLeonardoP_of_le (p k : ℕ) (x : ℕ → ℝ) {n : ℕ} (hn : n ≤
     superLeonardoP p k x n = x n := by
   rw [superLeonardoP]; simp [hn]
 
-/-- The recurrence: `𝓛_{p,k,x}(n) = 𝓛_{p,k,x}(n-1) + 𝓛_{p,k,x}(n-p-1) + k` for `n > p`.
+/-- **Recurrence for the supergeneralized Leonardo p-numbers.** For all natural numbers $p$, $k$
+and $n$ with $n > p$ and every real sequence $x$, the supergeneralized Leonardo $p$-numbers
+$\mathcal{L}_{p,k,x}$ satisfy
+$\mathcal{L}_{p,k,x}(n) = \mathcal{L}_{p,k,x}(n-1) + \mathcal{L}_{p,k,x}(n-p-1) + k$.
 
 Source: Schütz and Kelly, Journal of Integer Sequences 28 (2025), Article 25.8.2,
 Definition 1. -/
@@ -65,9 +73,15 @@ theorem superLeonardoP_of_lt (p k : ℕ) (x : ℕ → ℝ) {n : ℕ} (hn : p < n
       superLeonardoP p k x (n - 1) + superLeonardoP p k x (n - p - 1) + k := by
   rw [superLeonardoP]; simp [show ¬n ≤ p by omega]
 
-/-- **Theorem 3**: `𝓛_{p,k,x}(n) = 𝓛_{p,0,x}(n) + max{0, 𝓛_{p,1,y}(n-(p+1))} · k` with
-`y = (1, …, p + 1)`. The paper sets `𝓛 ≤ 0` at negative indices, so the correction term is
-`0` for `n ≤ p`; for `n > p` the `max` is redundant since `𝓛_{p,1,y}` is positive.
+/-- **Reduction of supergeneralized Leonardo p-numbers to the homogeneous case.** Let $p \ge 1$
+and $k$ be natural numbers, $x$ a real sequence, $y$ the real sequence $y_i = i + 1$, and write
+$\mathcal{L}_{p,k,x}(n)$ for the supergeneralized Leonardo $p$-numbers. For every natural number
+$n$, $\mathcal{L}_{p,k,x}(n) = \mathcal{L}_{p,0,x}(n)$ if $n \le p$, and
+$\mathcal{L}_{p,k,x}(n) = \mathcal{L}_{p,0,x}(n) + \mathcal{L}_{p,1,y}(n-(p+1)) \cdot k$ if $n > p$.
+
+The paper writes the correction term as $\max\{0, \mathcal{L}_{p,1,y}(n-(p+1))\} \cdot k$ with
+$y = (1, \dots, p + 1)$ and sets $\mathcal{L} \le 0$ at negative indices, so the correction term
+is $0$ for $n \le p$; for $n > p$ the $\max$ is redundant since $\mathcal{L}_{p,1,y}$ is positive.
 
 Source: Clemens Schütz and Kristian Kelly, *An Explicit Formula for Supergeneralized
 Leonardo `p`-numbers*, Journal of Integer Sequences 28 (2025), Article 25.8.2,
@@ -78,8 +92,11 @@ public theorem_wanted superLeonardoP_eq_add_mul (p k : ℕ) (hp : 1 ≤ p) (x : 
         (if p < n then superLeonardoP p 1 (fun i => (i : ℝ) + 1) (n - (p + 1)) else 0) *
           k
 
-/-- **Theorem 4**: the homogeneous case `k = 0`: `𝓛_{p,0,x}(n) = x_n` for `n ≤ p` and
-`F_p(n-p+1) x_p + ∑_{i=0}^{min(p-1, n-p-1)} F_p(n-p-i) x_i` for `n > p`.
+/-- **Homogeneous supergeneralized Leonardo p-numbers via Fibonacci p-numbers.** For all
+natural numbers $p \ge 1$ and $n$ and every real sequence $x$, the supergeneralized Leonardo
+$p$-numbers $\mathcal{L}_{p,0,x}$ with $k = 0$ satisfy $\mathcal{L}_{p,0,x}(n) = x_n$ if
+$n \le p$, and if $n > p$, with $F_p$ denoting the Fibonacci $p$-numbers,
+$$\mathcal{L}_{p,0,x}(n) = F_p(n-p+1)\,x_p + \sum_{i=0}^{\min(p-1,\,n-p-1)} F_p(n-p-i)\,x_i.$$
 
 Source: Clemens Schütz and Kristian Kelly, *An Explicit Formula for Supergeneralized
 Leonardo `p`-numbers*, Journal of Integer Sequences 28 (2025), Article 25.8.2,
@@ -91,8 +108,11 @@ public theorem_wanted superLeonardoP_zero_eq (p : ℕ) (hp : 1 ≤ p) (x : ℕ �
         ∑ i ∈ Finset.range (min (p - 1) (n - p - 1) + 1),
           (fibonacciP p (n - p - i) : ℝ) * x i
 
-/-- **Theorem 5**: with `y = (1, …, p + 1)`,
-`𝓛_{p,1,y}(n) = ∑_{i=0}^{⌊(n+1)/(p+1)⌋} C(n+1-pi, i+1)`.
+/-- **Binomial sum for supergeneralized Leonardo p-numbers with linear initial values.** Let
+$p \ge 1$ be a natural number and $y$ the real sequence $y_i = i + 1$, so that the initial values
+are $y_0, \dots, y_p = 1, \dots, p + 1$. For every natural number $n$, the supergeneralized
+Leonardo $p$-numbers $\mathcal{L}_{p,1,y}$ with $k = 1$ and initial values $y$ satisfy
+$$\mathcal{L}_{p,1,y}(n) = \sum_{i=0}^{\lfloor (n+1)/(p+1) \rfloor} \binom{n+1-pi}{i+1}.$$
 
 Source: Clemens Schütz and Kristian Kelly, *An Explicit Formula for Supergeneralized
 Leonardo `p`-numbers*, Journal of Integer Sequences 28 (2025), Article 25.8.2,
@@ -101,10 +121,13 @@ public theorem_wanted superLeonardoP_one_succ_eq_sum_choose (p : ℕ) (hp : 1 �
     superLeonardoP p 1 (fun i => (i : ℝ) + 1) n =
       ∑ i ∈ Finset.range ((n + 1) / (p + 1) + 1), ((n + 1 - p * i).choose (i + 1) : ℝ)
 
-/-- **Lemma 6**: `1 + ∑_{i=0}^{J} C(n-pi, i+1) + ∑_{i=0}^{J-1} C(n-pi-p, i+1) =
-∑_{i=0}^{J} C(n-pi+1, i+1)`, with natural-number subtraction (a negative upper index gives
-`C(0, i+1) = 0`, matching the paper's binomials). Stated for all `J, n, p ∈ ℕ`, which
-includes the value `0` beyond the paper's positive range.
+/-- **Schütz–Kelly binomial sum identity.** For all natural numbers $J$, $n$ and $p$,
+$$1 + \sum_{i=0}^{J} \binom{\max(n-pi,\,0)}{i+1} + \sum_{i=0}^{J-1} \binom{\max(n-pi-p,\,0)}{i+1} =
+\sum_{i=0}^{J} \binom{\max(n-pi,\,0)+1}{i+1}.$$
+
+Truncating the upper indices at $0$ makes a negative upper index give $\binom{0}{i+1} = 0$,
+matching the paper's binomials. The identity is stated for all natural $J$, $n$, $p$, which
+includes the value $0$ beyond the paper's positive range.
 
 Source: Clemens Schütz and Kristian Kelly, *An Explicit Formula for Supergeneralized
 Leonardo `p`-numbers*, Journal of Integer Sequences 28 (2025), Article 25.8.2,
@@ -114,13 +137,17 @@ public theorem_wanted one_add_sum_choose_add_sum_choose (J n p : ℕ) :
         ∑ i ∈ Finset.range J, (n - p * i - p).choose (i + 1) =
       ∑ i ∈ Finset.range (J + 1), (n - p * i + 1).choose (i + 1)
 
-/-- **Corollary 7** (with the factor `k` restored): for `n > p`,
-`𝓛_{p,k,x}(n) = F_p(n-p+1) x_p + ∑_{i=0}^{min(p-1,n-p-1)} F_p(n-p-i) x_i +
-max{0, ∑_{j=0}^{⌊(n-p)/(p+1)⌋} C(n-p-pj, j+1)} · k`. The printed corollary omits the
-factor `k` on the last term (and reuses `k` as the summation index); without it the
-identity fails, e.g. at `p = 1`, `k = 2`, `n = 2`, `x = (1, 1)`: `𝓛 = 4` but the printed
-right side is `3`. The factor is the one in Theorem 3, of which the corollary is stated to
-be an immediate combination with Theorems 4 and 5.
+/-- **Supergeneralized Leonardo p-numbers via Fibonacci p-numbers.** For all natural numbers
+$p \ge 1$, $k$ and $n$ with $n > p$ and every real sequence $x$, the supergeneralized Leonardo
+$p$-numbers $\mathcal{L}_{p,k,x}$ and the Fibonacci $p$-numbers $F_p$ satisfy
+$$\mathcal{L}_{p,k,x}(n) = F_p(n-p+1)\,x_p + \sum_{i=0}^{\min(p-1,\,n-p-1)} F_p(n-p-i)\,x_i +
+\max\Big\{0, \sum_{j=0}^{\lfloor (n-p)/(p+1) \rfloor} \binom{n-p-pj}{j+1}\Big\} \cdot k.$$
+
+This is Corollary 7 of the paper with the factor $k$ restored. The printed corollary omits the
+factor $k$ on the last term (and reuses $k$ as the summation index); without it the identity
+fails, e.g. at $p = 1$, $k = 2$, $n = 2$, $x = (1, 1)$: $\mathcal{L}_{p,k,x}(n) = 4$ but the
+printed right side is $3$. The factor is the one in Theorem 3, of which the corollary is stated
+to be an immediate combination with Theorems 4 and 5.
 
 Source: Clemens Schütz and Kristian Kelly, *An Explicit Formula for Supergeneralized
 Leonardo `p`-numbers*, Journal of Integer Sequences 28 (2025), Article 25.8.2,
@@ -134,11 +161,15 @@ public theorem_wanted superLeonardoP_eq_fibonacciP_sum (p k : ℕ) (hp : 1 ≤ p
         max 0 (∑ j ∈ Finset.range ((n - p) / (p + 1) + 1),
           ((n - p - p * j).choose (j + 1) : ℝ)) * k
 
-/-- **Theorem 8** (Kuhapatanakul, quoted): `F_p(n+1) = ∑_{i=0}^{⌊n/(p+1)⌋} C(n-ip, i)` for
-`p ≥ 1` and `n ≥ 0`; the paper's second form `F_p(n) = ∑_{i=0}^{⌊(n-1)/(p+1)⌋} C(n-1-ip, i)` is
-the same identity with `n` shifted by one. The paper allows all nonnegative `p`, but at `p = 0`
-the sequence is identically zero (`F_0(1) = F_0(0) + F_0(0) = 0`) while the sum at `n = 0` is
-`C(0, 0) = 1`, so `p ≥ 1` is assumed.
+/-- **Binomial sum formula for Fibonacci p-numbers.** For all natural numbers $p \ge 1$ and $n$,
+the Fibonacci $p$-numbers $F_p$ satisfy
+$$F_p(n+1) = \sum_{i=0}^{\lfloor n/(p+1) \rfloor} \binom{n-ip}{i}.$$
+
+The paper (Theorem 8, quoting Kuhapatanakul) also gives the form
+$F_p(n) = \sum_{i=0}^{\lfloor (n-1)/(p+1) \rfloor} \binom{n-1-ip}{i}$, which is the same identity
+with $n$ shifted by one. The paper allows all natural $p$, but at $p = 0$ the sequence is
+identically zero ($F_0(1) = F_0(0) + F_0(0) = 0$) while the sum at $n = 0$ is
+$\binom{0}{0} = 1$, so $p \ge 1$ is assumed.
 
 Source: Clemens Schütz and Kristian Kelly, *An Explicit Formula for Supergeneralized
 Leonardo `p`-numbers*, Journal of Integer Sequences 28 (2025), Article 25.8.2,
@@ -146,12 +177,18 @@ Theorem 8 (Kuhapatanakul). -/
 public theorem_wanted fibonacciP_succ_eq_sum_choose (p n : ℕ) (hp : 1 ≤ p) :
     fibonacciP p (n + 1) = ∑ i ∈ Finset.range (n / (p + 1) + 1), (n - i * p).choose i
 
-/-- **Theorem 9** (explicit formula, with the factor `k` restored): for `n > p`,
-`𝓛_{p,k,x}(n) = (∑_{i=0}^{⌊(n-p)/(p+1)⌋} C(n-p-ip, i)) x_p +
-∑_{i=0}^{min(p-1,n-p-1)} (∑_{j=0}^{⌊(n-p-i-1)/(p+1)⌋} C(n-p-i-1-jp, j)) x_i +
-max{0, ∑_{j=0}^{⌊(n-p)/(p+1)⌋} C(n-p-pj, j+1)} · k`. As in Corollary 7, the printed
-theorem omits the factor `k` on the last term and is false without it (same
-counterexample: `p = 1`, `k = 2`, `n = 2`, `x = (1, 1)` gives `4` versus `3`).
+/-- **Explicit formula for the supergeneralized Leonardo p-numbers.** For all natural numbers
+$p \ge 1$, $k$ and $n$ with $n > p$ and every real sequence $x$, the supergeneralized Leonardo
+$p$-numbers $\mathcal{L}_{p,k,x}$ satisfy
+$$\mathcal{L}_{p,k,x}(n) =
+\Big(\sum_{i=0}^{\lfloor (n-p)/(p+1) \rfloor} \binom{n-p-ip}{i}\Big) x_p +
+\sum_{i=0}^{\min(p-1,\,n-p-1)} \Big(\sum_{j=0}^{\lfloor (n-p-i-1)/(p+1) \rfloor}
+\binom{n-p-i-1-jp}{j}\Big) x_i +
+\max\Big\{0, \sum_{j=0}^{\lfloor (n-p)/(p+1) \rfloor} \binom{n-p-pj}{j+1}\Big\} \cdot k.$$
+
+This is Theorem 9 of the paper with the factor $k$ restored: as in Corollary 7, the printed
+theorem omits the factor $k$ on the last term and is false without it (same counterexample:
+$p = 1$, $k = 2$, $n = 2$, $x = (1, 1)$ gives $4$ versus $3$).
 
 Source: Clemens Schütz and Kristian Kelly, *An Explicit Formula for Supergeneralized
 Leonardo `p`-numbers*, Journal of Integer Sequences 28 (2025), Article 25.8.2,

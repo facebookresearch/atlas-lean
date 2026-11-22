@@ -40,23 +40,37 @@ set_option autoImplicit false
 
 namespace Cslib.Decidability
 
-/-- **A URM-computable total function is computed by a multi-stack Turing machine.**
+/-- **A URM-computable total function is computed by a multi-stack Turing machine.** Let
+$f : \mathbb{N} \to \mathbb{N}$. Suppose there is a URM program that, for every $n \in \mathbb{N}$,
+started with $n$ in register $0$ and all other registers $0$, halts with $f(n)$ in register $0$.
+Then there is a multi-stack Turing machine that computes $f$ with input and output numbers
+written in binary: started on the binary word of $n$, it halts with the binary word of $f(n)$.
+
 This is an alias of `Cslib.URM.Computable.tm2Computable` from `URMBridge.lean`, kept under
 the Church–Turing name.
+
 Source: Sipser, *Introduction to the Theory of Computation*, 3rd ed., Chapter 3 (the
 Church–Turing thesis and the equivalence of models). -/
 alias urmComputable_to_tm2 := Cslib.URM.Computable.tm2Computable
 
-/-- **A URM-decidable predicate is decidable by a multi-stack Turing machine.**
+/-- **URM-decidability implies multi-stack decidability.**
+Every predicate $P$ on $\mathbb{N}$ that is URM-decidable is decidable by a multi-stack Turing
+machine.
+
 This is an alias of `Cslib.URM.Decidable.tm2Decidable` from `URMBridge.lean`, kept under
 the Church–Turing name.
+
 Source: Sipser, *Introduction to the Theory of Computation*, 3rd ed.,
 Chapter 3 (the Church–Turing thesis). -/
 alias urmDecidable_to_tm2Decidable := Cslib.URM.Decidable.tm2Decidable
 
-/-- **A URM-recognizable predicate is recognizable by a multi-stack Turing machine.**
+/-- **URM-recognizability implies multi-stack recognizability.**
+Every predicate $P$ on $\mathbb{N}$ that is URM-recognizable is recognizable by a multi-stack
+Turing machine.
+
 This is an alias of `Cslib.URM.Recognizable.tm2Recognizable` from `URMBridge.lean`, kept
 under the Church–Turing name.
+
 Source: Sipser, *Introduction to the Theory of Computation*, 3rd ed.,
 Chapter 3 (the Church–Turing thesis). -/
 alias urmRecognizable_to_tm2Recognizable := Cslib.URM.Recognizable.tm2Recognizable
