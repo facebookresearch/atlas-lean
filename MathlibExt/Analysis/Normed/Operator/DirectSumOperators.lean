@@ -378,7 +378,7 @@ theorem isFredholm_prodMap_iff [CompleteSpace 𝕜] (T : E →L[𝕜] E') (S : F
 
 set_option linter.style.haveILetI false in
 /-- The Fredholm index of a direct sum is the sum of the Fredholm indices. -/
-theorem index_prodMap [CompleteSpace 𝕜] (T : E →L[𝕜] E') (S : F →L[𝕜] F')
+theorem index_prodMap (T : E →L[𝕜] E') (S : F →L[𝕜] F')
     (hT : T.IsFredholm) (hS : S.IsFredholm) :
     (T.prodMap S).index = T.index + S.index := by
   have hker : LinearMap.ker (↑(T.prodMap S) : (E × F) →ₗ[𝕜] (E' × F'))

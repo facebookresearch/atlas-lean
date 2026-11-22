@@ -32,9 +32,15 @@ the Carmichael exponent `lcm (p - 1) (q - 1)`.
   `d_p ≡ d [MOD p - 1]` and `d_q ≡ d [MOD q - 1]` in `ZMod p` and `ZMod q` and recombining with the
   Chinese remainder theorem gives `c ^ d`. `Key.crtDecrypt_mod_eq` is the standard choice
   `d_p = d % (p - 1)`, `d_q = d % (q - 1)` for odd primes.
+* `PubKey`, `PubKey.encrypt`, `Key.publicKey`: the public half `(n, e)` of a key and encryption
+  under it, which is all an adversary sees; `Key.publicKey_encrypt` relates it to `Key.encrypt`.
 
-Textbook RSA is deterministic and therefore not CPA-secure; its security (RSA assumption, padding)
-is not treated here.
+Message space: Katz and Lindell's plain RSA has plaintext space `Z*_N` (the units of `ZMod N`);
+this file works on all residues `ZMod n`, a broader model in which correctness still holds.
+
+Textbook RSA is deterministic and therefore not CPA-secure
+(`CSLibExt.Crypto.PublicKey.RSAInsecurity` proves that it is not eavesdropping-secure); its
+security (RSA assumption, padding) is not treated here.
 
 ## References
 
@@ -217,6 +223,33 @@ def ofTotient (p q e d : ℕ) (hp : p.Prime) (hq : q.Prime) (hpq : p ≠ q)
       Nat.totient_prime hq] at hed
     exact Nat.ModEq.of_mul_left _ hed
 
+/-- The modulus of a textbook RSA key exceeds `2` (it is at least `2 * 2`), so `1 ≠ -1` in
+`ZMod n`. -/
+theorem two_lt_n : 2 < key.n := by
+  have := Nat.mul_le_mul key.hp.two_le key.hq.two_le
+  unfold n
+  omega
+
 end Key
+
+/-! ### The public key -/
+
+/-- A textbook RSA public key `(n, e)` (Katz and Lindell, Section 11.5.1, "plain RSA"). -/
+structure PubKey where
+  /-- The modulus. -/
+  n : ℕ
+  /-- The public (encryption) exponent. -/
+  e : ℕ
+
+/-- Textbook RSA encryption under a public key: `m ↦ m ^ e` in `ZMod n`
+(Katz and Lindell, Section 11.5.1). -/
+def PubKey.encrypt (pk : PubKey) (m : ZMod pk.n) : ZMod pk.n := m ^ pk.e
+
+/-- The public part `(n, e)` of a textbook RSA key (Katz and Lindell, Section 11.5.1). -/
+def Key.publicKey (key : Key) : PubKey := ⟨key.n, key.e⟩
+
+/-- Encrypting under the public part of a key is `Key.encrypt`. -/
+theorem Key.publicKey_encrypt (key : Key) (m : ZMod key.n) :
+    key.publicKey.encrypt m = key.encrypt m := rfl
 
 end Cslib.Crypto.PublicKey.RSA

@@ -14,6 +14,8 @@ Original formalization by Zeina Migeed (@migeed-z); ported with permission.
 module
 
 public import CSLibExt.Computability.Languages.Congruences.Regularity
+public import Cslib.Computability.Languages.LanguageHom
+public import Cslib.Computability.Languages.RegularLanguage
 
 /-!
 # Syntactic monoids under alphabet morphisms
@@ -39,6 +41,13 @@ language over $\Gamma$. The alphabet preimage of $L$ under $f$ is the language o
 consisting of the words $a_1 a_2 \cdots a_n$ such that $f(a_1) f(a_2) \cdots f(a_n) \in L$. -/
 def alphabetPreimage (f : Source → Target) (L : Language Target) : Language Source :=
   {x | x.map f ∈ L}
+
+/-- Letterwise alphabet preimages are upstream language preimages under `List.map`.
+Use this equality to rewrite the representation explicitly; membership and identity
+simplification are provided by the alphabet-preimage lemmas. -/
+theorem alphabetPreimage_eq_preimage (f : Source → Target) (L : Language Target) :
+    alphabetPreimage f L = L.preimage (List.map f) :=
+  rfl
 
 @[simp]
 theorem mem_alphabetPreimage_iff (f : Source → Target) (L : Language Target)
@@ -152,9 +161,11 @@ preimage $\{w \in \Sigma^* \mid f^*(w) \in L\}$ is regular, where $f^*(w)$ is th
 by applying $f$ to each letter of $w$. -/
 theorem IsRegular.alphabetPreimage {L : Language Target} (hL : L.IsRegular)
     (f : Source → Target) : (alphabetPreimage f L).IsRegular := by
-  rw [Cslib.Language.isRegular_iff_finite_syntacticMonoid] at hL ⊢
-  let _ : Finite (SyntacticMonoid L) := hL
-  exact finite_syntacticMonoid_alphabetPreimage f L
+  let hom : Language.Hom Source Target := {
+    toFun := List.map f
+    map_nil' := rfl
+    map_append' := fun _ _ => List.map_append }
+  exact IsRegular.preimage hom hL
 
 /-- **Renaming letters by a bijection preserves and reflects regularity.** Let
 $e \colon \Sigma \to \Gamma$ be a bijection between alphabets and $L$ a language over $\Gamma$.

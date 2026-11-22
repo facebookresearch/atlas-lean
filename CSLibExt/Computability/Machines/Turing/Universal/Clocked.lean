@@ -735,7 +735,7 @@ $(q, a, q', s)$ of the code stack is $5q + 5a + 2q' + 2s + 30$. -/
 def entryCost (e : ℕ × ℕ × ℕ × ℕ) : ℕ := 5 * e.1 + 5 * e.2.1 + 2 * e.2.2.1 + 2 * e.2.2.2 + 30
 
 /-- The cells of the entries, the first entry first. -/
-private theorem cells_entryNums_cons (e : ℕ × ℕ × ℕ × ℕ) (es : List (ℕ × ℕ × ℕ × ℕ)) :
+theorem cells_entryNums_cons (e : ℕ × ℕ × ℕ × ℕ) (es : List (ℕ × ℕ × ℕ × ℕ)) :
     cells (entryNums (e :: es)) =
       cell e.1 ++ (cell e.2.1 ++ (cell e.2.2.1 ++ (cell e.2.2.2 ++ cells (entryNums es)))) := by
   simp [entryNums, cells, List.flatMap_cons]

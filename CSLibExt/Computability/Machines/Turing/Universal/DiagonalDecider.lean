@@ -133,12 +133,6 @@ decreasing_by
   simp only [List.length_cons]
   omega
 
-/-- The cells of an entry list, entry by entry. -/
-private theorem cells_entryNums_cons (e : ℕ × ℕ × ℕ × ℕ) (es : List (ℕ × ℕ × ℕ × ℕ)) :
-    cells (entryNums (e :: es)) =
-      cell e.1 ++ (cell e.2.1 ++ (cell e.2.2.1 ++ (cell e.2.2.2 ++ cells (entryNums es)))) := by
-  simp [cells, entryNums]
-
 /-- Reading the first cell. -/
 private theorem readUnaryLength_cell_append (n : ℕ) (r : List Bool) :
     readUnaryLength (cell n ++ r) = some (n, r) :=

@@ -1,0 +1,3 @@
+# Edge-weighted Kac-Ward matrix with direction phases
+
+For $L \in \mathbb{N}$, a weight $w$ on unordered pairs of sites of the discrete torus $T_L = (\mathbb{Z}/L\mathbb{Z})^2$ ($L \in \mathbb{N}$, with $\mathbb{Z}/0\mathbb{Z} = \mathbb{Z}$), and $\omega, u, v \in \mathbb{C}$, the matrix is indexed by darts and has entry $\pi_{u,v}(\mu_1)\, K^w_\omega(d_2, d_1)$ for darts $d_1 = (p_1, \mu_1)$, $d_2$, where $K^w_\omega$ is the [edge-weighted Kac–Ward matrix](ons-kwmat-weighted.md) and $\pi_{u,v}(\mu)$ is the [direction phase](ons-dir-phase.md) ($u, v, u^{-1}, v^{-1}$ for $\mu = 0, 1, 2, 3$, with $0^{-1} = 0$).

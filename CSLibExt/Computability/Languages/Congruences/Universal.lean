@@ -42,6 +42,7 @@ $M$ to the states of $N$ that sends the start state of $M$ to the start state of
 $f(\delta_M(q, a)) = \delta_N(f(q), a)$ for every state $q$ of $M$ and every symbol $a$, and
 such that each state $q$ of $M$ is accepting if and only if $f(q)$ is accepting in $N$. -/
 structure DFAHom (M : DFA Symbol State) (N : DFA Symbol State') where
+  /-- The underlying map on states. -/
   toFun : State → State'
   map_start : toFun M.start = N.start
   map_step : ∀ q a, toFun (M.step q a) = N.step (toFun q) a
@@ -168,7 +169,14 @@ theorem canonicalResidualHom_injective_iff (M : DFA Symbol State) (hacc : Access
 /-- **States of an accessible, state-separated DFA correspond to residuals.** Let $M$ be a DFA
 that is accessible and state-separated, and let $L$ be the language it accepts. The map sending
 each state $q$ of $M$ to the language of words accepted by $M$ starting from $q$ is a bijection
-from the states of $M$ onto the set of left quotients $\{z : xz \in L\}$ of $L$ by words $x$. -/
+from the states of $M$ onto the set of left quotients $\{z : xz \in L\}$ of $L$ by words $x$.
+
+This construction supports arbitrary universes.
+Upstream counterpart: `Cslib.Automata.DA.FinAcc.unique_minimal`, bridged by
+`Cslib.Automata.DA.FinAcc.stateEquivResidualsOfSeparated_eq_trans` for alphabets and states in
+`Type`. For alphabets in `Type` and states in any universe,
+`Cslib.Language.stateEquivResidualsOfSeparated_eq_minimal_equiv` characterizes its transport to
+upstream Nerode classes by reached words, with no finiteness assumption. -/
 noncomputable def stateEquivResidualsOfSeparated (M : DFA Symbol State) (hacc : Accessible M)
     (hsep : StateSeparated M) : State ≃ Set.range M.accepts.leftQuotient :=
   Equiv.ofBijective (canonicalResidualHom M hacc)

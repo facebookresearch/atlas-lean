@@ -162,7 +162,10 @@ theorem NerodeClass.toDFAState_injective (M : DFA Symbol State) (hM : M.accepts 
 
 /-- **Nerode classes bound the number of DFA states.** Let $L$ be a language with finitely many
 Nerode classes, and let $M$ be a DFA with a finite set of states $Q$ that accepts exactly $L$.
-Then the number of Nerode classes of $L$ is at most $|Q|$. -/
+Then the number of Nerode classes of $L$ is at most $|Q|$.
+
+Upstream counterpart: `Language.dfa_num_state_min`, bridged by
+`Cslib.Language.natCard_nerodeQuotient_le_natCard_state`. -/
 theorem card_nerodeClass_le_card_state [Fintype (NerodeClass L)] [Fintype State]
     (M : DFA Symbol State) (hM : M.accepts = L) :
     Fintype.card (NerodeClass L) ≤ Fintype.card State :=
@@ -171,12 +174,18 @@ theorem card_nerodeClass_le_card_state [Fintype (NerodeClass L)] [Fintype State]
 /-- **Myhill–Nerode lower bound via left quotients.** Let $L$ be a language and let $M$ be a DFA
 with a finite set of states $Q$ that accepts exactly $L$. For a word $x$, the left quotient of
 $L$ by $x$ is the language $\{z \mid xz \in L\}$. Then the number of distinct left quotients of
-$L$ is at most $|Q|$. -/
+$L$ is at most $|Q|$.
+
+This is the statement formerly requested as `myhillNerode_minimal_state_count`; it follows
+from `nerodeClassEquivReachableResiduals` and `card_nerodeClass_le_card_state`.
+This version supports arbitrary alphabet and state universes.
+Upstream counterpart: `Language.dfa_num_state_min`, bridged by
+`Cslib.Language.natCard_nerodeQuotient_le_natCard_state`. -/
 theorem natCard_range_leftQuotient_le_natCard_state [Finite State] (M : DFA Symbol State)
     (hM : M.accepts = L) :
     Nat.card (Set.range L.leftQuotient) ≤ Nat.card State := by
-  letI : Fintype State := Fintype.ofFinite State
-  letI : Finite (NerodeClass L) :=
+  let : Fintype State := Fintype.ofFinite State
+  let : Finite (NerodeClass L) :=
     Finite.of_injective _ (NerodeClass.toDFAState_injective M hM)
   cases nonempty_fintype (NerodeClass L)
   have e : NerodeClass L ≃ Set.range L.leftQuotient :=
@@ -190,7 +199,12 @@ theorem natCard_range_leftQuotient_le_natCard_state [Finite State] (M : DFA Symb
 Nerode classes, and let $M$ be a DFA with a finite set of states $Q$ that accepts exactly $L$.
 Send each Nerode class of $L$ to the state that $M$ reaches from its start state on the chosen
 representative word of the class. Then the number of Nerode classes of $L$ equals $|Q|$ if and
-only if every state in $Q$ is the image of some Nerode class under this map. -/
+only if every state in $Q$ is the image of some Nerode class under this map.
+
+Upstream counterpart: `Cslib.Automata.DA.FinAcc.IsMinimalAutomaton`, bridged by
+`Cslib.Automata.DA.FinAcc.isMinimalAutomaton_ofDFA_iff` for alphabets and states in `Type`, and
+by `Cslib.Language.isMinimalAutomaton_ofDFA_iff` for alphabets in `Type` and finite states in
+arbitrary universes. -/
 theorem card_nerodeClass_eq_card_state_iff [Fintype (NerodeClass L)] [Fintype State]
     (M : DFA Symbol State) (hM : M.accepts = L) :
     Fintype.card (NerodeClass L) = Fintype.card State ↔
