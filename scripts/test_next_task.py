@@ -296,6 +296,24 @@ class Picking(unittest.TestCase):
         for body in (f"Unlike \\`{name}\\`, this changes `foo`.", f"A ` here.\n\nUnlike {name}, this changes `foo`."):
             self.assertEqual(next_task.taken(items, [pull(106, body=body)]), {}, body)
 
+    def test_a_block_ends_with_the_list_item_or_quote_that_holds_it(self) -> None:
+        name = "breuillard_green_tao_approximate_subgroup"
+        items = [item(91, "proof", f"MetaMathlibExt.{name}"), item(92, "proof", "MetaMathlibExt.green_tao_density")]
+        # A list item's lines are indented to where its content starts, so is the fence that closes a block in it, and
+        # the block is code, a block opened on a later line of the item and a paragraph's lazy line included.
+        for body in (f"-   ```lean\n    #check {name}\n    ```",
+                     f"- Proves\nthe bound:\n  ```lean\n  #check {name}\n  ```"):
+            self.assertEqual(next_task.taken(items, [pull(111, body=body)]), {"Algebra/t91": [111]}, body)
+        # The prose after such a block is no code, nor is the line that ends the list item, and the block with it. A
+        # quote opening ends a paragraph, so a span does not run into it, and a list item that began with a blank
+        # line ends at a second one.
+        for body in (f"-   ```lean\n    #check Nat\n    ```\n\nUnlike {name}, this changes `foo`.",
+                     f"1.  ```lean\n    #check Nat\n    ```\n\nUnlike {name}, this changes `foo`.",
+                     f"-   ```lean\n    #check Nat\nUnlike {name}, this changes `foo`.",
+                     f"- Tests:\n\n  ```\n  #check Nat\nUnlike {name}, this changes `foo`.",
+                     f"A ` here\n> Unlike {name}, this changes `foo`.", f"-\n\n    ```\n    {name}\n    ```"):
+            self.assertEqual(next_task.taken(items, [pull(112, body=body)]), {}, body)
+
     def test_a_prime_is_part_of_the_name(self) -> None:
         items = [item(41, "proof", "Ext.sum"), item(42, "proof", "Ext.sum'"), item(43, "proof", "Ext.prod"),
                  item(44, "proof", "Ext.prod'")]
