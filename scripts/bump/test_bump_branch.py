@@ -38,13 +38,19 @@ def diverged(path: str, data: str, rationale: str, upstream: str = "e" * 64) -> 
             "rationale": rationale, "backport": "pending", "upstream_sha256": upstream}
 
 
-def staged_as(files: dict[str, tuple[str, bytes]]):
-    return lambda path: files.get(path, (None, None))
+def merged_file(staged: bytes, ours=b"ours", theirs=b"theirs", base=b"base", auto=None) -> dict:
+    """What `file_versions` reports; by default a staged file that is the automatic merge."""
+    return {"staged": staged, "ours": ours, "theirs": theirs, "base": base,
+            "auto": staged if auto is None else auto}
+
+
+def versions_as(files: dict[str, dict]):
+    return lambda path: files.get(path)
 
 
 class MergeManifestTest(unittest.TestCase):
     def merge(self, base, ours, theirs, files=None):
-        return bb.merge_manifest(manifest(base), manifest(ours), manifest(theirs), staged=staged_as(files or {}))
+        return bb.merge_manifest(manifest(base), manifest(ours), manifest(theirs), versions=versions_as(files or {}))
 
     def test_one_sided_and_adjacent_rows_take_their_side(self):
         a, b, c = (diverged(f"MathlibExt/{n}.lean", n, f"edit {n}") for n in "ABC")
@@ -58,7 +64,7 @@ class MergeManifestTest(unittest.TestCase):
         base = diverged("MathlibExt/A.lean", "A", "Port the lemma.")
         ours = {**diverged(base["path"], "A-bump", f"Port the lemma. {BUMP}"), "backport": "https://example.org/1"}
         theirs = diverged(base["path"], "A-main", "Restate docstrings (#961).")
-        text, counts, problems = self.merge([base], [ours], [theirs], {base["path"]: ("merged", b"A-merged")})
+        text, counts, problems = self.merge([base], [ours], [theirs], {base["path"]: merged_file(b"A-merged")})
         row = bb.manifest_rows(text)[base["path"]]
         self.assertEqual(problems, [])
         self.assertEqual(row["published_sha256"], fms.sha256(b"A-merged"))
@@ -71,10 +77,34 @@ class MergeManifestTest(unittest.TestCase):
         base = diverged("MathlibExt/A.lean", "A", "Port the lemma.")
         ours = diverged(base["path"], "A-bump", f"Port the lemma. {BUMP}")
         theirs = diverged(base["path"], "A-main", "Change zero to two.")
-        text, counts, _ = self.merge([base], [ours], [theirs], {base["path"]: ("theirs", b"A-main")})
+        kept_main = merged_file(b"A-main", ours=b"A-bump", theirs=b"A-main", base=b"A", auto=b"x")
+        text, counts, _ = self.merge([base], [ours], [theirs], {base["path"]: kept_main})
         self.assertEqual((bb.manifest_rows(text)[base["path"]], counts["main"]), (theirs, 1))
-        text, counts, _ = self.merge([base], [ours], [theirs], {base["path"]: ("ours", b"A-bump")})
+        kept_bump = merged_file(b"A-bump", ours=b"A-bump", theirs=b"A-main", base=b"A", auto=b"x")
+        text, counts, _ = self.merge([base], [ours], [theirs], {base["path"]: kept_bump})
         self.assertEqual((bb.manifest_rows(text)[base["path"]], counts["bump"]), (ours, 1))
+        # Keeping main's file drops the bump's change; a backport the bump set would go with it.
+        ours_backport = {**ours, "backport": "https://example.org/2"}
+        _, _, problems = self.merge([base], [ours_backport], [theirs], {base["path"]: kept_main})
+        self.assertIn("also changed the row's other fields", problems[0])
+
+    def test_metadata_only_changes_merge_field_by_field(self):
+        base = diverged("MathlibExt/A.lean", "A", "Port the lemma.")
+        ours = {**base, "backport": "https://example.org/3"}
+        theirs = {**base, "rationale": "Port the lemma; see #12."}
+        same = merged_file(b"A", ours=b"A", theirs=b"A", base=b"A")
+        text, _, problems = self.merge([base], [ours], [theirs], {base["path"]: same})
+        row = bb.manifest_rows(text)[base["path"]]
+        self.assertEqual((problems, row["backport"], row["rationale"]), ([], ours["backport"], theirs["rationale"]))
+
+    def test_hand_resolved_or_reverted_files_need_a_person(self):
+        base = diverged("MathlibExt/A.lean", "A", "Set a to one.")
+        ours = diverged(base["path"], "A2", "Set a to two.")
+        theirs = diverged(base["path"], "A3", "Set a to three.")
+        for staged, why in ((b"A", "back to the merge base"), (b"A4", "resolved by hand")):
+            files = {base["path"]: merged_file(staged, ours=b"A2", theirs=b"A3", base=b"A", auto=b"A23")}
+            _, _, problems = self.merge([base], [ours], [theirs], files)
+            self.assertIn(why, problems[0])
 
     def test_rationale_boundaries(self):
         self.assertEqual(bb.bump_rationale({"rationale": "Base."}, {"rationale": "Base. Also bump."}), "Also bump.")
@@ -98,15 +128,16 @@ class MergeManifestTest(unittest.TestCase):
             ([base], [diverged(base["path"], "1", f"x. {BUMP}")], [diverged(base["path"], "2", "y.")], {},
              "not resolved and staged"),
             ([base], [diverged(base["path"], "1", f"x. {BUMP}")], [diverged(base["path"], "2", f"y. {BUMP}")],
-             {base["path"]: ("merged", b"3")}, "adds nothing"),
+             {base["path"]: merged_file(b"3")}, "adds nothing"),
             ([base], [diverged(base["path"], "1", f"x. {BUMP}")],
-             [{**base, "disposition": "retired", "line_fingerprint": []}], {base["path"]: ("merged", b"1")},
+             [{**base, "disposition": "retired", "line_fingerprint": []}], {base["path"]: merged_file(b"1")},
              "dispositions"),
             ([base], [diverged(base["path"], "1", f"x. {BUMP}", upstream="d" * 64)],
-             [diverged(base["path"], "2", "y", upstream="f" * 64)], {base["path"]: ("merged", b"1")},
+             [diverged(base["path"], "2", "y", upstream="f" * 64)], {base["path"]: merged_file(b"1")},
              "both sides changed its 'upstream_sha256'"),
             ([base], [], [base], {}, "the bump removed the row"),
             ([base], [base], [], {}, "main removed the row"),
+            ([base], [], [], {}, "both sides removed the row"),
         ]
         for rows_b, rows_o, rows_t, files, why in cases:
             with self.subTest(why=why):
@@ -129,13 +160,13 @@ class MergeManifestTest(unittest.TestCase):
         a = diverged("MathlibExt/A.lean", "A", "x")
         base, ours = manifest([a]), manifest([a])
         theirs = manifest([a], lean_toolchain="leanprover/lean4:v9.9.0")
-        text, _, problems = bb.merge_manifest(base, ours, theirs, staged=staged_as({}))
+        text, _, problems = bb.merge_manifest(base, ours, theirs, versions=versions_as({}))
         self.assertEqual((json.loads(text)["lean_toolchain"], problems), ("leanprover/lean4:v9.9.0", []))
-        _, _, problems = bb.merge_manifest(base, manifest([a], lean_toolchain="v9.7.0"), theirs, staged=staged_as({}))
+        _, _, problems = bb.merge_manifest(base, manifest([a], lean_toolchain="v9.7.0"), theirs, versions=versions_as({}))
         self.assertIn("lean_toolchain", problems[0])
         dropped = json.loads(base)
         dropped.pop("lean_toolchain")
-        text, _, _ = bb.merge_manifest(base, fms.dump_manifest(dropped), base, staged=staged_as({}))
+        text, _, _ = bb.merge_manifest(base, fms.dump_manifest(dropped), base, versions=versions_as({}))
         self.assertNotIn("lean_toolchain", json.loads(text), "a field one side removed is removed, not null")
 
 
@@ -164,6 +195,11 @@ class MergeAdjacentTest(unittest.TestCase):
         self.assertIsNone(bb.merge_adjacent("a\nb\n", "a\nX\nb\n", "a\nY\nb\n"))
         self.assertIsNone(bb.merge_adjacent("a\nb\nc\n", "a\nB\nc\n", "a\nb\nX\nc\n"))
         self.assertIsNone(bb.merge_adjacent("a\nb\nc\n", "a\nY\nc\n", "a\nb\nY\n"), "both sides write the same line")
+        # Both replacements grow into their seam: two versions of `ready` would come out.
+        base = "def f := 0\ndef g := 0\n"
+        ours = "def f := 1\ntheorem ready : True := trivial\ndef g := 0\n"
+        theirs = "def f := 0\ntheorem ready : True := by trivial\ndef g := 1\n"
+        self.assertIsNone(bb.merge_conflicts_adjacent(base, ours, theirs))
 
     def test_clean_regions_keep_gits_merge(self):
         lines = [f"line {i}\n" for i in range(30)]
@@ -292,11 +328,21 @@ class GitTest(unittest.TestCase):
         proc = self.tool("resolve-manifest")
         self.assertNotEqual(proc.returncode, 0, "an unstaged edit must not be checked in place of the staged file")
         (self.repo / d).write_text(resolved)
+        # A file resolved by hand gets its rationale from the person, not from the two rows.
+        proc = self.tool("resolve-manifest")
+        self.assertEqual(proc.returncode, 3, proc.stdout + proc.stderr)
+        self.assertIn("resolved by hand", proc.stdout)
+        rationale = f"Type d (#5); noncomputable for the v9.9.0 bump."
+        record = subprocess.run([sys.executable, "scripts/check_formal_math_sync.py", "--record-divergence", d,
+                                 "--rationale", rationale, "--backport", "pending"], cwd=self.repo,
+                                capture_output=True, text=True, env=dict(os.environ, PYTHONDONTWRITEBYTECODE="1"))
+        self.assertEqual(record.returncode, 0, record.stdout + record.stderr)
+        self.git("add", bb.MANIFEST)
         proc = self.tool("resolve-manifest")
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         merged = bb.manifest_rows((self.repo / bb.MANIFEST).read_text())
         self.assertEqual(merged[d]["published_sha256"], fms.sha256(resolved.encode()))
-        self.assertEqual(merged[d]["rationale"], f"Type d (#5). {BUMP}")
+        self.assertEqual(merged[d]["rationale"], rationale)
         self.assertEqual(self.git("status", "--porcelain").stdout, "")
 
     def test_adjacent_resolves_neighbouring_edits(self):
@@ -354,7 +400,14 @@ class GitTest(unittest.TestCase):
         proc = self.tool("merge-main", "--main", "main")
         self.assertEqual(proc.returncode, 3, proc.stdout + proc.stderr)
         self.assertIn("removed the row", proc.stdout)
-        self.assertIn(a, bb.manifest_rows((self.repo / bb.MANIFEST).read_text()))
+        draft = (self.repo / bb.MANIFEST).read_text()
+        self.assertIn(a, bb.manifest_rows(draft))
+        # A rerun before the repair is staged keeps the person's edits.
+        (self.repo / bb.MANIFEST).write_text(draft.replace("Edit (#3).", "Edit (#3), kept."))
+        proc = self.tool("resolve-manifest")
+        self.assertEqual(proc.returncode, 3, proc.stdout + proc.stderr)
+        self.assertIn("edits that are not staged", proc.stdout)
+        self.assertIn("Edit (#3), kept.", (self.repo / bb.MANIFEST).read_text())
 
     def test_refuses_a_dirty_tree(self):
         self.base_tree()

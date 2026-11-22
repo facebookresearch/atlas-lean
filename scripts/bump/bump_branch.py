@@ -26,12 +26,17 @@
 
 REF defaults to origin/main; fetch it first. The manifest rule: a row only one side
 changed takes that side's row. A row both sides changed needs both rows `diverged` and
-the file resolved and staged. If the staged file is main's version, main's row is kept;
-if it is the bump's, the bump's row. Otherwise the row starts from main's, takes the
-hash of the staged file, merges its other fields three ways, and appends what the bump
-added to the base rationale. Anything else, such as a removed row, stops with the rows
-to resolve by hand; the manifest is then left parseable, with main's version of those
-rows, for `scripts/check_formal_math_sync.py --record-divergence` or `--retire`.
+the file resolved and staged:
+- the same file on both sides: every field merged three ways;
+- the staged file is main's: main's row (or the bump's, for the bump's file), as long as
+  the other side changed nothing else in the row;
+- the staged file is git's clean merge of the two sides, or --adjacent's: main's row
+  with the staged hash, its other fields merged three ways, and what the bump added to
+  the base rationale appended.
+Anything else, such as a removed row, a file resolved by hand or put back to the merge
+base, stops with the rows to finish by hand. The manifest is then left parseable, with
+main's version of those rows, for `scripts/check_formal_math_sync.py
+--record-divergence` or `--retire`; `git add` it and run resolve-manifest again.
 """
 
 from __future__ import annotations
@@ -198,26 +203,55 @@ def merge_value(base, ours, theirs):
     return MISSING, False
 
 
-def merge_both_changed(path: str, b, o: dict, t: dict, staged) -> tuple[dict | None, str, str | None]:
-    """The merged row for a row both sides changed: (row, whose, problem)."""
-    if o.get("disposition") != "diverged" or t.get("disposition") != "diverged":
-        return None, "", f"dispositions {o.get('disposition')} (bump) and {t.get('disposition')} (main)"
-    which, data = staged(path)
-    if which is None:
-        return None, "", "the file is not resolved and staged, or differs from what is staged"
-    if which == "theirs":
-        return t, "main", None
-    if which == "ours":
-        return o, "bump", None
+def merge_fields(b, o: dict, t: dict, skip: tuple[str, ...]) -> tuple[dict | None, str | None]:
+    """Three-way merge of a row's fields other than `skip`: (row, clashing field)."""
     row = {}
     for key in dict.fromkeys(list(t) + list(o) + list(b or {})):
-        if key in ("published_sha256", "rationale"):
+        if key in skip:
             continue
         value, ok = merge_value((b or {}).get(key, MISSING), o.get(key, MISSING), t.get(key, MISSING))
         if not ok:
-            return None, "", f"both sides changed its {key!r}"
+            return None, key
         if value is not MISSING:
             row[key] = value
+    return row, None
+
+
+def merge_both_changed(path: str, b, o: dict, t: dict, versions) -> tuple[dict | None, str, str | None]:
+    """The merged row for a row both sides changed: (row, whose, problem).
+
+    `versions(path)` gives the staged file and the file in the bump (ours), in main
+    (theirs), in the merge base, and as merged automatically (git, or --adjacent); or
+    None while the file is unresolved or differs from what is staged."""
+    if o.get("disposition") != "diverged" or t.get("disposition") != "diverged":
+        return None, "", f"dispositions {o.get('disposition')} (bump) and {t.get('disposition')} (main)"
+    files = versions(path)
+    if files is None:
+        return None, "", "the file is not resolved and staged, or differs from what is staged"
+    data = files["staged"]
+    content = ("published_sha256", "rationale")
+
+    def others(row: dict) -> dict:
+        return {k: v for k, v in row.items() if k not in content}
+
+    if data == files["ours"] == files["theirs"]:
+        row, clash = merge_fields(b, o, t, ())
+        return (row, "both", None) if clash is None else (None, "", f"both sides changed its {clash!r}")
+    if data == files["theirs"]:
+        if others(o) != others(b):
+            return None, "", "the staged file is main's, but the bump also changed the row's other fields"
+        return t, "main", None
+    if data == files["ours"]:
+        if others(t) != others(b):
+            return None, "", "the staged file is the bump's, but main also changed the row's other fields"
+        return o, "bump", None
+    if data == files["base"]:
+        return None, "", "the staged file is back to the merge base, so neither side's rationale holds"
+    if data != files["auto"]:
+        return None, "", "the file was resolved by hand: record its rationale with --record-divergence"
+    row, clash = merge_fields(b, o, t, content)
+    if clash is not None:
+        return None, "", f"both sides changed its {clash!r}"
     addition = bump_rationale(b, o)
     rationale = join_rationale(t.get("rationale", ""), addition)
     if not addition or rationale == t.get("rationale", "").strip():
@@ -227,12 +261,12 @@ def merge_both_changed(path: str, b, o: dict, t: dict, staged) -> tuple[dict | N
     return row, "both", None
 
 
-def merge_manifest(base_text: str, ours_text: str, theirs_text: str, staged) -> tuple[str, dict, list[str]]:
+def merge_manifest(base_text: str, ours_text: str, theirs_text: str, versions) -> tuple[str, dict, list[str]]:
     """Row-level three-way merge of the manifest: (text, counts, problems).
 
-    `staged(path)` says what the staged file is: ("ours" | "theirs" | "merged", bytes), or
-    (None, None) while it is unresolved. With problems, the text still parses: each such row
-    is main's (or, if main has none, the bump's), for a person to finish."""
+    `versions` is as for `merge_both_changed`. With problems, the text still parses: each
+    such row is main's (or, if main has none, the bump's, else the base's), for a person to
+    finish."""
     base, ours, theirs = (json.loads(t) for t in (base_text, ours_text, theirs_text))
     problems, merged = [], {}
     for key in dict.fromkeys(list(theirs) + list(ours) + list(base)):
@@ -252,13 +286,13 @@ def merge_manifest(base_text: str, ours_text: str, theirs_text: str, staged) -> 
     for path in sorted(set(rows_b) | set(rows_o) | set(rows_t)):
         b, o, t = (rows.get(path, MISSING) for rows in (rows_b, rows_o, rows_t))
         fallback = next((r for r in (t, o, b) if r is not MISSING), MISSING)
-        if o == t:
-            rows[path] = o
-            continue
-        if MISSING in (o, t) and b is not MISSING:
-            side = "the bump" if o is MISSING else "main"
+        if b is not MISSING and MISSING in (o, t):
+            side = "both sides" if o is t else "the bump" if o is MISSING else "main"
             problems.append(f"{path}: {side} removed the row; rows are never removed (use --retire)")
             rows[path] = fallback
+            continue
+        if o == t:
+            rows[path] = o
             continue
         if o == b:
             rows[path], counts["main"] = t, counts["main"] + 1
@@ -270,7 +304,7 @@ def merge_manifest(base_text: str, ours_text: str, theirs_text: str, staged) -> 
             problems.append(f"{path}: both sides added a row, differently")
             rows[path] = fallback
             continue
-        row, whose, problem = merge_both_changed(path, b, o, t, staged)
+        row, whose, problem = merge_both_changed(path, b, o, t, versions)
         if problem:
             problems.append(f"{path}: {problem}")
             rows[path] = fallback
@@ -285,16 +319,37 @@ def unmerged_paths() -> list[str]:
     return [path for path in out.split("\0") if path]
 
 
-def staged_state(path: str):
-    """What the staged, resolved file is, compared with the two sides of the merge."""
-    data = git_bytes("show", f":0:{path}")
-    if data is None or git("diff", "--quiet", "--", path, check=False).returncode != 0:
-        return None, None
-    if data == git_bytes("show", f"MERGE_HEAD:{path}"):
-        return "theirs", data
-    if data == git_bytes("show", f"HEAD:{path}"):
-        return "ours", data
-    return "merged", data
+def auto_merge(base: bytes, ours: bytes, theirs: bytes) -> bytes | None:
+    """The file as `git merge-file` merges it cleanly, or as --adjacent would; else None."""
+    with tempfile.TemporaryDirectory() as tmp:
+        names = []
+        for name, data in (("ours", ours), ("base", base), ("theirs", theirs)):
+            (Path(tmp) / name).write_bytes(data)
+            names.append(str(Path(tmp) / name))
+        proc = subprocess.run(["git", "merge-file", "-p", *names], capture_output=True)
+    if proc.returncode == 0:
+        return proc.stdout
+    try:
+        texts = [data.decode("utf-8") for data in (base, ours, theirs)]
+    except UnicodeDecodeError:
+        return None
+    if any(text and not text.endswith("\n") for text in texts):
+        return None
+    merged = merge_conflicts_adjacent(*texts)
+    return None if merged is None else merged.encode("utf-8")
+
+
+def file_versions(path: str) -> dict | None:
+    """The staged file and its versions in the bump, in main and in the merge base, with
+    the automatic merge of the three; None while the file is unresolved or unstaged."""
+    staged = git_bytes("show", f":0:{path}")
+    if staged is None or git("diff", "--quiet", "--", path, check=False).returncode != 0:
+        return None
+    base_commit = git("merge-base", "HEAD", "MERGE_HEAD").stdout.strip()
+    ours, theirs = git_bytes("show", f"HEAD:{path}"), git_bytes("show", f"MERGE_HEAD:{path}")
+    base = git_bytes("show", f"{base_commit}:{path}")
+    auto = auto_merge(base, ours, theirs) if None not in (base, ours, theirs) else None
+    return {"staged": staged, "ours": ours, "theirs": theirs, "base": base, "auto": auto}
 
 
 # ---------------------------------------------------------------- neighbouring lines
@@ -310,8 +365,9 @@ def merge_adjacent(base: str, ours: str, theirs: str) -> str | None:
     """Three-way merge of one conflict that only puts two replacements side by side: main
     rewrote a docstring right above a declaration the bump changed, for instance. None, for
     a person, when the sides change the same lines, when either side inserts or deletes next
-    to the other's change, or when both sides write the same line (one change may contain
-    the other)."""
+    to the other's change, when both replacements change their number of lines (each may
+    add something at the seam), or when both sides write the same line (one change may
+    contain the other)."""
     b, o, t = (text.splitlines(keepends=True) for text in (base, ours, theirs))
     mine, other = edits(b, o), edits(b, t)
     for s1, e1, new1 in mine:
@@ -324,6 +380,8 @@ def merge_adjacent(base: str, ours: str, theirs: str) -> str | None:
                 continue
             if e1 == s2 or e2 == s1:  # two replacements, side by side
                 if not new1 or not new2:
+                    return None
+                if len(new1) != e1 - s1 and len(new2) != e2 - s2:  # both grow or shrink at the seam
                     return None
                 if {line.strip() for line in new1 if line.strip()} & {line.strip() for line in new2 if line.strip()}:
                     return None
@@ -465,7 +523,17 @@ def resolve_manifest(commit: bool, adjacent: bool = False) -> int:
         texts = [show(f":{stage}:{MANIFEST}") for stage in (1, 2, 3)]
         if any(text is None for text in texts):
             raise Stop(f"{MANIFEST} has no common base version; resolve it by hand")
-        merged, counts, problems = merge_manifest(*texts, staged=staged_state)
+        merged, counts, problems = merge_manifest(*texts, versions=file_versions)
+        current = (REPO / MANIFEST).read_text(encoding="utf-8") if (REPO / MANIFEST).is_file() else ""
+        try:
+            json.loads(current)
+            draft = True  # a manifest an earlier run left, perhaps edited since
+        except ValueError:
+            draft = False  # git's conflicted file
+        if draft and current != merged:
+            print(f"{MANIFEST} has edits that are not staged: `git add {MANIFEST}` when it is finished "
+                  "and run resolve-manifest again, or delete it to start over.")
+            return 3
         (REPO / MANIFEST).write_text(merged, encoding="utf-8")
         if problems:
             print(f"{MANIFEST}: rows to finish by hand (main's version is in place; record them with "

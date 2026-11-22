@@ -12,18 +12,19 @@ Measured on #6018 (v4.36.0) on 22 November 2026:
 
 - At its head `ad8f8942` it changed 623 Lean files and 342 rows of
   `provenance/formal-math-sync.json`. From its base (00:20 UTC) to its sixth
-  merge of main (main as of 16:00 UTC), 202 pull requests merged into main.
+  merge of main (main as of 16:00 UTC), 202 commits landed on main, 201 of
+  them merged pull requests.
 - Each of its first eight merges of main conflicted in the manifest, and four
   also in Lean files: docstring campaigns edit the same files and rows as the
-  bump. After each of the first six merges, the next pull request that
-  conflicted landed a median of 6 minutes after the newest main commit the
-  merge had brought in.
-- 7 of those 202 pull requests (3.5%) failed on the new toolchain, each fixed
-  in one to four lines.
+  bump. After each of its first five merges, the next conflicting commit
+  landed 5, 26, 6, 6 and 7 minutes after the newest main commit the merge had
+  brought in.
+- 7 of those 202 commits (3.5%) failed on the new toolchain, each fixed in one
+  to four lines.
 - No cached build matches the new pins, because `ci.yml` keys its cache on
-  `lean-toolchain` and `lake-manifest.json`. Its only complete CI run took 316
-  minutes against a 360-minute limit, and each new push cancelled the run in
-  progress.
+  `lean-toolchain` and `lake-manifest.json`. Its only complete CI build job
+  took 316 minutes against a 360-minute limit, and each new push cancelled the
+  run in progress.
 
 The merge queue solves the last-minute race: once the bump is at the front of
 the queue, nothing can merge ahead of it, and every pull request behind it is
@@ -78,12 +79,15 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
    ```
 
    `merge-main` resolves the manifest row by row. A row that only one side
-   changed takes that side's row. A row that both sides changed starts from
-   main's row, takes the hash of the merged file, and appends the bump's
-   rationale. With `--adjacent` it also merges a file where the two sides
-   replaced different lines that merely touch, which is how docstring
-   campaigns on main usually meet the bump's edits. It leaves every other
-   conflict to you: resolve it, `git add` it, then run
+   changed takes that side's row. For a row both sides changed it looks at the
+   merged file: if it is git's own merge of the two sides (or `--adjacent`'s),
+   the row takes main's rationale plus the bump's addition and the new hash; if
+   it is one side's version, it keeps that side's row. With `--adjacent` it
+   also merges a file where the two sides replaced different lines that merely
+   touch, which is how docstring campaigns on main usually meet the bump's
+   edits. It leaves every other conflict to you: resolve it and `git add` it,
+   record the rationale of any file you resolved by hand with
+   `scripts/check_formal_math_sync.py --record-divergence`, then run
    `bump_branch.py resolve-manifest`. Before committing it checks the manifest
    against main on the exact tree it would commit. Re-run any fixer the bump
    needs for files main adds, such as a rename script. Then build: what fails
