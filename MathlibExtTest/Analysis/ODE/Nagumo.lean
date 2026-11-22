@@ -15,6 +15,15 @@ import MathlibExt.Analysis.ODE.Nagumo
 
 open Set
 
+-- Necessity holds for arbitrary invariant sets, without an IsClosed hypothesis.
+example {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [FiniteDimensional ℝ E] {f : E → E} (hf : LocallyLipschitz f) {s : Set E}
+    (hinv : ∀ T : ℝ, 0 < T → ∀ u : ℝ → E,
+      (∀ t ∈ Icc 0 T, HasDerivWithinAt u (f (u t)) (Icc 0 T) t) →
+      u 0 ∈ s → ∀ t ∈ Icc 0 T, u t ∈ s) :
+    ∀ x ∈ s, f x ∈ posTangentConeAt s x :=
+  Nagumo.mem_posTangentConeAt_of_invariant hf hinv
+
 -- The criterion interoperates with Mathlib's positive tangent cone.
 example {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [FiniteDimensional ℝ E] (f : E → E) (hf : LocallyLipschitz f)
@@ -152,4 +161,5 @@ example (T : ℝ) (hT : 0 < T) (u : ℝ → Fin 0 → ℝ)
 
 #print axioms Nagumo.mem_posTangentConeAt_iff
 #print axioms Nagumo.mem_posTangentConeAt_of_curve
+#print axioms Nagumo.mem_posTangentConeAt_of_invariant
 #print axioms Nagumo.invariant_iff_mem_posTangentConeAt

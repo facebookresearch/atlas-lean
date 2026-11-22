@@ -315,6 +315,17 @@ theorem mapsTo_of_mem_posTangentConeAt [FiniteDimensional ℝ E]
   mapsTo_of_contingent hf hs
     (fun x hx => (contingentCondition_iff_mem_posTangentConeAt).mpr (htan x hx)) hu hu₀
 
+/-- Necessity is separate from the closed-set criterion: invariance alone
+forces tangency, even when the invariant set is not closed. -/
+theorem mem_posTangentConeAt_of_invariant [FiniteDimensional ℝ E]
+    {f : E → E} (hf : LocallyLipschitz f) {s : Set E}
+    (hinv : ∀ (T : ℝ), 0 < T → ∀ u : ℝ → E,
+      (∀ t ∈ Icc 0 T, HasDerivWithinAt u (f (u t)) (Icc 0 T) t) →
+      u 0 ∈ s → ∀ t ∈ Icc 0 T, u t ∈ s) :
+    ∀ x ∈ s, f x ∈ posTangentConeAt s x :=
+  fun x hx => contingentCondition_iff_mem_posTangentConeAt.mp
+    (contingent_of_invariant hf hinv x hx)
+
 /-- Nagumo's criterion stated with Mathlib's positive tangent cone. -/
 theorem invariant_iff_mem_posTangentConeAt [FiniteDimensional ℝ E]
     (f : E → E) (hf : LocallyLipschitz f) (s : Set E) (hs : IsClosed s) :
