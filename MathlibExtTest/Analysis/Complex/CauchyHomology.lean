@@ -42,6 +42,17 @@ example : ∫ᶜ z in circlePath 0 1, exp z • ContinuousLinearMap.id ℂ ℂ =
   rw [image_univ, OnePoint.compl_range_coe]
   exact isConnected_singleton
 
+-- Cauchy's theorem along a genuinely piecewise `C¹` path: the backtracking path `0 → 1 → 0`, a
+-- concatenation of two segments with a corner at `1` (it is not `C¹` on `[0, 1]`; see the
+-- winding-number tests).
+example : ∫ᶜ z in (Path.segment (0 : ℂ) 1).trans (Path.segment 1 0),
+    exp z • ContinuousLinearMap.id ℂ ℂ = 0 := by
+  refine (curveIntegral_eq_zero_of_differentiableOn isOpen_univ
+    differentiable_exp.differentiableOn).2 ?_ _
+    ((Path.isPiecewiseC1_segment 0 1).trans (Path.isPiecewiseC1_segment 1 0)) (subset_univ _)
+  rw [image_univ, OnePoint.compl_range_coe]
+  exact isConnected_singleton
+
 -- Cauchy's integral formula at the centre of the unit circle: `(2πi)⁻¹ ∫ exp ζ / ζ dζ = exp 0`.
 example : (2 * Real.pi * I)⁻¹ *
     ∫ᶜ ζ in circlePath 0 1, (exp ζ / (ζ - 0)) • ContinuousLinearMap.id ℂ ℂ = 1 := by
