@@ -109,14 +109,6 @@ private theorem dirac_mem_of_adj_right_of_maxpath {V : Type*}
   rw [SimpleGraph.Walk.length_concat] at hle
   omega
 
-/-- A longest (maximal-length) path exists. -/
-private theorem dirac_exists_maxpath {V : Type*} [Finite V]
-    (G : SimpleGraph V) [Nonempty V] :
-    ∃ (a b : V) (P : G.Walk a b) (_ : P.IsPath),
-      ∀ (u' v' : V) (p' : G.Walk u' v'), p'.IsPath → p'.length ≤ P.length := by
-  have : Finite G.edgeSet := by infer_instance
-  exact SimpleGraph.Walk.exists_isPath_forall_isPath_length_le_length G
-
 /-- A longest path has length at least 2 (via a length-2 path from min-degree 2). -/
 private theorem dirac_maxpath_ge_two {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -532,7 +524,8 @@ theorem dirac {V : Type*} [Fintype V] [DecidableEq V]
     (hdeg : ∀ v : V, Fintype.card V ≤ 2 * G.degree v) :
     G.IsHamiltonian := by
   have : Nonempty V := Fintype.card_pos_iff.mp (by omega)
-  obtain ⟨a, b, P, hP, hmax⟩ := dirac_exists_maxpath G
+  obtain ⟨a, b, P, hP, hmax⟩ :=
+    SimpleGraph.Walk.exists_isPath_forall_isPath_length_le_length G
   have hl2 := dirac_maxpath_ge_two G hcard hdeg hmax
   obtain ⟨C, hcyc, hlenC, hsup⟩ := dirac_cycle_of_maxpath G hdeg hP hmax hl2
   have hspan := dirac_spanning G hdeg hmax hcyc hsup hlenC
