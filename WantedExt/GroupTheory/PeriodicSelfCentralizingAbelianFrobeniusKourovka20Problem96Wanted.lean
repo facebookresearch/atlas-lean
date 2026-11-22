@@ -38,9 +38,11 @@ neighbouring Problem 20.95 cites: `G = F ⋊ H` with `H ∩ H^g = 1` for every `
 
 open MathlibExt.GroupTheory.FrobeniusGroupShared (IsFrobeniusGroup)
 
-/-- Kourovka 20.96 (A. I. Sozutov): a periodic group with a proper non-trivial normal abelian
-subgroup `A` containing the centralizer of each of its non-identity elements is a Frobenius
-group. -/
+/-- **Kourovka Problem 20.96 (periodic Frobenius groups).** The statement, posed by A. I. Sozutov,
+that for every group $G$ in which every element has finite order and every normal abelian subgroup
+$A$ of $G$ that is neither trivial nor all of $G$ and such that for every $a \in A$ with $a \ne 1$
+the centralizer $C_G(a)$ of $a$ in $G$ is contained in $A$, there are subgroups $F$ and $H$ of $G$
+such that $G$ is a Frobenius group with kernel $F$ and complement $H$. -/
 def periodicSelfCentralizingAbelianNormalFrobenius : Prop :=
   ∀ (G : Type) [Group G], IsMulTorsion G → ∀ A : Subgroup G, A.Normal → A ≠ ⊥ → A ≠ ⊤ →
     (∀ x ∈ A, ∀ y ∈ A, x * y = y * x) → (∀ a ∈ A, a ≠ 1 → Subgroup.centralizer {a} ≤ A) →
@@ -58,10 +60,14 @@ def IsFrobeniusGroup (G : Type) [Group G] : Prop :=
     ∀ x : G, x ≠ 1 → (x ∈ F ↔ ∀ g : G, g⁻¹ * x * g ∉ H)
 
 /--
-Resolved true: the 21st issue of the Kourovka Notebook marks 20.96 solved ("Yes, it is"), citing
-Lytkina and Mazurov, Periodic Frobenius groups, Siberian Math. J. 64 (2023): a periodic group with a
-proper non-trivial normal abelian subgroup containing the centralizers of its non-identity elements
-is a Frobenius group. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
+**Lytkina–Mazurov theorem on periodic Frobenius groups.** Let $G$ be a group in which every element
+has finite order, and let $A$ be a normal abelian subgroup of $G$ that is neither trivial nor all of
+$G$ and such that for every $a \in A$ with $a \ne 1$ the centralizer $C_G(a)$ of $a$ in $G$ is
+contained in $A$. Then there are subgroups $F$ and $H$ of $G$ such that $G$ is a Frobenius group
+with kernel $F$ and complement $H$. This answers Kourovka Problem 20.96 (A. I. Sozutov) in the
+affirmative.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
 Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 20.96 (A. I. Sozutov);
 resolution: D. V. Lytkina and V. D. Mazurov, Periodic Frobenius groups, Siberian Math. J. 64 (2023),
 no. 6, 1351-1355 (Sibirsk. Mat. Zh. 64 (2023), no. 6, 1224-1228), abstract: conditions for a
