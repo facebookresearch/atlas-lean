@@ -70379,7 +70379,7 @@
 "MetaMathlibExt.powerSeriesFactorialMatrix_apply_self": "a2c95f01ce8c9fda",
 "MetaMathlibExt.powerSeriesFactorialMatrix_mul": "0cc388d8d9865d63",
 "MetaMathlibExt.powerSum_vanishing_mod_prime": "ab89aad56db4bba8",
-"MetaMathlibExt.power_coeff_convolution_pow": "71a4f99a98488a0f",
+"MetaMathlibExt.power_coeff_convolution_pow": "a5e7ac1693552906",
 "MetaMathlibExt.power_coeff_convolution_zpow": "89fb351d3115b9ed",
 "MetaMathlibExt.power_sum_le_card_mul_rpow_of_lt": "6d2afcb542aad844",
 "MetaMathlibExt.power_sum_le_rpow_of_le": "53e35d8c9709faf6",
