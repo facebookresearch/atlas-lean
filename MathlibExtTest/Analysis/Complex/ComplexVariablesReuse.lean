@@ -20,9 +20,9 @@ import Mathlib.NumberTheory.LSeries.Nonvanishing
 import Mathlib.RingTheory.RootsOfUnity.Complex
 import MathlibExt.Analysis.Complex.ArgumentPrinciple
 import MathlibExt.Analysis.Complex.CasoratiWeierstrass
-import MathlibExt.Analysis.Complex.MittagLeffler
+import MathlibExt.Analysis.Complex.MittagLefflerPolynomial
 import MathlibExt.Analysis.Complex.NormalFamilies
-import MathlibExt.Analysis.Complex.Rouche
+import MathlibExt.Analysis.Complex.RoucheCurve
 import MathlibExt.Analysis.LaplaceTransform.ExponentialBound
 import MathlibExt.Analysis.LaplaceTransform.NewmanTauberian
 import MathlibExt.NumberTheory.LSeries.PrimeLog
@@ -30,10 +30,14 @@ import MathlibExt.NumberTheory.LSeries.PrimeLog
 /-!
 Canonical APIs for the archived `v1/Atlas/ComplexVariables` targets that Mathlib or `MathlibExt`
 already proves. Each example states the library form of a target, numbered by its zero-based
-ordinal in `v1/Atlas/ComplexVariables/targets.yaml`. Targets 22, 23 and 37 replace archived
-proofs that rest on `sorry`; target 29 adds the uniqueness clause of Mittag-Leffler, which the
-library states only as existence. These are canonical-use checks, not verification against the
-printed textbook.
+ordinal in `v1/Atlas/ComplexVariables/targets.yaml`. These are canonical-use checks, recording
+where and in which form the library proves each target, not a new verification of the printed
+notes.
+
+Targets 23 (Rouché's theorem for a simple closed curve) and 37 (Newman's analytic theorem) replace
+archived proofs that rest on `sorry`. Target 22, the argument principle for a simple closed curve,
+is covered only partially: the library proves it for the circle bounding a disc, and the general
+curve form is deferred to a separate port.
 -/
 
 set_option autoImplicit false
@@ -46,9 +50,9 @@ open scoped Real
 example {b : ℝ} (hb : 1 < b) (x : ℝ) : b ^ x = Real.exp (x * Real.log b) := by
   rw [Real.rpow_def_of_pos (by linarith), mul_comm]
 
--- Target 1: `b ^ (x + y) = b ^ x b ^ y`.
-example {b : ℝ} (hb : 1 < b) (x y : ℝ) : b ^ (x + y) = b ^ x * b ^ y :=
-  Real.rpow_add (by linarith) x y
+-- Target 1: `b ^ (x + y) = b ^ x b ^ y` for every `b > 0`.
+example {b : ℝ} (hb : 0 < b) (x y : ℝ) : b ^ (x + y) = b ^ x * b ^ y :=
+  Real.rpow_add hb x y
 
 -- Target 2: `e ^ (z + w) = e ^ z e ^ w`.
 example (z w : ℂ) : exp (z + w) = exp z * exp w := exp_add z w
@@ -75,7 +79,8 @@ example {c : ℂ} {r : ℝ} {f : ℂ → ℂ} (hr : 0 < r)
     Dense (f '' (Metric.ball c r \ {c})) :=
   MathlibExt.Analysis.Complex.CasoratiWeierstrass.casoratiWeierstrass hr hf hess
 
--- Target 22: the argument principle on a disc.
+-- Target 22, partial coverage: the argument principle for the circle bounding a disc. The target
+-- is stated for a simple closed curve; that form is deferred to a separate port.
 example {c : ℂ} {R : ℝ} (hR : 0 < R) {f : ℂ → ℂ} (hf : MeromorphicOn f (Metric.closedBall c R))
     (hf_top : ∀ z ∈ Metric.closedBall c R, meromorphicOrderAt f z ≠ ⊤)
     (hbd : ∀ z ∈ Metric.sphere c R, MeromorphicOn.divisor f (Metric.closedBall c R) z = 0) :
@@ -84,50 +89,54 @@ example {c : ℂ} {R : ℝ} (hR : 0 < R) {f : ℂ → ℂ} (hf : MeromorphicOn f
   MathlibExt.Analysis.Complex.ArgumentPrinciple.argumentPrinciple_closedBall_general hR hf hf_top
     hbd
 
--- Target 23: Rouché on a disc (the book's `‖f - g‖ < ‖f‖` is `g ↦ g - f` here).
-example {c : ℂ} {R : ℝ} (hR : 0 < R) {f g : ℂ → ℂ}
-    (hf : AnalyticOnNhd ℂ f (Metric.closedBall c R))
-    (hg : AnalyticOnNhd ℂ g (Metric.closedBall c R))
-    (hfg : ∀ z ∈ Metric.sphere c R, ‖g z‖ < ‖f z‖) :
-    ∑ᶠ z, MeromorphicOn.divisor f (Metric.ball c R) z =
-      ∑ᶠ z, MeromorphicOn.divisor (fun z => f z + g z) (Metric.ball c R) z :=
-  MathlibExt.Analysis.Complex.Rouche.rouche_closedBall hR hf hg hfg
+-- Target 23: Rouché's theorem for a simple closed curve `γ : Circle → ℂ` whose interior
+-- `Set.inside (range γ)` lies in the region `Ω`. If `‖f - g‖ < ‖f‖` on `γ`, then `f` and `g` have
+-- finitely many zeros inside `γ`, and the same number of them, counted with multiplicity.
+example {Ω : Set ℂ} (hΩ : IsOpen Ω) (hΩc : IsConnected Ω) {f g : ℂ → ℂ}
+    (hf : DifferentiableOn ℂ f Ω) (hg : DifferentiableOn ℂ g Ω) {γ : Circle → ℂ}
+    (hγc : Continuous γ) (hγ : Function.Injective γ) (hγΩ : Set.range γ ⊆ Ω)
+    (hinside : (Set.range γ).inside ⊆ Ω) (hfg : ∀ t, ‖f (γ t) - g (γ t)‖ < ‖f (γ t)‖) :
+    {z ∈ (Set.range γ).inside | f z = 0}.Finite ∧ {z ∈ (Set.range γ).inside | g z = 0}.Finite ∧
+      ∑ᶠ z ∈ (Set.range γ).inside, analyticOrderNatAt f z =
+        ∑ᶠ z ∈ (Set.range γ).inside, analyticOrderNatAt g z :=
+  Complex.rouche hΩ hΩc hf hg hγc hγ hγΩ hinside hfg
 
--- Targets 24 and 26: harmonic functions and the mean value property.
+-- Target 24: on an open set, harmonic in the sense of the notes (`C²` with
+-- `∂²u/∂x² + ∂²u/∂y² = 0`) is Mathlib's `HarmonicOnNhd`, whose Laplacian on `ℂ` is the sum of the
+-- second derivatives along `1` and `I`.
+example {u : ℂ → ℝ} {Ω : Set ℂ} (hΩ : IsOpen Ω) :
+    InnerProductSpace.HarmonicOnNhd u Ω ↔ ContDiffOn ℝ 2 u Ω ∧
+      ∀ z ∈ Ω, iteratedFDeriv ℝ 2 u z ![1, 1] + iteratedFDeriv ℝ 2 u z ![I, I] = 0 := by
+  refine ⟨fun hu => ⟨hu.contDiffOn, fun z hz => ?_⟩, fun ⟨hC, hΔ⟩ z hz =>
+    ⟨hC.contDiffAt (hΩ.mem_nhds hz), ?_⟩⟩
+  · have := (hu z hz).2.self_of_nhds
+    rwa [InnerProductSpace.laplacian_eq_iteratedFDeriv_complexPlane] at this
+  · filter_upwards [hΩ.mem_nhds hz] with w hw
+    rw [InnerProductSpace.laplacian_eq_iteratedFDeriv_complexPlane]
+    exact hΔ w hw
+
+-- Target 26: the mean value property of harmonic functions on a closed disc.
 example {u : ℂ → ℝ} {c : ℂ} {R : ℝ}
     (hu : InnerProductSpace.HarmonicOnNhd u (Metric.closedBall c |R|)) :
     Real.circleAverage u c R = u c :=
   hu.circleAverage_eq
 
--- Target 29: Mittag-Leffler, existence ...
-example (S : Set ℂ) (hS : IsClosed S)
-    (hS_discrete : ∀ z ∈ S, ∃ ε > 0, (Metric.ball z ε \ {z}) ∩ S = ∅)
-    (coeff : ↥S → ℕ →₀ ℂ) :
-    ∃ f : ℂ → ℂ, DifferentiableOn ℂ f Sᶜ ∧
-      (∀ s : ↥S, AnalyticAt ℂ
-        (fun z => f z - MathlibExt.Analysis.Complex.MittagLefflerWanted.principalPart s.val
-          (coeff s) z) s.val) ∧
-      MeromorphicOn f Set.univ :=
-  MathlibExt.Analysis.Complex.MittagLefflerWanted.mittag_leffler S hS hS_discrete coeff
-
--- ... and uniqueness: two solutions differ by an entire function.
-example (S : Set ℂ) (hS : IsClosed S) (coeff : ↥S → ℕ →₀ ℂ) (f g : ℂ → ℂ)
-    (hf : DifferentiableOn ℂ f Sᶜ)
-    (hf_pp : ∀ s : ↥S, AnalyticAt ℂ
-      (fun z => f z - MathlibExt.Analysis.Complex.MittagLefflerWanted.principalPart s.val
-        (coeff s) z) s.val)
-    (hg : DifferentiableOn ℂ g Sᶜ)
-    (hg_pp : ∀ s : ↥S, AnalyticAt ℂ
-      (fun z => g z - MathlibExt.Analysis.Complex.MittagLefflerWanted.principalPart s.val
-        (coeff s) z) s.val) :
-    Differentiable ℂ (f - g) := by
-  intro z
-  by_cases hz : z ∈ S
-  · have h := ((hf_pp ⟨z, hz⟩).sub (hg_pp ⟨z, hz⟩)).differentiableAt
-    convert h using 1
-    funext w
-    simp
-  · exact (hf.sub hg).differentiableAt (hS.isOpen_compl.mem_nhds hz)
+-- Target 29: Mittag-Leffler's theorem. For distinct `b ν → ∞` and polynomials `P ν` without
+-- constant term, some meromorphic `f` has singular part `P ν (1 / (z - b ν))` at each `b ν` and no
+-- other poles, and for suitable polynomials `p ν` every such `f` is
+-- `g + ∑ ν, (P ν (1 / (z - b ν)) - p ν z)` off the poles, with `g` entire.
+example {b : ℕ → ℂ} (hb_inj : Function.Injective b) (hb : Tendsto (fun ν => ‖b ν‖) atTop atTop)
+    (P : ℕ → Polynomial ℂ) (hP : ∀ ν, (P ν).coeff 0 = 0) :
+    (∃ f : ℂ → ℂ, Meromorphic f ∧ (∀ z ∉ Set.range b, AnalyticAt ℂ f z) ∧
+      ∀ ν, ∃ φ : ℂ → ℂ, AnalyticAt ℂ φ (b ν) ∧
+        ∀ᶠ z in 𝓝[≠] b ν, f z = (P ν).eval (z - b ν)⁻¹ + φ z) ∧
+    ∃ p : ℕ → Polynomial ℂ, ∀ f : ℂ → ℂ,
+      (Meromorphic f ∧ (∀ z ∉ Set.range b, AnalyticAt ℂ f z) ∧
+        ∀ ν, ∃ φ : ℂ → ℂ, AnalyticAt ℂ φ (b ν) ∧
+          ∀ᶠ z in 𝓝[≠] b ν, f z = (P ν).eval (z - b ν)⁻¹ + φ z) ↔
+      ∃ g : ℂ → ℂ, Differentiable ℂ g ∧
+        ∀ z ∉ Set.range b, HasSum (fun ν => (P ν).eval (z - b ν)⁻¹ - (p ν).eval z) (f z - g z) :=
+  Complex.mittag_leffler_of_coeff_zero_eq_zero hb_inj hb P hP
 
 -- Target 31: the beta integral.
 example (u v : ℂ) (hu : 0 < u.re) (hv : 0 < v.re) :
@@ -158,12 +167,14 @@ example {x : ℝ} (hx : 0 ≤ x) : Chebyshev.theta x ≤ Real.log 4 * x :=
   Chebyshev.theta_le_log4_mul_x hx
 
 -- Target 36: `ζ(s) ≠ 0` for `Re s ≥ 1`, and `Φ(s) - 1/(s - 1)` (with `Φ(s) = ∑_p log p / p ^ s`)
--- extends to a function analytic at every point of `Re s ≥ 1`; both parts in one statement.
+-- extends to a function analytic at every point of `Re s ≥ 1`; both parts in one statement. The
+-- notes' `ζ` has a pole at `s = 1`, where Mathlib's `riemannZeta 1` is a junk value, so the
+-- nonvanishing clause excludes `s = 1`.
 example :
-    (∀ s : ℂ, 1 ≤ s.re → riemannZeta s ≠ 0) ∧
+    (∀ s : ℂ, 1 ≤ s.re → s ≠ 1 → riemannZeta s ≠ 0) ∧
       ∃ F : ℂ → ℂ, AnalyticOnNhd ℂ F {s | 1 ≤ s.re} ∧
         Set.EqOn F (fun s => Nat.Primes.logDirichletSeries s - 1 / (s - 1)) {s | 1 < s.re} :=
-  ⟨fun _ hs => riemannZeta_ne_zero_of_one_le_re hs, Nat.Primes.logDirichletContinuation,
+  ⟨fun _ hs _ => riemannZeta_ne_zero_of_one_le_re hs, Nat.Primes.logDirichletContinuation,
     Nat.Primes.logDirichletContinuation_analyticOn, Nat.Primes.logDirichletContinuation_agree⟩
 
 -- Target 37: Newman's analytic theorem in the book's form. If `f` is bounded and locally
