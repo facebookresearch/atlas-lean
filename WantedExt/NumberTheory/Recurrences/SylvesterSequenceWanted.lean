@@ -48,7 +48,8 @@ abbrev sylvesterNumber (n : ℕ) : ℕ :=
 /-- **Proposition 1, divisibility**: for positive `k` and `m n ≥ k`,
 `(S_k - 1)^2` divides `S_n - S_m` over `ℤ`.
 
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1, divisibility (4). -/
+Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1, divisibility
+(4). -/
 theorem_wanted sylvester_sub_dvd
     (k m n : ℕ) (hk : 1 ≤ k) (hm : k ≤ m) (hn : k ≤ n) :
     ((sylvesterNumber k : ℤ) - 1) ^ 2 ∣
@@ -80,7 +81,8 @@ theorem_wanted sylvester_modEq_forty_three_mod_1764
 /-- **Proposition 2, divisibility**: for positive `k` and `n ≥ k`,
 `S_k^2 + 1` divides `S_n - (-1)^(n-k) S_k` over `ℤ`.
 
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 2, divisibility (8). -/
+Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 2, divisibility
+(8). -/
 theorem_wanted sylvester_sq_add_one_dvd_sub
     (k n : ℕ) (hk : 1 ≤ k) (hn : k ≤ n) :
     (sylvesterNumber k : ℤ) ^ 2 + 1 ∣
@@ -90,7 +92,8 @@ theorem_wanted sylvester_sq_add_one_dvd_sub
 /-- **Proposition 2, congruence (9), even indices**:
 `S_{2i} ≡ 7 (mod 10)` for `i ≥ 1`.
 
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 2, congruence (9), even indices. -/
+Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 2, congruence (9),
+even indices. -/
 theorem_wanted sylvester_even_index_mod_ten
     (i : ℕ) (hi : 1 ≤ i) :
     sylvesterNumber (2 * i) % 10 = 7
@@ -98,7 +101,8 @@ theorem_wanted sylvester_even_index_mod_ten
 /-- **Proposition 2, congruence (9), odd indices**:
 `S_{2i+1} ≡ 3 (mod 10)` for `i ≥ 1`.
 
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 2, congruence (9), odd indices. -/
+Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 2, congruence (9),
+odd indices. -/
 theorem_wanted sylvester_odd_index_mod_ten
     (i : ℕ) (hi : 1 ≤ i) :
     sylvesterNumber (2 * i + 1) % 10 = 3
@@ -157,7 +161,9 @@ theorem_wanted sylvester_ne_pow_add_or_sub_one
 the positive coprime solutions of `x² + 3 = 4yⁿ` with `n ≥ 3` are
 exactly `x = y = 1` (any `n ≥ 3`) and `(n, x, y) = (3, 37, 7)`.
 
-Source: F. Luca, Sz. Tengely, and A. Togbé, "On the Diophantine equation x² + C = 4yⁿ", Theorem 1.1, as quoted in Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Theorem 1, equation with C = 3. -/
+Source: F. Luca, Sz. Tengely, and A. Togbé, "On the Diophantine equation x² + C = 4yⁿ",
+Theorem 1.1, as quoted in Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Theorem 1,
+equation with C = 3. -/
 theorem_wanted lebesgue_nagell_three_solutions_iff
     (n x y : ℕ) :
     (3 ≤ n ∧ 1 ≤ x ∧ 1 ≤ y ∧ Nat.Coprime x y ∧
@@ -168,7 +174,9 @@ theorem_wanted lebesgue_nagell_three_solutions_iff
 the positive coprime solutions of `x² + 7 = 4yⁿ` with `n ≥ 3` are
 exactly `(n, x, y) = (3, 5, 2)`, `(5, 11, 2)`, and `(13, 181, 2)`.
 
-Source: F. Luca, Sz. Tengely, and A. Togbé, "On the Diophantine equation x² + C = 4yⁿ", Theorem 1.1, as quoted in Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Theorem 1, equation with C = 7. -/
+Source: F. Luca, Sz. Tengely, and A. Togbé, "On the Diophantine equation x² + C = 4yⁿ",
+Theorem 1.1, as quoted in Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Theorem 1,
+equation with C = 7. -/
 theorem_wanted lebesgue_nagell_seven_solutions_iff
     (n x y : ℕ) :
     (3 ≤ n ∧ 1 ≤ x ∧ 1 ≤ y ∧ Nat.Coprime x y ∧

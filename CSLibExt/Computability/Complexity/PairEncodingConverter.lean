@@ -41,10 +41,12 @@ open Turing Function MetaMathlibExt
 
 /-! ### The canonical encoding of a pair of bit lists -/
 
-/-- Six input symbols per bit of the first component. -/
+/-- **Converter encoding of the first component.** For a bit list $x$, the bit list obtained by
+replacing every bit $b$ of $x$, in order, with the six bits true, true, true, $b$, true, false. -/
 def encFst (x : List Bool) : List Bool := x.flatMap fun b => [true, true, true, b, true, false]
 
-/-- Three input symbols per bit of the second component. -/
+/-- **Converter encoding of the second component.** For a bit list $w$, the bit list obtained by
+replacing every bit $b$ of $w$, in order, with the three bits true, $b$, false. -/
 def encSnd (w : List Bool) : List Bool := w.flatMap fun b => [true, b, false]
 
 theorem delimit_eq (l : List Bool) :
@@ -71,7 +73,10 @@ theorem flatMap_delimit_encSnd (x : List Bool) :
       rw [ih]
       rfl
 
-/-- The canonical encoding of a pair of bit lists, spelled out. -/
+/-- **Canonical encoding of a pair of bit lists.** For bit lists $x$ and $w$, the canonical
+bitstring encoding of the pair $(x, w)$ is the concatenation of three parts: every bit $b$ of $x$,
+in order, written as the six bits true, true, true, $b$, true, false; then a single false; then
+every bit $b$ of $w$, in order, written as the three bits true, $b$, false. -/
 theorem bitEncode_pair_eq (x w : List Bool) :
     (BitstringEncoding.toEncoding (α := List Bool × List Bool)).encode (x, w) =
       encFst x ++ false :: encSnd w := by
@@ -82,7 +87,9 @@ theorem bitEncode_pair_eq (x w : List Bool) :
 
 /-! ### The machine -/
 
-/-- Stacks: the input, the output, and stashes for the two components. -/
+/-- **Stacks of the pair-encoding converter.** The machine that rewrites the canonical encoding
+of a pair of bit lists into the verifier's input form has four stacks: the input stack, the
+output stack, and two stash stacks, one for each component of the pair. -/
 inductive Stk | inp | out | fst | snd
   deriving DecidableEq
 
@@ -90,13 +97,16 @@ instance : Fintype Stk where
   elems := ⟨↑[Stk.inp, Stk.out, Stk.fst, Stk.snd], by decide⟩
   complete := fun k => by cases k <;> decide
 
-/-- Stack alphabets: the output holds the verifier's symbols, every other stack bits. -/
+/-- **Stack alphabets of the pair-encoding converter.** The output stack of the converter has as
+its alphabet the verifier's work alphabet $G = \{0,1\} \sqcup (\{0,1\} \cup \{\#\})$; the input
+stack and the two stash stacks have the bits $\{0,1\}$ as their alphabet. -/
 @[reducible] def Γ : Stk → Type
   | .out => Verifier.G
   | _ => Bool
 
-/-- Labels: read the first component, read the second, emit the second, emit the separator,
-emit the first. -/
+/-- **Labels of the pair-encoding converter.** The five labels of the converter program: read the
+first component, read the second component, emit the second component, emit the separator, and
+emit the first component. -/
 inductive Lab | readFst | readSnd | emitSnd | sep | emitFst
   deriving DecidableEq
 
@@ -104,10 +114,24 @@ instance : Fintype Lab where
   elems := ⟨↑[Lab.readFst, Lab.readSnd, Lab.emitSnd, Lab.sep, Lab.emitFst], by decide⟩
   complete := fun l => by cases l <;> decide
 
-/-- The machine state: the last bit popped. -/
+/-- **State of the pair-encoding converter.** The internal state of the converter is an optional
+bit: either a bit or nothing. It records the last bit the program stored. -/
 abbrev St := Option Bool
 
-/-- The program. -/
+/-- **Program of the pair-encoding converter.** The program over the converter's four stacks,
+five labels and states (a bit or nothing). Each pop either stores the popped bit in the state
+(nothing if the stack is empty) or leaves the state unchanged, and each push of the stored bit
+uses false when the state holds nothing.
+
+At *read first*: pop the input, storing; if the state is true, pop the input twice without
+storing, once storing and twice without storing, push the stored bit onto the first stash and go
+to *read first*; otherwise go to *read second*. At *read second*: pop the input, storing; if the
+state is true, pop the input once storing and once without storing, push the stored bit onto the
+second stash and go to *read second*; otherwise go to *emit second*. At *emit second*: pop the
+second stash, storing; if a bit was popped, push it onto the output as a right-tagged bit and go
+to *emit second*; otherwise go to *separator*. At *separator*: push the separator onto the
+output and go to *emit first*. At *emit first*: pop the first stash, storing; if a bit was
+popped, push it onto the output as a left-tagged bit and go to *emit first*; otherwise halt. -/
 def prog : Lab → TM2.Stmt Γ Lab St
   | .readFst =>
       .pop .inp (fun _ o => o) <| .branch (fun s => s == some true)
@@ -130,7 +154,14 @@ def prog : Lab → TM2.Stmt Γ Lab St
         (.push .out (fun s => .inl (s.getD false)) <| .goto fun _ => .emitFst)
         .halt
 
-/-- The converter as a `FinTM2`: input stack `inp` (alphabet `Bool`), output stack `out`. -/
+/-- **The pair-encoding converter machine.** The converter is the finite multi-stack Turing
+machine whose stacks are the input stack, the output stack and the two stash stacks, with bits
+as the alphabet of every stack except the output stack, which holds the verifier's symbols. Its
+labels are the five phases (read the first component, read the second, emit the second, emit
+the separator, emit the first), and it starts in the phase that reads the first component. Its
+internal state is an optional bit (the last bit popped), initially empty, and it runs the
+converter program. Input is read from the input stack, which holds bits, and output is written
+to the output stack. -/
 def tm : FinTM2 where
   K := Stk
   k₀ := .inp
@@ -145,7 +176,9 @@ def tm : FinTM2 where
 
 /-! ### Configurations and runs -/
 
-/-- All four stacks. -/
+/-- **Stack contents of the pair-encoding converter.** For bit lists $i$, $a$, $b$ and a list $o$ of
+verifier symbols, the contents of the converter's four stacks with $i$ on the input stack, $o$ on
+the output stack, $a$ on the first stash and $b$ on the second stash. -/
 def stk (i : List Bool) (o : List Verifier.G) (a b : List Bool) : ∀ k, List (Γ k)
   | .inp => i
   | .out => o
@@ -165,7 +198,8 @@ def stk (i : List Bool) (o : List Verifier.G) (a b : List Bool) : ∀ k, List (�
     update (stk i o a b) .snd l = stk i o a l := by
   funext k; cases k <;> rfl
 
-/-- `n` steps of the converter program. -/
+/-- **Runs of the pair-encoding converter.** For $n \in \mathbb{N}$ and configurations $c$ and $d$
+of the converter, the statement that $n$ steps of the converter program lead from $c$ to $d$. -/
 abbrev Run (n : ℕ) (c d : TM2.Cfg Γ Lab St) : Prop := TM2Program.Run prog n c d
 
 theorem readFst_run (x : List Bool) :
@@ -234,8 +268,13 @@ theorem emitFst_run (a : List Bool) :
       refine TM2Program.Run.head ?_ h
       simp [TM2.step, prog, TM2.stepAux, stk]
 
-/-- The whole conversion: `2 |x| + 2 |w| + 5` steps from the canonical encoding of `(x, w)` to
-the halting configuration with `pairEncode (x, w)` on the output stack. -/
+/-- **Full run of the pair-encoding converter.** For bit lists $x$ and $w$, the converter program
+goes in exactly $2|x| + 2|w| + 5$ steps from the configuration at the label *read first*, with
+no bit in the state, the input stack holding every bit $b$ of $x$ in order as the six bits true,
+true, true, $b$, true, false, then a single false, then every bit $b$ of $w$ in order as the three
+bits true, $b$, false, and the other three stacks empty, to the halted configuration with no bit
+in the state, the verifier's pair encoding of $(x, w)$ on the output stack and the other three
+stacks empty. -/
 theorem convert_run (x w : List Bool) :
     Run (2 * x.length + 2 * w.length + 5)
       ⟨some .readFst, none, stk (encFst x ++ false :: encSnd w) [] [] []⟩
@@ -264,8 +303,13 @@ theorem haltList_tm (l : List Verifier.G) : haltList tm l = ⟨none, none, stk [
   funext k
   cases k <;> rfl
 
-/-- The converter computes the identity from the canonical `BitstringEncoding` of a pair of bit
-lists to the verifier's `w # y` encoding, in at most `n + 5` steps for an input of length `n`. -/
+/-- **Polynomial-time conversion to the verifier's pair encoding.** A polynomial-time computation
+of the identity map on pairs $(x, w)$ of bit lists, from the canonical bitstring encoding of
+$(x, w)$ to the verifier's pair encoding of $(x, w)$ (the bits of $x$, the separator, then the
+bits of $w$), by the converter machine, with the bits and the verifier's symbols themselves as
+input and output alphabets and time bound $n + 5$: started on the canonical encoding of $(x, w)$,
+a list of length $n$, the converter halts within $n + 5$ steps with no bit in its state, the
+verifier's pair encoding of $(x, w)$ on its output stack and every other stack empty. -/
 noncomputable def computable :
     TM2ComputableInPolyTime (BitstringEncoding.toEncoding (α := List Bool × List Bool)).encode
       Verifier.pairEncode id where

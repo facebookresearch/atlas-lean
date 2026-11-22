@@ -1388,15 +1388,6 @@ private lemma integral_sq_finsetSum_of_iIndepFun {Ω : Type*}
   rw [← hsub, hvar]
   exact Finset.sum_congr rfl heach
 
-/-- Leave-one-out rewriting: `Vᵢ + ξᵢ = W` pointwise. -/
-private lemma sum_erase_add_pointwise {Ω : Type*} {ξ : ℕ → Ω → ℝ}
-    {s : Finset ℕ} {i : ℕ} (hi : i ∈ s) (ω : Ω) :
-    (∑ j ∈ s.erase i, ξ j ω) + ξ i ω = ∑ j ∈ s, ξ j ω := by
-  calc (∑ j ∈ s.erase i, ξ j ω) + ξ i ω
-      = ξ i ω + (∑ j ∈ s.erase i, ξ j ω) := by ring
-    _ = ∑ j ∈ s, ξ j ω :=
-        Finset.add_sum_erase s (fun j => ξ j ω) hi
-
 /-- N8: Stein expansion by independence. -/
 private lemma integral_sum_mul_eq_sum_leaveOneOut {Ω : Type*}
     [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
@@ -2294,7 +2285,7 @@ private lemma measureReal_Icc_finsetSum_le {Ω : Type*}
         Finset.sum_apply _ _ _
       have h2 : (∑ j ∈ t.erase i, ξ j ω) + ξ i ω
           = ∑ j ∈ t, ξ j ω :=
-        sum_erase_add_pointwise hi ω
+        Finset.sum_erase_add _ _ hi
       have hVeq : (∑ j ∈ t.erase i, ξ j) ω
           = (∑ j ∈ t, ξ j ω) - ξ i ω := by
         rw [h1]
@@ -2513,18 +2504,6 @@ private lemma measureReal_window_finsetSum_le {Ω : Type*}
   have heq : (2:ℝ) * ((z + r) - (z - r)) + 8 * γ = 4 * r + 8 * γ := by
     ring
   rwa [heq] at h
-
-/-- `P.real` is at most one on a probability space. -/
-private lemma probReal_le_one' {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
-    [IsProbabilityMeasure P] (s : Set Ω) : P.real s ≤ 1 := by
-  rw [← probReal_univ (μ := P)]
-  exact measureReal_mono (Set.subset_univ _) (measure_ne_top _ _)
-
-/-- Difference of two numbers in `[0,1]` is at most one in absolute value. -/
-private lemma abs_sub_le_one_of_unit {a b : ℝ} (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
-    (hb0 : 0 ≤ b) (hb1 : b ≤ 1) : |a - b| ≤ 1 := by
-  rw [abs_le]
-  constructor <;> linarith
 
 private lemma measurable_steinSolution (z : ℝ) :
     Measurable (steinSolution z) :=

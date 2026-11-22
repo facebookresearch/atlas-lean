@@ -213,12 +213,6 @@ private lemma aux_E_D_bound (x h : ℝ) (hx : 0 < x) (hh : |h| ≤ x / 2) (h0 : 
     _ ≤ 2 * |h| * (1 / x ^ 2 + Real.pi ^ 2 / 6) := by
         apply mul_le_mul_of_nonneg_left (aux_sq_sum_bound x hx N) (by positivity)
 
-/-- Three-term triangle inequality for `dist`. -/
-private lemma aux_dist_tri {a b c d : ℝ} : dist a d ≤ dist a b + dist b c + dist c d := by
-  have t1 := dist_triangle a b d
-  have t2 := dist_triangle b c d
-  linarith
-
 /-- The difference quotients `D_N(x)` tend to `deriv (log ∘ Gamma) x`. -/
 private lemma aux_D_tendsto (x : ℝ) (hx : 0 < x) :
     Tendsto (fun N : ℕ => Real.log N - ∑ m ∈ Finset.range (N + 1), 1 / (x + m))
@@ -328,7 +322,7 @@ private lemma aux_D_tendsto (x : ℝ) (hx : 0 < x) :
             + dist (Real.log ↑N - ∑ m ∈ Finset.range (N + 1),
                 (Real.log (x + hstar + ↑m) - Real.log (x + ↑m)) / hstar)
               ((f (x + hstar) - f x) / hstar)
-            + dist ((f (x + hstar) - f x) / hstar) (deriv f x) := aux_dist_tri
+            + dist ((f (x + hstar) - f x) / hstar) (deriv f x) := dist_triangle4 _ _ _ _
       _ < (2 * |hstar| * C₀ + ε / 3) + ε / 3 :=
           add_lt_add (add_lt_add_of_le_of_lt hED hE_close) hquot_close
       _ < ε / 3 + ε / 3 + ε / 3 := by linarith [hstar_small]

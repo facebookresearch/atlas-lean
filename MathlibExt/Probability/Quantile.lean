@@ -83,6 +83,36 @@ theorem cdfQuantile_le_iff (μ : Measure ℝ) {u : ℝ} (hu : u ∈ Ioo (0 : ℝ
   · exact fun h ↦ hmem.trans (monotone_cdf μ h)
   · exact fun h ↦ csInf_le hbdd h
 
+/-- The cdf at the quantile equals the level at every continuity point of the cdf. -/
+theorem cdf_cdfQuantile_eq_of_continuousAt (μ : Measure ℝ) {u : ℝ}
+    (hu : u ∈ Set.Ioo (0 : ℝ) 1)
+    (hc : ContinuousAt (cdf μ) (cdfQuantile μ u)) :
+    cdf μ (cdfQuantile μ u) = u := by
+  have hge := cdfQuantile_mem μ hu
+  have hle : cdf μ (cdfQuantile μ u) ≤ u := by
+    have hleft : Filter.Tendsto (cdf μ)
+        (nhdsWithin (cdfQuantile μ u) (Iio (cdfQuantile μ u)))
+        (nhds (cdf μ (cdfQuantile μ u))) :=
+      hc.mono_left nhdsWithin_le_nhds
+    have hev : ∀ᶠ x in nhdsWithin (cdfQuantile μ u) (Iio (cdfQuantile μ u)),
+        cdf μ x ≤ u := by
+      filter_upwards [self_mem_nhdsWithin] with x hx
+      by_contra h
+      have hlt : u < cdf μ x := lt_of_not_ge h
+      have hle' : cdfQuantile μ u ≤ x :=
+        (cdfQuantile_le_iff μ hu).mpr hlt.le
+      exact (not_le_of_gt hx) hle'
+    exact le_of_tendsto hleft hev
+  exact le_antisymm hle hge
+
+/-- **Quantile inversion under a continuous cdf.** When `cdf μ` is continuous, the cdf at the
+generalized inverse quantile is exactly `u`. (`cdfQuantile_mem` gives `≥`; continuity rules out
+`>`, since just below the quantile the cdf is `< u`.) -/
+theorem cdf_cdfQuantile_eq_of_continuous (μ : Measure ℝ)
+    (hcont : Continuous (cdf μ)) {u : ℝ} (hu : u ∈ Set.Ioo (0 : ℝ) 1) :
+    cdf μ (cdfQuantile μ u) = u :=
+  cdf_cdfQuantile_eq_of_continuousAt μ hu hcont.continuousAt
+
 /-- The generalized cdf inverse is monotone on `(0, 1)`. -/
 theorem cdfQuantile_monoOn (μ : Measure ℝ) : MonotoneOn (cdfQuantile μ) (Ioo 0 1) := by
   intro u hu v hv huv
@@ -166,5 +196,19 @@ theorem map_cdfQuantile_restrict_Icc (μ : Measure ℝ) [IsProbabilityMeasure μ
         exact ⟨h.2.le, h⟩
     rw [hset, Real.volume_Ioo, ← hc, hceq]
     norm_num
+
+/-- The quantile inverts a strictly increasing cdf at every point: strict monotonicity keeps
+every cdf value inside `(0, 1)`. -/
+theorem cdfQuantile_cdf_of_strictMono (μ : Measure ℝ) [IsProbabilityMeasure μ]
+    (hs : StrictMono (cdf μ)) (x : ℝ) :
+    cdfQuantile μ (cdf μ x) = x := by
+  have hx : cdf μ x ∈ Set.Ioo (0 : ℝ) 1 :=
+    ⟨(cdf_nonneg μ (x - 1)).trans_lt (hs (sub_one_lt x)),
+      (hs (lt_add_one x)).trans_le (cdf_le_one μ (x + 1))⟩
+  apply le_antisymm
+  · exact (cdfQuantile_le_iff μ hx).mpr le_rfl
+  · by_contra h
+    have hlt : cdfQuantile μ (cdf μ x) < x := lt_of_not_ge h
+    exact (not_lt_of_ge (cdfQuantile_mem μ hx)) (hs hlt)
 
 end ProbabilityTheory

@@ -84,21 +84,6 @@ private theorem le_listMax_of_mem' {xs : List ℤ} {a : ℤ} (ha : a ∈ xs) : a
     | inl h => rw [h]; exact le_max_left _ _
     | inr h => exact le_trans (ih h) (le_max_right _ _)
 
-/-- The list maximum is `0` or an element of the list. -/
-private theorem listMax_mem' {xs : List ℤ} : listMax xs ∈ 0 :: xs := by
-  induction xs with
-  | nil => exact List.mem_cons_self
-  | cons b bs ih =>
-    show max b (listMax bs) ∈ 0 :: b :: bs
-    by_cases h : b ≤ listMax bs
-    · rw [max_eq_right h]
-      rcases List.mem_cons.mp ih with h0 | hbs
-      · rw [← h0]
-        exact List.mem_cons_self
-      · exact List.mem_cons_of_mem _ (List.mem_cons_of_mem _ hbs)
-    · rw [max_eq_left (le_of_not_ge h)]
-      exact List.mem_cons_of_mem _ List.mem_cons_self
-
 /-- Private `foldl max` API: the seed is itself a candidate, so unlike `listMax`
 there is no `0` floor. Used for `fittingScore`, whose seed is the empty infix's
 score. Stated about `List.foldl` directly (a public function) so the public
@@ -215,7 +200,7 @@ that the Needleman–Wunsch score of $x'$ against $y'$ (with $\sigma$ and $g$) e
 overlap score of $x$ and $y$. -/
 theorem exists_nwScore_eq_overlapScore (xs ys : List α) :
     ∃ p ∈ overlapPairs xs ys, nwScore σ gap p.1 p.2 = overlapScore σ gap xs ys := by
-  have hmem := listMax_mem'
+  have hmem := listMax_mem
     (xs := (overlapPairs xs ys).map (fun p => nwScore σ gap p.1 p.2))
   rw [List.mem_cons] at hmem
   rcases hmem with h0 | hmem
