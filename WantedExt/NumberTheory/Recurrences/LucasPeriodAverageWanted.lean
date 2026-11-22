@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.Recurrences.DegenerateSecondOrder
 public import MathlibExt.NumberTheory.Recurrences.NondegenerateLucasPair
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Algebra.GCDMonoid.Finset
@@ -278,42 +279,6 @@ public theorem_wanted lucasUPeriod_lcm (params : LucasSequenceParams) (m n : ℕ
       (lucasURestrictedPeriod params)^[i] (Nat.lcm m n) =
           Nat.lcm ((lucasURestrictedPeriod params)^[i] m)
             ((lucasURestrictedPeriod params)^[i] n)
-
-/-- **Closed forms of eight degenerate second-order recurrences.** For every integer sequence
-$(w_j)_{j \ge 0}$ and every $n \in \mathbb{N}$: if $w_{j+2} = w_j$ for all $j$, then
-$w_{2n} = w_0$ and $w_{2n+1} = w_1$; if $w_{j+2} = -w_j$ for all $j$, then $w_{4n} = w_0$,
-$w_{4n+1} = w_1$, $w_{4n+2} = -w_0$ and $w_{4n+3} = -w_1$; if $w_{j+2} = w_{j+1} - w_j$ for all
-$j$, then $w_{6n} = w_0$, $w_{6n+1} = w_1$, $w_{6n+2} = w_1 - w_0$, $w_{6n+3} = -w_0$,
-$w_{6n+4} = -w_1$ and $w_{6n+5} = w_0 - w_1$; if $w_{j+2} = -w_{j+1} - w_j$ for all $j$, then
-$w_{3n} = w_0$, $w_{3n+1} = w_1$ and $w_{3n+2} = -w_1 - w_0$; if $w_{j+2} = 2 w_{j+1} - w_j$ for
-all $j$, then $w_n = n w_1 - (n - 1) w_0$; if $w_{j+2} = -2 w_{j+1} - w_j$ for all $j$, then
-$w_n = (-1)^{n+1} (n w_1 + (n - 1) w_0)$; if $w_{j+2} = w_{j+1}$ for all $j$ and $n \ge 1$, then
-$w_n = w_1$; and if $w_{j+2} = -w_{j+1}$ for all $j$ and $n \ge 1$, then $w_n = (-1)^{n+1} w_1$.
-
-In the paper's notation $W_{j+2} = a W_{j+1} + b W_j$ these are the pairs $(a, b) = (0, 1)$,
-$(0, -1)$, $(1, -1)$, $(-1, -1)$, $(2, -1)$, $(-2, -1)$, $(1, 0)$ and $(-1, 0)$.
-
-Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
-Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 1.3
-(`integers-2024-A36-thm-1-3`). -/
-public theorem_wanted degenerate_secondOrder_closedForms :
-    (∀ w : ℕ → ℤ, (∀ k, w (k + 2) = w k) →
-      ∀ n, w (2 * n) = w 0 ∧ w (2 * n + 1) = w 1) ∧
-    (∀ w : ℕ → ℤ, (∀ k, w (k + 2) = -w k) →
-      ∀ n, w (4 * n) = w 0 ∧ w (4 * n + 1) = w 1 ∧ w (4 * n + 2) = -w 0 ∧
-        w (4 * n + 3) = -w 1) ∧
-    (∀ w : ℕ → ℤ, (∀ k, w (k + 2) = w (k + 1) - w k) →
-      ∀ n, w (6 * n) = w 0 ∧ w (6 * n + 1) = w 1 ∧ w (6 * n + 2) = w 1 - w 0 ∧
-        w (6 * n + 3) = -w 0 ∧ w (6 * n + 4) = -w 1 ∧ w (6 * n + 5) = w 0 - w 1) ∧
-    (∀ w : ℕ → ℤ, (∀ k, w (k + 2) = -w (k + 1) - w k) →
-      ∀ n, w (3 * n) = w 0 ∧ w (3 * n + 1) = w 1 ∧ w (3 * n + 2) = -w 1 - w 0) ∧
-    (∀ w : ℕ → ℤ, (∀ k, w (k + 2) = 2 * w (k + 1) - w k) →
-      ∀ n : ℕ, w n = n * w 1 - ((n : ℤ) - 1) * w 0) ∧
-    (∀ w : ℕ → ℤ, (∀ k, w (k + 2) = -2 * w (k + 1) - w k) →
-      ∀ n : ℕ, w n = (-1) ^ (n + 1) * (n * w 1 + ((n : ℤ) - 1) * w 0)) ∧
-    (∀ w : ℕ → ℤ, (∀ k, w (k + 2) = w (k + 1)) → ∀ n, 1 ≤ n → w n = w 1) ∧
-    (∀ w : ℕ → ℤ, (∀ k, w (k + 2) = -w (k + 1)) →
-      ∀ n, 1 ≤ n → w n = (-1) ^ (n + 1) * w 1)
 
 /-- **Sums of eight degenerate second-order recurrences.** For an integer sequence
 $(w_j)_{j \ge 0}$ write $B_w(n) = w_1 + \dots + w_n$. Let $u$ be the sequence with $u_0 = 0$,
