@@ -225,8 +225,8 @@ theorem partrec_pairU : Partrec pairU := by
     ((partrec_U.comp ((Primrec.list_drop.comp hlen hrest).to_comp.comp Computable.fst)).map
       (Primrec.list_append.comp (Primrec.snd.comp Primrec.fst) Primrec.snd).to_comp.to₂).to₂
 
-/-- **Concatenation costs at most twice the first part.** There is a natural number $c$ such that
-for all binary strings $x$ and $y$, the Kolmogorov complexity of their concatenation $xy$
+/-- **Concatenation bound: $K(xy) \le 2K(x) + K(y) + O(1)$.** There is a natural number $c$ such
+that for all binary strings $x$ and $y$, the Kolmogorov complexity of their concatenation $xy$
 satisfies $K(xy) \le 2K(x) + K(y) + c$. -/
 theorem K_append_le : ∃ c, ∀ x y : List Bool, K (x ++ y) ≤ 2 * K x + K y + c := by
   obtain ⟨c, hc⟩ := exists_K_le_of_partrec partrec_pairU
