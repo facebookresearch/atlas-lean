@@ -121,7 +121,10 @@ $$
 = \frac{d}{ds}\Big|_{s = t} \frac{\partial L}{\partial v}(s, x(s), x'(s)).
 $$
 
-Source: L. Euler (1744) and J.-L. Lagrange (1755). Listed as §44 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `euler_lagrange_equation`. -/
+Source: L. Euler (1744) and J.-L. Lagrange (1755). Listed as §44 in O. Knill, Some Fundamental
+Theorems in Mathematics
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `euler_lagrange_equation`. -/
 public theorem_wanted euler_lagrange_equation
     {a b : ℝ} (L : ℝ → ℝ → ℝ → ℝ) (x : ℝ → ℝ) (_hab : a < b)
     (_hL : ContDiff ℝ 2 (fun p : ℝ × ℝ × ℝ => L p.1 p.2.1 p.2.2))

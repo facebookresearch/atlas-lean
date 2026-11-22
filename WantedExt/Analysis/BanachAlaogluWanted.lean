@@ -75,7 +75,10 @@ space and let $U$ be a neighbourhood of $0$ in $E$. Then the weak-star polar of 
 in the weak dual of $E$, that is, in the space of continuous linear functionals on $E$ with the
 weak-star topology.
 
-Source: N. Bourbaki, Espaces vectoriels topologiques; the normed case is L. Alaoglu, Ann. of Math. 41 (1940). Listed as §137 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `banach_alaoglu_bourbaki`. -/
+Source: N. Bourbaki, Espaces vectoriels topologiques; the normed case is L. Alaoglu, Ann. of Math.
+41 (1940). Listed as §137 in O. Knill, Some Fundamental Theorems in Mathematics
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `banach_alaoglu_bourbaki`. -/
 public theorem_wanted banach_alaoglu_bourbaki (E : Type*) [AddCommGroup E] [Module ℝ E]
     [TopologicalSpace E] [ContinuousAdd E] [ContinuousSMul ℝ E]
     [LocallyConvexSpace ℝ E] (U : Set E) (_hU : U ∈ 𝓝 (0 : E)) :

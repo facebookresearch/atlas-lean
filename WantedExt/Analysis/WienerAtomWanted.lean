@@ -81,7 +81,10 @@ $\hat\mu_k = \int_{\mathbb{T}} e^{ikx} \, d\mu(x)$. Then
 $\frac{1}{N} \sum_{k=1}^{N} \lvert \hat\mu_k \rvert^2 \to \sum_{x \in \mathbb{T}} \mu(\{x\})^2$
 as $N \to \infty$.
 
-Source: N. Wiener, The Fourier Integral and Certain of its Applications (1933). Listed as §66 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `wiener_atom_detection`. -/
+Source: N. Wiener, The Fourier Integral and Certain of its Applications (1933). Listed as §66 in O.
+Knill, Some Fundamental Theorems in Mathematics
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `wiener_atom_detection`. -/
 public theorem_wanted wiener_atom_detection
     (μ : Measure (AddCircle (2 * Real.pi))) [IsProbabilityMeasure μ] :
     Tendsto

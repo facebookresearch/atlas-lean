@@ -176,7 +176,9 @@ where $\dim(\mu)$ is the Hausdorff dimension of $\mu$ and
 $H = \frac{2 \lambda_1 (-\lambda_2)}{\lambda_1 - \lambda_2}$ is the harmonic mean of $\lambda_1$
 and $-\lambda_2$, taken to be $0$ when $\lambda_1 = \lambda_2$.
 
-Source: L.-S. Young, *Dimension, entropy and Lyapunov exponents*, Ergodic Theory Dynam. Systems 2 (1982), 109–124. Knill, *Some fundamental theorems in mathematics*, §103. Via leanprover/lean-eval@38361be, problem `entropy_dimension_lyapunov`. -/
+Source: L.-S. Young, *Dimension, entropy and Lyapunov exponents*, Ergodic Theory Dynam. Systems 2
+(1982), 109–124. Knill, *Some fundamental theorems in mathematics*, §103. Via
+leanprover/lean-eval@38361be, problem `entropy_dimension_lyapunov`. -/
 public theorem_wanted entropy_dimension_lyapunov
     (T T_inv : EucPlane → EucPlane)
     (hT_smooth : ContDiff ℝ 2 T)
@@ -207,7 +209,9 @@ with respect to $\mu$, and $\lambda_1(x)$ and $\lambda_2(x)$ for the upper and l
 exponents of $T$ at $x$. Suppose that the Hausdorff dimension of $\mu$ equals $2$ and that
 $\int \lambda_1 \, d\mu = -\int \lambda_2 \, d\mu$. Then $h_\mu(T) = \int \lambda_1 \, d\mu$.
 
-Source: Ya. B. Pesin, *Characteristic Lyapunov exponents and smooth ergodic theory*, Russian Math. Surveys 32 (1977). Knill, *Some fundamental theorems in mathematics*, §103. Via leanprover/lean-eval@38361be, problem `pesin_formula`. -/
+Source: Ya. B. Pesin, *Characteristic Lyapunov exponents and smooth ergodic theory*, Russian Math.
+Surveys 32 (1977). Knill, *Some fundamental theorems in mathematics*, §103. Via
+leanprover/lean-eval@38361be, problem `pesin_formula`. -/
 public theorem_wanted pesin_formula
     (T T_inv : EucPlane → EucPlane)
     (hT_smooth : ContDiff ℝ 2 T)
@@ -237,7 +241,9 @@ exponents of $T$ at $x$. Then
 
 $$h_\mu(T) \le \max(0, \int \lambda_1 \, d\mu) + \max(0, \int \lambda_2 \, d\mu).$$
 
-Source: D. Ruelle, *An inequality for the entropy of differentiable maps*, Bol. Soc. Brasil. Mat. 9 (1978); G. A. Margulis (1968, unpublished). Knill, *Some fundamental theorems in mathematics*, §103. Via leanprover/lean-eval@38361be, problem `margulis_ruelle`. -/
+Source: D. Ruelle, *An inequality for the entropy of differentiable maps*, Bol. Soc. Brasil. Mat. 9
+(1978); G. A. Margulis (1968, unpublished). Knill, *Some fundamental theorems in mathematics*, §103.
+Via leanprover/lean-eval@38361be, problem `margulis_ruelle`. -/
 public theorem_wanted margulis_ruelle
     (T T_inv : EucPlane → EucPlane)
     (hT_smooth : ContDiff ℝ 2 T)

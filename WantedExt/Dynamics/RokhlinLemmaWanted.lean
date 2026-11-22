@@ -125,7 +125,14 @@ under the $k$-fold iterate of $T$, and their union $\bigcup_{k=0}^{n-1} T^k(B)$ 
 $\mu$-measure at least $1 - \varepsilon$ (truncated subtraction, so the bound is $0$ when
 $\varepsilon \ge 1$). No invertibility of $T$ is assumed.
 
-Source: V. A. Rokhlin, *A general measure-preserving transformation is not mixing*, Doklady Akademii Nauk SSSR 60 (1948), 349-351 (original Russian; English translation later); S. Kakutani, *Induced measure-preserving transformations*, Proc. Imp. Acad. Tokyo 19 (1943), 635-641 (independent discovery); S.-M. Heinemann and O. Schmitt, *Rokhlin's lemma for non-invertible maps*, Dynam. Systems Appl. 10 (2001), no. 2, 201-213. The classical form is listed as §109 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `rokhlin_lemma`. -/
+Source: V. A. Rokhlin, *A general measure-preserving transformation is not mixing*, Doklady Akademii
+Nauk SSSR 60 (1948), 349-351 (original Russian; English translation later); S. Kakutani, *Induced
+measure-preserving transformations*, Proc. Imp. Acad. Tokyo 19 (1943), 635-641 (independent
+discovery); S.-M. Heinemann and O. Schmitt, *Rokhlin's lemma for non-invertible maps*, Dynam.
+Systems Appl. 10 (2001), no. 2, 201-213. The classical form is listed as §109 in O. Knill, *Some
+Fundamental Theorems in Mathematics*
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `rokhlin_lemma`. -/
 public theorem_wanted rokhlin_lemma {Ω : Type*} [MeasurableSpace Ω]
     [StandardBorelSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] (T : Ω → Ω)

@@ -104,7 +104,12 @@ there is a measurable set $B \subseteq \Omega$ such that the images $T_v(B)$, fo
 integer box $[0, N)^d$, are pairwise disjoint and their union has measure at least
 $1 - \varepsilon$.
 
-Source: D. S. Ornstein and B. Weiss, *Entropy and isomorphism theorems for actions of amenable groups*, J. Anal. Math. 48 (1987), 1-141 — Theorem 5.2 establishes the multidimensional (and amenable-group) Rokhlin lemma. Listed as §109 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). No formalization found in any major prover. Via leanprover/lean-eval@38361be, problem `ornstein_weiss_rokhlin`. -/
+Source: D. S. Ornstein and B. Weiss, *Entropy and isomorphism theorems for actions of amenable
+groups*, J. Anal. Math. 48 (1987), 1-141 — Theorem 5.2 establishes the multidimensional (and
+amenable-group) Rokhlin lemma. Listed as §109 in O. Knill, *Some Fundamental Theorems in
+Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). No
+formalization found in any major prover. Via leanprover/lean-eval@38361be, problem
+`ornstein_weiss_rokhlin`. -/
 public theorem_wanted ornstein_weiss_rokhlin {Ω : Type*} [MeasurableSpace Ω]
     [StandardBorelSpace Ω]
     {d : ℕ} (_hd : 1 ≤ d) (μ : Measure Ω) [IsProbabilityMeasure μ]

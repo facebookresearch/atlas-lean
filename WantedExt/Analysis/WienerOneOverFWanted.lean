@@ -80,7 +80,10 @@ a continuous function in the Wiener algebra with $f(x) \ne 0$ for every $x$. The
 continuous function $g : \mathbb{R}/T\mathbb{Z} \to \mathbb{C}$ with $g(x) = f(x)^{-1}$ for every
 $x$, and $g$ lies in the Wiener algebra.
 
-Source: N. Wiener, Tauberian theorems, Ann. of Math. 33 (1932), 1-100. Listed as §226 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Knill, §226. Via leanprover/lean-eval@38361be, problem `wiener_inverse_closed`. -/
+Source: N. Wiener, Tauberian theorems, Ann. of Math. 33 (1932), 1-100. Listed as §226 in O. Knill,
+Some Fundamental Theorems in Mathematics
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Knill, §226. Via
+leanprover/lean-eval@38361be, problem `wiener_inverse_closed`. -/
 public theorem_wanted wiener_inverse_closed (f : C(AddCircle T, ℂ))
     (hf : InWienerAlgebra f) (hzero : ∀ x, f x ≠ 0) :
     ∃ g : C(AddCircle T, ℂ),

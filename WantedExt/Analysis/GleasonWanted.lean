@@ -107,7 +107,8 @@ unique continuous linear operator $\rho$ on $H$ such that $\rho$ is positive,
 $\operatorname{Re} \operatorname{tr}(\rho) = 1$, and
 $\mu(P) = \operatorname{Re} \operatorname{tr}(\rho P)$ for every orthogonal projection $P$ on $H$.
 
-Source: A. M. Gleason, Measures on the closed subspaces of a Hilbert space, J. Math. Mech. 6 (1957), 885-893. Via leanprover/lean-eval@38361be, problem `gleason_theorem_finite`. -/
+Source: A. M. Gleason, Measures on the closed subspaces of a Hilbert space, J. Math. Mech. 6 (1957),
+885-893. Via leanprover/lean-eval@38361be, problem `gleason_theorem_finite`. -/
 public theorem_wanted gleason_theorem_finite
     {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
       [CompleteSpace H] [FiniteDimensional ℂ H]
@@ -147,7 +148,8 @@ $f(x) = \operatorname{Re} \langle x, \rho x \rangle$ for every unit vector $x$ i
 The statement does not assert that $\rho$ is trace class with trace $1$, nor that $\rho$ is
 unique.
 
-Source: A. M. Gleason, Measures on the closed subspaces of a Hilbert space, J. Math. Mech. 6 (1957), 885-893. Via leanprover/lean-eval@38361be, problem `gleason_theorem_separable`. -/
+Source: A. M. Gleason, Measures on the closed subspaces of a Hilbert space, J. Math. Mech. 6 (1957),
+885-893. Via leanprover/lean-eval@38361be, problem `gleason_theorem_separable`. -/
 public theorem_wanted gleason_theorem_separable
     {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
       [CompleteSpace H] [TopologicalSpace.SeparableSpace H]

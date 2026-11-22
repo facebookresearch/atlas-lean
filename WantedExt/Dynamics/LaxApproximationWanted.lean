@@ -159,7 +159,9 @@ volume-preserving transformation $S$ of $\mathbb{T}^d$ such that $S$ is a cyclic
 with $n$ subdivisions and $\delta(T, S) < \varepsilon$, where $\delta$ is the
 essential-supremum distance between volume-preserving maps.
 
-Source: P. D. Lax, *Approximation of measure preserving transformations*, Comm. Pure Appl. Math. 24 (1971). Knill, *Some fundamental theorems in mathematics*, §110. Via leanprover/lean-eval@38361be, problem `lax_approximation`. -/
+Source: P. D. Lax, *Approximation of measure preserving transformations*, Comm. Pure Appl. Math. 24
+(1971). Knill, *Some fundamental theorems in mathematics*, §110. Via leanprover/lean-eval@38361be,
+problem `lax_approximation`. -/
 public theorem_wanted lax_approximation {d : ℕ} (hd : 0 < d) (T : ToralDynamicalSystem d)
     {ε : ℝ≥0∞} (hε : 0 < ε) :
     ∃ (n : ℕ) (S : VolumePreservingEquiv d),

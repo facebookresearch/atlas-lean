@@ -83,7 +83,14 @@ $$f(x) = \sum_{k=0}^{2n} g\left(\sum_{l=0}^{n-1} \varphi_{k,l}(x_l)\right).$$
 Both $g$ and the $\varphi_{k,l}$ may depend on $f$, so this is weaker than the form in which the
 inner functions are universal.
 
-Source: A. N. Kolmogorov, *On the representation of continuous functions of several variables by superposition of continuous functions of one variable and addition*, Doklady Akad. Nauk SSSR 114 (1957), 953-956. V. I. Arnold, *On functions of three variables*, Doklady Akad. Nauk SSSR 114 (1957), 679-681. G. G. Lorentz, *Metric entropy, widths, and superpositions of functions*, Amer. Math. Monthly 69 (1962), 469-485 (single-outer-function refinement). Listed as §80 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `kolmogorov_arnold_superposition`. -/
+Source: A. N. Kolmogorov, *On the representation of continuous functions of several variables by
+superposition of continuous functions of one variable and addition*, Doklady Akad. Nauk SSSR 114
+(1957), 953-956. V. I. Arnold, *On functions of three variables*, Doklady Akad. Nauk SSSR 114
+(1957), 679-681. G. G. Lorentz, *Metric entropy, widths, and superpositions of functions*, Amer.
+Math. Monthly 69 (1962), 469-485 (single-outer-function refinement). Listed as §80 in O.
+Knill, *Some Fundamental Theorems in Mathematics*
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `kolmogorov_arnold_superposition`. -/
 public theorem_wanted kolmogorov_arnold (n : ℕ) (_hn : 1 ≤ n)
     (f : (Fin n → ℝ) → ℝ) (_hf : ContinuousOn f (Set.Icc 0 1)) :
     ∃ (g : ℝ → ℝ) (φ : Fin (2 * n + 1) → Fin n → ℝ → ℝ),

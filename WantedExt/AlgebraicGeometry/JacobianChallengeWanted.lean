@@ -98,7 +98,9 @@ variable {k : Type u} [Field k] {C : Over (Spec (.of k))}
 $k$-scheme that is proper, smooth of relative dimension $1$ and geometrically irreducible, the
 genus of $C$ is a natural number.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
 public def_wanted genus (C : Over (Spec (.of k))) [IsProper C.hom] [SmoothOfRelativeDimension 1 C.hom]
     [GeometricallyIrreducible C.hom] : ℕ
 
@@ -108,7 +110,9 @@ public def_wanted genus (C : Over (Spec (.of k))) [IsProper C.hom] [SmoothOfRela
 $k$-scheme that is proper, smooth of relative dimension $1$ and geometrically irreducible, the
 Jacobian $J(C)$ of $C$ is a $k$-scheme.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
 public def_wanted Jacobian (C : Over (Spec (.of k))) [IsProper C.hom] [SmoothOfRelativeDimension 1 C.hom]
     [GeometricallyIrreducible C.hom] : Over (Spec (.of k))
 
@@ -127,7 +131,9 @@ genus of `C`. -/
 irreducible curve over a field $k$. The Jacobian $J(C)$ is smooth of relative dimension $g$ over
 $k$, where $g$ is the genus of $C$.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
 public theorem_wanted smoothOfRelativeDimension_genus :
     SmoothOfRelativeDimension (❰genus❱ C) (❰Jacobian❱ C).hom
 
@@ -146,7 +152,9 @@ to a `k`-rational point of `C`. -/
 $k$. Each $k$-rational point $P$ of $C$ gives a morphism of $k$-schemes $C \to J(C)$ from $C$ to
 its Jacobian, the Abel–Jacobi map based at $P$.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
 public def_wanted ofCurve (P : 𝟙_ (Over (Spec (.of k))) ⟶ C) : C ⟶ ❰Jacobian❱ C
 
 /- The Abel-Jacobi map sends the `k`-rational point `P` to `0`, where `0` (denoted by `η` below) is
@@ -156,7 +164,9 @@ geometrically irreducible curve over a field $k$, let $J(C)$ be its Jacobian, an
 $k$-rational point of $C$. The Abel–Jacobi map $C \to J(C)$ based at $P$ sends $P$ to the
 identity point of $J(C)$ for its group scheme structure.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
 public theorem_wanted comp_ofCurve (C : Over (Spec (.of k))) [IsProper C.hom]
     [SmoothOfRelativeDimension 1 C.hom] [GeometricallyIrreducible C.hom]
     (P : 𝟙_ (Over (Spec (.of k))) ⟶ C) :
@@ -250,7 +260,10 @@ open _root_.MathlibExt.AlgebraicGeometry.JacobianChallengeWanted.AlgebraicGeomet
 number: the constant in the uniform bound on rational points of curves in Theorem 1.1 of
 Dimitrov, Gao and Habegger.
 
-Source: V. Dimitrov, Z. Gao, and P. Habegger, `Uniformity in Mordell–Lang for curves`, Annals of Math, 194 (1) 2021. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2021-194-1-UniformMordellLang.lean Via leanprover/lean-eval@38361be, problem `annals_uniform_mordell_lang`. -/
+Source: V. Dimitrov, Z. Gao, and P. Habegger, `Uniformity in Mordell–Lang for curves`, Annals of
+Math, 194 (1) 2021. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge
+(v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2021-194-1-UniformMordellLang.lean Via
+leanprover/lean-eval@38361be, problem `annals_uniform_mordell_lang`. -/
 public def_wanted c (g : ℕ) (d : ℕ) : ℕ
 
 /-
@@ -276,7 +289,10 @@ irreducible curve over $F$. If $C$ has genus $g$, then the number of $F$-rationa
 possibly infinite, is at most $c(g, d)^{1 + \rho}$, where $c$ is the uniform constant and $\rho$
 is the free rank of the group of $F$-rational points of the Jacobian of $C$.
 
-Source: V. Dimitrov, Z. Gao, and P. Habegger, `Uniformity in Mordell–Lang for curves`, Annals of Math, 194 (1) 2021. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2021-194-1-UniformMordellLang.lean Via leanprover/lean-eval@38361be, problem `annals_uniform_mordell_lang`. -/
+Source: V. Dimitrov, Z. Gao, and P. Habegger, `Uniformity in Mordell–Lang for curves`, Annals of
+Math, 194 (1) 2021. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge
+(v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2021-194-1-UniformMordellLang.lean Via
+leanprover/lean-eval@38361be, problem `annals_uniform_mordell_lang`. -/
 public theorem_wanted theorem_1_1 (g d : ℕ) (hg : g ≥ 2) (hd : d ≥ 1) {F : Type*} [Field F] [NumberField F]
     (hF : finrank ℚ F ≤ d) (C : Over (Spec (.of F))) [IsProper C.hom]
     [SmoothOfRelativeDimension 1 C.hom] [GeometricallyIrreducible C.hom] :

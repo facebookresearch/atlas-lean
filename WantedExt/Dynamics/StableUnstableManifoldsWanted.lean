@@ -102,7 +102,12 @@ $y_k \to x_0$, satisfy $W^s \cap W^u = \{x_0\}$.
 This is only the set-level part of the Hadamard–Perron theorem: it does not assert that $W^s$
 and $W^u$ are $C^1$ submanifolds tangent to the stable and unstable subspaces of $Df(x_0)$.
 
-Source: J. Hadamard, 'Sur l'itération et les solutions asymptotiques des équations différentielles', Bull. Soc. Math. France 29 (1901); O. Perron, 'Über Stabilität und asymptotisches Verhalten der Integrale von Differentialgleichungssystemen', Math. Z. 29 (1929) 129–160. Listed as §104 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `stable_unstable_manifolds`. -/
+Source: J. Hadamard, 'Sur l'itération et les solutions asymptotiques des équations différentielles',
+Bull. Soc. Math. France 29 (1901); O. Perron, 'Über Stabilität und asymptotisches Verhalten der
+Integrale von Differentialgleichungssystemen', Math. Z. 29 (1929) 129–160. Listed as §104 in O.
+Knill, *Some Fundamental Theorems in Mathematics*
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `stable_unstable_manifolds`. -/
 public theorem_wanted stable_unstable_manifolds_exist (n : ℕ) (f : E n → E n) (x₀ : E n)
     (_hf : ContDiffAt ℝ 1 f x₀)
     (_hfix : f x₀ = x₀)

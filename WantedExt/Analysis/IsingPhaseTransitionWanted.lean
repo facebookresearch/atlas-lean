@@ -123,7 +123,8 @@ function $F : \mathbb{R} \to \mathbb{R}$ and a real number $\beta_c > 0$ such th
 $\beta$, $\log Z_{n+1}(\beta) / (n+1)^2$ converges to $F(\beta)$ as $n \to \infty$, and $F$ is not
 real analytic at $\beta_c$.
 
-Source: L. Onsager, *Crystal statistics I*, Phys. Rev. 65 (1944). Knill, §158. Via leanprover/lean-eval@38361be, problem `ising_2d_phase_transition`. -/
+Source: L. Onsager, *Crystal statistics I*, Phys. Rev. 65 (1944). Knill, §158. Via
+leanprover/lean-eval@38361be, problem `ising_2d_phase_transition`. -/
 public theorem_wanted ising_2d_phase_transition :
     ∃ (F : ℝ → ℝ) (βc : ℝ),
       0 < βc ∧

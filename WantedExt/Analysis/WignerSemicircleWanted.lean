@@ -74,9 +74,11 @@ vacuously without them).
 open scoped ENNReal NNReal Topology
 open MeasureTheory ProbabilityTheory Filter
 
-/-- Empirical spectral measure of an `n × n` Hermitian matrix `W`, `n ≥ 1`, on the real
-eigenvalues: the probability measure `(1/n) · ∑_j δ_{λ_j}`. For `n = 0` it would be the zero
-measure. -/
+/-- **Empirical spectral measure of a Hermitian matrix.** Let $n \ge 1$ and let $W$ be a Hermitian
+$n \times n$ complex matrix with real eigenvalues $\lambda_1, \dots, \lambda_n$, listed with
+multiplicity. The empirical spectral measure of $W$ is the probability measure
+$\frac{1}{n} \sum_{j=1}^{n} \delta_{\lambda_j}$ on $\mathbb{R}$, where $\delta_\lambda$ is the
+Dirac measure at $\lambda$. -/
 noncomputable def empiricalSpectralMeasureHerm {n : ℕ} [NeZero n]
     {W : Matrix (Fin n) (Fin n) ℂ} (hW : W.IsHermitian) : Measure ℝ :=
   (n : ℝ≥0∞)⁻¹ • ∑ j : Fin n, Measure.dirac (hW.eigenvalues j)
@@ -136,7 +138,29 @@ mean-`0`, variance-`1` real random variables, the empirical spectral
 measure of the rescaled real-symmetric matrix `W_n / √n` converges
 weakly, almost surely, to the semicircle measure on `[−2, 2]`; the
 sequence is indexed by `n + 1`, the size of the matrix. -/
-/-- Source: E. Wigner, 'Characteristic vectors of bordered matrices with infinite dimensions', Ann. of Math. (2) 62 (1955) 548–564 (the expected moments of the eigenvalue distribution of random-sign real symmetric matrices, with zero diagonal and off-diagonal entries ±v, converge to the semicircle moments; extended to a wider class in Ann. of Math. 67 (1958)). Pastur's universality extending to all variances with finite second moments: L. Pastur, 'On the spectrum of random matrices', Teor. Mat. Fiz. 10 (1972) 102–112. Listed as §102 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). This almost-sure form, for i.i.d. upper-triangular entries of mean 0 and variance 1, is T. Tao, *Topics in Random Matrix Theory*, AMS GSM 132 (2012), Theorem 2.4.2, which allows the diagonal entries a different law. Via leanprover/lean-eval@38361be, problem `wigner_semicircle`. -/
+/-- **Wigner's semicircle law.** Let $(\Omega, \mu)$ be a probability space and let
+$X_{ij} : \Omega \to \mathbb{R}$, for $i, j \in \mathbb{N}$, be measurable functions. Suppose that
+the family $(X_{ij})_{i \le j}$ is mutually independent, that all $X_{ij}$ with $i \le j$ have the
+same distribution, and that for $i \le j$ both $X_{ij}$ and $X_{ij}^2$ are integrable with
+$\mathbb{E}[X_{ij}] = 0$ and $\mathbb{E}[X_{ij}^2] = 1$. For $n \ge 1$ and $\omega \in \Omega$,
+let $W_n(\omega)$ be the $n \times n$ Wigner matrix of $X$, with entries
+$X_{\min(i,j)\,\max(i,j)}(\omega)$, and let $L_n(\omega)$ be the empirical spectral measure of
+$W_n(\omega) / \sqrt{n}$, that is, the image of the empirical spectral measure of $W_n(\omega)$
+under $x \mapsto x / \sqrt{n}$. Then for $\mu$-almost every $\omega$, every bounded continuous
+function $f : \mathbb{R} \to \mathbb{R}$ satisfies
+$$\int f \, dL_n(\omega) \to \int f \, d\sigma \quad (n \to \infty),$$
+where $\sigma$ is the semicircle distribution.
+
+Source: E. Wigner, 'Characteristic vectors of bordered matrices with infinite dimensions', Ann. of
+Math. (2) 62 (1955) 548–564 (the expected moments of the eigenvalue distribution of random-sign real
+symmetric matrices, with zero diagonal and off-diagonal entries ±v, converge to the semicircle
+moments; extended to a wider class in Ann. of Math. 67 (1958)). Pastur's universality extending to
+all variances with finite second moments: L. Pastur, 'On the spectrum of random matrices', Teor.
+Mat. Fiz. 10 (1972) 102–112. Listed as §102 in O. Knill, *Some Fundamental Theorems in Mathematics*
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). This almost-sure
+form, for i.i.d. upper-triangular entries of mean 0 and variance 1, is T. Tao, *Topics in Random
+Matrix Theory*, AMS GSM 132 (2012), Theorem 2.4.2, which allows the diagonal entries a different
+law. Via leanprover/lean-eval@38361be, problem `wigner_semicircle`. -/
 public theorem_wanted wigner_semicircle
     {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ]

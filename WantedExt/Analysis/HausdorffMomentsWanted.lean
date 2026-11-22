@@ -145,7 +145,10 @@ $\mathbb{R}^d$ with $a_n = \int_{[0,1]^d} x^n \, d\mu(x) - \int_{[0,1]^d} x^n \,
 multi-index $n \in \mathbb{N}^d$, where $x^n = \prod_i x_i^{n_i}$, if and only if $a$ is Hausdorff
 bounded.
 
-Source: F. Hausdorff (1921, 1923); T. H. Hildebrandt and I. J. Schoenberg, *On linear functional operations and the moment problem for a finite interval in one or several dimensions*, Ann. of Math. 34 (1933). Knill, *Some fundamental theorems in mathematics*, §115. Via leanprover/lean-eval@38361be, problem `hausdorff_hildebrandt_schoenberg`. -/
+Source: F. Hausdorff (1921, 1923); T. H. Hildebrandt and I. J. Schoenberg, *On linear functional
+operations and the moment problem for a finite interval in one or several dimensions*, Ann. of Math.
+34 (1933). Knill, *Some fundamental theorems in mathematics*, §115. Via
+leanprover/lean-eval@38361be, problem `hausdorff_hildebrandt_schoenberg`. -/
 public theorem_wanted hausdorff_hildebrandt_schoenberg {d : ℕ} (a : (Fin d → ℕ) → ℝ) :
     IsMomentConfiguration a ↔ HausdorffBounded a
 
@@ -159,7 +162,9 @@ $a_n = \int_{[0,1]^d} x^n \, d\mu(x)$ for every multi-index $n \in \mathbb{N}^d$
 $x^n = \prod_i x_i^{n_i}$, if and only if $(\Delta^k a)_n \ge 0$ for all multi-indices $k, n$ with
 $k \le n$ coordinatewise, where $\Delta^k a$ is the iterated backward difference of $a$.
 
-Source: F. Hausdorff, *Summationsmethoden und Momentfolgen I, II*, Math. Z. 9 (1921). Knill, *Some fundamental theorems in mathematics*, §115. Via leanprover/lean-eval@38361be, problem `hausdorff_positivity_criterion`. -/
+Source: F. Hausdorff, *Summationsmethoden und Momentfolgen I, II*, Math. Z. 9 (1921). Knill, *Some
+fundamental theorems in mathematics*, §115. Via leanprover/lean-eval@38361be, problem
+`hausdorff_positivity_criterion`. -/
 public theorem_wanted hausdorff_positivity {d : ℕ} (a : (Fin d → ℕ) → ℝ) :
     IsPositiveMomentConfiguration a ↔ ∀ k n : Fin d → ℕ, k ≤ n → 0 ≤ diff a k n
 

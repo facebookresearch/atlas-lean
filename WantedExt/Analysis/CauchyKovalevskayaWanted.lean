@@ -95,7 +95,10 @@ $v : \mathbb{R}^d \times \mathbb{R} \to \mathbb{R}$ that is real analytic on $U$
 $v(x, 0) = u_0(x)$ whenever $(x, 0) \in U$, and satisfies the same equation at every point of
 $U$ agrees with $u$ on $U$.
 
-Source: A.-L. Cauchy (1842) and S. Kovalevskaya (1875). Listed as §32 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `cauchy_kovalevskaya`. -/
+Source: A.-L. Cauchy (1842) and S. Kovalevskaya (1875). Listed as §32 in O. Knill, Some Fundamental
+Theorems in Mathematics
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `cauchy_kovalevskaya`. -/
 public theorem_wanted cauchy_kovalevskaya {d : ℕ}
     (F : E d × ℝ × ℝ → E d) (f : E d × ℝ × ℝ → ℝ) (u₀ : E d → ℝ)
     (_hF : AnalyticOnNhd ℝ F univ) (_hf : AnalyticOnNhd ℝ f univ)

@@ -86,7 +86,9 @@ numbers with $\alpha$ irrational and $\lambda \neq 0$. Then there is an almost M
 on $\ell^2(\mathbb{Z})$ with frequency $\alpha$, coupling $\lambda$ and phase $\theta$, and the
 spectrum of $H$ is nonempty, compact, perfect and totally disconnected, that is, a Cantor set.
 
-Source: A. Avila and S. Jitomirskaya, 'The Ten Martini Problem', Ann. of Math. 170 (2009), 303-342, https://doi.org/10.4007/annals.2009.170.303. Via leanprover/lean-eval@38361be, problem `ten_martini_problem`. -/
+Source: A. Avila and S. Jitomirskaya, 'The Ten Martini Problem', Ann. of Math. 170 (2009), 303-342,
+https://doi.org/10.4007/annals.2009.170.303. Via leanprover/lean-eval@38361be, problem
+`ten_martini_problem`. -/
 public theorem_wanted ten_martini_problem (α coupling θ : ℝ)
     (hα : Irrational α) (hcoupling : coupling ≠ 0) :
     ∃ H : EllTwo →L[ℂ] EllTwo,

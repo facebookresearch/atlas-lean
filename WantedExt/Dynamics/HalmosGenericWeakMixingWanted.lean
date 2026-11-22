@@ -109,7 +109,12 @@ $T_0$, measurable set $A \subseteq X$ and real number $\varepsilon > 0$. Then th
 $G_\delta$ set of automorphisms all of which are weakly mixing, and every weakly mixing
 automorphism of $(X, m)$ is ergodic for $m$.
 
-Source: P.R. Halmos, 'In general a measure-preserving transformation is mixing', Ann. of Math. (2) 45 (1944) 786–792, and *Lectures on Ergodic Theory*, Chelsea, 1956. Related Baire-category genericity results in ergodic theory: A. Katok and A. Stepin (1967); J.R. Choksi (1965). Listed as §90 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `halmos_generic_weak_mixing`. -/
+Source: P.R. Halmos, 'In general a measure-preserving transformation is mixing', Ann. of Math. (2)
+45 (1944) 786–792, and *Lectures on Ergodic Theory*, Chelsea, 1956. Related Baire-category
+genericity results in ergodic theory: A. Katok and A. Stepin (1967); J.R. Choksi (1965). Listed as
+§90 in O. Knill, *Some Fundamental Theorems in Mathematics*
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `halmos_generic_weak_mixing`. -/
 public theorem_wanted generic_weakly_mixing [StandardBorelSpace X]
     (m : Measure X) [IsProbabilityMeasure m] [NullSingletonClass m] :
     (∃ G : Set (Automorphism m), IsGδ G ∧ Dense G ∧

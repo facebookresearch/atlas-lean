@@ -113,7 +113,11 @@ $f(y) \ge \varepsilon$ for every $y$ with $\|y - a\| = r$, $\|b - a\| > r$ and $
 Then the mountain pass level $c$ of $f$ between $a$ and $b$ satisfies $c \ge \varepsilon$, and
 $f$ has a critical point $x$ with $f(x) = c$.
 
-Source: A. Ambrosetti and P.H. Rabinowitz, 'Dual variational methods in critical point theory and applications', J. Funct. Anal. 14 (1973) 349–381. Listed as §119 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `mountain_pass`. -/
+Source: A. Ambrosetti and P.H. Rabinowitz, 'Dual variational methods in critical point theory and
+applications', J. Funct. Anal. 14 (1973) 349–381. Listed as §119 in O. Knill, *Some Fundamental
+Theorems in Mathematics*
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `mountain_pass`. -/
 public theorem_wanted mountain_pass (f : E → ℝ) (_hf : ContDiff ℝ 1 f) (_hps : PalaisSmale f)
     {a b : E} {ε r : ℝ} (_hmr : MountainRange f a b ε r) :
     ∃ x : E, IsCriticalPoint f x ∧

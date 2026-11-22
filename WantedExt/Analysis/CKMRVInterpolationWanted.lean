@@ -148,7 +148,10 @@ bijection from the radial Schwartz functions on $\mathbb{R}^n$ onto the quadrupl
 decreasing sequences indexed by $k \ge k_0$. So sampling starts at radius $\sqrt 2$ in
 dimension $8$ and at radius $2$ in dimension $24$.
 
-Source: H. Cohn, A. Kumar, S. D. Miller, D. Radchenko, and M. Viazovska, 'Universal optimality of the E8 and Leech lattices and interpolation formulas', Ann. of Math. 196 (2022), 983-1082, Theorem 1.9, https://doi.org/10.4007/annals.2022.196.3.3. Via leanprover/lean-eval@38361be, problem `ckmrv_fourier_interpolation`. -/
+Source: H. Cohn, A. Kumar, S. D. Miller, D. Radchenko, and M. Viazovska, 'Universal optimality of
+the E8 and Leech lattices and interpolation formulas', Ann. of Math. 196 (2022), 983-1082, Theorem
+1.9, https://doi.org/10.4007/annals.2022.196.3.3. Via leanprover/lean-eval@38361be, problem
+`ckmrv_fourier_interpolation`. -/
 public theorem_wanted ckmrv_fourier_interpolation :
     CKMRV 8 1 ∧ CKMRV 24 2
 
