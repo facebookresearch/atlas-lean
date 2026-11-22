@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.InformationTheory.LinearGaussianJointLaw
+public import MathlibExt.LinearAlgebra.Matrix.FischerDeterminant
 public import MathlibExt.InformationTheory.ReferenceOutputKL
 public import MathlibExt.InformationTheory.VectorGaussianKernelKL
 
@@ -26,9 +27,19 @@ positive definite noise covariance. If `X ~ N(0, K)` and `Z ~ N(0, R)` are indep
 `measureMutualInformation_gaussianInput_compProd_noiseKernel`). Both determinants are strictly
 positive (`det_pos_noise_and_output`) and the gain is nonnegative (`log_det_ratio_nonneg`).
 
+Scope: this module evaluates the mutual information at one fixed input covariance `K`; it
+defines no capacity and proves no capacity theorem. The all-law converse
+`measureMutualInformation_linearGaussianChannel_le_iSup`, in
+`MathlibExt.InformationTheory.LinearGaussianAllLawConverse`, bounds the mutual information of
+every input with `E ‖X‖² ≤ P` by the supremum of the same log-det value over positive
+semidefinite `K` with `trace K ≤ P`; the value computed here is what a centered Gaussian input
+with covariance `K` attains. The power constraint for Gaussian inputs, the identification of the
+capacity with that supremum, and its water-filling evaluation are not proved here.
+
 The proof compares the joint law with the input law times the actual output law
-`N(0, H K Hᵀ + R)` (`map_snd_gaussianInput_compProd_noiseKernel`). The closed-form kernel
-divergence `MathlibExt.InformationTheory.VectorGaussianKernelKL.klDiv_compProd_noiseKernel` then
+`N(0, H K Hᵀ + R)` (`map_snd_gaussianInput_compProd_noiseKernel`, which needs only a positive
+semidefinite, possibly singular, noise covariance). The closed-form kernel divergence
+`MathlibExt.InformationTheory.VectorGaussianKernelKL.klDiv_compProd_noiseKernel` then
 collapses to half the log-determinant ratio
 (`klDiv_gaussianInput_compProd_noiseKernel_outputLaw`), so no input density and no limit over a
 support subspace is needed.
@@ -42,7 +53,8 @@ Gaussian channel formula (`measureMutualInformation_gaussianInput_fin_one`). Wit
 definite noise the formula fails: the noiseless channel has infinite mutual information while the
 expression evaluates to `0` (`measureMutualInformation_noiseless_ne_logDet`).
 
-Fading, channel-estimation error, multiuser channels and optimization over `K` are not treated.
+Fading, channel-estimation error, multiuser channels, power constraints and optimization over
+`K` are not treated.
 -/
 
 @[expose] public section
@@ -61,42 +73,6 @@ private theorem map_fst_compProd' {α β : Type*} [MeasurableSpace α] [Measurab
     (μ ⊗ₘ κ).map Prod.fst = μ :=
   Measure.fst_compProd μ κ
 
-private theorem one_le_det_one_add {n : Type*} [Fintype n] [DecidableEq n] {Q : Matrix n n ℝ}
-    (hQ : Q.PosSemidef) : 1 ≤ (1 + Q).det := by
-  have hA : (1 + Q).IsHermitian := (PosSemidef.one.add hQ).1
-  rw [hA.det_eq_prod_eigenvalues]
-  have h : ∀ i, 1 ≤ hA.eigenvalues i := by
-    intro i
-    rw [hA.eigenvalues_eq i]
-    have hq := (posSemidef_iff_dotProduct_mulVec.1 hQ).2 (hA.eigenvectorBasis i)
-    have hn : star ⇑(hA.eigenvectorBasis i) ⬝ᵥ ⇑(hA.eigenvectorBasis i) = 1 := by
-      rw [dotProduct_comm, ← EuclideanSpace.inner_eq_star_dotProduct]
-      simp [hA.eigenvectorBasis.orthonormal.1 i]
-    simp only [add_mulVec, one_mulVec, dotProduct_add, hn, RCLike.re_to_real]
-    linarith
-  simp only [RCLike.ofReal_real_eq_id, id]
-  exact Finset.one_le_prod₀ (fun i _ => h i)
-
-private theorem det_le_det_add {ι κ : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ]
-    (H : Matrix ι κ ℝ) {K : Matrix κ κ ℝ} (hK : K.PosSemidef) {R : Matrix ι ι ℝ}
-    (hR : R.PosDef) : R.det ≤ (R + H * K * Hᵀ).det := by
-  classical
-  have hB : CFC.sqrt K * CFC.sqrt K = K := CFC.sqrt_mul_sqrt_self K hK.nonneg
-  have hBt : (CFC.sqrt K)ᵀ = CFC.sqrt K := by
-    have := (CFC.sqrt_nonneg K).isSelfAdjoint
-    rw [← conjTranspose_eq_transpose_of_trivial]
-    exact this
-  have hP : H * K * Hᵀ = (H * CFC.sqrt K) * (H * CFC.sqrt K)ᵀ := by
-    rw [transpose_mul, hBt]
-    conv_lhs => rw [← hB]
-    simp only [Matrix.mul_assoc]
-  have hQ : ((H * CFC.sqrt K)ᵀ * R⁻¹ * (H * CFC.sqrt K)).PosSemidef := by
-    simpa [conjTranspose_eq_transpose_of_trivial] using
-      hR.inv.posSemidef.conjTranspose_mul_mul_same (H * CFC.sqrt K)
-  rw [hP, det_add_mul _ _ hR.det_pos.ne'.isUnit]
-  calc R.det = R.det * 1 := (mul_one _).symm
-    _ ≤ _ := mul_le_mul_of_nonneg_left (one_le_det_one_add hQ) hR.det_pos.le
-
 /-- Both determinants of the log-det ratio are strictly positive: `det R > 0` and
 `det (R + H K Hᵀ) > 0`, for `K` positive semidefinite and `R` positive definite. -/
 theorem det_pos_noise_and_output {ι κ : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ]
@@ -111,10 +87,15 @@ theorem log_det_ratio_nonneg {ι κ : Type*} [Fintype ι] [DecidableEq ι] [Fint
     (H : Matrix ι κ ℝ) {K : Matrix κ κ ℝ} (hK : K.PosSemidef) {R : Matrix ι ι ℝ}
     (hR : R.PosDef) :
     0 ≤ Real.log ((R + H * K * Hᵀ).det / R.det) := by
-  exact Real.log_nonneg ((one_le_div hR.det_pos).2 (det_le_det_add H hK hR))
+  have hD : (R + H * K * Hᵀ - R).PosSemidef := by
+    rw [add_sub_cancel_left, ← conjTranspose_eq_transpose_of_trivial]
+    exact hK.mul_mul_conjTranspose_same H
+  exact Real.log_nonneg ((one_le_div hR.det_pos).2 (det_le_det_of_posSemidef_le hR.posSemidef hD))
 
-/-- Output law for a positive semidefinite (possibly singular) noise covariance. -/
-private theorem map_snd_compProd_noiseKernel_psd {ι κ : Type*} [Fintype ι] [DecidableEq ι]
+/-- The output law of the Gaussian-input channel: the second marginal of
+`N(0, K) ⊗ₘ noiseKernel` is `N(0, H K Hᵀ + R)`, for `K` and `R` positive semidefinite (both
+possibly singular). -/
+theorem map_snd_gaussianInput_compProd_noiseKernel {ι κ : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype κ] [DecidableEq κ] (H : Matrix ι κ ℝ) {K : Matrix κ κ ℝ} (hK : K.PosSemidef)
     {R : Matrix ι ι ℝ} (hR : R.PosSemidef) :
     (multivariateGaussian 0 K ⊗ₘ MetaMathlibExt.noiseKernel (toEuclideanLin H)
@@ -137,17 +118,6 @@ private theorem map_snd_compProd_noiseKernel_psd {ι κ : Type*} [Fintype ι] [D
   rw [hc, MetaMathlibExt.map_linear_add_of_indepFun (m := 0) (c := 0) measurable_fst
     measurable_snd hind hK hR (by simp) (by simp) H]
   simp
-
-/-- The output law of the Gaussian-input channel: the second marginal of
-`N(0, K) ⊗ₘ noiseKernel` is `N(0, H K Hᵀ + R)`. -/
-theorem map_snd_gaussianInput_compProd_noiseKernel {ι κ : Type*} [Fintype ι] [DecidableEq ι]
-    [Fintype κ] [DecidableEq κ] (H : Matrix ι κ ℝ) {K : Matrix κ κ ℝ} (hK : K.PosSemidef)
-    {R : Matrix ι ι ℝ} (hR : R.PosDef) :
-    (multivariateGaussian 0 K ⊗ₘ MetaMathlibExt.noiseKernel (toEuclideanLin H)
-        (MetaMathlibExt.continuous_toEuclideanLin H).measurable
-        (multivariateGaussian 0 R)).map Prod.snd =
-      multivariateGaussian 0 (H * K * Hᵀ + R) := by
-  exact map_snd_compProd_noiseKernel_psd H hK hR.posSemidef
 
 /-- The kernel divergence against the actual output law: with `Q = N(0, H K Hᵀ + R)`, the
 closed form collapses to `log (det (R + H K Hᵀ) / det R) / 2`, in nats. -/
@@ -185,7 +155,7 @@ theorem measureMutualInformation_gaussianInput_compProd_noiseKernel {ι κ : Typ
       ENNReal.ofReal (Real.log ((R + H * K * Hᵀ).det / R.det) / (2 * Real.log 2)) := by
   unfold measureMutualInformation
   simp only [ProbabilityMeasure.coe_mk]
-  rw [map_fst_compProd', map_snd_gaussianInput_compProd_noiseKernel H hK hR,
+  rw [map_fst_compProd', map_snd_gaussianInput_compProd_noiseKernel H hK hR.posSemidef,
     klDiv_gaussianInput_compProd_noiseKernel_outputLaw H hK hR,
     ← ENNReal.ofReal_div_of_pos (Real.log_pos one_lt_two), div_div]
 
@@ -415,7 +385,7 @@ theorem measureMutualInformation_noiseless_ne_logDet :
     simp [hsing]
   have hfst : J.map Prod.fst = N := map_fst_compProd' _ _
   have hsnd : J.map Prod.snd = N := by
-    rw [map_snd_compProd_noiseKernel_psd _ PosSemidef.one PosSemidef.zero]
+    rw [map_snd_gaussianInput_compProd_noiseKernel _ PosSemidef.one PosSemidef.zero]
     simp [N]
   have hnac : ¬ J ≪ (J.map Prod.fst).prod (J.map Prod.snd) := by
     intro hac
@@ -429,4 +399,3 @@ theorem measureMutualInformation_noiseless_ne_logDet :
   exact ENNReal.top_div_of_ne_top ENNReal.ofReal_ne_top
 
 end MathlibExt.InformationTheory.GaussianChannelLogDet
-
