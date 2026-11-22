@@ -208,8 +208,14 @@ theorem twoWell_depths : IsHajekLocalMin twoWellR twoWellV 2 ∧
     exact hdepth
   exact ⟨hlocal, hdepth, hdStar⟩
 
-/-- Energies of Hajek's Figure 1 landscape (26 states, p. 420 of the 1986
-paper; a transcription of the printed figure). The states are indexed as
+/-- Energies of the Figure 1 landscape in Bruce Hajek, "Optimization by
+simulated annealing: a necessary and sufficient condition for convergence",
+in *Adaptive Statistical Procedures and Related Topics*, IMS Lecture
+Notes--Monograph Series, vol. 8 (1986), pp. 417--427, Figure 1 on p. 420,
+DOI `10.1214/lnms/1215540316` (26 states; a transcription of the printed
+figure). This is the IMS chapter, not Hajek's later journal paper
+"Cooling schedules for optimal annealing", Mathematics of Operations
+Research 13(2) (1988), pp. 311--329. The states are indexed as
 follows: `0`–`6` are the labelled states s1–s7; `7`–`8` are the two
 unlabelled states at height 4; `9`–`12` at height 5; `13`–`18` at height 8;
 `19`–`23` at height 10; `24`–`25` are the two peaks at height 12. -/

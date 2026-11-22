@@ -16,8 +16,12 @@ For a finite state space with energy `V` and symmetric proposal `R`, the
 annealing step at temperature `T` is the Metropolis-Hastings step for the
 Gibbs law (`annealStep_eq_mhStep`), so the Gibbs law is stationary at fixed
 `T` (`bind_annealStep`) and concentrates on the global minima as `T` tends to
-zero (`tendsto_gibbs_globalMinSet`). The depth apparatus of Hajek (1986) is
-developed from height-bounded reachability (`ReachableAt`): strong
+zero (`tendsto_gibbs_globalMinSet`). The depth apparatus follows Bruce
+Hajek, "Optimization by simulated annealing: a necessary and sufficient
+condition for convergence", in *Adaptive Statistical Procedures and Related
+Topics*, IMS Lecture Notes--Monograph Series, vol. 8 (1986), pp. 417--427,
+DOI `10.1214/lnms/1215540316`. It is developed from height-bounded
+reachability (`ReachableAt`): strong
 irreducibility, weak reversibility, local minima, escape depth (`depth`),
 and the critical depth `dStar`. The logarithmic schedules used in
 Hajek's convergence characterization are specified by

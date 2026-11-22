@@ -14,6 +14,13 @@ public import CSLibExt.MachineLearning.Sampling.SimulatedAnnealing
 
 Hajek's theorem characterizes when finite-state simulated annealing with a
 logarithmic cooling schedule converges in probability to the global minima.
+Source: Bruce Hajek, "Optimization by simulated annealing: a necessary and
+sufficient condition for convergence", in *Adaptive Statistical Procedures
+and Related Topics*, IMS Lecture Notes--Monograph Series, vol. 8 (1986),
+pp. 417--427, DOI `10.1214/lnms/1215540316`; see the abstract on p. 417, the
+standing assumptions on p. 419, and the Remarks on p. 423. This is not the
+later journal version, "Cooling schedules for optimal annealing",
+Mathematics of Operations Research 13(2) (1988), pp. 311--329.
 The annealing law, Gibbs facts, depth apparatus and schedule properties used
 in the statement are in
 `CSLibExt.MachineLearning.Sampling.SimulatedAnnealing`; the
@@ -28,7 +35,8 @@ namespace Cslib.MachineLearning.Sampling.SimulatedAnnealing
 
 open Filter Topology
 
-/-- **Hajek's theorem**: for a strongly irreducible, weakly reversible finite
+/-- **Hajek's theorem** (IMS Lecture Notes--Monograph Series, vol. 8 (1986),
+pp. 417, 419, 423): for a strongly irreducible, weakly reversible finite
 landscape, simulated annealing from `x₀` under the logarithmic schedule
 `T k = c / log (k + 1)` converges in probability to the global minima iff
 `dStar R V ≤ c`, for `0 < c`. -/
