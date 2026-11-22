@@ -47,49 +47,62 @@ set_option autoImplicit false
 
 namespace MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330Wanted
 
-/-- `S_k(n) = 1^k + ⋯ + n^k`, as a rational number. -/
+/-- **Power sums.** For natural numbers $k$ and $n$, the power sum $S_k(n)$ is the rational
+number $\sum_{i=1}^{n} i^k = 1^k + 2^k + \cdots + n^k$, which is $0$ when $n = 0$. -/
 def powerSum (k n : ℕ) : ℚ :=
   ∑ i ∈ Finset.Icc 1 n, (i : ℚ) ^ k
 
-/-- `R(k, m) = Σ_{j=0}^m (-1)^j C(2m, j) (m - j)^{2k}`. -/
+/-- **The array $R(k, m)$.** For natural numbers $k$ and $m$, $R(k, m)$ is the integer
+$\sum_{j=0}^{m} (-1)^j \binom{2m}{j} (m - j)^{2k}$. -/
 def arrayR (k m : ℕ) : ℤ :=
   ∑ j ∈ Finset.range (m + 1),
     (-1 : ℤ) ^ j * (Nat.choose (2 * m) j : ℤ) * ((m : ℤ) - j) ^ (2 * k)
 
-/-- `U(k, m) = (2/(2m)!) Σ_{j=0}^m (-1)^j C(2m, j) (m - j)^{2k}`. -/
+/-- **The array $U(k, m)$.** For natural numbers $k$ and $m$, $U(k, m)$ is the rational number
+$\frac{2}{(2m)!} \sum_{j=0}^{m} (-1)^j \binom{2m}{j} (m - j)^{2k}$. -/
 def arrayU (k m : ℕ) : ℚ :=
   (2 / (Nat.factorial (2 * m) : ℚ)) *
     ∑ j ∈ Finset.range (m + 1),
       (-1 : ℚ) ^ j * (Nat.choose (2 * m) j : ℚ) * ((m : ℚ) - j) ^ (2 * k)
 
-/-- The Faulhaber coefficient
-`b_{k,r} = Σ_{m=r}^k (3·2^r/(2m+1)!)·R(k, m)·Ps_m^{(r)}` of
-Proposition 12. -/
+/-- **The Faulhaber coefficients $b_{k,r}$.** For natural numbers $p$ and $q$, let
+$R(p, q) = \sum_{j=0}^{q} (-1)^j \binom{2q}{j} (q - j)^{2p}$, and for natural numbers $q$
+and $s$ let $\mathrm{Ps}_q^{(s)}$ be the Legendre–Stirling number of the first kind, the
+coefficient of $x^s$ in $\prod_{i=0}^{q-1} (x - i(i+1))$. For natural numbers $k$ and $r$,
+$b_{k,r}$ is the rational number
+$\sum_{m=r}^{k} \frac{3 \cdot 2^r}{(2m+1)!}\, R(k, m)\, \mathrm{Ps}_m^{(r)}$. -/
 noncomputable def faulhaberB (k r : ℕ) : ℚ :=
   ∑ m ∈ Finset.Icc r k,
     (3 * 2 ^ r / (Nat.factorial (2 * m + 1) : ℚ)) *
       (arrayR k m : ℚ) * (MetaMathlibExt.legendreStirlingFirst m r : ℚ)
 
-/-- The Faulhaber coefficient
-`c_{k,r} = Σ_{m=r}^k (2^{r+1}/((2m+2)!(m+1)))·R(k+1, m+1)·Ps_{m+1}^{(r+1)}`
-of Proposition 12. -/
+/-- **The Faulhaber coefficients $c_{k,r}$.** For natural numbers $p$ and $q$, let
+$R(p, q) = \sum_{j=0}^{q} (-1)^j \binom{2q}{j} (q - j)^{2p}$, and for natural numbers $q$
+and $s$ let $\mathrm{Ps}_q^{(s)}$ be the Legendre–Stirling number of the first kind, the
+coefficient of $x^s$ in $\prod_{i=0}^{q-1} (x - i(i+1))$. For natural numbers $k$ and $r$,
+$c_{k,r}$ is the rational number
+$\sum_{m=r}^{k} \frac{2^{r+1}}{(2m+2)!\,(m+1)}\, R(k+1, m+1)\, \mathrm{Ps}_{m+1}^{(r+1)}$. -/
 noncomputable def faulhaberC (k r : ℕ) : ℚ :=
   ∑ m ∈ Finset.Icc r k,
     (2 ^ (r + 1) / ((Nat.factorial (2 * m + 2) : ℚ) * (m + 1))) *
       (arrayR (k + 1) (m + 1) : ℚ) * (MetaMathlibExt.legendreStirlingFirst (m + 1) (r + 1) : ℚ)
 
-/-- The polynomial values `Q_{k,m}(n)` of Theorem 10:
-`n^{2k-1}` for `m = 1`, and
-`2·Σ_{j=m}^k C(2k-1, 2j-2)·R(j-1, m-1)·n^{2k-2j+1}` for
-`m ≥ 2`, evaluated at `n`. -/
+/-- **The polynomials $Q_{k,m}$ of Theorem 10.** For natural numbers $k$, $m$ and $n$, write
+$R(a, b) = \sum_{i=0}^{b} (-1)^i \binom{2b}{i} (b - i)^{2a}$ for the array of OEIS A304330.
+The rational number $Q_{k,m}(n)$ is $n^{2k-1}$ if $m = 1$, and otherwise
+$$Q_{k,m}(n) = 2 \sum_{j=m}^{k} \binom{2k-1}{2j-2} R(j-1, m-1) \, n^{2k-2j+1}.$$
+
+Differences of natural numbers such as $2k - 1$ and $m - 1$ are truncated at $0$. -/
 def thmQ (k m n : ℕ) : ℚ :=
   if m = 1 then (n : ℚ) ^ (2 * k - 1)
   else 2 * ∑ j ∈ Finset.Icc m k,
     (Nat.choose (2 * k - 1) (2 * j - 2) : ℚ) *
       (arrayR (j - 1) (m - 1) : ℚ) * (n : ℚ) ^ (2 * k - 2 * j + 1)
 
-/-- **Theorem 1**: `2^{2k} S_{2k}(n) =
-Σ_{m=1}^k R(k, m)·C(2n + m + 1, 2m + 1)` for `k ≥ 1`.
+/-- **Even power sums in terms of $\binom{2n+m+1}{2m+1}$.** For natural numbers $k \ge 1$ and
+$n$, write $S_{2k}(n) = 1^{2k} + 2^{2k} + \dots + n^{2k}$ and
+$R(k, m) = \sum_{j=0}^{m} (-1)^j \binom{2m}{j} (m - j)^{2k}$. Then
+$2^{2k} S_{2k}(n) = \sum_{m=1}^{k} R(k, m) \binom{2n+m+1}{2m+1}$.
 
 Source: José L. Cereceda, "Sums of Powers of Integers and the
 Sequence A304330", Theorem 1. -/
@@ -100,12 +113,12 @@ theorem_wanted pow_mul_powerSum_even_eq_sum (k : ℕ) (hk : 1 ≤ k)
         (arrayR k m : ℚ) *
           (Nat.choose (2 * n + m + 1) (2 * m + 1) : ℚ)
 
-/-- **Proposition 2 (Knuth, 1993)**: for real coefficients
-`a_m`, the identity
-`S_{2k}(n)/(2n + 1) = Σ_{m=1}^k a_m·C(n + m, 2m)` (for all `n`)
-holds if and only if
-`S_{2k-1}(n) = Σ_{m=1}^k ((2m + 1)/m)·a_m·C(n + m, 2m)`
-(for all `n`).
+/-- **Knuth's correspondence between even and odd power sums.** Let $k \ge 1$ be a natural
+number, let $(a_m)_{m \ge 0}$ be a sequence of real numbers, and write
+$S_j(n) = 1^j + 2^j + \dots + n^j$. Then
+$\frac{S_{2k}(n)}{2n+1} = \sum_{m=1}^{k} a_m \binom{n+m}{2m}$ for every natural number $n$
+if and only if $S_{2k-1}(n) = \sum_{m=1}^{k} \frac{2m+1}{m}\, a_m \binom{n+m}{2m}$ for every
+natural number $n$.
 
 Source: José L. Cereceda, "Sums of Powers of Integers and the
 Sequence A304330", Proposition 2. -/
@@ -119,9 +132,10 @@ theorem_wanted powerSum_even_div_iff_odd (k : ℕ) (hk : 1 ≤ k)
         ((2 * (m : ℝ) + 1) / (m : ℝ)) * a m *
           (Nat.choose (n + m) (2 * m) : ℝ))
 
-/-- **Proposition 3 (Knuth, 1993), even case**:
-`S_{2k}(n) = Σ_{m=1}^k R(k, m)·((2n + 1)/(2m + 1))·C(n + m, 2m)`
-for `k ≥ 1`.
+/-- **Knuth's formula for even power sums.** For natural numbers $k \ge 1$ and $n$, write
+$S_{2k}(n) = 1^{2k} + 2^{2k} + \dots + n^{2k}$ and
+$R(k, m) = \sum_{j=0}^{m} (-1)^j \binom{2m}{j} (m - j)^{2k}$. Then
+$S_{2k}(n) = \sum_{m=1}^{k} R(k, m)\, \frac{2n+1}{2m+1} \binom{n+m}{2m}$.
 
 Source: José L. Cereceda, "Sums of Powers of Integers and the
 Sequence A304330", Proposition 3. -/
@@ -131,8 +145,10 @@ theorem_wanted powerSum_even_eq_sum (k : ℕ) (hk : 1 ≤ k) (n : ℕ) :
         (arrayR k m : ℚ) * ((2 * (n : ℚ) + 1) / (2 * (m : ℚ) + 1)) *
           (Nat.choose (n + m) (2 * m) : ℚ)
 
-/-- **Proposition 3 (Knuth, 1993), odd case**:
-`S_{2k-1}(n) = Σ_{m=1}^k R(k, m)·(1/m)·C(n + m, 2m)` for `k ≥ 1`.
+/-- **Knuth's binomial formula for the odd power sums.** For all natural numbers $k \ge 1$ and
+$n$, the power sum $S_{2k-1}(n) = 1^{2k-1} + 2^{2k-1} + \cdots + n^{2k-1}$ satisfies
+$$S_{2k-1}(n) = \sum_{m=1}^{k} R(k, m) \cdot \frac{1}{m} \binom{n + m}{2m},$$
+where $R(k, m) = \sum_{j=0}^{m} (-1)^j \binom{2m}{j} (m - j)^{2k}$ is the array of OEIS A304330.
 
 Source: José L. Cereceda, "Sums of Powers of Integers and the
 Sequence A304330", Proposition 3. -/
@@ -142,8 +158,8 @@ theorem_wanted powerSum_odd_eq_sum (k : ℕ) (hk : 1 ≤ k) (n : ℕ) :
         (arrayR k m : ℚ) * (1 / (m : ℚ)) *
           (Nat.choose (n + m) (2 * m) : ℚ)
 
-/-- **Lemma 4**: `Σ_{i=1}^n (2i)·C(2i + k - 1, 2k - 1) =
-k·C(2n + k + 1, 2k + 1)` for `n ≥ 1` and fixed positive `k`.
+/-- **Sum of $2i \binom{2i+k-1}{2k-1}$.** For all natural numbers $k \ge 1$ and $n \ge 1$,
+$$\sum_{i=1}^{n} 2i \binom{2i + k - 1}{2k - 1} = k \binom{2n + k + 1}{2k + 1}.$$
 
 Source: José L. Cereceda, "Sums of Powers of Integers and the
 Sequence A304330", Lemma 4. -/
@@ -153,9 +169,13 @@ theorem_wanted sum_two_mul_choose_eq (k n : ℕ) (hk : 1 ≤ k)
       (2 * i) * Nat.choose (2 * i + k - 1) (2 * k - 1)) =
       k * Nat.choose (2 * n + k + 1) (2 * k + 1)
 
-/-- **Lemma 5 (Butzer et al., Proposition 2.3)**: the inversion
-formula `a_k = Σ_{m=1}^k u(k, m)·b_m ⟺
-b_k = Σ_{m=1}^k U(k, m)·a_m` for real sequences.
+/-- **Inversion formula for the arrays $u(k, m)$ and $U(k, m)$ (Butzer et al.).** For natural
+numbers $k$ and $m$, let $u(k, m)$ be the first-kind Jacobi–Stirling number $J(k, m; 0)$, the
+coefficient of $x^m$ in $\prod_{i=0}^{k-1} (x - i^2)$, and let
+$U(k, m) = \frac{2}{(2m)!} \sum_{j=0}^{m} (-1)^j \binom{2m}{j} (m - j)^{2k}$. For all sequences
+$(a_k)_{k \ge 0}$ and $(b_k)_{k \ge 0}$ of real numbers, $a_k = \sum_{m=1}^{k} u(k, m)\, b_m$
+holds for every $k \ge 1$ if and only if $b_k = \sum_{m=1}^{k} U(k, m)\, a_m$ holds for every
+$k \ge 1$.
 
 Source: José L. Cereceda, "Sums of Powers of Integers and the
 Sequence A304330", Lemma 5. -/
@@ -165,12 +185,12 @@ theorem_wanted inversion_uU (a b : ℕ → ℝ) :
     (∀ k : ℕ, 1 ≤ k → b k =
       ∑ m ∈ Finset.Icc 1 k, (arrayU k m : ℝ) * a m)
 
-/-- **Corollary 6**: for `1 ≤ m ≤ k`,
-`R(k, m) = 2^{2k+m-1}·m!·Σ (2k)!/(b_1!⋯b_k!)·∏_{r=1}^k
-(1/(4^r (2r)!))^{b_r}`, summed over the `k`-tuples
-`b : Fin k → ℕ` with `Σ (r+1)·b_r = k` and `Σ b_r = m`
-(the entry bounds `b_r ≤ k` are automatic from the weighted
-sum).
+/-- **Closed form for the array $R(k, m)$.** Let $k$ and $m$ be natural numbers with
+$1 \le m \le k$, and let $R(k, m) = \sum_{j=0}^{m} (-1)^j \binom{2m}{j} (m - j)^{2k}$. Then
+$$R(k, m) = 2^{2k+m-1}\, m! \sum_{b} \frac{(2k)!}{b_1! \cdots b_k!}
+\prod_{r=1}^{k} \left(\frac{1}{4^r (2r)!}\right)^{b_r},$$
+where the sum runs over all $k$-tuples $b = (b_1, \dots, b_k)$ of natural numbers with
+$b_1 + 2 b_2 + \dots + k b_k = k$ and $b_1 + \dots + b_k = m$ (each such $b_r$ is at most $k$).
 
 Source: José L. Cereceda, "Sums of Powers of Integers and the
 Sequence A304330", Corollary 6. -/
@@ -188,9 +208,8 @@ theorem_wanted arrayR_eq_closedForm (k m : ℕ) (hm1 : 1 ≤ m)
               (1 / ((4 : ℚ) ^ (r.val + 1) *
                 (Nat.factorial (2 * (r.val + 1)) : ℚ))) ^ ((b r).val)
 
-/-- **Lemma 7**: `Σ_{i=1}^n i·C(i + k - 1, 2k - 1) =
-(k(2n + 1)/(2k + 1))·C(n + k, 2k)` for `n ≥ 1` and fixed
-positive `k`.
+/-- **Sum of $i \binom{i+k-1}{2k-1}$.** For all natural numbers $k \ge 1$ and $n \ge 1$,
+$$\sum_{i=1}^{n} i \binom{i + k - 1}{2k - 1} = \frac{k(2n + 1)}{2k + 1} \binom{n + k}{2k}.$$
 
 Source: José L. Cereceda, "Sums of Powers of Integers and the
 Sequence A304330", Lemma 7. -/
@@ -201,9 +220,11 @@ theorem_wanted sum_mul_choose_eq (k n : ℕ) (hk : 1 ≤ k)
       ((k : ℚ) * (2 * (n : ℚ) + 1) / (2 * (k : ℚ) + 1)) *
         (Nat.choose (n + k) (2 * k) : ℚ)
 
-/-- **Theorem 10**: `2^{2k-1} S_{2k-1}(n) =
-Σ_{m=1}^k Q_{k,m}(n)·C(n + m, 2m - 1)` for `k ≥ 1`, with
-`Q_{k,m}` as in `thmQ`.
+/-- **Odd power sums in terms of $\binom{n+m}{2m-1}$.** For natural numbers $k \ge 1$ and $n$,
+write $S_{2k-1}(n) = 1^{2k-1} + 2^{2k-1} + \dots + n^{2k-1}$, let
+$R(p, q) = \sum_{j=0}^{q} (-1)^j \binom{2q}{j} (q - j)^{2p}$, and let $Q_{k,1}(n) = n^{2k-1}$ and
+$Q_{k,m}(n) = 2 \sum_{j=m}^{k} \binom{2k-1}{2j-2} R(j-1, m-1)\, n^{2k-2j+1}$ for $m \ge 2$. Then
+$2^{2k-1} S_{2k-1}(n) = \sum_{m=1}^{k} Q_{k,m}(n) \binom{n+m}{2m-1}$.
 
 Source: José L. Cereceda, "Sums of Powers of Integers and the
 Sequence A304330", Theorem 10. -/
@@ -213,9 +234,10 @@ theorem_wanted pow_mul_powerSum_odd_eq_sum (k : ℕ) (hk : 1 ≤ k)
       ∑ m ∈ Finset.Icc 1 k,
         thmQ k m n * (Nat.choose (n + m) (2 * m - 1) : ℚ)
 
-/-- **Proposition 12, even case**: the Faulhaber form
-`S_{2k}(n) = S_2(n)·Σ_{r=1}^k b_{k,r}·S_1(n)^{r-1}` with
-`b_{k,r}` as in `faulhaberB`, for `k ≥ 1`.
+/-- **Faulhaber form of the even power sums.** For all natural numbers $k \ge 1$ and $n$,
+writing $S_j(n) = 1^j + 2^j + \cdots + n^j$ for the power sums and $b_{k,r}$ for the Faulhaber
+coefficients of Proposition 12, the rational numbers satisfy
+$S_{2k}(n) = S_2(n) \sum_{r=1}^{k} b_{k,r} \, S_1(n)^{r-1}$.
 
 Source: José L. Cereceda, "Sums of Powers of Integers and the
 Sequence A304330", Proposition 12. -/
@@ -225,9 +247,10 @@ theorem_wanted powerSum_even_faulhaber (k : ℕ) (hk : 1 ≤ k)
       powerSum 2 n * ∑ r ∈ Finset.Icc 1 k,
         faulhaberB k r * (powerSum 1 n) ^ (r - 1)
 
-/-- **Proposition 12, odd case**: the Faulhaber form
-`S_{2k+1}(n) = S_1(n)^2·Σ_{r=1}^k c_{k,r}·S_1(n)^{r-1}` with
-`c_{k,r}` as in `faulhaberC`, for `k ≥ 1`.
+/-- **Faulhaber form of the odd power sums.** For all natural numbers $k \ge 1$ and $n$,
+writing $S_j(n) = 1^j + 2^j + \cdots + n^j$ for the power sums and $c_{k,r}$ for the Faulhaber
+coefficients of Proposition 12, the rational numbers satisfy
+$S_{2k+1}(n) = S_1(n)^2 \sum_{r=1}^{k} c_{k,r} \, S_1(n)^{r-1}$.
 
 Source: José L. Cereceda, "Sums of Powers of Integers and the
 Sequence A304330", Proposition 12. -/
@@ -237,8 +260,9 @@ theorem_wanted powerSum_odd_faulhaber (k : ℕ) (hk : 1 ≤ k)
       (powerSum 1 n) ^ 2 * ∑ r ∈ Finset.Icc 1 k,
         faulhaberC k r * (powerSum 1 n) ^ (r - 1)
 
-/-- **Proposition 15**:
-`Σ_{m=1}^k (-1)^m·((m-1)!)^2/(2m)!·R(k, m) = 0` for `k ≥ 2`.
+/-- **Vanishing alternating sum of the A304330 array.** For every natural number $k \ge 2$,
+$$\sum_{m=1}^{k} (-1)^m \frac{((m-1)!)^2}{(2m)!} R(k, m) = 0,$$
+where $R(k, m) = \sum_{j=0}^{m} (-1)^j \binom{2m}{j} (m - j)^{2k}$ is the array of OEIS A304330.
 
 Source: José L. Cereceda, "Sums of Powers of Integers and the
 Sequence A304330", Proposition 15. -/

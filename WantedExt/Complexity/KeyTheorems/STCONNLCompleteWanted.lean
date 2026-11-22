@@ -41,7 +41,12 @@ shared file.
 -/
 
 open Classical in
-/-- Directed `s-t` connectivity as a decision problem over bitstrings. -/
+/-- **Directed $s$-$t$ connectivity.** The decision problem of directed $s$-$t$ connectivity
+accepts a bitstring $x$ exactly when decoding $x$ with the canonical bitstring encoding of
+tuples $(n, E, s, t)$, where $n$, $s$ and $t$ are natural numbers and $E$ is a list of pairs of
+natural numbers, succeeds and gives a tuple such that $s < n$, $t < n$, and there are pairwise
+distinct natural numbers $v_0, \dots, v_k$, all less than $n$, with $v_0 = s$, $v_k = t$ and
+$(v_j, v_{j+1}) \in E$ for every $j < k$. Bitstrings that do not decode are rejected. -/
 noncomputable def stconDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -55,7 +60,10 @@ noncomputable def stconDec :
         (path.getD j 0, path.getD (j + 1) 0) ∈ i.2.1)
   | none => false
 
-/-- **ST-connectivity is NL-complete.** Source: S. A. Cook, "A hierarchy for nondeterministic
+/-- **ST-connectivity is NL-complete.** Directed $s$-$t$ connectivity is in NL, and every
+decision problem in NL is log-space many-one reducible to directed $s$-$t$ connectivity.
+
+Source: S. A. Cook, "A hierarchy for nondeterministic
 time complexity" (1973) and the standard NL-completeness of directed reachability; see S.
 Arora and B. Barak, Computational Complexity: A Modern Approach, 2009, Chapter 4, and C.
 H. Papadimitriou, Computational Complexity, 1994, Theorem 7.3. -/
