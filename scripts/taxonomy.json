@@ -11449,6 +11449,7 @@
   "MathlibExt/NumberTheory/Sequences/GeneralizedEuclidSequence": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Generalized Euclid sequences"},
   "MathlibExt/NumberTheory/Sequences/PolynomiallyRecursiveMCFinite": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "MC-finite sequences"},
   "MathlibExt/NumberTheory/SimsekNumber": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "Simsek numbers"},
+  "MathlibExt/NumberTheory/SlHurwitzNumbers": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "Class number congruences for imaginary quadratic fields"},
   "MathlibExt/NumberTheory/SocialistPrime": {"to": "NumberTheory/primes-primality/special-primes", "title": "Socialist primes"},
   "MathlibExt/NumberTheory/SophieGermain": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Sophie Germain's theorem"},
   "MathlibExt/NumberTheory/SophieGermainPrime": {"to": "NumberTheory/primes-primality/special-primes", "title": "Sophie Germain primes"},
