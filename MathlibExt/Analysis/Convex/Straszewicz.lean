@@ -43,8 +43,9 @@ open Set Metric Filter TopologicalSpace
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
 
-/-- **Convex hull of a compact set is compact.** Let $E$ be a finite-dimensional real normed
-space. If $K \subseteq E$ is compact, then the convex hull of $K$ is compact. -/
+/-- **In finite dimensions, the convex hull of a compact set is compact.** Let $E$ be a
+finite-dimensional real normed space. If $K \subseteq E$ is compact, then the convex hull of $K$ is
+compact. -/
 theorem IsCompact.convexHull_of_compact {K : Set E} (hK : IsCompact K) :
     IsCompact (convexHull ℝ K) := by
   rcases K.eq_empty_or_nonempty with rfl | ⟨p₀, hp₀⟩
@@ -233,9 +234,9 @@ theorem convexOn_line (hconv : ConvexOn ℝ univ h) (v : StrongDual ℝ E) :
   exact hconv.2 (mem_univ _) (mem_univ _) ha hb hab
 
 omit [FiniteDimensional ℝ E] in
-/-- **Difference quotients of a convex function are bounded below.** Let $E$ be a real normed
-space, $E^*$ its continuous dual, and $h : E^* \to \mathbb{R}$ a convex function. For all
-$x, v \in E^*$, the set of difference quotients $\{(h(x + t v) - h(x))/t : t > 0\}$ is bounded
+/-- **Forward difference quotients of a convex function at a point are bounded below.** Let $E$ be a
+real normed space, $E^*$ its continuous dual, and $h : E^* \to \mathbb{R}$ a convex function. For
+all $x, v \in E^*$, the set of difference quotients $\{(h(x + t v) - h(x))/t : t > 0\}$ is bounded
 below.
 
 The bound comes from comparing slopes of $h$ on the line through $x$ in direction $v$. -/
@@ -271,9 +272,9 @@ theorem dirDeriv_le_quot (hconv : ConvexOn ℝ univ h) (v : StrongDual ℝ E)
   csInf_le (dirQuot_bddBelow hconv v) ⟨t, ht, rfl⟩
 
 omit [FiniteDimensional ℝ E] in
-/-- **Subadditivity of the directional derivative.** Let $E$ be a real normed space with
-continuous dual $E^*$, let $h : E^* \to \mathbb{R}$ be convex, and write $h'(x; v)$ for the
-directional derivative of $h$ at $x$ in direction $v$. For all $x, v, w \in E^*$,
+/-- **Subadditivity of the directional derivative of a convex function.** Let $E$ be a real normed
+space with continuous dual $E^*$, let $h : E^* \to \mathbb{R}$ be convex, and write $h'(x; v)$ for
+the directional derivative of $h$ at $x$ in direction $v$. For all $x, v, w \in E^*$,
 $h'(x; v + w) \le h'(x; v) + h'(x; w)$. -/
 theorem dirDeriv_subadd (hconv : ConvexOn ℝ univ h) (v w : StrongDual ℝ E) :
     dirDeriv h x (v + w) ≤ dirDeriv h x v + dirDeriv h x w := by
@@ -369,9 +370,9 @@ theorem dirDeriv_zero : dirDeriv h x 0 = 0 := by
   exact le_antisymm hle hge
 
 omit [FiniteDimensional ℝ E] in
-/-- **Opposite directional derivatives have nonnegative sum.** Let $E$ be a real normed space
-with continuous dual $E^*$, let $h : E^* \to \mathbb{R}$ be convex, and write $h'(x; v)$ for the
-directional derivative of $h$ at $x$ in direction $v$. For all $x, v \in E^*$,
+/-- **Opposite directional derivatives of a convex function have nonnegative sum.** Let $E$ be a
+real normed space with continuous dual $E^*$, let $h : E^* \to \mathbb{R}$ be convex, and write
+$h'(x; v)$ for the directional derivative of $h$ at $x$ in direction $v$. For all $x, v \in E^*$,
 $h'(x; v) + h'(x; -v) \ge 0$. -/
 theorem dirDeriv_add_neg_nonneg (hconv : ConvexOn ℝ univ h) (v : StrongDual ℝ E) :
     0 ≤ dirDeriv h x v + dirDeriv h x (-v) := by
@@ -395,9 +396,9 @@ noncomputable def suppFunc (K : Set E) : StrongDual ℝ E → ℝ :=
   fun l => sSup ((fun x => l x) '' K)
 
 omit [FiniteDimensional ℝ E] in
-/-- **The support function of a compact set is attained.** Let $K$ be a nonempty compact subset
-of a real normed space $E$, and let $h_K(l) = \sup_{x \in K} l(x)$ be its support function on the
-continuous dual $E^*$. For every $l \in E^*$ there is $x \in K$ with $l(x) = h_K(l)$. -/
+/-- **The support function of a nonempty compact set is attained.** Let $K$ be a nonempty compact
+subset of a real normed space $E$, and let $h_K(l) = \sup_{x \in K} l(x)$ be its support function on
+the continuous dual $E^*$. For every $l \in E^*$ there is $x \in K$ with $l(x) = h_K(l)$. -/
 theorem suppFunc_attain (hK : IsCompact K) (hKne : K.Nonempty) (l : StrongDual ℝ E) :
     ∃ x ∈ K, l x = suppFunc K l := by
   have hcont : Continuous (fun x => l x) := (l : E →L[ℝ] ℝ).continuous
@@ -501,10 +502,10 @@ def GateauxPt (h : StrongDual ℝ E → ℝ) (x : StrongDual ℝ E) : Prop :=
   ∀ v, dirDeriv h x v + dirDeriv h x (-v) ≤ 0
 
 omit [FiniteDimensional ℝ E] in
-/-- **Strict sublevel sets of the symmetrized directional derivative are open.** Let $E$ be a
-real normed space with continuous dual $E^*$, let $K \subseteq E$ be a nonempty compact set with
-support function $h_K$, and write $h_K'(x; v)$ for the directional derivative of $h_K$ at $x$ in
-direction $v$. For every $v \in E^*$ and every real $c$, the set of $x \in E^*$ with
+/-- **Strict sublevel sets of the symmetrized directional derivative of a support function are
+open.** Let $E$ be a real normed space with continuous dual $E^*$, let $K \subseteq E$ be a nonempty
+compact set with support function $h_K$, and write $h_K'(x; v)$ for the directional derivative of
+$h_K$ at $x$ in direction $v$. For every $v \in E^*$ and every real $c$, the set of $x \in E^*$ with
 $h_K'(x; v) + h_K'(x; -v) < c$ is open. -/
 theorem dirDeriv_sublevel_open (hK : IsCompact K) (hKne : K.Nonempty)
     (v : StrongDual ℝ E) (c : ℝ) :

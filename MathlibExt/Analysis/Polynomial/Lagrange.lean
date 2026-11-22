@@ -47,9 +47,9 @@ Lagrange basis polynomial for these nodes. -/
 noncomputable def evalInterpolant (f : ℝ → ℝ) (t : ℝ) : ℝ :=
   ∑ k : Fin n, f (x k) * Lagrange.evalBasis x k t
 
-/-- **Lagrange basis polynomials equal one at their own node.** If the real nodes
-$x_0, \dots, x_{n-1}$ are pairwise distinct, then $\ell_k(x_k) = 1$ for every $k < n$, where
-$\ell_k$ is the $k$-th evaluated Lagrange basis polynomial for these nodes. -/
+/-- **For pairwise distinct nodes, Lagrange basis polynomials equal one at their own node.** If the
+real nodes $x_0, \dots, x_{n-1}$ are pairwise distinct, then $\ell_k(x_k) = 1$ for every $k < n$,
+where $\ell_k$ is the $k$-th evaluated Lagrange basis polynomial for these nodes. -/
 theorem evalBasis_self (hx : Function.Injective x) (k : Fin n) :
     Lagrange.evalBasis x k (x k) = 1 := by
   unfold Lagrange.evalBasis
@@ -68,10 +68,10 @@ theorem evalBasis_of_ne {k j : Fin n} (hkj : k ≠ j) :
   unfold Lagrange.evalBasis
   exact Lagrange.eval_basis_of_ne hkj (Finset.mem_univ j)
 
-/-- **The Lagrange interpolant matches the function at the nodes.** If the real nodes
-$x_0, \dots, x_{n-1}$ are pairwise distinct, then for every function $f : \mathbb{R} \to \mathbb{R}$
-and every $j < n$, the Lagrange interpolant of $f$ on these nodes satisfies
-$\mathcal{L}^n f(x_j) = f(x_j)$. -/
+/-- **For pairwise distinct nodes, the Lagrange interpolant matches the function at the nodes.** If
+the real nodes $x_0, \dots, x_{n-1}$ are pairwise distinct, then for every function
+$f : \mathbb{R} \to \mathbb{R}$ and every $j < n$, the Lagrange interpolant of $f$ on these nodes
+satisfies $\mathcal{L}^n f(x_j) = f(x_j)$. -/
 theorem evalInterpolant_at_node (hx : Function.Injective x) (f : ℝ → ℝ) (j : Fin n) :
     Lagrange.evalInterpolant x f (x j) = f (x j) := by
   classical
@@ -84,8 +84,9 @@ theorem evalInterpolant_at_node (hx : Function.Injective x) (f : ℝ → ℝ) (j
     simp
   · simp
 
-/-- **The Lebesgue function equals one at the nodes.** If the real nodes $x_0, \dots, x_{n-1}$
-are pairwise distinct, then their Lebesgue function satisfies $L_n(x_j) = 1$ for every $j < n$. -/
+/-- **For pairwise distinct nodes, the Lebesgue function equals one at the nodes.** If the real
+nodes $x_0, \dots, x_{n-1}$ are pairwise distinct, then their Lebesgue function satisfies
+$L_n(x_j) = 1$ for every $j < n$. -/
 theorem lebesgueFunction_at_node (hx : Function.Injective x) (j : Fin n) :
     Lagrange.lebesgueFunction x (x j) = 1 := by
   classical
