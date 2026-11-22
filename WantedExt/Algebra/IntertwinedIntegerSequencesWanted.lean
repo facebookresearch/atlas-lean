@@ -22,6 +22,7 @@ public import Mathlib.RingTheory.PowerSeries.Exp
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import Mathlib.Algebra.MonoidAlgebra.Defs
+public import MathlibExt.Algebra.Polynomial.ChebyshevCPositivity
 
 /-!
 # Pairs of intertwined integer sequences (Kassel–Reutenauer)
@@ -41,6 +42,10 @@ Notation used throughout:
   `aeval (T 1 + T (-1)) (kasselReutenauerPoly n)` and, by the paper's relation
   `C_n(q) / q^n = q⁻¹ (q - 1)² P_n(q) / q^{n-1}`, the Laurent polynomial
   `C_n(q) / q^n` is `(T 1 - 2 + T (-1)) * aeval (T 1 + T (-1)) (kasselReutenauerPoly n)`.
+
+Proposition 3.1, the positivity of `T̄_k(x)` for real `x ≥ 2`
+(`chebyshevC_eval_pos_of_two_le`), is proved in
+`MathlibExt.Algebra.Polynomial.ChebyshevCPositivity`.
 -/
 
 open Polynomial
@@ -225,15 +230,6 @@ public theorem_wanted kasselReutenauerPoly_abs_eval_multiplicative_iff (N : ℤ)
         |(kasselReutenauerPoly (m * n)).eval N| =
           |(kasselReutenauerPoly m).eval N| * |(kasselReutenauerPoly n).eval N|) ↔
       N = -2 ∨ N = -1 ∨ N = 0 ∨ N = 2
-
-/-- Positivity of the monic Chebyshev polynomials: `T̄_k(x) > 0` for every
-`k ≥ 0` and every real `x ≥ 2`.
-
-Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
-Journal of Integer Sequences 29 (2026), Article 26.4.4, Proposition 3.1
-(`jis-2026-26.4.4-prop-6`). -/
-public theorem_wanted chebyshevC_eval_pos_of_two_le (k : ℕ) (x : ℝ) (hx : 2 ≤ x) :
-    0 < (Chebyshev.C ℝ k).eval x
 
 /-- Trace formula: `T̄_k(X) = tr(M^k)` for the companion matrix
 `M = !![X, -1; 1, 0]` and all `k ≥ 0`.
