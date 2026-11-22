@@ -13,7 +13,6 @@ public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Logic.Function.Basic
 public import MathlibExt.Analysis.Convex.StdSimplexWeights
-public import MathlibExt.GameTheory.CorrelatedEquilibrium
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
@@ -24,8 +23,10 @@ import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
 This file is the canonical regret vocabulary for online learning in games. It has
 two layers. The base layer is game-free: a finite action type `K`, loss vectors
 over a horizon `T`, played distributions, and external, swap, and average regret.
-The game layer induces a player's loss vector from the opponents' mixed play in
-a finite normal-form cost game.
+The game layer, which induces a player's loss vector from the opponents' mixed
+play in a finite normal-form cost game, lives in
+`MathlibExt/GameTheory/RegretInducedLoss.lean`, so this base module stays
+below the equilibrium modules.
 
 ## Main results
 
@@ -44,11 +45,7 @@ Base lemmas (C2):
 * `externalRegret_le_swapRegret`
 * `externalRegret_add_roundConst`
 
-Game layer (C3):
-
-* `inducedLoss`: expected cost of an action against mixed opponents.
-* `inducedLoss_nonneg`
-* `inducedLoss_le_one`
+Game layer (C3, in `RegretInducedLoss`): `inducedLoss` and its bounds.
 
 ## Non-goals
 
@@ -211,104 +208,5 @@ theorem externalRegret_add_roundConst (play loss : Fin T → K → ℝ)
     · refine Finset.le_inf' _ _ fun a _ => ?_
       exact add_le_add (Finset.inf'_le _ (Finset.mem_univ a)) le_rfl
   rw [hEL, hinf, add_sub_add_right_eq_sub]
-
-variable {ι : Type*} [Fintype ι] [DecidableEq ι]
-variable {S : ι → Type*} [∀ i, Fintype (S i)] [∀ i, DecidableEq (S i)]
-
-/-- Expected cost of playing `a` against the other players' independent mixed
-strategies. This is `CorrelatedEquilibrium.pureCost`. (C3 game layer) -/
-def inducedLoss (cost : ι → (∀ i, S i) → ℝ) (σ : ∀ i, S i → ℝ) (i : ι)
-    (a : S i) : ℝ :=
-  MathlibExt.GameTheory.CorrelatedEquilibrium.pureCost cost σ i a
-
-/-- The induced loss as the cost weighted by the opponents' mixed play,
-summed over profiles where player `i` plays `a`. -/
-theorem inducedLoss_eq_sum_filter (cost : ι → (∀ i, S i) → ℝ)
-    (σ : ∀ i, S i → ℝ) (i : ι) (a : S i) :
-    inducedLoss cost σ i a
-      = ∑ s ∈ Finset.univ.filter (fun s : ∀ j, S j => s i = a),
-        cost i s * ∏ j ∈ Finset.univ.erase i, σ j (s j) := by
-  unfold inducedLoss MathlibExt.GameTheory.CorrelatedEquilibrium.pureCost
-    MathlibExt.GameTheory.CorrelatedEquilibrium.othersWeight
-  rw [Finset.sum_filter]
-  refine Finset.sum_congr rfl fun s _ => ?_
-  by_cases h : s i = a
-  · simp [h, mul_comm]
-  · simp [h]
-
-/-- Induced losses are nonnegative for nonnegative costs. (C3 game layer) -/
-theorem inducedLoss_nonneg {cost : ι → (∀ i, S i) → ℝ} {σ : ∀ i, S i → ℝ}
-    {i : ι} {a : S i} (hσ : ∀ j, j ≠ i → IsSimplex (σ j))
-    (hcost : ∀ s, 0 ≤ cost i s) : 0 ≤ inducedLoss cost σ i a := by
-  rw [inducedLoss_eq_sum_filter]
-  refine Finset.sum_nonneg fun s _ => ?_
-  refine mul_nonneg (hcost s) ?_
-  refine Finset.prod_nonneg fun j hj => ?_
-  obtain ⟨hjn, -⟩ := (isSimplex_iff _).mp (hσ j (Finset.mem_erase.mp hj).1)
-  exact hjn _
-
-/-- Induced losses are at most one for [0,1] costs. (C3 game layer) -/
-theorem inducedLoss_le_one {cost : ι → (∀ i, S i) → ℝ} {σ : ∀ i, S i → ℝ}
-    {i : ι} {a : S i} (hσ : ∀ j, j ≠ i → IsSimplex (σ j))
-    (hcost : ∀ s, cost i s ≤ 1) : inducedLoss cost σ i a ≤ 1 := by
-  have hW : ∀ s : ∀ j, S j, 0 ≤ ∏ j ∈ Finset.univ.erase i, σ j (s j) := by
-    intro s
-    refine Finset.prod_nonneg fun j hj => ?_
-    obtain ⟨hjn, -⟩ := (isSimplex_iff _).mp (hσ j (Finset.mem_erase.mp hj).1)
-    exact hjn _
-  have hBridge : Finset.univ.filter (fun s : ∀ j, S j => s i = a)
-      = Fintype.piFinset (Function.update (fun _ => Finset.univ) i {a}) := by
-    have hmem : a ∈ (fun _ => Finset.univ) i := Finset.mem_univ a
-    have h := Fintype.piFinset_update_singleton_eq_filter_piFinset_eq
-      (fun _ => Finset.univ) i hmem
-    rw [Fintype.piFinset_univ] at h
-    exact h.symm
-  have hfib : ∀ j : ι, ∑ b ∈ Function.update (fun _ => Finset.univ) i {a} j,
-      Function.update (fun j b => σ j b) i (fun _ => 1) j b = 1 := by
-    intro j
-    by_cases hj : j = i
-    · subst hj
-      rw [Function.update_self, Function.update_self, Finset.sum_singleton]
-    · rw [Function.update_of_ne hj, Function.update_of_ne hj]
-      obtain ⟨-, hjsum⟩ := (isSimplex_iff _).mp (hσ j hj)
-      exact hjsum
-  have hLHS : ∏ j, ∑ b ∈ Function.update (fun _ => Finset.univ) i {a} j,
-      Function.update (fun j b => σ j b) i (fun _ => 1) j b = 1 :=
-    Finset.prod_eq_one fun j _ => hfib j
-  have hRHS : (∑ x ∈ Fintype.piFinset
-        (Function.update (fun _ => Finset.univ) i {a}),
-        ∏ j, Function.update (fun j b => σ j b) i (fun _ => 1) j (x j))
-      = ∑ x ∈ Fintype.piFinset (Function.update (fun _ => Finset.univ) i {a}),
-        ∏ j ∈ Finset.univ.erase i, σ j (x j) := by
-    refine Finset.sum_congr rfl fun x _ => ?_
-    have hfi : Function.update (fun j b => σ j b) i (fun _ => 1) i (x i) = 1 := by
-      simp only [Function.update_self]
-    have hrest : (∏ j ∈ Finset.univ.erase i,
-          Function.update (fun j b => σ j b) i (fun _ => 1) j (x j))
-        = ∏ j ∈ Finset.univ.erase i, σ j (x j) := by
-      refine Finset.prod_congr rfl fun j hj => ?_
-      rw [Finset.mem_erase] at hj
-      simp only [Function.update_of_ne hj.1]
-    have hsplit : (∏ j, Function.update (fun j b => σ j b) i (fun _ => 1) j (x j))
-        = (∏ j ∈ Finset.univ.erase i,
-            Function.update (fun j b => σ j b) i (fun _ => 1) j (x j))
-          * Function.update (fun j b => σ j b) i (fun _ => 1) i (x i) :=
-      (Finset.prod_erase_mul _ _ (Finset.mem_univ i)).symm
-    rw [hsplit, hrest, hfi, mul_one]
-  have hkey := Finset.prod_univ_sum
-    (Function.update (fun _ => Finset.univ) i {a})
-    (Function.update (fun j b => σ j b) i (fun _ => 1))
-  have hsum : ∑ x ∈ Fintype.piFinset
-      (Function.update (fun _ => Finset.univ) i {a}),
-      ∏ j ∈ Finset.univ.erase i, σ j (x j) = 1 := by
-    rw [← hRHS, ← hkey]
-    exact hLHS
-  rw [inducedLoss_eq_sum_filter]
-  rw [hBridge, ← hsum]
-  refine Finset.sum_le_sum fun s _ => ?_
-  calc cost i s * ∏ j ∈ Finset.univ.erase i, σ j (s j)
-      ≤ 1 * ∏ j ∈ Finset.univ.erase i, σ j (s j) :=
-        mul_le_mul_of_nonneg_right (hcost s) (hW s)
-    _ = ∏ j ∈ Finset.univ.erase i, σ j (s j) := one_mul _
 
 end MathlibExt.GameTheory.Regret
