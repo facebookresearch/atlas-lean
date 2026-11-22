@@ -35,7 +35,7 @@ The paper's long-term-decay argument is analysis and is not covered here.
 
 ## Informally uses
 
-- [Real planar rotation matrices](../../../LinearAlgebra/special-matrices/real-planar-rotation-matrices.md):
+- [Real planar rotation matrices](../../../LinearAlgebra/special-matrices/rotation-matrices/real-planar-rotation-matrices.md):
   mathematical prerequisite, the composition law and the transpose of the rotation blocks.
 - [Attention logits as bilinear forms](attention-logits-as-bilinear-forms.md): builds on, since
   RoPE changes the query and key factors of the logit's bilinear form.
