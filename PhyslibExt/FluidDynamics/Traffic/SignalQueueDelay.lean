@@ -10,6 +10,7 @@ module
 public import PhyslibExt.FluidDynamics.Traffic.SignalQueueArea
 public import CSLibExt.Algorithms.Networking.NetworkCalculus
 
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
@@ -158,13 +159,6 @@ lemma queueArea_div_arrivalVolume
   have h3' : (2 : ℝ) * (mu - lam) * (R + G) ≠ 0 := mul_ne_zero h2' h3
   field_simp
 
-private lemma queueLen_nonneg_aux {lam mu R : ℝ} (hlam : 0 < lam)
-    {t : ℝ} (ht : 0 ≤ t) : 0 ≤ queueLen lam mu R t := by
-  unfold queueLen
-  split_ifs with h
-  · exact mul_nonneg hlam.le ht
-  · exact le_max_left 0 _
-
 private lemma queueLen_le_aux {lam mu R : ℝ} (hlam : 0 < lam) (hmu : lam < mu)
     {t : ℝ} (ht : 0 ≤ t) : queueLen lam mu R t ≤ lam * t := by
   unfold queueLen
@@ -290,7 +284,7 @@ lemma isFlowPair_and_backlog_eq_queueLen {lam mu R : ℝ} (hlam : 0 < lam) (hmu 
   have hle : ∀ t, departures lam mu R t ≤ arrivals lam t := by
     intro t
     have hQ0 : 0 ≤ queueLen lam mu R (t : ℝ) :=
-      queueLen_nonneg_aux hlam t.coe_nonneg
+      queueLen_nonneg hlam t.coe_nonneg
     unfold departures arrivals
     apply Real.toNNReal_le_toNNReal
     linarith
@@ -485,33 +479,14 @@ private lemma delay_eval_mem {lam mu R : ℝ} (hlam : 0 < lam) (hmu : lam < mu)
       exact hub
     · exact zero_le
 
-private lemma integral_id_from_zero {t : ℝ} :
-    ∫ x in (0:ℝ)..t, x ∂volume = t ^ 2 / 2 := by
-  have h1 : IntervalIntegrable (fun x : ℝ => x) volume 0 t :=
-    continuous_id.intervalIntegrable 0 t
-  have hconst : IntervalIntegrable (fun _ : ℝ => t) volume 0 t :=
-    continuous_const.intervalIntegrable 0 t
-  have hconst_val : (∫ _ in (0:ℝ)..t, t ∂volume) = t * t := by
-    rw [intervalIntegral.integral_const, smul_eq_mul, sub_zero]
-  have key : (∫ x in (0:ℝ)..t, x ∂volume)
-      = (∫ _ in (0:ℝ)..t, t ∂volume) - ∫ x in (0:ℝ)..t, x ∂volume := by
-    have hsub := intervalIntegral.integral_sub hconst h1
-    have hrefl := intervalIntegral.integral_comp_sub_left (a := (0:ℝ)) (b := t)
-      (fun x : ℝ => x) t
-    simp only [sub_self, sub_zero] at hrefl
-    calc (∫ x in (0:ℝ)..t, x ∂volume)
-        = ∫ x in (0:ℝ)..t, (t - x) ∂volume := by exact hrefl.symm
-      _ = (∫ _ in (0:ℝ)..t, t ∂volume) - ∫ x in (0:ℝ)..t, x ∂volume := by exact hsub
-  rw [hconst_val] at key
-  have h2 : (∫ x in (0:ℝ)..t, x ∂volume) = t * t / 2 := by linarith
-  rw [h2]
-  ring
-
 private lemma linear_integral {R lam mu tc : ℝ} :
     ∫ x in (0:ℝ)..tc, (R + lam * x / mu - x) ∂volume
       = R * tc + (lam * (tc ^ 2 / 2) / mu) - tc ^ 2 / 2 := by
   have h1 : IntervalIntegrable (fun x : ℝ => x) volume 0 tc :=
     continuous_id.intervalIntegrable 0 tc
+  have hid : (∫ x in (0:ℝ)..tc, x ∂volume) = tc ^ 2 / 2 := by
+    rw [integral_id]
+    ring
   have hR : IntervalIntegrable (fun _ : ℝ => R) volume 0 tc :=
     continuous_const.intervalIntegrable 0 tc
   have hF2 : IntervalIntegrable (fun x : ℝ => lam * x / mu) volume 0 tc :=
@@ -535,9 +510,9 @@ private lemma linear_integral {R lam mu tc : ℝ} :
     have h2 : (∫ x in (0:ℝ)..tc, (lam * x) ∂volume)
         = lam * (∫ x in (0:ℝ)..tc, x ∂volume) :=
       intervalIntegral.integral_const_mul lam (fun x : ℝ => x)
-    rw [integral_id_from_zero] at h2
+    rw [hid] at h2
     exact h2
-  rw [hsub, hadd, hRval, hdiv, hmul, integral_id_from_zero]
+  rw [hsub, hadd, hRval, hdiv, hmul, hid]
 
 /-! ## C. Occupancy identity and arrival-average delay -/
 
