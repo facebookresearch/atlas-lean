@@ -372,6 +372,10 @@ variable {n : ℕ} (b : BayesNet α n)
 def Edge (i j : Fin n) : Prop :=
   ∃ h : i.val < j.val, (⟨i.val, h⟩ : Fin j) ∈ b.pa j
 
+instance decidableRelEdge : DecidableRel b.Edge := fun i j => by
+  unfold Edge
+  infer_instance
+
 /-- `j` is a descendant of `i` (every node is its own descendant). -/
 def IsDescendant (i j : Fin n) : Prop :=
   Relation.ReflTransGen b.Edge i j

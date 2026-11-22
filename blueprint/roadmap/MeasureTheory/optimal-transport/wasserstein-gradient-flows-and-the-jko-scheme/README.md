@@ -10,36 +10,16 @@ $\tfrac12 W_2(\rho^{(k-1)}, \rho)^2 + h F(\rho)$. Their a priori estimates use o
 minimizer beats the previous state, which gives a discrete energy inequality and, with the triangle
 and Cauchy–Schwarz inequalities, a Hölder-$\tfrac12$ bound in time. These estimates hold for an
 arbitrary functional on an arbitrary metric space (the *minimizing movement* scheme). In a Hilbert
-space, a $\lambda$-convex functional makes each step a $(1 + \lambda h)^{-1}$-contraction, the
-discrete form of the contraction of convex gradient flows. Each Wasserstein step has a
-unique minimizer, and the scheme converges to the Fokker–Planck equation as $h \to 0$.
+space, for a $\lambda$-convex functional and $1 + \lambda h > 0$, each step multiplies the distance
+between two sequences by at most $(1 + \lambda h)^{-1}$, the discrete form of the exponential stability
+of $\lambda$-convex gradient flows: a strict contraction for $\lambda > 0$, a nonexpansion for
+$\lambda = 0$, and possibly a growth for $\lambda < 0$. Under the hypotheses of the linked statements,
+each Wasserstein step of the Fokker–Planck free energy has a unique minimizer, and the scheme converges to
+the Fokker–Planck equation as $h \to 0$.
 
-- [Minimizing-movement (JKO) step](is-minimizing-movement-step.md)
-- [Minimizing-movement (JKO) sequence](is-minimizing-movement.md)
-- [One-step energy inequality of the JKO scheme](energy-le.md)
-- [The JKO step decreases the functional](le.md)
-- [Tails of a minimizing-movement sequence](shift.md)
-- [Discrete energy inequality, multiplied form](sum-add-le.md)
-- [Discrete energy inequality of the JKO scheme](energy-sum-le.md)
-- [The functional decreases along the JKO scheme](antitone.md)
-- [Hölder-½ estimate of the JKO scheme](dist-sq-le.md)
-- [Uniform Hölder-½ bound of the JKO scheme](dist-sq-le-of-le.md)
-- [Existence of a JKO step on a proper metric space](exists-is-minimizing-movement-step.md)
-- [Existence of a JKO sequence on a proper metric space](exists-is-minimizing-movement.md)
-- [Variational inequality of the minimizing-movement step](inner-le.md)
-- [Contraction of the minimizing-movement step](contraction.md)
-- [Discrete exponential contraction of minimizing movements](contraction-pow.md)
-- [Admissible densities of the JKO scheme](is-admissible.md)
-- [Negative Boltzmann entropy](neg-entropy.md)
-- [Potential energy](potential-energy.md)
-- [Free energy of the Fokker–Planck equation](free-energy.md)
-- [JKO objective](jko-objective.md)
-- [JKO step](is-jkostep.md)
-- [JKO sequence](is-jkosequence.md)
-- [The JKO objective at the previous state](jko-objective-self.md)
-- [One-step comparison inequality of the JKO scheme](jko-objective-le.md)
-- [Existence and uniqueness of the JKO step](exists-unique-is-jkostep.md)
-- [Convergence of the JKO scheme to the Fokker–Planck equation](tendsto-jko-fokker-planck.md)
+- [Minimizing-movement scheme](minimizing-movements/README.md)
+- [Discrete exponential stability of minimizing movements](contraction-of-minimizing-movements/README.md)
+- [Convergence of the JKO scheme to the Fokker–Planck equation](jko-scheme/README.md)
 
 ## Related topics
 

@@ -10,7 +10,7 @@ The source states $X_* = X_0$ for $X_*$ the minimizer of the nuclear norm under 
 
 ## Background
 
-- [Duality of the spectral and nuclear norms](../../../LinearAlgebra/matrix-decompositions/singular-value-decomposition/spectral-norm-dual-nuclear-norm.md): background, the source's Proposition 2.1, which identifies the nuclear norm as the dual of the operator norm.
+- [Duality of the spectral and nuclear norms](../../../LinearAlgebra/matrix-decompositions/singular-value-decomposition/duality-of-the-spectral-and-nuclear-norms/spectral-norm-dual-nuclear-norm.md): background, the source's Proposition 2.1, which identifies the nuclear norm as the dual of the operator norm.
 - [Exact recovery by basis pursuit](../../../Probability/linear-models-multivariate/exact-recovery-by-basis-pursuit/README.md): background, the vector analogue, $\ell_1$ minimization recovering sparse vectors under a restricted nullspace condition.
 - [Sparse recovery by orthogonal matching pursuit](../sparse-recovery-by-orthogonal-matching-pursuit/README.md): background, sparse recovery by a greedy algorithm rather than by convex minimization.
 

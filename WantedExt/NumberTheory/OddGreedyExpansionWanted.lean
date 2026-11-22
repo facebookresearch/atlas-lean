@@ -42,10 +42,9 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.OddGreedyExpansionWanted
 
-/-- **Proposition 1**: if a rational number is the sum
-of an even number of unit fractions with odd
-denominators, then every fraction representing it has
-even numerator.
+/-- **Even sums of odd unit fractions have even numerator.** Let $m$ be an even natural number
+and let $d_1, \dots, d_m$ be odd natural numbers. If integers $a$ and $b$ with $b \ne 0$ satisfy
+$a/b = \sum_{i=1}^{m} 1/d_i$, then $a$ is even.
 
 Source: Joel Louwsma and Joseph Martino, "Rational
 Numbers with Two-Term Odd Greedy Expansion",
@@ -56,10 +55,10 @@ theorem_wanted even_num_of_even_sum_unit_fractions
     (h : (a : ℚ) / (b : ℚ) = ∑ i, (1 : ℚ) / (d i : ℚ)) :
     Even a
 
-/-- **Lemma 2**: for positive integers `n, d` and odd
-`x₁`, `x₁` is the first denominator of the odd greedy
-expansion of `n / d` if and only if
-`0 ≤ n * x₁ - d < 2 * n`.
+/-- **Odd greedy choice at a fraction.** Let $n$ and $d$ be positive natural numbers and let $x_1$
+be an odd natural number. Then $x_1$ is the odd greedy choice at $n/d$ (the first denominator of
+the odd greedy expansion of $n/d$) if and only if $d \le n x_1$ and $n x_1 < d + 2n$, that is,
+$0 \le n x_1 - d < 2n$ in the integers.
 
 Source: Joel Louwsma and Joseph Martino, "Rational
 Numbers with Two-Term Odd Greedy Expansion", Lemma 2. -/

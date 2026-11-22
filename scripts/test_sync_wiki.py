@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import hashlib
 import io
 import json
+import re
 import shutil
 import tempfile
 import unittest
@@ -12,8 +14,22 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
+from scripts import extract_v2_lean_dependencies as extract
 from scripts import generate_wiki as wiki
 from scripts import sync_wiki as sync
+
+# The ids of rows a test unlinks or keeps: every committed row has one (What the tools own), and lean-facts keeps it.
+UNLINKED, KEPT = "af_0000000000000000000000a1", "af_0000000000000000000000a2"
+# lean-facts' own test of its checkout: the vaults below stand for a clean checkout, and CleanCheckout runs it.
+CHECKOUT_PROBLEM = sync.checkout_problem
+
+
+def paired(registry: object, dependency_file: Path) -> object:
+    """A registry as the extractor writes it beside *dependency_file*: with that extraction's digest."""
+    if isinstance(registry, dict) and isinstance(registry.get("inputs"), dict):
+        digest = hashlib.sha256(dependency_file.read_bytes()).hexdigest()
+        return {**registry, "inputs": {"extraction_sha256": digest, **registry["inputs"]}}
+    return registry
 
 
 class Sections(unittest.TestCase):
@@ -73,14 +89,26 @@ class Vault(unittest.TestCase):
             patch.object(wiki, "PAGE_MAP", vault / "pages.json"),
             patch.object(sync, "LINKS", vault / "links"),
             patch.object(sync, "STATE", self.tmp / "wiki-sync.json"),
+            patch.object(sync, "checkout_problem", lambda: None),
         ]
         for one in patches:
             one.start()
             self.addCleanup(one.stop)
 
     def annotate(self, rows: list[dict]) -> None:
-        sync.LINKS.mkdir(parents=True, exist_ok=True)
+        self.links_folder()
         sync.write_annotations({sync.LINKS / "Algebra.jsonl": rows})
+
+    def links_folder(self) -> None:
+        """The links folder with the defaults file the repository's has, which Autoform merges every row over."""
+        sync.LINKS.mkdir(parents=True, exist_ok=True)
+        if not (sync.LINKS / "_defaults.json").exists():
+            (sync.LINKS / "_defaults.json").write_text(json.dumps(sync.DEFAULTS) + "\n")
+
+    def assert_ids_kept(self, ids: list[str]) -> None:
+        """Each row of Algebra.jsonl, as written, still has its id, right after its subject (What the tools own)."""
+        rows = [json.loads(line) for line in (sync.LINKS / "Algebra.jsonl").read_text().splitlines() if line.strip()]
+        self.assertEqual([(list(row)[:2], row.get("id")) for row in rows], [(["subject", "id"], i) for i in ids])
 
     def about(self, relative: str, **fields) -> dict:
         return {"subject": [{"type": "generic", "uri": f"../roadmap/{relative}"}], **fields}
@@ -144,7 +172,7 @@ class LeanFacts(Vault):
         for _ in range(2):
             counts, unlinked = sync.apply_lean_facts(index, {})
             # A page whose annotation names no declaration is planned, not unresolved.
-            self.assertEqual(counts, {"articles": 0, "unresolved": 0, "edges": 0})
+            self.assertEqual(counts, {"articles": 0, "unresolved": 0, "edges": 0, "mathlib": 0})
             self.assertEqual(unlinked, [])
             self.assertEqual(page.read_text(), "# Unlinked\n\nKeep the edited statement.\n")
         row = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][0]
@@ -191,7 +219,7 @@ class LeanFacts(Vault):
             "Ext.conjecture": {"module": "Ext.Groups", "statement": [], "proof": []},
         }
         counts, unlinked = sync.apply_lean_facts(SimpleNamespace(declarations=declarations), dependencies)
-        self.assertEqual(counts, {"articles": 5, "unresolved": 0, "edges": 2})
+        self.assertEqual(counts, {"articles": 5, "unresolved": 0, "edges": 2, "mathlib": 0})
         self.assertEqual(unlinked, [])
         rows = {sync.subject_path(row).name: row for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
         facts = {name: (row.get("kind"), row.get("status")) for name, row in rows.items()}
@@ -211,6 +239,944 @@ class LeanFacts(Vault):
         self.assertEqual(order.read_text(), "# Order\n\nA number.\n\n## Depends on\n\nThis node has no prerequisites.\n")
         self.assertEqual(conjecture.read_text(), "# Conjecture\n\nOpen.\n\n## Depends on\n\nThis node has no prerequisites.\n")
         self.assertEqual((wiki.ROADMAP / "Algebra" / "README.md").read_text(), "# Algebra\n\n- [Order](order.md)\n")
+
+    def test_mathlib_credited_pages_keep_their_link_and_get_their_edges(self) -> None:
+        mathlib = lambda name: [{"type": "lean", "uri": sync.MATHLIB,
+                                 "location": {"declaration": name, "module": "Mathlib.Measure"}}]
+        flag = {"org.autoform": {"mathlib": True}}
+        atlas = self.page("Algebra/atlas.md", "# Atlas\n\nUses a measure.\n")
+        measure = self.page("Algebra/measure.md", "# Measure\n\nA measure.\n\n## Depends on\n\n- [Stray](atlas.md)\n")
+        space = self.page("Algebra/space.md", "# Space\n\nA space.\n")
+        gone = self.page("Algebra/gone.md", "# Gone\n\nNo longer in Mathlib.\n")
+        self.annotate([
+            self.about("Algebra/atlas.md", object=[{"location": {"declaration": "Ext.atlas"}}]),
+            self.about("Algebra/measure.md", object=mathlib("M.measure"), status="formalized", extensions=flag),
+            self.about("Algebra/space.md", object=mathlib("M.space"), extensions=flag),
+            self.about("Algebra/gone.md", object=mathlib("M.gone"), extensions=flag),
+        ])
+        self.assertEqual(sync.lean_name(sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][1]), None)
+        index = SimpleNamespace(declarations={"Ext.atlas": SimpleNamespace(keyword="theorem", path=Path("Ext/A.lean"))})
+        (wiki.ROOT / "Ext").mkdir(parents=True, exist_ok=True)
+        (wiki.ROOT / "Ext" / "A.lean").write_text("theorem atlas : True := trivial\n")
+        dependencies = {"Ext.atlas": {"module": "Ext.A", "statement": [], "proof": []}}
+        registry = {"left_out": {}, "bridges": {"Ext.atlas": {"statement": ["M.measure"], "proof": ["M.space"]}},
+                    "mathlib": {"M.measure": {"module": "Mathlib.Measure", "kind": "def", "proposition": False, "statement": ["M.space"],
+                                              "proof": []},
+                                "M.space": {"module": "Mathlib.Measure", "kind": "structure", "proposition": False, "statement": [],
+                                            "proof": []}},
+                    "missing": ["M.gone"], "project": [], "mutual": []}
+        registry["inputs"] = {"names_sha256": sync.names_digest(sync.credited_mathlib(sync.read_annotations())[0]),
+                              "dump_sha256": "d" * 64, "mathlib_rev": None, "requested": 3,
+                              "format": sync.REGISTRY_FORMAT}
+        self.assertEqual(sync.registry_problems(registry, sync.read_annotations()), [])
+        counts, unlinked = sync.apply_lean_facts(index, dependencies, registry)
+        self.assertEqual(counts, {"articles": 1, "unresolved": 1, "edges": 3, "mathlib": 2})
+        self.assertEqual(unlinked, ["M.gone (Algebra/gone.md, credited to Mathlib, missing from Mathlib)"])
+        rows = {sync.subject_path(row).name: row for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
+        self.assertEqual((rows["measure.md"]["kind"], "status" in rows["measure.md"]), ("def", False))
+        self.assertEqual(rows["measure.md"]["object"], mathlib("M.measure"))
+        self.assertEqual(rows["space.md"]["kind"], "structure")
+        # A missing declaration's page loses its link and the flag that would still show it as in Mathlib.
+        self.assertEqual({key: rows["gone.md"].get(key) for key in ("object", "extensions", "kind", "status")},
+                         {"object": None, "extensions": None, "kind": None, "status": None})
+        self.assertEqual(atlas.read_text(), "# Atlas\n\nUses a measure.\n\n## Depends on\n\n- [Measure](measure.md)\n\n"
+                                            "## Proof depends on\n\n- [Space](space.md)\n")
+        self.assertEqual(measure.read_text(), "# Measure\n\nA measure.\n\n## Depends on\n\n- [Space](space.md)\n")
+        # The registry follows every use, so a page it lists nothing for has no prerequisites among the pages.
+        self.assertEqual(space.read_text(), "# Space\n\nA space.\n\n## Depends on\n\nThis node has no prerequisites.\n")
+        self.assertEqual(gone.read_text(), "# Gone\n\nNo longer in Mathlib.\n")
+
+    def test_a_proof_bridges_only_to_a_declaration_it_names_itself(self) -> None:
+        # From the dump's rows to the pages: Ext.atlas's statement names M.stated itself, and its proof names M.named
+        # itself but reaches M.mediated only through the project's theorem Ext.hidden, which is no article. The page
+        # depends on M.stated and, in its proof, on M.named; M.mediated is in neither the registry's bridges nor the
+        # page. Every witness kept is direct, so either bridge rule gives the same.
+        from scripts import extract_v2_lean_dependencies as extract
+        from scripts.test_extract_v2_lean_dependencies import credited, row, with_mathlib
+
+        targets = ("stated", "named", "mediated")
+        flag = {"org.autoform": {"mathlib": True}}
+        atlas = self.page("Algebra/atlas.md", "# Atlas\n\nA theorem.\n")
+        for name in targets:
+            self.page(f"Algebra/{name}.md", f"# {name.title()}\n\nA Mathlib theorem.\n")
+        self.annotate([self.about("Algebra/atlas.md", object=[{"location": {"declaration": "Ext.atlas"}}])] + [
+            self.about(f"Algebra/{name}.md", extensions=flag, object=[
+                {"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": f"M.{name}", "module": "Mathlib.T"}}])
+            for name in targets])
+        rows = {
+            "Ext.hidden": with_mathlib(row("Ext.hidden", "theorem", [], []), [], ["M.mediated"], direct=["M.mediated"]),
+            "Ext.atlas": with_mathlib(row("Ext.atlas", "theorem", [], ["Ext.hidden"]), ["M.stated"], ["M.named"],
+                                      direct=["M.named"], type_direct=["M.stated"])}
+        registry = extract.registry(rows, {"Ext.atlas"}, {f"M.{name}": credited(f"M.{name}", "theorem", [], [])
+                                                          for name in targets})
+        self.assertEqual((registry["bridges"], registry["left_out"]),
+                         ({"Ext.atlas": {"statement": ["M.stated"], "proof": ["M.named"]}},
+                          {"Ext.atlas": {"statement": [], "proof": ["M.mediated"]}}))
+        registry["inputs"] = {"names_sha256": sync.names_digest(sync.credited_mathlib(sync.read_annotations())[0]),
+                              "dump_sha256": "d" * 64, "mathlib_rev": None, "requested": 3,
+                              "format": sync.REGISTRY_FORMAT}
+        self.assertEqual(sync.registry_problems(registry, sync.read_annotations()), [])
+        (wiki.ROOT / "Ext").mkdir(parents=True, exist_ok=True)
+        (wiki.ROOT / "Ext" / "A.lean").write_text("theorem atlas : True := trivial\n")
+        index = SimpleNamespace(declarations={"Ext.atlas": SimpleNamespace(keyword="theorem", path=Path("Ext/A.lean"))})
+        counts, _ = sync.apply_lean_facts(index, {"Ext.atlas": {"module": "Ext.A", "statement": [], "proof": []}},
+                                          registry)
+        self.assertEqual((counts["edges"], counts["mathlib"]), (2, 3))
+        self.assertEqual(atlas.read_text(), "# Atlas\n\nA theorem.\n\n## Depends on\n\n- [Stated](stated.md)\n\n"
+                                            "## Proof depends on\n\n- [Named](named.md)\n")
+
+    def test_a_registry_no_consumer_may_act_on_writes_nothing(self) -> None:
+        # A bridge both kept and left out, a `left_out` missing or malformed, a bridge from a declaration no page
+        # credits or to one the registry does not find, and a registry that is JSON null: lean-facts refuses each
+        # before it writes, and the vault keeps every byte. The registry as written passes.
+        from scripts import extract_v2_lean_dependencies as extract
+        from scripts.test_extract_v2_lean_dependencies import credited, row, with_mathlib
+
+        targets = ("stated", "named", "mediated")
+        self.page("Algebra/atlas.md", "# Atlas\n\nA theorem.\n")
+        for name in targets:
+            self.page(f"Algebra/{name}.md", f"# {name.title()}\n\nA Mathlib theorem.\n")
+        self.annotate([self.about("Algebra/atlas.md", object=[{"location": {"declaration": "Ext.atlas"}}])] + [
+            self.about(f"Algebra/{name}.md", extensions={"org.autoform": {"mathlib": True}}, object=[
+                {"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": f"M.{name}", "module": "Mathlib.T"}}])
+            for name in targets])
+        rows = {"Ext.atlas": with_mathlib(row("Ext.atlas", "theorem", [], []), ["M.stated"], ["M.named", "M.mediated"],
+                                          direct=["M.named"], type_direct=["M.stated"])}
+        good = extract.registry(rows, {"Ext.atlas"}, {f"M.{name}": credited(f"M.{name}", "theorem", [], [])
+                                                      for name in targets})
+        good["inputs"] = {"names_sha256": sync.names_digest(sync.credited_mathlib(sync.read_annotations())[0]),
+                          "dump_sha256": "d" * 64, "mathlib_rev": None, "requested": 3, "format": sync.REGISTRY_FORMAT}
+        self.assertEqual(good["left_out"], {"Ext.atlas": {"statement": [], "proof": ["M.mediated"]}})
+        kept = good["bridges"]["Ext.atlas"]
+        cases = {
+            "kept and left out": ({**good, "bridges": {"Ext.atlas": {**kept, "proof": ["M.mediated", "M.named"]}}},
+                                  "the registry both keeps and leaves out the bridge Ext.atlas -> M.mediated"),
+            "no left_out": ({key: value for key, value in good.items() if key != "left_out"},
+                            "the registry is not one extract_v2_lean_dependencies.py --registry writes"),
+            "left_out a string": ({**good, "left_out": "M.mediated"},
+                                  "the registry is not one extract_v2_lean_dependencies.py --registry writes"),
+            "left_out entry a list": ({**good, "left_out": {"Ext.atlas": ["M.mediated"]}},
+                                      "the registry's left_out entry for Ext.atlas is malformed"),
+            "unknown source": ({**good, "left_out": {"Ext.other": {"statement": [], "proof": ["M.mediated"]}}},
+                               "the registry's left_out name Ext.other, which no page credits to this project"),
+            "unknown target": ({**good, "bridges": {"Ext.atlas": {**kept, "statement": ["M.absent", "M.stated"]}}},
+                               "the registry's bridges entry for Ext.atlas names M.absent, which it does not find"),
+            "null": (None, "the registry is not one extract_v2_lean_dependencies.py --registry writes"),
+            # A table of another type is no extractor's registry, refused before any table is read.
+            **{f"{table} of another type": ({**good, table: other},
+                                            "the registry is not one extract_v2_lean_dependencies.py --registry writes")
+               for table, other in (("mathlib", []), ("bridges", []), ("left_out", []), ("inputs", []),
+                                    ("missing", {}), ("project", {}))},
+        }
+        (wiki.ROOT / "Ext").mkdir(parents=True, exist_ok=True)
+        (wiki.ROOT / "Ext" / "A.lean").write_text("theorem atlas : True := trivial\n")
+        index = SimpleNamespace(declarations={"Ext.atlas": SimpleNamespace(keyword="theorem", path=Path("Ext/A.lean"))})
+        lean = SimpleNamespace(index_project=lambda *args, **kwargs: index)
+        reader = sync.reader()
+        dependency_file, registry_file = self.tmp / "lean-dependencies.json", self.tmp / "mathlib-registry.json"
+        dependency_file.write_text(json.dumps({"missing_articles": {}, "articles": {
+            "Ext.atlas": {"module": "Ext.A", "statement": [], "proof": []}}}))
+
+        def run(registry) -> tuple[int, str, bool]:
+            registry_file.write_text(json.dumps(paired(registry, dependency_file)))
+            files = lambda: {path: path.read_bytes() for path in sorted([*wiki.ROADMAP.rglob("*"),
+                                                                          *sync.LINKS.iterdir()]) if path.is_file()}
+            before = files()
+            with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean, annotations=reader),
+                                            "autoform_cli.lean": lean, "autoform_cli.annotations": reader}), \
+                    patch("sys.stdout", new_callable=io.StringIO), patch("sys.stderr", new_callable=io.StringIO) as err:
+                code = sync.run_lean_facts(dependency_file, registry_file)
+            return code, err.getvalue(), files() == before
+
+        for case, (registry, message) in cases.items():
+            with self.subTest(case=case):
+                self.assertIn(message, sync.registry_problems(registry, sync.read_annotations()))
+                self.assertEqual(run(registry)[0::2], (1, True))
+        code, err, unchanged = run(good)
+        self.assertEqual((code, unchanged), (0, False), err)
+        self.assertIn("## Proof depends on\n\n- [Named](named.md)\n",
+                      (wiki.ROADMAP / "Algebra" / "atlas.md").read_text())
+
+    def test_a_statement_that_reaches_a_mathlib_declaration_only_through_another_constant_gives_no_edge(self) -> None:
+        # Ext.T's statement reaches M.r only through an intermediate constant: the registry lists the bridge apart,
+        # and lean-facts gives the page no edge to M.r. A registry of the previous format, which kept that bridge, is
+        # refused before anything is written.
+        from scripts import extract_v2_lean_dependencies as extract
+        from scripts.test_extract_v2_lean_dependencies import credited, row, with_mathlib
+
+        page = self.page("Algebra/t.md", "# T\n\nA theorem.\n")
+        self.page("Algebra/m.md", "# M\n\nA Mathlib theorem.\n")
+        self.annotate([self.about("Algebra/t.md", object=[{"location": {"declaration": "Ext.T"}}]),
+                       self.about("Algebra/m.md", extensions={"org.autoform": {"mathlib": True}}, object=[
+                           {"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": "M.r",
+                                                                              "module": "Mathlib.T"}}])])
+        registry = extract.registry({"Ext.T": with_mathlib(row("Ext.T", "theorem", [], []), ["M.r"], [])}, {"Ext.T"},
+                                    {"M.r": credited("M.r", "theorem", [], [])})
+        registry["inputs"] = {"names_sha256": sync.names_digest(sync.credited_mathlib(sync.read_annotations())[0]),
+                              "dump_sha256": "d" * 64, "mathlib_rev": None, "requested": 1,
+                              "format": sync.REGISTRY_FORMAT}
+        self.assertEqual((registry["bridges"], registry["left_out"]),
+                         ({}, {"Ext.T": {"statement": ["M.r"], "proof": []}}))
+        older = {**registry, "bridges": {"Ext.T": {"statement": ["M.r"], "proof": []}}, "left_out": {},
+                 "inputs": {**registry["inputs"], "format": 4, "bridge_rule": "statement-and-direct-proof"}}
+        (wiki.ROOT / "Ext.lean").write_text("theorem T : True := trivial\n")
+        index = SimpleNamespace(declarations={"Ext.T": SimpleNamespace(keyword="theorem", path=Path("Ext.lean"),
+                                                                       line=1)})
+        lean = SimpleNamespace(index_project=lambda *args, **kwargs: index)
+        reader = sync.reader()
+        dependency_file, registry_file = self.tmp / "lean-dependencies.json", self.tmp / "mathlib-registry.json"
+        dependency_file.write_text(json.dumps({"missing_articles": {}, "articles": {
+            "Ext.T": {"module": "Ext", "statement": [], "proof": []}}}))
+
+        def run(given: dict) -> tuple[int, str, bool]:
+            registry_file.write_text(json.dumps(paired(given, dependency_file)))
+            files = lambda: {path: path.read_bytes() for path in sorted([*wiki.ROADMAP.rglob("*"),
+                                                                          *sync.LINKS.iterdir()]) if path.is_file()}
+            before = files()
+            with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean, annotations=reader),
+                                            "autoform_cli.lean": lean, "autoform_cli.annotations": reader}), \
+                    patch("sys.stdout", new_callable=io.StringIO), patch("sys.stderr", new_callable=io.StringIO) as err:
+                code = sync.main(["lean-facts", str(dependency_file), "--registry", str(registry_file)])
+            return code, err.getvalue(), files() == before
+
+        code, err, unchanged = run(older)
+        self.assertEqual((code, unchanged), (1, True))
+        self.assertIn(f"the registry's format is 4, not {sync.REGISTRY_FORMAT}", err)
+        code, err, _ = run(registry)
+        self.assertEqual(code, 0, err)
+        self.assertEqual(page.read_text(), "# T\n\nA theorem.\n\n## Depends on\n\nThis node has no prerequisites.\n")
+
+    def test_an_extraction_without_a_live_credited_declaration_writes_nothing(self) -> None:
+        # Ext.main's page was added after the extraction was made: its statement depends on Ext.blocked, but the
+        # earlier extraction, otherwise valid, has no row for Ext.main, nor for Ext.old, which an earlier sync's
+        # module and name stand for. lean-facts refuses rather than give either page no prerequisites, and writes
+        # nothing; the fresh extraction passes. A credited declaration the extraction lists as missing and the
+        # sources no longer declare is unlinked, as before.
+        (wiki.ROOT / "Ext.lean").write_text("theorem main : True := sorry\ntheorem blocked : True := sorry\n"
+                                            "theorem old : True := trivial\n")
+        index = SimpleNamespace(declarations={name: SimpleNamespace(keyword="theorem", path=Path("Ext.lean"), line=1)
+                                              for name in ("Ext.main", "Ext.blocked", "Ext.old")})
+        lean = SimpleNamespace(index_project=lambda *args, **kwargs: index)
+        reader = sync.reader()
+        main = self.page("Algebra/main.md", "# Main\n\nA statement.\n")
+        self.page("Algebra/blocked.md", "# Blocked\n\nA statement.\n")
+        self.page("Algebra/gone.md", "# Gone\n\nA statement.\n")
+        old = self.page("Algebra/old.md", "# Old\n\nA statement.\n")
+        self.annotate([self.about(f"Algebra/{name}.md", object=[{"location": {"declaration": f"Ext.{name}"}}])
+                       for name in ("main", "blocked", "gone")]
+                      + [self.about("Algebra/old.md", extensions={sync.OWN: {"module": "Ext", "name": "old"}})])
+        dependency_file = self.tmp / "lean-dependencies.json"
+        blocked = {"module": "Ext", "statement": [], "proof": []}
+
+        def run(extraction: dict) -> tuple[int, str, bool]:
+            dependency_file.write_text(json.dumps(extraction))
+            files = lambda: {path: path.read_bytes() for path in sorted([*wiki.ROADMAP.rglob("*"),
+                                                                          *sync.LINKS.iterdir()]) if path.is_file()}
+            before = files()
+            with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean, annotations=reader),
+                                            "autoform_cli.lean": lean, "autoform_cli.annotations": reader}), \
+                    patch("sys.stdout", new_callable=io.StringIO), patch("sys.stderr", new_callable=io.StringIO) as err:
+                code = sync.run_lean_facts(dependency_file)
+            return code, err.getvalue(), files() == before
+
+        code, err, unchanged = run({"missing_articles": {"Ext": ["Ext.gone"]}, "articles": {"Ext.blocked": blocked}})
+        self.assertEqual((code, unchanged), (1, True))
+        self.assertIn("error: a page credits Ext.main, which the Lean sources declare, but", err)
+        self.assertIn("error: a page credits Ext.old, which the Lean sources declare, but", err)
+        self.assertNotIn("Ext.gone", err)
+        code, err, unchanged = run({"missing_articles": {"Ext": ["Ext.gone"]}, "articles": {
+            "Ext.blocked": blocked, "Ext.main": {"module": "Ext", "statement": ["Ext.blocked"], "proof": []},
+            "Ext.old": {"module": "Ext", "statement": ["Ext.blocked"], "proof": []}}})
+        self.assertEqual((code, unchanged), (0, False), err)
+        self.assertIn("the Lean no longer declares Ext.gone (Algebra/gone.md)", err)
+        self.assertEqual(main.read_text(), "# Main\n\nA statement.\n\n## Depends on\n\n- [Blocked](blocked.md)\n")
+        self.assertEqual(old.read_text(), "# Old\n\nA statement.\n\n## Depends on\n\n- [Blocked](blocked.md)\n")
+
+    def test_a_name_looked_for_only_in_imported_modules_says_which_module_was_missing(self) -> None:
+        self.page("Algebra/gone.md", "# Gone\n\nNot found.\n")
+        end = [{"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": "M.gone", "module": "Mathlib.New"}}]
+        self.annotate([self.about("Algebra/gone.md", object=end, extensions={"org.autoform": {"mathlib": True}})])
+        registry = {"left_out": {}, "bridges": {}, "mathlib": {}, "missing": ["M.gone"], "project": [],
+                    "unplaced": ["M.gone"],
+                    "mutual": []}
+        _, unlinked = sync.apply_lean_facts(SimpleNamespace(declarations={}), {}, registry)
+        self.assertEqual(unlinked, ["M.gone (Algebra/gone.md, credited to Mathlib, not in the modules the build "
+                                    "imported; the build's Mathlib has no module Mathlib.New)"])
+
+    def test_without_a_registry_a_mathlib_credited_page_stays_as_committed(self) -> None:
+        page = self.page("Algebra/measure.md", "# Measure\n\nA measure.\n")
+        end = [{"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": "M.measure"}}]
+        self.annotate([self.about("Algebra/measure.md", object=end, extensions={"org.autoform": {"mathlib": True}})])
+        counts, unlinked = sync.apply_lean_facts(SimpleNamespace(declarations={}), {})
+        self.assertEqual((counts["unresolved"], unlinked), (0, []))
+        self.assertEqual(sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][0]["object"], end)
+        self.assertEqual(page.read_text(), "# Measure\n\nA measure.\n")
+
+    def test_mathlib_names_lists_the_credited_declarations(self) -> None:
+        end = lambda name, module=None: [{"type": "lean", "uri": sync.MATHLIB, "location": {
+            "declaration": name, **({"module": module} if module else {})}}]
+        # The build has Mathlib.B; a module it lacks, which the dump could not import, is left out.
+        source = self.tmp / ".lake" / "packages" / "mathlib" / "Mathlib" / "B.lean"
+        source.parent.mkdir(parents=True)
+        source.write_text("")
+        flag = {"org.autoform": {"mathlib": True}}
+        rows = [self.about("Algebra/b.md", object=end("M.b", "Mathlib.B"), extensions=flag),
+                self.about("Algebra/a.md", object=end("M.a"), extensions=flag),
+                self.about("Algebra/d.md", object=end("M.d", "Mathlib.Nowhere"), extensions=flag),
+                self.about("Algebra/c.md", object=[{"location": {"declaration": "Ext.c"}}]),
+                # A Mathlib end on a row without the flag is a reference: the page is Ext.e's, and credits no M.e.
+                self.about("Algebra/e.md", object=[{"location": {"declaration": "Ext.e"}, "role": "states"},
+                                                   *end("M.e")])]
+        self.annotate(rows)
+        output = self.tmp / "build" / "names.txt"
+        with patch("sys.stdout", new_callable=io.StringIO):
+            self.assertEqual(sync.main(["mathlib-names", str(output)]), 0)
+        self.assertEqual(output.read_text(), "M.a\nM.b\tMathlib.B\nM.d\n")
+        # Two pages crediting one declaration, or a flagged row that also names a declaration of the project, leave
+        # the credit ambiguous: nothing is written.
+        for extra in (self.about("Algebra/f.md", object=end("M.a"), extensions=flag),
+                      self.about("Algebra/g.md", object=[{"location": {"declaration": "Ext.g"}}, *end("M.g")],
+                                 extensions=flag)):
+            output.unlink(missing_ok=True)
+            self.annotate(rows + [extra])
+            with patch("sys.stdout", new_callable=io.StringIO), patch("sys.stderr", new_callable=io.StringIO) as err:
+                self.assertEqual(sync.main(["mathlib-names", str(output)]), 1)
+            self.assertFalse(output.exists())
+            self.assertIn("error: ", err.getvalue())
+
+    def test_a_mathlib_reference_never_takes_the_credit_of_the_page_s_own_declaration(self) -> None:
+        # A page states Ext.t and refers to Mathlib's M.t, without the flag: the page stays Ext.t's article, even when
+        # the registry does not find M.t, and Git's `.git` spelling of Mathlib's address is still Mathlib's.
+        page = self.page("Algebra/t.md", "# T\n\nA theorem.\n")
+        reference = {"type": "lean", "uri": sync.MATHLIB + ".git", "location": {"declaration": "M.t"}}
+        self.annotate([self.about("Algebra/t.md", object=[{"location": {"declaration": "Ext.t"}, "role": "states"},
+                                                          reference], status="formalized")])
+        row = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][0]
+        self.assertEqual((sync.lean_name(row), sync.mathlib_name(row), sync.is_mathlib(reference["uri"])),
+                         ("Ext.t", None, True))
+        index = SimpleNamespace(declarations={"Ext.t": SimpleNamespace(keyword="theorem", path=Path("Ext/T.lean"))})
+        (wiki.ROOT / "Ext").mkdir(parents=True, exist_ok=True)
+        (wiki.ROOT / "Ext" / "T.lean").write_text("theorem t : True := trivial\n")
+        registry = {"left_out": {}, "bridges": {}, "mathlib": {}, "missing": [], "project": [], "mutual": [],
+                    "inputs": {"names_sha256": hashlib.sha256(b"").hexdigest(), "dump_sha256": "d" * 64,
+                               "mathlib_rev": None, "requested": 0, "format": sync.REGISTRY_FORMAT}}
+        self.assertEqual(sync.registry_problems(registry, sync.read_annotations()), [])
+        counts, unlinked = sync.apply_lean_facts(index, {"Ext.t": {"module": "Ext.T", "statement": [], "proof": []}},
+                                                 registry)
+        self.assertEqual((counts["articles"], counts["mathlib"], unlinked), (1, 0, []))
+        row = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][0]
+        self.assertEqual((row["kind"], row["status"], len(row["object"])), ("theorem", "formalized", 2))
+        self.assertIn("This node has no prerequisites.", page.read_text())
+
+    def test_nothing_is_written_from_a_registry_that_does_not_speak_for_the_checkout(self) -> None:
+        end = lambda name, module=None: [{"type": "lean", "uri": sync.MATHLIB, "location": {
+            "declaration": name, **({"module": module} if module else {})}}]
+        flag = {"org.autoform": {"mathlib": True}}
+        self.page("Algebra/a.md", "# A\n\nA.\n")
+        self.page("Algebra/b.md", "# B\n\nB.\n")
+        self.annotate([self.about("Algebra/a.md", object=end("M.a", "Mathlib.Wrong"), extensions=flag),
+                       self.about("Algebra/b.md", object=end("M.b"), extensions=flag)])
+        files = sync.read_annotations()
+        digest = sync.names_digest(sync.credited_mathlib(files)[0])
+        good = {"left_out": {}, "bridges": {}, "mutual": [], "project": [], "missing": ["M.b"],
+                "inputs": {"names_sha256": digest, "dump_sha256": "d" * 64, "mathlib_rev": None, "requested": 2,
+                           "format": sync.REGISTRY_FORMAT},
+                "mathlib": {"M.a": {"module": "Mathlib.Wrong", "kind": "def", "proposition": False, "statement": [], "proof": []}}}
+        self.assertEqual(sync.registry_problems(good, files), [])
+        cases = {
+            "names": ({**good, "inputs": {**good["inputs"], "names_sha256": "0" * 64}},
+                      "another list of credited Mathlib names"),
+            "dump": ({**good, "inputs": {**good["inputs"], "dump_sha256": None}}, "does not name the dump"),
+            "count": ({**good, "inputs": {**good["inputs"], "requested": 3}}, "another number of credited"),
+            "split": ({**good, "missing": []}, "do not split the checkout's credited names"),
+            # An empty registry is not one that found nothing: it answers none of the credited names.
+            "empty": ({**good, "mathlib": {}, "missing": []}, "do not split the checkout's credited names"),
+            "module": ({**good, "mathlib": {"M.a": {**good["mathlib"]["M.a"], "module": "Mathlib.Right"}}},
+                       "Algebra/a.md names the module Mathlib.Wrong for M.a, which is in Mathlib.Right"),
+            "shape": ({"mathlib": {}}, "not one extract_v2_lean_dependencies.py --registry writes"),
+            "format": ({**good, "inputs": {**good["inputs"], "format": None}}, "the registry's format is None"),
+            # A malformed edge list is refused before anything is written.
+            "edges": ({**good, "bridges": {"Ext.a": {"statement": "M.a", "proof": []}}},
+                      "the registry's bridges entry for Ext.a is malformed"),
+        }
+        for case, (registry, message) in cases.items():
+            with self.subTest(case):
+                self.assertTrue(any(message in problem for problem in sync.registry_problems(registry, files)))
+        # A credited page whose file is missing is refused before anything is written.
+        (wiki.ROADMAP / "Algebra" / "b.md").unlink()
+        self.assertIn("Algebra/b.md credits M.b, but the page is missing", sync.registry_problems(good, files))
+        self.page("Algebra/b.md", "# B\n\nB.\n")
+        # A registry made at another Mathlib than the checkout's pin.
+        (wiki.ROOT / "lake-manifest.json").write_text(json.dumps({"packages": [{"name": "mathlib", "rev": "a" * 40}]}))
+        self.assertTrue(any(f"pins {'a' * 40}" in problem for problem in sync.registry_problems(good, files)))
+        self.assertEqual(sync.registry_problems({**good, "inputs": {**good["inputs"], "mathlib_rev": "a" * 40}}, files),
+                         [])
+
+    def test_only_a_lean_link_to_mathlib_credits_and_a_page_has_one_row(self) -> None:
+        flag = {"org.autoform": {"mathlib": True}}
+        html = [{"type": "html", "uri": sync.MATHLIB, "location": {"declaration": "M.a"}}]
+        lean = lambda name: [{"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": name}}]
+        self.annotate([self.about("Algebra/a.md", object=html, extensions=flag)])
+        self.assertTrue(sync.credited_mathlib(sync.read_annotations())[1])
+        self.annotate([self.about("Algebra/a.md", object=lean("M.a"), extensions=flag),
+                       self.about("Algebra/a.md", object=lean("M.b"), extensions=flag)])
+        self.assertEqual(sync.credited_mathlib(sync.read_annotations())[1],
+                         ["Algebra/a.md has 2 rows, which Autoform reads together; a page has one row"])
+        # One file under two spellings, and a page with a local row beside its Mathlib-credited one.
+        for other in ({"subject": [{"type": "generic", "uri": "../roadmap/Algebra/./a.md"}],
+                       "object": lean("M.b"), "extensions": flag},
+                      self.about("Algebra/a.md", object=[{"location": {"declaration": "Ext.a"}}])):
+            self.annotate([self.about("Algebra/a.md", object=lean("M.a"), extensions=flag), other])
+            self.assertTrue(sync.credited_mathlib(sync.read_annotations())[1])
+
+    def test_only_lean_links_to_this_project_are_its_declarations(self) -> None:
+        self.links_folder()
+        other = "https://github.com/someone/elsewhere"
+        # A reference to another repository, or a link of another type, leaves the page's own declaration alone.
+        row = {"object": [{"location": {"declaration": "Ext.a"}},
+                          {"type": "lean", "uri": other, "location": {"declaration": "Other.x"}, "role": "uses"},
+                          {"type": "html", "uri": "https://example.org/notes.html", "location": {"declaration": "y"}}]}
+        self.assertEqual(sync.lean_name(row), "Ext.a")
+        # A link to another repository that shares a name of this project credits nothing.
+        self.assertIsNone(sync.lean_name({"object": [{"type": "lean", "uri": other,
+                                                      "location": {"declaration": "Ext.a"}}]}))
+        # Losing a Mathlib credit keeps the row's references to other repositories.
+        flagged = {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/a.md"}],
+                   "object": [{"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": "M.a"}},
+                              {"type": "lean", "uri": other, "location": {"declaration": "Other.x"}}],
+                   "extensions": {"org.autoform": {"mathlib": True}}}
+        self.assertEqual(sync.mathlib_credit(flagged), ("M.a", None))
+        sync.drop_mathlib_credit(flagged)
+        self.assertEqual(flagged["object"], [{"type": "lean", "uri": other, "location": {"declaration": "Other.x"}}])
+        # A Mathlib-credited row that also names a declaration of this project is ambiguous.
+        with self.assertRaises(sync.CreditError):
+            sync.mathlib_credit({"object": [{"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": "M.a"}},
+                                            {"location": {"declaration": "Ext.a"}}],
+                                 "extensions": {"org.autoform": {"mathlib": True}}})
+
+    def autoform_owners(self, rows: dict[str, dict]) -> dict[str, tuple | str]:
+        """Whom Autoform's own loader shows each page `Algebra/<key>.md` crediting, its row (*rows*, with a subject
+        naming the page) recording a formalized theorem: (`mathlib`, name, Mathlib file) for a page it shows as in
+        Mathlib with one Mathlib declaration and none of this project, `ambiguous` for any other page it shows as in
+        Mathlib, (`atlas`, name, None) when it keeps the theorem's status, which it does only for the declaration
+        that takes the credit, listed first, and (`none`, None, None) otherwise."""
+        from autoform_cli.graph import declaration_names, load_graph
+
+        self.page("README.md", "# Roadmap\n\n- [Algebra](Algebra/README.md)\n")
+        self.page("Algebra/README.md", "# Algebra\n\n" + "".join(f"- [{key}]({key}.md)\n" for key in rows))
+        for key in rows:
+            self.page(f"Algebra/{key}.md", f"# {key}\n\nA statement.\n")
+        self.annotate([{**row, "kind": "theorem", "status": "formalized"} for row in rows.values()])
+        graph = load_graph(wiki.VAULT)
+        owners: dict[str, tuple | str] = {}
+        for key in rows:
+            node = graph.nodes[f"Algebra/{key}"]
+            if node.mathlib:
+                names = declaration_names(node.mathlib_declaration or "")
+                owners[key] = (("mathlib", names[0], node.mathlib_file) if len(names) == 1 and node.lean is None
+                               else "ambiguous")
+            elif node.statement_formalized:
+                owners[key] = ("atlas", declaration_names(node.lean)[0], None)
+            else:
+                owners[key] = ("none", None, None)
+        return owners
+
+    def test_one_rule_says_which_declaration_a_row_credits(self) -> None:
+        # Every case reviews found, through the one function extraction, lean-facts, declarations and the cards call,
+        # and each checked against what Autoform's own loader shows for the same row, over the repository's defaults.
+        local = lambda name, **more: {"location": {"declaration": name}, **more}
+        other = lambda uri, name, **more: {"type": "lean", "uri": uri, "location": {"declaration": name}, **more}
+        upstream = lambda name, **more: other(sync.MATHLIB, name, **more)
+        flag = {"org.autoform": {"mathlib": True}}
+        elsewhere = "https://github.com/x/y"
+        cases = {
+            "one local link with no role": ([local("Ext.a")], None, ("atlas", "Ext.a", None)),
+            # The page named with a percent-encoded hyphen is the same page.
+            "a percent-encoded subject": ([local("Ext.a")], None, ("atlas", "Ext.a", None)),
+            "a helper beside the stated declaration": ([local("Ext.h", role="uses"), local("Ext.a", role="states")],
+                                                      None, ("atlas", "Ext.a", None)),
+            "two local links, none stated": ([local("Ext.a"), local("Ext.b")], None, ("none", None, None)),
+            "two stated local links": ([local("Ext.a", role="states"), local("Ext.b", role="states")], None,
+                                       ("none", None, None)),
+            "the project root spelled out": ([other("../..", "Ext.a")], None, ("atlas", "Ext.a", None)),
+            "the project root percent-encoded": ([other("..%2F..", "Ext.a")], None, ("atlas", "Ext.a", None)),
+            "another repository by URL": ([local("Ext.a"), other(elsewhere, "Y.b", role="uses")],
+                                          None, ("atlas", "Ext.a", None)),
+            "a sibling checkout by relative path": ([local("Ext.a"), other("../../../sibling", "S.b", role="uses")],
+                                                    None, ("atlas", "Ext.a", None)),
+            "a sibling's declaration sharing a local name": ([other("../../../sibling", "Ext.a")], None,
+                                                             ("none", None, None)),
+            "stated in another repository": ([local("Ext.a"), other(elsewhere, "Y.b", role="states")],
+                                             None, ("none", None, None)),
+            "a link of another type": ([local("Ext.a"), {"type": "html", "uri": "https://e.org/n.html"}], None,
+                                       ("atlas", "Ext.a", None)),
+            # A PDF or HTML end is a reference, even one that states the page.
+            "an HTML end that states the page": ([local("Ext.a"), {"type": "html", "uri": "https://e.org/n.html",
+                                                                   "role": "states"}], None, ("atlas", "Ext.a", None)),
+            "a PDF end that states the page beside a stated theorem": (
+                [{"type": "pdf", "uri": "https://e.org/b.pdf", "role": "states"}, local("Ext.a", role="states")],
+                None, ("atlas", "Ext.a", None)),
+            # An end of a type Autoform does not know is left out, but one stating the page still states it elsewhere.
+            "an end of an unknown type that states the page": (
+                [local("Ext.a"), {"type": "doi", "uri": "https://doi.org/10.1000/x", "role": "states"}], None,
+                ("none", None, None)),
+            # The folder defaults give their type only to an end with no uri: one with a uri and no type is left out.
+            "an end with a uri and no type": ([{"uri": "../..", "location": {"declaration": "Ext.a"}}], None,
+                                              ("none", None, None)),
+            "an end with a uri and no type beside a local theorem": (
+                [local("Ext.a"), {"uri": "../..", "location": {"declaration": "Ext.b"}, "role": "uses"}], None,
+                ("atlas", "Ext.a", None)),
+            "an end with a uri and no type that states the page": (
+                [local("Ext.a"), {"uri": "../..", "location": {"declaration": "Ext.b"}, "role": "states"}], None,
+                ("none", None, None)),
+            # A Lean end with no location names a whole project.
+            "another project stating the page with no location": (
+                [local("Ext.a"), {"type": "lean", "uri": elsewhere, "role": "states"}], None, ("none", None, None)),
+            "this project stating the page with no location": (
+                [local("Ext.a"), {"type": "lean", "uri": "../..", "role": "states"}], None, ("atlas", "Ext.a", None)),
+            "a declaration that is not text": ([local(7)], None, ("none", None, None)),
+            "a Mathlib reference": ([local("Ext.a"), upstream("M.b")], None, ("atlas", "Ext.a", None)),
+            "a Mathlib reference that states the page": ([local("Ext.a"), upstream("M.b", role="states")], None,
+                                                         ("none", None, None)),
+            "a Mathlib credit": ([upstream("M.b")], flag, ("mathlib", "M.b", None)),
+            "a Mathlib credit that states the page": ([upstream("M.b", role="states")], flag, ("mathlib", "M.b", None)),
+            "a Mathlib credit naming its module": (
+                [{"type": "lean", "uri": sync.MATHLIB + ".git",
+                  "location": {"declaration": "M.b", "module": "Mathlib.B"}}], flag, ("mathlib", "M.b", "Mathlib.B")),
+            "a Mathlib credit with a reference elsewhere": ([upstream("M.b"), other(elsewhere, "Y.c")],
+                                                            flag, ("mathlib", "M.b", None)),
+            "a Mathlib credit beside a page reference that states it": (
+                [upstream("M.b"), {"type": "html", "uri": "https://e.org/n.html", "role": "states"}], flag,
+                ("mathlib", "M.b", None)),
+        }
+        refused = {
+            "a Mathlib credit beside a local declaration": ([upstream("M.b"), local("Ext.a")], flag),
+            "a Mathlib flag with no Mathlib declaration": ([local("Ext.a")], flag),
+            "a flag that is not a Boolean": ([upstream("M.b")], {"org.autoform": {"mathlib": "true"}}),
+            "two Mathlib declarations": ([upstream("M.b"), upstream("M.c")], flag),
+            "a Mathlib end with a uri and no type": ([{"uri": sync.MATHLIB, "location": {"declaration": "M.b"}}], flag),
+        }
+        keys = {case: f"case-{number}" for number, case in enumerate([*cases, *refused])}
+        rows = {keys[case]: self.about(f"Algebra/{keys[case]}.md", object=ends,
+                                       **({"extensions": extensions} if extensions else {}))
+                for case, (ends, extensions, *_) in [*cases.items(), *refused.items()]}
+        encoded = keys["a percent-encoded subject"].replace("-", "%2D")
+        rows[keys["a percent-encoded subject"]]["subject"] = [{"type": "generic",
+                                                              "uri": f"../roadmap/Algebra/{encoded}.md"}]
+        shown = self.autoform_owners(rows)
+        for case, (_ends, _extensions, expected) in cases.items():
+            with self.subTest(case=case):
+                row = rows[keys[case]]
+                self.assertEqual(sync.subject_path(row), wiki.ROADMAP / "Algebra" / f"{keys[case]}.md")
+                self.assertEqual(sync.page_owner(row), expected)
+                owner, name, module = expected
+                self.assertEqual(shown[keys[case]], (owner, name, module and module.replace(".", "/") + ".lean"))
+        for case in refused:
+            with self.subTest(case=case):
+                with self.assertRaises(sync.CreditError):
+                    sync.page_owner(rows[keys[case]])
+                # Autoform does not show such a page as one Mathlib declaration's either.
+                self.assertFalse(isinstance(shown[keys[case]], tuple) and shown[keys[case]][0] == "mathlib")
+
+    def test_one_reading_joins_a_row_to_its_page(self) -> None:
+        # Each spelling of a row's subject, read as extraction, the sync and the cards read it, against the page that
+        # Autoform's own loader gives the row's facts to. A row it leaves out, about part of a page, several pages or
+        # none, is about no page, and is a problem every one of them refuses.
+        from autoform_cli.graph import load_graph
+
+        cases = [
+            # The page, the row's subject ends (below roadmap/), and whether the row is about the page.
+            ("Algebra/plain.md", ["Algebra/plain.md"], True),
+            ("Algebra/t-main.md", ["Algebra/t%2Dmain.md"], True),
+            ("Algebra/dots.md", ["Algebra/./x/../dots.md"], True),
+            ("Algebra/whole.md", ["Algebra/whole.md#statement", "Algebra/whole.md"], True),
+            ("Algebra/query.md", ["Algebra/query.md?v=2"], False),
+            ("Algebra/fragment.md", ["Algebra/fragment.md#statement"], False),
+            ("Algebra/located.md", [{"type": "generic", "uri": "../roadmap/Algebra/located.md",
+                                     "location": {"lines": [1, 2]}}], False),
+            ("Algebra/two.md", ["Algebra/two.md", "Algebra/plain.md"], False),
+            ("Algebra/text.md", ["Algebra/text.txt"], False),
+        ]
+        self.page("README.md", "# Roadmap\n\n- [Algebra](Algebra/README.md)\n")
+        self.page("Algebra/README.md", "# Algebra\n\n" + "".join(f"- [{Path(page).stem}]({Path(page).name})\n"
+                                                                 for page, _, _ in cases))
+        rows = []
+        for page, ends, _ in cases:
+            self.page(page, f"# {Path(page).stem}\n\nA statement.\n")
+            subject = [end if isinstance(end, dict) else {"type": "generic", "uri": f"../roadmap/{end}"}
+                       for end in ends]
+            rows.append({"subject": subject, "kind": "theorem", "status": "formalized",
+                         "object": [{"location": {"declaration": f"Ext.{Path(page).stem.replace('-', '_')}"}}]})
+        self.annotate(rows)
+        graph = load_graph(wiki.VAULT)
+        problems = sync.credit_problems(sync.read_annotations())
+        for (page, ends, about), row in zip(cases, rows):
+            with self.subTest(page=page):
+                node = graph.nodes[page.removesuffix(".md")]
+                self.assertEqual(sync.subject_path(row), (wiki.ROADMAP / page).resolve() if about else None)
+                credited = row["object"][0]["location"]["declaration"]
+                self.assertEqual((node.statement_formalized, node.lean), (True, credited) if about else (False, None))
+                self.assertEqual(any(f"about {sync.page_name(row)} is one Autoform leaves out" in problem
+                                     for problem in problems), not about)
+        self.assertEqual(len(problems), sum(not about for _, _, about in cases))
+        # Two spellings of one page are two rows for it, which Autoform reads together: a page has one row.
+        self.annotate([*rows, self.about("Algebra/plai%6E.md", object=[{"location": {"declaration": "Ext.other"}}])])
+        self.assertIn("Algebra/plain.md has 2 rows, which Autoform reads together; a page has one row",
+                      sync.credit_problems(sync.read_annotations()))
+
+    def test_rows_autoform_reads_otherwise_stop_the_sync_before_it_writes(self) -> None:
+        # A row about part of its page, a page with two rows, and a flagged row that also names a declaration of the
+        # project: lean-facts and mathlib-names name each and write nothing, as extraction and the cards refuse them.
+        self.page("Algebra/a.md", "# A\n\nA.\n")
+        self.page("Algebra/b.md", "# B\n\nB.\n")
+        good = self.about("Algebra/a.md", object=[{"location": {"declaration": "Ext.a"}}])
+        mathlib = {"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": "M.b"}}
+        cases = {
+            "part of a page": (self.about("Algebra/b.md#statement", object=[{"location": {"declaration": "Ext.b"}}]),
+                               "a row of Algebra.jsonl about ../roadmap/Algebra/b.md#statement is one Autoform leaves "
+                               "out: its subject names only part of its page"),
+            "two rows for a page": (self.about("Algebra/./a.md", object=[{"location": {"declaration": "Ext.b"}}]),
+                                    "Algebra/a.md has 2 rows, which Autoform reads together; a page has one row"),
+            "a flagged row with a local declaration": (
+                self.about("Algebra/b.md", object=[{"location": {"declaration": "Ext.b"}}, mathlib],
+                           extensions={"org.autoform": {"mathlib": True}}),
+                "Algebra/b.md sets `mathlib` but names 1 Mathlib declarations in Lean links and 1 of this project"),
+        }
+        dependency_file = self.tmp / "lean-dependencies.json"
+        dependency_file.write_text(json.dumps({"missing_articles": {}, "articles": {}}))
+        output = self.tmp / "names.txt"
+        for case, (row, message) in cases.items():
+            with self.subTest(case=case):
+                self.annotate([good, row])
+                before = (sync.LINKS / "Algebra.jsonl").read_bytes()
+                with patch.object(sync, "apply_lean_facts") as apply, patch("sys.stdout", new_callable=io.StringIO), \
+                        patch("sys.stderr", new_callable=io.StringIO) as err:
+                    self.assertEqual(sync.run_lean_facts(dependency_file), 1)
+                    self.assertEqual(sync.main(["mathlib-names", str(output)]), 1)
+                apply.assert_not_called()
+                self.assertFalse(output.exists())
+                self.assertEqual((sync.LINKS / "Algebra.jsonl").read_bytes(), before)
+                self.assertEqual(err.getvalue().count(f"error: {message}"), 2, err.getvalue())
+
+    def test_a_page_that_loses_its_declaration_keeps_its_references(self) -> None:
+        # Only the ends naming the declaration the Lean no longer has go; the row's references stay, and no row the
+        # sync writes back takes the folder defaults it is read with.
+        (wiki.ROOT / "Ext").mkdir()
+        (wiki.ROOT / "Ext" / "K.lean").write_text("theorem kept : True := trivial\n")
+        self.page("Algebra/gone.md", "# Gone\n\nA statement.\n")
+        self.page("Algebra/kept.md", "# Kept\n\nA statement.\n")
+        html = {"type": "html", "uri": "https://example.org/notes.html", "role": "states"}
+        reference = {"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": "M.g"}}
+        self.annotate([
+            self.about("Algebra/gone.md", id=UNLINKED,
+                       object=[{"location": {"declaration": "Ext.gone"}}, html, reference]),
+            self.about("Algebra/kept.md", id=KEPT, object=[{"location": {"declaration": "Ext.kept"}}])])
+        index = SimpleNamespace(declarations={"Ext.kept": SimpleNamespace(keyword="theorem", path=Path("Ext/K.lean"))})
+        _, unlinked = sync.apply_lean_facts(index, {"Ext.kept": {"module": "Ext.K", "statement": [], "proof": []}})
+        self.assertEqual(unlinked, ["Ext.gone (Algebra/gone.md)"])
+        self.assertEqual(sync.read_annotations()[sync.LINKS / "Algebra.jsonl"], [
+            self.about("Algebra/gone.md", id=UNLINKED, object=[html, reference]),
+            self.about("Algebra/kept.md", id=KEPT, object=[{"location": {"declaration": "Ext.kept"}}],
+                       kind="theorem", status="formalized")])
+        self.assert_ids_kept([UNLINKED, KEPT])
+
+    def test_an_unlinked_page_never_passes_to_a_declaration_it_refers_to(self) -> None:
+        # T states the missing Ext.gone and names the live Ext.a with no role (spelled out, or through the folder
+        # defaults), and cites a PDF. Unlinked, it keeps Ext.a as a reference (role `uses`) and the PDF: read again,
+        # it credits nothing, a second identical pass leaves it as it is, and Autoform's loader never shows it as
+        # Ext.a's theorem. A helper already marked `uses` stays as it was.
+        from autoform_cli.graph import load_graph
+
+        (wiki.ROOT / "Ext").mkdir()
+        (wiki.ROOT / "Ext" / "A.lean").write_text("theorem a : True := trivial\n")
+        index = SimpleNamespace(declarations={"Ext.a": SimpleNamespace(keyword="theorem", path=Path("Ext/A.lean"))})
+        pdf = {"type": "pdf", "uri": "https://example.org/book.pdf"}
+        gone = {"location": {"declaration": "Ext.gone"}, "role": "states"}
+        helpers = {
+            "spelled out": {"type": "lean", "uri": "../..", "location": {"declaration": "Ext.a"}},
+            "through the defaults": {"location": {"declaration": "Ext.a"}},
+            "already a reference": {"location": {"declaration": "Ext.a"}, "role": "uses"},
+        }
+        self.page("README.md", "# Roadmap\n\n- [Algebra](Algebra/README.md)\n")
+        self.page("Algebra/README.md", "# Algebra\n\n- [T](t.md)\n")
+        self.page("Algebra/t.md", "# T\n\nA statement.\n")
+        for case, helper in helpers.items():
+            with self.subTest(case=case):
+                self.annotate([self.about("Algebra/t.md", id=UNLINKED, object=[gone, helper, pdf], kind="theorem",
+                                          status="formalized")])
+                self.assertEqual(sync.page_owner(sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][0]),
+                                 ("atlas", "Ext.gone", None))
+                _, unlinked = sync.apply_lean_facts(index, {})
+                self.assertEqual(unlinked, ["Ext.gone (Algebra/t.md)"])
+                once = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]
+                self.assertEqual(once, [self.about("Algebra/t.md", id=UNLINKED,
+                                                   object=[{**helper, "role": "uses"}, pdf])])
+                self.assert_ids_kept([UNLINKED])
+                for _ in range(2):
+                    row = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][0]
+                    self.assertEqual(sync.page_owner(row), ("none", None, None))
+                    node = load_graph(wiki.VAULT).nodes["Algebra/t"]
+                    self.assertEqual((node.lean, node.statement_formalized, node.proof_formalized),
+                                     ("Ext.a", False, False))
+                    _, unlinked = sync.apply_lean_facts(index, {})
+                    self.assertEqual(unlinked, [])
+                    self.assertEqual(sync.read_annotations()[sync.LINKS / "Algebra.jsonl"], once)
+                self.assertEqual(sync.unowned(sync.read_annotations()), ["Algebra/t.md"])
+
+    def test_unlinking_masks_what_the_folder_defaults_would_credit(self) -> None:
+        # Under other folder defaults, a value only the defaults give (a `mathlib` flag, a declaration in the end
+        # template) would survive the removal of the row's own entries: unlinking masks it, so the row read again
+        # credits nothing, as Autoform's loader reads it too.
+        from autoform_cli.graph import load_graph
+
+        self.page("README.md", "# Roadmap\n\n- [Algebra](Algebra/README.md)\n")
+        self.page("Algebra/README.md", "# Algebra\n\n- [T](t.md)\n")
+        self.page("Algebra/t.md", "# T\n\nA statement.\n")
+        mathlib = {"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": "M.gone"}}
+        cases = {
+            "an inherited flag": ({**sync.DEFAULTS, "extensions": {"org.autoform": {"mathlib": True}}},
+                                  self.about("Algebra/t.md", id=UNLINKED, object=[mathlib], kind="theorem"),
+                                  self.about("Algebra/t.md", id=UNLINKED,
+                                             extensions={"org.autoform": {"mathlib": False}}),
+                                  "M.gone (Algebra/t.md, credited to Mathlib, missing from Mathlib)"),
+            "an inherited declaration": (
+                {"object": {**sync.DEFAULTS["object"], "location": {"declaration": "Ext.gone"}}},
+                self.about("Algebra/t.md", id=UNLINKED, kind="theorem", status="formalized"),
+                self.about("Algebra/t.md", id=UNLINKED, object=[]), "Ext.gone (Algebra/t.md)"),
+        }
+        registry = {"left_out": {}, "bridges": {}, "mathlib": {}, "missing": ["M.gone"], "project": []}
+        for case, (defaults, row, unlinked_row, message) in cases.items():
+            with self.subTest(case=case):
+                self.links_folder()
+                (sync.LINKS / "_defaults.json").write_text(json.dumps(defaults, indent=1) + "\n")
+                self.annotate([row])
+                self.assertNotEqual(sync.page_owner(row)[0], "none")
+                for run in range(2):
+                    _, unlinked = sync.apply_lean_facts(SimpleNamespace(declarations={}), {}, registry)
+                    self.assertEqual(unlinked, [message] if run == 0 else [])
+                    self.assertEqual(sync.read_annotations()[sync.LINKS / "Algebra.jsonl"], [unlinked_row])
+                    self.assert_ids_kept([UNLINKED])
+                    self.assertEqual(sync.page_owner(unlinked_row), ("none", None, None))
+                    node = load_graph(wiki.VAULT).nodes["Algebra/t"]
+                    self.assertEqual((node.lean, node.mathlib, node.statement_formalized), (None, False, False))
+
+    def test_an_unlinked_page_retires_the_module_and_name_an_earlier_sync_wrote(self) -> None:
+        # T credits the missing Ext.gone, and keeps an earlier sync's module and name, which the Lean index resolves to
+        # the live Ext.helper. Unlinking Ext.gone retires them too: the page then stands for nothing, by a Lean link or
+        # by them, and two more identical passes leave it as it is, never Ext.helper's article; Autoform's loader shows
+        # it unproved. The same holds for a Mathlib credit the registry does not find. A row with only the module and
+        # name still resolves as before (test_a_legacy_row_never_shares_a_declaration_with_another_page).
+        from autoform_cli.graph import load_graph
+
+        (wiki.ROOT / "Ext.lean").write_text("theorem helper : True := trivial\n")
+        index = SimpleNamespace(declarations={"Ext.helper": SimpleNamespace(keyword="theorem", path=Path("Ext.lean"),
+                                                                            line=1)})
+        registry = {"left_out": {}, "bridges": {}, "mathlib": {}, "missing": ["M.gone"], "project": []}
+        legacy = {"module": "Ext", "name": "helper"}
+        mathlib = {"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": "M.gone"}}
+        self.page("README.md", "# Roadmap\n\n- [Algebra](Algebra/README.md)\n")
+        self.page("Algebra/README.md", "# Algebra\n\n- [T](t.md)\n")
+        self.page("Algebra/t.md", "# T\n\nA statement.\n")
+        cases = {
+            "an ATLAS link": (
+                self.about("Algebra/t.md", id=UNLINKED, object=[{"location": {"declaration": "Ext.gone"}}],
+                           kind="theorem", status="formalized", extensions={sync.OWN: {**legacy, "from": "docstring"}}),
+                self.about("Algebra/t.md", id=UNLINKED, extensions={sync.OWN: {"from": "docstring"}}),
+                "Ext.gone (Algebra/t.md)"),
+            "a Mathlib credit": (
+                self.about("Algebra/t.md", id=UNLINKED, object=[mathlib], kind="theorem",
+                           extensions={"org.autoform": {"mathlib": True}, sync.OWN: legacy}),
+                self.about("Algebra/t.md", id=UNLINKED),
+                "M.gone (Algebra/t.md, credited to Mathlib, missing from Mathlib)"),
+        }
+        for case, (row, unlinked_row, message) in cases.items():
+            with self.subTest(case=case):
+                self.annotate([row])
+                for run in range(3):
+                    counts, unlinked = sync.apply_lean_facts(index, {}, registry)
+                    self.assertEqual((unlinked, counts["articles"]), ([message] if run == 0 else [], 0))
+                    rows = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]
+                    self.assertEqual(rows, [unlinked_row])
+                    self.assert_ids_kept([UNLINKED])
+                    self.assertEqual((sync.page_owner(rows[0]), sync.legacy_pair(rows[0]),
+                                      sync.annotation_key(rows[0], index)), (("none", None, None), None, None))
+                    node = load_graph(wiki.VAULT).nodes["Algebra/t"]
+                    self.assertEqual((node.lean, node.statement_formalized, node.proof_formalized),
+                                     (None, False, False))
+
+    def test_an_unlink_that_would_leave_an_owner_writes_nothing(self) -> None:
+        # The check every unlink ends with: a row that still credits a declaration, read again, is refused, and
+        # lean-facts then stops before it writes anything.
+        self.links_folder()
+        credited = self.about("Algebra/t.md", object=[{"location": {"declaration": "Ext.a"}}])
+        with self.assertRaises(sync.UnlinkError):
+            sync.unowned_after(credited, "Ext.gone")
+        sync.unowned_after(self.about("Algebra/t.md", object=[{"location": {"declaration": "Ext.a"}, "role": "uses"}]),
+                           "Ext.gone")
+        # A module and name an earlier sync wrote, left on a row with no Lean link, would stand for a declaration too.
+        with self.assertRaises(sync.UnlinkError):
+            sync.unowned_after(self.about("Algebra/t.md", extensions={sync.OWN: {"module": "Ext", "name": "a"}}),
+                               "Ext.gone")
+        self.page("Algebra/t.md", "# T\n\nA statement.\n")
+        self.annotate([credited])
+        before = (sync.LINKS / "Algebra.jsonl").read_bytes()
+        dependency_file = self.tmp / "lean-dependencies.json"
+        dependency_file.write_text(json.dumps({"missing_articles": {}, "articles": {}}))
+        lean = SimpleNamespace(index_project=lambda *args, **kwargs: SimpleNamespace(declarations={}))
+        reader = sync.reader()
+        refused = sync.UnlinkError("unlinking Ext.gone from Algebra/t.md would leave it crediting Ext.a; fix its row")
+        with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean, annotations=reader),
+                                        "autoform_cli.lean": lean, "autoform_cli.annotations": reader}), \
+                patch.object(sync, "apply_lean_facts", side_effect=refused), \
+                patch("sys.stderr", new_callable=io.StringIO) as err:
+            self.assertEqual(sync.run_lean_facts(dependency_file), 1)
+        self.assertIn(f"error: {refused}", err.getvalue())
+        self.assertEqual((sync.LINKS / "Algebra.jsonl").read_bytes(), before)
+
+    def test_a_legacy_row_never_shares_a_declaration_with_another_page(self) -> None:
+        # An earlier sync's module and name that the Lean index resolves to Ext.main, beside a page crediting Ext.main
+        # or another such row: lean-facts refuses before it writes any page. A lone such row still gets Ext.main's
+        # facts, and one the index does not resolve stays stale.
+        (wiki.ROOT / "Ext.lean").write_text("theorem main : True := trivial\n")
+        index = SimpleNamespace(declarations={"Ext.main": SimpleNamespace(keyword="theorem", path=Path("Ext.lean"),
+                                                                          line=1)})
+        lean = SimpleNamespace(index_project=lambda *args, **kwargs: index)
+        reader = sync.reader()
+        dependency_file = self.tmp / "lean-dependencies.json"
+        dependency_file.write_text(json.dumps({"missing_articles": {}, "articles": {
+            "Ext.main": {"module": "Ext", "statement": [], "proof": []}}}))
+        for name in "abc":
+            self.page(f"Algebra/{name}.md", f"# {name.upper()}\n\nA statement.\n")
+        explicit = self.about("Algebra/a.md", object=[{"location": {"declaration": "Ext.main"}}])
+        legacy = lambda page, module="Ext": self.about(page, extensions={sync.OWN: {"module": module, "name": "main"}})
+        planned = self.about
+
+        def run(rows: list[dict]) -> tuple[int, str, bool]:
+            self.annotate(rows)
+            files = lambda: {path: path.read_bytes() for path in sorted([*wiki.ROADMAP.rglob("*"),
+                                                                          *sync.LINKS.iterdir()]) if path.is_file()}
+            before = files()
+            with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean, annotations=reader),
+                                            "autoform_cli.lean": lean, "autoform_cli.annotations": reader}), \
+                    patch("sys.stdout", new_callable=io.StringIO), patch("sys.stderr", new_callable=io.StringIO) as err:
+                code = sync.run_lean_facts(dependency_file)
+            return code, err.getvalue(), files() == before
+
+        shared = "stand for the declaration Ext.main of this project; a declaration has one page"
+        legacy_mark = "(by the module and name an earlier sync wrote)"
+        for rows, message in (
+                ([explicit, legacy("Algebra/b.md"), planned("Algebra/c.md")],
+                 f"Algebra/a.md and Algebra/b.md {legacy_mark} both {shared}"),
+                ([planned("Algebra/a.md"), legacy("Algebra/b.md"), legacy("Algebra/c.md")],
+                 f"Algebra/b.md {legacy_mark} and Algebra/c.md {legacy_mark} both {shared}")):
+            with self.subTest(message=message):
+                code, err, unchanged = run(rows)
+                self.assertEqual((code, unchanged), (1, True))
+                self.assertIn(f"error: {message}", err)
+        # Controls: the lone resolvable row is Ext.main's page; one whose module the index lacks stays stale.
+        for module, facts in (("Ext", ("theorem", "formalized")), ("Ext.Elsewhere", (None, None))):
+            with self.subTest(module=module):
+                code, err, _ = run([planned("Algebra/a.md"), legacy("Algebra/b.md", module), planned("Algebra/c.md")])
+                self.assertEqual(code, 0, err)
+                row = {sync.page_name(row): row for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
+                self.assertEqual((row["Algebra/b.md"].get("kind"), row["Algebra/b.md"].get("status")), facts)
+
+    def test_rows_are_read_over_the_links_folder_s_own_defaults(self) -> None:
+        # The folder's defaults file decides, as for Autoform's loader: without one the shorthand end has no type and
+        # credits nothing; one Autoform cannot use leaves it no row at all, and the sync refuses it; and an annotation
+        # file only one of them reads is named, so that no row is read two ways.
+        from autoform_cli.graph import load_graph
+
+        self.page("README.md", "# Roadmap\n\n- [Algebra](Algebra/README.md)\n")
+        self.page("Algebra/README.md", "# Algebra\n\n- [A](a.md)\n")
+        self.page("Algebra/a.md", "# A\n\nA statement.\n")
+        row = self.about("Algebra/a.md", object=[{"location": {"declaration": "Ext.a"}}], kind="theorem",
+                         status="formalized")
+        self.annotate([row])
+        shown = lambda: load_graph(wiki.VAULT).nodes["Algebra/a"]
+        self.assertEqual((sync.page_owner(row), shown().statement_formalized), (("atlas", "Ext.a", None), True))
+        (sync.LINKS / "_defaults.json").unlink()
+        self.assertEqual((sync.page_owner(row), shown().statement_formalized), (("none", None, None), False))
+        self.assertEqual(sync.credit_problems(sync.read_annotations()), [])
+        (sync.LINKS / "_defaults.json").write_text("[]\n")
+        self.assertEqual(sync.credit_problems(sync.read_annotations()),
+                         ["Autoform cannot use blueprint/links/_defaults.json, so it reads no row of blueprint/links"])
+        self.assertEqual((sync.subject_path(row), sync.page_owner(row), shown().lean),
+                         (None, ("none", None, None), None))
+        # A page's kind and status are the Lean's, which lean-facts writes or removes: no defaults give them.
+        (sync.LINKS / "_defaults.json").write_text(json.dumps({**sync.DEFAULTS, "kind": "def", "status": "formalized"}))
+        self.assertEqual(sync.credit_problems(sync.read_annotations()), [
+            f"blueprint/links/_defaults.json sets `{key}`, which lean-facts derives for each page from the Lean; "
+            "remove it" for key in ("kind", "status")])
+        (sync.LINKS / "_defaults.json").write_text(json.dumps(sync.DEFAULTS) + "\n")
+        (sync.LINKS / "extra.json").write_text(json.dumps(self.about("Algebra/a.md", status="stated")) + "\n")
+        (sync.LINKS / ".hidden.jsonl").write_text("")
+        self.assertEqual(sync.credit_problems(sync.read_annotations()), [
+            "Autoform reads blueprint/links/extra.json, which the sync does not; keep annotations in "
+            "blueprint/links/*.jsonl",
+            "the sync reads blueprint/links/.hidden.jsonl, which Autoform does not: it is hidden, a symbolic link or "
+            "not a regular file"])
+        (sync.LINKS / "extra.json").unlink()
+        (sync.LINKS / ".hidden.jsonl").unlink()
+        # A line Autoform's parser does not read, here a key given twice, which Python's would read.
+        (sync.LINKS / "Algebra.jsonl").write_text(json.dumps(row)[:-1] + ', "kind": "def"}\n')
+        self.assertEqual(sync.credit_problems(sync.read_annotations()), [
+            "Autoform's reader leaves out what it cannot read: annotations that are not JSON are left out (1): "
+            "links/Algebra.jsonl:1 (duplicate key 'kind' in one object)"])
+
+    def test_a_row_that_credits_none_of_its_declarations_is_reported(self) -> None:
+        both = self.about("Algebra/a.md", object=[{"location": {"declaration": "Ext.a"}},
+                                                  {"location": {"declaration": "Ext.b"}}])
+        self.annotate([both, self.about("Algebra/c.md", object=[{"location": {"declaration": "Ext.c"}}])])
+        self.assertEqual(sync.unowned(sync.read_annotations()), ["Algebra/a.md"])
+
+    def test_the_declaration_a_page_states_is_never_chosen_by_position(self) -> None:
+        # A helper link before the stated declaration: the stated one is the page's, as Autoform reads it.
+        self.links_folder()
+        row = {"object": [{"location": {"declaration": "Ext.helper"}, "role": "uses"},
+                          {"location": {"declaration": "Ext.a"}, "role": "states"}]}
+        self.assertEqual(sync.lean_name(row), "Ext.a")
+        self.assertIsNone(sync.lean_name({"object": [{"location": {"declaration": "Ext.b"}},
+                                                     {"location": {"declaration": "Ext.c"}}]}))
+
+    def test_the_registry_check_needs_no_mathlib_checkout(self) -> None:
+        # The wiki job lists M.t with its module, which its Mathlib checkout has; the cards job, with no checkout,
+        # still recognises the registry made from that list.
+        flag = {"org.autoform": {"mathlib": True}}
+        end = [{"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": "M.t", "module": "Mathlib.Right"}}]
+        self.page("Algebra/t.md", "# T\n\nT.\n")
+        self.annotate([self.about("Algebra/t.md", object=end, extensions=flag)])
+        source = self.tmp / ".lake" / "packages" / "mathlib" / "Mathlib" / "Right.lean"
+        source.parent.mkdir(parents=True)
+        source.write_text("")
+        files = sync.read_annotations()
+        credited = sync.credited_mathlib(files)[0]
+        self.assertEqual(sync.names_text(credited), "M.t\tMathlib.Right\n")
+        registry = {"left_out": {}, "bridges": {}, "mutual": [], "project": [], "missing": [], "unplaced": [],
+                    "mathlib": {"M.t": {"module": "Mathlib.Right", "kind": "theorem", "proposition": False, "statement": [], "proof": []}},
+                    "inputs": {"names_sha256": sync.names_digest(credited), "dump_sha256": "d" * 64,
+                               "mathlib_rev": None, "requested": 1, "format": sync.REGISTRY_FORMAT}}
+        self.assertEqual(sync.registry_problems(registry, files), [])
+        shutil.rmtree(self.tmp / ".lake")
+        self.assertEqual(sync.names_text(credited), "M.t\n")
+        self.assertEqual(sync.registry_problems(registry, files), [])
+
+    def test_a_missing_credit_leaves_the_row_s_other_links(self) -> None:
+        citation = {"type": "doi", "uri": "https://doi.org/10.1000/x"}
+        row = {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/a.md"}],
+               "object": [{"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": "M.a"}}, citation],
+               "extensions": {"org.autoform": {"mathlib": True, "navigation": "module"}}, "kind": "def"}
+        sync.drop_mathlib_credit(row)
+        self.assertEqual(row, {"subject": row["subject"], "object": [citation],
+                               "extensions": {"org.autoform": {"navigation": "module"}}})
+
+    def test_a_mathlib_credited_row_names_no_declaration_of_the_project(self) -> None:
+        # An earlier sync's module-and-name hints on a Mathlib-credited row never bind it to a project declaration.
+        row = {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/a.md"}],
+               "object": [{"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": "M.a"}}],
+               "extensions": {"org.autoform": {"mathlib": True}, sync.OWN: {"module": "Ext.A", "name": "a"}}}
+        index = SimpleNamespace(declarations={"Ext.a": SimpleNamespace(keyword="def", path=Path("Ext/A.lean"))})
+        self.assertIsNone(sync.annotation_key(row, index))
 
     def test_a_second_pass_replaces_the_facts_of_the_first(self) -> None:
         # A proof dependency that is gone leaves no section, and a definition that gains `sorry` loses its status.
@@ -362,7 +1328,7 @@ class LeanFacts(Vault):
         dependencies = {"Ext.lagrange": {"module": "Ext.Groups", "statement": ["Ext.conjecture"], "proof": []},
                         "Ext.conjecture": {"module": "Ext.Groups", "statement": [], "proof": []}}
         counts, unlinked = sync.apply_lean_facts(SimpleNamespace(declarations=declarations), dependencies)
-        self.assertEqual((counts, unlinked), ({"articles": 2, "unresolved": 0, "edges": 1}, []))
+        self.assertEqual((counts, unlinked), ({"articles": 2, "unresolved": 0, "edges": 1, "mathlib": 0}, []))
         self.assertEqual((wiki.ROADMAP / "Algebra" / "lagrange.md").read_text(),
                          "# Lagrange's theorem\n\nIt divides.\n\n## Depends on\n\n- [Conjecture](conjecture.md)\n")
 
@@ -398,7 +1364,7 @@ class LeanFacts(Vault):
             "Ext.conjecture": {"module": "Ext.Groups", "statement": [], "proof": []},
         }
         counts, unlinked = sync.apply_lean_facts(SimpleNamespace(declarations=declarations), dependencies)
-        self.assertEqual(counts, {"articles": 2, "unresolved": 0, "edges": 1})
+        self.assertEqual(counts, {"articles": 2, "unresolved": 0, "edges": 1, "mathlib": 0})
         self.assertEqual(unlinked, [])
         rows = {sync.subject_path(row).name: row for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
         self.assertEqual((rows["order-pos.md"]["kind"], rows["order-pos.md"]["status"]), ("theorem", "formalized"))
@@ -433,7 +1399,10 @@ class UncompiledArticles(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             dependency_file = Path(directory) / "lean-dependencies.json"
             dependency_file.write_text(json.dumps({"missing_articles": {"MathlibExt": ["Ext.declared"]}, "articles": {}}))
-            with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean), "autoform_cli.lean": lean}), \
+            # Autoform's annotation reader stays the real one: rows are read with it.
+            reader = sync.reader()
+            with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean, annotations=reader),
+                                            "autoform_cli.lean": lean, "autoform_cli.annotations": reader}), \
                     patch.object(sync, "apply_lean_facts") as apply:
                 self.assertEqual(sync.run_lean_facts(dependency_file), 1)
                 apply.assert_not_called()
@@ -503,14 +1472,116 @@ class Declarations(Vault):
         self.assertEqual(rows["new.md"]["object"], [{"location": {"declaration": "Ext.new"}}])
         self.assertEqual(rows["new.md"]["extensions"], {"org.atlas-wiki": {"from": "docstring"}})
         self.assertNotIn("wanted.md", rows)
-        # Each row the sync adds gets a fresh id (Graph rules, Data and metadata); one it already had keeps its own, and one without
-        # stays without until the one-off fill.
+        # Each row the sync adds gets a fresh id (What the tools own); one it already had keeps its own, and one without
+        # stays without, for `ids` to give it one.
         self.assertEqual(rows["old.md"]["id"], "af_000000000000000000000001")
         self.assertNotIn("id", rows["gone.md"])
         added = [rows["new.md"]["id"], rows["lone.md"]["id"]]
         for article_id in added:
             self.assertRegex(article_id, r"^af_[0-9a-f]{24}$")
         self.assertEqual(len(set(added + ["af_000000000000000000000001"])), 3)
+
+    def test_a_new_page_never_joins_a_card(self) -> None:
+        # A card holds only the statements its editors placed in it (docs/cards.md): a new declaration whose module's
+        # pages sit in a card goes beside the card, and the run lists it for an editor.
+        self.page("Algebra/README.md", "# Algebra\n\n- [Groups](groups/README.md)\n")
+        self.page("Algebra/groups/README.md", "# Groups\n\nProse.\n\n- [Orders](orders/README.md)\n")
+        self.page("Algebra/groups/orders/README.md", "# Orders\n\nIt says.\n\n## Idea\n\nWhy.\n\n## Statements\n\n"
+                  "- [Old](old.md)\n")
+        self.page("Algebra/groups/orders/old.md", "# Old\n\nText.\n")
+        card = {"kind": "result", "main": "af_000000000000000000000001", "importance": "key", "level": "undergraduate"}
+        self.annotate([
+            self.about("Algebra/README.md"), self.about("Algebra/groups/README.md"),
+            self.about("Algebra/groups/orders/README.md", id="af_000000000000000000000002",
+                       extensions={"org.atlas-wiki": {"card": card}}),
+            self.about("Algebra/groups/orders/old.md", id="af_000000000000000000000001",
+                       object=[{"location": {"declaration": "Ext.old"}}]),
+        ])
+        targets = [declaration("Ext.old", "old", "Old", "Text."), declaration("Ext.new", "new", "New", "New text.")]
+        report = sync.apply_declarations(targets, SimpleNamespace(declarations={"Ext.old": None, "Ext.new": None}))
+        self.assertEqual(report["added"], ["Ext.new -> Algebra/groups/new.md"])
+        self.assertEqual(report["unassigned"], ["Algebra/groups/new.md"])
+        self.assertFalse((wiki.ROADMAP / "Algebra/groups/orders/new.md").exists())
+        self.assertEqual((wiki.ROADMAP / "Algebra/groups/README.md").read_text(),
+                         "# Groups\n\nProse.\n\n- [Orders](orders/README.md)\n- [New](new.md)\n")
+        self.assertNotIn("New", (wiki.ROADMAP / "Algebra/groups/orders/README.md").read_text())
+
+    def card_beside_a_folder(self) -> None:
+        """Algebra/groups holds a page of module Groups and the card orders (docs/cards.md)."""
+        self.page("Algebra/README.md", "# Algebra\n\n- [Groups](groups/README.md)\n")
+        self.page("Algebra/groups/README.md", "# Groups\n\nProse.\n\n- [G](g.md)\n- [Orders](orders/README.md)\n")
+        self.page("Algebra/groups/g.md", "# G\n\nText.\n")
+        self.page("Algebra/groups/orders/README.md", "# Orders\n\nIt says.\n\n## Idea\n\nWhy.\n\n## Statements\n\n"
+                  "- [Old](old.md)\n")
+        self.page("Algebra/groups/orders/old.md", "# Old\n\nText.\n")
+        card = {"kind": "result", "main_article_id": "af_000000000000000000000001", "importance": "key",
+                "level": "undergraduate"}
+        self.annotate([
+            self.about("Algebra/README.md"), self.about("Algebra/groups/README.md"),
+            self.about("Algebra/groups/g.md", id="af_000000000000000000000003",
+                       object=[{"location": {"declaration": "Ext.g"}}]),
+            self.about("Algebra/groups/orders/README.md", id="af_000000000000000000000002",
+                       extensions={"org.atlas-wiki": {"card": card}}),
+            self.about("Algebra/groups/orders/old.md", id="af_000000000000000000000001",
+                       object=[{"location": {"declaration": "Ext.old"}}]),
+        ])
+
+    def new_module_below_the_card(self, generated: bool) -> dict:
+        # generate_wiki lays a new module's folder out inside the card; the run makes no folder or page there,
+        # with or without generate_wiki's folder page for it.
+        self.card_beside_a_folder()
+        new = declaration("Ext.new", "new", "New", "New text.", module=("Ext", "Fresh"))
+        new.path = wiki.ROADMAP / "Algebra" / "groups" / "orders" / "fresh" / "new.md"
+        layout = {wiki.ROADMAP / "Algebra/groups/orders/fresh/README.md": "# Fresh\n\n- [New](new.md)\n"}
+        return sync.apply_declarations(
+            [declaration("Ext.g", "g", "G", "Text."), declaration("Ext.old", "old", "Old", "Text."), new],
+            SimpleNamespace(declarations={"Ext.g": None, "Ext.old": None, "Ext.new": None}),
+            generated=layout if generated else {})
+
+    def assert_beside_the_card(self, report: dict) -> None:
+        self.assertEqual(report["added"], ["Ext.new -> Algebra/groups/new.md"])
+        self.assertEqual(report["unassigned"], ["Algebra/groups/new.md"])
+        self.assertEqual(sorted(path.name for path in (wiki.ROADMAP / "Algebra/groups/orders").iterdir()),
+                         ["README.md", "old.md"])
+
+    def test_a_new_module_laid_out_below_a_card_goes_beside_it(self) -> None:
+        self.assert_beside_the_card(self.new_module_below_the_card(generated=True))
+
+    def test_the_fallback_to_the_nearest_folder_page_never_lands_in_a_card(self) -> None:
+        self.assert_beside_the_card(self.new_module_below_the_card(generated=False))
+
+    def test_a_new_folder_takes_no_recorded_address(self) -> None:
+        # generate_wiki lays a new module out in Algebra/groups/former/, an address a moved page left: the run makes
+        # no folder there and places the page in the nearest folder the wiki has.
+        self.card_beside_a_folder()
+        (wiki.ROOT / "scripts").mkdir(exist_ok=True)
+        (wiki.ROOT / "scripts" / "card-moves.jsonl").write_text(json.dumps(
+            {"page": "Algebra/groups/former", "to": "Algebra/groups/orders/old", "article_id": "af_000000000000000000000001"})
+            + "\n")
+        new = declaration("Ext.new", "new", "New", "New text.", module=("Ext", "Fresh"))
+        new.path = wiki.ROADMAP / "Algebra" / "groups" / "former" / "new.md"
+        layout = {wiki.ROADMAP / "Algebra/groups/former/README.md": "# Former\n\n- [New](new.md)\n"}
+        report = sync.apply_declarations(
+            [declaration("Ext.g", "g", "G", "Text."), declaration("Ext.old", "old", "Old", "Text."), new],
+            SimpleNamespace(declarations={"Ext.g": None, "Ext.old": None, "Ext.new": None}), generated=layout)
+        self.assertEqual(report["added"], ["Ext.new -> Algebra/groups/new.md"])
+        self.assertFalse((wiki.ROADMAP / "Algebra/groups/former").exists())
+
+    def test_a_new_page_takes_no_name_a_folder_or_a_recorded_address_has(self) -> None:
+        # A page named like the card's folder would share its node id; a moved page's old address keeps
+        # redirecting to its article.
+        self.card_beside_a_folder()
+        (wiki.ROOT / "scripts").mkdir(exist_ok=True)
+        (wiki.ROOT / "scripts" / "card-moves.jsonl").write_text(json.dumps(
+            {"page": "Algebra/groups/gone", "to": "Algebra/groups/orders/old", "article_id": "af_000000000000000000000001"})
+            + "\n")
+        report = sync.apply_declarations(
+            [declaration("Ext.g", "g", "G", "Text."), declaration("Ext.old", "old", "Old", "Text."),
+             declaration("Ext.orders", "orders", "Orders lemma", "A statement."),
+             declaration("Ext.gone", "gone", "Gone lemma", "Another statement.")],
+            SimpleNamespace(declarations={"Ext.g": None, "Ext.old": None, "Ext.orders": None, "Ext.gone": None}))
+        self.assertEqual(sorted(report["added"]), ["Ext.gone -> Algebra/groups/gone-2.md",
+                                                   "Ext.orders -> Algebra/groups/orders-2.md"])
 
     def test_a_held_declaration_keeps_its_page_unlinked_and_gets_no_other(self) -> None:
         self.page("Algebra/README.md", "# Algebra\n\n- [Claim](claim.md)\n")
@@ -529,8 +1600,8 @@ class Declarations(Vault):
         self.assertEqual(rows["claim.md"]["extensions"], {"org.atlas-wiki": {"held": held}})
 
     def test_a_held_marker_that_cannot_hold_its_declaration_back_is_reported(self) -> None:
-        self.page("Algebra/README.md", "# Algebra\n\n" + "".join(f"- [{n.upper()}]({n}.md)\n" for n in "abcdefgh"))
-        for name in "abcdefgh":
+        self.page("Algebra/README.md", "# Algebra\n\n" + "".join(f"- [{n.upper()}]({n}.md)\n" for n in "abcdefghi"))
+        for name in "abcdefghi":
             self.page(f"Algebra/{name}.md", f"# {name.upper()}\n")
         held = lambda value: {"org.atlas-wiki": {"held": value}}
         self.annotate([
@@ -543,6 +1614,9 @@ class Declarations(Vault):
             self.about("Algebra/f.md", extensions=held({"declaration": "Ext.e", "reason": "false"})),
             self.about("Algebra/g.md", extensions=held({"declaration": "Ext.g", "reason": "false"})),
             self.about("Algebra/h.md", extensions=held({"declaration": "Ext.g", "reason": "vacuous"})),
+            self.about("Algebra/i.md", object=[{"type": "lean", "uri": sync.MATHLIB, "location": {
+                "declaration": "M.real", "module": "Mathlib.A"}}],
+                extensions={**held({"declaration": "Ext.i", "reason": "false"}), "org.autoform": {"mathlib": True}}),
         ])
         targets = [declaration("Ext.c", "c", "C", "C."), declaration("Ext.e", "e", "E", "E."),
                    declaration("Ext.g", "g", "G", "G."), declaration("Ext.new", "new", "New", "A new statement.")]
@@ -555,6 +1629,7 @@ class Declarations(Vault):
             "Algebra/d.md: it holds Ext.renamed back, which the Lean index does not resolve",
             "Algebra/f.md: it holds Ext.e back, which Algebra/e.md links",
             "Algebra/h.md: it holds Ext.g back, as Algebra/g.md does",
+            "Algebra/i.md: it holds Ext.i back but is linked to M.real",
         ])
         # A marker the run cannot use stops it before it writes anything.
         self.assertEqual(report["added"], [])
@@ -1151,7 +2226,7 @@ class Declarations(Vault):
 
     def test_a_page_listed_nowhere_fails_the_run(self) -> None:
         report = {kind: [] for kind in ("added", "folders", "gone", "changed", "unindexed", "parts", "replaced", "appended",
-                                         "held", "held_problems")}
+                                         "held", "held_problems", "unassigned")}
         report["unlisted"] = ["Algebra/groups/sylow.md"]
         lean = SimpleNamespace(index_project=lambda *args, **kwargs: SimpleNamespace(declarations={}))
         with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean), "autoform_cli.lean": lean}), \
@@ -1176,6 +2251,108 @@ class Declarations(Vault):
         self.assertEqual(refreshed, [])
         self.assertEqual(output.getvalue(), "Held markers to fix: 1; the run wrote nothing\n")
         self.assertIn("error: Algebra/a.md: its held marker names no declaration; fix the marker", errors.getvalue())
+
+    def test_a_row_whose_credit_is_refused_neither_places_nor_keeps_a_page(self) -> None:
+        # A flagged row that also names Ext.a is reported and left alone, as lean-facts and mathlib-names refuse it: it
+        # neither keeps Ext.a from a page nor places the module's new page, and the run writes nothing until it is
+        # fixed. Fixed, the page keeps Ext.a and the new page joins it.
+        self.page("Algebra/README.md", "# Algebra\n\n- [Groups](groups/README.md)\n")
+        self.page("Algebra/groups/README.md", "# Groups\n\n- [A](a.md)\n")
+        self.page("Algebra/groups/a.md", "# A\n\nA statement.\n")
+        mathlib = {"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": "M.a"}}
+        flagged = self.about("Algebra/groups/a.md", id="af_000000000000000000000001",
+                             object=[mathlib, {"location": {"declaration": "Ext.a"}}],
+                             extensions={"org.autoform": {"mathlib": True}})
+        folders = [self.about("Algebra/README.md"), self.about("Algebra/groups/README.md")]
+        self.annotate([*folders, flagged])
+        files = lambda: {path: path.read_bytes() for path in sorted([*wiki.ROADMAP.rglob("*"), *sync.LINKS.iterdir()])
+                         if path.is_file()}
+        before = files()
+        targets = [declaration("Ext.a", "a", "A", "A statement."), declaration("Ext.new", "new", "New", "New.")]
+        index = SimpleNamespace(declarations={"Ext.a": None, "Ext.new": None})
+        report = sync.apply_declarations(targets, index)
+        self.assertEqual(report["credit_problems"], [
+            "Algebra/groups/a.md sets `mathlib` but names 1 Mathlib declarations in Lean links and 1 of this project; "
+            "a Mathlib-credited row names exactly one Mathlib declaration and none of this project"])
+        self.assertEqual((report["added"], report["gone"]), ([], []))
+        self.assertEqual(files(), before)
+        self.assertFalse(sync.STATE.exists())
+        lean = SimpleNamespace(index_project=lambda *args, **kwargs: index)
+        reader = sync.reader()
+        refreshed = []
+        with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean, annotations=reader),
+                                        "autoform_cli.lean": lean, "autoform_cli.annotations": reader}), \
+                patch.object(wiki, "generate", lambda *args: {}), \
+                patch.object(sync, "refresh_catalog", refreshed.append), \
+                patch("sys.stdout", new_callable=io.StringIO) as output, \
+                patch("sys.stderr", new_callable=io.StringIO) as errors:
+            self.assertEqual(sync.run_declarations(), 1)
+        self.assertEqual((refreshed, output.getvalue()), ([], "Rows to fix: 1; the run wrote nothing\n"))
+        self.assertIn("error: Algebra/groups/a.md sets `mathlib` but names 1 Mathlib declarations", errors.getvalue())
+        self.assertEqual(files(), before)
+        # The Mathlib link kept as a reference, without the flag: the page credits Ext.a again.
+        self.annotate([*folders, {key: value for key, value in flagged.items() if key != "extensions"}])
+        report = sync.apply_declarations(targets, index)
+        self.assertEqual((report["credit_problems"], report["added"]), ([], ["Ext.new -> Algebra/groups/new.md"]))
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
+                         "# Groups\n\n- [A](a.md)\n- [New](new.md)\n")
+
+    def test_a_declaration_two_pages_credit_neither_places_nor_keeps_a_page(self) -> None:
+        # Two valid rows on two pages crediting one declaration, Mathlib's or this project's, leave its owner
+        # ambiguous: the run reports them and writes nothing, as mathlib-names, lean-facts and extraction refuse them.
+        self.page("Algebra/README.md", "# Algebra\n\n- [Groups](groups/README.md)\n")
+        self.page("Algebra/groups/README.md", "# Groups\n\n- [A](a.md)\n- [B](b.md)\n")
+        self.page("Algebra/groups/a.md", "# A\n\nA statement.\n")
+        self.page("Algebra/groups/b.md", "# B\n\nA statement.\n")
+        mathlib = [{"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": "M.a"}}]
+        flag = {"org.autoform": {"mathlib": True}}
+        cases = {
+            "Mathlib's": ({"object": mathlib, "extensions": flag},
+                          "Algebra/groups/a.md and Algebra/groups/b.md both credit the Mathlib declaration M.a; a "
+                          "declaration has one page"),
+            "this project's": ({"object": [{"location": {"declaration": "Ext.a"}}]},
+                               "Algebra/groups/a.md and Algebra/groups/b.md both credit the declaration Ext.a of this "
+                               "project; a declaration has one page"),
+        }
+        targets = [declaration("Ext.a", "a", "A", "A statement."), declaration("Ext.new", "new", "New", "New.")]
+        index = SimpleNamespace(declarations={"Ext.a": None, "Ext.new": None})
+        for case, (fields, message) in cases.items():
+            with self.subTest(case=case):
+                self.annotate([self.about("Algebra/README.md"), self.about("Algebra/groups/README.md"),
+                               self.about("Algebra/groups/a.md", **fields),
+                               self.about("Algebra/groups/b.md", **fields)])
+                files = lambda: {path: path.read_bytes() for path in sorted([*wiki.ROADMAP.rglob("*"),
+                                                                              *sync.LINKS.iterdir()]) if path.is_file()}
+                before = files()
+                report = sync.apply_declarations(targets, index)
+                self.assertEqual((report["credit_problems"], report["added"]), ([message], []))
+                self.assertEqual(files(), before)
+                self.assertFalse(sync.STATE.exists())
+                self.assertIn(message, sync.credited_mathlib(sync.read_annotations())[1])
+
+    def test_a_legacy_row_and_an_explicit_one_neither_place_nor_keep_a_page(self) -> None:
+        # A page crediting Ext.main and an earlier sync's module and name the index resolves to it: the run reports
+        # them and writes nothing. Once the explicit credit goes, the lone legacy row keeps Ext.main its page.
+        self.page("Algebra/README.md", "# Algebra\n\n- [A](a.md)\n- [B](b.md)\n")
+        self.page("Algebra/a.md", "# A\n\nA statement.\n")
+        self.page("Algebra/b.md", "# B\n\nA statement.\n")
+        legacy = self.about("Algebra/b.md", extensions={sync.OWN: {"module": "Ext", "name": "main"}})
+        index = SimpleNamespace(declarations={"Ext.main": SimpleNamespace(path=Path("Ext.lean"), line=1,
+                                                                          keyword="theorem")})
+        targets = [declaration("Ext.main", "main", "Main", "Main.")]
+        self.annotate([self.about("Algebra/README.md"),
+                       self.about("Algebra/a.md", object=[{"location": {"declaration": "Ext.main"}}]), legacy])
+        files = lambda: {path: path.read_bytes() for path in sorted([*wiki.ROADMAP.rglob("*"), *sync.LINKS.iterdir()])
+                         if path.is_file()}
+        before = files()
+        report = sync.apply_declarations(targets, index)
+        self.assertEqual(report["credit_problems"], [
+            "Algebra/a.md and Algebra/b.md (by the module and name an earlier sync wrote) both stand for the "
+            "declaration Ext.main of this project; a declaration has one page"])
+        self.assertEqual((files(), sync.STATE.exists()), (before, False))
+        self.annotate([self.about("Algebra/README.md"), self.about("Algebra/a.md"), legacy])
+        report = sync.apply_declarations(targets, index)
+        self.assertEqual((report["credit_problems"], report["added"], report["unindexed"]), ([], [], []))
 
     def test_an_edit_that_does_not_render_as_meant_is_left_out(self) -> None:
         # The whitelist admits a heading holding raw HTML, but a browser builds the rest of the page inside the
@@ -1699,16 +2876,25 @@ class UnindexedDeclarations(Vault):
         self.assertEqual((report["added"], report["gone"], report["unindexed"]), ([], [], []))
 
     def test_a_legacy_page_without_a_compiled_row_claims_no_prerequisites(self) -> None:
+        # A row an earlier sync wrote with a module and a name that the Lean index resolves stands for that
+        # declaration as a Lean link does: an extraction without its row is refused (uncovered_owners) before the page
+        # could claim to have no prerequisites, and lean-facts gives the build's row the declaration's Lean link.
         source = self.tmp / "MathlibExt" / "Algebra" / "Wanted.lean"
         source.parent.mkdir(parents=True, exist_ok=True)
         source.write_text("/-- A wish. -/\ntheorem_wanted wish : True\n")
-        page = self.page("Algebra/wish.md", "# Wish\n\nA wish.\n\n## Depends on\n\nThis node has no prerequisites.\n")
-        self.annotate([self.about("Algebra/wish.md", extensions={"org.atlas-wiki": {"module": "MathlibExt.Algebra.Wanted", "name": "wish"}})])
+        self.page("Algebra/wish.md", "# Wish\n\nA wish.\n")
+        legacy = {"org.atlas-wiki": {"module": "MathlibExt.Algebra.Wanted", "name": "wish"}}
+        self.annotate([self.about("Algebra/wish.md", extensions=legacy)])
         index = SimpleNamespace(declarations={"MathlibExt.wish": SimpleNamespace(
             path=Path("MathlibExt/Algebra/Wanted.lean"), line=2, keyword="theorem_wanted")})
-        counts, _ = sync.apply_lean_facts(index, {})
+        empty = {"articles": {}, "missing_articles": {}}
+        self.assertEqual(sync.uncovered_owners(sync.read_annotations(), empty, index), ["MathlibExt.wish"])
+        counts, _ = sync.apply_lean_facts(index, {"MathlibExt.wish": {"module": "MathlibExt.Algebra.Wanted",
+                                                                      "statement": [], "proof": []}})
         self.assertEqual(counts["articles"], 1)
-        self.assertEqual(page.read_text(), "# Wish\n\nA wish.\n")
+        row = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][0]
+        self.assertEqual((row["object"], row["kind"], row["status"]),
+                         ([{"location": {"declaration": "MathlibExt.wish"}, "role": "states"}], "theorem", "stated"))
 
     def test_no_identity_is_rebuilt_from_the_source(self) -> None:
         # Keys are Lean names from the index: nothing builds `module:name` keys, and a last name component is taken
@@ -1720,6 +2906,7 @@ class UnindexedDeclarations(Vault):
         # Only the report formats `module:name` or `path:line`, for a reader.
         self.assertEqual([line for line in lines if "}:{" in line], [
             'summary["unindexed"].append(f"{relative.as_posix()}:{number + 1} {written}")',
+            'return f"{path.relative_to(wiki.ROOT).as_posix()}:{line}"',
             '+ [f"{subject_path(a).relative_to(wiki.ROADMAP)} ({a[\'extensions\'][OWN][\'module\']}:{a[\'extensions\'][OWN][\'name\']})"',
         ])
         for helper in ("declaration_identity", "split_identity", "fallback_metadata", "match_fallback", "qualified_name",
@@ -1732,6 +2919,363 @@ class UnindexedDeclarations(Vault):
             'short = target.names[0].split(".")[-1]',
             'if (match := wiki.V2_DECLARATION.match(row)) and match.group("name").split(".")[-1] == short]',
         ])
+
+
+class ArticleIds(Vault):
+    """`ids` gives each annotation without an id a fresh one and changes no other byte (What the tools own, in
+    docs/BLUEPRINT.md)."""
+
+    def links(self, name: str, text: str) -> Path:
+        sync.LINKS.mkdir(parents=True, exist_ok=True)
+        path = sync.LINKS / name
+        path.write_bytes(text.encode("utf-8"))
+        return path
+
+    def row(self, page: str, **fields) -> str:
+        return json.dumps(self.about(page, **fields), ensure_ascii=False)
+
+    def test_each_row_without_an_id_gets_one_after_its_subject_and_keeps_every_other_byte(self) -> None:
+        kept = self.row("Algebra/a.md", object=[{"location": {"declaration": "Ext.a"}}], id="af_000000000000000000000001")
+        rows = [
+            kept,
+            self.row("Algebra/b.md", object=[{"location": {"declaration": "Ext.b"}}],
+                     extensions={"org.atlas-wiki": {"from": "docstring"}}),
+            self.row("Algebra/README.md", extensions={"org.autoform": {"navigation": "module"}}),
+            self.row("Algebra/théorème.md", extensions={"org.atlas-wiki": {"held": {"declaration": "Ext.c", "reason": "false",
+                                                                                     "issue": 1}}}),
+        ]
+        algebra = self.links("Algebra.jsonl", "\n".join(rows) + "\n")
+        root = self.links("roadmap.jsonl", self.row("README.md") + "\n")
+        without, problems = sync.apply_ids()
+        self.assertEqual(problems, [])
+        self.assertEqual(without, ["blueprint/links/Algebra.jsonl:2", "blueprint/links/Algebra.jsonl:3",
+                                   "blueprint/links/Algebra.jsonl:4", "blueprint/links/roadmap.jsonl:1"])
+        filled = algebra.read_bytes().decode("utf-8").split("\n")
+        self.assertEqual((filled[0], filled[-1], len(filled)), (kept, "", len(rows) + 1))
+        ids = ["af_000000000000000000000001"]
+        for before, after in zip([*rows[1:], self.row("README.md")], [*filled[1:-1], root.read_text().rstrip("\n")]):
+            added = re.search(r', "id": "(af_[0-9a-f]{24})"', after)
+            # Without its id the row is the row it was, byte for byte; with it, it is the row declarations would write.
+            self.assertEqual(after[:added.start()] + after[added.end():], before)
+            annotation = json.loads(before)
+            self.assertEqual(after, json.dumps({"subject": annotation.pop("subject"), "id": added.group(1), **annotation},
+                                               ensure_ascii=False))
+            ids.append(added.group(1))
+        self.assertEqual(len(set(ids)), len(ids))
+        # A second run finds no row without an id and changes nothing.
+        written = {path: path.read_bytes() for path in (algebra, root)}
+        self.assertEqual(sync.apply_ids(), ([], []))
+        self.assertEqual({path: path.read_bytes() for path in (algebra, root)}, written)
+
+    def test_a_row_written_another_way_keeps_its_bytes(self) -> None:
+        rows = ['{"subject":[{"uri":"../roadmap/Algebra/a.md","type":"generic"}] , "object": [ ]}\r',
+                '{ "subject" : [{"type": "generic", "uri": "../roadmap/Algebra/b.md"}]}\r']
+        path = self.links("Algebra.jsonl", "\n".join(rows) + "\n")
+        self.assertEqual(sync.apply_ids()[1], [])
+        filled = path.read_bytes().decode("utf-8").split("\n")
+        self.assertRegex(filled[0], r'\A\{"subject":\[\{"uri":"\.\./roadmap/Algebra/a\.md","type":"generic"\}\], "id": "af_[0-9a-f]{24}" , "object": \[ \]\}\r\Z')
+        self.assertRegex(filled[1], r'\A\{ "subject" : \[\{"type": "generic", "uri": "\.\./roadmap/Algebra/b\.md"\}\], "id": "af_[0-9a-f]{24}"\}\r\Z')
+        self.assertEqual(filled[2], "")
+
+    def test_a_malformed_shared_or_repeated_id_or_a_row_it_cannot_read_stops_the_run(self) -> None:
+        text = "\n".join([
+            self.row("Algebra/a.md", id="af_000000000000000000000001"),
+            self.row("Algebra/b.md", id="af_000000000000000000000001"),
+            self.row("Algebra/c.md", id="af_1"),
+            # JSON keeps the last of two ids, so the first, malformed, one would pass unseen.
+            self.row("Algebra/d.md", id="broken")[:-1] + ', "id": "af_000000000000000000000003"}',
+            "{not json",
+            '{"object": []}',
+            '{"subject": [{"type": "generic", "uri": "../roadmap/Algebra/g.md", "uri": "../roadmap/Algebra/h.md"}]}',
+            '{"subject": [{"type": "generic", "uri": "../roadmap/Algebra/i.md"}], "weight": NaN}',
+            self.row("Algebra/e.md"),
+        ]) + "\n"
+        path = self.links("Algebra.jsonl", text)
+        other = self.links("Logic.jsonl", self.row("Logic/f.md") + "\n")
+        self.assertEqual(sync.apply_ids(), (["blueprint/links/Algebra.jsonl:9", "blueprint/links/Logic.jsonl:1"], [
+            "blueprint/links/Algebra.jsonl:2: its id af_000000000000000000000001 is the id of blueprint/links/Algebra.jsonl:1 too",
+            'blueprint/links/Algebra.jsonl:3: its id "af_1" is not af_ and 24 hex digits',
+            "blueprint/links/Algebra.jsonl:4: the row repeats id",
+            "blueprint/links/Algebra.jsonl:5: the row is not a JSON object",
+            "blueprint/links/Algebra.jsonl:6: the row has no subject",
+            "blueprint/links/Algebra.jsonl:7: the row repeats uri",
+            "blueprint/links/Algebra.jsonl:8: the row holds NaN, which JSON does not allow",
+        ]))
+        with redirect_stderr(io.StringIO()) as errors:
+            self.assertEqual(sync.main(["ids"]), 1)
+        self.assertIn("error: 7 rows to fix; the run wrote nothing", errors.getvalue())
+        # Neither file is written, the one without a problem included.
+        self.assertEqual(path.read_bytes().decode("utf-8"), text)
+        self.assertEqual(other.read_bytes().decode("utf-8"), self.row("Logic/f.md") + "\n")
+
+    def test_a_line_that_holds_only_a_form_feed_is_no_blank_line(self) -> None:
+        text = self.row("Algebra/a.md") + "\n\x0c\n\n"
+        path = self.links("Algebra.jsonl", text)
+        other = self.links("Logic.jsonl", self.row("Logic/b.md") + "\n")
+        self.assertEqual(sync.apply_ids(), (["blueprint/links/Algebra.jsonl:1", "blueprint/links/Logic.jsonl:1"],
+                                            ["blueprint/links/Algebra.jsonl:2: the row is not a JSON object"]))
+        self.assertEqual(path.read_bytes().decode("utf-8"), text)
+        self.assertEqual(other.read_bytes().decode("utf-8"), self.row("Logic/b.md") + "\n")
+
+    def test_a_links_file_that_is_a_symbolic_link_stops_the_run(self) -> None:
+        outside = sync.LINKS.parents[1] / "outside.jsonl"
+        outside.write_text(self.row("Logic/b.md") + "\n")
+        sync.LINKS.mkdir(parents=True, exist_ok=True)
+        (sync.LINKS / "Logic.jsonl").symlink_to(outside)
+        text = self.row("Algebra/a.md") + "\n"
+        path = self.links("Algebra.jsonl", text)
+        self.assertEqual(sync.apply_ids(), (["blueprint/links/Algebra.jsonl:1"],
+                                            ["blueprint/links/Logic.jsonl: it is not a regular file"]))
+        self.assertEqual(path.read_text(), text)
+        self.assertEqual(outside.read_text(), self.row("Logic/b.md") + "\n")
+
+    def test_a_row_whose_subject_is_not_first_gets_the_id_right_after_its_subject(self) -> None:
+        kept = '{"extensions": {}, "subject": [{"type": "generic", "uri": "../roadmap/Algebra/a.md"}], "id": "af_000000000000000000000001"}'
+        row = '{"object": [{"location": {"declaration": "Ext.b"}}], "subject": [{"type": "generic", "uri": "../roadmap/Algebra/b.md"}]}'
+        path = self.links("Algebra.jsonl", f"{kept}\n{row}\n")
+        self.assertEqual(sync.apply_ids(), (["blueprint/links/Algebra.jsonl:2"], []))
+        filled = path.read_bytes().decode("utf-8").split("\n")
+        self.assertEqual(filled[0], kept)
+        self.assertRegex(filled[1], r'\A' + re.escape(row[:-1]) + r', "id": "af_[0-9a-f]{24}"\}\Z')
+
+    def test_a_check_writes_nothing(self) -> None:
+        text = self.row("Algebra/a.md") + "\n"
+        path = self.links("Algebra.jsonl", text)
+        self.assertEqual(sync.apply_ids(write=False), (["blueprint/links/Algebra.jsonl:1"], []))
+        self.assertEqual(path.read_bytes().decode("utf-8"), text)
+
+
+class BuildPath(Vault):
+    """What the build's own steps refuse before they write, beside what credit_problems refuses everywhere."""
+
+    def run_lean_facts(self, dependency_file: Path, registry_file: Path | None = None) -> tuple[int, str, bool]:
+        files = lambda: {path: path.read_bytes() for path in sorted(wiki.VAULT.rglob("*")) if path.is_file()}
+        before = files()
+        with patch("sys.stdout", new_callable=io.StringIO), patch("sys.stderr", new_callable=io.StringIO) as err:
+            code = sync.run_lean_facts(dependency_file, registry_file)
+        return code, err.getvalue(), files() == before
+
+    def test_no_credit_overrides_a_held_marker(self) -> None:
+        # An editor held Local.vacuous back (as vacuous). A row that holds it back but credits it by a Lean link, one
+        # that holds it back but credits a Mathlib declaration, and a page that links it while another holds it back
+        # are refused by lean-facts before it writes anything, as by the extraction and the cards; so a held page is
+        # never published proved. The held marker alone is fine.
+        held = {"org.atlas-wiki": {"held": {"declaration": "Local.vacuous", "reason": "vacuous", "issue": 1}}}
+        mathlib = {"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": "M.real", "module": "Mathlib.A"}}
+        link = [{"location": {"declaration": "Local.vacuous"}}]
+        cases = {
+            "a Lean link": ([self.about("Algebra/h.md", object=link, extensions=held)],
+                            "Algebra/h.md: it holds Local.vacuous back but is linked to Local.vacuous"),
+            "Mathlib's credit": ([self.about("Algebra/h.md", object=[mathlib],
+                                             extensions={**held, "org.autoform": {"mathlib": True}})],
+                                 "Algebra/h.md: it holds Local.vacuous back but is linked to M.real"),
+            "another page's link": ([self.about("Algebra/h.md", extensions=held),
+                                     self.about("Algebra/p.md", object=link)],
+                                    "Algebra/h.md: it holds Local.vacuous back, which Algebra/p.md links"),
+            "the held marker alone": ([self.about("Algebra/h.md", extensions=held)], None),
+        }
+        self.page("Algebra/README.md", "# Algebra\n\n- [H](h.md)\n- [P](p.md)\n")
+        self.page("Algebra/h.md", "# H\n\nThe source's statement.\n")
+        self.page("Algebra/p.md", "# P\n\nA statement.\n")
+        dependency_file = self.tmp / "lean-dependencies.json"
+        dependency_file.write_text(json.dumps({"missing_articles": {}, "articles": {
+            "Local.vacuous": {"module": "Local", "statement": [], "proof": []}}}))
+        for case, (rows, message) in cases.items():
+            with self.subTest(case=case):
+                rows = [self.about("Algebra/README.md"), *rows]
+                if not any(sync.subject_path(row).name == "p.md" for row in rows):
+                    rows.append(self.about("Algebra/p.md"))
+                self.annotate(rows)
+                self.assertEqual(sync.held_conflicts(sync.read_annotations()), [message] if message else [])
+                if message:
+                    code, err, unchanged = self.run_lean_facts(dependency_file)
+                    self.assertEqual((code, unchanged), (1, True))
+                    self.assertIn(message, err)
+                    with patch.object(extract, "BLUEPRINT", wiki.VAULT), self.assertRaises(ValueError) as raised:
+                        extract.article_manifest()
+                    self.assertIn(message, str(raised.exception))
+
+    def test_a_folder_page_credits_nothing(self) -> None:
+        # A folder page's row that credits a Mathlib declaration (Autoform would show the folder in Mathlib, with no
+        # check of the name) or a declaration of this project, or that has `kind` or `status`, is refused by every
+        # step, mathlib-names and lean-facts among them.
+        mathlib = {"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": "Does.not.exist",
+                                                                    "module": "Mathlib.A"}}
+        cases = {
+            "Mathlib's credit": ({"object": [mathlib], "extensions": {"org.autoform": {"mathlib": True}}},
+                                 "Algebra/README.md is a folder page, which credits no declaration, but its row "
+                                 "credits Does.not.exist"),
+            "a declaration of this project": ({"object": [{"location": {"declaration": "Ext.t"}}]},
+                                              "Algebra/README.md is a folder page, which credits no declaration, but "
+                                              "its row credits Ext.t"),
+            "facts": ({"status": "formalized"}, "Algebra/README.md is a folder page, but its row has `kind` or "
+                                                "`status`, which lean-facts writes on statement pages only"),
+        }
+        self.page("Algebra/README.md", "# Algebra\n\n- [T](t.md)\n")
+        self.page("Algebra/t.md", "# T\n\nA statement.\n")
+        dependency_file = self.tmp / "lean-dependencies.json"
+        dependency_file.write_text(json.dumps({"missing_articles": {}, "articles": {}}))
+        for case, (fields, message) in cases.items():
+            with self.subTest(case=case):
+                self.annotate([self.about("Algebra/README.md", **fields), self.about("Algebra/t.md")])
+                self.assertIn(message, sync.credit_problems(sync.read_annotations()))
+                code, err, unchanged = self.run_lean_facts(dependency_file)
+                self.assertEqual((code, unchanged), (1, True))
+                self.assertIn(message, err)
+                with patch("sys.stdout", new_callable=io.StringIO), patch("sys.stderr", new_callable=io.StringIO):
+                    self.assertEqual(sync.run_mathlib_names(self.tmp / "names.txt"), 1)
+
+    def test_a_row_whose_page_is_gone_is_refused_for_what_it_is(self) -> None:
+        # The page was deleted, its row kept: lean-facts and the extraction say so, rather than take the extraction
+        # for stale.
+        self.page("Algebra/README.md", "# Algebra\n")
+        self.annotate([self.about("Algebra/README.md"),
+                       self.about("Algebra/gone.md", object=[{"location": {"declaration": "Local.gone"}}])])
+        dependency_file = self.tmp / "lean-dependencies.json"
+        dependency_file.write_text(json.dumps({"missing_articles": {}, "articles": {}}))
+        message = "Algebra/gone.md: its row names a page that does not exist; remove the row or restore the page"
+        code, err, unchanged = self.run_lean_facts(dependency_file)
+        self.assertEqual((code, unchanged), (1, True))
+        self.assertIn(message, err)
+        self.assertNotIn("another state of the wiki", err)
+        with patch.object(extract, "BLUEPRINT", wiki.VAULT), self.assertRaises(ValueError) as raised:
+            extract.article_manifest()
+        self.assertIn(message, str(raised.exception))
+
+    def test_rows_split_into_lines_as_autoform_splits_them(self) -> None:
+        # A string may hold U+2028 or another line separator: the row stays one row, read and written back.
+        self.page("Algebra/README.md", "# Algebra\n")
+        text = json.dumps(self.about("Algebra/README.md", note="one\u2028two\u0085three"), ensure_ascii=False) + "\n"
+        self.links_folder()
+        (sync.LINKS / "Algebra.jsonl").write_text(text, encoding="utf-8")
+        rows = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]
+        self.assertEqual([row["note"] for row in rows], ["one\u2028two\u0085three"])
+        sync.write_annotations(sync.read_annotations())
+        self.assertEqual(sync.read_annotations()[sync.LINKS / "Algebra.jsonl"], rows)
+        self.assertEqual(sync.read_rows("{\"a\": 1}\r\n{\"a\": 2}\r{\"a\": 3}\n"), [{"a": 1}, {"a": 2}, {"a": 3}])
+
+    def test_the_registry_is_valid_only_with_its_own_extraction(self) -> None:
+        # The extractor records the digest of the extraction it wrote beside the registry: lean-facts refuses a
+        # registry made with another extraction before it writes anything.
+        self.page("Algebra/README.md", "# Algebra\n")
+        self.annotate([self.about("Algebra/README.md")])
+        dependency_file, registry_file = self.tmp / "lean-dependencies.json", self.tmp / "mathlib-registry.json"
+        dependency_file.write_text(json.dumps({"missing_articles": {}, "articles": {}}))
+        registry = {"bridges": {}, "left_out": {}, "mathlib": {}, "missing": [], "project": [],
+                    "inputs": {"names_sha256": hashlib.sha256(b"").hexdigest(), "dump_sha256": "d" * 64,
+                               "mathlib_rev": sync.mathlib_revision(), "requested": 0, "format": sync.REGISTRY_FORMAT}}
+        for extraction, code in (("e" * 64, 1), (hashlib.sha256(dependency_file.read_bytes()).hexdigest(), 0)):
+            with self.subTest(code=code):
+                registry_file.write_text(json.dumps({**registry, "inputs": {**registry["inputs"],
+                                                                            "extraction_sha256": extraction}}))
+                found, err, _ = self.run_lean_facts(dependency_file, registry_file)
+                self.assertEqual(found, code, err)
+                if code:
+                    self.assertIn(f"the registry was not made with {dependency_file}", err)
+
+    def test_mathlib_names_writes_a_file_of_its_own(self) -> None:
+        # Its output is no links file, by its path or a link, no symbolic link, and nothing inside blueprint/ (the
+        # defaults file, a page): refused before anything is written.
+        self.page("Algebra/README.md", "# Algebra\n")
+        self.annotate([self.about("Algebra/README.md")])
+        links = sync.LINKS / "Algebra.jsonl"
+        before = {path: path.read_bytes() for path in wiki.VAULT.rglob("*") if path.is_file()}
+        (self.tmp / "alias.txt").symlink_to(links)
+        for output in (links, self.tmp / "alias.txt", sync.LINKS / "_defaults.json",
+                       wiki.ROADMAP / "Algebra" / "new.md"):
+            with self.subTest(output=output.name), patch("sys.stdout", new_callable=io.StringIO), \
+                    patch("sys.stderr", new_callable=io.StringIO):
+                self.assertEqual(sync.run_mathlib_names(output), 2)
+            self.assertEqual({path: path.read_bytes() for path in wiki.VAULT.rglob("*") if path.is_file()}, before)
+        with patch("sys.stdout", new_callable=io.StringIO):
+            self.assertEqual(sync.run_mathlib_names(self.tmp / "names.txt"), 0)
+        self.assertEqual((self.tmp / "names.txt").read_text(), "")
+
+
+class CleanCheckout(Vault):
+    """lean-facts runs only on blueprint/ as committed, never on its own output; the commands that write committed rows
+    refuse rows it synced."""
+
+    def git(self, *argv: str) -> None:
+        import subprocess
+        subprocess.run(["git", "-C", str(self.tmp), *argv], check=True, capture_output=True)
+
+    def lean_facts(self, dependency_file: Path) -> tuple[int, str]:
+        with patch.object(sync, "checkout_problem", CHECKOUT_PROBLEM), patch("sys.stdout", new_callable=io.StringIO), \
+                patch("sys.stderr", new_callable=io.StringIO) as err:
+            return sync.run_lean_facts(dependency_file), err.getvalue()
+
+    def test_lean_facts_runs_only_on_a_clean_checkout(self) -> None:
+        # Outside Git, refused; on a clean checkout, it runs and writes the page's facts; on its own output, or with
+        # an untracked file in blueprint/, refused before it writes anything; restored, it runs again.
+        (self.tmp / "Ext.lean").write_text("namespace Ext\ntheorem t : True := trivial\nend Ext\n")
+        self.page("Algebra/README.md", "# Algebra\n\n- [T](t.md)\n")
+        self.page("Algebra/t.md", "# T\n\nA theorem.\n")
+        self.annotate([self.about("Algebra/README.md"), self.about("Algebra/t.md",
+                                                                   object=[{"location": {"declaration": "Ext.t"}}])])
+        dependency_file = self.tmp / "build" / "lean-dependencies.json"
+        dependency_file.parent.mkdir()
+        dependency_file.write_text(json.dumps({"missing_articles": {}, "articles": {
+            "Ext.t": {"module": "Ext", "statement": [], "proof": []}}}))
+        code, err = self.lean_facts(dependency_file)
+        self.assertEqual(code, 1)
+        self.assertIn("is not a Git checkout; lean-facts runs on a clean checkout of the wiki", err)
+        self.git("init", "-q")
+        self.git("add", "blueprint", "Ext.lean")
+        self.git("-c", "user.name=fixture", "-c", "user.email=fixture@example.invalid", "commit", "-qm", "vault")
+        self.assertEqual(self.lean_facts(dependency_file), (0, ""))
+        written = {path: path.read_bytes() for path in wiki.VAULT.rglob("*") if path.is_file()}
+        self.assertIn(b'"kind": "theorem"', (sync.LINKS / "Algebra.jsonl").read_bytes())
+        code, err = self.lean_facts(dependency_file)
+        self.assertEqual(code, 1)
+        self.assertIn("blueprint/ is not as committed", err)
+        self.assertIn("run the build in a fresh disposable checkout or worktree", err)
+        self.assertIn("`git restore --source=HEAD --staged --worktree -- blueprint`", err)
+        self.assertEqual({path: path.read_bytes() for path in wiki.VAULT.rglob("*") if path.is_file()}, written)
+        # The restore the error advises, in this disposable checkout.
+        self.git("restore", "--source=HEAD", "--staged", "--worktree", "--", "blueprint")
+        draft = wiki.ROADMAP / "Algebra" / "draft.md"
+        draft.write_text("# Draft\n")
+        code, err = self.lean_facts(dependency_file)
+        self.assertEqual(code, 1)
+        self.assertIn("first blueprint/roadmap/Algebra/draft.md", err)
+        draft.unlink()  # an untracked file, reviewed and removed
+        self.assertEqual(self.lean_facts(dependency_file), (0, ""))
+
+    def test_commands_that_write_committed_rows_refuse_rows_lean_facts_synced(self) -> None:
+        # declarations and ids would commit what lean-facts derived (kind and status, unlinked rows): both refuse,
+        # writing nothing, whether run from the command line or called.
+        self.page("Algebra/README.md", "# Algebra\n\n- [T](t.md)\n")
+        self.page("Algebra/t.md", "# T\n\nA theorem.\n")
+        self.annotate([self.about("Algebra/README.md", id="af_000000000000000000000001"),
+                       self.about("Algebra/t.md", id="af_000000000000000000000002",
+                                  object=[{"location": {"declaration": "Ext.t"}}], kind="theorem")])
+        message = "Algebra.jsonl, line 2: the row carries `kind` or `status`, which lean-facts writes at build time"
+        before = (sync.LINKS / "Algebra.jsonl").read_bytes()
+        report = sync.apply_declarations([], SimpleNamespace(declarations={"Ext.t": None}))
+        self.assertTrue(any(problem.startswith(message) for problem in report["credit_problems"]))
+        self.assertEqual(sync.apply_ids()[1], [problem for problem in sync.synced_rows()])
+        self.assertTrue(sync.synced_rows()[0].startswith(message))
+        with patch("sys.stdout", new_callable=io.StringIO), patch("sys.stderr", new_callable=io.StringIO) as err:
+            self.assertEqual(sync.main(["ids"]), 1)
+        self.assertIn(message, err.getvalue())
+        self.assertEqual((sync.LINKS / "Algebra.jsonl").read_bytes(), before)
+
+
+class CommittedAnnotations(unittest.TestCase):
+    def test_every_annotation_has_an_id_of_its_own(self) -> None:
+        # What the tools own (docs/BLUEPRINT.md): declarations gives an id to each annotation it adds, and ids to
+        # any other row.
+        without, problems = sync.apply_ids(write=False)
+        self.assertEqual(problems, [])
+        self.assertEqual(len(without), 0, f"annotations without an id, such as {without[:3]}: "
+                                          "`python scripts/sync_wiki.py ids` gives them theirs")
+
+    def test_no_committed_row_carries_what_lean_facts_writes(self) -> None:
+        # What the tools own: `kind` and `status` are written at build time, never committed. lean-facts writes them
+        # on every page it credits, so a links file it synced, its other derived edits included, fails here.
+        self.assertEqual(sync.synced_rows(), [], "rows with `kind` or `status`, which lean-facts writes: run the build "
+                                                 "in a disposable checkout, and commit none of its output")
 
 
 class Titles(unittest.TestCase):

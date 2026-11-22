@@ -32,7 +32,13 @@ universe u
 
 variable {α : Type u} [LinearOrder α]
 
-/-- Deterministic head-pivot quicksort with a stable three-way partition. -/
+/-- **Quicksort.** Deterministic quicksort on lists over a linear order, using the first entry as
+pivot and counting comparisons. The empty list is returned unchanged at no cost. On a list with
+first entry $p$ and tail $t$, the algorithm stably splits $t$ into the entries less than $p$, equal
+to $p$ and greater than $p$, using one comparison per entry of $t$; it then recursively sorts the
+lesser and greater parts and returns the sorted lesser part, followed by $p$, the entries equal to
+$p$ in their original order, and the sorted greater part. The cost is the total number of
+comparisons. -/
 def quickSort (xs : List α) : TimeM Nat (List α) :=
   let rec loop : Nat → List α → TimeM Nat (List α)
     | 0, _ => pure []
@@ -74,7 +80,9 @@ private theorem pairwise_partition_append (pivot : α)
     · exact hpivotRest y hy
   exact (hbelow x hx).le.trans hpivotLe
 
-/-- Quicksort returns a nondecreasing permutation, preserving duplicate occurrences. -/
+/-- **Correctness of quicksort.** For every list $\ell$ over a linear order, the output of
+quicksort on $\ell$ is sorted in nondecreasing order and is a permutation of $\ell$; in
+particular every value occurs in the output exactly as often as in $\ell$. -/
 theorem quickSort_correct (xs : List α) :
     List.Pairwise (fun x y => x ≤ y) (quickSort xs).ret ∧
       List.Perm (quickSort xs).ret xs := by
@@ -162,7 +170,8 @@ private theorem recursive_cost_le_choose (a b n : Nat) (h : a + b ≤ n) :
   have hsum := choose_two_add_self n
   omega
 
-/-- Quicksort uses at most `n * (n - 1) / 2` comparisons on a list of length `n`. -/
+/-- **Worst-case comparison bound for quicksort.** For every list of length $n$ over a linear
+order, quicksort performs at most $n(n-1)/2$ comparisons. -/
 theorem quickSort_time (xs : List α) :
     (quickSort xs).time ≤ xs.length * (xs.length - 1) / 2 := by
   unfold quickSort

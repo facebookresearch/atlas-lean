@@ -43,18 +43,25 @@ Clause list from the source; every item appears in the formal text below:
 
 open scoped Classical
 
-/-- Complete `k`-uniform edge family on `m` vertices: all `k`-subsets of `Fin m`.
+/-- **Edges of the complete uniform hypergraph.** For natural numbers $k$ and $m$, the edge
+family of the complete $k$-uniform hypergraph on the vertex set $\{0, 1, \dots, m-1\}$ is the
+family of all $k$-element subsets of $\{0, 1, \dots, m-1\}$.
 
-Source citation: [AIM-COMBINATORICS-0149], aim-combinatorics-notes.json notes[148],
+Source: [AIM-COMBINATORICS-0149], aim-combinatorics-notes.json notes[148],
 Source item 11.3, Section Complete hypergraphs, Workshop Hypergraph Turan problem,
 Source URL http://aimpl.org/hypergraphturan/1/. -/
 def completeHypergraphEdges (k m : ℕ) : Finset (Finset (Fin m)) :=
   Finset.univ.powersetCard k
 
-/-- Turán number for `K_{k+1}^k`: maximum cardinality among `k`-uniform edge families
-on `Fin n` with no embedding of the complete edges on `Fin (k + 1)`.
+/-- **Turán number of the complete $k$-graph on $k+1$ vertices.** For natural numbers $k$ and
+$n$, let $K_{k+1}^{(k)}$ be the complete $k$-uniform hypergraph on the vertex set
+$\{0, 1, \dots, k\}$, whose edges are all $k$-element subsets of that set. The Turán number
+$\mathrm{ex}(n, K_{k+1}^{(k)})$ is the largest size of a family $E$ of $k$-element subsets of
+$\{0, 1, \dots, n-1\}$ that contains no copy of $K_{k+1}^{(k)}$, that is, for which there is no
+injective map $f \colon \{0, 1, \dots, k\} \to \{0, 1, \dots, n-1\}$ such that the image under
+$f$ of every edge of $K_{k+1}^{(k)}$ belongs to $E$.
 
-Source citation: [AIM-COMBINATORICS-0149], aim-combinatorics-notes.json notes[148],
+Source: [AIM-COMBINATORICS-0149], aim-combinatorics-notes.json notes[148],
 Source item 11.3, Section Complete hypergraphs, Workshop Hypergraph Turan problem,
 Source URL http://aimpl.org/hypergraphturan/1/. -/
 noncomputable def turanNumber (k n : ℕ) : ℕ :=
@@ -64,34 +71,54 @@ noncomputable def turanNumber (k n : ℕ) : ℕ :=
   let free := all.filter (fun E => ¬ ∃ f : Fin (k + 1) ↪ Fin n, ∀ e ∈ forb, Finset.map f e ∈ E)
   free.sup (fun E => E.card)
 
-/-- Turán density ratio `ex(n, K_{k+1}^k) / C(n, k)`, `0` when `C(n, k) = 0`.
+/-- **Turán density ratio.** For natural numbers $k$ and $n$, the Turán density ratio is the
+real number $\mathrm{ex}(n, K_{k+1}^{(k)}) / \binom{n}{k}$, where
+$\mathrm{ex}(n, K_{k+1}^{(k)})$ is the Turán number of the complete $k$-uniform hypergraph
+$K_{k+1}^{(k)}$ on $k+1$ vertices, the largest number of $k$-element subsets of an $n$-element
+set containing no copy of $K_{k+1}^{(k)}$. The ratio is defined to be $0$ when
+$\binom{n}{k} = 0$, that is, when $n < k$.
 
-Source citation: [AIM-COMBINATORICS-0149], aim-combinatorics-notes.json notes[148],
+Source: [AIM-COMBINATORICS-0149], aim-combinatorics-notes.json notes[148],
 Source item 11.3, Section Complete hypergraphs, Workshop Hypergraph Turan problem,
 Source URL http://aimpl.org/hypergraphturan/1/. -/
 noncomputable def turanDensityRatio (k n : ℕ) : ℝ :=
   if n.choose k = 0 then 0 else (turanNumber k n : ℝ) / (n.choose k : ℝ)
 
-/-- Turán density `π(K_{k+1}^k)` as the `limsup` of the density ratios as `n → ∞`.
+/-- **Turán density of the complete $k$-graph on $k+1$ vertices.** For a natural number $k$,
+the Turán density $\pi(K_{k+1}^{(k)})$ of the complete $k$-uniform hypergraph $K_{k+1}^{(k)}$
+on $k+1$ vertices is the limit superior, as $n \to \infty$, of the Turán density ratios
+$\mathrm{ex}(n, K_{k+1}^{(k)}) / \binom{n}{k}$, where $\mathrm{ex}(n, K_{k+1}^{(k)})$ is the
+Turán number of $K_{k+1}^{(k)}$ and the ratio is taken to be $0$ when $\binom{n}{k} = 0$.
 
-Source citation: [AIM-COMBINATORICS-0149], aim-combinatorics-notes.json notes[148],
+Source: [AIM-COMBINATORICS-0149], aim-combinatorics-notes.json notes[148],
 Source item 11.3, Section Complete hypergraphs, Workshop Hypergraph Turan problem,
 Source URL http://aimpl.org/hypergraphturan/1/. -/
 noncomputable def turanDensityComplete (k : ℕ) : ℝ :=
   Filter.limsup (fun n : ℕ => turanDensityRatio k n) Filter.atTop
 
-/-- De Caen question: does `k * (1 - π(K_{k+1}^k))` tend to `∞` as `k → ∞`.
+/-- **De Caen's conjecture on Turán densities of complete hypergraphs.** For a natural number
+$k$, let $\pi(K_{k+1}^{(k)})$ be the Turán density of the complete $k$-uniform hypergraph on
+$k+1$ vertices. De Caen's conjecture asserts that $k \, (1 - \pi(K_{k+1}^{(k)})) \to \infty$
+as $k \to \infty$.
 
-Source citation: [AIM-COMBINATORICS-0149], aim-combinatorics-notes.json notes[148],
+Source: [AIM-COMBINATORICS-0149], aim-combinatorics-notes.json notes[148],
 Source item 11.3, Section Complete hypergraphs, Workshop Hypergraph Turan problem,
 Source URL http://aimpl.org/hypergraphturan/1/. -/
 noncomputable def conjecture : Prop :=
   Filter.Tendsto (fun k : ℕ => (k : ℝ) * (1 - turanDensityComplete k)) Filter.atTop Filter.atTop
 
 /--
-Resolved false: Resolved false: Pikhurko (Adv. Math. 464 (2025) 110148, Theorem 1.1) proves T(n,
-k+1, k) <= 6.239/(k+1) * C(n,k) for all n > k >= 1, so k(1 - pi(K^k_{k+1})) <= 6.239 for every
-k; the paper states that this disproves de Caen's conjecture. Source: O. Pikhurko, Constructions
+**De Caen's conjecture is false.** It is not the case that $k \, (1 - \pi(K_{k+1}^{(k)}))$
+tends to $\infty$ as $k \to \infty$, where $\pi(K_{k+1}^{(k)})$ is the Turán density of the
+complete $k$-uniform hypergraph $K_{k+1}^{(k)}$ on $k+1$ vertices.
+
+Pikhurko (Adv. Math. 464 (2025) 110148, Theorem 1.1) proves
+$T(n, k+1, k) \le \frac{6.239}{k+1} \binom{n}{k}$ for all $n > k \ge 1$, where $T(n, k+1, k)$
+is the least number of $k$-element subsets of an $n$-element set such that every
+$(k+1)$-element subset contains one of them; hence $k \, (1 - \pi(K_{k+1}^{(k)})) \le 6.239$
+for every $k \ge 1$, and the paper states that this disproves de Caen's conjecture.
+
+Source: O. Pikhurko, Constructions
 of Turán systems that are tight up to a multiplicative constant, Advances in Mathematics 464
 (2025), 110148, https://pikhurko.github.io/E/Pikhurko25am.pdf. Moved from
 `OpenConjectures/Combinatorics/DeCaenTuranDefectGrowth`.

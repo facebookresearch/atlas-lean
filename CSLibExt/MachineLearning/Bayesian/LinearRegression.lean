@@ -56,11 +56,18 @@ open scoped ENNReal NNReal
 
 variable {n : ℕ}
 
-/-- The posterior variance `s₀ σ² / (σ² + s₀ ∑ xᵢ²)` of the weight. -/
+/-- **Posterior variance in Bayesian linear regression.** For a prior variance $s_0 \ge 0$,
+a noise variance $\sigma^2 \ge 0$ and inputs $x \in \mathbb{R}^n$, the posterior variance
+of the weight is the nonnegative real number
+$s_0 \sigma^2 / (\sigma^2 + s_0 \sum_i x_i^2)$, read as $0$ when the denominator is $0$. -/
 noncomputable def linRegPostVar (s₀ σ2 : ℝ≥0) (x : Fin n → ℝ) : ℝ≥0 :=
   s₀ * σ2 / (σ2 + s₀ * (∑ i, x i ^ 2).toNNReal)
 
-/-- The posterior mean `(σ² m₀ + s₀ ∑ xᵢ yᵢ) / (σ² + s₀ ∑ xᵢ²)` of the weight. -/
+/-- **Posterior mean in Bayesian linear regression.** For a prior mean $m_0 \in \mathbb{R}$,
+a prior variance $s_0 \ge 0$, a noise variance $\sigma^2 \ge 0$, inputs $x \in \mathbb{R}^n$
+and responses $y \in \mathbb{R}^n$, the posterior mean of the weight is the real number
+$(\sigma^2 m_0 + s_0 \sum_i x_i y_i) / (\sigma^2 + s_0 \sum_i x_i^2)$, read as $0$ when
+the denominator is $0$. -/
 noncomputable def linRegPostMean (m₀ : ℝ) (s₀ σ2 : ℝ≥0) (x y : Fin n → ℝ) : ℝ :=
   (σ2 * m₀ + s₀ * ∑ i, x i * y i) / (σ2 + s₀ * ∑ i, x i ^ 2)
 
@@ -78,7 +85,9 @@ theorem linRegPostVar_ne_zero {s₀ σ2 : ℝ≥0} (h₀ : s₀ ≠ 0) (h : σ2 
   have : σ2 + s₀ * (∑ i, x i ^ 2).toNNReal ≠ 0 := by positivity
   positivity
 
-/-- Precisions add: `1 / linRegPostVar = 1 / s₀ + ∑ xᵢ² / σ²`. -/
+/-- **Precisions add in Bayesian linear regression.** Let $s_0, \sigma^2 \ge 0$ be nonzero and
+$x \in \mathbb{R}^n$. Then the posterior variance $v$ of the weight for prior variance $s_0$, noise
+variance $\sigma^2$ and inputs $x$ satisfies $1 / v = 1 / s_0 + (\sum_i x_i^2) / \sigma^2$. -/
 theorem inv_linRegPostVar {s₀ σ2 : ℝ≥0} (h₀ : s₀ ≠ 0) (h : σ2 ≠ 0) (x : Fin n → ℝ) :
     ((linRegPostVar s₀ σ2 x : ℝ))⁻¹ = (s₀ : ℝ)⁻¹ + (∑ i, x i ^ 2) / σ2 := by
   have hs : (0 : ℝ) < s₀ := by positivity
@@ -87,10 +96,14 @@ theorem inv_linRegPostVar {s₀ σ2 : ℝ≥0} (h₀ : s₀ ≠ 0) (h : σ2 ≠ 
   rw [coe_linRegPostVar]
   field_simp
 
-/-- The product `∏ φ(yᵢ; w xᵢ, σ²)` of Gaussian densities. For `σ² ≠ 0` it is the Lebesgue density
-of the data `y` given the weight `w` (independent `yᵢ ~ N(w xᵢ, σ²)`). With no data (`n = 0`) it
-is the empty product `1`, the density of the unit mass on the single empty response. For `σ² = 0`
-and `n > 0` the responses are deterministic and have no density, and this formula is `0`. -/
+/-- **The linear regression likelihood density.** For $\sigma^2 \ge 0$, $x, y \in \mathbb{R}^n$
+and $w \in \mathbb{R}$, it is the real number $\prod_i \varphi(y_i; w x_i, \sigma^2)$, where
+$\varphi(t; \mu, \tau) = (2\pi\tau)^{-1/2} e^{-(t - \mu)^2 / (2\tau)}$ is the Gaussian density
+with mean $\mu$ and variance $\tau$ at $t$, read as $0$ when $\tau = 0$. For $\sigma^2 \ne 0$ it
+is the Lebesgue density of the responses $y$ given the weight $w$, independent with
+$y_i \sim \mathcal{N}(w x_i, \sigma^2)$. With no data ($n = 0$) it is the empty product $1$, the
+density of the unit mass on the single empty response. For $\sigma^2 = 0$ and $n > 0$ the
+responses are deterministic and have no density, and this formula is $0$. -/
 noncomputable def linRegLikelihoodPDFReal (σ2 : ℝ≥0) (x : Fin n → ℝ) (w : ℝ) (y : Fin n → ℝ) :
     ℝ :=
   ∏ i, gaussianPDFReal (w * x i) σ2 (y i)
@@ -101,9 +114,13 @@ theorem linRegLikelihoodPDFReal_eq (σ2 : ℝ≥0) (x : Fin n → ℝ) (w : ℝ)
   simp only [linRegLikelihoodPDFReal, gaussianPDFReal, prod_mul_distrib, prod_const, card_univ,
     Fintype.card_fin, ← Real.exp_sum, neg_div, sum_neg_distrib, ← sum_div]
 
-/-- **Completing the square for linear regression.** With the constant
-`C y = p(m) L(y | m) / r_y(m)` at the posterior mean `m`, prior density times likelihood is
-`C y` times the posterior density, for every weight `w`. -/
+/-- **Completing the square for linear regression.** Let $m_0 \in \mathbb{R}$, let
+$s_0, \sigma^2 \ge 0$ be nonzero, and let $x, y \in \mathbb{R}^n$. Write $\varphi(t; \mu, \tau)$
+for the Gaussian density with mean $\mu$ and variance $\tau$ at $t$, $p(w) = \varphi(w; m_0, s_0)$
+for the prior density, $L(y \mid w) = \prod_i \varphi(y_i; w x_i, \sigma^2)$ for the likelihood
+density, $m$ and $v$ for the posterior mean and variance of the weight, and
+$r(w) = \varphi(w; m, v)$ for the posterior density. Then for every weight $w \in \mathbb{R}$,
+$$p(w) \, L(y \mid w) \, r(m) = p(m) \, L(y \mid m) \, r(w).$$ -/
 theorem gaussianPDFReal_mul_linRegLikelihoodPDFReal (m₀ : ℝ) {s₀ σ2 : ℝ≥0} (h₀ : s₀ ≠ 0)
     (h : σ2 ≠ 0) (x : Fin n → ℝ) (w : ℝ) (y : Fin n → ℝ) :
     gaussianPDFReal m₀ s₀ w * linRegLikelihoodPDFReal σ2 x w y *
@@ -150,11 +167,19 @@ theorem linRegLikelihoodPDFReal_pos {σ2 : ℝ≥0} (h : σ2 ≠ 0) (x : Fin n �
     (y : Fin n → ℝ) : 0 < linRegLikelihoodPDFReal σ2 x w y :=
   prod_pos fun _ _ ↦ gaussianPDFReal_pos _ _ _ h
 
-/-- Prior times likelihood divided by the posterior density, evaluated at the posterior mean,
-where the ratio does not depend on the weight. For `s₀ ≠ 0` and `σ² ≠ 0` this is the evidence
-density, the Lebesgue density of the marginal law of the data
-(`linRegLikelihood_comp_gaussianReal`). It is not a density of the evidence in the degenerate
-cases. -/
+/-- **The evidence density of Bayesian linear regression.** For $m_0 \in \mathbb{R}$,
+$s_0, \sigma^2 \ge 0$ and $x, y \in \mathbb{R}^n$, let $m$ and $v$ be the posterior mean and
+variance of the weight, write $\varphi(t; \mu, \tau) = (2\pi\tau)^{-1/2} e^{-(t - \mu)^2 / (2\tau)}$
+for the Gaussian density with mean $\mu$ and variance $\tau$ at $t$ (read as $0$ when $\tau = 0$),
+and let $L(y \mid w) = \prod_i \varphi(y_i; w x_i, \sigma^2)$ be the likelihood density. The
+evidence density at $y$ is
+$$Z(y) = \frac{\varphi(m; m_0, s_0) \, L(y \mid m)}{\varphi(m; m, v)},$$
+prior density times likelihood divided by the posterior density, all at the posterior mean (a
+quotient by $0$ is read as $0$).
+
+For $s_0 \ne 0$ and $\sigma^2 \ne 0$ the ratio does not depend on the point where it is evaluated,
+and $Z$ is the Lebesgue density of the marginal law of the data. It is not a density of the
+evidence in the degenerate cases. -/
 noncomputable def linRegEvidencePDFReal (m₀ : ℝ) (s₀ σ2 : ℝ≥0) (x y : Fin n → ℝ) : ℝ :=
   gaussianPDFReal m₀ s₀ (linRegPostMean m₀ s₀ σ2 x y) *
       linRegLikelihoodPDFReal σ2 x (linRegPostMean m₀ s₀ σ2 x y) y /
@@ -170,7 +195,12 @@ theorem linRegEvidencePDFReal_pos (m₀ : ℝ) {s₀ σ2 : ℝ≥0} (h₀ : s₀
     (linRegPostMean m₀ s₀ σ2 x y) (linRegPostVar_ne_zero h₀ h x)
   positivity
 
-/-- Prior density times likelihood is the evidence density times the posterior density. -/
+/-- **Prior times likelihood factors as evidence times posterior.** Let $m_0 \in \mathbb{R}$,
+let $s_0, \sigma^2 \ge 0$ be nonzero, let $x, y \in \mathbb{R}^n$ and let $w \in \mathbb{R}$.
+Write $\varphi(t; \mu, \tau)$ for the Gaussian density with mean $\mu$ and variance $\tau$ at $t$,
+$L(y \mid w) = \prod_i \varphi(y_i; w x_i, \sigma^2)$ for the likelihood density, $m$ and $v$ for
+the posterior mean and variance of the weight, and $Z(y)$ for the evidence density. Then
+$\varphi(w; m_0, s_0) \, L(y \mid w) = Z(y) \, \varphi(w; m, v)$. -/
 theorem gaussianPDFReal_mul_linRegLikelihoodPDFReal' (m₀ : ℝ) {s₀ σ2 : ℝ≥0} (h₀ : s₀ ≠ 0)
     (h : σ2 ≠ 0) (x : Fin n → ℝ) (w : ℝ) (y : Fin n → ℝ) :
     gaussianPDFReal m₀ s₀ w * linRegLikelihoodPDFReal σ2 x w y =
@@ -183,8 +213,11 @@ theorem gaussianPDFReal_mul_linRegLikelihoodPDFReal' (m₀ : ℝ) {s₀ σ2 : �
 
 /-! ### The likelihood kernel -/
 
-/-- `linRegLikelihoodPDFReal` as an extended nonnegative real: the likelihood density for
-`σ² ≠ 0` or `n = 0`, and `0` for `σ² = 0` and `n > 0`. -/
+/-- **The extended-real linear regression likelihood density.** For $\sigma^2 \ge 0$,
+$x, y \in \mathbb{R}^n$ and $w \in \mathbb{R}$, it is $\prod_i \varphi(y_i; w x_i, \sigma^2)$ as an
+extended nonnegative real, where $\varphi(t; \mu, \tau)$ is the Gaussian density with mean $\mu$
+and variance $\tau$ at $t$, read as $0$ when $\tau = 0$. It is the likelihood density for
+$\sigma^2 \ne 0$ or $n = 0$, and it is $0$ for $\sigma^2 = 0$ and $n > 0$. -/
 noncomputable def linRegLikelihoodPDF (σ2 : ℝ≥0) (x : Fin n → ℝ) (w : ℝ) (y : Fin n → ℝ) :
     ℝ≥0∞ :=
   ∏ i, gaussianPDF (w * x i) σ2 (y i)
@@ -202,9 +235,13 @@ theorem measurable_linRegLikelihoodPDF (σ2 : ℝ≥0) (x : Fin n → ℝ) :
   have hf : Measurable fun z : ℝ × (Fin n → ℝ) ↦ (z.1 * x i, σ2, z.2 i) := by fun_prop
   exact measurable_uncurry_gaussianPDF.comp hf
 
-/-- **The likelihood of Bayesian linear regression** with one feature and known noise variance:
-given the weight `w`, the responses are independent, `yᵢ ~ N(w xᵢ, σ²)`. For `σ² = 0` they are
-exactly `w xᵢ` (`linRegLikelihood_zero_apply`). -/
+/-- **The likelihood of Bayesian linear regression** with one feature and known noise variance
+$\sigma^2 \ge 0$, for fixed inputs $x \in \mathbb{R}^n$: the kernel from the weight
+$w \in \mathbb{R}$ to the responses in $\mathbb{R}^n$ under which, given $w$, the responses are
+independent with $y_i \sim \mathcal{N}(w x_i, \sigma^2)$. For $\sigma^2 \ne 0$ it is given by the
+density $\prod_i \varphi(y_i; w x_i, \sigma^2)$ with respect to Lebesgue measure, where
+$\varphi(t; \mu, \tau)$ is the Gaussian density with mean $\mu$ and variance $\tau$ at $t$; for
+$\sigma^2 = 0$ it sends $w$ to the Dirac measure at $(w x_i)_i$. -/
 noncomputable def linRegLikelihood (σ2 : ℝ≥0) (x : Fin n → ℝ) : Kernel ℝ (Fin n → ℝ) :=
   if σ2 = 0 then Kernel.deterministic (fun w i ↦ w * x i) (by fun_prop)
   else (Kernel.const ℝ volume).withDensity (linRegLikelihoodPDF σ2 x)
@@ -214,12 +251,18 @@ theorem linRegLikelihood_apply' {σ2 : ℝ≥0} (h : σ2 ≠ 0) (x : Fin n → �
   simp only [linRegLikelihood, h, ↓reduceIte]
   rw [Kernel.withDensity_apply _ (measurable_linRegLikelihoodPDF σ2 x), Kernel.const_apply]
 
-/-- With zero noise the responses are exactly `w xᵢ`. -/
+/-- **The noiseless linear regression likelihood.** For $x \in \mathbb{R}^n$ and
+$w \in \mathbb{R}$, the linear regression likelihood with noise variance $0$ and inputs $x$, given
+the weight $w$, is the Dirac measure at the vector $(w x_i)_i$: the responses are exactly
+$y_i = w x_i$. -/
 theorem linRegLikelihood_zero_apply (x : Fin n → ℝ) (w : ℝ) :
     linRegLikelihood 0 x w = Measure.dirac fun i ↦ w * x i := by
   simp [linRegLikelihood, Kernel.deterministic_apply]
 
-/-- The likelihood is the product of the Gaussian laws of the responses. -/
+/-- **The linear regression likelihood is a product of Gaussians.** Let $\sigma^2 \ge 0$ be
+nonzero, $x \in \mathbb{R}^n$ and $w \in \mathbb{R}$. Given the weight $w$, the linear regression
+likelihood with noise variance $\sigma^2$ and inputs $x$ is the product measure
+$\bigotimes_i \mathcal{N}(w x_i, \sigma^2)$ on $\mathbb{R}^n$. -/
 theorem linRegLikelihood_apply {σ2 : ℝ≥0} (h : σ2 ≠ 0) (x : Fin n → ℝ) (w : ℝ) :
     linRegLikelihood σ2 x w = Measure.pi fun i ↦ gaussianReal (w * x i) σ2 := by
   have : ∀ i, SigmaFinite (volume.withDensity (gaussianPDF (w * x i) σ2)) := fun i ↦ by
@@ -238,6 +281,10 @@ instance {σ2 : ℝ≥0} (x : Fin n → ℝ) : IsMarkovKernel (linRegLikelihood 
 
 /-! ### The posterior -/
 
+/-- **Measurability of the posterior mean in Bayesian linear regression.** For a prior mean
+$m_0 \in \mathbb{R}$, a prior variance $s_0 \ge 0$, a noise variance $\sigma^2 \ge 0$ and inputs
+$x \in \mathbb{R}^n$, the posterior mean of the weight, as a function of the responses
+$y \in \mathbb{R}^n$, is a measurable map from $\mathbb{R}^n$ to $\mathbb{R}$. -/
 theorem measurable_linRegPostMean (m₀ : ℝ) (s₀ σ2 : ℝ≥0) (x : Fin n → ℝ) :
     Measurable (linRegPostMean m₀ s₀ σ2 x) := by
   unfold linRegPostMean
@@ -280,7 +327,12 @@ theorem gaussianPDF_mul_linRegLikelihoodPDF (m₀ : ℝ) {s₀ σ2 : ℝ≥0} (h
     ← ENNReal.ofReal_mul (linRegEvidencePDFReal_pos m₀ h₀ h x y).le,
     gaussianPDFReal_mul_linRegLikelihoodPDFReal' m₀ h₀ h]
 
-/-- **The evidence.** The marginal law of the responses has density `linRegEvidencePDFReal`. -/
+/-- **The evidence of Bayesian linear regression.** Let $m_0 \in \mathbb{R}$, let
+$s_0, \sigma^2 \ge 0$ be nonzero, and let $x \in \mathbb{R}^n$. If the weight has prior
+$\mathcal{N}(m_0, s_0)$ and the responses follow the linear regression likelihood with noise
+variance $\sigma^2$ and inputs $x$, then the marginal law of the responses is the measure on
+$\mathbb{R}^n$ whose density with respect to Lebesgue measure is the evidence density $Z$ for
+$m_0$, $s_0$, $\sigma^2$ and $x$. -/
 theorem linRegLikelihood_comp_gaussianReal (m₀ : ℝ) {s₀ σ2 : ℝ≥0} (h₀ : s₀ ≠ 0) (h : σ2 ≠ 0)
     (x : Fin n → ℝ) :
     linRegLikelihood σ2 x ∘ₘ gaussianReal m₀ s₀ =
@@ -293,9 +345,13 @@ theorem linRegLikelihood_comp_gaussianReal (m₀ : ℝ) {s₀ σ2 : ℝ≥0} (h�
     (fun _ ↦ lintegral_gaussianPDF_eq_one _ (linRegPostVar_ne_zero h₀ h x))
     (gaussianPDF_mul_linRegLikelihoodPDF m₀ h₀ h x)
 
-/-- **Bayesian linear regression** with one feature, a `N(m₀, s₀)` prior on the weight and known
-noise variance `σ²`. For almost every response vector `y`, the posterior of the weight is Gaussian
-with mean `(σ² m₀ + s₀ ∑ xᵢ yᵢ) / (σ² + s₀ ∑ xᵢ²)` and variance `s₀ σ² / (σ² + s₀ ∑ xᵢ²)`. -/
+/-- **Bayesian linear regression.** Let $m_0 \in \mathbb{R}$, let $s_0 > 0$ and $\sigma^2 > 0$,
+and let $x \in \mathbb{R}^n$ be fixed inputs. Put the prior $N(m_0, s_0)$ (mean $m_0$, variance
+$s_0$) on a scalar weight $w$, and let the responses be independent given $w$ with
+$y_i \sim N(w x_i, \sigma^2)$. Then for Lebesgue-almost every response vector
+$y \in \mathbb{R}^n$, the posterior of $w$ given $y$ is Gaussian with mean
+$(\sigma^2 m_0 + s_0 \sum_i x_i y_i) / (\sigma^2 + s_0 \sum_i x_i^2)$ and variance
+$s_0 \sigma^2 / (\sigma^2 + s_0 \sum_i x_i^2)$. -/
 theorem posterior_linRegLikelihood_gaussianReal (m₀ : ℝ) {s₀ σ2 : ℝ≥0} [NeZero s₀] [NeZero σ2]
     (x : Fin n → ℝ) :
     ∀ᵐ y, ((linRegLikelihood σ2 x)†(gaussianReal m₀ s₀)) y =
@@ -320,7 +376,10 @@ theorem posterior_linRegLikelihood_gaussianReal (m₀ : ℝ) {s₀ σ2 : ℝ≥0
 
 /-! ### Prediction at a new input -/
 
-/-- The law of the response at a new input `x'`: `y' ~ N(w x', σ²)`. -/
+/-- **Predictive law of a linear-regression response.** For a noise variance $\sigma^2 \ge 0$
+and a new input $x' \in \mathbb{R}$, the predictive kernel sends a weight $w \in \mathbb{R}$
+to the Gaussian law $N(w x', \sigma^2)$ of the response at $x'$, which is the point mass at
+$w x'$ when $\sigma^2 = 0$. -/
 noncomputable def linRegPredictive (σ2 : ℝ≥0) (x' : ℝ) : Kernel ℝ ℝ :=
   (gaussianLikelihood σ2).comap (· * x') (measurable_mul_const x')
 
@@ -331,8 +390,15 @@ theorem linRegPredictive_comp (σ2 : ℝ≥0) (x' : ℝ) (μ : Measure ℝ) :
     lintegral_map ((gaussianLikelihood σ2).measurable_coe hs) (measurable_mul_const x')]
   rfl
 
-/-- **Posterior predictive at a new input.** After observing `y`, the response at an input `x'`
-is `N(x' m, x'² v + σ²)`, where `m` and `v` are the posterior mean and variance. -/
+/-- **Posterior predictive at a new input.** Let $m_0 \in \mathbb{R}$, let $s_0 > 0$ and
+$\sigma^2 > 0$, and let $x \in \mathbb{R}^n$ and $x' \in \mathbb{R}$. Put the prior
+$N(m_0, s_0)$ (mean $m_0$, variance $s_0$) on a scalar weight $w$, and let the responses be
+independent given $w$ with $y_i \sim N(w x_i, \sigma^2)$. Then for Lebesgue-almost every
+response vector $y \in \mathbb{R}^n$, integrating the law $N(w x', \sigma^2)$ of the response
+at $x'$ against the posterior of $w$ given $y$ gives the Gaussian
+$N(x' m, x'^2 v + \sigma^2)$, where
+$m = (\sigma^2 m_0 + s_0 \sum_i x_i y_i) / (\sigma^2 + s_0 \sum_i x_i^2)$ and
+$v = s_0 \sigma^2 / (\sigma^2 + s_0 \sum_i x_i^2)$ are the posterior mean and variance. -/
 theorem linRegPredictive_comp_posterior (m₀ : ℝ) {s₀ σ2 : ℝ≥0} [NeZero s₀] [NeZero σ2]
     (x : Fin n → ℝ) (x' : ℝ) :
     ∀ᵐ y, linRegPredictive σ2 x' ∘ₘ ((linRegLikelihood σ2 x)†(gaussianReal m₀ s₀)) y =

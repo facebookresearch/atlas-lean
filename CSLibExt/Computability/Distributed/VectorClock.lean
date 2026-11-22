@@ -43,28 +43,42 @@ open LamportClock
 
 variable {P : Type*} [DecidableEq P]
 
-/-- The timestamp the vector clock algorithm gives to event `e`, from the
-current vectors of the processes and the timestamps assigned so far. -/
+/-- **Vector clock stamp of an event.** Let $P$ be the set of processes. Given the current
+vectors $V_q \in \mathbb{N}^P$ of the processes $q$ and the timestamps $T_0, T_1, \dots$ assigned
+so far, the vector clock algorithm stamps an event $e$ of process $p$ as follows. Let $m = T_i$
+if $e$ receives the message sent by the event at position $i$ and $T_i$ has been assigned, and
+$m = 0$ otherwise. The stamp of $e$ is the pointwise maximum of $V_p$ and $m$, with its $p$-entry
+increased by $1$. -/
 def stamp (st : (P → P → ℕ) × Array (P → ℕ)) (e : Event P) : P → ℕ :=
   let base : P → ℕ := fun q =>
     max (st.1 e.proc q) ((e.recvFrom.map fun i => (st.2[i]?.getD 0) q).getD 0)
   Function.update base e.proc (base e.proc + 1)
 
-/-- The vector clock algorithm on one event; timestamps are accumulated in an
-array, for constant-time append and lookup. -/
+/-- **One step of the vector clock algorithm.** The state of the algorithm holds a vector
+$V_q \in \mathbb{N}^P$ for each process $q$, where $P$ is the set of processes, and the
+timestamps assigned so far, kept in an array for constant-time append and lookup. On an event $e$
+of process $p$, the step replaces $V_p$ by the stamp $s$ of $e$ computed from the current state,
+leaves the other vectors unchanged, and appends $s$ to the timestamps. -/
 def clockStep (st : (P → P → ℕ) × Array (P → ℕ)) (e : Event P) :
     (P → P → ℕ) × Array (P → ℕ) :=
   (Function.update st.1 e.proc (stamp st e), st.2.push (stamp st e))
 
-/-- The vector clock algorithm over an execution, from all vectors `0`. -/
+/-- **Running the vector clock algorithm.** The state of the vector clock algorithm after an
+execution is obtained by starting from the state in which every process's vector is $0$ and no
+timestamps have been assigned, and applying one step of the algorithm to each event of the
+execution in order. -/
 def run (tr : List (Event P)) : (P → P → ℕ) × Array (P → ℕ) :=
   tr.foldl clockStep (fun _ => 0, #[])
 
-/-- The vector timestamps of the events of an execution. -/
+/-- **Vector timestamps of an execution.** The vector timestamps of an execution are the list of
+vectors that the vector clock algorithm, run over the execution, assigns to its events, in
+order. -/
 def timestamps (tr : List (Event P)) : List (P → ℕ) := (run tr).2.toList
 
-/-- The array lookup used by the algorithm agrees with the list of
-timestamps. -/
+/-- **Array lookup agrees with the timestamp list.** For every execution and every natural
+number $i$, the entry at index $i$ of the array of timestamps built by the vector clock algorithm
+on the execution equals the $i$-th vector timestamp of the execution, where an index out of range
+gives the zero vector in both lookups. -/
 theorem run_getD (tr : List (Event P)) (i : ℕ) :
     (run tr).2[i]?.getD 0 = (timestamps tr).getD i 0 := by
   simp [timestamps, List.getD_eq_getElem?_getD]
@@ -99,8 +113,9 @@ theorem timestamps_getD_take (tr : List (Event P)) {i k : ℕ} (hik : i < k)
   have h := timestamps_append (tr.take k) (tr.drop k) (i := i) (by simp; omega)
   rwa [List.take_append_drop] at h
 
-/-- The timestamp of the event at position `j` is the stamp computed from the
-state before it. -/
+/-- **Timestamps are stamps from the preceding state.** For every execution and every position
+$j$ of an event $e$ of it, the vector timestamp of $j$ equals the stamp of $e$ computed from the
+state of the vector clock algorithm after the first $j$ events of the execution. -/
 theorem timestamps_getD_eq_stamp {tr : List (Event P)} {j : ℕ} {ej : Event P}
     (hj : tr[j]? = some ej) :
     (timestamps tr).getD j 0 = stamp (run (tr.take j)) ej := by
@@ -114,7 +129,9 @@ theorem timestamps_getD_eq_stamp {tr : List (Event P)} {j : ℕ} {ej : Event P}
     Nat.sub_self]
   rfl
 
-/-- Each process's vector dominates the timestamps of its earlier events. -/
+/-- **Each process's vector dominates its events' timestamps.** For every execution and every
+position $i$ of an event of it, the vector timestamp of $i$ is pointwise at most the vector of
+that event's process in the state of the vector clock algorithm after the whole execution. -/
 theorem timestamp_le_vector (tr : List (Event P)) {i : ℕ} {ei : Event P}
     (hi : tr[i]? = some ei) : (timestamps tr).getD i 0 ≤ (run tr).1 ei.proc := by
   induction tr using List.reverseRecOn generalizing i with
@@ -151,7 +168,10 @@ theorem timestamp_le_vector (tr : List (Event P)) {i : ℕ} {ei : Event P}
         rw [List.getD_append_right _ _ _ _ (by omega), hlen, Nat.sub_self]
         simp [clockStep]
 
-/-- Each process's vector is `0` or the timestamp of one of its events. -/
+/-- **A process's final vector is zero or one of its timestamps.** Run the vector clock
+algorithm over an execution, starting from all vectors $0$. For every process $p$, the vector
+held by $p$ at the end is either the zero vector or the vector timestamp of some event of $p$
+in the execution. -/
 theorem vector_eq (tr : List (Event P)) (p : P) :
     (run tr).1 p = 0 ∨ ∃ j ej, tr[j]? = some ej ∧ ej.proc = p ∧
       (run tr).1 p = (timestamps tr).getD j 0 := by
@@ -175,13 +195,18 @@ theorem vector_eq (tr : List (Event P)) (p : P) :
           rw [List.getD_append _ _ _ _ (by omega)]
           exact hv
 
-/-- An event's own entry is positive. -/
+/-- **An event's own entry is positive.** For every position $j$ of an event of an execution, if
+$p$ is the process of that event, then the $p$-entry of the vector timestamp of $j$ is at least
+$1$. -/
 theorem one_le_own {tr : List (Event P)} {j : ℕ} {ej : Event P} (hj : tr[j]? = some ej) :
     1 ≤ (timestamps tr).getD j 0 ej.proc := by
   rw [timestamps_getD_eq_stamp hj]
   simp [stamp]
 
-/-- One step of happened-before does not decrease any entry. -/
+/-- **Vector timestamps are monotone along one step of happened-before.** In an execution,
+write $V_i$ for the vector timestamp that the vector clock algorithm gives to the event at
+position $i$. If the event at position $j$ follows the event at position $i$ by one step of
+happened-before, then $V_i(q) \le V_j(q)$ for every process $q$. -/
 theorem vectorClock_le_of_step {tr : List (Event P)} {i j : ℕ} (h : Step tr i j) :
     (timestamps tr).getD i 0 ≤ (timestamps tr).getD j 0 := by
   obtain ⟨hij, ei, ej, hi, hj, hrel⟩ := h
@@ -211,16 +236,20 @@ theorem vectorClock_le_of_step {tr : List (Event P)} {i j : ℕ} (h : Step tr i 
   · rw [Function.update_of_ne hq]
     exact hbase q
 
-/-- Happened-before does not decrease any entry. -/
+/-- **Vector timestamps are monotone along happened-before.** In an execution, write $V_i$ for
+the vector timestamp that the vector clock algorithm gives to the event at position $i$. If the
+event at position $a$ happened before the event at position $b$, then $V_a(q) \le V_b(q)$ for
+every process $q$. -/
 theorem vectorClock_le_of_happensBefore {tr : List (Event P)} {a b : ℕ}
     (h : HappensBefore tr a b) : (timestamps tr).getD a 0 ≤ (timestamps tr).getD b 0 := by
   induction h with
   | single hs => exact vectorClock_le_of_step hs
   | tail _ hs ih => exact ih.trans (vectorClock_le_of_step hs)
 
-/-- **The converse direction**: if the entry of `a`'s process in `a`'s
-timestamp is at most that entry in `b`'s timestamp, then `a = b` or `a`
-happened before `b`. -/
+/-- **Own-entry comparison detects happened-before.** Let $a$ and $b$ be positions of events of
+an execution, and let $p$ be the process of the event at $a$. If the $p$-entry of the vector
+timestamp of $a$ is at most the $p$-entry of the vector timestamp of $b$, then $a = b$ or $a$
+happened before $b$. -/
 theorem eq_or_happensBefore_of_le {tr : List (Event P)} :
     ∀ (b : ℕ) {a : ℕ} {ea eb : Event P}, tr[a]? = some ea → tr[b]? = some eb →
       (timestamps tr).getD a 0 ea.proc ≤ (timestamps tr).getD b 0 ea.proc →

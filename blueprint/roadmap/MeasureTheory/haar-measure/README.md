@@ -4,4 +4,4 @@ Invariant measures on locally compact groups, unimodularity, and fundamental dom
 
 - [Bruhat functions](bruhat-functions/README.md)
 - [Fundamental domains](fundamental-domains/README.md)
-- [Unimodular groups](unimodular-groups/README.md)
+- [Unimodularity of GL(2, F)](unimodular-groups/README.md)
