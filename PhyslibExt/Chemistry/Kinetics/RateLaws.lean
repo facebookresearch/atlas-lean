@@ -10,7 +10,7 @@ module
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import MathlibExt.Biology.Biophysics.CompartmentKinetics
+public import MathlibExt.Analysis.ODE.ConstantInputRelaxation
 
 import Mathlib.Analysis.Calculus.Deriv.Inv
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
@@ -34,7 +34,7 @@ zero rate and a constant concentration) cannot be passed. The rate laws `v = k`,
 inputs; their integrated solutions, uniqueness on `t ≥ 0` and half-lives are proved.
 
 The first-order law is the bolus case (infusion rate `0`) of the one-compartment model
-`MathlibExt.Biology.Biophysics.CompartmentKinetics` (`firstOrderSol_eq_amount`); its derivative,
+`MathlibExt.Analysis.ODE.ConstantInputRelaxation` (`firstOrderSol_eq_amount`); its derivative,
 uniqueness and half-life are corollaries of that module.
 
 Half-lives depend on the model, not only on the order: `2A → P` and `A + B → P` with equal initial

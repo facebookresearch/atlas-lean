@@ -52,15 +52,6 @@ public def delete {α : Type u} [LinearOrder α] (x : α) :
       else if key < x then .node key left (delete x right)
       else join left right
 
-@[simp] private theorem mem_nil {α : Type u} {x : α} :
-    x ∈ (BinaryTree.nil : BinaryTree α) ↔ False :=
-  Iff.rfl
-
-@[simp] private theorem mem_node {α : Type u} {x key : α}
-    {left right : BinaryTree α} :
-    x ∈ BinaryTree.node key left right ↔ x ∈ left ∨ x = key ∨ x ∈ right :=
-  Iff.rfl
-
 /-- A key is in a splice exactly when it is in one of the two parts. -/
 public theorem mem_join {α : Type u} {x : α} {left right : BinaryTree α} :
     x ∈ join left right ↔ x ∈ left ∨ x ∈ right := by

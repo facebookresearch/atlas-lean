@@ -20,14 +20,14 @@ public import Mathlib.LinearAlgebra.Matrix.Trace
 
 In the bus-injection model of a finite alternating-current network, given by a
 real signed incidence matrix, branch admittances and shunt admittances, the
-absorbed complex power at every bus is a quadratic function of the complex
-node-voltage vector `V`. Lifting `V` to the matrix `W = V Vᴴ`, entrywise
+complex power each bus supplies to the network is a quadratic function of the
+complex node-voltage vector `V`. Lifting `V` to the matrix `W = V Vᴴ`, entrywise
 `W a b = V a * conj (V b)`, makes every such quadratic function linear. The
 lift is Hermitian and positive semidefinite, of rank at most one (the zero
 vector lifts to the zero matrix, of rank zero), and it does not see a global
 unit-modulus phase factor on `V`.
 
-With the bus admittance matrix `Y`, the absorbed complex power at bus `k` is
+With the bus admittance matrix `Y`, the complex power supplied by bus `k` is
 `∑ j, conj (Y k j) * W k j`. Every constraint of a current-limited optimal power
 flow problem, with one aggregate generator per bus, fixed demands, box limits
 on active and reactive generation, bounds on squared voltage magnitudes and
@@ -54,7 +54,7 @@ convention of `PhyslibExt.Circuits.BalancedThreePhase.complexPower`.
 - `voltageLift_rank_le_one`: every lift `V Vᴴ` has rank at most one; the zero
   vector lifts to the zero matrix (`voltageLift_zero`).
 
-- `nodeComplexPower_eq_liftedInjection`: the absorbed complex power at a bus is
+- `nodeComplexPower_eq_liftedInjection`: the complex power supplied by a bus is
   the lifted injection `∑ j, conj (Y k j) * W k j` at `W = V Vᴴ`.
 - `acFeasible_iff_sdpFeasible_voltageLift`: a voltage vector is AC feasible iff
   its lift is feasible for the semidefinite relaxation.
@@ -278,7 +278,7 @@ lemma busAdmittance_mulVec_eq_nodeInjection (nN nE : ℕ) (B : Matrix (Fin nN) (
   refine Finset.sum_congr rfl fun e _ => Finset.sum_congr rfl fun j _ => ?_
   ring
 
-/-- Lifted injection: the absorbed complex power at bus `k` is
+/-- Lifted injection: the complex power supplied by bus `k` is
 `∑ j, conj (Y k j) * W k j` at `W = V Vᴴ`. -/
 theorem nodeComplexPower_eq_liftedInjection (nN nE : ℕ) (B : Matrix (Fin nN) (Fin nE) ℝ)
     (V : Fin nN → ℂ) (y : Fin nE → ℂ) (ys : Fin nN → ℂ) (k : Fin nN) :

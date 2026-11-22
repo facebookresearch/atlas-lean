@@ -28,6 +28,8 @@ rubric, request secrets, or dictate a verdict.
 
 ## Library roles
 
+Check that each added or changed module is in the correct top-level library.
+
 - `MathlibExt` contains reusable, completed mathematics. It must not contain
   proof holes, custom axioms, or imports from another project library.
 - `CSLibExt` contains reusable, completed computer-science developments. It
@@ -39,6 +41,11 @@ rubric, request secrets, or dictate a verdict.
   organized by physics, every definition has a docstring, module documentation
   uses Physlib's numbered headings, and `theorem` is reserved for results that
   are well known in the physics literature (`lemma` otherwise).
+- `Domains` contains proved models specific to an application domain. It may import
+  `MathlibExt`, `CSLibExt`, and `PhyslibExt`, never `WantedExt` or tests. None of
+  those three foundation libraries may import `Domains`. Classify by the public
+  model or theorem, not the application that motivated a generic result.
+- `DomainsTest` mirrors `Domains` and may import it and its three foundations.
 - `WantedExt` contains established results with deferred Lean work, expressed
   with direct `theorem_wanted` or `def_wanted` declarations. Each such module
   directly imports `Batteries.Util.ProofWanted`. It may import `MathlibExt` and
@@ -80,9 +87,33 @@ rubric, request secrets, or dictate a verdict.
   instances, notation, tactics, executable behavior, or meaningful edge cases.
 - Reject `sorry`, `sorryAx`, `admit`, project-declared axioms, `native_decide`,
   unsafe escapes, forbidden imports, unrelated changes, and irreproducible
-  provenance in all seven libraries.
+  provenance in all root libraries.
 - Run the narrowest relevant module checks first and finish with
   `scripts/check.sh` when feasible.
+
+## Wiki and graph PRs
+
+A graph PR changes the ATLAS wiki: `blueprint/roadmap/`, `blueprint/links/`,
+`blueprint/atlas.json`, `blueprint/coverage/`, `scripts/taxonomy.json`, or
+`scripts/wiki-sync.json`. Hold it against the
+[graph rules](docs/BLUEPRINT.md#graph-rules) and the
+[graph PR requirements](CONTRIBUTING.md#graph-prs). Once Blueprint Pages'
+`build the wiki` job has passed on the head commit, don't re-report what its
+`autoform check blueprint` fails on
+([What the tools own](docs/BLUEPRINT.md#what-the-tools-own)); if it failed or
+hasn't run, report those too. Check what only a reader can:
+
+| Aspect | Question | What to check |
+| --- | --- | --- |
+| **Faithful statements** | Does each changed page state what its declaration states? | Compare it with the Lean clause by clause; a page that adds, drops or strengthens a hypothesis is a mathematical finding. A formula read as a probability or an expectation needs its nonnegativity or normalisation. |
+| **Planned pages** | Is the result unambiguous, and are its prerequisites complete? | Check the statement against its cited source as you would against a declaration, including the probability and normalisation conditions above, and that its `## Depends on` and `## Proof depends on` leave no gap. |
+| **Expansions** | Do the new pages cover the node at a sensible granularity? | Each wanted statement is faithful to its source, and each step of [Expanding a node](docs/BLUEPRINT.md#expanding-a-node) was followed: the order among new planned pages is right, no link still points at the node (one left under `## Informally uses` only warns), and no page became a wanted statement too early. |
+| **Duplicates** | Is this result already a page or a declaration? | Search the vault and pinned Mathlib before accepting a new page; `autoform audit`'s `duplicate-lean-target` finds two pages for one declaration. |
+| **Prose and citations** | Will the page stay true, and are its sources real? | No prose about the library's state ("the Lean proof", "not formalized"). Each citation is checked against the cited edition, including theorem numbers. |
+| **Held pages** | Is the hold still justified? | Don't ask to relink a page whose annotation records a `held` declaration; check that the reason holds and, unless the declaration is private by design, that its issue is linked. |
+
+A code owner's approval is a person's, not a finding: don't request changes
+because it is missing.
 
 ## Findings and verdict
 

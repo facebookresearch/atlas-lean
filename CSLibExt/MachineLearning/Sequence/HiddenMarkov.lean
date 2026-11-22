@@ -14,6 +14,7 @@ public import Mathlib.Data.Fin.Tuple.Basic
 public import Mathlib.Data.List.MinMax
 public import Mathlib.Algebra.Order.Ring.Defs
 public import Mathlib.Data.Finset.Lattice.Fold
+import Mathlib.Tactic.Ring
 
 /-!
 # Hidden Markov models: the forward algorithm and Viterbi
@@ -120,6 +121,28 @@ theorem likelihood_eq_sum_forward (t : ℕ) :
   simp
 
 end Forward
+
+/-! ## Path weight as a product -/
+
+section PathProduct
+
+variable {S O R : Type*} [CommSemiring R] (h : HMM S O R) (x : ℕ → O)
+
+/-- The path weight as a product: the initial weight, the `T` transitions and the `T + 1`
+emissions. -/
+theorem pathProb_eq_prod : ∀ (T : ℕ) (z : Fin (T + 1) → S), pathProb h x T z =
+      h.init (z 0) * (∏ t : Fin T, h.trans (z t.castSucc) (z t.succ)) *
+        ∏ t : Fin (T + 1), h.emit (z t) (x t)
+  | 0, z => by simp [pathProb]
+  | T + 1, z => by
+      rw [Fin.prod_univ_castSucc (f := fun t : Fin (T + 1) => h.trans (z t.castSucc) (z t.succ)),
+        Fin.prod_univ_castSucc (f := fun t : Fin (T + 2) => h.emit (z t) (x t)), pathProb,
+        pathProb_eq_prod T]
+      simp only [Fin.init, Fin.succ_castSucc, Fin.val_castSucc, Fin.castSucc_zero, Fin.succ_last,
+        Fin.val_last]
+      ring
+
+end PathProduct
 
 /-! ## Viterbi -/
 

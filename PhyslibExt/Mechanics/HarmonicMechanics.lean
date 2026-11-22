@@ -55,8 +55,9 @@ solution carries the energy `(1 / 2) * k * A ^ 2`. Only first-order derivative h
 (`ClassicalMechanics.HarmonicOscillator.energy_conservation_of_equationOfMotion'`), and for unit
 mass with velocity `deriv x` in `EarthScience.oscillator_energy_const`.
 
-Section B covers resultant forces, action-reaction cancellation, 2D scalar moments, and discrete
-work. Section C covers finite spring networks: energy, stiffness matrix, zero modes,
+Section B covers resultant forces, action-reaction cancellation, 2D scalar moments, finite
+axial-member endpoint tables, and discrete work. Section C covers finite spring networks:
+energy, stiffness matrix, zero modes,
 mass-orthogonal normal modes, and nonnegative generalized eigenvalues.
 
 Newton's equation, the balance conditions, and the linear spring law are model assumptions,
@@ -74,6 +75,12 @@ carried as explicit hypotheses or definitions. Continuum stress and strain are i
   real-valued pair forces.
 * `moment2D_add`, `central_pair_moment_eq_zero`: 2D moment linearity and the
   single central-pair zero moment (no-body-couple model).
+* `moment2D_shift`, `moment2D_shift_eq_of_isEquilibrated`: shifting the moment
+  point changes the total moment by minus the moment of the resultant force, so
+  equilibrated families have origin-independent moment.
+* `memberEndpoint_resultantForce_eq_zero`, `memberEndpoint_moment2D_eq_zero`,
+  `axialEndpointForce_eq_memberEndpointForce`: a finite axial-member table has
+  zero resultant planar wrench, in coefficient and axial-force forms.
 * `totalWork_add`: discrete work distributes over force families.
 * `springEnergy_eq_quadForm`: for reciprocal weights without self-springs, the
   spring energy equals `(1 / 2)` times the stiffness quadratic form;
@@ -262,13 +269,148 @@ lemma moment2D_add {ρ : Type*} [Fintype ρ] (r F G : ρ → (Fin 2 → ℝ)) :
 forces, equal, opposite, and each a scalar multiple of the separation vector
 `q - p` (centrality hypothesis), has zero total 2D moment about any point
 `o`. Together with `moment2D_add` this is the single-pair case; the summed
-pairwise-central statement over many pairs is not claimed. -/
+axial-member table form is `memberEndpoint_moment2D_eq_zero` below. -/
 lemma central_pair_moment_eq_zero (p q o : Fin 2 → ℝ) (c : ℝ) :
     ((p 0 - o 0) * (c • (q - p)) 1 - (p 1 - o 1) * (c • (q - p)) 0) +
       ((q 0 - o 0) * (-(c • (q - p))) 1 - (q 1 - o 1) * (-(c • (q - p))) 0) =
       0 := by
   simp only [Pi.smul_apply, Pi.sub_apply, Pi.neg_apply, smul_eq_mul]
   ring
+
+/-- Position of one endpoint of a finite axial-member table.
+The endpoint index is `(member, isSecondEndpoint)`: `false`
+selects `a e` and `true` selects `b e`. Keeping the pair index
+retains parallel members as distinct table entries. -/
+noncomputable def memberEndpointPosition {J M : Type*}
+    (r : J → (Fin 2 → ℝ)) (a b : M → J) (p : M × Bool) :
+    Fin 2 → ℝ :=
+  if p.2 then r (b p.1) else r (a p.1)
+
+/-- Internal endpoint force of one axial member table entry,
+read as the force the member exerts on the joint. For member
+`e`, `c e` is the signed coefficient along the separation
+vector `r (b e) - r (a e)`: the force at `a e` is
+`c e • (r (b e) - r (a e))` and the force at `b e` is its
+negative, so positive `c e` is tension. This separation-vector
+form is the totalized model; for a genuine two-force member the
+endpoints are distinct and `c e` is the axial force divided by
+the member length. Joint-only loading is the physical reason a
+pin-jointed member carries only such an endpoint axial pair;
+external loads are outside this internal-force sum. -/
+noncomputable def memberEndpointForce {J M : Type*}
+    (r : J → (Fin 2 → ℝ)) (a b : M → J) (c : M → ℝ)
+    (p : M × Bool) : Fin 2 → ℝ :=
+  if p.2 then -(c p.1 • (r (b p.1) - r (a p.1)))
+  else c p.1 • (r (b p.1) - r (a p.1))
+
+/-- Internal axial-member forces have zero resultant: each
+member contributes an equal and opposite endpoint pair. -/
+theorem memberEndpoint_resultantForce_eq_zero {J M : Type*}
+    [Fintype M] (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (c : M → ℝ) :
+    resultantForce (memberEndpointForce r a b c) = 0 := by
+  simp only [resultantForce, memberEndpointForce, Fintype.sum_prod_type,
+    Fintype.sum_bool]
+  simp
+
+/-- Internal axial-member forces have zero planar moment
+about every point `o`: each member is a central equal-and-
+opposite pair along its separation vector. Together with the
+zero resultant, this says the internal member forces contribute
+zero resultant planar wrench. -/
+theorem memberEndpoint_moment2D_eq_zero {J M : Type*}
+    [Fintype M] (r : J → (Fin 2 → ℝ)) (a b : M → J)
+    (c : M → ℝ) (o : Fin 2 → ℝ) :
+    moment2D (fun p => memberEndpointPosition r a b p - o)
+      (memberEndpointForce r a b c) = 0 := by
+  simp only [moment2D, memberEndpointPosition, memberEndpointForce,
+    Fintype.sum_prod_type]
+  refine Finset.sum_eq_zero fun e _ => ?_
+  simp only [Fintype.sum_bool, Pi.sub_apply, Pi.neg_apply, Pi.smul_apply,
+    smul_eq_mul, Bool.false_eq_true, ite_true, ite_false]
+  ring
+
+/-- Euclidean length of one axial member: the square root of the
+sum of the squared separation coordinates. -/
+noncomputable def memberLength {J M : Type*}
+    (r : J → (Fin 2 → ℝ)) (a b : M → J) (e : M) : ℝ :=
+  Real.sqrt (((r (b e) - r (a e)) 0) ^ 2 + ((r (b e) - r (a e)) 1) ^ 2)
+
+/-- A member with noncoincident endpoints has positive length. -/
+lemma memberLength_pos_of_ne {J M : Type*}
+    (r : J → (Fin 2 → ℝ)) (a b : M → J) {e : M}
+    (hne : r (a e) ≠ r (b e)) :
+    0 < memberLength r a b e := by
+  have hsep : r (b e) - r (a e) ≠ 0 := by
+    intro h
+    exact hne (sub_eq_zero.mp h).symm
+  have hsum_ne : ((r (b e) - r (a e)) 0) ^ 2
+      + ((r (b e) - r (a e)) 1) ^ 2 ≠ 0 := by
+    intro hsum
+    have hboth := (add_eq_zero_iff_of_nonneg (sq_nonneg _) (sq_nonneg _)).mp hsum
+    have hz0 : (r (b e) - r (a e)) 0 = 0 :=
+      (pow_eq_zero_iff (by norm_num : (2 : ℕ) ≠ 0)).mp hboth.1
+    have hz1 : (r (b e) - r (a e)) 1 = 0 :=
+      (pow_eq_zero_iff (by norm_num : (2 : ℕ) ≠ 0)).mp hboth.2
+    apply hsep
+    ext i
+    fin_cases i <;> simp [hz0, hz1]
+  have hsum_pos : 0 < ((r (b e) - r (a e)) 0) ^ 2
+      + ((r (b e) - r (a e)) 1) ^ 2 :=
+    lt_of_le_of_ne (add_nonneg (sq_nonneg _) (sq_nonneg _)) (Ne.symm hsum_ne)
+  exact Real.sqrt_pos.2 hsum_pos
+
+/-- Endpoint force family in axial-force form: at `a e` the
+force on the joint is `N e` times the unit separation vector
+`(r (b e) - r (a e)) / memberLength r a b e`, and at `b e` it is
+the negative. Positive `N e` is tension. On a zero-length entry
+the separation vector is zero, so the displayed family is zero;
+the physical two-force-member reading is the noncoincident
+case of `memberLength_pos_of_ne`. -/
+noncomputable def axialEndpointForce {J M : Type*}
+    (r : J → (Fin 2 → ℝ)) (a b : M → J) (N : M → ℝ)
+    (p : M × Bool) : Fin 2 → ℝ :=
+  if p.2 then
+    -(N p.1 • ((memberLength r a b p.1)⁻¹ • (r (b p.1) - r (a p.1))))
+  else N p.1 • ((memberLength r a b p.1)⁻¹ • (r (b p.1) - r (a p.1)))
+
+/-- Physical-to-canonical bridge: the axial-force endpoint
+family is the coefficient endpoint family with coefficient
+`c e = N e / memberLength r a b e`. -/
+lemma axialEndpointForce_eq_memberEndpointForce {J M : Type*}
+    (r : J → (Fin 2 → ℝ)) (a b : M → J) (N : M → ℝ) :
+    axialEndpointForce r a b N
+      = memberEndpointForce r a b
+        (fun e => N e / memberLength r a b e) := by
+  funext p
+  by_cases hp : p.2 <;>
+    simp [axialEndpointForce, memberEndpointForce, hp, div_eq_mul_inv,
+      smul_smul]
+
+/-- Main-result form, resultant clause: for a finite
+pin-jointed axial-member table with noncoincident endpoints,
+the internal axial endpoint forces have zero resultant. The
+noncoincidence premise is the physical two-force-member domain;
+the coefficient cancellation core above is stronger. -/
+lemma axialEndpoint_resultantForce_eq_zero_of_ne {J M : Type*}
+    [Fintype M] (r : J → (Fin 2 → ℝ)) (a b : M → J) (N : M → ℝ)
+    (_hne : ∀ e, r (a e) ≠ r (b e)) :
+    resultantForce (axialEndpointForce r a b N) = 0 := by
+  rw [axialEndpointForce_eq_memberEndpointForce]
+  exact memberEndpoint_resultantForce_eq_zero r a b _
+
+/-- Main-result form, moment clause: for a finite pin-jointed
+axial-member table with noncoincident endpoints, the internal
+axial endpoint forces have zero planar moment about every
+point. Together with `axialEndpoint_resultantForce_eq_zero_of_ne`
+this is zero resultant planar wrench. -/
+lemma axialEndpoint_moment2D_eq_zero_of_ne {J M : Type*}
+    [Fintype M] (r : J → (Fin 2 → ℝ)) (a b : M → J) (N : M → ℝ)
+    (_hne : ∀ e, r (a e) ≠ r (b e)) (o : Fin 2 → ℝ) :
+    moment2D (fun p => memberEndpointPosition r a b p - o)
+      (axialEndpointForce r a b N) = 0 := by
+  rw [axialEndpointForce_eq_memberEndpointForce]
+  exact memberEndpoint_moment2D_eq_zero r a b _ o
 
 /-- Discrete work of a force family under a common constant displacement.
 This is the discrete constant-displacement work, not a path-dependent
@@ -291,6 +433,50 @@ lemma totalWork_add {ρ ι : Type*} [Fintype ρ] [Fintype ι]
   intro i _
   simp only [Pi.add_apply]
   ring
+
+/-- Shifting the moment point to `o` changes the total moment
+by minus the moment of the resultant force. -/
+theorem moment2D_shift {ρ : Type*} [Fintype ρ]
+    (r F : ρ → (Fin 2 → ℝ)) (o : Fin 2 → ℝ) :
+    moment2D (fun i => r i - o) F
+      = moment2D r F
+        - (o 0 * resultantForce F 1
+          - o 1 * resultantForce F 0) := by
+  unfold moment2D resultantForce
+  simp only [Pi.sub_apply, Finset.sum_apply]
+  rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_sub_distrib,
+    ← Finset.sum_sub_distrib]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  ring
+
+/-- Conversely, moment agreement about the two unit shifts
+forces the resultant force to vanish. -/
+theorem resultantForce_eq_zero_of_moment2D_shift_eq
+    {ρ : Type*} [Fintype ρ] (r F : ρ → (Fin 2 → ℝ))
+    (h0 : moment2D (fun i => r i - ![1, 0]) F = moment2D r F)
+    (h1 : moment2D (fun i => r i - ![0, 1]) F = moment2D r F) :
+    resultantForce F = 0 := by
+  have hshift0 := moment2D_shift r F ![1, 0]
+  have hshift1 := moment2D_shift r F ![0, 1]
+  rw [h0] at hshift0
+  rw [h1] at hshift1
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one,
+    one_mul, zero_mul, sub_zero] at hshift0 hshift1
+  have hR1 : resultantForce F 1 = 0 := by linarith
+  have hR0 : resultantForce F 0 = 0 := by linarith
+  refine funext fun j => ?_
+  fin_cases j
+  · simpa using hR0
+  · simpa using hR1
+
+/-- Under `IsEquilibrated`, the total moment is independent
+of the moment point. -/
+theorem moment2D_shift_eq_of_isEquilibrated
+    {ρ : Type*} [Fintype ρ] (r F : ρ → (Fin 2 → ℝ))
+    (o : Fin 2 → ℝ) (hF : IsEquilibrated F) :
+    moment2D (fun i => r i - o) F = moment2D r F := by
+  rw [moment2D_shift, hF]
+  simp
 
 /-! ## C. Finite spring networks, stiffness matrices, and normal modes. -/
 
