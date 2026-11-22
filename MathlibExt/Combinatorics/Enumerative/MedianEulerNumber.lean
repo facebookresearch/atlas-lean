@@ -12,6 +12,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.ModEq
 public import MathlibExt.Combinatorics.Enumerative.EulerSeidelMatrix
 import Mathlib.Algebra.BigOperators.Field
+import Mathlib.Algebra.BigOperators.ModEq
 import Mathlib.Algebra.BigOperators.NatAntidiagonal
 import Mathlib.Algebra.Ring.Parity
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
@@ -738,19 +739,6 @@ private theorem me_init_odd_sign (p : ℕ) :
   rw [h1, ← me_init_succ] at h
   exact h
 
--- Helper: finite-sum congruence for `ZMOD 15`.
-open scoped BigOperators in
-private theorem me_modeq_sum15 {s : Finset ℕ} {f g : ℕ → ℤ}
-    (h : ∀ i ∈ s, f i ≡ g i [ZMOD (15 : ℤ)]) :
-    ∑ i ∈ s, f i ≡ ∑ i ∈ s, g i [ZMOD (15 : ℤ)] := by
-  induction s using Finset.induction with
-  | empty =>
-    rw [Finset.sum_empty, Finset.sum_empty]
-  | insert a s ha ih =>
-    rw [Finset.sum_insert ha, Finset.sum_insert ha]
-    exact (h a (Finset.mem_insert_self a s)).add
-      (ih (fun i hi => h i (Finset.mem_insert_of_mem hi)))
-
 -- Scalar congruence mod 3.
 private theorem me_scalar3 (m : ℕ) :
     (8 * 10 ^ m - 5 * 2 ^ m - 3 ^ (m + 1) + 8 ^ (m + 1) - 3 : ℤ)
@@ -866,7 +854,7 @@ private theorem me_coeff_modEq : ∀ m : ℕ, 1 ≤ m →
             * (8 ^ (i + 1 + 1) - 3) := by
         ring
       rwa [heq] at h2
-    have hsum0 := me_modeq_sum15 hterm
+    have hsum0 := Int.ModEq.sum hterm
     have hG : (∑ i ∈ Finset.range t, ((t + 1).choose (i + 1) : ℤ)
           * 2 ^ (t + 1 - (i + 1)) * (8 ^ (i + 1 + 1) - 3))
         = 8 * 10 ^ (t + 1) - 3 * 3 ^ (t + 1) - 2 ^ (t + 1) * 5
@@ -1023,7 +1011,7 @@ private theorem me_seidel_modEq (n : ℕ) (hn : 1 ≤ n) :
       rw [me_init_succ]
       exact hih
     exact (Int.ModEq.refl _).mul ha
-  have hsum := me_modeq_sum15 hterm
+  have hsum := Int.ModEq.sum hterm
   have hSeq : eulerSeidelMatrix medianEulerInitialRow (n + 1) n
       ≡ (∑ i ∈ Finset.range (n + 1),
         ((n.choose i : ℤ)) * (8 ^ (n + 1 + i + 1) - 3)) [ZMOD 15] := by

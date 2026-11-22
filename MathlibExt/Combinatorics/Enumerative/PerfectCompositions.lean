@@ -195,15 +195,6 @@ private lemma canon_count_eq_fun (S : List (ℕ × ℕ)) (hN : (S.map Prod.fst).
   · exact count_canon_eq S hN c a ha
   · rw [count_canon_support S c a ha, hsup a ha]
 
-/-- Congruence for unique existence. -/
-private lemma existsUnique_congr' {α : Sort*} {p q : α → Prop} (h : ∀ x, p x ↔ q x) :
-    (∃! x, p x) ↔ (∃! x, q x) := by
-  constructor
-  · rintro ⟨x, hpx, huniq⟩
-    exact ⟨x, (h x).mp hpx, fun y hy => huniq y ((h y).mpr hy)⟩
-  · rintro ⟨x, hqx, huniq⟩
-    exact ⟨x, (h x).mpr hqx, fun y hy => huniq y ((h y).mp hy)⟩
-
 /-- Elements of the expansion are run values. -/
 private lemma mem_expand_map (S : List (ℕ × ℕ)) (a : ℕ) (h : a ∈ expandSym S) :
     a ∈ S.map Prod.fst := by
@@ -286,7 +277,7 @@ private lemma transfer_perfect (S T : List (ℕ × ℕ)) (hNS : (S.map Prod.fst)
     change (S.flatMap fun p => List.replicate (c p.1) p.1).Perm
       (T.flatMap fun p => List.replicate (c p.1) p.1)
     exact hperm.flatMap (fun a _ => List.Perm.refl _)
-  apply existsUnique_congr'
+  apply existsUnique_congr
   intro c
   constructor
   · rintro ⟨hc, hsup, hsum⟩
@@ -307,16 +298,6 @@ private lemma transfer_perfect (S T : List (ℕ × ℕ)) (hNS : (S.map Prod.fst)
       exact hsup a (fun h => ha ((hmem a).mpr h))
     · rw [hRsum c]
       exact hsum
-
-/-- A list is a sublist of itself appended with anything on the right. -/
-private lemma sublist_append_left' {α : Type*} (M R : List α) : M.Sublist (M ++ R) := by
-  rw [List.sublist_append_iff]
-  exact ⟨M, [], by simp, List.Sublist.refl _, by simp⟩
-
-/-- A list is a sublist of anything appended on its left. -/
-private lemma sublist_append_right' {α : Type*} (L M : List α) : M.Sublist (L ++ M) := by
-  rw [List.sublist_append_iff]
-  exact ⟨[], M, by simp, by simp, List.Sublist.refl _⟩
 
 /-- A repeated part size with a nonempty middle yields two distinct sublist witnesses. -/
 private lemma dup_runs_witnesses (L₁ : List (ℕ × ℕ)) (x z : ℕ × ℕ) (L' : List (ℕ × ℕ))
@@ -384,8 +365,8 @@ private lemma dup_runs_witnesses (L₁ : List (ℕ × ℕ)) (x z : ℕ × ℕ) (
       exact (List.replicate_sublist_replicate _).mpr hBx2
     rw [hE]
     exact List.Sublist.append
-      (h1.trans (sublist_append_right' _ _))
-      (sublist_append_left' _ _)
+      (h1.trans (List.sublist_append_right _ _))
+      (List.sublist_append_left _ _)
   · -- D₂ sublist
     have hE : expandSym (L₁ ++ [x] ++ z :: L' ++ [y] ++ R) =
         (expandSym L₁ ++ (List.replicate x.2 x.1 ++ expandSym (z :: L'))) ++
@@ -396,10 +377,10 @@ private lemma dup_runs_witnesses (L₁ : List (ℕ × ℕ)) (x z : ℕ × ℕ) (
       exact (List.replicate_sublist_replicate _).mpr hBy2
     rw [hE]
     refine List.Sublist.append ?_ ?_
-    · exact (sublist_append_right' _ _).trans (sublist_append_right' _ _)
+    · exact (List.sublist_append_right _ _).trans (List.sublist_append_right _ _)
     · have e : [x.1] = [y.1] := by rw [hxy]
       rw [e]
-      exact h1y.trans (sublist_append_left' _ _)
+      exact h1y.trans (List.sublist_append_left _ _)
   · -- sums
     simp
   · simp [add_comm]
@@ -539,21 +520,6 @@ private lemma pairwise_le_isortByFst (S : List (ℕ × ℕ)) :
     rw [e]
     exact pairwise_le_insByFst q _ ih
 
-/-- Pairwise `≤` on pairs gives pairwise `≤` on first components. -/
-private lemma pairwise_map_fst_le (P : List (ℕ × ℕ))
-    (h : P.Pairwise (fun a b => a.1 ≤ b.1)) :
-    (P.map Prod.fst).Pairwise (· ≤ ·) := by
-  induction P with
-  | nil => simp
-  | cons q P' ih =>
-    simp only [List.map_cons] at h ⊢
-    rw [List.pairwise_cons] at h ⊢
-    obtain ⟨h1, h2⟩ := h
-    refine ⟨?_, ih h2⟩
-    intro x hx
-    obtain ⟨r, hr, rfl⟩ := List.mem_map.mp hx
-    exact h1 r hr
-
 /-- Pairwise `≤` plus distinctness gives pairwise `<`. -/
 private lemma pairwise_lt_of_pairwise_le_nodup (L : List ℕ) (hle : L.Pairwise (· ≤ ·))
     (hn : L.Nodup) : L.Pairwise (· < ·) := by
@@ -639,7 +605,7 @@ theorem perfect_composition_iff_symbolic_parts_perm_perfect_partition_general
     · intro p hp
       exact hCpos p ((List.Perm.mem_iff hpermC).mp hp)
     · exact pairwise_lt_of_pairwise_le_nodup _
-        (pairwise_map_fst_le _ (pairwise_le_isortByFst C)) hNodupP
+        (List.pairwise_map.2 (pairwise_le_isortByFst C)) hNodupP
     · have hEperm : (expandSym (isortByFst C)).Perm (expandSym C) := by
         change ((isortByFst C).flatMap fun p => List.replicate p.2 p.1).Perm
           (C.flatMap fun p => List.replicate p.2 p.1)

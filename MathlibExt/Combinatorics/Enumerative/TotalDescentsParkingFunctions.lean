@@ -11,6 +11,7 @@ module
 public import Mathlib.Data.Fintype.BigOperators
 public import Mathlib.Data.Nat.Choose.Basic
 public import MathlibExt.Combinatorics.Enumerative.ParkingFunction
+import Mathlib.Data.Fintype.Lattice
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Tactic.Abel
 import Mathlib.Tactic.Ring
@@ -88,19 +89,11 @@ private theorem sum_mod_eq (n t : ℕ) (u v : Fin n → ℕ) (hu : ∀ i, u i < 
   rw [hfil, hrhs] at hsum
   exact hsum
 
-/-- A shift minimizing the total lifted weight exists. -/
-private theorem exists_min_shift (n : ℕ) (a : Fin n → ZMod (n + 1)) :
-    ∃ c : ZMod (n + 1), ∀ d : ZMod (n + 1),
-      (∑ i, (a i + c).val) ≤ ∑ i, (a i + d).val := by
-  obtain ⟨c, _, hc⟩ := Finset.exists_min_image Finset.univ
-    (fun c => ∑ i, (a i + c).val) ⟨0, Finset.mem_univ 0⟩
-  exact ⟨c, fun d => hc d (Finset.mem_univ d)⟩
-
 -- Pollak's circle lemma, existence half (the combinatorial core)
 private theorem pollak_exists (n : ℕ) (hn : 1 ≤ n) (a : Fin n → ZMod (n + 1)) :
     ∃ c : ZMod (n + 1), ∃ f : Fin n → Fin n,
       IsParkingFunction n f ∧ shift n a c = emb n f := by
-  obtain ⟨c, hc⟩ := exists_min_shift n a
+  obtain ⟨c, hc⟩ := Finite.exists_min fun c => ∑ i, (a i + c).val
   have h1lt : (1 : ℕ) < n + 1 := by omega
   have hno : ∀ i : Fin n, (a i + c).val < n := by
     by_contra hcon
@@ -762,19 +755,9 @@ private theorem card_partition (n : ℕ) (a b : Fin n) :
   omega
 
 -- arithmetic: twice C(n,2) is n * (n - 1)
-private theorem even_mul_pred_self (n : ℕ) : Even (n * (n - 1)) := by
-  rcases Nat.even_or_odd n with h | h
-  · exact h.mul_right _
-  · rcases Nat.eq_zero_or_pos n with rfl | hpos
-    · rw [Nat.zero_mul]
-      exact ⟨0, rfl⟩
-    · obtain ⟨k, hk⟩ := h
-      have h2 : n - 1 = k + k := by omega
-      have hev : Even (n - 1) := ⟨k, h2⟩
-      exact hev.mul_left _
 private theorem two_mul_choose_two (n : ℕ) : 2 * Nat.choose n 2 = n * (n - 1) := by
   rw [Nat.choose_two_right]
-  exact Nat.mul_div_cancel' (even_iff_two_dvd.mp (even_mul_pred_self n))
+  exact Nat.mul_div_cancel' (even_iff_two_dvd.mp (Nat.even_mul_pred_self n))
 
 -- membership in pfSet, unfolded
 private theorem mem_pfFinset (n : ℕ) (f : Fin n → Fin n) :
