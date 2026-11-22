@@ -22,19 +22,19 @@ private def sixCycle : ℕ → ℤ
 
 -- The terms on either side of each period boundary are 5 and 3.
 example (n : ℕ) : sixCycle (6 * n + 5) = 5 ∧ sixCycle (6 * (n + 1)) = 3 := by
-  have cycle := degenerate_secondOrder_closedForms.2.2.1 sixCycle (fun _ => rfl)
-  exact ⟨(cycle n).2.2.2.2.2, (cycle (n + 1)).1⟩
+  have cycle := period_six sixCycle (fun _ => rfl)
+  obtain ⟨_, _, _, _, _, hlast⟩ := cycle n
+  exact ⟨hlast, (cycle (n + 1)).1⟩
 
 -- The signed affine expression has intercept 3 even at index zero.
 example (w : ℕ → ℤ) (hw : ∀ k, w (k + 2) = -2 * w (k + 1) - w k)
     (h₀ : w 0 = 3) (h₁ : w 1 = -2) (n : ℕ) : w n = (-1) ^ n * (3 - (n : ℤ)) := by
-  rw [degenerate_secondOrder_closedForms.2.2.2.2.2.1 w hw n, h₀, h₁, pow_succ]
+  rw [alternating_affine w hw n, h₀, h₁, pow_succ]
   ring
 
 -- The alternating tail starts at index one, with arbitrary zeroth term.
 example (w : ℕ → ℤ) (hw : ∀ k, w (k + 2) = -w (k + 1)) (n : ℕ) :
     w (n + 1) = (-1) ^ n * w 1 := by
-  simpa [pow_succ] using
-    degenerate_secondOrder_closedForms.2.2.2.2.2.2.2 w hw (n + 1) (Nat.succ_pos n)
+  simpa [pow_succ] using alternating_tail w hw (n + 1) (Nat.succ_pos n)
 
 end MetaMathlibExt.degenerate_secondOrder_closedForms
