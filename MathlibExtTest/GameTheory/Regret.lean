@@ -120,10 +120,12 @@ def exCost : Fin 2 → (Fin 2 → Fin 2) → ℝ :=
 noncomputable def exOpp : Fin 2 → Fin 2 → ℝ :=
   fun _ => ![1 / 2, 1 / 2]
 
-/-- T6: induced loss under the uniform mix is `1 / 2` for both actions. -/
-theorem test_inducedLoss_uniform :
-    inducedLoss exCost exOpp 0 0 = 1 / 2 ∧
-      inducedLoss exCost exOpp 0 1 = 1 / 2 := by
+/-- T6: pure cost under the uniform mix is `1 / 2` for both actions. -/
+theorem test_pureCost_uniform :
+    MathlibExt.GameTheory.CorrelatedEquilibrium.pureCost exCost exOpp 0 0
+        = 1 / 2 ∧
+      MathlibExt.GameTheory.CorrelatedEquilibrium.pureCost exCost exOpp 0 1
+        = 1 / 2 := by
   have hsum : ∀ g : (Fin 2 → Fin 2) → ℝ,
       ∑ s, g s = (g ![0, 0] + g ![0, 1]) + (g ![1, 0] + g ![1, 1]) := by
     intro g
@@ -133,10 +135,10 @@ theorem test_inducedLoss_uniform :
   have h10 : (1 : Fin 2) ≠ 0 := by decide
   have herase : Finset.univ.erase (0 : Fin 2) = {1} := by decide
   constructor
-  · simp only [inducedLoss_eq_sum_filter, exCost, exOpp, Finset.sum_filter, hsum, herase,
+  · simp only [pureCost_eq_sum_filter, exCost, exOpp, Finset.sum_filter, hsum, herase,
       Finset.prod_singleton, Matrix.cons_val_zero, Matrix.cons_val_one]
     simp
-  · simp only [inducedLoss_eq_sum_filter, exCost, exOpp, Finset.sum_filter, hsum, herase,
+  · simp only [pureCost_eq_sum_filter, exCost, exOpp, Finset.sum_filter, hsum, herase,
       Finset.prod_singleton, Matrix.cons_val_zero, Matrix.cons_val_one]
     simp
 

@@ -45,7 +45,7 @@ Base lemmas (C2):
 * `externalRegret_le_swapRegret`
 * `externalRegret_add_roundConst`
 
-Game layer (C3, in `RegretInducedLoss`): `inducedLoss` and its bounds.
+Game layer (C3, in `RegretInducedLoss`): the `pureCost` sum form and bounds.
 
 ## Non-goals
 

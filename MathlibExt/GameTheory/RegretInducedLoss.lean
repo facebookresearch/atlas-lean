@@ -23,17 +23,17 @@ import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
 
 The game layer (C3) of the canonical regret vocabulary: a player's loss
 vector induced by the opponents' independent mixed play in a finite
-normal-form cost game. This adapter sits above both the game-free regret
-base (`MathlibExt/GameTheory/Regret.lean`) and
-`MathlibExt.GameTheory.CorrelatedEquilibrium`, whose `pureCost` is the
-induced loss; keeping it here leaves the base regret layer below the
-equilibrium modules.
+normal-form cost game, stated directly for
+`CorrelatedEquilibrium.pureCost`. This adapter sits above both the
+game-free regret base (`MathlibExt/GameTheory/Regret.lean`) and
+`MathlibExt.GameTheory.CorrelatedEquilibrium`; keeping it here leaves the
+base regret layer below the equilibrium modules.
 
 ## Main results
 
-* `inducedLoss`: expected cost of an action against mixed opponents.
-* `inducedLoss_nonneg`
-* `inducedLoss_le_one`
+* `pureCost_eq_sum_filter`: the pure cost as a filtered profile sum.
+* `pureCost_nonneg`
+* `pureCost_le_one`
 
 ## References
 
@@ -50,20 +50,14 @@ open scoped BigOperators
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 variable {S : ι → Type*} [∀ i, Fintype (S i)] [∀ i, DecidableEq (S i)]
 
-/-- Expected cost of playing `a` against the other players' independent mixed
-strategies. This is `CorrelatedEquilibrium.pureCost`. (C3 game layer) -/
-def inducedLoss (cost : ι → (∀ i, S i) → ℝ) (σ : ∀ i, S i → ℝ) (i : ι)
-    (a : S i) : ℝ :=
-  MathlibExt.GameTheory.CorrelatedEquilibrium.pureCost cost σ i a
-
-/-- The induced loss as the cost weighted by the opponents' mixed play,
-summed over profiles where player `i` plays `a`. -/
-theorem inducedLoss_eq_sum_filter (cost : ι → (∀ i, S i) → ℝ)
+/-- The pure cost as the cost weighted by the opponents' mixed play,
+summed over profiles where player `i` plays `a`. (C3 game layer) -/
+theorem pureCost_eq_sum_filter (cost : ι → (∀ i, S i) → ℝ)
     (σ : ∀ i, S i → ℝ) (i : ι) (a : S i) :
-    inducedLoss cost σ i a
+    MathlibExt.GameTheory.CorrelatedEquilibrium.pureCost cost σ i a
       = ∑ s ∈ Finset.univ.filter (fun s : ∀ j, S j => s i = a),
         cost i s * ∏ j ∈ Finset.univ.erase i, σ j (s j) := by
-  unfold inducedLoss MathlibExt.GameTheory.CorrelatedEquilibrium.pureCost
+  unfold MathlibExt.GameTheory.CorrelatedEquilibrium.pureCost
     MathlibExt.GameTheory.CorrelatedEquilibrium.othersWeight
   rw [Finset.sum_filter]
   refine Finset.sum_congr rfl fun s _ => ?_
@@ -71,21 +65,23 @@ theorem inducedLoss_eq_sum_filter (cost : ι → (∀ i, S i) → ℝ)
   · simp [h, mul_comm]
   · simp [h]
 
-/-- Induced losses are nonnegative for nonnegative costs. (C3 game layer) -/
-theorem inducedLoss_nonneg {cost : ι → (∀ i, S i) → ℝ} {σ : ∀ i, S i → ℝ}
+/-- Pure costs are nonnegative for nonnegative costs. (C3 game layer) -/
+theorem pureCost_nonneg {cost : ι → (∀ i, S i) → ℝ} {σ : ∀ i, S i → ℝ}
     {i : ι} {a : S i} (hσ : ∀ j, j ≠ i → IsSimplex (σ j))
-    (hcost : ∀ s, 0 ≤ cost i s) : 0 ≤ inducedLoss cost σ i a := by
-  rw [inducedLoss_eq_sum_filter]
+    (hcost : ∀ s, 0 ≤ cost i s) :
+    0 ≤ MathlibExt.GameTheory.CorrelatedEquilibrium.pureCost cost σ i a := by
+  rw [pureCost_eq_sum_filter]
   refine Finset.sum_nonneg fun s _ => ?_
   refine mul_nonneg (hcost s) ?_
   refine Finset.prod_nonneg fun j hj => ?_
   obtain ⟨hjn, -⟩ := (isSimplex_iff _).mp (hσ j (Finset.mem_erase.mp hj).1)
   exact hjn _
 
-/-- Induced losses are at most one for [0,1] costs. (C3 game layer) -/
-theorem inducedLoss_le_one {cost : ι → (∀ i, S i) → ℝ} {σ : ∀ i, S i → ℝ}
+/-- Pure costs are at most one for [0,1] costs. (C3 game layer) -/
+theorem pureCost_le_one {cost : ι → (∀ i, S i) → ℝ} {σ : ∀ i, S i → ℝ}
     {i : ι} {a : S i} (hσ : ∀ j, j ≠ i → IsSimplex (σ j))
-    (hcost : ∀ s, cost i s ≤ 1) : inducedLoss cost σ i a ≤ 1 := by
+    (hcost : ∀ s, cost i s ≤ 1) :
+    MathlibExt.GameTheory.CorrelatedEquilibrium.pureCost cost σ i a ≤ 1 := by
   have hW : ∀ s : ∀ j, S j, 0 ≤ ∏ j ∈ Finset.univ.erase i, σ j (s j) := by
     intro s
     refine Finset.prod_nonneg fun j hj => ?_
@@ -138,7 +134,7 @@ theorem inducedLoss_le_one {cost : ι → (∀ i, S i) → ℝ} {σ : ∀ i, S i
       ∏ j ∈ Finset.univ.erase i, σ j (x j) = 1 := by
     rw [← hRHS, ← hkey]
     exact hLHS
-  rw [inducedLoss_eq_sum_filter]
+  rw [pureCost_eq_sum_filter]
   rw [hBridge, ← hsum]
   refine Finset.sum_le_sum fun s _ => ?_
   calc cost i s * ∏ j ∈ Finset.univ.erase i, σ j (s j)
