@@ -95,4 +95,21 @@ example :
 #print axioms Cslib.CodingTheory.BivariateInterpolation.exists_bivariate_interpolant_sqrt
 #print axioms Cslib.CodingTheory.BivariateInterpolation.exists_bivariate_interpolant_mvPolynomial
 
+theorem ceilSqrt_zero : Cslib.CodingTheory.BivariateInterpolation.ceilSqrt 0 = 0 := by
+  decide
+
+theorem ceilSqrt_four : Cslib.CodingTheory.BivariateInterpolation.ceilSqrt 4 = 2 := by
+  unfold Cslib.CodingTheory.BivariateInterpolation.ceilSqrt
+  have h4 : Nat.sqrt 4 = 2 := Nat.sqrt_eq 2
+  rw [h4]
+  decide
+
+theorem ceilSqrt_three : Cslib.CodingTheory.BivariateInterpolation.ceilSqrt 3 = 2 := by
+  unfold Cslib.CodingTheory.BivariateInterpolation.ceilSqrt
+  have h3 : Nat.sqrt 3 = 1 := by
+    rw [eq_comm]
+    exact Nat.eq_sqrt.mpr ⟨by decide, by decide⟩
+  rw [h3]
+  decide
+
 end Cslib.CodingTheory.BivariateInterpolationTests
