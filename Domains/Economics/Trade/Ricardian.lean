@@ -80,8 +80,9 @@ at relative price `p`: `{x ≥ 0 | p x₁ + x₂ ≤ L / a₂}`. -/
 noncomputable def specializeGood2Set (c : Country) (p : ℝ) : Set (ℝ × ℝ) :=
   {x | 0 ≤ x.1 ∧ 0 ≤ x.2 ∧ p * x.1 + x.2 ≤ c.L / c.a₂}
 
-/-- Specializing in good 1 strictly enlarges the consumption set iff the world
-price exceeds the autarky price. -/
+/-- For a country (unit labor requirements `a₁, a₂ > 0`, labor endowment `L > 0`) and a positive
+world price, specializing in good 1 strictly enlarges the consumption set iff the world price
+exceeds the autarky price. -/
 theorem autarkySet_ssubset_specializeGood1Set_iff (c : Country) {p : ℝ} (hp : 0 < p) :
     autarkySet c ⊂ specializeGood1Set c p ↔ autarkyPrice c < p := by
   have ha₁ : 0 < c.a₁ := c.a₁_pos
@@ -143,8 +144,9 @@ theorem autarkySet_ssubset_specializeGood1Set_iff (c : Country) {p : ℝ} (hp : 
       have h4 := mul_lt_mul_of_pos_right hpa hL
       linarith [h2, h4]
 
-/-- Specializing in good 2 strictly enlarges the consumption set iff the world
-price is below the autarky price. -/
+/-- For a country (unit labor requirements `a₁, a₂ > 0`, labor endowment `L > 0`) and a positive
+world price, specializing in good 2 strictly enlarges the consumption set iff the world price is
+below the autarky price. -/
 theorem autarkySet_ssubset_specializeGood2Set_iff (c : Country) {p : ℝ} (hp : 0 < p) :
     autarkySet c ⊂ specializeGood2Set c p ↔ p < autarkyPrice c := by
   have ha₁ : 0 < c.a₁ := c.a₁_pos
@@ -207,10 +209,11 @@ theorem autarkySet_ssubset_specializeGood2Set_iff (c : Country) {p : ℝ} (hp : 
       have h5 := mul_lt_mul_of_pos_right hpa hL
       linarith [h3, h5]
 
-/-- **Potential mutual gains from Ricardian trade.** If the world price lies
-strictly between Home's and Foreign's autarky prices, Home (specializing in good 1)
-and Foreign (specializing in good 2) both strictly enlarge their consumption sets.
-This is an opportunity-set statement, not a utility comparison. -/
+/-- **Potential mutual gains from Ricardian trade.** For two countries, each with positive unit
+labor requirements and a positive labor endowment: if the world price `p` satisfies
+`autarkyPrice H < p < autarkyPrice F`, Home (specializing in good 1) and Foreign (specializing in
+good 2) both strictly enlarge their consumption sets. This is an opportunity-set statement, not a
+utility comparison. -/
 theorem ssubset_specializeSets_of_mem_Ioo (H F : Country) {p : ℝ}
     (hp : p ∈ Set.Ioo (autarkyPrice H) (autarkyPrice F)) :
     autarkySet H ⊂ specializeGood1Set H p ∧ autarkySet F ⊂ specializeGood2Set F p := by
@@ -220,9 +223,9 @@ theorem ssubset_specializeSets_of_mem_Ioo (H F : Country) {p : ℝ}
   exact ⟨(autarkySet_ssubset_specializeGood1Set_iff H hp0).mpr hp.1,
     (autarkySet_ssubset_specializeGood2Set_iff F hp0).mpr hp.2⟩
 
-/-- A world price at which both countries' consumption sets strictly enlarge (Home
-specializing in good 1, Foreign in good 2) exists iff Home has a comparative
-advantage in good 1. -/
+/-- For two countries, each with positive unit labor requirements and a positive labor endowment, a
+world price at which both countries' consumption sets strictly enlarge (Home specializing in good 1,
+Foreign in good 2) exists iff Home has a comparative advantage in good 1. -/
 theorem exists_ssubset_specializeSets_iff (H F : Country) :
     (∃ p, autarkySet H ⊂ specializeGood1Set H p ∧ autarkySet F ⊂ specializeGood2Set F p) ↔
       autarkyPrice H < autarkyPrice F := by

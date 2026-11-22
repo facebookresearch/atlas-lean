@@ -101,8 +101,8 @@ def IsArbitrage (M : ForwardMarket) (s : Strategy) : Prop :=
   s.IsAdmissible ∧ 0 ≤ initialCashFlow M s ∧ 0 ≤ terminalCashFlow M s ∧
     (0 < initialCashFlow M s ∨ 0 < terminalCashFlow M s)
 
-/-- Cash-and-carry: above the upper bound `ask * borrowRate - income`, borrowing the ask price,
-buying one unit and selling it forward is an arbitrage. -/
+/-- Cash-and-carry: with `0 ≤ ask`, above the upper bound `ask * borrowRate - income`, borrowing
+the ask price, buying one unit and selling it forward is an arbitrage. -/
 theorem cashAndCarry_isArbitrage (M : ForwardMarket) (hask : 0 ≤ M.ask)
     (hF : M.ask * M.borrowRate - M.income < M.forwardPrice) :
     IsArbitrage M ⟨1, 0, 0, M.ask, -1⟩ := by
@@ -119,8 +119,8 @@ theorem cashAndCarry_isArbitrage (M : ForwardMarket) (hask : 0 ≤ M.ask)
     ring
   exact ⟨hadm, hc0.ge, by rw [hc1]; linarith [hF], Or.inr (by rw [hc1]; linarith [hF])⟩
 
-/-- Reverse cash-and-carry: below the lower bound `bid * lendRate - income`, shorting one unit,
-lending the bid proceeds and buying forward is an arbitrage. -/
+/-- Reverse cash-and-carry: with `0 ≤ bid`, below the lower bound `bid * lendRate - income`,
+shorting one unit, lending the bid proceeds and buying forward is an arbitrage. -/
 theorem reverseCashAndCarry_isArbitrage (M : ForwardMarket) (hbid : 0 ≤ M.bid)
     (hF : M.forwardPrice < M.bid * M.lendRate - M.income) :
     IsArbitrage M ⟨0, 1, M.bid, 0, 1⟩ := by
@@ -202,8 +202,8 @@ theorem not_exists_isArbitrage_iff (M : ForwardMarket) (hbid : 0 < M.bid)
     rcases hpos with h | h <;> linarith
 
 /-- **Frictionless limit.** Without a bid-ask spread or a borrowing-lending wedge
-(`bid = ask = S`, `lendRate = borrowRate = R`), the interval collapses to the single
-cost-of-carry price `S * R - income`. -/
+(`bid = ask = S`, `lendRate = borrowRate = R`, with `0 < S` and `0 < R`), the interval collapses
+to the single cost-of-carry price `S * R - income`. -/
 theorem not_exists_isArbitrage_iff_frictionless (M : ForwardMarket) {S R : ℝ} (hS : 0 < S)
     (hR : 0 < R) (hbid : M.bid = S) (hask : M.ask = S) (hlend : M.lendRate = R)
     (hborrow : M.borrowRate = R) :

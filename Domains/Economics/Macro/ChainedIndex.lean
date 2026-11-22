@@ -61,8 +61,9 @@ namespace MathlibExt.Economics.Macro.ChainedIndex
 
 variable {ι K : Type*} [Fintype ι] [Field K]
 
-/-- Laspeyres volume growth from one period to the next: previous-period prices
-weight the quantity change. -/
+/-- Laspeyres volume growth from one period to the next: previous-period prices weight the quantity
+change. With the convention `x / 0 = 0`, it is `0` when the previous basket costs `0` at previous
+prices. -/
 def laspeyresVolumeGrowth (pPrev qPrev qCurr : ι → K) : K :=
   (∑ i, pPrev i * qCurr i) / (∑ i, pPrev i * qPrev i)
 
@@ -75,16 +76,17 @@ chained index. -/
 def chainedRealValue (baseNominal index : K) : K :=
   baseNominal * index
 
-/-- Chained real value of a basket over two links: its period-0 nominal value
-times the chained index of its period-0-to-1 Laspeyres volume growth (period-0
-prices) and its period-1-to-2 Laspeyres volume growth (period-1 prices). -/
+/-- Chained real value of a basket over two links: its period-0 nominal value times the chained
+index of its period-0-to-1 Laspeyres volume growth (period-0 prices) and its period-1-to-2 Laspeyres
+volume growth (period-1 prices). With the convention `x / 0 = 0`, a link whose denominator is `0` is
+`0`. -/
 def chainedValueTwoLinks (p₀ q₀ p₁ q₁ q₂ : ι → K) : K :=
   chainedRealValue (∑ i, p₀ i * q₀ i)
     (chainedIndexTwoLinks (laspeyresVolumeGrowth p₀ q₀ q₁) (laspeyresVolumeGrowth p₁ q₁ q₂))
 
-/-- Chained real value of component `j`: the same two-link chaining applied to
-the one-good basket consisting of `j` alone, so each link is `j`'s own
-Laspeyres volume growth. -/
+/-- Chained real value of component `j`: the same two-link chaining applied to the one-good basket
+consisting of `j` alone, so each link is `j`'s own Laspeyres volume growth. With the convention
+`x / 0 = 0`, a link whose denominator is `0` is `0`. -/
 def chainedComponentValue (p₀ q₀ p₁ q₁ q₂ : ι → K) (j : ι) : K :=
   chainedValueTwoLinks (fun _ : Unit => p₀ j) (fun _ : Unit => q₀ j) (fun _ : Unit => p₁ j)
     (fun _ : Unit => q₁ j) (fun _ : Unit => q₂ j)
@@ -103,7 +105,7 @@ theorem chainedComponentValue_eq (p₀ q₀ p₁ q₁ q₂ : ι → K) (j : ι) 
   · simp [hp₀]
   · field_simp
 
-/-- The two one-period Laspeyres growths of the concrete example.
+/-- The two one-period Laspeyres growths of the concrete example are `3/4` and `17/9`.
 Period 0: prices `(1, 1)`, quantities `(100, 100)`.
 Period 1: prices `(1, 4)`, quantities `(50, 100)`.
 Period 2: quantities `(50, 200)` (period-1 prices weight the second link). -/

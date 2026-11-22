@@ -44,24 +44,25 @@ Atlas roadmap target MA05.T03.
 
 namespace MathlibExt.Economics.Macro.LoanableFundsCrowdingOut
 
-/-- Saving schedule: funds supplied at interest rate `r`, with intercept `s0`
-and slope `s1 > 0` (source clause: "upward-sloping saving schedule"). -/
+/-- Saving schedule: funds supplied at interest rate `r`, `s0 + s1 * r`, with intercept `s0`
+and slope `s1` (upward-sloping when `s1 > 0`; source clause: "upward-sloping saving
+schedule"). -/
 noncomputable def saving (s0 s1 r : ℝ) : ℝ :=
   s0 + s1 * r
 
-/-- Investment schedule: funds demanded by private investors at rate `r`, with
-intercept `i0` and slope magnitude `i1 > 0` (source clause: "downward-sloping
-investment schedule"). -/
+/-- Investment schedule: funds demanded by private investors at rate `r`, `i0 - i1 * r`, with
+intercept `i0` and slope magnitude `i1` (downward-sloping when `i1 > 0`; source clause:
+"downward-sloping investment schedule"). -/
 noncomputable def investment (i0 i1 r : ℝ) : ℝ :=
   i0 - i1 * r
 
 /-- Equilibrium interest rate in the specified linear loanable-funds model:
-the rate clearing `S(r) = I(r) + D`, i.e. `(i0 + D - s0) / (s1 + i1)`
-(source clause: "market-clearing rate"). -/
+`(i0 + D - s0) / (s1 + i1)`, the rate clearing `S(r) = I(r) + D` when `s1 + i1 ≠ 0` (source clause:
+"market-clearing rate"). With the convention `x / 0 = 0`, `r* = 0` when `s1 + i1 = 0`. -/
 noncomputable def equilibriumRate (s0 s1 i0 i1 D : ℝ) : ℝ :=
   (i0 + D - s0) / (s1 + i1)
 
-/-- **Market clearing.** The equilibrium rate solves `S(r*) = I(r*) + D`
+/-- **Market clearing.** For `s1 + i1 ≠ 0`, the equilibrium rate solves `S(r*) = I(r*) + D`
 (Atlas roadmap MA05.T03). -/
 theorem equilibriumRate_clears_market (s0 s1 i0 i1 D : ℝ) (h : s1 + i1 ≠ 0) :
     saving s0 s1 (equilibriumRate s0 s1 i0 i1 D) =

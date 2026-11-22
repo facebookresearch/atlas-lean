@@ -52,7 +52,8 @@ noncomputable def retrospectiveBalance (r L P : ℝ) (k : ℕ) : ℝ :=
 
 /-- Prospective loan balance at date `k` of an `n`-payment level loan: the present
 value at date `k` of the remaining payments `P` at dates `k + 1, …, n`
-(source clause: "prospective balance"). -/
+(source clause: "prospective balance"). For `k > n` truncated subtraction gives `n - k = 0`, so
+the balance is `0`; the intended domain is `k ≤ n`. -/
 noncomputable def prospectiveBalance (r P : ℝ) (n k : ℕ) : ℝ :=
   presentValue (discountFactor r) (Finset.Icc 1 (n - k)) (fun _ => P)
 
@@ -117,8 +118,8 @@ theorem prospectiveBalance_succ (r P : ℝ) (n k : ℕ) (h1r : 1 + r ≠ 0) (hkn
     discounted_sum_succ r P (n - (k + 1)) h1r]
   ring
 
-/-- Prospective and retrospective balances agree when the loan is the present value
-of its `n` level payments at the same rate and payment timing, for every date
+/-- Prospective and retrospective balances agree when `1 + r ≠ 0` and the loan is the present
+value of its `n` level payments at the same rate and payment timing, for every date
 `k ≤ n` (Atlas roadmap FI01.T04). -/
 theorem retrospectiveBalance_eq_prospectiveBalance (r L P : ℝ) (n k : ℕ)
     (h1r : 1 + r ≠ 0) (hk : k ≤ n)

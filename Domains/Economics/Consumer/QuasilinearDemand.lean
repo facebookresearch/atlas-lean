@@ -14,10 +14,10 @@ import Mathlib.Algebra.BigOperators.Fin
 /-!
 # Quasilinear demand with an interior/corner solution
 
-For the quasilinear utility `u(x) = 2 √x₀ + x₁` (concave in good `0`, linear in the numeraire
-good `1`) with positive prices and nonnegative wealth, the demand is piecewise: the interior
-solution `x₀ = (p₁ / p₀)²`, `x₁ = (w - p₁² / p₀) / p₁` when wealth covers the satiation spending
-`p₁² / p₀` on good `0`, and otherwise the corner `x₀ = w / p₀`, `x₁ = 0`.
+For the quasilinear utility `u(x) = 2 √x₀ + x₁` (concave in good `0` on `x₀ ≥ 0`, linear in the
+numeraire good `1`) with positive prices and nonnegative wealth, the demand is piecewise: the
+interior solution `x₀ = (p₁ / p₀)²`, `x₁ = (w - p₁² / p₀) / p₁` when wealth covers the satiation
+spending `p₁² / p₀` on good `0`, and otherwise the corner `x₀ = w / p₀`, `x₁ = 0`.
 
 ## Main definitions
 
@@ -47,14 +47,16 @@ namespace MathlibExt.Economics.Consumer
 
 open Matrix
 
-/-- The quasilinear utility `u(x) = 2 √x₀ + x₁`: concave in good `0`, linear in the
-numeraire good `1`. -/
+/-- The quasilinear utility `u(x) = 2 √x₀ + x₁`: concave in good `0` on `x₀ ≥ 0`, linear in the
+numeraire good `1`. It is defined for all real `x`, with `√t = 0` for `t < 0`. -/
 noncomputable def quasilinearSqrt (x : Fin 2 → ℝ) : ℝ :=
   2 * Real.sqrt (x 0) + x 1
 
 /-- The piecewise demand for `quasilinearSqrt`: the interior solution
 `x₀ = (p₁ / p₀)²`, `x₁ = (w - p₁² / p₀) / p₁` when wealth covers the satiation spending
-`p₁² / p₀` on good `0`, and otherwise the corner `x₀ = w / p₀`, `x₁ = 0`. -/
+`p₁² / p₀` on good `0`, and otherwise the corner `x₀ = w / p₀`, `x₁ = 0`. It is defined for all
+real prices and wealth under the convention `x / 0 = 0`: for `p₀ = 0` it has `x₀ = 0`, and for
+`p₁ = 0` and `w ≥ 0` it is `(0, 0)`; the intended domain is `p₀, p₁ > 0` and `w ≥ 0`. -/
 noncomputable def quasilinearSqrtDemand (p : Fin 2 → ℝ) (w : ℝ) : Fin 2 → ℝ :=
   if p 1 ^ 2 / p 0 ≤ w then ![(p 1 / p 0) ^ 2, (w - p 1 ^ 2 / p 0) / p 1]
   else ![w / p 0, 0]

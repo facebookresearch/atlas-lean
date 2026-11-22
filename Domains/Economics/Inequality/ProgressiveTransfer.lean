@@ -51,7 +51,9 @@ namespace MathlibExt.Economics.Inequality
 open Finset
 
 /-- Additively separable inequality index `(∑ i, φ (x i)) / n` of the income distribution
-`x` over the population `ι` (`n = card ι`), for a convex evaluation function `φ`. At a fixed
+`x` over the population `ι` (`n = card ι`), for an evaluation function `φ` (convex in the
+transfer results). For an empty population (`n = 0`) the sum is empty and the convention
+`x / 0 = 0` makes it `0`; the intended domain is `n ≥ 1`. At a fixed
 mean, `φ y = y ^ 2` gives the variance up to a constant and `φ y = y * log y` gives the Theil
 index up to a constant. -/
 noncomputable def separableIndex {ι : Type*} [Fintype ι] (φ : ℝ → ℝ) (x : ι → ℝ) : ℝ :=

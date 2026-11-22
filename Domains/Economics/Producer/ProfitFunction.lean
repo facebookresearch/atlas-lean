@@ -49,7 +49,8 @@ Atlas roadmap target EC06.T02.
 namespace MathlibExt.Economics.Producer
 
 /-- The profit function `π(p) = sup_{y ∈ Y} p ⬝ᵥ y`, as a real `sSup`. It is the economically
-meaningful value only on `profitDomain Y`, where the supremum is finite. -/
+meaningful value only on `profitDomain Y`, where the supremum is finite. Elsewhere (empty `Y`, or
+profits unbounded above) the real supremum is `0` by convention. -/
 noncomputable def profitFn {ι : Type*} [Fintype ι] (Y : Set (ι → ℝ)) (p : ι → ℝ) : ℝ :=
   sSup ((fun y => p ⬝ᵥ y) '' Y)
 

@@ -64,13 +64,14 @@ def price (S₀ u d : ℝ) : List Bool → ℝ
   | false :: s => d * price S₀ u d s
 
 /-- The risk-neutral up probability `(R - d) / (u - d)` for the per-period gross riskless return
-`R`. -/
+`R`. With the convention `x / 0 = 0`, `q = 0` when `u = d`. -/
 noncomputable def rnProb (u d R : ℝ) : ℝ :=
   (R - d) / (u - d)
 
 /-- Backward induction for a path-dependent claim `V` paid at the horizon: with `k` periods left at
 history `s`, the claim value is `V s` when `k = 0`, and otherwise the discounted risk-neutral
-average of the two successor values. -/
+average of the two successor values. Division follows the convention `x / 0 = 0`: `q = 0` when
+`u = d`, and `v_{k+1}(s) = 0` when `R = 0`. -/
 noncomputable def claimValue (u d R : ℝ) (V : List Bool → ℝ) : ℕ → List Bool → ℝ
   | 0, s => V s
   | k + 1, s =>
@@ -79,7 +80,10 @@ noncomputable def claimValue (u d R : ℝ) (V : List Bool → ℝ) : ℕ → Lis
 
 /-- The delta-hedging ratio for horizon `N` at history `s` (time `s.length < N`): the number of
 shares held over the next period, the change in claim value divided by the change in stock price
-across the two successor nodes. It depends only on the history up to now (nonanticipating). -/
+across the two successor nodes. It depends only on the history up to now (nonanticipating). It is
+meant for `s.length < N`; for `s.length ≥ N` the subtraction `N - s.length - 1`, taken in the
+natural numbers, is truncated to `0`. Division follows the convention `x / 0 = 0`, so the ratio is
+`0` when the two successor prices coincide. -/
 noncomputable def hedgeRatio (S₀ u d R : ℝ) (V : List Bool → ℝ) (N : ℕ) (s : List Bool) : ℝ :=
   (claimValue u d R V (N - s.length - 1) (true :: s) -
       claimValue u d R V (N - s.length - 1) (false :: s)) /
@@ -106,9 +110,9 @@ theorem price_ne_zero (S₀ u d : ℝ) (hS₀ : S₀ ≠ 0) (hu : u ≠ 0) (hd :
     · simp only [price]
       exact mul_ne_zero hu ih
 
-/-- Along every history of length at most `N`, the self-financing delta-hedging strategy started
-with the backward-induction value `claimValue u d R V N []` has wealth equal to the claim value at
-that node. -/
+/-- For nonzero `S₀`, `u`, `d` with `u ≠ d` and `R ≠ 0`: along every history of length at most
+`N`, the self-financing delta-hedging strategy started with the backward-induction value
+`claimValue u d R V N []` has wealth equal to the claim value at that node. -/
 theorem wealth_hedgeRatio_eq_claimValue {S₀ u d R : ℝ} (hS₀ : S₀ ≠ 0) (hu : u ≠ 0) (hd : d ≠ 0)
     (hud : u ≠ d) (hR : R ≠ 0) (V : List Bool → ℝ) (N : ℕ) (s : List Bool)
     (hs : s.length ≤ N) :
@@ -148,10 +152,10 @@ theorem wealth_hedgeRatio_eq_claimValue {S₀ u d R : ℝ} (hS₀ : S₀ ≠ 0) 
       field_simp
       ring
 
-/-- **Replication in the multi-period binomial model** (Cox, Ross and Rubinstein 1979): every
-path-dependent claim `V` paid at horizon `N` is replicated by the self-financing delta-hedging
-strategy started with its backward-induction value: the terminal wealth equals `V` on every
-history of length `N`. -/
+/-- **Replication in the multi-period binomial model** (Cox, Ross and Rubinstein 1979): for
+nonzero `S₀`, `u`, `d` with `u ≠ d` and `R ≠ 0`, every path-dependent claim `V` paid at horizon
+`N` is replicated by the self-financing delta-hedging strategy started with its
+backward-induction value: the terminal wealth equals `V` on every history of length `N`. -/
 theorem wealth_hedgeRatio_replicates {S₀ u d R : ℝ} (hS₀ : S₀ ≠ 0) (hu : u ≠ 0) (hd : d ≠ 0)
     (hud : u ≠ d) (hR : R ≠ 0) (V : List Bool → ℝ) (N : ℕ) (s : List Bool)
     (hs : s.length = N) :

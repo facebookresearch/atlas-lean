@@ -33,7 +33,7 @@ namespace MathlibExt.Economics.LinearMonopoly
 
 open MathlibExt.Economics.DeadweightLoss
 
-/-- A monopoly with linear inverse demand `a - b q` and constant marginal cost
+/-- A monopoly with linear inverse demand `a - b q` (`b > 0`) and constant marginal cost
 `c`, in the interior regime `c < a`. -/
 structure Model where
   /-- Demand intercept (choke price). -/
@@ -75,7 +75,7 @@ theorem profit_le_profit_monopolyQuantity (m : Model) (q : ℝ) :
     mul_nonneg (le_of_lt m.b_pos) (sq_nonneg _)
   linarith
 
-/-- The monopoly quantity is the unique profit maximizer. -/
+/-- Every profit maximizer is the monopoly quantity. -/
 theorem eq_monopolyQuantity_of_forall_profit_le (m : Model) {q : ℝ}
     (hq : ∀ q', profit m q' ≤ profit m q) : q = monopolyQuantity m := by
   have h1 := hq (monopolyQuantity m)

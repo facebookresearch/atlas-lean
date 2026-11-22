@@ -44,7 +44,8 @@ Atlas roadmap target MA05.T02.
 namespace MathlibExt.Economics.Macro.MoneyGrowthInflation
 
 /-- **Exact inflation–money-growth relation.** If the quantity equation holds
-at two dates with the SAME constant velocity `V ≠ 0`, then the price growth
+at two dates with the SAME constant velocity `V ≠ 0`, with `M0`, `P0`, `Y0`, `Y1` nonzero, then
+the price growth
 factor is the money growth factor divided by the real-output growth factor
 (Atlas roadmap MA05.T02, exact form). In `1 + x` notation: with
 `1 + π = P₁/P₀`, `1 + μ = M₁/M₀`, `1 + g = Y₁/Y₀`, this is

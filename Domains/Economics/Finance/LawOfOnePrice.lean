@@ -34,8 +34,9 @@ namespace MathlibExt.Probability.Finance.LawOfOnePrice
 every asset (`p a = ∑ ω, ψ ω * X a ω`), two portfolios with the same attainable
 payoff in every state have the same price: if
 `∑ a, h a * X a ω = ∑ a, h' a * X a ω` for every `ω`, then
-`∑ a, h a * p a = ∑ a, h' a * p a`. FI08.T02 supplies such a `ψ` (strictly
-positive) under no arbitrage on funded gains. -/
+`∑ a, h a * p a = ∑ a, h' a * p a`. With at least one state and a gross risk-free
+return `R > 0`, FI08.T02 supplies such a `ψ` (strictly positive) under no arbitrage on
+funded gains. -/
 theorem law_of_one_price
     {Ω : Type*} [Fintype Ω]
     {A : Type*} [Fintype A]
@@ -70,7 +71,8 @@ theorem law_of_one_price
   rw [hpay ω]
 
 /-- **Law of one price under no arbitrage (FI08.T04, unconditional claim).**
-Under no arbitrage on funded gains, two portfolios with the same attainable
+With finitely many states, at least one, under no arbitrage on funded gains at a
+gross risk-free return `R > 0`, two portfolios with the same attainable
 payoff in every state have the same price. The pricing vector is the state-price
 vector supplied by FI08.T02. -/
 theorem law_of_one_price_of_no_arbitrage

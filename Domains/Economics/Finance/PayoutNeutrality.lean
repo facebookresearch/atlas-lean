@@ -67,7 +67,7 @@ is `N * P` whenever `P ≠ 0` (`repurchaseTotal_identity`). -/
 noncomputable def repurchaseTotal (N P C : ℝ) : ℝ :=
   C + (N - C / P) * P
 
-/-- Dividend accounting identity: under the price convention of `dividendTotal`, the
+/-- Dividend accounting identity: for `0 < N`, under the price convention of `dividendTotal`, the
 total is `N * P` (an algebraic identity), and for a feasible payout `0 ≤ C ≤ N * P` the
 ex-dividend price `P - C / N` is nonnegative. -/
 theorem dividendTotal_identity {N P C : ℝ} (hN : 0 < N) (hC0 : 0 ≤ C) (hC : C ≤ N * P) :
@@ -80,9 +80,9 @@ theorem dividendTotal_identity {N P C : ℝ} (hN : 0 < N) (hC0 : 0 ≤ C) (hC : 
   · rw [sub_nonneg, div_le_iff₀ hN, mul_comm P N]
     exact hC
 
-/-- Repurchase accounting identity: under the price convention of `repurchaseTotal`, the
-total is `N * P` (an algebraic identity), and for a feasible payout `0 ≤ C ≤ N * P` the
-remaining share count `N - C / P` is nonnegative. -/
+/-- Repurchase accounting identity: for `0 < P`, under the price convention of
+`repurchaseTotal`, the total is `N * P` (an algebraic identity), and for a feasible payout
+`0 ≤ C ≤ N * P` the remaining share count `N - C / P` is nonnegative. -/
 theorem repurchaseTotal_identity {N P C : ℝ} (hP : 0 < P) (hC0 : 0 ≤ C)
     (hC : C ≤ N * P) :
     repurchaseTotal N P C = N * P ∧ 0 ≤ N - C / P := by
@@ -94,7 +94,7 @@ theorem repurchaseTotal_identity {N P C : ℝ} (hP : 0 < P) (hC0 : 0 ≤ C)
   · rw [sub_nonneg, div_le_iff₀ hP]
     exact hC
 
-/-- The two payout conventions give the same total: for a feasible payout
+/-- The two payout conventions give the same total: for `0 < N`, `0 < P` and a feasible payout
 `0 ≤ C ≤ N * P`, both `dividendTotal N P C` and `repurchaseTotal N P C` equal `N * P`. -/
 theorem dividendTotal_eq_repurchaseTotal {N P C : ℝ} (hN : 0 < N) (hP : 0 < P) (hC0 : 0 ≤ C)
     (hC : C ≤ N * P) :

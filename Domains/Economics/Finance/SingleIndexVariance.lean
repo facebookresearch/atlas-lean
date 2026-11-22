@@ -31,7 +31,8 @@ open MeasureTheory ProbabilityTheory
 def singleIndexReturn {Ω : Type*} (α β : ℝ) (RM ε : Ω → ℝ) : Ω → ℝ :=
   fun ω => α + β * RM ω + ε ω
 
-/-- **Systematic plus idiosyncratic variance decomposition (FI07.T03).** For an
+/-- **Systematic plus idiosyncratic variance decomposition (FI07.T03).** Under a probability
+measure, for square-integrable `RM` and `ε` and an
 orthogonal single-index residual (`cov[RM, ε; μ] = 0`), the variance of the
 single-index return splits as `Var[R_i; μ] = β ^ 2 * Var[RM; μ] + Var[ε; μ]`.
 The constant `α` drops out, the cross term vanishes by orthogonality, and the

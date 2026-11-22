@@ -50,8 +50,9 @@ re-exports it as `Economics.Consumer.expenditure`, and compensating variation as
 namespace MathlibExt.Economics.ExpenditureFunction
 
 /-- The expenditure function `e(p, ū) = inf {p ⬝ᵥ x | x ∈ X, ū ≤ u x}`. As a real
-infimum it is meaningful only when the target is feasible and costs are bounded
-below. -/
+infimum it is the least cost only when the target is feasible and costs are bounded
+below; otherwise it is `0`, the convention for the real infimum of an empty or unbounded-below
+set. -/
 noncomputable def expenditure {ι : Type*} [Fintype ι] (u : (ι → ℝ) → ℝ)
     (X : Set (ι → ℝ)) (p : ι → ℝ) (ubar : ℝ) : ℝ :=
   sInf ((fun x => p ⬝ᵥ x) '' {x | x ∈ X ∧ ubar ≤ u x})

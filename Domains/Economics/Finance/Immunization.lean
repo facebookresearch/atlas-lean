@@ -105,8 +105,9 @@ theorem surplus_nonneg_near_of_matched {A L : ℝ → ℝ} {r₀ : ℝ}
   · exact hval.ge
   · exact (h r hne hr).le
 
-/-- **Local (Redington) immunization, strict form.** Under the hypotheses of
-`redington_immunization`, the surplus is strictly positive at every rate
+/-- **Local (Redington) immunization, strict form.** Let `A` and `L` be differentiable near
+`r₀`, with derivatives differentiable at `r₀`. If `A r₀ = L r₀`, `deriv A r₀ = deriv L r₀` and
+`deriv (deriv L) r₀ < deriv (deriv A) r₀`, the surplus is strictly positive at every rate
 `r ≠ r₀` sufficiently close to `r₀`: the strict convexity condition protects
 against every small nonzero parallel yield shift. -/
 theorem redington_immunization_strict {A L : ℝ → ℝ} {r₀ : ℝ}

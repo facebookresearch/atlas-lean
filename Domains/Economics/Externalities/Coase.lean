@@ -71,7 +71,7 @@ def ParetoEfficient {ι A : Type*} [Fintype ι] (v : ι → A → ℝ) (ω : ι 
   Feasible ω m ∧ ¬ ∃ (a' : A) (m' : ι → ℝ), Feasible ω m' ∧
     (∀ i, utility v a m i ≤ utility v a' m' i) ∧ ∃ i, utility v a m i < utility v a' m' i
 
-/-- Splitting `c` equally over all agents sums back to `c`. -/
+/-- With at least one agent, splitting `c` equally over all agents sums back to `c`. -/
 theorem sum_const_div_card {ι : Type*} [Fintype ι] [Nonempty ι] (c : ℝ) :
     (∑ _i : ι, c / Fintype.card ι) = c := by
   rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]

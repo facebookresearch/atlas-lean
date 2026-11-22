@@ -41,9 +41,10 @@ uniqueness. Without the sign pattern a project can have several internal rates (
 
 namespace MathlibExt.Economics.Finance.InternalRateOfReturn
 
-/-- Net present value at rate `r` of the dated cash flows `c 0, c 1, …, c N` (`c k` arrives at
-the end of period `k`; `c 0` is today): `∑ k ∈ range (N + 1), c k / (1 + r) ^ k`. Meaningful
-for `r > -1`. -/
+/-- Net present value at rate `r` of the dated cash flows `c 0, c 1, …, c N` (`c k` arrives at the
+end of period `k`; `c 0` is today): `∑ k ∈ range (N + 1), c k / (1 + r) ^ k`. Meaningful for
+`r > -1`. It is defined for every real `r`, with the convention `x / 0 = 0`, so that
+`NPV(-1) = c_0`. -/
 noncomputable def npv (c : ℕ → ℝ) (N : ℕ) (r : ℝ) : ℝ :=
   ∑ k ∈ Finset.range (N + 1), c k / (1 + r) ^ k
 

@@ -50,7 +50,7 @@ noncomputable def realExchangeRate (E Pstar P : ℝ) : ℝ :=
   E * Pstar / P
 
 /-- **Conversion formula.** The foreign basket costs `E * P*` in domestic
-currency, and `q * P = E * P*`: multiplying the real rate by the domestic
+currency, and for `P ≠ 0`, `q * P = E * P*`: multiplying the real rate by the domestic
 price level converts back to the domestic-currency cost of the foreign basket
 (Atlas roadmap MA05.T04). -/
 theorem realExchangeRate_mul_price (E Pstar P : ℝ) (hP : P ≠ 0) :

@@ -47,8 +47,8 @@ theorem isTaxEquilibrium_linear {α β γ δ τ : ℝ} (hs : 0 < β + δ) :
   field_simp
   ring
 
-/-- **Exact triangular deadweight loss for linear schedules.** The lost gains from trade
-between the no-tax and tax-`τ` equilibria are exactly the triangle
+/-- **Exact triangular deadweight loss for linear schedules.** For `β + δ > 0`, the lost gains from
+trade between the no-tax and tax-`τ` equilibria are exactly the triangle
 `τ (q* - q_τ) / 2 = τ² / (2 (β + δ))`. -/
 theorem deadweightLoss_linear {α β γ δ τ : ℝ} (hs : 0 < β + δ) :
     deadweightLoss (fun q => α - β * q) (fun q => γ + δ * q) ((α - γ) / (β + δ))
@@ -82,8 +82,9 @@ theorem deadweightLoss_linear {α β γ δ τ : ℝ} (hs : 0 < β + δ) :
   · rw [hcalc]; field_simp; ring
   · rw [hcalc]; field_simp; ring
 
-/-- **Interior-trade regime.** For a tax `0 ≤ τ ≤ α - γ`, trade stays nonnegative and the tax
-reduces it, `0 ≤ q_τ ≤ q*`, and the deadweight loss is nonnegative. -/
+/-- **Interior-trade regime.** For linear schedules with `β + δ > 0` and a tax `0 ≤ τ ≤ α - γ`,
+trade stays nonnegative and the tax reduces it, `0 ≤ q_τ ≤ q*`, and the deadweight loss is
+nonnegative. -/
 theorem linear_interior_regime {α β γ δ τ : ℝ} (hs : 0 < β + δ) (hτ : 0 ≤ τ)
     (hτα : τ ≤ α - γ) :
     0 ≤ (α - γ - τ) / (β + δ) ∧ (α - γ - τ) / (β + δ) ≤ (α - γ) / (β + δ) ∧

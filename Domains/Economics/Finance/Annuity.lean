@@ -41,9 +41,10 @@ Atlas roadmap target FI01.T02.
 
 namespace MathlibExt.Economics.Finance
 
-/-- Present value of a level annuity-immediate: one unit paid at each of the dates
-`1, …, n`, discounted at the constant per-period rate `r` (source clause:
-"`a_n = Σ_{t=1}^n v^t`, `v = (1 + r)⁻¹`"). -/
+/-- Present value of a level annuity-immediate: one unit paid at each of the dates `1, …, n`,
+discounted at the constant per-period rate `r` (source clause: "`a_n = Σ_{t=1}^n v^t`,
+`v = (1 + r)⁻¹`"). It is defined for every real `r`, with the convention `0⁻¹ = 0`: at `r = -1`
+every term is `0`, so `a_n = 0`. -/
 noncomputable def annuityImmediate (r : ℝ) (n : ℕ) : ℝ :=
   presentValue (discountFactor r) (Finset.Icc 1 n) (fun _ => 1)
 

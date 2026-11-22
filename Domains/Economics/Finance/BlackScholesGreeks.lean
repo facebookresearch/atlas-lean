@@ -37,13 +37,18 @@ namespace MathlibExt.Probability.Finance.BlackScholesGreeks
 
 open MeasureTheory ProbabilityTheory Real MathlibExt.Probability.Finance.BlackScholes
 
-/-- The Black-Scholes delta: `Φ(d₁)`, the sensitivity of the call price to the
-spot price `S0`. -/
+/-- The Black-Scholes delta: `Φ(d₁)`, the sensitivity of the call price to the spot price `S0`. It
+is the sensitivity for `S0, K, σ, T > 0`; with `x / 0 = 0` and `√T = 0` for `T ≤ 0` it is
+`Φ(0) = 1/2` when `σ = 0` or `T ≤ 0`. When `S0 / K ≤ 0`, `d₁` uses the conventions `log 0 = 0` and
+`log x = log |x|`. -/
 noncomputable def blackScholesDelta (S0 K r σ T : ℝ) : ℝ :=
   cdf (gaussianReal 0 1) (d1 S0 K r σ T)
 
-/-- The Black-Scholes vega: `S0 φ(d₁) √T`, the sensitivity of the call price to
-the volatility `σ`, with `φ` the standard normal density. -/
+/-- The Black-Scholes vega: `S0 φ(d₁) √T`, the sensitivity of the call price to the volatility `σ`,
+with `φ` the standard normal density. It is the sensitivity for `S0, K, σ, T > 0`. With `√T = 0` for
+`T ≤ 0` it is `0` there; when `σ = 0` and `T > 0` the convention `x / 0 = 0` gives `d₁ = 0` and the
+value `S0 φ(0) √T`. When `S0 / K ≤ 0`, `d₁` uses the conventions `log 0 = 0` and `log x = log |x|`.
+-/
 noncomputable def blackScholesVega (S0 K r σ T : ℝ) : ℝ :=
   S0 * gaussianPDFReal 0 1 (d1 S0 K r σ T) * √T
 
@@ -93,9 +98,9 @@ private theorem exists_hasDerivAt_d1_sigma (S0 K r σ T : ℝ) (hσ : 0 < σ) (h
       - (log (S0 / K) + (r + σ ^ 2 / 2) * T) * √T) / (σ * √T) ^ 2, ?_⟩
   simpa [d1, Pi.div_def] using hdiv
 
-/-- Density identity (FI17.T03): `S0 φ(d₁) = K e^{-rT} φ(d₂)`. Algebra from
-`d₁² - d₂² = 2 log (S0 / K) + 2 r T` and the explicit Gaussian density; needs
-`S0, K > 0` for the logarithm. -/
+/-- Density identity (FI17.T03): for `S0, K, σ, T > 0`, `S0 φ(d₁) = K e^{-rT} φ(d₂)`. Algebra
+from `d₁² - d₂² = 2 log (S0 / K) + 2 r T` and the explicit Gaussian density; needs
+`S0, K > 0` for the logarithm and `σ, T > 0` so that `σ √T ≠ 0`. -/
 theorem blackScholes_phi_identity {S0 K r σ T : ℝ} (hS0 : 0 < S0) (hK : 0 < K)
     (hσ : 0 < σ) (hT : 0 < T) :
     S0 * gaussianPDFReal 0 1 (d1 S0 K r σ T) =
@@ -143,7 +148,7 @@ theorem blackScholes_phi_identity {S0 K r σ T : ℝ} (hS0 : 0 < S0) (hK : 0 < K
   rw [hlog] at hsq'
   linarith
 
-/-- Delta (FI17.T03): the derivative of the Black-Scholes call price with
+/-- Delta (FI17.T03): for `S0, K, σ, T > 0`, the derivative of the Black-Scholes call price with
 respect to `S0` is `Φ(d₁)`. Chain rule through `d₁` and `d₂`: both have the
 same `S0`-derivative `1 / (S0 σ √T)`, so the density terms cancel by the
 identity above. -/
@@ -186,7 +191,7 @@ theorem hasDerivAt_blackScholesCall_S0 {S0 K r σ T : ℝ} (hS0 : 0 < S0) (hK : 
   rw [hexpr] at hCall
   simpa [blackScholesCall] using hCall
 
-/-- Vega (FI17.T03): the derivative of the Black-Scholes call price with
+/-- Vega (FI17.T03): for `S0, K, σ, T > 0`, the derivative of the Black-Scholes call price with
 respect to `σ` is `S0 φ(d₁) √T`. Chain rule: `d₂ = d₁ - σ √T`, so its
 `σ`-derivative is the `d₁`-derivative minus `√T`; the density terms cancel
 by the identity above, leaving `K e^{-rT} φ(d₂) √T = S0 φ(d₁) √T`. -/

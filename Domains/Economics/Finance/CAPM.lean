@@ -49,8 +49,9 @@ namespace MathlibExt.Probability.Finance.CAPM
 open Matrix MathlibExt.Probability.Finance.TangencyPortfolio
 
 /-- The beta `(S w_M)_i / (w_Mᵀ S w_M)` of asset `i` with respect to the portfolio `w_M`: the
-covariance of asset `i`'s return with the portfolio return divided by the portfolio variance,
-when `S` is the covariance matrix of the asset returns. -/
+covariance of asset `i`'s return with the portfolio return divided by the portfolio variance, when
+`S` is the covariance matrix of the asset returns. With the convention `x / 0 = 0` it is `0` when
+`w_Mᵀ S w_M = 0`. -/
 noncomputable def beta {ι : Type*} [Fintype ι] (S : Matrix ι ι ℝ) (wM : ι → ℝ) (i : ι) : ℝ :=
   (S *ᵥ wM) i / (wM ⬝ᵥ (S *ᵥ wM))
 

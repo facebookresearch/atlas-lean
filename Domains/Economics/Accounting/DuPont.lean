@@ -48,19 +48,23 @@ structure DuPontInputs where
 
 namespace DuPontInputs
 
-/-- Net profit margin: net income over sales. -/
+/-- Net profit margin: net income over sales. With the convention `x / 0 = 0`, it is `0` when sales
+are `0`. -/
 noncomputable def profitMargin (d : DuPontInputs) : ℝ :=
   d.netIncome / d.sales
 
-/-- Asset turnover: sales over total assets. -/
+/-- Asset turnover: sales over total assets. With the convention `x / 0 = 0`, it is `0` when total
+assets are `0`. -/
 noncomputable def assetTurnover (d : DuPontInputs) : ℝ :=
   d.sales / d.totalAssets
 
-/-- Equity multiplier (financial leverage): total assets over equity. -/
+/-- Equity multiplier (financial leverage): total assets over equity. With the convention
+`x / 0 = 0`, it is `0` when shareholders' equity is `0`. -/
 noncomputable def equityMultiplier (d : DuPontInputs) : ℝ :=
   d.totalAssets / d.equity
 
-/-- Return on equity: net income over equity. -/
+/-- Return on equity: net income over equity. With the convention `x / 0 = 0`, it is `0` when
+shareholders' equity is `0`. -/
 noncomputable def returnOnEquity (d : DuPontInputs) : ℝ :=
   d.netIncome / d.equity
 

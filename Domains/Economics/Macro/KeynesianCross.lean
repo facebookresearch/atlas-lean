@@ -49,7 +49,8 @@ theorem keynesianCross_solution {c A Y : ℝ} (hc : 0 ≤ c) (hc1 : c < 1)
   field_simp
   linear_combination h
 
-/-- **Multiplier form (MA06.T01).** Two equilibria with the same `c` differ by the multiplier
+/-- **Multiplier form (MA06.T01).** For `0 ≤ c < 1`, two equilibria with the same `c` differ by
+the multiplier
 times the change in autonomous expenditure: `Y₂ - Y₁ = (A₂ - A₁) / (1 - c)`. -/
 theorem keynesianCross_multiplier {c A₁ A₂ Y₁ Y₂ : ℝ} (hc : 0 ≤ c) (hc1 : c < 1)
     (h₁ : IsKeynesianEquilibrium c A₁ Y₁) (h₂ : IsKeynesianEquilibrium c A₂ Y₂) :

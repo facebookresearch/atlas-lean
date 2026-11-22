@@ -87,7 +87,8 @@ theorem labourElasticity_eq_of_hasFDerivAt {F : ℝ × ℝ → ℝ} {F' : ℝ ×
   rw [hF.fderiv]
 
 /-- **Growth accounting.** For `Y = A * F(K, L)` with all paths differentiable at
-`t` and `F` differentiable at `(K t, L t)` (derivative `F'`), the growth rate of
+`t`, `F` differentiable at `(K t, L t)` (derivative `F'`) and `A t`, `K t`, `L t` and
+`F (K t, L t)` nonzero, the growth rate of
 output is TFP growth plus the elasticity-weighted growth rates of capital and
 labour (Atlas roadmap MA03.T04). Growth rates are `deriv f t / f t`, i.e. derivatives
 of `Real.log ∘ f` by `HasDerivAt.log`. -/
@@ -131,7 +132,8 @@ theorem growthAccounting {F : ℝ × ℝ → ℝ} {F' : ℝ × ℝ →L[ℝ] ℝ
   field_simp
   try ring
 
-/-- **Capital share = capital elasticity under competitive pricing.** Let `F'` be
+/-- **Capital share = capital elasticity under competitive pricing.** Let
+`Y = A * F (K, L)` with `A ≠ 0` and `F (K, L) ≠ 0`, and let `F'` be
 the derivative of `F` at `(K, L)`. If capital is paid its marginal product, the
 capital price is `A * F' (1, 0)` (this is an explicit expression in the
 statement, NOT a proved claim about markets), then the capital income share
@@ -146,7 +148,8 @@ theorem competitiveShare_capital_eq_elasticity {F : ℝ × ℝ → ℝ}
   field_simp
   try ring
 
-/-- **Labour share = labour elasticity under competitive pricing.** Let `F'` be
+/-- **Labour share = labour elasticity under competitive pricing.** Let
+`Y = A * F (K, L)` with `A ≠ 0` and `F (K, L) ≠ 0`, and let `F'` be
 the derivative of `F` at `(K, L)`. If labour is paid its marginal product, the
 wage is `A * F' (0, 1)` (explicit expression, NOT a proved claim), then the
 labour income share equals the labour elasticity. -/
@@ -160,7 +163,8 @@ theorem competitiveShare_labour_eq_elasticity {F : ℝ × ℝ → ℝ}
   field_simp
   try ring
 
-/-- **Competitive shares sum to one.** Under competitive pricing (factor prices
+/-- **Competitive shares sum to one.** For `Y = A * F (K, L)` with `A ≠ 0` and
+`F (K, L) ≠ 0`, under competitive pricing (factor prices
 equal to the marginal products `A * F_K` and `A * F_L`) AND the pointwise Euler
 identity `hEuler : F (K, L) = K * F_K + L * F_L` at `(K, L)` (an explicit
 hypothesis, NOT proved here), the two factor shares sum to 1. Constant returns

@@ -70,16 +70,16 @@ noncomputable def retentionGrowth (b ROE : ℝ) : ℝ :=
   b * ROE
 
 /-- Equity price under the constant-return reinvestment model: Gordon's formula with
-`D₁ = E₁ * (1 - b)` and `g = b * ROE` (source clause: "`P = E₁(1-b) / (r - b*ROE)`").
-It is an equity price only for nonnegative earnings `E₁ ≥ 0` and a retention share
-`0 ≤ b ≤ 1`, where the dividend is nonnegative; the retention share alone does not
-suffice (`E₁ = -1`, `b = 1 / 2` gives the dividend `-1 / 2`). The formula is defined for
-every `E₁` and `b` (an algebraic extension). -/
+`D₁ = E₁ * (1 - b)` and `g = b * ROE` (source clause: "`P = E₁(1-b) / (r - b*ROE)`"). It is an
+equity price only for nonnegative earnings `E₁ ≥ 0` and a retention share `0 ≤ b ≤ 1`, where the
+dividend is nonnegative; the retention share alone does not suffice (`E₁ = -1`, `b = 1 / 2` gives
+the dividend `-1 / 2`). The formula is defined for every `E₁` and `b` (an algebraic extension). With
+the convention `x / 0 = 0`, the price is `0` when `r = b * ROE`. -/
 noncomputable def retentionPrice (E₁ b ROE r : ℝ) : ℝ :=
   E₁ * (1 - b) / (r - b * ROE)
 
-/-- No-retention (all earnings paid out) equity price `E₁ / r` (source clause: "no-growth
-value"). -/
+/-- No-retention (all earnings paid out) equity price `E₁ / r` (source clause: "no-growth value").
+With the convention `x / 0 = 0`, the price is `0` when `r = 0`. -/
 noncomputable def noGrowthPrice (E₁ r : ℝ) : ℝ :=
   E₁ / r
 
@@ -92,8 +92,8 @@ theorem retentionPrice_eq_gordonForm {E₁ b ROE r : ℝ} :
   rfl
 
 /-- `retentionPrice` is the value of the growing perpetuity that pays the
-reinvestment-model dividend `E₁ * (1 - b)` growing at `retentionGrowth b ROE`, under the
-convergence hypotheses of `growingPerpetuity_eq`. In particular, the rational
+reinvestment-model dividend `E₁ * (1 - b)` growing at `retentionGrowth b ROE`, when
+`0 < 1 + r` and `0 ≤ (1 + b * ROE) / (1 + r) < 1`. In particular, the rational
 expression is an equity price only when `0 ≤ (1 + b * ROE) / (1 + r)`; without this,
 e.g. `b = 1 / 2`, `ROE = -8`, `r = 1` gives ratio `-3 / 2` and the discounted flows
 diverge even though the rational expression is finite. It is also an equity price only

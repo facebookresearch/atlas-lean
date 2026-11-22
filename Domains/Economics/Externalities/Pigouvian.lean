@@ -52,9 +52,9 @@ def socialWelfare (B C Dm : ℝ → ℝ) (q : ℝ) : ℝ := B q - C q - Dm q
 payments. -/
 def taxedSurplus (B C : ℝ → ℝ) (τ q : ℝ) : ℝ := B q - C q - τ * q
 
-/-- At an interior social optimum, marginal benefit equals marginal private cost
-plus marginal damage: with `τ = Dm'(q)`, `q` satisfies the taxed market
-condition `B'(q) = C'(q) + τ`. -/
+/-- At an interior social optimum `q` where `B`, `C` and `Dm` are differentiable, marginal
+benefit equals marginal private cost plus marginal damage: with `τ = Dm'(q)`, `q` satisfies the
+taxed market condition `B'(q) = C'(q) + τ`. -/
 theorem marginalBenefit_eq_marginalCost_add_tax {B C Dm : ℝ → ℝ} {q b c d : ℝ}
     (hopt : IsLocalMax (socialWelfare B C Dm) q)
     (hB : HasDerivAt B b q) (hC : HasDerivAt C c q) (hD : HasDerivAt Dm d q) :
@@ -66,9 +66,9 @@ theorem marginalBenefit_eq_marginalCost_add_tax {B C Dm : ℝ → ℝ} {q b c d 
 
 /-- **The Pigouvian tax implements the chosen social optimum.** Let `q` be an
 interior local maximum of social welfare (for example a global social optimum on
-the neighborhood `S`) and set the tax to the marginal damage `d = Dm'(q)`. If the
-taxed private surplus is concave on a set `S` that is a neighborhood of `q`, then
-`q` maximizes the taxed private surplus on `S`. -/
+the neighborhood `S`) at which `B`, `C` and `Dm` are differentiable, and set the tax to the
+marginal damage `d = Dm'(q)`. If the taxed private surplus is concave on a set `S` that is a
+neighborhood of `q`, then `q` maximizes the taxed private surplus on `S`. -/
 theorem isMaxOn_taxedSurplus_of_isLocalMax {B C Dm : ℝ → ℝ} {S : Set ℝ} {q b c d : ℝ}
     (hS : S ∈ 𝓝 q) (hopt : IsLocalMax (socialWelfare B C Dm) q)
     (hB : HasDerivAt B b q) (hC : HasDerivAt C c q) (hD : HasDerivAt Dm d q)

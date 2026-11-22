@@ -90,11 +90,11 @@ theorem debtPayoff_add_europeanCallPayoff (V F : ℝ) :
   rw [hmax, ← add_sub_assoc, min_add_max, add_sub_cancel_right]
 
 /-- **Modigliani–Miller I** (Modigliani and Miller 1958, Proposition I). Consider a one-period
-market with finitely many states `Ω` and securities `A`, payoffs `X` and prices `p`, with no
-funded arbitrage at gross risk-free return `R > 0`. Let security `u` be the unlevered firm, with
-operating payoff `V`, and let securities `d` and `e` be the debt (face value `F`) and the equity
-of the levered firm. Then the levered firm's value, debt plus equity, equals the price of the
-unlevered firm: `p d + p e = p u`. -/
+market with finitely many states `Ω` (at least one) and securities `A`, payoffs `X` and prices
+`p`, with no funded arbitrage at gross risk-free return `R > 0`. Let security `u` be the
+unlevered firm, with operating payoff `V`, and let securities `d` and `e` be the debt (face value
+`F`) and the equity of the levered firm. Then the levered firm's value, debt plus equity, equals
+the price of the unlevered firm: `p d + p e = p u`. -/
 theorem modiglianiMiller_of_no_arbitrage {Ω : Type*} [Fintype Ω] [Nonempty Ω]
     {A : Type*} [Fintype A] (X : A → Ω → ℝ) (p : A → ℝ) (R : ℝ) (hR : 0 < R)
     (hNA : NoFundedArbitrage X p R) (V : Ω → ℝ) (F : ℝ) {u d e : A}

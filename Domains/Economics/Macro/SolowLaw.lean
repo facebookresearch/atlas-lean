@@ -49,13 +49,16 @@ term to drop.
 
 namespace MathlibExt.Economics.Macro.SolowLaw
 
-/-- The exact discrete growth factor of effective labor. -/
+/-- The exact discrete growth factor of effective labor:
+`(1 + n) * (1 + g) = 1 + n + g + n * g`. -/
 theorem solow_effectiveLabor_factor (n g : ℝ) :
     (1 + n) * (1 + g) = 1 + n + g + n * g := by
   ring
 
-/-- **Discrete Solow law.** Dividing the aggregate accumulation identity by
-next period's effective labor gives the per-effective-worker law. -/
+/-- **Discrete Solow law.** For `E' = (1 + n) * (1 + g) * E` with `E ≠ 0` and
+`(1 + n) * (1 + g) ≠ 0`, `K' = s * F + (1 - δ) * K` and `F = f k * E`, dividing the
+aggregate accumulation identity by next period's effective labor gives the per-effective-worker
+law `k' = (s * f k + (1 - δ) * k) / ((1 + n) * (1 + g))` for `k = K / E` and `k' = K' / E'`. -/
 theorem solow_law {f : ℝ → ℝ} {s δ n g k k' K K' E E' F : ℝ}
     (hE : E ≠ 0) (hD : (1 + n) * (1 + g) ≠ 0)
     (hE' : E' = (1 + n) * (1 + g) * E)
