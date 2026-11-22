@@ -22,6 +22,15 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 # Dyadic truncation of finite distributions
 
 Dyadic truncation of a finite probability vector with the leftover mass routed to a reject outcome: total-variation and acceptance error bounds and the precision choice.
+
+This is the finite-distribution arithmetic for the dyadic approximation of
+label masses in the Pauli-test analysis of T. Morimae, D. Nagaj and
+N. Schuch, "Quantum proofs can be verified using only single-qubit
+measurements", Physical Review A 93 (2016), 022326 (arXiv:1510.06789),
+Section IV: a label with probability `π l` is sampled with `t` fair coins
+by rounding `π l` down to a multiple of `2⁻ᵗ`, and the leftover mass is
+routed to a reject outcome. The bounds below are for an arbitrary finite
+probability vector; no Pauli or circuit statement is included.
 -/
 
 @[expose] public section
@@ -72,9 +81,20 @@ theorem sub_dyadicTrunc_lt {L : Type*} {π : L → ℝ} (hπ : ∀ l, 0 ≤ π l
     exact key
   exact lt_of_mul_lt_mul_right key2 (le_of_lt h2)
 
-/-- t-bit dyadic values (what t fair coins can realize) -/
+/-- The truncated value is a nonnegative dyadic rational with denominator `2 ^ t`. -/
 theorem exists_nat_eq_dyadicTrunc {L : Type*} (π : L → ℝ) (t : ℕ) (l : L) : ∃ n : ℕ, dyadicTrunc π t l = n / 2 ^ t := by
   exact ⟨⌊(2 : ℝ) ^ t * π l⌋₊, rfl⟩
+
+/-- For a probability mass `π l ≤ 1`, the dyadic numerator is at most
+`2 ^ t`, so the truncated value is realizable with `t` fair coins. -/
+theorem exists_nat_le_eq_dyadicTrunc {L : Type*} {π : L → ℝ} (hπ : ∀ l, π l ≤ 1)
+    (t : ℕ) (l : L) : ∃ n : ℕ, n ≤ 2 ^ t ∧ dyadicTrunc π t l = n / 2 ^ t := by
+  refine ⟨⌊(2 : ℝ) ^ t * π l⌋₊, ?_, rfl⟩
+  have h2 : (0 : ℝ) < 2 ^ t := by positivity
+  have hle : (2 : ℝ) ^ t * π l ≤ (2 ^ t : ℕ) := by
+    have h := mul_le_mul_of_nonneg_left (hπ l) (le_of_lt h2)
+    simpa using h
+  exact Nat.floor_le_of_le hle
 
 /-- reject outcome is a genuine probability -/
 theorem dyadicLeftover_nonneg {L : Type*} [Fintype L] {π : L → ℝ} (hπ : ∀ l, 0 ≤ π l) (hsum : ∑ l, π l = 1) (t : ℕ) : 0 ≤ dyadicLeftover π t := by
@@ -92,7 +112,7 @@ theorem dyadicLeftover_le {L : Type*} [Fintype L] {π : L → ℝ} (hπ : ∀ l,
     _ = Fintype.card L / 2 ^ t := by
         rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one_div]
 
-/-- A5 "TV(q, π) ≤ 2K 2^-t" (L1 form including the reject atom) -/
+/-- Total truncation error including the reject atom is at most `2K / 2 ^ t`. -/
 theorem sum_abs_sub_dyadicTrunc_add_leftover_le {L : Type*} [Fintype L] {π : L → ℝ} (hπ : ∀ l, 0 ≤ π l) (hsum : ∑ l, π l = 1) (t : ℕ) : ∑ l, |π l - dyadicTrunc π t l| + dyadicLeftover π t ≤ 2 * Fintype.card L / 2 ^ t := by
   have habs : ∀ l, |π l - dyadicTrunc π t l| = π l - dyadicTrunc π t l :=
     fun l => abs_of_nonneg (sub_nonneg.mpr (dyadicTrunc_le hπ t l))
@@ -137,7 +157,7 @@ theorem abs_acceptance_sub_le {L : Type*} [Fintype L] {π : L → ℝ} (hπ : �
 /-- t = max(0, ⌈log2(16K/γ)⌉): nonnegative by construction (Nat.clog) -/
 noncomputable def dyadicPrecision (K : ℕ) (γ : ℝ) : ℕ := Nat.clog 2 ⌈16 * (K : ℝ) / γ⌉₊
 
-/-- A5 "2K 2^-t ≤ γ/8" -/
+/-- The precision choice makes `2K / 2 ^ t ≤ γ / 8`. -/
 theorem two_mul_div_two_pow_dyadicPrecision_le (K : ℕ) {γ : ℝ} (hγ : 0 < γ) : 2 * (K : ℝ) / 2 ^ dyadicPrecision K γ ≤ γ / 8 := by
   unfold dyadicPrecision
   set N := ⌈16 * (K : ℝ) / γ⌉₊
