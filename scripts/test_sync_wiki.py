@@ -4036,6 +4036,41 @@ class ScopedRun(unittest.TestCase):
             "the declaration Ext.lagrange of this project has a page too many; a declaration has one page; fix it"]))
 
 
+    def test_a_row_by_module_and_name_whose_declaration_goes_is_stale(self) -> None:
+        # A row an earlier sync wrote with a module and a name links the declaration they resolve to: removing it
+        # leaves the row stale, which stops the run until the row is relinked or the link removed.
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/extra.md", "# Extra\n\nExtra.\n")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text() + json.dumps({
+            "subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/extra.md"}],
+            "id": "af_" + "e" * 24, "extensions": {sync.OWN: {"module": "MathlibExt.Algebra.Groups",
+                                                               "name": "extra"}}}) + "\n")
+        self.groups(more="theorem extra : True := trivial\n\n")
+        self.base = self.commit("a row by module and name")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (0, []))
+        self.groups()
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (1, False))
+        self.assertEqual(len(report["errors"]), 1, report["errors"])
+        self.assertIn("links the declaration named extra in MathlibExt.Algebra.Groups, by the module and name an "
+                      "earlier sync wrote, which the Lean no longer has", report["errors"][0])
+
+    def test_a_row_the_run_cannot_settle_stops_it_before_it_writes(self) -> None:
+        # Every row the run may add is checked before anything is written: one that would not credit its declaration
+        # leaves the tree as it was, the baseline included.
+        self.write("MathlibExt/Algebra/Rings.lean", self.RINGS)
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        before = self.tree()
+        real = sync.settled
+        with patch.object(sync, "settled", lambda annotation, lean: lean != "Ext.Rings.units" and real(annotation, lean)):
+            status, out, err, report = self.run_sync()
+        self.assertEqual((status, report.get("written")), (1, []))
+        self.assertIn("no row the sync can write credits Ext.Rings.units to this project; fix it and run again (the run "
+                      "wrote nothing)", err)
+        self.assertEqual(self.tree(), before)
+
+
 
 class BuildPath(Vault):
     """What the build's own steps refuse before they write, beside what credit_problems refuses everywhere."""

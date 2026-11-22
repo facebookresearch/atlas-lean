@@ -2440,6 +2440,21 @@ def settled(annotation: dict, lean: str | None) -> bool:
     return False
 
 
+def page_row(target, path: Path, fields: dict | None = None, scoped: bool = True) -> dict:
+    """The row of a page a run adds at *path* for *target*, its id to give: its Lean link, as crediting gives it on a
+    scoped run, and its provenance, with the origin *fields* gives (see page_text)."""
+    annotation: dict = {"subject": [{"type": "generic", "uri": "../" + path.relative_to(wiki.VAULT).as_posix()}],
+                        "id": None}
+    if target.lean:
+        annotation["object"] = ((crediting(target.lean) if scoped else None)
+                                or [{"location": {"declaration": target.lean}}])
+    extensions: dict = {OWN: {"from": "docstring"}}
+    if fields and "origin" in fields:
+        extensions[NAMESPACE] = {"origin": fields["origin"]}
+    annotation["extensions"] = extensions
+    return annotation
+
+
 def folder_row(readme: Path, page: str) -> dict:
     """The row of a folder page a run adds, its id to give, from *page*, generate_wiki's page for it: its navigation
     and area."""
@@ -2541,6 +2556,18 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
             touched.add(readme)
         return kind
 
+    if scope is not None:
+        # Every row the run may add is checked before it writes anything (see settled): a page's, and, when it adds
+        # one, a folder page's, which its place does not change.
+        wanted = [key for key, target in sorted(current.items())
+                  if key in scope.keys and key not in pages and key not in held and not deprecated(target)]
+        unsettled = [f"no row the sync can write credits {key} to this project" for key in wanted
+                     if not settled(page_row(current[key], wiki.ROADMAP / "page.md"), current[key].lean)]
+        if wanted and not settled(folder_row(wiki.ROADMAP / "README.md", ""), None):
+            unsettled.append("no row the sync can write for a folder page credits nothing")
+        if unsettled:
+            report["credit_problems"] = unsettled
+            return report
     for key, target in sorted(current.items()):
         if (scope is not None and key not in scope.keys) or key in pages or key in held or deprecated(target):
             continue
@@ -2574,11 +2601,6 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
                     or page.parent.relative_to(wiki.ROADMAP).as_posix() in retired]
         if missing and not occupied and all(laid_out.get(page, page) in generated for page in missing):
             # A scoped run makes a folder only with a row that credits nothing (see settled).
-            if scope is not None and not all(settled(folder_row(page, generated[laid_out.get(page, page)]), None)
-                                             for page in missing):
-                report["credit_problems"].append(f"no row the sync can write for a folder page {key} needs credits "
-                                                 "nothing")
-                continue
             created.update((page, generated[laid_out.get(page, page)]) for page in missing)
         else:
             folder = up
@@ -2595,18 +2617,10 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
         text, fields = page_text(target)
         # The page's row, whole before anything is written, its id given once the page is: a scoped run writes a
         # page only with a row that credits its declaration as Autoform reads the row (see crediting and settled).
-        annotation: dict = {"subject": [{"type": "generic", "uri": "../" + target.path.relative_to(wiki.VAULT).as_posix()}],
-                            "id": None}
-        if target.lean:
-            annotation["object"] = ((crediting(target.lean) if scope is not None else None)
-                                    or [{"location": {"declaration": target.lean}}])
-        extensions: dict = {OWN: {"from": "docstring"}}
-        if "origin" in fields:
-            extensions[NAMESPACE] = {"origin": fields["origin"]}
-        annotation["extensions"] = extensions
+        annotation = page_row(target, target.path, fields, scope is not None)
         if scope is not None and not settled(annotation, target.lean):
-            report["credit_problems"].append(f"no row the sync can write credits {key} to this project")
-            continue
+            # The run checked the page's row before it wrote anything.
+            raise RuntimeError(f"{key}: its row would not credit it")
         folder.mkdir(parents=True, exist_ok=True)
         target.path.write_text(text)
         written.add(target.path)
@@ -2970,10 +2984,19 @@ def link_view(index) -> dict:
     files: dict[Path, list[dict]] = defaultdict(list)
     for path, number, row in rows:
         files[path].append(row)
-        if (name := lean_name(row)) and not declared(name, index):
-            # Named as the working tree's file, which a copy of the wiki (see sync_output) stands for.
-            where = location(wiki.ROOT / path.relative_to(LINKS.parent.parent), number)
-            stale[(row.get("id") or page_name(row), name)].append(f"{where} ({page_name(row)})")
+        name = lean_name(row)
+        if name is not None and declared(name, index):
+            continue
+        if name is None:
+            # A row an earlier sync wrote with a module and a name links the declaration the index resolves them to:
+            # one that resolves to none links one the Lean no longer has.
+            pair = legacy_pair(row)
+            if pair is None or "held" in row["extensions"][OWN] or legacy_lean_name(row["extensions"][OWN], index):
+                continue
+            name = f"the declaration named {pair[1]} in {pair[0]}, by the module and name an earlier sync wrote"
+        # Named as the working tree's file, which a copy of the wiki (see sync_output) stands for.
+        where = location(wiki.ROOT / path.relative_to(LINKS.parent.parent), number)
+        stale[(row.get("id") or page_name(row), name)].append(f"{where} ({page_name(row)})")
     # Named as the working tree's links folder, which a copy of the wiki stands for.
     def stable(problem: str) -> str:
         return problem.replace(os.fspath(LINKS), "blueprint/links").replace(os.fspath(wiki.VAULT), "blueprint")
