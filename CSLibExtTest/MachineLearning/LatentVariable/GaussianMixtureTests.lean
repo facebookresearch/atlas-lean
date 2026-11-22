@@ -41,8 +41,25 @@ example (x : Fin 4 → EuclideanSpace ℝ (Fin 2)) (w : Fin 4 → ℝ) (hW : 0 <
 example (θ : ValidParams 2 3) (x : EuclideanSpace ℝ (Fin 2)) : ∑ k, resp θ x k = 1 :=
   sum_resp θ x
 
+/-- Score of a three-atom mixture in the plane with common variance `v`. -/
+example (θ : ValidParams 2 3) {v : NNReal} (hv : ∀ k, θ.1.var k = v)
+    (x : EuclideanSpace ℝ (Fin 2)) :
+    HasGradientAt (fun y => Real.log (marginal joint θ y))
+      ((v : ℝ)⁻¹ • (∑ k, resp θ x k • θ.1.mean k - x)) x :=
+  hasGradientAt_log_marginal_joint θ hv x
+
+/-- Finite-support Tweedie identity with means `λ xₖ`. -/
+example (θ : ValidParams 2 3) {v : NNReal} (hv : ∀ k, θ.1.var k = v) (lam : ℝ)
+    (xs : Fin 3 → EuclideanSpace ℝ (Fin 2)) (hmean : ∀ k, θ.1.mean k = lam • xs k)
+    (z : EuclideanSpace ℝ (Fin 2)) :
+    HasGradientAt (fun y => Real.log (marginal joint θ y))
+      ((v : ℝ)⁻¹ • (lam • ∑ k, resp θ z k • xs k - z)) z :=
+  hasGradientAt_log_marginal_joint_of_mean_eq_smul θ hv lam xs hmean z
+
 #print axioms logLik_iterate_emStep_monotone
 #print axioms emQ_le_emStep
 #print axioms log_isoGaussPDF
+#print axioms hasGradientAt_log_marginal_joint
+#print axioms hasGradientAt_log_marginal_joint_of_mean_eq_smul
 
 end Cslib.MachineLearning.LatentVariable.GaussianMixture

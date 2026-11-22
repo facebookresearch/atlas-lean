@@ -114,7 +114,9 @@ $\rho$ of $G$ on a vector space $V$ of dimension $22$ such that the tensor squar
 regarded as a module over the group algebra $\mathbb{C}[G]$ through the diagonal action
 $g \mapsto \rho(g) \otimes \rho(g)$, has exactly $4$ isotypic components.
 
-Source: É. Mathieu, Sur les fonctions cinq fois transitives de 24 quantités, J. Math. Pures Appl. (1873); ATLAS of Finite Groups, M₂₃ character table. Via leanprover/lean-eval@38361be, problem `m23_irrep_tensor_square_decomp`. -/
+Source: É. Mathieu, Sur les fonctions cinq fois transitives de 24 quantités, J. Math. Pures Appl.
+(1873); ATLAS of Finite Groups, M₂₃ character table. Via leanprover/lean-eval@38361be, problem
+`m23_irrep_tensor_square_decomp`. -/
 public theorem_wanted m23_irrep_tensor_square_decomp :
     ∃ (G : Type) (_ : Group G) (_ : Fintype G),
       Fintype.card G = 10200960 ∧

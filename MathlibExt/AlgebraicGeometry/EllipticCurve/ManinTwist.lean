@@ -793,11 +793,6 @@ private lemma minusOneNumerator_eq [Finite F] (hchar : ringChar F ≠ 2)
   simp only [cubic, map_mul, map_ofNat]
   ring
 
-private lemma natDegree_add_le_of_le {p q : F[X]} {n : ℕ}
-    (hp : p.natDegree ≤ n) (hq : q.natDegree ≤ n) :
-    (p + q).natDegree ≤ n :=
-  (Polynomial.natDegree_add_le p q).trans (max_le hp hq)
-
 private lemma minusOneNumerator_natDegree [Finite F]
     (hchar : ringChar F ≠ 2) (W : WeierstrassCurve F)
     (hcard : Nat.card F ≠ 3) :
@@ -812,14 +807,14 @@ private lemma minusOneNumerator_natDegree [Finite F]
             (C W.a₄ * X + C (2 * W.a₆)))))
   have hremainder : remainder.natDegree ≤ 2 * Nat.card F := by
     dsimp only [remainder]
-    apply natDegree_add_le_of_le
+    apply natDegree_add_le_of_degree_le
     · rw [Polynomial.natDegree_X_pow]
       omega
-    apply natDegree_add_le_of_le
+    apply natDegree_add_le_of_degree_le
     · exact (Polynomial.natDegree_C_mul_X_pow_le _ _).trans (by omega)
-    apply natDegree_add_le_of_le
+    apply natDegree_add_le_of_degree_le
     · exact (Polynomial.natDegree_C_mul_X_pow_le _ _).trans (by omega)
-    apply natDegree_add_le_of_le
+    apply natDegree_add_le_of_degree_le
     · calc
         (C 2 * cubic W ^ ((Nat.card F + 1) / 2)).natDegree ≤
             (cubic W ^ ((Nat.card F + 1) / 2)).natDegree :=
@@ -827,7 +822,7 @@ private lemma minusOneNumerator_natDegree [Finite F]
         _ = (Nat.card F + 1) / 2 * 3 := by
           rw [Polynomial.natDegree_pow, cubic_natDegree]
         _ ≤ 2 * Nat.card F := by omega
-    apply natDegree_add_le_of_le
+    apply natDegree_add_le_of_degree_le
     · simpa only [pow_one] using
         (Polynomial.natDegree_C_mul_X_pow_le W.a₄ 1).trans (by omega)
     · rw [Polynomial.natDegree_C]
@@ -983,18 +978,6 @@ private instance squareFiberFinite [Finite F] (W : WeierstrassCurve F)
   unfold squareFiber
   infer_instance
 
-private lemma two_ne_zero_of_ringChar_ne_two (hchar : ringChar F ≠ 2) :
-    (2 : F) ≠ 0 := by
-  let _ : CharP F (ringChar F) := ringChar.charP F
-  intro htwo
-  have hdvd : ringChar F ∣ 2 :=
-    (CharP.cast_eq_zero_iff F (ringChar F) 2).mp htwo
-  rcases (Nat.dvd_prime Nat.prime_two).mp hdvd with hone | htwoChar
-  · have hcast : ((1 : ℕ) : F) = 0 :=
-      (CharP.cast_eq_zero_iff F (ringChar F) 1).mpr (by simp [hone])
-    exact (one_ne_zero : (1 : F) ≠ 0) (by simpa only [Nat.cast_one] using hcast)
-  · exact hchar htwoChar
-
 private lemma squareFiber_natCard_eq_one [Finite F] (W : WeierstrassCurve F)
     (x : F) (hzero : (cubic W).eval x = 0) :
     Nat.card (squareFiber W x) = 1 := by
@@ -1024,7 +1007,7 @@ private lemma squareFiber_natCard_eq_two [Finite F]
     simp
   have hneg : -r ≠ r := by
     intro h
-    have htwo := two_ne_zero_of_ringChar_ne_two (F := F) hchar
+    have htwo := Ring.two_ne_zero hchar
     have hadd : r + r = 0 := by
       calc
         r + r = -r + r := congrArg (fun z : F ↦ z + r) h.symm
@@ -1187,7 +1170,7 @@ private lemma rootMultiplicity_minusOneNumerator_eq_zero [Finite F]
   apply Polynomial.rootMultiplicity_eq_zero
   intro hroot
   have heuler := eval_eulerPolynomial_eq_one hchar W x hzero hsquare
-  have htwo := two_ne_zero_of_ringChar_ne_two (F := F) hchar
+  have htwo := Ring.two_ne_zero hchar
   have hsum : (1 + 1 : F) ≠ 0 := by
     intro h
     apply htwo
@@ -1841,7 +1824,7 @@ private lemma ratFunc_ne_zero_of_num_degree_gt {r : RatFunc F}
 
 private lemma four_ne_zero_of_ringChar_ne_two (hchar : ringChar F ≠ 2) :
     (4 : F) ≠ 0 := by
-  have htwo := two_ne_zero_of_ringChar_ne_two (F := F) hchar
+  have htwo := Ring.two_ne_zero hchar
   intro hfour
   have hmul : (2 : F) * 2 = 0 := by
     calc
@@ -1857,7 +1840,7 @@ private lemma Q_y_ne_negY [Finite F] (hchar : ringChar F ≠ 2)
       (twist W).toAffine.negY (cubicRat W * RatFunc.X) (cubicRat W ^ 2) := by
   simp only [WeierstrassCurve.Affine.negY, twist, zero_mul, sub_zero]
   intro hneg
-  have htwoF := two_ne_zero_of_ringChar_ne_two (F := F) hchar
+  have htwoF := Ring.two_ne_zero hchar
   have htwo : (2 : RatFunc F) ≠ 0 := by
     intro hzero
     apply htwoF

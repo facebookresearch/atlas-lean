@@ -11,14 +11,13 @@ Author: Steven Warner
 -/
 module
 
-public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.SetTheory.Cardinal.Aleph
-public import Mathlib.SetTheory.Cardinal.Cofinality.Club
 public import Mathlib.SetTheory.Ordinal.Basic
 
 @[expose] public section
 
--- Source: Lean Definition Library (Airtable) records: Logic 1, Logic 42, Logic 52, Logic 53, Logic 2
+-- Source: Lean Definition Library (Airtable) records: Logic 42, Logic 52, Logic 53, Logic 2
+
+open Cardinal
 
 /-!
 # `MathlibExt.SetTheory.Cardinal.Cofinality.Stationary`
@@ -27,8 +26,6 @@ public import Mathlib.SetTheory.Ordinal.Basic
 
 * Jech (for `ContainsAllBounded`, `IsKappaCompleteIdeal`, `IsNormalIdeal`, `IsRegressive`)
 -/
-
-open Cardinal
 
 namespace MetaMathlibExt
 

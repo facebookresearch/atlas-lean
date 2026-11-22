@@ -22,6 +22,7 @@ public import Mathlib.Data.Finset.Defs
 public import Mathlib.GroupTheory.QuotientGroup.Defs
 public import Mathlib.GroupTheory.Subgroup.Simple
 public import Mathlib.Order.CompletePartialOrder
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
@@ -39,10 +40,7 @@ the members not containing `g` below the intersection of those containing it), s
 is never vacuous.
 -/
 
-/-- **Locally finite group.** A group $G$ is locally finite when every subgroup of $G$ generated
-by finitely many elements is finite. -/
-def IsLocallyFinite (G : Type*) [Group G] : Prop :=
-  ∀ S : Finset G, (Subgroup.closure (S : Set G) : Set G).Finite
+open MathlibExt.GroupTheory.GroupClassesShared (IsLocallyFinite)
 
 /-- **Composition series in Kurosh's sense.** A set $S$ of subgroups of a group $G$ is a
 composition series of $G$ when it contains the trivial subgroup and $G$, it is totally ordered by

@@ -20,6 +20,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Module.Projective
 public import Mathlib.GroupTheory.OrderOfElement
 public import Mathlib.RingTheory.Finiteness.Defs
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
@@ -32,25 +33,14 @@ UM-00700698 (`KOU-11.5`), dataset ulamai/UnsolvedMath v1.8.0.
 
 The statement is the literal one, over an arbitrary commutative ring `k`, which is what the Notebook
 asks and what its accepted answer refutes. Almost polycyclic means polycyclic-by-finite (a
-polycyclic subgroup of finite index); torsion-free means no nontrivial element of finite order. The
-group ring `kG` is `MonoidAlgebra k G`, and two independent elements are a `kG`-linearly independent
-pair. The refutation uses a coefficient ring that is not a field, `𝔽₂ × 𝔽₂` (it has nontrivial
-idempotents), and the trivial group; the question for field coefficients is not settled by it.
+polycyclic subgroup of finite index; `IsAlmostPolycyclic` of `GroupClassesShared`); torsion-free
+means no nontrivial element of finite order. The group ring `kG` is `MonoidAlgebra k G`, and two
+independent elements are a `kG`-linearly independent pair. The refutation uses a coefficient ring
+that is not a field, `𝔽₂ × 𝔽₂` (it has nontrivial idempotents), and the trivial group; the question
+for field coefficients is not settled by it.
 -/
 
-/-- **Polycyclic group.** A group $G$ is polycyclic if for some $n \ge 0$ there are subgroups
-$1 = H_0 \le H_1 \le \cdots \le H_n = G$ such that for each $i < n$, $H_i$ is normal in
-$H_{i+1}$ and the quotient $H_{i+1} / H_i$ is cyclic. -/
-def IsPolycyclic (G : Type*) [Group G] : Prop :=
-  ∃ (n : ℕ) (H : Fin (n + 1) → Subgroup G), H 0 = ⊥ ∧ H (Fin.last n) = ⊤ ∧
-    ∀ i : Fin n, H i.castSucc ≤ H i.succ ∧
-      ∃ _ : ((H i.castSucc).subgroupOf (H i.succ)).Normal,
-        IsCyclic (H i.succ ⧸ (H i.castSucc).subgroupOf (H i.succ))
-
-/-- **Almost polycyclic group.** A group $G$ is almost polycyclic (polycyclic-by-finite) if it
-has a subgroup of finite index that is polycyclic. -/
-def IsAlmostPolycyclic (G : Type*) [Group G] : Prop :=
-  ∃ H : Subgroup G, H.FiniteIndex ∧ IsPolycyclic H
+open MathlibExt.GroupTheory.GroupClassesShared (IsAlmostPolycyclic)
 
 /-- **Artamonov's freeness question (Kourovka 11.5).** This is the proposition that, for every
 commutative ring $k$, every torsion-free almost polycyclic group $G$ (no element $g \ne 1$ of $G$

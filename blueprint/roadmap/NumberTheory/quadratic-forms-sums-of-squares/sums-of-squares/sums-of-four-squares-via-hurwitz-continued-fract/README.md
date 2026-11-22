@@ -1,0 +1,15 @@
+# Sums of four squares via Hurwitz continued fractions
+
+- [Hurwitz rounding to the nearest Gaussian integer](hurwitz-round.md)
+- [Iterates of the Hurwitz algorithm](hurwitz-iter.md)
+- [Partial quotients of the Hurwitz expansion](hurwitz-digit.md)
+- [Consecutive pairs of Hurwitz convergents](hurwitz-pq.md)
+- [Convergent numerators of the Hurwitz expansion](hurwitz-p.md)
+- [Convergent denominators of the Hurwitz expansion](hurwitz-q.md)
+- [Legal indices of the Hurwitz expansion](hurwitz-legal.md)
+- [Rounding error of the nearest Gaussian integer](abs-re-sub-hurwitz-round-le.md)
+- [Recursion for the Hurwitz convergents](hurwitz-pq-recursion.md)
+- [Error of the Hurwitz convergents](hurwitz-q-mul-sub-hurwitz-p.md)
+- [Hurwitz's theorem: the convergent denominators grow in absolute value](norm-hurwitz-q-lt-succ.md)
+- [Lakein's first theorem on Hurwitz convergents](norm-sub-hurwitz-convergent-le.md)
+- [Sums of four squares via Hurwitz continued fractions](hurwitz-four-squares.md)

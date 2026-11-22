@@ -18,6 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.OrderOfElement
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
@@ -29,23 +30,12 @@ Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Pro
 Bludov). UnsolvedMath record UM-00700929 (`KOU-13.11`), dataset ulamai/UnsolvedMath v1.8.0.
 
 Polycyclic means a finite subnormal series with cyclic factors and almost polycyclic means a
-polycyclic subgroup of finite index, as in the resolving paper. Torsion-free means no nontrivial
-element of finite order. Generation is implied by the bijectivity of `k ↦ a₁^k₁ ⋯ aₙ^kₙ`.
+polycyclic subgroup of finite index, as in the resolving paper (`IsPolycyclic` and
+`IsAlmostPolycyclic` of `GroupClassesShared`). Torsion-free means no nontrivial element of finite
+order. Generation is implied by the bijectivity of `k ↦ a₁^k₁ ⋯ aₙ^kₙ`.
 -/
 
-/-- **Polycyclic groups (Kourovka Problem 13.11).** A group $G$ is polycyclic if it has a finite
-series of subgroups $1 = H_0 \le H_1 \le \cdots \le H_n = G$ in which each $H_i$ is normal in
-$H_{i+1}$ and each quotient $H_{i+1} / H_i$ is cyclic. -/
-def IsPolycyclic (G : Type*) [Group G] : Prop :=
-  ∃ (n : ℕ) (H : Fin (n + 1) → Subgroup G), H 0 = ⊥ ∧ H (Fin.last n) = ⊤ ∧
-    ∀ i : Fin n, H i.castSucc ≤ H i.succ ∧
-      ∃ _ : ((H i.castSucc).subgroupOf (H i.succ)).Normal,
-        IsCyclic (H i.succ ⧸ (H i.castSucc).subgroupOf (H i.succ))
-
-/-- **Almost polycyclic groups (Kourovka Problem 13.11).** A group $G$ is almost polycyclic, or
-virtually polycyclic, if some subgroup of finite index in $G$ is polycyclic. -/
-def IsAlmostPolycyclic (G : Type*) [Group G] : Prop :=
-  ∃ H : Subgroup G, H.FiniteIndex ∧ IsPolycyclic H
+open MathlibExt.GroupTheory.GroupClassesShared (IsAlmostPolycyclic)
 
 /-- **Groups with a unique product presentation.** A group $G$ has a unique product presentation if
 there are $n \in \mathbb{N}$ and elements $a_0, \dots, a_{n-1} \in G$ such that every element of $G$

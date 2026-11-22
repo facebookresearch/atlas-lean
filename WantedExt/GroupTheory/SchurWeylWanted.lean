@@ -98,7 +98,9 @@ algebra of $R$-linear endomorphisms of the tensor power $M^{\otimes k}$, the sub
 by the image of the action of the symmetric group $S_k$ by permuting tensor factors equals the
 centralizer of the image of the diagonal action $g \mapsto g^{\otimes k}$ of $\mathrm{GL}(M)$.
 
-Source: H. Weyl, The Classical Groups, 1939; I. Schur, Über die rationalen Darstellungen der allgemeinen linearen Gruppe, 1927. Via leanprover/lean-eval@38361be, problem `symAction_range_eq_centralizer_glAction`. -/
+Source: H. Weyl, The Classical Groups, 1939; I. Schur, Über die rationalen Darstellungen der
+allgemeinen linearen Gruppe, 1927. Via leanprover/lean-eval@38361be, problem
+`symAction_range_eq_centralizer_glAction`. -/
 public theorem_wanted symAction_range_eq_centralizer_glAction
     {R : Type*} [Field R]
     {M : Type*} [AddCommGroup M] [Module R M] [FiniteDimensional R M]
@@ -114,7 +116,9 @@ algebra of $R$-linear endomorphisms of the tensor power $M^{\otimes k}$, the sub
 by the image of the diagonal action $g \mapsto g^{\otimes k}$ of $\mathrm{GL}(M)$ equals the
 centralizer of the image of the action of the symmetric group $S_k$ by permuting tensor factors.
 
-Source: H. Weyl, The Classical Groups, 1939; I. Schur, Über die rationalen Darstellungen der allgemeinen linearen Gruppe, 1927. Via leanprover/lean-eval@38361be, problem `glAction_range_eq_centralizer_symAction`. -/
+Source: H. Weyl, The Classical Groups, 1939; I. Schur, Über die rationalen Darstellungen der
+allgemeinen linearen Gruppe, 1927. Via leanprover/lean-eval@38361be, problem
+`glAction_range_eq_centralizer_symAction`. -/
 public theorem_wanted glAction_range_eq_centralizer_symAction
     {R : Type*} [Field R]
     {M : Type*} [AddCommGroup M] [Module R M] [FiniteDimensional R M]

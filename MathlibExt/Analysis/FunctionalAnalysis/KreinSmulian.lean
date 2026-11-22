@@ -93,18 +93,6 @@ private lemma ks_isClosed_rpol {𝕜 : Type*} [RCLike 𝕜] {E : Type*} [NormedA
   rw [heq]
   exact isClosed_biInter fun x _ => ks_isClosed_re_le x 1
 
-/-- Dual norm balls are weak-* closed. -/
-private lemma ks_isClosed_ball {𝕜 : Type*} [RCLike 𝕜] {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace 𝕜 E] (r : ℝ) :
-    IsClosed (WeakDual.toStrongDual ⁻¹' closedBall (0 : StrongDual 𝕜 E) r) :=
-  WeakDual.isClosed_closedBall 0 r
-
-/-- Dual norm balls are weak-* compact. -/
-private lemma ks_isCompact_ball {𝕜 : Type*} [RCLike 𝕜] {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace 𝕜 E] (r : ℝ) :
-    IsCompact (WeakDual.toStrongDual ⁻¹' closedBall (0 : StrongDual 𝕜 E) r) :=
-  WeakDual.isCompact_closedBall 0 r
-
 /-- A norm gap: if `0 ∉ K` and `K ∩ B 1` is closed, dual norms on `K` stay above
 some positive `δ ≤ 1`. -/
 private lemma ks_norm_gap {𝕜 : Type*} [RCLike 𝕜] {E : Type*} [NormedAddCommGroup E]
@@ -173,7 +161,7 @@ private lemma ks_step {𝕜 : Type*} [RCLike 𝕜] {E : Type*} [NormedAddCommGro
     fun φ h => h.1.2
   have hQcompact : IsCompact (K ∩ WeakDual.toStrongDual ⁻¹'
       closedBall (0 : StrongDual 𝕜 E) (δ * ((n : ℝ) + 1)) ∩ ks_rpol (𝕜 := 𝕜) ↑G) :=
-    (ks_isCompact_ball _).of_isClosed_subset hQclosed hQsub
+    (WeakDual.isCompact_closedBall 0 _).of_isClosed_subset hQclosed hQsub
   have hdisj : Disjoint (K ∩ WeakDual.toStrongDual ⁻¹'
         closedBall (0 : StrongDual 𝕜 E) (δ * ((n : ℝ) + 1)) ∩ ks_rpol (𝕜 := 𝕜) ↑G)
       (⋂ v : ↥(closedBall (0 : E) (δ * (n : ℝ))⁻¹),
@@ -442,12 +430,6 @@ private lemma ks_null_family {𝕜 : Type*} [RCLike 𝕜] {E : Type*} [NormedAdd
     rw [hxy]
     exact hy1
 
-/-- Real parts distribute over addition. -/
-private lemma ks_re_add {𝕜 : Type*} [RCLike 𝕜] (z w : 𝕜) :
-    RCLike.re (z + w) = RCLike.re z + RCLike.re w := by
-  have h := map_add (RCLike.reCLM (K := 𝕜)) z w
-  rwa [RCLike.reCLM_apply] at h
-
 /-- The coordinate map into `C₀(ℕ × ℕ, ℝ)`. -/
 private noncomputable def ks_c0fun {𝕜 : Type*} [RCLike 𝕜] {E : Type*} [NormedAddCommGroup E]
     [NormedSpace 𝕜 E] {x : ℕ × ℕ → E}
@@ -479,7 +461,7 @@ private noncomputable def ks_c0lin {𝕜 : Type*} [RCLike 𝕜] {E : Type*} [Nor
     simp only [ks_c0fun_apply, ZeroAtInftyContinuousMap.add_apply]
     have hadd : (φ + ψ) (x p) = φ (x p) + ψ (x p) := rfl
     rw [hadd]
-    exact ks_re_add _ _
+    exact map_add RCLike.re _ _
   map_smul' := fun c φ => by
     ext p
     simp only [ks_c0fun_apply, ZeroAtInftyContinuousMap.smul_apply]
@@ -807,7 +789,7 @@ theorem krein_smulian
           (s ∩ WeakDual.toStrongDual ⁻¹' Metric.closedBall (0 : StrongDual 𝕜 E) r) := by
   constructor
   · intro hclosed r _hr
-    exact hclosed.inter (ks_isClosed_ball r)
+    exact hclosed.inter (WeakDual.isClosed_closedBall 0 r)
   · intro hball
     rw [← closure_subset_iff_isClosed]
     intro φ₀ hφ₀
@@ -850,7 +832,7 @@ theorem krein_smulian
           exact ⟨hψs, hψr⟩
       rw [hset]
       exact ((hball (r + ‖WeakDual.toStrongDual φ₀‖) hrr).preimage
-        (continuous_id.add continuous_const)).inter (ks_isClosed_ball r)
+        (continuous_id.add continuous_const)).inter (WeakDual.isClosed_closedBall 0 r)
     have h0cl : (0 : WeakDual 𝕜 E) ∈ closure ((fun ψ => ψ + φ₀) ⁻¹' s) := by
       have hmem : (Homeomorph.addRight φ₀) (0 : WeakDual 𝕜 E) ∈ closure s := by
         have h00 : (Homeomorph.addRight φ₀) (0 : WeakDual 𝕜 E) = φ₀ := by simp

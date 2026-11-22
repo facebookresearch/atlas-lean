@@ -19,6 +19,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Group.Subgroup.Lattice
 public import Mathlib.Basic.Finite.Defs
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
@@ -43,11 +44,7 @@ def IsThreeTranspositionSet {G : Type*} [Group G] (D : Set G) : Prop :=
   (∀ g : G, ∀ d ∈ D, g * d * g⁻¹ ∈ D) ∧ (∀ d ∈ D, d ≠ 1 ∧ d ^ 2 = 1) ∧
     ∀ d ∈ D, ∀ e ∈ D, d * e = 1 ∨ (d * e) ^ 2 = 1 ∨ (d * e) ^ 3 = 1
 
-/-- **Locally finite group, via finite subsets.** A group $G$ is locally finite when every finite
-subset $S \subseteq G$ generates a finite subgroup; equivalently, every finitely generated subgroup
-of $G$ is finite. -/
-def IsLocallyFinite (G : Type*) [Group G] : Prop :=
-  ∀ S : Set G, S.Finite → (Subgroup.closure S : Set G).Finite
+open MathlibExt.GroupTheory.GroupClassesShared (IsLocallyFinite)
 
 /-- **Sozutov's question on 3-transposition groups (Kourovka 12.76).** The statement that for
 every group $G$ and every set $D$ of 3-transpositions of $G$ that generates $G$, the group $G$ is

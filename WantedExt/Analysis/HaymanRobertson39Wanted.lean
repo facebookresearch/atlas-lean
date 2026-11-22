@@ -50,45 +50,56 @@ Clause list from the source; each item is realized in the formal text below:
   `n` ranges over `ℕ` with `1 ≤ n`.
 -/
 
-/-- Open unit disc in `ℂ`, domain for `f` and `h` [AMR-022-6039, Hayman Problem 6.39, arXiv:1809.07200]. -/
+/-- Open unit disc in `ℂ`, domain for `f` and `h` [AMR-022-6039, Hayman Problem 6.39,
+arXiv:1809.07200]. -/
 def haymanUnitDisc : Set ℂ := {z | ‖z‖ < 1}
 
-/-- Class `S`: analytic, injective on the unit disc, `f 0 = 0`, `f'(0) = 1` [AMR-022-6039, Hayman Problem 6.39, arXiv:1809.07200]. -/
+/-- Class `S`: analytic, injective on the unit disc, `f 0 = 0`, `f'(0) = 1` [AMR-022-6039, Hayman
+Problem 6.39, arXiv:1809.07200]. -/
 def haymanIsSchlicht (f : ℂ → ℂ) : Prop :=
   AnalyticOnNhd ℂ f haymanUnitDisc ∧ Set.InjOn f haymanUnitDisc ∧
     f 0 = 0 ∧ HasDerivAt f 1 0
 
-/-- Starlike: schlicht with `Re (z f'(z) / f z) > 0` on punctured disc [AMR-022-6039, Hayman Problem 6.39, arXiv:1809.07200]. -/
+/-- Starlike: schlicht with `Re (z f'(z) / f z) > 0` on punctured disc [AMR-022-6039, Hayman Problem
+6.39, arXiv:1809.07200]. -/
 noncomputable def haymanIsStarlike (f : ℂ → ℂ) : Prop :=
   haymanIsSchlicht f ∧
     ∀ z ∈ haymanUnitDisc, z ≠ 0 → 0 < (z * deriv f z / f z).re
 
-/-- Real coefficients: every Taylor coefficient of `f` at `0` is real [AMR-022-6039, Hayman Problem 6.39, arXiv:1809.07200]. -/
+/-- Real coefficients: every Taylor coefficient of `f` at `0` is real [AMR-022-6039, Hayman Problem
+6.39, arXiv:1809.07200]. -/
 noncomputable def haymanHasRealCoeffs (f : ℂ → ℂ) : Prop :=
   ∀ n : ℕ, (Nat.iterate deriv n f 0).im = 0
 
-/-- Close-to-convex: schlicht with one shared starlike `g` and angle `α` satisfying `Re (exp (iα) * z * f'(z) / g(z)) > 0` on the punctured disc [AMR-022-6039, Hayman Problem 6.39, arXiv:1809.07200]. -/
+/-- Close-to-convex: schlicht with one shared starlike `g` and angle `α` satisfying
+`Re (exp (iα) * z * f'(z) / g(z)) > 0` on the punctured disc [AMR-022-6039, Hayman Problem 6.39,
+arXiv:1809.07200]. -/
 noncomputable def haymanIsCloseToConvex (f : ℂ → ℂ) : Prop :=
   haymanIsSchlicht f ∧
     ∃ g : ℂ → ℂ, ∃ alpha : ℝ, haymanIsStarlike g ∧
       ∀ z ∈ haymanUnitDisc, z ≠ 0 →
         0 < (Complex.exp ((alpha : ℂ) * Complex.I) * z * deriv f z / g z).re
 
-/-- Odd square root `h(z) = {f (z^2)}^(1/2)`: analytic, `h^2 = f(z^2)`, odd, normalized [AMR-022-6039, Hayman Problem 6.39, arXiv:1809.07200]. -/
+/-- Odd square root `h(z) = {f (z^2)}^(1/2)`: analytic, `h^2 = f(z^2)`, odd, normalized
+[AMR-022-6039, Hayman Problem 6.39, arXiv:1809.07200]. -/
 def haymanIsOddSqrt (h f : ℂ → ℂ) : Prop :=
   AnalyticOnNhd ℂ h haymanUnitDisc ∧
     (∀ z ∈ haymanUnitDisc, h z ^ 2 = f (z ^ 2)) ∧
     (∀ z ∈ haymanUnitDisc, h (-z) = -h z) ∧ h 0 = 0 ∧ HasDerivAt h 1 0
 
-/-- Odd Taylor coefficients `c_n` of `h` at `0` [AMR-022-6039, Hayman Problem 6.39, arXiv:1809.07200]. -/
+/-- Odd Taylor coefficients `c_n` of `h` at `0` [AMR-022-6039, Hayman Problem 6.39,
+arXiv:1809.07200]. -/
 noncomputable def haymanOddSqrtCoeff (h : ℂ → ℂ) (n : ℕ) : ℂ :=
   Nat.iterate deriv n h 0 / (Nat.factorial n : ℂ)
 
-/-- Robertson bound `|c_1|^2 + |c_3|^2 + … + |c_{2n-1}|^2 ≤ n` [AMR-022-6039, Hayman Problem 6.39, arXiv:1809.07200]. -/
+/-- Robertson bound `|c_1|^2 + |c_3|^2 + … + |c_{2n-1}|^2 ≤ n` [AMR-022-6039, Hayman Problem 6.39,
+arXiv:1809.07200]. -/
 noncomputable def haymanRobertsonBound (h : ℂ → ℂ) (n : ℕ) : Prop :=
   ∑ k ∈ Finset.range n, ‖haymanOddSqrtCoeff h (2 * k + 1)‖ ^ 2 ≤ (n : ℝ)
 
-/-- Robertson bound under real coefficients, and under close-to-convexity [AMR-022-6039, Hayman Problem 6.39, arXiv:1809.07200] (resolved true: de Branges 1985 proved the bound for all of `S` via the Milin conjecture). -/
+/-- Robertson bound under real coefficients, and under close-to-convexity [AMR-022-6039, Hayman
+Problem 6.39, arXiv:1809.07200] (resolved true: de Branges 1985 proved the bound for all of `S` via
+the Milin conjecture). -/
 noncomputable def conjecture : Prop :=
   (∀ f h : ℂ → ℂ, haymanIsSchlicht f → haymanHasRealCoeffs f →
     haymanIsOddSqrt h f → ∀ n : ℕ, 1 ≤ n → haymanRobertsonBound h n) ∧

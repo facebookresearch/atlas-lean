@@ -80,7 +80,11 @@ $\langle g_1, \dots, g_n \mid R \rangle$ is not solvable: no algorithm decides, 
 the $g_i$ and their inverses, whether $w$ represents the identity of
 $\langle g_1, \dots, g_n \mid R \rangle$.
 
-Source: P.S. Novikov, 'On the algorithmic unsolvability of the word problem in group theory', Trudy Mat. Inst. Steklov. 44 (1955) 1–143 (Russian); W.W. Boone, 'The word problem', Ann. of Math. (2) 70 (1959) 207–265 (announced 1958). §122 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `novikov_unsolvable`. -/
+Source: P.S. Novikov, 'On the algorithmic unsolvability of the word problem in group theory', Trudy
+Mat. Inst. Steklov. 44 (1955) 1–143 (Russian); W.W. Boone, 'The word problem', Ann. of Math. (2) 70
+(1959) 207–265 (announced 1958). §122 in O. Knill, *Some Fundamental Theorems in Mathematics*
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `novikov_unsolvable`. -/
 public theorem_wanted novikov_unsolvable :
     ∃ (n : ℕ) (rels : Set (FreeGroup (Fin n))),
       rels.Finite ∧ ¬ WordProblemSolvable (PresentedGroup.mk rels)

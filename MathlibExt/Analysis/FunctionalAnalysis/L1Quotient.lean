@@ -102,12 +102,15 @@ private lemma exists_approx_unit_ball {E : Type*} [NormedAddCommGroup E] [Normed
     _ = ε := add_halves ε
 
 /--
-Every separable real Banach space `E` is a continuous linear quotient of `ℓ¹(ℕ, ℝ)`: there exists
-`T : lp (fun _ : ℕ => ℝ) 1 →L[ℝ] E` surjective. Source: S. Banach, Theorie des operations
+**Separable real Banach spaces are quotients of ℓ¹.** For every separable real Banach space $E$
+there is a surjective bounded linear operator $T \colon \ell^1(\mathbb{N}, \mathbb{R}) \to E$.
+
+Proves `Wanted` entry `separableRealBanach_quotient_l1`.
+
+Source: S. Banach, Theorie des operations
 lineaires, 1932, `ℓ¹` quotient theorem; Albiac and Kalton, Topics in Banach Space Theory; Lean
 states separable real Banach specialization with concrete `lp _ 1` domain and surjective bounded
 linear quotient.
-Proves `Wanted` entry `separableRealBanach_quotient_l1`.
 -/
 theorem separableRealBanach_quotient_l1
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]

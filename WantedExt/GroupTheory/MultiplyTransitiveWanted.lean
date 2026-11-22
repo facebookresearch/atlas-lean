@@ -23,14 +23,19 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.GroupTheory.MultiplyTransitive` — five_transitive_card_classification (manifest `manifests/problems/five_transitive_card_classification.toml`, rev 1, submitter Kim Morrison, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.GroupTheory.MultiplyTransitive` —
+five_transitive_card_classification (manifest
+`manifests/problems/five_transitive_card_classification.toml`, rev 1, submitter Kim Morrison, status
+active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.GroupTheory.MultiplyTransitiveWanted` namespace. Mathematical
-statements are unchanged. Source: Folklore via CFSG; classical work of Mathieu, Jordan; modern accounts in P. Cameron, Permutation Groups (1999).
+and placed the declarations in the `MathlibExt.GroupTheory.MultiplyTransitiveWanted` namespace.
+Mathematical
+statements are unchanged. Source: Folklore via CFSG; classical work of Mathieu, Jordan; modern
+accounts in P. Cameron, Permutation Groups (1999).
 -/
 module
 
@@ -72,7 +77,9 @@ $5$-transitive: for any two injective maps $a, b \colon \{0, 1, 2, 3, 4\} \to X$
 $g \in G$ with $g \cdot a(i) = b(i)$ for all $i$. Then $|G| = n!$, or $n \ge 7$ and
 $|G| = n!/2$, or $n = 12$ and $|G| = 95040$, or $n = 24$ and $|G| = 244823040$.
 
-Source: Folklore via CFSG; classical work of Mathieu, Jordan; modern accounts in P. Cameron, Permutation Groups (1999). Via leanprover/lean-eval@38361be, problem `five_transitive_card_classification`. -/
+Source: Folklore via CFSG; classical work of Mathieu, Jordan; modern accounts in P. Cameron,
+Permutation Groups (1999). Via leanprover/lean-eval@38361be, problem
+`five_transitive_card_classification`. -/
 public theorem_wanted five_transitive_card_classification
     (G X : Type) [Group G] [Fintype G] [Fintype X]
     [MulAction G X] [FaithfulSMul G X]

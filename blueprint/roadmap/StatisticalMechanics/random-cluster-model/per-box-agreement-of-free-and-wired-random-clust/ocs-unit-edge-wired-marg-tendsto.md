@@ -1,0 +1,3 @@
+# Wired unit-edge marginals converge to the wired density
+
+Let $d \in \mathbb{N}$, $\pm e_j$ a signed coordinate vector, and $0 < p < 1$. With $R = \lfloor\sqrt n\rfloor$, let $a_n$ be the probability that the unit edge $\{0, \pm e_j\}$ is open under the [wired random-cluster probability](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-fk-prob.md) on $\Lambda_R$ with boundary $\partial\Lambda_R$ at $(p, 2)$ when $R \ge 1$, and $a_n = 0$ when $R = 0$. Then $a_n \to \theta^1_{\{0, \pm e_j\}}(p)$, where $\theta^1_e(p)$ is the [wired edge density](wired-edge-density.md) of $e$ at $q = 2$ (the probability that $e$ is open under the wired infinite-volume random-cluster measure on $\mathbb{Z}^d$).

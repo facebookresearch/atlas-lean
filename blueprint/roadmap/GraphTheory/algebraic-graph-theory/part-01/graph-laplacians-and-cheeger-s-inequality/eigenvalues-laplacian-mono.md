@@ -1,0 +1,3 @@
+# Raising weights raises every Laplacian eigenvalue
+
+Let $V$ and $E$ be finite sets and let each $e \in E$ be an edge from $e^-$ to $e^+$ in $V$ (a finite multigraph; loops $e^- = e^+$ are allowed), and let $w, w' : E \to \mathbb{R}$ satisfy $w_e \le w'_e$ for every edge $e$. List the eigenvalues of each [Laplacian](laplacian.md) in decreasing order, with multiplicity. Then for every $k$, the $k$-th eigenvalue of $L_w$ is at most the $k$-th eigenvalue of $L_{w'}$: decreasing the weight of an edge, for instance removing an edge of nonnegative weight, can only decrease the Laplacian eigenvalues (D. A. Spielman, *Spectral and Algebraic Graph Theory*, draft of 2 April 2025, Corollary 6.2.2).
